@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: dma.h,v 1.13 1996/02/17 17:32:33 miguel Exp $&n; * include/asm-sparc/dma.h&n; *&n; * Copyright 1995 (C) David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: dma.h,v 1.15 1996/03/23 02:40:00 davem Exp $&n; * include/asm-sparc/dma.h&n; *&n; * Copyright 1995 (C) David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _ASM_SPARC_DMA_H
 DECL|macro|_ASM_SPARC_DMA_H
 mdefine_line|#define _ASM_SPARC_DMA_H
@@ -219,7 +219,9 @@ mdefine_line|#define DMA_ST_WRITE     0x00000100        /* write from device to 
 DECL|macro|DMA_ENABLE
 mdefine_line|#define DMA_ENABLE       0x00000200        /* Fire up DMA, handle requests */
 DECL|macro|DMA_PEND_READ
-mdefine_line|#define DMA_PEND_READ    0x00000400        /* DMA_VERS1/0/PLUS Pending Read */
+mdefine_line|#define DMA_PEND_READ    0x00000400        /* DMA_VERS1/0/PLUS Pendind Read */
+DECL|macro|DMA_DSBL_RD_DRN
+mdefine_line|#define DMA_DSBL_RD_DRN  0x00001000        /* No EC drain on slave reads */
 DECL|macro|DMA_BCNT_ENAB
 mdefine_line|#define DMA_BCNT_ENAB    0x00002000        /* If on, use the byte counter */
 DECL|macro|DMA_TERM_CNTR
@@ -228,16 +230,22 @@ DECL|macro|DMA_CSR_DISAB
 mdefine_line|#define DMA_CSR_DISAB    0x00010000        /* No FIFO drains during csr */
 DECL|macro|DMA_SCSI_DISAB
 mdefine_line|#define DMA_SCSI_DISAB   0x00020000        /* No FIFO drains during reg */
+DECL|macro|DMA_DSBL_WR_INV
+mdefine_line|#define DMA_DSBL_WR_INV  0x00020000        /* No EC inval. on slave writes */
 DECL|macro|DMA_ADD_ENABLE
 mdefine_line|#define DMA_ADD_ENABLE   0x00040000        /* Special ESC DVMA optimization */
+DECL|macro|DMA_E_BURST8
+mdefine_line|#define DMA_E_BURST8&t; 0x00040000&t;   /* ENET: SBUS r/w burst size */
 DECL|macro|DMA_BRST_SZ
-mdefine_line|#define DMA_BRST_SZ      0x000c0000        /* SBUS transfer r/w burst size */
+mdefine_line|#define DMA_BRST_SZ      0x000c0000        /* SCSI: SBUS r/w burst size */
 DECL|macro|DMA_ADDR_DISAB
 mdefine_line|#define DMA_ADDR_DISAB   0x00100000        /* No FIFO drains during addr */
 DECL|macro|DMA_2CLKS
 mdefine_line|#define DMA_2CLKS        0x00200000        /* Each transfer = 2 clock ticks */
 DECL|macro|DMA_3CLKS
 mdefine_line|#define DMA_3CLKS        0x00400000        /* Each transfer = 3 clock ticks */
+DECL|macro|DMA_EN_ENETAUI
+mdefine_line|#define DMA_EN_ENETAUI   DMA_3CLKS         /* Put lance into AUI-cable mode */
 DECL|macro|DMA_CNTR_DISAB
 mdefine_line|#define DMA_CNTR_DISAB   0x00800000        /* No IRQ when DMA_TERM_CNTR set */
 DECL|macro|DMA_AUTO_NADDR

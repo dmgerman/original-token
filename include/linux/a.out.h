@@ -170,8 +170,10 @@ macro_line|#ifdef __i386__
 DECL|macro|SEGMENT_SIZE
 mdefine_line|#define SEGMENT_SIZE&t;1024
 macro_line|#else
+macro_line|#ifndef SEGMENT_SIZE
 DECL|macro|SEGMENT_SIZE
 mdefine_line|#define SEGMENT_SIZE&t;PAGE_SIZE
+macro_line|#endif
 macro_line|#endif
 macro_line|#endif
 DECL|macro|_N_SEGMENT_ROUND

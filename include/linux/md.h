@@ -7,7 +7,7 @@ macro_line|#include &lt;linux/major.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/ioctl.h&gt;
 DECL|macro|MD_VERSION
-mdefine_line|#define MD_VERSION &quot;0.34&quot;
+mdefine_line|#define MD_VERSION &quot;0.35&quot;
 multiline_comment|/* ioctls */
 DECL|macro|REGISTER_DEV
 mdefine_line|#define REGISTER_DEV _IO (MD_MAJOR, 1)
@@ -47,12 +47,9 @@ mdefine_line|#define RAID5             (4UL &lt;&lt; PERSONALITY_SHIFT)
 DECL|macro|MAX_PERSONALITY
 mdefine_line|#define MAX_PERSONALITY   5
 macro_line|#ifdef __KERNEL__
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/blkdev.h&gt;
-DECL|macro|MD_COUNT_SIZE
-macro_line|#undef MD_COUNT_SIZE&t;&t;/* Define this to have stats about&n;&t;&t;&t;&t;   chunk size in /proc/mdstat */
 DECL|macro|MAX_REAL
 mdefine_line|#define MAX_REAL     8&t;&t;/* Max number of physical dev per md dev */
 DECL|macro|MAX_MD_DEV
@@ -138,18 +135,23 @@ op_star
 id|map
 )paren
 (paren
+r_struct
+id|md_dev
+op_star
+id|md_dev
+comma
+id|kdev_t
+op_star
+id|rdev
+comma
 r_int
-id|minor
-comma
-r_struct
-id|md_dev
+r_int
 op_star
-id|md_dev
+id|rsector
 comma
-r_struct
-id|request
-op_star
-id|req
+r_int
+r_int
+id|size
 )paren
 suffix:semicolon
 DECL|member|run
@@ -267,23 +269,6 @@ r_void
 op_star
 r_private
 suffix:semicolon
-macro_line|#ifdef MD_COUNT_SIZE
-DECL|member|smallest_count
-r_int
-r_int
-id|smallest_count
-suffix:semicolon
-DECL|member|biggest_count
-r_int
-r_int
-id|biggest_count
-suffix:semicolon
-DECL|member|equal_count
-r_int
-r_int
-id|equal_count
-suffix:semicolon
-macro_line|#endif
 )brace
 suffix:semicolon
 r_extern
@@ -313,20 +298,6 @@ id|MAX_MD_DEV
 )braket
 suffix:semicolon
 r_extern
-r_void
-id|make_md_request
-c_func
-(paren
-r_struct
-id|request
-op_star
-id|pending
-comma
-r_int
-id|n
-)paren
-suffix:semicolon
-r_extern
 r_char
 op_star
 id|partition_name
@@ -335,30 +306,6 @@ id|kdev_t
 id|dev
 )paren
 suffix:semicolon
-macro_line|#if defined(CONFIG_MD_SUPPORT_RAID1) || defined(CONFIG_MD_SUPPORT_RAID5)
-r_extern
-r_int
-id|md_valid_device
-(paren
-r_int
-id|minor
-comma
-id|kdev_t
-id|dev
-comma
-r_int
-id|mode
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|md_can_reemit
-(paren
-r_int
-id|minor
-)paren
-suffix:semicolon
-macro_line|#endif
 r_extern
 r_int
 id|register_md_personality

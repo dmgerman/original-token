@@ -2,7 +2,7 @@ multiline_comment|/* $Id: palloc.c,v 1.3 1995/11/25 01:00:08 davem Exp $&n; * pa
 macro_line|#include &lt;asm/openprom.h&gt;
 macro_line|#include &lt;asm/oplib.h&gt;
 multiline_comment|/* You should not call these routines after memory management&n; * has been initialized in the kernel, if fact you should not&n; * use these if at all possible in the kernel.  They are mainly&n; * to be used for a bootloader for temporary allocations which&n; * it will free before jumping into the kernel it has loaded.&n; *&n; * Also, these routines don&squot;t work on V0 proms, only V2 and later.&n; */
-multiline_comment|/* Allocate a chunk of memory of size &squot;num_bytes&squot; giving a suggestion&n; * of virtual_hint as the preferred virtual base address of this chunk.&n; * There are no guarantees that you will get the allocation, or that&n; * the prom will abide by your &quot;hint&quot;.  So check your return value.&n; */
+multiline_comment|/* Allocate a chunk of memory of size &squot;num_bytes&squot; giving a suggestion&n; * of virtual_hint as the preferred virtual base address of this chunk.&n; * There are no guarentees that you will get the allocation, or that&n; * the prom will abide by your &quot;hint&quot;.  So check your return value.&n; */
 r_char
 op_star
 DECL|function|prom_alloc

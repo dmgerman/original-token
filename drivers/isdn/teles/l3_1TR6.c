@@ -1,5 +1,4 @@
-DECL|macro|DEBUG_1TR6
-mdefine_line|#define DEBUG_1TR6 0
+multiline_comment|/* $Id: l3_1TR6.c,v 1.2 1996/04/20 16:47:23 fritz Exp $&n; *&n; * $Log: l3_1TR6.c,v $&n; * Revision 1.2  1996/04/20 16:47:23  fritz&n; * Changed statemachine to allow reject of an incoming call.&n; * Report all incoming calls, not just those with Service = 7.&n; * Misc. typos&n; *&n; * Revision 1.1  1996/04/13 10:25:16  fritz&n; * Initial revision&n; *&n; *&n; */
 r_char
 op_star
 DECL|function|mt_trans
@@ -543,15 +542,6 @@ id|ibh
 op_assign
 id|arg
 suffix:semicolon
-macro_line|#if DEBUG_1TR6
-id|printk
-c_func
-(paren
-id|KERN_INFO
-l_string|&quot;1tr6: TU_SETUP&bslash;n&quot;
-)paren
-suffix:semicolon
-macro_line|#endif
 id|p
 op_assign
 id|DATAPTR
@@ -578,6 +568,17 @@ l_int|0x80
 op_plus
 id|st-&gt;pa-&gt;callref
 suffix:semicolon
+macro_line|#if DEBUG_1TR6
+id|printk
+c_func
+(paren
+id|KERN_INFO
+l_string|&quot;1tr6: TU_SETUP cr=%d&bslash;n&quot;
+comma
+id|st-&gt;l3.callref
+)paren
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/*&n;         * Channel Identification&n;         */
 id|p
 op_assign
@@ -792,14 +793,27 @@ c_func
 id|ibh
 )paren
 suffix:semicolon
+multiline_comment|/* Signal all services, linklevel takes care of Service-Indicator */
 r_if
 c_cond
 (paren
 id|st-&gt;pa-&gt;info
-op_eq
+op_ne
 l_int|7
 )paren
 (brace
+id|printk
+c_func
+(paren
+id|KERN_INFO
+l_string|&quot;non-digital call: %s -&gt; %s&bslash;n&quot;
+comma
+id|st-&gt;pa-&gt;calling
+comma
+id|st-&gt;pa-&gt;called
+)paren
+suffix:semicolon
+)brace
 id|newl3state
 c_func
 (paren
@@ -820,7 +834,6 @@ comma
 l_int|NULL
 )paren
 suffix:semicolon
-)brace
 )brace
 r_static
 r_void
@@ -2158,6 +2171,9 @@ id|byte
 op_star
 id|p
 suffix:semicolon
+id|byte
+id|rejflg
+suffix:semicolon
 macro_line|#if DEBUG_1TR6
 id|printk
 c_func
@@ -2183,7 +2199,7 @@ op_star
 )paren
 id|st
 comma
-l_int|20
+l_int|21
 )paren
 suffix:semicolon
 id|p
@@ -2222,6 +2238,45 @@ op_increment
 op_assign
 id|MT_N1_DISC
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|st-&gt;l3.state
+op_eq
+l_int|7
+)paren
+(brace
+id|rejflg
+op_assign
+l_int|1
+suffix:semicolon
+op_star
+id|p
+op_increment
+op_assign
+id|WE0_cause
+suffix:semicolon
+multiline_comment|/* Anruf abweisen                */
+op_star
+id|p
+op_increment
+op_assign
+l_int|0x01
+suffix:semicolon
+multiline_comment|/* Laenge = 1                    */
+op_star
+id|p
+op_increment
+op_assign
+id|CAUSE_CallRejected
+suffix:semicolon
+)brace
+r_else
+(brace
+id|rejflg
+op_assign
+l_int|0
+suffix:semicolon
 op_star
 id|p
 op_increment
@@ -2235,6 +2290,7 @@ op_assign
 l_int|0x0
 suffix:semicolon
 multiline_comment|/* Laenge = 0 normales Ausloesen */
+)brace
 id|dibh-&gt;datasize
 op_assign
 id|p
@@ -2253,6 +2309,20 @@ comma
 id|dibh
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|rejflg
+)paren
+id|newl3state
+c_func
+(paren
+id|st
+comma
+l_int|0
+)paren
+suffix:semicolon
+r_else
 id|newl3state
 c_func
 (paren
@@ -2318,6 +2388,14 @@ id|l3_1tr6_setup
 )brace
 comma
 (brace
+l_int|4
+comma
+id|CC_DISCONNECT_REQ
+comma
+id|l3_1tr6_disconn_req
+)brace
+comma
+(brace
 l_int|6
 comma
 id|CC_REJECT_REQ
@@ -2353,6 +2431,14 @@ comma
 l_int|7
 comma
 id|CC_DISCONNECT_REQ
+comma
+id|l3_1tr6_disconn_req
+)brace
+comma
+(brace
+l_int|7
+comma
+id|CC_DLRL
 comma
 id|l3_1tr6_disconn_req
 )brace

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: isdn.h,v 1.2 1996/02/11 02:10:02 fritz Exp fritz $&n; *&n; * Main header for the Linux ISDN subsystem (linklevel).&n; *&n; * Copyright 1994,95,96 by Fritz Elfert (fritz@wuemaus.franken.de)&n; * Copyright 1995,96    by Thinking Objects Software GmbH Wuerzburg&n; * Copyright 1995,96    by Michael Hipp (Michael.Hipp@student.uni-tuebingen.de)&n; * &n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA. &n; *&n; * $Log: isdn.h,v $&n; * Revision 1.2  1996/02/11 02:10:02  fritz&n; * Changed IOCTL-names&n; * Added rx_netdev, st_netdev, first_skb, org_hcb, and org_hcu to&n; * Netdevice-local struct.&n; *&n; * Revision 1.1  1996/01/10 20:55:07  fritz&n; * Initial revision&n; *&n; */
+multiline_comment|/* $Id: isdn.h,v 1.3 1996/04/20 16:54:58 fritz Exp $&n; *&n; * Main header for the Linux ISDN subsystem (linklevel).&n; *&n; * Copyright 1994,95,96 by Fritz Elfert (fritz@wuemaus.franken.de)&n; * Copyright 1995,96    by Thinking Objects Software GmbH Wuerzburg&n; * Copyright 1995,96    by Michael Hipp (Michael.Hipp@student.uni-tuebingen.de)&n; * &n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA. &n; *&n; * $Log: isdn.h,v $&n; * Revision 1.3  1996/04/20 16:54:58  fritz&n; * Increased maximum number of channels.&n; * Added some flags for isdn_net to handle callback more reliable.&n; * Fixed delay-definitions to be more accurate.&n; * Misc. typos&n; *&n; * Revision 1.2  1996/02/11 02:10:02  fritz&n; * Changed IOCTL-names&n; * Added rx_netdev, st_netdev, first_skb, org_hcb, and org_hcu to&n; * Netdevice-local struct.&n; *&n; * Revision 1.1  1996/01/10 20:55:07  fritz&n; * Initial revision&n; *&n; */
 macro_line|#ifndef isdn_h
 DECL|macro|isdn_h
 mdefine_line|#define isdn_h
@@ -11,9 +11,9 @@ DECL|macro|ISDN_MAJOR
 mdefine_line|#define ISDN_MAJOR        45
 multiline_comment|/* The minor-devicenumbers for Channel 0 and 1 are used as arguments for&n; * physical Channel-Mapping, so they MUST NOT be changed without changing&n; * the correspondent code in isdn.c&n; */
 DECL|macro|ISDN_MAX_DRIVERS
-mdefine_line|#define ISDN_MAX_DRIVERS    16
+mdefine_line|#define ISDN_MAX_DRIVERS    32
 DECL|macro|ISDN_MAX_CHANNELS
-mdefine_line|#define ISDN_MAX_CHANNELS   16
+mdefine_line|#define ISDN_MAX_CHANNELS   64
 DECL|macro|ISDN_MINOR_B
 mdefine_line|#define ISDN_MINOR_B        0
 DECL|macro|ISDN_MINOR_BMAX
@@ -27,7 +27,7 @@ mdefine_line|#define ISDN_MINOR_PPP      (2*ISDN_MAX_CHANNELS)
 DECL|macro|ISDN_MINOR_PPPMAX
 mdefine_line|#define ISDN_MINOR_PPPMAX   (3*ISDN_MAX_CHANNELS-1)
 DECL|macro|ISDN_MINOR_STATUS
-mdefine_line|#define ISDN_MINOR_STATUS   128
+mdefine_line|#define ISDN_MINOR_STATUS   255
 multiline_comment|/* New ioctl-codes */
 DECL|macro|IIOCNETAIF
 mdefine_line|#define IIOCNETAIF  _IO(&squot;I&squot;,1)
@@ -69,6 +69,8 @@ DECL|macro|IIOCNETASL
 mdefine_line|#define IIOCNETASL  _IO(&squot;I&squot;,19)
 DECL|macro|IIOCNETDIL
 mdefine_line|#define IIOCNETDIL  _IO(&squot;I&squot;,20)
+DECL|macro|IIOCGETCPS
+mdefine_line|#define IIOCGETCPS  _IO(&squot;I&squot;,21)
 DECL|macro|IIOCNETALN
 mdefine_line|#define IIOCNETALN  _IO(&squot;I&squot;,32)
 DECL|macro|IIOCNETDLN
@@ -88,6 +90,8 @@ DECL|macro|ISDN_NET_ENCAP_CISCOHDLC
 mdefine_line|#define ISDN_NET_ENCAP_CISCOHDLC 3
 DECL|macro|ISDN_NET_ENCAP_SYNCPPP
 mdefine_line|#define ISDN_NET_ENCAP_SYNCPPP   4
+DECL|macro|ISDN_NET_ENCAP_UIHDLC
+mdefine_line|#define ISDN_NET_ENCAP_UIHDLC    5
 multiline_comment|/* Facility which currently uses an ISDN-channel */
 DECL|macro|ISDN_USAGE_NONE
 mdefine_line|#define ISDN_USAGE_NONE       0
@@ -226,16 +230,6 @@ l_int|25
 )braket
 suffix:semicolon
 multiline_comment|/* DriverId for Bindings                 */
-DECL|member|secure
-r_int
-id|secure
-suffix:semicolon
-multiline_comment|/* Flag: Secure                          */
-DECL|member|callback
-r_int
-id|callback
-suffix:semicolon
-multiline_comment|/* Flag: Callback                        */
 DECL|member|onhtime
 r_int
 id|onhtime
@@ -246,11 +240,6 @@ r_int
 id|charge
 suffix:semicolon
 multiline_comment|/* Charge-Units                          */
-DECL|member|chargehup
-r_int
-id|chargehup
-suffix:semicolon
-multiline_comment|/* Flag: Charge-Hangup                   */
 DECL|member|l2_proto
 r_int
 id|l2_proto
@@ -266,21 +255,51 @@ r_int
 id|p_encap
 suffix:semicolon
 multiline_comment|/* Encapsulation                         */
-DECL|member|ihup
-r_int
-id|ihup
-suffix:semicolon
-multiline_comment|/* Flag: Hangup-Timeout on incoming line */
 DECL|member|exclusive
 r_int
 id|exclusive
 suffix:semicolon
 multiline_comment|/* Channel, if bound exclusive           */
+DECL|member|dialmax
+r_int
+id|dialmax
+suffix:semicolon
+multiline_comment|/* Dial Retry-Counter                    */
 DECL|member|slavedelay
 r_int
 id|slavedelay
 suffix:semicolon
 multiline_comment|/* Delay until slave starts up           */
+DECL|member|cbdelay
+r_int
+id|cbdelay
+suffix:semicolon
+multiline_comment|/* Delay before Callback                 */
+DECL|member|chargehup
+r_int
+id|chargehup
+suffix:semicolon
+multiline_comment|/* Flag: Charge-Hangup                   */
+DECL|member|ihup
+r_int
+id|ihup
+suffix:semicolon
+multiline_comment|/* Flag: Hangup-Timeout on incoming line */
+DECL|member|secure
+r_int
+id|secure
+suffix:semicolon
+multiline_comment|/* Flag: Secure                          */
+DECL|member|callback
+r_int
+id|callback
+suffix:semicolon
+multiline_comment|/* Flag: Callback                        */
+DECL|member|cbhup
+r_int
+id|cbhup
+suffix:semicolon
+multiline_comment|/* Flag: Reject Call before Callback     */
 DECL|typedef|isdn_net_ioctl_cfg
 )brace
 id|isdn_net_ioctl_cfg
@@ -366,9 +385,9 @@ multiline_comment|/* Timer-delays and scheduling-flags */
 DECL|macro|ISDN_TIMER_RES
 mdefine_line|#define ISDN_TIMER_RES       3                     /* Main Timer-Resolution  */
 DECL|macro|ISDN_TIMER_02SEC
-mdefine_line|#define ISDN_TIMER_02SEC     (HZ/ISDN_TIMER_RES/5) /* Slow-Timer1 (0.2 sec.) */
+mdefine_line|#define ISDN_TIMER_02SEC     (HZ/(ISDN_TIMER_RES+1)/5) /* Slow-Timer1 .2 sec */
 DECL|macro|ISDN_TIMER_1SEC
-mdefine_line|#define ISDN_TIMER_1SEC      (HZ/ISDN_TIMER_RES)   /* Slow-Timer2 (1 sec.)   */
+mdefine_line|#define ISDN_TIMER_1SEC      (HZ/(ISDN_TIMER_RES+1)) /* Slow-Timer2 1 sec   */
 DECL|macro|ISDN_TIMER_MODEMREAD
 mdefine_line|#define ISDN_TIMER_MODEMREAD 1
 DECL|macro|ISDN_TIMER_MODEMPLUS
@@ -389,9 +408,9 @@ DECL|macro|ISDN_TIMER_SLOW
 mdefine_line|#define ISDN_TIMER_SLOW      (ISDN_TIMER_MODEMRING | ISDN_TIMER_NETHANGUP | &bslash;&n;                              ISDN_TIMER_NETDIAL)
 multiline_comment|/* Timeout-Values for isdn_net_dial() */
 DECL|macro|ISDN_TIMER_DTIMEOUT10
-mdefine_line|#define ISDN_TIMER_DTIMEOUT10 (10*HZ/(ISDN_TIMER_02SEC*ISDN_TIMER_RES))
+mdefine_line|#define ISDN_TIMER_DTIMEOUT10 (10*HZ/(ISDN_TIMER_02SEC*(ISDN_TIMER_RES+1)))
 DECL|macro|ISDN_TIMER_DTIMEOUT15
-mdefine_line|#define ISDN_TIMER_DTIMEOUT15 (15*HZ/(ISDN_TIMER_02SEC*ISDN_TIMER_RES))
+mdefine_line|#define ISDN_TIMER_DTIMEOUT15 (15*HZ/(ISDN_TIMER_02SEC*(ISDN_TIMER_RES+1)))
 multiline_comment|/* GLOBAL_FLAGS */
 DECL|macro|ISDN_GLOBAL_STOPPED
 mdefine_line|#define ISDN_GLOBAL_STOPPED 1
@@ -402,13 +421,17 @@ mdefine_line|#define ISDN_NET_CONNECTED  0x01       /* Bound to ISDN-Channel    
 DECL|macro|ISDN_NET_SECURE
 mdefine_line|#define ISDN_NET_SECURE     0x02       /* Accept calls from phonelist only  */
 DECL|macro|ISDN_NET_CALLBACK
-mdefine_line|#define ISDN_NET_CALLBACK   0x04       /* callback incoming phonenumber     */
-DECL|macro|ISDN_NET_CLONE
+mdefine_line|#define ISDN_NET_CALLBACK   0x04       /* activate callback                 */
+DECL|macro|ISDN_NET_CBHUP
+mdefine_line|#define ISDN_NET_CBHUP      0x08       /* hangup before callback            */
+DECL|macro|ISDN_NET_CBOUT
+mdefine_line|#define ISDN_NET_CBOUT      0x10       /* remote machine does callback      */
+macro_line|#if 0
+multiline_comment|/* Unused??? */
 mdefine_line|#define ISDN_NET_CLONE      0x08       /* clone a tmp interface when called */
-DECL|macro|ISDN_NET_TMP
 mdefine_line|#define ISDN_NET_TMP        0x10       /* tmp interface until getting an IP */
-DECL|macro|ISDN_NET_DYNAMIC
 mdefine_line|#define ISDN_NET_DYNAMIC    0x20       /* this link is dynamically allocated */
+macro_line|#endif
 DECL|macro|ISDN_NET_MAGIC
 mdefine_line|#define ISDN_NET_MAGIC      0x49344C02 /* for paranoia-checking             */
 multiline_comment|/* Phone-list-element */
@@ -490,11 +513,6 @@ r_int
 id|flags
 suffix:semicolon
 multiline_comment|/* Connection-flags                 */
-DECL|member|dialstate
-r_int
-id|dialstate
-suffix:semicolon
-multiline_comment|/* State for dialing                */
 DECL|member|dialretry
 r_int
 id|dialretry
@@ -505,6 +523,16 @@ r_int
 id|dialmax
 suffix:semicolon
 multiline_comment|/* Max. Number of Dial-retries      */
+DECL|member|cbdelay
+r_int
+id|cbdelay
+suffix:semicolon
+multiline_comment|/* Delay before Callback starts     */
+DECL|member|dtimer
+r_int
+id|dtimer
+suffix:semicolon
+multiline_comment|/* Timeout-counter for dialing      */
 DECL|member|msn
 r_char
 id|msn
@@ -513,11 +541,16 @@ id|ISDN_MSNLEN
 )braket
 suffix:semicolon
 multiline_comment|/* MSNs/EAZs for this interface */
-DECL|member|dtimer
-r_int
-id|dtimer
+DECL|member|cbhup
+id|u_char
+id|cbhup
 suffix:semicolon
-multiline_comment|/* Timeout-counter for dialing      */
+multiline_comment|/* Flag: Reject Call before Callback*/
+DECL|member|dialstate
+id|u_char
+id|dialstate
+suffix:semicolon
+multiline_comment|/* State for dialing                */
 DECL|member|p_encap
 id|u_char
 id|p_encap
@@ -1731,6 +1764,22 @@ id|ISDN_MAX_CHANNELS
 )braket
 suffix:semicolon
 multiline_comment|/* stat netdev-pointers   */
+DECL|member|ibytes
+id|ulong
+id|ibytes
+(braket
+id|ISDN_MAX_CHANNELS
+)braket
+suffix:semicolon
+multiline_comment|/* Statistics incoming bytes  */
+DECL|member|obytes
+id|ulong
+id|obytes
+(braket
+id|ISDN_MAX_CHANNELS
+)braket
+suffix:semicolon
+multiline_comment|/* Statistics outgoing bytes  */
 DECL|typedef|isdn_dev
 )brace
 id|isdn_dev

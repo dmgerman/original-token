@@ -1,3 +1,4 @@
+multiline_comment|/* $Id: tei.c,v 1.1 1996/04/13 10:28:25 fritz Exp $&n; *&n; * $Log: tei.c,v $&n; * Revision 1.1  1996/04/13 10:28:25  fritz&n; * Initial revision&n; *&n; *&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &quot;teles.h&quot;

@@ -1,3 +1,4 @@
+multiline_comment|/* $Id: buffers.c,v 1.1 1996/04/13 10:19:28 fritz Exp $&n; *&n; * $Log: buffers.c,v $&n; * Revision 1.1  1996/04/13 10:19:28  fritz&n; * Initial revision&n; *&n; *&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &quot;teles.h&quot;

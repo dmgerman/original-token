@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: pgtsun4c.h,v 1.22 1996/01/24 02:33:45 davem Exp $&n; * pgtsun4c.h:  Sun4c specific pgtable.h defines and code.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: pgtsun4c.h,v 1.24 1996/03/26 06:51:56 miguel Exp $&n; * pgtsun4c.h:  Sun4c specific pgtable.h defines and code.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _SPARC_PGTSUN4C_H
 DECL|macro|_SPARC_PGTSUN4C_H
 mdefine_line|#define _SPARC_PGTSUN4C_H
@@ -38,7 +38,7 @@ DECL|macro|SUN4C_PTRS_PER_PGD
 mdefine_line|#define SUN4C_PTRS_PER_PGD    1024
 multiline_comment|/* On the sun4c the physical ram limit is 128MB.  We set up our I/O&n; * translations at KERNBASE + 128MB for 1MB, then we begin the VMALLOC&n; * area, makes sense.  This works out to the value below.&n; */
 DECL|macro|SUN4C_VMALLOC_START
-mdefine_line|#define SUN4C_VMALLOC_START   (0xfe100000)
+mdefine_line|#define SUN4C_VMALLOC_START   (0xfe200000)
 multiline_comment|/*&n; * Sparc SUN4C pte fields.&n; */
 DECL|macro|_SUN4C_PAGE_VALID
 mdefine_line|#define _SUN4C_PAGE_VALID     0x80000000   /* valid page */
@@ -68,35 +68,6 @@ DECL|macro|SUN4C_PAGE_READONLY
 mdefine_line|#define SUN4C_PAGE_READONLY __pgprot(_SUN4C_PAGE_VALID | _SUN4C_PAGE_USER | &bslash;&n;&t;&t;&t;&t;     _SUN4C_PAGE_REF)
 DECL|macro|SUN4C_PAGE_KERNEL
 mdefine_line|#define SUN4C_PAGE_KERNEL   __pgprot(_SUN4C_PAGE_VALID | _SUN4C_PAGE_WRITE | &bslash;&n;&t;&t;&t;&t;     _SUN4C_PAGE_PRIV | _SUN4C_PAGE_DIRTY | &bslash;&n;&t;&t;&t;&t;     _SUN4C_PAGE_REF | _SUN4C_PAGE_NOCACHE)
-r_extern
-r_char
-op_star
-id|sun4c_lockarea
-c_func
-(paren
-r_char
-op_star
-id|vaddr
-comma
-r_int
-r_int
-id|size
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|sun4c_unlockarea
-c_func
-(paren
-r_char
-op_star
-id|vaddr
-comma
-r_int
-r_int
-id|size
-)paren
-suffix:semicolon
 DECL|function|sun4c_get_synchronous_error
 r_extern
 id|__inline__

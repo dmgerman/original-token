@@ -345,7 +345,6 @@ DECL|macro|DEVICE_OFF
 mdefine_line|#define DEVICE_OFF(device)
 multiline_comment|/* Kludge to use the same number for both char and block major numbers */
 macro_line|#elif  (MAJOR_NR == MD_MAJOR) &amp;&amp; defined(MD_DRIVER)
-macro_line|#ifndef MD_PERSONALITY
 DECL|macro|DEVICE_NAME
 mdefine_line|#define DEVICE_NAME &quot;Multiple devices driver&quot;
 DECL|macro|DEVICE_REQUEST
@@ -356,7 +355,6 @@ DECL|macro|DEVICE_ON
 mdefine_line|#define DEVICE_ON(device)
 DECL|macro|DEVICE_OFF
 mdefine_line|#define DEVICE_OFF(device)
-macro_line|#endif
 macro_line|#elif (MAJOR_NR == SCSI_TAPE_MAJOR)
 DECL|macro|DEVICE_NAME
 mdefine_line|#define DEVICE_NAME &quot;scsitape&quot;
@@ -540,7 +538,7 @@ mdefine_line|#define DEVICE_ON(device)
 DECL|macro|DEVICE_OFF
 mdefine_line|#define DEVICE_OFF(device)
 macro_line|#endif /* MAJOR_NR == whatever */
-macro_line|#if ((MAJOR_NR != SCSI_TAPE_MAJOR) &amp;&amp; !defined(IDE_DRIVER) &amp;&amp; !defined(MD_DRIVER))
+macro_line|#if ((MAJOR_NR != SCSI_TAPE_MAJOR) &amp;&amp; !defined(IDE_DRIVER))
 macro_line|#ifndef CURRENT
 DECL|macro|CURRENT
 mdefine_line|#define CURRENT (blk_dev[MAJOR_NR].current_request)
@@ -572,7 +570,6 @@ macro_line|#else
 DECL|macro|SET_INTR
 mdefine_line|#define SET_INTR(x) (DEVICE_INTR = (x))
 macro_line|#endif /* DEVICE_TIMEOUT */
-macro_line|#ifndef MD_PERSONALITY
 r_static
 r_void
 (paren
@@ -582,7 +579,6 @@ id|DEVICE_REQUEST
 r_void
 )paren
 suffix:semicolon
-macro_line|#endif
 macro_line|#ifdef DEVICE_INTR
 DECL|macro|CLEAR_INTR
 mdefine_line|#define CLEAR_INTR SET_INTR(NULL)
@@ -595,7 +591,7 @@ mdefine_line|#define INIT_REQUEST &bslash;&n;&t;if (!CURRENT) {&bslash;&n;&t;&t;
 macro_line|#endif /* (MAJOR_NR != SCSI_TAPE_MAJOR) &amp;&amp; !defined(IDE_DRIVER) */
 multiline_comment|/* end_request() - SCSI devices have their own version */
 multiline_comment|/*               - IDE drivers have their own copy too */
-macro_line|#if ! SCSI_MAJOR(MAJOR_NR) || (defined(MD_DRIVER) &amp;&amp; !defined(MD_PERSONALITY))
+macro_line|#if ! SCSI_MAJOR(MAJOR_NR)
 macro_line|#if defined(IDE_DRIVER) &amp;&amp; !defined(_IDE_C) /* shared copy for IDE modules */
 r_void
 id|ide_end_request
@@ -631,20 +627,6 @@ id|req
 op_assign
 id|hwgroup-&gt;rq
 suffix:semicolon
-macro_line|#elif defined(MD_DRIVER)
-r_static
-r_void
-id|end_request
-(paren
-r_int
-id|uptodate
-comma
-r_struct
-id|request
-op_star
-id|req
-)paren
-(brace
 macro_line|#else
 r_static
 r_void
@@ -824,7 +806,7 @@ id|hwgroup-&gt;rq
 op_assign
 l_int|NULL
 suffix:semicolon
-macro_line|#elif !defined(MD_DRIVER)
+macro_line|#else
 id|DEVICE_OFF
 c_func
 (paren
@@ -863,99 +845,6 @@ suffix:semicolon
 )brace
 macro_line|#endif /* defined(IDE_DRIVER) &amp;&amp; !defined(_IDE_C) */
 macro_line|#endif /* ! SCSI_MAJOR(MAJOR_NR) */
-macro_line|#ifdef MD_PERSONALITY
-DECL|function|end_redirect
-r_extern
-r_inline
-r_void
-id|end_redirect
-(paren
-r_struct
-id|request
-op_star
-id|req
-)paren
-(brace
-r_struct
-id|buffer_head
-op_star
-id|bh
-suffix:semicolon
-id|req-&gt;errors
-op_assign
-l_int|0
-suffix:semicolon
-r_if
-c_cond
-(paren
-(paren
-id|bh
-op_assign
-id|req-&gt;bh
-)paren
-op_ne
-l_int|NULL
-)paren
-(brace
-id|req-&gt;bh
-op_assign
-id|bh-&gt;b_reqnext
-suffix:semicolon
-id|bh-&gt;b_reqnext
-op_assign
-l_int|NULL
-suffix:semicolon
-r_if
-c_cond
-(paren
-(paren
-id|bh
-op_assign
-id|req-&gt;bh
-)paren
-op_ne
-l_int|NULL
-)paren
-(brace
-id|req-&gt;sector
-op_add_assign
-id|req-&gt;current_nr_sectors
-suffix:semicolon
-id|req-&gt;current_nr_sectors
-op_assign
-id|bh-&gt;b_size
-op_rshift
-l_int|9
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|req-&gt;nr_sectors
-OL
-id|req-&gt;current_nr_sectors
-)paren
-(brace
-id|req-&gt;nr_sectors
-op_assign
-id|req-&gt;current_nr_sectors
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;end_redirect : buffer-list destroyed&bslash;n&quot;
-)paren
-suffix:semicolon
-)brace
-id|req-&gt;buffer
-op_assign
-id|bh-&gt;b_data
-suffix:semicolon
-r_return
-suffix:semicolon
-)brace
-)brace
-)brace
-macro_line|#endif /* MD_PERSONALITY */
 macro_line|#endif /* defined(MAJOR_NR) || defined(IDE_DRIVER) */
 macro_line|#endif /* _BLK_H */
 eof

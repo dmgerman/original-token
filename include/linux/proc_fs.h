@@ -352,6 +352,9 @@ comma
 DECL|enumerator|PROC_SCSI_PPA
 id|PROC_SCSI_PPA
 comma
+DECL|enumerator|PROC_SCSI_ESP
+id|PROC_SCSI_ESP
+comma
 DECL|enumerator|PROC_SCSI_SCSI_DEBUG
 id|PROC_SCSI_SCSI_DEBUG
 comma

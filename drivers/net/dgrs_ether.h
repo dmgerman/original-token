@@ -381,7 +381,7 @@ r_extern
 r_int
 id|FirstChan
 suffix:semicolon
-multiline_comment|/* 0 or 1, depedning on whether host is used */
+multiline_comment|/* 0 or 1, depending on whether host is used */
 r_extern
 r_int
 id|NumChan

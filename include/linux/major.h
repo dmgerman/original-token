@@ -95,6 +95,8 @@ DECL|macro|STL_SIOMEMMAJOR
 mdefine_line|#define STL_SIOMEMMAJOR 28
 DECL|macro|AZTECH_CDROM_MAJOR
 mdefine_line|#define AZTECH_CDROM_MAJOR 29
+DECL|macro|GRAPHDEV_MAJOR
+mdefine_line|#define GRAPHDEV_MAJOR 29&t;/* SparcLinux /dev/fb */
 DECL|macro|CM206_CDROM_MAJOR
 mdefine_line|#define CM206_CDROM_MAJOR 32
 DECL|macro|IDE2_MAJOR
@@ -105,6 +107,10 @@ DECL|macro|NETLINK_MAJOR
 mdefine_line|#define NETLINK_MAJOR&t;36
 DECL|macro|IDETAPE_MAJOR
 mdefine_line|#define IDETAPE_MAJOR&t;37
+DECL|macro|APBLOCK_MAJOR
+mdefine_line|#define APBLOCK_MAJOR   60   /* AP1000 Block device */
+DECL|macro|DDV_MAJOR
+mdefine_line|#define DDV_MAJOR       61   /* AP1000 DDV block device */
 multiline_comment|/*&n; * Tests for SCSI devices.&n; */
 DECL|macro|SCSI_MAJOR
 mdefine_line|#define SCSI_MAJOR(M) &bslash;&n;  ((M) == SCSI_DISK_MAJOR&t;&bslash;&n;   || (M) == SCSI_TAPE_MAJOR&t;&bslash;&n;   || (M) == SCSI_CDROM_MAJOR&t;&bslash;&n;   || (M) == SCSI_GENERIC_MAJOR)

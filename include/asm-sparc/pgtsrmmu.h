@@ -1,7 +1,8 @@
-multiline_comment|/* $Id: pgtsrmmu.h,v 1.13 1996/03/01 07:20:54 davem Exp $&n; * pgtsrmmu.h:  SRMMU page table defines and code.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: pgtsrmmu.h,v 1.16 1996/04/04 16:31:32 tridge Exp $&n; * pgtsrmmu.h:  SRMMU page table defines and code.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _SPARC_PGTSRMMU_H
 DECL|macro|_SPARC_PGTSRMMU_H
 mdefine_line|#define _SPARC_PGTSRMMU_H
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
 multiline_comment|/* PMD_SHIFT determines the size of the area a second-level page table can map */
 DECL|macro|SRMMU_PMD_SHIFT
@@ -34,7 +35,7 @@ mdefine_line|#define SRMMU_PMD_TABLE_SIZE    0x100 /* 64 entries, 4 bytes a piec
 DECL|macro|SRMMU_PGD_TABLE_SIZE
 mdefine_line|#define SRMMU_PGD_TABLE_SIZE    0x400 /* 256 entries, 4 bytes a piece */
 DECL|macro|SRMMU_VMALLOC_START
-mdefine_line|#define SRMMU_VMALLOC_START   (0xfe100000)
+mdefine_line|#define SRMMU_VMALLOC_START   (0xfe200000)
 multiline_comment|/* Definition of the values in the ET field of PTD&squot;s and PTE&squot;s */
 DECL|macro|SRMMU_ET_MASK
 mdefine_line|#define SRMMU_ET_MASK         0x3
@@ -188,6 +189,17 @@ op_amp
 id|SRMMU_CTX_PMASK
 )paren
 suffix:semicolon
+macro_line|#if CONFIG_AP1000
+multiline_comment|/* weird memory system on the AP1000 */
+id|paddr
+op_or_assign
+(paren
+l_int|0x8
+op_lshift
+l_int|28
+)paren
+suffix:semicolon
+macro_line|#endif
 id|__asm__
 id|__volatile__
 c_func
@@ -420,7 +432,7 @@ r_return
 id|retval
 suffix:semicolon
 )brace
-multiline_comment|/* This is guaranteed on all SRMMU&squot;s. */
+multiline_comment|/* This is guarenteed on all SRMMU&squot;s. */
 DECL|function|srmmu_flush_whole_tlb
 r_extern
 r_inline
@@ -620,6 +632,10 @@ id|vaddr
 r_int
 r_int
 id|retval
+suffix:semicolon
+id|vaddr
+op_and_assign
+id|PAGE_MASK
 suffix:semicolon
 id|__asm__
 id|__volatile__

@@ -1,10 +1,10 @@
-multiline_comment|/* $Id: init_me.c,v 1.2 1995/11/25 00:57:44 davem Exp $&n; * init_me.c:  Initialize empirical constants and gather some info from&n; *             the boot prom.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: init_me.c,v 1.3 1996/04/21 10:30:09 davem Exp $&n; * init_me.c:  Initialize empirical constants and gather some info from&n; *             the boot prom.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#include &lt;asm/openprom.h&gt;  /* For property declarations and the prom structs */
 macro_line|#include &lt;asm/oplib.h&gt;
 macro_line|#include &lt;asm/vac-ops.h&gt;
 macro_line|#include &quot;empirical.h&quot;   /* Don&squot;t ask... */
 DECL|macro|DEBUG_INIT_ME
-mdefine_line|#define DEBUG_INIT_ME    /* Tell me what&squot;s goin on */
+mdefine_line|#define DEBUG_INIT_ME    /* Tell me what&squot;s going on */
 DECL|variable|nwindows
 r_int
 r_int

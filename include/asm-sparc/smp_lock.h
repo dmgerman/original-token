@@ -2,48 +2,16 @@ multiline_comment|/* smp_lock.h: Locking and unlocking the kernel on the Sparc.&
 macro_line|#ifndef __SPARC_SMPLOCK_H
 DECL|macro|__SPARC_SMPLOCK_H
 mdefine_line|#define __SPARC_SMPLOCK_H
+macro_line|#include &lt;asm/smp.h&gt;
+macro_line|#include &lt;asm/bitops.h&gt;
+macro_line|#include &lt;asm/atops.h&gt;
+macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#ifdef __SMP__
-DECL|function|ldstub
-r_extern
-id|_inline_
-r_int
-r_char
-id|ldstub
-c_func
-(paren
-id|klock_t
-op_star
-id|lock
-)paren
-(brace
-id|klock_t
-id|retval
-suffix:semicolon
-id|__asm__
-id|__volatile__
-c_func
-(paren
-l_string|&quot;ldstub [%1], %0&bslash;n&bslash;t&quot;
-suffix:colon
-l_string|&quot;=r&quot;
-(paren
-id|retval
-)paren
-suffix:colon
-l_string|&quot;r&quot;
-(paren
-id|lock
-)paren
-)paren
-suffix:semicolon
-r_return
-id|retval
-suffix:semicolon
-)brace
+multiline_comment|/*&n; *&t;Locking the kernel &n; */
 multiline_comment|/* Knock knock... */
 DECL|function|lock_kernel
 r_extern
-id|_inline_
+id|__inline
 r_void
 id|lock_kernel
 c_func
@@ -82,7 +50,7 @@ id|ldstub
 c_func
 (paren
 op_amp
-id|kernel_lock
+id|kernel_flag
 )paren
 )paren
 (brace
@@ -97,47 +65,34 @@ id|active_kernel_processor
 r_break
 suffix:semicolon
 )brace
-r_if
-c_cond
-(paren
-id|test_bit
-c_func
-(paren
-id|proc
-comma
-(paren
-r_int
-r_int
-op_star
-)paren
-op_amp
-id|smp_invalidate_needed
-)paren
-)paren
-r_if
-c_cond
-(paren
-id|clear_bit
-c_func
-(paren
-id|proc
-comma
-(paren
-r_int
-r_int
-op_star
-)paren
-op_amp
-id|smp_invalidate_needed
-)paren
-)paren
+r_do
 (brace
-id|local_invalidate
+macro_line|#ifdef __SMP_PROF__&t;&t;
+id|smp_spins
+(braket
+id|smp_processor_id
+c_func
+(paren
+)paren
+)braket
+op_increment
+suffix:semicolon
+macro_line|#endif&t;&t;&t;
+id|barrier
 c_func
 (paren
 )paren
 suffix:semicolon
 )brace
+r_while
+c_loop
+(paren
+id|kernel_flag
+)paren
+(brace
+suffix:semicolon
+)brace
+multiline_comment|/* Don&squot;t lock the bus more than we have to. */
 )brace
 id|active_kernel_processor
 op_assign
@@ -156,7 +111,7 @@ suffix:semicolon
 multiline_comment|/* I want out... */
 DECL|function|unlock_kernel
 r_extern
-id|_inline_
+id|__inline
 r_void
 id|unlock_kernel
 c_func
@@ -207,12 +162,12 @@ id|active_kernel_processor
 op_assign
 id|NO_PROC_ID
 suffix:semicolon
-id|kernel_lock
+id|kernel_flag
 op_assign
 id|KLOCK_CLEAR
 suffix:semicolon
 )brace
-id|restore_flag
+id|restore_flags
 c_func
 (paren
 id|flags

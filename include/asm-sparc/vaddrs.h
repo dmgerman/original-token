@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: vaddrs.h,v 1.17 1996/01/10 21:00:16 davem Exp $ */
+multiline_comment|/* $Id: vaddrs.h,v 1.19 1996/03/26 06:51:58 miguel Exp $ */
 macro_line|#ifndef _SPARC_VADDRS_H
 DECL|macro|_SPARC_VADDRS_H
 mdefine_line|#define _SPARC_VADDRS_H
@@ -8,16 +8,16 @@ multiline_comment|/* I can see only one reason why we should have statically def
 DECL|macro|IOBASE_VADDR
 mdefine_line|#define  IOBASE_VADDR   0xfe000000  /* Base for mapping pages */
 DECL|macro|IOBASE_LEN
-mdefine_line|#define  IOBASE_LEN     0x00100000  /* Length of the IO area */
+mdefine_line|#define  IOBASE_LEN     0x00200000  /* Length of the IO area */
 DECL|macro|IOBASE_END
-mdefine_line|#define  IOBASE_END     0xfe100000
+mdefine_line|#define  IOBASE_END     0xfe200000
 DECL|macro|DVMA_VADDR
 mdefine_line|#define  DVMA_VADDR     0xfff00000  /* Base area of the DVMA on suns */
 DECL|macro|DVMA_LEN
 mdefine_line|#define  DVMA_LEN       0x00040000  /* Size of the DVMA address space */
 DECL|macro|DVMA_END
 mdefine_line|#define  DVMA_END       0xfff40000
-multiline_comment|/* IOMMU Mapping area, must be on a 16MB boundary!  Note this&n; * doesn&squot;t count the DVMA areas, the prom lives between the&n; * iommu mapping area (for scsi transfer buffers) and the&n; * dvma upper range (for lance packet ring buffers).&n; */
+multiline_comment|/* IOMMU Mapping area, must be on a 16MB boundry!  Note this&n; * doesn&squot;t count the DVMA areas, the prom lives between the&n; * iommu mapping area (for scsi transfer buffers) and the&n; * dvma upper range (for lance packet ring buffers).&n; */
 DECL|macro|IOMMU_VADDR
 mdefine_line|#define  IOMMU_VADDR    0xff000000
 DECL|macro|IOMMU_LEN
@@ -33,7 +33,7 @@ DECL|macro|SUN4C_LOCK_END
 mdefine_line|#define  SUN4C_LOCK_END    0xffc00000
 multiline_comment|/* On sun4m machines we need per-cpu virtual areas */
 DECL|macro|PERCPU_VADDR
-mdefine_line|#define  PERCPU_VADDR   0xff000000  /* Base for per-cpu virtual mappings */
+mdefine_line|#define  PERCPU_VADDR   0xffc00000  /* Base for per-cpu virtual mappings */
 DECL|macro|PERCPU_ENTSIZE
 mdefine_line|#define  PERCPU_ENTSIZE 0x00100000
 DECL|macro|PERCPU_LEN
@@ -44,12 +44,12 @@ mdefine_line|#define  PERCPU_TBR_OFFSET      0x00000      /* %tbr, mainly used f
 DECL|macro|PERCPU_KSTACK_OFFSET
 mdefine_line|#define  PERCPU_KSTACK_OFFSET   0x01000      /* Beginning of kernel stack for this cpu */
 DECL|macro|PERCPU_MBOX_OFFSET
-mdefine_line|#define  PERCPU_MBOX_OFFSET     0x02000      /* Prom SMP Mailbox */
+mdefine_line|#define  PERCPU_MBOX_OFFSET     0x03000      /* Prom SMP Mailbox */
 DECL|macro|PERCPU_CPUID_OFFSET
-mdefine_line|#define  PERCPU_CPUID_OFFSET    0x03000      /* Per-cpu ID number. */
+mdefine_line|#define  PERCPU_CPUID_OFFSET    0x04000      /* Per-cpu ID number. */
 DECL|macro|PERCPU_ISALIVE_OFFSET
-mdefine_line|#define  PERCPU_ISALIVE_OFFSET  0x03004      /* Has CPU been initted yet? */
+mdefine_line|#define  PERCPU_ISALIVE_OFFSET  0x04004      /* Has CPU been initted yet? */
 DECL|macro|PERCPU_ISIDLING_OFFSET
-mdefine_line|#define  PERCPU_ISIDLING_OFFSET 0x03008      /* Is CPU in idle loop spinning? */
+mdefine_line|#define  PERCPU_ISIDLING_OFFSET 0x04008      /* Is CPU in idle loop spinning? */
 macro_line|#endif /* !(_SPARC_VADDRS_H) */
 eof

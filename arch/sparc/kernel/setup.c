@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: setup.c,v 1.54 1996/02/25 06:49:18 davem Exp $&n; *  linux/arch/sparc/kernel/setup.c&n; *&n; *  Copyright (C) 1995  David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/*  $Id: setup.c,v 1.60 1996/04/04 16:30:28 tridge Exp $&n; *  linux/arch/sparc/kernel/setup.c&n; *&n; *  Copyright (C) 1995  David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -8,6 +8,7 @@ macro_line|#include &lt;linux/unistd.h&gt;
 macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/ldt.h&gt;
+macro_line|#include &lt;linux/smp.h&gt;
 macro_line|#include &lt;linux/user.h&gt;
 macro_line|#include &lt;linux/a.out.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
@@ -73,12 +74,6 @@ l_int|16
 multiline_comment|/* orig-video-points */
 )brace
 suffix:semicolon
-DECL|variable|wp_works_ok
-r_char
-id|wp_works_ok
-op_assign
-l_int|0
-suffix:semicolon
 DECL|variable|phys_bytes_of_ram
 DECL|variable|end_of_phys_memory
 r_int
@@ -106,7 +101,7 @@ r_return
 id|memory_start
 suffix:semicolon
 )brace
-multiline_comment|/* Typing sync at the prom prompt calls the function pointed to by&n; * romvec-&gt;pv_synchook which I set to the following function.&n; * This should sync all filesystems and return, for now it just&n; * prints out pretty messages and returns.&n; */
+multiline_comment|/* Typing sync at the prom promptcalls the function pointed to by&n; * romvec-&gt;pv_synchook which I set to the following function.&n; * This should sync all filesystems and return, for now it just&n; * prints out pretty messages and returns.&n; */
 r_extern
 r_int
 r_int
@@ -120,6 +115,7 @@ c_func
 r_void
 )paren
 suffix:semicolon
+macro_line|#if CONFIG_SUN_CONSOLE
 r_extern
 r_void
 id|console_restore_palette
@@ -128,6 +124,7 @@ c_func
 r_void
 )paren
 suffix:semicolon
+macro_line|#endif
 id|asmlinkage
 r_void
 id|sys_sync
@@ -192,10 +189,12 @@ id|trapbase
 )paren
 )paren
 suffix:semicolon
+macro_line|#if CONFIG_SUN_CONSOLE
 id|console_restore_palette
 (paren
 )paren
 suffix:semicolon
+macro_line|#endif
 id|prom_printf
 c_func
 (paren
@@ -210,12 +209,9 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|current
+id|current-&gt;pid
 op_ne
-id|task
-(braket
 l_int|0
-)braket
 )paren
 (brace
 id|sti
@@ -286,6 +282,93 @@ DECL|macro|BOOTME_SINGLE
 mdefine_line|#define BOOTME_SINGLE 0x2
 DECL|macro|BOOTME_KGDB
 mdefine_line|#define BOOTME_KGDB   0x4
+DECL|function|kernel_enter_debugger
+r_void
+id|kernel_enter_debugger
+c_func
+(paren
+r_void
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|boot_flags
+op_amp
+id|BOOTME_KGDB
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;KGDB: Entered&bslash;n&quot;
+)paren
+suffix:semicolon
+id|breakpoint
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+)brace
+DECL|function|obp_system_intr
+r_int
+id|obp_system_intr
+c_func
+(paren
+r_void
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|boot_flags
+op_amp
+id|BOOTME_KGDB
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;KGDB: system interrupted&bslash;n&quot;
+)paren
+suffix:semicolon
+id|breakpoint
+c_func
+(paren
+)paren
+suffix:semicolon
+r_return
+l_int|1
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|boot_flags
+op_amp
+id|BOOTME_DEBUG
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;OBP: system interrupted&bslash;n&quot;
+)paren
+suffix:semicolon
+id|prom_halt
+c_func
+(paren
+)paren
+suffix:semicolon
+r_return
+l_int|1
+suffix:semicolon
+)brace
+r_return
+l_int|0
+suffix:semicolon
+)brace
 multiline_comment|/* This routine does no error checking, make sure your string is sane&n; * before calling this!&n; * XXX This is cheese, make generic and better.&n; */
 r_void
 DECL|function|boot_flags_init
@@ -489,6 +572,7 @@ id|boot_flags
 op_or_assign
 id|BOOTME_KGDB
 suffix:semicolon
+macro_line|#if CONFIG_SUN_SERIAL
 r_if
 c_cond
 (paren
@@ -531,6 +615,30 @@ l_int|1
 suffix:semicolon
 )brace
 r_else
+macro_line|#endif
+macro_line|#if CONFIG_AP1000
+r_if
+c_cond
+(paren
+id|commands
+(braket
+id|i
+op_plus
+l_int|8
+)braket
+op_eq
+l_char|&squot;c&squot;
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;KGDB: ap1000+ debugging&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
+r_else
+macro_line|#endif
 (brace
 id|printk
 c_func
@@ -678,7 +786,35 @@ id|panic_stuff
 (braket
 l_int|2
 )braket
+comma
+id|packed
 suffix:semicolon
+macro_line|#if CONFIG_AP1000
+id|register_console
+c_func
+(paren
+id|prom_printf
+)paren
+suffix:semicolon
+(paren
+(paren
+r_char
+op_star
+)paren
+(paren
+op_amp
+id|cputypval
+)paren
+)paren
+(braket
+l_int|4
+)braket
+op_assign
+l_char|&squot;m&squot;
+suffix:semicolon
+multiline_comment|/* ugly :-( */
+macro_line|#endif
+macro_line|#if 0
 multiline_comment|/* Always reboot on panic, but give 5 seconds to hit L1-A&n;&t; * and look at debugging info if desired.&n;&t; */
 id|panic_stuff
 (braket
@@ -702,6 +838,7 @@ comma
 id|panic_stuff
 )paren
 suffix:semicolon
+macro_line|#endif
 id|sparc_ttable
 op_assign
 (paren
@@ -836,6 +973,10 @@ c_func
 l_string|&quot;ARCH: &quot;
 )paren
 suffix:semicolon
+id|packed
+op_assign
+l_int|0
+suffix:semicolon
 r_switch
 c_cond
 (paren
@@ -856,6 +997,10 @@ c_func
 (paren
 )paren
 suffix:semicolon
+id|packed
+op_assign
+l_int|0
+suffix:semicolon
 r_break
 suffix:semicolon
 r_case
@@ -866,6 +1011,10 @@ c_func
 (paren
 l_string|&quot;SUN4M&bslash;n&quot;
 )paren
+suffix:semicolon
+id|packed
+op_assign
+l_int|1
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -878,6 +1027,10 @@ c_func
 l_string|&quot;SUN4D&bslash;n&quot;
 )paren
 suffix:semicolon
+id|packed
+op_assign
+l_int|1
+suffix:semicolon
 r_break
 suffix:semicolon
 r_case
@@ -888,6 +1041,10 @@ c_func
 (paren
 l_string|&quot;SUN4E&bslash;n&quot;
 )paren
+suffix:semicolon
+id|packed
+op_assign
+l_int|0
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -1019,25 +1176,13 @@ id|end
 )paren
 )paren
 suffix:semicolon
-macro_line|#if 0
-id|prom_printf
-c_func
+r_if
+c_cond
 (paren
-l_string|&quot;Physical Memory: %d bytes (in hex %08lx)&bslash;n&quot;
-comma
-(paren
-r_int
+op_logical_neg
+id|packed
 )paren
-id|total
-comma
-(paren
-r_int
-r_int
-)paren
-id|total
-)paren
-suffix:semicolon
-macro_line|#endif
+(brace
 r_for
 c_loop
 (paren
@@ -1058,37 +1203,6 @@ id|i
 op_increment
 )paren
 (brace
-macro_line|#if 0
-id|printk
-c_func
-(paren
-l_string|&quot;Bank %d:  base 0x%x  bytes %d&bslash;n&quot;
-comma
-id|i
-comma
-(paren
-r_int
-r_int
-)paren
-id|sp_banks
-(braket
-id|i
-)braket
-dot
-id|base_addr
-comma
-(paren
-r_int
-)paren
-id|sp_banks
-(braket
-id|i
-)braket
-dot
-id|num_bytes
-)paren
-suffix:semicolon
-macro_line|#endif
 id|end_of_phys_memory
 op_assign
 id|sp_banks
@@ -1104,6 +1218,50 @@ id|i
 )braket
 dot
 id|num_bytes
+suffix:semicolon
+)brace
+)brace
+r_else
+(brace
+r_int
+r_int
+id|sum
+op_assign
+l_int|0
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|sp_banks
+(braket
+id|i
+)braket
+dot
+id|num_bytes
+op_ne
+l_int|0
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
+id|sum
+op_add_assign
+id|sp_banks
+(braket
+id|i
+)braket
+dot
+id|num_bytes
+suffix:semicolon
+)brace
+id|end_of_phys_memory
+op_assign
+id|sum
 suffix:semicolon
 )brace
 id|prom_setsync
@@ -1161,6 +1319,12 @@ r_int
 id|serial_console
 suffix:semicolon
 multiline_comment|/* in console.c, of course */
+macro_line|#if !CONFIG_SUN_SERIAL
+id|serial_console
+op_assign
+l_int|0
+suffix:semicolon
+macro_line|#else
 r_int
 id|idev
 op_assign
@@ -1251,6 +1415,7 @@ c_func
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
 )brace
 macro_line|#if 1
 multiline_comment|/* XXX ROOT_DEV hack for kgdb - davem XXX */
@@ -1313,6 +1478,15 @@ id|sparc_fpu_type
 (braket
 )braket
 suffix:semicolon
+r_extern
+r_char
+op_star
+id|smp_info
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
 DECL|function|get_cpuinfo
 r_int
 id|get_cpuinfo
@@ -1340,12 +1514,21 @@ comma
 l_string|&quot;cpu&bslash;t&bslash;t: %s&bslash;n&quot;
 l_string|&quot;fpu&bslash;t&bslash;t: %s&bslash;n&quot;
 l_string|&quot;promlib&bslash;t&bslash;t: Version %d Revision %d&bslash;n&quot;
-l_string|&quot;wp&bslash;t&bslash;t: %s&bslash;n&quot;
 l_string|&quot;type&bslash;t&bslash;t: %s&bslash;n&quot;
 l_string|&quot;Elf Support&bslash;t: %s&bslash;n&quot;
 multiline_comment|/* I can&squot;t remember when I do --ralp */
+macro_line|#ifndef __SMP__
 l_string|&quot;BogoMips&bslash;t: %lu.%02lu&bslash;n&quot;
+macro_line|#else
+l_string|&quot;Cpu0Bogo&bslash;t: %lu.%02lu&bslash;n&quot;
+l_string|&quot;Cpu1Bogo&bslash;t: %lu.%02lu&bslash;n&quot;
+l_string|&quot;Cpu2Bogo&bslash;t: %lu.%02lu&bslash;n&quot;
+l_string|&quot;Cpu3Bogo&bslash;t: %lu.%02lu&bslash;n&quot;
+macro_line|#endif
 l_string|&quot;%s&quot;
+macro_line|#ifdef __SMP__
+l_string|&quot;%s&quot;
+macro_line|#endif
 comma
 id|sparc_cpu_type
 (braket
@@ -1357,17 +1540,17 @@ id|sparc_fpu_type
 id|cpuid
 )braket
 comma
+macro_line|#if CONFIG_AP1000
+l_int|0
+comma
+l_int|0
+comma
+macro_line|#else
 id|romvec-&gt;pv_romvers
 comma
 id|prom_rev
 comma
-id|wp_works_ok
-ques
-c_cond
-l_string|&quot;yes&quot;
-suffix:colon
-l_string|&quot;no&quot;
-comma
+macro_line|#endif
 op_amp
 id|cputypval
 comma
@@ -1378,6 +1561,7 @@ macro_line|#else
 l_string|&quot;no&quot;
 comma
 macro_line|#endif
+macro_line|#ifndef __SMP__
 id|loops_per_sec
 op_div
 l_int|500000
@@ -1390,10 +1574,107 @@ l_int|5000
 op_mod
 l_int|100
 comma
+macro_line|#else
+id|cpu_data
+(braket
+l_int|0
+)braket
+dot
+id|udelay_val
+op_div
+l_int|500000
+comma
+(paren
+id|cpu_data
+(braket
+l_int|0
+)braket
+dot
+id|udelay_val
+op_div
+l_int|5000
+)paren
+op_mod
+l_int|100
+comma
+id|cpu_data
+(braket
+l_int|1
+)braket
+dot
+id|udelay_val
+op_div
+l_int|500000
+comma
+(paren
+id|cpu_data
+(braket
+l_int|1
+)braket
+dot
+id|udelay_val
+op_div
+l_int|5000
+)paren
+op_mod
+l_int|100
+comma
+id|cpu_data
+(braket
+l_int|2
+)braket
+dot
+id|udelay_val
+op_div
+l_int|500000
+comma
+(paren
+id|cpu_data
+(braket
+l_int|2
+)braket
+dot
+id|udelay_val
+op_div
+l_int|5000
+)paren
+op_mod
+l_int|100
+comma
+id|cpu_data
+(braket
+l_int|3
+)braket
+dot
+id|udelay_val
+op_div
+l_int|500000
+comma
+(paren
+id|cpu_data
+(braket
+l_int|3
+)braket
+dot
+id|udelay_val
+op_div
+l_int|5000
+)paren
+op_mod
+l_int|100
+comma
+macro_line|#endif
 id|mmu_info
 c_func
 (paren
 )paren
+macro_line|#ifdef __SMP__
+comma
+id|smp_info
+c_func
+(paren
+)paren
+macro_line|#endif
 )paren
 suffix:semicolon
 )brace

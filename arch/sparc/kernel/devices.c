@@ -1,5 +1,6 @@
 multiline_comment|/* devices.c: Initial scan of the prom device tree for important&n; *            Sparc device nodes which we need to find.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;asm/oplib.h&gt;
 macro_line|#include &lt;asm/mp.h&gt;
@@ -26,12 +27,13 @@ r_void
 suffix:semicolon
 r_extern
 r_void
-id|auxio_probe
+id|clock_stop_probe
 c_func
 (paren
 r_void
 )paren
 suffix:semicolon
+multiline_comment|/* tadpole.c */
 r_int
 r_int
 DECL|function|device_scan
@@ -68,6 +70,20 @@ id|cpu_ctr
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#if CONFIG_AP1000
+id|printk
+c_func
+(paren
+l_string|&quot;Not scanning device list for CPUs&bslash;n&quot;
+)paren
+suffix:semicolon
+id|linux_num_cpus
+op_assign
+l_int|1
+suffix:semicolon
+r_return
+suffix:semicolon
+macro_line|#endif
 id|prom_getstring
 c_func
 (paren
@@ -119,6 +135,18 @@ id|prom_getchild
 c_func
 (paren
 id|prom_root_node
+)paren
+suffix:semicolon
+id|prom_printf
+c_func
+(paren
+l_string|&quot;root child is %08lx&bslash;n&quot;
+comma
+(paren
+r_int
+r_int
+)paren
+id|scan
 )paren
 suffix:semicolon
 id|nd
@@ -215,6 +243,22 @@ id|mid
 op_assign
 id|thismid
 suffix:semicolon
+id|prom_printf
+c_func
+(paren
+l_string|&quot;Found CPU %d &lt;node=%08lx,mid=%d&gt;&bslash;n&quot;
+comma
+id|cpu_ctr
+comma
+(paren
+r_int
+r_int
+)paren
+id|scan
+comma
+id|thismid
+)paren
+suffix:semicolon
 id|cpu_ctr
 op_increment
 suffix:semicolon
@@ -268,7 +312,24 @@ c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#if CONFIG_SUN_AUXIO
+(brace
+r_extern
+r_void
 id|auxio_probe
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+id|auxio_probe
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
+id|clock_stop_probe
 c_func
 (paren
 )paren

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: signal.h,v 1.17 1996/03/01 07:21:02 davem Exp $ */
+multiline_comment|/* $Id: signal.h,v 1.20 1996/03/24 20:21:27 davem Exp $ */
 macro_line|#ifndef _ASMSPARC_SIGNAL_H
 DECL|macro|_ASMSPARC_SIGNAL_H
 mdefine_line|#define _ASMSPARC_SIGNAL_H
@@ -174,13 +174,16 @@ mdefine_line|#define SIG_UNBLOCK        0x02&t;/* for unblocking signals */
 DECL|macro|SIG_SETMASK
 mdefine_line|#define SIG_SETMASK        0x04&t;/* for setting the signal mask */
 macro_line|#ifdef __KERNEL__
-multiline_comment|/*&n; * These values of sa_flags are used only by the kernel as part of the&n; * irq handling routines.&n; *&n; * SA_INTERRUPT is also used by the irq handling routines.&n; */
+multiline_comment|/*&n; * These values of sa_flags are used only by the kernel as part of the&n; * irq handling routines.&n; *&n; * SA_INTERRUPT is also used by the irq handling routines.&n; *&n; * DJHR&n; * SA_STATIC_ALLOC is used for the SPARC system to indicate that this&n; * interupt handler&squot;s irq structure should be statically allocated&n; * by the request_irq routine.&n; * The alternative is that arch/sparc/kernel/irq.c has carnal knowledge&n; * of interrupt usage and that sucks. Also without a flag like this&n; * it may be possible for the free_irq routine to attempt to free&n; * statically allocated data.. which is NOT GOOD.&n; *&n; */
 DECL|macro|SA_PROBE
 mdefine_line|#define SA_PROBE SA_ONESHOT
 DECL|macro|SA_SAMPLE_RANDOM
 mdefine_line|#define SA_SAMPLE_RANDOM SA_RESTART
+DECL|macro|SA_STATIC_ALLOC
+mdefine_line|#define SA_STATIC_ALLOC&t;&t;0x80
 macro_line|#endif
 multiline_comment|/* Type of a signal handler.  */
+macro_line|#ifdef __KERNEL__
 DECL|typedef|__sighandler_t
 r_typedef
 r_void
@@ -201,6 +204,19 @@ r_char
 op_star
 )paren
 suffix:semicolon
+macro_line|#else
+DECL|typedef|__sighandler_t
+r_typedef
+r_void
+(paren
+op_star
+id|__sighandler_t
+)paren
+(paren
+r_int
+)paren
+suffix:semicolon
+macro_line|#endif
 DECL|macro|SIG_DFL
 mdefine_line|#define SIG_DFL&t;((__sighandler_t)0)&t;/* default signal handling */
 DECL|macro|SIG_IGN

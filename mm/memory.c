@@ -2529,7 +2529,7 @@ id|current-&gt;mm
 comma
 id|beg
 comma
-id|from
+id|end
 )paren
 suffix:semicolon
 r_while
@@ -2613,7 +2613,7 @@ id|current-&gt;mm
 comma
 id|beg
 comma
-id|from
+id|end
 )paren
 suffix:semicolon
 r_return
@@ -2673,7 +2673,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/* no need for invalidate */
+multiline_comment|/* no need for flush_tlb */
 id|set_pte
 c_func
 (paren
@@ -2863,6 +2863,12 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+id|flush_page_to_ram
+c_func
+(paren
+id|page
+)paren
+suffix:semicolon
 id|set_pte
 c_func
 (paren
@@ -2885,7 +2891,7 @@ id|PAGE_COPY
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/* no need for flush_tlb */
+multiline_comment|/* no need for invalidate */
 r_return
 id|page
 suffix:semicolon
@@ -3829,6 +3835,12 @@ op_assign
 id|BAD_PAGE
 suffix:semicolon
 )brace
+id|flush_page_to_ram
+c_func
+(paren
+id|page
+)paren
+suffix:semicolon
 )brace
 id|put_page
 c_func
@@ -4011,6 +4023,14 @@ id|pte
 )paren
 r_return
 suffix:semicolon
+id|flush_cache_page
+c_func
+(paren
+id|vma
+comma
+id|address
+)paren
+suffix:semicolon
 id|address
 op_and_assign
 op_complement
@@ -4051,6 +4071,16 @@ id|address
 op_amp
 op_complement
 id|PAGE_MASK
+)paren
+)paren
+suffix:semicolon
+id|flush_page_to_ram
+c_func
+(paren
+id|pte_page
+c_func
+(paren
+id|pte
 )paren
 )paren
 suffix:semicolon
@@ -4384,6 +4414,17 @@ comma
 id|write_access
 )paren
 suffix:semicolon
+id|flush_page_to_ram
+c_func
+(paren
+id|pte_page
+c_func
+(paren
+op_star
+id|page_table
+)paren
+)paren
+suffix:semicolon
 r_return
 suffix:semicolon
 )brace
@@ -4479,6 +4520,16 @@ id|vma-&gt;vm_mm-&gt;rss
 suffix:semicolon
 op_increment
 id|tsk-&gt;maj_flt
+suffix:semicolon
+id|flush_page_to_ram
+c_func
+(paren
+id|pte_page
+c_func
+(paren
+id|page
+)paren
+)paren
 suffix:semicolon
 id|set_pte
 c_func
@@ -4700,6 +4751,12 @@ r_return
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; * This silly early PAGE_DIRTY setting removes a race&n;&t; * due to the bad i386 page protection. But it&squot;s valid&n;&t; * for other architectures too.&n;&t; *&n;&t; * Note that if write_access is true, we either now have&n;&t; * a exclusive copy of the page, or this is a shared mapping,&n;&t; * so we can make it writable and dirty to avoid having to&n;&t; * handle that later.&n;&t; */
+id|flush_page_to_ram
+c_func
+(paren
+id|page
+)paren
+suffix:semicolon
 id|entry
 op_assign
 id|mk_pte
@@ -4851,6 +4908,14 @@ id|pte
 )paren
 )paren
 suffix:semicolon
+id|flush_tlb_page
+c_func
+(paren
+id|vma
+comma
+id|address
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -4881,6 +4946,14 @@ c_func
 op_star
 id|pte
 )paren
+)paren
+suffix:semicolon
+id|flush_tlb_page
+c_func
+(paren
+id|vma
+comma
+id|address
 )paren
 suffix:semicolon
 r_return

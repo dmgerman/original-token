@@ -125,6 +125,8 @@ DECL|macro|VIDEO_TYPE_VGAC
 mdefine_line|#define VIDEO_TYPE_VGAC&t;&t;0x22&t;/* VGA+ in Color Mode&t;&t;*/
 DECL|macro|VIDEO_TYPE_TGAC
 mdefine_line|#define VIDEO_TYPE_TGAC&t;&t;0x40&t;/* DEC TGA */
+DECL|macro|VIDEO_TYPE_SUN
+mdefine_line|#define VIDEO_TYPE_SUN          0x50    /* Sun frame buffer. */
 multiline_comment|/*&n; * This character is the same as _POSIX_VDISABLE: it cannot be used as&n; * a c_cc[] character, but indicates that a particular special character&n; * isn&squot;t in use (eg VINTR has no character etc)&n; */
 DECL|macro|__DISABLED_CHAR
 mdefine_line|#define __DISABLED_CHAR &squot;&bslash;0&squot;

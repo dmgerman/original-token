@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: processor.h,v 1.40 1996/02/03 10:06:01 davem Exp $&n; * include/asm-sparc/processor.h&n; *&n; * Copyright (C) 1994 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: processor.h,v 1.43 1996/03/23 02:40:05 davem Exp $&n; * include/asm-sparc/processor.h&n; *&n; * Copyright (C) 1994 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef __ASM_SPARC_PROCESSOR_H
 DECL|macro|__ASM_SPARC_PROCESSOR_H
 mdefine_line|#define __ASM_SPARC_PROCESSOR_H
@@ -17,11 +17,11 @@ DECL|macro|MCA_bus
 mdefine_line|#define MCA_bus 0
 DECL|macro|MCA_bus__is_a_macro
 mdefine_line|#define MCA_bus__is_a_macro /* for versions in ksyms.c */
-multiline_comment|/*&n; * Write Protection works right in supervisor mode on the Sparc...&n; * And then there came the Swift module, which isn&squot;t so swift...&n; */
-r_extern
-r_char
-id|wp_works_ok
-suffix:semicolon
+multiline_comment|/*&n; * The sparc has no problems with write protection&n; */
+DECL|macro|wp_works_ok
+mdefine_line|#define wp_works_ok 1
+DECL|macro|wp_works_ok__is_a_macro
+mdefine_line|#define wp_works_ok__is_a_macro /* for versions in ksyms.c */
 multiline_comment|/* Whee, this is STACK_TOP and the lowest kernel address too... */
 DECL|macro|TASK_SIZE
 mdefine_line|#define TASK_SIZE&t;(KERNBASE)
@@ -352,26 +352,6 @@ id|saved_psr
 suffix:semicolon
 id|regs-&gt;u_regs
 (braket
-id|UREG_G1
-)braket
-op_assign
-id|sp
-suffix:semicolon
-multiline_comment|/* Base of arg/env stack area */
-id|regs-&gt;u_regs
-(braket
-id|UREG_G2
-)braket
-op_assign
-id|regs-&gt;u_regs
-(braket
-id|UREG_G7
-)braket
-op_assign
-id|regs-&gt;npc
-suffix:semicolon
-id|regs-&gt;u_regs
-(braket
 id|UREG_FP
 )braket
 op_assign
@@ -382,6 +362,7 @@ id|REGWIN_SZ
 )paren
 suffix:semicolon
 )brace
+macro_line|#ifdef __KERNEL__
 r_extern
 r_int
 r_int
@@ -433,5 +414,6 @@ op_star
 id|tsk
 )paren
 suffix:semicolon
+macro_line|#endif
 macro_line|#endif /* __ASM_SPARC_PROCESSOR_H */
 eof

@@ -4487,6 +4487,26 @@ id|i_busy
 op_assign
 l_int|1
 suffix:semicolon
+id|MSDOS_I
+c_func
+(paren
+id|old_inode
+)paren
+op_member_access_from_pointer
+id|i_linked
+op_assign
+id|free_inode
+suffix:semicolon
+id|MSDOS_I
+c_func
+(paren
+id|free_inode
+)paren
+op_member_access_from_pointer
+id|i_oldlink
+op_assign
+id|old_inode
+suffix:semicolon
 id|fat_cache_inval_inode
 c_func
 (paren
@@ -4523,16 +4543,8 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
 id|exists
 )paren
-id|iput
-c_func
-(paren
-id|free_inode
-)paren
-suffix:semicolon
-r_else
 (brace
 id|MSDOS_I
 c_func
@@ -4554,7 +4566,11 @@ id|i_old
 op_assign
 id|new_inode
 suffix:semicolon
-multiline_comment|/* free_inode is put when putting new_inode */
+multiline_comment|/* Two references now exist to free_inode so increase count */
+id|free_inode-&gt;i_count
+op_increment
+suffix:semicolon
+multiline_comment|/* free_inode is put after putting new_inode and old_inode */
 id|iput
 c_func
 (paren

@@ -1,8 +1,11 @@
-multiline_comment|/* $Id: fault.c,v 1.53 1996/03/01 07:16:17 davem Exp $&n; * fault.c:  Page fault handlers for the Sparc.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: fault.c,v 1.61 1996/04/12 06:52:35 davem Exp $&n; * fault.c:  Page fault handlers for the Sparc.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+macro_line|#include &lt;asm/head.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/mman.h&gt;
+macro_line|#include &lt;linux/tasks.h&gt;
+macro_line|#include &lt;linux/smp.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -14,6 +17,7 @@ macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/memreg.h&gt;
 macro_line|#include &lt;asm/openprom.h&gt;
 macro_line|#include &lt;asm/oplib.h&gt;
+macro_line|#include &lt;asm/smp.h&gt;
 macro_line|#include &lt;asm/traps.h&gt;
 macro_line|#include &lt;asm/kdebug.h&gt;
 DECL|macro|ELEMENTS
@@ -254,6 +258,37 @@ id|num_bytes
 op_assign
 l_int|0
 suffix:semicolon
+multiline_comment|/* Now mask all bank sizes on a page boundry, it is all we can&n;&t; * use anyways.&n;&t; */
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|sp_banks
+(braket
+id|i
+)braket
+dot
+id|num_bytes
+op_ne
+l_int|0
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
+id|sp_banks
+(braket
+id|i
+)braket
+dot
+id|num_bytes
+op_and_assign
+id|PAGE_MASK
+suffix:semicolon
+)brace
 r_return
 id|tally
 suffix:semicolon
@@ -418,6 +453,35 @@ op_amp
 id|PSR_PS
 )paren
 suffix:semicolon
+macro_line|#if 0
+id|printk
+c_func
+(paren
+l_string|&quot;CPU[%d]: f&lt;pid=%d,tf=%d,wr=%d,addr=%08lx&quot;
+comma
+id|smp_processor_id
+c_func
+(paren
+)paren
+comma
+id|current-&gt;pid
+comma
+id|text_fault
+comma
+id|write
+comma
+id|address
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;,pc=%08lx&gt; &quot;
+comma
+id|regs-&gt;pc
+)paren
+suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -441,6 +505,29 @@ op_ge
 id|KERNBASE
 )paren
 (brace
+macro_line|#ifdef __SMP__
+id|printk
+c_func
+(paren
+l_string|&quot;CPU[%d]: Kernel faults at addr=%08lx&bslash;n&quot;
+comma
+id|smp_processor_id
+c_func
+(paren
+)paren
+comma
+id|address
+)paren
+suffix:semicolon
+r_while
+c_loop
+(paren
+l_int|1
+)paren
+(brace
+suffix:semicolon
+)brace
+macro_line|#else
 id|quick_kernel_fault
 c_func
 (paren
@@ -449,6 +536,7 @@ id|address
 suffix:semicolon
 r_return
 suffix:semicolon
+macro_line|#endif
 )brace
 id|vma
 op_assign
@@ -583,6 +671,22 @@ c_cond
 id|from_user
 )paren
 (brace
+macro_line|#if 0
+id|printk
+c_func
+(paren
+l_string|&quot;%s [%d]: segfaults at %08lx pc=%08lx&bslash;n&quot;
+comma
+id|current-&gt;comm
+comma
+id|current-&gt;pid
+comma
+id|address
+comma
+id|regs-&gt;pc
+)paren
+suffix:semicolon
+macro_line|#endif
 id|current-&gt;tss.sig_address
 op_assign
 id|address
@@ -600,42 +704,6 @@ id|current
 comma
 l_int|1
 )paren
-suffix:semicolon
-r_return
-suffix:semicolon
-)brace
-multiline_comment|/* Uh oh, a kernel fault.  Check for bootup wp_test... */
-r_if
-c_cond
-(paren
-id|wp_works_ok
-OL
-l_int|0
-op_logical_and
-id|address
-op_eq
-l_int|0x0
-)paren
-(brace
-id|wp_works_ok
-op_assign
-l_int|1
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;This Sparc honours the WP bit even when in supervisor mode. &quot;
-l_string|&quot;Good.&bslash;n&quot;
-)paren
-suffix:semicolon
-multiline_comment|/* Advance program counter over the store. */
-id|regs-&gt;pc
-op_assign
-id|regs-&gt;npc
-suffix:semicolon
-id|regs-&gt;npc
-op_add_assign
-l_int|4
 suffix:semicolon
 r_return
 suffix:semicolon

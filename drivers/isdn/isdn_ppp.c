@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: isdn_ppp.c,v 1.4 1996/02/19 15:25:50 fritz Exp fritz $&n; *&n; * Linux ISDN subsystem, functions for synchronous PPP (linklevel).&n; *&n; * Copyright 1995,96 by Michael Hipp (Michael.Hipp@student.uni-tuebingen.de)&n; * &n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA. &n; *&n; * $Log: isdn_ppp.c,v $&n; * Revision 1.4  1996/02/19 15:25:50  fritz&n; * Bugfix: Sync-PPP packets got compressed twice, when resent due to&n; * send-queue-full reject.&n; *&n; * Revision 1.3  1996/02/11 02:27:12  fritz&n; * Lot of Bugfixes my Michael.&n; * Moved calls to skb_push() into isdn_net_header()&n; * Fixed a possible race-condition in isdn_ppp_timer_timeout().&n; *&n; * Revision 1.2  1996/01/22 05:08:06  fritz&n; * Merged in Michael&squot;s patches for MP.&n; * Minor changes in isdn_ppp_xmit.&n; *&n; * Revision 1.1  1996/01/09 04:11:29  fritz&n; * Initial revision&n; *&n; */
+multiline_comment|/* $Id: isdn_ppp.c,v 1.5 1996/04/20 16:32:32 fritz Exp $&n; *&n; * Linux ISDN subsystem, functions for synchronous PPP (linklevel).&n; *&n; * Copyright 1995,96 by Michael Hipp (Michael.Hipp@student.uni-tuebingen.de)&n; * &n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA. &n; *&n; * $Log: isdn_ppp.c,v $&n; * Revision 1.5  1996/04/20 16:32:32  fritz&n; * Changed ippp_table to an array of pointers, allocating each part&n; * separately.&n; *&n; * Revision 1.4  1996/02/19 15:25:50  fritz&n; * Bugfix: Sync-PPP packets got compressed twice, when resent due to&n; * send-queue-full reject.&n; *&n; * Revision 1.3  1996/02/11 02:27:12  fritz&n; * Lot of Bugfixes my Michael.&n; * Moved calls to skb_push() into isdn_net_header()&n; * Fixed a possible race-condition in isdn_ppp_timer_timeout().&n; *&n; * Revision 1.2  1996/01/22 05:08:06  fritz&n; * Merged in Michael&squot;s patches for MP.&n; * Minor changes in isdn_ppp_xmit.&n; *&n; * Revision 1.1  1996/01/09 04:11:29  fritz&n; * Initial revision&n; *&n; */
 multiline_comment|/* TODO: right tbusy handling when using MP */
 macro_line|#ifndef STANDALONE
 macro_line|#include &lt;linux/config.h&gt;
@@ -140,20 +140,16 @@ r_char
 op_star
 id|isdn_ppp_revision
 op_assign
-l_string|&quot;$Revision: 1.4 $&quot;
+l_string|&quot;$Revision: 1.5 $&quot;
 suffix:semicolon
 DECL|variable|ippp_table
 r_struct
 id|ippp_struct
 op_star
 id|ippp_table
-op_assign
-(paren
-r_struct
-id|ippp_struct
-op_star
-)paren
-l_int|0
+(braket
+id|ISDN_MAX_CHANNELS
+)braket
 suffix:semicolon
 r_extern
 r_int
@@ -288,7 +284,7 @@ id|ippp_table
 (braket
 id|lp-&gt;ppp_minor
 )braket
-dot
+op_member_access_from_pointer
 id|lp
 )paren
 suffix:semicolon
@@ -297,7 +293,7 @@ id|ippp_table
 (braket
 id|lp-&gt;ppp_minor
 )braket
-dot
+op_member_access_from_pointer
 id|lp
 op_assign
 l_int|NULL
@@ -375,7 +371,7 @@ id|ippp_table
 (braket
 id|i
 )braket
-dot
+op_member_access_from_pointer
 id|state
 op_eq
 id|IPPP_OPEN
@@ -436,7 +432,7 @@ id|ippp_table
 (braket
 id|lp-&gt;ppp_minor
 )braket
-dot
+op_member_access_from_pointer
 id|lp
 op_assign
 id|lp
@@ -459,7 +455,7 @@ id|ippp_table
 (braket
 id|lp-&gt;ppp_minor
 )braket
-dot
+op_member_access_from_pointer
 id|unit
 op_assign
 id|unit
@@ -468,7 +464,7 @@ id|ippp_table
 (braket
 id|lp-&gt;ppp_minor
 )braket
-dot
+op_member_access_from_pointer
 id|state
 op_assign
 id|IPPP_OPEN
@@ -491,7 +487,7 @@ id|ippp_table
 (braket
 id|lp-&gt;ppp_minor
 )braket
-dot
+op_member_access_from_pointer
 id|wq
 )paren
 id|wake_up_interruptible
@@ -502,7 +498,7 @@ id|ippp_table
 (braket
 id|lp-&gt;ppp_minor
 )braket
-dot
+op_member_access_from_pointer
 id|wq
 )paren
 suffix:semicolon
@@ -541,14 +537,14 @@ id|ippp_table
 (braket
 id|minor
 )braket
-dot
+op_member_access_from_pointer
 id|state
 op_logical_and
 id|ippp_table
 (braket
 id|minor
 )braket
-dot
+op_member_access_from_pointer
 id|wq
 )paren
 id|wake_up_interruptible
@@ -559,7 +555,7 @@ id|ippp_table
 (braket
 id|minor
 )braket
-dot
+op_member_access_from_pointer
 id|wq
 )paren
 suffix:semicolon
@@ -567,7 +563,7 @@ id|ippp_table
 (braket
 id|minor
 )braket
-dot
+op_member_access_from_pointer
 id|state
 op_assign
 id|IPPP_CLOSEWAIT
@@ -604,7 +600,7 @@ id|ippp_table
 (braket
 id|minor
 )braket
-dot
+op_member_access_from_pointer
 id|state
 )paren
 suffix:semicolon
@@ -616,7 +612,7 @@ id|ippp_table
 (braket
 id|minor
 )braket
-dot
+op_member_access_from_pointer
 id|state
 )paren
 r_return
@@ -627,7 +623,7 @@ id|ippp_table
 (braket
 id|minor
 )braket
-dot
+op_member_access_from_pointer
 id|lp
 op_assign
 l_int|0
@@ -636,7 +632,7 @@ id|ippp_table
 (braket
 id|minor
 )braket
-dot
+op_member_access_from_pointer
 id|mp_seqno
 op_assign
 l_int|0
@@ -646,7 +642,7 @@ id|ippp_table
 (braket
 id|minor
 )braket
-dot
+op_member_access_from_pointer
 id|pppcfg
 op_assign
 l_int|0
@@ -656,7 +652,7 @@ id|ippp_table
 (braket
 id|minor
 )braket
-dot
+op_member_access_from_pointer
 id|mpppcfg
 op_assign
 l_int|0
@@ -666,7 +662,7 @@ id|ippp_table
 (braket
 id|minor
 )braket
-dot
+op_member_access_from_pointer
 id|range
 op_assign
 l_int|0x1000000
@@ -676,7 +672,7 @@ id|ippp_table
 (braket
 id|minor
 )braket
-dot
+op_member_access_from_pointer
 id|last_link_seqno
 op_assign
 op_minus
@@ -687,7 +683,7 @@ id|ippp_table
 (braket
 id|minor
 )braket
-dot
+op_member_access_from_pointer
 id|unit
 op_assign
 op_minus
@@ -698,7 +694,7 @@ id|ippp_table
 (braket
 id|minor
 )braket
-dot
+op_member_access_from_pointer
 id|mru
 op_assign
 l_int|1524
@@ -708,7 +704,7 @@ id|ippp_table
 (braket
 id|minor
 )braket
-dot
+op_member_access_from_pointer
 id|maxcid
 op_assign
 l_int|16
@@ -718,7 +714,7 @@ id|ippp_table
 (braket
 id|minor
 )braket
-dot
+op_member_access_from_pointer
 id|tk
 op_assign
 id|current
@@ -727,7 +723,7 @@ id|ippp_table
 (braket
 id|minor
 )braket
-dot
+op_member_access_from_pointer
 id|wq
 op_assign
 l_int|NULL
@@ -737,7 +733,7 @@ id|ippp_table
 (braket
 id|minor
 )braket
-dot
+op_member_access_from_pointer
 id|wq1
 op_assign
 l_int|NULL
@@ -747,14 +743,14 @@ id|ippp_table
 (braket
 id|minor
 )braket
-dot
+op_member_access_from_pointer
 id|first
 op_assign
 id|ippp_table
 (braket
 id|minor
 )braket
-dot
+op_member_access_from_pointer
 id|rq
 op_plus
 id|NUM_RCV_BUFFS
@@ -766,14 +762,14 @@ id|ippp_table
 (braket
 id|minor
 )braket
-dot
+op_member_access_from_pointer
 id|last
 op_assign
 id|ippp_table
 (braket
 id|minor
 )braket
-dot
+op_member_access_from_pointer
 id|rq
 suffix:semicolon
 macro_line|#ifdef CONFIG_ISDN_PPP_VJ
@@ -782,7 +778,7 @@ id|ippp_table
 (braket
 id|minor
 )braket
-dot
+op_member_access_from_pointer
 id|cbuf
 op_assign
 id|kmalloc
@@ -792,7 +788,7 @@ id|ippp_table
 (braket
 id|minor
 )braket
-dot
+op_member_access_from_pointer
 id|mru
 op_plus
 id|PPP_HARD_HDR_LEN
@@ -809,7 +805,7 @@ id|ippp_table
 (braket
 id|minor
 )braket
-dot
+op_member_access_from_pointer
 id|cbuf
 op_eq
 l_int|NULL
@@ -831,7 +827,7 @@ id|ippp_table
 (braket
 id|minor
 )braket
-dot
+op_member_access_from_pointer
 id|slcomp
 op_assign
 id|slhc_init
@@ -848,7 +844,7 @@ id|ippp_table
 (braket
 id|minor
 )braket
-dot
+op_member_access_from_pointer
 id|state
 op_assign
 id|IPPP_OPEN
@@ -903,7 +899,7 @@ id|ippp_table
 (braket
 id|minor
 )braket
-dot
+op_member_access_from_pointer
 id|lp
 )paren
 suffix:semicolon
@@ -915,7 +911,7 @@ id|ippp_table
 (braket
 id|minor
 )braket
-dot
+op_member_access_from_pointer
 id|lp
 )paren
 (brace
@@ -943,7 +939,7 @@ id|ippp_table
 (braket
 id|minor
 )braket
-dot
+op_member_access_from_pointer
 id|lp
 )paren
 (brace
@@ -975,7 +971,7 @@ id|ippp_table
 (braket
 id|minor
 )braket
-dot
+op_member_access_from_pointer
 id|lp-&gt;netdev
 suffix:semicolon
 )brace
@@ -983,7 +979,7 @@ id|ippp_table
 (braket
 id|minor
 )braket
-dot
+op_member_access_from_pointer
 id|lp-&gt;ppp_minor
 op_assign
 op_minus
@@ -1001,7 +997,7 @@ id|ippp_table
 (braket
 id|minor
 )braket
-dot
+op_member_access_from_pointer
 id|lp
 op_assign
 l_int|NULL
@@ -1029,7 +1025,7 @@ id|ippp_table
 (braket
 id|minor
 )braket
-dot
+op_member_access_from_pointer
 id|rq
 (braket
 id|i
@@ -1044,7 +1040,7 @@ id|ippp_table
 (braket
 id|minor
 )braket
-dot
+op_member_access_from_pointer
 id|rq
 (braket
 id|i
@@ -1062,7 +1058,7 @@ id|ippp_table
 (braket
 id|minor
 )braket
-dot
+op_member_access_from_pointer
 id|slcomp
 )paren
 suffix:semicolon
@@ -1073,7 +1069,7 @@ id|ippp_table
 (braket
 id|minor
 )braket
-dot
+op_member_access_from_pointer
 id|cbuf
 )paren
 suffix:semicolon
@@ -1082,7 +1078,7 @@ id|ippp_table
 (braket
 id|minor
 )braket
-dot
+op_member_access_from_pointer
 id|state
 op_assign
 l_int|0
@@ -1273,7 +1269,7 @@ id|ippp_table
 (braket
 id|minor
 )braket
-dot
+op_member_access_from_pointer
 id|state
 )paren
 suffix:semicolon
@@ -1287,7 +1283,7 @@ id|ippp_table
 (braket
 id|minor
 )braket
-dot
+op_member_access_from_pointer
 id|state
 op_amp
 id|IPPP_OPEN
@@ -1358,7 +1354,7 @@ id|ippp_table
 (braket
 id|minor
 )braket
-dot
+op_member_access_from_pointer
 id|unit
 comma
 (paren
@@ -1407,7 +1403,7 @@ id|ippp_table
 (braket
 id|minor
 )braket
-dot
+op_member_access_from_pointer
 id|unit
 )paren
 )paren
@@ -1440,7 +1436,7 @@ id|ippp_table
 (braket
 id|minor
 )braket
-dot
+op_member_access_from_pointer
 id|mpppcfg
 )paren
 )paren
@@ -1481,7 +1477,7 @@ id|ippp_table
 (braket
 id|minor
 )braket
-dot
+op_member_access_from_pointer
 id|mpppcfg
 op_assign
 id|val
@@ -1511,7 +1507,7 @@ id|ippp_table
 (braket
 id|minor
 )braket
-dot
+op_member_access_from_pointer
 id|pppcfg
 )paren
 )paren
@@ -1563,7 +1559,7 @@ id|ippp_table
 (braket
 id|minor
 )braket
-dot
+op_member_access_from_pointer
 id|pppcfg
 op_amp
 id|SC_ENABLE_IP
@@ -1574,7 +1570,7 @@ id|ippp_table
 (braket
 id|minor
 )braket
-dot
+op_member_access_from_pointer
 id|lp-&gt;netdev-&gt;dev.tbusy
 op_assign
 l_int|0
@@ -1591,7 +1587,7 @@ id|ippp_table
 (braket
 id|minor
 )braket
-dot
+op_member_access_from_pointer
 id|pppcfg
 op_assign
 id|val
@@ -1643,7 +1639,7 @@ id|ippp_table
 (braket
 id|minor
 )braket
-dot
+op_member_access_from_pointer
 id|mru
 op_assign
 id|val
@@ -1691,7 +1687,7 @@ id|ippp_table
 (braket
 id|minor
 )braket
-dot
+op_member_access_from_pointer
 id|maxcid
 op_assign
 id|val
@@ -1772,7 +1768,7 @@ id|ippp_table
 (braket
 id|minor
 )braket
-dot
+op_member_access_from_pointer
 id|state
 op_amp
 id|IPPP_OPEN
@@ -1808,7 +1804,7 @@ id|ippp_table
 (braket
 id|minor
 )braket
-dot
+op_member_access_from_pointer
 id|last
 suffix:semicolon
 id|bf
@@ -1817,7 +1813,7 @@ id|ippp_table
 (braket
 id|minor
 )braket
-dot
+op_member_access_from_pointer
 id|first
 suffix:semicolon
 r_if
@@ -1833,7 +1829,7 @@ id|ippp_table
 (braket
 id|minor
 )braket
-dot
+op_member_access_from_pointer
 id|state
 op_amp
 id|IPPP_NOBLOCK
@@ -1848,7 +1844,7 @@ id|ippp_table
 (braket
 id|minor
 )braket
-dot
+op_member_access_from_pointer
 id|wq
 comma
 id|st
@@ -1868,7 +1864,7 @@ id|ippp_table
 (braket
 id|minor
 )braket
-dot
+op_member_access_from_pointer
 id|state
 op_and_assign
 op_complement
@@ -1901,7 +1897,7 @@ id|ippp_table
 (braket
 id|minor
 )braket
-dot
+op_member_access_from_pointer
 id|wq1
 comma
 id|st
@@ -1977,7 +1973,7 @@ id|ippp_table
 (braket
 id|minor
 )braket
-dot
+op_member_access_from_pointer
 id|state
 op_amp
 id|IPPP_CONNECT
@@ -2012,7 +2008,7 @@ id|ippp_table
 (braket
 id|minor
 )braket
-dot
+op_member_access_from_pointer
 id|first
 suffix:semicolon
 id|bl
@@ -2021,7 +2017,7 @@ id|ippp_table
 (braket
 id|minor
 )braket
-dot
+op_member_access_from_pointer
 id|last
 suffix:semicolon
 r_if
@@ -2053,7 +2049,7 @@ id|ippp_table
 (braket
 id|minor
 )braket
-dot
+op_member_access_from_pointer
 id|first
 op_assign
 id|bf
@@ -2115,7 +2111,7 @@ id|ippp_table
 (braket
 id|minor
 )braket
-dot
+op_member_access_from_pointer
 id|last
 op_assign
 id|bl-&gt;next
@@ -2133,7 +2129,7 @@ id|ippp_table
 (braket
 id|minor
 )braket
-dot
+op_member_access_from_pointer
 id|wq
 )paren
 id|wake_up_interruptible
@@ -2144,7 +2140,7 @@ id|ippp_table
 (braket
 id|minor
 )braket
-dot
+op_member_access_from_pointer
 id|wq
 )paren
 suffix:semicolon
@@ -2179,7 +2175,6 @@ id|ippp_struct
 op_star
 id|c
 op_assign
-op_amp
 id|ippp_table
 (braket
 id|minor
@@ -2206,7 +2201,7 @@ id|ippp_table
 (braket
 id|minor
 )braket
-dot
+op_member_access_from_pointer
 id|state
 op_amp
 id|IPPP_OPEN
@@ -2353,7 +2348,7 @@ id|ippp_table
 (braket
 id|minor
 )braket
-dot
+op_member_access_from_pointer
 id|state
 op_amp
 id|IPPP_CONNECT
@@ -2368,7 +2363,7 @@ id|ippp_table
 (braket
 id|minor
 )braket
-dot
+op_member_access_from_pointer
 id|lp
 suffix:semicolon
 multiline_comment|/* -&gt; push it directly to the lowlevel interface */
@@ -2421,14 +2416,7 @@ op_amp
 id|ISDN_NET_CONNECTED
 )paren
 )paren
-id|dev-&gt;drv
-(braket
-id|lp-&gt;isdn_device
-)braket
-op_member_access_from_pointer
-id|interface
-op_member_access_from_pointer
-id|writebuf
+id|isdn_writebuf_stub
 c_func
 (paren
 id|lp-&gt;isdn_device
@@ -2461,12 +2449,30 @@ id|i
 comma
 id|j
 suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|ISDN_MAX_CHANNELS
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
 r_if
 c_cond
 (paren
 op_logical_neg
 (paren
 id|ippp_table
+(braket
+id|i
+)braket
 op_assign
 (paren
 r_struct
@@ -2481,8 +2487,6 @@ r_sizeof
 r_struct
 id|ippp_struct
 )paren
-op_star
-id|ISDN_MAX_CHANNELS
 comma
 id|GFP_KERNEL
 )paren
@@ -2494,6 +2498,29 @@ c_func
 (paren
 id|KERN_WARNING
 l_string|&quot;isdn_ppp_init: Could not alloc ippp_table&bslash;n&quot;
+)paren
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|j
+op_assign
+l_int|0
+suffix:semicolon
+id|j
+OL
+id|i
+suffix:semicolon
+id|j
+op_increment
+)paren
+id|kfree
+c_func
+(paren
+id|ippp_table
+(braket
+id|i
+)braket
 )paren
 suffix:semicolon
 r_return
@@ -2509,6 +2536,9 @@ r_char
 op_star
 )paren
 id|ippp_table
+(braket
+id|i
+)braket
 comma
 l_int|0
 comma
@@ -2517,30 +2547,13 @@ r_sizeof
 r_struct
 id|ippp_struct
 )paren
-op_star
-id|ISDN_MAX_CHANNELS
 )paren
 suffix:semicolon
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-id|ISDN_MAX_CHANNELS
-suffix:semicolon
-id|i
-op_increment
-)paren
-(brace
 id|ippp_table
 (braket
 id|i
 )braket
-dot
+op_member_access_from_pointer
 id|state
 op_assign
 l_int|0
@@ -2549,14 +2562,14 @@ id|ippp_table
 (braket
 id|i
 )braket
-dot
+op_member_access_from_pointer
 id|first
 op_assign
 id|ippp_table
 (braket
 id|i
 )braket
-dot
+op_member_access_from_pointer
 id|rq
 op_plus
 id|NUM_RCV_BUFFS
@@ -2567,14 +2580,14 @@ id|ippp_table
 (braket
 id|i
 )braket
-dot
+op_member_access_from_pointer
 id|last
 op_assign
 id|ippp_table
 (braket
 id|i
 )braket
-dot
+op_member_access_from_pointer
 id|rq
 suffix:semicolon
 r_for
@@ -2596,7 +2609,7 @@ id|ippp_table
 (braket
 id|i
 )braket
-dot
+op_member_access_from_pointer
 id|rq
 (braket
 id|j
@@ -2610,7 +2623,7 @@ id|ippp_table
 (braket
 id|i
 )braket
-dot
+op_member_access_from_pointer
 id|rq
 (braket
 id|j
@@ -2622,7 +2635,7 @@ id|ippp_table
 (braket
 id|i
 )braket
-dot
+op_member_access_from_pointer
 id|rq
 op_plus
 (paren
@@ -2639,7 +2652,7 @@ id|ippp_table
 (braket
 id|i
 )braket
-dot
+op_member_access_from_pointer
 id|rq
 (braket
 id|j
@@ -2651,7 +2664,7 @@ id|ippp_table
 (braket
 id|i
 )braket
-dot
+op_member_access_from_pointer
 id|rq
 op_plus
 (paren
@@ -2676,10 +2689,30 @@ c_func
 r_void
 )paren
 (brace
+r_int
+id|i
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|ISDN_MAX_CHANNELS
+suffix:semicolon
+id|i
+op_increment
+)paren
 id|kfree
 c_func
 (paren
 id|ippp_table
+(braket
+id|i
+)braket
 )paren
 suffix:semicolon
 )brace
@@ -2749,7 +2782,7 @@ id|ippp_table
 (braket
 id|lp-&gt;ppp_minor
 )braket
-dot
+op_member_access_from_pointer
 id|pppcfg
 op_amp
 id|SC_REJ_COMP_AC
@@ -2767,7 +2800,7 @@ id|ippp_table
 (braket
 id|lp-&gt;ppp_minor
 )braket
-dot
+op_member_access_from_pointer
 id|mpppcfg
 op_amp
 id|SC_REJ_MP_PROT
@@ -2940,7 +2973,7 @@ id|ippp_table
 (braket
 id|lp-&gt;ppp_minor
 )braket
-dot
+op_member_access_from_pointer
 id|mpppcfg
 op_amp
 id|SC_IN_SHORT_SEQ
@@ -3037,7 +3070,7 @@ id|ippp_table
 (braket
 id|lp-&gt;ppp_minor
 )braket
-dot
+op_member_access_from_pointer
 id|last_link_seqno
 )paren
 op_ge
@@ -3051,7 +3084,7 @@ id|ippp_table
 (braket
 id|lp-&gt;ppp_minor
 )braket
-dot
+op_member_access_from_pointer
 id|range
 suffix:semicolon
 r_if
@@ -3087,7 +3120,7 @@ id|ippp_table
 (braket
 id|lp-&gt;ppp_minor
 )braket
-dot
+op_member_access_from_pointer
 id|last_link_seqno
 op_assign
 id|sqno
@@ -3099,7 +3132,7 @@ id|ippp_table
 (braket
 id|lp-&gt;ppp_minor
 )braket
-dot
+op_member_access_from_pointer
 id|last_link_seqno
 op_assign
 id|sqno
@@ -3125,7 +3158,7 @@ id|ippp_table
 (braket
 id|lpq-&gt;ppp_minor
 )braket
-dot
+op_member_access_from_pointer
 id|last_link_seqno
 OG
 id|min_sqno
@@ -3136,7 +3169,7 @@ id|ippp_table
 (braket
 id|lpq-&gt;ppp_minor
 )braket
-dot
+op_member_access_from_pointer
 id|last_link_seqno
 suffix:semicolon
 id|lpq
@@ -3162,7 +3195,7 @@ id|ippp_table
 (braket
 id|lpq-&gt;ppp_minor
 )braket
-dot
+op_member_access_from_pointer
 id|range
 )paren
 (brace
@@ -3174,7 +3207,7 @@ id|ippp_table
 (braket
 id|lpq-&gt;ppp_minor
 )braket
-dot
+op_member_access_from_pointer
 id|range
 op_minus
 l_int|1
@@ -3242,7 +3275,7 @@ id|ippp_table
 (braket
 id|lpq-&gt;ppp_minor
 )braket
-dot
+op_member_access_from_pointer
 id|last_link_seqno
 op_and_assign
 id|mask
@@ -3757,7 +3790,7 @@ id|ippp_table
 (braket
 id|net_dev-&gt;local.ppp_minor
 )braket
-dot
+op_member_access_from_pointer
 id|slcomp
 comma
 id|skb-&gt;data
@@ -3871,7 +3904,7 @@ id|ippp_table
 (braket
 id|net_dev-&gt;local.ppp_minor
 )braket
-dot
+op_member_access_from_pointer
 id|slcomp
 comma
 id|skb-&gt;data
@@ -4052,8 +4085,9 @@ op_star
 id|ipt
 op_assign
 id|ippp_table
-op_plus
+(braket
 id|lp-&gt;ppp_minor
+)braket
 suffix:semicolon
 r_struct
 id|ippp_struct
@@ -4061,8 +4095,9 @@ op_star
 id|ipts
 op_assign
 id|ippp_table
-op_plus
+(braket
 id|lp-&gt;netdev-&gt;local.ppp_minor
+)braket
 suffix:semicolon
 multiline_comment|/* If packet is to be resent, it has already been processed and&n;         * therefore it&squot;s first bytes are already initialized. In this case&n;         * send it immediately ...&n;         */
 r_if
@@ -4649,7 +4684,7 @@ id|ippp_table
 (braket
 id|minor
 )braket
-dot
+op_member_access_from_pointer
 id|lp
 suffix:semicolon
 id|lp
@@ -4688,14 +4723,14 @@ id|ippp_table
 (braket
 id|nlp-&gt;ppp_minor
 )braket
-dot
+op_member_access_from_pointer
 id|unit
 op_assign
 id|ippp_table
 (braket
 id|lp-&gt;ppp_minor
 )braket
-dot
+op_member_access_from_pointer
 id|unit
 suffix:semicolon
 multiline_comment|/* maybe also SC_CCP stuff */
@@ -4703,14 +4738,14 @@ id|ippp_table
 (braket
 id|nlp-&gt;ppp_minor
 )braket
-dot
+op_member_access_from_pointer
 id|pppcfg
 op_or_assign
 id|ippp_table
 (braket
 id|lp-&gt;ppp_minor
 )braket
-dot
+op_member_access_from_pointer
 id|pppcfg
 op_amp
 (paren
@@ -4725,14 +4760,14 @@ id|ippp_table
 (braket
 id|nlp-&gt;ppp_minor
 )braket
-dot
+op_member_access_from_pointer
 id|mpppcfg
 op_or_assign
 id|ippp_table
 (braket
 id|lp-&gt;ppp_minor
 )braket
-dot
+op_member_access_from_pointer
 id|mpppcfg
 op_amp
 (paren
@@ -4753,14 +4788,14 @@ id|ippp_table
 (braket
 id|nlp-&gt;ppp_minor
 )braket
-dot
+op_member_access_from_pointer
 id|mpppcfg
 op_ne
 id|ippp_table
 (braket
 id|lp-&gt;ppp_minor
 )braket
-dot
+op_member_access_from_pointer
 id|mpppcfg
 )paren
 (brace
@@ -4774,14 +4809,14 @@ id|ippp_table
 (braket
 id|nlp-&gt;ppp_minor
 )braket
-dot
+op_member_access_from_pointer
 id|mpppcfg
 comma
 id|ippp_table
 (braket
 id|lp-&gt;ppp_minor
 )braket
-dot
+op_member_access_from_pointer
 id|mpppcfg
 )paren
 suffix:semicolon

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: bsderrno.h,v 1.2 1995/11/25 02:31:17 davem Exp $&n; * bsderrno.h: Error numbers for NetBSD binary compatibility&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: bsderrno.h,v 1.2 1995/11/25 02:31:17 davem Exp $&n; * bsderrno.h: Error numbers for NetBSD binary compatability&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _SPARC_BSDERRNO_H
 DECL|macro|_SPARC_BSDERRNO_H
 mdefine_line|#define _SPARC_BSDERRNO_H

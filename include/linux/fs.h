@@ -237,6 +237,12 @@ id|kdev_t
 id|b_rdev
 suffix:semicolon
 multiline_comment|/* Real device */
+DECL|member|b_rsector
+r_int
+r_int
+id|b_rsector
+suffix:semicolon
+multiline_comment|/* Real buffer location on disk */
 DECL|member|b_next
 r_struct
 id|buffer_head

@@ -1,4 +1,5 @@
-multiline_comment|/* $Id: init.c,v 1.6 1995/11/25 01:00:01 davem Exp $&n; * init.c:  Initialize internal variables used by the PROM&n; *          library functions.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: init.c,v 1.7 1996/04/04 16:31:00 tridge Exp $&n; * init.c:  Initialize internal variables used by the PROM&n; *          library functions.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;asm/openprom.h&gt;
 macro_line|#include &lt;asm/oplib.h&gt;
@@ -65,6 +66,24 @@ id|romvec
 op_assign
 id|rp
 suffix:semicolon
+macro_line|#if CONFIG_AP1000
+id|prom_vers
+op_assign
+id|PROM_AP1000
+suffix:semicolon
+id|prom_meminit
+c_func
+(paren
+)paren
+suffix:semicolon
+id|prom_ranges_init
+c_func
+(paren
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+macro_line|#endif
 r_switch
 c_cond
 (paren

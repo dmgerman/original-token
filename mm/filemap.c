@@ -313,6 +313,7 @@ id|offset
 OL
 id|PAGE_SIZE
 )paren
+(brace
 id|memset
 c_func
 (paren
@@ -337,6 +338,17 @@ op_minus
 id|offset
 )paren
 suffix:semicolon
+id|flush_page_to_ram
+c_func
+(paren
+id|page_address
+c_func
+(paren
+id|page
+)paren
+)paren
+suffix:semicolon
+)brace
 )brace
 )brace
 DECL|function|shrink_mmap
@@ -1325,7 +1337,7 @@ suffix:semicolon
 )brace
 )brace
 macro_line|#endif  /* defined PROFILE_READAHEAD */
-multiline_comment|/*&n; * Read-ahead context:&n; * -------------------&n; * The read ahead context fields of the &quot;struct file&quot; are the following:&n; * - f_rapos : position of the first byte after the last page we tried to&n; *             read ahead.&n; * - f_ramax : current read-ahead maximum size.&n; * - f_ralen : length of the current IO read block we tried to read-ahead.&n; * - f_rawin : length of the current read-ahead window.&n; *             if last read-ahead was synchronous then&n; *                  f_rawin = f_ralen&n; *             otherwise (was asynchronous)&n; *                  f_rawin = previous value of f_ralen + f_ralen&n; *&n; * Read-ahead limits:&n; * ------------------&n; * MIN_READAHEAD   : minimum read-ahead size when read-ahead.&n; * MAX_READAHEAD   : maximum read-ahead size when read-ahead.&n; * MAX_READWINDOW  : maximum read window length.&n; *&n; * Synchronous read-ahead benefits:&n; * --------------------------------&n; * Using reasonnable IO xfer length from peripheral devices increase system &n; * performances.&n; * Reasonnable means, in this context, not too large but not too small.&n; * The actual maximum value is MAX_READAHEAD + PAGE_SIZE = 32k&n; *&n; * Asynchronous read-ahead benefits:&n; * ---------------------------------&n; * Overlapping next read request and user process execution increase system &n; * performance.&n; *&n; * Read-ahead risks:&n; * -----------------&n; * We have to guess which further data are needed by the user process.&n; * If these data are often not really needed, it&squot;s bad for system &n; * performances.&n; * However, we know that files are often accessed sequentially by &n; * application programs and it seems that it is possible to have some good &n; * strategy in that guessing.&n; * We only try to read-ahead files that seems to be read sequentially.&n; *&n; * Asynchronous read-ahead risks:&n; * ------------------------------&n; * In order to maximize overlapping, we must start some asynchronous read &n; * request from the device, as soon as possible.&n; * We must be very carefull about:&n; * - The number of effective pending IO read requests.&n; *   ONE seems to be the only reasonnable value.&n; * - The total memory pool usage for the file access stream.&n; *   We try to have a limit of MAX_READWINDOW = 48K.&n; */
+multiline_comment|/*&n; * Read-ahead context:&n; * -------------------&n; * The read ahead context fields of the &quot;struct file&quot; are the following:&n; * - f_rapos : position of the first byte after the last page we tried to&n; *             read ahead.&n; * - f_ramax : current read-ahead maximum size.&n; * - f_ralen : length of the current IO read block we tried to read-ahead.&n; * - f_rawin : length of the current read-ahead window.&n; *             if last read-ahead was synchronous then&n; *                  f_rawin = f_ralen&n; *             otherwise (was asynchronous)&n; *                  f_rawin = previous value of f_ralen + f_ralen&n; *&n; * Read-ahead limits:&n; * ------------------&n; * MIN_READAHEAD   : minimum read-ahead size when read-ahead.&n; * MAX_READAHEAD   : maximum read-ahead size when read-ahead.&n; * MAX_READWINDOW  : maximum read window length.&n; *&n; * Synchronous read-ahead benefits:&n; * --------------------------------&n; * Using reasonable IO xfer length from peripheral devices increase system &n; * performances.&n; * Reasonable means, in this context, not too large but not too small.&n; * The actual maximum value is MAX_READAHEAD + PAGE_SIZE = 32k&n; *&n; * Asynchronous read-ahead benefits:&n; * ---------------------------------&n; * Overlapping next read request and user process execution increase system &n; * performance.&n; *&n; * Read-ahead risks:&n; * -----------------&n; * We have to guess which further data are needed by the user process.&n; * If these data are often not really needed, it&squot;s bad for system &n; * performances.&n; * However, we know that files are often accessed sequentially by &n; * application programs and it seems that it is possible to have some good &n; * strategy in that guessing.&n; * We only try to read-ahead files that seems to be read sequentially.&n; *&n; * Asynchronous read-ahead risks:&n; * ------------------------------&n; * In order to maximize overlapping, we must start some asynchronous read &n; * request from the device, as soon as possible.&n; * We must be very careful about:&n; * - The number of effective pending IO read requests.&n; *   ONE seems to be the only reasonable value.&n; * - The total memory pool usage for the file access stream.&n; *   We try to have a limit of MAX_READWINDOW = 48K.&n; */
 DECL|macro|MAX_READWINDOW
 mdefine_line|#define MAX_READWINDOW (PAGE_SIZE*12)
 DECL|macro|MAX_READAHEAD
@@ -1395,7 +1407,7 @@ id|max_ahead
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/*&n; * If the current page is locked, try some synchronous read-ahead in order&n; * to avoid too small IO requests.&n; */
+multiline_comment|/*&n; * If the current page is locked, and if the current position is outside the&n; * previous read IO request, try some synchronous read-ahead in order&n; * to avoid too small IO requests.&n; */
 r_if
 c_cond
 (paren
@@ -1404,6 +1416,23 @@ c_func
 (paren
 id|page
 )paren
+)paren
+(brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|rapos
+op_logical_or
+id|ppos
+op_ge
+id|rapos
+op_logical_or
+id|ppos
+op_plus
+id|filp-&gt;f_ralen
+OL
+id|rapos
 )paren
 (brace
 id|rapos
@@ -1429,6 +1458,7 @@ id|filp-&gt;f_ralen
 op_assign
 id|PAGE_SIZE
 suffix:semicolon
+)brace
 )brace
 multiline_comment|/*&n; * The current page is not locked&n; * If the current position is inside the last read-ahead IO request,&n; * it is the moment to try asynchronous read-ahead.&n; * try_async = 2 means that we have to force unplug of the device in&n; * order to force read IO asynchronously.&n; */
 r_else
@@ -2486,6 +2516,7 @@ c_cond
 (paren
 id|new_page
 )paren
+(brace
 id|memcpy
 c_func
 (paren
@@ -2504,6 +2535,13 @@ comma
 id|PAGE_SIZE
 )paren
 suffix:semicolon
+id|flush_page_to_ram
+c_func
+(paren
+id|new_page
+)paren
+suffix:semicolon
+)brace
 id|free_page
 c_func
 (paren
@@ -2514,6 +2552,12 @@ r_return
 id|new_page
 suffix:semicolon
 )brace
+id|flush_page_to_ram
+c_func
+(paren
+id|page
+)paren
+suffix:semicolon
 r_return
 id|page
 suffix:semicolon
@@ -3084,6 +3128,16 @@ id|pte
 )paren
 r_return
 l_int|0
+suffix:semicolon
+id|flush_page_to_ram
+c_func
+(paren
+id|pte_page
+c_func
+(paren
+id|pte
+)paren
+)paren
 suffix:semicolon
 id|flush_cache_page
 c_func

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: mbus.h,v 1.5 1995/11/25 02:32:00 davem Exp $&n; * mbus.h:  Various defines for MBUS modules.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: mbus.h,v 1.6 1996/04/16 09:34:31 zaitcev Exp $&n; * mbus.h:  Various defines for MBUS modules.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _SPARC_MBUS_H
 DECL|macro|_SPARC_MBUS_H
 mdefine_line|#define _SPARC_MBUS_H
@@ -119,7 +119,7 @@ r_int
 r_int
 id|hwbug_bitmask
 suffix:semicolon
-multiline_comment|/* First the module type values. To find out which you have, just load&n; * the mmu control register from ASI_M_MMUREG alternate address space and&n; * shift the value right 28 bits.&n; */
+multiline_comment|/* First the module type values. To find out which you have, just load&n; * the mmu control register from ASI_M_MMUREG alternate adress space and&n; * shift the value right 28 bits.&n; */
 multiline_comment|/* IMPL field means the company which produced the chip. */
 DECL|macro|MBUS_VIKING
 mdefine_line|#define MBUS_VIKING        0x4   /* bleech, Texas Instruments Module */
@@ -156,7 +156,7 @@ mdefine_line|#define FMI_AURORA&t;&t;0x4   /* MB8690x, a Swift module... */
 multiline_comment|/* For multiprocessor support we need to be able to obtain the CPU id and&n; * the MBUS Module id.&n; */
 multiline_comment|/* The CPU ID is encoded in the trap base register, 20 bits to the left of&n; * bit zero, with 2 bits being significant.&n; */
 DECL|macro|TBR_ID_SHIFT
-mdefine_line|#define TBR_ID_SHIFT            0x20
+mdefine_line|#define TBR_ID_SHIFT            20
 DECL|function|get_cpuid
 r_extern
 r_inline

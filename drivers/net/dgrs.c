@@ -4281,7 +4281,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;Module/driver initialization points.  Two ways, depending on&n; *&t;whether we are a module or statically linked, ala Don Becker&squot;s&n; *&t;3c59x driver.&n; */
 macro_line|#ifdef MODULE
-multiline_comment|/*&n; *&t;Variables that can be overriden from command line&n; */
+multiline_comment|/*&n; *&t;Variables that can be overridden from command line&n; */
 DECL|variable|debug
 r_static
 r_int

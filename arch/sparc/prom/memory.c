@@ -1,7 +1,8 @@
-multiline_comment|/* $Id: memory.c,v 1.4 1995/11/25 01:00:02 davem Exp $&n; * memory.c: Prom routine for acquiring various bits of information&n; *           about RAM on the machine, both virtual and physical.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: memory.c,v 1.6 1996/04/08 09:02:27 davem Exp $&n; * memory.c: Prom routine for acquiring various bits of information&n; *           about RAM on the machine, both virtual and physical.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;asm/openprom.h&gt;
 macro_line|#include &lt;asm/oplib.h&gt;
-multiline_comment|/* This routine, for consistency, returns the ram parameters in the&n; * V0 prom memory descriptor format.  I choose this format because I&n; * think it was the easiest to work with.  I feel the religious&n; * arguments now... ;)  Also, I return the linked lists sorted to&n; * prevent paging_init() upset stomach as I have not yet written&n; * the pepto-bismol kernel module yet.&n; */
+multiline_comment|/* This routine, for consistancy, returns the ram parameters in the&n; * V0 prom memory descriptor format.  I choose this format becuase I&n; * think it was the easiest to work with.  I feel the religious&n; * arguments now... ;)  Also, I return the linked lists sorted to&n; * prevent paging_init() upset stomache as I have not yet written&n; * the pepto-bismal kernel module yet.&n; */
 DECL|variable|prom_reg_memlist
 r_struct
 id|linux_prom_registers
@@ -1030,6 +1031,121 @@ c_func
 (paren
 id|prom_phys_avail
 )paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|PROM_AP1000
+suffix:colon
+multiline_comment|/* really simple memory map */
+id|prom_phys_total
+(braket
+l_int|0
+)braket
+dot
+id|start_adr
+op_assign
+l_int|0x00000000
+suffix:semicolon
+id|prom_phys_total
+(braket
+l_int|0
+)braket
+dot
+id|num_bytes
+op_assign
+l_int|0x01000000
+suffix:semicolon
+multiline_comment|/* 16MB */
+id|prom_phys_total
+(braket
+l_int|0
+)braket
+dot
+id|theres_more
+op_assign
+l_int|0x0
+suffix:semicolon
+id|prom_prom_taken
+(braket
+l_int|0
+)braket
+dot
+id|start_adr
+op_assign
+l_int|0x00000000
+suffix:semicolon
+id|prom_prom_taken
+(braket
+l_int|0
+)braket
+dot
+id|num_bytes
+op_assign
+l_int|0x00000000
+suffix:semicolon
+id|prom_prom_taken
+(braket
+l_int|0
+)braket
+dot
+id|theres_more
+op_assign
+l_int|0x0
+suffix:semicolon
+id|prom_phys_avail
+(braket
+l_int|0
+)braket
+dot
+id|start_adr
+op_assign
+l_int|0x00000000
+suffix:semicolon
+id|prom_phys_avail
+(braket
+l_int|0
+)braket
+dot
+id|num_bytes
+op_assign
+l_int|0x01000000
+suffix:semicolon
+multiline_comment|/* 16MB */
+id|prom_phys_avail
+(braket
+l_int|0
+)braket
+dot
+id|theres_more
+op_assign
+l_int|0x0
+suffix:semicolon
+id|prom_sortmemlist
+c_func
+(paren
+id|prom_phys_total
+)paren
+suffix:semicolon
+id|prom_sortmemlist
+c_func
+(paren
+id|prom_prom_taken
+)paren
+suffix:semicolon
+id|prom_sortmemlist
+c_func
+(paren
+id|prom_phys_avail
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;Initialised AP1000 memory lists (forced 16MB)&bslash;n&quot;
+)paren
+suffix:semicolon
+r_break
 suffix:semicolon
 )brace
 suffix:semicolon

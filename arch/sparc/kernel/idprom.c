@@ -17,7 +17,7 @@ r_struct
 id|idp_struct
 id|idprom_buff
 suffix:semicolon
-multiline_comment|/* Here is the master table of Sun machines which use some implementation&n; * of the Sparc CPU and have a meaningful IDPROM machtype value that we&n; * know about.  See asm-sparc/machines.h for empirical constants.&n; */
+multiline_comment|/* Here is the master table of Sun machines which use some implementation&n; * of the Sparc CPU and have a meaningful IDPROM machtype value that we&n; * know about.  See asm-sparc/machines.h for imperical constants.&n; */
 DECL|variable|Sun_Machines
 r_struct
 id|Sun_Machine_Models

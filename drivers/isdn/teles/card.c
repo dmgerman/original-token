@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * card.c     low level stuff for the Teles S0 isdn card&n; * &n; * Author     Jan den Ouden&n; * &n; * &n; * &n; * Changelog:&n; * &n; * Beat Doebeli         log all D channel traffic&n; * &n; */
+multiline_comment|/* $Id: card.c,v 1.1 1996/04/13 10:22:42 fritz Exp $&n; *&n; * card.c     low level stuff for the Teles S0 isdn card&n; * &n; * Author     Jan den Ouden&n; * &n; * Beat Doebeli         log all D channel traffic&n; * &n; * $Log: card.c,v $&n; * Revision 1.1  1996/04/13 10:22:42  fritz&n; * Initial revision&n; *&n; *&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &quot;teles.h&quot;

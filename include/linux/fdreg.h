@@ -131,10 +131,21 @@ DECL|macro|FD_RSEEK_OUT
 mdefine_line|#define FD_RSEEK_OUT&t;&t;0x8f&t;/* seek out (i.e. to lower tracks) */
 DECL|macro|FD_RSEEK_IN
 mdefine_line|#define FD_RSEEK_IN&t;&t;0xcf&t;/* seek in (i.e. to higher tracks) */
+multiline_comment|/* the following commands are new in the 82078. They are not used in the&n; * floppy driver, except the first three. These commands may be useful for apps&n; * which use the FDRAWCMD interface. For doc, get the 82078 spec sheets at&n; * http://www-techdoc.intel.com/docs/periph/fd_contr/datasheets/ */
 DECL|macro|FD_PARTID
 mdefine_line|#define FD_PARTID&t;&t;0x18&t;/* part id (&quot;extended&quot; version cmd) */
 DECL|macro|FD_SAVE
 mdefine_line|#define FD_SAVE&t;&t;&t;0x2e&t;/* save fdc regs for later restore */
+DECL|macro|FD_DRIVESPEC
+mdefine_line|#define FD_DRIVESPEC&t;&t;0x8e&t;/* drive specification: Access to the&n;&t;&t;&t;&t;&t; * 2 Mbps data transfer rate for tape&n;&t;&t;&t;&t;&t; * drives */
+DECL|macro|FD_RESTORE
+mdefine_line|#define FD_RESTORE&t;&t;0x4e    /* later restore */
+DECL|macro|FD_POWERDOWN
+mdefine_line|#define FD_POWERDOWN&t;&t;0x27&t;/* configure FDC&squot;s powersave features */
+DECL|macro|FD_FORMAT_N_WRITE
+mdefine_line|#define FD_FORMAT_N_WRITE&t;0xef    /* format and write in one go. */
+DECL|macro|FD_OPTION
+mdefine_line|#define FD_OPTION&t;&t;0x33&t;/* ISO format (which is a clean way to&n;&t;&t;&t;&t;&t; * pack more sectors on a track) */
 multiline_comment|/* DMA commands */
 DECL|macro|DMA_READ
 mdefine_line|#define DMA_READ&t;0x46
@@ -157,8 +168,8 @@ DECL|macro|FDC_82077_ORIG
 mdefine_line|#define FDC_82077_ORIG&t;0x51&t;/* Original version of 82077AA, sans LOCK */
 DECL|macro|FDC_82077
 mdefine_line|#define FDC_82077&t;0x52&t;/* 82077AA-1 */
-DECL|macro|FDC_82077_UNKN
-mdefine_line|#define FDC_82077_UNKN&t;0x53&t;/* Unknown 82077 variant */
+DECL|macro|FDC_82078_UNKN
+mdefine_line|#define FDC_82078_UNKN&t;0x5f&t;/* Unknown 82078 variant */
 DECL|macro|FDC_82078
 mdefine_line|#define FDC_82078&t;0x60&t;/* 44pin 82078 or 64pin 82078SL */
 DECL|macro|FDC_82078_1

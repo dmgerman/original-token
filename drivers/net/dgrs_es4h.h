@@ -239,7 +239,7 @@ DECL|macro|ES4H_INT_ETHER2
 mdefine_line|#define&t;ES4H_INT_ETHER2&t;&t;IDT_INT4
 DECL|macro|ES4H_INT_ETHER3
 mdefine_line|#define&t;ES4H_INT_ETHER3&t;&t;IDT_INT5
-multiline_comment|/*&n; *&t;Because there are differences between the SE-4 and the SE-6,&n; *&t;we assume that the following globals will be set up at init&n; *&t;time in main.c to containt the appropriate constants from above&n; */
+multiline_comment|/*&n; *&t;Because there are differences between the SE-4 and the SE-6,&n; *&t;we assume that the following globals will be set up at init&n; *&t;time in main.c to contain the appropriate constants from above&n; */
 r_extern
 id|ushort
 id|Gpp

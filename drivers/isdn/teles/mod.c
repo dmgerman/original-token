@@ -1,3 +1,4 @@
+multiline_comment|/* $Id: mod.c,v 1.1 1996/04/13 10:27:02 fritz Exp $&n; *&n; * $Log: mod.c,v $&n; * Revision 1.1  1996/04/13 10:27:02  fritz&n; * Initial revision&n; *&n; *&n; */
 macro_line|#include &quot;teles.h&quot;
 r_extern
 r_struct

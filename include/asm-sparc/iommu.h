@@ -223,6 +223,8 @@ mdefine_line|#define IOMMU_MID_MID       0x0000000f /* Module-id, hardcoded to 0
 multiline_comment|/* The format of an iopte in the page tables */
 DECL|macro|IOPTE_PAGE
 mdefine_line|#define IOPTE_PAGE          0x07ffff00 /* Physical page number (PA[30:12]) */
+DECL|macro|IOPTE_CACHE
+mdefine_line|#define IOPTE_CACHE         0x00000080 /* Cached (in vme IOCACHE or Viking/MXCC) */
 DECL|macro|IOPTE_WRITE
 mdefine_line|#define IOPTE_WRITE         0x00000004 /* Writeable */
 DECL|macro|IOPTE_VALID
@@ -243,6 +245,17 @@ DECL|member|page_table
 id|iopte_t
 op_star
 id|page_table
+suffix:semicolon
+DECL|member|lowest
+id|iopte_t
+op_star
+id|lowest
+suffix:semicolon
+multiline_comment|/* to speed up searches... */
+DECL|member|plow
+r_int
+r_int
+id|plow
 suffix:semicolon
 multiline_comment|/* For convenience */
 DECL|member|start

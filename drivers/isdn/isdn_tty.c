@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: isdn_tty.c,v 1.3 1996/02/11 02:12:32 fritz Exp fritz $&n; *&n; * Linux ISDN subsystem, tty functions and AT-command emulator (linklevel).&n; *&n; * Copyright 1994,95,96 by Fritz Elfert (fritz@wuemaus.franken.de)&n; * Copyright 1995,96    by Thinking Objects Software GmbH Wuerzburg&n; * &n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA. &n; *&n; * $Log: isdn_tty.c,v $&n; * Revision 1.3  1996/02/11 02:12:32  fritz&n; * Bugfixes according to similar fixes in standard serial.c of kernel.&n; *&n; * Revision 1.2  1996/01/22 05:12:25  fritz&n; * replaced my_atoi by simple_strtoul&n; *&n; * Revision 1.1  1996/01/09 04:13:18  fritz&n; * Initial revision&n; *&n; */
+multiline_comment|/* $Id: isdn_tty.c,v 1.4 1996/04/20 16:39:54 fritz Exp $&n; *&n; * Linux ISDN subsystem, tty functions and AT-command emulator (linklevel).&n; *&n; * Copyright 1994,95,96 by Fritz Elfert (fritz@wuemaus.franken.de)&n; * Copyright 1995,96    by Thinking Objects Software GmbH Wuerzburg&n; * &n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA. &n; *&n; * $Log: isdn_tty.c,v $&n; * Revision 1.4  1996/04/20 16:39:54  fritz&n; * Changed all io to go through generic routines in isdn_common.c&n; * Fixed a real ugly bug in modem-emulator: &squot;ATA&squot; had been accepted&n; * even when a call has been cancelled from the remote machine.&n; *&n; * Revision 1.3  1996/02/11 02:12:32  fritz&n; * Bugfixes according to similar fixes in standard serial.c of kernel.&n; *&n; * Revision 1.2  1996/01/22 05:12:25  fritz&n; * replaced my_atoi by simple_strtoul&n; *&n; * Revision 1.1  1996/01/09 04:13:18  fritz&n; * Initial revision&n; *&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &lt;linux/module.h&gt;
@@ -82,7 +82,7 @@ r_char
 op_star
 id|isdn_tty_revision
 op_assign
-l_string|&quot;$Revision: 1.3 $&quot;
+l_string|&quot;$Revision: 1.4 $&quot;
 suffix:semicolon
 DECL|function|isdn_tty_try_read
 r_int
@@ -912,6 +912,14 @@ id|info
 id|isdn_ctrl
 id|cmd
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|info
+)paren
+r_return
+suffix:semicolon
 id|dev-&gt;mdm.rcvsched
 (braket
 id|info-&gt;line
@@ -979,14 +987,6 @@ id|ISDN_USAGE_MODEM
 )paren
 suffix:semicolon
 )brace
-id|dev-&gt;m_idx
-(braket
-id|info-&gt;drv_index
-)braket
-op_assign
-op_minus
-l_int|1
-suffix:semicolon
 id|info-&gt;isdn_driver
 op_assign
 op_minus
@@ -997,11 +997,28 @@ op_assign
 op_minus
 l_int|1
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|info-&gt;drv_index
+op_ge
+l_int|0
+)paren
+(brace
 id|info-&gt;drv_index
 op_assign
 op_minus
 l_int|1
 suffix:semicolon
+id|dev-&gt;m_idx
+(braket
+id|info-&gt;drv_index
+)braket
+op_assign
+op_minus
+l_int|1
+suffix:semicolon
+)brace
 )brace
 DECL|function|isdn_tty_paranoia_check
 r_static
@@ -1035,7 +1052,7 @@ id|printk
 c_func
 (paren
 id|KERN_WARNING
-l_string|&quot;isdn: null info_struct for (%d, %d) in %s&bslash;n&quot;
+l_string|&quot;isdn_tty: null info_struct for (%d, %d) in %s&bslash;n&quot;
 comma
 id|MAJOR
 c_func
@@ -1068,7 +1085,7 @@ id|printk
 c_func
 (paren
 id|KERN_WARNING
-l_string|&quot;isdn: bad magic for modem struct (%d, %d) in %s&bslash;n&quot;
+l_string|&quot;isdn_tty: bad magic for modem struct (%d, %d) in %s&bslash;n&quot;
 comma
 id|MAJOR
 c_func
@@ -1202,15 +1219,6 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|dev-&gt;mdm.online
-(braket
-id|info-&gt;line
-)braket
-)paren
-(brace
 macro_line|#ifdef ISDN_DEBUG_MODEM_HUP
 id|printk
 c_func
@@ -1226,6 +1234,14 @@ c_func
 id|info
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|dev-&gt;mdm.online
+(braket
+id|info-&gt;line
+)braket
+)paren
 id|isdn_tty_modem_result
 c_func
 (paren
@@ -1234,7 +1250,6 @@ comma
 id|info
 )paren
 suffix:semicolon
-)brace
 r_return
 suffix:semicolon
 )brace
@@ -1534,15 +1549,6 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|dev-&gt;mdm.online
-(braket
-id|info-&gt;line
-)braket
-)paren
-(brace
 macro_line|#ifdef ISDN_DEBUG_MODEM_HUP
 id|printk
 c_func
@@ -1558,7 +1564,6 @@ c_func
 id|info
 )paren
 suffix:semicolon
-)brace
 )brace
 r_if
 c_cond
@@ -1968,14 +1973,7 @@ macro_line|#endif
 r_if
 c_cond
 (paren
-id|dev-&gt;drv
-(braket
-id|info-&gt;isdn_driver
-)braket
-op_member_access_from_pointer
-id|interface
-op_member_access_from_pointer
-id|writebuf
+id|isdn_writebuf_stub
 c_func
 (paren
 id|info-&gt;isdn_driver
@@ -2898,15 +2896,6 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|dev-&gt;mdm.online
-(braket
-id|info-&gt;line
-)braket
-)paren
-(brace
 macro_line|#ifdef ISDN_DEBUG_MODEM_HUP
 id|printk
 c_func
@@ -2922,6 +2911,14 @@ c_func
 id|info
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|dev-&gt;mdm.online
+(braket
+id|info-&gt;line
+)braket
+)paren
 id|isdn_tty_modem_result
 c_func
 (paren
@@ -2930,7 +2927,6 @@ comma
 id|info
 )paren
 suffix:semicolon
-)brace
 )brace
 r_break
 suffix:semicolon
@@ -3001,15 +2997,6 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|dev-&gt;mdm.online
-(braket
-id|info-&gt;line
-)braket
-)paren
-(brace
 macro_line|#ifdef ISDN_DEBUG_MODEM_HUP
 id|printk
 c_func
@@ -3025,6 +3012,14 @@ c_func
 id|info
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|dev-&gt;mdm.online
+(braket
+id|info-&gt;line
+)braket
+)paren
 id|isdn_tty_modem_result
 c_func
 (paren
@@ -3033,7 +3028,6 @@ comma
 id|info
 )paren
 suffix:semicolon
-)brace
 )brace
 r_break
 suffix:semicolon
@@ -5442,7 +5436,7 @@ id|printk
 c_func
 (paren
 id|KERN_WARNING
-l_string|&quot;isdn: Unable to register modem-device&bslash;n&quot;
+l_string|&quot;isdn_tty: Couldn&squot;t register modem-device&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -5465,7 +5459,7 @@ id|printk
 c_func
 (paren
 id|KERN_WARNING
-l_string|&quot;Couldn&squot;t register modem-callout-device&bslash;n&quot;
+l_string|&quot;isdn_tty: Couldn&squot;t register modem-callout-device&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -5699,7 +5693,7 @@ id|printk
 c_func
 (paren
 id|KERN_WARNING
-l_string|&quot;isdn: Incoming call without OAD, assuming &squot;0&squot;&bslash;n&quot;
+l_string|&quot;isdn_tty: Incoming call without OAD, assuming &squot;0&squot;&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
@@ -5745,7 +5739,7 @@ id|printk
 c_func
 (paren
 id|KERN_WARNING
-l_string|&quot;isdn: Incoming callinfo garbled, ignored: %s&bslash;n&quot;
+l_string|&quot;isdn_tty: Incoming callinfo garbled, ignored: %s&bslash;n&quot;
 comma
 id|num
 )paren
@@ -5797,7 +5791,7 @@ id|printk
 c_func
 (paren
 id|KERN_WARNING
-l_string|&quot;isdn: Incoming callinfo garbled, ignored: %s&bslash;n&quot;
+l_string|&quot;isdn_tty: Incoming callinfo garbled, ignored: %s&bslash;n&quot;
 comma
 id|num
 )paren
@@ -5849,7 +5843,7 @@ id|printk
 c_func
 (paren
 id|KERN_WARNING
-l_string|&quot;isdn: Incoming call without CPN, assuming &squot;0&squot;&bslash;n&quot;
+l_string|&quot;isdn_tty: Incoming call without CPN, assuming &squot;0&squot;&bslash;n&quot;
 )paren
 suffix:semicolon
 id|eaz
@@ -6242,7 +6236,7 @@ id|printk
 c_func
 (paren
 id|KERN_WARNING
-l_string|&quot;isdn: Null-Message in isdn_tty_at_cout&bslash;n&quot;
+l_string|&quot;isdn_tty: Null-Message in isdn_tty_at_cout&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -7418,10 +7412,12 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|m-&gt;mdmreg
+id|dev-&gt;mdm.msr
 (braket
-l_int|1
+id|info-&gt;line
 )braket
+op_amp
+id|UART_MSR_RI
 )paren
 (brace
 DECL|macro|FIDOBUG
@@ -9470,14 +9466,7 @@ macro_line|#endif
 r_if
 c_cond
 (paren
-id|dev-&gt;drv
-(braket
-id|info-&gt;isdn_driver
-)braket
-op_member_access_from_pointer
-id|interface
-op_member_access_from_pointer
-id|writebuf
+id|isdn_writebuf_stub
 c_func
 (paren
 id|info-&gt;isdn_driver

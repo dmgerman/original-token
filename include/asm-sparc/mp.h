@@ -1,14 +1,10 @@
-multiline_comment|/* $Id: mp.h,v 1.2 1995/11/25 02:32:06 davem Exp $&n; * mp.h:  Multiprocessing definitions for the Sparc.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: mp.h,v 1.3 1996/03/25 20:21:09 davem Exp $&n; * mp.h:  Multiprocessing definitions for the Sparc.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _SPARC_MP_H
 DECL|macro|_SPARC_MP_H
 mdefine_line|#define _SPARC_MP_H
 macro_line|#include &lt;asm/traps.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;asm/vaddrs.h&gt;
-r_extern
-r_int
-id|linux_smp_still_initting
-suffix:semicolon
 DECL|struct|sparc_percpu
 r_struct
 id|sparc_percpu
@@ -16,23 +12,19 @@ id|sparc_percpu
 DECL|member|trap_table
 r_struct
 id|tt_entry
+op_star
 id|trap_table
-(braket
-id|NUM_SPARC_TRAPS
-)braket
 suffix:semicolon
-multiline_comment|/* One page */
 DECL|member|kernel_stack
-r_int
-r_int
+r_char
+op_star
 id|kernel_stack
 (braket
 id|PAGE_SIZE
-op_div
-l_int|4
+op_lshift
+l_int|1
 )braket
 suffix:semicolon
-multiline_comment|/* One page */
 DECL|member|cpuid
 r_int
 id|cpuid

@@ -190,7 +190,7 @@ suffix:semicolon
 DECL|macro|FBIOSATTR
 mdefine_line|#define FBIOSATTR  _IOW(&squot;F&squot;, 5, struct fbgattr) /* Unsupported: */
 DECL|macro|FBIOGATTR
-mdefine_line|#define FBIOGATTR  _IOR(&squot;F&squot;, 6, struct fbgattr)&t;/* supported */
+mdefine_line|#define FBIOGATTR  _IOR(&squot;F&squot;, 6, struct fbgattr)&t;/* supporoted */
 DECL|macro|FBIOSVIDEO
 mdefine_line|#define FBIOSVIDEO _IOW(&squot;F&squot;, 7, int)
 DECL|macro|FBIOGVIDEO

@@ -1,3 +1,4 @@
+multiline_comment|/* $Id: l3_1TR6.h,v 1.1 1996/04/13 10:25:42 fritz Exp $&n; *&n; * $Log: l3_1TR6.h,v $&n; * Revision 1.1  1996/04/13 10:25:42  fritz&n; * Initial revision&n; *&n; *&n; */
 macro_line|#ifndef l3_1TR6
 DECL|macro|l3_1TR6
 mdefine_line|#define l3_1TR6

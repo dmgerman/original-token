@@ -1351,13 +1351,13 @@ id|mp-&gt;state
 op_assign
 id|MOD_DELETED
 suffix:semicolon
+)brace
+)brace
 id|free_modules
 c_func
 (paren
 )paren
 suffix:semicolon
-)brace
-)brace
 )brace
 r_return
 l_int|0

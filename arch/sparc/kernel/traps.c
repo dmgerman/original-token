@@ -1,7 +1,8 @@
-multiline_comment|/* $Id: traps.c,v 1.32 1996/03/01 07:16:08 davem Exp $&n; * arch/sparc/kernel/traps.c&n; *&n; * Copyright 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: traps.c,v 1.42 1996/04/16 08:24:44 davem Exp $&n; * arch/sparc/kernel/traps.c&n; *&n; * Copyright 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 multiline_comment|/*&n; * I hate traps on the sparc, grrr...&n; */
 macro_line|#include &lt;linux/sched.h&gt;  /* for jiffies */
 macro_line|#include &lt;linux/kernel.h&gt;
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;asm/delay.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -9,9 +10,10 @@ macro_line|#include &lt;asm/ptrace.h&gt;
 macro_line|#include &lt;asm/oplib.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
-macro_line|#include &lt;asm/mp.h&gt;
 macro_line|#include &lt;asm/kdebug.h&gt;
 macro_line|#include &lt;asm/unistd.h&gt;
+macro_line|#include &lt;asm/smp.h&gt;
+multiline_comment|/* #define TRAP_DEBUG */
 DECL|struct|trap_trace_entry
 r_struct
 id|trap_trace_entry
@@ -98,6 +100,78 @@ id|regs
 )paren
 (brace
 )brace
+DECL|function|sun4m_nmi
+r_void
+id|sun4m_nmi
+c_func
+(paren
+r_struct
+id|pt_regs
+op_star
+id|regs
+)paren
+(brace
+r_int
+r_int
+id|afsr
+comma
+id|afar
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;Aieee: sun4m NMI received!&bslash;n&quot;
+)paren
+suffix:semicolon
+multiline_comment|/* XXX HyperSparc hack XXX */
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;mov 0x500, %%g1&bslash;n&bslash;t&quot;
+l_string|&quot;lda [%%g1] 0x4, %0&bslash;n&bslash;t&quot;
+l_string|&quot;mov 0x600, %%g1&bslash;n&bslash;t&quot;
+l_string|&quot;lda [%%g1] 0x4, %1&bslash;n&bslash;t&quot;
+suffix:colon
+l_string|&quot;=r&quot;
+(paren
+id|afsr
+)paren
+comma
+l_string|&quot;=r&quot;
+(paren
+id|afar
+)paren
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;afsr=%08lx afar=%08lx&bslash;n&quot;
+comma
+id|afsr
+comma
+id|afar
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;you lose buddy boy...&bslash;n&quot;
+)paren
+suffix:semicolon
+id|show_regs
+c_func
+(paren
+id|regs
+)paren
+suffix:semicolon
+id|prom_halt
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
 DECL|function|die_if_kernel
 r_void
 id|die_if_kernel
@@ -122,21 +196,16 @@ r_int
 op_star
 id|pc
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|regs-&gt;psr
-op_amp
-id|PSR_PS
-)paren
-(brace
-id|do_exit
+multiline_comment|/* Amuse the user. */
+id|printk
 c_func
 (paren
-id|SIGKILL
+l_string|&quot;              &bslash;&bslash;|/ ____ &bslash;&bslash;|/&bslash;n&quot;
+l_string|&quot;              &bslash;&quot;@&squot;/ ,. &bslash;&bslash;`@&bslash;&quot;&bslash;n&quot;
+l_string|&quot;              /_| &bslash;&bslash;__/ |_&bslash;&bslash;&bslash;n&quot;
+l_string|&quot;                 &bslash;&bslash;__U_/&bslash;n&quot;
 )paren
 suffix:semicolon
-)brace
 id|printk
 c_func
 (paren
@@ -155,6 +224,13 @@ c_func
 id|regs
 )paren
 suffix:semicolon
+macro_line|#if CONFIG_AP1000
+id|ap_panic
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
 id|printk
 c_func
 (paren
@@ -218,6 +294,21 @@ c_func
 l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|regs-&gt;psr
+op_amp
+id|PSR_PS
+)paren
+(brace
+id|do_exit
+c_func
+(paren
+id|SIGKILL
+)paren
+suffix:semicolon
+)brace
 id|do_exit
 c_func
 (paren
@@ -260,10 +351,12 @@ comma
 id|type
 )paren
 suffix:semicolon
-id|panic
+id|die_if_kernel
 c_func
 (paren
 l_string|&quot;Whee... Hello Mr. Penguin&quot;
+comma
+id|current-&gt;tss.kregs
 )paren
 suffix:semicolon
 )brace
@@ -332,6 +425,24 @@ id|regs
 )paren
 suffix:semicolon
 )brace
+macro_line|#ifdef TRAP_DEBUG
+id|printk
+c_func
+(paren
+l_string|&quot;Ill instr. at pc=%08lx instruction is %08lx&bslash;n&quot;
+comma
+id|regs-&gt;pc
+comma
+op_star
+(paren
+r_int
+r_int
+op_star
+)paren
+id|regs-&gt;pc
+)paren
+suffix:semicolon
+macro_line|#endif
 id|current-&gt;tss.sig_address
 op_assign
 id|pc
@@ -442,14 +553,30 @@ op_amp
 id|PSR_PS
 )paren
 (brace
+id|printk
+c_func
+(paren
+l_string|&quot;KERNEL MNA at pc %08lx npc %08lx called by %08lx&bslash;n&quot;
+comma
+id|pc
+comma
+id|npc
+comma
+id|regs-&gt;u_regs
+(braket
+id|UREG_RETPC
+)braket
+)paren
+suffix:semicolon
 id|die_if_kernel
 c_func
 (paren
-l_string|&quot;Kernel MNA access&quot;
+l_string|&quot;BOGUS&quot;
 comma
 id|regs
 )paren
 suffix:semicolon
+multiline_comment|/* die_if_kernel(&quot;Kernel MNA access&quot;, regs); */
 )brace
 id|current-&gt;tss.sig_address
 op_assign
@@ -670,7 +797,7 @@ id|PSR_PS
 id|die_if_kernel
 c_func
 (paren
-l_string|&quot;Kernel gets Penguin-FPU disabled trap&quot;
+l_string|&quot;Kernel gets FloatingPenguinUnit disabled trap&quot;
 comma
 id|regs
 )paren
@@ -692,6 +819,7 @@ id|regs-&gt;psr
 op_or_assign
 id|PSR_EF
 suffix:semicolon
+macro_line|#ifndef __SMP__
 r_if
 c_cond
 (paren
@@ -785,6 +913,53 @@ op_assign
 l_int|1
 suffix:semicolon
 )brace
+macro_line|#else
+r_if
+c_cond
+(paren
+op_logical_neg
+id|current-&gt;used_math
+)paren
+(brace
+id|fpload
+c_func
+(paren
+op_amp
+id|init_fregs
+(braket
+l_int|0
+)braket
+comma
+op_amp
+id|init_fsr
+)paren
+suffix:semicolon
+id|current-&gt;used_math
+op_assign
+l_int|1
+suffix:semicolon
+)brace
+r_else
+(brace
+id|fpload
+c_func
+(paren
+op_amp
+id|current-&gt;tss.float_regs
+(braket
+l_int|0
+)braket
+comma
+op_amp
+id|current-&gt;tss.fsr
+)paren
+suffix:semicolon
+)brace
+id|current-&gt;flags
+op_or_assign
+id|PF_USEDFPU
+suffix:semicolon
+macro_line|#endif
 )brace
 DECL|variable|fake_regs
 r_static
@@ -862,6 +1037,7 @@ id|calls
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#ifndef __SMP__
 r_struct
 id|task_struct
 op_star
@@ -869,6 +1045,15 @@ id|fpt
 op_assign
 id|last_task_used_math
 suffix:semicolon
+macro_line|#else
+r_struct
+id|task_struct
+op_star
+id|fpt
+op_assign
+id|current
+suffix:semicolon
+macro_line|#endif
 id|put_psr
 c_func
 (paren
@@ -881,6 +1066,7 @@ id|PSR_EF
 )paren
 suffix:semicolon
 multiline_comment|/* If nobody owns the fpu right now, just clear the&n;&t; * error into our fake static buffer and hope it don&squot;t&n;&t; * happen again.  Thank you crashme...&n;&t; */
+macro_line|#ifndef __SMP__
 r_if
 c_cond
 (paren
@@ -888,6 +1074,19 @@ op_logical_neg
 id|fpt
 )paren
 (brace
+macro_line|#else
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|fpt-&gt;flags
+op_amp
+id|PF_USEDFPU
+)paren
+)paren
+(brace
+macro_line|#endif
 id|fpsave
 c_func
 (paren
@@ -940,15 +1139,22 @@ op_amp
 id|fpt-&gt;tss.fpqdepth
 )paren
 suffix:semicolon
-id|last_task_used_math-&gt;tss.sig_address
+id|fpt-&gt;tss.sig_address
 op_assign
 id|pc
 suffix:semicolon
-id|last_task_used_math-&gt;tss.sig_desc
+id|fpt-&gt;tss.sig_desc
 op_assign
 id|SUBSIG_FPERROR
 suffix:semicolon
 multiline_comment|/* as good as any */
+macro_line|#ifdef __SMP__
+id|fpt-&gt;flags
+op_and_assign
+op_complement
+id|PF_USEDFPU
+suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -1002,15 +1208,17 @@ c_func
 (paren
 id|SIGFPE
 comma
-id|last_task_used_math
+id|fpt
 comma
 l_int|1
 )paren
 suffix:semicolon
+macro_line|#ifndef __SMP__
 id|last_task_used_math
 op_assign
 l_int|NULL
 suffix:semicolon
+macro_line|#endif
 id|regs-&gt;psr
 op_and_assign
 op_complement
@@ -1113,6 +1321,7 @@ r_int
 id|psr
 )paren
 (brace
+macro_line|#ifdef TRAP_DEBUG
 id|printk
 c_func
 (paren
@@ -1125,6 +1334,7 @@ comma
 id|psr
 )paren
 suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -1165,6 +1375,7 @@ r_int
 id|psr
 )paren
 (brace
+macro_line|#ifdef TRAP_DEBUG
 id|printk
 c_func
 (paren
@@ -1177,6 +1388,7 @@ comma
 id|psr
 )paren
 suffix:semicolon
+macro_line|#endif
 id|send_sig
 c_func
 (paren
@@ -1245,6 +1457,7 @@ r_int
 id|psr
 )paren
 (brace
+macro_line|#ifdef TRAP_DEBUG
 id|printk
 c_func
 (paren
@@ -1255,6 +1468,23 @@ comma
 id|npc
 comma
 id|psr
+)paren
+suffix:semicolon
+macro_line|#endif
+id|printk
+c_func
+(paren
+l_string|&quot;INSTRUCTION=%08lx&bslash;n&quot;
+comma
+op_star
+(paren
+(paren
+r_int
+r_int
+op_star
+)paren
+id|regs-&gt;pc
+)paren
 )paren
 suffix:semicolon
 id|send_sig
@@ -1291,6 +1521,7 @@ r_int
 id|psr
 )paren
 (brace
+macro_line|#ifdef TRAP_DEBUG
 id|printk
 c_func
 (paren
@@ -1303,6 +1534,7 @@ comma
 id|psr
 )paren
 suffix:semicolon
+macro_line|#endif
 id|send_sig
 c_func
 (paren
@@ -1337,18 +1569,6 @@ r_int
 id|psr
 )paren
 (brace
-id|printk
-c_func
-(paren
-l_string|&quot;Divide By Zero Exception at PC %08lx NPC %08lx PSR %08lx&bslash;n&quot;
-comma
-id|pc
-comma
-id|npc
-comma
-id|psr
-)paren
-suffix:semicolon
 id|send_sig
 c_func
 (paren
@@ -1374,10 +1594,9 @@ r_int
 id|linux_num_cpus
 suffix:semicolon
 r_extern
-id|pgd_t
+id|ctxd_t
 op_star
-op_star
-id|srmmu_context_table
+id|srmmu_ctx_table_phys
 suffix:semicolon
 DECL|variable|linux_smp_still_initting
 r_int
@@ -1400,260 +1619,5 @@ c_func
 r_void
 )paren
 (brace
-r_struct
-id|linux_prom_registers
-id|ctx_reg
-suffix:semicolon
-r_int
-id|i
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|linux_num_cpus
-op_eq
-l_int|1
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;trap_init: Uniprocessor detected.&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|sparc_cpu_model
-op_ne
-id|sun4m
-)paren
-(brace
-id|prom_printf
-c_func
-(paren
-l_string|&quot;trap_init: Multiprocessor on a non-sun4m! Aieee...&bslash;n&quot;
-)paren
-suffix:semicolon
-id|prom_printf
-c_func
-(paren
-l_string|&quot;trap_init: Cannot continue, bailing out.&bslash;n&quot;
-)paren
-suffix:semicolon
-id|prom_halt
-c_func
-(paren
-)paren
-suffix:semicolon
-)brace
-multiline_comment|/* Ok, we are on a sun4m with multiple cpu&squot;s */
-id|prom_printf
-c_func
-(paren
-l_string|&quot;trap_init: Multiprocessor detected, initiating CPU-startup. cpus=%d&bslash;n&quot;
-comma
-id|linux_num_cpus
-)paren
-suffix:semicolon
-id|linux_smp_still_initting
-op_assign
-l_int|1
-suffix:semicolon
-id|ctx_reg.which_io
-op_assign
-l_int|0x0
-suffix:semicolon
-multiline_comment|/* real ram */
-id|ctx_reg.phys_addr
-op_assign
-(paren
-r_char
-op_star
-)paren
-(paren
-(paren
-(paren
-r_int
-r_int
-)paren
-id|srmmu_context_table
-)paren
-op_minus
-id|PAGE_OFFSET
-)paren
-suffix:semicolon
-id|ctx_reg.reg_size
-op_assign
-l_int|0x0
-suffix:semicolon
-multiline_comment|/* This basically takes every cpu, loads up our Linux context table&n;&t; * into it&squot;s context table pointer register, inits it at the low level&n;&t; * and then makes it spin in an endless loop...&n;&t; */
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-id|linux_num_cpus
-suffix:semicolon
-id|i
-op_increment
-)paren
-(brace
-r_if
-c_cond
-(paren
-(paren
-id|linux_cpus
-(braket
-id|i
-)braket
-dot
-id|mid
-op_amp
-(paren
-op_complement
-l_int|8
-)paren
-)paren
-op_ne
-l_int|0x0
-)paren
-(brace
-r_static
-r_int
-id|cpuid
-op_assign
-l_int|0
-suffix:semicolon
-id|cpuid
-op_assign
-(paren
-id|linux_cpus
-(braket
-id|i
-)braket
-dot
-id|mid
-op_amp
-(paren
-op_complement
-l_int|8
-)paren
-)paren
-suffix:semicolon
-id|percpu_table
-(braket
-id|cpuid
-)braket
-dot
-id|cpu_is_alive
-op_assign
-l_int|0
-suffix:semicolon
-id|thiscpus_mid
-op_assign
-id|linux_cpus
-(braket
-id|i
-)braket
-dot
-id|mid
-suffix:semicolon
-id|thiscpus_tbr
-op_assign
-(paren
-r_int
-r_int
-)paren
-id|percpu_table
-(braket
-id|cpuid
-)braket
-dot
-id|trap_table
-suffix:semicolon
-id|prom_startcpu
-c_func
-(paren
-id|linux_cpus
-(braket
-id|i
-)braket
-dot
-id|prom_node
-comma
-op_amp
-id|ctx_reg
-comma
-l_int|0x0
-comma
-(paren
-r_char
-op_star
-)paren
-id|sparc_cpu_startup
-)paren
-suffix:semicolon
-id|prom_printf
-c_func
-(paren
-l_string|&quot;Waiting for cpu %d to start up...&bslash;n&quot;
-comma
-id|i
-)paren
-suffix:semicolon
-r_while
-c_loop
-(paren
-id|percpu_table
-(braket
-id|cpuid
-)braket
-dot
-id|cpu_is_alive
-op_eq
-l_int|0
-)paren
-(brace
-r_static
-r_int
-id|counter
-op_assign
-l_int|0
-suffix:semicolon
-id|counter
-op_increment
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|counter
-OG
-l_int|200
-)paren
-(brace
-r_break
-suffix:semicolon
-)brace
-id|__delay
-c_func
-(paren
-l_int|200000
-)paren
-suffix:semicolon
-)brace
-)brace
-)brace
-id|linux_smp_still_initting
-op_assign
-l_int|1
-suffix:semicolon
 )brace
 eof

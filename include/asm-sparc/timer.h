@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: timer.h,v 1.11 1996/01/03 03:53:23 davem Exp $&n; * timer.h:  Definitions for the timer chips on the Sparc.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: timer.h,v 1.12 1996/03/24 20:21:29 davem Exp $&n; * timer.h:  Definitions for the timer chips on the Sparc.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _SPARC_TIMER_H
 DECL|macro|_SPARC_TIMER_H
 mdefine_line|#define _SPARC_TIMER_H
@@ -37,13 +37,6 @@ suffix:semicolon
 suffix:semicolon
 DECL|macro|SUN4C_TIMER_PHYSADDR
 mdefine_line|#define SUN4C_TIMER_PHYSADDR   0xf3000000
-DECL|variable|sun4c_timers
-r_volatile
-r_struct
-id|sun4c_timer_info
-op_star
-id|sun4c_timers
-suffix:semicolon
 multiline_comment|/* A sun4m has two blocks of registers which are probably of the same&n; * structure. LSI Logic&squot;s L64851 is told to _decrement_ from the limit&n; * value. Aurora behaves similarly but its limit value is compacted in&n; * other fashion (it&squot;s wider). Documented fields are defined here.&n; */
 multiline_comment|/* As with the interrupt register, we have two classes of timer registers&n; * which are per-cpu and master.  Per-cpu timers only hit that cpu and are&n; * only level 14 ticks, master timer hits all cpus and is level 10.&n; */
 DECL|macro|SUN4M_PRM_CNT_L

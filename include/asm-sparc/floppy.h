@@ -168,8 +168,6 @@ DECL|macro|fd_request_irq
 mdefine_line|#define fd_request_irq()          sun_fd_request_irq()
 DECL|macro|fd_free_irq
 mdefine_line|#define fd_free_irq()             /* nothing... */
-DECL|macro|fd_eject
-mdefine_line|#define fd_eject(x)               sun_fd_eject()
 DECL|macro|FLOPPY_MOTOR_MASK
 mdefine_line|#define FLOPPY_MOTOR_MASK         0x10
 multiline_comment|/* It&squot;s all the same... */
@@ -202,7 +200,7 @@ DECL|macro|N_FDC
 mdefine_line|#define N_FDC    1
 DECL|macro|N_DRIVE
 mdefine_line|#define N_DRIVE  8
-multiline_comment|/* No 64k boundary crossing problems on the Sparc. */
+multiline_comment|/* No 64k boundry crossing problems on the Sparc. */
 DECL|macro|CROSS_64KB
 mdefine_line|#define CROSS_64KB(a,s) (0)
 multiline_comment|/* Routines unique to each controller type on a Sun. */
@@ -318,15 +316,12 @@ l_int|2
 suffix:colon
 multiline_comment|/* FD_DOR */
 multiline_comment|/* Oh geese, 82072 on the Sun has no DOR register,&n;&t;&t; * the functionality is implemented via the AUXIO&n;&t;&t; * I/O register.  So we must emulate the behavior.&n;&t;&t; *&n;&t;&t; * ASSUMPTIONS:  There will only ever be one floppy&n;&t;&t; *               drive attached to a Sun controller&n;&t;&t; *               and it will be at drive zero.&n;&t;&t; */
-macro_line|#if 0
-r_if
-c_cond
-(paren
-id|value
-op_amp
-l_int|0xf0
-)paren
-macro_line|#else
+(brace
+r_int
+id|bits
+op_assign
+l_int|0
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -334,26 +329,43 @@ id|value
 op_amp
 l_int|0x10
 )paren
-(brace
-macro_line|#endif
+id|bits
+op_or_assign
+id|AUXIO_FLPY_DSEL
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|value
+op_amp
+l_int|0x80
+)paren
+op_eq
+l_int|0
+)paren
+id|bits
+op_or_assign
+id|AUXIO_FLPY_EJCT
+suffix:semicolon
 id|set_auxio
 c_func
 (paren
-id|AUXIO_FLPY_DSEL
+id|bits
 comma
-l_int|0
+(paren
+op_complement
+id|bits
+)paren
+op_amp
+(paren
+id|AUXIO_FLPY_DSEL
+op_or
+id|AUXIO_FLPY_EJCT
+)paren
 )paren
 suffix:semicolon
 )brace
-r_else
-id|set_auxio
-c_func
-(paren
-l_int|0
-comma
-id|AUXIO_FLPY_DSEL
-)paren
-suffix:semicolon
 r_break
 suffix:semicolon
 r_case
@@ -737,87 +749,6 @@ op_assign
 id|pdma_size
 suffix:semicolon
 )brace
-DECL|function|sun_fd_eject
-r_static
-r_int
-id|sun_fd_eject
-c_func
-(paren
-r_void
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|sparc_cpu_model
-op_eq
-id|sun4c
-)paren
-(brace
-id|set_auxio
-c_func
-(paren
-id|AUXIO_FLPY_DSEL
-comma
-id|AUXIO_FLPY_EJCT
-)paren
-suffix:semicolon
-id|udelay
-c_func
-(paren
-l_int|1000
-)paren
-suffix:semicolon
-id|set_auxio
-c_func
-(paren
-id|AUXIO_FLPY_EJCT
-comma
-id|AUXIO_FLPY_DSEL
-)paren
-suffix:semicolon
-)brace
-r_else
-(brace
-id|set_dor
-c_func
-(paren
-id|fdc
-comma
-op_complement
-l_int|0
-comma
-l_int|0x90
-)paren
-suffix:semicolon
-id|udelay
-c_func
-(paren
-l_int|500
-)paren
-suffix:semicolon
-id|set_dor
-c_func
-(paren
-id|fdc
-comma
-op_complement
-l_int|0x80
-comma
-l_int|0
-)paren
-suffix:semicolon
-id|udelay
-c_func
-(paren
-l_int|500
-)paren
-suffix:semicolon
-)brace
-r_return
-l_int|0
-suffix:semicolon
-)brace
 multiline_comment|/* Our low-level entry point in arch/sparc/kernel/entry.S */
 r_extern
 r_void
@@ -1189,42 +1120,14 @@ r_goto
 id|no_sun_fdc
 suffix:semicolon
 )brace
-multiline_comment|/* We need the version as early as possible to set up the&n;&t; * function pointers correctly.  Assume 82077 for probing&n;&t; * purposes.&n;&t; */
-id|sun_fdops.fd_inb
-op_assign
-id|sun_82077_fd_inb
-suffix:semicolon
-id|sun_fdops.fd_outb
-op_assign
-id|sun_82077_fd_outb
-suffix:semicolon
-id|fdc_status
-op_assign
-op_amp
-id|sun_fdc-&gt;status_82077
-suffix:semicolon
-multiline_comment|/* This controller detection technique is from the netbsd&n;&t; * Sun floppy driver, originally Chris Torek of BSDI came&n;&t; * up with this.  It seems to work pretty well.&n;&t; */
 r_if
 c_cond
 (paren
-id|sun_fdc-&gt;dor_82077
+id|sparc_cpu_model
 op_eq
-l_int|0x80
+id|sun4c
 )paren
 (brace
-id|sun_fdc-&gt;dor_82077
-op_assign
-l_int|2
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|sun_fdc-&gt;dor_82077
-op_eq
-l_int|0x80
-)paren
-(brace
-multiline_comment|/* Ok, it&squot;s really an 82072. */
 id|sun_fdops.fd_inb
 op_assign
 id|sun_82072_fd_inb
@@ -1238,31 +1141,27 @@ op_assign
 op_amp
 id|sun_fdc-&gt;status_82072
 suffix:semicolon
+multiline_comment|/* printk(&quot;AUXIO @0x%p&bslash;n&quot;, auxio_register); */
+multiline_comment|/* P3 */
 )brace
+r_else
+(brace
+id|sun_fdops.fd_inb
+op_assign
+id|sun_82077_fd_inb
+suffix:semicolon
+id|sun_fdops.fd_outb
+op_assign
+id|sun_82077_fd_outb
+suffix:semicolon
+id|fdc_status
+op_assign
+op_amp
+id|sun_fdc-&gt;status_82077
+suffix:semicolon
+multiline_comment|/* printk(&quot;DOR @0x%p&bslash;n&quot;, &amp;sun_fdc-&gt;dor_82077); */
+multiline_comment|/* P3 */
 )brace
-multiline_comment|/* P3: The only reliable way which I found for ejection&n;&t; * of boot floppy. AUXIO_FLPY_EJCT is not enough alone.&n;&t; */
-id|set_auxio
-c_func
-(paren
-id|AUXIO_FLPY_EJCT
-comma
-l_int|0
-)paren
-suffix:semicolon
-multiline_comment|/* Bring EJECT line to normal. */
-id|udelay
-c_func
-(paren
-l_int|1000
-)paren
-suffix:semicolon
-id|sun_fd_eject
-c_func
-(paren
-l_int|0
-)paren
-suffix:semicolon
-multiline_comment|/* Send Eject Pulse. */
 multiline_comment|/* Success... */
 r_return
 (paren

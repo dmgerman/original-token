@@ -185,6 +185,7 @@ l_int|1
 suffix:semicolon
 id|current-&gt;flags
 op_and_assign
+op_complement
 id|PF_USEDFPU
 suffix:semicolon
 id|memcpy_fromfs
@@ -529,6 +530,7 @@ c_func
 suffix:semicolon
 id|current-&gt;flags
 op_and_assign
+op_complement
 id|PF_USEDFPU
 suffix:semicolon
 )brace

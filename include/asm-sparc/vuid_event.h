@@ -62,7 +62,7 @@ DECL|macro|VUIDSFORMAT
 mdefine_line|#define VUIDSFORMAT   _IOW(&squot;v&squot;, 1, int)
 multiline_comment|/* Retrieve input device byte stream format */
 DECL|macro|VUIDGFORMAT
-mdefine_line|#define VUIDGFORMAT   _IOR(v, 2, int)
+mdefine_line|#define VUIDGFORMAT   _IOR(&squot;v&squot;, 2, int)
 multiline_comment|/* Possible tag values */
 multiline_comment|/*    mouse buttons: */
 DECL|macro|MS_LEFT

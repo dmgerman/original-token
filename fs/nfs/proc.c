@@ -1,7 +1,6 @@
 multiline_comment|/*&n; *  linux/fs/nfs/proc.c&n; *&n; *  Copyright (C) 1992, 1993, 1994  Rick Sladkey&n; *&n; *  OS-independent nfs remote procedure call functions&n; *&n; *  Tuned by Alan Cox &lt;A.Cox@swansea.ac.uk&gt; for &gt;3K buffers&n; *  so at last we can have decent(ish) throughput off a &n; *  Sun server.&n; *&n; *  Coding optimized and cleaned up by Florian La Roche.&n; *  Note: Error returns are optimized for NFS_OK, which isn&squot;t translated via&n; *  nfs_stat_to_errno(), but happens to be already the right return code.&n; *&n; *  FixMe: We ought to define a sensible small max size for&n; *  things like getattr that are tiny packets and use the&n; *  old get_free_page stuff with it.&n; *&n; *  Also, the code currently doesn&squot;t check the size of the packet, when&n; *  it decodes the packet.&n; *&n; *  Feel free to fix it and mail me the diffs if it worries you.&n; */
 multiline_comment|/*&n; * Defining NFS_PROC_DEBUG causes a lookup of a file named&n; * &quot;xyzzy&quot; to toggle debugging.  Just cd to an NFS-mounted&n; * filesystem and type &squot;ls xyzzy&squot; to turn on debugging.&n; */
-macro_line|#if 1
-DECL|macro|NFS_PROC_DEBUG
+macro_line|#if 0
 mdefine_line|#define NFS_PROC_DEBUG
 macro_line|#endif
 macro_line|#include &lt;linux/param.h&gt;

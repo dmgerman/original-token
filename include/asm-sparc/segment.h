@@ -1,8 +1,10 @@
-multiline_comment|/* $Id: segment.h,v 1.9 1996/01/14 00:05:33 davem Exp $ */
+multiline_comment|/* $Id: segment.h,v 1.10 1996/03/08 01:19:38 miguel Exp $ */
 macro_line|#ifndef _ASM_SEGMENT_H
 DECL|macro|_ASM_SEGMENT_H
 mdefine_line|#define _ASM_SEGMENT_H
+macro_line|#ifdef __KERNEL__
 macro_line|#include &lt;asm/vac-ops.h&gt;
+macro_line|#endif
 macro_line|#ifndef __ASSEMBLY__
 multiline_comment|/*&n; * Uh, these should become the main single-value transfer routines..&n; * They automatically use the right size if we just have the right&n; * pointer type..&n; */
 DECL|macro|put_user

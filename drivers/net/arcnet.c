@@ -1,4 +1,4 @@
-multiline_comment|/* arcnet.c:&n;&t;Written 1994-1996 by Avery Pennarun,&n;&t;derived from skeleton.c by Donald Becker.&n;&n;&t;Contact Avery at: apenwarr@foxnet.net or&n;&t;RR #5 Pole Line Road, Thunder Bay, ON, Canada P7C 5M9&n;&t;&n;&t;**********************&n;&t;&n;&t;The original copyright was as follows:&n;&n;&t;skeleton.c Written 1993 by Donald Becker.&n;&t;Copyright 1993 United States Government as represented by the&n;        Director, National Security Agency.  This software may only be used&n;        and distributed according to the terms of the GNU Public License as&n;        modified by SRC, incorporated herein by reference.&n;         &n;&t;**********************&n;&t;&n;&t;v2.51 (96/02/29)&n;&t;  - Inserted a rather important missing &quot;volatile&quot; in autoprobe.&n;&t;  - arc0e and arc0s are now options in drivers/net/Config.in.&n;&t;&n;&t;v2.50 (96/02/24)&n;&t;  - Increased IRQ autoprobe delay.  Thanks to Andrew J. Kroll for&n;&t;    noticing the problem, which seems to only affect certain cards.&n;&t;  - Errors reserving ports and IRQ&squot;s now clean up after themselves.&n;&t;  - We now replace the TESTvalue byte from unused shmem addresses.&n;&t;  - You can now use &quot;irq=&quot; as well as &quot;irqnum=&quot; to set the IRQ&n;&t;    during module autoprobe.  This doesn&squot;t seem to crash insmod&n;&t;    anymore. (?)&n;&t;  - You can now define the name of the ARCnet device more easily&n;&t;    when loading the module: insmod arcnet.o device=test1&n;&t;    A new option, CONFIG_ARCNET_ETHNAME, allows the kernel to&n;&t;    choose one of the standard eth?-style device names&n;&t;    automatically.  This currently only works as a module.&n;&t;  - printk&squot;s now try to make some use of the KERN_xxx priority level&n;&t;    macros (though they may not be perfect yet).&n;&t;  - Packet and skb dump loops are now separate functions.&n;&t;  - Removed D_INIT from default debug level, because I am (finally)&n;&t;    pretty confident that autoprobe shouldn&squot;t toast anyone&squot;s&n;&t;    computer.&n;&t;  - This version is no longer ALPHA.&n;&n;&t;v2.41 ALPHA (96/02/10)&n;&t;  - Incorporated changes someone made to arcnet_setup in 1.3.60.&n;&t;  - Increased reset timeout to 3/10 of a second because some cards&n;&t;    are too slow.&n;&t;  - Removed a useless delay from autoprobe stage 4; I wonder&n;&t;    how that got there!  (oops)&n;&t;  - If FAST_IFCONFIG is defined, don&squot;t reset the card during&n;&t;    arcnet_open; rather, do it in arcnet_close but don&squot;t delay. &n;&t;    This speeds up calls to ifconfig up/down.  (Thanks to Vojtech&n;&t;    for the idea to speed this up.)&n;&t;  - If FAST_PROBE is defined, don&squot;t bother to reset the card in&n;&t;    autoprobe Stage 5 when there is only one io port and one shmem&n;&t;    left in the list.  They &quot;obviously&quot; correspond to each other. &n;&t;    Another good idea from Vojtech.&n;&n;&t;v2.40 ALPHA (96/02/03)&n;&t;  - Checked the RECON flag last in the interrupt handler (when&n;&t;    enabled) so the flag will show up in &quot;status&quot; when reporting&n;&t;    other errors.  (I had a cabling problem that was hard to notice&n;&t;    until I saw the huge RECON count in /proc/net/dev.)&n;&t;  - Moved &quot;IRQ for unknown device&quot; message to D_DURING.&n;&t;  - &quot;transmit timed out&quot; and &quot;not acknowledged&quot; messages are&n;&t;    now D_EXTRA, because they very commonly happen when things&n;&t;    are working fine.  &quot;transmit timed out&quot; due to missed IRQ&squot;s&n;&t;    is still D_NORMAL, because it&squot;s probably a bug.&n;&t;  - &quot;Transmit timed out&quot; messages now include destination station id.&n;&t;  - The virtual arc0e and arc0s devices can now be disabled. &n;&t;    Massive (but simple) code rearrangement to support this with&n;&t;    fewer ifdef&squot;s.&n;&t;  - SLOW_XMIT_COPY option so fast computers don&squot;t hog the bus.  It&squot;s&n;&t;    weird, but it works.&n;&t;  - Finally redesigned autoprobe after some discussion with Vojtech&n;&t;    Pavlik &lt;Vojtech.Pavlik@st.mff.cuni.cz&gt;.  It should be much safer&n;&t;    and more reliable now, I think.  We now probe several more io&n;&t;    ports and many more shmem addresses.&n;&t;  - Rearranged D_* debugging flags slightly.  Watch out!  There is&n;&t;    now a new flag, disabled by default, that will tell you the&n;&t;    reason a particular port or shmem is discarded from the list.&n;&n;&t;v2.30 ALPHA (96/01/10)&n;&t;  - Abandoned support for Linux 1.2 to simplify coding and allow me&n;&t;    to take advantage of new features in 1.3.&n;&t;  - Updated cabling/jumpers documentation with MUCH information that&n;&t;    people have recently (and in some cases, not so recently) sent&n;&t;    me.  I don&squot;t mind writing documentation, but the jumpers&n;&t;    database is REALLY starting to get dull.&n;&t;  - Autoprobing works as a module now - but ONLY with my fix to&n;&t;    register_netdev and unregister_netdev.  It&squot;s also much faster,&n;&t;    and uses the &quot;new-style&quot; IRQ autoprobe routines.  Autoprobe is&n;&t;    still a horrible mess and will be cleaned up further as time&n;&t;    passes.&n;&t;    &n;&t;The following has been SUMMARIZED.  The complete ChangeLog is&n;&t;available in the full Linux-ARCnet package.&n;&t;&n;&t;v2.22 (95/12/08)&n;&t;  - Major cleanups, speedups, and better code-sharing.&n;&t;  - Eliminated/changed many useless/meaningless/scary debug messages&n;&t;    (and, in most cases, the bugs that caused them).&n;&t;  - Better IPX support.&n;&t;  - lp-&gt;stats updated properly.&n;&t;  - RECON checking now by default only prints a message if there are&n;&t;    excessive errors (ie. your cable is probably broken).&n;&t;  - New RFC1051-compliant &quot;arc0s&quot; virtual device by Tomasz&n;&t;    Motylewski.&n;&t;  - Excess debug messages can be compiled out to reduce code size.&n;&n;&t;v2.00 (95/09/06)&n;&t;  - ARCnet RECON messages are now detected and logged as &quot;carrier&quot;&n;&t;    errors.&n;&t;  - The TXACK flag is now checked, and errors are logged.&n;&t;  - Debug levels are now completely different.  See the README.&n;&t;  - Massive code cleanups, with several no-longer-necessary and some&n;&t;    completely useless options removed.&n;&t;  - Multiprotocol support.  You can now use the &quot;arc0e&quot; device to&n;&t;    send &quot;Ethernet-Encapsulation&quot; packets, which are compatible with&n;&t;    Windows for Workgroups and LAN Manager, and possibly other&n;&t;    software.  See the README for more information.&n;&t;  &n;&t;v1.02 (95/06/21)&n;          - A fix to make &quot;exception&quot; packets sent from Linux receivable&n;&t;    on other systems.  (The protocol_id byte was sometimes being set&n;&t;    incorrectly, and Linux wasn&squot;t checking it on receive so it&n;&t;    didn&squot;t show up)&n;&n;&t;v1.01 (95/03/24)&n;&t;  - Fixed some IPX-related bugs. (Thanks to Tomasz Motylewski&n;            &lt;motyl@tichy.ch.uj.edu.pl&gt; for the patches to make arcnet work&n;            with dosemu!)&n;            &n;&t;v1.00 (95/02/15)&n;&t;  - Initial non-alpha release.&n;&t;&n;         &n;&t;TO DO: (semi-prioritized)&n;&t;&n;         - Make arcnetE_send_packet use arcnet_prepare_tx for loading the&n;           packet into ARCnet memory.&n;&t; - Probe for multiple devices in one shot (trying to decide whether&n;&t;   to do it the &quot;ugly&quot; way or not).&n;         - Add support for the new 1.3.x IP header cache features.&n;&t; - Debug level should be changed with a system call, not a hack to&n;&t;   the &quot;metric&quot; flag.&n;         - What about cards with shared memory that can be &quot;turned off?&quot;&n;           (or that have none at all, like the SMC PC500longboard)&n;         - Autoconfigure PDI5xxPlus cards. (I now have a PDI508Plus to play&n;           with temporarily.)  Update: yes, the Pure Data config program&n;           for DOS works fine, but the PDI508Plus I have doesn&squot;t! :)&n;         - Try to implement promiscuous (receive-all-packets) mode available&n;           on some newer cards with COM20020 and similar chips.  I don&squot;t have&n;           one, but SMC sent me the specs.&n;         - ATA protocol support?? &n;         - VINES TCP/IP encapsulation?? (info needed)&n;&n;           &n;&t;Sources:&n;&t; - Crynwr arcnet.com/arcether.com packet drivers.&n;&t; - arcnet.c v0.00 dated 1/1/94 and apparently by&n;&t; &t;Donald Becker - it didn&squot;t work :)&n;&t; - skeleton.c v0.05 dated 11/16/93 by Donald Becker&n;&t; &t;(from Linux Kernel 1.1.45)&n;&t; - RFC&squot;s 1201 and 1051 - re: TCP/IP over ARCnet&n;&t; - The official ARCnet COM9026 data sheets (!) thanks to Ken&n;&t;&t;Cornetet &lt;kcornete@nyx10.cs.du.edu&gt;&n;&t; - Information on some more obscure ARCnet controller chips, thanks&n;&t;   to the nice people at SMC.&n;&t; - net/inet/eth.c (from kernel 1.1.50) for header-building info.&n;&t; - Alternate Linux ARCnet source by V.Shergin &lt;vsher@sao.stavropol.su&gt;&n;&t; - Textual information and more alternate source from Joachim Koenig&n;&t; &t;&lt;jojo@repas.de&gt;&n;*/
+multiline_comment|/* arcnet.c:&n;&t;Written 1994-1996 by Avery Pennarun,&n;&t;derived from skeleton.c by Donald Becker.&n;&n;&t;Contact Avery at: apenwarr@foxnet.net or&n;&t;RR #5 Pole Line Road, Thunder Bay, ON, Canada P7C 5M9&n;&t;&n;&t;**********************&n;&t;&n;&t;The original copyright was as follows:&n;&n;&t;skeleton.c Written 1993 by Donald Becker.&n;&t;Copyright 1993 United States Government as represented by the&n;        Director, National Security Agency.  This software may only be used&n;        and distributed according to the terms of the GNU Public License as&n;        modified by SRC, incorporated herein by reference.&n;         &n;&t;**********************&n;&t;&n;&t;v2.52 (96/04/20)&n;&t;  - Replaced more decimal node ID&squot;s with hex, for consistency.&n;&t;  - Changed a couple of printk debug levels.&n;&n;&t;v2.51 (96/02/29)&n;&t;  - Inserted a rather important missing &quot;volatile&quot; in autoprobe.&n;&t;  - arc0e and arc0s are now options in drivers/net/Config.in.&n;&t;&n;&t;v2.50 (96/02/24)&n;&t;  - Increased IRQ autoprobe delay.  Thanks to Andrew J. Kroll for&n;&t;    noticing the problem, which seems to only affect certain cards.&n;&t;  - Errors reserving ports and IRQ&squot;s now clean up after themselves.&n;&t;  - We now replace the TESTvalue byte from unused shmem addresses.&n;&t;  - You can now use &quot;irq=&quot; as well as &quot;irqnum=&quot; to set the IRQ&n;&t;    during module autoprobe.  This doesn&squot;t seem to crash insmod&n;&t;    anymore. (?)&n;&t;  - You can now define the name of the ARCnet device more easily&n;&t;    when loading the module: insmod arcnet.o device=test1&n;&t;    A new option, CONFIG_ARCNET_ETHNAME, allows the kernel to&n;&t;    choose one of the standard eth?-style device names&n;&t;    automatically.  This currently only works as a module.&n;&t;  - printk&squot;s now try to make some use of the KERN_xxx priority level&n;&t;    macros (though they may not be perfect yet).&n;&t;  - Packet and skb dump loops are now separate functions.&n;&t;  - Removed D_INIT from default debug level, because I am (finally)&n;&t;    pretty confident that autoprobe shouldn&squot;t toast anyone&squot;s&n;&t;    computer.&n;&t;  - This version is no longer ALPHA.&n;&n;&t;v2.41 ALPHA (96/02/10)&n;&t;  - Incorporated changes someone made to arcnet_setup in 1.3.60.&n;&t;  - Increased reset timeout to 3/10 of a second because some cards&n;&t;    are too slow.&n;&t;  - Removed a useless delay from autoprobe stage 4; I wonder&n;&t;    how that got there!  (oops)&n;&t;  - If FAST_IFCONFIG is defined, don&squot;t reset the card during&n;&t;    arcnet_open; rather, do it in arcnet_close but don&squot;t delay. &n;&t;    This speeds up calls to ifconfig up/down.  (Thanks to Vojtech&n;&t;    for the idea to speed this up.)&n;&t;  - If FAST_PROBE is defined, don&squot;t bother to reset the card in&n;&t;    autoprobe Stage 5 when there is only one io port and one shmem&n;&t;    left in the list.  They &quot;obviously&quot; correspond to each other. &n;&t;    Another good idea from Vojtech.&n;&n;&t;v2.40 ALPHA (96/02/03)&n;&t;  - Checked the RECON flag last in the interrupt handler (when&n;&t;    enabled) so the flag will show up in &quot;status&quot; when reporting&n;&t;    other errors.  (I had a cabling problem that was hard to notice&n;&t;    until I saw the huge RECON count in /proc/net/dev.)&n;&t;  - Moved &quot;IRQ for unknown device&quot; message to D_DURING.&n;&t;  - &quot;transmit timed out&quot; and &quot;not acknowledged&quot; messages are&n;&t;    now D_EXTRA, because they very commonly happen when things&n;&t;    are working fine.  &quot;transmit timed out&quot; due to missed IRQ&squot;s&n;&t;    is still D_NORMAL, because it&squot;s probably a bug.&n;&t;  - &quot;Transmit timed out&quot; messages now include destination station id.&n;&t;  - The virtual arc0e and arc0s devices can now be disabled. &n;&t;    Massive (but simple) code rearrangement to support this with&n;&t;    fewer ifdef&squot;s.&n;&t;  - SLOW_XMIT_COPY option so fast computers don&squot;t hog the bus.  It&squot;s&n;&t;    weird, but it works.&n;&t;  - Finally redesigned autoprobe after some discussion with Vojtech&n;&t;    Pavlik &lt;Vojtech.Pavlik@st.mff.cuni.cz&gt;.  It should be much safer&n;&t;    and more reliable now, I think.  We now probe several more io&n;&t;    ports and many more shmem addresses.&n;&t;  - Rearranged D_* debugging flags slightly.  Watch out!  There is&n;&t;    now a new flag, disabled by default, that will tell you the&n;&t;    reason a particular port or shmem is discarded from the list.&n;&n;&t;v2.30 ALPHA (96/01/10)&n;&t;  - Abandoned support for Linux 1.2 to simplify coding and allow me&n;&t;    to take advantage of new features in 1.3.&n;&t;  - Updated cabling/jumpers documentation with MUCH information that&n;&t;    people have recently (and in some cases, not so recently) sent&n;&t;    me.  I don&squot;t mind writing documentation, but the jumpers&n;&t;    database is REALLY starting to get dull.&n;&t;  - Autoprobing works as a module now - but ONLY with my fix to&n;&t;    register_netdev and unregister_netdev.  It&squot;s also much faster,&n;&t;    and uses the &quot;new-style&quot; IRQ autoprobe routines.  Autoprobe is&n;&t;    still a horrible mess and will be cleaned up further as time&n;&t;    passes.&n;&t;    &n;&t;The following has been SUMMARIZED.  The complete ChangeLog is&n;&t;available in the full Linux-ARCnet package.&n;&t;&n;&t;v2.22 (95/12/08)&n;&t;  - Major cleanups, speedups, and better code-sharing.&n;&t;  - Eliminated/changed many useless/meaningless/scary debug messages&n;&t;    (and, in most cases, the bugs that caused them).&n;&t;  - Better IPX support.&n;&t;  - lp-&gt;stats updated properly.&n;&t;  - RECON checking now by default only prints a message if there are&n;&t;    excessive errors (ie. your cable is probably broken).&n;&t;  - New RFC1051-compliant &quot;arc0s&quot; virtual device by Tomasz&n;&t;    Motylewski.&n;&t;  - Excess debug messages can be compiled out to reduce code size.&n;&n;&t;v2.00 (95/09/06)&n;&t;  - ARCnet RECON messages are now detected and logged as &quot;carrier&quot;&n;&t;    errors.&n;&t;  - The TXACK flag is now checked, and errors are logged.&n;&t;  - Debug levels are now completely different.  See the README.&n;&t;  - Massive code cleanups, with several no-longer-necessary and some&n;&t;    completely useless options removed.&n;&t;  - Multiprotocol support.  You can now use the &quot;arc0e&quot; device to&n;&t;    send &quot;Ethernet-Encapsulation&quot; packets, which are compatible with&n;&t;    Windows for Workgroups and LAN Manager, and possibly other&n;&t;    software.  See the README for more information.&n;&t;  &n;&t;v1.02 (95/06/21)&n;          - A fix to make &quot;exception&quot; packets sent from Linux receivable&n;&t;    on other systems.  (The protocol_id byte was sometimes being set&n;&t;    incorrectly, and Linux wasn&squot;t checking it on receive so it&n;&t;    didn&squot;t show up)&n;&n;&t;v1.01 (95/03/24)&n;&t;  - Fixed some IPX-related bugs. (Thanks to Tomasz Motylewski&n;            &lt;motyl@tichy.ch.uj.edu.pl&gt; for the patches to make arcnet work&n;            with dosemu!)&n;            &n;&t;v1.00 (95/02/15)&n;&t;  - Initial non-alpha release.&n;&t;&n;         &n;&t;TO DO: (semi-prioritized)&n;&t;&n;         - Smarter recovery from RECON-during-transmit conditions.&n;         - Make arcnetE_send_packet use arcnet_prepare_tx for loading the&n;           packet into ARCnet memory.&n;&t; - Probe for multiple devices in one shot (trying to decide whether&n;&t;   to do it the &quot;ugly&quot; way or not).&n;         - Add support for the new 1.3.x IP header cache features.&n;&t; - Debug level should be changed with a system call, not a hack to&n;&t;   the &quot;metric&quot; flag.&n;         - What about cards with shared memory that can be &quot;turned off?&quot;&n;           (or that have none at all, like the SMC PC500longboard)&n;         - Autoconfigure PDI5xxPlus cards. (I now have a PDI508Plus to play&n;           with temporarily.)  Update: yes, the Pure Data config program&n;           for DOS works fine, but the PDI508Plus I have doesn&squot;t! :)&n;         - Try to implement promiscuous (receive-all-packets) mode available&n;           on some newer cards with COM20020 and similar chips.  I don&squot;t have&n;           one, but SMC sent me the specs.&n;         - ATA protocol support?? &n;         - VINES TCP/IP encapsulation?? (info needed)&n;&n;           &n;&t;Sources:&n;&t; - Crynwr arcnet.com/arcether.com packet drivers.&n;&t; - arcnet.c v0.00 dated 1/1/94 and apparently by&n;&t; &t;Donald Becker - it didn&squot;t work :)&n;&t; - skeleton.c v0.05 dated 11/16/93 by Donald Becker&n;&t; &t;(from Linux Kernel 1.1.45)&n;&t; - RFC&squot;s 1201 and 1051 - re: TCP/IP over ARCnet&n;&t; - The official ARCnet COM9026 data sheets (!) thanks to Ken&n;&t;&t;Cornetet &lt;kcornete@nyx10.cs.du.edu&gt;&n;&t; - Information on some more obscure ARCnet controller chips, thanks&n;&t;   to the nice people at SMC.&n;&t; - net/inet/eth.c (from kernel 1.1.50) for header-building info.&n;&t; - Alternate Linux ARCnet source by V.Shergin &lt;vsher@sao.stavropol.su&gt;&n;&t; - Textual information and more alternate source from Joachim Koenig&n;&t; &t;&lt;jojo@repas.de&gt;&n;*/
 DECL|variable|version
 r_static
 r_const
@@ -6,7 +6,7 @@ r_char
 op_star
 id|version
 op_assign
-l_string|&quot;arcnet.c: v2.51 96/02/29 Avery Pennarun &lt;apenwarr@foxnet.net&gt;&bslash;n&quot;
+l_string|&quot;arcnet.c: v2.52 96/04/20 Avery Pennarun &lt;apenwarr@foxnet.net&gt;&bslash;n&quot;
 suffix:semicolon
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
@@ -102,7 +102,7 @@ mdefine_line|#define BUGLVL(x) if ((ARCNET_DEBUG_MAX)&amp;arcnet_debug&amp;(x))
 DECL|macro|BUGMSG2
 mdefine_line|#define BUGMSG2(x,msg,args...) BUGLVL(x) printk(msg, ## args)
 DECL|macro|BUGMSG
-mdefine_line|#define BUGMSG(x,msg,args...) BUGMSG2(x,&quot;%s%6s: &quot; msg, &bslash;&n;&t;x==D_NORMAL ? &quot;&quot; : x&lt;=D_INIT_REASONS ? KERN_INFO : KERN_DEBUG , &bslash;&n;&t;dev-&gt;name , ## args)
+mdefine_line|#define BUGMSG(x,msg,args...) BUGMSG2(x,&quot;%s%6s: &quot; msg, &bslash;&n;            x==D_NORMAL&t;? KERN_WARNING : &bslash;&n;      x&lt;=D_INIT_REASONS&t;? KERN_INFO    : KERN_DEBUG , &bslash;&n;&t;dev-&gt;name , ## args)
 multiline_comment|/* Some useful multiprotocol macros.  The idea here is that GCC will&n; * optimize away multiple tests or assignments to lp-&gt;adev.  Relying on this&n; * results in the cleanest mess possible.&n; */
 DECL|macro|ADEV
 mdefine_line|#define ADEV lp-&gt;adev
@@ -1926,9 +1926,9 @@ id|numports
 id|BUGMSG
 c_func
 (paren
-id|D_INIT
+id|D_NORMAL
 comma
-l_string|&quot;Stage 1: failed.  No ARCnet cards found.&bslash;n&quot;
+l_string|&quot;Stage 1: No ARCnet cards found.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -2273,9 +2273,9 @@ id|numshmems
 id|BUGMSG
 c_func
 (paren
-id|D_INIT
+id|D_NORMAL
 comma
-l_string|&quot;Stage 3: failed.  No ARCnet cards found.&bslash;n&quot;
+l_string|&quot;Stage 3: No ARCnet cards found.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -2750,6 +2750,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
+multiline_comment|/* just one shmem and port, assume they match */
 op_star
 (paren
 id|u_char
@@ -2995,6 +2996,19 @@ id|shmem
 )paren
 op_assign
 id|TESTvalue
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|retval
+)paren
+id|BUGMSG
+c_func
+(paren
+id|D_NORMAL
+comma
+l_string|&quot;Stage 5: No ARCnet cards found.&bslash;n&quot;
+)paren
 suffix:semicolon
 r_return
 id|retval
@@ -3363,7 +3377,7 @@ c_func
 (paren
 id|D_NORMAL
 comma
-l_string|&quot;WARNING!  Station address 0 is reserved &quot;
+l_string|&quot;WARNING!  Station address 00 is reserved &quot;
 l_string|&quot;for broadcasts!&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -4413,7 +4427,7 @@ c_func
 (paren
 id|D_NORMAL
 comma
-l_string|&quot;tx timeout - missed IRQ? (status=%Xh, ticks=%d, mask=%Xh, dest=%d)&bslash;n&quot;
+l_string|&quot;tx timeout - missed IRQ? (status=%Xh, ticks=%d, mask=%Xh, dest=%02Xh)&bslash;n&quot;
 comma
 id|status
 comma
@@ -4435,7 +4449,7 @@ c_func
 (paren
 id|D_EXTRA
 comma
-l_string|&quot;tx timed out (status=%Xh, tickssofar=%d, intmask=%Xh, dest=%d)&bslash;n&quot;
+l_string|&quot;tx timed out (status=%Xh, tickssofar=%d, intmask=%Xh, dest=%02Xh)&bslash;n&quot;
 comma
 id|status
 comma
@@ -6267,7 +6281,7 @@ c_func
 (paren
 id|D_EXTRA
 comma
-l_string|&quot;transmit was not acknowledged! (status=%Xh, dest=%d)&bslash;n&quot;
+l_string|&quot;transmit was not acknowledged! (status=%Xh, dest=%02Xh)&bslash;n&quot;
 comma
 id|status
 comma
@@ -6288,7 +6302,7 @@ c_func
 (paren
 id|D_DURING
 comma
-l_string|&quot;broadcast was not acknowledged; that&squot;s normal (status=%Xh, dest=%d)&bslash;n&quot;
+l_string|&quot;broadcast was not acknowledged; that&squot;s normal (status=%Xh, dest=%02Xh)&bslash;n&quot;
 comma
 id|status
 comma

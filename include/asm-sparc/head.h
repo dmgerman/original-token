@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: head.h,v 1.23 1996/02/15 09:12:55 davem Exp $ */
+multiline_comment|/* $Id: head.h,v 1.26 1996/03/25 20:21:08 davem Exp $ */
 macro_line|#ifndef __SPARC_HEAD_H
 DECL|macro|__SPARC_HEAD_H
 mdefine_line|#define __SPARC_HEAD_H
@@ -13,7 +13,7 @@ mdefine_line|#define SRMMU_L1_KBASE_OFFSET ((KERNBASE&gt;&gt;24)&lt;&lt;2)  /* U
 DECL|macro|INTS_ENAB
 mdefine_line|#define INTS_ENAB        0x01           /* entry.S uses this. */
 DECL|macro|NCPUS
-mdefine_line|#define NCPUS            4              /* Architectural limit of sun4m. */
+mdefine_line|#define NCPUS            4              /* Architectual limit of sun4m. */
 DECL|macro|SUN4_PROM_VECTOR
 mdefine_line|#define SUN4_PROM_VECTOR 0xFFE81000     /* To safely die on a SUN4 */
 DECL|macro|SUN4_PRINTF
@@ -31,6 +31,10 @@ DECL|macro|SPARC_TFAULT
 mdefine_line|#define SPARC_TFAULT rd %psr, %l0; rd %wim, %l3; b sun4c_fault; mov 1, %l7;
 DECL|macro|SPARC_DFAULT
 mdefine_line|#define SPARC_DFAULT rd %psr, %l0; rd %wim, %l3; b sun4c_fault; mov 0, %l7;
+DECL|macro|SRMMU_TFAULT
+mdefine_line|#define SRMMU_TFAULT rd %psr, %l0; rd %wim, %l3; b C_LABEL(srmmu_fault); mov 1, %l7;
+DECL|macro|SRMMU_DFAULT
+mdefine_line|#define SRMMU_DFAULT rd %psr, %l0; rd %wim, %l3; b C_LABEL(srmmu_fault); mov 0, %l7;
 multiline_comment|/* This is for traps we should NEVER get. */
 DECL|macro|BAD_TRAP
 mdefine_line|#define BAD_TRAP(num) &bslash;&n;        rd %psr, %l0; mov num, %l7; b bad_trap_handler; rd %wim, %l3;
@@ -43,20 +47,20 @@ DECL|macro|SUNOS_SYSCALL_TRAP
 mdefine_line|#define SUNOS_SYSCALL_TRAP &bslash;&n;        rd %psr, %l0; &bslash;&n;        sethi %hi(C_LABEL(sunos_sys_table)), %l7; &bslash;&n;        b linux_sparc_syscall; &bslash;&n;        or %l7, %lo(C_LABEL(sunos_sys_table)), %l7;
 multiline_comment|/* Software trap for Slowaris system calls. */
 DECL|macro|SOLARIS_SYSCALL_TRAP
-mdefine_line|#define SOLARIS_SYSCALL_TRAP &bslash;&n;        sethi %hi(C_LABEL(sys_call_table)), %l7; &bslash;&n;        or %l7, %lo(C_LABEL(sys_call_table)), %l7; &bslash;&n;        b linux_sparc_syscall; &bslash;&n;        rd %psr, %l0;
+mdefine_line|#define SOLARIS_SYSCALL_TRAP &bslash;&n;        sethi %hi(C_LABEL(sys_call_table)), %l7; &bslash;&n;        or %l7, %lo(C_LABEL(sys_call_table)), %l7; &bslash;&n;        b solaris_syscall; &bslash;&n;        rd %psr, %l0;
 multiline_comment|/* Software trap for Sparc-netbsd system calls. */
 DECL|macro|NETBSD_SYSCALL_TRAP
-mdefine_line|#define NETBSD_SYSCALL_TRAP &bslash;&n;        sethi %hi(C_LABEL(sys_call_table)), %l7; &bslash;&n;        or %l7, %lo(C_LABEL(sys_call_table)), %l7; &bslash;&n;        b linux_sparc_syscall; &bslash;&n;        rd %psr, %l0;
+mdefine_line|#define NETBSD_SYSCALL_TRAP &bslash;&n;        sethi %hi(C_LABEL(sys_call_table)), %l7; &bslash;&n;        or %l7, %lo(C_LABEL(sys_call_table)), %l7; &bslash;&n;        b bsd_syscall; &bslash;&n;        rd %psr, %l0;
 multiline_comment|/* The Get Condition Codes software trap for userland. */
 DECL|macro|GETCC_TRAP
-mdefine_line|#define GETCC_TRAP &bslash;&n;        b getcc_trap_handler; mov %psr, %l0; nop; nop
+mdefine_line|#define GETCC_TRAP &bslash;&n;        b getcc_trap_handler; mov %psr, %l0; nop; nop;
 multiline_comment|/* The Set Condition Codes software trap for userland. */
 DECL|macro|SETCC_TRAP
-mdefine_line|#define SETCC_TRAP &bslash;&n;        b setcc_trap_handler; mov %psr, %l0; nop; nop
+mdefine_line|#define SETCC_TRAP &bslash;&n;        b setcc_trap_handler; mov %psr, %l0; nop; nop;
 multiline_comment|/* This is for hard interrupts from level 1-14, 15 is non-maskable (nmi) and&n; * gets handled with another macro.&n; */
 DECL|macro|TRAP_ENTRY_INTERRUPT
 mdefine_line|#define TRAP_ENTRY_INTERRUPT(int_level) &bslash;&n;        mov int_level, %l7; rd %psr, %l0; b real_irq_entry; rd %wim, %l3;
-multiline_comment|/* NMI&squot;s (Non Maskable Interrupts) are special, you can&squot;t keep them&n; * from coming in, and basically if you get one, the shows over. ;(&n; * On the sun4c they are usually asynchronous memory errors, on the&n; * the sun4m they could be either due to mem errors or a software&n; * initiated interrupt from the prom/kern on an SMP box saying &quot;I&n; * command you to do CPU tricks, read your mailbox for more info.&quot;&n; */
+multiline_comment|/* NMI&squot;s (Non Maskable Interrupts) are special, you can&squot;t keep them&n; * from coming in, and basically if you get one, the shows over. ;(&n; * On the sun4c they are usually asyncronous memory errors, on the&n; * the sun4m they could be either due to mem errors or a software&n; * initiated interrupt from the prom/kern on an SMP box saying &quot;I&n; * command you to do CPU tricks, read your mailbox for more info.&quot;&n; */
 DECL|macro|NMI_TRAP
 mdefine_line|#define NMI_TRAP &bslash;&n;        rd %wim, %l3; b linux_trap_nmi_sun4c; mov %psr, %l0; nop;
 multiline_comment|/* Window overflows/underflows are special and we need to try and be as&n; * efficient as possible here....&n; */

@@ -1,3 +1,4 @@
+multiline_comment|/* $Id: config.c,v 1.1 1996/04/13 10:23:11 fritz Exp $&n; *&n; * $Log: config.c,v $&n; * Revision 1.1  1996/04/13 10:23:11  fritz&n; * Initial revision&n; *&n; *&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &lt;linux/types.h&gt;

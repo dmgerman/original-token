@@ -5232,6 +5232,50 @@ id|dtr
 op_assign
 l_int|300
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|FDCS-&gt;version
+op_ge
+id|FDC_82078
+)paren
+(brace
+multiline_comment|/* chose the default rate table, not the one&n;&t;&t;&t;&t; * where 1 = 2 Mbps */
+id|output_byte
+c_func
+(paren
+id|FD_DRIVESPEC
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|need_more_output
+c_func
+(paren
+)paren
+op_eq
+id|MORE_OUTPUT
+)paren
+(brace
+id|output_byte
+c_func
+(paren
+id|UNIT
+c_func
+(paren
+id|current_drive
+)paren
+)paren
+suffix:semicolon
+id|output_byte
+c_func
+(paren
+l_int|0xc0
+)paren
+suffix:semicolon
+)brace
+)brace
 r_break
 suffix:semicolon
 r_case
@@ -13127,8 +13171,9 @@ c_cond
 (paren
 id|ptr-&gt;cmd_count
 OG
-l_int|16
+l_int|33
 )paren
+multiline_comment|/* the command may now also take up the space&n;&t;&t;&t;&t; * initially intended for the reply &amp; the&n;&t;&t;&t;&t; * reply count. Needed for long 82078 commands&n;&t;&t;&t;&t; * such as RESTORE, which takes ... 17 command&n;&t;&t;&t;&t; * bytes. Murphy&squot;s law #137: When you reserve&n;&t;&t;&t;&t; * 16 bytes for a structure, you&squot;ll one day&n;&t;&t;&t;&t; * discover that you really need 17...&n;&t;&t;&t;&t; */
 r_return
 op_minus
 id|EINVAL
@@ -17360,7 +17405,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;FDC %d init: 82077 variant with PARTID=%d.&bslash;n&quot;
+l_string|&quot;FDC %d init: 82078 variant with unknown PARTID=%d.&bslash;n&quot;
 comma
 id|fdc
 comma
@@ -17373,7 +17418,7 @@ l_int|5
 )paren
 suffix:semicolon
 r_return
-id|FDC_82077_UNKN
+id|FDC_82078_UNKN
 suffix:semicolon
 )brace
 )brace

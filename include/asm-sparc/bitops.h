@@ -1,10 +1,17 @@
-multiline_comment|/* $Id: bitops.h,v 1.18 1996/01/03 03:53:00 davem Exp $&n; * bitops.h: Bit string operations on the Sparc.&n; *&n; * Copyright 1995, David S. Miller (davem@caip.rutgers.edu).&n; */
+multiline_comment|/* $Id: bitops.h,v 1.23 1996/04/20 07:54:35 davem Exp $&n; * bitops.h: Bit string operations on the Sparc.&n; *&n; * Copyright 1995, David S. Miller (davem@caip.rutgers.edu).&n; */
 macro_line|#ifndef _SPARC_BITOPS_H
 DECL|macro|_SPARC_BITOPS_H
 mdefine_line|#define _SPARC_BITOPS_H
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#ifdef __KERNEL__
 macro_line|#include &lt;asm/system.h&gt;
+macro_line|#endif
+macro_line|#ifdef __SMP__
+DECL|macro|SMPVOL
+mdefine_line|#define SMPVOL volatile
+macro_line|#else
+DECL|macro|SMPVOL
+mdefine_line|#define SMPVOL
 macro_line|#endif
 multiline_comment|/* Set bit &squot;nr&squot; in 32-bit quantity at address &squot;addr&squot; where bit &squot;0&squot;&n; * is in the highest of the four bytes and bit &squot;31&squot; is the high bit&n; * within the first byte. Sparc is BIG-Endian. Unless noted otherwise&n; * all bit-ops return 0 if bit was previously clear and != 0 otherwise.&n; */
 DECL|function|set_bit
@@ -19,6 +26,7 @@ r_int
 r_int
 id|nr
 comma
+id|SMPVOL
 r_void
 op_star
 id|addr
@@ -110,6 +118,7 @@ r_int
 r_int
 id|nr
 comma
+id|SMPVOL
 r_void
 op_star
 id|addr
@@ -202,6 +211,7 @@ r_int
 r_int
 id|nr
 comma
+id|SMPVOL
 r_void
 op_star
 id|addr
@@ -294,13 +304,23 @@ r_int
 id|nr
 comma
 r_const
+id|SMPVOL
 r_void
 op_star
 id|addr
 )paren
 (brace
 r_return
+(paren
+(paren
 l_int|1UL
+op_lshift
+(paren
+id|nr
+op_amp
+l_int|31
+)paren
+)paren
 op_amp
 (paren
 (paren
@@ -317,13 +337,10 @@ id|nr
 op_rshift
 l_int|5
 )braket
-op_rshift
-(paren
-id|nr
-op_amp
-l_int|31
 )paren
 )paren
+op_ne
+l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* The easy/cheese version for now. */
@@ -457,7 +474,7 @@ id|tmp
 op_or_assign
 op_complement
 l_int|0UL
-op_lshift
+op_rshift
 (paren
 l_int|32
 op_minus

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sparc-stub.c,v 1.10 1996/02/15 09:12:09 davem Exp $&n; * sparc-stub.c:  KGDB support for the Linux kernel.&n; *&n; * Modifications to run under Linux&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; *&n; * This file originally came from the gdb sources, and the&n; * copyright notices have been retained below.&n; */
+multiline_comment|/* $Id: sparc-stub.c,v 1.15 1996/04/04 12:41:35 davem Exp $&n; * sparc-stub.c:  KGDB support for the Linux kernel.&n; *&n; * Modifications to run under Linux&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; *&n; * This file origionally came from the gdb sources, and the&n; * copyright notices have been retained below.&n; */
 multiline_comment|/****************************************************************************&n;&n;&t;&t;THIS SOFTWARE IS NOT COPYRIGHTED&n;&n;   HP offers the following for use in the public domain.  HP makes no&n;   warranty with regard to the software or it&squot;s performance and the&n;   user accepts the software &quot;AS IS&quot; with all faults.&n;&n;   HP DISCLAIMS ANY WARRANTIES, EXPRESS OR IMPLIED, WITH REGARD&n;   TO THIS SOFTWARE INCLUDING BUT NOT LIMITED TO THE WARRANTIES&n;   OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.&n;&n;****************************************************************************/
 multiline_comment|/****************************************************************************&n; *  Header: remcom.c,v 1.34 91/03/09 12:29:49 glenne Exp $&n; *&n; *  Module name: remcom.c $&n; *  Revision: 1.34 $&n; *  Date: 91/03/09 12:29:49 $&n; *  Contributor:     Lake Stevens Instrument Division$&n; *&n; *  Description:     low level support for gdb debugger. $&n; *&n; *  Considerations:  only works on target hardware $&n; *&n; *  Written by:      Glenn Engel $&n; *  ModuleState:     Experimental $&n; *&n; *  NOTES:           See Below $&n; *&n; *  Modified for SPARC by Stu Grossman, Cygnus Support.&n; *&n; *  This code has been extensively tested on the Fujitsu SPARClite demo board.&n; *&n; *  To enable debugger support, two things need to happen.  One, a&n; *  call to set_debug_traps() is necessary in order to allow any breakpoints&n; *  or error conditions to be properly intercepted and reported to gdb.&n; *  Two, a breakpoint needs to be generated to begin communication.  This&n; *  is most easily accomplished by a call to breakpoint().  Breakpoint()&n; *  simulates a breakpoint by executing a trap #1.&n; *&n; *************&n; *&n; *    The following gdb commands are supported:&n; *&n; * command          function                               Return value&n; *&n; *    g             return the value of the CPU registers  hex data or ENN&n; *    G             set the value of the CPU registers     OK or ENN&n; *&n; *    mAA..AA,LLLL  Read LLLL bytes at address AA..AA      hex data or ENN&n; *    MAA..AA,LLLL: Write LLLL bytes at address AA.AA      OK or ENN&n; *&n; *    c             Resume at current address              SNN   ( signal NN)&n; *    cAA..AA       Continue at address AA..AA             SNN&n; *&n; *    s             Step one instruction                   SNN&n; *    sAA..AA       Step one instruction from AA..AA       SNN&n; *&n; *    k             kill&n; *&n; *    ?             What was the last sigval ?             SNN   (signal NN)&n; *&n; *    bBB..BB&t;    Set baud rate to BB..BB&t;&t;   OK or BNN, then sets&n; *&t;&t;&t;&t;&t;&t;&t;   baud rate&n; *&n; * All commands and responses are sent with a packet which includes a&n; * checksum.  A packet consists of&n; *&n; * $&lt;packet info&gt;#&lt;checksum&gt;.&n; *&n; * where&n; * &lt;packet info&gt; :: &lt;characters representing the command or response&gt;&n; * &lt;checksum&gt;    :: &lt; two hex digits computed as modulo 256 sum of &lt;packetinfo&gt;&gt;&n; *&n; * When a packet is received, it is first acknowledged with either &squot;+&squot; or &squot;-&squot;.&n; * &squot;+&squot; indicates a successful transfer.  &squot;-&squot; indicates a failed transfer.&n; *&n; * Example:&n; *&n; * Host:                  Reply:&n; * $m0,10#2a               +$00010203040506070809101112131415#42&n; *&n; ****************************************************************************/
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -12,6 +12,7 @@ macro_line|#include &lt;asm/traps.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/vac-ops.h&gt;
 macro_line|#include &lt;asm/kgdb.h&gt;
+macro_line|#include &lt;asm/pgtable.h&gt;
 multiline_comment|/*&n; *&n; * external low-level support routines&n; */
 r_extern
 r_void
@@ -368,6 +369,16 @@ suffix:semicolon
 r_return
 id|entry
 suffix:semicolon
+)brace
+DECL|function|flush_cache_all_nop
+r_static
+r_void
+id|flush_cache_all_nop
+c_func
+(paren
+r_void
+)paren
+(brace
 )brace
 multiline_comment|/* Place where we save old trap entries for restoration */
 DECL|variable|kgdb_savettable
@@ -1265,8 +1276,27 @@ op_star
 id|ht
 suffix:semicolon
 r_int
+r_int
+id|flags
+suffix:semicolon
+r_int
 r_char
 id|c
+suffix:semicolon
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
+id|flush_cache_all
+op_assign
+id|flush_cache_all_nop
 suffix:semicolon
 multiline_comment|/* Initialize our copy of the Linux Sparc trap table */
 id|eh_init
@@ -1379,6 +1409,12 @@ op_assign
 l_int|1
 suffix:semicolon
 multiline_comment|/* connect! */
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 )brace
 multiline_comment|/* Convert the SPARC hardware trap type code to a unix signal number. */
 r_static
@@ -1510,7 +1546,7 @@ id|numChars
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * This function does all command processing for interfacing to gdb.  It&n; * returns 1 if you should skip the instruction at the trap address, 0&n; * otherwise.&n; */
+multiline_comment|/*&n; * This function does all command procesing for interfacing to gdb.  It&n; * returns 1 if you should skip the instruction at the trap address, 0&n; * otherwise.&n; */
 r_extern
 r_void
 id|breakinst
@@ -2535,34 +2571,11 @@ l_int|4
 suffix:semicolon
 )brace
 multiline_comment|/* Need to flush the instruction cache here, as we may have deposited a&n; * breakpoint, and the icache probably has no way of knowing that a data ref to&n; * some location may have changed something that is in the instruction cache.&n; */
-multiline_comment|/* Only instruction cache flushing on the sun4c/sun4&n;&t;&t;&t; * for now.  We assume control flow during the kgdb&n;&t;&t;&t; * transaction has not left the context in which it&n;&t;&t;&t; * was entered.&n;&t;&t;&t; */
-r_if
-c_cond
-(paren
-(paren
-id|sparc_cpu_model
-op_eq
-id|sun4
-op_logical_or
-id|sparc_cpu_model
-op_eq
-id|sun4c
-)paren
-op_logical_and
-(paren
-id|sun4c_vacinfo.num_bytes
-op_logical_and
-id|sun4c_vacinfo.on
-)paren
-)paren
-(brace
-id|sun4c_flush_context
+id|flush_cache_all
 c_func
 (paren
 )paren
 suffix:semicolon
-)brace
-multiline_comment|/* XXX SRMMU and on-chip v8 instruction cache&n;&t;&t;&t; * XXX flushing goes here!&n;&t;&t;&t; */
 r_return
 suffix:semicolon
 multiline_comment|/* kill the program */

@@ -16,7 +16,7 @@ mdefine_line|#define MAILBOX_GOSPIN        0xfc
 multiline_comment|/* Another CPU has hit a breakpoint either into kadb or the prom&n; * itself.  Just like MAILBOX_GOSPIN, you should call prom_cpuidle()&n; * at this point.&n; */
 DECL|macro|MAILBOX_BPT_SPIN
 mdefine_line|#define MAILBOX_BPT_SPIN      0xfd
-multiline_comment|/* Oh geese, some other nitwit got a damn watchdog reset.  The party&squot;s&n; * over so go call prom_stopcpu().&n; */
+multiline_comment|/* Oh geese, some other nitwit got a damn watchdog reset.  The partys&n; * over so go call prom_stopcpu().&n; */
 DECL|macro|MAILBOX_WDOG_STOP
 mdefine_line|#define MAILBOX_WDOG_STOP     0xfe
 macro_line|#ifndef __ASSEMBLY__

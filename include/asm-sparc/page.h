@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: page.h,v 1.26 1996/01/03 03:53:07 davem Exp $&n; * page.h:  Various defines and such for MMU operations on the Sparc for&n; *          the Linux kernel.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: page.h,v 1.27 1996/04/18 01:33:42 davem Exp $&n; * page.h:  Various defines and such for MMU operations on the Sparc for&n; *          the Linux kernel.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _SPARC_PAGE_H
 DECL|macro|_SPARC_PAGE_H
 mdefine_line|#define _SPARC_PAGE_H
@@ -62,8 +62,8 @@ id|cache_palias
 op_star
 id|sparc_aliases
 suffix:semicolon
-DECL|macro|STRICT_MM_TYPECHECKS
-mdefine_line|#define STRICT_MM_TYPECHECKS
+multiline_comment|/* passing structs on the Sparc slow us down tremendously... */
+multiline_comment|/* #define STRICT_MM_TYPECHECKS */
 macro_line|#ifdef STRICT_MM_TYPECHECKS
 multiline_comment|/*&n; * These are used to make use of C type-checking..&n; */
 DECL|member|pte

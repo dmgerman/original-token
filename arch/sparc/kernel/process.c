@@ -1,5 +1,8 @@
-multiline_comment|/*  $Id: process.c,v 1.42 1996/02/20 07:45:08 davem Exp $&n; *  linux/arch/sparc/kernel/process.c&n; *&n; *  Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/*  $Id: process.c,v 1.49 1996/04/20 07:37:20 davem Exp $&n; *  linux/arch/sparc/kernel/process.c&n; *&n; *  Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 multiline_comment|/*&n; * This file handles the architecture-dependent parts of process handling..&n; */
+DECL|macro|__KERNEL_SYSCALLS__
+mdefine_line|#define __KERNEL_SYSCALLS__
+macro_line|#include &lt;stdarg.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -20,6 +23,7 @@ macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/delay.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;
 macro_line|#include &lt;asm/psr.h&gt;
+macro_line|#include &lt;asm/system.h&gt;
 r_extern
 r_void
 id|fpsave
@@ -47,6 +51,7 @@ id|active_ds
 op_assign
 id|USER_DS
 suffix:semicolon
+macro_line|#ifndef __SMP__
 multiline_comment|/*&n; * the idle loop on a Sparc... ;)&n; */
 DECL|function|sys_idle
 id|asmlinkage
@@ -87,7 +92,183 @@ c_func
 )paren
 suffix:semicolon
 )brace
+r_return
+l_int|0
+suffix:semicolon
 )brace
+macro_line|#else
+multiline_comment|/*&n; * the idle loop on a SparcMultiPenguin...&n; */
+DECL|function|sys_idle
+id|asmlinkage
+r_int
+id|sys_idle
+c_func
+(paren
+r_void
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|current-&gt;pid
+op_ne
+l_int|0
+)paren
+r_return
+op_minus
+id|EPERM
+suffix:semicolon
+multiline_comment|/* endless idle loop with no priority at all */
+id|current-&gt;counter
+op_assign
+op_minus
+l_int|100
+suffix:semicolon
+id|schedule
+c_func
+(paren
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+multiline_comment|/* This is being executed in task 0 &squot;user space&squot;. */
+DECL|function|cpu_idle
+r_int
+id|cpu_idle
+c_func
+(paren
+r_void
+op_star
+id|unused
+)paren
+(brace
+r_volatile
+r_int
+op_star
+id|spap
+op_assign
+op_amp
+id|smp_process_available
+suffix:semicolon
+r_volatile
+r_int
+id|cval
+suffix:semicolon
+id|current-&gt;priority
+op_assign
+op_minus
+l_int|50
+suffix:semicolon
+r_while
+c_loop
+(paren
+l_int|1
+)paren
+(brace
+r_if
+c_cond
+(paren
+l_int|0
+op_eq
+id|read_smp_counter
+c_func
+(paren
+id|spap
+)paren
+)paren
+(brace
+r_continue
+suffix:semicolon
+)brace
+r_while
+c_loop
+(paren
+op_star
+id|spap
+op_eq
+op_minus
+l_int|1
+)paren
+(brace
+suffix:semicolon
+)brace
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/* Acquire exclusive access. */
+r_while
+c_loop
+(paren
+(paren
+id|cval
+op_assign
+id|smp_swap
+c_func
+(paren
+id|spap
+comma
+op_minus
+l_int|1
+)paren
+)paren
+op_eq
+op_minus
+l_int|1
+)paren
+(brace
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+l_int|0
+op_eq
+id|cval
+)paren
+(brace
+multiline_comment|/* ho hum, release it. */
+id|smp_process_available
+op_assign
+l_int|0
+suffix:semicolon
+id|sti
+c_func
+(paren
+)paren
+suffix:semicolon
+r_continue
+suffix:semicolon
+)brace
+multiline_comment|/* Something interesting happened, whee... */
+id|smp_swap
+c_func
+(paren
+id|spap
+comma
+(paren
+id|cval
+op_minus
+l_int|1
+)paren
+)paren
+suffix:semicolon
+id|sti
+c_func
+(paren
+)paren
+suffix:semicolon
+id|idle
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+)brace
+macro_line|#endif
 r_extern
 r_char
 id|saved_command_line
@@ -379,6 +560,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#ifndef __SMP__
 r_if
 c_cond
 (paren
@@ -387,6 +569,16 @@ op_eq
 id|current
 )paren
 (brace
+macro_line|#else
+r_if
+c_cond
+(paren
+id|current-&gt;flags
+op_amp
+id|PF_USEDFPU
+)paren
+(brace
+macro_line|#endif
 multiline_comment|/* Keep process from leaving FPU in a bogon state. */
 id|put_psr
 c_func
@@ -421,10 +613,18 @@ op_amp
 id|current-&gt;tss.fpqdepth
 )paren
 suffix:semicolon
+macro_line|#ifndef __SMP__
 id|last_task_used_math
 op_assign
 l_int|NULL
 suffix:semicolon
+macro_line|#else
+id|current-&gt;flags
+op_and_assign
+op_complement
+id|PF_USEDFPU
+suffix:semicolon
+macro_line|#endif
 )brace
 id|mmu_exit_hook
 c_func
@@ -483,6 +683,7 @@ id|current-&gt;tss.sstk_info.the_stack
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#ifndef __SMP__
 r_if
 c_cond
 (paren
@@ -491,6 +692,16 @@ op_eq
 id|current
 )paren
 (brace
+macro_line|#else
+r_if
+c_cond
+(paren
+id|current-&gt;flags
+op_amp
+id|PF_USEDFPU
+)paren
+(brace
+macro_line|#endif
 multiline_comment|/* Clean the fpu. */
 id|put_psr
 c_func
@@ -525,6 +736,18 @@ op_amp
 id|current-&gt;tss.fpqdepth
 )paren
 suffix:semicolon
+macro_line|#ifndef __SMP__
+id|last_task_used_math
+op_assign
+l_int|NULL
+suffix:semicolon
+macro_line|#else
+id|current-&gt;flags
+op_and_assign
+op_complement
+id|PF_USEDFPU
+suffix:semicolon
+macro_line|#endif
 )brace
 id|memset
 c_func
@@ -582,7 +805,7 @@ op_complement
 id|SPARC_FLAG_KTHREAD
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Copy a Sparc thread.  The fork() return value conventions&n; * under SunOS are nothing short of bletcherous:&n; * Parent --&gt;  %o0 == childs  pid, %o1 == 0&n; * Child  --&gt;  %o0 == parents pid, %o1 == 1&n; *&n; * NOTE: We have a separate fork kpsr/kwim because&n; *       the parent could change these values between&n; *       sys_fork invocation and when we reach here&n; *       if the parent should sleep while trying to&n; *       allocate the task_struct and kernel stack in&n; *       do_fork().&n; */
+multiline_comment|/*&n; * Copy a Sparc thread.  The fork() return value conventions&n; * under SunOS are nothing short of bletcherous:&n; * Parent --&gt;  %o0 == childs  pid, %o1 == 0&n; * Child  --&gt;  %o0 == parents pid, %o1 == 1&n; *&n; * NOTE: We have a seperate fork kpsr/kwim because&n; *       the parent could change these values between&n; *       sys_fork invocation and when we reach here&n; *       if the parent should sleep while trying to&n; *       allocate the task_struct and kernel stack in&n; *       do_fork().&n; */
 r_extern
 r_void
 id|ret_sys_call
@@ -635,6 +858,7 @@ r_int
 r_int
 id|stack_offset
 suffix:semicolon
+macro_line|#ifndef __SMP__
 r_if
 c_cond
 (paren
@@ -643,6 +867,16 @@ op_eq
 id|current
 )paren
 (brace
+macro_line|#else
+r_if
+c_cond
+(paren
+id|current-&gt;flags
+op_amp
+id|PF_USEDFPU
+)paren
+(brace
+macro_line|#endif
 id|put_psr
 c_func
 (paren
@@ -676,14 +910,43 @@ op_amp
 id|p-&gt;tss.fpqdepth
 )paren
 suffix:semicolon
+macro_line|#ifdef __SMP__
+id|current-&gt;flags
+op_and_assign
+op_complement
+id|PF_USEDFPU
+suffix:semicolon
+macro_line|#endif
 )brace
 multiline_comment|/* Calculate offset to stack_frame &amp; pt_regs */
+r_if
+c_cond
+(paren
+id|sparc_cpu_model
+op_eq
+id|sun4c
+)paren
+(brace
 id|stack_offset
 op_assign
 (paren
 (paren
 id|PAGE_SIZE
 op_star
+l_int|3
+)paren
+op_minus
+id|TRACEREG_SZ
+)paren
+suffix:semicolon
+)brace
+r_else
+id|stack_offset
+op_assign
+(paren
+(paren
+id|PAGE_SIZE
+op_lshift
 l_int|2
 )paren
 op_minus

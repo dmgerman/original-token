@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: ioport.c,v 1.14 1996/01/03 03:34:41 davem Exp $&n; * ioport.c:  Simple io mapping allocator.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1995 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; *&n; * The routines in this file should be changed for a memory allocator&n; * that would be setup just like NetBSD does : you create regions that&n; * are administered by a general purpose allocator, and then you call&n; * that allocator with your handle and the block size instead of this&n; * weak stuff.&n; *&n; * XXX No joke, this needs to be rewritten badly. XXX&n; */
+multiline_comment|/* $Id: ioport.c,v 1.17 1996/03/23 02:39:13 davem Exp $&n; * ioport.c:  Simple io mapping allocator.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1995 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; *&n; * The routines in this file should be changed for a memory allocator&n; * that would be setup just like NetBSD does : you create regions that&n; * are administered by a general purpose allocator, and then you call&n; * that allocator with your handle and the block size instead of this&n; * weak stuff.&n; *&n; * XXX No joke, this needs to be rewritten badly. XXX&n; */
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -25,7 +25,7 @@ id|dvma_next_free
 op_assign
 id|DVMA_VADDR
 suffix:semicolon
-multiline_comment|/*&n; * sparc_alloc_dev:&n; * Map and allocates an obio device.&n; * Implements a simple linear allocator, you can force the function&n; * to use your own mapping, but in practice this should not be used.&n; *&n; * Input:&n; *  address: the obio address to map&n; *  virtual: if non zero, specifies a fixed virtual address where&n; *           the mapping should take place.&n; *  len:     the length of the mapping&n; *  bus_type: The bus on which this io area sits.&n; *&n; * Returns:&n; *  The virtual address where the mapping actually took place.&n; */
+multiline_comment|/*&n; * sparc_alloc_io:&n; * Map and allocates an obio device.&n; * Implements a simple linear allocator, you can force the function&n; * to use your own mapping, but in practice this should not be used.&n; *&n; * Input:&n; *  address: the obio address to map&n; *  virtual: if non zero, specifies a fixed virtual address where&n; *           the mapping should take place.&n; *  len:     the length of the mapping&n; *  bus_type: The bus on which this io area sits.&n; *&n; * Returns:&n; *  The virtual address where the mapping actually took place.&n; */
 DECL|function|sparc_alloc_io
 r_void
 op_star
@@ -127,7 +127,7 @@ id|IOBASE_LEN
 id|prom_printf
 c_func
 (paren
-l_string|&quot;alloc_io: Mapping outside IOBASE area&bslash;n&quot;
+l_string|&quot;alloc_io: Mapping ouside IOBASE area&bslash;n&quot;
 )paren
 suffix:semicolon
 id|prom_halt
@@ -240,7 +240,7 @@ id|offset
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Does DVMA allocations with PAGE_SIZE granularity.  How this basically&n; * works is that the ESP chip can do DVMA transfers at ANY address with&n; * certain size and boundary restrictions.  But other devices that are&n; * attached to it and would like to do DVMA have to set things up in&n; * a special way, if the DVMA sees a device attached to it transfer data&n; * at addresses above DVMA_VADDR it will grab them, this way it does not&n; * now have to know the peculiarities of where to read the Lance data&n; * from. (for example)&n; */
+multiline_comment|/* Does DVMA allocations with PAGE_SIZE granulatity.  How this basically&n; * works is that the ESP chip can do DVMA transfers at ANY address with&n; * certain size and boundry restrictions.  But other devices that are&n; * attached to it and would like to do DVMA have to set things up in&n; * a special way, if the DVMA see&squot;s a device attached to it transfer data&n; * at addresses above DVMA_VADDR it will grab them, this way it does not&n; * now have to know the peculiarities of where to read the Lance data&n; * from. (for example)&n; */
 DECL|function|sparc_dvma_malloc
 r_void
 op_star

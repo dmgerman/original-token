@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * q931.c               code to decode ITU Q.931 call control messages&n; * &n; * Author               Jan den Ouden&n; * &n; * Changelog&n; * &n; * Pauline Middelink    general improvements&n; * &n; * Beat Doebeli         cause texts, display information element&n; * &n; */
+multiline_comment|/* $Id: q931.c,v 1.2 1996/04/20 16:48:19 fritz Exp $&n; *&n; * q931.c               code to decode ITU Q.931 call control messages&n; * &n; * Author               Jan den Ouden&n; * &n; * Changelog&n; * &n; * Pauline Middelink    general improvements&n; * &n; * Beat Doebeli         cause texts, display information element&n; * &n; * $Log: q931.c,v $&n; * Revision 1.2  1996/04/20 16:48:19  fritz&n; * Misc. typos&n; *&n; * Revision 1.1  1996/04/13 10:27:49  fritz&n; * Initial revision&n; *&n; *&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &quot;teles.h&quot;

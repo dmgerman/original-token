@@ -92,7 +92,7 @@ mdefine_line|#define MSTK_CREG_WRITE    0x80   /* Must set this before placing v
 DECL|macro|MSTK_CREG_READ
 mdefine_line|#define MSTK_CREG_READ     0x40   /* Stop the clock, I want to fetch values. */
 DECL|macro|MSTK_CREG_SIGN
-mdefine_line|#define MSTK_CREG_SIGN     0x20   /* Grrr... what&squot;s this??? */
+mdefine_line|#define MSTK_CREG_SIGN     0x20   /* Grrr... whats this??? */
 DECL|macro|MSTK_YR_ZERO
 mdefine_line|#define MSTK_YR_ZERO       1968   /* If year reg has zero, it is 1968 */
 DECL|macro|MSTK_CVT_YEAR

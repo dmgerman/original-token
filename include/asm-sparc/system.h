@@ -1,12 +1,14 @@
-multiline_comment|/* $Id: system.h,v 1.24 1996/02/11 00:42:39 davem Exp $ */
+multiline_comment|/* $Id: system.h,v 1.29 1996/04/03 02:17:52 davem Exp $ */
 macro_line|#ifndef __SPARC_SYSTEM_H
 DECL|macro|__SPARC_SYSTEM_H
 mdefine_line|#define __SPARC_SYSTEM_H
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
+macro_line|#ifdef __KERNEL__
 macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;asm/oplib.h&gt;
 macro_line|#include &lt;asm/psr.h&gt;
+macro_line|#endif
 DECL|macro|EMPTY_PGT
 mdefine_line|#define EMPTY_PGT       (&amp;empty_bad_page)
 DECL|macro|EMPTY_PGE
@@ -110,8 +112,38 @@ op_star
 id|new_task
 )paren
 suffix:semicolon
+macro_line|#ifndef __SMP__
 DECL|macro|switch_to
-mdefine_line|#define switch_to(p) do { &bslash;&n;&t;&t;&t;  flush_user_windows(); &bslash;&n;&t;&t;          switch_to_context(p); &bslash;&n;&t;&t;&t;  current-&gt;tss.current_ds = active_ds; &bslash;&n;                          active_ds = p-&gt;tss.current_ds; &bslash;&n;                          sparc_switch_to(p); &bslash;&n;                     } while(0)
+mdefine_line|#define switch_to(prev, next) do { &bslash;&n;&t;&t;&t;  flush_user_windows(); &bslash;&n;&t;&t;          switch_to_context(next); &bslash;&n;&t;&t;&t;  prev-&gt;tss.current_ds = active_ds; &bslash;&n;                          active_ds = next-&gt;tss.current_ds; &bslash;&n;&t;&t;&t;  if(last_task_used_math != next) &bslash;&n;&t;&t;&t;&t;  next-&gt;tss.kregs-&gt;psr &amp;= ~PSR_EF; &bslash;&n;                          sparc_switch_to(next); &bslash;&n;                     } while(0)
+macro_line|#else
+r_extern
+r_void
+id|fpsave
+c_func
+(paren
+r_int
+r_int
+op_star
+id|fpregs
+comma
+r_int
+r_int
+op_star
+id|fsr
+comma
+r_void
+op_star
+id|fpqueue
+comma
+r_int
+r_int
+op_star
+id|fpqdepth
+)paren
+suffix:semicolon
+DECL|macro|switch_to
+mdefine_line|#define switch_to(prev, next) do { &bslash;&n;&t;&t;&t;  cli(); &bslash;&n;&t;&t;&t;  if(prev-&gt;flags &amp; PF_USEDFPU) { &bslash;&n;                          &t;fpsave(&amp;prev-&gt;tss.float_regs[0], &amp;prev-&gt;tss.fsr, &bslash;&n;                          &t;       &amp;prev-&gt;tss.fpqueue[0], &amp;prev-&gt;tss.fpqdepth); &bslash;&n;                          &t;prev-&gt;flags &amp;= ~PF_USEDFPU; &bslash;&n;                          &t;prev-&gt;tss.kregs-&gt;psr &amp;= ~PSR_EF; &bslash;&n;                          } &bslash;&n;&t;&t;&t;  prev-&gt;lock_depth = syscall_count; &bslash;&n;&t;&t;&t;  kernel_counter += (next-&gt;lock_depth - prev-&gt;lock_depth); &bslash;&n;&t;&t;&t;  syscall_count = next-&gt;lock_depth; &bslash;&n;&t;&t;&t;  flush_user_windows(); &bslash;&n;&t;&t;          switch_to_context(next); &bslash;&n;&t;&t;&t;  prev-&gt;tss.current_ds = active_ds; &bslash;&n;                          active_ds = next-&gt;tss.current_ds; &bslash;&n;                          sparc_switch_to(next); &bslash;&n;&t;&t;&t;  sti(); &bslash;&n;                     } while(0)
+macro_line|#endif
 multiline_comment|/* Changing the IRQ level on the Sparc. */
 DECL|function|setipl
 r_extern

@@ -1,4 +1,5 @@
-multiline_comment|/* $Id: console.c,v 1.6 1996/01/01 02:46:27 davem Exp $&n; * console.c: Routines that deal with sending and receiving IO&n; *            to/from the current console device using the PROM.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: console.c,v 1.8 1996/04/05 07:44:35 tridge Exp $&n; * console.c: Routines that deal with sending and receiving IO&n; *            to/from the current console device using the PROM.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/openprom.h&gt;
 macro_line|#include &lt;asm/oplib.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
@@ -73,6 +74,15 @@ r_return
 id|inc
 suffix:semicolon
 )brace
+r_return
+op_minus
+l_int|1
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|PROM_AP1000
+suffix:colon
 r_return
 op_minus
 l_int|1
@@ -167,6 +177,32 @@ r_return
 op_minus
 l_int|1
 suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|PROM_AP1000
+suffix:colon
+macro_line|#if CONFIG_AP1000
+(brace
+r_extern
+r_void
+id|ap_putchar
+c_func
+(paren
+r_char
+)paren
+suffix:semicolon
+id|ap_putchar
+c_func
+(paren
+id|c
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+macro_line|#endif
 r_break
 suffix:semicolon
 )brace
@@ -460,6 +496,12 @@ suffix:semicolon
 r_return
 id|PROMDEV_I_UNK
 suffix:semicolon
+r_case
+id|PROM_AP1000
+suffix:colon
+r_return
+id|PROMDEV_I_UNK
+suffix:semicolon
 )brace
 suffix:semicolon
 )brace
@@ -733,6 +775,12 @@ suffix:semicolon
 suffix:semicolon
 )brace
 r_break
+suffix:semicolon
+r_case
+id|PROM_AP1000
+suffix:colon
+r_return
+id|PROMDEV_I_UNK
 suffix:semicolon
 )brace
 suffix:semicolon

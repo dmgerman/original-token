@@ -92,10 +92,13 @@ macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_PPA
 macro_line|#include &quot;ppa.h&quot;
 macro_line|#endif
+macro_line|#ifdef CONFIG_SCSI_SUNESP
+macro_line|#include &quot;esp.h&quot;
+macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_DEBUG
 macro_line|#include &quot;scsi_debug.h&quot;
 macro_line|#endif
-multiline_comment|/*&n;static const char RCSid[] = &quot;$Header: /usr/src/linux/kernel/blk_drv/scsi/RCS/hosts.c,v 1.3 1993/09/24 12:21:00 drew Exp drew $&quot;;&n;*/
+multiline_comment|/*&n;static const char RCSid[] = &quot;$Header: /vger/u4/cvs/linux/drivers/scsi/hosts.c,v 1.10 1996/04/16 08:09:36 davem Exp $&quot;;&n;*/
 multiline_comment|/*&n; *  The scsi host entries should be in the order you wish the&n; *  cards to be detected.  A driver may appear more than once IFF&n; *  it can deal with being detected (and therefore initialized)&n; *  with more than one simultaneous host number, can handle being&n; *  reentrant, etc.&n; *&n; *  They may appear in any order, as each SCSI host is told which host &n; *  number it is during detection.&n; */
 multiline_comment|/* This is a placeholder for controllers that are not configured into&n; * the system - we do this to ensure that the controller numbering is&n; * always consistent, no matter how the kernel is configured. */
 DECL|macro|NO_CONTROLLER
@@ -211,6 +214,10 @@ comma
 macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_PPA
 id|PPA
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_SCSI_SUNESP
+id|SCSI_SPARC_ESP
 comma
 macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_DEBUG

@@ -1417,7 +1417,7 @@ op_plus
 id|p-&gt;base
 )paren
 suffix:semicolon
-multiline_comment|/*&n;   * Scale the Data FIFO Threshhold and the Bus Release Time; they are&n;   * stored in formats compatible for writing to sequencer registers.&n;   */
+multiline_comment|/*&n;   * Scale the Data FIFO Threshold and the Bus Release Time; they are&n;   * stored in formats compatible for writing to sequencer registers.&n;   */
 id|dfthresh
 op_assign
 id|p-&gt;bus_speed
@@ -11947,7 +11947,7 @@ op_plus
 id|base
 )paren
 suffix:semicolon
-multiline_comment|/*&n;   * Set the QCNT (queue count) mask to deal with broken aic7850s that&n;   * sporatically get garbage in the upper bits of their QCNT registers.&n;   */
+multiline_comment|/*&n;   * Set the QCNT (queue count) mask to deal with broken aic7850s that&n;   * sporadically get garbage in the upper bits of their QCNT registers.&n;   */
 id|outb
 c_func
 (paren

@@ -9,6 +9,8 @@ DECL|macro|MS_BUSMOUSE_MINOR
 mdefine_line|#define MS_BUSMOUSE_MINOR 2
 DECL|macro|ATIXL_BUSMOUSE_MINOR
 mdefine_line|#define ATIXL_BUSMOUSE_MINOR 3
+DECL|macro|SUN_MOUSE_MINOR
+mdefine_line|#define SUN_MOUSE_MINOR 6
 DECL|macro|MISC_DYNAMIC_MINOR
 mdefine_line|#define MISC_DYNAMIC_MINOR 255
 r_extern

@@ -44,6 +44,20 @@ op_star
 id|i_old
 suffix:semicolon
 multiline_comment|/* pointer to the old inode this inode&n;&t;&t;&t;&t;   depends on */
+DECL|member|i_linked
+r_struct
+id|inode
+op_star
+id|i_linked
+suffix:semicolon
+multiline_comment|/* pointer to inode linked to the current one,&n;&t;&t;&t;&t;   happens when an open file is moved */
+DECL|member|i_oldlink
+r_struct
+id|inode
+op_star
+id|i_oldlink
+suffix:semicolon
+multiline_comment|/* pointer to open inode that references&n;&t;&t;&t;&t;   the same file */
 DECL|member|i_binary
 r_int
 id|i_binary

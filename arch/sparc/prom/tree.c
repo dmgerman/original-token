@@ -1,4 +1,5 @@
-multiline_comment|/* $Id: tree.c,v 1.7 1996/01/01 02:46:24 davem Exp $&n; * tree.c: Basic device tree traversal/scanning for the Linux&n; *         prom library.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: tree.c,v 1.8 1996/04/04 16:31:09 tridge Exp $&n; * tree.c: Basic device tree traversal/scanning for the Linux&n; *         prom library.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;asm/openprom.h&gt;
 macro_line|#include &lt;asm/oplib.h&gt;
@@ -23,6 +24,17 @@ id|node
 r_int
 id|cnode
 suffix:semicolon
+macro_line|#if CONFIG_AP1000
+id|printk
+c_func
+(paren
+l_string|&quot;prom_getchild -&gt; 0&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -84,6 +96,17 @@ id|node
 r_int
 id|sibnode
 suffix:semicolon
+macro_line|#if CONFIG_AP1000
+id|printk
+c_func
+(paren
+l_string|&quot;prom_getsibling -&gt; 0&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -146,6 +169,20 @@ op_star
 id|prop
 )paren
 (brace
+macro_line|#if CONFIG_AP1000
+id|printk
+c_func
+(paren
+l_string|&quot;prom_getproplen(%s) -&gt; -1&bslash;n&quot;
+comma
+id|prop
+)paren
+suffix:semicolon
+r_return
+op_minus
+l_int|1
+suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -201,6 +238,20 @@ id|bufsize
 r_int
 id|plen
 suffix:semicolon
+macro_line|#if CONFIG_AP1000
+id|printk
+c_func
+(paren
+l_string|&quot;prom_getproperty(%s) -&gt; -1&bslash;n&quot;
+comma
+id|prop
+)paren
+suffix:semicolon
+r_return
+op_minus
+l_int|1
+suffix:semicolon
+macro_line|#endif
 id|plen
 op_assign
 id|prom_getproplen
@@ -272,6 +323,20 @@ r_static
 r_int
 id|intprop
 suffix:semicolon
+macro_line|#if CONFIG_AP1000
+id|printk
+c_func
+(paren
+l_string|&quot;prom_getint(%s) -&gt; -1&bslash;n&quot;
+comma
+id|prop
+)paren
+suffix:semicolon
+r_return
+op_minus
+l_int|1
+suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -328,6 +393,19 @@ id|deflt
 r_int
 id|retval
 suffix:semicolon
+macro_line|#if CONFIG_AP1000
+id|printk
+c_func
+(paren
+l_string|&quot;prom_getintdefault(%s) -&gt; 0&bslash;n&quot;
+comma
+id|property
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+macro_line|#endif
 id|retval
 op_assign
 id|prom_getint
@@ -372,6 +450,19 @@ id|prop
 r_int
 id|retval
 suffix:semicolon
+macro_line|#if CONFIG_AP1000
+id|printk
+c_func
+(paren
+l_string|&quot;prom_getbool(%s) -&gt; 0&bslash;n&quot;
+comma
+id|prop
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+macro_line|#endif
 id|retval
 op_assign
 id|prom_getproplen
@@ -423,6 +514,18 @@ id|ubuf_size
 r_int
 id|len
 suffix:semicolon
+macro_line|#if CONFIG_AP1000
+id|printk
+c_func
+(paren
+l_string|&quot;prom_getstring(%s) -&gt; .&bslash;n&quot;
+comma
+id|prop
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+macro_line|#endif
 id|len
 op_assign
 id|prom_getproperty

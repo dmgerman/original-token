@@ -1,3 +1,4 @@
+multiline_comment|/* $Id: teles.h,v 1.1 1996/04/13 10:29:00 fritz Exp $&n; *&n; * $Log: teles.h,v $&n; * Revision 1.1  1996/04/13 10:29:00  fritz&n; * Initial revision&n; *&n; *&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;

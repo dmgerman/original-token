@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: oplib.h,v 1.6 1996/01/01 02:47:19 davem Exp $&n; * oplib.h:  Describes the interface and available routines in the&n; *           Linux Prom library.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: oplib.h,v 1.7 1996/04/04 16:31:25 tridge Exp $&n; * oplib.h:  Describes the interface and available routines in the&n; *           Linux Prom library.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef __SPARC_OPLIB_H
 DECL|macro|__SPARC_OPLIB_H
 mdefine_line|#define __SPARC_OPLIB_H
@@ -18,7 +18,7 @@ id|prom_major_version
 DECL|enumerator|PROM_V0
 id|PROM_V0
 comma
-multiline_comment|/* Original sun4c V0 prom */
+multiline_comment|/* Origional sun4c V0 prom */
 DECL|enumerator|PROM_V2
 id|PROM_V2
 comma
@@ -31,6 +31,10 @@ DECL|enumerator|PROM_P1275
 id|PROM_P1275
 comma
 multiline_comment|/* IEEE compliant ISA based Sun PROM, only sun4u */
+DECL|enumerator|PROM_AP1000
+id|PROM_AP1000
+comma
+multiline_comment|/* actually no prom at all */
 )brace
 suffix:semicolon
 r_extern
@@ -160,7 +164,7 @@ id|seek_lowval
 )paren
 suffix:semicolon
 multiline_comment|/* Machine memory configuration routine. */
-multiline_comment|/* This function returns a V0 format memory descriptor table, it has three&n; * entries.  One for the total amount of physical ram on the machine, one&n; * for the amount of physical ram available, and one describing the virtual&n; * areas which are allocated by the prom.  So, in a sense the physical&n; * available is a calculation of the total physical minus the physical mapped&n; * by the prom with virtual mappings.&n; *&n; * These lists are returned pre-sorted, this should make your life easier&n; * since the prom itself is way too lazy to do such nice things.&n; */
+multiline_comment|/* This function returns a V0 format memory descriptor table, it has three&n; * entries.  One for the total amount of physical ram on the machine, one&n; * for the amount of physical ram available, and one describing the virtual&n; * areas which are allocated by the prom.  So, in a sense the physical&n; * available is a calculation of the total physical minus the physcial mapped&n; * by the prom with virtual mappings.&n; *&n; * These lists are returned pre-sorted, this should make your life easier&n; * since the prom itself is way too lazy to do such nice things.&n; */
 r_extern
 r_struct
 id|linux_mem_v0
