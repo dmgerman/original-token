@@ -414,11 +414,6 @@ r_int
 id|is_long
 suffix:semicolon
 multiline_comment|/* was the found entry long */
-DECL|member|is_alias
-r_int
-id|is_alias
-suffix:semicolon
-multiline_comment|/* was the found entry an alias */
 DECL|member|long_slots
 r_int
 id|long_slots
@@ -791,14 +786,14 @@ id|device
 suffix:semicolon
 r_extern
 r_void
-id|cache_init
+id|fat_cache_init
 c_func
 (paren
 r_void
 )paren
 suffix:semicolon
 r_void
-id|cache_lookup
+id|fat_cache_lookup
 c_func
 (paren
 r_struct
@@ -819,7 +814,7 @@ id|d_clu
 )paren
 suffix:semicolon
 r_void
-id|cache_add
+id|fat_cache_add
 c_func
 (paren
 r_struct
@@ -835,7 +830,7 @@ id|d_clu
 )paren
 suffix:semicolon
 r_int
-id|get_cluster
+id|fat_get_cluster
 c_func
 (paren
 r_struct
@@ -1152,7 +1147,7 @@ id|fat_readpage
 c_func
 (paren
 r_struct
-id|inode
+id|dentry
 op_star
 comma
 r_struct

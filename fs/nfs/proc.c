@@ -13,7 +13,6 @@ macro_line|#include &lt;linux/pagemap.h&gt;
 macro_line|#include &lt;linux/sunrpc/clnt.h&gt;
 macro_line|#include &lt;linux/nfs_fs.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
-multiline_comment|/*&n; * If NFS_DEBUG is defined, you can toggle NFS debugging by causing&n; * a lookup of &quot;__xyzzy__&quot;. Just cd to an NFS-mounted filesystem and type&n; * &squot;ls __xyzzy__&squot; to turn on debugging.&n; */
 macro_line|#ifdef NFS_DEBUG
 DECL|macro|NFSDBG_FACILITY
 macro_line|# define NFSDBG_FACILITY&t;NFSDBG_PROC
@@ -209,25 +208,6 @@ comma
 id|name
 )paren
 suffix:semicolon
-macro_line|#ifdef RPC_DEBUG
-r_if
-c_cond
-(paren
-op_logical_neg
-id|strcmp
-c_func
-(paren
-id|name
-comma
-l_string|&quot;__xyzzy__&quot;
-)paren
-)paren
-id|nfs_debug
-op_assign
-op_complement
-id|nfs_debug
-suffix:semicolon
-macro_line|#endif
 id|status
 op_assign
 id|rpc_call

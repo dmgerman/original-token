@@ -5966,6 +5966,33 @@ op_star
 id|skb
 )paren
 (brace
+macro_line|#ifdef CONFIG_FILTER
+r_if
+c_cond
+(paren
+id|sk-&gt;filter
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|sk_filter
+c_func
+(paren
+id|skb
+comma
+id|sk-&gt;filter_data
+comma
+id|sk-&gt;filter
+)paren
+)paren
+r_return
+op_minus
+id|EPERM
+suffix:semicolon
+multiline_comment|/* Toss packet */
+)brace
+macro_line|#endif /* CONFIG_FILTER */
 id|skb_set_owner_r
 c_func
 (paren

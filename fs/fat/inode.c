@@ -2069,7 +2069,7 @@ id|fat_mount_options
 )paren
 )paren
 suffix:semicolon
-id|cache_init
+id|fat_cache_init
 c_func
 (paren
 )paren

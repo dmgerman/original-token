@@ -328,6 +328,20 @@ c_func
 id|exit_files
 )paren
 suffix:semicolon
+DECL|variable|exit_fs
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|exit_fs
+)paren
+suffix:semicolon
+DECL|variable|exit_sighand
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|exit_sighand
+)paren
+suffix:semicolon
 multiline_comment|/* internal kernel memory management */
 DECL|variable|__get_free_pages
 id|EXPORT_SYMBOL

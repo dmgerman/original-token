@@ -912,9 +912,9 @@ r_return
 id|next
 suffix:semicolon
 )brace
-DECL|function|cache_init
+DECL|function|fat_cache_init
 r_void
-id|cache_init
+id|fat_cache_init
 c_func
 (paren
 r_void
@@ -998,9 +998,9 @@ op_assign
 l_int|1
 suffix:semicolon
 )brace
-DECL|function|cache_lookup
+DECL|function|fat_cache_lookup
 r_void
-id|cache_lookup
+id|fat_cache_lookup
 c_func
 (paren
 r_struct
@@ -1193,9 +1193,9 @@ l_string|&quot;&bslash;n&quot;
 suffix:semicolon
 )brace
 macro_line|#endif
-DECL|function|cache_add
+DECL|function|fat_cache_add
 r_void
-id|cache_add
+id|fat_cache_add
 c_func
 (paren
 r_struct
@@ -1509,7 +1509,7 @@ suffix:semicolon
 r_for
 c_loop
 (paren
-id|cache_lookup
+id|fat_cache_lookup
 c_func
 (paren
 id|inode
@@ -1565,7 +1565,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-id|cache_add
+id|fat_cache_add
 c_func
 (paren
 id|inode

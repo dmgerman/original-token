@@ -1102,6 +1102,11 @@ id|dotoffset
 op_assign
 l_int|0
 suffix:semicolon
+r_int
+id|was_long
+op_assign
+id|is_long
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1182,6 +1187,10 @@ id|alias_checksum
 )paren
 suffix:semicolon
 id|is_long
+op_assign
+l_int|0
+suffix:semicolon
+id|long_slots
 op_assign
 l_int|0
 suffix:semicolon
@@ -1512,7 +1521,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|is_long
+id|was_long
 )paren
 (brace
 id|spos

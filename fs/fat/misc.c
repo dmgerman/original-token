@@ -857,7 +857,7 @@ op_ne
 l_int|0
 )paren
 (brace
-id|cache_lookup
+id|fat_cache_lookup
 c_func
 (paren
 id|inode
@@ -1190,7 +1190,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|cache_add
+id|fat_cache_add
 c_func
 (paren
 id|inode

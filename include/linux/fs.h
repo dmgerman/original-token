@@ -685,6 +685,11 @@ r_struct
 id|list_head
 id|i_list
 suffix:semicolon
+DECL|member|i_dentry
+r_struct
+id|list_head
+id|i_dentry
+suffix:semicolon
 DECL|member|i_ino
 r_int
 r_int

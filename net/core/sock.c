@@ -32,6 +32,9 @@ macro_line|#include &lt;net/sock.h&gt;
 macro_line|#include &lt;net/raw.h&gt;
 macro_line|#include &lt;net/icmp.h&gt;
 macro_line|#include &lt;linux/ipsec.h&gt;
+macro_line|#ifdef CONFIG_FILTER
+macro_line|#include &lt;linux/filter.h&gt;
+macro_line|#endif
 DECL|macro|min
 mdefine_line|#define min(a,b)&t;((a)&lt;(b)?(a):(b))
 multiline_comment|/* Run time adjustable parameters. */
@@ -119,6 +122,12 @@ id|ret
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#ifdef CONFIG_FILTER
+r_struct
+id|sock_fprog
+id|fprog
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/*&n;&t; *&t;Options without arguments&n;&t; */
 macro_line|#ifdef SO_DONTLINGER&t;&t;/* Compatibility item... */
 r_switch

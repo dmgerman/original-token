@@ -247,6 +247,12 @@ id|list_head
 id|d_subdirs
 suffix:semicolon
 multiline_comment|/* our children */
+DECL|member|d_alias
+r_struct
+id|list_head
+id|d_alias
+suffix:semicolon
+multiline_comment|/* inode alias list */
 DECL|member|d_name
 r_struct
 id|qstr

@@ -82,6 +82,10 @@ DECL|member|I2C
 id|unchar
 id|I2C
 suffix:semicolon
+DECL|member|IFPCoff
+id|ushort
+id|IFPCoff
+suffix:semicolon
 )brace
 suffix:semicolon
 macro_line|#endif
