@@ -41,6 +41,12 @@ c_func
 r_void
 )paren
 (brace
+macro_line|#ifdef CONFIG_USB_PROC
+id|proc_usb_init
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#ifndef CONFIG_USB_MODULE
 macro_line|#&t;ifdef CONFIG_USB_UHCI
 id|uhci_init
@@ -105,6 +111,13 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#&t;endif
+macro_line|#&t;ifdef CONFIG_USB_SERIAL
+id|usb_serial_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#&t;endif
 macro_line|#&t;ifdef CONFIG_USB_CPIA
 id|usb_cpia_init
 c_func
@@ -126,12 +139,6 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#&t;endif
-macro_line|#endif
-macro_line|#ifdef CONFIG_USB_PROC
-id|proc_usb_init
-(paren
-)paren
-suffix:semicolon
 macro_line|#endif
 r_return
 l_int|0

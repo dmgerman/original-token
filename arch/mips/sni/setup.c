@@ -21,7 +21,6 @@ macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;
 macro_line|#include &lt;asm/reboot.h&gt;
 macro_line|#include &lt;asm/sni.h&gt;
-macro_line|#include &lt;asm/pci.h&gt;
 multiline_comment|/*&n; * Initial irq handlers.&n; */
 DECL|function|no_action
 r_static

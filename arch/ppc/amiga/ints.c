@@ -1,15 +1,19 @@
 multiline_comment|/*&n; *  linux/arch/ppc/amiga/ints.c&n; *&n; *  Linux/m68k general interrupt handling code from arch/m68k/kernel/ints.c&n; *  Needed to drive the m68k emulating IRQ hardware on the PowerUp boards.&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
+macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel_stat.h&gt;
-macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/setup.h&gt;
+macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/traps.h&gt;
+macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;asm/machdep.h&gt;
 multiline_comment|/* table for system interrupt handlers */
 DECL|variable|irq_list
+r_static
 id|irq_handler_t
 id|irq_list
 (braket
@@ -62,10 +66,10 @@ id|NUM_IRQ_NODES
 )braket
 suffix:semicolon
 multiline_comment|/*&n; * void init_IRQ(void)&n; *&n; * Parameters:&t;None&n; *&n; * Returns:&t;Nothing&n; *&n; * This function should be called during kernel startup to initialize&n; * the IRQ handling routines.&n; */
-DECL|function|apus_init_IRQ
-r_void
 id|__init
-id|apus_init_IRQ
+DECL|function|m68k_init_IRQ
+r_void
+id|m68k_init_IRQ
 c_func
 (paren
 r_void
@@ -116,7 +120,7 @@ id|i
 dot
 id|flags
 op_assign
-id|IRQ_FLG_STD
+l_int|0
 suffix:semicolon
 id|irq_list
 (braket
@@ -289,6 +293,7 @@ op_minus
 id|ENXIO
 suffix:semicolon
 )brace
+macro_line|#if 0
 r_if
 c_cond
 (paren
@@ -376,6 +381,7 @@ id|EBUSY
 suffix:semicolon
 )brace
 )brace
+macro_line|#endif
 id|irq_list
 (braket
 id|irq
@@ -502,7 +508,7 @@ id|irq
 dot
 id|flags
 op_assign
-id|IRQ_FLG_STD
+l_int|0
 suffix:semicolon
 id|irq_list
 (braket
@@ -619,9 +625,9 @@ r_return
 suffix:semicolon
 )brace
 )brace
-DECL|function|get_irq_list
+DECL|function|m68k_get_irq_list
 r_int
-id|get_irq_list
+id|m68k_get_irq_list
 c_func
 (paren
 r_char
@@ -685,31 +691,6 @@ suffix:colon
 id|num_spurious
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|irq_list
-(braket
-id|i
-)braket
-dot
-id|flags
-op_amp
-id|IRQ_FLG_LOCK
-)paren
-id|len
-op_add_assign
-id|sprintf
-c_func
-(paren
-id|buf
-op_plus
-id|len
-comma
-l_string|&quot;L &quot;
-)paren
-suffix:semicolon
-r_else
 id|len
 op_add_assign
 id|sprintf

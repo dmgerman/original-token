@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  ncplib_kernel.h&n; *&n; *  Copyright (C) 1995, 1996 by Volker Lendecke&n; *  Modified for big endian by J.F. Chadima and David S. Miller&n; *  Modified 1997 Peter Waltenberg, Bill Hawes, David Woodhouse for 2.1 dcache&n; *  Modified 1998 Wolfram Pienkoss for NLS&n; *&n; */
+multiline_comment|/*&n; *  ncplib_kernel.h&n; *&n; *  Copyright (C) 1995, 1996 by Volker Lendecke&n; *  Modified for big endian by J.F. Chadima and David S. Miller&n; *  Modified 1997 Peter Waltenberg, Bill Hawes, David Woodhouse for 2.1 dcache&n; *  Modified 1998 Wolfram Pienkoss for NLS&n; *  Modified 1999 Wolfram Pienkoss for directory caching&n; *&n; */
 macro_line|#ifndef _NCPLIB_H
 DECL|macro|_NCPLIB_H
 mdefine_line|#define _NCPLIB_H
@@ -9,6 +9,7 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
+macro_line|#include &lt;linux/pagemap.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/byteorder.h&gt;
 macro_line|#include &lt;asm/unaligned.h&gt;
@@ -16,13 +17,13 @@ macro_line|#include &lt;asm/string.h&gt;
 macro_line|#ifdef CONFIG_NCPFS_NLS
 macro_line|#include &lt;linux/nls.h&gt;
 macro_line|#endif
-macro_line|#include &lt;linux/ncp.h&gt;
 macro_line|#include &lt;linux/ncp_fs.h&gt;
-macro_line|#include &lt;linux/ncp_fs_sb.h&gt;
 DECL|macro|NCP_MIN_SYMLINK_SIZE
 mdefine_line|#define NCP_MIN_SYMLINK_SIZE&t;8
 DECL|macro|NCP_MAX_SYMLINK_SIZE
 mdefine_line|#define NCP_MAX_SYMLINK_SIZE&t;512
+DECL|macro|NCP_BLOCK_SIZE
+mdefine_line|#define NCP_BLOCK_SIZE&t;&t;512
 r_int
 id|ncp_negotiate_buffersize
 c_func
@@ -330,7 +331,7 @@ comma
 r_int
 comma
 r_struct
-id|nw_file_info
+id|ncp_entry_info
 op_star
 )paren
 suffix:semicolon
@@ -454,16 +455,16 @@ c_func
 r_struct
 id|ncp_server
 op_star
-id|server
+comma
+r_struct
+id|nw_info_struct
+op_star
 comma
 id|__u8
-id|volNumber
 comma
 id|__u8
-id|srcNS
 comma
 id|__u32
-id|srcDirEntNum
 )paren
 suffix:semicolon
 macro_line|#endif&t;/* CONFIG_NCPFS_MOUNT_SUBDIR */
@@ -731,5 +732,108 @@ mdefine_line|#define io2vol(S,N,U) if (U) str_upper(N)
 DECL|macro|vol2io
 mdefine_line|#define vol2io(S,N,U) if (U) str_lower(N)
 macro_line|#endif /* CONFIG_NCPFS_NLS */
+DECL|macro|NCP_GET_AGE
+mdefine_line|#define NCP_GET_AGE(dentry)&t;(jiffies - (dentry)-&gt;d_time)
+DECL|macro|NCP_MAX_AGE
+mdefine_line|#define NCP_MAX_AGE&t;&t;(server-&gt;dentry_ttl)
+DECL|macro|NCP_TEST_AGE
+mdefine_line|#define NCP_TEST_AGE(server,dentry)&t;(NCP_GET_AGE(dentry) &lt; NCP_MAX_AGE)
+r_static
+r_inline
+r_void
+DECL|function|ncp_age_dentry
+id|ncp_age_dentry
+c_func
+(paren
+r_struct
+id|ncp_server
+op_star
+id|server
+comma
+r_struct
+id|dentry
+op_star
+id|dentry
+)paren
+(brace
+id|dentry-&gt;d_time
+op_assign
+id|jiffies
+op_minus
+id|server-&gt;dentry_ttl
+suffix:semicolon
+)brace
+r_static
+r_inline
+r_void
+DECL|function|ncp_new_dentry
+id|ncp_new_dentry
+c_func
+(paren
+r_struct
+id|dentry
+op_star
+id|dentry
+)paren
+(brace
+id|dentry-&gt;d_time
+op_assign
+id|jiffies
+suffix:semicolon
+)brace
+DECL|macro|NCP_FPOS_EMPTY
+mdefine_line|#define NCP_FPOS_EMPTY&t;0&t;/* init value for fpos variables. */
+DECL|struct|ncp_cache_control
+r_struct
+id|ncp_cache_control
+(brace
+DECL|member|seq
+r_struct
+id|nw_search_sequence
+id|seq
+suffix:semicolon
+DECL|member|firstcache
+r_int
+id|firstcache
+suffix:semicolon
+DECL|member|currentpos
+r_int
+id|currentpos
+suffix:semicolon
+DECL|member|cachehead
+r_int
+id|cachehead
+suffix:semicolon
+DECL|member|cachetail
+r_int
+id|cachetail
+suffix:semicolon
+DECL|member|eof
+r_int
+id|eof
+suffix:semicolon
+)brace
+suffix:semicolon
+DECL|macro|NCP_DIRCACHE_SIZE
+mdefine_line|#define NCP_DIRCACHE_SIZE&t;(PAGE_CACHE_SIZE-sizeof(struct ncp_cache_control))
+DECL|struct|ncp_seq_cache
+r_struct
+id|ncp_seq_cache
+(brace
+DECL|member|ctl
+r_struct
+id|ncp_cache_control
+id|ctl
+suffix:semicolon
+DECL|member|cache
+r_int
+r_char
+id|cache
+(braket
+id|NCP_DIRCACHE_SIZE
+)braket
+suffix:semicolon
+)brace
+suffix:semicolon
 macro_line|#endif /* _NCPLIB_H */
 eof

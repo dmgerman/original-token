@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * $Id: irq.c,v 1.109 1999/09/05 11:56:31 paulus Exp $&n; *&n; *  arch/ppc/kernel/irq.c&n; *&n; *  Derived from arch/i386/kernel/irq.c&n; *    Copyright (C) 1992 Linus Torvalds&n; *  Adapted from arch/i386 by Gary Thomas&n; *    Copyright (C) 1995-1996 Gary Thomas (gdt@linuxppc.org)&n; *  Updated and modified by Cort Dougan (cort@cs.nmt.edu)&n; *    Copyright (C) 1996 Cort Dougan&n; *  Adapted for Power Macintosh by Paul Mackerras&n; *    Copyright (C) 1996 Paul Mackerras (paulus@cs.anu.edu.au)&n; *  Amiga/APUS changes by Jesper Skov (jskov@cygnus.co.uk).&n; *  &n; * This file contains the code used by various IRQ handling routines:&n; * asking for different IRQ&squot;s should be done through these routines&n; * instead of just grabbing them. Thus setups with different IRQ numbers&n; * shouldn&squot;t result in any weird surprises, and installing new handlers&n; * should be easier.&n; *&n; * The MPC8xx has an interrupt mask in the SIU.  If a bit is set, the&n; * interrupt is _enabled_.  As expected, IRQ0 is bit 0 in the 32-bit&n; * mask register (of which only 16 are defined), hence the weird shifting&n; * and compliment of the cached_irq_mask.  I want to be able to stuff&n; * this right into the SIU SMASK register.&n; * Many of the prep/chrp functions are conditional compiled on CONFIG_8xx&n; * to reduce code space and undefined function references.&n; */
+multiline_comment|/*&n; * $Id: irq.c,v 1.113 1999/09/17 17:22:56 cort Exp $&n; *&n; *  arch/ppc/kernel/irq.c&n; *&n; *  Derived from arch/i386/kernel/irq.c&n; *    Copyright (C) 1992 Linus Torvalds&n; *  Adapted from arch/i386 by Gary Thomas&n; *    Copyright (C) 1995-1996 Gary Thomas (gdt@linuxppc.org)&n; *  Updated and modified by Cort Dougan (cort@cs.nmt.edu)&n; *    Copyright (C) 1996 Cort Dougan&n; *  Adapted for Power Macintosh by Paul Mackerras&n; *    Copyright (C) 1996 Paul Mackerras (paulus@cs.anu.edu.au)&n; *  Amiga/APUS changes by Jesper Skov (jskov@cygnus.co.uk).&n; *  &n; * This file contains the code used by various IRQ handling routines:&n; * asking for different IRQ&squot;s should be done through these routines&n; * instead of just grabbing them. Thus setups with different IRQ numbers&n; * shouldn&squot;t result in any weird surprises, and installing new handlers&n; * should be easier.&n; *&n; * The MPC8xx has an interrupt mask in the SIU.  If a bit is set, the&n; * interrupt is _enabled_.  As expected, IRQ0 is bit 0 in the 32-bit&n; * mask register (of which only 16 are defined), hence the weird shifting&n; * and compliment of the cached_irq_mask.  I want to be able to stuff&n; * this right into the SIU SMASK register.&n; * Many of the prep/chrp functions are conditional compiled on CONFIG_8xx&n; * to reduce code space and undefined function references.&n; */
 macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/threads.h&gt;
@@ -74,6 +74,23 @@ DECL|macro|MAXCOUNT
 mdefine_line|#define MAXCOUNT 10000000
 DECL|macro|NR_MASK_WORDS
 mdefine_line|#define NR_MASK_WORDS&t;((NR_IRQS + 31) / 32)
+DECL|variable|irq_desc
+r_struct
+id|irqdesc
+id|irq_desc
+(braket
+id|NR_IRQS
+)braket
+op_assign
+(brace
+(brace
+l_int|0
+comma
+l_int|0
+)brace
+comma
+)brace
+suffix:semicolon
 DECL|variable|ppc_spurious_interrupts
 r_int
 id|ppc_spurious_interrupts
@@ -291,26 +308,35 @@ id|ptr
 )paren
 suffix:semicolon
 )brace
-DECL|variable|irq_desc
-r_struct
-id|irqdesc
-id|irq_desc
-(braket
-id|NR_IRQS
-)braket
-op_assign
-(brace
-(brace
-l_int|0
-comma
-l_int|0
-)brace
-comma
-)brace
-suffix:semicolon
+macro_line|#ifndef CONFIG_8xx
 DECL|function|request_irq
 r_int
 id|request_irq
+(paren
+r_int
+r_int
+id|irq
+comma
+r_void
+(paren
+op_star
+id|handler
+)paren
+(paren
+r_int
+comma
+r_void
+op_star
+comma
+r_struct
+id|pt_regs
+op_star
+)paren
+comma
+macro_line|#else
+multiline_comment|/* Name change so we can catch standard drivers that potentially mess up&n; * the internal interrupt controller on 8xx and 82xx.  Just bear with me,&n; * I don&squot;t like this either and I am searching a better solution.  For&n; * now, this is what I need. -- Dan&n; */
+r_int
+id|request_8xxirq
 c_func
 (paren
 r_int
@@ -333,6 +359,7 @@ id|pt_regs
 op_star
 )paren
 comma
+macro_line|#endif
 r_int
 r_int
 id|irqflags
@@ -608,6 +635,7 @@ op_star
 id|dev_id
 )paren
 (brace
+macro_line|#ifndef CONFIG_8xx
 id|request_irq
 c_func
 (paren
@@ -622,6 +650,22 @@ comma
 id|dev_id
 )paren
 suffix:semicolon
+macro_line|#else
+id|request_8xxirq
+c_func
+(paren
+id|irq
+comma
+l_int|NULL
+comma
+l_int|0
+comma
+l_int|NULL
+comma
+id|dev_id
+)paren
+suffix:semicolon
+macro_line|#endif
 )brace
 multiline_comment|/* XXX should implement irq disable depth like on intel */
 DECL|function|disable_irq_nosync
@@ -1147,22 +1191,70 @@ c_func
 (paren
 )paren
 suffix:semicolon
+r_int
+id|irq
+suffix:semicolon
 id|hardirq_enter
 c_func
 (paren
 id|cpu
 )paren
 suffix:semicolon
+multiline_comment|/* every arch is required to have a get_irq -- Cort */
+id|irq
+op_assign
 id|ppc_md
 dot
-id|do_IRQ
+id|get_irq
+c_func
+(paren
+id|regs
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|irq
+OL
+l_int|0
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_DEBUG
+l_string|&quot;Bogus interrupt %d from PC = %lx&bslash;n&quot;
+comma
+id|irq
+comma
+id|regs-&gt;nip
+)paren
+suffix:semicolon
+id|ppc_spurious_interrupts
+op_increment
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+id|ppc_irq_dispatch_handler
 c_func
 (paren
 id|regs
 comma
-id|cpu
-comma
-id|isfake
+id|irq
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ppc_md.post_irq
+)paren
+id|ppc_md
+dot
+id|post_irq
+c_func
+(paren
+id|irq
 )paren
 suffix:semicolon
 id|hardirq_exit

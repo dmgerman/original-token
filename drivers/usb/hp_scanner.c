@@ -317,6 +317,10 @@ id|thistime
 comma
 op_amp
 id|partial
+comma
+id|HZ
+op_star
+l_int|10
 )paren
 suffix:semicolon
 singleline_comment|//printk(KERN_DEBUG &quot;write stats: result:%d thistime:%lu partial:%lu&bslash;n&quot;, result, thistime, partial);
@@ -560,6 +564,10 @@ id|this_read
 comma
 op_amp
 id|partial
+comma
+id|HZ
+op_star
+l_int|10
 )paren
 suffix:semicolon
 id|printk

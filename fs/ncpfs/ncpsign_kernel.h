@@ -3,7 +3,6 @@ macro_line|#ifndef _NCPSIGN_KERNEL_H
 DECL|macro|_NCPSIGN_KERNEL_H
 mdefine_line|#define _NCPSIGN_KERNEL_H
 macro_line|#include &lt;linux/ncp_fs.h&gt;
-macro_line|#include &lt;linux/ncp_fs_sb.h&gt;
 r_void
 id|sign_packet
 c_func

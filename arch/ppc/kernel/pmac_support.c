@@ -10,8 +10,8 @@ macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/prom.h&gt;
-macro_line|#include &lt;asm/adb.h&gt;
-macro_line|#include &lt;asm/pmu.h&gt;
+macro_line|#include &lt;linux/adb.h&gt;
+macro_line|#include &lt;linux/pmu.h&gt;
 multiline_comment|/*&n; * Read and write the non-volatile RAM on PowerMacs and CHRP machines.&n; */
 DECL|variable|nvram_naddrs
 r_static
@@ -231,9 +231,9 @@ id|nvram_naddrs
 op_eq
 l_int|0
 op_logical_and
-id|adb_hardware
+id|sys_ctrler
 op_eq
-id|ADB_VIAPMU
+id|SYS_CTRLER_PMU
 )paren
 (brace
 id|nvram_naddrs
@@ -255,6 +255,7 @@ id|nvram_naddrs
 suffix:semicolon
 )brace
 )brace
+macro_line|#ifdef CONFIG_NVRAM
 DECL|function|nvram_read_byte
 r_int
 r_char
@@ -508,4 +509,5 @@ c_func
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif /* CONFIG_NVRAM */
 eof

@@ -15,7 +15,7 @@ mdefine_line|#define PCKBD_RELEASED 0x80
 DECL|macro|PCKBD_NEEDS_E0
 mdefine_line|#define PCKBD_NEEDS_E0 0x80
 DECL|macro|USBKBD_MODIFIER_BASE
-mdefine_line|#define USBKBD_MODIFIER_BASE  120
+mdefine_line|#define USBKBD_MODIFIER_BASE  224
 DECL|macro|USBKBD_KEYCODE_OFFSET
 mdefine_line|#define USBKBD_KEYCODE_OFFSET 2
 DECL|macro|USBKBD_KEYCODE_COUNT

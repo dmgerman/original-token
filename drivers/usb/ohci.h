@@ -1,7 +1,7 @@
 macro_line|#ifndef __LINUX_OHCI_H
 DECL|macro|__LINUX_OHCI_H
 mdefine_line|#define __LINUX_OHCI_H
-multiline_comment|/*&n; * Open Host Controller Interface data structures and defines.&n; *&n; * (C) Copyright 1999 Gregory P. Smith &lt;greg@electricrain.com&gt;&n; *&n; * $Id: ohci.h,v 1.24 1999/05/16 10:18:26 greg Exp $&n; */
+multiline_comment|/*&n; * Open Host Controller Interface data structures and defines.&n; *&n; * (C) Copyright 1999 Gregory P. Smith &lt;greg@electricrain.com&gt;&n; *&n; * $Id: ohci.h,v 1.40 1999/09/05 07:26:46 greg Exp $&n; */
 macro_line|#include &lt;linux/list.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &quot;usb.h&quot;
@@ -281,13 +281,32 @@ mdefine_line|#define ed_get_en(ed)&t;((le32_to_cpup(&amp;(ed)-&gt;status) &amp; 
 DECL|macro|ed_get_fa
 mdefine_line|#define ed_get_fa(ed)&t;(le32_to_cpup(&amp;(ed)-&gt;status) &amp; OHCI_ED_FA)
 multiline_comment|/* NOTE: bits 27-31 of the status dword are reserved for the HCD */
-multiline_comment|/*&n; * We&squot;ll use this status flag for to mark if an ED is in use by the&n; * driver or not.  If the bit is set, it is being used.&n; */
+DECL|macro|OHCI_ED_HCD_MASK
+mdefine_line|#define OHCI_ED_HCD_MASK&t;(0x1f &lt;&lt; 27)
+multiline_comment|/*&n; * We&squot;ll use this status flag for to mark if an ED is in use by the&n; * driver or not.  If the bit is set, it is being used.  (bit 31)&n; */
 DECL|macro|ED_ALLOCATED
 mdefine_line|#define ED_ALLOCATED&t;(1 &lt;&lt; 31)
 DECL|macro|ed_allocated
 mdefine_line|#define ed_allocated(ed)&t;(le32_to_cpup(&amp;(ed).status) &amp; ED_ALLOCATED)
 DECL|macro|allocate_ed
 mdefine_line|#define allocate_ed(ed)&t;&t;((ed)-&gt;status |= cpu_to_le32(ED_ALLOCATED))
+multiline_comment|/*&n; * These store the endpoint transfer type for this ED in the status&n; * field.  (bits 27 and 28)&n; *   Bit 28:&n; *     0 = Periodic ED&n; *       Bit 27:&n; *         0 = Isochronous&n; *         1 = Interrupt&n; *     1 = Normal ED&n; *       Bit 27:&n; *         0 = Control&n; *         1 = Bulk&n; */
+DECL|macro|HCD_ED_NORMAL
+mdefine_line|#define HCD_ED_NORMAL&t;(1 &lt;&lt; 28)  /* (2 &lt;&lt; 27) */
+DECL|macro|HCD_ED_ISOC
+mdefine_line|#define HCD_ED_ISOC     (0)
+DECL|macro|HCD_ED_INT
+mdefine_line|#define HCD_ED_INT      (1 &lt;&lt; 27)
+DECL|macro|HCD_ED_CONTROL
+mdefine_line|#define HCD_ED_CONTROL  (2 &lt;&lt; 27)
+DECL|macro|HCD_ED_BULK
+mdefine_line|#define HCD_ED_BULK     (3 &lt;&lt; 27)
+DECL|macro|HCD_ED_MASK
+mdefine_line|#define HCD_ED_MASK&t;(3 &lt;&lt; 27)
+DECL|macro|ohci_ed_hcdtype
+mdefine_line|#define ohci_ed_hcdtype(ed)&t;(le32_to_cpup(&amp;(ed)-&gt;status) &amp; HCD_ED_MASK)
+DECL|macro|ohci_ed_set_hcdtype
+mdefine_line|#define ohci_ed_set_hcdtype(ed, t)&t;( (ed)-&gt;status = ((ed)-&gt;status &amp; ~cpu_to_le32(HCD_ED_MASK)) | cpu_to_le32((t) &amp; HCD_ED_MASK) )
 multiline_comment|/*&n; * The HCCA (Host Controller Communications Area) is a 256 byte&n; * structure defined in the OHCI spec. that the host controller is&n; * told the base address of.  It must be 256-byte aligned.&n; */
 DECL|macro|NUM_INTS
 mdefine_line|#define NUM_INTS 32&t;/* part of the OHCI standard */
@@ -561,15 +580,6 @@ l_int|32
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * These are used by internal ED managing functions as a&n; * parameter to state the type of ED to deal with (when it matters).&n; */
-DECL|macro|HCD_ED_ISOC
-mdefine_line|#define HCD_ED_ISOC     (0)
-DECL|macro|HCD_ED_INT
-mdefine_line|#define HCD_ED_INT      (1)
-DECL|macro|HCD_ED_CONTROL
-mdefine_line|#define HCD_ED_CONTROL  (2)
-DECL|macro|HCD_ED_BULK
-mdefine_line|#define HCD_ED_BULK     (3)
 multiline_comment|/* &n; * Read a MMIO register and re-write it after ANDing with (m)&n; */
 DECL|macro|writel_mask
 mdefine_line|#define writel_mask(m, a) writel( (readl((unsigned long)(a))) &amp; (__u32)(m), (unsigned long)(a) )
@@ -639,6 +649,8 @@ mdefine_line|#define OHCI_INTR_OC&t;(1 &lt;&lt; 30)
 DECL|macro|OHCI_INTR_MIE
 mdefine_line|#define OHCI_INTR_MIE&t;(1 &lt;&lt; 31)
 multiline_comment|/*&n; * Control register masks&n; */
+DECL|macro|OHCI_USB_RESUME
+mdefine_line|#define OHCI_USB_RESUME&t;&t;(1 &lt;&lt; 6)
 DECL|macro|OHCI_USB_OPER
 mdefine_line|#define OHCI_USB_OPER&t;&t;(2 &lt;&lt; 6)
 DECL|macro|OHCI_USB_SUSPEND
@@ -651,6 +663,12 @@ DECL|macro|OHCI_USB_CLE
 mdefine_line|#define OHCI_USB_CLE&t;&t;(1 &lt;&lt; 4)  /* Control list enable */
 DECL|macro|OHCI_USB_BLE
 mdefine_line|#define OHCI_USB_BLE&t;&t;(1 &lt;&lt; 5)  /* Bulk list enable */
+DECL|macro|OHCI_USB_IR
+mdefine_line|#define OHCI_USB_IR&t;&t;(1 &lt;&lt; 8)  /* Int. Routing, HCD ownership */
+DECL|macro|OHCI_USB_RWC
+mdefine_line|#define OHCI_USB_RWC&t;&t;(1 &lt;&lt; 9)  /* Remote Wakeup Connected */
+DECL|macro|OHCI_USB_RWE
+mdefine_line|#define OHCI_USB_RWE&t;&t;(1 &lt;&lt; 10) /* Remote Wakeup Enable */
 multiline_comment|/*&n; * Command status register masks&n; */
 DECL|macro|OHCI_CMDSTAT_HCR
 mdefine_line|#define OHCI_CMDSTAT_HCR&t;(1)

@@ -3,21 +3,17 @@ macro_line|#ifndef _M68K_AMIGAPPC_H
 DECL|macro|_M68K_AMIGAPPC_H
 mdefine_line|#define _M68K_AMIGAPPC_H
 macro_line|#ifndef __ASSEMBLY__
-macro_line|#ifndef iobarrier_rw /* Don&squot;t include io.h - avoid circular dependency */
-DECL|macro|iobarrier_rw
-mdefine_line|#define iobarrier_rw() eieio()
-macro_line|#endif
+multiline_comment|/* #include &lt;asm/system.h&gt; */
+DECL|macro|mb
+mdefine_line|#define mb()  __asm__ __volatile__ (&quot;sync&quot; : : : &quot;memory&quot;)
 DECL|macro|APUS_WRITE
-mdefine_line|#define APUS_WRITE(_a_, _v_)&t;&t;&t;&t;&bslash;&n;do {&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;(*((volatile unsigned char *)(_a_)) = (_v_));&t;&bslash;&n;&t;iobarrier_rw ();&t;&t;&t;&t;&bslash;&n;} while (0)
+mdefine_line|#define APUS_WRITE(_a_, _v_)&t;&t;&t;&t;&bslash;&n;do {&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;(*((volatile unsigned char *)(_a_)) = (_v_));&t;&bslash;&n;&t;mb();&t;&t;&t;&t;&t;&t;&bslash;&n;} while (0)
 DECL|macro|APUS_READ
-mdefine_line|#define APUS_READ(_a_, _v_) &t;&t;&t;&t;&bslash;&n;do {&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;(_v_) = (*((volatile unsigned char *)(_a_)));&t;&bslash;&n;&t;iobarrier_rw ();&t;&t;&t;&t;&bslash;&n;} while (0)
+mdefine_line|#define APUS_READ(_a_, _v_)&t;&t;&t;&t;&bslash;&n;do {&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;(_v_) = (*((volatile unsigned char *)(_a_)));&t;&bslash;&n;&t;mb();&t;&t;&t;&t;&t;&t;&bslash;&n;} while (0)
 macro_line|#endif /* ndef __ASSEMBLY__ */
 multiline_comment|/* Maybe add a [#ifdef WANT_ZTWOBASE] condition to amigahw.h? */
 DECL|macro|zTwoBase
 mdefine_line|#define zTwoBase (0x80000000)
-multiline_comment|/* At CYBERBASEp we find the following sum:&n; * -KERNELBASE+CyberStormMemoryBase&n; */
-DECL|macro|CYBERBASEp
-mdefine_line|#define CYBERBASEp (0xfff00000)
 DECL|macro|APUS_IPL_BASE
 mdefine_line|#define APUS_IPL_BASE   &t;(zTwoBase + 0x00f60000)
 DECL|macro|APUS_REG_RESET

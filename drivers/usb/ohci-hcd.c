@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * OHCI HCD (Host Controller Driver) for USB.&n; *&n; * (C) Copyright 1999 Roman Weissgaerber &lt;weissg@vienna.at&gt;&n; *&n; * The OHCI HCD layer is a simple but nearly complete implementation of what &n; * the USB people would call a HCD  for the OHCI. &n; * (ISO alpha , Bulk, INT u. CTRL transfers enabled)&n; * The layer on top of it, is for interfacing to the alternate-usb &n; * device-drivers.&n; * &n; * [ This is based on Linus&squot; UHCI code and gregs OHCI fragments &n; * (0.03c source tree). ]&n; * [ Open Host Controller Interface driver for USB. ]&n; * [ (C) Copyright 1999 Linus Torvalds (uhci.c) ]&n; * [ (C) Copyright 1999 Gregory P. Smith &lt;greg@electricrain.com&gt; ]&n; * [ $Log: ohci.c,v $ ]&n; * [ Revision 1.1  1999/04/05 08:32:30  greg ]&n; * &n; * v4.2 1999/09/05 ISO API alpha, new dev alloc, neg Error-codes&n; * v4.1 1999/08/27 Randy Dunlap&squot;s - ISO API first impl.&n; * v4.0 1999/08/18 &n; * v3.0 1999/06/25 &n; * v2.1 1999/05/09  code clean up&n; * v2.0 1999/05/04 &n; * virtual root hub is now enabled, &n; * memory allocation based on kmalloc and kfree now, Bus error handling, &n; * INT, CTRL and BULK transfers enabled, ISO needs testing (alpha)&n; * &n; * from Linus Torvalds (uhci.c) (APM not tested; hub, usb_device, bus and related stuff)&n; * from Greg Smith (ohci.c) (reset controller handling, hub)&n; * &n; * v1.0 1999/04/27 initial release&n; * ohci-hcd.c&n; */
+multiline_comment|/*&n; * OHCI HCD (Host Controller Driver) for USB.&n; *&n; * (C) Copyright 1999 Roman Weissgaerber &lt;weissg@vienna.at&gt;&n; *&n; * The OHCI HCD layer is a simple but nearly complete implementation of what &n; * the USB people would call a HCD  for the OHCI. &n; * (ISO alpha , Bulk, INT u. CTRL transfers enabled)&n; * The layer on top of it, is for interfacing to the alternate-usb &n; * device-drivers.&n; * &n; * [ This is based on Linus&squot; UHCI code and gregs OHCI fragments &n; * (0.03c source tree). ]&n; * [ Open Host Controller Interface driver for USB. ]&n; * [ (C) Copyright 1999 Linus Torvalds (uhci.c) ]&n; * [ (C) Copyright 1999 Gregory P. Smith &lt;greg@electricrain.com&gt; ]&n; * [ _Log: ohci-hcd.c,v _&n; * [ Revision 1.1  1999/04/05 08:32:30  greg ]&n; * &n; * v4.2 1999/09/05 ISO API alpha, new dev alloc, neg Error-codes&n; * v4.1 1999/08/27 Randy Dunlap&squot;s - ISO API first impl.&n; * v4.0 1999/08/18 &n; * v3.0 1999/06/25 &n; * v2.1 1999/05/09  code clean up&n; * v2.0 1999/05/04 &n; * virtual root hub is now enabled, &n; * memory allocation based on kmalloc and kfree now, Bus error handling, &n; * INT, CTRL and BULK transfers enabled, ISO needs testing (alpha)&n; * &n; * from Linus Torvalds (uhci.c) (APM not tested; hub, usb_device, bus and related stuff)&n; * from Greg Smith (ohci.c) (reset controller handling, hub)&n; * &n; * v1.0 1999/04/27 initial release&n; * ohci-hcd.c&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
@@ -1244,6 +1244,9 @@ id|data
 comma
 r_int
 id|len
+comma
+r_int
+id|timeout
 )paren
 (brace
 id|DECLARE_WAITQUEUE
@@ -1587,9 +1590,7 @@ suffix:semicolon
 id|schedule_timeout
 c_func
 (paren
-id|HZ
-op_star
-l_int|5
+id|timeout
 )paren
 suffix:semicolon
 r_if
@@ -1670,6 +1671,9 @@ r_int
 r_int
 op_star
 id|rval
+comma
+r_int
+id|timeout
 )paren
 (brace
 id|DECLARE_WAITQUEUE
@@ -1876,9 +1880,7 @@ suffix:semicolon
 id|schedule_timeout
 c_func
 (paren
-id|HZ
-op_star
-l_int|5
+id|timeout
 )paren
 suffix:semicolon
 r_if

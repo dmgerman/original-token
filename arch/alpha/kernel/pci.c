@@ -3,7 +3,6 @@ macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
-macro_line|#include &lt;asm/pci.h&gt;
 macro_line|#include &lt;asm/machvec.h&gt;
 macro_line|#include &quot;proto.h&quot;
 macro_line|#include &quot;pci_impl.h&quot;
@@ -197,6 +196,30 @@ op_ne
 id|PCI_CLASS_STORAGE_IDE
 )paren
 r_continue
+suffix:semicolon
+multiline_comment|/* Resource 1 of IDE controller is the address of HD_CMD&n;&t;&t;   register which actually occupies a single byte (0x3f6&n;&t;&t;   for ide0) in reported 0x3f4-3f7 range. We have to fix&n;&t;&t;   that to avoid resource conflict with AT-style floppy&n;&t;&t;   controller. */
+id|dev-&gt;resource
+(braket
+l_int|1
+)braket
+dot
+id|start
+op_add_assign
+l_int|2
+suffix:semicolon
+id|dev-&gt;resource
+(braket
+l_int|1
+)braket
+dot
+id|end
+op_assign
+id|dev-&gt;resource
+(braket
+l_int|1
+)braket
+dot
+id|start
 suffix:semicolon
 r_for
 c_loop

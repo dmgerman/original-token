@@ -675,8 +675,13 @@ mdefine_line|#define ide_request_irq(irq,hand,flg,dev,id)&t;request_irq((irq),(h
 DECL|macro|ide_free_irq
 mdefine_line|#define ide_free_irq(irq,dev_id)&t;&t;free_irq((irq), (dev_id))
 multiline_comment|/*&n; * The following are not needed for the non-m68k ports&n; */
+macro_line|#ifdef CONFIG_APUS
+DECL|macro|ide_ack_intr
+mdefine_line|#define ide_ack_intr(hwif) (hwif-&gt;hw.ack_intr ? hwif-&gt;hw.ack_intr(hwif) : 1)
+macro_line|#else
 DECL|macro|ide_ack_intr
 mdefine_line|#define ide_ack_intr(hwif)&t;&t;(1)
+macro_line|#endif
 DECL|macro|ide_release_lock
 mdefine_line|#define ide_release_lock(lock)&t;&t;do {} while (0)
 DECL|macro|ide_get_lock

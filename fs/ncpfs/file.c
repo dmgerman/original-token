@@ -84,7 +84,7 @@ r_int
 id|access
 suffix:semicolon
 r_struct
-id|nw_file_info
+id|ncp_entry_info
 id|finfo
 suffix:semicolon
 id|error
@@ -1111,12 +1111,6 @@ id|inode-&gt;i_size
 id|inode-&gt;i_size
 op_assign
 id|pos
-suffix:semicolon
-id|ncp_invalid_dir_cache
-c_func
-(paren
-id|dentry-&gt;d_parent-&gt;d_inode
-)paren
 suffix:semicolon
 )brace
 id|DPRINTK

@@ -1,15 +1,11 @@
 DECL|macro|m68k_debug_device
 mdefine_line|#define m68k_debug_device debug_device
-DECL|macro|m68k_num_memory
-mdefine_line|#define m68k_num_memory num_memory
-DECL|macro|m68k_memory
-mdefine_line|#define m68k_memory memory
 macro_line|#include &lt;linux/init.h&gt;
 multiline_comment|/* machine dependent &quot;kbd-reset&quot; setup function */
 r_void
 (paren
 op_star
-id|kbd_reset_setup
+id|mach_kbd_reset_setup
 )paren
 (paren
 r_char
@@ -22,6 +18,7 @@ op_assign
 l_int|0
 suffix:semicolon
 macro_line|#include &lt;asm/io.h&gt;
+macro_line|#include &lt;asm/system.h&gt;
 multiline_comment|/*&n; *  linux/arch/m68k/amiga/config.c&n; *&n; *  Copyright (C) 1993 Hamish Macdonald&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file COPYING in the main directory of this archive&n; * for more details.&n; */
 multiline_comment|/*&n; * Miscellaneous Amiga stuff&n; */
 macro_line|#include &lt;linux/config.h&gt;
@@ -40,6 +37,11 @@ macro_line|#include &lt;asm/amigaints.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/machdep.h&gt;
 macro_line|#include &lt;linux/zorro.h&gt;
+DECL|variable|powerup_PCI_present
+r_int
+r_int
+id|powerup_PCI_present
+suffix:semicolon
 DECL|variable|amiga_model
 r_int
 r_int
@@ -165,17 +167,6 @@ id|amiga_kbdrate
 r_struct
 id|kbd_repeat
 op_star
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|amiga_kbd_reset_setup
-c_func
-(paren
-r_char
-op_star
-comma
-r_int
 )paren
 suffix:semicolon
 multiline_comment|/* amiga specific irq functions */
@@ -606,11 +597,27 @@ id|record-&gt;tag
 r_case
 id|BI_AMIGA_MODEL
 suffix:colon
-id|amiga_model
+(brace
+r_int
+r_int
+id|d
 op_assign
 op_star
 id|data
 suffix:semicolon
+id|powerup_PCI_present
+op_assign
+id|d
+op_amp
+l_int|0x100
+suffix:semicolon
+id|amiga_model
+op_assign
+id|d
+op_amp
+l_int|0xff
+suffix:semicolon
+)brace
 r_break
 suffix:semicolon
 r_case
@@ -1501,10 +1508,6 @@ id|mach_kbdrate
 op_assign
 id|amiga_kbdrate
 suffix:semicolon
-id|kbd_reset_setup
-op_assign
-id|amiga_kbd_reset_setup
-suffix:semicolon
 id|mach_init_IRQ
 op_assign
 id|amiga_init_IRQ
@@ -1819,7 +1822,7 @@ id|IRQ_AMIGA_CIAB_TA
 comma
 id|timer_routine
 comma
-id|IRQ_FLG_LOCK
+l_int|0
 comma
 l_string|&quot;timer&quot;
 comma
@@ -3211,7 +3214,8 @@ id|c
 op_or
 l_int|0x100
 suffix:semicolon
-id|iobarrier_rw
+id|mb
+c_func
 (paren
 )paren
 suffix:semicolon
@@ -4042,4 +4046,149 @@ r_return
 id|len
 suffix:semicolon
 )brace
+macro_line|#ifdef CONFIG_APUS
+DECL|function|get_hardware_list
+r_int
+id|get_hardware_list
+c_func
+(paren
+r_char
+op_star
+id|buffer
+)paren
+(brace
+r_extern
+r_int
+id|get_cpuinfo
+c_func
+(paren
+r_char
+op_star
+id|buffer
+)paren
+suffix:semicolon
+r_int
+id|len
+op_assign
+l_int|0
+suffix:semicolon
+r_char
+id|model
+(braket
+l_int|80
+)braket
+suffix:semicolon
+id|u_long
+id|mem
+suffix:semicolon
+r_int
+id|i
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|mach_get_model
+)paren
+id|mach_get_model
+c_func
+(paren
+id|model
+)paren
+suffix:semicolon
+r_else
+id|strcpy
+c_func
+(paren
+id|model
+comma
+l_string|&quot;Unknown PowerPC&quot;
+)paren
+suffix:semicolon
+id|len
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|buffer
+op_plus
+id|len
+comma
+l_string|&quot;Model:&bslash;t&bslash;t%s&bslash;n&quot;
+comma
+id|model
+)paren
+suffix:semicolon
+id|len
+op_add_assign
+id|get_cpuinfo
+c_func
+(paren
+id|buffer
+op_plus
+id|len
+)paren
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|mem
+op_assign
+l_int|0
+comma
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|m68k_realnum_memory
+suffix:semicolon
+id|i
+op_increment
+)paren
+id|mem
+op_add_assign
+id|m68k_memory
+(braket
+id|i
+)braket
+dot
+id|size
+suffix:semicolon
+id|len
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|buffer
+op_plus
+id|len
+comma
+l_string|&quot;System Memory:&bslash;t%ldK&bslash;n&quot;
+comma
+id|mem
+op_rshift
+l_int|10
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|mach_get_hardware_list
+)paren
+id|len
+op_add_assign
+id|mach_get_hardware_list
+c_func
+(paren
+id|buffer
+op_plus
+id|len
+)paren
+suffix:semicolon
+r_return
+id|len
+suffix:semicolon
+)brace
+macro_line|#endif
 eof

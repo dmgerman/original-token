@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * $Id: prep_pci.c,v 1.39 1999/08/31 15:42:39 cort Exp $&n; * PReP pci functions.&n; * Originally by Gary Thomas&n; * rewritten and updated by Cort Dougan (cort@cs.nmt.edu)&n; *&n; * The motherboard routes/maps will disappear shortly. -- Cort&n; */
+multiline_comment|/*&n; * $Id: prep_pci.c,v 1.40 1999/09/17 17:23:05 cort Exp $&n; * PReP pci functions.&n; * Originally by Gary Thomas&n; * rewritten and updated by Cort Dougan (cort@cs.nmt.edu)&n; *&n; * The motherboard routes/maps will disappear shortly. -- Cort&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -47,16 +47,20 @@ op_star
 id|ProcInfo
 suffix:semicolon
 r_extern
-r_void
-id|chrp_do_IRQ
+r_int
+id|chrp_get_irq
 c_func
 (paren
 r_struct
 id|pt_regs
 op_star
-comma
-r_int
-comma
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|chrp_post_irq
+c_func
+(paren
 r_int
 )paren
 suffix:semicolon
@@ -2170,9 +2174,13 @@ r_sizeof
 id|mvme2600_openpic_initsenses
 )paren
 suffix:semicolon
-id|ppc_md.do_IRQ
+id|ppc_md.get_irq
 op_assign
-id|chrp_do_IRQ
+id|chrp_get_irq
+suffix:semicolon
+id|ppc_md.post_irq
+op_assign
+id|chrp_post_irq
 suffix:semicolon
 multiline_comment|/* If raven is present on Motorola store the system config register&n;&t; * for later use.&n;&t; */
 id|ProcInfo

@@ -3,7 +3,6 @@ macro_line|#ifndef _LINUX_NCP_H
 DECL|macro|_LINUX_NCP_H
 mdefine_line|#define _LINUX_NCP_H
 macro_line|#include &lt;linux/types.h&gt;
-macro_line|#include &lt;linux/ipx.h&gt;
 DECL|macro|NCP_PTYPE
 mdefine_line|#define NCP_PTYPE                (0x11)
 DECL|macro|NCP_PORT
@@ -248,33 +247,6 @@ l_int|1
 suffix:semicolon
 )brace
 suffix:semicolon
-multiline_comment|/* these define the attribute byte as seen by NCP */
-DECL|macro|aRONLY
-mdefine_line|#define aRONLY     (ntohl(0x01000000))
-DECL|macro|aHIDDEN
-mdefine_line|#define aHIDDEN    (__constant_ntohl(0x02000000))
-DECL|macro|aSYSTEM
-mdefine_line|#define aSYSTEM    (__constant_ntohl(0x04000000))
-DECL|macro|aEXECUTE
-mdefine_line|#define aEXECUTE   (ntohl(0x08000000))
-DECL|macro|aDIR
-mdefine_line|#define aDIR       (ntohl(0x10000000))
-DECL|macro|aARCH
-mdefine_line|#define aARCH      (ntohl(0x20000000))
-DECL|macro|aSHARED
-mdefine_line|#define aSHARED&t;   (ntohl(0x80000000))
-DECL|macro|aDONTSUBALLOCATE
-mdefine_line|#define aDONTSUBALLOCATE (ntohl(1L&lt;&lt;(11+8)))
-DECL|macro|aTRANSACTIONAL
-mdefine_line|#define aTRANSACTIONAL   (ntohl(1L&lt;&lt;(12+8)))
-DECL|macro|aPURGE
-mdefine_line|#define aPURGE&t;&t; (ntohl(1L&lt;&lt;(16-8)))
-DECL|macro|aRENAMEINHIBIT
-mdefine_line|#define aRENAMEINHIBIT&t; (ntohl(1L&lt;&lt;(17-8)))
-DECL|macro|aDELETEINHIBIT
-mdefine_line|#define aDELETEINHIBIT&t; (ntohl(1L&lt;&lt;(18-8)))
-DECL|macro|aDONTCOMPRESS
-mdefine_line|#define aDONTCOMPRESS&t; (nothl(1L&lt;&lt;(27-24)))
 DECL|macro|AR_READ
 mdefine_line|#define AR_READ      (ntohs(0x0100))
 DECL|macro|AR_WRITE
@@ -832,61 +804,6 @@ suffix:semicolon
 DECL|member|maximumSpace
 id|__u32
 id|maximumSpace
-id|__attribute__
-c_func
-(paren
-(paren
-id|packed
-)paren
-)paren
-suffix:semicolon
-)brace
-suffix:semicolon
-DECL|struct|nw_file_info
-r_struct
-id|nw_file_info
-(brace
-DECL|member|i
-r_struct
-id|nw_info_struct
-id|i
-suffix:semicolon
-DECL|member|opened
-r_int
-id|opened
-suffix:semicolon
-DECL|member|access
-r_int
-id|access
-suffix:semicolon
-DECL|member|server_file_handle
-id|__u32
-id|server_file_handle
-id|__attribute__
-c_func
-(paren
-(paren
-id|packed
-)paren
-)paren
-suffix:semicolon
-DECL|member|open_create_action
-id|__u8
-id|open_create_action
-id|__attribute__
-c_func
-(paren
-(paren
-id|packed
-)paren
-)paren
-suffix:semicolon
-DECL|member|file_handle
-id|__u8
-id|file_handle
-(braket
-l_int|6
-)braket
 id|__attribute__
 c_func
 (paren

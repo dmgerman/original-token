@@ -415,6 +415,10 @@ id|this_xfer
 comma
 op_amp
 id|partial
+comma
+id|HZ
+op_star
+l_int|5
 )paren
 suffix:semicolon
 r_if
@@ -958,9 +962,6 @@ suffix:semicolon
 id|devrequest
 id|dr
 suffix:semicolon
-r_int
-id|result
-suffix:semicolon
 id|US_DEBUGP
 c_func
 (paren
@@ -1038,6 +1039,8 @@ comma
 id|cmd
 comma
 l_int|12
+comma
+id|HZ
 )paren
 suffix:semicolon
 multiline_comment|/* long wait for reset */
@@ -1359,6 +1362,8 @@ comma
 id|cmd
 comma
 id|us-&gt;fixedlength
+comma
+id|HZ
 )paren
 suffix:semicolon
 r_if
@@ -1439,6 +1444,8 @@ comma
 id|cmd
 comma
 id|us-&gt;fixedlength
+comma
+id|HZ
 )paren
 suffix:semicolon
 id|wait_ms
@@ -1478,6 +1485,8 @@ comma
 id|srb-&gt;cmnd
 comma
 id|srb-&gt;cmd_len
+comma
+id|HZ
 )paren
 suffix:semicolon
 r_if
@@ -1612,6 +1621,8 @@ r_sizeof
 (paren
 id|status
 )paren
+comma
+id|HZ
 )paren
 suffix:semicolon
 r_if
@@ -1927,18 +1938,6 @@ op_star
 id|srb
 )paren
 (brace
-r_struct
-id|us_data
-op_star
-id|us
-op_assign
-(paren
-r_struct
-id|us_data
-op_star
-)paren
-id|srb-&gt;host_scribble
-suffix:semicolon
 r_int
 id|result
 suffix:semicolon
@@ -2155,6 +2154,8 @@ comma
 l_int|NULL
 comma
 l_int|0
+comma
+id|HZ
 )paren
 suffix:semicolon
 r_if
@@ -2362,6 +2363,10 @@ id|US_BULK_CB_WRAP_LEN
 comma
 op_amp
 id|partial
+comma
+id|HZ
+op_star
+l_int|5
 )paren
 suffix:semicolon
 r_if
@@ -2462,6 +2467,10 @@ id|US_BULK_CS_WRAP_LEN
 comma
 op_amp
 id|partial
+comma
+id|HZ
+op_star
+l_int|5
 )paren
 suffix:semicolon
 r_if
@@ -5726,6 +5735,8 @@ comma
 id|qstat
 comma
 l_int|2
+comma
+id|HZ
 )paren
 suffix:semicolon
 id|US_DEBUGP
@@ -6176,10 +6187,6 @@ c_func
 r_void
 )paren
 (brace
-r_int
-r_int
-id|offset
-suffix:semicolon
 id|usb_deregister
 c_func
 (paren

@@ -242,7 +242,7 @@ op_star
 id|reg
 )paren
 suffix:semicolon
-multiline_comment|/* Functions to register get/setsockopt ranges (non-inclusive). */
+multiline_comment|/* Functions to register get/setsockopt ranges (non-inclusive).  You&n;   need to check permissions yourself! */
 r_int
 id|nf_register_sockopt
 c_func

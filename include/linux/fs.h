@@ -35,10 +35,6 @@ mdefine_line|#define BLOCK_SIZE (1&lt;&lt;BLOCK_SIZE_BITS)
 multiline_comment|/* And dynamically-tunable limits and defaults: */
 r_extern
 r_int
-id|max_inodes
-suffix:semicolon
-r_extern
-r_int
 id|max_files
 comma
 id|nr_files
@@ -473,6 +469,7 @@ macro_line|#include &lt;linux/hfs_fs_i.h&gt;
 macro_line|#include &lt;linux/adfs_fs_i.h&gt;
 macro_line|#include &lt;linux/qnx4_fs_i.h&gt;
 macro_line|#include &lt;linux/udf_fs_i.h&gt;
+macro_line|#include &lt;linux/ncp_fs_i.h&gt;
 multiline_comment|/*&n; * Attribute flags.  These should be or-ed together to figure out what&n; * has been changed!&n; */
 DECL|macro|ATTR_MODE
 mdefine_line|#define ATTR_MODE&t;1
@@ -826,6 +823,11 @@ DECL|member|udf_i
 r_struct
 id|udf_inode_info
 id|udf_i
+suffix:semicolon
+DECL|member|ncpfs_i
+r_struct
+id|ncp_inode_info
+id|ncpfs_i
 suffix:semicolon
 DECL|member|socket_i
 r_struct
@@ -1327,6 +1329,7 @@ macro_line|#include &lt;linux/hfs_fs_sb.h&gt;
 macro_line|#include &lt;linux/adfs_fs_sb.h&gt;
 macro_line|#include &lt;linux/qnx4_fs_sb.h&gt;
 macro_line|#include &lt;linux/udf_fs_sb.h&gt;
+macro_line|#include &lt;linux/ncp_fs_sb.h&gt;
 r_extern
 r_struct
 id|list_head
@@ -1529,6 +1532,11 @@ DECL|member|udf_sb
 r_struct
 id|udf_sb_info
 id|udf_sb
+suffix:semicolon
+DECL|member|ncpfs_sb
+r_struct
+id|ncp_sb_info
+id|ncpfs_sb
 suffix:semicolon
 DECL|member|generic_sbp
 r_void

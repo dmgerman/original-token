@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * $Id: locks.c,v 1.24 1999/08/03 19:16:47 cort Exp $&n; *&n; * Locks for smp ppc &n; * &n; * Written by Cort Dougan (cort@cs.nmt.edu)&n; */
+multiline_comment|/*&n; * $Id: locks.c,v 1.25 1999/09/10 10:40:13 davem Exp $&n; *&n; * Locks for smp ppc &n; * &n; * Written by Cort Dougan (cort@cs.nmt.edu)&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;

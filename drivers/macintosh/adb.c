@@ -8,14 +8,17 @@ macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
+macro_line|#include &lt;linux/adb.h&gt;
+macro_line|#include &lt;linux/cuda.h&gt;
+macro_line|#include &lt;linux/pmu.h&gt;
+macro_line|#include &lt;linux/notifier.h&gt;
 macro_line|#include &lt;linux/wait.h&gt;
-macro_line|#include &lt;asm/prom.h&gt;
-macro_line|#include &lt;asm/adb.h&gt;
-macro_line|#include &lt;asm/cuda.h&gt;
-macro_line|#include &lt;asm/pmu.h&gt;
-macro_line|#include &lt;asm/uaccess.h&gt;
-macro_line|#include &lt;asm/hydra.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;asm/uaccess.h&gt;
+macro_line|#ifdef CONFIG_PPC
+macro_line|#include &lt;asm/prom.h&gt;
+macro_line|#include &lt;asm/hydra.h&gt;
+macro_line|#endif
 DECL|variable|adb_controller
 id|EXPORT_SYMBOL
 c_func
@@ -30,20 +33,84 @@ c_func
 id|adb_client_list
 )paren
 suffix:semicolon
-DECL|variable|adb_hardware
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|adb_hardware
-)paren
+r_extern
+r_struct
+id|adb_driver
+id|via_macii_driver
+suffix:semicolon
+r_extern
+r_struct
+id|adb_driver
+id|via_maciisi_driver
+suffix:semicolon
+r_extern
+r_struct
+id|adb_driver
+id|via_cuda_driver
+suffix:semicolon
+r_extern
+r_struct
+id|adb_driver
+id|adb_iop_driver
+suffix:semicolon
+r_extern
+r_struct
+id|adb_driver
+id|via_pmu_driver
+suffix:semicolon
+r_extern
+r_struct
+id|adb_driver
+id|macio_adb_driver
+suffix:semicolon
+DECL|variable|adb_driver_list
+r_static
+r_struct
+id|adb_driver
+op_star
+id|adb_driver_list
+(braket
+)braket
+op_assign
+(brace
+macro_line|#ifdef CONFIG_ADB_MACII
+op_amp
+id|via_macii_driver
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_ADB_MACIISI
+op_amp
+id|via_maciisi_driver
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_ADB_CUDA
+op_amp
+id|via_cuda_driver
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_ADB_IOP
+op_amp
+id|adb_iop_driver
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_ADB_PMU
+op_amp
+id|via_pmu_driver
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_ADB_MACIO
+op_amp
+id|macio_adb_driver
+comma
+macro_line|#endif
+l_int|NULL
+)brace
 suffix:semicolon
 DECL|variable|adb_controller
 r_struct
-id|adb_controller
+id|adb_driver
 op_star
 id|adb_controller
-op_assign
-l_int|NULL
 suffix:semicolon
 DECL|variable|adb_client_list
 r_struct
@@ -53,12 +120,12 @@ id|adb_client_list
 op_assign
 l_int|NULL
 suffix:semicolon
-DECL|variable|adb_hardware
-r_enum
-id|adb_hw
-id|adb_hardware
+DECL|variable|adb_got_sleep
+r_static
+r_int
+id|adb_got_sleep
 op_assign
-id|ADB_NONE
+l_int|0
 suffix:semicolon
 macro_line|#ifdef CONFIG_PMAC_PBOOK
 r_static
@@ -67,28 +134,25 @@ id|adb_notify_sleep
 c_func
 (paren
 r_struct
-id|notifier_block
+id|pmu_sleep_notifier
 op_star
+id|self
 comma
 r_int
-r_int
-comma
-r_void
-op_star
+id|when
 )paren
 suffix:semicolon
 DECL|variable|adb_sleep_notifier
 r_static
 r_struct
-id|notifier_block
+id|pmu_sleep_notifier
 id|adb_sleep_notifier
 op_assign
 (brace
 id|adb_notify_sleep
 comma
-l_int|NULL
+id|SLEEP_LEVEL_ADB
 comma
-l_int|0
 )brace
 suffix:semicolon
 macro_line|#endif
@@ -394,6 +458,39 @@ comma
 l_int|0xfe
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t;&t;&t; * See if anybody actually moved. This is suggested&n;&t;&t;&t; * by HW TechNote 01:&n;&t;&t;&t; *&n;&t;&t;&t; * http://developer.apple.com/technotes/hw/hw_01.html&n;&t;&t;&t; */
+id|adb_request
+c_func
+(paren
+op_amp
+id|req
+comma
+l_int|NULL
+comma
+id|ADBREQ_SYNC
+op_or
+id|ADBREQ_REPLY
+comma
+l_int|1
+comma
+(paren
+id|highFree
+op_lshift
+l_int|4
+)paren
+op_or
+l_int|0xf
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|req.reply_len
+op_le
+l_int|1
+)paren
+r_continue
+suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t; * Test whether there are any device(s) left&n;&t;&t;&t; * at address i.&n;&t;&t;&t; */
 id|adb_request
 c_func
@@ -619,13 +716,23 @@ id|devmask
 suffix:semicolon
 )brace
 DECL|function|adb_init
-r_void
+r_int
+id|__init
 id|adb_init
 c_func
 (paren
 r_void
 )paren
 (brace
+r_struct
+id|adb_driver
+op_star
+id|driver
+suffix:semicolon
+r_int
+id|i
+suffix:semicolon
+macro_line|#ifdef CONFIG_PPC
 r_if
 c_cond
 (paren
@@ -642,29 +749,81 @@ id|_MACH_Pmac
 )paren
 )paren
 r_return
+l_int|0
 suffix:semicolon
-id|via_cuda_init
-c_func
-(paren
-)paren
-suffix:semicolon
-id|via_pmu_init
-c_func
-(paren
-)paren
-suffix:semicolon
-id|macio_adb_init
-c_func
-(paren
-)paren
-suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_MAC
 r_if
 c_cond
+(paren
+op_logical_neg
+id|MACH_IS_MAC
+)paren
+r_return
+l_int|0
+suffix:semicolon
+macro_line|#endif
+id|adb_controller
+op_assign
+l_int|NULL
+suffix:semicolon
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+r_while
+c_loop
+(paren
+(paren
+id|driver
+op_assign
+id|adb_driver_list
+(braket
+id|i
+op_increment
+)braket
+)paren
+op_ne
+l_int|NULL
+)paren
+(brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|driver
+op_member_access_from_pointer
+id|probe
+c_func
+(paren
+)paren
+)paren
+(brace
+id|adb_controller
+op_assign
+id|driver
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
+)brace
+r_if
+c_cond
+(paren
 (paren
 id|adb_controller
 op_eq
 l_int|NULL
 )paren
+op_logical_or
+id|adb_controller
+op_member_access_from_pointer
+id|init
+c_func
+(paren
+)paren
+)paren
+(brace
 id|printk
 c_func
 (paren
@@ -672,19 +831,13 @@ id|KERN_WARNING
 l_string|&quot;Warning: no ADB interface detected&bslash;n&quot;
 )paren
 suffix:semicolon
+)brace
 r_else
 (brace
-id|adb_hardware
-op_assign
-id|adb_controller-&gt;kind
-suffix:semicolon
 macro_line|#ifdef CONFIG_PMAC_PBOOK
-id|notifier_chain_register
+id|pmu_register_sleep_notifier
 c_func
 (paren
-op_amp
-id|sleep_notifier_list
-comma
 op_amp
 id|adb_sleep_notifier
 )paren
@@ -696,7 +849,17 @@ c_func
 )paren
 suffix:semicolon
 )brace
+r_return
+l_int|0
+suffix:semicolon
 )brace
+DECL|variable|adb_init
+id|__initcall
+c_func
+(paren
+id|adb_init
+)paren
+suffix:semicolon
 macro_line|#ifdef CONFIG_PMAC_PBOOK
 multiline_comment|/*&n; * notify clients before sleep and reset bus afterwards&n; */
 r_int
@@ -705,17 +868,12 @@ id|adb_notify_sleep
 c_func
 (paren
 r_struct
-id|notifier_block
+id|pmu_sleep_notifier
 op_star
-id|this
+id|self
 comma
 r_int
-r_int
-id|code
-comma
-r_void
-op_star
-id|x
+id|when
 )paren
 (brace
 r_int
@@ -724,12 +882,16 @@ suffix:semicolon
 r_switch
 c_cond
 (paren
-id|code
+id|when
 )paren
 (brace
 r_case
-id|PBOOK_SLEEP
+id|PBOOK_SLEEP_REQUEST
 suffix:colon
+id|adb_got_sleep
+op_assign
+l_int|1
+suffix:semicolon
 id|ret
 op_assign
 id|notifier_call_chain
@@ -751,8 +913,35 @@ op_amp
 id|NOTIFY_STOP_MASK
 )paren
 r_return
-op_minus
-id|EBUSY
+id|PBOOK_SLEEP_REFUSE
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|PBOOK_SLEEP_REJECT
+suffix:colon
+r_if
+c_cond
+(paren
+id|adb_got_sleep
+)paren
+(brace
+id|adb_got_sleep
+op_assign
+l_int|0
+suffix:semicolon
+id|adb_reset_bus
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+r_break
+suffix:semicolon
+r_case
+id|PBOOK_SLEEP_NOW
+suffix:colon
+r_break
 suffix:semicolon
 r_case
 id|PBOOK_WAKE
@@ -766,7 +955,7 @@ r_break
 suffix:semicolon
 )brace
 r_return
-id|NOTIFY_DONE
+id|PBOOK_SLEEP_OK
 suffix:semicolon
 )brace
 macro_line|#endif /* CONFIG_PMAC_PBOOK */
@@ -1115,6 +1304,16 @@ c_func
 (paren
 id|list
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|flags
+op_amp
+id|ADBREQ_NOSEND
+)paren
+r_return
+l_int|0
 suffix:semicolon
 r_return
 id|adb_controller
@@ -1835,12 +2034,9 @@ id|inode-&gt;i_rdev
 OG
 l_int|0
 op_logical_or
-(paren
 id|adb_controller
 op_eq
 l_int|NULL
-)paren
-multiline_comment|/*adb_hardware == ADB_NONE*/
 )paren
 r_return
 op_minus
@@ -2486,6 +2682,17 @@ op_amp
 id|state-&gt;n_pending
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|adb_controller
+op_eq
+l_int|NULL
+)paren
+r_return
+op_minus
+id|ENXIO
+suffix:semicolon
 multiline_comment|/* Special case for ADB_BUSRESET request, all others are sent to&n;&t;   the controller */
 r_if
 c_cond
@@ -2638,6 +2845,7 @@ c_func
 (paren
 )paren
 (brace
+macro_line|#ifdef CONFIG_PPC
 r_if
 c_cond
 (paren
@@ -2655,6 +2863,17 @@ id|_MACH_Pmac
 )paren
 r_return
 suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_MAC
+r_if
+c_cond
+(paren
+op_logical_neg
+id|MACH_IS_MAC
+)paren
+r_return
+suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren

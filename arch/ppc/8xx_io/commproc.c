@@ -8,12 +8,7 @@ macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
-macro_line|#ifdef CONFIG_MBX
-macro_line|#include &lt;asm/mbx.h&gt;
-macro_line|#endif
-macro_line|#ifdef CONFIG_FADS
-macro_line|#include &lt;asm/fads.h&gt;
-macro_line|#endif
+macro_line|#include &lt;asm/mpc8xx.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/8xx_immap.h&gt;
@@ -198,11 +193,11 @@ id|PAGE_SIZE
 suffix:semicolon
 id|pte
 op_assign
-id|va_to_pte
+id|find_pte
 c_func
 (paren
 op_amp
-id|init_task
+id|init_mm
 comma
 id|host_page_addr
 )paren
@@ -233,6 +228,16 @@ op_star
 )paren
 id|commproc
 suffix:semicolon
+)brace
+multiline_comment|/* This is called during init_IRQ.  We used to do it above, but this&n; * was too early since init_IRQ was not yet called.&n; */
+r_void
+DECL|function|cpm_interrupt_init
+id|cpm_interrupt_init
+c_func
+(paren
+r_void
+)paren
+(brace
 multiline_comment|/* Initialize the CPM interrupt controller.&n;&t;*/
 (paren
 (paren
@@ -256,9 +261,7 @@ id|CICR_SCA_SCC1
 op_or
 (paren
 (paren
-(paren
-l_int|5
-)paren
+id|CPM_INTERRUPT
 op_div
 l_int|2
 )paren
@@ -268,7 +271,6 @@ l_int|13
 op_or
 id|CICR_HP_MASK
 suffix:semicolon
-multiline_comment|/* I hard coded the CPM interrupt to 5 above&n;&t; * since the CPM_INTERRUPT define is relative to&n;&t; * the linux irq structure not what the hardware&n;&t; * belives. -- Cort&n;&t; */
 (paren
 (paren
 id|immap_t
@@ -285,7 +287,7 @@ multiline_comment|/* Set our interrupt handler with the core CPU.&n;&t;*/
 r_if
 c_cond
 (paren
-id|request_irq
+id|request_8xxirq
 c_func
 (paren
 id|CPM_INTERRUPT
@@ -556,6 +558,52 @@ id|vec
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* Free a CPM interrupt handler.&n;*/
+r_void
+DECL|function|cpm_free_handler
+id|cpm_free_handler
+c_func
+(paren
+r_int
+id|vec
+)paren
+(brace
+id|cpm_vecs
+(braket
+id|vec
+)braket
+dot
+id|handler
+op_assign
+l_int|NULL
+suffix:semicolon
+id|cpm_vecs
+(braket
+id|vec
+)braket
+dot
+id|dev_id
+op_assign
+l_int|NULL
+suffix:semicolon
+(paren
+(paren
+id|immap_t
+op_star
+)paren
+id|IMAP_ADDR
+)paren
+op_member_access_from_pointer
+id|im_cpic.cpic_cimr
+op_and_assign
+op_complement
+(paren
+l_int|1
+op_lshift
+id|vec
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/* Allocate some memory from the dual ported ram.  We may want to&n; * enforce alignment restrictions, but right now everyone is a good&n; * citizen.&n; */
 id|uint
 DECL|function|m8xx_cpm_dpalloc
@@ -636,7 +684,7 @@ suffix:semicolon
 )brace
 multiline_comment|/* Set a baud rate generator.  This needs lots of work.  There are&n; * four BRGs, any of which can be wired to any channel.&n; * The internal baud rate clock is the system clock divided by 16.&n; * This assumes the baudrate is 16x oversampled by the uart.&n; */
 DECL|macro|BRG_INT_CLK
-mdefine_line|#define BRG_INT_CLK&t;(((bd_t *)res)-&gt;bi_intfreq * 1000000)
+mdefine_line|#define BRG_INT_CLK&t;(((bd_t *)__res)-&gt;bi_intfreq * 1000000)
 DECL|macro|BRG_UART_CLK
 mdefine_line|#define BRG_UART_CLK&t;(BRG_INT_CLK/16)
 r_void

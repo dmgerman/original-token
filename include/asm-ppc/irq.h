@@ -92,41 +92,49 @@ suffix:semicolon
 )brace
 macro_line|#endif
 macro_line|#else /* CONFIG_8xx */
-multiline_comment|/* The MPC8xx cores have 16 possible interrupts.  There are eight&n; * possible level sensitive interrupts assigned and generated internally&n; * from such devices as CPM, PCMCIA, RTC, PIT, TimeBase and Decrementer.&n; * There are eight external interrupts (IRQs) that can be configured&n; * as either level or edge sensitive. &n; * On the MBX implementation, there is also the possibility of an 8259&n; * through the PCI and PCI-ISA bridges.&n; */
+multiline_comment|/* The MPC8xx cores have 16 possible interrupts.  There are eight&n; * possible level sensitive interrupts assigned and generated internally&n; * from such devices as CPM, PCMCIA, RTC, PIT, TimeBase and Decrementer.&n; * There are eight external interrupts (IRQs) that can be configured&n; * as either level or edge sensitive. &n; *&n; * The 82xx can have up to 64 interrupts on the internal controller.&n; *&n; * On some implementations, there is also the possibility of an 8259&n; * through the PCI and PCI-ISA bridges.&n; */
+macro_line|#ifdef CONFIG_82xx
+DECL|macro|NR_SIU_INTS
+mdefine_line|#define NR_SIU_INTS&t;64
+macro_line|#else
+DECL|macro|NR_SIU_INTS
+mdefine_line|#define NR_SIU_INTS&t;16
+macro_line|#endif
 DECL|macro|NR_IRQS
-mdefine_line|#define NR_IRQS&t;(16+16) /* 8259 has 16, too -- Cort */
+mdefine_line|#define NR_IRQS&t;(NR_SIU_INTS + NR_8259_INTS)
+multiline_comment|/* These values must be zero-based and map 1:1 with the SIU configuration.&n; * They are used throughout the 8xx/82xx I/O subsystem to generate&n; * interrupt masks, flags, and other control patterns.  This is why the&n; * current kernel assumption of the 8259 as the base controller is such&n; * a pain in the butt.&n; */
 DECL|macro|SIU_IRQ0
-mdefine_line|#define&t;SIU_IRQ0&t;(0+16)&t;/* Highest priority */
+mdefine_line|#define&t;SIU_IRQ0&t;(0)&t;/* Highest priority */
 DECL|macro|SIU_LEVEL0
-mdefine_line|#define&t;SIU_LEVEL0&t;(1+16)
+mdefine_line|#define&t;SIU_LEVEL0&t;(1)
 DECL|macro|SIU_IRQ1
-mdefine_line|#define&t;SIU_IRQ1&t;(2+16)
+mdefine_line|#define&t;SIU_IRQ1&t;(2)
 DECL|macro|SIU_LEVEL1
-mdefine_line|#define&t;SIU_LEVEL1&t;(3+16)
+mdefine_line|#define&t;SIU_LEVEL1&t;(3)
 DECL|macro|SIU_IRQ2
-mdefine_line|#define&t;SIU_IRQ2&t;(4+16)
+mdefine_line|#define&t;SIU_IRQ2&t;(4)
 DECL|macro|SIU_LEVEL2
-mdefine_line|#define&t;SIU_LEVEL2&t;(5+16)
+mdefine_line|#define&t;SIU_LEVEL2&t;(5)
 DECL|macro|SIU_IRQ3
-mdefine_line|#define&t;SIU_IRQ3&t;(6+16)
+mdefine_line|#define&t;SIU_IRQ3&t;(6)
 DECL|macro|SIU_LEVEL3
-mdefine_line|#define&t;SIU_LEVEL3&t;(7+16)
+mdefine_line|#define&t;SIU_LEVEL3&t;(7)
 DECL|macro|SIU_IRQ4
-mdefine_line|#define&t;SIU_IRQ4&t;(8+16)
+mdefine_line|#define&t;SIU_IRQ4&t;(8)
 DECL|macro|SIU_LEVEL4
-mdefine_line|#define&t;SIU_LEVEL4&t;(9+16)
+mdefine_line|#define&t;SIU_LEVEL4&t;(9)
 DECL|macro|SIU_IRQ5
-mdefine_line|#define&t;SIU_IRQ5&t;(10+16)
+mdefine_line|#define&t;SIU_IRQ5&t;(10)
 DECL|macro|SIU_LEVEL5
-mdefine_line|#define&t;SIU_LEVEL5&t;(11+16)
+mdefine_line|#define&t;SIU_LEVEL5&t;(11)
 DECL|macro|SIU_IRQ6
-mdefine_line|#define&t;SIU_IRQ6&t;(12+16)
+mdefine_line|#define&t;SIU_IRQ6&t;(12)
 DECL|macro|SIU_LEVEL6
-mdefine_line|#define&t;SIU_LEVEL6&t;(13+16)
+mdefine_line|#define&t;SIU_LEVEL6&t;(13)
 DECL|macro|SIU_IRQ7
-mdefine_line|#define&t;SIU_IRQ7&t;(14+16)
+mdefine_line|#define&t;SIU_IRQ7&t;(14)
 DECL|macro|SIU_LEVEL7
-mdefine_line|#define&t;SIU_LEVEL7&t;(15+16)
+mdefine_line|#define&t;SIU_LEVEL7&t;(15)
 multiline_comment|/* The internal interrupts we can configure as we see fit.&n; * My personal preference is CPM at level 2, which puts it above the&n; * MBX PCI/ISA/IDE interrupts.&n; */
 DECL|macro|PIT_INTERRUPT
 mdefine_line|#define PIT_INTERRUPT&t;&t;SIU_LEVEL0
@@ -139,26 +147,9 @@ mdefine_line|#define DEC_INTERRUPT&t;&t;SIU_LEVEL7
 multiline_comment|/* Some internal interrupt registers use an 8-bit mask for the interrupt&n; * level instead of a number.&n; */
 DECL|macro|mk_int_int_mask
 mdefine_line|#define&t;mk_int_int_mask(IL) (1 &lt;&lt; (7 - (IL/2)))
-macro_line|#ifdef CONFIG_MBX
-multiline_comment|/* These are defined (and fixed) by the MBX hardware implementation.*/
-DECL|macro|POWER_FAIL_INT
-mdefine_line|#define POWER_FAIL_INT&t;SIU_IRQ0&t;/* Power fail */
-DECL|macro|TEMP_HILO_INT
-mdefine_line|#define TEMP_HILO_INT&t;SIU_IRQ1&t;/* Temperature sensor */
-DECL|macro|QSPAN_INT
-mdefine_line|#define QSPAN_INT&t;SIU_IRQ2&t;/* PCI Bridge (DMA CTLR?) */
-DECL|macro|ISA_BRIDGE_INT
-mdefine_line|#define ISA_BRIDGE_INT&t;SIU_IRQ3&t;/* All those PC things */
-DECL|macro|COMM_L_INT
-mdefine_line|#define COMM_L_INT&t;SIU_IRQ6&t;/* MBX Comm expansion connector pin */
-DECL|macro|STOP_ABRT_INT
-mdefine_line|#define STOP_ABRT_INT&t;SIU_IRQ7&t;/* Stop/Abort header pin */
-macro_line|#endif /* CONFIG_MBX */
-macro_line|#ifdef CONFIG_FADS
-DECL|macro|FEC_INTERRUPT
-mdefine_line|#define FEC_INTERRUPT&t;SIU_LEVEL1&t;/* FEC interrupt */
-macro_line|#endif
-multiline_comment|/* always the same on MBX -- Cort */
+multiline_comment|/* Now include the board configuration specific associations.&n;*/
+macro_line|#include &lt;asm/mpc8xx.h&gt;
+multiline_comment|/* always the same on 8xx -- Cort */
 DECL|function|irq_cannonicalize
 r_static
 id|__inline__

@@ -12,7 +12,7 @@ mdefine_line|#define __pmacfunc(__argpmac) &bslash;&n;&t;__argpmac __pmac; &bsla
 DECL|macro|__prep
 mdefine_line|#define __prep __attribute__ ((__section__ (&quot;.text.prep&quot;)))
 DECL|macro|__prepdata
-mdefine_line|#define __prepdata /* __attribute__ ((__section__ (&quot;.data.prep&quot;)))*/
+mdefine_line|#define __prepdata __attribute__ ((__section__ (&quot;.data.prep&quot;)))
 DECL|macro|__prepfunc
 mdefine_line|#define __prepfunc(__argprep) &bslash;&n;&t;__argprep __prep; &bslash;&n;&t;__argprep
 DECL|macro|__apus

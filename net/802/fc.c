@@ -320,6 +320,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#ifdef CONFIG_INET
 r_return
 id|arp_find
 c_func
@@ -329,5 +330,10 @@ comma
 id|skb
 )paren
 suffix:semicolon
+macro_line|#else
+r_return
+l_int|0
+suffix:semicolon
+macro_line|#endif
 )brace
 eof

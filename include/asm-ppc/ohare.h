@@ -15,8 +15,12 @@ DECL|macro|OH_BAY_FLOPPY_ENABLE
 mdefine_line|#define OH_BAY_FLOPPY_ENABLE&t;0x10
 DECL|macro|OH_IDE_ENABLE
 mdefine_line|#define OH_IDE_ENABLE&t;&t;0x20
+DECL|macro|OH_IDE_POWER
+mdefine_line|#define OH_IDE_POWER&t;&t;0x40&t;/* a guess */
 DECL|macro|OH_BAY_ENABLE
 mdefine_line|#define OH_BAY_ENABLE&t;&t;0x80
+DECL|macro|OH_IDE_RESET
+mdefine_line|#define OH_IDE_RESET&t;&t;0x100&t;/* 0-based, a guess */
 DECL|macro|OH_SCC_ENABLE
 mdefine_line|#define OH_SCC_ENABLE&t;&t;0x200
 DECL|macro|OH_MESH_ENABLE

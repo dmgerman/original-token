@@ -5,11 +5,18 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
+macro_line|#include &lt;linux/adb.h&gt;
+macro_line|#include &lt;linux/cuda.h&gt;
+macro_line|#ifdef CONFIG_PPC
 macro_line|#include &lt;asm/prom.h&gt;
-macro_line|#include &lt;asm/adb.h&gt;
-macro_line|#include &lt;asm/cuda.h&gt;
+macro_line|#include &lt;asm/machdep.h&gt;
+macro_line|#else
+macro_line|#include &lt;asm/macintosh.h&gt;
+macro_line|#include &lt;asm/macints.h&gt;
+macro_line|#include &lt;asm/machw.h&gt;
+macro_line|#include &lt;asm/mac_via.h&gt;
+macro_line|#endif
 macro_line|#include &lt;asm/io.h&gt;
-macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 DECL|variable|via
@@ -20,6 +27,17 @@ r_char
 op_star
 id|via
 suffix:semicolon
+macro_line|#ifdef CONFIG_MAC
+DECL|macro|CUDA_IRQ
+mdefine_line|#define CUDA_IRQ IRQ_MAC_ADB
+DECL|macro|__openfirmware
+mdefine_line|#define __openfirmware
+DECL|macro|eieio
+mdefine_line|#define eieio()
+macro_line|#else
+DECL|macro|CUDA_IRQ
+mdefine_line|#define CUDA_IRQ vias-&gt;intrs[0].line
+macro_line|#endif
 multiline_comment|/* VIA registers - spaced 0x200 bytes apart */
 DECL|macro|RS
 mdefine_line|#define RS&t;&t;0x200&t;&t;/* skip between registers */
@@ -142,6 +160,7 @@ r_static
 r_int
 id|data_index
 suffix:semicolon
+macro_line|#ifdef CONFIG_PPC
 DECL|variable|vias
 r_static
 r_struct
@@ -149,6 +168,7 @@ id|device_node
 op_star
 id|vias
 suffix:semicolon
+macro_line|#endif
 DECL|variable|cuda_fully_inited
 r_static
 r_int
@@ -158,7 +178,23 @@ l_int|0
 suffix:semicolon
 r_static
 r_int
-id|init_via
+id|cuda_probe
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_static
+r_int
+id|cuda_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_static
+r_int
+id|cuda_init_via
 c_func
 (paren
 r_void
@@ -174,7 +210,7 @@ r_void
 suffix:semicolon
 r_static
 r_void
-id|via_interrupt
+id|cuda_interrupt
 c_func
 (paren
 r_int
@@ -211,7 +247,7 @@ id|regs
 suffix:semicolon
 r_static
 r_int
-id|cuda_adb_send_request
+id|cuda_send_request
 c_func
 (paren
 r_struct
@@ -232,9 +268,8 @@ r_int
 id|devs
 )paren
 suffix:semicolon
-r_static
-r_int
-id|cuda_adb_reset_bus
+r_void
+id|cuda_poll
 c_func
 (paren
 r_void
@@ -242,7 +277,15 @@ r_void
 suffix:semicolon
 r_static
 r_int
-id|cuda_send_request
+id|cuda_reset_adb_bus
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_static
+r_int
+id|cuda_write
 c_func
 (paren
 r_struct
@@ -251,24 +294,57 @@ op_star
 id|req
 )paren
 suffix:semicolon
-DECL|variable|cuda_controller
-r_static
+r_int
+id|cuda_request
+c_func
+(paren
 r_struct
-id|adb_controller
-id|cuda_controller
+id|adb_request
+op_star
+id|req
+comma
+r_void
+(paren
+op_star
+id|done
+)paren
+(paren
+r_struct
+id|adb_request
+op_star
+)paren
+comma
+r_int
+id|nbytes
+comma
+dot
+dot
+dot
+)paren
+suffix:semicolon
+DECL|variable|via_cuda_driver
+r_struct
+id|adb_driver
+id|via_cuda_driver
 op_assign
 (brace
-id|ADB_VIACUDA
+l_string|&quot;CUDA&quot;
 comma
-id|cuda_adb_send_request
+id|cuda_probe
 comma
+id|cuda_init
+comma
+id|cuda_send_request
+comma
+multiline_comment|/*cuda_write,*/
 id|cuda_adb_autopoll
 comma
-id|cuda_adb_reset_bus
-comma
 id|cuda_poll
+comma
+id|cuda_reset_adb_bus
 )brace
 suffix:semicolon
+macro_line|#ifdef CONFIG_PPC
 r_void
 DECL|function|find_via_cuda
 id|find_via_cuda
@@ -315,7 +391,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;via_cuda_init: node = %p, addrs =&quot;
+l_string|&quot;find_via_cuda: node = %p, addrs =&quot;
 comma
 id|vias-&gt;node
 )paren
@@ -452,42 +528,65 @@ id|cuda_state
 op_assign
 id|idle
 suffix:semicolon
+id|sys_ctrler
+op_assign
+id|SYS_CTRLER_CUDA
+suffix:semicolon
+)brace
+macro_line|#endif /* CONFIG_PPC */
+r_static
+r_int
+DECL|function|cuda_probe
+id|cuda_probe
+c_func
+(paren
+)paren
+(brace
+macro_line|#ifdef CONFIG_PPC
 r_if
 c_cond
 (paren
-op_logical_neg
-id|init_via
-c_func
+id|sys_ctrler
+op_ne
+id|SYS_CTRLER_CUDA
+)paren
+r_return
+op_minus
+id|ENODEV
+suffix:semicolon
+macro_line|#else
+r_if
+c_cond
 (paren
+id|macintosh_config-&gt;adb_type
+op_ne
+id|MAC_ADB_CUDA
 )paren
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_ERR
-l_string|&quot;init_via failed&bslash;n&quot;
-)paren
+r_return
+op_minus
+id|ENODEV
 suffix:semicolon
 id|via
 op_assign
-l_int|NULL
+id|via1
+suffix:semicolon
+macro_line|#endif
+r_return
+l_int|0
 suffix:semicolon
 )brace
-id|adb_controller
-op_assign
-op_amp
-id|cuda_controller
-suffix:semicolon
-)brace
-r_void
-DECL|function|via_cuda_init
-id|via_cuda_init
+r_static
+r_int
+DECL|function|cuda_init
+id|cuda_init
 c_func
 (paren
 r_void
 )paren
 (brace
+r_int
+id|err
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -496,52 +595,40 @@ op_eq
 l_int|NULL
 )paren
 r_return
+op_minus
+id|ENODEV
+suffix:semicolon
+id|err
+op_assign
+id|cuda_init_via
+c_func
+(paren
+)paren
 suffix:semicolon
 r_if
 c_cond
 (paren
-id|request_irq
-c_func
-(paren
-id|vias-&gt;intrs
-(braket
-l_int|0
-)braket
-dot
-id|line
-comma
-id|via_interrupt
-comma
-l_int|0
-comma
-l_string|&quot;VIA&quot;
-comma
-(paren
-r_void
-op_star
-)paren
-l_int|0
-)paren
+id|err
 )paren
 (brace
 id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;VIA: can&squot;t get irq %d&bslash;n&quot;
-comma
-id|vias-&gt;intrs
-(braket
-l_int|0
-)braket
-dot
-id|line
+l_string|&quot;cuda_probe: init_via() failed&bslash;n&quot;
 )paren
 suffix:semicolon
+id|via
+op_assign
+l_int|NULL
+suffix:semicolon
 r_return
+id|err
 suffix:semicolon
 )brace
-multiline_comment|/* Clear and enable interrupts */
+multiline_comment|/* Clear and enable interrupts, but only on PPC. On 68K it&squot;s done  */
+multiline_comment|/* for us by the the main VIA driver in arch/m68k/mac/via.c        */
+macro_line|#ifndef CONFIG_MAC
 id|via
 (braket
 id|IFR
@@ -570,17 +657,59 @@ c_func
 )paren
 suffix:semicolon
 multiline_comment|/* enable interrupt from SR */
+macro_line|#endif
+r_if
+c_cond
+(paren
+id|request_irq
+c_func
+(paren
+id|CUDA_IRQ
+comma
+id|cuda_interrupt
+comma
+l_int|0
+comma
+l_string|&quot;ADB&quot;
+comma
+id|cuda_interrupt
+)paren
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;cuda_init: can&squot;t get irq %d&bslash;n&quot;
+comma
+id|CUDA_IRQ
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|EAGAIN
+suffix:semicolon
+)brace
+id|printk
+c_func
+(paren
+l_string|&quot;adb: CUDA driver v0.5 for Unified ADB.&bslash;n&quot;
+)paren
+suffix:semicolon
 id|cuda_fully_inited
 op_assign
 l_int|1
 suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
 )brace
 DECL|macro|WAIT_FOR
-mdefine_line|#define WAIT_FOR(cond, what)&t;&t;&t;&t;&bslash;&n;    do {&t;&t;&t;&t;&t;&t;&bslash;&n;&t;for (x = 1000; !(cond); --x) {&t;&t;&t;&bslash;&n;&t;    if (x == 0) {&t;&t;&t;&t;&bslash;&n;&t;&t;printk(&quot;Timeout waiting for &quot; what);&t;&bslash;&n;&t;&t;return 0;&t;&t;&t;&t;&bslash;&n;&t;    }&t;&t;&t;&t;&t;&t;&bslash;&n;&t;    udelay(100);&t;&t;&t;&t;&t;&bslash;&n;&t;}&t;&t;&t;&t;&t;&t;&bslash;&n;    } while (0)
+mdefine_line|#define WAIT_FOR(cond, what)&t;&t;&t;&t;&bslash;&n;    do {&t;&t;&t;&t;&t;&t;&bslash;&n;&t;for (x = 1000; !(cond); --x) {&t;&t;&t;&bslash;&n;&t;    if (x == 0) {&t;&t;&t;&t;&bslash;&n;&t;&t;printk(&quot;Timeout waiting for &quot; what);&t;&bslash;&n;&t;&t;return -ENXIO;&t;&t;&t;&t;&bslash;&n;&t;    }&t;&t;&t;&t;&t;&t;&bslash;&n;&t;    udelay(100);&t;&t;&t;&t;&t;&bslash;&n;&t;}&t;&t;&t;&t;&t;&t;&bslash;&n;    } while (0)
 r_static
 r_int
-DECL|function|init_via
-id|init_via
+DECL|function|cuda_init_via
+id|cuda_init_via
 c_func
 (paren
 )paren
@@ -654,6 +783,7 @@ c_func
 )paren
 suffix:semicolon
 multiline_comment|/* clear any left-over data */
+macro_line|#ifndef CONFIG_MAC
 id|via
 (braket
 id|IER
@@ -667,6 +797,7 @@ c_func
 )paren
 suffix:semicolon
 multiline_comment|/* disable interrupts from VIA */
+macro_line|#endif
 id|eieio
 c_func
 (paren
@@ -815,14 +946,14 @@ c_func
 suffix:semicolon
 multiline_comment|/* should be unnecessary */
 r_return
-l_int|1
+l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* Send an ADB command */
 r_static
 r_int
-DECL|function|cuda_adb_send_request
-id|cuda_adb_send_request
+DECL|function|cuda_send_request
+id|cuda_send_request
 c_func
 (paren
 r_struct
@@ -865,7 +996,7 @@ l_int|1
 suffix:semicolon
 id|i
 op_assign
-id|cuda_send_request
+id|cuda_write
 c_func
 (paren
 id|req
@@ -974,8 +1105,8 @@ suffix:semicolon
 multiline_comment|/* Reset adb bus - how do we do this?? */
 r_static
 r_int
-DECL|function|cuda_adb_reset_bus
-id|cuda_adb_reset_bus
+DECL|function|cuda_reset_adb_bus
+id|cuda_reset_adb_bus
 c_func
 (paren
 r_void
@@ -1139,7 +1270,7 @@ op_assign
 l_int|1
 suffix:semicolon
 r_return
-id|cuda_send_request
+id|cuda_write
 c_func
 (paren
 id|req
@@ -1148,8 +1279,8 @@ suffix:semicolon
 )brace
 r_static
 r_int
-DECL|function|cuda_send_request
-id|cuda_send_request
+DECL|function|cuda_write
+id|cuda_write
 c_func
 (paren
 r_struct
@@ -1379,15 +1510,16 @@ c_func
 )paren
 (brace
 r_int
-id|ie
+r_int
+id|flags
 suffix:semicolon
-id|__save_flags
+id|save_flags
 c_func
 (paren
-id|ie
+id|flags
 )paren
 suffix:semicolon
-id|__cli
+id|cli
 c_func
 (paren
 )paren
@@ -1402,7 +1534,7 @@ id|IFR
 op_amp
 id|SR_INT
 )paren
-id|via_interrupt
+id|cuda_interrupt
 c_func
 (paren
 l_int|0
@@ -1412,17 +1544,17 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-id|__restore_flags
+id|restore_flags
 c_func
 (paren
-id|ie
+id|flags
 )paren
 suffix:semicolon
 )brace
 r_static
 r_void
-DECL|function|via_interrupt
-id|via_interrupt
+DECL|function|cuda_interrupt
+id|cuda_interrupt
 c_func
 (paren
 r_int
@@ -1494,7 +1626,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/* printk(&quot;via_interrupt: state=%d status=%x&bslash;n&quot;, cuda_state, status); */
+multiline_comment|/* printk(&quot;cuda_interrupt: state=%d status=%x&bslash;n&quot;, cuda_state, status); */
 r_switch
 c_cond
 (paren
@@ -2127,7 +2259,7 @@ suffix:colon
 id|printk
 c_func
 (paren
-l_string|&quot;via_interrupt: unknown cuda_state %d?&bslash;n&quot;
+l_string|&quot;cuda_interrupt: unknown cuda_state %d?&bslash;n&quot;
 comma
 id|cuda_state
 )paren
@@ -2234,27 +2366,5 @@ l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
-)brace
-r_int
-DECL|function|cuda_present
-id|cuda_present
-c_func
-(paren
-r_void
-)paren
-(brace
-r_return
-(paren
-id|adb_controller
-op_logical_and
-(paren
-id|adb_controller-&gt;kind
-op_eq
-id|ADB_VIACUDA
-)paren
-op_logical_and
-id|via
-)paren
-suffix:semicolon
 )brace
 eof

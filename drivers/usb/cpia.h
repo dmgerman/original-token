@@ -131,9 +131,10 @@ mdefine_line|#define CPIA_YUYV&t;0
 DECL|macro|CPIA_UYVY
 mdefine_line|#define CPIA_UYVY&t;1
 DECL|macro|STREAM_BUF_SIZE
-mdefine_line|#define STREAM_BUF_SIZE&t;(PAGE_SIZE * 4)
+mdefine_line|#define STREAM_BUF_SIZE&t;&t;(PAGE_SIZE * 4)
+multiline_comment|/* #define STREAM_BUF_SIZE&t;(FRAMES_PER_DESC * FRAME_SIZE_PER_DESC) */
 DECL|macro|SCRATCH_BUF_SIZE
-mdefine_line|#define SCRATCH_BUF_SIZE (STREAM_BUF_SIZE * 2)
+mdefine_line|#define SCRATCH_BUF_SIZE&t;(STREAM_BUF_SIZE * 2)
 DECL|macro|FRAMES_PER_DESC
 mdefine_line|#define FRAMES_PER_DESC&t;&t;10
 DECL|macro|FRAME_SIZE_PER_DESC
@@ -154,6 +155,163 @@ comma
 multiline_comment|/* Parsing lines */
 )brace
 suffix:semicolon
+DECL|macro|CPIA_MAGIC
+mdefine_line|#define CPIA_MAGIC&t;0x1968
+DECL|struct|cpia_frame_header
+r_struct
+id|cpia_frame_header
+(brace
+DECL|member|magic
+id|__u16
+id|magic
+suffix:semicolon
+multiline_comment|/* 0 - 1 */
+DECL|member|timestamp
+id|__u16
+id|timestamp
+suffix:semicolon
+multiline_comment|/* 2 - 3 */
+DECL|member|unused
+id|__u16
+id|unused
+suffix:semicolon
+multiline_comment|/* 4 - 5 */
+DECL|member|timestamp1
+id|__u16
+id|timestamp1
+suffix:semicolon
+multiline_comment|/* 6 - 7 */
+DECL|member|unused1
+id|__u8
+id|unused1
+(braket
+l_int|8
+)braket
+suffix:semicolon
+multiline_comment|/* 8 - 15 */
+DECL|member|video_size
+id|__u8
+id|video_size
+suffix:semicolon
+multiline_comment|/* 16 0 = QCIF, 1 = CIF */
+DECL|member|sub_sample
+id|__u8
+id|sub_sample
+suffix:semicolon
+multiline_comment|/* 17 0 = 4:2:0, 1 = 4:2:2 */
+DECL|member|yuv_order
+id|__u8
+id|yuv_order
+suffix:semicolon
+multiline_comment|/* 18 0 = YUYV, 1 = UYVY */
+DECL|member|unused2
+id|__u8
+id|unused2
+(braket
+l_int|5
+)braket
+suffix:semicolon
+multiline_comment|/* 19 - 23 */
+DECL|member|col_start
+id|__u8
+id|col_start
+suffix:semicolon
+multiline_comment|/* 24 */
+DECL|member|col_end
+id|__u8
+id|col_end
+suffix:semicolon
+multiline_comment|/* 25 */
+DECL|member|row_start
+id|__u8
+id|row_start
+suffix:semicolon
+multiline_comment|/* 26 */
+DECL|member|row_end
+id|__u8
+id|row_end
+suffix:semicolon
+multiline_comment|/* 27 */
+DECL|member|comp_enable
+id|__u8
+id|comp_enable
+suffix:semicolon
+multiline_comment|/* 28 0 = non compressed, 1 = compressed */
+DECL|member|decimation
+id|__u8
+id|decimation
+suffix:semicolon
+multiline_comment|/* 29 0 = no decimation, 1 = decimation */
+DECL|member|y_thresh
+id|__u8
+id|y_thresh
+suffix:semicolon
+multiline_comment|/* 30 */
+DECL|member|uv_thresh
+id|__u8
+id|uv_thresh
+suffix:semicolon
+multiline_comment|/* 31 */
+DECL|member|system_state
+id|__u8
+id|system_state
+suffix:semicolon
+multiline_comment|/* 32 */
+DECL|member|grab_state
+id|__u8
+id|grab_state
+suffix:semicolon
+multiline_comment|/* 33 */
+DECL|member|stream_state
+id|__u8
+id|stream_state
+suffix:semicolon
+multiline_comment|/* 34 */
+DECL|member|fatal_error
+id|__u8
+id|fatal_error
+suffix:semicolon
+multiline_comment|/* 35 */
+DECL|member|cmd_error
+id|__u8
+id|cmd_error
+suffix:semicolon
+multiline_comment|/* 36 */
+DECL|member|debug_flags
+id|__u8
+id|debug_flags
+suffix:semicolon
+multiline_comment|/* 37 */
+DECL|member|camera_state_7
+id|__u8
+id|camera_state_7
+suffix:semicolon
+multiline_comment|/* 38 */
+DECL|member|camera_state_8
+id|__u8
+id|camera_state_8
+suffix:semicolon
+multiline_comment|/* 39 */
+DECL|member|cr_achieved
+id|__u8
+id|cr_achieved
+suffix:semicolon
+multiline_comment|/* 40 */
+DECL|member|fr_achieved
+id|__u8
+id|fr_achieved
+suffix:semicolon
+multiline_comment|/* 41 */
+DECL|member|unused3
+id|__u8
+id|unused3
+(braket
+l_int|22
+)braket
+suffix:semicolon
+multiline_comment|/* 42 - 63 */
+)brace
+suffix:semicolon
 r_struct
 id|usb_device
 suffix:semicolon
@@ -166,30 +324,24 @@ r_char
 op_star
 id|data
 suffix:semicolon
-DECL|member|len
-r_int
-id|len
-suffix:semicolon
 DECL|member|isodesc
 r_struct
 id|usb_isoc_desc
 op_star
 id|isodesc
 suffix:semicolon
-macro_line|#if 0
-r_void
-op_star
-id|isodesc
-suffix:semicolon
-macro_line|#endif
 )brace
 suffix:semicolon
 r_enum
 (brace
+DECL|enumerator|FRAME_UNUSED
+id|FRAME_UNUSED
+comma
+multiline_comment|/* Unused (no MCAPTURE) */
 DECL|enumerator|FRAME_READY
 id|FRAME_READY
 comma
-multiline_comment|/* Ready to grab into */
+multiline_comment|/* Ready to start grabbing */
 DECL|enumerator|FRAME_GRABBING
 id|FRAME_GRABBING
 comma
@@ -198,10 +350,10 @@ DECL|enumerator|FRAME_DONE
 id|FRAME_DONE
 comma
 multiline_comment|/* Finished grabbing, but not been synced yet */
-DECL|enumerator|FRAME_UNUSED
-id|FRAME_UNUSED
+DECL|enumerator|FRAME_ERROR
+id|FRAME_ERROR
 comma
-multiline_comment|/* Unused (no MCAPTURE) */
+multiline_comment|/* Something bad happened while processing */
 )brace
 suffix:semicolon
 DECL|struct|cpia_frame
@@ -213,20 +365,59 @@ r_char
 op_star
 id|data
 suffix:semicolon
+multiline_comment|/* Frame buffer */
+DECL|member|header
+r_struct
+id|cpia_frame_header
+id|header
+suffix:semicolon
+multiline_comment|/* Header from stream */
 DECL|member|width
 r_int
 id|width
 suffix:semicolon
+multiline_comment|/* Width application is expecting */
 DECL|member|height
 r_int
 id|height
 suffix:semicolon
-DECL|member|state
+multiline_comment|/* Height */
+DECL|member|hdrwidth
 r_int
-id|state
+id|hdrwidth
 suffix:semicolon
+multiline_comment|/* Width the frame actually is */
+DECL|member|hdrheight
+r_int
+id|hdrheight
+suffix:semicolon
+multiline_comment|/* Height */
+DECL|member|grabstate
+r_int
+id|grabstate
+suffix:semicolon
+multiline_comment|/* State of grabbing */
+DECL|member|scanstate
+r_int
+id|scanstate
+suffix:semicolon
+multiline_comment|/* State of scanning */
+DECL|member|curline
+r_int
+id|curline
+suffix:semicolon
+multiline_comment|/* Line of frame we&squot;re working on */
+DECL|member|wq
+id|wait_queue_head_t
+id|wq
+suffix:semicolon
+multiline_comment|/* Processes waiting */
 )brace
 suffix:semicolon
+DECL|macro|CPIA_NUMFRAMES
+mdefine_line|#define CPIA_NUMFRAMES&t;2
+DECL|macro|CPIA_NUMSBUF
+mdefine_line|#define CPIA_NUMSBUF&t;2
 DECL|struct|usb_cpia
 r_struct
 id|usb_cpia
@@ -247,6 +438,17 @@ DECL|member|streaming
 r_int
 id|streaming
 suffix:semicolon
+multiline_comment|/* Are we streaming Isochronous? */
+DECL|member|grabbing
+r_int
+id|grabbing
+suffix:semicolon
+multiline_comment|/* Are we grabbing? */
+DECL|member|compress
+r_int
+id|compress
+suffix:semicolon
+multiline_comment|/* Should the next frame be compressed? */
 DECL|member|fbuf
 r_char
 op_star
@@ -262,13 +464,13 @@ r_struct
 id|cpia_frame
 id|frame
 (braket
-l_int|2
+id|CPIA_NUMFRAMES
 )braket
 suffix:semicolon
 multiline_comment|/* Double buffering */
-DECL|member|receivesbuf
+DECL|member|cursbuf
 r_int
-id|receivesbuf
+id|cursbuf
 suffix:semicolon
 multiline_comment|/* Current receiving sbuf */
 DECL|member|sbuf
@@ -276,20 +478,13 @@ r_struct
 id|cpia_sbuf
 id|sbuf
 (braket
-l_int|3
+id|CPIA_NUMSBUF
 )braket
 suffix:semicolon
-multiline_comment|/* Triple buffering */
-DECL|member|state
-r_int
-id|state
-suffix:semicolon
-multiline_comment|/* Current scanning state */
-DECL|member|curline
-r_int
-id|curline
-suffix:semicolon
+multiline_comment|/* Double buffering */
+multiline_comment|/* Scratch space from the Isochronous pipe */
 DECL|member|scratch
+r_int
 r_char
 id|scratch
 (braket
@@ -299,10 +494,6 @@ suffix:semicolon
 DECL|member|scratchlen
 r_int
 id|scratchlen
-suffix:semicolon
-DECL|member|wq
-id|wait_queue_head_t
-id|wq
 suffix:semicolon
 )brace
 suffix:semicolon

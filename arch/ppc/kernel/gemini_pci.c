@@ -1366,11 +1366,6 @@ c_func
 r_void
 )paren
 (brace
-r_struct
-id|pci_bus
-op_star
-id|bus
-suffix:semicolon
 r_int
 r_int
 id|orig_mem_base

@@ -2739,6 +2739,12 @@ r_return
 l_int|NULL
 suffix:semicolon
 )brace
+macro_line|#ifndef CONFIG_SYSV_FS_WRITE
+id|sb-&gt;s_flags
+op_or_assign
+id|MS_RDONLY
+suffix:semicolon
+macro_line|#endif
 id|unlock_super
 c_func
 (paren
@@ -4629,7 +4635,7 @@ suffix:colon
 id|printk
 c_func
 (paren
-l_string|&quot;sysv_getblk: block &lt; 0&bslash;n&quot;
+l_string|&quot;sysv_get_block: block &lt; 0&bslash;n&quot;
 )paren
 suffix:semicolon
 r_goto
@@ -4640,7 +4646,7 @@ suffix:colon
 id|printk
 c_func
 (paren
-l_string|&quot;sysv_getblk: block &gt; big&bslash;n&quot;
+l_string|&quot;sysv_get_block: block &gt; big&bslash;n&quot;
 )paren
 suffix:semicolon
 r_goto
@@ -4648,6 +4654,7 @@ m_abort
 suffix:semicolon
 )brace
 DECL|function|sysv_getblk
+r_static
 r_struct
 id|buffer_head
 op_star
@@ -4726,7 +4733,7 @@ id|dummy.b_dev
 comma
 id|dummy.b_blocknr
 comma
-id|BLOCK_SIZE
+id|inode-&gt;i_sb-&gt;sv_block_size
 )paren
 suffix:semicolon
 r_if
@@ -4747,7 +4754,7 @@ id|bh-&gt;b_data
 comma
 l_int|0
 comma
-id|BLOCK_SIZE
+id|inode-&gt;i_sb-&gt;sv_block_size
 )paren
 suffix:semicolon
 id|mark_buffer_uptodate
@@ -6138,32 +6145,11 @@ r_struct
 id|file_system_type
 id|sysv_fs_type
 (braket
-l_int|3
 )braket
 op_assign
 (brace
 (brace
-l_string|&quot;xenix&quot;
-comma
-id|FS_REQUIRES_DEV
-comma
-id|sysv_read_super
-comma
-l_int|NULL
-)brace
-comma
-(brace
 l_string|&quot;sysv&quot;
-comma
-id|FS_REQUIRES_DEV
-comma
-id|sysv_read_super
-comma
-l_int|NULL
-)brace
-comma
-(brace
-l_string|&quot;coherent&quot;
 comma
 id|FS_REQUIRES_DEV
 comma
@@ -6187,6 +6173,8 @@ id|i
 suffix:semicolon
 r_int
 id|ouch
+op_assign
+l_int|0
 suffix:semicolon
 r_for
 c_loop
@@ -6197,7 +6185,18 @@ l_int|0
 suffix:semicolon
 id|i
 OL
-l_int|3
+r_sizeof
+(paren
+id|sysv_fs_type
+)paren
+op_div
+r_sizeof
+(paren
+id|sysv_fs_type
+(braket
+l_int|0
+)braket
+)paren
 suffix:semicolon
 id|i
 op_increment
@@ -6267,7 +6266,18 @@ l_int|0
 suffix:semicolon
 id|i
 OL
-l_int|3
+r_sizeof
+(paren
+id|sysv_fs_type
+)paren
+op_div
+r_sizeof
+(paren
+id|sysv_fs_type
+(braket
+l_int|0
+)braket
+)paren
 suffix:semicolon
 id|i
 op_increment

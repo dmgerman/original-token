@@ -8,6 +8,9 @@ macro_line|#endif
 r_struct
 id|pt_regs
 suffix:semicolon
+r_struct
+id|pci_bus
+suffix:semicolon
 DECL|struct|machdep_calls
 r_struct
 id|machdep_calls
@@ -80,23 +83,26 @@ id|init_IRQ
 r_void
 )paren
 suffix:semicolon
-DECL|member|do_IRQ
-r_void
+DECL|member|get_irq
+r_int
 (paren
 op_star
-id|do_IRQ
+id|get_irq
 )paren
 (paren
 r_struct
 id|pt_regs
 op_star
-id|regs
-comma
+)paren
+suffix:semicolon
+DECL|member|post_irq
+r_void
+(paren
+op_star
+id|post_irq
+)paren
+(paren
 r_int
-id|cpu
-comma
-r_int
-id|isfake
 )paren
 suffix:semicolon
 multiline_comment|/* A general init function, called by ppc_init in init/main.c.&n;&t;   May be NULL. */
@@ -496,9 +502,6 @@ id|pcibios_fixup
 r_void
 )paren
 suffix:semicolon
-r_struct
-id|pci_bus
-suffix:semicolon
 DECL|member|pcibios_fixup_bus
 r_void
 (paren
@@ -510,6 +513,11 @@ r_struct
 id|pci_bus
 op_star
 )paren
+suffix:semicolon
+multiline_comment|/* this is for modules, since _machine can be a define -- Cort */
+DECL|member|ppc_machine
+r_int
+id|ppc_machine
 suffix:semicolon
 )brace
 suffix:semicolon
@@ -560,9 +568,9 @@ id|boot_loader
 l_int|128
 )braket
 suffix:semicolon
-DECL|member|_machine
+DECL|member|_machine_type
 r_int
-id|_machine
+id|_machine_type
 suffix:semicolon
 DECL|member|initrd_start
 DECL|member|initrd_size
@@ -605,6 +613,25 @@ r_struct
 id|boot_info
 op_star
 id|binfo
+suffix:semicolon
+multiline_comment|/*&n; * Power macintoshes have either a CUDA or a PMU controlling&n; * system reset, power, NVRAM, RTC.&n; */
+DECL|enum|sys_ctrler_kind
+r_enum
+id|sys_ctrler_kind
+(brace
+DECL|enumerator|SYS_CTRLER_CUDA
+id|SYS_CTRLER_CUDA
+op_assign
+l_int|1
+comma
+DECL|enumerator|SYS_CTRLER_PMU
+id|SYS_CTRLER_PMU
+op_assign
+l_int|2
+comma
+DECL|variable|sys_ctrler
+)brace
+id|sys_ctrler
 suffix:semicolon
 macro_line|#endif /* _PPC_MACHDEP_H */
 eof

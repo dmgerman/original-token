@@ -73,7 +73,13 @@ l_int|0
 comma
 multiline_comment|/* FEATURE_BMac_IO_enable */
 l_int|0
-multiline_comment|/* FEATURE_Modem_Reset -&gt; guess...*/
+comma
+multiline_comment|/* FEATURE_Modem_Reset -&gt; guess... */
+id|OH_IDE_POWER
+comma
+multiline_comment|/* FEATURE_IDE_DiskPower -&gt; guess... */
+id|OH_IDE_RESET
+multiline_comment|/* FEATURE_IDE_Reset (0 based) -&gt; guess... */
 )brace
 suffix:semicolon
 multiline_comment|/* assume these are the same as the ohare until proven otherwise */
@@ -137,7 +143,13 @@ l_int|0x60000000
 comma
 multiline_comment|/* FEATURE_BMac_IO_enable */
 l_int|0x02000000
+comma
 multiline_comment|/* FEATURE_Modem_Reset -&gt; guess...*/
+id|OH_IDE_POWER
+comma
+multiline_comment|/* FEATURE_IDE_DiskPower -&gt; guess... */
+id|OH_IDE_RESET
+multiline_comment|/* FEATURE_IDE_Reset (0 based) -&gt; guess... */
 )brace
 suffix:semicolon
 multiline_comment|/* definition of a feature controller object */
@@ -618,7 +630,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|st_le32
+id|out_le32
 c_func
 (paren
 id|controllers
@@ -628,7 +640,7 @@ id|controller
 dot
 id|reg
 comma
-id|ld_le32
+id|in_le32
 c_func
 (paren
 id|controllers
@@ -648,6 +660,20 @@ id|bits
 (braket
 id|f
 )braket
+)paren
+suffix:semicolon
+(paren
+r_void
+)paren
+id|in_le32
+c_func
+(paren
+id|controllers
+(braket
+id|controller
+)braket
+dot
+id|reg
 )paren
 suffix:semicolon
 id|restore_flags
@@ -754,7 +780,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|st_le32
+id|out_le32
 c_func
 (paren
 id|controllers
@@ -764,7 +790,7 @@ id|controller
 dot
 id|reg
 comma
-id|ld_le32
+id|in_le32
 c_func
 (paren
 id|controllers
@@ -787,6 +813,20 @@ id|bits
 id|f
 )braket
 )paren
+)paren
+suffix:semicolon
+(paren
+r_void
+)paren
+id|in_le32
+c_func
+(paren
+id|controllers
+(braket
+id|controller
+)braket
+dot
+id|reg
 )paren
 suffix:semicolon
 id|restore_flags
@@ -854,7 +894,7 @@ id|controller
 suffix:semicolon
 r_return
 (paren
-id|ld_le32
+id|in_le32
 c_func
 (paren
 id|controllers

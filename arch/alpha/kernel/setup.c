@@ -30,7 +30,6 @@ macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/hwrpb.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
-macro_line|#include &lt;asm/pci.h&gt;
 macro_line|#include &quot;proto.h&quot;
 macro_line|#include &quot;pci_impl.h&quot;
 DECL|variable|hwrpb

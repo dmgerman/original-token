@@ -172,6 +172,8 @@ op_amp
 id|status
 comma
 l_int|1
+comma
+id|HZ
 )paren
 )paren
 (brace
@@ -389,6 +391,8 @@ comma
 l_int|NULL
 comma
 l_int|0
+comma
+id|HZ
 )paren
 suffix:semicolon
 )brace
@@ -518,6 +522,8 @@ op_amp
 id|p-&gt;wait_q
 )paren
 suffix:semicolon
+id|MOD_INC_USE_COUNT
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -564,6 +570,7 @@ id|file-&gt;private_data
 op_assign
 l_int|NULL
 suffix:semicolon
+multiline_comment|/* free the resources if the printer is no longer around */
 r_if
 c_cond
 (paren
@@ -584,9 +591,9 @@ c_func
 id|p
 )paren
 suffix:semicolon
+)brace
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
-)brace
 r_return
 l_int|0
 suffix:semicolon
@@ -776,6 +783,10 @@ id|thistime
 comma
 op_amp
 id|partial
+comma
+id|HZ
+op_star
+l_int|20
 )paren
 suffix:semicolon
 r_if
@@ -1074,6 +1085,10 @@ id|this_read
 comma
 op_amp
 id|partial
+comma
+id|HZ
+op_star
+l_int|20
 )paren
 suffix:semicolon
 multiline_comment|/* unlike writes, we don&squot;t retry a NAK, just stop now */
@@ -1605,6 +1620,8 @@ id|ieee_id
 )paren
 op_minus
 l_int|1
+comma
+id|HZ
 )paren
 op_eq
 l_int|0
@@ -1779,8 +1796,6 @@ op_assign
 l_int|NULL
 suffix:semicolon
 multiline_comment|/* just in case */
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
 )brace
 DECL|variable|printer_driver
 r_static
@@ -1850,8 +1865,6 @@ r_void
 (brace
 r_int
 id|result
-suffix:semicolon
-id|MOD_INC_USE_COUNT
 suffix:semicolon
 r_if
 c_cond

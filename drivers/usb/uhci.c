@@ -303,6 +303,10 @@ r_int
 id|count
 op_assign
 l_int|1000
+comma
+id|bytesreceived
+op_assign
+l_int|0
 suffix:semicolon
 r_if
 c_cond
@@ -356,7 +360,9 @@ c_cond
 (paren
 id|status
 )paren
-(brace
+r_break
+suffix:semicolon
+macro_line|#if 0
 r_if
 c_cond
 (paren
@@ -449,6 +455,48 @@ id|tmp-&gt;status
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
+multiline_comment|/* The length field is only valid if the TD was completed */
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|tmp-&gt;status
+op_amp
+id|TD_CTRL_ACTIVE
+)paren
+op_logical_and
+id|uhci_packetin
+c_func
+(paren
+id|tmp-&gt;info
+)paren
+)paren
+(brace
+id|bytesreceived
+op_add_assign
+id|uhci_actual_length
+c_func
+(paren
+id|tmp-&gt;status
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|rval
+)paren
+op_star
+id|rval
+op_add_assign
+id|uhci_actual_length
+c_func
+(paren
+id|tmp-&gt;status
+)paren
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -503,6 +551,9 @@ l_int|1
 suffix:semicolon
 )brace
 r_else
+(brace
+multiline_comment|/* If we got to the last TD */
+multiline_comment|/* No error */
 r_if
 c_cond
 (paren
@@ -512,6 +563,62 @@ id|status
 r_return
 id|USB_ST_NOERROR
 suffix:semicolon
+multiline_comment|/* APC BackUPS Pro kludge */
+multiline_comment|/* It tries to send all of the descriptor instead of */
+multiline_comment|/*  the amount we requested */
+r_if
+c_cond
+(paren
+id|tmp-&gt;status
+op_amp
+id|TD_CTRL_IOC
+op_logical_and
+id|tmp-&gt;status
+op_amp
+id|TD_CTRL_ACTIVE
+op_logical_and
+id|tmp-&gt;status
+op_amp
+id|TD_CTRL_NAK
+)paren
+r_return
+id|USB_ST_NOERROR
+suffix:semicolon
+macro_line|#if 0
+multiline_comment|/* We got to an error, but the controller hasn&squot;t finished */
+multiline_comment|/*  with it, yet */
+r_if
+c_cond
+(paren
+id|tmp-&gt;status
+op_amp
+id|TD_CTRL_ACTIVE
+)paren
+r_return
+id|USB_ST_NOCHANGE
+suffix:semicolon
+macro_line|#endif
+multiline_comment|/* If this wasn&squot;t the last TD and SPD is set, ACTIVE */
+multiline_comment|/*  is not and NAK isn&squot;t then we received a short */
+multiline_comment|/*  packet */
+r_if
+c_cond
+(paren
+id|tmp-&gt;status
+op_amp
+id|TD_CTRL_SPD
+op_logical_and
+op_logical_neg
+(paren
+id|tmp-&gt;status
+op_amp
+id|TD_CTRL_NAK
+)paren
+)paren
+r_return
+id|USB_ST_NOERROR
+suffix:semicolon
+)brace
 multiline_comment|/* Some debugging code */
 r_if
 c_cond
@@ -3755,6 +3862,9 @@ r_struct
 id|uhci_td
 op_star
 id|last
+comma
+r_int
+id|timeout
 )paren
 (brace
 id|DECLARE_WAITQUEUE
@@ -3833,15 +3943,13 @@ comma
 id|qh
 )paren
 suffix:semicolon
+multiline_comment|/* wait a user specified reasonable amount of time */
 id|schedule_timeout
 c_func
 (paren
-id|HZ
-op_star
-l_int|5
+id|timeout
 )paren
 suffix:semicolon
-multiline_comment|/* 5 seconds */
 id|remove_wait_queue
 c_func
 (paren
@@ -3915,6 +4023,9 @@ id|data
 comma
 r_int
 id|len
+comma
+r_int
+id|timeout
 )paren
 (brace
 r_struct
@@ -4306,6 +4417,8 @@ comma
 id|first
 comma
 id|td
+comma
+id|timeout
 )paren
 suffix:semicolon
 id|count
@@ -4526,6 +4639,9 @@ r_int
 r_int
 op_star
 id|rval
+comma
+r_int
+id|timeout
 )paren
 (brace
 id|DECLARE_WAITQUEUE
@@ -4604,15 +4720,13 @@ comma
 id|qh
 )paren
 suffix:semicolon
+multiline_comment|/* wait a user specified reasonable amount of time */
 id|schedule_timeout
 c_func
 (paren
-id|HZ
-op_star
-l_int|5
+id|timeout
 )paren
 suffix:semicolon
-multiline_comment|/* 5 seconds */
 id|remove_wait_queue
 c_func
 (paren
@@ -4686,6 +4800,9 @@ r_int
 r_int
 op_star
 id|rval
+comma
+r_int
+id|timeout
 )paren
 (brace
 r_struct
@@ -5010,6 +5127,8 @@ comma
 id|td
 comma
 id|rval
+comma
+id|timeout
 )paren
 suffix:semicolon
 (brace
@@ -5933,7 +6052,7 @@ id|maxchild
 )paren
 suffix:semicolon
 )brace
-DECL|function|fixup_isoc_desc
+macro_line|#if 0
 r_static
 r_int
 id|fixup_isoc_desc
@@ -6158,6 +6277,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#endif /* 0 */
 DECL|function|uhci_interrupt_notify
 r_static
 r_void
@@ -7989,6 +8109,8 @@ id|i
 )braket
 dot
 id|start
+op_plus
+l_int|1
 suffix:semicolon
 multiline_comment|/* IO address? */
 r_if
@@ -8021,6 +8143,17 @@ id|io_size
 )paren
 )paren
 r_break
+suffix:semicolon
+multiline_comment|/* disable legacy emulation */
+id|pci_write_config_word
+c_func
+(paren
+id|dev
+comma
+id|USBLEGSUP
+comma
+id|USBLEGSUP_DEFAULT
+)paren
 suffix:semicolon
 r_return
 id|found_uhci

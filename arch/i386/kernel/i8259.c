@@ -1,7 +1,6 @@
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
-macro_line|#include &lt;linux/kernel_stat.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
@@ -9,107 +8,18 @@ macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/timex.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/random.h&gt;
-macro_line|#include &lt;linux/smp.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/kernel_stat.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
-macro_line|#include &lt;asm/smp.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/delay.h&gt;
 macro_line|#include &lt;asm/desc.h&gt;
 macro_line|#include &lt;linux/irq.h&gt;
-multiline_comment|/*&n; * Intel specific no controller code&n; * odd that no-controller should be architecture dependent&n; * but see the ifdef __SMP__ &n; */
-DECL|function|enable_none
-r_static
-r_void
-id|enable_none
-c_func
-(paren
-r_int
-r_int
-id|irq
-)paren
-(brace
-)brace
-DECL|function|startup_none
-r_static
-r_int
-r_int
-id|startup_none
-c_func
-(paren
-r_int
-r_int
-id|irq
-)paren
-(brace
-r_return
-l_int|0
-suffix:semicolon
-)brace
-DECL|function|disable_none
-r_static
-r_void
-id|disable_none
-c_func
-(paren
-r_int
-r_int
-id|irq
-)paren
-(brace
-)brace
-DECL|function|ack_none
-r_static
-r_void
-id|ack_none
-c_func
-(paren
-r_int
-r_int
-id|irq
-)paren
-(brace
-macro_line|#ifdef __SMP__
-multiline_comment|/*&n;&t; * [currently unexpected vectors happen only on SMP and APIC.&n;&t; *  if we want to have non-APIC and non-8259A controllers&n;&t; *  in the future with unexpected vectors, this ack should&n;&t; *  probably be made controller-specific.]&n;&t; */
-id|ack_APIC_irq
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-)brace
-multiline_comment|/* startup is the same as &quot;enable&quot;, shutdown is same as &quot;disable&quot; */
-DECL|macro|shutdown_none
-mdefine_line|#define shutdown_none&t;disable_none
-DECL|macro|end_none
-mdefine_line|#define end_none&t;enable_none
-DECL|variable|no_irq_type
-r_struct
-id|hw_interrupt_type
-id|no_irq_type
-op_assign
-(brace
-l_string|&quot;none&quot;
-comma
-id|startup_none
-comma
-id|shutdown_none
-comma
-id|enable_none
-comma
-id|disable_none
-comma
-id|ack_none
-comma
-id|end_none
-)brace
-suffix:semicolon
-multiline_comment|/*&n; * This is the &squot;legacy&squot; 8259A Programmable Interrupt Controller,&n; * present in the majority of PC/AT boxes.&n; * plus some generic x86 specific things if generic specifics makes&n; * any sense at all.&n; * this file should become arch/i386/kernel/irq.c when the old irq.c&n; * moves to arch independent land&n; */
-multiline_comment|/*&n; * This builds up the IRQ handler stubs using some ugly macros in irq.h&n; *&n; * These macros create the low-level assembly IRQ routines that save&n; * register context and call do_IRQ(). do_IRQ() then does all the&n; * operations that are needed to keep the AT (or SMP IOAPIC)&n; * interrupt-controller happy.&n; */
+multiline_comment|/*&n; * Common place to define all x86 IRQ vectors&n; *&n; * This builds up the IRQ handler stubs using some ugly macros in irq.h&n; *&n; * These macros create the low-level assembly IRQ routines that save&n; * register context and call do_IRQ(). do_IRQ() then does all the&n; * operations that are needed to keep the AT (or SMP IOAPIC)&n; * interrupt-controller happy.&n; */
 id|BUILD_COMMON_IRQ
 c_func
 (paren
@@ -118,7 +28,7 @@ DECL|macro|BI
 mdefine_line|#define BI(x,y) &bslash;&n;&t;BUILD_IRQ(##x##y)
 DECL|macro|BUILD_16_IRQS
 mdefine_line|#define BUILD_16_IRQS(x) &bslash;&n;&t;BI(x,0) BI(x,1) BI(x,2) BI(x,3) &bslash;&n;&t;BI(x,4) BI(x,5) BI(x,6) BI(x,7) &bslash;&n;&t;BI(x,8) BI(x,9) BI(x,a) BI(x,b) &bslash;&n;&t;BI(x,c) BI(x,d) BI(x,e) BI(x,f)
-multiline_comment|/*&n; * ISA PIC or low IO-APIC triggered (INTA-cycle or APIC) interrupts:&n; * (these are usually mapped to vectors 0x20-0x30)&n; */
+multiline_comment|/*&n; * ISA PIC or low IO-APIC triggered (INTA-cycle or APIC) interrupts:&n; * (these are usually mapped to vectors 0x20-0x2f)&n; */
 id|BUILD_16_IRQS
 c_func
 (paren
@@ -215,13 +125,6 @@ id|INVALIDATE_TLB_VECTOR
 id|BUILD_SMP_INTERRUPT
 c_func
 (paren
-id|stop_cpu_interrupt
-comma
-id|STOP_CPU_VECTOR
-)paren
-id|BUILD_SMP_INTERRUPT
-c_func
-(paren
 id|call_function_interrupt
 comma
 id|CALL_FUNCTION_VECTOR
@@ -232,6 +135,13 @@ c_func
 id|spurious_interrupt
 comma
 id|SPURIOUS_APIC_VECTOR
+)paren
+id|BUILD_SMP_INTERRUPT
+c_func
+(paren
+id|error_interrupt
+comma
+id|ERROR_APIC_VECTOR
 )paren
 multiline_comment|/*&n; * every pentium local APIC has two &squot;local interrupts&squot;, with a&n; * soft-definable vector attached to both interrupts, one of&n; * which is a timer interrupt, the other one is error counter&n; * overflow. Linux uses the local APIC timer interrupt to get&n; * a much simpler SMP time architecture:&n; */
 id|BUILD_SMP_TIMER_INTERRUPT
@@ -246,8 +156,6 @@ DECL|macro|IRQ
 mdefine_line|#define IRQ(x,y) &bslash;&n;&t;IRQ##x##y##_interrupt
 DECL|macro|IRQLIST_16
 mdefine_line|#define IRQLIST_16(x) &bslash;&n;&t;IRQ(x,0), IRQ(x,1), IRQ(x,2), IRQ(x,3), &bslash;&n;&t;IRQ(x,4), IRQ(x,5), IRQ(x,6), IRQ(x,7), &bslash;&n;&t;IRQ(x,8), IRQ(x,9), IRQ(x,a), IRQ(x,b), &bslash;&n;&t;IRQ(x,c), IRQ(x,d), IRQ(x,e), IRQ(x,f)
-DECL|variable|interrupt
-r_static
 r_void
 (paren
 op_star
@@ -352,7 +260,7 @@ DECL|macro|IRQ
 macro_line|#undef IRQ
 DECL|macro|IRQLIST_16
 macro_line|#undef IRQLIST_16
-r_static
+multiline_comment|/*&n; * This is the &squot;legacy&squot; 8259A Programmable Interrupt Controller,&n; * present in the majority of PC/AT boxes.&n; * plus some generic x86 specific things if generic specifics makes&n; * any sense at all.&n; * this file should become arch/i386/kernel/irq.c when the old irq.c&n; * moves to arch independent land&n; */
 r_void
 id|enable_8259A_irq
 c_func
@@ -376,7 +284,6 @@ DECL|macro|end_8259A_irq
 mdefine_line|#define end_8259A_irq&t;&t;enable_8259A_irq
 DECL|macro|shutdown_8259A_irq
 mdefine_line|#define shutdown_8259A_irq&t;disable_8259A_irq
-r_static
 r_void
 id|mask_and_ack_8259A
 c_func
@@ -446,7 +353,7 @@ DECL|macro|cached_21
 mdefine_line|#define cached_21&t;(__byte(0,cached_irq_mask))
 DECL|macro|cached_A1
 mdefine_line|#define cached_A1&t;(__byte(1,cached_irq_mask))
-multiline_comment|/*&n; * Not all IRQs can be routed through the IO-APIC, eg. on certain (older)&n; * boards the timer interrupt is not connected to any IO-APIC pin, it&squot;s&n; * fed to the CPU IRQ line directly.&n; *&n; * Any &squot;1&squot; bit in this mask means the IRQ is routed through the IO-APIC.&n; * this &squot;mixed mode&squot; IRQ handling costs nothing because it&squot;s only used&n; * at IRQ setup time.&n; */
+multiline_comment|/*&n; * Not all IRQs can be routed through the IO-APIC, eg. on certain (older)&n; * boards the timer interrupt is not really connected to any IO-APIC pin,&n; * it&squot;s fed to the master 8259A&squot;s IR0 line only.&n; *&n; * Any &squot;1&squot; bit in this mask means the IRQ is routed through the IO-APIC.&n; * this &squot;mixed mode&squot; IRQ handling costs nothing because it&squot;s only used&n; * at IRQ setup time.&n; */
 DECL|variable|io_apic_irqs
 r_int
 r_int
@@ -484,7 +391,6 @@ id|irq
 op_amp
 l_int|8
 )paren
-(brace
 id|outb
 c_func
 (paren
@@ -493,9 +399,7 @@ comma
 l_int|0xA1
 )paren
 suffix:semicolon
-)brace
 r_else
-(brace
 id|outb
 c_func
 (paren
@@ -505,9 +409,7 @@ l_int|0x21
 )paren
 suffix:semicolon
 )brace
-)brace
 DECL|function|enable_8259A_irq
-r_static
 r_void
 id|enable_8259A_irq
 c_func
@@ -539,7 +441,6 @@ id|irq
 op_amp
 l_int|8
 )paren
-(brace
 id|outb
 c_func
 (paren
@@ -548,9 +449,7 @@ comma
 l_int|0xA1
 )paren
 suffix:semicolon
-)brace
 r_else
-(brace
 id|outb
 c_func
 (paren
@@ -559,7 +458,6 @@ comma
 l_int|0x21
 )paren
 suffix:semicolon
-)brace
 )brace
 DECL|function|i8259A_irq_pending
 r_int
@@ -655,9 +553,107 @@ id|irq
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * This function assumes to be called rarely. Switching between&n; * 8259A registers is slow.&n; */
+DECL|function|i8259A_irq_real
+r_static
+r_inline
+r_int
+id|i8259A_irq_real
+c_func
+(paren
+r_int
+r_int
+id|irq
+)paren
+(brace
+r_int
+id|value
+suffix:semicolon
+r_int
+id|irqmask
+op_assign
+l_int|1
+op_lshift
+id|irq
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|irq
+OL
+l_int|8
+)paren
+(brace
+id|outb
+c_func
+(paren
+l_int|0x0B
+comma
+l_int|0x20
+)paren
+suffix:semicolon
+multiline_comment|/* ISR register */
+id|value
+op_assign
+id|inb
+c_func
+(paren
+l_int|0x20
+)paren
+op_amp
+id|irqmask
+suffix:semicolon
+id|outb
+c_func
+(paren
+l_int|0x0A
+comma
+l_int|0x20
+)paren
+suffix:semicolon
+multiline_comment|/* back to the IRR register */
+r_return
+id|value
+suffix:semicolon
+)brace
+id|outb
+c_func
+(paren
+l_int|0x0B
+comma
+l_int|0xA0
+)paren
+suffix:semicolon
+multiline_comment|/* ISR register */
+id|value
+op_assign
+id|inb
+c_func
+(paren
+l_int|0xA0
+)paren
+op_amp
+(paren
+id|irqmask
+op_rshift
+l_int|8
+)paren
+suffix:semicolon
+id|outb
+c_func
+(paren
+l_int|0x0A
+comma
+l_int|0xA0
+)paren
+suffix:semicolon
+multiline_comment|/* back to the IRR register */
+r_return
+id|value
+suffix:semicolon
+)brace
 multiline_comment|/*&n; * Careful! The 8259A is a fragile beast, it pretty&n; * much _has_ to be done exactly like this (mask it&n; * first, _then_ send the EOI, and the order of EOI&n; * to the two 8259s is important!&n; */
 DECL|function|mask_and_ack_8259A
-r_static
 r_void
 id|mask_and_ack_8259A
 c_func
@@ -667,12 +663,31 @@ r_int
 id|irq
 )paren
 (brace
-id|cached_irq_mask
-op_or_assign
+r_int
+r_int
+id|irqmask
+op_assign
 l_int|1
 op_lshift
 id|irq
 suffix:semicolon
+multiline_comment|/*&n;&t; * Lightweight spurious IRQ detection. We do not want&n;&t; * to overdo spurious IRQ handling - it&squot;s usually a sign&n;&t; * of hardware problems, so we only do the checks we can&n;&t; * do without slowing down good hardware unnecesserily.&n;&t; *&n;&t; * Note that IRQ7 and IRQ15 (the two spurious IRQs&n;&t; * usually resulting from the 8259A-1|2 PICs) occur&n;&t; * even if the IRQ is masked in the 8259A. Thus we&n;&t; * can check spurious 8259A IRQs without doing the&n;&t; * quite slow i8259A_irq_real() call for every IRQ.&n;&t; * This does not cover 100% of spurious interrupts,&n;&t; * but should be enough to warn the user that there&n;&t; * is something bad going on ...&n;&t; */
+r_if
+c_cond
+(paren
+id|cached_irq_mask
+op_amp
+id|irqmask
+)paren
+r_goto
+id|spurious_8259A_irq
+suffix:semicolon
+id|cached_irq_mask
+op_or_assign
+id|irqmask
+suffix:semicolon
+id|handle_real_irq
+suffix:colon
 r_if
 c_cond
 (paren
@@ -687,7 +702,7 @@ c_func
 l_int|0xA1
 )paren
 suffix:semicolon
-multiline_comment|/* DUMMY */
+multiline_comment|/* DUMMY - (do we need this?) */
 id|outb
 c_func
 (paren
@@ -704,7 +719,7 @@ comma
 l_int|0x20
 )paren
 suffix:semicolon
-multiline_comment|/* Specific EOI to cascade */
+multiline_comment|/* &squot;Specific EOI&squot; to master-IRQ2 */
 id|outb
 c_func
 (paren
@@ -713,6 +728,7 @@ comma
 l_int|0xA0
 )paren
 suffix:semicolon
+multiline_comment|/* &squot;generic EOI&squot; to slave */
 )brace
 r_else
 (brace
@@ -722,7 +738,7 @@ c_func
 l_int|0x21
 )paren
 suffix:semicolon
-multiline_comment|/* DUMMY */
+multiline_comment|/* DUMMY - (do we need this?) */
 id|outb
 c_func
 (paren
@@ -739,7 +755,242 @@ comma
 l_int|0x20
 )paren
 suffix:semicolon
+multiline_comment|/* &squot;generic EOI&squot; to master */
 )brace
+r_return
+suffix:semicolon
+id|spurious_8259A_irq
+suffix:colon
+multiline_comment|/*&n;&t; * this is the slow path - should happen rarely.&n;&t; */
+r_if
+c_cond
+(paren
+id|i8259A_irq_real
+c_func
+(paren
+id|irq
+)paren
+)paren
+multiline_comment|/*&n;&t;&t; * oops, the IRQ _is_ in service according to the&n;&t;&t; * 8259A - not spurious, go handle it.&n;&t;&t; */
+r_goto
+id|handle_real_irq
+suffix:semicolon
+(brace
+r_static
+r_int
+id|spurious_irq_mask
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/*&n;&t;&t; * At this point we can be sure the IRQ is spurious,&n;&t;&t; * lets ACK and report it. [once per IRQ]&n;&t;&t; */
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|spurious_irq_mask
+op_amp
+id|irqmask
+)paren
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;spurious 8259A interrupt: IRQ%d.&bslash;n&quot;
+comma
+id|irq
+)paren
+suffix:semicolon
+id|spurious_irq_mask
+op_or_assign
+id|irqmask
+suffix:semicolon
+)brace
+id|irq_err_count
+op_increment
+suffix:semicolon
+multiline_comment|/*&n;&t;&t; * Theoretically we do not have to handle this IRQ,&n;&t;&t; * but in Linux this does not cause problems and is&n;&t;&t; * simpler for us.&n;&t;&t; */
+r_goto
+id|handle_real_irq
+suffix:semicolon
+)brace
+)brace
+DECL|function|init_8259A
+r_void
+id|init_8259A
+c_func
+(paren
+r_int
+id|auto_eoi
+)paren
+(brace
+r_int
+r_int
+id|flags
+suffix:semicolon
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
+id|outb
+c_func
+(paren
+l_int|0xff
+comma
+l_int|0x21
+)paren
+suffix:semicolon
+multiline_comment|/* mask all of 8259A-1 */
+id|outb
+c_func
+(paren
+l_int|0xff
+comma
+l_int|0xA1
+)paren
+suffix:semicolon
+multiline_comment|/* mask all of 8259A-2 */
+multiline_comment|/*&n;&t; * outb_p - this has to work on a wide range of PC hardware.&n;&t; */
+id|outb_p
+c_func
+(paren
+l_int|0x11
+comma
+l_int|0x20
+)paren
+suffix:semicolon
+multiline_comment|/* ICW1: select 8259A-1 init */
+id|outb_p
+c_func
+(paren
+l_int|0x20
+op_plus
+l_int|0
+comma
+l_int|0x21
+)paren
+suffix:semicolon
+multiline_comment|/* ICW2: 8259A-1 IR0-7 mapped to 0x20-0x27 */
+id|outb_p
+c_func
+(paren
+l_int|0x04
+comma
+l_int|0x21
+)paren
+suffix:semicolon
+multiline_comment|/* 8259A-1 (the master) has a slave on IR2 */
+r_if
+c_cond
+(paren
+id|auto_eoi
+)paren
+id|outb_p
+c_func
+(paren
+l_int|0x03
+comma
+l_int|0x21
+)paren
+suffix:semicolon
+multiline_comment|/* master does Auto EOI */
+r_else
+id|outb_p
+c_func
+(paren
+l_int|0x01
+comma
+l_int|0x21
+)paren
+suffix:semicolon
+multiline_comment|/* master expects normal EOI */
+id|outb_p
+c_func
+(paren
+l_int|0x11
+comma
+l_int|0xA0
+)paren
+suffix:semicolon
+multiline_comment|/* ICW1: select 8259A-2 init */
+id|outb_p
+c_func
+(paren
+l_int|0x20
+op_plus
+l_int|8
+comma
+l_int|0xA1
+)paren
+suffix:semicolon
+multiline_comment|/* ICW2: 8259A-2 IR0-7 mapped to 0x28-0x2f */
+id|outb_p
+c_func
+(paren
+l_int|0x02
+comma
+l_int|0xA1
+)paren
+suffix:semicolon
+multiline_comment|/* 8259A-2 is a slave on master&squot;s IR2 */
+id|outb_p
+c_func
+(paren
+l_int|0x01
+comma
+l_int|0xA1
+)paren
+suffix:semicolon
+multiline_comment|/* (slave&squot;s support for AEOI in flat mode&n;&t;&t;&t;&t;    is to be investigated) */
+r_if
+c_cond
+(paren
+id|auto_eoi
+)paren
+multiline_comment|/*&n;&t;&t; * in AEOI mode we just have to mask the interrupt&n;&t;&t; * when acking.&n;&t;&t; */
+id|i8259A_irq_type.ack
+op_assign
+id|disable_8259A_irq
+suffix:semicolon
+id|udelay
+c_func
+(paren
+l_int|100
+)paren
+suffix:semicolon
+multiline_comment|/* wait for 8259A to initialize */
+id|outb
+c_func
+(paren
+id|cached_21
+comma
+l_int|0x21
+)paren
+suffix:semicolon
+multiline_comment|/* restore master IRQ mask */
+id|outb
+c_func
+(paren
+id|cached_A1
+comma
+l_int|0xA1
+)paren
+suffix:semicolon
+multiline_comment|/* restore slave IRQ mask */
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 )brace
 macro_line|#ifndef CONFIG_VISWS
 multiline_comment|/*&n; * Note that on a 486, we don&squot;t want to do a SIGFPE on an irq13&n; * as the irq is unreliable, and exception 16 works correctly&n; * (ie as explained in the intel literature). On a 386, you&n; * can&squot;t use exception 16 due to bad IBM design, so we have to&n; * rely on the less exact irq13.&n; *&n; * Careful.. Not only is IRQ13 unreliable, but it is also&n; * leads to races. IBM designers who came up with it should&n; * be shot.&n; */
@@ -837,6 +1088,12 @@ r_void
 (brace
 r_int
 id|i
+suffix:semicolon
+id|init_8259A
+c_func
+(paren
+l_int|0
+)paren
 suffix:semicolon
 r_for
 c_loop
@@ -984,7 +1241,7 @@ id|i
 suffix:semicolon
 )brace
 macro_line|#ifdef __SMP__&t;
-multiline_comment|/*&n;&t;  IRQ0 must be given a fixed assignment and initialized&n;&t;  before init_IRQ_SMP.&n;&t;*/
+multiline_comment|/*&n;&t; * IRQ0 must be given a fixed assignment and initialized,&n;&t; * because it&squot;s used before the IO-APIC is set up.&n;&t; */
 id|set_intr_gate
 c_func
 (paren
@@ -1014,15 +1271,6 @@ comma
 id|invalidate_interrupt
 )paren
 suffix:semicolon
-multiline_comment|/* IPI for CPU halt */
-id|set_intr_gate
-c_func
-(paren
-id|STOP_CPU_VECTOR
-comma
-id|stop_cpu_interrupt
-)paren
-suffix:semicolon
 multiline_comment|/* self generated IPI for local APIC timer */
 id|set_intr_gate
 c_func
@@ -1041,13 +1289,21 @@ comma
 id|call_function_interrupt
 )paren
 suffix:semicolon
-multiline_comment|/* IPI vector for APIC spurious interrupts */
+multiline_comment|/* IPI vectors for APIC spurious and error interrupts */
 id|set_intr_gate
 c_func
 (paren
 id|SPURIOUS_APIC_VECTOR
 comma
 id|spurious_interrupt
+)paren
+suffix:semicolon
+id|set_intr_gate
+c_func
+(paren
+id|ERROR_APIC_VECTOR
+comma
+id|error_interrupt
 )paren
 suffix:semicolon
 macro_line|#endif&t;
@@ -1104,59 +1360,4 @@ id|irq13
 suffix:semicolon
 macro_line|#endif
 )brace
-macro_line|#ifdef CONFIG_X86_IO_APIC
-DECL|function|init_IRQ_SMP
-r_void
-id|__init
-id|init_IRQ_SMP
-c_func
-(paren
-r_void
-)paren
-(brace
-r_int
-id|i
-suffix:semicolon
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-id|NR_IRQS
-suffix:semicolon
-id|i
-op_increment
-)paren
-r_if
-c_cond
-(paren
-id|IO_APIC_VECTOR
-c_func
-(paren
-id|i
-)paren
-OG
-l_int|0
-)paren
-id|set_intr_gate
-c_func
-(paren
-id|IO_APIC_VECTOR
-c_func
-(paren
-id|i
-)paren
-comma
-id|interrupt
-(braket
-id|i
-)braket
-)paren
-suffix:semicolon
-)brace
-macro_line|#endif
 eof

@@ -67,6 +67,13 @@ id|tim_element
 suffix:semicolon
 )brace
 suffix:semicolon
+multiline_comment|/* Return values for get_free{,_tx}_ccs */
+DECL|macro|ECCSFULL
+mdefine_line|#define ECCSFULL  (-1)
+DECL|macro|ECCSBUSY
+mdefine_line|#define ECCSBUSY  (-2)
+DECL|macro|ECARDGONE
+mdefine_line|#define ECARDGONE (-3)
 DECL|struct|ray_dev_t
 r_typedef
 r_struct
@@ -122,6 +129,14 @@ DECL|member|timer
 r_struct
 id|timer_list
 id|timer
+suffix:semicolon
+DECL|member|tx_ccs_lock
+r_int
+id|tx_ccs_lock
+suffix:semicolon
+DECL|member|ccs_lock
+r_int
+id|ccs_lock
 suffix:semicolon
 DECL|member|dl_param_ccs
 r_int

@@ -78,7 +78,7 @@ c_func
 (paren
 l_string|&quot;PCI: PIIX3: Enabling Passive Release on %s&bslash;n&quot;
 comma
-id|d-&gt;name
+id|d-&gt;slot_name
 )paren
 suffix:semicolon
 id|dlc
@@ -327,7 +327,7 @@ l_string|&quot;PCI: Calling quirk %p for %s&bslash;n&quot;
 comma
 id|f-&gt;hook
 comma
-id|dev-&gt;name
+id|dev-&gt;slot_name
 )paren
 suffix:semicolon
 macro_line|#endif

@@ -19,12 +19,7 @@ macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/8xx_immap.h&gt;
-macro_line|#ifdef CONFIG_MBX
-macro_line|#include &lt;asm/mbx.h&gt;
-macro_line|#endif
-macro_line|#ifdef CONFIG_FADS
-macro_line|#include &lt;asm/fads.h&gt;
-macro_line|#endif
+macro_line|#include &lt;asm/mpc8xx.h&gt;
 macro_line|#include &quot;commproc.h&quot;
 macro_line|#ifdef CONFIG_SERIAL_CONSOLE
 macro_line|#include &lt;linux/console.h&gt;
@@ -111,11 +106,16 @@ mdefine_line|#define DBG_CNT(s)
 multiline_comment|/* We overload some of the items in the data structure to meet our&n; * needs.  For example, the port address is the CPM parameter ram&n; * offset for the SCC or SMC.  The maximum number of ports is 4 SCCs and&n; * 2 SMCs.  The &quot;hub6&quot; field is used to indicate the channel number, with&n; * 0 and 1 indicating the SMCs and 2, 3, 4, and 5 are the SCCs.&n; * Since these ports are so versatile, I don&squot;t yet have a strategy for&n; * their management.  For example, SCC1 is used for Ethernet.  Right&n; * now, just don&squot;t put them in the table.  Of course, right now I just&n; * want the SMC to work as a uart :-)..&n; * The &quot;type&quot; field is currently set to 0, for PORT_UNKNOWN.  It is&n; * not currently used.  I should probably use it to indicate the port&n; * type of CMS or SCC.&n; * The SMCs do not support any modem control signals.&n; */
 DECL|macro|smc_scc_num
 mdefine_line|#define smc_scc_num&t;hub6
+multiline_comment|/* SMC2 is sometimes used for low performance TDM interfaces.  Define&n; * this as 1 if you want SMC2 as a serial port UART managed by this driver.&n; * Define this as 0 if you wish to use SMC2 for something else.&n; */
+DECL|macro|USE_SMC2
+mdefine_line|#define USE_SMC2 1
+multiline_comment|/* Define SCC to ttySx mapping.&n;*/
 DECL|macro|SCC_NUM_BASE
-mdefine_line|#define SCC_NUM_BASE&t;2
-multiline_comment|/* The index into the CPM registers for the first SCC in the table.&n;*/
+mdefine_line|#define SCC_NUM_BASE&t;(USE_SMC2 + 1)&t;/* SCC base tty &quot;number&quot; */
+multiline_comment|/* Define which SCC is the first one to use for a serial port.  These&n; * are 0-based numbers, i.e. this assumes the first SCC (SCC1) is used&n; * for Ethernet, and the first available SCC for serial UART is SCC2.&n; * NOTE:  IF YOU CHANGE THIS, you have to change the PROFF_xxx and&n; * interrupt vectors in the table below to match.&n; */
 DECL|macro|SCC_IDX_BASE
-mdefine_line|#define SCC_IDX_BASE&t;1
+mdefine_line|#define SCC_IDX_BASE&t;1&t;/* table index */
+multiline_comment|/* Processors other than the 860 only get SMCs configured by default.&n; * Either they don&squot;t have SCCs or they are allocated somewhere else.&n; * Of course, there are now 860s without some SCCs, so we will need to&n; * address that someday.&n; */
 DECL|variable|rs_table
 r_static
 r_struct
@@ -141,6 +141,7 @@ l_int|0
 )brace
 comma
 multiline_comment|/* SMC1 ttyS0 */
+macro_line|#if USE_SMC2
 (brace
 l_int|0
 comma
@@ -155,7 +156,9 @@ comma
 l_int|1
 )brace
 comma
-multiline_comment|/* SMC1 ttyS0 */
+multiline_comment|/* SMC2 ttyS1 */
+macro_line|#endif
+macro_line|#if defined(CONFIG_MPC860) || defined(CONFIG_MPC860T)
 (brace
 l_int|0
 comma
@@ -167,7 +170,7 @@ id|CPMVEC_SCC2
 comma
 l_int|0
 comma
-l_int|2
+id|SCC_NUM_BASE
 )brace
 comma
 multiline_comment|/* SCC2 ttyS2 */
@@ -182,10 +185,13 @@ id|CPMVEC_SCC3
 comma
 l_int|0
 comma
-l_int|3
+id|SCC_NUM_BASE
+op_plus
+l_int|1
 )brace
 comma
 multiline_comment|/* SCC3 ttyS3 */
+macro_line|#endif
 )brace
 suffix:semicolon
 DECL|macro|NR_PORTS
@@ -2570,33 +2576,24 @@ r_if
 c_cond
 (paren
 id|i
-op_amp
-id|CBAUDEX
-)paren
-(brace
-id|i
-op_and_assign
-op_complement
-id|CBAUDEX
-suffix:semicolon
-r_if
-c_cond
+op_ge
 (paren
-id|i
-template_param
-l_int|4
+r_sizeof
+(paren
+id|baud_table
 )paren
-id|info-&gt;tty-&gt;termios-&gt;c_cflag
-op_and_assign
-op_complement
-id|CBAUDEX
+op_div
+r_sizeof
+(paren
+r_int
+)paren
+)paren
+)paren
+id|baud_rate
+op_assign
+l_int|9600
 suffix:semicolon
 r_else
-id|i
-op_add_assign
-l_int|15
-suffix:semicolon
-)brace
 id|baud_rate
 op_assign
 id|baud_table
@@ -6186,14 +6183,14 @@ c_cond
 (paren
 id|timeout
 op_logical_and
-id|time_after
-c_func
 (paren
-id|jiffies
-comma
+(paren
 id|orig_jiffies
 op_plus
 id|timeout
+)paren
+OL
+id|jiffies
 )paren
 )paren
 r_break
@@ -8259,6 +8256,14 @@ id|kmem_start
 suffix:semicolon
 )brace
 macro_line|#endif
+multiline_comment|/* This will be used for all boards when the MBX board information&n; * is modified to include a default baud rate.&n; */
+macro_line|#ifndef CONFIG_MBX
+DECL|variable|baud_idx
+r_static
+r_int
+id|baud_idx
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/*&n; * The serial driver boot-time initialization code!&n; */
 DECL|function|rs_8xx_init
 r_int
@@ -8414,6 +8419,18 @@ id|tty_std_termios
 suffix:semicolon
 id|serial_driver.init_termios.c_cflag
 op_assign
+macro_line|#ifndef CONFIG_MBX
+id|baud_idx
+op_or
+id|CS8
+op_or
+id|CREAD
+op_or
+id|HUPCL
+op_or
+id|CLOCAL
+suffix:semicolon
+macro_line|#else
 id|B9600
 op_or
 id|CS8
@@ -8424,6 +8441,7 @@ id|HUPCL
 op_or
 id|CLOCAL
 suffix:semicolon
+macro_line|#endif
 id|serial_driver.flags
 op_assign
 id|TTY_DRIVER_REAL_RAW
@@ -8585,6 +8603,7 @@ id|IMAP_ADDR
 suffix:semicolon
 multiline_comment|/* and to internal registers */
 multiline_comment|/* Configure SMCs Tx/Rx instead of port B parallel I/O.&n;&t;*/
+macro_line|#if USE_SMC2
 id|cp-&gt;cp_pbpar
 op_or_assign
 l_int|0x00000cc0
@@ -8599,7 +8618,25 @@ op_and_assign
 op_complement
 l_int|0x00000cc0
 suffix:semicolon
+macro_line|#else
+multiline_comment|/* This will only enable SMC1 if you want SMC2 for something else.&n;&t;*/
+id|cp-&gt;cp_pbpar
+op_or_assign
+l_int|0x000000c0
+suffix:semicolon
+id|cp-&gt;cp_pbdir
+op_and_assign
+op_complement
+l_int|0x000000c0
+suffix:semicolon
+id|cp-&gt;cp_pbodr
+op_and_assign
+op_complement
+l_int|0x000000c0
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/* Configure SCC2 and SCC3 instead of port A parallel I/O.&n;&t; */
+macro_line|#if defined(CONFIG_MPC860) || defined(CONFIG_MPC860T)
 macro_line|#ifndef CONFIG_MBX
 multiline_comment|/* The &quot;standard&quot; configuration through the 860.&n;&t;*/
 id|immap-&gt;im_ioport.iop_papar
@@ -8649,11 +8686,6 @@ op_and_assign
 op_complement
 l_int|0x03c6
 suffix:semicolon
-multiline_comment|/* Wire BRG1 to SMC1 and BRG2 to SMC2.&n;&t;*/
-id|cp-&gt;cp_simode
-op_assign
-l_int|0x10000000
-suffix:semicolon
 multiline_comment|/* Connect SCC2 and SCC3 to NMSI.  Connect BRG3 to SCC2 and&n;&t; * BRG4 to SCC3.&n;&t; */
 id|cp-&gt;cp_sicr
 op_and_assign
@@ -8663,6 +8695,12 @@ suffix:semicolon
 id|cp-&gt;cp_sicr
 op_or_assign
 l_int|0x001b1200
+suffix:semicolon
+macro_line|#endif
+multiline_comment|/* Wire BRG1 to SMC1 and BRG2 to SMC2.&n;&t;*/
+id|cp-&gt;cp_simode
+op_assign
+l_int|0x10000000
 suffix:semicolon
 r_for
 c_loop
@@ -9401,6 +9439,19 @@ id|info
 )paren
 suffix:semicolon
 multiline_comment|/* Set up the baud rate generator.&n;&t;&t;&t;*/
+macro_line|#ifndef CONFIG_MBX
+id|m8xx_cpm_setbrg
+c_func
+(paren
+id|state-&gt;smc_scc_num
+comma
+id|baud_table
+(braket
+id|baud_idx
+)braket
+)paren
+suffix:semicolon
+macro_line|#else
 id|m8xx_cpm_setbrg
 c_func
 (paren
@@ -9409,6 +9460,7 @@ comma
 l_int|9600
 )paren
 suffix:semicolon
+macro_line|#endif
 multiline_comment|/* If the port is the console, enable Rx and Tx.&n;&t;&t;&t;*/
 macro_line|#ifdef CONFIG_SERIAL_CONSOLE
 r_if
@@ -9458,6 +9510,8 @@ id|uint
 id|mem_addr
 comma
 id|dp_addr
+comma
+id|bidx
 suffix:semicolon
 r_volatile
 id|cbd_t
@@ -9479,6 +9533,70 @@ id|smc_uart_t
 op_star
 id|up
 suffix:semicolon
+macro_line|#ifndef CONFIG_MBX
+id|bd_t
+op_star
+id|bd
+suffix:semicolon
+id|bd
+op_assign
+(paren
+id|bd_t
+op_star
+)paren
+id|__res
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|bidx
+op_assign
+l_int|0
+suffix:semicolon
+id|bidx
+OL
+(paren
+r_sizeof
+(paren
+id|baud_table
+)paren
+op_div
+r_sizeof
+(paren
+r_int
+)paren
+)paren
+suffix:semicolon
+id|bidx
+op_increment
+)paren
+r_if
+c_cond
+(paren
+id|bd-&gt;bi_baudrate
+op_eq
+id|baud_table
+(braket
+id|bidx
+)braket
+)paren
+r_break
+suffix:semicolon
+id|co-&gt;cflag
+op_assign
+id|CREAD
+op_or
+id|CLOCAL
+op_or
+id|bidx
+op_or
+id|CS8
+suffix:semicolon
+id|baud_idx
+op_assign
+id|bidx
+suffix:semicolon
+macro_line|#else
 id|co-&gt;cflag
 op_assign
 id|CREAD
@@ -9489,6 +9607,7 @@ id|B9600
 op_or
 id|CS8
 suffix:semicolon
+macro_line|#endif
 id|ser
 op_assign
 id|rs_table
@@ -9679,6 +9798,16 @@ op_or
 id|SMCMR_SM_UART
 suffix:semicolon
 multiline_comment|/* Set up the baud rate generator.&n;&t;*/
+macro_line|#ifndef CONFIG_MBX
+id|m8xx_cpm_setbrg
+c_func
+(paren
+id|ser-&gt;smc_scc_num
+comma
+id|bd-&gt;bi_baudrate
+)paren
+suffix:semicolon
+macro_line|#else
 id|m8xx_cpm_setbrg
 c_func
 (paren
@@ -9687,6 +9816,7 @@ comma
 l_int|9600
 )paren
 suffix:semicolon
+macro_line|#endif
 multiline_comment|/* And finally, enable Rx and Tx.&n;&t;*/
 id|sp-&gt;smc_smcmr
 op_or_assign

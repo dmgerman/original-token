@@ -443,7 +443,7 @@ id|port
 comma
 id|PARPORT_CONTROL_INIT
 comma
-id|PARPORT_CONTROL_INIT
+l_int|0
 )paren
 suffix:semicolon
 id|udelay
@@ -457,8 +457,12 @@ id|parport_frob_control
 id|port
 comma
 id|PARPORT_CONTROL_SELECT
+op_or
+id|PARPORT_CONTROL_INIT
 comma
 id|PARPORT_CONTROL_SELECT
+op_or
+id|PARPORT_CONTROL_INIT
 )paren
 suffix:semicolon
 r_break

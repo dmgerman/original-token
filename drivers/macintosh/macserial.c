@@ -27,12 +27,41 @@ macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/feature.h&gt;
-macro_line|#include &lt;asm/adb.h&gt;
-macro_line|#include &lt;asm/pmu.h&gt;
+macro_line|#include &lt;linux/adb.h&gt;
+macro_line|#include &lt;linux/pmu.h&gt;
 macro_line|#ifdef CONFIG_KGDB
 macro_line|#include &lt;asm/kgdb.h&gt;
 macro_line|#endif
 macro_line|#include &quot;macserial.h&quot;
+macro_line|#ifdef CONFIG_PMAC_PBOOK
+r_static
+r_int
+id|serial_notify_sleep
+c_func
+(paren
+r_struct
+id|pmu_sleep_notifier
+op_star
+id|self
+comma
+r_int
+id|when
+)paren
+suffix:semicolon
+DECL|variable|serial_sleep_notifier
+r_static
+r_struct
+id|pmu_sleep_notifier
+id|serial_sleep_notifier
+op_assign
+(brace
+id|serial_notify_sleep
+comma
+id|SLEEP_LEVEL_MISC
+comma
+)brace
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/*&n; * It would be nice to dynamically allocate everything that&n; * depends on NUM_SERIAL, so we could support any number of&n; * Z8530s, but for now...&n; */
 DECL|macro|NUM_SERIAL
 mdefine_line|#define NUM_SERIAL&t;2&t;&t;/* Max number of ZS chips supported */
@@ -8208,6 +8237,20 @@ id|zs_channels_found
 op_assign
 id|n
 suffix:semicolon
+macro_line|#ifdef CONFIG_PMAC_PBOOK
+r_if
+c_cond
+(paren
+id|n
+)paren
+id|pmu_register_sleep_notifier
+c_func
+(paren
+op_amp
+id|serial_sleep_notifier
+)paren
+suffix:semicolon
+macro_line|#endif /* CONFIG_PMAC_PBOOK */
 )brace
 multiline_comment|/* rs_init inits the driver */
 DECL|function|macserial_init
@@ -10720,4 +10763,148 @@ suffix:semicolon
 multiline_comment|/* init stub */
 )brace
 macro_line|#endif /* ifdef CONFIG_KGDB */
+macro_line|#ifdef CONFIG_PMAC_PBOOK
+multiline_comment|/*&n; * notify clients before sleep and reset bus afterwards&n; */
+r_int
+DECL|function|serial_notify_sleep
+id|serial_notify_sleep
+c_func
+(paren
+r_struct
+id|pmu_sleep_notifier
+op_star
+id|self
+comma
+r_int
+id|when
+)paren
+(brace
+r_int
+id|i
+suffix:semicolon
+r_switch
+c_cond
+(paren
+id|when
+)paren
+(brace
+r_case
+id|PBOOK_SLEEP_REQUEST
+suffix:colon
+r_case
+id|PBOOK_SLEEP_REJECT
+suffix:colon
+r_break
+suffix:semicolon
+r_case
+id|PBOOK_SLEEP_NOW
+suffix:colon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|zs_channels_found
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
+r_struct
+id|mac_serial
+op_star
+id|info
+op_assign
+op_amp
+id|zs_soft
+(braket
+id|i
+)braket
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|info-&gt;flags
+op_amp
+id|ZILOG_INITIALIZED
+)paren
+(brace
+id|shutdown
+c_func
+(paren
+id|info
+)paren
+suffix:semicolon
+id|info-&gt;flags
+op_or_assign
+id|ZILOG_SLEEPING
+suffix:semicolon
+)brace
+)brace
+r_break
+suffix:semicolon
+r_case
+id|PBOOK_WAKE
+suffix:colon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|zs_channels_found
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
+r_struct
+id|mac_serial
+op_star
+id|info
+op_assign
+op_amp
+id|zs_soft
+(braket
+id|i
+)braket
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|info-&gt;flags
+op_amp
+id|ZILOG_SLEEPING
+)paren
+(brace
+id|info-&gt;flags
+op_and_assign
+op_complement
+id|ZILOG_SLEEPING
+suffix:semicolon
+id|startup
+c_func
+(paren
+id|info
+comma
+l_int|0
+)paren
+suffix:semicolon
+)brace
+)brace
+r_break
+suffix:semicolon
+)brace
+r_return
+id|PBOOK_SLEEP_OK
+suffix:semicolon
+)brace
+macro_line|#endif /* CONFIG_PMAC_PBOOK */
 eof

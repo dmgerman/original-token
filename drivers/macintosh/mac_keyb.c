@@ -8,10 +8,11 @@ macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/tty_flip.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;linux/notifier.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
-macro_line|#include &lt;asm/adb.h&gt;
-macro_line|#include &lt;asm/cuda.h&gt;
-macro_line|#include &lt;asm/pmu.h&gt;
+macro_line|#include &lt;linux/adb.h&gt;
+macro_line|#include &lt;linux/cuda.h&gt;
+macro_line|#include &lt;linux/pmu.h&gt;
 macro_line|#include &lt;linux/kbd_kern.h&gt;
 macro_line|#include &lt;linux/kbd_ll.h&gt;
 DECL|macro|KEYB_KEYREG
@@ -2364,7 +2365,7 @@ r_int
 id|id
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_ADBMOUSE
+macro_line|#ifdef CONFIG_ADB_MOUSE
 multiline_comment|/* XXX: Hook for mouse driver */
 DECL|variable|adb_mouse_interrupt_hook
 r_void
@@ -2411,6 +2412,10 @@ id|kbd_struct
 id|kbd_table
 (braket
 )braket
+suffix:semicolon
+r_extern
+id|wait_queue_head_t
+id|keypress_wait
 suffix:semicolon
 r_extern
 r_void
@@ -2764,7 +2769,7 @@ op_amp
 id|repeat_timer
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_ADBMOUSE
+macro_line|#ifdef CONFIG_ADB_MOUSE
 multiline_comment|/*&n;&t; * XXX: Add mouse button 2+3 fake codes here if mouse open.&n;&t; *&t;Keep track of &squot;button&squot; states here as we only send &n;&t; *&t;single up/down events!&n;&t; *&t;Really messy; might need to check if keyboard is in&n;&t; *&t;VC_RAW mode.&n;&t; *&t;Might also want to know how many buttons need to be emulated.&n;&t; *&t;-&gt; hide this as function in arch/m68k/mac ?&n;&t; */
 r_if
 c_cond
@@ -2887,7 +2892,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-macro_line|#endif /* CONFIG_ADBMOUSE */
+macro_line|#endif /* CONFIG_ADB_MOUSE */
 r_if
 c_cond
 (paren
@@ -3101,7 +3106,7 @@ id|tty
 suffix:semicolon
 )brace
 )brace
-macro_line|#ifdef CONFIG_ADBMOUSE
+macro_line|#ifdef CONFIG_ADB_MOUSE
 r_static
 r_void
 DECL|function|mouse_input
@@ -3552,7 +3557,7 @@ suffix:semicolon
 )brace
 )brace
 )brace
-macro_line|#endif /* CONFIG_ADBMOUSE */
+macro_line|#endif /* CONFIG_ADB_MOUSE */
 multiline_comment|/* XXX Needs to get rid of this, see comments in pmu.c */
 r_extern
 r_int
@@ -3583,6 +3588,7 @@ id|autopoll
 (brace
 multiline_comment|/*&n;&t; * XXX: Where is the contrast control for the passive?&n;&t; *  -- Cort&n;&t; */
 multiline_comment|/* Ignore data from register other than 0 */
+macro_line|#if 0
 r_if
 c_cond
 (paren
@@ -3607,6 +3613,26 @@ OL
 l_int|2
 )paren
 )paren
+macro_line|#else
+r_if
+c_cond
+(paren
+(paren
+id|data
+(braket
+l_int|0
+)braket
+op_amp
+l_int|0x3
+)paren
+op_logical_or
+(paren
+id|nb
+OL
+l_int|2
+)paren
+)paren
+macro_line|#endif
 r_return
 suffix:semicolon
 r_switch
@@ -3703,6 +3729,7 @@ r_case
 l_int|0xa
 suffix:colon
 multiline_comment|/* down event */
+macro_line|#ifdef CONFIG_PPC
 r_if
 c_cond
 (paren
@@ -3744,6 +3771,7 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
 r_break
 suffix:semicolon
 multiline_comment|/* brightness increase */
@@ -3751,6 +3779,7 @@ r_case
 l_int|0x9
 suffix:colon
 multiline_comment|/* down event */
+macro_line|#ifdef CONFIG_PPC
 r_if
 c_cond
 (paren
@@ -3792,6 +3821,7 @@ l_int|0x1f
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
 r_break
 suffix:semicolon
 )brace
@@ -4094,6 +4124,7 @@ c_func
 r_void
 )paren
 (brace
+macro_line|#ifdef CONFIG_PPC
 r_if
 c_cond
 (paren
@@ -4111,6 +4142,17 @@ id|_MACH_Pmac
 )paren
 r_return
 suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_MAC
+r_if
+c_cond
+(paren
+op_logical_neg
+id|MACH_IS_MAC
+)paren
+r_return
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/* setup key map */
 id|memcpy
 c_func
@@ -4224,7 +4266,7 @@ id|plain_map
 )paren
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_ADBMOUSE
+macro_line|#ifdef CONFIG_ADB_MOUSE
 multiline_comment|/* initialize mouse interrupt hook */
 id|adb_mouse_interrupt_hook
 op_assign
@@ -4330,7 +4372,7 @@ suffix:semicolon
 r_int
 id|i
 suffix:semicolon
-macro_line|#ifdef CONFIG_ADBMOUSE
+macro_line|#ifdef CONFIG_ADB_MOUSE
 id|adb_register
 c_func
 (paren
@@ -4344,7 +4386,7 @@ comma
 id|mouse_input
 )paren
 suffix:semicolon
-macro_line|#endif /* CONFIG_ADBMOUSE */
+macro_line|#endif /* CONFIG_ADB_MOUSE */
 id|adb_register
 c_func
 (paren

@@ -411,7 +411,7 @@ l_int|2
 id|printk
 c_func
 (paren
-l_string|&quot;hm, busy page invalidated? (not necesserily a bug)&bslash;n&quot;
+l_string|&quot;hm, busy page invalidated? (not necessarily a bug)&bslash;n&quot;
 )paren
 suffix:semicolon
 id|lru_cache_del

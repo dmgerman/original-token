@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * $Id: pci.c,v 1.60 1999/09/08 03:04:07 cort Exp $&n; * Common pmac/prep/chrp pci routines. -- Cort&n; */
+multiline_comment|/*&n; * $Id: pci.c,v 1.64 1999/09/17 18:01:53 cort Exp $&n; * Common pmac/prep/chrp pci routines. -- Cort&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
@@ -418,6 +418,8 @@ c_func
 id|dev
 comma
 id|r
+comma
+l_int|0
 )paren
 suffix:semicolon
 r_if
@@ -511,7 +513,7 @@ r_return
 id|str
 suffix:semicolon
 )brace
-macro_line|#ifndef CONFIG_MBX
+macro_line|#ifndef CONFIG_8xx
 multiline_comment|/* Recursively searches any node that is of type PCI-PCI bridge. Without&n; * this, the old code would miss children of P2P bridges and hence not&n; * fix IRQ&squot;s for cards located behind P2P bridges.&n; * - Ranjit Deshpande, 01/20/99&n; */
 DECL|function|fix_intr
 r_void
@@ -653,22 +655,4 @@ suffix:semicolon
 )brace
 )brace
 macro_line|#endif
-DECL|function|pcibios_assign_resource
-r_int
-id|pcibios_assign_resource
-c_func
-(paren
-r_struct
-id|pci_dev
-op_star
-id|pdev
-comma
-r_int
-id|resource
-)paren
-(brace
-r_return
-l_int|0
-suffix:semicolon
-)brace
 eof

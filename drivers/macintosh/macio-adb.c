@@ -6,7 +6,7 @@ macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;asm/prom.h&gt;
-macro_line|#include &lt;asm/adb.h&gt;
+macro_line|#include &lt;linux/adb.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/hydra.h&gt;
@@ -146,6 +146,22 @@ l_int|16
 )braket
 suffix:semicolon
 r_static
+r_int
+id|macio_probe
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_static
+r_int
+id|macio_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_static
 r_void
 id|macio_adb_interrupt
 c_func
@@ -165,7 +181,7 @@ id|regs
 suffix:semicolon
 r_static
 r_int
-id|macio_adb_send_request
+id|macio_send_request
 c_func
 (paren
 r_struct
@@ -210,27 +226,55 @@ c_func
 r_void
 )paren
 suffix:semicolon
-DECL|variable|macio_controller
-r_static
+DECL|variable|macio_adb_driver
 r_struct
-id|adb_controller
-id|macio_controller
+id|adb_driver
+id|macio_adb_driver
 op_assign
 (brace
-id|ADB_MACIO
+l_string|&quot;MACIO&quot;
 comma
-id|macio_adb_send_request
+id|macio_probe
 comma
+id|macio_init
+comma
+id|macio_send_request
+comma
+multiline_comment|/*macio_write,*/
 id|macio_adb_autopoll
 comma
-id|macio_adb_reset_bus
-comma
 id|macio_adb_poll
+comma
+id|macio_adb_reset_bus
 )brace
 suffix:semicolon
-DECL|function|macio_adb_init
+DECL|function|macio_probe
+r_int
+id|macio_probe
+c_func
+(paren
 r_void
-id|macio_adb_init
+)paren
+(brace
+r_return
+id|find_compatible_devices
+c_func
+(paren
+l_string|&quot;adb&quot;
+comma
+l_string|&quot;chrp,adb0&quot;
+)paren
+ques
+c_cond
+l_int|0
+suffix:colon
+op_minus
+id|ENODEV
+suffix:semicolon
+)brace
+DECL|function|macio_init
+r_int
+id|macio_init
 c_func
 (paren
 r_void
@@ -259,6 +303,8 @@ op_eq
 l_int|0
 )paren
 r_return
+op_minus
+id|ENXIO
 suffix:semicolon
 macro_line|#if 0
 (brace
@@ -410,6 +456,8 @@ id|line
 )paren
 suffix:semicolon
 r_return
+op_minus
+id|EAGAIN
 suffix:semicolon
 )brace
 id|out_8
@@ -478,15 +526,9 @@ op_or
 id|TAG
 )paren
 suffix:semicolon
-id|adb_controller
-op_assign
-op_amp
-id|macio_controller
+r_return
+l_int|0
 suffix:semicolon
-singleline_comment|//&t;adb_hardware = ADB_MACIO;
-singleline_comment|//&t;adb_send_request = macio_adb_send_request;
-singleline_comment|//&t;adb_autopoll = macio_adb_autopoll;
-singleline_comment|//&t;adb_reset_bus = macio_reset_bus;
 )brace
 DECL|function|macio_adb_autopoll
 r_static
@@ -620,10 +662,10 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* Send an ADB command */
-DECL|function|macio_adb_send_request
+DECL|function|macio_send_request
 r_static
 r_int
-id|macio_adb_send_request
+id|macio_send_request
 c_func
 (paren
 r_struct

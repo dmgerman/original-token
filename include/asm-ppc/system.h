@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * $Id: system.h,v 1.48 1999/09/05 11:56:40 paulus Exp $&n; *&n; * Copyright (C) 1999 Cort Dougan &lt;cort@cs.nmt.edu&gt;&n; */
+multiline_comment|/*&n; * $Id: system.h,v 1.49 1999/09/11 18:37:54 cort Exp $&n; *&n; * Copyright (C) 1999 Cort Dougan &lt;cort@cs.nmt.edu&gt;&n; */
 macro_line|#ifndef __PPC_SYSTEM_H
 DECL|macro|__PPC_SYSTEM_H
 mdefine_line|#define __PPC_SYSTEM_H
@@ -392,6 +392,14 @@ mdefine_line|#define save_flags(x) ((x)=__global_save_flags())
 DECL|macro|restore_flags
 mdefine_line|#define restore_flags(x) __global_restore_flags(x)
 macro_line|#endif /* !__SMP__ */
+DECL|macro|local_irq_disable
+mdefine_line|#define local_irq_disable()&t;&t;__cli()
+DECL|macro|local_irq_enable
+mdefine_line|#define local_irq_enable()&t;&t;__sti()
+DECL|macro|local_irq_save
+mdefine_line|#define local_irq_save(flags)&t;&t;__save_and_cli(flags)
+DECL|macro|local_irq_restore
+mdefine_line|#define local_irq_restore(flags)&t;__restore_flags(flags)
 DECL|macro|xchg
 mdefine_line|#define xchg(ptr,x) ((__typeof__(*(ptr)))__xchg((unsigned long)(x),(ptr),sizeof(*(ptr))))
 r_extern

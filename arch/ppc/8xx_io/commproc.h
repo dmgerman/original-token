@@ -19,6 +19,8 @@ DECL|macro|CPM_CR_INIT_RX
 mdefine_line|#define CPM_CR_INIT_RX&t;&t;((ushort)0x0001)
 DECL|macro|CPM_CR_INIT_TX
 mdefine_line|#define CPM_CR_INIT_TX&t;&t;((ushort)0x0002)
+DECL|macro|CPM_CR_HUNT_MODE
+mdefine_line|#define CPM_CR_HUNT_MODE&t;((ushort)0x0003)
 DECL|macro|CPM_CR_STOP_TX
 mdefine_line|#define CPM_CR_STOP_TX&t;&t;((ushort)0x0004)
 DECL|macro|CPM_CR_RESTART_TX
@@ -118,6 +120,8 @@ DECL|macro|BD_SC_WRAP
 mdefine_line|#define BD_SC_WRAP&t;((ushort)0x2000)&t;/* Last buffer descriptor */
 DECL|macro|BD_SC_INTRPT
 mdefine_line|#define BD_SC_INTRPT&t;((ushort)0x1000)&t;/* Interrupt on change */
+DECL|macro|BD_SC_LAST
+mdefine_line|#define BD_SC_LAST&t;((ushort)0x0800)&t;/* Last buffer in frame */
 DECL|macro|BD_SC_CM
 mdefine_line|#define BD_SC_CM&t;((ushort)0x0200)&t;/* Continous mode */
 DECL|macro|BD_SC_ID
@@ -137,6 +141,8 @@ mdefine_line|#define BD_SC_CD&t;((ushort)0x0001)&t;/* ?? */
 multiline_comment|/* Parameter RAM offsets.&n;*/
 DECL|macro|PROFF_SCC1
 mdefine_line|#define PROFF_SCC1&t;((uint)0x0000)
+DECL|macro|PROFF_IIC
+mdefine_line|#define PROFF_IIC&t;((uint)0x0080)
 DECL|macro|PROFF_SCC2
 mdefine_line|#define PROFF_SCC2&t;((uint)0x0100)
 DECL|macro|PROFF_SCC3
@@ -147,7 +153,7 @@ DECL|macro|PROFF_SCC4
 mdefine_line|#define PROFF_SCC4&t;((uint)0x0300)
 DECL|macro|PROFF_SMC2
 mdefine_line|#define PROFF_SMC2&t;((uint)0x0380)
-multiline_comment|/* Define enough so I can at least use the serial port as a UART.&n; */
+multiline_comment|/* Define enough so I can at least use the serial port as a UART.&n; * The MBX uses SMC1 as the host serial port.&n; */
 DECL|struct|smc_uart
 r_typedef
 r_struct
@@ -282,14 +288,143 @@ DECL|macro|SMCMR_SM_MASK
 mdefine_line|#define SMCMR_SM_MASK&t;((ushort)0x0030)
 DECL|macro|SMCMR_PM_EVEN
 mdefine_line|#define SMCMR_PM_EVEN&t;((ushort)0x0100)&t;/* Even parity, else odd */
+DECL|macro|SMCMR_REVD
+mdefine_line|#define SMCMR_REVD&t;SMCMR_PM_EVEN
 DECL|macro|SMCMR_PEN
 mdefine_line|#define SMCMR_PEN&t;((ushort)0x0200)&t;/* Parity enable */
+DECL|macro|SMCMR_BS
+mdefine_line|#define SMCMR_BS&t;SMCMR_PEN
 DECL|macro|SMCMR_SL
 mdefine_line|#define SMCMR_SL&t;((ushort)0x0400)&t;/* Two stops, else one */
 DECL|macro|SMCR_CLEN_MASK
 mdefine_line|#define SMCR_CLEN_MASK&t;((ushort)0x7800)&t;/* Character length */
 DECL|macro|smcr_mk_clen
 mdefine_line|#define smcr_mk_clen(C)&t;(((C) &lt;&lt; 11) &amp; SMCR_CLEN_MASK)
+multiline_comment|/* SMC2 as Centronics parallel printer.  It is half duplex, in that&n; * it can only receive or transmit.  The parameter ram values for&n; * each direction are either unique or properly overlap, so we can&n; * include them in one structure.&n; */
+DECL|struct|smc_centronics
+r_typedef
+r_struct
+id|smc_centronics
+(brace
+DECL|member|scent_rbase
+id|ushort
+id|scent_rbase
+suffix:semicolon
+DECL|member|scent_tbase
+id|ushort
+id|scent_tbase
+suffix:semicolon
+DECL|member|scent_cfcr
+id|u_char
+id|scent_cfcr
+suffix:semicolon
+DECL|member|scent_smask
+id|u_char
+id|scent_smask
+suffix:semicolon
+DECL|member|scent_mrblr
+id|ushort
+id|scent_mrblr
+suffix:semicolon
+DECL|member|scent_rstate
+id|uint
+id|scent_rstate
+suffix:semicolon
+DECL|member|scent_r_ptr
+id|uint
+id|scent_r_ptr
+suffix:semicolon
+DECL|member|scent_rbptr
+id|ushort
+id|scent_rbptr
+suffix:semicolon
+DECL|member|scent_r_cnt
+id|ushort
+id|scent_r_cnt
+suffix:semicolon
+DECL|member|scent_rtemp
+id|uint
+id|scent_rtemp
+suffix:semicolon
+DECL|member|scent_tstate
+id|uint
+id|scent_tstate
+suffix:semicolon
+DECL|member|scent_t_ptr
+id|uint
+id|scent_t_ptr
+suffix:semicolon
+DECL|member|scent_tbptr
+id|ushort
+id|scent_tbptr
+suffix:semicolon
+DECL|member|scent_t_cnt
+id|ushort
+id|scent_t_cnt
+suffix:semicolon
+DECL|member|scent_ttemp
+id|uint
+id|scent_ttemp
+suffix:semicolon
+DECL|member|scent_max_sl
+id|ushort
+id|scent_max_sl
+suffix:semicolon
+DECL|member|scent_sl_cnt
+id|ushort
+id|scent_sl_cnt
+suffix:semicolon
+DECL|member|scent_character1
+id|ushort
+id|scent_character1
+suffix:semicolon
+DECL|member|scent_character2
+id|ushort
+id|scent_character2
+suffix:semicolon
+DECL|member|scent_character3
+id|ushort
+id|scent_character3
+suffix:semicolon
+DECL|member|scent_character4
+id|ushort
+id|scent_character4
+suffix:semicolon
+DECL|member|scent_character5
+id|ushort
+id|scent_character5
+suffix:semicolon
+DECL|member|scent_character6
+id|ushort
+id|scent_character6
+suffix:semicolon
+DECL|member|scent_character7
+id|ushort
+id|scent_character7
+suffix:semicolon
+DECL|member|scent_character8
+id|ushort
+id|scent_character8
+suffix:semicolon
+DECL|member|scent_rccm
+id|ushort
+id|scent_rccm
+suffix:semicolon
+DECL|member|scent_rccr
+id|ushort
+id|scent_rccr
+suffix:semicolon
+DECL|typedef|smc_cent_t
+)brace
+id|smc_cent_t
+suffix:semicolon
+multiline_comment|/* Centronics Status Mask Register.&n;*/
+DECL|macro|SMC_CENT_F
+mdefine_line|#define SMC_CENT_F&t;((u_char)0x08)
+DECL|macro|SMC_CENT_PE
+mdefine_line|#define SMC_CENT_PE&t;((u_char)0x04)
+DECL|macro|SMC_CENT_S
+mdefine_line|#define SMC_CENT_S&t;((u_char)0x02)
 multiline_comment|/* SMC Event and Mask register.&n;*/
 DECL|macro|SMCM_TXE
 mdefine_line|#define&t;SMCM_TXE&t;((unsigned char)0x10)
@@ -813,6 +948,7 @@ DECL|typedef|scc_enet_t
 )brace
 id|scc_enet_t
 suffix:semicolon
+macro_line|#ifdef CONFIG_MBX
 multiline_comment|/* Bits in parallel I/O port registers that have to be set/cleared&n; * to configure the pins for SCC1 use.  The TCLK and RCLK seem unique&n; * to the MBX860 board.  Any two of the four available clocks could be&n; * used, and the MPC860 cookbook manual has an example using different&n; * clock pins.&n; */
 DECL|macro|PA_ENET_RXD
 mdefine_line|#define PA_ENET_RXD&t;((ushort)0x0001)
@@ -833,6 +969,78 @@ DECL|macro|SICR_ENET_MASK
 mdefine_line|#define SICR_ENET_MASK&t;((uint)0x000000ff)
 DECL|macro|SICR_ENET_CLKRT
 mdefine_line|#define SICR_ENET_CLKRT&t;((uint)0x0000003d)
+macro_line|#endif
+macro_line|#ifdef CONFIG_RPXLITE
+multiline_comment|/* This ENET stuff is for the MPC850 with ethernet on SCC2.  Some of&n; * this may be unique to the RPX-Lite configuration.&n; * Note TENA is on Port B.&n; */
+DECL|macro|PA_ENET_RXD
+mdefine_line|#define PA_ENET_RXD&t;((ushort)0x0004)
+DECL|macro|PA_ENET_TXD
+mdefine_line|#define PA_ENET_TXD&t;((ushort)0x0008)
+DECL|macro|PA_ENET_TCLK
+mdefine_line|#define PA_ENET_TCLK&t;((ushort)0x0200)
+DECL|macro|PA_ENET_RCLK
+mdefine_line|#define PA_ENET_RCLK&t;((ushort)0x0800)
+DECL|macro|PB_ENET_TENA
+mdefine_line|#define PB_ENET_TENA&t;((uint)0x00002000)
+DECL|macro|PC_ENET_CLSN
+mdefine_line|#define PC_ENET_CLSN&t;((ushort)0x0040)
+DECL|macro|PC_ENET_RENA
+mdefine_line|#define PC_ENET_RENA&t;((ushort)0x0080)
+DECL|macro|SICR_ENET_MASK
+mdefine_line|#define SICR_ENET_MASK&t;((uint)0x0000ff00)
+DECL|macro|SICR_ENET_CLKRT
+mdefine_line|#define SICR_ENET_CLKRT&t;((uint)0x00003d00)
+macro_line|#endif
+macro_line|#ifdef CONFIG_BSEIP
+multiline_comment|/* This ENET stuff is for the MPC823 with ethernet on SCC2.&n; * This is unique to the BSE ip-Engine board.&n; */
+DECL|macro|PA_ENET_RXD
+mdefine_line|#define PA_ENET_RXD&t;((ushort)0x0004)
+DECL|macro|PA_ENET_TXD
+mdefine_line|#define PA_ENET_TXD&t;((ushort)0x0008)
+DECL|macro|PA_ENET_TCLK
+mdefine_line|#define PA_ENET_TCLK&t;((ushort)0x0100)
+DECL|macro|PA_ENET_RCLK
+mdefine_line|#define PA_ENET_RCLK&t;((ushort)0x0200)
+DECL|macro|PB_ENET_TENA
+mdefine_line|#define PB_ENET_TENA&t;((uint)0x00002000)
+DECL|macro|PC_ENET_CLSN
+mdefine_line|#define PC_ENET_CLSN&t;((ushort)0x0040)
+DECL|macro|PC_ENET_RENA
+mdefine_line|#define PC_ENET_RENA&t;((ushort)0x0080)
+multiline_comment|/* BSE uses port B and C bits for PHY control also.&n;*/
+DECL|macro|PB_BSE_POWERUP
+mdefine_line|#define PB_BSE_POWERUP&t;((uint)0x00000004)
+DECL|macro|PB_BSE_FDXDIS
+mdefine_line|#define PB_BSE_FDXDIS&t;((uint)0x00008000)
+DECL|macro|PC_BSE_LOOPBACK
+mdefine_line|#define PC_BSE_LOOPBACK&t;((ushort)0x0800)
+DECL|macro|SICR_ENET_MASK
+mdefine_line|#define SICR_ENET_MASK&t;((uint)0x0000ff00)
+DECL|macro|SICR_ENET_CLKRT
+mdefine_line|#define SICR_ENET_CLKRT&t;((uint)0x00002c00)
+macro_line|#endif
+macro_line|#ifdef CONFIG_RPXCLASSIC
+multiline_comment|/* Bits in parallel I/O port registers that have to be set/cleared&n; * to configure the pins for SCC1 use.&n; */
+DECL|macro|PA_ENET_RXD
+mdefine_line|#define PA_ENET_RXD&t;((ushort)0x0001)
+DECL|macro|PA_ENET_TXD
+mdefine_line|#define PA_ENET_TXD&t;((ushort)0x0002)
+DECL|macro|PA_ENET_TCLK
+mdefine_line|#define PA_ENET_TCLK&t;((ushort)0x0200)
+DECL|macro|PA_ENET_RCLK
+mdefine_line|#define PA_ENET_RCLK&t;((ushort)0x0800)
+DECL|macro|PB_ENET_TENA
+mdefine_line|#define PB_ENET_TENA&t;((uint)0x00001000)
+DECL|macro|PC_ENET_CLSN
+mdefine_line|#define PC_ENET_CLSN&t;((ushort)0x0010)
+DECL|macro|PC_ENET_RENA
+mdefine_line|#define PC_ENET_RENA&t;((ushort)0x0020)
+multiline_comment|/* Control bits in the SICR to route TCLK (CLK2) and RCLK (CLK4) to&n; * SCC1.  Also, make sure GR1 (bit 24) and SC1 (bit 25) are zero.&n; */
+DECL|macro|SICR_ENET_MASK
+mdefine_line|#define SICR_ENET_MASK&t;((uint)0x000000ff)
+DECL|macro|SICR_ENET_CLKRT
+mdefine_line|#define SICR_ENET_CLKRT&t;((uint)0x0000003d)
+macro_line|#endif
 multiline_comment|/* SCC Event register as used by Ethernet.&n;*/
 DECL|macro|SCCE_ENET_GRA
 mdefine_line|#define SCCE_ENET_GRA&t;((ushort)0x0080)&t;/* Graceful stop complete */
@@ -1142,6 +1350,95 @@ DECL|typedef|scc_trans_t
 )brace
 id|scc_trans_t
 suffix:semicolon
+DECL|macro|BD_SCC_TX_LAST
+mdefine_line|#define BD_SCC_TX_LAST&t;&t;((ushort)0x0800)
+multiline_comment|/* IIC parameter RAM.&n;*/
+DECL|struct|iic
+r_typedef
+r_struct
+id|iic
+(brace
+DECL|member|iic_rbase
+id|ushort
+id|iic_rbase
+suffix:semicolon
+multiline_comment|/* Rx Buffer descriptor base address */
+DECL|member|iic_tbase
+id|ushort
+id|iic_tbase
+suffix:semicolon
+multiline_comment|/* Tx Buffer descriptor base address */
+DECL|member|iic_rfcr
+id|u_char
+id|iic_rfcr
+suffix:semicolon
+multiline_comment|/* Rx function code */
+DECL|member|iic_tfcr
+id|u_char
+id|iic_tfcr
+suffix:semicolon
+multiline_comment|/* Tx function code */
+DECL|member|iic_mrblr
+id|ushort
+id|iic_mrblr
+suffix:semicolon
+multiline_comment|/* Max receive buffer length */
+DECL|member|iic_rstate
+id|uint
+id|iic_rstate
+suffix:semicolon
+multiline_comment|/* Internal */
+DECL|member|iic_rdp
+id|uint
+id|iic_rdp
+suffix:semicolon
+multiline_comment|/* Internal */
+DECL|member|iic_rbptr
+id|ushort
+id|iic_rbptr
+suffix:semicolon
+multiline_comment|/* Internal */
+DECL|member|iic_rbc
+id|ushort
+id|iic_rbc
+suffix:semicolon
+multiline_comment|/* Internal */
+DECL|member|iic_rxtmp
+id|uint
+id|iic_rxtmp
+suffix:semicolon
+multiline_comment|/* Internal */
+DECL|member|iic_tstate
+id|uint
+id|iic_tstate
+suffix:semicolon
+multiline_comment|/* Internal */
+DECL|member|iic_tdp
+id|uint
+id|iic_tdp
+suffix:semicolon
+multiline_comment|/* Internal */
+DECL|member|iic_tbptr
+id|ushort
+id|iic_tbptr
+suffix:semicolon
+multiline_comment|/* Internal */
+DECL|member|iic_tbc
+id|ushort
+id|iic_tbc
+suffix:semicolon
+multiline_comment|/* Internal */
+DECL|member|iic_txtmp
+id|uint
+id|iic_txtmp
+suffix:semicolon
+multiline_comment|/* Internal */
+DECL|typedef|iic_t
+)brace
+id|iic_t
+suffix:semicolon
+DECL|macro|BD_IIC_START
+mdefine_line|#define BD_IIC_START&t;&t;((ushort)0x0400)
 multiline_comment|/* CPM interrupts.  There are nearly 32 interrupts generated by CPM&n; * channels or devices.  All of these are presented to the PPC core&n; * as a single interrupt.  The CPM interrupt handler dispatches its&n; * own handlers, in a similar fashion to the PPC core handler.  We&n; * use the table as defined in the manuals (i.e. no special high&n; * priority and SCC1 == SCCa, etc...).&n; */
 DECL|macro|CPMVEC_NR
 mdefine_line|#define CPMVEC_NR&t;&t;32

@@ -66,4 +66,10 @@ id|proc_usb_cleanup
 r_void
 )paren
 suffix:semicolon
+r_int
+id|usb_serial_init
+(paren
+r_void
+)paren
+suffix:semicolon
 eof

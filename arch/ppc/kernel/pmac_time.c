@@ -7,10 +7,10 @@ macro_line|#include &lt;linux/param.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/adb.h&gt;
+macro_line|#include &lt;linux/cuda.h&gt;
+macro_line|#include &lt;linux/pmu.h&gt;
 macro_line|#include &lt;asm/init.h&gt;
-macro_line|#include &lt;asm/adb.h&gt;
-macro_line|#include &lt;asm/cuda.h&gt;
-macro_line|#include &lt;asm/pmu.h&gt;
 macro_line|#include &lt;asm/prom.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
@@ -55,19 +55,22 @@ c_func
 r_void
 )paren
 (brace
+macro_line|#ifdef CONFIG_ADB
 r_struct
 id|adb_request
 id|req
 suffix:semicolon
+macro_line|#endif
 multiline_comment|/* Get the time from the RTC */
 r_switch
 c_cond
 (paren
-id|adb_hardware
+id|sys_ctrler
 )paren
 (brace
+macro_line|#ifdef CONFIG_ADB_CUDA
 r_case
-id|ADB_VIACUDA
+id|SYS_CTRLER_CUDA
 suffix:colon
 r_if
 c_cond
@@ -154,8 +157,10 @@ l_int|6
 op_minus
 id|RTC_OFFSET
 suffix:semicolon
+macro_line|#endif /* CONFIG_ADB_CUDA */
+macro_line|#ifdef CONFIG_ADB_PMU
 r_case
-id|ADB_VIAPMU
+id|SYS_CTRLER_PMU
 suffix:colon
 r_if
 c_cond
@@ -240,6 +245,7 @@ l_int|4
 op_minus
 id|RTC_OFFSET
 suffix:semicolon
+macro_line|#endif /* CONFIG_ADB_PMU */
 r_default
 suffix:colon
 r_return
@@ -552,17 +558,12 @@ id|time_sleep_notify
 c_func
 (paren
 r_struct
-id|notifier_block
+id|pmu_sleep_notifier
 op_star
-id|this
+id|self
 comma
 r_int
-r_int
-id|event
-comma
-r_void
-op_star
-id|x
+id|when
 )paren
 (brace
 r_static
@@ -573,11 +574,11 @@ suffix:semicolon
 r_switch
 c_cond
 (paren
-id|event
+id|when
 )paren
 (brace
 r_case
-id|PBOOK_SLEEP
+id|PBOOK_SLEEP_NOW
 suffix:colon
 id|time_diff
 op_assign
@@ -620,21 +621,20 @@ r_break
 suffix:semicolon
 )brace
 r_return
-id|NOTIFY_DONE
+id|PBOOK_SLEEP_OK
 suffix:semicolon
 )brace
 DECL|variable|time_sleep_notifier
 r_static
 r_struct
-id|notifier_block
+id|pmu_sleep_notifier
 id|time_sleep_notifier
 op_assign
 (brace
 id|time_sleep_notify
 comma
-l_int|NULL
+id|SLEEP_LEVEL_MISC
 comma
-l_int|100
 )brace
 suffix:semicolon
 macro_line|#endif /* CONFIG_PMAC_PBOOK */
@@ -662,12 +662,9 @@ comma
 id|divisor
 suffix:semicolon
 macro_line|#ifdef CONFIG_PMAC_PBOOK
-id|notifier_chain_register
+id|pmu_register_sleep_notifier
 c_func
 (paren
-op_amp
-id|sleep_notifier_list
-comma
 op_amp
 id|time_sleep_notifier
 )paren

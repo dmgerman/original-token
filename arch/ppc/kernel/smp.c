@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * $Id: smp.c,v 1.62 1999/09/05 11:56:34 paulus Exp $&n; *&n; * Smp support for ppc.&n; *&n; * Written by Cort Dougan (cort@cs.nmt.edu) borrowing a great&n; * deal of code from the sparc and intel versions.&n; *&n; * Support for PReP (Motorola MTX/MVME) SMP by Troy Benjegerdes&n; * (troy@microux.com, hozer@drgw.net)&n; */
+multiline_comment|/*&n; * $Id: smp.c,v 1.68 1999/09/17 19:38:05 cort Exp $&n; *&n; * Smp support for ppc.&n; *&n; * Written by Cort Dougan (cort@cs.nmt.edu) borrowing a great&n; * deal of code from the sparc and intel versions.&n; *&n; * Copyright (C) 1999 Cort Dougan &lt;cort@cs.nmt.edu&gt;&n; *&n; * Support for PReP (Motorola MTX/MVME) SMP by Troy Benjegerdes&n; * (troy@microux.com, hozer@drgw.net)&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/smp.h&gt;
@@ -23,13 +23,8 @@ macro_line|#include &lt;asm/init.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/prom.h&gt;
 macro_line|#include &lt;asm/smp.h&gt;
+macro_line|#include &lt;asm/gemini.h&gt;
 macro_line|#include &quot;time.h&quot;
-DECL|variable|first_cpu_booted
-r_int
-id|first_cpu_booted
-op_assign
-l_int|0
-suffix:semicolon
 DECL|variable|smp_threads_ready
 r_int
 id|smp_threads_ready
@@ -870,10 +865,6 @@ l_string|&quot;Entering SMP Mode...&bslash;n&quot;
 )paren
 suffix:semicolon
 multiline_comment|/* let other processors know to not do certain initialization */
-id|first_cpu_booted
-op_assign
-l_int|1
-suffix:semicolon
 id|smp_num_cpus
 op_assign
 l_int|1
@@ -953,6 +944,8 @@ op_amp
 id|_MACH_Pmac
 op_or
 id|_MACH_chrp
+op_or
+id|_MACH_gemini
 )paren
 )paren
 )paren
@@ -1013,6 +1006,38 @@ id|smp_chrp_cpu_nr
 suffix:semicolon
 r_break
 suffix:semicolon
+r_case
+id|_MACH_gemini
+suffix:colon
+id|cpu_nr
+op_assign
+(paren
+id|readb
+c_func
+(paren
+id|GEMINI_CPUSTAT
+)paren
+op_amp
+id|GEMINI_CPU_COUNT_MASK
+)paren
+op_rshift
+l_int|2
+suffix:semicolon
+id|cpu_nr
+op_assign
+(paren
+id|cpu_nr
+op_eq
+l_int|0
+)paren
+ques
+c_cond
+l_int|4
+suffix:colon
+id|cpu_nr
+suffix:semicolon
+r_break
+suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; * only check for cpus we know exist.  We keep the callin map&n;&t; * with cpus at the bottom -- Cort&n;&t; */
 r_for
@@ -1036,11 +1061,6 @@ suffix:semicolon
 r_struct
 id|pt_regs
 id|regs
-suffix:semicolon
-r_struct
-id|task_struct
-op_star
-id|idle
 suffix:semicolon
 multiline_comment|/* create a process for the processor */
 multiline_comment|/* we don&squot;t care about the values in regs since we&squot;ll&n;&t;&t;   never reschedule the forked task. */
@@ -1343,6 +1363,25 @@ id|i
 )paren
 suffix:semicolon
 macro_line|#endif&t;&t;&t;
+r_break
+suffix:semicolon
+r_case
+id|_MACH_gemini
+suffix:colon
+id|openpic_init_processor
+c_func
+(paren
+l_int|1
+op_lshift
+id|i
+)paren
+suffix:semicolon
+id|openpic_init_processor
+c_func
+(paren
+l_int|0
+)paren
+suffix:semicolon
 r_break
 suffix:semicolon
 )brace

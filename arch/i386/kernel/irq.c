@@ -3,7 +3,6 @@ multiline_comment|/*&n; *&t;linux/arch/i386/kernel/irq.c&n; *&n; *&t;Copyright (
 multiline_comment|/*&n; * IRQs are in fact implemented a bit like signal handlers for the kernel.&n; * Naturally it&squot;s not a 1:1 relation, but there are similarities.&n; */
 macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
-macro_line|#include &lt;linux/kernel_stat.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
@@ -11,13 +10,12 @@ macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/timex.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/random.h&gt;
-macro_line|#include &lt;linux/smp.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/kernel_stat.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
-macro_line|#include &lt;asm/smp.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/delay.h&gt;
 macro_line|#include &lt;asm/desc.h&gt;
@@ -39,9 +37,12 @@ id|local_irq_count
 id|NR_CPUS
 )braket
 suffix:semicolon
-DECL|variable|nmi_counter
+r_extern
 id|atomic_t
 id|nmi_counter
+(braket
+id|NR_CPUS
+)braket
 suffix:semicolon
 multiline_comment|/*&n; * Linux has a controller-independent x86 interrupt architecture.&n; * every controller has a &squot;controller-template&squot;, that is used&n; * by the main code to do the right thing. Each driver-visible&n; * interrupt source is transparently wired to the apropriate&n; * controller. Thus drivers need not be aware of the&n; * interrupt-controller.&n; *&n; * Various interrupt controllers we handle: 8259 PIC, SMP IO-APIC,&n; * PIIX4&squot;s internal 8259 PIC and SGI&squot;s Visual Workstation Cobalt (IO-)APIC.&n; * (IO-APICs assumed to be messaging to Pentium local-APICs)&n; *&n; * the code is designed to be easily extended with new/different&n; * interrupt controllers, without having to do assembly magic.&n; */
 multiline_comment|/*&n; * Micro-access to controllers is serialized over the whole&n; * system. We never hold this lock when we call the actual&n; * IRQ handler.&n; */
@@ -100,6 +101,110 @@ id|regs
 )paren
 (brace
 )brace
+multiline_comment|/*&n; * Generic no controller code&n; */
+DECL|function|enable_none
+r_static
+r_void
+id|enable_none
+c_func
+(paren
+r_int
+r_int
+id|irq
+)paren
+(brace
+)brace
+DECL|function|startup_none
+r_static
+r_int
+r_int
+id|startup_none
+c_func
+(paren
+r_int
+r_int
+id|irq
+)paren
+(brace
+r_return
+l_int|0
+suffix:semicolon
+)brace
+DECL|function|disable_none
+r_static
+r_void
+id|disable_none
+c_func
+(paren
+r_int
+r_int
+id|irq
+)paren
+(brace
+)brace
+DECL|function|ack_none
+r_static
+r_void
+id|ack_none
+c_func
+(paren
+r_int
+r_int
+id|irq
+)paren
+(brace
+multiline_comment|/*&n; * &squot;what should we do if we get a hw irq event on an illegal vector&squot;.&n; * each architecture has to answer this themselves, it doesnt deserve&n; * a generic callback i think.&n; */
+macro_line|#if CONFIG_X86
+id|printk
+c_func
+(paren
+l_string|&quot;unexpected IRQ trap at vector %02x&bslash;n&quot;
+comma
+id|irq
+)paren
+suffix:semicolon
+macro_line|#ifdef __SMP__
+multiline_comment|/*&n;&t; * Currently unexpected vectors happen only on SMP and APIC.&n;&t; * We _must_ ack these because every local APIC has only N&n;&t; * irq slots per priority level, and a &squot;hanging, unacked&squot; IRQ&n;&t; * holds up an irq slot - in excessive cases (when multiple&n;&t; * unexpected vectors occur) that might lock up the APIC&n;&t; * completely.&n;&t; */
+id|ack_APIC_irq
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#endif
+)brace
+multiline_comment|/* startup is the same as &quot;enable&quot;, shutdown is same as &quot;disable&quot; */
+DECL|macro|shutdown_none
+mdefine_line|#define shutdown_none&t;disable_none
+DECL|macro|end_none
+mdefine_line|#define end_none&t;enable_none
+DECL|variable|no_irq_type
+r_struct
+id|hw_interrupt_type
+id|no_irq_type
+op_assign
+(brace
+l_string|&quot;none&quot;
+comma
+id|startup_none
+comma
+id|shutdown_none
+comma
+id|enable_none
+comma
+id|disable_none
+comma
+id|ack_none
+comma
+id|end_none
+)brace
+suffix:semicolon
+DECL|variable|irq_err_count
+r_volatile
+r_int
+r_int
+id|irq_err_count
+suffix:semicolon
 multiline_comment|/*&n; * Generic, controller-independent functions:&n; */
 DECL|function|get_irq_list
 r_int
@@ -312,7 +417,6 @@ id|action
 op_assign
 id|action-&gt;next
 )paren
-(brace
 id|p
 op_add_assign
 id|sprintf
@@ -325,7 +429,6 @@ comma
 id|action-&gt;name
 )paren
 suffix:semicolon
-)brace
 op_star
 id|p
 op_increment
@@ -340,17 +443,110 @@ c_func
 (paren
 id|p
 comma
-l_string|&quot;NMI: %10u&bslash;n&quot;
+l_string|&quot;NMI: &quot;
+)paren
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|j
+op_assign
+l_int|0
+suffix:semicolon
+id|j
+OL
+id|smp_num_cpus
+suffix:semicolon
+id|j
+op_increment
+)paren
+id|p
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|p
+comma
+l_string|&quot;%10u &quot;
 comma
 id|atomic_read
 c_func
 (paren
-op_amp
 id|nmi_counter
+op_plus
+id|cpu_logical_map
+c_func
+(paren
+id|j
+)paren
 )paren
 )paren
 suffix:semicolon
-macro_line|#ifdef __SMP__
+id|p
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|p
+comma
+l_string|&quot;&bslash;n&quot;
+)paren
+suffix:semicolon
+macro_line|#if CONFIG_SMP
+id|p
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|p
+comma
+l_string|&quot;LOC: &quot;
+)paren
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|j
+op_assign
+l_int|0
+suffix:semicolon
+id|j
+OL
+id|smp_num_cpus
+suffix:semicolon
+id|j
+op_increment
+)paren
+id|p
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|p
+comma
+l_string|&quot;%10u &quot;
+comma
+id|apic_timer_irqs
+(braket
+id|cpu_logical_map
+c_func
+(paren
+id|j
+)paren
+)braket
+)paren
+suffix:semicolon
+id|p
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|p
+comma
+l_string|&quot;&bslash;n&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
 id|p
 op_add_assign
 id|sprintf
@@ -360,10 +556,9 @@ id|p
 comma
 l_string|&quot;ERR: %10lu&bslash;n&quot;
 comma
-id|ipi_count
+id|irq_err_count
 )paren
 suffix:semicolon
-macro_line|#endif&t;&t;
 r_return
 id|p
 op_minus
@@ -1733,12 +1928,7 @@ op_amp
 id|irq_controller_lock
 )paren
 suffix:semicolon
-id|irq_desc
-(braket
-id|irq
-)braket
-dot
-id|handler
+id|desc-&gt;handler
 op_member_access_from_pointer
 id|ack
 c_func
@@ -1886,13 +2076,7 @@ op_amp
 id|IRQ_DISABLED
 )paren
 )paren
-(brace
-id|irq_desc
-(braket
-id|irq
-)braket
-dot
-id|handler
+id|desc-&gt;handler
 op_member_access_from_pointer
 id|end
 c_func
@@ -1900,7 +2084,6 @@ c_func
 id|irq
 )paren
 suffix:semicolon
-)brace
 id|spin_unlock
 c_func
 (paren

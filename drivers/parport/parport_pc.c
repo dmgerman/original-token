@@ -1,4 +1,4 @@
-multiline_comment|/* Low-level parallel-port routines for 8255-based PC-style hardware.&n; * &n; * Authors: Phil Blundell &lt;Philip.Blundell@pobox.com&gt;&n; *          Tim Waugh &lt;tim@cyberelk.demon.co.uk&gt;&n; *&t;    Jose Renau &lt;renau@acm.org&gt;&n; *          David Campbell &lt;campbell@torque.net&gt;&n; *          Andrea Arcangeli&n; *&n; * based on work by Grant Guenther &lt;grant@torque.net&gt; and Phil Blundell.&n; *&n; * Cleaned up include files - Russell King &lt;linux@arm.uk.linux.org&gt;&n; * DMA support - Bert De Jonghe &lt;bert@sophis.be&gt;&n; */
+multiline_comment|/* Low-level parallel-port routines for 8255-based PC-style hardware.&n; * &n; * Authors: Phil Blundell &lt;Philip.Blundell@pobox.com&gt;&n; *          Tim Waugh &lt;tim@cyberelk.demon.co.uk&gt;&n; *&t;    Jose Renau &lt;renau@acm.org&gt;&n; *          David Campbell &lt;campbell@torque.net&gt;&n; *          Andrea Arcangeli&n; *&n; * based on work by Grant Guenther &lt;grant@torque.net&gt; and Phil Blundell.&n; *&n; * Cleaned up include files - Russell King &lt;linux@arm.uk.linux.org&gt;&n; * DMA support - Bert De Jonghe &lt;bert@sophis.be&gt;&n; * Many ECP bugs fixed.  Fred Barnes &amp; Jamie Lokier, 1999&n; */
 multiline_comment|/* This driver should work with any hardware that is broadly compatible&n; * with that in the IBM PC.  This applies to the majority of integrated&n; * I/O chipsets that are commonly available.  The expected register&n; * layout is:&n; *&n; *&t;base+0&t;&t;data&n; *&t;base+1&t;&t;status&n; *&t;base+2&t;&t;control&n; *&n; * In addition, there are some optional registers:&n; *&n; *&t;base+3&t;&t;EPP address&n; *&t;base+4&t;&t;EPP data&n; *&t;base+0x400&t;ECP config A&n; *&t;base+0x401&t;ECP config B&n; *&t;base+0x402&t;ECP control&n; *&n; * All registers are 8 bits wide and read/write.  If your hardware differs&n; * only in register addresses (eg because your registers are on 32-bit&n; * word boundaries) then you can alter the constants in parport_pc.h to&n; * accomodate this.&n; *&n; * Note that the ECP registers may not start at offset 0x400 for PCI cards,&n; * but rather will start at port-&gt;base_hi.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
@@ -55,9 +55,10 @@ r_char
 id|v
 )paren
 (brace
-id|outb
-(paren
-(paren
+r_int
+r_char
+id|ectr
+op_assign
 id|inb
 (paren
 id|ECONTROL
@@ -65,6 +66,34 @@ id|ECONTROL
 id|pb
 )paren
 )paren
+suffix:semicolon
+macro_line|#ifdef DEBUG_PARPORT
+id|printk
+(paren
+id|KERN_DEBUG
+l_string|&quot;frob_econtrol(%02x,%02x): %02x -&gt; %02x&bslash;n&quot;
+comma
+id|m
+comma
+id|v
+comma
+id|ectr
+comma
+(paren
+id|ectr
+op_amp
+op_complement
+id|m
+)paren
+op_xor
+id|v
+)paren
+suffix:semicolon
+macro_line|#endif
+id|outb
+(paren
+(paren
+id|ectr
 op_amp
 op_complement
 id|m
@@ -169,30 +198,12 @@ r_if
 c_cond
 (paren
 id|mode
-op_logical_and
-id|m
-)paren
-multiline_comment|/* We have to go through mode 000 */
-id|change_mode
-(paren
-id|p
-comma
-id|ECR_SPP
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|m
-OL
+op_ge
 l_int|2
 op_logical_and
 op_logical_neg
 (paren
-id|parport_read_control
-(paren
-id|p
-)paren
+id|priv-&gt;ctr
 op_amp
 l_int|0x20
 )paren
@@ -331,6 +342,42 @@ suffix:semicolon
 )brace
 )brace
 )brace
+r_if
+c_cond
+(paren
+id|mode
+op_ge
+l_int|2
+op_logical_and
+id|m
+op_ge
+l_int|2
+)paren
+(brace
+multiline_comment|/* We have to go through mode 001 */
+id|oecr
+op_and_assign
+op_complement
+(paren
+l_int|7
+op_lshift
+l_int|5
+)paren
+suffix:semicolon
+id|oecr
+op_or_assign
+id|ECR_PS2
+op_lshift
+l_int|5
+suffix:semicolon
+id|outb
+(paren
+id|oecr
+comma
+id|ecr
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/* Set the mode. */
 id|oecr
 op_and_assign
@@ -452,7 +499,9 @@ id|p
 comma
 l_int|0xe0
 comma
-l_int|0x20
+id|ECR_PS2
+op_lshift
+l_int|5
 )paren
 suffix:semicolon
 id|parport_frob_control
@@ -471,7 +520,9 @@ id|p
 comma
 l_int|0xe0
 comma
-l_int|0xe0
+id|ECR_CNF
+op_lshift
+l_int|5
 )paren
 suffix:semicolon
 id|cnfga
@@ -529,7 +580,9 @@ id|p
 comma
 l_int|0xe0
 comma
-l_int|0x20
+id|ECR_PS2
+op_lshift
+l_int|5
 )paren
 suffix:semicolon
 r_return
@@ -630,7 +683,7 @@ l_int|0x01
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Access functions.&n; *&n; * These aren&squot;t static because they may be used by the parport_xxx_yyy&n; * macros.  extern __inline__ versions of several of these are in&n; * parport_pc.h.&n; */
+multiline_comment|/*&n; * Access functions.&n; *&n; * Most of these aren&squot;t static because they may be used by the&n; * parport_xxx_yyy macros.  extern __inline__ versions of several&n; * of these are in parport_pc.h.&n; */
 DECL|function|parport_pc_interrupt
 r_static
 r_void
@@ -714,88 +767,6 @@ id|p
 )paren
 suffix:semicolon
 )brace
-DECL|function|__frob_control
-r_int
-r_char
-id|__frob_control
-(paren
-r_struct
-id|parport
-op_star
-id|p
-comma
-r_int
-r_char
-id|mask
-comma
-r_int
-r_char
-id|val
-)paren
-(brace
-r_const
-r_int
-r_char
-id|wm
-op_assign
-(paren
-id|PARPORT_CONTROL_STROBE
-op_or
-id|PARPORT_CONTROL_AUTOFD
-op_or
-id|PARPORT_CONTROL_INIT
-op_or
-id|PARPORT_CONTROL_SELECT
-)paren
-suffix:semicolon
-r_struct
-id|parport_pc_private
-op_star
-id|priv
-op_assign
-id|p-&gt;physport-&gt;private_data
-suffix:semicolon
-r_int
-r_char
-id|ctr
-op_assign
-id|priv-&gt;ctr
-suffix:semicolon
-id|ctr
-op_assign
-(paren
-id|ctr
-op_amp
-op_complement
-id|mask
-)paren
-op_xor
-id|val
-suffix:semicolon
-id|ctr
-op_and_assign
-id|priv-&gt;ctr_writable
-suffix:semicolon
-multiline_comment|/* only write writable bits. */
-id|outb
-(paren
-id|ctr
-comma
-id|CONTROL
-(paren
-id|p
-)paren
-)paren
-suffix:semicolon
-r_return
-id|priv-&gt;ctr
-op_assign
-id|ctr
-op_amp
-id|wm
-suffix:semicolon
-multiline_comment|/* update soft copy */
-)brace
 DECL|function|parport_pc_write_control
 r_void
 id|parport_pc_write_control
@@ -851,7 +822,7 @@ id|p
 )paren
 suffix:semicolon
 )brace
-id|__frob_control
+id|__parport_pc_frob_control
 (paren
 id|p
 comma
@@ -876,6 +847,21 @@ id|p
 )paren
 (brace
 r_const
+r_int
+r_char
+id|wm
+op_assign
+(paren
+id|PARPORT_CONTROL_STROBE
+op_or
+id|PARPORT_CONTROL_AUTOFD
+op_or
+id|PARPORT_CONTROL_INIT
+op_or
+id|PARPORT_CONTROL_SELECT
+)paren
+suffix:semicolon
+r_const
 r_struct
 id|parport_pc_private
 op_star
@@ -885,6 +871,8 @@ id|p-&gt;physport-&gt;private_data
 suffix:semicolon
 r_return
 id|priv-&gt;ctr
+op_amp
+id|wm
 suffix:semicolon
 multiline_comment|/* Use soft copy */
 )brace
@@ -934,14 +922,38 @@ l_int|0x20
 id|printk
 (paren
 id|KERN_DEBUG
-l_string|&quot;%s (%s): use data_reverse for this!&bslash;n&quot;
+l_string|&quot;%s (%s): use data_%s for this!&bslash;n&quot;
 comma
 id|p-&gt;name
 comma
 id|p-&gt;cad-&gt;name
+comma
+(paren
+id|val
+op_amp
+l_int|0x20
+)paren
+ques
+c_cond
+l_string|&quot;reverse&quot;
+suffix:colon
+l_string|&quot;forward&quot;
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|val
+op_amp
+l_int|0x20
+)paren
 id|parport_pc_data_reverse
+(paren
+id|p
+)paren
+suffix:semicolon
+r_else
+id|parport_pc_data_forward
 (paren
 id|p
 )paren
@@ -957,7 +969,7 @@ op_and_assign
 id|wm
 suffix:semicolon
 r_return
-id|__frob_control
+id|__parport_pc_frob_control
 (paren
 id|p
 comma
@@ -1000,7 +1012,7 @@ op_star
 id|p
 )paren
 (brace
-id|__frob_control
+id|__parport_pc_frob_control
 (paren
 id|p
 comma
@@ -1021,7 +1033,7 @@ op_star
 id|p
 )paren
 (brace
-id|__frob_control
+id|__parport_pc_frob_control
 (paren
 id|p
 comma
@@ -1041,7 +1053,7 @@ op_star
 id|p
 )paren
 (brace
-id|__frob_control
+id|__parport_pc_frob_control
 (paren
 id|p
 comma
@@ -1061,7 +1073,7 @@ op_star
 id|p
 )paren
 (brace
-id|__frob_control
+id|__parport_pc_frob_control
 (paren
 id|p
 comma
@@ -1907,6 +1919,7 @@ id|parport_pc_data_forward
 id|port
 )paren
 suffix:semicolon
+multiline_comment|/* Must be in PS2 mode */
 r_while
 c_loop
 (paren
@@ -2292,6 +2305,7 @@ id|parport_pc_data_forward
 id|port
 )paren
 suffix:semicolon
+multiline_comment|/* Must be in PS2 mode */
 r_while
 c_loop
 (paren
@@ -2678,6 +2692,12 @@ id|flags
 )paren
 suffix:semicolon
 multiline_comment|/* Set up parallel port FIFO mode.*/
+id|parport_pc_data_forward
+(paren
+id|port
+)paren
+suffix:semicolon
+multiline_comment|/* Must be in PS2 mode */
 id|change_mode
 (paren
 id|port
@@ -2686,11 +2706,6 @@ id|ECR_PPF
 )paren
 suffix:semicolon
 multiline_comment|/* Parallel port FIFO */
-id|parport_pc_data_forward
-(paren
-id|port
-)paren
-suffix:semicolon
 id|port-&gt;physport-&gt;ieee1284.phase
 op_assign
 id|IEEE1284_PH_FWD_DATA
@@ -2807,14 +2822,16 @@ id|port
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Reset the FIFO. */
+multiline_comment|/* Reset the FIFO and return to PS2 mode. */
 id|frob_econtrol
 (paren
 id|port
 comma
 l_int|0xe0
 comma
-l_int|0
+id|ECR_PS2
+op_lshift
+l_int|5
 )paren
 suffix:semicolon
 multiline_comment|/* De-assert strobe. */
@@ -2921,6 +2938,12 @@ id|PARPORT_STATUS_PAPEROUT
 suffix:semicolon
 )brace
 multiline_comment|/* Set up ECP parallel port mode.*/
+id|parport_pc_data_forward
+(paren
+id|port
+)paren
+suffix:semicolon
+multiline_comment|/* Must be in PS2 mode */
 id|change_mode
 (paren
 id|port
@@ -2929,11 +2952,6 @@ id|ECR_ECP
 )paren
 suffix:semicolon
 multiline_comment|/* ECP FIFO */
-id|parport_pc_data_forward
-(paren
-id|port
-)paren
-suffix:semicolon
 id|port-&gt;physport-&gt;ieee1284.phase
 op_assign
 id|IEEE1284_PH_FWD_DATA
@@ -3050,16 +3068,19 @@ id|port
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Reset the FIFO. */
+multiline_comment|/* Reset the FIFO and return to PS2 mode. */
 id|frob_econtrol
 (paren
 id|port
 comma
 l_int|0xe0
 comma
-l_int|0
+id|ECR_PS2
+op_lshift
+l_int|5
 )paren
 suffix:semicolon
+multiline_comment|/* De-assert strobe. */
 id|parport_frob_control
 (paren
 id|port
@@ -3070,18 +3091,24 @@ l_int|0
 )paren
 suffix:semicolon
 multiline_comment|/* Host transfer recovery. */
+id|parport_pc_data_reverse
+(paren
+id|port
+)paren
+suffix:semicolon
+multiline_comment|/* Must be in PS2 mode */
+id|udelay
+(paren
+l_int|5
+)paren
+suffix:semicolon
 id|parport_frob_control
 (paren
 id|port
 comma
 id|PARPORT_CONTROL_INIT
 comma
-id|PARPORT_CONTROL_INIT
-)paren
-suffix:semicolon
-id|parport_pc_data_reverse
-(paren
-id|port
+l_int|0
 )paren
 suffix:semicolon
 id|parport_wait_peripheral
@@ -3099,7 +3126,7 @@ id|port
 comma
 id|PARPORT_CONTROL_INIT
 comma
-l_int|0
+id|PARPORT_CONTROL_INIT
 )paren
 suffix:semicolon
 id|parport_wait_peripheral
@@ -3270,6 +3297,7 @@ id|parport_pc_data_reverse
 id|port
 )paren
 suffix:semicolon
+multiline_comment|/* Must be in PS2 mode */
 id|udelay
 (paren
 l_int|5
@@ -3282,7 +3310,7 @@ id|port
 comma
 id|PARPORT_CONTROL_INIT
 comma
-id|PARPORT_CONTROL_INIT
+l_int|0
 )paren
 suffix:semicolon
 multiline_comment|/* Event 40: PError goes low */
@@ -3297,6 +3325,12 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* Set up ECP parallel port mode.*/
+id|parport_pc_data_reverse
+(paren
+id|port
+)paren
+suffix:semicolon
+multiline_comment|/* Must be in PS2 mode */
 id|change_mode
 (paren
 id|port
@@ -3305,11 +3339,6 @@ id|ECR_ECP
 )paren
 suffix:semicolon
 multiline_comment|/* ECP FIFO */
-id|parport_pc_data_reverse
-(paren
-id|port
-)paren
-suffix:semicolon
 id|port-&gt;ieee1284.phase
 op_assign
 id|IEEE1284_PH_REV_DATA
@@ -3920,10 +3949,6 @@ id|r
 op_assign
 l_int|0xc
 suffix:semicolon
-id|priv-&gt;ecr
-op_assign
-l_int|0
-suffix:semicolon
 id|outb
 (paren
 id|r
@@ -4183,10 +4208,12 @@ c_cond
 (paren
 id|ok
 )paren
+(brace
 id|pb-&gt;modes
 op_or_assign
 id|PARPORT_MODE_TRISTATE
 suffix:semicolon
+)brace
 r_else
 (brace
 r_struct
@@ -4460,12 +4487,13 @@ op_lshift
 l_int|5
 )paren
 suffix:semicolon
-multiline_comment|/* Reset FIFO */
+multiline_comment|/* Reset FIFO and enable PS2 */
 id|parport_pc_data_reverse
 (paren
 id|pb
 )paren
 suffix:semicolon
+multiline_comment|/* Must be in PS2 mode */
 id|frob_econtrol
 (paren
 id|pb
@@ -6071,12 +6099,6 @@ c_func
 id|p
 )paren
 suffix:semicolon
-id|parport_ECPPS2_supported
-c_func
-(paren
-id|p
-)paren
-suffix:semicolon
 )brace
 r_if
 c_cond
@@ -6101,20 +6123,14 @@ l_int|5
 )paren
 )paren
 (brace
-id|parport_EPP_supported
-c_func
-(paren
-id|p
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
 op_logical_neg
+id|parport_EPP_supported
+c_func
 (paren
-id|p-&gt;modes
-op_amp
-id|PARPORT_MODE_EPP
+id|p
 )paren
 )paren
 id|parport_ECPEPP_supported
@@ -6145,6 +6161,18 @@ r_return
 l_int|NULL
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|priv-&gt;ecr
+)paren
+id|parport_ECPPS2_supported
+c_func
+(paren
+id|p
+)paren
+suffix:semicolon
+r_else
 id|parport_PS2_supported
 (paren
 id|p
@@ -6658,11 +6686,9 @@ multiline_comment|/* Done probing.  Now put the port into a sensible start-up st
 r_if
 c_cond
 (paren
-id|p-&gt;modes
-op_amp
-id|PARPORT_MODE_ECP
+id|priv-&gt;ecr
 )paren
-multiline_comment|/*&n;&t;&t; * Put the ECP detected port in PS2 mode.&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; * Put the ECP detected port in PS2 mode.&n;&t;&t; * Do this also for ports that have ECR but don&squot;t do ECP.&n;&t;&t; */
 id|outb
 (paren
 l_int|0x34

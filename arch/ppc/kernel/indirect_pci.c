@@ -38,6 +38,7 @@ id|val
 )paren
 (brace
 r_int
+r_int
 id|flags
 suffix:semicolon
 id|save_flags
@@ -129,6 +130,7 @@ op_star
 id|val
 )paren
 (brace
+r_int
 r_int
 id|flags
 suffix:semicolon
@@ -239,6 +241,7 @@ id|val
 )paren
 (brace
 r_int
+r_int
 id|flags
 suffix:semicolon
 r_if
@@ -338,6 +341,7 @@ id|val
 )paren
 (brace
 r_int
+r_int
 id|flags
 suffix:semicolon
 id|save_flags
@@ -427,6 +431,7 @@ r_int
 id|val
 )paren
 (brace
+r_int
 r_int
 id|flags
 suffix:semicolon
@@ -534,6 +539,7 @@ r_int
 id|val
 )paren
 (brace
+r_int
 r_int
 id|flags
 suffix:semicolon

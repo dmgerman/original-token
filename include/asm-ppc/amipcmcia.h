@@ -1,2 +1,2 @@
-macro_line|#include &quot;../asm-m68k/amipcmcia.h&quot;
+macro_line|#include &lt;asm-m68k/amipcmcia.h&gt;
 eof

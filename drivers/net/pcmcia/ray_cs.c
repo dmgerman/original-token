@@ -24,26 +24,37 @@ macro_line|#include &lt;pcmcia/ds.h&gt;
 macro_line|#include &lt;pcmcia/mem_op.h&gt;
 macro_line|#include &quot;rayctl.h&quot;
 macro_line|#include &quot;ray_cs.h&quot;
-multiline_comment|/* All the PCMCIA modules use PCMCIA_DEBUG to control debugging.  If&n;   you do not define PCMCIA_DEBUG at all, all the debug code will be&n;   left out.  If you compile with PCMCIA_DEBUG=0, the debug code will&n;   be present but disabled -- but it can then be enabled for specific&n;   modules at load time with a &squot;pc_debug=#&squot; option to insmod.&n;&n;   I found that  adding -DPCMCIA_DEBUG to the compile options during&n;   the &squot;make config&squot; resulted in cardmgr not finding any sockets.&n;   Therefore, this module uses RAYLINK_DEBUG instead.&n;   The module option to use is ray_debug=#&n;    where # is 1 for modest output&n;               2 for more output&n;               ...&n;*/
+multiline_comment|/* All the PCMCIA modules use PCMCIA_DEBUG to control debugging.  If&n;   you do not define PCMCIA_DEBUG at all, all the debug code will be&n;   left out.  If you compile with PCMCIA_DEBUG=0, the debug code will&n;   be present but disabled -- but it can then be enabled for specific&n;   modules at load time with a &squot;pc_debug=#&squot; option to insmod.&n;*/
 macro_line|#ifdef RAYLINK_DEBUG
+DECL|macro|PCMCIA_DEBUG
+mdefine_line|#define PCMCIA_DEBUG RAYLINK_DEBUG
+macro_line|#endif
+macro_line|#ifdef PCMCIA_DEBUG
 DECL|variable|ray_debug
 r_static
 r_int
 id|ray_debug
 op_assign
-id|RAYLINK_DEBUG
+l_int|0
+suffix:semicolon
+DECL|variable|pc_debug
+r_static
+r_int
+id|pc_debug
+op_assign
+id|PCMCIA_DEBUG
 suffix:semicolon
 id|MODULE_PARM
 c_func
 (paren
-id|ray_debug
+id|pc_debug
 comma
 l_string|&quot;i&quot;
 )paren
 suffix:semicolon
-multiline_comment|/* #define DEBUG(n, args...) if (ray_debug&gt;(n)) printk(KERN_DEBUG args); */
+multiline_comment|/* #define DEBUG(n, args...) if (pc_debug&gt;(n)) printk(KERN_DEBUG args); */
 DECL|macro|DEBUG
-mdefine_line|#define DEBUG(n, args...) if (ray_debug&gt;(n)) printk(args);
+mdefine_line|#define DEBUG(n, args...) if (pc_debug&gt;(n)) printk(args);
 macro_line|#else
 DECL|macro|DEBUG
 mdefine_line|#define DEBUG(n, args...)
@@ -689,14 +700,6 @@ id|irq_mask
 op_assign
 l_int|0xdeb8
 suffix:semicolon
-id|MODULE_PARM
-c_func
-(paren
-id|irq_mask
-comma
-l_string|&quot;i&quot;
-)paren
-suffix:semicolon
 multiline_comment|/* ADHOC=0, Infrastructure=1 */
 DECL|variable|net_type
 r_static
@@ -704,14 +707,6 @@ r_int
 id|net_type
 op_assign
 id|ADHOC
-suffix:semicolon
-id|MODULE_PARM
-c_func
-(paren
-id|net_type
-comma
-l_string|&quot;i&quot;
-)paren
 suffix:semicolon
 multiline_comment|/* Hop dwell time in Kus (1024 us units defined by 802.11) */
 DECL|variable|hop_dwell
@@ -721,14 +716,6 @@ id|hop_dwell
 op_assign
 l_int|128
 suffix:semicolon
-id|MODULE_PARM
-c_func
-(paren
-id|hop_dwell
-comma
-l_string|&quot;i&quot;
-)paren
-suffix:semicolon
 multiline_comment|/* Beacon period in Kus */
 DECL|variable|beacon_period
 r_static
@@ -737,14 +724,6 @@ id|beacon_period
 op_assign
 l_int|256
 suffix:semicolon
-id|MODULE_PARM
-c_func
-(paren
-id|beacon_period
-comma
-l_string|&quot;i&quot;
-)paren
-suffix:semicolon
 multiline_comment|/* power save mode (0 = off, 1 = save power) */
 DECL|variable|psm
 r_static
@@ -752,14 +731,6 @@ r_int
 id|psm
 op_assign
 l_int|0
-suffix:semicolon
-id|MODULE_PARM
-c_func
-(paren
-id|psm
-comma
-l_string|&quot;i&quot;
-)paren
 suffix:semicolon
 multiline_comment|/* String for network&squot;s Extended Service Set ID. 32 Characters max */
 DECL|variable|essid
@@ -770,14 +741,6 @@ id|essid
 op_assign
 l_int|NULL
 suffix:semicolon
-id|MODULE_PARM
-c_func
-(paren
-id|essid
-comma
-l_string|&quot;s&quot;
-)paren
-suffix:semicolon
 multiline_comment|/* Default to encapsulation unless translation requested */
 DECL|variable|translate
 r_static
@@ -786,28 +749,12 @@ id|translate
 op_assign
 l_int|1
 suffix:semicolon
-id|MODULE_PARM
-c_func
-(paren
-id|translate
-comma
-l_string|&quot;i&quot;
-)paren
-suffix:semicolon
 DECL|variable|country
 r_static
 r_int
 id|country
 op_assign
 id|USA
-suffix:semicolon
-id|MODULE_PARM
-c_func
-(paren
-id|country
-comma
-l_string|&quot;i&quot;
-)paren
 suffix:semicolon
 DECL|variable|sniffer
 r_static
@@ -816,28 +763,12 @@ id|sniffer
 op_assign
 l_int|0
 suffix:semicolon
-id|MODULE_PARM
-c_func
-(paren
-id|sniffer
-comma
-l_string|&quot;i&quot;
-)paren
-suffix:semicolon
 DECL|variable|bc
 r_static
 r_int
 id|bc
 op_assign
 l_int|0
-suffix:semicolon
-id|MODULE_PARM
-c_func
-(paren
-id|bc
-comma
-l_string|&quot;i&quot;
-)paren
 suffix:semicolon
 multiline_comment|/* 48 bit physical card address if overriding card&squot;s real physical&n; * address is required.  Since IEEE 802.11 addresses are 48 bits&n; * like ethernet, an int can&squot;t be used, so a string is used. To&n; * allow use of addresses starting with a decimal digit, the first&n; * character must be a letter and will be ignored. This letter is&n; * followed by up to 12 hex digits which are the address.  If less&n; * than 12 digits are used, the address will be left filled with 0&squot;s.&n; * Note that bit 0 of the first byte is the broadcast bit, and evil&n; * things will happen if it is not 0 in a card address.&n; */
 DECL|variable|phy_addr
@@ -847,14 +778,6 @@ op_star
 id|phy_addr
 op_assign
 l_int|NULL
-suffix:semicolon
-id|MODULE_PARM
-c_func
-(paren
-id|phy_addr
-comma
-l_string|&quot;s&quot;
-)paren
 suffix:semicolon
 multiline_comment|/* The dev_info variable is the &quot;key&quot; that is used to match up this&n;   device driver with appropriate cards, through the card configuration&n;   database.&n;*/
 DECL|variable|dev_info
@@ -876,12 +799,119 @@ suffix:semicolon
 multiline_comment|/* A dev_link_t structure has fields for most things that are needed&n;   to keep track of a socket, but there will usually be some device&n;   specific information that also needs to be kept track of.  The&n;   &squot;priv&squot; pointer in a dev_link_t structure can be used to point to&n;   a device-specific private data structure, like this.&n;*/
 DECL|variable|ray_mem_speed
 r_static
-r_const
 r_int
 r_int
 id|ray_mem_speed
 op_assign
 l_int|0x2A
+suffix:semicolon
+id|MODULE_AUTHOR
+c_func
+(paren
+l_string|&quot;Corey Thomas &lt;corey@world.std.com&gt;&quot;
+)paren
+suffix:semicolon
+id|MODULE_DESCRIPTION
+c_func
+(paren
+l_string|&quot;Raylink/WebGear wireless LAN driver&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|irq_mask
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|net_type
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|hop_dwell
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|beacon_period
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|psm
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|essid
+comma
+l_string|&quot;s&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|translate
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|country
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|sniffer
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|bc
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|phy_addr
+comma
+l_string|&quot;s&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|ray_mem_speed
+comma
+l_string|&quot;i&quot;
+)paren
 suffix:semicolon
 DECL|variable|b5_default_startup_parms
 r_static
@@ -1351,7 +1381,7 @@ id|rcsid
 (braket
 )braket
 op_assign
-l_string|&quot; $Id: ray_cs.c,v 1.60 1999/09/01 20:58:45 corey Exp $ - Corey Thomas corey@world.std.com&quot;
+l_string|&quot;Raylink/WebGear wireless LAN - Corey &lt;Thomas corey@world.std.com&gt;&quot;
 suffix:semicolon
 macro_line|#ifdef CONFIG_PROC_FS
 DECL|variable|ray_cs_proc_entry
@@ -1996,17 +2026,6 @@ op_amp
 id|DEV_STALE_CONFIG
 )paren
 (brace
-id|DEBUG
-c_func
-(paren
-l_int|0
-comma
-l_string|&quot;ray_cs: detach postponed, &squot;%s&squot; &quot;
-l_string|&quot;still locked&bslash;n&quot;
-comma
-id|link-&gt;dev-&gt;dev_name
-)paren
-suffix:semicolon
 id|link-&gt;state
 op_or_assign
 id|DEV_STALE_LINK
@@ -2100,7 +2119,7 @@ multiline_comment|/*============================================================
 DECL|macro|CS_CHECK
 mdefine_line|#define CS_CHECK(fn, args...) &bslash;&n;while ((last_ret=CardServices(last_fn=(fn),args))!=0) goto cs_failed
 DECL|macro|MAX_TUPLE_SIZE
-mdefine_line|#define MAX_TUPLE_SIZE 80
+mdefine_line|#define MAX_TUPLE_SIZE 128
 DECL|function|ray_config
 r_void
 id|ray_config
@@ -2133,7 +2152,7 @@ suffix:semicolon
 id|u_char
 id|buf
 (braket
-l_int|80
+id|MAX_TUPLE_SIZE
 )braket
 suffix:semicolon
 id|win_req_t
@@ -2237,6 +2256,101 @@ id|parse.config.rmask
 (braket
 l_int|0
 )braket
+suffix:semicolon
+multiline_comment|/* Determine card type and firmware version */
+id|buf
+(braket
+l_int|0
+)braket
+op_assign
+id|buf
+(braket
+id|MAX_TUPLE_SIZE
+op_minus
+l_int|1
+)braket
+op_assign
+l_int|0
+suffix:semicolon
+id|tuple.DesiredTuple
+op_assign
+id|CISTPL_VERS_1
+suffix:semicolon
+id|CS_CHECK
+c_func
+(paren
+id|GetFirstTuple
+comma
+id|handle
+comma
+op_amp
+id|tuple
+)paren
+suffix:semicolon
+id|tuple.TupleData
+op_assign
+id|buf
+suffix:semicolon
+id|tuple.TupleDataMax
+op_assign
+id|MAX_TUPLE_SIZE
+suffix:semicolon
+id|tuple.TupleOffset
+op_assign
+l_int|2
+suffix:semicolon
+id|CS_CHECK
+c_func
+(paren
+id|GetTupleData
+comma
+id|handle
+comma
+op_amp
+id|tuple
+)paren
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|tuple.TupleDataLen
+op_minus
+l_int|4
+suffix:semicolon
+id|i
+op_increment
+)paren
+r_if
+c_cond
+(paren
+id|buf
+(braket
+id|i
+)braket
+op_eq
+l_int|0
+)paren
+id|buf
+(braket
+id|i
+)braket
+op_assign
+l_char|&squot; &squot;
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_INFO
+l_string|&quot;ray_cs Detected: %s&bslash;n&quot;
+comma
+id|buf
+)paren
 suffix:semicolon
 multiline_comment|/* Configure card */
 id|link-&gt;state
@@ -2595,12 +2709,53 @@ op_and_assign
 op_complement
 id|DEV_CONFIG_PENDING
 suffix:semicolon
-id|DEBUG
+id|printk
 c_func
 (paren
-l_int|0
+id|KERN_INFO
+l_string|&quot;%s: RayLink, irq %d, hw_addr &quot;
 comma
-l_string|&quot;ray_cs device loaded&bslash;n&quot;
+id|dev-&gt;name
+comma
+id|dev-&gt;irq
+)paren
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+l_int|6
+suffix:semicolon
+id|i
+op_increment
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;%02X%s&quot;
+comma
+id|dev-&gt;dev_addr
+(braket
+id|i
+)braket
+comma
+(paren
+(paren
+id|i
+OL
+l_int|5
+)paren
+ques
+c_cond
+l_string|&quot;:&quot;
+suffix:colon
+l_string|&quot;&bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 r_return
@@ -2738,11 +2893,10 @@ op_ne
 l_int|0x80
 )paren
 (brace
-id|DEBUG
+id|printk
 c_func
 (paren
-l_int|0
-comma
+id|KERN_INFO
 l_string|&quot;ray_init ERROR card status = %2x&bslash;n&quot;
 comma
 id|local-&gt;startup_res.startup_word
@@ -2890,45 +3044,6 @@ id|p
 op_assign
 id|local-&gt;sparm.b4.a_mac_addr
 suffix:semicolon
-id|DEBUG
-c_func
-(paren
-l_int|1
-comma
-l_string|&quot;ray_cs phy address overridden = %2x %2x %2x %2x %2x %2x&bslash;n&quot;
-comma
-"&bslash;"
-id|p
-(braket
-l_int|0
-)braket
-comma
-id|p
-(braket
-l_int|1
-)braket
-comma
-id|p
-(braket
-l_int|2
-)braket
-comma
-id|p
-(braket
-l_int|3
-)braket
-comma
-id|p
-(braket
-l_int|4
-)braket
-comma
-id|p
-(braket
-l_int|5
-)braket
-)paren
-suffix:semicolon
 )brace
 r_else
 (brace
@@ -2947,45 +3062,6 @@ suffix:semicolon
 id|p
 op_assign
 id|local-&gt;sparm.b4.a_mac_addr
-suffix:semicolon
-id|DEBUG
-c_func
-(paren
-l_int|1
-comma
-l_string|&quot;ray_cs phy addr= %2x %2x %2x %2x %2x %2x&bslash;n&quot;
-comma
-"&bslash;"
-id|p
-(braket
-l_int|0
-)braket
-comma
-id|p
-(braket
-l_int|1
-)braket
-comma
-id|p
-(braket
-l_int|2
-)braket
-comma
-id|p
-(braket
-l_int|3
-)braket
-comma
-id|p
-(braket
-l_int|4
-)braket
-comma
-id|p
-(braket
-l_int|5
-)braket
-)paren
 suffix:semicolon
 )brace
 id|clear_interrupt
@@ -3071,7 +3147,7 @@ id|DEV_PRESENT
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|2
 comma
 l_string|&quot;ray_cs dl_startup_params - device not present&bslash;n&quot;
 )paren
@@ -3137,9 +3213,8 @@ c_func
 id|local
 )paren
 )paren
-op_eq
-op_minus
-l_int|1
+OL
+l_int|0
 )paren
 r_return
 op_minus
@@ -3198,12 +3273,12 @@ id|ccsindex
 )paren
 )paren
 (brace
-id|DEBUG
+id|printk
 c_func
 (paren
-l_int|0
-comma
-l_string|&quot;ray dl_startup_params failed - ECF not ready for intr&bslash;n&quot;
+id|KERN_INFO
+l_string|&quot;ray dl_startup_params failed - &quot;
+l_string|&quot;ECF not ready for intr&bslash;n&quot;
 )paren
 suffix:semicolon
 id|local-&gt;card_status
@@ -3624,7 +3699,6 @@ suffix:semicolon
 id|UCHAR
 id|status
 suffix:semicolon
-multiline_comment|/*    UCHAR *p = local-&gt;sram + HOST_TO_ECF_BASE; */
 id|dev_link_t
 op_star
 id|link
@@ -3645,7 +3719,7 @@ id|DEV_PRESENT
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|2
 comma
 l_string|&quot;ray_cs verify_dl_startup - device not present&bslash;n&quot;
 )paren
@@ -3653,19 +3727,24 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-macro_line|#ifdef RAYLINK_DEBUG
+macro_line|#ifdef PCMCIA_DEBUG
+r_if
+c_cond
+(paren
+id|pc_debug
+OG
+l_int|2
+)paren
 (brace
 r_int
 id|i
 suffix:semicolon
-id|DEBUG
+id|printk
 c_func
 (paren
-l_int|2
-comma
+id|KERN_DEBUG
 l_string|&quot;verify_dl_startup parameters sent via ccs %d:&bslash;n&quot;
 comma
-"&bslash;"
 id|local-&gt;dl_param_ccs
 )paren
 suffix:semicolon
@@ -3688,12 +3767,10 @@ id|i
 op_increment
 )paren
 (brace
-id|DEBUG
+id|printk
 c_func
 (paren
-l_int|1
-comma
-l_string|&quot; %2x &quot;
+l_string|&quot; %2x&quot;
 comma
 id|readb
 c_func
@@ -3707,11 +3784,9 @@ id|i
 )paren
 suffix:semicolon
 )brace
-id|DEBUG
+id|printk
 c_func
 (paren
-l_int|1
-comma
 l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -3734,11 +3809,10 @@ op_ne
 id|CCS_BUFFER_FREE
 )paren
 (brace
-id|DEBUG
+id|printk
 c_func
 (paren
-l_int|0
-comma
+id|KERN_INFO
 l_string|&quot;Download startup params failed.  Status = %d&bslash;n&quot;
 comma
 id|status
@@ -3830,7 +3904,7 @@ id|DEV_PRESENT
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|2
 comma
 l_string|&quot;ray_cs start_net - device not present&bslash;n&quot;
 )paren
@@ -3851,9 +3925,8 @@ c_func
 id|local
 )paren
 )paren
-op_eq
-op_minus
-l_int|1
+OL
+l_int|0
 )paren
 r_return
 suffix:semicolon
@@ -3987,7 +4060,7 @@ id|DEV_PRESENT
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|2
 comma
 l_string|&quot;ray_cs join_net - device not present&bslash;n&quot;
 )paren
@@ -4008,9 +4081,8 @@ c_func
 id|local
 )paren
 )paren
-op_eq
-op_minus
-l_int|1
+OL
+l_int|0
 )paren
 r_return
 suffix:semicolon
@@ -4670,7 +4742,7 @@ id|DEV_PRESENT
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|2
 comma
 l_string|&quot;ray_dev_init - device not present&bslash;n&quot;
 )paren
@@ -4697,12 +4769,12 @@ OL
 l_int|0
 )paren
 (brace
-id|DEBUG
+id|printk
 c_func
 (paren
-l_int|0
-comma
-l_string|&quot;ray_dev_init dl_startup_params failed - returns 0x%x/n&quot;
+id|KERN_INFO
+l_string|&quot;ray_dev_init dl_startup_params failed - &quot;
+l_string|&quot;returns 0x%x/n&quot;
 comma
 id|i
 )paren
@@ -4735,63 +4807,6 @@ comma
 id|ETH_ALEN
 )paren
 suffix:semicolon
-macro_line|#ifdef RAYLINK_DEBUG
-(brace
-id|UCHAR
-op_star
-id|p
-suffix:semicolon
-id|p
-op_assign
-(paren
-id|UCHAR
-op_star
-)paren
-(paren
-id|local-&gt;startup_res.station_addr
-)paren
-suffix:semicolon
-id|DEBUG
-c_func
-(paren
-l_int|1
-comma
-l_string|&quot;ray_dev_init card hardware mac addr = %2x %2x %2x %2x %2x %2x&bslash;n&quot;
-comma
-"&bslash;"
-id|p
-(braket
-l_int|0
-)braket
-comma
-id|p
-(braket
-l_int|1
-)braket
-comma
-id|p
-(braket
-l_int|2
-)braket
-comma
-id|p
-(braket
-l_int|3
-)braket
-comma
-id|p
-(braket
-l_int|4
-)braket
-comma
-id|p
-(braket
-l_int|5
-)braket
-)paren
-suffix:semicolon
-)brace
-macro_line|#endif
 id|DEBUG
 c_func
 (paren
@@ -4860,7 +4875,7 @@ id|DEV_PRESENT
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|2
 comma
 l_string|&quot;ray_dev_config - device not present&bslash;n&quot;
 )paren
@@ -4920,7 +4935,7 @@ id|DEV_PRESENT
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|2
 comma
 l_string|&quot;ray_dev_start_xmit - device not present&bslash;n&quot;
 )paren
@@ -4948,11 +4963,10 @@ c_cond
 id|dev-&gt;tbusy
 )paren
 (brace
-id|DEBUG
+id|printk
 c_func
 (paren
-l_int|2
-comma
+id|KERN_NOTICE
 l_string|&quot;ray_dev_start_xmit busy&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -5152,12 +5166,11 @@ OG
 id|TX_BUF_SIZE
 )paren
 (brace
-id|DEBUG
+id|printk
 c_func
 (paren
-l_int|0
-comma
-l_string|&quot;ray_hw_xmit packet to large %d bytes&bslash;n&quot;
+id|KERN_INFO
+l_string|&quot;ray_hw_xmit packet too large: %d bytes&bslash;n&quot;
 comma
 id|len
 )paren
@@ -5166,9 +5179,8 @@ r_return
 id|XMIT_MSG_BAD
 suffix:semicolon
 )brace
-r_if
+r_switch
 c_cond
-(paren
 (paren
 id|ccsindex
 op_assign
@@ -5178,25 +5190,42 @@ c_func
 id|local
 )paren
 )paren
-op_eq
-op_minus
-l_int|1
-)paren
 (brace
+r_case
+id|ECCSBUSY
+suffix:colon
 id|DEBUG
 c_func
 (paren
 l_int|2
 comma
-l_string|&quot;ray_hw_xmit - No free tx ccs&bslash;n&quot;
+l_string|&quot;ray_hw_xmit tx_ccs table busy&bslash;n&quot;
 )paren
 suffix:semicolon
+r_case
+id|ECCSFULL
+suffix:colon
+id|DEBUG
+c_func
+(paren
+l_int|2
+comma
+l_string|&quot;ray_hw_xmit No free tx ccs&bslash;n&quot;
+)paren
+suffix:semicolon
+r_case
+id|ECARDGONE
+suffix:colon
 id|dev-&gt;tbusy
 op_assign
 l_int|1
 suffix:semicolon
 r_return
 id|XMIT_NO_CCS
+suffix:semicolon
+r_default
+suffix:colon
+r_break
 suffix:semicolon
 )brace
 id|addr
@@ -6001,7 +6030,7 @@ id|DEV_PRESENT
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|2
 comma
 l_string|&quot;ray_dev_ioctl - device not present&bslash;n&quot;
 )paren
@@ -6323,7 +6352,6 @@ id|i
 op_assign
 l_int|50
 suffix:semicolon
-multiline_comment|/*    UCHAR *p = (local-&gt;amem + CIS_OFFSET + ECF_INTR_OFFSET); */
 id|dev_link_t
 op_star
 id|link
@@ -6344,7 +6372,7 @@ id|DEV_PRESENT
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|2
 comma
 l_string|&quot;ray_cs interrupt_ecf - device not present&bslash;n&quot;
 )paren
@@ -6366,7 +6394,6 @@ comma
 id|ccs
 )paren
 suffix:semicolon
-multiline_comment|/*    while ( i &amp;&amp; (*p &amp; ECF_INTR_SET))  i--; */
 r_while
 c_loop
 (paren
@@ -6410,14 +6437,16 @@ op_minus
 l_int|1
 suffix:semicolon
 )brace
-op_star
+multiline_comment|/* Fill the mailbox, then kick the card */
+id|writeb
+c_func
 (paren
+id|ccs
+comma
 id|local-&gt;sram
 op_plus
 id|SCB_BASE
 )paren
-op_assign
-id|ccs
 suffix:semicolon
 id|writeb
 c_func
@@ -6488,14 +6517,38 @@ id|DEV_PRESENT
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|2
 comma
 l_string|&quot;ray_cs get_free_tx_ccs - device not present&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
-op_minus
+id|ECARDGONE
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|test_and_set_bit
+c_func
+(paren
+l_int|0
+comma
+op_amp
+id|local-&gt;tx_ccs_lock
+)paren
+)paren
+(brace
+id|DEBUG
+c_func
+(paren
 l_int|1
+comma
+l_string|&quot;ray_cs tx_ccs_lock busy&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+id|ECCSBUSY
 suffix:semicolon
 )brace
 r_for
@@ -6562,22 +6615,29 @@ op_member_access_from_pointer
 id|link
 )paren
 suffix:semicolon
+id|local-&gt;tx_ccs_lock
+op_assign
+l_int|0
+suffix:semicolon
 r_return
 id|i
 suffix:semicolon
 )brace
 )brace
+id|local-&gt;tx_ccs_lock
+op_assign
+l_int|0
+suffix:semicolon
 id|DEBUG
 c_func
 (paren
-l_int|1
+l_int|2
 comma
 l_string|&quot;ray_cs ERROR no free tx CCS for raylink card&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
-op_minus
-l_int|1
+id|ECCSFULL
 suffix:semicolon
 )brace
 multiline_comment|/* get_free_tx_ccs */
@@ -6633,14 +6693,38 @@ id|DEV_PRESENT
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|2
 comma
 l_string|&quot;ray_cs get_free_ccs - device not present&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
-op_minus
+id|ECARDGONE
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|test_and_set_bit
+c_func
+(paren
+l_int|0
+comma
+op_amp
+id|local-&gt;ccs_lock
+)paren
+)paren
+(brace
+id|DEBUG
+c_func
+(paren
 l_int|1
+comma
+l_string|&quot;ray_cs ccs_lock busy&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+id|ECCSBUSY
 suffix:semicolon
 )brace
 r_for
@@ -6707,11 +6791,19 @@ op_member_access_from_pointer
 id|link
 )paren
 suffix:semicolon
+id|local-&gt;ccs_lock
+op_assign
+l_int|0
+suffix:semicolon
 r_return
 id|i
 suffix:semicolon
 )brace
 )brace
+id|local-&gt;ccs_lock
+op_assign
+l_int|0
+suffix:semicolon
 id|DEBUG
 c_func
 (paren
@@ -6721,8 +6813,7 @@ l_string|&quot;ray_cs ERROR no free CCS for raylink card&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
-op_minus
-l_int|1
+id|ECCSFULL
 suffix:semicolon
 )brace
 multiline_comment|/* get_free_ccs */
@@ -6753,12 +6844,12 @@ op_amp
 id|local-&gt;timer
 )paren
 suffix:semicolon
-id|DEBUG
+id|printk
 c_func
 (paren
-l_int|0
-comma
-l_string|&quot;ray_cs Authentication with access point failed - timeout&bslash;n&quot;
+id|KERN_INFO
+l_string|&quot;ray_cs Authentication with access point failed&quot;
+l_string|&quot; - timeout&bslash;n&quot;
 )paren
 suffix:semicolon
 id|join_net
@@ -7111,7 +7202,7 @@ id|DEV_PRESENT
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|2
 comma
 l_string|&quot;ray_cs enet_statistics - device not present&bslash;n&quot;
 )paren
@@ -7124,7 +7215,12 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|readb
+c_func
+(paren
+op_amp
 id|p-&gt;mrx_overflow_for_host
+)paren
 )paren
 (brace
 id|local-&gt;stats.rx_over_errors
@@ -7132,22 +7228,42 @@ op_add_assign
 id|ntohs
 c_func
 (paren
+id|readb
+c_func
+(paren
+op_amp
+id|p-&gt;mrx_overflow
+)paren
+)paren
+suffix:semicolon
+id|writeb
+c_func
+(paren
+l_int|0
+comma
+op_amp
 id|p-&gt;mrx_overflow
 )paren
 suffix:semicolon
-id|p-&gt;mrx_overflow
-op_assign
+id|writeb
+c_func
+(paren
 l_int|0
-suffix:semicolon
+comma
+op_amp
 id|p-&gt;mrx_overflow_for_host
-op_assign
-l_int|0
+)paren
 suffix:semicolon
 )brace
 r_if
 c_cond
 (paren
+id|readb
+c_func
+(paren
+op_amp
 id|p-&gt;mrx_checksum_error_for_host
+)paren
 )paren
 (brace
 id|local-&gt;stats.rx_crc_errors
@@ -7155,22 +7271,42 @@ op_add_assign
 id|ntohs
 c_func
 (paren
+id|readb
+c_func
+(paren
+op_amp
+id|p-&gt;mrx_checksum_error
+)paren
+)paren
+suffix:semicolon
+id|writeb
+c_func
+(paren
+l_int|0
+comma
+op_amp
 id|p-&gt;mrx_checksum_error
 )paren
 suffix:semicolon
-id|p-&gt;mrx_checksum_error
-op_assign
+id|writeb
+c_func
+(paren
 l_int|0
-suffix:semicolon
+comma
+op_amp
 id|p-&gt;mrx_checksum_error_for_host
-op_assign
-l_int|0
+)paren
 suffix:semicolon
 )brace
 r_if
 c_cond
 (paren
+id|readb
+c_func
+(paren
+op_amp
 id|p-&gt;rx_hec_error_for_host
+)paren
 )paren
 (brace
 id|local-&gt;stats.rx_frame_errors
@@ -7178,16 +7314,31 @@ op_add_assign
 id|ntohs
 c_func
 (paren
+id|readb
+c_func
+(paren
+op_amp
+id|p-&gt;rx_hec_error
+)paren
+)paren
+suffix:semicolon
+id|writeb
+c_func
+(paren
+l_int|0
+comma
+op_amp
 id|p-&gt;rx_hec_error
 )paren
 suffix:semicolon
-id|p-&gt;rx_hec_error
-op_assign
+id|writeb
+c_func
+(paren
 l_int|0
-suffix:semicolon
+comma
+op_amp
 id|p-&gt;rx_hec_error_for_host
-op_assign
-l_int|0
+)paren
 suffix:semicolon
 )brace
 r_return
@@ -7258,7 +7409,7 @@ id|DEV_PRESENT
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|2
 comma
 l_string|&quot;ray_update_parm - device not present&bslash;n&quot;
 )paren
@@ -7278,9 +7429,8 @@ c_func
 id|local
 )paren
 )paren
-op_eq
-op_minus
-l_int|1
+OL
+l_int|0
 )paren
 (brace
 id|DEBUG
@@ -7489,7 +7639,7 @@ id|DEV_PRESENT
 id|DEBUG
 c_func
 (paren
-l_int|1
+l_int|2
 comma
 l_string|&quot;ray_update_multi_list - device not present&bslash;n&quot;
 )paren
@@ -7501,7 +7651,7 @@ r_else
 id|DEBUG
 c_func
 (paren
-l_int|1
+l_int|2
 comma
 l_string|&quot;ray_update_multi_list(%p)&bslash;n&quot;
 comma
@@ -7520,9 +7670,8 @@ c_func
 id|local
 )paren
 )paren
-op_eq
-op_minus
-l_int|1
+OL
+l_int|0
 )paren
 (brace
 id|DEBUG
@@ -7773,7 +7922,7 @@ suffix:semicolon
 id|DEBUG
 c_func
 (paren
-l_int|1
+l_int|2
 comma
 l_string|&quot;ray_cs set_multicast_list(%p)&bslash;n&quot;
 comma
@@ -7975,58 +8124,17 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+(paren
 id|dev
 op_eq
 l_int|NULL
 )paren
-(brace
-id|link
-op_assign
-id|dev_list
-suffix:semicolon
-id|dev
-op_assign
-(paren
-r_struct
-id|net_device
-op_star
+op_logical_or
+op_logical_neg
+id|dev-&gt;start
 )paren
-id|link-&gt;priv
-suffix:semicolon
-id|DEBUG
-c_func
-(paren
-l_int|4
-comma
-l_string|&quot;ray_cs interrupt dev  = %p, link = %p&bslash;n&quot;
-comma
-id|dev
-comma
-id|link
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|dev-&gt;irq
-op_ne
-id|irq
-)paren
-(brace
-id|DEBUG
-c_func
-(paren
-l_int|0
-comma
-l_string|&quot;ray_cs interrupt irq %d for unknown device.&bslash;n&quot;
-comma
-id|irq
-)paren
-suffix:semicolon
 r_return
 suffix:semicolon
-)brace
-)brace
 id|DEBUG
 c_func
 (paren
@@ -8040,7 +8148,14 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|test_and_set_bit
+c_func
+(paren
+l_int|0
+comma
+op_amp
 id|dev-&gt;interrupt
+)paren
 )paren
 (brace
 id|printk
@@ -8052,10 +8167,6 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-id|dev-&gt;interrupt
-op_assign
-l_int|1
-suffix:semicolon
 id|local
 op_assign
 (paren
@@ -8090,7 +8201,7 @@ id|DEV_SUSPEND
 id|DEBUG
 c_func
 (paren
-l_int|1
+l_int|2
 comma
 l_string|&quot;ray_cs interrupt from device not present or suspended.&bslash;n&quot;
 )paren
@@ -8100,6 +8211,10 @@ suffix:semicolon
 )brace
 id|rcsindex
 op_assign
+id|readb
+c_func
+(paren
+op_amp
 (paren
 (paren
 r_struct
@@ -8112,6 +8227,7 @@ id|local-&gt;sram
 )paren
 op_member_access_from_pointer
 id|rcs_index
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -8352,7 +8468,7 @@ c_func
 (paren
 l_int|0
 comma
-l_string|&quot;ray_cs interrupt network &bslash;&quot;%s&bslash;&quot;started&bslash;n&quot;
+l_string|&quot;ray_cs interrupt network &bslash;&quot;%s&bslash;&quot; started&bslash;n&quot;
 comma
 "&bslash;"
 id|local-&gt;sparm.b4.a_current_ess_id
@@ -10003,9 +10119,6 @@ id|destaddr
 id|ADDRLEN
 )braket
 suffix:semicolon
-r_int
-id|i
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -10044,11 +10157,22 @@ comma
 id|ADDRLEN
 )paren
 suffix:semicolon
-id|DEBUG
+macro_line|#ifdef PCMCIA_DEBUG
+r_if
+c_cond
+(paren
+id|pc_debug
+OG
+l_int|3
+)paren
+(brace
+r_int
+id|i
+suffix:semicolon
+id|printk
 c_func
 (paren
-l_int|3
-comma
+id|KERN_DEBUG
 l_string|&quot;skb-&gt;data before untranslate&quot;
 )paren
 suffix:semicolon
@@ -10066,11 +10190,9 @@ suffix:semicolon
 id|i
 op_increment
 )paren
-id|DEBUG
+id|printk
 c_func
 (paren
-l_int|3
-comma
 l_string|&quot;%02x &quot;
 comma
 id|skb-&gt;data
@@ -10079,12 +10201,12 @@ id|i
 )braket
 )paren
 suffix:semicolon
-id|DEBUG
+id|printk
 c_func
 (paren
-l_int|3
-comma
-l_string|&quot;&bslash;ntype = %08x, xsap = %08x, org = %08x&bslash;n&quot;
+l_string|&quot;&bslash;n&quot;
+id|KERN_DEBUG
+l_string|&quot;type = %08x, xsap = %08x, org = %08x&bslash;n&quot;
 comma
 id|type
 comma
@@ -10093,16 +10215,17 @@ comma
 id|org
 )paren
 suffix:semicolon
-id|DEBUG
+id|printk
 c_func
 (paren
-l_int|3
-comma
+id|KERN_DEBUG
 l_string|&quot;untranslate skb-&gt;data = %p&bslash;n&quot;
 comma
 id|skb-&gt;data
 )paren
 suffix:semicolon
+)brace
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -10389,11 +10512,22 @@ comma
 id|ADDRLEN
 )paren
 suffix:semicolon
-id|DEBUG
+macro_line|#ifdef PCMCIA_DEBUG
+r_if
+c_cond
+(paren
+id|pc_debug
+OG
+l_int|3
+)paren
+(brace
+r_int
+id|i
+suffix:semicolon
+id|printk
 c_func
 (paren
-l_int|3
-comma
+id|KERN_DEBUG
 l_string|&quot;skb-&gt;data after untranslate:&quot;
 )paren
 suffix:semicolon
@@ -10411,11 +10545,9 @@ suffix:semicolon
 id|i
 op_increment
 )paren
-id|DEBUG
+id|printk
 c_func
 (paren
-l_int|3
-comma
 l_string|&quot;%02x &quot;
 comma
 id|skb-&gt;data
@@ -10424,14 +10556,14 @@ id|i
 )braket
 )paren
 suffix:semicolon
-id|DEBUG
+id|printk
 c_func
 (paren
-l_int|3
-comma
 l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
+)brace
+macro_line|#endif
 )brace
 multiline_comment|/* end untranslate */
 multiline_comment|/*===========================================================================*/
@@ -10683,7 +10815,7 @@ id|DEV_PRESENT
 id|DEBUG
 c_func
 (paren
-l_int|1
+l_int|2
 comma
 l_string|&quot;ray_cs authenticate - device not present&bslash;n&quot;
 )paren
@@ -11056,7 +11188,7 @@ id|DEV_PRESENT
 id|DEBUG
 c_func
 (paren
-l_int|1
+l_int|2
 comma
 l_string|&quot;ray_cs associate - device not present&bslash;n&quot;
 )paren
@@ -11077,9 +11209,8 @@ c_func
 id|local
 )paren
 )paren
-op_eq
-op_minus
-l_int|1
+OL
+l_int|0
 )paren
 (brace
 multiline_comment|/* TBD should never be here but... what if we are? */
@@ -12029,12 +12160,10 @@ c_func
 id|local
 )paren
 )paren
-op_eq
-op_minus
-l_int|1
+OL
+l_int|0
 )paren
 (brace
-multiline_comment|/* TBD should never be here but... what if we are? */
 id|DEBUG
 c_func
 (paren

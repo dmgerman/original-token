@@ -1,5 +1,4 @@
-multiline_comment|/*&n; * Ethernet driver for Motorola MPC8xx.&n; * Copyright (c) 1997 Dan Malek (dmalek@jlc.net)&n; *&n; * I copied the basic skeleton from the lance driver, because I did not&n; * know how to write the Linux driver, but I did know how the LANCE worked.&n; * This version of the driver is specific to the MBX implementation,&n; * since the board contains control registers external to the processor&n; * for the control of the MC68160 SIA/transceiver.  The MPC860 manual&n; * describes connections using the internal parallel port I/O.&n; *&n; * The MBX860 uses the CPM SCC1 serial port for the Ethernet interface.&n; * Buffer descriptors are kept in the CPM dual port RAM, and the frame&n; * buffers are in the host memory.&n; *&n; * Right now, I am very watseful with the buffers.  I allocate memory&n; * pages and then divide them into 2K frame buffers.  This way I know I&n; * have buffers large enough to hold one frame within one buffer descriptor.&n; * Once I get this working, I will use 64 or 128 byte CPM buffers, which&n; * will be much more memory efficient and will easily handle lots of&n; * small packets.&n; *&n; */
-macro_line|#include &lt;linux/config.h&gt;
+multiline_comment|/*&n; * Ethernet driver for Motorola MPC8xx.&n; * Copyright (c) 1997 Dan Malek (dmalek@jlc.net)&n; *&n; * I copied the basic skeleton from the lance driver, because I did not&n; * know how to write the Linux driver, but I did know how the LANCE worked.&n; *&n; * This version of the driver is somewhat selectable for the different&n; * processor/board combinations.  It works for the boards I know about&n; * now, and should be easily modified to include others.  Some of the&n; * configuration information is contained in &quot;commproc.h&quot; and the&n; * remainder is here.&n; *&n; * Buffer descriptors are kept in the CPM dual port RAM, and the frame&n; * buffers are in the host memory.&n; *&n; * Right now, I am very watseful with the buffers.  I allocate memory&n; * pages and then divide them into 2K frame buffers.  This way I know I&n; * have buffers large enough to hold one frame within one buffer descriptor.&n; * Once I get this working, I will use 64 or 128 byte CPM buffers, which&n; * will be much more memory efficient and will easily handle lots of&n; * small packets.&n; *&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
@@ -16,7 +15,7 @@ macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;asm/8xx_immap.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
-macro_line|#include &lt;asm/fads.h&gt;
+macro_line|#include &lt;asm/mpc8xx.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &quot;commproc.h&quot;
@@ -198,9 +197,8 @@ id|dev
 suffix:semicolon
 multiline_comment|/* Get this from various configuration locations (depends on board).&n;*/
 multiline_comment|/*static&t;ushort&t;my_enet_addr[] = { 0x0800, 0x3e26, 0x1559 };*/
-multiline_comment|/* Right now, only the boards with an 860 use SCC1 for the Ethernet.&n; * All others use SCC2.  We may need to make this board specific someday.&n; */
-macro_line|#ifndef CONFIG_MPC860
-multiline_comment|/*static&t;ushort&t;my_enet_addr[] = { 0x2700, 0x00ec, 0x1000 };*/
+multiline_comment|/* Typically, 860(T) boards use SCC1 for Ethernet, and other 8xx boards&n; * use SCC2.  This is easily extended if necessary.&n; */
+macro_line|#ifdef CONFIG_SCC2_ENET
 DECL|macro|CPM_CR_ENET
 mdefine_line|#define CPM_CR_ENET&t;CPM_CR_CH_SCC2
 DECL|macro|PROFF_ENET
@@ -209,7 +207,8 @@ DECL|macro|SCC_ENET
 mdefine_line|#define SCC_ENET&t;1&t;&t;/* Index, not number! */
 DECL|macro|CPMVEC_ENET
 mdefine_line|#define CPMVEC_ENET&t;CPMVEC_SCC2
-macro_line|#else
+macro_line|#endif
+macro_line|#ifdef CONFIG_SCC1_ENET
 DECL|macro|CPM_CR_ENET
 mdefine_line|#define CPM_CR_ENET CPM_CR_CH_SCC1
 DECL|macro|PROFF_ENET
@@ -766,121 +765,6 @@ id|dev_id
 )paren
 suffix:semicolon
 multiline_comment|/* Check for a transmit error.  The manual is a little unclear&n;&t; * about this, so the debug code until I get it figured out.  It&n;&t; * appears that if TXE is set, then TXB is not set.  However,&n;&t; * if carrier sense is lost during frame transmission, the TXE&n;&t; * bit is set, &quot;and continues the buffer transmission normally.&quot;&n;&t; * I don&squot;t know if &quot;normally&quot; implies TXB is set when the buffer&n;&t; * descriptor is closed.....trial and error :-).&n;&t; */
-macro_line|#if 0
-r_if
-c_cond
-(paren
-id|int_events
-op_amp
-id|SCCE_ENET_TXE
-)paren
-(brace
-multiline_comment|/* Transmission errors.&n;&t;&t;*/
-id|bdp
-op_assign
-id|cep-&gt;dirty_tx
-suffix:semicolon
-macro_line|#ifndef final_version
-id|printk
-c_func
-(paren
-l_string|&quot;CPM ENET xmit error %x&bslash;n&quot;
-comma
-id|bdp-&gt;cbd_sc
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|bdp-&gt;cbd_sc
-op_amp
-id|BD_ENET_TX_READY
-)paren
-id|printk
-c_func
-(paren
-l_string|&quot;HEY! Enet xmit interrupt and TX_READY.&bslash;n&quot;
-)paren
-suffix:semicolon
-macro_line|#endif
-r_if
-c_cond
-(paren
-id|bdp-&gt;cbd_sc
-op_amp
-id|BD_ENET_TX_HB
-)paren
-multiline_comment|/* No heartbeat */
-id|cep-&gt;stats.tx_heartbeat_errors
-op_increment
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|bdp-&gt;cbd_sc
-op_amp
-id|BD_ENET_TX_LC
-)paren
-multiline_comment|/* Late collision */
-id|cep-&gt;stats.tx_window_errors
-op_increment
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|bdp-&gt;cbd_sc
-op_amp
-id|BD_ENET_TX_RL
-)paren
-multiline_comment|/* Retrans limit */
-id|cep-&gt;stats.tx_aborted_errors
-op_increment
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|bdp-&gt;cbd_sc
-op_amp
-id|BD_ENET_TX_UN
-)paren
-multiline_comment|/* Underrun */
-id|cep-&gt;stats.tx_fifo_errors
-op_increment
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|bdp-&gt;cbd_sc
-op_amp
-id|BD_ENET_TX_CSL
-)paren
-multiline_comment|/* Carrier lost */
-id|cep-&gt;stats.tx_carrier_errors
-op_increment
-suffix:semicolon
-id|cep-&gt;stats.tx_errors
-op_increment
-suffix:semicolon
-multiline_comment|/* No heartbeat or Lost carrier are not really bad errors.&n;&t;&t; * The others require a restart transmit command.&n;&t;&t; */
-r_if
-c_cond
-(paren
-id|bdp-&gt;cbd_sc
-op_amp
-(paren
-id|BD_ENET_TX_LC
-op_or
-id|BD_ENET_TX_RL
-op_or
-id|BD_ENET_TX_UN
-)paren
-)paren
-id|must_restart
-op_assign
-l_int|1
-suffix:semicolon
-)brace
-macro_line|#endif
 multiline_comment|/* Transmit OK, or non-fatal error.  Update the buffer descriptors.&n;&t;*/
 r_if
 c_cond
@@ -894,7 +778,6 @@ id|SCCE_ENET_TXB
 )paren
 )paren
 (brace
-macro_line|#if 1
 id|bdp
 op_assign
 id|cep-&gt;dirty_tx
@@ -1009,27 +892,6 @@ suffix:semicolon
 id|cep-&gt;stats.tx_packets
 op_increment
 suffix:semicolon
-macro_line|#else
-id|bdp
-op_assign
-id|cep-&gt;dirty_tx
-suffix:semicolon
-macro_line|#if 1
-r_if
-c_cond
-(paren
-id|bdp-&gt;cbd_sc
-op_amp
-id|BD_ENET_TX_READY
-)paren
-id|printk
-c_func
-(paren
-l_string|&quot;HEY! Enet xmit interrupt and TX_READY.&bslash;n&quot;
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#endif
 multiline_comment|/* Deferred means some collisions occurred during transmit,&n;&t;&t; * but we eventually sent the packet OK.&n;&t;&t; */
 r_if
 c_cond
@@ -1753,25 +1615,10 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/* Initialize the CPM Ethernet on SCC.  If EPPC-Bug loaded us, or performed&n; * some other network I/O, a whole bunch of this has already been set up.&n; * It is no big deal if we do it again, we just have to disable the&n; * transmit and receive to make sure we don&squot;t catch the CPM with some&n; * inconsistent control information.&n; */
-multiline_comment|/* until this gets cleared up -- Cort */
 DECL|function|cpm_enet_init
 r_int
 id|__init
 id|cpm_enet_init
-c_func
-(paren
-)paren
-(brace
-id|m8xx_enet_init
-c_func
-(paren
-)paren
-suffix:semicolon
-)brace
-DECL|function|m8xx_enet_init
-r_int
-id|__init
-id|m8xx_enet_init
 c_func
 (paren
 r_void
@@ -1854,7 +1701,7 @@ op_assign
 id|bd_t
 op_star
 )paren
-id|res
+id|__res
 suffix:semicolon
 multiline_comment|/* Allocate some private information.&n;&t;*/
 id|cep
@@ -2160,12 +2007,12 @@ suffix:semicolon
 multiline_comment|/* minimum frame length register */
 id|ep-&gt;sen_maxd1
 op_assign
-id|PKT_MAXBUF_SIZE
+id|PKT_MAXBLR_SIZE
 suffix:semicolon
 multiline_comment|/* maximum DMA1 length */
 id|ep-&gt;sen_maxd2
 op_assign
-id|PKT_MAXBUF_SIZE
+id|PKT_MAXBLR_SIZE
 suffix:semicolon
 multiline_comment|/* maximum DMA2 length */
 multiline_comment|/* Clear hash tables.&n;&t;*/
@@ -2201,7 +2048,7 @@ id|ep-&gt;sen_iaddr4
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* Set Ethernet station address.&n;&t; *&n;&t; * If we performed a MBX diskless boot, the Ethernet controller&n;&t; * has been initialized and we copy the address out into our&n;&t; * own structure.&n;&t; */
+multiline_comment|/* Set Ethernet station address.&n;&t; *&n;&t; * If we performed a MBX diskless boot, the Ethernet controller&n;&t; * has been initialized and we copy the address out into our&n;&t; * own structure.&n;&t; *&n;&t; * All other types of boards supply the address in the board&n;&t; * information structure, so we copy that into the controller.&n;&t; */
 id|eap
 op_assign
 (paren
@@ -2359,11 +2206,11 @@ suffix:semicolon
 multiline_comment|/* Make it uncached.&n;&t;&t;*/
 id|pte
 op_assign
-id|va_to_pte
+id|find_pte
 c_func
 (paren
 op_amp
-id|init_task
+id|init_mm
 comma
 id|mem_addr
 )paren
@@ -2638,10 +2485,12 @@ id|dev-&gt;priv
 op_assign
 id|cep
 suffix:semicolon
+macro_line|#if 0
 id|dev-&gt;name
 op_assign
 l_string|&quot;CPM_ENET&quot;
 suffix:semicolon
+macro_line|#endif
 multiline_comment|/* The CPM Ethernet specific entries in the device structure. */
 id|dev-&gt;open
 op_assign
@@ -2675,7 +2524,9 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;CPM ENET Version 0.1, &quot;
+l_string|&quot;%s: CPM ENET Version 0.2, &quot;
+comma
+id|dev-&gt;name
 )paren
 suffix:semicolon
 r_for

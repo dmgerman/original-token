@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * $Id: setup.c,v 1.148 1999/09/05 11:56:34 paulus Exp $&n; * Common prep/pmac/chrp boot and setup code.&n; */
+multiline_comment|/*&n; * $Id: setup.c,v 1.159 1999/09/18 18:40:38 dmalek Exp $&n; * Common prep/pmac/chrp boot and setup code.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
@@ -8,9 +8,6 @@ macro_line|#include &lt;linux/reboot.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/blk.h&gt;
 macro_line|#include &lt;asm/init.h&gt;
-macro_line|#include &lt;asm/adb.h&gt;
-macro_line|#include &lt;asm/cuda.h&gt;
-macro_line|#include &lt;asm/pmu.h&gt;
 macro_line|#include &lt;asm/residual.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;linux/ide.h&gt;
@@ -22,8 +19,8 @@ macro_line|#include &lt;asm/bootinfo.h&gt;
 macro_line|#include &lt;asm/setup.h&gt;
 macro_line|#include &lt;asm/amigappc.h&gt;
 macro_line|#include &lt;asm/smp.h&gt;
-macro_line|#ifdef CONFIG_MBX
-macro_line|#include &lt;asm/mbx.h&gt;
+macro_line|#ifdef CONFIG_8xx
+macro_line|#include &lt;asm/mpc8xx.h&gt;
 macro_line|#include &lt;asm/8xx_immap.h&gt;
 macro_line|#endif
 macro_line|#include &lt;asm/bootx.h&gt;
@@ -108,7 +105,7 @@ id|r7
 suffix:semicolon
 r_extern
 r_void
-id|mbx_init
+id|m8xx_init
 c_func
 (paren
 r_int
@@ -208,6 +205,11 @@ r_int
 r_char
 id|aux_device_present
 suffix:semicolon
+DECL|variable|int_control
+r_struct
+id|int_control_struct
+id|int_control
+suffix:semicolon
 DECL|variable|ppc_ide_md
 r_struct
 id|ide_machdep_calls
@@ -226,32 +228,20 @@ id|DMA_MODE_READ
 comma
 id|DMA_MODE_WRITE
 suffix:semicolon
-multiline_comment|/* Temporary hacks until machdep.h is fully done. */
+macro_line|#ifndef CONFIG_MACH_SPECIFIC
 DECL|variable|_machine
 r_int
 id|_machine
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* do we have OF? */
 DECL|variable|have_of
 r_int
 id|have_of
 op_assign
 l_int|0
 suffix:semicolon
-DECL|variable|is_prep
-r_int
-id|is_prep
-op_assign
-l_int|0
-suffix:semicolon
-DECL|variable|is_chrp
-r_int
-id|is_chrp
-op_assign
-l_int|0
-suffix:semicolon
+macro_line|#endif /* CONFIG_MACH_SPECIFIC */
 macro_line|#ifdef CONFIG_MAGIC_SYSRQ
 DECL|variable|SYSRQ_KEY
 r_int
@@ -272,8 +262,8 @@ id|machdep_calls
 id|ppc_md
 suffix:semicolon
 multiline_comment|/* copy of the residual data */
-macro_line|#ifndef CONFIG_MBX
-DECL|variable|__prepdata
+macro_line|#ifndef CONFIG_8xx
+r_extern
 r_int
 r_char
 id|__res
@@ -283,15 +273,9 @@ r_sizeof
 id|RESIDUAL
 )paren
 )braket
-id|__prepdata
-op_assign
-(brace
-l_int|0
-comma
-)brace
 suffix:semicolon
 macro_line|#else
-DECL|variable|__res
+r_extern
 r_int
 r_char
 id|__res
@@ -301,27 +285,10 @@ r_sizeof
 id|bd_t
 )paren
 )braket
-op_assign
-(brace
-l_int|0
-comma
-)brace
 suffix:semicolon
 macro_line|#endif
-DECL|variable|res
-id|RESIDUAL
-op_star
-id|res
-op_assign
-(paren
-id|RESIDUAL
-op_star
-)paren
-op_amp
-id|__res
-suffix:semicolon
 multiline_comment|/*&n; * Perhaps we can put the pmac screen_info[] here&n; * on pmac as well so we don&squot;t need the ifdef&squot;s.&n; * Until we get multiple-console support in here&n; * that is.  -- Cort&n; */
-macro_line|#ifndef CONFIG_MBX
+macro_line|#ifndef CONFIG_8xx
 DECL|variable|screen_info
 r_struct
 id|screen_info
@@ -388,7 +355,7 @@ r_void
 )paren
 (brace
 )brace
-macro_line|#else /* CONFIG_MBX */
+macro_line|#else /* CONFIG_8xx */
 multiline_comment|/* We need this to satisfy some external references until we can&n; * strip the kernel down.&n; */
 DECL|variable|screen_info
 r_struct
@@ -430,7 +397,7 @@ l_int|16
 multiline_comment|/* orig-video-points */
 )brace
 suffix:semicolon
-macro_line|#endif /* CONFIG_MBX */
+macro_line|#endif /* CONFIG_8xx */
 DECL|function|machine_restart
 r_void
 id|machine_restart
@@ -918,6 +885,7 @@ r_break
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t;&t; * Assume here that all clock rates are the same in a&n;&t;&t; * smp system.  -- Cort&n;&t;&t; */
+macro_line|#ifndef CONFIG_8xx
 r_if
 c_cond
 (paren
@@ -1036,6 +1004,7 @@ l_int|1000000
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -1289,16 +1258,7 @@ r_int
 id|r7
 )paren
 (brace
-macro_line|#ifdef __SMP__
-r_if
-c_cond
-(paren
-id|first_cpu_booted
-)paren
-r_return
-l_int|0
-suffix:semicolon
-macro_line|#endif /* __SMP__ */
+macro_line|#ifndef CONFIG_8xx
 r_if
 c_cond
 (paren
@@ -1357,10 +1317,6 @@ id|_machine
 op_assign
 id|_MACH_prep
 suffix:semicolon
-id|is_prep
-op_assign
-l_int|1
-suffix:semicolon
 )brace
 r_else
 (brace
@@ -1368,27 +1324,55 @@ r_char
 op_star
 id|model
 suffix:semicolon
+r_struct
+id|device_node
+op_star
+id|root
+suffix:semicolon
 id|have_of
 op_assign
 l_int|1
 suffix:semicolon
 multiline_comment|/* prom_init has already been called from __start */
-id|finish_device_tree
+r_if
+c_cond
+(paren
+id|boot_infos
+)paren
+id|relocate_nodes
 c_func
 (paren
 )paren
 suffix:semicolon
 multiline_comment|/* ask the OF info if we&squot;re a chrp or pmac */
-id|model
+multiline_comment|/* we need to set _machine before calling finish_device_tree */
+id|root
 op_assign
-id|get_property
-c_func
-(paren
 id|find_path_device
 c_func
 (paren
 l_string|&quot;/&quot;
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|root
+op_ne
+l_int|0
+)paren
+(brace
+multiline_comment|/* assume pmac unless proven to be chrp -- Cort */
+id|_machine
+op_assign
+id|_MACH_Pmac
+suffix:semicolon
+id|model
+op_assign
+id|get_property
+c_func
+(paren
+id|root
 comma
 l_string|&quot;device_type&quot;
 comma
@@ -1411,16 +1395,10 @@ comma
 l_int|4
 )paren
 )paren
-(brace
 id|_machine
 op_assign
 id|_MACH_chrp
 suffix:semicolon
-id|is_chrp
-op_assign
-l_int|1
-suffix:semicolon
-)brace
 r_else
 (brace
 id|model
@@ -1428,11 +1406,7 @@ op_assign
 id|get_property
 c_func
 (paren
-id|find_path_device
-c_func
-(paren
-l_string|&quot;/&quot;
-)paren
+id|root
 comma
 l_string|&quot;model&quot;
 comma
@@ -1455,80 +1429,18 @@ comma
 l_int|3
 )paren
 )paren
-(brace
 id|_machine
 op_assign
 id|_MACH_chrp
 suffix:semicolon
-id|is_chrp
-op_assign
-l_int|1
-suffix:semicolon
-)brace
-r_else
-(brace
-id|_machine
-op_assign
-id|_MACH_Pmac
-suffix:semicolon
 )brace
 )brace
+id|finish_device_tree
+c_func
+(paren
+)paren
+suffix:semicolon
 )brace
-macro_line|#else /* CONFIG_MACH_SPECIFIC */
-macro_line|#ifdef CONFIG_PREP
-id|_machine
-op_assign
-id|_MACH_prep
-suffix:semicolon
-id|is_prep
-op_assign
-l_int|1
-suffix:semicolon
-macro_line|#elif defined(CONFIG_CHRP)
-id|_machine
-op_assign
-id|_MACH_chrp
-suffix:semicolon
-id|is_chrp
-op_assign
-l_int|1
-suffix:semicolon
-id|have_of
-op_assign
-l_int|1
-suffix:semicolon
-macro_line|#elif defined(CONFIG_PMAC)
-id|_machine
-op_assign
-id|_MACH_Pmac
-suffix:semicolon
-id|have_of
-op_assign
-l_int|1
-suffix:semicolon
-macro_line|#elif defined(CONFIG_MBX)
-id|_machine
-op_assign
-id|_MACH_mbx
-suffix:semicolon
-macro_line|#elif defined(CONFIG_FADS)
-id|_machine
-op_assign
-id|_MACH_fads
-suffix:semicolon
-macro_line|#elif defined(CONFIG_APUS)
-id|_machine
-op_assign
-id|_MACH_apus
-suffix:semicolon
-macro_line|#elif defined(CONFIG_GEMINI)
-id|_machine
-op_assign
-id|_MACH_gemini
-suffix:semicolon
-macro_line|#else
-macro_line|#error &quot;Machine not defined correctly&quot;
-macro_line|#endif /* CONFIG_APUS */
 macro_line|#endif /* CONFIG_MACH_SPECIFIC */
 r_if
 c_cond
@@ -1538,6 +1450,16 @@ id|have_of
 (brace
 macro_line|#ifdef CONFIG_MACH_SPECIFIC
 multiline_comment|/* prom_init has already been called from __start */
+r_if
+c_cond
+(paren
+id|boot_infos
+)paren
+id|relocate_nodes
+c_func
+(paren
+)paren
+suffix:semicolon
 id|finish_device_tree
 c_func
 (paren
@@ -1776,6 +1698,22 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
+id|int_control.int_sti
+op_assign
+id|__no_use_sti
+suffix:semicolon
+id|int_control.int_cli
+op_assign
+id|__no_use_cli
+suffix:semicolon
+id|int_control.int_save_flags
+op_assign
+id|__no_use_save_flags
+suffix:semicolon
+id|int_control.int_restore_flags
+op_assign
+id|__no_use_restore_flags
+suffix:semicolon
 r_switch
 c_cond
 (paren
@@ -1860,27 +1798,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef CONFIG_MBX
-r_case
-id|_MACH_mbx
-suffix:colon
-id|mbx_init
-c_func
-(paren
-id|r3
-comma
-id|r4
-comma
-id|r5
-comma
-id|r6
-comma
-id|r7
-)paren
-suffix:semicolon
-r_break
-suffix:semicolon
-macro_line|#endif
+macro_line|#ifdef CONFIG_GEMINI
 r_case
 id|_MACH_gemini
 suffix:colon
@@ -1900,6 +1818,7 @@ id|r7
 suffix:semicolon
 r_break
 suffix:semicolon
+macro_line|#endif&t;&t;
 r_default
 suffix:colon
 id|printk
@@ -1931,6 +1850,43 @@ op_assign
 l_int|1
 suffix:semicolon
 )brace
+macro_line|#else /* CONFIG_8xx */
+id|int_control.int_sti
+op_assign
+id|__no_use_sti
+suffix:semicolon
+id|int_control.int_cli
+op_assign
+id|__no_use_cli
+suffix:semicolon
+id|int_control.int_save_flags
+op_assign
+id|__no_use_save_flags
+suffix:semicolon
+id|int_control.int_restore_flags
+op_assign
+id|__no_use_restore_flags
+suffix:semicolon
+id|m8xx_init
+c_func
+(paren
+id|r3
+comma
+id|r4
+comma
+id|r5
+comma
+id|r6
+comma
+id|r7
+)paren
+suffix:semicolon
+macro_line|#endif
+multiline_comment|/* this is for modules since _machine can be a define -- Cort */
+id|ppc_md.ppc_machine
+op_assign
+id|_machine
+suffix:semicolon
 r_if
 c_cond
 (paren

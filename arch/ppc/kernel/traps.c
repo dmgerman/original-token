@@ -378,8 +378,8 @@ id|regs
 )paren
 )paren
 (brace
-macro_line|#ifdef CONFIG_MBX
-multiline_comment|/* the mbx pci read routines can cause machine checks -- Cort */
+macro_line|#if defined(CONFIG_8xx) &amp;&amp; defined(CONFIG_PCI)
+multiline_comment|/* the qspan pci read routines can cause machine checks -- Cort */
 id|bad_page_fault
 c_func
 (paren
@@ -390,7 +390,7 @@ id|regs-&gt;dar
 suffix:semicolon
 r_return
 suffix:semicolon
-macro_line|#endif /* CONFIG_MBX */
+macro_line|#endif
 macro_line|#if defined(CONFIG_XMON) || defined(CONFIG_KGDB)
 r_if
 c_cond
@@ -1004,6 +1004,7 @@ l_string|&quot;Kernel Mode Software FPU Emulation&quot;
 )paren
 suffix:semicolon
 )brace
+macro_line|#ifdef CONFIG_MATH_EMULATION
 r_if
 c_cond
 (paren
@@ -1018,6 +1019,22 @@ id|regs
 )paren
 )paren
 (brace
+macro_line|#else
+r_if
+c_cond
+(paren
+(paren
+id|errcode
+op_assign
+id|Soft_emulate_8xx
+c_func
+(paren
+id|regs
+)paren
+)paren
+)paren
+(brace
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -1041,7 +1058,7 @@ id|errcode
 op_eq
 op_minus
 id|EFAULT
-suffix:semicolon
+)paren
 id|_exception
 c_func
 (paren

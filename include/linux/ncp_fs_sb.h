@@ -2,9 +2,8 @@ multiline_comment|/*&n; *  ncp_fs_sb.h&n; *&n; *  Copyright (C) 1995, 1996 by Vo
 macro_line|#ifndef _NCP_FS_SB
 DECL|macro|_NCP_FS_SB
 mdefine_line|#define _NCP_FS_SB
-macro_line|#include &lt;asm/semaphore.h&gt;
-macro_line|#include &lt;linux/ncp_mount.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
+macro_line|#include &lt;linux/ncp_mount.h&gt;
 macro_line|#ifdef __KERNEL__
 DECL|macro|NCP_DEFAULT_BUFSIZE
 mdefine_line|#define NCP_DEFAULT_BUFSIZE 1024
@@ -103,17 +102,6 @@ DECL|member|ncp_reply_size
 r_int
 id|ncp_reply_size
 suffix:semicolon
-DECL|member|root
-r_struct
-id|ncp_inode_info
-id|root
-suffix:semicolon
-DECL|member|root_dentry
-r_struct
-id|dentry
-op_star
-id|root_dentry
-suffix:semicolon
 DECL|member|root_setuped
 r_int
 id|root_setuped
@@ -184,28 +172,28 @@ DECL|member|priv
 )brace
 id|priv
 suffix:semicolon
-DECL|member|nls_charsets
-r_struct
-id|ncp_nls_ioctl
-id|nls_charsets
-suffix:semicolon
-multiline_comment|/* NLS user data */
+multiline_comment|/* nls info: codepage for volume and charset for I/O */
 DECL|member|nls_vol
 r_struct
 id|nls_table
 op_star
 id|nls_vol
 suffix:semicolon
-multiline_comment|/* codepage used on volume */
 DECL|member|nls_io
 r_struct
 id|nls_table
 op_star
 id|nls_io
 suffix:semicolon
-multiline_comment|/* charset used for input and display */
+multiline_comment|/* maximum age in jiffies */
+DECL|member|dentry_ttl
+r_int
+id|dentry_ttl
+suffix:semicolon
 )brace
 suffix:semicolon
+DECL|macro|ncp_sb_info
+mdefine_line|#define ncp_sb_info&t;ncp_server
 DECL|function|ncp_conn_valid
 r_static
 r_inline

@@ -1726,14 +1726,6 @@ c_func
 suffix:semicolon
 )brace
 macro_line|#endif
-r_extern
-r_void
-id|initialize_secondary
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
 multiline_comment|/*&n; *&t;Activate the first processor.&n; */
 DECL|function|start_kernel
 id|asmlinkage
@@ -1749,30 +1741,6 @@ r_char
 op_star
 id|command_line
 suffix:semicolon
-macro_line|#ifdef __SMP__
-r_static
-r_int
-id|boot_cpu
-op_assign
-l_int|1
-suffix:semicolon
-multiline_comment|/* &quot;current&quot; has been set up, we need to load it now */
-r_if
-c_cond
-(paren
-op_logical_neg
-id|boot_cpu
-)paren
-id|initialize_secondary
-c_func
-(paren
-)paren
-suffix:semicolon
-id|boot_cpu
-op_assign
-l_int|0
-suffix:semicolon
-macro_line|#endif
 multiline_comment|/*&n; * Interrupts are still disabled. Do necessary setups, then&n; * enable them&n; */
 id|lock_kernel
 c_func

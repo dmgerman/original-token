@@ -4621,7 +4621,7 @@ c_func
 id|fe-&gt;informationLength
 )paren
 op_amp
-l_int|0xFFFFFFFF00000000
+l_int|0xFFFFFFFF00000000ULL
 )paren
 id|inode-&gt;i_size
 op_assign

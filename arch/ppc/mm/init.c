@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  $Id: init.c,v 1.183 1999/09/05 19:29:44 cort Exp $&n; *&n; *  PowerPC version &n; *    Copyright (C) 1995-1996 Gary Thomas (gdt@linuxppc.org)&n; *&n; *  Modifications by Paul Mackerras (PowerMac) (paulus@cs.anu.edu.au)&n; *  and Cort Dougan (PReP) (cort@cs.nmt.edu)&n; *    Copyright (C) 1996 Paul Mackerras&n; *  Amiga/APUS changes by Jesper Skov (jskov@cygnus.co.uk).&n; *&n; *  Derived from &quot;arch/i386/mm/init.c&quot;&n; *    Copyright (C) 1991, 1992, 1993, 1994  Linus Torvalds&n; *&n; *  This program is free software; you can redistribute it and/or&n; *  modify it under the terms of the GNU General Public License&n; *  as published by the Free Software Foundation; either version&n; *  2 of the License, or (at your option) any later version.&n; *&n; */
+multiline_comment|/*&n; *  $Id: init.c,v 1.188 1999/09/18 18:40:44 dmalek Exp $&n; *&n; *  PowerPC version &n; *    Copyright (C) 1995-1996 Gary Thomas (gdt@linuxppc.org)&n; *&n; *  Modifications by Paul Mackerras (PowerMac) (paulus@cs.anu.edu.au)&n; *  and Cort Dougan (PReP) (cort@cs.nmt.edu)&n; *    Copyright (C) 1996 Paul Mackerras&n; *  Amiga/APUS changes by Jesper Skov (jskov@cygnus.co.uk).&n; *&n; *  Derived from &quot;arch/i386/mm/init.c&quot;&n; *    Copyright (C) 1991, 1992, 1993, 1994  Linus Torvalds&n; *&n; *  This program is free software; you can redistribute it and/or&n; *  modify it under the terms of the GNU General Public License&n; *  as published by the Free Software Foundation; either version&n; *  2 of the License, or (at your option) any later version.&n; *&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -26,7 +26,7 @@ macro_line|#include &lt;asm/mmu.h&gt;
 macro_line|#include &lt;asm/residual.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/8xx_immap.h&gt;
-macro_line|#include &lt;asm/mbx.h&gt;
+macro_line|#include &lt;asm/mpc8xx.h&gt;
 macro_line|#include &lt;asm/smp.h&gt;
 macro_line|#include &lt;asm/bootx.h&gt;
 macro_line|#include &lt;asm/machdep.h&gt;
@@ -144,7 +144,6 @@ r_struct
 id|mem_info
 id|memory
 (braket
-id|NUM_MEMINFO
 )braket
 suffix:semicolon
 r_extern
@@ -221,17 +220,17 @@ c_func
 r_void
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_MBX
+macro_line|#ifdef CONFIG_8xx
 r_int
 r_int
 op_star
-id|mbx_find_end_of_memory
+id|m8xx_find_end_of_memory
 c_func
 (paren
 r_void
 )paren
 suffix:semicolon
-macro_line|#endif /* CONFIG_MBX */
+macro_line|#endif /* CONFIG_8xx */
 r_static
 r_void
 id|mapin_ram
@@ -4554,15 +4553,6 @@ c_func
 r_void
 )paren
 (brace
-macro_line|#ifdef __SMP__
-r_if
-c_cond
-(paren
-id|first_cpu_booted
-)paren
-r_return
-suffix:semicolon
-macro_line|#endif /* __SMP__ */
 r_if
 c_cond
 (paren
@@ -4888,7 +4878,6 @@ comma
 id|IO_PAGE
 )paren
 suffix:semicolon
-multiline_comment|/* Note: a temporary hack in arch/ppc/amiga/setup.c&n;&t;&t;   (kernel_map) remaps individual IO regions to&n;&t;&t;   0x90000000. */
 r_break
 suffix:semicolon
 r_case
@@ -4930,15 +4919,13 @@ op_assign
 id|ioremap_base
 suffix:semicolon
 macro_line|#else /* CONFIG_8xx */
-macro_line|#ifdef CONFIG_MBX
 id|end_of_DRAM
 op_assign
-id|mbx_find_end_of_memory
+id|m8xx_find_end_of_memory
 c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#endif /* CONFIG_MBX */
 multiline_comment|/* Map in all of RAM starting at KERNELBASE */
 id|mapin_ram
 c_func
@@ -4946,6 +4933,15 @@ c_func
 )paren
 suffix:semicolon
 multiline_comment|/* Now map in some of the I/O space that is generically needed&n;         * or shared with multiple devices.&n;         * All of this fits into the same 4Mbyte region, so it only&n;         * requires one page table page.&n;         */
+id|ioremap
+c_func
+(paren
+id|IMAP_ADDR
+comma
+id|IMAP_SIZE
+)paren
+suffix:semicolon
+macro_line|#ifdef CONFIG_MBX
 id|ioremap
 c_func
 (paren
@@ -4965,11 +4961,48 @@ suffix:semicolon
 id|ioremap
 c_func
 (paren
-id|IMAP_ADDR
+id|PCI_CSR_ADDR
 comma
-id|IMAP_SIZE
+id|PCI_CSR_SIZE
 )paren
 suffix:semicolon
+multiline_comment|/* Map some of the PCI/ISA I/O space to get the IDE interface.&n;&t;*/
+id|ioremap
+c_func
+(paren
+id|PCI_ISA_IO_ADDR
+comma
+l_int|0x4000
+)paren
+suffix:semicolon
+id|ioremap
+c_func
+(paren
+id|PCI_IDE_ADDR
+comma
+l_int|0x4000
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_RPXLITE
+id|ioremap
+c_func
+(paren
+id|RPX_CSR_ADDR
+comma
+id|RPX_CSR_SIZE
+)paren
+suffix:semicolon
+id|ioremap
+c_func
+(paren
+id|HIOX_CSR_ADDR
+comma
+id|HIOX_CSR_SIZE
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_RPXCLASSIC
 id|ioremap
 c_func
 (paren
@@ -4978,23 +5011,15 @@ comma
 id|PCI_CSR_SIZE
 )paren
 suffix:semicolon
-multiline_comment|/* ide needs to be able to get at PCI space -- Cort */
 id|ioremap
 c_func
 (paren
-l_int|0x80000000
+id|RPX_CSR_ADDR
 comma
-l_int|0x4000
+id|RPX_CSR_SIZE
 )paren
 suffix:semicolon
-id|ioremap
-c_func
-(paren
-l_int|0x81000000
-comma
-l_int|0x4000
-)paren
-suffix:semicolon
+macro_line|#endif
 macro_line|#endif /* CONFIG_8xx */
 r_if
 c_cond
@@ -5844,166 +5869,8 @@ op_assign
 l_int|1
 suffix:semicolon
 )brace
-macro_line|#ifdef CONFIG_MBX
-multiline_comment|/*&n; * This is a big hack right now, but it may turn into something real&n; * someday.&n; *&n; * For the MBX860 (at this time anyway), there is nothing to initialize&n; * associated the PROM.  Rather than include all of the prom.c&n; * functions in the image just to get prom_init, all we really need right&n; * now is the initialization of the physical memory region.&n; */
-DECL|function|mbx_find_end_of_memory
-r_int
-r_int
-id|__init
-op_star
-id|mbx_find_end_of_memory
-c_func
-(paren
-r_void
-)paren
-(brace
-r_int
-r_int
-id|kstart
-comma
-id|ksize
-suffix:semicolon
-id|bd_t
-op_star
-id|binfo
-suffix:semicolon
-r_volatile
-id|memctl8xx_t
-op_star
-id|mcp
-suffix:semicolon
-r_int
-r_int
-op_star
-id|ret
-suffix:semicolon
-id|binfo
-op_assign
-(paren
-id|bd_t
-op_star
-)paren
-id|res
-suffix:semicolon
-multiline_comment|/*&n;&t; * The MBX does weird things with the mmaps for ram.&n;&t; * If there&squot;s no DIMM, it puts the onboard DRAM at&n;&t; * 0, if there is a DIMM it sticks it at 0 and puts&n;&t; * the DRAM at the end of the DIMM.&n;&t; *&n;&t; * In fact, it might be the best idea to just read the DRAM&n;&t; * config registers and set the mem areas accordingly.&n;&t; */
-id|mcp
-op_assign
-(paren
-id|memctl8xx_t
-op_star
-)paren
-(paren
-op_amp
-(paren
-(paren
-(paren
-id|immap_t
-op_star
-)paren
-id|IMAP_ADDR
-)paren
-op_member_access_from_pointer
-id|im_memctl
-)paren
-)paren
-suffix:semicolon
-id|append_mem_piece
-c_func
-(paren
-op_amp
-id|phys_mem
-comma
-l_int|0
-comma
-id|binfo-&gt;bi_memsize
-)paren
-suffix:semicolon
-macro_line|#if 0
-id|phys_mem.regions
-(braket
-l_int|0
-)braket
-dot
-id|address
-op_assign
-l_int|0
-suffix:semicolon
-id|phys_mem.regions
-(braket
-l_int|0
-)braket
-dot
-id|size
-op_assign
-id|binfo-&gt;bi_memsize
-suffix:semicolon
-id|phys_mem.n_regions
-op_assign
-l_int|1
-suffix:semicolon
-macro_line|#endif&t;
-id|ret
-op_assign
-id|__va
-c_func
-(paren
-id|phys_mem.regions
-(braket
-l_int|0
-)braket
-dot
-id|address
-op_plus
-id|phys_mem.regions
-(braket
-l_int|0
-)braket
-dot
-id|size
-)paren
-suffix:semicolon
-id|phys_avail
-op_assign
-id|phys_mem
-suffix:semicolon
-id|kstart
-op_assign
-id|__pa
-c_func
-(paren
-id|_stext
-)paren
-suffix:semicolon
-multiline_comment|/* should be 0 */
-id|ksize
-op_assign
-id|PAGE_ALIGN
-c_func
-(paren
-id|_end
-op_minus
-id|_stext
-)paren
-suffix:semicolon
-id|remove_mem_piece
-c_func
-(paren
-op_amp
-id|phys_avail
-comma
-id|kstart
-comma
-id|ksize
-comma
-l_int|0
-)paren
-suffix:semicolon
-r_return
-id|ret
-suffix:semicolon
-)brace
-macro_line|#endif /* CONFIG_MBX */
 macro_line|#ifndef CONFIG_8xx
+macro_line|#if defined(CONFIG_PMAC) || defined(CONFIG_PPC_ALL)
 multiline_comment|/*&n; * On systems with Open Firmware, collect information about&n; * physical RAM and which pieces are already in use.&n; * At this point, we have (at least) the first 8MB mapped with a BAT.&n; * Our text, data, bss use something over 1MB, starting at 0.&n; * Open Firmware may be using 1MB at the 4MB point.&n; */
 DECL|function|pmac_find_end_of_memory
 r_int
@@ -6377,6 +6244,8 @@ id|total
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif /* defined(CONFIG_PMAC) || defined(CONFIG_PPC_ALL) */
+macro_line|#if defined(CONFIG_PREP) || defined(CONFIG_PPC_ALL)
 multiline_comment|/*&n; * This finds the amount of physical ram and does necessary&n; * setup for prep.  This is pretty architecture specific so&n; * this will likely stay separate from the pmac.&n; * -- Cort&n; */
 DECL|function|prep_find_end_of_memory
 r_int
@@ -6503,6 +6372,8 @@ id|total
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif /* defined(CONFIG_PREP) || defined(CONFIG_PPC_ALL) */
+macro_line|#if defined(CONFIG_GEMINI) || defined(CONFIG_PPC_ALL)
 DECL|function|gemini_find_end_of_memory
 r_int
 r_int
@@ -6651,6 +6522,7 @@ r_return
 id|ret
 suffix:semicolon
 )brace
+macro_line|#endif /* defined(CONFIG_GEMINI) || defined(CONFIG_PPC_ALL) */
 macro_line|#ifdef CONFIG_APUS
 DECL|macro|HARDWARE_MAPPED_SIZE
 mdefine_line|#define HARDWARE_MAPPED_SIZE (512*1024)
@@ -7435,6 +7307,131 @@ l_string|&quot;hash:done&quot;
 comma
 l_int|0x205
 )paren
+suffix:semicolon
+)brace
+macro_line|#else /* CONFIG_8xx */
+multiline_comment|/*&n; * This is a big hack right now, but it may turn into something real&n; * someday.&n; *&n; * For the 8xx boards (at this time anyway), there is nothing to initialize&n; * associated the PROM.  Rather than include all of the prom.c&n; * functions in the image just to get prom_init, all we really need right&n; * now is the initialization of the physical memory region.&n; */
+DECL|function|m8xx_find_end_of_memory
+r_int
+r_int
+id|__init
+op_star
+id|m8xx_find_end_of_memory
+c_func
+(paren
+r_void
+)paren
+(brace
+r_int
+r_int
+id|kstart
+comma
+id|ksize
+suffix:semicolon
+id|bd_t
+op_star
+id|binfo
+suffix:semicolon
+r_int
+r_int
+op_star
+id|ret
+suffix:semicolon
+r_extern
+r_int
+r_char
+id|__res
+(braket
+)braket
+suffix:semicolon
+id|binfo
+op_assign
+(paren
+id|bd_t
+op_star
+)paren
+id|__res
+suffix:semicolon
+id|phys_mem.regions
+(braket
+l_int|0
+)braket
+dot
+id|address
+op_assign
+l_int|0
+suffix:semicolon
+id|phys_mem.regions
+(braket
+l_int|0
+)braket
+dot
+id|size
+op_assign
+id|binfo-&gt;bi_memsize
+suffix:semicolon
+id|phys_mem.n_regions
+op_assign
+l_int|1
+suffix:semicolon
+id|ret
+op_assign
+id|__va
+c_func
+(paren
+id|phys_mem.regions
+(braket
+l_int|0
+)braket
+dot
+id|address
+op_plus
+id|phys_mem.regions
+(braket
+l_int|0
+)braket
+dot
+id|size
+)paren
+suffix:semicolon
+id|phys_avail
+op_assign
+id|phys_mem
+suffix:semicolon
+id|kstart
+op_assign
+id|__pa
+c_func
+(paren
+id|_stext
+)paren
+suffix:semicolon
+multiline_comment|/* should be 0 */
+id|ksize
+op_assign
+id|PAGE_ALIGN
+c_func
+(paren
+id|_end
+op_minus
+id|_stext
+)paren
+suffix:semicolon
+id|remove_mem_piece
+c_func
+(paren
+op_amp
+id|phys_avail
+comma
+id|kstart
+comma
+id|ksize
+comma
+l_int|0
+)paren
+suffix:semicolon
+r_return
+id|ret
 suffix:semicolon
 )brace
 macro_line|#endif /* ndef CONFIG_8xx */

@@ -40,10 +40,10 @@ r_int
 id|sec
 )paren
 suffix:semicolon
-DECL|function|apus_get_rtc_time
+DECL|function|m68k_get_rtc_time
 r_int
 r_int
-id|apus_get_rtc_time
+id|m68k_get_rtc_time
 c_func
 (paren
 r_void
@@ -147,9 +147,9 @@ id|sec
 )paren
 suffix:semicolon
 )brace
-DECL|function|apus_set_rtc_time
+DECL|function|m68k_set_rtc_time
 r_int
-id|apus_set_rtc_time
+id|m68k_set_rtc_time
 c_func
 (paren
 r_int
@@ -396,5 +396,10 @@ l_int|4
 suffix:semicolon
 )brace
 macro_line|#endif
+multiline_comment|/* should be made smarter */
+id|ppc_md.heartbeat_count
+op_assign
+l_int|1
+suffix:semicolon
 )brace
 eof

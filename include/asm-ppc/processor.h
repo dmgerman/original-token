@@ -46,7 +46,7 @@ DECL|macro|MSR_RI
 mdefine_line|#define MSR_RI&t;&t;(1&lt;&lt;1)&t;&t;/* Recoverable Exception */
 DECL|macro|MSR_LE
 mdefine_line|#define MSR_LE&t;&t;(1&lt;&lt;0)&t;&t;/* Little-Endian enable */
-macro_line|#ifdef CONFIG_APUS
+macro_line|#ifdef CONFIG_APUS_FAST_EXCEPT
 DECL|macro|MSR_
 mdefine_line|#define MSR_&t;&t;MSR_ME|MSR_IP|MSR_RI
 macro_line|#else
@@ -173,6 +173,8 @@ DECL|macro|_MACH_yk
 mdefine_line|#define _MACH_yk      256 /* Motorola Yellowknife */
 DECL|macro|_MACH_gemini
 mdefine_line|#define _MACH_gemini  512 /* Synergy Microsystems gemini board */
+DECL|macro|_MACH_classic
+mdefine_line|#define _MACH_classic 1024  /* RPCG RPX-Classic 8xx board */
 multiline_comment|/* see residual.h for these */
 DECL|macro|_PREP_Motorola
 mdefine_line|#define _PREP_Motorola 0x01  /* motorola prep */
@@ -360,18 +362,14 @@ mdefine_line|#define SR14&t;14
 DECL|macro|SR15
 mdefine_line|#define SR15&t;15
 macro_line|#ifndef __ASSEMBLY__
+macro_line|#ifndef CONFIG_MACH_SPECIFIC
 r_extern
 r_int
 id|_machine
 suffix:semicolon
-multiline_comment|/* Temporary hacks until we can clean things up better - Corey */
 r_extern
 r_int
 id|have_of
-suffix:semicolon
-r_extern
-r_int
-id|is_prep
 suffix:semicolon
 r_extern
 r_int
@@ -381,6 +379,7 @@ r_extern
 r_int
 id|is_powerplus
 suffix:semicolon
+macro_line|#endif /* CONFIG_MACH_SPECIFIC */
 multiline_comment|/* what kind of prep workstation we are */
 r_extern
 r_int
@@ -642,5 +641,40 @@ id|or_val
 )paren
 suffix:semicolon
 macro_line|#endif /* ndef ASSEMBLY*/
+macro_line|#ifdef CONFIG_MACH_SPECIFIC
+macro_line|#if defined(CONFIG_PREP)
+DECL|macro|_machine
+mdefine_line|#define _machine _MACH_prep
+DECL|macro|have_of
+mdefine_line|#define have_of 0
+macro_line|#elif defined(CONFIG_CHRP)
+DECL|macro|_machine
+mdefine_line|#define _machine _MACH_chrp
+DECL|macro|have_of
+mdefine_line|#define have_of 1
+macro_line|#elif defined(CONFIG_PMAC)
+DECL|macro|_machine
+mdefine_line|#define _machine _MACH_Pmac
+DECL|macro|have_of
+mdefine_line|#define have_of 1
+macro_line|#elif defined(CONFIG_8xx)
+DECL|macro|_machine
+mdefine_line|#define _machine _MACH_8xx
+DECL|macro|have_of
+mdefine_line|#define have_of 0
+macro_line|#elif defined(CONFIG_APUS)
+DECL|macro|_machine
+mdefine_line|#define _machine _MACH_apus
+DECL|macro|have_of
+mdefine_line|#define have_of 0
+macro_line|#elif defined(CONFIG_GEMINI)
+DECL|macro|_machine
+mdefine_line|#define _machine _MACH_gemini
+DECL|macro|have_of
+mdefine_line|#define have_of 0
+macro_line|#else
+macro_line|#error &quot;Machine not defined correctly&quot;
+macro_line|#endif
+macro_line|#endif /* CONFIG_MACH_SPECIFIC */
 macro_line|#endif /* __ASM_PPC_PROCESSOR_H */
 eof

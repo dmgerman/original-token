@@ -1,18 +1,11 @@
 multiline_comment|/*&n; * include/asm-ppc/serial.h&n; */
 macro_line|#include &lt;linux/config.h&gt;
-macro_line|#ifdef CONFIG_APUS
-macro_line|#include &lt;asm-m68k/serial.h&gt;
-macro_line|#else
 macro_line|#ifdef CONFIG_GEMINI
 macro_line|#include &lt;asm/gemini_serial.h&gt;
 macro_line|#else
 multiline_comment|/*&n; * This assumes you have a 1.8432 MHz clock for your UART.&n; *&n; * It&squot;d be nice if someone built a serial card with a 24.576 MHz&n; * clock, since the 16550A is capable of handling a top speed of 1.5&n; * megabits/second; but this requires the faster clock.&n; */
 DECL|macro|BASE_BAUD
 mdefine_line|#define BASE_BAUD ( 1843200 / 16 )
-macro_line|#ifdef CONFIG_PMAC
-multiline_comment|/*&n; * Auto-probing will cause machine checks on powermacs.&n; */
-DECL|macro|SERIAL_PORT_DFNS
-mdefine_line|#define SERIAL_PORT_DFNS
 macro_line|#ifdef CONFIG_SERIAL_MANY_PORTS
 DECL|macro|RS_TABLE_SIZE
 mdefine_line|#define RS_TABLE_SIZE  64
@@ -20,9 +13,11 @@ macro_line|#else
 DECL|macro|RS_TABLE_SIZE
 mdefine_line|#define RS_TABLE_SIZE  4
 macro_line|#endif
-macro_line|#else
+macro_line|#ifdef CONFIG_PMAC
+multiline_comment|/*&n; * Auto-probing will cause machine checks on powermacs.&n; */
 DECL|macro|SERIAL_PORT_DFNS
 mdefine_line|#define SERIAL_PORT_DFNS
+macro_line|#else
 multiline_comment|/*&n; * PReP, CHRP, etc.&n; */
 multiline_comment|/* Standard COM flags (except for COM4, because of the 8514 problem) */
 macro_line|#ifdef CONFIG_SERIAL_DETECT_IRQ
@@ -72,5 +67,4 @@ DECL|macro|SERIAL_PORT_DFNS
 mdefine_line|#define SERIAL_PORT_DFNS&t;&t;&bslash;&n;&t;STD_SERIAL_PORT_DEFNS&t;&t;&bslash;&n;&t;EXTRA_SERIAL_PORT_DEFNS&t;&t;&bslash;&n;&t;HUB6_SERIAL_PORT_DFNS&t;&t;&bslash;&n;&t;MCA_SERIAL_PORT_DFNS
 macro_line|#endif /* CONFIG_PMAC */
 macro_line|#endif /* CONFIG_GEMINI */
-macro_line|#endif /* CONFIG_APUS */
 eof

@@ -61,6 +61,12 @@ comma
 DECL|enumerator|FEATURE_Modem_Reset
 id|FEATURE_Modem_Reset
 comma
+DECL|enumerator|FEATURE_IDE_DiskPower
+id|FEATURE_IDE_DiskPower
+comma
+DECL|enumerator|FEATURE_IDE_Reset
+id|FEATURE_IDE_Reset
+comma
 DECL|enumerator|FEATURE_last
 id|FEATURE_last
 comma

@@ -1,7 +1,7 @@
 macro_line|#ifndef __ASM_SPINLOCK_H
 DECL|macro|__ASM_SPINLOCK_H
 mdefine_line|#define __ASM_SPINLOCK_H
-multiline_comment|/* Simple spin lock operations.  There are two variants, one clears IRQ&squot;s&n; * on the local processor, one does not.&n; *&n; * We make no fairness assumptions. They have a cost.&n; */
+multiline_comment|/*&n; * Simple spin lock operations.&n; */
 r_typedef
 r_struct
 (brace
@@ -67,18 +67,6 @@ DECL|macro|spin_lock
 mdefine_line|#define spin_lock(lp)&t;&t;&t;_spin_lock(lp)
 DECL|macro|spin_unlock
 mdefine_line|#define spin_unlock(lp)&t;&t;&t;_spin_unlock(lp)
-DECL|macro|spin_lock_irq
-mdefine_line|#define spin_lock_irq(lock) &bslash;&n;&t;do { __cli(); spin_lock(lock); } while (0)
-DECL|macro|spin_lock_bh
-mdefine_line|#define spin_lock_bh(___lk) do { local_bh_disable(); spin_lock(___lk); } while(0)
-DECL|macro|spin_unlock_irq
-mdefine_line|#define spin_unlock_irq(lock) &bslash;&n;&t;do { spin_unlock(lock); __sti(); } while (0)
-DECL|macro|spin_unlock_bh
-mdefine_line|#define spin_unlock_bh(___lk) do { spin_unlock(___lk); local_bh_enable(); } while(0)
-DECL|macro|spin_lock_irqsave
-mdefine_line|#define spin_lock_irqsave(lock, flags) &bslash;&n;&t;do { __save_flags(flags); __cli(); spin_lock(lock); } while (0)
-DECL|macro|spin_unlock_irqrestore
-mdefine_line|#define spin_unlock_irqrestore(lock, flags) &bslash;&n;&t;do { spin_unlock(lock); __restore_flags(flags); } while (0)
 r_extern
 r_int
 r_int

@@ -15,7 +15,7 @@ macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;asm/8xx_immap.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
-macro_line|#include &lt;asm/fads.h&gt;
+macro_line|#include &lt;asm/mpc8xx.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
@@ -282,7 +282,7 @@ op_star
 id|mii_func
 )paren
 (paren
-id|uint
+r_int
 id|val
 )paren
 suffix:semicolon
@@ -684,7 +684,16 @@ op_amp
 id|TX_RING_MOD_MASK
 suffix:semicolon
 multiline_comment|/* Push the data cache so the CPM does not get stale memory&n;&t; * data.&n;&t; */
-multiline_comment|/*flush_dcache_range(skb-&gt;data, skb-&gt;data + skb-&gt;len);*/
+id|flush_dcache_range
+c_func
+(paren
+id|skb-&gt;data
+comma
+id|skb-&gt;data
+op_plus
+id|skb-&gt;len
+)paren
+suffix:semicolon
 multiline_comment|/* Send it on its way.  Tell CPM its ready, interrupt when done,&n;&t; * its the last BD of the frame, and to put the CRC on the end.&n;&t; */
 id|save_flags
 c_func
@@ -1904,6 +1913,31 @@ l_string|&quot;, Half-Duplex&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+(paren
+(paren
+id|mii_reg
+op_rshift
+l_int|18
+)paren
+op_amp
+l_int|0x1f
+)paren
+op_eq
+l_int|0x1f
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;fec: %x&bslash;n&quot;
+comma
+id|mii_reg
+)paren
+suffix:semicolon
+)brace
 )brace
 r_static
 r_void
@@ -1927,6 +1961,7 @@ comma
 id|mii_status
 )paren
 suffix:semicolon
+macro_line|#ifndef CONFIG_RPXCLASSIC
 id|mii_queue
 c_func
 (paren
@@ -1952,7 +1987,53 @@ comma
 id|mii_status
 )paren
 suffix:semicolon
-multiline_comment|/* Enable Link status change interrupts.&n;&t;mii_queue(mk_mii_write(0x11, 0x0002), NULL);&n;&t;*/
+multiline_comment|/* Enable Link status change interrupts.&n;&t;*/
+id|mii_queue
+c_func
+(paren
+id|mk_mii_write
+c_func
+(paren
+l_int|0x11
+comma
+l_int|0x0002
+)paren
+comma
+l_int|NULL
+)paren
+suffix:semicolon
+macro_line|#ifdef CONFIG_FADS
+multiline_comment|/* FADS uses the TRSTE in the BCSR, which is kind of weird.&n;&t; * This really controls the startup default configuration.&n;&t; * Changing the state of TRSTE once powered up doesn&squot;t do&n;&t; * anything, you have to whack the control register.&n;&t; * This of course screws up any autoconfig that was done.......&n;&t; */
+id|mii_queue
+c_func
+(paren
+id|mk_mii_write
+c_func
+(paren
+l_int|0
+comma
+l_int|0x1000
+)paren
+comma
+l_int|NULL
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#else
+multiline_comment|/* Experimenting with the QS6612 PHY....not done yet.&n;&t;*/
+id|mii_queue
+c_func
+(paren
+id|mk_mii_read
+c_func
+(paren
+l_int|31
+)paren
+comma
+id|mii_status
+)paren
+suffix:semicolon
+macro_line|#endif
 )brace
 multiline_comment|/* This supports the mii_link interrupt below.&n; * We should get called three times.  Once for register 1, once for&n; * register 18, and once for register 20.&n; */
 DECL|variable|mii_saved_reg1
@@ -2231,6 +2312,8 @@ comma
 id|mii_relink
 )paren
 suffix:semicolon
+macro_line|#ifndef CONFIG_RPXCLASSIC
+multiline_comment|/* Unique to LevelOne PHY.&n;&t;*/
 id|mii_queue
 c_func
 (paren
@@ -2255,6 +2338,33 @@ comma
 id|mii_relink
 )paren
 suffix:semicolon
+macro_line|#else
+multiline_comment|/* Unique to QS6612 PHY.&n;&t;*/
+id|mii_queue
+c_func
+(paren
+id|mk_mii_read
+c_func
+(paren
+l_int|6
+)paren
+comma
+id|mii_relink
+)paren
+suffix:semicolon
+id|mii_queue
+c_func
+(paren
+id|mk_mii_read
+c_func
+(paren
+l_int|31
+)paren
+comma
+id|mii_relink
+)paren
+suffix:semicolon
+macro_line|#endif
 )brace
 r_static
 r_int
@@ -2545,11 +2655,11 @@ suffix:semicolon
 macro_line|#endif
 )brace
 )brace
-multiline_comment|/* Initialize the FECC Ethernet on 860T.&n; */
-DECL|function|m8xx_enet_init
+multiline_comment|/* Initialize the FEC Ethernet on 860T.&n; */
+DECL|function|fec_enet_init
 r_int
 id|__init
-id|m8xx_enet_init
+id|fec_enet_init
 c_func
 (paren
 r_void
@@ -2604,9 +2714,20 @@ id|fecp
 suffix:semicolon
 r_int
 r_char
-id|rtc_save_cfg
-comma
-id|rtc_val
+op_star
+id|iap
+suffix:semicolon
+id|bd_t
+op_star
+id|bd
+suffix:semicolon
+id|bd
+op_assign
+(paren
+id|bd_t
+op_star
+)paren
+id|__res
 suffix:semicolon
 id|immap
 op_assign
@@ -2708,30 +2829,7 @@ l_int|2
 op_lshift
 l_int|29
 suffix:semicolon
-multiline_comment|/* Set station address.&n;&t;*/
-id|fecp-&gt;fec_addr_low
-op_assign
-(paren
-id|my_enet_addr
-(braket
-l_int|0
-)braket
-op_lshift
-l_int|16
-)paren
-op_or
-id|my_enet_addr
-(braket
-l_int|1
-)braket
-suffix:semicolon
-id|fecp-&gt;fec_addr_high
-op_assign
-id|my_enet_addr
-(braket
-l_int|2
-)braket
-suffix:semicolon
+multiline_comment|/* Right now, all of the boards supply the ethernet address in&n;&t; * the board descriptor.  If someone doesn&squot;t we can just use&n;&t; * the hard coded address in this driver for testing (this is&n;&t; * a Motorola address for a board I have, so it is unlikely to&n;&t; * be used elsewhere).&n;&t; */
 id|eap
 op_assign
 (paren
@@ -2744,6 +2842,11 @@ id|my_enet_addr
 (braket
 l_int|0
 )braket
+suffix:semicolon
+macro_line|#if 1
+id|iap
+op_assign
+id|bd-&gt;bi_enetaddr
 suffix:semicolon
 r_for
 c_loop
@@ -2767,6 +2870,59 @@ op_assign
 op_star
 id|eap
 op_increment
+op_assign
+op_star
+id|iap
+op_increment
+suffix:semicolon
+macro_line|#else
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+l_int|6
+suffix:semicolon
+id|i
+op_increment
+)paren
+id|dev-&gt;dev_addr
+(braket
+id|i
+)braket
+op_assign
+op_star
+id|eap
+op_increment
+suffix:semicolon
+macro_line|#endif
+multiline_comment|/* Set station address.&n;&t;*/
+id|fecp-&gt;fec_addr_low
+op_assign
+(paren
+id|my_enet_addr
+(braket
+l_int|0
+)braket
+op_lshift
+l_int|16
+)paren
+op_or
+id|my_enet_addr
+(braket
+l_int|1
+)braket
+suffix:semicolon
+id|fecp-&gt;fec_addr_high
+op_assign
+id|my_enet_addr
+(braket
+l_int|2
+)braket
 suffix:semicolon
 multiline_comment|/* Reset all multicast.&n;&t;*/
 id|fecp-&gt;fec_hash_table_high
@@ -2809,13 +2965,13 @@ id|PAGE_SIZE
 id|printk
 c_func
 (paren
-l_string|&quot;FECC init error.  Need more space.&bslash;n&quot;
+l_string|&quot;FEC init error.  Need more space.&bslash;n&quot;
 )paren
 suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;FECC initialization failed.&bslash;n&quot;
+l_string|&quot;FEC initialization failed.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -2841,11 +2997,11 @@ suffix:semicolon
 multiline_comment|/* Make it uncached.&n;&t;*/
 id|pte
 op_assign
-id|va_to_pte
+id|find_pte
 c_func
 (paren
 op_amp
-id|init_task
+id|init_mm
 comma
 (paren
 r_int
@@ -2953,11 +3109,11 @@ suffix:semicolon
 multiline_comment|/* Make it uncached.&n;&t;&t;*/
 id|pte
 op_assign
-id|va_to_pte
+id|find_pte
 c_func
 (paren
 op_amp
-id|init_task
+id|init_mm
 comma
 id|mem_addr
 )paren
@@ -3097,7 +3253,7 @@ multiline_comment|/* Install our interrupt handlers.  The 860T FADS board uses&n
 r_if
 c_cond
 (paren
-id|request_irq
+id|request_8xxirq
 c_func
 (paren
 id|FEC_INTERRUPT
@@ -3122,7 +3278,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|request_irq
+id|request_8xxirq
 c_func
 (paren
 id|SIU_IRQ2

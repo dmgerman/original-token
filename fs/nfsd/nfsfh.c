@@ -3212,11 +3212,7 @@ c_func
 (paren
 id|dirent.name
 comma
-id|dget
-c_func
-(paren
 id|parent
-)paren
 comma
 l_int|0
 )paren
@@ -3799,7 +3795,11 @@ op_assign
 id|lookup_by_inode
 c_func
 (paren
+id|dget
+c_func
+(paren
 id|parent
+)paren
 comma
 id|u32_to_ino_t
 c_func

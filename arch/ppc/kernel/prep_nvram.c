@@ -51,6 +51,7 @@ suffix:semicolon
 DECL|function|prep_nvram_read_val
 r_int
 r_char
+id|__prep
 id|prep_nvram_read_val
 c_func
 (paren
@@ -86,6 +87,7 @@ suffix:semicolon
 )brace
 DECL|function|prep_nvram_write_val
 r_void
+id|__prep
 id|prep_nvram_write_val
 c_func
 (paren
@@ -128,6 +130,7 @@ multiline_comment|/*&n; * Most Radstone boards have NvRAM memory mapped at offse
 DECL|function|rs_nvram_read_val
 r_int
 r_char
+id|__prep
 id|rs_nvram_read_val
 c_func
 (paren
@@ -144,6 +147,7 @@ suffix:semicolon
 )brace
 DECL|function|rs_nvram_write_val
 r_void
+id|__prep
 id|rs_nvram_write_val
 c_func
 (paren
@@ -339,6 +343,7 @@ suffix:semicolon
 id|__prep
 DECL|function|prep_nvram_get_var
 r_char
+id|__prep
 op_star
 id|prep_nvram_get_var
 c_func
@@ -430,6 +435,7 @@ suffix:semicolon
 id|__prep
 DECL|function|prep_nvram_first_var
 r_char
+id|__prep
 op_star
 id|prep_nvram_first_var
 c_func
@@ -475,6 +481,7 @@ suffix:semicolon
 id|__prep
 DECL|function|prep_nvram_next_var
 r_char
+id|__prep
 op_star
 id|prep_nvram_next_var
 c_func

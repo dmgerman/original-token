@@ -1,4 +1,4 @@
-multiline_comment|/* IEEE-1284 operations for parport.&n; *&n; * This file is for generic IEEE 1284 operations.  The idea is that&n; * they are used by the low-level drivers.  If they have a special way&n; * of doing something, they can provide their own routines (and put&n; * the function pointers in port-&gt;ops); if not, they can just use these&n; * as a fallback.&n; *&n; * Note: Make no assumptions about hardware or architecture in this file!&n; *&n; * Author: Tim Waugh &lt;tim@cyberelk.demon.co.uk&gt;&n; */
+multiline_comment|/* IEEE-1284 operations for parport.&n; *&n; * This file is for generic IEEE 1284 operations.  The idea is that&n; * they are used by the low-level drivers.  If they have a special way&n; * of doing something, they can provide their own routines (and put&n; * the function pointers in port-&gt;ops); if not, they can just use these&n; * as a fallback.&n; *&n; * Note: Make no assumptions about hardware or architecture in this file!&n; *&n; * Author: Tim Waugh &lt;tim@cyberelk.demon.co.uk&gt;&n; * Fixed AUTOFD polarity in ecp_forward_to_reverse().  Fred Barnes, 1999&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/parport.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
@@ -994,7 +994,7 @@ id|port
 comma
 id|PARPORT_CONTROL_AUTOFD
 comma
-l_int|0
+id|PARPORT_CONTROL_AUTOFD
 )paren
 suffix:semicolon
 id|parport_data_reverse
@@ -1636,7 +1636,7 @@ id|schedule_timeout
 (paren
 id|HZ
 op_plus
-l_int|99
+l_int|24
 )paren
 op_div
 l_int|25
@@ -1657,7 +1657,7 @@ comma
 (paren
 id|HZ
 op_plus
-l_int|99
+l_int|24
 )paren
 op_div
 l_int|25
@@ -1904,16 +1904,20 @@ id|rle_count
 suffix:semicolon
 )brace
 r_else
+(brace
 multiline_comment|/* Normal data byte. */
 op_star
 id|buf
-op_increment
 op_assign
 id|byte
+suffix:semicolon
+id|buf
+op_increment
 comma
 id|count
 op_increment
 suffix:semicolon
+)brace
 )brace
 id|out
 suffix:colon

@@ -5,7 +5,6 @@ macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;asm/cache.h&gt;
-macro_line|#include &lt;asm/pci.h&gt;
 DECL|macro|DEBUG_CONFIG
 mdefine_line|#define DEBUG_CONFIG 0
 macro_line|#if DEBUG_CONFIG
@@ -362,12 +361,18 @@ id|i
 suffix:semicolon
 )brace
 multiline_comment|/* Special case, disable the ROM.  Several devices act funny&n;&t;   (ie. do not respond to memory space writes) when it is left&n;&t;   enabled.  A good example are QlogicISP adapters.  */
+r_if
+c_cond
+(paren
+id|dev-&gt;rom_base_reg
+)paren
+(brace
 id|pci_read_config_dword
 c_func
 (paren
 id|dev
 comma
-id|PCI_ROM_ADDRESS
+id|dev-&gt;rom_base_reg
 comma
 op_amp
 id|reg
@@ -383,11 +388,22 @@ c_func
 (paren
 id|dev
 comma
-id|PCI_ROM_ADDRESS
+id|dev-&gt;rom_base_reg
 comma
 id|reg
 )paren
 suffix:semicolon
+id|dev-&gt;resource
+(braket
+id|PCI_ROM_RESOURCE
+)braket
+dot
+id|flags
+op_and_assign
+op_complement
+id|PCI_ROM_ADDRESS_ENABLE
+suffix:semicolon
+)brace
 multiline_comment|/* All of these (may) have I/O scattered all around and may not&n;&t;   use I/O base address registers at all.  So we just have to&n;&t;   always enable IO to these devices.  */
 r_if
 c_cond

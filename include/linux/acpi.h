@@ -65,10 +65,13 @@ mdefine_line|#define ACPI_SLP_TYP2 0x1000
 DECL|macro|ACPI_SLP_EN
 mdefine_line|#define ACPI_SLP_EN   0x2000
 multiline_comment|/* PM_TMR masks */
-DECL|macro|ACPI_TMR_VAL_MASK
-mdefine_line|#define ACPI_TMR_VAL_MASK   0x00ffffff
-DECL|macro|ACPI_E_TMR_VAL_MASK
-mdefine_line|#define ACPI_E_TMR_VAL_MASK 0xff000000
+DECL|macro|ACPI_TMR_MASK
+mdefine_line|#define ACPI_TMR_MASK   0x00ffffff
+DECL|macro|ACPI_TMR_HZ
+mdefine_line|#define ACPI_TMR_HZ&t;3580000 /* 3.58 MHz */
+multiline_comment|/* strangess to avoid integer overflow */
+DECL|macro|ACPI_uS_TO_TMR_TICKS
+mdefine_line|#define ACPI_uS_TO_TMR_TICKS(val) &bslash;&n;  (((val) * (ACPI_TMR_HZ / 10000)) / 100)
 multiline_comment|/* PM2_CNT flags */
 DECL|macro|ACPI_ARB_DIS
 mdefine_line|#define ACPI_ARB_DIS 0x01
@@ -360,5 +363,17 @@ id|dsdt
 suffix:semicolon
 )brace
 suffix:semicolon
+macro_line|#ifdef __KERNEL__
+r_extern
+r_void
+(paren
+op_star
+id|acpi_idle
+)paren
+(paren
+r_void
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#endif /* _LINUX_ACPI_H */
 eof

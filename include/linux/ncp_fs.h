@@ -5,38 +5,8 @@ mdefine_line|#define _LINUX_NCP_FS_H
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/in.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
-macro_line|#include &lt;linux/ncp_mount.h&gt;
-multiline_comment|/* NLS charsets by ioctl */
-DECL|macro|NCP_IOCSNAME_LEN
-mdefine_line|#define NCP_IOCSNAME_LEN 20
-DECL|struct|ncp_nls_ioctl
-r_struct
-id|ncp_nls_ioctl
-(brace
-DECL|member|codepage
-r_int
-r_char
-id|codepage
-(braket
-id|NCP_IOCSNAME_LEN
-op_plus
-l_int|1
-)braket
-suffix:semicolon
-DECL|member|iocharset
-r_int
-r_char
-id|iocharset
-(braket
-id|NCP_IOCSNAME_LEN
-op_plus
-l_int|1
-)braket
-suffix:semicolon
-)brace
-suffix:semicolon
-macro_line|#include &lt;linux/ncp_fs_sb.h&gt;
-macro_line|#include &lt;linux/ncp_fs_i.h&gt;
+macro_line|#include &lt;linux/ipx.h&gt;
+macro_line|#include &lt;linux/ncp_no.h&gt;
 multiline_comment|/*&n; * ioctl commands&n; */
 DECL|struct|ncp_ioctl_request
 r_struct
@@ -216,6 +186,35 @@ suffix:semicolon
 multiline_comment|/* ~1000 for NDS */
 )brace
 suffix:semicolon
+multiline_comment|/* NLS charsets by ioctl */
+DECL|macro|NCP_IOCSNAME_LEN
+mdefine_line|#define NCP_IOCSNAME_LEN 20
+DECL|struct|ncp_nls_ioctl
+r_struct
+id|ncp_nls_ioctl
+(brace
+DECL|member|codepage
+r_int
+r_char
+id|codepage
+(braket
+id|NCP_IOCSNAME_LEN
+op_plus
+l_int|1
+)braket
+suffix:semicolon
+DECL|member|iocharset
+r_int
+r_char
+id|iocharset
+(braket
+id|NCP_IOCSNAME_LEN
+op_plus
+l_int|1
+)braket
+suffix:semicolon
+)brace
+suffix:semicolon
 DECL|macro|NCP_IOC_NCPREQUEST
 mdefine_line|#define&t;NCP_IOC_NCPREQUEST&t;&t;_IOR(&squot;n&squot;, 1, struct ncp_ioctl_request)
 DECL|macro|NCP_IOC_GETMOUNTUID
@@ -257,6 +256,10 @@ DECL|macro|NCP_IOC_GETCHARSETS
 mdefine_line|#define NCP_IOC_GETCHARSETS&t;&t;_IOWR(&squot;n&squot;, 11, struct ncp_nls_ioctl)
 DECL|macro|NCP_IOC_SETCHARSETS
 mdefine_line|#define NCP_IOC_SETCHARSETS&t;&t;_IOR(&squot;n&squot;, 11, struct ncp_nls_ioctl)
+DECL|macro|NCP_IOC_GETDENTRYTTL
+mdefine_line|#define NCP_IOC_GETDENTRYTTL&t;&t;_IOW(&squot;n&squot;, 12, __u32)
+DECL|macro|NCP_IOC_SETDENTRYTTL
+mdefine_line|#define NCP_IOC_SETDENTRYTTL&t;&t;_IOR(&squot;n&squot;, 12, __u32)
 multiline_comment|/*&n; * The packet size to allocate. One page should be enough.&n; */
 DECL|macro|NCP_PACKET_SIZE
 mdefine_line|#define NCP_PACKET_SIZE 4070
@@ -286,61 +289,21 @@ macro_line|#else
 DECL|macro|DDPRINTK
 mdefine_line|#define DDPRINTK(format, args...)
 macro_line|#endif
-multiline_comment|/* The readdir cache size controls how many directory entries are&n; * cached.&n; */
-DECL|macro|NCP_READDIR_CACHE_SIZE
-mdefine_line|#define NCP_READDIR_CACHE_SIZE        64
 DECL|macro|NCP_MAX_RPC_TIMEOUT
 mdefine_line|#define NCP_MAX_RPC_TIMEOUT (6*HZ)
-multiline_comment|/*&n; * This is the ncpfs part of the inode structure. This must contain&n; * all the information we need to work with an inode after creation.&n; * (Move to ncp_fs_i.h once it stabilizes, and add a union in fs.h)&n; */
-DECL|struct|ncpfs_i
+DECL|struct|ncp_entry_info
 r_struct
-id|ncpfs_i
+id|ncp_entry_info
 (brace
-DECL|member|dirEntNum
-id|__u32
-id|dirEntNum
-id|__attribute__
-c_func
-(paren
-(paren
-id|packed
-)paren
-)paren
+DECL|member|i
+r_struct
+id|nw_info_struct
+id|i
 suffix:semicolon
-DECL|member|DosDirNum
-id|__u32
-id|DosDirNum
-id|__attribute__
-c_func
-(paren
-(paren
-id|packed
-)paren
-)paren
+DECL|member|ino
+id|ino_t
+id|ino
 suffix:semicolon
-DECL|member|volNumber
-id|__u32
-id|volNumber
-id|__attribute__
-c_func
-(paren
-(paren
-id|packed
-)paren
-)paren
-suffix:semicolon
-macro_line|#ifdef CONFIG_NCPFS_SMALLDOS
-DECL|member|origNS
-id|__u32
-id|origNS
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_NCPFS_STRONG
-DECL|member|nwattr
-id|__u32
-id|nwattr
-suffix:semicolon
-macro_line|#endif
 DECL|member|opened
 r_int
 id|opened
@@ -387,33 +350,15 @@ id|packed
 suffix:semicolon
 )brace
 suffix:semicolon
-multiline_comment|/*&n; * This is an extension of the nw_file_info structure with&n; * the additional information we need to create an inode.&n; */
-DECL|struct|ncpfs_inode_info
-r_struct
-id|ncpfs_inode_info
-(brace
-DECL|member|ino
-id|ino_t
-id|ino
-suffix:semicolon
-multiline_comment|/* dummy inode number */
-DECL|member|nw_info
-r_struct
-id|nw_file_info
-id|nw_info
-suffix:semicolon
-)brace
-suffix:semicolon
 multiline_comment|/* Guess, what 0x564c is :-) */
 DECL|macro|NCP_SUPER_MAGIC
 mdefine_line|#define NCP_SUPER_MAGIC  0x564c
 DECL|macro|NCP_SBP
-mdefine_line|#define NCP_SBP(sb)          ((struct ncp_server *)((sb)-&gt;u.generic_sbp))
+mdefine_line|#define NCP_SBP(sb)&t;&t;(&amp;((sb)-&gt;u.ncpfs_sb))
 DECL|macro|NCP_SERVER
-mdefine_line|#define NCP_SERVER(inode)    NCP_SBP((inode)-&gt;i_sb)
-multiline_comment|/* We don&squot;t have an ncpfs union yet, so use smbfs ... */
+mdefine_line|#define NCP_SERVER(inode)&t;NCP_SBP((inode)-&gt;i_sb)
 DECL|macro|NCP_FINFO
-mdefine_line|#define NCP_FINFO(inode)     ((struct ncpfs_i *)&amp;((inode)-&gt;u.smbfs_i))
+mdefine_line|#define NCP_FINFO(inode)&t;(&amp;((inode)-&gt;u.ncpfs_i))
 macro_line|#ifdef DEBUG_NCP_MALLOC
 macro_line|#include &lt;linux/malloc.h&gt;
 r_extern
@@ -534,7 +479,7 @@ id|super_block
 op_star
 comma
 r_struct
-id|ncpfs_inode_info
+id|ncp_entry_info
 op_star
 )paren
 suffix:semicolon
@@ -547,7 +492,7 @@ id|inode
 op_star
 comma
 r_struct
-id|nw_file_info
+id|ncp_entry_info
 op_star
 )paren
 suffix:semicolon
@@ -560,7 +505,7 @@ id|inode
 op_star
 comma
 r_struct
-id|nw_file_info
+id|ncp_entry_info
 op_star
 )paren
 suffix:semicolon
@@ -583,31 +528,8 @@ id|ncp_conn_logged_in
 c_func
 (paren
 r_struct
-id|ncp_server
+id|super_block
 op_star
-)paren
-suffix:semicolon
-r_void
-id|ncp_init_dir_cache
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_void
-id|ncp_invalid_dir_cache
-c_func
-(paren
-r_struct
-id|inode
-op_star
-)paren
-suffix:semicolon
-r_void
-id|ncp_free_dir_cache
-c_func
-(paren
-r_void
 )paren
 suffix:semicolon
 r_int

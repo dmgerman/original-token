@@ -2054,16 +2054,6 @@ r_goto
 id|got_it
 suffix:semicolon
 multiline_comment|/*&n;&t; * Try pruning the dcache to free up some dquots ...&n;&t; */
-id|count
-op_assign
-id|select_dcache
-c_func
-(paren
-l_int|128
-comma
-l_int|0
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2085,7 +2075,7 @@ c_func
 id|count
 )paren
 suffix:semicolon
-id|free_inode_memory
+id|prune_icache
 c_func
 (paren
 id|count

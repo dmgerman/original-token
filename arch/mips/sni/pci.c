@@ -4,7 +4,6 @@ macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;asm/byteorder.h&gt;
-macro_line|#include &lt;asm/pci.h&gt;
 macro_line|#include &lt;asm/sni.h&gt;
 macro_line|#ifdef CONFIG_PCI
 DECL|macro|mkaddr

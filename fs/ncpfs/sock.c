@@ -16,9 +16,7 @@ macro_line|#include &lt;net/sock.h&gt;
 macro_line|#include &lt;linux/ipx.h&gt;
 macro_line|#include &lt;linux/poll.h&gt;
 macro_line|#include &lt;linux/file.h&gt;
-macro_line|#include &lt;linux/ncp.h&gt;
 macro_line|#include &lt;linux/ncp_fs.h&gt;
-macro_line|#include &lt;linux/ncp_fs_sb.h&gt;
 macro_line|#ifdef CONFIG_NCPFS_PACKET_SIGNING
 macro_line|#include &quot;ncpsign_kernel.h&quot;
 macro_line|#endif

@@ -23,6 +23,8 @@ macro_line|#include &lt;linux/console.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/openpic.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
+macro_line|#include &lt;linux/adb.h&gt;
+macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;asm/mmu.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
@@ -35,63 +37,12 @@ macro_line|#include &lt;asm/pci-bridge.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;asm/machdep.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
-macro_line|#include &lt;asm/adb.h&gt;
 macro_line|#include &lt;asm/hydra.h&gt;
 macro_line|#include &lt;asm/keyboard.h&gt;
 macro_line|#include &quot;time.h&quot;
 macro_line|#include &quot;local_irq.h&quot;
 macro_line|#include &quot;i8259.h&quot;
 macro_line|#include &quot;open_pic.h&quot;
-multiline_comment|/* Fixme - need to move these into their own .c and .h file */
-r_extern
-r_void
-id|i8259_mask_and_ack_irq
-c_func
-(paren
-r_int
-r_int
-id|irq_nr
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|i8259_set_irq_mask
-c_func
-(paren
-r_int
-r_int
-id|irq_nr
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|i8259_mask_irq
-c_func
-(paren
-r_int
-r_int
-id|irq_nr
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|i8259_unmask_irq
-c_func
-(paren
-r_int
-r_int
-id|irq_nr
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|i8259_init
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-multiline_comment|/* Fixme - remove this when it is fixed. - Corey */
 r_extern
 r_volatile
 r_int
@@ -312,7 +263,6 @@ id|mackbd_sysrq_xlate
 l_int|128
 )braket
 suffix:semicolon
-multiline_comment|/* for the mac fs */
 DECL|variable|boot_dev
 id|kdev_t
 id|boot_dev
@@ -783,7 +733,7 @@ r_return
 id|len
 suffix:semicolon
 )brace
-multiline_comment|/*&n;     *  Fixes for the National Semiconductor PC78308VUL SuperI/O&n;     *&n;     *  Some versions of Open Firmware incorrectly initialize the IRQ settings&n;     *  for keyboard and mouse&n;     */
+multiline_comment|/*&n; *  Fixes for the National Semiconductor PC78308VUL SuperI/O&n; *&n; *  Some versions of Open Firmware incorrectly initialize the IRQ settings&n; *  for keyboard and mouse&n; */
 DECL|function|sio_write
 r_static
 r_inline
@@ -1524,8 +1474,125 @@ id|irq
 suffix:semicolon
 )brace
 )brace
+DECL|function|chrp_get_irq
+r_int
+id|chrp_get_irq
+c_func
+(paren
+r_struct
+id|pt_regs
+op_star
+id|regs
+)paren
+(brace
+r_int
+id|irq
+suffix:semicolon
+id|irq
+op_assign
+id|openpic_irq
+c_func
+(paren
+id|smp_processor_id
+c_func
+(paren
+)paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|irq
+op_eq
+id|IRQ_8259_CASCADE
+)paren
+(brace
+multiline_comment|/*&n;                 * This magic address generates a PCI IACK cycle.&n;                 */
+r_if
+c_cond
+(paren
+id|chrp_int_ack_special
+)paren
+id|irq
+op_assign
+op_star
+id|chrp_int_ack_special
+suffix:semicolon
+r_else
+id|irq
+op_assign
+id|i8259_irq
+c_func
+(paren
+id|smp_processor_id
+c_func
+(paren
+)paren
+)paren
+suffix:semicolon
+multiline_comment|/*&n;                 * Acknowledge as soon as possible to allow i8259&n;                 * interrupt nesting                         */
+id|openpic_eoi
+c_func
+(paren
+id|smp_processor_id
+c_func
+(paren
+)paren
+)paren
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|irq
+op_eq
+id|OPENPIC_VEC_SPURIOUS
+)paren
+multiline_comment|/*&n;                 * Spurious interrupts should never be&n;                 * acknowledged&n;                 */
+id|irq
+op_assign
+op_minus
+l_int|1
+suffix:semicolon
+r_return
+id|irq
+suffix:semicolon
+)brace
+DECL|function|chrp_post_irq
 r_void
-DECL|function|chrp_do_IRQ
+id|chrp_post_irq
+c_func
+(paren
+r_int
+id|irq
+)paren
+(brace
+multiline_comment|/*&n;&t; * If it&squot;s an i8259 irq then we&squot;ve already done the&n;&t; * openpic irq.  So we just check to make sure the controller&n;&t; * is an openpic and if it is then eoi -- Cort&n;&t; */
+r_if
+c_cond
+(paren
+id|irq_desc
+(braket
+id|irq
+)braket
+dot
+id|ctl
+op_eq
+op_amp
+id|open_pic
+)paren
+id|openpic_eoi
+c_func
+(paren
+id|smp_processor_id
+c_func
+(paren
+)paren
+)paren
+suffix:semicolon
+)brace
+macro_line|#if 0
+r_void
 id|chrp_do_IRQ
 c_func
 (paren
@@ -1756,9 +1823,10 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
+DECL|function|chrp_init_IRQ
 r_void
 id|__init
-DECL|function|chrp_init_IRQ
 id|chrp_init_IRQ
 c_func
 (paren
@@ -1935,12 +2003,6 @@ c_func
 r_void
 )paren
 (brace
-id|adb_init
-c_func
-(paren
-)paren
-suffix:semicolon
-multiline_comment|/* Should this be here? - Corey */
 id|pmac_nvram_init
 c_func
 (paren
@@ -1973,8 +2035,8 @@ DECL|variable|chrp_idedma_regbase
 id|ide_ioreg_t
 id|chrp_idedma_regbase
 suffix:semicolon
-DECL|function|chrp_ide_probe
 r_void
+DECL|function|chrp_ide_probe
 id|chrp_ide_probe
 c_func
 (paren
@@ -2339,6 +2401,7 @@ op_assign
 id|chrp_ide_irq
 suffix:semicolon
 )brace
+macro_line|#if defined(CONFIG_BLK_DEV_IDE_MODULE)
 DECL|variable|chrp_ide_irq
 id|EXPORT_SYMBOL
 c_func
@@ -2367,6 +2430,7 @@ c_func
 id|chrp_ide_probe
 )paren
 suffix:semicolon
+macro_line|#endif
 macro_line|#endif
 r_void
 id|__init
@@ -2458,9 +2522,13 @@ id|ppc_md.init_IRQ
 op_assign
 id|chrp_init_IRQ
 suffix:semicolon
-id|ppc_md.do_IRQ
+id|ppc_md.get_irq
 op_assign
-id|chrp_do_IRQ
+id|chrp_get_irq
+suffix:semicolon
+id|ppc_md.post_irq
+op_assign
+id|chrp_post_irq
 suffix:semicolon
 id|ppc_md.init
 op_assign
@@ -2499,9 +2567,9 @@ macro_line|#ifdef CONFIG_MAC_KEYBOAD
 r_if
 c_cond
 (paren
-id|adb_hardware
+id|adb_driver
 op_eq
-id|ADB_NONE
+l_int|NULL
 )paren
 (brace
 id|ppc_md.kbd_setkeycode
@@ -2683,8 +2751,8 @@ l_int|0x0
 )paren
 suffix:semicolon
 )brace
-DECL|function|chrp_progress
 r_void
+DECL|function|chrp_progress
 id|chrp_progress
 c_func
 (paren

@@ -134,7 +134,7 @@ mdefine_line|#define kernel_lock()
 DECL|macro|cpu_logical_map
 mdefine_line|#define cpu_logical_map(cpu)&t;&t;&t;0
 DECL|macro|smp_call_function
-mdefine_line|#define smp_call_function(func,info,retry,wait)
+mdefine_line|#define smp_call_function(func,info,retry,wait)&t;0
 macro_line|#endif
 macro_line|#endif
 eof

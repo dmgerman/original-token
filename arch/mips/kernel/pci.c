@@ -4,7 +4,6 @@ macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
-macro_line|#include &lt;asm/pci.h&gt;
 macro_line|#ifdef CONFIG_PCI
 DECL|variable|pci_ops
 r_struct

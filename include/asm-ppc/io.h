@@ -26,14 +26,9 @@ DECL|macro|PREP_ISA_MEM_BASE
 mdefine_line|#define PREP_ISA_MEM_BASE &t;0xc0000000
 DECL|macro|PREP_PCI_DRAM_OFFSET
 mdefine_line|#define PREP_PCI_DRAM_OFFSET &t;0x80000000
-macro_line|#ifdef CONFIG_MBX
-DECL|macro|_IO_BASE
-mdefine_line|#define _IO_BASE        0x80000000
-DECL|macro|_ISA_MEM_BASE
-mdefine_line|#define _ISA_MEM_BASE   0
-DECL|macro|PCI_DRAM_OFFSET
-mdefine_line|#define PCI_DRAM_OFFSET 0x80000000
-macro_line|#else /* CONFIG_MBX8xx */
+macro_line|#ifdef CONFIG_8xx
+macro_line|#include &lt;asm/mpc8xx.h&gt;
+macro_line|#else
 macro_line|#ifdef CONFIG_APUS
 DECL|macro|_IO_BASE
 mdefine_line|#define _IO_BASE 0
@@ -64,7 +59,7 @@ mdefine_line|#define _ISA_MEM_BASE&t;isa_mem_base
 DECL|macro|PCI_DRAM_OFFSET
 mdefine_line|#define PCI_DRAM_OFFSET&t;pci_dram_offset
 macro_line|#endif /* CONFIG_APUS */
-macro_line|#endif /* CONFIG_MBX8xx */
+macro_line|#endif /* CONFIG_8xx */
 DECL|macro|readb
 mdefine_line|#define readb(addr) in_8((volatile unsigned char *)(addr))
 DECL|macro|writeb

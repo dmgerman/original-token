@@ -6,7 +6,6 @@ macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
-macro_line|#include &lt;asm/pci.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
 DECL|macro|DEBUG
 macro_line|#undef DEBUG
@@ -462,12 +461,6 @@ id|best
 op_assign
 l_int|NULL
 suffix:semicolon
-r_while
-c_loop
-(paren
-id|bus
-)paren
-(brace
 r_for
 c_loop
 (paren
@@ -578,28 +571,8 @@ id|r
 suffix:semicolon
 multiline_comment|/* Approximating prefetchable by non-prefetchable */
 )brace
-r_if
-c_cond
-(paren
-id|best
-)paren
 r_return
 id|best
-suffix:semicolon
-id|bus
-op_assign
-id|bus-&gt;parent
-suffix:semicolon
-)brace
-id|printk
-c_func
-(paren
-id|KERN_ERR
-l_string|&quot;PCI: Bug: Parent resource not found!&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-l_int|NULL
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * This interrupt-safe spinlock protects all accesses to PCI&n; * configuration space.&n; */
@@ -720,7 +693,7 @@ c_func
 (paren
 l_string|&quot;PCI: Enabling bus mastering for device %s&bslash;n&quot;
 comma
-id|dev-&gt;name
+id|dev-&gt;slot_name
 )paren
 suffix:semicolon
 id|cmd
@@ -762,7 +735,7 @@ c_func
 (paren
 l_string|&quot;PCI: Increasing latency timer of device %s to 64&bslash;n&quot;
 comma
-id|dev-&gt;name
+id|dev-&gt;slot_name
 )paren
 suffix:semicolon
 id|pci_write_config_byte
@@ -776,160 +749,6 @@ l_int|64
 )paren
 suffix:semicolon
 )brace
-)brace
-multiline_comment|/*&n; * Assign new address to PCI resource.  We hope our resource information&n; * is complete.  On the PC, we don&squot;t re-assign resources unless we are&n; * forced to do so or the driver asks us to.&n; *&n; * Expects start=0, end=size-1, flags=resource type.&n; */
-DECL|function|pci_assign_resource
-r_int
-id|__init
-id|pci_assign_resource
-c_func
-(paren
-r_struct
-id|pci_dev
-op_star
-id|dev
-comma
-r_int
-id|i
-)paren
-(brace
-r_struct
-id|resource
-op_star
-id|r
-op_assign
-op_amp
-id|dev-&gt;resource
-(braket
-id|i
-)braket
-suffix:semicolon
-r_struct
-id|resource
-op_star
-id|pr
-op_assign
-id|pci_find_parent_resource
-c_func
-(paren
-id|dev
-comma
-id|r
-)paren
-suffix:semicolon
-r_int
-r_int
-id|size
-op_assign
-id|r-&gt;end
-op_plus
-l_int|1
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|pr
-)paren
-r_return
-op_minus
-id|EINVAL
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|r-&gt;flags
-op_amp
-id|IORESOURCE_IO
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|size
-OG
-l_int|0x100
-)paren
-r_return
-op_minus
-id|EFBIG
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|allocate_resource
-c_func
-(paren
-id|pr
-comma
-id|r
-comma
-id|size
-comma
-l_int|0x1000
-comma
-op_complement
-l_int|0
-comma
-l_int|1024
-)paren
-)paren
-r_return
-op_minus
-id|EBUSY
-suffix:semicolon
-)brace
-r_else
-(brace
-r_if
-c_cond
-(paren
-id|allocate_resource
-c_func
-(paren
-id|pr
-comma
-id|r
-comma
-id|size
-comma
-l_int|0x10000000
-comma
-op_complement
-l_int|0
-comma
-id|size
-)paren
-)paren
-r_return
-op_minus
-id|EBUSY
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|i
-OL
-l_int|6
-)paren
-id|pci_write_config_dword
-c_func
-(paren
-id|dev
-comma
-id|PCI_BASE_ADDRESS_0
-op_plus
-l_int|4
-op_star
-id|i
-comma
-id|r-&gt;start
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
 )brace
 multiline_comment|/*&n; * Translate the low bits of the PCI base&n; * to the resource type&n; */
 DECL|function|pci_resource_flags
@@ -1356,7 +1175,7 @@ c_func
 id|KERN_ERR
 l_string|&quot;PCI: Unable to handle 64-bit address for device %s&bslash;n&quot;
 comma
-id|dev-&gt;name
+id|dev-&gt;slot_name
 )paren
 suffix:semicolon
 id|res-&gt;start
@@ -1379,6 +1198,10 @@ c_cond
 id|rom
 )paren
 (brace
+id|dev-&gt;rom_base_reg
+op_assign
+id|rom
+suffix:semicolon
 id|res
 op_assign
 op_amp
@@ -1516,16 +1339,18 @@ id|pci_read_bridge_bases
 c_func
 (paren
 r_struct
-id|pci_dev
-op_star
-id|dev
-comma
-r_struct
 id|pci_bus
 op_star
 id|child
 )paren
 (brace
+r_struct
+id|pci_dev
+op_star
+id|dev
+op_assign
+id|child-&gt;self
+suffix:semicolon
 id|u8
 id|io_base_lo
 comma
@@ -1558,6 +1383,15 @@ id|res
 suffix:semicolon
 r_int
 id|i
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|dev
+)paren
+multiline_comment|/* It&squot;s a host bus, nothing to read */
+r_return
 suffix:semicolon
 r_for
 c_loop
@@ -2196,7 +2030,7 @@ suffix:semicolon
 id|sprintf
 c_func
 (paren
-id|dev-&gt;name
+id|dev-&gt;slot_name
 comma
 l_string|&quot;%02x:%02x.%d&quot;
 comma
@@ -2250,13 +2084,13 @@ suffix:semicolon
 id|dev-&gt;hdr_type
 op_assign
 id|hdr_type
+op_amp
+l_int|0x7f
 suffix:semicolon
 r_switch
 c_cond
 (paren
-id|hdr_type
-op_amp
-l_int|0x7f
+id|dev-&gt;hdr_type
 )paren
 (brace
 multiline_comment|/* header type */
@@ -2274,7 +2108,7 @@ id|PCI_CLASS_BRIDGE_PCI
 r_goto
 id|bad
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t; * If the card generates interrupts, read IRQ number&n;&t;&t;&t; * (some architectures change it during pcibios_fixup())&n;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t; * Read interrupt line and base address registers.&n;&t;&t;&t; * The architecture-dependent code can tweak these, of course.&n;&t;&t;&t; */
 id|pci_read_config_byte
 c_func
 (paren
@@ -2306,7 +2140,6 @@ id|dev-&gt;irq
 op_assign
 id|irq
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t; * read base address registers, again pcibios_fixup() can&n;&t;&t;&t; * tweak these&n;&t;&t;&t; */
 id|pci_read_bases
 c_func
 (paren
@@ -2424,17 +2257,9 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;PCI: %02x:%02x [%04x/%04x/%06x] has unknown header type %02x, ignoring.&bslash;n&quot;
+l_string|&quot;PCI: device %s has unknown header type %02x, ignoring.&bslash;n&quot;
 comma
-id|bus-&gt;number
-comma
-id|dev-&gt;devfn
-comma
-id|dev-&gt;vendor
-comma
-id|dev-&gt;device
-comma
-r_class
+id|dev-&gt;slot_name
 comma
 id|hdr_type
 )paren

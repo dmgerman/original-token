@@ -9,6 +9,8 @@ DECL|macro|rdtscl
 mdefine_line|#define rdtscl(low) &bslash;&n;     __asm__ __volatile__ (&quot;rdtsc&quot; : &quot;=a&quot; (low) : : &quot;edx&quot;)
 DECL|macro|rdtscll
 mdefine_line|#define rdtscll(val) &bslash;&n;     __asm__ __volatile__ (&quot;rdtsc&quot; : &quot;=A&quot; (val))
+DECL|macro|write_tsc
+mdefine_line|#define write_tsc(val1,val2) wrmsr(0x10, val1, val2)
 DECL|macro|rdpmc
 mdefine_line|#define rdpmc(counter,low,high) &bslash;&n;     __asm__ __volatile__(&quot;rdpmc&quot; &bslash;&n;&t;&t;&t;  : &quot;=a&quot; (low), &quot;=d&quot; (high) &bslash;&n;&t;&t;&t;  : &quot;c&quot; (counter))
 eof

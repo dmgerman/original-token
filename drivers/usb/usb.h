@@ -165,6 +165,69 @@ DECL|member|length
 id|__u16
 id|length
 suffix:semicolon
+DECL|member|timeout
+id|__u32
+id|timeout
+suffix:semicolon
+multiline_comment|/* in milliseconds */
+DECL|member|data
+r_void
+op_star
+id|data
+suffix:semicolon
+)brace
+suffix:semicolon
+DECL|struct|usb_proc_bulktransfer
+r_struct
+id|usb_proc_bulktransfer
+(brace
+DECL|member|ep
+r_int
+r_int
+id|ep
+suffix:semicolon
+DECL|member|len
+r_int
+r_int
+id|len
+suffix:semicolon
+DECL|member|timeout
+r_int
+r_int
+id|timeout
+suffix:semicolon
+multiline_comment|/* in milliseconds */
+DECL|member|data
+r_void
+op_star
+id|data
+suffix:semicolon
+)brace
+suffix:semicolon
+DECL|struct|usb_proc_old_ctrltransfer
+r_struct
+id|usb_proc_old_ctrltransfer
+(brace
+DECL|member|requesttype
+id|__u8
+id|requesttype
+suffix:semicolon
+DECL|member|request
+id|__u8
+id|request
+suffix:semicolon
+DECL|member|value
+id|__u16
+id|value
+suffix:semicolon
+DECL|member|index
+id|__u16
+id|index
+suffix:semicolon
+DECL|member|length
+id|__u16
+id|length
+suffix:semicolon
 multiline_comment|/* pointer to data */
 DECL|member|data
 r_void
@@ -173,11 +236,9 @@ id|data
 suffix:semicolon
 )brace
 suffix:semicolon
-DECL|macro|USB_PROC_CONTROL
-mdefine_line|#define USB_PROC_CONTROL           _IOWR(&squot;U&squot;, 0, struct usb_proc_ctrltransfer)
-DECL|struct|usb_proc_bulktransfer
+DECL|struct|usb_proc_old_bulktransfer
 r_struct
-id|usb_proc_bulktransfer
+id|usb_proc_old_bulktransfer
 (brace
 DECL|member|ep
 r_int
@@ -196,10 +257,6 @@ id|data
 suffix:semicolon
 )brace
 suffix:semicolon
-DECL|macro|USB_PROC_BULK
-mdefine_line|#define USB_PROC_BULK              _IOWR(&squot;U&squot;, 2, struct usb_proc_bulktransfer)
-DECL|macro|USB_PROC_RESETEP
-mdefine_line|#define USB_PROC_RESETEP           _IOR(&squot;U&squot;, 3, unsigned int)
 DECL|struct|usb_proc_setinterface
 r_struct
 id|usb_proc_setinterface
@@ -216,6 +273,16 @@ id|altsetting
 suffix:semicolon
 )brace
 suffix:semicolon
+DECL|macro|USB_PROC_CONTROL
+mdefine_line|#define USB_PROC_CONTROL           _IOWR(&squot;U&squot;, 0, struct usb_proc_ctrltransfer)
+DECL|macro|USB_PROC_BULK
+mdefine_line|#define USB_PROC_BULK              _IOWR(&squot;U&squot;, 2, struct usb_proc_bulktransfer)
+DECL|macro|USB_PROC_OLD_CONTROL
+mdefine_line|#define USB_PROC_OLD_CONTROL       _IOWR(&squot;U&squot;, 0, struct usb_proc_old_ctrltransfer)
+DECL|macro|USB_PROC_OLD_BULK
+mdefine_line|#define USB_PROC_OLD_BULK          _IOWR(&squot;U&squot;, 2, struct usb_proc_old_bulktransfer)
+DECL|macro|USB_PROC_RESETEP
+mdefine_line|#define USB_PROC_RESETEP           _IOR(&squot;U&squot;, 3, unsigned int)
 DECL|macro|USB_PROC_SETINTERFACE
 mdefine_line|#define USB_PROC_SETINTERFACE      _IOR(&squot;U&squot;, 4, struct usb_proc_setinterface)
 DECL|macro|USB_PROC_SETCONFIGURATION
@@ -1076,6 +1143,8 @@ r_void
 op_star
 comma
 r_int
+comma
+r_int
 )paren
 suffix:semicolon
 DECL|member|bulk_msg
@@ -1100,6 +1169,8 @@ comma
 r_int
 r_int
 op_star
+comma
+r_int
 )paren
 suffix:semicolon
 DECL|member|request_irq
@@ -1471,6 +1542,12 @@ op_star
 r_private
 suffix:semicolon
 multiline_comment|/* Upper layer private data */
+DECL|member|audiopriv
+r_void
+op_star
+id|audiopriv
+suffix:semicolon
+multiline_comment|/* May be both audio and HID */
 multiline_comment|/* procfs entry */
 DECL|member|proc_entry
 r_struct
@@ -1512,37 +1589,6 @@ c_func
 (paren
 r_struct
 id|usb_driver
-op_star
-)paren
-suffix:semicolon
-r_int
-id|usb_find_driver
-c_func
-(paren
-r_struct
-id|usb_device
-op_star
-)paren
-suffix:semicolon
-r_void
-id|usb_check_support
-c_func
-(paren
-r_struct
-id|usb_device
-op_star
-)paren
-suffix:semicolon
-r_void
-id|usb_driver_purge
-c_func
-(paren
-r_struct
-id|usb_driver
-op_star
-comma
-r_struct
-id|usb_device
 op_star
 )paren
 suffix:semicolon
@@ -1659,6 +1705,9 @@ id|data
 comma
 id|__u16
 id|size
+comma
+r_int
+id|timeout
 )paren
 suffix:semicolon
 r_extern

@@ -496,14 +496,6 @@ op_star
 suffix:semicolon
 r_extern
 r_void
-id|prune_dcache
-c_func
-(paren
-r_int
-)paren
-suffix:semicolon
-r_extern
-r_void
 id|shrink_dcache_sb
 c_func
 (paren
@@ -537,16 +529,6 @@ mdefine_line|#define shrink_dcache() prune_dcache(0)
 multiline_comment|/* dcache memory management */
 r_extern
 r_int
-id|select_dcache
-c_func
-(paren
-r_int
-comma
-r_int
-)paren
-suffix:semicolon
-r_extern
-r_void
 id|shrink_dcache_memory
 c_func
 (paren
@@ -558,21 +540,31 @@ r_int
 suffix:semicolon
 r_extern
 r_void
-id|check_dcache_memory
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|free_inode_memory
+id|prune_dcache
 c_func
 (paren
 r_int
 )paren
 suffix:semicolon
-multiline_comment|/* defined in fs/inode.c */
+multiline_comment|/* icache memory management (defined in linux/fs/inode.c) */
+r_extern
+r_int
+id|shrink_icache_memory
+c_func
+(paren
+r_int
+comma
+r_int
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|prune_icache
+c_func
+(paren
+r_int
+)paren
+suffix:semicolon
 multiline_comment|/* only used at mount-time */
 r_extern
 r_struct

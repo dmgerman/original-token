@@ -235,23 +235,6 @@ r_void
 )paren
 suffix:semicolon
 r_extern
-r_void
-id|chrp_do_IRQ
-c_func
-(paren
-r_struct
-id|pt_regs
-op_star
-id|regs
-comma
-r_int
-id|cpu
-comma
-r_int
-id|isfake
-)paren
-suffix:semicolon
-r_extern
 r_char
 id|saved_command_line
 (braket
@@ -335,8 +318,8 @@ r_int
 id|vgacon_remap_base
 suffix:semicolon
 macro_line|#endif
-id|__prep
 r_int
+id|__prep
 DECL|function|prep_get_cpuinfo
 id|prep_get_cpuinfo
 c_func
@@ -1259,7 +1242,9 @@ multiline_comment|/*&n;&t; * setup proper values for the cs4232 driver so we don
 r_if
 c_cond
 (paren
-id|is_prep
+id|_machine
+op_eq
+id|_MACH_prep
 )paren
 (brace
 r_extern
@@ -1988,6 +1973,7 @@ l_int|1000000
 suffix:semicolon
 )brace
 r_void
+id|__prep
 DECL|function|prep_restart
 id|prep_restart
 c_func
@@ -2067,6 +2053,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * This function will restart a board regardless of port 92 functionality&n; */
 r_void
+id|__prep
 DECL|function|prep_direct_restart
 id|prep_direct_restart
 c_func
@@ -2129,6 +2116,7 @@ suffix:semicolon
 multiline_comment|/*&n;&t; * Not reached&n;&t; */
 )brace
 r_void
+id|__prep
 DECL|function|prep_halt
 id|prep_halt
 c_func
@@ -2200,6 +2188,7 @@ suffix:semicolon
 multiline_comment|/*&n;&t; * Not reached&n;&t; */
 )brace
 r_void
+id|__prep
 DECL|function|prep_power_off
 id|prep_power_off
 c_func
@@ -2213,8 +2202,9 @@ c_func
 )paren
 suffix:semicolon
 )brace
-DECL|function|prep_setup_residual
 r_int
+id|__prep
+DECL|function|prep_setup_residual
 id|prep_setup_residual
 c_func
 (paren
@@ -2289,6 +2279,7 @@ id|len
 suffix:semicolon
 )brace
 id|u_int
+id|__prep
 DECL|function|prep_irq_cannonicalize
 id|prep_irq_cannonicalize
 c_func
@@ -2316,8 +2307,9 @@ id|irq
 suffix:semicolon
 )brace
 )brace
+macro_line|#if 0
 r_void
-DECL|function|prep_do_IRQ
+id|__prep
 id|prep_do_IRQ
 c_func
 (paren
@@ -2373,6 +2365,30 @@ c_func
 id|regs
 comma
 id|irq
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
+r_int
+id|__prep
+DECL|function|prep_get_irq
+id|prep_get_irq
+c_func
+(paren
+r_struct
+id|pt_regs
+op_star
+id|regs
+)paren
+(brace
+r_return
+id|i8259_irq
+c_func
+(paren
+id|smp_processor_id
+c_func
+(paren
+)paren
 )paren
 suffix:semicolon
 )brace
@@ -2480,6 +2496,7 @@ macro_line|#endif /* __SMP__ */
 macro_line|#if defined(CONFIG_BLK_DEV_IDE) || defined(CONFIG_BLK_DEV_IDE_MODULE)
 multiline_comment|/*&n; * IDE stuff.&n; */
 r_void
+id|__prep
 DECL|function|prep_ide_insw
 id|prep_ide_insw
 c_func
@@ -2518,6 +2535,7 @@ id|ns
 suffix:semicolon
 )brace
 r_void
+id|__prep
 DECL|function|prep_ide_outsw
 id|prep_ide_outsw
 c_func
@@ -2556,6 +2574,7 @@ id|ns
 suffix:semicolon
 )brace
 r_int
+id|__prep
 DECL|function|prep_ide_default_irq
 id|prep_ide_default_irq
 c_func
@@ -2602,6 +2621,7 @@ suffix:semicolon
 )brace
 )brace
 id|ide_ioreg_t
+id|__prep
 DECL|function|prep_ide_default_io_base
 id|prep_ide_default_io_base
 c_func
@@ -2648,6 +2668,7 @@ suffix:semicolon
 )brace
 )brace
 r_int
+id|__prep
 DECL|function|prep_ide_check_region
 id|prep_ide_check_region
 c_func
@@ -2671,6 +2692,7 @@ id|extent
 suffix:semicolon
 )brace
 r_void
+id|__prep
 DECL|function|prep_ide_request_region
 id|prep_ide_request_region
 c_func
@@ -2700,6 +2722,7 @@ id|name
 suffix:semicolon
 )brace
 r_void
+id|__prep
 DECL|function|prep_ide_release_region
 id|prep_ide_release_region
 c_func
@@ -2722,6 +2745,7 @@ id|extent
 suffix:semicolon
 )brace
 r_void
+id|__prep
 DECL|function|prep_ide_fix_driveid
 id|prep_ide_fix_driveid
 c_func
@@ -3083,9 +3107,9 @@ op_assign
 id|prep_init_IRQ
 suffix:semicolon
 multiline_comment|/* this gets changed later on if we have an OpenPIC -- Cort */
-id|ppc_md.do_IRQ
+id|ppc_md.get_irq
 op_assign
-id|prep_do_IRQ
+id|prep_get_irq
 suffix:semicolon
 id|ppc_md.init
 op_assign

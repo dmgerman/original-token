@@ -6,6 +6,40 @@ macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/bitops.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &quot;usb.h&quot;
+r_static
+r_int
+id|usb_find_driver
+c_func
+(paren
+r_struct
+id|usb_device
+op_star
+)paren
+suffix:semicolon
+r_static
+r_void
+id|usb_check_support
+c_func
+(paren
+r_struct
+id|usb_device
+op_star
+)paren
+suffix:semicolon
+r_static
+r_void
+id|usb_driver_purge
+c_func
+(paren
+r_struct
+id|usb_driver
+op_star
+comma
+r_struct
+id|usb_device
+op_star
+)paren
+suffix:semicolon
 multiline_comment|/*&n; * We have a per-interface &quot;registered driver&quot; list.&n; */
 r_static
 id|LIST_HEAD
@@ -501,7 +535,8 @@ suffix:semicolon
 multiline_comment|/* what new total allocated bus time would be */
 id|PRINTD
 (paren
-l_string|&quot;usb-bandwidth-alloc: was: %ld, new: %ld, bustime = %ld us, Pipe allowed: %s&quot;
+l_string|&quot;usb-bandwidth-alloc: was: %u, new: %u, &quot;
+l_string|&quot;bustime = %ld us, Pipe allowed: %s&quot;
 comma
 id|old_alloc
 comma
@@ -2492,6 +2527,8 @@ comma
 l_int|NULL
 comma
 l_int|0
+comma
+id|HZ
 )paren
 suffix:semicolon
 )brace
@@ -2593,6 +2630,8 @@ comma
 id|buf
 comma
 id|size
+comma
+id|HZ
 )paren
 )paren
 op_logical_or
@@ -2684,6 +2723,8 @@ comma
 id|buf
 comma
 id|size
+comma
+id|HZ
 )paren
 suffix:semicolon
 )brace
@@ -2824,6 +2865,8 @@ comma
 id|data
 comma
 l_int|2
+comma
+id|HZ
 )paren
 suffix:semicolon
 )brace
@@ -2894,6 +2937,8 @@ comma
 id|buf
 comma
 l_int|1
+comma
+id|HZ
 )paren
 )paren
 r_return
@@ -2968,6 +3013,8 @@ comma
 l_int|NULL
 comma
 l_int|0
+comma
+id|HZ
 )paren
 )paren
 r_return
@@ -3049,6 +3096,8 @@ comma
 l_int|NULL
 comma
 l_int|0
+comma
+id|HZ
 )paren
 )paren
 r_return
@@ -3277,6 +3326,8 @@ comma
 l_int|NULL
 comma
 l_int|0
+comma
+id|HZ
 )paren
 suffix:semicolon
 multiline_comment|/* don&squot;t clear if failed */
@@ -3331,6 +3382,8 @@ op_amp
 id|status
 comma
 l_int|2
+comma
+id|HZ
 )paren
 suffix:semicolon
 r_if
@@ -3456,6 +3509,8 @@ comma
 l_int|NULL
 comma
 l_int|0
+comma
+id|HZ
 )paren
 )paren
 r_return
@@ -3617,6 +3672,8 @@ comma
 l_int|NULL
 comma
 l_int|0
+comma
+id|HZ
 )paren
 )paren
 r_return
@@ -3736,6 +3793,8 @@ comma
 id|buf
 comma
 id|size
+comma
+id|HZ
 )paren
 )paren
 r_return
@@ -3901,6 +3960,8 @@ r_if
 c_cond
 (paren
 id|result
+OL
+l_int|0
 )paren
 r_return
 op_minus
@@ -4600,6 +4661,9 @@ id|data
 comma
 id|__u16
 id|size
+comma
+r_int
+id|timeout
 )paren
 (brace
 id|devrequest
@@ -4656,6 +4720,8 @@ comma
 id|data
 comma
 id|size
+comma
+id|timeout
 )paren
 suffix:semicolon
 )brace

@@ -22,6 +22,9 @@ macro_line|#include &lt;linux/vt_kern.h&gt;
 macro_line|#include &lt;linux/console.h&gt;
 macro_line|#include &lt;linux/ide.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
+macro_line|#include &lt;linux/adb.h&gt;
+macro_line|#include &lt;linux/cuda.h&gt;
+macro_line|#include &lt;linux/pmu.h&gt;
 macro_line|#include &lt;asm/init.h&gt;
 macro_line|#include &lt;asm/prom.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -29,9 +32,6 @@ macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/pci-bridge.h&gt;
-macro_line|#include &lt;asm/adb.h&gt;
-macro_line|#include &lt;asm/cuda.h&gt;
-macro_line|#include &lt;asm/pmu.h&gt;
 macro_line|#include &lt;asm/ohare.h&gt;
 macro_line|#include &lt;asm/mediabay.h&gt;
 macro_line|#include &lt;asm/feature.h&gt;
@@ -718,6 +718,9 @@ op_ne
 l_int|0
 )paren
 (brace
+r_int
+id|n
+suffix:semicolon
 r_struct
 id|reg_property
 op_star
@@ -735,7 +738,8 @@ id|np
 comma
 l_string|&quot;reg&quot;
 comma
-l_int|NULL
+op_amp
+id|n
 )paren
 suffix:semicolon
 r_if
@@ -746,6 +750,39 @@ op_ne
 l_int|0
 )paren
 (brace
+r_int
+r_int
+id|total
+op_assign
+l_int|0
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|n
+op_div_assign
+r_sizeof
+(paren
+r_struct
+id|reg_property
+)paren
+suffix:semicolon
+id|n
+OG
+l_int|0
+suffix:semicolon
+op_decrement
+id|n
+)paren
+id|total
+op_add_assign
+(paren
+id|reg
+op_increment
+)paren
+op_member_access_from_pointer
+id|size
+suffix:semicolon
 id|len
 op_add_assign
 id|sprintf
@@ -755,9 +792,9 @@ id|buffer
 op_plus
 id|len
 comma
-l_string|&quot;memory&bslash;t&bslash;t: %dMB&bslash;n&quot;
+l_string|&quot;memory&bslash;t&bslash;t: %luMB&bslash;n&quot;
 comma
-id|reg-&gt;size
+id|total
 op_rshift
 l_int|20
 )paren
@@ -771,6 +808,21 @@ id|find_devices
 c_func
 (paren
 l_string|&quot;cpus&quot;
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|np
+op_eq
+l_int|0
+)paren
+id|np
+op_assign
+id|find_type_devices
+c_func
+(paren
+l_string|&quot;cpu&quot;
 )paren
 suffix:semicolon
 r_if
@@ -1145,6 +1197,21 @@ r_if
 c_cond
 (paren
 id|np
+op_eq
+l_int|0
+)paren
+id|np
+op_assign
+id|find_type_devices
+c_func
+(paren
+l_string|&quot;cpu&quot;
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|np
 op_ne
 l_int|0
 )paren
@@ -1239,16 +1306,20 @@ l_int|0
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef CONFIG_ADB_CUDA
 id|find_via_cuda
 c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#endif&t;
+macro_line|#ifdef CONFIG_ADB_PMU
 id|find_via_pmu
 c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#endif&t;
 macro_line|#ifdef CONFIG_DUMMY_CONSOLE
 id|conswitchp
 op_assign
@@ -1521,21 +1592,18 @@ c_func
 r_void
 )paren
 (brace
-id|adb_init
-c_func
-(paren
-)paren
-suffix:semicolon
 id|pmac_nvram_init
 c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_PMAC_PBOOK&t;
 id|media_bay_init
 c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#endif&t;
 )brace
 macro_line|#ifdef CONFIG_SCSI
 r_void
@@ -2032,18 +2100,21 @@ op_star
 id|cmd
 )paren
 (brace
+macro_line|#ifdef CONFIG_ADB_CUDA
 r_struct
 id|adb_request
 id|req
 suffix:semicolon
+macro_line|#endif /* CONFIG_ADB_CUDA */
 r_switch
 c_cond
 (paren
-id|adb_hardware
+id|sys_ctrler
 )paren
 (brace
+macro_line|#ifdef CONFIG_ADB_CUDA
 r_case
-id|ADB_VIACUDA
+id|SYS_CTRLER_CUDA
 suffix:colon
 id|cuda_request
 c_func
@@ -2073,8 +2144,10 @@ c_func
 suffix:semicolon
 r_break
 suffix:semicolon
+macro_line|#endif /* CONFIG_ADB_CUDA */
+macro_line|#ifdef CONFIG_ADB_PMU&t;&t;
 r_case
-id|ADB_VIAPMU
+id|SYS_CTRLER_PMU
 suffix:colon
 id|pmu_restart
 c_func
@@ -2083,6 +2156,7 @@ c_func
 suffix:semicolon
 r_break
 suffix:semicolon
+macro_line|#endif /* CONFIG_ADB_PMU */&t;&t;
 r_default
 suffix:colon
 (brace
@@ -2097,18 +2171,21 @@ c_func
 r_void
 )paren
 (brace
+macro_line|#ifdef CONFIG_ADB_CUDA
 r_struct
 id|adb_request
 id|req
 suffix:semicolon
+macro_line|#endif /* CONFIG_ADB_CUDA */
 r_switch
 c_cond
 (paren
-id|adb_hardware
+id|sys_ctrler
 )paren
 (brace
+macro_line|#ifdef CONFIG_ADB_CUDA
 r_case
-id|ADB_VIACUDA
+id|SYS_CTRLER_CUDA
 suffix:colon
 id|cuda_request
 c_func
@@ -2138,8 +2215,10 @@ c_func
 suffix:semicolon
 r_break
 suffix:semicolon
+macro_line|#endif /* CONFIG_ADB_CUDA */
+macro_line|#ifdef CONFIG_ADB_PMU
 r_case
-id|ADB_VIAPMU
+id|SYS_CTRLER_PMU
 suffix:colon
 id|pmu_shutdown
 c_func
@@ -2148,6 +2227,7 @@ c_func
 suffix:semicolon
 r_break
 suffix:semicolon
+macro_line|#endif /* CONFIG_ADB_PMU */
 r_default
 suffix:colon
 (brace
@@ -2465,9 +2545,9 @@ id|ppc_md.init_IRQ
 op_assign
 id|pmac_pic_init
 suffix:semicolon
-id|ppc_md.do_IRQ
+id|ppc_md.get_irq
 op_assign
-id|pmac_do_IRQ
+id|pmac_get_irq
 suffix:semicolon
 id|ppc_md.init
 op_assign
@@ -2501,7 +2581,7 @@ id|ppc_md.calibrate_decr
 op_assign
 id|pmac_calibrate_decr
 suffix:semicolon
-macro_line|#if defined(CONFIG_VT) &amp;&amp; defined(CONFIG_MAC_KEYBOARD)
+macro_line|#if defined(CONFIG_VT) &amp;&amp; defined(CONFIG_ADB_KEYBOARD)
 id|ppc_md.kbd_setkeycode
 op_assign
 id|mackbd_setkeycode

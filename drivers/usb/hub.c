@@ -110,6 +110,8 @@ comma
 id|data
 comma
 id|size
+comma
+id|HZ
 )paren
 suffix:semicolon
 )brace
@@ -156,6 +158,8 @@ comma
 l_int|NULL
 comma
 l_int|0
+comma
+id|HZ
 )paren
 suffix:semicolon
 )brace
@@ -202,6 +206,8 @@ comma
 l_int|NULL
 comma
 l_int|0
+comma
+id|HZ
 )paren
 suffix:semicolon
 )brace
@@ -249,6 +255,8 @@ comma
 id|data
 comma
 l_int|4
+comma
+id|HZ
 )paren
 suffix:semicolon
 )brace
@@ -299,6 +307,8 @@ comma
 id|data
 comma
 l_int|4
+comma
+id|HZ
 )paren
 suffix:semicolon
 )brace

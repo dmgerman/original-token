@@ -103,5 +103,11 @@ id|skb
 suffix:semicolon
 macro_line|#endif /*__KERNEL__*/
 macro_line|#endif /*CONFIG_NETFILTER_DEBUG*/
+multiline_comment|/* Arguments for setsockopt SOL_IP: */
+multiline_comment|/* 2.0 firewalling went from 64 through 71 (and +256, +512, etc). */
+multiline_comment|/* 2.2 firewalling (+ masq) went from 64 through 76 */
+multiline_comment|/* 2.4 firewalling went 64 through 67. */
+DECL|macro|SO_ORIGINAL_DST
+mdefine_line|#define SO_ORIGINAL_DST 80
 macro_line|#endif /*__LINUX_IP_NETFILTER_H*/
 eof

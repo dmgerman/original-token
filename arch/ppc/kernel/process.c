@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * $Id: process.c,v 1.95 1999/08/31 06:54:07 davem Exp $&n; *&n; *  linux/arch/ppc/kernel/process.c&n; *&n; *  Derived from &quot;arch/i386/kernel/process.c&quot;&n; *    Copyright (C) 1995  Linus Torvalds&n; *&n; *  Updated and modified by Cort Dougan (cort@cs.nmt.edu) and&n; *  Paul Mackerras (paulus@cs.anu.edu.au)&n; *&n; *  PowerPC version &n; *    Copyright (C) 1995-1996 Gary Thomas (gdt@linuxppc.org)&n; *&n; *  This program is free software; you can redistribute it and/or&n; *  modify it under the terms of the GNU General Public License&n; *  as published by the Free Software Foundation; either version&n; *  2 of the License, or (at your option) any later version.&n; *&n; */
+multiline_comment|/*&n; * $Id: process.c,v 1.97 1999/09/14 19:07:42 cort Exp $&n; *&n; *  linux/arch/ppc/kernel/process.c&n; *&n; *  Derived from &quot;arch/i386/kernel/process.c&quot;&n; *    Copyright (C) 1995  Linus Torvalds&n; *&n; *  Updated and modified by Cort Dougan (cort@cs.nmt.edu) and&n; *  Paul Mackerras (paulus@cs.anu.edu.au)&n; *&n; *  PowerPC version &n; *    Copyright (C) 1995-1996 Gary Thomas (gdt@linuxppc.org)&n; *&n; *  This program is free software; you can redistribute it and/or&n; *  modify it under the terms of the GNU General Public License&n; *  as published by the Free Software Foundation; either version&n; *  2 of the License, or (at your option) any later version.&n; *&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -596,6 +596,7 @@ comma
 op_star
 id|old_thread
 suffix:semicolon
+r_int
 r_int
 id|s
 suffix:semicolon
@@ -2266,8 +2267,9 @@ multiline_comment|/*&n;&t; * can&squot;t ll_puts on chrp without openfirmware ye
 r_if
 c_cond
 (paren
-op_logical_neg
-id|is_prep
+id|_machine
+op_ne
+id|_MACH_prep
 )paren
 r_return
 suffix:semicolon

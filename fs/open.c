@@ -2359,7 +2359,7 @@ id|ATTR_GID
 op_or
 id|ATTR_CTIME
 suffix:semicolon
-multiline_comment|/*&n;&t; * If the user or group of a non-directory has been changed by a&n;&t; * non-root user, remove the setuid bit.&n;&t; * 19981026&t;David C Niemi &lt;niemi@tux.org&gt;&n;&t; *&n;&t; */
+multiline_comment|/*&n;&t; * If the user or group of a non-directory has been changed by a&n;&t; * non-root user, remove the setuid bit.&n;&t; * 19981026&t;David C Niemi &lt;niemi@tux.org&gt;&n;&t; *&n;&t; * Changed this to apply to all users, including root, to avoid&n;&t; * some races. This is the behavior we had in 2.0. The check for&n;&t; * non-root was definitely wrong for 2.2 anyway, as it should&n;&t; * have been using CAP_FSETID rather than fsuid -- 19990830 SD.&n;&t; */
 r_if
 c_cond
 (paren
@@ -2377,8 +2377,6 @@ c_func
 (paren
 id|inode-&gt;i_mode
 )paren
-op_logical_and
-id|current-&gt;fsuid
 )paren
 (brace
 id|newattrs.ia_mode
@@ -2391,7 +2389,7 @@ op_or_assign
 id|ATTR_MODE
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; * Likewise, if the user or group of a non-directory has been changed&n;&t; * by a non-root user, remove the setgid bit UNLESS there is no group&n;&t; * execute bit (this would be a file marked for mandatory locking).&n;&t; * 19981026&t;David C Niemi &lt;niemi@tux.org&gt;&n;&t; */
+multiline_comment|/*&n;&t; * Likewise, if the user or group of a non-directory has been changed&n;&t; * by a non-root user, remove the setgid bit UNLESS there is no group&n;&t; * execute bit (this would be a file marked for mandatory locking).&n;&t; * 19981026&t;David C Niemi &lt;niemi@tux.org&gt;&n;&t; *&n;&t; * Removed the fsuid check (see the comment above) -- 19990830 SD.&n;&t; */
 r_if
 c_cond
 (paren
@@ -2419,8 +2417,6 @@ c_func
 (paren
 id|inode-&gt;i_mode
 )paren
-op_logical_and
-id|current-&gt;fsuid
 )paren
 (brace
 id|newattrs.ia_mode

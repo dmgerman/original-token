@@ -345,23 +345,40 @@ id|mpc_dstirq
 suffix:semicolon
 )brace
 suffix:semicolon
-DECL|macro|MP_INT_VECTORED
-mdefine_line|#define MP_INT_VECTORED&t;&t;0
-DECL|macro|MP_INT_NMI
-mdefine_line|#define MP_INT_NMI&t;&t;1
-DECL|macro|MP_INT_SMI
-mdefine_line|#define MP_INT_SMI&t;&t;2
-DECL|macro|MP_INT_EXTINT
-mdefine_line|#define MP_INT_EXTINT&t;&t;3
+DECL|enum|mp_irq_source_types
+r_enum
+id|mp_irq_source_types
+(brace
+DECL|enumerator|mp_INT
+id|mp_INT
+op_assign
+l_int|0
+comma
+DECL|enumerator|mp_NMI
+id|mp_NMI
+op_assign
+l_int|1
+comma
+DECL|enumerator|mp_SMI
+id|mp_SMI
+op_assign
+l_int|2
+comma
+DECL|enumerator|mp_ExtINT
+id|mp_ExtINT
+op_assign
+l_int|3
+)brace
+suffix:semicolon
 DECL|macro|MP_IRQDIR_DEFAULT
 mdefine_line|#define MP_IRQDIR_DEFAULT&t;0
 DECL|macro|MP_IRQDIR_HIGH
 mdefine_line|#define MP_IRQDIR_HIGH&t;&t;1
 DECL|macro|MP_IRQDIR_LOW
 mdefine_line|#define MP_IRQDIR_LOW&t;&t;3
-DECL|struct|mpc_config_intlocal
+DECL|struct|mpc_config_lintsrc
 r_struct
-id|mpc_config_intlocal
+id|mpc_config_lintsrc
 (brace
 DECL|member|mpc_type
 r_int
@@ -402,7 +419,7 @@ id|mpc_destapiclint
 suffix:semicolon
 )brace
 suffix:semicolon
-multiline_comment|/*&n; *&t;Default configurations&n; *&n; *&t;1&t;2 CPU ISA 82489DX&n; *&t;2&t;2 CPU EISA 82489DX no IRQ 8 or timer chaining&n; *&t;3&t;2 CPU EISA 82489DX&n; *&t;4&t;2 CPU MCA 82489DX&n; *&t;5&t;2 CPU ISA+PCI&n; *&t;6&t;2 CPU EISA+PCI&n; *&t;7&t;2 CPU MCA+PCI&n; */
+multiline_comment|/*&n; *&t;Default configurations&n; *&n; *&t;1&t;2 CPU ISA 82489DX&n; *&t;2&t;2 CPU EISA 82489DX neither IRQ 0 timer nor IRQ 13 DMA chaining&n; *&t;3&t;2 CPU EISA 82489DX&n; *&t;4&t;2 CPU MCA 82489DX&n; *&t;5&t;2 CPU ISA+PCI&n; *&t;6&t;2 CPU EISA+PCI&n; *&t;7&t;2 CPU MCA+PCI&n; */
 multiline_comment|/*&n; *&t;Private routines/data&n; */
 r_extern
 r_int
@@ -429,11 +446,6 @@ id|mem_base
 suffix:semicolon
 r_extern
 r_int
-r_char
-id|boot_cpu_id
-suffix:semicolon
-r_extern
-r_int
 r_int
 id|cpu_present_map
 suffix:semicolon
@@ -445,16 +457,12 @@ suffix:semicolon
 r_extern
 r_volatile
 r_int
-id|cpu_number_map
-(braket
-id|NR_CPUS
-)braket
-suffix:semicolon
-r_extern
-r_volatile
-r_int
 r_int
 id|smp_invalidate_needed
+suffix:semicolon
+r_extern
+r_int
+id|pic_mode
 suffix:semicolon
 r_extern
 r_void
@@ -465,13 +473,12 @@ r_void
 )paren
 suffix:semicolon
 r_extern
-r_volatile
 r_int
-r_int
-id|cpu_callin_map
-(braket
-id|NR_CPUS
-)braket
+id|get_maxlvt
+c_func
+(paren
+r_void
+)paren
 suffix:semicolon
 r_extern
 r_void
@@ -499,11 +506,6 @@ c_func
 r_int
 id|cpu
 )paren
-suffix:semicolon
-r_extern
-r_int
-r_int
-id|ipi_count
 suffix:semicolon
 r_extern
 r_void
@@ -537,10 +539,19 @@ r_void
 suffix:semicolon
 r_extern
 r_void
-id|setup_APIC_clock
+id|setup_APIC_clocks
+c_func
 (paren
 r_void
 )paren
+suffix:semicolon
+r_extern
+r_volatile
+r_int
+id|cpu_number_map
+(braket
+id|NR_CPUS
+)braket
 suffix:semicolon
 r_extern
 r_volatile
@@ -632,15 +643,56 @@ id|reg
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;General functions that each host system must provide.&n; */
 r_extern
+r_int
+r_int
+id|apic_timer_irqs
+(braket
+id|NR_CPUS
+)braket
+suffix:semicolon
+macro_line|#ifdef CONFIG_X86_GOOD_APIC
+DECL|macro|FORCE_READ_AROUND_WRITE
+macro_line|# define FORCE_READ_AROUND_WRITE 0
+DECL|macro|apic_readaround
+macro_line|# define apic_readaround(x)
+macro_line|#else
+DECL|macro|FORCE_READ_AROUND_WRITE
+macro_line|# define FORCE_READ_AROUND_WRITE 1
+DECL|macro|apic_readaround
+macro_line|# define apic_readaround(x) apic_read(x)
+macro_line|#endif
+DECL|macro|apic_write_around
+mdefine_line|#define apic_write_around(x,y) &bslash;&n;&t;&t;do { apic_readaround(x); apic_write(x,y); } while (0)
+DECL|function|ack_APIC_irq
+r_extern
+r_inline
 r_void
-id|smp_callin
+id|ack_APIC_irq
 c_func
 (paren
 r_void
 )paren
+(brace
+multiline_comment|/* Clear the IPI */
+id|apic_readaround
+c_func
+(paren
+id|APIC_EOI
+)paren
 suffix:semicolon
+multiline_comment|/*&n;&t; * on P6+ cores (CONFIG_X86_GOOD_APIC) ack_APIC_irq() actually&n;&t; * gets compiled as a single instruction ... yummie.&n;&t; */
+id|apic_write
+c_func
+(paren
+id|APIC_EOI
+comma
+l_int|0
+)paren
+suffix:semicolon
+multiline_comment|/* Docs say use 0 for future compatibility */
+)brace
+multiline_comment|/*&n; *&t;General functions that each host system must provide.&n; */
 r_extern
 r_void
 id|smp_boot_cpus

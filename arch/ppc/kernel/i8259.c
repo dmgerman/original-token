@@ -385,8 +385,6 @@ l_int|NULL
 comma
 l_int|NULL
 comma
-l_int|NULL
-comma
 id|i8259_unmask_irq
 comma
 id|i8259_mask_irq

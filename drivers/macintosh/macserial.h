@@ -128,6 +128,8 @@ DECL|macro|ZILOG_CTS_FLOW
 mdefine_line|#define ZILOG_CTS_FLOW&t;&t;0x04000000 /* Do CTS flow control */
 DECL|macro|ZILOG_CHECK_CD
 mdefine_line|#define ZILOG_CHECK_CD&t;&t;0x02000000 /* i.e., CLOCAL */
+DECL|macro|ZILOG_SLEEPING
+mdefine_line|#define ZILOG_SLEEPING&t;&t;0x01000000 /* have shut it down for sleep */
 multiline_comment|/* Software state per channel */
 macro_line|#ifdef __KERNEL__
 multiline_comment|/*&n; * This is our internal structure for each serial port&squot;s state.&n; * &n; * Many fields are paralleled by the structure used by the serial_struct&n; * structure.&n; *&n; * For definitions of the flags field, see tty.h&n; */

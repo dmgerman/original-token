@@ -34,6 +34,9 @@ macro_line|#endif
 macro_line|#ifdef CONFIG_BVME6000_SCSI
 macro_line|#include &quot;bvme6000.h&quot;
 macro_line|#endif
+macro_line|#ifdef CONFIG_SCSI_SIM710
+macro_line|#include &quot;sim710.h&quot;
+macro_line|#endif
 macro_line|#ifdef CONFIG_A3000_SCSI
 macro_line|#include &quot;a3000.h&quot;
 macro_line|#endif
@@ -340,6 +343,10 @@ comma
 macro_line|#endif
 macro_line|#ifdef CONFIG_BVME6000_SCSI
 id|BVME6000_SCSI
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_SCSI_SIM710
+id|SIM710_SCSI
 comma
 macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_ADVANSYS

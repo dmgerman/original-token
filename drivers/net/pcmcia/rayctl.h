@@ -444,6 +444,12 @@ DECL|macro|TX_AUTHENTICATE_LENGTH_MSB
 mdefine_line|#define TX_AUTHENTICATE_LENGTH_MSB (TX_AUTHENTICATE_LENGTH &gt;&gt; 8)
 DECL|macro|TX_AUTHENTICATE_LENGTH_LSB
 mdefine_line|#define TX_AUTHENTICATE_LENGTH_LSB (TX_AUTHENTICATE_LENGTH &amp; 0xff)
+DECL|macro|TX_DEAUTHENTICATE_LENGTH
+mdefine_line|#define TX_DEAUTHENTICATE_LENGTH (TX_HEADER_LENGTH + 2)
+DECL|macro|TX_DEAUTHENTICATE_LENGTH_MSB
+mdefine_line|#define TX_DEAUTHENTICATE_LENGTH_MSB (TX_AUTHENTICATE_LENGTH &gt;&gt; 8)
+DECL|macro|TX_DEAUTHENTICATE_LENGTH_LSB
+mdefine_line|#define TX_DEAUTHENTICATE_LENGTH_LSB (TX_AUTHENTICATE_LENGTH &amp; 0xff)
 DECL|macro|FCS_LEN
 mdefine_line|#define FCS_LEN           4
 DECL|macro|ADHOC
@@ -693,7 +699,7 @@ DECL|macro|CARD_ASSOC_COMPLETE
 mdefine_line|#define CARD_ASSOC_COMPLETE (6)
 DECL|macro|CARD_ASSOC_FAILED
 mdefine_line|#define CARD_ASSOC_FAILED   (16)
-multiline_comment|/*** Values for authentication_state */
+multiline_comment|/*** Values for authentication_state ***********************************/
 DECL|macro|UNAUTHENTICATED
 mdefine_line|#define UNAUTHENTICATED     (0)
 DECL|macro|AWAITING_RESPONSE
@@ -702,11 +708,26 @@ DECL|macro|AUTHENTICATED
 mdefine_line|#define AUTHENTICATED       (2)
 DECL|macro|NEED_TO_AUTH
 mdefine_line|#define NEED_TO_AUTH        (3)
-multiline_comment|/*** Values for authentication type */
+multiline_comment|/*** Values for authentication type ************************************/
 DECL|macro|OPEN_AUTH_REQUEST
 mdefine_line|#define OPEN_AUTH_REQUEST   (1)
 DECL|macro|OPEN_AUTH_RESPONSE
 mdefine_line|#define OPEN_AUTH_RESPONSE  (2)
+DECL|macro|BROADCAST_DEAUTH
+mdefine_line|#define BROADCAST_DEAUTH    (0xc0)
+multiline_comment|/*** Values for timer functions ****************************************/
+DECL|macro|TODO_NOTHING
+mdefine_line|#define TODO_NOTHING              (0)
+DECL|macro|TODO_VERIFY_DL_START
+mdefine_line|#define TODO_VERIFY_DL_START      (-1)
+DECL|macro|TODO_START_NET
+mdefine_line|#define TODO_START_NET            (-2)
+DECL|macro|TODO_JOIN_NET
+mdefine_line|#define TODO_JOIN_NET             (-3)
+DECL|macro|TODO_AUTHENTICATE_TIMEOUT
+mdefine_line|#define TODO_AUTHENTICATE_TIMEOUT (-4)
+DECL|macro|TODO_SEND_CCS
+mdefine_line|#define TODO_SEND_CCS             (-5)
 multiline_comment|/***********************************************************************/
 multiline_comment|/* Parameter passing structure for update/report parameter CCS&squot;s */
 DECL|struct|object_id

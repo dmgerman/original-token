@@ -6,6 +6,69 @@ DECL|macro|_LINUX_EZUSB_H
 mdefine_line|#define _LINUX_EZUSB_H
 macro_line|#include &lt;linux/ioctl.h&gt;
 multiline_comment|/* --------------------------------------------------------------------- */
+DECL|struct|ezusb_old_ctrltransfer
+r_struct
+id|ezusb_old_ctrltransfer
+(brace
+multiline_comment|/* keep in sync with usb.h:devrequest */
+DECL|member|requesttype
+r_int
+r_char
+id|requesttype
+suffix:semicolon
+DECL|member|request
+r_int
+r_char
+id|request
+suffix:semicolon
+DECL|member|value
+r_int
+r_int
+id|value
+suffix:semicolon
+DECL|member|index
+r_int
+r_int
+id|index
+suffix:semicolon
+DECL|member|length
+r_int
+r_int
+id|length
+suffix:semicolon
+DECL|member|dlen
+r_int
+r_int
+id|dlen
+suffix:semicolon
+DECL|member|data
+r_void
+op_star
+id|data
+suffix:semicolon
+)brace
+suffix:semicolon
+DECL|struct|ezusb_old_bulktransfer
+r_struct
+id|ezusb_old_bulktransfer
+(brace
+DECL|member|ep
+r_int
+r_int
+id|ep
+suffix:semicolon
+DECL|member|len
+r_int
+r_int
+id|len
+suffix:semicolon
+DECL|member|data
+r_void
+op_star
+id|data
+suffix:semicolon
+)brace
+suffix:semicolon
 DECL|struct|ezusb_ctrltransfer
 r_struct
 id|ezusb_ctrltransfer
@@ -36,11 +99,12 @@ r_int
 r_int
 id|length
 suffix:semicolon
-multiline_comment|/* pointer to data */
-DECL|member|dlen
+DECL|member|timeout
 r_int
-id|dlen
+r_int
+id|timeout
 suffix:semicolon
+multiline_comment|/* in milliseconds */
 DECL|member|data
 r_void
 op_star
@@ -62,6 +126,12 @@ r_int
 r_int
 id|len
 suffix:semicolon
+DECL|member|timeout
+r_int
+r_int
+id|timeout
+suffix:semicolon
+multiline_comment|/* in milliseconds */
 DECL|member|data
 r_void
 op_star
@@ -194,9 +264,13 @@ suffix:semicolon
 )brace
 suffix:semicolon
 DECL|macro|EZUSB_CONTROL
-mdefine_line|#define EZUSB_CONTROL           _IOWR(&squot;E&squot;, 0, struct ezusb_ctrltransfer)
+mdefine_line|#define EZUSB_CONTROL           _IOWR(&squot;E&squot;, 1, struct ezusb_ctrltransfer)
 DECL|macro|EZUSB_BULK
 mdefine_line|#define EZUSB_BULK              _IOWR(&squot;E&squot;, 2, struct ezusb_bulktransfer)
+DECL|macro|EZUSB_OLD_CONTROL
+mdefine_line|#define EZUSB_OLD_CONTROL       _IOWR(&squot;E&squot;, 0, struct ezusb_old_ctrltransfer)
+DECL|macro|EZUSB_OLD_BULK
+mdefine_line|#define EZUSB_OLD_BULK          _IOWR(&squot;E&squot;, 2, struct ezusb_old_bulktransfer)
 DECL|macro|EZUSB_RESETEP
 mdefine_line|#define EZUSB_RESETEP           _IOR(&squot;E&squot;, 3, unsigned int)
 DECL|macro|EZUSB_SETINTERFACE

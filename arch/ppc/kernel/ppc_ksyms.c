@@ -20,9 +20,9 @@ macro_line|#include &lt;asm/atomic.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/checksum.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
-macro_line|#include &lt;asm/adb.h&gt;
-macro_line|#include &lt;asm/cuda.h&gt;
-macro_line|#include &lt;asm/pmu.h&gt;
+macro_line|#include &lt;linux/adb.h&gt;
+macro_line|#include &lt;linux/cuda.h&gt;
+macro_line|#include &lt;linux/pmu.h&gt;
 macro_line|#include &lt;asm/prom.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/pci-bridge.h&gt;
@@ -30,6 +30,9 @@ macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/feature.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;asm/machdep.h&gt;
+macro_line|#ifdef __SMP__
+macro_line|#include &lt;asm/smplock.h&gt;
+macro_line|#endif /* __SMP__ */
 multiline_comment|/* Tell string.h we don&squot;t want memcpy etc. as cpp defines */
 DECL|macro|EXPORT_SYMTAB_STROPS
 mdefine_line|#define EXPORT_SYMTAB_STROPS
@@ -142,6 +145,30 @@ comma
 r_struct
 id|pt_regs
 op_star
+)paren
+suffix:semicolon
+id|asmlinkage
+r_int
+r_int
+id|__ashrdi3
+c_func
+(paren
+r_int
+r_int
+comma
+r_int
+)paren
+suffix:semicolon
+id|asmlinkage
+r_int
+r_int
+id|__lshrdi3
+c_func
+(paren
+r_int
+r_int
+comma
+r_int
 )paren
 suffix:semicolon
 id|asmlinkage
@@ -278,6 +305,16 @@ c_func
 id|ppc_local_bh_count
 )paren
 suffix:semicolon
+macro_line|#ifdef __SMP__
+DECL|variable|kernel_flag
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|kernel_flag
+)paren
+suffix:semicolon
+macro_line|#endif /* __SMP__ */
+macro_line|#ifndef CONFIG_8xx
 DECL|variable|isa_io_base
 id|EXPORT_SYMBOL
 c_func
@@ -299,6 +336,7 @@ c_func
 id|pci_dram_offset
 )paren
 suffix:semicolon
+macro_line|#endif
 DECL|variable|ISA_DMA_THRESHOLD
 id|EXPORT_SYMBOL
 c_func
@@ -320,6 +358,8 @@ c_func
 id|DMA_MODE_WRITE
 )paren
 suffix:semicolon
+macro_line|#ifndef CONFIG_8xx
+macro_line|#if defined(CONFIG_PREP) || defined(CONFIG_ALL_PPC)
 DECL|variable|_prep_type
 id|EXPORT_SYMBOL
 c_func
@@ -334,6 +374,8 @@ c_func
 id|ucSystemType
 )paren
 suffix:semicolon
+macro_line|#endif
+macro_line|#endif
 DECL|variable|atomic_add
 id|EXPORT_SYMBOL
 c_func
@@ -843,6 +885,7 @@ id|_write_unlock
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifndef CONFIG_MACH_SPECIFIC
 DECL|variable|_machine
 id|EXPORT_SYMBOL
 c_func
@@ -850,6 +893,7 @@ c_func
 id|_machine
 )paren
 suffix:semicolon
+macro_line|#endif
 DECL|variable|ppc_md
 id|EXPORT_SYMBOL
 c_func
@@ -857,6 +901,8 @@ c_func
 id|ppc_md
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_ADB
+multiline_comment|/*&n; * This could be more fine-grained, but for now assume if we have&n; * ADB we have it all -- Cort&n; */
 DECL|variable|adb_request
 id|EXPORT_SYMBOL
 c_func
@@ -899,12 +945,20 @@ c_func
 id|pmu_poll
 )paren
 suffix:semicolon
+macro_line|#endif /* CONFIG_ADB */
 macro_line|#ifdef CONFIG_PMAC_PBOOK
-DECL|variable|sleep_notifier_list
+DECL|variable|pmu_register_sleep_notifier
 id|EXPORT_SYMBOL
 c_func
 (paren
-id|sleep_notifier_list
+id|pmu_register_sleep_notifier
+)paren
+suffix:semicolon
+DECL|variable|pmu_unregister_sleep_notifier
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|pmu_unregister_sleep_notifier
 )paren
 suffix:semicolon
 DECL|variable|pmu_enable_irled
@@ -922,6 +976,7 @@ c_func
 m_abort
 )paren
 suffix:semicolon
+macro_line|#ifndef CONFIG_8xx
 DECL|variable|find_devices
 id|EXPORT_SYMBOL
 c_func
@@ -999,6 +1054,7 @@ c_func
 id|feature_test
 )paren
 suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI
 DECL|variable|note_scsi_host
 id|EXPORT_SYMBOL
@@ -1015,7 +1071,7 @@ c_func
 id|kd_mksound
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_PMAC
+macro_line|#ifdef CONFIG_NVRAM
 DECL|variable|nvram_read_byte
 id|EXPORT_SYMBOL
 c_func
@@ -1030,7 +1086,21 @@ c_func
 id|nvram_write_byte
 )paren
 suffix:semicolon
-macro_line|#endif /* CONFIG_PMAC */
+macro_line|#endif /* CONFIG_NVRAM */
+DECL|variable|__ashrdi3
+id|EXPORT_SYMBOL_NOVERS
+c_func
+(paren
+id|__ashrdi3
+)paren
+suffix:semicolon
+DECL|variable|__lshrdi3
+id|EXPORT_SYMBOL_NOVERS
+c_func
+(paren
+id|__lshrdi3
+)paren
+suffix:semicolon
 DECL|variable|memcpy
 id|EXPORT_SYMBOL_NOVERS
 c_func
@@ -1073,6 +1143,7 @@ c_func
 id|abs
 )paren
 suffix:semicolon
+macro_line|#ifndef CONFIG_8xx
 DECL|variable|device_is_compatible
 id|EXPORT_SYMBOL
 c_func
@@ -1080,6 +1151,7 @@ c_func
 id|device_is_compatible
 )paren
 suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef CONFIG_VT
 DECL|variable|screen_info
 id|EXPORT_SYMBOL
@@ -1089,4 +1161,44 @@ id|screen_info
 )paren
 suffix:semicolon
 macro_line|#endif
+DECL|variable|int_control
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|int_control
+)paren
+suffix:semicolon
+DECL|variable|timer_interrupt_intercept
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|timer_interrupt_intercept
+)paren
+suffix:semicolon
+DECL|variable|timer_interrupt
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|timer_interrupt
+)paren
+suffix:semicolon
+r_extern
+r_int
+r_int
+id|do_IRQ_intercept
+suffix:semicolon
+DECL|variable|do_IRQ_intercept
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|do_IRQ_intercept
+)paren
+suffix:semicolon
+DECL|variable|irq_desc
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|irq_desc
+)paren
+suffix:semicolon
 eof

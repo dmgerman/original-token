@@ -573,7 +573,7 @@ id|printk
 c_func
 (paren
 id|KERN_DEBUG
-l_string|&quot;       %sMPS %d%s%s%s%s tc%d e%d fa%d%s&bslash;n&quot;
+l_string|&quot;       %sMPS %d%s%s%s%s tc%d e%d fa%d [HCD_%d%s]&bslash;n&quot;
 comma
 id|skip
 ques
@@ -631,6 +631,14 @@ id|endnum
 comma
 id|funcaddr
 comma
+id|ohci_ed_hcdtype
+c_func
+(paren
+id|ed
+)paren
+op_rshift
+l_int|27
+comma
 (paren
 id|stat
 op_amp
@@ -638,7 +646,7 @@ id|ED_ALLOCATED
 )paren
 ques
 c_cond
-l_string|&quot; Allocated&quot;
+l_string|&quot;, Allocated&quot;
 suffix:colon
 l_string|&quot;&quot;
 )paren

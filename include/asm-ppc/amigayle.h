@@ -1,2 +1,2 @@
-macro_line|#include &quot;../asm-m68k/amigayle.h&quot;
+macro_line|#include &lt;asm-m68k/amigayle.h&gt;
 eof

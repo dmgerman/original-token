@@ -3,9 +3,7 @@ macro_line|#ifndef _LINUX_NCP_MOUNT_H
 DECL|macro|_LINUX_NCP_MOUNT_H
 mdefine_line|#define _LINUX_NCP_MOUNT_H
 macro_line|#include &lt;linux/types.h&gt;
-macro_line|#include &lt;linux/ipx.h&gt;
 macro_line|#include &lt;linux/ncp.h&gt;
-macro_line|#include &lt;linux/ncp_fs_i.h&gt;
 DECL|macro|NCP_MOUNT_VERSION
 mdefine_line|#define NCP_MOUNT_VERSION 3
 multiline_comment|/* Values for flags */

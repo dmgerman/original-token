@@ -48,10 +48,6 @@ id|NR_CPUS
 suffix:semicolon
 r_extern
 r_int
-id|first_cpu_booted
-suffix:semicolon
-r_extern
-r_int
 r_int
 id|smp_proc_in_lock
 (braket

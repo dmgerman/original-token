@@ -213,11 +213,23 @@ op_star
 id|rx_pending
 suffix:semicolon
 multiline_comment|/* receive pending list */
+DECL|member|tx_pending
+r_struct
+id|rpc_xprt
+op_star
+id|tx_pending
+suffix:semicolon
+multiline_comment|/* transmit pending list */
 DECL|member|rx_pending_flag
 r_int
 id|rx_pending_flag
 suffix:semicolon
-multiline_comment|/* are we on the pending list ? */
+multiline_comment|/* are we on the rcv pending list ? */
+DECL|member|tx_pending_flag
+r_int
+id|tx_pending_flag
+suffix:semicolon
+multiline_comment|/* are we on the xmit pending list ? */
 DECL|member|file
 r_struct
 id|file

@@ -564,6 +564,9 @@ comma
 DECL|enumerator|PROC_SCSI_BVME6000
 id|PROC_SCSI_BVME6000
 comma
+DECL|enumerator|PROC_SCSI_SIM710
+id|PROC_SCSI_SIM710
+comma
 DECL|enumerator|PROC_SCSI_A3000
 id|PROC_SCSI_A3000
 comma
