@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * Definitions for the Mitsumi CDROM interface&n; * Copyright (C) 1995 Heiko Schlittermann&n; * VERSION: 1.0a&n; * &n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; * &n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; * &n; * You should have received a copy of the GNU General Public License&n; * along with this program; see the file COPYING.  If not, write to&n; * the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * Thanks to&n; *  The Linux Community at all and ...&n; *  Martin Harris (he wrote the first Mitsumi Driver)&n; *  Eberhard Moenkeberg (he gave me much support and the initial kick)&n; *  Bernd Huebner, Ruediger Helsch (Unifix-Software Gmbh, they&n; *      improved the original driver)&n; *  Jon Tombs, Bjorn Ekwall (module support)&n; *  Daniel v. Mosnenck (he sent me the Technical and Programming Reference)&n; *  Gerd Knorr (he lent me his PhotoCD)&n; *  Nils Faerber and Roger E. Wolff (extensivly tested the LU portion)&n; *  ... somebody forgotten?&n; *  &n; */
+multiline_comment|/*&n; * Definitions for the Mitsumi CDROM interface&n; * Copyright (C) 1995 Heiko Schlittermann &lt;heiko@lotte.sax.de&gt;&n; * VERSION: 1.3&n; * &n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; * &n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; * &n; * You should have received a copy of the GNU General Public License&n; * along with this program; see the file COPYING.  If not, write to&n; * the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * Thanks to&n; *  The Linux Community at all and ...&n; *  Martin Harris (he wrote the first Mitsumi Driver)&n; *  Eberhard Moenkeberg (he gave me much support and the initial kick)&n; *  Bernd Huebner, Ruediger Helsch (Unifix-Software Gmbh, they&n; *      improved the original driver)&n; *  Jon Tombs, Bjorn Ekwall (module support)&n; *  Daniel v. Mosnenck (he sent me the Technical and Programming Reference)&n; *  Gerd Knorr (he lent me his PhotoCD)&n; *  Nils Faerber and Roger E. Wolff (extensivly tested the LU portion)&n; *  ... somebody forgotten?&n; *  &n; */
 multiline_comment|/*&n; *&t;The following lines are for user configuration&n; *&t;~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~&n; *&n; *&t;{0|1} -- 1 if you want the driver detect your drive, may crash and&n; *&t;needs a long time to seek.  The higher the address the longer the&n; *&t;seek.&n; *&n; *  WARNING: AUTOPROBE doesn&squot;t work.&n; */
 DECL|macro|MCDX_AUTOPROBE
 mdefine_line|#define MCDX_AUTOPROBE 0
@@ -42,6 +42,18 @@ DECL|macro|MALLOC
 mdefine_line|#define MALLOC &t;&t;0
 DECL|macro|IOCTL
 mdefine_line|#define IOCTL &t;&t;0
+DECL|macro|PLAYTRK
+mdefine_line|#define PLAYTRK     0
+DECL|macro|SUBCHNL
+mdefine_line|#define SUBCHNL     0
+DECL|macro|TOCHDR
+mdefine_line|#define TOCHDR      0
+DECL|macro|MS
+mdefine_line|#define MS          0
+DECL|macro|PLAYMSF
+mdefine_line|#define PLAYMSF     0
+DECL|macro|READTOC
+mdefine_line|#define READTOC     0
 DECL|macro|OPENCLOSE
 mdefine_line|#define OPENCLOSE &t;0
 DECL|macro|HW
@@ -49,7 +61,7 @@ mdefine_line|#define HW&t;&t;    0
 DECL|macro|TALK
 mdefine_line|#define TALK&t;&t;0
 DECL|macro|IRQ
-mdefine_line|#define IRQ &t;&t;0
+mdefine_line|#define IRQ &t;&t;1
 DECL|macro|TRANSFER
 mdefine_line|#define TRANSFER &t;0
 DECL|macro|REQUEST
@@ -146,9 +158,8 @@ DECL|macro|MCDX_E
 mdefine_line|#define MCDX_E&t;&t;1&t;&t;&t;/* unspec error */
 DECL|macro|MCDX_EOM
 mdefine_line|#define MCDX_EOM&t;2&t;&t;&t;/* end of media */
-macro_line|#if 0
 macro_line|#ifndef I_WAS_HERE
-macro_line|#error Please edit this file first.
-macro_line|#endif
+macro_line|#warning You have not edited mcdx.h
+macro_line|#warning Perhaps irq and i/o settings are wrong.
 macro_line|#endif
 eof

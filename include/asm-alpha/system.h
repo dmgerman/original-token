@@ -167,7 +167,7 @@ id|m
 comma
 r_int
 r_int
-id|new_val
+id|val
 )paren
 suffix:semicolon
 r_extern
@@ -183,7 +183,7 @@ id|m
 comma
 r_int
 r_int
-id|new_val
+id|val
 )paren
 suffix:semicolon
 DECL|function|xchg_u32
@@ -201,50 +201,60 @@ id|m
 comma
 r_int
 r_int
-id|new_val
+id|val
 )paren
 (brace
 r_int
 r_int
-id|old_val
+id|dummy
+comma
+id|dummy2
 suffix:semicolon
 id|__asm__
 id|__volatile__
 c_func
 (paren
 l_string|&quot;&bslash;n1:&bslash;t&quot;
-l_string|&quot;ldl_l %0,%2&bslash;n&bslash;t&quot;
-l_string|&quot;bis %3,%3,$25&bslash;n&bslash;t&quot;
-l_string|&quot;stl_c $25,%1&bslash;n&bslash;t&quot;
-l_string|&quot;beq $25,1b&bslash;n&quot;
+l_string|&quot;ldl_l %0,0(%1)&bslash;n&bslash;t&quot;
+l_string|&quot;bis %2,%2,%3&bslash;n&bslash;t&quot;
+l_string|&quot;stl_c %3,0(%1)&bslash;n&bslash;t&quot;
+l_string|&quot;beq %3,1b&bslash;n&quot;
 suffix:colon
 l_string|&quot;=r&quot;
 (paren
-id|old_val
+id|val
 )paren
 comma
-l_string|&quot;=m&quot;
+l_string|&quot;=r&quot;
 (paren
-op_star
-id|m
-)paren
-suffix:colon
-l_string|&quot;m&quot;
-(paren
-op_star
 id|m
 )paren
 comma
-l_string|&quot;r&quot;
+l_string|&quot;=r&quot;
 (paren
-id|new_val
+id|dummy
+)paren
+comma
+l_string|&quot;=r&quot;
+(paren
+id|dummy2
 )paren
 suffix:colon
-l_string|&quot;$25&quot;
+l_string|&quot;1&quot;
+(paren
+id|m
+)paren
+comma
+l_string|&quot;2&quot;
+(paren
+id|val
+)paren
+suffix:colon
+l_string|&quot;memory&quot;
 )paren
 suffix:semicolon
 r_return
-id|old_val
+id|val
 suffix:semicolon
 )brace
 DECL|function|xchg_u64
@@ -262,50 +272,60 @@ id|m
 comma
 r_int
 r_int
-id|new_val
+id|val
 )paren
 (brace
 r_int
 r_int
-id|old_val
+id|dummy
+comma
+id|dummy2
 suffix:semicolon
 id|__asm__
 id|__volatile__
 c_func
 (paren
 l_string|&quot;&bslash;n1:&bslash;t&quot;
-l_string|&quot;ldq_l %0,%2&bslash;n&bslash;t&quot;
-l_string|&quot;bis %3,%3,$25&bslash;n&bslash;t&quot;
-l_string|&quot;stq_c $25,%1&bslash;n&bslash;t&quot;
-l_string|&quot;beq $25,1b&bslash;n&quot;
+l_string|&quot;ldq_l %0,0(%1)&bslash;n&bslash;t&quot;
+l_string|&quot;bis %2,%2,%3&bslash;n&bslash;t&quot;
+l_string|&quot;stq_c %3,0(%1)&bslash;n&bslash;t&quot;
+l_string|&quot;beq %3,1b&bslash;n&quot;
 suffix:colon
 l_string|&quot;=r&quot;
 (paren
-id|old_val
+id|val
 )paren
 comma
-l_string|&quot;=m&quot;
+l_string|&quot;=r&quot;
 (paren
-op_star
-id|m
-)paren
-suffix:colon
-l_string|&quot;m&quot;
-(paren
-op_star
 id|m
 )paren
 comma
-l_string|&quot;r&quot;
+l_string|&quot;=r&quot;
 (paren
-id|new_val
+id|dummy
+)paren
+comma
+l_string|&quot;=r&quot;
+(paren
+id|dummy2
 )paren
 suffix:colon
-l_string|&quot;$25&quot;
+l_string|&quot;1&quot;
+(paren
+id|m
+)paren
+comma
+l_string|&quot;2&quot;
+(paren
+id|val
+)paren
+suffix:colon
+l_string|&quot;memory&quot;
 )paren
 suffix:semicolon
 r_return
-id|old_val
+id|val
 suffix:semicolon
 )brace
 DECL|macro|xchg

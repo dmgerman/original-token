@@ -305,7 +305,7 @@ id|sp-&gt;write_seq
 op_minus
 id|sp-&gt;rcv_ack_seq
 suffix:colon
-id|sp-&gt;rmem_alloc
+id|sp-&gt;wmem_alloc
 comma
 id|format
 op_eq
@@ -316,7 +316,7 @@ id|sp-&gt;acked_seq
 op_minus
 id|sp-&gt;copied_seq
 suffix:colon
-id|sp-&gt;wmem_alloc
+id|sp-&gt;rmem_alloc
 comma
 id|timer_active
 comma

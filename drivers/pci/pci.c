@@ -1304,7 +1304,7 @@ id|ADAPTEC
 comma
 id|ADAPTEC_7880
 comma
-l_string|&quot;AIC-7880&quot;
+l_string|&quot;AIC-7880U&quot;
 )paren
 comma
 id|DEVICE
@@ -1314,7 +1314,17 @@ id|ADAPTEC
 comma
 id|ADAPTEC_7881
 comma
-l_string|&quot;AIC-7881&quot;
+l_string|&quot;AIC-7881U&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|ADAPTEC
+comma
+id|ADAPTEC_7882
+comma
+l_string|&quot;AIC-7882U&quot;
 )paren
 comma
 id|DEVICE

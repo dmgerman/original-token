@@ -298,7 +298,7 @@ suffix:semicolon
 op_star
 id|dotsOK
 op_assign
-l_int|1
+l_int|0
 suffix:semicolon
 op_star
 id|uid

@@ -970,6 +970,18 @@ c_func
 id|tty_hung_up_p
 )paren
 comma
+id|X
+c_func
+(paren
+id|do_SAK
+)paren
+comma
+id|X
+c_func
+(paren
+id|console_print
+)paren
+comma
 multiline_comment|/* filesystem registration */
 id|X
 c_func

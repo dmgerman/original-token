@@ -745,6 +745,7 @@ r_else
 r_if
 c_cond
 (paren
+op_logical_neg
 id|strcmp
 (paren
 id|value
@@ -764,6 +765,7 @@ r_else
 r_if
 c_cond
 (paren
+op_logical_neg
 id|strcmp
 (paren
 id|value

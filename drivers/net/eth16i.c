@@ -4903,14 +4903,6 @@ id|CONFIG_REG_1
 suffix:semicolon
 )brace
 macro_line|#ifdef MODULE
-DECL|variable|kernel_version
-r_char
-id|kernel_version
-(braket
-)braket
-op_assign
-id|UTS_RELEASE
-suffix:semicolon
 DECL|variable|devicename
 r_static
 r_char

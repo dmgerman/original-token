@@ -926,6 +926,17 @@ id|Scsi_Cmnd
 op_star
 )paren
 suffix:semicolon
+r_extern
+r_void
+id|scsi_mark_host_bus_reset
+c_func
+(paren
+r_struct
+id|Scsi_Host
+op_star
+id|Host
+)paren
+suffix:semicolon
 macro_line|#if defined(MAJOR_NR) &amp;&amp; (MAJOR_NR != SCSI_TAPE_MAJOR)
 macro_line|#include &quot;hosts.h&quot;
 DECL|function|end_scsi_request

@@ -13258,6 +13258,7 @@ id|set_geometry
 c_func
 (paren
 r_int
+r_int
 id|cmd
 comma
 r_struct
@@ -13897,7 +13898,7 @@ id|ocmd
 suffix:semicolon
 id|orig_size
 op_assign
-id|IOC_SIZE
+id|_IOC_SIZE
 c_func
 (paren
 op_star
@@ -13966,7 +13967,7 @@ c_cond
 op_logical_neg
 id|orig_size
 op_logical_and
-id|IOC_SIZE
+id|_IOC_SIZE
 c_func
 (paren
 op_star
@@ -13974,11 +13975,11 @@ id|cmd
 )paren
 )paren
 (brace
-multiline_comment|/* kernels 1.3.34 to 1.3.37 : */
+multiline_comment|/* kernels 1.3.34 to 1.3.39 : */
 op_star
 id|size
 op_assign
-id|IOC_SIZE
+id|_IOC_SIZE
 c_func
 (paren
 op_star
@@ -14014,7 +14015,7 @@ c_cond
 op_star
 id|size
 OG
-id|IOC_SIZE
+id|_IOC_SIZE
 c_func
 (paren
 op_star
@@ -14648,6 +14649,8 @@ c_func
 (paren
 id|outparam
 )paren
+op_plus
+l_int|1
 )paren
 suffix:semicolon
 r_break

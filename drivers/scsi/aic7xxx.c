@@ -1,4 +1,4 @@
-multiline_comment|/*+M*************************************************************************&n; * Adaptec 274x/284x/294x device driver for Linux.&n; *&n; * Copyright (c) 1994 John Aycock&n; *   The University of Calgary Department of Computer Science.&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; see the file COPYING.  If not, write to&n; * the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * Sources include the Adaptec 1740 driver (aha1740.c), the Ultrastor 24F&n; * driver (ultrastor.c), various Linux kernel source, the Adaptec EISA&n; * config file (!adp7771.cfg), the Adaptec AHA-2740A Series User&squot;s Guide,&n; * the Linux Kernel Hacker&squot;s Guide, Writing a SCSI Device Driver for Linux,&n; * the Adaptec 1542 driver (aha1542.c), the Adaptec EISA overlay file&n; * (adp7770.ovl), the Adaptec AHA-2740 Series Technical Reference Manual,&n; * the Adaptec AIC-7770 Data Book, the ANSI SCSI specification, the&n; * ANSI SCSI-2 specification (draft 10c), ...&n; *&n; * ----------------------------------------------------------------&n; *  Modified to include support for wide and twin bus adapters,&n; *  DMAing of SCBs, tagged queueing, IRQ sharing, bug fixes,&n; *  and other rework of the code.&n; *&n; *  Parts of this driver are based on the FreeBSD driver by Justin&n; *  T. Gibbs.&n; *&n; *  A Boot time option was also added for not resetting the scsi bus.&n; *&n; *    Form:  aic7xxx=extended,no_reset&n; *&n; *    -- Daniel M. Eischen, deischen@iworks.InterWorks.org, 04/03/95&n; *&n; *  $Id: aic7xxx.c,v 2.5 1995/09/20 05:18:18 deang Exp $&n; *-M*************************************************************************/
+multiline_comment|/*+M*************************************************************************&n; * Adaptec 274x/284x/294x device driver for Linux.&n; *&n; * Copyright (c) 1994 John Aycock&n; *   The University of Calgary Department of Computer Science.&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; see the file COPYING.  If not, write to&n; * the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * Sources include the Adaptec 1740 driver (aha1740.c), the Ultrastor 24F&n; * driver (ultrastor.c), various Linux kernel source, the Adaptec EISA&n; * config file (!adp7771.cfg), the Adaptec AHA-2740A Series User&squot;s Guide,&n; * the Linux Kernel Hacker&squot;s Guide, Writing a SCSI Device Driver for Linux,&n; * the Adaptec 1542 driver (aha1542.c), the Adaptec EISA overlay file&n; * (adp7770.ovl), the Adaptec AHA-2740 Series Technical Reference Manual,&n; * the Adaptec AIC-7770 Data Book, the ANSI SCSI specification, the&n; * ANSI SCSI-2 specification (draft 10c), ...&n; *&n; * ----------------------------------------------------------------&n; *  Modified to include support for wide and twin bus adapters,&n; *  DMAing of SCBs, tagged queueing, IRQ sharing, bug fixes,&n; *  and other rework of the code.&n; *&n; *  Parts of this driver are based on the FreeBSD driver by Justin&n; *  T. Gibbs.&n; *&n; *  A Boot time option was also added for not resetting the scsi bus.&n; *&n; *    Form:  aic7xxx=extended,no_reset&n; *&n; *    -- Daniel M. Eischen, deischen@iworks.InterWorks.org, 04/03/95&n; *&n; *  $Id: aic7xxx.c,v 2.10 1995/11/10 10:49:14 deang Exp $&n; *-M*************************************************************************/
 macro_line|#ifdef MODULE
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#endif
@@ -42,7 +42,7 @@ l_int|2
 )brace
 suffix:semicolon
 DECL|macro|AIC7XXX_C_VERSION
-mdefine_line|#define AIC7XXX_C_VERSION  &quot;$Revision: 2.5 $&quot;
+mdefine_line|#define AIC7XXX_C_VERSION  &quot;$Revision: 2.10 $&quot;
 DECL|macro|NUMBER
 mdefine_line|#define NUMBER(arr)     (sizeof(arr) / sizeof(arr[0]))
 DECL|macro|MIN
@@ -76,7 +76,7 @@ multiline_comment|/*&n; * Uncomment the following define for collection of SCSI 
 multiline_comment|/* #define AIC7XXX_PROC_STATS */
 multiline_comment|/*&n; * Define this to use polling rather than using kernel support for waking&n; * up a waiting process.&n; */
 DECL|macro|AIC7XXX_POLL
-macro_line|#undef AIC7XXX_POLL
+mdefine_line|#define AIC7XXX_POLL
 multiline_comment|/*&n; * Controller type and options&n; */
 r_typedef
 r_enum
@@ -95,14 +95,23 @@ multiline_comment|/* VLB  aic7770 */
 DECL|enumerator|AIC_7870
 id|AIC_7870
 comma
-multiline_comment|/* PCI  aic7870 */
+multiline_comment|/* PCI  aic7870/aic7871 motherboard or 294x */
 DECL|enumerator|AIC_7850
 id|AIC_7850
 comma
 multiline_comment|/* PCI  aic7850 */
 DECL|enumerator|AIC_7872
 id|AIC_7872
+comma
 multiline_comment|/* PCI  aic7870 on 394x */
+DECL|enumerator|AIC_7880
+id|AIC_7880
+comma
+multiline_comment|/* PCI  aic7880/aic7881 motherboard or 294x Ultra */
+DECL|enumerator|AIC_7882
+id|AIC_7882
+comma
+multiline_comment|/* PCI  aic7870 on 394x Ultra */
 DECL|typedef|aha_type
 )brace
 id|aha_type
@@ -204,6 +213,24 @@ DECL|macro|ENAUTOATNP
 mdefine_line|#define&t;&t;ENAUTOATNP&t;0x02
 DECL|macro|SCSIRSTO
 mdefine_line|#define&t;&t;SCSIRSTO&t;0x01
+multiline_comment|/*&n; * SCSI Transfer Control 0 Register (pp. 3-13).&n; * Controls the SCSI module data path.&n; */
+DECL|macro|SXFRCTL0
+mdefine_line|#define&t;SXFRCTL0(x)&t;&t;((x) + 0xC01ul)
+DECL|macro|DFON
+mdefine_line|#define&t;&t;DFON&t;&t;0x80
+DECL|macro|DFPEXP
+mdefine_line|#define&t;&t;DFPEXP&t;&t;0x40
+DECL|macro|ULTRAEN
+mdefine_line|#define&t;&t;ULTRAEN&t;&t;0x20
+DECL|macro|CLRSTCNT
+mdefine_line|#define&t;&t;CLRSTCNT&t;0x10
+DECL|macro|SPIOEN
+mdefine_line|#define&t;&t;SPIOEN&t;&t;0x08
+DECL|macro|SCAMEN
+mdefine_line|#define&t;&t;SCAMEN&t;&t;0x04
+DECL|macro|CLRCHN
+mdefine_line|#define&t;&t;CLRCHN&t;&t;0x02
+multiline_comment|/*  UNUSED&t;&t;&t;0x01 */
 multiline_comment|/*&n; * SCSI Transfer Control 1 Register (pp. 3-14,15).&n; * Controls the SCSI module data path.&n; */
 DECL|macro|SXFRCTL1
 mdefine_line|#define SXFRCTL1(x)&t;&t;((x) + 0xC02ul)
@@ -364,32 +391,19 @@ mdefine_line|#define&t;&t;SELID_MASK&t;0xF0
 DECL|macro|ONEBIT
 mdefine_line|#define&t;&t;ONEBIT&t;&t;0x08
 multiline_comment|/*  UNUSED&t;&t;&t;0x07 */
-multiline_comment|/*&n; * Serial EEPROM Control (p. 4-92 in 7870 Databook)&n; * Controls the reading and writing of an external serial 1-bit&n; * EEPROM Device.  In order to access the serial EEPROM, you must&n; * first set the SEEMS bit that generates a request to the memory&n; * port for access to the serial EEPROM device.  When the memory&n; * port is not busy servicing another request, it reconfigures&n; * to allow access to the serial EEPROM.  When this happens, SEERDY&n; * gets set high to verify that the memory port access has been&n; * granted.  See aic7xxx_read_eprom for detailed information on&n; * the protocol necessary to read the serial EEPROM.&n; */
-DECL|macro|SEECTL
-mdefine_line|#define SEECTL(x)&t;&t;((x) + 0xC1Eul)
-DECL|macro|EXTARBACK
-mdefine_line|#define&t;&t;EXTARBACK&t;0x80
-DECL|macro|EXTARBREQ
-mdefine_line|#define&t;&t;EXTARBREQ&t;0x40
-DECL|macro|SEEMS
-mdefine_line|#define&t;&t;SEEMS&t;&t;0x20
-DECL|macro|SEERDY
-mdefine_line|#define&t;&t;SEERDY&t;&t;0x10
-DECL|macro|SEECS
-mdefine_line|#define&t;&t;SEECS&t;&t;0x08
-DECL|macro|SEECK
-mdefine_line|#define&t;&t;SEECK&t;&t;0x04
-DECL|macro|SEEDO
-mdefine_line|#define&t;&t;SEEDO&t;&t;0x02
-DECL|macro|SEEDI
-mdefine_line|#define&t;&t;SEEDI&t;&t;0x01
 multiline_comment|/*&n; * SCSI Block Control (p. 3-32)&n; * Controls Bus type and channel selection. In a twin channel configuration&n; * addresses 0x00-0x1E are gated to the appropriate channel based on this&n; * register. SELWIDE allows for the coexistence of 8bit and 16bit devices&n; * on a wide bus.&n; */
 DECL|macro|SBLKCTL
 mdefine_line|#define SBLKCTL(x)&t;&t;((x) + 0xC1Ful)
 multiline_comment|/*  UNUSED&t;&t;&t;0xC0 */
+DECL|macro|DIAGLEDEN
+mdefine_line|#define&t;&t;DIAGLEDEN&t;0x80
+DECL|macro|DIAGLEDON
+mdefine_line|#define&t;&t;DIAGLEDON&t;0x40
 DECL|macro|AUTOFLUSHDIS
 mdefine_line|#define&t;&t;AUTOFLUSHDIS&t;0x20&t;&t;/* used for Rev C check */
 multiline_comment|/*  UNUSED&t;&t;&t;0x10 */
+DECL|macro|SELBUS_MASK
+mdefine_line|#define&t;&t;SELBUS_MASK&t;0x0F
 DECL|macro|SELBUSB
 mdefine_line|#define&t;&t;SELBUSB&t;&t;0x08
 multiline_comment|/*  UNUSED&t;&t;&t;0x04 */
@@ -472,7 +486,7 @@ mdefine_line|#define&t;&t;INTEN&t;&t;0x02
 DECL|macro|CHIPRST
 mdefine_line|#define&t;&t;CHIPRST&t;&t;0x01
 DECL|macro|REQ_PAUSE
-mdefine_line|#define&t;&t;REQ_PAUSE&t;IRQMS | PAUSE | INTEN
+mdefine_line|#define&t;&t;REQ_PAUSE&t;IRQMS | INTEN | PAUSE
 DECL|macro|UNPAUSE_274X
 mdefine_line|#define&t;&t;UNPAUSE_274X&t;IRQMS | INTEN
 DECL|macro|UNPAUSE_284X
@@ -569,11 +583,78 @@ mdefine_line|#define QOUTCNT(x)&t;&t;((x) + 0xC9Eul)
 DECL|macro|SCBARRAY
 mdefine_line|#define SCBARRAY(x)&t;&t;((x) + 0xCA0ul)
 multiline_comment|/* ---------------- END AIC-7770 Register Definitions ----------------- */
+multiline_comment|/* --------------------- AHA-2840-only definitions -------------------- */
+DECL|macro|SEECTL_2840
+mdefine_line|#define SEECTL_2840(x)&t;&t;((x) + 0xCC0ul)
+multiline_comment|/*    UNUSED&t;&t;&t;0xF8 */
+DECL|macro|CS_2840
+mdefine_line|#define&t;&t;CS_2840&t;&t;0x04
+DECL|macro|CK_2840
+mdefine_line|#define&t;&t;CK_2840&t;&t;0x02
+DECL|macro|DO_2840
+mdefine_line|#define&t;&t;DO_2840&t;&t;0x01
+DECL|macro|STATUS_2840
+mdefine_line|#define STATUS_2840(x)&t;&t;((x) + 0xCC1ul)
+DECL|macro|EEPROM_TF
+mdefine_line|#define&t;&t;EEPROM_TF&t;0x80
+DECL|macro|BIOS_SEL
+mdefine_line|#define&t;&t;BIOS_SEL&t;0x60
+DECL|macro|ADSEL
+mdefine_line|#define&t;&t;ADSEL&t;&t;0x1E
+DECL|macro|DI_2840
+mdefine_line|#define&t;&t;DI_2840&t;&t;0x01
 multiline_comment|/* --------------------- AIC-7870-only definitions -------------------- */
 DECL|macro|DSPCISTATUS
 mdefine_line|#define DSPCISTATUS(x)&t; &t;((x) + 0xC86ul)
 DECL|macro|DFTHRESH
 mdefine_line|#define &t;DFTHRESH        0xC0
+multiline_comment|/*&n; * Serial EEPROM Control (p. 4-92 in 7870 Databook)&n; * Controls the reading and writing of an external serial 1-bit&n; * EEPROM Device.  In order to access the serial EEPROM, you must&n; * first set the SEEMS bit that generates a request to the memory&n; * port for access to the serial EEPROM device.  When the memory&n; * port is not busy servicing another request, it reconfigures&n; * to allow access to the serial EEPROM.  When this happens, SEERDY&n; * gets set high to verify that the memory port access has been&n; * granted.  See aic7xxx_read_eprom for detailed information on&n; * the protocol necessary to read the serial EEPROM.&n; */
+DECL|macro|SEECTL
+mdefine_line|#define SEECTL(x)&t;&t;((x) + 0xC1Eul)
+DECL|macro|EXTARBACK
+mdefine_line|#define&t;&t;EXTARBACK&t;0x80
+DECL|macro|EXTARBREQ
+mdefine_line|#define&t;&t;EXTARBREQ&t;0x40
+DECL|macro|SEEMS
+mdefine_line|#define&t;&t;SEEMS&t;&t;0x20
+DECL|macro|SEERDY
+mdefine_line|#define&t;&t;SEERDY&t;&t;0x10
+DECL|macro|SEECS
+mdefine_line|#define&t;&t;SEECS&t;&t;0x08
+DECL|macro|SEECK
+mdefine_line|#define&t;&t;SEECK&t;&t;0x04
+DECL|macro|SEEDO
+mdefine_line|#define&t;&t;SEEDO&t;&t;0x02
+DECL|macro|SEEDI
+mdefine_line|#define&t;&t;SEEDI&t;&t;0x01
+DECL|macro|DEVREVID
+mdefine_line|#define DEVREVID  &t;&t;0x08ul
+DECL|macro|DEVSTATUS
+mdefine_line|#define&t;DEVSTATUS&t;&t;0x40ul
+DECL|macro|MPORTMODE
+mdefine_line|#define&t;&t;MPORTMODE&t;0x04&t;/* aic7870 only */
+DECL|macro|RAMPSM
+mdefine_line|#define&t;&t;RAMPSM&t;&t;0x02&t;/* aic7870 only */
+DECL|macro|VOLSENSE
+mdefine_line|#define&t;&t;VOLSENSE&t;0x01
+DECL|macro|DEVCONFIG
+mdefine_line|#define&t;DEVCONFIG&t;&t;0x41ul
+DECL|macro|SCBRAMSEL
+mdefine_line|#define&t;&t;SCBRAMSEL&t;0x80
+DECL|macro|MRDCEN
+mdefine_line|#define&t;&t;MRDCEN&t;&t;0x40
+DECL|macro|EXTSCBTIME
+mdefine_line|#define&t;&t;EXTSCBTIME&t;0x20&t;/* aic7870 only */
+DECL|macro|EXTSCBPEN
+mdefine_line|#define&t;&t;EXTSCBPEN&t;0x10&t;/* aic7870 only */
+DECL|macro|BERREN
+mdefine_line|#define&t;&t;BERREN&t;&t;0x08
+DECL|macro|DACEN
+mdefine_line|#define&t;&t;DACEN&t;&t;0x04
+DECL|macro|STPWLEVEL
+mdefine_line|#define&t;&t;STPWLEVEL&t;0x02
+DECL|macro|DIFACTNEGEN
+mdefine_line|#define&t;&t;DIFACTNEGEN&t;0x01&t;/* aic7870 only */
 multiline_comment|/* Scratch RAM offset definitions */
 multiline_comment|/* ---------------------- Scratch RAM Offsets ------------------------- */
 multiline_comment|/* These offsets are either to values that are initialized by the board&squot;s&n; * BIOS or are specified by the Linux sequencer code. If I can figure out&n; * how to read the EISA configuration info at probe time, the cards could&n; * be run without BIOS support installed&n; */
@@ -711,11 +792,13 @@ id|bios_control
 suffix:semicolon
 multiline_comment|/* word 16 */
 multiline_comment|/*&n; * Host Adapter Control Bits&n; */
-multiline_comment|/* UNUSED&t;&t;0x0003 */
-DECL|macro|CFWSTERM
-mdefine_line|#define CFWSTERM&t;0x0008&t;&t;/* SCSI high byte termination (wide card) */
+multiline_comment|/* UNUSED               0x0001 */
+DECL|macro|CFULTRAEN
+mdefine_line|#define CFULTRAEN       0x0002          /* Ultra SCSI speed enable (Ultra cards) */
 DECL|macro|CFSTERM
-mdefine_line|#define CFSTERM&t;&t;0x0004&t;&t;/* SCSI low byte termination (non-wide cards) */
+mdefine_line|#define CFSTERM         0x0004          /* SCSI low byte termination (non-wide cards) */
+DECL|macro|CFWSTERM
+mdefine_line|#define CFWSTERM        0x0008          /* SCSI high byte termination (wide card) */
 DECL|macro|CFSPARITY
 mdefine_line|#define CFSPARITY&t;0x0010&t;&t;/* SCSI parity */
 multiline_comment|/* UNUSED&t;&t;0x0020 */
@@ -777,7 +860,7 @@ DECL|macro|UNPAUSE_SEQUENCER
 mdefine_line|#define UNPAUSE_SEQUENCER(p) &bslash;&n;  outb(p-&gt;unpause, HCNTRL(p-&gt;base))
 multiline_comment|/*&n; * Restart the sequencer program from address zero&n; */
 DECL|macro|RESTART_SEQUENCER
-mdefine_line|#define RESTART_SEQUENCER(p) &bslash;&n;  do {&t;&t;&t;&t;&t;&t;&t;&bslash;&n;    outb(SEQRESET | FASTMODE, SEQCTL(p-&gt;base));&t;&bslash;&n;  } while (inb(SEQADDR0(p-&gt;base)) != 0 &amp;&amp;&t;&t;&bslash;&n;&t;   inb(SEQADDR1(p-&gt;base)) != 0);&t;&t;&bslash;&n;  UNPAUSE_SEQUENCER(p);
+mdefine_line|#define RESTART_SEQUENCER(p) &bslash;&n;  do {&t;&t;&t;&t;&t;&t;&t;&bslash;&n;    outb(SEQRESET | FASTMODE, SEQCTL(p-&gt;base));&t;&t;&bslash;&n;  } while (inb(SEQADDR0(p-&gt;base)) != 0 &amp;&amp;&t;&t;&bslash;&n;&t;   inb(SEQADDR1(p-&gt;base)) != 0);&t;&t;&bslash;&n;  UNPAUSE_SEQUENCER(p);
 multiline_comment|/*&n; * If an error occurs during a data transfer phase, run the comand&n; * to completion - it&squot;s easier that way - making a note of the error&n; * condition in this location. This then will modify a DID_OK status&n; * into an appropriate error for the higher-level SCSI code.&n; */
 DECL|macro|aic7xxx_error
 mdefine_line|#define aic7xxx_error(cmd)&t;((cmd)-&gt;SCp.Status)
@@ -997,11 +1080,6 @@ op_star
 id|cmd
 suffix:semicolon
 multiline_comment|/* Scsi_Cmnd for this scb */
-DECL|member|state
-r_int
-id|state
-suffix:semicolon
-multiline_comment|/* current state of scb */
 DECL|macro|SCB_FREE
 mdefine_line|#define SCB_FREE               0x00
 DECL|macro|SCB_ACTIVE
@@ -1014,6 +1092,11 @@ DECL|macro|SCB_IMMED
 mdefine_line|#define SCB_IMMED              0x08
 DECL|macro|SCB_SENSE
 mdefine_line|#define SCB_SENSE              0x10
+DECL|member|state
+r_int
+id|state
+suffix:semicolon
+multiline_comment|/* current state of scb */
 DECL|member|position
 r_int
 r_int
@@ -1156,7 +1239,7 @@ l_int|0
 suffix:semicolon
 multiline_comment|/*&n; * The maximum number of SCBs we could have for ANY type&n; * of card. DON&squot;T FORGET TO CHANGE THE SCB MASK IN THE&n; * SEQUENCER CODE IF THIS IS MODIFIED!&n; */
 DECL|macro|AIC7XXX_MAXSCB
-mdefine_line|#define AIC7XXX_MAXSCB&t;16
+mdefine_line|#define AIC7XXX_MAXSCB&t;255
 multiline_comment|/*&n; * Define a structure used for each host adapter, only one per IRQ.&n; */
 DECL|struct|aic7xxx_host
 r_struct
@@ -1187,6 +1270,16 @@ id|aha_type
 id|type
 suffix:semicolon
 multiline_comment|/* card type */
+DECL|member|ultra_enabled
+r_int
+id|ultra_enabled
+suffix:semicolon
+multiline_comment|/* Ultra SCSI speed enabled */
+DECL|member|chan_num
+r_int
+id|chan_num
+suffix:semicolon
+multiline_comment|/* for 3940/3985, channel number */
 DECL|member|bus_type
 id|aha_bus_type
 id|bus_type
@@ -1414,11 +1507,26 @@ r_int
 id|busrtime
 suffix:semicolon
 multiline_comment|/* bus release time */
+DECL|member|walk_scbs
+r_int
+id|walk_scbs
+suffix:semicolon
+multiline_comment|/* external SCB RAM detected; walk the scb array */
 DECL|member|type
 id|aha_type
 id|type
 suffix:semicolon
 multiline_comment|/* card type */
+DECL|member|ultra_enabled
+r_int
+id|ultra_enabled
+suffix:semicolon
+multiline_comment|/* Ultra SCSI speed enabled */
+DECL|member|chan_num
+r_int
+id|chan_num
+suffix:semicolon
+multiline_comment|/* for 3940/3985, channel number */
 DECL|member|bus_type
 id|aha_bus_type
 id|bus_type
@@ -1449,6 +1557,9 @@ DECL|member|period
 r_int
 id|period
 suffix:semicolon
+multiline_comment|/* Rates in Ultra mode have bit 8 of sxfr set */
+DECL|macro|ULTRA_SXFR
+mdefine_line|#define&t;&t;ULTRA_SXFR 0x100
 DECL|member|rate
 r_int
 id|rate
@@ -1467,9 +1578,41 @@ id|aic7xxx_syncrates
 op_assign
 (brace
 (brace
+l_int|50
+comma
+l_int|0x100
+comma
+l_string|&quot;20.0&quot;
+)brace
+comma
+(brace
+l_int|62
+comma
+l_int|0x110
+comma
+l_string|&quot;16.0&quot;
+)brace
+comma
+(brace
+l_int|75
+comma
+l_int|0x120
+comma
+l_string|&quot;13.4&quot;
+)brace
+comma
+(brace
 l_int|100
 comma
-l_int|0
+l_int|0x140
+comma
+l_string|&quot;10.0&quot;
+)brace
+comma
+(brace
+l_int|100
+comma
+l_int|0x000
 comma
 l_string|&quot;10.0&quot;
 )brace
@@ -1477,7 +1620,7 @@ comma
 (brace
 l_int|125
 comma
-l_int|1
+l_int|0x010
 comma
 l_string|&quot;8.0&quot;
 )brace
@@ -1485,7 +1628,7 @@ comma
 (brace
 l_int|150
 comma
-l_int|2
+l_int|0x020
 comma
 l_string|&quot;6.67&quot;
 )brace
@@ -1493,7 +1636,7 @@ comma
 (brace
 l_int|175
 comma
-l_int|3
+l_int|0x030
 comma
 l_string|&quot;5.7&quot;
 )brace
@@ -1501,7 +1644,7 @@ comma
 (brace
 l_int|200
 comma
-l_int|4
+l_int|0x040
 comma
 l_string|&quot;5.0&quot;
 )brace
@@ -1509,7 +1652,7 @@ comma
 (brace
 l_int|225
 comma
-l_int|5
+l_int|0x050
 comma
 l_string|&quot;4.4&quot;
 )brace
@@ -1517,7 +1660,7 @@ comma
 (brace
 l_int|250
 comma
-l_int|6
+l_int|0x060
 comma
 l_string|&quot;4.0&quot;
 )brace
@@ -1525,7 +1668,7 @@ comma
 (brace
 l_int|275
 comma
-l_int|7
+l_int|0x070
 comma
 l_string|&quot;3.6&quot;
 )brace
@@ -1548,6 +1691,13 @@ id|aic7xxx_syncrates
 l_int|0
 )braket
 )paren
+suffix:semicolon
+DECL|variable|number_of_3940s
+r_static
+r_int
+id|number_of_3940s
+op_assign
+l_int|0
 suffix:semicolon
 macro_line|#ifdef AIC7XXX_DEBUG
 r_static
@@ -1809,7 +1959,7 @@ suffix:colon
 id|printk
 c_func
 (paren
-l_string|&quot;AIC7870%s (PCI-bus):&bslash;n&quot;
+l_string|&quot;AIC7870/7871%s (PCI-bus):&bslash;n&quot;
 comma
 id|BUSW
 (braket
@@ -1842,6 +1992,38 @@ id|printk
 c_func
 (paren
 l_string|&quot;AIC7872%s (PCI-bus):&bslash;n&quot;
+comma
+id|BUSW
+(braket
+id|p-&gt;bus_type
+)braket
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|AIC_7880
+suffix:colon
+id|printk
+c_func
+(paren
+l_string|&quot;AIC7880/7881%s (PCI-bus):&bslash;n&quot;
+comma
+id|BUSW
+(braket
+id|p-&gt;bus_type
+)braket
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|AIC_7882
+suffix:colon
+id|printk
+c_func
+(paren
+l_string|&quot;AIC7882%s (PCI-bus):&bslash;n&quot;
 comma
 id|BUSW
 (braket
@@ -2058,9 +2240,9 @@ l_string|&quot;dis&quot;
 suffix:semicolon
 )brace
 )brace
+macro_line|#if 0
 r_static
 r_void
-DECL|function|debug_scb
 id|debug_scb
 c_func
 (paren
@@ -2287,6 +2469,7 @@ id|scb-&gt;position
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
 macro_line|#else
 DECL|macro|debug
 macro_line|#  define debug(fmt, args...)
@@ -2299,6 +2482,7 @@ multiline_comment|/*&n; * XXX - these options apply unilaterally to _all_ 274x/2
 DECL|variable|aic7xxx_extended
 r_static
 r_int
+r_int
 id|aic7xxx_extended
 op_assign
 l_int|0
@@ -2307,12 +2491,13 @@ multiline_comment|/* extended translation on? */
 DECL|variable|aic7xxx_no_reset
 r_static
 r_int
+r_int
 id|aic7xxx_no_reset
 op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* no resetting of SCSI bus */
-multiline_comment|/*+F*************************************************************************&n; * Function:&n; *   aic7xxx_setup&n; *&n; * Description:&n; *   Handle Linux boot parameters.&n; *-F*************************************************************************/
+multiline_comment|/*+F*************************************************************************&n; * Function:&n; *   aic7xxx_setup&n; *&n; * Description:&n; *   Handle Linux boot parameters. This routine allows for assigning a value&n; *   to a parameter with a &squot;:&squot; between the parameter and the value.&n; *   ie. aic7xxx=unpause:0x0A,extended&n; *-F*************************************************************************/
 r_void
 DECL|function|aic7xxx_setup
 id|aic7xxx_setup
@@ -2329,6 +2514,8 @@ id|dummy
 (brace
 r_int
 id|i
+comma
+id|n
 suffix:semicolon
 r_char
 op_star
@@ -2342,6 +2529,7 @@ r_char
 op_star
 id|name
 suffix:semicolon
+r_int
 r_int
 op_star
 id|flag
@@ -2417,11 +2605,24 @@ id|i
 op_increment
 )paren
 (brace
+id|n
+op_assign
+id|strlen
+c_func
+(paren
+id|options
+(braket
+id|i
+)braket
+dot
+id|name
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
 op_logical_neg
-id|strcmp
+id|strncmp
 c_func
 (paren
 id|options
@@ -2432,8 +2633,48 @@ dot
 id|name
 comma
 id|p
+comma
+id|n
 )paren
 )paren
+(brace
+r_if
+c_cond
+(paren
+id|p
+(braket
+id|n
+)braket
+op_eq
+l_char|&squot;:&squot;
+)paren
+(brace
+op_star
+(paren
+id|options
+(braket
+id|i
+)braket
+dot
+id|flag
+)paren
+op_assign
+id|simple_strtoul
+c_func
+(paren
+id|p
+op_plus
+id|n
+op_plus
+l_int|1
+comma
+l_int|NULL
+comma
+l_int|0
+)paren
+suffix:semicolon
+)brace
+r_else
 (brace
 op_star
 (paren
@@ -2448,6 +2689,7 @@ op_assign
 op_logical_neg
 l_int|0
 suffix:semicolon
+)brace
 )brace
 )brace
 )brace
@@ -3277,6 +3519,11 @@ DECL|function|aic7xxx_scsirate
 id|aic7xxx_scsirate
 c_func
 (paren
+r_struct
+id|aic7xxx_host
+op_star
+id|p
+comma
 r_int
 r_char
 op_star
@@ -3332,6 +3579,73 @@ op_ge
 l_int|0
 )paren
 (brace
+multiline_comment|/*&n;       * Watch out for Ultra speeds when ultra is not enabled and&n;       * vice-versa.&n;       */
+r_if
+c_cond
+(paren
+id|p-&gt;ultra_enabled
+)paren
+(brace
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|aic7xxx_syncrates
+(braket
+id|i
+)braket
+dot
+id|rate
+op_amp
+id|ULTRA_SXFR
+)paren
+)paren
+(brace
+id|printk
+(paren
+l_string|&quot;aic7xxx: target %d, channel %c, requests %sMB/s transfers, &quot;
+l_string|&quot;but adapter in Ultra mode can only sync at 10MB/s or &quot;
+l_string|&quot;above.&bslash;n&quot;
+comma
+id|target
+comma
+id|channel
+comma
+id|aic7xxx_syncrates
+(braket
+id|i
+)braket
+dot
+id|english
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+multiline_comment|/* Use asynchronous transfers. */
+)brace
+)brace
+r_else
+(brace
+multiline_comment|/*&n;         * Check for an Ultra device trying to negotiate an Ultra rate&n;         * on an adapter with Ultra mode disabled.&n;         */
+r_if
+c_cond
+(paren
+id|aic7xxx_syncrates
+(braket
+id|i
+)braket
+dot
+id|rate
+op_amp
+id|ULTRA_SXFR
+)paren
+(brace
+multiline_comment|/*&n;           * This should only happen if the driver is the first to negotiate&n;           * and chooses a high rate.  We&squot;ll just move down the table until&n;           * we hit a non Ultra speed.&n;           */
+r_continue
+suffix:semicolon
+)brace
+)brace
 op_star
 id|scsirate
 op_assign
@@ -3342,8 +3656,6 @@ id|i
 )braket
 dot
 id|rate
-op_lshift
-l_int|4
 )paren
 op_or
 (paren
@@ -3355,7 +3667,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;aic7xxx: target %d, channel %c, now synchronous at %sMb/s, &quot;
+l_string|&quot;aic7xxx: target %d, channel %c, now synchronous at %sMB/s, &quot;
 l_string|&quot;offset = 0x%x&bslash;n&quot;
 comma
 id|target
@@ -5985,6 +6297,8 @@ suffix:semicolon
 id|aic7xxx_scsirate
 c_func
 (paren
+id|p
+comma
 op_amp
 id|rate
 comma
@@ -8901,11 +9215,11 @@ id|AIC_NONE
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*+F*************************************************************************&n; * Function:&n; *   read_seeprom&n; *&n; * Description:&n; *   Reads the serial EEPROM and returns 1 if successful and 0 if&n; *   not successful.&n; *&n; *   The instruction set of the 93C46 chip is as follows:&n; *&n; *               Start  OP&n; *     Function   Bit  Code  Address    Data     Description&n; *     -------------------------------------------------------------------&n; *     READ        1    10   A5 - A0             Reads data stored in memory,&n; *                                               starting at specified address&n; *     EWEN        1    00   11XXXX              Write enable must preceed&n; *                                               all programming modes&n; *     ERASE       1    11   A5 - A0             Erase register A5A4A3A2A1A0&n; *     WRITE       1    01   A5 - A0   D15 - D0  Writes register&n; *     ERAL        1    00   10XXXX              Erase all registers&n; *     WRAL        1    00   01XXXX    D15 - D0  Writes to all registers&n; *     EWDS        1    00   00XXXX              Disables all programming&n; *                                               instructions&n; *     *Note: A value of X for address is a don&squot;t care condition.&n; *&n; *   The 93C46 has a four wire interface: clock, chip select, data in, and&n; *   data out.  In order to perform one of the above functions, you need&n; *   to enable the chip select for a clock period (typically a minimum of&n; *   1 usec, with the clock high and low a minimum of 750 and 250 nsec&n; *   respectively.  While the chip select remains high, you can clock in&n; *   the instructions (above) starting with the start bit, followed by the&n; *   OP code, Address, and Data (if needed).  For the READ instruction, the&n; *   requested 16-bit register contents is read from the data out line but&n; *   is preceded by an initial zero (leading 0, followed by 16-bits, MSB&n; *   first).  The clock cycling from low to high initiates the next data&n; *   bit to be sent from the chip.&n; *&n; *   The 7870 interface to the 93C46 serial EEPROM is through the SEECTL&n; *   register.  After successful arbitration for the memory port, the&n; *   SEECS bit of the SEECTL register is connected to the chip select.&n; *   The SEECK, SEEDO, and SEEDI are connected to the clock, data out,&n; *   and data in lines respectively.  The SEERDY bit of SEECTL is useful&n; *   in that it gives us an 800 nsec timer.  After a write to the SEECTL&n; *   register, the SEERDY goes high 800 nsec later.  The one exception&n; *   to this is when we first request access to the memory port.  The&n; *   SEERDY goes high to signify that access has been granted and, for&n; *   this case, has no implied timing.&n; *&n; *-F*************************************************************************/
+multiline_comment|/*+F*************************************************************************&n; * Function:&n; *   read_2840_seeprom&n; *&n; * Description:&n; *   Reads the 2840 serial EEPROM and returns 1 if successful and 0 if&n; *   not successful.&n; *&n; *   See read_seeprom (for the 2940) for the instruction set of the 93C46&n; *   chip.&n; *&n; *   The 2840 interface to the 93C46 serial EEPROM is through the&n; *   STATUS_2840 and SEECTL_2840 registers.  The CS_2840, CK_2840, and&n; *   DO_2840 bits of the SEECTL_2840 register are connected to the chip&n; *   select, clock, and data out lines respectively of the serial EEPROM.&n; *   The DI_2840 bit of the STATUS_2840 is connected to the data in line&n; *   of the serial EEPROM.  The EEPROM_TF bit of STATUS_2840 register is&n; *   useful in that it gives us an 800 nsec timer.  After a read from the&n; *   SEECTL_2840 register the timing flag is cleard and goes high 800 nsec&n; *   later.&n; *&n; *-F*************************************************************************/
 r_static
 r_int
-DECL|function|read_seeprom
-id|read_seeprom
+DECL|function|read_2840_seeprom
+id|read_2840_seeprom
 c_func
 (paren
 r_int
@@ -8925,6 +9239,571 @@ comma
 id|k
 op_assign
 l_int|0
+suffix:semicolon
+r_int
+r_char
+id|temp
+suffix:semicolon
+r_int
+r_int
+id|checksum
+op_assign
+l_int|0
+suffix:semicolon
+r_int
+r_int
+op_star
+id|seeprom
+op_assign
+(paren
+r_int
+r_int
+op_star
+)paren
+id|sc
+suffix:semicolon
+r_struct
+id|seeprom_cmd
+(brace
+r_int
+r_char
+id|len
+suffix:semicolon
+r_int
+r_char
+id|bits
+(braket
+l_int|3
+)braket
+suffix:semicolon
+)brace
+suffix:semicolon
+r_struct
+id|seeprom_cmd
+id|seeprom_read
+op_assign
+(brace
+l_int|3
+comma
+(brace
+l_int|1
+comma
+l_int|1
+comma
+l_int|0
+)brace
+)brace
+suffix:semicolon
+DECL|macro|CLOCK_PULSE
+mdefine_line|#define CLOCK_PULSE(p) &bslash;&n;  while ((inb(STATUS_2840(base)) &amp; EEPROM_TF) == 0)&t;&bslash;&n;  {&t;&t;&t;&t;&t;&t;&bslash;&n;    ;  /* Do nothing */&t;&t;&t;&t;&bslash;&n;  }&t;&t;&t;&t;&t;&t;&bslash;&n;  (void) inb(SEECTL_2840(base));
+multiline_comment|/*&n;   * Read the first 32 registers of the seeprom.  For the 2840,&n;   * the 93C46 SEEPROM is a 1024-bit device with 64 16-bit registers&n;   * but only the first 32 are used by Adaptec BIOS.  The loop&n;   * will range from 0 to 31.&n;   */
+r_for
+c_loop
+(paren
+id|k
+op_assign
+l_int|0
+suffix:semicolon
+id|k
+OL
+(paren
+r_sizeof
+(paren
+op_star
+id|sc
+)paren
+op_div
+l_int|2
+)paren
+suffix:semicolon
+id|k
+op_increment
+)paren
+(brace
+multiline_comment|/*&n;     * Send chip select for one clock cycle.&n;     */
+id|outb
+c_func
+(paren
+id|CK_2840
+op_or
+id|CS_2840
+comma
+id|SEECTL_2840
+c_func
+(paren
+id|base
+)paren
+)paren
+suffix:semicolon
+id|CLOCK_PULSE
+c_func
+(paren
+id|base
+)paren
+suffix:semicolon
+multiline_comment|/*&n;     * Now we&squot;re ready to send the read command followed by the&n;     * address of the 16-bit register we want to read.&n;     */
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|seeprom_read.len
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
+id|temp
+op_assign
+id|CS_2840
+op_or
+id|seeprom_read.bits
+(braket
+id|i
+)braket
+suffix:semicolon
+id|outb
+c_func
+(paren
+id|temp
+comma
+id|SEECTL_2840
+c_func
+(paren
+id|base
+)paren
+)paren
+suffix:semicolon
+id|CLOCK_PULSE
+c_func
+(paren
+id|base
+)paren
+suffix:semicolon
+id|temp
+op_assign
+id|temp
+op_xor
+id|CK_2840
+suffix:semicolon
+id|outb
+c_func
+(paren
+id|temp
+comma
+id|SEECTL_2840
+c_func
+(paren
+id|base
+)paren
+)paren
+suffix:semicolon
+id|CLOCK_PULSE
+c_func
+(paren
+id|base
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/*&n;     * Send the 6 bit address (MSB first, LSB last).&n;     */
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|5
+suffix:semicolon
+id|i
+op_ge
+l_int|0
+suffix:semicolon
+id|i
+op_decrement
+)paren
+(brace
+id|temp
+op_assign
+id|k
+suffix:semicolon
+id|temp
+op_assign
+(paren
+id|temp
+op_rshift
+id|i
+)paren
+op_amp
+l_int|1
+suffix:semicolon
+multiline_comment|/* Mask out all but lower bit. */
+id|temp
+op_assign
+id|CS_2840
+op_or
+id|temp
+suffix:semicolon
+id|outb
+c_func
+(paren
+id|temp
+comma
+id|SEECTL_2840
+c_func
+(paren
+id|base
+)paren
+)paren
+suffix:semicolon
+id|CLOCK_PULSE
+c_func
+(paren
+id|base
+)paren
+suffix:semicolon
+id|temp
+op_assign
+id|temp
+op_xor
+id|CK_2840
+suffix:semicolon
+id|outb
+c_func
+(paren
+id|temp
+comma
+id|SEECTL_2840
+c_func
+(paren
+id|base
+)paren
+)paren
+suffix:semicolon
+id|CLOCK_PULSE
+c_func
+(paren
+id|base
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/*&n;     * Now read the 16 bit register.  An initial 0 precedes the&n;     * register contents which begins with bit 15 (MSB) and ends&n;     * with bit 0 (LSB).  The initial 0 will be shifted off the&n;     * top of our word as we let the loop run from 0 to 16.&n;     */
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+op_le
+l_int|16
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
+id|temp
+op_assign
+id|CS_2840
+suffix:semicolon
+id|outb
+c_func
+(paren
+id|temp
+comma
+id|SEECTL_2840
+c_func
+(paren
+id|base
+)paren
+)paren
+suffix:semicolon
+id|CLOCK_PULSE
+c_func
+(paren
+id|base
+)paren
+suffix:semicolon
+id|temp
+op_assign
+id|temp
+op_xor
+id|CK_2840
+suffix:semicolon
+id|seeprom
+(braket
+id|k
+)braket
+op_assign
+(paren
+id|seeprom
+(braket
+id|k
+)braket
+op_lshift
+l_int|1
+)paren
+op_or
+(paren
+id|inb
+c_func
+(paren
+id|STATUS_2840
+c_func
+(paren
+id|base
+)paren
+)paren
+op_amp
+id|DI_2840
+)paren
+suffix:semicolon
+id|outb
+c_func
+(paren
+id|temp
+comma
+id|SEECTL_2840
+c_func
+(paren
+id|base
+)paren
+)paren
+suffix:semicolon
+id|CLOCK_PULSE
+c_func
+(paren
+id|base
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/*&n;     * The serial EEPROM has a checksum in the last word.  Keep a&n;     * running checksum for all words read except for the last&n;     * word.  We&squot;ll verify the checksum after all words have been&n;     * read.&n;     */
+r_if
+c_cond
+(paren
+id|k
+OL
+(paren
+r_sizeof
+(paren
+op_star
+id|sc
+)paren
+op_div
+l_int|2
+)paren
+op_minus
+l_int|1
+)paren
+(brace
+id|checksum
+op_assign
+id|checksum
+op_plus
+id|seeprom
+(braket
+id|k
+)braket
+suffix:semicolon
+)brace
+multiline_comment|/*&n;     * Reset the chip select for the next command cycle.&n;     */
+id|outb
+c_func
+(paren
+l_int|0
+comma
+id|SEECTL_2840
+c_func
+(paren
+id|base
+)paren
+)paren
+suffix:semicolon
+id|CLOCK_PULSE
+c_func
+(paren
+id|base
+)paren
+suffix:semicolon
+id|outb
+c_func
+(paren
+id|CK_2840
+comma
+id|SEECTL_2840
+c_func
+(paren
+id|base
+)paren
+)paren
+suffix:semicolon
+id|CLOCK_PULSE
+c_func
+(paren
+id|base
+)paren
+suffix:semicolon
+id|outb
+c_func
+(paren
+l_int|0
+comma
+id|SEECTL_2840
+c_func
+(paren
+id|base
+)paren
+)paren
+suffix:semicolon
+id|CLOCK_PULSE
+c_func
+(paren
+id|base
+)paren
+suffix:semicolon
+)brace
+macro_line|#if 0
+id|printk
+c_func
+(paren
+l_string|&quot;Computed checksum 0x%x, checksum read 0x%x&bslash;n&quot;
+comma
+id|checksum
+comma
+id|sc-&gt;checksum
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;Serial EEPROM:&quot;
+)paren
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|k
+op_assign
+l_int|0
+suffix:semicolon
+id|k
+OL
+(paren
+r_sizeof
+(paren
+op_star
+id|sc
+)paren
+op_div
+l_int|2
+)paren
+suffix:semicolon
+id|k
+op_increment
+)paren
+(brace
+r_if
+c_cond
+(paren
+(paren
+(paren
+id|k
+op_mod
+l_int|8
+)paren
+op_eq
+l_int|0
+)paren
+op_logical_and
+(paren
+id|k
+op_ne
+l_int|0
+)paren
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;&bslash;n              &quot;
+)paren
+suffix:semicolon
+)brace
+id|printk
+c_func
+(paren
+l_string|&quot; 0x%x&quot;
+comma
+id|seeprom
+(braket
+id|k
+)braket
+)paren
+suffix:semicolon
+)brace
+id|printk
+c_func
+(paren
+l_string|&quot;&bslash;n&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
+r_if
+c_cond
+(paren
+id|checksum
+op_ne
+id|sc-&gt;checksum
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;aic7xxx: SEEPROM checksum error, ignoring SEEPROM settings.&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+(paren
+l_int|0
+)paren
+suffix:semicolon
+)brace
+r_return
+(paren
+l_int|1
+)paren
+suffix:semicolon
+DECL|macro|CLOCK_PULSE
+macro_line|#undef CLOCK_PULSE
+)brace
+multiline_comment|/*+F*************************************************************************&n; * Function:&n; *   read_seeprom&n; *&n; * Description:&n; *   Reads the serial EEPROM and returns 1 if successful and 0 if&n; *   not successful.&n; *&n; *   The instruction set of the 93C46 chip is as follows:&n; *&n; *               Start  OP&n; *     Function   Bit  Code  Address    Data     Description&n; *     -------------------------------------------------------------------&n; *     READ        1    10   A5 - A0             Reads data stored in memory,&n; *                                               starting at specified address&n; *     EWEN        1    00   11XXXX              Write enable must preceed&n; *                                               all programming modes&n; *     ERASE       1    11   A5 - A0             Erase register A5A4A3A2A1A0&n; *     WRITE       1    01   A5 - A0   D15 - D0  Writes register&n; *     ERAL        1    00   10XXXX              Erase all registers&n; *     WRAL        1    00   01XXXX    D15 - D0  Writes to all registers&n; *     EWDS        1    00   00XXXX              Disables all programming&n; *                                               instructions&n; *     *Note: A value of X for address is a don&squot;t care condition.&n; *&n; *   The 93C46 has a four wire interface: clock, chip select, data in, and&n; *   data out.  In order to perform one of the above functions, you need&n; *   to enable the chip select for a clock period (typically a minimum of&n; *   1 usec, with the clock high and low a minimum of 750 and 250 nsec&n; *   respectively.  While the chip select remains high, you can clock in&n; *   the instructions (above) starting with the start bit, followed by the&n; *   OP code, Address, and Data (if needed).  For the READ instruction, the&n; *   requested 16-bit register contents is read from the data out line but&n; *   is preceded by an initial zero (leading 0, followed by 16-bits, MSB&n; *   first).  The clock cycling from low to high initiates the next data&n; *   bit to be sent from the chip.&n; *&n; *   The 7870 interface to the 93C46 serial EEPROM is through the SEECTL&n; *   register.  After successful arbitration for the memory port, the&n; *   SEECS bit of the SEECTL register is connected to the chip select.&n; *   The SEECK, SEEDO, and SEEDI are connected to the clock, data out,&n; *   and data in lines respectively.  The SEERDY bit of SEECTL is useful&n; *   in that it gives us an 800 nsec timer.  After a write to the SEECTL&n; *   register, the SEERDY goes high 800 nsec later.  The one exception&n; *   to this is when we first request access to the memory port.  The&n; *   SEERDY goes high to signify that access has been granted and, for&n; *   this case, has no implied timing.&n; *&n; *-F*************************************************************************/
+r_static
+r_int
+DECL|function|read_seeprom
+id|read_seeprom
+c_func
+(paren
+r_int
+id|base
+comma
+r_int
+id|offset
+comma
+r_struct
+id|seeprom_config
+op_star
+id|sc
+)paren
+(brace
+r_int
+id|i
+op_assign
+l_int|0
+comma
+id|k
 suffix:semicolon
 r_int
 r_int
@@ -9215,6 +10094,8 @@ op_decrement
 id|temp
 op_assign
 id|k
+op_plus
+id|offset
 suffix:semicolon
 id|temp
 op_assign
@@ -9586,6 +10467,8 @@ r_return
 l_int|1
 )paren
 suffix:semicolon
+DECL|macro|CLOCK_PULSE
+macro_line|#undef CLOCK_PULSE
 )brace
 multiline_comment|/*+F*************************************************************************&n; * Function:&n; *   detect_maxscb&n; *&n; * Description:&n; *   Return the maximum number of SCB&squot;s allowed for a given controller.&n; *-F*************************************************************************/
 r_static
@@ -9599,16 +10482,23 @@ id|type
 comma
 r_int
 id|base
+comma
+r_int
+id|walk_scbs
 )paren
 (brace
 r_int
 r_char
 id|sblkctl_reg
+comma
+id|scb_byte
 suffix:semicolon
 r_int
 id|maxscb
 op_assign
 l_int|0
+comma
+id|i
 suffix:semicolon
 r_switch
 c_cond
@@ -9718,6 +10608,9 @@ suffix:semicolon
 r_case
 id|AIC_7870
 suffix:colon
+r_case
+id|AIC_7880
+suffix:colon
 id|maxscb
 op_assign
 l_int|16
@@ -9727,7 +10620,10 @@ suffix:semicolon
 r_case
 id|AIC_7872
 suffix:colon
-multiline_comment|/*&n;       * Really has 255, but we&squot;ll wait to verify that we access&n;       * them the same way and do not have to set the card to&n;       * use the memory port to access external SCB RAM.&n;       */
+r_case
+id|AIC_7882
+suffix:colon
+multiline_comment|/*&n;       * Is suppose to have 255 SCBs, but we&squot;ll walk the SCBs&n;       * looking for more if external RAM is detected.&n;       */
 id|maxscb
 op_assign
 l_int|16
@@ -9739,6 +10635,94 @@ id|AIC_NONE
 suffix:colon
 multiline_comment|/*&n;       * This should never happen... But just in case.&n;       */
 r_break
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|walk_scbs
+)paren
+(brace
+multiline_comment|/*&n;     * This adapter has external SCB memory.&n;     * Walk the SCBs to determine how many there are.&n;     */
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+r_while
+c_loop
+(paren
+id|i
+OL
+id|AIC7XXX_MAXSCB
+)paren
+(brace
+id|outb
+c_func
+(paren
+id|i
+comma
+id|SCBPTR
+c_func
+(paren
+id|base
+)paren
+)paren
+suffix:semicolon
+id|scb_byte
+op_assign
+op_complement
+(paren
+id|inb
+c_func
+(paren
+id|SCBARRAY
+c_func
+(paren
+id|base
+)paren
+)paren
+)paren
+suffix:semicolon
+multiline_comment|/* complement the byte */
+id|outb
+c_func
+(paren
+id|scb_byte
+comma
+id|SCBARRAY
+c_func
+(paren
+id|base
+)paren
+)paren
+suffix:semicolon
+multiline_comment|/* write it back out */
+r_if
+c_cond
+(paren
+id|inb
+c_func
+(paren
+id|SCBARRAY
+c_func
+(paren
+id|base
+)paren
+)paren
+op_ne
+id|scb_byte
+)paren
+(brace
+r_break
+suffix:semicolon
+)brace
+id|i
+op_increment
+suffix:semicolon
+)brace
+id|maxscb
+op_assign
+id|i
 suffix:semicolon
 )brace
 r_return
@@ -9758,15 +10742,10 @@ id|Scsi_Host_Template
 op_star
 r_template
 comma
-id|aha_type
-id|type
-comma
-r_int
-id|base
-comma
-r_int
-r_char
-id|irq
+r_struct
+id|aic7xxx_host_config
+op_star
+id|config
 )paren
 (brace
 r_static
@@ -9789,6 +10768,8 @@ comma
 l_string|&quot;7850&quot;
 comma
 l_string|&quot;7872&quot;
+comma
+l_string|&quot;7881&quot;
 )brace
 suffix:semicolon
 r_int
@@ -9805,6 +10786,8 @@ r_int
 id|found
 op_assign
 l_int|1
+comma
+id|base
 suffix:semicolon
 r_int
 id|bios_disabled
@@ -9837,40 +10820,12 @@ op_star
 id|p
 suffix:semicolon
 r_struct
-id|aic7xxx_host_config
-id|config
-suffix:semicolon
-r_struct
 id|seeprom_config
 id|sc
 suffix:semicolon
-id|config.type
-op_assign
-id|type
-suffix:semicolon
-id|config.base
-op_assign
 id|base
-suffix:semicolon
-id|config.irq
 op_assign
-id|irq
-suffix:semicolon
-id|config.parity
-op_assign
-id|AIC_UNKNOWN
-suffix:semicolon
-id|config.low_term
-op_assign
-id|AIC_UNKNOWN
-suffix:semicolon
-id|config.high_term
-op_assign
-id|AIC_UNKNOWN
-suffix:semicolon
-id|config.busrtime
-op_assign
-l_int|0
+id|config-&gt;base
 suffix:semicolon
 multiline_comment|/*&n;   * Lock out other contenders for our i/o space.&n;   */
 id|request_region
@@ -9900,7 +10855,7 @@ suffix:semicolon
 r_switch
 c_cond
 (paren
-id|type
+id|config-&gt;type
 )paren
 (brace
 r_case
@@ -9910,7 +10865,7 @@ macro_line|#if 0
 id|printk
 c_func
 (paren
-l_string|&quot;aha274x: aic7770 hcntrl=0x%x&bslash;n&quot;
+l_string|&quot;aha274x: HCNTRL:0x%x&bslash;n&quot;
 comma
 id|inb
 c_func
@@ -9918,14 +10873,14 @@ c_func
 id|HCNTRL
 c_func
 (paren
-id|config.base
+id|base
 )paren
 )paren
 )paren
 suffix:semicolon
 macro_line|#endif
 multiline_comment|/*&n;       * For some 274x boards, we must clear the CHIPRST bit&n;       * and pause the sequencer. For some reason, this makes&n;       * the driver work. For 284x boards, we give it a&n;       * CHIPRST just like the 294x boards.&n;       *&n;       * Use the BIOS settings to determine the interrupt&n;       * trigger type (level or edge) and use this value&n;       * for pausing and unpausing the sequencer.&n;       */
-id|config.unpause
+id|config-&gt;unpause
 op_assign
 (paren
 id|inb
@@ -9934,7 +10889,7 @@ c_func
 id|HCNTRL
 c_func
 (paren
-id|config.base
+id|base
 )paren
 )paren
 op_amp
@@ -9943,28 +10898,27 @@ id|IRQMS
 op_or
 id|INTEN
 suffix:semicolon
-id|config.pause
+id|config-&gt;pause
 op_assign
-id|config.unpause
+id|config-&gt;unpause
 op_or
 id|PAUSE
 suffix:semicolon
-id|config.extended
+id|config-&gt;extended
 op_assign
 id|aic7xxx_extended
 suffix:semicolon
-multiline_comment|/*&n;       * I don&squot;t think we need to kick the reset again, the initial probe&n;       * does a reset, it seems that this is kicking a dead horse here.&n;       * So... I will try to just verify that the chip has come out of the&n;       * reset state and continue the same as the 284x.&n;       * In the Calgary version of the driver:&n;       *   1) Chip Reset&n;       *   2) Set unpause to IRQMS | INTEN&n;       *   3) If an interrupt occured without any commands queued, the&n;       *      unpause was set to just INTEN&n;       * I changed the initial reset code to just mask in the CHIPRST bit&n;       * and try to leave the other settings alone.&n;       *&n;       * I don&squot;t think we need the warning about chip reset not being clear.&n;       * On both my test machines (2842 &amp; 2940), they work just fine with a&n;       * HCNTRL() of 0x5 (PAUSE | CHIPRST). Notice though, the 274x also&n;       * adds the INTEN flag, where neither the 284x or 294x do.&n;       */
 id|outb
 c_func
 (paren
-id|config.pause
+id|config-&gt;pause
 op_or
 id|CHIPRST
 comma
 id|HCNTRL
 c_func
 (paren
-id|config.base
+id|base
 )paren
 )paren
 suffix:semicolon
@@ -9983,7 +10937,7 @@ c_func
 id|HCNTRL
 c_func
 (paren
-id|config.base
+id|base
 )paren
 )paren
 op_amp
@@ -10000,17 +10954,17 @@ suffix:semicolon
 id|outb
 c_func
 (paren
-id|config.pause
+id|config-&gt;pause
 comma
 id|HCNTRL
 c_func
 (paren
-id|config.base
+id|base
 )paren
 )paren
 suffix:semicolon
 multiline_comment|/*&n;       * Just to be on the safe side with the 274x, we will re-read the irq&n;       * since there was some issue about reseting the board.&n;       */
-id|config.irq
+id|config-&gt;irq
 op_assign
 id|inb
 c_func
@@ -10018,7 +10972,7 @@ c_func
 id|HA_INTDEF
 c_func
 (paren
-id|config.base
+id|base
 )paren
 )paren
 op_amp
@@ -10057,11 +11011,11 @@ c_func
 id|HA_HOSTCONF
 c_func
 (paren
-id|config.base
+id|base
 )paren
 )paren
 suffix:semicolon
-id|config.busrtime
+id|config-&gt;busrtime
 op_assign
 id|host_conf
 op_amp
@@ -10079,7 +11033,7 @@ comma
 id|BUSSPD
 c_func
 (paren
-id|config.base
+id|base
 )paren
 )paren
 suffix:semicolon
@@ -10097,7 +11051,7 @@ comma
 id|BUSTIME
 c_func
 (paren
-id|config.base
+id|base
 )paren
 )paren
 suffix:semicolon
@@ -10105,9 +11059,9 @@ multiline_comment|/*&n;       * A reminder until this can be detected automatica
 id|printk
 c_func
 (paren
-l_string|&quot;aha274x: extended translation %sabled&bslash;n&quot;
+l_string|&quot;aha274x: Extended translation %sabled&bslash;n&quot;
 comma
-id|config.extended
+id|config-&gt;extended
 ques
 c_cond
 l_string|&quot;en&quot;
@@ -10124,7 +11078,7 @@ macro_line|#if 0
 id|printk
 c_func
 (paren
-l_string|&quot;aha284x: aic7770 hcntrl=0x%x&bslash;n&quot;
+l_string|&quot;aha284x: HCNTRL:0x%x&bslash;n&quot;
 comma
 id|inb
 c_func
@@ -10132,7 +11086,7 @@ c_func
 id|HCNTRL
 c_func
 (paren
-id|config.base
+id|base
 )paren
 )paren
 )paren
@@ -10146,24 +11100,42 @@ comma
 id|HCNTRL
 c_func
 (paren
-id|config.base
+id|base
 )paren
 )paren
 suffix:semicolon
-id|config.unpause
+id|config-&gt;unpause
 op_assign
 id|UNPAUSE_284X
 suffix:semicolon
-id|config.pause
+id|config-&gt;pause
 op_assign
 id|REQ_PAUSE
 suffix:semicolon
 multiline_comment|/* DWG would like to be like the rest */
-id|config.extended
+id|aic7xxx_delay
+c_func
+(paren
+l_int|1
+)paren
+suffix:semicolon
+id|outb
+c_func
+(paren
+id|config-&gt;pause
+comma
+id|HCNTRL
+c_func
+(paren
+id|base
+)paren
+)paren
+suffix:semicolon
+id|config-&gt;extended
 op_assign
 id|aic7xxx_extended
 suffix:semicolon
-id|config.irq
+id|config-&gt;irq
 op_assign
 id|inb
 c_func
@@ -10171,7 +11143,7 @@ c_func
 id|HA_INTDEF
 c_func
 (paren
-id|config.base
+id|base
 )paren
 )paren
 op_amp
@@ -10210,137 +11182,19 @@ c_func
 id|HA_HOSTCONF
 c_func
 (paren
-id|config.base
+id|base
 )paren
 )paren
-suffix:semicolon
-id|config.busrtime
-op_assign
-id|host_conf
-op_amp
-l_int|0x3C
-suffix:semicolon
-multiline_comment|/* XXX Is this valid for motherboard based controllers? */
-multiline_comment|/* Setup the FIFO threshold and the bus off time */
-id|outb
-c_func
-(paren
-id|host_conf
-op_amp
-id|DFTHRSH
-comma
-id|BUSSPD
-c_func
-(paren
-id|config.base
-)paren
-)paren
-suffix:semicolon
-id|outb
-c_func
-(paren
-(paren
-id|host_conf
-op_lshift
-l_int|2
-)paren
-op_amp
-id|BOFF
-comma
-id|BUSTIME
-c_func
-(paren
-id|config.base
-)paren
-)paren
-suffix:semicolon
-multiline_comment|/*&n;       * A reminder until this can be detected automatically.&n;       */
-id|printk
-c_func
-(paren
-l_string|&quot;aha284x: extended translation %sabled&bslash;n&quot;
-comma
-id|config.extended
-ques
-c_cond
-l_string|&quot;en&quot;
-suffix:colon
-l_string|&quot;dis&quot;
-)paren
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-id|AIC_7850
-suffix:colon
-r_case
-id|AIC_7870
-suffix:colon
-r_case
-id|AIC_7872
-suffix:colon
-macro_line|#if 0
-id|printk
-c_func
-(paren
-l_string|&quot;aic%s hcntrl=0x%x&bslash;n&quot;
-comma
-id|board_name
-(braket
-id|type
-)braket
-comma
-id|inb
-c_func
-(paren
-id|HCNTRL
-c_func
-(paren
-id|config.base
-)paren
-)paren
-)paren
-suffix:semicolon
-macro_line|#endif
-id|outb
-c_func
-(paren
-id|CHIPRST
-comma
-id|HCNTRL
-c_func
-(paren
-id|config.base
-)paren
-)paren
-suffix:semicolon
-id|config.unpause
-op_assign
-id|UNPAUSE_294X
-suffix:semicolon
-id|config.pause
-op_assign
-id|config.unpause
-op_or
-id|PAUSE
-suffix:semicolon
-id|config.extended
-op_assign
-id|aic7xxx_extended
-suffix:semicolon
-id|config.scsi_id
-op_assign
-l_int|7
 suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;aic78xx: Reading SEEPROM... &quot;
+l_string|&quot;aha284x: Reading SEEPROM...&quot;
 )paren
 suffix:semicolon
 id|have_seeprom
 op_assign
-id|read_seeprom
+id|read_2840_seeprom
 c_func
 (paren
 id|base
@@ -10359,8 +11213,14 @@ id|have_seeprom
 id|printk
 c_func
 (paren
-l_string|&quot;aic78xx: unable to read SEEPROM&bslash;n&quot;
+l_string|&quot;aha284x: Unable to read SEEPROM&bslash;n&quot;
 )paren
+suffix:semicolon
+id|config-&gt;busrtime
+op_assign
+id|host_conf
+op_amp
+l_int|0x3C
 suffix:semicolon
 )brace
 r_else
@@ -10368,10 +11228,10 @@ r_else
 id|printk
 c_func
 (paren
-l_string|&quot;done&bslash;n&quot;
+l_string|&quot;done.&bslash;n&quot;
 )paren
 suffix:semicolon
-id|config.extended
+id|config-&gt;extended
 op_assign
 (paren
 (paren
@@ -10383,7 +11243,7 @@ op_rshift
 l_int|7
 )paren
 suffix:semicolon
-id|config.scsi_id
+id|config-&gt;scsi_id
 op_assign
 (paren
 id|sc.brtime_id
@@ -10391,7 +11251,7 @@ op_amp
 id|CFSCSIID
 )paren
 suffix:semicolon
-id|config.parity
+id|config-&gt;parity
 op_assign
 (paren
 id|sc.adapter_control
@@ -10404,7 +11264,7 @@ id|AIC_ENABLED
 suffix:colon
 id|AIC_DISABLED
 suffix:semicolon
-id|config.low_term
+id|config-&gt;low_term
 op_assign
 (paren
 id|sc.adapter_control
@@ -10417,7 +11277,7 @@ id|AIC_ENABLED
 suffix:colon
 id|AIC_DISABLED
 suffix:semicolon
-id|config.high_term
+id|config-&gt;high_term
 op_assign
 (paren
 id|sc.adapter_control
@@ -10430,7 +11290,7 @@ id|AIC_ENABLED
 suffix:colon
 id|AIC_DISABLED
 suffix:semicolon
-id|config.busrtime
+id|config-&gt;busrtime
 op_assign
 (paren
 (paren
@@ -10443,6 +11303,297 @@ l_int|8
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* XXX Is this valid for motherboard based controllers? */
+multiline_comment|/* Setup the FIFO threshold and the bus off time */
+id|outb
+c_func
+(paren
+id|host_conf
+op_amp
+id|DFTHRSH
+comma
+id|BUSSPD
+c_func
+(paren
+id|base
+)paren
+)paren
+suffix:semicolon
+id|outb
+c_func
+(paren
+(paren
+id|host_conf
+op_lshift
+l_int|2
+)paren
+op_amp
+id|BOFF
+comma
+id|BUSTIME
+c_func
+(paren
+id|base
+)paren
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;aha284x: Extended translation %sabled&bslash;n&quot;
+comma
+id|config-&gt;extended
+ques
+c_cond
+l_string|&quot;en&quot;
+suffix:colon
+l_string|&quot;dis&quot;
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|AIC_7850
+suffix:colon
+r_case
+id|AIC_7870
+suffix:colon
+r_case
+id|AIC_7872
+suffix:colon
+r_case
+id|AIC_7880
+suffix:colon
+r_case
+id|AIC_7882
+suffix:colon
+macro_line|#if 0
+id|printk
+c_func
+(paren
+l_string|&quot;aic%s HCNTRL:0x%x&bslash;n&quot;
+comma
+id|board_name
+(braket
+id|config-&gt;type
+)braket
+comma
+id|inb
+c_func
+(paren
+id|HCNTRL
+c_func
+(paren
+id|base
+)paren
+)paren
+)paren
+suffix:semicolon
+macro_line|#endif
+id|outb
+c_func
+(paren
+id|CHIPRST
+comma
+id|HCNTRL
+c_func
+(paren
+id|base
+)paren
+)paren
+suffix:semicolon
+id|config-&gt;unpause
+op_assign
+id|UNPAUSE_294X
+suffix:semicolon
+id|config-&gt;pause
+op_assign
+id|config-&gt;unpause
+op_or
+id|PAUSE
+suffix:semicolon
+id|aic7xxx_delay
+c_func
+(paren
+l_int|1
+)paren
+suffix:semicolon
+id|outb
+c_func
+(paren
+id|config-&gt;pause
+comma
+id|HCNTRL
+c_func
+(paren
+id|base
+)paren
+)paren
+suffix:semicolon
+id|config-&gt;extended
+op_assign
+id|aic7xxx_extended
+suffix:semicolon
+id|config-&gt;scsi_id
+op_assign
+l_int|7
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;aic78xx: Reading SEEPROM...&quot;
+)paren
+suffix:semicolon
+id|have_seeprom
+op_assign
+id|read_seeprom
+c_func
+(paren
+id|base
+comma
+id|config-&gt;chan_num
+op_star
+(paren
+r_sizeof
+(paren
+id|sc
+)paren
+op_div
+l_int|2
+)paren
+comma
+op_amp
+id|sc
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|have_seeprom
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;aic78xx: Unable to read SEEPROM&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;done.&bslash;n&quot;
+)paren
+suffix:semicolon
+id|config-&gt;extended
+op_assign
+(paren
+(paren
+id|sc.bios_control
+op_amp
+id|CFEXTEND
+)paren
+op_rshift
+l_int|7
+)paren
+suffix:semicolon
+id|config-&gt;scsi_id
+op_assign
+(paren
+id|sc.brtime_id
+op_amp
+id|CFSCSIID
+)paren
+suffix:semicolon
+id|config-&gt;parity
+op_assign
+(paren
+id|sc.adapter_control
+op_amp
+id|CFSPARITY
+)paren
+ques
+c_cond
+id|AIC_ENABLED
+suffix:colon
+id|AIC_DISABLED
+suffix:semicolon
+id|config-&gt;low_term
+op_assign
+(paren
+id|sc.adapter_control
+op_amp
+id|CFSTERM
+)paren
+ques
+c_cond
+id|AIC_ENABLED
+suffix:colon
+id|AIC_DISABLED
+suffix:semicolon
+id|config-&gt;high_term
+op_assign
+(paren
+id|sc.adapter_control
+op_amp
+id|CFWSTERM
+)paren
+ques
+c_cond
+id|AIC_ENABLED
+suffix:colon
+id|AIC_DISABLED
+suffix:semicolon
+id|config-&gt;busrtime
+op_assign
+(paren
+(paren
+id|sc.brtime_id
+op_amp
+id|CFBRTIME
+)paren
+op_rshift
+l_int|8
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+(paren
+id|config-&gt;type
+op_eq
+id|AIC_7880
+)paren
+op_logical_or
+(paren
+id|config-&gt;type
+op_eq
+id|AIC_7882
+)paren
+)paren
+op_logical_and
+(paren
+id|sc.adapter_control
+op_amp
+id|CFULTRAEN
+)paren
+)paren
+(brace
+id|printk
+(paren
+l_string|&quot;aic7xxx: Enabling support for Ultra SCSI speed.&bslash;n&quot;
+)paren
+suffix:semicolon
+id|config-&gt;ultra_enabled
+op_assign
+id|TRUE
+suffix:semicolon
+)brace
+)brace
 multiline_comment|/*&n;       * XXX - force data fifo threshold to 100%. Why does this&n;       *       need to be done?&n;       */
 id|outb
 c_func
@@ -10453,7 +11604,7 @@ c_func
 id|DSPCISTATUS
 c_func
 (paren
-id|config.base
+id|base
 )paren
 )paren
 op_or
@@ -10462,21 +11613,21 @@ comma
 id|DSPCISTATUS
 c_func
 (paren
-id|config.base
+id|base
 )paren
 )paren
 suffix:semicolon
 id|outb
 c_func
 (paren
-id|config.scsi_id
+id|config-&gt;scsi_id
 op_or
 id|DFTHRESH
 comma
 id|HA_SCSICONF
 c_func
 (paren
-id|config.base
+id|base
 )paren
 )paren
 suffix:semicolon
@@ -10484,31 +11635,30 @@ multiline_comment|/*&n;       * In case we are a wide card, place scsi ID in sec
 id|outb
 c_func
 (paren
-id|config.scsi_id
+id|config-&gt;scsi_id
 comma
 (paren
 id|HA_SCSICONF
 c_func
 (paren
-id|config.base
+id|base
 )paren
 op_plus
 l_int|1
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;       * A reminder until this can be detected automatically.&n;       */
 id|printk
 c_func
 (paren
-l_string|&quot;aic%s: extended translation %sabled&bslash;n&quot;
+l_string|&quot;aic%s: Extended translation %sabled&bslash;n&quot;
 comma
 id|board_name
 (braket
-id|type
+id|config-&gt;type
 )braket
 comma
-id|config.extended
+id|config-&gt;extended
 ques
 c_cond
 l_string|&quot;en&quot;
@@ -10527,27 +11677,29 @@ l_string|&quot;aic7xxx_register: internal error&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
-id|config.maxscb
+id|config-&gt;maxscb
 op_assign
 id|detect_maxscb
 c_func
 (paren
-id|type
+id|config-&gt;type
 comma
 id|base
+comma
+id|config-&gt;walk_scbs
 )paren
 suffix:semicolon
 r_if
 c_cond
 (paren
 (paren
-id|config.type
+id|config-&gt;type
 op_eq
 id|AIC_274x
 )paren
 op_logical_or
 (paren
-id|config.type
+id|config-&gt;type
 op_eq
 id|AIC_284x
 )paren
@@ -10556,7 +11708,7 @@ id|AIC_284x
 r_if
 c_cond
 (paren
-id|config.pause
+id|config-&gt;pause
 op_amp
 id|IRQMS
 )paren
@@ -10590,21 +11742,20 @@ c_func
 id|base
 )paren
 )paren
-op_amp
-l_int|0x0F
 suffix:semicolon
-multiline_comment|/* mask out upper two bits */
 r_switch
 c_cond
 (paren
 id|sblkctl
+op_amp
+id|SELBUS_MASK
 )paren
 (brace
 r_case
 id|SELSINGLE
 suffix:colon
 multiline_comment|/* narrow/normal bus */
-id|config.scsi_id
+id|config-&gt;scsi_id
 op_assign
 id|inb
 c_func
@@ -10618,7 +11769,7 @@ id|base
 op_amp
 l_int|0x07
 suffix:semicolon
-id|config.bus_type
+id|config-&gt;bus_type
 op_assign
 id|AIC_SINGLE
 suffix:semicolon
@@ -10640,7 +11791,7 @@ r_case
 id|SELWIDE
 suffix:colon
 multiline_comment|/* Wide bus */
-id|config.scsi_id
+id|config-&gt;scsi_id
 op_assign
 id|inb
 c_func
@@ -10656,7 +11807,7 @@ l_int|1
 op_amp
 l_int|0x0F
 suffix:semicolon
-id|config.bus_type
+id|config-&gt;bus_type
 op_assign
 id|AIC_WIDE
 suffix:semicolon
@@ -10667,7 +11818,7 @@ l_string|&quot;aic7xxx: Enabling wide channel of %s-Wide&bslash;n&quot;
 comma
 id|board_name
 (braket
-id|config.type
+id|config-&gt;type
 )braket
 )paren
 suffix:semicolon
@@ -10689,7 +11840,7 @@ r_case
 id|SELBUSB
 suffix:colon
 multiline_comment|/* Twin bus */
-id|config.scsi_id
+id|config-&gt;scsi_id
 op_assign
 id|inb
 c_func
@@ -10704,7 +11855,7 @@ op_amp
 l_int|0x07
 suffix:semicolon
 macro_line|#ifdef AIC7XXX_TWIN_SUPPORT
-id|config.scsi_id_b
+id|config-&gt;scsi_id_b
 op_assign
 id|inb
 c_func
@@ -10720,7 +11871,7 @@ l_int|1
 op_amp
 l_int|0x07
 suffix:semicolon
-id|config.bus_type
+id|config-&gt;bus_type
 op_assign
 id|AIC_TWIN
 suffix:semicolon
@@ -10731,7 +11882,7 @@ l_string|&quot;aic7xxx: Enabled channel B of %s-Twin&bslash;n&quot;
 comma
 id|board_name
 (braket
-id|config.type
+id|config-&gt;type
 )braket
 )paren
 suffix:semicolon
@@ -10748,7 +11899,7 @@ id|base
 )paren
 suffix:semicolon
 macro_line|#else
-id|config.bus_type
+id|config-&gt;bus_type
 op_assign
 id|AIC_SINGLE
 suffix:semicolon
@@ -10759,7 +11910,7 @@ l_string|&quot;aic7xxx: Channel B of %s-Twin will be ignored&bslash;n&quot;
 comma
 id|board_name
 (braket
-id|config.type
+id|config-&gt;type
 )braket
 )paren
 suffix:semicolon
@@ -10815,11 +11966,18 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n;   * Clear the upper two bits. For the 294x cards, clearing the&n;   * upper two bits, will take the card out of diagnostic mode&n;   * and make the host adatper LED follow bus activity (will not&n;   * always be on).&n;   */
+multiline_comment|/*&n;   * For the 294x cards, clearing DIAGLEDEN and DIAGLEDON, will&n;   * take the card out of diagnostic mode and make the host adatper&n;   * LED follow bus activity (will not always be on).&n;   */
 id|outb
 c_func
 (paren
 id|sblkctl
+op_amp
+op_complement
+(paren
+id|DIAGLEDEN
+op_or
+id|DIAGLEDON
+)paren
 comma
 id|SBLKCTL
 c_func
@@ -10834,20 +11992,20 @@ c_cond
 (paren
 (paren
 (paren
-id|config.type
+id|config-&gt;type
 op_eq
 id|AIC_274x
 )paren
 op_logical_or
 (paren
-id|config.type
+id|config-&gt;type
 op_eq
 id|AIC_284x
 )paren
 )paren
 op_logical_and
 (paren
-id|config.irq
+id|config-&gt;irq
 template_param
 l_int|15
 )paren
@@ -10856,7 +12014,7 @@ l_int|15
 id|printk
 c_func
 (paren
-l_string|&quot;aic7xxx uses unsupported IRQ level, ignoring&bslash;n&quot;
+l_string|&quot;aic7xxx uses unsupported IRQ level, ignoring.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -10872,7 +12030,7 @@ c_cond
 (paren
 id|aic7xxx_boards
 (braket
-id|config.irq
+id|config-&gt;irq
 )braket
 op_ne
 l_int|NULL
@@ -10895,7 +12053,6 @@ multiline_comment|/*&n;   * Print out debugging information before re-enabling&n
 id|debug_config
 c_func
 (paren
-op_amp
 id|config
 )paren
 suffix:semicolon
@@ -10928,7 +12085,7 @@ id|printk
 c_func
 (paren
 l_string|&quot;aic7xxx warning: kernel scatter-gather &quot;
-l_string|&quot;structures changed, disabling it&bslash;n&quot;
+l_string|&quot;structures changed, disabling it.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_template
@@ -10956,7 +12113,7 @@ id|aic7xxx_host
 suffix:semicolon
 id|host-&gt;can_queue
 op_assign
-id|config.maxscb
+id|config-&gt;maxscb
 suffix:semicolon
 id|host-&gt;cmd_per_lun
 op_assign
@@ -10964,16 +12121,16 @@ id|AIC7XXX_CMDS_PER_LUN
 suffix:semicolon
 id|host-&gt;this_id
 op_assign
-id|config.scsi_id
+id|config-&gt;scsi_id
 suffix:semicolon
 id|host-&gt;irq
 op_assign
-id|config.irq
+id|config-&gt;irq
 suffix:semicolon
 r_if
 c_cond
 (paren
-id|config.bus_type
+id|config-&gt;bus_type
 op_eq
 id|AIC_WIDE
 )paren
@@ -10986,7 +12143,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|config.bus_type
+id|config-&gt;bus_type
 op_eq
 id|AIC_TWIN
 )paren
@@ -11063,11 +12220,11 @@ l_int|0
 suffix:semicolon
 id|p-&gt;base
 op_assign
-id|config.base
+id|base
 suffix:semicolon
 id|p-&gt;maxscb
 op_assign
-id|config.maxscb
+id|config-&gt;maxscb
 suffix:semicolon
 id|p-&gt;numscb
 op_assign
@@ -11075,15 +12232,23 @@ l_int|0
 suffix:semicolon
 id|p-&gt;extended
 op_assign
-id|config.extended
+id|config-&gt;extended
 suffix:semicolon
 id|p-&gt;type
 op_assign
-id|config.type
+id|config-&gt;type
+suffix:semicolon
+id|p-&gt;ultra_enabled
+op_assign
+id|config-&gt;ultra_enabled
+suffix:semicolon
+id|p-&gt;chan_num
+op_assign
+id|config-&gt;chan_num
 suffix:semicolon
 id|p-&gt;bus_type
 op_assign
-id|config.bus_type
+id|config-&gt;bus_type
 suffix:semicolon
 id|p-&gt;have_seeprom
 op_assign
@@ -11103,18 +12268,18 @@ l_int|NULL
 suffix:semicolon
 id|p-&gt;unpause
 op_assign
-id|config.unpause
+id|config-&gt;unpause
 suffix:semicolon
 id|p-&gt;pause
 op_assign
-id|config.pause
+id|config-&gt;pause
 suffix:semicolon
 r_if
 c_cond
 (paren
 id|aic7xxx_boards
 (braket
-id|config.irq
+id|config-&gt;irq
 )braket
 op_eq
 l_int|NULL
@@ -11123,7 +12288,7 @@ l_int|NULL
 multiline_comment|/*&n;     * Warning! This must be done before requesting the irq.  It is&n;     * possible for some boards to raise an interrupt as soon as&n;     * they are enabled.  So when we request the irq from the Linux&n;     * kernel, an interrupt is triggered immediately.  Therefore, we&n;     * must ensure the board data is correctly set before the request.&n;     */
 id|aic7xxx_boards
 (braket
-id|config.irq
+id|config-&gt;irq
 )braket
 op_assign
 id|host
@@ -11135,7 +12300,7 @@ c_cond
 id|request_irq
 c_func
 (paren
-id|config.irq
+id|config-&gt;irq
 comma
 id|aic7xxx_isr
 comma
@@ -11150,12 +12315,12 @@ c_func
 (paren
 l_string|&quot;aic7xxx couldn&squot;t register irq %d, ignoring&bslash;n&quot;
 comma
-id|config.irq
+id|config-&gt;irq
 )paren
 suffix:semicolon
 id|aic7xxx_boards
 (braket
-id|config.irq
+id|config-&gt;irq
 )braket
 op_assign
 l_int|NULL
@@ -11174,12 +12339,12 @@ id|p-&gt;next
 op_assign
 id|aic7xxx_boards
 (braket
-id|config.irq
+id|config-&gt;irq
 )braket
 suffix:semicolon
 id|aic7xxx_boards
 (braket
-id|config.irq
+id|config-&gt;irq
 )braket
 op_assign
 id|host
@@ -11189,7 +12354,7 @@ multiline_comment|/*&n;   * Load the sequencer program, then re-enable the board
 id|printk
 c_func
 (paren
-l_string|&quot;aic7xxx: Downloading sequencer code..&quot;
+l_string|&quot;aic7xxx: Downloading sequencer code...&quot;
 )paren
 suffix:semicolon
 id|aic7xxx_loadseq
@@ -11246,7 +12411,7 @@ c_func
 l_string|&quot;done.&bslash;n&quot;
 )paren
 suffix:semicolon
-multiline_comment|/*&n;   * Set the SCSI Id, SXFRCTL1, and SIMODE1, for both channels&n;   */
+multiline_comment|/*&n;   * Set the SCSI Id, SXFRCTL0, SXFRCTL1, and SIMODE1, for both channels&n;   */
 r_if
 c_cond
 (paren
@@ -11255,11 +12420,30 @@ op_eq
 id|AIC_TWIN
 )paren
 (brace
-multiline_comment|/*&n;     * The device is gated to channel B after a chip reset,&n;     * so set those values first.&n;     */
+multiline_comment|/*&n;     * Select Channel B.&n;     */
 id|outb
 c_func
 (paren
-id|config.scsi_id_b
+(paren
+id|sblkctl
+op_amp
+op_complement
+id|SELBUS_MASK
+)paren
+op_or
+id|SELBUSB
+comma
+id|SBLKCTL
+c_func
+(paren
+id|base
+)paren
+)paren
+suffix:semicolon
+id|outb
+c_func
+(paren
+id|config-&gt;scsi_id_b
 comma
 id|SCSIID
 c_func
@@ -11320,10 +12504,36 @@ id|base
 )paren
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|p-&gt;ultra_enabled
+)paren
+(brace
+id|outb
+c_func
+(paren
+id|ULTRAEN
+comma
+id|SXFRCTL0
+c_func
+(paren
+id|base
+)paren
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/*&n;     * Select Channel A&n;     */
 id|outb
 c_func
 (paren
+(paren
+id|sblkctl
+op_amp
+op_complement
+id|SELBUS_MASK
+)paren
+op_or
 id|SELSINGLE
 comma
 id|SBLKCTL
@@ -11337,7 +12547,7 @@ suffix:semicolon
 id|outb
 c_func
 (paren
-id|config.scsi_id
+id|config-&gt;scsi_id
 comma
 id|SCSIID
 c_func
@@ -11396,6 +12606,25 @@ id|base
 )paren
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|p-&gt;ultra_enabled
+)paren
+(brace
+id|outb
+c_func
+(paren
+id|ULTRAEN
+comma
+id|SXFRCTL0
+c_func
+(paren
+id|base
+)paren
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/*&n;   * Look at the information that board initialization or the board&n;   * BIOS has left us. In the lower four bits of each target&squot;s&n;   * scratch space any value other than 0 indicates that we should&n;   * initiate synchronous transfers. If it&squot;s zero, the user or the&n;   * BIOS has decided to disable synchronous negotiation to that&n;   * target so we don&squot;t activate the needsdtr flag.&n;   */
 id|p-&gt;needsdtr_copy
 op_assign
@@ -11456,7 +12685,7 @@ id|bios_disabled
 id|printk
 c_func
 (paren
-l_string|&quot;aic7xxx : Host Adapter Bios disabled.  Using default SCSI &quot;
+l_string|&quot;aic7xxx : Host Adapter Bios disabled. Using default SCSI &quot;
 l_string|&quot;device parameters&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -11471,7 +12700,23 @@ id|p-&gt;discenable
 op_assign
 op_complement
 (paren
-id|inw
+(paren
+id|inb
+c_func
+(paren
+id|HA_DISC_DSB
+c_func
+(paren
+id|base
+op_plus
+l_int|1
+)paren
+)paren
+op_lshift
+l_int|8
+)paren
+op_or
+id|inb
 c_func
 (paren
 id|HA_DISC_DSB
@@ -11715,7 +12960,7 @@ l_int|0
 suffix:semicolon
 id|i
 OL
-id|config.maxscb
+id|config-&gt;maxscb
 suffix:semicolon
 id|i
 op_increment
@@ -11750,7 +12995,7 @@ multiline_comment|/*&n;   * For reconnecting targets, the sequencer code needs t
 id|outb
 c_func
 (paren
-id|config.maxscb
+id|config-&gt;maxscb
 comma
 id|HA_SCBCOUNT
 c_func
@@ -11820,7 +13065,7 @@ id|aic7xxx_no_reset
 id|printk
 c_func
 (paren
-l_string|&quot;Resetting the SCSI bus...&bslash;n&quot;
+l_string|&quot;aic7xxx: Resetting the SCSI bus...&quot;
 )paren
 suffix:semicolon
 r_if
@@ -11831,10 +13076,17 @@ op_eq
 id|AIC_TWIN
 )paren
 (brace
-multiline_comment|/*&n;       * Select channel B.&n;       */
+multiline_comment|/*&n;       * Select Channel B.&n;       */
 id|outb
 c_func
 (paren
+(paren
+id|sblkctl
+op_amp
+op_complement
+id|SELBUS_MASK
+)paren
+op_or
 id|SELBUSB
 comma
 id|SBLKCTL
@@ -11874,10 +13126,17 @@ id|base
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;       * Select channel A.&n;       */
+multiline_comment|/*&n;       * Select Channel A.&n;       */
 id|outb
 c_func
 (paren
+(paren
+id|sblkctl
+op_amp
+op_complement
+id|SELBUS_MASK
+)paren
+op_or
 id|SELSINGLE
 comma
 id|SBLKCTL
@@ -11922,6 +13181,12 @@ id|aic7xxx_delay
 c_func
 (paren
 id|AIC7XXX_RESET_DELAY
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;done.&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
@@ -11972,12 +13237,20 @@ suffix:semicolon
 r_int
 id|i
 suffix:semicolon
+r_struct
+id|aic7xxx_host_config
+id|config
+suffix:semicolon
 r_template
 op_member_access_from_pointer
 id|proc_dir
 op_assign
 op_amp
 id|proc_scsi_aic7xxx
+suffix:semicolon
+id|config.chan_num
+op_assign
+l_int|0
 suffix:semicolon
 multiline_comment|/*&n;   * Since we may allow sharing of IRQs, it is imperative&n;   * that we &quot;null-out&quot; the aic7xxx_boards array. It is&n;   * not guaranteed to be initialized to 0 (NULL). We use&n;   * a NULL entry to indicate that no prior hosts have&n;   * been found/registered for that IRQ.&n;   */
 r_for
@@ -12093,7 +13366,7 @@ macro_line|#if 0
 id|printk
 c_func
 (paren
-l_string|&quot;aic7xxx: hcntrl=0x%x&bslash;n&quot;
+l_string|&quot;aic7xxx: HCNTRL:0x%x&bslash;n&quot;
 comma
 id|inb
 c_func
@@ -12128,22 +13401,44 @@ id|base
 )paren
 )paren
 suffix:semicolon
-id|irq
-op_assign
-id|inb
-c_func
-(paren
-id|HA_INTDEF
-c_func
-(paren
-id|base
-)paren
-)paren
-op_amp
-l_int|0x0F
-suffix:semicolon
 macro_line|#endif
 multiline_comment|/*&n;       * We &quot;find&quot; a AIC-7770 if we locate the card&n;       * signature and we can set it up and register&n;       * it with the kernel without incident.&n;       */
+id|config.type
+op_assign
+id|type
+suffix:semicolon
+id|config.base
+op_assign
+id|base
+suffix:semicolon
+id|config.irq
+op_assign
+id|irq
+suffix:semicolon
+id|config.parity
+op_assign
+id|AIC_UNKNOWN
+suffix:semicolon
+id|config.low_term
+op_assign
+id|AIC_UNKNOWN
+suffix:semicolon
+id|config.high_term
+op_assign
+id|AIC_UNKNOWN
+suffix:semicolon
+id|config.busrtime
+op_assign
+l_int|0
+suffix:semicolon
+id|config.walk_scbs
+op_assign
+id|FALSE
+suffix:semicolon
+id|config.ultra_enabled
+op_assign
+id|FALSE
+suffix:semicolon
 id|found
 op_add_assign
 id|aic7xxx_register
@@ -12151,11 +13446,8 @@ c_func
 (paren
 r_template
 comma
-id|type
-comma
-id|base
-comma
-id|irq
+op_amp
+id|config
 )paren
 suffix:semicolon
 multiline_comment|/*&n;       * Disallow spurious interrupts.&n;       */
@@ -12166,14 +13458,6 @@ suffix:semicolon
 )brace
 )brace
 macro_line|#ifdef CONFIG_PCI
-DECL|macro|DEVREVID
-mdefine_line|#define DEVREVID  0x08
-DECL|macro|DEVCONFIG
-mdefine_line|#define DEVCONFIG 0x40
-DECL|macro|DEVSTATUS
-mdefine_line|#define DEVSTATUS 0x41
-DECL|macro|RAMPSM
-mdefine_line|#define RAMPSM    0x02
 multiline_comment|/*&n;   * PCI-bus probe.&n;   */
 r_if
 c_cond
@@ -12338,6 +13622,92 @@ id|type
 op_assign
 id|AIC_7872
 suffix:semicolon
+id|config.chan_num
+op_assign
+id|number_of_3940s
+op_amp
+l_int|0x1
+suffix:semicolon
+id|number_of_3940s
+op_increment
+suffix:semicolon
+)brace
+r_else
+(brace
+r_if
+c_cond
+(paren
+(paren
+op_logical_neg
+id|pcibios_find_device
+c_func
+(paren
+id|PCI_VENDOR_ID_ADAPTEC
+comma
+id|PCI_DEVICE_ID_ADAPTEC_7881
+comma
+id|index
+comma
+op_amp
+id|pci_bus
+comma
+op_amp
+id|pci_device_fn
+)paren
+)paren
+op_logical_or
+(paren
+op_logical_neg
+id|pcibios_find_device
+c_func
+(paren
+id|PCI_VENDOR_ID_ADAPTEC
+comma
+id|PCI_DEVICE_ID_ADAPTEC_7880
+comma
+id|index
+comma
+op_amp
+id|pci_bus
+comma
+op_amp
+id|pci_device_fn
+)paren
+)paren
+)paren
+(brace
+id|type
+op_assign
+id|AIC_7880
+suffix:semicolon
+)brace
+r_else
+(brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|pcibios_find_device
+c_func
+(paren
+id|PCI_VENDOR_ID_ADAPTEC
+comma
+id|PCI_DEVICE_ID_ADAPTEC_7882
+comma
+id|index
+comma
+op_amp
+id|pci_bus
+comma
+op_amp
+id|pci_device_fn
+)paren
+)paren
+(brace
+id|type
+op_assign
+id|AIC_7882
+suffix:semicolon
 )brace
 r_else
 (brace
@@ -12349,6 +13719,8 @@ id|done
 op_assign
 l_int|1
 suffix:semicolon
+)brace
+)brace
 )brace
 )brace
 )brace
@@ -12420,58 +13792,6 @@ id|error
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; * Make the base I/O register look like EISA and VL-bus.&n;&t; */
-id|base
-op_assign
-id|io_port
-op_minus
-l_int|0xC01
-suffix:semicolon
-multiline_comment|/*&n;&t; * I don&squot;t think we need to bother with allowing&n;&t; * spurious interrupts for the 787x/7850, but what&n;&t; * the hey.&n;&t; */
-id|aic7xxx_spurious_count
-op_assign
-l_int|1
-suffix:semicolon
-macro_line|#if 0
-id|printk
-c_func
-(paren
-l_string|&quot;aic7xxx: hcntrl=0x%x&bslash;n&quot;
-comma
-id|inb
-c_func
-(paren
-id|HCNTRL
-c_func
-(paren
-id|base
-)paren
-)paren
-)paren
-suffix:semicolon
-macro_line|#endif
-id|outb
-c_func
-(paren
-id|inb
-c_func
-(paren
-id|HCNTRL
-c_func
-(paren
-id|base
-)paren
-)paren
-op_or
-id|CHIPRST
-comma
-id|HCNTRL
-c_func
-(paren
-id|base
-)paren
-)paren
-suffix:semicolon
 id|error
 op_assign
 id|pcibios_read_config_byte
@@ -12487,6 +13807,21 @@ op_amp
 id|devrevid
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|error
+)paren
+(brace
+id|panic
+c_func
+(paren
+l_string|&quot;aic7xxx_detect: error %d reading device revision id.&bslash;n&quot;
+comma
+id|error
+)paren
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -12522,6 +13857,21 @@ op_amp
 id|devconfig
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|error
+)paren
+(brace
+id|panic
+c_func
+(paren
+l_string|&quot;aic7xxx_detect: error %d reading device configuration.&bslash;n&quot;
+comma
+id|error
+)paren
+suffix:semicolon
+)brace
 id|error
 op_assign
 id|pcibios_read_config_byte
@@ -12537,6 +13887,21 @@ op_amp
 id|devstatus
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|error
+)paren
+(brace
+id|panic
+c_func
+(paren
+l_string|&quot;aic7xxx_detect: error %d reading device status.&bslash;n&quot;
+comma
+id|error
+)paren
+suffix:semicolon
+)brace
 id|printk
 c_func
 (paren
@@ -12547,20 +13912,79 @@ comma
 id|devstatus
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t; * Make the base I/O register look like EISA and VL-bus.&n;&t; */
+id|base
+op_assign
+id|io_port
+op_minus
+l_int|0xC01
+suffix:semicolon
+multiline_comment|/*&n;&t; * I don&squot;t think we need to bother with allowing&n;&t; * spurious interrupts for the 787x/7850, but what&n;&t; * the hey.&n;&t; */
+id|aic7xxx_spurious_count
+op_assign
+l_int|1
+suffix:semicolon
+id|config.type
+op_assign
+id|type
+suffix:semicolon
+id|config.base
+op_assign
+id|base
+suffix:semicolon
+id|config.irq
+op_assign
+id|irq
+suffix:semicolon
+id|config.parity
+op_assign
+id|AIC_UNKNOWN
+suffix:semicolon
+id|config.low_term
+op_assign
+id|AIC_UNKNOWN
+suffix:semicolon
+id|config.high_term
+op_assign
+id|AIC_UNKNOWN
+suffix:semicolon
+id|config.busrtime
+op_assign
+l_int|0
+suffix:semicolon
+id|config.walk_scbs
+op_assign
+id|FALSE
+suffix:semicolon
+id|config.ultra_enabled
+op_assign
+id|FALSE
+suffix:semicolon
 r_if
 c_cond
+(paren
 (paren
 id|devstatus
 op_amp
 id|RAMPSM
 )paren
-(brace
-id|printk
-c_func
+op_logical_or
 (paren
-l_string|&quot;aic7xxx_detect: detected external SCB RAM, &quot;
-l_string|&quot;mail deang@ims.com for test patch&quot;
+id|devconfig
+op_amp
+id|SCBRAMSEL
 )paren
+op_logical_or
+(paren
+id|type
+op_eq
+id|AIC_7872
+)paren
+)paren
+(brace
+id|config.walk_scbs
+op_assign
+id|TRUE
 suffix:semicolon
 )brace
 id|found
@@ -12570,11 +13994,8 @@ c_func
 (paren
 r_template
 comma
-id|type
-comma
-id|base
-comma
-id|irq
+op_amp
+id|config
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * Disable spurious interrupts.&n;&t; */
@@ -14129,6 +15550,35 @@ c_func
 (paren
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|scb-&gt;state
+op_amp
+id|SCB_ACTIVE
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|scb-&gt;state
+op_amp
+id|SCB_IMMED
+)paren
+(brace
+multiline_comment|/*&n;       * Don&squot;t know how set the number of retries to 0.&n;       */
+multiline_comment|/* cmd-&gt;retries = 0; */
+id|aic7xxx_done
+(paren
+id|p
+comma
+id|scb
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
+multiline_comment|/*&n;       * Abort the operation.&n;       */
 id|aic7xxx_abort_scb
 c_func
 (paren
@@ -14137,6 +15587,8 @@ comma
 id|scb
 )paren
 suffix:semicolon
+)brace
+)brace
 id|restore_flags
 c_func
 (paren

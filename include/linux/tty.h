@@ -1058,6 +1058,16 @@ r_int
 id|new_console
 )paren
 suffix:semicolon
+r_extern
+r_void
+id|console_print
+c_func
+(paren
+r_const
+r_char
+op_star
+)paren
+suffix:semicolon
 multiline_comment|/* vt.c */
 r_extern
 r_int

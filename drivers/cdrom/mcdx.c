@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * The Mitsumi CDROM interface&n; * Copyright (C) 1995 Heiko Schlittermann&n; * VERSION: 1.0a&n; * &n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; * &n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; * &n; * You should have received a copy of the GNU General Public License&n; * along with this program; see the file COPYING.  If not, write to&n; * the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * Thanks to&n; *  The Linux Community at all and ...&n; *  Martin Harriss (he wrote the first Mitsumi Driver)&n; *  Eberhard Moenkeberg (he gave me much support and the initial kick)&n; *  Bernd Huebner, Ruediger Helsch (Unifix-Software GmbH, they&n; *      improved the original driver)&n; *  Jon Tombs, Bjorn Ekwall (module support)&n; *  Daniel v. Mosnenck (he sent me the Technical and Programming Reference)&n; *  Gerd Knorr (he lent me his PhotoCD)&n; *  Nils Faerber and Roger E. Wolff (extensivly tested the LU portion)&n; *  ... somebody forgotten?&n; *  &n; */
+multiline_comment|/*&n; * The Mitsumi CDROM interface&n; * Copyright (C) 1995 Heiko Schlittermann &lt;heiko@lotte.sax.de&gt;&n; * VERSION: 1.3&n; * &n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; * &n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; * &n; * You should have received a copy of the GNU General Public License&n; * along with this program; see the file COPYING.  If not, write to&n; * the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * Thanks to&n; *  The Linux Community at all and ...&n; *  Martin Harriss (he wrote the first Mitsumi Driver)&n; *  Eberhard Moenkeberg (he gave me much support and the initial kick)&n; *  Bernd Huebner, Ruediger Helsch (Unifix-Software GmbH, they&n; *      improved the original driver)&n; *  Jon Tombs, Bjorn Ekwall (module support)&n; *  Daniel v. Mosnenck (he sent me the Technical and Programming Reference)&n; *  Gerd Knorr (he lent me his PhotoCD)&n; *  Nils Faerber and Roger E. Wolff (extensivly tested the LU portion)&n; *  ... somebody forgotten?&n; *  &n; */
 macro_line|#if RCS
 DECL|variable|mcdx_c_version
 r_static
@@ -7,10 +7,33 @@ r_char
 op_star
 id|mcdx_c_version
 op_assign
-l_string|&quot;mcdx.c,v 1.7 1995/08/27 01:46:41 heiko Exp&quot;
+l_string|&quot;mcdx.c,v 1.17 1995/11/06 01:07:57 heiko Exp&quot;
 suffix:semicolon
 macro_line|#endif
+macro_line|#include &lt;linux/config.h&gt;
+macro_line|#ifdef MODULE
 macro_line|#include &lt;linux/module.h&gt;
+macro_line|#endif
+macro_line|#include &lt;linux/version.h&gt;
+macro_line|#ifdef MODULE
+macro_line|#ifndef CONFIG_MODVERSIONS
+DECL|variable|kernel_version
+r_char
+id|kernel_version
+(braket
+)braket
+op_assign
+id|UTS_RELEASE
+suffix:semicolon
+macro_line|#endif
+macro_line|#else
+DECL|macro|MOD_INC_USE_COUNT
+mdefine_line|#define MOD_INC_USE_COUNT
+DECL|macro|MOD_DEC_USE_COUNT
+mdefine_line|#define MOD_DEC_USE_COUNT
+DECL|macro|MOD_IN_USE
+mdefine_line|#define MOD_IN_USE 1
+macro_line|#endif MODULE
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -25,11 +48,12 @@ macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;linux/major.h&gt;
-macro_line|#ifndef MITSUMI_X_CDROM_MAJOR               /* old kernel (doesn&squot;t know about MCDX) */
+multiline_comment|/* old kernel (doesn&squot;t know about MCDX) */
+macro_line|#ifndef MITSUMI_X_CDROM_MAJOR
 DECL|macro|MITSUMI_X_CDROM_MAJOR
 mdefine_line|#define MITSUMI_X_CDROM_MAJOR 20
 DECL|macro|DEVICE_NAME
-mdefine_line|#define DEVICE_NAME &quot;Mitsumi CD-ROM&quot;
+mdefine_line|#define DEVICE_NAME &quot;mcdx&quot;
 multiline_comment|/* #define DEVICE_INTR do_mcdx */
 DECL|macro|DEVICE_REQUEST
 mdefine_line|#define DEVICE_REQUEST do_mcdx_request
@@ -43,9 +67,13 @@ macro_line|#endif
 DECL|macro|MAJOR_NR
 mdefine_line|#define MAJOR_NR MITSUMI_X_CDROM_MAJOR
 macro_line|#include &lt;linux/blk.h&gt;
+multiline_comment|/* for compatible parameter passing with &quot;insmod&quot; */
 DECL|macro|mcdx_drive_map
-mdefine_line|#define&t;mcdx_drive_map mcdx     /* for compatible parameter passing with &quot;insmod&quot; */
+mdefine_line|#define&t;mcdx_drive_map mcdx    
 macro_line|#include &lt;linux/mcdx.h&gt;
+macro_line|#ifndef HZ 
+macro_line|#error HZ not defined
+macro_line|#endif
 multiline_comment|/* CONSTANTS *******************************************************/
 DECL|variable|REQUEST_SIZE
 r_const
@@ -61,6 +89,15 @@ id|DIRECT_SIZE
 op_assign
 l_int|200
 suffix:semicolon
+DECL|variable|ACLOSE_INHIBIT
+r_const
+r_int
+r_int
+id|ACLOSE_INHIBIT
+op_assign
+l_int|800
+suffix:semicolon
+multiline_comment|/* 1/100 s of autoclose inhibit */
 DECL|enum|drivemodes
 DECL|enumerator|TOC
 DECL|enumerator|DATA
@@ -308,6 +345,16 @@ r_int
 id|lock
 suffix:semicolon
 multiline_comment|/* exclusive usage */
+DECL|member|eject_sw
+r_int
+id|eject_sw
+suffix:semicolon
+multiline_comment|/* 1 - eject on last close (default 0) */
+DECL|member|autoclose
+r_int
+id|autoclose
+suffix:semicolon
+multiline_comment|/* 1 - close the door on open (default 1) */
 multiline_comment|/* cd infos */
 DECL|member|di
 r_struct
@@ -445,6 +492,12 @@ r_int
 id|xxx
 suffix:semicolon
 multiline_comment|/* last jiff it was asked for media change */
+DECL|member|ejected
+r_int
+r_int
+id|ejected
+suffix:semicolon
+multiline_comment|/* time we called the eject function */
 DECL|member|users
 r_int
 id|users
@@ -465,6 +518,22 @@ suffix:semicolon
 multiline_comment|/* Prototypes ******************************************************/
 multiline_comment|/*&t;The following prototypes are already declared elsewhere.  They are&n; &t;repeated here to show what&squot;s going on.  And to sense, if they&squot;re&n;&t;changed elsewhere. */
 multiline_comment|/* declared in blk.h */
+macro_line|#if LINUX_VERSION_CODE &lt; 66338
+r_int
+r_int
+id|mcdx_init
+c_func
+(paren
+r_int
+r_int
+id|mem_start
+comma
+r_int
+r_int
+id|mem_end
+)paren
+suffix:semicolon
+macro_line|#else
 r_int
 id|mcdx_init
 c_func
@@ -472,6 +541,7 @@ c_func
 r_void
 )paren
 suffix:semicolon
+macro_line|#endif
 r_void
 id|do_mcdx_request
 c_func
@@ -479,6 +549,15 @@ c_func
 r_void
 )paren
 suffix:semicolon
+macro_line|#if LINUX_VERSION_CODE &lt; 66338
+r_int
+id|check_mcdx_media_change
+c_func
+(paren
+id|dev_t
+)paren
+suffix:semicolon
+macro_line|#else
 r_int
 id|check_mcdx_media_change
 c_func
@@ -486,6 +565,7 @@ c_func
 id|kdev_t
 )paren
 suffix:semicolon
+macro_line|#endif
 multiline_comment|/* already declared in init/main */
 r_void
 id|mcdx_setup
@@ -981,12 +1061,23 @@ id|cdrom_msf
 op_star
 )paren
 suffix:semicolon
-multiline_comment|/* static variables ************************************************/
-DECL|variable|dummy0
 r_static
 r_int
-id|dummy0
+id|mcdx_setattentuator
+c_func
+(paren
+r_struct
+id|s_drive_stuff
+op_star
+comma
+r_struct
+id|cdrom_volctrl
+op_star
+comma
+r_int
+)paren
 suffix:semicolon
+multiline_comment|/* static variables ************************************************/
 DECL|variable|mcdx_drive_map
 r_static
 r_int
@@ -1330,7 +1421,7 @@ id|TRACE
 c_func
 (paren
 (paren
-id|IOCTL
+id|PLAYTRK
 comma
 l_string|&quot;ioctl() track %d to %d&bslash;n&quot;
 comma
@@ -1884,7 +1975,7 @@ id|TRACE
 c_func
 (paren
 (paren
-id|IOCTL
+id|SUBCHNL
 comma
 l_string|&quot;audiostatus: %x&bslash;n&quot;
 comma
@@ -1926,7 +2017,7 @@ id|TRACE
 c_func
 (paren
 (paren
-id|IOCTL
+id|SUBCHNL
 comma
 l_string|&quot;trk %d, ind %d&bslash;n&quot;
 comma
@@ -1966,7 +2057,7 @@ id|TRACE
 c_func
 (paren
 (paren
-id|IOCTL
+id|SUBCHNL
 comma
 l_string|&quot;lba: abs %d, rel %d&bslash;n&quot;
 comma
@@ -2038,7 +2129,7 @@ id|TRACE
 c_func
 (paren
 (paren
-id|IOCTL
+id|SUBCHNL
 comma
 l_string|&quot;msf: abs %02d:%02d:%02d, rel %02d:%02d:%02d&bslash;n&quot;
 comma
@@ -2185,7 +2276,7 @@ id|TRACE
 c_func
 (paren
 (paren
-id|IOCTL
+id|TOCHDR
 comma
 l_string|&quot;ioctl() track0 = %d, track1 = %d&bslash;n&quot;
 comma
@@ -2242,6 +2333,10 @@ r_return
 op_minus
 id|EIO
 suffix:semicolon
+id|stuffp-&gt;audiostatus
+op_assign
+id|CDROM_AUDIO_PAUSED
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2262,10 +2357,6 @@ l_int|1
 r_return
 op_minus
 id|EIO
-suffix:semicolon
-id|stuffp-&gt;audiostatus
-op_assign
-id|CDROM_AUDIO_PAUSED
 suffix:semicolon
 r_return
 l_int|0
@@ -2460,7 +2551,7 @@ id|TRACE
 c_func
 (paren
 (paren
-id|IOCTL
+id|MS
 comma
 l_string|&quot;ioctl() (%d, %02x:%02x.%02x [%02x:%02x.%02x])&bslash;n&quot;
 comma
@@ -2482,15 +2573,11 @@ id|stuffp-&gt;multi.msf_last.frame
 suffix:semicolon
 r_else
 (brace
-id|dummy0
-op_assign
-l_int|0
-suffix:semicolon
 id|TRACE
 c_func
 (paren
 (paren
-id|IOCTL
+id|MS
 comma
 l_string|&quot;ioctl() (%d, 0x%08x [%02x:%02x.%02x])&bslash;n&quot;
 comma
@@ -2559,21 +2646,94 @@ l_int|0
 suffix:semicolon
 )brace
 r_case
+id|CDROMEJECT_SW
+suffix:colon
+(brace
+id|stuffp-&gt;eject_sw
+op_assign
+id|arg
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+r_case
 id|CDROMVOLCTRL
 suffix:colon
 (brace
+r_int
+id|ans
+suffix:semicolon
+r_struct
+id|cdrom_volctrl
+id|volctrl
+suffix:semicolon
 id|TRACE
 c_func
 (paren
 (paren
 id|IOCTL
 comma
-l_string|&quot;ioctl() volctrl&bslash;n&quot;
+l_string|&quot;ioctl() VOLCTRL&bslash;n&quot;
+)paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|ans
+op_assign
+id|verify_area
+c_func
+(paren
+id|VERIFY_READ
+comma
+(paren
+r_void
+op_star
+)paren
+id|arg
+comma
+r_sizeof
+(paren
+id|volctrl
+)paren
+)paren
+)paren
+)paren
+r_return
+id|ans
+suffix:semicolon
+id|memcpy_fromfs
+c_func
+(paren
+op_amp
+id|volctrl
+comma
+(paren
+r_char
+op_star
+)paren
+id|arg
+comma
+r_sizeof
+(paren
+id|volctrl
 )paren
 )paren
 suffix:semicolon
 r_return
-l_int|0
+id|mcdx_setattentuator
+c_func
+(paren
+id|stuffp
+comma
+op_amp
+id|volctrl
+comma
+l_int|1
+)paren
 suffix:semicolon
 )brace
 r_default
@@ -2621,6 +2781,24 @@ l_string|&quot;do_request()&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
+macro_line|#if LINUX_VERSION_CODE &lt; 66338
+r_if
+c_cond
+(paren
+(paren
+id|CURRENT
+op_eq
+l_int|NULL
+)paren
+op_logical_or
+(paren
+id|CURRENT-&gt;dev
+OL
+l_int|0
+)paren
+)paren
+(brace
+macro_line|#else
 r_if
 c_cond
 (paren
@@ -2637,6 +2815,7 @@ id|RQ_INACTIVE
 )paren
 )paren
 (brace
+macro_line|#endif
 id|TRACE
 c_func
 (paren
@@ -2650,6 +2829,19 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+macro_line|#if LINUX_VERSION_CODE &lt; 66338
+id|stuffp
+op_assign
+id|mcdx_stuffp
+(braket
+id|MINOR
+c_func
+(paren
+id|CURRENT-&gt;dev
+)paren
+)braket
+suffix:semicolon
+macro_line|#else
 id|stuffp
 op_assign
 id|mcdx_stuffp
@@ -2661,6 +2853,7 @@ id|CURRENT-&gt;rq_dev
 )paren
 )braket
 suffix:semicolon
+macro_line|#endif
 id|TRACE
 c_func
 (paren
@@ -2675,6 +2868,16 @@ id|stuffp
 suffix:semicolon
 id|INIT_REQUEST
 suffix:semicolon
+macro_line|#if LINUX_VERSION_CODE &lt; 66338
+id|dev
+op_assign
+id|MINOR
+c_func
+(paren
+id|CURRENT-&gt;dev
+)paren
+suffix:semicolon
+macro_line|#else
 id|dev
 op_assign
 id|MINOR
@@ -2683,6 +2886,7 @@ c_func
 id|CURRENT-&gt;rq_dev
 )paren
 suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -2704,6 +2908,18 @@ id|stuffp-&gt;present
 )paren
 )paren
 (brace
+macro_line|#if LINUX_VERSION_CODE &lt; 66338
+id|WARN
+c_func
+(paren
+(paren
+l_string|&quot;do_request(): bad device: 0x%04x&bslash;n&quot;
+comma
+id|CURRENT-&gt;dev
+)paren
+)paren
+suffix:semicolon
+macro_line|#else
 id|WARN
 c_func
 (paren
@@ -2718,6 +2934,7 @@ id|CURRENT-&gt;rq_dev
 )paren
 )paren
 suffix:semicolon
+macro_line|#endif
 id|end_request
 c_func
 (paren
@@ -2908,6 +3125,7 @@ id|file
 op_star
 id|fp
 )paren
+multiline_comment|/*  actions done on open:&n; *  1)  get the drives status */
 (brace
 r_struct
 id|s_drive_stuff
@@ -2945,6 +3163,7 @@ r_return
 op_minus
 id|ENXIO
 suffix:semicolon
+multiline_comment|/* this is only done to test if the drive talks with us */
 r_if
 c_cond
 (paren
@@ -2963,7 +3182,7 @@ r_return
 op_minus
 id|EIO
 suffix:semicolon
-multiline_comment|/* close the door, if necessary (get the door information&n;    from the hardware status register) */
+multiline_comment|/* close the door, if necessary (get the door information&n;    from the hardware status register). &n;    If the last eject is too recent, an autoclose wouldn&squot;t probably&n;    be what we want ..., if we can&squot;t read the CD after an autoclose&n;    no further autclose&squot;s will be tried */
 r_if
 c_cond
 (paren
@@ -2979,6 +3198,25 @@ id|stuffp-&gt;rreg_status
 op_amp
 id|MCDX_RBIT_DOOR
 )paren
+(brace
+r_if
+c_cond
+(paren
+id|jiffies
+op_minus
+id|stuffp-&gt;ejected
+OL
+id|ACLOSE_INHIBIT
+)paren
+r_return
+op_minus
+id|EIO
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|stuffp-&gt;autoclose
+)paren
 id|mcdx_closedoor
 c_func
 (paren
@@ -2987,7 +3225,13 @@ comma
 l_int|1
 )paren
 suffix:semicolon
-multiline_comment|/* if the media changed we will have to little more */
+r_else
+r_return
+op_minus
+id|EIO
+suffix:semicolon
+)brace
+multiline_comment|/* if the media changed we will have to do a little more */
 r_if
 c_cond
 (paren
@@ -3007,13 +3251,15 @@ l_string|&quot;open() media changed&bslash;n&quot;
 )paren
 suffix:semicolon
 multiline_comment|/* but wait - the time of media change will be set at the &n;        very last of this block - it seems, some of the following&n;        talk() will detect a media change ... (I think, config()&n;        is the reason. */
-multiline_comment|/*&n;        TRACE((OPENCLOSE, &quot;open() hardware reset&bslash;n&quot;));&n;&t;&t;if (-1 == mcdx_reset(stuffp, HARD, 1)) return -EIO;&n;        */
 id|stuffp-&gt;audiostatus
 op_assign
 id|CDROM_AUDIO_INVALID
 suffix:semicolon
 multiline_comment|/* get the multisession information */
 (brace
+r_int
+id|ans
+suffix:semicolon
 id|TRACE
 c_func
 (paren
@@ -3024,12 +3270,8 @@ l_string|&quot;open() Request multisession info&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-op_minus
-l_int|1
-op_eq
+id|ans
+op_assign
 id|mcdx_requestmultidiskinfo
 c_func
 (paren
@@ -3040,10 +3282,37 @@ id|stuffp-&gt;multi
 comma
 l_int|6
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ans
+op_eq
+op_minus
+l_int|1
 )paren
+(brace
+id|stuffp-&gt;autoclose
+op_assign
+l_int|0
+suffix:semicolon
+id|mcdx_eject
+c_func
+(paren
+id|stuffp
+comma
+l_int|1
+)paren
+suffix:semicolon
 r_return
 op_minus
 id|EIO
+suffix:semicolon
+)brace
+multiline_comment|/* we succeeded, so on next open(2) we could try auto close&n;            again */
+id|stuffp-&gt;autoclose
+op_assign
+l_int|1
 suffix:semicolon
 r_if
 c_cond
@@ -3570,14 +3839,29 @@ id|stuffp
 comma
 l_int|0
 comma
-l_int|1
+l_int|3
 )paren
 )paren
-id|printk
+id|INFO
 c_func
 (paren
-id|MCDX
-l_string|&quot;: Cannot unlock the door&bslash;n&quot;
+(paren
+l_string|&quot;close() Cannot unlock the door&bslash;n&quot;
+)paren
+)paren
+suffix:semicolon
+multiline_comment|/* eject if wished */
+r_if
+c_cond
+(paren
+id|stuffp-&gt;eject_sw
+)paren
+id|mcdx_eject
+c_func
+(paren
+id|stuffp
+comma
+l_int|1
 )paren
 suffix:semicolon
 )brace
@@ -3586,7 +3870,16 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+macro_line|#if LINUX_VERSION_CODE &lt; 66338
 DECL|function|check_mcdx_media_change
+r_int
+id|check_mcdx_media_change
+c_func
+(paren
+id|dev_t
+id|full_dev
+)paren
+macro_line|#else
 r_int
 id|check_mcdx_media_change
 c_func
@@ -3594,8 +3887,21 @@ c_func
 id|kdev_t
 id|full_dev
 )paren
+macro_line|#endif
 multiline_comment|/*&t;Return: 1 if media changed since last call to &n;&t;&t;&t;  this function&n;&t;&t;&t;0 else&n;&t;Setting flag to 0 resets the changed state. */
 (brace
+macro_line|#if LINUX_VERSION_CODE &lt; 66338
+id|INFO
+c_func
+(paren
+(paren
+l_string|&quot;check_mcdx_media_change called for device %x&bslash;n&quot;
+comma
+id|full_dev
+)paren
+)paren
+suffix:semicolon
+macro_line|#else
 id|INFO
 c_func
 (paren
@@ -3610,6 +3916,7 @@ id|full_dev
 )paren
 )paren
 suffix:semicolon
+macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
@@ -3801,14 +4108,20 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|stuffp
+op_eq
+l_int|NULL
+op_logical_or
 op_logical_neg
 id|stuffp-&gt;busy
 )paren
 (brace
-id|INFO
+id|TRACE
 c_func
 (paren
 (paren
+id|IRQ
+comma
 l_string|&quot;intr() unexpected interrupt @ irq %d&bslash;n&quot;
 comma
 id|irq
@@ -3873,10 +4186,6 @@ id|stuffp-&gt;rreg_data
 suffix:semicolon
 r_else
 (brace
-id|dummy0
-op_assign
-l_int|0
-suffix:semicolon
 id|TRACE
 c_func
 (paren
@@ -3937,32 +4246,34 @@ comma
 r_int
 id|tries
 )paren
-multiline_comment|/* Send a command to the drive, wait for the result.&n; * returns -1 on timeout, drive status otherwise&n; */
+multiline_comment|/* Send a command to the drive, wait for the result.&n; * returns -1 on timeout, drive status otherwise&n; * If buffer is not zero, the result (length size) is stored there.&n; * If buffer is zero the size should be the number of bytes to read&n; * from the drive.  These bytes are discarded.&n; */
 (brace
+r_int
+id|st
+suffix:semicolon
 r_char
 id|c
 suffix:semicolon
 r_int
-id|st
+id|disgard
 suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
+(paren
+id|disgard
+op_assign
+(paren
 id|buffer
-op_logical_or
-id|size
 op_eq
-l_int|0
+l_int|NULL
+)paren
+)paren
 )paren
 id|buffer
 op_assign
 op_amp
 id|c
-comma
-id|size
-op_assign
-l_int|1
 suffix:semicolon
 r_while
 c_loop
@@ -4147,7 +4458,7 @@ id|bp
 )paren
 )paren
 (brace
-id|WARN
+id|INFO
 c_func
 (paren
 (paren
@@ -4180,10 +4491,18 @@ id|st
 op_assign
 op_star
 id|bp
-op_increment
 suffix:semicolon
 id|sz
 op_decrement
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|disgard
+)paren
+id|bp
+op_increment
 suffix:semicolon
 id|TRACE
 c_func
@@ -4212,7 +4531,7 @@ id|WARN
 c_func
 (paren
 (paren
-l_string|&quot;command error %02x (%d)&bslash;n&quot;
+l_string|&quot;command error cmd = %02x %s &bslash;n&quot;
 comma
 id|cmd
 (braket
@@ -4220,6 +4539,13 @@ l_int|0
 )braket
 comma
 id|cmdlen
+OG
+l_int|1
+ques
+c_cond
+l_string|&quot;...&quot;
+suffix:colon
+l_string|&quot;&quot;
 )paren
 )paren
 suffix:semicolon
@@ -4251,6 +4577,26 @@ c_cond
 id|CDROM_AUDIO_PLAY
 suffix:colon
 id|CDROM_AUDIO_NO_STATUS
+suffix:semicolon
+r_else
+r_if
+c_cond
+(paren
+id|stuffp-&gt;audiostatus
+op_eq
+id|CDROM_AUDIO_PLAY
+op_logical_and
+id|e_audiobusy
+c_func
+(paren
+id|st
+)paren
+op_eq
+l_int|0
+)paren
+id|stuffp-&gt;audiostatus
+op_assign
+id|CDROM_AUDIO_COMPLETED
 suffix:semicolon
 multiline_comment|/* media change? */
 r_if
@@ -4301,11 +4647,10 @@ op_minus
 l_int|1
 comma
 id|bp
-op_increment
 )paren
 )paren
 (brace
-id|WARN
+id|INFO
 c_func
 (paren
 (paren
@@ -4339,6 +4684,15 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|disgard
+)paren
+id|bp
+op_increment
+suffix:semicolon
 id|TRACE
 c_func
 (paren
@@ -4358,7 +4712,6 @@ l_int|1
 suffix:semicolon
 )brace
 )brace
-macro_line|#if QUIET == 0
 r_if
 c_cond
 (paren
@@ -4370,7 +4723,7 @@ op_eq
 op_minus
 l_int|1
 )paren
-id|INFO
+id|WARN
 c_func
 (paren
 (paren
@@ -4378,7 +4731,6 @@ l_string|&quot;talk() giving up&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
-macro_line|#endif
 id|stuffp-&gt;lock
 op_assign
 l_int|0
@@ -4424,11 +4776,22 @@ id|drives
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#if LINUX_VERSION_CODE &lt; 66338
+id|mcdx_init
+c_func
+(paren
+l_int|0
+comma
+l_int|0
+)paren
+suffix:semicolon
+macro_line|#else
 id|mcdx_init
 c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#endif
 r_for
 c_loop
 (paren
@@ -4484,6 +4847,12 @@ id|drives
 r_return
 op_minus
 id|EIO
+suffix:semicolon
+id|register_symtab
+c_func
+(paren
+l_int|0
+)paren
 suffix:semicolon
 r_return
 l_int|0
@@ -4807,23 +5176,48 @@ id|args
 )paren
 suffix:semicolon
 )brace
+macro_line|#if LINUX_VERSION_CODE &lt; 66338
 DECL|function|mcdx_init
+r_int
+r_int
+id|mcdx_init
+c_func
+(paren
+r_int
+r_int
+id|mem_start
+comma
+r_int
+r_int
+id|mem_end
+)paren
+macro_line|#else
 r_int
 id|mcdx_init
 c_func
 (paren
 r_void
 )paren
+macro_line|#endif
 (brace
 r_int
 id|drive
+suffix:semicolon
+id|WARN
+c_func
+(paren
+(paren
+l_string|&quot;Version 1.3 &quot;
+l_string|&quot;mcdx.c,v 1.17 1995/11/06 01:07:57 heiko Exp&bslash;n&quot;
+)paren
+)paren
 suffix:semicolon
 id|INFO
 c_func
 (paren
 (paren
-l_string|&quot;: Version 1.0a &quot;
-l_string|&quot;mcdx.c,v 1.7 1995/08/27 01:46:41 heiko Exp&bslash;n&quot;
+l_string|&quot;: Version 1.3 &quot;
+l_string|&quot;mcdx.c,v 1.17 1995/11/06 01:07:57 heiko Exp&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
@@ -4897,6 +5291,17 @@ id|drive
 )paren
 )paren
 suffix:semicolon
+macro_line|#if defined(MODULE) || LINUX_VERSION_CODE &gt; 66338
+id|TRACE
+c_func
+(paren
+(paren
+id|INIT
+comma
+l_string|&quot;kmalloc space for stuffpt&squot;s&bslash;n&quot;
+)paren
+)paren
+suffix:semicolon
 id|TRACE
 c_func
 (paren
@@ -4937,6 +5342,31 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
+macro_line|#else
+id|TRACE
+c_func
+(paren
+(paren
+id|INIT
+comma
+l_string|&quot;adjust mem_start&bslash;n&quot;
+)paren
+)paren
+suffix:semicolon
+id|stuffp
+op_assign
+(paren
+r_struct
+id|s_drive_stuff
+op_star
+)paren
+id|mem_start
+suffix:semicolon
+id|mem_start
+op_add_assign
+id|size
+suffix:semicolon
+macro_line|#endif
 id|TRACE
 c_func
 (paren
@@ -4955,7 +5385,7 @@ id|stuffp
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/* zero the stuff */
+multiline_comment|/* set default values */
 id|memset
 c_func
 (paren
@@ -4970,6 +5400,11 @@ id|stuffp
 )paren
 )paren
 suffix:semicolon
+id|stuffp-&gt;autoclose
+op_assign
+l_int|1
+suffix:semicolon
+multiline_comment|/* close the door on open(2) */
 id|stuffp-&gt;present
 op_assign
 l_int|0
@@ -5586,9 +6021,15 @@ id|stuffp
 )paren
 suffix:semicolon
 )brace
+macro_line|#if MODULE || LINUX_VERSION_CODE &gt; 66338
 r_return
 l_int|0
 suffix:semicolon
+macro_line|#else
+r_return
+id|mem_start
+suffix:semicolon
+macro_line|#endif
 )brace
 DECL|function|mcdx_transfer
 r_static
@@ -5759,34 +6200,6 @@ op_amp
 id|stuffp-&gt;busyq
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-(paren
-id|sig
-op_assign
-(paren
-id|current-&gt;signal
-op_logical_and
-op_complement
-id|current-&gt;blocked
-)paren
-)paren
-op_logical_or
-(paren
-id|to
-op_assign
-(paren
-id|current-&gt;timeout
-op_eq
-l_int|0
-)paren
-)paren
-)paren
-(brace
-r_break
-suffix:semicolon
-)brace
 )brace
 id|current-&gt;timeout
 op_assign
@@ -5806,8 +6219,6 @@ op_logical_and
 op_logical_neg
 id|stuffp-&gt;introk
 )paren
-op_logical_or
-id|sig
 op_logical_or
 id|to
 )paren
@@ -5843,22 +6254,6 @@ c_func
 (paren
 (paren
 l_string|&quot;mcdx_transfer(): timeout&bslash;n&quot;
-)paren
-)paren
-suffix:semicolon
-r_else
-r_if
-c_cond
-(paren
-id|sig
-)paren
-id|WARN
-c_func
-(paren
-(paren
-l_string|&quot;mcdx_transfer(): got signal 0x%lx&bslash;n&quot;
-comma
-id|current-&gt;signal
 )paren
 )paren
 suffix:semicolon
@@ -6584,7 +6979,7 @@ id|TRACE
 c_func
 (paren
 (paren
-id|IOCTL
+id|READTOC
 comma
 l_string|&quot;ioctl() toc already read&bslash;n&quot;
 )paren
@@ -6598,7 +6993,7 @@ id|TRACE
 c_func
 (paren
 (paren
-id|IOCTL
+id|READTOC
 comma
 l_string|&quot;ioctl() readtoc for %d tracks&bslash;n&quot;
 comma
@@ -6632,7 +7027,7 @@ id|TRACE
 c_func
 (paren
 (paren
-id|IOCTL
+id|READTOC
 comma
 l_string|&quot;ioctl() tocmode&bslash;n&quot;
 )paren
@@ -6882,7 +7277,7 @@ id|TRACE
 c_func
 (paren
 (paren
-id|IOCTL
+id|READTOC
 comma
 l_string|&quot;ioctl() toc idx %d (trk %d)&bslash;n&quot;
 comma
@@ -6949,7 +7344,7 @@ id|TRACE
 c_func
 (paren
 (paren
-id|IOCTL
+id|READTOC
 comma
 l_string|&quot;ioctl() undo toc mode&bslash;n&quot;
 )paren
@@ -6975,7 +7370,7 @@ r_return
 op_minus
 id|EIO
 suffix:semicolon
-macro_line|#if MCDX_DEBUG &amp;&amp; IOCTL
+macro_line|#if MCDX_DEBUG &amp;&amp; READTOC
 (brace
 r_int
 id|trk
@@ -7004,7 +7399,7 @@ id|TRACE
 c_func
 (paren
 (paren
-id|IOCTL
+id|READTOC
 comma
 l_string|&quot;ioctl() %d readtoc %02x %02x %02x&quot;
 l_string|&quot;  %02x:%02x.%02x  %02x:%02x.%02x&bslash;n&quot;
@@ -7178,7 +7573,7 @@ id|TRACE
 c_func
 (paren
 (paren
-id|IOCTL
+id|PLAYMSF
 comma
 l_string|&quot;ioctl(): play %x &quot;
 l_string|&quot;%02x:%02x:%02x -- %02x:%02x:%02x&bslash;n&quot;
@@ -7246,7 +7641,7 @@ c_func
 (paren
 id|stuffp
 comma
-l_int|1
+l_int|3
 op_star
 id|HZ
 comma
@@ -7441,7 +7836,7 @@ l_int|1
 comma
 l_int|NULL
 comma
-l_int|0
+l_int|1
 comma
 l_int|5
 op_star
@@ -7482,7 +7877,7 @@ l_int|1
 comma
 l_int|NULL
 comma
-l_int|0
+l_int|1
 comma
 l_int|2
 op_star
@@ -7519,7 +7914,7 @@ l_int|1
 comma
 l_int|NULL
 comma
-l_int|0
+l_int|1
 comma
 l_int|2
 op_star
@@ -7551,6 +7946,11 @@ id|stuffp-&gt;present
 op_amp
 id|DOOR
 )paren
+(brace
+id|stuffp-&gt;ejected
+op_assign
+id|jiffies
+suffix:semicolon
 r_return
 id|mcdx_talk
 c_func
@@ -7563,7 +7963,7 @@ l_int|1
 comma
 l_int|NULL
 comma
-l_int|0
+l_int|1
 comma
 l_int|5
 op_star
@@ -7572,6 +7972,7 @@ comma
 id|tries
 )paren
 suffix:semicolon
+)brace
 r_else
 r_return
 l_int|0
@@ -8094,7 +8495,7 @@ l_int|2
 comma
 l_int|NULL
 comma
-l_int|0
+l_int|1
 comma
 l_int|5
 op_star
@@ -8207,7 +8608,7 @@ l_int|2
 comma
 l_int|NULL
 comma
-l_int|0
+l_int|1
 comma
 l_int|5
 op_star
@@ -8288,7 +8689,7 @@ l_int|3
 comma
 l_int|NULL
 comma
-l_int|0
+l_int|1
 comma
 l_int|1
 op_star
@@ -8329,7 +8730,7 @@ l_int|3
 comma
 l_int|NULL
 comma
-l_int|0
+l_int|1
 comma
 l_int|1
 op_star
@@ -8492,7 +8893,7 @@ l_int|1
 comma
 l_int|NULL
 comma
-l_int|0
+l_int|1
 comma
 l_int|5
 op_star
@@ -8565,7 +8966,7 @@ id|cmd
 comma
 l_int|NULL
 comma
-l_int|0
+l_int|1
 comma
 l_int|5
 op_star
@@ -8607,7 +9008,7 @@ l_int|1
 comma
 l_int|NULL
 comma
-l_int|0
+l_int|1
 comma
 l_int|5
 op_star
@@ -8718,6 +9119,90 @@ l_int|0xff
 suffix:semicolon
 r_return
 l_int|0
+suffix:semicolon
+)brace
+r_static
+r_int
+DECL|function|mcdx_setattentuator
+id|mcdx_setattentuator
+c_func
+(paren
+r_struct
+id|s_drive_stuff
+op_star
+id|stuffp
+comma
+r_struct
+id|cdrom_volctrl
+op_star
+id|vol
+comma
+r_int
+id|tries
+)paren
+(brace
+r_char
+id|cmd
+(braket
+l_int|5
+)braket
+suffix:semicolon
+id|cmd
+(braket
+l_int|0
+)braket
+op_assign
+l_int|0xae
+suffix:semicolon
+id|cmd
+(braket
+l_int|1
+)braket
+op_assign
+id|vol-&gt;channel0
+suffix:semicolon
+id|cmd
+(braket
+l_int|2
+)braket
+op_assign
+l_int|0
+suffix:semicolon
+id|cmd
+(braket
+l_int|3
+)braket
+op_assign
+id|vol-&gt;channel1
+suffix:semicolon
+id|cmd
+(braket
+l_int|4
+)braket
+op_assign
+l_int|0
+suffix:semicolon
+r_return
+id|mcdx_talk
+c_func
+(paren
+id|stuffp
+comma
+id|cmd
+comma
+r_sizeof
+(paren
+id|cmd
+)paren
+comma
+l_int|NULL
+comma
+l_int|5
+comma
+l_int|200
+comma
+id|tries
+)paren
 suffix:semicolon
 )brace
 eof

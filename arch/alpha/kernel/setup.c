@@ -13,6 +13,7 @@ macro_line|#include &lt;linux/user.h&gt;
 macro_line|#include &lt;linux/a.out.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
+macro_line|#include &lt;linux/config.h&gt;&t;/* CONFIG_ALPHA_LCA etc */
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/hwrpb.h&gt;
@@ -112,83 +113,6 @@ l_int|16
 multiline_comment|/* orig-video-points */
 )brace
 suffix:semicolon
-multiline_comment|/*&n; * Initialize Programmable Interval Timers with standard values.  Some&n; * drivers depend on them being initialized (e.g., joystick driver).&n; */
-DECL|function|init_pit
-r_static
-r_void
-id|init_pit
-(paren
-r_void
-)paren
-(brace
-id|outb
-c_func
-(paren
-l_int|0x54
-comma
-l_int|0x43
-)paren
-suffix:semicolon
-multiline_comment|/* counter 1: refresh timer */
-id|outb
-c_func
-(paren
-l_int|0x18
-comma
-l_int|0x41
-)paren
-suffix:semicolon
-id|outb
-c_func
-(paren
-l_int|0x36
-comma
-l_int|0x43
-)paren
-suffix:semicolon
-multiline_comment|/* counter 0: system timer */
-id|outb
-c_func
-(paren
-l_int|0x00
-comma
-l_int|0x40
-)paren
-suffix:semicolon
-id|outb
-c_func
-(paren
-l_int|0x00
-comma
-l_int|0x40
-)paren
-suffix:semicolon
-id|outb
-c_func
-(paren
-l_int|0xb6
-comma
-l_int|0x43
-)paren
-suffix:semicolon
-multiline_comment|/* counter 2: speaker */
-id|outb
-c_func
-(paren
-l_int|0x31
-comma
-l_int|0x42
-)paren
-suffix:semicolon
-id|outb
-c_func
-(paren
-l_int|0x13
-comma
-l_int|0x42
-)paren
-suffix:semicolon
-)brace
 DECL|function|find_end_memory
 r_static
 r_int
@@ -328,11 +252,6 @@ id|memory_end_p
 r_extern
 r_int
 id|_end
-suffix:semicolon
-id|init_pit
-c_func
-(paren
-)paren
 suffix:semicolon
 id|hwrpb
 op_assign
