@@ -1314,6 +1314,11 @@ r_int
 id|dump_fpu
 (paren
 r_struct
+id|pt_regs
+op_star
+id|regs
+comma
+r_struct
 id|user_i387_struct
 op_star
 id|fpu
@@ -1527,6 +1532,8 @@ id|dump-&gt;u_fpvalid
 op_assign
 id|dump_fpu
 (paren
+id|regs
+comma
 op_amp
 id|dump-&gt;i387
 )paren

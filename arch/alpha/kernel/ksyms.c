@@ -2,6 +2,8 @@ multiline_comment|/*&n; * linux/arch/alpha/kernel/ksyms.c&n; *&n; * Export the a
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
+macro_line|#include &lt;linux/user.h&gt;
+macro_line|#include &lt;linux/elfcore.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/hwrpb.h&gt;
 r_extern
@@ -82,6 +84,33 @@ r_void
 id|__remqu
 (paren
 r_void
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|dump_thread
+c_func
+(paren
+r_struct
+id|pt_regs
+op_star
+comma
+r_struct
+id|user
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|dump_fpu
+c_func
+(paren
+r_struct
+id|pt_regs
+op_star
+comma
+id|elf_fpregset_t
+op_star
 )paren
 suffix:semicolon
 DECL|variable|arch_symbol_table
@@ -300,12 +329,6 @@ comma
 id|X
 c_func
 (paren
-id|hwrpb
-)paren
-comma
-id|X
-c_func
-(paren
 id|memcmp
 )paren
 comma
@@ -325,6 +348,30 @@ id|X
 c_func
 (paren
 id|__constant_c_memset
+)paren
+comma
+id|X
+c_func
+(paren
+id|dump_thread
+)paren
+comma
+id|X
+c_func
+(paren
+id|dump_fpu
+)paren
+comma
+id|X
+c_func
+(paren
+id|hwrpb
+)paren
+comma
+id|X
+c_func
+(paren
+id|wrusp
 )paren
 comma
 multiline_comment|/*&n;&t; * The following are special because they&squot;re not called&n;&t; * explicitly (the C compiler or assembler generates them in&n;&t; * response to division operations).  Fortunately, their&n;&t; * interface isn&squot;t gonna change any time soon now, so it&squot;s OK&n;&t; * to leave it out of version control.&n;&t; */

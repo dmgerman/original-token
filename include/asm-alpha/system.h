@@ -8,6 +8,7 @@ DECL|macro|BOOT_PCB
 mdefine_line|#define BOOT_PCB&t;0x20000000
 DECL|macro|BOOT_ADDR
 mdefine_line|#define BOOT_ADDR&t;0x20000000
+multiline_comment|/* Remove when official MILO sources have ELF support: */
 DECL|macro|BOOT_SIZE
 mdefine_line|#define BOOT_SIZE&t;(16*1024)
 DECL|macro|KERNEL_START
@@ -24,6 +25,7 @@ DECL|macro|ZERO_PGE
 mdefine_line|#define ZERO_PGE&t;0xfffffc000030A000
 DECL|macro|START_ADDR
 mdefine_line|#define START_ADDR&t;0xfffffc0000310000
+multiline_comment|/* Remove when official MILO sources have ELF support: */
 DECL|macro|START_SIZE
 mdefine_line|#define START_SIZE&t;(2*1024*1024)
 macro_line|#ifndef __ASSEMBLY__

@@ -5214,7 +5214,6 @@ l_int|0
 suffix:semicolon
 multiline_comment|/*DPRINT(&quot;FIFO enabled&bslash;n&quot;);*/
 )brace
-macro_line|#ifndef __sparc__
 r_switch
 c_cond
 (paren
@@ -5492,7 +5491,6 @@ id|spec2
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
 )brace
 multiline_comment|/* fdc_specify */
 multiline_comment|/* Set the FDC&squot;s data transfer rate on behalf of the specified drive.&n; * NOTE: with 82072/82077 FDCs, changing the data rate requires a reissue&n; * of the specify command (i.e. using the fdc_specify function).&n; */

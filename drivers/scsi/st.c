@@ -13723,10 +13723,7 @@ id|inode
 comma
 id|file
 comma
-id|mtc.mt_op
-op_eq
-id|MTSEEK
-op_logical_or
+multiline_comment|/* mtc.mt_op == MTSEEK || */
 id|mtc.mt_op
 op_eq
 id|MTREW

@@ -17,6 +17,7 @@ macro_line|#include &lt;linux/time.h&gt;
 macro_line|#include &lt;linux/major.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/mman.h&gt;
+macro_line|#include &lt;linux/elfcore.h&gt;
 macro_line|#include &lt;asm/reg.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -879,6 +880,53 @@ l_int|32
 op_star
 l_int|8
 )paren
+suffix:semicolon
+)brace
+DECL|function|dump_fpu
+r_int
+id|dump_fpu
+(paren
+r_struct
+id|pt_regs
+op_star
+id|regs
+comma
+id|elf_fpregset_t
+op_star
+id|r
+)paren
+(brace
+multiline_comment|/* switch stack follows right below pt_regs: */
+r_struct
+id|switch_stack
+op_star
+id|sw
+op_assign
+(paren
+(paren
+r_struct
+id|switch_stack
+op_star
+)paren
+id|regs
+)paren
+op_minus
+l_int|1
+suffix:semicolon
+id|memcpy
+c_func
+(paren
+id|r
+comma
+id|sw-&gt;fp
+comma
+l_int|32
+op_star
+l_int|8
+)paren
+suffix:semicolon
+r_return
+l_int|1
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * sys_execve() executes a new program.&n; *&n; * This works due to the alpha calling sequence: the first 6 args&n; * are gotten from registers, while the rest is on the stack, so&n; * we get a0-a5 for free, and then magically find &quot;struct pt_regs&quot;&n; * on the stack for us..&n; *&n; * Don&squot;t do this at home.&n; */

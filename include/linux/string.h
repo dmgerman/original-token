@@ -43,7 +43,7 @@ r_const
 r_char
 op_star
 comma
-r_int
+id|__kernel_size_t
 )paren
 suffix:semicolon
 r_extern
@@ -73,7 +73,7 @@ r_const
 r_char
 op_star
 comma
-r_int
+id|__kernel_size_t
 )paren
 suffix:semicolon
 r_extern
@@ -147,7 +147,7 @@ op_star
 )paren
 suffix:semicolon
 r_extern
-r_int
+id|__kernel_size_t
 id|strlen
 c_func
 (paren
@@ -157,7 +157,7 @@ op_star
 )paren
 suffix:semicolon
 r_extern
-r_int
+id|__kernel_size_t
 id|strnlen
 c_func
 (paren
@@ -165,11 +165,11 @@ r_const
 r_char
 op_star
 comma
-r_int
+id|__kernel_size_t
 )paren
 suffix:semicolon
 r_extern
-r_int
+id|__kernel_size_t
 id|strspn
 c_func
 (paren
@@ -209,7 +209,7 @@ r_const
 r_char
 op_star
 comma
-r_int
+id|__kernel_size_t
 )paren
 suffix:semicolon
 r_extern
@@ -223,7 +223,7 @@ op_star
 comma
 r_int
 comma
-r_int
+id|__kernel_size_t
 )paren
 suffix:semicolon
 r_extern
@@ -239,7 +239,7 @@ r_const
 r_void
 op_star
 comma
-r_int
+id|__kernel_size_t
 )paren
 suffix:semicolon
 r_extern
@@ -255,7 +255,7 @@ r_const
 r_void
 op_star
 comma
-r_int
+id|__kernel_size_t
 )paren
 suffix:semicolon
 r_extern
@@ -269,7 +269,7 @@ op_star
 comma
 r_int
 comma
-r_int
+id|__kernel_size_t
 )paren
 suffix:semicolon
 r_extern
@@ -285,7 +285,7 @@ r_const
 r_void
 op_star
 comma
-r_int
+id|__kernel_size_t
 )paren
 suffix:semicolon
 multiline_comment|/*&n; * Include machine specific inline routines&n; */

@@ -1482,11 +1482,6 @@ suffix:semicolon
 r_case
 id|ASF_PCB_NAK
 suffix:colon
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
 id|printk
 c_func
 (paren

@@ -13,9 +13,6 @@ macro_line|#include &lt;linux/hdreg.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &quot;ide.h&quot;
 macro_line|#include &quot;ide_modes.h&quot;
-multiline_comment|/*&n; * This should be set to the system&squot;s local bus (PCI or VLB) speed,&n; * e.g., 33 for a 486DX33 or 486DX2/66.  Legal values are anything&n; * from 25 to 50.  Setting this too *low* will make the EIDE&n; * controller unable to communicate with the disks.&n; *&n; * The value is 50 by default -- this should work ok with any system.&n; * (Low values cause problems because it multiplies by bus speed&n; * to get cycles, and thus gets a too-small cycle count and tries to&n; * access the disks too fast.  I tried this once under DOS and it locked&n; * up the system.)&t;-- derekn@vw.ece.cmu.edu&n; */
-DECL|macro|ALI_14xx_BUS_SPEED
-mdefine_line|#define ALI_14xx_BUS_SPEED&t;50&t;/* PCI / VLB bus speed */
 multiline_comment|/* port addresses for auto-detection */
 DECL|macro|ALI_NUM_PORTS
 mdefine_line|#define ALI_NUM_PORTS 4
@@ -217,65 +214,8 @@ l_int|0x00
 )brace
 )brace
 suffix:semicolon
-multiline_comment|/* default timing parameters for each PIO mode */
 DECL|macro|ALI_MAX_PIO
 mdefine_line|#define ALI_MAX_PIO 4
-DECL|member|time1
-DECL|member|time2
-DECL|variable|timeTab
-r_static
-r_struct
-(brace
-r_int
-id|time1
-comma
-id|time2
-suffix:semicolon
-)brace
-id|timeTab
-(braket
-id|ALI_MAX_PIO
-op_plus
-l_int|1
-)braket
-op_assign
-(brace
-(brace
-l_int|600
-comma
-l_int|165
-)brace
-comma
-multiline_comment|/* PIO 0 */
-(brace
-l_int|383
-comma
-l_int|125
-)brace
-comma
-multiline_comment|/* PIO 1 */
-(brace
-l_int|240
-comma
-l_int|100
-)brace
-comma
-multiline_comment|/* PIO 2 */
-(brace
-l_int|180
-comma
-l_int|80
-)brace
-comma
-multiline_comment|/* PIO 3 */
-(brace
-l_int|120
-comma
-l_int|70
-)brace
-multiline_comment|/* PIO 4 */
-)brace
-suffix:semicolon
 multiline_comment|/* timing parameter registers for each drive */
 DECL|member|reg1
 DECL|member|reg2
@@ -462,8 +402,6 @@ r_int
 id|time1
 comma
 id|time2
-comma
-id|time1a
 suffix:semicolon
 id|byte
 id|param1
@@ -474,99 +412,50 @@ id|param3
 comma
 id|param4
 suffix:semicolon
-r_struct
-id|hd_driveid
-op_star
-id|id
-op_assign
-id|drive-&gt;id
-suffix:semicolon
 r_int
 r_int
 id|flags
 suffix:semicolon
-r_if
-c_cond
+id|ide_pio_data_t
+id|d
+suffix:semicolon
+r_int
+id|bus_speed
+op_assign
+id|ide_system_bus_speed
+c_func
 (paren
-id|pio
-op_eq
-l_int|255
 )paren
+suffix:semicolon
 id|pio
 op_assign
 id|ide_get_best_pio_mode
 c_func
 (paren
 id|drive
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
+comma
 id|pio
-OG
+comma
 id|ALI_MAX_PIO
+comma
+op_amp
+id|d
 )paren
-id|pio
-op_assign
-id|ALI_MAX_PIO
 suffix:semicolon
 multiline_comment|/* calculate timing, according to PIO mode */
 id|time1
 op_assign
-id|timeTab
+id|d.cycle_time
+suffix:semicolon
+id|time2
+op_assign
+id|ide_pio_timings
 (braket
 id|pio
 )braket
 dot
-id|time1
+id|active_time
 suffix:semicolon
-id|time2
-op_assign
-id|timeTab
-(braket
-id|pio
-)braket
-dot
-id|time2
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|pio
-op_ge
-l_int|3
-)paren
-(brace
-id|time1a
-op_assign
-(paren
-id|id-&gt;capability
-op_amp
-l_int|0x08
-)paren
-ques
-c_cond
-id|id-&gt;eide_pio_iordy
-suffix:colon
-id|id-&gt;eide_pio
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|time1a
-op_ne
-l_int|0
-op_logical_and
-id|time1a
-OL
-id|time1
-)paren
-id|time1
-op_assign
-id|time1a
-suffix:semicolon
-)brace
 id|param3
 op_assign
 id|param1
@@ -574,7 +463,7 @@ op_assign
 (paren
 id|time2
 op_star
-id|ALI_14xx_BUS_SPEED
+id|bus_speed
 op_plus
 l_int|999
 )paren
@@ -588,7 +477,7 @@ op_assign
 (paren
 id|time1
 op_star
-id|ALI_14xx_BUS_SPEED
+id|bus_speed
 op_plus
 l_int|999
 )paren

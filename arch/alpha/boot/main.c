@@ -8,6 +8,7 @@ macro_line|#include &lt;asm/console.h&gt;
 macro_line|#include &lt;asm/hwrpb.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;stdarg.h&gt;
+macro_line|#include &quot;ksize.h&quot;
 r_extern
 r_int
 id|vsprintf
@@ -563,10 +564,6 @@ c_func
 )paren
 suffix:semicolon
 )brace
-r_extern
-r_int
-id|_end
-suffix:semicolon
 DECL|function|openboot
 r_static
 r_inline
@@ -670,8 +667,23 @@ id|bootfile
 l_int|256
 )braket
 suffix:semicolon
+r_extern
+r_char
+id|_end
+suffix:semicolon
 r_int
 id|result
+comma
+id|boot_size
+op_assign
+op_amp
+id|_end
+op_minus
+(paren
+r_char
+op_star
+)paren
+id|BOOT_ADDR
 suffix:semicolon
 id|result
 op_assign
@@ -733,7 +745,7 @@ id|count
 comma
 id|addr
 comma
-id|BOOT_SIZE
+id|boot_size
 op_div
 l_int|512
 op_plus
@@ -877,7 +889,7 @@ id|dev
 comma
 id|START_ADDR
 comma
-id|START_SIZE
+id|KERNEL_SIZE
 )paren
 suffix:semicolon
 id|close
@@ -891,7 +903,7 @@ c_cond
 (paren
 id|i
 op_ne
-id|START_SIZE
+id|KERNEL_SIZE
 )paren
 (brace
 id|printk

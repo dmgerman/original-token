@@ -320,11 +320,6 @@ id|pentry
 op_assign
 id|entry-&gt;next
 suffix:semicolon
-id|sti
-c_func
-(paren
-)paren
-suffix:semicolon
 id|rarp_release_entry
 c_func
 (paren

@@ -3344,7 +3344,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;Lost timer or fin packet in tcp_fin.&quot;
+l_string|&quot;Lost timer or fin packet in tcp_fin.&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace

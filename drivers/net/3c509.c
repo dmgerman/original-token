@@ -2005,6 +2005,10 @@ c_cond
 id|tickssofar
 OL
 l_int|40
+op_star
+id|HZ
+op_div
+l_int|100
 )paren
 r_return
 l_int|1

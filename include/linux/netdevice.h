@@ -5,7 +5,6 @@ mdefine_line|#define _LINUX_NETDEVICE_H
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/if.h&gt;
 macro_line|#include &lt;linux/if_ether.h&gt;
-macro_line|#include &lt;linux/skbuff.h&gt;
 multiline_comment|/* for future expansion when we will have different priorities. */
 DECL|macro|DEV_NUMBUFFS
 mdefine_line|#define DEV_NUMBUFFS&t;3
@@ -38,6 +37,8 @@ DECL|macro|IS_INVBCAST
 mdefine_line|#define IS_INVBCAST&t;4&t;&t;/* Wrong netmask bcast not for us (unused)*/
 DECL|macro|IS_MULTICAST
 mdefine_line|#define IS_MULTICAST&t;5&t;&t;/* Multicast IP address */
+macro_line|#ifdef __KERNEL__
+macro_line|#include &lt;linux/skbuff.h&gt;
 multiline_comment|/*&n; *&t;We tag multicasts with these structures.&n; */
 DECL|struct|dev_mc_list
 r_struct
@@ -703,7 +704,6 @@ id|next
 suffix:semicolon
 )brace
 suffix:semicolon
-macro_line|#ifdef __KERNEL__
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/notifier.h&gt;
 multiline_comment|/* Used by dev_rint */

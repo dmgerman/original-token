@@ -1,4 +1,4 @@
-multiline_comment|/********************************************************&n;* Header file for eata_pio.c Linux EATA-PIO SCSI driver *&n;* (c) 1993-96 Michael Neuffer  &t;                        *&n;*********************************************************&n;* last change: 95/06/21&t;&t;&t;&t;&t;*&n;********************************************************/
+multiline_comment|/********************************************************&n;* Header file for eata_pio.c Linux EATA-PIO SCSI driver *&n;* (c) 1993-96 Michael Neuffer  &t;                        *&n;*********************************************************&n;* last change: 96/05/05&t;&t;&t;&t;&t;*&n;********************************************************/
 macro_line|#ifndef _EATA_PIO_H
 DECL|macro|_EATA_PIO_H
 mdefine_line|#define _EATA_PIO_H

@@ -5038,6 +5038,12 @@ c_func
 l_string|&quot;Unable to allocate IRQ for adaptec controller.&bslash;n&quot;
 )paren
 suffix:semicolon
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 r_goto
 id|unregister
 suffix:semicolon
@@ -5074,6 +5080,12 @@ c_func
 id|irq_level
 comma
 l_int|NULL
+)paren
+suffix:semicolon
+id|restore_flags
+c_func
+(paren
+id|flags
 )paren
 suffix:semicolon
 r_goto

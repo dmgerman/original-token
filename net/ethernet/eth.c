@@ -798,7 +798,7 @@ r_struct
 id|ethhdr
 op_star
 )paren
-id|dest-&gt;data
+id|src
 suffix:semicolon
 r_if
 c_cond

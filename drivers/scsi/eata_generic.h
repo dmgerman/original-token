@@ -1,4 +1,4 @@
-multiline_comment|/********************************************************&n;* Header file for eata_dma.c and eata_pio.c&t;&t;*&n;* Linux EATA SCSI drivers&t;&t;&t;&t;*&n;* (c) 1993-96 Michael Neuffer                           *&n;*             mike@i-Connect.Net                        *&n;*             neuffer@mail.uni-mainz.de                 *&n;*********************************************************&n;* last change: 95/05/05                                 *&n;********************************************************/
+multiline_comment|/********************************************************&n;* Header file for eata_dma.c and eata_pio.c&t;&t;*&n;* Linux EATA SCSI drivers&t;&t;&t;&t;*&n;* (c) 1993-96 Michael Neuffer                           *&n;*             mike@i-Connect.Net                        *&n;*             neuffer@mail.uni-mainz.de                 *&n;*********************************************************&n;* last change: 96/05/16                                 *&n;********************************************************/
 macro_line|#ifndef _EATA_GENERIC_H
 DECL|macro|_EATA_GENERIC_H
 mdefine_line|#define _EATA_GENERIC_H
@@ -106,7 +106,7 @@ mdefine_line|#define CD(cmd)&t; ((struct eata_ccb *)(cmd-&gt;host_scribble))
 DECL|macro|SD
 mdefine_line|#define SD(host) ((hostdata *)&amp;(host-&gt;hostdata))
 DECL|macro|DELAY
-mdefine_line|#define DELAY(x) { __u32 i; ulong flags;          &bslash;&n;                   save_flags(flags); sti();      &bslash;&n;                   i = jiffies + (x * HZ);        &bslash;&n;                   while (jiffies &lt; i) barrier(); &bslash;&n;                   restore_flags(flags); }
+mdefine_line|#define DELAY(x) { ulong flags, i;                &bslash;&n;                   save_flags(flags); sti();      &bslash;&n;                   i = jiffies + (x * HZ);        &bslash;&n;                   while (jiffies &lt; i);           &bslash;&n;                   restore_flags(flags); }
 multiline_comment|/***********************************************&n; *    EATA Command &amp; Register definitions      *&n; ***********************************************/
 DECL|macro|PCI_REG_DPTconfig
 mdefine_line|#define PCI_REG_DPTconfig&t; 0x40&t; 
@@ -156,6 +156,14 @@ DECL|macro|EATA_COLD_BOOT_HBA
 mdefine_line|#define EATA_COLD_BOOT_HBA       0x06&t;   /* Only as a last resort&t;*/
 DECL|macro|EATA_FORCE_IO
 mdefine_line|#define EATA_FORCE_IO            0x07
+DECL|macro|HA_CTRLREG
+mdefine_line|#define HA_CTRLREG     0x206       /* control register for HBA    */
+DECL|macro|HA_CTRL_DISINT
+mdefine_line|#define HA_CTRL_DISINT 0x02        /* CTRLREG: disable interrupts */
+DECL|macro|HA_CTRL_RESCPU
+mdefine_line|#define HA_CTRL_RESCPU 0x04        /* CTRLREG: reset processor    */
+DECL|macro|HA_CTRL_8HEADS
+mdefine_line|#define HA_CTRL_8HEADS 0x08        /* CTRLREG: set for drives with* &n;&t;&t;&t;&t;    * &gt;=8 heads (WD1003 rudimentary :-) */
 DECL|macro|HA_WCOMMAND
 mdefine_line|#define HA_WCOMMAND    0x07&t;   /* command register offset&t;*/
 DECL|macro|HA_WIFC
@@ -1031,28 +1039,6 @@ id|__u32
 id|all_lat
 (braket
 l_int|4
-)braket
-suffix:semicolon
-multiline_comment|/* state of Target (RESET,..) */
-DECL|member|t_state
-id|__u8
-id|t_state
-(braket
-id|MAXCHANNEL
-)braket
-(braket
-id|MAXTARGET
-)braket
-suffix:semicolon
-multiline_comment|/* timeouts on target&t;       */
-DECL|member|t_timeout
-id|__u32
-id|t_timeout
-(braket
-id|MAXCHANNEL
-)braket
-(braket
-id|MAXTARGET
 )braket
 suffix:semicolon
 DECL|member|resetlevel

@@ -434,19 +434,6 @@ l_int|NULL
 )brace
 suffix:semicolon
 macro_line|#endif
-multiline_comment|/*&n; *  As the scsi do command functions are intelligent, and may need to&n; *  redo a command, we need to keep track of the last command&n; *  executed on each one.&n; */
-DECL|macro|WAS_RESET
-mdefine_line|#define WAS_RESET       0x01
-DECL|macro|WAS_TIMEDOUT
-mdefine_line|#define WAS_TIMEDOUT    0x02
-DECL|macro|WAS_SENSE
-mdefine_line|#define WAS_SENSE       0x04
-DECL|macro|IS_RESETTING
-mdefine_line|#define IS_RESETTING    0x08
-DECL|macro|IS_ABORTING
-mdefine_line|#define IS_ABORTING     0x10
-DECL|macro|ASKED_FOR_SENSE
-mdefine_line|#define ASKED_FOR_SENSE 0x20
 multiline_comment|/*&n; *  This is the number  of clock ticks we should wait before we time out&n; *  and abort the command.  This is for  where the scsi.c module generates&n; *  the command, not where it originates from a higher level, in which&n; *  case the timeout is specified there.&n; *&n; *  ABORT_TIMEOUT and RESET_TIMEOUT are the timeouts for RESET and ABORT&n; *  respectively.&n; */
 macro_line|#ifdef DEBUG_TIMEOUT
 r_static
@@ -4718,6 +4705,37 @@ r_int
 id|clock
 suffix:semicolon
 macro_line|#endif
+macro_line|#if DEBUG
+r_int
+r_int
+op_star
+id|ret
+op_assign
+l_int|0
+suffix:semicolon
+macro_line|#ifdef __mips__
+id|__asm__
+id|__volatile__
+(paren
+l_string|&quot;move&bslash;t%0,$31&quot;
+suffix:colon
+l_string|&quot;=r&quot;
+(paren
+id|ret
+)paren
+)paren
+suffix:semicolon
+macro_line|#else
+id|ret
+op_assign
+id|__builtin_return_address
+c_func
+(paren
+l_int|0
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#endif
 id|host
 op_assign
 id|SCpnt-&gt;host
@@ -5427,7 +5445,7 @@ suffix:semicolon
 multiline_comment|/* Start the timer ticking.  */
 id|SCpnt-&gt;internal_timeout
 op_assign
-l_int|0
+id|NORMAL_TIMEOUT
 suffix:semicolon
 id|SCpnt-&gt;abort_reason
 op_assign
@@ -5904,7 +5922,8 @@ id|WAS_SENSE
 macro_line|#ifdef DEBUG
 id|printk
 (paren
-l_string|&quot;In scsi_done, GOOD status, COMMAND COMPLETE, parsing sense information.&bslash;n&quot;
+l_string|&quot;In scsi_done, GOOD status, COMMAND COMPLETE, &quot;
+l_string|&quot;parsing sense information.&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -6054,7 +6073,8 @@ macro_line|#ifdef DEBUG
 id|printk
 c_func
 (paren
-l_string|&quot;COMMAND COMPLETE message returned, status = FINISHED. &bslash;n&quot;
+l_string|&quot;COMMAND COMPLETE message returned, &quot;
+l_string|&quot;status = FINISHED. &bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -8801,6 +8821,34 @@ r_int
 id|flags
 suffix:semicolon
 macro_line|#ifdef DEBUG
+r_int
+r_int
+id|ret
+op_assign
+l_int|0
+suffix:semicolon
+macro_line|#ifdef __mips__
+id|__asm__
+id|__volatile__
+(paren
+l_string|&quot;move&bslash;t%0,$31&quot;
+suffix:colon
+l_string|&quot;=r&quot;
+(paren
+id|ret
+)paren
+)paren
+suffix:semicolon
+macro_line|#else
+id|ret
+op_assign
+id|__builtin_return_address
+c_func
+(paren
+l_int|0
+)paren
+suffix:semicolon
+macro_line|#endif
 id|printk
 c_func
 (paren
@@ -8950,6 +8998,20 @@ id|sector
 )paren
 )paren
 (brace
+macro_line|#ifdef DEBUG
+id|printk
+c_func
+(paren
+l_string|&quot;scsi_free(obj=%p, len=%d) called from %08lx&bslash;n&quot;
+comma
+id|obj
+comma
+id|len
+comma
+id|ret
+)paren
+suffix:semicolon
+macro_line|#endif
 id|panic
 c_func
 (paren

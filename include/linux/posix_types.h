@@ -28,8 +28,10 @@ DECL|macro|__FDMASK
 macro_line|#undef __FDMASK
 DECL|macro|__FDMASK
 mdefine_line|#define&t;__FDMASK(d)&t;(1UL &lt;&lt; ((d) % __NFDBITS))
+DECL|struct|fd_set
 r_typedef
 r_struct
+id|fd_set
 (brace
 DECL|member|fds_bits
 r_int

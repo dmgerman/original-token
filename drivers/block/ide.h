@@ -26,6 +26,18 @@ macro_line|#ifndef FANCY_STATUS_DUMPS&t;&t;/* 1 for human-readable drive errors 
 DECL|macro|FANCY_STATUS_DUMPS
 mdefine_line|#define FANCY_STATUS_DUMPS&t;1&t;/* 0 to reduce kernel size */
 macro_line|#endif
+macro_line|#ifdef CONFIG_BLK_DEV_CMD640
+macro_line|#if 1
+r_void
+id|cmd640_dump_regs
+(paren
+r_void
+)paren
+suffix:semicolon
+DECL|macro|CMD640_DUMP_REGS
+mdefine_line|#define CMD640_DUMP_REGS cmd640_dump_regs() /* for debugging cmd640 chipset */
+macro_line|#endif
+macro_line|#endif  /* CONFIG_BLK_DEV_CMD640 */
 macro_line|#if defined(CONFIG_BLK_DEV_IDECD) || defined(CONFIG_BLK_DEV_IDETAPE)
 DECL|macro|CONFIG_BLK_DEV_IDEATAPI
 mdefine_line|#define CONFIG_BLK_DEV_IDEATAPI 1
@@ -577,13 +589,13 @@ suffix:colon
 l_int|1
 suffix:semicolon
 multiline_comment|/* set multmode count */
-DECL|member|set_pio
+DECL|member|set_tune
 r_int
-id|set_pio
+id|set_tune
 suffix:colon
 l_int|1
 suffix:semicolon
-multiline_comment|/* set pio mode */
+multiline_comment|/* tune interface for drive */
 DECL|member|reserved
 r_int
 id|reserved
@@ -719,6 +731,20 @@ suffix:colon
 l_int|1
 suffix:semicolon
 multiline_comment|/* flag: okay to unmask other irqs */
+DECL|member|no_unmask
+r_int
+id|no_unmask
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* disallow setting unmask bit */
+DECL|member|no_io_32bit
+r_int
+id|no_io_32bit
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* disallow enabling 32bit I/O */
 DECL|member|nobios
 r_int
 id|nobios
@@ -772,11 +798,11 @@ id|byte
 id|mult_req
 suffix:semicolon
 multiline_comment|/* requested multiple sector setting */
-DECL|member|pio_req
+DECL|member|tune_req
 id|byte
-id|pio_req
+id|tune_req
 suffix:semicolon
-multiline_comment|/* requested drive pio setting */
+multiline_comment|/* requested drive tuning setting */
 DECL|member|io_32bit
 id|byte
 id|io_32bit
@@ -1128,13 +1154,6 @@ suffix:colon
 l_int|1
 suffix:semicolon
 multiline_comment|/* serialized operation with mate hwif */
-DECL|member|no_unmask
-r_int
-id|no_unmask
-suffix:colon
-l_int|1
-suffix:semicolon
-multiline_comment|/* disallow setting unmask bits */
 DECL|member|sharing_irq
 r_int
 id|sharing_irq
@@ -1255,23 +1274,15 @@ DECL|typedef|ide_hwgroup_t
 )brace
 id|ide_hwgroup_t
 suffix:semicolon
-multiline_comment|/*&n; * ide_hwifs[] is the master data structure used to keep track&n; * of just about everything in ide.c.  Whenever possible, routines&n; * should be using pointers to a drive (ide_drive_t *) or &n; * pointers to a hwif (ide_hwif_t *), rather than indexing this&n; * structure directly (the allocation/layout may change!).&n; */
-macro_line|#ifdef _IDE_C
-DECL|variable|ide_hwifs
-id|ide_hwif_t
-id|ide_hwifs
-(braket
-id|MAX_HWIFS
-)braket
-suffix:semicolon
-multiline_comment|/* master data repository */
-macro_line|#else
+multiline_comment|/*&n; * ide_hwifs[] is the master data structure used to keep track&n; * of just about everything in ide.c.  Whenever possible, routines&n; * should be using pointers to a drive (ide_drive_t *) or &n; * pointers to a hwif (ide_hwif_t *), rather than indexing this&n; * structure directly (the allocation/layout may change!).&n; *&n; */
+macro_line|#ifndef _IDE_C
 r_extern
 id|ide_hwif_t
 id|ide_hwifs
 (braket
 )braket
 suffix:semicolon
+multiline_comment|/* master data repository */
 macro_line|#endif
 multiline_comment|/*&n; * One final include file, which references some of the data/defns from above&n; */
 DECL|macro|IDE_DRIVER
@@ -1496,6 +1507,13 @@ id|stat
 comma
 id|byte
 id|err
+)paren
+suffix:semicolon
+multiline_comment|/*&n; * ide_system_bus_speed() returns what we think is the system VESA/PCI&n; * bus speed (in Mhz).  This is used for calculating interface PIO timings.&n; * The default is 40 for known PCI systems, 50 otherwise.&n; * The &quot;idebus=xx&quot; parameter can be used to override this value.&n; */
+r_int
+id|ide_system_bus_speed
+(paren
+r_void
 )paren
 suffix:semicolon
 multiline_comment|/*&n; * ide_multwrite() transfers a block of up to mcount sectors of data&n; * to a drive as part of a disk multwrite operation.&n; */

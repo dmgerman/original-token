@@ -1,7 +1,11 @@
-multiline_comment|/*&n; *  linux/drivers/char/pcxe.c&n; * &n; *  Written by Troy De Jongh, November, 1994&n; *&n; *  Copyright (C) 1994,1995 Troy De Jongh&n; *  This software may be used and distributed according to the terms &n; *  of the GNU Public License.&n; *&n; *  This driver is for the DigiBoard PC/Xe and PC/Xi line of products.&n; *&n; *  This driver does NOT support DigiBoard&squot;s fastcook FEP option and&n; *  does not support the transparent print (i.e. digiprint) option.&n; *&n; * This Driver is currently maintained by Christoph Lameter (clameter@fuller.edu)&n; * Please contact the mailing list for problems first. &n; *&n; * Sources of Information:&n; * 1. The Linux Digiboard Page at http://private.fuller.edu/clameter/digi.html&n; * 2. The Linux Digiboard Mailing list at digiboard@list.fuller.edu&n; *    (Simply write a message to introduce yourself to subscribe)&n; *&n; *  1.5.2 Fall 1995 Bug fixes by David Nugent&n; *  1.5.3 March 9, 1996 Christoph Lameter: Fixed 115.2K Support. Memory&n; *&t;&t;allocation harmonized with 1.3.X Series.&n; *  1.5.4 March 30, 1996 Christoph Lameter: Fixup for 1.3.81. Use init_bh&n; *&t;&t;instead of direct assignment to kernel arrays.&n; *  1.5.5 April 5, 1996 Major device numbers corrected.&n; *              Mike McLagan&lt;mike.mclagan@linux.org&gt;: Add setup&n; *              variable handling, instead of using the old pcxxconfig.h&n; *  1.5.6 April 16, 1996 Christoph Lameter: Pointer cleanup, macro cleanup.&n; *&t;&t;Call out devices changed to /dev/cudxx.&n; *&n; */
+multiline_comment|/*&n; *  linux/drivers/char/pcxe.c&n; * &n; *  Written by Troy De Jongh, November, 1994&n; *&n; *  Copyright (C) 1994,1995 Troy De Jongh&n; *  This software may be used and distributed according to the terms &n; *  of the GNU Public License.&n; *&n; *  This driver is for the DigiBoard PC/Xe and PC/Xi line of products.&n; *&n; *  This driver does NOT support DigiBoard&squot;s fastcook FEP option and&n; *  does not support the transparent print (i.e. digiprint) option.&n; *&n; * This Driver is currently maintained by Christoph Lameter (clameter@fuller.edu)&n; * Please contact the mailing list for problems first. &n; *&n; * Sources of Information:&n; * 1. The Linux Digiboard Page at http://private.fuller.edu/clameter/digi.html&n; * 2. The Linux Digiboard Mailing list at digiboard@list.fuller.edu&n; *    (Simply write a message to introduce yourself to subscribe)&n; *&n; *  1.5.2 Fall 1995 Bug fixes by David Nugent&n; *  1.5.3 March 9, 1996 Christoph Lameter: Fixed 115.2K Support. Memory&n; *&t;&t;allocation harmonized with 1.3.X Series.&n; *  1.5.4 March 30, 1996 Christoph Lameter: Fixup for 1.3.81. Use init_bh&n; *&t;&t;instead of direct assignment to kernel arrays.&n; *  1.5.5 April 5, 1996 Major device numbers corrected.&n; *              Mike McLagan&lt;mike.mclagan@linux.org&gt;: Add setup&n; *              variable handling, instead of using the old pcxxconfig.h&n; *  1.5.6 April 16, 1996 Christoph Lameter: Pointer cleanup, macro cleanup.&n; *&t;&t;Call out devices changed to /dev/cudxx.&n; *  1.5.7 July 22, 1996 Martin Mares: CLOCAL fix, pcxe_table clearing.&n; *&t;&t;David Nugent: Bug in pcxe_open.&n; *&t;&t;Brian J. Murrell: Modem Control fixes, Majors correctly assigned&n; *&n; */
+DECL|macro|MODULE
+macro_line|#undef MODULE
+multiline_comment|/* Module code is broken right now. Don&squot;t enable this unless you want to fix it */
 DECL|macro|SPEED_HACK
 macro_line|#undef SPEED_HACK
 multiline_comment|/* If you define SPEED_HACK then you get the following Baudrate translation&n;   19200 = 57600&n;   38400 = 115K&n;   The driver supports the native 57.6K and 115K Baudrates under Linux, but&n;   some distributions like Slackware 3.0 don&squot;t like these high baudrates.&n;*/
+macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -20,23 +24,24 @@ macro_line|#include &lt;linux/serial.h&gt;
 macro_line|#include &lt;linux/tty_driver.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
+macro_line|#ifndef MODULE
+multiline_comment|/* is* routines not available in modules&n;** the need for this should go away when probing is done.  :-)&n;** brian@ilinx.com&n;*/
 macro_line|#include &lt;linux/ctype.h&gt;
+macro_line|#endif
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 DECL|macro|VERSION
-mdefine_line|#define VERSION &t;&quot;1.5.6&quot;
+mdefine_line|#define VERSION &t;&quot;1.5.7&quot;
 DECL|variable|banner
 r_static
 r_char
 op_star
 id|banner
 op_assign
-l_string|&quot;Digiboard PC/X{i,e,eve} driver v1.5.6.  Christoph Lameter &lt;clameter@fuller.edu&gt;.&quot;
+l_string|&quot;Digiboard PC/X{i,e,eve} driver v1.5.7&quot;
 suffix:semicolon
-multiline_comment|/*#define&t;DEFAULT_HW_FLOW&t;1 */
-multiline_comment|/*#define&t;DEBUG_IOCTL */
 macro_line|#include &quot;digi.h&quot;
 macro_line|#include &quot;fep.h&quot;
 macro_line|#include &quot;pcxx.h&quot;
@@ -583,6 +588,255 @@ id|ch
 suffix:semicolon
 DECL|macro|TZ_BUFSZ
 mdefine_line|#define TZ_BUFSZ 4096
+multiline_comment|/* function definitions */
+macro_line|#ifdef MODULE
+r_int
+id|init_module
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_void
+id|cleanup_module
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+multiline_comment|/*&n; *&t;Loadable module initialization stuff.&n; */
+DECL|function|init_module
+r_int
+id|init_module
+c_func
+(paren
+)paren
+(brace
+r_return
+id|pcxe_init
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/*****************************************************************************/
+DECL|function|cleanup_module
+r_void
+id|cleanup_module
+c_func
+(paren
+)paren
+(brace
+r_int
+r_int
+id|flags
+suffix:semicolon
+r_int
+id|crd
+comma
+id|i
+suffix:semicolon
+r_int
+id|e1
+comma
+id|e2
+suffix:semicolon
+r_struct
+id|board_info
+op_star
+id|bd
+suffix:semicolon
+r_struct
+id|channel
+op_star
+id|ch
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_INFO
+l_string|&quot;Unloading PC/Xx: version %s&bslash;n&quot;
+comma
+id|VERSION
+)paren
+suffix:semicolon
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
+id|timer_active
+op_and_assign
+op_complement
+(paren
+l_int|1
+op_lshift
+id|DIGI_TIMER
+)paren
+suffix:semicolon
+id|timer_table
+(braket
+id|DIGI_TIMER
+)braket
+dot
+id|fn
+op_assign
+l_int|NULL
+suffix:semicolon
+id|timer_table
+(braket
+id|DIGI_TIMER
+)braket
+dot
+id|expires
+op_assign
+l_int|0
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|e1
+op_assign
+id|tty_unregister_driver
+c_func
+(paren
+op_amp
+id|pcxe_driver
+)paren
+)paren
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;SERIAL: failed to unregister serial driver (%d)&bslash;n&quot;
+comma
+id|e1
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|e2
+op_assign
+id|tty_unregister_driver
+c_func
+(paren
+op_amp
+id|pcxe_callout
+)paren
+)paren
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;SERIAL: failed to unregister callout driver (%d)&bslash;n&quot;
+comma
+id|e2
+)paren
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|crd
+op_assign
+l_int|0
+suffix:semicolon
+id|crd
+OL
+id|numcards
+suffix:semicolon
+id|crd
+op_increment
+)paren
+(brace
+id|bd
+op_assign
+op_amp
+id|boards
+(braket
+id|crd
+)braket
+suffix:semicolon
+id|ch
+op_assign
+id|digi_channels
+op_plus
+id|bd-&gt;first_minor
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|bd-&gt;numports
+suffix:semicolon
+id|i
+op_increment
+comma
+id|ch
+op_increment
+)paren
+(brace
+id|kfree
+c_func
+(paren
+id|ch-&gt;tmp_buf
+)paren
+suffix:semicolon
+)brace
+id|release_region
+c_func
+(paren
+id|bd-&gt;port
+comma
+l_int|4
+)paren
+suffix:semicolon
+)brace
+id|kfree
+c_func
+(paren
+id|digi_channels
+)paren
+suffix:semicolon
+id|kfree
+c_func
+(paren
+id|pcxe_termios_locked
+)paren
+suffix:semicolon
+id|kfree
+c_func
+(paren
+id|pcxe_termios
+)paren
+suffix:semicolon
+id|kfree
+c_func
+(paren
+id|pcxe_table
+)paren
+suffix:semicolon
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
 DECL|function|chan
 r_static
 r_inline
@@ -1361,7 +1615,6 @@ r_return
 id|retval
 suffix:semicolon
 )brace
-multiline_comment|/* static  ???why static??? */
 DECL|function|pcxe_open
 r_int
 id|pcxe_open
@@ -1469,7 +1722,7 @@ id|first_minor
 op_logical_and
 (paren
 id|line
-op_le
+OL
 id|boards
 (braket
 id|boardnum
@@ -1555,6 +1808,9 @@ op_minus
 id|ENODEV
 suffix:semicolon
 )brace
+multiline_comment|/* flag the kernel that there is somebody using this guy */
+id|MOD_INC_USE_COUNT
+suffix:semicolon
 multiline_comment|/*&n;&t; * If the device is in the middle of being closed, then block&n;&t; * until it&squot;s done, and then try again.&n;&t; */
 r_if
 c_cond
@@ -1849,6 +2105,11 @@ suffix:semicolon
 )brace
 r_else
 (brace
+multiline_comment|/* this has to be set in order for the &quot;block until&n;&t;&t;&t; * CD&quot; code to work correctly.  i&squot;m not sure under&n;&t;&t;&t; * what circumstances asyncflags should be set to&n;&t;&t;&t; * ASYNC_NORMAL_ACTIVE though&n;&t;&t;&t; * brian@ilinx.com&n;&t;&t;&t; */
+id|ch-&gt;asyncflags
+op_or_assign
+id|ASYNC_NORMAL_ACTIVE
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2156,6 +2417,9 @@ id|filp
 )paren
 )paren
 (brace
+multiline_comment|/* flag that somebody is done with this module */
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
 id|restore_flags
 c_func
 (paren
@@ -2163,6 +2427,37 @@ id|flags
 )paren
 suffix:semicolon
 r_return
+suffix:semicolon
+)brace
+multiline_comment|/* this check is in serial.c, it won&squot;t hurt to do it here too */
+r_if
+c_cond
+(paren
+(paren
+id|tty-&gt;count
+op_eq
+l_int|1
+)paren
+op_logical_and
+(paren
+id|info-&gt;count
+op_ne
+l_int|1
+)paren
+)paren
+(brace
+multiline_comment|/*&n;&t;&t;&t; * Uh, oh.  tty-&gt;count is 1, which means that the tty&n;&t;&t;&t; * structure will be freed.  Info-&gt;count should always&n;&t;&t;&t; * be one in these conditions.  If it&squot;s greater than&n;&t;&t;&t; * one, we&squot;ve got real problems, since it means the&n;&t;&t;&t; * serial port won&squot;t be shutdown.&n;&t;&t;&t; */
+id|printk
+c_func
+(paren
+l_string|&quot;pcxe_close: bad serial port count; tty-&gt;count is 1, info-&gt;count is %d&bslash;n&quot;
+comma
+id|info-&gt;count
+)paren
+suffix:semicolon
+id|info-&gt;count
+op_assign
+l_int|1
 suffix:semicolon
 )brace
 r_if
@@ -2179,6 +2474,8 @@ c_func
 (paren
 id|flags
 )paren
+suffix:semicolon
+id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return
 suffix:semicolon
@@ -2307,6 +2604,8 @@ id|info-&gt;tty
 op_assign
 l_int|NULL
 suffix:semicolon
+macro_line|#ifndef MODULE
+multiline_comment|/* ldiscs[] is not available in a MODULE&n;** worth noting that while I&squot;m not sure what this hunk of code is supposed&n;** to do, it is not present in the serial.c driver.  Hmmm.  If you know,&n;** please send me a note.  brian@ilinx.com&n;** Dont know either what this is supposed to do clameter@waterf.org.&n;*/
 r_if
 c_cond
 (paren
@@ -2360,6 +2659,7 @@ id|tty
 suffix:semicolon
 )brace
 )brace
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -2413,6 +2713,8 @@ c_func
 op_amp
 id|info-&gt;close_wait
 )paren
+suffix:semicolon
+id|MOD_DEC_USE_COUNT
 suffix:semicolon
 id|restore_flags
 c_func
@@ -2625,20 +2927,21 @@ op_minus
 l_int|1
 )paren
 suffix:semicolon
+multiline_comment|/* It seems to be necessary to make sure that the value is stable here somehow&n;&t;&t;   This is a rather odd pice of code here. */
+r_do
+(brace
 id|tail
 op_assign
 id|bc-&gt;tout
 suffix:semicolon
-r_if
-c_cond
+)brace
+r_while
+c_loop
 (paren
 id|tail
 op_ne
 id|bc-&gt;tout
 )paren
-id|tail
-op_assign
-id|bc-&gt;tout
 suffix:semicolon
 id|tail
 op_and_assign
@@ -4093,6 +4396,8 @@ id|t2
 op_assign
 id|str
 suffix:semicolon
+macro_line|#ifndef MODULE
+multiline_comment|/* is* routines not available in modules&n;** the need for this should go away when probing is done.  :-)&n;** brian@ilinx.com&n;*/
 r_while
 c_loop
 (paren
@@ -4124,6 +4429,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+macro_line|#endif
 id|board.numports
 op_assign
 id|simple_strtoul
@@ -4145,6 +4451,8 @@ suffix:semicolon
 r_case
 l_int|5
 suffix:colon
+macro_line|#ifndef MODULE
+multiline_comment|/* is* routines not available in modules&n;** the need for this should go away when probing is done.  :-)&n;** brian@ilinx.com&n;*/
 id|t2
 op_assign
 id|str
@@ -4180,6 +4488,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+macro_line|#endif
 id|board.port
 op_assign
 id|simple_strtoul
@@ -4201,6 +4510,8 @@ suffix:semicolon
 r_case
 l_int|6
 suffix:colon
+macro_line|#ifndef MODULE
+multiline_comment|/* is* routines not available in modules&n;** the need for this should go away when probing is done.  :-)&n;** brian@ilinx.com&n;*/
 id|t2
 op_assign
 id|str
@@ -4236,6 +4547,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+macro_line|#endif
 id|board.membase
 op_assign
 id|simple_strtoul
@@ -4388,11 +4700,6 @@ c_func
 r_void
 )paren
 (brace
-macro_line|#if 0
-id|ulong
-id|save_loops_per_sec
-suffix:semicolon
-macro_line|#endif
 id|ulong
 id|flags
 comma
@@ -4580,6 +4887,23 @@ c_func
 l_string|&quot;Unable to allocate pcxe_table struct&quot;
 )paren
 suffix:semicolon
+id|memset
+c_func
+(paren
+id|pcxe_table
+comma
+l_int|0
+comma
+r_sizeof
+(paren
+r_struct
+id|tty_struct
+op_star
+)paren
+op_star
+id|nbdevs
+)paren
+suffix:semicolon
 id|pcxe_termios
 op_assign
 id|kmalloc
@@ -4691,7 +5015,7 @@ id|TTY_DRIVER_MAGIC
 suffix:semicolon
 id|pcxe_driver.name
 op_assign
-l_string|&quot;cud&quot;
+l_string|&quot;ttyD&quot;
 suffix:semicolon
 id|pcxe_driver.major
 op_assign
@@ -4724,8 +5048,6 @@ op_or
 id|CS8
 op_or
 id|CREAD
-op_or
-id|CLOCAL
 op_or
 id|HUPCL
 suffix:semicolon
@@ -4816,7 +5138,7 @@ id|pcxe_driver
 suffix:semicolon
 id|pcxe_callout.name
 op_assign
-l_string|&quot;ttyD&quot;
+l_string|&quot;cud&quot;
 suffix:semicolon
 id|pcxe_callout.major
 op_assign
@@ -4835,21 +5157,9 @@ op_or
 id|CREAD
 op_or
 id|HUPCL
+op_or
+id|CLOCAL
 suffix:semicolon
-macro_line|#if 0 
-multiline_comment|/* strangely enough, this is FALSE */
-multiline_comment|/* &n;&t; * loops_per_sec hasn&squot;t been set at this point :-(, so fake it out... &n;&t; * I set it so that I can use the __delay() function.&n;&t; */
-id|save_loops_per_sec
-op_assign
-id|loops_per_sec
-suffix:semicolon
-id|loops_per_sec
-op_assign
-l_int|13L
-op_star
-l_int|500000L
-suffix:semicolon
-macro_line|#endif
 id|save_flags
 c_func
 (paren
@@ -6585,6 +6895,11 @@ id|ch-&gt;close_wait
 op_assign
 l_int|0
 suffix:semicolon
+multiline_comment|/* zero out flags as it is unassigned at this point&n;&t;&t;&t; * brian@ilinx.com&n;&t;&t;&t; */
+id|ch-&gt;asyncflags
+op_assign
+l_int|0
+suffix:semicolon
 )brace
 id|printk
 c_func
@@ -7857,6 +8172,8 @@ op_or
 id|CSTOPB
 op_or
 id|CSIZE
+op_or
+id|CLOCAL
 )paren
 suffix:semicolon
 r_return

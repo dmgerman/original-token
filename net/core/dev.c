@@ -1451,6 +1451,11 @@ id|skb
 )paren
 )paren
 (brace
+id|sti
+c_func
+(paren
+)paren
+suffix:semicolon
 r_continue
 suffix:semicolon
 )brace

@@ -1668,14 +1668,10 @@ suffix:semicolon
 multiline_comment|/*&n;&t; * We need to grab some memory, and put together an RST,&n;&t; * and then put it into the queue to be sent.&n;&t; */
 id|buff
 op_assign
-id|sock_wmalloc
+id|alloc_skb
 c_func
 (paren
-l_int|NULL
-comma
 id|MAX_RESET_SIZE
-comma
-l_int|1
 comma
 id|GFP_ATOMIC
 )paren

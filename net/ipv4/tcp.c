@@ -1627,6 +1627,25 @@ id|sk
 )paren
 suffix:semicolon
 )brace
+DECL|function|tcp_memory_free
+r_static
+r_inline
+r_int
+id|tcp_memory_free
+c_func
+(paren
+r_struct
+id|sock
+op_star
+id|sk
+)paren
+(brace
+r_return
+id|sk-&gt;wmem_alloc
+OL
+id|sk-&gt;sndbuf
+suffix:semicolon
+)brace
 multiline_comment|/*&n; *&t;Wait for more memory for a socket&n; */
 DECL|function|wait_for_tcp_memory
 r_static
@@ -1654,11 +1673,12 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|sk-&gt;wmem_alloc
-op_star
-l_int|2
-OG
-id|sk-&gt;sndbuf
+op_logical_neg
+id|tcp_memory_free
+c_func
+(paren
+id|sk
+)paren
 op_logical_and
 (paren
 id|sk-&gt;state
@@ -1673,6 +1693,7 @@ op_logical_and
 id|sk-&gt;err
 op_eq
 l_int|0
+multiline_comment|/* &amp;&amp; check shutdown ?? */
 )paren
 (brace
 id|sk-&gt;socket-&gt;flags
@@ -1920,8 +1941,9 @@ suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t; * The following code can result in copy &lt;= if sk-&gt;mss is ever&n;&t;&t;&t; * decreased.  It shouldn&squot;t be.  sk-&gt;mss is min(sk-&gt;mtu, sk-&gt;max_window).&n;&t;&t;&t; * sk-&gt;mtu is constant once SYN processing is finished.  I.e. we&n;&t;&t;&t; * had better not get here until we&squot;ve seen his SYN and at least one&n;&t;&t;&t; * valid ack.  (The SYN sets sk-&gt;mtu and the ack sets sk-&gt;max_window.)&n;&t;&t;&t; * But ESTABLISHED should guarantee that.  sk-&gt;max_window is by definition&n;&t;&t;&t; * non-decreasing.  Note that any ioctl to set user_mss must be done&n;&t;&t;&t; * before the exchange of SYN&squot;s.  If the initial ack from the other&n;&t;&t;&t; * end has a window of 0, max_window and thus mss will both be 0.&n;&t;&t;&t; */
 multiline_comment|/*&n;&t;&t;&t; *&t;Now we need to check if we have a half built packet.&n;&t;&t;&t; */
 macro_line|#ifndef CONFIG_NO_PATH_MTU_DISCOVERY
-multiline_comment|/*&n;&t;&t;&t; *&t;FIXME:  I&squot;m almost sure that this fragment is BUG,&n;&t;&t;&t; *&t;&t;but it works... I do not know why 8) --ANK&n;&t;&t;&t; *&n;&t;&t;&t; *&t;Really, we should rebuild all the queues...&n;&t;&t;&t; *&t;It&squot;s difficult. Temporary hack is to send all&n;&t;&t;&t; *&t;queued segments with allowed fragmentation.&n;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t; *&t;Really, we should rebuild all the queues...&n;&t;&t;&t; *&t;It&squot;s difficult. Temporary hack is to send all&n;&t;&t;&t; *&t;queued segments with allowed fragmentation.&n;&t;&t;&t; */
 (brace
+multiline_comment|/*&n;&t;&t;&t;&t; *&t;new_mss may be zero. That indicates&n;&t;&t;&t;&t; *&t;we don&squot;t have a window estimate for&n;&t;&t;&t;&t; *&t;the remote box yet. &n;&t;&t;&t;&t; *&t;&t;-- AC&n;&t;&t;&t;&t; */
 r_int
 id|new_mss
 op_assign
@@ -1936,6 +1958,8 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|new_mss
+op_logical_and
 id|new_mss
 OL
 id|sk-&gt;mss
@@ -3427,6 +3451,13 @@ r_if
 c_cond
 (paren
 id|sk-&gt;err
+op_logical_and
+op_logical_neg
+(paren
+id|flags
+op_amp
+id|MSG_PEEK
+)paren
 )paren
 (brace
 id|copied

@@ -33,5 +33,18 @@ id|elf_fpregset_t
 id|ELF_NFPREG
 )braket
 suffix:semicolon
+DECL|macro|elf_check_arch
+mdefine_line|#define elf_check_arch(x) ((x) == EM_PPC)
+multiline_comment|/*&n; * These are used to set parameters in the core dumps.&n; * FIXME(eric) I don&squot;t know what the correct endianness to use is.&n; */
+DECL|macro|ELF_CLASS
+mdefine_line|#define ELF_CLASS&t;ELFCLASS32
+DECL|macro|ELF_DATA
+mdefine_line|#define ELF_DATA&t;ELFDATA2LSB;
+DECL|macro|ELF_ARCH
+mdefine_line|#define ELF_ARCH&t;EM_PPC
+DECL|macro|USE_ELF_CORE_DUMP
+mdefine_line|#define USE_ELF_CORE_DUMP
+DECL|macro|ELF_EXEC_PAGESIZE
+mdefine_line|#define ELF_EXEC_PAGESIZE&t;4096
 macro_line|#endif
 eof

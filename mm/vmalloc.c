@@ -1603,9 +1603,17 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|MAP_NR
+c_func
+(paren
 id|offset
+)paren
 OL
+id|MAP_NR
+c_func
+(paren
 id|high_memory
+)paren
 )paren
 r_return
 l_int|NULL

@@ -1554,6 +1554,13 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef CONFIG_PCWATCHDOG
+id|pcwatchdog_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#if CONFIG_ISDN
 id|isdn_init
 c_func

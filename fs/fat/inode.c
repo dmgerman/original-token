@@ -15,6 +15,7 @@ macro_line|#include &lt;linux/locks.h&gt;
 macro_line|#include &quot;msbuffer.h&quot;
 macro_line|#include &quot;tables.h&quot;
 macro_line|#include &lt;asm/segment.h&gt;
+macro_line|#include &lt;asm/unaligned.h&gt;
 DECL|function|fat_put_inode
 r_void
 id|fat_put_inode
@@ -1383,7 +1384,9 @@ op_assign
 id|CF_LE_W
 c_func
 (paren
-op_star
+id|get_unaligned
+c_func
+(paren
 (paren
 r_int
 r_int
@@ -1391,6 +1394,7 @@ op_star
 )paren
 op_amp
 id|b-&gt;sector_size
+)paren
 )paren
 suffix:semicolon
 id|sector_mult
@@ -1490,7 +1494,8 @@ op_assign
 id|CF_LE_W
 c_func
 (paren
-op_star
+id|get_unaligned
+c_func
 (paren
 (paren
 r_int
@@ -1540,11 +1545,11 @@ id|sector_mult
 suffix:semicolon
 id|data_sectors
 op_assign
-(paren
 id|CF_LE_W
 c_func
 (paren
-op_star
+id|get_unaligned
+c_func
 (paren
 (paren
 r_int
@@ -1555,29 +1560,26 @@ op_amp
 id|b-&gt;sectors
 )paren
 )paren
-ques
+suffix:semicolon
+r_if
 c_cond
-id|CF_LE_W
-c_func
 (paren
-op_star
-(paren
-(paren
-r_int
-r_int
-op_star
+op_logical_neg
+id|data_sectors
 )paren
-op_amp
-id|b-&gt;sectors
-)paren
-)paren
-suffix:colon
+(brace
+id|data_sectors
+op_assign
 id|CF_LE_L
 c_func
 (paren
 id|b-&gt;total_sect
 )paren
-)paren
+suffix:semicolon
+)brace
+id|data_sectors
+op_assign
+id|data_sectors
 op_star
 id|sector_mult
 op_minus

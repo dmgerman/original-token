@@ -1,6 +1,7 @@
 macro_line|#ifndef _LINUX_ELF_H
 DECL|macro|_LINUX_ELF_H
 mdefine_line|#define _LINUX_ELF_H
+macro_line|#include &lt;asm/elf.h&gt;
 DECL|typedef|Elf32_Addr
 r_typedef
 r_int
@@ -83,6 +84,21 @@ DECL|macro|EM_860
 mdefine_line|#define EM_860   7
 DECL|macro|EM_PPC
 mdefine_line|#define EM_PPC   20
+DECL|macro|EM_MIPS
+mdefine_line|#define EM_MIPS&t;&t;8&t;/* MIPS R3000 (officially, big-endian only) */
+DECL|macro|EM_MIPS_RS4_BE
+mdefine_line|#define EM_MIPS_RS4_BE 10&t;/* MIPS R4000 big-endian */
+DECL|macro|EM_SPARC64
+mdefine_line|#define EM_SPARC64     11&t;/* SPARC v9 (not official) 64-bit */
+DECL|macro|EM_PARISC
+mdefine_line|#define EM_PARISC      15&t;/* HPPA */
+DECL|macro|EM_SPARC32PLUS
+mdefine_line|#define EM_SPARC32PLUS 18&t;/* Sun&squot;s &quot;v8plus&quot; */
+DECL|macro|EM_PPC
+mdefine_line|#define EM_PPC&t;       20&t;/* PowerPC */
+multiline_comment|/*&n; * This is an interim value that we will use until the committee comes&n; * up with a final number.&n; */
+DECL|macro|EM_ALPHA
+mdefine_line|#define EM_ALPHA&t;0x9026
 multiline_comment|/* This is the info that is needed to parse the dynamic section of the file */
 DECL|macro|DT_NULL
 mdefine_line|#define DT_NULL&t;&t;0
@@ -217,11 +233,37 @@ DECL|typedef|Elf32_Dyn
 )brace
 id|Elf32_Dyn
 suffix:semicolon
-r_extern
-id|Elf32_Dyn
-id|_DYNAMIC
-(braket
-)braket
+r_typedef
+r_struct
+(brace
+DECL|member|d_tag
+r_int
+r_int
+r_int
+id|d_tag
+suffix:semicolon
+multiline_comment|/* entry tag value */
+r_union
+(brace
+DECL|member|d_val
+r_int
+r_int
+r_int
+id|d_val
+suffix:semicolon
+DECL|member|d_ptr
+r_int
+r_int
+r_int
+id|d_ptr
+suffix:semicolon
+DECL|member|d_un
+)brace
+id|d_un
+suffix:semicolon
+DECL|typedef|Elf64_Dyn
+)brace
+id|Elf64_Dyn
 suffix:semicolon
 multiline_comment|/* The following are used with relocations */
 DECL|macro|ELF32_R_SYM
@@ -269,6 +311,29 @@ DECL|typedef|Elf32_Rel
 )brace
 id|Elf32_Rel
 suffix:semicolon
+DECL|struct|elf64_rel
+r_typedef
+r_struct
+id|elf64_rel
+(brace
+DECL|member|r_offset
+r_int
+r_int
+r_int
+id|r_offset
+suffix:semicolon
+multiline_comment|/* Location at which to apply the action */
+DECL|member|r_info
+r_int
+r_int
+r_int
+id|r_info
+suffix:semicolon
+multiline_comment|/* index and type of relocation */
+DECL|typedef|Elf64_Rel
+)brace
+id|Elf64_Rel
+suffix:semicolon
 DECL|struct|elf32_rela
 r_typedef
 r_struct
@@ -289,6 +354,36 @@ suffix:semicolon
 DECL|typedef|Elf32_Rela
 )brace
 id|Elf32_Rela
+suffix:semicolon
+DECL|struct|elf64_rela
+r_typedef
+r_struct
+id|elf64_rela
+(brace
+DECL|member|r_offset
+r_int
+r_int
+r_int
+id|r_offset
+suffix:semicolon
+multiline_comment|/* Location at which to apply the action */
+DECL|member|r_info
+r_int
+r_int
+r_int
+id|r_info
+suffix:semicolon
+multiline_comment|/* index and type of relocation */
+DECL|member|r_addend
+r_int
+r_int
+r_int
+id|r_addend
+suffix:semicolon
+multiline_comment|/* Constant addend used to compute value */
+DECL|typedef|Elf64_Rela
+)brace
+id|Elf64_Rela
 suffix:semicolon
 DECL|struct|elf32_sym
 r_typedef
@@ -325,12 +420,59 @@ DECL|typedef|Elf32_Sym
 )brace
 id|Elf32_Sym
 suffix:semicolon
-DECL|macro|EI_NIDENT
-mdefine_line|#define EI_NIDENT&t;16
-DECL|struct|elfhdr
+DECL|struct|elf64_sym
 r_typedef
 r_struct
-id|elfhdr
+id|elf64_sym
+(brace
+DECL|member|st_name
+r_int
+r_int
+id|st_name
+suffix:semicolon
+multiline_comment|/* Symbol name, index in string tbl */
+DECL|member|st_info
+r_int
+r_char
+id|st_info
+suffix:semicolon
+multiline_comment|/* Type and binding attributes */
+DECL|member|st_other
+r_int
+r_char
+id|st_other
+suffix:semicolon
+multiline_comment|/* No defined meaning, 0 */
+DECL|member|st_shndx
+r_int
+r_int
+id|st_shndx
+suffix:semicolon
+multiline_comment|/* Associated section index */
+DECL|member|st_value
+r_int
+r_int
+r_int
+id|st_value
+suffix:semicolon
+multiline_comment|/* Value of the symbol */
+DECL|member|st_size
+r_int
+r_int
+r_int
+id|st_size
+suffix:semicolon
+multiline_comment|/* Associated symbol size */
+DECL|typedef|Elf64_Sym
+)brace
+id|Elf64_Sym
+suffix:semicolon
+DECL|macro|EI_NIDENT
+mdefine_line|#define EI_NIDENT&t;16
+DECL|struct|elf32_hdr
+r_typedef
+r_struct
+id|elf32_hdr
 (brace
 DECL|member|e_ident
 r_int
@@ -397,6 +539,94 @@ DECL|typedef|Elf32_Ehdr
 )brace
 id|Elf32_Ehdr
 suffix:semicolon
+DECL|struct|elf64_hdr
+r_typedef
+r_struct
+id|elf64_hdr
+(brace
+DECL|member|e_ident
+r_int
+r_char
+id|e_ident
+(braket
+l_int|16
+)braket
+suffix:semicolon
+multiline_comment|/* ELF &quot;magic number&quot; */
+DECL|member|e_type
+r_int
+r_int
+id|e_type
+suffix:semicolon
+DECL|member|e_machine
+r_int
+r_int
+r_int
+id|e_machine
+suffix:semicolon
+DECL|member|e_version
+r_int
+id|e_version
+suffix:semicolon
+DECL|member|e_entry
+r_int
+r_int
+r_int
+id|e_entry
+suffix:semicolon
+multiline_comment|/* Entry point virtual address */
+DECL|member|e_phoff
+r_int
+r_int
+r_int
+id|e_phoff
+suffix:semicolon
+multiline_comment|/* Program header table file offset */
+DECL|member|e_shoff
+r_int
+r_int
+r_int
+id|e_shoff
+suffix:semicolon
+multiline_comment|/* Section header table file offset */
+DECL|member|e_flags
+r_int
+id|e_flags
+suffix:semicolon
+DECL|member|e_ehsize
+r_int
+r_int
+id|e_ehsize
+suffix:semicolon
+DECL|member|e_phentsize
+r_int
+r_int
+id|e_phentsize
+suffix:semicolon
+DECL|member|e_phnum
+r_int
+r_int
+id|e_phnum
+suffix:semicolon
+DECL|member|e_shentsize
+r_int
+r_int
+id|e_shentsize
+suffix:semicolon
+DECL|member|e_shnum
+r_int
+r_int
+id|e_shnum
+suffix:semicolon
+DECL|member|e_shstrndx
+r_int
+r_int
+id|e_shstrndx
+suffix:semicolon
+DECL|typedef|Elf64_Ehdr
+)brace
+id|Elf64_Ehdr
+suffix:semicolon
 multiline_comment|/* These constants define the permissions on sections in the program&n;   header, p_flags. */
 DECL|macro|PF_R
 mdefine_line|#define PF_R&t;&t;0x4
@@ -404,10 +634,10 @@ DECL|macro|PF_W
 mdefine_line|#define PF_W&t;&t;0x2
 DECL|macro|PF_X
 mdefine_line|#define PF_X&t;&t;0x1
-DECL|struct|elf_phdr
+DECL|struct|elf32_phdr
 r_typedef
 r_struct
-id|elf_phdr
+id|elf32_phdr
 (brace
 DECL|member|p_type
 id|Elf32_Word
@@ -444,6 +674,65 @@ suffix:semicolon
 DECL|typedef|Elf32_Phdr
 )brace
 id|Elf32_Phdr
+suffix:semicolon
+DECL|struct|elf64_phdr
+r_typedef
+r_struct
+id|elf64_phdr
+(brace
+DECL|member|p_type
+r_int
+id|p_type
+suffix:semicolon
+DECL|member|p_flags
+r_int
+id|p_flags
+suffix:semicolon
+DECL|member|p_offset
+r_int
+r_int
+r_int
+id|p_offset
+suffix:semicolon
+multiline_comment|/* Segment file offset */
+DECL|member|p_vaddr
+r_int
+r_int
+r_int
+id|p_vaddr
+suffix:semicolon
+multiline_comment|/* Segment virtual address */
+DECL|member|p_paddr
+r_int
+r_int
+r_int
+id|p_paddr
+suffix:semicolon
+multiline_comment|/* Segment physical address */
+DECL|member|p_filesz
+r_int
+r_int
+r_int
+id|p_filesz
+suffix:semicolon
+multiline_comment|/* Segment size in file */
+DECL|member|p_memsz
+r_int
+r_int
+r_int
+id|p_memsz
+suffix:semicolon
+multiline_comment|/* Segment size in memory */
+DECL|member|p_align
+r_int
+r_int
+r_int
+id|p_align
+suffix:semicolon
+multiline_comment|/* Segment alignment, file &amp; memory */
+DECL|typedef|Elf64_Phdr
+)brace
+id|Elf64_Phdr
 suffix:semicolon
 multiline_comment|/* sh_type */
 DECL|macro|SHT_NULL
@@ -551,6 +840,81 @@ DECL|typedef|Elf32_Shdr
 )brace
 id|Elf32_Shdr
 suffix:semicolon
+DECL|struct|elf64_shdr
+r_typedef
+r_struct
+id|elf64_shdr
+(brace
+DECL|member|sh_name
+r_int
+r_int
+id|sh_name
+suffix:semicolon
+multiline_comment|/* Section name, index in string tbl */
+DECL|member|sh_type
+r_int
+r_int
+id|sh_type
+suffix:semicolon
+multiline_comment|/* Type of section */
+DECL|member|sh_flags
+r_int
+r_int
+r_int
+id|sh_flags
+suffix:semicolon
+multiline_comment|/* Miscellaneous section attributes */
+DECL|member|sh_addr
+r_int
+r_int
+r_int
+id|sh_addr
+suffix:semicolon
+multiline_comment|/* Section virtual addr at execution */
+DECL|member|sh_offset
+r_int
+r_int
+r_int
+id|sh_offset
+suffix:semicolon
+multiline_comment|/* Section file offset */
+DECL|member|sh_size
+r_int
+r_int
+r_int
+id|sh_size
+suffix:semicolon
+multiline_comment|/* Size of section in bytes */
+DECL|member|sh_link
+r_int
+r_int
+id|sh_link
+suffix:semicolon
+multiline_comment|/* Index of another section */
+DECL|member|sh_info
+r_int
+r_int
+id|sh_info
+suffix:semicolon
+multiline_comment|/* Additional section information */
+DECL|member|sh_addralign
+r_int
+r_int
+r_int
+id|sh_addralign
+suffix:semicolon
+multiline_comment|/* Section alignment */
+DECL|member|sh_entsize
+r_int
+r_int
+r_int
+id|sh_entsize
+suffix:semicolon
+multiline_comment|/* Entry size if section holds table */
+DECL|typedef|Elf64_Shdr
+)brace
+id|Elf64_Shdr
+suffix:semicolon
 DECL|macro|EI_MAG0
 mdefine_line|#define&t;EI_MAG0&t;&t;0&t;&t;/* e_ident[] indexes */
 DECL|macro|EI_MAG1
@@ -609,10 +973,10 @@ mdefine_line|#define NT_PRPSINFO&t;3
 DECL|macro|NT_TASKSTRUCT
 mdefine_line|#define NT_TASKSTRUCT&t;4
 multiline_comment|/* Note header in a PT_NOTE section */
-DECL|struct|elf_note
+DECL|struct|elf32_note
 r_typedef
 r_struct
-id|elf_note
+id|elf32_note
 (brace
 DECL|member|n_namesz
 id|Elf32_Word
@@ -633,7 +997,63 @@ DECL|typedef|Elf32_Nhdr
 )brace
 id|Elf32_Nhdr
 suffix:semicolon
+multiline_comment|/* Note header in a PT_NOTE section */
+multiline_comment|/*&n; * For now we use the 32 bit version of the structure until we figure&n; * out whether we need anything better.  Note - on the Alpha, &quot;unsigned int&quot;&n; * is only 32 bits.&n; */
+DECL|struct|elf64_note
+r_typedef
+r_struct
+id|elf64_note
+(brace
+DECL|member|n_namesz
+r_int
+r_int
+id|n_namesz
+suffix:semicolon
+multiline_comment|/* Name size */
+DECL|member|n_descsz
+r_int
+r_int
+id|n_descsz
+suffix:semicolon
+multiline_comment|/* Content size */
+DECL|member|n_type
+r_int
+r_int
+id|n_type
+suffix:semicolon
+multiline_comment|/* Content type */
+DECL|typedef|Elf64_Nhdr
+)brace
+id|Elf64_Nhdr
+suffix:semicolon
 DECL|macro|ELF_START_MMAP
 mdefine_line|#define ELF_START_MMAP 0x80000000
+macro_line|#if ELF_CLASS == ELFCLASS32
+r_extern
+id|Elf32_Dyn
+id|_DYNAMIC
+(braket
+)braket
+suffix:semicolon
+DECL|macro|elfhdr
+mdefine_line|#define elfhdr&t;&t;elf32_hdr
+DECL|macro|elf_phdr
+mdefine_line|#define elf_phdr&t;elf32_phdr
+DECL|macro|elf_note
+mdefine_line|#define elf_note&t;elf32_note
+macro_line|#else
+r_extern
+id|Elf64_Dyn
+id|_DYNAMIC
+(braket
+)braket
+suffix:semicolon
+DECL|macro|elfhdr
+mdefine_line|#define elfhdr&t;&t;elf64_hdr
+DECL|macro|elf_phdr
+mdefine_line|#define elf_phdr&t;elf64_phdr
+DECL|macro|elf_note
+mdefine_line|#define elf_note&t;elf64_note
+macro_line|#endif
 macro_line|#endif /* _LINUX_ELF_H */
 eof

@@ -1197,7 +1197,7 @@ macro_line|#if 0
 mdefine_line|#define PROFILE_READAHEAD
 mdefine_line|#define DEBUG_READAHEAD
 macro_line|#endif
-multiline_comment|/*&n; * Read-ahead profiling informations&n; * ---------------------------------&n; * Every PROFILE_MAXREADCOUNT, the following informations are written &n; * to the syslog:&n; *   Percentage of asynchronous read-ahead.&n; *   Average of read-ahead fields context value.&n; * If DEBUG_READAHEAD is defined, a snapshot of these fields is written &n; * to the syslog.&n; */
+multiline_comment|/*&n; * Read-ahead profiling information&n; * --------------------------------&n; * Every PROFILE_MAXREADCOUNT, the following information is written &n; * to the syslog:&n; *   Percentage of asynchronous read-ahead.&n; *   Average of read-ahead fields context value.&n; * If DEBUG_READAHEAD is defined, a snapshot of these fields is written &n; * to the syslog.&n; */
 macro_line|#ifdef PROFILE_READAHEAD
 DECL|macro|PROFILE_MAXREADCOUNT
 mdefine_line|#define PROFILE_MAXREADCOUNT 1000

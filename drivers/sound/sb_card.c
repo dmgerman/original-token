@@ -2,7 +2,7 @@ multiline_comment|/*&n; * sound/sb_card.c&n; *&n; * Detection routine for the So
 multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1996&n; *&n; * USS/Lite for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
-macro_line|#if defined(CONFIG_SB)
+macro_line|#if defined(CONFIG_SBDSP)
 macro_line|#include &quot;sb_mixer.h&quot;
 macro_line|#include &quot;sb.h&quot;
 r_void

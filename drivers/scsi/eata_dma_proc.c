@@ -1934,6 +1934,20 @@ id|length
 r_goto
 id|stop_output
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|SD
+c_func
+(paren
+id|HBA_ptr
+)paren
+op_member_access_from_pointer
+id|do_latency
+op_eq
+id|FALSE
+)paren
+(brace
 id|cmnd
 (braket
 l_int|0
@@ -2014,7 +2028,7 @@ id|scmd.cmd_len
 op_assign
 l_int|10
 suffix:semicolon
-multiline_comment|/*&n;&t; * Do the command and wait for it to finish.&n;&t; */
+multiline_comment|/*&n;&t;     * Do the command and wait for it to finish.&n;&t;     */
 (brace
 r_struct
 id|semaphore
@@ -2345,6 +2359,7 @@ op_plus
 id|len
 suffix:semicolon
 )brace
+)brace
 r_if
 c_cond
 (paren
@@ -2388,6 +2403,13 @@ op_eq
 id|TRUE
 )paren
 (brace
+r_int
+id|factor
+op_assign
+l_int|1024
+op_div
+id|HZ
+suffix:semicolon
 id|size
 op_assign
 id|sprintf
@@ -2398,8 +2420,10 @@ op_plus
 id|len
 comma
 l_string|&quot;Host Latency Command Statistics:&bslash;n&quot;
-l_string|&quot;Current timer resolution: 10ms&bslash;n&quot;
+l_string|&quot;Current timer resolution: %2dms&bslash;n&quot;
 l_string|&quot;         Reads:&t;      Min:(ms)     Max:(ms)     Ave:(ms)&bslash;n&quot;
+comma
+id|factor
 )paren
 suffix:semicolon
 id|len
@@ -2492,7 +2516,7 @@ id|x
 l_int|1
 )braket
 op_star
-l_int|10
+id|factor
 )paren
 comma
 id|SD
@@ -2509,7 +2533,7 @@ id|x
 l_int|2
 )braket
 op_star
-l_int|10
+id|factor
 comma
 id|SD
 c_func
@@ -2525,7 +2549,7 @@ id|x
 l_int|3
 )braket
 op_star
-l_int|10
+id|factor
 op_div
 (paren
 (paren
@@ -2635,7 +2659,7 @@ l_int|11
 l_int|1
 )braket
 op_star
-l_int|10
+id|factor
 )paren
 comma
 id|SD
@@ -2652,7 +2676,7 @@ l_int|11
 l_int|2
 )braket
 op_star
-l_int|10
+id|factor
 comma
 id|SD
 c_func
@@ -2668,7 +2692,7 @@ l_int|11
 l_int|3
 )braket
 op_star
-l_int|10
+id|factor
 op_div
 (paren
 (paren
@@ -2847,7 +2871,7 @@ id|x
 l_int|1
 )braket
 op_star
-l_int|10
+id|factor
 )paren
 comma
 id|SD
@@ -2864,7 +2888,7 @@ id|x
 l_int|2
 )braket
 op_star
-l_int|10
+id|factor
 comma
 id|SD
 c_func
@@ -2880,7 +2904,7 @@ id|x
 l_int|3
 )braket
 op_star
-l_int|10
+id|factor
 op_div
 (paren
 (paren
@@ -2990,7 +3014,7 @@ id|x
 l_int|1
 )braket
 op_star
-l_int|10
+id|factor
 )paren
 comma
 id|SD
@@ -3007,7 +3031,7 @@ l_int|11
 l_int|2
 )braket
 op_star
-l_int|10
+id|factor
 comma
 id|SD
 c_func
@@ -3023,7 +3047,7 @@ l_int|11
 l_int|3
 )braket
 op_star
-l_int|10
+id|factor
 op_div
 (paren
 (paren

@@ -1,4 +1,4 @@
-multiline_comment|/********************************************************&n;* Header file for eata_dma.c Linux EATA-DMA SCSI driver *&n;* (c) 1993-96 Michael Neuffer                           *&n;*             mike@i-Connect.Net                        *&n;*             neuffer@mail.uni-mainz.de                 *&n;*********************************************************&n;* last change: 96/05/05                                 *&n;********************************************************/
+multiline_comment|/********************************************************&n;* Header file for eata_dma.c Linux EATA-DMA SCSI driver *&n;* (c) 1993-96 Michael Neuffer                           *&n;*             mike@i-Connect.Net                        *&n;*             neuffer@mail.uni-mainz.de                 *&n;*********************************************************&n;* last change: 96/06/26                                 *&n;********************************************************/
 macro_line|#ifndef _EATA_DMA_H
 DECL|macro|_EATA_DMA_H
 mdefine_line|#define _EATA_DMA_H
@@ -9,12 +9,14 @@ mdefine_line|#define VER_MAJOR 2
 DECL|macro|VER_MINOR
 mdefine_line|#define VER_MINOR 5
 DECL|macro|VER_SUB
-mdefine_line|#define VER_SUB   &quot;8d&quot;
+mdefine_line|#define VER_SUB   &quot;8g&quot;
 multiline_comment|/************************************************************************&n; * Here you can switch parts of the code on and of                      *&n; ************************************************************************/
 DECL|macro|CHECKPAL
 mdefine_line|#define CHECKPAL        0        /* EISA pal checking on/off            */
-DECL|macro|NEWSTUFF
-mdefine_line|#define NEWSTUFF        0        /* Some changes for ISA/EISA boards    */
+DECL|macro|CHECK_BLINK
+mdefine_line|#define CHECK_BLINK     1        /* Switch Blink state check off, might *&n;                                  * be nessessary for some MIPS machines*/ 
+DECL|macro|CRIPPLE_QUEUE
+mdefine_line|#define CRIPPLE_QUEUE   0        /* Only enable this if the interrupt &n;                                  * controller on your motherboard is &n;                                  * broken and you are experiencing &n;                                  * massive interrupt losses */
 multiline_comment|/************************************************************************&n; * Debug options.                                                       * &n; * Enable DEBUG and whichever options you require.                      *&n; ************************************************************************/
 DECL|macro|DEBUG_EATA
 mdefine_line|#define DEBUG_EATA      1       /* Enable debug code.                   */

@@ -1232,7 +1232,19 @@ id|SCpnt-&gt;sense_buffer
 suffix:semicolon
 id|device-&gt;header.result
 op_assign
-id|SCpnt-&gt;result
+(paren
+id|SCpnt-&gt;sense_buffer
+(braket
+l_int|0
+)braket
+op_eq
+l_int|0
+ques
+c_cond
+l_int|0
+suffix:colon
+id|EIO
+)paren
 suffix:semicolon
 multiline_comment|/*&n;     * Now wake up the process that is waiting for the&n;     * result.&n;     */
 id|device-&gt;complete

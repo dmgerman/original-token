@@ -3121,6 +3121,11 @@ id|skb-&gt;sk-&gt;priority
 )paren
 suffix:semicolon
 )brace
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
 )brace
 id|restore_flags
 c_func

@@ -3546,7 +3546,7 @@ c_cond
 (paren
 id|smp_proc_in_lock
 (braket
-id|i
+id|j
 )braket
 )paren
 (brace

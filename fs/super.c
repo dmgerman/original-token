@@ -4670,6 +4670,15 @@ c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_BLK_DEV_RAM
+id|printk
+c_func
+(paren
+id|KERN_NOTICE
+l_string|&quot;(Warning, this kernel has no ramdisk support)&bslash;n&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
 id|printk
 c_func
 (paren
@@ -5202,7 +5211,6 @@ r_else
 id|printk
 c_func
 (paren
-id|KERN_NOTICE
 l_string|&quot;okay&bslash;n&quot;
 )paren
 suffix:semicolon

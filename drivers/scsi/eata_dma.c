@@ -1,4 +1,4 @@
-multiline_comment|/************************************************************&n; *&t;&t;&t;&t;&t;&t;&t;    *&n; *&t;&t;    Linux EATA SCSI driver&t;&t;    *&n; *&t;&t;&t;&t;&t;&t;&t;    *&n; *  based on the CAM document CAM/89-004 rev. 2.0c,&t;    *&n; *  DPT&squot;s driver kit, some internal documents and source,   *&n; *  and several other Linux scsi drivers and kernel docs.   *&n; *&t;&t;&t;&t;&t;&t;&t;    *&n; *  The driver currently:&t;&t;&t;&t;    *&n; *&t;-supports all ISA based EATA-DMA boards&t;&t;    *&n; *       like PM2011, PM2021, PM2041, PM3021                *&n; *&t;-supports all EISA based EATA-DMA boards&t;    *&n; *       like PM2012B, PM2022, PM2122, PM2322, PM2042,      *&n; *            PM3122, PM3222, PM3332                        *&n; *&t;-supports all PCI based EATA-DMA boards&t;&t;    *&n; *       like PM2024, PM2124, PM2044, PM2144, PM3224,       *&n; *            PM3334                                        *&n; *      -supports the Wide, Ultra Wide and Differential     *&n; *       versions of the boards                             *&n; *&t;-supports multiple HBAs with &amp; without IRQ sharing  *&n; *&t;-supports all SCSI channels on multi channel boards *&n; *&t;-needs identical IDs on all channels of a HBA&t;    * &n; *&t;-can be loaded as module&t;&t;&t;    *&n; *&t;-displays statistical and hardware information&t;    *&n; *&t; in /proc/scsi/eata_dma&t;&t;&t;&t;    *&n; *      -provides rudimentary latency measurement           * &n; *       possibilities via /proc/scsi/eata_dma/&lt;hostnum&gt;    *&n; *&t;&t;&t;&t;&t;&t;&t;    *&n; *  (c)1993-96 Michael Neuffer&t;&t;&t;            *&n; *             mike@i-Connect.Net                           *&n; *&t;       neuffer@mail.uni-mainz.de&t;            *&n; *&t;&t;&t;&t;&t;&t;&t;    *&n; *  This program is free software; you can redistribute it  *&n; *  and/or modify it under the terms of the GNU General&t;    *&n; *  Public License as published by the Free Software&t;    *&n; *  Foundation; either version 2 of the License, or&t;    *&n; *  (at your option) any later version.&t;&t;&t;    *&n; *&t;&t;&t;&t;&t;&t;&t;    *&n; *  This program is distributed in the hope that it will be *&n; *  useful, but WITHOUT ANY WARRANTY; without even the&t;    *&n; *  implied warranty of MERCHANTABILITY or FITNESS FOR A    *&n; *  PARTICULAR PURPOSE.&t; See the GNU General Public License *&n; *  for more details.&t;&t;&t;&t;&t;    *&n; *&t;&t;&t;&t;&t;&t;&t;    *&n; *  You should have received a copy of the GNU General&t;    *&n; *  Public License along with this kernel; if not, write to *&n; *  the Free Software Foundation, Inc., 675 Mass Ave,&t;    *&n; *  Cambridge, MA 02139, USA.&t;&t;&t;&t;    *&n; *&t;&t;&t;&t;&t;&t;&t;    *&n; * I have to thank DPT for their excellent support. I took  *&n; * me almost a year and a stopover at their HQ, on my first *&n; * trip to the USA, to get it, but since then they&squot;ve been  *&n; * very helpful and tried to give me all the infos and&t;    *&n; * support I need.&t;&t;&t;&t;&t;    *&n; *&t;&t;&t;&t;&t;&t;&t;    *&n; * Thanks also to Simon Shapiro, Greg Hosler and Mike       *&n; * Jagdis who did a lot of testing and found quite a number *&n; * of bugs during the development.                          *&n; ************************************************************&n; *  last change: 95/05/05                 OS: Linux 1.3.98  *&n; ************************************************************/
+multiline_comment|/************************************************************&n; *&t;&t;&t;&t;&t;&t;&t;    *&n; *&t;&t;    Linux EATA SCSI driver&t;&t;    *&n; *&t;&t;&t;&t;&t;&t;&t;    *&n; *  based on the CAM document CAM/89-004 rev. 2.0c,&t;    *&n; *  DPT&squot;s driver kit, some internal documents and source,   *&n; *  and several other Linux scsi drivers and kernel docs.   *&n; *&t;&t;&t;&t;&t;&t;&t;    *&n; *  The driver currently:&t;&t;&t;&t;    *&n; *&t;-supports all ISA based EATA-DMA boards&t;&t;    *&n; *       like PM2011, PM2021, PM2041, PM3021                *&n; *&t;-supports all EISA based EATA-DMA boards&t;    *&n; *       like PM2012B, PM2022, PM2122, PM2322, PM2042,      *&n; *            PM3122, PM3222, PM3332                        *&n; *&t;-supports all PCI based EATA-DMA boards&t;&t;    *&n; *       like PM2024, PM2124, PM2044, PM2144, PM3224,       *&n; *            PM3334                                        *&n; *      -supports the Wide, Ultra Wide and Differential     *&n; *       versions of the boards                             *&n; *&t;-supports multiple HBAs with &amp; without IRQ sharing  *&n; *&t;-supports all SCSI channels on multi channel boards *&n; *      -supports ix86 and MIPS, untested on ALPHA          *&n; *&t;-needs identical IDs on all channels of a HBA&t;    * &n; *&t;-can be loaded as module&t;&t;&t;    *&n; *&t;-displays statistical and hardware information&t;    *&n; *&t; in /proc/scsi/eata_dma&t;&t;&t;&t;    *&n; *      -provides rudimentary latency measurement           * &n; *       possibilities via /proc/scsi/eata_dma/&lt;hostnum&gt;    *&n; *&t;&t;&t;&t;&t;&t;&t;    *&n; *  (c)1993-96 Michael Neuffer&t;&t;&t;            *&n; *             mike@i-Connect.Net                           *&n; *&t;       neuffer@mail.uni-mainz.de&t;            *&n; *&t;&t;&t;&t;&t;&t;&t;    *&n; *  This program is free software; you can redistribute it  *&n; *  and/or modify it under the terms of the GNU General&t;    *&n; *  Public License as published by the Free Software&t;    *&n; *  Foundation; either version 2 of the License, or&t;    *&n; *  (at your option) any later version.&t;&t;&t;    *&n; *&t;&t;&t;&t;&t;&t;&t;    *&n; *  This program is distributed in the hope that it will be *&n; *  useful, but WITHOUT ANY WARRANTY; without even the&t;    *&n; *  implied warranty of MERCHANTABILITY or FITNESS FOR A    *&n; *  PARTICULAR PURPOSE.&t; See the GNU General Public License *&n; *  for more details.&t;&t;&t;&t;&t;    *&n; *&t;&t;&t;&t;&t;&t;&t;    *&n; *  You should have received a copy of the GNU General&t;    *&n; *  Public License along with this kernel; if not, write to *&n; *  the Free Software Foundation, Inc., 675 Mass Ave,&t;    *&n; *  Cambridge, MA 02139, USA.&t;&t;&t;&t;    *&n; *&t;&t;&t;&t;&t;&t;&t;    *&n; * I have to thank DPT for their excellent support. I took  *&n; * me almost a year and a stopover at their HQ, on my first *&n; * trip to the USA, to get it, but since then they&squot;ve been  *&n; * very helpful and tried to give me all the infos and&t;    *&n; * support I need.&t;&t;&t;&t;&t;    *&n; *&t;&t;&t;&t;&t;&t;&t;    *&n; * Thanks also to Simon Shapiro, Greg Hosler and Mike       *&n; * Jagdis who did a lot of testing and found quite a number *&n; * of bugs during the development.                          *&n; ************************************************************&n; *  last change: 96/07/20                  OS: Linux 2.0.8  *&n; ************************************************************/
 multiline_comment|/* Look in eata_dma.h for configuration and revision information */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -15,6 +15,10 @@ macro_line|#include &lt;asm/byteorder.h&gt;
 macro_line|#include &lt;asm/types.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
+macro_line|#include &lt;asm/pgtable.h&gt;
+macro_line|#ifdef __mips__
+macro_line|#include &lt;asm/cachectl.h&gt;
+macro_line|#endif
 macro_line|#include &lt;linux/blk.h&gt;
 macro_line|#include &quot;scsi.h&quot;
 macro_line|#include &quot;sd.h&quot;
@@ -1118,9 +1122,6 @@ suffix:semicolon
 id|uint
 id|base
 suffix:semicolon
-id|ulong
-id|flags
-suffix:semicolon
 id|uint
 id|x
 suffix:semicolon
@@ -1128,17 +1129,6 @@ r_struct
 id|Scsi_Host
 op_star
 id|sh
-suffix:semicolon
-id|save_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
-)paren
 suffix:semicolon
 r_for
 c_loop
@@ -1209,6 +1199,22 @@ id|sh
 op_member_access_from_pointer
 id|sp
 suffix:semicolon
+macro_line|#ifdef __mips__
+id|sys_cacheflush
+c_func
+(paren
+id|sp
+comma
+r_sizeof
+(paren
+r_struct
+id|eata_sp
+)paren
+comma
+l_int|2
+)paren
+suffix:semicolon
+macro_line|#endif
 id|ccb
 op_assign
 id|sp-&gt;ccb
@@ -1350,12 +1356,21 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
+id|sp-&gt;EOC
+op_assign
+id|FALSE
+suffix:semicolon
+multiline_comment|/* Clean out this flag */
 r_if
 c_cond
 (paren
 id|ccb-&gt;status
 op_eq
 id|LOCKED
+op_logical_or
+id|ccb-&gt;status
+op_eq
+id|RESET
 )paren
 (brace
 id|ccb-&gt;status
@@ -1375,7 +1390,8 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;eata_dma: int_handler, freeing locked queueslot&bslash;n&quot;
+l_string|&quot;eata_dma: int_handler, reseted command returned,&quot;
+l_string|&quot; freeing reseted queueslot&bslash;n&quot;
 )paren
 suffix:semicolon
 id|DBG
@@ -1395,11 +1411,6 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
-id|sp-&gt;EOC
-op_assign
-id|FALSE
-suffix:semicolon
-multiline_comment|/* Clean out this flag */
 id|eata_stat
 op_assign
 id|inb
@@ -1448,22 +1459,6 @@ r_case
 id|HA_NO_ERROR
 suffix:colon
 multiline_comment|/* NO Error */
-id|HD
-c_func
-(paren
-id|cmd
-)paren
-op_member_access_from_pointer
-id|t_state
-(braket
-id|ccb-&gt;cp_channel
-)braket
-(braket
-id|ccb-&gt;cp_id
-)braket
-op_assign
-id|OK
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1498,22 +1493,6 @@ op_assign
 id|DID_OK
 op_lshift
 l_int|16
-suffix:semicolon
-id|HD
-c_func
-(paren
-id|cmd
-)paren
-op_member_access_from_pointer
-id|t_timeout
-(braket
-id|ccb-&gt;cp_channel
-)braket
-(braket
-id|ccb-&gt;cp_id
-)braket
-op_assign
-id|OK
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -1607,22 +1586,6 @@ suffix:semicolon
 id|i
 op_increment
 )paren
-id|HD
-c_func
-(paren
-id|cmd
-)paren
-op_member_access_from_pointer
-id|t_state
-(braket
-id|ccb-&gt;cp_channel
-)braket
-(braket
-id|i
-)braket
-op_assign
-id|RESET
-suffix:semicolon
 id|DBG
 c_func
 (paren
@@ -1691,22 +1654,6 @@ suffix:colon
 r_case
 id|HA_CP_RESET
 suffix:colon
-id|HD
-c_func
-(paren
-id|cmd
-)paren
-op_member_access_from_pointer
-id|t_state
-(braket
-id|cmd-&gt;channel
-)braket
-(braket
-id|cmd-&gt;target
-)braket
-op_assign
-id|OK
-suffix:semicolon
 id|HD
 c_func
 (paren
@@ -1941,12 +1888,6 @@ id|cmd
 suffix:semicolon
 )brace
 )brace
-id|restore_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
 r_return
 suffix:semicolon
 )brace
@@ -1995,14 +1936,42 @@ l_int|0
 r_return
 id|FALSE
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|addr
+op_ne
+(paren
+id|u32
+)paren
+l_int|NULL
+)paren
+(brace
+id|addr
+op_assign
+id|virt_to_bus
+c_func
+(paren
+(paren
+r_void
+op_star
+)paren
+id|addr
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/*&n;     * This is overkill.....but the MIPSen seem to need this&n;     * and it will be optimized away for i86 and ALPHA machines.&n;     */
+id|flush_cache_all
+c_func
+(paren
+)paren
+suffix:semicolon
 multiline_comment|/* And now the address in nice little byte chunks */
 macro_line|#ifdef __LITTLE_ENDIAN
 id|outb
 c_func
 (paren
 id|addr
-op_amp
-l_int|0x000000ff
 comma
 id|base
 op_plus
@@ -2012,11 +1981,7 @@ suffix:semicolon
 id|outb
 c_func
 (paren
-(paren
 id|addr
-op_amp
-l_int|0x0000ff00
-)paren
 op_rshift
 l_int|8
 comma
@@ -2030,11 +1995,7 @@ suffix:semicolon
 id|outb
 c_func
 (paren
-(paren
 id|addr
-op_amp
-l_int|0x00ff0000
-)paren
 op_rshift
 l_int|16
 comma
@@ -2048,11 +2009,7 @@ suffix:semicolon
 id|outb
 c_func
 (paren
-(paren
 id|addr
-op_amp
-l_int|0xff000000
-)paren
 op_rshift
 l_int|24
 comma
@@ -2067,11 +2024,7 @@ macro_line|#else
 id|outb
 c_func
 (paren
-(paren
 id|addr
-op_amp
-l_int|0xff000000
-)paren
 op_rshift
 l_int|24
 comma
@@ -2083,11 +2036,7 @@ suffix:semicolon
 id|outb
 c_func
 (paren
-(paren
 id|addr
-op_amp
-l_int|0x00ff0000
-)paren
 op_rshift
 l_int|16
 comma
@@ -2101,11 +2050,7 @@ suffix:semicolon
 id|outb
 c_func
 (paren
-(paren
 id|addr
-op_amp
-l_int|0x0000ff00
-)paren
 op_rshift
 l_int|8
 comma
@@ -2119,11 +2064,7 @@ suffix:semicolon
 id|outb
 c_func
 (paren
-(paren
 id|addr
-op_amp
-l_int|0x000000ff
-)paren
 comma
 id|base
 op_plus
@@ -2169,6 +2110,36 @@ id|u8
 id|code2
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|addr
+op_ne
+(paren
+id|u32
+)paren
+l_int|NULL
+)paren
+(brace
+id|addr
+op_assign
+id|virt_to_bus
+c_func
+(paren
+(paren
+r_void
+op_star
+)paren
+id|addr
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/*&n;     * This is overkill.....but the MIPSen seem to need this&n;     * and it will be optimized away for i86 and ALPHA machines.&n;     */
+id|flush_cache_all
+c_func
+(paren
+)paren
+suffix:semicolon
 id|outb
 c_func
 (paren
@@ -2192,8 +2163,6 @@ id|outb
 c_func
 (paren
 id|addr
-op_amp
-l_int|0x000000ff
 comma
 id|base
 op_plus
@@ -2203,11 +2172,7 @@ suffix:semicolon
 id|outb
 c_func
 (paren
-(paren
 id|addr
-op_amp
-l_int|0x0000ff00
-)paren
 op_rshift
 l_int|8
 comma
@@ -2221,11 +2186,7 @@ suffix:semicolon
 id|outb
 c_func
 (paren
-(paren
 id|addr
-op_amp
-l_int|0x00ff0000
-)paren
 op_rshift
 l_int|16
 comma
@@ -2239,11 +2200,7 @@ suffix:semicolon
 id|outb
 c_func
 (paren
-(paren
 id|addr
-op_amp
-l_int|0xff000000
-)paren
 op_rshift
 l_int|24
 comma
@@ -2258,11 +2215,7 @@ macro_line|#else
 id|outb
 c_func
 (paren
-(paren
 id|addr
-op_amp
-l_int|0xff000000
-)paren
 op_rshift
 l_int|24
 comma
@@ -2274,11 +2227,7 @@ suffix:semicolon
 id|outb
 c_func
 (paren
-(paren
 id|addr
-op_amp
-l_int|0x00ff0000
-)paren
 op_rshift
 l_int|16
 comma
@@ -2292,11 +2241,7 @@ suffix:semicolon
 id|outb
 c_func
 (paren
-(paren
 id|addr
-op_amp
-l_int|0x0000ff00
-)paren
 op_rshift
 l_int|8
 comma
@@ -2310,11 +2255,7 @@ suffix:semicolon
 id|outb
 c_func
 (paren
-(paren
 id|addr
-op_amp
-l_int|0x000000ff
-)paren
 comma
 id|base
 op_plus
@@ -2656,6 +2597,12 @@ op_assign
 id|USED
 suffix:semicolon
 multiline_comment|/* claim free slot */
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 id|DBG
 c_func
 (paren
@@ -3084,7 +3031,7 @@ id|ccb-&gt;cp_viraddr
 op_assign
 id|ccb
 suffix:semicolon
-multiline_comment|/* This will be passed thru, so we don&squot;t need to &n;                          * convert it */
+multiline_comment|/* This will be passed thru, so we don&squot;t need to &n;&t;&t;&t;    * convert it */
 id|ccb-&gt;cmd
 op_assign
 id|cmd
@@ -3148,20 +3095,14 @@ id|cmd-&gt;pid
 )paren
 )paren
 suffix:semicolon
-id|done
-c_func
-(paren
-id|cmd
-)paren
-suffix:semicolon
 id|ccb-&gt;status
 op_assign
 id|FREE
 suffix:semicolon
-id|restore_flags
+id|done
 c_func
 (paren
-id|flags
+id|cmd
 )paren
 suffix:semicolon
 r_return
@@ -3210,12 +3151,6 @@ l_int|1
 )paren
 )paren
 suffix:semicolon
-id|restore_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -3233,10 +3168,20 @@ id|cmd
 id|ulong
 id|loop
 op_assign
-id|R_LIMIT
+id|HZ
+op_div
+l_int|2
 suffix:semicolon
 id|ulong
 id|flags
+suffix:semicolon
+r_int
+id|x
+suffix:semicolon
+r_struct
+id|Scsi_Host
+op_star
+id|sh
 suffix:semicolon
 id|save_flags
 c_func
@@ -3284,6 +3229,74 @@ l_int|1
 )paren
 )paren
 suffix:semicolon
+multiline_comment|/* Some interrupt controllers seem to loose interrupts */
+r_for
+c_loop
+(paren
+id|x
+op_assign
+l_int|1
+comma
+id|sh
+op_assign
+id|first_HBA
+suffix:semicolon
+id|x
+op_le
+id|registered_HBAs
+suffix:semicolon
+id|x
+op_increment
+comma
+id|sh
+op_assign
+id|SD
+c_func
+(paren
+id|sh
+)paren
+op_member_access_from_pointer
+id|next
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|inb
+c_func
+(paren
+(paren
+id|uint
+)paren
+id|sh-&gt;base
+op_plus
+id|HA_RAUXSTAT
+)paren
+op_amp
+id|HA_AIRQ
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;eata_dma: scsi%d interrupt pending in eata_abort.&bslash;n&quot;
+l_string|&quot;          Calling interrupt handler.&bslash;n&quot;
+comma
+id|sh-&gt;host_no
+)paren
+suffix:semicolon
+id|eata_int_handler
+c_func
+(paren
+id|sh-&gt;irq
+comma
+l_int|0
+comma
+l_int|0
+)paren
+suffix:semicolon
+)brace
+)brace
 r_while
 c_loop
 (paren
@@ -3547,15 +3560,8 @@ r_int
 id|resetflags
 )paren
 (brace
-id|ushort
+id|uint
 id|x
-comma
-id|z
-suffix:semicolon
-id|ulong
-id|limit
-op_assign
-l_int|0
 suffix:semicolon
 id|ulong
 id|loop
@@ -3575,6 +3581,11 @@ suffix:semicolon
 id|Scsi_Cmnd
 op_star
 id|sp
+suffix:semicolon
+r_struct
+id|Scsi_Host
+op_star
+id|sh
 suffix:semicolon
 id|save_flags
 c_func
@@ -3608,6 +3619,74 @@ id|cmd-&gt;abort_reason
 )paren
 )paren
 suffix:semicolon
+multiline_comment|/* Some interrupt controllers seem to loose interrupts */
+r_for
+c_loop
+(paren
+id|x
+op_assign
+l_int|1
+comma
+id|sh
+op_assign
+id|first_HBA
+suffix:semicolon
+id|x
+op_le
+id|registered_HBAs
+suffix:semicolon
+id|x
+op_increment
+comma
+id|sh
+op_assign
+id|SD
+c_func
+(paren
+id|sh
+)paren
+op_member_access_from_pointer
+id|next
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|inb
+c_func
+(paren
+(paren
+id|uint
+)paren
+id|sh-&gt;base
+op_plus
+id|HA_RAUXSTAT
+)paren
+op_amp
+id|HA_AIRQ
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;eata_dma: scsi%d interrupt pending in eata_reset.&bslash;n&quot;
+l_string|&quot;          Calling interrupt handler.&bslash;n&quot;
+comma
+id|sh-&gt;host_no
+)paren
+suffix:semicolon
+id|eata_int_handler
+c_func
+(paren
+id|sh-&gt;irq
+comma
+l_int|0
+comma
+l_int|0
+)paren
+suffix:semicolon
+)brace
+)brace
 r_if
 c_cond
 (paren
@@ -3712,70 +3791,6 @@ r_return
 id|SCSI_RESET_ERROR
 )paren
 suffix:semicolon
-)brace
-r_for
-c_loop
-(paren
-id|x
-op_assign
-l_int|0
-suffix:semicolon
-id|x
-OL
-id|MAXCHANNEL
-suffix:semicolon
-id|x
-op_increment
-)paren
-(brace
-r_for
-c_loop
-(paren
-id|z
-op_assign
-l_int|0
-suffix:semicolon
-id|z
-OL
-id|MAXTARGET
-suffix:semicolon
-id|z
-op_increment
-)paren
-(brace
-id|HD
-c_func
-(paren
-id|cmd
-)paren
-op_member_access_from_pointer
-id|t_state
-(braket
-id|x
-)braket
-(braket
-id|z
-)braket
-op_assign
-id|RESET
-suffix:semicolon
-id|HD
-c_func
-(paren
-id|cmd
-)paren
-op_member_access_from_pointer
-id|t_timeout
-(braket
-id|x
-)braket
-(braket
-id|z
-)braket
-op_assign
-id|NO_TIMEOUT
-suffix:semicolon
-)brace
 )brace
 r_for
 c_loop
@@ -3901,30 +3916,6 @@ id|status
 op_assign
 id|RESET
 suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;eata_reset: slot %d in reset, pid %ld.&bslash;n&quot;
-comma
-id|x
-comma
-id|sp-&gt;pid
-)paren
-suffix:semicolon
-id|DBG
-c_func
-(paren
-id|DBG_ABNORM
-op_logical_and
-id|DBG_DELAY
-comma
-id|DELAY
-c_func
-(paren
-l_int|1
-)paren
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -3938,6 +3929,16 @@ c_func
 l_string|&quot;eata_reset: slot %d, sp==NULL.&bslash;n&quot;
 comma
 id|x
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;eata_reset: slot %d in reset, pid %ld.&bslash;n&quot;
+comma
+id|x
+comma
+id|sp-&gt;pid
 )paren
 suffix:semicolon
 id|DBG
@@ -3994,18 +3995,6 @@ comma
 id|EATA_CMD_RESET
 )paren
 suffix:semicolon
-id|DBG
-c_func
-(paren
-id|DBG_ABNORM
-comma
-id|printk
-c_func
-(paren
-l_string|&quot;eata_reset: board reset done, enabling interrupts.&bslash;n&quot;
-)paren
-)paren
-suffix:semicolon
 id|HD
 c_func
 (paren
@@ -4016,12 +4005,6 @@ id|state
 op_assign
 id|RESET
 suffix:semicolon
-id|DELAY
-c_func
-(paren
-l_int|1
-)paren
-suffix:semicolon
 id|DBG
 c_func
 (paren
@@ -4030,9 +4013,27 @@ comma
 id|printk
 c_func
 (paren
-l_string|&quot;eata_reset: interrupts disabled, loops %ld.&bslash;n&quot;
+l_string|&quot;eata_reset: board reset done, enabling &quot;
+l_string|&quot;interrupts.&bslash;n&quot;
+)paren
+)paren
+suffix:semicolon
+id|DELAY
+c_func
+(paren
+l_int|2
+)paren
+suffix:semicolon
+multiline_comment|/* In theorie we should get interrupts and set free all&n;&t;       * used queueslots */
+id|DBG
+c_func
+(paren
+id|DBG_ABNORM
 comma
-id|limit
+id|printk
+c_func
+(paren
+l_string|&quot;eata_reset: interrupts disabled again.&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
@@ -4065,7 +4066,7 @@ id|x
 op_increment
 )paren
 (brace
-multiline_comment|/* Skip slots already set free by interrupt */
+multiline_comment|/* Skip slots already set free by interrupt and those that &n;         * are still LOCKED from the last reset */
 r_if
 c_cond
 (paren
@@ -4276,6 +4277,38 @@ id|factor
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#if CRIPPLE_QUEUE    
+r_for
+c_loop
+(paren
+id|device
+op_assign
+id|devicelist
+suffix:semicolon
+id|device
+op_ne
+l_int|NULL
+suffix:semicolon
+id|device
+op_assign
+id|device-&gt;next
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|device-&gt;host
+op_eq
+id|host
+)paren
+(brace
+id|device-&gt;queue_depth
+op_assign
+l_int|2
+suffix:semicolon
+)brace
+)brace
+macro_line|#else
 multiline_comment|/* First we do a sample run go find out what we have */
 r_for
 c_loop
@@ -4567,7 +4600,9 @@ id|device-&gt;queue_depth
 suffix:semicolon
 )brace
 )brace
+macro_line|#endif
 )brace
+macro_line|#if CHECK_BLINK
 DECL|function|check_blink_state
 r_int
 id|check_blink_state
@@ -4685,6 +4720,7 @@ id|FALSE
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
 DECL|function|get_board_data
 r_char
 op_star
@@ -4718,11 +4754,6 @@ id|buff
 suffix:semicolon
 id|ulong
 id|i
-suffix:semicolon
-id|ulong
-id|limit
-op_assign
-l_int|0
 suffix:semicolon
 id|cp
 op_assign
@@ -7151,6 +7182,7 @@ l_string|&quot;eata_dma: No valid IRQ. HBA removed from list&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
+macro_line|#if CHECK_BLINK
 r_else
 (brace
 r_if
@@ -7170,6 +7202,7 @@ l_string|&quot;Manual to correct this.&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
 multiline_comment|/* Nothing found here so we take it from the list */
 id|EISAbases
 (braket
@@ -7273,6 +7306,7 @@ id|IS_ISA
 )paren
 suffix:semicolon
 )brace
+macro_line|#if CHECK_BLINK
 r_else
 (brace
 r_if
@@ -7295,6 +7329,7 @@ l_string|&quot;Manual to correct this.&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
 id|ISAbases
 (braket
 id|i
@@ -7537,7 +7572,8 @@ id|PCI_COMMAND_MASTER
 id|printk
 c_func
 (paren
-l_string|&quot;eata_dma: find_PCI, HBA has IO or BUSMASTER mode disabled&bslash;n&quot;
+l_string|&quot;eata_dma: find_PCI, HBA has IO or&quot;
+l_string|&quot; BUSMASTER mode disabled&bslash;n&quot;
 )paren
 suffix:semicolon
 r_continue
@@ -7570,7 +7606,8 @@ r_else
 id|printk
 c_func
 (paren
-l_string|&quot;eata_dma: find_PCI, error %x while reading PCI_CLASS_BASE&bslash;n&quot;
+l_string|&quot;eata_dma: find_PCI, error %x while reading &quot;
+l_string|&quot;PCI_CLASS_BASE&bslash;n&quot;
 comma
 id|error
 )paren
@@ -7836,6 +7873,7 @@ r_continue
 suffix:semicolon
 multiline_comment|/* break; */
 )brace
+macro_line|#if CHECK_BLINK
 r_else
 r_if
 c_cond
@@ -7857,6 +7895,7 @@ l_string|&quot;Consult your HBAs manual to correct this.&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
 )brace
 )brace
 )brace
@@ -8062,6 +8101,8 @@ id|eata_int_handler
 )paren
 comma
 id|SA_INTERRUPT
+op_or
+id|SA_SHIRQ
 comma
 l_string|&quot;eata_dma&quot;
 comma

@@ -120,12 +120,12 @@ suffix:semicolon
 multiline_comment|/* error register */
 multiline_comment|/* The next two fields are not always used */
 DECL|member|mt_fileno
-id|daddr_t
+id|__kernel_daddr_t
 id|mt_fileno
 suffix:semicolon
 multiline_comment|/* number of current file on tape */
 DECL|member|mt_blkno
-id|daddr_t
+id|__kernel_daddr_t
 id|mt_blkno
 suffix:semicolon
 multiline_comment|/* current block number */

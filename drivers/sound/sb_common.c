@@ -4215,6 +4215,16 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|hw_config-&gt;io_base
+op_le
+l_int|0
+)paren
+r_return
+l_int|0
+suffix:semicolon
+r_if
+c_cond
+(paren
 id|check_region
 (paren
 id|hw_config-&gt;io_base

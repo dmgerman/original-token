@@ -959,8 +959,6 @@ c_cond
 id|force
 op_logical_or
 id|sk-&gt;wmem_alloc
-op_plus
-id|size
 OL
 id|sk-&gt;sndbuf
 )paren
@@ -1045,8 +1043,6 @@ c_cond
 id|force
 op_logical_or
 id|sk-&gt;rmem_alloc
-op_plus
-id|size
 OL
 id|sk-&gt;rcvbuf
 )paren

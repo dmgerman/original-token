@@ -70,11 +70,11 @@ mdefine_line|#define SCSI_GENERIC_MAJOR 21
 DECL|macro|Z8530_MAJOR
 mdefine_line|#define Z8530_MAJOR 34
 DECL|macro|DIGI_MAJOR
-mdefine_line|#define DIGI_MAJOR 22
+mdefine_line|#define DIGI_MAJOR 23
 DECL|macro|IDE1_MAJOR
 mdefine_line|#define IDE1_MAJOR&t;22
 DECL|macro|DIGICU_MAJOR
-mdefine_line|#define DIGICU_MAJOR 23
+mdefine_line|#define DIGICU_MAJOR 22
 DECL|macro|MITSUMI_CDROM_MAJOR
 mdefine_line|#define MITSUMI_CDROM_MAJOR 23
 DECL|macro|CDU535_CDROM_MAJOR

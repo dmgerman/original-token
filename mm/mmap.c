@@ -3342,11 +3342,7 @@ r_return
 l_int|0
 suffix:semicolon
 multiline_comment|/*&n;&t; * Ok - we have the memory areas we should free on the &squot;free&squot; list,&n;&t; * so release them, and unmap the page range..&n;&t; * If the one of the segments is only being partially unmapped,&n;&t; * it will put new vm_area_struct(s) into the address space.&n;&t; */
-r_while
-c_loop
-(paren
-id|free
-)paren
+r_do
 (brace
 r_int
 r_int
@@ -3448,16 +3444,13 @@ id|mpnt
 )paren
 suffix:semicolon
 )brace
-id|zap_page_range
-c_func
+r_while
+c_loop
 (paren
-id|current-&gt;mm
-comma
-id|addr
-comma
-id|len
+id|free
 )paren
 suffix:semicolon
+multiline_comment|/* we could zap the page tables here too.. */
 r_return
 l_int|0
 suffix:semicolon

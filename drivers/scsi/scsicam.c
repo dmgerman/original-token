@@ -9,6 +9,7 @@ macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/genhd.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/blk.h&gt;
+macro_line|#include &lt;asm/unaligned.h&gt;
 macro_line|#include &quot;scsi.h&quot;
 macro_line|#include &quot;hosts.h&quot;
 macro_line|#include &quot;sd.h&quot;
@@ -484,9 +485,19 @@ suffix:semicolon
 multiline_comment|/* This is the actual _sector_ number at the end */
 id|logical_end
 op_assign
+id|get_unaligned
+c_func
+(paren
+op_amp
 id|largest-&gt;start_sect
+)paren
 op_plus
+id|get_unaligned
+c_func
+(paren
+op_amp
 id|largest-&gt;nr_sects
+)paren
 suffix:semicolon
 multiline_comment|/* This is for &gt;1023 cylinders */
 id|ext_cyl
