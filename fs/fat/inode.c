@@ -4399,7 +4399,7 @@ id|inode
 op_member_access_from_pointer
 id|i_binary
 op_assign
-id|is_binary
+id|fat_is_binary
 c_func
 (paren
 id|MSDOS_SB

@@ -1510,6 +1510,10 @@ DECL|macro|PCI_DEVICE_ID_SIGMADES_6425
 mdefine_line|#define PCI_DEVICE_ID_SIGMADES_6425&t;0x6401
 DECL|macro|PCI_VENDOR_ID_CCUBE
 mdefine_line|#define PCI_VENDOR_ID_CCUBE&t;&t;0x123f
+DECL|macro|PCI_VENDOR_ID_AVM
+mdefine_line|#define PCI_VENDOR_ID_AVM&t;&t;0x1244
+DECL|macro|PCI_DEVICE_ID_AVM_A1
+mdefine_line|#define PCI_DEVICE_ID_AVM_A1&t;&t;0x0a00
 DECL|macro|PCI_VENDOR_ID_DIPIX
 mdefine_line|#define PCI_VENDOR_ID_DIPIX&t;&t;0x1246
 DECL|macro|PCI_VENDOR_ID_STALLION

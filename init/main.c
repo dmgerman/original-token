@@ -5042,6 +5042,9 @@ suffix:semicolon
 id|buffer_init
 c_func
 (paren
+id|memory_end
+op_minus
+id|memory_start
 )paren
 suffix:semicolon
 id|signals_init

@@ -518,7 +518,7 @@ suffix:semicolon
 multiline_comment|/* misc.c */
 r_extern
 r_int
-id|is_binary
+id|fat_is_binary
 c_func
 (paren
 r_char

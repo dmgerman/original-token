@@ -184,6 +184,26 @@ DECL|member|priv
 )brace
 id|priv
 suffix:semicolon
+DECL|member|nls_charsets
+r_struct
+id|ncp_nls_ioctl
+id|nls_charsets
+suffix:semicolon
+multiline_comment|/* NLS user data */
+DECL|member|nls_vol
+r_struct
+id|nls_table
+op_star
+id|nls_vol
+suffix:semicolon
+multiline_comment|/* codepage used on volume */
+DECL|member|nls_io
+r_struct
+id|nls_table
+op_star
+id|nls_io
+suffix:semicolon
+multiline_comment|/* charset used for input and display */
 )brace
 suffix:semicolon
 DECL|function|ncp_conn_valid

@@ -29,7 +29,7 @@ DECL|macro|NR_MEM_LISTS
 mdefine_line|#define NR_MEM_LISTS 12
 macro_line|#else
 DECL|macro|NR_MEM_LISTS
-mdefine_line|#define NR_MEM_LISTS 6
+mdefine_line|#define NR_MEM_LISTS 10
 macro_line|#endif
 multiline_comment|/* The start of this MUST match the start of &quot;struct page&quot; */
 DECL|struct|free_area_struct

@@ -35,8 +35,6 @@ DECL|macro|PAGE_HASH_BITS
 mdefine_line|#define PAGE_HASH_BITS 12
 DECL|macro|PAGE_HASH_SIZE
 mdefine_line|#define PAGE_HASH_SIZE (1 &lt;&lt; PAGE_HASH_BITS)
-DECL|macro|PAGE_AGE_VALUE
-mdefine_line|#define PAGE_AGE_VALUE 16
 r_extern
 r_int
 r_int

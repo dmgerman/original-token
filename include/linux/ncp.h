@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  ncp.h&n; *&n; *  Copyright (C) 1995 by Volker Lendecke&n; *  Modified for sparc by J.F. Chadima&n; *&n; */
+multiline_comment|/*&n; *  ncp.h&n; *&n; *  Copyright (C) 1995 by Volker Lendecke&n; *  Modified for sparc by J.F. Chadima&n; *  Modified for __constant_ntoh by Frank A. Vorstenbosch&n; *&n; */
 macro_line|#ifndef _LINUX_NCP_H
 DECL|macro|_LINUX_NCP_H
 mdefine_line|#define _LINUX_NCP_H
@@ -252,15 +252,33 @@ multiline_comment|/* these define the attribute byte as seen by NCP */
 DECL|macro|aRONLY
 mdefine_line|#define aRONLY     (ntohl(0x01000000))
 DECL|macro|aHIDDEN
-mdefine_line|#define aHIDDEN    (ntohl(0x02000000))
+mdefine_line|#define aHIDDEN    (__constant_ntohl(0x02000000))
 DECL|macro|aSYSTEM
-mdefine_line|#define aSYSTEM    (ntohl(0x04000000))
+mdefine_line|#define aSYSTEM    (__constant_ntohl(0x04000000))
 DECL|macro|aEXECUTE
 mdefine_line|#define aEXECUTE   (ntohl(0x08000000))
 DECL|macro|aDIR
 mdefine_line|#define aDIR       (ntohl(0x10000000))
 DECL|macro|aARCH
 mdefine_line|#define aARCH      (ntohl(0x20000000))
+DECL|macro|aSHARED
+mdefine_line|#define aSHARED&t;   (ntohl(0x80000000))
+DECL|macro|aDONTSUBALLOCATE
+mdefine_line|#define aDONTSUBALLOCATE (ntohl(1L&lt;&lt;(11+8)))
+DECL|macro|aTRANSACTIONAL
+mdefine_line|#define aTRANSACTIONAL   (ntohl(1L&lt;&lt;(12+8)))
+DECL|macro|aPURGE
+mdefine_line|#define aPURGE&t;&t; (ntohl(1L&lt;&lt;(16-8)))
+DECL|macro|aRENAMEINHIBIT
+mdefine_line|#define aRENAMEINHIBIT&t; (ntohl(1L&lt;&lt;(17-8)))
+DECL|macro|aDELETEINHIBIT
+mdefine_line|#define aDELETEINHIBIT&t; (ntohl(1L&lt;&lt;(18-8)))
+DECL|macro|aDONTCOMPRESS
+mdefine_line|#define aDONTCOMPRESS&t; (nothl(1L&lt;&lt;(27-24)))
+DECL|macro|NCP_MIN_SYMLINK_SIZE
+mdefine_line|#define NCP_MIN_SYMLINK_SIZE&t;8
+DECL|macro|NCP_MAX_SYMLINK_SIZE
+mdefine_line|#define NCP_MAX_SYMLINK_SIZE&t;512
 DECL|macro|AR_READ
 mdefine_line|#define AR_READ      (ntohs(0x0100))
 DECL|macro|AR_WRITE

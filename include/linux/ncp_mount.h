@@ -10,15 +10,19 @@ DECL|macro|NCP_MOUNT_VERSION
 mdefine_line|#define NCP_MOUNT_VERSION 3
 multiline_comment|/* Values for flags */
 DECL|macro|NCP_MOUNT_SOFT
-mdefine_line|#define NCP_MOUNT_SOFT 0x0001
+mdefine_line|#define NCP_MOUNT_SOFT&t;&t;0x0001
 DECL|macro|NCP_MOUNT_INTR
-mdefine_line|#define NCP_MOUNT_INTR 0x0002
+mdefine_line|#define NCP_MOUNT_INTR&t;&t;0x0002
 DECL|macro|NCP_MOUNT_STRONG
-mdefine_line|#define NCP_MOUNT_STRONG 0x0004   /* enable delete/rename of r/o files */
+mdefine_line|#define NCP_MOUNT_STRONG&t;0x0004&t;/* enable delete/rename of r/o files */
 DECL|macro|NCP_MOUNT_NO_OS2
-mdefine_line|#define NCP_MOUNT_NO_OS2 0x0008
+mdefine_line|#define NCP_MOUNT_NO_OS2&t;0x0008&t;/* do not use OS/2 (LONG) namespace */
 DECL|macro|NCP_MOUNT_NO_NFS
-mdefine_line|#define NCP_MOUNT_NO_NFS 0x0010
+mdefine_line|#define NCP_MOUNT_NO_NFS&t;0x0010&t;/* do not use NFS namespace */
+DECL|macro|NCP_MOUNT_EXTRAS
+mdefine_line|#define NCP_MOUNT_EXTRAS&t;0x0020
+DECL|macro|NCP_MOUNT_SYMLINKS
+mdefine_line|#define NCP_MOUNT_SYMLINKS&t;0x0040&t;/* enable symlinks */
 DECL|struct|ncp_mount_data
 r_struct
 id|ncp_mount_data

@@ -4174,6 +4174,16 @@ comma
 id|DEVICE
 c_func
 (paren
+id|AVM
+comma
+id|AVM_A1
+comma
+l_string|&quot;A1 (Fritz)&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
 id|STALLION
 comma
 id|STALLION_ECHPCI832
@@ -6487,6 +6497,12 @@ id|PCI_VENDOR_ID_SIGMADES
 suffix:colon
 r_return
 l_string|&quot;Sigma Designs&quot;
+suffix:semicolon
+r_case
+id|PCI_VENDOR_ID_AVM
+suffix:colon
+r_return
+l_string|&quot;AVM&quot;
 suffix:semicolon
 r_case
 id|PCI_VENDOR_ID_CCUBE

@@ -89,6 +89,22 @@ op_star
 id|dentry
 )paren
 suffix:semicolon
+r_static
+r_int
+id|nfs_file_open
+c_func
+(paren
+r_struct
+id|inode
+op_star
+id|inode
+comma
+r_struct
+id|file
+op_star
+id|filp
+)paren
+suffix:semicolon
 DECL|variable|nfs_file_operations
 r_static
 r_struct
@@ -117,9 +133,9 @@ multiline_comment|/* ioctl - default */
 id|nfs_file_mmap
 comma
 multiline_comment|/* mmap */
-l_int|NULL
+id|nfs_file_open
 comma
-multiline_comment|/* no special open is needed */
+multiline_comment|/* open */
 id|nfs_file_flush
 comma
 multiline_comment|/* flush */
@@ -280,6 +296,45 @@ suffix:semicolon
 )brace
 r_return
 id|status
+suffix:semicolon
+)brace
+multiline_comment|/*&n; * Open the file.&n; * Just checks the cache is synchronized.&n; */
+r_static
+r_int
+DECL|function|nfs_file_open
+id|nfs_file_open
+c_func
+(paren
+r_struct
+id|inode
+op_star
+id|inode
+comma
+r_struct
+id|file
+op_star
+id|filp
+)paren
+(brace
+r_struct
+id|dentry
+op_star
+id|dentry
+op_assign
+id|filp-&gt;f_dentry
+suffix:semicolon
+r_return
+id|_nfs_revalidate_inode
+c_func
+(paren
+id|NFS_DSERVER
+c_func
+(paren
+id|dentry
+)paren
+comma
+id|dentry
+)paren
 suffix:semicolon
 )brace
 r_static

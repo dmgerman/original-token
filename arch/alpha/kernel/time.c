@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/arch/alpha/kernel/time.c&n; *&n; *  Copyright (C) 1991, 1992, 1995  Linus Torvalds&n; *&n; * This file contains the PC-specific time handling details:&n; * reading the RTC at bootup, etc..&n; * 1994-07-02    Alan Modra&n; *&t;fixed set_rtc_mmss, fixed time.year for &gt;= 2000, new mktime&n; * 1995-03-26    Markus Kuhn&n; *      fixed 500 ms bug at call to set_rtc_mmss, fixed DS12887&n; *      precision CMOS clock update&n; * 1997-09-10&t;Updated NTP code according to technical memorandum Jan &squot;96&n; *&t;&t;&quot;A Kernel Model for Precision Timekeeping&quot; by Dave Mills&n; * 1997-01-09    Adrian Sun&n; *      use interval timer if CONFIG_RTC=y&n; * 1997-10-29    John Bowman (bowman@math.ualberta.ca)&n; *      fixed tick loss calculation in timer_interrupt&n; *      (round system clock to nearest tick instead of truncating)&n; *      fixed algorithm in time_init for getting time from CMOS clock&n; */
+multiline_comment|/*&n; *  linux/arch/alpha/kernel/time.c&n; *&n; *  Copyright (C) 1991, 1992, 1995  Linus Torvalds&n; *&n; * This file contains the PC-specific time handling details:&n; * reading the RTC at bootup, etc..&n; * 1994-07-02    Alan Modra&n; *&t;fixed set_rtc_mmss, fixed time.year for &gt;= 2000, new mktime&n; * 1995-03-26    Markus Kuhn&n; *      fixed 500 ms bug at call to set_rtc_mmss, fixed DS12887&n; *      precision CMOS clock update&n; * 1997-09-10&t;Updated NTP code according to technical memorandum Jan &squot;96&n; *&t;&t;&quot;A Kernel Model for Precision Timekeeping&quot; by Dave Mills&n; * 1997-01-09    Adrian Sun&n; *      use interval timer if CONFIG_RTC=y&n; * 1997-10-29    John Bowman (bowman@math.ualberta.ca)&n; *      fixed tick loss calculation in timer_interrupt&n; *      (round system clock to nearest tick instead of truncating)&n; *      fixed algorithm in time_init for getting time from CMOS clock&n; * 1999-04-16&t;Thorsten Kranzkowski (dl8bcu@gmx.net)&n; *&t;fixed algorithm in do_gettimeofday() for calculating the precise time&n; *&t;from processor cycle counter (now taking lost_ticks into account)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -1118,8 +1118,6 @@ r_int
 r_int
 id|flags
 comma
-id|now
-comma
 id|delta_cycles
 comma
 id|delta_usec
@@ -1130,6 +1128,16 @@ id|sec
 comma
 id|usec
 suffix:semicolon
+id|__u32
+id|now
+suffix:semicolon
+r_extern
+r_volatile
+r_int
+r_int
+id|lost_ticks
+suffix:semicolon
+multiline_comment|/*kernel/sched.c*/
 id|now
 op_assign
 id|rpcc
@@ -1166,9 +1174,19 @@ suffix:semicolon
 multiline_comment|/*&n;&t; * usec = cycles * ticks_per_cycle * 2**48 * 1e6 / (2**48 * ticks)&n;&t; *&t;= cycles * (s_t_p_c) * 1e6 / (2**48 * ticks)&n;&t; *&t;= cycles * (s_t_p_c) * 15625 / (2**42 * ticks)&n;&t; *&n;&t; * which, given a 600MHz cycle and a 1024Hz tick, has a&n;&t; * dynamic range of about 1.7e17, which is less than the&n;&t; * 1.8e19 in an unsigned long, so we are safe from overflow.&n;&t; *&n;&t; * Round, but with .5 up always, since .5 to even is harder&n;&t; * with no clear gain.&n;&t; */
 id|delta_usec
 op_assign
+(paren
 id|delta_cycles
 op_star
 id|state.scaled_ticks_per_cycle
+op_plus
+id|state.partial_tick
+op_plus
+(paren
+id|lost_ticks
+op_lshift
+id|FIX_SHIFT
+)paren
+)paren
 op_star
 l_int|15625
 suffix:semicolon
@@ -1200,6 +1218,7 @@ l_int|1
 op_div
 l_int|2
 suffix:semicolon
+multiline_comment|/* the &squot;lost_tics&squot; term above implements this:&t;&n;&t; * delta_usec += lost_ticks * (1000000 / HZ);&n;&t; */
 id|usec
 op_add_assign
 id|delta_usec

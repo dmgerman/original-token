@@ -118,10 +118,10 @@ l_string|&quot;  File system has been set read-only&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * is_binary selects optional text conversion based on the conversion mode and&n; * the extension part of the file name.&n; */
-DECL|function|is_binary
+multiline_comment|/*&n; * fat_is_binary selects optional text conversion based on the conversion mode&n; * and the extension part of the file name.&n; */
+DECL|function|fat_is_binary
 r_int
-id|is_binary
+id|fat_is_binary
 c_func
 (paren
 r_char

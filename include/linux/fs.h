@@ -206,7 +206,8 @@ r_void
 id|buffer_init
 c_func
 (paren
-r_void
+r_int
+r_int
 )paren
 suffix:semicolon
 r_extern

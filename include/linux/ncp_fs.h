@@ -6,6 +6,35 @@ macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/in.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/ncp_mount.h&gt;
+multiline_comment|/* NLS charsets by ioctl */
+DECL|macro|NCP_IOCSNAME_LEN
+mdefine_line|#define NCP_IOCSNAME_LEN 20
+DECL|struct|ncp_nls_ioctl
+r_struct
+id|ncp_nls_ioctl
+(brace
+DECL|member|codepage
+r_int
+r_char
+id|codepage
+(braket
+id|NCP_IOCSNAME_LEN
+op_plus
+l_int|1
+)braket
+suffix:semicolon
+DECL|member|iocharset
+r_int
+r_char
+id|iocharset
+(braket
+id|NCP_IOCSNAME_LEN
+op_plus
+l_int|1
+)braket
+suffix:semicolon
+)brace
+suffix:semicolon
 macro_line|#include &lt;linux/ncp_fs_sb.h&gt;
 macro_line|#include &lt;linux/ncp_fs_i.h&gt;
 multiline_comment|/*&n; * ioctl commands&n; */
@@ -224,6 +253,10 @@ DECL|macro|NCP_IOC_GETPRIVATEDATA
 mdefine_line|#define NCP_IOC_GETPRIVATEDATA&t;&t;_IOWR(&squot;n&squot;, 10, struct ncp_privatedata_ioctl)
 DECL|macro|NCP_IOC_SETPRIVATEDATA
 mdefine_line|#define NCP_IOC_SETPRIVATEDATA&t;&t;_IOR(&squot;n&squot;, 10, struct ncp_privatedata_ioctl)
+DECL|macro|NCP_IOC_GETCHARSETS
+mdefine_line|#define NCP_IOC_GETCHARSETS&t;&t;_IOWR(&squot;n&squot;, 11, struct ncp_nls_ioctl)
+DECL|macro|NCP_IOC_SETCHARSETS
+mdefine_line|#define NCP_IOC_SETCHARSETS&t;&t;_IOR(&squot;n&squot;, 11, struct ncp_nls_ioctl)
 multiline_comment|/*&n; * The packet size to allocate. One page should be enough.&n; */
 DECL|macro|NCP_PACKET_SIZE
 mdefine_line|#define NCP_PACKET_SIZE 4070
@@ -296,6 +329,18 @@ id|packed
 )paren
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_NCPFS_SMALLDOS
+DECL|member|origNS
+id|__u32
+id|origNS
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_NCPFS_STRONG
+DECL|member|nwattr
+id|__u32
+id|nwattr
+suffix:semicolon
+macro_line|#endif
 DECL|member|opened
 r_int
 id|opened
@@ -840,17 +885,20 @@ id|volNumber
 )braket
 suffix:semicolon
 )brace
-DECL|function|ncp_preserve_case
+DECL|function|ncp_preserve_entry_case
 r_static
 r_inline
 r_int
-id|ncp_preserve_case
+id|ncp_preserve_entry_case
 c_func
 (paren
 r_struct
 id|inode
 op_star
 id|i
+comma
+id|__u32
+id|nscreator
 )paren
 (brace
 macro_line|#if defined(CONFIG_NCPFS_NFS_NS) || defined(CONFIG_NCPFS_OS2_NS)
@@ -862,6 +910,26 @@ c_func
 (paren
 id|i
 )paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#if defined(CONFIG_NCPFS_SMALLDOS) &amp;&amp; defined(CONFIG_NCPFS_OS2_NS)
+r_if
+c_cond
+(paren
+(paren
+id|ns
+op_eq
+id|NW_NS_OS2
+)paren
+op_logical_and
+(paren
+id|nscreator
+op_eq
+id|NW_NS_DOS
+)paren
+)paren
+r_return
+l_int|0
 suffix:semicolon
 macro_line|#endif
 r_return
@@ -882,6 +950,29 @@ id|NW_NS_NFS
 op_logical_or
 macro_line|#endif&t;/* CONFIG_NCPFS_NFS_NS */
 l_int|0
+suffix:semicolon
+)brace
+DECL|function|ncp_preserve_case
+r_static
+r_inline
+r_int
+id|ncp_preserve_case
+c_func
+(paren
+r_struct
+id|inode
+op_star
+id|i
+)paren
+(brace
+r_return
+id|ncp_preserve_entry_case
+c_func
+(paren
+id|i
+comma
+id|NW_NS_OS2
+)paren
 suffix:semicolon
 )brace
 DECL|function|ncp_case_sensitive

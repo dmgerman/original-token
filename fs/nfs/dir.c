@@ -433,7 +433,7 @@ id|dentry-&gt;d_name.name
 )paren
 suffix:semicolon
 r_return
-id|nfs_revalidate_inode
+id|_nfs_revalidate_inode
 c_func
 (paren
 id|NFS_DSERVER
@@ -1737,9 +1737,24 @@ id|nfs_fh
 )paren
 )paren
 )paren
+(brace
+r_if
+c_cond
+(paren
+id|dentry-&gt;d_count
+OL
+l_int|2
+op_logical_or
+id|nfs_revalidate
+c_func
+(paren
+id|dentry
+)paren
+)paren
 r_goto
 id|out_bad
 suffix:semicolon
+)brace
 multiline_comment|/* Ok, remeber that we successfully checked it.. */
 id|nfs_renew_times
 c_func
