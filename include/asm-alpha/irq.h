@@ -26,6 +26,33 @@ macro_line|#else /* everyone else */
 DECL|macro|NR_IRQS
 macro_line|# define NR_IRQS&t;16
 macro_line|#endif
+DECL|function|irq_cannonicalize
+r_static
+id|__inline__
+r_int
+id|irq_cannonicalize
+c_func
+(paren
+r_int
+id|irq
+)paren
+(brace
+multiline_comment|/*&n;&t; * XXX is this true for all Alpha&squot;s?  The old serial driver&n;&t; * did it this way for years without any complaints, so....&n;&t; */
+r_return
+(paren
+(paren
+id|irq
+op_eq
+l_int|2
+)paren
+ques
+c_cond
+l_int|9
+suffix:colon
+id|irq
+)paren
+suffix:semicolon
+)brace
 r_extern
 r_void
 id|disable_irq

@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: setup.c,v 1.18 1997/12/18 02:43:00 ecd Exp $&n; *  linux/arch/sparc64/kernel/setup.c&n; *&n; *  Copyright (C) 1995,1996  David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1997       Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/*  $Id: setup.c,v 1.20 1998/02/24 17:02:39 jj Exp $&n; *  linux/arch/sparc64/kernel/setup.c&n; *&n; *  Copyright (C) 1995,1996  David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1997       Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -85,25 +85,6 @@ id|phys_bytes_of_ram
 comma
 id|end_of_phys_memory
 suffix:semicolon
-DECL|function|bios32_init
-r_int
-r_int
-id|bios32_init
-c_func
-(paren
-r_int
-r_int
-id|memory_start
-comma
-r_int
-r_int
-id|memory_end
-)paren
-(brace
-r_return
-id|memory_start
-suffix:semicolon
-)brace
 multiline_comment|/* Typing sync at the prom prompt calls the function pointed to by&n; * the sync callback which I set to the following function.&n; * This should sync all filesystems and return, for now it just&n; * prints out pretty messages and returns.&n; */
 r_extern
 r_int
@@ -1676,21 +1657,30 @@ id|sparc_fpu_type
 )braket
 suffix:semicolon
 r_extern
-r_char
-op_star
+r_int
 id|smp_info
 c_func
 (paren
-r_void
+r_char
+op_star
 )paren
 suffix:semicolon
 r_extern
+r_int
+id|smp_bogo
+c_func
+(paren
 r_char
 op_star
+)paren
+suffix:semicolon
+r_extern
+r_int
 id|mmu_info
 c_func
 (paren
-r_void
+r_char
+op_star
 )paren
 suffix:semicolon
 DECL|function|get_cpuinfo
@@ -1711,7 +1701,11 @@ c_func
 (paren
 )paren
 suffix:semicolon
-r_return
+r_int
+id|len
+suffix:semicolon
+id|len
+op_assign
 id|sprintf
 c_func
 (paren
@@ -1726,15 +1720,6 @@ l_string|&quot;ncpus probed&bslash;t: %d&bslash;n&quot;
 l_string|&quot;ncpus active&bslash;t: %d&bslash;n&quot;
 macro_line|#ifndef __SMP__
 l_string|&quot;BogoMips&bslash;t: %lu.%02lu&bslash;n&quot;
-macro_line|#else
-l_string|&quot;Cpu0Bogo&bslash;t: %lu.%02lu&bslash;n&quot;
-l_string|&quot;Cpu1Bogo&bslash;t: %lu.%02lu&bslash;n&quot;
-l_string|&quot;Cpu2Bogo&bslash;t: %lu.%02lu&bslash;n&quot;
-l_string|&quot;Cpu3Bogo&bslash;t: %lu.%02lu&bslash;n&quot;
-macro_line|#endif
-l_string|&quot;%s&quot;
-macro_line|#ifdef __SMP__
-l_string|&quot;%s&quot;
 macro_line|#endif
 comma
 id|sparc_cpu_type
@@ -1768,8 +1753,8 @@ comma
 id|linux_num_cpus
 comma
 id|smp_num_cpus
-comma
 macro_line|#ifndef __SMP__
+comma
 id|loops_per_sec
 op_div
 l_int|500000
@@ -1781,109 +1766,45 @@ l_int|5000
 )paren
 op_mod
 l_int|100
-comma
-macro_line|#else
-id|cpu_data
-(braket
-l_int|0
-)braket
-dot
-id|udelay_val
-op_div
-l_int|500000
-comma
-(paren
-id|cpu_data
-(braket
-l_int|0
-)braket
-dot
-id|udelay_val
-op_div
-l_int|5000
-)paren
-op_mod
-l_int|100
-comma
-id|cpu_data
-(braket
-l_int|1
-)braket
-dot
-id|udelay_val
-op_div
-l_int|500000
-comma
-(paren
-id|cpu_data
-(braket
-l_int|1
-)braket
-dot
-id|udelay_val
-op_div
-l_int|5000
-)paren
-op_mod
-l_int|100
-comma
-id|cpu_data
-(braket
-l_int|2
-)braket
-dot
-id|udelay_val
-op_div
-l_int|500000
-comma
-(paren
-id|cpu_data
-(braket
-l_int|2
-)braket
-dot
-id|udelay_val
-op_div
-l_int|5000
-)paren
-op_mod
-l_int|100
-comma
-id|cpu_data
-(braket
-l_int|3
-)braket
-dot
-id|udelay_val
-op_div
-l_int|500000
-comma
-(paren
-id|cpu_data
-(braket
-l_int|3
-)braket
-dot
-id|udelay_val
-op_div
-l_int|5000
-)paren
-op_mod
-l_int|100
-comma
 macro_line|#endif
+)paren
+suffix:semicolon
+macro_line|#ifdef __SMP__
+id|len
+op_add_assign
+id|smp_bogo
+c_func
+(paren
+id|buffer
+op_plus
+id|len
+)paren
+suffix:semicolon
+macro_line|#endif
+id|len
+op_add_assign
 id|mmu_info
 c_func
 (paren
+id|buffer
+op_plus
+id|len
 )paren
+suffix:semicolon
 macro_line|#ifdef __SMP__
-comma
+id|len
+op_add_assign
 id|smp_info
 c_func
 (paren
+id|buffer
+op_plus
+id|len
 )paren
+suffix:semicolon
 macro_line|#endif
-)paren
+r_return
+id|len
 suffix:semicolon
 )brace
 eof

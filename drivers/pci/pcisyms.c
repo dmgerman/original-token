@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;$Id: pcisyms.c,v 1.2 1998/02/16 10:35:57 mj Exp $&n; *&n; *&t;PCI Bus Services -- Exported Symbols&n; *&n; *&t;Copyright 1998 Martin Mares&n; */
+multiline_comment|/*&n; *&t;$Id: pcisyms.c,v 1.4 1998/04/17 16:34:19 mj Exp $&n; *&n; *&t;PCI Bus Services -- Exported Symbols&n; *&n; *&t;Copyright 1998 Martin Mares&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 DECL|variable|pcibios_present
@@ -50,18 +50,18 @@ c_func
 id|pcibios_write_config_dword
 )paren
 suffix:semicolon
-DECL|variable|pcibios_strerror
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|pcibios_strerror
-)paren
-suffix:semicolon
 DECL|variable|pci_devices
 id|EXPORT_SYMBOL
 c_func
 (paren
 id|pci_devices
+)paren
+suffix:semicolon
+DECL|variable|pci_root
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|pci_root
 )paren
 suffix:semicolon
 DECL|variable|pci_find_class
@@ -83,6 +83,13 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|pci_find_slot
+)paren
+suffix:semicolon
+DECL|variable|pci_set_master
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|pci_set_master
 )paren
 suffix:semicolon
 multiline_comment|/* Backward compatibility */

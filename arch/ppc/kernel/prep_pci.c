@@ -1,6 +1,5 @@
-multiline_comment|/*&n; * $Id: prep_pci.c,v 1.12 1997/10/29 03:35:08 cort Exp $&n; * PReP pci functions.&n; * Originally by Gary Thomas&n; * rewritten and updated by Cort Dougan (cort@cs.nmt.edu)&n; *&n; * The motherboard routes/maps will disappear shortly. -- Cort&n; */
+multiline_comment|/*&n; * $Id: prep_pci.c,v 1.16 1998/02/23 02:47:32 davem Exp $&n; * PReP pci functions.&n; * Originally by Gary Thomas&n; * rewritten and updated by Cort Dougan (cort@cs.nmt.edu)&n; *&n; * The motherboard routes/maps will disappear shortly. -- Cort&n; */
 macro_line|#include &lt;linux/types.h&gt;
-macro_line|#include &lt;linux/bios32.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
@@ -637,6 +636,7 @@ DECL|macro|CAROLINA_IRQ_EDGE_MASK_LO
 mdefine_line|#define CAROLINA_IRQ_EDGE_MASK_LO   0x00  /* IRQ&squot;s 0-7  */
 DECL|macro|CAROLINA_IRQ_EDGE_MASK_HI
 mdefine_line|#define CAROLINA_IRQ_EDGE_MASK_HI   0xA4  /* IRQ&squot;s 8-15 [10,13,15] */
+multiline_comment|/*&n; * FIXME: This code incorrectly assumes there&squot;s only bus #0, breaking all&n; *&t;  PCI-to-PCI bridges. Also multi-function devices are not supported&n; *&t;  at all. [mj]&n; */
 r_int
 DECL|function|prep_pcibios_read_config_dword
 id|prep_pcibios_read_config_dword
@@ -877,31 +877,6 @@ id|dev
 op_rshift_assign
 l_int|3
 suffix:semicolon
-multiline_comment|/* Note: the configuration registers don&squot;t always have this right! */
-r_if
-c_cond
-(paren
-id|offset
-op_eq
-id|PCI_INTERRUPT_LINE
-)paren
-(brace
-op_star
-id|val
-op_assign
-id|Motherboard_routes
-(braket
-id|Motherboard_map
-(braket
-id|dev
-)braket
-)braket
-suffix:semicolon
-multiline_comment|/*printk(&quot;dev %d map %d route %d on board %d&bslash;n&quot;,&n;  dev,Motherboard_map[dev],&n;  Motherboard_routes[Motherboard_map[dev]],&n;  *(unsigned char *)(0x80800000 | (1&lt;&lt;dev) | (offset ^ 1)));*/
-r_return
-id|PCIBIOS_SUCCESSFUL
-suffix:semicolon
-)brace
 r_if
 c_cond
 (paren

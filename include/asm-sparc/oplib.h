@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: oplib.h,v 1.18 1997/09/24 11:34:18 jj Exp $&n; * oplib.h:  Describes the interface and available routines in the&n; *           Linux Prom library.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: oplib.h,v 1.19 1998/01/30 10:59:53 jj Exp $&n; * oplib.h:  Describes the interface and available routines in the&n; *           Linux Prom library.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef __SPARC_OPLIB_H
 DECL|macro|__SPARC_OPLIB_H
 mdefine_line|#define __SPARC_OPLIB_H
@@ -35,6 +35,10 @@ DECL|enumerator|PROM_AP1000
 id|PROM_AP1000
 comma
 multiline_comment|/* actually no prom at all */
+DECL|enumerator|PROM_SUN4
+id|PROM_SUN4
+comma
+multiline_comment|/* Old sun4 proms are totally different, but we&squot;ll shoehorn it to make it fit */
 )brace
 suffix:semicolon
 r_extern

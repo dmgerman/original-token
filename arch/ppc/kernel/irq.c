@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  arch/ppc/kernel/irq.c&n; *&n; *  Derived from arch/i386/kernel/irq.c&n; *    Copyright (C) 1992 Linus Torvalds&n; *  Adapted from arch/i386 by Gary Thomas&n; *    Copyright (C) 1995-1996 Gary Thomas (gdt@linuxppc.org)&n; *  Updated and modified by Cort Dougan (cort@cs.nmt.edu)&n; *  Adapted for Power Macintosh by Paul Mackerras&n; *    Copyright (C) 1996 Paul Mackerras (paulus@cs.anu.edu.au)&n; *&n; * This file contains the code used by various IRQ handling routines:&n; * asking for different IRQ&squot;s should be done through these routines&n; * instead of just grabbing them. Thus setups with different IRQ numbers&n; * shouldn&squot;t result in any weird surprises, and installing new handlers&n; * should be easier.&n; */
+multiline_comment|/*&n; *  arch/ppc/kernel/irq.c&n; *&n; *  Derived from arch/i386/kernel/irq.c&n; *    Copyright (C) 1992 Linus Torvalds&n; *  Adapted from arch/i386 by Gary Thomas&n; *    Copyright (C) 1995-1996 Gary Thomas (gdt@linuxppc.org)&n; *  Updated and modified by Cort Dougan (cort@cs.nmt.edu)&n; *  Adapted for Power Macintosh by Paul Mackerras&n; *    Copyright (C) 1996 Paul Mackerras (paulus@cs.anu.edu.au)&n; *&n; * This file contains the code used by various IRQ handling routines:&n; * asking for different IRQ&squot;s should be done through these routines&n; * instead of just grabbing them. Thus setups with different IRQ numbers&n; * shouldn&squot;t result in any weird surprises, and installing new handlers&n; * should be easier.&n; *&n; * The MPC8xx has an interrupt mask in the SIU.  If a bit is set, the&n; * interrupt is _enabled_.  As expected, IRQ0 is bit 0 in the 32-bit&n; * mask register (of which only 16 are defined), hence the weird shifting&n; * and compliment of the cached_irq_mask.  I want to be able to stuff&n; * this right into the SIU SMASK register.&n; * Many of the prep/chrp functions are conditional compiled on CONFIG_8xx&n; * to reduce code space and undefined function references.&n; */
 macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/kernel_stat.h&gt;
@@ -12,14 +12,19 @@ macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/openpic.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
-macro_line|#include &lt;linux/bios32.h&gt;
 macro_line|#include &lt;linux/openpic.h&gt;
 macro_line|#include &lt;asm/hydra.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
+macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/gg2.h&gt;
+macro_line|#include &lt;asm/cache.h&gt;
+macro_line|#ifdef CONFIG_8xx
+macro_line|#include &lt;asm/8xx_immap.h&gt;
+macro_line|#include &lt;asm/mbx.h&gt;
+macro_line|#endif
 DECL|macro|SHOW_IRQ
 macro_line|#undef SHOW_IRQ
 DECL|variable|lost_interrupts
@@ -40,6 +45,7 @@ DECL|variable|irq_action
 r_static
 r_struct
 id|irqaction
+op_star
 id|irq_action
 (braket
 id|NR_IRQS
@@ -52,6 +58,7 @@ id|spurious_interrupts
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#ifndef CONFIG_8xx
 DECL|variable|cached_irq_mask
 r_static
 r_int
@@ -60,6 +67,16 @@ id|cached_irq_mask
 op_assign
 l_int|0xffffffff
 suffix:semicolon
+macro_line|#else
+DECL|variable|cached_irq_mask
+r_static
+r_int
+r_int
+id|cached_irq_mask
+op_assign
+l_int|0xffffffff
+suffix:semicolon
+macro_line|#endif
 DECL|function|no_action
 r_static
 r_void
@@ -80,10 +97,7 @@ id|regs
 )paren
 (brace
 )brace
-DECL|variable|irq_controller_lock
-id|spinlock_t
-id|irq_controller_lock
-suffix:semicolon
+multiline_comment|/*spinlock_t irq_controller_lock = SPIN_LOCK_UNLOCKED;*/
 macro_line|#ifdef __SMP__
 DECL|variable|__ppc_bh_counter
 id|atomic_t
@@ -103,11 +117,26 @@ op_assign
 l_int|0
 suffix:semicolon
 macro_line|#endif
+DECL|variable|gg2_int_ack_special
+r_static
+r_volatile
+r_int
+r_char
+op_star
+id|gg2_int_ack_special
+suffix:semicolon
+r_extern
+r_volatile
+r_int
+r_int
+id|ipi_count
+suffix:semicolon
 DECL|macro|cached_21
 mdefine_line|#define cached_21&t;(((char *)(&amp;cached_irq_mask))[3])
 DECL|macro|cached_A1
 mdefine_line|#define cached_A1&t;(((char *)(&amp;cached_irq_mask))[2])
 multiline_comment|/*&n; * These are set to the appropriate functions by init_IRQ()&n; */
+macro_line|#ifndef CONFIG_8xx
 DECL|variable|mask_and_ack_irq
 r_void
 (paren
@@ -143,6 +172,15 @@ r_int
 id|irq_nr
 )paren
 suffix:semicolon
+macro_line|#else /* CONFIG_8xx */
+multiline_comment|/* init_IRQ() happens too late for the MBX because we initialize the&n; * CPM early and it calls request_irq() before we have these function&n; * pointers initialized.&n; */
+DECL|macro|mask_and_ack_irq
+mdefine_line|#define mask_and_ack_irq(irq)&t;mbx_mask_irq(irq)
+DECL|macro|mask_irq
+mdefine_line|#define mask_irq(irq) mbx_mask_irq(irq)
+DECL|macro|unmask_irq
+mdefine_line|#define unmask_irq(irq) mbx_unmask_irq(irq)
+macro_line|#endif /* CONFIG_8xx */
 multiline_comment|/* prep */
 DECL|macro|PREP_IRQ_MASK
 mdefine_line|#define PREP_IRQ_MASK&t;(((unsigned int)cached_A1)&lt;&lt;8) | (unsigned int)cached_21
@@ -168,6 +206,173 @@ DECL|macro|KEYBOARD_IRQ
 mdefine_line|#define KEYBOARD_IRQ&t;20&t;/* irq number for command-power interrupt */
 DECL|macro|PMAC_IRQ_MASK
 mdefine_line|#define PMAC_IRQ_MASK&t;(~ld_le32(IRQ_ENABLE))
+multiline_comment|/* nasty hack for shared irq&squot;s since we need to do kmalloc calls but&n; * can&squot;t very very early in the boot when we need to do a request irq.&n; * this needs to be removed.&n; * -- Cort&n; */
+DECL|variable|cache_bitmask
+r_static
+r_char
+id|cache_bitmask
+op_assign
+l_int|0
+suffix:semicolon
+DECL|variable|malloc_cache
+r_static
+r_struct
+id|irqaction
+id|malloc_cache
+(braket
+l_int|4
+)braket
+suffix:semicolon
+r_extern
+r_int
+id|mem_init_done
+suffix:semicolon
+DECL|function|irq_kmalloc
+r_void
+op_star
+id|irq_kmalloc
+c_func
+(paren
+r_int
+id|size
+comma
+r_int
+id|pri
+)paren
+(brace
+r_int
+r_int
+id|i
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|mem_init_done
+)paren
+r_return
+id|kmalloc
+c_func
+(paren
+id|size
+comma
+id|pri
+)paren
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+op_le
+l_int|3
+suffix:semicolon
+id|i
+op_increment
+)paren
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|cache_bitmask
+op_amp
+(paren
+l_int|1
+op_lshift
+id|i
+)paren
+)paren
+)paren
+(brace
+id|cache_bitmask
+op_or_assign
+(paren
+l_int|1
+op_lshift
+id|i
+)paren
+suffix:semicolon
+r_return
+(paren
+r_void
+op_star
+)paren
+(paren
+op_amp
+id|malloc_cache
+(braket
+id|i
+)braket
+)paren
+suffix:semicolon
+)brace
+r_return
+l_int|0
+suffix:semicolon
+)brace
+DECL|function|irq_kfree
+r_void
+id|irq_kfree
+c_func
+(paren
+r_void
+op_star
+id|ptr
+)paren
+(brace
+r_int
+r_int
+id|i
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+op_le
+l_int|3
+suffix:semicolon
+id|i
+op_increment
+)paren
+r_if
+c_cond
+(paren
+id|ptr
+op_eq
+op_amp
+id|malloc_cache
+(braket
+id|i
+)braket
+)paren
+(brace
+id|cache_bitmask
+op_and_assign
+op_complement
+(paren
+l_int|1
+op_lshift
+id|i
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+id|kfree
+c_func
+(paren
+id|ptr
+)paren
+suffix:semicolon
+)brace
+macro_line|#ifndef CONFIG_8xx&t;
 DECL|function|i8259_mask_and_ack_irq
 r_void
 id|i8259_mask_and_ack_irq
@@ -177,13 +382,7 @@ r_int
 id|irq_nr
 )paren
 (brace
-id|spin_lock
-c_func
-(paren
-op_amp
-id|irq_controller_lock
-)paren
-suffix:semicolon
+multiline_comment|/*&t;spin_lock(&amp;irq_controller_lock);*/
 id|cached_irq_mask
 op_or_assign
 l_int|1
@@ -269,13 +468,7 @@ l_int|0x20
 suffix:semicolon
 multiline_comment|/* specific eoi */
 )brace
-id|spin_unlock
-c_func
-(paren
-op_amp
-id|irq_controller_lock
-)paren
-suffix:semicolon
+multiline_comment|/*&t;spin_unlock(&amp;irq_controller_lock);*/
 )brace
 DECL|function|pmac_mask_and_ack_irq
 r_void
@@ -294,13 +487,7 @@ l_int|1UL
 op_lshift
 id|irq_nr
 suffix:semicolon
-id|spin_lock
-c_func
-(paren
-op_amp
-id|irq_controller_lock
-)paren
-suffix:semicolon
+multiline_comment|/*&t;spin_lock(&amp;irq_controller_lock);*/
 id|cached_irq_mask
 op_or_assign
 id|bit
@@ -335,13 +522,8 @@ comma
 id|bit
 )paren
 suffix:semicolon
-id|spin_unlock
-c_func
-(paren
-op_amp
-id|irq_controller_lock
-)paren
-suffix:semicolon
+multiline_comment|/*&t;spin_unlock(&amp;irq_controller_lock);*/
+multiline_comment|/*if ( irq_controller_lock.lock )&n;  panic(&quot;irq controller lock still held in mask and ack&bslash;n&quot;);*/
 )brace
 DECL|function|chrp_mask_and_ack_irq
 r_void
@@ -653,6 +835,81 @@ id|irq_nr
 )paren
 suffix:semicolon
 )brace
+macro_line|#else /* CONFIG_8xx */
+DECL|function|mbx_mask_irq
+r_static
+r_void
+id|mbx_mask_irq
+c_func
+(paren
+r_int
+r_int
+id|irq_nr
+)paren
+(brace
+id|cached_irq_mask
+op_and_assign
+op_complement
+(paren
+l_int|1
+op_lshift
+(paren
+l_int|31
+op_minus
+id|irq_nr
+)paren
+)paren
+suffix:semicolon
+(paren
+(paren
+id|immap_t
+op_star
+)paren
+id|MBX_IMAP_ADDR
+)paren
+op_member_access_from_pointer
+id|im_siu_conf.sc_simask
+op_assign
+id|cached_irq_mask
+suffix:semicolon
+)brace
+DECL|function|mbx_unmask_irq
+r_static
+r_void
+id|mbx_unmask_irq
+c_func
+(paren
+r_int
+r_int
+id|irq_nr
+)paren
+(brace
+id|cached_irq_mask
+op_or_assign
+(paren
+l_int|1
+op_lshift
+(paren
+l_int|31
+op_minus
+id|irq_nr
+)paren
+)paren
+suffix:semicolon
+(paren
+(paren
+id|immap_t
+op_star
+)paren
+id|MBX_IMAP_ADDR
+)paren
+op_member_access_from_pointer
+id|im_siu_conf.sc_simask
+op_assign
+id|cached_irq_mask
+suffix:semicolon
+)brace
+macro_line|#endif /* CONFIG_8xx */
 DECL|function|disable_irq
 r_void
 id|disable_irq
@@ -663,34 +920,15 @@ r_int
 id|irq_nr
 )paren
 (brace
-r_int
-r_int
-id|flags
-suffix:semicolon
-id|spin_lock_irqsave
-c_func
-(paren
-op_amp
-id|irq_controller_lock
-comma
-id|flags
-)paren
-suffix:semicolon
+multiline_comment|/*unsigned long flags;*/
+multiline_comment|/*&t;spin_lock_irqsave(&amp;irq_controller_lock, flags);*/
 id|mask_irq
 c_func
 (paren
 id|irq_nr
 )paren
 suffix:semicolon
-id|spin_unlock_irqrestore
-c_func
-(paren
-op_amp
-id|irq_controller_lock
-comma
-id|flags
-)paren
-suffix:semicolon
+multiline_comment|/*&t;spin_unlock_irqrestore(&amp;irq_controller_lock, flags);*/
 id|synchronize_irq
 c_func
 (paren
@@ -707,34 +945,15 @@ r_int
 id|irq_nr
 )paren
 (brace
-r_int
-r_int
-id|flags
-suffix:semicolon
-id|spin_lock_irqsave
-c_func
-(paren
-op_amp
-id|irq_controller_lock
-comma
-id|flags
-)paren
-suffix:semicolon
+multiline_comment|/*unsigned long flags;*/
+multiline_comment|/*&t;spin_lock_irqsave(&amp;irq_controller_lock, flags);*/
 id|unmask_irq
 c_func
 (paren
 id|irq_nr
 )paren
 suffix:semicolon
-id|spin_unlock_irqrestore
-c_func
-(paren
-op_amp
-id|irq_controller_lock
-comma
-id|flags
-)paren
-suffix:semicolon
+multiline_comment|/*&t;spin_unlock_irqrestore(&amp;irq_controller_lock, flags);*/
 )brace
 DECL|function|get_irq_list
 r_int
@@ -752,11 +971,67 @@ comma
 id|len
 op_assign
 l_int|0
+comma
+id|j
 suffix:semicolon
 r_struct
 id|irqaction
 op_star
 id|action
+suffix:semicolon
+id|len
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|buf
+op_plus
+id|len
+comma
+l_string|&quot;           &quot;
+)paren
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|j
+op_assign
+l_int|0
+suffix:semicolon
+id|j
+OL
+id|smp_num_cpus
+suffix:semicolon
+id|j
+op_increment
+)paren
+id|len
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|buf
+op_plus
+id|len
+comma
+l_string|&quot;CPU%d       &quot;
+comma
+id|j
+)paren
+suffix:semicolon
+op_star
+(paren
+r_char
+op_star
+)paren
+(paren
+id|buf
+op_plus
+id|len
+op_increment
+)paren
+op_assign
+l_char|&squot;&bslash;n&squot;
 suffix:semicolon
 r_for
 c_loop
@@ -776,8 +1051,9 @@ op_increment
 id|action
 op_assign
 id|irq_action
-op_plus
+(braket
 id|i
+)braket
 suffix:semicolon
 r_if
 c_cond
@@ -799,14 +1075,160 @@ id|buf
 op_plus
 id|len
 comma
-l_string|&quot;%2d: %10u   %s&quot;
+l_string|&quot;%3d: &quot;
 comma
 id|i
+)paren
+suffix:semicolon
+macro_line|#ifdef __SMP__
+r_for
+c_loop
+(paren
+id|j
+op_assign
+l_int|0
+suffix:semicolon
+id|j
+OL
+id|smp_num_cpus
+suffix:semicolon
+id|j
+op_increment
+)paren
+id|len
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|buf
+op_plus
+id|len
 comma
-id|kstat.interrupts
+l_string|&quot;%10u &quot;
+comma
+id|kstat.irqs
+(braket
+id|cpu_logical_map
+c_func
+(paren
+id|j
+)paren
+)braket
 (braket
 id|i
 )braket
+)paren
+suffix:semicolon
+macro_line|#else&t;&t;
+id|len
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|buf
+op_plus
+id|len
+comma
+l_string|&quot;%10u &quot;
+comma
+id|kstat_irqs
+c_func
+(paren
+id|i
+)paren
+)paren
+suffix:semicolon
+macro_line|#endif /* __SMP__ */
+r_switch
+c_cond
+(paren
+id|_machine
+)paren
+(brace
+r_case
+id|_MACH_prep
+suffix:colon
+id|len
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|buf
+op_plus
+id|len
+comma
+l_string|&quot;    82c59 &quot;
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|_MACH_Pmac
+suffix:colon
+id|len
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|buf
+op_plus
+id|len
+comma
+l_string|&quot; PMAC-PIC &quot;
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|_MACH_chrp
+suffix:colon
+r_if
+c_cond
+(paren
+id|is_8259_irq
+c_func
+(paren
+id|i
+)paren
+)paren
+id|len
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|buf
+op_plus
+id|len
+comma
+l_string|&quot;    82c59 &quot;
+)paren
+suffix:semicolon
+r_else
+id|len
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|buf
+op_plus
+id|len
+comma
+l_string|&quot;  OpenPIC &quot;
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
+id|len
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|buf
+op_plus
+id|len
+comma
+l_string|&quot;   %s&quot;
 comma
 id|action-&gt;name
 )paren
@@ -853,6 +1275,8 @@ l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
+macro_line|#ifdef __SMP__
+multiline_comment|/* should this be per processor send/receive? */
 id|len
 op_add_assign
 id|sprintf
@@ -862,9 +1286,104 @@ id|buf
 op_plus
 id|len
 comma
-l_string|&quot;99: %10u   spurious or short&bslash;n&quot;
+l_string|&quot;IPI: %10lu&bslash;n&quot;
+comma
+id|ipi_count
+)paren
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+op_le
+id|smp_num_cpus
+op_minus
+l_int|1
+suffix:semicolon
+id|i
+op_increment
+)paren
+id|len
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|buf
+op_plus
+id|len
+comma
+l_string|&quot;          &quot;
+)paren
+suffix:semicolon
+id|len
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|buf
+op_plus
+id|len
+comma
+l_string|&quot;    interprocessor messages received&bslash;n&quot;
+)paren
+suffix:semicolon
+macro_line|#endif&t;&t;
+id|len
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|buf
+op_plus
+id|len
+comma
+l_string|&quot;BAD: %10u&quot;
 comma
 id|spurious_interrupts
+)paren
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+op_le
+id|smp_num_cpus
+op_minus
+l_int|1
+suffix:semicolon
+id|i
+op_increment
+)paren
+id|len
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|buf
+op_plus
+id|len
+comma
+l_string|&quot;          &quot;
+)paren
+suffix:semicolon
+id|len
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|buf
+op_plus
+id|len
+comma
+l_string|&quot;    spurious or short&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -1402,6 +1921,24 @@ id|openpic_eoi_done
 op_assign
 l_int|0
 suffix:semicolon
+multiline_comment|/* save the HID0 in case dcache was off - see idle.c&n;&t; * this hack should leave for a better solution -- Cort */
+r_int
+id|dcache_locked
+suffix:semicolon
+id|dcache_locked
+op_assign
+id|unlock_dcache
+c_func
+(paren
+)paren
+suffix:semicolon
+id|hardirq_enter
+c_func
+(paren
+id|cpu
+)paren
+suffix:semicolon
+macro_line|#ifndef CONFIG_8xx&t;&t;  
 macro_line|#ifdef __SMP__
 r_if
 c_cond
@@ -1410,22 +1947,42 @@ id|cpu
 op_ne
 l_int|0
 )paren
-id|panic
+(brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|lost_interrupts
+)paren
+(brace
+r_extern
+id|smp_message_recv
 c_func
 (paren
-l_string|&quot;cpu %d received interrupt&quot;
-comma
-id|cpu
+r_void
 )paren
 suffix:semicolon
-macro_line|#endif /* __SMP__ */&t;&t;
-id|hardirq_enter
+r_goto
+id|out
+suffix:semicolon
+id|ipi_count
+op_increment
+suffix:semicolon
+id|smp_message_recv
 c_func
 (paren
-id|cpu
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * I&squot;ll put this ugly mess of code into a function&n;&t; * such as get_pending_irq() or some such clear thing&n;&t; * so we don&squot;t have a switch in the irq code and&n;&t; * the chrp code is merged a bit with the prep.&n;&t; * -- Cort&n;&t; */
+r_goto
+id|out
+suffix:semicolon
+)brace
+multiline_comment|/* could be here due to a do_fake_interrupt call but we don&squot;t&n;&t;&t;   mess with the controller from the second cpu -- Cort */
+r_goto
+id|out
+suffix:semicolon
+)brace
+macro_line|#endif /* __SMP__ */&t;&t;&t;
 r_switch
 c_cond
 (paren
@@ -1499,13 +2056,7 @@ multiline_comment|/*&n;&t;&t;&t; * This magic address generates a PCI IACK cycle
 id|irq
 op_assign
 op_star
-(paren
-r_volatile
-r_int
-r_char
-op_star
-)paren
-id|GG2_INT_ACK_SPECIAL
+id|gg2_int_ack_special
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t; * Acknowledge as soon as possible to allow i8259&n;&t;&t;&t; * interrupt nesting&n;&t;&t;&t; */
 id|openpic_eoi
@@ -1559,7 +2110,6 @@ suffix:semicolon
 r_case
 id|_MACH_prep
 suffix:colon
-macro_line|#if 1
 id|outb
 c_func
 (paren
@@ -1635,66 +2185,6 @@ l_int|1UL
 op_lshift
 id|irq
 suffix:semicolon
-macro_line|#else
-multiline_comment|/*&n;&t;&t; * get the isr from the intr controller since&n;&t;&t; * the bit in the irr has been cleared&n;&t;&t; */
-id|outb
-c_func
-(paren
-l_int|0x0a
-comma
-l_int|0x20
-)paren
-suffix:semicolon
-id|bits
-op_assign
-id|inb
-c_func
-(paren
-l_int|0x20
-)paren
-op_amp
-l_int|0xff
-suffix:semicolon
-multiline_comment|/* handle cascade */
-r_if
-c_cond
-(paren
-id|bits
-op_amp
-l_int|4
-)paren
-(brace
-id|bits
-op_and_assign
-op_complement
-l_int|4UL
-suffix:semicolon
-id|outb
-c_func
-(paren
-l_int|0x0a
-comma
-l_int|0xA0
-)paren
-suffix:semicolon
-id|bits
-op_or_assign
-id|inb
-c_func
-(paren
-l_int|0xA0
-)paren
-op_lshift
-l_int|8
-suffix:semicolon
-)brace
-multiline_comment|/* ignore masked irqs */
-id|bits
-op_and_assign
-op_complement
-id|cached_irq_mask
-suffix:semicolon
-macro_line|#endif&t;&t;
 r_break
 suffix:semicolon
 )brace
@@ -1718,6 +2208,27 @@ r_goto
 id|out
 suffix:semicolon
 )brace
+macro_line|#else /* CONFIG_8xx */
+multiline_comment|/* For MPC8xx, read the SIVEC register and shift the bits down&n;&t; * to get the irq number.&n;&t; */
+id|bits
+op_assign
+(paren
+(paren
+id|immap_t
+op_star
+)paren
+id|MBX_IMAP_ADDR
+)paren
+op_member_access_from_pointer
+id|im_siu_conf.sc_sivec
+suffix:semicolon
+id|irq
+op_assign
+id|bits
+op_rshift
+l_int|26
+suffix:semicolon
+macro_line|#endif /* CONFIG_8xx */
 id|mask_and_ack_irq
 c_func
 (paren
@@ -1731,10 +2242,14 @@ suffix:semicolon
 id|action
 op_assign
 id|irq_action
-op_plus
+(braket
 id|irq
+)braket
 suffix:semicolon
-id|kstat.interrupts
+id|kstat.irqs
+(braket
+id|cpu
+)braket
 (braket
 id|irq
 )braket
@@ -1743,6 +2258,8 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|action
+op_logical_and
 id|action-&gt;handler
 )paren
 (brace
@@ -1761,6 +2278,8 @@ c_func
 (paren
 )paren
 suffix:semicolon
+r_do
+(brace
 id|status
 op_or_assign
 id|action-&gt;flags
@@ -1777,36 +2296,35 @@ comma
 id|regs
 )paren
 suffix:semicolon
-multiline_comment|/*if (status &amp; SA_SAMPLE_RANDOM)&n;&t;&t;&t;add_interrupt_randomness(irq);*/
+multiline_comment|/*if (status &amp; SA_SAMPLE_RANDOM)&n;&t;&t;&t;&t;  add_interrupt_randomness(irq);*/
+id|action
+op_assign
+id|action-&gt;next
+suffix:semicolon
+)brace
+r_while
+c_loop
+(paren
+id|action
+)paren
+suffix:semicolon
 id|__cli
 c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/* in case the handler turned them on */
-id|spin_lock
-c_func
-(paren
-op_amp
-id|irq_controller_lock
-)paren
-suffix:semicolon
+multiline_comment|/*&t;&t;spin_lock(&amp;irq_controller_lock);*/
 id|unmask_irq
 c_func
 (paren
 id|irq
 )paren
 suffix:semicolon
-id|spin_unlock
-c_func
-(paren
-op_amp
-id|irq_controller_lock
-)paren
-suffix:semicolon
+multiline_comment|/*&t;&t;spin_unlock(&amp;irq_controller_lock);*/
 )brace
 r_else
 (brace
+macro_line|#ifndef CONFIG_8xx&t;  
 r_if
 c_cond
 (paren
@@ -1815,6 +2333,7 @@ op_eq
 l_int|7
 )paren
 multiline_comment|/* i8259 gives us irq 7 on &squot;short&squot; intrs */
+macro_line|#endif&t;&t;  
 id|spurious_interrupts
 op_increment
 suffix:semicolon
@@ -1826,6 +2345,7 @@ id|irq
 suffix:semicolon
 )brace
 multiline_comment|/* make sure we don&squot;t miss any cascade intrs due to eoi-ing irq 2 */
+macro_line|#ifndef CONFIG_8xx&t;
 r_if
 c_cond
 (paren
@@ -1859,10 +2379,18 @@ c_func
 l_int|0
 )paren
 suffix:semicolon
+macro_line|#endif /* CONFIG_8xx */
 id|hardirq_exit
 c_func
 (paren
 id|cpu
+)paren
+suffix:semicolon
+multiline_comment|/* restore the HID0 in case dcache was off - see idle.c&n;&t; * this hack should leave for a better solution -- Cort */
+id|lock_dcache
+c_func
+(paren
+id|dcache_locked
 )paren
 suffix:semicolon
 )brace
@@ -1908,6 +2436,13 @@ id|dev_id
 r_struct
 id|irqaction
 op_star
+id|old
+comma
+op_star
+op_star
+id|p
+comma
+op_star
 id|action
 suffix:semicolon
 r_int
@@ -1941,30 +2476,104 @@ r_return
 op_minus
 id|EINVAL
 suffix:semicolon
-id|action
-op_assign
-id|irq
-op_plus
-id|irq_action
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|action-&gt;handler
-)paren
-r_return
-op_minus
-id|EBUSY
-suffix:semicolon
 r_if
 c_cond
 (paren
 op_logical_neg
 id|handler
 )paren
+(brace
+multiline_comment|/* Free */
+r_for
+c_loop
+(paren
+id|p
+op_assign
+id|irq
+op_plus
+id|irq_action
+suffix:semicolon
+(paren
+id|action
+op_assign
+op_star
+id|p
+)paren
+op_ne
+l_int|NULL
+suffix:semicolon
+id|p
+op_assign
+op_amp
+id|action-&gt;next
+)paren
+(brace
+multiline_comment|/* Found it - now free it */
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
+op_star
+id|p
+op_assign
+id|action-&gt;next
+suffix:semicolon
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|irq_kfree
+c_func
+(paren
+id|action
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
 r_return
 op_minus
-id|EINVAL
+id|ENOENT
+suffix:semicolon
+)brace
+id|action
+op_assign
+(paren
+r_struct
+id|irqaction
+op_star
+)paren
+id|irq_kmalloc
+c_func
+(paren
+r_sizeof
+(paren
+r_struct
+id|irqaction
+)paren
+comma
+id|GFP_KERNEL
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|action
+)paren
+r_return
+op_minus
+id|ENOMEM
 suffix:semicolon
 id|save_flags
 c_func
@@ -1997,11 +2606,77 @@ id|action-&gt;dev_id
 op_assign
 id|dev_id
 suffix:semicolon
+id|action-&gt;next
+op_assign
+l_int|NULL
+suffix:semicolon
 id|enable_irq
 c_func
 (paren
 id|irq
 )paren
+suffix:semicolon
+id|p
+op_assign
+id|irq_action
+op_plus
+id|irq
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|old
+op_assign
+op_star
+id|p
+)paren
+op_ne
+l_int|NULL
+)paren
+(brace
+multiline_comment|/* Can&squot;t share interrupts unless both agree to */
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|old-&gt;flags
+op_amp
+id|action-&gt;flags
+op_amp
+id|SA_SHIRQ
+)paren
+)paren
+r_return
+op_minus
+id|EBUSY
+suffix:semicolon
+multiline_comment|/* add new interrupt at end of irq queue */
+r_do
+(brace
+id|p
+op_assign
+op_amp
+id|old-&gt;next
+suffix:semicolon
+id|old
+op_assign
+op_star
+id|p
+suffix:semicolon
+)brace
+r_while
+c_loop
+(paren
+id|old
+)paren
+suffix:semicolon
+)brace
+op_star
+id|p
+op_assign
+id|action
 suffix:semicolon
 id|restore_flags
 c_func
@@ -2027,109 +2702,18 @@ op_star
 id|dev_id
 )paren
 (brace
-r_struct
-id|irqaction
-op_star
-id|action
-op_assign
-id|irq
-op_plus
-id|irq_action
-suffix:semicolon
-r_int
-r_int
-id|flags
-suffix:semicolon
-macro_line|#ifdef SHOW_IRQ
-id|printk
+id|request_irq
 c_func
 (paren
-l_string|&quot;free_irq(): irq %d dev_id %04x&bslash;n&quot;
-comma
 id|irq
+comma
+l_int|NULL
+comma
+l_int|0
+comma
+l_int|NULL
 comma
 id|dev_id
-)paren
-suffix:semicolon
-macro_line|#endif /* SHOW_IRQ */
-r_if
-c_cond
-(paren
-id|irq
-op_ge
-id|NR_IRQS
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;Trying to free IRQ%d&bslash;n&quot;
-comma
-id|irq
-)paren
-suffix:semicolon
-r_return
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-op_logical_neg
-id|action-&gt;handler
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;Trying to free free IRQ%d&bslash;n&quot;
-comma
-id|irq
-)paren
-suffix:semicolon
-r_return
-suffix:semicolon
-)brace
-id|disable_irq
-c_func
-(paren
-id|irq
-)paren
-suffix:semicolon
-id|save_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
-id|action-&gt;handler
-op_assign
-l_int|NULL
-suffix:semicolon
-id|action-&gt;flags
-op_assign
-l_int|0
-suffix:semicolon
-id|action-&gt;mask
-op_assign
-l_int|0
-suffix:semicolon
-id|action-&gt;name
-op_assign
-l_int|NULL
-suffix:semicolon
-id|action-&gt;dev_id
-op_assign
-l_int|NULL
-suffix:semicolon
-id|restore_flags
-c_func
-(paren
-id|flags
 )paren
 suffix:semicolon
 )brace
@@ -2158,6 +2742,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#ifndef CONFIG_8xx 
 DECL|function|__initfunc
 id|__initfunc
 c_func
@@ -2312,6 +2897,8 @@ l_int|2
 suffix:semicolon
 multiline_comment|/* Enable cascade interrupt */
 )brace
+macro_line|#endif /* CONFIG_8xx */
+multiline_comment|/* On MBX8xx, the interrupt control (SIEL) was set by EPPC-bug.  External&n; * interrupts can be either edge or level triggered, but there is no&n; * reason for us to change the EPPC-bug values (it would not work if we did).&n; */
 DECL|function|__initfunc
 id|__initfunc
 c_func
@@ -2339,6 +2926,7 @@ id|pt_regs
 op_star
 )paren
 suffix:semicolon
+macro_line|#ifndef CONFIG_8xx
 r_switch
 c_cond
 (paren
@@ -2398,6 +2986,14 @@ id|unmask_irq
 op_assign
 id|chrp_unmask_irq
 suffix:semicolon
+id|gg2_int_ack_special
+op_assign
+(paren
+r_volatile
+r_int
+r_char
+op_star
+)paren
 id|ioremap
 c_func
 (paren
@@ -2463,7 +3059,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; * According to the Carolina spec from ibm irq&squot;s 0,1,2, and 8&n;&t;&t; * must be edge triggered.  Also, the pci intrs must be level&n;&t;&t; * triggered and _only_ isa intrs can be level sensitive&n;&t;&t; * which are 3-7,9-12,14-15. 13 is special - it can be level.&n;&t;&t; *&n;&t;&t; * power on default is 0&squot;s in both regs - all edge.&n;&t;&t; *&n;&t;&t; * These edge/level control regs allow edge/level status&n;&t;&t; * to be decided on a irq basis instead of on a PIC basis.&n;&t;&t; * It&squot;s still pretty ugly.&n;&t;&t; * - Cort&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; * According to the Carolina spec from ibm irqs 0,1,2, and 8&n;&t;&t; * must be edge triggered.  Also, the pci intrs must be level&n;&t;&t; * triggered and _only_ isa intrs can be level sensitive&n;&t;&t; * which are 3-7,9-12,14-15. 13 is special - it can be level.&n;&t;&t; *&n;&t;&t; * power on default is 0&squot;s in both regs - all edge.&n;&t;&t; *&n;&t;&t; * These edge/level control regs allow edge/level status&n;&t;&t; * to be decided on a irq basis instead of on a PIC basis.&n;&t;&t; * It&squot;s still pretty ugly.&n;&t;&t; * - Cort&n;&t;&t; */
 (brace
 r_int
 r_char
@@ -2531,5 +3127,6 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
+macro_line|#endif /* CONFIG_8xx */
 )brace
 eof

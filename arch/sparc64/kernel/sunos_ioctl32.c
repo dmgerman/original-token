@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sunos_ioctl32.c,v 1.5 1997/09/18 10:37:57 rth Exp $&n; * sunos_ioctl32.c: SunOS ioctl compatability on sparc64.&n; *&n; * Copyright (C) 1995 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; * Copyright (C) 1995, 1996, 1997 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: sunos_ioctl32.c,v 1.9 1998/03/29 10:10:53 davem Exp $&n; * sunos_ioctl32.c: SunOS ioctl compatability on sparc64.&n; *&n; * Copyright (C) 1995 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; * Copyright (C) 1995, 1996, 1997 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -11,6 +11,7 @@ macro_line|#include &lt;linux/if.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/if_arp.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
+macro_line|#include &lt;linux/file.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/smp.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
@@ -292,11 +293,6 @@ id|u32
 id|arg
 )paren
 (brace
-r_struct
-id|file
-op_star
-id|filp
-suffix:semicolon
 r_int
 id|ret
 op_assign
@@ -320,18 +316,15 @@ r_goto
 id|out
 suffix:semicolon
 )brace
-id|filp
-op_assign
-id|current-&gt;files-&gt;fd
-(braket
-id|fd
-)braket
-suffix:semicolon
 r_if
 c_cond
 (paren
 op_logical_neg
-id|filp
+id|fcheck
+c_func
+(paren
+id|fd
+)paren
 )paren
 (brace
 r_goto
@@ -879,7 +872,7 @@ c_func
 (paren
 id|fd
 comma
-id|SIOCGIFBRDADDR
+id|SIOCSIFBRDADDR
 comma
 id|arg
 )paren

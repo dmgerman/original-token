@@ -1,6 +1,8 @@
-multiline_comment|/* $Id: fs.c,v 1.6 1997/10/13 03:54:05 davem Exp $&n; * fs.c: fs related syscall emulation for Solaris&n; *&n; * Copyright (C) 1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: fs.c,v 1.8 1998/03/29 10:11:02 davem Exp $&n; * fs.c: fs related syscall emulation for Solaris&n; *&n; * Copyright (C) 1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/types.h&gt;
+macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
+macro_line|#include &lt;linux/file.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/limits.h&gt;
@@ -2008,29 +2010,28 @@ c_func
 (paren
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|fd
-op_ge
-id|NR_OPEN
-op_logical_or
-op_logical_neg
-(paren
-id|file
-op_assign
-id|current-&gt;files-&gt;fd
-(braket
-id|fd
-)braket
-)paren
-)paren
 id|error
 op_assign
 op_minus
 id|EBADF
 suffix:semicolon
-r_else
+id|file
+op_assign
+id|fget
+c_func
+(paren
+id|fd
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|file
+)paren
+r_goto
+id|out
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2097,6 +2098,14 @@ comma
 id|buf
 )paren
 suffix:semicolon
+id|fput
+c_func
+(paren
+id|file
+)paren
+suffix:semicolon
+id|out
+suffix:colon
 id|unlock_kernel
 c_func
 (paren
@@ -3199,7 +3208,7 @@ suffix:semicolon
 id|DQUOT_TRANSFER
 c_func
 (paren
-id|inode
+id|dentry
 comma
 id|newattrs
 )paren
@@ -3468,22 +3477,19 @@ op_assign
 op_minus
 id|EBADF
 suffix:semicolon
+id|file
+op_assign
+id|fget
+c_func
+(paren
+id|fd
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
-id|fd
-op_ge
-id|NR_OPEN
-op_logical_or
 op_logical_neg
-(paren
 id|file
-op_assign
-id|current-&gt;files-&gt;fd
-(braket
-id|fd
-)braket
-)paren
 )paren
 r_goto
 id|bad
@@ -3520,7 +3526,7 @@ OL
 l_int|0
 )paren
 r_goto
-id|bad
+id|out_putf
 suffix:semicolon
 )brace
 id|retval
@@ -3581,6 +3587,14 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
+id|out_putf
+suffix:colon
+id|fput
+c_func
+(paren
+id|file
+)paren
+suffix:semicolon
 id|bad
 suffix:colon
 id|unlock_kernel
@@ -3706,22 +3720,19 @@ op_assign
 op_minus
 id|EBADF
 suffix:semicolon
+id|file
+op_assign
+id|fget
+c_func
+(paren
+id|fd
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
-id|fd
-op_ge
-id|NR_OPEN
-op_logical_or
 op_logical_neg
-(paren
 id|file
-op_assign
-id|current-&gt;files-&gt;fd
-(braket
-id|fd
-)braket
-)paren
 )paren
 r_goto
 id|bad
@@ -3758,7 +3769,7 @@ OL
 l_int|0
 )paren
 r_goto
-id|bad
+id|out_putf
 suffix:semicolon
 )brace
 id|retval
@@ -3819,6 +3830,14 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
+id|out_putf
+suffix:colon
+id|fput
+c_func
+(paren
+id|file
+)paren
+suffix:semicolon
 id|bad
 suffix:colon
 id|unlock_kernel

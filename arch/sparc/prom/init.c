@@ -1,9 +1,10 @@
-multiline_comment|/* $Id: init.c,v 1.11 1997/03/18 17:58:24 jj Exp $&n; * init.c:  Initialize internal variables used by the PROM&n; *          library functions.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: init.c,v 1.12 1998/01/30 10:59:02 jj Exp $&n; * init.c:  Initialize internal variables used by the PROM&n; *          library functions.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/openprom.h&gt;
 macro_line|#include &lt;asm/oplib.h&gt;
+macro_line|#include &lt;asm/sun4prom.h&gt;
 DECL|variable|romvec
 r_struct
 id|linux_romvec
@@ -22,6 +23,11 @@ r_int
 id|prom_rev
 comma
 id|prom_prev
+suffix:semicolon
+DECL|variable|sun4_romvec
+id|linux_sun4_romvec
+op_star
+id|sun4_romvec
 suffix:semicolon
 multiline_comment|/* The root node of the prom device tree. */
 DECL|variable|prom_root_node
@@ -74,6 +80,25 @@ id|rp
 )paren
 )paren
 (brace
+macro_line|#ifdef CONFIG_SUN4
+r_extern
+r_struct
+id|linux_romvec
+op_star
+id|sun4_prom_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+id|rp
+op_assign
+id|sun4_prom_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#if CONFIG_AP1000
 r_extern
 r_struct
@@ -127,6 +152,15 @@ suffix:colon
 id|prom_vers
 op_assign
 id|PROM_V3
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|40
+suffix:colon
+id|prom_vers
+op_assign
+id|PROM_SUN4
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -270,6 +304,8 @@ c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#ifndef CONFIG_SUN4
+multiline_comment|/* SUN4 prints this in sun4_prom_init */
 id|printk
 c_func
 (paren
@@ -280,6 +316,7 @@ comma
 id|prom_rev
 )paren
 suffix:semicolon
+macro_line|#endif
 multiline_comment|/* Initialization successful. */
 r_return
 suffix:semicolon

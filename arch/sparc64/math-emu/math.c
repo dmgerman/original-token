@@ -1,5 +1,4 @@
-multiline_comment|/* $Id: math.c,v 1.3 1997/10/15 07:28:55 jj Exp $&n; * arch/sparc64/math-emu/math.c&n; *&n; * Copyright (C) 1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; *&n; * Emulation routines originate from soft-fp package, which is part&n; * of glibc and has appropriate copyrights in it.&n; */
-macro_line|#include &lt;linux/module.h&gt;
+multiline_comment|/* $Id: math.c,v 1.4 1998/04/06 16:09:57 jj Exp $&n; * arch/sparc64/math-emu/math.c&n; *&n; * Copyright (C) 1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; *&n; * Emulation routines originate from soft-fp package, which is part&n; * of glibc and has appropriate copyrights in it.&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;asm/fpumacro.h&gt;
@@ -280,8 +279,6 @@ id|regs
 )paren
 suffix:semicolon
 )brace
-id|MOD_INC_USE_COUNT
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1353,77 +1350,14 @@ id|regs-&gt;tnpc
 op_add_assign
 l_int|4
 suffix:semicolon
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
 r_return
 l_int|1
 suffix:semicolon
 )brace
 id|err
 suffix:colon
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#ifdef MODULE
-id|MODULE_AUTHOR
-c_func
-(paren
-l_string|&quot;Jakub Jelinek (jj@sunsite.mff.cuni.cz), Richard Henderson (rth@cygnus.com)&quot;
-)paren
-suffix:semicolon
-id|MODULE_DESCRIPTION
-c_func
-(paren
-l_string|&quot;FPU emulation module&quot;
-)paren
-suffix:semicolon
-r_extern
-r_int
-(paren
-op_star
-id|handle_mathemu
-)paren
-(paren
-r_struct
-id|pt_regs
-op_star
-comma
-r_struct
-id|fpustate
-op_star
-)paren
-suffix:semicolon
-DECL|function|init_module
-r_int
-id|init_module
-c_func
-(paren
-r_void
-)paren
-(brace
-id|handle_mathemu
-op_assign
-id|do_mathemu
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
-DECL|function|cleanup_module
-r_void
-id|cleanup_module
-c_func
-(paren
-r_void
-)paren
-(brace
-id|handle_mathemu
-op_assign
-l_int|NULL
-suffix:semicolon
-)brace
-macro_line|#endif
 eof

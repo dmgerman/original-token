@@ -1,12 +1,12 @@
 multiline_comment|/*&n; * CHRP pci routines.&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
-macro_line|#include &lt;linux/bios32.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/openpic.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
+macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/hydra.h&gt;
 macro_line|#include &lt;asm/prom.h&gt;
@@ -24,6 +24,7 @@ op_assign
 l_int|NULL
 suffix:semicolon
 macro_line|#if 1
+multiline_comment|/*&n; * The VLSI Golden Gate II has only 512K of PCI configuration space, so we&n; * limit the bus number to 3 bits&n; */
 DECL|function|chrp_pcibios_read_config_byte
 r_int
 id|chrp_pcibios_read_config_byte
@@ -86,32 +87,6 @@ id|offset
 )paren
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|offset
-op_eq
-id|PCI_INTERRUPT_LINE
-)paren
-(brace
-multiline_comment|/* PCI interrupts are controlled by the OpenPIC */
-r_if
-c_cond
-(paren
-op_star
-id|val
-)paren
-op_star
-id|val
-op_assign
-id|openpic_to_irq
-c_func
-(paren
-op_star
-id|val
-)paren
-suffix:semicolon
-)brace
 r_return
 id|PCIBIOS_SUCCESSFUL
 suffix:semicolon
@@ -1207,30 +1182,38 @@ r_int
 r_int
 id|t32
 suffix:semicolon
+r_struct
+id|pci_dev
+op_star
+id|pdev
+suffix:semicolon
 r_if
 c_cond
 (paren
-id|pcibios_find_device
+(paren
+id|pdev
+op_assign
+id|pci_find_device
 c_func
 (paren
 id|PCI_VENDOR_ID_WINBOND
 comma
 id|PCI_DEVICE_ID_WINBOND_83C553
 comma
-l_int|0
-comma
-op_amp
-id|bus
-comma
-op_amp
-id|dev
+l_int|NULL
 )paren
-op_eq
-id|PCIBIOS_SUCCESSFUL
+)paren
 )paren
 (brace
+id|bus
+op_assign
+id|pdev-&gt;bus-&gt;number
+suffix:semicolon
 id|dev
-op_increment
+op_assign
+id|pdev-&gt;devfn
+op_plus
+l_int|1
 suffix:semicolon
 id|chrp_pcibios_read_config_dword
 c_func

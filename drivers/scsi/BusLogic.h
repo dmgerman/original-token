@@ -1,4 +1,4 @@
-multiline_comment|/*&n;&n;  Linux Driver for BusLogic MultiMaster and FlashPoint SCSI Host Adapters&n;&n;  Copyright 1995 by Leonard N. Zubkoff &lt;lnz@dandelion.com&gt;&n;&n;  This program is free software; you may redistribute and/or modify it under&n;  the terms of the GNU General Public License Version 2 as published by the&n;  Free Software Foundation.&n;&n;  This program is distributed in the hope that it will be useful, but&n;  WITHOUT ANY WARRANTY, without even the implied warranty of MERCHANTABILITY&n;  or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License&n;  for complete details.&n;&n;  The author respectfully requests that any modifications to this software be&n;  sent directly to him for evaluation and testing.&n;&n;  Special thanks to Wayne Yen, Jin-Lon Hon, and Alex Win of BusLogic, whose&n;  advice has been invaluable, to David Gentzel, for writing the original Linux&n;  BusLogic driver, and to Paul Gortmaker, for being such a dedicated test site.&n;&n;  Finally, special thanks to Mylex/BusLogic for making the FlashPoint SCCB&n;  Manager available as freely redistributable source code.&n;&n;*/
+multiline_comment|/*&n;&n;  Linux Driver for BusLogic MultiMaster and FlashPoint SCSI Host Adapters&n;&n;  Copyright 1995-1998 by Leonard N. Zubkoff &lt;lnz@dandelion.com&gt;&n;&n;  This program is free software; you may redistribute and/or modify it under&n;  the terms of the GNU General Public License Version 2 as published by the&n;  Free Software Foundation.&n;&n;  This program is distributed in the hope that it will be useful, but&n;  WITHOUT ANY WARRANTY, without even the implied warranty of MERCHANTABILITY&n;  or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License&n;  for complete details.&n;&n;  The author respectfully requests that any modifications to this software be&n;  sent directly to him for evaluation and testing.&n;&n;  Special thanks to Wayne Yen, Jin-Lon Hon, and Alex Win of BusLogic, whose&n;  advice has been invaluable, to David Gentzel, for writing the original Linux&n;  BusLogic driver, and to Paul Gortmaker, for being such a dedicated test site.&n;&n;  Finally, special thanks to Mylex/BusLogic for making the FlashPoint SCCB&n;  Manager available as freely redistributable source code.&n;&n;*/
 macro_line|#include &lt;linux/config.h&gt;
 multiline_comment|/*&n;  Define types for some of the structures that interface with the rest&n;  of the Linux Kernel and SCSI Subsystem.&n;*/
 DECL|typedef|KernelDevice_T
@@ -12,6 +12,12 @@ r_struct
 id|proc_dir_entry
 id|PROC_DirectoryEntry_T
 suffix:semicolon
+DECL|typedef|ProcessorFlags_T
+r_typedef
+r_int
+r_int
+id|ProcessorFlags_T
+suffix:semicolon
 DECL|typedef|Registers_T
 r_typedef
 r_struct
@@ -23,6 +29,12 @@ r_typedef
 r_struct
 id|partition
 id|PartitionTable_T
+suffix:semicolon
+DECL|typedef|PCI_Device_T
+r_typedef
+r_struct
+id|pci_dev
+id|PCI_Device_T
 suffix:semicolon
 DECL|typedef|SCSI_Host_Template_T
 r_typedef
@@ -2586,13 +2598,6 @@ r_int
 r_char
 id|BusLogic_RequestedReplyLength_T
 suffix:semicolon
-multiline_comment|/*&n;  Define the Lock data structure.  Until a true symmetric multiprocessing&n;  kernel with fine grained locking is available, acquiring the lock is&n;  implemented as saving the processor flags and disabling interrupts, and&n;  releasing the lock restores the saved processor flags.&n;*/
-DECL|typedef|BusLogic_Lock_T
-r_typedef
-r_int
-r_int
-id|BusLogic_Lock_T
-suffix:semicolon
 multiline_comment|/*&n;  Define the Outgoing Mailbox Action Codes.&n;*/
 r_typedef
 r_enum
@@ -3770,14 +3775,6 @@ id|FullModelName
 l_int|18
 )braket
 suffix:semicolon
-DECL|member|InterruptLabel
-r_int
-r_char
-id|InterruptLabel
-(braket
-l_int|68
-)braket
-suffix:semicolon
 DECL|member|Bus
 r_int
 r_char
@@ -3929,12 +3926,14 @@ id|HostAdapterInternalError
 suffix:colon
 l_int|1
 suffix:semicolon
+DECL|member|ProcessCompletedCCBsActive
+id|boolean
+id|ProcessCompletedCCBsActive
+suffix:semicolon
 DECL|member|HostAdapterCommandCompleted
 r_volatile
 id|boolean
 id|HostAdapterCommandCompleted
-suffix:colon
-l_int|1
 suffix:semicolon
 DECL|member|HostAdapterScatterGatherLimit
 r_int
@@ -4074,12 +4073,6 @@ id|BusLogic_HostAdapter
 op_star
 id|Next
 suffix:semicolon
-DECL|member|NextAll
-r_struct
-id|BusLogic_HostAdapter
-op_star
-id|NextAll
-suffix:semicolon
 DECL|member|All_CCBs
 id|BusLogic_CCB_T
 op_star
@@ -4089,6 +4082,16 @@ DECL|member|Free_CCBs
 id|BusLogic_CCB_T
 op_star
 id|Free_CCBs
+suffix:semicolon
+DECL|member|FirstCompletedCCB
+id|BusLogic_CCB_T
+op_star
+id|FirstCompletedCCB
+suffix:semicolon
+DECL|member|LastCompletedCCB
+id|BusLogic_CCB_T
+op_star
+id|LastCompletedCCB
 suffix:semicolon
 DECL|member|BusDeviceResetPendingCCB
 id|BusLogic_CCB_T
@@ -4471,23 +4474,11 @@ id|BusLogic_HostAdapter_T
 op_star
 id|HostAdapter
 comma
-id|BusLogic_Lock_T
+id|ProcessorFlags_T
 op_star
-id|Lock
+id|ProcessorFlags
 )paren
 (brace
-id|save_flags
-c_func
-(paren
-op_star
-id|Lock
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
 )brace
 multiline_comment|/*&n;  BusLogic_ReleaseHostAdapterLock releases exclusive access to Host Adapter.&n;*/
 r_static
@@ -4501,54 +4492,75 @@ id|BusLogic_HostAdapter_T
 op_star
 id|HostAdapter
 comma
-id|BusLogic_Lock_T
+id|ProcessorFlags_T
 op_star
-id|Lock
+id|ProcessorFlags
 )paren
 (brace
-id|restore_flags
+)brace
+multiline_comment|/*&n;  BusLogic_AcquireHostAdapterLockIH acquires exclusive access to Host Adapter,&n;  but is only called from the interrupt handler.&n;*/
+r_static
+r_inline
+DECL|function|BusLogic_AcquireHostAdapterLockIH
+r_void
+id|BusLogic_AcquireHostAdapterLockIH
 c_func
 (paren
+id|BusLogic_HostAdapter_T
 op_star
-id|Lock
+id|HostAdapter
+comma
+id|ProcessorFlags_T
+op_star
+id|ProcessorFlags
+)paren
+(brace
+r_extern
+id|spinlock_t
+id|io_request_lock
+suffix:semicolon
+id|spin_lock_irqsave
+c_func
+(paren
+op_amp
+id|io_request_lock
+comma
+op_star
+id|ProcessorFlags
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n;  BusLogic_AcquireHostAdapterLockID acquires exclusive access to Host Adapter,&n;  but is only called when interrupts are disabled.&n;*/
+multiline_comment|/*&n;  BusLogic_ReleaseHostAdapterLockIH releases exclusive access to Host Adapter,&n;  but is only called from the interrupt handler.&n;*/
 r_static
 r_inline
-DECL|function|BusLogic_AcquireHostAdapterLockID
+DECL|function|BusLogic_ReleaseHostAdapterLockIH
 r_void
-id|BusLogic_AcquireHostAdapterLockID
+id|BusLogic_ReleaseHostAdapterLockIH
 c_func
 (paren
 id|BusLogic_HostAdapter_T
 op_star
 id|HostAdapter
 comma
-id|BusLogic_Lock_T
+id|ProcessorFlags_T
 op_star
-id|Lock
+id|ProcessorFlags
 )paren
 (brace
-)brace
-multiline_comment|/*&n;  BusLogic_ReleaseHostAdapterLockID releases exclusive access to Host Adapter,&n;  but is only called when interrupts are disabled.&n;*/
-r_static
-r_inline
-DECL|function|BusLogic_ReleaseHostAdapterLockID
-r_void
-id|BusLogic_ReleaseHostAdapterLockID
+r_extern
+id|spinlock_t
+id|io_request_lock
+suffix:semicolon
+id|spin_unlock_irqrestore
 c_func
 (paren
-id|BusLogic_HostAdapter_T
-op_star
-id|HostAdapter
+op_amp
+id|io_request_lock
 comma
-id|BusLogic_Lock_T
 op_star
-id|Lock
+id|ProcessorFlags
 )paren
-(brace
+suffix:semicolon
 )brace
 multiline_comment|/*&n;  Define functions to provide an abstraction for reading and writing the&n;  Host Adapter I/O Registers.&n;*/
 r_static
@@ -4931,7 +4943,7 @@ id|BusAddress
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n;  Virtual_to_32Bit_Virtual maps between Kernel Virtual Addresses and&n;  32 Bit Kernel Virtual Addresses.  This avoids compilation warnings&n;  on 64 Bit architectures.&n;*/
+multiline_comment|/*&n;  Virtual_to_32Bit_Virtual maps between Kernel Virtual Addresses and&n;  32 bit Kernel Virtual Addresses.  This avoids compilation warnings&n;  on 64 bit architectures.&n;*/
 r_static
 r_inline
 DECL|function|Virtual_to_32Bit_Virtual
@@ -5169,11 +5181,6 @@ id|Index
 op_increment
 suffix:semicolon
 )brace
-multiline_comment|/*&n;  Define compatibility macros between Linux 2.0 and Linux 2.1.&n;*/
-macro_line|#if LINUX_VERSION_CODE &lt; 0x20100
-DECL|macro|MODULE_PARM
-mdefine_line|#define MODULE_PARM(Variable, Type)
-macro_line|#endif
 multiline_comment|/*&n;  Define the version number of the FlashPoint Firmware (SCCB Manager).&n;*/
 DECL|macro|FlashPoint_FirmwareVersion
 mdefine_line|#define FlashPoint_FirmwareVersion&t;&t;&quot;5.02&quot;

@@ -63,9 +63,8 @@ DECL|macro|write_unlock_irqrestore
 mdefine_line|#define write_unlock_irqrestore(lock, flags) &bslash;&n;&t;restore_flags(flags)
 macro_line|#else /* __SMP__ */
 multiline_comment|/* Simple spin lock operations.  There are two variants, one clears IRQ&squot;s&n; * on the local processor, one does not.&n; *&n; * We make no fairness assumptions. They have a cost.&n; */
-DECL|struct|_spinlock_debug
+r_typedef
 r_struct
-id|_spinlock_debug
 (brace
 DECL|member|lock
 r_volatile
@@ -79,20 +78,20 @@ r_int
 r_int
 id|owner_pc
 suffix:semicolon
-)brace
+DECL|member|owner_cpu
+r_volatile
+r_int
+r_int
+id|owner_cpu
 suffix:semicolon
 DECL|typedef|spinlock_t
-r_typedef
-r_struct
-id|_spinlock_debug
+)brace
 id|spinlock_t
 suffix:semicolon
 DECL|macro|SPIN_LOCK_UNLOCKED
-mdefine_line|#define SPIN_LOCK_UNLOCKED { 0, 0 }
-DECL|macro|SPIN_LOCK_UNLOCKED
-mdefine_line|#define SPIN_LOCK_UNLOCKED&t;{ 0, 0 }
+mdefine_line|#define SPIN_LOCK_UNLOCKED&t;{ 0, 0, 0 }
 DECL|macro|spin_lock_init
-mdefine_line|#define spin_lock_init(lp)&t;do { (lp)-&gt;owner_pc = 0; (lp)-&gt;lock = 0; } while(0)
+mdefine_line|#define spin_lock_init(lp) &bslash;&n;do { spinlock_t *p = (lp); p-&gt;owner_pc = p-&gt;owner_cpu = p-&gt;lock = 0; } while(0)
 DECL|macro|spin_unlock_wait
 mdefine_line|#define spin_unlock_wait(lp)&t;do { barrier(); } while((lp)-&gt;lock)
 r_extern
@@ -115,12 +114,20 @@ op_star
 id|lock
 )paren
 suffix:semicolon
+r_extern
+r_int
+id|spin_trylock
+c_func
+(paren
+id|spinlock_t
+op_star
+id|lock
+)paren
+suffix:semicolon
 DECL|macro|spin_lock
 mdefine_line|#define spin_lock(lp)&t;&t;&t;_spin_lock(lp)
 DECL|macro|spin_unlock
 mdefine_line|#define spin_unlock(lp)&t;&t;&t;_spin_unlock(lp)
-DECL|macro|spin_trylock
-mdefine_line|#define spin_trylock(l) (!test_and_set_bit(0, &amp;((l)-&gt;lock) ))
 DECL|macro|spin_lock_irq
 mdefine_line|#define spin_lock_irq(lock) &bslash;&n;&t;do { __cli(); spin_lock(lock); } while (0)
 DECL|macro|spin_unlock_irq

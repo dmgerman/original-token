@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: zs.c,v 1.15 1997/12/22 16:09:34 jj Exp $&n; * zs.c: Zilog serial port driver for the Sparc.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost   (ecd@skynet.be)&n; * Fixes by Pete A. Zaitcev &lt;zaitcev@ipmce.su&gt;.&n; */
+multiline_comment|/* $Id: zs.c,v 1.20 1998/02/25 23:51:57 ecd Exp $&n; * zs.c: Zilog serial port driver for the Sparc.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost   (ecd@skynet.be)&n; * Fixes by Pete A. Zaitcev &lt;zaitcev@ipmce.su&gt;.&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -28,7 +28,7 @@ macro_line|#include &lt;asm/sbus.h&gt;
 macro_line|#ifdef __sparc_v9__
 macro_line|#include &lt;asm/fhc.h&gt;
 macro_line|#ifdef CONFIG_PCI
-macro_line|#include &lt;linux/bios32.h&gt;
+macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#endif
 macro_line|#endif
 macro_line|#include &quot;sunserial.h&quot;
@@ -127,7 +127,10 @@ c_func
 r_void
 )paren
 suffix:semicolon
-macro_line|#endif
+multiline_comment|/*&n; * Define this to get the zs_fair_output() functionality.&n; */
+DECL|macro|SERIAL_CONSOLE_FAIR_OUTPUT
+macro_line|#undef SERIAL_CONSOLE_FAIR_OUTPUT
+macro_line|#endif /* CONFIG_SERIAL_CONSOLE */
 DECL|variable|kgdb_regs
 r_static
 r_int
@@ -1069,6 +1072,8 @@ id|flags
 )paren
 suffix:semicolon
 )brace
+DECL|macro|ZS_PUT_CHAR_MAX_DELAY
+mdefine_line|#define ZS_PUT_CHAR_MAX_DELAY&t;2000&t;/* 10 ms */
 DECL|function|zs_put_char
 r_static
 r_inline
@@ -1088,7 +1093,7 @@ id|ch
 r_int
 id|loops
 op_assign
-l_int|0
+id|ZS_PUT_CHAR_MAX_DELAY
 suffix:semicolon
 r_while
 c_loop
@@ -1101,14 +1106,10 @@ id|Tx_BUF_EMP
 op_eq
 l_int|0
 op_logical_and
+op_decrement
 id|loops
-OL
-l_int|10000
 )paren
 (brace
-id|loops
-op_increment
-suffix:semicolon
 id|udelay
 c_func
 (paren
@@ -1649,6 +1650,13 @@ r_void
 suffix:semicolon
 multiline_comment|/* For the KGDB frame character */
 macro_line|#endif
+macro_line|#ifdef CONFIG_MAGIC_SYSRQ
+DECL|variable|serial_sysrq
+r_static
+r_int
+id|serial_sysrq
+suffix:semicolon
+macro_line|#endif
 DECL|function|receive_chars
 r_static
 id|_INLINE_
@@ -1826,10 +1834,6 @@ id|info-&gt;is_cons
 )paren
 (brace
 macro_line|#ifdef CONFIG_MAGIC_SYSRQ
-r_static
-r_int
-id|serial_sysrq
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2319,11 +2323,18 @@ op_logical_and
 id|info-&gt;break_abort
 )paren
 (brace
+macro_line|#ifdef CONFIG_MAGIC_SYSRQ
+id|serial_sysrq
+op_assign
+l_int|1
+suffix:semicolon
+macro_line|#else
 id|batten_down_hatches
 c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#endif
 )brace
 multiline_comment|/* XXX Whee, put in a buffer somewhere, the status information&n;&t; * XXX whee whee whee... Where does the information go...&n;&t; */
 r_return
@@ -4160,6 +4171,17 @@ l_string|&quot;zs_flush_chars&quot;
 )paren
 r_return
 suffix:semicolon
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -4174,20 +4196,10 @@ op_logical_or
 op_logical_neg
 id|info-&gt;xmit_buf
 )paren
-r_return
+r_goto
+id|out
 suffix:semicolon
 multiline_comment|/* Enable transmitter */
-id|save_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
 id|info-&gt;curregs
 (braket
 l_int|1
@@ -4256,6 +4268,8 @@ suffix:semicolon
 id|info-&gt;xmit_cnt
 op_decrement
 suffix:semicolon
+id|out
+suffix:colon
 id|restore_flags
 c_func
 (paren
@@ -4501,6 +4515,11 @@ op_add_assign
 id|c
 suffix:semicolon
 )brace
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -4556,20 +4575,7 @@ l_int|5
 )braket
 )paren
 suffix:semicolon
-)brace
 macro_line|#if 1
-r_if
-c_cond
-(paren
-id|info-&gt;xmit_cnt
-op_logical_and
-op_logical_neg
-id|tty-&gt;stopped
-op_logical_and
-op_logical_neg
-id|tty-&gt;hw_stopped
-)paren
-(brace
 id|zs_put_char
 c_func
 (paren
@@ -4595,8 +4601,8 @@ suffix:semicolon
 id|info-&gt;xmit_cnt
 op_decrement
 suffix:semicolon
-)brace
 macro_line|#endif
+)brace
 id|restore_flags
 c_func
 (paren
@@ -7692,7 +7698,7 @@ r_char
 op_star
 id|revision
 op_assign
-l_string|&quot;$Revision: 1.15 $&quot;
+l_string|&quot;$Revision: 1.20 $&quot;
 suffix:semicolon
 r_char
 op_star
@@ -10002,7 +10008,7 @@ macro_line|#ifdef CONFIG_PCI
 r_if
 c_cond
 (paren
-id|pcibios_present
+id|pci_present
 c_func
 (paren
 )paren
@@ -11955,6 +11961,11 @@ id|ch
 )paren
 (brace
 r_int
+id|loops
+op_assign
+id|ZS_PUT_CHAR_MAX_DELAY
+suffix:semicolon
+r_int
 r_int
 id|flags
 suffix:semicolon
@@ -11987,6 +11998,31 @@ comma
 id|ch
 )paren
 suffix:semicolon
+r_while
+c_loop
+(paren
+op_logical_neg
+(paren
+id|read_zsreg
+c_func
+(paren
+id|info-&gt;zs_channel
+comma
+id|R1
+)paren
+op_amp
+id|ALL_SNT
+)paren
+op_logical_and
+op_decrement
+id|loops
+)paren
+id|udelay
+c_func
+(paren
+l_int|5
+)paren
+suffix:semicolon
 id|restore_flags
 c_func
 (paren
@@ -11994,6 +12030,7 @@ id|flags
 )paren
 suffix:semicolon
 )brace
+macro_line|#ifdef SERIAL_CONSOLE_FAIR_OUTPUT
 multiline_comment|/*&n; * Fair output driver allows a process to speak.&n; */
 DECL|function|zs_fair_output
 r_static
@@ -12135,6 +12172,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+macro_line|#endif
 multiline_comment|/*&n; * zs_console_write is registered for printk.&n; */
 r_static
 r_void
@@ -12216,6 +12254,7 @@ id|s
 )paren
 suffix:semicolon
 )brace
+macro_line|#ifdef SERIAL_CONSOLE_FAIR_OUTPUT
 multiline_comment|/* Comment this if you want to have a strict interrupt-driven output */
 id|zs_fair_output
 c_func
@@ -12223,6 +12262,7 @@ c_func
 id|info
 )paren
 suffix:semicolon
+macro_line|#endif
 )brace
 r_static
 r_int

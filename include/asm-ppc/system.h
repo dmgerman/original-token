@@ -265,21 +265,17 @@ c_func
 r_void
 )paren
 suffix:semicolon
-multiline_comment|/*extern void note_bootable_part(kdev_t, int);*/
 r_extern
 r_int
-id|sd_find_target
+id|_get_PVR
 c_func
 (paren
 r_void
-op_star
-comma
-r_int
 )paren
 suffix:semicolon
 r_extern
 r_int
-id|_get_PVR
+id|_get_L2CR
 c_func
 (paren
 r_void
@@ -323,6 +319,16 @@ id|giveup_fpu
 c_func
 (paren
 r_void
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|smp_giveup_fpu
+c_func
+(paren
+r_struct
+id|task_struct
+op_star
 )paren
 suffix:semicolon
 r_extern
@@ -433,6 +439,8 @@ DECL|macro|save_flags
 mdefine_line|#define save_flags(flags)&t;__save_flags(flags)
 DECL|macro|restore_flags
 mdefine_line|#define restore_flags(flags)&t;__restore_flags(flags)
+DECL|macro|save_and_cli
+mdefine_line|#define save_and_cli(flags)&t;__save_and_cli(flags)
 macro_line|#else /* __SMP__ */
 r_extern
 r_void

@@ -2170,7 +2170,7 @@ c_func
 suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef CONFIG_JOYSTICK
-multiline_comment|/*&n;&t; *&t;Some joysticks only appear when the soundcard they are&n;&t; *&t;connected too is confgured. Keep the sound/joystick ordering.&n;&t; */
+multiline_comment|/*&n;&t; *&t;Some joysticks only appear when the soundcard they are&n;&t; *&t;connected to is configured. Keep the sound/joystick ordering.&n;&t; */
 id|js_init
 c_func
 (paren

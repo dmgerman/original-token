@@ -2,7 +2,9 @@ multiline_comment|/* smp.h: Sparc specific SMP stuff.&n; *&n; * Copyright (C) 19
 macro_line|#ifndef _SPARC_SMP_H
 DECL|macro|_SPARC_SMP_H
 mdefine_line|#define _SPARC_SMP_H
+macro_line|#include &lt;linux/tasks.h&gt;
 macro_line|#include &lt;asm/head.h&gt;
+macro_line|#include &lt;asm/btfixup.h&gt;
 macro_line|#ifndef __ASSEMBLY__
 multiline_comment|/* PROM provided per-processor information we need&n; * to start them all up.&n; */
 DECL|struct|prom_cpuinfo
@@ -27,12 +29,14 @@ multiline_comment|/* number of CPUs probed  */
 macro_line|#endif /* !(__ASSEMBLY__) */
 macro_line|#ifdef __SMP__
 macro_line|#ifndef __ASSEMBLY__
+macro_line|#include &lt;asm/ptrace.h&gt;
+macro_line|#include &lt;asm/asi.h&gt;
 r_extern
 r_struct
 id|prom_cpuinfo
 id|linux_cpus
 (braket
-id|NCPUS
+id|NR_CPUS
 )braket
 suffix:semicolon
 multiline_comment|/* Per processor Sparc parameters we need. */
@@ -62,6 +66,14 @@ r_extern
 r_struct
 id|cpuinfo_sparc
 id|cpu_data
+(braket
+id|NR_CPUS
+)braket
+suffix:semicolon
+r_extern
+r_int
+r_int
+id|cpu_offset
 (braket
 id|NR_CPUS
 )braket
@@ -131,7 +143,20 @@ r_int
 )paren
 suffix:semicolon
 multiline_comment|/*&n; *&t;General functions that each host system must provide.&n; */
-r_extern
+r_void
+id|sun4m_init_smp
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_void
+id|sun4d_init_smp
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
 r_void
 id|smp_callin
 c_func
@@ -139,7 +164,6 @@ c_func
 r_void
 )paren
 suffix:semicolon
-r_extern
 r_void
 id|smp_boot_cpus
 c_func
@@ -147,44 +171,100 @@ c_func
 r_void
 )paren
 suffix:semicolon
-r_extern
 r_void
 id|smp_store_cpu_info
 c_func
 (paren
 r_int
-id|id
 )paren
 suffix:semicolon
-r_extern
-r_void
-id|smp_cross_call
+id|BTFIXUPDEF_CALL
 c_func
 (paren
+r_void
+comma
+id|smp_cross_call
+comma
 id|smpfunc_t
-id|func
 comma
 r_int
 r_int
-id|arg1
 comma
 r_int
 r_int
-id|arg2
 comma
 r_int
 r_int
-id|arg3
 comma
 r_int
 r_int
-id|arg4
 comma
 r_int
 r_int
-id|arg5
 )paren
-suffix:semicolon
+id|BTFIXUPDEF_CALL
+c_func
+(paren
+r_void
+comma
+id|smp_message_pass
+comma
+r_int
+comma
+r_int
+comma
+r_int
+r_int
+comma
+r_int
+)paren
+id|BTFIXUPDEF_CALL
+c_func
+(paren
+r_int
+comma
+id|__smp_processor_id
+comma
+r_void
+)paren
+id|BTFIXUPDEF_BLACKBOX
+c_func
+(paren
+id|smp_processor_id
+)paren
+id|BTFIXUPDEF_BLACKBOX
+c_func
+(paren
+id|load_current
+)paren
+DECL|macro|smp_cross_call
+mdefine_line|#define smp_cross_call(func,arg1,arg2,arg3,arg4,arg5) BTFIXUP_CALL(smp_cross_call)(func,arg1,arg2,arg3,arg4,arg5)
+DECL|macro|smp_message_pass
+mdefine_line|#define smp_message_pass(target,msg,data,wait) BTFIXUP_CALL(smp_message_pass)(target,msg,data,wait)
+id|BTFIXUPDEF_CALL
+c_func
+(paren
+r_int
+comma
+id|smp_bogo_info
+comma
+r_char
+op_star
+)paren
+id|BTFIXUPDEF_CALL
+c_func
+(paren
+r_int
+comma
+id|smp_info
+comma
+r_char
+op_star
+)paren
+DECL|macro|smp_bogo_info
+mdefine_line|#define smp_bogo_info(buf) BTFIXUP_CALL(smp_bogo_info)(buf)
+DECL|macro|smp_info
+mdefine_line|#define smp_info(buf) BTFIXUP_CALL(smp_info)(buf)
 DECL|function|xc0
 r_extern
 id|__inline__
@@ -424,7 +504,7 @@ suffix:semicolon
 r_extern
 id|__volatile__
 r_int
-id|cpu_logical_map
+id|__cpu_logical_map
 (braket
 id|NR_CPUS
 )braket
@@ -437,11 +517,29 @@ id|smp_proc_in_lock
 id|NR_CPUS
 )braket
 suffix:semicolon
-DECL|function|hard_smp_processor_id
+DECL|function|cpu_logical_map
 r_extern
 id|__inline__
 r_int
-id|hard_smp_processor_id
+id|cpu_logical_map
+c_func
+(paren
+r_int
+id|cpu
+)paren
+(brace
+r_return
+id|__cpu_logical_map
+(braket
+id|cpu
+)braket
+suffix:semicolon
+)brace
+DECL|function|hard_smp4m_processor_id
+r_extern
+id|__inline__
+r_int
+id|hard_smp4m_processor_id
 c_func
 (paren
 r_void
@@ -468,6 +566,113 @@ r_return
 id|cpuid
 suffix:semicolon
 )brace
+DECL|function|hard_smp4d_processor_id
+r_extern
+id|__inline__
+r_int
+id|hard_smp4d_processor_id
+c_func
+(paren
+r_void
+)paren
+(brace
+r_int
+id|cpuid
+suffix:semicolon
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;lda [%%g0] %1, %0&bslash;n&bslash;t&quot;
+suffix:colon
+l_string|&quot;=&amp;r&quot;
+(paren
+id|cpuid
+)paren
+suffix:colon
+l_string|&quot;i&quot;
+(paren
+id|ASI_M_VIKING_TMP1
+)paren
+)paren
+suffix:semicolon
+r_return
+id|cpuid
+suffix:semicolon
+)brace
+macro_line|#ifndef MODULE
+DECL|function|hard_smp_processor_id
+r_extern
+id|__inline__
+r_int
+id|hard_smp_processor_id
+c_func
+(paren
+r_void
+)paren
+(brace
+r_int
+id|cpuid
+suffix:semicolon
+multiline_comment|/* Black box - sun4m&n;&t;&t;__asm__ __volatile__(&quot;rd %%tbr, %0&bslash;n&bslash;t&quot;&n;&t;&t;&t;&t;     &quot;srl %0, 12, %0&bslash;n&bslash;t&quot;&n;&t;&t;&t;&t;     &quot;and %0, 3, %0&bslash;n&bslash;t&quot; :&n;&t;&t;&t;&t;     &quot;=&amp;r&quot; (cpuid));&n;&t;             - sun4d&n;&t;   &t;__asm__ __volatile__(&quot;lda [%g0] ASI_M_VIKING_TMP1, %0&bslash;n&bslash;t&quot;&n;&t;   &t;&t;&t;     &quot;nop; nop&quot; :&n;&t;   &t;&t;&t;     &quot;=&amp;r&quot; (cpuid));&n;&t;   See btfixup.h and btfixupprep.c to understand how a blackbox works.&n;&t; */
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;sethi %%hi(___b_smp_processor_id), %0&bslash;n&bslash;t&quot;
+l_string|&quot;sethi %%hi(boot_cpu_id), %0&bslash;n&bslash;t&quot;
+l_string|&quot;ldub [%0 + %%lo(boot_cpu_id)], %0&bslash;n&bslash;t&quot;
+suffix:colon
+l_string|&quot;=&amp;r&quot;
+(paren
+id|cpuid
+)paren
+)paren
+suffix:semicolon
+r_return
+id|cpuid
+suffix:semicolon
+)brace
+macro_line|#else
+DECL|function|hard_smp_processor_id
+r_extern
+id|__inline__
+r_int
+id|hard_smp_processor_id
+c_func
+(paren
+r_void
+)paren
+(brace
+r_int
+id|cpuid
+id|__asm__
+(paren
+l_string|&quot;g2&quot;
+)paren
+suffix:semicolon
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;mov %%o7, %%g1&bslash;n&bslash;t&quot;
+l_string|&quot;call ___f___smp_processor_id&bslash;n&bslash;t&quot;
+l_string|&quot; nop&bslash;n&bslash;t&quot;
+suffix:colon
+l_string|&quot;=r&quot;
+(paren
+id|cpuid
+)paren
+suffix:colon
+suffix:colon
+l_string|&quot;g1&quot;
+)paren
+suffix:semicolon
+r_return
+id|cpuid
+suffix:semicolon
+)brace
+macro_line|#endif
 DECL|macro|smp_processor_id
 mdefine_line|#define smp_processor_id() hard_smp_processor_id()
 macro_line|#endif /* !(__ASSEMBLY__) */
@@ -489,6 +694,24 @@ DECL|macro|SMP_FROM_INT
 mdefine_line|#define SMP_FROM_INT&t;&t;1
 DECL|macro|SMP_FROM_SYSCALL
 mdefine_line|#define SMP_FROM_SYSCALL&t;2
+macro_line|#else /* !(__SMP__) */
+macro_line|#ifndef __ASSEMBLY__ 
+DECL|function|cpu_logical_map
+r_extern
+id|__inline__
+r_int
+id|cpu_logical_map
+c_func
+(paren
+r_int
+id|cpu
+)paren
+(brace
+r_return
+id|cpu
+suffix:semicolon
+)brace
+macro_line|#endif 
 macro_line|#endif /* !(__SMP__) */
 DECL|macro|NO_PROC_ID
 mdefine_line|#define NO_PROC_ID            0xFF

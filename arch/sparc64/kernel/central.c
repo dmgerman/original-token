@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: central.c,v 1.4 1997/08/19 14:17:49 jj Exp $&n; * central.c: Central FHC driver for Sunfire/Starfire/Wildfire.&n; *&n; * Copyright (C) 1997 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: central.c,v 1.5 1998/02/12 15:57:59 jj Exp $&n; * central.c: Central FHC driver for Sunfire/Starfire/Wildfire.&n; *&n; * Copyright (C) 1997 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
@@ -155,12 +155,6 @@ r_return
 id|memory_start
 suffix:semicolon
 )brace
-id|prom_printf
-c_func
-(paren
-l_string|&quot;CENTRAL: found central PROM node.&bslash;n&quot;
-)paren
-suffix:semicolon
 id|printk
 c_func
 (paren
@@ -187,14 +181,6 @@ op_star
 id|memory_start
 )paren
 suffix:semicolon
-id|prom_printf
-c_func
-(paren
-l_string|&quot;CENTRAL: central_bus[%p] &quot;
-comma
-id|central_bus
-)paren
-suffix:semicolon
 id|memory_start
 op_add_assign
 r_sizeof
@@ -236,14 +222,6 @@ id|long_align
 c_func
 (paren
 id|memory_start
-)paren
-suffix:semicolon
-id|prom_printf
-c_func
-(paren
-l_string|&quot;fhc[%p] &quot;
-comma
-id|fhc
 )paren
 suffix:semicolon
 multiline_comment|/* First init central. */
@@ -276,12 +254,6 @@ c_func
 id|central_bus-&gt;prom_name
 comma
 id|namebuf
-)paren
-suffix:semicolon
-id|prom_printf
-c_func
-(paren
-l_string|&quot;init_central_ranges &quot;
 )paren
 suffix:semicolon
 id|prom_central_ranges_init
@@ -367,16 +339,6 @@ comma
 id|namebuf
 )paren
 suffix:semicolon
-id|prom_printf
-c_func
-(paren
-l_string|&quot;cnode[%x] fnode[%x] init_fhc_ranges&bslash;n&quot;
-comma
-id|cnode
-comma
-id|fnode
-)paren
-suffix:semicolon
 id|prom_fhc_ranges_init
 c_func
 (paren
@@ -385,9 +347,10 @@ comma
 id|fhc
 )paren
 suffix:semicolon
-multiline_comment|/* Finally, map in FHC register set.  (From the prtconf dumps&n;&t; * I have seen on Ex000 boxes only the central ranges need to&n;&t; * be applied to the fhc internal register set) -DaveM&n;&t; */
-id|err
-op_assign
+multiline_comment|/* Finally, map in FHC register set. */
+r_if
+c_cond
+(paren
 id|prom_getproperty
 c_func
 (paren
@@ -410,11 +373,6 @@ r_sizeof
 id|fpregs
 )paren
 )paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|err
 op_eq
 op_minus
 l_int|1
@@ -444,97 +402,6 @@ l_int|0
 )braket
 comma
 l_int|6
-)paren
-suffix:semicolon
-id|prom_printf
-c_func
-(paren
-l_string|&quot;CENTRAL: FHC_REGS[(%08x,%08x) (%08x,%08x) &quot;
-l_string|&quot;(%08x,%08x) (%08x,%08x) (%08x,%08x) (%08x,%08x)]&bslash;n&quot;
-comma
-id|fpregs
-(braket
-l_int|0
-)braket
-dot
-id|which_io
-comma
-id|fpregs
-(braket
-l_int|0
-)braket
-dot
-id|phys_addr
-comma
-id|fpregs
-(braket
-l_int|1
-)braket
-dot
-id|which_io
-comma
-id|fpregs
-(braket
-l_int|1
-)braket
-dot
-id|phys_addr
-comma
-id|fpregs
-(braket
-l_int|2
-)braket
-dot
-id|which_io
-comma
-id|fpregs
-(braket
-l_int|2
-)braket
-dot
-id|phys_addr
-comma
-id|fpregs
-(braket
-l_int|3
-)braket
-dot
-id|which_io
-comma
-id|fpregs
-(braket
-l_int|3
-)braket
-dot
-id|phys_addr
-comma
-id|fpregs
-(braket
-l_int|4
-)braket
-dot
-id|which_io
-comma
-id|fpregs
-(braket
-l_int|4
-)braket
-dot
-id|phys_addr
-comma
-id|fpregs
-(braket
-l_int|5
-)braket
-dot
-id|which_io
-comma
-id|fpregs
-(braket
-l_int|5
-)braket
-dot
-id|phys_addr
 )paren
 suffix:semicolon
 id|fhc-&gt;fhc_regs.pregs
@@ -795,41 +662,9 @@ id|phys_addr
 )paren
 )paren
 suffix:semicolon
-id|prom_printf
-c_func
-(paren
-l_string|&quot;CENTRAL: FHC_REGS[%p %p %p %p %p %p]&bslash;n&quot;
-comma
-id|fhc-&gt;fhc_regs.pregs
-comma
-id|fhc-&gt;fhc_regs.ireg
-comma
-id|fhc-&gt;fhc_regs.ffregs
-comma
-id|fhc-&gt;fhc_regs.sregs
-comma
-id|fhc-&gt;fhc_regs.uregs
-comma
-id|fhc-&gt;fhc_regs.tregs
-)paren
-suffix:semicolon
-id|prom_printf
-c_func
-(paren
-l_string|&quot;CENTRAL: reading FHC_ID register... &quot;
-)paren
-suffix:semicolon
 id|err
 op_assign
 id|fhc-&gt;fhc_regs.pregs-&gt;fhc_id
-suffix:semicolon
-id|prom_printf
-c_func
-(paren
-l_string|&quot;VALUE[%x]&bslash;n&quot;
-comma
-id|err
-)paren
 suffix:semicolon
 id|printk
 c_func

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: processor.h,v 1.61 1997/10/22 09:25:42 jj Exp $&n; * include/asm-sparc/processor.h&n; *&n; * Copyright (C) 1994 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: processor.h,v 1.62 1998/02/05 14:20:02 jj Exp $&n; * include/asm-sparc/processor.h&n; *&n; * Copyright (C) 1994 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef __ASM_SPARC_PROCESSOR_H
 DECL|macro|__ASM_SPARC_PROCESSOR_H
 mdefine_line|#define __ASM_SPARC_PROCESSOR_H
@@ -8,6 +8,8 @@ macro_line|#include &lt;asm/ptrace.h&gt;
 macro_line|#include &lt;asm/head.h&gt;
 macro_line|#include &lt;asm/signal.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
+macro_line|#include &lt;asm/btfixup.h&gt;
+macro_line|#include &lt;asm/page.h&gt;
 multiline_comment|/*&n; * Bus types&n; */
 DECL|macro|EISA_bus
 mdefine_line|#define EISA_bus 0
@@ -24,7 +26,7 @@ DECL|macro|wp_works_ok__is_a_macro
 mdefine_line|#define wp_works_ok__is_a_macro /* for versions in ksyms.c */
 multiline_comment|/* Whee, this is STACK_TOP + PAGE_SIZE and the lowest kernel address too... &n; * That one page is used to protect kernel from intruders, so that&n; * we can make our access_ok test faster&n; */
 DECL|macro|TASK_SIZE
-mdefine_line|#define TASK_SIZE&t;(page_offset)
+mdefine_line|#define TASK_SIZE&t;PAGE_OFFSET
 DECL|macro|COPY_TASK_STRUCT
 mdefine_line|#define COPY_TASK_STRUCT(dst, src) &t;&bslash;&n;do {&t;&t;&t;&t;&t;&bslash;&n;&t;*dst = *src;&t;&t;&t;&bslash;&n;} while (0)
 DECL|struct|fpq
@@ -418,31 +420,32 @@ DECL|macro|release_thread
 mdefine_line|#define release_thread(tsk)&t;&t;do { } while(0)
 macro_line|#ifdef __KERNEL__
 multiline_comment|/* Allocation and freeing of basic task resources. */
-r_extern
+id|BTFIXUPDEF_CALL
+c_func
+(paren
 r_struct
 id|task_struct
 op_star
-(paren
-op_star
+comma
 id|alloc_task_struct
-)paren
-(paren
+comma
 r_void
 )paren
-suffix:semicolon
-r_extern
-r_void
+id|BTFIXUPDEF_CALL
+c_func
 (paren
-op_star
+r_void
+comma
 id|free_task_struct
-)paren
-(paren
+comma
 r_struct
 id|task_struct
 op_star
-id|tsk
 )paren
-suffix:semicolon
+DECL|macro|alloc_task_struct
+mdefine_line|#define alloc_task_struct() BTFIXUP_CALL(alloc_task_struct)()
+DECL|macro|free_task_struct
+mdefine_line|#define free_task_struct(tsk) BTFIXUP_CALL(free_task_struct)(tsk)
 DECL|macro|init_task
 mdefine_line|#define init_task&t;(init_task_union.task)
 DECL|macro|init_stack

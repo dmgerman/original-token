@@ -1165,6 +1165,11 @@ c_func
 id|dev
 )paren
 suffix:semicolon
+id|schedule
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
 id|parport_claim_or_block
 c_func
@@ -1190,6 +1195,8 @@ comma
 r_const
 r_char
 op_star
+(braket
+)braket
 comma
 r_int
 id|irqval

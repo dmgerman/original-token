@@ -1,6 +1,6 @@
 multiline_comment|/*&n; * Definitions for IEEE Single Precision&n; */
 macro_line|#if _FP_W_TYPE_SIZE &lt; 32
-macro_line|#error &quot;Here&squot;s a nickle kid.  Go buy yourself a real computer.&quot;
+macro_line|#error &quot;Here&squot;s a nickel kid.  Go buy yourself a real computer.&quot;
 macro_line|#endif
 DECL|macro|_FP_FRACBITS_S
 mdefine_line|#define _FP_FRACBITS_S&t;&t;24

@@ -6,10 +6,24 @@ macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;asm/oplib.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/smp.h&gt;
-DECL|variable|linux_cpus
+DECL|variable|__initdata
 r_struct
 id|prom_cpuinfo
 id|linux_cpus
+(braket
+id|NR_CPUS
+)braket
+id|__initdata
+op_assign
+(brace
+(brace
+l_int|0
+)brace
+)brace
+suffix:semicolon
+DECL|variable|prom_cpu_nodes
+r_int
+id|prom_cpu_nodes
 (braket
 id|NR_CPUS
 )braket
@@ -330,6 +344,13 @@ suffix:semicolon
 id|linux_num_cpus
 op_assign
 id|cpu_ctr
+suffix:semicolon
+id|prom_cpu_nodes
+(braket
+l_int|0
+)braket
+op_assign
+id|prom_node_cpu
 suffix:semicolon
 id|cpu_probe
 c_func

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: suncons.c,v 1.77 1997/12/19 07:32:59 ecd Exp $&n; * suncons.c: Sparc platform console generic layer.&n; *&n; * Copyright (C) 1997 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: suncons.c,v 1.79 1998/01/30 10:59:23 jj Exp $&n; * suncons.c: Sparc platform console generic layer.&n; *&n; * Copyright (C) 1997 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -41,6 +41,16 @@ id|__initdata
 op_assign
 id|linux_logo_banner
 suffix:semicolon
+macro_line|#ifdef CONFIG_PCI
+DECL|variable|__initdata
+r_static
+r_int
+id|cons_type
+id|__initdata
+op_assign
+l_int|0
+suffix:semicolon
+macro_line|#endif
 r_extern
 r_struct
 id|console
@@ -1274,6 +1284,10 @@ c_func
 )paren
 (brace
 macro_line|#ifdef CONFIG_PCI
+id|cons_type
+op_assign
+l_int|1
+suffix:semicolon
 id|pci_console_inithook
 c_func
 (paren
@@ -1342,6 +1356,18 @@ c_func
 r_return
 id|memory_start
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|cons_type
+)paren
+(brace
+multiline_comment|/* Some console was already found on SBUS or UPA */
+r_return
+id|memory_start
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren

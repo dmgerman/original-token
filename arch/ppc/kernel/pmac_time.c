@@ -7,8 +7,11 @@ macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;asm/adb.h&gt;
 macro_line|#include &lt;asm/cuda.h&gt;
+macro_line|#include &lt;asm/pmu.h&gt;
 macro_line|#include &lt;asm/prom.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
+macro_line|#include &lt;asm/io.h&gt;
+macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &quot;time.h&quot;
 multiline_comment|/* Apparently the RTC stores seconds since 1 Jan 1904 */
 DECL|macro|RTC_OFFSET
@@ -39,8 +42,8 @@ mdefine_line|#define T1MODE_CONT&t;0x40&t;&t;/*  continuous interrupts */
 multiline_comment|/* Bits in IFR and IER */
 DECL|macro|T1_INT
 mdefine_line|#define T1_INT&t;&t;0x40&t;&t;/* Timer 1 interrupt */
+multiline_comment|/*&n; * Calibrate the decrementer register using VIA timer 1.&n; * This is used both on powermacs and CHRP machines.&n; */
 DECL|function|via_calibrate_decr
-r_static
 r_int
 id|via_calibrate_decr
 c_func
@@ -101,6 +104,21 @@ c_cond
 id|vias
 op_eq
 l_int|0
+)paren
+id|vias
+op_assign
+id|find_devices
+c_func
+(paren
+l_string|&quot;via&quot;
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|vias
+op_eq
+l_int|0
 op_logical_or
 id|vias-&gt;n_addrs
 op_eq
@@ -117,12 +135,23 @@ r_int
 r_char
 op_star
 )paren
+id|ioremap
+c_func
+(paren
 id|vias-&gt;addrs
 (braket
 l_int|0
 )braket
 dot
 id|address
+comma
+id|vias-&gt;addrs
+(braket
+l_int|0
+)braket
+dot
+id|size
+)paren
 suffix:semicolon
 multiline_comment|/* set timer 1 for continuous interrupts */
 id|out_8
@@ -432,6 +461,18 @@ id|adb_request
 id|req
 suffix:semicolon
 multiline_comment|/* Get the time from the RTC */
+r_switch
+c_cond
+(paren
+id|adb_hardware
+)paren
+(brace
+r_case
+id|ADB_VIACUDA
+suffix:colon
+r_if
+c_cond
+(paren
 id|cuda_request
 c_func
 (paren
@@ -446,6 +487,11 @@ id|CUDA_PACKET
 comma
 id|CUDA_GET_TIME
 )paren
+OL
+l_int|0
+)paren
+r_return
+l_int|0
 suffix:semicolon
 r_while
 c_loop
@@ -509,6 +555,98 @@ l_int|6
 op_minus
 id|RTC_OFFSET
 suffix:semicolon
+r_case
+id|ADB_VIAPMU
+suffix:colon
+r_if
+c_cond
+(paren
+id|pmu_request
+c_func
+(paren
+op_amp
+id|req
+comma
+l_int|NULL
+comma
+l_int|1
+comma
+id|PMU_READ_RTC
+)paren
+OL
+l_int|0
+)paren
+r_return
+l_int|0
+suffix:semicolon
+r_while
+c_loop
+(paren
+op_logical_neg
+id|req.complete
+)paren
+id|pmu_poll
+c_func
+(paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|req.reply_len
+op_ne
+l_int|5
+)paren
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;pmac_get_rtc_time: got %d byte reply&bslash;n&quot;
+comma
+id|req.reply_len
+)paren
+suffix:semicolon
+r_return
+(paren
+id|req.reply
+(braket
+l_int|1
+)braket
+op_lshift
+l_int|24
+)paren
+op_plus
+(paren
+id|req.reply
+(braket
+l_int|2
+)braket
+op_lshift
+l_int|16
+)paren
+op_plus
+(paren
+id|req.reply
+(braket
+l_int|3
+)braket
+op_lshift
+l_int|8
+)paren
+op_plus
+id|req.reply
+(braket
+l_int|4
+)braket
+op_minus
+id|RTC_OFFSET
+suffix:semicolon
+r_default
+suffix:colon
+r_return
+l_int|0
+suffix:semicolon
+)brace
 )brace
 DECL|function|pmac_set_rtc_time
 r_int

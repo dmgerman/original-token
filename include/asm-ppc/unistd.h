@@ -346,6 +346,10 @@ DECL|macro|__NR_getresgid
 mdefine_line|#define __NR_getresgid&t;&t;170
 DECL|macro|__NR_prctl
 mdefine_line|#define __NR_prctl&t;&t;171
+DECL|macro|__NR_xstat
+mdefine_line|#define __NR_xstat&t;&t;172
+DECL|macro|__NR_xmknod
+mdefine_line|#define __NR_xmknod&t;&t;173
 DECL|macro|__NR
 mdefine_line|#define __NR(n)&t;#n
 DECL|macro|__do_syscall
@@ -363,7 +367,7 @@ mdefine_line|#define _syscall4(type,name,type1,arg1,type2,arg2,type3,arg3,type4,
 DECL|macro|_syscall5
 mdefine_line|#define _syscall5(type,name,type1,arg1,type2,arg2,type3,arg3,type4,arg4, &bslash;&n;&t;  type5,arg5) &bslash;&n;type name (type1 arg1,type2 arg2,type3 arg3,type4 arg4,type5 arg5) &bslash;&n;{ __do_syscall(__NR_##name); }
 macro_line|#ifdef __KERNEL_SYSCALLS__
-multiline_comment|/*&n; * Forking from kernel space will result in NO COPY ON WRITE (!!!),&n; * until an execve is executed. This is no problem, but for the stack.&n; * This is handled by not letting main() use the stack at all after&n; * fork().  On the PowerPC, this means we can only call leaf functions.&n; */
+multiline_comment|/*&n; * Forking from kernel space will result in the child getting a new,&n; * empty kernel stack area.  Thus the child cannot access automatic&n; * variables set in the parent unless they are in registers, and the&n; * procedure where the fork was done cannot return to its caller in&n; * the child.&n; */
 multiline_comment|/*&n; * Create a new kernel thread.&n; */
 r_extern
 r_int
@@ -522,6 +526,29 @@ r_int
 op_star
 comma
 r_int
+)paren
+suffix:semicolon
+id|pid_t
+id|fork
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_void
+id|_exit
+c_func
+(paren
+r_int
+)paren
+suffix:semicolon
+r_int
+id|delete_module
+c_func
+(paren
+r_const
+r_char
+op_star
 )paren
 suffix:semicolon
 DECL|function|wait

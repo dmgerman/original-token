@@ -24,6 +24,10 @@ DECL|macro|ADB_MODEM
 mdefine_line|#define ADB_MODEM&t;5
 DECL|macro|ADB_MISC
 mdefine_line|#define ADB_MISC&t;7&t;/* maybe a monitor */
+DECL|macro|ADB_RET_OK
+mdefine_line|#define ADB_RET_OK&t;0
+DECL|macro|ADB_RET_TIMEOUT
+mdefine_line|#define ADB_RET_TIMEOUT&t;3
 macro_line|#ifdef __KERNEL__
 DECL|struct|adb_request
 r_struct
@@ -34,7 +38,7 @@ r_int
 r_char
 id|data
 (braket
-l_int|16
+l_int|32
 )braket
 suffix:semicolon
 DECL|member|nbytes
@@ -46,7 +50,7 @@ r_int
 r_char
 id|reply
 (braket
-l_int|16
+l_int|32
 )braket
 suffix:semicolon
 DECL|member|reply_len
@@ -90,6 +94,24 @@ r_struct
 id|adb_request
 op_star
 id|next
+suffix:semicolon
+)brace
+suffix:semicolon
+DECL|struct|adb_ids
+r_struct
+id|adb_ids
+(brace
+DECL|member|nids
+r_int
+id|nids
+suffix:semicolon
+DECL|member|id
+r_int
+r_char
+id|id
+(braket
+l_int|16
+)braket
 suffix:semicolon
 )brace
 suffix:semicolon
@@ -188,6 +210,14 @@ c_func
 (paren
 r_int
 id|default_id
+comma
+r_int
+id|handler_id
+comma
+r_struct
+id|adb_ids
+op_star
+id|ids
 comma
 r_void
 (paren

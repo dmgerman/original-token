@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: pgtable.h,v 1.59 1997/10/12 06:20:43 davem Exp $&n; * pgtable.h: SpitFire page table operations.&n; *&n; * Copyright 1996,1997 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: pgtable.h,v 1.64 1998/02/16 14:06:44 jj Exp $&n; * pgtable.h: SpitFire page table operations.&n; *&n; * Copyright 1996,1997 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright 1997,1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#ifndef _SPARC64_PGTABLE_H
 DECL|macro|_SPARC64_PGTABLE_H
 mdefine_line|#define _SPARC64_PGTABLE_H
@@ -24,24 +24,27 @@ DECL|macro|PMD_MASK
 mdefine_line|#define PMD_MASK&t;(~(PMD_SIZE-1))
 multiline_comment|/* PGDIR_SHIFT determines what a third-level page table entry can map */
 DECL|macro|PGDIR_SHIFT
-mdefine_line|#define PGDIR_SHIFT&t;(PAGE_SHIFT + 2*(PAGE_SHIFT-3))
+mdefine_line|#define PGDIR_SHIFT&t;(PAGE_SHIFT + (PAGE_SHIFT-3) + (PAGE_SHIFT-2))
 DECL|macro|PGDIR_SIZE
 mdefine_line|#define PGDIR_SIZE&t;(1UL &lt;&lt; PGDIR_SHIFT)
 DECL|macro|PGDIR_MASK
 mdefine_line|#define PGDIR_MASK&t;(~(PGDIR_SIZE-1))
 multiline_comment|/* Entries per page directory level. */
 DECL|macro|PTRS_PER_PTE
-mdefine_line|#define PTRS_PER_PTE&t;(1UL &lt;&lt; (PAGE_SHIFT-3))
+mdefine_line|#define PTRS_PER_PTE&t;&t;(1UL &lt;&lt; (PAGE_SHIFT-3))
 DECL|macro|PTRS_PER_PMD
-mdefine_line|#define PTRS_PER_PMD&t;(1UL &lt;&lt; (PAGE_SHIFT-3))
+mdefine_line|#define PTRS_PER_PMD&t;&t;(1UL &lt;&lt; (PAGE_SHIFT-2))
+multiline_comment|/* We cannot use the top 16G because a half of mm/ would break, so why to check it */
 DECL|macro|PTRS_PER_PGD
-mdefine_line|#define PTRS_PER_PGD&t;(1UL &lt;&lt; (PAGE_SHIFT-3))
+mdefine_line|#define PTRS_PER_PGD&t;&t;((1UL &lt;&lt; (PAGE_SHIFT-3))-1)
+DECL|macro|USER_PTRS_PER_PGD
+mdefine_line|#define USER_PTRS_PER_PGD&t;PTRS_PER_PGD&t;/* Kernel has a separate 44bit address space */
 DECL|macro|PTE_TABLE_SIZE
 mdefine_line|#define PTE_TABLE_SIZE&t;0x2000&t;/* 1024 entries 8 bytes each */
 DECL|macro|PMD_TABLE_SIZE
-mdefine_line|#define PMD_TABLE_SIZE&t;0x2000&t;/* 1024 entries 8 bytes each */
+mdefine_line|#define PMD_TABLE_SIZE&t;0x2000&t;/* 2048 entries 4 bytes each */
 DECL|macro|PGD_TABLE_SIZE
-mdefine_line|#define PGD_TABLE_SIZE&t;0x2000&t;/* 1024 entries 8 bytes each */
+mdefine_line|#define PGD_TABLE_SIZE&t;0x1000&t;/* 1024 entries 4 bytes each */
 multiline_comment|/* the no. of pointers that fit on a page */
 DECL|macro|PTRS_PER_PAGE
 mdefine_line|#define PTRS_PER_PAGE&t;(1UL &lt;&lt; (PAGE_SHIFT-3))
@@ -192,7 +195,7 @@ DECL|macro|BAD_PTE
 mdefine_line|#define BAD_PTE&t;&t;__bad_pte()
 DECL|macro|BAD_PAGE
 mdefine_line|#define BAD_PAGE&t;__bad_page()
-multiline_comment|/* First phsical page can be anywhere, the following is needed so that&n; * va--&gt;pa and vice versa conversions work properly without performance&n; * hit for all __pa()/__va() operations.&n; */
+multiline_comment|/* First physical page can be anywhere, the following is needed so that&n; * va--&gt;pa and vice versa conversions work properly without performance&n; * hit for all __pa()/__va() operations.&n; */
 r_extern
 r_int
 r_int
@@ -201,11 +204,8 @@ suffix:semicolon
 DECL|macro|ZERO_PAGE
 mdefine_line|#define ZERO_PAGE&t;((unsigned long)__va(phys_base))
 multiline_comment|/* This is for making TLB miss faster to process. */
-r_extern
-r_int
-r_int
-id|null_pmd_table
-suffix:semicolon
+DECL|macro|null_pmd_table
+mdefine_line|#define null_pmd_table (null_pte_table - PAGE_SIZE)
 r_extern
 r_int
 r_int
@@ -418,6 +418,8 @@ op_amp
 l_int|0x1fff
 comma
 id|page
+op_amp
+id|PAGE_MASK
 )paren
 suffix:semicolon
 )brace
@@ -860,7 +862,7 @@ id|pgd
 suffix:semicolon
 )brace
 DECL|macro|PMD_NONE_MAGIC
-mdefine_line|#define PMD_NONE_MAGIC&t;&t;0x80
+mdefine_line|#define PMD_NONE_MAGIC&t;&t;0x40
 DECL|macro|PGD_NONE_MAGIC
 mdefine_line|#define PGD_NONE_MAGIC&t;&t;0x40
 DECL|function|pte_none
@@ -1499,9 +1501,7 @@ id|PGDIR_SHIFT
 )paren
 op_amp
 (paren
-id|PTRS_PER_PAGE
-op_minus
-l_int|1
+id|PTRS_PER_PGD
 )paren
 )paren
 suffix:semicolon
@@ -1547,7 +1547,7 @@ id|PMD_SHIFT
 )paren
 op_amp
 (paren
-id|PTRS_PER_PAGE
+id|PTRS_PER_PMD
 op_minus
 l_int|1
 )paren
@@ -1592,7 +1592,7 @@ id|PAGE_SHIFT
 )paren
 op_amp
 (paren
-id|PTRS_PER_PAGE
+id|PTRS_PER_PTE
 op_minus
 l_int|1
 )paren
@@ -1602,39 +1602,49 @@ suffix:semicolon
 multiline_comment|/* Very stupidly, we used to get new pgd&squot;s and pmd&squot;s, init their contents&n; * to point to the NULL versions of the next level page table, later on&n; * completely re-init them the same way, then free them up.  This wasted&n; * a lot of work and caused unnecessary memory traffic.  How broken...&n; * We fix this by caching them.&n; */
 macro_line|#ifdef __SMP__
 multiline_comment|/* Sliiiicck */
-DECL|macro|pgd_quicklist
-mdefine_line|#define pgd_quicklist&t;&t;(cpu_data[smp_processor_id()].pgd_cache)
-DECL|macro|pmd_quicklist
-mdefine_line|#define pmd_quicklist&t;&t;(cpu_data[smp_processor_id()].pmd_cache)
-DECL|macro|pte_quicklist
-mdefine_line|#define pte_quicklist&t;&t;(cpu_data[smp_processor_id()].pte_cache)
-DECL|macro|pgtable_cache_size
-mdefine_line|#define pgtable_cache_size&t;(cpu_data[smp_processor_id()].pgcache_size)
+DECL|macro|pgt_quicklists
+mdefine_line|#define pgt_quicklists&t;cpu_data[smp_processor_id()]
 macro_line|#else
+DECL|struct|pgtable_cache_struct
 r_extern
+r_struct
+id|pgtable_cache_struct
+(brace
+DECL|member|pgd_cache
 r_int
 r_int
 op_star
-id|pgd_quicklist
+id|pgd_cache
 suffix:semicolon
-r_extern
+DECL|member|pmd_cache
 r_int
 r_int
 op_star
-id|pmd_quicklist
+id|pmd_cache
 suffix:semicolon
-r_extern
+DECL|member|pte_cache
 r_int
 r_int
 op_star
-id|pte_quicklist
+id|pte_cache
 suffix:semicolon
-r_extern
+DECL|member|pgcache_size
 r_int
 r_int
-id|pgtable_cache_size
+id|pgcache_size
+suffix:semicolon
+)brace
+id|pgt_quicklists
 suffix:semicolon
 macro_line|#endif
+DECL|macro|pgd_quicklist
+mdefine_line|#define pgd_quicklist&t;&t;(pgt_quicklists.pgd_cache)
+DECL|macro|pmd_quicklist
+mdefine_line|#define pmd_quicklist&t;&t;(pgt_quicklists.pmd_cache)
+DECL|macro|pte_quicklist
+mdefine_line|#define pte_quicklist&t;&t;(pgt_quicklists.pte_cache)
+DECL|macro|pgtable_cache_size
+mdefine_line|#define pgtable_cache_size&t;(pgt_quicklists.pgcache_size)
 r_extern
 id|pgd_t
 op_star
@@ -1655,7 +1665,8 @@ c_func
 r_void
 )paren
 (brace
-id|pgd_t
+r_int
+r_int
 op_star
 id|ret
 suffix:semicolon
@@ -1665,10 +1676,6 @@ c_cond
 (paren
 id|ret
 op_assign
-(paren
-id|pgd_t
-op_star
-)paren
 id|pgd_quicklist
 )paren
 op_ne
@@ -1682,46 +1689,43 @@ r_int
 r_int
 op_star
 )paren
-id|pgd_val
-c_func
 (paren
 op_star
 id|ret
 )paren
 suffix:semicolon
-id|pgd_val
-c_func
-(paren
 id|ret
 (braket
 l_int|0
 )braket
-)paren
 op_assign
-id|pgd_val
-c_func
-(paren
 id|ret
 (braket
 l_int|1
 )braket
-)paren
 suffix:semicolon
-(paren
 id|pgtable_cache_size
-)paren
 op_decrement
 suffix:semicolon
 )brace
 r_else
 id|ret
 op_assign
+(paren
+r_int
+r_int
+op_star
+)paren
 id|get_pgd_slow
 c_func
 (paren
 )paren
 suffix:semicolon
 r_return
+(paren
+id|pgd_t
+op_star
+)paren
 id|ret
 suffix:semicolon
 )brace
@@ -1737,32 +1741,54 @@ op_star
 id|pgd
 )paren
 (brace
-id|pgd_val
+op_star
+(paren
+r_int
+r_int
+op_star
+)paren
+id|pgd
+op_assign
+(paren
+r_int
+r_int
+)paren
+id|pgd_quicklist
+suffix:semicolon
+id|pgd_quicklist
+op_assign
+(paren
+r_int
+r_int
+op_star
+)paren
+id|pgd
+suffix:semicolon
+id|pgtable_cache_size
+op_increment
+suffix:semicolon
+)brace
+DECL|function|free_pgd_slow
+r_extern
+id|__inline__
+r_void
+id|free_pgd_slow
 c_func
 (paren
+id|pgd_t
 op_star
 id|pgd
 )paren
-op_assign
+(brace
+id|free_page
+c_func
+(paren
 (paren
 r_int
 r_int
-)paren
-id|pgd_quicklist
-suffix:semicolon
-id|pgd_quicklist
-op_assign
-(paren
-r_int
-r_int
-op_star
 )paren
 id|pgd
-suffix:semicolon
-(paren
-id|pgtable_cache_size
 )paren
-op_increment
 suffix:semicolon
 )brace
 r_extern
@@ -1791,7 +1817,8 @@ c_func
 r_void
 )paren
 (brace
-id|pmd_t
+r_int
+r_int
 op_star
 id|ret
 suffix:semicolon
@@ -1802,7 +1829,8 @@ c_cond
 id|ret
 op_assign
 (paren
-id|pmd_t
+r_int
+r_int
 op_star
 )paren
 id|pmd_quicklist
@@ -1818,38 +1846,30 @@ r_int
 r_int
 op_star
 )paren
-id|pmd_val
-c_func
 (paren
 op_star
 id|ret
 )paren
 suffix:semicolon
-id|pmd_val
-c_func
-(paren
 id|ret
 (braket
 l_int|0
 )braket
-)paren
 op_assign
-id|pmd_val
-c_func
-(paren
 id|ret
 (braket
 l_int|1
 )braket
-)paren
 suffix:semicolon
-(paren
 id|pgtable_cache_size
-)paren
 op_decrement
 suffix:semicolon
 )brace
 r_return
+(paren
+id|pmd_t
+op_star
+)paren
 id|ret
 suffix:semicolon
 )brace
@@ -1865,32 +1885,54 @@ op_star
 id|pmd
 )paren
 (brace
-id|pmd_val
+op_star
+(paren
+r_int
+r_int
+op_star
+)paren
+id|pmd
+op_assign
+(paren
+r_int
+r_int
+)paren
+id|pmd_quicklist
+suffix:semicolon
+id|pmd_quicklist
+op_assign
+(paren
+r_int
+r_int
+op_star
+)paren
+id|pmd
+suffix:semicolon
+id|pgtable_cache_size
+op_increment
+suffix:semicolon
+)brace
+DECL|function|free_pmd_slow
+r_extern
+id|__inline__
+r_void
+id|free_pmd_slow
 c_func
 (paren
+id|pmd_t
 op_star
 id|pmd
 )paren
-op_assign
+(brace
+id|free_page
+c_func
+(paren
 (paren
 r_int
 r_int
-)paren
-id|pmd_quicklist
-suffix:semicolon
-id|pmd_quicklist
-op_assign
-(paren
-r_int
-r_int
-op_star
 )paren
 id|pmd
-suffix:semicolon
-(paren
-id|pgtable_cache_size
 )paren
-op_increment
 suffix:semicolon
 )brace
 r_extern
@@ -1919,7 +1961,8 @@ c_func
 r_void
 )paren
 (brace
-id|pte_t
+r_int
+r_int
 op_star
 id|ret
 suffix:semicolon
@@ -1930,7 +1973,8 @@ c_cond
 id|ret
 op_assign
 (paren
-id|pte_t
+r_int
+r_int
 op_star
 )paren
 id|pte_quicklist
@@ -1946,38 +1990,30 @@ r_int
 r_int
 op_star
 )paren
-id|pte_val
-c_func
 (paren
 op_star
 id|ret
 )paren
 suffix:semicolon
-id|pte_val
-c_func
-(paren
 id|ret
 (braket
 l_int|0
 )braket
-)paren
 op_assign
-id|pte_val
-c_func
-(paren
 id|ret
 (braket
 l_int|1
 )braket
-)paren
 suffix:semicolon
-(paren
 id|pgtable_cache_size
-)paren
 op_decrement
 suffix:semicolon
 )brace
 r_return
+(paren
+id|pte_t
+op_star
+)paren
 id|ret
 suffix:semicolon
 )brace
@@ -1993,32 +2029,54 @@ op_star
 id|pte
 )paren
 (brace
-id|pte_val
+op_star
+(paren
+r_int
+r_int
+op_star
+)paren
+id|pte
+op_assign
+(paren
+r_int
+r_int
+)paren
+id|pte_quicklist
+suffix:semicolon
+id|pte_quicklist
+op_assign
+(paren
+r_int
+r_int
+op_star
+)paren
+id|pte
+suffix:semicolon
+id|pgtable_cache_size
+op_increment
+suffix:semicolon
+)brace
+DECL|function|free_pte_slow
+r_extern
+id|__inline__
+r_void
+id|free_pte_slow
 c_func
 (paren
+id|pte_t
 op_star
 id|pte
 )paren
-op_assign
+(brace
+id|free_page
+c_func
+(paren
 (paren
 r_int
 r_int
-)paren
-id|pte_quicklist
-suffix:semicolon
-id|pte_quicklist
-op_assign
-(paren
-r_int
-r_int
-op_star
 )paren
 id|pte
-suffix:semicolon
-(paren
-id|pgtable_cache_size
 )paren
-op_increment
 suffix:semicolon
 )brace
 DECL|macro|pte_free_kernel
@@ -2227,6 +2285,23 @@ DECL|macro|pte_alloc_kernel
 mdefine_line|#define pte_alloc_kernel(pmd, addr)&t;pte_alloc(pmd, addr)
 DECL|macro|pmd_alloc_kernel
 mdefine_line|#define pmd_alloc_kernel(pgd, addr)&t;pmd_alloc(pgd, addr)
+DECL|function|set_pgdir
+r_extern
+r_inline
+r_void
+id|set_pgdir
+c_func
+(paren
+r_int
+r_int
+id|address
+comma
+id|pgd_t
+id|entry
+)paren
+(brace
+multiline_comment|/* Nothing to do on sparc64 :) */
+)brace
 r_extern
 id|pgd_t
 id|swapper_pg_dir
@@ -2897,6 +2972,22 @@ op_star
 id|addr
 )paren
 suffix:semicolon
+r_extern
+r_void
+id|module_shrink
+(paren
+r_void
+op_star
+id|addr
+comma
+r_int
+r_int
+id|size
+)paren
+suffix:semicolon
+multiline_comment|/* Needs to be defined here and not in linux/mm.h, as it is arch dependent */
+DECL|macro|PageSkip
+mdefine_line|#define PageSkip(page)&t;&t;(test_bit(PG_skip, &amp;(page)-&gt;flags))
 macro_line|#endif /* !(__ASSEMBLY__) */
 macro_line|#endif /* !(_SPARC64_PGTABLE_H) */
 eof

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sunlance.c,v 1.69 1998/01/09 16:42:52 jj Exp $&n; * lance.c: Linux/Sparc/Lance driver&n; *&n; *&t;Written 1995, 1996 by Miguel de Icaza&n; * Sources:&n; *&t;The Linux  depca driver&n; *&t;The Linux  lance driver.&n; *&t;The Linux  skeleton driver.&n; *&t;The NetBSD Sparc/Lance driver.&n; *&t;Theo de Raadt (deraadt@openbsd.org)&n; *&t;NCR92C990 Lan Controller manual&n; *&n; * 1.4:&n; *&t;Added support to run with a ledma on the Sun4m&n; *&n; * 1.5:&n; *&t;Added multiple card detection.&n; *&n; *&t; 4/17/96: Burst sizes and tpe selection on sun4m by Eddie C. Dost&n; *&t;&t;  (ecd@skynet.be)&n; *&n; *&t; 5/15/96: auto carrier detection on sun4m by Eddie C. Dost&n; *&t;&t;  (ecd@skynet.be)&n; *&n; *&t; 5/17/96: lebuffer on scsi/ether cards now work David S. Miller&n; *&t;&t;  (davem@caip.rutgers.edu)&n; *&n; *&t; 5/29/96: override option &squot;tpe-link-test?&squot;, if it is &squot;false&squot;, as&n; *&t;&t;  this disables auto carrier detection on sun4m. Eddie C. Dost&n; *&t;&t;  (ecd@skynet.be)&n; *&n; * 1.7:&n; *&t; 6/26/96: Bug fix for multiple ledmas, miguel.&n; *&n; * 1.8:&n; *&t;&t;  Stole multicast code from depca.c, fixed lance_tx.&n; *&n; * 1.9:&n; *&t; 8/21/96: Fixed the multicast code (Pedro Roque)&n; *&n; *&t; 8/28/96: Send fake packet in lance_open() if auto_select is true,&n; *&t;&t;  so we can detect the carrier loss condition in time.&n; *&t;&t;  Eddie C. Dost (ecd@skynet.be)&n; *&n; *&t; 9/15/96: Align rx_buf so that eth_copy_and_sum() won&squot;t cause an&n; *&t;&t;  MNA trap during chksum_partial_copy(). (ecd@skynet.be)&n; *&n; *&t;11/17/96: Handle LE_C0_MERR in lance_interrupt(). (ecd@skynet.be)&n; *&n; *&t;12/22/96: Don&squot;t loop forever in lance_rx() on incomplete packets.&n; *&t;&t;  This was the sun4c killer. Shit, stupid bug.&n; *&t;&t;  (ecd@skynet.be)&n; *&n; * 1.10:&n; *&t; 1/26/97: Modularize driver. (ecd@skynet.be)&n; *&n; * 1.11:&n; *&t;12/27/97: Added sun4d support. (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: sunlance.c,v 1.74 1998/02/12 07:37:25 davem Exp $&n; * lance.c: Linux/Sparc/Lance driver&n; *&n; *&t;Written 1995, 1996 by Miguel de Icaza&n; * Sources:&n; *&t;The Linux  depca driver&n; *&t;The Linux  lance driver.&n; *&t;The Linux  skeleton driver.&n; *&t;The NetBSD Sparc/Lance driver.&n; *&t;Theo de Raadt (deraadt@openbsd.org)&n; *&t;NCR92C990 Lan Controller manual&n; *&n; * 1.4:&n; *&t;Added support to run with a ledma on the Sun4m&n; *&n; * 1.5:&n; *&t;Added multiple card detection.&n; *&n; *&t; 4/17/96: Burst sizes and tpe selection on sun4m by Eddie C. Dost&n; *&t;&t;  (ecd@skynet.be)&n; *&n; *&t; 5/15/96: auto carrier detection on sun4m by Eddie C. Dost&n; *&t;&t;  (ecd@skynet.be)&n; *&n; *&t; 5/17/96: lebuffer on scsi/ether cards now work David S. Miller&n; *&t;&t;  (davem@caip.rutgers.edu)&n; *&n; *&t; 5/29/96: override option &squot;tpe-link-test?&squot;, if it is &squot;false&squot;, as&n; *&t;&t;  this disables auto carrier detection on sun4m. Eddie C. Dost&n; *&t;&t;  (ecd@skynet.be)&n; *&n; * 1.7:&n; *&t; 6/26/96: Bug fix for multiple ledmas, miguel.&n; *&n; * 1.8:&n; *&t;&t;  Stole multicast code from depca.c, fixed lance_tx.&n; *&n; * 1.9:&n; *&t; 8/21/96: Fixed the multicast code (Pedro Roque)&n; *&n; *&t; 8/28/96: Send fake packet in lance_open() if auto_select is true,&n; *&t;&t;  so we can detect the carrier loss condition in time.&n; *&t;&t;  Eddie C. Dost (ecd@skynet.be)&n; *&n; *&t; 9/15/96: Align rx_buf so that eth_copy_and_sum() won&squot;t cause an&n; *&t;&t;  MNA trap during chksum_partial_copy(). (ecd@skynet.be)&n; *&n; *&t;11/17/96: Handle LE_C0_MERR in lance_interrupt(). (ecd@skynet.be)&n; *&n; *&t;12/22/96: Don&squot;t loop forever in lance_rx() on incomplete packets.&n; *&t;&t;  This was the sun4c killer. Shit, stupid bug.&n; *&t;&t;  (ecd@skynet.be)&n; *&n; * 1.10:&n; *&t; 1/26/97: Modularize driver. (ecd@skynet.be)&n; *&n; * 1.11:&n; *&t;12/27/97: Added sun4d support. (jj@sunsite.mff.cuni.cz)&n; */
 DECL|macro|DEBUG_DRIVER
 macro_line|#undef DEBUG_DRIVER
 DECL|variable|version
@@ -57,6 +57,8 @@ macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
+macro_line|#include &lt;asm/idprom.h&gt;
+macro_line|#include &lt;asm/machines.h&gt;
 multiline_comment|/* Define: 2^4 Tx buffers and 2^4 Rx buffers */
 macro_line|#ifndef LANCE_LOG_TX_BUFFERS
 DECL|macro|LANCE_LOG_TX_BUFFERS
@@ -4486,6 +4488,110 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#ifdef CONFIG_SUN4
+macro_line|#include &lt;asm/sun4paddr.h&gt;
+multiline_comment|/* Find all the lance cards on the system and initialize them */
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
+r_int
+id|sparc_lance_probe
+(paren
+r_struct
+id|device
+op_star
+id|dev
+)paren
+)paren
+(brace
+r_static
+r_struct
+id|linux_sbus_device
+id|sdev
+suffix:semicolon
+r_static
+r_int
+id|called
+op_assign
+l_int|0
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|called
+)paren
+(brace
+r_return
+id|ENODEV
+suffix:semicolon
+)brace
+id|called
+op_increment
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|idprom-&gt;id_machtype
+op_eq
+(paren
+id|SM_SUN4
+op_or
+id|SM_4_330
+)paren
+)paren
+(brace
+id|memset
+(paren
+op_amp
+id|sdev
+comma
+l_int|0
+comma
+r_sizeof
+(paren
+id|sdev
+)paren
+)paren
+suffix:semicolon
+id|sdev.reg_addrs
+(braket
+l_int|0
+)braket
+dot
+id|phys_addr
+op_assign
+id|SUN4_300_ETH_PHYSADDR
+suffix:semicolon
+id|sdev.irqs
+(braket
+l_int|0
+)braket
+dot
+id|pri
+op_assign
+l_int|6
+suffix:semicolon
+r_return
+id|sparc_lance_init
+c_func
+(paren
+id|dev
+comma
+op_amp
+id|sdev
+comma
+l_int|0
+comma
+l_int|0
+)paren
+suffix:semicolon
+)brace
+r_return
+id|ENODEV
+suffix:semicolon
+)brace
+macro_line|#else /* !CONFIG_SUN4 */
 multiline_comment|/* Find all the lance cards on the system and initialize them */
 DECL|function|__initfunc
 id|__initfunc
@@ -4714,6 +4820,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#endif /* !CONFIG_SUN4 */
 macro_line|#ifdef MODULE
 r_int
 DECL|function|init_module

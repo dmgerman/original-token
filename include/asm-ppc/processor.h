@@ -37,8 +37,13 @@ DECL|macro|MSR_RI
 mdefine_line|#define MSR_RI&t;&t;(1&lt;&lt;1)&t;&t;/* Recoverable Exception */
 DECL|macro|MSR_LE
 mdefine_line|#define MSR_LE&t;&t;(1&lt;&lt;0)&t;&t;/* Little-Endian enable */
+macro_line|#ifdef CONFIG_APUS
+DECL|macro|MSR_
+mdefine_line|#define MSR_&t;&t;MSR_ME|MSR_FE0|MSR_FE1|MSR_IP|MSR_RI
+macro_line|#else
 DECL|macro|MSR_
 mdefine_line|#define MSR_&t;&t;MSR_ME|MSR_FE0|MSR_FE1|MSR_RI
+macro_line|#endif
 DECL|macro|MSR_KERNEL
 mdefine_line|#define MSR_KERNEL      MSR_|MSR_IR|MSR_DR
 DECL|macro|MSR_USER
@@ -95,6 +100,10 @@ DECL|macro|_MACH_Pmac
 mdefine_line|#define _MACH_Pmac     2 /* pmac or pmac clone (non-chrp) */
 DECL|macro|_MACH_chrp
 mdefine_line|#define _MACH_chrp     4 /* chrp machine */
+DECL|macro|_MACH_mbx
+mdefine_line|#define _MACH_mbx      8 /* Motorola MBX board */
+DECL|macro|_MACH_apus
+mdefine_line|#define _MACH_apus    16 /* amiga with phase5 powerup */
 multiline_comment|/* see residual.h for these */
 DECL|macro|_PREP_Motorola
 mdefine_line|#define _PREP_Motorola 0x01  /* motorola prep */
@@ -202,6 +211,28 @@ DECL|macro|DEC
 mdefine_line|#define DEC&t;22&t;/* Decrementer */
 DECL|macro|EAR
 mdefine_line|#define EAR&t;282&t;/* External Address Register */
+DECL|macro|L2CR
+mdefine_line|#define L2CR&t;1017    /* PPC 750 L2 control register */
+DECL|macro|THRM1
+mdefine_line|#define THRM1&t;1020
+DECL|macro|THRM2
+mdefine_line|#define THRM2&t;1021
+DECL|macro|THRM3
+mdefine_line|#define THRM3&t;1022
+DECL|macro|THRM1_TIN
+mdefine_line|#define THRM1_TIN 0x1
+DECL|macro|THRM1_TIV
+mdefine_line|#define THRM1_TIV 0x2
+DECL|macro|THRM1_THRES
+mdefine_line|#define THRM1_THRES (0x7f&lt;&lt;2)
+DECL|macro|THRM1_TID
+mdefine_line|#define THRM1_TID (1&lt;&lt;29)
+DECL|macro|THRM1_TIE
+mdefine_line|#define THRM1_TIE (1&lt;&lt;30)
+DECL|macro|THRM1_V
+mdefine_line|#define THRM1_V   (1&lt;&lt;31)
+DECL|macro|THRM3_E
+mdefine_line|#define THRM3_E   (1&lt;&lt;31)
 multiline_comment|/* Segment Registers */
 DECL|macro|SR0
 mdefine_line|#define SR0&t;0
@@ -243,19 +274,47 @@ DECL|macro|_machine
 mdefine_line|#define _machine (_MACH_prep)
 DECL|macro|is_prep
 mdefine_line|#define is_prep (1)
+DECL|macro|is_chrp
+mdefine_line|#define is_chrp (0)
+DECL|macro|have_of
+mdefine_line|#define have_of (0)
 macro_line|#endif /* CONFIG_PREP */
 macro_line|#ifdef CONFIG_CHRP
 DECL|macro|_machine
 mdefine_line|#define _machine (_MACH_chrp)
 DECL|macro|is_prep
 mdefine_line|#define is_prep (0)
+DECL|macro|is_chrp
+mdefine_line|#define is_chrp (1)
+DECL|macro|have_of
+mdefine_line|#define have_of (1)
 macro_line|#endif /* CONFIG_CHRP */
 macro_line|#ifdef CONFIG_PMAC
 DECL|macro|_machine
 mdefine_line|#define _machine (_MACH_Pmac)
 DECL|macro|is_prep
 mdefine_line|#define is_prep (0)
+DECL|macro|is_chrp
+mdefine_line|#define is_chrp (0)
+DECL|macro|have_of
+mdefine_line|#define have_of (1)
 macro_line|#endif /* CONFIG_PMAC */
+macro_line|#ifdef CONFIG_MBX
+DECL|macro|_machine
+mdefine_line|#define _machine (_MACH_mbx)
+DECL|macro|is_prep
+mdefine_line|#define is_prep (0)
+DECL|macro|is_chrp
+mdefine_line|#define is_chrp (0)
+DECL|macro|have_of
+mdefine_line|#define have_of (0)
+macro_line|#endif /* CONFIG_MBX */
+macro_line|#ifdef CONFIG_APUS
+DECL|macro|_machine
+mdefine_line|#define _machine (_MACH_apus)
+DECL|macro|is_prep
+mdefine_line|#define is_prep (0)
+macro_line|#endif /* CONFIG_APUS */
 macro_line|#else /* CONFIG_MACH_SPECIFIC */
 r_extern
 r_int
@@ -264,13 +323,16 @@ suffix:semicolon
 multiline_comment|/* if we&squot;re a prep machine */
 DECL|macro|is_prep
 mdefine_line|#define is_prep (_machine == _MACH_prep)
-macro_line|#endif /* CONFIG_MACH_SPECIFIC */
+multiline_comment|/* if we&squot;re a chrp machine */
+DECL|macro|is_chrp
+mdefine_line|#define is_chrp (_machine == _MACH_chrp)
 multiline_comment|/* if we have openfirmware */
 r_extern
 r_int
 r_int
 id|have_of
 suffix:semicolon
+macro_line|#endif /* CONFIG_MACH_SPECIFIC */
 multiline_comment|/* what kind of prep workstation we are */
 r_extern
 r_int
@@ -395,14 +457,20 @@ r_int
 id|fpscr
 suffix:semicolon
 multiline_comment|/* Floating point status */
+DECL|member|smp_fork_ret
+r_int
+r_int
+id|smp_fork_ret
+suffix:semicolon
 )brace
 suffix:semicolon
 DECL|macro|INIT_SP
 mdefine_line|#define INIT_SP&t;&t;(sizeof(init_stack) + (unsigned long) &amp;init_stack)
 DECL|macro|INIT_TSS
-mdefine_line|#define INIT_TSS  { &bslash;&n;&t;INIT_SP, /* ksp */ &bslash;&n;&t;(unsigned long *) swapper_pg_dir, /* pg_tables */ &bslash;&n;&t;0, /* wchan */ &bslash;&n;&t;(struct pt_regs *)INIT_SP - 1, /* regs */ &bslash;&n;&t;KERNEL_DS, /*fs*/ &bslash;&n;&t;0, /* last_syscall */ &bslash;&n;&t;{0}, 0, 0 &bslash;&n;}
+mdefine_line|#define INIT_TSS  { &bslash;&n;&t;INIT_SP, /* ksp */ &bslash;&n;&t;(unsigned long *) swapper_pg_dir, /* pg_tables */ &bslash;&n;&t;0, /* wchan */ &bslash;&n;&t;(struct pt_regs *)INIT_SP - 1, /* regs */ &bslash;&n;&t;KERNEL_DS, /*fs*/ &bslash;&n;&t;0, /* last_syscall */ &bslash;&n;&t;{0}, 0, 0, 0 &bslash;&n;}
+multiline_comment|/*&n; * Note: the vm_start and vm_end fields here should *not*&n; * be in kernel space.  (Could vm_end == vm_start perhaps?)&n; */
 DECL|macro|INIT_MMAP
-mdefine_line|#define INIT_MMAP { &amp;init_mm, KERNELBASE/*0*/, 0xffffffff/*0x40000000*/, &bslash;&n;&t;&t;      PAGE_SHARED, VM_READ | VM_WRITE | VM_EXEC }
+mdefine_line|#define INIT_MMAP { &amp;init_mm, 0, 0x1000, &bslash;&n;&t;&t;      PAGE_SHARED, VM_READ | VM_WRITE | VM_EXEC }
 multiline_comment|/*&n; * Return saved PC of a blocked thread. For now, this is the &quot;user&quot; PC&n; */
 DECL|function|thread_saved_pc
 r_static

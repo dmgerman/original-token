@@ -12,6 +12,8 @@ DECL|macro|POWER_PACKET
 mdefine_line|#define POWER_PACKET&t;4
 DECL|macro|MACIIC_PACKET
 mdefine_line|#define MACIIC_PACKET&t;5
+DECL|macro|PMU_PACKET
+mdefine_line|#define PMU_PACKET&t;6
 multiline_comment|/* CUDA commands (2nd byte) */
 DECL|macro|CUDA_WARM_START
 mdefine_line|#define CUDA_WARM_START&t;&t;0

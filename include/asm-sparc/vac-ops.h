@@ -1,8 +1,9 @@
-multiline_comment|/* $Id: vac-ops.h,v 1.12 1996/07/08 15:12:30 ecd Exp $ */
+multiline_comment|/* $Id: vac-ops.h,v 1.13 1998/01/30 10:59:59 jj Exp $ */
 macro_line|#ifndef _SPARC_VAC_OPS_H
 DECL|macro|_SPARC_VAC_OPS_H
 mdefine_line|#define _SPARC_VAC_OPS_H
 multiline_comment|/* vac-ops.h: Inline assembly routines to do operations on the Sparc&n; *            VAC (virtual address cache) for the sun4c.&n; *&n; * Copyright (C) 1994, David S. Miller (davem@caip.rutgers.edu)&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/sysen.h&gt;
 macro_line|#include &lt;asm/contregs.h&gt;
 macro_line|#include &lt;asm/asi.h&gt;
@@ -19,15 +20,20 @@ mdefine_line|#define S4CVACTAG_V        0x00080000
 DECL|macro|S4CVACTAG_TID
 mdefine_line|#define S4CVACTAG_TID      0x0000fffc
 multiline_comment|/* Sun4c VAC Virtual Address */
-DECL|macro|S4CVACVA_TID
+multiline_comment|/* These aren&squot;t used, why bother? (Anton) */
+macro_line|#if 0
 mdefine_line|#define S4CVACVA_TID       0x3fff0000
-DECL|macro|S4CVACVA_LINE
 mdefine_line|#define S4CVACVA_LINE      0x0000fff0
-DECL|macro|S4CVACVA_BIL
 mdefine_line|#define S4CVACVA_BIL       0x0000000f
+macro_line|#endif
 multiline_comment|/* The indexing of cache lines creates a problem.  Because the line&n; * field of a virtual address extends past the page offset within&n; * the virtual address it is possible to have what are called&n; * &squot;bad aliases&squot; which will create inconsistencies.  So we must make&n; * sure that within a context that if a physical page is mapped&n; * more than once, that &squot;extra&squot; line bits are the same.  If this is&n; * not the case, and thus is a &squot;bad alias&squot; we must turn off the&n; * cacheable bit in the pte&squot;s of all such pages.&n; */
+macro_line|#ifdef CONFIG_SUN4
 DECL|macro|S4CVAC_BADBITS
-mdefine_line|#define S4CVAC_BADBITS     0x0000f000
+mdefine_line|#define S4CVAC_BADBITS     0x0001e000
+macro_line|#else
+DECL|macro|S4CVAC_BADBITS
+mdefine_line|#define S4CVAC_BADBITS    0x0000f000
+macro_line|#endif
 multiline_comment|/* The following is true if vaddr1 and vaddr2 would cause&n; * a &squot;bad alias&squot;.&n; */
 DECL|macro|S4CVAC_BADALIAS
 mdefine_line|#define S4CVAC_BADALIAS(vaddr1, vaddr2) &bslash;&n;        ((((unsigned long) (vaddr1)) ^ ((unsigned long) (vaddr2))) &amp; &bslash;&n;&t; (S4CVAC_BADBITS))
@@ -54,6 +60,21 @@ r_int
 id|do_hwflushes
 suffix:semicolon
 multiline_comment|/* Hardware flushing available? */
+DECL|enumerator|NONE
+DECL|enumerator|WRITE_THROUGH
+r_enum
+(brace
+id|NONE
+comma
+id|WRITE_THROUGH
+comma
+DECL|enumerator|WRITE_BACK
+DECL|member|type
+id|WRITE_BACK
+)brace
+id|type
+suffix:semicolon
+multiline_comment|/* What type of VAC? */
 DECL|member|linesize
 r_int
 r_int

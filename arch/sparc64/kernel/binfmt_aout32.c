@@ -11,6 +11,7 @@ macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
+macro_line|#include &lt;linux/file.h&gt;
 macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/user.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
@@ -1562,10 +1563,11 @@ id|fd
 suffix:semicolon
 id|file
 op_assign
-id|current-&gt;files-&gt;fd
-(braket
+id|fcheck
+c_func
+(paren
 id|fd
-)braket
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -1940,6 +1942,7 @@ r_return
 id|retval
 suffix:semicolon
 )brace
+multiline_comment|/* N.B. Move to .h file and use code in fs/binfmt_aout.c? */
 r_static
 r_inline
 r_int
@@ -1988,10 +1991,11 @@ id|error
 suffix:semicolon
 id|file
 op_assign
-id|current-&gt;files-&gt;fd
-(braket
+id|fcheck
+c_func
+(paren
 id|fd
-)braket
+)paren
 suffix:semicolon
 r_if
 c_cond

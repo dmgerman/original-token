@@ -1,4 +1,4 @@
-multiline_comment|/* io-unit.h: Definitions for the sun4d IO-UNIT.&n; *&n; * Copyright (C) 1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* io-unit.h: Definitions for the sun4d IO-UNIT.&n; *&n; * Copyright (C) 1997,1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#ifndef _SPARC_IO_UNIT_H
 DECL|macro|_SPARC_IO_UNIT_H
 mdefine_line|#define _SPARC_IO_UNIT_H
@@ -10,9 +10,9 @@ DECL|macro|IOUNIT_DMA_BASE
 mdefine_line|#define IOUNIT_DMA_BASE&t;    0xfc000000 /* TOP - 64M */
 DECL|macro|IOUNIT_DMA_SIZE
 mdefine_line|#define IOUNIT_DMA_SIZE&t;    0x04000000 /* 64M */
-multiline_comment|/* We use last 4M for sparc_dvma_malloc */
+multiline_comment|/* We use last 1M for sparc_dvma_malloc */
 DECL|macro|IOUNIT_DVMA_SIZE
-mdefine_line|#define IOUNIT_DVMA_SIZE    0x00400000 /* 4M */
+mdefine_line|#define IOUNIT_DVMA_SIZE    0x00100000 /* 1M */
 multiline_comment|/* The format of an iopte in the external page tables */
 DECL|macro|IOUPTE_PAGE
 mdefine_line|#define IOUPTE_PAGE          0xffffff00 /* Physical page number (PA[35:12]) */
@@ -32,16 +32,66 @@ DECL|struct|iounit_struct
 r_struct
 id|iounit_struct
 (brace
-DECL|member|iommu_lock
+DECL|member|bmap
+r_int
+r_int
+id|bmap
+(braket
+(paren
+id|IOUNIT_DMA_SIZE
+op_rshift
+(paren
+id|PAGE_SHIFT
+op_plus
+l_int|3
+)paren
+)paren
+op_div
+r_sizeof
+(paren
+r_int
+r_int
+)paren
+)braket
+suffix:semicolon
+DECL|member|lock
 id|spinlock_t
-id|iommu_lock
+id|lock
 suffix:semicolon
 DECL|member|page_table
 id|iopte_t
 op_star
 id|page_table
 suffix:semicolon
+DECL|member|rotor
+r_int
+r_int
+id|rotor
+(braket
+l_int|3
+)braket
+suffix:semicolon
+DECL|member|limit
+r_int
+r_int
+id|limit
+(braket
+l_int|4
+)braket
+suffix:semicolon
 )brace
 suffix:semicolon
+DECL|macro|IOUNIT_BMAP1_START
+mdefine_line|#define IOUNIT_BMAP1_START&t;0x00000000
+DECL|macro|IOUNIT_BMAP1_END
+mdefine_line|#define IOUNIT_BMAP1_END&t;(IOUNIT_DMA_SIZE &gt;&gt; (PAGE_SHIFT + 1))
+DECL|macro|IOUNIT_BMAP2_START
+mdefine_line|#define IOUNIT_BMAP2_START&t;IOUNIT_BMAP1_END
+DECL|macro|IOUNIT_BMAP2_END
+mdefine_line|#define IOUNIT_BMAP2_END&t;IOUNIT_BMAP2_START + (IOUNIT_DMA_SIZE &gt;&gt; (PAGE_SHIFT + 2))
+DECL|macro|IOUNIT_BMAPM_START
+mdefine_line|#define IOUNIT_BMAPM_START&t;IOUNIT_BMAP2_END
+DECL|macro|IOUNIT_BMAPM_END
+mdefine_line|#define IOUNIT_BMAPM_END&t;((IOUNIT_DMA_SIZE - IOUNIT_DVMA_SIZE) &gt;&gt; PAGE_SHIFT)
 macro_line|#endif /* !(_SPARC_IO_UNIT_H) */
 eof

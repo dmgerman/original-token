@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: bwtwo.c,v 1.18 1997/07/17 02:21:43 davem Exp $&n; * bwtwo.c: bwtwo console driver&n; *&n; * Copyright (C) 1996 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; * Copyright (C) 1997 Eddie C. Dost   (ecd@skynet.be)&n; */
+multiline_comment|/* $Id: bwtwo.c,v 1.20 1998/03/10 20:18:22 jj Exp $&n; * bwtwo.c: bwtwo console driver&n; *&n; * Copyright (C) 1996 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; * Copyright (C) 1997 Eddie C. Dost   (ecd@skynet.be)&n; * Copyright (C) 1998 Pavel Machek    (pavel@ucw.cz)&n; */
 macro_line|#include &lt;linux/kd.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
@@ -246,13 +246,12 @@ r_return
 op_minus
 id|EAGAIN
 suffix:semicolon
-id|vma-&gt;vm_dentry
+id|vma-&gt;vm_file
 op_assign
-id|dget
-c_func
-(paren
-id|file-&gt;f_dentry
-)paren
+id|file
+suffix:semicolon
+id|file-&gt;f_count
+op_increment
 suffix:semicolon
 r_return
 l_int|0
@@ -665,6 +664,7 @@ id|fb-&gt;reset
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#ifndef CONFIG_SUN4&t;
 id|fb-&gt;blank
 op_assign
 id|bwtwo_blank
@@ -673,6 +673,7 @@ id|fb-&gt;unblank
 op_assign
 id|bwtwo_unblank
 suffix:semicolon
+macro_line|#endif
 id|fb-&gt;info.bwtwo.regs
 op_assign
 id|sparc_alloc_io
@@ -699,6 +700,8 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|sbdp
+op_logical_and
 op_logical_neg
 id|prom_getbool
 c_func

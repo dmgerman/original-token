@@ -1,10 +1,11 @@
-multiline_comment|/* $Id: sys_sparc.c,v 1.38 1998/01/09 16:42:48 jj Exp $&n; * linux/arch/sparc/kernel/sys_sparc.c&n; *&n; * This file contains various random system calls that&n; * have a non-standard calling sequence on the Linux/sparc&n; * platform.&n; */
+multiline_comment|/* $Id: sys_sparc.c,v 1.40 1998/03/28 08:29:26 davem Exp $&n; * linux/arch/sparc/kernel/sys_sparc.c&n; *&n; * This file contains various random system calls that&n; * have a non-standard calling sequence on the Linux/sparc&n; * platform.&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
-macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
+macro_line|#include &lt;linux/fs.h&gt;
+macro_line|#include &lt;linux/file.h&gt;
 macro_line|#include &lt;linux/sem.h&gt;
 macro_line|#include &lt;linux/msg.h&gt;
 macro_line|#include &lt;linux/shm.h&gt;
@@ -67,9 +68,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|sparc_cpu_model
-op_eq
-id|sun4c
+id|ARCH_SUN4C_SUN4
 )paren
 (brace
 r_if
@@ -839,28 +838,23 @@ id|MAP_ANONYMOUS
 )paren
 )paren
 (brace
+id|file
+op_assign
+id|fget
+c_func
+(paren
+id|fd
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
-id|fd
-op_ge
-id|NR_OPEN
-op_logical_or
 op_logical_neg
-(paren
 id|file
-op_assign
-id|current-&gt;files-&gt;fd
-(braket
-id|fd
-)braket
 )paren
-)paren
-(brace
 r_goto
 id|out
 suffix:semicolon
-)brace
 )brace
 id|retval
 op_assign
@@ -899,7 +893,7 @@ id|addr
 )paren
 (brace
 r_goto
-id|out
+id|out_putf
 suffix:semicolon
 )brace
 )brace
@@ -936,15 +930,13 @@ id|PAGE_SIZE
 )paren
 (brace
 r_goto
-id|out
+id|out_putf
 suffix:semicolon
 )brace
 r_if
 c_cond
 (paren
-id|sparc_cpu_model
-op_eq
-id|sun4c
+id|ARCH_SUN4C_SUN4
 )paren
 (brace
 r_if
@@ -970,7 +962,7 @@ op_assign
 id|current-&gt;mm-&gt;brk
 suffix:semicolon
 r_goto
-id|out
+id|out_putf
 suffix:semicolon
 )brace
 )brace
@@ -990,6 +982,19 @@ comma
 id|flags
 comma
 id|off
+)paren
+suffix:semicolon
+id|out_putf
+suffix:colon
+r_if
+c_cond
+(paren
+id|file
+)paren
+id|fput
+c_func
+(paren
+id|file
 )paren
 suffix:semicolon
 id|out

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: weitek.c,v 1.15 1997/07/22 06:14:11 davem Exp $&n; * weitek.c: Tadpole P9100/P9000 console driver&n; *&n; * Copyright (C) 1996 David Redman (djhr@tadpole.co.uk)&n; */
+multiline_comment|/* $Id: weitek.c,v 1.16 1998/03/10 20:18:54 jj Exp $&n; * weitek.c: Tadpole P9100/P9000 console driver&n; *&n; * Copyright (C) 1996 David Redman (djhr@tadpole.co.uk)&n; */
 macro_line|#include &lt;linux/kd.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
@@ -256,13 +256,12 @@ op_add_assign
 id|map_size
 suffix:semicolon
 )brace
-id|vma-&gt;vm_dentry
+id|vma-&gt;vm_file
 op_assign
-id|dget
-c_func
-(paren
-id|file-&gt;f_dentry
-)paren
+id|file
+suffix:semicolon
+id|file-&gt;f_count
+op_increment
 suffix:semicolon
 r_return
 l_int|0

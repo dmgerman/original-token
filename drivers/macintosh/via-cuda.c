@@ -9,6 +9,7 @@ macro_line|#include &lt;asm/prom.h&gt;
 macro_line|#include &lt;asm/adb.h&gt;
 macro_line|#include &lt;asm/cuda.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
+macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 DECL|variable|via
 r_static
@@ -335,6 +336,8 @@ id|vias-&gt;intrs
 (braket
 id|i
 )braket
+dot
+id|line
 )paren
 suffix:semicolon
 id|printk
@@ -390,7 +393,13 @@ r_int
 r_char
 op_star
 )paren
+id|ioremap
+c_func
+(paren
 id|vias-&gt;addrs-&gt;address
+comma
+l_int|0x2000
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -426,6 +435,8 @@ id|vias-&gt;intrs
 (braket
 l_int|0
 )braket
+dot
+id|line
 comma
 id|via_interrupt
 comma
@@ -451,6 +462,8 @@ id|vias-&gt;intrs
 (braket
 l_int|0
 )braket
+dot
+id|line
 )paren
 suffix:semicolon
 r_return
@@ -998,6 +1011,40 @@ r_int
 r_int
 id|flags
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|via
+op_eq
+l_int|NULL
+)paren
+(brace
+id|req-&gt;complete
+op_assign
+l_int|1
+suffix:semicolon
+r_return
+op_minus
+id|ENXIO
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|req-&gt;nbytes
+template_param
+id|CUDA_PACKET
+)paren
+(brace
+id|req-&gt;complete
+op_assign
+l_int|1
+suffix:semicolon
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
+)brace
 id|req-&gt;next
 op_assign
 l_int|0
@@ -1794,6 +1841,64 @@ id|reply_ptr
 op_minus
 id|req-&gt;reply
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|req-&gt;data
+(braket
+l_int|0
+)braket
+op_eq
+id|ADB_PACKET
+)paren
+(brace
+multiline_comment|/* Have to adjust the reply from ADB commands */
+r_if
+c_cond
+(paren
+id|req-&gt;reply_len
+op_le
+l_int|2
+op_logical_or
+(paren
+id|req-&gt;reply
+(braket
+l_int|1
+)braket
+op_amp
+l_int|2
+)paren
+op_ne
+l_int|0
+)paren
+(brace
+multiline_comment|/* the 0x2 bit indicates no response */
+id|req-&gt;reply_len
+op_assign
+l_int|0
+suffix:semicolon
+)brace
+r_else
+(brace
+multiline_comment|/* leave just the command and result bytes in the reply */
+id|req-&gt;reply_len
+op_sub_assign
+l_int|2
+suffix:semicolon
+id|memmove
+c_func
+(paren
+id|req-&gt;reply
+comma
+id|req-&gt;reply
+op_plus
+l_int|2
+comma
+id|req-&gt;reply_len
+)paren
+suffix:semicolon
+)brace
+)brace
 id|req-&gt;complete
 op_assign
 l_int|1

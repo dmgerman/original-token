@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * $Id: idle.c,v 1.13 1998/01/06 06:44:55 cort Exp $&n; *&n; * Idle daemon for PowerPC.  Idle daemon will handle any action&n; * that needs to be taken when the system becomes idle.&n; *&n; * Written by Cort Dougan (cort@cs.nmt.edu)&n; *&n; * This program is free software; you can redistribute it and/or&n; * modify it under the terms of the GNU General Public License&n; * as published by the Free Software Foundation; either version&n; * 2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; * $Id: idle.c,v 1.35 1998/04/07 20:24:23 cort Exp $&n; *&n; * Idle daemon for PowerPC.  Idle daemon will handle any action&n; * that needs to be taken when the system becomes idle.&n; *&n; * Written by Cort Dougan (cort@cs.nmt.edu)&n; *&n; * This program is free software; you can redistribute it and/or&n; * modify it under the terms of the GNU General Public License&n; * as published by the Free Software Foundation; either version&n; * 2 of the License, or (at your option) any later version.&n; */
 DECL|macro|__KERNEL_SYSCALLS__
 mdefine_line|#define __KERNEL_SYSCALLS__
 macro_line|#include &lt;linux/errno.h&gt;
@@ -18,17 +18,18 @@ macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/smp_lock.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;
 macro_line|#include &lt;asm/mmu.h&gt;
-r_int
+macro_line|#include &lt;asm/cache.h&gt;
+macro_line|#ifdef CONFIG_PMAC
+macro_line|#include &lt;asm/mediabay.h&gt;
+macro_line|#endif
+r_void
 id|zero_paged
 c_func
 (paren
 r_void
-op_star
-id|unused
 )paren
 suffix:semicolon
 r_void
-r_inline
 id|power_save
 c_func
 (paren
@@ -42,6 +43,20 @@ c_func
 (paren
 r_void
 )paren
+suffix:semicolon
+DECL|variable|htab_reclaim_on
+r_int
+r_int
+id|htab_reclaim_on
+op_assign
+l_int|0
+suffix:semicolon
+DECL|variable|zero_paged_on
+r_int
+r_int
+id|zero_paged_on
+op_assign
+l_int|0
 suffix:semicolon
 DECL|function|idled
 r_int
@@ -59,22 +74,6 @@ op_assign
 op_minus
 id|EPERM
 suffix:semicolon
-multiline_comment|/*&n;&t; * want one per cpu since it would be nice to have all&n;&t; * processors who aren&squot;t doing anything&n;&t; * zero-ing pages since this daemon is lock-free&n;&t; * -- Cort&n;&t; */
-multiline_comment|/* kernel_thread(zero_paged, NULL, 0); */
-macro_line|#ifdef __SMP__&t;
-id|printk
-c_func
-(paren
-l_string|&quot;SMP %d: in idle.  current = %s/%d&bslash;n&quot;
-comma
-id|current-&gt;processor
-comma
-id|current-&gt;comm
-comma
-id|current-&gt;pid
-)paren
-suffix:semicolon
-macro_line|#endif /* __SMP__ */
 r_for
 c_loop
 (paren
@@ -82,6 +81,11 @@ suffix:semicolon
 suffix:semicolon
 )paren
 (brace
+id|__sti
+c_func
+(paren
+)paren
+suffix:semicolon
 multiline_comment|/* endless loop with no priority at all */
 id|current-&gt;priority
 op_assign
@@ -93,17 +97,56 @@ op_assign
 op_minus
 l_int|100
 suffix:semicolon
-multiline_comment|/* endless idle loop with no priority at all */
-multiline_comment|/* htab_reclaim(); */
+id|check_pgt_cache
+c_func
+(paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|need_resched
+op_logical_and
+id|zero_paged_on
+)paren
+id|zero_paged
+c_func
+(paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|need_resched
+op_logical_and
+id|htab_reclaim_on
+)paren
+id|htab_reclaim
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t;&t; * Only processor 1 may sleep now since processor 2 would&n;&t;&t; * never wake up.  Need to add timer code for processor 2&n;&t;&t; * then it can sleep. -- Cort&n;&t;&t; */
+macro_line|#ifndef __SMP__
+r_if
+c_cond
+(paren
+op_logical_neg
+id|need_resched
+)paren
+id|power_save
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif /* __SMP__ */
 id|schedule
 c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#ifndef __SMP__
-multiline_comment|/* can&squot;t do this on smp since second processor&n;&t;&t;   will never wake up -- Cort */
-multiline_comment|/* power_save(); */
-macro_line|#endif /* __SMP__  */
 )brace
 id|ret
 op_assign
@@ -113,7 +156,14 @@ r_return
 id|ret
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Mark &squot;zombie&squot; pte&squot;s in the hash table as invalid.&n; * This improves performance for the hash table reload code&n; * a bit since we don&squot;t consider unused pages as valid.&n; * I haven&squot;t done any rigorous performance analysis yet&n; * so it&squot;s still experimental and turned off here.&n; *  -- Cort&n; */
+multiline_comment|/*&n; * Mark &squot;zombie&squot; pte&squot;s in the hash table as invalid.&n; * This improves performance for the hash table reload code&n; * a bit since we don&squot;t consider unused pages as valid.&n; *  -- Cort&n; */
+DECL|variable|reclaim_ptr
+id|PTE
+op_star
+id|reclaim_ptr
+op_assign
+l_int|0
+suffix:semicolon
 DECL|function|htab_reclaim
 r_void
 r_inline
@@ -123,6 +173,8 @@ c_func
 r_void
 )paren
 (brace
+macro_line|#ifndef CONFIG_8xx&t;&t;
+macro_line|#if 0&t;
 id|PTE
 op_star
 id|ptr
@@ -130,6 +182,13 @@ comma
 op_star
 id|start
 suffix:semicolon
+r_static
+r_int
+id|dir
+op_assign
+l_int|1
+suffix:semicolon
+macro_line|#endif&t;
 r_struct
 id|task_struct
 op_star
@@ -164,7 +223,13 @@ l_int|0
 )paren
 r_return
 suffix:semicolon
-multiline_comment|/*lock_dcache();*/
+id|lock_dcache
+c_func
+(paren
+l_int|1
+)paren
+suffix:semicolon
+macro_line|#if 0&t;
 multiline_comment|/* find a random place in the htab to start each time */
 id|start
 op_assign
@@ -178,10 +243,16 @@ id|Hash_size
 op_div
 r_sizeof
 (paren
-id|ptr
+id|PTE
 )paren
 )paren
 )braket
+suffix:semicolon
+multiline_comment|/* go a different direction each time */
+id|dir
+op_mul_assign
+op_minus
+l_int|1
 suffix:semicolon
 r_for
 c_loop
@@ -190,45 +261,70 @@ id|ptr
 op_assign
 id|start
 suffix:semicolon
+op_logical_neg
+id|need_resched
+op_logical_and
+(paren
 id|ptr
-OL
+op_ne
 id|Hash_end
+)paren
+op_logical_and
+(paren
+id|ptr
+op_ne
+id|Hash
+)paren
 suffix:semicolon
 id|ptr
-op_increment
+op_add_assign
+id|dir
 )paren
 (brace
-r_if
-c_cond
-(paren
-id|ptr
-op_eq
-id|start
-)paren
-r_return
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|ptr
-op_eq
-id|Hash_end
-)paren
-id|ptr
-op_assign
-id|Hash
-suffix:semicolon
-id|valid
-op_assign
-l_int|0
-suffix:semicolon
+macro_line|#else
 r_if
 c_cond
 (paren
 op_logical_neg
-id|ptr-&gt;v
+id|reclaim_ptr
+)paren
+id|reclaim_ptr
+op_assign
+id|Hash
+suffix:semicolon
+r_while
+c_loop
+(paren
+op_logical_neg
+id|need_resched
+)paren
+(brace
+id|reclaim_ptr
+op_increment
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|reclaim_ptr
+op_eq
+id|Hash_end
+)paren
+id|reclaim_ptr
+op_assign
+id|Hash
+suffix:semicolon
+macro_line|#endif&t;  
+r_if
+c_cond
+(paren
+op_logical_neg
+id|reclaim_ptr-&gt;v
 )paren
 r_continue
+suffix:semicolon
+id|valid
+op_assign
+l_int|0
 suffix:semicolon
 id|for_each_task
 c_func
@@ -241,17 +337,15 @@ c_cond
 (paren
 id|need_resched
 )paren
-(brace
-multiline_comment|/*unlock_dcache();*/
-r_return
+r_goto
+id|out
 suffix:semicolon
-)brace
 multiline_comment|/* if this vsid/context is in use */
 r_if
 c_cond
 (paren
 (paren
-id|ptr-&gt;vsid
+id|reclaim_ptr-&gt;vsid
 op_rshift
 l_int|4
 )paren
@@ -275,12 +369,32 @@ id|valid
 r_continue
 suffix:semicolon
 multiline_comment|/* this pte isn&squot;t used */
-id|ptr-&gt;v
+id|reclaim_ptr-&gt;v
 op_assign
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*unlock_dcache();*/
+id|out
+suffix:colon
+r_if
+c_cond
+(paren
+id|need_resched
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;need_resched: %x&bslash;n&quot;
+comma
+id|need_resched
+)paren
+suffix:semicolon
+id|unlock_dcache
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif /* CONFIG_8xx */
 )brace
 multiline_comment|/*&n; * Syscall entry into the idle task. -- Cort&n; */
 DECL|function|sys_idle
@@ -292,6 +406,15 @@ c_func
 r_void
 )paren
 (brace
+r_extern
+r_int
+id|media_bay_task
+c_func
+(paren
+r_void
+op_star
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -305,6 +428,23 @@ op_minus
 id|EPERM
 suffix:semicolon
 )brace
+macro_line|#ifdef CONFIG_PMAC
+r_if
+c_cond
+(paren
+id|media_bay_present
+)paren
+id|kernel_thread
+c_func
+(paren
+id|media_bay_task
+comma
+l_int|NULL
+comma
+l_int|0
+)paren
+suffix:semicolon
+macro_line|#endif
 id|idled
 c_func
 (paren
@@ -372,14 +512,6 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* # pages zero&squot;d over time -- for ooh&squot;s and ahhh&squot;s */
-DECL|variable|pageptr
-r_int
-r_int
-id|pageptr
-op_assign
-l_int|0
-suffix:semicolon
-multiline_comment|/* current page being zero&squot;d */
 DECL|variable|zeropage_hits
 r_int
 r_int
@@ -396,15 +528,6 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* # zero&squot;d pages request that&squot;ve been made */
-DECL|variable|page_zerod_wait
-r_static
-r_struct
-id|wait_queue
-op_star
-id|page_zerod_wait
-op_assign
-l_int|NULL
-suffix:semicolon
 DECL|macro|PAGE_THRESHOLD
 mdefine_line|#define PAGE_THRESHOLD 96       /* how many pages to keep pre-zero&squot;d */
 multiline_comment|/*&n; * Returns a pre-zero&squot;d page from the list otherwise returns&n; * NULL.&n; */
@@ -492,13 +615,6 @@ op_amp
 id|zerocount
 )paren
 suffix:semicolon
-id|wake_up
-c_func
-(paren
-op_amp
-id|page_zerod_wait
-)paren
-suffix:semicolon
 id|need_resched
 op_assign
 l_int|1
@@ -522,111 +638,34 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Experimental stuff to zero out pages in the idle task&n; * to speed up get_free_pages() -- Cort&n; * Zero&squot;s out pages until we need to resched or&n; * we&squot;ve reached the limit of zero&squot;d pages.&n; */
+multiline_comment|/*&n; * Experimental stuff to zero out pages in the idle task&n; * to speed up get_free_pages(). Zero&squot;s out pages until&n; * we&squot;ve reached the limit of zero&squot;d pages.  We handle&n; * reschedule()&squot;s in here so when we return we know we&squot;ve&n; * zero&squot;d all we need to for now.&n; */
 DECL|function|zero_paged
-r_int
+r_void
 id|zero_paged
 c_func
 (paren
 r_void
-op_star
-id|unused
 )paren
 (brace
-r_extern
-id|pte_t
-op_star
-id|get_pte
-c_func
-(paren
-r_struct
-id|mm_struct
-op_star
-id|mm
-comma
 r_int
 r_int
-id|address
-)paren
+id|pageptr
+op_assign
+l_int|0
 suffix:semicolon
-id|pgd_t
-op_star
-id|dir
-suffix:semicolon
-id|pmd_t
-op_star
-id|pmd
-suffix:semicolon
+multiline_comment|/* current page being zero&squot;d */
 id|pte_t
 op_star
 id|pte
 suffix:semicolon
-id|sprintf
-c_func
-(paren
-id|current-&gt;comm
-comma
-l_string|&quot;zero_paged (idle)&quot;
-)paren
-suffix:semicolon
-multiline_comment|/* current-&gt;blocked = ~0UL; */
-macro_line|#ifdef __SMP__
-id|printk
-c_func
-(paren
-l_string|&quot;Started zero_paged (cpu %d)&bslash;n&quot;
-comma
-id|hard_smp_processor_id
-c_func
-(paren
-)paren
-)paren
-suffix:semicolon
-macro_line|#else
-id|printk
-c_func
-(paren
-l_string|&quot;Started zero_paged&bslash;n&quot;
-)paren
-suffix:semicolon
-macro_line|#endif /* __SMP__ */
-id|__sti
-c_func
-(paren
-)paren
-suffix:semicolon
-r_while
-c_loop
-(paren
-l_int|1
-)paren
-(brace
-multiline_comment|/* don&squot;t want to be pre-empted by swapper or power_save */
-id|current-&gt;priority
-op_assign
-op_minus
-l_int|98
-suffix:semicolon
-id|current-&gt;counter
-op_assign
-op_minus
-l_int|98
-suffix:semicolon
-multiline_comment|/* we don&squot;t want to run until we have something to do */
 r_while
 c_loop
 (paren
 id|zerocount
-op_ge
+op_le
 id|PAGE_THRESHOLD
 )paren
-id|sleep_on
-c_func
-(paren
-op_amp
-id|page_zerod_wait
-)paren
-suffix:semicolon
+(brace
 multiline_comment|/*&n;&t;&t; * Mark a page as reserved so we can mess with it&n;&t;&t; * If we&squot;re interrupted we keep this page and our place in it&n;&t;&t; * since we validly hold it and it&squot;s reserved for us.&n;&t;&t; */
 id|pageptr
 op_assign
@@ -644,8 +683,7 @@ c_cond
 op_logical_neg
 id|pageptr
 )paren
-r_goto
-id|retry
+r_return
 suffix:semicolon
 r_if
 c_cond
@@ -658,9 +696,9 @@ c_func
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t;&t; * Make the page no cache so we don&squot;t blow our cache with 0&squot;s&n;&t;&t; */
-id|dir
+id|pte
 op_assign
-id|pgd_offset
+id|find_pte
 c_func
 (paren
 id|init_task.mm
@@ -671,59 +709,19 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|dir
+op_logical_neg
+id|pte
 )paren
 (brace
-id|pmd
-op_assign
-id|pmd_offset
+id|printk
 c_func
 (paren
-id|dir
-comma
-id|pageptr
-op_amp
-id|PAGE_MASK
+l_string|&quot;pte NULL in zero_paged()&bslash;n&quot;
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|pmd
-op_logical_and
-id|pmd_present
-c_func
-(paren
-op_star
-id|pmd
-)paren
-)paren
-(brace
-id|pte
-op_assign
-id|pte_offset
-c_func
-(paren
-id|pmd
-comma
-id|pageptr
-op_amp
-id|PAGE_MASK
-)paren
+r_return
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|pte
-op_logical_and
-id|pte_present
-c_func
-(paren
-op_star
-id|pte
-)paren
-)paren
-(brace
+)brace
 id|pte_uncache
 c_func
 (paren
@@ -745,9 +743,6 @@ comma
 id|pageptr
 )paren
 suffix:semicolon
-)brace
-)brace
-)brace
 multiline_comment|/*&n;&t;&t; * Important here to not take time away from real processes.&n;&t;&t; */
 r_for
 c_loop
@@ -873,18 +868,16 @@ op_amp
 id|zerototal
 )paren
 suffix:semicolon
-id|retry
-suffix:colon
-id|schedule
-c_func
-(paren
-)paren
+)brace
+)brace
+DECL|variable|powersave_mode
+r_int
+id|powersave_mode
+op_assign
+id|HID0_DOZE
 suffix:semicolon
-)brace
-)brace
 DECL|function|power_save
 r_void
-r_inline
 id|power_save
 c_func
 (paren
@@ -897,10 +890,9 @@ id|msr
 comma
 id|hid0
 suffix:semicolon
-multiline_comment|/* no powersaving modes on the 601 */
-r_if
+multiline_comment|/* only sleep on the 603-family/750 processors */
+r_switch
 c_cond
-(paren
 (paren
 id|_get_PVR
 c_func
@@ -909,68 +901,98 @@ c_func
 op_rshift
 l_int|16
 )paren
-op_eq
-l_int|1
-)paren
 (brace
+r_case
+l_int|3
+suffix:colon
+multiline_comment|/* 603 */
+r_case
+l_int|6
+suffix:colon
+multiline_comment|/* 603e */
+r_case
+l_int|7
+suffix:colon
+multiline_comment|/* 603ev */
+r_case
+l_int|8
+suffix:colon
+multiline_comment|/* 750 */
+r_break
+suffix:semicolon
+r_default
+suffix:colon
 r_return
 suffix:semicolon
 )brace
-id|__sti
+id|save_flags
+c_func
+(paren
+id|msr
+)paren
+suffix:semicolon
+id|cli
 c_func
 (paren
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|need_resched
+)paren
+(brace
 id|asm
-r_volatile
+c_func
 (paren
-multiline_comment|/* clear powersaving modes and set nap mode */
-l_string|&quot;mfspr %3,1008 &bslash;n&bslash;t&quot;
-l_string|&quot;andc  %3,%3,%4 &bslash;n&bslash;t&quot;
-l_string|&quot;or    %3,%3,%5 &bslash;n&bslash;t&quot;
-l_string|&quot;mtspr 1008,%3 &bslash;n&bslash;t&quot;
-multiline_comment|/* enter the mode */
-l_string|&quot;mfmsr %0 &bslash;n&bslash;t&quot;
-l_string|&quot;oris  %0,%0,%2 &bslash;n&bslash;t&quot;
-l_string|&quot;sync &bslash;n&bslash;t&quot;
-l_string|&quot;mtmsr %0 &bslash;n&bslash;t&quot;
-l_string|&quot;isync &bslash;n&bslash;t&quot;
+l_string|&quot;mfspr %0,1008&quot;
 suffix:colon
-l_string|&quot;=&amp;r&quot;
+l_string|&quot;=r&quot;
 (paren
-id|msr
+id|hid0
 )paren
 suffix:colon
-l_string|&quot;0&quot;
-(paren
-id|msr
 )paren
-comma
-l_string|&quot;i&quot;
+suffix:semicolon
+id|hid0
+op_and_assign
+op_complement
 (paren
-id|MSR_POW
-op_rshift
-l_int|16
+id|HID0_NAP
+op_or
+id|HID0_SLEEP
+op_or
+id|HID0_DOZE
 )paren
-comma
+suffix:semicolon
+id|hid0
+op_or_assign
+id|powersave_mode
+op_or
+id|HID0_DPM
+suffix:semicolon
+id|asm
+c_func
+(paren
+l_string|&quot;mtspr 1008,%0&quot;
+suffix:colon
+suffix:colon
 l_string|&quot;r&quot;
 (paren
 id|hid0
 )paren
-comma
-l_string|&quot;r&quot;
-(paren
-id|HID0_DOZE
-op_or
-id|HID0_NAP
-op_or
-id|HID0_SLEEP
 )paren
-comma
-l_string|&quot;r&quot;
+suffix:semicolon
+id|msr
+op_or_assign
+id|MSR_POW
+suffix:semicolon
+)brace
+id|restore_flags
+c_func
 (paren
-id|HID0_NAP
-)paren
+id|msr
 )paren
 suffix:semicolon
 )brace

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: io.h,v 1.14 1997/04/10 05:13:22 davem Exp $ */
+multiline_comment|/* $Id: io.h,v 1.15 1998/01/30 10:59:51 jj Exp $ */
 macro_line|#ifndef __SPARC_IO_H
 DECL|macro|__SPARC_IO_H
 mdefine_line|#define __SPARC_IO_H
@@ -331,6 +331,9 @@ id|sparc_cpu_model
 r_case
 id|sun4c
 suffix:colon
+r_case
+id|sun4
+suffix:colon
 id|sun4c_mapioaddr
 c_func
 (paren
@@ -440,6 +443,9 @@ id|sparc_cpu_model
 (brace
 r_case
 id|sun4c
+suffix:colon
+r_case
+id|sun4
 suffix:colon
 id|sun4c_unmapioaddr
 c_func

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: user.h,v 1.4 1996/07/24 23:17:14 miguel Exp $&n; * asm-sparc/user.h: Core file definitions for the Sparc.&n; *&n; * Keep in sync with reg.h.  Actually, we could get rid of this&n; * one, since we won&squot;t a.out core dump that much anyways - miguel.&n; * Copyright (C) 1995 (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: user.h,v 1.5 1998/02/23 01:49:22 rth Exp $&n; * asm-sparc/user.h: Core file definitions for the Sparc.&n; *&n; * Keep in sync with reg.h.  Actually, we could get rid of this&n; * one, since we won&squot;t a.out core dump that much anyways - miguel.&n; * Copyright (C) 1995 (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _SPARC_USER_H
 DECL|macro|_SPARC_USER_H
 mdefine_line|#define _SPARC_USER_H
@@ -177,15 +177,15 @@ multiline_comment|/* Special sigcontext subcode, if any */
 )brace
 suffix:semicolon
 DECL|macro|NBPG
-mdefine_line|#define NBPG                   PAGE_SIZE
+mdefine_line|#define NBPG                   0x2000
 DECL|macro|UPAGES
 mdefine_line|#define UPAGES                 1
 DECL|macro|HOST_TEXT_START_ADDR
 mdefine_line|#define HOST_TEXT_START_ADDR   (u.start_code)
 DECL|macro|HOST_DATA_START_ADDR
-mdefine_line|#define HOST_DATA_START_ADDR   (u.start_data)
+mdefine_line|#define HOST_DATA_START_ADDR   (u.uexec.a_data)
 DECL|macro|HOST_STACK_END_ADDR
-mdefine_line|#define HOST_STACK_END_ADDR    (u.start_stack + u.u_ssize * NBPG)
+mdefine_line|#define HOST_STACK_END_ADDR    (- u.u_ssize * NBPG)
 DECL|macro|SUNOS_CORE_MAGIC
 mdefine_line|#define SUNOS_CORE_MAGIC       0x080456
 macro_line|#endif /* !(_SPARC_USER_H) */

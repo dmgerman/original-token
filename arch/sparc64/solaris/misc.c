@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: misc.c,v 1.6 1997/12/14 23:40:15 ecd Exp $&n; * misc.c: Miscelaneous syscall emulation for Solaris&n; *&n; * Copyright (C) 1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: misc.c,v 1.10 1998/04/01 05:16:06 davem Exp $&n; * misc.c: Miscelaneous syscall emulation for Solaris&n; *&n; * Copyright (C) 1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/module.h&gt; 
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
@@ -587,6 +587,8 @@ id|buffer
 (brace
 r_int
 id|i
+comma
+id|len
 suffix:semicolon
 r_struct
 (brace
@@ -749,6 +751,8 @@ id|buffer
 op_assign
 l_int|0
 suffix:semicolon
+id|len
+op_assign
 id|prom_getproperty
 c_func
 (paren
@@ -761,6 +765,22 @@ comma
 l_int|256
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|len
+OG
+l_int|0
+)paren
+(brace
+id|buffer
+(braket
+id|len
+)braket
+op_assign
+l_int|0
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -877,6 +897,9 @@ c_func
 id|prom_root_node
 )paren
 suffix:semicolon
+r_int
+id|len
+suffix:semicolon
 id|node
 op_assign
 id|prom_searchsiblings
@@ -892,6 +915,8 @@ id|buffer
 op_assign
 l_int|0
 suffix:semicolon
+id|len
+op_assign
 id|prom_getproperty
 c_func
 (paren
@@ -904,6 +929,22 @@ comma
 l_int|256
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|len
+OG
+l_int|0
+)paren
+(brace
+id|buffer
+(braket
+id|len
+)braket
+op_assign
+l_int|0
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -1601,6 +1642,13 @@ DECL|macro|SOLARIS_CONFIG_PHYS_PAGES
 mdefine_line|#define&t;SOLARIS_CONFIG_PHYS_PAGES&t;&t;26
 DECL|macro|SOLARIS_CONFIG_AVPHYS_PAGES
 mdefine_line|#define&t;SOLARIS_CONFIG_AVPHYS_PAGES&t;&t;27
+r_extern
+r_int
+id|prom_cpu_nodes
+(braket
+id|NR_CPUS
+)braket
+suffix:semicolon
 DECL|function|solaris_sysconf
 id|asmlinkage
 r_int
@@ -1663,15 +1711,13 @@ r_return
 id|prom_getintdefault
 c_func
 (paren
-id|linux_cpus
+id|prom_cpu_nodes
 (braket
 id|smp_processor_id
 c_func
 (paren
 )paren
 )braket
-dot
-id|prom_node
 comma
 l_string|&quot;clock-frequency&quot;
 comma
@@ -2091,6 +2137,70 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
+DECL|function|solaris_gettimeofday
+id|asmlinkage
+r_int
+id|solaris_gettimeofday
+c_func
+(paren
+id|u32
+id|tim
+)paren
+(brace
+r_int
+(paren
+op_star
+id|sys_gettimeofday
+)paren
+(paren
+r_struct
+id|timeval
+op_star
+comma
+r_struct
+id|timezone
+op_star
+)paren
+op_assign
+(paren
+r_int
+(paren
+op_star
+)paren
+(paren
+r_struct
+id|timeval
+op_star
+comma
+r_struct
+id|timezone
+op_star
+)paren
+)paren
+id|SYS
+c_func
+(paren
+id|gettimeofday
+)paren
+suffix:semicolon
+r_return
+id|sys_gettimeofday
+c_func
+(paren
+(paren
+r_struct
+id|timeval
+op_star
+)paren
+(paren
+id|u64
+)paren
+id|tim
+comma
+l_int|NULL
+)paren
+suffix:semicolon
+)brace
 DECL|function|do_sol_unimplemented
 id|asmlinkage
 r_int
@@ -2254,11 +2364,19 @@ macro_line|#endif
 l_int|NULL
 )brace
 suffix:semicolon
+r_extern
+r_int
+id|init_socksys
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
 macro_line|#ifdef MODULE
 id|MODULE_AUTHOR
 c_func
 (paren
-l_string|&quot;Jakub Jelinek (jj@sunsite.mff.cuni.cz)&quot;
+l_string|&quot;Jakub Jelinek (jj@ultra.linux.cz), Patrik Rak (prak3264@ss1000.ms.mff.cuni.cz)&quot;
 )paren
 suffix:semicolon
 id|MODULE_DESCRIPTION
@@ -2266,6 +2384,8 @@ c_func
 (paren
 l_string|&quot;Solaris binary emulation module&quot;
 )paren
+suffix:semicolon
+id|EXPORT_NO_SYMBOLS
 suffix:semicolon
 macro_line|#ifdef __sparc_v9__
 r_extern
@@ -2292,14 +2412,6 @@ id|solaris_syscall
 )braket
 suffix:semicolon
 r_extern
-r_int
-id|init_socksys
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_extern
 r_void
 id|cleanup_socksys
 c_func
@@ -2317,6 +2429,16 @@ r_void
 (brace
 r_int
 id|ret
+suffix:semicolon
+id|SOLDD
+c_func
+(paren
+(paren
+l_string|&quot;Solaris module at %p&bslash;n&quot;
+comma
+id|solaris_sparc_syscall
+)paren
+)paren
 suffix:semicolon
 id|register_exec_domain
 c_func

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: contregs.h,v 1.6 1995/11/25 02:31:27 davem Exp $ */
+multiline_comment|/* $Id: contregs.h,v 1.7 1998/01/30 10:59:48 jj Exp $ */
 macro_line|#ifndef _SPARC_CONTREGS_H
 DECL|macro|_SPARC_CONTREGS_H
 mdefine_line|#define _SPARC_CONTREGS_H
@@ -13,7 +13,7 @@ mdefine_line|#define AC_SENABLE    0x40000000    /* 4c system dvma/cache/reset e
 DECL|macro|AC_UDVMA_ENB
 mdefine_line|#define AC_UDVMA_ENB  0x50000000    /* 4  Not used on Sun boards, byte       */
 DECL|macro|AC_BUS_ERROR
-mdefine_line|#define AC_BUS_ERROR  0x60000000    /* 4  Cleared on read, byte.             */
+mdefine_line|#define AC_BUS_ERROR  0x60000000    /* 4  Not cleared on read, byte.         */
 DECL|macro|AC_SYNC_ERR
 mdefine_line|#define AC_SYNC_ERR   0x60000000    /*  c fault type                         */
 DECL|macro|AC_SYNC_VA

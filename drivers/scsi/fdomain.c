@@ -474,7 +474,7 @@ suffix:semicolon
 multiline_comment|/* 8k FIFO for&n;&t;&t;&t;&t;&t;&t;pre-tmc18c30 chips */
 r_extern
 r_void
-id|fdomain_16x0_intr
+id|do_fdomain_16x0_intr
 c_func
 (paren
 r_int
@@ -1980,9 +1980,9 @@ op_assign
 id|pci_find_device
 c_func
 (paren
-id|PCI_VENDOR_ID
+id|PCI_VENDOR_ID_FD
 comma
-id|PCI_DEVICE_ID
+id|PCI_DEVICE_ID_FD_36C70
 comma
 id|pdev
 )paren

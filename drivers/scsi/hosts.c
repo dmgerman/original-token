@@ -147,6 +147,9 @@ macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_PSI240I
 macro_line|#include &quot;psi240i.h&quot;
 macro_line|#endif
+macro_line|#ifdef CONFIG_SCSI_PLUTO
+macro_line|#include &quot;pluto.h&quot;
+macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_DEBUG
 macro_line|#include &quot;scsi_debug.h&quot;
 macro_line|#endif
@@ -342,6 +345,10 @@ comma
 macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_MAC53C94
 id|SCSI_MAC53C94
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_SCSI_PLUTO
+id|PLUTO
 comma
 macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_DEBUG

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: pgtsun4c.h,v 1.34 1997/03/23 03:47:08 davem Exp $&n; * pgtsun4c.h:  Sun4c specific pgtable.h defines and code.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: pgtsun4c.h,v 1.35 1998/01/30 11:00:05 jj Exp $&n; * pgtsun4c.h:  Sun4c specific pgtable.h defines and code.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _SPARC_PGTSUN4C_H
 DECL|macro|_SPARC_PGTSUN4C_H
 mdefine_line|#define _SPARC_PGTSUN4C_H
@@ -30,6 +30,14 @@ DECL|macro|SUN4C_REAL_PGDIR_MASK
 mdefine_line|#define SUN4C_REAL_PGDIR_MASK        (~(SUN4C_REAL_PGDIR_SIZE-1))
 DECL|macro|SUN4C_REAL_PGDIR_ALIGN
 mdefine_line|#define SUN4C_REAL_PGDIR_ALIGN(addr) (((addr)+SUN4C_REAL_PGDIR_SIZE-1)&amp;SUN4C_REAL_PGDIR_MASK)
+multiline_comment|/* 16 bit PFN on sun4c */
+DECL|macro|SUN4C_PFN_MASK
+mdefine_line|#define SUN4C_PFN_MASK 0xffff
+multiline_comment|/* Don&squot;t increase these unless the structures in sun4c.c are fixed */
+DECL|macro|SUN4C_MAX_SEGMAPS
+mdefine_line|#define SUN4C_MAX_SEGMAPS 256
+DECL|macro|SUN4C_MAX_CONTEXTS
+mdefine_line|#define SUN4C_MAX_CONTEXTS 16
 multiline_comment|/*&n; * To be efficient, and not have to worry about allocating such&n; * a huge pgd, we make the kernel sun4c tables each hold 1024&n; * entries and the pgd similarly just like the i386 tables.&n; */
 DECL|macro|SUN4C_PTRS_PER_PTE
 mdefine_line|#define SUN4C_PTRS_PER_PTE    1024

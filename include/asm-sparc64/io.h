@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: io.h,v 1.14 1997/11/01 10:23:58 ecd Exp $ */
+multiline_comment|/* $Id: io.h,v 1.16 1998/03/24 05:54:40 ecd Exp $ */
 macro_line|#ifndef __SPARC64_IO_H
 DECL|macro|__SPARC64_IO_H
 mdefine_line|#define __SPARC64_IO_H
@@ -12,6 +12,16 @@ DECL|macro|__SLOW_DOWN_IO
 mdefine_line|#define __SLOW_DOWN_IO&t;do { } while (0)
 DECL|macro|SLOW_DOWN_IO
 mdefine_line|#define SLOW_DOWN_IO&t;do { } while (0)
+r_extern
+r_int
+r_int
+id|pci_dvma_offset
+suffix:semicolon
+r_extern
+r_int
+r_int
+id|pci_dvma_mask
+suffix:semicolon
 DECL|function|virt_to_phys
 r_extern
 id|__inline__
@@ -26,21 +36,44 @@ op_star
 id|addr
 )paren
 (brace
-r_return
-(paren
-(paren
-(paren
+r_int
+r_int
+id|vaddr
+op_assign
 (paren
 r_int
 r_int
 )paren
 id|addr
+suffix:semicolon
+multiline_comment|/* Handle kernel variable pointers... */
+r_if
+c_cond
+(paren
+id|vaddr
+OL
+id|PAGE_OFFSET
 )paren
+id|vaddr
+op_add_assign
+id|PAGE_OFFSET
+op_minus
+(paren
+r_int
+r_int
+)paren
+op_amp
+id|empty_zero_page
+suffix:semicolon
+r_return
+(paren
+(paren
+id|vaddr
 op_minus
 id|PAGE_OFFSET
 )paren
 op_or
-l_int|0x80000000UL
+id|pci_dvma_offset
 )paren
 suffix:semicolon
 )brace
@@ -67,8 +100,7 @@ op_star
 (paren
 id|addr
 op_amp
-op_complement
-l_int|0x80000000
+id|pci_dvma_mask
 )paren
 op_plus
 id|PAGE_OFFSET
@@ -449,11 +481,11 @@ id|count
 suffix:semicolon
 multiline_comment|/* Memory functions, same as I/O accesses on Ultra. */
 DECL|macro|readb
-mdefine_line|#define readb(addr)&t;&t;inb((unsigned long)addr)
+mdefine_line|#define readb(addr)&t;&t;inb((unsigned long)(addr))
 DECL|macro|readw
-mdefine_line|#define readw(addr)&t;&t;inw((unsigned long)addr)
+mdefine_line|#define readw(addr)&t;&t;inw((unsigned long)(addr))
 DECL|macro|readl
-mdefine_line|#define readl(addr)&t;&t;inl((unsigned long)addr)
+mdefine_line|#define readl(addr)&t;&t;inl((unsigned long)(addr))
 DECL|macro|writeb
 mdefine_line|#define writeb(b, addr)&t;&t;outb((b), (unsigned long)(addr))
 DECL|macro|writew

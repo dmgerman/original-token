@@ -54,10 +54,12 @@ DECL|macro|get_32be
 mdefine_line|#define get_32be(x)&t;(*(unsigned *)(x))
 DECL|macro|RAM_START
 mdefine_line|#define RAM_START&t;0xc0000000
+DECL|macro|PROG_START
+mdefine_line|#define PROG_START&t;RAM_START
 DECL|macro|RAM_END
-mdefine_line|#define RAM_END&t;&t;0xc0800000&t;/* only 8M mapped with BATs */
+mdefine_line|#define RAM_END&t;&t;(RAM_START + 0x800000)&t;/* only 8M mapped with BATs */
 DECL|macro|RAM_FREE
-mdefine_line|#define RAM_FREE&t;0xc0540000&t;/* after image of coffboot */
+mdefine_line|#define RAM_FREE&t;(RAM_START + 0x540000)&t;/* after image of coffboot */
 DECL|variable|avail_ram
 r_char
 op_star
@@ -203,6 +205,7 @@ suffix:semicolon
 id|setup_bats
 c_func
 (paren
+id|RAM_START
 )paren
 suffix:semicolon
 id|eh
@@ -454,7 +457,7 @@ op_assign
 r_void
 op_star
 )paren
-id|RAM_START
+id|PROG_START
 suffix:semicolon
 r_if
 c_cond
@@ -571,7 +574,7 @@ op_star
 )paren
 id|dst
 op_plus
-id|RAM_START
+id|PROG_START
 suffix:semicolon
 id|printf
 c_func

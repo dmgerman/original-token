@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: cgthree.c,v 1.24 1997/08/20 07:38:37 davem Exp $&n; * cgtree.c: cg3 frame buffer driver&n; *&n; * Copyright (C) 1996 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; * Copyright (C) 1996 Jakub Jelinek   (jj@sunsite.mff.cuni.cz)&n; * Copyright (C) 1997 Eddie C. Dost   (ecd@skynet.be)&n; *&n; * Support for cgRDI added, Nov/96, jj.&n; */
+multiline_comment|/* $Id: cgthree.c,v 1.25 1998/03/10 20:18:27 jj Exp $&n; * cgtree.c: cg3 frame buffer driver&n; *&n; * Copyright (C) 1996 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; * Copyright (C) 1996 Jakub Jelinek   (jj@sunsite.mff.cuni.cz)&n; * Copyright (C) 1997 Eddie C. Dost   (ecd@skynet.be)&n; *&n; * Support for cgRDI added, Nov/96, jj.&n; */
 macro_line|#include &lt;linux/kd.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
@@ -442,13 +442,12 @@ op_add_assign
 id|map_size
 suffix:semicolon
 )brace
-id|vma-&gt;vm_dentry
+id|vma-&gt;vm_file
 op_assign
-id|dget
-c_func
-(paren
-id|file-&gt;f_dentry
-)paren
+id|file
+suffix:semicolon
+id|file-&gt;f_count
+op_increment
 suffix:semicolon
 r_return
 l_int|0

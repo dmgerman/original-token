@@ -52,13 +52,13 @@ mdefine_line|#define get_16be(x)&t;(*(unsigned short *)(x))
 DECL|macro|get_32be
 mdefine_line|#define get_32be(x)&t;(*(unsigned *)(x))
 DECL|macro|RAM_START
-mdefine_line|#define RAM_START&t;0x90000000
+mdefine_line|#define RAM_START&t;0x00000000
 DECL|macro|RAM_END
-mdefine_line|#define RAM_END&t;&t;0x90800000&t;/* only 8M mapped with BATs */
+mdefine_line|#define RAM_END&t;&t;0x00800000&t;/* only 8M mapped with BATs */
 DECL|macro|RAM_FREE
-mdefine_line|#define RAM_FREE&t;0x90540000&t;/* after image of chrpboot */
+mdefine_line|#define RAM_FREE&t;0x00540000&t;/* after image of chrpboot */
 DECL|macro|PROG_START
-mdefine_line|#define PROG_START&t;0x90010000
+mdefine_line|#define PROG_START&t;0x00010000
 DECL|variable|avail_ram
 r_char
 op_star
@@ -136,11 +136,7 @@ c_func
 l_string|&quot;chrpboot starting&bslash;n&bslash;r&quot;
 )paren
 suffix:semicolon
-id|setup_bats
-c_func
-(paren
-)paren
-suffix:semicolon
+multiline_comment|/* setup_bats(); */
 r_if
 c_cond
 (paren

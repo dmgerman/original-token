@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: unistd.h,v 1.36 1997/12/14 23:24:43 ecd Exp $ */
+multiline_comment|/* $Id: unistd.h,v 1.38 1998/03/27 07:01:56 davem Exp $ */
 macro_line|#ifndef _SPARC_UNISTD_H
 DECL|macro|_SPARC_UNISTD_H
 mdefine_line|#define _SPARC_UNISTD_H
@@ -29,7 +29,8 @@ DECL|macro|__NR_execv
 mdefine_line|#define __NR_execv               11 /* SunOS Specific                              */
 DECL|macro|__NR_chdir
 mdefine_line|#define __NR_chdir               12 /* Common                                      */
-multiline_comment|/* #define __NR_ni_syscall       13    ENOSYS under SunOS                          */
+DECL|macro|__NR_xstat
+mdefine_line|#define __NR_xstat&t;&t; 13 /* Linux Specific&t;&t;&t;&t;   */
 DECL|macro|__NR_mknod
 mdefine_line|#define __NR_mknod               14 /* Common                                      */
 DECL|macro|__NR_chmod
@@ -38,7 +39,8 @@ DECL|macro|__NR_chown
 mdefine_line|#define __NR_chown               16 /* Common                                      */
 DECL|macro|__NR_brk
 mdefine_line|#define __NR_brk                 17 /* Common                                      */
-multiline_comment|/* #define __NR_ni_syscall       18    ENOSYS under SunOS                          */
+DECL|macro|__NR_xmknod
+mdefine_line|#define __NR_xmknod&t;&t; 18 /* Linux Specific&t;&t;&t;&t;   */
 DECL|macro|__NR_lseek
 mdefine_line|#define __NR_lseek               19 /* Common                                      */
 DECL|macro|__NR_getpid

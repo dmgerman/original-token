@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: elf.h,v 1.13 1997/10/03 18:44:14 davem Exp $ */
+multiline_comment|/* $Id: elf.h,v 1.17 1998/03/23 10:07:06 jj Exp $ */
 macro_line|#ifndef __ASM_SPARC64_ELF_H
 DECL|macro|__ASM_SPARC64_ELF_H
 mdefine_line|#define __ASM_SPARC64_ELF_H
@@ -30,7 +30,7 @@ suffix:semicolon
 multiline_comment|/*&n; * These are used to set parameters in the core dumps.&n; */
 macro_line|#ifndef ELF_ARCH
 DECL|macro|ELF_ARCH
-mdefine_line|#define ELF_ARCH&t;&t;EM_SPARC64
+mdefine_line|#define ELF_ARCH&t;&t;EM_SPARCV9
 DECL|macro|ELF_CLASS
 mdefine_line|#define ELF_CLASS&t;&t;ELFCLASS64
 DECL|macro|ELF_DATA
@@ -39,7 +39,7 @@ macro_line|#endif
 multiline_comment|/*&n; * This is used to ensure we don&squot;t load something for the wrong architecture.&n; */
 macro_line|#ifndef elf_check_arch
 DECL|macro|elf_check_arch
-mdefine_line|#define elf_check_arch(x) ((x) == ELF_ARCH)&t;/* Might be EM_SPARC64 or EM_SPARC */
+mdefine_line|#define elf_check_arch(x) ((x) == ELF_ARCH)&t;/* Might be EM_SPARCV9 or EM_SPARC */
 macro_line|#endif
 DECL|macro|USE_ELF_CORE_DUMP
 mdefine_line|#define USE_ELF_CORE_DUMP
@@ -53,7 +53,7 @@ macro_line|#endif
 multiline_comment|/* This yields a mask that user programs can use to figure out what&n;   instruction set this cpu supports.  */
 multiline_comment|/* On Ultra, we support all of the v8 capabilities. */
 DECL|macro|ELF_HWCAP
-mdefine_line|#define ELF_HWCAP&t;(HWCAP_SPARC_FLUSH | HWCAP_SPARC_STBAR | &bslash;&n;&t;&t;&t; HWCAP_SPARC_SWAP | HWCAP_SPARC_MULDIV)
+mdefine_line|#define ELF_HWCAP&t;(HWCAP_SPARC_FLUSH | HWCAP_SPARC_STBAR | &bslash;&n;&t;&t;&t; HWCAP_SPARC_SWAP | HWCAP_SPARC_MULDIV | &bslash;&n;&t;&t;&t; HWCAP_SPARC_V9)
 multiline_comment|/* This yields a string that ld.so will use to load implementation&n;   specific libraries for optimization.  This is more specific in&n;   intent than poking at uname or /proc/cpuinfo.  */
 DECL|macro|ELF_PLATFORM
 mdefine_line|#define ELF_PLATFORM&t;(NULL)

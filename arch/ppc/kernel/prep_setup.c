@@ -178,10 +178,9 @@ id|RESIDUAL
 id|res
 suffix:semicolon
 r_int
-id|i
-suffix:semicolon
-r_int
 id|len
+comma
+id|i
 suffix:semicolon
 macro_line|#ifdef __SMP__
 DECL|macro|CD
@@ -312,6 +311,7 @@ comma
 l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
+macro_line|#if 0&t;
 multiline_comment|/* TLB */
 id|len
 op_add_assign
@@ -472,6 +472,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
+macro_line|#endif
 multiline_comment|/* L2 */
 r_if
 c_cond
@@ -711,6 +712,20 @@ suffix:semicolon
 )brace
 )brace
 macro_line|#endif
+multiline_comment|/* make the serial port the console */
+multiline_comment|/* strcat(cmd_line,&quot;console=ttyS0,9600n8&quot;); */
+multiline_comment|/* use the normal console but send output to the serial port, too */
+multiline_comment|/*strcat(cmd_line,&quot;console=tty0 console=ttyS0,9600n8&quot;);*/
+id|sprintf
+c_func
+(paren
+id|cmd_line
+comma
+l_string|&quot;%s console=tty0 console=ttyS0,9600n8&quot;
+comma
+id|cmd_line
+)paren
+suffix:semicolon
 id|printk
 c_func
 (paren
@@ -896,14 +911,6 @@ id|conswitchp
 op_assign
 op_amp
 id|vga_con
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_FB
-multiline_comment|/* Frame buffer device based console */
-id|conswitchp
-op_assign
-op_amp
-id|fb_con
 suffix:semicolon
 macro_line|#endif
 macro_line|#endif

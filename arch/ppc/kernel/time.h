@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * $Id: time.h,v 1.7 1997/12/28 22:47:24 paulus Exp $&n; * Common time prototypes and such for all ppc machines.&n; *&n; * Written by Cort Dougan (cort@cs.nmt.edu) to merge&n; * Paul Mackerras&squot; version and mine for PReP and Pmac.&n; */
+multiline_comment|/*&n; * $Id: time.h,v 1.10 1998/04/01 07:46:03 geert Exp $&n; * Common time prototypes and such for all ppc machines.&n; *&n; * Written by Cort Dougan (cort@cs.nmt.edu) to merge&n; * Paul Mackerras&squot; version and mine for PReP and Pmac.&n; */
 macro_line|#include &lt;linux/mc146818rtc.h&gt;
 multiline_comment|/* time.c */
 r_void
@@ -24,6 +24,14 @@ r_void
 suffix:semicolon
 r_void
 id|pmac_calibrate_decr
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|apus_calibrate_decr
 c_func
 (paren
 r_void
@@ -111,6 +119,14 @@ r_void
 )paren
 suffix:semicolon
 r_int
+r_int
+id|apus_get_rtc_time
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_int
 id|prep_set_rtc_time
 c_func
 (paren
@@ -137,6 +153,15 @@ r_int
 id|nowtime
 )paren
 suffix:semicolon
+r_int
+id|apus_set_rtc_time
+c_func
+(paren
+r_int
+r_int
+id|nowtime
+)paren
+suffix:semicolon
 r_void
 id|pmac_read_rtc_time
 c_func
@@ -153,6 +178,20 @@ r_void
 suffix:semicolon
 r_void
 id|chrp_time_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_int
+id|via_calibrate_decr
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_void
+id|mbx_calibrate_decr
 c_func
 (paren
 r_void

@@ -24,7 +24,6 @@ macro_line|#include &lt;linux/kbd_diacr.h&gt;
 macro_line|#include &lt;linux/vt_kern.h&gt;
 macro_line|#ifdef CONFIG_PCI
 macro_line|#include &lt;linux/pci.h&gt;
-macro_line|#include &lt;linux/bios32.h&gt;
 macro_line|#include &lt;asm/pbm.h&gt;
 macro_line|#include &lt;asm/ebus.h&gt;
 macro_line|#endif

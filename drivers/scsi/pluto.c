@@ -1,4 +1,4 @@
-multiline_comment|/* pluto.c: SparcSTORAGE Array SCSI host adapter driver.&n; *&n; * Copyright (C) 1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* pluto.c: SparcSTORAGE Array SCSI host adapter driver.&n; *&n; * Copyright (C) 1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; *&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -8,6 +8,10 @@ macro_line|#include &lt;linux/blk.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/config.h&gt;
+macro_line|#ifdef CONFIG_KERNELD
+macro_line|#include &lt;linux/kerneld.h&gt;
+macro_line|#endif
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &quot;scsi.h&quot;
 macro_line|#include &quot;hosts.h&quot;
@@ -85,18 +89,30 @@ DECL|variable|__initdata
 op_star
 id|fcs
 id|__initdata
+op_assign
+(brace
+l_int|0
+)brace
 suffix:semicolon
 DECL|variable|__initdata
 r_static
 r_int
 id|fcscount
 id|__initdata
+op_assign
+l_int|0
 suffix:semicolon
 DECL|variable|__initdata
 r_static
 id|atomic_t
 id|fcss
 id|__initdata
+op_assign
+id|ATOMIC_INIT
+c_func
+(paren
+l_int|0
+)paren
 suffix:semicolon
 DECL|variable|__initdata
 r_static
@@ -347,9 +363,33 @@ c_cond
 op_logical_neg
 id|fcscount
 )paren
+(brace
+macro_line|#if defined(MODULE) &amp;&amp; defined(CONFIG_FC4_SOC_MODULE) &amp;&amp; defined(CONFIG_KERNELD)
+id|request_module
+c_func
+(paren
+l_string|&quot;soc&quot;
+)paren
+suffix:semicolon
+id|for_each_online_fc_channel
+c_func
+(paren
+id|fc
+)paren
+id|fcscount
+op_increment
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|fcscount
+)paren
+macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
+)brace
 id|fcs
 op_assign
 (paren
@@ -995,6 +1035,17 @@ suffix:semicolon
 id|nplutos
 op_increment
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|fc-&gt;module
+)paren
+id|__MOD_INC_USE_COUNT
+c_func
+(paren
+id|fc-&gt;module
+)paren
+suffix:semicolon
 id|pluto
 op_assign
 (paren
@@ -1274,6 +1325,17 @@ id|fc
 op_assign
 id|pluto-&gt;fc
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|fc-&gt;module
+)paren
+id|__MOD_DEC_USE_COUNT
+c_func
+(paren
+id|fc-&gt;module
+)paren
+suffix:semicolon
 id|fc
 op_member_access_from_pointer
 id|fcp_register
@@ -1286,9 +1348,25 @@ comma
 l_int|1
 )paren
 suffix:semicolon
+id|PLND
+c_func
+(paren
+(paren
+l_string|&quot; releasing pluto.&bslash;n&quot;
+)paren
+)paren
+suffix:semicolon
 id|kfree
 (paren
 id|fc-&gt;ages
+)paren
+suffix:semicolon
+id|PLND
+c_func
+(paren
+(paren
+l_string|&quot;released pluto!&bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 r_return
@@ -1385,7 +1463,7 @@ op_amp
 l_int|0xe0
 )paren
 )paren
-multiline_comment|/* We don&squot;t support LUNs */
+multiline_comment|/* We don&squot;t support LUNs - neither does SSA :) */
 r_if
 c_cond
 (paren

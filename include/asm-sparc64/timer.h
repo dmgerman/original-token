@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: timer.h,v 1.1 1997/07/23 10:38:00 davem Exp $&n; * timer.h: System timer definitions for sun5.&n; *&n; * Copyright (C) 1997 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: timer.h,v 1.2 1998/03/15 17:23:52 ecd Exp $&n; * timer.h: System timer definitions for sun5.&n; *&n; * Copyright (C) 1997 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _SPARC64_TIMER_H
 DECL|macro|_SPARC64_TIMER_H
 mdefine_line|#define _SPARC64_TIMER_H
@@ -37,5 +37,22 @@ mdefine_line|#define SUN5_LIMIT_CMASK&t;0x1fffffff
 multiline_comment|/* Given a HZ value, set the limit register to so that the timer IRQ&n; * gets delivered that often.&n; */
 DECL|macro|SUN5_HZ_TO_LIMIT
 mdefine_line|#define SUN5_HZ_TO_LIMIT(__hz)  (1000000/(__hz))
+macro_line|#ifdef __SMP__
+r_extern
+r_int
+r_int
+id|timer_tick_offset
+suffix:semicolon
+r_extern
+r_void
+id|timer_tick_interrupt
+c_func
+(paren
+r_struct
+id|pt_regs
+op_star
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#endif /* _SPARC64_TIMER_H */
 eof

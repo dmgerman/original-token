@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: traps.c,v 1.44 1998/01/09 16:39:35 jj Exp $&n; * arch/sparc64/kernel/traps.c&n; *&n; * Copyright (C) 1995,1997 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: traps.c,v 1.49 1998/04/06 16:09:38 jj Exp $&n; * arch/sparc64/kernel/traps.c&n; *&n; * Copyright (C) 1995,1997 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 multiline_comment|/*&n; * I like traps on v9, :))))&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;  /* for jiffies */
@@ -1541,14 +1541,12 @@ id|current-&gt;tss.sig_address
 op_assign
 id|regs-&gt;tpc
 suffix:semicolon
-id|send_sig
+id|force_sig
 c_func
 (paren
 id|SIGILL
 comma
 id|current
-comma
-l_int|1
 )paren
 suffix:semicolon
 id|unlock_kernel
@@ -1695,14 +1693,22 @@ r_return
 suffix:semicolon
 )brace
 )brace
-id|send_sig
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+id|force_sig
 c_func
 (paren
 id|SIGSEGV
 comma
 id|current
-comma
-l_int|1
+)paren
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
 )paren
 suffix:semicolon
 )brace
@@ -1720,68 +1726,22 @@ r_int
 id|pci_poke_faulted
 suffix:semicolon
 macro_line|#endif
-DECL|function|do_dae
+multiline_comment|/* When access exceptions happen, we must do this. */
+DECL|function|clean_and_reenable_l1_caches
+r_static
+id|__inline__
 r_void
-id|do_dae
+id|clean_and_reenable_l1_caches
 c_func
 (paren
-r_struct
-id|pt_regs
-op_star
-id|regs
-)paren
-(brace
-macro_line|#ifdef CONFIG_PCI
-macro_line|#ifdef DEBUG_PCI_POKES
-id|prom_printf
-c_func
-(paren
-l_string|&quot; (POKE &quot;
-)paren
-suffix:semicolon
-macro_line|#endif
-r_if
-c_cond
-(paren
-id|pci_poke_in_progress
+r_void
 )paren
 (brace
 r_int
 r_int
 id|va
 suffix:semicolon
-macro_line|#ifdef DEBUG_PCI_POKES
-id|prom_printf
-c_func
-(paren
-l_string|&quot;tpc[%016lx] tnpc[%016lx] &quot;
-comma
-id|regs-&gt;tpc
-comma
-id|regs-&gt;tnpc
-)paren
-suffix:semicolon
-macro_line|#endif
-id|pci_poke_faulted
-op_assign
-l_int|1
-suffix:semicolon
-id|regs-&gt;tnpc
-op_assign
-id|regs-&gt;tpc
-op_plus
-l_int|4
-suffix:semicolon
-macro_line|#ifdef DEBUG_PCI_POKES
-id|prom_printf
-c_func
-(paren
-l_string|&quot;PCI) &quot;
-)paren
-suffix:semicolon
-multiline_comment|/* prom_halt(); */
-macro_line|#endif
-multiline_comment|/* Re-enable I/D caches, Ultra turned them off. */
+multiline_comment|/* Clean &squot;em. */
 r_for
 c_loop
 (paren
@@ -1819,6 +1779,7 @@ l_int|0x0
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* Re-enable. */
 id|__asm__
 id|__volatile__
 c_func
@@ -1849,37 +1810,86 @@ suffix:colon
 l_string|&quot;memory&quot;
 )paren
 suffix:semicolon
-r_return
-suffix:semicolon
 )brace
+DECL|function|do_dae
+r_void
+id|do_dae
+c_func
+(paren
+r_struct
+id|pt_regs
+op_star
+id|regs
+)paren
+(brace
+macro_line|#ifdef CONFIG_PCI
+r_if
+c_cond
+(paren
+id|pci_poke_in_progress
+)paren
+(brace
 macro_line|#ifdef DEBUG_PCI_POKES
 id|prom_printf
 c_func
 (paren
-l_string|&quot;USER) &quot;
+l_string|&quot; (POKE tpc[%016lx] tnpc[%016lx] &quot;
+comma
+id|regs-&gt;tpc
+comma
+id|regs-&gt;tnpc
 )paren
 suffix:semicolon
+macro_line|#endif
+id|pci_poke_faulted
+op_assign
+l_int|1
+suffix:semicolon
+id|regs-&gt;tnpc
+op_assign
+id|regs-&gt;tpc
+op_plus
+l_int|4
+suffix:semicolon
+macro_line|#ifdef DEBUG_PCI_POKES
 id|prom_printf
 c_func
 (paren
-l_string|&quot;tpc[%016lx] tnpc[%016lx]&bslash;n&quot;
+l_string|&quot;PCI) &quot;
 )paren
 suffix:semicolon
-id|prom_halt
+multiline_comment|/* prom_halt(); */
+macro_line|#endif
+id|clean_and_reenable_l1_caches
 c_func
 (paren
 )paren
 suffix:semicolon
+r_return
+suffix:semicolon
+)brace
 macro_line|#endif
-macro_line|#endif
-id|send_sig
+id|clean_and_reenable_l1_caches
+c_func
+(paren
+)paren
+suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+id|force_sig
 c_func
 (paren
 id|SIGSEGV
 comma
 id|current
-comma
-l_int|1
+)paren
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
 )paren
 suffix:semicolon
 )brace
@@ -1893,14 +1903,27 @@ op_star
 id|regs
 )paren
 (brace
-id|send_sig
+id|clean_and_reenable_l1_caches
+c_func
+(paren
+)paren
+suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+id|force_sig
 c_func
 (paren
 id|SIGSEGV
 comma
 id|current
-comma
-l_int|1
+)paren
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
 )paren
 suffix:semicolon
 )brace
@@ -1915,14 +1938,22 @@ op_star
 id|regs
 )paren
 (brace
-id|send_sig
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+id|force_sig
 c_func
 (paren
 id|SIGSEGV
 comma
 id|current
-comma
-l_int|1
+)paren
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
 )paren
 suffix:semicolon
 )brace
@@ -2011,27 +2042,6 @@ id|regs
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifdef CONFIG_MATHEMU_MODULE
-DECL|variable|handle_mathemu
-r_volatile
-r_int
-(paren
-op_star
-id|handle_mathemu
-)paren
-(paren
-r_struct
-id|pt_regs
-op_star
-comma
-r_struct
-id|fpustate
-op_star
-)paren
-op_assign
-l_int|NULL
-suffix:semicolon
-macro_line|#else
 r_extern
 r_int
 id|do_mathemu
@@ -2046,7 +2056,6 @@ id|fpustate
 op_star
 )paren
 suffix:semicolon
-macro_line|#endif
 DECL|function|do_fpother
 r_void
 id|do_fpother
@@ -2096,38 +2105,6 @@ l_int|14
 )paren
 suffix:colon
 multiline_comment|/* unimplemented_FPop */
-macro_line|#ifdef CONFIG_MATHEMU_MODULE
-macro_line|#ifdef CONFIG_KMOD
-r_if
-c_cond
-(paren
-op_logical_neg
-id|handle_mathemu
-)paren
-id|request_module
-c_func
-(paren
-l_string|&quot;math-emu&quot;
-)paren
-suffix:semicolon
-macro_line|#endif
-r_if
-c_cond
-(paren
-id|handle_mathemu
-)paren
-id|ret
-op_assign
-id|handle_mathemu
-c_func
-(paren
-id|regs
-comma
-id|f
-)paren
-suffix:semicolon
-macro_line|#else
-macro_line|#ifdef CONFIG_MATHEMU
 id|ret
 op_assign
 id|do_mathemu
@@ -2138,8 +2115,6 @@ comma
 id|f
 )paren
 suffix:semicolon
-macro_line|#endif
-macro_line|#endif
 r_break
 suffix:semicolon
 )brace
@@ -3300,6 +3275,8 @@ suffix:semicolon
 macro_line|#else
 macro_line|#error SMP not supported on sparc64 yet
 macro_line|#endif
+macro_line|#if 0
+multiline_comment|/* Broken */
 r_int
 id|size
 op_assign
@@ -3323,8 +3300,14 @@ suffix:semicolon
 r_int
 r_int
 id|addr
+suffix:semicolon
+r_struct
+id|page
+op_star
+id|page
 comma
-id|page_nr
+op_star
+id|end
 suffix:semicolon
 id|regs-&gt;tpc
 op_assign
@@ -3357,6 +3340,18 @@ id|PAGE_OFFSET
 op_minus
 id|PAGE_SIZE
 suffix:semicolon
+id|page
+op_assign
+id|mem_map
+op_minus
+l_int|1
+suffix:semicolon
+id|end
+op_assign
+id|mem_map
+op_plus
+id|max_mapnr
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -3378,35 +3373,27 @@ id|addr
 op_add_assign
 id|PAGE_SIZE
 suffix:semicolon
-id|page_nr
-op_assign
-id|MAP_NR
-c_func
-(paren
-id|addr
-)paren
+id|page
+op_increment
 suffix:semicolon
 r_if
 c_cond
 (paren
-id|page_nr
+id|page
 op_ge
-id|max_mapnr
+id|end
 )paren
-(brace
 r_return
 suffix:semicolon
-)brace
 )brace
 r_while
 c_loop
 (paren
 op_logical_neg
 id|PageReserved
+c_func
 (paren
-id|mem_map
-op_plus
-id|page_nr
+id|page
 )paren
 )paren
 suffix:semicolon
@@ -3446,6 +3433,7 @@ l_string|&quot;g1&quot;
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
 )brace
 macro_line|#endif
 DECL|function|trap_init

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: openpromfs.c,v 1.21 1997/08/19 02:05:48 davem Exp $&n; * openpromfs.c: /proc/openprom handling routines&n; *&n; * Copyright (C) 1996,1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: openpromfs.c,v 1.26 1998/01/28 09:55:32 ecd Exp $&n; * openpromfs.c: /proc/openprom handling routines&n; *&n; * Copyright (C) 1996,1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
@@ -183,10 +183,6 @@ id|openpromfs_readdir
 c_func
 (paren
 r_struct
-id|inode
-op_star
-comma
-r_struct
 id|file
 op_star
 comma
@@ -227,15 +223,10 @@ id|dentry
 suffix:semicolon
 DECL|function|nodenum_read
 r_static
-r_int
+id|ssize_t
 id|nodenum_read
 c_func
 (paren
-r_struct
-id|inode
-op_star
-id|inode
-comma
 r_struct
 id|file
 op_star
@@ -246,10 +237,20 @@ op_star
 id|buf
 comma
 r_int
-r_int
 id|count
+comma
+id|loff_t
+op_star
+id|ppos
 )paren
 (brace
+r_struct
+id|inode
+op_star
+id|inode
+op_assign
+id|file-&gt;f_dentry-&gt;d_inode
+suffix:semicolon
 r_char
 id|buffer
 (braket
@@ -334,15 +335,10 @@ suffix:semicolon
 )brace
 DECL|function|property_read
 r_static
-r_int
+id|ssize_t
 id|property_read
 c_func
 (paren
-r_struct
-id|inode
-op_star
-id|inode
-comma
 r_struct
 id|file
 op_star
@@ -353,10 +349,20 @@ op_star
 id|buf
 comma
 r_int
-r_int
 id|count
+comma
+id|loff_t
+op_star
+id|ppos
 )paren
 (brace
+r_struct
+id|inode
+op_star
+id|inode
+op_assign
+id|filp-&gt;f_dentry-&gt;d_inode
+suffix:semicolon
 r_int
 id|i
 comma
@@ -1276,15 +1282,10 @@ suffix:semicolon
 )brace
 DECL|function|property_write
 r_static
-r_int
+id|ssize_t
 id|property_write
 c_func
 (paren
-r_struct
-id|inode
-op_star
-id|inode
-comma
 r_struct
 id|file
 op_star
@@ -1296,8 +1297,11 @@ op_star
 id|buf
 comma
 r_int
-r_int
 id|count
+comma
+id|loff_t
+op_star
+id|ppos
 )paren
 (brace
 r_int
@@ -1345,11 +1349,11 @@ id|i
 op_assign
 id|property_read
 (paren
-id|inode
-comma
 id|filp
 comma
 l_int|NULL
+comma
+l_int|0
 comma
 l_int|0
 )paren
@@ -4208,11 +4212,6 @@ id|openpromfs_readdir
 c_func
 (paren
 r_struct
-id|inode
-op_star
-id|inode
-comma
-r_struct
 id|file
 op_star
 id|filp
@@ -4225,6 +4224,13 @@ id|filldir_t
 id|filldir
 )paren
 (brace
+r_struct
+id|inode
+op_star
+id|inode
+op_assign
+id|filp-&gt;f_dentry-&gt;d_inode
+suffix:semicolon
 r_int
 r_int
 id|ino
@@ -5918,21 +5924,6 @@ r_void
 )paren
 macro_line|#endif
 (brace
-macro_line|#ifndef __sparc_v9__
-r_if
-c_cond
-(paren
-op_logical_neg
-id|romvec-&gt;pv_romvers
-)paren
-r_return
-id|RET
-c_func
-(paren
-id|ENODEV
-)paren
-suffix:semicolon
-macro_line|#endif
 id|nodes
 op_assign
 (paren

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: cgsix.c,v 1.37 1997/08/22 15:55:20 jj Exp $&n; * cgsix.c: cgsix frame buffer driver&n; *&n; * Copyright (C) 1996 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; * Copyright (C) 1996 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; */
+multiline_comment|/* $Id: cgsix.c,v 1.39 1998/03/10 20:18:25 jj Exp $&n; * cgsix.c: cgsix frame buffer driver&n; *&n; * Copyright (C) 1996 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; * Copyright (C) 1996 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; */
 macro_line|#include &lt;linux/kd.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
@@ -1353,13 +1353,12 @@ op_add_assign
 id|map_size
 suffix:semicolon
 )brace
-id|vma-&gt;vm_dentry
+id|vma-&gt;vm_file
 op_assign
-id|dget
-c_func
-(paren
-id|file-&gt;f_dentry
-)paren
+id|file
+suffix:semicolon
+id|file-&gt;f_count
+op_increment
 suffix:semicolon
 r_return
 l_int|0
@@ -1708,6 +1707,12 @@ op_and_assign
 op_complement
 id|CG6_THC_MISC_VIDEO
 suffix:semicolon
+multiline_comment|/* This should put us in power-save */
+id|fb-&gt;info.cg6.thc-&gt;thc_misc
+op_and_assign
+op_complement
+id|CG6_THC_MISC_SYNC_ENAB
+suffix:semicolon
 )brace
 r_static
 r_void
@@ -1719,6 +1724,10 @@ op_star
 id|fb
 )paren
 (brace
+id|fb-&gt;info.cg6.thc-&gt;thc_misc
+op_or_assign
+id|CG6_THC_MISC_SYNC_ENAB
+suffix:semicolon
 id|fb-&gt;info.cg6.thc-&gt;thc_misc
 op_or_assign
 id|CG6_THC_MISC_VIDEO

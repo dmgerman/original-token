@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: process.c,v 1.102 1997/12/01 03:36:31 davem Exp $&n; *  linux/arch/sparc/kernel/process.c&n; *&n; *  Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1996 Eddie C. Dost   (ecd@skynet.be)&n; */
+multiline_comment|/*  $Id: process.c,v 1.110 1998/04/08 16:15:51 jj Exp $&n; *  linux/arch/sparc/kernel/process.c&n; *&n; *  Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1996 Eddie C. Dost   (ecd@skynet.be)&n; */
 multiline_comment|/*&n; * This file handles the architecture-dependent parts of process handling..&n; */
 DECL|macro|__KERNEL_SYSCALLS__
 mdefine_line|#define __KERNEL_SYSCALLS__
@@ -47,6 +47,14 @@ comma
 r_int
 r_int
 op_star
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|srmmu_check_pgt_cache
+c_func
+(paren
+r_void
 )paren
 suffix:semicolon
 DECL|variable|current_set
@@ -119,9 +127,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|sparc_cpu_model
-op_eq
-id|sun4c
+id|ARCH_SUN4C_SUN4
 )paren
 (brace
 r_static
@@ -263,7 +269,18 @@ c_func
 id|flags
 )paren
 suffix:semicolon
+id|check_pgt_cache
+c_func
+(paren
+)paren
+suffix:semicolon
 )brace
+r_else
+id|srmmu_check_pgt_cache
+c_func
+(paren
+)paren
+suffix:semicolon
 id|schedule
 c_func
 (paren
@@ -313,6 +330,11 @@ c_loop
 l_int|1
 )paren
 (brace
+id|srmmu_check_pgt_cache
+c_func
+(paren
+)paren
+suffix:semicolon
 multiline_comment|/*&n;&t;&t; * tq_scheduler currently assumes we&squot;re running in a process&n;&t;&t; * context (ie that we hold the kernel lock..)&n;&t;&t; */
 r_if
 c_cond
@@ -595,7 +617,7 @@ id|rw
 id|printk
 c_func
 (paren
-l_string|&quot;l0: %08lx l1: %08lx l2: %08lx l3: %08lx&bslash;n&quot;
+l_string|&quot;l0: %08lx l1: %08lx l2: %08lx l3: %08lx &quot;
 l_string|&quot;l4: %08lx l5: %08lx l6: %08lx l7: %08lx&bslash;n&quot;
 comma
 id|rw-&gt;locals
@@ -642,8 +664,8 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;i0: %08lx i1: %08lx i2: %08lx i3: %08lx&bslash;n&quot;
-l_string|&quot;i4: %08lx i5: %08lx i6: %08lx i7: %08lx&bslash;n&quot;
+l_string|&quot;i0: %08lx i1: %08lx i2: %08lx i3: %08lx &quot;
+l_string|&quot;i4: %08lx i5: %08lx fp: %08lx i7: %08lx&bslash;n&quot;
 comma
 id|rw-&gt;ins
 (braket
@@ -696,12 +718,14 @@ op_assign
 id|SPIN_LOCK_UNLOCKED
 suffix:semicolon
 macro_line|#endif
-DECL|function|show_backtrace
+DECL|function|__show_backtrace
 r_void
-id|show_backtrace
+id|__show_backtrace
 c_func
 (paren
-r_void
+r_int
+r_int
+id|fp
 )paren
 (brace
 r_struct
@@ -712,10 +736,6 @@ suffix:semicolon
 r_int
 r_int
 id|flags
-suffix:semicolon
-r_int
-r_int
-id|fp
 suffix:semicolon
 r_int
 id|cpu
@@ -732,18 +752,6 @@ op_amp
 id|sparc_backtrace_lock
 comma
 id|flags
-)paren
-suffix:semicolon
-id|__asm__
-id|__volatile__
-c_func
-(paren
-l_string|&quot;mov %%i6, %0&quot;
-suffix:colon
-l_string|&quot;=r&quot;
-(paren
-id|fp
-)paren
 )paren
 suffix:semicolon
 id|rw
@@ -833,6 +841,53 @@ id|flags
 )paren
 suffix:semicolon
 )brace
+DECL|function|show_backtrace
+r_void
+id|show_backtrace
+c_func
+(paren
+r_void
+)paren
+(brace
+r_int
+r_int
+id|fp
+suffix:semicolon
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;save %%sp, -64, %%sp&bslash;n&bslash;t&quot;
+l_string|&quot;save %%sp, -64, %%sp&bslash;n&bslash;t&quot;
+l_string|&quot;save %%sp, -64, %%sp&bslash;n&bslash;t&quot;
+l_string|&quot;save %%sp, -64, %%sp&bslash;n&bslash;t&quot;
+l_string|&quot;save %%sp, -64, %%sp&bslash;n&bslash;t&quot;
+l_string|&quot;save %%sp, -64, %%sp&bslash;n&bslash;t&quot;
+l_string|&quot;save %%sp, -64, %%sp&bslash;n&bslash;t&quot;
+l_string|&quot;save %%sp, -64, %%sp&bslash;n&bslash;t&quot;
+l_string|&quot;restore&bslash;n&bslash;t&quot;
+l_string|&quot;restore&bslash;n&bslash;t&quot;
+l_string|&quot;restore&bslash;n&bslash;t&quot;
+l_string|&quot;restore&bslash;n&bslash;t&quot;
+l_string|&quot;restore&bslash;n&bslash;t&quot;
+l_string|&quot;restore&bslash;n&bslash;t&quot;
+l_string|&quot;restore&bslash;n&bslash;t&quot;
+l_string|&quot;restore&bslash;n&bslash;t&quot;
+l_string|&quot;mov %%i6, %0&quot;
+suffix:colon
+l_string|&quot;=r&quot;
+(paren
+id|fp
+)paren
+)paren
+suffix:semicolon
+id|__show_backtrace
+c_func
+(paren
+id|fp
+)paren
+suffix:semicolon
+)brace
 macro_line|#ifdef __SMP__
 DECL|function|smp_show_backtrace_all_cpus
 r_void
@@ -879,7 +934,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;l0: %08lx l1: %08lx l2: %08lx l3: %08lx&bslash;n&quot;
+l_string|&quot;l0: %08lx l1: %08lx l2: %08lx l3: %08lx &quot;
 l_string|&quot;l4: %08lx l5: %08lx l6: %08lx l7: %08lx&bslash;n&quot;
 comma
 id|sf-&gt;locals
@@ -926,8 +981,8 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;i0: %08lx i1: %08lx i2: %08lx i3: %08lx&bslash;n&quot;
-l_string|&quot;i4: %08lx i5: %08lx fp: %08lx ret_pc: %08lx&bslash;n&quot;
+l_string|&quot;i0: %08lx i1: %08lx i2: %08lx i3: %08lx &quot;
+l_string|&quot;i4: %08lx i5: %08lx fp: %08lx i7: %08lx&bslash;n&quot;
 comma
 id|sf-&gt;ins
 (braket
@@ -971,7 +1026,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;sp: %08lx x0: %08lx x1: %08lx x2: %08lx&bslash;n&quot;
+l_string|&quot;sp: %08lx x0: %08lx x1: %08lx x2: %08lx &quot;
 l_string|&quot;x3: %08lx x4: %08lx x5: %08lx xx: %08lx&bslash;n&quot;
 comma
 (paren
@@ -1131,7 +1186,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;g0: %08lx g1: %08lx g2: %08lx g3: %08lx&bslash;n&quot;
+l_string|&quot;g0: %08lx g1: %08lx g2: %08lx g3: %08lx &quot;
 comma
 id|regs-&gt;u_regs
 (braket
@@ -1183,7 +1238,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;o0: %08lx o1: %08lx o2: %08lx o3: %08lx&bslash;n&quot;
+l_string|&quot;o0: %08lx o1: %08lx o2: %08lx o3: %08lx &quot;
 comma
 id|regs-&gt;u_regs
 (braket
@@ -1209,7 +1264,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;o4: %08lx o5: %08lx sp: %08lx ret_pc: %08lx&bslash;n&quot;
+l_string|&quot;o4: %08lx o5: %08lx sp: %08lx o7: %08lx&bslash;n&quot;
 comma
 id|regs-&gt;u_regs
 (braket
@@ -1247,6 +1302,7 @@ l_int|14
 )paren
 suffix:semicolon
 )brace
+macro_line|#if NOTUSED
 DECL|function|show_thread
 r_void
 id|show_thread
@@ -1264,15 +1320,9 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;uwinmask:          0x%08lx&bslash;n&quot;
+l_string|&quot;uwinmask:          0x%08lx  kregs:             0x%08lx&bslash;n&quot;
 comma
 id|tss-&gt;uwinmask
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;kregs:             0x%08lx&bslash;n&quot;
 comma
 (paren
 r_int
@@ -1290,15 +1340,9 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;sig_address:       0x%08lx&bslash;n&quot;
+l_string|&quot;sig_address:       0x%08lx  sig_desc:          0x%08lx&bslash;n&quot;
 comma
 id|tss-&gt;sig_address
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;sig_desc:          0x%08lx&bslash;n&quot;
 comma
 id|tss-&gt;sig_desc
 )paren
@@ -1306,15 +1350,9 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;ksp:               0x%08lx&bslash;n&quot;
+l_string|&quot;ksp:               0x%08lx  kpc:               0x%08lx&bslash;n&quot;
 comma
 id|tss-&gt;ksp
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;kpc:               0x%08lx&bslash;n&quot;
 comma
 id|tss-&gt;kpc
 )paren
@@ -1322,15 +1360,9 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;kpsr:              0x%08lx&bslash;n&quot;
+l_string|&quot;kpsr:              0x%08lx  kwim:              0x%08lx&bslash;n&quot;
 comma
 id|tss-&gt;kpsr
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;kwim:              0x%08lx&bslash;n&quot;
 comma
 id|tss-&gt;kwim
 )paren
@@ -1338,15 +1370,9 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;fork_kpsr:         0x%08lx&bslash;n&quot;
+l_string|&quot;fork_kpsr:         0x%08lx  fork_kwim:         0x%08lx&bslash;n&quot;
 comma
 id|tss-&gt;fork_kpsr
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;fork_kwim:         0x%08lx&bslash;n&quot;
 comma
 id|tss-&gt;fork_kwim
 )paren
@@ -1419,15 +1445,9 @@ multiline_comment|/* XXX missing: float_regs */
 id|printk
 c_func
 (paren
-l_string|&quot;fsr:               0x%08lx&bslash;n&quot;
+l_string|&quot;fsr:               0x%08lx  fpqdepth:          0x%08lx&bslash;n&quot;
 comma
 id|tss-&gt;fsr
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;fpqdepth:          0x%08lx&bslash;n&quot;
 comma
 id|tss-&gt;fpqdepth
 )paren
@@ -1436,19 +1456,13 @@ multiline_comment|/* XXX missing: fpqueue */
 id|printk
 c_func
 (paren
-l_string|&quot;sstk_info.stack:   0x%08lx&bslash;n&quot;
+l_string|&quot;sstk_info.stack:   0x%08lx  sstk_info.status:  0x%08lx&bslash;n&quot;
 comma
 (paren
 r_int
 r_int
 )paren
 id|tss-&gt;sstk_info.the_stack
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;sstk_info.status:  0x%08lx&bslash;n&quot;
 comma
 (paren
 r_int
@@ -1460,21 +1474,27 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;flags:             0x%08lx&bslash;n&quot;
+l_string|&quot;flags:             0x%08lx  current_ds:        0x%08lx&bslash;n&quot;
 comma
 id|tss-&gt;flags
+comma
+id|tss-&gt;current_ds.seg
 )paren
 suffix:semicolon
-id|printk
+id|show_regwindow
 c_func
 (paren
-l_string|&quot;current_ds:        0x%08x&bslash;n&quot;
-comma
-id|tss-&gt;current_ds
+(paren
+r_struct
+id|reg_window
+op_star
+)paren
+id|tss-&gt;ksp
 )paren
 suffix:semicolon
 multiline_comment|/* XXX missing: core_exec */
 )brace
+macro_line|#endif
 multiline_comment|/*&n; * Free current thread data structures etc..&n; */
 DECL|function|exit_thread
 r_void
@@ -1643,15 +1663,30 @@ suffix:semicolon
 macro_line|#endif
 )brace
 multiline_comment|/* Now, this task is no longer a kernel thread. */
+id|current-&gt;tss.current_ds
+op_assign
+id|USER_DS
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|current-&gt;tss.flags
+op_amp
+id|SPARC_FLAG_KTHREAD
+)paren
+(brace
 id|current-&gt;tss.flags
 op_and_assign
 op_complement
 id|SPARC_FLAG_KTHREAD
 suffix:semicolon
-id|current-&gt;tss.current_ds
-op_assign
-id|USER_DS
+id|switch_to_context
+c_func
+(paren
+id|current
+)paren
 suffix:semicolon
+)brace
 )brace
 DECL|function|copy_regs
 r_static
@@ -2010,15 +2045,9 @@ macro_line|#endif
 multiline_comment|/* Calculate offset to stack_frame &amp; pt_regs */
 id|stack_offset
 op_assign
-(paren
-(paren
-id|PAGE_SIZE
-op_lshift
-l_int|1
-)paren
+id|TASK_UNION_SIZE
 op_minus
 id|TRACEREG_SZ
-)paren
 suffix:semicolon
 r_if
 c_cond

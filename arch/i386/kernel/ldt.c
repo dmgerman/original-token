@@ -234,10 +234,8 @@ id|task
 (braket
 id|i
 )braket
-op_member_access_from_pointer
-id|mm
 op_eq
-id|mm
+id|current
 )paren
 (brace
 r_if

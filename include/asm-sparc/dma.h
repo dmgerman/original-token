@@ -1,7 +1,8 @@
-multiline_comment|/* $Id: dma.h,v 1.24 1997/04/10 05:13:21 davem Exp $&n; * include/asm-sparc/dma.h&n; *&n; * Copyright 1995 (C) David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: dma.h,v 1.25 1998/02/09 13:27:01 jj Exp $&n; * include/asm-sparc/dma.h&n; *&n; * Copyright 1995 (C) David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _ASM_SPARC_DMA_H
 DECL|macro|_ASM_SPARC_DMA_H
 mdefine_line|#define _ASM_SPARC_DMA_H
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;asm/vac-ops.h&gt;  /* for invalidate&squot;s, etc. */
@@ -153,8 +154,14 @@ op_star
 id|dma_chain
 suffix:semicolon
 multiline_comment|/* Broken hardware... */
+macro_line|#ifdef CONFIG_SUN4
+multiline_comment|/* Have to sort this out. Does rev0 work fine on sun4[cmd] without isbroken?&n; * Or is rev0 present only on sun4 boxes? -jj */
+DECL|macro|DMA_ISBROKEN
+mdefine_line|#define DMA_ISBROKEN(dma)    ((dma)-&gt;revision == dvmarev0 || (dma)-&gt;revision == dvmarev1)
+macro_line|#else
 DECL|macro|DMA_ISBROKEN
 mdefine_line|#define DMA_ISBROKEN(dma)    ((dma)-&gt;revision == dvmarev1)
+macro_line|#endif
 DECL|macro|DMA_ISESC1
 mdefine_line|#define DMA_ISESC1(dma)      ((dma)-&gt;revision == dvmaesc1)
 multiline_comment|/* Main routines in dma.c */

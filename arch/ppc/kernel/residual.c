@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * $Id: residual.c,v 1.5 1997/10/30 21:25:19 cort Exp $&n; *&n; * Code to deal with the PReP residual data.&n; *&n; * Written by: Cort Dougan (cort@cs.nmt.edu)&n; * Improved _greatly_ and rewritten by Gabriel Paubert (paubert@iram.es)&n; */
+multiline_comment|/*&n; * $Id: residual.c,v 1.7 1998/03/08 05:49:20 davem Exp $&n; *&n; * Code to deal with the PReP residual data.&n; *&n; * Written by: Cort Dougan (cort@cs.nmt.edu)&n; * Improved _greatly_ and rewritten by Gabriel Paubert (paubert@iram.es)&n; */
 macro_line|#if 0
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sparc_ksyms.c,v 1.61 1997/11/19 07:57:44 jj Exp $&n; * arch/sparc/kernel/ksyms.c: Sparc specific ksyms support.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; */
+multiline_comment|/* $Id: sparc_ksyms.c,v 1.64 1998/03/19 15:36:43 jj Exp $&n; * arch/sparc/kernel/ksyms.c: Sparc specific ksyms support.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; */
 multiline_comment|/* Tell string.h we don&squot;t want memcpy etc. as cpp defines */
 DECL|macro|EXPORT_SYMTAB_STROPS
 mdefine_line|#define EXPORT_SYMTAB_STROPS
@@ -10,7 +10,6 @@ macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/in6.h&gt;
-macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;asm/oplib.h&gt;
 macro_line|#include &lt;asm/delay.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -567,13 +566,6 @@ id|stack_top
 )paren
 suffix:semicolon
 multiline_comment|/* Atomic operations. */
-DECL|variable|_xchg32
-id|EXPORT_SYMBOL_PRIVATE
-c_func
-(paren
-id|_xchg32
-)paren
-suffix:semicolon
 DECL|variable|_atomic_add
 id|EXPORT_SYMBOL_PRIVATE
 c_func
@@ -720,53 +712,118 @@ c_func
 id|io_remap_page_range
 )paren
 suffix:semicolon
-DECL|variable|mmu_v2p
-id|EXPORT_SYMBOL
+multiline_comment|/* Btfixup stuff cannot have versions, it would be complicated too much */
+macro_line|#ifndef __SMP__
+id|EXPORT_SYMBOL_NOVERS
+c_func
+(paren
+id|BTFIXUP_CALL
+c_func
+(paren
+id|___xchg32
+)paren
+)paren
+suffix:semicolon
+macro_line|#else
+id|EXPORT_SYMBOL_NOVERS
+c_func
+(paren
+id|BTFIXUP_CALL
+c_func
+(paren
+id|__smp_processor_id
+)paren
+)paren
+suffix:semicolon
+macro_line|#endif
+id|EXPORT_SYMBOL_NOVERS
+c_func
+(paren
+id|BTFIXUP_CALL
+c_func
+(paren
+id|enable_irq
+)paren
+)paren
+suffix:semicolon
+id|EXPORT_SYMBOL_NOVERS
+c_func
+(paren
+id|BTFIXUP_CALL
+c_func
+(paren
+id|disable_irq
+)paren
+)paren
+suffix:semicolon
+id|EXPORT_SYMBOL_NOVERS
+c_func
+(paren
+id|BTFIXUP_CALL
 c_func
 (paren
 id|mmu_v2p
 )paren
+)paren
 suffix:semicolon
-DECL|variable|mmu_unlockarea
-id|EXPORT_SYMBOL
+id|EXPORT_SYMBOL_NOVERS
+c_func
+(paren
+id|BTFIXUP_CALL
 c_func
 (paren
 id|mmu_unlockarea
 )paren
+)paren
 suffix:semicolon
-DECL|variable|mmu_lockarea
-id|EXPORT_SYMBOL
+id|EXPORT_SYMBOL_NOVERS
+c_func
+(paren
+id|BTFIXUP_CALL
 c_func
 (paren
 id|mmu_lockarea
 )paren
+)paren
 suffix:semicolon
-DECL|variable|mmu_get_scsi_sgl
-id|EXPORT_SYMBOL
+id|EXPORT_SYMBOL_NOVERS
+c_func
+(paren
+id|BTFIXUP_CALL
 c_func
 (paren
 id|mmu_get_scsi_sgl
 )paren
+)paren
 suffix:semicolon
-DECL|variable|mmu_get_scsi_one
-id|EXPORT_SYMBOL
+id|EXPORT_SYMBOL_NOVERS
+c_func
+(paren
+id|BTFIXUP_CALL
 c_func
 (paren
 id|mmu_get_scsi_one
 )paren
+)paren
 suffix:semicolon
-DECL|variable|mmu_release_scsi_sgl
-id|EXPORT_SYMBOL
+id|EXPORT_SYMBOL_NOVERS
+c_func
+(paren
+id|BTFIXUP_CALL
 c_func
 (paren
 id|mmu_release_scsi_sgl
 )paren
+)paren
 suffix:semicolon
-DECL|variable|mmu_release_scsi_one
-id|EXPORT_SYMBOL
+id|EXPORT_SYMBOL_NOVERS
+c_func
+(paren
+id|BTFIXUP_CALL
 c_func
 (paren
 id|mmu_release_scsi_one
+)paren
 )paren
 suffix:semicolon
 DECL|variable|_sparc_dvma_malloc
@@ -1292,13 +1349,4 @@ c_func
 id|udiv
 )paren
 suffix:semicolon
-macro_line|#if CONFIG_PCI
-DECL|variable|pci_devices
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|pci_devices
-)paren
-suffix:semicolon
-macro_line|#endif
 eof

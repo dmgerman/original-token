@@ -1,4 +1,4 @@
-multiline_comment|/* fcp_scsi.h: Generic SCSI on top of FC4 - interface defines.&n; *&n; * Copyright (C) 1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* fcp_scsi.h: Generic SCSI on top of FC4 - interface defines.&n; *&n; * Copyright (C) 1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; * Copyright (C) 1998 Jiri Hanika (geo@ff.cuni.cz)&n; */
 macro_line|#ifndef _FCP_SCSI_H
 DECL|macro|_FCP_SCSI_H
 mdefine_line|#define _FCP_SCSI_H
@@ -17,6 +17,9 @@ suffix:semicolon
 macro_line|#else
 macro_line|#error Need to port FC layer to your architecture
 macro_line|#endif
+multiline_comment|/* 0 or 1 */
+DECL|macro|FCP_SCSI_USE_NEW_EH_CODE
+mdefine_line|#define&t;FCP_SCSI_USE_NEW_EH_CODE&t;0
 DECL|macro|FC_CLASS_OUTBOUND
 mdefine_line|#define FC_CLASS_OUTBOUND&t;0x01
 DECL|macro|FC_CLASS_INBOUND
@@ -167,20 +170,6 @@ comma
 r_int
 )paren
 suffix:semicolon
-DECL|member|fcp_state_change
-r_void
-(paren
-op_star
-id|fcp_state_change
-)paren
-(paren
-r_struct
-id|_fc_channel
-op_star
-comma
-r_int
-)paren
-suffix:semicolon
 DECL|member|reset
 r_void
 (paren
@@ -238,10 +227,20 @@ op_star
 id|dev
 suffix:semicolon
 macro_line|#endif
+DECL|member|module
+r_struct
+id|module
+op_star
+id|module
+suffix:semicolon
 multiline_comment|/* FCP SCSI stuff */
 DECL|member|can_queue
 r_int
 id|can_queue
+suffix:semicolon
+DECL|member|abort_count
+r_int
+id|abort_count
 suffix:semicolon
 DECL|member|rsp_size
 r_int
@@ -297,9 +296,6 @@ DECL|member|scsi_que
 id|fcp_cmnd
 op_star
 id|scsi_que
-(braket
-l_int|2
-)braket
 suffix:semicolon
 DECL|member|scsi_name
 r_char
@@ -326,6 +322,11 @@ DECL|member|ages
 r_int
 op_star
 id|ages
+suffix:semicolon
+DECL|member|rst_pkt
+id|Scsi_Cmnd
+op_star
+id|rst_pkt
 suffix:semicolon
 multiline_comment|/* LOGIN stuff */
 DECL|member|login
@@ -412,6 +413,18 @@ op_star
 )paren
 suffix:semicolon
 r_void
+id|fcp_release
+c_func
+(paren
+id|fc_channel
+op_star
+id|fc_chain
+comma
+r_int
+id|count
+)paren
+suffix:semicolon
+r_void
 id|fcp_receive_solicited
 c_func
 (paren
@@ -426,6 +439,16 @@ r_int
 comma
 id|fc_hdr
 op_star
+)paren
+suffix:semicolon
+r_void
+id|fcp_state_change
+c_func
+(paren
+id|fc_channel
+op_star
+comma
+r_int
 )paren
 suffix:semicolon
 DECL|macro|for_each_fc_channel
@@ -451,6 +474,14 @@ op_star
 )paren
 suffix:semicolon
 r_int
+id|fcp_old_abort
+c_func
+(paren
+id|Scsi_Cmnd
+op_star
+)paren
+suffix:semicolon
+r_int
 id|fcp_scsi_abort
 c_func
 (paren
@@ -459,14 +490,27 @@ op_star
 )paren
 suffix:semicolon
 r_int
-id|fcp_scsi_reset
+id|fcp_scsi_dev_reset
 c_func
 (paren
 id|Scsi_Cmnd
 op_star
-comma
+)paren
+suffix:semicolon
 r_int
+id|fcp_scsi_bus_reset
+c_func
+(paren
+id|Scsi_Cmnd
+op_star
+)paren
+suffix:semicolon
 r_int
+id|fcp_scsi_host_reset
+c_func
+(paren
+id|Scsi_Cmnd
+op_star
 )paren
 suffix:semicolon
 macro_line|#endif /* !(_FCP_SCSI_H) */

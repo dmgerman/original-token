@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;The IP fragmentation functionality.&n; *&t;&t;&n; * Version:&t;$Id: ip_fragment.c,v 1.33 1998/03/19 08:34:08 davem Exp $&n; *&n; * Authors:&t;Fred N. van Kempen &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Alan Cox &lt;Alan.Cox@linux.org&gt;&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;:&t;Split from ip.c , see ip_input.c for history.&n; *&t;&t;David S. Miller :&t;Begin massive cleanup...&n; *&t;&t;Andi Kleen&t;:&t;Add sysctls.&n; *&t;&t;xxxx&t;&t;:&t;Overlapfrag bug.&n; *&t;&t;Ultima          :       ip_expire() kernel panic.&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;The IP fragmentation functionality.&n; *&t;&t;&n; * Version:&t;$Id: ip_fragment.c,v 1.36 1998/04/18 02:13:07 davem Exp $&n; *&n; * Authors:&t;Fred N. van Kempen &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Alan Cox &lt;Alan.Cox@linux.org&gt;&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;:&t;Split from ip.c , see ip_input.c for history.&n; *&t;&t;David S. Miller :&t;Begin massive cleanup...&n; *&t;&t;Andi Kleen&t;:&t;Add sysctls.&n; *&t;&t;xxxx&t;&t;:&t;Overlapfrag bug.&n; *&t;&t;Ultima          :       ip_expire() kernel panic.&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -1308,14 +1308,14 @@ id|ptr
 op_add_assign
 id|qp-&gt;ihlen
 suffix:semicolon
-id|count
-op_assign
-l_int|0
-suffix:semicolon
 multiline_comment|/* Copy the data portions of all fragments into the new buffer. */
 id|fp
 op_assign
 id|qp-&gt;fragments
+suffix:semicolon
+id|count
+op_assign
+id|qp-&gt;ihlen
 suffix:semicolon
 r_while
 c_loop
@@ -1379,8 +1379,9 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
 id|count
+op_eq
+id|qp-&gt;ihlen
 )paren
 (brace
 id|skb-&gt;dst
@@ -1434,12 +1435,6 @@ op_assign
 id|htons
 c_func
 (paren
-(paren
-id|iph-&gt;ihl
-op_star
-l_int|4
-)paren
-op_plus
 id|count
 )paren
 suffix:semicolon

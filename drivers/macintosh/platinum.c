@@ -7,6 +7,7 @@ macro_line|#include &lt;linux/vc_ioctl.h&gt;
 macro_line|#include &lt;linux/nvram.h&gt;
 macro_line|#include &lt;asm/prom.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
+macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;linux/selection.h&gt;
 macro_line|#include &quot;pmac-cons.h&quot;
 macro_line|#include &quot;platinum.h&quot;
@@ -165,6 +166,24 @@ r_struct
 id|platinum_regs
 op_star
 id|plat_regs
+suffix:semicolon
+DECL|variable|frame_buffer_phys
+r_static
+r_int
+r_int
+id|frame_buffer_phys
+suffix:semicolon
+DECL|variable|cmap_regs_phys
+r_static
+r_int
+r_int
+id|cmap_regs_phys
+suffix:semicolon
+DECL|variable|plat_regs_phys
+r_static
+r_int
+r_int
+id|plat_regs_phys
 suffix:semicolon
 multiline_comment|/*&n; * Register initialization tables for the platinum display.&n; *&n; * It seems that there are two different types of platinum display&n; * out there.  Older ones use the values in clocksel[1], for which&n; * the formula for the clock frequency seems to be&n; *&t;F = 14.3MHz * c0 / (c1 &amp; 0x1f) / (1 &lt;&lt; (c1 &gt;&gt; 5))&n; * Newer ones use the values in clocksel[0], for which the formula&n; * seems to be&n; *&t;F = 15MHz * c0 / ((c1 &amp; 0x1f) + 2) / (1 &lt;&lt; (c1 &gt;&gt; 5))&n; */
 DECL|struct|plat_regvals
@@ -2936,14 +2955,20 @@ l_int|0x400000
 )paren
 (brace
 multiline_comment|/* frame buffer - map only 4MB */
+id|frame_buffer_phys
+op_assign
+id|addr
+suffix:semicolon
 id|frame_buffer
 op_assign
-id|ioremap
+id|__ioremap
 c_func
 (paren
 id|addr
 comma
 l_int|0x400000
+comma
+id|_PAGE_WRITETHRU
 )paren
 suffix:semicolon
 id|base_frame_buffer
@@ -2954,6 +2979,10 @@ suffix:semicolon
 r_else
 (brace
 multiline_comment|/* registers */
+id|plat_regs_phys
+op_assign
+id|addr
+suffix:semicolon
 id|plat_regs
 op_assign
 id|ioremap
@@ -2966,17 +2995,21 @@ id|size
 suffix:semicolon
 )brace
 )brace
+id|cmap_regs_phys
+op_assign
+l_int|0xf301b000
+suffix:semicolon
+multiline_comment|/* XXX not in prom? */
 id|cmap_regs
 op_assign
 id|ioremap
 c_func
 (paren
-l_int|0xf301b000
+id|cmap_regs_phys
 comma
 l_int|0x1000
 )paren
 suffix:semicolon
-multiline_comment|/* XXX not in prom? */
 multiline_comment|/* Grok total video ram */
 id|plat_regs-&gt;reg
 (braket
@@ -3891,40 +3924,25 @@ id|display_info.name
 suffix:semicolon
 id|display_info.fb_address
 op_assign
-(paren
-r_int
-r_int
-)paren
-id|frame_buffer
+id|frame_buffer_phys
+op_plus
+id|init-&gt;fb_offset
 op_plus
 l_int|0x10
 suffix:semicolon
 id|display_info.cmap_adr_address
 op_assign
-(paren
-r_int
-r_int
-)paren
-op_amp
-id|cmap_regs-&gt;addr
+id|cmap_regs_phys
 suffix:semicolon
 id|display_info.cmap_data_address
 op_assign
-(paren
-r_int
-r_int
-)paren
-op_amp
-id|cmap_regs-&gt;lut
+id|cmap_regs_phys
+op_plus
+l_int|0x30
 suffix:semicolon
 id|display_info.disp_reg_address
 op_assign
-(paren
-r_int
-r_int
-)paren
-op_amp
-id|plat_regs
+id|plat_regs_phys
 suffix:semicolon
 )brace
 r_int

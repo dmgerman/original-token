@@ -1,18 +1,16 @@
-multiline_comment|/* $Id: segment.c,v 1.5 1997/05/14 20:45:02 davem Exp $&n; * segment.c:  Prom routine to map segments in other contexts before&n; *             a standalone is completely mapped.  This is for sun4 and&n; *             sun4c architectures only.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: segment.c,v 1.6 1998/03/09 14:04:27 jj Exp $&n; * segment.c:  Prom routine to map segments in other contexts before&n; *             a standalone is completely mapped.  This is for sun4 and&n; *             sun4c architectures only.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;asm/openprom.h&gt;
 macro_line|#include &lt;asm/oplib.h&gt;
-multiline_comment|/* XXX Let&squot;s get rid of this thing if we can... */
 r_extern
-r_struct
-id|task_struct
-op_star
-id|current_set
-(braket
-id|NR_CPUS
-)braket
+r_void
+id|restore_current
+c_func
+(paren
+r_void
+)paren
 suffix:semicolon
 multiline_comment|/* Set physical segment &squot;segment&squot; at virtual address &squot;vaddr&squot; in&n; * context &squot;ctx&squot;.&n; */
 r_void
@@ -64,26 +62,9 @@ comma
 id|segment
 )paren
 suffix:semicolon
-id|__asm__
-id|__volatile__
+id|restore_current
 c_func
 (paren
-l_string|&quot;ld [%0], %%g6&bslash;n&bslash;t&quot;
-suffix:colon
-suffix:colon
-l_string|&quot;r&quot;
-(paren
-op_amp
-id|current_set
-(braket
-id|hard_smp_processor_id
-c_func
-(paren
-)paren
-)braket
-)paren
-suffix:colon
-l_string|&quot;memory&quot;
 )paren
 suffix:semicolon
 id|restore_flags

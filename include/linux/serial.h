@@ -161,10 +161,12 @@ DECL|macro|ASYNC_SPD_SHI
 mdefine_line|#define ASYNC_SPD_SHI&t;0x1000&t;/* Use 230400 instead of 38400 bps */
 DECL|macro|ASYNC_SPD_WARP
 mdefine_line|#define ASYNC_SPD_WARP&t;0x1010&t;/* Use 460800 instead of 38400 bps */
+DECL|macro|ASYNC_LOW_LATENCY
+mdefine_line|#define ASYNC_LOW_LATENCY 0x2000 /* Request low latency behaviour */
 DECL|macro|ASYNC_FLAGS
-mdefine_line|#define ASYNC_FLAGS&t;0x1FFF&t;/* Possible legal async flags */
+mdefine_line|#define ASYNC_FLAGS&t;0x2FFF&t;/* Possible legal async flags */
 DECL|macro|ASYNC_USR_MASK
-mdefine_line|#define ASYNC_USR_MASK 0x1430&t;/* Legal flags that non-privileged&n;&t;&t;&t;&t; * users can set or reset */
+mdefine_line|#define ASYNC_USR_MASK&t;0x3430&t;/* Legal flags that non-privileged&n;&t;&t;&t;&t; * users can set or reset */
 multiline_comment|/* Internal flags used only by kernel/chr_drv/serial.c */
 DECL|macro|ASYNC_INITIALIZED
 mdefine_line|#define ASYNC_INITIALIZED&t;0x80000000 /* Serial port was initialized */

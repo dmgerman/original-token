@@ -5,10 +5,13 @@ macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/vc_ioctl.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
-macro_line|#include &lt;linux/bios32.h&gt;
 macro_line|#include &lt;linux/selection.h&gt;
 macro_line|#include &lt;asm/prom.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
+macro_line|#include &lt;asm/pgtable.h&gt;
+macro_line|#include &lt;asm/adb.h&gt;
+macro_line|#include &lt;asm/cuda.h&gt;
+macro_line|#include &lt;asm/pmu.h&gt;
 macro_line|#include &lt;asm/pci-bridge.h&gt;
 macro_line|#include &quot;pmac-cons.h&quot;
 macro_line|#include &quot;chips.h&quot;
@@ -32,6 +35,18 @@ r_int
 r_char
 op_star
 id|io_space
+suffix:semicolon
+DECL|variable|chips_base_phys
+r_static
+r_int
+r_int
+id|chips_base_phys
+suffix:semicolon
+DECL|variable|chips_io_phys
+r_static
+r_int
+r_int
+id|chips_io_phys
 suffix:semicolon
 r_void
 DECL|function|map_chips_display
@@ -67,9 +82,13 @@ l_int|0
 dot
 id|address
 suffix:semicolon
+id|chips_base_phys
+op_assign
+id|addr
+suffix:semicolon
 id|frame_buffer
 op_assign
-id|ioremap
+id|__ioremap
 c_func
 (paren
 id|addr
@@ -77,6 +96,8 @@ op_plus
 l_int|0x800000
 comma
 l_int|0x100000
+comma
+id|_PAGE_WRITETHRU
 )paren
 suffix:semicolon
 id|blitter_regs
@@ -151,9 +172,20 @@ id|cmd
 suffix:semicolon
 id|io_space
 op_assign
-id|ioremap
+(paren
+r_int
+r_char
+op_star
+)paren
+id|pci_io_base
 c_func
 (paren
+id|bus
+)paren
+suffix:semicolon
+multiline_comment|/* XXX really want the physical address here */
+id|chips_io_phys
+op_assign
 (paren
 r_int
 r_int
@@ -163,14 +195,11 @@ c_func
 (paren
 id|bus
 )paren
-comma
-l_int|4096
-)paren
 suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;Mapped chips65550 IO space at %p&bslash;n&quot;
+l_string|&quot;Chips65550 IO space at %p&bslash;n&quot;
 comma
 id|io_space
 )paren
@@ -220,14 +249,21 @@ id|video_mode
 op_ne
 id|VMODE_800_600_60
 )paren
-id|panic
+(brace
+id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;chips65550: display mode %d not supported&quot;
 comma
 id|video_mode
 )paren
 suffix:semicolon
+id|video_mode
+op_assign
+id|VMODE_800_600_60
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -239,14 +275,21 @@ id|color_mode
 op_ne
 id|CMODE_16
 )paren
-id|panic
+(brace
+id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;chips65550: color mode %d not supported&quot;
 comma
 id|color_mode
 )paren
 suffix:semicolon
+id|color_mode
+op_assign
+id|CMODE_8
+suffix:semicolon
+)brace
 id|n_scanlines
 op_assign
 l_int|600
@@ -428,23 +471,27 @@ id|display_info.name
 suffix:semicolon
 id|display_info.fb_address
 op_assign
-(paren
-r_int
-r_int
-)paren
-id|frame_buffer
+id|chips_base_phys
+op_plus
+l_int|0x800000
 suffix:semicolon
 id|display_info.cmap_adr_address
 op_assign
-l_int|0
+id|chips_io_phys
+op_plus
+l_int|0x3c8
 suffix:semicolon
 id|display_info.cmap_data_address
 op_assign
-l_int|0
+id|chips_io_phys
+op_plus
+l_int|0x3c9
 suffix:semicolon
 id|display_info.disp_reg_address
 op_assign
-l_int|0
+id|chips_base_phys
+op_plus
+l_int|0xC00000
 suffix:semicolon
 multiline_comment|/* Clear screen */
 id|p
@@ -481,6 +528,13 @@ id|p
 op_increment
 op_assign
 l_int|0
+suffix:semicolon
+multiline_comment|/* Turn on backlight */
+id|pmu_enable_backlight
+c_func
+(paren
+l_int|1
+)paren
 suffix:semicolon
 )brace
 r_int
@@ -694,5 +748,13 @@ r_int
 id|blank_mode
 )paren
 (brace
+id|pmu_enable_backlight
+c_func
+(paren
+id|blank_mode
+op_eq
+id|VESA_NO_BLANKING
+)paren
+suffix:semicolon
 )brace
 eof

@@ -1,21 +1,20 @@
-multiline_comment|/* $Id: console.c,v 1.14 1997/05/14 20:44:58 davem Exp $&n; * console.c: Routines that deal with sending and receiving IO&n; *            to/from the current console device using the PROM.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: console.c,v 1.17 1998/03/09 14:04:21 jj Exp $&n; * console.c: Routines that deal with sending and receiving IO&n; *            to/from the current console device using the PROM.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;asm/openprom.h&gt;
+macro_line|#include &lt;asm/sun4prom.h&gt;
 macro_line|#include &lt;asm/oplib.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
-multiline_comment|/* XXX Let&squot;s get rid of this thing if we can... */
 r_extern
-r_struct
-id|task_struct
-op_star
-id|current_set
-(braket
-id|NR_CPUS
-)braket
+r_void
+id|restore_current
+c_func
+(paren
+r_void
+)paren
 suffix:semicolon
 multiline_comment|/* Non blocking get character from console input device, returns -1&n; * if no input was taken.  This can be used for polling.&n; */
 r_int
@@ -59,6 +58,9 @@ id|prom_vers
 (brace
 r_case
 id|PROM_V0
+suffix:colon
+r_case
+id|PROM_SUN4
 suffix:colon
 id|i
 op_assign
@@ -132,26 +134,9 @@ r_break
 suffix:semicolon
 )brace
 suffix:semicolon
-id|__asm__
-id|__volatile__
+id|restore_current
 c_func
 (paren
-l_string|&quot;ld [%0], %%g6&bslash;n&bslash;t&quot;
-suffix:colon
-suffix:colon
-l_string|&quot;r&quot;
-(paren
-op_amp
-id|current_set
-(braket
-id|hard_smp_processor_id
-c_func
-(paren
-)paren
-)braket
-)paren
-suffix:colon
-l_string|&quot;memory&quot;
 )paren
 suffix:semicolon
 id|restore_flags
@@ -208,6 +193,9 @@ id|prom_vers
 (brace
 r_case
 id|PROM_V0
+suffix:colon
+r_case
+id|PROM_SUN4
 suffix:colon
 id|i
 op_assign
@@ -308,26 +296,9 @@ r_break
 suffix:semicolon
 )brace
 suffix:semicolon
-id|__asm__
-id|__volatile__
+id|restore_current
 c_func
 (paren
-l_string|&quot;ld [%0], %%g6&bslash;n&bslash;t&quot;
-suffix:colon
-suffix:colon
-l_string|&quot;r&quot;
-(paren
-op_amp
-id|current_set
-(braket
-id|hard_smp_processor_id
-c_func
-(paren
-)paren
-)braket
-)paren
-suffix:colon
-l_string|&quot;memory&quot;
 )paren
 suffix:semicolon
 id|restore_flags
@@ -444,6 +415,9 @@ suffix:colon
 r_case
 id|PROM_V2
 suffix:colon
+r_case
+id|PROM_SUN4
+suffix:colon
 r_default
 suffix:colon
 (brace
@@ -505,26 +479,9 @@ op_star
 id|romvec-&gt;pv_v2bootargs.fd_stdin
 )paren
 suffix:semicolon
-id|__asm__
-id|__volatile__
+id|restore_current
 c_func
 (paren
-l_string|&quot;ld [%0], %%g6&bslash;n&bslash;t&quot;
-suffix:colon
-suffix:colon
-l_string|&quot;r&quot;
-(paren
-op_amp
-id|current_set
-(braket
-id|hard_smp_processor_id
-c_func
-(paren
-)paren
-)braket
-)paren
-suffix:colon
-l_string|&quot;memory&quot;
 )paren
 suffix:semicolon
 id|restore_flags
@@ -712,6 +669,9 @@ id|prom_vers
 r_case
 id|PROM_V0
 suffix:colon
+r_case
+id|PROM_SUN4
+suffix:colon
 r_switch
 c_cond
 (paren
@@ -769,26 +729,9 @@ op_star
 id|romvec-&gt;pv_v2bootargs.fd_stdout
 )paren
 suffix:semicolon
-id|__asm__
-id|__volatile__
+id|restore_current
 c_func
 (paren
-l_string|&quot;ld [%0], %%g6&bslash;n&bslash;t&quot;
-suffix:colon
-suffix:colon
-l_string|&quot;r&quot;
-(paren
-op_amp
-id|current_set
-(braket
-id|hard_smp_processor_id
-c_func
-(paren
-)paren
-)braket
-)paren
-suffix:colon
-l_string|&quot;memory&quot;
 )paren
 suffix:semicolon
 id|restore_flags

@@ -1,11 +1,11 @@
-multiline_comment|/* soc.c: Sparc SUNW,soc (Serial Optical Channel) Fibre Channel Sbus adapter support.&n; *&n; * Copyright (C) 1996,1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; * Copyright (C) 1997 Jiri Hanika (geo@ff.cuni.cz)&n; *&n; * Sources:&n; *&t;Fibre Channel Physical &amp; Signaling Interface (FC-PH), dpANS, 1994&n; *&t;dpANS Fibre Channel Protocol for SCSI (X3.269-199X), Rev. 012, 1995&n; */
+multiline_comment|/* soc.c: Sparc SUNW,soc (Serial Optical Channel) Fibre Channel Sbus adapter support.&n; *&n; * Copyright (C) 1996,1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; * Copyright (C) 1997,1998 Jiri Hanika (geo@ff.cuni.cz)&n; *&n; * Sources:&n; *&t;Fibre Channel Physical &amp; Signaling Interface (FC-PH), dpANS, 1994&n; *&t;dpANS Fibre Channel Protocol for SCSI (X3.269-199X), Rev. 012, 1995&n; *&n; * Supported hardware:&n; *      Tested on SOC sbus card bought with SS1000 in Linux running on SS5 and Ultra1. &n; *      Should run on on-board SOC/SOC+ cards of Ex000 servers as well, but it is not&n; *      tested (let us know if you succeed).&n; *      For SOC sbus cards, you have to make sure your FCode is 1.52 or later.&n; *      If you have older FCode, you should try to upgrade or get SOC microcode from Sun&n; *      (the microcode is present in Solaris soc driver as well). In that case you need&n; *      to #define HAVE_SOC_UCODE and format the microcode into soc_asm.c. For the exact&n; *      format mail me and I will tell you. I cannot offer you the actual microcode though,&n; *      unless Sun confirms they don&squot;t mind.&n; */
 DECL|variable|version
 r_static
 r_char
 op_star
 id|version
 op_assign
-l_string|&quot;soc.c:v1.0 24/Nov/97 Jakub Jelinek (jj@sunsite.mff.cuni.cz), Jiri Hanika (geo@ff.cuni.cz)&bslash;n&quot;
+l_string|&quot;soc.c:v1.2 27/Feb/98 Jakub Jelinek (jj@sunsite.mff.cuni.cz), Jiri Hanika (geo@ff.cuni.cz)&bslash;n&quot;
 suffix:semicolon
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -121,6 +121,18 @@ comma
 id|SOC_IMASK_RSP_QALL
 op_or
 id|SOC_IMASK_SAE
+)paren
+suffix:semicolon
+id|SOD
+c_func
+(paren
+(paren
+l_string|&quot;imask %08lx %08lx&bslash;n&quot;
+comma
+id|s-&gt;imask
+comma
+id|s-&gt;regs-&gt;imask
+)paren
 )paren
 suffix:semicolon
 )brace
@@ -640,6 +652,18 @@ id|SOD
 c_func
 (paren
 (paren
+l_string|&quot;imask %08lx %08lx&bslash;n&quot;
+comma
+id|s-&gt;imask
+comma
+id|s-&gt;regs-&gt;imask
+)paren
+)paren
+suffix:semicolon
+id|SOD
+c_func
+(paren
+(paren
 l_string|&quot;Queues available %08x OUT %X %X&bslash;n&quot;
 comma
 id|cmd
@@ -1141,8 +1165,14 @@ id|status
 r_case
 id|SOC_ONLINE
 suffix:colon
-id|fc
-op_member_access_from_pointer
+id|SOD
+c_func
+(paren
+(paren
+l_string|&quot;State change to ONLINE&bslash;n&quot;
+)paren
+)paren
+suffix:semicolon
 id|fcp_state_change
 c_func
 (paren
@@ -1156,8 +1186,14 @@ suffix:semicolon
 r_case
 id|SOC_OFFLINE
 suffix:colon
-id|fc
-op_member_access_from_pointer
+id|SOD
+c_func
+(paren
+(paren
+l_string|&quot;State change to OFFLINE&bslash;n&quot;
+)paren
+)paren
+suffix:semicolon
 id|fcp_state_change
 c_func
 (paren
@@ -1694,10 +1730,21 @@ op_lshift
 id|qno
 )paren
 )paren
+(brace
+id|SOD
+c_func
+(paren
+(paren
+l_string|&quot;EIO %08x&bslash;n&quot;
+comma
+id|s-&gt;imask
+)paren
+)paren
 r_return
 op_minus
 id|EIO
 suffix:semicolon
+)brace
 id|sw_cq
 op_assign
 id|s-&gt;req
@@ -1767,11 +1814,23 @@ id|qno
 )paren
 )paren
 suffix:semicolon
+id|SOD
+c_func
+(paren
+(paren
+l_string|&quot;imask %08lx %08lx&bslash;n&quot;
+comma
+id|s-&gt;imask
+comma
+id|s-&gt;regs-&gt;imask
+)paren
+)paren
+suffix:semicolon
+multiline_comment|/* If queue is full, just say NO */
 r_return
 op_minus
 id|EBUSY
 suffix:semicolon
-singleline_comment|// If queue full, just say NO
 )brace
 id|request
 op_assign
@@ -2660,12 +2719,10 @@ r_int
 id|no
 )paren
 (brace
-macro_line|#ifdef __sparc_v9__
 r_struct
 id|devid_cookie
 id|dcookie
 suffix:semicolon
-macro_line|#endif
 r_int
 r_char
 id|tmp
@@ -2774,6 +2831,47 @@ id|printk
 id|version
 )paren
 suffix:semicolon
+macro_line|#ifdef MODULE
+id|s-&gt;port
+(braket
+l_int|0
+)braket
+dot
+id|fc.module
+op_assign
+op_amp
+id|__this_module
+suffix:semicolon
+id|s-&gt;port
+(braket
+l_int|1
+)braket
+dot
+id|fc.module
+op_assign
+op_amp
+id|__this_module
+suffix:semicolon
+macro_line|#else
+id|s-&gt;port
+(braket
+l_int|0
+)braket
+dot
+id|fc.module
+op_assign
+l_int|NULL
+suffix:semicolon
+id|s-&gt;port
+(braket
+l_int|1
+)braket
+dot
+id|fc.module
+op_assign
+l_int|NULL
+suffix:semicolon
+macro_line|#endif
 id|s-&gt;next
 op_assign
 id|socs
@@ -3364,6 +3462,14 @@ macro_line|#ifndef __sparc_v9__&t;
 r_if
 c_cond
 (paren
+id|sparc_cpu_model
+op_ne
+id|sun4d
+)paren
+(brace
+r_if
+c_cond
+(paren
 id|request_irq
 (paren
 id|irq
@@ -3389,7 +3495,75 @@ comma
 id|irq
 )paren
 suffix:semicolon
+id|socs
+op_assign
+id|s-&gt;next
+suffix:semicolon
 r_return
+suffix:semicolon
+)brace
+)brace
+r_else
+(brace
+id|dcookie.real_dev_id
+op_assign
+id|s
+suffix:semicolon
+id|dcookie.bus_cookie
+op_assign
+id|sdev
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|request_irq
+c_func
+(paren
+id|irq
+comma
+id|soc_intr
+comma
+(paren
+id|SA_SHIRQ
+op_or
+id|SA_DCOOKIE
+)paren
+comma
+l_string|&quot;SOC&quot;
+comma
+op_amp
+id|dcookie
+)paren
+)paren
+(brace
+id|soc_printk
+(paren
+l_string|&quot;Cannot order irq %d to go&bslash;n&quot;
+comma
+id|irq
+)paren
+suffix:semicolon
+id|socs
+op_assign
+id|s-&gt;next
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+id|SOD
+c_func
+(paren
+(paren
+l_string|&quot;IRQ %d %x&bslash;n&quot;
+comma
+id|irq
+comma
+id|dcookie.ret_ino
+)paren
+)paren
+id|irq
+op_assign
+id|dcookie.ret_ino
 suffix:semicolon
 )brace
 macro_line|#else
@@ -3442,6 +3616,10 @@ l_string|&quot;Cannot order irq %d to go&bslash;n&quot;
 comma
 id|irq
 )paren
+suffix:semicolon
+id|socs
+op_assign
+id|s-&gt;next
 suffix:semicolon
 r_return
 suffix:semicolon
@@ -4182,7 +4360,6 @@ c_func
 id|s
 )paren
 (brace
-multiline_comment|/* FIXME: Tell FC layer we say good bye */
 id|irq
 op_assign
 id|s-&gt;port
@@ -4202,6 +4379,22 @@ id|free_irq
 id|irq
 comma
 id|s
+)paren
+suffix:semicolon
+id|fcp_release
+c_func
+(paren
+op_amp
+(paren
+id|s-&gt;port
+(braket
+l_int|0
+)braket
+dot
+id|fc
+)paren
+comma
+l_int|2
 )paren
 suffix:semicolon
 id|sdev

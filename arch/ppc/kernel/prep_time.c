@@ -817,10 +817,11 @@ multiline_comment|/* use hard disk LED as a heartbeat instead -- much more usefu
 r_switch
 c_cond
 (paren
-id|kstat.interrupts
-(braket
+id|kstat_irqs
+c_func
+(paren
 l_int|0
-)braket
+)paren
 op_mod
 l_int|101
 )paren

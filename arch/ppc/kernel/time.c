@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * $Id: time.c,v 1.17 1997/12/28 22:47:21 paulus Exp $&n; * Common time routines among all ppc machines.&n; *&n; * Written by Cort Dougan (cort@cs.nmt.edu) to merge&n; * Paul Mackerras&squot; version and mine for PReP and Pmac.&n; */
+multiline_comment|/*&n; * $Id: time.c,v 1.28 1998/04/07 18:49:49 cort Exp $&n; * Common time routines among all ppc machines.&n; *&n; * Written by Cort Dougan (cort@cs.nmt.edu) to merge&n; * Paul Mackerras&squot; version and mine for PReP and Pmac.&n; * MPC8xx/MBX changes by Dan Malek (dmalek@jlc.net).&n; *&n; * Since the MPC8xx has a programmable interrupt timer, I decided to&n; * use that rather than the decrementer.  Two reasons: 1.) the clock&n; * frequency is low, causing 2.) a long wait in the timer interrupt&n; *&t;&t;while ((d = get_dec()) == dval)&n; * loop.  The MPC8xx can be driven from a variety of input clocks,&n; * so a number of assumptions have been made here because the kernel&n; * parameter HZ is a constant.  We assume (correctly, today :-) that&n; * the MPC8xx on the MBX board is driven from a 32.768 kHz crystal.&n; * This is then divided by 4, providing a 8192 Hz clock into the PIT.&n; * Since it is not possible to get a nice 100 Hz clock out of this, without&n; * creating a software PLL, I have set HZ to 128.  -- Dan&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -14,6 +14,13 @@ macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;
 macro_line|#include &lt;asm/nvram.h&gt;
+macro_line|#include &lt;asm/cache.h&gt;
+macro_line|#ifdef CONFIG_MBX
+macro_line|#include &lt;asm/mbx.h&gt;
+macro_line|#endif
+macro_line|#ifdef CONFIG_8xx
+macro_line|#include &lt;asm/8xx_immap.h&gt;
+macro_line|#endif
 macro_line|#include &quot;time.h&quot;
 multiline_comment|/* this is set to the appropriate pmac/prep/chrp func in init_IRQ() */
 DECL|variable|set_rtc_time
@@ -25,6 +32,15 @@ id|set_rtc_time
 (paren
 r_int
 r_int
+)paren
+suffix:semicolon
+r_void
+id|smp_local_timer_interrupt
+c_func
+(paren
+r_struct
+id|pt_regs
+op_star
 )paren
 suffix:semicolon
 multiline_comment|/* keep track of when we need to update the rtc */
@@ -74,6 +90,44 @@ id|dval
 comma
 id|d
 suffix:semicolon
+r_int
+r_int
+id|cpu
+op_assign
+id|smp_processor_id
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/* save the HID0 in case dcache was off - see idle.c&n;&t; * this hack should leave for a better solution -- Cort */
+r_int
+id|dcache_locked
+op_assign
+id|unlock_dcache
+c_func
+(paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|smp_processor_id
+c_func
+(paren
+)paren
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;SMP 1: timer intr&bslash;n&quot;
+)paren
+suffix:semicolon
+id|hardirq_enter
+c_func
+(paren
+id|cpu
+)paren
+suffix:semicolon
 r_while
 c_loop
 (paren
@@ -113,13 +167,23 @@ op_plus
 id|decrementer_count
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|smp_processor_id
+c_func
+(paren
+)paren
+)paren
+(brace
 id|do_timer
 c_func
 (paren
 id|regs
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; * update the rtc when needed&n;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t; * update the rtc when needed&n;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -154,6 +218,103 @@ suffix:semicolon
 multiline_comment|/* do it again in 60 s */
 )brace
 )brace
+macro_line|#ifdef __SMP__
+id|smp_local_timer_interrupt
+c_func
+(paren
+id|regs
+)paren
+suffix:semicolon
+macro_line|#endif&t;&t;
+id|hardirq_exit
+c_func
+(paren
+id|cpu
+)paren
+suffix:semicolon
+multiline_comment|/* restore the HID0 in case dcache was off - see idle.c&n;&t; * this hack should leave for a better solution -- Cort */
+id|lock_dcache
+c_func
+(paren
+id|dcache_locked
+)paren
+suffix:semicolon
+)brace
+macro_line|#ifdef CONFIG_MBX
+multiline_comment|/* A place holder for time base interrupts, if they are ever enabled.&n;*/
+DECL|function|timebase_interrupt
+r_void
+id|timebase_interrupt
+c_func
+(paren
+r_int
+id|irq
+comma
+r_void
+op_star
+id|dev
+comma
+r_struct
+id|pt_regs
+op_star
+id|regs
+)paren
+(brace
+)brace
+multiline_comment|/* The RTC on the MPC8xx is an internal register.&n; * We want to protect this during power down, so we need to unlock,&n; * modify, and re-lock.&n; */
+r_static
+r_int
+DECL|function|mbx_set_rtc_time
+id|mbx_set_rtc_time
+c_func
+(paren
+r_int
+r_int
+id|time
+)paren
+(brace
+(paren
+(paren
+id|immap_t
+op_star
+)paren
+id|MBX_IMAP_ADDR
+)paren
+op_member_access_from_pointer
+id|im_sitk.sitk_rtck
+op_assign
+id|KAPWR_KEY
+suffix:semicolon
+(paren
+(paren
+id|immap_t
+op_star
+)paren
+id|MBX_IMAP_ADDR
+)paren
+op_member_access_from_pointer
+id|im_sit.sit_rtc
+op_assign
+id|time
+suffix:semicolon
+(paren
+(paren
+id|immap_t
+op_star
+)paren
+id|MBX_IMAP_ADDR
+)paren
+op_member_access_from_pointer
+id|im_sitk.sitk_rtck
+op_assign
+op_complement
+id|KAPWR_KEY
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+macro_line|#endif /* CONFIG_MBX */
 multiline_comment|/*&n; * This version of gettimeofday has microsecond resolution.&n; */
 DECL|function|do_gettimeofday
 r_void
@@ -303,6 +464,7 @@ c_func
 r_void
 )paren
 (brace
+macro_line|#ifndef CONFIG_MBX
 r_if
 c_cond
 (paren
@@ -355,12 +517,29 @@ l_int|16
 )paren
 op_ne
 l_int|1
+op_logical_and
+(paren
+op_logical_neg
+id|smp_processor_id
+c_func
+(paren
+)paren
+)paren
 )paren
 id|pmac_calibrate_decr
 c_func
 (paren
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|smp_processor_id
+c_func
+(paren
+)paren
+)paren
 id|set_rtc_time
 op_assign
 id|pmac_set_rtc_time
@@ -428,15 +607,36 @@ id|prep_set_rtc_time
 suffix:semicolon
 r_break
 suffix:semicolon
+multiline_comment|/* ifdef APUS specific stuff until the merge is completed. -jskov */
+macro_line|#ifdef CONFIG_APUS
+r_case
+id|_MACH_apus
+suffix:colon
+(brace
+id|xtime.tv_sec
+op_assign
+id|apus_get_rtc_time
+c_func
+(paren
+)paren
+suffix:semicolon
+id|apus_calibrate_decr
+c_func
+(paren
+)paren
+suffix:semicolon
+id|set_rtc_time
+op_assign
+id|apus_set_rtc_time
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
+macro_line|#endif
 )brace
 id|xtime.tv_usec
 op_assign
 l_int|0
-suffix:semicolon
-multiline_comment|/*&n;&t; * mark the rtc/on-chip timer as in sync&n;&t; * so we don&squot;t update right away&n;&t; */
-id|last_rtc_update
-op_assign
-id|xtime.tv_sec
 suffix:semicolon
 id|set_dec
 c_func
@@ -444,7 +644,138 @@ c_func
 id|decrementer_count
 )paren
 suffix:semicolon
+macro_line|#else
+id|mbx_calibrate_decr
+c_func
+(paren
+)paren
+suffix:semicolon
+id|set_rtc_time
+op_assign
+id|mbx_set_rtc_time
+suffix:semicolon
+multiline_comment|/* First, unlock all of the registers we are going to modify.&n;&t; * To protect them from corruption during power down, registers&n;&t; * that are maintained by keep alive power are &quot;locked&quot;.  To&n;&t; * modify these registers we have to write the key value to&n;&t; * the key location associated with the register.&n;&t; */
+(paren
+(paren
+id|immap_t
+op_star
+)paren
+id|MBX_IMAP_ADDR
+)paren
+op_member_access_from_pointer
+id|im_sitk.sitk_tbscrk
+op_assign
+id|KAPWR_KEY
+suffix:semicolon
+(paren
+(paren
+id|immap_t
+op_star
+)paren
+id|MBX_IMAP_ADDR
+)paren
+op_member_access_from_pointer
+id|im_sitk.sitk_rtcsck
+op_assign
+id|KAPWR_KEY
+suffix:semicolon
+multiline_comment|/* Disable the RTC one second and alarm interrupts.&n;&t;*/
+(paren
+(paren
+id|immap_t
+op_star
+)paren
+id|MBX_IMAP_ADDR
+)paren
+op_member_access_from_pointer
+id|im_sit.sit_rtcsc
+op_and_assign
+op_complement
+(paren
+id|RTCSC_SIE
+op_or
+id|RTCSC_ALE
+)paren
+suffix:semicolon
+multiline_comment|/* Enabling the decrementer also enables the timebase interrupts&n;&t; * (or from the other point of view, to get decrementer interrupts&n;&t; * we have to enable the timebase).  The decrementer interrupt&n;&t; * is wired into the vector table, nothing to do here for that.&n;&t; */
+(paren
+(paren
+id|immap_t
+op_star
+)paren
+id|MBX_IMAP_ADDR
+)paren
+op_member_access_from_pointer
+id|im_sit.sit_tbscr
+op_assign
+(paren
+(paren
+id|mk_int_int_mask
+c_func
+(paren
+id|DEC_INTERRUPT
+)paren
+op_lshift
+l_int|8
+)paren
+op_or
+(paren
+id|TBSCR_TBF
+op_or
+id|TBSCR_TBE
+)paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|request_irq
+c_func
+(paren
+id|DEC_INTERRUPT
+comma
+id|timebase_interrupt
+comma
+l_int|0
+comma
+l_string|&quot;tbint&quot;
+comma
+l_int|NULL
+)paren
+op_ne
+l_int|0
+)paren
+id|panic
+c_func
+(paren
+l_string|&quot;Could not allocate timer IRQ!&quot;
+)paren
+suffix:semicolon
+multiline_comment|/* Get time from the RTC.&n;&t;*/
+id|xtime.tv_sec
+op_assign
+(paren
+(paren
+id|immap_t
+op_star
+)paren
+id|MBX_IMAP_ADDR
+)paren
+op_member_access_from_pointer
+id|im_sit.sit_rtc
+suffix:semicolon
+id|xtime.tv_usec
+op_assign
+l_int|0
+suffix:semicolon
+macro_line|#endif /* CONFIG_MBX */
+multiline_comment|/* mark the rtc/on-chip timer as in sync&n;&t; * so we don&squot;t update right away&n;&t; */
+id|last_rtc_update
+op_assign
+id|xtime.tv_sec
+suffix:semicolon
 )brace
+macro_line|#ifndef CONFIG_MBX
 multiline_comment|/*&n; * Uses the on-board timer to calibrate the on-chip decrementer register&n; * for prep systems.  On the pmac the OF tells us what the frequency is&n; * but on prep we have to figure it out.&n; * -- Cort&n; */
 DECL|variable|calibrate_done
 r_int
@@ -473,6 +804,96 @@ r_int
 r_int
 id|flags
 suffix:semicolon
+multiline_comment|/* the Powerstack II&squot;s have trouble with the timer so&n;&t; * we use a default value -- Cort&n;&t; */
+r_if
+c_cond
+(paren
+(paren
+id|_prep_type
+op_eq
+id|_PREP_Motorola
+)paren
+op_logical_and
+(paren
+(paren
+id|inb
+c_func
+(paren
+l_int|0x800
+)paren
+op_amp
+l_int|0xF0
+)paren
+op_amp
+l_int|0x40
+)paren
+)paren
+(brace
+r_int
+r_int
+id|freq
+comma
+id|divisor
+suffix:semicolon
+r_static
+r_int
+r_int
+id|t2
+op_assign
+l_int|0
+suffix:semicolon
+id|t2
+op_assign
+l_int|998700000
+op_div
+l_int|60
+suffix:semicolon
+id|freq
+op_assign
+id|t2
+op_star
+l_int|60
+suffix:semicolon
+multiline_comment|/* try to make freq/1e6 an integer */
+id|divisor
+op_assign
+l_int|60
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;time_init: decrementer frequency = %lu/%lu (%luMHz)&bslash;n&quot;
+comma
+id|freq
+comma
+id|divisor
+comma
+id|t2
+op_rshift
+l_int|20
+)paren
+suffix:semicolon
+id|decrementer_count
+op_assign
+id|freq
+op_div
+id|HZ
+op_div
+id|divisor
+suffix:semicolon
+id|count_period_num
+op_assign
+id|divisor
+suffix:semicolon
+id|count_period_den
+op_assign
+id|freq
+op_div
+l_int|1000000
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
 id|save_flags
 c_func
 (paren
@@ -648,35 +1069,6 @@ op_star
 id|HZ
 suffix:semicolon
 multiline_comment|/* # decrs in 1s - thus in Hz */
-r_if
-c_cond
-(paren
-(paren
-id|t2
-op_rshift
-l_int|20
-)paren
-OG
-l_int|100
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;Decrementer frequency too high: %luMHz.  Using 15MHz.&bslash;n&quot;
-comma
-id|t2
-op_rshift
-l_int|20
-)paren
-suffix:semicolon
-id|t2
-op_assign
-l_int|998700000
-op_div
-l_int|60
-suffix:semicolon
-)brace
 id|freq
 op_assign
 id|t2
@@ -727,6 +1119,91 @@ l_int|1
 suffix:semicolon
 )brace
 )brace
+macro_line|#else /* CONFIG_MBX */
+multiline_comment|/* The decrementer counts at the system (internal) clock frequency divided by&n; * sixteen, or external oscillator divided by four.  Currently, we only&n; * support the MBX, which is system clock divided by sixteen.&n; */
+DECL|function|mbx_calibrate_decr
+r_void
+id|mbx_calibrate_decr
+c_func
+(paren
+r_void
+)paren
+(brace
+r_int
+id|freq
+comma
+id|fp
+comma
+id|divisor
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+(paren
+(paren
+id|immap_t
+op_star
+)paren
+id|MBX_IMAP_ADDR
+)paren
+op_member_access_from_pointer
+id|im_clkrst.car_sccr
+op_amp
+l_int|0x02000000
+)paren
+op_eq
+l_int|0
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;WARNING: Wrong decrementer source clock.&bslash;n&quot;
+)paren
+suffix:semicolon
+multiline_comment|/* The manual says the frequency is in Hz, but it is really&n;&t; * as MHz.  The value &squot;fp&squot; is the number of decrementer ticks&n;&t; * per second.&n;&t; */
+multiline_comment|/*fp = (mbx_board_info.bi_intfreq * 1000000) / 16;*/
+id|freq
+op_assign
+id|fp
+op_star
+l_int|60
+suffix:semicolon
+multiline_comment|/* try to make freq/1e6 an integer */
+id|divisor
+op_assign
+l_int|60
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;time_init: decrementer frequency = %d/%d&bslash;n&quot;
+comma
+id|freq
+comma
+id|divisor
+)paren
+suffix:semicolon
+id|decrementer_count
+op_assign
+id|freq
+op_div
+id|HZ
+op_div
+id|divisor
+suffix:semicolon
+id|count_period_num
+op_assign
+id|divisor
+suffix:semicolon
+id|count_period_den
+op_assign
+id|freq
+op_div
+l_int|1000000
+suffix:semicolon
+)brace
+macro_line|#endif /* CONFIG_MBX */
 multiline_comment|/* Converts Gregorian date to seconds since 1970-01-01 00:00:00.&n; * Assumes input in normal date format, i.e. 1980-12-31 23:59:59&n; * =&gt; year=1980, mon=12, day=31, hour=23, min=59, sec=59.&n; *&n; * [For the Julian calendar (which was used in Russia before 1917,&n; * Britain &amp; colonies before 1752, anywhere else before 1582,&n; * and is still in use by some communities) leave out the&n; * -year/100+year/400 terms, and add 10.]&n; *&n; * This algorithm was first published by Gauss (I think).&n; *&n; * WARNING: this function will overflow on 2106-02-07 06:28:16 on&n; * machines were long is 32-bit! (However, as time_t is signed, we&n; * will already get problems at other places on 2038-01-19 03:14:08)&n; */
 DECL|function|mktime
 r_int

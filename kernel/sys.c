@@ -583,6 +583,10 @@ op_logical_and
 id|magic2
 op_ne
 id|LINUX_REBOOT_MAGIC2A
+op_logical_and
+id|magic2
+op_ne
+id|LINUX_REBOOT_MAGIC2B
 )paren
 )paren
 r_return

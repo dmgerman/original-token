@@ -1,18 +1,16 @@
-multiline_comment|/* $Id: mp.c,v 1.9 1997/05/14 20:45:01 davem Exp $&n; * mp.c:  OpenBoot Prom Multiprocessor support routines.  Don&squot;t call&n; *        these on a UP or else you will halt and catch fire. ;)&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: mp.c,v 1.10 1998/03/09 14:04:26 jj Exp $&n; * mp.c:  OpenBoot Prom Multiprocessor support routines.  Don&squot;t call&n; *        these on a UP or else you will halt and catch fire. ;)&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;asm/openprom.h&gt;
 macro_line|#include &lt;asm/oplib.h&gt;
-multiline_comment|/* XXX Let&squot;s get rid of this thing if we can... */
 r_extern
-r_struct
-id|task_struct
-op_star
-id|current_set
-(braket
-id|NR_CPUS
-)braket
+r_void
+id|restore_current
+c_func
+(paren
+r_void
+)paren
 suffix:semicolon
 multiline_comment|/* Start cpu with prom-tree node &squot;cpunode&squot; using context described&n; * by &squot;ctable_reg&squot; in context &squot;ctx&squot; at program counter &squot;pc&squot;.&n; *&n; * XXX Have to look into what the return values mean. XXX&n; */
 r_int
@@ -106,26 +104,9 @@ r_break
 suffix:semicolon
 )brace
 suffix:semicolon
-id|__asm__
-id|__volatile__
+id|restore_current
 c_func
 (paren
-l_string|&quot;ld [%0], %%g6&bslash;n&bslash;t&quot;
-suffix:colon
-suffix:colon
-l_string|&quot;r&quot;
-(paren
-op_amp
-id|current_set
-(braket
-id|hard_smp_processor_id
-c_func
-(paren
-)paren
-)braket
-)paren
-suffix:colon
-l_string|&quot;memory&quot;
 )paren
 suffix:semicolon
 id|restore_flags
@@ -209,26 +190,9 @@ r_break
 suffix:semicolon
 )brace
 suffix:semicolon
-id|__asm__
-id|__volatile__
+id|restore_current
 c_func
 (paren
-l_string|&quot;ld [%0], %%g6&bslash;n&bslash;t&quot;
-suffix:colon
-suffix:colon
-l_string|&quot;r&quot;
-(paren
-op_amp
-id|current_set
-(braket
-id|hard_smp_processor_id
-c_func
-(paren
-)paren
-)braket
-)paren
-suffix:colon
-l_string|&quot;memory&quot;
 )paren
 suffix:semicolon
 id|restore_flags
@@ -312,26 +276,9 @@ r_break
 suffix:semicolon
 )brace
 suffix:semicolon
-id|__asm__
-id|__volatile__
+id|restore_current
 c_func
 (paren
-l_string|&quot;ld [%0], %%g6&bslash;n&bslash;t&quot;
-suffix:colon
-suffix:colon
-l_string|&quot;r&quot;
-(paren
-op_amp
-id|current_set
-(braket
-id|hard_smp_processor_id
-c_func
-(paren
-)paren
-)braket
-)paren
-suffix:colon
-l_string|&quot;memory&quot;
 )paren
 suffix:semicolon
 id|restore_flags
@@ -415,26 +362,9 @@ r_break
 suffix:semicolon
 )brace
 suffix:semicolon
-id|__asm__
-id|__volatile__
+id|restore_current
 c_func
 (paren
-l_string|&quot;ld [%0], %%g6&bslash;n&bslash;t&quot;
-suffix:colon
-suffix:colon
-l_string|&quot;r&quot;
-(paren
-op_amp
-id|current_set
-(braket
-id|hard_smp_processor_id
-c_func
-(paren
-)paren
-)braket
-)paren
-suffix:colon
-l_string|&quot;memory&quot;
 )paren
 suffix:semicolon
 id|restore_flags

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: page.h,v 1.16 1997/11/28 15:59:34 jj Exp $ */
+multiline_comment|/* $Id: page.h,v 1.17 1998/01/14 17:16:28 jj Exp $ */
 macro_line|#ifndef _SPARC64_PAGE_H
 DECL|macro|_SPARC64_PAGE_H
 mdefine_line|#define _SPARC64_PAGE_H
@@ -125,9 +125,9 @@ mdefine_line|#define pte_val(x)&t;((x).pte)
 DECL|macro|iopte_val
 mdefine_line|#define iopte_val(x)&t;((x).iopte)
 DECL|macro|pmd_val
-mdefine_line|#define pmd_val(x)      ((x).pmd)
+mdefine_line|#define pmd_val(x)      ((unsigned long)(x).pmd)
 DECL|macro|pgd_val
-mdefine_line|#define pgd_val(x)&t;((x).pgd)
+mdefine_line|#define pgd_val(x)&t;((unsigned long)(x).pgd)
 DECL|macro|ctxd_val
 mdefine_line|#define ctxd_val(x)&t;((x).ctxd)
 DECL|macro|pgprot_val
@@ -197,9 +197,9 @@ mdefine_line|#define pte_val(x)&t;(x)
 DECL|macro|iopte_val
 mdefine_line|#define iopte_val(x)&t;(x)
 DECL|macro|pmd_val
-mdefine_line|#define pmd_val(x)      (x)
+mdefine_line|#define pmd_val(x)      ((unsigned long)(x))
 DECL|macro|pgd_val
-mdefine_line|#define pgd_val(x)&t;(x)
+mdefine_line|#define pgd_val(x)&t;((unsigned long)(x))
 DECL|macro|ctxd_val
 mdefine_line|#define ctxd_val(x)&t;(x)
 DECL|macro|pgprot_val
@@ -222,7 +222,7 @@ DECL|macro|__iopgprot
 mdefine_line|#define __iopgprot(x)&t;(x)
 macro_line|#endif /* (STRICT_MM_TYPECHECKS) */
 DECL|macro|TASK_UNMAPPED_BASE
-mdefine_line|#define TASK_UNMAPPED_BASE&t;((current-&gt;tss.flags &amp; SPARC_FLAG_32BIT) ? &bslash;&n;&t;&t;&t;&t; (0x0000000070000000UL) : &bslash;&n;&t;&t;&t;&t; (0x0000030000000000UL))
+mdefine_line|#define TASK_UNMAPPED_BASE&t;((current-&gt;tss.flags &amp; SPARC_FLAG_32BIT) ? &bslash;&n;&t;&t;&t;&t; (0x0000000070000000UL) : &bslash;&n;&t;&t;&t;&t; (0xfffff80000000000UL))
 macro_line|#endif /* !(__ASSEMBLY__) */
 multiline_comment|/* to align the pointer to the (next) page boundary */
 DECL|macro|PAGE_ALIGN

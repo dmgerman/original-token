@@ -4,9 +4,7 @@ macro_line|#include &lt;linux/smp.h&gt;
 macro_line|#include &lt;linux/elfcore.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
-macro_line|#include &lt;linux/bios32.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
-macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;asm/semaphore.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
@@ -17,9 +15,11 @@ macro_line|#include &lt;asm/checksum.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/adb.h&gt;
 macro_line|#include &lt;asm/cuda.h&gt;
+macro_line|#include &lt;asm/pmu.h&gt;
 macro_line|#include &lt;asm/prom.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/pci-bridge.h&gt;
+macro_line|#include &lt;asm/irq.h&gt;
 r_extern
 r_void
 id|transfer_to_handler
@@ -234,7 +234,21 @@ c_func
 id|__ppc_bh_counter
 )paren
 suffix:semicolon
-macro_line|#if !defined(CONFIG_MACH_SPECIFIC)
+DECL|variable|enable_irq
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|enable_irq
+)paren
+suffix:semicolon
+DECL|variable|disable_irq
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|disable_irq
+)paren
+suffix:semicolon
+macro_line|#if !defined(CONFIG_MACH_SPECIFIC) || defined(CONFIG_PMAC)
 DECL|variable|isa_io_base
 id|EXPORT_SYMBOL
 c_func
@@ -242,6 +256,8 @@ c_func
 id|isa_io_base
 )paren
 suffix:semicolon
+macro_line|#endif
+macro_line|#if !defined(CONFIG_MACH_SPECIFIC)
 DECL|variable|pci_dram_offset
 id|EXPORT_SYMBOL
 c_func
@@ -545,6 +561,20 @@ id|strlen_user
 )paren
 suffix:semicolon
 multiline_comment|/*&n;EXPORT_SYMBOL(inb);&n;EXPORT_SYMBOL(inw);&n;EXPORT_SYMBOL(inl);&n;EXPORT_SYMBOL(outb);&n;EXPORT_SYMBOL(outw);&n;EXPORT_SYMBOL(outl);&n;EXPORT_SYMBOL(outsl);*/
+DECL|variable|_insb
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|_insb
+)paren
+suffix:semicolon
+DECL|variable|_outsb
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|_outsb
+)paren
+suffix:semicolon
 DECL|variable|_insw
 id|EXPORT_SYMBOL
 c_func
@@ -578,6 +608,20 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|ioremap
+)paren
+suffix:semicolon
+DECL|variable|__ioremap
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|__ioremap
+)paren
+suffix:semicolon
+DECL|variable|iounmap
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|iounmap
 )paren
 suffix:semicolon
 DECL|variable|start_thread
@@ -693,6 +737,34 @@ c_func
 id|cuda_send_request
 )paren
 suffix:semicolon
+DECL|variable|cuda_poll
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|cuda_poll
+)paren
+suffix:semicolon
+DECL|variable|pmu_request
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|pmu_request
+)paren
+suffix:semicolon
+DECL|variable|pmu_send_request
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|pmu_send_request
+)paren
+suffix:semicolon
+DECL|variable|pmu_poll
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|pmu_poll
+)paren
+suffix:semicolon
 DECL|variable|abort
 id|EXPORT_SYMBOL
 c_func
@@ -749,13 +821,4 @@ c_func
 id|note_scsi_host
 )paren
 suffix:semicolon
-macro_line|#if CONFIG_PCI
-DECL|variable|pci_devices
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|pci_devices
-)paren
-suffix:semicolon
-macro_line|#endif
 eof

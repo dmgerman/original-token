@@ -8,6 +8,7 @@ macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;asm/prom.h&gt;
 macro_line|#include &lt;asm/adb.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
+macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/hydra.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -232,7 +233,7 @@ l_int|0
 )paren
 r_return
 suffix:semicolon
-macro_line|#if 1
+macro_line|#if 0
 (brace
 r_int
 id|i
@@ -308,6 +309,8 @@ id|adbs-&gt;intrs
 (braket
 id|i
 )braket
+dot
+id|line
 )paren
 suffix:semicolon
 id|printk
@@ -326,7 +329,17 @@ r_struct
 id|adb_regs
 op_star
 )paren
+id|ioremap
+c_func
+(paren
 id|adbs-&gt;addrs-&gt;address
+comma
+r_sizeof
+(paren
+r_struct
+id|adb_regs
+)paren
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -334,14 +347,12 @@ c_cond
 id|request_irq
 c_func
 (paren
-id|openpic_to_irq
-c_func
-(paren
 id|adbs-&gt;intrs
 (braket
 l_int|0
 )braket
-)paren
+dot
+id|line
 comma
 id|macio_adb_interrupt
 comma
@@ -363,14 +374,12 @@ c_func
 id|KERN_ERR
 l_string|&quot;ADB: can&squot;t get irq %d&bslash;n&quot;
 comma
-id|openpic_to_irq
-c_func
-(paren
 id|adbs-&gt;intrs
 (braket
 l_int|0
 )braket
-)paren
+dot
+id|line
 )paren
 suffix:semicolon
 r_return

@@ -10,6 +10,7 @@ macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/mman.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
+macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;
@@ -23,6 +24,14 @@ c_func
 r_void
 )paren
 (brace
+id|DEFINE
+c_func
+(paren
+id|KERNELBASE
+comma
+id|KERNELBASE
+)paren
+suffix:semicolon
 id|DEFINE
 c_func
 (paren
@@ -62,6 +71,20 @@ r_struct
 id|task_struct
 comma
 id|counter
+)paren
+)paren
+suffix:semicolon
+id|DEFINE
+c_func
+(paren
+id|PROCESSOR
+comma
+m_offsetof
+(paren
+r_struct
+id|task_struct
+comma
+id|processor
 )paren
 )paren
 suffix:semicolon
@@ -239,6 +262,20 @@ r_struct
 id|thread_struct
 comma
 id|fpscr
+)paren
+)paren
+suffix:semicolon
+id|DEFINE
+c_func
+(paren
+id|TSS_SMP_FORK_RET
+comma
+m_offsetof
+(paren
+r_struct
+id|thread_struct
+comma
+id|smp_fork_ret
 )paren
 )paren
 suffix:semicolon

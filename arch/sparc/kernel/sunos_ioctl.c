@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sunos_ioctl.c,v 1.29 1997/09/18 10:37:31 rth Exp $&n; * sunos_ioctl.c: The Linux Operating system: SunOS ioctl compatibility.&n; * &n; * Copyright (C) 1995 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: sunos_ioctl.c,v 1.30 1998/01/21 06:17:32 ecd Exp $&n; * sunos_ioctl.c: The Linux Operating system: SunOS ioctl compatibility.&n; * &n; * Copyright (C) 1995 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -646,7 +646,7 @@ c_func
 (paren
 id|fd
 comma
-id|SIOCGIFBRDADDR
+id|SIOCSIFBRDADDR
 comma
 id|arg
 )paren

@@ -1,5 +1,3 @@
-macro_line|#include &quot;soft-fp.h&quot;
-macro_line|#include &quot;quad.h&quot;
 DECL|function|FNEGQ
 r_int
 id|FNEGQ
@@ -16,7 +14,6 @@ op_star
 id|rs2
 )paren
 (brace
-multiline_comment|/*&n;&t;FP_DECL_Q(A); FP_DECL_Q(R);&n;&n;&t;__FP_UNPACK_Q(A, rs2);&n;&t;FP_NEG_Q(R, A);&n;&t;__FP_PACK_Q(rd, R);&n; */
 id|rd
 (braket
 l_int|0

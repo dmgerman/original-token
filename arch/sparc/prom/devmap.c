@@ -1,18 +1,16 @@
-multiline_comment|/* $Id: devmap.c,v 1.5 1997/05/14 20:44:59 davem Exp $&n; * promdevmap.c:  Map device/IO areas to virtual addresses.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: devmap.c,v 1.6 1998/03/09 14:04:23 jj Exp $&n; * promdevmap.c:  Map device/IO areas to virtual addresses.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;asm/openprom.h&gt;
 macro_line|#include &lt;asm/oplib.h&gt;
-multiline_comment|/* XXX Let&squot;s get rid of this thing if we can... */
 r_extern
-r_struct
-id|task_struct
-op_star
-id|current_set
-(braket
-id|NR_CPUS
-)braket
+r_void
+id|restore_current
+c_func
+(paren
+r_void
+)paren
 suffix:semicolon
 multiline_comment|/* Just like the routines in palloc.c, these should not be used&n; * by the kernel at all.  Bootloader facility mainly.  And again,&n; * this is only available on V2 proms and above.&n; */
 multiline_comment|/* Map physical device address &squot;paddr&squot; in IO space &squot;ios&squot; of size&n; * &squot;num_bytes&squot; to a virtual address, with &squot;vhint&squot; being a hint to&n; * the prom as to where you would prefer the mapping.  We return&n; * where the prom actually mapped it.&n; */
@@ -101,26 +99,9 @@ comma
 id|num_bytes
 )paren
 suffix:semicolon
-id|__asm__
-id|__volatile__
+id|restore_current
 c_func
 (paren
-l_string|&quot;ld [%0], %%g6&bslash;n&bslash;t&quot;
-suffix:colon
-suffix:colon
-l_string|&quot;r&quot;
-(paren
-op_amp
-id|current_set
-(braket
-id|hard_smp_processor_id
-c_func
-(paren
-)paren
-)braket
-)paren
-suffix:colon
-l_string|&quot;memory&quot;
 )paren
 suffix:semicolon
 id|restore_flags
@@ -186,26 +167,9 @@ comma
 id|num_bytes
 )paren
 suffix:semicolon
-id|__asm__
-id|__volatile__
+id|restore_current
 c_func
 (paren
-l_string|&quot;ld [%0], %%g6&bslash;n&bslash;t&quot;
-suffix:colon
-suffix:colon
-l_string|&quot;r&quot;
-(paren
-op_amp
-id|current_set
-(braket
-id|hard_smp_processor_id
-c_func
-(paren
-)paren
-)braket
-)paren
-suffix:colon
-l_string|&quot;memory&quot;
 )paren
 suffix:semicolon
 id|restore_flags

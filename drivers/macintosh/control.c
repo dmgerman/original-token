@@ -9,6 +9,7 @@ macro_line|#include &lt;asm/prom.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/adb.h&gt;
 macro_line|#include &lt;asm/cuda.h&gt;
+macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;linux/selection.h&gt;
 macro_line|#include &quot;pmac-cons.h&quot;
 macro_line|#include &quot;control.h&quot;
@@ -313,6 +314,24 @@ DECL|variable|control_use_bank2
 r_static
 r_int
 id|control_use_bank2
+suffix:semicolon
+DECL|variable|frame_buffer_phys
+r_static
+r_int
+r_int
+id|frame_buffer_phys
+suffix:semicolon
+DECL|variable|disp_regs_phys
+r_static
+r_int
+r_int
+id|disp_regs_phys
+suffix:semicolon
+DECL|variable|cmap_regs_phys
+r_static
+r_int
+r_int
+id|cmap_regs_phys
 suffix:semicolon
 multiline_comment|/*&n; * Register initialization tables for the control display.&n; *&n; * Dot clock rate is&n; * 3.9064MHz * 2**clock_params[2] * clock_params[1] / clock_params[0].&n; *&n; * The values for vertical frequency (V) in the comments below&n; * are the values measured using the modes under MacOS.&n; */
 DECL|struct|control_regvals
@@ -1883,6 +1902,8 @@ id|dp-&gt;intrs
 (braket
 id|i
 )braket
+dot
+id|line
 )paren
 suffix:semicolon
 id|printk
@@ -1940,19 +1961,29 @@ op_add_assign
 l_int|0x800000
 suffix:semicolon
 multiline_comment|/* map at most 8MB for the frame buffer */
+id|frame_buffer_phys
+op_assign
+id|addr
+suffix:semicolon
 id|frame_buffer
 op_assign
-id|ioremap
+id|__ioremap
 c_func
 (paren
 id|addr
 comma
 l_int|0x800000
+comma
+id|_PAGE_WRITETHRU
 )paren
 suffix:semicolon
 )brace
 r_else
 (brace
+id|disp_regs_phys
+op_assign
+id|addr
+suffix:semicolon
 id|disp_regs
 op_assign
 id|ioremap
@@ -1965,17 +1996,21 @@ id|size
 suffix:semicolon
 )brace
 )brace
+id|cmap_regs_phys
+op_assign
+l_int|0xf301b000
+suffix:semicolon
+multiline_comment|/* XXX not in prom? */
 id|cmap_regs
 op_assign
 id|ioremap
 c_func
 (paren
-l_int|0xf301b000
+id|cmap_regs_phys
 comma
 l_int|0x1000
 )paren
 suffix:semicolon
-multiline_comment|/* XXX not in prom? */
 multiline_comment|/* Work out which banks of VRAM we have installed. */
 id|frame_buffer
 (braket
@@ -2694,11 +2729,7 @@ id|display_info.name
 suffix:semicolon
 id|display_info.fb_address
 op_assign
-(paren
-r_int
-r_int
-)paren
-id|frame_buffer
+id|frame_buffer_phys
 op_plus
 id|init-&gt;offset
 (braket
@@ -2707,30 +2738,17 @@ id|color_mode
 suffix:semicolon
 id|display_info.cmap_adr_address
 op_assign
-(paren
-r_int
-r_int
-)paren
-op_amp
-id|cmap_regs-&gt;addr
+id|cmap_regs_phys
 suffix:semicolon
 id|display_info.cmap_data_address
 op_assign
-(paren
-r_int
-r_int
-)paren
-op_amp
-id|cmap_regs-&gt;lut
+id|cmap_regs_phys
+op_plus
+l_int|0x30
 suffix:semicolon
 id|display_info.disp_reg_address
 op_assign
-(paren
-r_int
-r_int
-)paren
-op_amp
-id|disp_regs
+id|disp_regs_phys
 suffix:semicolon
 )brace
 r_int

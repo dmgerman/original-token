@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;$Id: pci.h,v 1.62 1998/03/15 13:50:05 ecd Exp $&n; *&n; *&t;PCI defines and function prototypes&n; *&t;Copyright 1994, Drew Eckhardt&n; *&t;Copyright 1997, Martin Mares &lt;mj@atrey.karlin.mff.cuni.cz&gt;&n; *&n; *&t;For more information, please consult &n; * &n; *&t;PCI BIOS Specification Revision&n; *&t;PCI Local Bus Specification&n; *&t;PCI System Design Guide&n; *&n; *&t;PCI Special Interest Group&n; *&t;M/S HF3-15A&n; *&t;5200 N.E. Elam Young Parkway&n; *&t;Hillsboro, Oregon 97124-6497&n; *&t;+1 (503) 696-2000 &n; *&t;+1 (800) 433-5177&n; * &n; *&t;Manuals are $25 each or $50 for all three, plus $7 shipping &n; *&t;within the United States, $35 abroad.&n; */
+multiline_comment|/*&n; *&t;$Id: pci.h,v 1.67 1998/04/16 20:48:33 mj Exp $&n; *&n; *&t;PCI defines and function prototypes&n; *&t;Copyright 1994, Drew Eckhardt&n; *&t;Copyright 1997, Martin Mares &lt;mj@atrey.karlin.mff.cuni.cz&gt;&n; *&n; *&t;For more information, please consult &n; * &n; *&t;PCI BIOS Specification Revision&n; *&t;PCI Local Bus Specification&n; *&t;PCI System Design Guide&n; *&n; *&t;PCI Special Interest Group&n; *&t;M/S HF3-15A&n; *&t;5200 N.E. Elam Young Parkway&n; *&t;Hillsboro, Oregon 97124-6497&n; *&t;+1 (503) 696-2000 &n; *&t;+1 (800) 433-5177&n; * &n; *&t;Manuals are $25 each or $50 for all three, plus $7 shipping &n; *&t;within the United States, $35 abroad.&n; */
 macro_line|#ifndef LINUX_PCI_H
 DECL|macro|LINUX_PCI_H
 mdefine_line|#define LINUX_PCI_H
@@ -127,9 +127,11 @@ mdefine_line|#define PCI_SUBSYSTEM_VENDOR_ID&t;0x2c
 DECL|macro|PCI_SUBSYSTEM_ID
 mdefine_line|#define PCI_SUBSYSTEM_ID&t;0x2e  
 DECL|macro|PCI_ROM_ADDRESS
-mdefine_line|#define PCI_ROM_ADDRESS&t;&t;0x30&t;/* 32 bits */
+mdefine_line|#define PCI_ROM_ADDRESS&t;&t;0x30&t;/* Bits 31..11 are address, 10..1 reserved */
 DECL|macro|PCI_ROM_ADDRESS_ENABLE
-mdefine_line|#define  PCI_ROM_ADDRESS_ENABLE&t;0x01&t;/* Write 1 to enable ROM,&n;&t;&t;&t;&t;&t;   bits 31..11 are address,&n;&t;&t;&t;&t;&t;   10..2 are reserved */
+mdefine_line|#define  PCI_ROM_ADDRESS_ENABLE&t;0x01
+DECL|macro|PCI_ROM_ADDRESS_MASK
+mdefine_line|#define PCI_ROM_ADDRESS_MASK&t;(~0x7ffUL)
 multiline_comment|/* 0x34-0x3b are reserved */
 DECL|macro|PCI_INTERRUPT_LINE
 mdefine_line|#define PCI_INTERRUPT_LINE&t;0x3c&t;/* 8 bits */
@@ -256,10 +258,10 @@ DECL|macro|PCI_CB_IO_LIMIT_1_HI
 mdefine_line|#define PCI_CB_IO_LIMIT_1_HI&t;0x3a
 multiline_comment|/* 0x3c-0x3d are same as for htype 0 */
 multiline_comment|/* 0x3e-0x3f are same as for htype 1 */
-DECL|macro|PCI_CB_SUBSYSTEM_ID
-mdefine_line|#define PCI_CB_SUBSYSTEM_ID&t;0x40
 DECL|macro|PCI_CB_SUBSYSTEM_VENDOR_ID
-mdefine_line|#define PCI_CB_SUBSYSTEM_VENDOR_ID 0x42
+mdefine_line|#define PCI_CB_SUBSYSTEM_VENDOR_ID 0x40
+DECL|macro|PCI_CB_SUBSYSTEM_ID
+mdefine_line|#define PCI_CB_SUBSYSTEM_ID&t;0x42
 DECL|macro|PCI_CB_LEGACY_MODE_BASE
 mdefine_line|#define PCI_CB_LEGACY_MODE_BASE&t;0x44&t;/* 16-bit PC Card legacy mode base address (ExCa) */
 multiline_comment|/* 0x48-0x7f reserved */
@@ -1556,7 +1558,7 @@ mdefine_line|#define PCI_SLOT(devfn)&t;&t;(((devfn) &gt;&gt; 3) &amp; 0x1f)
 DECL|macro|PCI_FUNC
 mdefine_line|#define PCI_FUNC(devfn)&t;&t;((devfn) &amp; 0x07)
 macro_line|#ifdef __KERNEL__
-multiline_comment|/*&n; * Error values that may be returned by the PCI bios.  Use&n; * pcibios_strerror() to convert to a printable string.&n; */
+multiline_comment|/*&n; * Error values that may be returned by the PCI bios.&n; */
 DECL|macro|PCIBIOS_SUCCESSFUL
 mdefine_line|#define PCIBIOS_SUCCESSFUL&t;&t;0x00
 DECL|macro|PCIBIOS_FUNC_NOT_SUPPORTED
@@ -1724,15 +1726,6 @@ r_int
 id|val
 )paren
 suffix:semicolon
-r_const
-r_char
-op_star
-id|pcibios_strerror
-(paren
-r_int
-id|error
-)paren
-suffix:semicolon
 multiline_comment|/* Don&squot;t use these in new code, use pci_find_... instead */
 r_int
 id|pcibios_find_class
@@ -1866,6 +1859,11 @@ id|base_address
 l_int|6
 )braket
 suffix:semicolon
+DECL|member|rom_address
+r_int
+r_int
+id|rom_address
+suffix:semicolon
 )brace
 suffix:semicolon
 DECL|struct|pci_bus
@@ -1991,7 +1989,7 @@ id|bus
 )paren
 suffix:semicolon
 r_void
-id|proc_bus_pci_init
+id|pci_proc_init
 c_func
 (paren
 r_void
@@ -2002,6 +2000,15 @@ id|proc_old_pci_init
 c_func
 (paren
 r_void
+)paren
+suffix:semicolon
+r_int
+id|get_pci_list
+c_func
+(paren
+r_char
+op_star
+id|buf
 )paren
 suffix:semicolon
 r_struct
@@ -2066,12 +2073,13 @@ DECL|macro|pci_write_config_word
 mdefine_line|#define pci_write_config_word(dev, where, val) pcibios_write_config_word(dev-&gt;bus-&gt;number, dev-&gt;devfn, where, val)
 DECL|macro|pci_write_config_dword
 mdefine_line|#define pci_write_config_dword(dev, where, val) pcibios_write_config_dword(dev-&gt;bus-&gt;number, dev-&gt;devfn, where, val)
-r_int
-id|get_pci_list
+r_void
+id|pci_set_master
+c_func
 (paren
-r_char
+r_struct
+id|pci_dev
 op_star
-id|buf
 )paren
 suffix:semicolon
 macro_line|#endif /* __KERNEL__ */

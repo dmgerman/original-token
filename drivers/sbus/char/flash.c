@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: flash.c,v 1.5 1997/11/01 10:22:13 ecd Exp $&n; * flash.c: Allow mmap access to the OBP Flash, for OBP updates.&n; *&n; * Copyright (C) 1997  Eddie C. Dost  (ecd@skynet.be)&n; */
+multiline_comment|/* $Id: flash.c,v 1.7 1998/03/10 20:19:05 jj Exp $&n; * flash.c: Allow mmap access to the OBP Flash, for OBP updates.&n; *&n; * Copyright (C) 1997  Eddie C. Dost  (ecd@skynet.be)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -262,13 +262,12 @@ r_return
 op_minus
 id|EAGAIN
 suffix:semicolon
-id|vma-&gt;vm_dentry
+id|vma-&gt;vm_file
 op_assign
-id|dget
-c_func
-(paren
-id|file-&gt;f_dentry
-)paren
+id|file
+suffix:semicolon
+id|file-&gt;f_count
+op_increment
 suffix:semicolon
 r_return
 l_int|0

@@ -53,5 +53,16 @@ DECL|macro|_IOC_NR
 mdefine_line|#define _IOC_NR(nr)&t;&t;(((nr) &gt;&gt; _IOC_NRSHIFT) &amp; _IOC_NRMASK)
 DECL|macro|_IOC_SIZE
 mdefine_line|#define _IOC_SIZE(nr)&t;&t;(((nr) &gt;&gt; _IOC_SIZESHIFT) &amp; _IOC_SIZEMASK)
+multiline_comment|/* various drivers, such as the pcmcia stuff, need these... */
+DECL|macro|IOC_IN
+mdefine_line|#define IOC_IN&t;&t;(_IOC_WRITE &lt;&lt; _IOC_DIRSHIFT)
+DECL|macro|IOC_OUT
+mdefine_line|#define IOC_OUT&t;&t;(_IOC_READ &lt;&lt; _IOC_DIRSHIFT)
+DECL|macro|IOC_INOUT
+mdefine_line|#define IOC_INOUT&t;((_IOC_WRITE|_IOC_READ) &lt;&lt; _IOC_DIRSHIFT)
+DECL|macro|IOCSIZE_MASK
+mdefine_line|#define IOCSIZE_MASK&t;(_IOC_SIZEMASK &lt;&lt; _IOC_SIZESHIFT)
+DECL|macro|IOCSIZE_SHIFT
+mdefine_line|#define IOCSIZE_SHIFT&t;(_IOC_SIZESHIFT)
 macro_line|#endif
 eof

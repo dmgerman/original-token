@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: fault.c,v 1.92 1997/05/15 21:14:21 davem Exp $&n; * fault.c:  Page fault handlers for the Sparc.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; * Copyright (C) 1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: fault.c,v 1.93 1998/03/25 10:43:16 jj Exp $&n; * fault.c:  Page fault handlers for the Sparc.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; * Copyright (C) 1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;asm/head.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -1161,14 +1161,12 @@ id|tsk-&gt;tss.sig_desc
 op_assign
 id|SUBSIG_NOMAPPING
 suffix:semicolon
-id|send_sig
+id|force_sig
 c_func
 (paren
 id|SIGSEGV
 comma
 id|tsk
-comma
-l_int|1
 )paren
 suffix:semicolon
 r_goto

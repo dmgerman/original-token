@@ -1489,7 +1489,7 @@ id|FIRST_LDT_ENTRY
 comma
 id|ldt
 comma
-id|LDT_ENTRIES
+id|ldt_size
 )paren
 suffix:semicolon
 )brace

@@ -1,9 +1,15 @@
-multiline_comment|/* $Id: page.h,v 1.37 1997/11/28 15:59:21 jj Exp $&n; * page.h:  Various defines and such for MMU operations on the Sparc for&n; *          the Linux kernel.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: page.h,v 1.40 1998/02/06 14:14:46 jj Exp $&n; * page.h:  Various defines and such for MMU operations on the Sparc for&n; *          the Linux kernel.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _SPARC_PAGE_H
 DECL|macro|_SPARC_PAGE_H
 mdefine_line|#define _SPARC_PAGE_H
+macro_line|#include &lt;linux/config.h&gt;
+macro_line|#ifdef CONFIG_SUN4
+DECL|macro|PAGE_SHIFT
+mdefine_line|#define PAGE_SHIFT   13
+macro_line|#else
 DECL|macro|PAGE_SHIFT
 mdefine_line|#define PAGE_SHIFT   12
+macro_line|#endif
 DECL|macro|PAGE_SIZE
 mdefine_line|#define PAGE_SIZE    (1 &lt;&lt; PAGE_SHIFT)
 DECL|macro|PAGE_MASK
@@ -11,6 +17,10 @@ mdefine_line|#define PAGE_MASK    (~(PAGE_SIZE-1))
 macro_line|#ifdef __KERNEL__
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/head.h&gt;       /* for KERNBASE */
+macro_line|#include &lt;asm/btfixup.h&gt;
+multiline_comment|/* This is always 2048*sizeof(long), doesn&squot;t change with PAGE_SIZE */
+DECL|macro|TASK_UNION_SIZE
+mdefine_line|#define TASK_UNION_SIZE&t;&t;8192
 macro_line|#ifndef __ASSEMBLY__
 DECL|macro|clear_page
 mdefine_line|#define clear_page(page)&t;memset((void *)(page), 0, PAGE_SIZE)
@@ -21,33 +31,46 @@ r_int
 r_int
 id|page_offset
 suffix:semicolon
+id|BTFIXUPDEF_SETHI_INIT
+c_func
+(paren
+id|page_offset
+comma
+l_int|0xf0000000
+)paren
+macro_line|#ifdef MODULE
 DECL|macro|PAGE_OFFSET
-mdefine_line|#define PAGE_OFFSET  (page_offset)
+mdefine_line|#define &t;PAGE_OFFSET  (page_offset)
+macro_line|#else
+mdefine_line|#define&t;&t;PAGE_OFFSET  BTFIXUP_SETHI(page_offset)
+macro_line|#endif
 multiline_comment|/* translate between physical and virtual addresses */
-r_extern
-r_int
-r_int
+id|BTFIXUPDEF_CALL_CONST
+c_func
 (paren
-op_star
+r_int
+r_int
+comma
 id|mmu_v2p
-)paren
-(paren
+comma
 r_int
 r_int
 )paren
-suffix:semicolon
-r_extern
-r_int
-r_int
+id|BTFIXUPDEF_CALL_CONST
+c_func
 (paren
-op_star
+r_int
+r_int
+comma
 id|mmu_p2v
-)paren
-(paren
+comma
 r_int
 r_int
 )paren
-suffix:semicolon
+DECL|macro|mmu_v2p
+mdefine_line|#define mmu_v2p(vaddr) BTFIXUP_CALL(mmu_v2p)(vaddr)
+DECL|macro|mmu_p2v
+mdefine_line|#define mmu_p2v(paddr) BTFIXUP_CALL(mmu_p2v)(paddr)
 DECL|macro|__pa
 mdefine_line|#define __pa(x)    (mmu_v2p((unsigned long)(x)))
 DECL|macro|__va
@@ -763,8 +786,13 @@ r_int
 r_int
 id|sparc_unmapped_base
 suffix:semicolon
+id|BTFIXUPDEF_SETHI
+c_func
+(paren
+id|sparc_unmapped_base
+)paren
 DECL|macro|TASK_UNMAPPED_BASE
-mdefine_line|#define TASK_UNMAPPED_BASE&t;(sparc_unmapped_base)
+mdefine_line|#define TASK_UNMAPPED_BASE&t;BTFIXUP_SETHI(sparc_unmapped_base)
 multiline_comment|/* to align the pointer to the (next) page boundary */
 DECL|macro|PAGE_ALIGN
 mdefine_line|#define PAGE_ALIGN(addr)  (((addr)+PAGE_SIZE-1)&amp;PAGE_MASK)
@@ -772,7 +800,6 @@ multiline_comment|/* Now, to allow for very large physical memory configurations
 DECL|macro|MAP_NR
 mdefine_line|#define MAP_NR(addr) ((((unsigned long) (addr)) - PAGE_OFFSET) &gt;&gt; PAGE_SHIFT)
 macro_line|#else /* !(__ASSEMBLY__) */
-DECL|macro|__pgprot
 mdefine_line|#define __pgprot(x)&t;(x)
 macro_line|#endif /* !(__ASSEMBLY__) */
 macro_line|#endif /* __KERNEL__ */

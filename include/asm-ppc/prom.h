@@ -49,6 +49,21 @@ id|size
 suffix:semicolon
 )brace
 suffix:semicolon
+DECL|struct|interrupt_info
+r_struct
+id|interrupt_info
+(brace
+DECL|member|line
+r_int
+id|line
+suffix:semicolon
+DECL|member|sense
+r_int
+id|sense
+suffix:semicolon
+multiline_comment|/* +ve/-ve logic, edge or level, etc. */
+)brace
+suffix:semicolon
 DECL|struct|reg_property
 r_struct
 id|reg_property
@@ -151,7 +166,8 @@ r_int
 id|n_intrs
 suffix:semicolon
 DECL|member|intrs
-r_int
+r_struct
+id|interrupt_info
 op_star
 id|intrs
 suffix:semicolon

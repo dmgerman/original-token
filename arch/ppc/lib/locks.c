@@ -1,19 +1,17 @@
-multiline_comment|/*&n; * $Id: locks.c,v 1.7 1998/01/06 06:44:59 cort Exp $&n; *&n; * Locks for smp ppc &n; * &n; * Written by Cort Dougan (cort@cs.nmt.edu)&n; */
+multiline_comment|/*&n; * $Id: locks.c,v 1.17 1998/03/26 22:19:38 cort Exp $&n; *&n; * Locks for smp ppc &n; * &n; * Written by Cort Dougan (cort@cs.nmt.edu)&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
+macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/spinlock.h&gt;
+macro_line|#include &lt;asm/io.h&gt;
 DECL|macro|DEBUG_LOCKS
 mdefine_line|#define DEBUG_LOCKS 1
 DECL|macro|INIT_STUCK
 macro_line|#undef INIT_STUCK
 DECL|macro|INIT_STUCK
-mdefine_line|#define INIT_STUCK 10000
-DECL|macro|STUCK
-macro_line|#undef STUCK
-DECL|macro|STUCK
-mdefine_line|#define STUCK &bslash;&n;if(!--stuck) { printk(&quot;spin_lock(%p) CPU#%d nip %08lx&bslash;n&quot;, lock, cpu, nip); stuck = INIT_STUCK; }
+mdefine_line|#define INIT_STUCK 1000000
 DECL|function|_spin_lock
 r_void
 id|_spin_lock
@@ -25,10 +23,95 @@ id|lock
 )paren
 (brace
 r_int
+id|cpu
+op_assign
+id|smp_processor_id
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#ifdef DEBUG_LOCKS
 r_int
-id|val
+id|stuck
+op_assign
+id|INIT_STUCK
+suffix:semicolon
+macro_line|#endif /* DEBUG_LOCKS */
+multiline_comment|/* try expensive atomic load/store to get lock */
+r_while
+c_loop
+(paren
+(paren
+r_int
+r_int
+)paren
+id|xchg_u32
+c_func
+(paren
+(paren
+r_void
+op_star
+)paren
+op_amp
+id|lock-&gt;lock
 comma
-id|nip
+l_int|0xffffffff
+)paren
+)paren
+(brace
+multiline_comment|/* try cheap load until it&squot;s free */
+r_while
+c_loop
+(paren
+id|lock-&gt;lock
+)paren
+(brace
+macro_line|#ifdef DEBUG_LOCKS
+r_if
+c_cond
+(paren
+op_logical_neg
+op_decrement
+id|stuck
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;_spin_lock(%p) CPU#%d NIP %p&quot;
+l_string|&quot; holder: cpu %ld pc %08lX&bslash;n&quot;
+comma
+id|lock
+comma
+id|cpu
+comma
+id|__builtin_return_address
+c_func
+(paren
+l_int|0
+)paren
+comma
+id|lock-&gt;owner_cpu
+comma
+id|lock-&gt;owner_pc
+)paren
+suffix:semicolon
+id|stuck
+op_assign
+id|INIT_STUCK
+suffix:semicolon
+multiline_comment|/* steal the lock */
+multiline_comment|/*xchg_u32((void *)&amp;lock-&gt;lock,0);*/
+)brace
+macro_line|#endif /* DEBUG_LOCKS */
+id|barrier
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+)brace
+id|lock-&gt;owner_pc
 op_assign
 (paren
 r_int
@@ -40,86 +123,78 @@ c_func
 l_int|0
 )paren
 suffix:semicolon
-r_int
+id|lock-&gt;owner_cpu
+op_assign
 id|cpu
+suffix:semicolon
+)brace
+DECL|function|spin_trylock
+r_int
+id|spin_trylock
+c_func
+(paren
+id|spinlock_t
+op_star
+id|lock
+)paren
+(brace
+r_int
+r_int
+id|result
+suffix:semicolon
+id|result
+op_assign
+(paren
+r_int
+r_int
+)paren
+id|xchg_u32
+c_func
+(paren
+(paren
+r_void
+op_star
+)paren
+op_amp
+id|lock-&gt;lock
+comma
+l_int|0xffffffff
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|result
+)paren
+(brace
+id|lock-&gt;owner_cpu
 op_assign
 id|smp_processor_id
 c_func
 (paren
 )paren
 suffix:semicolon
-r_int
-id|stuck
+id|lock-&gt;owner_pc
 op_assign
-id|INIT_STUCK
-suffix:semicolon
-id|again
-suffix:colon
-multiline_comment|/* try expensive atomic load/store to get lock */
-id|__asm__
-id|__volatile__
+(paren
+r_int
+r_int
+)paren
+id|__builtin_return_address
 c_func
 (paren
-l_string|&quot;10: &bslash;n&bslash;t&quot;
-l_string|&quot;lwarx %0,0,%1 &bslash;n&bslash;t&quot;
-l_string|&quot;stwcx. %2,0,%1 &bslash;n&bslash;t&quot;
-l_string|&quot;bne- 10b &bslash;n&bslash;t&quot;
-suffix:colon
-l_string|&quot;=r&quot;
-(paren
-id|val
-)paren
-suffix:colon
-l_string|&quot;r&quot;
-(paren
-op_amp
-(paren
-id|lock-&gt;lock
-)paren
-)paren
-comma
-l_string|&quot;r&quot;
-(paren
-(paren
-id|cpu
-op_amp
-l_int|3
-)paren
-op_or
-(paren
-id|nip
-op_amp
-op_complement
-l_int|3L
-)paren
-)paren
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|val
-)paren
-(brace
-multiline_comment|/* try cheap load until it&squot;s free */
-r_while
-c_loop
-(paren
-id|lock-&gt;lock
-)paren
-(brace
-id|STUCK
-suffix:semicolon
-id|barrier
-c_func
-(paren
+l_int|0
 )paren
 suffix:semicolon
 )brace
-r_goto
-id|again
+r_return
+(paren
+id|result
+op_eq
+l_int|0
+)paren
 suffix:semicolon
-)brace
 )brace
 DECL|function|_spin_unlock
 r_void
@@ -131,15 +206,84 @@ op_star
 id|lp
 )paren
 (brace
+macro_line|#ifdef DEBUG_LOCKS
+r_if
+c_cond
+(paren
+op_logical_neg
+id|lp-&gt;lock
+)paren
+id|panic
+c_func
+(paren
+l_string|&quot;_spin_unlock(%p): no lock cpu %d %s/%d&bslash;n&quot;
+comma
+id|lp
+comma
+id|smp_processor_id
+c_func
+(paren
+)paren
+comma
+id|current-&gt;comm
+comma
+id|current-&gt;pid
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|lp-&gt;owner_cpu
+op_ne
+id|smp_processor_id
+c_func
+(paren
+)paren
+)paren
+id|panic
+c_func
+(paren
+l_string|&quot;_spin_unlock(%p): cpu %d trying clear of cpu %d pc %lx val %lx&bslash;n&quot;
+comma
+id|lp
+comma
+id|smp_processor_id
+c_func
+(paren
+)paren
+comma
+(paren
+r_int
+)paren
+id|lp-&gt;owner_cpu
+comma
+id|lp-&gt;owner_pc
+comma
+id|lp-&gt;lock
+)paren
+suffix:semicolon
+macro_line|#endif /* DEBUG_LOCKS */
+id|lp-&gt;owner_pc
+op_assign
+id|lp-&gt;owner_cpu
+op_assign
+l_int|0
+suffix:semicolon
+id|eieio
+c_func
+(paren
+)paren
+suffix:semicolon
 id|lp-&gt;lock
 op_assign
 l_int|0
 suffix:semicolon
+id|eieio
+c_func
+(paren
+)paren
+suffix:semicolon
 )brace
-DECL|macro|STUCK
-macro_line|#undef STUCK
-DECL|macro|STUCK
-mdefine_line|#define STUCK &bslash;&n;if(!--stuck) { printk(&quot;_read_lock(%p) CPU#%d&bslash;n&quot;, rw, cpu); stuck = INIT_STUCK; }
 multiline_comment|/*&n; * Just like x86, implement read-write locks as a 32-bit counter&n; * with the high bit (sign) being the &quot;write&quot; bit.&n; * -- Cort&n; */
 DECL|function|_read_lock
 r_void
@@ -151,6 +295,7 @@ op_star
 id|rw
 )paren
 (brace
+macro_line|#ifdef DEBUG_LOCKS
 r_int
 r_int
 id|stuck
@@ -165,6 +310,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#endif /* DEBUG_LOCKS */&t;&t;  
 id|again
 suffix:colon
 multiline_comment|/* get our read lock in there */
@@ -237,8 +383,31 @@ OL
 l_int|0
 )paren
 (brace
-id|STUCK
+macro_line|#ifdef DEBUG_LOCKS
+r_if
+c_cond
+(paren
+op_logical_neg
+op_decrement
+id|stuck
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;_read_lock(%p) CPU#%d&bslash;n&quot;
+comma
+id|rw
+comma
+id|cpu
+)paren
 suffix:semicolon
+id|stuck
+op_assign
+id|INIT_STUCK
+suffix:semicolon
+)brace
+macro_line|#endif /* DEBUG_LOCKS */
 )brace
 multiline_comment|/* try to get the read lock again */
 r_goto
@@ -264,12 +433,6 @@ id|rw-&gt;lock
 op_eq
 l_int|0
 )paren
-(brace
-r_if
-c_cond
-(paren
-id|current
-)paren
 id|printk
 c_func
 (paren
@@ -284,14 +447,6 @@ comma
 id|rw-&gt;lock
 )paren
 suffix:semicolon
-r_else
-id|printk
-c_func
-(paren
-l_string|&quot;no current&bslash;n&quot;
-)paren
-suffix:semicolon
-)brace
 macro_line|#endif /* DEBUG_LOCKS */
 id|atomic_dec
 c_func
@@ -309,10 +464,6 @@ id|lock
 )paren
 suffix:semicolon
 )brace
-DECL|macro|STUCK
-macro_line|#undef STUCK
-DECL|macro|STUCK
-mdefine_line|#define STUCK &bslash;&n;if(!--stuck) { printk(&quot;write_lock(%p) CPU#%d lock %lx)&bslash;n&quot;, rw, cpu,rw-&gt;lock); stuck = INIT_STUCK; }
 DECL|function|_write_lock
 r_void
 id|_write_lock
@@ -323,6 +474,7 @@ op_star
 id|rw
 )paren
 (brace
+macro_line|#ifdef DEBUG_LOCKS
 r_int
 r_int
 id|stuck
@@ -337,6 +489,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#endif /* DEBUG_LOCKS */&t;&t;  
 id|again
 suffix:colon
 r_if
@@ -374,7 +527,37 @@ l_int|31
 )paren
 multiline_comment|/* wait for write lock */
 (brace
-id|STUCK
+macro_line|#ifdef DEBUG_LOCKS
+r_if
+c_cond
+(paren
+op_logical_neg
+op_decrement
+id|stuck
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;write_lock(%p) CPU#%d lock %lx)&bslash;n&quot;
+comma
+id|rw
+comma
+id|cpu
+comma
+id|rw-&gt;lock
+)paren
+suffix:semicolon
+id|stuck
+op_assign
+id|INIT_STUCK
+suffix:semicolon
+)brace
+macro_line|#endif /* DEBUG_LOCKS */&t;&t;  
+id|barrier
+c_func
+(paren
+)paren
 suffix:semicolon
 )brace
 r_goto
@@ -430,7 +613,37 @@ l_int|31
 )paren
 )paren
 (brace
-id|STUCK
+macro_line|#ifdef DEBUG_LOCKS
+r_if
+c_cond
+(paren
+op_logical_neg
+op_decrement
+id|stuck
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;write_lock(%p) 2 CPU#%d lock %lx)&bslash;n&quot;
+comma
+id|rw
+comma
+id|cpu
+comma
+id|rw-&gt;lock
+)paren
+suffix:semicolon
+id|stuck
+op_assign
+id|INIT_STUCK
+suffix:semicolon
+)brace
+macro_line|#endif /* DEBUG_LOCKS */
+id|barrier
+c_func
+(paren
+)paren
 suffix:semicolon
 )brace
 r_goto
@@ -463,12 +676,6 @@ l_int|31
 )paren
 )paren
 )paren
-(brace
-r_if
-c_cond
-(paren
-id|current
-)paren
 id|printk
 c_func
 (paren
@@ -483,14 +690,6 @@ comma
 id|rw-&gt;lock
 )paren
 suffix:semicolon
-r_else
-id|printk
-c_func
-(paren
-l_string|&quot;no current&bslash;n&quot;
-)paren
-suffix:semicolon
-)brace
 macro_line|#endif /* DEBUG_LOCKS */
 id|clear_bit
 c_func
@@ -518,6 +717,12 @@ id|task
 )paren
 (brace
 macro_line|#ifdef DEBUG_LOCKS
+r_int
+r_int
+id|stuck
+op_assign
+id|INIT_STUCK
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -548,7 +753,6 @@ id|task-&gt;lock_depth
 suffix:semicolon
 )brace
 macro_line|#endif /* DEBUG_LOCKS */
-multiline_comment|/* mine! */
 r_if
 c_cond
 (paren
@@ -562,9 +766,75 @@ op_star
 op_amp
 id|task-&gt;lock_depth
 )paren
-op_eq
+op_ne
 l_int|1
 )paren
+r_return
+suffix:semicolon
+multiline_comment|/* mine! */
+r_while
+c_loop
+(paren
+id|xchg_u32
+c_func
+(paren
+(paren
+r_void
+op_star
+)paren
+op_amp
+id|klock_info.kernel_flag
+comma
+id|KLOCK_HELD
+)paren
+)paren
+(brace
+multiline_comment|/* try cheap load until it&squot;s free */
+r_while
+c_loop
+(paren
+id|klock_info.kernel_flag
+)paren
+(brace
+macro_line|#ifdef DEBUG_LOCKS
+r_if
+c_cond
+(paren
+op_logical_neg
+op_decrement
+id|stuck
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;_lock_kernel() CPU#%d NIP %p&bslash;n&quot;
+comma
+id|smp_processor_id
+c_func
+(paren
+)paren
+comma
+id|__builtin_return_address
+c_func
+(paren
+l_int|0
+)paren
+)paren
+suffix:semicolon
+id|stuck
+op_assign
+id|INIT_STUCK
+suffix:semicolon
+)brace
+macro_line|#endif /* DEBUG_LOCKS */
+id|barrier
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+)brace
 id|klock_info.akp
 op_assign
 id|smp_processor_id
@@ -589,15 +859,24 @@ macro_line|#ifdef DEBUG_LOCKS
 r_if
 c_cond
 (paren
+(paren
 id|task-&gt;lock_depth
 op_eq
 l_int|0
+)paren
+op_logical_or
+(paren
+id|klock_info.kernel_flag
+op_ne
+id|KLOCK_HELD
+)paren
 )paren
 (brace
 id|printk
 c_func
 (paren
-l_string|&quot;__unlock_kernel(): %s/%d (nip %08lX) lock depth %x&bslash;n&quot;
+l_string|&quot;__unlock_kernel(): %s/%d (nip %08lX) &quot;
+l_string|&quot;lock depth %x flags %lx&bslash;n&quot;
 comma
 id|task-&gt;comm
 comma
@@ -606,6 +885,8 @@ comma
 id|task-&gt;tss.regs-&gt;nip
 comma
 id|task-&gt;lock_depth
+comma
+id|klock_info.kernel_flag
 )paren
 suffix:semicolon
 id|klock_info.akp
@@ -641,7 +922,7 @@ id|NO_PROC_ID
 suffix:semicolon
 id|klock_info.kernel_flag
 op_assign
-l_int|0
+id|KLOCK_CLEAR
 suffix:semicolon
 )brace
 )brace

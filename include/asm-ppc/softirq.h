@@ -200,9 +200,9 @@ suffix:semicolon
 )brace
 multiline_comment|/* These are for the irq&squot;s testing the lock */
 DECL|macro|softirq_trylock
-mdefine_line|#define softirq_trylock()&t;(__ppc_bh_counter? 0: ((__ppc_bh_counter=1),1))
+mdefine_line|#define softirq_trylock(cpu)&t;(__ppc_bh_counter? 0: ((__ppc_bh_counter=1),1))
 DECL|macro|softirq_endlock
-mdefine_line|#define softirq_endlock()&t;(__ppc_bh_counter = 0)
+mdefine_line|#define softirq_endlock(cpu)&t;(__ppc_bh_counter = 0)
 macro_line|#else /* __SMP__ */
 r_extern
 id|atomic_t
@@ -228,9 +228,9 @@ mdefine_line|#define disable_bh(nr)&t;&t;&t;&t;&t;&bslash;&n;do {&t;unsigned lon
 DECL|macro|enable_bh
 mdefine_line|#define enable_bh(nr)&t;&t;&t;&t;&t;&bslash;&n;do {&t;unsigned long flags;&t;&t;&t;&t;&bslash;&n;&t;int ent = nr;&t;&t;&t;&t;&t;&bslash;&n;&t;spin_lock_irqsave(&amp;global_bh_lock, flags);&t;&bslash;&n;&t;if (!--bh_mask_count[ent])&t;&t;&t;&bslash;&n;&t;&t;bh_mask |= 1 &lt;&lt; ent;&t;&t;&t;&bslash;&n;&t;spin_unlock_irqrestore(&amp;global_bh_lock, flags);&t;&bslash;&n;} while(0)
 DECL|macro|softirq_trylock
-mdefine_line|#define softirq_trylock()&t;&t;&t;&t;&t;&bslash;&n;({&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;int ret = 1;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;if(atomic_add_return(1, &amp;__ppc_bh_counter) != 1) {&t;&bslash;&n;&t;&t;atomic_dec(&amp;__ppc_bh_counter);&t;&t;&bslash;&n;&t;&t;ret = 0;&t;&t;&t;&t;&t;&bslash;&n;&t;}&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;ret;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;})
+mdefine_line|#define softirq_trylock(cpu)&t;&t;&t;&t;&t;&bslash;&n;({&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;int ret = 1;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;if(atomic_add_return(1, &amp;__ppc_bh_counter) != 1) {&t;&bslash;&n;&t;&t;atomic_dec(&amp;__ppc_bh_counter);&t;&t;&bslash;&n;&t;&t;ret = 0;&t;&t;&t;&t;&t;&bslash;&n;&t;}&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;ret;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;})
 DECL|macro|softirq_endlock
-mdefine_line|#define softirq_endlock()&t;atomic_dec(&amp;__ppc_bh_counter)
+mdefine_line|#define softirq_endlock(cpu)&t;atomic_dec(&amp;__ppc_bh_counter)
 DECL|macro|clear_active_bhs
 mdefine_line|#define clear_active_bhs(mask)&t;&t;&t;&t;&bslash;&n;do {&t;unsigned long flags;&t;&t;&t;&t;&bslash;&n;&t;spin_lock_irqsave(&amp;global_bh_lock, flags);&t;&bslash;&n;&t;bh_active &amp;= ~(mask);&t;&t;&t;&t;&bslash;&n;&t;spin_unlock_irqrestore(&amp;global_bh_lock, flags);&t;&bslash;&n;} while(0)
 macro_line|#endif /* __SMP__ */

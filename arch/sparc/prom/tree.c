@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: tree.c,v 1.22 1997/09/25 02:19:22 davem Exp $&n; * tree.c: Basic device tree traversal/scanning for the Linux&n; *         prom library.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: tree.c,v 1.24 1998/03/09 14:04:29 jj Exp $&n; * tree.c: Basic device tree traversal/scanning for the Linux&n; *         prom library.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 DECL|macro|PROMLIB_INTERNAL
 mdefine_line|#define PROMLIB_INTERNAL
 macro_line|#include &lt;linux/string.h&gt;
@@ -7,19 +7,14 @@ macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;asm/openprom.h&gt;
 macro_line|#include &lt;asm/oplib.h&gt;
-multiline_comment|/* XXX Let&squot;s get rid of this thing if we can... */
 r_extern
-r_struct
-id|task_struct
-op_star
-id|current_set
-(braket
-id|NR_CPUS
-)braket
+r_void
+id|restore_current
+c_func
+(paren
+r_void
+)paren
 suffix:semicolon
-multiline_comment|/* Macro to restore &quot;current&quot; to the g6 register. */
-DECL|macro|restore_current
-mdefine_line|#define restore_current() __asm__ __volatile__(&quot;ld [%0], %%g6&bslash;n&bslash;t&quot; : : &bslash;&n;&t;&t;&t;  &quot;r&quot; (&amp;current_set[hard_smp_processor_id()]) : &bslash;&n;&t;&t;&t;  &quot;memory&quot;)
 DECL|variable|promlib_buf
 r_static
 r_char
@@ -247,17 +242,6 @@ r_int
 r_int
 id|flags
 suffix:semicolon
-id|save_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -272,13 +256,22 @@ id|prop
 )paren
 )paren
 (brace
-id|ret
-op_assign
+r_return
 op_minus
 l_int|1
 suffix:semicolon
 )brace
-r_else
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
 id|ret
 op_assign
 id|prom_nodeops
@@ -336,17 +329,6 @@ r_int
 r_int
 id|flags
 suffix:semicolon
-id|save_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
 id|plen
 op_assign
 id|prom_getproplen
@@ -380,15 +362,23 @@ l_int|1
 )paren
 )paren
 (brace
-id|ret
-op_assign
+r_return
 op_minus
 l_int|1
 suffix:semicolon
 )brace
-r_else
-(brace
 multiline_comment|/* Ok, things seem all right. */
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
 id|ret
 op_assign
 id|prom_nodeops
@@ -403,7 +393,6 @@ comma
 id|buffer
 )paren
 suffix:semicolon
-)brace
 id|restore_current
 c_func
 (paren

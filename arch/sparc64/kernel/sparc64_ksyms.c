@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sparc64_ksyms.c,v 1.27 1997/11/19 07:57:46 jj Exp $&n; * arch/sparc64/kernel/sparc64_ksyms.c: Sparc64 specific ksyms support.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; */
+multiline_comment|/* $Id: sparc64_ksyms.c,v 1.33 1998/04/06 16:09:40 jj Exp $&n; * arch/sparc64/kernel/sparc64_ksyms.c: Sparc64 specific ksyms support.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; */
 multiline_comment|/* Tell string.h we don&squot;t want memcpy etc. as cpp defines */
 DECL|macro|EXPORT_SYMTAB_STROPS
 mdefine_line|#define EXPORT_SYMTAB_STROPS
@@ -54,6 +54,13 @@ r_int
 id|revents
 suffix:semicolon
 )brace
+suffix:semicolon
+r_extern
+r_int
+id|prom_cpu_nodes
+(braket
+id|NR_CPUS
+)braket
 suffix:semicolon
 r_extern
 r_void
@@ -493,6 +500,20 @@ id|local_irq_count
 )paren
 suffix:semicolon
 macro_line|#endif
+DECL|variable|enable_irq
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|enable_irq
+)paren
+suffix:semicolon
+DECL|variable|disable_irq
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|disable_irq
+)paren
+suffix:semicolon
 DECL|variable|_lock_kernel
 id|EXPORT_SYMBOL_PRIVATE
 c_func
@@ -615,11 +636,25 @@ c_func
 id|ebus_chain
 )paren
 suffix:semicolon
-DECL|variable|pci_devices
+DECL|variable|pci_dvma_offset
 id|EXPORT_SYMBOL
 c_func
 (paren
-id|pci_devices
+id|pci_dvma_offset
+)paren
+suffix:semicolon
+DECL|variable|pci_dvma_mask
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|pci_dvma_mask
+)paren
+suffix:semicolon
+DECL|variable|empty_zero_page
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|empty_zero_page
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -803,13 +838,6 @@ c_func
 id|bcopy
 )paren
 suffix:semicolon
-DECL|variable|memscan
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|memscan
-)paren
-suffix:semicolon
 DECL|variable|strlen
 id|EXPORT_SYMBOL
 c_func
@@ -857,13 +885,6 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|strcmp
-)paren
-suffix:semicolon
-DECL|variable|strncmp
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|strncmp
 )paren
 suffix:semicolon
 DECL|variable|strchr
@@ -1000,11 +1021,11 @@ c_func
 id|svr4_setcontext
 )paren
 suffix:semicolon
-DECL|variable|linux_cpus
+DECL|variable|prom_cpu_nodes
 id|EXPORT_SYMBOL
 c_func
 (paren
-id|linux_cpus
+id|prom_cpu_nodes
 )paren
 suffix:semicolon
 DECL|variable|sys_ioctl
@@ -1019,15 +1040,6 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|sys32_ioctl
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_MATHEMU_MODULE
-DECL|variable|handle_mathemu
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|handle_mathemu
 )paren
 suffix:semicolon
 macro_line|#endif

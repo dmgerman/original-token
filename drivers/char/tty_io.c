@@ -213,6 +213,8 @@ DECL|macro|MIN
 mdefine_line|#define MIN(a,b)&t;((a) &lt; (b) ? (a) : (b))
 macro_line|#endif
 multiline_comment|/*&n; * This routine returns the name of tty.&n; */
+DECL|macro|TTY_NUMBER
+mdefine_line|#define TTY_NUMBER(tty) (MINOR((tty)-&gt;device) - (tty)-&gt;driver.minor_start + &bslash;&n;&t;&t;&t; (tty)-&gt;driver.name_base)
 DECL|function|tty_name
 r_char
 op_star
@@ -243,15 +245,11 @@ l_string|&quot;%s%d&quot;
 comma
 id|tty-&gt;driver.name
 comma
-id|MINOR
+id|TTY_NUMBER
 c_func
 (paren
-id|tty-&gt;device
+id|tty
 )paren
-op_minus
-id|tty-&gt;driver.minor_start
-op_plus
-id|tty-&gt;driver.name_base
 )paren
 suffix:semicolon
 r_else
@@ -5165,14 +5163,39 @@ id|tty-&gt;driver.subtype
 op_eq
 id|SERIAL_TYPE_CALLOUT
 )paren
+op_logical_and
+(paren
+id|tty-&gt;count
+op_eq
+l_int|1
+)paren
+)paren
+(brace
+r_static
+r_int
+id|nr_warns
+op_assign
+l_int|0
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|nr_warns
+OL
+l_int|5
 )paren
 (brace
 id|printk
 c_func
 (paren
-id|KERN_INFO
-l_string|&quot;Warning, %s opened, is a deprecated tty &quot;
-l_string|&quot;callout device&bslash;n&quot;
+id|KERN_WARNING
+l_string|&quot;tty_io.c: &quot;
+l_string|&quot;process %d (%s) used obsolete /dev/%s - &quot;
+l_string|&quot;update software to use /dev/ttyS%d&bslash;n&quot;
+comma
+id|current-&gt;pid
+comma
+id|current-&gt;comm
 comma
 id|tty_name
 c_func
@@ -5181,8 +5204,18 @@ id|tty
 comma
 id|buf
 )paren
+comma
+id|TTY_NUMBER
+c_func
+(paren
+id|tty
+)paren
 )paren
 suffix:semicolon
+id|nr_warns
+op_increment
+suffix:semicolon
+)brace
 )brace
 r_return
 l_int|0

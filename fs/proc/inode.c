@@ -190,6 +190,27 @@ id|de
 op_assign
 id|inode-&gt;u.generic_ip
 suffix:semicolon
+macro_line|#if defined(CONFIG_SUN_OPENPROMFS) || defined(CONFIG_SUN_OPENPROMFS_MODULE)
+r_if
+c_cond
+(paren
+(paren
+id|inode-&gt;i_ino
+op_ge
+id|PROC_OPENPROM_FIRST
+)paren
+op_logical_and
+(paren
+id|inode-&gt;i_ino
+OL
+id|PROC_OPENPROM_FIRST
+op_plus
+id|PROC_NOPENPROM
+)paren
+)paren
+r_return
+suffix:semicolon
+macro_line|#endif&t;
 r_if
 c_cond
 (paren

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;$Id: proc.c,v 1.8 1998/03/12 14:32:51 mj Exp $&n; *&n; *&t;Procfs interface for the PCI bus.&n; *&n; *&t;Copyright (c) 1997, 1998 Martin Mares &lt;mj@atrey.karlin.mff.cuni.cz&gt;&n; */
+multiline_comment|/*&n; *&t;$Id: proc.c,v 1.10 1998/04/16 20:48:30 mj Exp $&n; *&n; *&t;Procfs interface for the PCI bus.&n; *&n; *&t;Copyright (c) 1997, 1998 Martin Mares &lt;mj@atrey.karlin.mff.cuni.cz&gt;&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
@@ -1112,6 +1112,25 @@ id|i
 )paren
 suffix:semicolon
 )brace
+id|len
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|buf
+op_plus
+id|len
+comma
+macro_line|#if BITS_PER_LONG == 32
+l_string|&quot;&bslash;t%08lx&quot;
+comma
+macro_line|#else
+l_string|&quot;&bslash;t%016lx&quot;
+comma
+macro_line|#endif
+id|dev-&gt;rom_address
+)paren
+suffix:semicolon
 id|buf
 (braket
 id|len
@@ -1378,7 +1397,7 @@ id|__initfunc
 c_func
 (paren
 r_void
-id|proc_bus_pci_init
+id|pci_proc_init
 c_func
 (paren
 r_void
@@ -1431,5 +1450,12 @@ comma
 id|proc_pci
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_PCI_OLD_PROC
+id|proc_old_pci_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
 )brace
 eof

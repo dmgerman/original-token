@@ -1,8 +1,9 @@
-multiline_comment|/* $Id: timer.h,v 1.15 1997/12/18 14:21:43 jj Exp $&n; * timer.h:  Definitions for the timer chips on the Sparc.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: timer.h,v 1.16 1998/01/30 10:59:59 jj Exp $&n; * timer.h:  Definitions for the timer chips on the Sparc.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _SPARC_TIMER_H
 DECL|macro|_SPARC_TIMER_H
 mdefine_line|#define _SPARC_TIMER_H
 macro_line|#include &lt;asm/system.h&gt;  /* For NCPUS */
+macro_line|#include &lt;asm/sun4paddr.h&gt;
 multiline_comment|/* Timer structures. The interrupt timer has two properties which&n; * are the counter (which is handled in do_timer in sched.c) and the limit.&n; * This limit is where the timer&squot;s counter &squot;wraps&squot; around. Oddly enough,&n; * the sun4c timer when it hits the limit wraps back to 1 and not zero&n; * thus when calculating the value at which it will fire a microsecond you&n; * must adjust by one.  Thanks SUN for designing such great hardware ;(&n; */
 multiline_comment|/* Note that I am only going to use the timer that interrupts at&n; * Sparc IRQ 10.  There is another one available that can fire at&n; * IRQ 14. Currently it is left untouched, we keep the PROM&squot;s limit&n; * register value and let the prom take these interrupts.  This allows&n; * L1-A to work.&n; */
 DECL|struct|sun4c_timer_info
@@ -37,6 +38,13 @@ suffix:semicolon
 suffix:semicolon
 DECL|macro|SUN4C_TIMER_PHYSADDR
 mdefine_line|#define SUN4C_TIMER_PHYSADDR   0xf3000000
+macro_line|#ifdef CONFIG_SUN4
+DECL|macro|SUN_TIMER_PHYSADDR
+mdefine_line|#define SUN_TIMER_PHYSADDR SUN4_300_TIMER_PHYSADDR
+macro_line|#else
+DECL|macro|SUN_TIMER_PHYSADDR
+mdefine_line|#define SUN_TIMER_PHYSADDR SUN4C_TIMER_PHYSADDR
+macro_line|#endif
 multiline_comment|/* A sun4m has two blocks of registers which are probably of the same&n; * structure. LSI Logic&squot;s L64851 is told to _decrement_ from the limit&n; * value. Aurora behaves similarly but its limit value is compacted in&n; * other fashion (it&squot;s wider). Documented fields are defined here.&n; */
 multiline_comment|/* As with the interrupt register, we have two classes of timer registers&n; * which are per-cpu and master.  Per-cpu timers only hit that cpu and are&n; * only level 14 ticks, master timer hits all cpus and is level 10.&n; */
 DECL|macro|SUN4M_PRM_CNT_L

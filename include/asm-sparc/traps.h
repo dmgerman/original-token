@@ -1,11 +1,11 @@
-multiline_comment|/* $Id: traps.h,v 1.8 1996/05/17 10:38:53 davem Exp $&n; * traps.h:  Format of entries for the Sparc trap table.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: traps.h,v 1.9 1998/03/09 14:04:53 jj Exp $&n; * traps.h:  Format of entries for the Sparc trap table.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _SPARC_TRAPS_H
 DECL|macro|_SPARC_TRAPS_H
 mdefine_line|#define _SPARC_TRAPS_H
 DECL|macro|NUM_SPARC_TRAPS
 mdefine_line|#define NUM_SPARC_TRAPS  255
 macro_line|#ifndef __ASSEMBLY__
-multiline_comment|/* This is for V8 and V9 compliant Sparc CPUS */
+multiline_comment|/* This is for V8 compliant Sparc CPUS */
 DECL|struct|tt_entry
 r_struct
 id|tt_entry
@@ -38,66 +38,6 @@ r_struct
 id|tt_entry
 op_star
 id|sparc_ttable
-suffix:semicolon
-multiline_comment|/* This for V9 compliant Sparc CPUS */
-DECL|struct|tt_v9_entry
-r_struct
-id|tt_v9_entry
-(brace
-DECL|member|inst_one
-r_int
-r_int
-id|inst_one
-suffix:semicolon
-DECL|member|inst_two
-r_int
-r_int
-id|inst_two
-suffix:semicolon
-DECL|member|inst_three
-r_int
-r_int
-id|inst_three
-suffix:semicolon
-DECL|member|inst_four
-r_int
-r_int
-id|inst_four
-suffix:semicolon
-DECL|member|inst_five
-r_int
-r_int
-id|inst_five
-suffix:semicolon
-DECL|member|inst_six
-r_int
-r_int
-id|inst_six
-suffix:semicolon
-DECL|member|inst_seven
-r_int
-r_int
-id|inst_seven
-suffix:semicolon
-DECL|member|inst_eight
-r_int
-r_int
-id|inst_eight
-suffix:semicolon
-)brace
-suffix:semicolon
-multiline_comment|/* V9 has multiple trap tables, which one is used depends&n; * upon how deep within multiple traps you are.&n; * I believe the UltraSparc supports two levels now.&n; */
-r_extern
-r_struct
-id|tt_v9_entry
-op_star
-id|sparc_v9_ttablel0
-suffix:semicolon
-r_extern
-r_struct
-id|tt_v9_entry
-op_star
-id|sparc_v9_ttablel1
 suffix:semicolon
 DECL|function|get_tbr
 r_extern

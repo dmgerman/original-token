@@ -1,8 +1,7 @@
-multiline_comment|/* $Id: pbm.h,v 1.8 1998/01/10 18:26:10 ecd Exp $&n; * pbm.h: U2P PCI bus module pseudo driver software state.&n; *&n; * Copyright (C) 1997 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: pbm.h,v 1.12 1998/04/10 12:29:55 ecd Exp $&n; * pbm.h: U2P PCI bus module pseudo driver software state.&n; *&n; * Copyright (C) 1997 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef __SPARC64_PBM_H
 DECL|macro|__SPARC64_PBM_H
 mdefine_line|#define __SPARC64_PBM_H
-macro_line|#include &lt;linux/bios32.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;asm/psycho.h&gt;
 macro_line|#include &lt;asm/oplib.h&gt;
@@ -36,10 +35,10 @@ r_int
 r_int
 id|end
 suffix:semicolon
-DECL|member|base_reg
+DECL|member|offset
 r_int
 r_int
-id|base_reg
+id|offset
 suffix:semicolon
 DECL|member|_pad
 r_int
@@ -95,6 +94,23 @@ suffix:semicolon
 DECL|member|num_pbm_ranges
 r_int
 id|num_pbm_ranges
+suffix:semicolon
+DECL|member|pbm_intmap
+r_struct
+id|linux_prom_pci_intmap
+id|pbm_intmap
+(braket
+id|PROMREG_MAX
+)braket
+suffix:semicolon
+DECL|member|num_pbm_intmap
+r_int
+id|num_pbm_intmap
+suffix:semicolon
+DECL|member|pbm_intmask
+r_struct
+id|linux_prom_pci_intmask
+id|pbm_intmask
 suffix:semicolon
 multiline_comment|/* Now things for the actual PCI bus probes. */
 DECL|member|pci_first_busno
@@ -165,6 +181,23 @@ DECL|member|pbm_B
 r_struct
 id|linux_pbm_info
 id|pbm_B
+suffix:semicolon
+multiline_comment|/* Now things for the actual PCI bus probes. */
+DECL|member|pci_first_busno
+r_int
+r_int
+id|pci_first_busno
+suffix:semicolon
+DECL|member|pci_last_busno
+r_int
+r_int
+id|pci_last_busno
+suffix:semicolon
+DECL|member|pci_bus
+r_struct
+id|pci_bus
+op_star
+id|pci_bus
 suffix:semicolon
 )brace
 suffix:semicolon
@@ -240,7 +273,7 @@ mdefine_line|#define PCI_IRQ_IMAP_OFF&t;0x7ff00000&t;/* Offset from first PSYCHO
 DECL|macro|PCI_IRQ_IMAP_OFF_SHFT
 mdefine_line|#define PCI_IRQ_IMAP_OFF_SHFT&t;20
 DECL|macro|PCI_IRQ_BUSNO
-mdefine_line|#define PCI_IRQ_BUSNO&t;&t;0x000fc000&t;/* PSYCHO instance, currently unused   */
+mdefine_line|#define PCI_IRQ_BUSNO&t;&t;0x000fc000&t;/* PSYCHO instance                     */
 DECL|macro|PCI_IRQ_BUSNO_SHFT
 mdefine_line|#define PCI_IRQ_BUSNO_SHFT&t;14
 DECL|macro|PCI_IRQ_IGN

@@ -1,9 +1,10 @@
-multiline_comment|/* $Id: irq.h,v 1.21 1997/11/19 15:12:20 jj Exp $&n; * irq.h: IRQ registers on the Sparc.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: irq.h,v 1.22 1998/02/05 14:20:05 jj Exp $&n; * irq.h: IRQ registers on the Sparc.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _SPARC_IRQ_H
 DECL|macro|_SPARC_IRQ_H
 mdefine_line|#define _SPARC_IRQ_H
 macro_line|#include &lt;linux/linkage.h&gt;
 macro_line|#include &lt;asm/system.h&gt;     /* For NCPUS */
+macro_line|#include &lt;asm/btfixup.h&gt;
 multiline_comment|/* This is used for sun4d */
 DECL|struct|devid_cookie
 r_struct
@@ -244,86 +245,106 @@ mdefine_line|#define irq_enter(cpu, irq, regs)&t;(local_irq_count[cpu]++)
 DECL|macro|irq_exit
 mdefine_line|#define irq_exit(cpu, irq)&t;&t;(local_irq_count[cpu]--)
 macro_line|#endif
-multiline_comment|/* Dave Redman (djhr@tadpole.co.uk)&n; * changed these to function pointers.. it saves cycles and will allow&n; * the irq dependencies to be split into different files at a later date&n; * sun4c_irq.c, sun4m_irq.c etc so we could reduce the kernel size.&n; */
-r_extern
-r_void
+DECL|function|irq_cannonicalize
+r_static
+id|__inline__
+r_int
+id|irq_cannonicalize
+c_func
 (paren
-op_star
+r_int
+id|irq
+)paren
+(brace
+r_return
+id|irq
+suffix:semicolon
+)brace
+multiline_comment|/* Dave Redman (djhr@tadpole.co.uk)&n; * changed these to function pointers.. it saves cycles and will allow&n; * the irq dependencies to be split into different files at a later date&n; * sun4c_irq.c, sun4m_irq.c etc so we could reduce the kernel size.&n; * Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; * Changed these to btfixup entities... It saves cycles :)&n; */
+id|BTFIXUPDEF_CALL
+c_func
+(paren
+r_void
+comma
 id|disable_irq
-)paren
-(paren
-r_int
-r_int
-)paren
-suffix:semicolon
-r_extern
-r_void
-(paren
-op_star
-id|enable_irq
-)paren
-(paren
-r_int
-r_int
-)paren
-suffix:semicolon
-r_extern
-r_void
-(paren
-op_star
-id|disable_pil_irq
-)paren
-(paren
-r_int
-r_int
-)paren
-suffix:semicolon
-r_extern
-r_void
-(paren
-op_star
-id|enable_pil_irq
-)paren
-(paren
-r_int
-r_int
-)paren
-suffix:semicolon
-r_extern
-r_void
-(paren
-op_star
-id|clear_clock_irq
-)paren
-(paren
-r_void
-)paren
-suffix:semicolon
-r_extern
-r_void
-(paren
-op_star
-id|clear_profile_irq
-)paren
-(paren
-r_int
-)paren
-suffix:semicolon
-r_extern
-r_void
-(paren
-op_star
-id|load_profile_irq
-)paren
-(paren
-r_int
-id|cpu
 comma
 r_int
 r_int
-id|timeout
 )paren
-suffix:semicolon
+id|BTFIXUPDEF_CALL
+c_func
+(paren
+r_void
+comma
+id|enable_irq
+comma
+r_int
+r_int
+)paren
+id|BTFIXUPDEF_CALL
+c_func
+(paren
+r_void
+comma
+id|disable_pil_irq
+comma
+r_int
+r_int
+)paren
+id|BTFIXUPDEF_CALL
+c_func
+(paren
+r_void
+comma
+id|enable_pil_irq
+comma
+r_int
+r_int
+)paren
+id|BTFIXUPDEF_CALL
+c_func
+(paren
+r_void
+comma
+id|clear_clock_irq
+comma
+r_void
+)paren
+id|BTFIXUPDEF_CALL
+c_func
+(paren
+r_void
+comma
+id|clear_profile_irq
+comma
+r_int
+)paren
+id|BTFIXUPDEF_CALL
+c_func
+(paren
+r_void
+comma
+id|load_profile_irq
+comma
+r_int
+comma
+r_int
+r_int
+)paren
+DECL|macro|disable_irq
+mdefine_line|#define disable_irq(irq) BTFIXUP_CALL(disable_irq)(irq)
+DECL|macro|enable_irq
+mdefine_line|#define enable_irq(irq) BTFIXUP_CALL(enable_irq)(irq)
+DECL|macro|disable_pil_irq
+mdefine_line|#define disable_pil_irq(irq) BTFIXUP_CALL(disable_pil_irq)(irq)
+DECL|macro|enable_pil_irq
+mdefine_line|#define enable_pil_irq(irq) BTFIXUP_CALL(enable_pil_irq)(irq)
+DECL|macro|clear_clock_irq
+mdefine_line|#define clear_clock_irq() BTFIXUP_CALL(clear_clock_irq)()
+DECL|macro|clear_profile_irq
+mdefine_line|#define clear_profile_irq(cpu) BTFIXUP_CALL(clear_profile_irq)(cpu)
+DECL|macro|load_profile_irq
+mdefine_line|#define load_profile_irq(cpu,limit) BTFIXUP_CALL(load_profile_irq)(cpu,limit)
 r_extern
 r_void
 (paren
@@ -378,40 +399,43 @@ id|timeout
 )paren
 suffix:semicolon
 macro_line|#ifdef __SMP__
-r_extern
-r_void
+id|BTFIXUPDEF_CALL
+c_func
 (paren
-op_star
+r_void
+comma
 id|set_cpu_int
-)paren
-(paren
+comma
 r_int
 comma
 r_int
 )paren
-suffix:semicolon
-r_extern
-r_void
+id|BTFIXUPDEF_CALL
+c_func
 (paren
-op_star
+r_void
+comma
 id|clear_cpu_int
-)paren
-(paren
+comma
 r_int
 comma
 r_int
 )paren
-suffix:semicolon
-r_extern
+id|BTFIXUPDEF_CALL
+c_func
+(paren
 r_void
-(paren
-op_star
+comma
 id|set_irq_udt
-)paren
-(paren
+comma
 r_int
 )paren
-suffix:semicolon
+DECL|macro|set_cpu_int
+mdefine_line|#define set_cpu_int(cpu,level) BTFIXUP_CALL(set_cpu_int)(cpu,level)
+DECL|macro|clear_cpu_int
+mdefine_line|#define clear_cpu_int(cpu,level) BTFIXUP_CALL(clear_cpu_int)(cpu,level)
+DECL|macro|set_irq_udt
+mdefine_line|#define set_irq_udt(cpu) BTFIXUP_CALL(set_irq_udt)(cpu)
 macro_line|#endif
 r_extern
 r_int

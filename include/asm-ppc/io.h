@@ -4,6 +4,8 @@ mdefine_line|#define _PPC_IO_H
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;asm/byteorder.h&gt;
+DECL|macro|KERNELBASE
+mdefine_line|#define KERNELBASE&t;0xc0000000
 multiline_comment|/* from the Carolina Technical Spec -- Cort */
 DECL|macro|IBM_ACORN
 mdefine_line|#define IBM_ACORN 0x82A
@@ -23,8 +25,6 @@ DECL|macro|IBM_SYS_CTL
 mdefine_line|#define IBM_SYS_CTL       0x81c
 DECL|macro|SLOW_DOWN_IO
 mdefine_line|#define SLOW_DOWN_IO
-DECL|macro|PMAC_ISA_IO_BASE
-mdefine_line|#define PMAC_ISA_IO_BASE &t;0
 DECL|macro|PMAC_ISA_MEM_BASE
 mdefine_line|#define PMAC_ISA_MEM_BASE &t;0
 DECL|macro|PMAC_PCI_DRAM_OFFSET
@@ -60,13 +60,26 @@ DECL|macro|PCI_DRAM_OFFSET
 mdefine_line|#define PCI_DRAM_OFFSET CHRP_PCI_DRAM_OFFSET
 macro_line|#endif /* CONFIG_CHRP */
 macro_line|#ifdef CONFIG_PMAC
+r_extern
+r_int
+r_int
+id|isa_io_base
+suffix:semicolon
 DECL|macro|_IO_BASE
-mdefine_line|#define _IO_BASE&t;PMAC_ISA_IO_BASE
+mdefine_line|#define _IO_BASE &t;isa_io_base&t;/* well, PCI i/o base really */
 DECL|macro|_ISA_MEM_BASE
 mdefine_line|#define _ISA_MEM_BASE&t;PMAC_ISA_MEM_BASE
 DECL|macro|PCI_DRAM_OFFSET
 mdefine_line|#define PCI_DRAM_OFFSET PMAC_PCI_DRAM_OFFSET
 macro_line|#endif /* CONFIG_PMAC */
+macro_line|#ifdef CONFIG_MBX
+DECL|macro|_IO_BASE
+mdefine_line|#define _IO_BASE        0
+DECL|macro|_ISA_MEM_BASE
+mdefine_line|#define _ISA_MEM_BASE   0
+DECL|macro|PCI_DRAM_OFFSET
+mdefine_line|#define PCI_DRAM_OFFSET 0x80000000
+macro_line|#endif /* CONFIG_MBX8xx */
 macro_line|#else /* CONFIG_MACH_SPECIFIC */
 r_extern
 r_int
@@ -346,6 +359,25 @@ multiline_comment|/*&n; * Map in an area of physical address space, for accessin
 r_extern
 r_void
 op_star
+id|__ioremap
+c_func
+(paren
+r_int
+r_int
+id|address
+comma
+r_int
+r_int
+id|size
+comma
+r_int
+r_int
+id|flags
+)paren
+suffix:semicolon
+r_extern
+r_void
+op_star
 id|ioremap
 c_func
 (paren
@@ -363,9 +395,19 @@ r_void
 id|iounmap
 c_func
 (paren
-r_int
-r_int
+r_void
 op_star
+id|addr
+)paren
+suffix:semicolon
+r_extern
+r_int
+r_int
+id|iopa
+c_func
+(paren
+r_int
+r_int
 id|addr
 )paren
 suffix:semicolon

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: irq.h,v 1.7 1997/09/07 02:56:44 davem Exp $&n; * irq.h: IRQ registers on the 64-bit Sparc.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: irq.h,v 1.8 1998/03/15 17:23:51 ecd Exp $&n; * irq.h: IRQ registers on the 64-bit Sparc.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _SPARC64_IRQ_H
 DECL|macro|_SPARC64_IRQ_H
 mdefine_line|#define _SPARC64_IRQ_H
@@ -107,6 +107,10 @@ r_struct
 id|pt_regs
 op_star
 )paren
+comma
+r_int
+r_int
+op_star
 )paren
 suffix:semicolon
 macro_line|#ifdef __SMP__
@@ -261,6 +265,21 @@ id|retval
 suffix:semicolon
 r_return
 id|retval
+suffix:semicolon
+)brace
+DECL|function|irq_cannonicalize
+r_static
+id|__inline__
+r_int
+id|irq_cannonicalize
+c_func
+(paren
+r_int
+id|irq
+)paren
+(brace
+r_return
+id|irq
 suffix:semicolon
 )brace
 macro_line|#endif

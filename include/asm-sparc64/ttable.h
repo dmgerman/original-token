@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: ttable.h,v 1.5 1997/10/14 16:21:34 jj Exp $ */
+multiline_comment|/* $Id: ttable.h,v 1.6 1998/03/15 17:23:54 ecd Exp $ */
 macro_line|#ifndef _SPARC64_TTABLE_H
 DECL|macro|_SPARC64_TTABLE_H
 mdefine_line|#define _SPARC64_TTABLE_H
@@ -54,13 +54,6 @@ DECL|macro|BREAKPOINT_TRAP
 mdefine_line|#define BREAKPOINT_TRAP TRAP(breakpoint_trap)
 DECL|macro|TRAP_IRQ
 mdefine_line|#define TRAP_IRQ(routine, level)&t;&t;&t;&bslash;&n;&t;rdpr&t;%pil, %g2;&t;&t;&t;&t;&bslash;&n;&t;wrpr&t;%g0, 15, %pil;&t;&t;&t;&t;&bslash;&n;&t;b,pt&t;%xcc, etrap_irq;&t;&t;&t;&bslash;&n;&t; rd&t;%pc, %g7;&t;&t;&t;&t;&bslash;&n;&t;mov&t;level, %o0;&t;&t;&t;&t;&bslash;&n;&t;call&t;routine;&t;&t;&t;&t;&bslash;&n;&t; add&t;%sp, STACK_BIAS + REGWIN_SZ, %o1;&t;&bslash;&n;&t;ba,a,pt&t;%xcc, rtrap_clr_l6;
-macro_line|#ifdef __SMP__
-DECL|macro|TRAP_TICK
-mdefine_line|#define TRAP_TICK&t;&t;&t;&t;&t;&bslash;&n;&t;rdpr&t;%pil, %g2;&t;&t;&t;&t;&bslash;&n;&t;wrpr&t;%g0, 15, %pil;&t;&t;&t;&t;&bslash;&n;&t;b,pt&t;%xcc, etrap_irq;&t;&t;&t;&bslash;&n;&t; rd&t;%pc, %g7;&t;&t;&t;&t;&bslash;&n;&t;call&t;smp_percpu_timer_interrupt;&t;&t;&bslash;&n;&t; add&t;%sp, STACK_BIAS + REGWIN_SZ, %o0;&t;&bslash;&n;&t;b,pt&t;%xcc, rtrap;&t;&t;&t;&t;&bslash;&n;&t; clr&t;%l6;
-macro_line|#else
-DECL|macro|TRAP_TICK
-mdefine_line|#define TRAP_TICK&t;TRAP_IRQ(handler_irq, 14)
-macro_line|#endif
 DECL|macro|TRAP_IVEC
 mdefine_line|#define TRAP_IVEC TRAP_NOSAVE(do_ivec)
 DECL|macro|BTRAP

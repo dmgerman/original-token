@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: obio.h,v 1.3 1997/12/18 14:21:41 jj Exp $&n; * obio.h:  Some useful locations in 0xFXXXXXXXX PA obio space on sun4d.&n; *&n; * Copyright (C) 1997 Jakub Jelinek &lt;jj@sunsite.mff.cuni.cz&gt;&n; */
+multiline_comment|/* $Id: obio.h,v 1.4 1998/03/09 14:04:55 jj Exp $&n; * obio.h:  Some useful locations in 0xFXXXXXXXX PA obio space on sun4d.&n; *&n; * Copyright (C) 1997 Jakub Jelinek &lt;jj@sunsite.mff.cuni.cz&gt;&n; */
 macro_line|#ifndef _SPARC_OBIO_H
 DECL|macro|_SPARC_OBIO_H
 mdefine_line|#define _SPARC_OBIO_H
@@ -67,9 +67,28 @@ mdefine_line|#define BW_CTRL_USER_TIMER&t;0x00000004&t;/* Is User Timer Free run
 multiline_comment|/* Boot Bus */
 DECL|macro|BB_LOCAL_BASE
 mdefine_line|#define BB_LOCAL_BASE&t;&t;0xf0000000
+DECL|macro|BB_STAT1
+mdefine_line|#define BB_STAT1&t;&t;0x00100000
+DECL|macro|BB_STAT2
+mdefine_line|#define BB_STAT2&t;&t;0x00120000
+DECL|macro|BB_STAT3
+mdefine_line|#define BB_STAT3&t;&t;0x00140000
 DECL|macro|BB_LEDS
 mdefine_line|#define BB_LEDS&t;&t;&t;0x002e0000
+multiline_comment|/* Bits in BB_STAT2 */
+DECL|macro|BB_STAT2_AC_INTR
+mdefine_line|#define BB_STAT2_AC_INTR&t;0x04&t;/* Aiee! 5ms and power is gone... */
+DECL|macro|BB_STAT2_TMP_INTR
+mdefine_line|#define BB_STAT2_TMP_INTR&t;0x10&t;/* My Penguins are burning. Are you able to smell it? */
+DECL|macro|BB_STAT2_FAN_INTR
+mdefine_line|#define BB_STAT2_FAN_INTR&t;0x20&t;/* My fan refuses to work */
+DECL|macro|BB_STAT2_PWR_INTR
+mdefine_line|#define BB_STAT2_PWR_INTR&t;0x40&t;/* On SC2000, one of the two ACs died. Ok, we go on... */
+DECL|macro|BB_STAT2_MASK
+mdefine_line|#define BB_STAT2_MASK&t;&t;(BB_STAT2_AC_INTR|BB_STAT2_TMP_INTR|BB_STAT2_FAN_INTR|BB_STAT2_PWR_INTR)
 multiline_comment|/* Cache Controller */
+DECL|macro|CC_BASE
+mdefine_line|#define CC_BASE&t;&t;0x1F00000
 DECL|macro|CC_DATSTREAM
 mdefine_line|#define CC_DATSTREAM&t;0x1F00000  /* Data stream register */
 DECL|macro|CC_DATSIZE
@@ -369,6 +388,14 @@ id|ASI_M_CTL
 )paren
 suffix:semicolon
 )brace
+r_extern
+r_int
+r_char
+id|cpu_leds
+(braket
+l_int|32
+)braket
+suffix:semicolon
 DECL|function|show_leds
 r_extern
 id|__inline__
@@ -378,12 +405,12 @@ c_func
 (paren
 r_int
 id|cpuid
-comma
-r_int
-r_char
-id|mask
 )paren
 (brace
+id|cpuid
+op_and_assign
+l_int|0x1e
+suffix:semicolon
 id|__asm__
 id|__volatile__
 (paren
@@ -392,7 +419,21 @@ suffix:colon
 suffix:colon
 l_string|&quot;r&quot;
 (paren
-id|mask
+(paren
+id|cpu_leds
+(braket
+id|cpuid
+)braket
+op_lshift
+l_int|4
+)paren
+op_or
+id|cpu_leds
+(braket
+id|cpuid
+op_plus
+l_int|1
+)braket
 )paren
 comma
 l_string|&quot;r&quot;
@@ -557,6 +598,94 @@ id|ASI_M_MXCC
 )paren
 suffix:semicolon
 )brace
+DECL|function|cc_get_imsk_other
+r_extern
+id|__inline__
+r_int
+id|cc_get_imsk_other
+c_func
+(paren
+r_int
+id|cpuid
+)paren
+(brace
+r_int
+id|mask
+suffix:semicolon
+id|__asm__
+id|__volatile__
+(paren
+l_string|&quot;lduha [%1] %2, %0&quot;
+suffix:colon
+l_string|&quot;=r&quot;
+(paren
+id|mask
+)paren
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+id|ECSR_BASE
+c_func
+(paren
+id|cpuid
+)paren
+op_or
+id|CC_IMSK
+)paren
+comma
+l_string|&quot;i&quot;
+(paren
+id|ASI_M_CTL
+)paren
+)paren
+suffix:semicolon
+r_return
+id|mask
+suffix:semicolon
+)brace
+DECL|function|cc_set_imsk_other
+r_extern
+id|__inline__
+r_void
+id|cc_set_imsk_other
+c_func
+(paren
+r_int
+id|cpuid
+comma
+r_int
+id|mask
+)paren
+(brace
+id|__asm__
+id|__volatile__
+(paren
+l_string|&quot;stha %0, [%1] %2&quot;
+suffix:colon
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+id|mask
+)paren
+comma
+l_string|&quot;r&quot;
+(paren
+id|ECSR_BASE
+c_func
+(paren
+id|cpuid
+)paren
+op_or
+id|CC_IMSK
+)paren
+comma
+l_string|&quot;i&quot;
+(paren
+id|ASI_M_CTL
+)paren
+)paren
+suffix:semicolon
+)brace
 DECL|function|cc_set_igen
 r_extern
 id|__inline__
@@ -587,6 +716,58 @@ comma
 l_string|&quot;i&quot;
 (paren
 id|ASI_M_MXCC
+)paren
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/* +-------+-------------+-----------+------------------------------------+&n; * | bcast |  devid      |   sid     |              levels mask           |&n; * +-------+-------------+-----------+------------------------------------+&n; *  31      30         23 22       15 14                                 0&n; */
+DECL|macro|IGEN_MESSAGE
+mdefine_line|#define IGEN_MESSAGE(bcast, devid, sid, levels) &bslash;&n;&t;(((bcast) &lt;&lt; 31) | ((devid) &lt;&lt; 23) | ((sid) &lt;&lt; 15) | (levels))
+DECL|function|sun4d_send_ipi
+r_extern
+id|__inline__
+r_void
+id|sun4d_send_ipi
+c_func
+(paren
+r_int
+id|cpu
+comma
+r_int
+id|level
+)paren
+(brace
+id|cc_set_igen
+c_func
+(paren
+id|IGEN_MESSAGE
+c_func
+(paren
+l_int|0
+comma
+id|cpu
+op_lshift
+l_int|3
+comma
+l_int|6
+op_plus
+(paren
+(paren
+id|level
+op_rshift
+l_int|1
+)paren
+op_amp
+l_int|7
+)paren
+comma
+l_int|1
+op_lshift
+(paren
+id|level
+op_minus
+l_int|1
+)paren
 )paren
 )paren
 suffix:semicolon

@@ -57,6 +57,7 @@ r_int
 id|mq
 suffix:semicolon
 multiline_comment|/* 601 only (not used at present) */
+multiline_comment|/* Used on APUS to hold IPL value. */
 DECL|member|trap
 r_int
 r_int

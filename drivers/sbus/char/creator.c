@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: creator.c,v 1.13 1997/10/17 04:14:40 davem Exp $&n; * creator.c: Creator/Creator3D frame buffer driver&n; *&n; * Copyright (C) 1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: creator.c,v 1.14 1998/03/10 20:18:32 jj Exp $&n; * creator.c: Creator/Creator3D frame buffer driver&n; *&n; * Copyright (C) 1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/kd.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
@@ -1003,13 +1003,12 @@ op_add_assign
 id|map_size
 suffix:semicolon
 )brace
-id|vma-&gt;vm_dentry
+id|vma-&gt;vm_file
 op_assign
-id|dget
-c_func
-(paren
-id|file-&gt;f_dentry
-)paren
+id|file
+suffix:semicolon
+id|file-&gt;f_count
+op_increment
 suffix:semicolon
 r_return
 l_int|0
@@ -3537,18 +3536,18 @@ id|boxes
 l_int|0
 )braket
 suffix:semicolon
-id|ffb-&gt;bw
-op_assign
-id|boxes
-(braket
-l_int|2
-)braket
-suffix:semicolon
 id|ffb-&gt;bh
 op_assign
 id|boxes
 (braket
 l_int|3
+)braket
+suffix:semicolon
+id|ffb-&gt;bw
+op_assign
+id|boxes
+(braket
+l_int|2
 )braket
 suffix:semicolon
 id|boxes

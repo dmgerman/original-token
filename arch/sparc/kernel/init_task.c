@@ -56,7 +56,7 @@ id|init_mm
 op_assign
 id|INIT_MM
 suffix:semicolon
-multiline_comment|/* .text section in head.S is aligned at 2 page boundry and this gets linked&n; * right after that so that the init_task_union is aligned properly as well.&n; * We really don&squot;t need this special alignment like the Intel does, but&n; * I do it anyways for completeness.&n; */
+multiline_comment|/* .text section in head.S is aligned at 8k boundry and this gets linked&n; * right after that so that the init_task_union is aligned properly as well.&n; * If this is not aligned on a 8k boundry, then you should change code&n; * in etrap.S which assumes it.&n; */
 DECL|variable|init_task_union
 r_union
 id|task_union

@@ -6,12 +6,12 @@ macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/vc_ioctl.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
-macro_line|#include &lt;linux/bios32.h&gt;
 macro_line|#include &lt;linux/nvram.h&gt;
 macro_line|#include &lt;linux/selection.h&gt;
 macro_line|#include &lt;linux/vt_kern.h&gt;
 macro_line|#include &lt;asm/prom.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
+macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/pci-bridge.h&gt;
 macro_line|#include &quot;pmac-cons.h&quot;
 macro_line|#include &quot;aty.h&quot;
@@ -172,6 +172,12 @@ r_char
 op_star
 id|frame_buffer
 suffix:semicolon
+DECL|variable|frame_buffer_phys
+r_static
+r_int
+r_int
+id|frame_buffer_phys
+suffix:semicolon
 DECL|variable|total_vram
 r_static
 r_int
@@ -189,6 +195,12 @@ r_static
 r_int
 r_int
 id|ati_regbase
+suffix:semicolon
+DECL|variable|ati_regbase_phys
+r_static
+r_int
+r_int
+id|ati_regbase_phys
 suffix:semicolon
 DECL|variable|aty_cmap_regs
 r_static
@@ -510,7 +522,8 @@ comma
 op_amp
 id|aty_gx_reg_init_17
 comma
-l_int|NULL
+op_amp
+id|aty_gx_reg_init_18
 comma
 l_int|NULL
 comma
@@ -1605,15 +1618,8 @@ comma
 id|dp-&gt;n_addrs
 )paren
 suffix:semicolon
-id|ati_regbase
+id|ati_regbase_phys
 op_assign
-(paren
-r_int
-)paren
-id|ioremap
-c_func
-(paren
-(paren
 l_int|0x7ffc00
 op_plus
 id|dp-&gt;addrs
@@ -1622,7 +1628,16 @@ l_int|0
 )braket
 dot
 id|address
+suffix:semicolon
+id|ati_regbase
+op_assign
+(paren
+r_int
 )paren
+id|ioremap
+c_func
+(paren
+id|ati_regbase_phys
 comma
 l_int|0x1000
 )paren
@@ -1865,7 +1880,7 @@ op_assign
 l_int|0x80000
 suffix:semicolon
 )brace
-macro_line|#if 1
+macro_line|#if 0
 id|printk
 c_func
 (paren
@@ -1923,6 +1938,8 @@ id|dp-&gt;intrs
 (braket
 id|i
 )braket
+dot
+id|line
 )paren
 suffix:semicolon
 id|printk
@@ -1963,14 +1980,20 @@ id|addr
 op_add_assign
 l_int|0x800000
 suffix:semicolon
+id|frame_buffer_phys
+op_assign
+id|addr
+suffix:semicolon
 id|frame_buffer
 op_assign
-id|ioremap
+id|__ioremap
 c_func
 (paren
 id|addr
 comma
 l_int|0x800000
+comma
+id|_PAGE_WRITETHRU
 )paren
 suffix:semicolon
 id|sense
@@ -1983,6 +2006,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;monitor sense = %x&bslash;n&quot;
 comma
 id|sense
@@ -3681,44 +3705,30 @@ id|MACH64_GT_ID
 )paren
 ques
 c_cond
-(paren
-r_int
-r_int
-)paren
-id|frame_buffer
+id|frame_buffer_phys
 op_plus
 id|init-&gt;offset
 (braket
 id|color_mode
 )braket
 suffix:colon
-(paren
-r_int
-r_int
-)paren
-id|frame_buffer
+id|frame_buffer_phys
 suffix:semicolon
 id|display_info.cmap_adr_address
 op_assign
-(paren
-r_int
-r_int
-)paren
-op_amp
-id|aty_cmap_regs-&gt;windex
+id|ati_regbase_phys
+op_plus
+l_int|0xc0
 suffix:semicolon
 id|display_info.cmap_data_address
 op_assign
-(paren
-r_int
-r_int
-)paren
-op_amp
-id|aty_cmap_regs-&gt;lut
+id|ati_regbase_phys
+op_plus
+l_int|0xc1
 suffix:semicolon
 id|display_info.disp_reg_address
 op_assign
-id|ati_regbase
+id|ati_regbase_phys
 suffix:semicolon
 )brace
 r_int

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: time.c,v 1.29 1997/04/18 09:48:44 davem Exp $&n; * linux/arch/sparc/kernel/time.c&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Thomas K. Dyas (tdyas@eden.rutgers.edu)&n; *&n; * This file handles the Sparc specific time handling details.&n; */
+multiline_comment|/* $Id: time.c,v 1.32 1998/03/23 08:41:13 jj Exp $&n; * linux/arch/sparc/kernel/time.c&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Thomas K. Dyas (tdyas@eden.rutgers.edu)&n; *&n; * This file handles the Sparc specific time handling details.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -16,6 +16,10 @@ macro_line|#include &lt;asm/mostek.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
+macro_line|#include &lt;asm/idprom.h&gt;
+macro_line|#include &lt;asm/machines.h&gt;
+macro_line|#include &lt;asm/sun4paddr.h&gt;
+macro_line|#include &lt;asm/page.h&gt;
 DECL|variable|sp_clock_typ
 r_enum
 id|sparc_clock_type
@@ -271,13 +275,17 @@ suffix:semicolon
 multiline_comment|/* finally seconds */
 )brace
 multiline_comment|/* Kick start a stopped clock (procedure from the Sun NVRAM/hostid FAQ). */
-DECL|function|kick_start_clock
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_void
 id|kick_start_clock
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_register
@@ -503,6 +511,7 @@ suffix:semicolon
 multiline_comment|/* Return nonzero if the clock chip battery is low. */
 DECL|function|has_low_battery
 r_static
+id|__inline__
 r_int
 id|has_low_battery
 c_func
@@ -566,18 +575,78 @@ id|data2
 suffix:semicolon
 multiline_comment|/* Was the write blocked? */
 )brace
-multiline_comment|/* Probe for the real time clock chip. */
-DECL|function|__initfunc
-id|__initfunc
+multiline_comment|/* Probe for the real time clock chip on Sun4/300. */
+DECL|function|sun4_clock_probe
+r_static
+id|__inline__
+r_void
+id|sun4_clock_probe
 c_func
 (paren
+r_void
+)paren
+(brace
+id|sp_clock_typ
+op_assign
+id|MSTK48T02
+suffix:semicolon
+id|mstk48t02_regs
+op_assign
+(paren
+r_struct
+id|mostek48t02
+op_star
+)paren
+id|sparc_alloc_io
+c_func
+(paren
+id|SUN4_300_MOSTEK_PHYSADDR
+comma
+l_int|0
+comma
+r_sizeof
+(paren
+op_star
+id|mstk48t02_regs
+)paren
+comma
+l_string|&quot;clock&quot;
+comma
+l_int|0x0
+comma
+l_int|0x0
+)paren
+suffix:semicolon
+id|mstk48t08_regs
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* To catch weirdness */
+multiline_comment|/* Kick start the clock if it is completely stopped. */
+r_if
+c_cond
+(paren
+id|mstk48t02_regs-&gt;sec
+op_amp
+id|MSTK_STOP
+)paren
+(brace
+id|kick_start_clock
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+)brace
+multiline_comment|/* Probe for the mostek real time clock chip. */
+DECL|function|clock_probe
 r_static
+id|__inline__
 r_void
 id|clock_probe
 c_func
 (paren
 r_void
-)paren
 )paren
 (brace
 r_struct
@@ -1111,6 +1180,17 @@ suffix:semicolon
 r_return
 suffix:semicolon
 macro_line|#endif
+r_if
+c_cond
+(paren
+id|ARCH_SUN4
+)paren
+id|sun4_clock_probe
+c_func
+(paren
+)paren
+suffix:semicolon
+r_else
 id|clock_probe
 c_func
 (paren

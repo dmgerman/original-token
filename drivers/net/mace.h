@@ -395,8 +395,8 @@ DECL|macro|RTRE
 mdefine_line|#define RTRE&t;&t;0x80&t;/* reserved test register enable. DON&squot;T SET. */
 DECL|macro|RTRD
 mdefine_line|#define RTRD&t;&t;0x40&t;/* reserved test register disable.  Sticky */
-DECL|macro|RPA
-mdefine_line|#define RPA&t;&t;0x20&t;/* accept runt packets */
+DECL|macro|RPAC
+mdefine_line|#define RPAC&t;&t;0x20&t;/* accept runt packets */
 DECL|macro|FCOLL
 mdefine_line|#define FCOLL&t;&t;0x10&t;/* force collision */
 DECL|macro|RCVFCSE

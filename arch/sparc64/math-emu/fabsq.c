@@ -1,5 +1,3 @@
-macro_line|#include &quot;soft-fp.h&quot;
-macro_line|#include &quot;quad.h&quot;
 DECL|function|FABSQ
 r_int
 id|FABSQ
@@ -16,7 +14,6 @@ op_star
 id|rs2
 )paren
 (brace
-multiline_comment|/*&n;&t;FP_DECL_Q(A); FP_DECL_Q(R);&n;&n;&t;__FP_UNPACK_Q(A, rs2);&n;&t;_FP_FRAC_COPY_2(R, A);&n;&t;R_c = A_c;&n;&t;R_e = A_e;&n;&t;R_s = 0;&n;&t;__FP_PACK_Q(rd, R);&n; */
 id|rd
 (braket
 l_int|0

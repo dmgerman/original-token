@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sbi.h,v 1.1 1997/11/19 15:12:16 jj Exp $&n; * sbi.h:  SBI (Sbus Interface on sun4d) definitions&n; *&n; * Copyright (C) 1997 Jakub Jelinek &lt;jj@sunsite.mff.cuni.cz&gt;&n; */
+multiline_comment|/* $Id: sbi.h,v 1.2 1998/03/09 14:04:48 jj Exp $&n; * sbi.h:  SBI (Sbus Interface on sun4d) definitions&n; *&n; * Copyright (C) 1997 Jakub Jelinek &lt;jj@sunsite.mff.cuni.cz&gt;&n; */
 macro_line|#ifndef _SPARC_SBI_H
 DECL|macro|_SPARC_SBI_H
 mdefine_line|#define _SPARC_SBI_H
@@ -218,6 +218,49 @@ id|devid
 )paren
 op_or
 id|SBI_INTR_STATE
+)paren
+comma
+l_string|&quot;i&quot;
+(paren
+id|ASI_M_CTL
+)paren
+)paren
+suffix:semicolon
+)brace
+DECL|function|set_sbi_tid
+r_extern
+id|__inline__
+r_void
+id|set_sbi_tid
+c_func
+(paren
+r_int
+id|devid
+comma
+r_int
+id|targetid
+)paren
+(brace
+id|__asm__
+id|__volatile__
+(paren
+l_string|&quot;sta %0, [%1] %2&quot;
+suffix:colon
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+id|targetid
+)paren
+comma
+l_string|&quot;r&quot;
+(paren
+id|ECSR_DEV_BASE
+c_func
+(paren
+id|devid
+)paren
+op_or
+id|SBI_INTR_TID
 )paren
 comma
 l_string|&quot;i&quot;

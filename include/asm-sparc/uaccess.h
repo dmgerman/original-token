@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: uaccess.h,v 1.14 1997/09/18 10:42:02 rth Exp $&n; * uaccess.h: User space memore access functions.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996,1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: uaccess.h,v 1.15 1998/02/05 14:19:54 jj Exp $&n; * uaccess.h: User space memore access functions.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996,1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#ifndef _ASM_UACCESS_H
 DECL|macro|_ASM_UACCESS_H
 mdefine_line|#define _ASM_UACCESS_H
@@ -28,7 +28,7 @@ DECL|macro|segment_eq
 mdefine_line|#define segment_eq(a,b)&t;((a).seg == (b).seg)
 multiline_comment|/* We have there a nice not-mapped page at page_offset - PAGE_SIZE, so that this test&n; * can be fairly lightweight.&n; * No one can read/write anything from userland in the kernel space by setting&n; * large size and address near to page_offset - a fault will break his intentions.&n; */
 DECL|macro|__user_ok
-mdefine_line|#define __user_ok(addr,size) ((addr) &lt; stack_top)
+mdefine_line|#define __user_ok(addr,size) ((addr) &lt; STACK_TOP)
 DECL|macro|__kernel_ok
 mdefine_line|#define __kernel_ok (segment_eq(get_fs(), KERNEL_DS))
 DECL|macro|__access_ok

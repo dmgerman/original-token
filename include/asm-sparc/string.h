@@ -1,7 +1,8 @@
-multiline_comment|/* $Id: string.h,v 1.33 1997/11/19 07:57:48 jj Exp $&n; * string.h: External definitions for optimized assembly string&n; *           routines for the Linux Kernel.&n; *&n; * Copyright (C) 1995,1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996,1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: string.h,v 1.34 1998/01/30 10:59:55 jj Exp $&n; * string.h: External definitions for optimized assembly string&n; *           routines for the Linux Kernel.&n; *&n; * Copyright (C) 1995,1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996,1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#ifndef __SPARC_STRING_H__
 DECL|macro|__SPARC_STRING_H__
 mdefine_line|#define __SPARC_STRING_H__
+macro_line|#include &lt;asm/page.h&gt;
 multiline_comment|/* Really, userland/ksyms should not see any of this stuff. */
 macro_line|#ifdef __KERNEL__
 r_extern
@@ -121,7 +122,7 @@ id|n
 )paren
 (brace
 r_case
-l_int|4096
+id|PAGE_SIZE
 suffix:colon
 id|__copy_1page
 c_func
@@ -245,7 +246,7 @@ c_cond
 (paren
 id|count
 op_eq
-l_int|4096
+id|PAGE_SIZE
 )paren
 (brace
 id|bzero_1page

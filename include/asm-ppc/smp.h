@@ -26,6 +26,23 @@ r_int
 r_int
 id|pvr
 suffix:semicolon
+DECL|member|pgd_quick
+r_int
+r_int
+op_star
+id|pgd_quick
+suffix:semicolon
+DECL|member|pte_quick
+r_int
+r_int
+op_star
+id|pte_quick
+suffix:semicolon
+DECL|member|pgtable_cache_sz
+r_int
+r_int
+id|pgtable_cache_sz
+suffix:semicolon
 )brace
 suffix:semicolon
 r_extern
@@ -36,13 +53,13 @@ id|cpu_data
 id|NR_CPUS
 )braket
 suffix:semicolon
-DECL|struct|klock_info
+DECL|struct|klock_info_struct
 r_struct
-id|klock_info
+id|klock_info_struct
 (brace
 DECL|member|kernel_flag
 r_int
-r_char
+r_int
 id|kernel_flag
 suffix:semicolon
 DECL|member|akp
@@ -54,15 +71,15 @@ suffix:semicolon
 suffix:semicolon
 r_extern
 r_struct
-id|klock_info
+id|klock_info_struct
 id|klock_info
 suffix:semicolon
 DECL|macro|KLOCK_HELD
-mdefine_line|#define KLOCK_HELD       0xff
+mdefine_line|#define KLOCK_HELD       0xffffffff
 DECL|macro|KLOCK_CLEAR
-mdefine_line|#define KLOCK_CLEAR      0x00
+mdefine_line|#define KLOCK_CLEAR      0x0
 DECL|macro|PROC_CHANGE_PENALTY
-mdefine_line|#define PROC_CHANGE_PENALTY     1000 /* don&squot;t change cpu&squot;s for now */
+mdefine_line|#define PROC_CHANGE_PENALTY     20
 r_extern
 id|__volatile__
 r_int
@@ -74,7 +91,7 @@ suffix:semicolon
 r_extern
 id|__volatile__
 r_int
-id|cpu_logical_map
+id|__cpu_logical_map
 (braket
 id|NR_CPUS
 )braket
@@ -87,6 +104,24 @@ id|smp_proc_in_lock
 id|NR_CPUS
 )braket
 suffix:semicolon
+DECL|function|cpu_logical_map
+r_extern
+id|__inline__
+r_int
+id|cpu_logical_map
+c_func
+(paren
+r_int
+id|cpu
+)paren
+(brace
+r_return
+id|__cpu_logical_map
+(braket
+id|cpu
+)braket
+suffix:semicolon
+)brace
 DECL|function|hard_smp_processor_id
 r_extern
 id|__inline__
@@ -109,7 +144,44 @@ suffix:semicolon
 )brace
 DECL|macro|smp_processor_id
 mdefine_line|#define smp_processor_id() (current-&gt;processor)
+r_extern
+r_void
+id|smp_message_pass
+c_func
+(paren
+r_int
+id|target
+comma
+r_int
+id|msg
+comma
+r_int
+r_int
+id|data
+comma
+r_int
+id|wait
+)paren
+suffix:semicolon
 macro_line|#endif /* __ASSEMBLY__ */
+macro_line|#else /* !(__SMP__) */
+macro_line|#ifndef __ASSEMBLY__
+DECL|function|cpu_logical_map
+r_extern
+id|__inline__
+r_int
+id|cpu_logical_map
+c_func
+(paren
+r_int
+id|cpu
+)paren
+(brace
+r_return
+id|cpu
+suffix:semicolon
+)brace
+macro_line|#endif
 macro_line|#endif /* !(__SMP__) */
 DECL|macro|NO_PROC_ID
 mdefine_line|#define NO_PROC_ID               0xFF            /* No processor magic marker */

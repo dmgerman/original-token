@@ -914,13 +914,9 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;proc_ide_write_config: %s&bslash;n&quot;
+l_string|&quot;proc_ide_write_config: error %d&bslash;n&quot;
 comma
-id|pcibios_strerror
-c_func
-(paren
 id|rc
-)paren
 )paren
 suffix:semicolon
 r_return
@@ -1147,13 +1143,9 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;proc_ide_read_config: %s&bslash;n&quot;
+l_string|&quot;proc_ide_read_config: error %d&bslash;n&quot;
 comma
-id|pcibios_strerror
-c_func
-(paren
 id|rc
-)paren
 )paren
 suffix:semicolon
 r_return

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: unistd.h,v 1.14 1997/12/11 15:16:08 jj Exp $ */
+multiline_comment|/* $Id: unistd.h,v 1.17 1998/03/29 12:57:54 ecd Exp $ */
 macro_line|#ifndef _SPARC64_UNISTD_H
 DECL|macro|_SPARC64_UNISTD_H
 mdefine_line|#define _SPARC64_UNISTD_H
@@ -29,7 +29,8 @@ DECL|macro|__NR_execv
 mdefine_line|#define __NR_execv               11 /* SunOS Specific                              */
 DECL|macro|__NR_chdir
 mdefine_line|#define __NR_chdir               12 /* Common                                      */
-multiline_comment|/* #define __NR_ni_syscall       13    ENOSYS under SunOS                          */
+DECL|macro|__NR_xstat
+mdefine_line|#define __NR_xstat&t;&t; 13 /* Linux Specific&t;&t;&t;&t;   */
 DECL|macro|__NR_mknod
 mdefine_line|#define __NR_mknod               14 /* Common                                      */
 DECL|macro|__NR_chmod
@@ -38,7 +39,8 @@ DECL|macro|__NR_chown
 mdefine_line|#define __NR_chown               16 /* Common                                      */
 DECL|macro|__NR_brk
 mdefine_line|#define __NR_brk                 17 /* Common                                      */
-multiline_comment|/* #define __NR_ni_syscall       18    ENOSYS under SunOS                          */
+DECL|macro|__NR_xmknod
+mdefine_line|#define __NR_xmknod&t;&t; 18 /* Linux Specific&t;&t;&t;&t;   */
 DECL|macro|__NR_lseek
 mdefine_line|#define __NR_lseek               19 /* Common                                      */
 DECL|macro|__NR_getpid
@@ -49,7 +51,7 @@ DECL|macro|__NR_setuid
 mdefine_line|#define __NR_setuid              23 /* Implemented via setreuid in SunOS           */
 DECL|macro|__NR_getuid
 mdefine_line|#define __NR_getuid              24 /* Common                                      */
-multiline_comment|/* #define __NR_ni_syscall       25    ENOSYS under SunOS                          */
+multiline_comment|/* #define __NR_time alias&t; 25    ENOSYS under SunOS&t;&t;&t;   */
 DECL|macro|__NR_ptrace
 mdefine_line|#define __NR_ptrace              26 /* Common                                      */
 DECL|macro|__NR_alarm
@@ -587,6 +589,28 @@ id|count
 )paren
 r_static
 id|__inline__
+id|_syscall3
+c_func
+(paren
+r_int
+comma
+id|read
+comma
+r_int
+comma
+id|fd
+comma
+r_char
+op_star
+comma
+id|buf
+comma
+id|off_t
+comma
+id|count
+)paren
+r_static
+id|__inline__
 id|_syscall1
 c_func
 (paren
@@ -770,10 +794,6 @@ id|__asm__
 id|__volatile
 c_func
 (paren
-l_string|&quot;mov %4, %%g2&bslash;n&bslash;t&quot;
-multiline_comment|/* Set aside fn ptr... */
-l_string|&quot;mov %5, %%g3&bslash;n&bslash;t&quot;
-multiline_comment|/* and arg. */
 l_string|&quot;mov %1, %%g1&bslash;n&bslash;t&quot;
 l_string|&quot;mov %2, %%o0&bslash;n&bslash;t&quot;
 multiline_comment|/* Clone flags. */
@@ -782,12 +802,12 @@ multiline_comment|/* usp arg == 0 */
 l_string|&quot;t 0x6d&bslash;n&bslash;t&quot;
 multiline_comment|/* Linux/Sparc clone(). */
 l_string|&quot;brz,a,pn %%o1, 1f&bslash;n&bslash;t&quot;
-multiline_comment|/* The parent, just return. */
+multiline_comment|/* Parent, just return. */
 l_string|&quot; mov %%o0, %0&bslash;n&bslash;t&quot;
-l_string|&quot;jmpl %%g2, %%o7&bslash;n&bslash;t&quot;
+l_string|&quot;jmpl %4, %%o7&bslash;n&bslash;t&quot;
 multiline_comment|/* Call the function. */
-l_string|&quot; mov %%g3, %%o0&bslash;n&bslash;t&quot;
-multiline_comment|/* Get back the arg in delay. */
+l_string|&quot; mov %5, %%o0&bslash;n&bslash;t&quot;
+multiline_comment|/* Set arg in delay. */
 l_string|&quot;mov %3, %%g1&bslash;n&bslash;t&quot;
 l_string|&quot;t 0x6d&bslash;n&bslash;t&quot;
 multiline_comment|/* Linux/Sparc exit(). */
@@ -828,9 +848,121 @@ id|arg
 suffix:colon
 l_string|&quot;g1&quot;
 comma
-l_string|&quot;g2&quot;
+l_string|&quot;o0&quot;
 comma
-l_string|&quot;g3&quot;
+l_string|&quot;o1&quot;
+comma
+l_string|&quot;memory&quot;
+comma
+l_string|&quot;cc&quot;
+)paren
+suffix:semicolon
+r_return
+id|retval
+suffix:semicolon
+)brace
+DECL|function|fork
+r_static
+id|__inline__
+id|pid_t
+id|fork
+c_func
+(paren
+r_void
+)paren
+(brace
+r_int
+id|retval
+suffix:semicolon
+id|__asm__
+id|__volatile
+c_func
+(paren
+l_string|&quot;mov %1, %%g1&bslash;n&bslash;t&quot;
+l_string|&quot;t 0x6d&bslash;n&bslash;t&quot;
+l_string|&quot;brz,a,pn %%o1, 1f&bslash;n&bslash;t&quot;
+l_string|&quot; mov %%o0, %0&bslash;n&bslash;t&quot;
+l_string|&quot;mov %%g0, %0&bslash;n&bslash;t&quot;
+l_string|&quot;1:&quot;
+suffix:colon
+l_string|&quot;=r&quot;
+(paren
+id|retval
+)paren
+suffix:colon
+l_string|&quot;i&quot;
+(paren
+id|__NR_fork
+)paren
+suffix:colon
+l_string|&quot;g1&quot;
+comma
+l_string|&quot;o0&quot;
+comma
+l_string|&quot;o1&quot;
+comma
+l_string|&quot;memory&quot;
+comma
+l_string|&quot;cc&quot;
+)paren
+suffix:semicolon
+r_return
+id|retval
+suffix:semicolon
+)brace
+DECL|function|clone
+r_static
+id|__inline__
+id|pid_t
+id|clone
+c_func
+(paren
+r_int
+r_int
+id|flags
+comma
+r_char
+op_star
+id|ksp
+)paren
+(brace
+r_int
+id|retval
+suffix:semicolon
+id|__asm__
+id|__volatile
+c_func
+(paren
+l_string|&quot;mov %1, %%g1&bslash;n&bslash;t&quot;
+l_string|&quot;mov %2, %%o0&bslash;n&bslash;t&quot;
+l_string|&quot;mov %3, %%o1&bslash;n&bslash;t&quot;
+l_string|&quot;t 0x6d&bslash;n&bslash;t&quot;
+l_string|&quot;brz,a,pn %%o1, 1f&bslash;n&bslash;t&quot;
+l_string|&quot; mov %%o0, %0&bslash;n&bslash;t&quot;
+l_string|&quot;mov %%g0, %0&bslash;n&bslash;t&quot;
+l_string|&quot;1:&quot;
+suffix:colon
+l_string|&quot;=r&quot;
+(paren
+id|retval
+)paren
+suffix:colon
+l_string|&quot;i&quot;
+(paren
+id|__NR_fork
+)paren
+comma
+l_string|&quot;r&quot;
+(paren
+id|flags
+)paren
+comma
+l_string|&quot;r&quot;
+(paren
+id|ksp
+)paren
+suffix:colon
+l_string|&quot;g1&quot;
 comma
 l_string|&quot;o0&quot;
 comma

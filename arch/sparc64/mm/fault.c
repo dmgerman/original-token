@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: fault.c,v 1.20 1997/08/04 16:16:51 davem Exp $&n; * arch/sparc64/mm/fault.c: Page fault handlers for the 64-bit Sparc.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: fault.c,v 1.21 1998/03/25 10:43:20 jj Exp $&n; * arch/sparc64/mm/fault.c: Page fault handlers for the 64-bit Sparc.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;asm/head.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -873,14 +873,12 @@ id|current-&gt;tss.sig_desc
 op_assign
 id|SUBSIG_NOMAPPING
 suffix:semicolon
-id|send_sig
+id|force_sig
 c_func
 (paren
 id|SIGSEGV
 comma
 id|current
-comma
-l_int|1
 )paren
 suffix:semicolon
 r_goto

@@ -2236,6 +2236,14 @@ suffix:semicolon
 )brace
 multiline_comment|/* Load the firmware. */
 macro_line|#if !defined(MODULE) &amp;&amp; !defined(__sparc_v9__)
+r_if
+c_cond
+(paren
+id|sparc_cpu_model
+op_ne
+id|sun4d
+)paren
+(brace
 id|dvma_addr
 op_assign
 (paren
@@ -2376,8 +2384,10 @@ id|risc_code_length01
 )paren
 )paren
 suffix:semicolon
-macro_line|#else
-multiline_comment|/* We need to do it this slow way always on Ultra. */
+)brace
+r_else
+macro_line|#endif
+multiline_comment|/* We need to do it this slow way always on Ultra, SS[12]000. */
 r_for
 c_loop
 (paren
@@ -2459,7 +2469,6 @@ l_int|1
 suffix:semicolon
 )brace
 )brace
-macro_line|#endif
 multiline_comment|/* Reset the ISP again. */
 id|qregs-&gt;hcctrl
 op_assign
@@ -3135,12 +3144,19 @@ op_logical_neg
 id|SBus_chain
 )paren
 (brace
+macro_line|#ifdef __sparc_v9__
+r_return
+l_int|0
+suffix:semicolon
+multiline_comment|/* Could be a PCI-only machine. */
+macro_line|#else
 id|panic
 c_func
 (paren
 l_string|&quot;No SBUS in qlogicpti_detect()&quot;
 )paren
 suffix:semicolon
+macro_line|#endif
 )brace
 id|for_each_sbus
 c_func
@@ -3998,6 +4014,11 @@ op_increment
 suffix:semicolon
 )brace
 )brace
+r_if
+c_cond
+(paren
+id|nqptis
+)paren
 id|printk
 c_func
 (paren
@@ -4823,6 +4844,7 @@ id|u_int
 id|out_ptr
 )paren
 (brace
+multiline_comment|/* Temporary workaround until bug is found and fixed (one bug has been found&n;&t;   already, but fixing it makes things even worse) -jj */
 r_int
 id|num_free
 op_assign
@@ -4835,6 +4857,8 @@ id|in_ptr
 comma
 id|out_ptr
 )paren
+op_minus
+l_int|64
 suffix:semicolon
 id|host-&gt;can_queue
 op_assign
@@ -6348,5 +6372,7 @@ op_assign
 id|QLOGICPTI
 suffix:semicolon
 macro_line|#include &quot;scsi_module.c&quot;
+id|EXPORT_NO_SYMBOLS
+suffix:semicolon
 macro_line|#endif /* MODULE */
 eof

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: ebus.h,v 1.4 1998/01/10 18:26:08 ecd Exp $&n; * ebus.h: PCI to Ebus pseudo driver software state.&n; *&n; * Copyright (C) 1997 Eddie C. Dost (ecd@skynet.be)&n; */
+multiline_comment|/* $Id: ebus.h,v 1.5 1998/03/15 10:14:46 ecd Exp $&n; * ebus.h: PCI to Ebus pseudo driver software state.&n; *&n; * Copyright (C) 1997 Eddie C. Dost (ecd@skynet.be)&n; */
 macro_line|#ifndef __SPARC64_EBUS_H
 DECL|macro|__SPARC64_EBUS_H
 mdefine_line|#define __SPARC64_EBUS_H
@@ -171,6 +171,23 @@ suffix:semicolon
 DECL|member|num_ebus_ranges
 r_int
 id|num_ebus_ranges
+suffix:semicolon
+DECL|member|ebus_intmap
+r_struct
+id|linux_prom_ebus_intmap
+id|ebus_intmap
+(braket
+id|PROMREG_MAX
+)braket
+suffix:semicolon
+DECL|member|num_ebus_intmap
+r_int
+id|num_ebus_intmap
+suffix:semicolon
+DECL|member|ebus_intmask
+r_struct
+id|linux_prom_ebus_intmask
+id|ebus_intmask
 suffix:semicolon
 )brace
 suffix:semicolon

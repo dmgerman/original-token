@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: system.h,v 1.37 1997/10/20 00:14:22 davem Exp $ */
+multiline_comment|/* $Id: system.h,v 1.38 1998/01/30 11:00:11 jj Exp $ */
 macro_line|#ifndef __SPARC64_SYSTEM_H
 DECL|macro|__SPARC64_SYSTEM_H
 mdefine_line|#define __SPARC64_SYSTEM_H
@@ -57,6 +57,11 @@ multiline_comment|/* almost a sun4m */
 suffix:semicolon
 DECL|macro|sparc_cpu_model
 mdefine_line|#define sparc_cpu_model sun4u
+multiline_comment|/* This cannot ever be a sun4c nor sun4 :) That&squot;s just history. */
+DECL|macro|ARCH_SUN4C_SUN4
+mdefine_line|#define ARCH_SUN4C_SUN4 0
+DECL|macro|ARCH_SUN4
+mdefine_line|#define ARCH_SUN4 0
 r_extern
 r_int
 r_int

@@ -1,8 +1,9 @@
-multiline_comment|/* $Id: memory.c,v 1.12 1997/05/27 06:45:57 davem Exp $&n; * memory.c: Prom routine for acquiring various bits of information&n; *           about RAM on the machine, both virtual and physical.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: memory.c,v 1.13 1998/01/30 10:59:03 jj Exp $&n; * memory.c: Prom routine for acquiring various bits of information&n; *           about RAM on the machine, both virtual and physical.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1997 Michael A. Griffith (grif@acm.org)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/openprom.h&gt;
+macro_line|#include &lt;asm/sun4prom.h&gt;
 macro_line|#include &lt;asm/oplib.h&gt;
 multiline_comment|/* This routine, for consistency, returns the ram parameters in the&n; * V0 prom memory descriptor format.  I choose this format because I&n; * think it was the easiest to work with.  I feel the religious&n; * arguments now... ;)  Also, I return the linked lists sorted to&n; * prevent paging_init() upset stomach as I have not yet written&n; * the pepto-bismol kernel module yet.&n; */
 DECL|variable|prom_reg_memlist
@@ -1055,6 +1056,101 @@ suffix:semicolon
 r_break
 suffix:semicolon
 r_case
+id|PROM_SUN4
+suffix:colon
+macro_line|#ifdef CONFIG_SUN4&t;
+multiline_comment|/* how simple :) */
+id|prom_phys_total
+(braket
+l_int|0
+)braket
+dot
+id|start_adr
+op_assign
+l_int|0x0
+suffix:semicolon
+id|prom_phys_total
+(braket
+l_int|0
+)braket
+dot
+id|num_bytes
+op_assign
+op_star
+(paren
+id|sun4_romvec-&gt;memorysize
+)paren
+suffix:semicolon
+id|prom_phys_total
+(braket
+l_int|0
+)braket
+dot
+id|theres_more
+op_assign
+l_int|0x0
+suffix:semicolon
+id|prom_prom_taken
+(braket
+l_int|0
+)braket
+dot
+id|start_adr
+op_assign
+l_int|0x0
+suffix:semicolon
+id|prom_prom_taken
+(braket
+l_int|0
+)braket
+dot
+id|num_bytes
+op_assign
+l_int|0x0
+suffix:semicolon
+id|prom_prom_taken
+(braket
+l_int|0
+)braket
+dot
+id|theres_more
+op_assign
+l_int|0x0
+suffix:semicolon
+id|prom_phys_avail
+(braket
+l_int|0
+)braket
+dot
+id|start_adr
+op_assign
+l_int|0x0
+suffix:semicolon
+id|prom_phys_avail
+(braket
+l_int|0
+)braket
+dot
+id|num_bytes
+op_assign
+op_star
+(paren
+id|sun4_romvec-&gt;memoryavail
+)paren
+suffix:semicolon
+id|prom_phys_avail
+(braket
+l_int|0
+)braket
+dot
+id|theres_more
+op_assign
+l_int|0x0
+suffix:semicolon
+macro_line|#endif
+r_break
+suffix:semicolon
+r_case
 id|PROM_AP1000
 suffix:colon
 macro_line|#if CONFIG_AP1000
@@ -1147,24 +1243,6 @@ dot
 id|theres_more
 op_assign
 l_int|0x0
-suffix:semicolon
-id|prom_sortmemlist
-c_func
-(paren
-id|prom_phys_total
-)paren
-suffix:semicolon
-id|prom_sortmemlist
-c_func
-(paren
-id|prom_prom_taken
-)paren
-suffix:semicolon
-id|prom_sortmemlist
-c_func
-(paren
-id|prom_phys_avail
-)paren
 suffix:semicolon
 macro_line|#endif
 r_default

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: head.h,v 1.33 1997/10/04 08:54:22 ecd Exp $ */
+multiline_comment|/* $Id: head.h,v 1.35 1998/03/18 09:15:40 jj Exp $ */
 macro_line|#ifndef __SPARC_HEAD_H
 DECL|macro|__SPARC_HEAD_H
 mdefine_line|#define __SPARC_HEAD_H
@@ -15,9 +15,7 @@ mdefine_line|#define INTS_ENAB        0x01           /* entry.S uses this. */
 DECL|macro|NCPUS
 mdefine_line|#define NCPUS            4              /* Architectural limit of sun4m. */
 DECL|macro|SUN4_PROM_VECTOR
-mdefine_line|#define SUN4_PROM_VECTOR 0xFFE81000     /* To safely die on a SUN4 */
-DECL|macro|SUN4_PRINTF
-mdefine_line|#define SUN4_PRINTF      0x84           /* Offset into SUN4_PROM_VECTOR */
+mdefine_line|#define SUN4_PROM_VECTOR 0xFFE81000     /* SUN4 PROM needs to be hardwired */
 DECL|macro|WRITE_PAUSE
 mdefine_line|#define WRITE_PAUSE      nop; nop; nop; /* Have to do this after %wim/%psr chg */
 DECL|macro|NOP_INSN
@@ -38,6 +36,9 @@ mdefine_line|#define SRMMU_DFAULT rd %psr, %l0; rd %wim, %l3; b C_LABEL(srmmu_fa
 multiline_comment|/* This is for traps we should NEVER get. */
 DECL|macro|BAD_TRAP
 mdefine_line|#define BAD_TRAP(num) &bslash;&n;        rd %psr, %l0; mov num, %l7; b bad_trap_handler; rd %wim, %l3;
+multiline_comment|/* This is for traps when we want just skip the instruction which caused it */
+DECL|macro|SKIP_TRAP
+mdefine_line|#define SKIP_TRAP(type, name) &bslash;&n;&t;jmpl %l2, %g0; rett %l2 + 4; nop; nop;
 multiline_comment|/* Notice that for the system calls we pull a trick.  We load up a&n; * different pointer to the system call vector table in %l7, but call&n; * the same generic system call low-level entry point.  The trap table&n; * entry sequences are also HyperSparc pipeline friendly ;-)&n; */
 multiline_comment|/* Software trap for Linux system calls. */
 DECL|macro|LINUX_SYSCALL_TRAP

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: processor.h,v 1.40 1997/10/24 11:57:59 jj Exp $&n; * include/asm-sparc64/processor.h&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: processor.h,v 1.42 1998/01/28 10:00:04 ecd Exp $&n; * include/asm-sparc64/processor.h&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef __ASM_SPARC64_PROCESSOR_H
 DECL|macro|__ASM_SPARC64_PROCESSOR_H
 mdefine_line|#define __ASM_SPARC64_PROCESSOR_H
@@ -23,8 +23,13 @@ mdefine_line|#define wp_works_ok 1
 DECL|macro|wp_works_ok__is_a_macro
 mdefine_line|#define wp_works_ok__is_a_macro /* for versions in ksyms.c */
 multiline_comment|/* User lives in his very own context, and cannot reference us. */
+macro_line|#ifndef __ASSEMBLY__
 DECL|macro|TASK_SIZE
-mdefine_line|#define TASK_SIZE&t;((1UL &lt;&lt; (PAGE_SHIFT - 3)) * PGDIR_SIZE)
+mdefine_line|#define TASK_SIZE&t;((unsigned long)-PGDIR_SIZE)
+macro_line|#else
+DECL|macro|TASK_SIZE
+mdefine_line|#define TASK_SIZE&t;0xfffffffc00000000
+macro_line|#endif
 DECL|macro|COPY_TASK_STRUCT
 mdefine_line|#define COPY_TASK_STRUCT(dst, src)&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;do {&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;if (src-&gt;tss.w_saved)&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;*dst = *src;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;else {&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;memcpy (dst, src, ((const unsigned long)(&amp;((struct task_struct *)0)-&gt;tss.reg_window)));&t;&t;&bslash;&n;&t;&t;memcpy ((char *)dst + ((const unsigned long)(&amp;((struct task_struct *)0)-&gt;tss.sig_address)),&t;&bslash;&n;&t;&t;&t;(char *)src + ((const unsigned long)(&amp;((struct task_struct *)0)-&gt;tss.sig_address)),&t;&bslash;&n;&t;&t;&t;sizeof(struct task_struct) - &t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;  ((const unsigned long)(&amp;((struct task_struct *)0)-&gt;tss.sig_address)));&t;&t;&bslash;&n;&t;}&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;} while (0)
 macro_line|#ifndef __ASSEMBLY__

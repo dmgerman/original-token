@@ -1566,7 +1566,7 @@ r_return
 id|retval
 suffix:semicolon
 multiline_comment|/* OK, This is the point of no return */
-macro_line|#ifdef __sparc__
+macro_line|#if defined(__sparc__) &amp;&amp; !defined(__sparc_v9__)
 id|memcpy
 c_func
 (paren

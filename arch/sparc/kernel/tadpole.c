@@ -2,6 +2,7 @@ multiline_comment|/* tadpole.c: Probing for the tadpole clock stopping h/w at bo
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/asi.h&gt;
 macro_line|#include &lt;asm/oplib.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
@@ -300,12 +301,16 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|clock_stop_probe
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|clock_stop_probe
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_int

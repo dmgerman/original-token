@@ -1,6 +1,8 @@
 multiline_comment|/* cpu.c: Dinky routines to look for the kind of Sparc cpu&n; *        we are on.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/smp.h&gt;
+macro_line|#include &lt;linux/tasks.h&gt;
 macro_line|#include &lt;asm/oplib.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;asm/head.h&gt;
@@ -609,17 +611,11 @@ r_char
 op_star
 id|sparc_cpu_type
 (braket
-id|NCPUS
+id|NR_CPUS
 )braket
 op_assign
 (brace
-l_string|&quot;cpu-oops&quot;
-comma
-l_string|&quot;cpu-oops1&quot;
-comma
-l_string|&quot;cpu-oops2&quot;
-comma
-l_string|&quot;cpu-oops3&quot;
+l_int|0
 )brace
 suffix:semicolon
 DECL|variable|sparc_fpu_type
@@ -627,17 +623,11 @@ r_char
 op_star
 id|sparc_fpu_type
 (braket
-id|NCPUS
+id|NR_CPUS
 )braket
 op_assign
 (brace
-l_string|&quot;fpu-oops&quot;
-comma
-l_string|&quot;fpu-oops1&quot;
-comma
-l_string|&quot;fpu-oops2&quot;
-comma
-l_string|&quot;fpu-oops3&quot;
+l_int|0
 )brace
 suffix:semicolon
 DECL|variable|fsr_storage
@@ -668,10 +658,12 @@ r_int
 id|i
 comma
 id|cpuid
+comma
+id|psr
 suffix:semicolon
 id|cpuid
 op_assign
-id|get_cpuid
+id|hard_smp_processor_id
 c_func
 (paren
 )paren
@@ -706,6 +698,21 @@ op_amp
 l_int|0xf
 )paren
 suffix:semicolon
+id|psr
+op_assign
+id|get_psr
+c_func
+(paren
+)paren
+suffix:semicolon
+id|put_psr
+c_func
+(paren
+id|psr
+op_or
+id|PSR_EF
+)paren
+suffix:semicolon
 id|fpu_vers
 op_assign
 (paren
@@ -719,6 +726,12 @@ l_int|17
 )paren
 op_amp
 l_int|0x7
+)paren
+suffix:semicolon
+id|put_psr
+c_func
+(paren
+id|psr
 )paren
 suffix:semicolon
 r_for

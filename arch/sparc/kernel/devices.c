@@ -12,7 +12,7 @@ r_struct
 id|prom_cpuinfo
 id|linux_cpus
 (braket
-id|NCPUS
+id|NR_CPUS
 )braket
 suffix:semicolon
 DECL|variable|linux_num_cpus
@@ -75,7 +75,7 @@ suffix:semicolon
 r_int
 id|cpu_nds
 (braket
-id|NCPUS
+id|NR_CPUS
 )braket
 suffix:semicolon
 multiline_comment|/* One node for each cpu */
@@ -377,14 +377,6 @@ id|thismid
 )paren
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|cpu_ctr
-OL
-id|NCPUS
-)paren
-(brace
 id|cpu_nds
 (braket
 id|cpu_ctr
@@ -410,7 +402,6 @@ id|mid
 op_assign
 id|thismid
 suffix:semicolon
-)brace
 id|prom_printf
 c_func
 (paren
@@ -433,17 +424,6 @@ suffix:semicolon
 )brace
 )brace
 )brace
-r_if
-c_cond
-(paren
-id|cpu_ctr
-OG
-id|NCPUS
-)paren
-id|cpu_ctr
-op_assign
-id|NCPUS
-suffix:semicolon
 )brace
 r_if
 c_cond
@@ -530,9 +510,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|sparc_cpu_model
-op_eq
-id|sun4c
+id|ARCH_SUN4C_SUN4
 )paren
 id|sun4c_probe_memerr_reg
 c_func

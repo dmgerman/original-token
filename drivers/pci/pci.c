@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;$Id: pci.c,v 1.71 1998/03/30 11:14:35 mj Exp $&n; *&n; *&t;PCI Bus Services&n; *&n; *&t;Copyright 1993 -- 1998 Drew Eckhardt, Frederic Potter,&n; *&t;David Mosberger-Tang, Martin Mares&n; */
+multiline_comment|/*&n; *&t;$Id: pci.c,v 1.79 1998/04/17 16:25:24 mj Exp $&n; *&n; *&t;PCI Bus Services&n; *&n; *&t;Copyright 1993 -- 1998 Drew Eckhardt, Frederic Potter,&n; *&t;David Mosberger-Tang, Martin Mares&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -7,6 +7,15 @@ macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
+DECL|macro|DEBUG
+macro_line|#undef DEBUG
+macro_line|#ifdef DEBUG
+DECL|macro|DBG
+mdefine_line|#define DBG(x...) printk(x)
+macro_line|#else
+DECL|macro|DBG
+mdefine_line|#define DBG(x...)
+macro_line|#endif
 DECL|variable|pci_root
 r_struct
 id|pci_bus
@@ -39,87 +48,6 @@ id|__initdata
 op_assign
 l_int|0
 suffix:semicolon
-DECL|macro|DEBUG
-macro_line|#undef DEBUG
-DECL|function|pcibios_strerror
-r_const
-r_char
-op_star
-id|pcibios_strerror
-c_func
-(paren
-r_int
-id|error
-)paren
-(brace
-r_static
-r_char
-id|buf
-(braket
-l_int|32
-)braket
-suffix:semicolon
-r_switch
-c_cond
-(paren
-id|error
-)paren
-(brace
-r_case
-id|PCIBIOS_SUCCESSFUL
-suffix:colon
-r_case
-id|PCIBIOS_BAD_VENDOR_ID
-suffix:colon
-r_return
-l_string|&quot;SUCCESSFUL&quot;
-suffix:semicolon
-r_case
-id|PCIBIOS_FUNC_NOT_SUPPORTED
-suffix:colon
-r_return
-l_string|&quot;FUNC_NOT_SUPPORTED&quot;
-suffix:semicolon
-r_case
-id|PCIBIOS_DEVICE_NOT_FOUND
-suffix:colon
-r_return
-l_string|&quot;DEVICE_NOT_FOUND&quot;
-suffix:semicolon
-r_case
-id|PCIBIOS_BAD_REGISTER_NUMBER
-suffix:colon
-r_return
-l_string|&quot;BAD_REGISTER_NUMBER&quot;
-suffix:semicolon
-r_case
-id|PCIBIOS_SET_FAILED
-suffix:colon
-r_return
-l_string|&quot;SET_FAILED&quot;
-suffix:semicolon
-r_case
-id|PCIBIOS_BUFFER_TOO_SMALL
-suffix:colon
-r_return
-l_string|&quot;BUFFER_TOO_SMALL&quot;
-suffix:semicolon
-r_default
-suffix:colon
-id|sprintf
-(paren
-id|buf
-comma
-l_string|&quot;PCI ERROR 0x%x&quot;
-comma
-id|error
-)paren
-suffix:semicolon
-r_return
-id|buf
-suffix:semicolon
-)brace
-)brace
 r_struct
 id|pci_dev
 op_star
@@ -281,6 +209,113 @@ r_return
 id|from
 suffix:semicolon
 )brace
+r_void
+DECL|function|pci_set_master
+id|pci_set_master
+c_func
+(paren
+r_struct
+id|pci_dev
+op_star
+id|dev
+)paren
+(brace
+r_int
+r_int
+id|cmd
+suffix:semicolon
+r_int
+r_char
+id|lat
+suffix:semicolon
+id|pci_read_config_word
+c_func
+(paren
+id|dev
+comma
+id|PCI_COMMAND
+comma
+op_amp
+id|cmd
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|cmd
+op_amp
+id|PCI_COMMAND_MASTER
+)paren
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;PCI: Enabling bus mastering for device %02x:%02x&bslash;n&quot;
+comma
+id|dev-&gt;bus-&gt;number
+comma
+id|dev-&gt;devfn
+)paren
+suffix:semicolon
+id|cmd
+op_or_assign
+id|PCI_COMMAND_MASTER
+suffix:semicolon
+id|pci_write_config_word
+c_func
+(paren
+id|dev
+comma
+id|PCI_COMMAND
+comma
+id|cmd
+)paren
+suffix:semicolon
+)brace
+id|pci_read_config_byte
+c_func
+(paren
+id|dev
+comma
+id|PCI_LATENCY_TIMER
+comma
+op_amp
+id|lat
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|lat
+OL
+l_int|16
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;PCI: Increasing latency timer of device %02x:%02x to 64&bslash;n&quot;
+comma
+id|dev-&gt;bus-&gt;number
+comma
+id|dev-&gt;devfn
+)paren
+suffix:semicolon
+id|pci_write_config_byte
+c_func
+(paren
+id|dev
+comma
+id|PCI_LATENCY_TIMER
+comma
+l_int|64
+)paren
+suffix:semicolon
+)brace
+)brace
 DECL|function|__initfunc
 id|__initfunc
 c_func
@@ -334,8 +369,7 @@ suffix:semicolon
 r_int
 id|reg
 suffix:semicolon
-macro_line|#ifdef DEBUG
-id|printk
+id|DBG
 c_func
 (paren
 l_string|&quot;pci_scan_bus for bus %d&bslash;n&quot;
@@ -343,7 +377,6 @@ comma
 id|bus-&gt;number
 )paren
 suffix:semicolon
-macro_line|#endif
 id|max
 op_assign
 id|bus-&gt;secondary
@@ -700,6 +733,32 @@ suffix:colon
 id|l
 suffix:semicolon
 )brace
+id|pcibios_read_config_dword
+c_func
+(paren
+id|bus-&gt;number
+comma
+id|devfn
+comma
+id|PCI_ROM_ADDRESS
+comma
+op_amp
+id|l
+)paren
+suffix:semicolon
+id|dev-&gt;rom_address
+op_assign
+(paren
+id|l
+op_eq
+l_int|0xffffffff
+)paren
+ques
+c_cond
+l_int|0
+suffix:colon
+id|l
+suffix:semicolon
 r_break
 suffix:semicolon
 r_case
@@ -769,6 +828,32 @@ suffix:colon
 id|l
 suffix:semicolon
 )brace
+id|pcibios_read_config_dword
+c_func
+(paren
+id|bus-&gt;number
+comma
+id|devfn
+comma
+id|PCI_ROM_ADDRESS1
+comma
+op_amp
+id|l
+)paren
+suffix:semicolon
+id|dev-&gt;rom_address
+op_assign
+(paren
+id|l
+op_eq
+l_int|0xffffffff
+)paren
+ques
+c_cond
+l_int|0
+suffix:colon
+id|l
+suffix:semicolon
 r_break
 suffix:semicolon
 r_case
@@ -867,8 +952,7 @@ suffix:semicolon
 r_continue
 suffix:semicolon
 )brace
-macro_line|#ifdef DEBUG
-id|printk
+id|DBG
 c_func
 (paren
 l_string|&quot;PCI: %02x:%02x [%04x/%04x]&bslash;n&quot;
@@ -882,7 +966,6 @@ comma
 id|dev-&gt;device
 )paren
 suffix:semicolon
-macro_line|#endif
 multiline_comment|/*&n;&t;&t; * Put it into the global PCI device chain. It&squot;s used to&n;&t;&t; * find devices once everything is set up.&n;&t;&t; */
 r_if
 c_cond
@@ -922,7 +1005,8 @@ id|bus-&gt;devices
 op_assign
 id|dev
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; * In case the latency timer value is less than 32,&n;&t;&t; * which makes everything very sllooowww, set it to&n;&t;&t; * 32. Pciutils should be used to fine-tune it later.&n;&t;&t; * Note that we don&squot;t check if the device is a bus-master:&n;&t;&t; * if it isn&squot;t, write to the latency timer should be ignored.&n;&t;&t; */
+macro_line|#if 0
+multiline_comment|/*&n;&t;&t; * Setting of latency timer in case it was less than 32 was&n;&t;&t; * a great idea, but it confused several broken devices. Grrr.&n;&t;&t; */
 id|pcibios_read_config_byte
 c_func
 (paren
@@ -955,6 +1039,7 @@ comma
 l_int|32
 )paren
 suffix:semicolon
+macro_line|#endif
 multiline_comment|/*&n;&t;&t; * If it&squot;s a bridge, scan the bus behind it.&n;&t;&t; */
 r_if
 c_cond
@@ -1274,8 +1359,7 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/*&n;&t; * We&squot;ve scanned the bus and so we know all about what&squot;s on&n;&t; * the other side of any bridges that may be on this bus plus&n;&t; * any devices.&n;&t; *&n;&t; * Return how far we&squot;ve got finding sub-buses.&n;&t; */
-macro_line|#ifdef DEBUG
-id|printk
+id|DBG
 c_func
 (paren
 l_string|&quot;PCI: pci_scan_bus returning with max=%02x&bslash;n&quot;
@@ -1283,7 +1367,6 @@ comma
 id|max
 )paren
 suffix:semicolon
-macro_line|#endif
 r_return
 id|max
 suffix:semicolon
@@ -1366,19 +1449,12 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef CONFIG_PROC_FS
-id|proc_bus_pci_init
+macro_line|#ifdef CONFIG_PROC
+id|pci_proc_init
 c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_PCI_OLD_PROC
-id|proc_old_pci_init
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
 macro_line|#endif
 )brace
 DECL|function|__initfunc
@@ -1398,14 +1474,6 @@ id|ints
 )paren
 )paren
 (brace
-id|str
-op_assign
-id|pcibios_setup
-c_func
-(paren
-id|str
-)paren
-suffix:semicolon
 r_while
 c_loop
 (paren
@@ -1440,12 +1508,7 @@ c_cond
 (paren
 op_star
 id|str
-)paren
-(brace
-r_if
-c_cond
-(paren
-op_logical_neg
+op_logical_and
 (paren
 id|str
 op_assign
@@ -1455,13 +1518,11 @@ c_func
 id|str
 )paren
 )paren
-op_logical_or
-op_logical_neg
+op_logical_and
 op_star
 id|str
 )paren
-r_continue
-suffix:semicolon
+(brace
 r_if
 c_cond
 (paren

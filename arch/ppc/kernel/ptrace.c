@@ -1914,6 +1914,22 @@ op_le
 id|PT_FPSCR
 )paren
 (brace
+macro_line|#ifdef __SMP__
+r_if
+c_cond
+(paren
+id|child-&gt;tss.regs-&gt;msr
+op_amp
+id|MSR_FP
+)paren
+id|smp_giveup_fpu
+c_func
+(paren
+id|child
+)paren
+suffix:semicolon
+macro_line|#else&t;&t;&t;  
+multiline_comment|/* only current can be last task to use math on SMP */
 r_if
 c_cond
 (paren
@@ -1926,6 +1942,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#endif&t;&t;&t;&t;
 id|tmp
 op_assign
 (paren
@@ -2094,6 +2111,21 @@ op_plus
 l_int|64
 )paren
 (brace
+macro_line|#ifndef __SMP__
+r_if
+c_cond
+(paren
+id|child-&gt;tss.regs-&gt;msr
+op_amp
+id|MSR_FP
+)paren
+id|smp_giveup_fpu
+c_func
+(paren
+id|child
+)paren
+suffix:semicolon
+macro_line|#else&t;
 r_if
 c_cond
 (paren
@@ -2106,6 +2138,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#endif&t;&t;&t;&t;
 (paren
 (paren
 r_int

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: namei.h,v 1.10 1997/09/24 16:20:41 jj Exp $&n; * linux/include/asm-sparc64/namei.h&n; *&n; * Routines to handle famous /usr/gnemul/s*.&n; * Included from linux/fs/namei.c&n; */
+multiline_comment|/* $Id: namei.h,v 1.12 1998/03/13 17:38:13 jj Exp $&n; * linux/include/asm-sparc64/namei.h&n; *&n; * Routines to handle famous /usr/gnemul/s*.&n; * Included from linux/fs/namei.c&n; */
 macro_line|#ifndef __SPARC64_NAMEI_H
 DECL|macro|__SPARC64_NAMEI_H
 mdefine_line|#define __SPARC64_NAMEI_H
@@ -6,8 +6,6 @@ DECL|macro|SPARC_BSD_EMUL
 mdefine_line|#define SPARC_BSD_EMUL &quot;usr/gnemul/sunos/&quot;
 DECL|macro|SPARC_SOL_EMUL
 mdefine_line|#define SPARC_SOL_EMUL &quot;usr/gnemul/solaris/&quot;
-DECL|macro|SPARC_LIN_EMUL
-mdefine_line|#define SPARC_LIN_EMUL &quot;usr/gnemul/linux32/&quot;
 r_static
 r_inline
 r_struct
@@ -41,6 +39,8 @@ c_cond
 id|current-&gt;personality
 )paren
 (brace
+macro_line|#if 0
+multiline_comment|/* Until we solve, why SunOS apps sometime crash, disable gnemul support for SunOS */
 r_case
 id|PER_BSD
 suffix:colon
@@ -50,21 +50,13 @@ id|SPARC_BSD_EMUL
 suffix:semicolon
 r_break
 suffix:semicolon
+macro_line|#endif&t;&t;
 r_case
 id|PER_SVR4
 suffix:colon
 id|emul
 op_assign
 id|SPARC_SOL_EMUL
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-id|PER_LINUX32
-suffix:colon
-id|emul
-op_assign
-id|SPARC_LIN_EMUL
 suffix:semicolon
 r_break
 suffix:semicolon

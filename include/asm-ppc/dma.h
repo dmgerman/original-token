@@ -38,6 +38,11 @@ mdefine_line|#define DMA_MODE_WRITE 2
 DECL|macro|ISA_DMA_THRESHOLD
 mdefine_line|#define ISA_DMA_THRESHOLD ~0L
 macro_line|#endif /* CONFIG_PMAC */
+macro_line|#ifdef CONFIG_APUS
+multiline_comment|/* This is bogus and should go away. */
+DECL|macro|ISA_DMA_THRESHOLD
+mdefine_line|#define ISA_DMA_THRESHOLD (0x00ffffff)
+macro_line|#endif
 macro_line|#else
 multiline_comment|/* in arch/ppc/kernel/setup.c -- Cort */
 r_extern

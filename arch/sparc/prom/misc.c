@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: misc.c,v 1.15 1997/05/14 20:45:00 davem Exp $&n; * misc.c:  Miscellaneous prom functions that don&squot;t belong&n; *          anywhere else.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: misc.c,v 1.16 1998/03/09 14:04:25 jj Exp $&n; * misc.c:  Miscellaneous prom functions that don&squot;t belong&n; *          anywhere else.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -6,15 +6,13 @@ macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;asm/openprom.h&gt;
 macro_line|#include &lt;asm/oplib.h&gt;
 macro_line|#include &lt;asm/auxio.h&gt;
-multiline_comment|/* XXX Let&squot;s get rid of this thing if we can... */
 r_extern
-r_struct
-id|task_struct
-op_star
-id|current_set
-(braket
-id|NR_CPUS
-)braket
+r_void
+id|restore_current
+c_func
+(paren
+r_void
+)paren
 suffix:semicolon
 multiline_comment|/* Reset and reboot the machine with the command &squot;bcommand&squot;. */
 r_void
@@ -53,26 +51,9 @@ id|bcommand
 )paren
 suffix:semicolon
 multiline_comment|/* Never get here. */
-id|__asm__
-id|__volatile__
+id|restore_current
 c_func
 (paren
-l_string|&quot;ld [%0], %%g6&bslash;n&bslash;t&quot;
-suffix:colon
-suffix:colon
-l_string|&quot;r&quot;
-(paren
-op_amp
-id|current_set
-(braket
-id|hard_smp_processor_id
-c_func
-(paren
-)paren
-)braket
-)paren
-suffix:colon
-l_string|&quot;memory&quot;
 )paren
 suffix:semicolon
 id|restore_flags
@@ -161,26 +142,9 @@ id|romvec-&gt;pv_fortheval.v2_eval
 id|fstring
 )paren
 suffix:semicolon
-id|__asm__
-id|__volatile__
+id|restore_current
 c_func
 (paren
-l_string|&quot;ld [%0], %%g6&bslash;n&bslash;t&quot;
-suffix:colon
-suffix:colon
-l_string|&quot;r&quot;
-(paren
-op_amp
-id|current_set
-(braket
-id|hard_smp_processor_id
-c_func
-(paren
-)paren
-)braket
-)paren
-suffix:colon
-l_string|&quot;memory&quot;
 )paren
 suffix:semicolon
 id|restore_flags
@@ -294,26 +258,9 @@ id|romvec-&gt;pv_abort
 (paren
 )paren
 suffix:semicolon
-id|__asm__
-id|__volatile__
+id|restore_current
 c_func
 (paren
-l_string|&quot;ld [%0], %%g6&bslash;n&bslash;t&quot;
-suffix:colon
-suffix:colon
-l_string|&quot;r&quot;
-(paren
-op_amp
-id|current_set
-(braket
-id|hard_smp_processor_id
-c_func
-(paren
-)paren
-)braket
-)paren
-suffix:colon
-l_string|&quot;memory&quot;
 )paren
 suffix:semicolon
 id|restore_flags
@@ -382,26 +329,9 @@ id|romvec-&gt;pv_halt
 )paren
 suffix:semicolon
 multiline_comment|/* Never get here. */
-id|__asm__
-id|__volatile__
+id|restore_current
 c_func
 (paren
-l_string|&quot;ld [%0], %%g6&bslash;n&bslash;t&quot;
-suffix:colon
-suffix:colon
-l_string|&quot;r&quot;
-(paren
-op_amp
-id|current_set
-(braket
-id|hard_smp_processor_id
-c_func
-(paren
-)paren
-)braket
-)paren
-suffix:colon
-l_string|&quot;memory&quot;
 )paren
 suffix:semicolon
 id|restore_flags

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: psycho.h,v 1.2 1997/08/11 14:35:40 davem Exp $&n; * psycho.h: UltraSparc AX specific PCI definitions.&n; *&n; * Copyright (C) 1997 Eddie C. Dost (ecd@skynet.be)&n; */
+multiline_comment|/* $Id: psycho.h,v 1.3 1998/03/15 13:24:28 ecd Exp $&n; * psycho.h: UltraSparc AX specific PCI definitions.&n; *&n; * Copyright (C) 1997 Eddie C. Dost (ecd@skynet.be)&n; */
 macro_line|#ifndef __SPARC64_PSYCHO_H
 DECL|macro|__SPARC64_PSYCHO_H
 mdefine_line|#define __SPARC64_PSYCHO_H
@@ -125,44 +125,49 @@ multiline_comment|/*0x0c00*/
 id|u64
 id|imap_a_slot0
 suffix:semicolon
-multiline_comment|/* PCI A Slot 0 Int Mapping */
+multiline_comment|/* PCI A Slot 0 Int Mapping&t;*/
 DECL|member|imap_a_slot1
 multiline_comment|/*0x0c08*/
 id|u64
 id|imap_a_slot1
 suffix:semicolon
-multiline_comment|/* PCI A Slot 1 Int Mapping */
-DECL|member|__pad5
+multiline_comment|/* PCI A Slot 1 Int Mapping&t;*/
+DECL|member|imap_a_slot2
+multiline_comment|/*0x0c10*/
 id|u64
-id|__pad5
-(braket
-l_int|0x2
-)braket
+id|imap_a_slot2
 suffix:semicolon
+multiline_comment|/* PCI A Slot 2 Int Mapping (IIi only)*/
+DECL|member|imap_a_slot3
+multiline_comment|/*0x0c18*/
+id|u64
+id|imap_a_slot3
+suffix:semicolon
+multiline_comment|/* PCI A Slot 3 Int Mapping (IIi only)*/
 DECL|member|imap_b_slot0
 multiline_comment|/*0x0c20*/
 id|u64
 id|imap_b_slot0
 suffix:semicolon
-multiline_comment|/* PCI B Slot 0 Int Mapping */
+multiline_comment|/* PCI B Slot 0 Int Mapping&t;*/
 DECL|member|imap_b_slot1
 multiline_comment|/*0x0c28*/
 id|u64
 id|imap_b_slot1
 suffix:semicolon
-multiline_comment|/* PCI B Slot 1 Int Mapping */
+multiline_comment|/* PCI B Slot 1 Int Mapping&t;*/
 DECL|member|imap_b_slot2
 multiline_comment|/*0x0c30*/
 id|u64
 id|imap_b_slot2
 suffix:semicolon
-multiline_comment|/* PCI B Slot 2 Int Mapping */
+multiline_comment|/* PCI B Slot 2 Int Mapping&t;*/
 DECL|member|imap_b_slot3
 multiline_comment|/*0x0c38*/
 id|u64
 id|imap_b_slot3
 suffix:semicolon
-multiline_comment|/* PCI B Slot 3 Int Mapping */
+multiline_comment|/* PCI B Slot 3 Int Mapping&t;*/
 DECL|member|__pad6
 id|u64
 id|__pad6
@@ -175,127 +180,127 @@ multiline_comment|/*0x1000*/
 id|u64
 id|imap_scsi
 suffix:semicolon
-multiline_comment|/* SCSI Int Mapping&t;*/
+multiline_comment|/* SCSI Int Mapping&t;&t;*/
 DECL|member|imap_eth
 multiline_comment|/*0x1008*/
 id|u64
 id|imap_eth
 suffix:semicolon
-multiline_comment|/* Ethernet Int Mapping&t;*/
+multiline_comment|/* Ethernet Int Mapping&t;&t;*/
 DECL|member|imap_bpp
 multiline_comment|/*0x1010*/
 id|u64
 id|imap_bpp
 suffix:semicolon
-multiline_comment|/* Parallel Port Int Mapping */
+multiline_comment|/* Parallel Port Int Mapping&t;*/
 DECL|member|imap_au_rec
 multiline_comment|/*0x1018*/
 id|u64
 id|imap_au_rec
 suffix:semicolon
-multiline_comment|/* Audio Record Int Mapping */
+multiline_comment|/* Audio Record Int Mapping&t;*/
 DECL|member|imap_au_play
 multiline_comment|/*0x1020*/
 id|u64
 id|imap_au_play
 suffix:semicolon
-multiline_comment|/* Audio Playback Int Mapping */
+multiline_comment|/* Audio Playback Int Mapping&t;*/
 DECL|member|imap_pfail
 multiline_comment|/*0x1028*/
 id|u64
 id|imap_pfail
 suffix:semicolon
-multiline_comment|/* Power Fail Int Mapping */
+multiline_comment|/* Power Fail Int Mapping&t;*/
 DECL|member|imap_kms
 multiline_comment|/*0x1030*/
 id|u64
 id|imap_kms
 suffix:semicolon
-multiline_comment|/* Kbd/Mouse/Ser Int Mapping */
+multiline_comment|/* Kbd/Mouse/Ser Int Mapping&t;*/
 DECL|member|imap_flpy
 multiline_comment|/*0x1038*/
 id|u64
 id|imap_flpy
 suffix:semicolon
-multiline_comment|/* Floppy Int Mapping&t; */
+multiline_comment|/* Floppy Int Mapping&t;&t;*/
 DECL|member|imap_shw
 multiline_comment|/*0x1040*/
 id|u64
 id|imap_shw
 suffix:semicolon
-multiline_comment|/* Spare HW Int Mapping&t;*/
+multiline_comment|/* Spare HW Int Mapping&t;&t;*/
 DECL|member|imap_kbd
 multiline_comment|/*0x1048*/
 id|u64
 id|imap_kbd
 suffix:semicolon
-multiline_comment|/* Kbd Only Int Mapping&t;*/
+multiline_comment|/* Kbd Only Int Mapping&t;&t;*/
 DECL|member|imap_ms
 multiline_comment|/*0x1050*/
 id|u64
 id|imap_ms
 suffix:semicolon
-multiline_comment|/* Mouse Only Int Mapping */
+multiline_comment|/* Mouse Only Int Mapping&t;*/
 DECL|member|imap_ser
 multiline_comment|/*0x1058*/
 id|u64
 id|imap_ser
 suffix:semicolon
-multiline_comment|/* Serial Only Int Mapping */
+multiline_comment|/* Serial Only Int Mapping&t;*/
 DECL|member|imap_tim0
 multiline_comment|/*0x1060*/
 id|u64
 id|imap_tim0
 suffix:semicolon
-multiline_comment|/* Timer 0 Int Mapping&t;*/
+multiline_comment|/* Timer 0 Int Mapping&t;&t;*/
 DECL|member|imap_tim1
 multiline_comment|/*0x1068*/
 id|u64
 id|imap_tim1
 suffix:semicolon
-multiline_comment|/* Timer 1 Int Mapping&t;*/
+multiline_comment|/* Timer 1 Int Mapping&t;&t;*/
 DECL|member|imap_ue
 multiline_comment|/*0x1070*/
 id|u64
 id|imap_ue
 suffix:semicolon
-multiline_comment|/* UE Int Mapping&t;*/
+multiline_comment|/* UE Int Mapping&t;&t;*/
 DECL|member|imap_ce
 multiline_comment|/*0x1078*/
 id|u64
 id|imap_ce
 suffix:semicolon
-multiline_comment|/* CE Int Mapping&t;*/
+multiline_comment|/* CE Int Mapping&t;&t;*/
 DECL|member|imap_a_err
 multiline_comment|/*0x1080*/
 id|u64
 id|imap_a_err
 suffix:semicolon
-multiline_comment|/* PCI A Err Int Mapping */
+multiline_comment|/* PCI A Err Int Mapping&t;*/
 DECL|member|imap_b_err
 multiline_comment|/*0x1088*/
 id|u64
 id|imap_b_err
 suffix:semicolon
-multiline_comment|/* PCI B Err Int Mapping */
+multiline_comment|/* PCI B Err Int Mapping&t;*/
 DECL|member|imap_pmgmt
 multiline_comment|/*0x1090*/
 id|u64
 id|imap_pmgmt
 suffix:semicolon
-multiline_comment|/* Power Mgmt Int Mapping */
+multiline_comment|/* Power Mgmt Int Mapping&t;*/
 DECL|member|imap_gfx
 multiline_comment|/*0x1098*/
 id|u64
 id|imap_gfx
 suffix:semicolon
-multiline_comment|/* OB Graphics Int Mapping */
+multiline_comment|/* OB Graphics Int Mapping&t;*/
 DECL|member|imap_eupa
 multiline_comment|/*0x10a0*/
 id|u64
 id|imap_eupa
 suffix:semicolon
-multiline_comment|/* UPA Expansion Int Mapping */
+multiline_comment|/* UPA Expansion Int Mapping&t;*/
 DECL|member|__pad7
 id|u64
 id|__pad7
@@ -322,13 +327,24 @@ l_int|4
 )braket
 suffix:semicolon
 multiline_comment|/* PCI A Slot 1 Clear Int Reg */
-DECL|member|__pad8
+DECL|member|iclr_a_slot2
+multiline_comment|/*0x1440*/
 id|u64
-id|__pad8
+id|iclr_a_slot2
 (braket
-l_int|0x8
+l_int|4
 )braket
 suffix:semicolon
+multiline_comment|/* PCI A Slot 2 Clear Int Reg */
+DECL|member|iclr_a_slot3
+multiline_comment|/*0x1460*/
+id|u64
+id|iclr_a_slot3
+(braket
+l_int|4
+)braket
+suffix:semicolon
+multiline_comment|/* PCI A Slot 3 Clear Int Reg */
 DECL|member|iclr_b_slot0
 multiline_comment|/*0x1480*/
 id|u64
@@ -508,11 +524,17 @@ multiline_comment|/*0x1c18*/
 id|u64
 id|tim1_lim
 suffix:semicolon
+DECL|member|pci_dma_wsync
+multiline_comment|/*0x1c20*/
+id|u64
+id|pci_dma_wsync
+suffix:semicolon
+multiline_comment|/* PCI DMA Write Sync Register (IIi) */
 DECL|member|__pad12
 id|u64
 id|__pad12
 (braket
-l_int|0x7c
+l_int|0x7b
 )braket
 suffix:semicolon
 multiline_comment|/* PCI Bus A Registers */
@@ -545,11 +567,17 @@ id|u64
 id|pci_a_diag
 suffix:semicolon
 multiline_comment|/* PCI Bus A Diag Register&t;*/
+DECL|member|pci_tasr
+multiline_comment|/*0x2028*/
+id|u64
+id|pci_tasr
+suffix:semicolon
+multiline_comment|/* PCI Target Address Space Reg (IIi) */
 DECL|member|__pad14
 id|u64
 id|__pad14
 (braket
-l_int|0xfb
+l_int|0xfa
 )braket
 suffix:semicolon
 multiline_comment|/* PCI Bus A/IOMMU Streaming Buffer Registers */

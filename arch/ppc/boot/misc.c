@@ -1,10 +1,42 @@
-multiline_comment|/*&n; * misc.c&n; * &n; * Adapted for PowerPC by Gary Thomas&n; *&n; * Rewritten by Cort Dougan (cort@cs.nmt.edu)&n; * Soon to be replaced by a single bootloader for chrp/prep/pmac. -- Cort&n; */
+multiline_comment|/*&n; * misc.c&n; * &n; * Adapted for PowerPC by Gary Thomas&n; *&n; * Rewritten by Cort Dougan (cort@cs.nmt.edu)&n; * One day to be replaced by a single bootloader for chrp/prep/pmac. -- Cort&n; */
 macro_line|#include &quot;../coffboot/zlib.h&quot;
 macro_line|#include &quot;asm/residual.h&quot;
 macro_line|#include &lt;elf.h&gt;
+macro_line|#include &lt;linux/config.h&gt;
+macro_line|#ifdef CONFIG_MBX
+macro_line|#include &lt;asm/mbx.h&gt;
+DECL|variable|hold_board_info
+id|bd_t
+id|hold_board_info
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/* this is where the INITRD gets moved to for safe keeping */
 DECL|macro|INITRD_DESTINATION
-mdefine_line|#define INITRD_DESTINATION /*0x00f00000*/ 0x01f00000
+mdefine_line|#define INITRD_DESTINATION /*0x00f00000*/ 0x01800000
+macro_line|#ifdef CONFIG_8xx
+DECL|variable|avail_ram
+r_char
+op_star
+id|avail_ram
+op_assign
+(paren
+r_char
+op_star
+)paren
+l_int|0x00200000
+suffix:semicolon
+DECL|variable|end_avail
+r_char
+op_star
+id|end_avail
+op_assign
+(paren
+r_char
+op_star
+)paren
+l_int|0x00400000
+suffix:semicolon
+macro_line|#else /* CONFIG_8xx */
 multiline_comment|/* this will do for now - Cort */
 DECL|variable|avail_ram
 r_char
@@ -30,6 +62,14 @@ op_star
 )paren
 id|INITRD_DESTINATION
 suffix:semicolon
+macro_line|#endif /* CONFIG_8xx */
+DECL|variable|cmd_line
+r_char
+id|cmd_line
+(braket
+l_int|256
+)braket
+suffix:semicolon
 DECL|variable|hold_residual
 id|RESIDUAL
 id|hold_residual
@@ -54,13 +94,6 @@ suffix:semicolon
 DECL|variable|zimage_size
 r_int
 id|zimage_size
-suffix:semicolon
-DECL|variable|cmd_line
-r_char
-id|cmd_line
-(braket
-l_int|256
-)braket
 suffix:semicolon
 DECL|variable|vidmem
 r_char
@@ -200,6 +233,7 @@ l_int|1
 suffix:semicolon
 )brace
 )brace
+macro_line|#ifndef CONFIG_MBX
 DECL|function|clear_screen
 r_static
 r_void
@@ -671,6 +705,122 @@ op_assign
 id|y
 suffix:semicolon
 )brace
+macro_line|#else
+multiline_comment|/* The MBX is just the serial port.&n;*/
+DECL|function|tstc
+id|tstc
+c_func
+(paren
+r_void
+)paren
+(brace
+r_return
+(paren
+id|serial_tstc
+c_func
+(paren
+)paren
+)paren
+suffix:semicolon
+)brace
+DECL|function|getc
+id|getc
+c_func
+(paren
+r_void
+)paren
+(brace
+r_while
+c_loop
+(paren
+l_int|1
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|serial_tstc
+c_func
+(paren
+)paren
+)paren
+r_return
+(paren
+id|serial_getc
+c_func
+(paren
+)paren
+)paren
+suffix:semicolon
+)brace
+)brace
+r_void
+DECL|function|putc
+id|putc
+c_func
+(paren
+r_const
+r_char
+id|c
+)paren
+(brace
+id|serial_putchar
+c_func
+(paren
+id|c
+)paren
+suffix:semicolon
+)brace
+DECL|function|puts
+r_void
+id|puts
+c_func
+(paren
+r_const
+r_char
+op_star
+id|s
+)paren
+(brace
+r_char
+id|c
+suffix:semicolon
+r_while
+c_loop
+(paren
+(paren
+id|c
+op_assign
+op_star
+id|s
+op_increment
+)paren
+op_ne
+l_char|&squot;&bslash;0&squot;
+)paren
+(brace
+id|serial_putchar
+c_func
+(paren
+id|c
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|c
+op_eq
+l_char|&squot;&bslash;n&squot;
+)paren
+id|serial_putchar
+c_func
+(paren
+l_char|&squot;&bslash;r&squot;
+)paren
+suffix:semicolon
+)brace
+)brace
+macro_line|#endif /* CONFIG_MBX */
 DECL|function|memcpy
 r_void
 op_star
@@ -1258,6 +1408,14 @@ id|s
 )paren
 suffix:semicolon
 )brace
+DECL|variable|sanity
+r_int
+r_char
+id|sanity
+(braket
+l_int|0x2000
+)braket
+suffix:semicolon
 r_int
 r_int
 DECL|function|decompress_kernel
@@ -1314,47 +1472,68 @@ id|orig_y
 op_assign
 l_int|24
 suffix:semicolon
-multiline_comment|/* Turn off MMU.  Since we are mapped 1-1, this is OK. */
-id|flush_instruction_cache
-c_func
-(paren
-)paren
-suffix:semicolon
-id|_put_HID0
-c_func
-(paren
-id|_get_HID0
-c_func
-(paren
-)paren
-op_amp
-op_complement
-l_int|0x0000C000
-)paren
-suffix:semicolon
-id|_put_MSR
-c_func
-(paren
-id|_get_MSR
-c_func
-(paren
-)paren
-op_amp
-op_complement
-l_int|0x0030
-)paren
-suffix:semicolon
+macro_line|#ifndef CONFIG_8xx
 id|vga_init
 c_func
 (paren
 l_int|0xC0000000
 )paren
 suffix:semicolon
-multiline_comment|/*clear_screen();*/
+multiline_comment|/* copy the residual data */
+r_if
+c_cond
+(paren
+id|residual
+)paren
+id|memcpy
+c_func
+(paren
+op_amp
+id|hold_residual
+comma
+id|residual
+comma
+r_sizeof
+(paren
+id|RESIDUAL
+)paren
+)paren
+suffix:semicolon
+macro_line|#endif /* CONFIG_8xx */
+macro_line|#ifdef CONFIG_MBX&t;
+multiline_comment|/* copy board data */
+r_if
+c_cond
+(paren
+id|residual
+)paren
+id|_bcopy
+c_func
+(paren
+(paren
+r_char
+op_star
+)paren
+id|residual
+comma
+(paren
+r_char
+op_star
+)paren
+op_amp
+id|hold_board_info
+comma
+r_sizeof
+(paren
+id|hold_board_info
+)paren
+)paren
+suffix:semicolon
+macro_line|#endif /* CONFIG_8xx */
 id|puts
 c_func
 (paren
-l_string|&quot;loaded at:    &quot;
+l_string|&quot;loaded at:     &quot;
 )paren
 suffix:semicolon
 id|puthex
@@ -1396,7 +1575,7 @@ suffix:semicolon
 id|puts
 c_func
 (paren
-l_string|&quot;relocated to: &quot;
+l_string|&quot;relocated to:  &quot;
 )paren
 suffix:semicolon
 id|puthex
@@ -1445,6 +1624,176 @@ c_func
 l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|residual
+)paren
+(brace
+id|puts
+c_func
+(paren
+l_string|&quot;board data at: &quot;
+)paren
+suffix:semicolon
+id|puthex
+c_func
+(paren
+(paren
+r_int
+r_int
+)paren
+id|residual
+)paren
+suffix:semicolon
+id|puts
+c_func
+(paren
+l_string|&quot; &quot;
+)paren
+suffix:semicolon
+macro_line|#ifdef CONFIG_MBX&t;
+id|puthex
+c_func
+(paren
+(paren
+r_int
+r_int
+)paren
+(paren
+(paren
+r_int
+r_int
+)paren
+id|residual
+op_plus
+r_sizeof
+(paren
+id|bd_t
+)paren
+)paren
+)paren
+suffix:semicolon
+macro_line|#else
+id|puthex
+c_func
+(paren
+(paren
+r_int
+r_int
+)paren
+(paren
+(paren
+r_int
+r_int
+)paren
+id|residual
+op_plus
+r_sizeof
+(paren
+id|RESIDUAL
+)paren
+)paren
+)paren
+suffix:semicolon
+macro_line|#endif&t;
+id|puts
+c_func
+(paren
+l_string|&quot;&bslash;n&quot;
+)paren
+suffix:semicolon
+id|puts
+c_func
+(paren
+l_string|&quot;relocated to:  &quot;
+)paren
+suffix:semicolon
+macro_line|#ifdef CONFIG_MBX
+id|puthex
+c_func
+(paren
+(paren
+r_int
+r_int
+)paren
+op_amp
+id|hold_board_info
+)paren
+suffix:semicolon
+macro_line|#else
+id|puthex
+c_func
+(paren
+(paren
+r_int
+r_int
+)paren
+op_amp
+id|hold_residual
+)paren
+suffix:semicolon
+macro_line|#endif
+id|puts
+c_func
+(paren
+l_string|&quot; &quot;
+)paren
+suffix:semicolon
+macro_line|#ifdef CONFIG_MBX
+id|puthex
+c_func
+(paren
+(paren
+r_int
+r_int
+)paren
+(paren
+(paren
+r_int
+r_int
+)paren
+op_amp
+id|hold_board_info
+op_plus
+r_sizeof
+(paren
+id|bd_t
+)paren
+)paren
+)paren
+suffix:semicolon
+macro_line|#else
+id|puthex
+c_func
+(paren
+(paren
+r_int
+r_int
+)paren
+(paren
+(paren
+r_int
+r_int
+)paren
+op_amp
+id|hold_residual
+op_plus
+r_sizeof
+(paren
+id|RESIDUAL
+)paren
+)paren
+)paren
+suffix:semicolon
+macro_line|#endif&t;
+id|puts
+c_func
+(paren
+l_string|&quot;&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
 id|zimage_start
 op_assign
 (paren
@@ -1466,7 +1815,7 @@ suffix:semicolon
 id|puts
 c_func
 (paren
-l_string|&quot;zimage at:    &quot;
+l_string|&quot;zimage at:     &quot;
 )paren
 suffix:semicolon
 id|puthex
@@ -1539,7 +1888,7 @@ id|initrd_start
 id|puts
 c_func
 (paren
-l_string|&quot;initrd at:    &quot;
+l_string|&quot;initrd at:     &quot;
 )paren
 suffix:semicolon
 id|puthex
@@ -1596,7 +1945,7 @@ suffix:semicolon
 id|puts
 c_func
 (paren
-l_string|&quot;Moved initrd to: &quot;
+l_string|&quot;Moved initrd to:  &quot;
 )paren
 suffix:semicolon
 id|puthex
@@ -1624,12 +1973,14 @@ l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
+macro_line|#ifndef CONFIG_MBX
 id|CRT_tstc
 c_func
 (paren
 )paren
 suffix:semicolon
 multiline_comment|/* Forces keyboard to be initialized */
+macro_line|#endif&t;
 id|puts
 c_func
 (paren
@@ -1820,6 +2171,8 @@ c_func
 l_string|&quot;Uncompressing Linux...&quot;
 )paren
 suffix:semicolon
+multiline_comment|/* these _bcopy() calls are here so I can add breakpoints to the boot for mbx -- Cort */
+multiline_comment|/*_bcopy( (char *)0x100,(char *)&amp;sanity, 0x2000-0x100);*/
 id|gunzip
 c_func
 (paren
@@ -1833,6 +2186,7 @@ op_amp
 id|zimage_size
 )paren
 suffix:semicolon
+multiline_comment|/*_bcopy( (char *)&amp;sanity,(char *)0x100,0x2000-0x100);*/
 id|puts
 c_func
 (paren

@@ -722,6 +722,21 @@ op_star
 )paren
 id|sigctx.regs
 suffix:semicolon
+macro_line|#ifdef __SMP__
+r_if
+c_cond
+(paren
+id|regs-&gt;msr
+op_amp
+id|MSR_FP
+)paren
+id|smp_giveup_fpu
+c_func
+(paren
+id|current
+)paren
+suffix:semicolon
+macro_line|#else&t;
 r_if
 c_cond
 (paren
@@ -734,6 +749,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#endif&t;&t;
 r_if
 c_cond
 (paren
@@ -994,6 +1010,21 @@ id|frame
 r_goto
 id|badframe
 suffix:semicolon
+macro_line|#ifdef __SMP__
+r_if
+c_cond
+(paren
+id|regs-&gt;msr
+op_amp
+id|MSR_FP
+)paren
+id|smp_giveup_fpu
+c_func
+(paren
+id|current
+)paren
+suffix:semicolon
+macro_line|#else&t;
 r_if
 c_cond
 (paren
@@ -1006,6 +1037,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#endif&t;&t;
 r_if
 c_cond
 (paren

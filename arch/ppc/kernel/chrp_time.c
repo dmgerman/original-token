@@ -77,16 +77,12 @@ r_return
 suffix:semicolon
 id|base
 op_assign
-(paren
-(paren
-r_int
-op_star
-)paren
 id|rtcs-&gt;addrs
-)paren
 (braket
-l_int|2
+l_int|0
 )braket
+dot
+id|address
 suffix:semicolon
 id|nvram_as1
 op_assign
@@ -221,18 +217,11 @@ id|to_tm
 c_func
 (paren
 id|nowtime
-op_plus
-l_int|10
-op_star
-l_int|60
-op_star
-l_int|60
 comma
 op_amp
 id|tm
 )paren
 suffix:semicolon
-multiline_comment|/* XXX for now */
 id|save_control
 op_assign
 id|chrp_cmos_clock_read
@@ -653,13 +642,6 @@ id|min
 comma
 id|sec
 )paren
-op_minus
-l_int|10
-op_star
-l_int|60
-op_star
-l_int|60
-multiline_comment|/* XXX for now */
 suffix:semicolon
 )brace
 DECL|function|chrp_calibrate_decr
@@ -682,6 +664,16 @@ op_star
 id|fp
 comma
 id|divisor
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|via_calibrate_decr
+c_func
+(paren
+)paren
+)paren
+r_return
 suffix:semicolon
 multiline_comment|/*&n;&t; * The cpu node should have a timebase-frequency property&n;&t; * to tell us the rate at which the decrementer counts.&n;&t; */
 id|freq

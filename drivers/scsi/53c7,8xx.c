@@ -18870,14 +18870,11 @@ r_else
 (brace
 id|printk
 (paren
-l_string|&quot;scsi%d : couldn&squot;t read status register : %s&bslash;n&quot;
+l_string|&quot;scsi%d : couldn&squot;t read status register : error %d&bslash;n&quot;
 comma
 id|host-&gt;host_no
 comma
-id|pcibios_strerror
-(paren
 id|tmp
-)paren
 )paren
 suffix:semicolon
 id|retry

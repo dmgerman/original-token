@@ -520,10 +520,6 @@ id|proc_openprom_defreaddir_ptr
 )paren
 (paren
 r_struct
-id|inode
-op_star
-comma
-r_struct
 id|file
 op_star
 comma
@@ -595,10 +591,6 @@ op_star
 id|readdir
 )paren
 (paren
-r_struct
-id|inode
-op_star
-comma
 r_struct
 id|file
 op_star
@@ -839,11 +831,6 @@ id|proc_openprom_defreaddir
 c_func
 (paren
 r_struct
-id|inode
-op_star
-id|inode
-comma
-r_struct
 id|file
 op_star
 id|filp
@@ -880,8 +867,6 @@ id|proc_openprom_inode_operations.default_file_ops
 op_member_access_from_pointer
 id|readdir
 (paren
-id|inode
-comma
 id|filp
 comma
 id|dirent

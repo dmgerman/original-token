@@ -507,6 +507,9 @@ comma
 DECL|enumerator|PROC_SCSI_53C94
 id|PROC_SCSI_53C94
 comma
+DECL|enumerator|PROC_SCSI_PLUTO
+id|PROC_SCSI_PLUTO
+comma
 DECL|enumerator|PROC_SCSI_SCSI_DEBUG
 id|PROC_SCSI_SCSI_DEBUG
 comma
@@ -1377,10 +1380,6 @@ op_star
 id|readdir
 )paren
 (paren
-r_struct
-id|inode
-op_star
-comma
 r_struct
 id|file
 op_star

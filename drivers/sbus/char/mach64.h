@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: mach64.h,v 1.4 1997/10/04 08:51:30 ecd Exp $&n; * mach64.h: Ultra/PCI mach64 driver constants etc.&n; *&n; * Copyright 1997 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: mach64.h,v 1.5 1998/04/01 05:52:58 ecd Exp $&n; * mach64.h: Ultra/PCI mach64 driver constants etc.&n; *&n; * Copyright 1997 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _MACH64_H
 DECL|macro|_MACH64_H
 mdefine_line|#define _MACH64_H 1
@@ -11,10 +11,10 @@ r_int
 r_int
 id|color_mode
 suffix:semicolon
-DECL|member|flags
+DECL|member|chip_type
 r_int
 r_int
-id|flags
+id|chip_type
 suffix:semicolon
 DECL|member|total_vram
 r_int
@@ -23,9 +23,6 @@ id|total_vram
 suffix:semicolon
 )brace
 suffix:semicolon
-multiline_comment|/* The mach64_info flag bits. */
-DECL|macro|MACH64_MASK_VT
-mdefine_line|#define MACH64_MASK_VT&t;0x00000001
 multiline_comment|/* NON-GUI MEMORY MAPPED Registers - expressed in BYTE offsets */
 DECL|macro|CRTC_H_TOTAL_DISP
 mdefine_line|#define CRTC_H_TOTAL_DISP       0x0000  /* Dword offset 00 */
@@ -615,21 +612,6 @@ DECL|macro|MEM_BNDRY_1M
 mdefine_line|#define MEM_BNDRY_1M            0x00030000
 DECL|macro|MEM_BNDRY_EN
 mdefine_line|#define MEM_BNDRY_EN            0x00040000
-multiline_comment|/* ATI PCI constants */
-DECL|macro|PCI_ATI_VENDOR_ID
-mdefine_line|#define PCI_ATI_VENDOR_ID&t;0x1002
-DECL|macro|PCI_MACH64_GX
-mdefine_line|#define PCI_MACH64_GX&t;&t;0x4758
-DECL|macro|PCI_MACH64_CX
-mdefine_line|#define PCI_MACH64_CX&t;&t;0x4358
-DECL|macro|PCI_MACH64_CT
-mdefine_line|#define PCI_MACH64_CT&t;&t;0x4354
-DECL|macro|PCI_MACH64_ET
-mdefine_line|#define PCI_MACH64_ET&t;&t;0x4554
-DECL|macro|PCI_MACH64_VT
-mdefine_line|#define PCI_MACH64_VT&t;&t;0x5654
-DECL|macro|PCI_MACH64_GT
-mdefine_line|#define PCI_MACH64_GT&t;&t;0x4754
 multiline_comment|/* CONFIG_CHIP_ID register constants */
 DECL|macro|CFG_CHIP_TYPE
 mdefine_line|#define CFG_CHIP_TYPE&t;&t;0x0000FFFF

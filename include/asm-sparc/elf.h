@@ -1,8 +1,9 @@
-multiline_comment|/* $Id: elf.h,v 1.11 1997/09/26 18:37:32 tdyas Exp $ */
+multiline_comment|/* $Id: elf.h,v 1.15 1998/03/23 08:41:32 jj Exp $ */
 macro_line|#ifndef __ASMSPARC_ELF_H
 DECL|macro|__ASMSPARC_ELF_H
 mdefine_line|#define __ASMSPARC_ELF_H
 multiline_comment|/*&n; * ELF register definitions..&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/ptrace.h&gt;
 macro_line|#include &lt;asm/mbus.h&gt;
 DECL|typedef|elf_greg_t
@@ -39,16 +40,21 @@ DECL|macro|ELF_DATA
 mdefine_line|#define ELF_DATA&t;ELFDATA2MSB
 DECL|macro|USE_ELF_CORE_DUMP
 mdefine_line|#define USE_ELF_CORE_DUMP
+macro_line|#ifndef CONFIG_SUN4
 DECL|macro|ELF_EXEC_PAGESIZE
 mdefine_line|#define ELF_EXEC_PAGESIZE&t;4096
+macro_line|#else
+DECL|macro|ELF_EXEC_PAGESIZE
+mdefine_line|#define ELF_EXEC_PAGESIZE&t;8192
+macro_line|#endif
 multiline_comment|/* This is the location that an ET_DYN program is loaded if exec&squot;ed.  Typical&n;   use of this is to invoke &quot;./ld.so someprog&quot; to test out a new version of&n;   the loader.  We need to make sure that it is out of the way of the program&n;   that it will &quot;exec&quot;, and that there is sufficient room for the brk.  */
 DECL|macro|ELF_ET_DYN_BASE
 mdefine_line|#define ELF_ET_DYN_BASE         (TASK_UNMAPPED_BASE + 0x1000000)
 multiline_comment|/* This yields a mask that user programs can use to figure out what&n;   instruction set this cpu supports.  This can NOT be done in userspace&n;   on Sparc.  */
 multiline_comment|/* Sun4c has none of the capabilities, most sun4m&squot;s have them all.&n; * XXX This is gross, set some global variable at boot time. -DaveM&n; */
 DECL|macro|ELF_HWCAP
-mdefine_line|#define ELF_HWCAP&t;((sparc_cpu_model == sun4c) ? 0 : &bslash;&n;&t;&t;&t; (HWCAP_SPARC_FLUSH | HWCAP_SPARC_STBAR | &bslash;&n;&t;&t;&t;  HWCAP_SPARC_SWAP | &bslash;&n;&t;&t;&t;  ((srmmu_modtype != Cypress &amp;&amp; &bslash;&n;&t;&t;&t;    srmmu_modtype != Cypress_vE &amp;&amp; &bslash;&n;&t;&t;&t;    srmmu_modtype != Cypress_vD) ? &bslash;&n;&t;&t;&t;   HWCAP_SPARC_MULDIV : 0)))
-multiline_comment|/* This yields a string that ld.so will use to load implementation&n;   specific libraries for optimization.  This is more specific in&n;   intent than poking at uname or /proc/cpuinfo.  */
+mdefine_line|#define ELF_HWCAP&t;((ARCH_SUN4C_SUN4) ? 0 : &bslash;&n;&t;&t;&t; (HWCAP_SPARC_FLUSH | HWCAP_SPARC_STBAR | &bslash;&n;&t;&t;&t;  HWCAP_SPARC_SWAP | &bslash;&n;&t;&t;&t;  ((srmmu_modtype != Cypress &amp;&amp; &bslash;&n;&t;&t;&t;    srmmu_modtype != Cypress_vE &amp;&amp; &bslash;&n;&t;&t;&t;    srmmu_modtype != Cypress_vD) ? &bslash;&n;&t;&t;&t;   HWCAP_SPARC_MULDIV : 0)))
+multiline_comment|/* This yields a string that ld.so will use to load implementation&n;   specific libraries for optimization.  This is more specific in&n;   intent than poking at uname or /proc/cpuinfo. */
 DECL|macro|ELF_PLATFORM
 mdefine_line|#define ELF_PLATFORM&t;(NULL)
 macro_line|#ifdef __KERNEL__

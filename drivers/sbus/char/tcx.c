@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: tcx.c,v 1.20 1997/08/22 15:55:14 jj Exp $&n; * tcx.c: SUNW,tcx 24/8bit frame buffer driver&n; *&n; * Copyright (C) 1996 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; * Copyright (C) 1996 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; */
+multiline_comment|/* $Id: tcx.c,v 1.22 1998/03/10 20:18:47 jj Exp $&n; * tcx.c: SUNW,tcx 24/8bit frame buffer driver&n; *&n; * Copyright (C) 1996 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; * Copyright (C) 1996 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; */
 macro_line|#include &lt;linux/kd.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
@@ -29,6 +29,10 @@ DECL|macro|TCX_THC_MISC_REV_SHIFT
 mdefine_line|#define TCX_THC_MISC_REV_SHIFT       16
 DECL|macro|TCX_THC_MISC_REV_MASK
 mdefine_line|#define TCX_THC_MISC_REV_MASK        15
+DECL|macro|TCX_THC_MISC_VSYNC_DIS
+mdefine_line|#define TCX_THC_MISC_VSYNC_DIS       (1 &lt;&lt; 25)
+DECL|macro|TCX_THC_MISC_HSYNC_DIS
+mdefine_line|#define TCX_THC_MISC_HSYNC_DIS       (1 &lt;&lt; 24)
 DECL|macro|TCX_THC_MISC_RESET
 mdefine_line|#define TCX_THC_MISC_RESET           (1 &lt;&lt; 12)
 DECL|macro|TCX_THC_MISC_VIDEO
@@ -658,13 +662,12 @@ op_add_assign
 id|map_size
 suffix:semicolon
 )brace
-id|vma-&gt;vm_dentry
+id|vma-&gt;vm_file
 op_assign
-id|dget
-c_func
-(paren
-id|file-&gt;f_dentry
-)paren
+id|file
+suffix:semicolon
+id|file-&gt;f_count
+op_increment
 suffix:semicolon
 r_return
 l_int|0
@@ -1022,6 +1025,15 @@ op_and_assign
 op_complement
 id|TCX_THC_MISC_VIDEO
 suffix:semicolon
+multiline_comment|/* This should put us in power-save */
+id|fb-&gt;info.tcx.thc-&gt;thc_misc
+op_or_assign
+id|TCX_THC_MISC_VSYNC_DIS
+suffix:semicolon
+id|fb-&gt;info.tcx.thc-&gt;thc_misc
+op_or_assign
+id|TCX_THC_MISC_HSYNC_DIS
+suffix:semicolon
 )brace
 r_static
 r_void
@@ -1033,6 +1045,16 @@ op_star
 id|fb
 )paren
 (brace
+id|fb-&gt;info.tcx.thc-&gt;thc_misc
+op_and_assign
+op_complement
+id|TCX_THC_MISC_VSYNC_DIS
+suffix:semicolon
+id|fb-&gt;info.tcx.thc-&gt;thc_misc
+op_and_assign
+op_complement
+id|TCX_THC_MISC_HSYNC_DIS
+suffix:semicolon
 id|fb-&gt;info.tcx.thc-&gt;thc_misc
 op_or_assign
 id|TCX_THC_MISC_VIDEO
