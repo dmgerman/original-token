@@ -3813,7 +3813,11 @@ op_assign
 id|desc-&gt;status
 op_amp
 op_complement
+(paren
 id|IRQ_REPLAY
+op_or
+id|IRQ_WAITING
+)paren
 suffix:semicolon
 id|status
 op_or_assign
@@ -3988,7 +3992,11 @@ op_assign
 id|desc-&gt;status
 op_amp
 op_complement
+(paren
 id|IRQ_REPLAY
+op_or
+id|IRQ_WAITING
+)paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * If the IRQ is disabled for whatever reason, we must&n;&t; * not enter the IRQ action.&n;&t; */
 id|action

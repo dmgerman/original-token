@@ -500,7 +500,11 @@ op_assign
 id|desc-&gt;status
 op_amp
 op_complement
+(paren
 id|IRQ_REPLAY
+op_or
+id|IRQ_WAITING
+)paren
 suffix:semicolon
 id|action
 op_assign
