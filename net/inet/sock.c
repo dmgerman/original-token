@@ -1484,6 +1484,8 @@ multiline_comment|/*&n;   * Now if everything is gone we can free the socket&n; 
 r_if
 c_cond
 (paren
+id|sk-&gt;dead
+op_logical_and
 id|sk-&gt;rmem_alloc
 op_eq
 l_int|0
@@ -4694,16 +4696,10 @@ id|newsock-&gt;data
 op_assign
 l_int|NULL
 suffix:semicolon
-id|kfree_s
+id|destroy_sock
 c_func
 (paren
 id|sk
-comma
-r_sizeof
-(paren
-r_struct
-id|sock
-)paren
 )paren
 suffix:semicolon
 )brace

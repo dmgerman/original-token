@@ -4538,7 +4538,13 @@ id|VERIFY_WRITE
 comma
 id|arg
 comma
-l_int|16
+id|strlen
+c_func
+(paren
+id|sl-&gt;dev-&gt;name
+)paren
+op_plus
+l_int|1
 )paren
 suffix:semicolon
 r_if
@@ -4548,7 +4554,6 @@ id|err
 )paren
 (brace
 r_return
-op_minus
 id|err
 suffix:semicolon
 )brace

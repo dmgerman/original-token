@@ -2283,8 +2283,8 @@ r_if
 c_cond
 (paren
 id|testvalue
-op_ne
-l_int|255
+op_eq
+id|LP_DUMMY
 )paren
 (brace
 id|LP_F
@@ -2304,11 +2304,9 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;lp_init: lp%d exists (%d), &quot;
+l_string|&quot;lp_init: lp%d exists, &quot;
 comma
 id|offset
-comma
-id|testvalue
 )paren
 suffix:semicolon
 r_if

@@ -184,6 +184,7 @@ id|NR_SG
 r_return
 op_minus
 id|ENXIO
+suffix:semicolon
 r_switch
 c_cond
 (paren

@@ -3370,6 +3370,7 @@ id|p
 )paren
 (brace
 r_int
+r_int
 id|free
 suffix:semicolon
 r_static

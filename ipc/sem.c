@@ -1583,10 +1583,13 @@ id|verify_area
 (paren
 id|VERIFY_WRITE
 comma
-id|arg
+id|buf
 comma
 r_sizeof
-id|tbuf
+(paren
+op_star
+id|sma
+)paren
 )paren
 )paren
 )paren

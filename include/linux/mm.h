@@ -307,6 +307,73 @@ DECL|macro|BAD_PAGE
 mdefine_line|#define BAD_PAGE __bad_page()
 DECL|macro|ZERO_PAGE
 mdefine_line|#define ZERO_PAGE __zero_page()
+multiline_comment|/* planning stage.. */
+DECL|macro|P_DIRTY
+mdefine_line|#define P_DIRTY&t;&t;0x0001
+DECL|macro|P_LOCKED
+mdefine_line|#define P_LOCKED&t;0x0002
+DECL|macro|P_UPTODATE
+mdefine_line|#define P_UPTODATE&t;0x0004
+DECL|macro|P_RESERVED
+mdefine_line|#define P_RESERVED&t;0x8000
+DECL|struct|page_info
+r_struct
+id|page_info
+(brace
+DECL|member|flags
+r_int
+r_int
+id|flags
+suffix:semicolon
+DECL|member|count
+r_int
+r_int
+id|count
+suffix:semicolon
+DECL|member|inode
+r_struct
+id|inode
+op_star
+id|inode
+suffix:semicolon
+DECL|member|offset
+r_int
+r_int
+id|offset
+suffix:semicolon
+DECL|member|next_same_inode
+r_struct
+id|page_info
+op_star
+id|next_same_inode
+suffix:semicolon
+DECL|member|prev_same_inode
+r_struct
+id|page_info
+op_star
+id|prev_same_inode
+suffix:semicolon
+DECL|member|next_hash
+r_struct
+id|page_info
+op_star
+id|next_hash
+suffix:semicolon
+DECL|member|prev_hash
+r_struct
+id|page_info
+op_star
+id|prev_hash
+suffix:semicolon
+DECL|member|wait
+r_struct
+id|wait_queue
+op_star
+id|wait
+suffix:semicolon
+)brace
+suffix:semicolon
+multiline_comment|/* end of planning stage */
 r_extern
 r_volatile
 r_int
@@ -916,7 +983,7 @@ DECL|macro|GFP_KERNEL
 mdefine_line|#define GFP_KERNEL&t;0x03
 multiline_comment|/* vm_ops not present page codes */
 DECL|macro|SHM_SWP_TYPE
-mdefine_line|#define SHM_SWP_TYPE 0x41        
+mdefine_line|#define SHM_SWP_TYPE 0x41
 r_extern
 r_void
 id|shm_no_page

@@ -4058,6 +4058,15 @@ id|iph-&gt;daddr
 )paren
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|mtu
+OL
+l_int|8
+)paren
+r_return
+suffix:semicolon
 multiline_comment|/* Check for any &quot;DF&quot; flag. */
 r_if
 c_cond
