@@ -362,17 +362,6 @@ r_int
 r_int
 id|unique_id
 suffix:semicolon
-multiline_comment|/*&n;     * Set these if there are conflicts between memory&n;     * in the &lt; 1mb region and regions at 16mb multiples.&n;     * The address must be on a page boundary.&n;     */
-DECL|member|forbidden_addr
-r_int
-r_int
-id|forbidden_addr
-suffix:semicolon
-DECL|member|forbidden_size
-r_int
-r_int
-id|forbidden_size
-suffix:semicolon
 multiline_comment|/*&n;     * The rest can be copied from the template, or specifically&n;     * initialized, as required.&n;     */
 DECL|member|this_id
 r_int
@@ -419,6 +408,7 @@ suffix:colon
 l_int|1
 suffix:semicolon
 DECL|member|hostdata
+r_int
 r_int
 id|hostdata
 (braket

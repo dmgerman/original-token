@@ -4395,6 +4395,28 @@ id|sk_buff
 op_star
 id|skb
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|pkt_len
+OL
+l_int|60
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;%s: Runt packet!&bslash;n&quot;
+comma
+id|dev-&gt;name
+)paren
+suffix:semicolon
+id|lp-&gt;stats.rx_errors
+op_increment
+suffix:semicolon
+)brace
+r_else
+(brace
 id|skb
 op_assign
 id|dev_alloc_skb
@@ -4551,6 +4573,7 @@ suffix:semicolon
 id|lp-&gt;stats.rx_packets
 op_increment
 suffix:semicolon
+)brace
 )brace
 multiline_comment|/* The docs say that the buffer length isn&squot;t touched, but Andrew Boyd&n;&t;&t;   of QNX reports that some revs of the 79C965 clear it. */
 id|lp-&gt;rx_ring

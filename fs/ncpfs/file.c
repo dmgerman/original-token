@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  file.c&n; *&n; *  Copyright (C) 1995 by Paal-Kr. Engstad and Volker Lendecke&n; *&n; */
+multiline_comment|/*&n; *  file.c&n; *&n; *  Copyright (C) 1995 by Volker Lendecke&n; *&n; */
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -292,8 +292,6 @@ id|count
 r_int
 id|bufsize
 comma
-id|to_read
-comma
 id|already_read
 suffix:semicolon
 id|off_t
@@ -440,20 +438,12 @@ id|count
 r_int
 id|read_this_time
 suffix:semicolon
-r_if
-c_cond
-(paren
-(paren
-id|pos
-op_mod
-id|bufsize
-)paren
-op_ne
-l_int|0
-)paren
-(brace
+r_int
 id|to_read
 op_assign
+id|min
+c_func
+(paren
 id|bufsize
 op_minus
 (paren
@@ -461,21 +451,6 @@ id|pos
 op_mod
 id|bufsize
 )paren
-suffix:semicolon
-)brace
-r_else
-(brace
-id|to_read
-op_assign
-id|bufsize
-suffix:semicolon
-)brace
-id|to_read
-op_assign
-id|min
-c_func
-(paren
-id|to_read
 comma
 id|count
 op_minus
@@ -559,10 +534,12 @@ c_func
 id|inode
 )paren
 )paren
+(brace
 id|inode-&gt;i_atime
 op_assign
 id|CURRENT_TIME
 suffix:semicolon
+)brace
 id|inode-&gt;i_dirt
 op_assign
 l_int|1
@@ -612,8 +589,6 @@ id|count
 (brace
 r_int
 id|bufsize
-comma
-id|to_write
 comma
 id|already_written
 suffix:semicolon
@@ -756,20 +731,12 @@ id|count
 r_int
 id|written_this_time
 suffix:semicolon
-r_if
-c_cond
-(paren
-(paren
-id|pos
-op_mod
-id|bufsize
-)paren
-op_ne
-l_int|0
-)paren
-(brace
+r_int
 id|to_write
 op_assign
+id|min
+c_func
+(paren
 id|bufsize
 op_minus
 (paren
@@ -777,21 +744,6 @@ id|pos
 op_mod
 id|bufsize
 )paren
-suffix:semicolon
-)brace
-r_else
-(brace
-id|to_write
-op_assign
-id|bufsize
-suffix:semicolon
-)brace
-id|to_write
-op_assign
-id|min
-c_func
-(paren
-id|to_write
 comma
 id|count
 op_minus

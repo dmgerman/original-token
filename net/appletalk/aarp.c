@@ -1485,6 +1485,14 @@ id|skb-&gt;dev
 op_assign
 id|dev
 suffix:semicolon
+id|skb-&gt;protocol
+op_assign
+id|htons
+c_func
+(paren
+id|ETH_P_ATALK
+)paren
+suffix:semicolon
 id|hash
 op_assign
 id|sa-&gt;s_node

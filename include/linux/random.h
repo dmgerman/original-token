@@ -57,6 +57,9 @@ c_func
 (paren
 r_int
 id|irq
+comma
+r_int
+id|mode
 )paren
 suffix:semicolon
 r_void

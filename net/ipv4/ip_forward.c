@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;The IP forwarding functionality.&n; *&t;&t;&n; * Authors:&t;see ip.c&n; *&n; * Fixes:&n; *&t;&t;Many&t;&t;:&t;Split from ip.c , see ip_input.c for history.&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;The IP forwarding functionality.&n; *&t;&t;&n; * Authors:&t;see ip.c&n; *&n; * Fixes:&n; *&t;&t;Many&t;&t;:&t;Split from ip.c , see ip_input.c for history.&n; *&t;&t;Dave Gregorich&t;:&t;NULL ip_rt_put fix for multicast routing.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -677,12 +677,19 @@ comma
 id|dev
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|rt
+)paren
+(brace
 id|ip_rt_put
 c_func
 (paren
 id|rt
 )paren
 suffix:semicolon
+)brace
 r_return
 op_minus
 l_int|1
@@ -766,12 +773,19 @@ l_string|&quot;&bslash;nIP: No memory available for IP forward&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|rt
+)paren
+(brace
 id|ip_rt_put
 c_func
 (paren
 id|rt
 )paren
 suffix:semicolon
+)brace
 r_return
 op_minus
 l_int|1
@@ -1392,23 +1406,37 @@ suffix:semicolon
 )brace
 r_else
 (brace
+r_if
+c_cond
+(paren
+id|rt
+)paren
+(brace
 id|ip_rt_put
 c_func
 (paren
 id|rt
 )paren
 suffix:semicolon
+)brace
 r_return
 op_minus
 l_int|1
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|rt
+)paren
+(brace
 id|ip_rt_put
 c_func
 (paren
 id|rt
 )paren
 suffix:semicolon
+)brace
 multiline_comment|/*&n;&t; *&t;Tell the caller if their buffer is free.&n;&t; */
 r_if
 c_cond

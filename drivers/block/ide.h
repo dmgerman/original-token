@@ -1546,15 +1546,6 @@ id|idetape_register_chrdev
 r_void
 )paren
 suffix:semicolon
-multiline_comment|/*&n; *&t;The following function is called to re-insert a postponed tape&n; *&t;request into the request queue.&n; */
-r_void
-id|idetape_put_back_postponed_request
-(paren
-id|ide_drive_t
-op_star
-id|drive
-)paren
-suffix:semicolon
 macro_line|#endif /* CONFIG_BLK_DEV_IDETAPE */
 macro_line|#ifdef CONFIG_BLK_DEV_TRITON
 r_void

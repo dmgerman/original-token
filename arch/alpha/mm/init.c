@@ -16,15 +16,6 @@ macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/hwrpb.h&gt;
 r_extern
 r_void
-id|scsi_mem_init
-c_func
-(paren
-r_int
-r_int
-)paren
-suffix:semicolon
-r_extern
-r_void
 id|die_if_kernel
 c_func
 (paren
@@ -626,14 +617,6 @@ op_add_assign
 id|PAGE_SIZE
 suffix:semicolon
 )brace
-macro_line|#ifdef CONFIG_SCSI
-id|scsi_mem_init
-c_func
-(paren
-id|high_memory
-)paren
-suffix:semicolon
-macro_line|#endif
 r_for
 c_loop
 (paren

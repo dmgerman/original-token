@@ -3977,6 +3977,10 @@ c_cond
 id|dev
 op_eq
 l_int|NULL
+op_logical_or
+id|dev-&gt;family
+op_ne
+id|family
 )paren
 r_return
 id|main_dev

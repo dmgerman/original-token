@@ -2197,18 +2197,33 @@ id|dev-&gt;irq
 suffix:semicolon
 macro_line|#endif
 )brace
-multiline_comment|/* now, set any level-triggered IRQs */
-r_if
-c_cond
-(paren
-id|level_bits
-)paren
-id|outw
+multiline_comment|/*&n;&t; * Now, make all PCI interrupts level sensitive.  Notice:&n;&t; * these registers must be accessed byte-wise.  outw() doesn&squot;t&n;&t; * work, for some reason.&n;&t; */
+id|outb
 c_func
 (paren
+(paren
 id|level_bits
+op_rshift
+l_int|0
+)paren
+op_amp
+l_int|0xff
 comma
 l_int|0x4d0
+)paren
+suffix:semicolon
+id|outb
+c_func
+(paren
+(paren
+id|level_bits
+op_rshift
+l_int|8
+)paren
+op_amp
+l_int|0xff
+comma
+l_int|0x4d1
 )paren
 suffix:semicolon
 macro_line|#if PCI_MODIFY

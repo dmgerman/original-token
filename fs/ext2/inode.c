@@ -2887,8 +2887,9 @@ id|raw_inode-&gt;i_dtime
 suffix:semicolon
 id|inode-&gt;i_blksize
 op_assign
-id|inode-&gt;i_sb-&gt;s_blocksize
+id|PAGE_SIZE
 suffix:semicolon
+multiline_comment|/* This is the optimal IO size (for stat), not the fs block size */
 id|inode-&gt;i_blocks
 op_assign
 id|raw_inode-&gt;i_blocks

@@ -52,17 +52,6 @@ r_void
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef CONFIG_SCSI
-r_extern
-r_void
-id|scsi_mem_init
-c_func
-(paren
-r_int
-r_int
-)paren
-suffix:semicolon
-macro_line|#endif
 macro_line|#ifdef CONFIG_SOUND
 r_extern
 r_void
@@ -750,14 +739,6 @@ macro_line|#ifdef CONFIG_DESKSTATION_TYNE
 id|deskstation_tyne_dma_init
 c_func
 (paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_SCSI
-id|scsi_mem_init
-c_func
-(paren
-id|high_memory
 )paren
 suffix:semicolon
 macro_line|#endif

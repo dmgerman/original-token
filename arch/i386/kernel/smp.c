@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;Intel MP v1.1 specification support routines for multi-pentium &n; *&t;hosts.&n; *&n; *&t;(c) 1995 Alan Cox, CymruNET Ltd  &lt;alan@cymru.net&gt;&n; *&t;Supported by Caldera http://www.caldera.com.&n; *&t;Much of the core SMP work is based on previous work by Thomas Radke, to&n; *&t;whom a great many thanks are extended.&n; *&n; *&t;This code is released under the GNU public license version 2 or&n; *&t;later.&n; *&n; *&t;Fixes&n; *&t;&t;Felix Koop&t;:&t;NR_CPUS used properly&n; *&t;&t;Jose Renau&t;:&t;Handle single CPU case.&n; *&t;&t;Alan Cox&t;:&t;By repeated request 8) - Total BogoMIP report.&n; *&n; */
+multiline_comment|/*&n; *&t;Intel MP v1.1 specification support routines for multi-pentium &n; *&t;hosts.&n; *&n; *&t;(c) 1995 Alan Cox, CymruNET Ltd  &lt;alan@cymru.net&gt;&n; *&t;Supported by Caldera http://www.caldera.com.&n; *&t;Much of the core SMP work is based on previous work by Thomas Radke, to&n; *&t;whom a great many thanks are extended.&n; *&n; *&t;This code is released under the GNU public license version 2 or&n; *&t;later.&n; *&n; *&t;Fixes&n; *&t;&t;Felix Koop&t;:&t;NR_CPUS used properly&n; *&t;&t;Jose Renau&t;:&t;Handle single CPU case.&n; *&t;&t;Alan Cox&t;:&t;By repeated request 8) - Total BogoMIP report.&n; *&t;&t;Greg Wright&t;:&t;Fix for kernel stacks panic.&n; *&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
@@ -94,7 +94,7 @@ r_int
 r_int
 id|num_processors
 op_assign
-l_int|0
+l_int|1
 suffix:semicolon
 multiline_comment|/* Internal processor count&t;&t;&t;&t;*/
 DECL|variable|io_apic_addr
@@ -1096,11 +1096,6 @@ id|intel_mp_floating
 op_star
 id|mpf
 suffix:semicolon
-id|num_processors
-op_assign
-l_int|1
-suffix:semicolon
-multiline_comment|/* The boot processor */
 multiline_comment|/*&t;printk(&quot;Scan SMP from %p for %ld bytes.&bslash;n&quot;,&n;&t;&t;bp,length);*/
 r_if
 c_cond

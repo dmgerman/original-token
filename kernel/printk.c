@@ -9,7 +9,7 @@ macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/tty_driver.h&gt;
 DECL|macro|LOG_BUF_LEN
-mdefine_line|#define LOG_BUF_LEN&t;4096
+mdefine_line|#define LOG_BUF_LEN&t;8192
 DECL|variable|buf
 r_static
 r_char

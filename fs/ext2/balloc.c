@@ -923,7 +923,7 @@ c_func
 (paren
 l_int|1
 comma
-id|inode-&gt;i_blksize
+id|sb-&gt;s_blocksize
 )paren
 )paren
 suffix:semicolon
@@ -1704,7 +1704,7 @@ c_func
 (paren
 l_int|1
 comma
-id|inode-&gt;i_blksize
+id|sb-&gt;s_blocksize
 )paren
 )paren
 )paren
@@ -1818,7 +1818,7 @@ c_func
 (paren
 l_int|1
 comma
-id|inode-&gt;i_blksize
+id|sb-&gt;s_blocksize
 )paren
 )paren
 suffix:semicolon
@@ -1900,7 +1900,7 @@ c_func
 (paren
 l_int|1
 comma
-id|inode-&gt;i_blksize
+id|sb-&gt;s_blocksize
 )paren
 )paren
 )paren
@@ -1936,7 +1936,7 @@ c_func
 (paren
 l_int|1
 comma
-id|inode-&gt;i_blksize
+id|sb-&gt;s_blocksize
 )paren
 )paren
 suffix:semicolon

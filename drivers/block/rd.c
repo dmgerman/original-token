@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * ramdisk.c - Multiple ramdisk driver - gzip-loading version - v. 0.8 beta.&n; * &n; * (C) Chad Page, Theodore Ts&squot;o, et. al, 1995. &n; *&n; * This ramdisk is designed to have filesystems created on it and mounted&n; * just like a regular floppy disk.  &n; *  &n; * It also does something suggested by Linus: use the buffer cache as the&n; * ramdisk data.  This makes it possible to dynamically allocate the ramdisk&n; * buffer - with some consequences I have to deal with as I write this. &n; * &n; * This code is based on the original ramdisk.c, written mostly by&n; * Theodore Ts&squot;o (TYT) in 1991.  The code was largely rewritten by&n; * Chad Page to use the buffer cache to store the ramdisk data in&n; * 1995; Theodore then took over the driver again, and cleaned it up&n; * for inclusion in the mainline kernel.&n; *&n; * The original CRAMDISK code was written by Richard Lyons, and&n; * adapted by Chad Page to use the new ramdisk interface.  Theodore&n; * Ts&squot;o rewrote it so that both the compressed ramdisk loader and the&n; * kernel decompressor uses the same inflate.c codebase.  The ramdisk&n; * loader now also loads into a dynamic (buffer cache based) ramdisk,&n; * not the old static ramdisk.  Support for the old static ramdisk has&n; * been completely removed.&n; *&n; * Loadable module support added by Tom Dyas.&n; */
+multiline_comment|/*&n; * ramdisk.c - Multiple ramdisk driver - gzip-loading version - v. 0.8 beta.&n; * &n; * (C) Chad Page, Theodore Ts&squot;o, et. al, 1995. &n; *&n; * This ramdisk is designed to have filesystems created on it and mounted&n; * just like a regular floppy disk.  &n; *  &n; * It also does something suggested by Linus: use the buffer cache as the&n; * ramdisk data.  This makes it possible to dynamically allocate the ramdisk&n; * buffer - with some consequences I have to deal with as I write this. &n; * &n; * This code is based on the original ramdisk.c, written mostly by&n; * Theodore Ts&squot;o (TYT) in 1991.  The code was largely rewritten by&n; * Chad Page to use the buffer cache to store the ramdisk data in&n; * 1995; Theodore then took over the driver again, and cleaned it up&n; * for inclusion in the mainline kernel.&n; *&n; * The original CRAMDISK code was written by Richard Lyons, and&n; * adapted by Chad Page to use the new ramdisk interface.  Theodore&n; * Ts&squot;o rewrote it so that both the compressed ramdisk loader and the&n; * kernel decompressor uses the same inflate.c codebase.  The ramdisk&n; * loader now also loads into a dynamic (buffer cache based) ramdisk,&n; * not the old static ramdisk.  Support for the old static ramdisk has&n; * been completely removed.&n; *&n; * Loadable module support added by Tom Dyas.&n; *&n; * Further cleanups by Chad Page (page0588@sundance.sjsu.edu):&n; *&t;Cosmetic changes in #ifdef MODULE, code movement, etc...&n; * &t;When the ramdisk is rmmod&squot;ed, free the protected buffers&n; * &t;Default ramdisk size changed to 2.88MB&n; */
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/minix_fs.h&gt;
 macro_line|#include &lt;linux/ext2_fs.h&gt;
@@ -24,11 +24,17 @@ multiline_comment|/*&n; * 35 has been officially registered as the RAMDISK major
 DECL|macro|MAJOR_NR
 mdefine_line|#define MAJOR_NR RAMDISK_MAJOR
 macro_line|#include &lt;linux/blk.h&gt;
-DECL|macro|BUILD_CRAMDISK
-mdefine_line|#define BUILD_CRAMDISK
+multiline_comment|/* These *should* be defined as parameters */
 DECL|macro|NUM_RAMDISKS
 mdefine_line|#define NUM_RAMDISKS 8
+DECL|macro|RD_DEFAULTSIZE
+mdefine_line|#define RD_DEFAULTSIZE&t;2880&t;/* 2.88 MB */
 macro_line|#ifndef MODULE
+multiline_comment|/* We don&squot;t have to load ramdisks or gunzip them in a module... */
+DECL|macro|RD_LOADER
+mdefine_line|#define RD_LOADER
+DECL|macro|BUILD_CRAMDISK
+mdefine_line|#define BUILD_CRAMDISK
 r_void
 id|rd_load
 c_func
@@ -180,6 +186,7 @@ r_goto
 id|repeat
 suffix:semicolon
 )brace
+multiline_comment|/*&n;&t; * If we&squot;re reading, fill the buffer with 0&squot;s.  This is okay since&n;         * we&squot;re using protected buffers which should never get freed...&n;&t; *&n;&t; * If we&squot;re writing, we protect the buffer.&n;  &t; */
 r_if
 c_cond
 (paren
@@ -187,7 +194,6 @@ id|CURRENT-&gt;cmd
 op_eq
 id|READ
 )paren
-(brace
 id|memset
 c_func
 (paren
@@ -198,7 +204,7 @@ comma
 id|len
 )paren
 suffix:semicolon
-)brace
+r_else
 id|set_bit
 c_func
 (paren
@@ -539,7 +545,7 @@ id|i
 )braket
 op_assign
 (paren
-l_int|16384
+id|RD_DEFAULTSIZE
 op_star
 l_int|1024
 )paren
@@ -563,7 +569,100 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#ifndef MODULE
+multiline_comment|/* loadable module support */
+macro_line|#ifdef MODULE
+DECL|function|init_module
+r_int
+id|init_module
+c_func
+(paren
+r_void
+)paren
+(brace
+r_int
+id|error
+op_assign
+id|rd_init
+c_func
+(paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|error
+)paren
+id|printk
+c_func
+(paren
+id|KERN_INFO
+l_string|&quot;RAMDISK: Loaded as module.&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+id|error
+suffix:semicolon
+)brace
+multiline_comment|/* Before freeing the module, invalidate all of the protected buffers! */
+DECL|function|cleanup_module
+r_void
+id|cleanup_module
+c_func
+(paren
+r_void
+)paren
+(brace
+r_int
+id|i
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|NUM_RAMDISKS
+suffix:semicolon
+id|i
+op_increment
+)paren
+id|invalidate_buffers
+c_func
+(paren
+id|MKDEV
+c_func
+(paren
+id|MAJOR_NR
+comma
+id|i
+)paren
+)paren
+suffix:semicolon
+id|unregister_blkdev
+c_func
+(paren
+id|MAJOR_NR
+comma
+l_string|&quot;ramdisk&quot;
+)paren
+suffix:semicolon
+id|blk_dev
+(braket
+id|MAJOR_NR
+)braket
+dot
+id|request_fn
+op_assign
+l_int|0
+suffix:semicolon
+)brace
+macro_line|#endif  /* MODULE */
+multiline_comment|/* End of non-loading portions of the ramdisk driver */
+macro_line|#ifdef RD_LOADER 
 multiline_comment|/*&n; * This routine tries to a ramdisk image to load, and returns the&n; * number of blocks to read for a non-compressed image, 0 if the image&n; * is a compressed image, and -1 if an image with the right magic&n; * numbers could not be found.&n; *&n; * We currently check for the following magic numbers:&n; * &t;minix&n; * &t;ext2&n; * &t;gzip&n; */
 r_int
 DECL|function|identify_ramdisk_image
@@ -1484,6 +1583,7 @@ id|fs
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif /* RD_LOADER */
 macro_line|#ifdef BUILD_CRAMDISK
 multiline_comment|/*&n; * gzip declarations&n; */
 DECL|macro|OF
@@ -2028,67 +2128,4 @@ id|result
 suffix:semicolon
 )brace
 macro_line|#endif  /* BUILD_CRAMDISK */
-macro_line|#endif  /* MODULE */
-multiline_comment|/* loadable module support */
-macro_line|#ifdef MODULE
-DECL|function|init_module
-r_int
-id|init_module
-c_func
-(paren
-r_void
-)paren
-(brace
-r_int
-id|error
-op_assign
-id|rd_init
-c_func
-(paren
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|error
-)paren
-id|printk
-c_func
-(paren
-id|KERN_INFO
-l_string|&quot;RAMDISK: Loaded as module.&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-id|error
-suffix:semicolon
-)brace
-DECL|function|cleanup_module
-r_void
-id|cleanup_module
-c_func
-(paren
-r_void
-)paren
-(brace
-id|unregister_blkdev
-c_func
-(paren
-id|MAJOR_NR
-comma
-l_string|&quot;ramdisk&quot;
-)paren
-suffix:semicolon
-id|blk_dev
-(braket
-id|MAJOR_NR
-)braket
-dot
-id|request_fn
-op_assign
-l_int|0
-suffix:semicolon
-)brace
-macro_line|#endif  /* MODULE */
 eof

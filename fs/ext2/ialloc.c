@@ -1908,8 +1908,9 @@ id|j
 suffix:semicolon
 id|inode-&gt;i_blksize
 op_assign
-id|sb-&gt;s_blocksize
+id|PAGE_SIZE
 suffix:semicolon
+multiline_comment|/* This is the optimal IO size (for stat), not the fs block size */
 id|inode-&gt;i_blocks
 op_assign
 l_int|0

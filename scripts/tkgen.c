@@ -1,4 +1,4 @@
-multiline_comment|/* Generate tk script based upon config.in&n; *&n; * Version 1.0&n; * Eric Youngdale&n; * 10/95&n; */
+multiline_comment|/* Generate tk script based upon config.in&n; *&n; * Version 1.0&n; * Eric Youngdale&n; * 10/95&n; *&n; * 1995 01 04 - Aesthetic improvements by Avery Pennarun&n; *              &lt;apenwarr@foxnet.net&gt;&n; */
 macro_line|#include &lt;stdio.h&gt;
 macro_line|#include &quot;tkparse.h&quot;
 macro_line|#ifndef TRUE
@@ -1504,13 +1504,13 @@ suffix:semicolon
 id|printf
 c_func
 (paren
-l_string|&quot;&bslash;tpack $w.f.back $w.f.next $w.f.prev -side left -pady 10 -padx 45&bslash;n&quot;
+l_string|&quot;&bslash;tpack $w.f.back $w.f.next $w.f.prev -side left -expand on&bslash;n&quot;
 )paren
 suffix:semicolon
 id|printf
 c_func
 (paren
-l_string|&quot;&bslash;tpack $w.f -pady 10 -side top -padx 10 -anchor w&bslash;n&quot;
+l_string|&quot;&bslash;tpack $w.f -pady 10 -side top -anchor w -fill x -expand on&bslash;n&quot;
 )paren
 suffix:semicolon
 id|printf
@@ -2222,7 +2222,7 @@ suffix:colon
 id|printf
 c_func
 (paren
-l_string|&quot;&bslash;t$w.line%d.menu add radiobutton -label &bslash;&quot;%s&bslash;&quot; -variable %s -value %d -command &bslash;&quot;update_menu%d .menu%d&bslash;&quot;&bslash;n&quot;
+l_string|&quot;&bslash;t$w.x%d.x.menu add radiobutton -label &bslash;&quot;%s&bslash;&quot; -variable %s -value %d -command &bslash;&quot;update_menu%d .menu%d&bslash;&quot;&bslash;n&quot;
 comma
 id|cfg1-&gt;menu_line
 comma
@@ -2275,6 +2275,7 @@ op_assign
 id|cfg-&gt;menu_number
 suffix:semicolon
 )brace
+macro_line|#if 0
 id|printf
 c_func
 (paren
@@ -2309,6 +2310,30 @@ comma
 id|cfg-&gt;menu_line
 )paren
 suffix:semicolon
+macro_line|#else
+id|printf
+c_func
+(paren
+l_string|&quot;&bslash;tminimenu $w %d %d &bslash;&quot;%s&bslash;&quot; %s&bslash;n&quot;
+comma
+id|cfg-&gt;menu_number
+comma
+id|cfg-&gt;menu_line
+comma
+id|cfg-&gt;label
+comma
+id|cfg-&gt;optionname
+)paren
+suffix:semicolon
+id|printf
+c_func
+(paren
+l_string|&quot;&bslash;tmenu $w.x%d.x.menu&bslash;n&quot;
+comma
+id|cfg-&gt;menu_line
+)paren
+suffix:semicolon
+macro_line|#endif
 id|cfg1
 op_assign
 id|cfg
@@ -2582,7 +2607,7 @@ suffix:semicolon
 id|printf
 c_func
 (paren
-l_string|&quot;&bslash;tpack $w.m0 $w.m1 -side top -pady 10&bslash;n&quot;
+l_string|&quot;&bslash;tpack $w.m0 $w.m1 -side top -pady 10 -expand on&bslash;n&quot;
 )paren
 suffix:semicolon
 multiline_comment|/*&n;   * Close out the last menu.&n;   */

@@ -131,6 +131,10 @@ DECL|macro|FD_RSEEK_OUT
 mdefine_line|#define FD_RSEEK_OUT&t;&t;0x8f&t;/* seek out (i.e. to lower tracks) */
 DECL|macro|FD_RSEEK_IN
 mdefine_line|#define FD_RSEEK_IN&t;&t;0xcf&t;/* seek in (i.e. to higher tracks) */
+DECL|macro|FD_PARTID
+mdefine_line|#define FD_PARTID&t;&t;0x18&t;/* part id (&quot;extended&quot; version cmd) */
+DECL|macro|FD_SAVE
+mdefine_line|#define FD_SAVE&t;&t;&t;0x2e&t;/* save fdc regs for later restore */
 multiline_comment|/* DMA commands */
 DECL|macro|DMA_READ
 mdefine_line|#define DMA_READ&t;0x46
@@ -151,6 +155,10 @@ DECL|macro|FDC_82077_ORIG
 mdefine_line|#define FDC_82077_ORIG&t;0x50&t;/* Original version of 82077AA, sans LOCK */
 DECL|macro|FDC_82077
 mdefine_line|#define FDC_82077&t;0x52&t;/* 82077AA-1 */
+DECL|macro|FDC_82078
+mdefine_line|#define FDC_82078&t;0x60&t;/* 44pin 82078 or 64pin 82078SL */
+DECL|macro|FDC_82078_1
+mdefine_line|#define FDC_82078_1&t;0x61&t;/* 82078-1 (2Mbps fdc) */
 DECL|macro|FD_RESET_DELAY
 mdefine_line|#define FD_RESET_DELAY 20
 macro_line|#endif

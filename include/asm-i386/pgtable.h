@@ -237,8 +237,6 @@ DECL|macro|_PAGE_DIRTY
 mdefine_line|#define _PAGE_DIRTY&t;0x040
 DECL|macro|_PAGE_4M
 mdefine_line|#define _PAGE_4M&t;0x080&t;/* 4 MB page, Pentium+.. */
-DECL|macro|_PAGE_COW
-mdefine_line|#define _PAGE_COW&t;0x200&t;/* implemented in software (one of the AVL bits) */
 DECL|macro|_PAGE_TABLE
 mdefine_line|#define _PAGE_TABLE&t;(_PAGE_PRESENT | _PAGE_RW | _PAGE_USER | _PAGE_ACCESSED | _PAGE_DIRTY)
 DECL|macro|_PAGE_CHG_MASK
@@ -248,7 +246,7 @@ mdefine_line|#define PAGE_NONE&t;__pgprot(_PAGE_PRESENT | _PAGE_ACCESSED)
 DECL|macro|PAGE_SHARED
 mdefine_line|#define PAGE_SHARED&t;__pgprot(_PAGE_PRESENT | _PAGE_RW | _PAGE_USER | _PAGE_ACCESSED)
 DECL|macro|PAGE_COPY
-mdefine_line|#define PAGE_COPY&t;__pgprot(_PAGE_PRESENT | _PAGE_USER | _PAGE_ACCESSED | _PAGE_COW)
+mdefine_line|#define PAGE_COPY&t;__pgprot(_PAGE_PRESENT | _PAGE_USER | _PAGE_ACCESSED)
 DECL|macro|PAGE_READONLY
 mdefine_line|#define PAGE_READONLY&t;__pgprot(_PAGE_PRESENT | _PAGE_USER | _PAGE_ACCESSED)
 DECL|macro|PAGE_KERNEL
@@ -834,27 +832,6 @@ op_amp
 id|_PAGE_ACCESSED
 suffix:semicolon
 )brace
-DECL|function|pte_cow
-r_extern
-r_inline
-r_int
-id|pte_cow
-c_func
-(paren
-id|pte_t
-id|pte
-)paren
-(brace
-r_return
-id|pte_val
-c_func
-(paren
-id|pte
-)paren
-op_amp
-id|_PAGE_COW
-suffix:semicolon
-)brace
 DECL|function|pte_wrprotect
 r_extern
 r_inline
@@ -975,30 +952,6 @@ r_return
 id|pte
 suffix:semicolon
 )brace
-DECL|function|pte_uncow
-r_extern
-r_inline
-id|pte_t
-id|pte_uncow
-c_func
-(paren
-id|pte_t
-id|pte
-)paren
-(brace
-id|pte_val
-c_func
-(paren
-id|pte
-)paren
-op_and_assign
-op_complement
-id|_PAGE_COW
-suffix:semicolon
-r_return
-id|pte
-suffix:semicolon
-)brace
 DECL|function|pte_mkwrite
 r_extern
 r_inline
@@ -1109,29 +1062,6 @@ id|pte
 )paren
 op_or_assign
 id|_PAGE_ACCESSED
-suffix:semicolon
-r_return
-id|pte
-suffix:semicolon
-)brace
-DECL|function|pte_mkcow
-r_extern
-r_inline
-id|pte_t
-id|pte_mkcow
-c_func
-(paren
-id|pte_t
-id|pte
-)paren
-(brace
-id|pte_val
-c_func
-(paren
-id|pte
-)paren
-op_or_assign
-id|_PAGE_COW
 suffix:semicolon
 r_return
 id|pte

@@ -2507,6 +2507,7 @@ id|i
 op_increment
 )paren
 (brace
+multiline_comment|/*&n;&t;&t; *&t;We use kernel_thread for the idlers which are&n;&t;&t; *&t;unlocked tasks running in kernel space.&n;&t;&t; */
 id|kernel_thread
 c_func
 (paren
@@ -2855,7 +2856,7 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
-multiline_comment|/* we count on the initial thread going ok */
+multiline_comment|/* &n;&t; *&t;We count on the initial thread going ok &n;&t; *&t;Like idlers init is an unlocked kernel thread, which will&n;&t; *&t;make syscalls (and thus be locked).&n;&t; */
 id|kernel_thread
 c_func
 (paren

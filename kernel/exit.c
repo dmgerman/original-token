@@ -2401,11 +2401,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|exit_notify
-c_func
-(paren
-)paren
-suffix:semicolon
 id|current-&gt;state
 op_assign
 id|TASK_ZOMBIE
@@ -2413,6 +2408,11 @@ suffix:semicolon
 id|current-&gt;exit_code
 op_assign
 id|code
+suffix:semicolon
+id|exit_notify
+c_func
+(paren
+)paren
 suffix:semicolon
 macro_line|#ifdef DEBUG_PROC_TREE
 id|audit_ptree

@@ -195,8 +195,6 @@ mdefine_line|#define _PAGE_KWE&t;0x1000&t;/* used to do the dirty bit in softwar
 DECL|macro|_PAGE_UWE
 mdefine_line|#define _PAGE_UWE&t;0x2000&t;/* used to do the dirty bit in software */
 multiline_comment|/* .. and these are ours ... */
-DECL|macro|_PAGE_COW
-mdefine_line|#define _PAGE_COW&t;0x10000
 DECL|macro|_PAGE_DIRTY
 mdefine_line|#define _PAGE_DIRTY&t;0x20000
 DECL|macro|_PAGE_ACCESSED
@@ -218,7 +216,7 @@ mdefine_line|#define PAGE_NONE&t;__pgprot(_PAGE_VALID | __ACCESS_BITS | _PAGE_FO
 DECL|macro|PAGE_SHARED
 mdefine_line|#define PAGE_SHARED&t;__pgprot(_PAGE_VALID | __ACCESS_BITS)
 DECL|macro|PAGE_COPY
-mdefine_line|#define PAGE_COPY&t;__pgprot(_PAGE_VALID | __ACCESS_BITS | _PAGE_FOW | _PAGE_COW)
+mdefine_line|#define PAGE_COPY&t;__pgprot(_PAGE_VALID | __ACCESS_BITS | _PAGE_FOW)
 DECL|macro|PAGE_READONLY
 mdefine_line|#define PAGE_READONLY&t;__pgprot(_PAGE_VALID | __ACCESS_BITS | _PAGE_FOW)
 DECL|macro|PAGE_KERNEL
@@ -226,7 +224,7 @@ mdefine_line|#define PAGE_KERNEL&t;__pgprot(_PAGE_VALID | _PAGE_ASM | _PAGE_KRE 
 DECL|macro|_PAGE_NORMAL
 mdefine_line|#define _PAGE_NORMAL(x) __pgprot(_PAGE_VALID | __ACCESS_BITS | (x))
 DECL|macro|_PAGE_P
-mdefine_line|#define _PAGE_P(x) _PAGE_NORMAL((x) | (((x) &amp; _PAGE_FOW)?0:(_PAGE_FOW | _PAGE_COW)))
+mdefine_line|#define _PAGE_P(x) _PAGE_NORMAL((x) | (((x) &amp; _PAGE_FOW)?0:_PAGE_FOW))
 DECL|macro|_PAGE_S
 mdefine_line|#define _PAGE_S(x) _PAGE_NORMAL(x)
 multiline_comment|/*&n; * The hardware can handle write-only mappings, but as the alpha&n; * architecture does byte-wide writes with a read-modify-write&n; * sequence, it&squot;s not practical to have write-without-read privs.&n; * Thus the &quot;-w- -&gt; rw-&quot; and &quot;-wx -&gt; rwx&quot; mapping here (and in&n; * arch/alpha/mm/fault.c)&n; */
@@ -1149,27 +1147,6 @@ op_amp
 id|_PAGE_ACCESSED
 suffix:semicolon
 )brace
-DECL|function|pte_cow
-r_extern
-r_inline
-r_int
-id|pte_cow
-c_func
-(paren
-id|pte_t
-id|pte
-)paren
-(brace
-r_return
-id|pte_val
-c_func
-(paren
-id|pte
-)paren
-op_amp
-id|_PAGE_COW
-suffix:semicolon
-)brace
 DECL|function|pte_wrprotect
 r_extern
 r_inline
@@ -1291,30 +1268,6 @@ r_return
 id|pte
 suffix:semicolon
 )brace
-DECL|function|pte_uncow
-r_extern
-r_inline
-id|pte_t
-id|pte_uncow
-c_func
-(paren
-id|pte_t
-id|pte
-)paren
-(brace
-id|pte_val
-c_func
-(paren
-id|pte
-)paren
-op_and_assign
-op_complement
-id|_PAGE_COW
-suffix:semicolon
-r_return
-id|pte
-suffix:semicolon
-)brace
 DECL|function|pte_mkwrite
 r_extern
 r_inline
@@ -1428,29 +1381,6 @@ id|pte
 )paren
 op_or_assign
 id|__ACCESS_BITS
-suffix:semicolon
-r_return
-id|pte
-suffix:semicolon
-)brace
-DECL|function|pte_mkcow
-r_extern
-r_inline
-id|pte_t
-id|pte_mkcow
-c_func
-(paren
-id|pte_t
-id|pte
-)paren
-(brace
-id|pte_val
-c_func
-(paren
-id|pte
-)paren
-op_or_assign
-id|_PAGE_COW
 suffix:semicolon
 r_return
 id|pte

@@ -3269,9 +3269,11 @@ suffix:colon
 id|printk
 c_func
 (paren
-l_string|&quot;SCSI host %d abort() timed out - resetting&bslash;n&quot;
+l_string|&quot;SCSI host %d abort (pid %ld) timed out - resetting&bslash;n&quot;
 comma
 id|SCpnt-&gt;host-&gt;host_no
+comma
+id|SCpnt-&gt;pid
 )paren
 suffix:semicolon
 r_if

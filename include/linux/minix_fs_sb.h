@@ -56,7 +56,7 @@ id|buffer_head
 op_star
 id|s_zmap
 (braket
-l_int|8
+l_int|64
 )braket
 suffix:semicolon
 DECL|member|s_dirsize
@@ -85,6 +85,11 @@ DECL|member|s_mount_state
 r_int
 r_int
 id|s_mount_state
+suffix:semicolon
+DECL|member|s_version
+r_int
+r_int
+id|s_version
 suffix:semicolon
 )brace
 suffix:semicolon

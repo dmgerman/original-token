@@ -17,6 +17,10 @@ macro_line|#ifndef __LITTLE_ENDIAN_BITFIELD
 DECL|macro|__LITTLE_ENDIAN_BITFIELD
 mdefine_line|#define __LITTLE_ENDIAN_BITFIELD
 macro_line|#endif
+multiline_comment|/* For avoiding bswap on i386 */
+macro_line|#ifdef __KERNEL__
+macro_line|#include &lt;linux/config.h&gt;
+macro_line|#endif
 r_extern
 r_int
 r_int

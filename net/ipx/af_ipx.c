@@ -1701,6 +1701,14 @@ id|skb-&gt;dev
 op_assign
 id|dev
 suffix:semicolon
+id|skb-&gt;protocol
+op_assign
+id|htons
+c_func
+(paren
+id|ETH_P_IPX
+)paren
+suffix:semicolon
 id|dl
 op_member_access_from_pointer
 id|datalink_header
@@ -4106,6 +4114,10 @@ suffix:semicolon
 id|skb-&gt;arp
 op_assign
 l_int|1
+suffix:semicolon
+id|skb-&gt;sk
+op_assign
+id|sk
 suffix:semicolon
 multiline_comment|/* Fill in IPX header */
 id|ipx

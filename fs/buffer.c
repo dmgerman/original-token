@@ -9,7 +9,9 @@ macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/locks.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
+macro_line|#include &lt;linux/pagemap.h&gt;
 macro_line|#include &lt;linux/swapctl.h&gt;
+macro_line|#include &lt;linux/smp.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
@@ -1204,6 +1206,15 @@ suffix:semicolon
 id|bh-&gt;b_flushtime
 op_assign
 l_int|0
+suffix:semicolon
+id|clear_bit
+c_func
+(paren
+id|BH_Protected
+comma
+op_amp
+id|bh-&gt;b_state
+)paren
 suffix:semicolon
 id|clear_bit
 c_func
@@ -4116,6 +4127,15 @@ c_func
 id|buf
 )paren
 suffix:semicolon
+id|clear_bit
+c_func
+(paren
+id|BH_Protected
+comma
+op_amp
+id|buf-&gt;b_state
+)paren
+suffix:semicolon
 id|buf-&gt;b_count
 op_decrement
 suffix:semicolon
@@ -4965,6 +4985,7 @@ l_int|0
 suffix:semicolon
 )brace
 DECL|function|bread_page
+r_static
 r_int
 id|bread_page
 c_func
@@ -5240,6 +5261,122 @@ id|next
 )paren
 suffix:semicolon
 )brace
+r_return
+l_int|0
+suffix:semicolon
+)brace
+multiline_comment|/*&n; * Generic &quot;readpage&quot; function for block devices that have the&n; * normal bmap functionality. This is most of the block device&n; * filesystems.&n; */
+DECL|function|generic_readpage
+r_int
+id|generic_readpage
+c_func
+(paren
+r_struct
+id|inode
+op_star
+id|inode
+comma
+r_struct
+id|page
+op_star
+id|page
+)paren
+(brace
+r_int
+r_int
+id|block
+suffix:semicolon
+r_int
+op_star
+id|p
+comma
+id|nr
+(braket
+id|PAGE_SIZE
+op_div
+l_int|512
+)braket
+suffix:semicolon
+r_int
+id|i
+suffix:semicolon
+id|i
+op_assign
+id|PAGE_SIZE
+op_rshift
+id|inode-&gt;i_sb-&gt;s_blocksize_bits
+suffix:semicolon
+id|block
+op_assign
+id|page-&gt;offset
+op_rshift
+id|inode-&gt;i_sb-&gt;s_blocksize_bits
+suffix:semicolon
+id|p
+op_assign
+id|nr
+suffix:semicolon
+r_do
+(brace
+op_star
+id|p
+op_assign
+id|inode-&gt;i_op
+op_member_access_from_pointer
+id|bmap
+c_func
+(paren
+id|inode
+comma
+id|block
+)paren
+suffix:semicolon
+id|i
+op_decrement
+suffix:semicolon
+id|block
+op_increment
+suffix:semicolon
+id|p
+op_increment
+suffix:semicolon
+)brace
+r_while
+c_loop
+(paren
+id|i
+OG
+l_int|0
+)paren
+suffix:semicolon
+multiline_comment|/* We should make this asynchronous, but this is good enough for now.. */
+id|bread_page
+c_func
+(paren
+id|page_address
+c_func
+(paren
+id|page
+)paren
+comma
+id|inode-&gt;i_dev
+comma
+id|nr
+comma
+id|inode-&gt;i_sb-&gt;s_blocksize
+)paren
+suffix:semicolon
+id|page-&gt;uptodate
+op_assign
+l_int|1
+suffix:semicolon
+id|wake_up
+c_func
+(paren
+op_amp
+id|page-&gt;wait
+)paren
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -8651,7 +8788,7 @@ comma
 op_star
 id|next
 suffix:semicolon
-multiline_comment|/* We have a bare-bones task_struct, and really should fill&n;&t;in a few more things so &quot;top&quot; and /proc/2/{exe,root,cwd}&n;&t;display semi-sane things. Not real crucial though...  */
+multiline_comment|/*&n;&t; *&t;We have a bare-bones task_struct, and really should fill&n;&t; *&t;in a few more things so &quot;top&quot; and /proc/2/{exe,root,cwd}&n;&t; *&t;display semi-sane things. Not real crucial though...  &n;&t; */
 id|current-&gt;session
 op_assign
 l_int|1
@@ -8668,6 +8805,17 @@ comma
 l_string|&quot;kernel bdflush&quot;
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t; *&t;As a kernel thread we want to tamper with system buffers&n;&t; *&t;and other internals and thus be subject to the SMP locking&n;&t; *&t;rules. (On a uniprocessor box this does nothing).&n;&t; */
+macro_line|#ifdef __SMP__
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+id|syscall_count
+op_increment
+suffix:semicolon
+macro_line|#endif
 r_for
 c_loop
 (paren

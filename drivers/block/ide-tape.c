@@ -1,6 +1,7 @@
-multiline_comment|/*&n; * linux/drivers/block/ide-tape.c&t;Version 1.1 - ALPHA&t;Dec  14, 1995&n; *&n; * Copyright (C) 1995 Gadi Oxman &lt;tgud@tochnapc2.technion.ac.il&gt;&n; *&n; * This driver was constructed as a student project in the software laboratory&n; * of the faculty of electrical engineering in the Technion - Israel&squot;s&n; * Institute Of Technology, with the guide of Avner Lottem and Dr. Ilana David.&n; *&n; * It is hereby placed under the terms of the GNU general public license.&n; * (See linux/COPYING).&n; */
-multiline_comment|/*&n; * IDE ATAPI streaming tape driver.&n; *&n; * This driver is a part of the Linux ide driver and works in co-operation&n; * with linux/drivers/block/ide.c.&n; *&n; * The driver, in co-operation with ide.c, basically traverses the &n; * request-list for the block device interface. The character device&n; * interface, on the other hand, creates new requests, adds them&n; * to the request-list of the block device, and waits for their completion.&n; *&n; * Pipelined operation mode is now supported on writes.&n; *&n; * The block device major and minor numbers are determined from the&n; * tape&squot;s relative position in the ide interfaces, as explained in ide.c.&n; *&n; * The character device interface consists of two devices:&n; *&n; * ht0&t;&t;major=37,minor=0&t;first IDE tape, rewind on close.&n; * nht0&t;&t;major=37,minor=128&t;first IDE tape, no rewind on close.&n; *&n; * Run /usr/src/linux/drivers/block/MAKEDEV.ide to create the above entries.&n; * We currently support only one ide tape drive.&n; *&n; * The general magnetic tape commands compatible interface, as defined by&n; * include/linux/mtio.h, is accessible through the character device.&n; *&n; * General ide driver configuration options, such as the interrupt-unmask&n; * flag, can be configured by issuing an ioctl to the block device interface,&n; * as any other ide device.&n; *&n; * Our own ide-tape ioctl&squot;s can can be issued to either the block device or&n; * the character device interface.&n; *&n; * Testing was done with a 2 GB CONNER CTMA 4000 IDE ATAPI Streaming Tape Drive.&n; *&n; * Ver 0.1   Nov  1 95   Pre-working code :-)&n; * Ver 0.2   Nov 23 95   A short backup (few megabytes) and restore procedure&n; *                        was successful ! (Using tar cvf ... on the block&n; *                        device interface).&n; *                       A longer backup resulted in major swapping, bad&n; *                        overall Linux performance and eventually failed as&n; *                        we received non serial read-ahead requests from the&n; *                        buffer cache.&n; * Ver 0.3   Nov 28 95   Long backups are now possible, thanks to the&n; *                        character device interface. Linux&squot;s responsiveness&n; *                        and performance doesn&squot;t seem to be much affected&n; *                        from the background backup procedure.&n; *                       Some general mtio.h magnetic tape operations are&n; *                        now supported by our character device. As a result,&n; *                        popular tape utilities are starting to work with&n; *                        ide tapes :-)&n; *                       The following configurations were tested:&n; *                       &t;1. An IDE ATAPI TAPE shares the same interface&n; *                       &t;   and irq with an IDE ATAPI CDROM.&n; *                        &t;2. An IDE ATAPI TAPE shares the same interface&n; *                          &t;   and irq with a normal IDE disk.&n; *                        Both configurations seemed to work just fine !&n; *                        However, to be on the safe side, it is meanwhile&n; *                        recommended to give the IDE TAPE its own interface&n; *                        and irq.&n; *                       The one thing which needs to be done here is to&n; *                        add a &quot;request postpone&quot; feature to ide.c,&n; *                        so that we won&squot;t have to wait for the tape to finish&n; *                        performing a long media access (DSC) request (such&n; *                        as a rewind) before we can access the other device&n; *                        on the same interface. This effect doesn&squot;t disturb&n; *                        normal operation most of the time because read/write&n; *                        requests are relatively fast, and once we are&n; *                        performing one tape r/w request, a lot of requests&n; *                        from the other device can be queued and ide.c will&n; *&t;&t;&t;  service all of them after this single tape request.&n; * Ver 1.0   Dec 11 95   Integrated into Linux 1.3.46 development tree.&n; *                       On each read / write request, we now ask the drive&n; *                        if we can transfer a constant number of bytes&n; *                        (a parameter of the drive) only to its buffers,&n; *                        without causing actual media access. If we can&squot;t,&n; *                        we just wait until we can by polling the DSC bit.&n; *                        This ensures that while we are not transferring&n; *                        more bytes than the constant referred to above, the&n; *                        interrupt latency will not become too high and&n; *                        we won&squot;t cause an interrupt timeout, as happened&n; *                        occasionally in the previous version.&n; *                       While polling for DSC, the current request is&n; *                        postponed and ide.c is free to handle requests from&n; *                        the other device. This is handled transparently to&n; *                        ide.c. The hwgroup locking method which was used&n; *                        in the previous version was removed.&n; *                       Use of new general features which are provided by&n; *                        ide.c for use with atapi devices.&n; *                        (Programming done by Mark Lord)&n; *                       Few potential bug fixes (Again, suggested by Mark)&n; *                       Single character device data transfers are now&n; *                        not limited in size, as they were before.&n; *                       We are asking the tape about its recommended&n; *                        transfer unit and send a larger data transfer&n; *                        as several transfers of the above size.&n; *                        For best results, use an integral number of this&n; *                        basic unit (which is shown during driver&n; *                        initialization). I will soon add an ioctl to get&n; *                        this important parameter.&n; *                       Our data transfer buffer is allocated on startup,&n; *                        rather than before each data transfer. This should&n; *                        ensure that we will indeed have a data buffer.&n; * Ver 1.1   Dec 14 95   Fixed random problems which occured when the tape&n; *                        shared an interface with another device.&n; *                        (poll_for_dsc was a complete mess).&n; *                       Removed some old (non-active) code which had&n; *                        to do with supporting buffer cache originated&n; *                        requests.&n; *                       The block device interface can now be opened, so&n; *                        that general ide driver features like the unmask&n; *                        interrupts flag can be selected with an ioctl.&n; *                        This is the only use of the block device interface.&n; *                       New fast pipelined operation mode (currently only on&n; *                        writes). When using the pipelined mode, the&n; *                        throughput can potentially reach the maximum&n; *                        tape supported throughput, regardless of the&n; *                        user backup program. On my tape drive, it sometimes&n; *                        boosted performance by a factor of 2. Pipelined&n; *                        mode is enabled by default, but since it has a few&n; *                        downfalls as well, you may want to disable it.&n; *                        A short explanation of the pipelined operation mode&n; *                        is available below.&n; *&n; * We are currently in an *alpha* stage. The driver is not complete and not&n; * much tested. I would strongly suggest to:&n; *&n; *&t;1. Connect the tape to a separate interface and irq.&n; *&t;2. Be truly prepared for a kernel crash and the resulting data loss.&n; *&t;3. Don&squot;t rely too much on the resulting backups.&n; *&n; * Other than that, enjoy !&n; *&n; * Here are some words from the first releases of hd.c, which are quoted&n; * in ide.c and apply here as well:&n; *&n; * | Special care is recommended.  Have Fun!&n; *&n; */
-multiline_comment|/*&n; * A short explanation of the pipelined operation mode.&n; *&n; * Pipelined mode is currently only implemented on writes. Reads are still&n; * performed in the slow non-pipelined mode.&n; *&n; * The pipeline mode, when enough pipeline stages are available, manages to&n; * keep the tape constantly streaming with the maximum device supported&n; * throughput, regardless of the user backup program, since even when Linux&n; * is busy doing other tasks, we still have job to be done.&n; *&n; * On my tape drive, using pipelined mode and giving the tape its own&n; * interface and irq, I get a constant over 400 KBps throughput, which seems&n; * to be the maximum throughput supported by my tape. When sharing the&n; * interface between the tape and another ata-2 disk drive, I receive around&n; * 350 KBps.&n; *&n; * Using the non-pipelined mode, I get anything between 150 to 380 KBps,&n; * with the average being around 150 or 250 KBps, depending mainly on&n; * the double buffering capabilities of the user backup program, but also&n; * on some additional factors, such as the user block size and the ongoing&n; * disk activity.&n; *&n; * However, there are some downfalls:&n; *&n; *&t;1.&t;We use memory (for data buffers) in proportional to the number&n; *&t;&t;of pipeline stages (each stage is about 26 KB with my tape).&n; *&t;2.&t;We cheat and postpone error codes to the user task. Again,&n; *&t;&t;the postponing period is proportional to the number of stages.&n; *&n; * Concerning (1):&n; *&n; *&t;1.&t;We allocate stages dynamically only when we need them. When&n; *&t;&t;we don&squot;t need them, we don&squot;t consume additional memory. In&n; *&t;&t;case we can&squot;t allocate stages, we just manage without them&n; *&t;&t;(at the expense of decreased throughput) so when Linux is&n; *&t;&t;tight in memory, we will not pose additional difficulties.&n; *&n; *&t;2.&t;The maximum number of stages (which is, in fact, the maximum&n; *&t;&t;amount of memory) which we allocate is limited by the compile&n; *&t;&t;time parameter IDETAPE_MAX_PIPELINE_STAGES.&n; *&n; *&t;3.&t;The maximum number of stages is a controlled parameter - We&n; *&t;&t;don&squot;t start from the user defined maximum number of stages&n; *&t;&t;but from the lower IDETAPE_MIN_PIPELINE_STAGES (again, we&n; *&t;&t;will not even allocate this amount of stages if the user&n; *&t;&t;program can&squot;t handle the speed). We then implement a feedback&n; *&t;&t;loop which checks if the pipeline is empty, and if it is, we&n; *&t;&t;increase the maximum number of stages as necessary until we&n; *&t;&t;reach the optimum value which just manages to keep the tape&n; *&t;&t;busy with with minimum allocated memory or until we reach&n; *&t;&t;IDETAPE_MAX_PIPELINE_STAGES.&n; *&n; * Concerning (2):&n; *&n; *&t;In pipelined mode, ide-tape can not return accurate error codes to&n; *      the user program since we usually just add the request to the&n; *      pipeline without waiting for it to be serviced. In case an error&n; *      occurs, I will report it on the next user request.&n; *&n; *&t;For accurate error codes, you should disable pipelined mode.&n; *&n; * You can enable/disable/tune the pipelined operation mode by adjusting&n; * the compile time parameters in ide-tape.h.&n; */
+multiline_comment|/*&n; * linux/drivers/block/ide-tape.c&t;Version 1.2 - ALPHA&t;Jan   1, 1996&n; *&n; * Copyright (C) 1995, 1996 Gadi Oxman &lt;tgud@tochnapc2.technion.ac.il&gt;&n; *&n; * This driver was constructed as a student project in the software laboratory&n; * of the faculty of electrical engineering in the Technion - Israel&squot;s&n; * Institute Of Technology, with the guide of Avner Lottem and Dr. Ilana David.&n; *&n; * It is hereby placed under the terms of the GNU general public license.&n; * (See linux/COPYING).&n; */
+multiline_comment|/*&n; * IDE ATAPI streaming tape driver.&n; *&n; * This driver is a part of the Linux ide driver and works in co-operation&n; * with linux/drivers/block/ide.c.&n; *&n; * The driver, in co-operation with ide.c, basically traverses the &n; * request-list for the block device interface. The character device&n; * interface, on the other hand, creates new requests, adds them&n; * to the request-list of the block device, and waits for their completion.&n; *&n; * Pipelined operation mode is now supported on both reads and writes.&n; *&n; * The block device major and minor numbers are determined from the&n; * tape&squot;s relative position in the ide interfaces, as explained in ide.c.&n; *&n; * The character device interface consists of two devices:&n; *&n; * ht0&t;&t;major=37,minor=0&t;first IDE tape, rewind on close.&n; * nht0&t;&t;major=37,minor=128&t;first IDE tape, no rewind on close.&n; *&n; * Run /usr/src/linux/drivers/block/MAKEDEV.ide to create the above entries.&n; * We currently support only one ide tape drive.&n; *&n; * The general magnetic tape commands compatible interface, as defined by&n; * include/linux/mtio.h, is accessible through the character device.&n; *&n; * General ide driver configuration options, such as the interrupt-unmask&n; * flag, can be configured by issuing an ioctl to the block device interface,&n; * as any other ide device.&n; *&n; * Our own ide-tape ioctl&squot;s can can be issued to either the block device or&n; * the character device interface.&n; *&n; * Maximal throughput with minimal bus load will usually be achieved in the&n; * following scenario:&n; *&n; *&t;1.&t;ide-tape is operating in the pipelined operation mode.&n; *&t;2.&t;All character device read/write requests consist of an&n; *&t;&t;integral number of the tape&squot;s recommended data transfer unit&n; *&t;&t;(which is shown on initialization and can be received with&n; *&t;&t; an ioctl).&n; *&t;3.&t;No buffering is performed by the user backup program.&n; *&n; * Testing was done with a 2 GB CONNER CTMA 4000 IDE ATAPI Streaming Tape Drive.&n; * &n; * Ver 0.1   Nov  1 95   Pre-working code :-)&n; * Ver 0.2   Nov 23 95   A short backup (few megabytes) and restore procedure&n; *                        was successful ! (Using tar cvf ... on the block&n; *                        device interface).&n; *                       A longer backup resulted in major swapping, bad&n; *                        overall Linux performance and eventually failed as&n; *                        we received non serial read-ahead requests from the&n; *                        buffer cache.&n; * Ver 0.3   Nov 28 95   Long backups are now possible, thanks to the&n; *                        character device interface. Linux&squot;s responsiveness&n; *                        and performance doesn&squot;t seem to be much affected&n; *                        from the background backup procedure.&n; *                       Some general mtio.h magnetic tape operations are&n; *                        now supported by our character device. As a result,&n; *                        popular tape utilities are starting to work with&n; *                        ide tapes :-)&n; *                       The following configurations were tested:&n; *                       &t;1. An IDE ATAPI TAPE shares the same interface&n; *                       &t;   and irq with an IDE ATAPI CDROM.&n; *                        &t;2. An IDE ATAPI TAPE shares the same interface&n; *                          &t;   and irq with a normal IDE disk.&n; *                        Both configurations seemed to work just fine !&n; *                        However, to be on the safe side, it is meanwhile&n; *                        recommended to give the IDE TAPE its own interface&n; *                        and irq.&n; *                       The one thing which needs to be done here is to&n; *                        add a &quot;request postpone&quot; feature to ide.c,&n; *                        so that we won&squot;t have to wait for the tape to finish&n; *                        performing a long media access (DSC) request (such&n; *                        as a rewind) before we can access the other device&n; *                        on the same interface. This effect doesn&squot;t disturb&n; *                        normal operation most of the time because read/write&n; *                        requests are relatively fast, and once we are&n; *                        performing one tape r/w request, a lot of requests&n; *                        from the other device can be queued and ide.c will&n; *&t;&t;&t;  service all of them after this single tape request.&n; * Ver 1.0   Dec 11 95   Integrated into Linux 1.3.46 development tree.&n; *                       On each read / write request, we now ask the drive&n; *                        if we can transfer a constant number of bytes&n; *                        (a parameter of the drive) only to its buffers,&n; *                        without causing actual media access. If we can&squot;t,&n; *                        we just wait until we can by polling the DSC bit.&n; *                        This ensures that while we are not transferring&n; *                        more bytes than the constant referred to above, the&n; *                        interrupt latency will not become too high and&n; *                        we won&squot;t cause an interrupt timeout, as happened&n; *                        occasionally in the previous version.&n; *                       While polling for DSC, the current request is&n; *                        postponed and ide.c is free to handle requests from&n; *                        the other device. This is handled transparently to&n; *                        ide.c. The hwgroup locking method which was used&n; *                        in the previous version was removed.&n; *                       Use of new general features which are provided by&n; *                        ide.c for use with atapi devices.&n; *                        (Programming done by Mark Lord)&n; *                       Few potential bug fixes (Again, suggested by Mark)&n; *                       Single character device data transfers are now&n; *                        not limited in size, as they were before.&n; *                       We are asking the tape about its recommended&n; *                        transfer unit and send a larger data transfer&n; *                        as several transfers of the above size.&n; *                        For best results, use an integral number of this&n; *                        basic unit (which is shown during driver&n; *                        initialization). I will soon add an ioctl to get&n; *                        this important parameter.&n; *                       Our data transfer buffer is allocated on startup,&n; *                        rather than before each data transfer. This should&n; *                        ensure that we will indeed have a data buffer.&n; * Ver 1.1   Dec 14 95   Fixed random problems which occured when the tape&n; *                        shared an interface with another device.&n; *                        (poll_for_dsc was a complete mess).&n; *                       Removed some old (non-active) code which had&n; *                        to do with supporting buffer cache originated&n; *                        requests.&n; *                       The block device interface can now be opened, so&n; *                        that general ide driver features like the unmask&n; *                        interrupts flag can be selected with an ioctl.&n; *                        This is the only use of the block device interface.&n; *                       New fast pipelined operation mode (currently only on&n; *                        writes). When using the pipelined mode, the&n; *                        throughput can potentially reach the maximum&n; *                        tape supported throughput, regardless of the&n; *                        user backup program. On my tape drive, it sometimes&n; *                        boosted performance by a factor of 2. Pipelined&n; *                        mode is enabled by default, but since it has a few&n; *                        downfalls as well, you may want to disable it.&n; *                        A short explanation of the pipelined operation mode&n; *                        is available below.&n; * Ver 1.2   Jan  1 96   Eliminated pipelined mode race condition.&n; *                       Added pipeline read mode. As a result, restores&n; *                        are now as fast as backups.&n; *                       Optimized shared interface behavior. The new behavior&n; *                        typically results in better IDE bus efficiency and&n; *                        higher tape throughput.&n; *                       Pre-calculation of the expected read/write request&n; *                        service time, based on the tape&squot;s parameters. In&n; *                        the pipelined operation mode, this allows us to&n; *                        adjust our polling frequency to a much lower value,&n; *                        and thus to dramatically reduce our load on Linux,&n; *                        without any decrease in performance.&n; *                       Implemented additional mtio.h operations.&n; *                       The recommended user block size is returned by&n; *                        the MTIOCGET ioctl.&n; *                       Additional minor changes.&n; *&n; * We are currently in an *alpha* stage. The driver is not complete and not&n; * much tested. I would strongly suggest to:&n; *&n; *&t;1. Connect the tape to a separate interface and irq.&n; *&t;2. Be truly prepared for a kernel crash and the resulting data loss.&n; *&t;3. Don&squot;t rely too much on the resulting backups.&n; *&n; * Other than that, enjoy !&n; *&n; * Here are some words from the first releases of hd.c, which are quoted&n; * in ide.c and apply here as well:&n; *&n; * | Special care is recommended.  Have Fun!&n; *&n; */
+multiline_comment|/*&n; * An overview of the pipelined operation mode.&n; *&n; * In the pipelined write mode, we will usually just add requests to our&n; * pipeline and return immediately, before we even start to service them. The&n; * user program will then have enough time to prepare the next request while&n; * we are still busy servicing previous requests. In the pipelined read mode,&n; * the situation is similar - we add read-ahead requests into the pipeline,&n; * before the user even requested them.&n; *&n; * The pipeline can be viewed as a &quot;safety net&quot; which will be activated when&n; * the system load is high and prevents the user backup program from keeping up&n; * with the current tape speed. At this point, the pipeline will get&n; * shorter and shorter but the tape will still be streaming at the same speed.&n; * Assuming we have enough pipeline stages, the system load will hopefully&n; * decrease before the pipeline is completely empty, and the backup program&n; * will be able to &quot;catch up&quot; and refill the pipeline again.&n; * &n; * When using the pipelined mode, it would be best to disable any type of&n; * buffering done by the user program, as ide-tape already provides all the&n; * benefits in the kernel, where it can be done in a more efficient way.&n; * As we will usually not block the user program on a request, the most&n; * efficient user code will then be a simple read-write-read-... cycle.&n; * Any additional logic will usually just slow down the backup process.&n; *&n; * Using the pipelined mode, I get a constant over 400 KBps throughput,&n; * which seems to be the maximum throughput supported by my tape.&n; *&n; * However, there are some downfalls:&n; *&n; *&t;1.&t;We use memory (for data buffers) in proportional to the number&n; *&t;&t;of pipeline stages (each stage is about 26 KB with my tape).&n; *&t;2.&t;In the pipelined write mode, we cheat and postpone error codes&n; *&t;&t;to the user task. In read mode, the actual tape position&n; *&t;&t;will be a bit further than the last requested block.&n; *&n; * Concerning (1):&n; *&n; *&t;1.&t;We allocate stages dynamically only when we need them. When&n; *&t;&t;we don&squot;t need them, we don&squot;t consume additional memory. In&n; *&t;&t;case we can&squot;t allocate stages, we just manage without them&n; *&t;&t;(at the expense of decreased throughput) so when Linux is&n; *&t;&t;tight in memory, we will not pose additional difficulties.&n; *&n; *&t;2.&t;The maximum number of stages (which is, in fact, the maximum&n; *&t;&t;amount of memory) which we allocate is limited by the compile&n; *&t;&t;time parameter IDETAPE_MAX_PIPELINE_STAGES.&n; *&n; *&t;3.&t;The maximum number of stages is a controlled parameter - We&n; *&t;&t;don&squot;t start from the user defined maximum number of stages&n; *&t;&t;but from the lower IDETAPE_MIN_PIPELINE_STAGES (again, we&n; *&t;&t;will not even allocate this amount of stages if the user&n; *&t;&t;program can&squot;t handle the speed). We then implement a feedback&n; *&t;&t;loop which checks if the pipeline is empty, and if it is, we&n; *&t;&t;increase the maximum number of stages as necessary until we&n; *&t;&t;reach the optimum value which just manages to keep the tape&n; *&t;&t;busy with with minimum allocated memory or until we reach&n; *&t;&t;IDETAPE_MAX_PIPELINE_STAGES.&n; *&n; * Concerning (2):&n; *&n; *&t;In pipelined write mode, ide-tape can not return accurate error codes&n; *&t;to the user program since we usually just add the request to the&n; *      pipeline without waiting for it to be serviced. In case an error&n; *      occurs, I will report it on the next user request.&n; *&n; *&t;In the pipelined read mode, subsequent read requests or forward&n; *&t;filemark spacing will perform correctly, as we preserve all blocks&n; *&t;and filemarks which we encountered during our excess read-ahead.&n; * &n; *&t;For accurate tape positioning and error reporting, disabling&n; *&t;pipelined mode might be the best option.&n; *&n; * You can enable/disable/tune the pipelined operation mode by adjusting&n; * the compile time parameters in ide-tape.h.&n; */
+multiline_comment|/*&n; *&t;Possible improvements.&n; *&n; *&t;1.&t;Support for the ATAPI overlap protocol.&n; *&n; *&t;&t;In order to maximize bus throughput, we currently use the DSC&n; *&t;&t;overlap method which enables ide.c to service requests from the&n; *&t;&t;other device while the tape is busy executing a command. The&n; *&t;&t;DSC overlap method involves polling the tape&squot;s status register&n; *&t;&t;for the DSC bit, and servicing the other device while the tape&n; *&t;&t;isn&squot;t ready.&n; *&n; *&t;&t;In the current QIC development standard (December 1995),&n; *&t;&t;it is recommended that new tape drives will *in addition* &n; *&t;&t;implement the ATAPI overlap protocol, which is used for the&n; *&t;&t;same purpose - efficient use of the IDE bus, but is interrupt&n; *&t;&t;driven and thus has much less CPU overhead.&n; *&n; *&t;&t;ATAPI overlap is likely to be supported in most new ATAPI&n; *&t;&t;devices, including new ATAPI cdroms, and thus provides us&n; *&t;&t;a method by which we can achieve higher throughput when&n; *&t;&t;sharing a (fast) ATA-2 disk with any (slow) new ATAPI device.&n; */
 macro_line|#include &lt;linux/hdreg.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
@@ -45,6 +46,8 @@ DECL|macro|IDETAPE_ERASE_CMD
 mdefine_line|#define&t;IDETAPE_ERASE_CMD&t;&t;0x19
 DECL|macro|IDETAPE_MODE_SENSE_CMD
 mdefine_line|#define&t;IDETAPE_MODE_SENSE_CMD&t;&t;0x1a
+DECL|macro|IDETAPE_LOAD_UNLOAD_CMD
+mdefine_line|#define&t;IDETAPE_LOAD_UNLOAD_CMD&t;&t;0x1b
 DECL|macro|IDETAPE_LOCATE_CMD
 mdefine_line|#define&t;IDETAPE_LOCATE_CMD&t;&t;0x2b
 DECL|macro|IDETAPE_READ_POSITION_CMD
@@ -54,6 +57,13 @@ DECL|macro|IDETAPE_SPACE_OVER_FILEMARK
 mdefine_line|#define&t;IDETAPE_SPACE_OVER_FILEMARK&t;1
 DECL|macro|IDETAPE_SPACE_TO_EOD
 mdefine_line|#define&t;IDETAPE_SPACE_TO_EOD&t;&t;3
+multiline_comment|/*&n; *&t;Some defines for the LOAD UNLOAD command&n; */
+DECL|macro|IDETAPE_LU_LOAD_MASK
+mdefine_line|#define&t;IDETAPE_LU_LOAD_MASK&t;&t;1
+DECL|macro|IDETAPE_LU_RETENSION_MASK
+mdefine_line|#define&t;IDETAPE_LU_RETENSION_MASK&t;2
+DECL|macro|IDETAPE_LU_EOT_MASK
+mdefine_line|#define&t;IDETAPE_LU_EOT_MASK&t;&t;4
 multiline_comment|/*&n; *&t;Our ioctls - We will use 0x034n and 0x035n&n; *&n; *&t;Nothing special meanwhile.&n; *&t;mtio.h MTIOCTOP compatible commands are supported on the character&n; *&t;device interface.&n; */
 DECL|macro|IDETAPE_INQUIRY_IOCTL
 mdefine_line|#define IDETAPE_INQUIRY_IOCTL&t;&t;0x0341
@@ -82,6 +92,13 @@ mdefine_line|#define IDETAPE_REQUEST_CMD(cmd) &t;((cmd &gt;= IDETAPE_FIRST_REQUE
 multiline_comment|/*&n; *&t;We are now able to postpone an idetape request in the stage&n; *&t;where it is polling for DSC and service requests from the other&n; *&t;ide device meanwhile.&n; */
 DECL|macro|IDETAPE_RQ_POSTPONED
 mdefine_line|#define&t;IDETAPE_RQ_POSTPONED&t;&t;0x1234
+multiline_comment|/*&n; *&t;Error codes which are returned in rq-&gt;errors to the higher part&n; *&t;of the driver.&n; */
+DECL|macro|IDETAPE_RQ_ERROR_GENERAL
+mdefine_line|#define&t;IDETAPE_RQ_ERROR_GENERAL&t;1 
+DECL|macro|IDETAPE_RQ_ERROR_FILEMARK
+mdefine_line|#define&t;IDETAPE_RQ_ERROR_FILEMARK&t;2
+DECL|macro|IDETAPE_RQ_ERROR_EOD
+mdefine_line|#define&t;IDETAPE_RQ_ERROR_EOD&t;&t;3
 multiline_comment|/*&n; *&t;ATAPI Task File Registers (Re-definition of the ATA Task File&n; *&t;Registers for an ATAPI packet command).&n; * &t;From Table 3-2 of QIC-157C.&n; */
 multiline_comment|/* Read Access */
 DECL|macro|IDETAPE_DATA_OFFSET
@@ -1371,6 +1388,14 @@ id|data
 )paren
 suffix:semicolon
 r_void
+id|idetape_put_back_postponed_request
+(paren
+id|ide_drive_t
+op_star
+id|drive
+)paren
+suffix:semicolon
+r_void
 id|idetape_media_access_finished
 (paren
 id|ide_drive_t
@@ -1420,6 +1445,18 @@ op_star
 id|rq
 )paren
 suffix:semicolon
+r_void
+id|idetape_analyze_error
+(paren
+id|ide_drive_t
+op_star
+id|drive
+comma
+id|idetape_request_sense_result_t
+op_star
+id|result
+)paren
+suffix:semicolon
 id|idetape_packet_command_t
 op_star
 id|idetape_next_pc_storage
@@ -1439,6 +1476,7 @@ op_star
 id|drive
 )paren
 suffix:semicolon
+multiline_comment|/*&n; *&t;idetape_end_request is used to finish servicing a request, and to&n; *&t;insert a pending pipeline request into the main device queue.&n; */
 r_void
 id|idetape_end_request
 (paren
@@ -1499,6 +1537,17 @@ id|pc
 comma
 r_int
 id|write_filemark
+)paren
+suffix:semicolon
+r_void
+id|idetape_create_load_unload_cmd
+(paren
+id|idetape_packet_command_t
+op_star
+id|pc
+comma
+r_int
+id|cmd
 )paren
 suffix:semicolon
 r_void
@@ -1620,18 +1669,6 @@ id|idetape_display_inquiry_result
 id|byte
 op_star
 id|buffer
-)paren
-suffix:semicolon
-r_void
-id|idetape_analyze_error
-(paren
-id|ide_drive_t
-op_star
-id|drive
-comma
-id|idetape_request_sense_result_t
-op_star
-id|result
 )paren
 suffix:semicolon
 multiline_comment|/*&n; *&t;Character device callback functions.&n; *&n; *&t;We currently support:&n; *&n; *&t;&t;OPEN, RELEASE, READ, WRITE and IOCTL.&n; */
@@ -1786,6 +1823,37 @@ r_int
 id|mt_count
 )paren
 suffix:semicolon
+multiline_comment|/*&n; *&t;idetape_space_over_filemarks handles the MTFSF, MTFSFM, ... mtio.h&n; *&t;commands.&n; */
+r_int
+id|idetape_space_over_filemarks
+(paren
+id|ide_drive_t
+op_star
+id|drive
+comma
+r_int
+id|mt_op
+comma
+r_int
+id|mt_count
+)paren
+suffix:semicolon
+multiline_comment|/*&n; *&t;idetape_add_chrdev_read_request is called from idetape_chrdev_read&n; *&t;to service a character device read request and add read-ahead&n; *&t;requests to our pipeline.&n; */
+r_int
+id|idetape_add_chrdev_read_request
+(paren
+id|ide_drive_t
+op_star
+id|drive
+comma
+r_int
+id|blocks
+comma
+r_char
+op_star
+id|buffer
+)paren
+suffix:semicolon
 multiline_comment|/*&n; *&t;idetape_add_chrdev_write_request adds a character device write&n; *&t;request to the pipeline.&n; */
 r_int
 id|idetape_add_chrdev_write_request
@@ -1793,9 +1861,6 @@ id|idetape_add_chrdev_write_request
 id|ide_drive_t
 op_star
 id|drive
-comma
-r_int
-id|cmd
 comma
 r_int
 id|blocks
@@ -1851,6 +1916,14 @@ id|block
 suffix:semicolon
 r_int
 id|idetape_rewind_tape
+(paren
+id|ide_drive_t
+op_star
+id|drive
+)paren
+suffix:semicolon
+r_int
+id|idetape_flush_tape_buffers
 (paren
 id|ide_drive_t
 op_star
@@ -1948,6 +2021,14 @@ id|stage
 )paren
 suffix:semicolon
 r_void
+id|idetape_remove_stage_head
+(paren
+id|ide_drive_t
+op_star
+id|drive
+)paren
+suffix:semicolon
+r_void
 id|idetape_active_next_stage
 (paren
 id|ide_drive_t
@@ -1956,7 +2037,15 @@ id|drive
 )paren
 suffix:semicolon
 r_void
-id|idetape_empty_pipeline
+id|idetape_empty_read_pipeline
+(paren
+id|ide_drive_t
+op_star
+id|drive
+)paren
+suffix:semicolon
+r_void
+id|idetape_empty_write_pipeline
 (paren
 id|ide_drive_t
 op_star
@@ -2063,14 +2152,14 @@ id|support
 op_assign
 l_int|1
 suffix:semicolon
-macro_line|#if IDETAPE_DEBUG
+macro_line|#if IDETAPE_DEBUG_LOG
 r_int
 r_int
 id|mask
 comma
 id|i
 suffix:semicolon
-macro_line|#endif /* IDETAPE_DEBUG */
+macro_line|#endif /* IDETAPE_DEBUG_LOG */
 id|ptr
 op_assign
 (paren
@@ -2086,7 +2175,7 @@ id|ptr
 op_assign
 id|id-&gt;config
 suffix:semicolon
-macro_line|#if IDETAPE_DEBUG
+macro_line|#if IDETAPE_DEBUG_LOG
 id|printk
 (paren
 l_string|&quot;Dumping ATAPI Identify Device tape parameters&bslash;n&quot;
@@ -2700,7 +2789,7 @@ l_string|&quot;According to the device, fields 64-70 are not valid.&bslash;n&quo
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif /* IDETAPE_DEBUG */
+macro_line|#endif /* IDETAPE_DEBUG_LOG */
 multiline_comment|/* Check that we can support this device */
 r_if
 c_cond
@@ -2974,13 +3063,18 @@ r_int
 r_int
 id|allocation_length
 suffix:semicolon
-macro_line|#if IDETAPE_DEBUG
+r_float
+id|service_time
+comma
+id|nr_units
+suffix:semicolon
+macro_line|#if IDETAPE_DEBUG_LOG
 id|printk
 (paren
 l_string|&quot;ide-tape: Reached idetape_setup&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#endif /* IDETAPE_DEBUG */&t;
+macro_line|#endif /* IDETAPE_DEBUG_LOG */&t;
 id|drive-&gt;ready_stat
 op_assign
 l_int|0
@@ -3031,19 +3125,13 @@ l_int|0
 suffix:semicolon
 id|tape-&gt;first_stage
 op_assign
+id|tape-&gt;next_stage
+op_assign
 id|tape-&gt;last_stage
 op_assign
 l_int|NULL
 suffix:semicolon
-id|tape-&gt;pipeline_was_full_once
-op_assign
-l_int|0
-suffix:semicolon
 id|tape-&gt;error_in_pipeline_stage
-op_assign
-l_int|0
-suffix:semicolon
-id|tape-&gt;pipeline_locked
 op_assign
 l_int|0
 suffix:semicolon
@@ -3051,9 +3139,9 @@ id|tape-&gt;request_status
 op_assign
 l_int|0
 suffix:semicolon
-id|tape-&gt;request_dsc_callback
+id|tape-&gt;chrdev_direction
 op_assign
-l_int|0
+id|idetape_direction_none
 suffix:semicolon
 macro_line|#if IDETAPE_PIPELINE
 id|tape-&gt;max_number_of_stages
@@ -3062,7 +3150,7 @@ id|IDETAPE_MIN_PIPELINE_STAGES
 suffix:semicolon
 id|printk
 (paren
-l_string|&quot;ide-tape: Operating in pipelined (fast and tricky) write mode.&bslash;n&quot;
+l_string|&quot;ide-tape: Operating in pipelined (fast and tricky) operation mode.&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#else
@@ -3072,15 +3160,10 @@ l_int|0
 suffix:semicolon
 id|printk
 (paren
-l_string|&quot;ide-tape: Operating in non-pipelined (slow and safe) write mode.&bslash;n&quot;
+l_string|&quot;ide-tape: Operating in non-pipelined (slow and safe) operation mode.&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif /* IDETAPE_PIPELINE */
-id|printk
-(paren
-l_string|&quot;ide-tape: Operating in non-pipelined (slow and safe) read mode.&bslash;n&quot;
-)paren
-suffix:semicolon
 id|idetape_get_mode_sense_results
 (paren
 id|drive
@@ -3163,6 +3246,146 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+macro_line|#if IDETAPE_ANTICIPATE_READ_WRITE_DSC
+multiline_comment|/*&n;&t; *&t;Cleverly select the DSC read/write polling frequency, based&n;&t; *&t;on the tape&squot;s speed, its recommended transfer unit, its&n;&t; *&t;internal buffer size and our operation mode.&n;&t; *&n;&t; *&t;In the pipelined operation mode we aim for &quot;catching&quot; the&n;&t; *&t;tape when its internal buffer is about 50% full. This will&n;&t; *&t;dramatically reduce our polling frequency and will also&n;&t; *&t;leave enough time for the ongoing request of the other device&n;&t; *&t;to complete before the buffer is completly empty. We will&n;&t; *&t;then completly refill the buffer with requests from our&n;&t; *&t;internal pipeline.&n;&t; *&n;&t; *&t;When operating in the non-pipelined operation mode, we&n;&t; *&t;can&squot;t allow ourself this luxury. Instead, we will try to take&n;&t; *&t;full advantage of the internal tape buffer by waiting only&n;&t; *&t;for one request to complete. This will increase our load&n;&t; *&t;on linux but will usually still fail to keep the tape&n;&t; *&t;constantly streaming.&n;&t; */
+id|service_time
+op_assign
+(paren
+(paren
+r_float
+)paren
+id|tape-&gt;data_buffer_size
+op_div
+l_float|1024.0
+)paren
+op_div
+(paren
+(paren
+r_float
+)paren
+id|tape-&gt;capabilities.speed
+op_star
+(paren
+l_float|1000.0
+op_div
+l_float|1024.0
+)paren
+)paren
+suffix:semicolon
+id|nr_units
+op_assign
+(paren
+r_float
+)paren
+id|tape-&gt;capabilities.buffer_size
+op_star
+l_float|512.0
+op_div
+(paren
+r_float
+)paren
+id|tape-&gt;data_buffer_size
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|tape-&gt;max_number_of_stages
+)paren
+id|tape-&gt;best_dsc_rw_frequency
+op_assign
+(paren
+r_int
+r_int
+)paren
+(paren
+l_float|0.5
+op_star
+id|nr_units
+op_star
+id|service_time
+op_star
+id|HZ
+)paren
+suffix:semicolon
+r_else
+id|tape-&gt;best_dsc_rw_frequency
+op_assign
+(paren
+r_int
+r_int
+)paren
+(paren
+id|service_time
+op_star
+id|HZ
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t; *&t;Ensure that the number we got makes sense.&n;&t; */
+r_if
+c_cond
+(paren
+id|tape-&gt;best_dsc_rw_frequency
+OG
+id|IDETAPE_DSC_READ_WRITE_LOWEST_FREQUENCY
+)paren
+(brace
+id|printk
+(paren
+l_string|&quot;ide-tape: Although the recommended polling period is %lu jiffies, &bslash;n&quot;
+comma
+id|tape-&gt;best_dsc_rw_frequency
+)paren
+suffix:semicolon
+id|printk
+(paren
+l_string|&quot;ide-tape: we will use %u jiffies&bslash;n&quot;
+comma
+id|IDETAPE_DSC_READ_WRITE_LOWEST_FREQUENCY
+)paren
+suffix:semicolon
+id|printk
+(paren
+l_string|&quot;ide-tape: (It may well be that we are wrong here)&bslash;n&quot;
+)paren
+suffix:semicolon
+id|tape-&gt;best_dsc_rw_frequency
+op_assign
+id|IDETAPE_DSC_READ_WRITE_LOWEST_FREQUENCY
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|tape-&gt;best_dsc_rw_frequency
+OL
+id|IDETAPE_DSC_READ_WRITE_FALLBACK_FREQUENCY
+)paren
+(brace
+id|printk
+(paren
+l_string|&quot;ide-tape: Although the recommended polling period is %lu jiffies, &bslash;n&quot;
+comma
+id|tape-&gt;best_dsc_rw_frequency
+)paren
+suffix:semicolon
+id|printk
+(paren
+l_string|&quot;ide-tape: we will use %u jiffies&bslash;n&quot;
+comma
+id|IDETAPE_DSC_READ_WRITE_FALLBACK_FREQUENCY
+)paren
+suffix:semicolon
+id|tape-&gt;best_dsc_rw_frequency
+op_assign
+id|IDETAPE_DSC_READ_WRITE_FALLBACK_FREQUENCY
+suffix:semicolon
+)brace
+macro_line|#else
+id|tape-&gt;best_dsc_rw_frequency
+op_assign
+id|IDETAPE_DSC_READ_WRITE_FALLBACK_FREQUENCY
+suffix:semicolon
+macro_line|#endif /* IDETAPE_ANTICIPATE_READ_WRITE_DSC */
 id|printk
 (paren
 l_string|&quot;ide-tape: Tape speed - %d KBps. Recommended transfer unit - %d bytes.&bslash;n&quot;
@@ -3326,14 +3549,22 @@ l_int|512
 suffix:semicolon
 id|tape-&gt;capabilities.ctl
 op_assign
-l_int|26
+l_int|52
+suffix:semicolon
+id|tape-&gt;capabilities.speed
+op_assign
+l_int|450
+suffix:semicolon
+id|tape-&gt;capabilities.buffer_size
+op_assign
+l_int|6
 op_star
-l_int|1024
+l_int|52
 suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-macro_line|#if IDETAPE_DEBUG
+macro_line|#if IDETAPE_DEBUG_LOG
 id|printk
 (paren
 l_string|&quot;Dumping the results of the MODE SENSE packet command&bslash;n&quot;
@@ -3577,7 +3808,7 @@ op_star
 l_int|512
 )paren
 suffix:semicolon
-macro_line|#endif /* IDETAPE_DEBUG */
+macro_line|#endif /* IDETAPE_DEBUG_LOG */
 )brace
 multiline_comment|/*&n; *&t;Packet Command Interface&n; *&n; *&t;The current Packet Command is available in tape-&gt;pc, and will not&n; *&t;change until we finish handling it. Each packet command is associated&n; *&t;with a callback function that will be called when the command is&n; *&t;finished.&n; *&n; *&t;The handling will be done in three stages:&n; *&n; *&t;1.&t;idetape_issue_packet_command will send the packet command to the&n; *&t;&t;drive, and will set the interrupt handler to idetape_pc_intr.&n; *&n; *&t;2.&t;On each interrupt, idetape_pc_intr will be called. This step&n; *&t;&t;will be repeated until the device signals us that no more&n; *&t;&t;interrupts will be issued.&n; *&n; *&t;3.&t;ATAPI Tape media access commands have immediate status with a&n; *&t;&t;delayed process. In case of a successfull initiation of a&n; *&t;&t;media access packet command, the DSC bit will be set when the&n; *&t;&t;actual execution of the command is finished. &n; *&t;&t;Since the tape drive will not issue an interrupt, we have to&n; *&t;&t;poll for this event. In this case, we define the request as&n; *&t;&t;&quot;low priority request&quot; by setting rq_status to&n; *&t;&t;IDETAPE_RQ_POSTPONED, &t;set a timer to poll for DSC and exit&n; *&t;&t;the driver.&n; *&n; *&t;&t;ide.c will then give higher priority to requests which&n; *&t;&t;originate from the other device, until will change rq_status&n; *&t;&t;to RQ_ACTIVE.&n; *&n; *&t;4.&t;When the packet command is finished, it will be checked for errors.&n; *&n; *&t;5.&t;In case an error was found, we queue a request sense packet command&n; *&t;&t;in front of the request queue and retry the operation up to&n; *&t;&t;IDETAPE_MAX_PC_RETRIES times.&n; *&n; *&t;6.&t;In case no error was found, or we decided to give up and not&n; *&t;&t;to retry again, the callback function will be called and then&n; *&t;&t;we will handle the next request.&n; *&n; */
 DECL|function|idetape_issue_packet_command
@@ -3614,7 +3845,7 @@ op_amp
 id|drive-&gt;tape
 )paren
 suffix:semicolon
-macro_line|#if IDETAPE_DEBUG
+macro_line|#if IDETAPE_DEBUG_BUGS
 r_if
 c_cond
 (paren
@@ -3638,9 +3869,8 @@ id|printk
 l_string|&quot;ide-tape: ide-tape.c bug - Two request sense in serial were issued&bslash;n&quot;
 )paren
 suffix:semicolon
-multiline_comment|/* ??? Need to rethink about that */
 )brace
-macro_line|#endif /* IDETAPE_DEBUG */
+macro_line|#endif /* IDETAPE_DEBUG_BUGS */
 r_if
 c_cond
 (paren
@@ -3670,6 +3900,20 @@ c_cond
 id|pc-&gt;retries
 OG
 id|IDETAPE_MAX_PC_RETRIES
+op_logical_or
+id|pc
+op_member_access_from_pointer
+m_abort
+)paren
+(brace
+multiline_comment|/*&n;&t;&t; *&t;We will &quot;abort&quot; retrying a packet command in case&n;&t;&t; *&t;a legitimate error code was received (crossing a&n;&t;&t; *&t;filemark, for example). We will not log those errors.&n;&t;&t; */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|pc
+op_member_access_from_pointer
+m_abort
 )paren
 (brace
 id|printk
@@ -3705,15 +3949,12 @@ op_assign
 l_int|1
 suffix:semicolon
 multiline_comment|/* Giving up */
-id|pc-&gt;active
-op_assign
-l_int|0
-suffix:semicolon
+)brace
 id|tape-&gt;failed_pc
 op_assign
 l_int|NULL
 suffix:semicolon
-macro_line|#if IDETAPE_DEBUG
+macro_line|#if IDETAPE_DEBUG_BUGS
 r_if
 c_cond
 (paren
@@ -3727,7 +3968,7 @@ l_string|&quot;ide-tape: ide-tape bug - Callback function not set !&bslash;n&quo
 )paren
 suffix:semicolon
 r_else
-macro_line|#endif /* IDETAPE_DEBUG */
+macro_line|#endif /* IDETAPE_DEBUG_BUGS */
 (paren
 op_star
 id|pc-&gt;callback
@@ -3739,7 +3980,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-macro_line|#if IDETAPE_DEBUG
+macro_line|#if IDETAPE_DEBUG_LOG
 id|printk
 (paren
 l_string|&quot;Retry number - %d&bslash;n&quot;
@@ -3747,7 +3988,7 @@ comma
 id|pc-&gt;retries
 )paren
 suffix:semicolon
-macro_line|#endif /* IDETAPE_DEBUG */
+macro_line|#endif /* IDETAPE_DEBUG_LOG */
 id|pc-&gt;retries
 op_increment
 suffix:semicolon
@@ -3757,11 +3998,6 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* We haven&squot;t transferred any data yet */
-id|pc-&gt;active
-op_assign
-l_int|1
-suffix:semicolon
-multiline_comment|/* Packet command started */
 id|bcount.all
 op_assign
 id|pc-&gt;request_transfer
@@ -3889,6 +4125,11 @@ id|drive
 id|idetape_tape_t
 op_star
 id|tape
+op_assign
+op_amp
+(paren
+id|drive-&gt;tape
+)paren
 suffix:semicolon
 id|idetape_status_reg_t
 id|status
@@ -3902,17 +4143,12 @@ suffix:semicolon
 id|idetape_packet_command_t
 op_star
 id|pc
+op_assign
+id|tape-&gt;pc
 suffix:semicolon
 r_int
 r_int
 id|temp
-suffix:semicolon
-id|tape
-op_assign
-op_amp
-(paren
-id|drive-&gt;tape
-)paren
 suffix:semicolon
 id|status.all
 op_assign
@@ -3922,18 +4158,13 @@ id|IDETAPE_STATUS_REG
 )paren
 suffix:semicolon
 multiline_comment|/* Clear the interrupt */
-macro_line|#if IDETAPE_DEBUG
+macro_line|#if IDETAPE_DEBUG_LOG
 id|printk
 (paren
 l_string|&quot;ide-tape: Reached idetape_pc_intr interrupt handler&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#endif /* IDETAPE_DEBUG */&t;
-id|pc
-op_assign
-id|tape-&gt;pc
-suffix:semicolon
-multiline_comment|/* Current packet command */
+macro_line|#endif /* IDETAPE_DEBUG_LOG */&t;
 r_if
 c_cond
 (paren
@@ -3942,7 +4173,7 @@ id|status.b.drq
 )paren
 (brace
 multiline_comment|/* No more interrupts */
-macro_line|#if IDETAPE_DEBUG
+macro_line|#if IDETAPE_DEBUG_LOG
 id|printk
 (paren
 l_string|&quot;Packet command completed&bslash;n&quot;
@@ -3955,7 +4186,11 @@ comma
 id|pc-&gt;actually_transferred
 )paren
 suffix:semicolon
-macro_line|#endif /* IDETAPE_DEBUG */
+macro_line|#endif /* IDETAPE_DEBUG_LOG */
+id|sti
+(paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -3963,7 +4198,7 @@ id|status.b.check
 )paren
 (brace
 multiline_comment|/* Error detected */
-macro_line|#if IDETAPE_DEBUG
+macro_line|#if IDETAPE_DEBUG_LOG
 multiline_comment|/*&n;&t; *&t;Without debugging, we only log an error if we decided to&n;&t; *&t;give up retrying.&n;&t; */
 id|printk
 (paren
@@ -3972,7 +4207,7 @@ comma
 id|drive-&gt;name
 )paren
 suffix:semicolon
-macro_line|#endif /* IDETAPE_DEBUG */
+macro_line|#endif /* IDETAPE_DEBUG_LOG */
 id|idetape_retry_pc
 (paren
 id|drive
@@ -4009,10 +4244,6 @@ multiline_comment|/* Allow ide.c to handle other requests */
 r_return
 suffix:semicolon
 )brace
-id|pc-&gt;active
-op_assign
-l_int|0
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -4024,7 +4255,7 @@ id|tape-&gt;failed_pc
 op_assign
 l_int|NULL
 suffix:semicolon
-macro_line|#if IDETAPE_DEBUG
+macro_line|#if IDETAPE_DEBUG_BUGS
 r_if
 c_cond
 (paren
@@ -4038,7 +4269,7 @@ l_string|&quot;ide-tape: ide-tape bug - Callback function not set !&bslash;n&quo
 )paren
 suffix:semicolon
 r_else
-macro_line|#endif /* IDETAPE_DEBUG */
+macro_line|#endif /* IDETAPE_DEBUG_BUGS */
 (paren
 op_star
 id|pc-&gt;callback
@@ -4198,7 +4429,7 @@ l_string|&quot;Allowing transfer&bslash;n&quot;
 suffix:semicolon
 )brace
 )brace
-macro_line|#if IDETAPE_DEBUG&t;
+macro_line|#if IDETAPE_DEBUG_BUGS&t;
 r_if
 c_cond
 (paren
@@ -4250,7 +4481,7 @@ r_else
 multiline_comment|/* ??? */
 )brace
 )brace
-macro_line|#endif /* IDETAPE_DEBUG */
+macro_line|#endif /* IDETAPE_DEBUG_BUGS */
 r_if
 c_cond
 (paren
@@ -4277,7 +4508,7 @@ id|bcount.all
 )paren
 suffix:semicolon
 multiline_comment|/* Read the current buffer */
-macro_line|#if IDETAPE_DEBUG
+macro_line|#if IDETAPE_DEBUG_LOG
 id|printk
 (paren
 l_string|&quot;ide-tape: %s %d bytes&bslash;n&quot;
@@ -4292,7 +4523,7 @@ comma
 id|bcount.all
 )paren
 suffix:semicolon
-macro_line|#endif /* IDETAPE_DEBUG */
+macro_line|#endif /* IDETAPE_DEBUG_LOG */
 id|pc-&gt;actually_transferred
 op_add_assign
 id|bcount.all
@@ -4327,10 +4558,11 @@ id|drive
 id|idetape_tape_t
 op_star
 id|tape
-suffix:semicolon
-r_int
-r_int
-id|flags
+op_assign
+op_amp
+(paren
+id|drive-&gt;tape
+)paren
 suffix:semicolon
 r_struct
 id|request
@@ -4340,30 +4572,14 @@ suffix:semicolon
 id|idetape_status_reg_t
 id|status
 suffix:semicolon
-id|tape
-op_assign
-op_amp
-(paren
-id|drive-&gt;tape
-)paren
-suffix:semicolon
-id|status.all
-op_assign
-id|IN_BYTE
-(paren
-id|IDETAPE_STATUS_REG
-)paren
-suffix:semicolon
-id|sti
-(paren
-)paren
-suffix:semicolon
-macro_line|#if IDETAPE_DEBUG
+macro_line|#if IDETAPE_DEBUG_LOG
 id|printk
 (paren
 l_string|&quot;Reached idetape_postpone_request&bslash;n&quot;
 )paren
 suffix:semicolon
+macro_line|#endif /* IDETAPE_DEBUG_LOG */
+macro_line|#if IDETAPE_DEBUG_BUGS
 r_if
 c_cond
 (paren
@@ -4376,7 +4592,7 @@ id|printk
 l_string|&quot;ide-tape.c bug - postponed_rq not NULL in idetape_postpone_request&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#endif /* IDETAPE_DEBUG */
+macro_line|#endif /* IDETAPE_DEBUG_BUGS */
 id|tape-&gt;dsc_timer.expires
 op_assign
 id|jiffies
@@ -4429,17 +4645,6 @@ id|rq-&gt;rq_status
 op_assign
 id|IDETAPE_RQ_POSTPONED
 suffix:semicolon
-id|save_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-id|cli
-(paren
-)paren
-suffix:semicolon
-multiline_comment|/* Let ide.c handle another request */
 id|blk_dev
 (braket
 id|MAJOR
@@ -4463,23 +4668,21 @@ id|rq
 op_assign
 l_int|NULL
 suffix:semicolon
-id|restore_flags
-c_func
+multiline_comment|/*&n;&t; *&t;Check the status again - Maybe we can save one polling period.&n;&t; */
+id|status.all
+op_assign
+id|IN_BYTE
 (paren
-id|flags
+id|IDETAPE_STATUS_REG
 )paren
-suffix:semicolon
-id|tape-&gt;request_status
-op_assign
-l_int|0
-suffix:semicolon
-id|tape-&gt;request_dsc_callback
-op_assign
-l_int|0
 suffix:semicolon
 id|tape-&gt;last_status
 op_assign
 id|status.all
+suffix:semicolon
+id|tape-&gt;request_status
+op_assign
+l_int|1
 suffix:semicolon
 id|tape-&gt;dsc_polling_start
 op_assign
@@ -4516,15 +4719,6 @@ op_star
 )paren
 id|data
 suffix:semicolon
-id|ide_hwgroup_t
-op_star
-id|hwgroup
-op_assign
-id|HWGROUP
-(paren
-id|drive
-)paren
-suffix:semicolon
 id|idetape_tape_t
 op_star
 id|tape
@@ -4537,11 +4731,7 @@ suffix:semicolon
 id|idetape_status_reg_t
 id|status
 suffix:semicolon
-r_int
-r_int
-id|flags
-suffix:semicolon
-macro_line|#if IDETAPE_DEBUG
+macro_line|#if IDETAPE_DEBUG_LOG
 id|printk
 (paren
 l_string|&quot;%s: idetape_poll_for_dsc_direct called&bslash;n&quot;
@@ -4549,16 +4739,7 @@ comma
 id|drive-&gt;name
 )paren
 suffix:semicolon
-macro_line|#endif /* IDETAPE_DEBUG */&t;
-id|save_flags
-(paren
-id|flags
-)paren
-suffix:semicolon
-id|cli
-(paren
-)paren
-suffix:semicolon
+macro_line|#endif /* IDETAPE_DEBUG_LOG */&t;
 id|OUT_BYTE
 c_func
 (paren
@@ -4572,25 +4753,6 @@ op_assign
 id|IN_BYTE
 (paren
 id|IDETAPE_STATUS_REG
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|hwgroup-&gt;drive
-op_ne
-l_int|NULL
-)paren
-id|OUT_BYTE
-(paren
-id|hwgroup-&gt;drive-&gt;select.all
-comma
-id|IDE_SELECT_REG
-)paren
-suffix:semicolon
-id|restore_flags
-(paren
-id|flags
 )paren
 suffix:semicolon
 r_if
@@ -4687,7 +4849,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;idetape_poll_for_dsc gets invoked by a timer (which was set&n; *&t;by idetape_postpone_request) to poll for the DSC bit&n; *&t;in the status register.&n; *&n; *&t;We take care not to perform any tape access and not to touch the&n; *&t;device request queue if the driver is accessing the other device.&n; *&t;We will instead ask ide.c to perform those functions on the next&n; *&t;call to do_request, at the point in which the other device is idle.&n; *&n; *&t;However, in case the other device is already idle, we will read&n; *&t;the status register from our timer handler.&n; *&n; *&t;I am also a bit paranoid with the use of cli (), all through the&n; *&t;code. I still need to think harder about each one whether we can&n; *&t;avoid it and still be free of race conditions ...&n; */
+multiline_comment|/*&n; *&t;idetape_poll_for_dsc gets invoked by a timer (which was set&n; *&t;by idetape_postpone_request) to poll for the DSC bit&n; *&t;in the status register.&n; *&n; *&t;We take care not to perform any tape access if the driver is&n; *&t;accessing the other device. We will instead ask ide.c to sample&n; *&t;the tape status register on our behalf in the next call to do_request,&n; *&t;at the point in which the other device is idle, or assume that&n; *&t;DSC was received even though we won&squot;t verify it (but when we assume&n; *&t;that, it will usually have a solid basis).&n; *&n; *&t;The use of cli () below is a must, as we inspect and change&n; *&t;the device request list while another request is active.&n; */
 DECL|function|idetape_poll_for_dsc
 r_void
 id|idetape_poll_for_dsc
@@ -4746,6 +4908,15 @@ suffix:semicolon
 id|idetape_status_reg_t
 id|status
 suffix:semicolon
+macro_line|#if IDETAPE_DEBUG_LOG
+id|printk
+(paren
+l_string|&quot;%s: idetape_poll_for_dsc called&bslash;n&quot;
+comma
+id|drive-&gt;name
+)paren
+suffix:semicolon
+macro_line|#endif /* IDETAPE_DEBUG_LOG */&t;
 id|save_flags
 (paren
 id|flags
@@ -4755,15 +4926,6 @@ id|cli
 (paren
 )paren
 suffix:semicolon
-macro_line|#if IDETAPE_DEBUG
-id|printk
-(paren
-l_string|&quot;%s: idetape_poll_for_dsc called&bslash;n&quot;
-comma
-id|drive-&gt;name
-)paren
-suffix:semicolon
-macro_line|#endif /* IDETAPE_DEBUG */&t;
 multiline_comment|/*&n;&t; *&t;Check if the other device is idle. If there are no requests,&n;&t; *&t;we can safely access the tape.&n;&t; */
 r_if
 c_cond
@@ -4773,9 +4935,8 @@ op_eq
 l_int|NULL
 )paren
 (brace
-id|restore_flags
+id|sti
 (paren
-id|flags
 )paren
 suffix:semicolon
 id|idetape_poll_for_dsc_direct
@@ -4786,41 +4947,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-r_if
-c_cond
-(paren
-id|bdev-&gt;current_request-&gt;next
-op_eq
-l_int|NULL
-)paren
-(brace
-multiline_comment|/*&n;&t;&t; *&t;There will not be another request after the currently&n;&t;&t; *&t;ongoing request, so ide.c won&squot;t be able to sample&n;&t;&t; *&t;the status register on our behalf in do_request. Just&n;&t;&t; *&t;give up and poll again (in a faster frequency), until&n;&t;&t; *&t;we are lucky.&n;&t;&t; */
-id|restore_flags
-(paren
-id|flags
-)paren
-suffix:semicolon
-id|tape-&gt;dsc_timer.expires
-op_assign
-id|jiffies
-op_plus
-id|tape-&gt;dsc_polling_frequency
-op_div
-l_int|2
-suffix:semicolon
-id|add_timer
-c_func
-(paren
-op_amp
-(paren
-id|tape-&gt;dsc_timer
-)paren
-)paren
-suffix:semicolon
-r_return
-suffix:semicolon
-)brace
-multiline_comment|/*&n;&t; *&t;We now know that:&n;&t; *&n;&t; *&t;&t;1.&t;The ide driver is potentially accessing&n;&t; *&t;&t;&t;the other device -- We can not touch it.&n;&t; *&t;&t;2.&t;do_request will be called after the current&n;&t; *&t;&t;&t;request is finished.&n;&t; *&n;&t; *&t;We will therefor ask ide.c to perform the tasks on our behalf.&n;&t; */
+multiline_comment|/*&n;&t; *&t;If DSC was received, re-insert our postponed request into&n;&t; *&t;the request queue (using ide_next).&n;&t; */
 id|status.all
 op_assign
 id|tape-&gt;last_status
@@ -4836,6 +4963,11 @@ id|tape-&gt;dsc_received
 op_assign
 l_int|1
 suffix:semicolon
+id|idetape_put_back_postponed_request
+(paren
+id|drive
+)paren
+suffix:semicolon
 id|del_timer
 (paren
 op_amp
@@ -4844,12 +4976,6 @@ id|tape-&gt;dsc_timer
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/* Stop polling and request ide.c to call */
-id|tape-&gt;request_dsc_callback
-op_assign
-l_int|1
-suffix:semicolon
-multiline_comment|/* our idetape_put_back_postponed_request later */
 id|restore_flags
 (paren
 id|flags
@@ -4858,6 +4984,118 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+multiline_comment|/*&n;&t; *&t;At this point, DSC may have been received, but we can&squot;t&n;&t; *&t;check it. We now have two options:&n;&t; *&n;&t; *&t;&t;1.&t;The &quot;simple&quot; method - We can continue polling&n;&t; *&t;&t;&t;until we know the value of DSC.&n;&t; *&n;&t; *&t;but we also have a more clever option :-)&n;&t; *&n;&t; *&t;&t;2.&t;We can sometimes more or less anticipate in&n;&t; *&t;&t;&t;advance how much time it will take for&n;&t; *&t;&t;&t;the tape to perform the request. This is the&n;&t; *&t;&t;&t;place to take advantage of this !&n;&t; *&n;&t; *&t;&t;&t;We can assume that DSC was received, put&n;&t; *&t;&t;&t;back our request, and hope that we will have&n;&t; *&t;&t;&t;a &quot;cache hit&quot;. This will only work when&n;&t; *&t;&t;&t;we haven&squot;t initiated the packet command yet,&n;&t; *&t;&t;&t;but this is the common read/write case. As&n;&t; *&t;&t;&t;for the slower media access commands, fallback&n;&t; *&t;&t;&t;to method 1 above.&n;&t; *&n;&t; *&t;When using method 2, we can also take advantage of the&n;&t; *&t;knowledge of the tape&squot;s internal buffer size - We can&n;&t; *&t;precalculate the time it will take for the tape to complete&n;&t; *&t;servicing not only one request, but rather, say, 50% of its&n;&t; *&t;internal buffer. The polling period will then be much larger,&n;&t; *&t;decreasing our load on Linux, and we will also call&n;&t; *&t;idetape_postpone_request less often, as there will usually&n;&t; *&t;be more room in the internal tape buffer while we are in&n;&t; *&t;idetape_do_request.&n;&t; *&n;&t; *&t;For this method to work well, the ongoing request of the&n;&t; *&t;other device should be serviced by the time the tape is&n;&t; *&t;still working on its remaining 50% internal buffer. This&n;&t; *&t;will usually happen when the other device is much faster&n;&t; *&t;than the tape.&n;&t; */
+macro_line|#if IDETAPE_ANTICIPATE_READ_WRITE_DSC
+multiline_comment|/*&n;&t; *&t;Method 2.&n;&t; *&n;&t; *&t;There is a high chance that DSC was received, even though&n;&t; *&t;we couldn&squot;t verify it. Let&squot;s hope that it&squot;s a &quot;cache hit&quot;&n;&t; *&t;rather than a &quot;cache miss&quot;. Someday I will probably add a&n;&t; *&t;feedback loop around the number of &quot;cache hits&quot; which will&n;&t; *&t;fine-tune the polling period.&n;&t; */
+r_if
+c_cond
+(paren
+id|tape-&gt;postponed_rq-&gt;cmd
+op_ne
+id|IDETAPE_PACKET_COMMAND_REQUEST_TYPE1
+)paren
+(brace
+multiline_comment|/*&n;&t;&t; *&t;We can use this method only when the packet command&n;&t;&t; *&t;was still not initiated.&n;&t;&t; */
+id|idetape_put_back_postponed_request
+(paren
+id|drive
+)paren
+suffix:semicolon
+id|del_timer
+(paren
+op_amp
+(paren
+id|tape-&gt;dsc_timer
+)paren
+)paren
+suffix:semicolon
+id|restore_flags
+(paren
+id|flags
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+macro_line|#endif /* IDETAPE_ANTICIPATE_READ_WRITE_DSC */
+multiline_comment|/*&n;&t; *&t;Fallback to method 1.&n;&t; */
+r_if
+c_cond
+(paren
+id|bdev-&gt;current_request-&gt;next
+op_eq
+l_int|NULL
+)paren
+(brace
+multiline_comment|/*&n;&t;&t; *&t;There will not be another request after the currently&n;&t;&t; *&t;ongoing request, so ide.c won&squot;t be able to sample&n;&t;&t; *&t;the status register on our behalf in do_request.&n;&t;&t; *&n;&t;&t; *&t;In case we are waiting for DSC before the packet&n;&t;&t; *&t;command was initiated, we will put back our postponed&n;&t;&t; *&t;request and have another look at the status register&n;&t;&t; *&t;in idetape_do_request, as done in method 2 above.&n;&t;&t; *&n;&t;&t; *&t;In case we already initiated the command, we can&squot;t&n;&t;&t; *&t;put it back, but it is anyway a slow media access&n;&t;&t; *&t;command. We will just give up and poll again until&n;&t;&t; *&t;we are lucky.&n;&t;&t; */
+r_if
+c_cond
+(paren
+id|tape-&gt;postponed_rq-&gt;cmd
+op_eq
+id|IDETAPE_PACKET_COMMAND_REQUEST_TYPE1
+)paren
+(brace
+multiline_comment|/*&n;&t;&t;&t; *&t;Media access command - Poll again.&n;&t;&t;&t; *&n;&t;&t;&t; *&t;We set tape-&gt;request_status to 1, just in case&n;&t;&t;&t; *&t;other requests are added while we are waiting.&n;&t;&t;&t; */
+id|tape-&gt;request_status
+op_assign
+l_int|1
+suffix:semicolon
+id|restore_flags
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|tape-&gt;dsc_timer.expires
+op_assign
+id|jiffies
+op_plus
+id|tape-&gt;dsc_polling_frequency
+suffix:semicolon
+id|add_timer
+c_func
+(paren
+op_amp
+(paren
+id|tape-&gt;dsc_timer
+)paren
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+multiline_comment|/*&n;&t;&t; *&t;The packet command hasn&squot;t been sent to the tape yet -&n;&t;&t; *&t;We can safely put back the request and have another&n;&t;&t; *&t;look at the status register in idetape_do_request.&n;&t;&t; */
+id|idetape_put_back_postponed_request
+(paren
+id|drive
+)paren
+suffix:semicolon
+id|del_timer
+(paren
+op_amp
+(paren
+id|tape-&gt;dsc_timer
+)paren
+)paren
+suffix:semicolon
+id|restore_flags
+(paren
+id|flags
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+multiline_comment|/*&n;&t; *&t;There will be another request after the current request.&n;&t; *&n;&t; *&t;Request ide.c to sample for us the tape&squot;s status register&n;&t; *&t;before the next request.&n;&t; */
+id|tape-&gt;request_status
+op_assign
+l_int|1
+suffix:semicolon
+id|restore_flags
+(paren
+id|flags
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -4869,7 +5107,13 @@ id|tape-&gt;dsc_timeout
 multiline_comment|/* Timeout */
 id|tape-&gt;dsc_received
 op_assign
-l_int|1
+l_int|0
+suffix:semicolon
+multiline_comment|/* ??? */
+id|idetape_put_back_postponed_request
+(paren
+id|drive
+)paren
 suffix:semicolon
 id|del_timer
 (paren
@@ -4879,11 +5123,6 @@ id|tape-&gt;dsc_timer
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/* ??? */
-id|tape-&gt;request_dsc_callback
-op_assign
-l_int|1
-suffix:semicolon
 id|restore_flags
 (paren
 id|flags
@@ -4892,16 +5131,6 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; *&t;Request ide.c to sample for us the tape&squot;s status register on&n;&t; *&t;the next time in which it can be safely done.&n;&t; */
-id|tape-&gt;request_status
-op_assign
-l_int|1
-suffix:semicolon
-id|restore_flags
-(paren
-id|flags
-)paren
-suffix:semicolon
 multiline_comment|/* Poll again */
 r_if
 c_cond
@@ -4937,7 +5166,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;idetape_put_back_postponed_request gets called by do_request&n; *&t;in ide.c when we decided to stop polling for DSC and continue&n; *&t;servicing our postponed request.&n; */
+multiline_comment|/*&n; *&t;idetape_put_back_postponed_request gets called when we decided to&n; *&t;stop polling for DSC and continue servicing our postponed request.&n; */
 DECL|function|idetape_put_back_postponed_request
 r_void
 id|idetape_put_back_postponed_request
@@ -4956,13 +5185,31 @@ op_amp
 id|drive-&gt;tape
 )paren
 suffix:semicolon
-macro_line|#if IDETAPE_DEBUG
+macro_line|#if IDETAPE_DEBUG_LOG
 id|printk
 (paren
 l_string|&quot;ide-tape: Putting back postponed request&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#endif /* IDETAPE_DEBUG */
+macro_line|#endif /* IDETAPE_DEBUG_LOG */
+macro_line|#if IDETAPE_DEBUG_BUGS
+r_if
+c_cond
+(paren
+id|tape-&gt;postponed_rq
+op_eq
+l_int|NULL
+)paren
+(brace
+id|printk
+(paren
+l_string|&quot;tape-&gt;postponed_rq is NULL in put_back_postponed_request&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+macro_line|#endif /* IDETAPE_DEBUG_BUGS */
 (paren
 r_void
 )paren
@@ -5019,17 +5266,13 @@ c_cond
 id|tape-&gt;dsc_received
 )paren
 (brace
-macro_line|#if IDETAPE_DEBUG
+macro_line|#if IDETAPE_DEBUG_LOG
 id|printk
 (paren
 l_string|&quot;DSC received&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#endif /* IDETAPE_DEBUG */
-id|pc-&gt;active
-op_assign
-l_int|0
-suffix:semicolon
+macro_line|#endif /* IDETAPE_DEBUG_LOG */
 r_if
 c_cond
 (paren
@@ -5068,7 +5311,7 @@ id|tape-&gt;failed_pc
 op_assign
 l_int|NULL
 suffix:semicolon
-macro_line|#if IDETAPE_DEBUG
+macro_line|#if IDETAPE_DEBUG_BUGS
 r_if
 c_cond
 (paren
@@ -5082,7 +5325,7 @@ l_string|&quot;ide-tape: ide-tape bug - Callback function not set !&bslash;n&quo
 )paren
 suffix:semicolon
 r_else
-macro_line|#endif /* IDETAPE_DEBUG */
+macro_line|#endif /* IDETAPE_DEBUG_BUGS */
 (paren
 op_star
 id|pc-&gt;callback
@@ -5096,10 +5339,6 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|pc-&gt;active
-op_assign
-l_int|0
-suffix:semicolon
 id|printk
 (paren
 l_string|&quot;ide-tape: %s: DSC timeout.&bslash;n&quot;
@@ -5116,7 +5355,7 @@ id|tape-&gt;failed_pc
 op_assign
 l_int|NULL
 suffix:semicolon
-macro_line|#if IDETAPE_DEBUG
+macro_line|#if IDETAPE_DEBUG_BUGS
 r_if
 c_cond
 (paren
@@ -5130,7 +5369,7 @@ l_string|&quot;ide-tape: ide-tape bug - Callback function not set !&bslash;n&quo
 )paren
 suffix:semicolon
 r_else
-macro_line|#endif /* IDETAPE_DEBUG */
+macro_line|#endif /* IDETAPE_DEBUG_BUGS */
 (paren
 op_star
 id|pc-&gt;callback
@@ -5249,13 +5488,13 @@ id|drive
 op_member_access_from_pointer
 id|rq
 suffix:semicolon
-macro_line|#if IDETAPE_DEBUG
+macro_line|#if IDETAPE_DEBUG_LOG
 id|printk
 (paren
 l_string|&quot;ide-tape: Reached idetape_pc_callback&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#endif /* IDETAPE_DEBUG */
+macro_line|#endif /* IDETAPE_DEBUG_LOG */
 r_if
 c_cond
 (paren
@@ -5263,13 +5502,13 @@ op_logical_neg
 id|tape-&gt;pc-&gt;error
 )paren
 (brace
-macro_line|#if IDETAPE_DEBUG
+macro_line|#if IDETAPE_DEBUG_LOG
 id|printk
 (paren
 l_string|&quot;Request completed&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#endif /* IDETAPE_DEBUG */
+macro_line|#endif /* IDETAPE_DEBUG_LOG */
 id|idetape_end_request
 (paren
 l_int|1
@@ -5283,11 +5522,6 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|printk
-(paren
-l_string|&quot;Aborting request&bslash;n&quot;
-)paren
-suffix:semicolon
 id|idetape_end_request
 (paren
 l_int|0
@@ -5337,13 +5571,13 @@ id|drive
 op_member_access_from_pointer
 id|rq
 suffix:semicolon
-macro_line|#if IDETAPE_DEBUG&t;
+macro_line|#if IDETAPE_DEBUG_LOG&t;
 id|printk
 (paren
 l_string|&quot;ide-tape: Reached idetape_read_callback&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#endif /* IDETAPE_DEBUG */
+macro_line|#endif /* IDETAPE_DEBUG_LOG */
 id|tape-&gt;block_address
 op_add_assign
 id|tape-&gt;pc-&gt;actually_transferred
@@ -5357,13 +5591,13 @@ op_logical_neg
 id|tape-&gt;pc-&gt;error
 )paren
 (brace
-macro_line|#if IDETAPE_DEBUG
+macro_line|#if IDETAPE_DEBUG_LOG
 id|printk
 (paren
 l_string|&quot;Request completed&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#endif /* IDETAPE_DEBUG */
+macro_line|#endif /* IDETAPE_DEBUG_LOG */
 id|rq-&gt;sector
 op_add_assign
 id|rq-&gt;current_nr_sectors
@@ -5389,11 +5623,25 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|printk
-(paren
-l_string|&quot;Aborting request&bslash;n&quot;
-)paren
+id|rq-&gt;errors
+op_assign
+id|tape-&gt;pc-&gt;error
 suffix:semicolon
+r_switch
+c_cond
+(paren
+id|rq-&gt;errors
+)paren
+(brace
+r_case
+id|IDETAPE_RQ_ERROR_FILEMARK
+suffix:colon
+r_case
+id|IDETAPE_RQ_ERROR_EOD
+suffix:colon
+r_break
+suffix:semicolon
+)brace
 id|idetape_end_request
 (paren
 l_int|0
@@ -5443,13 +5691,13 @@ id|drive
 op_member_access_from_pointer
 id|rq
 suffix:semicolon
-macro_line|#if IDETAPE_DEBUG&t;
+macro_line|#if IDETAPE_DEBUG_LOG&t;
 id|printk
 (paren
 l_string|&quot;ide-tape: Reached idetape_write_callback&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#endif /* IDETAPE_DEBUG */
+macro_line|#endif /* IDETAPE_DEBUG_LOG */
 id|tape-&gt;block_address
 op_add_assign
 id|tape-&gt;pc-&gt;actually_transferred
@@ -5463,13 +5711,13 @@ op_logical_neg
 id|tape-&gt;pc-&gt;error
 )paren
 (brace
-macro_line|#if IDETAPE_DEBUG
+macro_line|#if IDETAPE_DEBUG_LOG
 id|printk
 (paren
 l_string|&quot;Request completed&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#endif /* IDETAPE_DEBUG */
+macro_line|#endif /* IDETAPE_DEBUG_LOG */
 id|rq-&gt;sector
 op_add_assign
 id|rq-&gt;current_nr_sectors
@@ -5495,11 +5743,6 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|printk
-(paren
-l_string|&quot;Aborting request&bslash;n&quot;
-)paren
-suffix:semicolon
 id|idetape_end_request
 (paren
 l_int|0
@@ -5749,13 +5992,13 @@ op_star
 id|pc
 )paren
 (brace
-macro_line|#if IDETAPE_DEBUG
+macro_line|#if IDETAPE_DEBUG_LOG
 id|printk
 (paren
 l_string|&quot;ide-tape: Creating INQUIRY packet command&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#endif /* IDETAPE_DEBUG */&t;
+macro_line|#endif /* IDETAPE_DEBUG_LOG */&t;
 id|pc-&gt;request_transfer
 op_assign
 l_int|36
@@ -5857,7 +6100,7 @@ l_string|&quot;Assuming QIC-157C format.&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
-macro_line|#if IDETAPE_DEBUG
+macro_line|#if IDETAPE_DEBUG_LOG
 id|printk
 (paren
 l_string|&quot;Dumping INQUIRY command results:&bslash;n&quot;
@@ -6110,7 +6353,7 @@ comma
 id|result-&gt;revision_level
 )paren
 suffix:semicolon
-macro_line|#endif /* IDETAPE_DEBUG */
+macro_line|#endif /* IDETAPE_DEBUG_LOG */
 r_if
 c_cond
 (paren
@@ -6163,13 +6406,13 @@ op_star
 id|pc
 )paren
 (brace
-macro_line|#if IDETAPE_DEBUG
+macro_line|#if IDETAPE_DEBUG_LOG
 id|printk
 (paren
 l_string|&quot;ide-tape: Creating REQUEST SENSE packet command&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#endif /* IDETAPE_DEBUG */&t;
+macro_line|#endif /* IDETAPE_DEBUG_LOG */&t;
 id|pc-&gt;request_transfer
 op_assign
 l_int|18
@@ -6215,36 +6458,19 @@ id|drive
 id|idetape_tape_t
 op_star
 id|tape
-suffix:semicolon
-r_struct
-id|request
-op_star
-id|rq
-suffix:semicolon
-id|tape
 op_assign
 op_amp
 (paren
 id|drive-&gt;tape
 )paren
 suffix:semicolon
-id|rq
-op_assign
-id|HWGROUP
-c_func
-(paren
-id|drive
-)paren
-op_member_access_from_pointer
-id|rq
-suffix:semicolon
-macro_line|#if IDETAPE_DEBUG
+macro_line|#if IDETAPE_DEBUG_LOG
 id|printk
 (paren
 l_string|&quot;ide-tape: Reached idetape_request_sense_callback&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#endif /* IDETAPE_DEBUG */
+macro_line|#endif /* IDETAPE_DEBUG_LOG */
 r_if
 c_cond
 (paren
@@ -6252,13 +6478,13 @@ op_logical_neg
 id|tape-&gt;pc-&gt;error
 )paren
 (brace
-macro_line|#if IDETAPE_DEBUG
+macro_line|#if IDETAPE_DEBUG_LOG
 id|printk
 (paren
 l_string|&quot;Request completed&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#endif /* IDETAPE_DEBUG */
+macro_line|#endif /* IDETAPE_DEBUG_LOG */
 id|idetape_analyze_error
 (paren
 id|drive
@@ -6319,13 +6545,17 @@ id|result
 id|idetape_tape_t
 op_star
 id|tape
-suffix:semicolon
-id|tape
 op_assign
 op_amp
 (paren
 id|drive-&gt;tape
 )paren
+suffix:semicolon
+id|idetape_packet_command_t
+op_star
+id|pc
+op_assign
+id|tape-&gt;failed_pc
 suffix:semicolon
 id|tape-&gt;sense_key
 op_assign
@@ -6339,11 +6569,16 @@ id|tape-&gt;ascq
 op_assign
 id|result-&gt;ascq
 suffix:semicolon
-macro_line|#if IDETAPE_DEBUG&t;
+macro_line|#if IDETAPE_DEBUG_LOG&t;
 multiline_comment|/*&n;&t; *&t;Without debugging, we only log an error if we decided to&n;&t; *&t;give up retrying.&n;&t; */
 id|printk
 (paren
-l_string|&quot;ide-tape: sense key = %x, asc = %x, ascq = %x&bslash;n&quot;
+l_string|&quot;ide-tape: pc = %x, sense key = %x, asc = %x, ascq = %x&bslash;n&quot;
+comma
+id|pc-&gt;c
+(braket
+l_int|0
+)braket
 comma
 id|result-&gt;sense_key
 comma
@@ -6352,9 +6587,59 @@ comma
 id|result-&gt;ascq
 )paren
 suffix:semicolon
-macro_line|#endif /* IDETAPE_DEBUG */&t;
+macro_line|#endif /* IDETAPE_DEBUG_LOG */
+r_if
+c_cond
+(paren
+id|pc-&gt;c
+(braket
+l_int|0
+)braket
+op_eq
+id|IDETAPE_READ_CMD
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|result-&gt;filemark
+)paren
+(brace
+id|pc-&gt;error
+op_assign
+id|IDETAPE_RQ_ERROR_FILEMARK
+suffix:semicolon
+id|pc
+op_member_access_from_pointer
+m_abort
+op_assign
+l_int|1
+suffix:semicolon
 r_return
 suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|result-&gt;sense_key
+op_eq
+l_int|8
+)paren
+(brace
+id|pc-&gt;error
+op_assign
+id|IDETAPE_RQ_ERROR_EOD
+suffix:semicolon
+id|pc
+op_member_access_from_pointer
+m_abort
+op_assign
+l_int|1
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+)brace
 )brace
 DECL|function|idetape_create_test_unit_ready_cmd
 r_void
@@ -6365,13 +6650,13 @@ op_star
 id|pc
 )paren
 (brace
-macro_line|#if IDETAPE_DEBUG
+macro_line|#if IDETAPE_DEBUG_LOG
 id|printk
 (paren
 l_string|&quot;ide-tape: Creating TEST UNIT READY packet command&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#endif /* IDETAPE_DEBUG */&t;
+macro_line|#endif /* IDETAPE_DEBUG_LOG */&t;
 id|pc-&gt;request_transfer
 op_assign
 l_int|0
@@ -6427,13 +6712,13 @@ r_int
 op_star
 id|ptr
 suffix:semicolon
-macro_line|#if IDETAPE_DEBUG
+macro_line|#if IDETAPE_DEBUG_LOG
 id|printk
 (paren
 l_string|&quot;ide-tape: Creating LOCATE packet command&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#endif /* IDETAPE_DEBUG */
+macro_line|#endif /* IDETAPE_DEBUG_LOG */
 id|pc-&gt;request_transfer
 op_assign
 l_int|0
@@ -6522,13 +6807,13 @@ op_star
 id|pc
 )paren
 (brace
-macro_line|#if IDETAPE_DEBUG
+macro_line|#if IDETAPE_DEBUG_LOG
 id|printk
 (paren
 l_string|&quot;ide-tape: Creating REWIND packet command&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#endif /* IDETAPE_DEBUG */
+macro_line|#endif /* IDETAPE_DEBUG_LOG */
 id|pc-&gt;request_transfer
 op_assign
 l_int|0
@@ -6584,7 +6869,7 @@ id|byte
 id|page_code
 )paren
 (brace
-macro_line|#if IDETAPE_DEBUG
+macro_line|#if IDETAPE_DEBUG_LOG
 id|printk
 (paren
 l_string|&quot;ide-tape: Creating MODE SENSE packet command - Page %d&bslash;n&quot;
@@ -6592,7 +6877,7 @@ comma
 id|page_code
 )paren
 suffix:semicolon
-macro_line|#endif /* IDETAPE_DEBUG */
+macro_line|#endif /* IDETAPE_DEBUG_LOG */
 id|pc-&gt;wait_for_dsc
 op_assign
 l_int|0
@@ -6677,7 +6962,7 @@ r_int
 id|write_filemark
 )paren
 (brace
-macro_line|#if IDETAPE_DEBUG
+macro_line|#if IDETAPE_DEBUG_LOG
 id|printk
 (paren
 l_string|&quot;Creating WRITE FILEMARK packet command&bslash;n&quot;
@@ -6694,7 +6979,7 @@ id|printk
 l_string|&quot;which will only flush buffered data&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#endif /* IDETAPE_DEBUG */
+macro_line|#endif /* IDETAPE_DEBUG_LOG */
 id|pc-&gt;request_transfer
 op_assign
 l_int|0
@@ -6749,6 +7034,76 @@ op_assign
 l_int|1
 suffix:semicolon
 )brace
+DECL|function|idetape_create_load_unload_cmd
+r_void
+id|idetape_create_load_unload_cmd
+(paren
+id|idetape_packet_command_t
+op_star
+id|pc
+comma
+r_int
+id|cmd
+)paren
+(brace
+macro_line|#if IDETAPE_DEBUG_LOG
+id|printk
+(paren
+l_string|&quot;Creating LOAD UNLOAD packet command, cmd=%d&bslash;n&quot;
+comma
+id|cmd
+)paren
+suffix:semicolon
+macro_line|#endif /* IDETAPE_DEBUG_LOG */
+id|pc-&gt;request_transfer
+op_assign
+l_int|0
+suffix:semicolon
+id|pc-&gt;buffer
+op_assign
+l_int|NULL
+suffix:semicolon
+id|pc-&gt;current_position
+op_assign
+l_int|NULL
+suffix:semicolon
+id|pc-&gt;buffer_size
+op_assign
+l_int|0
+suffix:semicolon
+id|pc-&gt;wait_for_dsc
+op_assign
+l_int|1
+suffix:semicolon
+id|pc-&gt;callback
+op_assign
+op_amp
+id|idetape_pc_callback
+suffix:semicolon
+id|pc-&gt;writing
+op_assign
+l_int|0
+suffix:semicolon
+id|idetape_zero_packet_command
+(paren
+id|pc
+)paren
+suffix:semicolon
+id|pc-&gt;c
+(braket
+l_int|0
+)braket
+op_assign
+id|IDETAPE_LOAD_UNLOAD_CMD
+suffix:semicolon
+id|pc-&gt;c
+(braket
+l_int|4
+)braket
+op_assign
+id|cmd
+suffix:semicolon
+)brace
 DECL|function|idetape_create_erase_cmd
 r_void
 id|idetape_create_erase_cmd
@@ -6758,13 +7113,13 @@ op_star
 id|pc
 )paren
 (brace
-macro_line|#if IDETAPE_DEBUG
+macro_line|#if IDETAPE_DEBUG_LOG
 id|printk
 (paren
 l_string|&quot;Creating ERASE command&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#endif /* IDETAPE_DEBUG */
+macro_line|#endif /* IDETAPE_DEBUG_LOG */
 id|pc-&gt;request_transfer
 op_assign
 l_int|0
@@ -6863,13 +7218,13 @@ suffix:semicolon
 )brace
 id|original
 suffix:semicolon
-macro_line|#if IDETAPE_DEBUG
+macro_line|#if IDETAPE_DEBUG_LOG
 id|printk
 (paren
 l_string|&quot;ide-tape: Creating READ packet command&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#endif /* IDETAPE_DEBUG */
+macro_line|#endif /* IDETAPE_DEBUG_LOG */
 id|original.all
 op_assign
 id|length
@@ -6981,13 +7336,13 @@ suffix:semicolon
 )brace
 id|original
 suffix:semicolon
-macro_line|#if IDETAPE_DEBUG
+macro_line|#if IDETAPE_DEBUG_LOG
 id|printk
 (paren
 l_string|&quot;ide-tape: Creating SPACE packet command&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#endif /* IDETAPE_DEBUG */
+macro_line|#endif /* IDETAPE_DEBUG_LOG */
 id|original.all
 op_assign
 id|count
@@ -7113,13 +7468,13 @@ suffix:semicolon
 )brace
 id|original
 suffix:semicolon
-macro_line|#if IDETAPE_DEBUG
+macro_line|#if IDETAPE_DEBUG_LOG
 id|printk
 (paren
 l_string|&quot;ide-tape: Creating WRITE packet command&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#endif /* IDETAPE_DEBUG */
+macro_line|#endif /* IDETAPE_DEBUG_LOG */
 id|original.all
 op_assign
 id|length
@@ -7189,13 +7544,13 @@ op_star
 id|pc
 )paren
 (brace
-macro_line|#if IDETAPE_DEBUG
+macro_line|#if IDETAPE_DEBUG_LOG
 id|printk
 (paren
 l_string|&quot;ide-tape: Creating READ POSITION packet command&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#endif /* IDETAPE_DEBUG */
+macro_line|#endif /* IDETAPE_DEBUG_LOG */
 id|pc-&gt;request_transfer
 op_assign
 l_int|20
@@ -7262,13 +7617,13 @@ op_amp
 id|drive-&gt;tape
 )paren
 suffix:semicolon
-macro_line|#if IDETAPE_DEBUG
+macro_line|#if IDETAPE_DEBUG_LOG
 id|printk
 (paren
 l_string|&quot;ide-tape: Reached idetape_read_position_callback&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#endif /* IDETAPE_DEBUG */
+macro_line|#endif /* IDETAPE_DEBUG_LOG */
 id|rq
 op_assign
 id|HWGROUP
@@ -7294,7 +7649,7 @@ op_star
 )paren
 id|tape-&gt;pc-&gt;buffer
 suffix:semicolon
-macro_line|#if IDETAPE_DEBUG
+macro_line|#if IDETAPE_DEBUG_LOG
 id|printk
 (paren
 l_string|&quot;Request completed&bslash;n&quot;
@@ -7329,7 +7684,7 @@ suffix:colon
 l_string|&quot;No&quot;
 )paren
 suffix:semicolon
-macro_line|#endif /* IDETAPE_DEBUG */
+macro_line|#endif /* IDETAPE_DEBUG_LOG */
 r_if
 c_cond
 (paren
@@ -7363,7 +7718,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-macro_line|#if IDETAPE_DEBUG
+macro_line|#if IDETAPE_DEBUG_LOG
 id|printk
 (paren
 l_string|&quot;Block Location - %lu&bslash;n&quot;
@@ -7374,7 +7729,7 @@ id|result-&gt;first_block
 )paren
 )paren
 suffix:semicolon
-macro_line|#endif /* IDETAPE_DEBUG */
+macro_line|#endif /* IDETAPE_DEBUG_LOG */
 id|tape-&gt;block_address
 op_assign
 id|idetape_swap_long
@@ -7465,13 +7820,13 @@ id|pc.current_position
 op_assign
 id|pc.temp_buffer
 suffix:semicolon
-macro_line|#if IDETAPE_DEBUG&t;
+macro_line|#if IDETAPE_DEBUG_LOG&t;
 id|printk
 (paren
 l_string|&quot;ide-tape: Reached idetape_blkdev_ioctl&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#endif /* IDETAPE_DEBUG */
+macro_line|#endif /* IDETAPE_DEBUG_LOG */
 r_switch
 c_cond
 (paren
@@ -7481,13 +7836,13 @@ id|cmd
 r_case
 id|IDETAPE_INQUIRY_IOCTL
 suffix:colon
-macro_line|#if IDETAPE_DEBUG
+macro_line|#if IDETAPE_DEBUG_LOG
 id|printk
 (paren
 l_string|&quot;Adding INQUIRY packet command to the tail of the request queue&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#endif /* IDETAPE_DEBUG */
+macro_line|#endif /* IDETAPE_DEBUG_LOG */
 id|idetape_create_inquiry_cmd
 (paren
 op_amp
@@ -7520,13 +7875,13 @@ suffix:semicolon
 r_case
 id|IDETAPE_LOCATE_IOCTL
 suffix:colon
-macro_line|#if IDETAPE_DEBUG
+macro_line|#if IDETAPE_DEBUG_LOG
 id|printk
 (paren
 l_string|&quot;Adding LOCATE packet command to the tail of the request queue&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#endif /* IDETAPE_DEBUG */
+macro_line|#endif /* IDETAPE_DEBUG_LOG */
 id|idetape_create_locate_cmd
 (paren
 op_amp
@@ -7598,7 +7953,7 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/*&n; *&t;Functions which handle requests.&n; */
-multiline_comment|/*&n; *&t;idetape_end_request is used to end a request.&n; *&n; *&t;It is very similiar to ide_end_request, with a major difference - If&n; *&t;we are handling our own requests rather than requests which originate&n; *&t;in the buffer cache, we set rq-&gt;errors to 1 if the request failed.&n; */
+multiline_comment|/*&n; *&t;idetape_end_request is used to end a request.&n; */
 DECL|function|idetape_end_request
 r_void
 id|idetape_end_request
@@ -7633,13 +7988,54 @@ op_amp
 id|drive-&gt;tape
 )paren
 suffix:semicolon
-multiline_comment|/* Our own originated request */
+r_int
+r_int
+id|major
+op_assign
+id|HWIF
+c_func
+(paren
+id|drive
+)paren
+op_member_access_from_pointer
+id|major
+suffix:semicolon
+r_struct
+id|blk_dev_struct
+op_star
+id|bdev
+op_assign
+op_amp
+id|blk_dev
+(braket
+id|major
+)braket
+suffix:semicolon
+macro_line|#if IDETAPE_DEBUG_LOG
+id|printk
+(paren
+l_string|&quot;Reached idetape_end_request&bslash;n&quot;
+)paren
+suffix:semicolon
+macro_line|#endif /* IDETAPE_DEBUG_LOG */
+id|bdev-&gt;current_request
+op_assign
+id|rq
+suffix:semicolon
+multiline_comment|/* Since we may have taken it out */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|rq-&gt;errors
+)paren
+multiline_comment|/* In case rq-&gt;errors is already set, */
 id|rq-&gt;errors
 op_assign
 op_logical_neg
 id|uptodate
 suffix:semicolon
-multiline_comment|/* rq-&gt;errors will tell us if the request was successfull */
+multiline_comment|/* we won&squot;t change it. */
 r_if
 c_cond
 (paren
@@ -7648,32 +8044,54 @@ op_eq
 id|rq
 )paren
 (brace
-multiline_comment|/* The request was a data transfer request */
-macro_line|#if IDETAPE_DEBUG
+multiline_comment|/* The request was a pipelined data transfer request */
 r_if
 c_cond
 (paren
-op_logical_neg
-id|tape-&gt;max_number_of_stages
+id|rq-&gt;cmd
+op_eq
+id|IDETAPE_READ_REQUEST
+)paren
+(brace
+macro_line|#if IDETAPE_DEBUG_BUGS
+r_if
+c_cond
+(paren
+id|tape-&gt;active_stage
+op_eq
+l_int|NULL
 )paren
 id|printk
 (paren
-l_string|&quot;ide-tape: non pipelined mode bug&bslash;n&quot;
+l_string|&quot;ide-tape: bug: active_stage is NULL in idetape_end_request&bslash;n&quot;
 )paren
 suffix:semicolon
-id|printk
+r_else
+macro_line|#endif /* IDETAPE_DEBUG_BUGS */
+id|idetape_copy_buffer_to_stage
 (paren
-l_string|&quot;Finished our active data request&bslash;n&quot;
-)paren
-suffix:semicolon
-id|printk
-(paren
-l_string|&quot;Requests in pipeline: %d&bslash;n&quot;
+id|tape-&gt;active_stage
 comma
-id|tape-&gt;current_number_of_stages
+id|tape-&gt;data_buffer
 )paren
 suffix:semicolon
-macro_line|#endif /* IDETAPE_DEBUG */
+)brace
+id|tape-&gt;active_stage
+op_assign
+l_int|NULL
+suffix:semicolon
+id|tape-&gt;active_data_request
+op_assign
+l_int|NULL
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|rq-&gt;cmd
+op_eq
+id|IDETAPE_WRITE_REQUEST
+)paren
+(brace
 r_if
 c_cond
 (paren
@@ -7683,30 +8101,32 @@ id|tape-&gt;error_in_pipeline_stage
 op_assign
 l_int|1
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; *&t;Pass to the next stage, but avoid a possible&n;&t;&t; *&t;race condition which could occur since&n;&t;&t; *&t;active_data_request is set to NULL until&n;&t;&t; *&t;idetape_active_next_stage returns, and in that&n;&t;&t; *&t;time, the higher level of the driver can get&n;&t;&t; *&t;an inaccurate sampling of this variable.&n;&t;&t; */
-id|tape-&gt;pipeline_locked
-op_assign
-l_int|1
+id|idetape_remove_stage_head
+(paren
+id|drive
+)paren
 suffix:semicolon
-id|tape-&gt;active_data_request
-op_assign
-l_int|NULL
-suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
-id|tape-&gt;first_stage
+id|tape-&gt;next_stage
 op_eq
 l_int|NULL
 )paren
 (brace
-id|tape-&gt;pipeline_locked
-op_assign
-l_int|0
-suffix:semicolon
 id|idetape_increase_max_pipeline_stages
 (paren
 id|drive
+)paren
+suffix:semicolon
+id|ide_end_drive_cmd
+(paren
+id|drive
+comma
+l_int|0
+comma
+l_int|0
 )paren
 suffix:semicolon
 r_return
@@ -7717,18 +8137,11 @@ id|idetape_active_next_stage
 id|drive
 )paren
 suffix:semicolon
-id|tape-&gt;pipeline_locked
-op_assign
-l_int|0
-suffix:semicolon
-macro_line|#if IDETAPE_DEBUG
-id|printk
+multiline_comment|/*&n;&t;&t; *&t;Insert the next request into the request queue.&n;&t;&t; *&n;&t;&t; *&t;The choice of using ide_next or ide_end is now left&n;&t;&t; *&t;to the user.&n;&t;&t; */
+macro_line|#if IDETAPE_LOW_TAPE_PRIORITY
 (paren
-l_string|&quot;Using ide_end&bslash;n&quot;
+r_void
 )paren
-suffix:semicolon
-macro_line|#endif /* IDETAPE_DEBUG */
-multiline_comment|/*&n;&t;&t; *&t;Insert the next request into the request queue.&n;&t;&t; *&n;&t;&t; *&t;We currently give higher priority to the other devie&n;&t;&t; *&t;by using ide_end. ide_next can be used to give us&n;&t;&t; *&t;a higher priority.&n;&t;&t; */
 id|ide_do_drive_cmd
 (paren
 id|drive
@@ -7738,6 +8151,20 @@ comma
 id|ide_end
 )paren
 suffix:semicolon
+macro_line|#else
+(paren
+r_void
+)paren
+id|ide_do_drive_cmd
+(paren
+id|drive
+comma
+id|tape-&gt;active_data_request
+comma
+id|ide_next
+)paren
+suffix:semicolon
+macro_line|#endif /* IDETAPE_LOW_TAPE_PRIORITY */
 )brace
 id|ide_end_drive_cmd
 (paren
@@ -7781,10 +8208,33 @@ id|idetape_packet_command_t
 op_star
 id|pc
 suffix:semicolon
+r_int
+r_int
+id|major
+op_assign
+id|HWIF
+c_func
+(paren
+id|drive
+)paren
+op_member_access_from_pointer
+id|major
+suffix:semicolon
+r_struct
+id|blk_dev_struct
+op_star
+id|bdev
+op_assign
+op_amp
+id|blk_dev
+(braket
+id|major
+)braket
+suffix:semicolon
 id|idetape_status_reg_t
 id|status
 suffix:semicolon
-macro_line|#if IDETAPE_DEBUG
+macro_line|#if IDETAPE_DEBUG_LOG
 id|printk
 (paren
 l_string|&quot;Current request:&bslash;n&quot;
@@ -7818,7 +8268,7 @@ comma
 id|rq-&gt;current_nr_sectors
 )paren
 suffix:semicolon
-macro_line|#endif /* IDETAPE_DEBUG */
+macro_line|#endif /* IDETAPE_DEBUG_LOG */
 r_if
 c_cond
 (paren
@@ -7874,6 +8324,22 @@ multiline_comment|/* Let the common code handle it */
 r_return
 suffix:semicolon
 )brace
+multiline_comment|/*&n;&t; *&t;This is an important point. We will try to remove our request&n;&t; *&t;from the block device request queue while we service the&n;&t; *&t;request. Note that the request must be returned to&n;&t; *&t;bdev-&gt;current_request before the next call to&n;&t; *&t;ide_end_drive_cmd or ide_do_drive_cmd to conform with the&n;&t; *&t;normal behavior of the IDE driver, which leaves the active&n;&t; *&t;request in bdev-&gt;current_request during I/O.&n;&t; *&n;&t; *&t;This will eliminate fragmentation of disk/cdrom requests&n;&t; *&t;around a tape request, now that we are using ide_next to&n;&t; *&t;insert pending pipeline requests, since we have only one&n;&t; *&t;ide-tape.c data request in the device request queue, and&n;&t; *&t;thus once removed, ll_rw_blk.c will only see requests from&n;&t; *&t;the other device.&n;&t; *&n;&t; *&t;The potential fragmentation inefficiency was pointed to me&n;&t; *&t;by Mark Lord.&n;&t; */
+r_if
+c_cond
+(paren
+id|rq-&gt;next
+op_ne
+l_int|NULL
+op_logical_and
+id|rq-&gt;rq_dev
+op_ne
+id|rq-&gt;next-&gt;rq_dev
+)paren
+id|bdev-&gt;current_request
+op_assign
+id|rq-&gt;next
+suffix:semicolon
 multiline_comment|/* Retry a failed packet command */
 r_if
 c_cond
@@ -7912,7 +8378,7 @@ op_ne
 l_int|NULL
 )paren
 (brace
-macro_line|#if IDETAPE_DEBUG
+macro_line|#if IDETAPE_DEBUG_BUGS
 r_if
 c_cond
 (paren
@@ -7943,7 +8409,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-macro_line|#endif /* IDETAPE_DEBUG */
+macro_line|#endif /* IDETAPE_DEBUG_BUGS */
 r_if
 c_cond
 (paren
@@ -7980,13 +8446,6 @@ id|rq-&gt;cmd
 r_case
 id|IDETAPE_READ_REQUEST
 suffix:colon
-macro_line|#if IDETAPE_DEBUG
-id|printk
-(paren
-l_string|&quot;ide-tape: Handling our own (not buffer cache originated) READ request&bslash;n&quot;
-)paren
-suffix:semicolon
-macro_line|#endif /* IDETAPE_DEBUG */&t;&t;&t;
 id|status.all
 op_assign
 id|IN_BYTE
@@ -8002,16 +8461,16 @@ id|status.b.dsc
 )paren
 (brace
 multiline_comment|/* Tape buffer not ready to accept r/w command */
-macro_line|#if IDETAPE_DEBUG
+macro_line|#if IDETAPE_DEBUG_LOG
 id|printk
 (paren
 l_string|&quot;ide-tape: DSC != 1 - Postponing read request&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#endif /* IDETAPE_DEBUG */&t;
+macro_line|#endif /* IDETAPE_DEBUG_LOG */&t;
 id|tape-&gt;dsc_polling_frequency
 op_assign
-id|IDETAPE_DSC_READ_WRITE_FREQUENCY
+id|tape-&gt;best_dsc_rw_frequency
 suffix:semicolon
 id|idetape_postpone_request
 (paren
@@ -8071,13 +8530,6 @@ suffix:semicolon
 r_case
 id|IDETAPE_WRITE_REQUEST
 suffix:colon
-macro_line|#if IDETAPE_DEBUG
-id|printk
-(paren
-l_string|&quot;ide-tape: Handling our own (not buffer cache originated) WRITE request&bslash;n&quot;
-)paren
-suffix:semicolon
-macro_line|#endif /* IDETAPE_DEBUG */&t;&t;&t;
 id|status.all
 op_assign
 id|IN_BYTE
@@ -8093,16 +8545,16 @@ id|status.b.dsc
 )paren
 (brace
 multiline_comment|/* Tape buffer not ready to accept r/w command */
-macro_line|#if IDETAPE_DEBUG
+macro_line|#if IDETAPE_DEBUG_LOG
 id|printk
 (paren
 l_string|&quot;ide-tape: DSC != 1 - Postponing write request&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#endif /* IDETAPE_DEBUG */&t;
+macro_line|#endif /* IDETAPE_DEBUG_LOG */&t;
 id|tape-&gt;dsc_polling_frequency
 op_assign
-id|IDETAPE_DSC_READ_WRITE_FREQUENCY
+id|tape-&gt;best_dsc_rw_frequency
 suffix:semicolon
 id|idetape_postpone_request
 (paren
@@ -8181,13 +8633,13 @@ id|status.b.dsc
 )paren
 (brace
 multiline_comment|/* Tape buffers are still not ready */
-macro_line|#if IDETAPE_DEBUG
+macro_line|#if IDETAPE_DEBUG_LOG
 id|printk
 (paren
 l_string|&quot;ide-tape: DSC != 1 - Postponing packet command request&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#endif /* IDETAPE_DEBUG */
+macro_line|#endif /* IDETAPE_DEBUG_LOG */
 id|rq-&gt;cmd
 op_assign
 id|IDETAPE_PACKET_COMMAND_REQUEST_TYPE2
@@ -8196,7 +8648,7 @@ multiline_comment|/* Note that we are waiting for DSC *before* we */
 multiline_comment|/* even issued the command */
 id|tape-&gt;dsc_polling_frequency
 op_assign
-id|IDETAPE_DSC_READ_WRITE_FREQUENCY
+id|IDETAPE_DSC_READ_WRITE_FALLBACK_FREQUENCY
 suffix:semicolon
 id|idetape_postpone_request
 (paren
@@ -8231,7 +8683,7 @@ id|idetape_pc_intr
 suffix:semicolon
 r_return
 suffix:semicolon
-macro_line|#if IDETAPE_DEBUG
+macro_line|#if IDETAPE_DEBUG_BUGS
 r_default
 suffix:colon
 id|printk
@@ -8249,7 +8701,7 @@ id|drive
 )paren
 )paren
 suffix:semicolon
-macro_line|#endif /* IDETAPE_DEBUG */
+macro_line|#endif /* IDETAPE_DEBUG_BUGS */
 )brace
 )brace
 multiline_comment|/*&n; *&t;idetape_queue_pc_tail is based on the following functions:&n; *&n; *&t;ide_do_drive_cmd from ide.c&n; *&t;cdrom_queue_request and cdrom_queue_packet_command from ide-cd.c&n; *&n; *&t;We add a special packet command request to the tail of the request queue,&n; *&t;and wait for it to be serviced.&n; *&n; *&t;This is not to be called from within the request handling part&n; *&t;of the driver ! We allocate here data in the stack, and it is valid&n; *&t;until the request is finished. This is not the case for the bottom&n; *&t;part of the driver, where we are always leaving the functions to wait&n; *&t;for an interrupt or a timer event.&n; *&n; *&t;From the bottom part of the driver, we should allocate safe memory&n; *&t;using idetape_next_pc_storage and idetape_next_rq_storage, and add&n; *&t;the request to the request list without waiting for it to be serviced !&n; *&t;In that case, we usually use idetape_queue_pc_head.&n; */
@@ -8319,6 +8771,39 @@ op_star
 id|rq
 )paren
 (brace
+r_int
+r_int
+id|major
+op_assign
+id|HWIF
+c_func
+(paren
+id|drive
+)paren
+op_member_access_from_pointer
+id|major
+suffix:semicolon
+r_struct
+id|blk_dev_struct
+op_star
+id|bdev
+op_assign
+op_amp
+id|blk_dev
+(braket
+id|major
+)braket
+suffix:semicolon
+id|bdev-&gt;current_request
+op_assign
+id|HWGROUP
+(paren
+id|drive
+)paren
+op_member_access_from_pointer
+id|rq
+suffix:semicolon
+multiline_comment|/* Since we may have taken it out */
 id|ide_init_drive_cmd
 (paren
 id|rq
@@ -8349,6 +8834,7 @@ id|ide_preempt
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/*&n; *&t;idetape_wait_for_request installs a semaphore in a pending request&n; *&t;and sleeps until it is serviced.&n; *&n; *&t;The caller should ensure that the request will not be serviced&n; *&t;before we install the semaphore (usually by disabling interrupts).&n; */
 DECL|function|idetape_wait_for_request
 r_void
 id|idetape_wait_for_request
@@ -8359,34 +8845,40 @@ op_star
 id|rq
 )paren
 (brace
-r_int
-r_int
-id|flags
-suffix:semicolon
 r_struct
 id|semaphore
 id|sem
 op_assign
 id|MUTEX_LOCKED
 suffix:semicolon
-id|save_flags
+macro_line|#if IDETAPE_DEBUG_BUGS
+r_if
+c_cond
 (paren
-id|flags
+id|rq
+op_eq
+l_int|NULL
+op_logical_or
+op_logical_neg
+id|IDETAPE_REQUEST_CMD
+(paren
+id|rq-&gt;cmd
+)paren
+)paren
+(brace
+id|printk
+(paren
+l_string|&quot;ide-tape: bug: Trying to sleep on non-valid request&bslash;n&quot;
 )paren
 suffix:semicolon
-id|cli
-(paren
-)paren
+r_return
 suffix:semicolon
+)brace
+macro_line|#endif /* IDETAPE_DEBUG_BUGS */
 id|rq-&gt;sem
 op_assign
 op_amp
 id|sem
-suffix:semicolon
-id|restore_flags
-(paren
-id|flags
-)paren
 suffix:semicolon
 id|down
 (paren
@@ -8428,7 +8920,7 @@ r_struct
 id|request
 id|rq
 suffix:semicolon
-macro_line|#if IDETAPE_DEBUG
+macro_line|#if IDETAPE_DEBUG_LOG
 id|printk
 (paren
 l_string|&quot;idetape_queue_rw_tail: cmd=%d&bslash;n&quot;
@@ -8436,7 +8928,7 @@ comma
 id|cmd
 )paren
 suffix:semicolon
-macro_line|#endif /* IDETAPE_DEBUG */
+macro_line|#endif /* IDETAPE_DEBUG_LOG */
 multiline_comment|/* build up a special read request, and add it to the queue */
 id|ide_init_drive_cmd
 (paren
@@ -8469,13 +8961,6 @@ op_assign
 l_int|NULL
 suffix:semicolon
 multiline_comment|/* Non-pipelined mode */
-macro_line|#if IDETAPE_DEBUG
-id|printk
-(paren
-l_string|&quot;Using ide_tail&bslash;n&quot;
-)paren
-suffix:semicolon
-macro_line|#endif /* IDETAPE_DEBUG */
 r_return
 id|ide_do_drive_cmd
 (paren
@@ -8488,17 +8973,14 @@ id|ide_wait
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;idetape_add_chrdev_write_request tries to add a character device&n; *&t;originated write request to our pipeline. In case we don&squot;t succeed,&n; *&t;we revert to non-piplined operation mode for this request.&n; *&n; *&t;1.&t;Try to allocate a new pipeline stage.&n; *&t;2.&t;If we can&squot;t, wait for more and more requests to be serviced&n; *&t;&t;and try again each time.&n; *&t;3.&t;If we still can&squot;t allocate a stage, fallback to&n; *&t;&t;non-pipelined operation mode for this request.&n; */
-DECL|function|idetape_add_chrdev_write_request
+multiline_comment|/*&n; *&t;idetape_add_chrdev_read_request handles character device read requests&n; *&t;when operating in the pipelined operation mode.&n; */
+DECL|function|idetape_add_chrdev_read_request
 r_int
-id|idetape_add_chrdev_write_request
+id|idetape_add_chrdev_read_request
 (paren
 id|ide_drive_t
 op_star
 id|drive
-comma
-r_int
-id|cmd
 comma
 r_int
 id|blocks
@@ -8521,23 +9003,250 @@ id|idetape_pipeline_stage_t
 op_star
 id|new_stage
 suffix:semicolon
+r_int
+r_int
+id|flags
+suffix:semicolon
+r_struct
+id|request
+id|rq
+suffix:semicolon
+r_int
+id|errors
+suffix:semicolon
+macro_line|#if IDETAPE_DEBUG_LOG
+id|printk
+(paren
+l_string|&quot;Reached idetape_add_chrdev_read_request&bslash;n&quot;
+)paren
+suffix:semicolon
+macro_line|#endif /* IDETAPE_DEBUG_LOG */
+id|ide_init_drive_cmd
+(paren
+op_amp
+id|rq
+)paren
+suffix:semicolon
+id|rq.cmd
+op_assign
+id|IDETAPE_READ_REQUEST
+suffix:semicolon
+id|rq.sector
+op_assign
+id|tape-&gt;block_address
+suffix:semicolon
+id|rq.nr_sectors
+op_assign
+id|blocks
+suffix:semicolon
+id|rq.current_nr_sectors
+op_assign
+id|blocks
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|tape-&gt;current_number_of_stages
+OL
+l_float|0.5
+op_star
+id|tape-&gt;max_number_of_stages
+)paren
+(brace
+id|new_stage
+op_assign
+id|idetape_kmalloc_stage
+(paren
+id|drive
+)paren
+suffix:semicolon
+r_while
+c_loop
+(paren
+id|new_stage
+op_ne
+l_int|NULL
+)paren
+(brace
+id|new_stage-&gt;rq
+op_assign
+id|rq
+suffix:semicolon
+id|save_flags
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|cli
+(paren
+)paren
+suffix:semicolon
+id|idetape_add_stage_tail
+(paren
+id|drive
+comma
+id|new_stage
+)paren
+suffix:semicolon
+id|restore_flags
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|new_stage
+op_assign
+id|idetape_kmalloc_stage
+(paren
+id|drive
+)paren
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|tape-&gt;active_data_request
+op_eq
+l_int|NULL
+)paren
+id|idetape_insert_pipeline_into_queue
+(paren
+id|drive
+)paren
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|tape-&gt;first_stage
+op_eq
+l_int|NULL
+)paren
+(brace
+multiline_comment|/*&n;&t;&t; *&t;Linux is short on memory. Revert to non-pipelined&n;&t;&t; *&t;operation mode for this request.&n;&t;&t; */
+r_return
+(paren
+id|idetape_queue_rw_tail
+(paren
+id|drive
+comma
+id|IDETAPE_READ_REQUEST
+comma
+id|blocks
+comma
+id|buffer
+)paren
+)paren
+suffix:semicolon
+)brace
+id|save_flags
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|cli
+(paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|tape-&gt;active_data_request
+op_eq
+op_amp
+(paren
+id|tape-&gt;first_stage-&gt;rq
+)paren
+)paren
+id|idetape_wait_for_request
+(paren
+id|tape-&gt;active_data_request
+)paren
+suffix:semicolon
+id|restore_flags
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|errors
+op_assign
+id|tape-&gt;first_stage-&gt;rq.errors
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|errors
+)paren
+id|idetape_copy_buffer_from_stage
+(paren
+id|tape-&gt;first_stage
+comma
+id|buffer
+)paren
+suffix:semicolon
+id|idetape_remove_stage_head
+(paren
+id|drive
+)paren
+suffix:semicolon
+r_return
+(paren
+id|errors
+ques
+c_cond
+op_minus
+id|EIO
+suffix:colon
+l_int|0
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/*&n; *&t;idetape_add_chrdev_write_request tries to add a character device&n; *&t;originated write request to our pipeline. In case we don&squot;t succeed,&n; *&t;we revert to non-piplined operation mode for this request.&n; *&n; *&t;1.&t;Try to allocate a new pipeline stage.&n; *&t;2.&t;If we can&squot;t, wait for more and more requests to be serviced&n; *&t;&t;and try again each time.&n; *&t;3.&t;If we still can&squot;t allocate a stage, fallback to&n; *&t;&t;non-pipelined operation mode for this request.&n; */
+DECL|function|idetape_add_chrdev_write_request
+r_int
+id|idetape_add_chrdev_write_request
+(paren
+id|ide_drive_t
+op_star
+id|drive
+comma
+r_int
+id|blocks
+comma
+r_char
+op_star
+id|buffer
+)paren
+(brace
+id|idetape_tape_t
+op_star
+id|tape
+op_assign
+op_amp
+(paren
+id|drive-&gt;tape
+)paren
+suffix:semicolon
+id|idetape_pipeline_stage_t
+op_star
+id|new_stage
+suffix:semicolon
+r_int
+r_int
+id|flags
+suffix:semicolon
 r_struct
 id|request
 op_star
 id|rq
 suffix:semicolon
-macro_line|#if IDETAPE_DEBUG
+macro_line|#if IDETAPE_DEBUG_LOG
 id|printk
 (paren
 l_string|&quot;Reached idetape_add_chrdev_write_request&bslash;n&quot;
 )paren
 suffix:semicolon
-id|printk
-(paren
-l_string|&quot;Trying to allocate stage - &quot;
-)paren
-suffix:semicolon
-macro_line|#endif /* IDETAPE_DEBUG */
+macro_line|#endif /* IDETAPE_DEBUG_LOG */
 r_if
 c_cond
 (paren
@@ -8566,27 +9275,31 @@ op_eq
 l_int|NULL
 )paren
 (brace
-multiline_comment|/*&n;&t;&t; *&t;Wait for the time in which we can safely inspect&n;&t;&t; *&t;tape-&gt;first_stage.&n;&t;&t; */
-r_while
-c_loop
+id|save_flags
 (paren
-id|tape-&gt;pipeline_locked
+id|flags
+)paren
+suffix:semicolon
+id|cli
+(paren
 )paren
 suffix:semicolon
 r_if
 c_cond
 (paren
-id|tape-&gt;first_stage
+id|tape-&gt;active_data_request
 op_ne
 l_int|NULL
 )paren
 (brace
 id|idetape_wait_for_request
 (paren
-op_amp
-(paren
-id|tape-&gt;first_stage-&gt;rq
+id|tape-&gt;active_data_request
 )paren
+suffix:semicolon
+id|restore_flags
+(paren
+id|flags
 )paren
 suffix:semicolon
 id|new_stage
@@ -8598,29 +9311,11 @@ id|drive
 suffix:semicolon
 )brace
 r_else
-r_break
-suffix:semicolon
-multiline_comment|/* Linux is short on memory */
-)brace
-multiline_comment|/*&n;&t; *&t;If we don&squot;t have a new_stage, fallback to non-pipelined&n;&t; *&t;operation mode for this request.&n;&t; */
-r_if
-c_cond
-(paren
-id|new_stage
-op_eq
-l_int|NULL
-)paren
 (brace
-r_if
-c_cond
+multiline_comment|/*&n;&t;&t;&t; *&t;Linux is short on memory. Fallback to&n;&t;&t;&t; *&t;non-pipelined operation mode for this request.&n;&t;&t;&t; */
+id|restore_flags
 (paren
-id|tape-&gt;active_data_request
-op_ne
-l_int|NULL
-)paren
-id|idetape_wait_for_request
-(paren
-id|tape-&gt;active_data_request
+id|flags
 )paren
 suffix:semicolon
 r_return
@@ -8629,7 +9324,7 @@ id|idetape_queue_rw_tail
 (paren
 id|drive
 comma
-id|cmd
+id|IDETAPE_WRITE_REQUEST
 comma
 id|blocks
 comma
@@ -8637,6 +9332,7 @@ id|buffer
 )paren
 )paren
 suffix:semicolon
+)brace
 )brace
 id|rq
 op_assign
@@ -8650,14 +9346,9 @@ id|ide_init_drive_cmd
 id|rq
 )paren
 suffix:semicolon
-id|rq-&gt;buffer
-op_assign
-l_int|NULL
-suffix:semicolon
-multiline_comment|/* We will correct this when we will actually service the request */
 id|rq-&gt;cmd
 op_assign
-id|cmd
+id|IDETAPE_WRITE_REQUEST
 suffix:semicolon
 id|rq-&gt;sector
 op_assign
@@ -8679,11 +9370,44 @@ comma
 id|buffer
 )paren
 suffix:semicolon
+id|save_flags
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|cli
+(paren
+)paren
+suffix:semicolon
 id|idetape_add_stage_tail
 (paren
 id|drive
 comma
 id|new_stage
+)paren
+suffix:semicolon
+id|restore_flags
+(paren
+id|flags
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t; *&t;Check if we are currently servicing requests in the bottom&n;&t; *&t;part of the driver.&n;&t; *&n;&t; *&t;If not, wait for the pipeline to be full enough (75%) before&n;&t; *&t;starting to service requests, so that we will be able to&n;&t; *&t;keep up with the higher speeds of the tape.&n;&t; */
+r_if
+c_cond
+(paren
+id|tape-&gt;active_data_request
+op_eq
+l_int|NULL
+op_logical_and
+id|tape-&gt;current_number_of_stages
+op_ge
+l_float|0.75
+op_star
+id|tape-&gt;max_number_of_stages
+)paren
+id|idetape_insert_pipeline_into_queue
+(paren
+id|drive
 )paren
 suffix:semicolon
 r_return
@@ -8692,9 +9416,9 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
-DECL|function|idetape_empty_pipeline
+DECL|function|idetape_empty_read_pipeline
 r_void
-id|idetape_empty_pipeline
+id|idetape_empty_read_pipeline
 (paren
 id|ide_drive_t
 op_star
@@ -8710,16 +9434,131 @@ op_amp
 id|drive-&gt;tape
 )paren
 suffix:semicolon
-id|tape-&gt;pipeline_was_full_once
+r_int
+r_int
+id|flags
+suffix:semicolon
+macro_line|#if IDETAPE_DEBUG_BUGS
+r_if
+c_cond
+(paren
+id|tape-&gt;chrdev_direction
+op_ne
+id|idetape_direction_read
+)paren
+(brace
+id|printk
+(paren
+l_string|&quot;ide-tape: bug: Trying to empty read pipeline, but we are not reading.&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+macro_line|#endif /* IDETAPE_DEBUG_BUGS */
+r_if
+c_cond
+(paren
+id|tape-&gt;first_stage
+op_eq
+l_int|NULL
+)paren
+r_return
+suffix:semicolon
+id|save_flags
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|cli
+(paren
+)paren
+suffix:semicolon
+id|tape-&gt;next_stage
 op_assign
-l_int|0
+l_int|NULL
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|tape-&gt;active_data_request
+op_ne
+l_int|NULL
+)paren
+id|idetape_wait_for_request
+(paren
+id|tape-&gt;active_data_request
+)paren
+suffix:semicolon
+id|restore_flags
+(paren
+id|flags
+)paren
 suffix:semicolon
 r_while
 c_loop
 (paren
-id|tape-&gt;pipeline_locked
+id|tape-&gt;first_stage
+op_ne
+l_int|NULL
+)paren
+id|idetape_remove_stage_head
+(paren
+id|drive
 )paren
 suffix:semicolon
+macro_line|#if IDETAPE_PIPELINE
+id|tape-&gt;max_number_of_stages
+op_assign
+id|IDETAPE_MIN_PIPELINE_STAGES
+suffix:semicolon
+macro_line|#else
+id|tape-&gt;max_number_of_stages
+op_assign
+l_int|0
+suffix:semicolon
+macro_line|#endif /* IDETAPE_PIPELINE */
+)brace
+DECL|function|idetape_empty_write_pipeline
+r_void
+id|idetape_empty_write_pipeline
+(paren
+id|ide_drive_t
+op_star
+id|drive
+)paren
+(brace
+id|idetape_tape_t
+op_star
+id|tape
+op_assign
+op_amp
+(paren
+id|drive-&gt;tape
+)paren
+suffix:semicolon
+r_int
+r_int
+id|flags
+suffix:semicolon
+macro_line|#if IDETAPE_DEBUG_BUGS
+r_if
+c_cond
+(paren
+id|tape-&gt;chrdev_direction
+op_ne
+id|idetape_direction_write
+)paren
+(brace
+id|printk
+(paren
+l_string|&quot;ide-tape: bug: Trying to empty write pipeline, but we are not writing.&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+macro_line|#endif /* IDETAPE_DEBUG_BUGS */
 r_if
 c_cond
 (paren
@@ -8730,6 +9569,15 @@ l_int|NULL
 id|idetape_insert_pipeline_into_queue
 (paren
 id|drive
+)paren
+suffix:semicolon
+id|save_flags
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|cli
+(paren
 )paren
 suffix:semicolon
 r_if
@@ -8760,6 +9608,11 @@ id|idetape_wait_for_request
 id|tape-&gt;active_data_request
 )paren
 suffix:semicolon
+id|restore_flags
+(paren
+id|flags
+)paren
+suffix:semicolon
 id|tape-&gt;error_in_pipeline_stage
 op_assign
 l_int|0
@@ -8776,11 +9629,15 @@ op_assign
 l_int|0
 suffix:semicolon
 macro_line|#endif /* IDETAPE_PIPELINE */
-macro_line|#if IDETAPE_DEBUG
+macro_line|#if IDETAPE_DEBUG_BUGS
 r_if
 c_cond
 (paren
 id|tape-&gt;first_stage
+op_ne
+l_int|NULL
+op_logical_or
+id|tape-&gt;next_stage
 op_ne
 l_int|NULL
 op_logical_or
@@ -8799,7 +9656,7 @@ l_string|&quot;ide-tape: ide-tape pipeline bug&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif /* IDETAPE_DEBUG */
+macro_line|#endif /* IDETAPE_DEBUG_BUGS */
 )brace
 multiline_comment|/*&n; *&t;idetape_zero_packet_command just zeros a packet command and&n; *&t;sets the number of retries to 0, as we haven&squot;t retried it yet.&n; */
 DECL|function|idetape_zero_packet_command
@@ -8836,6 +9693,12 @@ op_assign
 l_int|0
 suffix:semicolon
 id|pc-&gt;retries
+op_assign
+l_int|0
+suffix:semicolon
+id|pc
+op_member_access_from_pointer
+m_abort
 op_assign
 l_int|0
 suffix:semicolon
@@ -8994,7 +9857,7 @@ op_amp
 id|drive-&gt;tape
 )paren
 suffix:semicolon
-macro_line|#if IDETAPE_DEBUG
+macro_line|#if IDETAPE_DEBUG_LOG
 id|printk
 (paren
 l_string|&quot;ide-tape: pc_stack_index=%d&bslash;n&quot;
@@ -9002,7 +9865,7 @@ comma
 id|tape-&gt;pc_stack_index
 )paren
 suffix:semicolon
-macro_line|#endif /* IDETAPE_DEBUG */
+macro_line|#endif /* IDETAPE_DEBUG_LOG */
 r_if
 c_cond
 (paren
@@ -9051,7 +9914,7 @@ op_amp
 id|drive-&gt;tape
 )paren
 suffix:semicolon
-macro_line|#if IDETAPE_DEBUG
+macro_line|#if IDETAPE_DEBUG_LOG
 id|printk
 (paren
 l_string|&quot;ide-tape: rq_stack_index=%d&bslash;n&quot;
@@ -9059,7 +9922,7 @@ comma
 id|tape-&gt;rq_stack_index
 )paren
 suffix:semicolon
-macro_line|#endif /* IDETAPE_DEBUG */
+macro_line|#endif /* IDETAPE_DEBUG_LOG */
 r_if
 c_cond
 (paren
@@ -9123,17 +9986,16 @@ id|flags
 )paren
 suffix:semicolon
 id|cli
-c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#if IDETAPE_DEBUG
+macro_line|#if IDETAPE_DEBUG_LOG
 id|printk
 (paren
 l_string|&quot;Reached idetape_blkdev_open&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#endif /* IDETAPE_DEBUG */
+macro_line|#endif /* IDETAPE_DEBUG_LOG */
 r_if
 c_cond
 (paren
@@ -9201,20 +10063,19 @@ r_int
 r_int
 id|flags
 suffix:semicolon
-macro_line|#if IDETAPE_DEBUG
+macro_line|#if IDETAPE_DEBUG_LOG
 id|printk
 (paren
 l_string|&quot;Reached idetape_blkdev_release&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#endif /* IDETAPE_DEBUG */
+macro_line|#endif /* IDETAPE_DEBUG_LOG */
 id|save_flags
 (paren
 id|flags
 )paren
 suffix:semicolon
 id|cli
-c_func
 (paren
 )paren
 suffix:semicolon
@@ -9231,75 +10092,7 @@ r_return
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;Character device interface functions&n; */
-multiline_comment|/*&n; *&t;lseek is currently not installed.&n; */
-DECL|function|idetape_chrdev_lseek
-r_int
-id|idetape_chrdev_lseek
-(paren
-r_struct
-id|inode
-op_star
-id|inode
-comma
-r_struct
-id|file
-op_star
-id|file
-comma
-id|off_t
-id|offset
-comma
-r_int
-id|origin
-)paren
-(brace
-id|ide_drive_t
-op_star
-id|drive
-suffix:semicolon
-macro_line|#if IDETAPE_DEBUG
-id|printk
-(paren
-l_string|&quot;Reached idetape_chrdev_lseek&bslash;n&quot;
-)paren
-suffix:semicolon
-macro_line|#endif /* IDETAPE_DEBUG */
-id|drive
-op_assign
-id|idetape_chrdev.drive
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|idetape_position_tape
-(paren
-id|drive
-comma
-id|offset
-)paren
-op_ne
-l_int|0
-)paren
-(brace
-id|printk
-(paren
-l_string|&quot;ide-tape: Rewinding tape failed&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-(paren
-op_minus
-l_int|1
-)paren
-suffix:semicolon
-)brace
-r_return
-(paren
-l_int|0
-)paren
-suffix:semicolon
-)brace
-multiline_comment|/*&n; *&t;Our character device read / write functions.&n; *&n; *&t;The tape is optimized to maximize throughput when it is transfering&n; *&t;an integral number of the &quot;continous transfer limit&quot;, which is&n; *&t;a parameter of the specific tape (26 KB on my particular tape). The&n; *&t;resulting increase in performance should be dramatical. In the&n; *&t;character device read/write functions, we split the current&n; *&t;request to units of the above size, and handle the remaining bytes&n; *&t;in some other sub-functions.&n; *&n; *&t;In case the count number is not even an integral number of the tape&n; *&t;block size (usually 512 or 1024 bytes), we will pad the transfer with&n; *&t;zeroes (write) or read the entire block and return only the requested&n; *&t;bytes (but the tape will be in the &quot;wrong&quot; position). Do not supply&n; *&t;such a count value unless you are going to close the device right&n; *&t;after this request.&n; *&n; *&t;Again, for best results use an integral number of the tape&squot;s parameter&n; *&t;(which is displayed in the driver installation stage). I will soon&n; *&t;add an ioctl to get this important parameter.&n; */
+multiline_comment|/*&n; *&t;Our character device read / write functions.&n; *&n; *&t;The tape is optimized to maximize throughput when it is transfering&n; *&t;an integral number of the &quot;continous transfer limit&quot;, which is&n; *&t;a parameter of the specific tape (26 KB on my particular tape). The&n; *&t;resulting increase in performance should be dramatical. In the&n; *&t;character device read/write functions, we split the current&n; *&t;request to units of the above size, and handle the remaining bytes&n; *&t;in some other sub-functions.&n; *&n; *&t;In case the count number is not even an integral number of the tape&n; *&t;block size (usually 512 or 1024 bytes), we will pad the transfer with&n; *&t;zeroes (write) or read the entire block and return only the requested&n; *&t;bytes (but the tape will be in the &quot;wrong&quot; position). Do not supply&n; *&t;such a count value unless you are going to close the device right&n; *&t;after this request.&n; *&n; *&t;Again, for best results use an integral number of the tape&squot;s parameter&n; *&t;(which is displayed in the driver installation stage and is returned&n; *&t; by the MTIOCGET ioctl).&n; */
 multiline_comment|/*&n; *&t;Our character device read function.&n; */
 DECL|function|idetape_chrdev_read
 r_int
@@ -9326,10 +10119,17 @@ id|count
 id|ide_drive_t
 op_star
 id|drive
+op_assign
+id|idetape_chrdev.drive
 suffix:semicolon
 id|idetape_tape_t
 op_star
 id|tape
+op_assign
+op_amp
+(paren
+id|drive-&gt;tape
+)paren
 suffix:semicolon
 r_int
 id|blocks
@@ -9337,8 +10137,6 @@ comma
 id|remainder
 comma
 id|retval
-comma
-id|ctl_bytes
 suffix:semicolon
 r_char
 op_star
@@ -9350,28 +10148,70 @@ id|previous_block_address
 comma
 id|actually_read
 suffix:semicolon
-macro_line|#if IDETAPE_DEBUG
+macro_line|#if IDETAPE_DEBUG_LOG
 id|printk
 (paren
 l_string|&quot;Reached idetape_chrdev_read&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#endif /* IDETAPE_DEBUG */
-id|drive
-op_assign
-id|idetape_chrdev.drive
-suffix:semicolon
-id|tape
-op_assign
-op_amp
+macro_line|#endif /* IDETAPE_DEBUG_LOG */
+r_if
+c_cond
 (paren
-id|drive-&gt;tape
+id|tape-&gt;chrdev_direction
+op_ne
+id|idetape_direction_read
+)paren
+(brace
+multiline_comment|/* Initialize read operation */
+r_if
+c_cond
+(paren
+id|tape-&gt;chrdev_direction
+op_eq
+id|idetape_direction_write
+)paren
+(brace
+id|idetape_empty_write_pipeline
+(paren
+id|drive
 )paren
 suffix:semicolon
-id|tape-&gt;last_dt_was_write
-op_assign
-l_int|0
+id|idetape_flush_tape_buffers
+(paren
+id|drive
+)paren
 suffix:semicolon
+)brace
+multiline_comment|/*&n;&t;&t; *&t;Issue a read 0 command to ensure that DSC handshake&n;&t;&t; *&t;is switched from completion mode to buffer available&n;&t;&t; *&t;mode.&n;&t;&t; */
+id|retval
+op_assign
+id|idetape_queue_rw_tail
+(paren
+id|drive
+comma
+id|IDETAPE_READ_REQUEST
+comma
+l_int|0
+comma
+id|tape-&gt;temp_data_buffer
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|retval
+)paren
+r_return
+(paren
+id|retval
+)paren
+suffix:semicolon
+id|tape-&gt;chrdev_direction
+op_assign
+id|idetape_direction_read
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -9392,23 +10232,17 @@ id|buf_ptr
 op_assign
 id|buf
 suffix:semicolon
-id|ctl_bytes
-op_assign
-id|tape-&gt;capabilities.ctl
-op_star
-id|tape-&gt;tape_block_size
-suffix:semicolon
 id|blocks
 op_assign
 id|count
 op_div
-id|ctl_bytes
+id|tape-&gt;data_buffer_size
 suffix:semicolon
 id|remainder
 op_assign
 id|count
 op_mod
-id|ctl_bytes
+id|tape-&gt;data_buffer_size
 suffix:semicolon
 r_while
 c_loop
@@ -9416,30 +10250,31 @@ c_loop
 id|blocks
 )paren
 (brace
-macro_line|#if IDETAPE_DEBUG
-id|printk
-(paren
-l_string|&quot;Adding a READ request to the block device request queue&bslash;n&quot;
-)paren
-suffix:semicolon
-macro_line|#endif /* IDETAPE_DEBUG */
 id|previous_block_address
 op_assign
 id|tape-&gt;block_address
 suffix:semicolon
 id|retval
 op_assign
-id|idetape_queue_rw_tail
+id|idetape_add_chrdev_read_request
 (paren
 id|drive
 comma
-id|IDETAPE_READ_REQUEST
-comma
 id|tape-&gt;capabilities.ctl
 comma
-id|tape-&gt;data_buffer
+id|tape-&gt;temp_data_buffer
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|tape-&gt;max_number_of_stages
+)paren
+id|actually_read
+op_add_assign
+id|tape-&gt;data_buffer_size
+suffix:semicolon
+r_else
 id|actually_read
 op_add_assign
 id|tape-&gt;tape_block_size
@@ -9456,38 +10291,35 @@ c_cond
 id|retval
 )paren
 (brace
-id|printk
+r_if
+c_cond
 (paren
-l_string|&quot;ide-tape: Error occured while reading&bslash;n&quot;
+id|tape-&gt;max_number_of_stages
+)paren
+r_return
+(paren
+l_int|0
 )paren
 suffix:semicolon
+r_else
 r_return
 (paren
 id|actually_read
 )paren
 suffix:semicolon
 )brace
-macro_line|#if IDETAPE_DEBUG
-id|printk
-(paren
-l_string|&quot;Copying %d bytes to the user space memory&bslash;n&quot;
-comma
-id|ctl_bytes
-)paren
-suffix:semicolon
-macro_line|#endif /* IDETAPE_DEBUG */
 id|memcpy_tofs
 (paren
 id|buf_ptr
 comma
-id|tape-&gt;data_buffer
+id|tape-&gt;temp_data_buffer
 comma
-id|ctl_bytes
+id|tape-&gt;data_buffer_size
 )paren
 suffix:semicolon
 id|buf_ptr
 op_add_assign
-id|ctl_bytes
+id|tape-&gt;data_buffer_size
 suffix:semicolon
 id|blocks
 op_decrement
@@ -9546,10 +10378,17 @@ id|count
 id|ide_drive_t
 op_star
 id|drive
+op_assign
+id|idetape_chrdev.drive
 suffix:semicolon
 id|idetape_tape_t
 op_star
 id|tape
+op_assign
+op_amp
+(paren
+id|drive-&gt;tape
+)paren
 suffix:semicolon
 r_int
 id|blocks
@@ -9564,40 +10403,13 @@ id|previous_block_address
 comma
 id|actually_read
 suffix:semicolon
-macro_line|#if IDETAPE_DEBUG
+macro_line|#if IDETAPE_DEBUG_LOG
 id|printk
 (paren
 l_string|&quot;Reached idetape_chrdev_read_remainder&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#endif /* IDETAPE_DEBUG */
-id|drive
-op_assign
-id|idetape_chrdev.drive
-suffix:semicolon
-id|tape
-op_assign
-op_amp
-(paren
-id|drive-&gt;tape
-)paren
-suffix:semicolon
-id|tape-&gt;last_dt_was_write
-op_assign
-l_int|0
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|count
-op_eq
-l_int|0
-)paren
-r_return
-(paren
-l_int|0
-)paren
-suffix:semicolon
+macro_line|#endif /* IDETAPE_DEBUG_LOG */
 id|blocks
 op_assign
 id|count
@@ -9616,39 +10428,37 @@ c_cond
 id|remainder
 )paren
 (brace
-macro_line|#if IDETAPE_DEBUG
+macro_line|#if IDETAPE_DEBUG_LOG
 id|printk
 (paren
 l_string|&quot;ide-tape: Padding read to block boundary&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#endif /* IDETAPE_DEBUG */
+macro_line|#endif /* IDETAPE_DEBUG_LOG */
 id|blocks
 op_increment
 suffix:semicolon
 )brace
-macro_line|#if IDETAPE_DEBUG
+macro_line|#if IDETAPE_DEBUG_LOG
 id|printk
 (paren
 l_string|&quot;Adding a READ request to the block device request queue&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#endif /* IDETAPE_DEBUG */
+macro_line|#endif /* IDETAPE_DEBUG_LOG */
 id|previous_block_address
 op_assign
 id|tape-&gt;block_address
 suffix:semicolon
 id|retval
 op_assign
-id|idetape_queue_rw_tail
+id|idetape_add_chrdev_read_request
 (paren
 id|drive
 comma
-id|IDETAPE_READ_REQUEST
-comma
 id|blocks
 comma
-id|tape-&gt;data_buffer
+id|tape-&gt;temp_data_buffer
 )paren
 suffix:semicolon
 r_if
@@ -9657,11 +10467,16 @@ c_cond
 id|retval
 )paren
 (brace
-id|printk
+r_if
+c_cond
 (paren
-l_string|&quot;ide-tape: Error occured while reading&bslash;n&quot;
+id|tape-&gt;max_number_of_stages
 )paren
+id|actually_read
+op_assign
+l_int|0
 suffix:semicolon
+r_else
 id|actually_read
 op_assign
 id|tape-&gt;tape_block_size
@@ -9694,7 +10509,7 @@ id|memcpy_tofs
 (paren
 id|buf
 comma
-id|tape-&gt;data_buffer
+id|tape-&gt;temp_data_buffer
 comma
 id|actually_read
 )paren
@@ -9705,7 +10520,7 @@ id|actually_read
 )paren
 suffix:semicolon
 )brace
-macro_line|#if IDETAPE_DEBUG
+macro_line|#if IDETAPE_DEBUG_LOG
 id|printk
 (paren
 l_string|&quot;Copying %d bytes to the user space memory&bslash;n&quot;
@@ -9713,12 +10528,12 @@ comma
 id|count
 )paren
 suffix:semicolon
-macro_line|#endif /* IDETAPE_DEBUG */
+macro_line|#endif /* IDETAPE_DEBUG_LOG */
 id|memcpy_tofs
 (paren
 id|buf
 comma
-id|tape-&gt;data_buffer
+id|tape-&gt;temp_data_buffer
 comma
 id|count
 )paren
@@ -9778,13 +10593,13 @@ id|previous_block_address
 comma
 id|actually_written
 suffix:semicolon
-macro_line|#if IDETAPE_DEBUG
+macro_line|#if IDETAPE_DEBUG_LOG
 id|printk
 (paren
 l_string|&quot;Reached idetape_chrdev_write&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#endif /* IDETAPE_DEBUG */
+macro_line|#endif /* IDETAPE_DEBUG_LOG */
 id|drive
 op_assign
 id|idetape_chrdev.drive
@@ -9796,10 +10611,56 @@ op_amp
 id|drive-&gt;tape
 )paren
 suffix:semicolon
-id|tape-&gt;last_dt_was_write
-op_assign
-l_int|1
+r_if
+c_cond
+(paren
+id|tape-&gt;chrdev_direction
+op_ne
+id|idetape_direction_write
+)paren
+(brace
+multiline_comment|/* Initialize write operation */
+r_if
+c_cond
+(paren
+id|tape-&gt;chrdev_direction
+op_eq
+id|idetape_direction_read
+)paren
+id|idetape_empty_read_pipeline
+(paren
+id|drive
+)paren
 suffix:semicolon
+multiline_comment|/*&n;&t;&t; *&t;Issue a write 0 command to ensure that DSC handshake&n;&t;&t; *&t;is switched from completion mode to buffer available&n;&t;&t; *&t;mode.&n;&t;&t; */
+id|retval
+op_assign
+id|idetape_queue_rw_tail
+(paren
+id|drive
+comma
+id|IDETAPE_WRITE_REQUEST
+comma
+l_int|0
+comma
+id|tape-&gt;temp_data_buffer
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|retval
+)paren
+r_return
+(paren
+id|retval
+)paren
+suffix:semicolon
+id|tape-&gt;chrdev_direction
+op_assign
+id|idetape_direction_write
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -9861,8 +10722,6 @@ id|idetape_add_chrdev_write_request
 (paren
 id|drive
 comma
-id|IDETAPE_WRITE_REQUEST
-comma
 id|tape-&gt;capabilities.ctl
 comma
 id|tape-&gt;temp_data_buffer
@@ -9895,11 +10754,6 @@ c_cond
 id|retval
 )paren
 (brace
-id|printk
-(paren
-l_string|&quot;ide-tape: Error occured while writing&bslash;n&quot;
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -9997,13 +10851,13 @@ id|previous_block_address
 comma
 id|actually_written
 suffix:semicolon
-macro_line|#if IDETAPE_DEBUG
+macro_line|#if IDETAPE_DEBUG_LOG
 id|printk
 (paren
 l_string|&quot;Reached idetape_chrdev_write_remainder&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#endif /* IDETAPE_DEBUG */
+macro_line|#endif /* IDETAPE_DEBUG_LOG */
 id|drive
 op_assign
 id|idetape_chrdev.drive
@@ -10035,7 +10889,7 @@ id|remainder
 id|blocks
 op_increment
 suffix:semicolon
-macro_line|#if IDETAPE_DEBUG
+macro_line|#if IDETAPE_DEBUG_LOG
 id|printk
 (paren
 l_string|&quot;Copying %d bytes from the user space memory&bslash;n&quot;
@@ -10043,7 +10897,7 @@ comma
 id|count
 )paren
 suffix:semicolon
-macro_line|#endif /* IDETAPE_DEBUG */
+macro_line|#endif /* IDETAPE_DEBUG_LOG */
 id|memcpy_fromfs
 (paren
 id|tape-&gt;temp_data_buffer
@@ -10059,13 +10913,13 @@ c_cond
 id|remainder
 )paren
 (brace
-macro_line|#if IDETAPE_DEBUG
+macro_line|#if IDETAPE_DEBUG_LOG
 id|printk
 (paren
 l_string|&quot;ide-tape: Padding written data to block boundary&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#endif /* IDETAPE_DEBUG */
+macro_line|#endif /* IDETAPE_DEBUG_LOG */
 id|ptr
 op_assign
 id|tape-&gt;temp_data_buffer
@@ -10088,13 +10942,13 @@ id|remainder
 )paren
 suffix:semicolon
 )brace
-macro_line|#if IDETAPE_DEBUG
+macro_line|#if IDETAPE_DEBUG_LOG
 id|printk
 (paren
 l_string|&quot;Adding a WRITE request to the block device request queue&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#endif /* IDETAPE_DEBUG */
+macro_line|#endif /* IDETAPE_DEBUG_LOG */
 id|previous_block_address
 op_assign
 id|tape-&gt;block_address
@@ -10104,8 +10958,6 @@ op_assign
 id|idetape_add_chrdev_write_request
 (paren
 id|drive
-comma
-id|IDETAPE_WRITE_REQUEST
 comma
 id|blocks
 comma
@@ -10118,11 +10970,6 @@ c_cond
 id|retval
 )paren
 (brace
-id|printk
-(paren
-l_string|&quot;ide-tape: Error occured while writing&bslash;n&quot;
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -10166,7 +11013,7 @@ id|count
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;Our character device ioctls.&n; *&n; *&t;General mtio.h magnetic io commands are supported here, and not in&n; *&t;the correspoding block interface.&n; *&n; *&t;Our own ide-tape ioctls are supported on both interfaces.&n; */
+multiline_comment|/*&n; *&t;Our character device ioctls.&n; *&n; *&t;General mtio.h magnetic io commands are supported here, and not in&n; *&t;the correspoding block interface.&n; *&n; *&t;The following ioctls are supported:&n; *&n; *&t;MTIOCTOP -&t;Refer to idetape_mtioctop for detailed description.&n; *&n; *&t;MTIOCGET - &t;The mt_dsreg field in the returned mtget structure&n; *&t;&t;&t;will be set to (recommended block size &lt;&lt;&n; *&t;&t;&t;MT_ST_BLKSIZE_SHIFT) &amp; MT_ST_BLKSIZE_MASK, which&n; *&t;&t;&t;is currently equal to the size itself.&n; *&t;&t;&t;The other mtget fields are not supported.&n; *&n; *&t;&t;&t;Note that we do not actually return the tape&squot;s&n; *&t;&t;&t;block size. Rather, we provide the recommended&n; *&t;&t;&t;number of bytes which sould be used as a &quot;user&n; *&t;&t;&t;block size&quot; with the character device read/write&n; *&t;&t;&t;functions to maximize throughput.&n; *&n; *&t;MTIOCPOS -&t;The current tape &quot;position&quot; is returned.&n; *&t;&t;&t;(A unique number which can be used with the MTSEEK&n; *&t;&t;&t; operation to return to this position in some&n; *&t;&t;&t; future time, provided this place was not overwritten&n; *&t;&t;&t; meanwhile).&n; *&n; *&t;Our own ide-tape ioctls are supported on both interfaces.&n; */
 DECL|function|idetape_chrdev_ioctl
 r_int
 id|idetape_chrdev_ioctl
@@ -10190,18 +11037,40 @@ r_int
 id|arg
 )paren
 (brace
+id|ide_drive_t
+op_star
+id|drive
+op_assign
+id|idetape_chrdev.drive
+suffix:semicolon
+id|idetape_tape_t
+op_star
+id|tape
+op_assign
+op_amp
+(paren
+id|drive-&gt;tape
+)paren
+suffix:semicolon
+id|idetape_packet_command_t
+id|pc
+suffix:semicolon
 r_struct
 id|mtop
 id|mtop
 suffix:semicolon
-id|ide_drive_t
-op_star
-id|drive
+r_struct
+id|mtget
+id|mtget
+suffix:semicolon
+r_struct
+id|mtpos
+id|mtpos
 suffix:semicolon
 r_int
 id|retval
 suffix:semicolon
-macro_line|#if IDETAPE_DEBUG
+macro_line|#if IDETAPE_DEBUG_LOG
 id|printk
 (paren
 l_string|&quot;Reached idetape_chrdev_ioctl, cmd=%u&bslash;n&quot;
@@ -10209,10 +11078,66 @@ comma
 id|cmd
 )paren
 suffix:semicolon
-macro_line|#endif
+macro_line|#endif /* IDETAPE_DEBUG_LOG */
+r_if
+c_cond
+(paren
+id|tape-&gt;chrdev_direction
+op_eq
+id|idetape_direction_write
+)paren
+(brace
+id|idetape_empty_write_pipeline
+(paren
 id|drive
+)paren
+suffix:semicolon
+id|idetape_flush_tape_buffers
+(paren
+id|drive
+)paren
+suffix:semicolon
+id|tape-&gt;chrdev_direction
 op_assign
-id|idetape_chrdev.drive
+id|idetape_direction_none
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|tape-&gt;chrdev_direction
+op_eq
+id|idetape_direction_read
+)paren
+r_if
+c_cond
+(paren
+id|cmd
+op_ne
+id|MTIOCTOP
+)paren
+(brace
+id|idetape_empty_read_pipeline
+(paren
+id|drive
+)paren
+suffix:semicolon
+id|tape-&gt;chrdev_direction
+op_assign
+id|idetape_direction_none
+suffix:semicolon
+)brace
+id|pc.buffer
+op_assign
+id|pc.temp_buffer
+suffix:semicolon
+id|pc.buffer_size
+op_assign
+id|IDETAPE_TEMP_BUFFER_SIZE
+suffix:semicolon
+id|pc.current_position
+op_assign
+id|pc.temp_buffer
 suffix:semicolon
 r_switch
 c_cond
@@ -10286,6 +11211,164 @@ id|mtop.mt_count
 )paren
 )paren
 suffix:semicolon
+r_case
+id|MTIOCGET
+suffix:colon
+id|mtget.mt_dsreg
+op_assign
+(paren
+id|tape-&gt;data_buffer_size
+op_lshift
+id|MT_ST_BLKSIZE_SHIFT
+)paren
+op_amp
+id|MT_ST_BLKSIZE_MASK
+suffix:semicolon
+id|retval
+op_assign
+id|verify_area
+(paren
+id|VERIFY_WRITE
+comma
+(paren
+r_char
+op_star
+)paren
+id|arg
+comma
+r_sizeof
+(paren
+r_struct
+id|mtget
+)paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|retval
+)paren
+r_return
+(paren
+id|retval
+)paren
+suffix:semicolon
+id|memcpy_tofs
+(paren
+(paren
+r_char
+op_star
+)paren
+id|arg
+comma
+(paren
+r_char
+op_star
+)paren
+op_amp
+id|mtget
+comma
+r_sizeof
+(paren
+r_struct
+id|mtget
+)paren
+)paren
+suffix:semicolon
+r_return
+(paren
+l_int|0
+)paren
+suffix:semicolon
+r_case
+id|MTIOCPOS
+suffix:colon
+id|idetape_create_read_position_cmd
+(paren
+op_amp
+id|pc
+)paren
+suffix:semicolon
+id|retval
+op_assign
+id|idetape_queue_pc_tail
+(paren
+id|drive
+comma
+op_amp
+id|pc
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|retval
+)paren
+r_return
+(paren
+id|retval
+)paren
+suffix:semicolon
+id|mtpos.mt_blkno
+op_assign
+id|tape-&gt;block_address
+suffix:semicolon
+id|retval
+op_assign
+id|verify_area
+(paren
+id|VERIFY_WRITE
+comma
+(paren
+r_char
+op_star
+)paren
+id|arg
+comma
+r_sizeof
+(paren
+r_struct
+id|mtpos
+)paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|retval
+)paren
+r_return
+(paren
+id|retval
+)paren
+suffix:semicolon
+id|memcpy_tofs
+(paren
+(paren
+r_char
+op_star
+)paren
+id|arg
+comma
+(paren
+r_char
+op_star
+)paren
+op_amp
+id|mtpos
+comma
+r_sizeof
+(paren
+r_struct
+id|mtpos
+)paren
+)paren
+suffix:semicolon
+r_return
+(paren
+l_int|0
+)paren
+suffix:semicolon
 r_default
 suffix:colon
 r_return
@@ -10306,7 +11389,7 @@ id|arg
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n; *&t;idetape_mtioctop is called from idetape_chrdev_ioctl when&n; *&t;the general mtio MTIOCTOP ioctl is requested.&n; *&n; *&t;We currently support the following mtio.h operations:&n; *&n; *&t;MTFSF&t;-&t;Space over mt_count filemarks in the positive direction.&n; *&t;&t;&t;The tape is positioned after the last spaced filemark.&n; *&n; *&t;MTFSFM&t;-&t;Same as MTFSF, but the tape is positioned before the&n; *&t;&t;&t;last filemark.&n; *&n; *&t;MTBSF&t;-&t;Steps background over mt_count filemarks, tape is&n; *&t;&t;&t;positioned before the last filemark.&n; *&n; *&t;MTBSFM&t;-&t;Like MTBSF, only tape is positioned after the last filemark.&n; *&n; *&t;MTWEOF&t;-&t;Writes mt_count filemarks. Tape is positioned after&n; *&t;&t;&t;the last written filemark.&n; *&n; *&t;MTREW&t;-&t;Rewindes tape.&n; *&n; *&t;MTNOP&t;-&t;Flushes tape buffers.&n; *&n; *&t;MTEOM&t;-&t;Moves to the end of recorded data.&n; *&n; *&t;MTERASE&t;-&t;Erases tape.&n; *&n; *&t;The following commands are currently not supported:&n; *&n; *&t;MTFSR, MTBSR, MTFSS, MTBSS, MTWSM, MTOFFL, MTRETEN, MTSEEK, MTSETBLK,&n; *&t;MTSETDENSITY, MTSETDRVBUFFER, MT_ST_BOOLEANS, MT_ST_WRITE_THRESHOLD.&n; */
+multiline_comment|/*&n; *&t;idetape_mtioctop is called from idetape_chrdev_ioctl when&n; *&t;the general mtio MTIOCTOP ioctl is requested.&n; *&n; *&t;We currently support the following mtio.h operations:&n; *&n; *&t;MTFSF&t;-&t;Space over mt_count filemarks in the positive direction.&n; *&t;&t;&t;The tape is positioned after the last spaced filemark.&n; *&n; *&t;MTFSFM&t;-&t;Same as MTFSF, but the tape is positioned before the&n; *&t;&t;&t;last filemark.&n; *&n; *&t;MTBSF&t;-&t;Steps background over mt_count filemarks, tape is&n; *&t;&t;&t;positioned before the last filemark.&n; *&n; *&t;MTBSFM&t;-&t;Like MTBSF, only tape is positioned after the last filemark.&n; *&n; *&n; *&t;Note:&n; *&n; *&t;&t;MTBSF and MTBSFM are not supported when the tape doesn&squot;t&n; *&t;&t;supports spacing over filemarks in the reverse direction.&n; *&t;&t;In this case, MTFSFM is also usually not supported (it is&n; *&t;&t;supported in the rare case in which we crossed the filemark&n; *&t;&t;during our read-ahead pipelined operation mode).&n; *&t;&t;&n; *&t;MTWEOF&t;-&t;Writes mt_count filemarks. Tape is positioned after&n; *&t;&t;&t;the last written filemark.&n; *&n; *&t;MTREW&t;-&t;Rewindes tape.&n; *&n; *&t;MTOFFL&t;-&t;Puts the tape drive &quot;Offline&quot;: Rewinds the tape and&n; *&t;&t;&t;prevents further access until the media is replaced.&n; *&n; *&t;MTNOP&t;-&t;Flushes tape buffers.&n; *&n; *&t;MTRETEN&t;-&t;Retension media. This typically consists of one end&n; *&t;&t;&t;to end pass on the media.&n; *&n; *&t;MTEOM&t;-&t;Moves to the end of recorded data.&n; *&n; *&t;MTERASE&t;-&t;Erases tape.&n; *&n; *&t;MTSEEK&t;-&t;Positions the tape in a specific block number, which&n; *&t;&t;&t;was previously received using the MTIOCPOS ioctl,&n; *&t;&t;&t;assuming this place was not overwritten meanwhile.&n; *&n; *&t;The following commands are currently not supported:&n; *&n; *&t;MTFSR, MTBSR, MTFSS, MTBSS, MTWSM, MTSETBLK, MTSETDENSITY,&n; *&t;MTSETDRVBUFFER, MT_ST_BOOLEANS, MT_ST_WRITE_THRESHOLD.&n; */
 DECL|function|idetape_mtioctop
 r_int
 id|idetape_mtioctop
@@ -10322,13 +11405,22 @@ r_int
 id|mt_count
 )paren
 (brace
+id|idetape_tape_t
+op_star
+id|tape
+op_assign
+op_amp
+(paren
+id|drive-&gt;tape
+)paren
+suffix:semicolon
+id|idetape_packet_command_t
+id|pc
+suffix:semicolon
 r_int
 id|i
 comma
 id|retval
-suffix:semicolon
-id|idetape_packet_command_t
-id|pc
 suffix:semicolon
 id|pc.buffer
 op_assign
@@ -10342,35 +11434,18 @@ id|pc.current_position
 op_assign
 id|pc.temp_buffer
 suffix:semicolon
-id|idetape_create_write_filemark_cmd
+macro_line|#if IDETAPE_DEBUG_LOG
+id|printk
 (paren
-op_amp
-id|pc
+l_string|&quot;Handling MTIOCTOP ioctl: mt_op=%d, mt_count=%d&bslash;n&quot;
 comma
-l_int|0
-)paren
-suffix:semicolon
-multiline_comment|/* Flush buffers */
-id|retval
-op_assign
-id|idetape_queue_pc_tail
-(paren
-id|drive
+id|mt_op
 comma
-op_amp
-id|pc
+id|mt_count
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|retval
-)paren
-r_return
-(paren
-id|retval
-)paren
-suffix:semicolon
+macro_line|#endif /* IDETAPE_DEBUG_LOG */
+multiline_comment|/*&n;&t; *&t;Commands which need our pipelined read-ahead stages.&n;&t; */
 r_switch
 c_cond
 (paren
@@ -10380,162 +11455,60 @@ id|mt_op
 r_case
 id|MTFSF
 suffix:colon
-macro_line|#if IDETAPE_DEBUG
-id|printk
-(paren
-l_string|&quot;Handling MTFSF command&bslash;n&quot;
-)paren
-suffix:semicolon
-macro_line|#endif /* IDETAPE_DEBUG */
-id|idetape_create_space_cmd
-(paren
-op_amp
-id|pc
-comma
-id|mt_count
-comma
-id|IDETAPE_SPACE_OVER_FILEMARK
-)paren
-suffix:semicolon
-r_return
-(paren
-id|idetape_queue_pc_tail
-(paren
-id|drive
-comma
-op_amp
-id|pc
-)paren
-)paren
-suffix:semicolon
 r_case
 id|MTFSFM
 suffix:colon
-macro_line|#if IDETAPE_DEBUG
-id|printk
-(paren
-l_string|&quot;Handling MTFSFM command&bslash;n&quot;
-)paren
-suffix:semicolon
-macro_line|#endif /* IDETAPE_DEBUG */
-id|retval
-op_assign
-id|idetape_mtioctop
-(paren
-id|drive
-comma
-id|MTFSF
-comma
-id|mt_count
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|retval
-)paren
-r_return
-(paren
-id|retval
-)paren
-suffix:semicolon
-r_return
-(paren
-id|idetape_mtioctop
-(paren
-id|drive
-comma
-id|MTBSF
-comma
-l_int|1
-)paren
-)paren
-suffix:semicolon
 r_case
 id|MTBSF
 suffix:colon
-macro_line|#if IDETAPE_DEBUG
-id|printk
-(paren
-l_string|&quot;Handling MTBSF command&bslash;n&quot;
-)paren
-suffix:semicolon
-macro_line|#endif /* IDETAPE_DEBUG */
-id|idetape_create_space_cmd
-(paren
-op_amp
-id|pc
-comma
-op_minus
-id|mt_count
-comma
-id|IDETAPE_SPACE_OVER_FILEMARK
-)paren
-suffix:semicolon
-r_return
-(paren
-id|idetape_queue_pc_tail
-(paren
-id|drive
-comma
-op_amp
-id|pc
-)paren
-)paren
-suffix:semicolon
 r_case
 id|MTBSFM
 suffix:colon
-macro_line|#if IDETAPE_DEBUG
-id|printk
+r_return
 (paren
-l_string|&quot;Handling MTBSFM command&bslash;n&quot;
-)paren
-suffix:semicolon
-macro_line|#endif /* IDETAPE_DEBUG */
-id|retval
-op_assign
-id|idetape_mtioctop
+id|idetape_space_over_filemarks
 (paren
 id|drive
 comma
-id|MTBSF
+id|mt_op
 comma
 id|mt_count
 )paren
+)paren
 suffix:semicolon
+r_default
+suffix:colon
+r_break
+suffix:semicolon
+)brace
+multiline_comment|/*&n;&t; *&t;Empty the pipeline.&n;&t; */
 r_if
 c_cond
 (paren
-id|retval
+id|tape-&gt;chrdev_direction
+op_eq
+id|idetape_direction_read
 )paren
-r_return
-(paren
-id|retval
-)paren
-suffix:semicolon
-r_return
-(paren
-id|idetape_mtioctop
+(brace
+id|idetape_empty_read_pipeline
 (paren
 id|drive
-comma
-id|MTFSF
-comma
-l_int|1
-)paren
 )paren
 suffix:semicolon
+id|tape-&gt;chrdev_direction
+op_assign
+id|idetape_direction_none
+suffix:semicolon
+)brace
+r_switch
+c_cond
+(paren
+id|mt_op
+)paren
+(brace
 r_case
 id|MTWEOF
 suffix:colon
-macro_line|#if IDETAPE_DEBUG
-id|printk
-(paren
-l_string|&quot;Handling MTWEOF command&bslash;n&quot;
-)paren
-suffix:semicolon
-macro_line|#endif /* IDETAPE_DEBUG */
 r_for
 c_loop
 (paren
@@ -10588,13 +11561,6 @@ suffix:semicolon
 r_case
 id|MTREW
 suffix:colon
-macro_line|#if IDETAPE_DEBUG
-id|printk
-(paren
-l_string|&quot;Handling MTREW command&bslash;n&quot;
-)paren
-suffix:semicolon
-macro_line|#endif /* IDETAPE_DEBUG */
 r_return
 (paren
 id|idetape_rewind_tape
@@ -10604,21 +11570,50 @@ id|drive
 )paren
 suffix:semicolon
 r_case
-id|MTNOP
+id|MTOFFL
 suffix:colon
-macro_line|#if IDETAPE_DEBUG
-id|printk
-(paren
-l_string|&quot;Handling MTNOP command&bslash;n&quot;
-)paren
-suffix:semicolon
-macro_line|#endif /* IDETAPE_DEBUG */
-id|idetape_create_write_filemark_cmd
+id|idetape_create_load_unload_cmd
 (paren
 op_amp
 id|pc
 comma
-l_int|0
+op_logical_neg
+id|IDETAPE_LU_LOAD_MASK
+)paren
+suffix:semicolon
+r_return
+(paren
+id|idetape_queue_pc_tail
+(paren
+id|drive
+comma
+op_amp
+id|pc
+)paren
+)paren
+suffix:semicolon
+r_case
+id|MTNOP
+suffix:colon
+r_return
+(paren
+id|idetape_flush_tape_buffers
+(paren
+id|drive
+)paren
+)paren
+suffix:semicolon
+r_case
+id|MTRETEN
+suffix:colon
+id|idetape_create_load_unload_cmd
+(paren
+op_amp
+id|pc
+comma
+id|IDETAPE_LU_RETENSION_MASK
+op_or
+id|IDETAPE_LU_LOAD_MASK
 )paren
 suffix:semicolon
 r_return
@@ -10635,13 +11630,6 @@ suffix:semicolon
 r_case
 id|MTEOM
 suffix:colon
-macro_line|#if IDETAPE_DEBUG
-id|printk
-(paren
-l_string|&quot;Handling MTEOM command&bslash;n&quot;
-)paren
-suffix:semicolon
-macro_line|#endif /* IDETAPE_DEBUG */
 id|idetape_create_space_cmd
 (paren
 op_amp
@@ -10666,20 +11654,11 @@ suffix:semicolon
 r_case
 id|MTERASE
 suffix:colon
-macro_line|#if IDETAPE_DEBUG
-id|printk
-(paren
-l_string|&quot;Handling MTERASE command&bslash;n&quot;
-)paren
-suffix:semicolon
-macro_line|#endif /* IDETAPE_DEBUG */
 id|retval
 op_assign
-id|idetape_position_tape
+id|idetape_rewind_tape
 (paren
 id|drive
-comma
-l_int|0
 )paren
 suffix:semicolon
 r_if
@@ -10706,6 +11685,367 @@ id|drive
 comma
 op_amp
 id|pc
+)paren
+)paren
+suffix:semicolon
+r_case
+id|MTSEEK
+suffix:colon
+r_return
+(paren
+id|idetape_position_tape
+(paren
+id|drive
+comma
+id|mt_count
+)paren
+)paren
+suffix:semicolon
+r_default
+suffix:colon
+id|printk
+(paren
+l_string|&quot;ide-tape: MTIO operation %d not supported&bslash;n&quot;
+comma
+id|mt_op
+)paren
+suffix:semicolon
+r_return
+(paren
+op_minus
+id|EIO
+)paren
+suffix:semicolon
+)brace
+)brace
+multiline_comment|/*&n; *&t;idetape_space_over_filemarks is now a bit more complicated than just&n; *&t;passing the command to the tape since we may have crossed some&n; *&t;filemarks during our pipelined read-ahead mode.&n; *&n; *&t;As a minor side effect, the pipeline enables us to support MTFSFM when&n; *&t;the filemark is in our internal pipeline even if the tape doesn&squot;t&n; *&t;support spacing over filemarks in the reverse direction.&n; */
+DECL|function|idetape_space_over_filemarks
+r_int
+id|idetape_space_over_filemarks
+(paren
+id|ide_drive_t
+op_star
+id|drive
+comma
+r_int
+id|mt_op
+comma
+r_int
+id|mt_count
+)paren
+(brace
+id|idetape_tape_t
+op_star
+id|tape
+op_assign
+op_amp
+(paren
+id|drive-&gt;tape
+)paren
+suffix:semicolon
+id|idetape_packet_command_t
+id|pc
+suffix:semicolon
+r_int
+r_int
+id|flags
+suffix:semicolon
+r_int
+id|retval
+comma
+id|count
+op_assign
+l_int|0
+comma
+id|errors
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|tape-&gt;chrdev_direction
+op_eq
+id|idetape_direction_read
+)paren
+(brace
+multiline_comment|/*&n;&t;&t; *&t;We have a read-ahead buffer. Scan it for crossed&n;&t;&t; *&t;filemarks.&n;&t;&t; */
+r_while
+c_loop
+(paren
+id|tape-&gt;first_stage
+op_ne
+l_int|NULL
+)paren
+(brace
+multiline_comment|/*&n;&t;&t;&t; *&t;Wait until the first read-ahead request&n;&t;&t;&t; *&t;is serviced.&n;&t;&t;&t; */
+id|save_flags
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|cli
+(paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|tape-&gt;active_data_request
+op_eq
+op_amp
+(paren
+id|tape-&gt;first_stage-&gt;rq
+)paren
+)paren
+id|idetape_wait_for_request
+(paren
+id|tape-&gt;active_data_request
+)paren
+suffix:semicolon
+id|restore_flags
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|errors
+op_assign
+id|tape-&gt;first_stage-&gt;rq.errors
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|errors
+op_eq
+id|IDETAPE_RQ_ERROR_FILEMARK
+)paren
+id|count
+op_increment
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|count
+op_eq
+id|mt_count
+)paren
+(brace
+r_switch
+c_cond
+(paren
+id|mt_op
+)paren
+(brace
+r_case
+id|MTFSF
+suffix:colon
+id|idetape_remove_stage_head
+(paren
+id|drive
+)paren
+suffix:semicolon
+r_case
+id|MTFSFM
+suffix:colon
+r_return
+(paren
+l_int|0
+)paren
+suffix:semicolon
+)brace
+)brace
+id|idetape_remove_stage_head
+(paren
+id|drive
+)paren
+suffix:semicolon
+)brace
+id|tape-&gt;chrdev_direction
+op_assign
+id|idetape_direction_none
+suffix:semicolon
+)brace
+multiline_comment|/*&n;&t; *&t;The filemark was not found in our internal pipeline.&n;&t; *&t;Now we can issue the space command.&n;&t; */
+id|pc.buffer
+op_assign
+id|pc.temp_buffer
+suffix:semicolon
+id|pc.buffer_size
+op_assign
+id|IDETAPE_TEMP_BUFFER_SIZE
+suffix:semicolon
+id|pc.current_position
+op_assign
+id|pc.temp_buffer
+suffix:semicolon
+r_switch
+c_cond
+(paren
+id|mt_op
+)paren
+(brace
+r_case
+id|MTFSF
+suffix:colon
+id|idetape_create_space_cmd
+(paren
+op_amp
+id|pc
+comma
+id|mt_count
+op_minus
+id|count
+comma
+id|IDETAPE_SPACE_OVER_FILEMARK
+)paren
+suffix:semicolon
+r_return
+(paren
+id|idetape_queue_pc_tail
+(paren
+id|drive
+comma
+op_amp
+id|pc
+)paren
+)paren
+suffix:semicolon
+r_case
+id|MTFSFM
+suffix:colon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|tape-&gt;capabilities.sprev
+)paren
+r_return
+(paren
+op_minus
+id|EIO
+)paren
+suffix:semicolon
+id|retval
+op_assign
+id|idetape_mtioctop
+(paren
+id|drive
+comma
+id|MTFSF
+comma
+id|mt_count
+op_minus
+id|count
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|retval
+)paren
+r_return
+(paren
+id|retval
+)paren
+suffix:semicolon
+r_return
+(paren
+id|idetape_mtioctop
+(paren
+id|drive
+comma
+id|MTBSF
+comma
+l_int|1
+)paren
+)paren
+suffix:semicolon
+r_case
+id|MTBSF
+suffix:colon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|tape-&gt;capabilities.sprev
+)paren
+r_return
+(paren
+op_minus
+id|EIO
+)paren
+suffix:semicolon
+id|idetape_create_space_cmd
+(paren
+op_amp
+id|pc
+comma
+op_minus
+(paren
+id|mt_count
+op_plus
+id|count
+)paren
+comma
+id|IDETAPE_SPACE_OVER_FILEMARK
+)paren
+suffix:semicolon
+r_return
+(paren
+id|idetape_queue_pc_tail
+(paren
+id|drive
+comma
+op_amp
+id|pc
+)paren
+)paren
+suffix:semicolon
+r_case
+id|MTBSFM
+suffix:colon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|tape-&gt;capabilities.sprev
+)paren
+r_return
+(paren
+op_minus
+id|EIO
+)paren
+suffix:semicolon
+id|retval
+op_assign
+id|idetape_mtioctop
+(paren
+id|drive
+comma
+id|MTBSF
+comma
+id|mt_count
+op_plus
+id|count
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|retval
+)paren
+r_return
+(paren
+id|retval
+)paren
+suffix:semicolon
+r_return
+(paren
+id|idetape_mtioctop
+(paren
+id|drive
+comma
+id|MTFSF
+comma
+l_int|1
 )paren
 )paren
 suffix:semicolon
@@ -10764,17 +12104,16 @@ id|flags
 )paren
 suffix:semicolon
 id|cli
-c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#if IDETAPE_DEBUG
+macro_line|#if IDETAPE_DEBUG_LOG
 id|printk
 (paren
 l_string|&quot;Reached idetape_chrdev_open&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#endif /* IDETAPE_DEBUG */
+macro_line|#endif /* IDETAPE_DEBUG_LOG */
 id|drive
 op_assign
 id|idetape_chrdev.drive
@@ -10881,10 +12220,6 @@ id|EIO
 suffix:semicolon
 )brace
 )brace
-id|tape-&gt;last_dt_was_write
-op_assign
-l_int|0
-suffix:semicolon
 r_return
 (paren
 l_int|0
@@ -10926,13 +12261,13 @@ r_int
 r_int
 id|flags
 suffix:semicolon
-macro_line|#if IDETAPE_DEBUG
+macro_line|#if IDETAPE_DEBUG_LOG
 id|printk
 (paren
 l_string|&quot;Reached idetape_chrdev_release&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#endif /* IDETAPE_DEBUG */
+macro_line|#endif /* IDETAPE_DEBUG_LOG */
 id|drive
 op_assign
 id|idetape_chrdev.drive
@@ -10951,17 +12286,23 @@ id|MINOR
 id|inode-&gt;i_rdev
 )paren
 suffix:semicolon
-id|idetape_empty_pipeline
+r_if
+c_cond
+(paren
+id|tape-&gt;chrdev_direction
+op_eq
+id|idetape_direction_write
+)paren
+(brace
+id|idetape_empty_write_pipeline
 (paren
 id|drive
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|tape-&gt;last_dt_was_write
-)paren
-(brace
+id|tape-&gt;chrdev_direction
+op_assign
+id|idetape_direction_none
+suffix:semicolon
 id|idetape_create_write_filemark_cmd
 (paren
 op_amp
@@ -10991,37 +12332,6 @@ suffix:semicolon
 multiline_comment|/* ??? */
 )brace
 )brace
-r_else
-(brace
-id|idetape_create_write_filemark_cmd
-(paren
-op_amp
-id|pc
-comma
-l_int|0
-)paren
-suffix:semicolon
-multiline_comment|/* Flush buffers */
-r_if
-c_cond
-(paren
-id|idetape_queue_pc_tail
-(paren
-id|drive
-comma
-op_amp
-id|pc
-)paren
-)paren
-(brace
-id|printk
-(paren
-l_string|&quot;ide-tape: Couldn&squot;t flush buffers&bslash;n&quot;
-)paren
-suffix:semicolon
-multiline_comment|/* ??? */
-)brace
-)brace
 r_if
 c_cond
 (paren
@@ -11030,6 +12340,18 @@ OL
 l_int|128
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|tape-&gt;chrdev_direction
+op_eq
+id|idetape_direction_read
+)paren
+id|idetape_empty_read_pipeline
+(paren
+id|drive
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -11053,7 +12375,6 @@ id|flags
 )paren
 suffix:semicolon
 id|cli
-c_func
 (paren
 )paren
 suffix:semicolon
@@ -11167,42 +12488,13 @@ suffix:semicolon
 id|idetape_packet_command_t
 id|pc
 suffix:semicolon
-macro_line|#if IDETAPE_DEBUG
+macro_line|#if IDETAPE_DEBUG_LOG
 id|printk
 (paren
 l_string|&quot;Reached idetape_rewind_tape&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#endif /* IDETAPE_DEBUG */&t;
-id|idetape_create_write_filemark_cmd
-(paren
-op_amp
-id|pc
-comma
-l_int|0
-)paren
-suffix:semicolon
-multiline_comment|/* Flush buffers */
-id|retval
-op_assign
-id|idetape_queue_pc_tail
-(paren
-id|drive
-comma
-op_amp
-id|pc
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|retval
-)paren
-r_return
-(paren
-id|retval
-)paren
-suffix:semicolon
+macro_line|#endif /* IDETAPE_DEBUG_LOG */&t;
 id|idetape_create_rewind_cmd
 (paren
 op_amp
@@ -11259,6 +12551,38 @@ id|pc
 )paren
 suffix:semicolon
 )brace
+DECL|function|idetape_flush_tape_buffers
+r_int
+id|idetape_flush_tape_buffers
+(paren
+id|ide_drive_t
+op_star
+id|drive
+)paren
+(brace
+id|idetape_packet_command_t
+id|pc
+suffix:semicolon
+id|idetape_create_write_filemark_cmd
+(paren
+op_amp
+id|pc
+comma
+l_int|0
+)paren
+suffix:semicolon
+r_return
+(paren
+id|idetape_queue_pc_tail
+(paren
+id|drive
+comma
+op_amp
+id|pc
+)paren
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/*&n; *&t;Pipeline related functions&n; */
 multiline_comment|/*&n; *&t;idetape_kmalloc_stage uses kmalloc to allocate a pipeline stage,&n; *&t;along with all the necessary small buffers which together make&n; *&t;a buffer of size tape-&gt;data_buffer_size or a bit more, in case&n; *&t;it is not a multiply of IDETAPE_ALLOCATION_BLOCK (it isn&squot;t ...).&n; *&n; *&t;Returns a pointer to the new allocated stage, or NULL if we&n; *&t;can&squot;t (or don&squot;t want to, in case we already have too many stages)&n; *&t;allocate a stage.&n; *&n; *&t;Pipeline stages are optional and are used to increase performance.&n; *&t;If we can&squot;t allocate them, we&squot;ll manage without them.&n; */
 DECL|function|idetape_kmalloc_stage
@@ -11296,25 +12620,21 @@ id|buffers_num
 comma
 id|i
 suffix:semicolon
-macro_line|#if IDETAPE_DEBUG
+macro_line|#if IDETAPE_DEBUG_LOG
 id|printk
 (paren
 l_string|&quot;Reached idetape_kmalloc_stage&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#endif /* IDETAPE_DEBUG */
+macro_line|#endif /* IDETAPE_DEBUG_LOG */
 r_if
 c_cond
 (paren
 id|tape-&gt;current_number_of_stages
-op_eq
+op_ge
 id|tape-&gt;max_number_of_stages
 )paren
 (brace
-id|tape-&gt;pipeline_was_full_once
-op_assign
-l_int|1
-suffix:semicolon
 r_return
 (paren
 l_int|NULL
@@ -11563,13 +12883,13 @@ l_int|NULL
 )paren
 r_return
 suffix:semicolon
-macro_line|#if IDETAPE_DEBUG
+macro_line|#if IDETAPE_DEBUG_LOG
 id|printk
 (paren
 l_string|&quot;Reached idetape_kfree_stage&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#endif /* IDETAPE_DEBUG */
+macro_line|#endif /* IDETAPE_DEBUG_LOG */
 id|bh
 op_assign
 id|stage-&gt;bh
@@ -11638,13 +12958,31 @@ r_char
 op_star
 id|ptr
 suffix:semicolon
-macro_line|#if IDETAPE_DEBUG
+macro_line|#if IDETAPE_DEBUG_LOG
 id|printk
 (paren
 l_string|&quot;Reached idetape_copy_buffer_from_stage&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#endif /* IDETAPE_DEBUG */
+macro_line|#endif /* IDETAPE_DEBUG_LOG */
+macro_line|#if IDETAPE_DEBUG_BUGS
+r_if
+c_cond
+(paren
+id|buffer
+op_eq
+l_int|NULL
+)paren
+(brace
+id|printk
+(paren
+l_string|&quot;ide-tape: bug: buffer is null in copy_buffer_from_stage&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+macro_line|#endif /* IDETAPE_DEBUG_BUGS */
 id|ptr
 op_assign
 id|buffer
@@ -11661,6 +12999,24 @@ op_ne
 l_int|NULL
 )paren
 (brace
+macro_line|#if IDETAPE_DEBUG_BUGS
+r_if
+c_cond
+(paren
+id|bh-&gt;data
+op_eq
+l_int|NULL
+)paren
+(brace
+id|printk
+(paren
+l_string|&quot;ide-tape: bug: bh-&gt;data is null&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+macro_line|#endif /* IDETAPE_DEBUG_BUGS */
 id|memcpy
 (paren
 id|ptr
@@ -11706,13 +13062,31 @@ r_char
 op_star
 id|ptr
 suffix:semicolon
-macro_line|#if IDETAPE_DEBUG
+macro_line|#if IDETAPE_DEBUG_LOG
 id|printk
 (paren
 l_string|&quot;Reached idetape_copy_buffer_to_stage&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#endif /* IDETAPE_DEBUG */
+macro_line|#endif /* IDETAPE_DEBUG_LOG */
+macro_line|#if IDETAPE_DEBUG_BUGS
+r_if
+c_cond
+(paren
+id|buffer
+op_eq
+l_int|NULL
+)paren
+(brace
+id|printk
+(paren
+l_string|&quot;ide-tape: bug: buffer is null in copy_buffer_to_stage&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+macro_line|#endif /* IDETAPE_DEBUG_BUGS */
 id|ptr
 op_assign
 id|buffer
@@ -11729,6 +13103,24 @@ op_ne
 l_int|NULL
 )paren
 (brace
+macro_line|#if IDETAPE_DEBUG_BUGS
+r_if
+c_cond
+(paren
+id|bh-&gt;data
+op_eq
+l_int|NULL
+)paren
+(brace
+id|printk
+(paren
+l_string|&quot;ide-tape: bug: bh-&gt;data is null&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+macro_line|#endif /* IDETAPE_DEBUG_BUGS */
 id|memcpy
 (paren
 id|bh-&gt;data
@@ -11771,21 +13163,13 @@ op_amp
 id|drive-&gt;tape
 )paren
 suffix:semicolon
-macro_line|#if IDETAPE_DEBUG
+macro_line|#if IDETAPE_DEBUG_LOG
 id|printk
 (paren
 l_string|&quot;Reached idetape_increase_max_pipeline_stages&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#endif /* IDETAPE_DEBUG */
-r_if
-c_cond
-(paren
-op_logical_neg
-id|tape-&gt;pipeline_was_full_once
-)paren
-r_return
-suffix:semicolon
+macro_line|#endif /* IDETAPE_DEBUG_LOG */
 id|tape-&gt;max_number_of_stages
 op_add_assign
 id|IDETAPE_INCREASE_STAGES_RATE
@@ -11807,7 +13191,7 @@ id|tape-&gt;max_number_of_stages
 op_assign
 id|IDETAPE_MAX_PIPELINE_STAGES
 suffix:semicolon
-macro_line|#if IDETAPE_DEBUG
+macro_line|#if IDETAPE_DEBUG_LOG
 id|printk
 (paren
 l_string|&quot;Maximum number of stages: %d&bslash;n&quot;
@@ -11815,11 +13199,11 @@ comma
 id|tape-&gt;max_number_of_stages
 )paren
 suffix:semicolon
-macro_line|#endif /* IDETAPE_DEBUG */
+macro_line|#endif /* IDETAPE_DEBUG_LOG */
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;idetape_add_stage_tail adds a new stage at the end of the pipeline.&n; */
+multiline_comment|/*&n; *&t;idetape_add_stage_tail adds a new stage at the end of the pipeline.&n; *&n; *&t;Caller should disable interrupts, if necessary.&n; */
 DECL|function|idetape_add_stage_tail
 r_void
 id|idetape_add_stage_tail
@@ -11842,43 +13226,16 @@ op_amp
 id|drive-&gt;tape
 )paren
 suffix:semicolon
-r_int
-r_int
-id|flags
-suffix:semicolon
-macro_line|#if IDETAPE_DEBUG
+macro_line|#if IDETAPE_DEBUG_LOG
 id|printk
 (paren
 l_string|&quot;Reached idetape_add_stage_tail&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#endif /* IDETAPE_DEBUG */
+macro_line|#endif /* IDETAPE_DEBUG_LOG */
 id|stage-&gt;next
 op_assign
 l_int|NULL
-suffix:semicolon
-macro_line|#if IDETAPE_DEBUG
-id|printk
-(paren
-l_string|&quot;Adding to the tail of the pipeline&bslash;n&quot;
-)paren
-suffix:semicolon
-macro_line|#endif /* IDETAPE_DEBUG */
-multiline_comment|/*&n;&t; *&t;Avoid a race condition - pipeline_locked is set whenever&n;&t; *&t;we modify active_data_request from the lower level of&n;&t; *&t;the driver. We wait until active_data_request is valid.&n;&t; */
-r_while
-c_loop
-(paren
-id|tape-&gt;pipeline_locked
-)paren
-suffix:semicolon
-id|save_flags
-(paren
-id|flags
-)paren
-suffix:semicolon
-id|cli
-(paren
-)paren
 suffix:semicolon
 id|stage-&gt;prev
 op_assign
@@ -11887,7 +13244,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|tape-&gt;first_stage
+id|tape-&gt;last_stage
 op_ne
 l_int|NULL
 )paren
@@ -11898,49 +13255,148 @@ suffix:semicolon
 r_else
 id|tape-&gt;first_stage
 op_assign
+id|tape-&gt;next_stage
+op_assign
 id|stage
 suffix:semicolon
 id|tape-&gt;last_stage
 op_assign
 id|stage
 suffix:semicolon
-id|tape-&gt;current_number_of_stages
-op_increment
-suffix:semicolon
-multiline_comment|/*&n;&t; *&t;Check if we are currently servicing requests in the bottom&n;&t; *&t;part of the driver.&n;&t; *&n;&t; *&t;If not, wait for the pipeline to be full enough (75%) before&n;&t; *&t;starting to service requests, so that we will be able to&n;&t; *&t;keep up with the higher speeds of the tape.&n;&t; */
 r_if
 c_cond
 (paren
-id|tape-&gt;active_data_request
+id|tape-&gt;next_stage
 op_eq
 l_int|NULL
-op_logical_and
-id|tape-&gt;current_number_of_stages
-op_ge
-l_float|0.75
-op_star
-id|tape-&gt;max_number_of_stages
 )paren
-(brace
-id|restore_flags
-(paren
-id|flags
-)paren
+id|tape-&gt;next_stage
+op_assign
+id|tape-&gt;last_stage
 suffix:semicolon
-id|idetape_insert_pipeline_into_queue
+id|tape-&gt;current_number_of_stages
+op_increment
+suffix:semicolon
+)brace
+multiline_comment|/*&n; *&t;idetape_remove_stage_head removes tape-&gt;first_stage from the pipeline.&n; *&n; *&t;Again, caller should avoid race conditions.&n; */
+DECL|function|idetape_remove_stage_head
+r_void
+id|idetape_remove_stage_head
 (paren
+id|ide_drive_t
+op_star
 id|drive
 )paren
-suffix:semicolon
-)brace
-r_else
-id|restore_flags
+(brace
+id|idetape_tape_t
+op_star
+id|tape
+op_assign
+op_amp
 (paren
-id|flags
+id|drive-&gt;tape
 )paren
 suffix:semicolon
+id|idetape_pipeline_stage_t
+op_star
+id|stage
+suffix:semicolon
+macro_line|#if IDETAPE_DEBUG_LOG
+id|printk
+(paren
+l_string|&quot;Reached idetape_remove_stage_head&bslash;n&quot;
+)paren
+suffix:semicolon
+macro_line|#endif /* IDETAPE_DEBUG_LOG */
+macro_line|#if IDETAPE_DEBUG_BUGS
+r_if
+c_cond
+(paren
+id|tape-&gt;first_stage
+op_eq
+l_int|NULL
+)paren
+(brace
+id|printk
+(paren
+l_string|&quot;ide-tape: bug: tape-&gt;first_stage is NULL&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;idetape_insert_pipeline_into_queue is used to start servicing the&n; *&t;pipeline stages.&n; */
+r_if
+c_cond
+(paren
+id|tape-&gt;active_stage
+op_eq
+id|tape-&gt;first_stage
+)paren
+(brace
+id|printk
+(paren
+l_string|&quot;ide-tape: bug: Trying to free our active pipeline stage&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+macro_line|#endif /* IDETAPE_DEBUG_BUGS */
+id|stage
+op_assign
+id|tape-&gt;first_stage
+suffix:semicolon
+id|tape-&gt;first_stage
+op_assign
+id|stage-&gt;next
+suffix:semicolon
+id|idetape_kfree_stage
+(paren
+id|stage
+)paren
+suffix:semicolon
+id|tape-&gt;current_number_of_stages
+op_decrement
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|tape-&gt;first_stage
+op_eq
+l_int|NULL
+)paren
+(brace
+id|tape-&gt;last_stage
+op_assign
+l_int|NULL
+suffix:semicolon
+macro_line|#if IDETAPE_DEBUG_BUGS
+r_if
+c_cond
+(paren
+id|tape-&gt;next_stage
+op_ne
+l_int|NULL
+)paren
+id|printk
+(paren
+l_string|&quot;ide-tape: bug: tape-&gt;next_stage != NULL&bslash;n&quot;
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|tape-&gt;current_number_of_stages
+)paren
+id|printk
+(paren
+l_string|&quot;ide-tape: bug: current_number_of_stages should be 0 now&bslash;n&quot;
+)paren
+suffix:semicolon
+macro_line|#endif /* IDETAPE_DEBUG_BUGS */
+)brace
+)brace
+multiline_comment|/*&n; *&t;idetape_insert_pipeline_into_queue is used to start servicing the&n; *&t;pipeline stages, starting from tape-&gt;next_stage.&n; */
 DECL|function|idetape_insert_pipeline_into_queue
 r_void
 id|idetape_insert_pipeline_into_queue
@@ -11962,7 +13418,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|tape-&gt;first_stage
+id|tape-&gt;next_stage
 op_eq
 l_int|NULL
 )paren
@@ -11981,13 +13437,6 @@ id|idetape_active_next_stage
 id|drive
 )paren
 suffix:semicolon
-macro_line|#if IDETAPE_DEBUG
-id|printk
-(paren
-l_string|&quot;Using ide_end&bslash;n&quot;
-)paren
-suffix:semicolon
-macro_line|#endif /* IDETAPE_DEBUG */
 (paren
 r_void
 )paren
@@ -12006,7 +13455,7 @@ r_return
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n; *&t;idetape_active_next_stage will &quot;move the pipeline&quot; one stage -&n; *&t;Inserting the first stage into the &quot;active place&quot;, and using kfree&n; *&t;to free the stage.&n; */
+multiline_comment|/*&n; *&t;idetape_active_next_stage will declare the next stage as &quot;active&quot;.&n; */
 DECL|function|idetape_active_next_stage
 r_void
 id|idetape_active_next_stage
@@ -12028,43 +13477,51 @@ suffix:semicolon
 id|idetape_pipeline_stage_t
 op_star
 id|stage
+op_assign
+id|tape-&gt;next_stage
 suffix:semicolon
 r_struct
 id|request
 op_star
 id|rq
+op_assign
+op_amp
+(paren
+id|stage-&gt;rq
+)paren
 suffix:semicolon
-r_int
-r_int
-id|flags
-suffix:semicolon
-macro_line|#if IDETAPE_DEBUG
+macro_line|#if IDETAPE_DEBUG_LOG
 id|printk
 (paren
 l_string|&quot;Reached idetape_active_next_stage&bslash;n&quot;
 )paren
 suffix:semicolon
+macro_line|#endif /* IDETAPE_DEBUG_LOG */
+macro_line|#if IDETAPE_DEBUG_BUGS
 r_if
 c_cond
 (paren
-id|tape-&gt;first_stage
+id|stage
 op_eq
 l_int|NULL
 )paren
 (brace
 id|printk
 (paren
-l_string|&quot;ide-tape: ide-tape.c bug - tape-&gt;first_stage is NULL&bslash;n&quot;
+l_string|&quot;ide-tape: bug: Trying to activate a non existing stage&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-macro_line|#endif /* IDETAPE_DEBUG */
-id|stage
-op_assign
-id|tape-&gt;first_stage
-suffix:semicolon
+macro_line|#endif /* IDETAPE_DEBUG_BUGS */&t;
+r_if
+c_cond
+(paren
+id|rq-&gt;cmd
+op_eq
+id|IDETAPE_WRITE_REQUEST
+)paren
 id|idetape_copy_buffer_from_stage
 (paren
 id|stage
@@ -12072,62 +13529,21 @@ comma
 id|tape-&gt;data_buffer
 )paren
 suffix:semicolon
-id|rq
-op_assign
-id|idetape_next_rq_storage
-(paren
-id|drive
-)paren
-suffix:semicolon
-op_star
-id|rq
-op_assign
-id|stage-&gt;rq
-suffix:semicolon
 id|rq-&gt;buffer
 op_assign
 id|tape-&gt;data_buffer
-suffix:semicolon
-id|save_flags
-(paren
-id|flags
-)paren
-suffix:semicolon
-id|cli
-(paren
-)paren
-suffix:semicolon
-id|tape-&gt;first_stage
-op_assign
-id|stage-&gt;next
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|tape-&gt;first_stage
-op_eq
-l_int|NULL
-)paren
-id|tape-&gt;last_stage
-op_assign
-l_int|NULL
-suffix:semicolon
-id|tape-&gt;current_number_of_stages
-op_decrement
 suffix:semicolon
 id|tape-&gt;active_data_request
 op_assign
 id|rq
 suffix:semicolon
-id|restore_flags
-(paren
-id|flags
-)paren
-suffix:semicolon
-id|idetape_kfree_stage
-(paren
+id|tape-&gt;active_stage
+op_assign
 id|stage
-)paren
+suffix:semicolon
+id|tape-&gt;next_stage
+op_assign
+id|stage-&gt;next
 suffix:semicolon
 )brace
 eof

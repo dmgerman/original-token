@@ -1089,7 +1089,7 @@ c_cond
 (paren
 id|attr-&gt;ia_valid
 op_amp
-id|ATTR_MTIME
+id|ATTR_MTIME_SET
 )paren
 (brace
 id|sattr.mtime.seconds
@@ -1117,7 +1117,7 @@ c_cond
 (paren
 id|attr-&gt;ia_valid
 op_amp
-id|ATTR_ATIME
+id|ATTR_ATIME_SET
 )paren
 (brace
 id|sattr.atime.seconds
