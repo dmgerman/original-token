@@ -111,8 +111,6 @@ r_extern
 r_int
 id|buffermem
 suffix:semicolon
-DECL|macro|BUFFER_MEM
-mdefine_line|#define BUFFER_MEM ((buffermem &gt;&gt; PAGE_SHIFT) + page_cache_size)
 multiline_comment|/* Incomplete types for prototype declarations: */
 r_struct
 id|task_struct

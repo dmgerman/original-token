@@ -428,6 +428,17 @@ c_func
 r_void
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|current-&gt;pid
+op_ne
+l_int|0
+)paren
+r_return
+op_minus
+id|EPERM
+suffix:semicolon
 id|cpu_idle
 c_func
 (paren

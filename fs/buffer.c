@@ -91,15 +91,15 @@ DECL|macro|NR_RESERVED
 mdefine_line|#define NR_RESERVED (2*MAX_BUF_PER_PAGE)
 DECL|macro|MAX_UNUSED_BUFFERS
 mdefine_line|#define MAX_UNUSED_BUFFERS NR_RESERVED+20 /* don&squot;t ever have more than this &n;&t;&t;&t;&t;&t;     number of unused buffer heads */
-multiline_comment|/*&n; * How large a hash table do we need?&n; */
-DECL|macro|HASH_PAGES_ORDER
-mdefine_line|#define HASH_PAGES_ORDER&t;4
-DECL|macro|HASH_PAGES
-mdefine_line|#define HASH_PAGES&t;&t;(1UL &lt;&lt; HASH_PAGES_ORDER)
-DECL|macro|NR_HASH
-mdefine_line|#define NR_HASH&t;&t;&t;(HASH_PAGES*PAGE_SIZE/sizeof(struct buffer_head *))
-DECL|macro|HASH_MASK
-mdefine_line|#define HASH_MASK&t;&t;(NR_HASH-1)
+multiline_comment|/*&n; * Hash table mask..&n; */
+DECL|variable|bh_hash_mask
+r_static
+r_int
+r_int
+id|bh_hash_mask
+op_assign
+l_int|0
+suffix:semicolon
 r_static
 r_int
 id|grow_buffers
@@ -1493,7 +1493,7 @@ suffix:semicolon
 )brace
 )brace
 DECL|macro|_hashfn
-mdefine_line|#define _hashfn(dev,block) (((unsigned)(HASHDEV(dev)^block))&amp;HASH_MASK)
+mdefine_line|#define _hashfn(dev,block) (((unsigned)(HASHDEV(dev)^block)) &amp; bh_hash_mask)
 DECL|macro|hash
 mdefine_line|#define hash(dev,block) hash_table[_hashfn(dev,block)]
 DECL|function|remove_from_hash_queue
@@ -2960,14 +2960,18 @@ op_star
 l_int|2
 )paren
 op_logical_and
-id|BUFFER_MEM
+(paren
+id|buffermem
+op_rshift
+id|PAGE_SHIFT
+)paren
+op_star
+l_int|100
 OL
 (paren
 id|buffer_mem.max_percent
 op_star
 id|num_physpages
-op_div
-l_int|100
 )paren
 op_logical_and
 id|grow_buffers
@@ -3266,16 +3270,6 @@ template_param
 id|freepages.min
 op_plus
 l_int|5
-op_logical_and
-id|BUFFER_MEM
-OL
-(paren
-id|buffer_mem.max_percent
-op_star
-id|num_physpages
-op_div
-l_int|100
-)paren
 op_logical_and
 id|grow_buffers
 c_func
@@ -6774,6 +6768,33 @@ c_func
 r_void
 )paren
 (brace
+r_int
+id|order
+op_assign
+l_int|5
+suffix:semicolon
+multiline_comment|/* Currently maximum order.. */
+r_int
+r_int
+id|nr_hash
+suffix:semicolon
+id|nr_hash
+op_assign
+(paren
+l_int|1UL
+op_lshift
+id|order
+)paren
+op_star
+id|PAGE_SIZE
+op_div
+r_sizeof
+(paren
+r_struct
+id|buffer_head
+op_star
+)paren
+suffix:semicolon
 id|hash_table
 op_assign
 (paren
@@ -6787,7 +6808,7 @@ c_func
 (paren
 id|GFP_ATOMIC
 comma
-id|HASH_PAGES_ORDER
+id|order
 )paren
 suffix:semicolon
 r_if
@@ -6809,7 +6830,7 @@ id|hash_table
 comma
 l_int|0
 comma
-id|NR_HASH
+id|nr_hash
 op_star
 r_sizeof
 (paren
@@ -6818,6 +6839,12 @@ id|buffer_head
 op_star
 )paren
 )paren
+suffix:semicolon
+id|bh_hash_mask
+op_assign
+id|nr_hash
+op_minus
+l_int|1
 suffix:semicolon
 id|bh_cachep
 op_assign

@@ -524,6 +524,27 @@ op_ne
 id|bh
 )paren
 suffix:semicolon
+multiline_comment|/* Refuse to swap out all buffer pages */
+r_if
+c_cond
+(paren
+(paren
+id|buffermem
+op_rshift
+id|PAGE_SHIFT
+)paren
+op_star
+l_int|100
+OG
+(paren
+id|buffer_mem.min_percent
+op_star
+id|num_physpages
+)paren
+)paren
+r_goto
+id|next
+suffix:semicolon
 )brace
 multiline_comment|/* We can&squot;t throw away shared pages, but we do mark&n;&t;&t;   them as referenced.  This relies on the fact that&n;&t;&t;   no page is currently in both the page cache and the&n;&t;&t;   buffer cache; we&squot;d have to modify the following&n;&t;&t;   test to allow for that case. */
 r_switch

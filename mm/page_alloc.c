@@ -209,6 +209,11 @@ id|nr
 )paren
 (brace
 r_int
+id|retval
+op_assign
+l_int|0
+suffix:semicolon
+r_int
 r_int
 id|flags
 suffix:semicolon
@@ -269,6 +274,12 @@ id|list
 r_continue
 suffix:semicolon
 multiline_comment|/* More than one item? We&squot;re ok */
+id|retval
+op_assign
+id|nr
+op_plus
+l_int|1
+suffix:semicolon
 r_break
 suffix:semicolon
 )brace
@@ -291,9 +302,7 @@ id|flags
 )paren
 suffix:semicolon
 r_return
-id|nr
-op_plus
-l_int|1
+id|retval
 suffix:semicolon
 )brace
 DECL|function|free_pages_ok
