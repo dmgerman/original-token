@@ -856,12 +856,28 @@ id|head
 OG
 l_int|15
 )paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;bad drive mapping, trying to access drive=%d, cyl=%d, head=%d, sect=%d&bslash;n&quot;
+comma
+id|drive
+comma
+id|cyl
+comma
+id|head
+comma
+id|sect
+)paren
+suffix:semicolon
 id|panic
 c_func
 (paren
-l_string|&quot;Trying to write bad sector&quot;
+l_string|&quot;harddisk driver problem&quot;
 )paren
 suffix:semicolon
+)brace
 macro_line|#if (HD_DELAY &gt; 0)
 r_while
 c_loop

@@ -1261,6 +1261,10 @@ id|req-&gt;waiting
 op_assign
 l_int|NULL
 suffix:semicolon
+id|p-&gt;swapping
+op_assign
+l_int|0
+suffix:semicolon
 id|p-&gt;state
 op_assign
 id|TASK_RUNNING
@@ -1297,6 +1301,6 @@ DECL|macro|INIT_SCSI_REQUEST
 mdefine_line|#define INIT_SCSI_REQUEST &bslash;&n;&t;if (!CURRENT) {&bslash;&n;&t;&t;CLEAR_INTR; &bslash;&n;&t;&t;sti();   &bslash;&n;&t;&t;return; &bslash;&n;&t;} &bslash;&n;&t;if (MAJOR(CURRENT-&gt;dev) != MAJOR_NR) &bslash;&n;&t;&t;panic(DEVICE_NAME &quot;: request list destroyed&quot;); &bslash;&n;&t;if (CURRENT-&gt;bh) { &bslash;&n;&t;&t;if (!CURRENT-&gt;bh-&gt;b_lock) &bslash;&n;&t;&t;&t;panic(DEVICE_NAME &quot;: block not locked&quot;); &bslash;&n;&t;}
 macro_line|#endif
 DECL|macro|SCSI_SLEEP
-mdefine_line|#define SCSI_SLEEP(QUEUE, CONDITION) {&t;&t;&t;&t;&bslash;&n;&t;long old_state;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;if (CONDITION) {&t;&t;&t;&t;&t;&bslash;&n;&t;&t;struct wait_queue wait = { current, NULL};&t;&bslash;&n;&t;&t;add_wait_queue(QUEUE, &amp;wait);&t;&t;&t;&bslash;&n;sleep_repeat:&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;old_state = current-&gt;state;&t;&t;&t;&bslash;&n;&t;&t;current-&gt;state = TASK_UNINTERRUPTIBLE;&t;&t;&bslash;&n;&t;&t;if (CONDITION) {&t;&t;&t;&t;&bslash;&n;&t;&t;&t;schedule();&t;&t;&t;&t;&bslash;&n;&t;&t;&t;goto sleep_repeat;&t;&t;&t;&bslash;&n;&t;&t;}&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;remove_wait_queue(QUEUE, &amp;wait);&t;&t;&bslash;&n;&t;&t;if (current-&gt;state == TASK_UNINTERRUPTIBLE)&t;&bslash;&n;&t;&t;&t;current-&gt;state = old_state;&t;&t;&bslash;&n;&t;}; }
+mdefine_line|#define SCSI_SLEEP(QUEUE, CONDITION) {&t;&t;&t;&t;&bslash;&n;&t;if (CONDITION) {&t;&t;&t;&t;&t;&bslash;&n;&t;&t;struct wait_queue wait = { current, NULL};&t;&bslash;&n;&t;&t;add_wait_queue(QUEUE, &amp;wait);&t;&t;&t;&bslash;&n;sleep_repeat:&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;current-&gt;state = TASK_UNINTERRUPTIBLE;&t;&t;&bslash;&n;&t;&t;if (CONDITION) {&t;&t;&t;&t;&bslash;&n;&t;&t;&t;schedule();&t;&t;&t;&t;&bslash;&n;&t;&t;&t;goto sleep_repeat;&t;&t;&t;&bslash;&n;&t;&t;}&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;remove_wait_queue(QUEUE, &amp;wait);&t;&t;&bslash;&n;&t;&t;current-&gt;state = TASK_RUNNING;&t;&t;&t;&bslash;&n;&t;}; }
 macro_line|#endif
 eof

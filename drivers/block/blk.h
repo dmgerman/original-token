@@ -704,6 +704,10 @@ id|req-&gt;waiting
 op_assign
 l_int|NULL
 suffix:semicolon
+id|p-&gt;swapping
+op_assign
+l_int|0
+suffix:semicolon
 id|p-&gt;state
 op_assign
 id|TASK_RUNNING

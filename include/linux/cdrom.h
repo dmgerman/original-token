@@ -9,8 +9,14 @@ DECL|macro|CD_SECS
 mdefine_line|#define CD_SECS                   60  /* seconds per minute              */
 DECL|macro|CD_FRAMES
 mdefine_line|#define CD_FRAMES                 75  /* frames per second               */
+DECL|macro|CD_CHUNK_SIZE
+mdefine_line|#define CD_CHUNK_SIZE             24  /* lowest-level &quot;data bytes piece&quot; */
+DECL|macro|CD_NUM_OF_CHUNKS
+mdefine_line|#define CD_NUM_OF_CHUNKS          98  /* chunks per frame                */
 DECL|macro|CD_FRAMESIZE
 mdefine_line|#define CD_FRAMESIZE            2048  /* bytes per frame, cooked mode    */
+DECL|macro|CD_FRAMESIZE_RAW0
+mdefine_line|#define CD_FRAMESIZE_RAW0       2336  /* bytes per frame, &quot;raw&quot; mode     */
 DECL|macro|CD_FRAMESIZE_XA
 mdefine_line|#define CD_FRAMESIZE_XA         2340  /* bytes per frame, &quot;xa&quot; mode      */
 DECL|macro|CD_FRAMESIZE_RAW

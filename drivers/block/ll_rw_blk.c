@@ -1328,6 +1328,10 @@ id|req-&gt;next
 op_assign
 l_int|NULL
 suffix:semicolon
+id|current-&gt;swapping
+op_assign
+l_int|1
+suffix:semicolon
 id|current-&gt;state
 op_assign
 id|TASK_SWAPPING
@@ -1341,6 +1345,16 @@ id|blk_dev
 comma
 id|req
 )paren
+suffix:semicolon
+multiline_comment|/* The I/O may have inadvertently chagned the task state.&n;&t;   Make sure we really wait until the I/O is done */
+r_if
+c_cond
+(paren
+id|current-&gt;swapping
+)paren
+id|current-&gt;state
+op_assign
+id|TASK_SWAPPING
 suffix:semicolon
 id|schedule
 c_func
@@ -2018,6 +2032,10 @@ id|req-&gt;next
 op_assign
 l_int|NULL
 suffix:semicolon
+id|current-&gt;swapping
+op_assign
+l_int|1
+suffix:semicolon
 id|current-&gt;state
 op_assign
 id|TASK_UNINTERRUPTIBLE
@@ -2031,6 +2049,16 @@ id|blk_dev
 comma
 id|req
 )paren
+suffix:semicolon
+multiline_comment|/* The I/O may have inadvertently chagned the task state.&n;&t;&t;   Make sure we really wait until the I/O is done */
+r_if
+c_cond
+(paren
+id|current-&gt;swapping
+)paren
+id|current-&gt;state
+op_assign
+id|TASK_UNINTERRUPTIBLE
 suffix:semicolon
 id|schedule
 c_func
