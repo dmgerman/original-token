@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * Setup pointers to hardware-dependent routines.&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1996, 1997 by Ralf Baechle&n; *&n; * $Id: setup.c,v 1.5 1998/05/04 09:18:42 ralf Exp $&n; */
+multiline_comment|/* $Id: setup.c,v 1.7 1998/06/10 07:21:19 davem Exp $&n; *&n; * Setup pointers to hardware-dependent routines.&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1996, 1997 by Ralf Baechle&n; */
 macro_line|#include &lt;asm/ptrace.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/hdreg.h&gt;
@@ -306,8 +306,6 @@ suffix:semicolon
 r_int
 r_int
 id|asic
-comma
-id|cacheconf
 suffix:semicolon
 id|csmsr
 op_assign

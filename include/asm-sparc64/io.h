@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: io.h,v 1.16 1998/03/24 05:54:40 ecd Exp $ */
+multiline_comment|/* $Id: io.h,v 1.18 1998/07/12 12:07:43 ecd Exp $ */
 macro_line|#ifndef __SPARC64_IO_H
 DECL|macro|__SPARC64_IO_H
 mdefine_line|#define __SPARC64_IO_H
@@ -12,6 +12,8 @@ DECL|macro|__SLOW_DOWN_IO
 mdefine_line|#define __SLOW_DOWN_IO&t;do { } while (0)
 DECL|macro|SLOW_DOWN_IO
 mdefine_line|#define SLOW_DOWN_IO&t;do { } while (0)
+DECL|macro|PCI_DVMA_HASHSZ
+mdefine_line|#define PCI_DVMA_HASHSZ&t;256
 r_extern
 r_int
 r_int
@@ -22,6 +24,24 @@ r_int
 r_int
 id|pci_dvma_mask
 suffix:semicolon
+r_extern
+r_int
+r_int
+id|pci_dvma_v2p_hash
+(braket
+id|PCI_DVMA_HASHSZ
+)braket
+suffix:semicolon
+r_extern
+r_int
+r_int
+id|pci_dvma_p2v_hash
+(braket
+id|PCI_DVMA_HASHSZ
+)braket
+suffix:semicolon
+DECL|macro|pci_dvma_ahashfn
+mdefine_line|#define pci_dvma_ahashfn(addr)&t;(((addr) &gt;&gt; 24) &amp; 0xff)
 DECL|function|virt_to_phys
 r_extern
 id|__inline__
@@ -46,6 +66,10 @@ r_int
 )paren
 id|addr
 suffix:semicolon
+r_int
+r_int
+id|off
+suffix:semicolon
 multiline_comment|/* Handle kernel variable pointers... */
 r_if
 c_cond
@@ -65,16 +89,23 @@ r_int
 op_amp
 id|empty_zero_page
 suffix:semicolon
-r_return
-(paren
+id|off
+op_assign
+id|pci_dvma_v2p_hash
+(braket
+id|pci_dvma_ahashfn
+c_func
 (paren
 id|vaddr
 op_minus
 id|PAGE_OFFSET
 )paren
-op_or
-id|pci_dvma_offset
-)paren
+)braket
+suffix:semicolon
+r_return
+id|vaddr
+op_plus
+id|off
 suffix:semicolon
 )brace
 DECL|function|phys_to_virt
@@ -90,21 +121,38 @@ r_int
 id|addr
 )paren
 (brace
-r_return
+r_int
+r_int
+id|paddr
+op_assign
+id|addr
+op_amp
+l_int|0xffffffffUL
+suffix:semicolon
+r_int
+r_int
+id|off
+suffix:semicolon
+id|off
+op_assign
+id|pci_dvma_p2v_hash
+(braket
+id|pci_dvma_ahashfn
+c_func
 (paren
+id|paddr
+)paren
+)braket
+suffix:semicolon
+r_return
 (paren
 r_void
 op_star
 )paren
 (paren
-(paren
-id|addr
-op_amp
-id|pci_dvma_mask
-)paren
+id|paddr
 op_plus
-id|PAGE_OFFSET
-)paren
+id|off
 )paren
 suffix:semicolon
 )brace
@@ -112,6 +160,25 @@ DECL|macro|virt_to_bus
 mdefine_line|#define virt_to_bus virt_to_phys
 DECL|macro|bus_to_virt
 mdefine_line|#define bus_to_virt phys_to_virt
+DECL|function|bus_dvma_to_mem
+r_extern
+id|__inline__
+r_int
+r_int
+id|bus_dvma_to_mem
+c_func
+(paren
+r_int
+r_int
+id|vaddr
+)paren
+(brace
+r_return
+id|vaddr
+op_amp
+id|pci_dvma_mask
+suffix:semicolon
+)brace
 DECL|function|inb
 r_extern
 id|__inline__

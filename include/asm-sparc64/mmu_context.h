@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: mmu_context.h,v 1.24 1998/05/06 02:07:54 paulus Exp $ */
+multiline_comment|/* $Id: mmu_context.h,v 1.26 1998/07/31 10:42:38 jj Exp $ */
 macro_line|#ifndef __SPARC64_MMU_CONTEXT_H
 DECL|macro|__SPARC64_MMU_CONTEXT_H
 mdefine_line|#define __SPARC64_MMU_CONTEXT_H
@@ -46,7 +46,7 @@ multiline_comment|/* Initialize/destroy the context related info for a new mm_st
 DECL|macro|init_new_context
 mdefine_line|#define init_new_context(mm)&t;((mm)-&gt;context = NO_CONTEXT)
 DECL|macro|destroy_context
-mdefine_line|#define destroy_context(mm)&t;do { &t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;if ((mm)-&gt;context != NO_CONTEXT) { &t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;spin_lock(&amp;scheduler_lock); &t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;if (!(((mm)-&gt;context ^ tlb_context_cache) &amp; CTX_VERSION_MASK))&t;&t;&t;&bslash;&n;&t;&t;&t;clear_bit((mm)-&gt;context &amp; ~(CTX_VERSION_MASK), mmu_context_bmap);&t;&bslash;&n;&t;&t;spin_unlock(&amp;scheduler_lock); &t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;(mm)-&gt;context = NO_CONTEXT; &t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;} &t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;} while (0)
+mdefine_line|#define destroy_context(mm)&t;do { &t;&t;&t;&t;&t;&t;&bslash;&n;&t;if ((mm)-&gt;context != NO_CONTEXT) { &t;&t;&t;&t;&t;&bslash;&n;&t;&t;spin_lock(&amp;scheduler_lock); &t;&t;&t;&t;&t;&bslash;&n;&t;&t;if (!(((mm)-&gt;context ^ tlb_context_cache) &amp; CTX_VERSION_MASK))&t;&bslash;&n;&t;&t;&t;clear_bit((mm)-&gt;context &amp; ~(CTX_VERSION_MASK),&t;&t;&bslash;&n;&t;&t;&t;&t;  mmu_context_bmap);&t;&t;&t;&t;&bslash;&n;&t;&t;spin_unlock(&amp;scheduler_lock); &t;&t;&t;&t;&t;&bslash;&n;&t;&t;(mm)-&gt;context = NO_CONTEXT; &t;&t;&t;&t;&t;&bslash;&n;&t;} &t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;} while (0)
 DECL|function|get_mmu_context
 r_extern
 id|__inline__
@@ -68,6 +68,16 @@ id|asm
 c_func
 (paren
 l_string|&quot;o5&quot;
+)paren
+suffix:semicolon
+r_register
+r_int
+r_int
+id|pgd_cache
+id|asm
+c_func
+(paren
+l_string|&quot;o4&quot;
 )paren
 suffix:semicolon
 r_struct
@@ -220,6 +230,31 @@ c_func
 id|mm-&gt;pgd
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|tsk-&gt;tss.flags
+op_amp
+id|SPARC_FLAG_32BIT
+)paren
+(brace
+id|pgd_cache
+op_assign
+(paren
+r_int
+r_int
+)paren
+id|mm-&gt;pgd
+(braket
+l_int|0
+)braket
+suffix:semicolon
+)brace
+r_else
+id|pgd_cache
+op_assign
+l_int|0
+suffix:semicolon
 id|__asm__
 id|__volatile__
 c_func
@@ -232,18 +267,25 @@ id|pstate
 comma
 op_mod
 op_mod
-id|o4
+id|o3
 id|wrpr
 op_mod
 op_mod
-id|o4
+id|o3
 comma
 op_mod
-l_int|1
+l_int|2
 comma
 op_mod
 op_mod
 id|pstate
+id|mov
+op_mod
+l_int|4
+comma
+op_mod
+op_mod
+id|g4
 id|mov
 op_mod
 l_int|0
@@ -251,10 +293,21 @@ comma
 op_mod
 op_mod
 id|g7
+id|stxa
+op_mod
+l_int|1
+comma
+(braket
+op_mod
+op_mod
+id|g4
+)braket
+op_mod
+l_int|3
 id|wrpr
 op_mod
 op_mod
-id|o4
+id|o3
 comma
 l_int|0x0
 comma
@@ -270,14 +323,29 @@ l_string|&quot;r&quot;
 id|paddr
 )paren
 comma
+l_string|&quot;r&quot;
+(paren
+id|pgd_cache
+)paren
+comma
 l_string|&quot;i&quot;
 (paren
 id|PSTATE_MG
 op_or
 id|PSTATE_IE
 )paren
+comma
+l_string|&quot;i&quot;
+(paren
+id|ASI_DMMU
+)paren
+comma
+l_string|&quot;i&quot;
+(paren
+id|TSB_REG
+)paren
 suffix:colon
-l_string|&quot;o4&quot;
+l_string|&quot;o3&quot;
 )paren
 suffix:semicolon
 )brace

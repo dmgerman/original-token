@@ -166,6 +166,21 @@ suffix:semicolon
 macro_line|#endif /* ndef CONFIG_8xx */
 )brace
 macro_line|#endif /* __ASSEMBLY__ */
+multiline_comment|/* prep registers for L2 */
+DECL|macro|CACHECRBA
+mdefine_line|#define CACHECRBA       0x80000823      /* Cache configuration register address */
+DECL|macro|L2CACHE_MASK
+mdefine_line|#define L2CACHE_MASK&t;0x03&t;/* Mask for 2 L2 Cache bits */
+DECL|macro|L2CACHE_512KB
+mdefine_line|#define L2CACHE_512KB&t;0x00&t;/* 512KB */
+DECL|macro|L2CACHE_256KB
+mdefine_line|#define L2CACHE_256KB&t;0x01&t;/* 256KB */
+DECL|macro|L2CACHE_1MB
+mdefine_line|#define L2CACHE_1MB&t;0x02&t;/* 1MB */
+DECL|macro|L2CACHE_NONE
+mdefine_line|#define L2CACHE_NONE&t;0x03&t;/* NONE */
+DECL|macro|L2CACHE_PARITY
+mdefine_line|#define L2CACHE_PARITY  0x08    /* Mask for L2 Cache Parity Protected bit */
 macro_line|#ifdef CONFIG_8xx
 multiline_comment|/* Cache control on the MPC8xx is provided through some additional&n; * special purpose registers.&n; */
 DECL|macro|IC_CST

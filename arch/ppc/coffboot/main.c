@@ -208,6 +208,10 @@ c_func
 id|RAM_START
 )paren
 suffix:semicolon
+id|loadbase
+op_add_assign
+id|RAM_START
+suffix:semicolon
 id|eh
 op_assign
 (paren

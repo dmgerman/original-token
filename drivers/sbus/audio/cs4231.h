@@ -181,6 +181,15 @@ r_int
 r_int
 id|output_size
 suffix:semicolon
+DECL|member|output_dma_handle
+DECL|member|output_next_dma_handle
+r_volatile
+id|__u32
+op_star
+id|output_dma_handle
+comma
+id|output_next_dma_handle
+suffix:semicolon
 multiline_comment|/* Current record buffer. */
 DECL|member|input_ptr
 r_volatile

@@ -5,6 +5,8 @@ macro_line|#include &lt;linux/elfcore.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
+macro_line|#include &lt;linux/vt_kern.h&gt;
+macro_line|#include &lt;linux/nvram.h&gt;
 macro_line|#include &lt;asm/semaphore.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
@@ -20,6 +22,9 @@ macro_line|#include &lt;asm/prom.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/pci-bridge.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
+DECL|macro|__KERNEL_SYSCALLS__
+mdefine_line|#define __KERNEL_SYSCALLS__
+macro_line|#include &lt;linux/unistd.h&gt;
 r_extern
 r_void
 id|transfer_to_handler
@@ -111,8 +116,8 @@ id|regs
 )paren
 suffix:semicolon
 r_extern
-r_int
-id|lost_interrupts
+id|atomic_t
+id|n_lost_interrupts
 suffix:semicolon
 r_extern
 r_void
@@ -134,6 +139,26 @@ comma
 r_struct
 id|pt_regs
 op_star
+)paren
+suffix:semicolon
+id|asmlinkage
+r_int
+r_int
+id|__ashrdi3
+c_func
+(paren
+r_int
+r_int
+comma
+r_int
+)paren
+suffix:semicolon
+id|asmlinkage
+r_int
+id|abs
+c_func
+(paren
+r_int
 )paren
 suffix:semicolon
 DECL|variable|do_signal
@@ -213,11 +238,11 @@ c_func
 id|sys_sigreturn
 )paren
 suffix:semicolon
-DECL|variable|lost_interrupts
+DECL|variable|n_lost_interrupts
 id|EXPORT_SYMBOL
 c_func
 (paren
-id|lost_interrupts
+id|n_lost_interrupts
 )paren
 suffix:semicolon
 DECL|variable|do_lost_interrupts
@@ -248,7 +273,13 @@ c_func
 id|disable_irq
 )paren
 suffix:semicolon
-macro_line|#if !defined(CONFIG_MACH_SPECIFIC) || defined(CONFIG_PMAC)
+DECL|variable|local_irq_count
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|local_irq_count
+)paren
+suffix:semicolon
 DECL|variable|isa_io_base
 id|EXPORT_SYMBOL
 c_func
@@ -256,8 +287,13 @@ c_func
 id|isa_io_base
 )paren
 suffix:semicolon
-macro_line|#endif
-macro_line|#if !defined(CONFIG_MACH_SPECIFIC)
+DECL|variable|isa_mem_base
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|isa_mem_base
+)paren
+suffix:semicolon
 DECL|variable|pci_dram_offset
 id|EXPORT_SYMBOL
 c_func
@@ -265,7 +301,6 @@ c_func
 id|pci_dram_offset
 )paren
 suffix:semicolon
-macro_line|#endif
 DECL|variable|atomic_add
 id|EXPORT_SYMBOL
 c_func
@@ -603,6 +638,34 @@ c_func
 id|_outsl
 )paren
 suffix:semicolon
+DECL|variable|_insw_ns
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|_insw_ns
+)paren
+suffix:semicolon
+DECL|variable|_outsw_ns
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|_outsw_ns
+)paren
+suffix:semicolon
+DECL|variable|_insl_ns
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|_insl_ns
+)paren
+suffix:semicolon
+DECL|variable|_outsl_ns
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|_outsl_ns
+)paren
+suffix:semicolon
 DECL|variable|ioremap
 id|EXPORT_SYMBOL
 c_func
@@ -629,6 +692,13 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|start_thread
+)paren
+suffix:semicolon
+DECL|variable|__kernel_thread
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|__kernel_thread
 )paren
 suffix:semicolon
 DECL|variable|__down_interruptible
@@ -765,6 +835,15 @@ c_func
 id|pmu_poll
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_PMAC_PBOOK
+DECL|variable|sleep_notifier_list
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|sleep_notifier_list
+)paren
+suffix:semicolon
+macro_line|#endif CONFIG_PMAC_PBOOK
 DECL|variable|abort
 id|EXPORT_SYMBOL
 c_func
@@ -819,6 +898,46 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|note_scsi_host
+)paren
+suffix:semicolon
+DECL|variable|kd_mksound
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|kd_mksound
+)paren
+suffix:semicolon
+macro_line|#ifdef CONFIG_PMAC
+DECL|variable|nvram_read_byte
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|nvram_read_byte
+)paren
+suffix:semicolon
+DECL|variable|nvram_write_byte
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|nvram_write_byte
+)paren
+suffix:semicolon
+macro_line|#endif /* CONFIG_PMAC */
+macro_line|#ifdef CONFIG_SOUND_MODULE
+DECL|variable|abs
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|abs
+)paren
+suffix:semicolon
+macro_line|#endif
+multiline_comment|/* The following are special because they&squot;re not called&n;   explicitly (the C compiler generates them).  Fortunately,&n;   their interface isn&squot;t gonna change any time soon now, so&n;   it&squot;s OK to leave it out of version control.  */
+DECL|variable|__ashrdi3
+id|EXPORT_SYMBOL_NOVERS
+c_func
+(paren
+id|__ashrdi3
 )paren
 suffix:semicolon
 eof

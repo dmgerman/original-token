@@ -29,6 +29,12 @@ DECL|macro|PMAC_ISA_MEM_BASE
 mdefine_line|#define PMAC_ISA_MEM_BASE &t;0
 DECL|macro|PMAC_PCI_DRAM_OFFSET
 mdefine_line|#define PMAC_PCI_DRAM_OFFSET &t;0
+DECL|macro|APUS_ISA_IO_BASE
+mdefine_line|#define APUS_ISA_IO_BASE &t;0
+DECL|macro|APUS_ISA_MEM_BASE
+mdefine_line|#define APUS_ISA_MEM_BASE &t;0
+DECL|macro|APUS_PCI_DRAM_OFFSET
+mdefine_line|#define APUS_PCI_DRAM_OFFSET &t;0
 DECL|macro|CHRP_ISA_IO_BASE
 mdefine_line|#define CHRP_ISA_IO_BASE &t;0xf8000000
 DECL|macro|CHRP_ISA_MEM_BASE
@@ -42,36 +48,6 @@ mdefine_line|#define PREP_ISA_MEM_BASE &t;0xd0000000
 multiline_comment|/*#define PREP_ISA_MEM_BASE &t;0xc0000000*/
 DECL|macro|PREP_PCI_DRAM_OFFSET
 mdefine_line|#define PREP_PCI_DRAM_OFFSET &t;0x80000000
-macro_line|#if defined(CONFIG_MACH_SPECIFIC)
-macro_line|#ifdef CONFIG_PREP
-DECL|macro|_IO_BASE
-mdefine_line|#define _IO_BASE&t;PREP_ISA_IO_BASE
-DECL|macro|_ISA_MEM_BASE
-mdefine_line|#define _ISA_MEM_BASE&t;PREP_ISA_MEM_BASE
-DECL|macro|PCI_DRAM_OFFSET
-mdefine_line|#define PCI_DRAM_OFFSET PREP_PCI_DRAM_OFFSET
-macro_line|#endif /* CONFIG_PREP */
-macro_line|#ifdef CONFIG_CHRP
-DECL|macro|_IO_BASE
-mdefine_line|#define _IO_BASE&t;CHRP_ISA_IO_BASE
-DECL|macro|_ISA_MEM_BASE
-mdefine_line|#define _ISA_MEM_BASE&t;CHRP_ISA_MEM_BASE
-DECL|macro|PCI_DRAM_OFFSET
-mdefine_line|#define PCI_DRAM_OFFSET CHRP_PCI_DRAM_OFFSET
-macro_line|#endif /* CONFIG_CHRP */
-macro_line|#ifdef CONFIG_PMAC
-r_extern
-r_int
-r_int
-id|isa_io_base
-suffix:semicolon
-DECL|macro|_IO_BASE
-mdefine_line|#define _IO_BASE &t;isa_io_base&t;/* well, PCI i/o base really */
-DECL|macro|_ISA_MEM_BASE
-mdefine_line|#define _ISA_MEM_BASE&t;PMAC_ISA_MEM_BASE
-DECL|macro|PCI_DRAM_OFFSET
-mdefine_line|#define PCI_DRAM_OFFSET PMAC_PCI_DRAM_OFFSET
-macro_line|#endif /* CONFIG_PMAC */
 macro_line|#ifdef CONFIG_MBX
 DECL|macro|_IO_BASE
 mdefine_line|#define _IO_BASE        0
@@ -79,44 +55,52 @@ DECL|macro|_ISA_MEM_BASE
 mdefine_line|#define _ISA_MEM_BASE   0
 DECL|macro|PCI_DRAM_OFFSET
 mdefine_line|#define PCI_DRAM_OFFSET 0x80000000
-macro_line|#endif /* CONFIG_MBX8xx */
-macro_line|#else /* CONFIG_MACH_SPECIFIC */
+macro_line|#else /* CONFIG_MBX8xx */
 r_extern
 r_int
 r_int
 id|isa_io_base
 suffix:semicolon
-DECL|macro|_IO_BASE
-mdefine_line|#define _IO_BASE isa_io_base
 r_extern
 r_int
 r_int
 id|isa_mem_base
 suffix:semicolon
-DECL|macro|_ISA_MEM_BASE
-mdefine_line|#define _ISA_MEM_BASE isa_mem_base
-DECL|macro|PCI_DRAM_OFFSET
-macro_line|#undef PCI_DRAM_OFFSET
-DECL|macro|PCI_DRAM_OFFSET
-mdefine_line|#define PCI_DRAM_OFFSET  pci_dram_offset
 r_extern
 r_int
 r_int
 id|pci_dram_offset
 suffix:semicolon
-macro_line|#endif /* CONFIG_MACH_SPECIFIC */
+DECL|macro|_IO_BASE
+mdefine_line|#define _IO_BASE&t;isa_io_base
+DECL|macro|_ISA_MEM_BASE
+mdefine_line|#define _ISA_MEM_BASE&t;isa_mem_base
+DECL|macro|PCI_DRAM_OFFSET
+mdefine_line|#define PCI_DRAM_OFFSET&t;pci_dram_offset
+macro_line|#endif /* CONFIG_MBX8xx */
 DECL|macro|readb
 mdefine_line|#define readb(addr) (*(volatile unsigned char *) (addr))
+DECL|macro|writeb
+mdefine_line|#define writeb(b,addr) ((*(volatile unsigned char *) (addr)) = (b))
+macro_line|#if defined(CONFIG_APUS)
+DECL|macro|readw
+mdefine_line|#define readw(addr) (*(volatile unsigned short *) (addr))
+DECL|macro|readl
+mdefine_line|#define readl(addr) (*(volatile unsigned int *) (addr))
+DECL|macro|writew
+mdefine_line|#define writew(b,addr) ((*(volatile unsigned short *) (addr)) = (b))
+DECL|macro|writel
+mdefine_line|#define writel(b,addr) ((*(volatile unsigned int *) (addr)) = (b))
+macro_line|#else
 DECL|macro|readw
 mdefine_line|#define readw(addr) ld_le16((volatile unsigned short *)(addr))
 DECL|macro|readl
 mdefine_line|#define readl(addr) ld_le32((volatile unsigned *)addr)
-DECL|macro|writeb
-mdefine_line|#define writeb(b,addr) ((*(volatile unsigned char *) (addr)) = (b))
 DECL|macro|writew
 mdefine_line|#define writew(b,addr) st_le16((volatile unsigned short *)(addr),(b))
 DECL|macro|writel
 mdefine_line|#define writel(b,addr) st_le32((volatile unsigned *)(addr),(b))
+macro_line|#endif
 DECL|macro|insb
 mdefine_line|#define insb(port, buf, ns)&t;_insb((unsigned char *)((port)+_IO_BASE), (buf), (ns))
 DECL|macro|outsb
@@ -133,6 +117,16 @@ DECL|macro|inb
 mdefine_line|#define inb(port)&t;&t;in_8((unsigned char *)((port)+_IO_BASE))
 DECL|macro|outb
 mdefine_line|#define outb(val, port)&t;&t;out_8((unsigned char *)((port)+_IO_BASE), (val))
+macro_line|#if defined(CONFIG_APUS)
+DECL|macro|inw
+mdefine_line|#define inw(port)&t;&t;in_be16((unsigned short *)((port)+_IO_BASE))
+DECL|macro|outw
+mdefine_line|#define outw(val, port)&t;&t;out_be16((unsigned short *)((port)+_IO_BASE), (val))
+DECL|macro|inl
+mdefine_line|#define inl(port)&t;&t;in_be32((unsigned *)((port)+_IO_BASE))
+DECL|macro|outl
+mdefine_line|#define outl(val, port)&t;&t;out_be32((unsigned *)((port)+_IO_BASE), (val))
+macro_line|#else
 DECL|macro|inw
 mdefine_line|#define inw(port)&t;&t;in_le16((unsigned short *)((port)+_IO_BASE))
 DECL|macro|outw
@@ -141,6 +135,7 @@ DECL|macro|inl
 mdefine_line|#define inl(port)&t;&t;in_le32((unsigned *)((port)+_IO_BASE))
 DECL|macro|outl
 mdefine_line|#define outl(val, port)&t;&t;out_le32((unsigned *)((port)+_IO_BASE), (val))
+macro_line|#endif
 DECL|macro|inb_p
 mdefine_line|#define inb_p(port)&t;&t;in_8((unsigned char *)((port)+_IO_BASE))
 DECL|macro|outb_p
@@ -270,6 +265,93 @@ r_int
 id|nl
 )paren
 suffix:semicolon
+multiline_comment|/*&n; * The *_ns versions below don&squot;t do byte-swapping.&n; */
+DECL|macro|insw_ns
+mdefine_line|#define insw_ns(port, buf, ns)&t;_insw_ns((unsigned short *)((port)+_IO_BASE), (buf), (ns))
+DECL|macro|outsw_ns
+mdefine_line|#define outsw_ns(port, buf, ns)&t;_outsw_ns((unsigned short *)((port)+_IO_BASE), (buf), (ns))
+DECL|macro|insl_ns
+mdefine_line|#define insl_ns(port, buf, nl)&t;_insl_ns((unsigned long *)((port)+_IO_BASE), (buf), (nl))
+DECL|macro|outsl_ns
+mdefine_line|#define outsl_ns(port, buf, nl)&t;_outsl_ns((unsigned long *)((port)+_IO_BASE), (buf), (nl))
+r_extern
+r_void
+id|_insw_ns
+c_func
+(paren
+r_volatile
+r_int
+r_int
+op_star
+id|port
+comma
+r_void
+op_star
+id|buf
+comma
+r_int
+id|ns
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|_outsw_ns
+c_func
+(paren
+r_volatile
+r_int
+r_int
+op_star
+id|port
+comma
+r_const
+r_void
+op_star
+id|buf
+comma
+r_int
+id|ns
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|_insl_ns
+c_func
+(paren
+r_volatile
+r_int
+r_int
+op_star
+id|port
+comma
+r_void
+op_star
+id|buf
+comma
+r_int
+id|nl
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|_outsl_ns
+c_func
+(paren
+r_volatile
+r_int
+r_int
+op_star
+id|port
+comma
+r_const
+r_void
+op_star
+id|buf
+comma
+r_int
+id|nl
+)paren
+suffix:semicolon
 DECL|macro|memset_io
 mdefine_line|#define memset_io(a,b,c)&t;memset((a),(b),(c))
 DECL|macro|memcpy_fromio
@@ -277,84 +359,6 @@ mdefine_line|#define memcpy_fromio(a,b,c)&t;memcpy((a),(b),(c))
 DECL|macro|memcpy_toio
 mdefine_line|#define memcpy_toio(a,b,c)&t;memcpy((a),(b),(c))
 macro_line|#ifdef __KERNEL__
-multiline_comment|/*&n; * The PCI bus is inherently Little-Endian.  The PowerPC is being&n; * run Big-Endian.  Thus all values which cross the [PCI] barrier&n; * must be endian-adjusted.  Also, the local DRAM has a different&n; * address from the PCI point of view, thus buffer addresses also&n; * have to be modified [mapped] appropriately.&n; */
-DECL|function|virt_to_bus
-r_extern
-r_inline
-r_int
-r_int
-id|virt_to_bus
-c_func
-(paren
-r_volatile
-r_void
-op_star
-id|address
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|address
-op_eq
-(paren
-r_void
-op_star
-)paren
-l_int|0
-)paren
-r_return
-l_int|0
-suffix:semicolon
-r_return
-(paren
-r_int
-r_int
-)paren
-id|address
-op_minus
-id|KERNELBASE
-op_plus
-id|PCI_DRAM_OFFSET
-suffix:semicolon
-)brace
-DECL|function|bus_to_virt
-r_extern
-r_inline
-r_void
-op_star
-id|bus_to_virt
-c_func
-(paren
-r_int
-r_int
-id|address
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|address
-op_eq
-l_int|0
-)paren
-r_return
-l_int|0
-suffix:semicolon
-r_return
-(paren
-r_void
-op_star
-)paren
-(paren
-id|address
-op_minus
-id|PCI_DRAM_OFFSET
-op_plus
-id|KERNELBASE
-)paren
-suffix:semicolon
-)brace
 multiline_comment|/*&n; * Map in an area of physical address space, for accessing&n; * I/O devices etc.&n; */
 r_extern
 r_void
@@ -411,6 +415,129 @@ r_int
 id|addr
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_APUS
+r_extern
+r_int
+r_int
+id|mm_ptov
+c_func
+(paren
+r_int
+r_int
+id|addr
+)paren
+id|__attribute__
+(paren
+(paren
+r_const
+)paren
+)paren
+suffix:semicolon
+macro_line|#endif
+multiline_comment|/*&n; * The PCI bus is inherently Little-Endian.  The PowerPC is being&n; * run Big-Endian.  Thus all values which cross the [PCI] barrier&n; * must be endian-adjusted.  Also, the local DRAM has a different&n; * address from the PCI point of view, thus buffer addresses also&n; * have to be modified [mapped] appropriately.&n; */
+DECL|function|virt_to_bus
+r_extern
+r_inline
+r_int
+r_int
+id|virt_to_bus
+c_func
+(paren
+r_volatile
+r_void
+op_star
+id|address
+)paren
+(brace
+macro_line|#ifndef CONFIG_APUS
+r_if
+c_cond
+(paren
+id|address
+op_eq
+(paren
+r_void
+op_star
+)paren
+l_int|0
+)paren
+r_return
+l_int|0
+suffix:semicolon
+r_return
+(paren
+r_int
+r_int
+)paren
+id|address
+op_minus
+id|KERNELBASE
+op_plus
+id|PCI_DRAM_OFFSET
+suffix:semicolon
+macro_line|#else
+r_return
+id|iopa
+(paren
+(paren
+r_int
+r_int
+)paren
+id|address
+)paren
+suffix:semicolon
+macro_line|#endif
+)brace
+DECL|function|bus_to_virt
+r_extern
+r_inline
+r_void
+op_star
+id|bus_to_virt
+c_func
+(paren
+r_int
+r_int
+id|address
+)paren
+(brace
+macro_line|#ifndef CONFIG_APUS
+r_if
+c_cond
+(paren
+id|address
+op_eq
+l_int|0
+)paren
+r_return
+l_int|0
+suffix:semicolon
+r_return
+(paren
+r_void
+op_star
+)paren
+(paren
+id|address
+op_minus
+id|PCI_DRAM_OFFSET
+op_plus
+id|KERNELBASE
+)paren
+suffix:semicolon
+macro_line|#else
+r_return
+(paren
+r_void
+op_star
+)paren
+id|mm_ptov
+(paren
+id|address
+)paren
+suffix:semicolon
+macro_line|#endif
+)brace
 multiline_comment|/*&n; * Change virtual addresses to physical addresses and vv, for&n; * addresses in the area where the kernel has the RAM mapped.&n; */
 DECL|function|virt_to_phys
 r_extern
@@ -426,6 +553,7 @@ op_star
 id|address
 )paren
 (brace
+macro_line|#ifndef CONFIG_APUS
 r_return
 (paren
 r_int
@@ -435,6 +563,18 @@ id|address
 op_minus
 id|KERNELBASE
 suffix:semicolon
+macro_line|#else
+r_return
+id|iopa
+(paren
+(paren
+r_int
+r_int
+)paren
+id|address
+)paren
+suffix:semicolon
+macro_line|#endif
 )brace
 DECL|function|phys_to_virt
 r_extern
@@ -449,6 +589,7 @@ r_int
 id|address
 )paren
 (brace
+macro_line|#ifndef CONFIG_APUS
 r_return
 (paren
 r_void
@@ -459,6 +600,87 @@ id|address
 op_plus
 id|KERNELBASE
 )paren
+suffix:semicolon
+macro_line|#else
+r_return
+(paren
+r_void
+op_star
+)paren
+id|mm_ptov
+(paren
+id|address
+)paren
+suffix:semicolon
+macro_line|#endif
+)brace
+DECL|function|check_signature
+r_static
+r_inline
+r_int
+id|check_signature
+c_func
+(paren
+r_int
+r_int
+id|io_addr
+comma
+r_const
+r_int
+r_char
+op_star
+id|signature
+comma
+r_int
+id|length
+)paren
+(brace
+r_int
+id|retval
+op_assign
+l_int|0
+suffix:semicolon
+r_do
+(brace
+r_if
+c_cond
+(paren
+id|readb
+c_func
+(paren
+id|io_addr
+)paren
+op_ne
+op_star
+id|signature
+)paren
+r_goto
+id|out
+suffix:semicolon
+id|io_addr
+op_increment
+suffix:semicolon
+id|signature
+op_increment
+suffix:semicolon
+id|length
+op_decrement
+suffix:semicolon
+)brace
+r_while
+c_loop
+(paren
+id|length
+)paren
+suffix:semicolon
+id|retval
+op_assign
+l_int|1
+suffix:semicolon
+id|out
+suffix:colon
+r_return
+id|retval
 suffix:semicolon
 )brace
 macro_line|#endif /* __KERNEL__ */
@@ -473,12 +695,14 @@ c_func
 r_void
 )paren
 (brace
-id|asm
-r_volatile
+id|__asm__
+id|__volatile__
 (paren
 l_string|&quot;eieio&quot;
 suffix:colon
 suffix:colon
+suffix:colon
+l_string|&quot;memory&quot;
 )paren
 suffix:semicolon
 )brace
@@ -500,14 +724,45 @@ id|addr
 r_int
 id|ret
 suffix:semicolon
+id|__asm__
+id|__volatile__
+(paren
+l_string|&quot;&quot;
+suffix:colon
+l_string|&quot;=m&quot;
+(paren
+op_star
+id|addr
+)paren
+suffix:colon
+l_string|&quot;0&quot;
+(paren
+op_star
+id|addr
+)paren
+)paren
+suffix:semicolon
 id|ret
 op_assign
 op_star
 id|addr
 suffix:semicolon
-id|eieio
-c_func
+id|__asm__
+id|__volatile__
 (paren
+l_string|&quot;eieio&quot;
+suffix:colon
+l_string|&quot;=m&quot;
+(paren
+op_star
+id|addr
+)paren
+suffix:colon
+l_string|&quot;0&quot;
+(paren
+op_star
+id|addr
+)paren
 )paren
 suffix:semicolon
 r_return
@@ -531,14 +786,45 @@ r_int
 id|val
 )paren
 (brace
+id|__asm__
+id|__volatile__
+(paren
+l_string|&quot;&quot;
+suffix:colon
+l_string|&quot;=m&quot;
+(paren
+op_star
+id|addr
+)paren
+suffix:colon
+l_string|&quot;0&quot;
+(paren
+op_star
+id|addr
+)paren
+)paren
+suffix:semicolon
 op_star
 id|addr
 op_assign
 id|val
 suffix:semicolon
-id|eieio
-c_func
+id|__asm__
+id|__volatile__
 (paren
+l_string|&quot;eieio&quot;
+suffix:colon
+l_string|&quot;=m&quot;
+(paren
+op_star
+id|addr
+)paren
+suffix:colon
+l_string|&quot;0&quot;
+(paren
+op_star
+id|addr
+)paren
 )paren
 suffix:semicolon
 )brace
@@ -559,6 +845,24 @@ id|addr
 r_int
 id|ret
 suffix:semicolon
+id|__asm__
+id|__volatile__
+(paren
+l_string|&quot;&quot;
+suffix:colon
+l_string|&quot;=m&quot;
+(paren
+op_star
+id|addr
+)paren
+suffix:colon
+l_string|&quot;0&quot;
+(paren
+op_star
+id|addr
+)paren
+)paren
+suffix:semicolon
 id|ret
 op_assign
 id|ld_le16
@@ -567,9 +871,22 @@ c_func
 id|addr
 )paren
 suffix:semicolon
-id|eieio
-c_func
+id|__asm__
+id|__volatile__
 (paren
+l_string|&quot;eieio&quot;
+suffix:colon
+l_string|&quot;=m&quot;
+(paren
+op_star
+id|addr
+)paren
+suffix:colon
+l_string|&quot;0&quot;
+(paren
+op_star
+id|addr
+)paren
 )paren
 suffix:semicolon
 r_return
@@ -593,14 +910,45 @@ id|addr
 r_int
 id|ret
 suffix:semicolon
+id|__asm__
+id|__volatile__
+(paren
+l_string|&quot;&quot;
+suffix:colon
+l_string|&quot;=m&quot;
+(paren
+op_star
+id|addr
+)paren
+suffix:colon
+l_string|&quot;0&quot;
+(paren
+op_star
+id|addr
+)paren
+)paren
+suffix:semicolon
 id|ret
 op_assign
 op_star
 id|addr
 suffix:semicolon
-id|eieio
-c_func
+id|__asm__
+id|__volatile__
 (paren
+l_string|&quot;eieio&quot;
+suffix:colon
+l_string|&quot;=m&quot;
+(paren
+op_star
+id|addr
+)paren
+suffix:colon
+l_string|&quot;0&quot;
+(paren
+op_star
+id|addr
+)paren
 )paren
 suffix:semicolon
 r_return
@@ -624,6 +972,24 @@ r_int
 id|val
 )paren
 (brace
+id|__asm__
+id|__volatile__
+(paren
+l_string|&quot;&quot;
+suffix:colon
+l_string|&quot;=m&quot;
+(paren
+op_star
+id|addr
+)paren
+suffix:colon
+l_string|&quot;0&quot;
+(paren
+op_star
+id|addr
+)paren
+)paren
+suffix:semicolon
 id|st_le16
 c_func
 (paren
@@ -632,9 +998,22 @@ comma
 id|val
 )paren
 suffix:semicolon
-id|eieio
-c_func
+id|__asm__
+id|__volatile__
 (paren
+l_string|&quot;eieio&quot;
+suffix:colon
+l_string|&quot;=m&quot;
+(paren
+op_star
+id|addr
+)paren
+suffix:colon
+l_string|&quot;0&quot;
+(paren
+op_star
+id|addr
+)paren
 )paren
 suffix:semicolon
 )brace
@@ -655,14 +1034,45 @@ r_int
 id|val
 )paren
 (brace
+id|__asm__
+id|__volatile__
+(paren
+l_string|&quot;&quot;
+suffix:colon
+l_string|&quot;=m&quot;
+(paren
+op_star
+id|addr
+)paren
+suffix:colon
+l_string|&quot;0&quot;
+(paren
+op_star
+id|addr
+)paren
+)paren
+suffix:semicolon
 op_star
 id|addr
 op_assign
 id|val
 suffix:semicolon
-id|eieio
-c_func
+id|__asm__
+id|__volatile__
 (paren
+l_string|&quot;eieio&quot;
+suffix:colon
+l_string|&quot;=m&quot;
+(paren
+op_star
+id|addr
+)paren
+suffix:colon
+l_string|&quot;0&quot;
+(paren
+op_star
+id|addr
+)paren
 )paren
 suffix:semicolon
 )brace
@@ -682,6 +1092,24 @@ id|addr
 r_int
 id|ret
 suffix:semicolon
+id|__asm__
+id|__volatile__
+(paren
+l_string|&quot;&quot;
+suffix:colon
+l_string|&quot;=m&quot;
+(paren
+op_star
+id|addr
+)paren
+suffix:colon
+l_string|&quot;0&quot;
+(paren
+op_star
+id|addr
+)paren
+)paren
+suffix:semicolon
 id|ret
 op_assign
 id|ld_le32
@@ -690,9 +1118,22 @@ c_func
 id|addr
 )paren
 suffix:semicolon
-id|eieio
-c_func
+id|__asm__
+id|__volatile__
 (paren
+l_string|&quot;eieio&quot;
+suffix:colon
+l_string|&quot;=m&quot;
+(paren
+op_star
+id|addr
+)paren
+suffix:colon
+l_string|&quot;0&quot;
+(paren
+op_star
+id|addr
+)paren
 )paren
 suffix:semicolon
 r_return
@@ -715,14 +1156,45 @@ id|addr
 r_int
 id|ret
 suffix:semicolon
+id|__asm__
+id|__volatile__
+(paren
+l_string|&quot;&quot;
+suffix:colon
+l_string|&quot;=m&quot;
+(paren
+op_star
+id|addr
+)paren
+suffix:colon
+l_string|&quot;0&quot;
+(paren
+op_star
+id|addr
+)paren
+)paren
+suffix:semicolon
 id|ret
 op_assign
 op_star
 id|addr
 suffix:semicolon
-id|eieio
-c_func
+id|__asm__
+id|__volatile__
 (paren
+l_string|&quot;eieio&quot;
+suffix:colon
+l_string|&quot;=m&quot;
+(paren
+op_star
+id|addr
+)paren
+suffix:colon
+l_string|&quot;0&quot;
+(paren
+op_star
+id|addr
+)paren
 )paren
 suffix:semicolon
 r_return
@@ -745,6 +1217,24 @@ r_int
 id|val
 )paren
 (brace
+id|__asm__
+id|__volatile__
+(paren
+l_string|&quot;&quot;
+suffix:colon
+l_string|&quot;=m&quot;
+(paren
+op_star
+id|addr
+)paren
+suffix:colon
+l_string|&quot;0&quot;
+(paren
+op_star
+id|addr
+)paren
+)paren
+suffix:semicolon
 id|st_le32
 c_func
 (paren
@@ -753,9 +1243,22 @@ comma
 id|val
 )paren
 suffix:semicolon
-id|eieio
-c_func
+id|__asm__
+id|__volatile__
 (paren
+l_string|&quot;eieio&quot;
+suffix:colon
+l_string|&quot;=m&quot;
+(paren
+op_star
+id|addr
+)paren
+suffix:colon
+l_string|&quot;0&quot;
+(paren
+op_star
+id|addr
+)paren
 )paren
 suffix:semicolon
 )brace
@@ -775,14 +1278,45 @@ r_int
 id|val
 )paren
 (brace
+id|__asm__
+id|__volatile__
+(paren
+l_string|&quot;&quot;
+suffix:colon
+l_string|&quot;=m&quot;
+(paren
+op_star
+id|addr
+)paren
+suffix:colon
+l_string|&quot;0&quot;
+(paren
+op_star
+id|addr
+)paren
+)paren
+suffix:semicolon
 op_star
 id|addr
 op_assign
 id|val
 suffix:semicolon
-id|eieio
-c_func
+id|__asm__
+id|__volatile__
 (paren
+l_string|&quot;eieio&quot;
+suffix:colon
+l_string|&quot;=m&quot;
+(paren
+op_star
+id|addr
+)paren
+suffix:colon
+l_string|&quot;0&quot;
+(paren
+op_star
+id|addr
+)paren
 )paren
 suffix:semicolon
 )brace

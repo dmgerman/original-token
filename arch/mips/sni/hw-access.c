@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * Low-level hardware access stuff for SNI RM200 PCI&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1996, 1997, 1998 by Ralf Baechle&n; *&n; * $Id: hw-access.c,v 1.4 1998/05/01 01:35:32 ralf Exp $&n; */
+multiline_comment|/* $Id: hw-access.c,v 1.5 1998/05/07 00:39:56 ralf Exp $&n; *&n; * Low-level hardware access stuff for SNI RM200 PCI&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1996, 1997, 1998 by Ralf Baechle&n; */
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/kbdcntrlr.h&gt;
@@ -414,6 +414,8 @@ comma
 id|rtc_write_data
 )brace
 suffix:semicolon
+DECL|macro|KBD_STAT_IBF
+mdefine_line|#define KBD_STAT_IBF&t;&t;0x02&t;/* Keyboard input buffer full */
 DECL|function|sni_read_input
 r_static
 r_int
@@ -443,6 +445,28 @@ r_char
 id|val
 )paren
 (brace
+r_int
+id|status
+suffix:semicolon
+r_do
+(brace
+id|status
+op_assign
+id|inb
+c_func
+(paren
+id|KBD_CNTL_REG
+)paren
+suffix:semicolon
+)brace
+r_while
+c_loop
+(paren
+id|status
+op_amp
+id|KBD_STAT_IBF
+)paren
+suffix:semicolon
 id|outb
 c_func
 (paren
@@ -463,6 +487,28 @@ r_char
 id|val
 )paren
 (brace
+r_int
+id|status
+suffix:semicolon
+r_do
+(brace
+id|status
+op_assign
+id|inb
+c_func
+(paren
+id|KBD_CNTL_REG
+)paren
+suffix:semicolon
+)brace
+r_while
+c_loop
+(paren
+id|status
+op_amp
+id|KBD_STAT_IBF
+)paren
+suffix:semicolon
 id|outb
 c_func
 (paren

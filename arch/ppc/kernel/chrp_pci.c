@@ -23,11 +23,10 @@ id|Hydra
 op_assign
 l_int|NULL
 suffix:semicolon
-macro_line|#if 1
 multiline_comment|/*&n; * The VLSI Golden Gate II has only 512K of PCI configuration space, so we&n; * limit the bus number to 3 bits&n; */
-DECL|function|chrp_pcibios_read_config_byte
+DECL|function|gg2_pcibios_read_config_byte
 r_int
-id|chrp_pcibios_read_config_byte
+id|gg2_pcibios_read_config_byte
 c_func
 (paren
 r_int
@@ -91,9 +90,9 @@ r_return
 id|PCIBIOS_SUCCESSFUL
 suffix:semicolon
 )brace
-DECL|function|chrp_pcibios_read_config_word
+DECL|function|gg2_pcibios_read_config_word
 r_int
-id|chrp_pcibios_read_config_word
+id|gg2_pcibios_read_config_word
 c_func
 (paren
 r_int
@@ -157,9 +156,9 @@ r_return
 id|PCIBIOS_SUCCESSFUL
 suffix:semicolon
 )brace
-DECL|function|chrp_pcibios_read_config_dword
+DECL|function|gg2_pcibios_read_config_dword
 r_int
-id|chrp_pcibios_read_config_dword
+id|gg2_pcibios_read_config_dword
 c_func
 (paren
 r_int
@@ -223,9 +222,9 @@ r_return
 id|PCIBIOS_SUCCESSFUL
 suffix:semicolon
 )brace
-DECL|function|chrp_pcibios_write_config_byte
+DECL|function|gg2_pcibios_write_config_byte
 r_int
-id|chrp_pcibios_write_config_byte
+id|gg2_pcibios_write_config_byte
 c_func
 (paren
 r_int
@@ -280,9 +279,9 @@ r_return
 id|PCIBIOS_SUCCESSFUL
 suffix:semicolon
 )brace
-DECL|function|chrp_pcibios_write_config_word
+DECL|function|gg2_pcibios_write_config_word
 r_int
-id|chrp_pcibios_write_config_word
+id|gg2_pcibios_write_config_word
 c_func
 (paren
 r_int
@@ -337,9 +336,9 @@ r_return
 id|PCIBIOS_SUCCESSFUL
 suffix:semicolon
 )brace
-DECL|function|chrp_pcibios_write_config_dword
+DECL|function|gg2_pcibios_write_config_dword
 r_int
-id|chrp_pcibios_write_config_dword
+id|gg2_pcibios_write_config_dword
 c_func
 (paren
 r_int
@@ -394,42 +393,25 @@ r_return
 id|PCIBIOS_SUCCESSFUL
 suffix:semicolon
 )brace
-macro_line|#else
-DECL|variable|pci_config_address
+r_extern
 r_volatile
 r_int
 r_int
 op_star
 id|pci_config_address
-op_assign
-(paren
-r_volatile
-r_int
-r_int
-op_star
-)paren
-l_int|0xfec00cf8
 suffix:semicolon
-DECL|variable|pci_config_data
+r_extern
 r_volatile
 r_int
 r_char
 op_star
 id|pci_config_data
-op_assign
-(paren
-r_volatile
-r_int
-r_char
-op_star
-)paren
-l_int|0xfee00cfc
 suffix:semicolon
 DECL|macro|DEV_FN_MAX
 mdefine_line|#define DEV_FN_MAX (31&lt;&lt;3)
-DECL|function|chrp_pcibios_read_config_byte
+DECL|function|raven_pcibios_read_config_byte
 r_int
-id|chrp_pcibios_read_config_byte
+id|raven_pcibios_read_config_byte
 c_func
 (paren
 r_int
@@ -510,9 +492,9 @@ r_return
 id|PCIBIOS_SUCCESSFUL
 suffix:semicolon
 )brace
-DECL|function|chrp_pcibios_read_config_word
+DECL|function|raven_pcibios_read_config_word
 r_int
-id|chrp_pcibios_read_config_word
+id|raven_pcibios_read_config_word
 c_func
 (paren
 r_int
@@ -611,9 +593,9 @@ r_return
 id|PCIBIOS_SUCCESSFUL
 suffix:semicolon
 )brace
-DECL|function|chrp_pcibios_read_config_dword
+DECL|function|raven_pcibios_read_config_dword
 r_int
-id|chrp_pcibios_read_config_dword
+id|raven_pcibios_read_config_dword
 c_func
 (paren
 r_int
@@ -701,9 +683,9 @@ r_return
 id|PCIBIOS_SUCCESSFUL
 suffix:semicolon
 )brace
-DECL|function|chrp_pcibios_write_config_byte
+DECL|function|raven_pcibios_write_config_byte
 r_int
-id|chrp_pcibios_write_config_byte
+id|raven_pcibios_write_config_byte
 c_func
 (paren
 r_int
@@ -782,9 +764,9 @@ r_return
 id|PCIBIOS_SUCCESSFUL
 suffix:semicolon
 )brace
-DECL|function|chrp_pcibios_write_config_word
+DECL|function|raven_pcibios_write_config_word
 r_int
-id|chrp_pcibios_write_config_word
+id|raven_pcibios_write_config_word
 c_func
 (paren
 r_int
@@ -881,9 +863,9 @@ r_return
 id|PCIBIOS_SUCCESSFUL
 suffix:semicolon
 )brace
-DECL|function|chrp_pcibios_write_config_dword
+DECL|function|raven_pcibios_write_config_dword
 r_int
-id|chrp_pcibios_write_config_dword
+id|raven_pcibios_write_config_dword
 c_func
 (paren
 r_int
@@ -967,7 +949,6 @@ r_return
 id|PCIBIOS_SUCCESSFUL
 suffix:semicolon
 )brace
-macro_line|#endif
 multiline_comment|/*&n;     *  Temporary fixes for PCI devices. These should be replaced by OF query&n;     *  code -- Geert&n;     */
 DECL|variable|__initdata
 r_static
@@ -1170,6 +1151,7 @@ id|bus
 comma
 id|dev
 suffix:semicolon
+macro_line|#if 0    
 r_int
 r_char
 id|t8
@@ -1178,6 +1160,7 @@ r_int
 r_int
 id|t16
 suffix:semicolon
+macro_line|#endif    
 r_int
 r_int
 id|t32
@@ -1215,7 +1198,7 @@ id|pdev-&gt;devfn
 op_plus
 l_int|1
 suffix:semicolon
-id|chrp_pcibios_read_config_dword
+id|pcibios_read_config_dword
 c_func
 (paren
 id|bus
@@ -1251,7 +1234,7 @@ l_string|&quot;Enabling SL82C105 IDE on W83C553F&bslash;n&quot;
 suffix:semicolon
 multiline_comment|/*&n;&t;     *  FIXME: this doesn&squot;t help :-(&n;&t;     */
 multiline_comment|/* I/O mapping */
-id|chrp_pcibios_read_config_word
+id|pcibios_read_config_word
 c_func
 (paren
 id|bus
@@ -1268,7 +1251,7 @@ id|t16
 op_or_assign
 id|PCI_COMMAND_IO
 suffix:semicolon
-id|chrp_pcibios_write_config_word
+id|pcibios_write_config_word
 c_func
 (paren
 id|bus
@@ -1281,7 +1264,7 @@ id|t16
 )paren
 suffix:semicolon
 multiline_comment|/* Standard IDE registers */
-id|chrp_pcibios_write_config_dword
+id|pcibios_write_config_dword
 c_func
 (paren
 id|bus
@@ -1293,7 +1276,7 @@ comma
 l_int|0xffffffff
 )paren
 suffix:semicolon
-id|chrp_pcibios_read_config_dword
+id|pcibios_read_config_dword
 c_func
 (paren
 id|bus
@@ -1306,7 +1289,7 @@ op_amp
 id|t32
 )paren
 suffix:semicolon
-id|chrp_pcibios_write_config_dword
+id|pcibios_write_config_dword
 c_func
 (paren
 id|bus
@@ -1320,7 +1303,7 @@ op_or
 l_int|1
 )paren
 suffix:semicolon
-id|chrp_pcibios_write_config_dword
+id|pcibios_write_config_dword
 c_func
 (paren
 id|bus
@@ -1332,7 +1315,7 @@ comma
 l_int|0xffffffff
 )paren
 suffix:semicolon
-id|chrp_pcibios_read_config_dword
+id|pcibios_read_config_dword
 c_func
 (paren
 id|bus
@@ -1345,7 +1328,7 @@ op_amp
 id|t32
 )paren
 suffix:semicolon
-id|chrp_pcibios_write_config_dword
+id|pcibios_write_config_dword
 c_func
 (paren
 id|bus
@@ -1359,7 +1342,7 @@ op_or
 l_int|1
 )paren
 suffix:semicolon
-id|chrp_pcibios_write_config_dword
+id|pcibios_write_config_dword
 c_func
 (paren
 id|bus
@@ -1371,7 +1354,7 @@ comma
 l_int|0xffffffff
 )paren
 suffix:semicolon
-id|chrp_pcibios_read_config_dword
+id|pcibios_read_config_dword
 c_func
 (paren
 id|bus
@@ -1384,7 +1367,7 @@ op_amp
 id|t32
 )paren
 suffix:semicolon
-id|chrp_pcibios_write_config_dword
+id|pcibios_write_config_dword
 c_func
 (paren
 id|bus
@@ -1398,7 +1381,7 @@ op_or
 l_int|1
 )paren
 suffix:semicolon
-id|chrp_pcibios_write_config_dword
+id|pcibios_write_config_dword
 c_func
 (paren
 id|bus
@@ -1410,7 +1393,7 @@ comma
 l_int|0xffffffff
 )paren
 suffix:semicolon
-id|chrp_pcibios_read_config_dword
+id|pcibios_read_config_dword
 c_func
 (paren
 id|bus
@@ -1423,7 +1406,7 @@ op_amp
 id|t32
 )paren
 suffix:semicolon
-id|chrp_pcibios_write_config_dword
+id|pcibios_write_config_dword
 c_func
 (paren
 id|bus
@@ -1438,7 +1421,7 @@ l_int|1
 )paren
 suffix:semicolon
 multiline_comment|/* IDE Bus Master Control */
-id|chrp_pcibios_write_config_dword
+id|pcibios_write_config_dword
 c_func
 (paren
 id|bus
@@ -1450,7 +1433,7 @@ comma
 l_int|0xffffffff
 )paren
 suffix:semicolon
-id|chrp_pcibios_read_config_dword
+id|pcibios_read_config_dword
 c_func
 (paren
 id|bus
@@ -1463,7 +1446,7 @@ op_amp
 id|t32
 )paren
 suffix:semicolon
-id|chrp_pcibios_write_config_dword
+id|pcibios_write_config_dword
 c_func
 (paren
 id|bus
@@ -1477,7 +1460,7 @@ op_or
 l_int|1
 )paren
 suffix:semicolon
-id|chrp_pcibios_write_config_dword
+id|pcibios_write_config_dword
 c_func
 (paren
 id|bus
@@ -1489,7 +1472,7 @@ comma
 l_int|0xffffffff
 )paren
 suffix:semicolon
-id|chrp_pcibios_read_config_dword
+id|pcibios_read_config_dword
 c_func
 (paren
 id|bus
@@ -1502,7 +1485,7 @@ op_amp
 id|t32
 )paren
 suffix:semicolon
-id|chrp_pcibios_write_config_dword
+id|pcibios_write_config_dword
 c_func
 (paren
 id|bus
@@ -1517,7 +1500,7 @@ l_int|1
 )paren
 suffix:semicolon
 multiline_comment|/* IDE Interrupt */
-id|chrp_pcibios_read_config_byte
+id|pcibios_read_config_byte
 c_func
 (paren
 id|bus

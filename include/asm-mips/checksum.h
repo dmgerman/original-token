@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * include/asm-mips/checksum.h&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1995 by Ralf Baechle&n; */
+multiline_comment|/* $Id: checksum.h,v 1.8 1998/05/07 00:39:59 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1995, 1996, 1997, 1998 by Ralf Baechle&n; */
 macro_line|#ifndef __ASM_MIPS_CHECKSUM_H
 DECL|macro|__ASM_MIPS_CHECKSUM_H
 mdefine_line|#define __ASM_MIPS_CHECKSUM_H
@@ -22,10 +22,10 @@ r_int
 id|sum
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * the same as csum_partial, but copies from src while it&n; * checksums&n; *&n; * here even more important to align src and dst on a 32-bit (or even&n; * better 64-bit) boundary&n; */
+multiline_comment|/*&n; * this is a new version of the above that records errors it finds in *errp,&n; * but continues and zeros the rest of the buffer.&n; */
 r_int
 r_int
-id|csum_partial_copy
+id|csum_partial_copy_nocheck
 c_func
 (paren
 r_const
@@ -45,9 +45,6 @@ r_int
 id|sum
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * the same as csum_partial, but copies from user space (but on MIPS&n; * we have just one address space, so this is identical to the above)&n; *&n; * this is obsolete and will go away.&n; */
-DECL|macro|csum_partial_copy_fromuser
-mdefine_line|#define csum_partial_copy_fromuser csum_partial_copy
 multiline_comment|/*&n; * this is a new version of the above that records errors it finds in *errp,&n; * but continues and zeros the rest of the buffer.&n; */
 r_int
 r_int
@@ -73,6 +70,31 @@ comma
 r_int
 op_star
 id|errp
+)paren
+suffix:semicolon
+multiline_comment|/*&n; * the same as csum_partial, but copies from user space (but on MIPS&n; * we have just one address space, so this is identical to the above)&n; *&n; * this is obsolete and will go away.&n; */
+DECL|macro|csum_partial_copy_fromuser
+mdefine_line|#define csum_partial_copy_fromuser csum_partial_copy
+r_int
+r_int
+id|csum_partial_copy
+c_func
+(paren
+r_const
+r_char
+op_star
+id|src
+comma
+r_char
+op_star
+id|dst
+comma
+r_int
+id|len
+comma
+r_int
+r_int
+id|sum
 )paren
 suffix:semicolon
 multiline_comment|/*&n; *&t;Fold a partial checksum without adding pseudo headers&n; */
@@ -416,13 +438,12 @@ id|sum
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * computes the checksum of the TCP/UDP pseudo-header&n; * returns a 16-bit checksum, already complemented&n; */
-DECL|function|csum_tcpudp_magic
+DECL|function|csum_tcpudp_nofold
 r_static
 r_inline
 r_int
 r_int
-r_int
-id|csum_tcpudp_magic
+id|csum_tcpudp_nofold
 c_func
 (paren
 r_int
@@ -578,10 +599,57 @@ l_string|&quot;$1&quot;
 )paren
 suffix:semicolon
 r_return
+id|sum
+suffix:semicolon
+)brace
+multiline_comment|/*&n; * computes the checksum of the TCP/UDP pseudo-header&n; * returns a 16-bit checksum, already complemented&n; */
+DECL|function|csum_tcpudp_magic
+r_static
+r_inline
+r_int
+r_int
+r_int
+id|csum_tcpudp_magic
+c_func
+(paren
+r_int
+r_int
+id|saddr
+comma
+r_int
+r_int
+id|daddr
+comma
+r_int
+r_int
+id|len
+comma
+r_int
+r_int
+id|proto
+comma
+r_int
+r_int
+id|sum
+)paren
+(brace
+r_return
 id|csum_fold
 c_func
 (paren
+id|csum_tcpudp_nofold
+c_func
+(paren
+id|saddr
+comma
+id|daddr
+comma
+id|len
+comma
+id|proto
+comma
 id|sum
+)paren
 )paren
 suffix:semicolon
 )brace

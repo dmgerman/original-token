@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * include/asm-mips/processor.h&n; *&n; * Copyright (C) 1994  Waldorf Electronics&n; * written by Ralf Baechle&n; * Modified further for R[236]000 compatibility by Paul M. Antoine&n; *&n; * $Id: processor.h,v 1.20 1998/05/04 09:18:59 ralf Exp $&n; */
+multiline_comment|/*&n; * include/asm-mips/processor.h&n; *&n; * Copyright (C) 1994  Waldorf Electronics&n; * written by Ralf Baechle&n; * Modified further for R[236]000 compatibility by Paul M. Antoine&n; *&n; * $Id: processor.h,v 1.22 1998/05/11 08:40:07 davem Exp $&n; */
 macro_line|#ifndef __ASM_MIPS_PROCESSOR_H
 DECL|macro|__ASM_MIPS_PROCESSOR_H
 mdefine_line|#define __ASM_MIPS_PROCESSOR_H
@@ -42,9 +42,7 @@ DECL|macro|TASK_SIZE
 mdefine_line|#define TASK_SIZE&t;(0x80000000UL)
 multiline_comment|/* This decides where the kernel will search for a free chunk of vm&n; * space during mmap&squot;s.&n; */
 DECL|macro|TASK_UNMAPPED_BASE
-mdefine_line|#define TASK_UNMAPPED_BASE(off)&t;(TASK_SIZE / 3)
-DECL|macro|TASK_UNMAPPED_ALIGN
-mdefine_line|#define TASK_UNMAPPED_ALIGN(addr, off)&t;PAGE_ALIGN(addr)
+mdefine_line|#define TASK_UNMAPPED_BASE&t;(TASK_SIZE / 3)
 multiline_comment|/*&n; * Size of io_bitmap in longwords: 32 is ports 0-0x3ff.&n; */
 DECL|macro|IO_BITMAP_SIZE
 mdefine_line|#define IO_BITMAP_SIZE&t;32
@@ -241,6 +239,11 @@ id|task_struct
 op_star
 )paren
 suffix:semicolon
+multiline_comment|/* Copy and release all segment info associated with a VM */
+DECL|macro|copy_segments
+mdefine_line|#define copy_segments(nr, p, mm) do { } while(0)
+DECL|macro|release_segments
+mdefine_line|#define release_segments(mm) do { } while(0)
 multiline_comment|/*&n; * Return saved PC of a blocked thread.&n; */
 DECL|function|thread_saved_pc
 r_extern

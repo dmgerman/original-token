@@ -2519,7 +2519,7 @@ id|flags
 )paren
 suffix:semicolon
 multiline_comment|/* all CPUs; safe now that hwif-&gt;hwgroup is set up */
-macro_line|#ifndef __mc68000__
+macro_line|#if !defined(__mc68000__) &amp;&amp; !defined(CONFIG_APUS) &amp;&amp; !defined(__sparc__)
 id|printk
 c_func
 (paren
@@ -2547,6 +2547,38 @@ comma
 id|hwif-&gt;irq
 )paren
 suffix:semicolon
+macro_line|#elif defined(__sparc__)
+id|printk
+c_func
+(paren
+l_string|&quot;%s at 0x%03x-0x%03x,0x%03x on irq %s&quot;
+comma
+id|hwif-&gt;name
+comma
+id|hwif-&gt;io_ports
+(braket
+id|IDE_DATA_OFFSET
+)braket
+comma
+id|hwif-&gt;io_ports
+(braket
+id|IDE_DATA_OFFSET
+)braket
+op_plus
+l_int|7
+comma
+id|hwif-&gt;io_ports
+(braket
+id|IDE_CONTROL_OFFSET
+)braket
+comma
+id|__irq_itoa
+c_func
+(paren
+id|hwif-&gt;irq
+)paren
+)paren
+suffix:semicolon
 macro_line|#else
 id|printk
 c_func
@@ -2563,7 +2595,7 @@ comma
 id|hwif-&gt;irq
 )paren
 suffix:semicolon
-macro_line|#endif /* __mc68000__ */
+macro_line|#endif /* __mc68000__ &amp;&amp; CONFIG_APUS */
 r_if
 c_cond
 (paren

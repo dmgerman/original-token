@@ -1173,6 +1173,22 @@ suffix:semicolon
 )brace
 multiline_comment|/* These are in kernel/dma.c: */
 r_extern
+r_int
+id|request_dma
+c_func
+(paren
+r_int
+r_int
+id|dmanr
+comma
+r_const
+r_char
+op_star
+id|device_id
+)paren
+suffix:semicolon
+multiline_comment|/* reserve a DMA channel */
+r_extern
 r_void
 id|free_dma
 c_func

@@ -2473,7 +2473,7 @@ id|current-&gt;counter
 op_assign
 l_int|0
 suffix:semicolon
-id|need_resched
+id|current-&gt;need_resched
 op_assign
 l_int|1
 suffix:semicolon

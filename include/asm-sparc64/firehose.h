@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: firehose.h,v 1.2 1997/08/08 04:26:31 davem Exp $&n; * firehose.h: Defines for the Fire Hose Controller (FHC) found&n; *             on Sunfire/Starfire/Wildfire systems.&n; *&n; * Copyright (C) 1997 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: firehose.h,v 1.3 1998/06/10 07:28:43 davem Exp $&n; * firehose.h: Defines for the Fire Hose Controller (FHC) found&n; *             on Sunfire/Starfire/Wildfire systems.&n; *&n; * Copyright (C) 1997 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _SPARC64_FIREHOSE_H
 DECL|macro|_SPARC64_FIREHOSE_H
 mdefine_line|#define _SPARC64_FIREHOSE_H

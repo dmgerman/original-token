@@ -739,7 +739,10 @@ id|ide_rz1000
 comma
 id|ide_trm290
 comma
+DECL|enumerator|ide_cmd646
 DECL|enumerator|ide_4drives
+id|ide_cmd646
+comma
 id|ide_4drives
 DECL|typedef|hwif_chipset_t
 )brace

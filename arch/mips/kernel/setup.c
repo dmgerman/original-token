@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/arch/mips/kernel/setup.c&n; *&n; *  Copyright (C) 1995  Linus Torvalds&n; *  Copyright (C) 1995, 1996  Ralf Baechle&n; *  Copyright (C) 1996  Stoned Elipot&n; *&n; * $Id: setup.c,v 1.9 1998/05/04 09:17:56 ralf Exp $&n; */
+multiline_comment|/*&n; *  linux/arch/mips/kernel/setup.c&n; *&n; *  Copyright (C) 1995  Linus Torvalds&n; *  Copyright (C) 1995, 1996  Ralf Baechle&n; *  Copyright (C) 1996  Stoned Elipot&n; *&n; * $Id: setup.c,v 1.10 1998/06/10 07:21:10 davem Exp $&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/hdreg.h&gt;

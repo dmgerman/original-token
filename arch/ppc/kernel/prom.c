@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * Procedures for interfacing to the Open Firmware PROM on&n; * Power Macintosh computers.&n; *&n; * In particular, we are interested in the device tree&n; * and in using some of its services (exit, write to stdout).&n; *&n; * Paul Mackerras&t;August 1996.&n; * Copyright (C) 1996 Paul Mackerras.&n; */
+multiline_comment|/*&n; * $Id: prom.c,v 1.32 1998/07/28 20:28:46 geert Exp $&n; *&n; * Procedures for interfacing to the Open Firmware PROM on&n; * Power Macintosh computers.&n; *&n; * In particular, we are interested in the device tree&n; * and in using some of its services (exit, write to stdout).&n; *&n; * Paul Mackerras&t;August 1996.&n; * Copyright (C) 1996 Paul Mackerras.&n; */
 macro_line|#include &lt;stdarg.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -238,14 +238,12 @@ id|rtas_size
 op_assign
 l_int|0
 suffix:semicolon
-DECL|variable|chunk
-r_char
-id|chunk
-(braket
-id|PAGE_SIZE
-op_star
-l_int|64
-)braket
+DECL|variable|old_rtas
+r_int
+r_int
+id|old_rtas
+op_assign
+l_int|0
 suffix:semicolon
 DECL|variable|allnodes
 r_static
@@ -397,7 +395,7 @@ DECL|macro|RELOC
 mdefine_line|#define RELOC(x)&t;(*PTRRELOC(&amp;(x)))
 DECL|macro|ALIGN
 mdefine_line|#define ALIGN(x) (((x) + sizeof(unsigned long)-1) &amp; -sizeof(unsigned long))
-id|__pmac
+id|__openfirmware
 r_static
 r_void
 DECL|function|prom_exit
@@ -450,6 +448,7 @@ suffix:semicolon
 multiline_comment|/* should never get here */
 suffix:semicolon
 )brace
+id|__openfirmware
 r_void
 DECL|function|prom_enter
 id|prom_enter
@@ -498,6 +497,7 @@ id|args
 )paren
 suffix:semicolon
 )brace
+id|__openfirmware
 r_static
 r_void
 op_star
@@ -634,6 +634,7 @@ id|nargs
 )braket
 suffix:semicolon
 )brace
+id|__openfirmware
 r_void
 DECL|function|prom_print
 id|prom_print
@@ -776,23 +777,8 @@ suffix:semicolon
 )brace
 )brace
 )brace
-macro_line|#ifdef CONFIG_ALL_PPC
-DECL|variable|OF_type
-DECL|variable|OF_model
-r_int
-r_char
-id|OF_type
-(braket
-l_int|16
-)braket
-comma
-id|OF_model
-(braket
-l_int|16
-)braket
-suffix:semicolon
-macro_line|#endif
 multiline_comment|/*&n; * We enter here early on, when the Open Firmware prom is still&n; * handling exceptions and the MMU hash table for us.&n; */
+id|__openfirmware
 r_void
 DECL|function|prom_init
 id|prom_init
@@ -849,6 +835,16 @@ l_int|0
 )paren
 op_eq
 l_int|0xdeadc0de
+)paren
+r_return
+suffix:semicolon
+multiline_comment|/* check if we&squot;re apus, return if we are */
+r_if
+c_cond
+(paren
+id|r3
+op_eq
+l_int|0x61707573
 )paren
 r_return
 suffix:semicolon
@@ -1290,7 +1286,7 @@ id|rtas_data
 )paren
 op_assign
 id|mem
-op_minus
+op_plus
 id|KERNELBASE
 suffix:semicolon
 id|mem
@@ -1323,24 +1319,6 @@ c_func
 l_string|&quot;/rtas&quot;
 )paren
 )paren
-suffix:semicolon
-id|RELOC
-c_func
-(paren
-id|rtas_data
-)paren
-op_assign
-(paren
-(paren
-id|ulong
-)paren
-id|chunk
-op_plus
-l_int|4095
-)paren
-op_amp
-op_minus
-l_int|4096
 suffix:semicolon
 (brace
 r_int
@@ -1407,6 +1385,8 @@ id|rtas_data
 )paren
 op_minus
 id|KERNELBASE
+op_minus
+id|offset
 )paren
 suffix:semicolon
 id|RELOC
@@ -1517,117 +1497,9 @@ op_minus
 id|offset
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_ALL_PPC
-(brace
-id|ihandle
-id|prom_root
-suffix:semicolon
-id|RELOC
-c_func
-(paren
-id|prom_root
-)paren
-op_assign
-id|call_prom
-c_func
-(paren
-id|RELOC
-c_func
-(paren
-l_string|&quot;finddevice&quot;
-)paren
-comma
-l_int|1
-comma
-l_int|1
-comma
-id|RELOC
-c_func
-(paren
-l_string|&quot;/&quot;
-)paren
-)paren
-suffix:semicolon
-id|call_prom
-c_func
-(paren
-id|RELOC
-c_func
-(paren
-l_string|&quot;getprop&quot;
-)paren
-comma
-l_int|4
-comma
-l_int|1
-comma
-id|RELOC
-c_func
-(paren
-id|prom_root
-)paren
-comma
-id|RELOC
-c_func
-(paren
-l_string|&quot;device_type&quot;
-)paren
-comma
-id|RELOC
-c_func
-(paren
-id|OF_type
-)paren
-comma
-(paren
-r_void
-op_star
-)paren
-l_int|16
-)paren
-suffix:semicolon
-id|call_prom
-c_func
-(paren
-id|RELOC
-c_func
-(paren
-l_string|&quot;getprop&quot;
-)paren
-comma
-l_int|4
-comma
-l_int|1
-comma
-id|RELOC
-c_func
-(paren
-id|prom_root
-)paren
-comma
-id|RELOC
-c_func
-(paren
-l_string|&quot;model&quot;
-)paren
-comma
-id|RELOC
-c_func
-(paren
-id|OF_model
-)paren
-comma
-(paren
-r_void
-op_star
-)paren
-l_int|16
-)paren
-suffix:semicolon
-)brace
-macro_line|#endif
 )brace
 multiline_comment|/*&n; * If we have a display that we don&squot;t know how to drive,&n; * we will want to try to execute OF&squot;s open method for it&n; * later.  However, OF will probably fall over if we do that&n; * we&squot;ve taken over the MMU.&n; * So we check whether we will need to open the display,&n; * and if so, open it now.&n; */
+id|__openfirmware
 r_static
 r_int
 r_int
@@ -1657,6 +1529,11 @@ c_func
 suffix:semicolon
 r_char
 id|type
+(braket
+l_int|16
+)braket
+comma
+id|name
 (braket
 l_int|16
 )braket
@@ -1844,9 +1721,58 @@ l_string|&quot;... failed&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
+multiline_comment|/* platinum kludge. platinum is a valid display,&n;&t;&t;&t; * but not handled by OF. Make sure prom_num_display&n;&t;&t;&t; * is incremented anyway&n;&t;&t;&t; */
+id|call_prom
+c_func
+(paren
+id|RELOC
+c_func
+(paren
+l_string|&quot;getprop&quot;
+)paren
+comma
+l_int|4
+comma
+l_int|1
+comma
+id|node
+comma
+id|RELOC
+c_func
+(paren
+l_string|&quot;name&quot;
+)paren
+comma
+id|name
+comma
+r_sizeof
+(paren
+id|name
+)paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|strncmp
+c_func
+(paren
+id|name
+comma
+id|RELOC
+c_func
+(paren
+l_string|&quot;platinum&quot;
+)paren
+comma
+l_int|8
+)paren
+)paren
 r_continue
 suffix:semicolon
 )brace
+r_else
+(brace
 id|prom_print
 c_func
 (paren
@@ -1857,6 +1783,7 @@ l_string|&quot;... ok&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
+)brace
 id|mem
 op_add_assign
 id|strlen
@@ -1909,6 +1836,7 @@ id|mem
 )paren
 suffix:semicolon
 )brace
+id|__openfirmware
 r_static
 r_int
 DECL|function|prom_next_node
@@ -2066,6 +1994,7 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/*&n; * Make a copy of the device tree from the PROM.&n; */
+id|__openfirmware
 r_static
 r_int
 r_int
@@ -2195,6 +2124,7 @@ r_return
 id|new_start
 suffix:semicolon
 )brace
+id|__openfirmware
 r_static
 r_int
 r_int
@@ -2714,6 +2644,7 @@ id|mem_start
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * finish_device_tree is called once things are running normally&n; * (i.e. with text and data mapped to the address they were linked at).&n; * It traverses the device tree and fills in the name, type,&n; * {n_}addrs and {n_}intrs fields of each node.&n; */
+id|__openfirmware
 r_void
 DECL|function|finish_device_tree
 id|finish_device_tree
@@ -2768,6 +2699,7 @@ op_star
 id|mem
 suffix:semicolon
 )brace
+id|__openfirmware
 r_static
 r_int
 r_int
@@ -2826,6 +2758,7 @@ id|ifunc
 op_ne
 l_int|NULL
 )paren
+(brace
 id|mem_start
 op_assign
 id|ifunc
@@ -2836,6 +2769,7 @@ comma
 id|mem_start
 )paren
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -3003,6 +2937,7 @@ r_return
 id|mem_start
 suffix:semicolon
 )brace
+id|__openfirmware
 r_static
 r_int
 r_int
@@ -3285,6 +3220,7 @@ r_return
 id|mem_start
 suffix:semicolon
 )brace
+id|__openfirmware
 r_static
 r_int
 r_int
@@ -3622,6 +3558,7 @@ r_return
 id|mem_start
 suffix:semicolon
 )brace
+id|__openfirmware
 r_static
 r_int
 r_int
@@ -3969,6 +3906,7 @@ r_return
 id|mem_start
 suffix:semicolon
 )brace
+id|__openfirmware
 r_static
 r_int
 r_int
@@ -4246,6 +4184,7 @@ r_return
 id|mem_start
 suffix:semicolon
 )brace
+id|__openfirmware
 r_static
 r_int
 r_int
@@ -4523,6 +4462,7 @@ id|mem_start
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Construct and return a list of the device_nodes with a given name.&n; */
+id|__openfirmware
 r_struct
 id|device_node
 op_star
@@ -4609,6 +4549,7 @@ id|head
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Construct and return a list of the device_nodes with a given type.&n; */
+id|__openfirmware
 r_struct
 id|device_node
 op_star
@@ -4695,6 +4636,7 @@ id|head
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Construct and return a list of the device_nodes with a given type&n; * and compatible property.&n; */
+id|__openfirmware
 r_struct
 id|device_node
 op_star
@@ -4833,6 +4775,7 @@ id|head
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Find the device_node with a given full_name.&n; */
+id|__openfirmware
 r_struct
 id|device_node
 op_star
@@ -4891,6 +4834,7 @@ l_int|NULL
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Find the device_node with a given phandle.&n; */
+id|__openfirmware
 r_struct
 id|device_node
 op_star
@@ -4937,6 +4881,7 @@ l_int|NULL
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Find a property with a given name for a given node&n; * and return the value.&n; */
+id|__openfirmware
 r_int
 r_char
 op_star
@@ -5013,6 +4958,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+id|__openfirmware
 r_void
 DECL|function|print_properties
 id|print_properties
@@ -5340,6 +5286,7 @@ suffix:semicolon
 )brace
 )brace
 )brace
+id|__openfirmware
 r_int
 DECL|function|call_rtas
 id|call_rtas
@@ -5588,6 +5535,7 @@ l_int|3
 )braket
 suffix:semicolon
 )brace
+id|__openfirmware
 r_void
 DECL|function|abort
 m_abort

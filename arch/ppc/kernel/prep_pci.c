@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * $Id: prep_pci.c,v 1.16 1998/02/23 02:47:32 davem Exp $&n; * PReP pci functions.&n; * Originally by Gary Thomas&n; * rewritten and updated by Cort Dougan (cort@cs.nmt.edu)&n; *&n; * The motherboard routes/maps will disappear shortly. -- Cort&n; */
+multiline_comment|/*&n; * $Id: prep_pci.c,v 1.20 1998/06/19 16:48:45 cort Exp $&n; * PReP pci functions.&n; * Originally by Gary Thomas&n; * rewritten and updated by Cort Dougan (cort@cs.nmt.edu)&n; *&n; * The motherboard routes/maps will disappear shortly. -- Cort&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -32,13 +32,14 @@ id|Motherboard_routes
 suffix:semicolon
 multiline_comment|/* Tables for known hardware */
 multiline_comment|/* Motorola PowerStackII - Utah */
-DECL|variable|Utah_pci_IRQ_map
+DECL|variable|__prepdata
 r_static
 r_char
 id|Utah_pci_IRQ_map
 (braket
 l_int|23
 )braket
+id|__prepdata
 op_assign
 (brace
 l_int|0
@@ -107,12 +108,13 @@ l_int|0
 comma
 )brace
 suffix:semicolon
-DECL|variable|Utah_pci_IRQ_routes
+DECL|variable|__prepdata
 r_static
 r_char
 id|Utah_pci_IRQ_routes
 (braket
 )braket
+id|__prepdata
 op_assign
 (brace
 l_int|0
@@ -134,13 +136,14 @@ multiline_comment|/* Line 4 */
 suffix:semicolon
 multiline_comment|/* Motorola PowerStackII - Omaha */
 multiline_comment|/* no integrated SCSI or ethernet */
-DECL|variable|Omaha_pci_IRQ_map
+DECL|variable|__prepdata
 r_static
 r_char
 id|Omaha_pci_IRQ_map
 (braket
 l_int|23
 )braket
+id|__prepdata
 op_assign
 (brace
 l_int|0
@@ -213,12 +216,13 @@ l_int|0
 comma
 )brace
 suffix:semicolon
-DECL|variable|Omaha_pci_IRQ_routes
+DECL|variable|__prepdata
 r_static
 r_char
 id|Omaha_pci_IRQ_routes
 (braket
 )braket
+id|__prepdata
 op_assign
 (brace
 l_int|0
@@ -238,13 +242,14 @@ multiline_comment|/* Line 4 */
 )brace
 suffix:semicolon
 multiline_comment|/* Motorola PowerStack */
-DECL|variable|Blackhawk_pci_IRQ_map
+DECL|variable|__prepdata
 r_static
 r_char
 id|Blackhawk_pci_IRQ_map
 (braket
 l_int|16
 )braket
+id|__prepdata
 op_assign
 (brace
 l_int|0
@@ -297,12 +302,13 @@ comma
 multiline_comment|/* Slot 15 - unused */
 )brace
 suffix:semicolon
-DECL|variable|Blackhawk_pci_IRQ_routes
+DECL|variable|__prepdata
 r_static
 r_char
 id|Blackhawk_pci_IRQ_routes
 (braket
 )braket
+id|__prepdata
 op_assign
 (brace
 l_int|0
@@ -322,13 +328,14 @@ multiline_comment|/* Line 4 */
 )brace
 suffix:semicolon
 multiline_comment|/* Motorola MVME16xx */
-DECL|variable|Genesis_pci_IRQ_map
+DECL|variable|__prepdata
 r_static
 r_char
 id|Genesis_pci_IRQ_map
 (braket
 l_int|16
 )braket
+id|__prepdata
 op_assign
 (brace
 l_int|0
@@ -381,12 +388,13 @@ comma
 multiline_comment|/* Slot 15 - unused */
 )brace
 suffix:semicolon
-DECL|variable|Genesis_pci_IRQ_routes
+DECL|variable|__prepdata
 r_static
 r_char
 id|Genesis_pci_IRQ_routes
 (braket
 )braket
+id|__prepdata
 op_assign
 (brace
 l_int|0
@@ -406,13 +414,14 @@ multiline_comment|/* Line 4 */
 )brace
 suffix:semicolon
 multiline_comment|/* Motorola Series-E */
-DECL|variable|Comet_pci_IRQ_map
+DECL|variable|__prepdata
 r_static
 r_char
 id|Comet_pci_IRQ_map
 (braket
 l_int|16
 )braket
+id|__prepdata
 op_assign
 (brace
 l_int|0
@@ -465,12 +474,13 @@ comma
 multiline_comment|/* Slot 15 - unused */
 )brace
 suffix:semicolon
-DECL|variable|Comet_pci_IRQ_routes
+DECL|variable|__prepdata
 r_static
 r_char
 id|Comet_pci_IRQ_routes
 (braket
 )braket
+id|__prepdata
 op_assign
 (brace
 l_int|0
@@ -490,13 +500,14 @@ multiline_comment|/* Line 4 */
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * ibm 830 (and 850?).&n; * This is actually based on the Carolina motherboard&n; * -- Cort&n; */
-DECL|variable|ibm8xx_pci_IRQ_map
+DECL|variable|__prepdata
 r_static
 r_char
 id|ibm8xx_pci_IRQ_map
 (braket
 l_int|23
 )braket
+id|__prepdata
 op_assign
 (brace
 l_int|0
@@ -570,12 +581,13 @@ comma
 multiline_comment|/* Slot 22 - PCI slot 1 PCIINTx# (See below) */
 )brace
 suffix:semicolon
-DECL|variable|ibm8xx_pci_IRQ_routes
+DECL|variable|__prepdata
 r_static
 r_char
 id|ibm8xx_pci_IRQ_routes
 (braket
 )braket
+id|__prepdata
 op_assign
 (brace
 l_int|0
@@ -596,22 +608,24 @@ multiline_comment|/* Line 4 */
 )brace
 suffix:semicolon
 multiline_comment|/* IBM Nobis and 850 */
-DECL|variable|Nobis_pci_IRQ_map
+DECL|variable|__prepdata
 r_static
 r_char
 id|Nobis_pci_IRQ_map
 (braket
 l_int|23
 )braket
+id|__prepdata
 op_assign
 initialization_block
 suffix:semicolon
-DECL|variable|Nobis_pci_IRQ_routes
+DECL|variable|__prepdata
 r_static
 r_char
 id|Nobis_pci_IRQ_routes
 (braket
 )braket
+id|__prepdata
 op_assign
 (brace
 l_int|0
@@ -636,7 +650,7 @@ DECL|macro|CAROLINA_IRQ_EDGE_MASK_LO
 mdefine_line|#define CAROLINA_IRQ_EDGE_MASK_LO   0x00  /* IRQ&squot;s 0-7  */
 DECL|macro|CAROLINA_IRQ_EDGE_MASK_HI
 mdefine_line|#define CAROLINA_IRQ_EDGE_MASK_HI   0xA4  /* IRQ&squot;s 8-15 [10,13,15] */
-multiline_comment|/*&n; * FIXME: This code incorrectly assumes there&squot;s only bus #0, breaking all&n; *&t;  PCI-to-PCI bridges. Also multi-function devices are not supported&n; *&t;  at all. [mj]&n; */
+id|__prep
 r_int
 DECL|function|prep_pcibios_read_config_dword
 id|prep_pcibios_read_config_dword
@@ -737,6 +751,7 @@ r_return
 id|PCIBIOS_SUCCESSFUL
 suffix:semicolon
 )brace
+id|__prep
 r_int
 DECL|function|prep_pcibios_read_config_word
 id|prep_pcibios_read_config_word
@@ -841,6 +856,7 @@ r_return
 id|PCIBIOS_SUCCESSFUL
 suffix:semicolon
 )brace
+id|__prep
 r_int
 DECL|function|prep_pcibios_read_config_byte
 id|prep_pcibios_read_config_byte
@@ -951,6 +967,7 @@ r_return
 id|PCIBIOS_SUCCESSFUL
 suffix:semicolon
 )brace
+id|__prep
 r_int
 DECL|function|prep_pcibios_write_config_dword
 id|prep_pcibios_write_config_dword
@@ -1044,6 +1061,7 @@ r_return
 id|PCIBIOS_SUCCESSFUL
 suffix:semicolon
 )brace
+id|__prep
 r_int
 DECL|function|prep_pcibios_write_config_word
 id|prep_pcibios_write_config_word
@@ -1137,6 +1155,7 @@ r_return
 id|PCIBIOS_SUCCESSFUL
 suffix:semicolon
 )brace
+id|__prep
 r_int
 DECL|function|prep_pcibios_write_config_byte
 id|prep_pcibios_write_config_byte
@@ -1341,6 +1360,8 @@ suffix:semicolon
 id|Motherboard_routes
 op_assign
 id|Omaha_pci_IRQ_routes
+suffix:semicolon
+r_break
 suffix:semicolon
 r_case
 l_int|0x60

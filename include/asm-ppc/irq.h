@@ -4,9 +4,13 @@ DECL|macro|_ASM_IRQ_H
 mdefine_line|#define _ASM_IRQ_H
 macro_line|#include &lt;asm/processor.h&gt;&t;&t;/* for is_prep() */
 macro_line|#ifndef CONFIG_8xx
-multiline_comment|/*&n; * this is the # irq&squot;s for all ppc arch&squot;s (pmac/chrp/prep)&n; * so it is the max of them all - which happens to be chrp&n; * -- Cort&n; */
+macro_line|#ifdef CONFIG_APUS
+macro_line|#include &lt;asm-m68k/irq.h&gt;
+macro_line|#else /* CONFIG_APUS */
+multiline_comment|/*&n; * this is the # irq&squot;s for all ppc arch&squot;s (pmac/chrp/prep)&n; * so it is the max of them all - which happens to be powermac&n; * at present (G3 powermacs have 64).&n; */
 DECL|macro|NR_IRQS
-mdefine_line|#define NR_IRQS&t;&t;&t;(NUM_8259_INTERRUPTS+NUM_OPENPIC_INTERRUPTS)
+mdefine_line|#define NR_IRQS&t;&t;&t;64
+macro_line|#endif /* CONFIG_APUS */
 DECL|macro|NUM_8259_INTERRUPTS
 mdefine_line|#define NUM_8259_INTERRUPTS&t;16
 DECL|macro|NUM_OPENPIC_INTERRUPTS
@@ -37,6 +41,7 @@ r_int
 r_int
 )paren
 suffix:semicolon
+macro_line|#ifndef CONFIG_APUS
 multiline_comment|/*&n; * This gets called from serial.c, which is now used on&n; * powermacs as well as prep/chrp boxes.&n; * Prep and chrp both have cascaded 8259 PICs.&n; */
 DECL|function|irq_cannonicalize
 r_static
@@ -70,6 +75,7 @@ id|irq
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
 macro_line|#else /* CONFIG_8xx */
 multiline_comment|/* The MPC8xx cores have 16 possible interrupts.  There are eight&n; * possible level sensitive interrupts assigned and generated internally&n; * from such devices as CPM, PCMCIA, RTC, PIT, TimeBase and Decrementer.&n; * There are eight external interrupts (IRQs) that can be configured&n; * as either level or edge sensitive. &n; * On the MBX implementation, there is also the possibility of an 8259&n; * through the PCI and PCI-ISA bridges.  All 8259 interrupts appear&n; * on the 8xx as IRQ3, but I may eventually add some of the 8259 code&n; * back into this port to handle that controller.&n; */
 DECL|macro|NR_IRQS

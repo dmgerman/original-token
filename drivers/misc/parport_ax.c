@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: parport_ax.c,v 1.5 1998/01/10 18:28:39 ecd Exp $&n; * Parallel-port routines for Sun Ultra/AX architecture&n; * &n; * Author: Eddie C. Dost &lt;ecd@skynet.be&gt;&n; *&n; * based on work by:&n; *          Phil Blundell &lt;Philip.Blundell@pobox.com&gt;&n; *          Tim Waugh &lt;tim@cyberelk.demon.co.uk&gt;&n; *&t;    Jose Renau &lt;renau@acm.org&gt;&n; *          David Campbell &lt;campbell@tirian.che.curtin.edu.au&gt;&n; *          Grant Guenther &lt;grant@torque.net&gt;&n; */
+multiline_comment|/* $Id: parport_ax.c,v 1.12 1998/07/26 03:03:31 davem Exp $&n; * Parallel-port routines for Sun Ultra/AX architecture&n; * &n; * Author: Eddie C. Dost &lt;ecd@skynet.be&gt;&n; *&n; * based on work by:&n; *          Phil Blundell &lt;Philip.Blundell@pobox.com&gt;&n; *          Tim Waugh &lt;tim@cyberelk.demon.co.uk&gt;&n; *&t;    Jose Renau &lt;renau@acm.org&gt;&n; *          David Campbell &lt;campbell@tirian.che.curtin.edu.au&gt;&n; *          Grant Guenther &lt;grant@torque.net&gt;&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -12,6 +12,7 @@ macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/ebus.h&gt;
 macro_line|#include &lt;asm/ns87303.h&gt;
+macro_line|#include &lt;asm/irq.h&gt;
 multiline_comment|/*&n; * Define this if you have Devices which don&squot;t support short&n; * host read/write cycles.&n; */
 DECL|macro|HAVE_SLOW_DEVICES
 macro_line|#undef HAVE_SLOW_DEVICES
@@ -154,6 +155,16 @@ id|EPPADDR
 )paren
 suffix:semicolon
 )brace
+r_int
+id|parport_ax_epp_clear_timeout
+c_func
+(paren
+r_struct
+id|parport
+op_star
+id|pb
+)paren
+suffix:semicolon
 r_int
 DECL|function|parport_ax_check_epp_timeout
 id|parport_ax_check_epp_timeout
@@ -1233,6 +1244,93 @@ id|parport_ax_fill_inode
 )brace
 suffix:semicolon
 multiline_comment|/******************************************************&n; *  MODE detection section:&n; */
+multiline_comment|/*&n; * Clear TIMEOUT BIT in EPP MODE&n; */
+DECL|function|parport_ax_epp_clear_timeout
+r_int
+id|parport_ax_epp_clear_timeout
+c_func
+(paren
+r_struct
+id|parport
+op_star
+id|pb
+)paren
+(brace
+r_int
+r_char
+id|r
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|parport_ax_read_status
+c_func
+(paren
+id|pb
+)paren
+op_amp
+l_int|0x01
+)paren
+)paren
+r_return
+l_int|1
+suffix:semicolon
+multiline_comment|/* To clear timeout some chips require double read */
+id|parport_ax_read_status
+c_func
+(paren
+id|pb
+)paren
+suffix:semicolon
+id|r
+op_assign
+id|parport_ax_read_status
+c_func
+(paren
+id|pb
+)paren
+suffix:semicolon
+id|parport_ax_write_status
+c_func
+(paren
+id|pb
+comma
+id|r
+op_or
+l_int|0x01
+)paren
+suffix:semicolon
+multiline_comment|/* Some reset by writing 1 */
+id|parport_ax_write_status
+c_func
+(paren
+id|pb
+comma
+id|r
+op_amp
+l_int|0xfe
+)paren
+suffix:semicolon
+multiline_comment|/* Others by writing 0 */
+id|r
+op_assign
+id|parport_ax_read_status
+c_func
+(paren
+id|pb
+)paren
+suffix:semicolon
+r_return
+op_logical_neg
+(paren
+id|r
+op_amp
+l_int|0x01
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/* Check for ECP&n; *&n; * Old style XT ports alias io ports every 0x400, hence accessing ECONTROL&n; * on these cards actually accesses the CTR.&n; *&n; * Modern cards don&squot;t do this but reading from ECONTROL will return 0xff&n; * regardless of what is written here if the card does NOT support&n; * ECP.&n; *&n; * We will write 0x2c to ECONTROL and 0xcc to CTR since both of these&n; * values are &quot;safe&quot; on the CTR since bits 6-7 of CTR are unused.&n; */
 DECL|function|parport_ECR_present
 r_static
@@ -2073,13 +2171,13 @@ id|PARPORT_IRQ_NONE
 id|printk
 c_func
 (paren
-l_string|&quot;, irq %x&quot;
+l_string|&quot;, irq %s&quot;
 comma
+id|__irq_itoa
+c_func
 (paren
-r_int
-r_int
-)paren
 id|p-&gt;irq
+)paren
 )paren
 suffix:semicolon
 r_if
@@ -2225,13 +2323,20 @@ id|count
 op_assign
 l_int|0
 suffix:semicolon
-id|for_all_ebusdev
+id|for_each_ebus
+c_func
+(paren
+id|ebus
+)paren
+(brace
+id|for_each_ebusdev
 c_func
 (paren
 id|edev
 comma
 id|ebus
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -2252,6 +2357,8 @@ c_func
 id|edev
 )paren
 suffix:semicolon
+)brace
+)brace
 r_return
 id|count
 ques

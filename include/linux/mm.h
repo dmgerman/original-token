@@ -445,6 +445,8 @@ DECL|macro|PG_Slab
 mdefine_line|#define PG_Slab&t;&t;&t; 8
 DECL|macro|PG_swap_cache
 mdefine_line|#define PG_swap_cache&t;&t; 9
+DECL|macro|PG_skip
+mdefine_line|#define PG_skip&t;&t;&t;10
 DECL|macro|PG_reserved
 mdefine_line|#define PG_reserved&t;&t;31
 multiline_comment|/* Make it prettier to test the above... */

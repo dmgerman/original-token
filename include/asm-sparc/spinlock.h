@@ -4,6 +4,7 @@ DECL|macro|__SPARC_SPINLOCK_H
 mdefine_line|#define __SPARC_SPINLOCK_H
 macro_line|#ifndef __ASSEMBLY__
 macro_line|#ifndef __SMP__
+macro_line|#if (__GNUC__ &gt; 2) || (__GNUC_MINOR__ &gt;= 8)
 DECL|typedef|spinlock_t
 r_typedef
 r_struct
@@ -13,6 +14,16 @@ id|spinlock_t
 suffix:semicolon
 DECL|macro|SPIN_LOCK_UNLOCKED
 mdefine_line|#define SPIN_LOCK_UNLOCKED { }
+macro_line|#else
+DECL|typedef|spinlock_t
+r_typedef
+r_int
+r_char
+id|spinlock_t
+suffix:semicolon
+DECL|macro|SPIN_LOCK_UNLOCKED
+mdefine_line|#define SPIN_LOCK_UNLOCKED 0
+macro_line|#endif
 DECL|macro|spin_lock_init
 mdefine_line|#define spin_lock_init(lock)&t;do { } while(0)
 DECL|macro|spin_lock
@@ -97,7 +108,7 @@ mdefine_line|#define SPIN_LOCK_UNLOCKED&t;{ 0, 0 }
 DECL|macro|spin_lock_init
 mdefine_line|#define spin_lock_init(lp)&t;do { (lp)-&gt;owner_pc = 0; (lp)-&gt;lock = 0; } while(0)
 DECL|macro|spin_unlock_wait
-mdefine_line|#define spin_unlock_wait(lp)&t;do { barrier(); } while((lp)-&gt;lock)
+mdefine_line|#define spin_unlock_wait(lp)&t;&bslash;&n;do { barrier();&t;&bslash;&n;} while(*(volatile unsigned char *)(&amp;(lp)-&gt;lock))
 r_extern
 r_void
 id|_spin_lock

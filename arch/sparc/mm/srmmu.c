@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: srmmu.c,v 1.171 1998/04/24 15:03:35 jj Exp $&n; * srmmu.c:  SRMMU specific routines for memory management.&n; *&n; * Copyright (C) 1995 David S. Miller  (davem@caip.rutgers.edu)&n; * Copyright (C) 1995 Peter A. Zaitcev (zaitcev@ithil.mcst.ru)&n; * Copyright (C) 1996 Eddie C. Dost    (ecd@skynet.be)&n; * Copyright (C) 1997,1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: srmmu.c,v 1.173 1998/08/04 20:48:57 davem Exp $&n; * srmmu.c:  SRMMU specific routines for memory management.&n; *&n; * Copyright (C) 1995 David S. Miller  (davem@caip.rutgers.edu)&n; * Copyright (C) 1995 Peter A. Zaitcev (zaitcev@ithil.mcst.ru)&n; * Copyright (C) 1996 Eddie C. Dost    (ecd@skynet.be)&n; * Copyright (C) 1997,1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -6288,7 +6288,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|save_and_cli
+id|__save_and_cli
 c_func
 (paren
 id|flags
@@ -6429,7 +6429,7 @@ c_func
 id|octx
 )paren
 suffix:semicolon
-id|restore_flags
+id|__restore_flags
 c_func
 (paren
 id|flags
@@ -6493,7 +6493,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|save_and_cli
+id|__save_and_cli
 c_func
 (paren
 id|flags
@@ -6655,7 +6655,7 @@ c_func
 id|octx
 )paren
 suffix:semicolon
-id|restore_flags
+id|__restore_flags
 c_func
 (paren
 id|flags
@@ -6722,7 +6722,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|save_and_cli
+id|__save_and_cli
 c_func
 (paren
 id|flags
@@ -6871,7 +6871,7 @@ c_func
 id|octx
 )paren
 suffix:semicolon
-id|restore_flags
+id|__restore_flags
 c_func
 (paren
 id|flags
@@ -12547,7 +12547,7 @@ id|pte_t
 op_star
 id|ptep
 suffix:semicolon
-id|save_and_cli
+id|__save_and_cli
 c_func
 (paren
 id|flags
@@ -12847,7 +12847,7 @@ suffix:semicolon
 )brace
 id|done
 suffix:colon
-id|restore_flags
+id|__restore_flags
 c_func
 (paren
 id|flags

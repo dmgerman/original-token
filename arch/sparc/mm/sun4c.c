@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sun4c.c,v 1.164 1998/05/02 12:06:19 davem Exp $&n; * sun4c.c: Doing in software what should be done in hardware.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; * Copyright (C) 1996 Andrew Tridgell (Andrew.Tridgell@anu.edu.au)&n; * Copyright (C) 1997 Anton Blanchard (anton@progsoc.uts.edu.au)&n; * Copyright (C) 1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: sun4c.c,v 1.166 1998/08/04 20:49:05 davem Exp $&n; * sun4c.c: Doing in software what should be done in hardware.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; * Copyright (C) 1996 Andrew Tridgell (Andrew.Tridgell@anu.edu.au)&n; * Copyright (C) 1997 Anton Blanchard (anton@progsoc.uts.edu.au)&n; * Copyright (C) 1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -2821,20 +2821,10 @@ op_or
 id|SM_4_260
 )paren
 suffix:colon
-id|prom_printf
-c_func
-(paren
-l_string|&quot;No support for 4200 yet&bslash;n&quot;
-)paren
-suffix:semicolon
-id|prom_halt
-c_func
-(paren
-)paren
-suffix:semicolon
+multiline_comment|/* should be 512 segmaps. when it get fixed */
 id|num_segmaps
 op_assign
-l_int|512
+l_int|256
 suffix:semicolon
 id|num_contexts
 op_assign
@@ -3014,7 +3004,7 @@ op_assign
 id|sparc_alloc_io
 c_func
 (paren
-id|SUN4_MEMREG_PHYSADDR
+id|sun4_memreg_physaddr
 comma
 l_int|0
 comma
@@ -3536,6 +3526,7 @@ id|bits_off
 suffix:semicolon
 )brace
 )brace
+multiline_comment|/* the 4/260 dies real hard on the prom_putsegment line.&n;    not sure why, but it seems to work without it cgd */
 DECL|function|sun4c_init_map_kernelprom
 r_static
 r_inline
@@ -3558,6 +3549,7 @@ id|pseg
 comma
 id|ctx
 suffix:semicolon
+macro_line|#ifndef CONFIG_SUN4
 r_for
 c_loop
 (paren
@@ -3637,6 +3629,7 @@ l_int|0
 suffix:semicolon
 )brace
 )brace
+macro_line|#endif
 r_for
 c_loop
 (paren

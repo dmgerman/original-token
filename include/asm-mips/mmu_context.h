@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * Switch a MMU context.&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1996 by Ralf Baechle&n; */
+multiline_comment|/* $Id: mmu_context.h,v 1.4 1998/05/07 00:40:04 ralf Exp $&n; *&n; * Switch a MMU context.&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1996, 1997, 1998 by Ralf Baechle&n; */
 macro_line|#ifndef __ASM_MIPS_MMU_CONTEXT_H
 DECL|macro|__ASM_MIPS_MMU_CONTEXT_H
 mdefine_line|#define __ASM_MIPS_MMU_CONTEXT_H
@@ -181,6 +181,7 @@ multiline_comment|/*&n; * After we have set current-&gt;mm to a new value, this 
 DECL|function|activate_context
 r_extern
 r_inline
+r_void
 id|activate_context
 c_func
 (paren
@@ -196,7 +197,12 @@ c_func
 id|tsk
 )paren
 suffix:semicolon
-multiline_comment|/* XXX here we presumably need to set some cpu register - paulus. */
+id|set_entryhi
+c_func
+(paren
+id|tsk-&gt;mm-&gt;context
+)paren
+suffix:semicolon
 )brace
 macro_line|#endif /* __ASM_MIPS_MMU_CONTEXT_H */
 eof

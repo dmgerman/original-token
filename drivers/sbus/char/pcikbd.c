@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: pcikbd.c,v 1.16 1998/04/01 04:12:40 davem Exp $&n; * pcikbd.c: Ultra/AX PC keyboard support.&n; *&n; * Copyright (C) 1997  Eddie C. Dost  (ecd@skynet.be)&n; *&n; * This code is mainly put together from various places in&n; * drivers/char, please refer to these sources for credits&n; * to the original authors.&n; */
+multiline_comment|/* $Id: pcikbd.c,v 1.18 1998/05/29 06:00:23 ecd Exp $&n; * pcikbd.c: Ultra/AX PC keyboard support.&n; *&n; * Copyright (C) 1997  Eddie C. Dost  (ecd@skynet.be)&n; *&n; * This code is mainly put together from various places in&n; * drivers/char, please refer to these sources for credits&n; * to the original authors.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -2036,7 +2036,13 @@ r_char
 op_star
 id|msg
 suffix:semicolon
-id|for_all_ebusdev
+id|for_each_ebus
+c_func
+(paren
+id|ebus
+)paren
+(brace
+id|for_each_ebusdev
 c_func
 (paren
 id|edev
@@ -2080,6 +2086,7 @@ l_string|&quot;kb_ps2&quot;
 r_goto
 id|found
 suffix:semicolon
+)brace
 )brace
 )brace
 )brace
@@ -2183,9 +2190,13 @@ id|pcikbd_iobase
 id|printk
 c_func
 (paren
-l_string|&quot;8042: cannot register IRQ %x&bslash;n&quot;
+l_string|&quot;8042: cannot register IRQ %s&bslash;n&quot;
 comma
+id|__irq_itoa
+c_func
+(paren
 id|pcikbd_irq
+)paren
 )paren
 suffix:semicolon
 r_return
@@ -2194,18 +2205,32 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;8042(kbd): iobase[%016lx] irq[%x]&bslash;n&quot;
+l_string|&quot;8042(kbd) at 0x%lx (irq %s)&bslash;n&quot;
 comma
 id|pcikbd_iobase
 comma
+id|__irq_itoa
+c_func
+(paren
 id|pcikbd_irq
+)paren
 )paren
 suffix:semicolon
 id|kd_mksound
 op_assign
 id|nop_kd_mksound
 suffix:semicolon
-id|for_all_ebusdev
+id|edev
+op_assign
+l_int|0
+suffix:semicolon
+id|for_each_ebus
+c_func
+(paren
+id|ebus
+)paren
+(brace
+id|for_each_ebusdev
 c_func
 (paren
 id|edev
@@ -2226,10 +2251,14 @@ l_string|&quot;beeper&quot;
 )paren
 )paren
 (brace
-r_break
+r_goto
+id|ebus_done
 suffix:semicolon
 )brace
 )brace
+)brace
+id|ebus_done
+suffix:colon
 multiline_comment|/*&n;&t; * XXX: my 3.1.3 PROM does not give me the beeper node for the audio&n;&t; *      auxio register, though I know it is there... (ecd)&n;&t; */
 r_if
 c_cond
@@ -3718,7 +3747,13 @@ id|linux_ebus_child
 op_star
 id|child
 suffix:semicolon
-id|for_all_ebusdev
+id|for_each_ebus
+c_func
+(paren
+id|ebus
+)paren
+(brace
+id|for_each_ebusdev
 c_func
 (paren
 id|edev
@@ -3762,6 +3797,7 @@ l_string|&quot;kdmouse&quot;
 r_goto
 id|found
 suffix:semicolon
+)brace
 )brace
 )brace
 )brace
@@ -3848,9 +3884,13 @@ id|pcimouse_iobase
 id|printk
 c_func
 (paren
-l_string|&quot;8042: Cannot register IRQ %x&bslash;n&quot;
+l_string|&quot;8042: Cannot register IRQ %s&bslash;n&quot;
 comma
+id|__irq_itoa
+c_func
+(paren
 id|pcimouse_irq
+)paren
 )paren
 suffix:semicolon
 r_return
@@ -3861,11 +3901,15 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;8042(mouse): iobase[%016lx] irq[%x]&bslash;n&quot;
+l_string|&quot;8042(mouse) at %lx (irq %s)&bslash;n&quot;
 comma
 id|pcimouse_iobase
 comma
+id|__irq_itoa
+c_func
+(paren
 id|pcimouse_irq
+)paren
 )paren
 suffix:semicolon
 id|printk

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * $Id: bitops.h,v 1.7 1997/08/03 00:12:07 paulus Exp $&n; * bitops.h: Bit string operations on the ppc&n; */
+multiline_comment|/*&n; * $Id: bitops.h,v 1.9 1998/07/26 03:05:28 davem Exp $&n; * bitops.h: Bit string operations on the ppc&n; */
 macro_line|#ifndef _ASM_PPC_BITOPS_H_
 DECL|macro|_ASM_PPC_BITOPS_H_
 mdefine_line|#define _ASM_PPC_BITOPS_H_

@@ -179,8 +179,7 @@ r_int
 id|prio
 comma
 r_int
-r_int
-id|limit
+id|gfp_mask
 )paren
 (brace
 r_return

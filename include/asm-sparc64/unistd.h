@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: unistd.h,v 1.18 1998/04/14 13:50:01 jj Exp $ */
+multiline_comment|/* $Id: unistd.h,v 1.20 1998/07/28 13:08:40 jj Exp $ */
 macro_line|#ifndef _SPARC64_UNISTD_H
 DECL|macro|_SPARC64_UNISTD_H
 mdefine_line|#define _SPARC64_UNISTD_H
@@ -29,8 +29,7 @@ DECL|macro|__NR_execv
 mdefine_line|#define __NR_execv               11 /* SunOS Specific                              */
 DECL|macro|__NR_chdir
 mdefine_line|#define __NR_chdir               12 /* Common                                      */
-DECL|macro|__NR_xstat
-mdefine_line|#define __NR_xstat&t;&t; 13 /* Linux Specific&t;&t;&t;&t;   */
+multiline_comment|/* #define __NR_ni_syscall       13    ENOSYS under SunOS                          */
 DECL|macro|__NR_mknod
 mdefine_line|#define __NR_mknod               14 /* Common                                      */
 DECL|macro|__NR_chmod
@@ -39,14 +38,15 @@ DECL|macro|__NR_chown
 mdefine_line|#define __NR_chown               16 /* Common                                      */
 DECL|macro|__NR_brk
 mdefine_line|#define __NR_brk                 17 /* Common                                      */
-DECL|macro|__NR_xmknod
-mdefine_line|#define __NR_xmknod&t;&t; 18 /* Linux Specific&t;&t;&t;&t;   */
+multiline_comment|/* #define __NR_ni_syscall       18    ENOSYS under SunOS                          */
 DECL|macro|__NR_lseek
 mdefine_line|#define __NR_lseek               19 /* Common                                      */
 DECL|macro|__NR_getpid
 mdefine_line|#define __NR_getpid              20 /* Common                                      */
-multiline_comment|/* #define __NR_ni_syscall       21    ENOSYS under SunOS                          */
-multiline_comment|/* #define __NR_ni_syscall       22    ENOSYS under SunOS                          */
+DECL|macro|__NR_capget
+mdefine_line|#define __NR_capget&t;&t; 21 /* Linux Specific&t;&t;&t;&t;   */
+DECL|macro|__NR_capset
+mdefine_line|#define __NR_capset&t;&t; 22 /* Linux Specific&t;&t;&t;&t;   */
 DECL|macro|__NR_setuid
 mdefine_line|#define __NR_setuid              23 /* Implemented via setreuid in SunOS           */
 DECL|macro|__NR_getuid
@@ -56,7 +56,8 @@ DECL|macro|__NR_ptrace
 mdefine_line|#define __NR_ptrace              26 /* Common                                      */
 DECL|macro|__NR_alarm
 mdefine_line|#define __NR_alarm               27 /* Implemented via setitimer in SunOS          */
-multiline_comment|/* #define __NR_ni_syscall       28    ENOSYS under SunOS                          */
+DECL|macro|__NR_sigaltstack
+mdefine_line|#define __NR_sigaltstack&t; 28 /* Common&t;&t;&t;&t;&t;   */
 DECL|macro|__NR_pause
 mdefine_line|#define __NR_pause               29 /* Is sigblock(0)-&gt;sigpause() in SunOS         */
 DECL|macro|__NR_utime
@@ -77,7 +78,8 @@ DECL|macro|__NR_kill
 mdefine_line|#define __NR_kill                37 /* Common                                      */
 DECL|macro|__NR_stat
 mdefine_line|#define __NR_stat                38 /* Common                                      */
-multiline_comment|/* #define __NR_ni_syscall       39    ENOSYS under SunOS                          */
+DECL|macro|__NR_sendfile
+mdefine_line|#define __NR_sendfile&t;&t; 39 /* Linux Specific&t;&t;&t;&t;   */
 DECL|macro|__NR_lstat
 mdefine_line|#define __NR_lstat               40 /* Common                                      */
 DECL|macro|__NR_dup

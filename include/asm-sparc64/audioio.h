@@ -3,9 +3,11 @@ macro_line|#ifndef _AUDIOIO_H_
 DECL|macro|_AUDIOIO_H_
 mdefine_line|#define _AUDIOIO_H_
 multiline_comment|/*&n; *&t;SunOS/Solaris /dev/audio interface&n; */
+macro_line|#if defined(__KERNEL__) || !defined(__GLIBC__) || (__GLIBC__ &lt; 2)
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/time.h&gt;
 macro_line|#include &lt;linux/ioctl.h&gt;
+macro_line|#endif
 multiline_comment|/*&n; * This structure contains state information for audio device IO streams.&n; */
 DECL|struct|audio_prinfo
 r_typedef
@@ -396,6 +398,13 @@ DECL|member|flags
 r_int
 r_int
 id|flags
+suffix:semicolon
+multiline_comment|/* This device */
+DECL|member|dev
+r_struct
+id|linux_sbus_device
+op_star
+id|dev
 suffix:semicolon
 multiline_comment|/* Processes blocked on open() sit here. */
 DECL|member|open_wait

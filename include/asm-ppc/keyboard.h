@@ -6,6 +6,9 @@ mdefine_line|#define __ASMPPC_KEYBOARD_H
 macro_line|#ifdef __KERNEL__
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/adb.h&gt;
+macro_line|#ifdef CONFIG_APUS
+macro_line|#include &lt;asm-m68k/keyboard.h&gt;
+macro_line|#else
 DECL|macro|KEYBOARD_IRQ
 mdefine_line|#define KEYBOARD_IRQ&t;&t;&t;1
 DECL|macro|DISABLE_KBD_DURING_INTERRUPTS
@@ -714,6 +717,7 @@ c_func
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif /* CONFIG_APUS */
 macro_line|#endif /* __KERNEL__ */
 macro_line|#endif /* __ASMPPC_KEYBOARD_H */
 eof

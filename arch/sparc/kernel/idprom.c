@@ -1,10 +1,22 @@
-multiline_comment|/* $Id: idprom.c,v 1.22 1996/11/13 05:09:25 davem Exp $&n; * idprom.c: Routines to load the idprom into kernel addresses and&n; *           interpret the data contained within.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: idprom.c,v 1.23 1998/07/28 16:52:44 jj Exp $&n; * idprom.c: Routines to load the idprom into kernel addresses and&n; *           interpret the data contained within.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/oplib.h&gt;
 macro_line|#include &lt;asm/idprom.h&gt;
 macro_line|#include &lt;asm/machines.h&gt;  /* Fun with Sun released architectures. */
+macro_line|#ifdef CONFIG_SUN4
+macro_line|#include &lt;asm/sun4paddr.h&gt;
+r_extern
+r_void
+id|sun4setup
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+macro_line|#endif
 DECL|variable|idprom
 r_struct
 id|idprom
@@ -491,5 +503,12 @@ l_int|5
 )braket
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_SUN4
+id|sun4setup
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
 )brace
 eof

@@ -312,6 +312,15 @@ id|sun4c_timer_info
 op_star
 id|sun4c_timers
 suffix:semicolon
+macro_line|#ifdef CONFIG_SUN4
+multiline_comment|/* This is an ugly hack to work around the&n;   current timer code, and make it work with &n;   the sun4/260 intersil &n;   */
+DECL|variable|sun4_timer
+r_volatile
+r_struct
+id|sun4c_timer_info
+id|sun4_timer
+suffix:semicolon
+macro_line|#endif
 DECL|function|sun4c_clear_clock_irq
 r_static
 r_void
@@ -326,6 +335,24 @@ r_int
 r_int
 id|clear_intr
 suffix:semicolon
+macro_line|#ifdef CONFIG_SUN4
+r_if
+c_cond
+(paren
+id|idprom-&gt;id_machtype
+op_eq
+id|SM_SUN4
+op_or
+id|SM_4_260
+)paren
+(brace
+id|clear_intr
+op_assign
+id|sun4_timer.timer_limit10
+suffix:semicolon
+)brace
+r_else
+macro_line|#endif
 id|clear_intr
 op_assign
 id|sun4c_timers-&gt;timer_limit10
@@ -390,6 +417,23 @@ r_int
 id|irq
 suffix:semicolon
 multiline_comment|/* Map the Timer chip, this is implemented in hardware inside&n;&t; * the cache chip on the sun4c.&n;&t; */
+macro_line|#ifdef CONFIG_SUN4
+r_if
+c_cond
+(paren
+id|idprom-&gt;id_machtype
+op_eq
+id|SM_SUN4
+op_or
+id|SM_4_260
+)paren
+id|sun4c_timers
+op_assign
+op_amp
+id|sun4_timer
+suffix:semicolon
+r_else
+macro_line|#endif
 id|sun4c_timers
 op_assign
 id|sparc_alloc_io
@@ -478,6 +522,12 @@ c_func
 )paren
 suffix:semicolon
 )brace
+id|sun4c_enable_irq
+c_func
+(paren
+l_int|10
+)paren
+suffix:semicolon
 id|claim_ticker14
 c_func
 (paren
@@ -501,6 +551,17 @@ r_void
 (brace
 )brace
 macro_line|#endif
+r_extern
+r_char
+op_star
+id|sun4m_irq_itoa
+c_func
+(paren
+r_int
+r_int
+id|irq
+)paren
+suffix:semicolon
 DECL|function|__initfunc
 id|__initfunc
 c_func
@@ -538,7 +599,7 @@ op_star
 id|sparc_alloc_io
 c_func
 (paren
-id|SUN4_IE_PHYSADDR
+id|sun4_ie_physaddr
 comma
 l_int|0
 comma
@@ -708,6 +769,16 @@ comma
 id|sun4c_load_profile_irq
 comma
 id|BTFIXUPCALL_NOP
+)paren
+suffix:semicolon
+id|BTFIXUPSET_CALL
+c_func
+(paren
+id|__irq_itoa
+comma
+id|sun4m_irq_itoa
+comma
+id|BTFIXUPCALL_NORM
 )paren
 suffix:semicolon
 id|init_timers

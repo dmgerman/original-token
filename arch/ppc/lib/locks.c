@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * $Id: locks.c,v 1.17 1998/03/26 22:19:38 cort Exp $&n; *&n; * Locks for smp ppc &n; * &n; * Written by Cort Dougan (cort@cs.nmt.edu)&n; */
+multiline_comment|/*&n; * $Id: locks.c,v 1.18 1998/07/28 03:50:27 cort Exp $&n; *&n; * Locks for smp ppc &n; * &n; * Written by Cort Dougan (cort@cs.nmt.edu)&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
@@ -11,7 +11,7 @@ mdefine_line|#define DEBUG_LOCKS 1
 DECL|macro|INIT_STUCK
 macro_line|#undef INIT_STUCK
 DECL|macro|INIT_STUCK
-mdefine_line|#define INIT_STUCK 1000000
+mdefine_line|#define INIT_STUCK 10000
 DECL|function|_spin_lock
 r_void
 id|_spin_lock
@@ -436,7 +436,7 @@ l_int|0
 id|printk
 c_func
 (paren
-l_string|&quot;_read_unlock(): %s/%d (nip %08lX) lock %lx&quot;
+l_string|&quot;_read_unlock(): %s/%d (nip %08lX) lock %lx&bslash;n&quot;
 comma
 id|current-&gt;comm
 comma
@@ -679,7 +679,7 @@ l_int|31
 id|printk
 c_func
 (paren
-l_string|&quot;_write_lock(): %s/%d (nip %08lX) lock %lx&quot;
+l_string|&quot;_write_lock(): %s/%d (nip %08lX) lock %lx&bslash;n&quot;
 comma
 id|current-&gt;comm
 comma

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: su.c,v 1.8 1998/04/01 05:07:50 ecd Exp $&n; * su.c: Small serial driver for keyboard/mouse interface on Ultra/AX&n; *&n; * Copyright (C) 1997  Eddie C. Dost  (ecd@skynet.be)&n; *&n; * This is mainly a very stripped down version of drivers/char/serial.c,&n; * credits go to authors mentioned therein.&n; */
+multiline_comment|/* $Id: su.c,v 1.10 1998/05/29 06:00:26 ecd Exp $&n; * su.c: Small serial driver for keyboard/mouse interface on Ultra/AX&n; *&n; * Copyright (C) 1997  Eddie C. Dost  (ecd@skynet.be)&n; *&n; * This is mainly a very stripped down version of drivers/char/serial.c,&n; * credits go to authors mentioned therein.&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
@@ -12,6 +12,7 @@ macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/oplib.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/ebus.h&gt;
+macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &quot;sunserial.h&quot;
 macro_line|#include &quot;sunkbd.h&quot;
 macro_line|#include &quot;sunmouse.h&quot;
@@ -593,9 +594,13 @@ macro_line|#ifdef SERIAL_DEBUG_INTR
 id|printk
 c_func
 (paren
-l_string|&quot;su_interrupt(%d)...&quot;
+l_string|&quot;su_interrupt(%s)...&quot;
 comma
+id|__irq_itoa
+c_func
+(paren
 id|irq
+)paren
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -720,11 +725,15 @@ macro_line|#ifdef SERIAL_DEBUG_OPEN
 id|printk
 c_func
 (paren
-l_string|&quot;starting up su%d (irq %x)...&quot;
+l_string|&quot;starting up su%d (irq %s)...&quot;
 comma
 id|info-&gt;line
 comma
+id|__irq_itoa
+c_func
+(paren
 id|info-&gt;irq
+)paren
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -1553,6 +1562,8 @@ r_struct
 id|linux_ebus_device
 op_star
 id|dev
+op_assign
+l_int|0
 suffix:semicolon
 r_struct
 id|linux_ebus
@@ -1563,7 +1574,13 @@ r_int
 r_int
 id|flags
 suffix:semicolon
-id|for_all_ebusdev
+id|for_each_ebus
+c_func
+(paren
+id|ebus
+)paren
+(brace
+id|for_each_ebusdev
 c_func
 (paren
 id|dev
@@ -1593,7 +1610,8 @@ id|dev-&gt;prom_node
 op_eq
 id|info-&gt;kbd_node
 )paren
-r_break
+r_goto
+id|ebus_done
 suffix:semicolon
 r_if
 c_cond
@@ -1602,10 +1620,14 @@ id|dev-&gt;prom_node
 op_eq
 id|info-&gt;ms_node
 )paren
-r_break
+r_goto
+id|ebus_done
 suffix:semicolon
 )brace
 )brace
+)brace
+id|ebus_done
+suffix:colon
 r_if
 c_cond
 (paren
@@ -1645,17 +1667,21 @@ macro_line|#ifdef DEBUG_SERIAL_OPEN
 id|printk
 c_func
 (paren
-l_string|&quot;Found &squot;su&squot; at %016lx IRQ %08x&bslash;n&quot;
+l_string|&quot;Found &squot;su&squot; at %016lx IRQ %d,%x&bslash;n&quot;
 comma
 id|dev-&gt;base_address
 (braket
 l_int|0
 )braket
 comma
+id|__irq_itoa
+c_func
+(paren
 id|dev-&gt;irqs
 (braket
 l_int|0
 )braket
+)paren
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -2383,13 +2409,17 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;%s at %16lx (irq = %08x) is a %s&bslash;n&quot;
+l_string|&quot;%s at %16lx (irq = %s) is a %s&bslash;n&quot;
 comma
 id|info-&gt;name
 comma
 id|info-&gt;port
 comma
+id|__irq_itoa
+c_func
+(paren
 id|info-&gt;irq
+)paren
 comma
 id|uart_config
 (braket

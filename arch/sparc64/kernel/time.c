@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: time.c,v 1.13 1998/03/15 17:23:47 ecd Exp $&n; * time.c: UltraSparc timer and TOD clock support.&n; *&n; * Copyright (C) 1997 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1998 Eddie C. Dost   (ecd@skynet.be)&n; *&n; * Based largely on code which is:&n; *&n; * Copyright (C) 1996 Thomas K. Dyas (tdyas@eden.rutgers.edu)&n; */
+multiline_comment|/* $Id: time.c,v 1.15 1998/05/12 22:38:29 ecd Exp $&n; * time.c: UltraSparc timer and TOD clock support.&n; *&n; * Copyright (C) 1997 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1998 Eddie C. Dost   (ecd@skynet.be)&n; *&n; * Based largely on code which is:&n; *&n; * Copyright (C) 1996 Thomas K. Dyas (tdyas@eden.rutgers.edu)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -898,6 +898,15 @@ l_int|1
 comma
 id|err
 suffix:semicolon
+macro_line|#ifdef CONFIG_PCI
+r_struct
+id|linux_ebus
+op_star
+id|ebus
+op_assign
+l_int|0
+suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -921,9 +930,13 @@ op_ne
 l_int|NULL
 )paren
 (brace
+id|ebus
+op_assign
+id|ebus_chain
+suffix:semicolon
 id|busnd
 op_assign
-id|ebus_chain-&gt;prom_node
+id|ebus-&gt;prom_node
 suffix:semicolon
 )brace
 macro_line|#endif
@@ -1020,6 +1033,44 @@ c_func
 id|node
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_PCI
+r_if
+c_cond
+(paren
+(paren
+id|node
+op_eq
+l_int|0
+)paren
+op_logical_and
+id|ebus
+)paren
+(brace
+id|ebus
+op_assign
+id|ebus-&gt;next
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ebus
+)paren
+(brace
+id|busnd
+op_assign
+id|ebus-&gt;prom_node
+suffix:semicolon
+id|node
+op_assign
+id|prom_getchild
+c_func
+(paren
+id|busnd
+)paren
+suffix:semicolon
+)brace
+)brace
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -1130,7 +1181,7 @@ c_func
 (paren
 id|edev
 comma
-id|ebus_chain
+id|ebus
 )paren
 r_if
 c_cond

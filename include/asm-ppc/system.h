@@ -3,6 +3,7 @@ DECL|macro|__PPC_SYSTEM_H
 mdefine_line|#define __PPC_SYSTEM_H
 macro_line|#include &lt;linux/kdev_t.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;
+macro_line|#include &lt;asm/atomic.h&gt;
 DECL|macro|mb
 mdefine_line|#define mb()  __asm__ __volatile__ (&quot;sync&quot; : : : &quot;memory&quot;)
 DECL|macro|__save_flags
@@ -84,8 +85,8 @@ id|flags
 )paren
 (brace
 r_extern
-r_int
-id|lost_interrupts
+id|atomic_t
+id|n_lost_interrupts
 suffix:semicolon
 r_extern
 r_void
@@ -105,7 +106,12 @@ op_amp
 id|MSR_EE
 )paren
 op_logical_and
-id|lost_interrupts
+id|atomic_read
+c_func
+(paren
+op_amp
+id|n_lost_interrupts
+)paren
 op_ne
 l_int|0
 )paren
@@ -135,59 +141,6 @@ l_string|&quot;memory&quot;
 suffix:semicolon
 )brace
 )brace
-macro_line|#if 0
-multiline_comment|/*&n; * Gcc bug prevents us from using this inline func so for now&n; * it lives in misc.S&n; */
-r_void
-id|__inline__
-id|__restore_flags
-c_func
-(paren
-r_int
-r_int
-id|flags
-)paren
-(brace
-r_extern
-r_int
-id|lost_interrupts
-suffix:semicolon
-id|__asm__
-id|__volatile__
-(paren
-l_string|&quot;andi.&t;0,%0,%2 &bslash;n&bslash;t&quot;
-l_string|&quot;beq&t;2f &bslash;n&bslash;t&quot;
-l_string|&quot;cmpi&t;0,%1,0 &bslash;n&bslash;t&quot;
-l_string|&quot;bne&t;do_lost_interrupts &bslash;n&bslash;t&quot;
-l_string|&quot;2:&t;sync &bslash;n&bslash;t&quot;
-l_string|&quot;mtmsr&t;%0 &bslash;n&bslash;t&quot;
-l_string|&quot;isync &bslash;n&bslash;t&quot;
-suffix:colon
-suffix:colon
-l_string|&quot;r&quot;
-(paren
-id|flags
-)paren
-comma
-l_string|&quot;r&quot;
-(paren
-id|lost_interrupts
-)paren
-comma
-l_string|&quot;i&quot;
-(paren
-l_int|1
-op_lshift
-l_int|15
-)paren
-multiline_comment|/*MSR_EE*/
-suffix:colon
-l_string|&quot;0&quot;
-comma
-l_string|&quot;cc&quot;
-)paren
-suffix:semicolon
-)brace
-macro_line|#endif
 r_extern
 r_void
 id|__sti

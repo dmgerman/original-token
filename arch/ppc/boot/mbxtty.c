@@ -1,15 +1,11 @@
-multiline_comment|/* Minimal serial functions needed to send messages out the serial&n; * port on the MBX console.&n; *&n; * The MBX uxes SMC1 for the serial port.  We reset the port and use&n; * only the first BD that EPPC-Bug set up as a character FIFO.&n; *&n; * It&squot;s a big hack, but I don&squot;t have time right now....I want a kernel&n; * that boots.&n; */
+multiline_comment|/* Minimal serial functions needed to send messages out the serial&n; * port on the MBX console.&n; *&n; * The MBX uxes SMC1 for the serial port.  We reset the port and use&n; * only the first BD that EPPC-Bug set up as a character FIFO.&n; *&n; * Later versions (at least 1.4, maybe earlier) of the MBX EPPC-Bug&n; * use COM1 instead of SMC1 as the console port.  This kinda sucks&n; * for the rest of the kernel, so here we force the use of SMC1 again.&n; * I f**ked around for a day trying to figure out how to make EPPC-Bug&n; * use SMC1, but gave up and decided to fix it here.&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;asm/mbx.h&gt;
 macro_line|#include &quot;../8xx_io/commproc.h&quot;
-DECL|macro|CPM_CPCR
-mdefine_line|#define CPM_CPCR&t;((volatile ushort *)0xfa2009c0)
-DECL|macro|SMC1_MODE
-mdefine_line|#define SMC1_MODE&t;((volatile ushort *)0xfa200a82)
-DECL|macro|SMC1_TBDF
-mdefine_line|#define SMC1_TBDF&t;((volatile bd_t *)0xfa202c90)
-DECL|macro|SMC1_RBDF
-mdefine_line|#define SMC1_RBDF&t;((volatile bd_t *)0xfa202c10)
+DECL|macro|MBX_CSR1
+mdefine_line|#define MBX_CSR1&t;((volatile u_char *)0xfa100000)
+DECL|macro|CSR1_COMEN
+mdefine_line|#define CSR1_COMEN&t;(u_char)0x02
 DECL|variable|cpmp
 r_static
 id|cpm8xx_t
@@ -38,7 +34,9 @@ DECL|function|serial_init
 id|serial_init
 c_func
 (paren
-r_void
+id|bd_t
+op_star
+id|bd
 )paren
 (brace
 r_volatile
@@ -63,6 +61,11 @@ r_volatile
 id|cpm8xx_t
 op_star
 id|cp
+suffix:semicolon
+id|uint
+id|dpaddr
+comma
+id|memaddr
 suffix:semicolon
 id|cp
 op_assign
@@ -95,7 +98,7 @@ id|PROFF_SMC1
 )braket
 suffix:semicolon
 multiline_comment|/* Disable transmitter/receiver.&n;&t;*/
-id|sp-&gt;smc_smcm
+id|sp-&gt;smc_smcmr
 op_and_assign
 op_complement
 (paren
@@ -104,6 +107,178 @@ op_or
 id|SMCMR_TEN
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_star
+id|MBX_CSR1
+op_amp
+id|CSR1_COMEN
+)paren
+(brace
+multiline_comment|/* COM1 is enabled.  Initialize SMC1 and use it for&n;&t;&t; * the console port.&n;&t;&t; */
+multiline_comment|/* Enable SDMA.&n;&t;&t;*/
+(paren
+(paren
+id|immap_t
+op_star
+)paren
+id|MBX_IMAP_ADDR
+)paren
+op_member_access_from_pointer
+id|im_siu_conf.sc_sdcr
+op_assign
+l_int|1
+suffix:semicolon
+multiline_comment|/* Use Port B for SMCs instead of other functions.&n;&t;&t;*/
+id|cp-&gt;cp_pbpar
+op_or_assign
+l_int|0x00000cc0
+suffix:semicolon
+id|cp-&gt;cp_pbdir
+op_and_assign
+op_complement
+l_int|0x00000cc0
+suffix:semicolon
+id|cp-&gt;cp_pbodr
+op_and_assign
+op_complement
+l_int|0x00000cc0
+suffix:semicolon
+multiline_comment|/* Allocate space for two buffer descriptors in the DP ram.&n;&t;&t; * For now, this address seems OK, but it may have to&n;&t;&t; * change with newer versions of the firmware.&n;&t;&t; */
+id|dpaddr
+op_assign
+l_int|0x0800
+suffix:semicolon
+multiline_comment|/* Grab a few bytes from the top of memory.  EPPC-Bug isn&squot;t&n;&t;&t; * running any more, so we can do this.&n;&t;&t; */
+id|memaddr
+op_assign
+(paren
+id|bd-&gt;bi_memsize
+op_minus
+l_int|32
+)paren
+op_amp
+op_complement
+l_int|15
+suffix:semicolon
+multiline_comment|/* Set the physical address of the host memory buffers in&n;&t;&t; * the buffer descriptors.&n;&t;&t; */
+id|rbdf
+op_assign
+(paren
+id|cbd_t
+op_star
+)paren
+op_amp
+id|cp-&gt;cp_dpmem
+(braket
+id|dpaddr
+)braket
+suffix:semicolon
+id|rbdf-&gt;cbd_bufaddr
+op_assign
+id|memaddr
+suffix:semicolon
+id|rbdf-&gt;cbd_sc
+op_assign
+l_int|0
+suffix:semicolon
+id|tbdf
+op_assign
+id|rbdf
+op_plus
+l_int|1
+suffix:semicolon
+id|tbdf-&gt;cbd_bufaddr
+op_assign
+id|memaddr
+op_plus
+l_int|4
+suffix:semicolon
+id|tbdf-&gt;cbd_sc
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* Set up the uart parameters in the parameter ram.&n;&t;&t;*/
+id|up-&gt;smc_rbase
+op_assign
+id|dpaddr
+suffix:semicolon
+id|up-&gt;smc_tbase
+op_assign
+id|dpaddr
+op_plus
+r_sizeof
+(paren
+id|cbd_t
+)paren
+suffix:semicolon
+id|up-&gt;smc_rfcr
+op_assign
+id|SMC_EB
+suffix:semicolon
+id|up-&gt;smc_tfcr
+op_assign
+id|SMC_EB
+suffix:semicolon
+multiline_comment|/* Set UART mode, 8 bit, no parity, one stop.&n;&t;&t; * Enable receive and transmit.&n;&t;&t; */
+id|sp-&gt;smc_smcmr
+op_assign
+id|smcr_mk_clen
+c_func
+(paren
+l_int|9
+)paren
+op_or
+id|SMCMR_SM_UART
+suffix:semicolon
+multiline_comment|/* Mask all interrupts and remove anything pending.&n;&t;&t;*/
+id|sp-&gt;smc_smcm
+op_assign
+l_int|0
+suffix:semicolon
+id|sp-&gt;smc_smce
+op_assign
+l_int|0xff
+suffix:semicolon
+multiline_comment|/* Set up the baud rate generator.&n;&t;&t; * See 8xx_io/commproc.c for details.&n;&t;&t; */
+id|cp-&gt;cp_simode
+op_assign
+l_int|0x10000000
+suffix:semicolon
+id|cp-&gt;cp_brgc1
+op_assign
+(paren
+(paren
+(paren
+(paren
+id|bd-&gt;bi_intfreq
+op_star
+l_int|1000000
+)paren
+op_div
+l_int|16
+)paren
+op_div
+l_int|9600
+)paren
+op_lshift
+l_int|1
+)paren
+op_or
+id|CPM_BRG_EN
+suffix:semicolon
+multiline_comment|/* Enable SMC1 for console output.&n;&t;&t;*/
+op_star
+id|MBX_CSR1
+op_and_assign
+op_complement
+id|CSR1_COMEN
+suffix:semicolon
+)brace
+r_else
+(brace
+multiline_comment|/* SMC1 is used as console port.&n;&t;&t;*/
 id|tbdf
 op_assign
 (paren
@@ -128,7 +303,7 @@ id|cp-&gt;cp_dpmem
 id|up-&gt;smc_rbase
 )braket
 suffix:semicolon
-multiline_comment|/* Issue a stop transmit, and wait for it.&n;&t;*/
+multiline_comment|/* Issue a stop transmit, and wait for it.&n;&t;&t;*/
 id|cp-&gt;cp_cpcr
 op_assign
 id|mk_cr_cmd
@@ -149,6 +324,7 @@ op_amp
 id|CPM_CR_FLG
 )paren
 suffix:semicolon
+)brace
 multiline_comment|/* Make the first buffer the only buffer.&n;&t;*/
 id|tbdf-&gt;cbd_sc
 op_or_assign
@@ -191,7 +367,7 @@ id|CPM_CR_FLG
 )paren
 suffix:semicolon
 multiline_comment|/* Enable transmitter/receiver.&n;&t;*/
-id|sp-&gt;smc_smcm
+id|sp-&gt;smc_smcmr
 op_or_assign
 id|SMCMR_REN
 op_or

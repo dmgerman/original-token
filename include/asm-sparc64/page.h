@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: page.h,v 1.18 1998/05/01 09:33:50 davem Exp $ */
+multiline_comment|/* $Id: page.h,v 1.23 1998/06/12 14:54:33 jj Exp $ */
 macro_line|#ifndef _SPARC64_PAGE_H
 DECL|macro|_SPARC64_PAGE_H
 mdefine_line|#define _SPARC64_PAGE_H
@@ -16,58 +16,8 @@ DECL|macro|PAGE_MASK
 mdefine_line|#define PAGE_MASK    (~(PAGE_SIZE-1))
 macro_line|#ifdef __KERNEL__
 macro_line|#ifndef __ASSEMBLY__
-DECL|macro|PAGE_ALIAS_BITS
-mdefine_line|#define PAGE_ALIAS_BITS&t;&t;(PAGE_SIZE)&t;/* 16K Dcache, 8K pages */
-macro_line|#ifdef __SMP__
-DECL|macro|ULOCK_DECLARE
-mdefine_line|#define ULOCK_DECLARE extern spinlock_t user_page_lock;
-macro_line|#else
-DECL|macro|ULOCK_DECLARE
-mdefine_line|#define ULOCK_DECLARE
-macro_line|#endif
-DECL|struct|upcache
-r_struct
-id|upcache
-(brace
-DECL|member|list
-r_struct
-id|page
-op_star
-id|list
-suffix:semicolon
-DECL|member|count
-r_int
-r_int
-id|count
-suffix:semicolon
-)brace
-suffix:semicolon
-r_extern
-r_struct
-id|upcache
-id|user_page_cache
-(braket
-l_int|2
-)braket
-suffix:semicolon
-DECL|macro|USER_PAGE_WATER
-mdefine_line|#define USER_PAGE_WATER&t;&t;16
-r_extern
-r_int
-r_int
-id|get_user_page_slow
-c_func
-(paren
-r_int
-id|which
-)paren
-suffix:semicolon
-DECL|macro|get_user_page
-mdefine_line|#define get_user_page(__vaddr) &bslash;&n;({ &bslash;&n;&t;ULOCK_DECLARE &bslash;&n;&t;int which = ((__vaddr) &amp; PAGE_ALIAS_BITS) ? 1 : 0; &bslash;&n;&t;struct upcache *up = &amp;user_page_cache[which]; &bslash;&n;&t;struct page *p; &bslash;&n;&t;unsigned long ret; &bslash;&n;&t;spin_lock(&amp;user_page_lock); &bslash;&n;&t;if((p = up-&gt;list) != NULL) { &bslash;&n;&t;&t;up-&gt;list = p-&gt;next; &bslash;&n;&t;&t;up-&gt;count--; &bslash;&n;&t;} &bslash;&n;&t;spin_unlock(&amp;user_page_lock); &bslash;&n;&t;if(p != NULL) &bslash;&n;&t;&t;ret = PAGE_OFFSET+PAGE_SIZE*p-&gt;map_nr; &bslash;&n;&t;else &bslash;&n;&t;&t;ret = get_user_page_slow(which); &bslash;&n;&t;ret; &bslash;&n;})
-DECL|macro|free_user_page
-mdefine_line|#define free_user_page(__page, __addr) &bslash;&n;do { &bslash;&n;&t;ULOCK_DECLARE &bslash;&n;&t;int which = ((__addr) &amp; PAGE_ALIAS_BITS) ? 1 : 0; &bslash;&n;&t;struct upcache *up = &amp;user_page_cache[which]; &bslash;&n;&t;if(atomic_read(&amp;(__page)-&gt;count) == 1 &amp;&amp; &bslash;&n;           up-&gt;count &lt; USER_PAGE_WATER) { &bslash;&n;&t;&t;spin_lock(&amp;user_page_lock); &bslash;&n;&t;&t;(__page)-&gt;age = PAGE_INITIAL_AGE; &bslash;&n;&t;&t;(__page)-&gt;next = up-&gt;list; &bslash;&n;&t;&t;up-&gt;list = (__page); &bslash;&n;&t;&t;up-&gt;count++; &bslash;&n;&t;&t;spin_unlock(&amp;user_page_lock); &bslash;&n;&t;} else &bslash;&n;&t;&t;free_page(addr); &bslash;&n;} while(0)
 DECL|macro|clear_page
-mdefine_line|#define clear_page(page) memset((void *)(page), 0, PAGE_SIZE)
+mdefine_line|#define clear_page(page)&t;&t;memset((void *)(page), 0, PAGE_SIZE)
 r_extern
 r_void
 id|copy_page
@@ -272,10 +222,7 @@ DECL|macro|__iopgprot
 mdefine_line|#define __iopgprot(x)&t;(x)
 macro_line|#endif /* (STRICT_MM_TYPECHECKS) */
 DECL|macro|TASK_UNMAPPED_BASE
-mdefine_line|#define TASK_UNMAPPED_BASE(__off)&t;(((current-&gt;tss.flags &amp; SPARC_FLAG_32BIT) ? &bslash;&n;&t;&t;&t;&t; &t; (0x0000000070000000UL) : &bslash;&n;&t;&t;&t;&t; &t; (0xfffff80000000000UL)) + &bslash;&n;&t;&t;&t;&t;&t; (__off &amp; PAGE_SIZE))
-multiline_comment|/* On Ultra this aligns to the size of the L1 cache. */
-DECL|macro|TASK_UNMAPPED_ALIGN
-mdefine_line|#define TASK_UNMAPPED_ALIGN(__addr, __off) &bslash;&n;&t;((((__addr)+((PAGE_SIZE&lt;&lt;1UL)-1UL)) &amp; ~((PAGE_SIZE &lt;&lt; 1UL)-1UL)) + &bslash;&n;&t; (__off&amp;PAGE_SIZE))
+mdefine_line|#define TASK_UNMAPPED_BASE&t;((current-&gt;tss.flags &amp; SPARC_FLAG_32BIT) ? &bslash;&n;&t;&t;&t;&t; (0x0000000070000000UL) : (PAGE_OFFSET))
 macro_line|#endif /* !(__ASSEMBLY__) */
 multiline_comment|/* to align the pointer to the (next) page boundary */
 DECL|macro|PAGE_ALIGN

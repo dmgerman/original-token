@@ -4059,8 +4059,6 @@ id|dev-&gt;irqs
 (braket
 l_int|0
 )braket
-dot
-id|pri
 )paren
 suffix:semicolon
 multiline_comment|/* IPC Zebra   1.fa200000[1c] i=2  */

@@ -2205,7 +2205,7 @@ op_assign
 l_int|1
 suffix:semicolon
 macro_line|#ifdef CONFIG_VT
-id|kbd_read_mask
+id|pckbd_read_mask
 op_assign
 id|AUX_STAT_OBF
 suffix:semicolon

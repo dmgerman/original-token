@@ -153,7 +153,8 @@ l_int|0x10ff08a1
 )paren
 suffix:semicolon
 )brace
-macro_line|#if 0&t;/* nobody ever calls these.. ?? */
+multiline_comment|/* nobody ever calls these.. ??  -mlord&n; *&n; * Yes somebody certainly does, check asm-ppc/ide.h for the place.  -DaveM&n; */
+DECL|function|chrp_ide_probe
 r_void
 id|chrp_ide_probe
 c_func
@@ -225,6 +226,7 @@ id|pdev-&gt;irq
 suffix:semicolon
 )brace
 )brace
+DECL|function|chrp_ide_init_hwif_ports
 r_void
 id|chrp_ide_init_hwif_ports
 (paren
@@ -282,5 +284,4 @@ op_assign
 id|chrp_ide_irq
 suffix:semicolon
 )brace
-macro_line|#endif
 eof

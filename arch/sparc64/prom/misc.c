@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: misc.c,v 1.9 1997/07/24 12:15:11 davem Exp $&n; * misc.c:  Miscellaneous prom functions that don&squot;t belong&n; *          anywhere else.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996,1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: misc.c,v 1.10 1998/07/21 10:36:29 jj Exp $&n; * misc.c:  Miscellaneous prom functions that don&squot;t belong&n; *          anywhere else.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996,1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -96,18 +96,12 @@ multiline_comment|/* We want to do this more nicely some day. */
 macro_line|#ifdef CONFIG_SUN_CONSOLE
 r_extern
 r_void
-id|console_restore_palette
-c_func
 (paren
-r_void
+op_star
+id|prom_palette
 )paren
-suffix:semicolon
-r_extern
-r_void
-id|set_palette
-c_func
 (paren
-r_void
+r_int
 )paren
 suffix:semicolon
 r_extern
@@ -141,20 +135,21 @@ id|flags
 suffix:semicolon
 multiline_comment|/* kernel_enter_debugger(); */
 macro_line|#ifdef CONFIG_SUN_CONSOLE
-macro_line|#if 0
 r_if
 c_cond
 (paren
 op_logical_neg
 id|serial_console
+op_logical_and
+id|prom_palette
 )paren
 (brace
-id|console_restore_palette
+id|prom_palette
 (paren
+l_int|1
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
 macro_line|#endif
 multiline_comment|/* install_obp_ticker(); */
 id|save_flags
@@ -189,20 +184,21 @@ id|flags
 suffix:semicolon
 multiline_comment|/* install_linux_ticker(); */
 macro_line|#ifdef CONFIG_SUN_CONSOLE
-macro_line|#if 0
 r_if
 c_cond
 (paren
 op_logical_neg
 id|serial_console
+op_logical_and
+id|prom_palette
 )paren
 (brace
-id|set_palette
+id|prom_palette
 (paren
+l_int|0
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
 macro_line|#endif
 )brace
 multiline_comment|/* Drop into the prom, but completely terminate the program.&n; * No chance of continuing.&n; */

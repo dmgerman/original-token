@@ -7,6 +7,17 @@ DECL|macro|NR_IRQS
 mdefine_line|#define NR_IRQS 64
 DECL|macro|TIMER_IRQ
 mdefine_line|#define TIMER_IRQ 0
+r_extern
+r_int
+(paren
+op_star
+id|irq_cannonicalize
+)paren
+(paren
+r_int
+id|irq
+)paren
+suffix:semicolon
 r_struct
 id|irqaction
 suffix:semicolon

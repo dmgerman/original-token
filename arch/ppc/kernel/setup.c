@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * $Id: setup.c,v 1.77 1998/05/04 07:24:38 geert Exp $&n; * Common prep/pmac/chrp boot and setup code.&n; */
+multiline_comment|/*&n; * $Id: setup.c,v 1.95 1998/07/20 19:03:47 geert Exp $&n; * Common prep/pmac/chrp boot and setup code.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -14,34 +14,27 @@ macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/ide.h&gt;
 macro_line|#include &lt;asm/prom.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;
-macro_line|#ifdef CONFIG_MBX
-macro_line|#include &lt;asm/mbx.h&gt;
-macro_line|#endif
-multiline_comment|/* ifdef APUS specific stuff until the merge is completed. -jskov */
-macro_line|#ifdef CONFIG_APUS
+macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/bootinfo.h&gt;
 macro_line|#include &lt;asm/setup.h&gt;
 macro_line|#include &lt;asm/amigappc.h&gt;
+macro_line|#ifdef CONFIG_MBX
+macro_line|#include &lt;asm/mbx.h&gt;
+macro_line|#endif
+multiline_comment|/* APUS defs */
 r_extern
 r_int
 r_int
 id|m68k_machtype
 suffix:semicolon
 r_extern
-r_void
-id|amiga_reset
-(paren
-r_void
-)paren
-suffix:semicolon
-r_extern
 r_struct
 id|mem_info
-id|m68k_ramdisk
+id|ramdisk
 suffix:semicolon
 r_extern
 r_int
-id|m68k_parse_bootinfo
+id|parse_bootinfo
 c_func
 (paren
 r_const
@@ -56,7 +49,7 @@ id|_end
 (braket
 )braket
 suffix:semicolon
-macro_line|#endif
+multiline_comment|/* END APUS defs */
 r_extern
 r_char
 id|cmd_line
@@ -102,9 +95,34 @@ id|have_of
 suffix:semicolon
 macro_line|#endif /* ! CONFIG_MACH_SPECIFIC */
 multiline_comment|/* copy of the residual data */
+DECL|variable|__prepdata
+r_int
+r_char
+id|__res
+(braket
+r_sizeof
+(paren
+id|RESIDUAL
+)paren
+)braket
+id|__prepdata
+op_assign
+(brace
+l_int|0
+comma
+)brace
+suffix:semicolon
 DECL|variable|res
 id|RESIDUAL
+op_star
 id|res
+op_assign
+(paren
+id|RESIDUAL
+op_star
+)paren
+op_amp
+id|__res
 suffix:semicolon
 DECL|variable|_prep_type
 r_int
@@ -112,7 +130,6 @@ id|_prep_type
 suffix:semicolon
 multiline_comment|/*&n; * Perhaps we can put the pmac screen_info[] here&n; * on pmac as well so we don&squot;t need the ifdef&squot;s.&n; * Until we get multiple-console support in here&n; * that is.  -- Cort&n; */
 macro_line|#ifndef CONFIG_MBX
-macro_line|#if !defined(CONFIG_PMAC_CONSOLE)
 DECL|variable|screen_info
 r_struct
 id|screen_info
@@ -124,11 +141,7 @@ comma
 l_int|25
 comma
 multiline_comment|/* orig-x, orig-y */
-(brace
 l_int|0
-comma
-l_int|0
-)brace
 comma
 multiline_comment|/* unused */
 l_int|0
@@ -189,7 +202,6 @@ r_void
 )paren
 (brace
 )brace
-macro_line|#endif
 macro_line|#else /* CONFIG_MBX */
 multiline_comment|/* We need this to satisfy some external references until we can&n; * strip the kernel down.&n; */
 DECL|variable|screen_info
@@ -203,11 +215,7 @@ comma
 l_int|25
 comma
 multiline_comment|/* orig-x, orig-y */
-(brace
 l_int|0
-comma
-l_int|0
-)brace
 comma
 multiline_comment|/* unused */
 l_int|0
@@ -465,8 +473,36 @@ c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/* APUS:FIXME: Reset the system. Apparently there&squot;s&n;&t;&t; * more magic to it than this!?!?&n;&t;&t; */
-macro_line|#if 0
+id|APUS_WRITE
+c_func
+(paren
+id|APUS_REG_LOCK
+comma
+id|REGLOCK_BLACKMAGICK1
+op_or
+id|REGLOCK_BLACKMAGICK2
+)paren
+suffix:semicolon
+id|APUS_WRITE
+c_func
+(paren
+id|APUS_REG_LOCK
+comma
+id|REGLOCK_BLACKMAGICK1
+op_or
+id|REGLOCK_BLACKMAGICK3
+)paren
+suffix:semicolon
+id|APUS_WRITE
+c_func
+(paren
+id|APUS_REG_LOCK
+comma
+id|REGLOCK_BLACKMAGICK2
+op_or
+id|REGLOCK_BLACKMAGICK3
+)paren
+suffix:semicolon
 id|APUS_WRITE
 c_func
 (paren
@@ -480,34 +516,7 @@ c_func
 (paren
 id|APUS_REG_RESET
 comma
-id|REGRESET_PPCRESET
-op_or
-id|REGRESET_M68KRESET
-op_or
 id|REGRESET_AMIGARESET
-op_or
-id|REGRESET_AUXRESET
-op_or
-id|REGRESET_SCSIRESET
-)paren
-suffix:semicolon
-macro_line|#endif
-id|printk
-c_func
-(paren
-l_string|&quot;&bslash;n**************************************&bslash;n&quot;
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;*** You can make a hard reset now! ***&bslash;n&quot;
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;**************************************&bslash;n&quot;
 )paren
 suffix:semicolon
 r_for
@@ -693,7 +702,6 @@ c_func
 l_int|NULL
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_APUS
 r_case
 id|_MACH_apus
 suffix:colon
@@ -711,7 +719,6 @@ suffix:semicolon
 suffix:semicolon
 )paren
 suffix:semicolon
-macro_line|#endif
 macro_line|#endif
 )brace
 r_for
@@ -746,21 +753,11 @@ op_eq
 id|_MACH_Pmac
 )paren
 (brace
-macro_line|#if 0
-id|prom_exit
-c_func
-(paren
-)paren
-suffix:semicolon
-multiline_comment|/* doesn&squot;t work because prom is trashed */
-macro_line|#else
 id|machine_power_off
 c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/* for now */
-macro_line|#endif
 )brace
 r_else
 multiline_comment|/* prep, chrp or apus */
@@ -788,7 +785,7 @@ op_star
 id|irq
 )paren
 (brace
-macro_line|#ifndef CONFIG_MBX
+macro_line|#if !defined(CONFIG_MBX) &amp;&amp; !defined(CONFIG_APUS)
 r_switch
 c_cond
 (paren
@@ -1449,20 +1446,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|len
-op_add_assign
-id|sprintf
-c_func
-(paren
-id|len
-op_plus
-id|buffer
-comma
-l_string|&quot;L2CR&bslash;t&bslash;t: %lx&bslash;n&quot;
-comma
-id|cr
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1471,7 +1454,7 @@ op_amp
 (paren
 l_int|0x1
 op_lshift
-l_int|1
+l_int|28
 )paren
 )paren
 id|cr
@@ -1487,7 +1470,7 @@ op_amp
 (paren
 l_int|0x2
 op_lshift
-l_int|1
+l_int|28
 )paren
 )paren
 id|cr
@@ -1503,7 +1486,7 @@ op_amp
 (paren
 l_int|0x3
 op_lshift
-l_int|1
+l_int|28
 )paren
 )paren
 id|cr
@@ -1535,7 +1518,7 @@ c_func
 (paren
 )paren
 op_amp
-l_int|1
+l_int|0x80000000
 )paren
 ques
 c_cond
@@ -1747,7 +1730,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|res.ResidualLength
+id|res-&gt;ResidualLength
 )paren
 id|len
 op_add_assign
@@ -1761,17 +1744,17 @@ comma
 l_string|&quot;%ldMHz&bslash;n&quot;
 comma
 (paren
-id|res.VitalProductData.ProcessorHz
+id|res-&gt;VitalProductData.ProcessorHz
 OG
 l_int|1024
 )paren
 ques
 c_cond
-id|res.VitalProductData.ProcessorHz
+id|res-&gt;VitalProductData.ProcessorHz
 op_rshift
 l_int|20
 suffix:colon
-id|res.VitalProductData.ProcessorHz
+id|res-&gt;VitalProductData.ProcessorHz
 )paren
 suffix:semicolon
 r_else
@@ -1950,17 +1933,6 @@ suffix:semicolon
 macro_line|#endif /* __SMP__ */
 multiline_comment|/*&n;&t; * Ooh&squot;s and aah&squot;s info about zero&squot;d pages in idle task&n;&t; */
 (brace
-r_extern
-r_int
-r_int
-id|zerocount
-comma
-id|zerototal
-comma
-id|zeropage_hits
-comma
-id|zeropage_calls
-suffix:semicolon
 id|len
 op_add_assign
 id|sprintf
@@ -1970,47 +1942,47 @@ id|buffer
 op_plus
 id|len
 comma
-l_string|&quot;zero pages&bslash;t: total %u (%luKb) &quot;
-l_string|&quot;current: %u (%luKb) hits: %u/%u (%u%%)&bslash;n&quot;
+l_string|&quot;zero pages&bslash;t: total %lu (%luKb) &quot;
+l_string|&quot;current: %lu (%luKb) hits: %lu/%lu (%lu%%)&bslash;n&quot;
 comma
-id|zerototal
+id|quicklists.zerototal
 comma
 (paren
-id|zerototal
+id|quicklists.zerototal
 op_star
 id|PAGE_SIZE
 )paren
 op_rshift
 l_int|10
 comma
-id|zerocount
+id|quicklists.zero_sz
 comma
 (paren
-id|zerocount
+id|quicklists.zero_sz
 op_star
 id|PAGE_SIZE
 )paren
 op_rshift
 l_int|10
 comma
-id|zeropage_hits
+id|quicklists.zeropage_hits
 comma
-id|zeropage_calls
+id|quicklists.zeropage_calls
 comma
 multiline_comment|/* : 1 below is so we don&squot;t div by zero */
 (paren
-id|zeropage_hits
+id|quicklists.zeropage_hits
 op_star
 l_int|100
 )paren
 op_div
 (paren
 (paren
-id|zeropage_calls
+id|quicklists.zeropage_calls
 )paren
 ques
 c_cond
-id|zeropage_calls
+id|quicklists.zeropage_calls
 suffix:colon
 l_int|1
 )paren
@@ -2069,23 +2041,12 @@ id|len
 suffix:semicolon
 r_break
 suffix:semicolon
-macro_line|#ifdef CONFIG_APUS
 r_case
 id|_MACH_apus
 suffix:colon
-id|len
-op_add_assign
-id|apus_get_cpuinfo
-c_func
-(paren
-id|buffer
-op_plus
-id|len
-)paren
-suffix:semicolon
+multiline_comment|/* Not much point in printing m68k info when it is not&n;                   used. */
 r_break
 suffix:semicolon
-macro_line|#endif
 )brace
 macro_line|#endif /* ndef CONFIG_MBX */&t;
 r_return
@@ -2133,75 +2094,11 @@ r_void
 )paren
 suffix:semicolon
 macro_line|#ifndef CONFIG_MBX
-macro_line|#ifdef CONFIG_APUS
-r_if
-c_cond
-(paren
-id|r3
-op_eq
-l_int|0x61707573
-)paren
-(brace
-multiline_comment|/* Parse bootinfo. The bootinfo is located right after&n;                   the kernel bss */
-id|m68k_parse_bootinfo
-c_func
-(paren
-(paren
-r_const
-r_struct
-id|bi_record
-op_star
-)paren
-op_amp
-id|_end
-)paren
-suffix:semicolon
-id|have_of
-op_assign
-l_int|0
-suffix:semicolon
-macro_line|#ifdef CONFIG_BLK_DEV_INITRD
-multiline_comment|/* Take care of initrd if we have one. Use data from&n;&t;&t;   bootinfo to avoid the need to initialize PPC&n;&t;&t;   registers when kernel is booted via a PPC reset. */
-r_if
-c_cond
-(paren
-id|m68k_ramdisk.addr
-)paren
-(brace
-id|initrd_start
-op_assign
-(paren
-r_int
-r_int
-)paren
-id|__va
-c_func
-(paren
-id|m68k_ramdisk.addr
-)paren
-suffix:semicolon
-id|initrd_end
-op_assign
-(paren
-r_int
-r_int
-)paren
-id|__va
-c_func
-(paren
-id|m68k_ramdisk.size
-op_plus
-id|m68k_ramdisk.addr
-)paren
-suffix:semicolon
-)brace
-macro_line|#endif /* CONFIG_BLK_DEV_INITRD */
-r_return
-l_int|0
-suffix:semicolon
-)brace
-macro_line|#endif /* CONFIG_APUS */
 macro_line|#ifndef CONFIG_MACH_SPECIFIC
+r_char
+op_star
+id|model
+suffix:semicolon
 multiline_comment|/* prep boot loader tells us if we&squot;re prep or not */
 r_if
 c_cond
@@ -2230,32 +2127,50 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
+multiline_comment|/* boot loader will tell us if we&squot;re APUS */
+r_else
+r_if
+c_cond
+(paren
+id|r3
+op_eq
+l_int|0x61707573
+)paren
+(brace
+id|_machine
+op_assign
+id|_MACH_apus
+suffix:semicolon
+id|have_of
+op_assign
+l_int|0
+suffix:semicolon
+id|r3
+op_assign
+l_int|0
+suffix:semicolon
+)brace
 r_else
 (brace
-multiline_comment|/* need to ask OF if we&squot;re chrp or pmac */
-r_extern
-r_int
-r_char
-id|OF_type
-(braket
-l_int|16
-)braket
-comma
-id|OF_model
-(braket
-l_int|16
-)braket
+id|have_of
+op_assign
+l_int|1
 suffix:semicolon
-id|prom_print
+multiline_comment|/* ask the OF info if we&squot;re a chrp or pmac */
+id|model
+op_assign
+id|get_property
 c_func
 (paren
-id|OF_type
+id|find_path_device
+c_func
+(paren
+l_string|&quot;/&quot;
 )paren
-suffix:semicolon
-id|prom_print
-c_func
-(paren
-id|OF_model
+comma
+l_string|&quot;type&quot;
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 r_if
@@ -2267,25 +2182,16 @@ c_func
 (paren
 l_string|&quot;chrp&quot;
 comma
-id|OF_type
+id|model
 comma
 l_int|4
 )paren
 )paren
-(brace
 id|_machine
 op_assign
 id|_MACH_chrp
 suffix:semicolon
-)brace
 r_else
-(brace
-multiline_comment|/*if ( !strncmp(&quot;Power Macintosh&quot;, type,15) )*/
-id|_machine
-op_assign
-id|_MACH_Pmac
-suffix:semicolon
-)brace
 id|_machine
 op_assign
 id|_MACH_Pmac
@@ -2463,14 +2369,6 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#ifdef CONFIG_PCI
-multiline_comment|/* so that pmac/chrp can use pci to find its console -- Cort */
-id|setup_pci_ptrs
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
 r_switch
 c_cond
 (paren
@@ -2480,7 +2378,11 @@ id|_machine
 r_case
 id|_MACH_Pmac
 suffix:colon
-macro_line|#if !defined(CONFIG_MACH_SPECIFIC)
+id|setup_pci_ptrs
+c_func
+(paren
+)paren
+suffix:semicolon
 multiline_comment|/* isa_io_base gets set in pmac_find_bridges */
 id|isa_mem_base
 op_assign
@@ -2490,6 +2392,7 @@ id|pci_dram_offset
 op_assign
 id|PMAC_PCI_DRAM_OFFSET
 suffix:semicolon
+macro_line|#if !defined(CONFIG_MACH_SPECIFIC)
 id|ISA_DMA_THRESHOLD
 op_assign
 op_complement
@@ -2522,7 +2425,6 @@ c_func
 r_void
 op_star
 )paren
-op_amp
 id|res
 comma
 (paren
@@ -2541,7 +2443,11 @@ id|RESIDUAL
 )paren
 )paren
 suffix:semicolon
-macro_line|#if !defined(CONFIG_MACH_SPECIFIC)
+id|setup_pci_ptrs
+c_func
+(paren
+)paren
+suffix:semicolon
 id|isa_io_base
 op_assign
 id|PREP_ISA_IO_BASE
@@ -2554,6 +2460,7 @@ id|pci_dram_offset
 op_assign
 id|PREP_PCI_DRAM_OFFSET
 suffix:semicolon
+macro_line|#if !defined(CONFIG_MACH_SPECIFIC)
 id|ISA_DMA_THRESHOLD
 op_assign
 l_int|0x00ffffff
@@ -2571,7 +2478,7 @@ multiline_comment|/* figure out what kind of prep workstation we are */
 r_if
 c_cond
 (paren
-id|res.ResidualLength
+id|res-&gt;ResidualLength
 op_ne
 l_int|0
 )paren
@@ -2583,7 +2490,7 @@ op_logical_neg
 id|strncmp
 c_func
 (paren
-id|res.VitalProductData.PrintableModel
+id|res-&gt;VitalProductData.PrintableModel
 comma
 l_string|&quot;IBM&quot;
 comma
@@ -2670,6 +2577,11 @@ suffix:semicolon
 r_case
 id|_MACH_chrp
 suffix:colon
+id|setup_pci_ptrs
+c_func
+(paren
+)paren
+suffix:semicolon
 macro_line|#ifdef CONFIG_BLK_DEV_INITRD
 multiline_comment|/* take care of initrd if we have one */
 r_if
@@ -2694,11 +2606,7 @@ id|KERNELBASE
 suffix:semicolon
 )brace
 macro_line|#endif /* CONFIG_BLK_DEV_INITRD */
-macro_line|#if !defined(CONFIG_MACH_SPECIFIC)
-id|isa_io_base
-op_assign
-id|CHRP_ISA_IO_BASE
-suffix:semicolon
+multiline_comment|/* isa_io_base set by setup_pci_ptrs() */
 id|isa_mem_base
 op_assign
 id|CHRP_ISA_MEM_BASE
@@ -2707,6 +2615,7 @@ id|pci_dram_offset
 op_assign
 id|CHRP_PCI_DRAM_OFFSET
 suffix:semicolon
+macro_line|#if !defined(CONFIG_MACH_SPECIFIC)
 id|ISA_DMA_THRESHOLD
 op_assign
 op_complement
@@ -2723,6 +2632,83 @@ suffix:semicolon
 macro_line|#endif /* ! CONFIG_MACH_SPECIFIC */
 r_break
 suffix:semicolon
+macro_line|#ifdef CONFIG_APUS&t;&t;
+r_case
+id|_MACH_apus
+suffix:colon
+id|setup_pci_ptrs
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/* Parse bootinfo. The bootinfo is located right after&n;                   the kernel bss */
+id|parse_bootinfo
+c_func
+(paren
+(paren
+r_const
+r_struct
+id|bi_record
+op_star
+)paren
+op_amp
+id|_end
+)paren
+suffix:semicolon
+macro_line|#ifdef CONFIG_BLK_DEV_INITRD
+multiline_comment|/* Take care of initrd if we have one. Use data from&n;&t;&t;   bootinfo to avoid the need to initialize PPC&n;&t;&t;   registers when kernel is booted via a PPC reset. */
+r_if
+c_cond
+(paren
+id|ramdisk.addr
+)paren
+(brace
+id|initrd_start
+op_assign
+(paren
+r_int
+r_int
+)paren
+id|__va
+c_func
+(paren
+id|ramdisk.addr
+)paren
+suffix:semicolon
+id|initrd_end
+op_assign
+(paren
+r_int
+r_int
+)paren
+id|__va
+c_func
+(paren
+id|ramdisk.size
+op_plus
+id|ramdisk.addr
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/* Make sure code below is not executed. */
+id|r4
+op_assign
+l_int|0
+suffix:semicolon
+id|r6
+op_assign
+l_int|0
+suffix:semicolon
+macro_line|#endif /* CONFIG_BLK_DEV_INITRD */
+macro_line|#if !defined(CONFIG_MACH_SPECIFIC)
+id|ISA_DMA_THRESHOLD
+op_assign
+l_int|0x00ffffff
+suffix:semicolon
+macro_line|#endif /* ! CONFIG_MACH_SPECIFIC */
+r_break
+suffix:semicolon
+macro_line|#endif
 r_default
 suffix:colon
 id|printk
@@ -2764,11 +2750,13 @@ id|bd_t
 )paren
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_PCI
 id|setup_pci_ptrs
 c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef CONFIG_BLK_DEV_INITRD
 multiline_comment|/* take care of initrd if we have one */
 r_if
@@ -2902,13 +2890,9 @@ op_star
 suffix:semicolon
 r_extern
 r_void
-id|apus_setup_arch
+id|mbx_setup_arch
 c_func
 (paren
-r_char
-op_star
-op_star
-comma
 r_int
 r_int
 op_star
@@ -2920,7 +2904,7 @@ op_star
 suffix:semicolon
 r_extern
 r_void
-id|mbx_setup_arch
+id|apus_setup_arch
 c_func
 (paren
 r_int
@@ -3045,6 +3029,42 @@ r_int
 )paren
 id|end_of_DRAM
 suffix:semicolon
+macro_line|#ifdef CONFIG_BLK_DEV_INITRD
+multiline_comment|/* initrd_start and size are setup by boot/head.S and kernel/head.S */
+r_if
+c_cond
+(paren
+id|initrd_start
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|initrd_end
+OG
+op_star
+id|memory_end_p
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;initrd extends beyond end of memory &quot;
+l_string|&quot;(0x%08lx &gt; 0x%08lx)&bslash;ndisabling initrd&bslash;n&quot;
+comma
+id|initrd_end
+comma
+op_star
+id|memory_end_p
+)paren
+suffix:semicolon
+id|initrd_start
+op_assign
+l_int|0
+suffix:semicolon
+)brace
+)brace
+macro_line|#endif
 macro_line|#ifdef CONFIG_MBX
 id|mbx_setup_arch
 c_func
@@ -3100,7 +3120,7 @@ id|memory_end_p
 suffix:semicolon
 r_break
 suffix:semicolon
-macro_line|#ifdef CONFIG_APUS
+macro_line|#ifdef CONFIG_APUS&t;&t;
 r_case
 id|_MACH_apus
 suffix:colon
@@ -3111,8 +3131,6 @@ suffix:semicolon
 id|apus_setup_arch
 c_func
 (paren
-id|cmdline_p
-comma
 id|memory_start_p
 comma
 id|memory_end_p
@@ -3120,7 +3138,7 @@ id|memory_end_p
 suffix:semicolon
 r_break
 suffix:semicolon
-macro_line|#endif
+macro_line|#endif&t;&t;
 r_default
 suffix:colon
 id|printk

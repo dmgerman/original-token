@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sys_sparc.c,v 1.40 1998/03/28 08:29:26 davem Exp $&n; * linux/arch/sparc/kernel/sys_sparc.c&n; *&n; * This file contains various random system calls that&n; * have a non-standard calling sequence on the Linux/sparc&n; * platform.&n; */
+multiline_comment|/* $Id: sys_sparc.c,v 1.46 1998/08/03 23:58:01 davem Exp $&n; * linux/arch/sparc/kernel/sys_sparc.c&n; *&n; * This file contains various random system calls that&n; * have a non-standard calling sequence on the Linux/sparc&n; * platform.&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -56,15 +56,6 @@ r_int
 id|brk
 )paren
 (brace
-r_int
-r_int
-id|ret
-suffix:semicolon
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -83,32 +74,17 @@ OL
 l_int|0xe0000000
 )paren
 (brace
-id|ret
-op_assign
+r_return
 id|current-&gt;mm-&gt;brk
 suffix:semicolon
-r_goto
-id|out
-suffix:semicolon
 )brace
 )brace
-id|ret
-op_assign
+r_return
 id|sys_brk
 c_func
 (paren
 id|brk
 )paren
-suffix:semicolon
-id|out
-suffix:colon
-id|unlock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
-r_return
-id|ret
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * sys_pipe() is the normal C calling standard for creating&n; * a pipe. It&squot;s not the way unix traditionally does this, though.&n; */
@@ -760,21 +736,6 @@ r_return
 id|err
 suffix:semicolon
 )brace
-r_extern
-r_int
-r_int
-id|get_unmapped_area
-c_func
-(paren
-r_int
-r_int
-id|addr
-comma
-r_int
-r_int
-id|len
-)paren
-suffix:semicolon
 multiline_comment|/* Linux version of mmap */
 DECL|function|sys_mmap
 id|asmlinkage
@@ -1540,6 +1501,8 @@ c_func
 (paren
 id|system_utsname.domainname
 )paren
+op_plus
+l_int|1
 suffix:semicolon
 r_if
 c_cond
@@ -1559,8 +1522,11 @@ id|len
 OG
 id|__NEW_UTS_LEN
 )paren
+(brace
 r_goto
 id|done
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren

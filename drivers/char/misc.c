@@ -214,6 +214,14 @@ c_func
 r_void
 )paren
 suffix:semicolon
+r_extern
+r_int
+id|pmu_device_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
 macro_line|#ifdef CONFIG_PROC_FS
 DECL|function|misc_read_proc
 r_static
@@ -952,6 +960,13 @@ suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef CONFIG_HFMODEM
 id|hfmodem_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_PMAC_PBOOK
+id|pmu_device_init
 c_func
 (paren
 )paren

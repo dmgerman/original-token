@@ -1,4 +1,5 @@
-multiline_comment|/* $Id: ipc.c,v 1.2 1997/09/18 10:38:27 rth Exp $&n; * ipc.c: Solaris IPC emulation&n; *&n; * Copyright (C) 1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: ipc.c,v 1.3 1998/07/30 11:29:47 davem Exp $&n; * ipc.c: Solaris IPC emulation&n; *&n; * Copyright (C) 1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/shm.h&gt;

@@ -583,10 +583,10 @@ id|msg
 )paren
 suffix:semicolon
 )brace
-DECL|variable|kbd_read_mask
+DECL|variable|pckbd_read_mask
 r_int
 r_char
-id|kbd_read_mask
+id|pckbd_read_mask
 op_assign
 id|KBD_STAT_OBF
 suffix:semicolon
@@ -1792,7 +1792,7 @@ c_cond
 (paren
 id|status
 op_amp
-id|kbd_read_mask
+id|pckbd_read_mask
 op_amp
 id|KBD_STAT_MOUSE_OBF
 )paren

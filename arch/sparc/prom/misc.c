@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: misc.c,v 1.16 1998/03/09 14:04:25 jj Exp $&n; * misc.c:  Miscellaneous prom functions that don&squot;t belong&n; *          anywhere else.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: misc.c,v 1.17 1998/07/21 10:36:22 jj Exp $&n; * misc.c:  Miscellaneous prom functions that don&squot;t belong&n; *          anywhere else.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -158,18 +158,12 @@ multiline_comment|/* We want to do this more nicely some day. */
 macro_line|#ifdef CONFIG_SUN_CONSOLE
 r_extern
 r_void
-id|console_restore_palette
-c_func
 (paren
-r_void
+op_star
+id|prom_palette
 )paren
-suffix:semicolon
-r_extern
-r_void
-id|set_palette
-c_func
 (paren
-r_void
+r_int
 )paren
 suffix:semicolon
 r_extern
@@ -225,10 +219,13 @@ c_cond
 (paren
 op_logical_neg
 id|serial_console
+op_logical_and
+id|prom_palette
 )paren
 (brace
-id|console_restore_palette
+id|prom_palette
 (paren
+l_int|1
 )paren
 suffix:semicolon
 )brace
@@ -284,10 +281,13 @@ c_cond
 (paren
 op_logical_neg
 id|serial_console
+op_logical_and
+id|prom_palette
 )paren
 (brace
-id|set_palette
+id|prom_palette
 (paren
+l_int|0
 )paren
 suffix:semicolon
 )brace

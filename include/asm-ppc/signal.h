@@ -130,6 +130,15 @@ DECL|macro|SA_INTERRUPT
 mdefine_line|#define SA_INTERRUPT&t;0x20000000 /* dummy -- ignored */
 DECL|macro|SA_RESTORER
 mdefine_line|#define SA_RESTORER&t;0x04000000
+multiline_comment|/* &n; * sigaltstack controls&n; */
+DECL|macro|SS_ONSTACK
+mdefine_line|#define SS_ONSTACK&t;1
+DECL|macro|SS_DISABLE
+mdefine_line|#define SS_DISABLE&t;2
+DECL|macro|MINSIGSTKSZ
+mdefine_line|#define MINSIGSTKSZ&t;2048
+DECL|macro|SIGSTKSZ
+mdefine_line|#define SIGSTKSZ&t;8192
 macro_line|#ifdef __KERNEL__
 multiline_comment|/*&n; * These values of sa_flags are used only by the kernel as part of the&n; * irq handling routines.&n; *&n; * SA_INTERRUPT is also used by the irq handling routines.&n; * SA_SHIRQ is for shared interrupt support on PCI and EISA.&n; */
 DECL|macro|SA_PROBE

@@ -31,6 +31,8 @@ DECL|macro|PER_BSD
 mdefine_line|#define PER_BSD&t;&t;&t;(0x0006)
 DECL|macro|PER_XENIX
 mdefine_line|#define PER_XENIX&t;&t;(0x0007 | STICKY_TIMEOUTS)
+DECL|macro|PER_LINUX32
+mdefine_line|#define PER_LINUX32&t;&t;(0x0008)
 multiline_comment|/* Prototype for an lcall7 syscall handler. */
 DECL|typedef|lcall7_func
 r_typedef

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: ebus.h,v 1.6 1998/04/13 07:27:07 davem Exp $&n; * ebus.h: PCI to Ebus pseudo driver software state.&n; *&n; * Copyright (C) 1997 Eddie C. Dost (ecd@skynet.be)&n; */
+multiline_comment|/* $Id: ebus.h,v 1.8 1998/05/07 21:00:27 ecd Exp $&n; * ebus.h: PCI to Ebus pseudo driver software state.&n; *&n; * Copyright (C) 1997 Eddie C. Dost (ecd@skynet.be)&n; */
 macro_line|#ifndef __SPARC64_EBUS_H
 DECL|macro|__SPARC64_EBUS_H
 mdefine_line|#define __SPARC64_EBUS_H
@@ -284,7 +284,5 @@ DECL|macro|for_each_ebusdev
 mdefine_line|#define for_each_ebusdev(dev, bus)&t;&t;&t;&t;&t;&bslash;&n;        for((dev) = (bus)-&gt;devices; (dev); (dev) = (dev)-&gt;next)
 DECL|macro|for_each_edevchild
 mdefine_line|#define for_each_edevchild(dev, child)&t;&t;&t;&t;&t;&bslash;&n;        for((child) = (dev)-&gt;children; (child); (child) = (child)-&gt;next)
-DECL|macro|for_all_ebusdev
-mdefine_line|#define for_all_ebusdev(dev, bus)&t;&t;&t;&t;&t;&bslash;&n;&t;for ((bus) = ebus_chain, ((dev) = (bus) ? (bus)-&gt;devices : 0);&t;&bslash;&n;&t;     (bus); ((dev) = (dev)-&gt;next ? (dev)-&gt;next :&t;&t;&bslash;&n;&t;     ((bus) = (bus)-&gt;next, (bus) ? (bus)-&gt;devices : 0)))
 macro_line|#endif /* !(__SPARC64_EBUS_H) */
 eof

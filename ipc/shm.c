@@ -3639,7 +3639,7 @@ r_int
 id|prio
 comma
 r_int
-id|dma
+id|gfp_mask
 )paren
 (brace
 id|pte_t
@@ -3807,7 +3807,11 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|dma
+(paren
+id|gfp_mask
+op_amp
+id|__GFP_DMA
+)paren
 op_logical_and
 op_logical_neg
 id|PageDMA

@@ -192,6 +192,9 @@ macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_POWERTECSCSI
 macro_line|#include &quot;../acorn/scsi/powertec.h&quot;
 macro_line|#endif
+macro_line|#ifdef CONFIG_JAZZ_ESP
+macro_line|#include &quot;jazz_esp.h&quot;
+macro_line|#endif
 multiline_comment|/*&n;static const char RCSid[] = &quot;$Header: /vger/u4/cvs/linux/drivers/scsi/hosts.c,v 1.20 1996/12/12 19:18:32 davem Exp $&quot;;&n;*/
 multiline_comment|/*&n; *  The scsi host entries should be in the order you wish the&n; *  cards to be detected.  A driver may appear more than once IFF&n; *  it can deal with being detected (and therefore initialized)&n; *  with more than one simultaneous host number, can handle being&n; *  reentrant, etc.&n; *&n; *  They may appear in any order, as each SCSI host is told which host &n; *  number it is during detection.&n; */
 multiline_comment|/* This is a placeholder for controllers that are not configured into&n; * the system - we do this to ensure that the controller numbering is&n; * always consistent, no matter how the kernel is configured. */

@@ -152,7 +152,7 @@ op_logical_neg
 id|hlt_counter
 op_logical_and
 op_logical_neg
-id|need_resched
+id|current-&gt;need_resched
 )paren
 id|proc_idle
 (paren

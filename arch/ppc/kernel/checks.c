@@ -14,7 +14,6 @@ macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
-macro_line|#include &lt;asm/smp_lock.h&gt;
 multiline_comment|/*&n; * Do various before compile checks of data structures&n; * -- Cort&n; */
 DECL|function|main
 r_int

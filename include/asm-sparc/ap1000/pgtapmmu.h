@@ -37,6 +37,8 @@ DECL|macro|APMMU_PGD_TABLE_SIZE
 mdefine_line|#define APMMU_PGD_TABLE_SIZE    0x400 /* 256 entries, 4 bytes a piece */
 DECL|macro|APMMU_VMALLOC_START
 mdefine_line|#define APMMU_VMALLOC_START   (0xfe300000)
+DECL|macro|APMMU_VMALLOC_END
+mdefine_line|#define APMMU_VMALLOC_END     ~0x0UL
 multiline_comment|/* Definition of the values in the ET field of PTD&squot;s and PTE&squot;s */
 DECL|macro|APMMU_ET_MASK
 mdefine_line|#define APMMU_ET_MASK         0x3

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: signal.h,v 1.4 1997/12/11 15:16:06 jj Exp $ */
+multiline_comment|/* $Id: signal.h,v 1.8 1998/07/29 16:32:39 jj Exp $ */
 macro_line|#ifndef _ASMSPARC64_SIGNAL_H
 DECL|macro|_ASMSPARC64_SIGNAL_H
 mdefine_line|#define _ASMSPARC64_SIGNAL_H
@@ -115,6 +115,8 @@ DECL|macro|SIGWINCH
 mdefine_line|#define SIGWINCH&t;28
 DECL|macro|SIGLOST
 mdefine_line|#define SIGLOST&t;&t;29
+DECL|macro|SIGPWR
+mdefine_line|#define SIGPWR&t;&t;SIGLOST
 DECL|macro|SIGUSR1
 mdefine_line|#define SIGUSR1&t;&t;30
 DECL|macro|SIGUSR2
@@ -244,6 +246,8 @@ DECL|macro|SA_NOCLDSTOP
 mdefine_line|#define SA_NOCLDSTOP&t;SV_IGNCHILD
 DECL|macro|SA_STACK
 mdefine_line|#define SA_STACK&t;SV_SSTACK
+DECL|macro|SA_ONSTACK
+mdefine_line|#define SA_ONSTACK&t;SV_SSTACK
 DECL|macro|SA_RESTART
 mdefine_line|#define SA_RESTART&t;SV_INTR
 DECL|macro|SA_ONESHOT
@@ -264,6 +268,15 @@ DECL|macro|SIG_UNBLOCK
 mdefine_line|#define SIG_UNBLOCK        0x02&t;/* for unblocking signals */
 DECL|macro|SIG_SETMASK
 mdefine_line|#define SIG_SETMASK        0x04&t;/* for setting the signal mask */
+multiline_comment|/* &n; * sigaltstack controls&n; */
+DECL|macro|SS_ONSTACK
+mdefine_line|#define SS_ONSTACK&t;1
+DECL|macro|SS_DISABLE
+mdefine_line|#define SS_DISABLE&t;2
+DECL|macro|MINSIGSTKSZ
+mdefine_line|#define MINSIGSTKSZ&t;4096
+DECL|macro|SIGSTKSZ
+mdefine_line|#define SIGSTKSZ&t;16384
 macro_line|#ifdef __KERNEL__
 multiline_comment|/*&n; * These values of sa_flags are used only by the kernel as part of the&n; * irq handling routines.&n; *&n; * SA_INTERRUPT is also used by the irq handling routines.&n; *&n; * DJHR&n; * SA_STATIC_ALLOC is used for the SPARC system to indicate that this&n; * interrupt handler&squot;s irq structure should be statically allocated&n; * by the request_irq routine.&n; * The alternative is that arch/sparc/kernel/irq.c has carnal knowledge&n; * of interrupt usage and that sucks. Also without a flag like this&n; * it may be possible for the free_irq routine to attempt to free&n; * statically allocated data.. which is NOT GOOD.&n; *&n; */
 DECL|macro|SA_PROBE
@@ -459,6 +472,27 @@ suffix:semicolon
 DECL|typedef|stack_t
 )brace
 id|stack_t
+suffix:semicolon
+DECL|struct|sigaltstack32
+r_typedef
+r_struct
+id|sigaltstack32
+(brace
+DECL|member|ss_sp
+id|u32
+id|ss_sp
+suffix:semicolon
+DECL|member|ss_flags
+r_int
+id|ss_flags
+suffix:semicolon
+DECL|member|ss_size
+id|__kernel_size_t32
+id|ss_size
+suffix:semicolon
+DECL|typedef|stack_t32
+)brace
+id|stack_t32
 suffix:semicolon
 macro_line|#endif /* !(__ASSEMBLY__) */
 macro_line|#endif /* !(_ASMSPARC64_SIGNAL_H) */

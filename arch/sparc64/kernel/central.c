@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: central.c,v 1.5 1998/02/12 15:57:59 jj Exp $&n; * central.c: Central FHC driver for Sunfire/Starfire/Wildfire.&n; *&n; * Copyright (C) 1997 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: central.c,v 1.6 1998/05/14 13:35:45 jj Exp $&n; * central.c: Central FHC driver for Sunfire/Starfire/Wildfire.&n; *&n; * Copyright (C) 1997 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
@@ -118,12 +118,6 @@ id|fnode
 comma
 id|err
 suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;CENTRAL: &quot;
-)paren
-suffix:semicolon
 id|cnode
 op_assign
 id|prom_finddevice
@@ -145,12 +139,6 @@ op_minus
 l_int|1
 )paren
 (brace
-id|printk
-c_func
-(paren
-l_string|&quot;no central found.&bslash;n&quot;
-)paren
-suffix:semicolon
 r_return
 id|memory_start
 suffix:semicolon
@@ -158,7 +146,9 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;found central PROM node.&bslash;n&quot;
+l_string|&quot;CENTRAL: found central PROM node %08x.&bslash;n&quot;
+comma
+id|cnode
 )paren
 suffix:semicolon
 multiline_comment|/* Ok we got one, grab some memory for software state. */

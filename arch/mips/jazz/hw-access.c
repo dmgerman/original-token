@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * Low-level hardware access stuff for Jazz family machines.&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1995, 1996, 1997 by Ralf Baechle&n; *&n; * $Id: hw-access.c,v 1.4 1998/05/01 01:33:36 ralf Exp $&n; */
+multiline_comment|/* $Id: hw-access.c,v 1.5 1998/05/07 00:39:27 ralf Exp $&n; * Low-level hardware access stuff for Jazz family machines.&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1995, 1996, 1997 by Ralf Baechle&n; */
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/linkage.h&gt;
@@ -405,6 +405,8 @@ op_star
 )paren
 id|JAZZ_KEYBOARD_ADDRESS
 suffix:semicolon
+DECL|macro|KBD_STAT_IBF
+mdefine_line|#define KBD_STAT_IBF&t;&t;0x02&t;/* Keyboard input buffer full */
 DECL|function|jazz_read_input
 r_static
 r_int
@@ -430,6 +432,24 @@ r_char
 id|val
 )paren
 (brace
+r_int
+id|status
+suffix:semicolon
+r_do
+(brace
+id|status
+op_assign
+id|jazz_kh-&gt;command
+suffix:semicolon
+)brace
+r_while
+c_loop
+(paren
+id|status
+op_amp
+id|KBD_STAT_IBF
+)paren
+suffix:semicolon
 id|jazz_kh-&gt;data
 op_assign
 id|val
@@ -446,6 +466,24 @@ r_char
 id|val
 )paren
 (brace
+r_int
+id|status
+suffix:semicolon
+r_do
+(brace
+id|status
+op_assign
+id|jazz_kh-&gt;command
+suffix:semicolon
+)brace
+r_while
+c_loop
+(paren
+id|status
+op_amp
+id|KBD_STAT_IBF
+)paren
+suffix:semicolon
 id|jazz_kh-&gt;command
 op_assign
 id|val

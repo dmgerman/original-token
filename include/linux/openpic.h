@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/openpic.h -- OpenPIC definitions&n; *&n; *  Copyright (C) 1997 Geert Uytterhoeven&n; *&n; *  This file is subject to the terms and conditions of the GNU General Public&n; *  License.  See the file COPYING in the main directory of this archive&n; *  for more details.&n; *&n; *  This file is based on the following documentation:&n; *&n; *&t;The Open Programmable Interrupt Controller (PIC)&n; *&t;Register Interface Specification Revision 1.2&n; *&n; *&t;Issue Date: October 1995&n; *&n; *&t;Issued jointly by Advanced Micro Devices and Cyrix Corporation&n; *&n; *&t;AMD is a registered trademark of Advanced Micro Devices, Inc.&n; *&t;Copyright (C) 1995, Advanced Micro Devices, Inc. and Cyrix, Inc.&n; *&t;All Rights Reserved.&n; *&n; *  To receive a copy of this documentation, send an email to openpic@amd.com.&n; *&n; *  This file is subject to the terms and conditions of the GNU General Public&n; *  License.  See the file COPYING in the main directory of this archive&n; *  for more details.&n; */
+multiline_comment|/*&n; *  linux/openpic.h -- OpenPIC definitions&n; *&n; *  Copyright (C) 1997 Geert Uytterhoeven&n; *&n; *  This file is based on the following documentation:&n; *&n; *&t;The Open Programmable Interrupt Controller (PIC)&n; *&t;Register Interface Specification Revision 1.2&n; *&n; *&t;Issue Date: October 1995&n; *&n; *&t;Issued jointly by Advanced Micro Devices and Cyrix Corporation&n; *&n; *&t;AMD is a registered trademark of Advanced Micro Devices, Inc.&n; *&t;Copyright (C) 1995, Advanced Micro Devices, Inc. and Cyrix, Inc.&n; *&t;All Rights Reserved.&n; *&n; *  To receive a copy of this documentation, send an email to openpic@amd.com.&n; *&n; *  This file is subject to the terms and conditions of the GNU General Public&n; *  License.  See the file COPYING in the main directory of this archive&n; *  for more details.&n; */
 macro_line|#ifndef _LINUX_OPENPIC_H
 DECL|macro|_LINUX_OPENPIC_H
 mdefine_line|#define _LINUX_OPENPIC_H
@@ -19,6 +19,15 @@ DECL|macro|OPENPIC_NUM_PRI
 mdefine_line|#define OPENPIC_NUM_PRI&t;&t;16
 DECL|macro|OPENPIC_NUM_VECTORS
 mdefine_line|#define OPENPIC_NUM_VECTORS&t;256
+multiline_comment|/*&n;     *  Vector numbers&n;     */
+DECL|macro|OPENPIC_VEC_SOURCE
+mdefine_line|#define OPENPIC_VEC_SOURCE      0x10    /* and up */
+DECL|macro|OPENPIC_VEC_TIMER
+mdefine_line|#define OPENPIC_VEC_TIMER       0x40    /* and up */
+DECL|macro|OPENPIC_VEC_IPI
+mdefine_line|#define OPENPIC_VEC_IPI         0x50    /* and up */
+DECL|macro|OPENPIC_VEC_SPURIOUS
+mdefine_line|#define OPENPIC_VEC_SPURIOUS    99
 multiline_comment|/*&n;     *  OpenPIC Registers are 32 bits and aligned on 128 bit boundaries&n;     */
 DECL|struct|_OpenPIC_Reg
 r_typedef
@@ -321,6 +330,15 @@ r_struct
 id|OpenPIC
 op_star
 id|OpenPIC
+suffix:semicolon
+r_extern
+id|u_int
+id|OpenPIC_NumInitSenses
+suffix:semicolon
+r_extern
+id|u_char
+op_star
+id|OpenPIC_InitSenses
 suffix:semicolon
 multiline_comment|/*&n;     *  Current Task Priority Register&n;     */
 DECL|macro|OPENPIC_CURRENT_TASK_PRIORITY_MASK

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: traps.c,v 1.49 1998/04/06 16:09:38 jj Exp $&n; * arch/sparc64/kernel/traps.c&n; *&n; * Copyright (C) 1995,1997 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: traps.c,v 1.51 1998/06/12 14:54:20 jj Exp $&n; * arch/sparc64/kernel/traps.c&n; *&n; * Copyright (C) 1995,1997 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 multiline_comment|/*&n; * I like traps on v9, :))))&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;  /* for jiffies */
@@ -2018,20 +2018,21 @@ op_star
 id|regs
 )paren
 (brace
-macro_line|#ifdef DEBUG_FPU&t;
-r_struct
-id|fpustate
-op_star
-id|f
-op_assign
-id|FPUSTATE
+macro_line|#ifdef DEBUG_FPU
+id|save_and_clear_fpu
+c_func
+(paren
+)paren
 suffix:semicolon
 id|printk
 c_func
 (paren
 l_string|&quot;fpieee %016lx&bslash;n&quot;
 comma
-id|f-&gt;fsr
+id|current-&gt;tss.xfsr
+(braket
+l_int|0
+)braket
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -2079,11 +2080,19 @@ id|ret
 op_assign
 l_int|0
 suffix:semicolon
+id|save_and_clear_fpu
+c_func
+(paren
+)paren
+suffix:semicolon
 r_switch
 c_cond
 (paren
 (paren
-id|f-&gt;fsr
+id|current-&gt;tss.xfsr
+(braket
+l_int|0
+)braket
 op_amp
 l_int|0x1c000
 )paren
@@ -2131,7 +2140,10 @@ c_func
 (paren
 l_string|&quot;fpother %016lx&bslash;n&quot;
 comma
-id|f-&gt;fsr
+id|current-&gt;tss.xfsr
+(braket
+l_int|0
+)braket
 )paren
 suffix:semicolon
 macro_line|#endif

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * List of Linux/MIPS syscalls.&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1995, 1996 by Ralf Baechle&n; *&n; * $Id: syscalls.h,v 1.13 1998/05/01 01:34:34 ralf Exp $&n; */
+multiline_comment|/*&n; * List of Linux/MIPS syscalls.&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1995, 1996 by Ralf Baechle&n; *&n; * $Id: syscalls.h,v 1.14 1998/05/07 00:39:37 ralf Exp $&n; */
 multiline_comment|/*&n; * This file is being included twice - once to build a list of all&n; * syscalls and once to build a table of how many arguments each syscall&n; * accepts.  Syscalls that receive a pointer to the saved registers are&n; * marked as having zero arguments.&n; *&n; * The binary compatibility calls are still missing in this list.&n; */
 id|SYS
 c_func
@@ -119,7 +119,7 @@ multiline_comment|/* 4015 */
 id|SYS
 c_func
 (paren
-id|sys_chown
+id|sys_lchown
 comma
 l_int|3
 )paren
@@ -1463,8 +1463,15 @@ l_int|4
 id|SYS
 c_func
 (paren
-id|sys_lchown
+id|sys_chown
 comma
 l_int|3
+)paren
+id|SYS
+c_func
+(paren
+id|sys_getcwd
+comma
+l_int|2
 )paren
 eof

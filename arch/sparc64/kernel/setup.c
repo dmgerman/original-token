@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: setup.c,v 1.26 1998/07/08 10:21:15 jj Exp $&n; *  linux/arch/sparc64/kernel/setup.c&n; *&n; *  Copyright (C) 1995,1996  David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1997       Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/*  $Id: setup.c,v 1.30 1998/07/24 09:50:08 jj Exp $&n; *  linux/arch/sparc64/kernel/setup.c&n; *&n; *  Copyright (C) 1995,1996  David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1997       Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -90,16 +90,16 @@ r_int
 id|sparc64_ttable_tl0
 suffix:semicolon
 macro_line|#if CONFIG_SUN_CONSOLE
-DECL|function|console_restore_palette
+DECL|variable|prom_palette
 r_void
-id|console_restore_palette
-c_func
 (paren
-r_void
+op_star
+id|prom_palette
 )paren
-(brace
-multiline_comment|/* FIXME */
-)brace
+(paren
+r_int
+)paren
+suffix:semicolon
 macro_line|#endif
 id|asmlinkage
 r_void
@@ -160,8 +160,14 @@ id|sparc64_ttable_tl0
 )paren
 suffix:semicolon
 macro_line|#ifdef CONFIG_SUN_CONSOLE
-id|console_restore_palette
+r_if
+c_cond
 (paren
+id|prom_palette
+)paren
+id|prom_palette
+(paren
+l_int|1
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -628,6 +634,62 @@ id|prom_printf
 l_string|&quot;Using /dev/ttyb as console.&bslash;n&quot;
 )paren
 suffix:semicolon
+macro_line|#if defined(CONFIG_PROM_CONSOLE)
+)brace
+r_else
+r_if
+c_cond
+(paren
+op_logical_neg
+id|strncmp
+(paren
+id|commands
+comma
+l_string|&quot;prom&quot;
+comma
+l_int|4
+)paren
+)paren
+(brace
+r_char
+op_star
+id|p
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|p
+op_assign
+id|commands
+op_minus
+l_int|8
+suffix:semicolon
+op_star
+id|p
+op_logical_and
+op_star
+id|p
+op_ne
+l_char|&squot; &squot;
+suffix:semicolon
+id|p
+op_increment
+)paren
+op_star
+id|p
+op_assign
+l_char|&squot; &squot;
+suffix:semicolon
+id|conswitchp
+op_assign
+op_amp
+id|prom_con
+suffix:semicolon
+id|console_fb
+op_assign
+l_int|1
+suffix:semicolon
+macro_line|#endif
 )brace
 r_else
 (brace
@@ -982,6 +1044,19 @@ c_func
 l_string|&quot;ARCH: SUN4U&bslash;n&quot;
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_DUMMY_CONSOLE
+id|conswitchp
+op_assign
+op_amp
+id|dummy_con
+suffix:semicolon
+macro_line|#elif defined(CONFIG_PROM_CONSOLE)
+id|conswitchp
+op_assign
+op_amp
+id|prom_con
+suffix:semicolon
+macro_line|#endif
 id|boot_flags_init
 c_func
 (paren
@@ -1611,24 +1686,12 @@ macro_line|#endif
 r_if
 c_cond
 (paren
-op_logical_neg
 id|serial_console
 )paren
-(brace
-macro_line|#ifdef CONFIG_PROM_CONSOLE
 id|conswitchp
 op_assign
-op_amp
-id|prom_con
+l_int|NULL
 suffix:semicolon
-macro_line|#elif defined(CONFIG_DUMMY_CONSOLE)&t;
-id|conswitchp
-op_assign
-op_amp
-id|dummy_con
-suffix:semicolon
-macro_line|#endif
-)brace
 )brace
 DECL|function|sys_ioperm
 id|asmlinkage

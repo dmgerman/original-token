@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sparc64_ksyms.c,v 1.36 1998/04/16 07:07:19 ecd Exp $&n; * arch/sparc64/kernel/sparc64_ksyms.c: Sparc64 specific ksyms support.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; */
+multiline_comment|/* $Id: sparc64_ksyms.c,v 1.39 1998/07/04 12:35:59 ecd Exp $&n; * arch/sparc64/kernel/sparc64_ksyms.c: Sparc64 specific ksyms support.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; */
 multiline_comment|/* Tell string.h we don&squot;t want memcpy etc. as cpp defines */
 DECL|macro|EXPORT_SYMTAB_STROPS
 mdefine_line|#define EXPORT_SYMTAB_STROPS
@@ -648,6 +648,20 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|pci_dvma_mask
+)paren
+suffix:semicolon
+DECL|variable|pci_dvma_v2p_hash
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|pci_dvma_v2p_hash
+)paren
+suffix:semicolon
+DECL|variable|pci_dvma_p2v_hash
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|pci_dvma_p2v_hash
 )paren
 suffix:semicolon
 DECL|variable|empty_zero_page

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * Drivers/sbus/audio/cs4231.c&n; *&n; * Copyright (C) 1996, 1997 Derrick J Brashear (shadow@andrew.cmu.edu)&n; *&n; * Based on the AMD7930 driver:&n; * Copyright (C) 1996 Thomas K. Dyas (tdyas@noc.rutgers.edu)&n; *&n; * This is the lowlevel driver for the CS4231 audio chip found on some&n; * sun4m and sun4u machines.&n; * &n; * This was culled from the Crystal docs on the 4231a, and the addendum they&n; * faxed me on the 4231.&n; * The APC DMA controller support unfortunately is not documented. Thanks, Sun&n; */
+multiline_comment|/*&n; * drivers/sbus/audio/cs4231.c&n; *&n; * Copyright (C) 1996, 1997 Derrick J Brashear (shadow@andrew.cmu.edu)&n; *&n; * Based on the AMD7930 driver:&n; * Copyright (C) 1996 Thomas K. Dyas (tdyas@noc.rutgers.edu)&n; *&n; * This is the lowlevel driver for the CS4231 audio chip found on some&n; * sun4m and sun4u machines.&n; * &n; * This was culled from the Crystal docs on the 4231a, and the addendum they&n; * faxed me on the 4231.&n; * The APC DMA controller support unfortunately is not documented. Thanks, Sun&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -12,18 +12,10 @@ macro_line|#include &lt;asm/oplib.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
+macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/sbus.h&gt;
 macro_line|#include &lt;asm/audioio.h&gt;
 macro_line|#include &quot;cs4231.h&quot;
-multiline_comment|/* Stolen for now from compat.h */
-macro_line|#ifndef MAX                             /* Usually found in &lt;sys/param.h&gt;. */
-DECL|macro|MAX
-mdefine_line|#define MAX(_a,_b)      ((_a)&lt;(_b)?(_b):(_a))
-macro_line|#endif
-macro_line|#ifndef MIN                             /* Usually found in &lt;sys/param.h&gt;. */
-DECL|macro|MIN
-mdefine_line|#define MIN(_a,_b)      ((_a)&lt;(_b)?(_a):(_b))
-macro_line|#endif
 DECL|macro|__CS4231_DEBUG
 macro_line|#undef __CS4231_DEBUG
 DECL|macro|__CS4231_TRACE
@@ -2124,6 +2116,7 @@ id|drv
 op_member_access_from_pointer
 r_private
 suffix:semicolon
+multiline_comment|/* This apparently applies only to APC ultras, not ebus ultras */
 r_if
 c_cond
 (paren
@@ -2372,6 +2365,7 @@ id|value
 suffix:semicolon
 multiline_comment|/* You can have one and only one. This is probably wrong, but&n;   * appears to be how SunOS is doing it. Should be able to mix.&n;   * More work to be done.&n;   */
 multiline_comment|/* Ultra systems do not support AUDIO_INTERNAL_CD_IN */
+multiline_comment|/* This apparently applies only to APC ultras, not ebus ultras */
 r_if
 c_cond
 (paren
@@ -3117,11 +3111,6 @@ id|AUDIO_MID_BALANCE
 (brace
 id|r
 op_assign
-id|MAX
-c_func
-(paren
-l_int|0
-comma
 (paren
 r_int
 )paren
@@ -3138,7 +3127,17 @@ op_lshift
 id|AUDIO_BALANCE_SHIFT
 )paren
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|r
+OL
+l_int|0
 )paren
+id|r
+op_assign
+l_int|0
 suffix:semicolon
 )brace
 r_else
@@ -3152,11 +3151,6 @@ id|AUDIO_MID_BALANCE
 (brace
 id|l
 op_assign
-id|MAX
-c_func
-(paren
-l_int|0
-comma
 (paren
 r_int
 )paren
@@ -3173,7 +3167,17 @@ op_lshift
 id|AUDIO_BALANCE_SHIFT
 )paren
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|l
+OL
+l_int|0
 )paren
+id|l
+op_assign
+l_int|0
 suffix:semicolon
 )brace
 id|l_adj
@@ -3416,11 +3420,6 @@ id|AUDIO_MID_BALANCE
 (brace
 id|r
 op_assign
-id|MAX
-c_func
-(paren
-l_int|0
-comma
 (paren
 r_int
 )paren
@@ -3437,7 +3436,17 @@ op_lshift
 id|AUDIO_BALANCE_SHIFT
 )paren
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|r
+OL
+l_int|0
 )paren
+id|r
+op_assign
+l_int|0
 suffix:semicolon
 )brace
 r_else
@@ -3451,11 +3460,6 @@ id|AUDIO_MID_BALANCE
 (brace
 id|l
 op_assign
-id|MAX
-c_func
-(paren
-l_int|0
-comma
 (paren
 r_int
 )paren
@@ -3472,7 +3476,17 @@ op_lshift
 id|AUDIO_BALANCE_SHIFT
 )paren
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|l
+OL
+l_int|0
 )paren
+id|l
+op_assign
+l_int|0
 suffix:semicolon
 )brace
 (paren
@@ -3607,11 +3621,10 @@ r_else
 r_if
 c_cond
 (paren
-id|l
-op_eq
 id|value
+op_eq
+id|l
 )paren
-(brace
 id|tmp
 op_assign
 (paren
@@ -3634,7 +3647,6 @@ l_int|1
 )paren
 )paren
 suffix:semicolon
-)brace
 r_else
 r_if
 c_cond
@@ -3643,7 +3655,6 @@ id|r
 op_eq
 id|value
 )paren
-(brace
 id|tmp
 op_assign
 (paren
@@ -3666,7 +3677,6 @@ l_int|1
 )paren
 )paren
 suffix:semicolon
-)brace
 )brace
 id|cs4231_chip-&gt;perchip_info.play.gain
 op_assign
@@ -4475,6 +4485,46 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|cs4231_chip-&gt;output_dma_handle
+)paren
+(brace
+id|mmu_release_scsi_one
+c_func
+(paren
+(paren
+r_char
+op_star
+)paren
+id|cs4231_chip-&gt;output_dma_handle
+comma
+l_int|4096
+comma
+id|drv-&gt;dev-&gt;my_bus
+)paren
+suffix:semicolon
+id|cs4231_chip-&gt;output_dma_handle
+op_assign
+l_int|0
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|cs4231_chip-&gt;output_next_dma_handle
+)paren
+(brace
+id|cs4231_chip-&gt;output_dma_handle
+op_assign
+id|cs4231_chip-&gt;output_next_dma_handle
+suffix:semicolon
+id|cs4231_chip-&gt;output_next_dma_handle
+op_assign
+l_int|0
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
 id|cs4231_chip-&gt;output_ptr
 op_logical_and
 id|cs4231_chip-&gt;output_size
@@ -4482,12 +4532,25 @@ OG
 l_int|0
 )paren
 (brace
-id|cs4231_chip-&gt;regs-&gt;dmapnva
+id|cs4231_chip-&gt;output_next_dma_handle
 op_assign
+id|mmu_get_scsi_one
+c_func
 (paren
-id|__u32
+(paren
+r_char
+op_star
 )paren
 id|cs4231_chip-&gt;output_ptr
+comma
+l_int|4096
+comma
+id|drv-&gt;dev-&gt;my_bus
+)paren
+suffix:semicolon
+id|cs4231_chip-&gt;regs-&gt;dmapnva
+op_assign
+id|cs4231_chip-&gt;output_next_dma_handle
 suffix:semicolon
 id|cs4231_chip-&gt;regs-&gt;dmapnc
 op_assign
@@ -4762,14 +4825,6 @@ id|cs4231_chip-&gt;regs-&gt;dmacsr
 op_or_assign
 id|CS_PLAY_SETUP
 suffix:semicolon
-id|cs4231_output_muted
-c_func
-(paren
-id|drv
-comma
-l_int|0
-)paren
-suffix:semicolon
 id|cs4231_ready
 c_func
 (paren
@@ -4819,6 +4874,56 @@ id|cs4231_chip-&gt;output_size
 op_assign
 l_int|0
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|cs4231_chip-&gt;output_dma_handle
+)paren
+(brace
+id|mmu_release_scsi_one
+c_func
+(paren
+(paren
+r_char
+op_star
+)paren
+id|cs4231_chip-&gt;output_dma_handle
+comma
+l_int|4096
+comma
+id|drv-&gt;dev-&gt;my_bus
+)paren
+suffix:semicolon
+id|cs4231_chip-&gt;output_dma_handle
+op_assign
+l_int|0
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|cs4231_chip-&gt;output_next_dma_handle
+)paren
+(brace
+id|mmu_release_scsi_one
+c_func
+(paren
+(paren
+r_char
+op_star
+)paren
+id|cs4231_chip-&gt;output_next_dma_handle
+comma
+l_int|4096
+comma
+id|drv-&gt;dev-&gt;my_bus
+)paren
+suffix:semicolon
+id|cs4231_chip-&gt;output_next_dma_handle
+op_assign
+l_int|0
+suffix:semicolon
+)brace
 id|cs4231_chip-&gt;perchip_info.play.active
 op_assign
 l_int|0
@@ -5068,6 +5173,7 @@ l_int|1
 )paren
 suffix:semicolon
 multiline_comment|/* versions: SPARCstation 4/5=a, Ultra=b */
+multiline_comment|/* apparently Ultra 1, Ultra 2 don&squot;t have internal CD input */
 r_if
 c_cond
 (paren
@@ -5374,6 +5480,7 @@ id|drv
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* Any other conditions we need worry about? */
 )brace
 r_if
 c_cond
@@ -5411,6 +5518,7 @@ id|drv
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* Any other conditions we need worry about? */
 )brace
 r_if
 c_cond
@@ -5428,6 +5536,7 @@ l_int|0
 )paren
 )paren
 (brace
+multiline_comment|/* Fix me */
 id|cs4231_chip-&gt;perchip_info.record.active
 op_assign
 l_int|0
@@ -5459,14 +5568,6 @@ id|cs4231_disable_play
 c_func
 (paren
 id|drv
-)paren
-suffix:semicolon
-id|cs4231_output_muted
-c_func
-(paren
-id|drv
-comma
-l_int|1
 )paren
 suffix:semicolon
 id|cs4231_getsamplecount
@@ -5619,12 +5720,6 @@ id|sbus
 op_assign
 id|sdev-&gt;my_bus
 suffix:semicolon
-macro_line|#ifdef __sparc_v9__
-r_struct
-id|devid_cookie
-id|dcookie
-suffix:semicolon
-macro_line|#endif
 multiline_comment|/* Allocate our private information structure. */
 id|drv
 op_member_access_from_pointer
@@ -5686,6 +5781,10 @@ suffix:semicolon
 id|cs4231_chip-&gt;status
 op_assign
 l_int|0
+suffix:semicolon
+id|drv-&gt;dev
+op_assign
+id|sdev
 suffix:semicolon
 multiline_comment|/* Map the registers into memory. */
 id|prom_apply_sbus_ranges
@@ -5776,10 +5875,7 @@ id|sdev-&gt;irqs
 (braket
 l_int|0
 )braket
-dot
-id|pri
 suffix:semicolon
-macro_line|#ifndef __sparc_v9__
 id|request_irq
 c_func
 (paren
@@ -5794,51 +5890,6 @@ comma
 id|drv
 )paren
 suffix:semicolon
-macro_line|#else
-id|dcookie.real_dev_id
-op_assign
-id|drv
-suffix:semicolon
-id|dcookie.imap
-op_assign
-id|dcookie.iclr
-op_assign
-l_int|0
-suffix:semicolon
-id|dcookie.pil
-op_assign
-op_minus
-l_int|1
-suffix:semicolon
-id|dcookie.bus_cookie
-op_assign
-id|sdev-&gt;my_bus
-suffix:semicolon
-id|request_irq
-(paren
-id|cs4231_chip-&gt;irq
-comma
-id|cs4231_interrupt
-comma
-(paren
-id|SA_SHIRQ
-op_or
-id|SA_SBUS
-op_or
-id|SA_DCOOKIE
-)paren
-comma
-l_string|&quot;cs4231&quot;
-comma
-op_amp
-id|dcookie
-)paren
-suffix:semicolon
-id|cs4231_chip-&gt;irq
-op_assign
-id|dcookie.ret_ino
-suffix:semicolon
-macro_line|#endif
 id|enable_irq
 c_func
 (paren

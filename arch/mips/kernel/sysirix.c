@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * sysirix.c: IRIX system call emulation.&n; *&n; * Copyright (C) 1996 David S. Miller&n; * Copyright (C) 1997 Miguel de Icaza&n; *&n; * $Id: sysirix.c,v 1.9 1998/05/01 01:34:35 ralf Exp $&n; */
+multiline_comment|/*&n; * sysirix.c: IRIX system call emulation.&n; *&n; * Copyright (C) 1996 David S. Miller&n; * Copyright (C) 1997 Miguel de Icaza&n; *&n; * $Id: sysirix.c,v 1.10 1998/05/08 21:01:33 davem Exp $&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/pagemap.h&gt;

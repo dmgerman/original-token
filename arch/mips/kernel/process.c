@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/arch/mips/kernel/process.c&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1994 - 1998 by Ralf Baechle and others.&n; *&n; * $Id: process.c,v 1.10 1998/05/04 09:17:53 ralf Exp $&n; */
+multiline_comment|/*&n; * linux/arch/mips/kernel/process.c&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1994 - 1998 by Ralf Baechle and others.&n; *&n; * $Id: process.c,v 1.11 1998/05/15 13:04:01 davem Exp $&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;

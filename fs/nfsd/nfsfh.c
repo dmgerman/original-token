@@ -16,7 +16,7 @@ multiline_comment|/* #define NFSD_DEBUG_VERBOSE 1 */
 r_extern
 r_int
 r_int
-id|num_physpages
+id|max_mapnr
 suffix:semicolon
 DECL|macro|NFSD_FILE_CACHE
 mdefine_line|#define NFSD_FILE_CACHE 0
@@ -4419,7 +4419,7 @@ op_assign
 id|min_addr
 op_plus
 (paren
-id|num_physpages
+id|max_mapnr
 op_lshift
 id|PAGE_SHIFT
 )paren
@@ -4480,6 +4480,7 @@ id|dent_addr
 r_goto
 id|bad_align
 suffix:semicolon
+multiline_comment|/* XXX: Should test here, whether the address doesn&squot;t belong to&n;&t;        a physical memory hole on sparc32/sparc64. Then it is not&n;&t;        safe to dereference it. On the other side, the previous&n;&t;        use of num_physpages instead of max_mapnr caused the same&n;&t;        to happen, plus some valid addresses could get rejected. -jj */
 multiline_comment|/*&n;&t; * Looks safe enough to dereference ...&n;&t; */
 id|len
 op_assign

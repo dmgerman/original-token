@@ -16,12 +16,13 @@ macro_line|#include &lt;asm/nvram.h&gt;
 macro_line|#include &quot;time.h&quot;
 multiline_comment|/*&n; * The motorola uses the m48t18 rtc (includes DS1643) whose registers&n; * are at a higher end of nvram (1ff8-1fff) than the ibm mc146818&n; * rtc (ds1386) which has regs at addr 0-d).  The intel gets&n; * past this because the bios emulates the mc146818.&n; *&n; * Why in the world did they have to use different clocks?&n; *&n; * Right now things are hacked to check which machine we&squot;re on then&n; * use the appropriate macro.  This is very very ugly and I should&n; * probably have a function that checks which machine we&squot;re on then&n; * does things correctly transparently or a function pointer which&n; * is setup at boot time to use the correct addresses.&n; * -- Cort&n; */
 multiline_comment|/*&n; * translate from mc146818 to m48t18  addresses&n; */
-DECL|variable|clock_transl
+DECL|variable|__prepdata
 r_int
 r_int
 id|clock_transl
 (braket
 )braket
+id|__prepdata
 op_assign
 (brace
 id|MOTO_RTC_SECONDS
@@ -55,6 +56,7 @@ id|MOTO_RTC_CONTROLB
 multiline_comment|/* 10,11 */
 )brace
 suffix:semicolon
+id|__prep
 DECL|function|prep_cmos_clock_read
 r_int
 id|prep_cmos_clock_read
@@ -132,6 +134,7 @@ op_minus
 l_int|1
 suffix:semicolon
 )brace
+id|__prep
 DECL|function|prep_cmos_clock_write
 r_void
 id|prep_cmos_clock_write
@@ -216,6 +219,7 @@ l_string|&quot;Unknown machine in prep_cmos_clock_write()!&bslash;n&quot;
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Set the hardware clock. -- Cort&n; */
+id|__prep
 DECL|function|prep_set_rtc_time
 r_int
 id|prep_set_rtc_time
@@ -429,6 +433,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+id|__prep
 DECL|function|prep_get_rtc_time
 r_int
 r_int

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: mostek.h,v 1.8 1996/11/04 00:45:30 ecd Exp $&n; * mostek.h:  Describes the various Mostek time of day clock registers.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Thomas K. Dyas (tdyas@eden.rutgers.edu)&n; */
+multiline_comment|/* $Id: mostek.h,v 1.9 1998/07/28 16:53:25 jj Exp $&n; * mostek.h:  Describes the various Mostek time of day clock registers.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Thomas K. Dyas (tdyas@eden.rutgers.edu)&n; * Added intersil code 05/25/98 Chris Davis (cdavis@cois.on.ca)&n; */
 macro_line|#ifndef _SPARC_MOSTEK_H
 DECL|macro|_SPARC_MOSTEK_H
 mdefine_line|#define _SPARC_MOSTEK_H
@@ -191,10 +191,15 @@ id|mostek48t08
 op_star
 id|mstk48t08_regs
 suffix:semicolon
+r_extern
+r_enum
+id|sparc_clock_type
+id|sp_clock_typ
+suffix:semicolon
+macro_line|#ifdef CONFIG_SUN4
 DECL|enum|sparc_clock_type
 DECL|enumerator|MSTK48T02
 DECL|enumerator|MSTK48T08
-DECL|enumerator|MSTK_INVALID
 r_enum
 id|sparc_clock_type
 (brace
@@ -202,13 +207,132 @@ id|MSTK48T02
 comma
 id|MSTK48T08
 comma
+"&bslash;"
+DECL|enumerator|INTERSIL
+DECL|enumerator|MSTK_INVALID
+id|INTERSIL
+comma
 id|MSTK_INVALID
 )brace
 suffix:semicolon
-r_extern
+macro_line|#else
+DECL|enum|sparc_clock_type
+DECL|enumerator|MSTK48T02
+DECL|enumerator|MSTK48T08
 r_enum
 id|sparc_clock_type
-id|sp_clock_typ
+(brace
+id|MSTK48T02
+comma
+id|MSTK48T08
+comma
+"&bslash;"
+DECL|enumerator|MSTK_INVALID
+id|MSTK_INVALID
+)brace
 suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_SUN4
+multiline_comment|/* intersil on a sun 4/260 code  data from harris doc */
+DECL|struct|intersil_dt
+r_struct
+id|intersil_dt
+(brace
+DECL|member|int_csec
+r_volatile
+r_int
+r_char
+id|int_csec
+suffix:semicolon
+DECL|member|int_hour
+r_volatile
+r_int
+r_char
+id|int_hour
+suffix:semicolon
+DECL|member|int_min
+r_volatile
+r_int
+r_char
+id|int_min
+suffix:semicolon
+DECL|member|int_sec
+r_volatile
+r_int
+r_char
+id|int_sec
+suffix:semicolon
+DECL|member|int_month
+r_volatile
+r_int
+r_char
+id|int_month
+suffix:semicolon
+DECL|member|int_day
+r_volatile
+r_int
+r_char
+id|int_day
+suffix:semicolon
+DECL|member|int_year
+r_volatile
+r_int
+r_char
+id|int_year
+suffix:semicolon
+DECL|member|int_dow
+r_volatile
+r_int
+r_char
+id|int_dow
+suffix:semicolon
+)brace
+suffix:semicolon
+DECL|struct|intersil
+r_struct
+id|intersil
+(brace
+DECL|member|clk
+r_struct
+id|intersil_dt
+id|clk
+suffix:semicolon
+DECL|member|cmp
+r_struct
+id|intersil_dt
+id|cmp
+suffix:semicolon
+DECL|member|int_intr_reg
+r_volatile
+r_int
+r_char
+id|int_intr_reg
+suffix:semicolon
+DECL|member|int_cmd_reg
+r_volatile
+r_int
+r_char
+id|int_cmd_reg
+suffix:semicolon
+)brace
+suffix:semicolon
+DECL|macro|INTERSIL_STOP
+mdefine_line|#define INTERSIL_STOP        0x0
+DECL|macro|INTERSIL_START
+mdefine_line|#define INTERSIL_START       0x8
+DECL|macro|INTERSIL_INTR_DISABLE
+mdefine_line|#define INTERSIL_INTR_DISABLE   0x0
+DECL|macro|INTERSIL_INTR_ENABLE
+mdefine_line|#define INTERSIL_INTR_ENABLE   0x10
+DECL|macro|INTERSIL_32K
+mdefine_line|#define INTERSIL_32K&t;&t;0x0
+DECL|macro|INTERSIL_NORMAL
+mdefine_line|#define INTERSIL_NORMAL&t;&t;0x0
+DECL|macro|INTERSIL_24H
+mdefine_line|#define INTERSIL_24H&t;&t;0x4 
+DECL|macro|INTERSIL_INT_100HZ
+mdefine_line|#define INTERSIL_INT_100HZ&t;0x2
+multiline_comment|/* end of intersil info */
+macro_line|#endif
 macro_line|#endif /* !(_SPARC_MOSTEK_H) */
 eof

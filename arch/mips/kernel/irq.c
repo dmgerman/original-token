@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * Code to handle x86 style IRQs plus some generic interrupt stuff.&n; *&n; * Copyright (C) 1992 Linus Torvalds&n; * Copyright (C) 1994, 1995, 1996, 1997 Ralf Baechle&n; *&n; * $Id: irq.c,v 1.11 1998/05/01 01:34:02 ralf Exp $&n; */
+multiline_comment|/* $Id: irq.c,v 1.13 1998/05/08 01:44:12 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Code to handle x86 style IRQs plus some generic interrupt stuff.&n; *&n; * Copyright (C) 1992 Linus Torvalds&n; * Copyright (C) 1994, 1995, 1996, 1997, 1998 Ralf Baechle&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/kernel_stat.h&gt;
@@ -1285,6 +1285,42 @@ r_return
 id|i
 suffix:semicolon
 )brace
+DECL|variable|irq_cannonicalize
+r_int
+(paren
+op_star
+id|irq_cannonicalize
+)paren
+(paren
+r_int
+id|irq
+)paren
+suffix:semicolon
+DECL|function|i8259a_irq_cannonicalize
+r_static
+r_int
+id|i8259a_irq_cannonicalize
+c_func
+(paren
+r_int
+id|irq
+)paren
+(brace
+r_return
+(paren
+(paren
+id|irq
+op_eq
+l_int|2
+)paren
+ques
+c_cond
+l_int|9
+suffix:colon
+id|irq
+)paren
+suffix:semicolon
+)brace
 DECL|function|__initfunc
 id|__initfunc
 c_func
@@ -1297,6 +1333,10 @@ r_void
 )paren
 )paren
 (brace
+id|irq_cannonicalize
+op_assign
+id|i8259a_irq_cannonicalize
+suffix:semicolon
 id|irq_setup
 c_func
 (paren

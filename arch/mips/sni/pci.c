@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * SNI specific PCI support for RM200/RM300.&n; *&n; * $Id: pci.c,v 1.4 1998/05/01 01:35:34 ralf Exp $&n; */
+multiline_comment|/* $Id: pci.c,v 1.5 1998/05/08 01:44:26 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * SNI specific PCI support for RM200/RM300.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/bios32.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
@@ -11,17 +11,10 @@ DECL|macro|mkaddr
 mdefine_line|#define mkaddr(bus, dev_fn, where)                                           &bslash;&n;do {                                                                         &bslash;&n;&t;if (bus == 0 &amp;&amp; dev_fn &gt;= PCI_DEVFN(8, 0))                           &bslash;&n;&t;&t;return -1;                                                   &bslash;&n;&t;*(volatile u32 *)PCIMT_CONFIG_ADDRESS = ((bus    &amp; 0xff) &lt;&lt; 0x10) |  &bslash;&n;&t;                                        ((dev_fn &amp; 0xff) &lt;&lt; 0x08) |  &bslash;&n;&t;                                        (where  &amp; 0xfc);             &bslash;&n;} while(0);
 DECL|function|sni_rm200_pcibios_fixup
 r_static
-r_int
-r_int
+r_void
 id|sni_rm200_pcibios_fixup
 (paren
-r_int
-r_int
-id|memory_start
-comma
-r_int
-r_int
-id|memory_end
+r_void
 )paren
 (brace
 multiline_comment|/*&n;&t; * TODO: Fix PCI_INTERRUPT_LINE register for onboard cards.&n;&t; * Take care of RM300 revision D boards for where the network&n;&t; * slot became an ordinary PCI slot.&n;&t; */
@@ -42,9 +35,6 @@ id|PCI_INTERRUPT_LINE
 comma
 id|PCIMT_IRQ_SCSI
 )paren
-suffix:semicolon
-r_return
-id|memory_start
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * We can&squot;t address 8 and 16 bit words directly.  Instead we have to&n; * read/write a 32bit word and mask/modify the data we actually want.&n; */

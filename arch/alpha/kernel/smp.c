@@ -1375,7 +1375,6 @@ id|cpu
 )braket
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_PROFILE
 r_if
 c_cond
 (paren
@@ -1387,14 +1386,13 @@ id|regs
 )paren
 )paren
 (brace
-id|sparc_do_profile
+id|alpha_do_profile
 c_func
 (paren
 id|regs-&gt;pc
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
 macro_line|#endif
 r_if
 c_cond
@@ -1450,7 +1448,7 @@ id|current-&gt;counter
 op_assign
 l_int|0
 suffix:semicolon
-id|need_resched
+id|current-&gt;need_resched
 op_assign
 l_int|1
 suffix:semicolon

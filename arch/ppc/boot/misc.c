@@ -1,9 +1,11 @@
-multiline_comment|/*&n; * misc.c&n; * &n; * Adapted for PowerPC by Gary Thomas&n; *&n; * Rewritten by Cort Dougan (cort@cs.nmt.edu)&n; * One day to be replaced by a single bootloader for chrp/prep/pmac. -- Cort&n; */
+multiline_comment|/*&n; * misc.c&n; *&n; * $Id: misc.c,v 1.49 1998/07/26 21:29:15 geert Exp $&n; * &n; * Adapted for PowerPC by Gary Thomas&n; *&n; * Rewritten by Cort Dougan (cort@cs.nmt.edu)&n; * One day to be replaced by a single bootloader for chrp/prep/pmac. -- Cort&n; */
 macro_line|#include &quot;../coffboot/zlib.h&quot;
 macro_line|#include &quot;asm/residual.h&quot;
 macro_line|#include &lt;elf.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
+macro_line|#include &lt;asm/processor.h&gt;
+macro_line|#include &lt;asm/mmu.h&gt;
 macro_line|#ifdef CONFIG_MBX
 macro_line|#include &lt;asm/mbx.h&gt;
 DECL|variable|hold_board_info
@@ -11,7 +13,7 @@ id|bd_t
 id|hold_board_info
 suffix:semicolon
 macro_line|#endif
-multiline_comment|/*&n; * MBX: loads at:      &t;0x00200000&n; *      board data at: &t;end of ram&n; * PREP:&n; *  powerstack 1:&n; *      network load at:   configurable - should set to link addr-0x400&n; *                         exec. addr set to link addr&n; *            such as load: 0x005ffc00 exec 0x00600000&n; *      hd/floppy/tape load at:&n; *  powerstack 2:&n; *      loads at:       0x00400000&n; *  IBM 830 (carolina):&n; *      loads at:&t;???&n; *&n; * Please send me load/board info and such data for hardware not&n; * listed here so I can keep track since things are getting tricky&n; * with the different load addrs with different firmware.  This will&n; * help to avoid breaking the load/boot process.&n; * -- Cort&n; */
+multiline_comment|/*&n; * Please send me load/board info and such data for hardware not&n; * listed here so I can keep track since things are getting tricky&n; * with the different load addrs with different firmware.  This will&n; * help to avoid breaking the load/boot process.&n; * -- Cort&n; */
 DECL|variable|avail_ram
 r_char
 op_star
@@ -1415,6 +1417,14 @@ r_int
 r_int
 id|i
 suffix:semicolon
+id|BATU
+op_star
+id|u
+suffix:semicolon
+id|BATL
+op_star
+id|l
+suffix:semicolon
 id|lines
 op_assign
 l_int|25
@@ -1432,13 +1442,42 @@ op_assign
 l_int|24
 suffix:semicolon
 macro_line|#ifndef CONFIG_MBX
+multiline_comment|/*&n;&t; * IBM&squot;s have the MMU on, so we have to disable it or&n;&t; * things get really unhappy in the kernel when&n;&t; * trying to setup the BATs with the MMU on&n;&t; * -- Cort&n;&t; */
+id|flush_instruction_cache
+c_func
+(paren
+)paren
+suffix:semicolon
+id|_put_HID0
+c_func
+(paren
+id|_get_HID0
+c_func
+(paren
+)paren
+op_amp
+op_complement
+l_int|0x0000C000
+)paren
+suffix:semicolon
+id|_put_MSR
+c_func
+(paren
+id|_get_MSR
+c_func
+(paren
+)paren
+op_amp
+op_complement
+l_int|0x0030
+)paren
+suffix:semicolon
 id|vga_init
 c_func
 (paren
 l_int|0xC0000000
 )paren
 suffix:semicolon
-multiline_comment|/* copy the residual data */
 r_if
 c_cond
 (paren
@@ -1488,11 +1527,26 @@ id|hold_board_info
 )paren
 suffix:semicolon
 macro_line|#endif /* CONFIG_MBX */
-multiline_comment|/* MBX/prep put the board/residual data at the end of memory */
+multiline_comment|/* MBX/prep sometimes put the residual/board info at the end of mem &n;&t; * assume 16M for now  -- Cort&n;&t; */
+id|end_avail
+op_assign
+(paren
+r_char
+op_star
+)paren
+l_int|0x01000000
+suffix:semicolon
+multiline_comment|/* let residual data tell us it&squot;s higher */
 r_if
 c_cond
 (paren
+(paren
+r_int
+r_int
+)paren
 id|residual
+OG
+l_int|0x00800000
 )paren
 id|end_avail
 op_assign
@@ -1509,16 +1563,6 @@ r_int
 )paren
 id|residual
 )paren
-suffix:semicolon
-multiline_comment|/* prep netboot looses the residual */
-r_else
-id|end_avail
-op_assign
-(paren
-r_char
-op_star
-)paren
-l_int|0x00800000
 suffix:semicolon
 id|puts
 c_func
@@ -1821,48 +1865,6 @@ id|zimage_size
 op_assign
 id|ZIMAGE_SIZE
 suffix:semicolon
-id|puts
-c_func
-(paren
-l_string|&quot;zimage at:     &quot;
-)paren
-suffix:semicolon
-id|puthex
-c_func
-(paren
-(paren
-r_int
-r_int
-)paren
-id|zimage_start
-)paren
-suffix:semicolon
-id|puts
-c_func
-(paren
-l_string|&quot; &quot;
-)paren
-suffix:semicolon
-id|puthex
-c_func
-(paren
-(paren
-r_int
-r_int
-)paren
-(paren
-id|zimage_size
-op_plus
-id|zimage_start
-)paren
-)paren
-suffix:semicolon
-id|puts
-c_func
-(paren
-l_string|&quot;&bslash;n&quot;
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1910,6 +1912,7 @@ r_if
 c_cond
 (paren
 (paren
+(paren
 id|load_addr
 op_plus
 (paren
@@ -1924,6 +1927,13 @@ r_int
 r_int
 )paren
 id|avail_ram
+)paren
+op_logical_and
+(paren
+id|load_addr
+op_le
+l_int|0x01000000
+)paren
 )paren
 id|avail_ram
 op_assign
@@ -1946,6 +1956,7 @@ c_cond
 (paren
 (paren
 (paren
+(paren
 r_int
 r_int
 )paren
@@ -1964,6 +1975,13 @@ r_int
 r_int
 )paren
 id|avail_ram
+)paren
+op_logical_and
+(paren
+id|load_addr
+op_le
+l_int|0x01000000
+)paren
 )paren
 id|avail_ram
 op_assign
@@ -1986,6 +2004,166 @@ l_int|4
 )paren
 )paren
 suffix:semicolon
+multiline_comment|/* relocate zimage */
+id|puts
+c_func
+(paren
+l_string|&quot;zimage at:     &quot;
+)paren
+suffix:semicolon
+id|puthex
+c_func
+(paren
+(paren
+r_int
+r_int
+)paren
+id|zimage_start
+)paren
+suffix:semicolon
+id|puts
+c_func
+(paren
+l_string|&quot; &quot;
+)paren
+suffix:semicolon
+id|puthex
+c_func
+(paren
+(paren
+r_int
+r_int
+)paren
+(paren
+id|zimage_size
+op_plus
+id|zimage_start
+)paren
+)paren
+suffix:semicolon
+id|puts
+c_func
+(paren
+l_string|&quot;&bslash;n&quot;
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t; * don&squot;t relocate the zimage if it was loaded above 16M since&n;&t; * things get weird if we try to relocate -- Cort&n;&t; */
+r_if
+c_cond
+(paren
+(paren
+r_int
+r_int
+)paren
+id|zimage_start
+op_le
+l_int|0x01000000
+)paren
+(brace
+id|memcpy
+(paren
+(paren
+r_void
+op_star
+)paren
+id|PAGE_ALIGN
+c_func
+(paren
+op_minus
+id|PAGE_SIZE
+op_plus
+(paren
+r_int
+r_int
+)paren
+id|end_avail
+op_minus
+id|zimage_size
+)paren
+comma
+(paren
+r_void
+op_star
+)paren
+id|zimage_start
+comma
+id|zimage_size
+)paren
+suffix:semicolon
+id|zimage_start
+op_assign
+(paren
+r_char
+op_star
+)paren
+id|PAGE_ALIGN
+c_func
+(paren
+op_minus
+id|PAGE_SIZE
+op_plus
+(paren
+r_int
+r_int
+)paren
+id|end_avail
+op_minus
+id|zimage_size
+)paren
+suffix:semicolon
+id|end_avail
+op_assign
+(paren
+r_char
+op_star
+)paren
+id|zimage_start
+suffix:semicolon
+id|puts
+c_func
+(paren
+l_string|&quot;relocated to:  &quot;
+)paren
+suffix:semicolon
+id|puthex
+c_func
+(paren
+(paren
+r_int
+r_int
+)paren
+id|zimage_start
+)paren
+suffix:semicolon
+id|puts
+c_func
+(paren
+l_string|&quot; &quot;
+)paren
+suffix:semicolon
+id|puthex
+c_func
+(paren
+(paren
+r_int
+r_int
+)paren
+id|zimage_size
+op_plus
+(paren
+r_int
+r_int
+)paren
+id|zimage_start
+)paren
+suffix:semicolon
+id|puts
+c_func
+(paren
+l_string|&quot;&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/* relocate initrd */
 r_if
 c_cond
@@ -2116,6 +2294,23 @@ l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* this is safe, just use it */
+id|avail_ram
+op_assign
+(paren
+r_char
+op_star
+)paren
+l_int|0x00400000
+suffix:semicolon
+id|end_avail
+op_assign
+(paren
+r_char
+op_star
+)paren
+l_int|0x00600000
+suffix:semicolon
 id|puts
 c_func
 (paren
@@ -2161,7 +2356,9 @@ c_func
 )paren
 suffix:semicolon
 multiline_comment|/* Forces keyboard to be initialized */
-macro_line|#endif&t;
+macro_line|#endif
+macro_line|#ifdef CONFIG_PREP
+multiline_comment|/* I need to fix this for mbx -- Cort */
 id|puts
 c_func
 (paren
@@ -2262,10 +2459,10 @@ r_break
 suffix:semicolon
 multiline_comment|/* Exit &squot;timer&squot; loop */
 )brace
-id|mdelay
+id|udelay
 c_func
 (paren
-l_int|1
+l_int|1000
 )paren
 suffix:semicolon
 multiline_comment|/* 1 msec */
@@ -2281,6 +2478,7 @@ c_func
 l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
+macro_line|#endif /* CONFIG_PREP */
 multiline_comment|/* mappings on early boot can only handle 16M */
 r_if
 c_cond

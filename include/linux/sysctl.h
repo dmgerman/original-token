@@ -169,6 +169,10 @@ DECL|enumerator|KERN_PPC_ZEROPAGED
 id|KERN_PPC_ZEROPAGED
 comma
 multiline_comment|/* turn idle page zeroing on/off on PPC */
+DECL|enumerator|KERN_PPC_POWERSAVE_NAP
+id|KERN_PPC_POWERSAVE_NAP
+comma
+multiline_comment|/* use nap mode for power saving */
 DECL|enumerator|KERN_MODPROBE
 id|KERN_MODPROBE
 comma

@@ -1,4 +1,4 @@
-multiline_comment|/* $Revision: 2.4 $$Date: 1998/06/01 12:09:53 $&n; * linux/include/linux/cyclades.h&n; *&n; * This file is maintained by Ivan Passos &lt;ivan@cyclades.com&gt;, &n; * Marcio Saito &lt;marcio@cyclades.com&gt; and&n; * Randolph Bentson &lt;bentson@grieg.seaslug.org&gt;.&n; *&n; * This file contains the general definitions for the cyclades.c driver&n; *$Log: cyclades.h,v $&n; *Revision 2.4  1998/06/01 12:09:53  ivan&n; *removed closing_wait2 from cyclades_port structure;&n; *&n; *Revision 2.3  1998/03/16 18:01:12  ivan&n; *changes in the cyclades_port structure to get it closer to the &n; *standard serial port structure;&n; *added constants for new ioctls;&n; *&n; *Revision 2.2  1998/02/17 16:50:00  ivan&n; *changes in the cyclades_port structure (addition of shutdown_wait and &n; *chip_rev variables);&n; *added constants for new ioctls and for CD1400 rev. numbers.&n; *&n; *Revision 2.1&t;1997/10/24 16:03:00  ivan&n; *added rflow (which allows enabling the CD1400 special flow control &n; *feature) and rtsdtr_inv (which allows DTR/RTS pin inversion) to &n; *cyclades_port structure;&n; *added Alpha support&n; *&n; *Revision 2.0  1997/06/30 10:30:00  ivan&n; *added some new doorbell command constants related to IOCTLW and&n; *UART error signaling&n; *&n; *Revision 1.8  1997/06/03 15:30:00  ivan&n; *added constant ZFIRM_HLT&n; *added constant CyPCI_Ze_win ( = 2 * Cy_PCI_Zwin)&n; *&n; *Revision 1.7  1997/03/26 10:30:00  daniel&n; *new entries at the end of cyclades_port struct to reallocate&n; *variables illegally allocated within card memory.&n; *&n; *Revision 1.6  1996/09/09 18:35:30  bentson&n; *fold in changes for Cyclom-Z -- including structures for&n; *communicating with board as well modest changes to original&n; *structures to support new features.&n; *&n; *Revision 1.5  1995/11/13 21:13:31  bentson&n; *changes suggested by Michael Chastain &lt;mec@duracef.shout.net&gt;&n; *to support use of this file in non-kernel applications&n; *&n; *&n; */
+multiline_comment|/* $Revision: 2.5 $$Date: 1998/08/03 16:57:01 $&n; * linux/include/linux/cyclades.h&n; *&n; * This file is maintained by Ivan Passos &lt;ivan@cyclades.com&gt;, &n; * Marcio Saito &lt;marcio@cyclades.com&gt; and&n; * Randolph Bentson &lt;bentson@grieg.seaslug.org&gt;.&n; *&n; * This file contains the general definitions for the cyclades.c driver&n; *$Log: cyclades.h,v $&n; *Revision 2.5  1998/08/03 16:57:01  ivan&n; *added cyclades_idle_stats structure;&n; * &n; *Revision 2.4  1998/06/01 12:09:53  ivan&n; *removed closing_wait2 from cyclades_port structure;&n; *&n; *Revision 2.3  1998/03/16 18:01:12  ivan&n; *changes in the cyclades_port structure to get it closer to the &n; *standard serial port structure;&n; *added constants for new ioctls;&n; *&n; *Revision 2.2  1998/02/17 16:50:00  ivan&n; *changes in the cyclades_port structure (addition of shutdown_wait and &n; *chip_rev variables);&n; *added constants for new ioctls and for CD1400 rev. numbers.&n; *&n; *Revision 2.1&t;1997/10/24 16:03:00  ivan&n; *added rflow (which allows enabling the CD1400 special flow control &n; *feature) and rtsdtr_inv (which allows DTR/RTS pin inversion) to &n; *cyclades_port structure;&n; *added Alpha support&n; *&n; *Revision 2.0  1997/06/30 10:30:00  ivan&n; *added some new doorbell command constants related to IOCTLW and&n; *UART error signaling&n; *&n; *Revision 1.8  1997/06/03 15:30:00  ivan&n; *added constant ZFIRM_HLT&n; *added constant CyPCI_Ze_win ( = 2 * Cy_PCI_Zwin)&n; *&n; *Revision 1.7  1997/03/26 10:30:00  daniel&n; *new entries at the end of cyclades_port struct to reallocate&n; *variables illegally allocated within card memory.&n; *&n; *Revision 1.6  1996/09/09 18:35:30  bentson&n; *fold in changes for Cyclom-Z -- including structures for&n; *communicating with board as well modest changes to original&n; *structures to support new features.&n; *&n; *Revision 1.5  1995/11/13 21:13:31  bentson&n; *changes suggested by Michael Chastain &lt;mec@duracef.shout.net&gt;&n; *to support use of this file in non-kernel applications&n; *&n; *&n; */
 macro_line|#ifndef _LINUX_CYCLADES_H
 DECL|macro|_LINUX_CYCLADES_H
 mdefine_line|#define _LINUX_CYCLADES_H
@@ -26,6 +26,58 @@ r_int
 r_int
 id|char_last
 suffix:semicolon
+)brace
+suffix:semicolon
+multiline_comment|/*&n; * These stats all reflect activity since the device was last initialized.&n; * (i.e., since the port was opened with no other processes already having it&n; * open)&n; */
+DECL|struct|cyclades_idle_stats
+r_struct
+id|cyclades_idle_stats
+(brace
+DECL|member|in_use
+id|time_t
+id|in_use
+suffix:semicolon
+multiline_comment|/* Time device has been in use (secs) */
+DECL|member|recv_idle
+id|time_t
+id|recv_idle
+suffix:semicolon
+multiline_comment|/* Time since last char received (secs) */
+DECL|member|xmit_idle
+id|time_t
+id|xmit_idle
+suffix:semicolon
+multiline_comment|/* Time since last char transmitted (secs) */
+DECL|member|recv_bytes
+r_int
+r_int
+id|recv_bytes
+suffix:semicolon
+multiline_comment|/* Bytes received */
+DECL|member|xmit_bytes
+r_int
+r_int
+id|xmit_bytes
+suffix:semicolon
+multiline_comment|/* Bytes transmitted */
+DECL|member|overruns
+r_int
+r_int
+id|overruns
+suffix:semicolon
+multiline_comment|/* Input overruns */
+DECL|member|frame_errs
+r_int
+r_int
+id|frame_errs
+suffix:semicolon
+multiline_comment|/* Input framing errors */
+DECL|member|parity_errs
+r_int
+r_int
+id|parity_errs
+suffix:semicolon
+multiline_comment|/* Input parity errors */
 )brace
 suffix:semicolon
 DECL|macro|CYCLADES_MAGIC
@@ -56,16 +108,18 @@ DECL|macro|CYSETRTSDTR_INV
 mdefine_line|#define CYSETRTSDTR_INV&t;&t;0x43590c
 DECL|macro|CYGETRTSDTR_INV
 mdefine_line|#define CYGETRTSDTR_INV&t;&t;0x43590d
-DECL|macro|CYZPOLLCYCLE
-mdefine_line|#define CYZPOLLCYCLE&t;&t;0x43590e
+DECL|macro|CYZSETPOLLCYCLE
+mdefine_line|#define CYZSETPOLLCYCLE&t;&t;0x43590e
+DECL|macro|CYZGETPOLLCYCLE
+mdefine_line|#define CYZGETPOLLCYCLE&t;&t;0x43590f
 DECL|macro|CYGETCD1400VER
-mdefine_line|#define CYGETCD1400VER&t;&t;0x43590f
+mdefine_line|#define CYGETCD1400VER&t;&t;0x435910
 DECL|macro|CYGETCARDINFO
-mdefine_line|#define CYGETCARDINFO&t;&t;0x435910
+mdefine_line|#define CYGETCARDINFO&t;&t;0x435911
 DECL|macro|CYSETWAIT
-mdefine_line|#define&t;CYSETWAIT&t;&t;0x435911
+mdefine_line|#define&t;CYSETWAIT&t;&t;0x435912
 DECL|macro|CYGETWAIT
-mdefine_line|#define&t;CYGETWAIT&t;&t;0x435912
+mdefine_line|#define&t;CYGETWAIT&t;&t;0x435913
 multiline_comment|/*************** CYCLOM-Z ADDITIONS ***************/
 DECL|macro|CZIOC
 mdefine_line|#define CZIOC           (&squot;M&squot; &lt;&lt; 8)
@@ -1199,6 +1253,11 @@ DECL|member|rflush_count
 r_int
 r_int
 id|rflush_count
+suffix:semicolon
+DECL|member|idle_stats
+r_struct
+id|cyclades_idle_stats
+id|idle_stats
 suffix:semicolon
 )brace
 suffix:semicolon

@@ -1970,13 +1970,10 @@ r_return
 id|cur
 suffix:semicolon
 )brace
-macro_line|#ifdef CONFIG_PROFILE
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+DECL|function|profile_setup
 r_static
 r_void
+id|__init
 id|profile_setup
 c_func
 (paren
@@ -1987,7 +1984,6 @@ comma
 r_int
 op_star
 id|ints
-)paren
 )paren
 (brace
 r_if
@@ -2012,19 +2008,11 @@ l_int|1
 )braket
 suffix:semicolon
 r_else
-macro_line|#ifdef CONFIG_PROFILE_SHIFT
-id|prof_shift
-op_assign
-id|CONFIG_PROFILE_SHIFT
-suffix:semicolon
-macro_line|#else
 id|prof_shift
 op_assign
 l_int|2
 suffix:semicolon
-macro_line|#endif
 )brace
-macro_line|#endif
 DECL|struct|dev_name_struct
 r_static
 r_struct
@@ -2613,14 +2601,12 @@ id|pnp_reserve_setup
 )brace
 comma
 macro_line|#endif
-macro_line|#ifdef CONFIG_PROFILE
 (brace
 l_string|&quot;profile=&quot;
 comma
 id|profile_setup
 )brace
 comma
-macro_line|#endif
 macro_line|#ifdef __SMP__
 (brace
 l_string|&quot;nosmp&quot;
@@ -4571,7 +4557,6 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef CONFIG_PROFILE
 r_if
 c_cond
 (paren
@@ -4635,7 +4620,6 @@ r_int
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
 id|memory_start
 op_assign
 id|kmem_cache_init

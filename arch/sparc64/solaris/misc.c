@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: misc.c,v 1.10 1998/04/01 05:16:06 davem Exp $&n; * misc.c: Miscelaneous syscall emulation for Solaris&n; *&n; * Copyright (C) 1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: misc.c,v 1.12 1998/06/16 04:37:08 davem Exp $&n; * misc.c: Miscelaneous syscall emulation for Solaris&n; *&n; * Copyright (C) 1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/module.h&gt; 
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
@@ -1156,6 +1156,13 @@ id|buf
 )paren
 (brace
 multiline_comment|/* Why should we not lie a bit? */
+id|down
+c_func
+(paren
+op_amp
+id|uts_sem
+)paren
+suffix:semicolon
 id|set_utsfield
 c_func
 (paren
@@ -1282,6 +1289,13 @@ comma
 l_int|0
 comma
 l_int|0
+)paren
+suffix:semicolon
+id|up
+c_func
+(paren
+op_amp
+id|uts_sem
 )paren
 suffix:semicolon
 r_return

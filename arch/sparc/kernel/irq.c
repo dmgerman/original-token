@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: irq.c,v 1.85 1998/03/09 14:03:40 jj Exp $&n; *  arch/sparc/kernel/irq.c:  Interrupt request handling routines. On the&n; *                            Sparc the IRQ&squot;s are basically &squot;cast in stone&squot;&n; *                            and you are supposed to probe the prom&squot;s device&n; *                            node trees to find out who&squot;s got which IRQ.&n; *&n; *  Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1995 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; *  Copyright (C) 1995 Pete A. Zaitcev (zaitcev@ipmce.su)&n; *  Copyright (C) 1996 Dave Redman (djhr@tadpole.co.uk)&n; */
+multiline_comment|/*  $Id: irq.c,v 1.86 1998/06/04 09:54:49 jj Exp $&n; *  arch/sparc/kernel/irq.c:  Interrupt request handling routines. On the&n; *                            Sparc the IRQ&squot;s are basically &squot;cast in stone&squot;&n; *                            and you are supposed to probe the prom&squot;s device&n; *                            node trees to find out who&squot;s got which IRQ.&n; *&n; *  Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1995 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; *  Copyright (C) 1995 Pete A. Zaitcev (zaitcev@ipmce.su)&n; *  Copyright (C) 1996 Dave Redman (djhr@tadpole.co.uk)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -2286,26 +2286,6 @@ id|handler
 r_return
 op_minus
 id|EINVAL
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|irqflags
-op_amp
-id|SA_DCOOKIE
-)paren
-id|dev_id
-op_assign
-(paren
-(paren
-r_struct
-id|devid_cookie
-op_star
-)paren
-id|dev_id
-)paren
-op_member_access_from_pointer
-id|real_dev_id
 suffix:semicolon
 id|action
 op_assign

@@ -3046,12 +3046,6 @@ id|tpnt
 )paren
 )paren
 (brace
-macro_line|#ifdef __sparc_v9__
-r_struct
-id|devid_cookie
-id|dcookie
-suffix:semicolon
-macro_line|#endif
 r_struct
 id|qlogicpti
 op_star
@@ -3126,19 +3120,9 @@ op_logical_neg
 id|SBus_chain
 )paren
 (brace
-macro_line|#ifdef __sparc_v9__
 r_return
 l_int|0
 suffix:semicolon
-multiline_comment|/* Could be a PCI-only machine. */
-macro_line|#else
-id|panic
-c_func
-(paren
-l_string|&quot;No SBUS in qlogicpti_detect()&quot;
-)paren
-suffix:semicolon
-macro_line|#endif
 )brace
 id|for_each_sbus
 c_func
@@ -3187,6 +3171,30 @@ l_string|&quot;QLGC,isp&quot;
 )paren
 )paren
 (brace
+r_continue
+suffix:semicolon
+)brace
+multiline_comment|/* Sometimes Antares cards come up not completely&n;&t;&t;&t; * setup, and we get a report of a zero IRQ.&n;&t;&t;&t; * Skip over them in such cases so we survive.&n;&t;&t;&t; */
+r_if
+c_cond
+(paren
+id|qpti_dev-&gt;irqs
+(braket
+l_int|0
+)braket
+op_eq
+l_int|0
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;qpti%d: Adapter reports no interrupt, &quot;
+l_string|&quot;skipping over this card.&quot;
+comma
+id|nqptis
+)paren
+suffix:semicolon
 r_continue
 suffix:semicolon
 )brace
@@ -3518,8 +3526,6 @@ id|qpti-&gt;qdev-&gt;irqs
 (braket
 l_int|0
 )braket
-dot
-id|pri
 suffix:semicolon
 macro_line|#ifndef __sparc_v9__
 multiline_comment|/* Allocate the irq only if necessary. */
@@ -3593,25 +3599,6 @@ id|qpti-&gt;qhost-&gt;irq
 suffix:semicolon
 macro_line|#else
 multiline_comment|/* On Ultra we must always call request_irq for each&n;&t;&t;&t; * qpti, so that imap registers get setup etc.&n;&t;&t;&t; */
-id|dcookie.real_dev_id
-op_assign
-id|qpti
-suffix:semicolon
-id|dcookie.imap
-op_assign
-id|dcookie.iclr
-op_assign
-l_int|0
-suffix:semicolon
-id|dcookie.pil
-op_assign
-op_minus
-l_int|1
-suffix:semicolon
-id|dcookie.bus_cookie
-op_assign
-id|sbus
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -3622,18 +3609,11 @@ id|qpti-&gt;qhost-&gt;irq
 comma
 id|do_qlogicpti_intr_handler
 comma
-(paren
 id|SA_SHIRQ
-op_or
-id|SA_SBUS
-op_or
-id|SA_DCOOKIE
-)paren
 comma
 l_string|&quot;PTI Qlogic/ISP SCSI&quot;
 comma
-op_amp
-id|dcookie
+id|qpti
 )paren
 )paren
 (brace
@@ -3647,22 +3627,18 @@ multiline_comment|/* XXX Unmap regs, unregister scsi host, free things. */
 r_continue
 suffix:semicolon
 )brace
-id|qpti-&gt;qhost-&gt;irq
-op_assign
-id|qpti-&gt;irq
-op_assign
-id|dcookie.ret_ino
-suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;qpti%d: INO[%x] IRQ %d &quot;
+l_string|&quot;qpti%d: IRQ %s &quot;
 comma
 id|qpti-&gt;qpti_id
 comma
+id|__irq_itoa
+c_func
+(paren
 id|qpti-&gt;qhost-&gt;irq
-comma
-id|dcookie.ret_pil
+)paren
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -4959,6 +4935,17 @@ comma
 id|qpti-&gt;qpti_id
 )paren
 suffix:semicolon
+multiline_comment|/* Unfortunately, unless you use the new EH code, which&n;&t;&t; * we don&squot;t, the midlayer will ignore the return value,&n;&t;&t; * which is insane.  We pick up the pieces like this.&n;&t;&t; */
+id|Cmnd-&gt;result
+op_assign
+id|DID_BUS_BUSY
+suffix:semicolon
+id|done
+c_func
+(paren
+id|Cmnd
+)paren
+suffix:semicolon
 r_return
 l_int|1
 suffix:semicolon
@@ -5006,6 +4993,17 @@ id|KERN_EMERG
 l_string|&quot;qlogicpti%d: request queue overflow&bslash;n&quot;
 comma
 id|qpti-&gt;qpti_id
+)paren
+suffix:semicolon
+multiline_comment|/* Unfortunately, unless you use the new EH code, which&n;&t;&t;&t; * we don&squot;t, the midlayer will ignore the return value,&n;&t;&t;&t; * which is insane.  We pick up the pieces like this.&n;&t;&t;&t; */
+id|Cmnd-&gt;result
+op_assign
+id|DID_BUS_BUSY
+suffix:semicolon
+id|done
+c_func
+(paren
+id|Cmnd
 )paren
 suffix:semicolon
 r_return
@@ -5071,6 +5069,17 @@ op_minus
 l_int|1
 )paren
 (brace
+multiline_comment|/* Unfortunately, unless you use the new EH code, which&n;&t;&t; * we don&squot;t, the midlayer will ignore the return value,&n;&t;&t; * which is insane.  We pick up the pieces like this.&n;&t;&t; */
+id|Cmnd-&gt;result
+op_assign
+id|DID_BUS_BUSY
+suffix:semicolon
+id|done
+c_func
+(paren
+id|Cmnd
+)paren
+suffix:semicolon
 r_return
 l_int|1
 suffix:semicolon

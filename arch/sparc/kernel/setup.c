@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: setup.c,v 1.93 1998/03/09 14:03:18 jj Exp $&n; *  linux/arch/sparc/kernel/setup.c&n; *&n; *  Copyright (C) 1995  David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/*  $Id: setup.c,v 1.99 1998/07/28 16:52:45 jj Exp $&n; *  linux/arch/sparc/kernel/setup.c&n; *&n; *  Copyright (C) 1995  David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -49,12 +49,7 @@ comma
 l_int|0
 comma
 multiline_comment|/* orig-x, orig-y */
-(brace
 l_int|0
-comma
-l_int|0
-comma
-)brace
 comma
 multiline_comment|/* unused */
 l_int|0
@@ -98,6 +93,10 @@ r_int
 id|trapbase
 suffix:semicolon
 r_extern
+r_int
+id|serial_console
+suffix:semicolon
+r_extern
 r_void
 id|breakpoint
 c_func
@@ -106,12 +105,14 @@ r_void
 )paren
 suffix:semicolon
 macro_line|#if CONFIG_SUN_CONSOLE
-r_extern
+DECL|variable|prom_palette
 r_void
-id|console_restore_palette
-c_func
 (paren
-r_void
+op_star
+id|prom_palette
+)paren
+(paren
+r_int
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -207,8 +208,15 @@ id|trapbase
 )paren
 suffix:semicolon
 macro_line|#ifdef CONFIG_SUN_CONSOLE
-id|console_restore_palette
+r_if
+c_cond
 (paren
+id|prom_palette
+)paren
+id|prom_palette
+c_func
+(paren
+l_int|1
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -722,6 +730,62 @@ id|prom_printf
 l_string|&quot;Using /dev/ttyb as console.&bslash;n&quot;
 )paren
 suffix:semicolon
+macro_line|#if defined(CONFIG_PROM_CONSOLE)
+)brace
+r_else
+r_if
+c_cond
+(paren
+op_logical_neg
+id|strncmp
+(paren
+id|commands
+comma
+l_string|&quot;prom&quot;
+comma
+l_int|4
+)paren
+)paren
+(brace
+r_char
+op_star
+id|p
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|p
+op_assign
+id|commands
+op_minus
+l_int|8
+suffix:semicolon
+op_star
+id|p
+op_logical_and
+op_star
+id|p
+op_ne
+l_char|&squot; &squot;
+suffix:semicolon
+id|p
+op_increment
+)paren
+op_star
+id|p
+op_assign
+l_char|&squot; &squot;
+suffix:semicolon
+id|conswitchp
+op_assign
+op_amp
+id|prom_con
+suffix:semicolon
+id|console_fb
+op_assign
+l_int|1
+suffix:semicolon
+macro_line|#endif
 )brace
 r_else
 (brace
@@ -1277,6 +1341,15 @@ c_func
 l_string|&quot;SUN4&bslash;n&quot;
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_SUN4_FORCECONSOLE
+id|register_console
+c_func
+(paren
+op_amp
+id|prom_console
+)paren
+suffix:semicolon
+macro_line|#endif
 id|packed
 op_assign
 l_int|0
@@ -1388,6 +1461,19 @@ r_break
 suffix:semicolon
 )brace
 suffix:semicolon
+macro_line|#ifdef CONFIG_DUMMY_CONSOLE
+id|conswitchp
+op_assign
+op_amp
+id|dummy_con
+suffix:semicolon
+macro_line|#elif defined(CONFIG_PROM_CONSOLE)
+id|conswitchp
+op_assign
+op_amp
+id|prom_con
+suffix:semicolon
+macro_line|#endif
 id|boot_flags_init
 c_func
 (paren
@@ -1710,11 +1796,6 @@ suffix:semicolon
 multiline_comment|/* set this up ASAP */
 macro_line|#endif
 (brace
-r_extern
-r_int
-id|serial_console
-suffix:semicolon
-multiline_comment|/* in console.c, of course */
 macro_line|#if !CONFIG_SUN_SERIAL
 id|serial_console
 op_assign
@@ -1987,24 +2068,12 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
 id|serial_console
 )paren
-(brace
-macro_line|#ifdef CONFIG_PROM_CONSOLE
 id|conswitchp
 op_assign
-op_amp
-id|prom_con
+l_int|NULL
 suffix:semicolon
-macro_line|#elif defined(CONFIG_DUMMY_CONSOLE)
-id|conswitchp
-op_assign
-op_amp
-id|dummy_con
-suffix:semicolon
-macro_line|#endif
-)brace
 )brace
 DECL|function|sys_ioperm
 id|asmlinkage

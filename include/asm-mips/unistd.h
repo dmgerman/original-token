@@ -2308,9 +2308,11 @@ DECL|macro|__NR_pwrite
 mdefine_line|#define __NR_pwrite&t;&t;&t;(__NR_Linux + 201)
 DECL|macro|__NR_chown
 mdefine_line|#define __NR_chown&t;&t;&t;(__NR_Linux + 202)
+DECL|macro|__NR_getcwd
+mdefine_line|#define __NR_getcwd&t;&t;&t;(__NR_Linux + 203)
 multiline_comment|/*&n; * Offset of the last Linux flavoured syscall&n; */
 DECL|macro|__NR_Linux_syscalls
-mdefine_line|#define __NR_Linux_syscalls&t;&t;202
+mdefine_line|#define __NR_Linux_syscalls&t;&t;203
 macro_line|#ifndef __LANGUAGE_ASSEMBLY__
 multiline_comment|/* XXX - _foo needs to be __foo, while __NR_bar could be _NR_bar. */
 DECL|macro|_syscall0
@@ -2342,34 +2344,6 @@ c_func
 r_int
 comma
 id|idle
-)paren
-r_static
-r_inline
-id|_syscall0
-c_func
-(paren
-r_int
-comma
-id|fork
-)paren
-r_static
-r_inline
-id|_syscall2
-c_func
-(paren
-r_int
-comma
-id|clone
-comma
-r_int
-r_int
-comma
-id|flags
-comma
-r_char
-op_star
-comma
-id|esp
 )paren
 r_static
 r_inline

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * MIPS specific syscall handling functions and syscalls&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1995, 1996 by Ralf Baechle&n; *&n; * TODO:  Implement the compatibility syscalls.&n; *        Don&squot;t waste that much memory for empty entries in the syscall&n; *        table.&n; *&n; * $Id: syscall.c,v 1.11 1998/05/01 01:34:30 ralf Exp $&n; */
+multiline_comment|/*&n; * MIPS specific syscall handling functions and syscalls&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1995, 1996 by Ralf Baechle&n; *&n; * TODO:  Implement the compatibility syscalls.&n; *        Don&squot;t waste that much memory for empty entries in the syscall&n; *        table.&n; *&n; * $Id: syscall.c,v 1.12 1998/07/26 03:02:09 davem Exp $&n; */
 DECL|macro|CONF_PRINT_SYSCALLS
 macro_line|#undef CONF_PRINT_SYSCALLS
 DECL|macro|CONF_DEBUG_IRIX
@@ -340,7 +340,7 @@ c_cond
 id|wait_available
 op_logical_and
 op_logical_neg
-id|need_resched
+id|current-&gt;need_resched
 )paren
 id|__asm__
 c_func

@@ -4537,6 +4537,10 @@ op_assign
 l_int|1
 suffix:semicolon
 multiline_comment|/* force disable below */
+id|drv-&gt;dev
+op_assign
+id|sdev
+suffix:semicolon
 multiline_comment|/* Map the registers into memory. */
 id|prom_getproperty
 c_func

@@ -12,11 +12,11 @@ macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/user.h&gt;
 macro_line|#include &lt;linux/elf.h&gt;
 macro_line|#include &lt;linux/elf.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
-macro_line|#include &lt;asm/smp_lock.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;
 macro_line|#include &lt;asm/mmu.h&gt;
 macro_line|#include &lt;asm/prom.h&gt;
@@ -59,6 +59,14 @@ suffix:semicolon
 r_extern
 id|spinlock_t
 id|scheduler_lock
+suffix:semicolon
+DECL|variable|last_task_used_math
+r_struct
+id|task_struct
+op_star
+id|last_task_used_math
+op_assign
+l_int|NULL
 suffix:semicolon
 DECL|macro|SHOW_TASK_SWITCHES
 macro_line|#undef SHOW_TASK_SWITCHES 1
@@ -1946,7 +1954,10 @@ l_string|&quot;&bslash;n&quot;
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Low level print for debugging - Cort&n; */
-DECL|function|ll_printk
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|ll_printk
 c_func
@@ -1959,6 +1970,7 @@ comma
 dot
 dot
 dot
+)paren
 )paren
 (brace
 id|va_list
@@ -2031,7 +2043,10 @@ id|orig_y
 op_assign
 l_int|0
 suffix:semicolon
-DECL|function|ll_puts
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|ll_puts
 c_func
@@ -2040,6 +2055,7 @@ r_const
 r_char
 op_star
 id|s
+)paren
 )paren
 (brace
 r_int
@@ -2055,12 +2071,8 @@ op_assign
 r_char
 op_star
 )paren
-(paren
-id|_ISA_MEM_BASE
-op_plus
-l_int|0xB8000
-)paren
-multiline_comment|/*0xC00B8000*/
+multiline_comment|/*(_ISA_MEM_BASE + 0xB8000) */
+l_int|0xD00B8000
 suffix:semicolon
 r_char
 id|c

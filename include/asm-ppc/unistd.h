@@ -355,39 +355,37 @@ mdefine_line|#define __NR_rt_sigprocmask&t;174
 DECL|macro|__NR_rt_sigpending
 mdefine_line|#define __NR_rt_sigpending&t;175
 DECL|macro|__NR_rt_sigtimedwait
-mdefine_line|#define __NR_rt_sigtimedwait&t;177
+mdefine_line|#define __NR_rt_sigtimedwait   176
 DECL|macro|__NR_rt_sigqueueinfo
-mdefine_line|#define __NR_rt_sigqueueinfo&t;178
+mdefine_line|#define __NR_rt_sigqueueinfo   177
 DECL|macro|__NR_rt_sigsuspend
-mdefine_line|#define __NR_rt_sigsuspend&t;179
+mdefine_line|#define __NR_rt_sigsuspend     178
 DECL|macro|__NR_pread
-mdefine_line|#define __NR_pread&t;&t;180
+mdefine_line|#define __NR_pread             179
 DECL|macro|__NR_pwrite
-mdefine_line|#define __NR_pwrite&t;&t;181
+mdefine_line|#define __NR_pwrite            180
 DECL|macro|__NR_chown
-mdefine_line|#define __NR_chown&t;&t;182
+mdefine_line|#define __NR_chown             181
 DECL|macro|__NR_getcwd
-mdefine_line|#define __NR_getcwd&t;&t;183
-DECL|macro|__NR_xstat
-mdefine_line|#define __NR_xstat&t;&t;184
-DECL|macro|__NR_xmknod
-mdefine_line|#define __NR_xmknod&t;&t;185
+mdefine_line|#define __NR_getcwd            182
 DECL|macro|__NR
 mdefine_line|#define __NR(n)&t;#n
-DECL|macro|__do_syscall
-mdefine_line|#define __do_syscall(n) &bslash;&n;&t;asm volatile (&quot;li 0,%0&bslash;n&bslash;&n;&t;sc&bslash;n&bslash;&n;&t;bns 1f&bslash;n&bslash;&n;&t;mr 0,3&bslash;n&bslash;&n;&t;lis 3,errno@ha&bslash;n&bslash;&n;&t;stw 0,errno@l(3)&bslash;n&bslash;&n;&t;li 3,-1&bslash;n&bslash;&n;1:&quot; : : &quot;i&quot; (n) : &quot;r0&quot;, &quot;r3&quot;)
+DECL|macro|__syscall_return
+mdefine_line|#define __syscall_return(type) &bslash;&n;&t;return (__sc_err &amp; 0x10000000 ? errno = __sc_ret, __sc_ret = -1 : 0), &bslash;&n;&t;       (type) __sc_ret
+DECL|macro|__syscall_clobbers
+mdefine_line|#define __syscall_clobbers &bslash;&n;&t;&quot;r4&quot;, &quot;r5&quot;, &quot;r6&quot;, &quot;r7&quot;, &quot;r8&quot;, &quot;r9&quot;, &quot;r10&quot;, &quot;r11&quot;, &quot;r12&quot;
 DECL|macro|_syscall0
-mdefine_line|#define _syscall0(type,name) &bslash;&n;type name(void) &bslash;&n;{ __do_syscall(__NR_##name); }
+mdefine_line|#define _syscall0(type,name)&t;&t;&t;&t;&t;&t;&bslash;&n;type name(void)&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;{&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;unsigned long __sc_ret, __sc_err;&t;&t;&t;&t;&bslash;&n;&t;{&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;register unsigned long __sc_0 __asm__ (&quot;r0&quot;);&t;&t;&bslash;&n;&t;&t;register unsigned long __sc_3 __asm__ (&quot;r3&quot;);&t;&t;&bslash;&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;__sc_0 = __NR_##name;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;__asm__ __volatile__&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;(&quot;sc           &bslash;n&bslash;t&quot;&t;&t;&t;&t;&bslash;&n;&t;&t;&t; &quot;mfcr %1      &quot;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;: &quot;=&amp;r&quot; (__sc_3), &quot;=&amp;r&quot; (__sc_0)&t;&t;&bslash;&n;&t;&t;&t;: &quot;0&quot;   (__sc_3), &quot;1&quot;   (__sc_0)&t;&t;&bslash;&n;&t;&t;&t;: __syscall_clobbers);&t;&t;&t;&t;&bslash;&n;&t;&t;__sc_ret = __sc_3;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;__sc_err = __sc_0;&t;&t;&t;&t;&t;&bslash;&n;&t;}&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;__syscall_return (type);&t;&t;&t;&t;&t;&bslash;&n;}
 DECL|macro|_syscall1
-mdefine_line|#define _syscall1(type,name,type1,arg1) &bslash;&n;type name(type1 arg1) &bslash;&n;{ __do_syscall(__NR_##name); }
+mdefine_line|#define _syscall1(type,name,type1,arg1)&t;&t;&t;&t;&t;&bslash;&n;type name(type1 arg1)&t;&t;&t;&t;&t;&t;&t;&bslash;&n;{&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;unsigned long __sc_ret, __sc_err;&t;&t;&t;&t;&bslash;&n;&t;{&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;register unsigned long __sc_0 __asm__ (&quot;r0&quot;);&t;&t;&bslash;&n;&t;&t;register unsigned long __sc_3 __asm__ (&quot;r3&quot;);&t;&t;&bslash;&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;__sc_3 = (unsigned long) (arg1);&t;&t;&t;&bslash;&n;&t;&t;__sc_0 = __NR_##name;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;__asm__ __volatile__&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;(&quot;sc           &bslash;n&bslash;t&quot;&t;&t;&t;&t;&bslash;&n;&t;&t;&t; &quot;mfcr %1      &quot;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;: &quot;=&amp;r&quot; (__sc_3), &quot;=&amp;r&quot; (__sc_0)&t;&t;&bslash;&n;&t;&t;&t;: &quot;0&quot;   (__sc_3), &quot;1&quot;   (__sc_0)&t;&t;&bslash;&n;&t;&t;&t;: __syscall_clobbers);&t;&t;&t;&t;&bslash;&n;&t;&t;__sc_ret = __sc_3;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;__sc_err = __sc_0;&t;&t;&t;&t;&t;&bslash;&n;&t;}&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;__syscall_return (type);&t;&t;&t;&t;&t;&bslash;&n;}
 DECL|macro|_syscall2
-mdefine_line|#define _syscall2(type,name,type1,arg1,type2,arg2) &bslash;&n;type name(type1 arg1,type2 arg2) &bslash;&n;{ __do_syscall(__NR_##name); }
+mdefine_line|#define _syscall2(type,name,type1,arg1,type2,arg2)&t;&t;&t;&bslash;&n;type name(type1 arg1, type2 arg2)&t;&t;&t;&t;&t;&bslash;&n;{&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;unsigned long __sc_ret, __sc_err;&t;&t;&t;&t;&bslash;&n;&t;{&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;register unsigned long __sc_0 __asm__ (&quot;r0&quot;);&t;&t;&bslash;&n;&t;&t;register unsigned long __sc_3 __asm__ (&quot;r3&quot;);&t;&t;&bslash;&n;&t;&t;register unsigned long __sc_4 __asm__ (&quot;r4&quot;);&t;&t;&bslash;&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;__sc_3 = (unsigned long) (arg1);&t;&t;&t;&bslash;&n;&t;&t;__sc_4 = (unsigned long) (arg2);&t;&t;&t;&bslash;&n;&t;&t;__sc_0 = __NR_##name;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;__asm__ __volatile__&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;(&quot;sc           &bslash;n&bslash;t&quot;&t;&t;&t;&t;&bslash;&n;&t;&t;&t; &quot;mfcr %1      &quot;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;: &quot;=&amp;r&quot; (__sc_3), &quot;=&amp;r&quot; (__sc_0)&t;&t;&bslash;&n;&t;&t;&t;: &quot;0&quot;   (__sc_3), &quot;1&quot;   (__sc_0),&t;&t;&bslash;&n;&t;&t;&t;  &quot;r&quot;   (__sc_4)&t;&t;&t;&t;&bslash;&n;&t;&t;&t;: __syscall_clobbers);&t;&t;&t;&t;&bslash;&n;&t;&t;__sc_ret = __sc_3;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;__sc_err = __sc_0;&t;&t;&t;&t;&t;&bslash;&n;&t;}&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;__syscall_return (type);&t;&t;&t;&t;&t;&bslash;&n;}
 DECL|macro|_syscall3
-mdefine_line|#define _syscall3(type,name,type1,arg1,type2,arg2,type3,arg3) &bslash;&n;type name(type1 arg1,type2 arg2,type3 arg3) &bslash;&n;{ __do_syscall(__NR_##name); }
+mdefine_line|#define _syscall3(type,name,type1,arg1,type2,arg2,type3,arg3)&t;&t;&bslash;&n;type name(type1 arg1, type2 arg2, type3 arg3)&t;&t;&t;&t;&bslash;&n;{&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;unsigned long __sc_ret, __sc_err;&t;&t;&t;&t;&bslash;&n;&t;{&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;register unsigned long __sc_0 __asm__ (&quot;r0&quot;);&t;&t;&bslash;&n;&t;&t;register unsigned long __sc_3 __asm__ (&quot;r3&quot;);&t;&t;&bslash;&n;&t;&t;register unsigned long __sc_4 __asm__ (&quot;r4&quot;);&t;&t;&bslash;&n;&t;&t;register unsigned long __sc_5 __asm__ (&quot;r5&quot;);&t;&t;&bslash;&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;__sc_3 = (unsigned long) (arg1);&t;&t;&t;&bslash;&n;&t;&t;__sc_4 = (unsigned long) (arg2);&t;&t;&t;&bslash;&n;&t;&t;__sc_5 = (unsigned long) (arg3);&t;&t;&t;&bslash;&n;&t;&t;__sc_0 = __NR_##name;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;__asm__ __volatile__&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;(&quot;sc           &bslash;n&bslash;t&quot;&t;&t;&t;&t;&bslash;&n;&t;&t;&t; &quot;mfcr %1      &quot;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;: &quot;=&amp;r&quot; (__sc_3), &quot;=&amp;r&quot; (__sc_0)&t;&t;&bslash;&n;&t;&t;&t;: &quot;0&quot;   (__sc_3), &quot;1&quot;   (__sc_0),&t;&t;&bslash;&n;&t;&t;&t;  &quot;r&quot;   (__sc_4),&t;&t;&t;&t;&bslash;&n;&t;&t;&t;  &quot;r&quot;   (__sc_5)&t;&t;&t;&t;&bslash;&n;&t;&t;&t;: __syscall_clobbers);&t;&t;&t;&t;&bslash;&n;&t;&t;__sc_ret = __sc_3;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;__sc_err = __sc_0;&t;&t;&t;&t;&t;&bslash;&n;&t;}&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;__syscall_return (type);&t;&t;&t;&t;&t;&bslash;&n;}
 DECL|macro|_syscall4
-mdefine_line|#define _syscall4(type,name,type1,arg1,type2,arg2,type3,arg3,type4,arg4) &bslash;&n;type name (type1 arg1, type2 arg2, type3 arg3, type4 arg4) &bslash;&n;{ __do_syscall(__NR_##name); }
+mdefine_line|#define _syscall4(type,name,type1,arg1,type2,arg2,type3,arg3,type4,arg4) &bslash;&n;type name(type1 arg1, type2 arg2, type3 arg3, type4 arg4)&t;&t;&bslash;&n;{&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;unsigned long __sc_ret, __sc_err;&t;&t;&t;&t;&bslash;&n;&t;{&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;register unsigned long __sc_0 __asm__ (&quot;r0&quot;);&t;&t;&bslash;&n;&t;&t;register unsigned long __sc_3 __asm__ (&quot;r3&quot;);&t;&t;&bslash;&n;&t;&t;register unsigned long __sc_4 __asm__ (&quot;r4&quot;);&t;&t;&bslash;&n;&t;&t;register unsigned long __sc_5 __asm__ (&quot;r5&quot;);&t;&t;&bslash;&n;&t;&t;register unsigned long __sc_6 __asm__ (&quot;r6&quot;);&t;&t;&bslash;&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;__sc_3 = (unsigned long) (arg1);&t;&t;&t;&bslash;&n;&t;&t;__sc_4 = (unsigned long) (arg2);&t;&t;&t;&bslash;&n;&t;&t;__sc_5 = (unsigned long) (arg3);&t;&t;&t;&bslash;&n;&t;&t;__sc_6 = (unsigned long) (arg4);&t;&t;&t;&bslash;&n;&t;&t;__sc_0 = __NR_##name;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;__asm__ __volatile__&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;(&quot;sc           &bslash;n&bslash;t&quot;&t;&t;&t;&t;&bslash;&n;&t;&t;&t; &quot;mfcr %1      &quot;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;: &quot;=&amp;r&quot; (__sc_3), &quot;=&amp;r&quot; (__sc_0)&t;&t;&bslash;&n;&t;&t;&t;: &quot;0&quot;   (__sc_3), &quot;1&quot;   (__sc_0),&t;&t;&bslash;&n;&t;&t;&t;  &quot;r&quot;   (__sc_4),&t;&t;&t;&t;&bslash;&n;&t;&t;&t;  &quot;r&quot;   (__sc_5),&t;&t;&t;&t;&bslash;&n;&t;&t;&t;  &quot;r&quot;   (__sc_6)&t;&t;&t;&t;&bslash;&n;&t;&t;&t;: __syscall_clobbers);&t;&t;&t;&t;&bslash;&n;&t;&t;__sc_ret = __sc_3;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;__sc_err = __sc_0;&t;&t;&t;&t;&t;&bslash;&n;&t;}&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;__syscall_return (type);&t;&t;&t;&t;&t;&bslash;&n;}
 DECL|macro|_syscall5
-mdefine_line|#define _syscall5(type,name,type1,arg1,type2,arg2,type3,arg3,type4,arg4, &bslash;&n;&t;  type5,arg5) &bslash;&n;type name (type1 arg1,type2 arg2,type3 arg3,type4 arg4,type5 arg5) &bslash;&n;{ __do_syscall(__NR_##name); }
+mdefine_line|#define _syscall5(type,name,type1,arg1,type2,arg2,type3,arg3,type4,arg4,type5,arg5) &bslash;&n;type name(type1 arg1, type2 arg2, type3 arg3, type4 arg4, type5 arg5)&t;&bslash;&n;{&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;unsigned long __sc_ret, __sc_err;&t;&t;&t;&t;&bslash;&n;&t;{&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;register unsigned long __sc_0 __asm__ (&quot;r0&quot;);&t;&t;&bslash;&n;&t;&t;register unsigned long __sc_3 __asm__ (&quot;r3&quot;);&t;&t;&bslash;&n;&t;&t;register unsigned long __sc_4 __asm__ (&quot;r4&quot;);&t;&t;&bslash;&n;&t;&t;register unsigned long __sc_5 __asm__ (&quot;r5&quot;);&t;&t;&bslash;&n;&t;&t;register unsigned long __sc_6 __asm__ (&quot;r6&quot;);&t;&t;&bslash;&n;&t;&t;register unsigned long __sc_7 __asm__ (&quot;r7&quot;);&t;&t;&bslash;&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;__sc_3 = (unsigned long) (arg1);&t;&t;&t;&bslash;&n;&t;&t;__sc_4 = (unsigned long) (arg2);&t;&t;&t;&bslash;&n;&t;&t;__sc_5 = (unsigned long) (arg3);&t;&t;&t;&bslash;&n;&t;&t;__sc_6 = (unsigned long) (arg4);&t;&t;&t;&bslash;&n;&t;&t;__sc_7 = (unsigned long) (arg5);&t;&t;&t;&bslash;&n;&t;&t;__sc_0 = __NR_##name;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;__asm__ __volatile__&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;(&quot;sc           &bslash;n&bslash;t&quot;&t;&t;&t;&t;&bslash;&n;&t;&t;&t; &quot;mfcr %1      &quot;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;: &quot;=&amp;r&quot; (__sc_3), &quot;=&amp;r&quot; (__sc_0)&t;&t;&bslash;&n;&t;&t;&t;: &quot;0&quot;   (__sc_3), &quot;1&quot;   (__sc_0),&t;&t;&bslash;&n;&t;&t;&t;  &quot;r&quot;   (__sc_4),&t;&t;&t;&t;&bslash;&n;&t;&t;&t;  &quot;r&quot;   (__sc_5),&t;&t;&t;&t;&bslash;&n;&t;&t;&t;  &quot;r&quot;   (__sc_6),&t;&t;&t;&t;&bslash;&n;&t;&t;&t;  &quot;r&quot;   (__sc_7)&t;&t;&t;&t;&bslash;&n;&t;&t;&t;: __syscall_clobbers);&t;&t;&t;&t;&bslash;&n;&t;&t;__sc_ret = __sc_3;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;__sc_err = __sc_0;&t;&t;&t;&t;&t;&bslash;&n;&t;}&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;__syscall_return (type);&t;&t;&t;&t;&t;&bslash;&n;}
 macro_line|#ifdef __KERNEL_SYSCALLS__
 multiline_comment|/*&n; * Forking from kernel space will result in the child getting a new,&n; * empty kernel stack area.  Thus the child cannot access automatic&n; * variables set in the parent unless they are in registers, and the&n; * procedure where the fork was done cannot return to its caller in&n; * the child.&n; */
 multiline_comment|/*&n; * Create a new kernel thread.&n; */
@@ -453,126 +451,249 @@ id|arg
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * System call prototypes.&n; */
-r_int
-id|idle
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_int
-id|setup
-c_func
-(paren
-r_int
-)paren
-suffix:semicolon
-r_int
-id|sync
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-id|pid_t
-id|setsid
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_int
-id|write
+DECL|macro|__NR__exit
+mdefine_line|#define __NR__exit __NR_exit
+r_static
+r_inline
+id|_syscall0
 c_func
 (paren
 r_int
 comma
+id|idle
+)paren
+r_static
+r_inline
+id|_syscall0
+c_func
+(paren
+r_int
+comma
+id|pause
+)paren
+r_static
+r_inline
+id|_syscall1
+c_func
+(paren
+r_int
+comma
+id|setup
+comma
+r_int
+comma
+id|magic
+)paren
+r_static
+r_inline
+id|_syscall0
+c_func
+(paren
+r_int
+comma
+id|sync
+)paren
+r_static
+r_inline
+id|_syscall0
+c_func
+(paren
+id|pid_t
+comma
+id|setsid
+)paren
+r_static
+r_inline
+id|_syscall3
+c_func
+(paren
+r_int
+comma
+id|write
+comma
+r_int
+comma
+id|fd
+comma
 r_const
 r_char
 op_star
+comma
+id|buf
 comma
 id|off_t
+comma
+id|count
 )paren
-suffix:semicolon
+r_static
+r_inline
+id|_syscall3
+c_func
+(paren
 r_int
+comma
+id|read
+comma
+r_int
+comma
+id|fd
+comma
+r_char
+op_star
+comma
+id|buf
+comma
+id|off_t
+comma
+id|count
+)paren
+r_static
+r_inline
+id|_syscall3
+c_func
+(paren
+id|off_t
+comma
+id|lseek
+comma
+r_int
+comma
+id|fd
+comma
+id|off_t
+comma
+id|offset
+comma
+r_int
+comma
+id|count
+)paren
+r_static
+r_inline
+id|_syscall1
+c_func
+(paren
+r_int
+comma
 id|dup
+comma
+r_int
+comma
+id|fd
+)paren
+r_static
+r_inline
+id|_syscall3
 c_func
 (paren
 r_int
-)paren
-suffix:semicolon
-r_int
+comma
 id|execve
-c_func
-(paren
+comma
 r_const
 r_char
 op_star
 comma
-r_char
-op_star
-op_star
+id|file
 comma
 r_char
 op_star
 op_star
+comma
+id|argv
+comma
+r_char
+op_star
+op_star
+comma
+id|envp
 )paren
-suffix:semicolon
+r_static
+r_inline
+id|_syscall3
+c_func
+(paren
 r_int
+comma
 id|open
-c_func
-(paren
+comma
 r_const
 r_char
 op_star
 comma
-r_int
+id|file
 comma
 r_int
-)paren
-suffix:semicolon
+comma
+id|flag
+comma
 r_int
+comma
+id|mode
+)paren
+r_static
+r_inline
+id|_syscall1
+c_func
+(paren
+r_int
+comma
 id|close
+comma
+r_int
+comma
+id|fd
+)paren
+r_static
+r_inline
+id|_syscall1
 c_func
 (paren
 r_int
+comma
+id|_exit
+comma
+r_int
+comma
+id|exitcode
 )paren
-suffix:semicolon
-id|pid_t
-id|waitpid
+r_static
+r_inline
+id|_syscall3
 c_func
 (paren
 id|pid_t
+comma
+id|waitpid
+comma
+id|pid_t
+comma
+id|pid
 comma
 r_int
 op_star
 comma
+id|wait_stat
+comma
 r_int
+comma
+id|options
 )paren
-suffix:semicolon
-id|pid_t
-id|fork
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_void
-id|_exit
+r_static
+r_inline
+id|_syscall1
 c_func
 (paren
 r_int
-)paren
-suffix:semicolon
-r_int
+comma
 id|delete_module
-c_func
-(paren
+comma
 r_const
 r_char
 op_star
+comma
+id|name
 )paren
-suffix:semicolon
 DECL|function|wait
 r_static
 r_inline

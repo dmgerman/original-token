@@ -3,6 +3,65 @@ multiline_comment|/*&n; *  This file contains the ppc architecture specific IDE 
 macro_line|#ifndef __ASMPPC_IDE_H
 DECL|macro|__ASMPPC_IDE_H
 mdefine_line|#define __ASMPPC_IDE_H
+macro_line|#include &lt;linux/config.h&gt;
+macro_line|#ifdef CONFIG_APUS
+macro_line|#include &lt;linux/hdreg.h&gt;
+macro_line|#include &lt;asm-m68k/ide.h&gt;
+r_void
+id|ide_init_hwif_ports
+c_func
+(paren
+id|ide_ioreg_t
+op_star
+id|p
+comma
+id|ide_ioreg_t
+id|base
+comma
+r_int
+op_star
+id|irq
+)paren
+suffix:semicolon
+r_void
+id|ide_insw
+c_func
+(paren
+id|ide_ioreg_t
+id|port
+comma
+r_void
+op_star
+id|buf
+comma
+r_int
+id|ns
+)paren
+suffix:semicolon
+r_void
+id|ide_outsw
+c_func
+(paren
+id|ide_ioreg_t
+id|port
+comma
+r_void
+op_star
+id|buf
+comma
+r_int
+id|ns
+)paren
+suffix:semicolon
+DECL|macro|insw
+macro_line|#undef insw
+DECL|macro|insw
+mdefine_line|#define insw(port, buf, ns) &t;do {&t;&t;&t;&bslash;&n;&t;if ( _machine != _MACH_Pmac &amp;&amp; _machine != _MACH_apus )&t;&bslash;&n;&t;&t;/* this must be the same as insw in io.h!! */&t;&bslash;&n;&t;&t;_insw((unsigned short *)((port)+_IO_BASE), (buf), (ns)); &bslash;&n;&t;else&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;ide_insw((port), (buf), (ns));&t;&t;&bslash;&n;} while (0)
+DECL|macro|outsw
+macro_line|#undef outsw
+DECL|macro|outsw
+mdefine_line|#define outsw(port, buf, ns) &t;do {&t;&t;&t;&bslash;&n;&t;if ( _machine != _MACH_Pmac &amp;&amp; _machine != _MACH_apus )&t;&bslash;&n;&t;&t;/* this must be the same as outsw in io.h!! */&t;&bslash;&n;&t;&t;_outsw((unsigned short *)((port)+_IO_BASE), (buf), (ns)); &bslash;&n;&t;else&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;ide_outsw((port), (buf), (ns));&t;&t;&bslash;&n;} while (0)
+macro_line|#else /* CONFIG_APUS */
 macro_line|#ifdef __KERNEL__
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;asm/io.h&gt;&t;&t;/* so we can redefine insw/outsw */
@@ -693,5 +752,6 @@ mdefine_line|#define ide_release_lock(lock)&t;&t;do {} while (0)
 DECL|macro|ide_get_lock
 mdefine_line|#define ide_get_lock(lock, hdlr, data)&t;do {} while (0)
 macro_line|#endif /* __KERNEL__ */
+macro_line|#endif /* CONFIG_APUS */
 macro_line|#endif /* __ASMPPC_IDE_H */
 eof

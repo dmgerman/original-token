@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * setup.c: SGI specific setup, including init of the feature struct.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; *&n; * $Id: setup.c,v 1.5 1998/05/01 01:35:19 ralf Exp $&n; */
+multiline_comment|/* $Id: setup.c,v 1.6 1998/05/07 00:39:53 ralf Exp $&n; *&n; * setup.c: SGI specific setup, including init of the feature struct.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; */
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -72,6 +72,8 @@ op_plus
 l_int|64
 )paren
 suffix:semicolon
+DECL|macro|KBD_STAT_IBF
+mdefine_line|#define KBD_STAT_IBF&t;&t;0x02&t;/* Keyboard input buffer full */
 DECL|function|sgi_read_input
 r_static
 r_int
@@ -97,6 +99,24 @@ r_char
 id|val
 )paren
 (brace
+r_int
+id|status
+suffix:semicolon
+r_do
+(brace
+id|status
+op_assign
+id|sgi_kh-&gt;command
+suffix:semicolon
+)brace
+r_while
+c_loop
+(paren
+id|status
+op_amp
+id|KBD_STAT_IBF
+)paren
+suffix:semicolon
 id|sgi_kh-&gt;data
 op_assign
 id|val
@@ -113,6 +133,24 @@ r_char
 id|val
 )paren
 (brace
+r_int
+id|status
+suffix:semicolon
+r_do
+(brace
+id|status
+op_assign
+id|sgi_kh-&gt;command
+suffix:semicolon
+)brace
+r_while
+c_loop
+(paren
+id|status
+op_amp
+id|KBD_STAT_IBF
+)paren
+suffix:semicolon
 id|sgi_kh-&gt;command
 op_assign
 id|val

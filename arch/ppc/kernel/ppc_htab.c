@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * $Id: ppc_htab.c,v 1.18 1998/04/24 12:29:39 davem Exp $&n; *&n; * PowerPC hash table management proc entry.  Will show information&n; * about the current hash table and will allow changes to it.&n; *&n; * Written by Cort Dougan (cort@cs.nmt.edu)&n; *&n; * This program is free software; you can redistribute it and/or&n; * modify it under the terms of the GNU General Public License&n; * as published by the Free Software Foundation; either version&n; * 2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; * $Id: ppc_htab.c,v 1.21 1998/05/13 22:34:55 cort Exp $&n; *&n; * PowerPC hash table management proc entry.  Will show information&n; * about the current hash table and will allow changes to it.&n; *&n; * Written by Cort Dougan (cort@cs.nmt.edu)&n; *&n; * This program is free software; you can redistribute it and/or&n; * modify it under the terms of the GNU General Public License&n; * as published by the Free Software Foundation; either version&n; * 2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -233,7 +233,6 @@ DECL|macro|PMC1
 mdefine_line|#define PMC1 953
 DECL|macro|PMC2
 mdefine_line|#define PMC2 954
-macro_line|#ifndef CONFIG_8xx
 DECL|function|pmc1_lookup
 r_char
 op_star
@@ -344,7 +343,6 @@ l_string|&quot;unknown&quot;
 suffix:semicolon
 )brace
 )brace
-macro_line|#endif /* CONFIG_8xx */
 multiline_comment|/*&n; * print some useful info about the hash table.  This function&n; * is _REALLY_ slow (see the nested for loops below) but nothing&n; * in here should be really timing critical. -- Cort&n; */
 DECL|function|ppc_htab_read
 r_static
@@ -369,7 +367,6 @@ op_star
 id|ppos
 )paren
 (brace
-macro_line|#ifndef CONFIG_8xx
 r_int
 r_int
 id|mmcr0
@@ -771,20 +768,31 @@ id|n
 comma
 l_string|&quot;Reloads&bslash;t&bslash;t: %08lx&bslash;n&quot;
 l_string|&quot;Evicts&bslash;t&bslash;t: %08lx&bslash;n&quot;
-l_string|&quot;Non-error misses: %08lx&bslash;n&quot;
-l_string|&quot;Error misses&bslash;t: %08lx&bslash;n&quot;
 comma
 id|htab_reloads
 comma
 id|htab_evicts
+)paren
+suffix:semicolon
+id|return_string
+suffix:colon
+id|n
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|buffer
+op_plus
+id|n
+comma
+l_string|&quot;Non-error misses: %08lx&bslash;n&quot;
+l_string|&quot;Error misses&bslash;t: %08lx&bslash;n&quot;
 comma
 id|pte_misses
 comma
 id|pte_errors
 )paren
 suffix:semicolon
-id|return_string
-suffix:colon
 r_if
 c_cond
 (paren
@@ -846,11 +854,6 @@ suffix:semicolon
 r_return
 id|n
 suffix:semicolon
-macro_line|#else /* CONFIG_8xx */
-r_return
-l_int|0
-suffix:semicolon
-macro_line|#endif /* CONFIG_8xx */
 )brace
 multiline_comment|/*&n; * Allow user to define performance counters and resize the hash table&n; */
 DECL|function|ppc_htab_write

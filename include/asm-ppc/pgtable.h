@@ -6,6 +6,7 @@ macro_line|#ifndef __ASSEMBLY__
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;&t;&t;/* For TASK_SIZE */
 macro_line|#include &lt;asm/mmu.h&gt;
+macro_line|#include &lt;asm/page.h&gt;
 r_extern
 r_void
 id|local_flush_tlb_all
@@ -59,7 +60,6 @@ r_int
 id|end
 )paren
 suffix:semicolon
-macro_line|#ifndef __SMP__
 DECL|macro|flush_tlb_all
 mdefine_line|#define flush_tlb_all local_flush_tlb_all
 DECL|macro|flush_tlb_mm
@@ -68,16 +68,6 @@ DECL|macro|flush_tlb_page
 mdefine_line|#define flush_tlb_page local_flush_tlb_page
 DECL|macro|flush_tlb_range
 mdefine_line|#define flush_tlb_range local_flush_tlb_range
-macro_line|#else /* __SMP__ */
-DECL|macro|flush_tlb_all
-mdefine_line|#define flush_tlb_all local_flush_tlb_all
-DECL|macro|flush_tlb_mm
-mdefine_line|#define flush_tlb_mm local_flush_tlb_mm
-DECL|macro|flush_tlb_page
-mdefine_line|#define flush_tlb_page local_flush_tlb_page
-DECL|macro|flush_tlb_range
-mdefine_line|#define flush_tlb_range local_flush_tlb_range
-macro_line|#endif /* __SMP__ */
 multiline_comment|/*&n; * No cache flushing is required when address mappings are&n; * changed, because the caches on PowerPCs are physically&n; * addressed.&n; * Also, when SMP we use the coherency (M) bit of the&n; * BATs and PTEs.  -- Cort&n; */
 DECL|macro|flush_cache_all
 mdefine_line|#define flush_cache_all()&t;&t;do { } while (0)
@@ -167,6 +157,8 @@ DECL|macro|VMALLOC_START
 mdefine_line|#define VMALLOC_START ((((long)high_memory + VMALLOC_OFFSET) &amp; ~(VMALLOC_OFFSET-1)))
 DECL|macro|VMALLOC_VMADDR
 mdefine_line|#define VMALLOC_VMADDR(x) ((unsigned long)(x))
+DECL|macro|VMALLOC_END
+mdefine_line|#define VMALLOC_END&t;0xf0000000
 multiline_comment|/*&n; * Bits in a linux-style PTE.  These match the bits in the&n; * (hardware-defined) PowerPC PTE as closely as possible.&n; */
 macro_line|#ifndef CONFIG_8xx
 DECL|macro|_PAGE_PRESENT
@@ -1346,18 +1338,7 @@ l_int|1
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Allocate and free page tables. The xxx_kernel() versions are&n; * used to allocate a kernel page table, but are actually identical&n; * to the xxx() versions.&n; */
-macro_line|#ifdef __SMP__
-multiline_comment|/* Sliiiicck */
-DECL|macro|pgd_quicklist
-mdefine_line|#define pgd_quicklist           (cpu_data[smp_processor_id()].pgd_quick)
-DECL|macro|pmd_quicklist
-mdefine_line|#define pmd_quicklist           ((unsigned long *)0)
-DECL|macro|pte_quicklist
-mdefine_line|#define pte_quicklist           (cpu_data[smp_processor_id()].pte_quick)
-DECL|macro|pgtable_cache_size
-mdefine_line|#define pgtable_cache_size      (cpu_data[smp_processor_id()].pgtable_cache_sz)
-macro_line|#else
+multiline_comment|/*&n; * This is handled very differently on the PPC since out page tables&n; * are all 0&squot;s and I want to be able to use these zero&squot;d pages elsewhere&n; * as well - it gives us quite a speedup.&n; *&n; * Note that the SMP/UP versions are the same since we don&squot;t need a&n; * per cpu list of zero pages since we do the zero-ing with the cache&n; * off and the access routines are lock-free but the pgt cache stuff&n; * _IS_ per-cpu since it isn&squot;t done with any lock-free access routines&n; * (although I think we need arch-specific routines so I can do lock-free).&n; *&n; * I need to generalize this so we can use it for other arch&squot;s as well.&n; * -- Cort&n; */
 DECL|struct|pgtable_cache_struct
 r_extern
 r_struct
@@ -1380,9 +1361,42 @@ r_int
 r_int
 id|pgtable_cache_sz
 suffix:semicolon
+DECL|member|zero_cache
+r_int
+r_int
+op_star
+id|zero_cache
+suffix:semicolon
+multiline_comment|/* head linked list of pre-zero&squot;d pages */
+DECL|member|zero_sz
+r_int
+r_int
+id|zero_sz
+suffix:semicolon
+multiline_comment|/* # currently pre-zero&squot;d pages */
+DECL|member|zeropage_hits
+r_int
+r_int
+id|zeropage_hits
+suffix:semicolon
+multiline_comment|/* # zero&squot;d pages request that we&squot;ve done */
+DECL|member|zeropage_calls
+r_int
+r_int
+id|zeropage_calls
+suffix:semicolon
+multiline_comment|/* # zero&squot;d pages request that&squot;ve been made */
+DECL|member|zerototal
+r_int
+r_int
+id|zerototal
+suffix:semicolon
+multiline_comment|/* # pages zero&squot;d over time */
 )brace
 id|quicklists
 suffix:semicolon
+macro_line|#ifdef __SMP__
+multiline_comment|/*#warning Tell Cort to do the pgt cache for SMP*/
 DECL|macro|pgd_quicklist
 mdefine_line|#define pgd_quicklist (quicklists.pgd_cache)
 DECL|macro|pmd_quicklist
@@ -1391,7 +1405,30 @@ DECL|macro|pte_quicklist
 mdefine_line|#define pte_quicklist (quicklists.pte_cache)
 DECL|macro|pgtable_cache_size
 mdefine_line|#define pgtable_cache_size (quicklists.pgtable_cache_sz)
-macro_line|#endif
+macro_line|#else /* __SMP__ */
+DECL|macro|pgd_quicklist
+mdefine_line|#define pgd_quicklist (quicklists.pgd_cache)
+DECL|macro|pmd_quicklist
+mdefine_line|#define pmd_quicklist ((unsigned long *)0)
+DECL|macro|pte_quicklist
+mdefine_line|#define pte_quicklist (quicklists.pte_cache)
+DECL|macro|pgtable_cache_size
+mdefine_line|#define pgtable_cache_size (quicklists.pgtable_cache_sz)
+macro_line|#endif /* __SMP__ */
+DECL|macro|zero_quicklist
+mdefine_line|#define zero_quicklist (quicklists.zero_cache)
+DECL|macro|zero_cache_sz
+mdefine_line|#define zero_cache_sz  (quicklists.zero_sz)
+multiline_comment|/* return a pre-zero&squot;d page from the list, return NULL if none available -- Cort */
+r_extern
+r_int
+r_int
+id|get_zero_page_fast
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
 DECL|function|get_pgd_slow
 r_extern
 id|__inline__
@@ -1406,6 +1443,31 @@ r_void
 id|pgd_t
 op_star
 id|ret
+multiline_comment|/* = (pgd_t *)__get_free_page(GFP_KERNEL)*/
+comma
+op_star
+id|init
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|ret
+op_assign
+(paren
+id|pgd_t
+op_star
+)paren
+id|get_zero_page_fast
+c_func
+(paren
+)paren
+)paren
+op_eq
+l_int|NULL
+)paren
+(brace
+id|ret
 op_assign
 (paren
 id|pgd_t
@@ -1416,10 +1478,22 @@ c_func
 (paren
 id|GFP_KERNEL
 )paren
-comma
-op_star
-id|init
 suffix:semicolon
+id|memset
+(paren
+id|ret
+comma
+l_int|0
+comma
+id|USER_PTRS_PER_PGD
+op_star
+r_sizeof
+(paren
+id|pgd_t
+)paren
+)paren
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -1437,20 +1511,7 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-id|memset
-(paren
-id|ret
-comma
-l_int|0
-comma
-id|USER_PTRS_PER_PGD
-op_star
-r_sizeof
-(paren
-id|pgd_t
-)paren
-)paren
-suffix:semicolon
+multiline_comment|/*memset (ret, 0, USER_PTRS_PER_PGD * sizeof(pgd_t));*/
 id|memcpy
 (paren
 id|ret
@@ -2340,8 +2401,110 @@ DECL|macro|module_map
 mdefine_line|#define module_map      vmalloc
 DECL|macro|module_unmap
 mdefine_line|#define module_unmap    vfree
-DECL|macro|module_shrink
-mdefine_line|#define module_shrink&t;vshrink
+multiline_comment|/* CONFIG_APUS */
+multiline_comment|/* For virtual address to physical address conversion */
+r_extern
+r_void
+id|cache_clear
+c_func
+(paren
+id|__u32
+id|addr
+comma
+r_int
+id|length
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|cache_push
+c_func
+(paren
+id|__u32
+id|addr
+comma
+r_int
+id|length
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|mm_end_of_chunk
+(paren
+r_int
+r_int
+id|addr
+comma
+r_int
+id|len
+)paren
+suffix:semicolon
+r_extern
+r_int
+r_int
+id|iopa
+c_func
+(paren
+r_int
+r_int
+id|addr
+)paren
+suffix:semicolon
+r_extern
+r_int
+r_int
+id|mm_ptov
+c_func
+(paren
+r_int
+r_int
+id|addr
+)paren
+id|__attribute__
+(paren
+(paren
+r_const
+)paren
+)paren
+suffix:semicolon
+DECL|macro|VTOP
+mdefine_line|#define VTOP(addr)  (iopa((unsigned long)(addr)))
+DECL|macro|PTOV
+mdefine_line|#define PTOV(addr)  (mm_ptov((unsigned long)(addr)))
+multiline_comment|/* Values for nocacheflag and cmode */
+multiline_comment|/* These are not used by the APUS kernel_map, but prevents&n;   compilation errors. */
+DECL|macro|KERNELMAP_FULL_CACHING
+mdefine_line|#define&t;KERNELMAP_FULL_CACHING&t;&t;0
+DECL|macro|KERNELMAP_NOCACHE_SER
+mdefine_line|#define&t;KERNELMAP_NOCACHE_SER&t;&t;1
+DECL|macro|KERNELMAP_NOCACHE_NONSER
+mdefine_line|#define&t;KERNELMAP_NOCACHE_NONSER&t;2
+DECL|macro|KERNELMAP_NO_COPYBACK
+mdefine_line|#define&t;KERNELMAP_NO_COPYBACK&t;&t;3
+multiline_comment|/*&n; * Map some physical address range into the kernel address space.&n; */
+r_extern
+r_int
+r_int
+id|kernel_map
+c_func
+(paren
+r_int
+r_int
+id|paddr
+comma
+r_int
+r_int
+id|size
+comma
+r_int
+id|nocacheflag
+comma
+r_int
+r_int
+op_star
+id|memavailp
+)paren
+suffix:semicolon
 multiline_comment|/* Needs to be defined here and not in linux/mm.h, as it is arch dependent */
 DECL|macro|PageSkip
 mdefine_line|#define PageSkip(page)&t;&t;(0)

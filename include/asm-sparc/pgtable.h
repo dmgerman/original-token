@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: pgtable.h,v 1.74 1998/03/11 04:08:37 tdyas Exp $ */
+multiline_comment|/* $Id: pgtable.h,v 1.77 1998/08/04 20:51:19 davem Exp $ */
 macro_line|#ifndef _SPARC_PGTABLE_H
 DECL|macro|_SPARC_PGTABLE_H
 mdefine_line|#define _SPARC_PGTABLE_H
@@ -390,6 +390,8 @@ mdefine_line|#define VMALLOC_VMADDR(x) ((unsigned long)(x))
 multiline_comment|/* This is the same accross all platforms */
 DECL|macro|VMALLOC_START
 mdefine_line|#define VMALLOC_START (0xfe300000)
+DECL|macro|VMALLOC_END
+mdefine_line|#define VMALLOC_END   ~0x0UL
 id|BTFIXUPDEF_INT
 c_func
 (paren
@@ -2327,8 +2329,6 @@ DECL|macro|module_map
 mdefine_line|#define module_map      vmalloc
 DECL|macro|module_unmap
 mdefine_line|#define module_unmap    vfree
-DECL|macro|module_shrink
-mdefine_line|#define module_shrink&t;vshrink
 multiline_comment|/* Needs to be defined here and not in linux/mm.h, as it is arch dependent */
 DECL|macro|PageSkip
 mdefine_line|#define PageSkip(page)&t;&t;(test_bit(PG_skip, &amp;(page)-&gt;flags))

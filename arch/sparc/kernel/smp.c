@@ -171,16 +171,12 @@ id|NR_CPUS
 )braket
 suffix:semicolon
 multiline_comment|/* The only guaranteed locking primitive available on all Sparc&n; * processors is &squot;ldstub [%reg + immediate], %dest_reg&squot; which atomically&n; * places the current byte at the effective address into dest_reg and&n; * places 0xff there afterwards.  Pretty lame locking primitive&n; * compared to the Alpha and the Intel no?  Most Sparcs have &squot;swap&squot;&n; * instruction which is much better...&n; */
-DECL|variable|klock_info
-r_struct
-id|klock_info
-id|klock_info
+multiline_comment|/* Kernel spinlock */
+DECL|variable|kernel_flag
+id|spinlock_t
+id|kernel_flag
 op_assign
-(brace
-id|KLOCK_CLEAR
-comma
-l_int|0
-)brace
+id|SPIN_LOCK_UNLOCKED
 suffix:semicolon
 DECL|variable|ipi_count
 r_volatile
@@ -1043,7 +1039,7 @@ c_func
 r_void
 )paren
 (brace
-id|need_resched
+id|current-&gt;need_resched
 op_assign
 l_int|1
 suffix:semicolon

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: socket.h,v 1.4 1997/10/19 00:19:23 davem Exp $ */
+multiline_comment|/* $Id: socket.h,v 1.5 1998/07/22 22:06:49 davem Exp $ */
 macro_line|#ifndef _ASM_SOCKET_H
 DECL|macro|_ASM_SOCKET_H
 mdefine_line|#define _ASM_SOCKET_H
@@ -53,6 +53,10 @@ DECL|macro|SO_PRIORITY
 mdefine_line|#define SO_PRIORITY&t;0x000c
 DECL|macro|SO_BINDTODEVICE
 mdefine_line|#define SO_BINDTODEVICE 0x000d
+DECL|macro|SO_ATTACH_FILTER
+mdefine_line|#define SO_ATTACH_FILTER&t;0x001a
+DECL|macro|SO_DETACH_FILTER
+mdefine_line|#define SO_DETACH_FILTER        0x001b
 multiline_comment|/* Security levels - as per NRL IPv6 - don&squot;t actually do anything */
 DECL|macro|SO_SECURITY_AUTHENTICATION
 mdefine_line|#define SO_SECURITY_AUTHENTICATION&t;&t;0x5001

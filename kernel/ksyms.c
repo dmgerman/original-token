@@ -46,7 +46,7 @@ r_int
 r_char
 id|aux_device_present
 comma
-id|kbd_read_mask
+id|pckbd_read_mask
 suffix:semicolon
 macro_line|#if defined(CONFIG_PROC_FS)
 macro_line|#include &lt;linux/proc_fs.h&gt;
@@ -363,13 +363,6 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|max_mapnr
-)paren
-suffix:semicolon
-DECL|variable|num_physpages
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|num_physpages
 )paren
 suffix:semicolon
 DECL|variable|high_memory
@@ -1876,6 +1869,7 @@ c_func
 id|fasync_helper
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_PSMOUSE_MODULE
 multiline_comment|/* psaux mouse */
 DECL|variable|aux_device_present
 id|EXPORT_SYMBOL
@@ -1885,13 +1879,14 @@ id|aux_device_present
 )paren
 suffix:semicolon
 macro_line|#ifdef CONFIG_VT
-DECL|variable|kbd_read_mask
+DECL|variable|pckbd_read_mask
 id|EXPORT_SYMBOL
 c_func
 (paren
-id|kbd_read_mask
+id|pckbd_read_mask
 )paren
 suffix:semicolon
+macro_line|#endif
 macro_line|#endif
 macro_line|#ifdef CONFIG_BLK_DEV_MD
 DECL|variable|disk_name

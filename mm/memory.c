@@ -41,20 +41,6 @@ id|high_memory
 op_assign
 l_int|NULL
 suffix:semicolon
-multiline_comment|/* Low and high watermarks for page table cache.&n;   The system should try to have pgt_water[0] &lt;= cache elements &lt;= pgt_water[1]&n; */
-DECL|variable|pgt_cache_water
-r_int
-id|pgt_cache_water
-(braket
-l_int|2
-)braket
-op_assign
-(brace
-l_int|25
-comma
-l_int|50
-)brace
-suffix:semicolon
 multiline_comment|/*&n; * We special-case the C-O-W ZERO_PAGE, because it&squot;s such&n; * a common occurrence (no need to read the page to know&n; * that it&squot;s zero - better for the cache and memory subsystem).&n; */
 DECL|function|copy_cow_page
 r_static
@@ -328,6 +314,45 @@ id|pmd
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* Low and high watermarks for page table cache.&n;   The system should try to have pgt_water[0] &lt;= cache elements &lt;= pgt_water[1]&n; */
+DECL|variable|pgt_cache_water
+r_int
+id|pgt_cache_water
+(braket
+l_int|2
+)braket
+op_assign
+(brace
+l_int|25
+comma
+l_int|50
+)brace
+suffix:semicolon
+multiline_comment|/* Returns the number of pages freed */
+DECL|function|check_pgt_cache
+r_int
+id|check_pgt_cache
+c_func
+(paren
+r_void
+)paren
+(brace
+r_return
+id|do_check_pgt_cache
+c_func
+(paren
+id|pgt_cache_water
+(braket
+l_int|0
+)braket
+comma
+id|pgt_cache_water
+(braket
+l_int|1
+)braket
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/*&n; * This function clears all user-level page tables of a process - this&n; * is needed by execve(), so that old pages aren&squot;t in the way.&n; */
 DECL|function|clear_page_tables
 r_void
@@ -385,18 +410,9 @@ id|i
 )paren
 suffix:semicolon
 multiline_comment|/* keep the page table cache within bounds */
-id|do_check_pgt_cache
+id|check_pgt_cache
 c_func
 (paren
-id|pgtable_cache_water
-(braket
-l_int|0
-)braket
-comma
-id|pgtable_cache_water
-(braket
-l_int|1
-)braket
 )paren
 suffix:semicolon
 r_return
@@ -484,18 +500,9 @@ id|page_dir
 )paren
 suffix:semicolon
 multiline_comment|/* keep the page table cache within bounds */
-id|do_check_pgt_cache
+id|check_pgt_cache
 c_func
 (paren
-id|pgtable_cache_water
-(braket
-l_int|0
-)braket
-comma
-id|pgtable_cache_water
-(braket
-l_int|1
-)braket
 )paren
 suffix:semicolon
 id|out
@@ -4451,30 +4458,5 @@ op_add_assign
 id|PAGE_SIZE
 suffix:semicolon
 )brace
-)brace
-multiline_comment|/* Returns the number of pages freed */
-DECL|function|check_pgt_cache
-r_int
-id|check_pgt_cache
-c_func
-(paren
-r_void
-)paren
-(brace
-r_return
-id|do_check_pgt_cache
-c_func
-(paren
-id|pgtable_cache_water
-(braket
-l_int|0
-)braket
-comma
-id|pgtable_cache_water
-(braket
-l_int|1
-)braket
-)paren
-suffix:semicolon
 )brace
 eof

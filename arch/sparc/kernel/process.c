@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: process.c,v 1.110 1998/04/08 16:15:51 jj Exp $&n; *  linux/arch/sparc/kernel/process.c&n; *&n; *  Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1996 Eddie C. Dost   (ecd@skynet.be)&n; */
+multiline_comment|/*  $Id: process.c,v 1.118 1998/08/04 20:48:47 davem Exp $&n; *  linux/arch/sparc/kernel/process.c&n; *&n; *  Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1996 Eddie C. Dost   (ecd@skynet.be)&n; */
 multiline_comment|/*&n; * This file handles the architecture-dependent parts of process handling..&n; */
 DECL|macro|__KERNEL_SYSCALLS__
 mdefine_line|#define __KERNEL_SYSCALLS__
@@ -17,6 +17,7 @@ macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/smp.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/reboot.h&gt;
+macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;asm/auxio.h&gt;
 macro_line|#include &lt;asm/oplib.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
@@ -48,6 +49,14 @@ r_int
 r_int
 op_star
 )paren
+suffix:semicolon
+DECL|variable|last_task_used_math
+r_struct
+id|task_struct
+op_star
+id|last_task_used_math
+op_assign
+l_int|NULL
 suffix:semicolon
 DECL|variable|current_set
 r_struct
@@ -358,7 +367,7 @@ c_cond
 op_logical_neg
 id|smp_commenced
 op_logical_or
-id|need_resched
+id|current-&gt;need_resched
 )paren
 (brace
 id|schedule
@@ -411,9 +420,12 @@ suffix:semicolon
 macro_line|#ifdef CONFIG_SUN_CONSOLE
 r_extern
 r_void
-id|console_restore_palette
 (paren
-r_void
+op_star
+id|prom_palette
+)paren
+(paren
+r_int
 )paren
 suffix:semicolon
 r_extern
@@ -451,9 +463,12 @@ c_cond
 (paren
 op_logical_neg
 id|serial_console
+op_logical_and
+id|prom_palette
 )paren
-id|console_restore_palette
+id|prom_palette
 (paren
+l_int|1
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -524,9 +539,12 @@ c_cond
 (paren
 op_logical_neg
 id|serial_console
+op_logical_and
+id|prom_palette
 )paren
-id|console_restore_palette
+id|prom_palette
 (paren
+l_int|1
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -1442,24 +1460,6 @@ multiline_comment|/* XXX missing: fpqueue */
 id|printk
 c_func
 (paren
-l_string|&quot;sstk_info.stack:   0x%08lx  sstk_info.status:  0x%08lx&bslash;n&quot;
-comma
-(paren
-r_int
-r_int
-)paren
-id|tss-&gt;sstk_info.the_stack
-comma
-(paren
-r_int
-r_int
-)paren
-id|tss-&gt;sstk_info.cur_status
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
 l_string|&quot;flags:             0x%08lx  current_ds:        0x%08lx&bslash;n&quot;
 comma
 id|tss-&gt;flags
@@ -1566,14 +1566,6 @@ r_void
 )paren
 (brace
 id|current-&gt;tss.w_saved
-op_assign
-l_int|0
-suffix:semicolon
-id|current-&gt;tss.sstk_info.cur_status
-op_assign
-l_int|0
-suffix:semicolon
-id|current-&gt;tss.sstk_info.the_stack
 op_assign
 l_int|0
 suffix:semicolon
@@ -2250,7 +2242,12 @@ r_struct
 id|sparc_stackf
 op_star
 )paren
+(paren
 id|sp
+op_amp
+op_complement
+l_int|0x7UL
+)paren
 suffix:semicolon
 id|parentstack
 op_assign

@@ -16,7 +16,7 @@ macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;
 DECL|macro|DEFINE
 mdefine_line|#define DEFINE(sym, val) &bslash;&n;&t;asm volatile(&quot;&bslash;n#define&bslash;t&quot; #sym &quot;&bslash;t%0&quot; : : &quot;i&quot; (val))
-r_void
+r_int
 DECL|function|main
 id|main
 c_func
@@ -231,6 +231,20 @@ r_struct
 id|task_struct
 comma
 id|flags
+)paren
+)paren
+suffix:semicolon
+id|DEFINE
+c_func
+(paren
+id|NEED_RESCHED
+comma
+m_offsetof
+(paren
+r_struct
+id|task_struct
+comma
+id|need_resched
 )paren
 )paren
 suffix:semicolon
@@ -1099,6 +1113,9 @@ comma
 id|trap
 )paren
 )paren
+suffix:semicolon
+r_return
+l_int|0
 suffix:semicolon
 )brace
 eof

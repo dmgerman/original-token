@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: flash.c,v 1.7 1998/03/10 20:19:05 jj Exp $&n; * flash.c: Allow mmap access to the OBP Flash, for OBP updates.&n; *&n; * Copyright (C) 1997  Eddie C. Dost  (ecd@skynet.be)&n; */
+multiline_comment|/* $Id: flash.c,v 1.9 1998/05/17 06:33:39 ecd Exp $&n; * flash.c: Allow mmap access to the OBP Flash, for OBP updates.&n; *&n; * Copyright (C) 1997  Eddie C. Dost  (ecd@skynet.be)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -596,6 +596,8 @@ r_int
 id|len
 comma
 id|err
+comma
+id|nregs
 suffix:semicolon
 id|for_all_sbusdev
 c_func
@@ -818,13 +820,20 @@ id|sdev
 )paren
 (brace
 macro_line|#ifdef CONFIG_PCI
-id|for_all_ebusdev
+id|for_each_ebus
+c_func
+(paren
+id|ebus
+)paren
+(brace
+id|for_each_ebusdev
 c_func
 (paren
 id|edev
 comma
 id|ebus
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -837,8 +846,13 @@ comma
 l_string|&quot;flashprom&quot;
 )paren
 )paren
-r_break
+r_goto
+id|ebus_done
 suffix:semicolon
+)brace
+)brace
+id|ebus_done
+suffix:colon
 r_if
 c_cond
 (paren
@@ -873,12 +887,19 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+(paren
 id|len
-op_ne
+op_mod
 r_sizeof
 (paren
 id|regs
+(braket
+l_int|0
+)braket
 )paren
+)paren
+op_ne
+l_int|0
 )paren
 (brace
 id|printk
@@ -894,6 +915,18 @@ op_minus
 id|ENODEV
 suffix:semicolon
 )brace
+id|nregs
+op_assign
+id|len
+op_div
+r_sizeof
+(paren
+id|regs
+(braket
+l_int|0
+)braket
+)paren
+suffix:semicolon
 id|flash.read_base
 op_assign
 id|edev-&gt;base_address
@@ -910,6 +943,40 @@ l_int|0
 dot
 id|reg_size
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|nregs
+op_eq
+l_int|1
+)paren
+(brace
+id|flash.write_base
+op_assign
+id|edev-&gt;base_address
+(braket
+l_int|0
+)braket
+suffix:semicolon
+id|flash.write_size
+op_assign
+id|regs
+(braket
+l_int|0
+)braket
+dot
+id|reg_size
+suffix:semicolon
+)brace
+r_else
+r_if
+c_cond
+(paren
+id|nregs
+op_eq
+l_int|2
+)paren
+(brace
 id|flash.write_base
 op_assign
 id|edev-&gt;base_address
@@ -926,6 +993,22 @@ l_int|1
 dot
 id|reg_size
 suffix:semicolon
+)brace
+r_else
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;flash: Strange number of regs %d&bslash;n&quot;
+comma
+id|nregs
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|ENODEV
+suffix:semicolon
+)brace
 id|flash.busy
 op_assign
 l_int|0

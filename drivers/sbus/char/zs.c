@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: zs.c,v 1.20 1998/02/25 23:51:57 ecd Exp $&n; * zs.c: Zilog serial port driver for the Sparc.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost   (ecd@skynet.be)&n; * Fixes by Pete A. Zaitcev &lt;zaitcev@ipmce.su&gt;.&n; */
+multiline_comment|/* $Id: zs.c,v 1.26 1998/08/03 23:58:14 davem Exp $&n; * zs.c: Zilog serial port driver for the Sparc.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost   (ecd@skynet.be)&n; * Fixes by Pete A. Zaitcev &lt;zaitcev@ipmce.su&gt;.&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -1650,13 +1650,6 @@ r_void
 suffix:semicolon
 multiline_comment|/* For the KGDB frame character */
 macro_line|#endif
-macro_line|#ifdef CONFIG_MAGIC_SYSRQ
-DECL|variable|serial_sysrq
-r_static
-r_int
-id|serial_sysrq
-suffix:semicolon
-macro_line|#endif
 DECL|function|receive_chars
 r_static
 id|_INLINE_
@@ -1833,66 +1826,6 @@ c_cond
 id|info-&gt;is_cons
 )paren
 (brace
-macro_line|#ifdef CONFIG_MAGIC_SYSRQ
-r_if
-c_cond
-(paren
-op_logical_neg
-id|ch
-)paren
-(brace
-id|serial_sysrq
-op_assign
-l_int|1
-suffix:semicolon
-r_return
-suffix:semicolon
-)brace
-r_else
-r_if
-c_cond
-(paren
-id|serial_sysrq
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|ch
-op_eq
-l_char|&squot;a&squot;
-op_logical_or
-id|ch
-op_eq
-l_char|&squot;A&squot;
-)paren
-multiline_comment|/* whee, break-A received */
-id|batten_down_hatches
-c_func
-(paren
-)paren
-suffix:semicolon
-r_else
-id|handle_sysrq
-c_func
-(paren
-id|ch
-comma
-id|regs
-comma
-l_int|NULL
-comma
-l_int|NULL
-)paren
-suffix:semicolon
-id|serial_sysrq
-op_assign
-l_int|0
-suffix:semicolon
-r_return
-suffix:semicolon
-)brace
-macro_line|#else
 r_if
 c_cond
 (paren
@@ -1911,7 +1844,6 @@ multiline_comment|/* Continue execution... */
 r_return
 suffix:semicolon
 )brace
-macro_line|#endif
 multiline_comment|/* It is a &squot;keyboard interrupt&squot; ;-) */
 id|wake_up
 c_func
@@ -2323,18 +2255,11 @@ op_logical_and
 id|info-&gt;break_abort
 )paren
 (brace
-macro_line|#ifdef CONFIG_MAGIC_SYSRQ
-id|serial_sysrq
-op_assign
-l_int|1
-suffix:semicolon
-macro_line|#else
 id|batten_down_hatches
 c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#endif
 )brace
 multiline_comment|/* XXX Whee, put in a buffer somewhere, the status information&n;&t; * XXX whee whee whee... Where does the information go...&n;&t; */
 r_return
@@ -7699,7 +7624,7 @@ r_char
 op_star
 id|revision
 op_assign
-l_string|&quot;$Revision: 1.20 $&quot;
+l_string|&quot;$Revision: 1.26 $&quot;
 suffix:semicolon
 r_char
 op_star
@@ -7750,18 +7675,6 @@ suffix:semicolon
 )brace
 multiline_comment|/* Probe the PROM for the request zs chip number.&n; *&n; * Note: The Sun Voyager shows two addresses and two intr for it&squot;s&n; *       Zilogs, what the second does, I don&squot;t know. It does work&n; *       with using only the first number of each property.  Also&n; *       we have a special version for sun4u.&n; */
 macro_line|#ifdef __sparc_v9__
-DECL|variable|zs_dcookie
-r_static
-r_struct
-id|devid_cookie
-id|zs_dcookie
-suffix:semicolon
-DECL|variable|zs_irq_flags
-r_static
-r_int
-r_int
-id|zs_irq_flags
-suffix:semicolon
 DECL|function|__initfunc
 id|__initfunc
 c_func
@@ -8028,96 +7941,46 @@ op_logical_neg
 id|irq
 )paren
 (brace
-id|irq
-op_assign
-id|zilog_irq
-op_assign
-id|sun4u_ino
-suffix:semicolon
-multiline_comment|/* Construct dcookie. */
 r_if
 c_cond
 (paren
 id|central_bus
 )paren
 (brace
-id|zs_dcookie.imap
-op_assign
-op_amp
-id|central_bus-&gt;child-&gt;fhc_regs.uregs-&gt;fhc_uart_imap
-suffix:semicolon
-id|zs_dcookie.iclr
-op_assign
-op_amp
-id|central_bus-&gt;child-&gt;fhc_regs.uregs-&gt;fhc_uart_iclr
-suffix:semicolon
-id|zs_dcookie.pil
-op_assign
-l_int|12
-suffix:semicolon
-id|zs_dcookie.bus_cookie
-op_assign
-l_int|NULL
-suffix:semicolon
-id|zs_irq_flags
-op_assign
-(paren
-id|SA_DCOOKIE
-op_or
-id|SA_INTERRUPT
-op_or
-id|SA_STATIC_ALLOC
-op_or
-id|SA_FHC
-)paren
-suffix:semicolon
-)brace
-r_else
-(brace
-id|zs_dcookie.imap
-op_assign
-id|zs_dcookie.iclr
-op_assign
-l_int|NULL
-suffix:semicolon
-id|zs_dcookie.pil
-op_assign
-op_minus
-l_int|1
-suffix:semicolon
-id|zs_dcookie.bus_cookie
-op_assign
-id|SBus_chain
-suffix:semicolon
-id|zs_irq_flags
-op_assign
-(paren
-id|SA_DCOOKIE
-op_or
-id|SA_INTERRUPT
-op_or
-id|SA_STATIC_ALLOC
-op_or
-id|SA_SBUS
-)paren
-suffix:semicolon
-)brace
-)brace
-r_else
-r_if
-c_cond
-(paren
 id|irq
-op_ne
-id|sun4u_ino
-)paren
-(brace
-id|panic
+op_assign
+id|zilog_irq
+op_assign
+id|build_irq
 c_func
 (paren
-l_string|&quot;zilog: bogon irqs&quot;
+l_int|12
+comma
+l_int|0
+comma
+op_amp
+id|central_bus-&gt;child-&gt;fhc_regs.uregs-&gt;fhc_uart_iclr
+comma
+op_amp
+id|central_bus-&gt;child-&gt;fhc_regs.uregs-&gt;fhc_uart_imap
 )paren
 suffix:semicolon
+)brace
+r_else
+(brace
+id|irq
+op_assign
+id|zilog_irq
+op_assign
+id|sbus_build_irq
+c_func
+(paren
+id|SBus_chain
+comma
+id|sun4u_ino
+)paren
+suffix:semicolon
+)brace
 )brace
 r_break
 suffix:semicolon
@@ -11677,13 +11540,17 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;tty%02d at 0x%04x (irq = %d)&quot;
+l_string|&quot;tty%02d at 0x%04x (irq = %s)&quot;
 comma
 id|info-&gt;line
 comma
 id|info-&gt;port
 comma
+id|__irq_itoa
+c_func
+(paren
 id|info-&gt;irq
+)paren
 )paren
 suffix:semicolon
 id|printk
@@ -11693,7 +11560,6 @@ l_string|&quot; is a Zilog8530&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifndef __sparc_v9__
 r_if
 c_cond
 (paren
@@ -11721,36 +11587,6 @@ c_func
 l_string|&quot;Unable to attach zs intr&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#else
-id|zs_dcookie.real_dev_id
-op_assign
-id|zs_chain
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|request_irq
-c_func
-(paren
-id|zilog_irq
-comma
-id|zs_interrupt
-comma
-id|zs_irq_flags
-comma
-l_string|&quot;Zilog8530&quot;
-comma
-op_amp
-id|zs_dcookie
-)paren
-)paren
-id|panic
-c_func
-(paren
-l_string|&quot;Unable to attach zs intr&bslash;n&quot;
-)paren
-suffix:semicolon
-macro_line|#endif
 id|restore_flags
 c_func
 (paren

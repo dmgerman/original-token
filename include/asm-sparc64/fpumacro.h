@@ -3,6 +3,7 @@ macro_line|#ifndef _SPARC64_FPUMACRO_H
 DECL|macro|_SPARC64_FPUMACRO_H
 mdefine_line|#define _SPARC64_FPUMACRO_H
 macro_line|#include &lt;asm/asi.h&gt;
+macro_line|#include &lt;asm/visasm.h&gt;
 DECL|struct|fpustate
 r_struct
 id|fpustate
@@ -14,18 +15,10 @@ id|regs
 l_int|64
 )braket
 suffix:semicolon
-DECL|member|fsr
-id|u64
-id|fsr
-suffix:semicolon
-DECL|member|gsr
-id|u64
-id|gsr
-suffix:semicolon
 )brace
 suffix:semicolon
 DECL|macro|FPUSTATE
-mdefine_line|#define FPUSTATE (struct fpustate *)(((unsigned long)current) + (((PAGE_SIZE&lt;&lt;1)-((64*4)+(2*8))) &amp; ~(64 - 1)))
+mdefine_line|#define FPUSTATE (struct fpustate *)(((unsigned long)current) + AOFF_task_fpregs)
 DECL|function|fprs_read
 r_extern
 id|__inline__

@@ -1687,7 +1687,7 @@ op_lshift
 id|MSC_INTR_QBMFUL_SH
 )paren
 suffix:semicolon
-id|need_resched
+id|current-&gt;need_resched
 op_assign
 l_int|1
 suffix:semicolon

@@ -1403,15 +1403,19 @@ suffix:semicolon
 )brace
 r_else
 (brace
-macro_line|#ifdef __sparc_v9__
+macro_line|#ifdef __sparc__
 id|printk
 c_func
 (paren
-l_string|&quot;%s: 100%% native mode on irq %08x&bslash;n&quot;
+l_string|&quot;%s: 100%% native mode on irq %s&bslash;n&quot;
 comma
 id|d-&gt;name
 comma
+id|__irq_itoa
+c_func
+(paren
 id|pciirq
+)paren
 )paren
 suffix:semicolon
 macro_line|#else

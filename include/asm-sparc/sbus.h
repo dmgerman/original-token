@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sbus.h,v 1.14 1998/03/09 14:04:56 jj Exp $&n; * sbus.h:  Defines for the Sun SBus.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: sbus.h,v 1.15 1998/05/22 14:33:36 jj Exp $&n; * sbus.h:  Defines for the Sun SBus.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _SPARC_SBUS_H
 DECL|macro|_SPARC_SBUS_H
 mdefine_line|#define _SPARC_SBUS_H
@@ -167,11 +167,11 @@ comma
 id|ranges_applied
 suffix:semicolon
 DECL|member|irqs
-r_struct
-id|linux_prom_irqs
+r_int
+r_int
 id|irqs
 (braket
-id|PROMINTR_MAX
+l_int|4
 )braket
 suffix:semicolon
 DECL|member|num_irqs

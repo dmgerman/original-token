@@ -49,6 +49,10 @@ DECL|macro|PMU_INT_ADB
 mdefine_line|#define PMU_INT_ADB&t;&t;0x10&t;/* ADB autopoll or reply data */
 DECL|macro|PMU_INT_TICK
 mdefine_line|#define PMU_INT_TICK&t;&t;0x80&t;/* 1-second tick interrupt */
+multiline_comment|/*&n; * Ioctl commands for the /dev/pmu device&n; */
+macro_line|#include &lt;linux/ioctl.h&gt;
+DECL|macro|PMU_IOC_SLEEP
+mdefine_line|#define PMU_IOC_SLEEP&t;&t;_IO(&squot;B&squot;, 0)
 macro_line|#ifdef __KERNEL__
 r_void
 id|find_via_pmu
@@ -117,5 +121,18 @@ r_int
 id|on
 )paren
 suffix:semicolon
+multiline_comment|/*&n; * Stuff for putting the powerbook to sleep and waking it again.&n; */
+macro_line|#include &lt;linux/notifier.h&gt;
+r_extern
+r_struct
+id|notifier_block
+op_star
+id|sleep_notifier_list
+suffix:semicolon
+multiline_comment|/* code values for calling sleep/wakeup handlers */
+DECL|macro|PBOOK_SLEEP
+mdefine_line|#define PBOOK_SLEEP&t;1
+DECL|macro|PBOOK_WAKE
+mdefine_line|#define PBOOK_WAKE&t;2
 macro_line|#endif&t;/* __KERNEL */
 eof

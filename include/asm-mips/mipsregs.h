@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * include/asm-mips/mipsregs.h&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1994, 1995, 1996, 1997 by Ralf Baechle&n; * Modified for further R[236]000 support by Paul M. Antoine, 1996.&n; *&n; * $Id: mipsregs.h,v 1.6 1998/05/01 01:35:58 ralf Exp $&n; */
+multiline_comment|/*&n; * include/asm-mips/mipsregs.h&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1994, 1995, 1996, 1997 by Ralf Baechle&n; * Modified for further R[236]000 support by Paul M. Antoine, 1996.&n; *&n; * $Id: mipsregs.h,v 1.7 1998/05/21 07:37:31 davem Exp $&n; */
 macro_line|#ifndef __ASM_MIPS_MIPSREGS_H
 DECL|macro|__ASM_MIPS_MIPSREGS_H
 mdefine_line|#define __ASM_MIPS_MIPSREGS_H

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * $Id: smp.c,v 1.24 1998/04/27 09:02:37 cort Exp $&n; *&n; * Smp support for ppc.&n; *&n; * Written by Cort Dougan (cort@cs.nmt.edu) borrowing a great&n; * deal of code from the sparc and intel versions.&n; */
+multiline_comment|/*&n; * $Id: smp.c,v 1.28 1998/08/04 04:47:45 cort Exp $&n; *&n; * Smp support for ppc.&n; *&n; * Written by Cort Dougan (cort@cs.nmt.edu) borrowing a great&n; * deal of code from the sparc and intel versions.&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/tasks.h&gt;
@@ -119,6 +119,12 @@ r_volatile
 r_int
 r_int
 id|ipi_count
+suffix:semicolon
+DECL|variable|kernel_flag
+id|spinlock_t
+id|kernel_flag
+op_assign
+id|SPIN_LOCK_UNLOCKED
 suffix:semicolon
 DECL|variable|prof_multiplier
 r_int
@@ -276,7 +282,7 @@ id|p-&gt;counter
 op_assign
 l_int|0
 suffix:semicolon
-id|need_resched
+id|current-&gt;need_resched
 op_assign
 l_int|1
 suffix:semicolon
@@ -454,6 +460,17 @@ op_assign
 op_minus
 l_int|1
 suffix:semicolon
+)brace
+DECL|function|smp_send_reschedule
+r_void
+id|smp_send_reschedule
+c_func
+(paren
+r_int
+id|cpu
+)paren
+(brace
+multiline_comment|/* for now, nothing */
 )brace
 DECL|variable|mesg_pass_lock
 id|spinlock_t
@@ -849,41 +866,13 @@ c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/* wait to see if the secondary made a callin (is actually up) */
-r_for
-c_loop
-(paren
-id|timeout
-op_assign
-l_int|0
-suffix:semicolon
-id|timeout
-OL
-l_int|15000
-suffix:semicolon
-id|timeout
-op_increment
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|cpu_callin_map
-(braket
-l_int|1
-)braket
-)paren
-(brace
-r_break
-suffix:semicolon
-)brace
+multiline_comment|/*&n;&t; * wait to see if the secondary made a callin (is actually up).&n;&t; * udelay() isn&squot;t accurate here since we haven&squot;t yet called&n;&t; * calibrate_delay() so use this value that I found through&n;&t; * experimentation.  -- Cort&n;&t; */
 id|udelay
 c_func
 (paren
-l_int|100
+l_int|1
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren

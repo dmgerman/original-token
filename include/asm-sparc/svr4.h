@@ -277,8 +277,8 @@ DECL|enum|svr4_stack_flags
 r_enum
 id|svr4_stack_flags
 (brace
-DECL|enumerator|SS_ONSTACK
-id|SS_ONSTACK
+DECL|enumerator|SVR4_SS_ONSTACK
+id|SVR4_SS_ONSTACK
 comma
 DECL|enumerator|SVR4_SS_DISABLE
 id|SVR4_SS_DISABLE

@@ -1,38 +1,27 @@
-multiline_comment|/* $Id: irq.h,v 1.22 1998/02/05 14:20:05 jj Exp $&n; * irq.h: IRQ registers on the Sparc.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: irq.h,v 1.25 1998/06/04 09:55:04 jj Exp $&n; * irq.h: IRQ registers on the Sparc.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _SPARC_IRQ_H
 DECL|macro|_SPARC_IRQ_H
 mdefine_line|#define _SPARC_IRQ_H
 macro_line|#include &lt;linux/linkage.h&gt;
 macro_line|#include &lt;asm/system.h&gt;     /* For NCPUS */
 macro_line|#include &lt;asm/btfixup.h&gt;
-multiline_comment|/* This is used for sun4d */
-DECL|struct|devid_cookie
-r_struct
-id|devid_cookie
-(brace
-multiline_comment|/* Caller specifies these. */
-DECL|member|real_dev_id
-r_void
+DECL|macro|__irq_ino
+mdefine_line|#define __irq_ino(irq) irq
+DECL|macro|__irq_pil
+mdefine_line|#define __irq_pil(irq) irq
+id|BTFIXUPDEF_CALL
+c_func
+(paren
+r_char
 op_star
-id|real_dev_id
-suffix:semicolon
-multiline_comment|/* What dev_id would usually contain. */
-DECL|member|bus_cookie
-r_void
-op_star
-id|bus_cookie
-suffix:semicolon
-multiline_comment|/* linux_sbus_device *, etc. */
-multiline_comment|/* Return values. */
-DECL|member|ret_ino
+comma
+id|__irq_itoa
+comma
 r_int
 r_int
-id|ret_ino
-suffix:semicolon
-)brace
-suffix:semicolon
-DECL|macro|SA_DCOOKIE
-mdefine_line|#define SA_DCOOKIE      0x10000
+)paren
+DECL|macro|__irq_itoa
+mdefine_line|#define __irq_itoa(irq) BTFIXUP_CALL(__irq_itoa)(irq)
 DECL|macro|NR_IRQS
 mdefine_line|#define NR_IRQS    15
 multiline_comment|/* Get rid of this when lockups have gone away. -DaveM */
@@ -72,7 +61,6 @@ id|irq
 )paren
 suffix:semicolon
 macro_line|#else
-DECL|function|irq_enter
 r_extern
 id|__inline__
 r_void
@@ -156,7 +144,6 @@ l_string|&quot;cc&quot;
 )paren
 suffix:semicolon
 )brace
-DECL|function|irq_exit
 r_extern
 id|__inline__
 r_void
@@ -240,9 +227,7 @@ suffix:semicolon
 )brace
 macro_line|#endif /* DEBUG_IRQLOCK */
 macro_line|#else
-DECL|macro|irq_enter
 mdefine_line|#define irq_enter(cpu, irq, regs)&t;(local_irq_count[cpu]++)
-DECL|macro|irq_exit
 mdefine_line|#define irq_exit(cpu, irq)&t;&t;(local_irq_count[cpu]--)
 macro_line|#endif
 multiline_comment|/* Dave Redman (djhr@tadpole.co.uk)&n; * changed these to function pointers.. it saves cycles and will allow&n; * the irq dependencies to be split into different files at a later date&n; * sun4c_irq.c, sun4m_irq.c etc so we could reduce the kernel size.&n; * Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; * Changed these to btfixup entities... It saves cycles :)&n; */

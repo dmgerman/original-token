@@ -753,6 +753,26 @@ r_do
 r_if
 c_cond
 (paren
+id|PageSkip
+c_func
+(paren
+id|page
+)paren
+)paren
+(brace
+multiline_comment|/* next_hash is overloaded for PageSkip */
+id|page
+op_assign
+id|page-&gt;next_hash
+suffix:semicolon
+id|clock
+op_assign
+id|page-&gt;map_nr
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
 id|shrink_one_page
 c_func
 (paren
@@ -788,7 +808,7 @@ c_cond
 (paren
 id|clock
 op_ge
-id|limit
+id|max_mapnr
 )paren
 (brace
 id|clock

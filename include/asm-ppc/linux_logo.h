@@ -7,8 +7,10 @@ mdefine_line|#define LINUX_LOGO_HEIGHT&t;80
 DECL|macro|LINUX_LOGO_WIDTH
 mdefine_line|#define LINUX_LOGO_WIDTH&t;80
 DECL|macro|LINUX_LOGO_COLORS
-mdefine_line|#define LINUX_LOGO_COLORS&t;221
+mdefine_line|#define LINUX_LOGO_COLORS&t;214
 macro_line|#ifdef INCLUDE_LINUX_LOGO_DATA
+DECL|macro|INCLUDE_LINUX_LOGOBW
+mdefine_line|#define INCLUDE_LINUX_LOGOBW
 DECL|macro|INCLUDE_LINUX_LOGO16
 mdefine_line|#define INCLUDE_LINUX_LOGO16
 macro_line|#include &lt;linux/linux_logo.h&gt;

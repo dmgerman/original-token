@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: processor.h,v 1.43 1998/04/23 08:26:30 davem Exp $&n; * include/asm-sparc64/processor.h&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: processor.h,v 1.49 1998/07/31 10:42:40 jj Exp $&n; * include/asm-sparc64/processor.h&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef __ASM_SPARC64_PROCESSOR_H
 DECL|macro|__ASM_SPARC64_PROCESSOR_H
 mdefine_line|#define __ASM_SPARC64_PROCESSOR_H
@@ -30,11 +30,9 @@ macro_line|#else
 DECL|macro|TASK_SIZE
 mdefine_line|#define TASK_SIZE&t;0xfffffffc00000000
 macro_line|#endif
-DECL|macro|COPY_TASK_STRUCT
-mdefine_line|#define COPY_TASK_STRUCT(dst, src)&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;do {&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;if (src-&gt;tss.w_saved)&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;*dst = *src;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;else {&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;memcpy (dst, src, ((const unsigned long)(&amp;((struct task_struct *)0)-&gt;tss.reg_window)));&t;&t;&bslash;&n;&t;&t;memcpy ((char *)dst + ((const unsigned long)(&amp;((struct task_struct *)0)-&gt;tss.sig_address)),&t;&bslash;&n;&t;&t;&t;(char *)src + ((const unsigned long)(&amp;((struct task_struct *)0)-&gt;tss.sig_address)),&t;&bslash;&n;&t;&t;&t;sizeof(struct task_struct) - &t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;  ((const unsigned long)(&amp;((struct task_struct *)0)-&gt;tss.sig_address)));&t;&t;&bslash;&n;&t;}&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;} while (0)
 macro_line|#ifndef __ASSEMBLY__
 DECL|macro|NSWINS
-mdefine_line|#define NSWINS&t;&t;8
+mdefine_line|#define NSWINS&t;&t;7
 r_typedef
 r_struct
 (brace
@@ -68,11 +66,6 @@ l_int|16
 )paren
 )paren
 suffix:semicolon
-DECL|member|kpc
-r_int
-r_int
-id|kpc
-suffix:semicolon
 DECL|member|wstate
 r_int
 r_int
@@ -84,7 +77,6 @@ r_int
 id|cwp
 suffix:semicolon
 DECL|member|flags
-multiline_comment|/*DC2*/
 r_int
 r_int
 id|flags
@@ -95,6 +87,7 @@ r_int
 id|ctx
 suffix:semicolon
 DECL|member|w_saved
+multiline_comment|/*DC2*/
 r_int
 r_int
 id|w_saved
@@ -103,6 +96,11 @@ DECL|member|new_signal
 r_int
 r_int
 id|new_signal
+suffix:semicolon
+DECL|member|___pad
+r_int
+r_int
+id|___pad
 suffix:semicolon
 DECL|member|current_ds
 id|mm_segment_t
@@ -174,32 +172,52 @@ r_int
 r_int
 id|sig_desc
 suffix:semicolon
-DECL|member|sstk_info
-r_struct
-id|sigstack
-id|sstk_info
+DECL|member|fpdepth
+r_int
+r_char
+id|fpdepth
+suffix:semicolon
+DECL|member|fpsaved
+r_int
+r_char
+id|fpsaved
+(braket
+l_int|7
+)braket
+suffix:semicolon
+DECL|member|gsr
+r_int
+r_char
+id|gsr
+(braket
+l_int|7
+)braket
+suffix:semicolon
+DECL|member|xfsr
+r_int
+r_int
+id|xfsr
+(braket
+l_int|7
+)braket
 suffix:semicolon
 )brace
 suffix:semicolon
 macro_line|#endif /* !(__ASSEMBLY__) */
-DECL|macro|SPARC_FLAG_USEDFPUL
-mdefine_line|#define SPARC_FLAG_USEDFPUL&t;0x01    /* Used f0-f31 */
-DECL|macro|SPARC_FLAG_USEDFPUU
-mdefine_line|#define SPARC_FLAG_USEDFPUU&t;0x02    /* Used f32-f62 */
-DECL|macro|SPARC_FLAG_USEDFPU
-mdefine_line|#define SPARC_FLAG_USEDFPU&t;0x04    /* If ever FEF bit was set while TSTATE_PEF */
 DECL|macro|SPARC_FLAG_KTHREAD
-mdefine_line|#define SPARC_FLAG_KTHREAD      0x10    /* task is a kernel thread */
+mdefine_line|#define SPARC_FLAG_KTHREAD      0x010    /* task is a kernel thread */
 DECL|macro|SPARC_FLAG_UNALIGNED
-mdefine_line|#define SPARC_FLAG_UNALIGNED    0x20    /* is allowed to do unaligned accesses */
+mdefine_line|#define SPARC_FLAG_UNALIGNED    0x020    /* is allowed to do unaligned accesses */
 DECL|macro|SPARC_FLAG_NEWSIGNALS
-mdefine_line|#define SPARC_FLAG_NEWSIGNALS   0x40    /* task wants new-style signals */
+mdefine_line|#define SPARC_FLAG_NEWSIGNALS   0x040    /* task wants new-style signals */
 DECL|macro|SPARC_FLAG_32BIT
-mdefine_line|#define SPARC_FLAG_32BIT        0x80    /* task is older 32-bit binary */
+mdefine_line|#define SPARC_FLAG_32BIT        0x080    /* task is older 32-bit binary */
+DECL|macro|SPARC_FLAG_NEWCHILD
+mdefine_line|#define SPARC_FLAG_NEWCHILD     0x100    /* task is just-spawned child process */
 DECL|macro|INIT_MMAP
 mdefine_line|#define INIT_MMAP { &amp;init_mm, 0xfffff80000000000, 0xfffff80001000000, &bslash;&n;&t;&t;    PAGE_SHARED , VM_READ | VM_WRITE | VM_EXEC, NULL, &amp;init_mm.mmap }
 DECL|macro|INIT_TSS
-mdefine_line|#define INIT_TSS  {&t;&t;&t;&t;&t;&t;&bslash;&n;/* ksp, kpc, wstate, cwp */ &t;&t;&t;&t;&t;&bslash;&n;   0,   0,   0,&t;     0,&t;&t;&t;&t;&t;&t;&bslash;&n;/* flags,              ctx, w_saved, new_signal, current_ds, */&t;&bslash;&n;   SPARC_FLAG_KTHREAD, 0,   0,       0,          KERNEL_DS,&t;&bslash;&n;/* kregs,   utraps, */&t;&t;&t;&t;&t;&t;&bslash;&n;   0,       0,&t;&t;&t;&t;&t;&t;&t;&bslash;&n;/* reg_window */&t;&t;&t;&t;&t;&t;&bslash;&n;   { { { 0, }, { 0, } }, }, &t;&t;&t;&t;&t;&bslash;&n;/* rwbuf_stkptrs */&t;&t;&t;&t;&t;&t;&bslash;&n;   { 0, 0, 0, 0, 0, 0, 0, 0, },&t;&t;&t;&t;&t;&bslash;&n;/* sig_address, sig_desc, sstk_info */&t;&t;&t;&t;&bslash;&n;   0,           0,        { 0, 0, },&t;&t;&t;&t;&bslash;&n;}
+mdefine_line|#define INIT_TSS  {&t;&t;&t;&t;&t;&t;&bslash;&n;/* ksp, wstate, cwp, flags,              ctx, */ &t;&t;&bslash;&n;   0,   0,      0,   SPARC_FLAG_KTHREAD, 0,&t;&t;&t;&bslash;&n;/* w_saved, new_signal, padding, current_ds, */&t;&t;&t;&bslash;&n;   0,       0,          0,       KERNEL_DS,&t;&t;&t;&bslash;&n;/* kregs,   utraps, */&t;&t;&t;&t;&t;&t;&bslash;&n;   0,       0,&t;&t;&t;&t;&t;&t;&t;&bslash;&n;/* reg_window */&t;&t;&t;&t;&t;&t;&bslash;&n;   { { { 0, }, { 0, } }, }, &t;&t;&t;&t;&t;&bslash;&n;/* rwbuf_stkptrs */&t;&t;&t;&t;&t;&t;&bslash;&n;   { 0, 0, 0, 0, 0, 0, 0, },&t;&t;&t;&t;&t;&bslash;&n;/* sig_address, sig_desc */&t;&t;&t;&t;&t;&bslash;&n;   0,           0,&t;&t;&t;&t;&t;&t;&bslash;&n;/* fpdepth, fpsaved, gsr,   xfsr */&t;&t;&t;&t;&bslash;&n;   0,       { 0 },   { 0 }, { 0 },&t;&t;&t;&t;&bslash;&n;}
 macro_line|#ifndef __ASSEMBLY__
 multiline_comment|/* Return saved PC of a blocked thread. */
 DECL|function|thread_saved_pc
@@ -216,8 +234,46 @@ op_star
 id|t
 )paren
 (brace
+r_int
+r_int
+op_star
+id|sp
+op_assign
+(paren
+r_int
+r_int
+op_star
+)paren
+(paren
+id|t-&gt;ksp
+op_plus
+id|STACK_BIAS
+)paren
+suffix:semicolon
+r_int
+r_int
+op_star
+id|fp
+op_assign
+(paren
+r_int
+r_int
+op_star
+)paren
+(paren
+id|sp
+(braket
+l_int|14
+)braket
+op_plus
+id|STACK_BIAS
+)paren
+suffix:semicolon
 r_return
-id|t-&gt;kpc
+id|fp
+(braket
+l_int|15
+)braket
 suffix:semicolon
 )brace
 multiline_comment|/* On Uniprocessor, even in RMO processes see TSO semantics */
@@ -232,7 +288,7 @@ multiline_comment|/* Do necessary setup to start up a newly executed thread. */
 DECL|macro|start_thread
 mdefine_line|#define start_thread(regs, pc, sp) &bslash;&n;do { &bslash;&n;&t;regs-&gt;tstate = (regs-&gt;tstate &amp; (TSTATE_CWP)) | (TSTATE_INITIAL_MM|TSTATE_IE) | (ASI_PNF &lt;&lt; 24); &bslash;&n;&t;regs-&gt;tpc = ((pc &amp; (~3)) - 4); &bslash;&n;&t;regs-&gt;tnpc = regs-&gt;tpc + 4; &bslash;&n;&t;regs-&gt;y = 0; &bslash;&n;&t;current-&gt;tss.flags &amp;= ~SPARC_FLAG_32BIT; &bslash;&n;&t;current-&gt;tss.wstate = (1 &lt;&lt; 3); &bslash;&n;&t;if (current-&gt;tss.utraps) { &bslash;&n;&t;&t;if (*(current-&gt;tss.utraps) &lt; 2) &bslash;&n;&t;&t;&t;kfree (current-&gt;tss.utraps); &bslash;&n;&t;&t;else &bslash;&n;&t;&t;&t;(*(current-&gt;tss.utraps))--; &bslash;&n;&t;&t;current-&gt;tss.utraps = NULL; &bslash;&n;&t;} &bslash;&n;&t;__asm__ __volatile__( &bslash;&n;&t;&quot;stx&t;&t;%%g0, [%0 + %2 + 0x00]&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;stx&t;&t;%%g0, [%0 + %2 + 0x08]&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;stx&t;&t;%%g0, [%0 + %2 + 0x10]&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;stx&t;&t;%%g0, [%0 + %2 + 0x18]&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;stx&t;&t;%%g0, [%0 + %2 + 0x20]&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;stx&t;&t;%%g0, [%0 + %2 + 0x28]&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;stx&t;&t;%%g0, [%0 + %2 + 0x30]&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;stx&t;&t;%%g0, [%0 + %2 + 0x38]&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;stx&t;&t;%%g0, [%0 + %2 + 0x40]&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;stx&t;&t;%%g0, [%0 + %2 + 0x48]&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;stx&t;&t;%%g0, [%0 + %2 + 0x50]&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;stx&t;&t;%%g0, [%0 + %2 + 0x58]&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;stx&t;&t;%%g0, [%0 + %2 + 0x60]&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;stx&t;&t;%%g0, [%0 + %2 + 0x68]&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;stx&t;&t;%1,   [%0 + %2 + 0x70]&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;stx&t;&t;%%g0, [%0 + %2 + 0x78]&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;wrpr&t;&t;%%g0, (1 &lt;&lt; 3), %%wstate&bslash;n&bslash;t&quot; &bslash;&n;&t;: &bslash;&n;&t;: &quot;r&quot; (regs), &quot;r&quot; (sp - REGWIN_SZ - STACK_BIAS), &bslash;&n;&t;  &quot;i&quot; ((const unsigned long)(&amp;((struct pt_regs *)0)-&gt;u_regs[0]))); &bslash;&n;} while(0)
 DECL|macro|start_thread32
-mdefine_line|#define start_thread32(regs, pc, sp) &bslash;&n;do { &bslash;&n;&t;register unsigned int zero asm(&quot;g1&quot;); &bslash;&n;&bslash;&n;&t;pc &amp;= 0x00000000ffffffffUL; &bslash;&n;&t;sp &amp;= 0x00000000ffffffffUL; &bslash;&n;&bslash;&n;&t;regs-&gt;tstate = (regs-&gt;tstate &amp; (TSTATE_CWP))|(TSTATE_INITIAL_MM|TSTATE_IE|TSTATE_AM); &bslash;&n;&t;regs-&gt;tpc = ((pc &amp; (~3)) - 4); &bslash;&n;&t;regs-&gt;tnpc = regs-&gt;tpc + 4; &bslash;&n;&t;regs-&gt;y = 0; &bslash;&n;&t;current-&gt;tss.flags |= SPARC_FLAG_32BIT; &bslash;&n;&t;current-&gt;tss.wstate = (2 &lt;&lt; 3); &bslash;&n;&t;if (current-&gt;tss.utraps) { &bslash;&n;&t;&t;if (*(current-&gt;tss.utraps) &lt; 2) &bslash;&n;&t;&t;&t;kfree (current-&gt;tss.utraps); &bslash;&n;&t;&t;else &bslash;&n;&t;&t;&t;(*(current-&gt;tss.utraps))--; &bslash;&n;&t;&t;current-&gt;tss.utraps = NULL; &bslash;&n;&t;} &bslash;&n;&t;zero = 0; &bslash;&n;&t;__asm__ __volatile__( &bslash;&n;&t;&quot;stx&t;&t;%%g0, [%0 + %2 + 0x00]&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;stx&t;&t;%%g0, [%0 + %2 + 0x08]&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;stx&t;&t;%%g0, [%0 + %2 + 0x10]&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;stx&t;&t;%%g0, [%0 + %2 + 0x18]&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;stx&t;&t;%%g0, [%0 + %2 + 0x20]&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;stx&t;&t;%%g0, [%0 + %2 + 0x28]&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;stx&t;&t;%%g0, [%0 + %2 + 0x30]&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;stx&t;&t;%%g0, [%0 + %2 + 0x38]&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;stx&t;&t;%%g0, [%0 + %2 + 0x40]&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;stx&t;&t;%%g0, [%0 + %2 + 0x48]&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;stx&t;&t;%%g0, [%0 + %2 + 0x50]&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;stx&t;&t;%%g0, [%0 + %2 + 0x58]&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;stx&t;&t;%%g0, [%0 + %2 + 0x60]&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;stx&t;&t;%%g0, [%0 + %2 + 0x68]&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;stx&t;&t;%1,   [%0 + %2 + 0x70]&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;stx&t;&t;%%g0, [%0 + %2 + 0x78]&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;wrpr&t;&t;%%g0, (2 &lt;&lt; 3), %%wstate&bslash;n&bslash;t&quot; &bslash;&n;&t;: &bslash;&n;&t;: &quot;r&quot; (regs), &quot;r&quot; (sp - REGWIN32_SZ), &bslash;&n;&t;  &quot;i&quot; ((const unsigned long)(&amp;((struct pt_regs *)0)-&gt;u_regs[0])), &bslash;&n;&t;  &quot;r&quot; (zero)); &bslash;&n;} while(0)
+mdefine_line|#define start_thread32(regs, pc, sp) &bslash;&n;do { &bslash;&n;&t;pc &amp;= 0x00000000ffffffffUL; &bslash;&n;&t;sp &amp;= 0x00000000ffffffffUL; &bslash;&n;&bslash;&n;&t;regs-&gt;tstate = (regs-&gt;tstate &amp; (TSTATE_CWP))|(TSTATE_INITIAL_MM|TSTATE_IE|TSTATE_AM); &bslash;&n;&t;regs-&gt;tpc = ((pc &amp; (~3)) - 4); &bslash;&n;&t;regs-&gt;tnpc = regs-&gt;tpc + 4; &bslash;&n;&t;regs-&gt;y = 0; &bslash;&n;&t;current-&gt;tss.flags |= SPARC_FLAG_32BIT; &bslash;&n;&t;current-&gt;tss.wstate = (2 &lt;&lt; 3); &bslash;&n;&t;if (current-&gt;tss.utraps) { &bslash;&n;&t;&t;if (*(current-&gt;tss.utraps) &lt; 2) &bslash;&n;&t;&t;&t;kfree (current-&gt;tss.utraps); &bslash;&n;&t;&t;else &bslash;&n;&t;&t;&t;(*(current-&gt;tss.utraps))--; &bslash;&n;&t;&t;current-&gt;tss.utraps = NULL; &bslash;&n;&t;} &bslash;&n;&t;__asm__ __volatile__( &bslash;&n;&t;&quot;stxa&t;&t;%3, [%4] %5&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;stx&t;&t;%%g0, [%0 + %2 + 0x00]&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;stx&t;&t;%%g0, [%0 + %2 + 0x08]&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;stx&t;&t;%%g0, [%0 + %2 + 0x10]&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;stx&t;&t;%%g0, [%0 + %2 + 0x18]&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;stx&t;&t;%%g0, [%0 + %2 + 0x20]&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;stx&t;&t;%%g0, [%0 + %2 + 0x28]&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;stx&t;&t;%%g0, [%0 + %2 + 0x30]&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;stx&t;&t;%%g0, [%0 + %2 + 0x38]&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;stx&t;&t;%%g0, [%0 + %2 + 0x40]&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;stx&t;&t;%%g0, [%0 + %2 + 0x48]&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;stx&t;&t;%%g0, [%0 + %2 + 0x50]&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;stx&t;&t;%%g0, [%0 + %2 + 0x58]&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;stx&t;&t;%%g0, [%0 + %2 + 0x60]&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;stx&t;&t;%%g0, [%0 + %2 + 0x68]&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;stx&t;&t;%1,   [%0 + %2 + 0x70]&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;stx&t;&t;%%g0, [%0 + %2 + 0x78]&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;wrpr&t;&t;%%g0, (2 &lt;&lt; 3), %%wstate&bslash;n&bslash;t&quot; &bslash;&n;&t;: &bslash;&n;&t;: &quot;r&quot; (regs), &quot;r&quot; (sp - REGWIN32_SZ), &bslash;&n;&t;  &quot;i&quot; ((const unsigned long)(&amp;((struct pt_regs *)0)-&gt;u_regs[0])), &bslash;&n;&t;  &quot;r&quot; (current-&gt;mm-&gt;pgd[0]), &quot;r&quot; (TSB_REG), &quot;i&quot; (ASI_DMMU)); &bslash;&n;} while(0)
 multiline_comment|/* Free all resources held by a thread. */
 DECL|macro|release_thread
 mdefine_line|#define release_thread(tsk)&t;&t;do { } while(0)

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sab82532.c,v 1.17 1998/04/01 06:55:12 ecd Exp $&n; * sab82532.c: ASYNC Driver for the SIEMENS SAB82532 DUSCC.&n; *&n; * Copyright (C) 1997  Eddie C. Dost  (ecd@skynet.be)&n; *&n; */
+multiline_comment|/* $Id: sab82532.c,v 1.20 1998/05/29 06:00:24 ecd Exp $&n; * sab82532.c: ASYNC Driver for the SIEMENS SAB82532 DUSCC.&n; *&n; * Copyright (C) 1997  Eddie C. Dost  (ecd@skynet.be)&n; *&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -23,6 +23,7 @@ macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;asm/sab82532.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/ebus.h&gt;
+macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &quot;sunserial.h&quot;
 r_static
 id|DECLARE_TASK_QUEUE
@@ -8119,7 +8120,7 @@ id|page
 comma
 l_string|&quot;serinfo:1.0 driver:%s&bslash;n&quot;
 comma
-l_string|&quot;$Revision: 1.17 $&quot;
+l_string|&quot;$Revision: 1.20 $&quot;
 )paren
 suffix:semicolon
 r_for
@@ -8269,6 +8270,8 @@ r_struct
 id|linux_ebus_device
 op_star
 id|edev
+op_assign
+l_int|0
 suffix:semicolon
 r_struct
 id|sab82532
@@ -8284,13 +8287,20 @@ suffix:semicolon
 r_int
 id|i
 suffix:semicolon
-id|for_all_ebusdev
+id|for_each_ebus
+c_func
+(paren
+id|ebus
+)paren
+(brace
+id|for_each_ebusdev
 c_func
 (paren
 id|edev
 comma
 id|ebus
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -8303,8 +8313,13 @@ comma
 l_string|&quot;se&quot;
 )paren
 )paren
-r_break
+r_goto
+id|ebus_done
 suffix:semicolon
+)brace
+)brace
+id|ebus_done
+suffix:colon
 r_if
 c_cond
 (paren
@@ -8588,7 +8603,7 @@ r_char
 op_star
 id|revision
 op_assign
-l_string|&quot;$Revision: 1.17 $&quot;
+l_string|&quot;$Revision: 1.20 $&quot;
 suffix:semicolon
 r_char
 op_star
@@ -9175,7 +9190,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;ttyS%02d at 0x%lx (irq = %x) is a SAB82532 %s&bslash;n&quot;
+l_string|&quot;ttyS%02d at 0x%lx (irq = %s) is a SAB82532 %s&bslash;n&quot;
 comma
 id|info-&gt;line
 comma
@@ -9185,7 +9200,11 @@ r_int
 )paren
 id|info-&gt;regs
 comma
+id|__irq_itoa
+c_func
+(paren
 id|info-&gt;irq
+)paren
 comma
 id|sab82532_version
 (braket

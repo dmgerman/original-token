@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: ebus.c,v 1.26 1998/04/21 06:34:02 ecd Exp $&n; * ebus.c: PCI to EBus bridge device.&n; *&n; * Copyright (C) 1997  Eddie C. Dost  (ecd@skynet.be)&n; */
+multiline_comment|/* $Id: ebus.c,v 1.29 1998/07/01 15:39:44 jj Exp $&n; * ebus.c: PCI to EBus bridge device.&n; *&n; * Copyright (C) 1997  Eddie C. Dost  (ecd@skynet.be)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -120,7 +120,12 @@ r_int
 id|size
 )paren
 (brace
-r_return
+r_int
+r_int
+id|mem
+suffix:semicolon
+id|mem
+op_assign
 (paren
 r_int
 r_int
@@ -132,6 +137,36 @@ id|size
 comma
 id|GFP_ATOMIC
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|mem
+)paren
+id|panic
+c_func
+(paren
+id|__FUNCTION__
+l_string|&quot;: out of memory&quot;
+)paren
+suffix:semicolon
+id|memset
+c_func
+(paren
+(paren
+r_char
+op_star
+)paren
+id|mem
+comma
+l_int|0
+comma
+id|size
+)paren
+suffix:semicolon
+r_return
+id|mem
 suffix:semicolon
 )brace
 DECL|function|__initfunc
@@ -694,12 +729,16 @@ op_increment
 id|dprintf
 c_func
 (paren
-l_string|&quot; %08x&quot;
+l_string|&quot; %s&quot;
 comma
+id|__irq_itoa
+c_func
+(paren
 id|dev-&gt;irqs
 (braket
 id|i
 )braket
+)paren
 )paren
 suffix:semicolon
 id|dprintf
@@ -1105,12 +1144,16 @@ op_increment
 id|dprintf
 c_func
 (paren
-l_string|&quot; %08x&quot;
+l_string|&quot; %s&quot;
 comma
+id|__irq_itoa
+c_func
+(paren
 id|dev-&gt;irqs
 (braket
 id|i
 )braket
+)paren
 )paren
 suffix:semicolon
 id|dprintf

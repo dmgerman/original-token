@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * CPU specific parts of the keyboard driver&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * $Id: keyboard.h,v 1.7 1998/05/01 01:35:57 ralf Exp $&n; */
+multiline_comment|/*&n; * CPU specific parts of the keyboard driver&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * $Id: keyboard.h,v 1.8 1998/05/07 00:40:03 ralf Exp $&n; */
 macro_line|#ifndef __ASM_MIPS_KEYBOARD_H
 DECL|macro|__ASM_MIPS_KEYBOARD_H
 mdefine_line|#define __ASM_MIPS_KEYBOARD_H
@@ -116,8 +116,6 @@ DECL|macro|kbd_sysrq_xlate
 mdefine_line|#define kbd_sysrq_xlate         pckbd_sysrq_xlate
 DECL|macro|SYSRQ_KEY
 mdefine_line|#define SYSRQ_KEY 0x54
-DECL|macro|INIT_KBD
-mdefine_line|#define INIT_KBD&t;/* full initialization for the keyboard controller. */
 multiline_comment|/* Some stoneage hardware needs delays after some operations.  */
 DECL|macro|kbd_pause
 mdefine_line|#define kbd_pause() do { } while(0)

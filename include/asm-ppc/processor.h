@@ -113,6 +113,11 @@ DECL|macro|_PREP_IBM
 mdefine_line|#define _PREP_IBM      0x00  /* ibm prep */
 DECL|macro|_PREP_Bull
 mdefine_line|#define _PREP_Bull     0x03  /* bull prep */
+multiline_comment|/* these are arbitrary */
+DECL|macro|_CHRP_Motorola
+mdefine_line|#define _CHRP_Motorola 0x04  /* motorola chrp, the cobra */
+DECL|macro|_CHRP_IBM
+mdefine_line|#define _CHRP_IBM     0x05   /* IBM chrp, the longtrail and longtrail 2 */
 DECL|macro|_GLOBAL
 mdefine_line|#define _GLOBAL(n)&bslash;&n;&t;.globl n;&bslash;&n;n:
 DECL|macro|TBRU
@@ -314,6 +319,10 @@ DECL|macro|_machine
 mdefine_line|#define _machine (_MACH_apus)
 DECL|macro|is_prep
 mdefine_line|#define is_prep (0)
+DECL|macro|is_chrp
+mdefine_line|#define is_chrp (0)
+DECL|macro|have_of
+mdefine_line|#define have_of (0)
 macro_line|#endif /* CONFIG_APUS */
 macro_line|#else /* CONFIG_MACH_SPECIFIC */
 r_extern
@@ -377,16 +386,19 @@ DECL|macro|MCA_bus
 mdefine_line|#define MCA_bus 0
 DECL|macro|MCA_bus__is_a_macro
 mdefine_line|#define MCA_bus__is_a_macro /* for versions in ksyms.c */
+multiline_comment|/* Lazy FPU handling on uni-processor */
+r_extern
+r_struct
+id|task_struct
+op_star
+id|last_task_used_math
+suffix:semicolon
 multiline_comment|/*&n; * this is the minimum allowable io space due to the location&n; * of the io areas on prep (first one at 0x80000000) but&n; * as soon as I get around to remapping the io areas with the BATs&n; * to match the mac we can raise this. -- Cort&n; */
 DECL|macro|TASK_SIZE
 mdefine_line|#define TASK_SIZE&t;(0x80000000UL)
 multiline_comment|/* This decides where the kernel will search for a free chunk of vm&n; * space during mmap&squot;s.&n; */
 DECL|macro|TASK_UNMAPPED_BASE
-mdefine_line|#define TASK_UNMAPPED_BASE(off)&t;(TASK_SIZE / 8 * 3)
-DECL|macro|TASK_UNMAPPED_ALIGN
-mdefine_line|#define TASK_UNMAPPED_ALIGN(addr, off)&t;PAGE_ALIGN(addr)
-DECL|macro|COPY_TASK_STRUCT
-mdefine_line|#define COPY_TASK_STRUCT(dst, src) &t;&bslash;&n;do {&t;&t;&t;&t;&t;&bslash;&n;&t;*dst = *src;&t;&t;&t;&bslash;&n;} while (0)
+mdefine_line|#define TASK_UNMAPPED_BASE&t;(TASK_SIZE / 8 * 3)
 r_typedef
 r_struct
 (brace

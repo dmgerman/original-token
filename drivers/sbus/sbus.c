@@ -1,4 +1,4 @@
-multiline_comment|/* sbus.c:  SBus support routines.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: sbus.c,v 1.69 1998/07/28 16:53:11 jj Exp $&n; * sbus.c:  SBus support routines.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
@@ -9,12 +9,29 @@ macro_line|#include &lt;asm/sbus.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;asm/oplib.h&gt;
 macro_line|#include &lt;asm/bpp.h&gt;
+macro_line|#include &lt;asm/irq.h&gt;
 multiline_comment|/* This file has been written to be more dynamic and a bit cleaner,&n; * but it still needs some spring cleaning.&n; */
 DECL|variable|SBus_chain
 r_struct
 id|linux_sbus
 op_star
 id|SBus_chain
+suffix:semicolon
+DECL|variable|__initdata
+r_static
+r_struct
+id|linux_prom_irqs
+id|irqs
+(braket
+id|PROMINTR_MAX
+)braket
+id|__initdata
+op_assign
+(brace
+(brace
+l_int|0
+)brace
+)brace
 suffix:semicolon
 DECL|variable|lbuf
 r_static
@@ -501,14 +518,7 @@ op_div
 l_int|4
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|sparc_cpu_model
-op_eq
-id|sun4u
-)paren
-(brace
+macro_line|#ifdef __sparc_v9__  
 id|len
 op_assign
 id|prom_getproperty
@@ -522,22 +532,11 @@ comma
 r_void
 op_star
 )paren
-op_amp
-id|sbus_dev-&gt;irqs
-(braket
-l_int|0
-)braket
-dot
-id|pri
+id|irqs
 comma
 r_sizeof
 (paren
-id|sbus_dev-&gt;irqs
-(braket
-l_int|0
-)braket
-dot
-id|pri
+id|irqs
 )paren
 )paren
 suffix:semicolon
@@ -562,8 +561,6 @@ id|sbus_dev-&gt;irqs
 (braket
 l_int|0
 )braket
-dot
-id|pri
 op_assign
 l_int|0
 suffix:semicolon
@@ -581,7 +578,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|sbus_dev-&gt;irqs
+id|irqs
 (braket
 l_int|0
 )braket
@@ -590,49 +587,22 @@ id|pri
 OL
 l_int|0x20
 )paren
-(brace
-r_int
-id|old_irq
-op_assign
 id|sbus_dev-&gt;irqs
 (braket
 l_int|0
 )braket
-dot
-id|pri
-suffix:semicolon
-multiline_comment|/* Need to do special SLOT fixups in this case. */
-macro_line|#if 0 /* DEBUGGING */
-id|printk
+op_assign
+id|sbus_build_irq
 c_func
 (paren
-l_string|&quot;SBUS[%x:%lx]: INO fixup from [%x] to [%x]&bslash;n&quot;
+id|sbus_dev-&gt;my_bus
 comma
-id|sbus_dev-&gt;slot
-comma
-id|sbus_dev-&gt;offset
-comma
-id|old_irq
-comma
-id|old_irq
-op_plus
-(paren
-id|sbus_dev-&gt;slot
-op_star
-l_int|8
-)paren
-)paren
-suffix:semicolon
-macro_line|#endif
-id|sbus_dev-&gt;irqs
+id|irqs
 (braket
 l_int|0
 )braket
 dot
 id|pri
-op_assign
-(paren
-id|old_irq
 op_plus
 (paren
 id|sbus_dev-&gt;slot
@@ -641,11 +611,27 @@ l_int|8
 )paren
 )paren
 suffix:semicolon
-)brace
-)brace
-)brace
 r_else
-(brace
+id|sbus_dev-&gt;irqs
+(braket
+l_int|0
+)braket
+op_assign
+id|sbus_build_irq
+c_func
+(paren
+id|sbus_dev-&gt;my_bus
+comma
+id|irqs
+(braket
+l_int|0
+)braket
+dot
+id|pri
+)paren
+suffix:semicolon
+)brace
+macro_line|#else
 id|len
 op_assign
 id|prom_getproperty
@@ -659,11 +645,11 @@ comma
 r_void
 op_star
 )paren
-id|sbus_dev-&gt;irqs
+id|irqs
 comma
 r_sizeof
 (paren
-id|sbus_dev-&gt;irqs
+id|irqs
 )paren
 )paren
 suffix:semicolon
@@ -703,6 +689,31 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|len
+OG
+l_int|4
+op_star
+l_int|8
+)paren
+(brace
+id|prom_printf
+c_func
+(paren
+l_string|&quot;Device %s has more than 4 interrupts&bslash;n&quot;
+comma
+id|sbus_dev-&gt;prom_name
+)paren
+suffix:semicolon
+id|len
+op_assign
+l_int|4
+op_star
+l_int|8
+suffix:semicolon
+)brace
 id|sbus_dev-&gt;num_irqs
 op_assign
 (paren
@@ -723,32 +734,137 @@ id|sbus_dev-&gt;irqs
 (braket
 l_int|0
 )braket
-dot
-id|pri
 op_assign
 l_int|0
 suffix:semicolon
 )brace
+r_else
+r_if
+c_cond
+(paren
+id|sparc_cpu_model
+op_ne
+id|sun4d
+)paren
+r_for
+c_loop
+(paren
+id|len
+op_assign
+l_int|0
+suffix:semicolon
+id|len
+OL
+id|sbus_dev-&gt;num_irqs
+suffix:semicolon
+id|len
+op_increment
+)paren
+id|sbus_dev-&gt;irqs
+(braket
+id|len
+)braket
+op_assign
+id|irqs
+(braket
+id|len
+)braket
+dot
+id|pri
+suffix:semicolon
+r_else
+(brace
+r_extern
+r_int
+r_int
+id|sun4d_build_irq
+c_func
+(paren
+r_struct
+id|linux_sbus_device
+op_star
+id|sdev
+comma
+r_int
+id|irq
+)paren
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|len
+op_assign
+l_int|0
+suffix:semicolon
+id|len
+OL
+id|sbus_dev-&gt;num_irqs
+suffix:semicolon
+id|len
+op_increment
+)paren
+id|sbus_dev-&gt;irqs
+(braket
+id|len
+)braket
+op_assign
+id|sun4d_build_irq
+c_func
+(paren
+id|sbus_dev
+comma
+id|irqs
+(braket
+id|len
+)braket
+dot
+id|pri
+)paren
+suffix:semicolon
 )brace
+macro_line|#endif
 macro_line|#ifdef DEBUG_FILL
 macro_line|#ifdef __sparc_v9__
 id|prom_printf
 c_func
 (paren
-l_string|&quot;Found %s at SBUS slot %x offset %016lx irq-level %d&bslash;n&quot;
+l_string|&quot;Found %s at SBUS slot %x offset %016lx &quot;
 comma
 id|sbus_dev-&gt;prom_name
 comma
 id|sbus_dev-&gt;slot
 comma
 id|sbus_dev-&gt;offset
-comma
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
 id|sbus_dev-&gt;irqs
 (braket
 l_int|0
 )braket
-dot
-id|pri
+)paren
+id|prom_printf
+c_func
+(paren
+l_string|&quot;irq %s&bslash;n&quot;
+comma
+id|__irq_itoa
+c_func
+(paren
+id|sbus_dev-&gt;irqs
+(braket
+l_int|0
+)braket
+)paren
+)paren
+suffix:semicolon
+r_else
+id|prom_printf
+c_func
+(paren
+l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
 id|prom_printf
@@ -775,8 +891,6 @@ id|sbus_dev-&gt;irqs
 (braket
 l_int|0
 )braket
-dot
-id|pri
 )paren
 suffix:semicolon
 id|prom_printf
@@ -914,14 +1028,6 @@ macro_line|#endif
 macro_line|#endif
 )brace
 multiline_comment|/* This routine gets called from whoever needs the sbus first, to scan&n; * the SBus device tree.  Currently it just prints out the devices&n; * found on the bus and builds trees of SBUS structs and attached&n; * devices.&n; */
-r_extern
-r_void
-id|sun_console_init
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
 r_extern
 r_void
 id|iommu_init
@@ -1069,6 +1175,10 @@ id|this_dev-&gt;next
 op_assign
 l_int|0
 suffix:semicolon
+id|this_dev-&gt;my_bus
+op_assign
+id|sbus
+suffix:semicolon
 id|fill_sbus_device
 c_func
 (paren
@@ -1076,10 +1186,6 @@ id|this_node
 comma
 id|this_dev
 )paren
-suffix:semicolon
-id|this_dev-&gt;my_bus
-op_assign
-id|sbus
 suffix:semicolon
 r_if
 c_cond
@@ -1105,6 +1211,10 @@ comma
 id|GFP_ATOMIC
 )paren
 suffix:semicolon
+id|this_dev-&gt;child-&gt;my_bus
+op_assign
+id|sbus
+suffix:semicolon
 id|fill_sbus_device
 c_func
 (paren
@@ -1116,10 +1226,6 @@ id|this_node
 comma
 id|this_dev-&gt;child
 )paren
-suffix:semicolon
-id|this_dev-&gt;child-&gt;my_bus
-op_assign
-id|sbus
 suffix:semicolon
 id|sbus_do_child_siblings
 c_func
@@ -1237,17 +1343,8 @@ l_int|0
 )paren
 (brace
 macro_line|#ifdef CONFIG_PCI
-id|printk
-c_func
-(paren
-l_string|&quot;SBUS: No SBUS&squot;s found.&bslash;n&quot;
-)paren
-suffix:semicolon
+multiline_comment|/* printk(&quot;SBUS: No SBUS&squot;s found.&bslash;n&quot;); */
 r_return
-id|sun_console_init
-c_func
-(paren
-)paren
 suffix:semicolon
 macro_line|#else
 id|prom_printf
@@ -1692,6 +1789,10 @@ id|this_dev-&gt;next
 op_assign
 l_int|0
 suffix:semicolon
+id|this_dev-&gt;my_bus
+op_assign
+id|sbus
+suffix:semicolon
 id|fill_sbus_device
 c_func
 (paren
@@ -1699,10 +1800,6 @@ id|sbus_devs
 comma
 id|this_dev
 )paren
-suffix:semicolon
-id|this_dev-&gt;my_bus
-op_assign
-id|sbus
 suffix:semicolon
 multiline_comment|/* Should we traverse for children? */
 r_if
@@ -1731,6 +1828,10 @@ id|GFP_ATOMIC
 )paren
 suffix:semicolon
 multiline_comment|/* Fill it */
+id|this_dev-&gt;child-&gt;my_bus
+op_assign
+id|sbus
+suffix:semicolon
 id|fill_sbus_device
 c_func
 (paren
@@ -1742,10 +1843,6 @@ id|sbus_devs
 comma
 id|this_dev-&gt;child
 )paren
-suffix:semicolon
-id|this_dev-&gt;child-&gt;my_bus
-op_assign
-id|sbus
 suffix:semicolon
 id|sbus_do_child_siblings
 c_func
@@ -1809,6 +1906,10 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* Fill it */
+id|this_dev-&gt;my_bus
+op_assign
+id|sbus
+suffix:semicolon
 id|fill_sbus_device
 c_func
 (paren
@@ -1816,10 +1917,6 @@ id|sbus_devs
 comma
 id|this_dev
 )paren
-suffix:semicolon
-id|this_dev-&gt;my_bus
-op_assign
-id|sbus
 suffix:semicolon
 multiline_comment|/* Is there a child node hanging off of us? */
 r_if
@@ -1848,6 +1945,10 @@ id|GFP_ATOMIC
 )paren
 suffix:semicolon
 multiline_comment|/* Fill it */
+id|this_dev-&gt;child-&gt;my_bus
+op_assign
+id|sbus
+suffix:semicolon
 id|fill_sbus_device
 c_func
 (paren
@@ -1859,10 +1960,6 @@ id|sbus_devs
 comma
 id|this_dev-&gt;child
 )paren
-suffix:semicolon
-id|this_dev-&gt;child-&gt;my_bus
-op_assign
-id|sbus
 suffix:semicolon
 id|sbus_do_child_siblings
 c_func
@@ -2084,12 +2181,6 @@ c_func
 )paren
 suffix:semicolon
 )brace
-id|sun_console_init
-c_func
-(paren
-)paren
-suffix:semicolon
-multiline_comment|/* whee... */
 macro_line|#ifdef CONFIG_SUN_OPENPROMIO
 id|openprom_init
 c_func
@@ -2183,11 +2274,6 @@ r_void
 )paren
 )paren
 (brace
-id|sun_console_init
-c_func
-(paren
-)paren
-suffix:semicolon
 id|sun4_dvma_init
 c_func
 (paren

@@ -81,6 +81,14 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* print debug for these targets */
+DECL|variable|use_active_neg
+r_int
+r_char
+id|use_active_neg
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* bit mask for SEQ_ACTIVE_NEG if used */
 DECL|macro|ALLOW_SYNC
 mdefine_line|#define ALLOW_SYNC(tgt)&t;&t;((mesh_sync_targets &gt;&gt; (tgt)) &amp; 1)
 DECL|macro|ALLOW_RESEL
@@ -111,7 +119,7 @@ l_int|2
 )brace
 suffix:semicolon
 DECL|macro|MESH_DBG
-mdefine_line|#define MESH_DBG
+macro_line|#undef MESH_DBG
 DECL|macro|N_DBG_LOG
 mdefine_line|#define N_DBG_LOG&t;50
 DECL|macro|N_DBG_SLOG
@@ -494,8 +502,6 @@ op_star
 id|ms
 )paren
 suffix:semicolon
-DECL|macro|MKWORD
-mdefine_line|#define MKWORD(a, b, c, d)&t;(((a) &lt;&lt; 24) + ((b) &lt;&lt; 16) + ((c) &lt;&lt; 8) + (d))
 macro_line|#else
 DECL|function|dlog
 r_static
@@ -550,6 +556,8 @@ id|ms
 (brace
 )brace
 macro_line|#endif /* MESH_DBG */
+DECL|macro|MKWORD
+mdefine_line|#define MKWORD(a, b, c, d)&t;(((a) &lt;&lt; 24) + ((b) &lt;&lt; 16) + ((c) &lt;&lt; 8) + (d))
 DECL|variable|all_meshes
 r_static
 r_struct
@@ -1364,7 +1372,26 @@ c_cond
 id|_machine
 op_eq
 id|_MACH_Pmac
-op_logical_and
+)paren
+(brace
+id|use_active_neg
+op_assign
+(paren
+id|find_devices
+c_func
+(paren
+l_string|&quot;mac-io&quot;
+)paren
+ques
+c_cond
+l_int|0
+suffix:colon
+id|SEQ_ACTIVE_NEG
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
 id|nmeshes
 OG
 l_int|0
@@ -1376,6 +1403,15 @@ op_amp
 id|mesh_notifier
 )paren
 suffix:semicolon
+)brace
+r_else
+(brace
+multiline_comment|/* CHRP mac-io */
+id|use_active_neg
+op_assign
+id|SEQ_ACTIVE_NEG
+suffix:semicolon
+)brace
 r_return
 id|nmeshes
 suffix:semicolon
@@ -1626,6 +1662,32 @@ comma
 id|mr-&gt;sync_params
 )paren
 suffix:semicolon
+r_while
+c_loop
+(paren
+id|in_8
+c_func
+(paren
+op_amp
+id|mr-&gt;fifo_count
+)paren
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_DEBUG
+l_string|&quot; fifo data=%.2x&bslash;n&quot;
+comma
+id|in_8
+c_func
+(paren
+op_amp
+id|mr-&gt;fifo
+)paren
+)paren
+suffix:semicolon
+)brace
 id|printk
 c_func
 (paren
@@ -2888,7 +2950,7 @@ c_loop
 (paren
 id|t
 op_assign
-l_int|30
+l_int|230
 suffix:semicolon
 id|t
 OG
@@ -3585,7 +3647,7 @@ id|INT_CMDDONE
 suffix:semicolon
 id|seq
 op_assign
-id|SEQ_ACTIVE_NEG
+id|use_active_neg
 op_plus
 (paren
 id|ms-&gt;n_msgout
@@ -3796,6 +3858,16 @@ op_eq
 l_int|0
 )paren
 (brace
+id|dlog
+c_func
+(paren
+id|ms
+comma
+l_string|&quot;bus0 was %.2x explictly asserting ATN&quot;
+comma
+id|mr-&gt;bus_status0
+)paren
+suffix:semicolon
 id|out_8
 c_func
 (paren
@@ -3842,6 +3914,16 @@ l_int|0
 )paren
 suffix:semicolon
 multiline_comment|/* release explicit ATN */
+id|dlog
+c_func
+(paren
+id|ms
+comma
+l_string|&quot;hace: after explicit ATN bus0=%.2x&quot;
+comma
+id|mr-&gt;bus_status0
+)paren
+suffix:semicolon
 )brace
 r_if
 c_cond
@@ -4518,7 +4600,7 @@ id|mr-&gt;fifo_count
 suffix:semicolon
 id|seq
 op_assign
-id|SEQ_ACTIVE_NEG
+id|use_active_neg
 op_plus
 (paren
 id|ms-&gt;n_msgout
@@ -4655,7 +4737,7 @@ id|SEQ_MSGIN
 op_plus
 id|SEQ_ATN
 op_plus
-id|SEQ_ACTIVE_NEG
+id|use_active_neg
 )paren
 suffix:semicolon
 r_break
@@ -4681,7 +4763,7 @@ id|mr-&gt;sequence
 comma
 id|SEQ_MSGOUT
 op_plus
-id|SEQ_ACTIVE_NEG
+id|use_active_neg
 op_plus
 id|SEQ_ATN
 )paren
@@ -4861,7 +4943,7 @@ id|mr-&gt;sequence
 comma
 id|SEQ_MSGOUT
 op_plus
-id|SEQ_ACTIVE_NEG
+id|use_active_neg
 )paren
 suffix:semicolon
 id|udelay
@@ -4899,7 +4981,7 @@ id|mr-&gt;sequence
 comma
 id|SEQ_MSGIN
 op_plus
-id|SEQ_ACTIVE_NEG
+id|use_active_neg
 op_plus
 id|SEQ_ATN
 )paren
@@ -4969,6 +5051,16 @@ suffix:semicolon
 r_case
 id|selecting
 suffix:colon
+id|dlog
+c_func
+(paren
+id|ms
+comma
+l_string|&quot;Selecting phase at command completion&quot;
+comma
+l_int|0
+)paren
+suffix:semicolon
 id|ms-&gt;msgout
 (braket
 l_int|0
@@ -5050,9 +5142,9 @@ suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t; * We need to wait for REQ before dropping ATN.&n;&t;&t;&t; * We wait for at most 30us, then fall back to&n;&t;&t;&t; * a scheme where we issue a SEQ_COMMAND with ATN,&n;&t;&t;&t; * which will give us a phase mismatch interrupt&n;&t;&t;&t; * when REQ does come, and then we send the message.&n;&t;&t;&t; */
 id|t
 op_assign
-l_int|30
+l_int|230
 suffix:semicolon
-multiline_comment|/* wait up to 30us */
+multiline_comment|/* wait up to 230us */
 r_while
 c_loop
 (paren
@@ -5308,7 +5400,7 @@ id|mr-&gt;sequence
 comma
 id|SEQ_MSGOUT
 op_plus
-id|SEQ_ACTIVE_NEG
+id|use_active_neg
 )paren
 suffix:semicolon
 id|udelay
@@ -6412,19 +6504,8 @@ op_star
 id|ptregs
 )paren
 (brace
-r_int
-r_int
-id|flags
-suffix:semicolon
-id|spin_lock_irqsave
-c_func
-(paren
-op_amp
-id|io_request_lock
-comma
-id|flags
-)paren
-suffix:semicolon
+multiline_comment|/*unsigned long flags;*/
+multiline_comment|/*spin_lock_irqsave(&amp;io_request_lock, flags);*/
 id|mesh_interrupt
 c_func
 (paren
@@ -6435,15 +6516,7 @@ comma
 id|ptregs
 )paren
 suffix:semicolon
-id|spin_unlock_irqrestore
-c_func
-(paren
-op_amp
-id|io_request_lock
-comma
-id|flags
-)paren
-suffix:semicolon
+multiline_comment|/*spin_unlock_irqrestore(&amp;io_request_lock, flags);*/
 )brace
 DECL|function|handle_error
 r_static

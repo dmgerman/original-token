@@ -12,6 +12,8 @@ r_extern
 r_int
 id|__ppc_bh_counter
 suffix:semicolon
+DECL|macro|synchronize_bh
+mdefine_line|#define synchronize_bh()&t;do { } while (0)
 DECL|macro|clear_active_bhs
 mdefine_line|#define clear_active_bhs(x)&t;atomic_clear_mask((x),&amp;bh_active)
 DECL|function|init_bh
@@ -212,6 +214,8 @@ DECL|macro|start_bh_atomic
 mdefine_line|#define start_bh_atomic() &bslash;&n;&t;do { atomic_inc(&amp;__ppc_bh_counter); synchronize_irq(); } while(0)
 DECL|macro|end_bh_atomic
 mdefine_line|#define end_bh_atomic()&t;&t;atomic_dec(&amp;__ppc_bh_counter)
+DECL|macro|synchronize_bh
+mdefine_line|#define synchronize_bh()&t;do { } while (0) /* XXX implement SMP version --Cort */
 macro_line|#include &lt;asm/spinlock.h&gt;
 r_extern
 id|spinlock_t

@@ -75,12 +75,6 @@ r_int
 op_star
 id|pgd_cache
 suffix:semicolon
-DECL|member|pmd_cache
-r_int
-r_int
-op_star
-id|pmd_cache
-suffix:semicolon
 DECL|member|pte_cache
 r_int
 r_int
@@ -92,6 +86,11 @@ r_int
 r_int
 id|udelay_val
 suffix:semicolon
+DECL|member|dummy
+r_int
+r_int
+id|dummy
+suffix:semicolon
 )brace
 suffix:semicolon
 r_extern
@@ -102,31 +101,6 @@ id|cpu_data
 id|NR_CPUS
 )braket
 suffix:semicolon
-DECL|struct|klock_info
-r_struct
-id|klock_info
-(brace
-DECL|member|kernel_flag
-r_int
-r_char
-id|kernel_flag
-suffix:semicolon
-DECL|member|akp
-r_int
-r_char
-id|akp
-suffix:semicolon
-)brace
-suffix:semicolon
-r_extern
-r_struct
-id|klock_info
-id|klock_info
-suffix:semicolon
-DECL|macro|KLOCK_HELD
-mdefine_line|#define KLOCK_HELD       0xff
-DECL|macro|KLOCK_CLEAR
-mdefine_line|#define KLOCK_CLEAR      0x00
 multiline_comment|/*&n; *&t;Private routines/data&n; */
 r_extern
 r_int
@@ -262,6 +236,9 @@ r_int
 id|wait
 )paren
 suffix:semicolon
+multiline_comment|/* As idle task checks need_resched in a tight loop, it is not necessary to&n;   wake it up. -jj */
+DECL|macro|smp_send_reschedule
+mdefine_line|#define smp_send_reschedule(cpu) do {} while (0)
 macro_line|#endif /* !(__ASSEMBLY__) */
 DECL|macro|PROC_CHANGE_PENALTY
 mdefine_line|#define PROC_CHANGE_PENALTY&t;20

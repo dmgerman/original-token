@@ -499,6 +499,12 @@ id|Linux_SBus_DMA
 op_star
 id|dchain
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|sun4_dma_physaddr
+)paren
+(brace
 id|dma
 op_assign
 id|kmalloc
@@ -532,7 +538,7 @@ op_star
 )paren
 id|sparc_alloc_io
 (paren
-id|SUN4_300_DMA_PHYSADDR
+id|sun4_dma_physaddr
 comma
 l_int|0
 comma
@@ -558,6 +564,14 @@ comma
 l_int|0
 )paren
 suffix:semicolon
+)brace
+r_else
+(brace
+id|dma_chain
+op_assign
+l_int|0x0
+suffix:semicolon
+)brace
 )brace
 macro_line|#endif
 eof

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: ttable.h,v 1.6 1998/03/15 17:23:54 ecd Exp $ */
+multiline_comment|/* $Id: ttable.h,v 1.8 1998/06/12 14:54:32 jj Exp $ */
 macro_line|#ifndef _SPARC64_TTABLE_H
 DECL|macro|_SPARC64_TTABLE_H
 mdefine_line|#define _SPARC64_TTABLE_H
@@ -21,7 +21,7 @@ mdefine_line|#define TRAP_ARG(routine, arg)&t;&t;&t;&t;&bslash;&n;&t;sethi&t;%hi
 DECL|macro|TRAPTL1_ARG
 mdefine_line|#define TRAPTL1_ARG(routine, arg)&t;&t;&t;&bslash;&n;&t;sethi&t;%hi(109f), %g7;&t;&t;&t;&t;&bslash;&n;&t;ba,pt&t;%xcc, etraptl1;&t;&t;&t;&t;&bslash;&n;109:&t; or&t;%g7, %lo(109b), %g7;&t;&t;&t;&bslash;&n;&t;add&t;%sp, STACK_BIAS + REGWIN_SZ, %o0;&t;&bslash;&n;&t;call&t;routine;&t;&t;&t;&t;&bslash;&n;&t; mov&t;arg, %o1;&t;&t;&t;&t;&bslash;&n;&t;ba,pt&t;%xcc, rtrap;&t;&t;&t;&t;&bslash;&n;&t; clr&t;%l6;
 DECL|macro|SYSCALL_TRAP
-mdefine_line|#define SYSCALL_TRAP(routine, systbl)&t;&t;&t;&bslash;&n;&t;sethi&t;%hi(109f), %g7;&t;&t;&t;&t;&bslash;&n;&t;ba,pt&t;%xcc, etrap;&t;&t;&t;&t;&bslash;&n;109:&t; or&t;%g7, %lo(109b), %g7;&t;&t;&t;&bslash;&n;&t;call&t;routine;&t;&t;&t;&t;&bslash;&n;&t; sethi&t;%hi(systbl), %l7;&t;&t;&t;&bslash;&n;&t;nop; nop; nop;
+mdefine_line|#define SYSCALL_TRAP(routine, systbl)&t;&t;&t;&bslash;&n;&t;sethi&t;%hi(109f), %g7;&t;&t;&t;&t;&bslash;&n;&t;ba,pt&t;%xcc, scetrap;&t;&t;&t;&t;&bslash;&n;109:&t; or&t;%g7, %lo(109b), %g7;&t;&t;&t;&bslash;&n;&t;call&t;routine;&t;&t;&t;&t;&bslash;&n;&t; sethi&t;%hi(systbl), %l7;&t;&t;&t;&bslash;&n;&t;nop; nop; nop;
 DECL|macro|ACCESS_EXCEPTION_TRAP
 mdefine_line|#define ACCESS_EXCEPTION_TRAP(routine)&t;&t;&t;&bslash;&n;&t;rdpr&t;%pstate, %g1;&t;&t;&t;&t;&bslash;&n;&t;wrpr&t;%g1, PSTATE_MG|PSTATE_AG, %pstate;&t;&bslash;&n;&t;ba,pt&t;%xcc, etrap;&t;&t;&t;&t;&bslash;&n;&t; rd&t;%pc, %g7;&t;&t;&t;&t;&bslash;&n;&t;call&t;routine;&t;&t;&t;&t;&bslash;&n;&t; add&t;%sp, STACK_BIAS + REGWIN_SZ, %o0;&t;&bslash;&n;&t;ba,pt&t;%xcc, rtrap;&t;&t;&t;&t;&bslash;&n;&t; clr&t;%l6;
 DECL|macro|ACCESS_EXCEPTION_TRAPTL1
@@ -54,6 +54,8 @@ DECL|macro|BREAKPOINT_TRAP
 mdefine_line|#define BREAKPOINT_TRAP TRAP(breakpoint_trap)
 DECL|macro|TRAP_IRQ
 mdefine_line|#define TRAP_IRQ(routine, level)&t;&t;&t;&bslash;&n;&t;rdpr&t;%pil, %g2;&t;&t;&t;&t;&bslash;&n;&t;wrpr&t;%g0, 15, %pil;&t;&t;&t;&t;&bslash;&n;&t;b,pt&t;%xcc, etrap_irq;&t;&t;&t;&bslash;&n;&t; rd&t;%pc, %g7;&t;&t;&t;&t;&bslash;&n;&t;mov&t;level, %o0;&t;&t;&t;&t;&bslash;&n;&t;call&t;routine;&t;&t;&t;&t;&bslash;&n;&t; add&t;%sp, STACK_BIAS + REGWIN_SZ, %o1;&t;&bslash;&n;&t;ba,a,pt&t;%xcc, rtrap_clr_l6;
+DECL|macro|TICK_SMP_IRQ
+mdefine_line|#define TICK_SMP_IRQ&t;&t;&t;&t;&t;&bslash;&n;&t;rdpr&t;%pil, %g2;&t;&t;&t;&t;&bslash;&n;&t;wrpr&t;%g0, 15, %pil;&t;&t;&t;&t;&bslash;&n;&t;sethi&t;%hi(109f), %g7;&t;&t;&t;&t;&bslash;&n;&t;b,pt&t;%xcc, etrap_irq;&t;&t;&t;&bslash;&n;109:&t; or&t;%g7, %lo(109b), %g7;&t;&t;&t;&bslash;&n;&t;call&t;smp_percpu_timer_interrupt;&t;&t;&bslash;&n;&t; add&t;%sp, STACK_BIAS + REGWIN_SZ, %o0;&t;&bslash;&n;&t;ba,a,pt&t;%xcc, rtrap_clr_l6;
 DECL|macro|TRAP_IVEC
 mdefine_line|#define TRAP_IVEC TRAP_NOSAVE(do_ivec)
 DECL|macro|BTRAP

@@ -18,7 +18,7 @@ multiline_comment|/*&n; *&t;Internal variables of the driver&n; */
 r_extern
 r_int
 r_char
-id|kbd_read_mask
+id|pckbd_read_mask
 suffix:semicolon
 r_extern
 r_int

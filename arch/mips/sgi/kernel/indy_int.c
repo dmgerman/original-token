@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * indy_int.c: Routines for generic manipulation of the INT[23] ASIC&n; *             found on INDY workstations..&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; *&n; * $Id: indy_int.c,v 1.6 1998/05/01 01:35:15 ralf Exp $&n; */
+multiline_comment|/*&n; * indy_int.c: Routines for generic manipulation of the INT[23] ASIC&n; *             found on INDY workstations..&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; *&n; * $Id: indy_int.c,v 1.7 1998/05/07 00:39:51 ralf Exp $&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -1950,6 +1950,32 @@ id|irq
 )paren
 suffix:semicolon
 )brace
+DECL|variable|irq_cannonicalize
+r_int
+(paren
+op_star
+id|irq_cannonicalize
+)paren
+(paren
+r_int
+id|irq
+)paren
+suffix:semicolon
+DECL|function|indy_irq_cannonicalize
+r_static
+r_int
+id|indy_irq_cannonicalize
+c_func
+(paren
+r_int
+id|irq
+)paren
+(brace
+r_return
+id|irq
+suffix:semicolon
+multiline_comment|/* Sane hardware, sane code ... */
+)brace
 DECL|function|__initfunc
 id|__initfunc
 c_func
@@ -1962,6 +1988,10 @@ r_void
 )paren
 )paren
 (brace
+id|irq_cannonicalize
+op_assign
+id|indy_irq_cannonicalize
+suffix:semicolon
 id|irq_setup
 c_func
 (paren

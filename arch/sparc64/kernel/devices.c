@@ -268,10 +268,11 @@ id|mid
 op_assign
 id|thismid
 suffix:semicolon
+macro_line|#ifdef __SMP__&t;&t;&t;&t;
 id|prom_printf
 c_func
 (paren
-l_string|&quot;Found CPU %d &lt;node=%08x,mid=%d&gt;&bslash;n&quot;
+l_string|&quot;Found CPU %d (node=%08x,mid=%d)&bslash;n&quot;
 comma
 id|cpu_ctr
 comma
@@ -286,7 +287,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;Found CPU %d &lt;node=%08x,mid=%d&gt;&bslash;n&quot;
+l_string|&quot;Found CPU %d (node=%08x,mid=%d)&bslash;n&quot;
 comma
 id|cpu_ctr
 comma
@@ -298,6 +299,7 @@ comma
 id|thismid
 )paren
 suffix:semicolon
+macro_line|#endif&t;&t;&t;&t;       
 id|cpu_ctr
 op_increment
 suffix:semicolon
@@ -312,7 +314,7 @@ op_eq
 l_int|0
 )paren
 (brace
-id|printk
+id|prom_printf
 c_func
 (paren
 l_string|&quot;No CPU nodes found, cannot continue.&bslash;n&quot;
@@ -324,6 +326,7 @@ c_func
 )paren
 suffix:semicolon
 )brace
+macro_line|#ifdef __SMP__&t;&t;
 id|printk
 c_func
 (paren
@@ -332,6 +335,7 @@ comma
 id|cpu_ctr
 )paren
 suffix:semicolon
+macro_line|#endif&t;&t;
 )brace
 suffix:semicolon
 id|prom_node_cpu

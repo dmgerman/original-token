@@ -1,72 +1,99 @@
-multiline_comment|/* $Id: irq.h,v 1.8 1998/03/15 17:23:51 ecd Exp $&n; * irq.h: IRQ registers on the 64-bit Sparc.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: irq.h,v 1.10 1998/05/29 06:00:39 ecd Exp $&n; * irq.h: IRQ registers on the 64-bit Sparc.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1998 Jakub Jelinek (jj@ultra.linux.cz)&n; */
 macro_line|#ifndef _SPARC64_IRQ_H
 DECL|macro|_SPARC64_IRQ_H
 mdefine_line|#define _SPARC64_IRQ_H
 macro_line|#include &lt;linux/linkage.h&gt;
-multiline_comment|/* Sparc64 extensions to the interrupt registry flags.  Mostly this is&n; * for passing along what bus type the device is on and also the true&n; * format of the dev_id cookie, see below.&n; */
-DECL|macro|SA_BUSMASK
-mdefine_line|#define SA_BUSMASK&t;0x0f000
-DECL|macro|SA_SBUS
-mdefine_line|#define SA_SBUS&t;&t;0x01000
-DECL|macro|SA_PCI
-mdefine_line|#define SA_PCI&t;&t;0x02000
-DECL|macro|SA_FHC
-mdefine_line|#define SA_FHC&t;&t;0x03000
-DECL|macro|SA_EBUS
-mdefine_line|#define SA_EBUS&t;&t;0x04000
-DECL|macro|SA_BUS
-mdefine_line|#define SA_BUS(mask)&t;((mask) &amp; SA_BUSMASK)
+macro_line|#include &lt;linux/kernel.h&gt;
 DECL|struct|devid_cookie
 r_struct
 id|devid_cookie
 (brace
-multiline_comment|/* Caller specifies these. */
-DECL|member|real_dev_id
-r_void
-op_star
-id|real_dev_id
+DECL|member|dummy
+r_int
+id|dummy
 suffix:semicolon
-multiline_comment|/* What dev_id would usually contain. */
-DECL|member|imap
+)brace
+suffix:semicolon
+multiline_comment|/* You should not mess with this directly. That&squot;s the job of irq.c. */
+DECL|struct|ino_bucket
+r_struct
+id|ino_bucket
+(brace
+DECL|member|ino
 r_int
 r_int
-op_star
-id|imap
+id|ino
 suffix:semicolon
-multiline_comment|/* Anonymous IMAP register */
+DECL|member|imap_off
+r_int
+id|imap_off
+suffix:semicolon
+DECL|member|pil
+r_int
+r_int
+id|pil
+suffix:semicolon
+DECL|member|flags
+r_int
+r_int
+id|flags
+suffix:semicolon
 DECL|member|iclr
 r_int
 r_int
 op_star
 id|iclr
 suffix:semicolon
-multiline_comment|/* Anonymous ICLR register */
-DECL|member|pil
-r_int
-id|pil
-suffix:semicolon
-multiline_comment|/* Anonymous PIL */
-DECL|member|bus_cookie
-r_void
-op_star
-id|bus_cookie
-suffix:semicolon
-multiline_comment|/* SYSIO regs, PSYCHO regs, etc. */
-multiline_comment|/* Return values. */
-DECL|member|ret_ino
-r_int
-r_int
-id|ret_ino
-suffix:semicolon
-DECL|member|ret_pil
-r_int
-r_int
-id|ret_pil
-suffix:semicolon
 )brace
 suffix:semicolon
-DECL|macro|SA_DCOOKIE
-mdefine_line|#define SA_DCOOKIE&t;0x10000
+DECL|macro|__irq_ino
+mdefine_line|#define __irq_ino(irq) ((struct ino_bucket *)(unsigned long)(irq))-&gt;ino
+DECL|macro|__irq_pil
+mdefine_line|#define __irq_pil(irq) ((struct ino_bucket *)(unsigned long)(irq))-&gt;pil
+DECL|function|__irq_itoa
+r_static
+id|__inline__
+r_char
+op_star
+id|__irq_itoa
+c_func
+(paren
+r_int
+r_int
+id|irq
+)paren
+(brace
+r_static
+r_char
+id|buff
+(braket
+l_int|16
+)braket
+suffix:semicolon
+id|sprintf
+c_func
+(paren
+id|buff
+comma
+l_string|&quot;%d,%x&quot;
+comma
+id|__irq_pil
+c_func
+(paren
+id|irq
+)paren
+comma
+id|__irq_ino
+c_func
+(paren
+id|irq
+)paren
+)paren
+suffix:semicolon
+r_return
+id|buff
+suffix:semicolon
+)brace
 DECL|macro|NR_IRQS
 mdefine_line|#define NR_IRQS    15
 r_extern
@@ -111,6 +138,64 @@ comma
 r_int
 r_int
 op_star
+)paren
+suffix:semicolon
+r_extern
+r_int
+r_int
+id|build_irq
+c_func
+(paren
+r_int
+id|pil
+comma
+r_int
+id|inofixup
+comma
+r_int
+r_int
+op_star
+id|iclr
+comma
+r_int
+r_int
+op_star
+id|imap
+)paren
+suffix:semicolon
+r_extern
+r_int
+r_int
+id|sbus_build_irq
+c_func
+(paren
+r_void
+op_star
+id|sbus
+comma
+r_int
+r_int
+id|ino
+)paren
+suffix:semicolon
+r_extern
+r_int
+r_int
+id|psycho_build_irq
+c_func
+(paren
+r_void
+op_star
+id|psycho
+comma
+r_int
+id|imap_off
+comma
+r_int
+id|ino
+comma
+r_int
+id|need_dma_sync
 )paren
 suffix:semicolon
 macro_line|#ifdef __SMP__

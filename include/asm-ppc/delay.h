@@ -2,6 +2,11 @@ macro_line|#ifndef _PPC_DELAY_H
 DECL|macro|_PPC_DELAY_H
 mdefine_line|#define _PPC_DELAY_H
 multiline_comment|/*&n; * Copyright 1996, Paul Mackerras.&n; *&n; * This program is free software; you can redistribute it and/or&n; * modify it under the terms of the GNU General Public License&n; * as published by the Free Software Foundation; either version&n; * 2 of the License, or (at your option) any later version.&n; */
+r_extern
+r_int
+r_int
+id|loops_per_sec
+suffix:semicolon
 DECL|function|__delay
 r_extern
 id|__inline__

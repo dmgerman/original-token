@@ -1707,6 +1707,7 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
+macro_line|#ifdef DEBUG
 id|printk
 (paren
 l_string|&quot;[MOUSE-ioctl: %8.8x]&bslash;n&quot;
@@ -1714,6 +1715,7 @@ comma
 id|cmd
 )paren
 suffix:semicolon
+macro_line|#endif
 r_return
 op_minus
 l_int|1
