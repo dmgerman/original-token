@@ -138,6 +138,13 @@ c_func
 id|disable_irq
 )paren
 suffix:semicolon
+DECL|variable|kernel_thread
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|kernel_thread
+)paren
+suffix:semicolon
 DECL|variable|__down_failed
 id|EXPORT_SYMBOL_NOVERS
 c_func

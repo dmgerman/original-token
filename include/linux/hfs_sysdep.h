@@ -8,6 +8,11 @@ macro_line|#include &lt;linux/locks.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;asm/byteorder.h&gt;
 macro_line|#include &lt;asm/unaligned.h&gt;
+r_extern
+r_struct
+id|timezone
+id|sys_tz
+suffix:semicolon
 DECL|macro|offsetof
 macro_line|#undef offsetof
 DECL|macro|offsetof
@@ -169,6 +174,45 @@ id|__LINE__
 suffix:semicolon
 macro_line|#endif
 )brace
+multiline_comment|/* handle conversion between times. &n; *&n; * NOTE: hfs+ doesn&squot;t need this. also, we don&squot;t use tz_dsttime as that&squot;s&n; *       not a good thing to do. instead, we depend upon tz_minuteswest&n; *       having the correct daylight savings correction. &n; */
+DECL|function|hfs_from_utc
+r_extern
+r_inline
+id|hfs_u32
+id|hfs_from_utc
+c_func
+(paren
+id|hfs_s32
+id|time
+)paren
+(brace
+r_return
+id|time
+op_minus
+id|sys_tz.tz_minuteswest
+op_star
+l_int|60
+suffix:semicolon
+)brace
+DECL|function|hfs_to_utc
+r_extern
+r_inline
+id|hfs_s32
+id|hfs_to_utc
+c_func
+(paren
+id|hfs_u32
+id|time
+)paren
+(brace
+r_return
+id|time
+op_plus
+id|sys_tz.tz_minuteswest
+op_star
+l_int|60
+suffix:semicolon
+)brace
 DECL|function|hfs_time
 r_extern
 r_inline
@@ -183,7 +227,11 @@ r_return
 id|htonl
 c_func
 (paren
+id|hfs_from_utc
+c_func
+(paren
 id|CURRENT_TIME
+)paren
 op_plus
 l_int|2082844800U
 )paren

@@ -1504,7 +1504,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * Create a kernel thread&n; */
 DECL|function|kernel_thread
-id|pid_t
+r_int
 id|kernel_thread
 c_func
 (paren

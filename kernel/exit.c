@@ -1,4 +1,5 @@
 multiline_comment|/*&n; *  linux/kernel/exit.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
@@ -1328,11 +1329,21 @@ id|tsk-&gt;flags
 op_or_assign
 id|PF_EXITING
 suffix:semicolon
+id|start_bh_atomic
+c_func
+(paren
+)paren
+suffix:semicolon
 id|del_timer
 c_func
 (paren
 op_amp
 id|tsk-&gt;real_timer
+)paren
+suffix:semicolon
+id|end_bh_atomic
+c_func
+(paren
 )paren
 suffix:semicolon
 id|lock_kernel

@@ -420,7 +420,7 @@ id|page_map
 )paren
 )paren
 (brace
-id|free_page_and_swap_cache
+id|free_page
 c_func
 (paren
 id|page
@@ -480,7 +480,7 @@ id|__GFP_WAIT
 suffix:semicolon
 )brace
 multiline_comment|/* Now we can free the current physical page.  We also&n;&t;&t; * free up the swap cache if this is the last use of the&n;&t;&t; * page.  Note that there is a race here: the page may&n;&t;&t; * still be shared COW by another process, but that&n;&t;&t; * process may exit while we are writing out the page&n;&t;&t; * asynchronously.  That&squot;s no problem, shrink_mmap() can&n;&t;&t; * correctly clean up the occassional unshared page&n;&t;&t; * which gets left behind in the swap cache. */
-id|free_page_and_swap_cache
+id|free_page
 c_func
 (paren
 id|page
@@ -543,7 +543,7 @@ c_func
 id|entry
 )paren
 suffix:semicolon
-id|free_page_and_swap_cache
+id|free_page
 c_func
 (paren
 id|page
@@ -609,10 +609,15 @@ id|address
 suffix:semicolon
 id|entry
 op_assign
-id|page_unuse
+(paren
+id|atomic_read
 c_func
 (paren
-id|page_map
+op_amp
+id|page_map-&gt;count
+)paren
+op_eq
+l_int|1
 )paren
 suffix:semicolon
 id|__free_page

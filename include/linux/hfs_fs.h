@@ -117,13 +117,13 @@ mdefine_line|#define hfs_h_to_mtime(ARG)&t;htonl((hfs_s32)ntohl(ARG)+3029529600U
 DECL|macro|hfs_m_to_htime
 mdefine_line|#define hfs_m_to_htime(ARG)&t;((hfs_s32)htonl(ntohl(ARG)-3029529600U))
 DECL|macro|hfs_h_to_utime
-mdefine_line|#define hfs_h_to_utime(ARG)&t;((hfs_s32)ntohl(ARG)+946684800U)
+mdefine_line|#define hfs_h_to_utime(ARG)&t;((hfs_s32)hfs_to_utc(ntohl(ARG)+946684800U))
 DECL|macro|hfs_u_to_htime
-mdefine_line|#define hfs_u_to_htime(ARG)&t;((hfs_s32)htonl((ARG)-946684800U))
+mdefine_line|#define hfs_u_to_htime(ARG)&t;((hfs_s32)htonl(hfs_from_utc(ARG)-946684800U))
 DECL|macro|hfs_u_to_mtime
-mdefine_line|#define hfs_u_to_mtime(ARG)&t;htonl((ARG)+2082844800U)
+mdefine_line|#define hfs_u_to_mtime(ARG)&t;htonl(hfs_from_utc(ARG)+2082844800U)
 DECL|macro|hfs_m_to_utime
-mdefine_line|#define hfs_m_to_utime(ARG)&t;(ntohl(ARG)-2082844800U)
+mdefine_line|#define hfs_m_to_utime(ARG)&t;(hfs_to_utc(ntohl(ARG)-2082844800U))
 multiline_comment|/*======== Data structures kept in memory ========*/
 multiline_comment|/*&n; * A descriptor for a single entry within the header of an&n; * AppleDouble or AppleSingle header file.&n; * An array of these make up a table of contents for the file.&n; */
 DECL|struct|hfs_hdr_descr

@@ -585,6 +585,16 @@ id|page-&gt;flags
 )paren
 r_break
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|buffer_under_min
+c_func
+(paren
+)paren
+)paren
+r_break
+suffix:semicolon
 multiline_comment|/* is it a buffer cache page? */
 r_if
 c_cond

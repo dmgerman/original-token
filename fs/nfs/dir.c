@@ -1531,6 +1531,25 @@ l_int|NULL
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * Whenever an NFS operation succeeds, we know that the dentry&n; * is valid, so we update the revalidation timestamp.&n; */
+DECL|function|nfs_renew_times
+r_static
+r_inline
+r_void
+id|nfs_renew_times
+c_func
+(paren
+r_struct
+id|dentry
+op_star
+id|dentry
+)paren
+(brace
+id|dentry-&gt;d_time
+op_assign
+id|jiffies
+suffix:semicolon
+)brace
 DECL|macro|NFS_REVALIDATE_INTERVAL
 mdefine_line|#define NFS_REVALIDATE_INTERVAL (5*HZ)
 multiline_comment|/*&n; * This is called every time the dcache has a lookup hit,&n; * and we should check whether we can really trust that&n; * lookup.&n; *&n; * NOTE! The hit can be a negative hit too, don&squot;t assume&n; * we have an inode!&n; *&n; * If the dentry is older than the revalidation interval, &n; * we do a new lookup and verify that the dentry is still&n; * correct.&n; */
@@ -1706,6 +1725,13 @@ id|nfs_fh
 )paren
 r_goto
 id|out_bad
+suffix:semicolon
+multiline_comment|/* Ok, remeber that we successfully checked it.. */
+id|nfs_renew_times
+c_func
+(paren
+id|dentry
+)paren
 suffix:semicolon
 id|out_valid
 suffix:colon
@@ -1997,25 +2023,6 @@ suffix:semicolon
 )brace
 )brace
 macro_line|#endif
-multiline_comment|/*&n; * Whenever an NFS operation succeeds, we know that the dentry&n; * is valid, so we update the revalidation timestamp.&n; */
-DECL|function|nfs_renew_times
-r_static
-r_inline
-r_void
-id|nfs_renew_times
-c_func
-(paren
-r_struct
-id|dentry
-op_star
-id|dentry
-)paren
-(brace
-id|dentry-&gt;d_time
-op_assign
-id|jiffies
-suffix:semicolon
-)brace
 DECL|function|nfs_lookup
 r_static
 r_int

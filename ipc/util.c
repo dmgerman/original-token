@@ -1,4 +1,5 @@
 multiline_comment|/*&n; * linux/ipc/util.c&n; * Copyright (C) 1992 Krishna Balasubramanian&n; *&n; * Sep 1997 - Call suser() last after &quot;normal&quot; permission checks so we&n; *            get BSD style process accounting right.&n; *            Occurs in several places in the IPC code.&n; *            Chris Evans, &lt;chris@ferret.lmh.ox.ac.uk&gt;&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/shm.h&gt;
 macro_line|#include &lt;linux/init.h&gt;

@@ -1,6 +1,7 @@
 multiline_comment|/*&n; *  linux/init/main.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *&n; *  GK 2/5/95  -  Changed to support mounting root fs via NFS&n; *  Added initrd &amp; change_root: Werner Almesberger &amp; Hans Lermen, Feb &squot;96&n; *  Moan early if gcc is old, avoiding bogus kernels - Paul Gortmaker, May &squot;96&n; *  Simplified starting of init:  Michael A. Griffith &lt;grif@acm.org&gt; &n; */
 DECL|macro|__KERNEL_SYSCALLS__
 mdefine_line|#define __KERNEL_SYSCALLS__
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;linux/unistd.h&gt;
 macro_line|#include &lt;linux/ctype.h&gt;

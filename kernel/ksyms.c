@@ -1,4 +1,5 @@
 multiline_comment|/*&n; * Herein lies all the functions/variables that are &quot;exported&quot; for linkage&n; * with dynamically loaded kernel modules.&n; *&t;&t;&t;Jon.&n; *&n; * - Stacked module support and unified symbol table added (June 1994)&n; * - External symbol table support added (December 1994)&n; * - Versions on symbols added (December 1994)&n; *   by Bjorn Ekwall &lt;bj0rn@blox.se&gt;&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/blkdev.h&gt;
@@ -1857,6 +1858,13 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|__down
+)paren
+suffix:semicolon
+DECL|variable|__down_interruptible
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|__down_interruptible
 )paren
 suffix:semicolon
 DECL|variable|__up

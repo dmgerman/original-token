@@ -8,6 +8,7 @@ id|version
 op_assign
 l_string|&quot;depca.c:v0.5 1998/11/14 davies@maniac.ultranet.com&bslash;n&quot;
 suffix:semicolon
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;

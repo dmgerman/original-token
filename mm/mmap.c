@@ -4,6 +4,7 @@ macro_line|#include &lt;linux/shm.h&gt;
 macro_line|#include &lt;linux/mman.h&gt;
 macro_line|#include &lt;linux/pagemap.h&gt;
 macro_line|#include &lt;linux/swap.h&gt;
+macro_line|#include &lt;linux/swapctl.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/file.h&gt;
@@ -72,6 +73,7 @@ id|pages
 )paren
 (brace
 multiline_comment|/* Stupid algorithm to decide if we have enough memory: while&n;&t; * simple, it hopefully works in most obvious cases.. Easy to&n;&t; * fool it, but this should catch most mistakes.&n;&t; */
+multiline_comment|/* 23/11/98 NJC: Somewhat less stupid version of algorithm,&n;&t; * which tries to do &quot;TheRightThing&quot;.  Instead of using half of&n;&t; * (buffers+cache), use the minimum values.  Allow an extra 2%&n;&t; * of num_physpages for safety margin.&n;&t; */
 r_int
 id|free
 suffix:semicolon
@@ -95,10 +97,6 @@ op_add_assign
 id|page_cache_size
 suffix:semicolon
 id|free
-op_rshift_assign
-l_int|1
-suffix:semicolon
-id|free
 op_add_assign
 id|nr_free_pages
 suffix:semicolon
@@ -108,9 +106,17 @@ id|nr_swap_pages
 suffix:semicolon
 id|free
 op_sub_assign
+(paren
+id|page_cache.min_percent
+op_plus
+id|buffer_mem.min_percent
+op_plus
+l_int|2
+)paren
+op_star
 id|num_physpages
-op_rshift
-l_int|4
+op_div
+l_int|100
 suffix:semicolon
 r_return
 id|free
