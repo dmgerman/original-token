@@ -105,6 +105,9 @@ id|bread
 c_func
 (paren
 id|dev
+op_amp
+op_complement
+l_int|0xf
 comma
 l_int|0
 comma

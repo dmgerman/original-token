@@ -141,6 +141,10 @@ DECL|macro|PCI_DEVICE_ID_NCR_53C820
 mdefine_line|#define PCI_DEVICE_ID_NCR_53C820&t;0x0002
 DECL|macro|PCI_DEVICE_ID_NCR_53C825
 mdefine_line|#define PCI_DEVICE_ID_NCR_53C825&t;0x0003
+DECL|macro|PCI_VENDOR_ID_ADAPTEC
+mdefine_line|#define PCI_VENDOR_ID_ADAPTEC&t;&t;0x9004
+DECL|macro|PCI_DEVICE_ID_ADAPTEC_2940
+mdefine_line|#define PCI_DEVICE_ID_ADAPTEC_2940&t;0x7178
 multiline_comment|/* PCI BIOS */
 r_extern
 r_int

@@ -641,7 +641,7 @@ op_star
 id|ints
 )paren
 suffix:semicolon
-macro_line|#endif CONFIG_SBPCD
+macro_line|#endif CONFIG_CDU31A
 r_void
 id|ramdisk_setup
 c_func
@@ -1705,7 +1705,7 @@ id|len
 comma
 l_int|NULL
 comma
-l_int|16
+l_int|0
 )paren
 suffix:semicolon
 r_break

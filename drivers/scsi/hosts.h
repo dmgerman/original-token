@@ -287,6 +287,10 @@ DECL|member|this_id
 r_int
 id|this_id
 suffix:semicolon
+DECL|member|can_queue
+r_int
+id|can_queue
+suffix:semicolon
 DECL|member|sg_tablesize
 r_int
 r_int

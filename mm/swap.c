@@ -24,7 +24,6 @@ mdefine_line|#define SWP_OFFSET(entry) ((entry) &gt;&gt; PAGE_SHIFT)
 DECL|macro|SWP_ENTRY
 mdefine_line|#define SWP_ENTRY(type,offset) (((type) &lt;&lt; 1) | ((offset) &lt;&lt; PAGE_SHIFT))
 DECL|variable|min_free_pages
-r_static
 r_int
 id|min_free_pages
 op_assign
@@ -2524,7 +2523,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * Some ugly macros to speed up __get_free_pages()..&n; */
 DECL|macro|RMQUEUE
-mdefine_line|#define RMQUEUE(order) &bslash;&n;do { struct mem_list * queue = free_area_list+order; &bslash;&n;     unsigned long new_order = order; &bslash;&n;&t;do { struct mem_list *next = queue-&gt;next; &bslash;&n;&t;&t;if (queue != next) { &bslash;&n;&t;&t;&t;queue-&gt;next = next-&gt;next; &bslash;&n;&t;&t;&t;next-&gt;next-&gt;prev = queue; &bslash;&n;&t;&t;&t;mark_used((unsigned long) next, new_order); &bslash;&n;&t;&t;&t;nr_free_pages -= 1 &lt;&lt; order; &bslash;&n;&t;&t;&t;restore_flags(flags); &bslash;&n;&t;&t;&t;EXPAND(next, order, new_order); &bslash;&n;&t;&t;&t;return (unsigned long) next; &bslash;&n;&t;&t;} new_order++; queue++; &bslash;&n;&t;} while (new_order &lt; NR_MEM_LISTS); &bslash;&n;} while (0)
+mdefine_line|#define RMQUEUE(order) &bslash;&n;do { struct mem_list * queue = free_area_list+order; &bslash;&n;     unsigned long new_order = order; &bslash;&n;&t;do { struct mem_list *next = queue-&gt;next; &bslash;&n;&t;&t;if (queue != next) { &bslash;&n;&t;&t;&t;(queue-&gt;next = next-&gt;next)-&gt;prev = queue; &bslash;&n;&t;&t;&t;mark_used((unsigned long) next, new_order); &bslash;&n;&t;&t;&t;nr_free_pages -= 1 &lt;&lt; order; &bslash;&n;&t;&t;&t;restore_flags(flags); &bslash;&n;&t;&t;&t;EXPAND(next, order, new_order); &bslash;&n;&t;&t;&t;return (unsigned long) next; &bslash;&n;&t;&t;} new_order++; queue++; &bslash;&n;&t;} while (new_order &lt; NR_MEM_LISTS); &bslash;&n;} while (0)
 DECL|function|mark_used
 r_static
 r_inline

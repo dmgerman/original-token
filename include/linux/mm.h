@@ -387,6 +387,10 @@ r_extern
 r_int
 id|nr_free_pages
 suffix:semicolon
+r_extern
+r_int
+id|min_free_pages
+suffix:semicolon
 DECL|macro|NR_MEM_LISTS
 mdefine_line|#define NR_MEM_LISTS 6
 DECL|struct|mem_list

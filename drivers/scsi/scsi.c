@@ -2206,11 +2206,11 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|device-&gt;host-&gt;hostt-&gt;can_queue
+id|device-&gt;host-&gt;can_queue
 op_logical_and
 id|device-&gt;host-&gt;host_busy
 op_ge
-id|device-&gt;host-&gt;hostt-&gt;can_queue
+id|device-&gt;host-&gt;can_queue
 )paren
 r_return
 l_int|NULL
@@ -2996,7 +2996,7 @@ macro_line|#endif
 r_if
 c_cond
 (paren
-id|host-&gt;hostt-&gt;can_queue
+id|host-&gt;can_queue
 )paren
 (brace
 macro_line|#ifdef DEBUG
@@ -3341,9 +3341,7 @@ id|host
 (brace
 id|panic
 (paren
-l_string|&quot;Invalid or not present host. %d&bslash;n&quot;
-comma
-id|host-&gt;host_no
+l_string|&quot;Invalid or not present host.&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
@@ -3369,11 +3367,11 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|host-&gt;hostt-&gt;can_queue
+id|host-&gt;can_queue
 op_logical_and
 id|host-&gt;host_busy
 op_ge
-id|host-&gt;hostt-&gt;can_queue
+id|host-&gt;can_queue
 )paren
 (brace
 id|sti
@@ -3390,7 +3388,7 @@ comma
 (paren
 id|host-&gt;host_busy
 op_ge
-id|host-&gt;hostt-&gt;can_queue
+id|host-&gt;can_queue
 )paren
 )paren
 suffix:semicolon

@@ -270,14 +270,6 @@ id|nr_buffer_heads
 op_assign
 l_int|0
 suffix:semicolon
-DECL|variable|min_free_pages
-r_static
-r_int
-id|min_free_pages
-op_assign
-l_int|20
-suffix:semicolon
-multiline_comment|/* nr free pages needed before buffer grows */
 r_extern
 r_int
 op_star
@@ -2436,6 +2428,8 @@ c_loop
 id|nr_free_pages
 OG
 id|min_free_pages
+op_star
+l_int|2
 op_logical_and
 id|needed
 OG
@@ -7753,6 +7747,8 @@ c_cond
 id|nr_free_pages
 OG
 id|min_free_pages
+op_star
+l_int|2
 )paren
 r_return
 id|try_to_generate_cluster
@@ -7817,10 +7813,6 @@ op_star
 l_int|1024
 )paren
 (brace
-id|min_free_pages
-op_assign
-l_int|200
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -7846,10 +7838,6 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|min_free_pages
-op_assign
-l_int|20
-suffix:semicolon
 id|nr_hash
 op_assign
 l_int|997

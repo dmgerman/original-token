@@ -608,6 +608,12 @@ comma
 id|X
 c_func
 (paren
+id|need_resched
+)paren
+comma
+id|X
+c_func
+(paren
 id|kill_proc
 )paren
 comma

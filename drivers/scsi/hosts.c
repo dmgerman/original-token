@@ -377,10 +377,14 @@ id|j
 )paren
 suffix:semicolon
 macro_line|#endif
-multiline_comment|/* The next three are the default values which can be overridden&n;&t;   if need be */
+multiline_comment|/* The next four are the default values which can be overridden&n;&t;   if need be */
 id|retval-&gt;this_id
 op_assign
 id|tpnt-&gt;this_id
+suffix:semicolon
+id|retval-&gt;can_queue
+op_assign
+id|tpnt-&gt;can_queue
 suffix:semicolon
 id|retval-&gt;sg_tablesize
 op_assign

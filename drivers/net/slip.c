@@ -3815,14 +3815,14 @@ comma
 id|SL_NRUNIT
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_INET&t;&t;&t;&t;
+macro_line|#ifdef SL_COMPRESSED
 id|printk
 c_func
 (paren
 l_string|&quot;CSLIP: code copyright 1989 Regents of the University of California&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#endif&t;
+macro_line|#endif
 macro_line|#ifdef CONFIG_AX25
 id|printk
 c_func
@@ -3830,7 +3830,7 @@ c_func
 l_string|&quot;AX25: KISS encapsulation enabled&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#endif&t;
+macro_line|#endif
 multiline_comment|/* Fill in our LDISC request block. */
 id|memset
 c_func

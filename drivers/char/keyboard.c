@@ -757,59 +757,202 @@ suffix:semicolon
 )brace
 multiline_comment|/* uft-8 is defined for words of up to 36 bits,&n;       but we need only 16 bits here */
 )brace
-multiline_comment|/*&n; * Translation of escaped scancodes to keysyms.&n; * This should be user-settable.&n; */
-DECL|macro|E0_BASE
-mdefine_line|#define E0_BASE 96
+multiline_comment|/*&n; * Translation of escaped scancodes to keycodes.&n; * This is now user-settable.&n; * The keycodes 1-88,96-111,119 are fairly standard, and&n; * should probably not be changed - changing might confuse X.&n; * X also interprets scancode 0x5d (KEY_Begin).&n; *&n; * For 1-88 keycode equals scancode.&n; */
 DECL|macro|E0_KPENTER
-mdefine_line|#define E0_KPENTER (E0_BASE+0)
+mdefine_line|#define E0_KPENTER 96
 DECL|macro|E0_RCTRL
-mdefine_line|#define E0_RCTRL   (E0_BASE+1)
+mdefine_line|#define E0_RCTRL   97
 DECL|macro|E0_KPSLASH
-mdefine_line|#define E0_KPSLASH (E0_BASE+2)
+mdefine_line|#define E0_KPSLASH 98
 DECL|macro|E0_PRSCR
-mdefine_line|#define E0_PRSCR   (E0_BASE+3)
+mdefine_line|#define E0_PRSCR   99
 DECL|macro|E0_RALT
-mdefine_line|#define E0_RALT    (E0_BASE+4)
+mdefine_line|#define E0_RALT    100
 DECL|macro|E0_BREAK
-mdefine_line|#define E0_BREAK   (E0_BASE+5)  /* (control-pause) */
+mdefine_line|#define E0_BREAK   101  /* (control-pause) */
 DECL|macro|E0_HOME
-mdefine_line|#define E0_HOME    (E0_BASE+6)
+mdefine_line|#define E0_HOME    102
 DECL|macro|E0_UP
-mdefine_line|#define E0_UP      (E0_BASE+7)
+mdefine_line|#define E0_UP      103
 DECL|macro|E0_PGUP
-mdefine_line|#define E0_PGUP    (E0_BASE+8)
+mdefine_line|#define E0_PGUP    104
 DECL|macro|E0_LEFT
-mdefine_line|#define E0_LEFT    (E0_BASE+9)
+mdefine_line|#define E0_LEFT    105
 DECL|macro|E0_RIGHT
-mdefine_line|#define E0_RIGHT   (E0_BASE+10)
+mdefine_line|#define E0_RIGHT   106
 DECL|macro|E0_END
-mdefine_line|#define E0_END     (E0_BASE+11)
+mdefine_line|#define E0_END     107
 DECL|macro|E0_DOWN
-mdefine_line|#define E0_DOWN    (E0_BASE+12)
+mdefine_line|#define E0_DOWN    108
 DECL|macro|E0_PGDN
-mdefine_line|#define E0_PGDN    (E0_BASE+13)
+mdefine_line|#define E0_PGDN    109
 DECL|macro|E0_INS
-mdefine_line|#define E0_INS     (E0_BASE+14)
+mdefine_line|#define E0_INS     110
 DECL|macro|E0_DEL
-mdefine_line|#define E0_DEL     (E0_BASE+15)
+mdefine_line|#define E0_DEL     111
+DECL|macro|E1_PAUSE
+mdefine_line|#define E1_PAUSE   119
+multiline_comment|/*&n; * The keycodes below are randomly located in 89-95,112-118,120-127.&n; * They could be thrown away (and all occurrences below replaced by 0),&n; * but that would force many users to use the `setkeycodes&squot; utility, where&n; * they needed not before. It does not matter that there are duplicates, as&n; * long as no duplication occurs for any single keyboard.&n; */
+DECL|macro|SC_LIM
+mdefine_line|#define SC_LIM 89
+DECL|macro|FOCUS_PF1
+mdefine_line|#define FOCUS_PF1 85           /* actual code! */
+DECL|macro|FOCUS_PF2
+mdefine_line|#define FOCUS_PF2 89
+DECL|macro|FOCUS_PF3
+mdefine_line|#define FOCUS_PF3 90
+DECL|macro|FOCUS_PF4
+mdefine_line|#define FOCUS_PF4 91
+DECL|macro|FOCUS_PF5
+mdefine_line|#define FOCUS_PF5 92
+DECL|macro|FOCUS_PF6
+mdefine_line|#define FOCUS_PF6 93
+DECL|macro|FOCUS_PF7
+mdefine_line|#define FOCUS_PF7 94
+DECL|macro|FOCUS_PF8
+mdefine_line|#define FOCUS_PF8 95
+DECL|macro|FOCUS_PF9
+mdefine_line|#define FOCUS_PF9 120
+DECL|macro|FOCUS_PF10
+mdefine_line|#define FOCUS_PF10 121
+DECL|macro|FOCUS_PF11
+mdefine_line|#define FOCUS_PF11 122
+DECL|macro|FOCUS_PF12
+mdefine_line|#define FOCUS_PF12 123
+DECL|macro|JAP_86
+mdefine_line|#define JAP_86     124
+multiline_comment|/* tfj@olivia.ping.dk:&n; * The four keys are located over the numeric keypad, and are&n; * labelled A1-A4. It&squot;s an rc930 keyboard, from&n; * Regnecentralen/RC International, Now ICL.&n; * Scancodes: 59, 5a, 5b, 5c.&n; */
+DECL|macro|RGN1
+mdefine_line|#define RGN1 124
+DECL|macro|RGN2
+mdefine_line|#define RGN2 125
+DECL|macro|RGN3
+mdefine_line|#define RGN3 126
+DECL|macro|RGN4
+mdefine_line|#define RGN4 127
+DECL|variable|high_keys
+r_static
+r_int
+r_char
+id|high_keys
+(braket
+l_int|128
+op_minus
+id|SC_LIM
+)braket
+op_assign
+(brace
+id|RGN1
+comma
+id|RGN2
+comma
+id|RGN3
+comma
+id|RGN4
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+multiline_comment|/* 0x59-0x5f */
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+multiline_comment|/* 0x60-0x67 */
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+id|FOCUS_PF11
+comma
+l_int|0
+comma
+id|FOCUS_PF12
+comma
+multiline_comment|/* 0x68-0x6f */
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+id|FOCUS_PF2
+comma
+id|FOCUS_PF9
+comma
+l_int|0
+comma
+l_int|0
+comma
+id|FOCUS_PF3
+comma
+multiline_comment|/* 0x70-0x77 */
+id|FOCUS_PF4
+comma
+id|FOCUS_PF5
+comma
+id|FOCUS_PF6
+comma
+id|FOCUS_PF7
+comma
+multiline_comment|/* 0x78-0x7b */
+id|FOCUS_PF8
+comma
+id|JAP_86
+comma
+id|FOCUS_PF10
+comma
+l_int|0
+multiline_comment|/* 0x7c-0x7f */
+)brace
+suffix:semicolon
 multiline_comment|/* BTC */
 DECL|macro|E0_MACRO
-mdefine_line|#define E0_MACRO   (E0_BASE+16)
+mdefine_line|#define E0_MACRO   112
 multiline_comment|/* LK450 */
 DECL|macro|E0_F13
-mdefine_line|#define E0_F13     (E0_BASE+17)
+mdefine_line|#define E0_F13     113
 DECL|macro|E0_F14
-mdefine_line|#define E0_F14     (E0_BASE+18)
+mdefine_line|#define E0_F14     114
 DECL|macro|E0_HELP
-mdefine_line|#define E0_HELP    (E0_BASE+19)
+mdefine_line|#define E0_HELP    115
 DECL|macro|E0_DO
-mdefine_line|#define E0_DO      (E0_BASE+20)
+mdefine_line|#define E0_DO      116
 DECL|macro|E0_F17
-mdefine_line|#define E0_F17     (E0_BASE+21)
+mdefine_line|#define E0_F17     117
 DECL|macro|E0_KPMINPLUS
-mdefine_line|#define E0_KPMINPLUS (E0_BASE+22)
-DECL|macro|E1_PAUSE
-mdefine_line|#define E1_PAUSE   (E0_BASE+23)&t;                      /* 119 */
+mdefine_line|#define E0_KPMINPLUS 118
+multiline_comment|/*&n; * My OmniKey generates e0 4c for  the &quot;OMNI&quot; key and the&n; * right alt key does nada. [kkoller@nyx10.cs.du.edu]&n; */
+DECL|macro|E0_OK
+mdefine_line|#define E0_OK&t;124
+multiline_comment|/*&n; * New microsoft keyboard is rumoured to have&n; * e0 5b (left window button), e0 5c (right window button),&n; * e0 5d (menu button). [or: LBANNER, RBANNER, RMENU]&n; * [or: Windows_L, Windows_R, TaskMan]&n; */
+DECL|macro|E0_MSLW
+mdefine_line|#define E0_MSLW&t;125
+DECL|macro|E0_MSRW
+mdefine_line|#define E0_MSRW&t;126
+DECL|macro|E0_MSTM
+mdefine_line|#define E0_MSTM&t;127
 DECL|variable|e0_keys
 r_static
 r_int
@@ -981,7 +1124,7 @@ l_int|0
 comma
 id|E0_LEFT
 comma
-l_int|0
+id|E0_OK
 comma
 id|E0_RIGHT
 comma
@@ -1013,11 +1156,11 @@ l_int|0
 comma
 l_int|0
 comma
-l_int|0
+id|E0_MSLW
 comma
-l_int|0
+id|E0_MSRW
 comma
-l_int|0
+id|E0_MSTM
 comma
 l_int|0
 comma
@@ -1093,136 +1236,108 @@ l_int|0
 multiline_comment|/* 0x78-0x7f */
 )brace
 suffix:semicolon
-multiline_comment|/* kludge to stay below 128 - next time someone comes with a strange&n;   keyboard, key codes will have to become 2 (or 4) bytes. */
-multiline_comment|/* Owners of a FOCUS 9000 can assign F1,F2-F8,F9-F12 to 85,89-95,120-123 */
-multiline_comment|/* Owners of a certain Japanese keyboard can use 89 and 124 */
-multiline_comment|/* Owners of a certain Brazilian keyboard can use 89 and 121 */
-multiline_comment|/* Note: MEDIUMRAW mode will change, and all keycodes above 89 will change;&n;   this is only a temporary solution */
-DECL|macro|SC_LIM
-mdefine_line|#define SC_LIM 89
-DECL|macro|FOCUS_PF1
-mdefine_line|#define FOCUS_PF1 85           /* actual code! */
-DECL|macro|FOCUS_PF2
-mdefine_line|#define FOCUS_PF2 89
-DECL|macro|FOCUS_PF3
-mdefine_line|#define FOCUS_PF3 90
-DECL|macro|FOCUS_PF4
-mdefine_line|#define FOCUS_PF4 91
-DECL|macro|FOCUS_PF5
-mdefine_line|#define FOCUS_PF5 92
-DECL|macro|FOCUS_PF6
-mdefine_line|#define FOCUS_PF6 93
-DECL|macro|FOCUS_PF7
-mdefine_line|#define FOCUS_PF7 94
-DECL|macro|FOCUS_PF8
-mdefine_line|#define FOCUS_PF8 95
-DECL|macro|FOCUS_PF9
-mdefine_line|#define FOCUS_PF9 (E1_PAUSE + 1)
-DECL|macro|FOCUS_PF10
-mdefine_line|#define FOCUS_PF10 (E1_PAUSE + 2)
-DECL|macro|FOCUS_PF11
-mdefine_line|#define FOCUS_PF11 (E1_PAUSE + 3)
-DECL|macro|FOCUS_PF12
-mdefine_line|#define FOCUS_PF12 (E1_PAUSE + 4)                    /* 123 */
-DECL|macro|JAP_86
-mdefine_line|#define JAP_86     (E1_PAUSE + 5)                    /* 124 */
-DECL|variable|high_keys
-r_static
+DECL|function|setkeycode
 r_int
-r_char
+id|setkeycode
+c_func
+(paren
+r_int
+r_int
+id|scancode
+comma
+r_int
+r_int
+id|keycode
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|scancode
+template_param
+l_int|255
+op_logical_or
+id|keycode
+OG
+l_int|127
+)paren
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|scancode
+OL
+l_int|128
+)paren
 id|high_keys
 (braket
-l_int|128
+id|scancode
 op_minus
 id|SC_LIM
 )braket
 op_assign
-(brace
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-multiline_comment|/* 0x59-0x5f */
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-multiline_comment|/* 0x60-0x67 */
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-id|FOCUS_PF11
-comma
-l_int|0
-comma
-id|FOCUS_PF12
-comma
-multiline_comment|/* 0x68-0x6f */
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-id|FOCUS_PF2
-comma
-id|FOCUS_PF9
-comma
-l_int|0
-comma
-l_int|0
-comma
-id|FOCUS_PF3
-comma
-multiline_comment|/* 0x70-0x77 */
-id|FOCUS_PF4
-comma
-id|FOCUS_PF5
-comma
-id|FOCUS_PF6
-comma
-id|FOCUS_PF7
-comma
-multiline_comment|/* 0x78-0x7b */
-id|FOCUS_PF8
-comma
-id|JAP_86
-comma
-id|FOCUS_PF10
-comma
-l_int|0
-multiline_comment|/* 0x7c-0x7f */
-)brace
+id|keycode
 suffix:semicolon
+r_else
+id|e0_keys
+(braket
+id|scancode
+op_minus
+l_int|128
+)braket
+op_assign
+id|keycode
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+DECL|function|getkeycode
+r_int
+id|getkeycode
+c_func
+(paren
+r_int
+r_int
+id|scancode
+)paren
+(brace
+r_return
+(paren
+id|scancode
+template_param
+l_int|255
+)paren
+ques
+c_cond
+op_minus
+id|EINVAL
+suffix:colon
+(paren
+id|scancode
+OL
+l_int|128
+)paren
+ques
+c_cond
+id|high_keys
+(braket
+id|scancode
+op_minus
+id|SC_LIM
+)braket
+suffix:colon
+id|e0_keys
+(braket
+id|scancode
+op_minus
+l_int|128
+)braket
+suffix:semicolon
+)brace
 DECL|function|keyboard_interrupt
 r_static
 r_void

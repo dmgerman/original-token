@@ -620,7 +620,11 @@ id|inode
 suffix:semicolon
 id|offset
 op_assign
+(paren
+id|inode-&gt;u.isofs_i.i_first_extent
+op_plus
 id|filp-&gt;f_pos
+)paren
 op_amp
 (paren
 id|ISOFS_BUFFER_SIZE

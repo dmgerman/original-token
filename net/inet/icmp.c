@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Internet Control Message Protocol (ICMP)&n; *&n; * Version:&t;@(#)icmp.c&t;1.0.11&t;06/02/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&n; * Fixes:&t;&n; *&t;&t;Alan Cox&t;:&t;Generic queue usage.&n; *&t;&t;Gerhard Koerting:&t;ICMP addressing corrected&n; *&t;&t;Alan Cox&t;:&t;Use tos/ttl settings&n; *&t;&t;Alan Cox&t;:&t;Protocol violations&n; *&t;&t;Alan Cox&t;:&t;SNMP Statistics&t;&t;&n; *&t;&t;Alan Cox&t;:&t;Routing errors&n; *&t;&t;Alan Cox&t;:&t;Changes for newer routing code&n; *&t;&t;Alan Cox&t;:&t;Removed old debugging junk&n; *&t;&t;Alan Cox&t;:&t;Fixed the ICMP error status of net/host unreachable&n; *&t;Gerhard Koerting&t;:&t;Fixed broadcast ping properly&n; *&t;&t;Ulrich Kunitz&t;:&t;Fixed ICMP timestamp reply&n; *&n; * &n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Internet Control Message Protocol (ICMP)&n; *&n; * Version:&t;@(#)icmp.c&t;1.0.11&t;06/02/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&n; * Fixes:&t;&n; *&t;&t;Alan Cox&t;:&t;Generic queue usage.&n; *&t;&t;Gerhard Koerting:&t;ICMP addressing corrected&n; *&t;&t;Alan Cox&t;:&t;Use tos/ttl settings&n; *&t;&t;Alan Cox&t;:&t;Protocol violations&n; *&t;&t;Alan Cox&t;:&t;SNMP Statistics&t;&t;&n; *&t;&t;Alan Cox&t;:&t;Routing errors&n; *&t;&t;Alan Cox&t;:&t;Changes for newer routing code&n; *&t;&t;Alan Cox&t;:&t;Removed old debugging junk&n; *&t;&t;Alan Cox&t;:&t;Fixed the ICMP error status of net/host unreachable&n; *&t;Gerhard Koerting&t;:&t;Fixed broadcast ping properly&n; *&t;&t;Ulrich Kunitz&t;:&t;Fixed ICMP timestamp reply&n; *&t;&t;A.N.Kuznetsov&t;:&t;Multihoming fixes.&n; *&t;&t;Laco Rusnak&t;:&t;Multihoming fixes.&n; *&n; * &n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -1267,7 +1267,7 @@ op_star
 )paren
 l_int|NULL
 comma
-id|dev
+id|ndev
 comma
 id|skb2
 comma
@@ -1619,7 +1619,7 @@ op_star
 )paren
 l_int|NULL
 comma
-id|dev
+id|ndev
 comma
 id|skb2
 comma
@@ -1953,7 +1953,7 @@ op_star
 )paren
 l_int|NULL
 comma
-id|dev
+id|ndev
 comma
 id|skb2
 comma

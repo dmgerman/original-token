@@ -15,10 +15,22 @@ DECL|macro|IOCSIZE_MASK
 mdefine_line|#define IOCSIZE_MASK&t;0x3fff0000&t;/* size (max 16k-1 bytes) */
 DECL|macro|IOCSIZE_SHIFT
 mdefine_line|#define IOCSIZE_SHIFT&t;16&t;&t;/* how to get the size */
+DECL|macro|IOCSIZE_MAX
+mdefine_line|#define IOCSIZE_MAX&t;((PAGE_SIZE-1)&amp;(IOCSIZE_MASK &gt;&gt; IOC_SHIFT))
 DECL|macro|IOCCMD_MASK
 mdefine_line|#define IOCCMD_MASK&t;0x0000ffff&t;/* command code */
 DECL|macro|IOCCMD_SHIFT
 mdefine_line|#define IOCCMD_SHIFT&t;0
+DECL|macro|IOCPARM_MASK
+mdefine_line|#define IOCPARM_MASK IOCCMD_MASK
+DECL|macro|IOCPARM_SHIFT
+mdefine_line|#define IOCPARM_SHIFT IOCCMD_SHIFT
+DECL|macro|IOC_SIZE
+mdefine_line|#define IOC_SIZE(cmd)&t;(((cmd) &amp; IOCSIZE_MASK) &gt;&gt; IOCSIZE_SHIFT)
+DECL|macro|IOCBASECMD
+mdefine_line|#define IOCBASECMD(cmd)&t;((cmd) &amp; ~IOOCPARM_MASK
+DECL|macro|IOCGROUP
+mdefine_line|#define IOCGROUP(cmd)&t;(((cmd) &gt;&gt; 8) &amp; 0xFF)
 multiline_comment|/* _IO(magic, subcode); size field is zero and the &n; * subcode determines the command.&n; */
 DECL|macro|_IO
 mdefine_line|#define _IO(c,d)&t;(IOC_VOID | ((c)&lt;&lt;8) | (d)) /* param encoded */

@@ -70,6 +70,7 @@ l_int|0x340
 comma
 l_int|0
 )brace
+suffix:semicolon
 multiline_comment|/*&n;   The HP EtherTwist chip implementation is a fairly routine DP8390&n;   implementation.  It allows both shared memory and programmed-I/O buffer&n;   access, using a custom interface for both.  The programmed-I/O mode is&n;   entirely implemented in the HP EtherTwist chip, bypassing the problem&n;   ridden built-in 8390 facilities used on NE2000 designs.  The shared&n;   memory mode is likewise special, with an offset register used to make&n;   packets appear at the shared memory base.  Both modes use a base and bounds&n;   page register to hide the Rx ring buffer wrap -- a packet that spans the&n;   end of physical buffer memory appears continuous to the driver. (c.f. the&n;   3c503 and Cabletron E2100)&n;&n;   A special note: the internal buffer of the board is only 8 bits wide.&n;   This lays several nasty traps for the unaware:&n;   - the 8390 must be programmed for byte-wide operations&n;   - all I/O and memory operations must work on whole words (the access&n;     latches are serially preloaded and have no byte-swapping ability).&n;&n;   This board is laid out in I/O space much like the earlier HP boards:&n;   the first 16 locations are for the board registers, and the second 16 are&n;   for the 8390.  The board is easy to identify, with both a dedicated 16 bit&n;   ID register and a constant 0x530* value in the upper bits of the paging&n;   register.&n;*/
 DECL|macro|HP_ID
 mdefine_line|#define HP_ID&t;&t;&t;0x00&t;/* ID register, always 0x4850. */
@@ -92,29 +93,35 @@ mdefine_line|#define HP_START_PG&t;&t;0x00&t;/* First page of TX buffer */
 DECL|macro|HP_STOP_PG
 mdefine_line|#define HP_STOP_PG&t;&t;0x80&t;/* Last page +1 of RX ring */
 multiline_comment|/* The register set selected in HP_PAGING. */
+DECL|enum|PageName
 r_enum
 id|PageName
 (brace
+DECL|enumerator|Perf_Page
 id|Perf_Page
 op_assign
 l_int|0
 comma
 multiline_comment|/* Normal operation. */
+DECL|enumerator|MAC_Page
 id|MAC_Page
 op_assign
 l_int|1
 comma
 multiline_comment|/* The ethernet address (+checksum). */
+DECL|enumerator|HW_Page
 id|HW_Page
 op_assign
 l_int|2
 comma
 multiline_comment|/* EEPROM-loaded hardware parameters. */
+DECL|enumerator|LAN_Page
 id|LAN_Page
 op_assign
 l_int|4
 comma
 multiline_comment|/* Transceiver selection, testing, etc. */
+DECL|enumerator|ID_Page
 id|ID_Page
 op_assign
 l_int|6
