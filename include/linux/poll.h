@@ -7,49 +7,8 @@ macro_line|#include &lt;linux/wait.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
-DECL|struct|poll_table_entry
-r_struct
-id|poll_table_entry
-(brace
-DECL|member|filp
-r_struct
-id|file
-op_star
-id|filp
-suffix:semicolon
-DECL|member|wait
-id|wait_queue_t
-id|wait
-suffix:semicolon
-DECL|member|wait_address
-id|wait_queue_head_t
-op_star
-id|wait_address
-suffix:semicolon
-)brace
-suffix:semicolon
-DECL|struct|poll_table_page
 r_struct
 id|poll_table_page
-(brace
-DECL|member|next
-r_struct
-id|poll_table_page
-op_star
-id|next
-suffix:semicolon
-DECL|member|nr
-r_int
-r_int
-id|nr
-suffix:semicolon
-DECL|member|entry
-r_struct
-id|poll_table_entry
-op_star
-id|entry
-suffix:semicolon
-)brace
 suffix:semicolon
 DECL|struct|poll_table_struct
 r_typedef
@@ -70,8 +29,6 @@ DECL|typedef|poll_table
 )brace
 id|poll_table
 suffix:semicolon
-DECL|macro|__MAX_POLL_TABLE_ENTRIES
-mdefine_line|#define __MAX_POLL_TABLE_ENTRIES ((PAGE_SIZE - sizeof (struct poll_table_page)) / sizeof (struct poll_table_entry))
 r_extern
 r_void
 id|__pollwait

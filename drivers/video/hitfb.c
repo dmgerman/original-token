@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * $Id: hitfb.c,v 1.1 2000/06/10 21:45:40 yaegashi Exp $&n; * linux/drivers/video/hitfb.c -- Hitachi LCD frame buffer device&n; * (C) 1999 Mihai Spatar&n; * (C) 2000 YAEGASHI Takeshi&n; *&n; *  This file is subject to the terms and conditions of the GNU General Public&n; *  License. See the file COPYING in the main directory of this archive for&n; *  more details.&n; */
+multiline_comment|/*&n; * $Id: hitfb.c,v 1.2 2000/07/04 06:24:46 yaegashi Exp $&n; * linux/drivers/video/hitfb.c -- Hitachi LCD frame buffer device&n; * (C) 1999 Mihai Spatar&n; * (C) 2000 YAEGASHI Takeshi&n; *&n; *  This file is subject to the terms and conditions of the GNU General Public&n; *  License. See the file COPYING in the main directory of this archive for&n; *  more details.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;

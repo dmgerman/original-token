@@ -3380,7 +3380,7 @@ id|SCpnt
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifdef CONFIG_MODULES
+macro_line|#if defined(CONFIG_MODULES) || defined(CONFIG_BLK_DEV_IDESCSI) || defined(CONFIG_USB_STORAGE)
 r_static
 r_int
 id|scsi_register_host

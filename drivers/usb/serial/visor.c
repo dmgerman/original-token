@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * USB HandSpring Visor driver&n; *&n; *&t;Copyright (C) 1999, 2000&n; *&t;    Greg Kroah-Hartman (greg@kroah.com)&n; *&n; *&t;This program is free software; you can redistribute it and/or modify&n; *&t;it under the terms of the GNU General Public License as published by&n; *&t;the Free Software Foundation; either version 2 of the License, or&n; *&t;(at your option) any later version.&n; *&n; * See Documentation/usb/usb-serial.txt for more information on using this driver&n; * &n; * (07/03/2000) gkh&n; *&t;Added visor_set_ioctl and visor_set_termios functions (they don&squot;t do much&n; *&t;of anything, but are good for debugging.)&n; * &n; * (06/25/2000) gkh&n; *&t;Fixed bug in visor_unthrottle that should help with the disconnect in PPP&n; *&t;bug that people have been reporting.&n; *&n; * (06/23/2000) gkh&n; *&t;Cleaned up debugging statements in a quest to find UHCI timeout bug.&n; *&n; * (04/27/2000) Ryan VanderBijl&n; * &t;Fixed memory leak in visor_close&n; *&n; * (03/26/2000) gkh&n; *&t;Split driver up into device specific pieces.&n; * &n; */
+multiline_comment|/*&n; * USB HandSpring Visor driver&n; *&n; *&t;Copyright (C) 1999, 2000&n; *&t;    Greg Kroah-Hartman (greg@kroah.com)&n; *&n; *&t;This program is free software; you can redistribute it and/or modify&n; *&t;it under the terms of the GNU General Public License as published by&n; *&t;the Free Software Foundation; either version 2 of the License, or&n; *&t;(at your option) any later version.&n; *&n; * See Documentation/usb/usb-serial.txt for more information on using this driver&n; * &n; * (07/19/2000) gkh&n; *&t;Added module_init and module_exit functions to handle the fact that this&n; *&t;driver is a loadable module now.&n; *&n; * (07/03/2000) gkh&n; *&t;Added visor_set_ioctl and visor_set_termios functions (they don&squot;t do much&n; *&t;of anything, but are good for debugging.)&n; * &n; * (06/25/2000) gkh&n; *&t;Fixed bug in visor_unthrottle that should help with the disconnect in PPP&n; *&t;bug that people have been reporting.&n; *&n; * (06/23/2000) gkh&n; *&t;Cleaned up debugging statements in a quest to find UHCI timeout bug.&n; *&n; * (04/27/2000) Ryan VanderBijl&n; * &t;Fixed memory leak in visor_close&n; *&n; * (03/26/2000) gkh&n; *&t;Split driver up into device specific pieces.&n; * &n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -1110,4 +1110,49 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+DECL|function|visor_init
+r_int
+id|visor_init
+(paren
+r_void
+)paren
+(brace
+id|usb_serial_register
+(paren
+op_amp
+id|handspring_device
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+DECL|function|visor_exit
+r_void
+id|visor_exit
+(paren
+r_void
+)paren
+(brace
+id|usb_serial_deregister
+(paren
+op_amp
+id|handspring_device
+)paren
+suffix:semicolon
+)brace
+DECL|variable|visor_init
+id|module_init
+c_func
+(paren
+id|visor_init
+)paren
+suffix:semicolon
+DECL|variable|visor_exit
+id|module_exit
+c_func
+(paren
+id|visor_exit
+)paren
+suffix:semicolon
 eof

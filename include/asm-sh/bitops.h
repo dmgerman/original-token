@@ -15,6 +15,7 @@ c_func
 r_int
 id|nr
 comma
+r_volatile
 r_void
 op_star
 id|addr
@@ -23,6 +24,7 @@ id|addr
 r_int
 id|mask
 suffix:semicolon
+r_volatile
 r_int
 r_int
 op_star
@@ -78,6 +80,7 @@ c_func
 r_int
 id|nr
 comma
+r_volatile
 r_void
 op_star
 id|addr
@@ -86,6 +89,7 @@ id|addr
 r_int
 id|mask
 suffix:semicolon
+r_volatile
 r_int
 r_int
 op_star
@@ -142,6 +146,7 @@ c_func
 r_int
 id|nr
 comma
+r_volatile
 r_void
 op_star
 id|addr
@@ -150,6 +155,7 @@ id|addr
 r_int
 id|mask
 suffix:semicolon
+r_volatile
 r_int
 r_int
 op_star
@@ -205,6 +211,7 @@ c_func
 r_int
 id|nr
 comma
+r_volatile
 r_void
 op_star
 id|addr
@@ -215,6 +222,7 @@ id|mask
 comma
 id|retval
 suffix:semicolon
+r_volatile
 r_int
 r_int
 op_star
@@ -284,6 +292,7 @@ c_func
 r_int
 id|nr
 comma
+r_volatile
 r_void
 op_star
 id|addr
@@ -294,6 +303,7 @@ id|mask
 comma
 id|retval
 suffix:semicolon
+r_volatile
 r_int
 r_int
 op_star
@@ -364,6 +374,7 @@ c_func
 r_int
 id|nr
 comma
+r_volatile
 r_void
 op_star
 id|addr
@@ -374,6 +385,7 @@ id|mask
 comma
 id|retval
 suffix:semicolon
+r_volatile
 r_int
 r_int
 op_star
@@ -444,6 +456,7 @@ r_int
 id|nr
 comma
 r_const
+r_volatile
 r_void
 op_star
 id|addr
@@ -456,6 +469,7 @@ op_amp
 (paren
 (paren
 r_const
+r_volatile
 r_int
 r_int
 op_star
@@ -743,6 +757,7 @@ c_func
 r_int
 id|nr
 comma
+r_volatile
 r_void
 op_star
 id|addr
@@ -757,6 +772,7 @@ r_int
 r_int
 id|flags
 suffix:semicolon
+r_volatile
 r_int
 r_char
 op_star
@@ -827,6 +843,7 @@ c_func
 r_int
 id|nr
 comma
+r_volatile
 r_void
 op_star
 id|addr
@@ -841,6 +858,7 @@ r_int
 r_int
 id|flags
 suffix:semicolon
+r_volatile
 r_int
 r_char
 op_star
@@ -913,6 +931,7 @@ r_int
 id|nr
 comma
 r_const
+r_volatile
 r_void
 op_star
 id|addr
@@ -922,6 +941,7 @@ r_int
 id|mask
 suffix:semicolon
 r_const
+r_volatile
 r_int
 r_char
 op_star

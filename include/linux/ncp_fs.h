@@ -484,8 +484,6 @@ id|kfree
 c_func
 (paren
 id|obj
-comma
-id|size
 )paren
 suffix:semicolon
 )brace

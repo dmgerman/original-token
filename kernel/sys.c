@@ -652,7 +652,7 @@ r_return
 id|error
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Ugh. To avoid negative return values, &quot;getpriority()&quot; will&n; * not return the normal nice-value, but a value that has been&n; * offset by 20 (ie it returns 0..39 instead of -20..19)&n; */
+multiline_comment|/*&n; * Ugh. To avoid negative return values, &quot;getpriority()&quot; will&n; * not return the normal nice-value, but a negated value that&n; * has been offset by 20 (ie it returns 40..1 instead of -20..19)&n; * to stay compatible.&n; */
 DECL|function|sys_getpriority
 id|asmlinkage
 r_int
@@ -733,10 +733,7 @@ r_if
 c_cond
 (paren
 id|niceval
-OL
-(paren
-r_int
-)paren
+OG
 id|retval
 )paren
 id|retval

@@ -2820,6 +2820,32 @@ OG
 l_int|0
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|ohci-&gt;disabled
+)paren
+(brace
+multiline_comment|/* FIXME: Something like this should kick in,&n;&t;&t;&t;&t; * though it&squot;s currently an exotic case ...&n;&t;&t;&t;&t; * the controller won&squot;t ever be touching&n;&t;&t;&t;&t; * these lists again!!&n;&t;&t;&t;&t;dl_del_list (ohci,&n;&t;&t;&t;&t;&t;le16_to_cpu (ohci-&gt;hcca.frame_no) &amp; 1);&n;&t;&t;&t;&t; */
+id|warn
+(paren
+l_string|&quot;TD leak, %d&quot;
+comma
+id|cnt
+)paren
+suffix:semicolon
+)brace
+r_else
+r_if
+c_cond
+(paren
+op_logical_neg
+id|in_interrupt
+(paren
+)paren
+)paren
+(brace
+multiline_comment|/* SF interrupt handler calls dl_del_list */
 id|add_wait_queue
 (paren
 op_amp
@@ -2849,6 +2875,16 @@ op_amp
 id|wait
 )paren
 suffix:semicolon
+)brace
+r_else
+(brace
+multiline_comment|/* drivers mustn&squot;t expect this to work */
+id|err
+(paren
+l_string|&quot;can&squot;t free tds, interrupt context&quot;
+)paren
+suffix:semicolon
+)brace
 )brace
 )brace
 id|kfree

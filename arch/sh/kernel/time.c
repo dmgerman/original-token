@@ -151,6 +151,11 @@ r_extern
 id|rwlock_t
 id|xtime_lock
 suffix:semicolon
+r_extern
+r_int
+r_int
+id|wall_jiffies
+suffix:semicolon
 DECL|macro|TICK_SIZE
 mdefine_line|#define TICK_SIZE tick
 DECL|function|do_gettimeofday
@@ -164,12 +169,6 @@ op_star
 id|tv
 )paren
 (brace
-r_extern
-r_volatile
-r_int
-r_int
-id|lost_ticks
-suffix:semicolon
 r_int
 r_int
 id|flags
@@ -198,7 +197,9 @@ r_int
 r_int
 id|lost
 op_assign
-id|lost_ticks
+id|jiffies
+op_minus
+id|wall_jiffies
 suffix:semicolon
 r_if
 c_cond
@@ -258,6 +259,9 @@ op_assign
 id|usec
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * Could someone please implement this...&n; */
+DECL|macro|do_gettimeoffset
+mdefine_line|#define do_gettimeoffset() 0
 DECL|function|do_settimeofday
 r_void
 id|do_settimeofday
@@ -276,6 +280,44 @@ op_amp
 id|xtime_lock
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t; * This is revolting. We need to set &quot;xtime&quot; correctly. However, the&n;&t; * value in this location is the value at the most recent update of&n;&t; * wall time.  Discover what correction gettimeofday() would have&n;&t; * made, and then undo it!&n;&t; */
+id|tv-&gt;tv_usec
+op_sub_assign
+id|do_gettimeoffset
+c_func
+(paren
+)paren
+suffix:semicolon
+id|tv-&gt;tv_usec
+op_sub_assign
+(paren
+id|jiffies
+op_minus
+id|wall_jiffies
+)paren
+op_star
+(paren
+l_int|1000000
+op_div
+id|HZ
+)paren
+suffix:semicolon
+r_while
+c_loop
+(paren
+id|tv-&gt;tv_usec
+OL
+l_int|0
+)paren
+(brace
+id|tv-&gt;tv_usec
+op_add_assign
+l_int|1000000
+suffix:semicolon
+id|tv-&gt;tv_sec
+op_decrement
+suffix:semicolon
+)brace
 id|xtime
 op_assign
 op_star

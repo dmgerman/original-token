@@ -25,18 +25,18 @@ macro_line|#include &lt;linux/irq.h&gt;
 macro_line|#ifdef CONFIG_HD64461
 macro_line|#include &lt;asm/hd64461.h&gt;
 macro_line|#endif
-DECL|variable|local_bh_count
+DECL|variable|__local_bh_count
 r_int
 r_int
-id|local_bh_count
+id|__local_bh_count
 (braket
 id|NR_CPUS
 )braket
 suffix:semicolon
-DECL|variable|local_irq_count
+DECL|variable|__local_irq_count
 r_int
 r_int
-id|local_irq_count
+id|__local_irq_count
 (braket
 id|NR_CPUS
 )braket
@@ -593,7 +593,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|local_irq_count
+id|__local_irq_count
 (braket
 id|smp_processor_id
 c_func

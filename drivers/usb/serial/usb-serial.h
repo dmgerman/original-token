@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * USB Serial Converter driver&n; *&n; *&t;Copyright (C) 1999, 2000&n; *&t;    Greg Kroah-Hartman (greg@kroah.com)&n; *&n; *&t;This program is free software; you can redistribute it and/or modify&n; *&t;it under the terms of the GNU General Public License as published by&n; *&t;the Free Software Foundation; either version 2 of the License, or&n; *&t;(at your option) any later version.&n; *&n; * See Documentation/usb/usb-serial.txt for more information on using this driver&n; * &n; */
+multiline_comment|/*&n; * USB Serial Converter driver&n; *&n; *&t;Copyright (C) 1999, 2000&n; *&t;    Greg Kroah-Hartman (greg@kroah.com)&n; *&n; *&t;This program is free software; you can redistribute it and/or modify&n; *&t;it under the terms of the GNU General Public License as published by&n; *&t;the Free Software Foundation; either version 2 of the License, or&n; *&t;(at your option) any later version.&n; *&n; * See Documentation/usb/usb-serial.txt for more information on using this driver&n; *&n; * (07/19/2000) gkh, pberger, and borchers&n; *&t;Modifications to allow usb-serial drivers to be modules.&n; *&n; * &n; */
 macro_line|#ifndef __LINUX_USB_SERIAL_H
 DECL|macro|__LINUX_USB_SERIAL_H
 mdefine_line|#define __LINUX_USB_SERIAL_H
@@ -38,11 +38,6 @@ op_star
 id|tty
 suffix:semicolon
 multiline_comment|/* the coresponding tty for this port */
-DECL|member|minor
-r_int
-r_char
-id|minor
-suffix:semicolon
 DECL|member|number
 r_int
 r_char
@@ -132,6 +127,13 @@ op_star
 id|type
 suffix:semicolon
 multiline_comment|/* the type of usb serial device this is */
+DECL|member|interface
+r_struct
+id|usb_interface
+op_star
+id|interface
+suffix:semicolon
+multiline_comment|/* the interface for this device */
 DECL|member|tty_driver
 r_struct
 id|tty_driver
@@ -243,6 +245,11 @@ r_char
 id|num_ports
 suffix:semicolon
 multiline_comment|/* number of serial ports this device has */
+DECL|member|driver_list
+r_struct
+id|list_head
+id|driver_list
+suffix:semicolon
 multiline_comment|/* function call to make before accepting driver */
 DECL|member|startup
 r_int
@@ -487,97 +494,29 @@ suffix:semicolon
 )brace
 suffix:semicolon
 r_extern
+r_int
+id|usb_serial_register
+c_func
+(paren
 r_struct
 id|usb_serial_device_type
-id|handspring_device
+op_star
+id|new_device
+)paren
 suffix:semicolon
 r_extern
+r_void
+id|usb_serial_deregister
+c_func
+(paren
 r_struct
 id|usb_serial_device_type
-id|whiteheat_fake_device
-suffix:semicolon
-r_extern
-r_struct
-id|usb_serial_device_type
-id|whiteheat_device
-suffix:semicolon
-r_extern
-r_struct
-id|usb_serial_device_type
-id|ftdi_sio_device
-suffix:semicolon
-r_extern
-r_struct
-id|usb_serial_device_type
-id|keyspan_pda_fake_device
-suffix:semicolon
-r_extern
-r_struct
-id|usb_serial_device_type
-id|keyspan_pda_device
-suffix:semicolon
-r_extern
-r_struct
-id|usb_serial_device_type
-id|keyspan_usa18x_pre_device
-suffix:semicolon
-r_extern
-r_struct
-id|usb_serial_device_type
-id|keyspan_usa19_pre_device
-suffix:semicolon
-r_extern
-r_struct
-id|usb_serial_device_type
-id|keyspan_usa19w_pre_device
-suffix:semicolon
-r_extern
-r_struct
-id|usb_serial_device_type
-id|keyspan_usa28_pre_device
-suffix:semicolon
-r_extern
-r_struct
-id|usb_serial_device_type
-id|keyspan_usa28x_pre_device
-suffix:semicolon
-r_extern
-r_struct
-id|usb_serial_device_type
-id|keyspan_usa18x_device
-suffix:semicolon
-r_extern
-r_struct
-id|usb_serial_device_type
-id|keyspan_usa19_device
-suffix:semicolon
-r_extern
-r_struct
-id|usb_serial_device_type
-id|keyspan_usa19w_device
-suffix:semicolon
-r_extern
-r_struct
-id|usb_serial_device_type
-id|keyspan_usa28_device
-suffix:semicolon
-r_extern
-r_struct
-id|usb_serial_device_type
-id|keyspan_usa28x_device
-suffix:semicolon
-r_extern
-r_struct
-id|usb_serial_device_type
-id|zyxel_omninet_device
-suffix:semicolon
-r_extern
-r_struct
-id|usb_serial_device_type
-id|digi_acceleport_device
+op_star
+id|device
+)paren
 suffix:semicolon
 multiline_comment|/* determine if we should include the EzUSB loader functions */
-macro_line|#if defined(CONFIG_USB_SERIAL_KEYSPAN_PDA) || defined(CONFIG_USB_SERIAL_WHITEHEAT) || defined(CONFIG_USB_SERIAL_KEYSPAN)
+macro_line|#if defined(CONFIG_USB_SERIAL_KEYSPAN_PDA) || defined(CONFIG_USB_SERIAL_WHITEHEAT) || defined(CONFIG_USB_SERIAL_KEYSPAN) || defined(CONFIG_USB_SERIAL_KEYSPAN_PDA_MODULE) || defined(CONFIG_USB_SERIAL_WHITEHEAT_MODULE) || defined(CONFIG_USB_SERIAL_KEYSPAN_MODULE)
 DECL|macro|USES_EZUSB_FUNCTIONS
 mdefine_line|#define&t;USES_EZUSB_FUNCTIONS
 r_extern

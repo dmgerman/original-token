@@ -90,9 +90,9 @@ op_assign
 id|kmalloc
 c_func
 (paren
-id|GFP_KERNEL
-comma
 id|size
+comma
+id|GFP_KERNEL
 )paren
 suffix:semicolon
 r_if

@@ -6524,11 +6524,6 @@ op_amp
 id|file-&gt;f_dentry-&gt;d_inode-&gt;i_sem
 )paren
 suffix:semicolon
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 id|error
 op_assign
 id|file-&gt;f_op
@@ -6541,11 +6536,6 @@ comma
 id|file-&gt;f_dentry
 comma
 l_int|1
-)paren
-suffix:semicolon
-id|unlock_kernel
-c_func
-(paren
 )paren
 suffix:semicolon
 id|up

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * USB ZyXEL omni.net LCD PLUS driver&n; *&n; *&t;This program is free software; you can redistribute it and/or modify&n; *&t;it under the terms of the GNU General Public License as published by&n; *&t;the Free Software Foundation; either version 2 of the License, or&n; *&t;(at your option) any later version.&n; *&n; * See Documentation/usb/usb-serial.txt for more information on using this driver&n; *&n; * Please report both successes and troubles to the author at omninet@kroah.com&n; *&n; */
+multiline_comment|/*&n; * USB ZyXEL omni.net LCD PLUS driver&n; *&n; *&t;This program is free software; you can redistribute it and/or modify&n; *&t;it under the terms of the GNU General Public License as published by&n; *&t;the Free Software Foundation; either version 2 of the License, or&n; *&t;(at your option) any later version.&n; *&n; * See Documentation/usb/usb-serial.txt for more information on using this driver&n; *&n; * Please report both successes and troubles to the author at omninet@kroah.com&n; *&n; * (07/19/2000) gkh&n; *&t;Added module_init and module_exit functions to handle the fact that this&n; *&t;driver is a loadable module now.&n; *&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -1069,4 +1069,49 @@ singleline_comment|//&t;dbg(&quot;omninet_write_bulk_callback, tty %0x&bslash;n&
 r_return
 suffix:semicolon
 )brace
+DECL|function|omninet_init
+r_int
+id|omninet_init
+(paren
+r_void
+)paren
+(brace
+id|usb_serial_register
+(paren
+op_amp
+id|zyxel_omninet_device
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+DECL|function|omninet_exit
+r_void
+id|omninet_exit
+(paren
+r_void
+)paren
+(brace
+id|usb_serial_deregister
+(paren
+op_amp
+id|zyxel_omninet_device
+)paren
+suffix:semicolon
+)brace
+DECL|variable|omninet_init
+id|module_init
+c_func
+(paren
+id|omninet_init
+)paren
+suffix:semicolon
+DECL|variable|omninet_exit
+id|module_exit
+c_func
+(paren
+id|omninet_exit
+)paren
+suffix:semicolon
 eof

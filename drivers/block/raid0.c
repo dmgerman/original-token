@@ -885,7 +885,8 @@ id|bh
 )paren
 (brace
 r_int
-id|blk_in_chunk
+r_int
+id|sect_in_chunk
 comma
 id|chunksize_bits
 comma
@@ -918,9 +919,10 @@ op_star
 id|tmp_dev
 suffix:semicolon
 r_int
+r_int
 id|block
 comma
-id|rblock
+id|rsect
 suffix:semicolon
 id|chunk_size
 op_assign
@@ -1021,12 +1023,16 @@ id|zone
 op_assign
 id|hash-&gt;zone0
 suffix:semicolon
-id|blk_in_chunk
+id|sect_in_chunk
 op_assign
-id|block
+id|bh-&gt;b_rsector
 op_amp
 (paren
+(paren
 id|chunk_size
+op_lshift
+l_int|1
+)paren
 op_minus
 l_int|1
 )paren
@@ -1058,17 +1064,21 @@ op_mod
 id|zone-&gt;nb_dev
 )braket
 suffix:semicolon
-id|rblock
+id|rsect
 op_assign
+(paren
 (paren
 id|chunk
 op_lshift
 id|chunksize_bits
 )paren
 op_plus
-id|blk_in_chunk
-op_plus
 id|zone-&gt;dev_offset
+)paren
+op_lshift
+l_int|1
+op_plus
+id|sect_in_chunk
 suffix:semicolon
 multiline_comment|/*&n;&t; * The new BH_Lock semantics in ll_rw_blk.c guarantee that this&n;&t; * is the only IO operation happening on this bh.&n;&t; */
 id|bh-&gt;b_rdev
@@ -1077,9 +1087,7 @@ id|tmp_dev-&gt;dev
 suffix:semicolon
 id|bh-&gt;b_rsector
 op_assign
-id|rblock
-op_lshift
-l_int|1
+id|rsect
 suffix:semicolon
 multiline_comment|/*&n;&t; * Let the main block layer submit the IO and resolve recursion:&n;&t; */
 r_return

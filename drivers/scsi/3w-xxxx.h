@@ -1,4 +1,4 @@
-multiline_comment|/* &n;   3w-xxxx.h -- 3ware Storage Controller device driver for Linux.&n;   &n;   Written By: Adam Radford &lt;linux@3ware.com&gt;&n;   Copyright (C) 1999 3ware Inc.&n;&n;   Kernel compatablity By:&t;Andre Hedrick &lt;andre@suse.com&gt;&n;   Non-Copyright (C) 2000&t;Andre Hedrick &lt;andre@suse.com&gt;&n;&n;   This program is free software; you can redistribute it and/or modify&n;   it under the terms of the GNU General Public License as published by&n;   the Free Software Foundation; version 2 of the License.&n;&n;   This program is distributed in the hope that it will be useful,           &n;   but WITHOUT ANY WARRANTY; without even the implied warranty of            &n;   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the             &n;   GNU General Public License for more details.                              &n;&n;   NO WARRANTY                                                               &n;   THE PROGRAM IS PROVIDED ON AN &quot;AS IS&quot; BASIS, WITHOUT WARRANTIES OR        &n;   CONDITIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED INCLUDING, WITHOUT      &n;   LIMITATION, ANY WARRANTIES OR CONDITIONS OF TITLE, NON-INFRINGEMENT,      &n;   MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE. Each Recipient is    &n;   solely responsible for determining the appropriateness of using and       &n;   distributing the Program and assumes all risks associated with its        &n;   exercise of rights under this Agreement, including but not limited to     &n;   the risks and costs of program errors, damage to or loss of data,         &n;   programs or equipment, and unavailability or interruption of operations.  &n;&n;   DISCLAIMER OF LIABILITY                                                   &n;   NEITHER RECIPIENT NOR ANY CONTRIBUTORS SHALL HAVE ANY LIABILITY FOR ANY   &n;   DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL        &n;   DAMAGES (INCLUDING WITHOUT LIMITATION LOST PROFITS), HOWEVER CAUSED AND   &n;   ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR     &n;   TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE    &n;   USE OR DISTRIBUTION OF THE PROGRAM OR THE EXERCISE OF ANY RIGHTS GRANTED  &n;   HEREUNDER, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGES             &n;&n;   You should have received a copy of the GNU General Public License         &n;   along with this program; if not, write to the Free Software               &n;   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA &n;&n;   Bugs/Comments/Suggestions should be mailed to:                            &n;   linux@3ware.com&n;   &n;   For more information, goto:&n;   http://www.3ware.com&n;*/
+multiline_comment|/* &n;   3w-xxxx.h -- 3ware Storage Controller device driver for Linux.&n;   &n;   Written By: Adam Radford &lt;linux@3ware.com&gt;&n;   Modifications By: Joel Jacobson &lt;linux@3ware.com&gt;&n;&n;   Copyright (C) 1999 3ware Inc.&n;&n;   Kernel compatablity By:&t;Andre Hedrick &lt;andre@suse.com&gt;&n;   Non-Copyright (C) 2000&t;Andre Hedrick &lt;andre@suse.com&gt;&n;&n;   This program is free software; you can redistribute it and/or modify&n;   it under the terms of the GNU General Public License as published by&n;   the Free Software Foundation; version 2 of the License.&n;&n;   This program is distributed in the hope that it will be useful,           &n;   but WITHOUT ANY WARRANTY; without even the implied warranty of            &n;   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the             &n;   GNU General Public License for more details.                              &n;&n;   NO WARRANTY                                                               &n;   THE PROGRAM IS PROVIDED ON AN &quot;AS IS&quot; BASIS, WITHOUT WARRANTIES OR        &n;   CONDITIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED INCLUDING, WITHOUT      &n;   LIMITATION, ANY WARRANTIES OR CONDITIONS OF TITLE, NON-INFRINGEMENT,      &n;   MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE. Each Recipient is    &n;   solely responsible for determining the appropriateness of using and       &n;   distributing the Program and assumes all risks associated with its        &n;   exercise of rights under this Agreement, including but not limited to     &n;   the risks and costs of program errors, damage to or loss of data,         &n;   programs or equipment, and unavailability or interruption of operations.  &n;&n;   DISCLAIMER OF LIABILITY                                                   &n;   NEITHER RECIPIENT NOR ANY CONTRIBUTORS SHALL HAVE ANY LIABILITY FOR ANY   &n;   DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL        &n;   DAMAGES (INCLUDING WITHOUT LIMITATION LOST PROFITS), HOWEVER CAUSED AND   &n;   ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR     &n;   TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE    &n;   USE OR DISTRIBUTION OF THE PROGRAM OR THE EXERCISE OF ANY RIGHTS GRANTED  &n;   HEREUNDER, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGES             &n;&n;   You should have received a copy of the GNU General Public License         &n;   along with this program; if not, write to the Free Software               &n;   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA &n;&n;   Bugs/Comments/Suggestions should be mailed to:                            &n;   linux@3ware.com&n;   &n;   For more information, goto:&n;   http://www.3ware.com&n;*/
 macro_line|#ifndef _3W_XXXX_H
 DECL|macro|_3W_XXXX_H
 mdefine_line|#define _3W_XXXX_H
@@ -96,6 +96,8 @@ DECL|macro|TW_OP_SECTOR_INFO
 mdefine_line|#define TW_OP_SECTOR_INFO     0x1a
 DECL|macro|TW_OP_AEN_LISTEN
 mdefine_line|#define TW_OP_AEN_LISTEN      0x1c
+DECL|macro|TW_CMD_PACKET
+mdefine_line|#define TW_CMD_PACKET         0x1d
 multiline_comment|/* Asynchronous Event Notification (AEN) Codes */
 DECL|macro|TW_AEN_QUEUE_EMPTY
 mdefine_line|#define TW_AEN_QUEUE_EMPTY       0x0000
@@ -148,6 +150,8 @@ DECL|macro|TW_IOCTL
 mdefine_line|#define TW_IOCTL                              0x80
 DECL|macro|TW_MAX_AEN_TRIES
 mdefine_line|#define TW_MAX_AEN_TRIES                      100
+DECL|macro|TW_UNIT_ONLINE
+mdefine_line|#define TW_UNIT_ONLINE                        1
 DECL|macro|TW_IN_INTR
 mdefine_line|#define TW_IN_INTR                            1
 multiline_comment|/* Macros */
@@ -901,6 +905,9 @@ c_func
 id|TW_Device_Extension
 op_star
 id|tw_dev
+comma
+r_int
+id|message_credits
 )paren
 suffix:semicolon
 r_int
@@ -1171,7 +1178,36 @@ id|request_id
 )paren
 suffix:semicolon
 r_int
+id|tw_setfeature
+c_func
+(paren
+id|TW_Device_Extension
+op_star
+id|tw_dev
+comma
+r_int
+id|parm
+comma
+r_int
+id|param_size
+comma
+r_int
+r_char
+op_star
+id|val
+)paren
+suffix:semicolon
+r_int
 id|tw_setup_irq
+c_func
+(paren
+id|TW_Device_Extension
+op_star
+id|tw_dev
+)paren
+suffix:semicolon
+r_int
+id|tw_shutdown_device
 c_func
 (paren
 id|TW_Device_Extension

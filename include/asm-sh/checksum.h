@@ -496,6 +496,7 @@ suffix:semicolon
 )brace
 DECL|macro|_HAVE_ARCH_IPV6_CSUM
 mdefine_line|#define _HAVE_ARCH_IPV6_CSUM
+macro_line|#ifdef CONFIG_IPV6
 DECL|function|csum_ipv6_magic
 r_static
 id|__inline__
@@ -608,6 +609,7 @@ id|sum
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
 multiline_comment|/* &n; *&t;Copy and checksum to user&n; */
 DECL|macro|HAVE_CSUM_COPY_USER
 mdefine_line|#define HAVE_CSUM_COPY_USER

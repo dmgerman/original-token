@@ -1,6 +1,13 @@
-multiline_comment|/* $Id: io_generic.c,v 1.3 2000/05/07 23:31:58 gniibe Exp $&n; *&n; * linux/arch/sh/kernel/io_generic.c&n; *&n; * Copyright (C) 2000  Niibe Yutaka&n; *&n; * Generic I/O routine.&n; *&n; */
+multiline_comment|/* $Id: io_generic.c,v 1.3 2000/05/07 23:31:58 gniibe Exp $&n; *&n; * linux/arch/sh/kernel/io_generic.c&n; *&n; * Copyright (C) 2000  Niibe Yutaka&n; *&n; * Generic I/O routine.&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
+macro_line|#if defined(__sh3__)
+multiline_comment|/* I&squot;m not sure SH7709 has this kind of bug */
+DECL|macro|SH3_PCMCIA_BUG_WORKAROUND
+mdefine_line|#define SH3_PCMCIA_BUG_WORKAROUND 1
+DECL|macro|DUMMY_READ_AREA6
+mdefine_line|#define DUMMY_READ_AREA6&t;  0xba000000
+macro_line|#endif
 DECL|macro|PORT2ADDR
 mdefine_line|#define PORT2ADDR(x) (CONFIG_IOPORT_START+(x))
 DECL|function|delay
@@ -222,6 +229,13 @@ id|port
 )paren
 suffix:semicolon
 )brace
+macro_line|#ifdef SH3_PCMCIA_BUG_WORKAROUND
+id|ctrl_inb
+(paren
+id|DUMMY_READ_AREA6
+)paren
+suffix:semicolon
+macro_line|#endif
 )brace
 DECL|function|insl
 r_void
@@ -266,6 +280,13 @@ id|port
 )paren
 suffix:semicolon
 )brace
+macro_line|#ifdef SH3_PCMCIA_BUG_WORKAROUND
+id|ctrl_inb
+(paren
+id|DUMMY_READ_AREA6
+)paren
+suffix:semicolon
+macro_line|#endif
 )brace
 DECL|function|outb
 r_void
@@ -483,6 +504,13 @@ id|port
 )paren
 suffix:semicolon
 )brace
+macro_line|#ifdef SH3_PCMCIA_BUG_WORKAROUND
+id|ctrl_inb
+(paren
+id|DUMMY_READ_AREA6
+)paren
+suffix:semicolon
+macro_line|#endif
 )brace
 DECL|function|outsl
 r_void
@@ -529,5 +557,12 @@ id|port
 )paren
 suffix:semicolon
 )brace
+macro_line|#ifdef SH3_PCMCIA_BUG_WORKAROUND
+id|ctrl_inb
+(paren
+id|DUMMY_READ_AREA6
+)paren
+suffix:semicolon
+macro_line|#endif
 )brace
 eof

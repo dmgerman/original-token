@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;$Id: hp600_keyb.c,v 1.1 2000/06/10 21:45:30 yaegashi Exp $ &n; *&t;Copyright (C) 2000 YAEGASHI Takeshi&n; *&t;HP600 keyboard scan routine and translate table&n; */
+multiline_comment|/*&n; *&t;$Id: hp600_keyb.c,v 1.1 2000/06/10 21:45:30 yaegashi Exp $&n; *&t;Copyright (C) 2000 YAEGASHI Takeshi&n; *&t;HP600 keyboard scan routine and translate table&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/io.h&gt;

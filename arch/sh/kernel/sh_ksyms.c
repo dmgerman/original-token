@@ -39,20 +39,6 @@ id|elf_fpregset_t
 op_star
 )paren
 suffix:semicolon
-macro_line|#if defined(CONFIG_BLK_DEV_IDE) || defined(CONFIG_BLK_DEV_HD) || defined(CONFIG_BLK_DEV_IDE_MODULE) || defined(CONFIG_BLK_DEV_HD_MODULE)
-r_extern
-r_struct
-id|drive_info_struct
-id|drive_info
-suffix:semicolon
-DECL|variable|drive_info
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|drive_info
-)paren
-suffix:semicolon
-macro_line|#endif
 multiline_comment|/* platform dependent support */
 DECL|variable|dump_thread
 id|EXPORT_SYMBOL
@@ -73,20 +59,6 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|iounmap
-)paren
-suffix:semicolon
-DECL|variable|local_bh_count
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|local_bh_count
-)paren
-suffix:semicolon
-DECL|variable|local_irq_count
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|local_irq_count
 )paren
 suffix:semicolon
 DECL|variable|enable_irq

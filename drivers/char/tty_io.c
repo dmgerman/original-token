@@ -335,6 +335,14 @@ c_func
 r_void
 )paren
 suffix:semicolon
+r_extern
+r_void
+id|sci_console_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
 macro_line|#ifndef MIN
 DECL|macro|MIN
 mdefine_line|#define MIN(a,b)&t;((a) &lt; (b) ? (a) : (b))
@@ -9165,6 +9173,13 @@ suffix:semicolon
 macro_line|#endif
 macro_line|#if defined(CONFIG_SERIAL167)
 id|serial167_console_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#if defined(CONFIG_SH_SCI)
+id|sci_console_init
 c_func
 (paren
 )paren

@@ -1,7 +1,7 @@
 macro_line|#ifndef&t;__DRIVER_CHAR_SCAN_KEYB_H
 DECL|macro|__DRIVER_CHAR_SCAN_KEYB_H
 mdefine_line|#define&t;__DRIVER_CHAR_SCAN_KEYB_H
-multiline_comment|/*&n; *&t;$Id: scan_keyb.h,v 1.1 2000/06/10 21:45:30 yaegashi Exp $ &n; *&t;Copyright (C) 2000 YAEGASHI Takeshi&n; *&t;Generic scan keyboard driver&n; */
+multiline_comment|/*&n; *&t;$Id: scan_keyb.h,v 1.1 2000/06/10 21:45:30 yaegashi Exp $&n; *&t;Copyright (C) 2000 YAEGASHI Takeshi&n; *&t;Generic scan keyboard driver&n; */
 r_int
 id|register_scan_keyboard
 c_func

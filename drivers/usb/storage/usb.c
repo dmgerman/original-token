@@ -1,11 +1,13 @@
-multiline_comment|/* Driver for USB Mass Storage compliant devices&n; *&n; * $Id: usb.c,v 1.3 2000/06/27 10:20:39 mdharm Exp $&n; *&n; * Current development and maintainance by:&n; *   (c) 1999, 2000 Matthew Dharm (mdharm-usb@one-eyed-alien.net)&n; *&n; * Developed with the assistance of:&n; *   (c) 2000 David L. Brown, Jr. (usb-storage@davidb.org)&n; *&n; * Initial work by:&n; *   (c) 1999 Michael Gee (michael@linuxspecific.com)&n; *&n; * This driver is based on the &squot;USB Mass Storage Class&squot; document. This&n; * describes in detail the protocol used to communicate with such&n; * devices.  Clearly, the designers had SCSI and ATAPI commands in&n; * mind when they created this document.  The commands are all very&n; * similar to commands in the SCSI-II and ATAPI specifications.&n; *&n; * It is important to note that in a number of cases this class&n; * exhibits class-specific exemptions from the USB specification.&n; * Notably the usage of NAK, STALL and ACK differs from the norm, in&n; * that they are used to communicate wait, failed and OK on commands.&n; *&n; * Also, for certain devices, the interrupt endpoint is used to convey&n; * status of a command.&n; *&n; * Please see http://www.one-eyed-alien.net/~mdharm/linux-usb for more&n; * information about this driver.&n; *&n; * This program is free software; you can redistribute it and/or modify it&n; * under the terms of the GNU General Public License as published by the&n; * Free Software Foundation; either version 2, or (at your option) any&n; * later version.&n; *&n; * This program is distributed in the hope that it will be useful, but&n; * WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU&n; * General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License along&n; * with this program; if not, write to the Free Software Foundation, Inc.,&n; * 675 Mass Ave, Cambridge, MA 02139, USA.&n; */
+multiline_comment|/* Driver for USB Mass Storage compliant devices&n; *&n; * $Id: usb.c,v 1.6 2000/07/20 23:36:22 mdharm Exp $&n; *&n; * Current development and maintainance by:&n; *   (c) 1999, 2000 Matthew Dharm (mdharm-usb@one-eyed-alien.net)&n; *&n; * Developed with the assistance of:&n; *   (c) 2000 David L. Brown, Jr. (usb-storage@davidb.org)&n; *&n; * Initial work by:&n; *   (c) 1999 Michael Gee (michael@linuxspecific.com)&n; *&n; * This driver is based on the &squot;USB Mass Storage Class&squot; document. This&n; * describes in detail the protocol used to communicate with such&n; * devices.  Clearly, the designers had SCSI and ATAPI commands in&n; * mind when they created this document.  The commands are all very&n; * similar to commands in the SCSI-II and ATAPI specifications.&n; *&n; * It is important to note that in a number of cases this class&n; * exhibits class-specific exemptions from the USB specification.&n; * Notably the usage of NAK, STALL and ACK differs from the norm, in&n; * that they are used to communicate wait, failed and OK on commands.&n; *&n; * Also, for certain devices, the interrupt endpoint is used to convey&n; * status of a command.&n; *&n; * Please see http://www.one-eyed-alien.net/~mdharm/linux-usb for more&n; * information about this driver.&n; *&n; * This program is free software; you can redistribute it and/or modify it&n; * under the terms of the GNU General Public License as published by the&n; * Free Software Foundation; either version 2, or (at your option) any&n; * later version.&n; *&n; * This program is distributed in the hope that it will be useful, but&n; * WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU&n; * General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License along&n; * with this program; if not, write to the Free Software Foundation, Inc.,&n; * 675 Mass Ave, Cambridge, MA 02139, USA.&n; */
 macro_line|#include &quot;usb.h&quot;
 macro_line|#include &quot;scsiglue.h&quot;
 macro_line|#include &quot;transport.h&quot;
 macro_line|#include &quot;protocol.h&quot;
 macro_line|#include &quot;debug.h&quot;
+macro_line|#ifdef CONFIG_USB_STORAGE_HP8200e
+macro_line|#include &quot;scm.h&quot;
+macro_line|#endif
 macro_line|#include &lt;linux/module.h&gt;
-multiline_comment|/*FIXME: note that this next include is needed for the new sleeping system&n;  * which is not implemented yet&n;  */
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
@@ -102,6 +104,9 @@ op_star
 id|__us
 )paren
 (brace
+id|wait_queue_t
+id|wait
+suffix:semicolon
 r_struct
 id|us_data
 op_star
@@ -144,6 +149,37 @@ c_func
 (paren
 )paren
 suffix:semicolon
+multiline_comment|/* set up for wakeups by new commands */
+id|init_waitqueue_entry
+c_func
+(paren
+op_amp
+id|wait
+comma
+id|current
+)paren
+suffix:semicolon
+id|init_waitqueue_head
+c_func
+(paren
+op_amp
+(paren
+id|us-&gt;wqh
+)paren
+)paren
+suffix:semicolon
+id|add_wait_queue
+c_func
+(paren
+op_amp
+(paren
+id|us-&gt;wqh
+)paren
+comma
+op_amp
+id|wait
+)paren
+suffix:semicolon
 multiline_comment|/* signal that we&squot;ve started the thread */
 id|up
 c_func
@@ -161,21 +197,30 @@ suffix:semicolon
 suffix:semicolon
 )paren
 (brace
+id|set_current_state
+c_func
+(paren
+id|TASK_INTERRUPTIBLE
+)paren
+suffix:semicolon
 id|US_DEBUGP
 c_func
 (paren
 l_string|&quot;*** thread sleeping.&bslash;n&quot;
 )paren
 suffix:semicolon
-id|down
+id|schedule
 c_func
 (paren
-op_amp
-(paren
-id|us-&gt;sleeper
-)paren
 )paren
 suffix:semicolon
+id|US_DEBUGP
+c_func
+(paren
+l_string|&quot;*** thread awakened.&bslash;n&quot;
+)paren
+suffix:semicolon
+multiline_comment|/* lock access to the queue element */
 id|down
 c_func
 (paren
@@ -183,12 +228,6 @@ op_amp
 (paren
 id|us-&gt;queue_exclusion
 )paren
-)paren
-suffix:semicolon
-id|US_DEBUGP
-c_func
-(paren
-l_string|&quot;*** thread awakened.&bslash;n&quot;
 )paren
 suffix:semicolon
 multiline_comment|/* take the command off the queue */
@@ -547,6 +586,30 @@ comma
 l_int|0
 )brace
 comma
+macro_line|#ifdef CONFIG_USB_STORAGE_HP8200e
+(brace
+l_int|0x03f0
+comma
+l_int|0x0207
+comma
+l_int|0x0001
+comma
+l_int|0x0001
+comma
+l_string|&quot;HP USB CD-Writer Plus 8200e&quot;
+comma
+id|US_SC_8070
+comma
+id|US_PR_SCM_ATAPI
+comma
+id|US_FL_ALT_LENGTH
+op_or
+id|US_FL_NEED_INIT
+op_or
+id|US_FL_SINGLE_LUN
+)brace
+comma
+macro_line|#endif
 (brace
 l_int|0x04e6
 comma
@@ -1933,15 +1996,6 @@ c_func
 (paren
 op_amp
 (paren
-id|ss-&gt;sleeper
-)paren
-)paren
-suffix:semicolon
-id|init_MUTEX_LOCKED
-c_func
-(paren
-op_amp
-(paren
 id|ss-&gt;notify
 )paren
 )paren
@@ -2220,6 +2274,29 @@ c_func
 id|ss
 )paren
 suffix:semicolon
+r_break
+suffix:semicolon
+macro_line|#ifdef CONFIG_USB_STORAGE_HP8200e
+r_case
+id|US_PR_SCM_ATAPI
+suffix:colon
+id|ss-&gt;transport_name
+op_assign
+l_string|&quot;SCM/ATAPI&quot;
+suffix:semicolon
+id|ss-&gt;transport
+op_assign
+id|hp8200e_transport
+suffix:semicolon
+id|ss-&gt;transport_reset
+op_assign
+id|usb_stor_CB_reset
+suffix:semicolon
+id|ss-&gt;max_lun
+op_assign
+l_int|1
+suffix:semicolon
+macro_line|#endif
 r_break
 suffix:semicolon
 r_default

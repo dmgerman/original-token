@@ -1,4 +1,5 @@
 multiline_comment|/*&n; *  linux/fs/fat/inode.c&n; *&n; *  Written 1992,1993 by Werner Almesberger&n; *  VFAT extensions by Gordon Chaffee, merged with msdos fs by Henrik Storner&n; *  Rewritten for the constant inumbers support by Al Viro&n; *&n; *  Fixes:&n; *&n; *  &t;Max Cohan: Fixed invalid FSINFO offset when info_sector is 0&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__

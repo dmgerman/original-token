@@ -1,4 +1,4 @@
-multiline_comment|/* drmP.h -- Private header for Direct Rendering Manager -*- linux-c -*-&n; * Created: Mon Jan  4 10:05:05 1999 by faith@precisioninsight.com&n; *&n; * Copyright 1999 Precision Insight, Inc., Cedar Park, Texas.&n; * All rights reserved.&n; *&n; * Permission is hereby granted, free of charge, to any person obtaining a&n; * copy of this software and associated documentation files (the &quot;Software&quot;),&n; * to deal in the Software without restriction, including without limitation&n; * the rights to use, copy, modify, merge, publish, distribute, sublicense,&n; * and/or sell copies of the Software, and to permit persons to whom the&n; * Software is furnished to do so, subject to the following conditions:&n; * &n; * The above copyright notice and this permission notice (including the next&n; * paragraph) shall be included in all copies or substantial portions of the&n; * Software.&n; * &n; * THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR&n; * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,&n; * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL&n; * PRECISION INSIGHT AND/OR ITS SUPPLIERS BE LIABLE FOR ANY CLAIM, DAMAGES OR&n; * OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,&n; * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER&n; * DEALINGS IN THE SOFTWARE.&n; * &n; * Authors:&n; *    Rickard E. (Rik) Faith &lt;faith@precisioninsight.com&gt;&n; * &n; */
+multiline_comment|/* drmP.h -- Private header for Direct Rendering Manager -*- linux-c -*-&n; * Created: Mon Jan  4 10:05:05 1999 by faith@precisioninsight.com&n; *&n; * Copyright 1999 Precision Insight, Inc., Cedar Park, Texas.&n; * Copyright 2000 VA Linux Systems, Inc., Sunnyvale, California.&n; * All rights reserved.&n; *&n; * Permission is hereby granted, free of charge, to any person obtaining a&n; * copy of this software and associated documentation files (the &quot;Software&quot;),&n; * to deal in the Software without restriction, including without limitation&n; * the rights to use, copy, modify, merge, publish, distribute, sublicense,&n; * and/or sell copies of the Software, and to permit persons to whom the&n; * Software is furnished to do so, subject to the following conditions:&n; * &n; * The above copyright notice and this permission notice (including the next&n; * paragraph) shall be included in all copies or substantial portions of the&n; * Software.&n; * &n; * THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR&n; * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,&n; * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL&n; * PRECISION INSIGHT AND/OR ITS SUPPLIERS BE LIABLE FOR ANY CLAIM, DAMAGES OR&n; * OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,&n; * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER&n; * DEALINGS IN THE SOFTWARE.&n; * &n; * Authors:&n; *    Rickard E. (Rik) Faith &lt;faith@valinux.com&gt;&n; * &n; */
 macro_line|#ifndef _DRM_P_H_
 DECL|macro|_DRM_P_H_
 mdefine_line|#define _DRM_P_H_
@@ -20,7 +20,16 @@ macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#ifdef CONFIG_MTRR
 macro_line|#include &lt;asm/mtrr.h&gt;
 macro_line|#endif
+macro_line|#if defined(CONFIG_AGP) || defined(CONFIG_AGP_MODULE)
+DECL|macro|DRM_AGP
+mdefine_line|#define DRM_AGP
+macro_line|#endif
+macro_line|#ifdef DRM_AGP
+macro_line|#include &lt;linux/types.h&gt;
+macro_line|#include &lt;linux/agp_backend.h&gt;
+macro_line|#endif
 macro_line|#if LINUX_VERSION_CODE &gt;= KERNEL_VERSION(2,1,0)
+macro_line|#include &lt;linux/tqueue.h&gt;
 macro_line|#include &lt;linux/poll.h&gt;
 macro_line|#endif
 macro_line|#include &quot;drm.h&quot;
@@ -47,35 +56,45 @@ mdefine_line|#define DRM_FLAG_DEBUG&t;  0x01
 DECL|macro|DRM_FLAG_NOCTX
 mdefine_line|#define DRM_FLAG_NOCTX&t;  0x02
 DECL|macro|DRM_MEM_DMA
-mdefine_line|#define DRM_MEM_DMA&t;  0
+mdefine_line|#define DRM_MEM_DMA&t;   0
 DECL|macro|DRM_MEM_SAREA
-mdefine_line|#define DRM_MEM_SAREA&t;  1
+mdefine_line|#define DRM_MEM_SAREA&t;   1
 DECL|macro|DRM_MEM_DRIVER
-mdefine_line|#define DRM_MEM_DRIVER&t;  2
+mdefine_line|#define DRM_MEM_DRIVER&t;   2
 DECL|macro|DRM_MEM_MAGIC
-mdefine_line|#define DRM_MEM_MAGIC&t;  3
+mdefine_line|#define DRM_MEM_MAGIC&t;   3
 DECL|macro|DRM_MEM_IOCTLS
-mdefine_line|#define DRM_MEM_IOCTLS&t;  4
+mdefine_line|#define DRM_MEM_IOCTLS&t;   4
 DECL|macro|DRM_MEM_MAPS
-mdefine_line|#define DRM_MEM_MAPS&t;  5
+mdefine_line|#define DRM_MEM_MAPS&t;   5
 DECL|macro|DRM_MEM_VMAS
-mdefine_line|#define DRM_MEM_VMAS&t;  6
+mdefine_line|#define DRM_MEM_VMAS&t;   6
 DECL|macro|DRM_MEM_BUFS
-mdefine_line|#define DRM_MEM_BUFS&t;  7
+mdefine_line|#define DRM_MEM_BUFS&t;   7
 DECL|macro|DRM_MEM_SEGS
-mdefine_line|#define DRM_MEM_SEGS&t;  8
+mdefine_line|#define DRM_MEM_SEGS&t;   8
 DECL|macro|DRM_MEM_PAGES
-mdefine_line|#define DRM_MEM_PAGES&t;  9
+mdefine_line|#define DRM_MEM_PAGES&t;   9
 DECL|macro|DRM_MEM_FILES
-mdefine_line|#define DRM_MEM_FILES&t; 10
+mdefine_line|#define DRM_MEM_FILES&t;  10
 DECL|macro|DRM_MEM_QUEUES
-mdefine_line|#define DRM_MEM_QUEUES&t; 11
+mdefine_line|#define DRM_MEM_QUEUES&t;  11
 DECL|macro|DRM_MEM_CMDS
-mdefine_line|#define DRM_MEM_CMDS&t; 12
+mdefine_line|#define DRM_MEM_CMDS&t;  12
 DECL|macro|DRM_MEM_MAPPINGS
-mdefine_line|#define DRM_MEM_MAPPINGS 13
+mdefine_line|#define DRM_MEM_MAPPINGS  13
 DECL|macro|DRM_MEM_BUFLISTS
-mdefine_line|#define DRM_MEM_BUFLISTS 14
+mdefine_line|#define DRM_MEM_BUFLISTS  14
+DECL|macro|DRM_MEM_AGPLISTS
+mdefine_line|#define DRM_MEM_AGPLISTS  15
+DECL|macro|DRM_MEM_TOTALAGP
+mdefine_line|#define DRM_MEM_TOTALAGP  16
+DECL|macro|DRM_MEM_BOUNDAGP
+mdefine_line|#define DRM_MEM_BOUNDAGP  17
+DECL|macro|DRM_MEM_CTXBITMAP
+mdefine_line|#define DRM_MEM_CTXBITMAP 18
+DECL|macro|DRM_MAX_CTXBITMAP
+mdefine_line|#define DRM_MAX_CTXBITMAP (PAGE_SIZE * 8)
 multiline_comment|/* Backward compatibility section */
 multiline_comment|/* _PAGE_WT changed to _PAGE_PWT in 2.2.6 */
 macro_line|#ifndef _PAGE_PWT
@@ -117,6 +136,15 @@ macro_line|#endif
 macro_line|#ifndef NOPAGE_OOM
 DECL|macro|NOPAGE_OOM
 mdefine_line|#define NOPAGE_OOM 0
+macro_line|#endif
+multiline_comment|/* module_init/module_exit added in 2.3.13 */
+macro_line|#ifndef module_init
+DECL|macro|module_init
+mdefine_line|#define module_init(x)  int init_module(void) { return x(); }
+macro_line|#endif
+macro_line|#ifndef module_exit
+DECL|macro|module_exit
+mdefine_line|#define module_exit(x)  void cleanup_module(void) { x(); }
 macro_line|#endif
 multiline_comment|/* Generic cmpxchg added in 2.3.x */
 macro_line|#ifndef __HAVE_ARCH_CMPXCHG
@@ -489,6 +517,12 @@ op_star
 id|address
 suffix:semicolon
 multiline_comment|/* Address of buffer&t;&t;     */
+DECL|member|bus_address
+r_int
+r_int
+id|bus_address
+suffix:semicolon
+multiline_comment|/* Bus address of buffer&t;&t;     */
 DECL|member|next
 r_struct
 id|drm_buf
@@ -586,6 +620,17 @@ id|time_freed
 suffix:semicolon
 multiline_comment|/* Back on freelist&t;&t;     */
 macro_line|#endif
+DECL|member|dev_priv_size
+r_int
+id|dev_priv_size
+suffix:semicolon
+multiline_comment|/* Size of buffer private stoarge   */
+DECL|member|dev_private
+r_void
+op_star
+id|dev_private
+suffix:semicolon
+multiline_comment|/* Per-buffer private storage       */
 DECL|typedef|drm_buf_t
 )brace
 id|drm_buf_t
@@ -1092,6 +1137,16 @@ r_int
 r_int
 id|byte_count
 suffix:semicolon
+r_enum
+(brace
+DECL|enumerator|_DRM_DMA_USE_AGP
+id|_DRM_DMA_USE_AGP
+op_assign
+l_int|0x01
+DECL|member|flags
+)brace
+id|flags
+suffix:semicolon
 multiline_comment|/* DMA support */
 DECL|member|this_buffer
 id|drm_buf_t
@@ -1120,6 +1175,195 @@ DECL|typedef|drm_device_dma_t
 )brace
 id|drm_device_dma_t
 suffix:semicolon
+macro_line|#ifdef DRM_AGP
+DECL|struct|drm_agp_mem
+r_typedef
+r_struct
+id|drm_agp_mem
+(brace
+DECL|member|handle
+r_int
+r_int
+id|handle
+suffix:semicolon
+DECL|member|memory
+id|agp_memory
+op_star
+id|memory
+suffix:semicolon
+DECL|member|bound
+r_int
+r_int
+id|bound
+suffix:semicolon
+multiline_comment|/* address */
+DECL|member|pages
+r_int
+id|pages
+suffix:semicolon
+DECL|member|prev
+r_struct
+id|drm_agp_mem
+op_star
+id|prev
+suffix:semicolon
+DECL|member|next
+r_struct
+id|drm_agp_mem
+op_star
+id|next
+suffix:semicolon
+DECL|typedef|drm_agp_mem_t
+)brace
+id|drm_agp_mem_t
+suffix:semicolon
+DECL|struct|drm_agp_head
+r_typedef
+r_struct
+id|drm_agp_head
+(brace
+DECL|member|agp_info
+id|agp_kern_info
+id|agp_info
+suffix:semicolon
+DECL|member|chipset
+r_const
+r_char
+op_star
+id|chipset
+suffix:semicolon
+DECL|member|memory
+id|drm_agp_mem_t
+op_star
+id|memory
+suffix:semicolon
+DECL|member|mode
+r_int
+r_int
+id|mode
+suffix:semicolon
+DECL|member|enabled
+r_int
+id|enabled
+suffix:semicolon
+DECL|member|acquired
+r_int
+id|acquired
+suffix:semicolon
+DECL|member|base
+r_int
+r_int
+id|base
+suffix:semicolon
+DECL|member|agp_mtrr
+r_int
+id|agp_mtrr
+suffix:semicolon
+DECL|typedef|drm_agp_head_t
+)brace
+id|drm_agp_head_t
+suffix:semicolon
+r_typedef
+r_struct
+(brace
+DECL|member|free_memory
+r_void
+(paren
+op_star
+id|free_memory
+)paren
+(paren
+id|agp_memory
+op_star
+)paren
+suffix:semicolon
+DECL|member|allocate_memory
+id|agp_memory
+op_star
+(paren
+op_star
+id|allocate_memory
+)paren
+(paren
+r_int
+comma
+id|u32
+)paren
+suffix:semicolon
+DECL|member|bind_memory
+r_int
+(paren
+op_star
+id|bind_memory
+)paren
+(paren
+id|agp_memory
+op_star
+comma
+id|off_t
+)paren
+suffix:semicolon
+DECL|member|unbind_memory
+r_int
+(paren
+op_star
+id|unbind_memory
+)paren
+(paren
+id|agp_memory
+op_star
+)paren
+suffix:semicolon
+DECL|member|enable
+r_void
+(paren
+op_star
+id|enable
+)paren
+(paren
+id|u32
+)paren
+suffix:semicolon
+DECL|member|acquire
+r_int
+(paren
+op_star
+id|acquire
+)paren
+(paren
+r_void
+)paren
+suffix:semicolon
+DECL|member|release
+r_void
+(paren
+op_star
+id|release
+)paren
+(paren
+r_void
+)paren
+suffix:semicolon
+DECL|member|copy_info
+r_void
+(paren
+op_star
+id|copy_info
+)paren
+(paren
+id|agp_kern_info
+op_star
+)paren
+suffix:semicolon
+DECL|typedef|drm_agp_func_t
+)brace
+id|drm_agp_func_t
+suffix:semicolon
+r_extern
+id|drm_agp_func_t
+id|drm_agp
+suffix:semicolon
+macro_line|#endif
 DECL|struct|drm_device
 r_typedef
 r_struct
@@ -1428,6 +1672,24 @@ id|wait_queue_head_t
 id|buf_writers
 suffix:semicolon
 multiline_comment|/* Processes waiting to ctx switch */
+macro_line|#ifdef DRM_AGP
+DECL|member|agp
+id|drm_agp_head_t
+op_star
+id|agp
+suffix:semicolon
+macro_line|#endif
+DECL|member|ctx_bitmap
+r_int
+r_int
+op_star
+id|ctx_bitmap
+suffix:semicolon
+DECL|member|dev_private
+r_void
+op_star
+id|dev_private
+suffix:semicolon
 DECL|typedef|drm_device_t
 )brace
 id|drm_device_t
@@ -1944,6 +2206,58 @@ r_int
 id|size
 )paren
 suffix:semicolon
+macro_line|#ifdef DRM_AGP
+r_extern
+id|agp_memory
+op_star
+id|drm_alloc_agp
+c_func
+(paren
+r_int
+id|pages
+comma
+id|u32
+id|type
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|drm_free_agp
+c_func
+(paren
+id|agp_memory
+op_star
+id|handle
+comma
+r_int
+id|pages
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|drm_bind_agp
+c_func
+(paren
+id|agp_memory
+op_star
+id|handle
+comma
+r_int
+r_int
+id|start
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|drm_unbind_agp
+c_func
+(paren
+id|agp_memory
+op_star
+id|handle
+)paren
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/* Buffer management support (bufs.c) */
 r_extern
 r_int
@@ -2909,6 +3223,262 @@ id|drm_lock_flags_t
 id|flags
 )paren
 suffix:semicolon
+multiline_comment|/* Context Bitmap support (ctxbitmap.c) */
+r_extern
+r_int
+id|drm_ctxbitmap_init
+c_func
+(paren
+id|drm_device_t
+op_star
+id|dev
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|drm_ctxbitmap_cleanup
+c_func
+(paren
+id|drm_device_t
+op_star
+id|dev
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|drm_ctxbitmap_next
+c_func
+(paren
+id|drm_device_t
+op_star
+id|dev
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|drm_ctxbitmap_free
+c_func
+(paren
+id|drm_device_t
+op_star
+id|dev
+comma
+r_int
+id|ctx_handle
+)paren
+suffix:semicolon
+macro_line|#ifdef DRM_AGP
+multiline_comment|/* AGP/GART support (agpsupport.c) */
+r_extern
+id|drm_agp_head_t
+op_star
+id|drm_agp_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|drm_agp_uninit
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|drm_agp_acquire
+c_func
+(paren
+r_struct
+id|inode
+op_star
+id|inode
+comma
+r_struct
+id|file
+op_star
+id|filp
+comma
+r_int
+r_int
+id|cmd
+comma
+r_int
+r_int
+id|arg
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|drm_agp_release
+c_func
+(paren
+r_struct
+id|inode
+op_star
+id|inode
+comma
+r_struct
+id|file
+op_star
+id|filp
+comma
+r_int
+r_int
+id|cmd
+comma
+r_int
+r_int
+id|arg
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|drm_agp_enable
+c_func
+(paren
+r_struct
+id|inode
+op_star
+id|inode
+comma
+r_struct
+id|file
+op_star
+id|filp
+comma
+r_int
+r_int
+id|cmd
+comma
+r_int
+r_int
+id|arg
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|drm_agp_info
+c_func
+(paren
+r_struct
+id|inode
+op_star
+id|inode
+comma
+r_struct
+id|file
+op_star
+id|filp
+comma
+r_int
+r_int
+id|cmd
+comma
+r_int
+r_int
+id|arg
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|drm_agp_alloc
+c_func
+(paren
+r_struct
+id|inode
+op_star
+id|inode
+comma
+r_struct
+id|file
+op_star
+id|filp
+comma
+r_int
+r_int
+id|cmd
+comma
+r_int
+r_int
+id|arg
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|drm_agp_free
+c_func
+(paren
+r_struct
+id|inode
+op_star
+id|inode
+comma
+r_struct
+id|file
+op_star
+id|filp
+comma
+r_int
+r_int
+id|cmd
+comma
+r_int
+r_int
+id|arg
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|drm_agp_unbind
+c_func
+(paren
+r_struct
+id|inode
+op_star
+id|inode
+comma
+r_struct
+id|file
+op_star
+id|filp
+comma
+r_int
+r_int
+id|cmd
+comma
+r_int
+r_int
+id|arg
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|drm_agp_bind
+c_func
+(paren
+r_struct
+id|inode
+op_star
+id|inode
+comma
+r_struct
+id|file
+op_star
+id|filp
+comma
+r_int
+r_int
+id|cmd
+comma
+r_int
+r_int
+id|arg
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#endif
 macro_line|#endif
 eof

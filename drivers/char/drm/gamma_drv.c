@@ -1,9 +1,13 @@
-multiline_comment|/* gamma.c -- 3dlabs GMX 2000 driver -*- linux-c -*-&n; * Created: Mon Jan  4 08:58:31 1999 by faith@precisioninsight.com&n; *&n; * Copyright 1999, 2000 Precision Insight, Inc., Cedar Park, Texas.&n; * All Rights Reserved.&n; *&n; * Permission is hereby granted, free of charge, to any person obtaining a&n; * copy of this software and associated documentation files (the &quot;Software&quot;),&n; * to deal in the Software without restriction, including without limitation&n; * the rights to use, copy, modify, merge, publish, distribute, sublicense,&n; * and/or sell copies of the Software, and to permit persons to whom the&n; * Software is furnished to do so, subject to the following conditions:&n; * &n; * The above copyright notice and this permission notice (including the next&n; * paragraph) shall be included in all copies or substantial portions of the&n; * Software.&n; * &n; * THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR&n; * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,&n; * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL&n; * PRECISION INSIGHT AND/OR ITS SUPPLIERS BE LIABLE FOR ANY CLAIM, DAMAGES OR&n; * OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,&n; * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER&n; * DEALINGS IN THE SOFTWARE.&n; * &n; * Authors:&n; *    Rickard E. (Rik) Faith &lt;faith@precisioninsight.com&gt;&n; *&n; */
+multiline_comment|/* gamma.c -- 3dlabs GMX 2000 driver -*- linux-c -*-&n; * Created: Mon Jan  4 08:58:31 1999 by faith@precisioninsight.com&n; *&n; * Copyright 1999 Precision Insight, Inc., Cedar Park, Texas.&n; * Copyright 2000 VA Linux Systems, Inc., Sunnyvale, California.&n; * All Rights Reserved.&n; *&n; * Permission is hereby granted, free of charge, to any person obtaining a&n; * copy of this software and associated documentation files (the &quot;Software&quot;),&n; * to deal in the Software without restriction, including without limitation&n; * the rights to use, copy, modify, merge, publish, distribute, sublicense,&n; * and/or sell copies of the Software, and to permit persons to whom the&n; * Software is furnished to do so, subject to the following conditions:&n; * &n; * The above copyright notice and this permission notice (including the next&n; * paragraph) shall be included in all copies or substantial portions of the&n; * Software.&n; * &n; * THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR&n; * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,&n; * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL&n; * PRECISION INSIGHT AND/OR ITS SUPPLIERS BE LIABLE FOR ANY CLAIM, DAMAGES OR&n; * OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,&n; * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER&n; * DEALINGS IN THE SOFTWARE.&n; * &n; * Authors:&n; *    Rickard E. (Rik) Faith &lt;faith@valinux.com&gt;&n; *&n; */
 macro_line|#include &lt;linux/config.h&gt;
-macro_line|#include &lt;linux/sched.h&gt;
-macro_line|#include &lt;linux/smp_lock.h&gt;
+macro_line|#ifndef EXPORT_SYMTAB
+DECL|macro|EXPORT_SYMTAB
+mdefine_line|#define EXPORT_SYMTAB
+macro_line|#endif
 macro_line|#include &quot;drmP.h&quot;
 macro_line|#include &quot;gamma_drv.h&quot;
+macro_line|#include &lt;linux/pci.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;&t;/* For (un)lock_kernel */
 DECL|variable|gamma_init
 id|EXPORT_SYMBOL
 c_func
@@ -18,18 +22,26 @@ c_func
 id|gamma_cleanup
 )paren
 suffix:semicolon
+macro_line|#ifndef PCI_DEVICE_ID_3DLABS_GAMMA
+DECL|macro|PCI_DEVICE_ID_3DLABS_GAMMA
+mdefine_line|#define PCI_DEVICE_ID_3DLABS_GAMMA 0x0008
+macro_line|#endif
+macro_line|#ifndef PCI_DEVICE_ID_3DLABS_MX
+DECL|macro|PCI_DEVICE_ID_3DLABS_MX
+mdefine_line|#define PCI_DEVICE_ID_3DLABS_MX 0x0006
+macro_line|#endif
 DECL|macro|GAMMA_NAME
 mdefine_line|#define GAMMA_NAME&t; &quot;gamma&quot;
 DECL|macro|GAMMA_DESC
 mdefine_line|#define GAMMA_DESC&t; &quot;3dlabs GMX 2000&quot;
 DECL|macro|GAMMA_DATE
-mdefine_line|#define GAMMA_DATE&t; &quot;19990830&quot;
+mdefine_line|#define GAMMA_DATE&t; &quot;20000719&quot;
 DECL|macro|GAMMA_MAJOR
-mdefine_line|#define GAMMA_MAJOR&t; 0
+mdefine_line|#define GAMMA_MAJOR&t; 1
 DECL|macro|GAMMA_MINOR
 mdefine_line|#define GAMMA_MINOR&t; 0
 DECL|macro|GAMMA_PATCHLEVEL
-mdefine_line|#define GAMMA_PATCHLEVEL 5
+mdefine_line|#define GAMMA_PATCHLEVEL 0
 DECL|variable|gamma_device
 r_static
 id|drm_device_t
@@ -42,10 +54,13 @@ id|file_operations
 id|gamma_fops
 op_assign
 (brace
+macro_line|#if LINUX_VERSION_CODE &gt;= 0x020322
+multiline_comment|/* This started being used approx. 2.3.34 */
 id|owner
 suffix:colon
 id|THIS_MODULE
 comma
+macro_line|#endif
 id|open
 suffix:colon
 id|gamma_open
@@ -563,20 +578,6 @@ suffix:semicolon
 DECL|macro|GAMMA_IOCTL_COUNT
 mdefine_line|#define GAMMA_IOCTL_COUNT DRM_ARRAY_SIZE(gamma_ioctls)
 macro_line|#ifdef MODULE
-r_int
-id|init_module
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_void
-id|cleanup_module
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
 DECL|variable|gamma
 r_static
 r_char
@@ -585,10 +586,18 @@ id|gamma
 op_assign
 l_int|NULL
 suffix:semicolon
+macro_line|#endif
+DECL|variable|devices
+r_static
+r_int
+id|devices
+op_assign
+l_int|0
+suffix:semicolon
 id|MODULE_AUTHOR
 c_func
 (paren
-l_string|&quot;Precision Insight, Inc., Cedar Park, Texas.&quot;
+l_string|&quot;VA Linux Systems, Inc.&quot;
 )paren
 suffix:semicolon
 id|MODULE_DESCRIPTION
@@ -605,82 +614,68 @@ comma
 l_string|&quot;s&quot;
 )paren
 suffix:semicolon
-multiline_comment|/* init_module is called when insmod is used to load the module */
-DECL|function|init_module
-r_int
-id|init_module
+id|MODULE_PARM
 c_func
 (paren
-r_void
+id|devices
+comma
+l_string|&quot;i&quot;
 )paren
-(brace
-r_return
+suffix:semicolon
+id|MODULE_PARM_DESC
+c_func
+(paren
+id|devices
+comma
+l_string|&quot;devices=x, where x is the number of MX chips on card&bslash;n&quot;
+)paren
+suffix:semicolon
+DECL|variable|gamma_init
+id|module_init
+c_func
+(paren
 id|gamma_init
-c_func
-(paren
 )paren
 suffix:semicolon
-)brace
-multiline_comment|/* cleanup_module is called when rmmod is used to unload the module */
-DECL|function|cleanup_module
-r_void
-id|cleanup_module
+DECL|variable|gamma_cleanup
+id|module_exit
 c_func
 (paren
-r_void
-)paren
-(brace
 id|gamma_cleanup
-c_func
-(paren
 )paren
 suffix:semicolon
-)brace
-macro_line|#endif
 macro_line|#ifndef MODULE
-multiline_comment|/* gamma_setup is called by the kernel to parse command-line options passed&n; * via the boot-loader (e.g., LILO).  It calls the insmod option routine,&n; * drm_parse_options.&n; *&n; * This is not currently supported, since it requires changes to&n; * linux/init/main.c. */
-DECL|function|gamma_setup
-r_void
+multiline_comment|/* gamma_options is called by the kernel to parse command-line options&n; * passed via the boot-loader (e.g., LILO).  It calls the insmod option&n; * routine, drm_parse_options.&n; */
+DECL|function|gamma_options
+r_static
+r_int
 id|__init
-id|gamma_setup
+id|gamma_options
 c_func
 (paren
 r_char
 op_star
 id|str
-comma
-r_int
-op_star
-id|ints
 )paren
 (brace
-r_if
-c_cond
-(paren
-id|ints
-(braket
-l_int|0
-)braket
-op_ne
-l_int|0
-)paren
-(brace
-id|DRM_ERROR
-c_func
-(paren
-l_string|&quot;Illegal command line format, ignored&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-suffix:semicolon
-)brace
 id|drm_parse_options
 c_func
 (paren
 id|str
 )paren
 suffix:semicolon
+r_return
+l_int|1
+suffix:semicolon
 )brace
+id|__setup
+c_func
+(paren
+l_string|&quot;gamma=&quot;
+comma
+id|gamma_options
+)paren
+suffix:semicolon
 macro_line|#endif
 DECL|function|gamma_setup
 r_static
@@ -1343,6 +1338,12 @@ id|DRM_MEM_SAREA
 suffix:semicolon
 r_break
 suffix:semicolon
+r_case
+id|_DRM_AGP
+suffix:colon
+multiline_comment|/* Do nothing here, because this is all&n;                                   handled in the AGP/GART driver. */
+r_break
+suffix:semicolon
 )brace
 id|drm_free
 c_func
@@ -1520,6 +1521,149 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|gamma_found
+r_int
+id|gamma_found
+c_func
+(paren
+r_void
+)paren
+(brace
+r_return
+id|devices
+suffix:semicolon
+)brace
+DECL|function|gamma_find_devices
+r_int
+id|gamma_find_devices
+c_func
+(paren
+r_void
+)paren
+(brace
+r_struct
+id|pci_dev
+op_star
+id|d
+op_assign
+l_int|NULL
+comma
+op_star
+id|one
+op_assign
+l_int|NULL
+comma
+op_star
+id|two
+op_assign
+l_int|NULL
+suffix:semicolon
+id|d
+op_assign
+id|pci_find_device
+c_func
+(paren
+id|PCI_VENDOR_ID_3DLABS
+comma
+id|PCI_DEVICE_ID_3DLABS_GAMMA
+comma
+id|d
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|d
+)paren
+r_return
+l_int|0
+suffix:semicolon
+id|one
+op_assign
+id|pci_find_device
+c_func
+(paren
+id|PCI_VENDOR_ID_3DLABS
+comma
+id|PCI_DEVICE_ID_3DLABS_MX
+comma
+id|d
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|one
+)paren
+r_return
+l_int|0
+suffix:semicolon
+multiline_comment|/* Make sure it&squot;s on the same card, if not - no MX&squot;s found */
+r_if
+c_cond
+(paren
+id|PCI_SLOT
+c_func
+(paren
+id|d-&gt;devfn
+)paren
+op_ne
+id|PCI_SLOT
+c_func
+(paren
+id|one-&gt;devfn
+)paren
+)paren
+r_return
+l_int|0
+suffix:semicolon
+id|two
+op_assign
+id|pci_find_device
+c_func
+(paren
+id|PCI_VENDOR_ID_3DLABS
+comma
+id|PCI_DEVICE_ID_3DLABS_MX
+comma
+id|one
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|two
+)paren
+r_return
+l_int|1
+suffix:semicolon
+multiline_comment|/* Make sure it&squot;s on the same card, if not - only 1 MX found */
+r_if
+c_cond
+(paren
+id|PCI_SLOT
+c_func
+(paren
+id|d-&gt;devfn
+)paren
+op_ne
+id|PCI_SLOT
+c_func
+(paren
+id|two-&gt;devfn
+)paren
+)paren
+r_return
+l_int|1
+suffix:semicolon
+multiline_comment|/* Two MX&squot;s found - we don&squot;t currently support more than 2 */
+r_return
+l_int|2
+suffix:semicolon
+)brace
 multiline_comment|/* gamma_init is called via init_module at module load time, or via&n; * linux/init/main.c (this is not currently supported). */
 DECL|function|gamma_init
 r_int
@@ -1584,6 +1728,24 @@ id|gamma
 )paren
 suffix:semicolon
 macro_line|#endif
+id|devices
+op_assign
+id|gamma_find_devices
+c_func
+(paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|devices
+op_eq
+l_int|0
+)paren
+r_return
+op_minus
+l_int|1
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1639,7 +1801,7 @@ suffix:semicolon
 id|DRM_INFO
 c_func
 (paren
-l_string|&quot;Initialized %s %d.%d.%d %s on minor %d&bslash;n&quot;
+l_string|&quot;Initialized %s %d.%d.%d %s on minor %d with %d MX devices&bslash;n&quot;
 comma
 id|GAMMA_NAME
 comma
@@ -1652,6 +1814,8 @@ comma
 id|GAMMA_DATE
 comma
 id|gamma_misc.minor
+comma
+id|devices
 )paren
 suffix:semicolon
 r_return
@@ -1888,6 +2052,8 @@ id|dev
 )paren
 )paren
 (brace
+id|MOD_INC_USE_COUNT
+suffix:semicolon
 id|atomic_inc
 c_func
 (paren
@@ -1962,20 +2128,13 @@ suffix:semicolon
 id|drm_device_t
 op_star
 id|dev
+op_assign
+id|priv-&gt;dev
 suffix:semicolon
 r_int
 id|retcode
 op_assign
 l_int|0
-suffix:semicolon
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
-id|dev
-op_assign
-id|priv-&gt;dev
 suffix:semicolon
 id|DRM_DEBUG
 c_func
@@ -1983,6 +2142,11 @@ c_func
 l_string|&quot;open_count = %d&bslash;n&quot;
 comma
 id|dev-&gt;open_count
+)paren
+suffix:semicolon
+id|lock_kernel
+c_func
+(paren
 )paren
 suffix:semicolon
 r_if
@@ -2002,6 +2166,8 @@ id|filp
 )paren
 )paren
 (brace
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
 id|atomic_inc
 c_func
 (paren

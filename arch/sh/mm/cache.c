@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: cache.c,v 1.10 2000/03/07 11:58:34 gniibe Exp $&n; *&n; *  linux/arch/sh/mm/cache.c&n; *&n; * Copyright (C) 1999  Niibe Yutaka&n; *&n; */
+multiline_comment|/* $Id: cache.c,v 1.10 2000/03/07 11:58:34 gniibe Exp $&n; *&n; *  linux/arch/sh/mm/cache.c&n; *&n; * Copyright (C) 1999, 2000  Niibe Yutaka&n; *&n; */
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/mman.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -45,11 +45,17 @@ id|num_entries
 suffix:semicolon
 )brace
 suffix:semicolon
+multiline_comment|/* Data at BSS is cleared after setting this variable.&n;   So, we Should not placed this variable at BSS section.&n;   Initialize this, it is placed at data section. */
 DECL|variable|cache_system_info
 r_static
 r_struct
 id|_cache_system_info
 id|cache_system_info
+op_assign
+(brace
+l_int|0
+comma
+)brace
 suffix:semicolon
 DECL|macro|CACHE_OC_WAY_SHIFT
 mdefine_line|#define CACHE_OC_WAY_SHIFT&t;(cache_system_info.way_shift)
@@ -209,6 +215,7 @@ suffix:semicolon
 )brace
 r_static
 r_void
+id|__init
 DECL|function|detect_cpu_and_cache_system
 id|detect_cpu_and_cache_system
 c_func
@@ -1089,6 +1096,7 @@ r_int
 id|addr
 )paren
 (brace
+multiline_comment|/* XXX: Umm... this flush out all the cache lines.  Any improvement? */
 id|flush_cache_range
 c_func
 (paren

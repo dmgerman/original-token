@@ -35,6 +35,14 @@ id|envp
 )braket
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_HOTPLUG
+r_extern
+r_char
+id|hotplug_path
+(braket
+)braket
+suffix:semicolon
+macro_line|#endif
 macro_line|#else
 DECL|function|request_module
 r_static

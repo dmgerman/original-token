@@ -50,23 +50,23 @@ r_void
 suffix:semicolon
 multiline_comment|/*&n; * Scheduling quanta.&n; *&n; * NOTE! The unix &quot;nice&quot; value influences how long a process&n; * gets. The nice value ranges from -20 to +19, where a -20&n; * is a &quot;high-priority&quot; task, and a &quot;+10&quot; is a low-priority&n; * task.&n; *&n; * We want the time-slice to be around 50ms or so, so this&n; * calculation depends on the value of HZ.&n; */
 macro_line|#if HZ &lt; 200
-DECL|macro|LOG2_HZ
-mdefine_line|#define LOG2_HZ 7
+DECL|macro|TICK_SCALE
+mdefine_line|#define TICK_SCALE(x)&t;((x) &gt;&gt; 2)
 macro_line|#elif HZ &lt; 400
-DECL|macro|LOG2_HZ
-mdefine_line|#define LOG2_HZ 8
+DECL|macro|TICK_SCALE
+mdefine_line|#define TICK_SCALE(x)&t;((x) &gt;&gt; 1)
 macro_line|#elif HZ &lt; 800
-DECL|macro|LOG2_HZ
-mdefine_line|#define LOG2_HZ 9
+DECL|macro|TICK_SCALE
+mdefine_line|#define TICK_SCALE(x)&t;(x)
 macro_line|#elif HZ &lt; 1600
-DECL|macro|LOG2_HZ
-mdefine_line|#define LOG2_HZ 10
+DECL|macro|TICK_SCALE
+mdefine_line|#define TICK_SCALE(x)&t;((x) &lt;&lt; 1)
 macro_line|#else
-DECL|macro|LOG2_HZ
-mdefine_line|#define LOG2_HZ 11
+DECL|macro|TICK_SCALE
+mdefine_line|#define TICK_SCALE(x)&t;((x) &lt;&lt; 2)
 macro_line|#endif
 DECL|macro|NICE_TO_TICKS
-mdefine_line|#define NICE_TO_TICKS(nice)&t;((((20)-(nice)) &gt;&gt; (LOG2_HZ-5))+1)
+mdefine_line|#define NICE_TO_TICKS(nice)&t;(TICK_SCALE(20-(nice))+1)
 multiline_comment|/*&n; *&t;Init task must be ok at boot for the ix86 as we will check its signals&n; *&t;via the SMP irq return path.&n; */
 DECL|variable|init_tasks
 r_struct

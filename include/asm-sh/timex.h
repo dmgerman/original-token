@@ -12,6 +12,7 @@ DECL|typedef|cycles_t
 r_typedef
 r_int
 r_int
+r_int
 id|cycles_t
 suffix:semicolon
 r_extern

@@ -75,6 +75,14 @@ id|modprobe_path
 (braket
 )braket
 suffix:semicolon
+macro_line|#ifdef CONFIG_HOTPLUG
+r_extern
+r_char
+id|hotplug_path
+(braket
+)braket
+suffix:semicolon
+macro_line|#endif
 macro_line|#endif
 macro_line|#ifdef CONFIG_CHR_DEV_SG
 r_extern
@@ -905,6 +913,29 @@ op_amp
 id|sysctl_string
 )brace
 comma
+macro_line|#ifdef CONFIG_HOTPLUG
+(brace
+id|KERN_HOTPLUG
+comma
+l_string|&quot;hotplug&quot;
+comma
+op_amp
+id|hotplug_path
+comma
+l_int|256
+comma
+l_int|0644
+comma
+l_int|NULL
+comma
+op_amp
+id|proc_dostring
+comma
+op_amp
+id|sysctl_string
+)brace
+comma
+macro_line|#endif
 macro_line|#endif
 macro_line|#ifdef CONFIG_CHR_DEV_SG
 (brace

@@ -214,6 +214,22 @@ DECL|macro|MMU_NTLB_ENTRIES
 mdefine_line|#define MMU_NTLB_ENTRIES&t;64&t;/* for 7750 */
 DECL|macro|MMU_CONTROL_INIT
 mdefine_line|#define MMU_CONTROL_INIT&t;0x205&t;/* SQMD=1, SV=0, TI=1, AT=1 */
+DECL|macro|MMU_ITLB_DATA_ARRAY
+mdefine_line|#define MMU_ITLB_DATA_ARRAY&t;0xF3000000
+DECL|macro|MMU_UTLB_DATA_ARRAY
+mdefine_line|#define MMU_UTLB_DATA_ARRAY&t;0xF7000000
+DECL|macro|MMU_UTLB_ENTRIES
+mdefine_line|#define MMU_UTLB_ENTRIES&t;   64
+DECL|macro|MMU_U_ENTRY_SHIFT
+mdefine_line|#define MMU_U_ENTRY_SHIFT&t;    8
+DECL|macro|MMU_UTLB_VALID
+mdefine_line|#define MMU_UTLB_VALID&t;&t;0x100
+DECL|macro|MMU_ITLB_ENTRIES
+mdefine_line|#define MMU_ITLB_ENTRIES&t;    4
+DECL|macro|MMU_I_ENTRY_SHIFT
+mdefine_line|#define MMU_I_ENTRY_SHIFT&t;    8
+DECL|macro|MMU_ITLB_VALID
+mdefine_line|#define MMU_ITLB_VALID&t;&t;0x100
 macro_line|#endif
 DECL|function|set_asid
 r_extern

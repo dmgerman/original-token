@@ -189,6 +189,12 @@ l_string|&quot;hub&quot;
 )brace
 comma
 (brace
+id|USB_CLASS_PHYSICAL
+comma
+l_string|&quot;phys.&quot;
+)brace
+comma
+(brace
 id|USB_CLASS_PRINTER
 comma
 l_string|&quot;print&quot;
@@ -204,6 +210,12 @@ comma
 id|USB_CLASS_DATA
 comma
 l_string|&quot;data&quot;
+)brace
+comma
+(brace
+id|USB_CLASS_APP_SPEC
+comma
+l_string|&quot;app.&quot;
 )brace
 comma
 (brace

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: init.c,v 1.16 2000/02/14 15:19:05 gniibe Exp $&n; *&n; *  linux/arch/sh/mm/init.c&n; *&n; *  Copyright (C) 1999  Niibe Yutaka&n; *&n; *  Based on linux/arch/i386/mm/init.c:&n; *   Copyright (C) 1995  Linus Torvalds&n; */
+multiline_comment|/* $Id: init.c,v 1.17 2000-04-08 15:38:54+09 gniibe Exp $&n; *&n; *  linux/arch/sh/mm/init.c&n; *&n; *  Copyright (C) 1999  Niibe Yutaka&n; *&n; *  Based on linux/arch/i386/mm/init.c:&n; *   Copyright (C) 1995  Linus Torvalds&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -881,6 +881,13 @@ c_func
 id|MMU_CONTROL_INIT
 comma
 id|MMUCR
+)paren
+suffix:semicolon
+multiline_comment|/* The manual suggests doing some nops after turning on the MMU */
+id|asm
+r_volatile
+(paren
+l_string|&quot;nop;nop;nop;nop;nop;nop;&quot;
 )paren
 suffix:semicolon
 id|mmu_context_cache

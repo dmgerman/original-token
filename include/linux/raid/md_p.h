@@ -193,7 +193,7 @@ DECL|member|set_uuid3
 id|__u32
 id|set_uuid3
 suffix:semicolon
-multiline_comment|/* 14 Raid set identifier #4&t;&t;      */
+multiline_comment|/* 15 Raid set identifier #4&t;&t;      */
 DECL|member|gstate_creserved
 id|__u32
 id|gstate_creserved
@@ -239,11 +239,29 @@ id|__u32
 id|sb_csum
 suffix:semicolon
 multiline_comment|/*  6 checksum of the whole superblock        */
-DECL|member|events
-id|__u64
-id|events
+macro_line|#ifdef __BIG_ENDIAN
+DECL|member|events_hi
+id|__u32
+id|events_hi
 suffix:semicolon
-multiline_comment|/*  7 number of superblock updates (64-bit!)  */
+multiline_comment|/*  7 high-order of superblock update count   */
+DECL|member|events_lo
+id|__u32
+id|events_lo
+suffix:semicolon
+multiline_comment|/*  8 low-order of superblock update count    */
+macro_line|#else
+DECL|member|events_lo
+id|__u32
+id|events_lo
+suffix:semicolon
+multiline_comment|/*  7 low-order of superblock update count    */
+DECL|member|events_hi
+id|__u32
+id|events_hi
+suffix:semicolon
+multiline_comment|/*  8 high-order of superblock update count   */
+macro_line|#endif
 DECL|member|gstate_sreserved
 id|__u32
 id|gstate_sreserved
@@ -308,5 +326,32 @@ DECL|typedef|mdp_super_t
 )brace
 id|mdp_super_t
 suffix:semicolon
+DECL|function|md_event
+r_static
+r_inline
+id|__u64
+id|md_event
+c_func
+(paren
+id|mdp_super_t
+op_star
+id|sb
+)paren
+(brace
+id|__u64
+id|ev
+op_assign
+id|sb-&gt;events_hi
+suffix:semicolon
+r_return
+(paren
+id|ev
+op_lshift
+l_int|32
+)paren
+op_or
+id|sb-&gt;events_lo
+suffix:semicolon
+)brace
 macro_line|#endif _MD_P_H
 eof

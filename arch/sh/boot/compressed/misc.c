@@ -1,6 +1,9 @@
-multiline_comment|/*&n; * arch/sh/boot/compressed/misc.c&n; * &n; * This is a collection of several routines from gzip-1.0.3 &n; * adapted for Linux.&n; *&n; * malloc by Hannu Savolainen 1993 and Matthias Urlichs 1994&n; *&n; * Adapted for SH by Stuart Menefy, Aug 1999&n; */
+multiline_comment|/*&n; * arch/sh/boot/compressed/misc.c&n; * &n; * This is a collection of several routines from gzip-1.0.3 &n; * adapted for Linux.&n; *&n; * malloc by Hannu Savolainen 1993 and Matthias Urlichs 1994&n; *&n; * Adapted for SH by Stuart Menefy, Aug 1999&n; *&n; * Modified to use standard LinuxSH BIOS by Greg Banks 7Jul2000&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
+macro_line|#ifdef CONFIG_SH_STANDARD_BIOS
+macro_line|#include &lt;asm/sh_bios.h&gt;
+macro_line|#endif
 multiline_comment|/*&n; * gzip declarations&n; */
 DECL|macro|OF
 mdefine_line|#define OF(args)  args
@@ -417,12 +420,7 @@ op_star
 id|ptr
 suffix:semicolon
 )brace
-macro_line|#ifdef CONFIG_DEBUG_KERNEL_WITH_GDB_STUB
-DECL|macro|IN_GDB
-mdefine_line|#define IN_GDB 1
-macro_line|#endif
-macro_line|#include &lt;asm/io.h&gt;
-macro_line|#include &quot;../../../../drivers/char/sh-sci.h&quot;
+macro_line|#ifdef CONFIG_SH_STANDARD_BIOS
 DECL|function|strlen
 r_static
 r_int
@@ -465,7 +463,7 @@ op_star
 id|s
 )paren
 (brace
-id|put_string
+id|sh_bios_console_write
 c_func
 (paren
 id|s
@@ -478,6 +476,21 @@ id|s
 )paren
 suffix:semicolon
 )brace
+macro_line|#else
+DECL|function|puts
+r_void
+id|puts
+c_func
+(paren
+r_const
+r_char
+op_star
+id|s
+)paren
+(brace
+multiline_comment|/* This should be updated to use the sh-sci routines */
+)brace
+macro_line|#endif
 DECL|function|memset
 r_void
 op_star

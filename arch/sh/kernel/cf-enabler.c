@@ -263,7 +263,7 @@ r_void
 )paren
 (brace
 multiline_comment|/* Enable the card, and set the level interrupt */
-id|outw
+id|ctrl_outw
 c_func
 (paren
 l_int|0x0042

@@ -11,6 +11,8 @@ DECL|macro|USB_CLASS_COMM
 mdefine_line|#define USB_CLASS_COMM&t;&t;&t;2
 DECL|macro|USB_CLASS_HID
 mdefine_line|#define USB_CLASS_HID&t;&t;&t;3
+DECL|macro|USB_CLASS_PHYSICAL
+mdefine_line|#define USB_CLASS_PHYSICAL&t;&t;5
 DECL|macro|USB_CLASS_PRINTER
 mdefine_line|#define USB_CLASS_PRINTER&t;&t;7
 DECL|macro|USB_CLASS_MASS_STORAGE
@@ -19,6 +21,8 @@ DECL|macro|USB_CLASS_HUB
 mdefine_line|#define USB_CLASS_HUB&t;&t;&t;9
 DECL|macro|USB_CLASS_DATA
 mdefine_line|#define USB_CLASS_DATA&t;&t;&t;10
+DECL|macro|USB_CLASS_APP_SPEC
+mdefine_line|#define USB_CLASS_APP_SPEC&t;&t;0xfe
 DECL|macro|USB_CLASS_VENDOR_SPEC
 mdefine_line|#define USB_CLASS_VENDOR_SPEC&t;&t;0xff
 multiline_comment|/*&n; * USB types&n; */

@@ -182,6 +182,48 @@ c_func
 (paren
 id|IRQ_SELECT_INDEX
 comma
+l_int|4
+)paren
+suffix:semicolon
+multiline_comment|/* IRQ4 */
+multiline_comment|/* COM2 */
+id|smsc_config
+c_func
+(paren
+id|CURRENT_LDN_INDEX
+comma
+id|LDN_COM2
+)paren
+suffix:semicolon
+id|smsc_config
+c_func
+(paren
+id|ACTIVATE_INDEX
+comma
+l_int|0x01
+)paren
+suffix:semicolon
+id|smsc_config
+c_func
+(paren
+id|IO_BASE_HI_INDEX
+comma
+l_int|0x02
+)paren
+suffix:semicolon
+id|smsc_config
+c_func
+(paren
+id|IO_BASE_LO_INDEX
+comma
+l_int|0xf8
+)paren
+suffix:semicolon
+id|smsc_config
+c_func
+(paren
+id|IRQ_SELECT_INDEX
+comma
 l_int|3
 )paren
 suffix:semicolon
@@ -212,7 +254,7 @@ l_int|8
 )paren
 suffix:semicolon
 multiline_comment|/* IRQ8 */
-multiline_comment|/* XXX: COM2, PARPORT, KBD, and MOUSE will come here... */
+multiline_comment|/* XXX: PARPORT, KBD, and MOUSE will come here... */
 id|outb_p
 c_func
 (paren

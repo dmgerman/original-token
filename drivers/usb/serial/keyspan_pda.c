@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * USB Keyspan PDA Converter driver&n; *&n; *&t;Copyright (C) 1999, 2000&n; *&t;    Greg Kroah-Hartman (greg@kroah.com)&n; *&n; *&t;This program is free software; you can redistribute it and/or modify&n; *&t;it under the terms of the GNU General Public License as published by&n; *&t;the Free Software Foundation; either version 2 of the License, or&n; *&t;(at your option) any later version.&n; *&n; * See Documentation/usb/usb-serial.txt for more information on using this driver&n; * &n; * (03/26/2000) gkh&n; *&t;Split driver up into device specific pieces.&n; * &n; */
+multiline_comment|/*&n; * USB Keyspan PDA Converter driver&n; *&n; *&t;Copyright (C) 1999, 2000&n; *&t;    Greg Kroah-Hartman (greg@kroah.com)&n; *&n; *&t;This program is free software; you can redistribute it and/or modify&n; *&t;it under the terms of the GNU General Public License as published by&n; *&t;the Free Software Foundation; either version 2 of the License, or&n; *&t;(at your option) any later version.&n; *&n; * See Documentation/usb/usb-serial.txt for more information on using this driver&n; * &n; * (07/19/2000) gkh&n; *&t;Added module_init and module_exit functions to handle the fact that this&n; *&t;driver is a loadable module now.&n; *&n; * (03/26/2000) gkh&n; *&t;Split driver up into device specific pieces.&n; * &n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -2831,5 +2831,62 @@ suffix:colon
 id|keyspan_pda_shutdown
 comma
 )brace
+suffix:semicolon
+DECL|function|keyspan_pda_init
+r_int
+id|keyspan_pda_init
+(paren
+r_void
+)paren
+(brace
+id|usb_serial_register
+(paren
+op_amp
+id|keyspan_pda_fake_device
+)paren
+suffix:semicolon
+id|usb_serial_register
+(paren
+op_amp
+id|keyspan_pda_device
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+DECL|function|keyspan_pda_exit
+r_void
+id|keyspan_pda_exit
+(paren
+r_void
+)paren
+(brace
+id|usb_serial_deregister
+(paren
+op_amp
+id|keyspan_pda_fake_device
+)paren
+suffix:semicolon
+id|usb_serial_deregister
+(paren
+op_amp
+id|keyspan_pda_device
+)paren
+suffix:semicolon
+)brace
+DECL|variable|keyspan_pda_init
+id|module_init
+c_func
+(paren
+id|keyspan_pda_init
+)paren
+suffix:semicolon
+DECL|variable|keyspan_pda_exit
+id|module_exit
+c_func
+(paren
+id|keyspan_pda_exit
+)paren
 suffix:semicolon
 eof

@@ -786,14 +786,6 @@ r_int
 id|unregister
 )paren
 suffix:semicolon
-r_int
-id|get_hardsect_size
-c_func
-(paren
-id|kdev_t
-id|dev
-)paren
-suffix:semicolon
 multiline_comment|/*&n; * FIXME: this should use genhd-&gt;minor_shift, but that is slow to look up.&n; */
 DECL|function|disk_index
 r_static

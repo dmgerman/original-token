@@ -1,4 +1,4 @@
-multiline_comment|/* vm.c -- Memory mapping for DRM -*- linux-c -*-&n; * Created: Mon Jan  4 08:58:31 1999 by faith@precisioninsight.com&n; *&n; * Copyright 1999 Precision Insight, Inc., Cedar Park, Texas.&n; * All Rights Reserved.&n; *&n; * Permission is hereby granted, free of charge, to any person obtaining a&n; * copy of this software and associated documentation files (the &quot;Software&quot;),&n; * to deal in the Software without restriction, including without limitation&n; * the rights to use, copy, modify, merge, publish, distribute, sublicense,&n; * and/or sell copies of the Software, and to permit persons to whom the&n; * Software is furnished to do so, subject to the following conditions:&n; * &n; * The above copyright notice and this permission notice (including the next&n; * paragraph) shall be included in all copies or substantial portions of the&n; * Software.&n; * &n; * THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR&n; * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,&n; * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL&n; * PRECISION INSIGHT AND/OR ITS SUPPLIERS BE LIABLE FOR ANY CLAIM, DAMAGES OR&n; * OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,&n; * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER&n; * DEALINGS IN THE SOFTWARE.&n; * &n; * Authors:&n; *    Rickard E. (Rik) Faith &lt;faith@precisioninsight.com&gt;&n; *&n; */
+multiline_comment|/* vm.c -- Memory mapping for DRM -*- linux-c -*-&n; * Created: Mon Jan  4 08:58:31 1999 by faith@precisioninsight.com&n; *&n; * Copyright 1999 Precision Insight, Inc., Cedar Park, Texas.&n; * Copyright 2000 VA Linux Systems, Inc., Sunnyvale, California.&n; * All Rights Reserved.&n; *&n; * Permission is hereby granted, free of charge, to any person obtaining a&n; * copy of this software and associated documentation files (the &quot;Software&quot;),&n; * to deal in the Software without restriction, including without limitation&n; * the rights to use, copy, modify, merge, publish, distribute, sublicense,&n; * and/or sell copies of the Software, and to permit persons to whom the&n; * Software is furnished to do so, subject to the following conditions:&n; * &n; * The above copyright notice and this permission notice (including the next&n; * paragraph) shall be included in all copies or substantial portions of the&n; * Software.&n; * &n; * THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR&n; * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,&n; * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL&n; * PRECISION INSIGHT AND/OR ITS SUPPLIERS BE LIABLE FOR ANY CLAIM, DAMAGES OR&n; * OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,&n; * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER&n; * DEALINGS IN THE SOFTWARE.&n; * &n; * Authors:&n; *    Rickard E. (Rik) Faith &lt;faith@valinux.com&gt;&n; *&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &quot;drmP.h&quot;
@@ -224,14 +224,7 @@ r_int
 )paren
 id|dev-&gt;lock.hw_lock
 op_plus
-(paren
 id|offset
-op_amp
-(paren
-op_complement
-id|PAGE_MASK
-)paren
-)paren
 suffix:semicolon
 id|atomic_inc
 c_func
@@ -502,6 +495,8 @@ op_amp
 id|dev-&gt;vma_count
 )paren
 suffix:semicolon
+id|MOD_INC_USE_COUNT
+suffix:semicolon
 macro_line|#if DRM_DEBUG_CODE
 id|vma_entry
 op_assign
@@ -599,6 +594,8 @@ id|vma-&gt;vm_end
 op_minus
 id|vma-&gt;vm_start
 )paren
+suffix:semicolon
+id|MOD_DEC_USE_COUNT
 suffix:semicolon
 id|atomic_dec
 c_func
@@ -956,6 +953,65 @@ r_return
 op_minus
 id|EINVAL
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|capable
+c_func
+(paren
+id|CAP_SYS_ADMIN
+)paren
+op_logical_and
+(paren
+id|map-&gt;flags
+op_amp
+id|_DRM_READ_ONLY
+)paren
+)paren
+(brace
+id|vma-&gt;vm_flags
+op_and_assign
+id|VM_MAYWRITE
+suffix:semicolon
+macro_line|#if defined(__i386__)
+id|pgprot_val
+c_func
+(paren
+id|vma-&gt;vm_page_prot
+)paren
+op_and_assign
+op_complement
+id|_PAGE_RW
+suffix:semicolon
+macro_line|#else
+multiline_comment|/* Ye gads this is ugly.  With more thought&n;                                   we could move this up higher and use&n;                                   `protection_map&squot; instead.  */
+id|vma-&gt;vm_page_prot
+op_assign
+id|__pgprot
+c_func
+(paren
+id|pte_val
+c_func
+(paren
+id|pte_wrprotect
+c_func
+(paren
+id|__pte
+c_func
+(paren
+id|pgprot_val
+c_func
+(paren
+id|vma-&gt;vm_page_prot
+)paren
+)paren
+)paren
+)paren
+)paren
+suffix:semicolon
+macro_line|#endif
+)brace
 r_switch
 c_cond
 (paren
@@ -967,6 +1023,9 @@ id|_DRM_FRAME_BUFFER
 suffix:colon
 r_case
 id|_DRM_REGISTERS
+suffix:colon
+r_case
+id|_DRM_AGP
 suffix:colon
 r_if
 c_cond
@@ -991,6 +1050,10 @@ c_cond
 id|boot_cpu_data.x86
 OG
 l_int|3
+op_logical_and
+id|map-&gt;type
+op_ne
+id|_DRM_AGP
 )paren
 (brace
 id|pgprot_val
@@ -1043,6 +1106,25 @@ r_return
 op_minus
 id|EAGAIN
 suffix:semicolon
+id|DRM_DEBUG
+c_func
+(paren
+l_string|&quot;   Type = %d; start = 0x%lx, end = 0x%lx,&quot;
+l_string|&quot; offset = 0x%lx&bslash;n&quot;
+comma
+id|map-&gt;type
+comma
+id|vma-&gt;vm_start
+comma
+id|vma-&gt;vm_end
+comma
+id|VM_OFFSET
+c_func
+(paren
+id|vma
+)paren
+)paren
+suffix:semicolon
 id|vma-&gt;vm_ops
 op_assign
 op_amp
@@ -1080,52 +1162,6 @@ op_or
 id|VM_SHM
 suffix:semicolon
 multiline_comment|/* Don&squot;t swap */
-r_if
-c_cond
-(paren
-id|map-&gt;flags
-op_amp
-id|_DRM_READ_ONLY
-)paren
-(brace
-macro_line|#if defined(__i386__)
-id|pgprot_val
-c_func
-(paren
-id|vma-&gt;vm_page_prot
-)paren
-op_and_assign
-op_complement
-id|_PAGE_RW
-suffix:semicolon
-macro_line|#else
-multiline_comment|/* Ye gads this is ugly.  With more thought&n;                                   we could move this up higher and use&n;                                   `protection_map&squot; instead.  */
-id|vma-&gt;vm_page_prot
-op_assign
-id|__pgprot
-c_func
-(paren
-id|pte_val
-c_func
-(paren
-id|pte_wrprotect
-c_func
-(paren
-id|__pte
-c_func
-(paren
-id|pgprot_val
-c_func
-(paren
-id|vma-&gt;vm_page_prot
-)paren
-)paren
-)paren
-)paren
-)paren
-suffix:semicolon
-macro_line|#endif
-)brace
 macro_line|#if LINUX_VERSION_CODE &lt; 0x020203 /* KERNEL_VERSION(2,2,3) */
 multiline_comment|/* In Linux 2.2.3 and above, this is&n;&t;&t;&t;&t;   handled in do_mmap() in mm/mmap.c. */
 op_increment

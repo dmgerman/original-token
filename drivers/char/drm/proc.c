@@ -1,4 +1,4 @@
-multiline_comment|/* proc.c -- /proc support for DRM -*- linux-c -*-&n; * Created: Mon Jan 11 09:48:47 1999 by faith@precisioninsight.com&n; *&n; * Copyright 1999 Precision Insight, Inc., Cedar Park, Texas.&n; * All Rights Reserved.&n; *&n; * Permission is hereby granted, free of charge, to any person obtaining a&n; * copy of this software and associated documentation files (the &quot;Software&quot;),&n; * to deal in the Software without restriction, including without limitation&n; * the rights to use, copy, modify, merge, publish, distribute, sublicense,&n; * and/or sell copies of the Software, and to permit persons to whom the&n; * Software is furnished to do so, subject to the following conditions:&n; * &n; * The above copyright notice and this permission notice (including the next&n; * paragraph) shall be included in all copies or substantial portions of the&n; * Software.&n; * &n; * THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR&n; * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,&n; * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL&n; * PRECISION INSIGHT AND/OR ITS SUPPLIERS BE LIABLE FOR ANY CLAIM, DAMAGES OR&n; * OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,&n; * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER&n; * DEALINGS IN THE SOFTWARE.&n; * &n; * Authors:&n; *    Rickard E. (Rik) Faith &lt;faith@precisioninsight.com&gt;&n; *&n; */
+multiline_comment|/* proc.c -- /proc support for DRM -*- linux-c -*-&n; * Created: Mon Jan 11 09:48:47 1999 by faith@precisioninsight.com&n; *&n; * Copyright 1999 Precision Insight, Inc., Cedar Park, Texas.&n; * Copyright 2000 VA Linux Systems, Inc., Sunnyvale, California.&n; * All Rights Reserved.&n; *&n; * Permission is hereby granted, free of charge, to any person obtaining a&n; * copy of this software and associated documentation files (the &quot;Software&quot;),&n; * to deal in the Software without restriction, including without limitation&n; * the rights to use, copy, modify, merge, publish, distribute, sublicense,&n; * and/or sell copies of the Software, and to permit persons to whom the&n; * Software is furnished to do so, subject to the following conditions:&n; * &n; * The above copyright notice and this permission notice (including the next&n; * paragraph) shall be included in all copies or substantial portions of the&n; * Software.&n; * &n; * THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR&n; * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,&n; * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL&n; * PRECISION INSIGHT AND/OR ITS SUPPLIERS BE LIABLE FOR ANY CLAIM, DAMAGES OR&n; * OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,&n; * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER&n; * DEALINGS IN THE SOFTWARE.&n; *&n; * Authors:&n; *    Rickard E. (Rik) Faith &lt;faith@valinux.com&gt;&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &quot;drmP.h&quot;
@@ -827,6 +827,7 @@ id|drm_map_t
 op_star
 id|map
 suffix:semicolon
+multiline_comment|/* Hardcoded from _DRM_FRAME_BUFFER,&n;                                   _DRM_REGISTERS, _DRM_SHM, and&n;                                   _DRM_AGP. */
 r_const
 r_char
 op_star
@@ -840,6 +841,8 @@ comma
 l_string|&quot;REG&quot;
 comma
 l_string|&quot;SHM&quot;
+comma
+l_string|&quot;AGP&quot;
 )brace
 suffix:semicolon
 r_const
@@ -904,7 +907,7 @@ c_cond
 (paren
 id|map-&gt;type
 template_param
-l_int|2
+l_int|3
 )paren
 id|type
 op_assign
@@ -1900,6 +1903,8 @@ id|ret
 suffix:semicolon
 )brace
 macro_line|#if DRM_DEBUG_CODE
+DECL|macro|DRM_VMA_VERBOSE
+mdefine_line|#define DRM_VMA_VERBOSE 0
 DECL|function|_drm_vma_info
 r_static
 r_int
@@ -1944,6 +1949,20 @@ id|drm_vma_entry_t
 op_star
 id|pt
 suffix:semicolon
+r_struct
+id|vm_area_struct
+op_star
+id|vma
+suffix:semicolon
+macro_line|#if DRM_VMA_VERBOSE
+r_int
+r_int
+id|i
+suffix:semicolon
+r_int
+r_int
+id|address
+suffix:semicolon
 id|pgd_t
 op_star
 id|pgd
@@ -1956,19 +1975,7 @@ id|pte_t
 op_star
 id|pte
 suffix:semicolon
-r_int
-r_int
-id|i
-suffix:semicolon
-r_struct
-id|vm_area_struct
-op_star
-id|vma
-suffix:semicolon
-r_int
-r_int
-id|address
-suffix:semicolon
+macro_line|#endif
 macro_line|#if defined(__i386__)
 r_int
 r_int
@@ -2217,6 +2224,7 @@ c_func
 l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
+macro_line|#if 0
 r_for
 c_loop
 (paren
@@ -2381,6 +2389,7 @@ id|i
 suffix:semicolon
 )brace
 )brace
+macro_line|#endif
 )brace
 r_return
 id|len
@@ -2932,7 +2941,7 @@ suffix:semicolon
 id|DRM_PROC_PRINT
 c_func
 (paren
-l_string|&quot;context_flag   0x%08lx&bslash;n&quot;
+l_string|&quot;context_flag   0x%08x&bslash;n&quot;
 comma
 id|dev-&gt;context_flag
 )paren
@@ -2940,7 +2949,7 @@ suffix:semicolon
 id|DRM_PROC_PRINT
 c_func
 (paren
-l_string|&quot;interrupt_flag 0x%08lx&bslash;n&quot;
+l_string|&quot;interrupt_flag 0x%08x&bslash;n&quot;
 comma
 id|dev-&gt;interrupt_flag
 )paren
@@ -2948,7 +2957,7 @@ suffix:semicolon
 id|DRM_PROC_PRINT
 c_func
 (paren
-l_string|&quot;dma_flag       0x%08lx&bslash;n&quot;
+l_string|&quot;dma_flag       0x%08x&bslash;n&quot;
 comma
 id|dev-&gt;dma_flag
 )paren

@@ -1,4 +1,4 @@
-multiline_comment|/*&n;*  Digi AccelePort USB-4 Serial Converter&n;*&n;*  Copyright 2000 by Digi International&n;*&n;*  This program is free software; you can redistribute it and/or modify&n;*  it under the terms of the GNU General Public License as published by&n;*  the Free Software Foundation; either version 2 of the License, or&n;*  (at your option) any later version.&n;*&n;*  Shamelessly based on Brian Warner&squot;s keyspan_pda.c and Greg Kroah-Hartman&squot;s&n;*  usb-serial driver.&n;*&n;*  Peter Berger (pberger@brimson.com)&n;*  Al Borchers (borchers@steinerpoint.com)&n;*&n;*  (6/27/2000) pberger and borchers&n;*    -- Zeroed out sync field in the wakeup_task before first use;&n;*       otherwise the uninitialized value might prevent the task from&n;*       being scheduled.&n;*    -- Initialized ret value to 0 in write_bulk_callback, otherwise&n;*       the uninitialized value could cause a spurious debugging message.&n;*&n;*  (6/22/2000) pberger and borchers&n;*    -- Made cond_wait_... inline--apparently on SPARC the flags arg&n;*       to spin_lock_irqsave cannot be passed to another function&n;*       to call spin_unlock_irqrestore.  Thanks to Pauline Middelink.&n;*    -- In digi_set_modem_signals the inner nested spin locks use just&n;*       spin_lock() rather than spin_lock_irqsave().  The old code&n;*       mistakenly left interrupts off.  Thanks to Pauline Middelink.&n;*    -- copy_from_user (which can sleep) is no longer called while a&n;*       spinlock is held.  We copy to a local buffer before getting&n;*       the spinlock--don&squot;t like the extra copy but the code is simpler.&n;*    -- Printk and dbg are no longer called while a spin lock is held.&n;*&n;*  (6/4/2000) pberger and borchers&n;*    -- Replaced separate calls to spin_unlock_irqrestore and&n;*       interruptible_sleep_on_interruptible with a new function&n;*       cond_wait_interruptible_timeout_irqrestore.  This eliminates&n;*       the race condition where the wake up could happen after&n;*       the unlock and before the sleep.&n;*    -- Close now waits for output to drain.&n;*    -- Open waits until any close in progress is finished.&n;*    -- All out of band responses are now processed, not just the&n;*       first in a USB packet.&n;*    -- Fixed a bug that prevented the driver from working when the&n;*       first Digi port was not the first USB serial port--the driver&n;*       was mistakenly using the external USB serial port number to&n;*       try to index into its internal ports.&n;*    -- Fixed an SMP bug -- write_bulk_callback is called directly from&n;*       an interrupt, so spin_lock_irqsave/spin_unlock_irqrestore are&n;*       needed for locks outside write_bulk_callback that are also&n;*       acquired by write_bulk_callback to prevent deadlocks.&n;*    -- Fixed support for select() by making digi_chars_in_buffer()&n;*       return 256 when -EINPROGRESS is set, as the line discipline&n;*       code in n_tty.c expects.&n;*    -- Fixed an include file ordering problem that prevented debugging&n;*       messages from working.&n;*    -- Fixed an intermittent timeout problem that caused writes to&n;*       sometimes get stuck on some machines on some kernels.  It turns&n;*       out in these circumstances write_chan() (in n_tty.c) was&n;*       asleep waiting for our wakeup call.  Even though we call&n;*       wake_up_interruptible() in digi_write_bulk_callback(), there is&n;*       a race condition that could cause the wakeup to fail: if our&n;*       wake_up_interruptible() call occurs between the time that our&n;*       driver write routine finishes and write_chan() sets current-&gt;state&n;*       to TASK_INTERRUPTIBLE, the effect of our wakeup setting the state&n;*       to TASK_RUNNING will be lost and write_chan&squot;s subsequent call to&n;*       schedule() will never return (unless it catches a signal).&n;*       This race condition occurs because write_bulk_callback() (and thus&n;*       the wakeup) are called asynchonously from an interrupt, rather than&n;*       from the scheduler.  We can avoid the race by calling the wakeup&n;*       from the scheduler queue and that&squot;s our fix:  Now, at the end of&n;*       write_bulk_callback() we queue up a wakeup call on the scheduler&n;*       task queue.  We still also invoke the wakeup directly since that&n;*       squeezes a bit more performance out of the driver, and any lost&n;*       race conditions will get cleaned up at the next scheduler run.&n;*&n;*       NOTE:  The problem also goes away if you comment out&n;*       the two code lines in write_chan() where current-&gt;state&n;*       is set to TASK_RUNNING just before calling driver.write() and to&n;*       TASK_INTERRUPTIBLE immediately afterwards.  This is why the&n;*       problem did not show up with the 2.2 kernels -- they do not&n;*       include that code.&n;*&n;*  (5/16/2000) pberger and borchers&n;*    -- Added timeouts to sleeps, to defend against lost wake ups.&n;*    -- Handle transition to/from B0 baud rate in digi_set_termios.&n;*&n;*  (5/13/2000) pberger and borchers&n;*    -- All commands now sent on out of band port, using&n;*       digi_write_oob_command.&n;*    -- Get modem control signals whenever they change, support TIOCMGET/&n;*       SET/BIS/BIC ioctls.&n;*    -- digi_set_termios now supports parity, word size, stop bits, and&n;*       receive enable.&n;*    -- Cleaned up open and close, use digi_set_termios and&n;*       digi_write_oob_command to set port parameters.&n;*    -- Added digi_startup_device to start read chains on all ports.&n;*    -- Write buffer is only used when count==1, to be sure put_char can&n;*       write a char (unless the buffer is full).&n;*&n;*  (5/10/2000) pberger and borchers&n;*    -- Added MOD_INC_USE_COUNT/MOD_DEC_USE_COUNT calls on open/close.&n;*    -- Fixed problem where the first incoming character is lost on&n;*       port opens after the first close on that port.  Now we keep&n;*       the read_urb chain open until shutdown.&n;*    -- Added more port conditioning calls in digi_open and digi_close.&n;*    -- Convert port-&gt;active to a use count so that we can deal with multiple&n;*       opens and closes properly.&n;*    -- Fixed some problems with the locking code.&n;*&n;*  (5/3/2000) pberger and borchers&n;*    -- First alpha version of the driver--many known limitations and bugs.&n;*&n;*&n;*  Locking and SMP&n;*&n;*  - Each port, including the out-of-band port, has a lock used to&n;*    serialize all access to the port&squot;s private structure.&n;*  - The port lock is also used to serialize all writes and access to&n;*    the port&squot;s URB.&n;*  - The port lock is also used for the port write_wait condition&n;*    variable.  Holding the port lock will prevent a wake up on the&n;*    port&squot;s write_wait; this can be used with cond_wait_... to be sure&n;*    the wake up is not lost in a race when dropping the lock and&n;*    sleeping waiting for the wakeup.&n;*  - digi_write() does not sleep, since it is sometimes called on&n;*    interrupt time.&n;*  - digi_write_bulk_callback() and digi_read_bulk_callback() are&n;*    called directly from interrupts.  Hence spin_lock_irqsave()&n;*    and spin_lock_irqrestore() are used in the rest of the code&n;*    for any locks they acquire.&n;*  - digi_write_bulk_callback() gets the port lock before waking up&n;*    processes sleeping on the port write_wait.  It also schedules&n;*    wake ups so they happen from the scheduler, because the tty&n;*    system can miss wake ups from interrupts.&n;*  - All sleeps use a timeout of DIGI_RETRY_TIMEOUT before looping to&n;*    recheck the condition they are sleeping on.  This is defensive,&n;*    in case a wake up is lost.&n;*  - Following Documentation/DocBook/kernel-locking.pdf no spin locks&n;*    are held when calling copy_to/from_user or printk.&n;*    &n;*  $Id: digi_acceleport.c,v 1.63 2000/06/28 18:28:31 root Exp root $&n;*/
+multiline_comment|/*&n;*  Digi AccelePort USB-4 Serial Converter&n;*&n;*  Copyright 2000 by Digi International&n;*&n;*  This program is free software; you can redistribute it and/or modify&n;*  it under the terms of the GNU General Public License as published by&n;*  the Free Software Foundation; either version 2 of the License, or&n;*  (at your option) any later version.&n;*&n;*  Shamelessly based on Brian Warner&squot;s keyspan_pda.c and Greg Kroah-Hartman&squot;s&n;*  usb-serial driver.&n;*&n;*  Peter Berger (pberger@brimson.com)&n;*  Al Borchers (borchers@steinerpoint.com)&n;*&n;*  (7/15/2000) borchers&n;*    -- Fixed race in open when a close is in progress.&n;*    -- Keep count of opens and dec the module use count for each&n;*       outstanding open when shutdown is called (on disconnect).&n;*    -- Fixed sanity checks in read_bulk_callback and write_bulk_callback&n;*       so pointers are checked before use.&n;*    -- Split read bulk callback into in band and out of band&n;*       callbacks, and no longer restart read chains if there is&n;*       a status error or a sanity error.  This fixed the seg&n;*       faults and other errors we used to get on disconnect.&n;*    -- Port-&gt;active is once again a flag, not a count, as it was&n;*       intended by usb-serial.  Since it was only a char it would&n;*       have been limited to 256 simultaneous opens.  Now the open&n;*       count is kept in the port private structure in dp_open_count.&n;*    -- Added code for modularization of the digi_acceleport driver.&n;*&n;*  (6/27/2000) pberger and borchers&n;*    -- Zeroed out sync field in the wakeup_task before first use;&n;*       otherwise the uninitialized value might prevent the task from&n;*       being scheduled.&n;*    -- Initialized ret value to 0 in write_bulk_callback, otherwise&n;*       the uninitialized value could cause a spurious debugging message.&n;*&n;*  (6/22/2000) pberger and borchers&n;*    -- Made cond_wait_... inline--apparently on SPARC the flags arg&n;*       to spin_lock_irqsave cannot be passed to another function&n;*       to call spin_unlock_irqrestore.  Thanks to Pauline Middelink.&n;*    -- In digi_set_modem_signals the inner nested spin locks use just&n;*       spin_lock() rather than spin_lock_irqsave().  The old code&n;*       mistakenly left interrupts off.  Thanks to Pauline Middelink.&n;*    -- copy_from_user (which can sleep) is no longer called while a&n;*       spinlock is held.  We copy to a local buffer before getting&n;*       the spinlock--don&squot;t like the extra copy but the code is simpler.&n;*    -- Printk and dbg are no longer called while a spin lock is held.&n;*&n;*  (6/4/2000) pberger and borchers&n;*    -- Replaced separate calls to spin_unlock_irqrestore and&n;*       interruptible_sleep_on_interruptible with a new function&n;*       cond_wait_interruptible_timeout_irqrestore.  This eliminates&n;*       the race condition where the wake up could happen after&n;*       the unlock and before the sleep.&n;*    -- Close now waits for output to drain.&n;*    -- Open waits until any close in progress is finished.&n;*    -- All out of band responses are now processed, not just the&n;*       first in a USB packet.&n;*    -- Fixed a bug that prevented the driver from working when the&n;*       first Digi port was not the first USB serial port--the driver&n;*       was mistakenly using the external USB serial port number to&n;*       try to index into its internal ports.&n;*    -- Fixed an SMP bug -- write_bulk_callback is called directly from&n;*       an interrupt, so spin_lock_irqsave/spin_unlock_irqrestore are&n;*       needed for locks outside write_bulk_callback that are also&n;*       acquired by write_bulk_callback to prevent deadlocks.&n;*    -- Fixed support for select() by making digi_chars_in_buffer()&n;*       return 256 when -EINPROGRESS is set, as the line discipline&n;*       code in n_tty.c expects.&n;*    -- Fixed an include file ordering problem that prevented debugging&n;*       messages from working.&n;*    -- Fixed an intermittent timeout problem that caused writes to&n;*       sometimes get stuck on some machines on some kernels.  It turns&n;*       out in these circumstances write_chan() (in n_tty.c) was&n;*       asleep waiting for our wakeup call.  Even though we call&n;*       wake_up_interruptible() in digi_write_bulk_callback(), there is&n;*       a race condition that could cause the wakeup to fail: if our&n;*       wake_up_interruptible() call occurs between the time that our&n;*       driver write routine finishes and write_chan() sets current-&gt;state&n;*       to TASK_INTERRUPTIBLE, the effect of our wakeup setting the state&n;*       to TASK_RUNNING will be lost and write_chan&squot;s subsequent call to&n;*       schedule() will never return (unless it catches a signal).&n;*       This race condition occurs because write_bulk_callback() (and thus&n;*       the wakeup) are called asynchonously from an interrupt, rather than&n;*       from the scheduler.  We can avoid the race by calling the wakeup&n;*       from the scheduler queue and that&squot;s our fix:  Now, at the end of&n;*       write_bulk_callback() we queue up a wakeup call on the scheduler&n;*       task queue.  We still also invoke the wakeup directly since that&n;*       squeezes a bit more performance out of the driver, and any lost&n;*       race conditions will get cleaned up at the next scheduler run.&n;*&n;*       NOTE:  The problem also goes away if you comment out&n;*       the two code lines in write_chan() where current-&gt;state&n;*       is set to TASK_RUNNING just before calling driver.write() and to&n;*       TASK_INTERRUPTIBLE immediately afterwards.  This is why the&n;*       problem did not show up with the 2.2 kernels -- they do not&n;*       include that code.&n;*&n;*  (5/16/2000) pberger and borchers&n;*    -- Added timeouts to sleeps, to defend against lost wake ups.&n;*    -- Handle transition to/from B0 baud rate in digi_set_termios.&n;*&n;*  (5/13/2000) pberger and borchers&n;*    -- All commands now sent on out of band port, using&n;*       digi_write_oob_command.&n;*    -- Get modem control signals whenever they change, support TIOCMGET/&n;*       SET/BIS/BIC ioctls.&n;*    -- digi_set_termios now supports parity, word size, stop bits, and&n;*       receive enable.&n;*    -- Cleaned up open and close, use digi_set_termios and&n;*       digi_write_oob_command to set port parameters.&n;*    -- Added digi_startup_device to start read chains on all ports.&n;*    -- Write buffer is only used when count==1, to be sure put_char can&n;*       write a char (unless the buffer is full).&n;*&n;*  (5/10/2000) pberger and borchers&n;*    -- Added MOD_INC_USE_COUNT/MOD_DEC_USE_COUNT calls on open/close.&n;*    -- Fixed problem where the first incoming character is lost on&n;*       port opens after the first close on that port.  Now we keep&n;*       the read_urb chain open until shutdown.&n;*    -- Added more port conditioning calls in digi_open and digi_close.&n;*    -- Convert port-&gt;active to a use count so that we can deal with multiple&n;*       opens and closes properly.&n;*    -- Fixed some problems with the locking code.&n;*&n;*  (5/3/2000) pberger and borchers&n;*    -- First alpha version of the driver--many known limitations and bugs.&n;*&n;*&n;*  Locking and SMP&n;*&n;*  - Each port, including the out-of-band port, has a lock used to&n;*    serialize all access to the port&squot;s private structure.&n;*  - The port lock is also used to serialize all writes and access to&n;*    the port&squot;s URB.&n;*  - The port lock is also used for the port write_wait condition&n;*    variable.  Holding the port lock will prevent a wake up on the&n;*    port&squot;s write_wait; this can be used with cond_wait_... to be sure&n;*    the wake up is not lost in a race when dropping the lock and&n;*    sleeping waiting for the wakeup.&n;*  - digi_write() does not sleep, since it is sometimes called on&n;*    interrupt time.&n;*  - digi_write_bulk_callback() and digi_read_bulk_callback() are&n;*    called directly from interrupts.  Hence spin_lock_irqsave()&n;*    and spin_lock_irqrestore() are used in the rest of the code&n;*    for any locks they acquire.&n;*  - digi_write_bulk_callback() gets the port lock before waking up&n;*    processes sleeping on the port write_wait.  It also schedules&n;*    wake ups so they happen from the scheduler, because the tty&n;*    system can miss wake ups from interrupts.&n;*  - All sleeps use a timeout of DIGI_RETRY_TIMEOUT before looping to&n;*    recheck the condition they are sleeping on.  This is defensive,&n;*    in case a wake up is lost.&n;*  - Following Documentation/DocBook/kernel-locking.pdf no spin locks&n;*    are held when calling copy_to/from_user or printk.&n;*    &n;*  $Id: digi_acceleport.c,v 1.5 2000/07/18 04:52:43 root Exp $&n;*/
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -274,6 +274,11 @@ r_int
 r_int
 id|dp_modem_signals
 suffix:semicolon
+DECL|member|dp_open_count
+r_int
+id|dp_open_count
+suffix:semicolon
+multiline_comment|/* inc on open, dec on close */
 DECL|member|dp_transmit_idle
 r_int
 id|dp_transmit_idle
@@ -282,6 +287,7 @@ DECL|member|dp_in_close
 r_int
 id|dp_in_close
 suffix:semicolon
+multiline_comment|/* close in progress */
 DECL|member|dp_close_wait
 id|wait_queue_head_t
 id|dp_close_wait
@@ -596,7 +602,18 @@ id|urb
 )paren
 suffix:semicolon
 r_static
-r_void
+r_int
+id|digi_read_inb_callback
+c_func
+(paren
+r_struct
+id|urb
+op_star
+id|urb
+)paren
+suffix:semicolon
+r_static
+r_int
 id|digi_read_oob_callback
 c_func
 (paren
@@ -3676,11 +3693,31 @@ r_struct
 id|usb_serial
 op_star
 id|serial
-op_assign
-id|port-&gt;serial
 suffix:semicolon
 id|digi_private_t
 op_star
+id|priv
+suffix:semicolon
+r_int
+id|ret
+op_assign
+l_int|0
+suffix:semicolon
+id|dbg
+c_func
+(paren
+l_string|&quot;digi_write_bulk_callback: TOP&quot;
+)paren
+suffix:semicolon
+multiline_comment|/* port sanity check */
+r_if
+c_cond
+(paren
+id|port
+op_eq
+l_int|NULL
+op_logical_or
+(paren
 id|priv
 op_assign
 (paren
@@ -3692,21 +3729,24 @@ id|port
 op_member_access_from_pointer
 r_private
 )paren
-suffix:semicolon
-r_int
-id|ret
-op_assign
-l_int|0
-suffix:semicolon
-id|dbg
+)paren
+op_eq
+l_int|NULL
+)paren
+(brace
+id|err
 c_func
 (paren
-l_string|&quot;digi_write_bulk_callback: TOP: port=%d&quot;
+id|__FUNCTION__
+l_string|&quot;: port or port-&gt;private is NULL, status=%d&quot;
 comma
-id|priv-&gt;dp_port_num
+id|urb-&gt;status
 )paren
 suffix:semicolon
-multiline_comment|/* handle callback on out-of-band port */
+r_return
+suffix:semicolon
+)brace
+multiline_comment|/* handle oob callback */
 r_if
 c_cond
 (paren
@@ -3756,7 +3796,18 @@ id|port
 comma
 l_string|&quot;digi_write_bulk_callback&quot;
 )paren
-op_logical_or
+)paren
+(brace
+r_return
+suffix:semicolon
+)brace
+id|serial
+op_assign
+id|port-&gt;serial
+suffix:semicolon
+r_if
+c_cond
+(paren
 id|serial_paranoia_check
 c_func
 (paren
@@ -3900,12 +3951,15 @@ c_cond
 id|ret
 )paren
 (brace
-id|dbg
+id|err
 c_func
 (paren
-l_string|&quot;digi_write_bulk_callback: usb_submit_urb failed, ret=%d&quot;
+id|__FUNCTION__
+l_string|&quot;: usb_submit_urb failed, ret=%d, port=%d&quot;
 comma
 id|ret
+comma
+id|priv-&gt;dp_port_num
 )paren
 suffix:semicolon
 )brace
@@ -4123,11 +4177,13 @@ suffix:semicolon
 id|dbg
 c_func
 (paren
-l_string|&quot;digi_open: TOP: port %d, active:%d&quot;
+l_string|&quot;digi_open: TOP: port=%d, active=%d, open_count=%d&quot;
 comma
 id|priv-&gt;dp_port_num
 comma
 id|port-&gt;active
+comma
+id|priv-&gt;dp_open_count
 )paren
 suffix:semicolon
 multiline_comment|/* be sure the device is started up */
@@ -4148,8 +4204,6 @@ op_minus
 id|ENXIO
 suffix:semicolon
 )brace
-multiline_comment|/* if port is already open, just return */
-multiline_comment|/* be sure exactly one open proceeds */
 id|spin_lock_irqsave
 c_func
 (paren
@@ -4159,35 +4213,6 @@ comma
 id|flags
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|port-&gt;active
-op_ge
-l_int|1
-op_logical_and
-op_logical_neg
-id|priv-&gt;dp_in_close
-)paren
-(brace
-op_increment
-id|port-&gt;active
-suffix:semicolon
-id|spin_unlock_irqrestore
-c_func
-(paren
-op_amp
-id|priv-&gt;dp_port_lock
-comma
-id|flags
-)paren
-suffix:semicolon
-id|MOD_INC_USE_COUNT
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
 multiline_comment|/* don&squot;t wait on a close in progress for non-blocking opens */
 r_if
 c_cond
@@ -4221,11 +4246,7 @@ op_minus
 id|EAGAIN
 suffix:semicolon
 )brace
-multiline_comment|/* prevent other opens from proceeding, before giving up lock */
-op_increment
-id|port-&gt;active
-suffix:semicolon
-multiline_comment|/* wait for close to finish */
+multiline_comment|/* wait for a close in progress to finish */
 r_while
 c_loop
 (paren
@@ -4256,9 +4277,6 @@ id|current
 )paren
 )paren
 (brace
-op_decrement
-id|port-&gt;active
-suffix:semicolon
 r_return
 op_minus
 id|EINTR
@@ -4274,6 +4292,19 @@ id|flags
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* if port is already open, just return */
+multiline_comment|/* be sure exactly one open proceeds */
+r_if
+c_cond
+(paren
+id|port-&gt;active
+)paren
+(brace
+op_increment
+id|priv-&gt;dp_open_count
+suffix:semicolon
+id|MOD_INC_USE_COUNT
+suffix:semicolon
 id|spin_unlock_irqrestore
 c_func
 (paren
@@ -4283,7 +4314,28 @@ comma
 id|flags
 )paren
 suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+multiline_comment|/* open is certain */
+id|port-&gt;active
+op_assign
+l_int|1
+suffix:semicolon
+op_increment
+id|priv-&gt;dp_open_count
+suffix:semicolon
 id|MOD_INC_USE_COUNT
+suffix:semicolon
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|priv-&gt;dp_port_lock
+comma
+id|flags
+)paren
 suffix:semicolon
 multiline_comment|/* read modem signals automatically whenever they change */
 id|buf
@@ -4464,11 +4516,13 @@ suffix:semicolon
 id|dbg
 c_func
 (paren
-l_string|&quot;digi_close: TOP: port %d, active:%d&quot;
+l_string|&quot;digi_close: TOP: port=%d, active=%d, open_count=%d&quot;
 comma
 id|priv-&gt;dp_port_num
 comma
 id|port-&gt;active
+comma
+id|priv-&gt;dp_open_count
 )paren
 suffix:semicolon
 multiline_comment|/* do cleanup only after final close on this port */
@@ -4484,13 +4538,15 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|port-&gt;active
+id|priv-&gt;dp_open_count
 OG
 l_int|1
 )paren
 (brace
 op_decrement
-id|port-&gt;active
+id|priv-&gt;dp_open_count
+suffix:semicolon
+id|MOD_DEC_USE_COUNT
 suffix:semicolon
 id|spin_unlock_irqrestore
 c_func
@@ -4501,8 +4557,6 @@ comma
 id|flags
 )paren
 suffix:semicolon
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
 r_return
 suffix:semicolon
 )brace
@@ -4510,7 +4564,7 @@ r_else
 r_if
 c_cond
 (paren
-id|port-&gt;active
+id|priv-&gt;dp_open_count
 op_le
 l_int|0
 )paren
@@ -4863,12 +4917,18 @@ comma
 id|flags
 )paren
 suffix:semicolon
-op_decrement
 id|port-&gt;active
+op_assign
+l_int|0
 suffix:semicolon
 id|priv-&gt;dp_in_close
 op_assign
 l_int|0
+suffix:semicolon
+op_decrement
+id|priv-&gt;dp_open_count
+suffix:semicolon
+id|MOD_DEC_USE_COUNT
 suffix:semicolon
 id|wake_up_interruptible
 c_func
@@ -4885,8 +4945,6 @@ id|priv-&gt;dp_port_lock
 comma
 id|flags
 )paren
-suffix:semicolon
-id|MOD_DEC_USE_COUNT
 suffix:semicolon
 id|dbg
 c_func
@@ -5137,6 +5195,10 @@ id|priv-&gt;dp_modem_signals
 op_assign
 l_int|0
 suffix:semicolon
+id|priv-&gt;dp_open_count
+op_assign
+l_int|0
+suffix:semicolon
 id|priv-&gt;dp_transmit_idle
 op_assign
 l_int|0
@@ -5239,10 +5301,23 @@ id|serial
 r_int
 id|i
 suffix:semicolon
+id|digi_private_t
+op_star
+id|priv
+suffix:semicolon
+r_int
+r_int
+id|flags
+suffix:semicolon
 id|dbg
 c_func
 (paren
-l_string|&quot;digi_shutdown: TOP&quot;
+l_string|&quot;digi_shutdown: TOP, in_interrupt()=%d&quot;
+comma
+id|in_interrupt
+c_func
+(paren
+)paren
 )paren
 suffix:semicolon
 multiline_comment|/* stop reads and writes on all ports */
@@ -5264,6 +5339,7 @@ op_increment
 )paren
 (brace
 id|usb_unlink_urb
+c_func
 (paren
 id|serial-&gt;port
 (braket
@@ -5274,6 +5350,7 @@ id|read_urb
 )paren
 suffix:semicolon
 id|usb_unlink_urb
+c_func
 (paren
 id|serial-&gt;port
 (braket
@@ -5288,6 +5365,64 @@ id|device_startup
 op_assign
 l_int|0
 suffix:semicolon
+multiline_comment|/* dec module use count */
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|digi_acceleport_device.num_ports
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
+id|priv
+op_assign
+id|serial-&gt;port
+(braket
+id|i
+)braket
+dot
+r_private
+suffix:semicolon
+id|spin_lock_irqsave
+c_func
+(paren
+op_amp
+id|priv-&gt;dp_port_lock
+comma
+id|flags
+)paren
+suffix:semicolon
+r_while
+c_loop
+(paren
+id|priv-&gt;dp_open_count
+OG
+l_int|0
+)paren
+(brace
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
+op_decrement
+id|priv-&gt;dp_open_count
+suffix:semicolon
+)brace
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|priv-&gt;dp_port_lock
+comma
+id|flags
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/* free the private data structures for all ports */
 multiline_comment|/* number of regular ports + 1 for the out-of-band port */
 r_for
@@ -5324,6 +5459,175 @@ DECL|function|digi_read_bulk_callback
 r_static
 r_void
 id|digi_read_bulk_callback
+c_func
+(paren
+r_struct
+id|urb
+op_star
+id|urb
+)paren
+(brace
+r_struct
+id|usb_serial_port
+op_star
+id|port
+op_assign
+(paren
+r_struct
+id|usb_serial_port
+op_star
+)paren
+id|urb-&gt;context
+suffix:semicolon
+id|digi_private_t
+op_star
+id|priv
+suffix:semicolon
+r_int
+id|ret
+suffix:semicolon
+id|dbg
+c_func
+(paren
+l_string|&quot;digi_read_bulk_callback: TOP&quot;
+)paren
+suffix:semicolon
+multiline_comment|/* port sanity check, do not resubmit if port is not valid */
+r_if
+c_cond
+(paren
+id|port
+op_eq
+l_int|NULL
+op_logical_or
+(paren
+id|priv
+op_assign
+(paren
+id|digi_private_t
+op_star
+)paren
+(paren
+id|port
+op_member_access_from_pointer
+r_private
+)paren
+)paren
+op_eq
+l_int|NULL
+)paren
+(brace
+id|err
+c_func
+(paren
+id|__FUNCTION__
+l_string|&quot;: port or port-&gt;private is NULL, status=%d&quot;
+comma
+id|urb-&gt;status
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+multiline_comment|/* do not resubmit urb if it has any status error */
+r_if
+c_cond
+(paren
+id|urb-&gt;status
+)paren
+(brace
+id|err
+c_func
+(paren
+id|__FUNCTION__
+l_string|&quot;: nonzero read bulk status: status=%d, port=%d&quot;
+comma
+id|urb-&gt;status
+comma
+id|priv-&gt;dp_port_num
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+multiline_comment|/* handle oob or inb callback, do not resubmit if error */
+r_if
+c_cond
+(paren
+id|priv-&gt;dp_port_num
+op_eq
+id|oob_port_num
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|digi_read_oob_callback
+c_func
+(paren
+id|urb
+)paren
+op_ne
+l_int|0
+)paren
+(brace
+r_return
+suffix:semicolon
+)brace
+)brace
+r_else
+(brace
+r_if
+c_cond
+(paren
+id|digi_read_inb_callback
+c_func
+(paren
+id|urb
+)paren
+op_ne
+l_int|0
+)paren
+(brace
+r_return
+suffix:semicolon
+)brace
+)brace
+multiline_comment|/* continue read */
+r_if
+c_cond
+(paren
+(paren
+id|ret
+op_assign
+id|usb_submit_urb
+c_func
+(paren
+id|urb
+)paren
+)paren
+op_ne
+l_int|0
+)paren
+(brace
+id|err
+c_func
+(paren
+id|__FUNCTION__
+l_string|&quot;: failed resubmitting urb, ret=%d, port=%d&quot;
+comma
+id|ret
+comma
+id|priv-&gt;dp_port_num
+)paren
+suffix:semicolon
+)brace
+)brace
+multiline_comment|/* &n;*  Digi Read INB Callback&n;*&n;*  Digi Read INB Callback handles reads on the in band ports, sending&n;*  the data on to the tty subsystem.  When called we know port and&n;*  port-&gt;private are not NULL.  It returns 0 if successful, and -1 if&n;*  the sanity checks failed.&n;*/
+DECL|function|digi_read_inb_callback
+r_static
+r_int
+id|digi_read_inb_callback
 c_func
 (paren
 r_struct
@@ -5434,36 +5738,8 @@ op_plus
 l_int|3
 suffix:semicolon
 r_int
-id|ret
-comma
 id|i
 suffix:semicolon
-id|dbg
-c_func
-(paren
-l_string|&quot;digi_read_bulk_callback: TOP: port=%d&quot;
-comma
-id|priv-&gt;dp_port_num
-)paren
-suffix:semicolon
-multiline_comment|/* handle oob callback */
-r_if
-c_cond
-(paren
-id|priv-&gt;dp_port_num
-op_eq
-id|oob_port_num
-)paren
-(brace
-id|digi_read_oob_callback
-c_func
-(paren
-id|urb
-)paren
-suffix:semicolon
-r_return
-suffix:semicolon
-)brace
 multiline_comment|/* sanity checks */
 r_if
 c_cond
@@ -5473,7 +5749,7 @@ c_func
 (paren
 id|port
 comma
-l_string|&quot;digi_read_bulk_callback&quot;
+id|__FUNCTION__
 )paren
 op_logical_or
 id|serial_paranoia_check
@@ -5481,44 +5757,16 @@ c_func
 (paren
 id|serial
 comma
-l_string|&quot;digi_read_bulk_callback&quot;
+id|__FUNCTION__
 )paren
-)paren
-(brace
-r_goto
-id|resubmit
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|urb-&gt;status
-)paren
-(brace
-id|dbg
-c_func
-(paren
-l_string|&quot;digi_read_bulk_callback: nonzero read bulk status: %d&quot;
-comma
-id|urb-&gt;status
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|urb-&gt;status
-op_eq
-op_minus
-id|ENOENT
 )paren
 (brace
 r_return
+op_minus
+l_int|1
 suffix:semicolon
 )brace
-r_goto
-id|resubmit
-suffix:semicolon
-)brace
+multiline_comment|/* short packet check */
 r_if
 c_cond
 (paren
@@ -5532,8 +5780,10 @@ l_int|2
 id|err
 c_func
 (paren
-id|KERN_INFO
-l_string|&quot;digi_read_bulk_callback: INCOMPLETE PACKET, port=%d, opcode=%d, len=%d, actual_length=%d, status=%d&quot;
+id|__FUNCTION__
+l_string|&quot;: INCOMPLETE PACKET, urb-&gt;status=%d, port=%d, opcode=%d, len=%d, actual_length=%d, status=%d&quot;
+comma
+id|urb-&gt;status
 comma
 id|priv-&gt;dp_port_num
 comma
@@ -5545,6 +5795,10 @@ id|urb-&gt;actual_length
 comma
 id|status
 )paren
+suffix:semicolon
+r_return
+op_minus
+l_int|1
 suffix:semicolon
 )brace
 multiline_comment|/* receive data */
@@ -5608,38 +5862,14 @@ id|tty
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* continue read */
-id|resubmit
-suffix:colon
-r_if
-c_cond
-(paren
-(paren
-id|ret
-op_assign
-id|usb_submit_urb
-c_func
-(paren
-id|urb
-)paren
-)paren
-op_ne
+r_return
 l_int|0
-)paren
-(brace
-id|dbg
-c_func
-(paren
-l_string|&quot;digi_read_bulk_callback: failed resubmitting urb, ret=%d&quot;
-comma
-id|ret
-)paren
 suffix:semicolon
 )brace
-)brace
+multiline_comment|/* &n;*  Digi Read OOB Callback&n;*&n;*  Digi Read OOB Callback handles reads on the out of band port.&n;*  When called we know port and port-&gt;private are not NULL.  It&n;*  returns 0 if successful, and -1 if the sanity checks failed.&n;*/
 DECL|function|digi_read_oob_callback
 r_static
-r_void
+r_int
 id|digi_read_oob_callback
 c_func
 (paren
@@ -5671,6 +5901,16 @@ suffix:semicolon
 id|digi_private_t
 op_star
 id|priv
+op_assign
+(paren
+id|digi_private_t
+op_star
+)paren
+(paren
+id|port
+op_member_access_from_pointer
+r_private
+)paren
 suffix:semicolon
 r_int
 id|opcode
@@ -5683,8 +5923,6 @@ id|val
 suffix:semicolon
 r_int
 id|i
-comma
-id|ret
 suffix:semicolon
 id|dbg
 c_func
@@ -5694,36 +5932,32 @@ comma
 id|urb-&gt;actual_length
 )paren
 suffix:semicolon
+multiline_comment|/* sanity check */
 r_if
 c_cond
 (paren
-id|urb-&gt;status
+id|serial
+op_eq
+l_int|NULL
 )paren
 (brace
-id|dbg
+id|err
 c_func
 (paren
-l_string|&quot;digi_read_oob_callback: nonzero read bulk status on oob: %d&quot;
+id|__FUNCTION__
+l_string|&quot;: port-&gt;serial is NULL, status=%d, port=%d&quot;
 comma
 id|urb-&gt;status
+comma
+id|priv-&gt;dp_port_num
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|urb-&gt;status
-op_eq
-op_minus
-id|ENOENT
-)paren
-(brace
 r_return
+op_minus
+l_int|1
 suffix:semicolon
 )brace
-r_goto
-id|resubmit
-suffix:semicolon
-)brace
+multiline_comment|/* handle each oob command */
 r_for
 c_loop
 (paren
@@ -5824,6 +6058,10 @@ l_int|0
 r_continue
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+(paren
 id|priv
 op_assign
 id|serial-&gt;port
@@ -5832,7 +6070,23 @@ id|line
 )braket
 dot
 r_private
+)paren
+op_eq
+l_int|NULL
+)paren
+(brace
+id|dbg
+c_func
+(paren
+id|__FUNCTION__
+l_string|&quot;: port[%d].private is NULL!&quot;
+comma
+id|line
+)paren
 suffix:semicolon
+r_continue
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -5976,32 +6230,53 @@ id|priv-&gt;dp_port_lock
 suffix:semicolon
 )brace
 )brace
-id|resubmit
-suffix:colon
-r_if
-c_cond
-(paren
-(paren
-id|ret
-op_assign
-id|usb_submit_urb
-c_func
-(paren
-id|urb
-)paren
-)paren
-op_ne
+r_return
 l_int|0
+suffix:semicolon
+)brace
+DECL|function|digi_init
+r_int
+id|digi_init
+(paren
+r_void
 )paren
 (brace
-id|dbg
-c_func
+id|usb_serial_register
 (paren
-l_string|&quot;digi_read_oob_callback: failed resubmitting oob urb, ret=%d&quot;
-comma
-id|ret
+op_amp
+id|digi_acceleport_device
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+DECL|function|digi_exit
+r_void
+id|digi_exit
+(paren
+r_void
+)paren
+(brace
+id|usb_serial_deregister
+(paren
+op_amp
+id|digi_acceleport_device
 )paren
 suffix:semicolon
 )brace
-)brace
+DECL|variable|digi_init
+id|module_init
+c_func
+(paren
+id|digi_init
+)paren
+suffix:semicolon
+DECL|variable|digi_exit
+id|module_exit
+c_func
+(paren
+id|digi_exit
+)paren
+suffix:semicolon
 eof

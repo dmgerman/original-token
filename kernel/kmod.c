@@ -751,4 +751,16 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#ifdef CONFIG_HOTPLUG
+multiline_comment|/*&n;&t;hotplug path is set via /proc/sys&n;&t;invoked by hotplug-aware bus drivers,&n;&t;with exec_usermodehelper and some thread-spawner&n;&n;&t;argv [0] = hotplug_path;&n;&t;argv [1] = &quot;usb&quot;, &quot;scsi&quot;, &quot;pci&quot;, &quot;network&quot;, etc;&n;&t;... plus optional type-specific parameters&n;&t;argv [n] = 0;&n;&n;&t;envp [*] = HOME, PATH; optional type-specific parameters&n;&n;&t;a hotplug bus should invoke this for device add/remove&n;&t;events.  the command is expected to load drivers when&n;&t;necessary, and may perform additional system setup.&n;*/
+DECL|variable|hotplug_path
+r_char
+id|hotplug_path
+(braket
+l_int|256
+)braket
+op_assign
+l_string|&quot;/sbin/hotplug&quot;
+suffix:semicolon
+macro_line|#endif
 eof

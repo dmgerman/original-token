@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;$Id: scan_keyb.c,v 1.1 2000/06/10 21:45:30 yaegashi Exp $ &n; *&t;Copyright (C) 2000 YAEGASHI Takeshi&n; *&t;Generic scan keyboard driver&n; */
+multiline_comment|/*&n; *&t;$Id: scan_keyb.c,v 1.2 2000/07/04 06:24:42 yaegashi Exp $ &n; *&t;Copyright (C) 2000 YAEGASHI Takeshi&n; *&t;Generic scan keyboard driver&n; */
 macro_line|#include &lt;linux/spinlock.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;

@@ -27,6 +27,10 @@ macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/smp.h&gt;
+macro_line|#ifdef CONFIG_SH_EARLY_PRINTK
+macro_line|#include &lt;linux/console.h&gt;
+macro_line|#include &lt;asm/sh_bios.h&gt;
+macro_line|#endif
 multiline_comment|/*&n; * Machine setup..&n; */
 DECL|variable|boot_cpu_data
 r_struct
@@ -263,38 +267,6 @@ l_int|0
 )brace
 )brace
 suffix:semicolon
-multiline_comment|/* System ROM resources */
-DECL|macro|MAXROMS
-mdefine_line|#define MAXROMS 6
-DECL|variable|rom_resources
-r_static
-r_struct
-id|resource
-id|rom_resources
-(braket
-id|MAXROMS
-)braket
-op_assign
-(brace
-(brace
-l_string|&quot;System ROM&quot;
-comma
-l_int|0xF0000
-comma
-l_int|0xFFFFF
-comma
-id|IORESOURCE_BUSY
-)brace
-comma
-(brace
-l_string|&quot;Video ROM&quot;
-comma
-l_int|0xc0000
-comma
-l_int|0xc7fff
-)brace
-)brace
-suffix:semicolon
 DECL|variable|memory_start
 DECL|variable|memory_end
 r_static
@@ -304,6 +276,182 @@ id|memory_start
 comma
 id|memory_end
 suffix:semicolon
+macro_line|#ifdef CONFIG_SH_EARLY_PRINTK
+multiline_comment|/*&n; *&t;Print a string through the BIOS&n; */
+DECL|function|sh_console_write
+r_static
+r_void
+id|sh_console_write
+c_func
+(paren
+r_struct
+id|console
+op_star
+id|co
+comma
+r_const
+r_char
+op_star
+id|s
+comma
+r_int
+id|count
+)paren
+(brace
+id|sh_bios_console_write
+c_func
+(paren
+id|s
+comma
+id|count
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/*&n; *&t;Receive character from the serial port&n; */
+DECL|function|sh_console_wait_key
+r_static
+r_int
+id|sh_console_wait_key
+c_func
+(paren
+r_struct
+id|console
+op_star
+id|co
+)paren
+(brace
+multiline_comment|/* Not implemented yet */
+r_return
+l_int|0
+suffix:semicolon
+)brace
+DECL|function|sh_console_device
+r_static
+id|kdev_t
+id|sh_console_device
+c_func
+(paren
+r_struct
+id|console
+op_star
+id|c
+)paren
+(brace
+multiline_comment|/* TODO: this is totally bogus */
+multiline_comment|/* return MKDEV(SCI_MAJOR, SCI_MINOR_START + c-&gt;index); */
+r_return
+l_int|0
+suffix:semicolon
+)brace
+multiline_comment|/*&n; *&t;Setup initial baud/bits/parity. We do two things here:&n; *&t;- construct a cflag setting for the first rs_open()&n; *&t;- initialize the serial port&n; *&t;Return non-zero if we didn&squot;t find a serial port.&n; */
+DECL|function|sh_console_setup
+r_static
+r_int
+id|__init
+id|sh_console_setup
+c_func
+(paren
+r_struct
+id|console
+op_star
+id|co
+comma
+r_char
+op_star
+id|options
+)paren
+(brace
+r_int
+id|cflag
+op_assign
+id|CREAD
+op_or
+id|HUPCL
+op_or
+id|CLOCAL
+suffix:semicolon
+multiline_comment|/*&n;&t; *&t;Now construct a cflag setting.&n;&t; *  &t;TODO: this is a totally bogus cflag, as we have&n;&t; *  &t;no idea what serial settings the BIOS is using, or&n;&t; *  &t;even if its using the serial port at all.&n;&t; */
+id|cflag
+op_or_assign
+id|B115200
+op_or
+id|CS8
+op_or
+multiline_comment|/*no parity*/
+l_int|0
+suffix:semicolon
+id|co-&gt;cflag
+op_assign
+id|cflag
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+DECL|variable|sh_console
+r_static
+r_struct
+id|console
+id|sh_console
+op_assign
+(brace
+l_string|&quot;bios&quot;
+comma
+id|sh_console_write
+comma
+l_int|NULL
+comma
+id|sh_console_device
+comma
+id|sh_console_wait_key
+comma
+l_int|NULL
+comma
+id|sh_console_setup
+comma
+id|CON_PRINTBUFFER
+comma
+op_minus
+l_int|1
+comma
+l_int|0
+comma
+l_int|NULL
+)brace
+suffix:semicolon
+DECL|function|sh_console_init
+r_void
+id|sh_console_init
+c_func
+(paren
+r_void
+)paren
+(brace
+id|register_console
+c_func
+(paren
+op_amp
+id|sh_console
+)paren
+suffix:semicolon
+)brace
+DECL|function|sh_console_unregister
+r_void
+id|sh_console_unregister
+c_func
+(paren
+r_void
+)paren
+(brace
+id|unregister_console
+c_func
+(paren
+op_amp
+id|sh_console
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
 DECL|function|parse_mem_cmdline
 r_static
 r_inline
@@ -512,6 +660,13 @@ id|max_pfn
 comma
 id|max_low_pfn
 suffix:semicolon
+macro_line|#ifdef CONFIG_SH_EARLY_PRINTK
+id|sh_console_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
 id|ROOT_DEV
 op_assign
 id|to_kdev_t

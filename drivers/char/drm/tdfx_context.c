@@ -1,4 +1,4 @@
-multiline_comment|/* tdfx_context.c -- IOCTLs for tdfx contexts -*- linux-c -*-&n; * Created: Thu Oct  7 10:50:22 1999 by faith@precisioninsight.com&n; *&n; * Copyright 1999 Precision Insight, Inc., Cedar Park, Texas.&n; * All Rights Reserved.&n; *&n; * Permission is hereby granted, free of charge, to any person obtaining a&n; * copy of this software and associated documentation files (the &quot;Software&quot;),&n; * to deal in the Software without restriction, including without limitation&n; * the rights to use, copy, modify, merge, publish, distribute, sublicense,&n; * and/or sell copies of the Software, and to permit persons to whom the&n; * Software is furnished to do so, subject to the following conditions:&n; * &n; * The above copyright notice and this permission notice (including the next&n; * paragraph) shall be included in all copies or substantial portions of the&n; * Software.&n; * &n; * THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR&n; * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,&n; * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL&n; * PRECISION INSIGHT AND/OR ITS SUPPLIERS BE LIABLE FOR ANY CLAIM, DAMAGES OR&n; * OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,&n; * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER&n; * DEALINGS IN THE SOFTWARE.&n; * &n; * Authors:&n; *    Rickard E. (Rik) Faith &lt;faith@precisioninsight.com&gt;&n; *&n; */
+multiline_comment|/* tdfx_context.c -- IOCTLs for tdfx contexts -*- linux-c -*-&n; * Created: Thu Oct  7 10:50:22 1999 by faith@precisioninsight.com&n; *&n; * Copyright 1999 Precision Insight, Inc., Cedar Park, Texas.&n; * Copyright 2000 VA Linux Systems, Inc., Sunnyvale, California.&n; * All Rights Reserved.&n; *&n; * Permission is hereby granted, free of charge, to any person obtaining a&n; * copy of this software and associated documentation files (the &quot;Software&quot;),&n; * to deal in the Software without restriction, including without limitation&n; * the rights to use, copy, modify, merge, publish, distribute, sublicense,&n; * and/or sell copies of the Software, and to permit persons to whom the&n; * Software is furnished to do so, subject to the following conditions:&n; * &n; * The above copyright notice and this permission notice (including the next&n; * paragraph) shall be included in all copies or substantial portions of the&n; * Software.&n; * &n; * THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR&n; * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,&n; * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL&n; * PRECISION INSIGHT AND/OR ITS SUPPLIERS BE LIABLE FOR ANY CLAIM, DAMAGES OR&n; * OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,&n; * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER&n; * DEALINGS IN THE SOFTWARE.&n; * &n; * Authors:&n; *    Rickard E. (Rik) Faith &lt;faith@valinux.com&gt;&n; *    Daryll Strauss &lt;daryll@valinux.com&gt;&n; * &n; */
 macro_line|#include &lt;linux/sched.h&gt;
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
@@ -19,17 +19,13 @@ op_star
 id|dev
 )paren
 (brace
-r_static
-r_int
-id|context
-op_assign
-l_int|0
-suffix:semicolon
 r_return
-op_increment
-id|context
+id|drm_ctxbitmap_next
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
-multiline_comment|/* Should this reuse contexts in the future? */
 )brace
 DECL|function|tdfx_context_switch
 r_int
@@ -499,6 +495,27 @@ comma
 id|ctx.handle
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|ctx.handle
+op_eq
+op_minus
+l_int|1
+)paren
+(brace
+id|DRM_DEBUG
+c_func
+(paren
+l_string|&quot;Not enough free contexts.&bslash;n&quot;
+)paren
+suffix:semicolon
+multiline_comment|/* Should this return -EBUSY instead? */
+r_return
+op_minus
+id|ENOMEM
+suffix:semicolon
+)brace
 id|copy_to_user_ret
 c_func
 (paren
@@ -849,6 +866,18 @@ r_int
 id|arg
 )paren
 (brace
+id|drm_file_t
+op_star
+id|priv
+op_assign
+id|filp-&gt;private_data
+suffix:semicolon
+id|drm_device_t
+op_star
+id|dev
+op_assign
+id|priv-&gt;dev
+suffix:semicolon
 id|drm_ctx_t
 id|ctx
 suffix:semicolon
@@ -881,7 +910,14 @@ comma
 id|ctx.handle
 )paren
 suffix:semicolon
-multiline_comment|/* This is currently a noop because we&n;&t;&t;&t;&t;   don&squot;t reuse context values.  Perhaps we&n;&t;&t;&t;&t;   should? */
+id|drm_ctxbitmap_free
+c_func
+(paren
+id|dev
+comma
+id|ctx.handle
+)paren
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon

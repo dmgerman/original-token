@@ -153,6 +153,15 @@ c_func
 id|exec_usermodehelper
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_HOTPLUG
+DECL|variable|hotplug_path
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|hotplug_path
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#endif
 macro_line|#ifdef CONFIG_MODULES
 DECL|variable|get_module_symbol
@@ -242,11 +251,32 @@ c_func
 id|alloc_pages_node
 )paren
 suffix:semicolon
-DECL|variable|__free_pages_ok
+DECL|variable|__get_free_pages
 id|EXPORT_SYMBOL
 c_func
 (paren
-id|__free_pages_ok
+id|__get_free_pages
+)paren
+suffix:semicolon
+DECL|variable|get_zeroed_page
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|get_zeroed_page
+)paren
+suffix:semicolon
+DECL|variable|__free_pages
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|__free_pages
+)paren
+suffix:semicolon
+DECL|variable|free_pages
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|free_pages
 )paren
 suffix:semicolon
 macro_line|#ifndef CONFIG_DISCONTIGMEM
@@ -464,11 +494,11 @@ c_func
 id|names_cachep
 )paren
 suffix:semicolon
-DECL|variable|_fput
+DECL|variable|fput
 id|EXPORT_SYMBOL
 c_func
 (paren
-id|_fput
+id|fput
 )paren
 suffix:semicolon
 DECL|variable|igrab

@@ -1,7 +1,8 @@
-multiline_comment|/* fops.c -- File operations for DRM -*- linux-c -*-&n; * Created: Mon Jan  4 08:58:31 1999 by faith@precisioninsight.com&n; *&n; * Copyright 1999, 2000 Precision Insight, Inc., Cedar Park, Texas.&n; * All Rights Reserved.&n; *&n; * Permission is hereby granted, free of charge, to any person obtaining a&n; * copy of this software and associated documentation files (the &quot;Software&quot;),&n; * to deal in the Software without restriction, including without limitation&n; * the rights to use, copy, modify, merge, publish, distribute, sublicense,&n; * and/or sell copies of the Software, and to permit persons to whom the&n; * Software is furnished to do so, subject to the following conditions:&n; * &n; * The above copyright notice and this permission notice (including the next&n; * paragraph) shall be included in all copies or substantial portions of the&n; * Software.&n; * &n; * THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR&n; * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,&n; * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL&n; * PRECISION INSIGHT AND/OR ITS SUPPLIERS BE LIABLE FOR ANY CLAIM, DAMAGES OR&n; * OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,&n; * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER&n; * DEALINGS IN THE SOFTWARE.&n; * &n; * Authors:&n; *    Rickard E. (Rik) Faith &lt;faith@precisioninsight.com&gt;&n; *    Daryll Strauss &lt;daryll@precisioninsight.com&gt;&n; *&n; */
+multiline_comment|/* fops.c -- File operations for DRM -*- linux-c -*-&n; * Created: Mon Jan  4 08:58:31 1999 by faith@precisioninsight.com&n; *&n; * Copyright 1999 Precision Insight, Inc., Cedar Park, Texas.&n; * Copyright 2000 VA Linux Systems, Inc., Sunnyvale, California.&n; * All Rights Reserved.&n; *&n; * Permission is hereby granted, free of charge, to any person obtaining a&n; * copy of this software and associated documentation files (the &quot;Software&quot;),&n; * to deal in the Software without restriction, including without limitation&n; * the rights to use, copy, modify, merge, publish, distribute, sublicense,&n; * and/or sell copies of the Software, and to permit persons to whom the&n; * Software is furnished to do so, subject to the following conditions:&n; * &n; * The above copyright notice and this permission notice (including the next&n; * paragraph) shall be included in all copies or substantial portions of the&n; * Software.&n; * &n; * THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR&n; * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,&n; * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL&n; * PRECISION INSIGHT AND/OR ITS SUPPLIERS BE LIABLE FOR ANY CLAIM, DAMAGES OR&n; * OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,&n; * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER&n; * DEALINGS IN THE SOFTWARE.&n; * &n; * Authors:&n; *    Rickard E. (Rik) Faith &lt;faith@valinux.com&gt;&n; *    Daryll Strauss &lt;daryll@valinux.com&gt;&n; *&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &quot;drmP.h&quot;
+macro_line|#include &lt;linux/poll.h&gt;
 multiline_comment|/* drm_open is called whenever a process opens /dev/drm. */
 DECL|function|drm_open_helper
 r_int
@@ -276,8 +277,6 @@ r_if
 c_cond
 (paren
 id|dev-&gt;lock.hw_lock
-op_ne
-l_int|NULL
 op_logical_and
 id|_DRM_LOCK_IS_HELD
 c_func
@@ -875,7 +874,8 @@ op_sub_assign
 id|count
 suffix:semicolon
 )brace
-macro_line|#if LINUX_VERSION_CODE &lt; 0x020315
+macro_line|#if LINUX_VERSION_CODE &lt; 0x020315 &amp;&amp; !defined(KILLFASYNCHASTHREEPARAMETERS)
+multiline_comment|/* The extra parameter to kill_fasync was added in 2.3.21, and is&n;           _not_ present in _stock_ 2.2.14 and 2.2.15.  However, some&n;           distributions patch 2.2.x kernels to add this parameter.  The&n;           Makefile.linux attempts to detect this addition and defines&n;           KILLFASYNCHASTHREEPARAMETERS if three parameters are found. */
 r_if
 c_cond
 (paren
@@ -890,7 +890,30 @@ id|SIGIO
 )paren
 suffix:semicolon
 macro_line|#else
-multiline_comment|/* Parameter added in 2.3.21 */
+multiline_comment|/* Parameter added in 2.3.21. */
+macro_line|#if LINUX_VERSION_CODE &lt; 0x020400
+r_if
+c_cond
+(paren
+id|dev-&gt;buf_async
+)paren
+id|kill_fasync
+c_func
+(paren
+id|dev-&gt;buf_async
+comma
+id|SIGIO
+comma
+id|POLL_IN
+)paren
+suffix:semicolon
+macro_line|#else
+multiline_comment|/* Type of first parameter changed in&n;                                   Linux 2.4.0-test2... */
+r_if
+c_cond
+(paren
+id|dev-&gt;buf_async
+)paren
 id|kill_fasync
 c_func
 (paren
@@ -902,6 +925,7 @@ comma
 id|POLL_IN
 )paren
 suffix:semicolon
+macro_line|#endif
 macro_line|#endif
 id|DRM_DEBUG
 c_func

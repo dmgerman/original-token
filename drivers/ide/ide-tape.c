@@ -3277,7 +3277,7 @@ op_increment
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;idetape_next_rq_storage is used along with idetape_next_pc_storage.&n; *&t;Since we queue packet commands in the request queue, we need to&n; *&t;allocate a request, along with the allocation of a packet command.&n; */
-multiline_comment|/**************************************************************&n; *                                                            *&n; *  This should get fixed to use kmalloc(GFP_ATOMIC, ..)      *&n; *  followed later on by kfree().   -ml                       *&n; *                                                            *&n; **************************************************************/
+multiline_comment|/**************************************************************&n; *                                                            *&n; *  This should get fixed to use kmalloc(.., GFP_ATOMIC)      *&n; *  followed later on by kfree().   -ml                       *&n; *                                                            *&n; **************************************************************/
 DECL|function|idetape_next_rq_storage
 r_static
 r_struct

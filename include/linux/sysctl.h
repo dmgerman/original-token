@@ -350,6 +350,12 @@ op_assign
 l_int|48
 comma
 multiline_comment|/* string: path to shm fs */
+DECL|enumerator|KERN_HOTPLUG
+id|KERN_HOTPLUG
+op_assign
+l_int|49
+comma
+multiline_comment|/* string: path to hotplug policy agent */
 )brace
 suffix:semicolon
 multiline_comment|/* CTL_VM names: */

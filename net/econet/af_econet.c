@@ -2131,13 +2131,13 @@ op_assign
 id|kmalloc
 c_func
 (paren
-id|GFP_KERNEL
-comma
 r_sizeof
 (paren
 r_struct
 id|ec_device
 )paren
+comma
+id|GFP_KERNEL
 )paren
 suffix:semicolon
 r_if
