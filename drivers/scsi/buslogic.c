@@ -4988,8 +4988,8 @@ l_int|NULL
 )paren
 (brace
 multiline_comment|/* BIOS enabled */
-macro_line|#if 0
-multiline_comment|/* ??? Once LNZ&squot;s forbidden_addr stuff makes it into the higher&n;&t;&t;   level scsi code, we can use this instead. */
+macro_line|#if 1
+multiline_comment|/* Now that LNZ&squot;s forbidden_addr stuff makes it into the higher&n;&t;&t;   level scsi code, we can use this instead. */
 multiline_comment|/* Avoid addresses which &quot;mirror&quot; the BIOS for DMA. */
 id|shpnt-&gt;forbidden_addr
 op_assign

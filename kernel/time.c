@@ -669,8 +669,6 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * This version of gettimeofday has near microsecond resolution.&n; */
 DECL|function|do_gettimeofday
-r_static
-r_inline
 r_void
 id|do_gettimeofday
 c_func
@@ -681,12 +679,22 @@ op_star
 id|tv
 )paren
 (brace
-macro_line|#ifdef __i386__
+r_int
+r_int
+id|flags
+suffix:semicolon
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 id|cli
 c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#ifdef __i386__
 op_star
 id|tv
 op_assign
@@ -715,28 +723,19 @@ id|tv-&gt;tv_sec
 op_increment
 suffix:semicolon
 )brace
-id|sti
-c_func
-(paren
-)paren
-suffix:semicolon
 macro_line|#else /* not __i386__ */
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
 op_star
 id|tv
 op_assign
 id|xtime
 suffix:semicolon
-id|sti
+macro_line|#endif /* not __i386__ */
+id|restore_flags
 c_func
 (paren
+id|flags
 )paren
 suffix:semicolon
-macro_line|#endif /* not __i386__ */
 )brace
 DECL|function|sys_gettimeofday
 id|asmlinkage

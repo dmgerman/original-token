@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/fs/proc/array.c&n; *&n; *  Copyright (C) 1992  by Linus Torvalds&n; *  based on ideas by Darren Senn&n; *&n; * Fixes:&n; * Michael. K. Johnson: stat,statm extensions.&n; *                      &lt;johnsonm@stolaf.edu&gt;&n; *&n; * Pauline Middelink :  Made cmdline,envline only break at &squot;&bslash;0&squot;s, to&n; *                      make sure SET_PROCTITLE works. Also removed&n; *                      bad &squot;!&squot; which forced address recalculation for&n; *                      EVERY character on the current page.&n; *                      &lt;middelin@polyware.iaf.nl&gt;&n; */
+multiline_comment|/*&n; *  linux/fs/proc/array.c&n; *&n; *  Copyright (C) 1992  by Linus Torvalds&n; *  based on ideas by Darren Senn&n; *&n; * Fixes:&n; * Michael. K. Johnson: stat,statm extensions.&n; *                      &lt;johnsonm@stolaf.edu&gt;&n; *&n; * Pauline Middelink :  Made cmdline,envline only break at &squot;&bslash;0&squot;s, to&n; *                      make sure SET_PROCTITLE works. Also removed&n; *                      bad &squot;!&squot; which forced address recalculation for&n; *                      EVERY character on the current page.&n; *                      &lt;middelin@polyware.iaf.nl&gt;&n; *&n; * Danny ter Haar    :&t;Some minor additions for cpuinfo&n; * &lt;danny@ow.nl&gt;&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -719,6 +719,64 @@ id|strlen
 c_func
 (paren
 id|buffer
+)paren
+suffix:semicolon
+)brace
+DECL|function|get_cpuinfo
+r_static
+r_int
+id|get_cpuinfo
+c_func
+(paren
+r_char
+op_star
+id|buffer
+)paren
+(brace
+r_return
+id|sprintf
+c_func
+(paren
+id|buffer
+comma
+l_string|&quot;cpu      : %d86&bslash;n&quot;
+l_string|&quot;vid      : %s&bslash;n&quot;
+l_string|&quot;fdiv_bug : %s&bslash;n&quot;
+l_string|&quot;math     : %s&bslash;n&quot;
+l_string|&quot;hlt      : %s&bslash;n&quot;
+l_string|&quot;wp       : %s&bslash;n&quot;
+comma
+id|x86
+comma
+id|x86_vendor_id
+comma
+id|fdiv_bug
+ques
+c_cond
+l_string|&quot;yes&quot;
+suffix:colon
+l_string|&quot;no&quot;
+comma
+id|hard_math
+ques
+c_cond
+l_string|&quot;yes&quot;
+suffix:colon
+l_string|&quot;no&quot;
+comma
+id|hlt_works_ok
+ques
+c_cond
+l_string|&quot;yes&quot;
+suffix:colon
+l_string|&quot;no&quot;
+comma
+id|wp_works_ok
+ques
+c_cond
+l_string|&quot;yes&quot;
+suffix:colon
+l_string|&quot;no&quot;
 )paren
 suffix:semicolon
 )brace
@@ -2470,6 +2528,15 @@ r_char
 op_star
 )paren
 suffix:semicolon
+r_extern
+r_int
+id|get_cpuinfo
+c_func
+(paren
+r_char
+op_star
+)paren
+suffix:semicolon
 DECL|function|get_root_array
 r_static
 r_int
@@ -2515,6 +2582,16 @@ id|PROC_MEMINFO
 suffix:colon
 r_return
 id|get_meminfo
+c_func
+(paren
+id|page
+)paren
+suffix:semicolon
+r_case
+id|PROC_CPUINFO
+suffix:colon
+r_return
+id|get_cpuinfo
 c_func
 (paren
 id|page

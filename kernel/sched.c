@@ -178,6 +178,22 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* set by boot/head.S to 3 or 4 */
+DECL|variable|fdiv_bug
+r_int
+id|fdiv_bug
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* set if Pentium(TM) with FP bug */
+DECL|variable|x86_vendor_id
+r_char
+id|x86_vendor_id
+(braket
+l_int|13
+)braket
+op_assign
+l_string|&quot;Unknown&quot;
+suffix:semicolon
 DECL|variable|ignore_irq13
 r_int
 id|ignore_irq13

@@ -38,6 +38,7 @@ r_int
 r_int
 id|__u32
 suffix:semicolon
+macro_line|#ifndef __STRICT_ANSI__
 DECL|typedef|__s64
 r_typedef
 r_int
@@ -52,6 +53,7 @@ r_int
 r_int
 id|__u64
 suffix:semicolon
+macro_line|#endif
 multiline_comment|/*&n; * These aren&squot;t exported outside the kernel to avoid name space clashes&n; */
 macro_line|#ifdef __KERNEL__
 DECL|typedef|s8

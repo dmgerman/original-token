@@ -204,6 +204,14 @@ l_string|&quot;version&quot;
 )brace
 comma
 (brace
+id|PROC_CPUINFO
+comma
+l_int|7
+comma
+l_string|&quot;cpuinfo&quot;
+)brace
+comma
+(brace
 id|PROC_SELF
 comma
 l_int|4

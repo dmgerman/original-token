@@ -1,6 +1,35 @@
-macro_line|#ifndef _ELF_H
-DECL|macro|_ELF_H
-mdefine_line|#define _ELF_H
+macro_line|#ifndef _LINUX_ELF_H
+DECL|macro|_LINUX_ELF_H
+mdefine_line|#define _LINUX_ELF_H
+DECL|typedef|Elf32_Addr
+r_typedef
+r_int
+r_int
+id|Elf32_Addr
+suffix:semicolon
+DECL|typedef|Elf32_Half
+r_typedef
+r_int
+r_int
+id|Elf32_Half
+suffix:semicolon
+DECL|typedef|Elf32_Off
+r_typedef
+r_int
+r_int
+id|Elf32_Off
+suffix:semicolon
+DECL|typedef|Elf32_Sword
+r_typedef
+r_int
+id|Elf32_Sword
+suffix:semicolon
+DECL|typedef|Elf32_Word
+r_typedef
+r_int
+r_int
+id|Elf32_Word
+suffix:semicolon
 multiline_comment|/* These constants are for the segment types stored in the image headers */
 DECL|macro|PT_NULL
 mdefine_line|#define PT_NULL    0
@@ -132,19 +161,18 @@ r_struct
 id|dynamic
 (brace
 DECL|member|d_tag
-r_int
+id|Elf32_Sword
 id|d_tag
 suffix:semicolon
 (def_block
 r_union
 (brace
 DECL|member|d_val
-r_int
+id|Elf32_Sword
 id|d_val
 suffix:semicolon
 DECL|member|d_ptr
-r_char
-op_star
+id|Elf32_Addr
 id|d_ptr
 suffix:semicolon
 DECL|member|d_un
@@ -155,6 +183,12 @@ suffix:semicolon
 DECL|typedef|Elf32_Dyn
 )brace
 id|Elf32_Dyn
+suffix:semicolon
+r_extern
+id|Elf32_Dyn
+id|_DYNAMIC
+(braket
+)braket
 suffix:semicolon
 multiline_comment|/* The following are used with relocations */
 DECL|macro|ELF32_R_SYM
@@ -190,15 +224,13 @@ r_typedef
 r_struct
 id|elf32_rel
 (brace
-DECL|member|offset
-r_int
-r_int
-op_star
-id|offset
+DECL|member|r_offset
+id|Elf32_Addr
+id|r_offset
 suffix:semicolon
-DECL|member|info
-r_int
-id|info
+DECL|member|r_info
+id|Elf32_Word
+id|r_info
 suffix:semicolon
 DECL|typedef|Elf32_Rel
 )brace
@@ -209,19 +241,17 @@ r_typedef
 r_struct
 id|elf32_rela
 (brace
-DECL|member|offset
-r_int
-r_int
-op_star
-id|offset
+DECL|member|r_offset
+id|Elf32_Addr
+id|r_offset
 suffix:semicolon
-DECL|member|info
-r_int
-id|info
+DECL|member|r_info
+id|Elf32_Word
+id|r_info
 suffix:semicolon
-DECL|member|addend
-r_int
-id|addend
+DECL|member|r_addend
+id|Elf32_Sword
+id|r_addend
 suffix:semicolon
 DECL|typedef|Elf32_Rela
 )brace
@@ -233,16 +263,15 @@ r_struct
 id|elf32_sym
 (brace
 DECL|member|st_name
-r_int
+id|Elf32_Word
 id|st_name
 suffix:semicolon
 DECL|member|st_value
-r_int
-r_int
+id|Elf32_Addr
 id|st_value
 suffix:semicolon
 DECL|member|st_size
-r_int
+id|Elf32_Word
 id|st_size
 suffix:semicolon
 DECL|member|st_info
@@ -256,86 +285,79 @@ r_char
 id|st_other
 suffix:semicolon
 DECL|member|st_shndx
-r_int
-r_int
+id|Elf32_Half
 id|st_shndx
 suffix:semicolon
 DECL|typedef|Elf32_Sym
 )brace
 id|Elf32_Sym
 suffix:semicolon
+DECL|macro|EI_NIDENT
+mdefine_line|#define EI_NIDENT&t;16
 DECL|struct|elfhdr
 r_typedef
 r_struct
 id|elfhdr
 (brace
 DECL|member|e_ident
+r_int
 r_char
 id|e_ident
 (braket
-l_int|16
+id|EI_NIDENT
 )braket
 suffix:semicolon
 DECL|member|e_type
-r_int
-r_int
+id|Elf32_Half
 id|e_type
 suffix:semicolon
 DECL|member|e_machine
-r_int
-r_int
+id|Elf32_Half
 id|e_machine
 suffix:semicolon
 DECL|member|e_version
-r_int
+id|Elf32_Word
 id|e_version
 suffix:semicolon
 DECL|member|e_entry
-r_char
-op_star
+id|Elf32_Addr
 id|e_entry
 suffix:semicolon
 multiline_comment|/* Entry point */
 DECL|member|e_phoff
-r_int
+id|Elf32_Off
 id|e_phoff
 suffix:semicolon
 DECL|member|e_shoff
-r_int
+id|Elf32_Off
 id|e_shoff
 suffix:semicolon
 DECL|member|e_flags
-r_int
+id|Elf32_Word
 id|e_flags
 suffix:semicolon
 DECL|member|e_ehsize
-r_int
-r_int
+id|Elf32_Half
 id|e_ehsize
 suffix:semicolon
 DECL|member|e_phentsize
-r_int
-r_int
+id|Elf32_Half
 id|e_phentsize
 suffix:semicolon
 DECL|member|e_phnum
-r_int
-r_int
+id|Elf32_Half
 id|e_phnum
 suffix:semicolon
 DECL|member|e_shentsize
-r_int
-r_int
+id|Elf32_Half
 id|e_shentsize
 suffix:semicolon
 DECL|member|e_shnum
-r_int
-r_int
+id|Elf32_Half
 id|e_shnum
 suffix:semicolon
 DECL|member|e_shstrndx
-r_int
-r_int
+id|Elf32_Half
 id|e_shstrndx
 suffix:semicolon
 DECL|typedef|Elf32_Ehdr
@@ -348,42 +370,148 @@ r_struct
 id|elf_phdr
 (brace
 DECL|member|p_type
-r_int
+id|Elf32_Word
 id|p_type
 suffix:semicolon
 DECL|member|p_offset
-r_int
+id|Elf32_Off
 id|p_offset
 suffix:semicolon
 DECL|member|p_vaddr
-r_int
+id|Elf32_Addr
 id|p_vaddr
 suffix:semicolon
 DECL|member|p_paddr
-r_int
+id|Elf32_Addr
 id|p_paddr
 suffix:semicolon
 DECL|member|p_filesz
-r_int
+id|Elf32_Word
 id|p_filesz
 suffix:semicolon
 DECL|member|p_memsz
-r_int
+id|Elf32_Word
 id|p_memsz
 suffix:semicolon
 DECL|member|p_flags
-r_int
+id|Elf32_Word
 id|p_flags
 suffix:semicolon
 DECL|member|p_align
-r_int
+id|Elf32_Word
 id|p_align
 suffix:semicolon
 DECL|typedef|Elf32_Phdr
 )brace
 id|Elf32_Phdr
 suffix:semicolon
+multiline_comment|/* sh_type */
+DECL|macro|SHT_NULL
+mdefine_line|#define SHT_NULL&t;0
+DECL|macro|SHT_PROGBITS
+mdefine_line|#define SHT_PROGBITS&t;1
+DECL|macro|SHT_SYMTAB
+mdefine_line|#define SHT_SYMTAB&t;2
+DECL|macro|SHT_STRTAB
+mdefine_line|#define SHT_STRTAB&t;3
+DECL|macro|SHT_RELA
+mdefine_line|#define SHT_RELA&t;4
+DECL|macro|SHT_HASH
+mdefine_line|#define SHT_HASH&t;5
+DECL|macro|SHT_DYNAMIC
+mdefine_line|#define SHT_DYNAMIC&t;6
+DECL|macro|SHT_NOTE
+mdefine_line|#define SHT_NOTE&t;7
+DECL|macro|SHT_NOBITS
+mdefine_line|#define SHT_NOBITS&t;8
+DECL|macro|SHT_REL
+mdefine_line|#define SHT_REL&t;&t;9
+DECL|macro|SHT_SHLIB
+mdefine_line|#define SHT_SHLIB&t;10
+DECL|macro|SHT_DYNSYM
+mdefine_line|#define SHT_DYNSYM&t;11
+DECL|macro|SHT_NUM
+mdefine_line|#define SHT_NUM&t;&t;12
+DECL|macro|SHT_LOPROC
+mdefine_line|#define SHT_LOPROC&t;0x70000000
+DECL|macro|SHT_HIPROC
+mdefine_line|#define SHT_HIPROC&t;0x7fffffff
+DECL|macro|SHT_LOUSER
+mdefine_line|#define SHT_LOUSER&t;0x80000000
+DECL|macro|SHT_HIUSER
+mdefine_line|#define SHT_HIUSER&t;0xffffffff
+multiline_comment|/* sh_flags */
+DECL|macro|SHF_WRITE
+mdefine_line|#define SHF_WRITE&t;0x1
+DECL|macro|SHF_ALLOC
+mdefine_line|#define SHF_ALLOC&t;0x2
+DECL|macro|SHF_EXECINSTR
+mdefine_line|#define SHF_EXECINSTR&t;0x4
+DECL|macro|SHF_MASKPROC
+mdefine_line|#define SHF_MASKPROC&t;0xf0000000
+multiline_comment|/* special section indexes */
+DECL|macro|SHN_UNDEF
+mdefine_line|#define SHN_UNDEF&t;0
+DECL|macro|SHN_LORESERVE
+mdefine_line|#define SHN_LORESERVE&t;0xff00
+DECL|macro|SHN_LOPROC
+mdefine_line|#define SHN_LOPROC&t;0xff00
+DECL|macro|SHN_HIPROC
+mdefine_line|#define SHN_HIPROC&t;0xff1f
+DECL|macro|SHN_ABS
+mdefine_line|#define SHN_ABS&t;&t;0xfff1
+DECL|macro|SHN_COMMON
+mdefine_line|#define SHN_COMMON&t;0xfff2
+DECL|macro|SHN_HIRESERVE
+mdefine_line|#define SHN_HIRESERVE&t;0xffff
+r_typedef
+r_struct
+(brace
+DECL|member|sh_name
+id|Elf32_Word
+id|sh_name
+suffix:semicolon
+DECL|member|sh_type
+id|Elf32_Word
+id|sh_type
+suffix:semicolon
+DECL|member|sh_flags
+id|Elf32_Word
+id|sh_flags
+suffix:semicolon
+DECL|member|sh_addr
+id|Elf32_Addr
+id|sh_addr
+suffix:semicolon
+DECL|member|sh_offset
+id|Elf32_Off
+id|sh_offset
+suffix:semicolon
+DECL|member|sh_size
+id|Elf32_Word
+id|sh_size
+suffix:semicolon
+DECL|member|sh_link
+id|Elf32_Word
+id|sh_link
+suffix:semicolon
+DECL|member|sh_info
+id|Elf32_Word
+id|sh_info
+suffix:semicolon
+DECL|member|sh_addralign
+id|Elf32_Word
+id|sh_addralign
+suffix:semicolon
+DECL|member|sh_entsize
+id|Elf32_Word
+id|sh_entsize
+suffix:semicolon
+DECL|typedef|Elf32_Shdr
+)brace
+id|Elf32_Shdr
+suffix:semicolon
 DECL|macro|ELF_START_MMAP
 mdefine_line|#define ELF_START_MMAP 0x80000000
-macro_line|#endif
+macro_line|#endif /* _LINUX_ELF_H */
 eof

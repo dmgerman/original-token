@@ -14,6 +14,16 @@ r_int
 id|x86
 suffix:semicolon
 r_extern
+r_char
+id|x86_vendor_id
+(braket
+l_int|13
+)braket
+suffix:semicolon
+r_extern
+id|fdiv_bug
+suffix:semicolon
+r_extern
 r_int
 id|ignore_irq13
 suffix:semicolon

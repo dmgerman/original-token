@@ -8,6 +8,15 @@ macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/locks.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
+macro_line|#ifdef MODULE
+macro_line|#include &lt;linux/module.h&gt;
+macro_line|#include &quot;../../tools/version.h&quot;
+macro_line|#else
+DECL|macro|MOD_INC_USE_COUNT
+mdefine_line|#define MOD_INC_USE_COUNT
+DECL|macro|MOD_DEC_USE_COUNT
+mdefine_line|#define MOD_DEC_USE_COUNT
+macro_line|#endif
 macro_line|#include &quot;xiafs_mac.h&quot;
 DECL|variable|random_nr
 r_static
@@ -129,6 +138,8 @@ c_func
 id|sb
 )paren
 suffix:semicolon
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
 )brace
 DECL|variable|xiafs_sops
 r_static
@@ -191,6 +202,8 @@ id|z
 comma
 id|dev
 suffix:semicolon
+id|MOD_INC_USE_COUNT
+suffix:semicolon
 id|dev
 op_assign
 id|s-&gt;s_dev
@@ -246,6 +259,8 @@ comma
 id|WHERE_ERR
 )paren
 suffix:semicolon
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
 r_return
 l_int|NULL
 suffix:semicolon
@@ -300,6 +315,8 @@ l_string|&quot;VFS: Can&squot;t find a xiafs filesystem on dev 0x%04x.&bslash;n&
 comma
 id|dev
 )paren
+suffix:semicolon
+id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return
 l_int|NULL
@@ -369,6 +386,8 @@ op_logical_neg
 id|bh
 )paren
 (brace
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
 r_return
 l_int|NULL
 suffix:semicolon
@@ -749,6 +768,8 @@ l_string|&quot;XIA-FS: read bitmaps failed (%s %d)&bslash;n&quot;
 comma
 id|WHERE_ERR
 )paren
+suffix:semicolon
+id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return
 l_int|NULL
@@ -2817,4 +2838,81 @@ r_return
 id|err
 suffix:semicolon
 )brace
+macro_line|#ifdef MODULE
+multiline_comment|/* Every kernel module contains stuff like this. */
+DECL|variable|kernel_version
+r_char
+id|kernel_version
+(braket
+)braket
+op_assign
+id|UTS_RELEASE
+suffix:semicolon
+DECL|variable|xiafs_fs_type
+r_static
+r_struct
+id|file_system_type
+id|xiafs_fs_type
+op_assign
+(brace
+id|xiafs_read_super
+comma
+l_string|&quot;xiafs&quot;
+comma
+l_int|1
+comma
+l_int|NULL
+)brace
+suffix:semicolon
+DECL|function|init_module
+r_int
+id|init_module
+c_func
+(paren
+r_void
+)paren
+(brace
+id|register_filesystem
+c_func
+(paren
+op_amp
+id|xiafs_fs_type
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+DECL|function|cleanup_module
+r_void
+id|cleanup_module
+c_func
+(paren
+r_void
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|MOD_IN_USE
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;XIA-FS cannot be removed, currently in use&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+id|unregister_filesystem
+c_func
+(paren
+op_amp
+id|xiafs_fs_type
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
 eof

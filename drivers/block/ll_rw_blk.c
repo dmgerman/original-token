@@ -904,6 +904,15 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+multiline_comment|/* Uhhuh.. Nasty dead-lock possible here.. */
+r_if
+c_cond
+(paren
+id|bh-&gt;b_lock
+)paren
+r_return
+suffix:semicolon
+multiline_comment|/* Maybe the above fixes it, and maybe it doesn&squot;t boot. Life is interesting */
 id|lock_buffer
 c_func
 (paren

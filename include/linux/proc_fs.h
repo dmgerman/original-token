@@ -26,6 +26,9 @@ comma
 DECL|enumerator|PROC_VERSION
 id|PROC_VERSION
 comma
+DECL|enumerator|PROC_CPUINFO
+id|PROC_CPUINFO
+comma
 DECL|enumerator|PROC_SELF
 id|PROC_SELF
 comma

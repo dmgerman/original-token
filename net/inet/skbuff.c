@@ -1272,6 +1272,14 @@ id|skb-&gt;sk
 )paren
 suffix:semicolon
 )brace
+id|kfree_skbmem
+c_func
+(paren
+id|skb
+comma
+id|skb-&gt;mem_len
+)paren
+suffix:semicolon
 )brace
 )brace
 r_else

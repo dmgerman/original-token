@@ -304,7 +304,18 @@ r_int
 r_char
 id|dma_channel
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;  The rest can be copied from the template, or specifically&n;&t;&t;  initialized, as required.&n;&t;&t;  */
+multiline_comment|/*&n;&t;&t;  Set these if there are conflicts between memory&n;&t;&t;  in the &lt; 1mb region and regions at 16mb multiples.&n;&t;&t;  The address must be on a page boundary.&n;&t;&t;*/
+DECL|member|forbidden_addr
+r_int
+r_int
+id|forbidden_addr
+suffix:semicolon
+DECL|member|forbidden_size
+r_int
+r_int
+id|forbidden_size
+suffix:semicolon
+multiline_comment|/*&n;&t;&t;  The rest can be copied from the template, or specifically&n;&t;&t;  initialized, as required.&n;&t;&t;*/
 DECL|member|this_id
 r_int
 id|this_id
@@ -329,7 +340,7 @@ id|unchecked_isa_dma
 suffix:colon
 l_int|1
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;   True if this host was loaded as a loadable module&n;&t;&t;   */
+multiline_comment|/*&n;&t;&t;   True if this host was loaded as a loadable module&n;&t;&t;*/
 DECL|member|loaded_as_module
 r_int
 id|loaded_as_module

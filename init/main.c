@@ -2123,8 +2123,9 @@ r_int
 r_int
 id|control_word
 suffix:semicolon
+r_extern
 r_int
-id|i
+id|fdiv_bug
 suffix:semicolon
 r_if
 c_cond
@@ -2294,7 +2295,7 @@ l_string|&quot;=m&quot;
 (paren
 op_star
 op_amp
-id|i
+id|fdiv_bug
 )paren
 suffix:colon
 l_string|&quot;m&quot;
@@ -2316,7 +2317,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|i
+id|fdiv_bug
 )paren
 (brace
 id|printk

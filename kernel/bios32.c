@@ -529,9 +529,9 @@ suffix:colon
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|pcibios_find_class_code
+DECL|function|pcibios_find_class
 r_int
-id|pcibios_find_class_code
+id|pcibios_find_class
 (paren
 r_int
 r_int

@@ -916,6 +916,9 @@ op_star
 comma
 r_int
 id|code
+comma
+r_int
+id|pid
 )paren
 suffix:semicolon
 r_extern
@@ -1195,6 +1198,13 @@ id|req-&gt;dev
 op_assign
 op_minus
 l_int|1
+suffix:semicolon
+id|wake_up
+c_func
+(paren
+op_amp
+id|wait_for_request
+)paren
 suffix:semicolon
 id|wake_up
 c_func

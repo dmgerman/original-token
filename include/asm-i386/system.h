@@ -4,10 +4,6 @@ mdefine_line|#define __ASM_SYSTEM_H
 macro_line|#include &lt;asm/segment.h&gt;
 DECL|macro|move_to_user_mode
 mdefine_line|#define move_to_user_mode() &bslash;&n;__asm__ __volatile__ (&quot;movl %%esp,%%eax&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;pushl %0&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;pushl %%eax&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;pushfl&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;pushl %1&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;pushl $1f&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;iret&bslash;n&quot; &bslash;&n;&t;&quot;1:&bslash;tmovl %0,%%eax&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;mov %%ax,%%ds&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;mov %%ax,%%es&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;mov %%ax,%%fs&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;mov %%ax,%%gs&quot; &bslash;&n;&t;: /* no outputs */ :&quot;i&quot; (USER_DS), &quot;i&quot; (USER_CS):&quot;ax&quot;)
-DECL|macro|sti
-mdefine_line|#define sti() __asm__ __volatile__ (&quot;sti&quot;: : :&quot;memory&quot;)
-DECL|macro|cli
-mdefine_line|#define cli() __asm__ __volatile__ (&quot;cli&quot;: : :&quot;memory&quot;)
 DECL|macro|nop
 mdefine_line|#define nop() __asm__ __volatile__ (&quot;nop&quot;)
 multiline_comment|/*&n; * Clear and set &squot;TS&squot; bit respectively&n; */
@@ -56,6 +52,10 @@ r_return
 id|res
 suffix:semicolon
 )brace
+DECL|macro|sti
+mdefine_line|#define sti() __asm__ __volatile__ (&quot;sti&quot;: : :&quot;memory&quot;)
+DECL|macro|cli
+mdefine_line|#define cli() __asm__ __volatile__ (&quot;cli&quot;: : :&quot;memory&quot;)
 DECL|macro|save_flags
 mdefine_line|#define save_flags(x) &bslash;&n;__asm__ __volatile__(&quot;pushfl ; popl %0&quot;:&quot;=r&quot; (x): /* no input */ :&quot;memory&quot;)
 DECL|macro|restore_flags

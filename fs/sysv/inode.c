@@ -7,6 +7,15 @@ macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/locks.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
+macro_line|#ifdef MODULE
+macro_line|#include &lt;linux/module.h&gt;
+macro_line|#include &quot;../../tools/version.h&quot;
+macro_line|#else
+DECL|macro|MOD_INC_USE_COUNT
+mdefine_line|#define MOD_INC_USE_COUNT
+DECL|macro|MOD_DEC_USE_COUNT
+mdefine_line|#define MOD_DEC_USE_COUNT
+macro_line|#endif
 DECL|function|sysv_put_inode
 r_void
 id|sysv_put_inode
@@ -1850,6 +1859,8 @@ c_func
 l_string|&quot;sysv fs: bad i-node size&quot;
 )paren
 suffix:semicolon
+id|MOD_INC_USE_COUNT
+suffix:semicolon
 id|lock_super
 c_func
 (paren
@@ -2175,6 +2186,10 @@ id|dev
 )paren
 )paren
 suffix:semicolon
+id|failed
+suffix:colon
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
 r_return
 l_int|NULL
 suffix:semicolon
@@ -2282,8 +2297,8 @@ c_func
 l_string|&quot;SysV FS: cannot read superblock in 1024 byte mode&bslash;n&quot;
 )paren
 suffix:semicolon
-r_return
-l_int|NULL
+r_goto
+id|failed
 suffix:semicolon
 )brace
 )brace
@@ -2574,8 +2589,8 @@ c_func
 l_string|&quot;SysV FS: cannot read superblock in 512 byte mode&bslash;n&quot;
 )paren
 suffix:semicolon
-r_return
-l_int|NULL
+r_goto
+id|failed
 suffix:semicolon
 )brace
 )brace
@@ -2665,16 +2680,16 @@ op_logical_neg
 id|sb-&gt;s_mounted
 )paren
 (brace
-id|sysv_put_super
-c_func
-(paren
-id|sb
-)paren
-suffix:semicolon
 id|printk
 c_func
 (paren
 l_string|&quot;SysV FS: get root inode failed&bslash;n&quot;
+)paren
+suffix:semicolon
+id|sysv_put_super
+c_func
+(paren
+id|sb
 )paren
 suffix:semicolon
 r_return
@@ -2822,6 +2837,8 @@ c_func
 (paren
 id|sb
 )paren
+suffix:semicolon
+id|MOD_DEC_USE_COUNT
 suffix:semicolon
 )brace
 DECL|function|sysv_statfs
@@ -5426,4 +5443,146 @@ r_return
 id|err
 suffix:semicolon
 )brace
+macro_line|#ifdef MODULE
+multiline_comment|/* Every kernel module contains stuff like this. */
+DECL|variable|kernel_version
+r_char
+id|kernel_version
+(braket
+)braket
+op_assign
+id|UTS_RELEASE
+suffix:semicolon
+DECL|variable|sysv_fs_type
+r_static
+r_struct
+id|file_system_type
+id|sysv_fs_type
+(braket
+l_int|3
+)braket
+op_assign
+(brace
+(brace
+id|sysv_read_super
+comma
+l_string|&quot;xenix&quot;
+comma
+l_int|1
+comma
+l_int|NULL
+)brace
+comma
+(brace
+id|sysv_read_super
+comma
+l_string|&quot;sysv&quot;
+comma
+l_int|1
+comma
+l_int|NULL
+)brace
+comma
+(brace
+id|sysv_read_super
+comma
+l_string|&quot;coherent&quot;
+comma
+l_int|1
+comma
+l_int|NULL
+)brace
+)brace
+suffix:semicolon
+DECL|function|init_module
+r_int
+id|init_module
+c_func
+(paren
+r_void
+)paren
+(brace
+r_int
+id|i
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+l_int|3
+suffix:semicolon
+id|i
+op_increment
+)paren
+id|register_filesystem
+c_func
+(paren
+op_amp
+id|sysv_fs_type
+(braket
+id|i
+)braket
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+DECL|function|cleanup_module
+r_void
+id|cleanup_module
+c_func
+(paren
+r_void
+)paren
+(brace
+r_int
+id|i
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|MOD_IN_USE
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;SysV FS cannot be removed, currently in use&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+l_int|3
+suffix:semicolon
+id|i
+op_increment
+)paren
+id|unregister_filesystem
+c_func
+(paren
+op_amp
+id|sysv_fs_type
+(braket
+id|i
+)braket
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
 eof

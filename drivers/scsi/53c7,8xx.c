@@ -247,6 +247,7 @@ id|pci_chip
 (brace
 DECL|member|pci_device_id
 r_int
+r_int
 id|pci_device_id
 suffix:semicolon
 DECL|member|chip
@@ -269,7 +270,6 @@ r_struct
 id|pci_chip
 id|pci_chip_ids
 (braket
-l_int|3
 )braket
 op_assign
 (brace
@@ -281,6 +281,16 @@ comma
 l_int|1
 comma
 l_int|1
+)brace
+comma
+(brace
+id|PCI_DEVICE_ID_NCR_53C815
+comma
+l_int|815
+comma
+l_int|2
+comma
+l_int|3
 )brace
 comma
 (brace
@@ -306,7 +316,6 @@ comma
 op_minus
 l_int|1
 )brace
-comma
 )brace
 suffix:semicolon
 DECL|macro|NPCI_CHIP_IDS
@@ -782,6 +791,9 @@ l_int|810
 suffix:colon
 r_case
 l_int|815
+suffix:colon
+r_case
+l_int|820
 suffix:colon
 r_case
 l_int|825

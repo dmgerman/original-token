@@ -36,6 +36,15 @@ suffix:semicolon
 multiline_comment|/* page table for 0-4MB for everybody */
 r_extern
 r_void
+id|scsi_mem_init
+c_func
+(paren
+r_int
+r_int
+)paren
+suffix:semicolon
+r_extern
+r_void
 id|sound_mem_init
 c_func
 (paren
@@ -5848,11 +5857,6 @@ r_extern
 r_int
 id|etext
 suffix:semicolon
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
 id|end_mem
 op_and_assign
 id|PAGE_MASK
@@ -5927,6 +5931,14 @@ op_add_assign
 id|PAGE_SIZE
 suffix:semicolon
 )brace
+macro_line|#ifdef CONFIG_SCSI
+id|scsi_mem_init
+c_func
+(paren
+id|high_memory
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef CONFIG_SOUND
 id|sound_mem_init
 c_func

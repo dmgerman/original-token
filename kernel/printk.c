@@ -763,9 +763,17 @@ id|log_size
 op_increment
 suffix:semicolon
 r_else
+(brace
 id|log_start
 op_increment
 suffix:semicolon
+id|log_start
+op_and_assign
+id|LOG_BUF_LEN
+op_minus
+l_int|1
+suffix:semicolon
+)brace
 id|logged_chars
 op_increment
 suffix:semicolon

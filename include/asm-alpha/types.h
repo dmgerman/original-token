@@ -40,6 +40,7 @@ id|__u32
 suffix:semicolon
 multiline_comment|/*&n; * There are 32-bit compilers for the alpha out there..&n; */
 macro_line|#if ((~0UL) == 0xffffffff)
+macro_line|#ifndef __STRICT_ANSI__
 DECL|typedef|__s64
 r_typedef
 r_int
@@ -54,6 +55,7 @@ r_int
 r_int
 id|__u64
 suffix:semicolon
+macro_line|#endif
 macro_line|#else
 DECL|typedef|__s64
 r_typedef
