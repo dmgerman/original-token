@@ -202,7 +202,10 @@ id|parport_i2c_bus_template
 suffix:semicolon
 id|b-&gt;i2c.data
 op_assign
+id|parport_get_port
+(paren
 id|port
+)paren
 suffix:semicolon
 id|strncpy
 c_func

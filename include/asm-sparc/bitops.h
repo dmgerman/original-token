@@ -2,7 +2,6 @@ multiline_comment|/* $Id: bitops.h,v 1.58 2000/07/07 07:29:30 anton Exp $&n; * b
 macro_line|#ifndef _SPARC_BITOPS_H
 DECL|macro|_SPARC_BITOPS_H
 mdefine_line|#define _SPARC_BITOPS_H
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;asm/byteorder.h&gt;
 macro_line|#ifndef __KERNEL__

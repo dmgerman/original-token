@@ -6769,7 +6769,7 @@ suffix:semicolon
 )brace
 DECL|macro|MAX_SLABINFO_WRITE
 mdefine_line|#define MAX_SLABINFO_WRITE 128
-multiline_comment|/**&n; * slabinfo_write_proc - SMP tuning for the slab allocator&n; * @file:&n; * @buffer: user buffer&n; * @count: data len&n; * @data: unused&n; */
+multiline_comment|/**&n; * slabinfo_write_proc - SMP tuning for the slab allocator&n; * @file: unused&n; * @buffer: user buffer&n; * @count: data len&n; * @data: unused&n; */
 DECL|function|slabinfo_write_proc
 r_int
 id|slabinfo_write_proc

@@ -17,7 +17,11 @@ r_extern
 r_volatile
 r_int
 r_int
-id|lost_ticks
+id|wall_jiffies
+suffix:semicolon
+r_extern
+id|rwlock_t
+id|xtime_lock
 suffix:semicolon
 multiline_comment|/*&n; * Change this if you have some constant time drift&n; */
 multiline_comment|/* This is the value for the PC-style PICs. */
@@ -71,7 +75,7 @@ r_int
 r_int
 id|quotient
 suffix:semicolon
-multiline_comment|/*&n;     * Cached &quot;1/(clocks per usec)*2^32&quot; value.&n;     * It has to be recalculated once each jiffy.&n;     */
+multiline_comment|/*&n;&t; * Cached &quot;1/(clocks per usec)*2^32&quot; value.&n;&t; * It has to be recalculated once each jiffy.&n;&t; */
 r_static
 r_int
 r_int
@@ -90,6 +94,8 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|tmp
+op_logical_and
 id|last_jiffies
 op_ne
 id|tmp
@@ -188,7 +194,7 @@ id|quotient
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;     * Due to possible jiffies inconsistencies, we need to check &n;     * the result so that we&squot;ll get a timer that is monotonic.&n;     */
+multiline_comment|/*&n;&t; * Due to possible jiffies inconsistencies, we need to check &n;&t; * the result so that we&squot;ll get a timer that is monotonic.&n;&t; */
 r_if
 c_cond
 (paren
@@ -219,7 +225,7 @@ c_func
 r_void
 )paren
 (brace
-multiline_comment|/*&n;     * This is a kludge until I find a way for the&n;     * DECstations without bus cycle counter. HK&n;     */
+multiline_comment|/*&n;&t; * This is a kludge until I find a way for the&n;&t; * DECstations without bus cycle counter. HK&n;&t; */
 r_return
 l_int|0
 suffix:semicolon
@@ -254,9 +260,12 @@ r_int
 r_int
 id|flags
 suffix:semicolon
-id|save_and_cli
+id|read_lock_irqsave
 c_func
 (paren
+op_amp
+id|xtime_lock
+comma
 id|flags
 )paren
 suffix:semicolon
@@ -272,19 +281,24 @@ c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;     * xtime is atomically updated in timer_bh. lost_ticks is&n;     * nonzero if the timer bottom half hasnt executed yet.&n;     */
+multiline_comment|/*&n;&t; * xtime is atomically updated in timer_bh. lost_ticks is&n;&t; * nonzero if the timer bottom half hasnt executed yet.&n;&t; */
 r_if
 c_cond
 (paren
-id|lost_ticks
+id|jiffies
+op_minus
+id|wall_jiffies
 )paren
 id|tv-&gt;tv_usec
 op_add_assign
 id|USECS_PER_JIFFY
 suffix:semicolon
-id|restore_flags
+id|read_unlock_irqrestore
 c_func
 (paren
+op_amp
+id|xtime_lock
+comma
 id|flags
 )paren
 suffix:semicolon
@@ -316,12 +330,14 @@ op_star
 id|tv
 )paren
 (brace
-id|cli
+id|write_lock_irq
 c_func
 (paren
+op_amp
+id|xtime_lock
 )paren
 suffix:semicolon
-multiline_comment|/* This is revolting. We need to set the xtime.tv_usec&n;     * correctly. However, the value in this location is&n;     * is value at the last tick.&n;     * Discover what correction gettimeofday&n;     * would have done, and then undo it!&n;     */
+multiline_comment|/* This is revolting. We need to set the xtime.tv_usec&n;&t; * correctly. However, the value in this location is&n;&t; * is value at the last tick.&n;&t; * Discover what correction gettimeofday&n;&t; * would have done, and then undo it!&n;&t; */
 id|tv-&gt;tv_usec
 op_sub_assign
 id|do_gettimeoffset
@@ -362,9 +378,11 @@ id|time_esterror
 op_assign
 id|MAXPHASE
 suffix:semicolon
-id|sti
+id|write_unlock_irq
 c_func
 (paren
+op_amp
+id|xtime_lock
 )paren
 suffix:semicolon
 )brace
@@ -466,7 +484,7 @@ c_func
 id|cmos_minutes
 )paren
 suffix:semicolon
-multiline_comment|/*&n;     * since we&squot;re only adjusting minutes and seconds,&n;     * don&squot;t interfere with hour overflow. This avoids&n;     * messing with unknown time zones but requires your&n;     * RTC not to be off by more than 15 minutes&n;     */
+multiline_comment|/*&n;&t; * since we&squot;re only adjusting minutes and seconds,&n;&t; * don&squot;t interfere with hour overflow. This avoids&n;&t; * messing with unknown time zones but requires your&n;&t; * RTC not to be off by more than 15 minutes&n;&t; */
 id|real_seconds
 op_assign
 id|nowtime
@@ -567,12 +585,25 @@ id|RTC_MINUTES
 suffix:semicolon
 )brace
 r_else
+(brace
+id|printk
+c_func
+(paren
+id|KERN_WARNING
+l_string|&quot;set_rtc_mmss: can&squot;t update from %d to %d&bslash;n&quot;
+comma
+id|cmos_minutes
+comma
+id|real_minutes
+)paren
+suffix:semicolon
 id|retval
 op_assign
 op_minus
 l_int|1
 suffix:semicolon
-multiline_comment|/* The following flags have to be released exactly in this order,&n;     * otherwise the DS12887 (popular MC146818A clone with integrated&n;     * battery and quartz) will not reset the oscillator and will not&n;     * update precisely 500 ms later. You won&squot;t find this mentioned in&n;     * the Dallas Semiconductor data sheets, but who believes data&n;     * sheets anyway ...                           -- Markus Kuhn&n;     */
+)brace
+multiline_comment|/* The following flags have to be released exactly in this order,&n;&t; * otherwise the DS12887 (popular MC146818A clone with integrated&n;&t; * battery and quartz) will not reset the oscillator and will not&n;&t; * update precisely 500 ms later. You won&squot;t find this mentioned in&n;&t; * the Dallas Semiconductor data sheets, but who believes data&n;&t; * sheets anyway ...                           -- Markus Kuhn&n;&t; */
 id|CMOS_WRITE
 c_func
 (paren
@@ -636,13 +667,94 @@ id|RTC_REG_C
 )paren
 suffix:semicolon
 multiline_comment|/* ACK RTC Interrupt */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|user_mode
+c_func
+(paren
+id|regs
+)paren
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|prof_buffer
+op_logical_and
+id|current-&gt;pid
+)paren
+(brace
+r_extern
+r_int
+id|_stext
+suffix:semicolon
+r_int
+r_int
+id|pc
+op_assign
+id|regs-&gt;cp0_epc
+suffix:semicolon
+id|pc
+op_sub_assign
+(paren
+r_int
+r_int
+)paren
+op_amp
+id|_stext
+suffix:semicolon
+id|pc
+op_rshift_assign
+id|prof_shift
+suffix:semicolon
+multiline_comment|/*&n;&t;&t;&t; * Dont ignore out-of-bounds pc values silently,&n;&t;&t;&t; * put them into the last histogram slot, so if&n;&t;&t;&t; * present, they will show up as a sharp peak.&n;&t;&t;&t; */
+r_if
+c_cond
+(paren
+id|pc
+OG
+id|prof_len
+op_minus
+l_int|1
+)paren
+id|pc
+op_assign
+id|prof_len
+op_minus
+l_int|1
+suffix:semicolon
+id|atomic_inc
+c_func
+(paren
+(paren
+id|atomic_t
+op_star
+)paren
+op_amp
+id|prof_buffer
+(braket
+id|pc
+)braket
+)paren
+suffix:semicolon
+)brace
+)brace
 id|do_timer
 c_func
 (paren
 id|regs
 )paren
 suffix:semicolon
-multiline_comment|/*&n;     * If we have an externally synchronized Linux clock, then update&n;     * CMOS clock accordingly every ~11 minutes. Set_rtc_mmss() has to be&n;     * called as close as possible to 500 ms before the new second starts.&n;     */
+multiline_comment|/*&n;&t; * If we have an externally synchronized Linux clock, then update&n;&t; * CMOS clock accordingly every ~11 minutes. Set_rtc_mmss() has to be&n;&t; * called as close as possible to 500 ms before the new second starts.&n;&t; */
+id|read_lock
+c_func
+(paren
+op_amp
+id|xtime_lock
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -699,6 +811,15 @@ op_minus
 l_int|600
 suffix:semicolon
 multiline_comment|/* do it again in 60 s */
+multiline_comment|/* As we return to user mode fire off the other CPU schedulers.. this is&n;&t;   basically because we don&squot;t yet share IRQ&squot;s around. This message is&n;&t;   rigged to be safe on the 386 - basically it&squot;s a hack, so don&squot;t look&n;&t;   closely for now.. */
+multiline_comment|/*smp_message_pass(MSG_ALL_BUT_SELF, MSG_RESCHEDULE, 0L, 0); */
+id|read_unlock
+c_func
+(paren
+op_amp
+id|xtime_lock
+)paren
+suffix:semicolon
 )brace
 DECL|function|r4k_timer_interrupt
 r_static
@@ -723,7 +844,7 @@ r_int
 r_int
 id|count
 suffix:semicolon
-multiline_comment|/*&n;     * The cycle counter is only 32 bit which is good for about&n;     * a minute at current count rates of upto 150MHz or so.&n;     */
+multiline_comment|/*&n;&t; * The cycle counter is only 32 bit which is good for about&n;&t; * a minute at current count rates of upto 150MHz or so.&n;&t; */
 id|count
 op_assign
 id|read_32bit_cp0_register
@@ -755,6 +876,21 @@ comma
 id|regs
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|jiffies
+)paren
+(brace
+multiline_comment|/*&n;&t;&t; * If jiffies has overflowed in this timer_interrupt we must&n;&t;&t; * update the timer[hi]/[lo] to make do_fast_gettimeoffset()&n;&t;&t; * quotient calc still valid. -arca&n;&t;&t; */
+id|timerhi
+op_assign
+id|timerlo
+op_assign
+l_int|0
+suffix:semicolon
+)brace
 )brace
 multiline_comment|/* Converts Gregorian date to seconds since 1970-01-01 00:00:00.&n; * Assumes input in normal date format, i.e. 1980-12-31 23:59:59&n; * =&gt; year=1980, mon=12, day=31, hour=23, min=59, sec=59.&n; *&n; * [For the Julian calendar (which was used in Russia before 1917,&n; * Britain &amp; colonies before 1752, anywhere else before 1582,&n; * and is still in use by some communities) leave out the&n; * -year/100+year/400 terms, and add 10.]&n; *&n; * This algorithm was first published by Gauss (I think).&n; *&n; * WARNING: this function will overflow on 2106-02-07 06:28:16 on&n; * machines were long is 32-bit! (However, as time_t is signed, we&n; * will already get problems at other places on 2038-01-19 03:14:08)&n; */
 DECL|function|mktime
@@ -1048,7 +1184,7 @@ suffix:semicolon
 r_int
 id|i
 suffix:semicolon
-multiline_comment|/* The Linux interpretation of the CMOS clock register contents:&n;     * When the Update-In-Progress (UIP) flag goes from 1 to 0, the&n;     * RTC registers show the second which has precisely just started.&n;     * Let&squot;s hope other operating systems interpret the RTC the same way.&n;     */
+multiline_comment|/* The Linux interpretation of the CMOS clock register contents:&n;&t; * When the Update-In-Progress (UIP) flag goes from 1 to 0, the&n;&t; * RTC registers show the second which has precisely just started.&n;&t; * Let&squot;s hope other operating systems interpret the RTC the same way.&n;&t; */
 multiline_comment|/* read RTC exactly on falling edge of update flag */
 r_for
 c_loop
@@ -1227,10 +1363,17 @@ id|year
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n;     * The DECstation RTC is used as a TOY (Time Of Year).&n;     * The PROM will reset the year to either &squot;70, &squot;71 or &squot;72.&n;     * This hack will only work until Dec 31 2001.&n;     */
+multiline_comment|/*&n;&t; * The DECstation RTC is used as a TOY (Time Of Year).&n;&t; * The PROM will reset the year to either &squot;70, &squot;71 or &squot;72.&n;&t; * This hack will only work until Dec 31 2001.&n;&t; */
 id|year
 op_add_assign
-l_int|1927
+l_int|1928
+suffix:semicolon
+id|write_lock_irq
+c_func
+(paren
+op_amp
+id|xtime_lock
+)paren
 suffix:semicolon
 id|xtime.tv_sec
 op_assign
@@ -1253,6 +1396,13 @@ suffix:semicolon
 id|xtime.tv_usec
 op_assign
 l_int|0
+suffix:semicolon
+id|write_unlock_irq
+c_func
+(paren
+op_amp
+id|xtime_lock
+)paren
 suffix:semicolon
 id|init_cycle_counter
 c_func

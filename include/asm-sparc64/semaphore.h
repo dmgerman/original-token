@@ -6,6 +6,7 @@ macro_line|#ifdef __KERNEL__
 macro_line|#include &lt;asm/atomic.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
+macro_line|#include &lt;linux/wait.h&gt;
 DECL|struct|semaphore
 r_struct
 id|semaphore

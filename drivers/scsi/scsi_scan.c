@@ -855,6 +855,50 @@ comma
 id|BLIST_FORCELUN
 )brace
 comma
+(brace
+l_string|&quot;DGC&quot;
+comma
+l_string|&quot;RAID&quot;
+comma
+l_string|&quot;*&quot;
+comma
+id|BLIST_SPARSELUN
+)brace
+comma
+singleline_comment|// Dell PV 650F (tgt @ LUN 0)
+(brace
+l_string|&quot;DGC&quot;
+comma
+l_string|&quot;DISK&quot;
+comma
+l_string|&quot;*&quot;
+comma
+id|BLIST_SPARSELUN
+)brace
+comma
+singleline_comment|// Dell PV 650F (no tgt @ LUN 0) 
+(brace
+l_string|&quot;DELL&quot;
+comma
+l_string|&quot;PV530F&quot;
+comma
+l_string|&quot;*&quot;
+comma
+id|BLIST_SPARSELUN
+)brace
+comma
+singleline_comment|// Dell PV 530F
+(brace
+l_string|&quot;SONY&quot;
+comma
+l_string|&quot;TSL&quot;
+comma
+l_string|&quot;*&quot;
+comma
+id|BLIST_FORCELUN
+)brace
+comma
+singleline_comment|// DDS3 &amp; DDS4 autoloaders
 multiline_comment|/*&n;&t; * Must be at end of list...&n;&t; */
 (brace
 l_int|NULL

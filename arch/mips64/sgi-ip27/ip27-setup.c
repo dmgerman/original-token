@@ -17,6 +17,7 @@ macro_line|#include &lt;asm/sn/sn_private.h&gt;
 macro_line|#include &lt;asm/pci/bridge.h&gt;
 macro_line|#include &lt;asm/paccess.h&gt;
 macro_line|#include &lt;asm/sn/sn0/ip27.h&gt;
+macro_line|#include &lt;asm/sn/sn0/hubio.h&gt;
 multiline_comment|/* Check against user dumbness.  */
 macro_line|#ifdef CONFIG_VT
 macro_line|#error CONFIG_VT not allowed for IP27.

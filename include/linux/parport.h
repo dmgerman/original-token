@@ -1112,6 +1112,10 @@ DECL|member|spintime
 r_int
 id|spintime
 suffix:semicolon
+DECL|member|ref_count
+id|atomic_t
+id|ref_count
+suffix:semicolon
 )brace
 suffix:semicolon
 DECL|macro|DEFAULT_SPIN_TIME
@@ -1203,10 +1207,7 @@ op_star
 id|port
 )paren
 suffix:semicolon
-multiline_comment|/* parport_in_use returns nonzero if there are devices attached to a&n;   port. */
-DECL|macro|parport_in_use
-mdefine_line|#define parport_in_use(x)  ((x)-&gt;devices != NULL)
-multiline_comment|/* parport_enumerate returns a pointer to the linked list of all the&n;   ports in this machine. */
+multiline_comment|/* parport_enumerate returns a pointer to the linked list of all the&n;   ports in this machine.  DON&squot;T USE THIS.  Use&n;   parport_register_driver instead. */
 r_struct
 id|parport
 op_star
@@ -1233,6 +1234,47 @@ id|parport_unregister_driver
 (paren
 r_struct
 id|parport_driver
+op_star
+)paren
+suffix:semicolon
+multiline_comment|/* If parport_register_driver doesn&squot;t fit your needs, perhaps&n; * parport_find_xxx does. */
+r_extern
+r_struct
+id|parport
+op_star
+id|parport_find_number
+(paren
+r_int
+)paren
+suffix:semicolon
+r_extern
+r_struct
+id|parport
+op_star
+id|parport_find_base
+(paren
+r_int
+r_int
+)paren
+suffix:semicolon
+multiline_comment|/* Reference counting for ports. */
+r_extern
+r_struct
+id|parport
+op_star
+id|parport_get_port
+(paren
+r_struct
+id|parport
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|parport_put_port
+(paren
+r_struct
+id|parport
 op_star
 )paren
 suffix:semicolon

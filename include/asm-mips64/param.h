@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: param.h,v 1.1 1999/08/18 23:37:51 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright 1994 - 1999 Ralf Baechle (ralf@gnu.org)&n; */
+multiline_comment|/*&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright 1994 - 2000 Ralf Baechle (ralf@gnu.org)&n; * Copyright 2000 Silicon Graphics, Inc.&n; */
 macro_line|#ifndef _ASM_PARAM_H
 DECL|macro|_ASM_PARAM_H
 mdefine_line|#define _ASM_PARAM_H
@@ -8,8 +8,8 @@ mdefine_line|#define HZ 100
 DECL|macro|HZ
 macro_line|#  define HZ 100
 macro_line|#ifdef __KERNEL__
-DECL|macro|HZ_TO_STD
-macro_line|#  define HZ_TO_STD(a) (a)
+DECL|macro|hz_to_std
+macro_line|#  define hz_to_std(a) (a)
 macro_line|#endif
 macro_line|#endif
 DECL|macro|EXEC_PAGESIZE

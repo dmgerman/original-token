@@ -848,7 +848,7 @@ id|sb-&gt;s_dirty
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/**&n; *&t;write_inode_now&t;-&t;write an inode to disk&n; *&t;@inode: inode to write to disk&n; *&n; *&t;This function commits an inode to disk immediately if it is&n; *&t;dirty. This is primarily needed by knfsd.&n; */
+multiline_comment|/**&n; *&t;write_inode_now&t;-&t;write an inode to disk&n; *&t;@inode: inode to write to disk&n; *&t;@sync: whether the write should be synchronous or not&n; *&n; *&t;This function commits an inode to disk immediately if it is&n; *&t;dirty. This is primarily needed by knfsd.&n; */
 DECL|function|write_inode_now
 r_void
 id|write_inode_now

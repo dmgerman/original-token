@@ -1,7 +1,7 @@
 multiline_comment|/* &n;        paride.c  (c) 1997-8  Grant R. Guenther &lt;grant@torque.net&gt;&n;                              Under the terms of the GNU public license.&n;&n;&t;This is the base module for the family of device drivers&n;        that support parallel port IDE devices.  &n;&n;*/
-multiline_comment|/* Changes:&n;&n;&t;1.01&t;GRG 1998.05.03&t;Use spinlocks&n;&t;1.02&t;GRG 1998.05.05  init_proto, release_proto, ktti&n;&t;1.03&t;GRG 1998.08.15  eliminate compiler warning&n;&t;1.04    GRG 1998.11.28  added support for FRIQ &n;&n;*/
+multiline_comment|/* Changes:&n;&n;&t;1.01&t;GRG 1998.05.03&t;Use spinlocks&n;&t;1.02&t;GRG 1998.05.05  init_proto, release_proto, ktti&n;&t;1.03&t;GRG 1998.08.15  eliminate compiler warning&n;&t;1.04    GRG 1998.11.28  added support for FRIQ &n;&t;1.05    TMW 2000.06.06  use parport_find_number instead of&n;&t;&t;&t;&t;parport_enumerate&n;*/
 DECL|macro|PI_VERSION
-mdefine_line|#define PI_VERSION      &quot;1.04&quot;
+mdefine_line|#define PI_VERSION      &quot;1.05&quot;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kmod.h&gt;
@@ -984,52 +984,29 @@ macro_line|#ifdef CONFIG_PARPORT
 r_struct
 id|parport
 op_star
-id|pp
+id|port
 suffix:semicolon
-id|pp
+id|port
 op_assign
-id|parport_enumerate
-c_func
+id|parport_find_base
 (paren
-)paren
-suffix:semicolon
-r_while
-c_loop
-(paren
-(paren
-id|pp
-)paren
-op_logical_and
-(paren
-id|pp-&gt;base
-op_ne
 id|pi-&gt;port
 )paren
-)paren
-(brace
-id|pp
-op_assign
-id|pp-&gt;next
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
 op_logical_neg
-id|pp
+id|port
 )paren
 r_return
 suffix:semicolon
 id|pi-&gt;pardev
 op_assign
-(paren
-r_void
-op_star
-)paren
 id|parport_register_device
 c_func
 (paren
-id|pp
+id|port
 comma
 id|pi-&gt;device
 comma
@@ -1047,6 +1024,19 @@ op_star
 )paren
 id|pi
 )paren
+suffix:semicolon
+id|parport_put_port
+(paren
+id|port
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|pi-&gt;pardev
+)paren
+r_return
 suffix:semicolon
 id|init_waitqueue_head
 c_func
@@ -1069,7 +1059,7 @@ id|pi-&gt;device
 comma
 id|pi-&gt;port
 comma
-id|pp-&gt;name
+id|port-&gt;name
 )paren
 suffix:semicolon
 id|pi-&gt;parname
@@ -1078,7 +1068,7 @@ op_assign
 r_char
 op_star
 )paren
-id|pp-&gt;name
+id|port-&gt;name
 suffix:semicolon
 macro_line|#endif
 )brace

@@ -30,10 +30,8 @@ macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/stackframe.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/cpu.h&gt;
-macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/bootmem.h&gt;
 macro_line|#include &lt;asm/addrspace.h&gt;
-macro_line|#include &lt;asm/bootinfo.h&gt;
 macro_line|#include &lt;asm/mc146818rtc.h&gt;
 DECL|variable|arcs_cmdline
 r_char

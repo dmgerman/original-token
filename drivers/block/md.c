@@ -13977,7 +13977,7 @@ OG
 id|sysctl_speed_limit_min
 )paren
 (brace
-id|current-&gt;priority
+id|current-&gt;nice
 op_assign
 l_int|19
 suffix:semicolon
@@ -14026,7 +14026,7 @@ suffix:semicolon
 )brace
 )brace
 r_else
-id|current-&gt;priority
+id|current-&gt;nice
 op_assign
 op_minus
 l_int|20

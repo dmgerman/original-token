@@ -922,6 +922,13 @@ id|RESCHEDULE_VECTOR
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Structure and data for smp_call_function(). This is designed to minimise&n; * static memory requirements. It also looks cleaner.&n; */
+DECL|variable|call_lock
+r_static
+id|spinlock_t
+id|call_lock
+op_assign
+id|SPIN_LOCK_UNLOCKED
+suffix:semicolon
 DECL|struct|call_data_struct
 r_static
 r_volatile
@@ -1005,24 +1012,15 @@ id|smp_num_cpus
 op_minus
 l_int|1
 suffix:semicolon
-r_static
-id|spinlock_t
-id|lock
-op_assign
-id|SPIN_LOCK_UNLOCKED
-suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
 id|cpus
-op_eq
-l_int|0
 )paren
-(brace
 r_return
 l_int|0
 suffix:semicolon
-)brace
 id|data.func
 op_assign
 id|func
@@ -1062,7 +1060,7 @@ id|spin_lock_bh
 c_func
 (paren
 op_amp
-id|lock
+id|call_lock
 )paren
 suffix:semicolon
 id|call_data
@@ -1078,7 +1076,6 @@ id|CALL_FUNCTION_VECTOR
 )paren
 suffix:semicolon
 multiline_comment|/* Wait for response */
-multiline_comment|/* FIXME: lock-up detection, backtrace on lock-up */
 r_while
 c_loop
 (paren
@@ -1091,13 +1088,11 @@ id|data.started
 op_ne
 id|cpus
 )paren
-(brace
 id|barrier
 c_func
 (paren
 )paren
 suffix:semicolon
-)brace
 id|ret
 op_assign
 l_int|0
@@ -1128,7 +1123,7 @@ id|spin_unlock_bh
 c_func
 (paren
 op_amp
-id|lock
+id|call_lock
 )paren
 suffix:semicolon
 r_return

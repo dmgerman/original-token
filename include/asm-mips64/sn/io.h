@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: io.h,v 1.2 2000/02/02 16:35:57 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 2000 Ralf Baechle&n; * Copyright (C) 2000 Silicon Graphics, Inc.&n; */
+multiline_comment|/*&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 2000 Ralf Baechle&n; * Copyright (C) 2000 Silicon Graphics, Inc.&n; */
 macro_line|#ifndef _ASM_SN_IO_H
 DECL|macro|_ASM_SN_IO_H
 mdefine_line|#define _ASM_SN_IO_H

@@ -490,7 +490,7 @@ comma
 id|best_cpu
 )paren
 OG
-l_int|1
+l_int|0
 )paren
 r_goto
 id|preempt_now
@@ -680,6 +680,12 @@ multiline_comment|/*&n;&t; * If need_resched == -1 then we can skip sending the 
 r_if
 c_cond
 (paren
+(paren
+id|tsk-&gt;processor
+op_ne
+id|current-&gt;processor
+)paren
+op_logical_and
 op_logical_neg
 id|tsk-&gt;need_resched
 )paren
