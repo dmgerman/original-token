@@ -2701,7 +2701,7 @@ c_func
 id|sb
 )paren
 comma
-l_int|1
+l_int|0
 comma
 op_amp
 id|err

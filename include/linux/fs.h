@@ -3853,14 +3853,13 @@ id|inode
 op_star
 comma
 r_int
-comma
 r_int
 comma
-r_int
+r_struct
+id|buffer_head
 op_star
 comma
 r_int
-op_star
 )paren
 suffix:semicolon
 multiline_comment|/* Generic buffer handling for block filesystems.. */

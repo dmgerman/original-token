@@ -927,12 +927,16 @@ id|page
 )paren
 )paren
 (brace
-singleline_comment|//&t;&t;&t;BUG();
 id|spin_unlock
 c_func
 (paren
 op_amp
 id|pagecache_lock
+)paren
+suffix:semicolon
+id|BUG
+c_func
+(paren
 )paren
 suffix:semicolon
 r_continue
@@ -973,6 +977,16 @@ c_cond
 id|page-&gt;buffers
 )paren
 (brace
+r_int
+id|mem
+op_assign
+id|page-&gt;inode
+ques
+c_cond
+l_int|0
+suffix:colon
+id|PAGE_CACHE_SIZE
+suffix:semicolon
 id|spin_unlock
 c_func
 (paren
@@ -983,6 +997,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
 id|try_to_free_buffers
 c_func
 (paren
@@ -990,7 +1005,11 @@ id|page
 )paren
 )paren
 r_goto
-id|made_progress
+id|unlock_continue
+suffix:semicolon
+id|buffermem
+op_sub_assign
+id|mem
 suffix:semicolon
 id|spin_lock
 c_func
@@ -1000,7 +1019,7 @@ id|pagecache_lock
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* We can&squot;t free pages unless there&squot;s just one user */
+multiline_comment|/*&n;&t;&t; * We can&squot;t free pages unless there&squot;s just one user&n;&t;&t; * (count == 2 because we added one ourselves above).&n;&t;&t; */
 r_if
 c_cond
 (paren

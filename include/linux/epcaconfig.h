@@ -1,7 +1,7 @@
 DECL|macro|NUMCARDS
-mdefine_line|#define NUMCARDS 1
+mdefine_line|#define NUMCARDS 0
 DECL|macro|NBDEVS
-mdefine_line|#define NBDEVS 2
+mdefine_line|#define NBDEVS 0
 DECL|variable|static_boards
 r_struct
 id|board_info

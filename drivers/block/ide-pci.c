@@ -2198,7 +2198,7 @@ id|mate
 op_assign
 l_int|NULL
 suffix:semicolon
-macro_line|#ifdef CONFIG_IDEDMA_AUTO
+macro_line|#ifdef CONFIG_IDEDMA_PCI_AUTO
 id|autodma
 op_assign
 l_int|1

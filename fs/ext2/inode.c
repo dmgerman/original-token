@@ -636,6 +636,9 @@ l_int|1
 )paren
 )paren
 suffix:semicolon
+r_goto
+id|out
+suffix:semicolon
 )brace
 id|block
 op_sub_assign

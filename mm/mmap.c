@@ -2989,6 +2989,12 @@ id|addr
 op_assign
 id|vma-&gt;vm_start
 suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/* kswapd, ugh */
 id|insert_vm_struct
 c_func
 (paren
@@ -3005,6 +3011,11 @@ comma
 id|vma-&gt;vm_start
 comma
 id|vma-&gt;vm_end
+)paren
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
 )paren
 suffix:semicolon
 id|mm-&gt;total_vm

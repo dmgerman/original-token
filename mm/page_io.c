@@ -552,11 +552,10 @@ c_cond
 id|dolock
 )paren
 (brace
-multiline_comment|/* only lock/unlock swap cache pages! */
 id|set_bit
 c_func
 (paren
-id|PG_swap_unlock_after
+id|PG_free_swap_after
 comma
 op_amp
 id|page-&gt;flags
@@ -665,24 +664,6 @@ id|page
 )paren
 suffix:semicolon
 macro_line|#endif
-)brace
-multiline_comment|/*&n; * This is run when asynchronous page I/O has completed.&n; * It decrements the swap bitmap counter&n; */
-DECL|function|swap_after_unlock_page
-r_void
-id|swap_after_unlock_page
-c_func
-(paren
-r_int
-r_int
-id|entry
-)paren
-(brace
-id|swap_free
-c_func
-(paren
-id|entry
-)paren
-suffix:semicolon
 )brace
 multiline_comment|/*&n; * A simple wrapper so the base function doesn&squot;t need to enforce&n; * that all swap pages go through the swap cache! We verify that:&n; *  - the page is locked&n; *  - it&squot;s marked as being swap-cache&n; *  - it&squot;s associated with the swap inode&n; */
 DECL|function|rw_swap_page
