@@ -33732,8 +33732,6 @@ id|aic7xxx_setup
 c_func
 (paren
 id|aic7xxx
-comma
-l_int|NULL
 )paren
 suffix:semicolon
 )brace

@@ -1,8 +1,9 @@
-multiline_comment|/*&n; *&t;$Id: oldproc.c,v 1.24 1998/10/11 15:13:04 mj Exp $&n; *&n; *&t;Backward-compatible procfs interface for PCI.&n; *&n; *&t;Copyright 1993, 1994, 1995, 1997 Drew Eckhardt, Frederic Potter,&n; *&t;David Mosberger-Tang, Martin Mares&n; */
+multiline_comment|/*&n; *&t;PCI Class and Device Name Tables&n; *&n; *&t;Copyright 1993--1999 Drew Eckhardt, Frederic Potter,&n; *&t;David Mosberger-Tang, Martin Mares&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#ifdef CONFIG_PCI_NAMES
 DECL|struct|pci_device_info
 r_struct
 id|pci_device_info
@@ -269,4 +270,131 @@ suffix:semicolon
 )brace
 )brace
 )brace
+multiline_comment|/*&n; *  Class names. Not in .init section as they are needed in runtime.&n; */
+DECL|variable|pci_class_numbers
+r_static
+id|u16
+id|pci_class_numbers
+(braket
+)braket
+op_assign
+(brace
+DECL|macro|CLASS
+mdefine_line|#define CLASS(x,y) 0x##x,
+macro_line|#include &quot;classlist.h&quot;
+)brace
+suffix:semicolon
+DECL|variable|pci_class_names
+r_static
+r_char
+op_star
+id|pci_class_names
+(braket
+)braket
+op_assign
+(brace
+DECL|macro|CLASS
+mdefine_line|#define CLASS(x,y) y,
+macro_line|#include &quot;classlist.h&quot;
+)brace
+suffix:semicolon
+r_char
+op_star
+DECL|function|pci_class_name
+id|pci_class_name
+c_func
+(paren
+id|u32
+r_class
+)paren
+(brace
+r_int
+id|i
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+r_sizeof
+(paren
+id|pci_class_numbers
+)paren
+op_div
+r_sizeof
+(paren
+id|pci_class_numbers
+(braket
+l_int|0
+)braket
+)paren
+suffix:semicolon
+id|i
+op_increment
+)paren
+r_if
+c_cond
+(paren
+id|pci_class_numbers
+(braket
+id|i
+)braket
+op_eq
+r_class
+)paren
+r_return
+id|pci_class_names
+(braket
+id|i
+)braket
+suffix:semicolon
+r_return
+l_int|NULL
+suffix:semicolon
+)brace
+macro_line|#else
+DECL|function|pci_name_device
+r_void
+id|__init
+id|pci_name_device
+c_func
+(paren
+r_struct
+id|pci_dev
+op_star
+id|dev
+)paren
+(brace
+id|sprintf
+c_func
+(paren
+id|dev-&gt;name
+comma
+l_string|&quot;PCI device %04x:%04x&quot;
+comma
+id|dev-&gt;vendor
+comma
+id|dev-&gt;device
+)paren
+suffix:semicolon
+)brace
+r_char
+op_star
+DECL|function|pci_class_name
+id|pci_class_name
+c_func
+(paren
+id|u32
+r_class
+)paren
+(brace
+r_return
+l_int|NULL
+suffix:semicolon
+)brace
+macro_line|#endif
 eof

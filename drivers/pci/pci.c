@@ -2618,8 +2618,6 @@ suffix:semicolon
 r_default
 suffix:colon
 multiline_comment|/* unknown header */
-id|bad
-suffix:colon
 id|printk
 c_func
 (paren
@@ -2633,11 +2631,32 @@ id|hdr_type
 suffix:semicolon
 r_continue
 suffix:semicolon
+id|bad
+suffix:colon
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;PCI: %s: class %x doesn&squot;t match header type %02x. Ignoring class.&bslash;n&quot;
+comma
+id|dev-&gt;slot_name
+comma
+r_class
+comma
+id|hdr_type
+)paren
+suffix:semicolon
+id|dev
+op_member_access_from_pointer
+r_class
+op_assign
+id|PCI_CLASS_NOT_DEFINED
+suffix:semicolon
 )brace
 id|DBG
 c_func
 (paren
-l_string|&quot;PCI: %02x:%02x [%04x/%04x]&bslash;n&quot;
+l_string|&quot;PCI: %02x:%02x [%04x/%04x] %06x %02x&bslash;n&quot;
 comma
 id|bus-&gt;number
 comma
@@ -2646,6 +2665,10 @@ comma
 id|dev-&gt;vendor
 comma
 id|dev-&gt;device
+comma
+r_class
+comma
+id|hdr_type
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t;&t; * Put it into the global PCI device chain. It&squot;s used to&n;&t;&t; * find devices once everything is set up.&n;&t;&t; */

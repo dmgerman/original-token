@@ -3,6 +3,7 @@ macro_line|#ifndef _DRM_P_H_
 DECL|macro|_DRM_P_H_
 mdefine_line|#define _DRM_P_H_
 macro_line|#ifdef __KERNEL__
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/miscdevice.h&gt;

@@ -1365,7 +1365,7 @@ multiline_comment|/* First we look for special cases.&n;&t;   Check for HP&squot
 r_if
 c_cond
 (paren
-id|readw
+id|isa_readw
 c_func
 (paren
 l_int|0x000f0102
@@ -1395,7 +1395,7 @@ r_int
 id|hp_port
 op_assign
 (paren
-id|readl
+id|isa_readl
 c_func
 (paren
 l_int|0x000f00f1

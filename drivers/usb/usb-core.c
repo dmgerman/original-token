@@ -52,6 +52,11 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
+id|usb_hub_init
+c_func
+(paren
+)paren
+suffix:semicolon
 macro_line|#ifndef CONFIG_USB_MODULE
 macro_line|#&t;ifdef CONFIG_USB_UHCI
 id|uhci_init
@@ -137,13 +142,6 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#&t;endif
-macro_line|#&t;ifdef CONFIG_USB_HUB
-id|usb_hub_init
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#&t;endif
 macro_line|#&t;ifdef CONFIG_USB_SCSI
 id|usb_scsi_init
 c_func
@@ -176,14 +174,12 @@ id|proc_usb_cleanup
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifndef MODULE
-macro_line|#&t;ifdef CONFIG_USB_HUB
 id|usb_hub_cleanup
 c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#&t;endif
+macro_line|#ifndef MODULE
 macro_line|#&t;ifdef CONFIG_USB_MOUSE
 id|usb_mouse_cleanup
 c_func

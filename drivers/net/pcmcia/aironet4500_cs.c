@@ -8,7 +8,6 @@ id|awc_version
 op_assign
 l_string|&quot;aironet4500_cs.c v0.1 1/1/99 Elmer Joandi, elmer@ylenurme.ee.&bslash;n&quot;
 suffix:semicolon
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 singleline_comment|//#include &lt;pcmcia/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -22,7 +21,6 @@ macro_line|#include &lt;linux/in.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
-macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;

@@ -16,7 +16,6 @@ macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/machvec.h&gt;
-macro_line|#include &lt;asm/spinlock.h&gt;
 macro_line|#include &quot;proto.h&quot;
 DECL|macro|vulp
 mdefine_line|#define vulp&t;volatile unsigned long *

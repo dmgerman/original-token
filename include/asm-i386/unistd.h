@@ -386,6 +386,10 @@ DECL|macro|__NR_ugetrlimit
 mdefine_line|#define __NR_ugetrlimit&t;&t;191&t;/* SuS compliant getrlimit */
 DECL|macro|__NR_mmap2
 mdefine_line|#define __NR_mmap2&t;&t;192
+DECL|macro|__NR_truncate64
+mdefine_line|#define __NR_truncate64&t;&t;193
+DECL|macro|__NR_ftruncate64
+mdefine_line|#define __NR_ftruncate64&t;194
 multiline_comment|/* user-visible error numbers are in the range -1 - -124: see &lt;asm-i386/errno.h&gt; */
 DECL|macro|__syscall_return
 mdefine_line|#define __syscall_return(type, res) &bslash;&n;do { &bslash;&n;&t;if ((unsigned long)(res) &gt;= (unsigned long)(-125)) { &bslash;&n;&t;&t;errno = -(res); &bslash;&n;&t;&t;res = -1; &bslash;&n;&t;} &bslash;&n;&t;return (type) (res); &bslash;&n;} while (0)

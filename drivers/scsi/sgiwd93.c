@@ -1013,7 +1013,7 @@ c_func
 (paren
 id|Scsi_Host_Template
 op_star
-id|HPsUX
+id|SGIblows
 )paren
 (brace
 r_static
@@ -1051,7 +1051,7 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* Should bitch on the console about this... */
-id|HPsUX-&gt;proc_name
+id|SGIblows-&gt;proc_name
 op_assign
 l_string|&quot;SGIWD93&quot;
 suffix:semicolon
@@ -1060,7 +1060,7 @@ op_assign
 id|scsi_register
 c_func
 (paren
-id|HPsUX
+id|SGIblows
 comma
 r_sizeof
 (paren

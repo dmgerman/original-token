@@ -4,7 +4,6 @@ macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/list.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
-macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/spinlock.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/byteorder.h&gt;
@@ -2166,35 +2165,4 @@ id|hub_driver
 suffix:semicolon
 )brace
 multiline_comment|/* usb_hub_cleanup() */
-macro_line|#ifdef MODULE
-DECL|function|init_module
-r_int
-id|init_module
-c_func
-(paren
-r_void
-)paren
-(brace
-r_return
-id|usb_hub_init
-c_func
-(paren
-)paren
-suffix:semicolon
-)brace
-DECL|function|cleanup_module
-r_void
-id|cleanup_module
-c_func
-(paren
-r_void
-)paren
-(brace
-id|usb_hub_cleanup
-c_func
-(paren
-)paren
-suffix:semicolon
-)brace
-macro_line|#endif
 eof

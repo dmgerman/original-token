@@ -3,7 +3,6 @@ macro_line|#ifndef AIRONET4500_H
 DECL|macro|AIRONET4500_H
 mdefine_line|#define&t;AIRONET4500_H
 singleline_comment|// redefined to avoid PCMCIA includes
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;

@@ -1291,6 +1291,15 @@ op_star
 id|dev
 )paren
 suffix:semicolon
+r_char
+op_star
+id|pci_class_name
+c_func
+(paren
+id|u32
+r_class
+)paren
+suffix:semicolon
 r_void
 id|pci_read_bridge_bases
 c_func

@@ -1440,375 +1440,6 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/*&n; *  Backward compatible /proc/pci interface.&n; */
-DECL|function|pci_strclass
-r_static
-r_const
-r_char
-op_star
-id|pci_strclass
-(paren
-r_int
-r_int
-r_class
-)paren
-(brace
-r_switch
-c_cond
-(paren
-r_class
-op_rshift
-l_int|8
-)paren
-(brace
-r_case
-id|PCI_CLASS_NOT_DEFINED
-suffix:colon
-r_return
-l_string|&quot;Non-VGA device&quot;
-suffix:semicolon
-r_case
-id|PCI_CLASS_NOT_DEFINED_VGA
-suffix:colon
-r_return
-l_string|&quot;VGA compatible device&quot;
-suffix:semicolon
-r_case
-id|PCI_CLASS_STORAGE_SCSI
-suffix:colon
-r_return
-l_string|&quot;SCSI storage controller&quot;
-suffix:semicolon
-r_case
-id|PCI_CLASS_STORAGE_IDE
-suffix:colon
-r_return
-l_string|&quot;IDE interface&quot;
-suffix:semicolon
-r_case
-id|PCI_CLASS_STORAGE_FLOPPY
-suffix:colon
-r_return
-l_string|&quot;Floppy disk controller&quot;
-suffix:semicolon
-r_case
-id|PCI_CLASS_STORAGE_IPI
-suffix:colon
-r_return
-l_string|&quot;IPI bus controller&quot;
-suffix:semicolon
-r_case
-id|PCI_CLASS_STORAGE_RAID
-suffix:colon
-r_return
-l_string|&quot;RAID bus controller&quot;
-suffix:semicolon
-r_case
-id|PCI_CLASS_STORAGE_OTHER
-suffix:colon
-r_return
-l_string|&quot;Unknown mass storage controller&quot;
-suffix:semicolon
-r_case
-id|PCI_CLASS_NETWORK_ETHERNET
-suffix:colon
-r_return
-l_string|&quot;Ethernet controller&quot;
-suffix:semicolon
-r_case
-id|PCI_CLASS_NETWORK_TOKEN_RING
-suffix:colon
-r_return
-l_string|&quot;Token ring network controller&quot;
-suffix:semicolon
-r_case
-id|PCI_CLASS_NETWORK_FDDI
-suffix:colon
-r_return
-l_string|&quot;FDDI network controller&quot;
-suffix:semicolon
-r_case
-id|PCI_CLASS_NETWORK_ATM
-suffix:colon
-r_return
-l_string|&quot;ATM network controller&quot;
-suffix:semicolon
-r_case
-id|PCI_CLASS_NETWORK_OTHER
-suffix:colon
-r_return
-l_string|&quot;Network controller&quot;
-suffix:semicolon
-r_case
-id|PCI_CLASS_DISPLAY_VGA
-suffix:colon
-r_return
-l_string|&quot;VGA compatible controller&quot;
-suffix:semicolon
-r_case
-id|PCI_CLASS_DISPLAY_XGA
-suffix:colon
-r_return
-l_string|&quot;XGA compatible controller&quot;
-suffix:semicolon
-r_case
-id|PCI_CLASS_DISPLAY_OTHER
-suffix:colon
-r_return
-l_string|&quot;Display controller&quot;
-suffix:semicolon
-r_case
-id|PCI_CLASS_MULTIMEDIA_VIDEO
-suffix:colon
-r_return
-l_string|&quot;Multimedia video controller&quot;
-suffix:semicolon
-r_case
-id|PCI_CLASS_MULTIMEDIA_AUDIO
-suffix:colon
-r_return
-l_string|&quot;Multimedia audio controller&quot;
-suffix:semicolon
-r_case
-id|PCI_CLASS_MULTIMEDIA_OTHER
-suffix:colon
-r_return
-l_string|&quot;Multimedia controller&quot;
-suffix:semicolon
-r_case
-id|PCI_CLASS_MEMORY_RAM
-suffix:colon
-r_return
-l_string|&quot;RAM memory&quot;
-suffix:semicolon
-r_case
-id|PCI_CLASS_MEMORY_FLASH
-suffix:colon
-r_return
-l_string|&quot;FLASH memory&quot;
-suffix:semicolon
-r_case
-id|PCI_CLASS_MEMORY_OTHER
-suffix:colon
-r_return
-l_string|&quot;Memory&quot;
-suffix:semicolon
-r_case
-id|PCI_CLASS_BRIDGE_HOST
-suffix:colon
-r_return
-l_string|&quot;Host bridge&quot;
-suffix:semicolon
-r_case
-id|PCI_CLASS_BRIDGE_ISA
-suffix:colon
-r_return
-l_string|&quot;ISA bridge&quot;
-suffix:semicolon
-r_case
-id|PCI_CLASS_BRIDGE_EISA
-suffix:colon
-r_return
-l_string|&quot;EISA bridge&quot;
-suffix:semicolon
-r_case
-id|PCI_CLASS_BRIDGE_MC
-suffix:colon
-r_return
-l_string|&quot;MicroChannel bridge&quot;
-suffix:semicolon
-r_case
-id|PCI_CLASS_BRIDGE_PCI
-suffix:colon
-r_return
-l_string|&quot;PCI bridge&quot;
-suffix:semicolon
-r_case
-id|PCI_CLASS_BRIDGE_PCMCIA
-suffix:colon
-r_return
-l_string|&quot;PCMCIA bridge&quot;
-suffix:semicolon
-r_case
-id|PCI_CLASS_BRIDGE_NUBUS
-suffix:colon
-r_return
-l_string|&quot;NuBus bridge&quot;
-suffix:semicolon
-r_case
-id|PCI_CLASS_BRIDGE_CARDBUS
-suffix:colon
-r_return
-l_string|&quot;CardBus bridge&quot;
-suffix:semicolon
-r_case
-id|PCI_CLASS_BRIDGE_OTHER
-suffix:colon
-r_return
-l_string|&quot;Bridge&quot;
-suffix:semicolon
-r_case
-id|PCI_CLASS_COMMUNICATION_SERIAL
-suffix:colon
-r_return
-l_string|&quot;Serial controller&quot;
-suffix:semicolon
-r_case
-id|PCI_CLASS_COMMUNICATION_PARALLEL
-suffix:colon
-r_return
-l_string|&quot;Parallel controller&quot;
-suffix:semicolon
-r_case
-id|PCI_CLASS_COMMUNICATION_OTHER
-suffix:colon
-r_return
-l_string|&quot;Communication controller&quot;
-suffix:semicolon
-r_case
-id|PCI_CLASS_SYSTEM_PIC
-suffix:colon
-r_return
-l_string|&quot;PIC&quot;
-suffix:semicolon
-r_case
-id|PCI_CLASS_SYSTEM_DMA
-suffix:colon
-r_return
-l_string|&quot;DMA controller&quot;
-suffix:semicolon
-r_case
-id|PCI_CLASS_SYSTEM_TIMER
-suffix:colon
-r_return
-l_string|&quot;Timer&quot;
-suffix:semicolon
-r_case
-id|PCI_CLASS_SYSTEM_RTC
-suffix:colon
-r_return
-l_string|&quot;RTC&quot;
-suffix:semicolon
-r_case
-id|PCI_CLASS_SYSTEM_OTHER
-suffix:colon
-r_return
-l_string|&quot;System peripheral&quot;
-suffix:semicolon
-r_case
-id|PCI_CLASS_INPUT_KEYBOARD
-suffix:colon
-r_return
-l_string|&quot;Keyboard controller&quot;
-suffix:semicolon
-r_case
-id|PCI_CLASS_INPUT_PEN
-suffix:colon
-r_return
-l_string|&quot;Digitizer Pen&quot;
-suffix:semicolon
-r_case
-id|PCI_CLASS_INPUT_MOUSE
-suffix:colon
-r_return
-l_string|&quot;Mouse controller&quot;
-suffix:semicolon
-r_case
-id|PCI_CLASS_INPUT_OTHER
-suffix:colon
-r_return
-l_string|&quot;Input device controller&quot;
-suffix:semicolon
-r_case
-id|PCI_CLASS_DOCKING_GENERIC
-suffix:colon
-r_return
-l_string|&quot;Generic Docking Station&quot;
-suffix:semicolon
-r_case
-id|PCI_CLASS_DOCKING_OTHER
-suffix:colon
-r_return
-l_string|&quot;Docking Station&quot;
-suffix:semicolon
-r_case
-id|PCI_CLASS_PROCESSOR_386
-suffix:colon
-r_return
-l_string|&quot;386&quot;
-suffix:semicolon
-r_case
-id|PCI_CLASS_PROCESSOR_486
-suffix:colon
-r_return
-l_string|&quot;486&quot;
-suffix:semicolon
-r_case
-id|PCI_CLASS_PROCESSOR_PENTIUM
-suffix:colon
-r_return
-l_string|&quot;Pentium&quot;
-suffix:semicolon
-r_case
-id|PCI_CLASS_PROCESSOR_ALPHA
-suffix:colon
-r_return
-l_string|&quot;Alpha&quot;
-suffix:semicolon
-r_case
-id|PCI_CLASS_PROCESSOR_POWERPC
-suffix:colon
-r_return
-l_string|&quot;Power PC&quot;
-suffix:semicolon
-r_case
-id|PCI_CLASS_PROCESSOR_CO
-suffix:colon
-r_return
-l_string|&quot;Co-processor&quot;
-suffix:semicolon
-r_case
-id|PCI_CLASS_SERIAL_FIREWIRE
-suffix:colon
-r_return
-l_string|&quot;FireWire (IEEE 1394)&quot;
-suffix:semicolon
-r_case
-id|PCI_CLASS_SERIAL_ACCESS
-suffix:colon
-r_return
-l_string|&quot;ACCESS Bus&quot;
-suffix:semicolon
-r_case
-id|PCI_CLASS_SERIAL_SSA
-suffix:colon
-r_return
-l_string|&quot;SSA&quot;
-suffix:semicolon
-r_case
-id|PCI_CLASS_SERIAL_USB
-suffix:colon
-r_return
-l_string|&quot;USB Controller&quot;
-suffix:semicolon
-r_case
-id|PCI_CLASS_SERIAL_FIBER
-suffix:colon
-r_return
-l_string|&quot;Fiber Channel&quot;
-suffix:semicolon
-r_case
-id|PCI_CLASS_HOT_SWAP_CONTROLLER
-suffix:colon
-r_return
-l_string|&quot;Hot Swap Controller&quot;
-suffix:semicolon
-r_default
-suffix:colon
-r_return
-l_string|&quot;Unknown class&quot;
-suffix:semicolon
-)brace
-)brace
 multiline_comment|/*&n; * Convert some of the configuration space registers of the device at&n; * address (bus,devfn) into a string (possibly several lines each).&n; * The configuration string is stored starting at buf[len].  If the&n; * string would exceed the size of the buffer (SIZE), 0 is returned.&n; */
 DECL|function|sprint_dev_config
 r_static
@@ -1829,8 +1460,7 @@ r_int
 id|size
 )paren
 (brace
-r_int
-r_int
+id|u32
 id|class_rev
 suffix:semicolon
 r_int
@@ -1840,6 +1470,9 @@ comma
 id|min_gnt
 comma
 id|max_lat
+comma
+op_star
+r_class
 suffix:semicolon
 r_int
 id|reg
@@ -1928,6 +1561,21 @@ id|dev-&gt;devfn
 )paren
 )paren
 suffix:semicolon
+r_class
+op_assign
+id|pci_class_name
+c_func
+(paren
+id|class_rev
+op_rshift
+l_int|16
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+r_class
+)paren
 id|len
 op_add_assign
 id|sprintf
@@ -1937,15 +1585,38 @@ id|buf
 op_plus
 id|len
 comma
-l_string|&quot;    %s: %s (rev %d).&bslash;n&quot;
+l_string|&quot;    %s&quot;
 comma
-id|pci_strclass
+r_class
+)paren
+suffix:semicolon
+r_else
+id|len
+op_add_assign
+id|sprintf
 c_func
 (paren
+id|buf
+op_plus
+id|len
+comma
+l_string|&quot;    Class %04x&quot;
+comma
 id|class_rev
 op_rshift
-l_int|8
+l_int|16
 )paren
+suffix:semicolon
+id|len
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|buf
+op_plus
+id|len
+comma
+l_string|&quot;: %s (rev %d).&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma
