@@ -2178,7 +2178,7 @@ id|readpage
 )paren
 (paren
 r_struct
-id|file
+id|dentry
 op_star
 comma
 r_struct
@@ -2194,7 +2194,7 @@ id|writepage
 )paren
 (paren
 r_struct
-id|file
+id|dentry
 op_star
 comma
 r_struct
@@ -4052,7 +4052,7 @@ id|block_read_full_page
 c_func
 (paren
 r_struct
-id|file
+id|dentry
 op_star
 comma
 r_struct
@@ -4065,7 +4065,7 @@ r_int
 id|block_write_full_page
 (paren
 r_struct
-id|file
+id|dentry
 op_star
 comma
 r_struct

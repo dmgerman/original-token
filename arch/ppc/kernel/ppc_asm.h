@@ -1,4 +1,5 @@
 multiline_comment|/*&n; * arch/ppc/kernel/ppc_asm.h&n; *&n; * Definitions used by various bits of low-level assembly code on PowerPC.&n; *&n; * Copyright (C) 1995-1999 Gary Thomas, Paul Mackerras, Cort Dougan.&n; *&n; *  This program is free software; you can redistribute it and/or&n; *  modify it under the terms of the GNU General Public License&n; *  as published by the Free Software Foundation; either version&n; *  2 of the License, or (at your option) any later version.&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &quot;ppc_asm.tmpl&quot;
 macro_line|#include &quot;ppc_defs.h&quot;
 multiline_comment|/*&n; * Macros for storing registers into and loading registers from&n; * exception frames.&n; */
@@ -48,9 +49,11 @@ DECL|macro|REST_32FPRS
 mdefine_line|#define REST_32FPRS(n, base)&t;REST_16FPRS(n, base); REST_16FPRS(n+16, base)
 DECL|macro|SYNC
 mdefine_line|#define SYNC &bslash;&n;&t;sync; &bslash;&n;&t;isync
-multiline_comment|/* This instruction is not implemented on the PPC 603 or 601 */
+multiline_comment|/*&n; * This instruction is not implemented on the PPC 603 or 601; however, on&n; * the 403GCX and 405GP tlbia IS defined and tlbie is not.&n; */
+macro_line|#if !defined(CONFIG_4xx)
 DECL|macro|tlbia
-mdefine_line|#define tlbia &bslash;&n;&t;li&t;r4,128; &bslash;&n;&t;mtctr&t;r4; &bslash;&n;&t;lis&t;r4,KERNELBASE@h; &bslash;&n;0:&t;tlbie&t;r4; &bslash;&n;&t;addi&t;r4,r4,0x1000; &bslash;&n;&t;bdnz&t;0b
+mdefine_line|#define tlbia&t;&t;&t;&t;&t;&bslash;&n;&t;li&t;r4,128;&t;&t;&t;&t;&bslash;&n;&t;mtctr&t;r4;&t;&t;&t;&t;&bslash;&n;&t;lis&t;r4,KERNELBASE@h;&t;&t;&bslash;&n;0:&t;tlbie&t;r4;&t;&t;&t;&t;&bslash;&n;&t;addi&t;r4,r4,0x1000;&t;&t;&t;&bslash;&n;&t;bdnz&t;0b
+macro_line|#endif
 multiline_comment|/*&n; * On APUS (Amiga PowerPC cpu upgrade board), we don&squot;t know the&n; * physical base address of RAM at compile time.&n; */
 DECL|macro|tophys
 mdefine_line|#define tophys(rd,rs)&t;&t;&t;&t;&bslash;&n;0:&t;addis&t;rd,rs,-KERNELBASE@h;&t;&t;&bslash;&n;&t;.section &quot;.vtop_fixup&quot;,&quot;aw&quot;;&t;&t;&bslash;&n;&t;.align  1;&t;&t;&t;&t;&bslash;&n;&t;.long   0b;&t;&t;&t;&t;&bslash;&n;&t;.previous

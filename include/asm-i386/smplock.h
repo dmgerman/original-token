@@ -22,6 +22,22 @@ c_func
 r_void
 )paren
 (brace
+macro_line|#if 1
+r_if
+c_cond
+(paren
+op_logical_neg
+op_increment
+id|current-&gt;lock_depth
+)paren
+id|spin_lock
+c_func
+(paren
+op_amp
+id|kernel_flag
+)paren
+suffix:semicolon
+macro_line|#else
 id|__asm__
 id|__volatile__
 c_func
@@ -47,6 +63,7 @@ id|current-&gt;lock_depth
 )paren
 )paren
 suffix:semicolon
+macro_line|#endif
 )brace
 DECL|function|unlock_kernel
 r_extern
@@ -70,6 +87,23 @@ c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#if 1
+r_if
+c_cond
+(paren
+op_decrement
+id|current-&gt;lock_depth
+OL
+l_int|0
+)paren
+id|spin_unlock
+c_func
+(paren
+op_amp
+id|kernel_flag
+)paren
+suffix:semicolon
+macro_line|#else
 id|__asm__
 id|__volatile__
 c_func
@@ -95,5 +129,6 @@ id|current-&gt;lock_depth
 )paren
 )paren
 suffix:semicolon
+macro_line|#endif
 )brace
 eof

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * align.c - handle alignment exceptions for the Power PC.&n; *&n; * Paul Mackerras&t;August 1996.&n; * Copyright (C) 1996 Paul Mackerras&t;(paulus@cs.anu.edu.au).&n; */
+multiline_comment|/*&n; * align.c - handle alignment exceptions for the Power PC.&n; *&n; * Copyright (c) 1996 Paul Mackerras &lt;paulus@cs.anu.edu.au&gt;&n; * Copyright (c) 1998-1999 TiVo, Inc.&n; *   PowerPC 403GCX modifications.&n; * Copyright (c) 1999 Grant Erickson &lt;grant@lcse.umn.edu&gt;&n; *   PowerPC 403GCX/405GP modifications.&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;asm/ptrace.h&gt;
@@ -21,6 +21,16 @@ id|flags
 suffix:semicolon
 )brace
 suffix:semicolon
+macro_line|#if defined(CONFIG_4xx)
+DECL|macro|OPCD
+mdefine_line|#define&t;OPCD(inst)&t;(((inst) &amp; 0xFC000000) &gt;&gt; 26)
+DECL|macro|RS
+mdefine_line|#define&t;RS(inst)&t;(((inst) &amp; 0x03E00000) &gt;&gt; 21)
+DECL|macro|RA
+mdefine_line|#define&t;RA(inst)&t;(((inst) &amp; 0x001F0000) &gt;&gt; 16)
+DECL|macro|IS_DFORM
+mdefine_line|#define&t;IS_DFORM(code)&t;((code) &gt;= 32 &amp;&amp; (code) &lt;= 47)
+macro_line|#endif
 DECL|macro|INVALID
 mdefine_line|#define INVALID&t;{ 0, 0 }
 DECL|macro|LD
@@ -764,6 +774,17 @@ id|nb
 comma
 id|flags
 suffix:semicolon
+macro_line|#if defined(CONFIG_4xx)
+r_int
+id|opcode
+comma
+id|f1
+comma
+id|f2
+comma
+id|f3
+suffix:semicolon
+macro_line|#endif
 r_int
 id|i
 comma
@@ -800,6 +821,149 @@ suffix:semicolon
 )brace
 id|data
 suffix:semicolon
+macro_line|#if defined(CONFIG_4xx)
+multiline_comment|/* The 4xx-family processors have no DSISR register,&n;&t; * so we emulate it.&n;&t; */
+id|instr
+op_assign
+op_star
+(paren
+(paren
+r_int
+r_int
+op_star
+)paren
+id|regs-&gt;nip
+)paren
+suffix:semicolon
+id|opcode
+op_assign
+id|OPCD
+c_func
+(paren
+id|instr
+)paren
+suffix:semicolon
+id|reg
+op_assign
+id|RS
+c_func
+(paren
+id|instr
+)paren
+suffix:semicolon
+id|areg
+op_assign
+id|RA
+c_func
+(paren
+id|instr
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|IS_DFORM
+c_func
+(paren
+id|opcode
+)paren
+)paren
+(brace
+id|f1
+op_assign
+l_int|0
+suffix:semicolon
+id|f2
+op_assign
+(paren
+id|instr
+op_amp
+l_int|0x04000000
+)paren
+op_rshift
+l_int|26
+suffix:semicolon
+id|f3
+op_assign
+(paren
+id|instr
+op_amp
+l_int|0x78000000
+)paren
+op_rshift
+l_int|27
+suffix:semicolon
+)brace
+r_else
+(brace
+id|f1
+op_assign
+(paren
+id|instr
+op_amp
+l_int|0x00000006
+)paren
+op_rshift
+l_int|1
+suffix:semicolon
+id|f2
+op_assign
+(paren
+id|instr
+op_amp
+l_int|0x00000040
+)paren
+op_rshift
+l_int|6
+suffix:semicolon
+id|f3
+op_assign
+(paren
+id|instr
+op_amp
+l_int|0x00000780
+)paren
+op_rshift
+l_int|7
+suffix:semicolon
+)brace
+id|instr
+op_assign
+(paren
+(paren
+id|f1
+op_lshift
+l_int|5
+)paren
+op_or
+(paren
+id|f2
+op_lshift
+l_int|4
+)paren
+op_or
+id|f3
+)paren
+suffix:semicolon
+macro_line|#else
+id|reg
+op_assign
+(paren
+id|regs-&gt;dsisr
+op_rshift
+l_int|5
+)paren
+op_amp
+l_int|0x1f
+suffix:semicolon
+multiline_comment|/* source/dest register */
+id|areg
+op_assign
+id|regs-&gt;dsisr
+op_amp
+l_int|0x1f
+suffix:semicolon
+multiline_comment|/* register to update */
 id|instr
 op_assign
 (paren
@@ -810,6 +974,7 @@ l_int|10
 op_amp
 l_int|0x7f
 suffix:semicolon
+macro_line|#endif
 id|nb
 op_assign
 id|aligninfo
@@ -839,6 +1004,7 @@ id|instr
 dot
 id|flags
 suffix:semicolon
+multiline_comment|/* For the 4xx-family processors, the &squot;dar&squot; field of the&n;&t; * pt_regs structure is overloaded and is really from the DEAR.&n;&t; */
 id|addr
 op_assign
 (paren
@@ -848,17 +1014,6 @@ op_star
 )paren
 id|regs-&gt;dar
 suffix:semicolon
-id|reg
-op_assign
-(paren
-id|regs-&gt;dsisr
-op_rshift
-l_int|5
-)paren
-op_amp
-l_int|0x1f
-suffix:semicolon
-multiline_comment|/* source/dest register */
 multiline_comment|/* Verify the address of the operand */
 r_if
 c_cond
@@ -1427,13 +1582,6 @@ op_amp
 id|U
 )paren
 (brace
-id|areg
-op_assign
-id|regs-&gt;dsisr
-op_amp
-l_int|0x1f
-suffix:semicolon
-multiline_comment|/* register to update */
 id|regs-&gt;gpr
 (braket
 id|areg

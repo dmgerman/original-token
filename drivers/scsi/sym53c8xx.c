@@ -525,6 +525,8 @@ macro_line|#if LINUX_VERSION_CODE &gt;= LinuxVersionCode(2,1,93)
 DECL|variable|sym53c8xx_lock
 id|spinlock_t
 id|sym53c8xx_lock
+op_assign
+id|SPIN_LOCK_UNLOCKED
 suffix:semicolon
 DECL|macro|NCR_LOCK_DRIVER
 mdefine_line|#define&t;NCR_LOCK_DRIVER(flags)     spin_lock_irqsave(&amp;sym53c8xx_lock, flags)

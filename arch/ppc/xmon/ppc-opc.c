@@ -2192,11 +2192,9 @@ r_int
 DECL|function|valid_bo
 id|valid_bo
 (paren
-id|value
-)paren
 r_int
 id|value
-suffix:semicolon
+)paren
 (brace
 multiline_comment|/* Certain encodings have bits that are required to be zero.  These&n;     are (z must be zero, y may be anything):&n;         001zy&n;&t; 011zy&n;&t; 1z00y&n;&t; 1z01y&n;&t; 1z1zz&n;     */
 r_switch

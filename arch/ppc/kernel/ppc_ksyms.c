@@ -308,7 +308,7 @@ id|kernel_flag
 )paren
 suffix:semicolon
 macro_line|#endif /* __SMP__ */
-macro_line|#ifndef CONFIG_8xx
+macro_line|#if !defined(CONFIG_4xx) &amp;&amp; !defined(CONFIG_8xx)
 DECL|variable|isa_io_base
 id|EXPORT_SYMBOL
 c_func
@@ -995,14 +995,7 @@ id|pmu_enable_irled
 )paren
 suffix:semicolon
 macro_line|#endif CONFIG_PMAC_PBOOK
-DECL|variable|abort
-id|EXPORT_SYMBOL
-c_func
-(paren
-m_abort
-)paren
-suffix:semicolon
-macro_line|#ifndef CONFIG_8xx
+macro_line|#if defined(CONFIG_PMAC) || defined(CONFIG_ALL_PPC)
 DECL|variable|find_devices
 id|EXPORT_SYMBOL
 c_func
@@ -1080,8 +1073,15 @@ c_func
 id|feature_test
 )paren
 suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_SCSI
+DECL|variable|device_is_compatible
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|device_is_compatible
+)paren
+suffix:semicolon
+macro_line|#endif /* defined(CONFIG_PMAC) || defined(CONFIG_ALL_PPC) */
+macro_line|#if defined(CONFIG_SCSI) &amp;&amp; (defined(CONFIG_PMAC) || defined(CONFIG_ALL_PPC))
 DECL|variable|note_scsi_host
 id|EXPORT_SYMBOL
 c_func
@@ -1169,15 +1169,6 @@ c_func
 id|abs
 )paren
 suffix:semicolon
-macro_line|#ifndef CONFIG_8xx
-DECL|variable|device_is_compatible
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|device_is_compatible
-)paren
-suffix:semicolon
-macro_line|#endif
 macro_line|#ifdef CONFIG_VT
 DECL|variable|screen_info
 id|EXPORT_SYMBOL
@@ -1194,6 +1185,7 @@ c_func
 id|int_control
 )paren
 suffix:semicolon
+macro_line|#if !defined(CONFIG_4xx)
 DECL|variable|timer_interrupt_intercept
 id|EXPORT_SYMBOL
 c_func
@@ -1208,6 +1200,7 @@ c_func
 id|timer_interrupt
 )paren
 suffix:semicolon
+macro_line|#endif
 r_extern
 r_int
 r_int

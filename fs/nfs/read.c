@@ -841,9 +841,9 @@ id|nfs_readpage
 c_func
 (paren
 r_struct
-id|file
+id|dentry
 op_star
-id|file
+id|dentry
 comma
 r_struct
 id|page
@@ -851,13 +851,6 @@ op_star
 id|page
 )paren
 (brace
-r_struct
-id|dentry
-op_star
-id|dentry
-op_assign
-id|file-&gt;f_dentry
-suffix:semicolon
 r_struct
 id|inode
 op_star

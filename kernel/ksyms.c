@@ -1076,6 +1076,20 @@ c_func
 id|__find_lock_page
 )paren
 suffix:semicolon
+DECL|variable|grab_cache_page
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|grab_cache_page
+)paren
+suffix:semicolon
+DECL|variable|read_cache_page
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|read_cache_page
+)paren
+suffix:semicolon
 macro_line|#if !defined(CONFIG_NFSD) &amp;&amp; defined(CONFIG_NFSD_MODULE)
 DECL|variable|do_nfsservctl
 id|EXPORT_SYMBOL

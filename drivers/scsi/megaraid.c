@@ -387,6 +387,8 @@ r_volatile
 r_static
 id|spinlock_t
 id|serial_lock
+op_assign
+id|SPIN_LOCK_UNLOCKED
 suffix:semicolon
 macro_line|#endif
 DECL|variable|mega_lock
@@ -394,6 +396,8 @@ r_volatile
 r_static
 id|spinlock_t
 id|mega_lock
+op_assign
+id|SPIN_LOCK_UNLOCKED
 suffix:semicolon
 macro_line|#if SERDEBUG
 DECL|variable|strbuf

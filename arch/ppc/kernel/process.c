@@ -710,9 +710,23 @@ c_func
 id|prev
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t; * The 750 doesn&squot;t broadcast invalidates with tlbie&squot;s&n;&t; * so flush every processor switch.&n;&t; *  -- Cort&n;&t; */
 r_if
 c_cond
 (paren
+(paren
+(paren
+id|_get_PVR
+c_func
+(paren
+)paren
+op_rshift
+l_int|16
+)paren
+op_eq
+l_int|8
+)paren
+op_logical_and
 (paren
 r_new
 op_member_access_from_pointer

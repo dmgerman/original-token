@@ -3391,6 +3391,8 @@ suffix:semicolon
 DECL|variable|tqueue_lock
 id|spinlock_t
 id|tqueue_lock
+op_assign
+id|SPIN_LOCK_UNLOCKED
 suffix:semicolon
 DECL|function|tqueue_bh
 r_void

@@ -522,6 +522,8 @@ macro_line|#if 0&t;/* not yet needed */
 r_static
 id|spinlock_t
 id|driver_lock
+op_assign
+id|SPIN_LOCK_UNLOCKED
 suffix:semicolon
 mdefine_line|#define&t;NCR_LOCK_DRIVER(flags)     spin_lock_irqsave(&amp;driver_lock, flags)
 mdefine_line|#define&t;NCR_UNLOCK_DRIVER(flags)   spin_unlock_irqrestore(&amp;driver_lock, flags)

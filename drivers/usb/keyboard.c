@@ -870,7 +870,7 @@ l_int|0
 suffix:semicolon
 id|kbd-&gt;irqpipe
 op_assign
-id|usb_rcvctrlpipe
+id|usb_rcvintpipe
 c_func
 (paren
 id|dev

@@ -141,7 +141,7 @@ r_int
 r_int
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * The error_code parameter is DSISR for a data fault, SRR1 for&n; * an instruction fault.&n; */
+multiline_comment|/*&n; * For 600- and 800-family processors, the error_code parameter is DSISR&n; * for a data fault, SRR1 for an instruction fault. For 400-family processors&n; * the error_code parameter is ESR for a data fault, 0 for an instruction&n; * fault.&n; */
 DECL|function|do_page_fault
 r_void
 id|do_page_fault
@@ -173,7 +173,23 @@ id|mm
 op_assign
 id|current-&gt;mm
 suffix:semicolon
-multiline_comment|/*printk(&quot;address: %08lx nip:%08lx code: %08lx %s%s%s%s%s%s&bslash;n&quot;,&n;&t;       address,regs-&gt;nip,error_code,&n;&t;       (error_code&amp;0x40000000)?&quot;604 tlb&amp;htab miss &quot;:&quot;&quot;,&n;&t;       (error_code&amp;0x20000000)?&quot;603 tlbmiss &quot;:&quot;&quot;,&n;&t;       (error_code&amp;0x02000000)?&quot;write &quot;:&quot;&quot;,&n;&t;       (error_code&amp;0x08000000)?&quot;prot &quot;:&quot;&quot;,&n;&t;       (error_code&amp;0x80000000)?&quot;I/O &quot;:&quot;&quot;,&n;&t;       (regs-&gt;trap == 0x400)?&quot;instr&quot;:&quot;data&quot;&n;&t;       );*/
+macro_line|#if defined(CONFIG_4xx)
+r_int
+id|is_write
+op_assign
+id|error_code
+op_amp
+id|ESR_DST
+suffix:semicolon
+macro_line|#else
+r_int
+id|is_write
+op_assign
+id|error_code
+op_amp
+l_int|0x02000000
+suffix:semicolon
+macro_line|#endif /* CONFIG_4xx */
 macro_line|#if defined(CONFIG_XMON) || defined(CONFIG_KGDB)
 r_if
 c_cond
@@ -194,6 +210,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+macro_line|#if !defined(CONFIG_4xx)
 r_if
 c_cond
 (paren
@@ -215,7 +232,8 @@ id|regs
 r_return
 suffix:semicolon
 )brace
-macro_line|#endif
+macro_line|#endif /* !CONFIG_4xx */
+macro_line|#endif /* CONFIG_XMON || CONFIG_KGDB */
 r_if
 c_cond
 (paren
@@ -344,7 +362,7 @@ id|bad_area
 suffix:semicolon
 id|good_area
 suffix:colon
-macro_line|#ifdef CONFIG_6xx
+macro_line|#if defined(CONFIG_6xx)
 r_if
 c_cond
 (paren
@@ -354,7 +372,7 @@ l_int|0x95700000
 )paren
 multiline_comment|/* an error such as lwarx to I/O controller space,&n;&t;&t;   address matching DABR, eciwx, etc. */
 macro_line|#endif /* CONFIG_6xx */
-macro_line|#ifdef CONFIG_8xx
+macro_line|#if defined(CONFIG_8xx)
 multiline_comment|/* The MPC8xx seems to always set 0x80000000, which is&n;         * &quot;undefined&quot;.  Of those that can be set, this is the only&n;         * one which seems bad.&n;         */
 r_if
 c_cond
@@ -372,9 +390,7 @@ multiline_comment|/* a write */
 r_if
 c_cond
 (paren
-id|error_code
-op_amp
-l_int|0x02000000
+id|is_write
 )paren
 (brace
 r_if
@@ -436,9 +452,7 @@ id|vma
 comma
 id|address
 comma
-id|error_code
-op_amp
-l_int|0x02000000
+id|is_write
 )paren
 )paren
 r_goto

@@ -24,6 +24,7 @@ macro_line|#include &lt;asm/8xx_immap.h&gt;
 macro_line|#endif
 macro_line|#include &lt;asm/bootx.h&gt;
 macro_line|#include &lt;asm/machdep.h&gt;
+macro_line|#include &quot;oak_setup.h&quot;
 r_extern
 r_void
 id|pmac_init
@@ -185,13 +186,6 @@ id|boot_infos_t
 op_star
 id|boot_infos
 suffix:semicolon
-r_extern
-r_char
-id|cmd_line
-(braket
-l_int|512
-)braket
-suffix:semicolon
 DECL|variable|saved_command_line
 r_char
 id|saved_command_line
@@ -213,6 +207,13 @@ DECL|variable|ppc_ide_md
 r_struct
 id|ide_machdep_calls
 id|ppc_ide_md
+suffix:semicolon
+r_int
+id|parse_bootinfo
+c_func
+(paren
+r_void
+)paren
 suffix:semicolon
 DECL|variable|ISA_DMA_THRESHOLD
 r_int
@@ -248,13 +249,6 @@ r_int
 id|SYSRQ_KEY
 suffix:semicolon
 macro_line|#endif /* CONFIG_MAGIC_SYSRQ */
-multiline_comment|/* For MTX/MVME boards.. with Raven/Falcon Chipset&n;      Real close to CHRP, but boot like PReP (via PPCbug)&n;      There&squot;s probably a nicer way to do this.. --Troy */
-DECL|variable|is_powerplus
-r_int
-id|is_powerplus
-op_assign
-l_int|0
-suffix:semicolon
 DECL|variable|ppc_md
 r_struct
 id|machdep_calls
@@ -586,6 +580,12 @@ r_int
 r_int
 id|i
 suffix:semicolon
+r_int
+r_int
+id|maj
+comma
+id|min
+suffix:semicolon
 macro_line|#ifdef __SMP__
 DECL|macro|CPU_PRESENT
 mdefine_line|#define CPU_PRESENT(x) (cpu_callin_map[(x)])
@@ -666,7 +666,7 @@ id|len
 op_plus
 id|buffer
 comma
-l_string|&quot;cpu&bslash;t&bslash;t: &quot;
+l_string|&quot;cpu&bslash;t&bslash;t:  &quot;
 )paren
 suffix:semicolon
 r_switch
@@ -890,7 +890,7 @@ id|len
 op_plus
 id|buffer
 comma
-l_string|&quot;unknown (%lu)&bslash;n&quot;
+l_string|&quot;unknown (%lx)&bslash;n&quot;
 comma
 id|GET_PVR
 op_rshift
@@ -1051,19 +1051,11 @@ id|len
 op_plus
 id|buffer
 comma
-l_string|&quot;revision&bslash;t: %ld.%ld&bslash;n&quot;
+l_string|&quot;revision&bslash;t: %hd.%hd&bslash;n&quot;
 comma
-(paren
-id|GET_PVR
-op_amp
-l_int|0xff00
-)paren
-op_rshift
-l_int|8
+id|maj
 comma
-id|GET_PVR
-op_amp
-l_int|0xff
+id|min
 )paren
 suffix:semicolon
 id|len
@@ -1317,7 +1309,27 @@ r_int
 id|r7
 )paren
 (brace
-macro_line|#ifndef CONFIG_8xx
+id|int_control.int_sti
+op_assign
+id|__no_use_sti
+suffix:semicolon
+id|int_control.int_cli
+op_assign
+id|__no_use_cli
+suffix:semicolon
+id|int_control.int_save_flags
+op_assign
+id|__no_use_save_flags
+suffix:semicolon
+id|int_control.int_restore_flags
+op_assign
+id|__no_use_restore_flags
+suffix:semicolon
+id|parse_bootinfo
+c_func
+(paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1333,7 +1345,17 @@ comma
 l_int|0x100
 )paren
 suffix:semicolon
+macro_line|#if !defined(CONFIG_4xx) &amp;&amp; !defined(CONFIG_8xx)
 macro_line|#ifndef CONFIG_MACH_SPECIFIC
+multiline_comment|/* if we didn&squot;t get any bootinfo telling us what we are... */
+r_if
+c_cond
+(paren
+id|_machine
+op_eq
+l_int|0
+)paren
+(brace
 multiline_comment|/* boot loader will tell us if we&squot;re APUS */
 r_if
 c_cond
@@ -1499,6 +1521,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
+)brace
 )brace
 macro_line|#endif /* CONFIG_MACH_SPECIFIC */
 r_if
@@ -1755,22 +1778,6 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
-id|int_control.int_sti
-op_assign
-id|__no_use_sti
-suffix:semicolon
-id|int_control.int_cli
-op_assign
-id|__no_use_cli
-suffix:semicolon
-id|int_control.int_save_flags
-op_assign
-id|__no_use_save_flags
-suffix:semicolon
-id|int_control.int_restore_flags
-op_assign
-id|__no_use_restore_flags
-suffix:semicolon
 r_switch
 c_cond
 (paren
@@ -1875,7 +1882,7 @@ id|r7
 suffix:semicolon
 r_break
 suffix:semicolon
-macro_line|#endif&t;&t;
+macro_line|#endif
 r_default
 suffix:colon
 id|printk
@@ -1907,23 +1914,23 @@ op_assign
 l_int|1
 suffix:semicolon
 )brace
-macro_line|#else /* CONFIG_8xx */
-id|int_control.int_sti
-op_assign
-id|__no_use_sti
+macro_line|#else
+macro_line|#if defined(CONFIG_4xx)
+id|oak_init
+c_func
+(paren
+id|r3
+comma
+id|r4
+comma
+id|r5
+comma
+id|r6
+comma
+id|r7
+)paren
 suffix:semicolon
-id|int_control.int_cli
-op_assign
-id|__no_use_cli
-suffix:semicolon
-id|int_control.int_save_flags
-op_assign
-id|__no_use_save_flags
-suffix:semicolon
-id|int_control.int_restore_flags
-op_assign
-id|__no_use_restore_flags
-suffix:semicolon
+macro_line|#elif defined(CONFIG_8xx)
 id|m8xx_init
 c_func
 (paren
@@ -1938,7 +1945,10 @@ comma
 id|r7
 )paren
 suffix:semicolon
-macro_line|#endif
+macro_line|#else
+macro_line|#error &quot;No board type has been defined for identify_machine()!&quot;
+macro_line|#endif /* CONFIG_4xx */
+macro_line|#endif /* !CONFIG_4xx &amp;&amp; !CONFIG_8xx */
 multiline_comment|/* Look for mem= option on command line */
 r_if
 c_cond
@@ -2100,6 +2110,186 @@ comma
 l_int|0x200
 )paren
 suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+DECL|function|parse_bootinfo
+r_int
+id|parse_bootinfo
+c_func
+(paren
+r_void
+)paren
+(brace
+r_struct
+id|bi_record
+op_star
+id|rec
+suffix:semicolon
+r_extern
+r_char
+id|_end
+(braket
+)braket
+suffix:semicolon
+id|rec
+op_assign
+(paren
+r_struct
+id|bi_record
+op_star
+)paren
+id|PAGE_ALIGN
+c_func
+(paren
+(paren
+id|ulong
+)paren
+id|_end
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|rec-&gt;tag
+op_ne
+id|BI_FIRST
+)paren
+(brace
+multiline_comment|/*&n;&t;&t; * This 0x10000 offset is a terrible hack but it will go away when&n;&t;&t; * we have the bootloader handle all the relocation and&n;&t;&t; * prom calls -- Cort&n;&t;&t; */
+id|rec
+op_assign
+(paren
+r_struct
+id|bi_record
+op_star
+)paren
+id|PAGE_ALIGN
+c_func
+(paren
+(paren
+id|ulong
+)paren
+id|_end
+op_plus
+l_int|0x10000
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|rec-&gt;tag
+op_ne
+id|BI_FIRST
+)paren
+r_return
+op_minus
+l_int|1
+suffix:semicolon
+)brace
+r_for
+c_loop
+(paren
+suffix:semicolon
+id|rec-&gt;tag
+op_ne
+id|BI_LAST
+suffix:semicolon
+id|rec
+op_assign
+(paren
+r_struct
+id|bi_record
+op_star
+)paren
+(paren
+(paren
+id|ulong
+)paren
+id|rec
+op_plus
+id|rec-&gt;size
+)paren
+)paren
+(brace
+id|ulong
+op_star
+id|data
+op_assign
+id|rec-&gt;data
+suffix:semicolon
+r_switch
+c_cond
+(paren
+id|rec-&gt;tag
+)paren
+(brace
+r_case
+id|BI_CMD_LINE
+suffix:colon
+id|memcpy
+c_func
+(paren
+id|cmd_line
+comma
+(paren
+r_void
+op_star
+)paren
+id|data
+comma
+id|rec-&gt;size
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+macro_line|#ifdef CONFIG_BLK_DEV_INITRD
+r_case
+id|BI_INITRD
+suffix:colon
+id|initrd_start
+op_assign
+id|data
+(braket
+l_int|0
+)braket
+suffix:semicolon
+id|initrd_end
+op_assign
+id|data
+(braket
+l_int|0
+)braket
+op_plus
+id|rec-&gt;size
+suffix:semicolon
+r_break
+suffix:semicolon
+macro_line|#endif /* CONFIG_BLK_DEV_INITRD */
+macro_line|#ifndef CONFIG_MACH_SPECIFIC
+r_case
+id|BI_MACHTYPE
+suffix:colon
+id|_machine
+op_assign
+id|data
+(braket
+l_int|0
+)braket
+suffix:semicolon
+id|have_of
+op_assign
+id|data
+(braket
+l_int|1
+)braket
+suffix:semicolon
+r_break
+suffix:semicolon
+macro_line|#endif /* CONFIG_MACH_SPECIFIC */
+)brace
+)brace
 r_return
 l_int|0
 suffix:semicolon

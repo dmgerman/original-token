@@ -957,7 +957,7 @@ l_int|31
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/* Note: these symbols include _ because they overlap with special register names */
+multiline_comment|/* Note: these symbols include _ because they overlap with special&n;&t; * register names&n;&t; */
 id|DEFINE
 c_func
 (paren
@@ -1074,6 +1074,39 @@ id|DEFINE
 c_func
 (paren
 id|_DSISR
+comma
+id|STACK_FRAME_OVERHEAD
+op_plus
+m_offsetof
+(paren
+r_struct
+id|pt_regs
+comma
+id|dsisr
+)paren
+)paren
+suffix:semicolon
+multiline_comment|/* The PowerPC 400-class processors have neither the DAR nor the DSISR&n;&t; * SPRs. Hence, we overload them to hold the similar DEAR and ESR SPRs&n;&t; * for such processors.&n;&t; */
+id|DEFINE
+c_func
+(paren
+id|_DEAR
+comma
+id|STACK_FRAME_OVERHEAD
+op_plus
+m_offsetof
+(paren
+r_struct
+id|pt_regs
+comma
+id|dar
+)paren
+)paren
+suffix:semicolon
+id|DEFINE
+c_func
+(paren
+id|_ESR
 comma
 id|STACK_FRAME_OVERHEAD
 op_plus

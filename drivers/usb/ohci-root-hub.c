@@ -868,8 +868,13 @@ suffix:colon
 multiline_comment|/* string descriptors */
 r_default
 suffix:colon
-(brace
-)brace
+id|OK
+c_func
+(paren
+op_minus
+l_int|4
+)paren
+suffix:semicolon
 )brace
 r_break
 suffix:semicolon
@@ -1112,6 +1117,15 @@ c_func
 l_int|0
 )paren
 suffix:semicolon
+r_default
+suffix:colon
+id|OK
+c_func
+(paren
+op_minus
+l_int|4
+)paren
+suffix:semicolon
 )brace
 id|OHCI_DEBUG
 c_func
@@ -1158,7 +1172,7 @@ l_int|1
 suffix:semicolon
 )paren
 r_return
-id|req_reply
+id|len
 suffix:semicolon
 )brace
 multiline_comment|/* prepare Interrupt pipe transaction data; HUB INTERRUPT ENDPOINT */

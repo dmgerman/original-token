@@ -1112,15 +1112,6 @@ comma
 op_star
 id|d
 suffix:semicolon
-macro_line|#ifdef CONFIG_GEMINI
-id|gemini_prom_init
-c_func
-(paren
-)paren
-suffix:semicolon
-r_return
-suffix:semicolon
-macro_line|#endif /* CONFIG_GEMINI */
 multiline_comment|/* check if we&squot;re apus, return if we are */
 r_if
 c_cond

@@ -1,4 +1,5 @@
 multiline_comment|/*&n; *&t;linux/arch/alpha/kernel/sys_nautilus.c&n; *&n; *&t;Copyright (C) 1995 David A Rusling&n; *&t;Copyright (C) 1998 Richard Henderson&n; *&t;Copyright (C) 1999 Alpha Processor, Inc.,&n; *&t;&t;(David Daniel, Stig Telfer, Soohoon Lee)&n; *&n; * Code supporting NAUTILUS systems.&n; *&n; *&n; * NAUTILUS has the following I/O features:&n; *&n; * a) Driven by AMD 751 aka IRONGATE (northbridge):&n; *     4 PCI slots&n; *     1 AGP slot&n; *&n; * b) Driven by ALI M1543C (southbridge)&n; *     2 ISA slots&n; *     2 IDE connectors&n; *     1 dual drive capable FDD controller&n; *     2 serial ports&n; *     1 ECP/EPP/SP parallel port&n; *     2 USB ports&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;

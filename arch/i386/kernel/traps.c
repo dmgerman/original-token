@@ -781,6 +781,8 @@ suffix:semicolon
 DECL|variable|die_lock
 id|spinlock_t
 id|die_lock
+op_assign
+id|SPIN_LOCK_UNLOCKED
 suffix:semicolon
 DECL|function|die
 r_void

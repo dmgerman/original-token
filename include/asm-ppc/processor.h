@@ -373,14 +373,6 @@ r_extern
 r_int
 id|have_of
 suffix:semicolon
-r_extern
-r_int
-id|is_chrp
-suffix:semicolon
-r_extern
-r_int
-id|is_powerplus
-suffix:semicolon
 macro_line|#endif /* CONFIG_MACH_SPECIFIC */
 multiline_comment|/* what kind of prep workstation we are */
 r_extern

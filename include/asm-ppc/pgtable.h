@@ -518,7 +518,7 @@ l_int|1
 suffix:semicolon
 )brace
 DECL|macro|pgd_clear
-mdefine_line|#define pgd_clear(xp)&t;do { pgd_val(*(xp)) = 0; } while (0)
+mdefine_line|#define pgd_clear(xp) &t;&t;&t;&t;do { } while(0)
 DECL|macro|pgd_page
 mdefine_line|#define pgd_page(pgd) &bslash;&n;&t;((unsigned long) __va(pgd_val(pgd) &amp; PAGE_MASK))
 multiline_comment|/*&n; * The following only work if pte_present() is true.&n; * Undefined behaviour if not..&n; */

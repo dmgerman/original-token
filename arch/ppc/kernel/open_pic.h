@@ -23,5 +23,13 @@ op_star
 id|regs
 )paren
 suffix:semicolon
+r_void
+id|openpic_enable_IPI
+c_func
+(paren
+id|u_int
+id|ipi
+)paren
+suffix:semicolon
 macro_line|#endif /* _PPC_KERNEL_OPEN_PIC_H */
 eof

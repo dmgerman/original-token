@@ -89,7 +89,7 @@ id|neigh_tables
 suffix:semicolon
 macro_line|#if defined(__i386__) &amp;&amp; defined(__SMP__)
 DECL|macro|ASSERT_WL
-mdefine_line|#define ASSERT_WL(n) if ((int)((n)-&gt;lock.lock) &gt;= 0) { printk(&quot;WL assertion failed at &quot; __FILE__ &quot;(%d):&quot; __FUNCTION__ &quot;&bslash;n&quot;, __LINE__); }
+mdefine_line|#define ASSERT_WL(n) if ((int)((n)-&gt;lock.lock) &gt; 0) { printk(&quot;WL assertion failed at &quot; __FILE__ &quot;(%d):&quot; __FUNCTION__ &quot;&bslash;n&quot;, __LINE__); }
 macro_line|#else
 DECL|macro|ASSERT_WL
 mdefine_line|#define ASSERT_WL(n) do { } while(0)
@@ -3728,6 +3728,10 @@ r_struct
 id|hh_cache
 )paren
 )paren
+suffix:semicolon
+id|hh-&gt;hh_lock
+op_assign
+id|RW_LOCK_UNLOCKED
 suffix:semicolon
 id|hh-&gt;hh_type
 op_assign

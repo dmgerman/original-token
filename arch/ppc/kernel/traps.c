@@ -527,6 +527,7 @@ id|regs
 )paren
 suffix:semicolon
 )brace
+macro_line|#if defined(CONFIG_ALTIVEC)
 r_void
 DECL|function|AltiVecUnavailable
 id|AltiVecUnavailable
@@ -623,6 +624,7 @@ op_or_assign
 id|MSR_VEC
 suffix:semicolon
 )brace
+macro_line|#endif /* CONFIG_ALTIVEC */
 r_void
 DECL|function|UnknownException
 id|UnknownException
@@ -719,6 +721,63 @@ op_star
 id|regs
 )paren
 (brace
+macro_line|#if defined(CONFIG_4xx)
+r_int
+r_int
+id|instr
+suffix:semicolon
+r_int
+r_int
+id|esr
+op_assign
+id|mfspr
+c_func
+(paren
+id|SPRN_ESR
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|esr
+op_amp
+id|ESR_PTR
+)paren
+(brace
+macro_line|#if defined(CONFIG_XMON) || defined(CONFIG_KGDB)
+r_if
+c_cond
+(paren
+id|debugger_bpt
+c_func
+(paren
+id|regs
+)paren
+)paren
+r_return
+suffix:semicolon
+macro_line|#endif
+id|_exception
+c_func
+(paren
+id|SIGTRAP
+comma
+id|regs
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
+id|_exception
+c_func
+(paren
+id|SIGILL
+comma
+id|regs
+)paren
+suffix:semicolon
+)brace
+macro_line|#else
 r_if
 c_cond
 (paren
@@ -780,6 +839,7 @@ id|regs
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
 )brace
 r_void
 DECL|function|SingleStepException

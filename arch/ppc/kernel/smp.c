@@ -25,6 +25,7 @@ macro_line|#include &lt;asm/prom.h&gt;
 macro_line|#include &lt;asm/smp.h&gt;
 macro_line|#include &lt;asm/gemini.h&gt;
 macro_line|#include &quot;time.h&quot;
+macro_line|#include &quot;open_pic.h&quot;
 DECL|variable|smp_threads_ready
 r_int
 id|smp_threads_ready
@@ -1088,6 +1089,10 @@ c_cond
 l_int|4
 suffix:colon
 id|cpu_nr
+suffix:semicolon
+id|cpu_nr
+op_assign
+l_int|2
 suffix:semicolon
 r_break
 suffix:semicolon

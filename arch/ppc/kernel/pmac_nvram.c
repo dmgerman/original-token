@@ -256,6 +256,7 @@ id|nvram_naddrs
 suffix:semicolon
 )brace
 )brace
+id|__openfirmware
 DECL|function|nvram_read_byte
 r_int
 r_char
@@ -380,6 +381,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+id|__openfirmware
 DECL|function|nvram_write_byte
 r_void
 id|nvram_write_byte

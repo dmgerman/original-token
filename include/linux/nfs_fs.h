@@ -744,7 +744,7 @@ id|nfs_writepage
 c_func
 (paren
 r_struct
-id|file
+id|dentry
 op_star
 comma
 r_struct
@@ -839,7 +839,7 @@ id|nfs_readpage
 c_func
 (paren
 r_struct
-id|file
+id|dentry
 op_star
 comma
 r_struct

@@ -602,6 +602,13 @@ c_func
 id|csum_partial_copy
 )paren
 suffix:semicolon
+DECL|variable|csum_partial_copy_nocheck
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|csum_partial_copy_nocheck
+)paren
+suffix:semicolon
 DECL|variable|csum_partial_copy_from_user
 id|EXPORT_SYMBOL
 c_func

@@ -1,11 +1,14 @@
 multiline_comment|/*&n; * sound/sb_card.c&n; *&n; * Detection routine for the Sound Blaster cards.&n; *&n; *&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
+multiline_comment|/* 26th Novemner 1999 - patched to compile without ISA PnP support in the&n;   kernel. -Daniel Stone (tamriel@ductape.net) */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#ifdef CONFIG_MCA
 macro_line|#include &lt;linux/mca.h&gt;
 macro_line|#endif
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#ifdef CONFIG_ISAPNP&t;&t;/* Patched so it will compile withOUT ISA PnP */
 macro_line|#include &lt;linux/isapnp.h&gt;
+macro_line|#endif
 macro_line|#include &quot;sound_config.h&quot;
 macro_line|#include &quot;soundmodule.h&quot;
 macro_line|#ifdef CONFIG_SBDSP
@@ -476,12 +479,21 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* Do acer notebook init */
+macro_line|#ifdef CONFIG_ISAPNP
+DECL|variable|isapnp
+r_int
+id|isapnp
+op_assign
+l_int|1
+suffix:semicolon
+macro_line|#else
 DECL|variable|isapnp
 r_int
 id|isapnp
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#endif
 id|MODULE_PARM
 c_func
 (paren
@@ -578,6 +590,7 @@ comma
 l_string|&quot;i&quot;
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_ISAPNP
 id|MODULE_PARM
 c_func
 (paren
@@ -586,6 +599,7 @@ comma
 l_string|&quot;i&quot;
 )paren
 suffix:semicolon
+macro_line|#endif
 DECL|variable|smw_free
 r_void
 op_star
@@ -593,6 +607,7 @@ id|smw_free
 op_assign
 l_int|NULL
 suffix:semicolon
+macro_line|#ifdef CONFIG_ISAPNP
 DECL|member|vendor
 DECL|member|function
 DECL|member|name
@@ -1102,6 +1117,7 @@ op_minus
 id|ENODEV
 suffix:semicolon
 )brace
+macro_line|#endif
 DECL|function|init_module
 r_int
 id|init_module
@@ -1137,14 +1153,7 @@ op_eq
 l_int|0
 )paren
 (brace
-r_if
-c_cond
-(paren
-id|isapnp
-op_eq
-l_int|1
-)paren
-(brace
+macro_line|#ifdef CONFIG_ISAPNP&t;&t;&t;
 r_if
 c_cond
 (paren
@@ -1173,9 +1182,8 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
+macro_line|#endif
 )brace
-r_else
-(brace
 r_if
 c_cond
 (paren
@@ -1223,7 +1231,6 @@ id|config.dma2
 op_assign
 id|dma16
 suffix:semicolon
-)brace
 id|config.card_subtype
 op_assign
 id|type
@@ -1306,7 +1313,6 @@ id|config_mpu
 )paren
 suffix:semicolon
 macro_line|#endif
-)brace
 id|SOUND_LOCK
 suffix:semicolon
 r_return

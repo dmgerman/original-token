@@ -1,5 +1,4 @@
 multiline_comment|/*&n; *&t;linux/arch/alpha/kernel/core_irongate.c&n; *&n; * Based on code written by David A. Rusling (david.rusling@reo.mts.dec.com).&n; *&n; *&t;Copyright (C) 1999 Alpha Processor, Inc.,&n; *&t;&t;(David Daniel, Stig Telfer, Soohoon Lee)&n; *&n; * Code common to all IRONGATE core logic chips.&n; */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
