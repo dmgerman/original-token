@@ -146,7 +146,9 @@ DECL|macro|MCDX_E
 mdefine_line|#define MCDX_E&t;&t;1&t;&t;&t;/* unspec error */
 DECL|macro|MCDX_EOM
 mdefine_line|#define MCDX_EOM&t;2&t;&t;&t;/* end of media */
+macro_line|#if 0
 macro_line|#ifndef I_WAS_HERE
 macro_line|#error Please edit this file first.
+macro_line|#endif
 macro_line|#endif
 eof

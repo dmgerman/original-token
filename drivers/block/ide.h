@@ -1,11 +1,8 @@
 multiline_comment|/*&n; *  linux/drivers/block/ide.h&n; *&n; *  Copyright (C) 1994, 1995  Linus Torvalds &amp; authors&n; */
 multiline_comment|/*&n; * This is the multiple IDE interface driver, as evolved from hd.c.  &n; * It supports up to four IDE interfaces, on one or more IRQs (usually 14 &amp; 15).&n; * There can be up to two drives per interface, as per the ATA-2 spec.&n; *&n; * Primary i/f:    ide0: major=3;  (hda)         minor=0; (hdb)         minor=64&n; * Secondary i/f:  ide1: major=22; (hdc or hd1a) minor=0; (hdd or hd1b) minor=64&n; * Tertiary i/f:   ide2: major=33; (hde)         minor=0; (hdf)         minor=64&n; * Quaternary i/f: ide3: major=34; (hdg)         minor=0; (hdh)         minor=64&n; */
-multiline_comment|/******************************************************************************&n; * IDE driver configuration options (play with these as desired):&n; */
-DECL|macro|REALLY_SLOW_IO
-macro_line|#undef REALLY_SLOW_IO&t;&t;&t;/* most systems can safely undef this */
-macro_line|#include &lt;asm/io.h&gt;
+multiline_comment|/******************************************************************************&n; * IDE driver configuration options (play with these as desired):&n; * &n; * REALLY_SLOW_IO can be defined in ide.c and ide-cd.c, if necessary&n; */
 DECL|macro|REALLY_FAST_IO
-macro_line|#undef &t;REALLY_FAST_IO&t;&t;&t;/* define if ide ports are perfect */
+mdefine_line|#define REALLY_FAST_IO&t;&t;&t;/* define if ide ports are perfect */
 DECL|macro|INITIAL_MULT_COUNT
 mdefine_line|#define INITIAL_MULT_COUNT&t;0&t;/* off=0; on=2,4,8,16,32, etc.. */
 macro_line|#ifndef DISK_RECOVERY_TIME&t;&t;/* off=0; on=access_delay_time */
@@ -68,22 +65,42 @@ DECL|macro|HWIF
 mdefine_line|#define HWIF(drive)&t;&t;((ide_hwif_t *)drive-&gt;hwif)
 DECL|macro|HWGROUP
 mdefine_line|#define HWGROUP(drive)&t;&t;((ide_hwgroup_t *)(HWIF(drive)-&gt;hwgroup))
+DECL|macro|IDE_DATA_OFFSET
+mdefine_line|#define IDE_DATA_OFFSET&t;&t;(0)
+DECL|macro|IDE_ERROR_OFFSET
+mdefine_line|#define IDE_ERROR_OFFSET&t;(1)
+DECL|macro|IDE_NSECTOR_OFFSET
+mdefine_line|#define IDE_NSECTOR_OFFSET&t;(2)
+DECL|macro|IDE_SECTOR_OFFSET
+mdefine_line|#define IDE_SECTOR_OFFSET&t;(3)
+DECL|macro|IDE_LCYL_OFFSET
+mdefine_line|#define IDE_LCYL_OFFSET&t;&t;(4)
+DECL|macro|IDE_HCYL_OFFSET
+mdefine_line|#define IDE_HCYL_OFFSET&t;&t;(5)
+DECL|macro|IDE_SELECT_OFFSET
+mdefine_line|#define IDE_SELECT_OFFSET&t;(6)
+DECL|macro|IDE_STATUS_OFFSET
+mdefine_line|#define IDE_STATUS_OFFSET&t;(7)
+DECL|macro|IDE_FEATURE_OFFSET
+mdefine_line|#define IDE_FEATURE_OFFSET&t;IDE_ERROR_OFFSET
+DECL|macro|IDE_COMMAND_OFFSET
+mdefine_line|#define IDE_COMMAND_OFFSET&t;IDE_STATUS_OFFSET
 DECL|macro|IDE_DATA_REG
-mdefine_line|#define IDE_DATA_REG&t;&t;(HWIF(drive)-&gt;io_base)
+mdefine_line|#define IDE_DATA_REG&t;&t;(HWIF(drive)-&gt;io_base+IDE_DATA_OFFSET)
 DECL|macro|IDE_ERROR_REG
-mdefine_line|#define IDE_ERROR_REG&t;&t;(HWIF(drive)-&gt;io_base+1)
+mdefine_line|#define IDE_ERROR_REG&t;&t;(HWIF(drive)-&gt;io_base+IDE_ERROR_OFFSET)
 DECL|macro|IDE_NSECTOR_REG
-mdefine_line|#define IDE_NSECTOR_REG&t;&t;(HWIF(drive)-&gt;io_base+2)
+mdefine_line|#define IDE_NSECTOR_REG&t;&t;(HWIF(drive)-&gt;io_base+IDE_NSECTOR_OFFSET)
 DECL|macro|IDE_SECTOR_REG
-mdefine_line|#define IDE_SECTOR_REG&t;&t;(HWIF(drive)-&gt;io_base+3)
+mdefine_line|#define IDE_SECTOR_REG&t;&t;(HWIF(drive)-&gt;io_base+IDE_SECTOR_OFFSET)
 DECL|macro|IDE_LCYL_REG
-mdefine_line|#define IDE_LCYL_REG&t;&t;(HWIF(drive)-&gt;io_base+4)
+mdefine_line|#define IDE_LCYL_REG&t;&t;(HWIF(drive)-&gt;io_base+IDE_LCYL_OFFSET)
 DECL|macro|IDE_HCYL_REG
-mdefine_line|#define IDE_HCYL_REG&t;&t;(HWIF(drive)-&gt;io_base+5)
+mdefine_line|#define IDE_HCYL_REG&t;&t;(HWIF(drive)-&gt;io_base+IDE_HCYL_OFFSET)
 DECL|macro|IDE_SELECT_REG
-mdefine_line|#define IDE_SELECT_REG&t;&t;(HWIF(drive)-&gt;io_base+6)
+mdefine_line|#define IDE_SELECT_REG&t;&t;(HWIF(drive)-&gt;io_base+IDE_SELECT_OFFSET)
 DECL|macro|IDE_STATUS_REG
-mdefine_line|#define IDE_STATUS_REG&t;&t;(HWIF(drive)-&gt;io_base+7)
+mdefine_line|#define IDE_STATUS_REG&t;&t;(HWIF(drive)-&gt;io_base+IDE_STATUS_OFFSET)
 DECL|macro|IDE_CONTROL_REG
 mdefine_line|#define IDE_CONTROL_REG&t;&t;(HWIF(drive)-&gt;ctl_port)
 DECL|macro|IDE_FEATURE_REG
@@ -1110,6 +1127,19 @@ comma
 r_int
 r_int
 id|within_area
+)paren
+suffix:semicolon
+multiline_comment|/*&n; * This function issues a specific IDE drive command onto the&n; * tail of the request queue, and waits for it to be completed.&n; * If arg is NULL, it goes through all the motions,&n; * but without actually sending a command to the drive.&n; *&n; * The value of arg is passed to the internal handler as rq-&gt;buffer.&n; */
+r_int
+id|ide_do_drive_cmd
+c_func
+(paren
+r_int
+id|rdev
+comma
+r_char
+op_star
+id|args
 )paren
 suffix:semicolon
 macro_line|#ifdef CONFIG_BLK_DEV_IDECD

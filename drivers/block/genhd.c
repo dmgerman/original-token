@@ -1,6 +1,4 @@
-multiline_comment|/*&n; *  Code extracted from&n; *  linux/kernel/hd.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; */
-multiline_comment|/*&n; *  Thanks to Branko Lankester, lankeste@fwi.uva.nl, who found a bug&n; *  in the early extended-partition checks and added DM partitions&n; */
-multiline_comment|/*&n; *  Support for DiskManager v6.0x added by Mark Lord (mlord@bnr.ca)&n; *  with information provided by OnTrack.  This now works for linux fdisk&n; *  and LILO, as well as loadlin and bootln.  Note that disks other than&n; *  /dev/hda *must* have a &quot;DOS&quot; type 0x51 partition in the first slot (hda1).&n; * &n; *  Added support for &quot;missing/deleted&quot; extended partitions - mlord@bnr.ca&n; */
+multiline_comment|/*&n; *  Code extracted from&n; *  linux/kernel/hd.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *&n; *&n; *  Thanks to Branko Lankester, lankeste@fwi.uva.nl, who found a bug&n; *  in the early extended-partition checks and added DM partitions&n; *&n; *  Support for DiskManager v6.0x added by Mark Lord (mlord@bnr.ca)&n; *  with information provided by OnTrack.  This now works for linux fdisk&n; *  and LILO, as well as loadlin and bootln.  Note that disks other than&n; *  /dev/hda *must* have a &quot;DOS&quot; type 0x51 partition in the first slot (hda1).&n; *&n; *  More flexible handling of extended partitions - aeb, 950831&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/genhd.h&gt;
@@ -246,6 +244,8 @@ r_int
 id|first_sector
 comma
 id|this_sector
+comma
+id|this_size
 suffix:semicolon
 r_int
 id|mask
@@ -257,6 +257,9 @@ id|hd-&gt;minor_shift
 )paren
 op_minus
 l_int|1
+suffix:semicolon
+r_int
+id|i
 suffix:semicolon
 id|first_sector
 op_assign
@@ -290,11 +293,7 @@ op_amp
 id|mask
 )paren
 op_ge
-(paren
-l_int|4
-op_plus
 id|hd-&gt;max_p
-)paren
 )paren
 r_return
 suffix:semicolon
@@ -364,25 +363,62 @@ op_plus
 id|bh-&gt;b_data
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; * Process the first entry, which should be the real&n;&t;&t; * data partition.&n;&t;&t; */
+id|this_size
+op_assign
+id|hd-&gt;part
+(braket
+id|MINOR
+c_func
+(paren
+id|dev
+)paren
+)braket
+dot
+id|nr_sects
+suffix:semicolon
+multiline_comment|/*&n;&t;&t; * Usually, the first entry is the real data partition,&n;&t;&t; * the 2nd entry is the next extended partition, or empty,&n;&t;&t; * and the 3rd and 4th entries are unused.&n;&t;&t; * However, DRDOS sometimes has the extended partition as&n;&t;&t; * the first entry (when the data partition is empty),&n;&t;&t; * and OS/2 seems to use all four entries.&n;&t;&t; */
+multiline_comment|/* &n;&t;&t; * First process the data partition(s)&n;&t;&t; */
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+l_int|4
+suffix:semicolon
+id|i
+op_increment
+comma
+id|p
+op_increment
+)paren
+(brace
 r_if
 c_cond
 (paren
+op_logical_neg
+id|p-&gt;nr_sects
+op_logical_or
 id|p-&gt;sys_ind
 op_eq
 id|EXTENDED_PARTITION
 )paren
-r_goto
-id|done
+r_continue
 suffix:semicolon
-multiline_comment|/* shouldn&squot;t happen */
 r_if
 c_cond
 (paren
-id|p-&gt;sys_ind
-op_logical_and
+id|p-&gt;start_sect
+op_plus
 id|p-&gt;nr_sects
+OG
+id|this_size
 )paren
+r_continue
+suffix:semicolon
 id|add_partition
 c_func
 (paren
@@ -400,19 +436,67 @@ suffix:semicolon
 id|current_minor
 op_increment
 suffix:semicolon
-id|p
-op_increment
-suffix:semicolon
-multiline_comment|/*&n;&t;&t; * Process the second entry, which should be a link&n;&t;&t; * to the next logical partition.  Create a minor&n;&t;&t; * for this just long enough to get the next partition&n;&t;&t; * table.  The minor will be reused for the real&n;&t;&t; * data partition.&n;&t;&t; */
 r_if
 c_cond
 (paren
-id|p-&gt;sys_ind
-op_ne
-id|EXTENDED_PARTITION
-op_logical_or
-op_logical_neg
 (paren
+id|current_minor
+op_amp
+id|mask
+)paren
+op_ge
+id|hd-&gt;max_p
+)paren
+r_goto
+id|done
+suffix:semicolon
+)brace
+multiline_comment|/*&n;&t;&t; * Next, process the (first) extended partition, if present.&n;&t;&t; * (So far, there seems to be no reason to make&n;&t;&t; *  extended_partition()  recursive and allow a tree&n;&t;&t; *  of extended partitions.)&n;&t;&t; * It should be a link to the next logical partition.&n;&t;&t; * Create a minor for this just long enough to get the next&n;&t;&t; * partition table.  The minor will be reused for the next&n;&t;&t; * data partition.&n;&t;&t; */
+id|p
+op_sub_assign
+l_int|4
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+l_int|4
+suffix:semicolon
+id|i
+op_increment
+comma
+id|p
+op_increment
+)paren
+r_if
+c_cond
+(paren
+id|p-&gt;nr_sects
+op_logical_and
+id|p-&gt;sys_ind
+op_eq
+id|EXTENDED_PARTITION
+)paren
+(brace
+r_break
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|i
+op_eq
+l_int|4
+)paren
+r_goto
+id|done
+suffix:semicolon
+multiline_comment|/* nothing left to do */
 id|hd-&gt;part
 (braket
 id|current_minor
@@ -421,12 +505,7 @@ dot
 id|nr_sects
 op_assign
 id|p-&gt;nr_sects
-)paren
-)paren
-r_goto
-id|done
 suffix:semicolon
-multiline_comment|/* no more logicals in this partition */
 id|hd-&gt;part
 (braket
 id|current_minor
@@ -893,6 +972,16 @@ c_func
 (paren
 l_string|&quot; &gt;&quot;
 )paren
+suffix:semicolon
+multiline_comment|/* prevent someone doing mkfs or mkswap on&n;&t;&t;&t;   an extended partition */
+id|hd-&gt;part
+(braket
+id|minor
+)braket
+dot
+id|nr_sects
+op_assign
+l_int|0
 suffix:semicolon
 )brace
 )brace

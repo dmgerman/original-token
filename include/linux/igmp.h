@@ -13,10 +13,10 @@ r_int
 r_char
 id|type
 suffix:semicolon
-DECL|member|unused
+DECL|member|code
 r_int
 r_char
-id|unused
+id|code
 suffix:semicolon
 DECL|member|csum
 r_int
@@ -40,10 +40,10 @@ r_int
 r_char
 id|type
 suffix:semicolon
-DECL|member|unused
+DECL|member|code
 r_int
 r_char
-id|unused
+id|code
 suffix:semicolon
 DECL|member|csum
 r_int

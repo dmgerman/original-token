@@ -5233,7 +5233,7 @@ id|ip_fw_blk_policy
 comma
 l_int|0
 )paren
-op_ne
+OL
 l_int|1
 )paren
 (brace

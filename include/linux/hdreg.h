@@ -1,7 +1,6 @@
 macro_line|#ifndef _LINUX_HDREG_H
 DECL|macro|_LINUX_HDREG_H
 mdefine_line|#define _LINUX_HDREG_H
-macro_line|#include &lt;linux/config.h&gt;
 multiline_comment|/*&n; * This file contains some defines for the AT-hd-controller.&n; * Various sources.  &n; */
 DECL|macro|HD_IRQ
 mdefine_line|#define HD_IRQ 14&t;&t;/* the standard disk interrupt */
@@ -455,7 +454,9 @@ multiline_comment|/* unsigned short reservedyy[96];*/
 multiline_comment|/* reserved (words 160-255) */
 )brace
 suffix:semicolon
+macro_line|#ifdef __KERNEL__
 multiline_comment|/*&n; * These routines are used for kernel command line parameters from main.c:&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#ifdef CONFIG_BLK_DEV_HD
 r_void
 id|hd_setup
@@ -479,5 +480,6 @@ op_star
 )paren
 suffix:semicolon
 macro_line|#endif&t;/* CONFIG_BLK_DEV_IDE */
+macro_line|#endif  /* __KERNEL__ */
 macro_line|#endif&t;/* _LINUX_HDREG_H */
 eof

@@ -164,7 +164,9 @@ id|diskTime
 suffix:semicolon
 )brace
 suffix:semicolon
+macro_line|#if 0
 macro_line|#ifndef I_WAS_HERE
 macro_line|#error Please edit this file first.
+macro_line|#endif
 macro_line|#endif
 eof

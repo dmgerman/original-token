@@ -122,6 +122,7 @@ c_func
 (paren
 id|w
 comma
+l_string|&quot;&quot;
 )paren
 DECL|macro|RETURN_TYPE
 macro_line|#undef RETURN_TYPE
@@ -134,6 +135,8 @@ id|l
 comma
 l_string|&quot;&quot;
 )paren
+DECL|macro|RETURN_TYPE
+macro_line|#undef RETURN_TYPE
 id|__OUT
 c_func
 (paren
