@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sunbmac.h,v 1.6 2000/02/09 11:15:36 davem Exp $&n; * sunbmac.h: Defines for the Sun &quot;Big MAC&quot; 100baseT ethernet cards.&n; *&n; * Copyright (C) 1997 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: sunbmac.h,v 1.7 2000/07/11 22:35:22 davem Exp $&n; * sunbmac.h: Defines for the Sun &quot;Big MAC&quot; 100baseT ethernet cards.&n; *&n; * Copyright (C) 1997 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _SUNBMAC_H
 DECL|macro|_SUNBMAC_H
 mdefine_line|#define _SUNBMAC_H

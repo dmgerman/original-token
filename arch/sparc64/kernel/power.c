@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: power.c,v 1.6 2000/04/13 00:59:59 davem Exp $&n; * power.c: Power management driver.&n; *&n; * Copyright (C) 1999 David S. Miller (davem@redhat.com)&n; */
+multiline_comment|/* $Id: power.c,v 1.8 2000/07/11 22:41:33 davem Exp $&n; * power.c: Power management driver.&n; *&n; * Copyright (C) 1999 David S. Miller (davem@redhat.com)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
@@ -85,6 +85,10 @@ c_func
 r_void
 )paren
 suffix:semicolon
+r_extern
+r_int
+id|serial_console
+suffix:semicolon
 DECL|function|machine_power_off
 r_void
 id|machine_power_off
@@ -100,6 +104,9 @@ c_cond
 id|power_reg
 op_ne
 l_int|0UL
+op_logical_and
+op_logical_neg
+id|serial_console
 )paren
 (brace
 multiline_comment|/* Both register bits seem to have the&n;&t;&t; * same effect, so until I figure out&n;&t;&t; * what the difference is...&n;&t;&t; */
@@ -157,7 +164,7 @@ id|argv
 )braket
 op_assign
 (brace
-l_string|&quot;/usr/bin/shutdown&quot;
+l_string|&quot;/sbin/shutdown&quot;
 comma
 l_string|&quot;-h&quot;
 comma
@@ -224,7 +231,7 @@ c_cond
 id|execve
 c_func
 (paren
-l_string|&quot;/usr/bin/shutdown&quot;
+l_string|&quot;/sbin/shutdown&quot;
 comma
 id|argv
 comma

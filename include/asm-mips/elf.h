@@ -34,9 +34,12 @@ id|elf_fpregset_t
 id|ELF_NFPREG
 )braket
 suffix:semicolon
-multiline_comment|/*&n; * This is used to ensure we don&squot;t load something for the wrong architecture.&n; */
+multiline_comment|/*&n; * This is used to ensure we don&squot;t load something for the wrong architecture&n; * and also rejects IRIX binaries.&n; */
 DECL|macro|elf_check_arch
-mdefine_line|#define elf_check_arch(x) ((x) == EM_MIPS || (x) == EM_MIPS_RS4_BE)
+mdefine_line|#define elf_check_arch(hdr)&t;&t;&t;&t;&t;&t;&bslash;&n;({&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;int __res = 0;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;struct elfhdr *__h = (hdr);&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;if ((__h-&gt;e_machine != EM_MIPS) &amp;&amp; (__h-&gt;e_machine != EM_MIPS))&t;&bslash;&n;&t;&t;__res = -ENOEXEC;&t;&t;&t;&t;&t;&bslash;&n;&t;if (__h-&gt;e_flags &amp; EF_MIPS_ARCH)&t;&t;&t;&t;&bslash;&n;&t;&t;__res = -ENOEXEC;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;__res;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;})
+multiline_comment|/* This one accepts IRIX binaries.  */
+DECL|macro|irix_elf_check_arch
+mdefine_line|#define irix_elf_check_arch(hdr)&t;&t;&t;&t;&t;&bslash;&n;({&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;int __res = 0;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;struct elfhdr *__h = (hdr);&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;if ((__h-&gt;e_machine != EM_MIPS) &amp;&amp; (__h-&gt;e_machine != EM_MIPS))&t;&bslash;&n;&t;&t;__res = -ENOEXEC;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;__res;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;})
 multiline_comment|/*&n; * These are used to set parameters in the core dumps.&n; */
 DECL|macro|ELF_CLASS
 mdefine_line|#define ELF_CLASS&t;ELFCLASS32

@@ -11,7 +11,7 @@ DECL|macro|ELF_NVRREG
 mdefine_line|#define ELF_NVRREG&t;33&t;/* includes vscr */
 multiline_comment|/*&n; * This is used to ensure we don&squot;t load something for the wrong architecture.&n; */
 DECL|macro|elf_check_arch
-mdefine_line|#define elf_check_arch(x) ((x) == EM_PPC)
+mdefine_line|#define elf_check_arch(x) ((x)-&gt;e_machine == EM_PPC)
 multiline_comment|/*&n; * These are used to set parameters in the core dumps.&n; */
 DECL|macro|ELF_ARCH
 mdefine_line|#define ELF_ARCH&t;EM_PPC

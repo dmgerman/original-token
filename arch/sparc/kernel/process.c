@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: process.c,v 1.148 2000/07/10 23:22:32 anton Exp $&n; *  linux/arch/sparc/kernel/process.c&n; *&n; *  Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1996 Eddie C. Dost   (ecd@skynet.be)&n; */
+multiline_comment|/*  $Id: process.c,v 1.150 2000/07/11 18:49:22 anton Exp $&n; *  linux/arch/sparc/kernel/process.c&n; *&n; *  Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1996 Eddie C. Dost   (ecd@skynet.be)&n; */
 multiline_comment|/*&n; * This file handles the architecture-dependent parts of process handling..&n; */
 DECL|macro|__KERNEL_SYSCALLS__
 mdefine_line|#define __KERNEL_SYSCALLS__
@@ -353,6 +353,10 @@ id|reboot_command
 (braket
 )braket
 suffix:semicolon
+r_extern
+r_int
+id|serial_console
+suffix:semicolon
 macro_line|#ifdef CONFIG_SUN_CONSOLE
 r_extern
 r_void
@@ -363,10 +367,6 @@ id|prom_palette
 (paren
 r_int
 )paren
-suffix:semicolon
-r_extern
-r_int
-id|serial_console
 suffix:semicolon
 macro_line|#endif
 DECL|function|machine_halt
@@ -532,6 +532,9 @@ r_if
 c_cond
 (paren
 id|auxio_power_register
+op_logical_and
+op_logical_neg
+id|serial_console
 )paren
 op_star
 id|auxio_power_register

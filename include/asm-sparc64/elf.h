@@ -65,7 +65,7 @@ macro_line|#endif
 multiline_comment|/*&n; * This is used to ensure we don&squot;t load something for the wrong architecture.&n; */
 macro_line|#ifndef elf_check_arch
 DECL|macro|elf_check_arch
-mdefine_line|#define elf_check_arch(x) ((x) == ELF_ARCH)&t;/* Might be EM_SPARCV9 or EM_SPARC */
+mdefine_line|#define elf_check_arch(x) ((x)-&gt;e_machine == ELF_ARCH)&t;/* Might be EM_SPARCV9 or EM_SPARC */
 macro_line|#endif
 DECL|macro|USE_ELF_CORE_DUMP
 mdefine_line|#define USE_ELF_CORE_DUMP

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: pcic.c,v 1.15 2000/06/20 01:10:00 anton Exp $&n; * pcic.c: Sparc/PCI controller support&n; *&n; * Copyright (C) 1998 V. Roganov and G. Raiko&n; *&n; * Code is derived from Ultra/PCI PSYCHO controller support, see that&n; * for author info.&n; *&n; * Support for diverse IIep based platforms by Pete Zaitcev.&n; * CP-1200 by Eric Brower.&n; */
+multiline_comment|/* $Id: pcic.c,v 1.16 2000/07/11 01:38:57 davem Exp $&n; * pcic.c: Sparc/PCI controller support&n; *&n; * Copyright (C) 1998 V. Roganov and G. Raiko&n; *&n; * Code is derived from Ultra/PCI PSYCHO controller support, see that&n; * for author info.&n; *&n; * Support for diverse IIep based platforms by Pete Zaitcev.&n; * CP-1200 by Eric Brower.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -3543,7 +3543,7 @@ r_extern
 r_volatile
 r_int
 r_int
-id|lost_ticks
+id|wall_jiffies
 suffix:semicolon
 DECL|function|pci_do_gettimeofday
 r_static
@@ -3579,11 +3579,17 @@ c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * xtime is atomically updated in timer_bh. lost_ticks is&n;&t; * nonzero if the timer bottom half hasnt executed yet.&n;&t; */
+multiline_comment|/*&n;&t; * xtime is atomically updated in timer_bh. The difference&n;&t; * between jiffies and wall_jiffies is nonzero if the timer&n;&t; * bottom half hasnt executed yet.&n;&t; */
 r_if
 c_cond
 (paren
-id|lost_ticks
+(paren
+id|jiffies
+op_minus
+id|wall_jiffies
+)paren
+op_ne
+l_int|0
 )paren
 id|tv-&gt;tv_usec
 op_add_assign

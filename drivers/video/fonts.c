@@ -33,7 +33,7 @@ id|font_vga_8x16
 comma
 macro_line|#endif
 macro_line|#ifdef CONFIG_FONT_6x11
-macro_line|#if defined(CONFIG_MAC) || defined(CONFIG_FB_SBUS)
+macro_line|#if defined(CONFIG_FBCON_MAC) || defined(CONFIG_FB_SBUS)
 DECL|macro|NO_FONTS
 macro_line|#undef NO_FONTS
 macro_line|#endif
