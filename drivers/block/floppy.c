@@ -399,13 +399,7 @@ mdefine_line|#define USETF(x) (set_bit(x##_BIT, &amp;UDRS-&gt;flags))
 DECL|macro|UTESTF
 mdefine_line|#define UTESTF(x) (test_bit(x##_BIT, &amp;UDRS-&gt;flags))
 DECL|macro|DPRINT
-mdefine_line|#define DPRINT(x) printk(DEVICE_NAME &quot;%d: &quot; x,current_drive)
-DECL|macro|DPRINT1
-mdefine_line|#define DPRINT1(x,x1) printk(DEVICE_NAME &quot;%d: &quot; x,current_drive,(x1))
-DECL|macro|DPRINT2
-mdefine_line|#define DPRINT2(x,x1,x2) printk(DEVICE_NAME &quot;%d: &quot; x,current_drive,(x1),(x2))
-DECL|macro|DPRINT3
-mdefine_line|#define DPRINT3(x,x1,x2,x3) printk(DEVICE_NAME &quot;%d: &quot; x,current_drive,(x1),(x2),(x3))
+mdefine_line|#define DPRINT(format, args...) printk(DEVICE_NAME &quot;%d: &quot; format, current_drive , ## args)
 DECL|macro|PH_HEAD
 mdefine_line|#define PH_HEAD(floppy,head) (((((floppy)-&gt;stretch &amp; 2) &gt;&gt;1) ^ head) &lt;&lt; 2)
 DECL|macro|STRETCH
@@ -2126,8 +2120,15 @@ r_void
 id|floppy_shutdown
 c_func
 (paren
-r_int
-r_int
+r_void
+)paren
+suffix:semicolon
+r_static
+r_void
+id|unexpected_floppy_interrupt
+c_func
+(paren
+r_void
 )paren
 suffix:semicolon
 r_static
@@ -2419,7 +2420,7 @@ op_logical_neg
 id|fd_timeout.prev
 )paren
 (brace
-id|DPRINT1
+id|DPRINT
 c_func
 (paren
 l_string|&quot;timeout handler died: %s&bslash;n&quot;
@@ -2764,7 +2765,7 @@ c_func
 l_string|&quot;probing disk change on unselected drive&bslash;n&quot;
 )paren
 suffix:semicolon
-id|DPRINT3
+id|DPRINT
 c_func
 (paren
 l_string|&quot;drive=%d fdc=%d dor=%x&bslash;n&quot;
@@ -2791,7 +2792,7 @@ op_amp
 id|FD_DEBUG
 )paren
 (brace
-id|DPRINT1
+id|DPRINT
 c_func
 (paren
 l_string|&quot;checking disk change line for drive %d&bslash;n&quot;
@@ -2799,7 +2800,7 @@ comma
 id|drive
 )paren
 suffix:semicolon
-id|DPRINT1
+id|DPRINT
 c_func
 (paren
 l_string|&quot;jiffies=%ld&bslash;n&quot;
@@ -2807,7 +2808,7 @@ comma
 id|jiffies
 )paren
 suffix:semicolon
-id|DPRINT1
+id|DPRINT
 c_func
 (paren
 l_string|&quot;disk change line=%x&bslash;n&quot;
@@ -2821,7 +2822,7 @@ op_amp
 l_int|0x80
 )paren
 suffix:semicolon
-id|DPRINT1
+id|DPRINT
 c_func
 (paren
 l_string|&quot;flags=%x&bslash;n&quot;
@@ -2881,6 +2882,7 @@ c_func
 id|FD_DISK_CHANGED
 )paren
 suffix:semicolon
+)brace
 multiline_comment|/* invalidate its geometry */
 r_if
 c_cond
@@ -2931,7 +2933,6 @@ id|current_drive
 op_assign
 id|MAX_DISK_SIZE
 suffix:semicolon
-)brace
 )brace
 multiline_comment|/*USETF(FD_DISK_NEWCHANGE);*/
 r_return
@@ -3566,7 +3567,7 @@ c_cond
 (paren
 id|DEVICE_INTR
 )paren
-id|DPRINT1
+id|DPRINT
 c_func
 (paren
 l_string|&quot;device interrupt still active at FDC release: %p!&bslash;n&quot;
@@ -4008,6 +4009,40 @@ id|saved_drive
 )paren
 suffix:semicolon
 )brace
+DECL|function|empty
+r_static
+r_void
+id|empty
+c_func
+(paren
+r_void
+)paren
+(brace
+)brace
+DECL|variable|floppy_tq
+r_static
+r_struct
+id|tq_struct
+id|floppy_tq
+op_assign
+(brace
+l_int|0
+comma
+l_int|0
+comma
+(paren
+r_void
+op_star
+)paren
+(paren
+r_void
+op_star
+)paren
+id|unexpected_floppy_interrupt
+comma
+l_int|0
+)brace
+suffix:semicolon
 DECL|variable|fd_timer
 r_static
 r_struct
@@ -4016,6 +4051,37 @@ id|fd_timer
 op_assign
 initialization_block
 suffix:semicolon
+DECL|function|cancel_activity
+r_static
+r_void
+id|cancel_activity
+c_func
+(paren
+r_void
+)paren
+(brace
+id|CLEAR_INTR
+suffix:semicolon
+id|floppy_tq.routine
+op_assign
+(paren
+r_void
+op_star
+)paren
+(paren
+r_void
+op_star
+)paren
+id|empty
+suffix:semicolon
+id|del_timer
+c_func
+(paren
+op_amp
+id|fd_timer
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/* this function makes sure that the disk stays in the drive during the&n; * transfer */
 DECL|function|fd_watchdog
 r_static
@@ -4059,10 +4125,22 @@ c_func
 l_string|&quot;disk removed during i/o&bslash;n&quot;
 )paren
 suffix:semicolon
-id|floppy_shutdown
+id|cancel_activity
 c_func
 (paren
-l_int|1
+)paren
+suffix:semicolon
+id|cont
+op_member_access_from_pointer
+id|done
+c_func
+(paren
+l_int|0
+)paren
+suffix:semicolon
+id|reset_fdc
+c_func
+(paren
 )paren
 suffix:semicolon
 )brace
@@ -4584,7 +4662,7 @@ op_logical_neg
 id|initialising
 )paren
 (brace
-id|DPRINT2
+id|DPRINT
 c_func
 (paren
 l_string|&quot;Getstatus times out (%x) on fdc %d&bslash;n&quot;
@@ -4721,12 +4799,14 @@ op_logical_neg
 id|initialising
 )paren
 (brace
-id|DPRINT2
+id|DPRINT
 c_func
 (paren
-l_string|&quot;Unable to send byte %x to FDC. Status=%x&bslash;n&quot;
+l_string|&quot;Unable to send byte %x to FDC. Fdc=%x Status=%x&bslash;n&quot;
 comma
 id|byte
+comma
+id|fdc
 comma
 id|status
 )paren
@@ -4862,10 +4942,12 @@ op_logical_neg
 id|initialising
 )paren
 (brace
-id|DPRINT2
+id|DPRINT
 c_func
 (paren
-l_string|&quot;&squot;get result&squot; error. Last status=%x Read bytes=%d&bslash;n&quot;
+l_string|&quot;get result error. Fdc=%d Last status=%x Read bytes=%d&bslash;n&quot;
+comma
+id|fdc
 comma
 id|status
 comma
@@ -6356,7 +6438,7 @@ c_func
 l_string|&quot;clearing NEWCHANGE flag because of effective seek&bslash;n&quot;
 )paren
 suffix:semicolon
-id|DPRINT1
+id|DPRINT
 c_func
 (paren
 l_string|&quot;jiffies=%ld&bslash;n&quot;
@@ -6469,7 +6551,7 @@ c_func
 l_string|&quot;checking whether disk is write protected&bslash;n&quot;
 )paren
 suffix:semicolon
-id|DPRINT1
+id|DPRINT
 c_func
 (paren
 l_string|&quot;wp=%x&bslash;n&quot;
@@ -7068,30 +7150,6 @@ op_assign
 l_int|1
 suffix:semicolon
 )brace
-DECL|variable|floppy_tq
-r_static
-r_struct
-id|tq_struct
-id|floppy_tq
-op_assign
-(brace
-l_int|0
-comma
-l_int|0
-comma
-(paren
-r_void
-op_star
-)paren
-(paren
-r_void
-op_star
-)paren
-id|unexpected_floppy_interrupt
-comma
-l_int|0
-)brace
-suffix:semicolon
 multiline_comment|/* interrupt handler */
 DECL|function|floppy_interrupt
 r_void
@@ -7474,16 +7532,6 @@ id|FD_DOR
 suffix:semicolon
 )brace
 )brace
-DECL|function|empty
-r_static
-r_void
-id|empty
-c_func
-(paren
-r_void
-)paren
-(brace
-)brace
 DECL|function|show_floppy
 r_void
 id|show_floppy
@@ -7778,9 +7826,7 @@ r_void
 id|floppy_shutdown
 c_func
 (paren
-r_int
-r_int
-id|mode
+r_void
 )paren
 (brace
 r_if
@@ -7788,34 +7834,15 @@ c_cond
 (paren
 op_logical_neg
 id|initialising
-op_logical_and
-op_logical_neg
-id|mode
 )paren
 id|show_floppy
 c_func
 (paren
 )paren
 suffix:semicolon
-id|CLEAR_INTR
-suffix:semicolon
-id|floppy_tq.routine
-op_assign
-(paren
-r_void
-op_star
-)paren
-(paren
-r_void
-op_star
-)paren
-id|empty
-suffix:semicolon
-id|del_timer
+id|cancel_activity
 c_func
 (paren
-op_amp
-id|fd_timer
 )paren
 suffix:semicolon
 id|sti
@@ -7839,14 +7866,11 @@ c_cond
 (paren
 op_logical_neg
 id|initialising
-op_logical_and
-op_logical_neg
-id|mode
 )paren
 id|DPRINT
 c_func
 (paren
-l_string|&quot;floppy timeout&bslash;n&quot;
+l_string|&quot;floppy timeout called&bslash;n&quot;
 )paren
 suffix:semicolon
 id|FDCS-&gt;reset
@@ -8263,6 +8287,14 @@ id|wakeup_cont
 op_assign
 initialization_block
 suffix:semicolon
+DECL|variable|intr_cont
+r_static
+r_struct
+id|cont_t
+id|intr_cont
+op_assign
+initialization_block
+suffix:semicolon
 DECL|function|wait_til_done
 r_static
 r_int
@@ -8357,18 +8389,22 @@ OL
 l_int|2
 )paren
 (brace
-id|floppy_shutdown
+id|cancel_activity
 c_func
 (paren
-l_int|1
+)paren
+suffix:semicolon
+id|cont
+op_assign
+op_amp
+id|intr_cont
+suffix:semicolon
+id|reset_fdc
+c_func
+(paren
 )paren
 suffix:semicolon
 id|sti
-c_func
-(paren
-)paren
-suffix:semicolon
-id|process_fd_request
 c_func
 (paren
 )paren
@@ -8698,7 +8734,7 @@ id|device
 )braket
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * formatting and support.&n; * =======================&n; */
+multiline_comment|/*&n; * formatting support.&n; * ===================&n; */
 DECL|function|format_interrupt
 r_static
 r_void
@@ -8821,7 +8857,8 @@ id|FD_RAW_INTR
 op_or
 id|FD_RAW_SPIN
 op_or
-multiline_comment|/*FD_RAW_NEED_DISK |*/
+id|FD_RAW_NEED_DISK
+op_or
 id|FD_RAW_NEED_SEEK
 suffix:semicolon
 id|raw_cmd-&gt;rate
@@ -9567,7 +9604,7 @@ op_mod
 id|ssize
 )paren
 (brace
-id|DPRINT2
+id|DPRINT
 c_func
 (paren
 l_string|&quot;long rw: %x instead of %lx&bslash;n&quot;
@@ -9743,7 +9780,7 @@ id|DP-&gt;flags
 op_amp
 id|FTD_MSG
 )paren
-id|DPRINT2
+id|DPRINT
 c_func
 (paren
 l_string|&quot;Auto-detected floppy type %s in fd%d&bslash;n&quot;
@@ -10214,7 +10251,7 @@ OL
 id|floppy_track_buffer
 )paren
 (brace
-id|DPRINT1
+id|DPRINT
 c_func
 (paren
 l_string|&quot;buffer overrun in copy buffer %d&bslash;n&quot;
@@ -10301,7 +10338,7 @@ id|buffer
 op_mod
 l_int|512
 )paren
-id|DPRINT1
+id|DPRINT
 c_func
 (paren
 l_string|&quot;%p buffer not aligned&bslash;n&quot;
@@ -10429,7 +10466,7 @@ id|remaining
 op_rshift
 l_int|9
 suffix:semicolon
-id|DPRINT1
+id|DPRINT
 c_func
 (paren
 l_string|&quot;weirdness: remaining %d&bslash;n&quot;
@@ -11223,7 +11260,7 @@ c_func
 l_string|&quot;zero dma transfer attempted from make_raw_request&bslash;n&quot;
 )paren
 suffix:semicolon
-id|DPRINT3
+id|DPRINT
 c_func
 (paren
 l_string|&quot;indirect=%d direct=%d sector_t=%d&quot;
@@ -11517,7 +11554,7 @@ op_le
 l_int|0
 )paren
 (brace
-id|DPRINT2
+id|DPRINT
 c_func
 (paren
 l_string|&quot;fractionary current count b=%lx s=%lx&bslash;n&quot;
@@ -13960,7 +13997,7 @@ c_func
 (paren
 l_int|1
 comma
-l_int|0
+id|FD_RAW_NEED_DISK
 )paren
 )paren
 suffix:semicolon
@@ -15005,6 +15042,31 @@ suffix:semicolon
 r_case
 id|FDGETPRM
 suffix:colon
+id|LOCK_FDC
+c_func
+(paren
+id|drive
+comma
+l_int|1
+)paren
+suffix:semicolon
+id|CALL
+c_func
+(paren
+id|poll_drive
+c_func
+(paren
+l_int|1
+comma
+l_int|0
+)paren
+)paren
+suffix:semicolon
+id|process_fd_request
+c_func
+(paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -17563,7 +17625,7 @@ id|FD_SILENT_DCL_CLEAR
 suffix:semicolon
 )brace
 )brace
-id|DPRINT1
+id|DPRINT
 c_func
 (paren
 l_string|&quot;Assuming %s floppy hardware&bslash;n&quot;
@@ -17689,7 +17751,7 @@ l_int|16
 )paren
 )paren
 (brace
-id|DPRINT1
+id|DPRINT
 c_func
 (paren
 l_string|&quot;bad cmos code %d&bslash;n&quot;
@@ -17710,7 +17772,7 @@ id|ints
 l_int|2
 )braket
 suffix:semicolon
-id|DPRINT1
+id|DPRINT
 c_func
 (paren
 l_string|&quot;setting cmos code to %d&bslash;n&quot;
@@ -17891,7 +17953,7 @@ dot
 id|var
 )paren
 (brace
-id|DPRINT2
+id|DPRINT
 c_func
 (paren
 l_string|&quot;%s=%d&bslash;n&quot;
@@ -17922,7 +17984,7 @@ c_cond
 id|str
 )paren
 (brace
-id|DPRINT1
+id|DPRINT
 c_func
 (paren
 l_string|&quot;unknown floppy option [%s]&bslash;n&quot;
@@ -18581,7 +18643,7 @@ c_func
 )paren
 )paren
 (brace
-id|DPRINT1
+id|DPRINT
 c_func
 (paren
 l_string|&quot;Unable to grab IRQ%d for the floppy driver&bslash;n&quot;
@@ -18603,7 +18665,7 @@ c_func
 )paren
 )paren
 (brace
-id|DPRINT1
+id|DPRINT
 c_func
 (paren
 l_string|&quot;Unable to grab DMA%d for the floppy driver&bslash;n&quot;

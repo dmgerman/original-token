@@ -4306,7 +4306,7 @@ id|info_array
 l_int|0
 )braket
 op_assign
-l_int|256
+l_int|255
 suffix:semicolon
 id|info_array
 (braket
@@ -4323,7 +4323,7 @@ op_assign
 id|disk-&gt;capacity
 op_div
 (paren
-l_int|256
+l_int|255
 op_star
 l_int|63
 )paren

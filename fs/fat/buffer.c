@@ -26,6 +26,7 @@ id|ret
 op_assign
 l_int|NULL
 suffix:semicolon
+multiline_comment|/* Note that the blocksize is 512 or 1024, but the first read&n;&t;   is always of size 1024. Doing readahead may be counterproductive&n;&t;   or just plain wrong. */
 r_if
 c_cond
 (paren
@@ -34,34 +35,26 @@ op_eq
 l_int|512
 )paren
 (brace
-multiline_comment|/*&t;&t;ret = bread (sb-&gt;s_dev,block,512); */
 id|ret
 op_assign
-id|breada
+id|bread
 (paren
 id|sb-&gt;s_dev
 comma
 id|block
 comma
 l_int|512
-comma
-l_int|0
-comma
-l_int|18
-op_star
-l_int|1024
 )paren
 suffix:semicolon
 )brace
 r_else
 (brace
-multiline_comment|/*&t;&t;struct buffer_head *real = bread (sb-&gt;s_dev,block&gt;&gt;1,1024); */
 r_struct
 id|buffer_head
 op_star
 id|real
 op_assign
-id|breada
+id|bread
 (paren
 id|sb-&gt;s_dev
 comma
@@ -69,12 +62,6 @@ id|block
 op_rshift
 l_int|1
 comma
-l_int|1024
-comma
-l_int|0
-comma
-l_int|18
-op_star
 l_int|1024
 )paren
 suffix:semicolon

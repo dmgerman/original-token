@@ -359,6 +359,8 @@ DECL|macro|B115200
 mdefine_line|#define  B115200 0010002
 DECL|macro|B230400
 mdefine_line|#define  B230400 0010003
+DECL|macro|B460800
+mdefine_line|#define  B460800 0010004
 DECL|macro|CIBAUD
 mdefine_line|#define CIBAUD&t;  002003600000&t;/* input baud rate (not used) */
 DECL|macro|CRTSCTS

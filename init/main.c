@@ -211,6 +211,20 @@ id|ints
 suffix:semicolon
 r_extern
 r_void
+id|msmouse_setup
+c_func
+(paren
+r_char
+op_star
+id|str
+comma
+r_int
+op_star
+id|ints
+)paren
+suffix:semicolon
+r_extern
+r_void
 id|lp_setup
 c_func
 (paren
@@ -1463,6 +1477,14 @@ macro_line|#ifdef CONFIG_BUSMOUSE
 l_string|&quot;bmouse=&quot;
 comma
 id|bmouse_setup
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_MS_BUSMOUSE
+(brace
+l_string|&quot;msmouse=&quot;
+comma
+id|msmouse_setup
 )brace
 comma
 macro_line|#endif

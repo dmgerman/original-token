@@ -2,25 +2,26 @@ multiline_comment|/*&n; * include/linux/random.h&n; *&n; * Include file for the 
 macro_line|#ifndef _LINUX_RANDOM_H
 DECL|macro|_LINUX_RANDOM_H
 mdefine_line|#define _LINUX_RANDOM_H
+macro_line|#include &lt;linux/ioctl.h&gt;
 multiline_comment|/* ioctl()&squot;s for the random number generator */
 multiline_comment|/* Get the entropy count. */
 DECL|macro|RNDGETENTCNT
-mdefine_line|#define RNDGETENTCNT&t;0x01080000
+mdefine_line|#define RNDGETENTCNT&t;_IOR( &squot;R&squot;, 0x00, int )
 multiline_comment|/* Add to (or subtract from) the entropy count.  (Superuser only.) */
 DECL|macro|RNDADDTOENTCNT
-mdefine_line|#define RNDADDTOENTCNT&t;0x01080001
+mdefine_line|#define RNDADDTOENTCNT&t;_IOW( &squot;R&squot;, 0x01, int )
 multiline_comment|/* Get the contents of the entropy pool.  (Superuser only.) */
 DECL|macro|RNDGETPOOL
-mdefine_line|#define RNDGETPOOL&t;0x01080002
+mdefine_line|#define RNDGETPOOL&t;_IOR( &squot;R&squot;, 0x02, int [2] )
 multiline_comment|/* &n; * Write bytes into the entropy pool and add to the entropy count.&n; * (Superuser only.)&n; */
 DECL|macro|RNDADDENTROPY
-mdefine_line|#define RNDADDENTROPY&t;0x01080003
+mdefine_line|#define RNDADDENTROPY&t;_IOW( &squot;R&squot;, 0x03, int [2] )
 multiline_comment|/* Clear entropy count to 0.  (Superuser only.) */
 DECL|macro|RNDZAPENTCNT
-mdefine_line|#define RNDZAPENTCNT&t;0x01080004
+mdefine_line|#define RNDZAPENTCNT&t;_IO( &squot;R&squot;, 0x04 )
 multiline_comment|/* Clear the entropy pool and associated counters.  (Superuser only.) */
 DECL|macro|RNDCLEARPOOL
-mdefine_line|#define RNDCLEARPOOL&t;0x01080006
+mdefine_line|#define RNDCLEARPOOL&t;_IO( &squot;R&squot;, 0x06 )
 DECL|struct|rand_pool_info
 r_struct
 id|rand_pool_info

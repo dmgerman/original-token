@@ -1303,14 +1303,12 @@ l_int|1024
 suffix:semicolon
 id|bh
 op_assign
-id|bread
+id|fat_bread
 c_func
 (paren
-id|sb-&gt;s_dev
+id|sb
 comma
 l_int|0
-comma
-l_int|1024
 )paren
 suffix:semicolon
 id|unlock_super
@@ -1336,8 +1334,10 @@ id|bh
 )paren
 )paren
 (brace
-id|brelse
+id|fat_brelse
 (paren
+id|sb
+comma
 id|bh
 )paren
 suffix:semicolon
@@ -1731,9 +1731,11 @@ op_logical_neg
 id|b-&gt;heads
 suffix:semicolon
 )brace
-id|brelse
+id|fat_brelse
 c_func
 (paren
+id|sb
+comma
 id|bh
 )paren
 suffix:semicolon
@@ -1742,10 +1744,10 @@ id|sb-&gt;s_blocksize
 op_assign
 id|blksize
 suffix:semicolon
-multiline_comment|/* Using this small block size solve the */
+multiline_comment|/* Using this small block size solves */
 multiline_comment|/* the misfit with buffer cache and cluster */
-multiline_comment|/* because cluster (DOS) are often aligned */
-multiline_comment|/* on odd sector */
+multiline_comment|/* because clusters (DOS) are often aligned */
+multiline_comment|/* on odd sectors. */
 id|sb-&gt;s_blocksize_bits
 op_assign
 id|blksize
@@ -2431,7 +2433,6 @@ suffix:semicolon
 r_int
 id|nr
 suffix:semicolon
-multiline_comment|/* printk(&quot;read inode %d&bslash;n&quot;,inode-&gt;i_ino); */
 id|MSDOS_I
 c_func
 (paren
@@ -2493,7 +2494,7 @@ op_assign
 id|MSDOS_SB
 c_func
 (paren
-id|inode-&gt;i_sb
+id|sb
 )paren
 op_member_access_from_pointer
 id|options.fs_uid
@@ -2503,7 +2504,7 @@ op_assign
 id|MSDOS_SB
 c_func
 (paren
-id|inode-&gt;i_sb
+id|sb
 )paren
 op_member_access_from_pointer
 id|options.fs_gid
@@ -2530,7 +2531,7 @@ op_complement
 id|MSDOS_SB
 c_func
 (paren
-id|inode-&gt;i_sb
+id|sb
 )paren
 op_member_access_from_pointer
 id|options.fs_umask
@@ -2558,7 +2559,7 @@ op_assign
 id|MSDOS_SB
 c_func
 (paren
-id|inode-&gt;i_sb
+id|sb
 )paren
 op_member_access_from_pointer
 id|dir_entries
@@ -2574,7 +2575,7 @@ op_assign
 id|MSDOS_SB
 c_func
 (paren
-id|inode-&gt;i_sb
+id|sb
 )paren
 op_member_access_from_pointer
 id|cluster_size
@@ -2596,7 +2597,7 @@ op_star
 id|MSDOS_SB
 c_func
 (paren
-id|inode-&gt;i_sb
+id|sb
 )paren
 op_member_access_from_pointer
 id|cluster_size
@@ -2639,16 +2640,14 @@ op_logical_neg
 (paren
 id|bh
 op_assign
-id|bread
+id|fat_bread
 c_func
 (paren
-id|inode-&gt;i_dev
+id|sb
 comma
 id|inode-&gt;i_ino
 op_rshift
 id|MSDOS_DPB_BITS
-comma
-id|SECTOR_SIZE
 )paren
 )paren
 )paren
@@ -2727,7 +2726,7 @@ op_complement
 id|MSDOS_SB
 c_func
 (paren
-id|inode-&gt;i_sb
+id|sb
 )paren
 op_member_access_from_pointer
 id|options.fs_umask
@@ -2836,7 +2835,7 @@ op_assign
 id|fat_access
 c_func
 (paren
-id|inode-&gt;i_sb
+id|sb
 comma
 id|nr
 comma
@@ -2881,7 +2880,7 @@ op_logical_or
 id|MSDOS_SB
 c_func
 (paren
-id|inode-&gt;i_sb
+id|sb
 )paren
 op_member_access_from_pointer
 id|options.showexec
@@ -2907,7 +2906,7 @@ op_complement
 id|MSDOS_SB
 c_func
 (paren
-id|inode-&gt;i_sb
+id|sb
 )paren
 op_member_access_from_pointer
 id|options.fs_umask
@@ -2970,7 +2969,7 @@ c_cond
 id|MSDOS_SB
 c_func
 (paren
-id|inode-&gt;i_sb
+id|sb
 )paren
 op_member_access_from_pointer
 id|options.sys_immutable
@@ -2993,7 +2992,7 @@ c_func
 id|MSDOS_SB
 c_func
 (paren
-id|inode-&gt;i_sb
+id|sb
 )paren
 op_member_access_from_pointer
 id|options.conversion
@@ -3019,7 +3018,7 @@ op_assign
 id|MSDOS_SB
 c_func
 (paren
-id|inode-&gt;i_sb
+id|sb
 )paren
 op_member_access_from_pointer
 id|cluster_size
@@ -3041,7 +3040,7 @@ op_star
 id|MSDOS_SB
 c_func
 (paren
-id|inode-&gt;i_sb
+id|sb
 )paren
 op_member_access_from_pointer
 id|cluster_size
@@ -3071,7 +3070,7 @@ op_assign
 id|MSDOS_SB
 c_func
 (paren
-id|inode-&gt;i_sb
+id|sb
 )paren
 op_member_access_from_pointer
 id|options.isvfat
@@ -3095,9 +3094,11 @@ id|raw_entry-&gt;cdate
 suffix:colon
 id|inode-&gt;i_mtime
 suffix:semicolon
-id|brelse
+id|fat_brelse
 c_func
 (paren
+id|sb
+comma
 id|bh
 )paren
 suffix:semicolon
@@ -3279,16 +3280,14 @@ op_logical_neg
 (paren
 id|bh
 op_assign
-id|bread
+id|fat_bread
 c_func
 (paren
-id|inode-&gt;i_dev
+id|sb
 comma
 id|inode-&gt;i_ino
 op_rshift
 id|MSDOS_DPB_BITS
-comma
-id|SECTOR_SIZE
 )paren
 )paren
 )paren
@@ -3470,17 +3469,21 @@ id|raw_entry-&gt;cdate
 )paren
 suffix:semicolon
 )brace
-id|mark_buffer_dirty
+id|fat_mark_buffer_dirty
 c_func
 (paren
+id|sb
+comma
 id|bh
 comma
 l_int|1
 )paren
 suffix:semicolon
-id|brelse
+id|fat_brelse
 c_func
 (paren
+id|sb
+comma
 id|bh
 )paren
 suffix:semicolon
@@ -3501,6 +3504,13 @@ op_star
 id|attr
 )paren
 (brace
+r_struct
+id|super_block
+op_star
+id|sb
+op_assign
+id|inode-&gt;i_sb
+suffix:semicolon
 r_int
 id|error
 suffix:semicolon
@@ -3523,7 +3533,7 @@ r_return
 id|MSDOS_SB
 c_func
 (paren
-id|inode-&gt;i_sb
+id|sb
 )paren
 op_member_access_from_pointer
 id|options.quiet
@@ -3549,7 +3559,7 @@ op_ne
 id|MSDOS_SB
 c_func
 (paren
-id|inode-&gt;i_sb
+id|sb
 )paren
 op_member_access_from_pointer
 id|options.fs_uid
@@ -3569,7 +3579,7 @@ op_ne
 id|MSDOS_SB
 c_func
 (paren
-id|inode-&gt;i_sb
+id|sb
 )paren
 op_member_access_from_pointer
 id|options.fs_gid
@@ -3605,7 +3615,7 @@ r_return
 id|MSDOS_SB
 c_func
 (paren
-id|inode-&gt;i_sb
+id|sb
 )paren
 op_member_access_from_pointer
 id|options.quiet
@@ -3673,7 +3683,7 @@ op_complement
 id|MSDOS_SB
 c_func
 (paren
-id|inode-&gt;i_sb
+id|sb
 )paren
 op_member_access_from_pointer
 id|options.fs_umask
@@ -3693,7 +3703,7 @@ op_complement
 id|MSDOS_SB
 c_func
 (paren
-id|inode-&gt;i_sb
+id|sb
 )paren
 op_member_access_from_pointer
 id|options.fs_umask

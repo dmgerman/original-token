@@ -274,7 +274,7 @@ comma
 r_int
 id|nb
 )paren
-multiline_comment|/* How many must be prefetch at once */
+multiline_comment|/* How many must we prefetch at once */
 (brace
 r_struct
 id|super_block
@@ -359,14 +359,12 @@ op_increment
 suffix:semicolon
 id|bh
 op_assign
-id|getblk
+id|fat_getblk
 c_func
 (paren
-id|inode-&gt;i_dev
+id|sb
 comma
 id|sector
-comma
-id|SECTOR_SIZE
 )paren
 suffix:semicolon
 r_if
@@ -891,8 +889,10 @@ id|bh
 )paren
 (brace
 multiline_comment|/* read error  ? */
-id|brelse
+id|fat_brelse
 (paren
+id|sb
+comma
 id|bh
 )paren
 suffix:semicolon
@@ -1032,9 +1032,11 @@ suffix:semicolon
 )brace
 )brace
 )brace
-id|brelse
+id|fat_brelse
 c_func
 (paren
+id|sb
+comma
 id|bh
 )paren
 suffix:semicolon
@@ -1071,8 +1073,10 @@ suffix:semicolon
 id|i
 op_increment
 )paren
-id|brelse
+id|fat_brelse
 (paren
+id|sb
+comma
 id|pre.bhlist
 (braket
 id|i
@@ -1240,7 +1244,7 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
-multiline_comment|/* system files are immutable */
+multiline_comment|/* system files may be immutable */
 r_if
 c_cond
 (paren
@@ -1408,14 +1412,12 @@ op_logical_neg
 (paren
 id|bh
 op_assign
-id|getblk
+id|fat_getblk
 c_func
 (paren
-id|inode-&gt;i_dev
+id|sb
 comma
 id|sector
-comma
-id|SECTOR_SIZE
 )paren
 )paren
 )paren
@@ -1437,14 +1439,12 @@ op_logical_neg
 (paren
 id|bh
 op_assign
-id|bread
+id|fat_bread
 c_func
 (paren
-id|inode-&gt;i_dev
+id|sb
 comma
 id|sector
-comma
-id|SECTOR_SIZE
 )paren
 )paren
 )paren
@@ -1655,17 +1655,21 @@ comma
 l_int|1
 )paren
 suffix:semicolon
-id|mark_buffer_dirty
+id|fat_mark_buffer_dirty
 c_func
 (paren
+id|sb
+comma
 id|bh
 comma
 l_int|0
 )paren
 suffix:semicolon
-id|brelse
+id|fat_brelse
 c_func
 (paren
+id|sb
+comma
 id|bh
 )paren
 suffix:semicolon

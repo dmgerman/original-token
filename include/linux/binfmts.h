@@ -223,6 +223,14 @@ r_void
 suffix:semicolon
 r_extern
 r_int
+id|init_java_binfmt
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_int
 id|prepare_binprm
 c_func
 (paren

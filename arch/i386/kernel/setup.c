@@ -824,7 +824,7 @@ l_string|&quot;12&quot;
 comma
 l_string|&quot;13&quot;
 comma
-l_string|&quot;Am5x85-WT&quot;
+l_string|&quot;Am5x86-WT&quot;
 comma
 l_string|&quot;Am5x86-WB&quot;
 )brace

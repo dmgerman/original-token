@@ -18,6 +18,7 @@ DECL|macro|SCSI_REMOVAL_PREVENT
 mdefine_line|#define&t;SCSI_REMOVAL_PREVENT&t;1
 DECL|macro|SCSI_REMOVAL_ALLOW
 mdefine_line|#define&t;SCSI_REMOVAL_ALLOW&t;0
+macro_line|#ifdef __KERNEL__
 r_extern
 r_int
 id|scsi_ioctl
@@ -50,5 +51,6 @@ op_star
 id|arg
 )paren
 suffix:semicolon
+macro_line|#endif
 macro_line|#endif
 eof

@@ -2674,6 +2674,14 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef CONFIG_CDI_INIT
+id|cdi_init
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/* this MUST precede ide_init */
+macro_line|#endif CONFIG_CDI_INIT
 macro_line|#ifdef CONFIG_BLK_DEV_IDE
 id|ide_init
 c_func
@@ -2712,13 +2720,6 @@ l_int|0x3f2
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef CONFIG_CDI_INIT
-id|cdi_init
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif CONFIG_CDI_INIT
 macro_line|#ifdef CONFIG_CDU31A
 id|cdu31a_init
 c_func

@@ -186,6 +186,11 @@ op_star
 id|msg_spot
 suffix:semicolon
 multiline_comment|/* message text address */
+DECL|member|msg_stime
+id|time_t
+id|msg_stime
+suffix:semicolon
+multiline_comment|/* msgsnd time */
 DECL|member|msg_ts
 r_int
 id|msg_ts

@@ -2,6 +2,8 @@ multiline_comment|/*&n; * include/asm-i386/processor.h&n; *&n; * Copyright (C) 1
 macro_line|#ifndef __ASM_I386_PROCESSOR_H
 DECL|macro|__ASM_I386_PROCESSOR_H
 mdefine_line|#define __ASM_I386_PROCESSOR_H
+macro_line|#include &lt;asm/vm86.h&gt;
+macro_line|#include &lt;asm/math_emu.h&gt;
 multiline_comment|/*&n; * System setup and hardware bug flags..&n; * [Note we don&squot;t test the 386 multiply bug or popad bug]&n; */
 r_extern
 r_char

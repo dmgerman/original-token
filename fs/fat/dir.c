@@ -1589,9 +1589,11 @@ c_cond
 (paren
 id|bh
 )paren
-id|brelse
+id|fat_brelse
 c_func
 (paren
+id|sb
+comma
 id|bh
 )paren
 suffix:semicolon

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *    in2000.c -  Linux device driver for the&n; *                Always IN2000 ISA SCSI card.&n; *&n; * Copyright (c) 1996 John Shifflett, GeoLog Consulting&n; *    john@geolog.com&n; *    jshiffle@netcom.com&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; *&n; * Drew Eckhardt&squot;s excellent &squot;Generic NCR5380&squot; sources provided&n; * much of the inspiration and some of the code for this driver.&n; * The Linux IN2000 driver distributed in the Linux kernels through&n; * version 1.2.13 was an extremely valuable reference on the arcane&n; * (and still mysterious) workings of the IN2000&squot;s fifo. It also&n; * is where I lifted in2000_biosparam(), the gist of the card&n; * detection scheme, and other bits of code. Many thanks to the&n; * talented and courageous people who wrote, contributed to, and&n; * maintained that driver (including Brad McLean, Shaun Savage,&n; * Bill Earnest, Larry Doolittle, Roger Sunshine, John Luckey,&n; * Matt Postiff, Peter Lu, zerucha@shell.portal.com, and Eric&n; * Youngdale). I should also mention the driver written by&n; * Hamish Macdonald for the (GASP!) Amiga A2091 card, included&n; * in the Linux-m68k distribution; it gave me a good initial&n; * understanding of the proper way to run a WD33c93 chip, and I&n; * ended up stealing lots of code from it.&n; *&n; * _This_ driver is (I feel) an improvement over the old one in&n; * several respects:&n; *    -  All problems relating to the data size of a SCSI request are&n; *          gone (as far as I know). The old driver couldn&squot;t handle&n; *          swapping to partitions because that involved 4k blocks, nor&n; *          could it deal with the st.c tape driver unmodified, because&n; *          that usually involved 4k - 32k blocks. The old driver never&n; *          quite got away from a morbid dependence on 2k block sizes -&n; *          which of course is the size of the card&squot;s fifo.&n; *&n; *    -  Target Disconnection/Reconnection is now supported. Any&n; *          system with more than one device active on the SCSI bus&n; *          will benefit from this. The driver defaults to what I&squot;m&n; *          calling &squot;adaptive disconnect&squot; - meaning that each command&n; *          is evaluated individually as to whether or not it should&n; *          be run with the option to disconnect/reselect (if the&n; *          device chooses), or as a &quot;SCSI-bus-hog&quot;.&n; *&n; *    -  Synchronous data transfers are now supported. Because there&n; *          are a few devices (and many improperly terminated systems)&n; *          that choke when doing sync, the default is sync DISABLED&n; *          for all devices. This faster protocol can (and should!)&n; *          be enabled on selected devices via the command-line.&n; *&n; *    -  Runtime operating parameters can now be specified through&n; *       either the LILO or the &squot;insmod&squot; command line. For LILO do:&n; *          &quot;in2000=blah,blah,blah&quot;&n; *       and with insmod go like:&n; *          &quot;insmod /usr/src/linux/modules/in2000.o setup_strings=blah,blah&quot;&n; *       The defaults should be good for most people. See the comment&n; *       for &squot;setup_strings&squot; below for more details.&n; *&n; *    -  The old driver relied exclusively on what the Western Digital&n; *          docs call &quot;Combination Level 2 Commands&quot;, which are a great&n; *          idea in that the CPU is relieved of a lot of interrupt&n; *          overhead. However, by accepting a certain (user-settable)&n; *          amount of additional interrupts, this driver achieves&n; *          better control over the SCSI bus, and data transfers are&n; *          almost as fast while being much easier to define, track,&n; *          and debug.&n; *&n; *    -  You can force detection of a card whose BIOS has been disabled.&n; *&n; *    -  Multiple IN2000 cards might almost be supported. I&squot;ve tried to&n; *       keep it in mind, but have no way to test...&n; *&n; *&n; * TODO:&n; *       proc interface. tagged queuing. multiple cards.&n; *&n; *&n; * NOTE:&n; *       When using this or any other SCSI driver as a module, you&squot;ll&n; *       find that with the stock kernel, at most _two_ SCSI hard&n; *       drives will be linked into the device list (ie, usable).&n; *       If your IN2000 card has more than 2 disks on its bus, you&n; *       might want to change the define of &squot;SD_EXTRA_DEVS&squot; in the&n; *       &squot;hosts.h&squot; file from 2 to whatever is appropriate. It took&n; *       me a while to track down this surprisingly obscure and&n; *       undocumented little &quot;feature&quot;.&n; *&n; *&n; * People with bug reports, wish-lists, complaints, comments,&n; * or improvements are asked to pah-leeez email me (John Shifflett)&n; * at john@geolog.com or jshiffle@netcom.com! I&squot;m anxious to get&n; * this thing into as good a shape as possible, and I&squot;m positive&n; * there are lots of lurking bugs and &quot;Stupid Places&quot;.&n; *&n; */
+multiline_comment|/*&n; *    in2000.c -  Linux device driver for the&n; *                Always IN2000 ISA SCSI card.&n; *&n; * Copyright (c) 1996 John Shifflett, GeoLog Consulting&n; *    john@geolog.com&n; *    jshiffle@netcom.com&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; *&n; * Drew Eckhardt&squot;s excellent &squot;Generic NCR5380&squot; sources provided&n; * much of the inspiration and some of the code for this driver.&n; * The Linux IN2000 driver distributed in the Linux kernels through&n; * version 1.2.13 was an extremely valuable reference on the arcane&n; * (and still mysterious) workings of the IN2000&squot;s fifo. It also&n; * is where I lifted in2000_biosparam(), the gist of the card&n; * detection scheme, and other bits of code. Many thanks to the&n; * talented and courageous people who wrote, contributed to, and&n; * maintained that driver (including Brad McLean, Shaun Savage,&n; * Bill Earnest, Larry Doolittle, Roger Sunshine, John Luckey,&n; * Matt Postiff, Peter Lu, zerucha@shell.portal.com, and Eric&n; * Youngdale). I should also mention the driver written by&n; * Hamish Macdonald for the (GASP!) Amiga A2091 card, included&n; * in the Linux-m68k distribution; it gave me a good initial&n; * understanding of the proper way to run a WD33c93 chip, and I&n; * ended up stealing lots of code from it.&n; *&n; * _This_ driver is (I feel) an improvement over the old one in&n; * several respects:&n; *    -  All problems relating to the data size of a SCSI request are&n; *          gone (as far as I know). The old driver couldn&squot;t handle&n; *          swapping to partitions because that involved 4k blocks, nor&n; *          could it deal with the st.c tape driver unmodified, because&n; *          that usually involved 4k - 32k blocks. The old driver never&n; *          quite got away from a morbid dependence on 2k block sizes -&n; *          which of course is the size of the card&squot;s fifo.&n; *&n; *    -  Target Disconnection/Reconnection is now supported. Any&n; *          system with more than one device active on the SCSI bus&n; *          will benefit from this. The driver defaults to what I&squot;m&n; *          calling &squot;adaptive disconnect&squot; - meaning that each command&n; *          is evaluated individually as to whether or not it should&n; *          be run with the option to disconnect/reselect (if the&n; *          device chooses), or as a &quot;SCSI-bus-hog&quot;.&n; *&n; *    -  Synchronous data transfers are now supported. Because there&n; *          are a few devices (and many improperly terminated systems)&n; *          that choke when doing sync, the default is sync DISABLED&n; *          for all devices. This faster protocol can (and should!)&n; *          be enabled on selected devices via the command-line.&n; *&n; *    -  Runtime operating parameters can now be specified through&n; *       either the LILO or the &squot;insmod&squot; command line. For LILO do:&n; *          &quot;in2000=blah,blah,blah&quot;&n; *       and with insmod go like:&n; *          &quot;insmod /usr/src/linux/modules/in2000.o setup_strings=blah,blah&quot;&n; *       The defaults should be good for most people. See the comment&n; *       for &squot;setup_strings&squot; below for more details.&n; *&n; *    -  The old driver relied exclusively on what the Western Digital&n; *          docs call &quot;Combination Level 2 Commands&quot;, which are a great&n; *          idea in that the CPU is relieved of a lot of interrupt&n; *          overhead. However, by accepting a certain (user-settable)&n; *          amount of additional interrupts, this driver achieves&n; *          better control over the SCSI bus, and data transfers are&n; *          almost as fast while being much easier to define, track,&n; *          and debug.&n; *&n; *    -  You can force detection of a card whose BIOS has been disabled.&n; *&n; *    -  Multiple IN2000 cards might almost be supported. I&squot;ve tried to&n; *       keep it in mind, but have no way to test...&n; *&n; *&n; * TODO:&n; *       tagged queuing. multiple cards.&n; *&n; *&n; * NOTE:&n; *       When using this or any other SCSI driver as a module, you&squot;ll&n; *       find that with the stock kernel, at most _two_ SCSI hard&n; *       drives will be linked into the device list (ie, usable).&n; *       If your IN2000 card has more than 2 disks on its bus, you&n; *       might want to change the define of &squot;SD_EXTRA_DEVS&squot; in the&n; *       &squot;hosts.h&squot; file from 2 to whatever is appropriate. It took&n; *       me a while to track down this surprisingly obscure and&n; *       undocumented little &quot;feature&quot;.&n; *&n; *&n; * People with bug reports, wish-lists, complaints, comments,&n; * or improvements are asked to pah-leeez email me (John Shifflett)&n; * at john@geolog.com or jshiffle@netcom.com! I&squot;m anxious to get&n; * this thing into as good a shape as possible, and I&squot;m positive&n; * there are lots of lurking bugs and &quot;Stupid Places&quot;.&n; *&n; */
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
@@ -11,35 +11,32 @@ macro_line|#include &quot;scsi.h&quot;
 macro_line|#include &quot;sd.h&quot;
 macro_line|#include &quot;hosts.h&quot;
 macro_line|#include &quot;in2000.h&quot;
-macro_line|#if LINUX_VERSION_CODE &gt;= 0x010300
 macro_line|#include &lt;linux/blk.h&gt;
-macro_line|#else
-macro_line|#include &quot;../block/blk.h&quot;
-macro_line|#endif
+macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#ifdef MODULE
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#endif
+DECL|macro|IN2000_VERSION
+mdefine_line|#define IN2000_VERSION    &quot;1.28&quot;
+DECL|macro|IN2000_DATE
+mdefine_line|#define IN2000_DATE       &quot;07/May/1996&quot;
 DECL|macro|PROC_INTERFACE
 mdefine_line|#define PROC_INTERFACE     /* add code for /proc/scsi/in2000/xxx interface */
-DECL|macro|FAST_READ_IO
-mdefine_line|#define FAST_READ_IO       /* No problems with these on my machine */
-DECL|macro|FAST_WRITE_IO
-mdefine_line|#define FAST_WRITE_IO
 DECL|macro|SYNC_DEBUG
 mdefine_line|#define SYNC_DEBUG         /* extra info on sync negotiation printed */
 DECL|macro|DEBUGGING_ON
 mdefine_line|#define DEBUGGING_ON       /* enable command-line debugging bitmask */
 DECL|macro|DEBUG_DEFAULTS
 mdefine_line|#define DEBUG_DEFAULTS 0   /* default bitmask - change from command-line */
-DECL|macro|IN2000_VERSION
-mdefine_line|#define IN2000_VERSION    &quot;1.28&quot;
-DECL|macro|IN2000_DATE
-mdefine_line|#define IN2000_DATE       &quot;27/Apr/1996&quot;
+DECL|macro|FAST_READ_IO
+mdefine_line|#define FAST_READ_IO       /* No problems with these on my machine */
+DECL|macro|FAST_WRITE_IO
+mdefine_line|#define FAST_WRITE_IO
 macro_line|#ifdef DEBUGGING_ON
 DECL|macro|DB
 mdefine_line|#define DB(f,a) if (hostdata-&gt;args &amp; (f)) a;
 DECL|macro|CHECK_NULL
-mdefine_line|#define CHECK_NULL(p,s) if (!(p)) {printk(&quot;&bslash;n&quot;); while (1) printk(&quot;NP:%s&bslash;r&quot;,(s));}
+mdefine_line|#define CHECK_NULL(p,s) /* if (!(p)) {printk(&quot;&bslash;n&quot;); while (1) printk(&quot;NP:%s&bslash;r&quot;,(s));} */
 macro_line|#else
 DECL|macro|DB
 mdefine_line|#define DB(f,a)
@@ -2157,7 +2154,6 @@ suffix:semicolon
 macro_line|#endif
 )brace
 multiline_comment|/* It appears that the Linux interrupt dispatcher calls this&n; * function in a non-reentrant fashion. What that means to us&n; * is that we can use an SA_INTERRUPT type of interrupt (which&n; * is faster), and do an sti() right away to let timer, serial,&n; * etc. ints happen.&n; *&n; * WHOA! Wait a minute, pardner! Does this hold when more than&n; * one card has been detected?? I doubt it. Maybe better&n; * re-think the multiple card capability....&n; */
-macro_line|#if LINUX_VERSION_CODE &gt;= 0x010346   /* 1.3.70 */
 DECL|function|in2000_intr
 r_void
 id|in2000_intr
@@ -2174,19 +2170,6 @@ id|pt_regs
 op_star
 id|ptregs
 )paren
-macro_line|#else
-r_void
-id|in2000_intr
-(paren
-r_int
-id|irqnum
-comma
-r_struct
-id|pt_regs
-op_star
-id|ptregs
-)paren
-macro_line|#endif
 (brace
 r_struct
 id|Scsi_Host
@@ -5390,7 +5373,6 @@ r_return
 id|x
 suffix:semicolon
 )brace
-macro_line|#if LINUX_VERSION_CODE &gt;= 0x010359        /* 1.3.89 */
 DECL|function|in2000_reset
 r_int
 id|in2000_reset
@@ -5404,16 +5386,6 @@ r_int
 r_int
 id|reset_flags
 )paren
-macro_line|#else
-r_int
-id|in2000_reset
-c_func
-(paren
-id|Scsi_Cmnd
-op_star
-id|cmd
-)paren
-macro_line|#endif
 (brace
 r_int
 r_int
@@ -6400,8 +6372,6 @@ op_increment
 id|x
 suffix:semicolon
 )brace
-macro_line|#if LINUX_VERSION_CODE &gt;= 0x010300
-macro_line|#include &lt;linux/stat.h&gt;
 DECL|variable|proc_scsi_in2000
 r_struct
 id|proc_dir_entry
@@ -6423,7 +6393,6 @@ comma
 l_int|2
 )brace
 suffix:semicolon
-macro_line|#endif
 DECL|variable|bios_tab
 r_const
 r_int
@@ -6604,7 +6573,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;Forcing detection at IOport 0x%x.&bslash;n&quot;
+l_string|&quot;Forcing IN2000 detection at IOport 0x%x &quot;
 comma
 id|base
 )paren
@@ -6646,7 +6615,7 @@ l_int|0x61776c41
 id|printk
 c_func
 (paren
-l_string|&quot;Found IN2000 BIOS at 0x%x.&bslash;n&quot;
+l_string|&quot;Found IN2000 BIOS at 0x%x &quot;
 comma
 (paren
 r_int
@@ -6721,7 +6690,7 @@ id|switches
 id|printk
 c_func
 (paren
-l_string|&quot;Bad IO signature: %02x vs %02x&bslash;n&quot;
+l_string|&quot;Bad IO signature: %02x vs %02x.&bslash;n&quot;
 comma
 id|x
 comma
@@ -6850,14 +6819,12 @@ r_continue
 suffix:semicolon
 )brace
 multiline_comment|/* Ok. We accept that there&squot;s an IN2000 at ioaddr &squot;base&squot;. Now&n; * initialize it.&n; */
-macro_line|#if LINUX_VERSION_CODE &gt;= 0x010300
 id|tpnt-&gt;proc_dir
 op_assign
 op_amp
 id|proc_scsi_in2000
 suffix:semicolon
 multiline_comment|/* done more than once? harmless. */
-macro_line|#endif
 id|detect_count
 op_increment
 suffix:semicolon
@@ -6952,7 +6919,6 @@ op_rshift
 id|SW_INT_SHIFT
 )braket
 suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &gt;= 0x010346   /* 1.3.70 */
 r_if
 c_cond
 (paren
@@ -6971,24 +6937,6 @@ l_int|NULL
 )paren
 )paren
 (brace
-macro_line|#else
-r_if
-c_cond
-(paren
-id|request_irq
-c_func
-(paren
-id|x
-comma
-id|in2000_intr
-comma
-id|SA_INTERRUPT
-comma
-l_string|&quot;in2000&quot;
-)paren
-)paren
-(brace
-macro_line|#endif
 id|printk
 c_func
 (paren
@@ -7317,8 +7265,8 @@ op_amp
 id|DB_MASK
 )paren
 suffix:semicolon
-r_while
-c_loop
+r_if
+c_cond
 (paren
 id|check_setup_strings
 c_func
@@ -7400,9 +7348,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;in2000-%d: dip_switch=%02x: irq=%d ioport=%02x floppy=%s sync/DOS5=%s&bslash;n&quot;
-comma
-id|instance-&gt;host_no
+l_string|&quot;dip_switch=%02x irq=%d ioport=%02x floppy=%s sync/DOS5=%s &quot;
 comma
 (paren
 id|switches
@@ -7440,9 +7386,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;in2000-%d: hardware_ver=%02x chip=%s microcode=%02x&bslash;n&quot;
-comma
-id|instance-&gt;host_no
+l_string|&quot;hardware_ver=%02x chip=%s microcode=%02x&bslash;n&quot;
 comma
 id|hrev
 comma
@@ -7482,9 +7426,7 @@ macro_line|#ifdef DEBUGGING_ON
 id|printk
 c_func
 (paren
-l_string|&quot;in2000-%d: setup_strings = &quot;
-comma
-id|instance-&gt;host_no
+l_string|&quot;setup_strings = &quot;
 )paren
 suffix:semicolon
 r_for
@@ -7529,17 +7471,13 @@ l_int|0xff
 id|printk
 c_func
 (paren
-l_string|&quot;in2000-%d: Sync-transfer DISABLED on all devices: ENABLE from command-line&bslash;n&quot;
-comma
-id|instance-&gt;host_no
+l_string|&quot;Sync-transfer DISABLED on all devices: ENABLE from command-line&bslash;n&quot;
 )paren
 suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;in2000-%d: driver version %s - %s&bslash;n&quot;
-comma
-id|instance-&gt;host_no
+l_string|&quot;IN2000 driver version %s - %s&bslash;n&quot;
 comma
 id|IN2000_VERSION
 comma
@@ -7552,7 +7490,6 @@ id|detect_count
 suffix:semicolon
 )brace
 multiline_comment|/* NOTE: I lifted this function straight out of the old driver,&n; *       and have not tested it. Presumably it does what it&squot;s&n; *       supposed to do...&n; */
-macro_line|#if LINUX_VERSION_CODE &gt;= 0x010300
 DECL|function|in2000_biosparam
 r_int
 id|in2000_biosparam
@@ -7569,23 +7506,6 @@ r_int
 op_star
 id|iinfo
 )paren
-macro_line|#else
-r_int
-id|in2000_biosparam
-c_func
-(paren
-id|Disk
-op_star
-id|disk
-comma
-r_int
-id|dev
-comma
-r_int
-op_star
-id|iinfo
-)paren
-macro_line|#endif
 (brace
 r_int
 id|size
@@ -7774,6 +7694,37 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#ifdef PROC_INTERFACE
+multiline_comment|/* Certain older compilers (such as a.out 2.5.8) choke and give a&n; * &quot;Too many reloads&quot; error when there are a lot of calls to &squot;strcat()&squot;&n; * in one function. Modern kernels define &squot;strcat()&squot; as an inline&n; * function - I _guess_ this is related to the problem. Regardless,&n; * we can make everyone happy by doing some macro fudging to force&n; * gcc to do calls instead of inline expansion.&n; */
+DECL|function|in2000_strcat
+r_char
+op_star
+id|in2000_strcat
+c_func
+(paren
+r_char
+op_star
+id|dest
+comma
+r_const
+r_char
+op_star
+id|src
+)paren
+(brace
+r_return
+id|strcat
+c_func
+(paren
+id|dest
+comma
+id|src
+)paren
+suffix:semicolon
+)brace
+DECL|macro|strcat
+mdefine_line|#define strcat(d,s) (in2000_strcat((d),(s)))
+macro_line|#endif
 DECL|function|in2000_proc_info
 r_int
 id|in2000_proc_info

@@ -82,8 +82,6 @@ macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/time.h&gt;
 macro_line|#include &lt;linux/param.h&gt;
 macro_line|#include &lt;linux/resource.h&gt;
-macro_line|#include &lt;linux/vm86.h&gt;
-macro_line|#include &lt;linux/math_emu.h&gt;
 macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;

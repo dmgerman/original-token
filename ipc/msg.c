@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/ipc/msg.c&n; * Copyright (C) 1992 Krishna Balasubramanian &n; *&n; * Kerneld extensions by Bjorn Ekwall &lt;bj0rn@blox.se&gt; in May 1995&n; *&n; */
+multiline_comment|/*&n; * linux/ipc/msg.c&n; * Copyright (C) 1992 Krishna Balasubramanian &n; *&n; * Kerneld extensions by Bjorn Ekwall &lt;bj0rn@blox.se&gt; in May 1995, and May 1996&n; *&n; * See &lt;linux/kerneld.h&gt; for the (optional) new kerneld protocol&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -182,6 +182,129 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * If the send queue is full, try to free any old messages.&n; * These are most probably unwanted, since noone has picked them up...&n; */
+DECL|macro|MSG_FLUSH_TIME
+mdefine_line|#define MSG_FLUSH_TIME 10 /* seconds */
+DECL|function|flush_msg
+r_static
+r_void
+id|flush_msg
+c_func
+(paren
+r_struct
+id|msqid_ds
+op_star
+id|msq
+)paren
+(brace
+r_struct
+id|msg
+op_star
+id|nmsg
+suffix:semicolon
+r_int
+r_int
+id|flags
+suffix:semicolon
+r_int
+id|flushed
+op_assign
+l_int|0
+suffix:semicolon
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/* messages were put on the queue in time order */
+r_while
+c_loop
+(paren
+(paren
+id|nmsg
+op_assign
+id|msq-&gt;msg_first
+)paren
+op_logical_and
+(paren
+(paren
+id|CURRENT_TIME
+op_minus
+id|nmsg-&gt;msg_stime
+)paren
+OG
+id|MSG_FLUSH_TIME
+)paren
+)paren
+(brace
+id|msgbytes
+op_sub_assign
+id|nmsg-&gt;msg_ts
+suffix:semicolon
+id|msghdrs
+op_decrement
+suffix:semicolon
+id|msq-&gt;msg_cbytes
+op_sub_assign
+id|nmsg-&gt;msg_ts
+suffix:semicolon
+id|msq-&gt;msg_qnum
+op_decrement
+suffix:semicolon
+id|msq-&gt;msg_first
+op_assign
+id|nmsg-&gt;msg_next
+suffix:semicolon
+op_increment
+id|flushed
+suffix:semicolon
+id|kfree
+c_func
+(paren
+id|nmsg
+)paren
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|msq-&gt;msg_qnum
+op_eq
+l_int|0
+)paren
+id|msq-&gt;msg_first
+op_assign
+id|msq-&gt;msg_last
+op_assign
+l_int|NULL
+suffix:semicolon
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|flushed
+)paren
+id|printk
+c_func
+(paren
+id|KERN_WARNING
+l_string|&quot;flushed %d old SYSVIPC messages&quot;
+comma
+id|flushed
+)paren
+suffix:semicolon
+)brace
 DECL|function|real_msgsnd
 r_static
 r_int
@@ -224,6 +347,10 @@ id|msgh
 suffix:semicolon
 r_int
 id|mtype
+suffix:semicolon
+r_int
+r_int
+id|flags
 suffix:semicolon
 r_if
 c_cond
@@ -368,7 +495,7 @@ r_return
 op_minus
 id|EIDRM
 suffix:semicolon
-multiline_comment|/*&n;&t; * Non-root processes may send to kerneld! &n;&t; * i.e. no permission check if called from the kernel&n;&t; * otoh we don&squot;t want user level non-root snoopers...&n;&t; */
+multiline_comment|/*&n;&t; * Non-root kernel level processes may send to kerneld! &n;&t; * i.e. no permission check if called from the kernel&n;&t; * otoh we don&squot;t want user level non-root snoopers...&n;&t; */
 r_if
 c_cond
 (paren
@@ -405,7 +532,40 @@ OG
 id|msq-&gt;msg_qbytes
 )paren
 (brace
-multiline_comment|/* no space in queue */
+r_if
+c_cond
+(paren
+(paren
+id|kerneld_msqid
+op_ne
+op_minus
+l_int|1
+)paren
+op_logical_and
+(paren
+id|kerneld_msqid
+op_eq
+id|msqid
+)paren
+)paren
+id|flush_msg
+c_func
+(paren
+id|msq
+)paren
+suffix:semicolon
+multiline_comment|/* flush the kerneld channel only */
+r_if
+c_cond
+(paren
+id|msgsz
+op_plus
+id|msq-&gt;msg_cbytes
+OG
+id|msq-&gt;msg_qbytes
+)paren
+(brace
+multiline_comment|/* still no space in queue */
 r_if
 c_cond
 (paren
@@ -435,11 +595,12 @@ c_cond
 id|intr_count
 )paren
 (brace
-multiline_comment|/* Very unlikely, but better safe than sorry... */
+multiline_comment|/* Very unlikely, but better safe than sorry */
 id|printk
 c_func
 (paren
-l_string|&quot;Ouch, kerneld:msgsnd wants to sleep at interrupt!&bslash;n&quot;
+id|KERN_WARNING
+l_string|&quot;Ouch, kerneld:msgsnd buffers full!&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -456,6 +617,7 @@ suffix:semicolon
 r_goto
 id|slept
 suffix:semicolon
+)brace
 )brace
 multiline_comment|/* allocate message header and text space*/
 id|msgh
@@ -475,14 +637,7 @@ id|msgh
 op_plus
 id|msgsz
 comma
-(paren
-id|intr_count
-ques
-c_cond
 id|GFP_ATOMIC
-suffix:colon
-id|GFP_USER
-)paren
 )paren
 suffix:semicolon
 r_if
@@ -545,10 +700,7 @@ id|kdmp-&gt;id
 )paren
 )paren
 comma
-r_sizeof
-(paren
-r_int
-)paren
+id|KDHDR
 )paren
 suffix:semicolon
 id|memcpy
@@ -556,19 +708,13 @@ c_func
 (paren
 id|msgh-&gt;msg_spot
 op_plus
-r_sizeof
-(paren
-r_int
-)paren
+id|KDHDR
 comma
 id|kdmp-&gt;text
 comma
 id|msgsz
 op_minus
-r_sizeof
-(paren
-r_int
-)paren
+id|KDHDR
 )paren
 suffix:semicolon
 )brace
@@ -625,6 +771,29 @@ id|msgh-&gt;msg_next
 op_assign
 l_int|NULL
 suffix:semicolon
+id|msgh-&gt;msg_ts
+op_assign
+id|msgsz
+suffix:semicolon
+id|msgh-&gt;msg_type
+op_assign
+id|mtype
+suffix:semicolon
+id|msgh-&gt;msg_stime
+op_assign
+id|CURRENT_TIME
+suffix:semicolon
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -648,14 +817,6 @@ op_assign
 id|msgh
 suffix:semicolon
 )brace
-id|msgh-&gt;msg_ts
-op_assign
-id|msgsz
-suffix:semicolon
-id|msgh-&gt;msg_type
-op_assign
-id|mtype
-suffix:semicolon
 id|msq-&gt;msg_cbytes
 op_add_assign
 id|msgsz
@@ -677,6 +838,12 @@ suffix:semicolon
 id|msq-&gt;msg_stime
 op_assign
 id|CURRENT_TIME
+suffix:semicolon
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -720,6 +887,10 @@ id|msg
 op_star
 id|tmsg
 suffix:semicolon
+r_int
+r_int
+id|flags
+suffix:semicolon
 id|msq
 op_assign
 id|msgque
@@ -745,6 +916,17 @@ op_eq
 id|IPC_UNUSED
 )paren
 r_return
+suffix:semicolon
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|cli
+c_func
+(paren
+)paren
 suffix:semicolon
 r_for
 c_loop
@@ -775,6 +957,12 @@ id|msgid
 )paren
 r_break
 suffix:semicolon
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -789,8 +977,7 @@ op_assign
 (brace
 id|msgid
 comma
-op_minus
-id|ENODEV
+id|NULL_KDHDR
 comma
 l_string|&quot;&quot;
 )brace
@@ -799,8 +986,15 @@ id|printk
 c_func
 (paren
 id|KERN_ALERT
-l_string|&quot;Ouch, kerneld timed out, message failed&bslash;n&quot;
+l_string|&quot;Ouch, no kerneld for message %ld&bslash;n&quot;
+comma
+id|msgid
 )paren
+suffix:semicolon
+id|kmsp.id
+op_assign
+op_minus
+id|ENODEV
 suffix:semicolon
 id|real_msgsnd
 c_func
@@ -815,10 +1009,7 @@ op_star
 op_amp
 id|kmsp
 comma
-r_sizeof
-(paren
-r_int
-)paren
+id|KDHDR
 comma
 id|S_IRUSR
 op_or
@@ -901,6 +1092,10 @@ r_int
 id|id
 comma
 id|err
+suffix:semicolon
+r_int
+r_int
+id|flags
 suffix:semicolon
 r_if
 c_cond
@@ -1079,7 +1274,7 @@ op_eq
 l_int|0
 )paren
 (brace
-multiline_comment|/*&n;&t;&t;&t; * Non-root processes may receive from kerneld! &n;&t;&t;&t; * i.e. no permission check if called from the kernel&n;&t;&t;&t; * otoh we don&squot;t want user level non-root snoopers...&n;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t; * All kernel level processes may receive from kerneld! &n;&t;&t;&t; * i.e. no permission check if called from the kernel&n;&t;&t;&t; * otoh we don&squot;t want user level non-root snoopers...&n;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -1093,12 +1288,24 @@ id|S_IRUGO
 (brace
 id|DROP_TIMER
 suffix:semicolon
+multiline_comment|/* Not needed, but doesn&squot;t hurt */
 r_return
 op_minus
 id|EACCES
 suffix:semicolon
 )brace
 )brace
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1227,6 +1434,12 @@ op_assign
 id|leastp
 suffix:semicolon
 )brace
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1253,8 +1466,6 @@ id|MSG_NOERROR
 )paren
 )paren
 (brace
-id|DROP_TIMER
-suffix:semicolon
 r_return
 op_minus
 id|E2BIG
@@ -1272,6 +1483,17 @@ c_cond
 id|nmsg-&gt;msg_ts
 suffix:colon
 id|msgsz
+suffix:semicolon
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|cli
+c_func
+(paren
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -1358,6 +1580,12 @@ id|msq-&gt;msg_cbytes
 op_sub_assign
 id|nmsg-&gt;msg_ts
 suffix:semicolon
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1406,10 +1634,7 @@ id|kdmp-&gt;id
 comma
 id|nmsg-&gt;msg_spot
 comma
-r_sizeof
-(paren
-r_int
-)paren
+id|KDHDR
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t;&t; * Note that kdmp-&gt;text is a pointer&n;&t;&t;&t;&t; * when called from kernel space!&n;&t;&t;&t;&t; */
@@ -1419,10 +1644,7 @@ c_cond
 (paren
 id|msgsz
 OG
-r_sizeof
-(paren
-r_int
-)paren
+id|KDHDR
 )paren
 op_logical_and
 id|kdmp-&gt;text
@@ -1434,17 +1656,11 @@ id|kdmp-&gt;text
 comma
 id|nmsg-&gt;msg_spot
 op_plus
-r_sizeof
-(paren
-r_int
-)paren
+id|KDHDR
 comma
 id|msgsz
 op_minus
-r_sizeof
-(paren
-r_int
-)paren
+id|KDHDR
 )paren
 suffix:semicolon
 )brace
@@ -1473,8 +1689,6 @@ c_func
 (paren
 id|nmsg
 )paren
-suffix:semicolon
-id|DROP_TIMER
 suffix:semicolon
 r_return
 id|msgsz
@@ -1508,26 +1722,6 @@ id|current-&gt;blocked
 )paren
 (brace
 id|DROP_TIMER
-suffix:semicolon
-r_return
-op_minus
-id|EINTR
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|intr_count
-)paren
-(brace
-id|DROP_TIMER
-suffix:semicolon
-multiline_comment|/* Won&squot;t happen... */
-id|printk
-c_func
-(paren
-l_string|&quot;Ouch, kerneld:msgrcv wants to sleep at interrupt!&bslash;n&quot;
-)paren
 suffix:semicolon
 r_return
 op_minus
@@ -1570,7 +1764,7 @@ r_int
 id|msgflg
 )paren
 (brace
-multiline_comment|/* IPC_KERNELD is used as a marker for kernel calls */
+multiline_comment|/* IPC_KERNELD is used as a marker for kernel level calls */
 r_return
 id|real_msgsnd
 c_func
@@ -1611,7 +1805,7 @@ r_int
 id|msgflg
 )paren
 (brace
-multiline_comment|/* IPC_KERNELD is used as a marker for kernel calls */
+multiline_comment|/* IPC_KERNELD is used as a marker for kernel level calls */
 r_return
 id|real_msgrcv
 (paren
@@ -1994,6 +2188,32 @@ r_return
 op_minus
 id|EPERM
 suffix:semicolon
+macro_line|#ifdef NEW_KERNELD_PROTOCOL
+r_if
+c_cond
+(paren
+(paren
+id|msgflg
+op_amp
+id|IPC_KERNELD
+)paren
+op_eq
+id|OLDIPC_KERNELD
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_ALERT
+l_string|&quot;Please recompile your kerneld daemons!&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|EPERM
+suffix:semicolon
+)brace
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -3116,8 +3336,8 @@ suffix:semicolon
 )brace
 )brace
 )brace
-multiline_comment|/*&n; * Kerneld internal message format/syntax:&n; *&n; * The message type from the kernel to kerneld is used to specify _what_&n; * function we want kerneld to perform. &n; *&n; * The &quot;normal&quot; message area is divided into a long, followed by a char array.&n; * The long is used to hold the sequence number of the request, which will&n; * be used as the return message type from kerneld back to the kernel.&n; * In the return message, the long will be used to store the exit status&n; * of the kerneld &quot;job&quot;, or task.&n; * The character array is used to pass parameters to kerneld and (optional)&n; * return information from kerneld back to the kernel.&n; * It is the responsibility of kerneld and the kernel level caller&n; * to set usable sizes on the parameter/return value array, since&n; * that information is _not_ included in the message format&n; */
-multiline_comment|/*&n; * The basic kernel level entry point to kerneld.&n; *&t;msgtype should correspond to a task type for (a) kerneld&n; *&t;ret_size is the size of the (optional) return _value,&n; *&t;&t;OR-ed with KERNELD_WAIT if we want an answer&n; *&t;msgsize is the size (in bytes) of the message, not including&n; *&t;&t;the long that is always sent first in a kerneld message&n; *&t;text is the parameter for the kerneld specific task&n; *&t;ret_val is NULL or the kernel address where an expected answer&n; *&t;&t;from kerneld should be placed.&n; *&n; * See &lt;linux/kerneld.h&gt; for usage (inline convenience functions)&n; *&n; */
+multiline_comment|/*&n; * Kerneld internal message format/syntax:&n; *&n; * The message type from the kernel to kerneld is used to specify _what_&n; * function we want kerneld to perform. &n; *&n; * The &quot;normal&quot; message area is divided into a header, followed by a char array.&n; * The header is used to hold the sequence number of the request, which will&n; * be used as the return message type from kerneld back to the kernel.&n; * In the return message, the header will be used to store the exit status&n; * of the kerneld &quot;job&quot;, or task.&n; * The character array is used to pass parameters to kerneld and (optional)&n; * return information from kerneld back to the kernel.&n; * It is the responsibility of kerneld and the kernel level caller&n; * to set usable sizes on the parameter/return value array, since&n; * that information is _not_ included in the message format&n; */
+multiline_comment|/*&n; * The basic kernel level entry point to kerneld.&n; *&t;msgtype should correspond to a task type for (a) kerneld&n; *&t;ret_size is the size of the (optional) return _value,&n; *&t;&t;OR-ed with KERNELD_WAIT if we want an answer&n; *&t;msgsize is the size (in bytes) of the message, not including&n; *&t;&t;the header that is always sent first in a kerneld message&n; *&t;text is the parameter for the kerneld specific task&n; *&t;ret_val is NULL or the kernel address where an expected answer&n; *&t;&t;from kerneld should be placed.&n; *&n; * See &lt;linux/kerneld.h&gt; for usage (inline convenience functions)&n; *&n; */
 DECL|function|kerneld_send
 r_int
 id|kerneld_send
@@ -3163,7 +3383,7 @@ op_assign
 (brace
 id|msgtype
 comma
-l_int|0
+id|NULL_KDHDR
 comma
 (paren
 r_char
@@ -3182,6 +3402,10 @@ op_or
 id|IPC_KERNELD
 op_or
 id|MSG_NOERROR
+suffix:semicolon
+r_int
+r_int
+id|flags
 suffix:semicolon
 r_if
 c_cond
@@ -3206,12 +3430,16 @@ op_and_assign
 op_complement
 id|KERNELD_WAIT
 suffix:semicolon
+macro_line|#ifdef NEW_KERNELD_PROTOCOL
+r_else
+id|kmsp.pid
+op_assign
+id|current-&gt;pid
+suffix:semicolon
+macro_line|#endif
 id|msgsz
 op_add_assign
-r_sizeof
-(paren
-r_int
-)paren
+id|KDHDR
 suffix:semicolon
 r_if
 c_cond
@@ -3221,6 +3449,17 @@ op_amp
 id|KERNELD_WAIT
 )paren
 (brace
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -3229,6 +3468,7 @@ id|id
 op_le
 l_int|0
 )paren
+multiline_comment|/* overflow */
 id|id
 op_assign
 id|KERNELD_MINSEQ
@@ -3236,6 +3476,12 @@ suffix:semicolon
 id|kmsp.id
 op_assign
 id|id
+suffix:semicolon
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
 suffix:semicolon
 )brace
 id|status
@@ -3302,10 +3548,7 @@ op_star
 op_amp
 id|kmsp
 comma
-r_sizeof
-(paren
-r_int
-)paren
+id|KDHDR
 op_plus
 (paren
 (paren

@@ -671,7 +671,7 @@ r_int
 r_int
 id|nr_uarts
 suffix:semicolon
-multiline_comment|/* UART-counter, that indicates&n;&t;&t;&t;&t;&t;&t;how manu UART&squot;s there are on&n;&t;&t;&t;&t;&t;&t;the board.  If the board has a&n;&t;&t;&t;&t;&t;&t;IRQ-register, this can be used&n;&t;&t;&t;&t;&t;&t;to check if any of the uarts,&n;&t;&t;&t;&t;&t;&t;on the board has requested an&n;&t;&t;&t;&t;&t;&t;interrupt, instead of checking&n;&t;&t;&t;&t;&t;&t;IRQ-registers on all UART&squot;s */
+multiline_comment|/* UART-counter, that indicates&n;&t;&t;&t;&t;&t;&t;how many UART&squot;s there are on&n;&t;&t;&t;&t;&t;&t;the board.  If the board has a&n;&t;&t;&t;&t;&t;&t;IRQ-register, this can be used&n;&t;&t;&t;&t;&t;&t;to check if any of the uarts,&n;&t;&t;&t;&t;&t;&t;on the board has requested an&n;&t;&t;&t;&t;&t;&t;interrupt, instead of checking&n;&t;&t;&t;&t;&t;&t;IRQ-registers on all UART&squot;s */
 DECL|member|sw
 id|SERIALSWITCH
 op_star

@@ -152,7 +152,7 @@ id|affs_zone
 op_star
 id|s_zones
 suffix:semicolon
-multiline_comment|/* The zones themselfes. */
+multiline_comment|/* The zones themselves. */
 DECL|member|s_zonemap
 r_char
 op_star
@@ -164,7 +164,7 @@ r_char
 op_star
 id|s_prefix
 suffix:semicolon
-multiline_comment|/* Prefix for volumes and assignes. */
+multiline_comment|/* Prefix for volumes and assigns. */
 DECL|member|s_prefix_len
 r_int
 id|s_prefix_len

@@ -1460,7 +1460,7 @@ id|CR_NODMA
 )paren
 suffix:semicolon
 macro_line|#endif
-multiline_comment|/* overwrite warning occured, stop NIC &amp; check the BOUNDARY pointer */
+multiline_comment|/* overwrite warning occurred, stop NIC &amp; check the BOUNDARY pointer */
 multiline_comment|/* FIXME - real overwrite handling needed !! */
 id|printk
 c_func

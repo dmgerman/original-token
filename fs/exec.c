@@ -79,6 +79,13 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef CONFIG_BINFMT_JAVA
+id|init_java_binfmt
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/* This cannot be configured out of the kernel */
 id|init_script_binfmt
 c_func

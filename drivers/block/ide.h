@@ -1130,13 +1130,6 @@ suffix:colon
 l_int|1
 suffix:semicolon
 multiline_comment|/* disallow setting unmask bits */
-DECL|member|got_irq
-r_int
-id|got_irq
-suffix:colon
-l_int|1
-suffix:semicolon
-multiline_comment|/* 1 = already alloc&squot;d our irq */
 DECL|member|sharing_irq
 r_int
 id|sharing_irq

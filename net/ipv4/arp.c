@@ -4221,7 +4221,7 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;Binding hardware header cache entry.&n; *&t;It is the only really complicated part of arp code.&n; *&t;We have no locking for hh records, so that&n; *&t;all possible race conditions should be resolved by&n; *&t;cli()/sti() pairs.&n; *&n; *&t;Important note: hhs never disapear from lists, if ARP_LOCKED,&n; *&t;this fact allows to scan hh lists with enabled interrupts,&n; *&t;but results in generating duplicate hh entries.&n; *&t;It is harmless. (and I&squot;ve never seen such event)&n; *&n; *&t;Returns 0, if hh has been just created, so that&n; *&t;caller should fill it.&n; */
+multiline_comment|/*&n; *&t;Binding hardware header cache entry.&n; *&t;It is the only really complicated part of arp code.&n; *&t;We have no locking for hh records, so that&n; *&t;all possible race conditions should be resolved by&n; *&t;cli()/sti() pairs.&n; *&n; *&t;Important note: hhs never disappear from lists, if ARP_LOCKED,&n; *&t;this fact allows to scan hh lists with enabled interrupts,&n; *&t;but results in generating duplicate hh entries.&n; *&t;It is harmless. (and I&squot;ve never seen such event)&n; *&n; *&t;Returns 0, if hh has been just created, so that&n; *&t;caller should fill it.&n; */
 DECL|function|arp_bind_cache
 r_int
 id|arp_bind_cache
@@ -6478,12 +6478,8 @@ id|r-&gt;arp_flags
 suffix:semicolon
 id|entry-&gt;next
 op_assign
-(paren
 op_star
 id|entryp
-)paren
-op_member_access_from_pointer
-id|next
 suffix:semicolon
 op_star
 id|entryp

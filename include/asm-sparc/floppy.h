@@ -168,6 +168,10 @@ DECL|macro|fd_request_irq
 mdefine_line|#define fd_request_irq()          sun_fd_request_irq()
 DECL|macro|fd_free_irq
 mdefine_line|#define fd_free_irq()             /* nothing... */
+DECL|macro|fd_dma_mem_alloc
+mdefine_line|#define fd_dma_mem_alloc(size)    ((unsigned long) vmalloc(size))
+DECL|macro|fd_dma_mem_free
+mdefine_line|#define fd_dma_mem_free(addr,size) (vfree((void *)(addr)))
 DECL|macro|FLOPPY_MOTOR_MASK
 mdefine_line|#define FLOPPY_MOTOR_MASK         0x10
 multiline_comment|/* It&squot;s all the same... */

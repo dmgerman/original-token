@@ -17,8 +17,25 @@ DECL|macro|KERNELD_BLANKER
 mdefine_line|#define KERNELD_BLANKER 7 /* from drivers/char/console.c */
 DECL|macro|KERNELD_ARP
 mdefine_line|#define KERNELD_ARP 256 /* from net/ipv4/arp.c */
+multiline_comment|/*&n; * Uncomment the following line for the new kerneld protocol&n; * This includes the pid of the kernel level requestor into the kerneld header&n; */
+multiline_comment|/*&n;#define NEW_KERNELD_PROTOCOL&n; */
+macro_line|#ifdef NEW_KERNELD_PROTOCOL
+DECL|macro|OLDIPC_KERNELD
+mdefine_line|#define OLDIPC_KERNELD 00040000   /* use the kerneld message channel */
+DECL|macro|IPC_KERNELD
+mdefine_line|#define IPC_KERNELD 00140000   /* use the kerneld message channel, new protocol */
+DECL|macro|KDHDR
+mdefine_line|#define KDHDR (sizeof(long) + sizeof(short) + sizeof(short))
+DECL|macro|NULL_KDHDR
+mdefine_line|#define NULL_KDHDR 0, 2, 0
+macro_line|#else
 DECL|macro|IPC_KERNELD
 mdefine_line|#define IPC_KERNELD 00040000   /* use the kerneld message channel */
+DECL|macro|KDHDR
+mdefine_line|#define KDHDR (sizeof(long))
+DECL|macro|NULL_KDHDR
+mdefine_line|#define NULL_KDHDR 0
+macro_line|#endif
 DECL|macro|KERNELD_MAXCMD
 mdefine_line|#define KERNELD_MAXCMD 0x7ffeffff
 DECL|macro|KERNELD_MINSEQ
@@ -39,6 +56,16 @@ DECL|member|id
 r_int
 id|id
 suffix:semicolon
+macro_line|#ifdef NEW_KERNELD_PROTOCOL
+DECL|member|version
+r_int
+id|version
+suffix:semicolon
+DECL|member|pid
+r_int
+id|pid
+suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef __KERNEL__
 DECL|member|text
 r_char

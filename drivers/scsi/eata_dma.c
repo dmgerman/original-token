@@ -6238,7 +6238,7 @@ id|hd-&gt;bustype
 op_assign
 id|bustype
 suffix:semicolon
-multiline_comment|/*&n;&t; * If we are using a ISA board, we can&squot;t use extended SG,&n;&t; * because we would need exessive amounts of memory for&n;&t; * bounce buffers.&n;&t; */
+multiline_comment|/*&n;&t; * If we are using a ISA board, we can&squot;t use extended SG,&n;&t; * because we would need excessive amounts of memory for&n;&t; * bounce buffers.&n;&t; */
 r_if
 c_cond
 (paren

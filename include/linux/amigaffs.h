@@ -32,7 +32,7 @@ macro_line|#elif defined(__BIG_ENDIAN)
 DECL|macro|BO_EXBITS
 mdefine_line|#define BO_EXBITS&t;0x00UL
 macro_line|#else
-macro_line|#error Endianess must be known for affs to work.
+macro_line|#error Endianness must be known for affs to work.
 macro_line|#endif
 multiline_comment|/* The following constants will be checked against the values read native */
 DECL|macro|FS_OFS

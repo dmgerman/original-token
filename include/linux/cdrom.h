@@ -459,6 +459,9 @@ DECL|macro|CDROMREADALL
 mdefine_line|#define CDROMREADALL&t;&t;0x5318&t;/* read all 2646 bytes */
 DECL|macro|CDROMCLOSETRAY
 mdefine_line|#define CDROMCLOSETRAY&t;&t;0x5319&t;/* pendant of CDROMEJECT */
+multiline_comment|/*&n; * For controlling a changer.  (Used by ATAPI driver.)&n; */
+DECL|macro|CDROMLOADFROMSLOT
+mdefine_line|#define CDROMLOADFROMSLOT&t;0x531a&t;/* LOAD disk from slot*/
 multiline_comment|/*&n; * CD-ROM-specific SCSI command opcodes&n; */
 multiline_comment|/*&n; * Group 2 (10-byte).  All of these are called &squot;optional&squot; by SCSI-II.&n; */
 DECL|macro|SCMD_READ_TOC

@@ -113,7 +113,7 @@ mdefine_line|#define ISR_RXE   0x04 /* Receive error  */
 DECL|macro|ISR_TXE
 mdefine_line|#define ISR_TXE   0x08 /* Transmit error */
 DECL|macro|ISR_OVW
-mdefine_line|#define ISR_OVW   0x10 /* Ring buffer overrrun */
+mdefine_line|#define ISR_OVW   0x10 /* Ring buffer overrun */
 DECL|macro|ISR_CNT
 mdefine_line|#define ISR_CNT   0x20 /* Counter overflow    */
 DECL|macro|ISR_RDC

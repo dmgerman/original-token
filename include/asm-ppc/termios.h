@@ -553,6 +553,8 @@ DECL|macro|B115200
 mdefine_line|#define  B115200  00021
 DECL|macro|B230400
 mdefine_line|#define  B230400  00022
+DECL|macro|B460800
+mdefine_line|#define  B460800  00023
 DECL|macro|CSIZE
 mdefine_line|#define CSIZE&t;00001400
 DECL|macro|CS5

@@ -561,7 +561,6 @@ l_string|&quot;AFFS: find_link_pred(): next key=%d&bslash;n&quot;
 comma
 id|nextkey
 )paren
-)paren
 suffix:semicolon
 r_if
 c_cond

@@ -3202,7 +3202,7 @@ r_goto
 id|end_rename
 suffix:semicolon
 )brace
-multiline_comment|/* Unlink destination if existant */
+multiline_comment|/* Unlink destination if existent */
 r_if
 c_cond
 (paren
