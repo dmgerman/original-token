@@ -3997,7 +3997,7 @@ c_func
 id|LINK_STATE_START
 comma
 op_amp
-id|info-&gt;dev
+id|info-&gt;dev.state
 )paren
 suffix:semicolon
 )brace
@@ -4078,7 +4078,7 @@ c_func
 id|LINK_STATE_START
 comma
 op_amp
-id|info-&gt;dev
+id|info-&gt;dev.state
 )paren
 suffix:semicolon
 )brace
