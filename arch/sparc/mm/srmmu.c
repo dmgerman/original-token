@@ -5019,8 +5019,7 @@ id|GFP_KERNEL
 comma
 l_int|1
 comma
-op_complement
-l_int|0UL
+l_int|0
 )paren
 suffix:semicolon
 r_if

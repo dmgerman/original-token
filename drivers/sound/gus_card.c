@@ -42,6 +42,12 @@ r_extern
 r_int
 id|have_gus_max
 suffix:semicolon
+DECL|variable|gus_pnp_flag
+r_int
+id|gus_pnp_flag
+op_assign
+l_int|0
+suffix:semicolon
 DECL|variable|gus_osp
 r_int
 op_star
@@ -330,6 +336,17 @@ id|gus_osp
 op_assign
 id|hw_config-&gt;osp
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|hw_config-&gt;card_subtype
+op_eq
+l_int|1
+)paren
+id|gus_pnp_flag
+op_assign
+l_int|1
+suffix:semicolon
 id|irq
 op_assign
 id|hw_config-&gt;irq
@@ -388,7 +405,6 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
 id|check_region
 (paren
 id|hw_config-&gt;io_base
@@ -396,10 +412,15 @@ comma
 l_int|16
 )paren
 )paren
+id|printk
+(paren
+l_string|&quot;GUS: I/O range conflict (1)&bslash;n&quot;
+)paren
+suffix:semicolon
+r_else
 r_if
 c_cond
 (paren
-op_logical_neg
 id|check_region
 (paren
 id|hw_config-&gt;io_base
@@ -409,6 +430,12 @@ comma
 l_int|16
 )paren
 )paren
+id|printk
+(paren
+l_string|&quot;GUS: I/O range conflict (2)&bslash;n&quot;
+)paren
+suffix:semicolon
+r_else
 r_if
 c_cond
 (paren

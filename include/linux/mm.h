@@ -410,10 +410,15 @@ id|free_after
 suffix:colon
 l_int|1
 comma
+DECL|member|dma
+id|dma
+suffix:colon
+l_int|1
+comma
 DECL|member|unused
 id|unused
 suffix:colon
-l_int|2
+l_int|1
 comma
 DECL|member|reserved
 id|reserved
@@ -467,6 +472,12 @@ id|page
 op_star
 id|prev_hash
 suffix:semicolon
+DECL|member|buffers
+r_struct
+id|buffer_head
+op_star
+id|buffers
+suffix:semicolon
 DECL|typedef|mem_map_t
 )brace
 id|mem_map_t
@@ -476,49 +487,11 @@ id|mem_map_t
 op_star
 id|mem_map
 suffix:semicolon
-multiline_comment|/*&n; * Free area management&n; */
-DECL|macro|NR_MEM_LISTS
-mdefine_line|#define NR_MEM_LISTS 6
-DECL|struct|mem_list
-r_struct
-id|mem_list
-(brace
-DECL|member|next
-r_struct
-id|mem_list
-op_star
-id|next
-suffix:semicolon
-DECL|member|prev
-r_struct
-id|mem_list
-op_star
-id|prev
-suffix:semicolon
-)brace
-suffix:semicolon
-r_extern
-r_struct
-id|mem_list
-id|free_area_list
-(braket
-id|NR_MEM_LISTS
-)braket
-suffix:semicolon
-r_extern
-r_int
-r_int
-op_star
-id|free_area_map
-(braket
-id|NR_MEM_LISTS
-)braket
-suffix:semicolon
 multiline_comment|/*&n; * This is timing-critical - most of the time in getting a new page&n; * goes to clearing the page. If you want a page without the clearing&n; * overhead, just use __get_free_page() directly..&n; */
 DECL|macro|__get_free_page
-mdefine_line|#define __get_free_page(priority) __get_free_pages((priority),0,~0UL)
+mdefine_line|#define __get_free_page(priority) __get_free_pages((priority),0,0)
 DECL|macro|__get_dma_pages
-mdefine_line|#define __get_dma_pages(priority, order) __get_free_pages((priority),(order),MAX_DMA_ADDRESS)
+mdefine_line|#define __get_dma_pages(priority, order) __get_free_pages((priority),(order),1)
 r_extern
 r_int
 r_int
@@ -533,8 +506,7 @@ r_int
 id|gfporder
 comma
 r_int
-r_int
-id|max_addr
+id|dma
 )paren
 suffix:semicolon
 DECL|function|get_free_page
@@ -1078,7 +1050,6 @@ c_func
 (paren
 r_int
 comma
-r_int
 r_int
 )paren
 suffix:semicolon

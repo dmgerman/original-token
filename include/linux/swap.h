@@ -126,7 +126,6 @@ id|shm_swap
 r_int
 comma
 r_int
-r_int
 )paren
 suffix:semicolon
 multiline_comment|/* linux/mm/vmscan.c */
@@ -137,7 +136,6 @@ c_func
 (paren
 r_int
 comma
-r_int
 r_int
 comma
 r_int
@@ -322,17 +320,13 @@ c_func
 (paren
 r_int
 r_int
-id|addr
+id|index
 )paren
 (brace
 r_return
 id|swap_cache
 (braket
-id|MAP_NR
-c_func
-(paren
-id|addr
-)paren
+id|index
 )braket
 suffix:semicolon
 )brace
@@ -341,10 +335,11 @@ r_extern
 r_inline
 r_int
 id|find_in_swap_cache
+c_func
 (paren
 r_int
 r_int
-id|addr
+id|index
 )paren
 (brace
 r_int
@@ -363,11 +358,7 @@ c_func
 (paren
 id|swap_cache
 op_plus
-id|MAP_NR
-c_func
-(paren
-id|addr
-)paren
+id|index
 comma
 l_int|0
 )paren
@@ -395,7 +386,7 @@ c_func
 (paren
 r_int
 r_int
-id|addr
+id|index
 )paren
 (brace
 r_int
@@ -414,11 +405,7 @@ c_func
 (paren
 id|swap_cache
 op_plus
-id|MAP_NR
-c_func
-(paren
-id|addr
-)paren
+id|index
 comma
 l_int|0
 )paren

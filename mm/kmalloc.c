@@ -937,8 +937,6 @@ id|flags
 suffix:semicolon
 r_int
 r_int
-id|max_addr
-comma
 id|type
 suffix:semicolon
 r_int
@@ -995,11 +993,6 @@ l_int|NULL
 )paren
 suffix:semicolon
 )brace
-id|max_addr
-op_assign
-op_complement
-l_int|0UL
-suffix:semicolon
 id|type
 op_assign
 id|MF_USED
@@ -1022,10 +1015,6 @@ op_amp
 id|GFP_DMA
 )paren
 (brace
-id|max_addr
-op_assign
-id|MAX_DMA_ADDRESS
-suffix:semicolon
 id|type
 op_assign
 id|MF_DMA
@@ -1184,7 +1173,9 @@ id|order
 dot
 id|gfporder
 comma
-id|max_addr
+id|priority
+op_amp
+id|GFP_DMA
 )paren
 suffix:semicolon
 r_if

@@ -56,6 +56,8 @@ DECL|macro|SNDCARD_MAUI
 mdefine_line|#define SNDCARD_MAUI&t;&t;23
 DECL|macro|SNDCARD_PSEUDO_MSS
 mdefine_line|#define SNDCARD_PSEUDO_MSS&t;24
+DECL|macro|SNDCARD_GUSPNP
+mdefine_line|#define SNDCARD_GUSPNP&t;&t;25
 multiline_comment|/***********************************&n; * IOCTL Commands for /dev/sequencer&n; */
 macro_line|#ifndef _IOWR
 multiline_comment|/*&t;@(#)ioctlp.h */
@@ -1016,7 +1018,8 @@ r_struct
 id|buffmem_desc
 (brace
 DECL|member|buffer
-id|caddr_t
+r_int
+op_star
 id|buffer
 suffix:semicolon
 DECL|member|size
@@ -1033,6 +1036,8 @@ DECL|macro|SNDCTL_DSP_MAPOUTBUF
 mdefine_line|#define SNDCTL_DSP_MAPOUTBUF&t;&t;_IOR (&squot;P&squot;, 20, buffmem_desc)
 DECL|macro|SNDCTL_DSP_SETSYNCRO
 mdefine_line|#define SNDCTL_DSP_SETSYNCRO&t;&t;_IO  (&squot;P&squot;, 21)
+DECL|macro|SNDCTL_DSP_SETDUPLEX
+mdefine_line|#define SNDCTL_DSP_SETDUPLEX&t;&t;_IO  (&squot;P&squot;, 22)
 DECL|macro|SOUND_PCM_READ_RATE
 mdefine_line|#define SOUND_PCM_READ_RATE&t;&t;_IOR (&squot;P&squot;, 2, int)
 DECL|macro|SOUND_PCM_READ_CHANNELS

@@ -454,8 +454,7 @@ multiline_comment|/* osk will be destroyed when it gets to close or the timer fi
 )brace
 r_else
 (brace
-multiline_comment|/*&t;&t;&t;unix_kill_credentials(skb);&t;*/
-multiline_comment|/* Throw out any passed fd&squot;s */
+multiline_comment|/* passed fds are erased where?? */
 id|kfree_skb
 c_func
 (paren
@@ -2984,6 +2983,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;Count the free descriptors available to a process. &n; *&t;Interpretation issue: Is the limit the highest descriptor (buggy&n; *&t;allowing passed fd&squot;s higher up to cause a limit to be exceeded) -&n; *&t;but how the old code did it - or like this...&n; */
 DECL|function|unix_files_free
+r_static
 r_int
 id|unix_files_free
 c_func
@@ -3094,6 +3094,7 @@ id|cmsg
 r_int
 id|i
 suffix:semicolon
+multiline_comment|/* count of space in parent for fds */
 r_int
 id|cmnum
 suffix:semicolon
@@ -3116,6 +3117,7 @@ op_assign
 l_int|NULL
 suffix:semicolon
 multiline_comment|/* =NULL To keep gcc happy */
+multiline_comment|/* number of fds actually passed */
 r_int
 id|fdnum
 suffix:semicolon
@@ -3350,6 +3352,11 @@ id|skb-&gt;h.filp
 op_assign
 l_int|NULL
 suffix:semicolon
+multiline_comment|/* no need to use destructor */
+id|skb-&gt;destructor
+op_assign
+l_int|NULL
+suffix:semicolon
 )brace
 DECL|function|unix_destruct_fds
 r_static
@@ -3416,6 +3423,7 @@ comma
 id|GFP_KERNEL
 )paren
 suffix:semicolon
+multiline_comment|/* number of descriptors starts block */
 id|memcpy
 c_func
 (paren
@@ -3430,6 +3438,7 @@ r_int
 )paren
 )paren
 suffix:semicolon
+multiline_comment|/* actual  descriptors */
 id|memcpy
 c_func
 (paren
@@ -3529,13 +3538,9 @@ id|fp
 id|UNIX_MAX_FD
 )braket
 suffix:semicolon
+multiline_comment|/* number of fds waiting to be passed, 0 means either&n;&t; * no fds to pass or they&squot;ve already been passed &n;&t; */
 r_int
 id|fpnum
-op_assign
-l_int|0
-suffix:semicolon
-r_int
-id|fp_attached
 op_assign
 l_int|0
 suffix:semicolon
@@ -3684,14 +3689,6 @@ op_ne
 id|cm-&gt;cmsg_len
 )paren
 (brace
-macro_line|#if 0
-id|printk
-c_func
-(paren
-l_string|&quot;Sendmsg: bad access rights&bslash;n&quot;
-)paren
-suffix:semicolon
-macro_line|#endif
 id|kfree
 c_func
 (paren
@@ -3729,16 +3726,6 @@ OL
 l_int|0
 )paren
 (brace
-macro_line|#if 0
-id|printk
-c_func
-(paren
-l_string|&quot;Sendmsg error = %d&bslash;n&quot;
-comma
-id|fpnum
-)paren
-suffix:semicolon
-macro_line|#endif
 r_return
 id|fpnum
 suffix:semicolon
@@ -3917,15 +3904,8 @@ r_if
 c_cond
 (paren
 id|fpnum
-op_logical_and
-op_logical_neg
-id|fp_attached
 )paren
 (brace
-id|fp_attached
-op_assign
-l_int|1
-suffix:semicolon
 id|unix_attach_fds
 c_func
 (paren
@@ -4302,12 +4282,6 @@ c_cond
 id|msg-&gt;msg_accrights
 )paren
 (brace
-id|printk
-c_func
-(paren
-l_string|&quot;recvmsg with accrights&bslash;n&quot;
-)paren
-suffix:semicolon
 id|cm
 op_assign
 id|unix_copyrights

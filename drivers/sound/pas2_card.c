@@ -760,6 +760,14 @@ id|EMULATION_CONFIGURATION
 )paren
 suffix:semicolon
 )brace
+r_else
+id|pas_write
+(paren
+l_int|0x00
+comma
+id|COMPATIBILITY_ENABLE
+)paren
+suffix:semicolon
 )brace
 macro_line|#else
 id|pas_write

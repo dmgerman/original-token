@@ -1881,6 +1881,22 @@ comma
 id|unload_gus
 )brace
 comma
+(brace
+l_string|&quot;GUSPNP&quot;
+comma
+l_int|1
+comma
+id|SNDCARD_GUSPNP
+comma
+l_string|&quot;GUS PnP&quot;
+comma
+id|attach_gus_card
+comma
+id|probe_gus
+comma
+id|unload_gus
+)brace
+comma
 macro_line|#endif
 macro_line|#ifdef CONFIG_SSCAPE
 (brace

@@ -11324,7 +11324,6 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-id|KERN_NOTICE
 l_string|&quot;Detected scsi tape st%d at scsi%d, channel %d, id %d, lun %d&bslash;n&quot;
 comma
 id|st_template.dev_noticed

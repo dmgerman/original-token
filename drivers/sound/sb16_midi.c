@@ -322,10 +322,6 @@ op_minus
 id|EBUSY
 suffix:semicolon
 )brace
-id|reset_sb16midi
-(paren
-)paren
-suffix:semicolon
 r_while
 c_loop
 (paren

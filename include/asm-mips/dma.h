@@ -798,6 +798,6 @@ suffix:semicolon
 multiline_comment|/* release it again */
 multiline_comment|/*&n; * DMA memory allocation - formerly in include/linux/mm.h&n; */
 DECL|macro|__get_dma_pages
-mdefine_line|#define __get_dma_pages(priority, order) __get_free_pages((priority),(order), &bslash;&n;                                             0x80000000 + MAX_DMA_ADDRESS)
+mdefine_line|#define __get_dma_pages(priority, order) __get_free_pages((priority),(order), 1)
 macro_line|#endif /* __ASM_MIPS_DMA_H */
 eof

@@ -107,8 +107,7 @@ op_star
 id|page_table
 comma
 r_int
-r_int
-id|limit
+id|dma
 comma
 r_int
 id|wait
@@ -174,16 +173,6 @@ id|high_memory
 r_return
 l_int|0
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|page
-op_ge
-id|limit
-)paren
-r_return
-l_int|0
-suffix:semicolon
 id|page_map
 op_assign
 id|mem_map
@@ -200,6 +189,13 @@ c_cond
 id|page_map-&gt;reserved
 op_logical_or
 id|page_map-&gt;locked
+op_logical_or
+(paren
+id|dma
+op_logical_and
+op_logical_neg
+id|page_map-&gt;dma
+)paren
 )paren
 r_return
 l_int|0
@@ -218,7 +214,11 @@ op_logical_and
 id|delete_from_swap_cache
 c_func
 (paren
+id|MAP_NR
+c_func
+(paren
 id|page
+)paren
 )paren
 )paren
 op_logical_or
@@ -412,7 +412,11 @@ op_assign
 id|find_in_swap_cache
 c_func
 (paren
+id|MAP_NR
+c_func
+(paren
 id|page
+)paren
 )paren
 )paren
 )paren
@@ -546,8 +550,7 @@ r_int
 id|end
 comma
 r_int
-r_int
-id|limit
+id|dma
 comma
 r_int
 id|wait
@@ -663,7 +666,7 @@ id|address
 comma
 id|pte
 comma
-id|limit
+id|dma
 comma
 id|wait
 )paren
@@ -726,8 +729,7 @@ r_int
 id|end
 comma
 r_int
-r_int
-id|limit
+id|dma
 comma
 r_int
 id|wait
@@ -837,7 +839,7 @@ id|address
 comma
 id|end
 comma
-id|limit
+id|dma
 comma
 id|wait
 )paren
@@ -901,8 +903,7 @@ r_int
 id|start
 comma
 r_int
-r_int
-id|limit
+id|dma
 comma
 r_int
 id|wait
@@ -955,7 +956,7 @@ id|start
 comma
 id|end
 comma
-id|limit
+id|dma
 comma
 id|wait
 )paren
@@ -998,8 +999,7 @@ op_star
 id|p
 comma
 r_int
-r_int
-id|limit
+id|dma
 comma
 r_int
 id|wait
@@ -1081,7 +1081,7 @@ id|address
 comma
 id|address
 comma
-id|limit
+id|dma
 comma
 id|wait
 )paren
@@ -1130,8 +1130,7 @@ r_int
 id|priority
 comma
 r_int
-r_int
-id|limit
+id|dma
 comma
 r_int
 id|wait
@@ -1272,7 +1271,7 @@ c_func
 (paren
 id|p
 comma
-id|limit
+id|dma
 comma
 id|wait
 )paren
@@ -1317,8 +1316,7 @@ r_int
 id|priority
 comma
 r_int
-r_int
-id|limit
+id|dma
 comma
 r_int
 id|wait
@@ -1354,7 +1352,7 @@ c_func
 (paren
 id|i
 comma
-id|limit
+id|dma
 )paren
 )paren
 r_return
@@ -1375,7 +1373,7 @@ c_func
 (paren
 id|i
 comma
-id|limit
+id|dma
 )paren
 )paren
 r_return
@@ -1397,7 +1395,7 @@ c_func
 (paren
 id|i
 comma
-id|limit
+id|dma
 comma
 id|wait
 )paren
@@ -1598,8 +1596,7 @@ c_func
 (paren
 id|GFP_KERNEL
 comma
-op_complement
-l_int|0UL
+l_int|0
 comma
 l_int|0
 )paren

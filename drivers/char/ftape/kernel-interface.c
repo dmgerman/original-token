@@ -32,16 +32,6 @@ op_assign
 l_int|NULL
 )brace
 suffix:semicolon
-macro_line|#ifdef MODULE
-DECL|variable|kernel_version
-r_char
-id|kernel_version
-(braket
-)braket
-op_assign
-id|UTS_RELEASE
-suffix:semicolon
-macro_line|#endif
 multiline_comment|/*      Local vars.&n; */
 DECL|variable|busy_flag
 r_static

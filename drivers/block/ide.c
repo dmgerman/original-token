@@ -1178,10 +1178,6 @@ r_struct
 id|gendisk
 op_star
 id|gd
-comma
-op_star
-op_star
-id|gdp
 suffix:semicolon
 r_int
 r_int
@@ -1391,39 +1387,14 @@ op_assign
 id|hwif
 suffix:semicolon
 multiline_comment|/* ptr to internal data */
-r_for
-c_loop
-(paren
-id|gdp
-op_assign
-op_amp
-id|gendisk_head
-suffix:semicolon
-op_star
-id|gdp
-suffix:semicolon
-id|gdp
-op_assign
-op_amp
-(paren
-(paren
-op_star
-id|gdp
-)paren
-op_member_access_from_pointer
-id|next
-)paren
-)paren
-suffix:semicolon
 id|gd-&gt;next
 op_assign
-l_int|NULL
+id|gendisk_head
 suffix:semicolon
-multiline_comment|/* link to tail of list */
+multiline_comment|/* link new major into list */
 id|hwif-&gt;gd
 op_assign
-op_star
-id|gdp
+id|gendisk_head
 op_assign
 id|gd
 suffix:semicolon
@@ -12324,19 +12295,24 @@ l_int|1
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n;&t; * Check for serialization with ide1.&n;&t; * This code depends on us having already taken care of ide1.&n;&t; */
+multiline_comment|/*&n;&t; * Check for serialization with ide0.&n;&t; * This code depends on us having already taken care of ide0.&n;&t; */
 r_if
 c_cond
 (paren
-id|hwif-&gt;serialized
-op_logical_and
 id|hwif-&gt;index
 op_eq
-l_int|0
+l_int|1
 op_logical_and
 id|ide_hwifs
 (braket
-l_int|1
+l_int|0
+)braket
+dot
+id|serialized
+op_logical_and
+id|ide_hwifs
+(braket
+l_int|0
 )braket
 dot
 id|present
@@ -12345,7 +12321,7 @@ id|hwgroup
 op_assign
 id|ide_hwifs
 (braket
-l_int|1
+l_int|0
 )braket
 dot
 id|hwgroup

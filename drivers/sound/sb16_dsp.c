@@ -976,6 +976,10 @@ id|sb_dsp_command01
 l_int|0xd5
 )paren
 suffix:semicolon
+id|sb_reset_dsp
+(paren
+)paren
+suffix:semicolon
 id|save_flags
 (paren
 id|flags

@@ -100,7 +100,7 @@ c_func
 (paren
 r_int
 r_int
-id|addr
+id|index
 comma
 r_int
 r_int
@@ -146,11 +146,7 @@ c_func
 (paren
 id|swap_cache
 op_plus
-id|MAP_NR
-c_func
-(paren
-id|addr
-)paren
+id|index
 comma
 id|entry
 )paren

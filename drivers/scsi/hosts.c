@@ -86,6 +86,9 @@ macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_AM53C974
 macro_line|#include &quot;AM53C974.h&quot;
 macro_line|#endif
+macro_line|#ifdef CONFIG_SCSI_PPA
+macro_line|#include &quot;ppa.h&quot;
+macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_DEBUG
 macro_line|#include &quot;scsi_debug.h&quot;
 macro_line|#endif
@@ -197,6 +200,10 @@ comma
 macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_AM53C974
 id|AM53C974
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_SCSI_PPA
+id|PPA
 comma
 macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_DEBUG

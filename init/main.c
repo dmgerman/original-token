@@ -200,6 +200,20 @@ id|ints
 suffix:semicolon
 r_extern
 r_void
+id|lp_setup
+c_func
+(paren
+r_char
+op_star
+id|str
+comma
+r_int
+op_star
+id|ints
+)paren
+suffix:semicolon
+r_extern
+r_void
 id|eth_setup
 c_func
 (paren
@@ -439,6 +453,20 @@ suffix:semicolon
 r_extern
 r_void
 id|NCR53c406a_setup
+c_func
+(paren
+r_char
+op_star
+id|str
+comma
+r_int
+op_star
+id|ints
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|ppa_setup
 c_func
 (paren
 r_char
@@ -1209,6 +1237,14 @@ id|eth_setup
 )brace
 comma
 macro_line|#endif
+macro_line|#ifdef CONFIG_PRINTER
+(brace
+l_string|&quot;lp=&quot;
+comma
+id|lp_setup
+)brace
+comma
+macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI
 (brace
 l_string|&quot;max_scsi_luns=&quot;
@@ -1346,6 +1382,14 @@ macro_line|#ifdef CONFIG_SCSI_FUTURE_DOMAIN
 l_string|&quot;fdomain=&quot;
 comma
 id|fdomain_setup
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_SCSI_PPA
+(brace
+l_string|&quot;ppa=&quot;
+comma
+id|ppa_setup
 )brace
 comma
 macro_line|#endif

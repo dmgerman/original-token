@@ -5670,7 +5670,7 @@ DECL|variable|irq
 r_int
 id|irq
 (braket
-id|MAX_EEXP_CARDS
+id|EEXP_MAX_CARDS
 )braket
 op_assign
 (brace
@@ -5682,7 +5682,7 @@ DECL|variable|io
 r_int
 id|io
 (braket
-id|MAX_EEXP_CARDS
+id|EEXP_MAX_CARDS
 )braket
 op_assign
 (brace
@@ -5874,16 +5874,10 @@ op_ne
 l_int|NULL
 )paren
 (brace
-id|kfree_s
+id|kfree
 c_func
 (paren
 id|dev-&gt;priv
-dot
-r_sizeof
-(paren
-r_struct
-id|net_local
-)paren
 )paren
 suffix:semicolon
 id|dev-&gt;priv

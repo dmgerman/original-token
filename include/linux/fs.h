@@ -2275,7 +2275,7 @@ op_star
 id|inode
 )paren
 suffix:semicolon
-DECL|variable|fifo_inode_operations
+r_extern
 r_struct
 id|inode_operations
 id|fifo_inode_operations
@@ -2424,13 +2424,6 @@ op_star
 comma
 r_int
 )paren
-suffix:semicolon
-r_extern
-r_struct
-id|buffer_head
-op_star
-op_star
-id|buffer_pages
 suffix:semicolon
 r_extern
 r_int

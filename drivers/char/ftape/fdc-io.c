@@ -1,5 +1,4 @@
 multiline_comment|/* Yo, Emacs! we&squot;re -*- Linux-C -*-&n; *&n; *      Copyright (C) 1993-1995 Bas Laarhoven.&n;&n; This program is free software; you can redistribute it and/or modify&n; it under the terms of the GNU General Public License as published by&n; the Free Software Foundation; either version 2, or (at your option)&n; any later version.&n;&n; This program is distributed in the hope that it will be useful,&n; but WITHOUT ANY WARRANTY; without even the implied warranty of&n; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; GNU General Public License for more details.&n;&n; You should have received a copy of the GNU General Public License&n; along with this program; see the file COPYING.  If not, write to&n; the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.&n;&n; *&n; *      This file contains the low-level floppy disk interface code&n; *      for the QIC-40/80 tape streamer device driver.&n; */
-macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
@@ -168,6 +167,16 @@ r_int
 id|perpend_mode
 suffix:semicolon
 multiline_comment|/* true if fdc is in perpendicular mode */
+DECL|variable|ftape_id
+r_static
+r_char
+id|ftape_id
+(braket
+)braket
+op_assign
+l_string|&quot;ftape&quot;
+suffix:semicolon
+multiline_comment|/* used by request irq and free irq */
 DECL|function|fdc_catch_stray_interrupts
 r_void
 id|fdc_catch_stray_interrupts
@@ -5527,14 +5536,6 @@ id|result
 op_assign
 l_int|0
 suffix:semicolon
-r_static
-r_char
-id|ftape_id
-(braket
-)braket
-op_assign
-l_string|&quot;ftape&quot;
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -5618,7 +5619,7 @@ c_func
 (paren
 id|fdc.irq
 comma
-l_int|NULL
+id|ftape_id
 )paren
 suffix:semicolon
 id|result
@@ -5730,7 +5731,7 @@ c_func
 (paren
 id|fdc.irq
 comma
-l_int|NULL
+id|ftape_id
 )paren
 suffix:semicolon
 )brace

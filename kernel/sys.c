@@ -993,6 +993,8 @@ suffix:semicolon
 id|ac.ac_comm
 (braket
 id|ACCT_COMM
+op_minus
+l_int|1
 )braket
 op_assign
 l_char|&squot;&bslash;0&squot;

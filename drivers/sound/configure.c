@@ -1,8 +1,9 @@
-multiline_comment|/*&n; *&t; PnP soundcard support is not included in this version.&n; *&n; *       AEDSP16 will not work without significant changes.&n; *&n; *       SB Pro and SB16 drivers are always enabled together with SB.&n; */
+multiline_comment|/*&n; *&t; PnP soundcard support is not included in this version.&n; *&n; *&t; AEDSP16 will not work without significant changes.&n; */
 DECL|macro|DISABLED_OPTIONS
-mdefine_line|#define DISABLED_OPTIONS &t;(B(OPT_PNP)|B(OPT_AEDSP16)|B(OPT_SBPRO)|B(OPT_SB16))
+mdefine_line|#define DISABLED_OPTIONS &t;(B(OPT_PNP)|B(OPT_AEDSP16)|B(OPT_UNUSED1)|B(OPT_UNUSED2))
 multiline_comment|/*&n; * sound/configure.c  - Configuration program for the Linux Sound Driver&n; */
-multiline_comment|/*&n; * Copyright by Hannu Savolainen 1993-1996&n; *&n; * Redistribution and use in source and binary forms, with or without&n; * modification, are permitted provided that the following conditions are&n; * met: 1. Redistributions of source code must retain the above copyright&n; * notice, this list of conditions and the following disclaimer. 2.&n; * Redistributions in binary form must reproduce the above copyright notice,&n; * this list of conditions and the following disclaimer in the documentation&n; * and/or other materials provided with the distribution.&n; *&n; * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS&squot;&squot; AND ANY&n; * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED&n; * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE&n; * DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR&n; * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL&n; * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR&n; * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER&n; * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT&n; * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY&n; * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF&n; * SUCH DAMAGE.&n; */
+DECL|macro|COPYING2
+mdefine_line|#define COPYING2
 macro_line|#include &lt;stdio.h&gt;
 macro_line|#include &lt;unistd.h&gt;
 macro_line|#include &lt;stdlib.h&gt;
@@ -47,10 +48,10 @@ DECL|macro|OPT_PNP
 mdefine_line|#define OPT_PNP&t;&t;15
 DECL|macro|OPT_HIGHLEVEL
 mdefine_line|#define OPT_HIGHLEVEL   16&t;/* This must be same than the next one */
-DECL|macro|OPT_SBPRO
-mdefine_line|#define OPT_SBPRO&t;16
-DECL|macro|OPT_SB16
-mdefine_line|#define OPT_SB16&t;17
+DECL|macro|OPT_UNUSED1
+mdefine_line|#define OPT_UNUSED1&t;16
+DECL|macro|OPT_UNUSED2
+mdefine_line|#define OPT_UNUSED2&t;17
 DECL|macro|OPT_AEDSP16
 mdefine_line|#define OPT_AEDSP16     18
 DECL|macro|OPT_AUDIO
@@ -63,14 +64,12 @@ DECL|macro|OPT_YM3812_AUTO
 mdefine_line|#define OPT_YM3812_AUTO&t;22
 DECL|macro|OPT_YM3812
 mdefine_line|#define OPT_YM3812&t;23
-DECL|macro|OPT_SEQUENCER
-mdefine_line|#define OPT_SEQUENCER&t;24
 DECL|macro|OPT_LAST
-mdefine_line|#define OPT_LAST&t;24&t;/* Last defined OPT number */
+mdefine_line|#define OPT_LAST&t;23&t;/* Last defined OPT number */
 DECL|macro|DUMMY_OPTS
 mdefine_line|#define DUMMY_OPTS (B(OPT_MIDI_AUTO)|B(OPT_YM3812_AUTO))
 DECL|macro|ANY_DEVS
-mdefine_line|#define ANY_DEVS (B(OPT_AUDIO)|B(OPT_MIDI)|B(OPT_SEQUENCER)|B(OPT_GUS)| &bslash;&n;&t;&t;  B(OPT_MPU401)|B(OPT_PSS)|B(OPT_GUS16)|B(OPT_GUSMAX)| &bslash;&n;&t;&t;  B(OPT_MSS)|B(OPT_SSCAPE)|B(OPT_UART6850)|B(OPT_TRIX)| &bslash;&n;&t;&t;  B(OPT_MAD16)|B(OPT_CS4232)|B(OPT_MAUI))
+mdefine_line|#define ANY_DEVS (B(OPT_AUDIO)|B(OPT_MIDI)|B(OPT_GUS)| &bslash;&n;&t;&t;  B(OPT_MPU401)|B(OPT_PSS)|B(OPT_GUS16)|B(OPT_GUSMAX)| &bslash;&n;&t;&t;  B(OPT_MSS)|B(OPT_SSCAPE)|B(OPT_UART6850)|B(OPT_TRIX)| &bslash;&n;&t;&t;  B(OPT_MAD16)|B(OPT_CS4232)|B(OPT_MAUI))
 DECL|macro|AUDIO_CARDS
 mdefine_line|#define AUDIO_CARDS (B (OPT_PSS) | B (OPT_SB) | B (OPT_PAS) | B (OPT_GUS) | &bslash;&n;&t;&t;B (OPT_MSS) | B (OPT_GUS16) | B (OPT_GUSMAX) | B (OPT_TRIX) | &bslash;&n;&t;&t;B (OPT_SSCAPE)| B(OPT_MAD16) | B(OPT_CS4232))
 DECL|macro|MIDI_CARDS
@@ -79,6 +78,8 @@ DECL|macro|MPU_DEVS
 mdefine_line|#define MPU_DEVS (B(OPT_PSS)|B(OPT_SSCAPE)|B(OPT_TRIX)|B(OPT_MAD16)|&bslash;&n;&t;&t;  B(OPT_CS4232)|B(OPT_PNP)|B(OPT_MAUI))
 DECL|macro|AD1848_DEVS
 mdefine_line|#define AD1848_DEVS (B(OPT_GUS16)|B(OPT_MSS)|B(OPT_PSS)|B(OPT_GUSMAX)|&bslash;&n;&t;&t;     B(OPT_SSCAPE)|B(OPT_TRIX)|B(OPT_MAD16)|B(OPT_CS4232)|&bslash;&n;&t;&t;     B(OPT_PNP))
+DECL|macro|SEQUENCER_DEVS
+mdefine_line|#define SEQUENCER_DEVS (OPT_MIDI|OPT_YM3812|OPT_ADLIB|OPT_GUS|OPT_MAUI|MIDI_CARDS)
 multiline_comment|/*&n; * Options that have been disabled for some reason (incompletely implemented&n; * and/or tested). Don&squot;t remove from this list before looking at file&n; * experimental.txt for further info.&n; */
 r_typedef
 r_struct
@@ -377,7 +378,7 @@ id|B
 id|OPT_PAS
 )paren
 comma
-l_string|&quot;SBPRO&quot;
+l_string|&quot;UNUSED1&quot;
 comma
 l_int|1
 comma
@@ -394,7 +395,7 @@ id|OPT_SB
 op_or
 id|B
 (paren
-id|OPT_SBPRO
+id|OPT_UNUSED1
 )paren
 comma
 id|B
@@ -402,7 +403,7 @@ id|B
 id|OPT_PAS
 )paren
 comma
-l_string|&quot;SB16&quot;
+l_string|&quot;UNUSED2&quot;
 comma
 l_int|1
 comma
@@ -414,7 +415,7 @@ comma
 (brace
 id|B
 (paren
-id|OPT_SBPRO
+id|OPT_UNUSED1
 )paren
 op_or
 id|B
@@ -549,38 +550,6 @@ l_int|0
 comma
 l_int|1
 )brace
-comma
-(brace
-id|B
-(paren
-id|OPT_MIDI
-)paren
-op_or
-id|B
-(paren
-id|OPT_YM3812
-)paren
-op_or
-id|B
-(paren
-id|OPT_YM3812_AUTO
-)paren
-op_or
-id|B
-(paren
-id|OPT_GUS
-)paren
-comma
-l_int|0
-comma
-l_string|&quot;SEQUENCER&quot;
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|1
-)brace
 )brace
 suffix:semicolon
 DECL|variable|questions
@@ -623,9 +592,9 @@ l_string|&quot;Support for Turtle Beach Wave Front (Maui, Tropez) synthesizers&q
 comma
 l_string|&quot;Support for PnP sound cards (_EXPERIMENTAL_)&quot;
 comma
-l_string|&quot;SoundBlaster Pro support&quot;
+l_string|&quot;*** Unused option 1 ***&quot;
 comma
-l_string|&quot;SoundBlaster 16 support&quot;
+l_string|&quot;*** Unused option 2 ***&quot;
 comma
 l_string|&quot;Audio Excel DSP 16 initialization support&quot;
 comma
@@ -638,8 +607,6 @@ comma
 l_string|&quot;This should not be asked&quot;
 comma
 l_string|&quot;FM synthesizer (YM3812/OPL-3) support&quot;
-comma
-l_string|&quot;/dev/sequencer support&quot;
 comma
 l_string|&quot;Is the sky really falling&quot;
 )brace
@@ -737,9 +704,6 @@ comma
 l_string|&quot;This enables the Yamaha FM synthesizer chip used on many sound&bslash;n&quot;
 l_string|&quot;cards.&bslash;n&quot;
 comma
-l_string|&quot;This enables the /dev/sequencer and /dev/music devices used for&bslash;n&quot;
-l_string|&quot;playing computer music.&bslash;n&quot;
-comma
 l_string|&quot;Is the sky really falling&quot;
 )brace
 suffix:semicolon
@@ -773,6 +737,12 @@ comma
 l_string|&quot;AD1848&quot;
 comma
 id|AD1848_DEVS
+)brace
+comma
+(brace
+l_string|&quot;SEQUENCER&quot;
+comma
+id|SEQUENCER_DEVS
 )brace
 comma
 (brace
@@ -854,6 +824,42 @@ r_int
 id|nr
 )paren
 (brace
+macro_line|#if 0
+r_switch
+c_cond
+(paren
+id|nr
+)paren
+(brace
+r_case
+id|OPT_LAST_MUTUAL
+op_plus
+l_int|1
+suffix:colon
+id|fprintf
+(paren
+id|stderr
+comma
+l_string|&quot;&bslash;nThe following cards should work with any other cards.&bslash;n&quot;
+l_string|&quot;CAUTION! Don&squot;t enable MPU-401 if you don&squot;t have it.&bslash;n&quot;
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|OPT_HIGHLEVEL
+suffix:colon
+id|fprintf
+(paren
+id|stderr
+comma
+l_string|&quot;&bslash;nSelect one or more of the following options&bslash;n&quot;
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -952,6 +958,7 @@ suffix:semicolon
 id|response
 suffix:colon
 id|fprintf
+c_func
 (paren
 id|stderr
 comma
@@ -964,6 +971,7 @@ c_cond
 id|def_answ
 )paren
 id|fprintf
+c_func
 (paren
 id|stderr
 comma
@@ -972,6 +980,7 @@ l_string|&quot; [Y/n/?] &quot;
 suffix:semicolon
 r_else
 id|fprintf
+c_func
 (paren
 id|stderr
 comma
@@ -1048,6 +1057,7 @@ l_char|&squot;?&squot;
 (brace
 multiline_comment|/* display help message */
 id|fprintf
+c_func
 (paren
 id|stderr
 comma
@@ -1055,6 +1065,7 @@ l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
 id|fprintf
+c_func
 (paren
 id|stderr
 comma
@@ -1062,6 +1073,7 @@ id|help
 )paren
 suffix:semicolon
 id|fprintf
+c_func
 (paren
 id|stderr
 comma
@@ -1413,6 +1425,7 @@ r_if
 c_cond
 (paren
 id|strcmp
+c_func
 (paren
 id|choices
 comma
@@ -2101,6 +2114,7 @@ l_int|0
 multiline_comment|/* Rename it (hack) */
 (brace
 id|printf
+c_func
 (paren
 l_string|&quot;#define SB_DMA2 %s&bslash;n&quot;
 comma
@@ -2129,6 +2143,7 @@ l_int|0
 multiline_comment|/* Rename it (hack) */
 (brace
 id|printf
+c_func
 (paren
 l_string|&quot;#define SB_DMA2 %s&bslash;n&quot;
 comma
@@ -2622,10 +2637,12 @@ comma
 l_string|&quot;Old configuration copied.&bslash;n&quot;
 )paren
 suffix:semicolon
+macro_line|#ifdef linux
 id|build_defines
 (paren
 )paren
 suffix:semicolon
+macro_line|#endif
 id|old_config_used
 op_assign
 l_int|1
@@ -2634,6 +2651,7 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
+macro_line|#ifdef linux
 r_void
 DECL|function|build_defines
 id|build_defines
@@ -2726,6 +2744,23 @@ dot
 id|macro
 )paren
 suffix:semicolon
+macro_line|#if 0
+r_else
+id|fprintf
+(paren
+id|optf
+comma
+l_string|&quot;CONFIG_%s=n&bslash;n&quot;
+comma
+id|hw_table
+(braket
+id|i
+)braket
+dot
+id|macro
+)paren
+suffix:semicolon
+macro_line|#endif
 id|fprintf
 (paren
 id|optf
@@ -2776,6 +2811,23 @@ dot
 id|name
 )paren
 suffix:semicolon
+macro_line|#if 0
+r_else
+id|fprintf
+(paren
+id|optf
+comma
+l_string|&quot;CONFIG_%s=n&bslash;n&quot;
+comma
+id|extra_options
+(braket
+id|i
+)braket
+dot
+id|name
+)paren
+suffix:semicolon
+macro_line|#endif
 id|i
 op_increment
 suffix:semicolon
@@ -2793,6 +2845,7 @@ id|optf
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
 r_void
 DECL|function|ask_parameters
 id|ask_parameters
@@ -2800,6 +2853,7 @@ id|ask_parameters
 r_void
 )paren
 (brace
+macro_line|#ifdef linux
 r_int
 id|num
 suffix:semicolon
@@ -2995,7 +3049,6 @@ l_string|&quot;Enable this option if you want to use the joystick port provided&
 l_string|&quot;on the PAS sound card.&bslash;n&quot;
 )paren
 )paren
-suffix:semicolon
 id|printf
 (paren
 l_string|&quot;#define PAS_JOYSTICK_ENABLE&bslash;n&quot;
@@ -3019,6 +3072,24 @@ l_string|&quot;this switch with DOS&bslash;n&quot;
 id|printf
 (paren
 l_string|&quot;#define BROKEN_BUS_CLOCK&bslash;n&quot;
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|think_positively
+(paren
+l_string|&quot;Disable SB mode of PAS16&quot;
+comma
+l_int|0
+comma
+l_string|&quot;You should disable SB emulation of PAS16 if you want to use&bslash;n&quot;
+l_string|&quot;Another SB compatible card in the same system&bslash;n&quot;
+)paren
+)paren
+id|printf
+(paren
+l_string|&quot;#define DISABLE_SB_EMULATION&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
@@ -3943,6 +4014,7 @@ comma
 l_string|&quot;5, 7, 9 or 10&quot;
 )paren
 suffix:semicolon
+macro_line|#endif
 id|ask_int_choice
 (paren
 id|B
@@ -4031,6 +4103,12 @@ id|macro
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * Some &quot;hardcoded&quot; options&n; */
+id|printf
+(paren
+l_string|&quot;bool &squot;Support for SM Wave&squot; CONFIG_SMWAVE&bslash;n&quot;
+)paren
+suffix:semicolon
 id|dump_only
 op_assign
 l_int|1
@@ -4043,11 +4121,13 @@ id|ask_parameters
 (paren
 )paren
 suffix:semicolon
+macro_line|#if 1
 id|printf
 (paren
 l_string|&quot;#&bslash;n$MAKE -C drivers/sound kernelconfig || exit 1&bslash;n&quot;
 )paren
 suffix:semicolon
+macro_line|#endif
 )brace
 r_void
 DECL|function|dump_fixed_local
@@ -4537,6 +4617,7 @@ l_int|255
 )braket
 suffix:semicolon
 id|sprintf
+c_func
 (paren
 id|str
 comma
@@ -4748,7 +4829,7 @@ id|selected_options
 op_amp
 id|B
 (paren
-id|OPT_SBPRO
+id|OPT_SB
 )paren
 )paren
 (brace
@@ -4960,23 +5041,6 @@ id|selected_options
 op_amp
 id|B
 (paren
-id|OPT_SB16
-)paren
-)paren
-id|selected_options
-op_or_assign
-id|B
-(paren
-id|OPT_SBPRO
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|selected_options
-op_amp
-id|B
-(paren
 id|OPT_AEDSP16
 )paren
 )paren
@@ -4993,7 +5057,7 @@ id|selected_options
 op_amp
 id|B
 (paren
-id|OPT_SBPRO
+id|OPT_SB
 )paren
 )paren
 (brace
@@ -5542,6 +5606,7 @@ l_int|255
 )braket
 suffix:semicolon
 id|sprintf
+c_func
 (paren
 id|str
 comma
