@@ -31,8 +31,6 @@ multiline_comment|/* for compatible parameter passing with &quot;insmod&quot; */
 DECL|macro|mcdx_drive_map
 mdefine_line|#define&t;mcdx_drive_map mcdx
 macro_line|#include &quot;mcdx.h&quot;
-DECL|macro|MCDX_QUIET
-mdefine_line|#define MCDX_QUIET 0
 macro_line|#ifndef HZ
 macro_line|#error HZ not defined
 macro_line|#endif
@@ -1113,6 +1111,8 @@ l_int|NULL
 comma
 multiline_comment|/* device-specific ioctl */
 id|CDC_OPEN_TRAY
+op_or
+id|CDC_LOCK
 op_or
 id|CDC_MEDIA_CHANGED
 op_or

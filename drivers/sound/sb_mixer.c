@@ -1360,7 +1360,7 @@ id|MDL_SB16
 r_if
 c_cond
 (paren
-id|__get_user
+id|get_user
 c_func
 (paren
 id|val
@@ -1426,7 +1426,7 @@ id|_SIOC_WRITE
 r_if
 c_cond
 (paren
-id|__get_user
+id|get_user
 c_func
 (paren
 id|val
@@ -1577,7 +1577,7 @@ r_break
 suffix:semicolon
 )brace
 r_return
-id|__put_user
+id|put_user
 c_func
 (paren
 id|ret

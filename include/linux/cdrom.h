@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * -- &lt;linux/cdrom.h&gt;&n; * General header file for linux CD-ROM drivers &n; * Copyright (C) 1992         David Giller, rafetmad@oxy.edu&n; *               1994, 1995   Eberhard Moenkeberg, emoenke@gwdg.de&n; *               1996         David van Leeuwen, david@tm.tno.nl&n; *               1997         Erik Andersen, andersee@debian.org&n; */
+multiline_comment|/*&n; * -- &lt;linux/cdrom.h&gt;&n; * General header file for linux CD-ROM drivers &n; * Copyright (C) 1992         David Giller, rafetmad@oxy.edu&n; *               1994, 1995   Eberhard Moenkeberg, emoenke@gwdg.de&n; *               1996         David van Leeuwen, david@tm.tno.nl&n; *               1997, 1998   Erik Andersen, andersee@debian.org&n; */
 macro_line|#ifndef&t;_LINUX_CDROM_H
 DECL|macro|_LINUX_CDROM_H
 mdefine_line|#define&t;_LINUX_CDROM_H
@@ -870,5 +870,5 @@ id|cdi
 )paren
 suffix:semicolon
 macro_line|#endif  /* End of kernel only stuff */ 
-macro_line|#endif  _LINUX_CDROM_H
+macro_line|#endif  /* _LINUX_CDROM_H */
 eof

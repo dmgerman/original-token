@@ -482,22 +482,7 @@ suffix:semicolon
 )brace
 suffix:semicolon
 macro_line|#ifdef __KERNEL__
-macro_line|#include &lt;linux/version.h&gt;
-macro_line|#if (LINUX_VERSION_CODE &lt; 0x020001)
-macro_line|#error &quot;Linux kernel version 2.0.1 or newer is required.&quot;
-macro_line|#endif
-macro_line|#if (LINUX_VERSION_CODE &lt; 0x020100) &amp;&amp; !defined(__alpha__)
-DECL|typedef|hfs_rwret_t
-r_typedef
-r_int
-id|hfs_rwret_t
-suffix:semicolon
-DECL|typedef|hfs_rwarg_t
-r_typedef
-r_int
-id|hfs_rwarg_t
-suffix:semicolon
-macro_line|#else
+macro_line|#if defined(CONFIG_HFS_FS) || defined(CONFIG_HFS_FS_MODULE)
 DECL|typedef|hfs_rwret_t
 r_typedef
 id|ssize_t
@@ -508,53 +493,7 @@ r_typedef
 r_int
 id|hfs_rwarg_t
 suffix:semicolon
-macro_line|#endif
-macro_line|#if (LINUX_VERSION_CODE &lt; 0x020104)
-DECL|macro|copy_to_user
-macro_line|#&t;define&t;copy_to_user&t;memcpy_tofs
-DECL|macro|copy_from_user
-macro_line|#&t;define&t;copy_from_user&t;memcpy_fromfs
-macro_line|#endif
-macro_line|#if (LINUX_VERSION_CODE &lt; 0x020106)
-macro_line|#&t;include &lt;asm/segment.h&gt;
-macro_line|#else
-macro_line|#&t;include &lt;asm/uaccess.h&gt;
-macro_line|#endif
-macro_line|#if (LINUX_VERSION_CODE &lt; 0x020105)
-DECL|function|clear_user
-r_extern
-r_inline
-r_void
-id|clear_user
-c_func
-(paren
-r_char
-op_star
-id|addr
-comma
-id|off_t
-id|count
-)paren
-(brace
-r_while
-c_loop
-(paren
-id|count
-op_decrement
-)paren
-(brace
-id|put_user
-c_func
-(paren
-l_int|0
-comma
-id|addr
-op_increment
-)paren
-suffix:semicolon
-)brace
-)brace
-macro_line|#endif
+macro_line|#include &lt;asm/uaccess.h&gt;
 multiline_comment|/* Some forward declarations */
 r_struct
 id|hfs_fork
@@ -1233,67 +1172,10 @@ id|hfs_name
 op_star
 )paren
 suffix:semicolon
-macro_line|#ifdef MODULE /* The kernel may or may not know about HFS */
-DECL|function|HFS_I
-r_extern
-id|__inline__
-r_struct
-id|hfs_inode_info
-op_star
-id|HFS_I
-c_func
-(paren
-r_struct
-id|inode
-op_star
-id|inode
-)paren
-(brace
-r_return
-(paren
-r_struct
-id|hfs_inode_info
-op_star
-)paren
-(paren
-op_amp
-id|inode-&gt;u
-)paren
-suffix:semicolon
-)brace
-DECL|function|HFS_SB
-r_extern
-id|__inline__
-r_struct
-id|hfs_sb_info
-op_star
-id|HFS_SB
-c_func
-(paren
-r_struct
-id|super_block
-op_star
-id|super
-)paren
-(brace
-r_return
-(paren
-r_struct
-id|hfs_sb_info
-op_star
-)paren
-(paren
-op_amp
-id|super-&gt;u
-)paren
-suffix:semicolon
-)brace
-macro_line|#else
 DECL|macro|HFS_I
-macro_line|# define&t;HFS_I(X)&t;(&amp;((X)-&gt;u.hfs_i))
+mdefine_line|#define&t;HFS_I(X)&t;(&amp;((X)-&gt;u.hfs_i))
 DECL|macro|HFS_SB
-macro_line|# define&t;HFS_SB(X)&t;(&amp;((X)-&gt;u.hfs_sb))
-macro_line|#endif
+mdefine_line|#define&t;HFS_SB(X)&t;(&amp;((X)-&gt;u.hfs_sb))
 DECL|function|hfs_nameout
 r_extern
 id|__inline__
@@ -1555,6 +1437,7 @@ suffix:semicolon
 )brace
 )brace
 )brace
+macro_line|#endif
 macro_line|#endif /* __KERNEL__ */
 macro_line|#endif
 eof

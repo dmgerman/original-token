@@ -934,7 +934,7 @@ multiline_comment|/* Set loudness bit */
 r_if
 c_cond
 (paren
-id|__get_user
+id|get_user
 c_func
 (paren
 id|level
@@ -997,7 +997,7 @@ op_logical_neg
 id|level
 suffix:semicolon
 r_return
-id|__put_user
+id|put_user
 c_func
 (paren
 id|level
@@ -1022,7 +1022,7 @@ multiline_comment|/* Set enhance bit */
 r_if
 c_cond
 (paren
-id|__get_user
+id|get_user
 c_func
 (paren
 id|level
@@ -1142,7 +1142,7 @@ id|i
 suffix:semicolon
 )brace
 r_return
-id|__put_user
+id|put_user
 c_func
 (paren
 id|level
@@ -1167,7 +1167,7 @@ multiline_comment|/* Set mute bit */
 r_if
 c_cond
 (paren
-id|__get_user
+id|get_user
 c_func
 (paren
 id|level
@@ -1259,7 +1259,7 @@ l_int|0x20
 suffix:semicolon
 )brace
 r_return
-id|__put_user
+id|put_user
 c_func
 (paren
 id|level
@@ -1291,7 +1291,7 @@ l_char|&squot;M&squot;
 r_if
 c_cond
 (paren
-id|__get_user
+id|get_user
 c_func
 (paren
 id|v
@@ -1413,7 +1413,7 @@ suffix:semicolon
 )brace
 )brace
 r_return
-id|__put_user
+id|put_user
 c_func
 (paren
 id|v

@@ -1,4 +1,4 @@
-multiline_comment|/* linux/drivers/cdrom/cdrom.c. &n;   Copyright (c) 1996, 1997 David A. van Leeuwen.&n;   Copyright (c) 1997 Erik Andersen (andersee@debian.org)&n;&n;   May be copied or modified under the terms of the GNU General Public&n;   License.  See linux/COPYING for more information.&n;&n;   Uniform CD-ROM driver for Linux.&n;   See Documentation/cdrom/cdrom-standard.tex for usage information.&n;&n;   The routines in the file provide a uniform interface between the&n;   software that uses CD-ROMs and the various low-level drivers that&n;   actually talk to actual hardware devices. Suggestions are welcome.&n;   Patches that work are more welcome though.  ;-)&n;&n;&n;  Recent Changes:&n;  ----------------------------------&n;&n;  New maintainer! As David A. van Leeuwen has been too busy to activly&n;  maintain and improve this driver, I am now carrying on the torch. If&n;  you have a problem with this driver, please feel free to contact me.&n;&n;  Added (rudimentary) sysctl interface. I realize this is really weak&n;  right now, and is _very_ badly implemented. It will be improved... I&n;  plan on having one directory per drive, with entries for outputing&n;  general drive information, and sysctl based tunable parameters such&n;  as whether the tray should auto-close for that drive. Suggestions (or&n;  patches) for improvements are very welcome.&n;&n;  Modified CDROM_DISC_STATUS so that it is now incorporated into&n;  the Uniform CD-ROM driver via the cdrom_count_tracks function.&n;  The cdrom_count_tracks function helps resolve some of the false&n;  assumptions of the CDROM_DISC_STATUS ioctl, and is also used to check&n;  for the correct media type when mounting or playing audio from a CD.&n;&n;  Remove the calls to verify_area and only use the copy_from_user and&n;  copy_to_user stuff, since these calls now provide their own memory&n;  checking with the 2.1.x kernels.&n;&n;  Major update to return codes so that errors from low-level drivers&n;  are passed on through (thanks to Gerd Knorr for pointing out this&n;  problem).&n;&n;  Made it so if a function isn&squot;t implemented in a low-level driver,&n;  ENOSYS is now returned instead of EINVAL.&n;&n;  Simplified some complex logic so that the source code is easier to read.&n;&n;  Other stuff I probably forgot to mention (lots of changes).&n;&n; */
+multiline_comment|/* linux/drivers/cdrom/cdrom.c. &n;   Copyright (c) 1996, 1997 David A. van Leeuwen.&n;   Copyright (c) 1997, 1998 Erik Andersen (andersee@debian.org)&n;&n;   May be copied or modified under the terms of the GNU General Public&n;   License.  See linux/COPYING for more information.&n;&n;   Uniform CD-ROM driver for Linux.&n;   See Documentation/cdrom/cdrom-standard.tex for usage information.&n;&n;   The routines in the file provide a uniform interface between the&n;   software that uses CD-ROMs and the various low-level drivers that&n;   actually talk to actual hardware devices. Suggestions are welcome.&n;   Patches that work are more welcome though.  ;-)&n;&n;&n;  Recent Changes:&n;  ----------------------------------&n;&n;  New maintainer! As David A. van Leeuwen has been too busy to activly&n;  maintain and improve this driver, I am now carrying on the torch. If&n;  you have a problem with this driver, please feel free to contact me.&n;&n;  Added (rudimentary) sysctl interface. I realize this is really weak&n;  right now, and is _very_ badly implemented. It will be improved... I&n;  plan on having one directory per drive, with entries for outputing&n;  general drive information, and sysctl based tunable parameters such&n;  as whether the tray should auto-close for that drive. Suggestions (or&n;  patches) for improvements are very welcome.&n;&n;  Modified CDROM_DISC_STATUS so that it is now incorporated into&n;  the Uniform CD-ROM driver via the cdrom_count_tracks function.&n;  The cdrom_count_tracks function helps resolve some of the false&n;  assumptions of the CDROM_DISC_STATUS ioctl, and is also used to check&n;  for the correct media type when mounting or playing audio from a CD.&n;&n;  Remove the calls to verify_area and only use the copy_from_user and&n;  copy_to_user stuff, since these calls now provide their own memory&n;  checking with the 2.1.x kernels.&n;&n;  Major update to return codes so that errors from low-level drivers&n;  are passed on through (thanks to Gerd Knorr for pointing out this&n;  problem).&n;&n;  Made it so if a function isn&squot;t implemented in a low-level driver,&n;  ENOSYS is now returned instead of EINVAL.&n;&n;  Simplified some complex logic so that the source code is easier to read.&n;&n;  Other stuff I probably forgot to mention (lots of changes).&n;&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
@@ -14,14 +14,11 @@ macro_line|#include &lt;asm/fcntl.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 DECL|macro|VERSION
-mdefine_line|#define VERSION &quot;$Id: cdrom.c,v 2.1 1997/12/28 15:11:47 david Exp $&quot;
+mdefine_line|#define VERSION &quot;$Id: cdrom.c,v 2.11 1998/01/04 01:11:18 erik Exp $&quot;
 DECL|macro|REVISION
-mdefine_line|#define REVISION &quot;$Revision: 2.1 $&quot;
+mdefine_line|#define REVISION &quot;Revision: 2.11&quot;
 DECL|macro|FM_WRITE
 mdefine_line|#define FM_WRITE&t;0x2                 /* file mode write bit */
-multiline_comment|/* When VERBOSE_STATUS_INFO is not defined, the debugging printks don&squot;t &n;   get compiled in */
-DECL|macro|VERBOSE_STATUS_INFO
-mdefine_line|#define VERBOSE_STATUS_INFO
 multiline_comment|/* I use an error-log mask to give fine grain control over the type of&n;   error messages dumped to the system logs.  The available masks include: */
 DECL|macro|CD_WARNING
 mdefine_line|#define CD_WARNING&t;0x1
@@ -33,9 +30,14 @@ DECL|macro|CD_OPEN
 mdefine_line|#define CD_OPEN&t;&t;0x8
 DECL|macro|CD_CLOSE
 mdefine_line|#define CD_CLOSE&t;0x10
+DECL|macro|CD_COUNT_TRACKS
+mdefine_line|#define CD_COUNT_TRACKS 0x20
+multiline_comment|/* When VERBOSE_STATUS_INFO is not defined, the debugging printks don&squot;t &n;   get compiled in at all */
+DECL|macro|VERBOSE_STATUS_INFO
+mdefine_line|#define VERBOSE_STATUS_INFO
 DECL|macro|ERRLOGMASK
 mdefine_line|#define ERRLOGMASK (CD_WARNING) 
-multiline_comment|/* #define ERRLOGMASK (CD_WARNING|CD_OPEN|CD_CLOSE) */
+multiline_comment|/* #define ERRLOGMASK (CD_WARNING|CD_OPEN|CD_COUNT_TRACKS|CD_CLOSE) */
 multiline_comment|/* #define ERRLOGMASK (CD_WARNING|CD_REG_UNREG|CD_DO_IOCTL|CD_OPEN|CD_CLOSE) */
 macro_line|#ifdef VERBOSE_STATUS_INFO
 DECL|macro|cdinfo
@@ -1819,7 +1821,7 @@ suffix:semicolon
 id|cdinfo
 c_func
 (paren
-id|CD_OPEN
+id|CD_COUNT_TRACKS
 comma
 l_string|&quot;entering cdrom_count_tracks&bslash;n&quot;
 )paren
@@ -1970,7 +1972,7 @@ suffix:semicolon
 id|cdinfo
 c_func
 (paren
-id|CD_OPEN
+id|CD_COUNT_TRACKS
 comma
 l_string|&quot;track %d: format=%d, ctrl=%d&bslash;n&quot;
 comma
@@ -1985,7 +1987,7 @@ suffix:semicolon
 id|cdinfo
 c_func
 (paren
-id|CD_OPEN
+id|CD_COUNT_TRACKS
 comma
 l_string|&quot;disc has %d tracks: %d=audio %d=data %d=Cd-I %d=XA&bslash;n&quot;
 comma

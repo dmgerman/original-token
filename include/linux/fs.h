@@ -592,6 +592,7 @@ macro_line|#include &lt;linux/affs_fs_i.h&gt;
 macro_line|#include &lt;linux/ufs_fs_i.h&gt;
 macro_line|#include &lt;linux/romfs_fs_i.h&gt;
 macro_line|#include &lt;linux/smb_fs_i.h&gt;
+macro_line|#include &lt;linux/hfs_fs_i.h&gt;
 multiline_comment|/*&n; * Attribute flags.  These should be or-ed together to figure out what&n; * has been changed!&n; */
 DECL|macro|ATTR_MODE
 mdefine_line|#define ATTR_MODE&t;1
@@ -904,6 +905,11 @@ DECL|member|smbfs_i
 r_struct
 id|smb_inode_info
 id|smbfs_i
+suffix:semicolon
+DECL|member|hfs_i
+r_struct
+id|hfs_inode_info
+id|hfs_i
 suffix:semicolon
 DECL|member|socket_i
 r_struct
@@ -1527,6 +1533,7 @@ macro_line|#include &lt;linux/affs_fs_sb.h&gt;
 macro_line|#include &lt;linux/ufs_fs_sb.h&gt;
 macro_line|#include &lt;linux/romfs_fs_sb.h&gt;
 macro_line|#include &lt;linux/smb_fs_sb.h&gt;
+macro_line|#include &lt;linux/hfs_fs_sb.h&gt;
 DECL|struct|super_block
 r_struct
 id|super_block
@@ -1688,6 +1695,11 @@ DECL|member|smbfs_sb
 r_struct
 id|smb_sb_info
 id|smbfs_sb
+suffix:semicolon
+DECL|member|hfs_sb
+r_struct
+id|hfs_sb_info
+id|hfs_sb
 suffix:semicolon
 DECL|member|generic_sbp
 r_void

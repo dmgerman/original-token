@@ -478,7 +478,7 @@ id|_SIOC_WRITE
 r_if
 c_cond
 (paren
-id|__get_user
+id|get_user
 c_func
 (paren
 id|val
@@ -599,7 +599,7 @@ id|EINVAL
 suffix:semicolon
 )brace
 r_return
-id|__put_user
+id|put_user
 c_func
 (paren
 id|val
@@ -751,7 +751,7 @@ id|EINVAL
 suffix:semicolon
 )brace
 r_return
-id|__put_user
+id|put_user
 c_func
 (paren
 id|val

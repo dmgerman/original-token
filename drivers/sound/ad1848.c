@@ -2492,7 +2492,7 @@ id|SOUND_MIXER_PRIVATE1
 r_if
 c_cond
 (paren
-id|__get_user
+id|get_user
 c_func
 (paren
 id|val
@@ -2594,7 +2594,7 @@ op_assign
 id|devc-&gt;mixer_output_port
 suffix:semicolon
 r_return
-id|__put_user
+id|put_user
 c_func
 (paren
 id|val
@@ -2648,7 +2648,7 @@ suffix:colon
 r_if
 c_cond
 (paren
-id|__get_user
+id|get_user
 c_func
 (paren
 id|val
@@ -2675,7 +2675,7 @@ id|val
 )paren
 suffix:semicolon
 r_return
-id|__put_user
+id|put_user
 c_func
 (paren
 id|val
@@ -2694,7 +2694,7 @@ suffix:colon
 r_if
 c_cond
 (paren
-id|__get_user
+id|get_user
 c_func
 (paren
 id|val
@@ -2725,7 +2725,7 @@ id|val
 )paren
 suffix:semicolon
 r_return
-id|__put_user
+id|put_user
 c_func
 (paren
 id|val
@@ -2756,7 +2756,7 @@ op_assign
 id|devc-&gt;recmask
 suffix:semicolon
 r_return
-id|__put_user
+id|put_user
 c_func
 (paren
 id|val
@@ -2776,7 +2776,7 @@ op_assign
 id|devc-&gt;supported_devices
 suffix:semicolon
 r_return
-id|__put_user
+id|put_user
 c_func
 (paren
 id|val
@@ -2812,7 +2812,7 @@ id|SOUND_MASK_IMIX
 )paren
 suffix:semicolon
 r_return
-id|__put_user
+id|put_user
 c_func
 (paren
 id|val
@@ -2832,7 +2832,7 @@ op_assign
 id|devc-&gt;supported_rec_devices
 suffix:semicolon
 r_return
-id|__put_user
+id|put_user
 c_func
 (paren
 id|val
@@ -2848,7 +2848,7 @@ r_case
 id|SOUND_MIXER_CAPS
 suffix:colon
 r_return
-id|__put_user
+id|put_user
 c_func
 (paren
 id|SOUND_CAP_EXCL_INPUT
@@ -2875,7 +2875,7 @@ l_int|0xff
 )paren
 suffix:semicolon
 r_return
-id|__put_user
+id|put_user
 c_func
 (paren
 id|val

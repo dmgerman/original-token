@@ -102,7 +102,7 @@ id|chn
 suffix:semicolon
 r_extern
 r_void
-id|reporgram_timer
+id|reprogram_timer
 c_func
 (paren
 r_void

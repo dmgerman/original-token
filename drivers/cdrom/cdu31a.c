@@ -626,13 +626,14 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
+multiline_comment|/*return sony_spun_up ? CDS_DISC_OK : CDS_DRIVE_NOT_READY;*/
 r_return
 id|sony_spun_up
 ques
 c_cond
 id|CDS_DISC_OK
 suffix:colon
-id|CDS_DRIVE_NOT_READY
+id|CDS_TRAY_OPEN
 suffix:semicolon
 )brace
 r_static
@@ -2985,7 +2986,7 @@ r_volatile
 r_int
 id|val
 suffix:semicolon
-macro_line|#if DEBUG
+macro_line|#if 0*DEBUG
 id|printk
 c_func
 (paren
@@ -3226,7 +3227,7 @@ id|num_consecutive_attentions
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#if DEBUG
+macro_line|#if 0*DEBUG
 id|printk
 c_func
 (paren
@@ -9949,9 +9950,25 @@ id|res_size
 suffix:semicolon
 )brace
 r_else
+(brace
+r_if
+c_cond
+(paren
+l_int|0
+op_eq
+id|scd_spinup
+c_func
+(paren
+)paren
+)paren
+id|sony_spun_up
+op_assign
+l_int|1
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
+)brace
 )brace
 multiline_comment|/*&n; * The big ugly ioctl handler.&n; */
 DECL|function|scd_audio_ioctl
@@ -11819,12 +11836,6 @@ id|sony_xa_mode
 op_assign
 l_int|1
 suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;sony_xa_mode is set&bslash;n&quot;
-)paren
-suffix:semicolon
 )brace
 multiline_comment|/* A non-XA disk.  Set the parms back if necessary. */
 r_else
@@ -11901,12 +11912,6 @@ suffix:semicolon
 id|sony_xa_mode
 op_assign
 l_int|0
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;sony_xa_mode is reset&bslash;n&quot;
-)paren
 suffix:semicolon
 )brace
 id|sony_spun_up
@@ -12026,6 +12031,8 @@ id|scd_dev_ioctl
 comma
 multiline_comment|/* device-specific ioctl */
 id|CDC_OPEN_TRAY
+op_or
+id|CDC_CLOSE_TRAY
 op_or
 id|CDC_LOCK
 op_or
@@ -13051,6 +13058,19 @@ suffix:semicolon
 id|scd_info.mask
 op_assign
 id|deficiency
+suffix:semicolon
+id|strncpy
+c_func
+(paren
+id|scd_info.name
+comma
+l_string|&quot;cdu31a&quot;
+comma
+r_sizeof
+(paren
+id|scd_info.name
+)paren
+)paren
 suffix:semicolon
 r_if
 c_cond
