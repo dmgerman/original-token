@@ -669,7 +669,7 @@ l_int|12
 suffix:semicolon
 )brace
 multiline_comment|/* Grab the region so we can find another board if something fails. */
-id|register_iomem
+id|request_region
 c_func
 (paren
 id|ioaddr

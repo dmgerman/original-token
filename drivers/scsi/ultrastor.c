@@ -1224,7 +1224,7 @@ id|config.port_address
 )paren
 suffix:semicolon
 multiline_comment|/* All above tests passed, must be the right thing.  Get some useful&n;       info. */
-id|register_iomem
+id|request_region
 c_func
 (paren
 id|config.port_address

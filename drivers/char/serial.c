@@ -6447,7 +6447,7 @@ op_ne
 id|PORT_UNKNOWN
 )paren
 (brace
-id|register_iomem
+id|request_region
 c_func
 (paren
 id|info-&gt;port
@@ -10257,7 +10257,7 @@ op_assign
 id|PORT_8250
 suffix:semicolon
 )brace
-id|register_iomem
+id|request_region
 c_func
 (paren
 id|info-&gt;port

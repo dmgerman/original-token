@@ -613,7 +613,7 @@ id|ENODEV
 suffix:semicolon
 )brace
 )brace
-id|register_iomem
+id|request_region
 c_func
 (paren
 id|PAR_DATA

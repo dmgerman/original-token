@@ -1745,6 +1745,9 @@ id|revision
 )paren
 suffix:semicolon
 r_return
+(paren
+r_int
+)paren
 id|revision
 suffix:semicolon
 )brace
@@ -1929,7 +1932,16 @@ dot
 id|vendor_id
 )paren
 )paren
-r_break
+r_return
+id|i
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;Device id=%x &quot;
+comma
+id|device
+)paren
 suffix:semicolon
 r_return
 id|i
@@ -2012,6 +2024,14 @@ id|vendor_id
 )paren
 r_return
 id|i
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;Vendor id=%x &quot;
+comma
+id|vendor
+)paren
 suffix:semicolon
 r_return
 id|i

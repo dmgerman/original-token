@@ -304,13 +304,13 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+op_decrement
 (paren
 op_star
 id|dmi
 )paren
 op_member_access_from_pointer
 id|dmi_users
-op_decrement
 op_logical_and
 op_logical_neg
 id|all

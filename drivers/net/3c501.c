@@ -19,6 +19,7 @@ macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
@@ -573,7 +574,7 @@ r_return
 id|ENODEV
 suffix:semicolon
 multiline_comment|/* Grab the region so we can find the another board if autoIRQ fails. */
-id|register_iomem
+id|request_region
 c_func
 (paren
 id|ioaddr

@@ -2084,7 +2084,7 @@ suffix:colon
 l_string|&quot;disabled&quot;
 )paren
 suffix:semicolon
-id|register_iomem
+id|request_region
 c_func
 (paren
 id|port_base

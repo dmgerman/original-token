@@ -1,6 +1,7 @@
 multiline_comment|/*&n; * vesa_blank.c&n; *&n; * Exported functions:&n; *&t;void vesa_blank(void);&n; *&t;void vesa_unblank(void);&n; *&t;void set_vesa_blanking(const unsigned long arg);&n; *&n; * Not all hardware reacts well to this code - activate at your own risk.&n; * Activation is done using a sufficiently recent version of setterm&n; * or using a tiny C program like the following.&n; *&n;-----------------------------------------------------------------------&n;|#include &lt;stdio.h&gt;&n;|#include &lt;linux/termios.h&gt;&n;|main(int argc, char *argv[]) {&n;|    int fd;&n;|    struct { char ten, onoff; } arg;&n;|&n;|    if (argc != 2) {&n;|&t;fprintf(stderr, &quot;usage: setvesablank ON|on|off&bslash;n&quot;);&n;|&t;exit(1);&n;|    }&n;|    if ((fd = open(&quot;/dev/console&quot;, 0)) &lt; 0)&n;|      fd = 0;&n;|    arg.ten = 10;&n;|    arg.onoff = 0;&n;|    if (!strcmp(argv[1], &quot;on&quot;))&n;|      arg.onoff = 1;&n;|    else if (!strcmp(argv[1], &quot;ON&quot;))&n;|      arg.onoff = 2;&n;|    if (ioctl(fd, TIOCLINUX, &amp;arg)) {&n;|&t;perror(&quot;setvesablank: TIOCLINUX&quot;);&n;|&t;exit(1);&n;|    }&n;|    exit(0);&n;|}&n;-----------------------------------------------------------------------&n;*/
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
+macro_line|#include &lt;asm/segment.h&gt;
 r_extern
 r_int
 r_int

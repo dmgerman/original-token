@@ -722,7 +722,7 @@ r_return
 id|ENODEV
 suffix:semicolon
 )brace
-id|register_iomem
+id|request_region
 c_func
 (paren
 id|ioaddr

@@ -5561,7 +5561,7 @@ suffix:semicolon
 )brace
 )brace
 macro_line|#endif
-id|register_iomem
+id|request_region
 c_func
 (paren
 id|bases

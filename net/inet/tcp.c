@@ -1316,7 +1316,7 @@ r_case
 id|TIME_KEEPOPEN
 suffix:colon
 multiline_comment|/* &n;&t;&t;&t; * this reset_timer() call is a hack, this is not&n;&t;&t;&t; * how KEEPOPEN is supposed to work.&n;&t;&t;&t; */
-id|reset_timer
+id|reset_xmit_timer
 (paren
 id|sk
 comma

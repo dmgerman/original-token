@@ -680,7 +680,7 @@ l_int|0
 )paren
 (brace
 multiline_comment|/* Is EWRK3 really here? */
-id|register_iomem
+id|request_region
 c_func
 (paren
 id|base_addr
@@ -5695,7 +5695,7 @@ l_int|0
 )paren
 (brace
 multiline_comment|/*&n;** Device found. Mark its (I/O) location for future reference. Only 24&n;** EtherWORKS devices can exist between 0x100 and 0x3e0.&n;*/
-id|register_iomem
+id|request_region
 c_func
 (paren
 id|iobase
@@ -5908,7 +5908,7 @@ l_int|24
 )paren
 )paren
 suffix:semicolon
-id|register_iomem
+id|request_region
 c_func
 (paren
 id|iobase

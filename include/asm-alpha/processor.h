@@ -26,12 +26,11 @@ r_int
 r_int
 id|usp
 suffix:semicolon
-DECL|member|cr3
+DECL|member|ptbr
 r_int
 r_int
-id|cr3
+id|ptbr
 suffix:semicolon
-multiline_comment|/* ptbr */
 DECL|member|pcc
 r_int
 r_int

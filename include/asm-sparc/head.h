@@ -36,5 +36,18 @@ mdefine_line|#define TRAP_ENTRY_INTERRUPT_SOFT(int_level, ident) &bslash;&n;    
 multiline_comment|/* Non-maskable interrupt entry macro. You have to turn off all interrupts&n;   to not receive this. This is usually due to a asynchronous memory error.&n;   All we can really do is stop the show. :-(&n;*/
 DECL|macro|TRAP_ENTRY_INTERRUPT_NMI
 mdefine_line|#define TRAP_ENTRY_INTERRUPT_NMI(t_type, jmp_to) &bslash;&n;        mov t_type, %l3; b jmp_to; mov %psr, %l0; nop;
+multiline_comment|/* Trap entry code in entry.S needs the offsets into task_struct&n; * to get at the thread_struct goodies during window craziness.&n; *&n; * NOTE: We need to keep these values under 0x3ff in order to do&n; *       efficient load/stores in the window fill/spill handlers.&n; *       See TRAP_WIN_CLEAN in entry.S for details.&n; */
+DECL|macro|THREAD_UWINDOWS
+mdefine_line|#define THREAD_UWINDOWS 0x3a8
+DECL|macro|THREAD_WIM
+mdefine_line|#define THREAD_WIM 0x3ac
+DECL|macro|THREAD_W_SAVED
+mdefine_line|#define THREAD_W_SAVED 0x3b0
+DECL|macro|THREAD_KSP
+mdefine_line|#define THREAD_KSP 0x3b4
+DECL|macro|THREAD_USP
+mdefine_line|#define THREAD_USP 0x3b8
+DECL|macro|THREAD_REG_WINDOW
+mdefine_line|#define THREAD_REG_WINDOW 0x3c0
 macro_line|#endif __SPARC_HEAD_H
 eof

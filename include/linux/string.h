@@ -86,7 +86,7 @@ r_const
 r_char
 op_star
 comma
-r_char
+r_int
 )paren
 suffix:semicolon
 r_extern
@@ -196,7 +196,7 @@ c_func
 r_void
 op_star
 comma
-r_char
+r_int
 comma
 r_int
 )paren
@@ -243,7 +243,6 @@ r_void
 op_star
 comma
 r_int
-r_char
 comma
 r_int
 )paren

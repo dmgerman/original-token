@@ -853,6 +853,12 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+id|iput
+c_func
+(paren
+id|dir
+)paren
+suffix:semicolon
 r_return
 op_minus
 id|ENOENT

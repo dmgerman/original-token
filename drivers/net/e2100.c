@@ -455,7 +455,7 @@ r_return
 id|ENODEV
 suffix:semicolon
 multiline_comment|/* Grab the region so we can find a different board if IRQ select fails. */
-id|register_iomem
+id|request_region
 c_func
 (paren
 id|ioaddr

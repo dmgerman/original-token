@@ -1230,7 +1230,7 @@ id|dev-&gt;base_addr
 op_assign
 id|ioaddr
 suffix:semicolon
-id|register_iomem
+id|request_region
 c_func
 (paren
 id|ioaddr

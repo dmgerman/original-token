@@ -20,8 +20,8 @@ multiline_comment|/************************************&n; * skeleton-stuff&n; *
 macro_line|#ifndef HAVE_PORTRESERVE
 DECL|macro|check_region
 mdefine_line|#define check_region(ioaddr, size)              0
-DECL|macro|register_iomem
-mdefine_line|#define register_iomem(ioaddr, size,name);             do ; while (0)
+DECL|macro|request_region
+mdefine_line|#define request_region(ioaddr, size,name);             do ; while (0)
 macro_line|#endif
 macro_line|#ifndef NET_DEBUG
 DECL|macro|NET_DEBUG
@@ -817,7 +817,7 @@ op_assign
 id|dev
 suffix:semicolon
 multiline_comment|/* Grab the region so we can find another board if autoIRQ fails. */
-id|register_iomem
+id|request_region
 c_func
 (paren
 id|ioaddr

@@ -2508,6 +2508,15 @@ id|sk
 )paren
 suffix:semicolon
 multiline_comment|/* Start closing the connection.  This may take a while. */
+macro_line|#ifdef CONFIG_IP_MULTICAST
+multiline_comment|/* Applications forget to leave groups before exiting */
+id|ip_mc_drop_socket
+c_func
+(paren
+id|sk
+)paren
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/*&n;&t; * If linger is set, we don&squot;t return until the close&n;&t; * is complete.  Other wise we return immediately. The&n;&t; * actually closing is done the same either way.&n;&t; */
 r_if
 c_cond

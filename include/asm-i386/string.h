@@ -419,7 +419,7 @@ r_char
 op_star
 id|s
 comma
-r_char
+r_int
 id|c
 )paren
 (brace
@@ -478,7 +478,7 @@ r_char
 op_star
 id|s
 comma
-r_char
+r_int
 id|c
 )paren
 (brace
@@ -1324,7 +1324,7 @@ suffix:colon
 id|COMMON
 c_func
 (paren
-l_string|&quot;&bslash;n&bslash;tmovsw&bslash;n&bslash;tstosb&quot;
+l_string|&quot;&bslash;n&bslash;tmovsw&bslash;n&bslash;tmovsb&quot;
 )paren
 suffix:semicolon
 r_return
@@ -1539,7 +1539,7 @@ r_void
 op_star
 id|cs
 comma
-r_char
+r_int
 id|c
 comma
 r_int
@@ -1852,7 +1852,6 @@ op_star
 id|addr
 comma
 r_int
-r_char
 id|c
 comma
 r_int

@@ -2077,7 +2077,7 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/* Log I/O ports with kernel */
-id|register_iomem
+id|request_region
 c_func
 (paren
 id|port_base

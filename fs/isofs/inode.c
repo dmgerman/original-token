@@ -1208,6 +1208,8 @@ c_cond
 (paren
 id|iso_blknum
 op_eq
+id|vol_desc_start
+op_plus
 l_int|100
 )paren
 (brace

@@ -15,6 +15,7 @@ macro_line|#include &lt;linux/hdreg.h&gt;
 macro_line|#include &lt;linux/genhd.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
+macro_line|#include &lt;linux/ioport.h&gt;
 DECL|macro|REALLY_SLOW_IO
 mdefine_line|#define REALLY_SLOW_IO
 macro_line|#include &lt;asm/system.h&gt;
@@ -5714,6 +5715,29 @@ suffix:semicolon
 id|NR_HD
 op_assign
 l_int|0
+suffix:semicolon
+)brace
+r_else
+(brace
+id|request_region
+c_func
+(paren
+id|HD_DATA
+comma
+l_int|8
+comma
+l_string|&quot;hd&quot;
+)paren
+suffix:semicolon
+id|request_region
+c_func
+(paren
+id|HD_CMD
+comma
+l_int|1
+comma
+l_string|&quot;hd(cmd)&quot;
+)paren
 suffix:semicolon
 )brace
 )brace

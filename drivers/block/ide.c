@@ -8551,7 +8551,7 @@ dot
 id|present
 )paren
 (brace
-id|register_iomem
+id|request_region
 c_func
 (paren
 id|IDE_PORT
@@ -8567,7 +8567,7 @@ comma
 l_string|&quot;ide&quot;
 )paren
 suffix:semicolon
-id|register_iomem
+id|request_region
 c_func
 (paren
 id|IDE_PORT

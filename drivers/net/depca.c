@@ -1091,7 +1091,7 @@ id|DEPCA_PROM
 suffix:semicolon
 )brace
 macro_line|#ifdef HAVE_PORTRESERVE
-id|register_iomem
+id|request_region
 c_func
 (paren
 id|ioaddr

@@ -49,7 +49,7 @@ id|extent
 suffix:semicolon
 r_extern
 r_void
-id|register_iomem
+id|request_region
 c_func
 (paren
 r_int
@@ -60,6 +60,7 @@ r_int
 r_int
 id|extent
 comma
+r_const
 r_char
 op_star
 id|name

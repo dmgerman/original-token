@@ -1232,7 +1232,7 @@ id|EAGAIN
 suffix:semicolon
 )brace
 multiline_comment|/* OK, were are certain this is going to work.  Setup the device. */
-id|register_iomem
+id|request_region
 c_func
 (paren
 id|ioaddr

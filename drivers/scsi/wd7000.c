@@ -3816,7 +3816,7 @@ comma
 id|host-&gt;dma
 )paren
 suffix:semicolon
-id|register_iomem
+id|request_region
 c_func
 (paren
 id|host-&gt;iobase

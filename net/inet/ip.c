@@ -66,16 +66,6 @@ initialization_block
 suffix:semicolon
 multiline_comment|/* Forwarding=No, Default TTL=64 */
 macro_line|#endif
-macro_line|#ifdef CONFIG_IP_MULTICAST
-DECL|variable|ip_mc_head
-r_struct
-id|ip_mc_list
-op_star
-id|ip_mc_head
-op_assign
-l_int|NULL
-suffix:semicolon
-macro_line|#endif
 multiline_comment|/*&n; *&t;Handle the issuing of an ioctl() request&n; *&t;for the ip device. This is scheduled to&n; *&t;disappear&n; */
 DECL|function|ip_ioctl
 r_int
@@ -6106,6 +6096,11 @@ id|len
 op_assign
 l_int|0
 suffix:semicolon
+r_struct
+id|device
+op_star
+id|dev
+suffix:semicolon
 id|len
 op_assign
 id|sprintf
@@ -6113,7 +6108,7 @@ c_func
 (paren
 id|buffer
 comma
-l_string|&quot;Device    : Multicast&bslash;n&quot;
+l_string|&quot;Device    : Count&bslash;tGroup    Users Timer&bslash;n&quot;
 )paren
 suffix:semicolon
 id|save_flags
@@ -6127,16 +6122,34 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|im
-op_assign
-id|ip_mc_head
-suffix:semicolon
-r_while
+r_for
 c_loop
 (paren
-id|im
-op_ne
-l_int|NULL
+id|dev
+op_assign
+id|dev_base
+suffix:semicolon
+id|dev
+suffix:semicolon
+id|dev
+op_assign
+id|dev-&gt;next
+)paren
+(brace
+r_if
+c_cond
+(paren
+(paren
+id|dev-&gt;flags
+op_amp
+id|IFF_UP
+)paren
+op_logical_and
+(paren
+id|dev-&gt;flags
+op_amp
+id|IFF_MULTICAST
+)paren
 )paren
 (brace
 id|len
@@ -6148,11 +6161,45 @@ id|buffer
 op_plus
 id|len
 comma
-l_string|&quot;%-10s: %08lX&bslash;n&quot;
+l_string|&quot;%-10s: %5d&bslash;n&quot;
 comma
-id|im-&gt;interface-&gt;name
+id|dev-&gt;name
+comma
+id|dev-&gt;mc_count
+)paren
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|im
+op_assign
+id|dev-&gt;ip_mc_list
+suffix:semicolon
+id|im
+suffix:semicolon
+id|im
+op_assign
+id|im-&gt;next
+)paren
+(brace
+id|len
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|buffer
+op_plus
+id|len
+comma
+l_string|&quot;&bslash;t&bslash;t&bslash;t%08lX %5d %d:%08lX&bslash;n&quot;
 comma
 id|im-&gt;multiaddr
+comma
+id|im-&gt;users
+comma
+id|im-&gt;tm_running
+comma
+id|im-&gt;timer.expires
 )paren
 suffix:semicolon
 id|pos
@@ -6191,10 +6238,8 @@ id|length
 r_break
 suffix:semicolon
 )brace
-id|im
-op_assign
-id|im-&gt;next
-suffix:semicolon
+)brace
+)brace
 )brace
 id|restore_flags
 c_func

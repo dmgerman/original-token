@@ -895,7 +895,7 @@ id|EAGAIN
 suffix:semicolon
 )brace
 multiline_comment|/* We&squot;ve committed to using the board, and can start filling in *dev. */
-id|register_iomem
+id|request_region
 c_func
 (paren
 id|ioaddr

@@ -15,10 +15,29 @@ mdefine_line|#define TASK_SIZE&t;(0xc0000000UL)
 multiline_comment|/*&n; * Size of io_bitmap in longwords: 32 is ports 0-0x3ff.&n; */
 DECL|macro|IO_BITMAP_SIZE
 mdefine_line|#define IO_BITMAP_SIZE&t;32
+multiline_comment|/* The first five entries here MUST be the first four. This allows me to&n; * do %lo(offset) loads and stores in entry.S. See TRAP_WIN_CLEAN to see&n; * why.&n; */
 DECL|struct|thread_struct
 r_struct
 id|thread_struct
 (brace
+DECL|member|uwindows
+r_int
+r_int
+id|uwindows
+suffix:semicolon
+multiline_comment|/* how many user windows are in the set */
+DECL|member|wim
+r_int
+r_int
+id|wim
+suffix:semicolon
+multiline_comment|/* user&squot;s window invalid mask */
+DECL|member|w_saved
+r_int
+r_int
+id|w_saved
+suffix:semicolon
+multiline_comment|/* how many windows saved in reg_window[] */
 DECL|member|ksp
 r_int
 r_int
@@ -31,6 +50,22 @@ r_int
 id|usp
 suffix:semicolon
 multiline_comment|/* user&squot;s sp, throw reg windows here */
+DECL|member|psr
+r_int
+r_int
+id|psr
+suffix:semicolon
+multiline_comment|/* save for condition codes */
+DECL|member|reg_window
+r_int
+r_int
+id|reg_window
+(braket
+l_int|16
+op_star
+l_int|24
+)braket
+suffix:semicolon
 DECL|member|cr3
 r_int
 r_int
@@ -65,12 +100,6 @@ id|res1
 comma
 id|res2
 suffix:semicolon
-DECL|member|psr
-r_int
-r_int
-id|psr
-suffix:semicolon
-multiline_comment|/* save for condition codes */
 DECL|member|pc
 r_int
 r_int
@@ -93,27 +122,11 @@ l_int|8
 )braket
 suffix:semicolon
 multiline_comment|/* global regs need to be saved too */
-DECL|member|reg_window
-r_int
-r_int
-id|reg_window
-(braket
-l_int|16
-op_star
-l_int|24
-)braket
-suffix:semicolon
 DECL|member|yreg
 r_int
 r_int
 id|yreg
 suffix:semicolon
-DECL|member|uwindows
-r_int
-r_int
-id|uwindows
-suffix:semicolon
-multiline_comment|/* how many user windows are in the set */
 DECL|member|float_regs
 r_int
 r_int
@@ -126,7 +139,50 @@ multiline_comment|/* V8 and below have 32, V9 has 64 */
 )brace
 suffix:semicolon
 DECL|macro|INIT_TSS
-mdefine_line|#define INIT_TSS  { &bslash;&n;&t;0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, &bslash;&n;        0, 0, 0, 0, 0, 0, 0, 0, &bslash;&n;        { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, &bslash;&n;        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, &bslash;&n;        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, &bslash;&n;        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, &bslash;&n;        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, &bslash;&n;        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, &bslash;&n;        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, &bslash;&n;        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, &bslash;&n;        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, &bslash;&n;        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, &bslash;&n;        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, &bslash;&n;        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, &bslash;&n;        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, &bslash;&n;        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, &bslash;&n;        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, &bslash;&n;        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, &bslash;&n;        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, &bslash;&n;        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, &bslash;&n;        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, &bslash;&n;        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, &bslash;&n;        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, &bslash;&n;        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, &bslash;&n;        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, &bslash;&n;        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, }, &bslash;&n;&t;0, 0, &bslash;&n;        { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, &bslash;&n;        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, &bslash;&n;        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, &bslash;&n;        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, }, &bslash;&n;}
+mdefine_line|#define INIT_TSS  { &bslash;&n;&t;0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, &bslash;&n;        0, 0, 0, 0, 0, 0, 0, 0, &bslash;&n;        { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, &bslash;&n;        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, &bslash;&n;        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, &bslash;&n;        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, &bslash;&n;        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, &bslash;&n;        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, &bslash;&n;        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, &bslash;&n;        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, &bslash;&n;        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, &bslash;&n;        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, &bslash;&n;        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, &bslash;&n;        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, &bslash;&n;        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, &bslash;&n;        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, &bslash;&n;        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, &bslash;&n;        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, &bslash;&n;        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, &bslash;&n;        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, &bslash;&n;        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, &bslash;&n;        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, &bslash;&n;        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, &bslash;&n;        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, &bslash;&n;        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, &bslash;&n;        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, }, &bslash;&n;&t;0, 0, 0, 0, &bslash;&n;        { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, &bslash;&n;        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, &bslash;&n;        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, &bslash;&n;        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, }, &bslash;&n;}
+multiline_comment|/* The thread_frame is what needs to be set up in certain circumstances&n; * upon entry to a trap. It is also loaded sometimes during a window&n; * spill if things don&squot;t go right (bad user stack pointer). In reality&n; * it is not per-process per se, it just sits in the kernel stack while&n; * the current process is in a handler then it is basically forgotten&n; * about.&n; */
+DECL|struct|thread_frame
+r_struct
+id|thread_frame
+(brace
+DECL|member|thr_psr
+r_int
+r_int
+id|thr_psr
+suffix:semicolon
+DECL|member|thr_pc
+r_int
+r_int
+id|thr_pc
+suffix:semicolon
+DECL|member|thr_npc
+r_int
+r_int
+id|thr_npc
+suffix:semicolon
+DECL|member|thr_y
+r_int
+r_int
+id|thr_y
+suffix:semicolon
+DECL|member|thr_globals
+r_int
+r_int
+id|thr_globals
+(braket
+l_int|8
+)braket
+suffix:semicolon
+DECL|member|thr_outs
+r_int
+r_int
+id|thr_outs
+(braket
+l_int|8
+)braket
+suffix:semicolon
+)brace
+suffix:semicolon
 multiline_comment|/*&n; * These are the &quot;cli()&quot; and &quot;sti()&quot; for software interrupts&n; * They work by increasing/decreasing the &quot;intr_count&quot; value, &n; * and as such can be nested arbitrarily.&n; */
 DECL|function|start_bh_atomic
 r_extern

@@ -147,6 +147,23 @@ r_int
 id|rx_over_errors
 suffix:semicolon
 multiline_comment|/* Frame bigger then SLIP buf.  */
+macro_line|#ifdef SL_INCLUDE_CSLIP
+DECL|member|tx_compressed
+r_int
+r_int
+id|tx_compressed
+suffix:semicolon
+DECL|member|rx_compressed
+r_int
+r_int
+id|rx_compressed
+suffix:semicolon
+DECL|member|tx_misses
+r_int
+r_int
+id|tx_misses
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/* Detailed SLIP statistics. */
 DECL|member|mtu
 r_int

@@ -29,8 +29,8 @@ macro_line|#endif
 macro_line|#ifndef HAVE_PORTRESERVE
 DECL|macro|check_region
 mdefine_line|#define check_region(addr, size)&t;0
-DECL|macro|register_iomem
-mdefine_line|#define register_iomem(addr, size,name)&t;do ; while(0)
+DECL|macro|request_region
+mdefine_line|#define request_region(addr, size,name)&t;do ; while(0)
 macro_line|#endif
 macro_line|#ifndef HAVE_ALLOC_SKB
 DECL|macro|alloc_skb
@@ -2937,7 +2937,7 @@ r_return
 id|ENODEV
 suffix:semicolon
 )brace
-id|register_iomem
+id|request_region
 c_func
 (paren
 id|ioaddr

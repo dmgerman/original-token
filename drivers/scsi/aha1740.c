@@ -2321,7 +2321,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-id|register_iomem
+id|request_region
 c_func
 (paren
 id|base

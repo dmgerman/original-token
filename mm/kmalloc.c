@@ -504,6 +504,10 @@ id|printk
 (paren
 l_string|&quot;Cannot use %d bytes out of %d in order = %d block mallocs&bslash;n&quot;
 comma
+(paren
+r_int
+)paren
+(paren
 id|NBLOCKS
 (paren
 id|order
@@ -519,6 +523,7 @@ r_sizeof
 (paren
 r_struct
 id|page_descriptor
+)paren
 )paren
 comma
 (paren
@@ -714,6 +719,9 @@ id|printk
 (paren
 l_string|&quot;kmalloc of too large a block (%d bytes).&bslash;n&quot;
 comma
+(paren
+r_int
+)paren
 id|size
 )paren
 suffix:semicolon
@@ -1148,6 +1156,9 @@ l_string|&quot;(Executive summary: This can&squot;t happen)&bslash;n&quot;
 comma
 id|MAX_GET_FREE_PAGE_TRIES
 comma
+(paren
+r_int
+)paren
 id|size
 )paren
 suffix:semicolon

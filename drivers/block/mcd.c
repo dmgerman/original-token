@@ -4583,7 +4583,7 @@ r_return
 id|mem_start
 suffix:semicolon
 )brace
-id|register_iomem
+id|request_region
 c_func
 (paren
 id|mcd_port

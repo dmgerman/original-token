@@ -3,7 +3,7 @@ multiline_comment|/*&n; * This module was updated by Shaun Savage first on 5-13-
 multiline_comment|/* More changes by Bill Earnest, wde@aluxpo.att.com&n; * through 4/07/94. Includes rewrites of FIFO routines,&n; * length-limited commands to make swap partitions work.&n; * Merged the changes released by Larry Doolittle, based on input&n; * from Jon Luckey, Roger Sunshine, John Shifflett. The FAST_FIFO&n; * doesn&squot;t work for me. Scatter-gather code from Eric. The change to&n; * an IF stmt. in the interrupt routine finally made it stable.&n; * Limiting swap request size patch to ll_rw_blk.c not needed now.&n; * Please ignore the clutter of debug stmts., pretty can come later.&n; */
 multiline_comment|/* Merged code from Matt Postiff improving the auto-sense validation&n; * for all I/O addresses. Some reports of problems still come in, but&n; * have been unable to reproduce or localize the cause. Some are from&n; * LUN &gt; 0 problems, but that is not host specific. Now 6/6/94.&n; */
 multiline_comment|/* Changes for 1.1.28 kernel made 7/19/94, code not affected. (WDE)&n; */
-multiline_comment|/* Changes for 1.1.43+ kernels made 8/25/94, code added to check for&n; * new BIOS version, derived by jshiffle@netcom.com. (WDE)&n; */
+multiline_comment|/* Changes for 1.1.43+ kernels made 8/25/94, code added to check for&n; * new BIOS version, derived by jshiffle@netcom.com. (WDE)&n; *&n; * 1/7/95 Fix from Peter Lu (swift@world.std.com) for datalen vs. dataptr&n; * logic, much more stable under load.&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/head.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -624,15 +624,13 @@ c_cond
 op_logical_neg
 id|in2000_datalen
 op_logical_and
+op_increment
 id|in2000_current_segment
 OL
 id|in2000_nsegment
 )paren
 (brace
 id|in2000_scatter
-op_increment
-suffix:semicolon
-id|in2000_current_segment
 op_increment
 suffix:semicolon
 id|in2000_datalen
@@ -1000,15 +998,13 @@ c_cond
 op_logical_neg
 id|in2000_datalen
 op_logical_and
+op_increment
 id|in2000_current_segment
 OL
 id|in2000_nsegment
 )paren
 (brace
 id|in2000_scatter
-op_increment
-suffix:semicolon
-id|in2000_current_segment
 op_increment
 suffix:semicolon
 id|in2000_datalen
@@ -1229,11 +1225,25 @@ r_if
 c_cond
 (paren
 id|in2000_datalen
-op_logical_and
-id|in2000_dataptr
 )paren
 multiline_comment|/* data xfer pending */
 (brace
+r_if
+c_cond
+(paren
+id|in2000_dataptr
+op_eq
+l_int|NULL
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;int2000: dataptr=NULL datalen=%d&bslash;n&quot;
+comma
+id|in2000_datalen
+)paren
+suffix:semicolon
+r_else
 r_if
 c_cond
 (paren
@@ -1251,11 +1261,6 @@ c_func
 )paren
 suffix:semicolon
 )brace
-r_else
-id|ficmsk
-op_assign
-l_int|0
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2848,7 +2853,7 @@ id|shpnt-&gt;irq
 op_assign
 id|irq_level
 suffix:semicolon
-id|register_iomem
+id|request_region
 c_func
 (paren
 id|base

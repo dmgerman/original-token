@@ -1453,7 +1453,7 @@ op_assign
 id|MAX_CMD_PER_LUN
 suffix:semicolon
 multiline_comment|/* Register the I/O space that we use */
-id|register_iomem
+id|request_region
 c_func
 (paren
 id|sh

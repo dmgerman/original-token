@@ -127,8 +127,8 @@ suffix:semicolon
 macro_line|#ifndef HAVE_PORTRESERVE
 DECL|macro|check_region
 mdefine_line|#define check_region(ioaddr, size) &t;&t;0
-DECL|macro|register_iomem
-mdefine_line|#define&t;register_iomem(ioaddr, size,name);&t;&t;do ; while (0)
+DECL|macro|request_region
+mdefine_line|#define&t;request_region(ioaddr, size,name);&t;&t;do ; while (0)
 macro_line|#endif
 DECL|macro|NI52_TOTAL_SIZE
 mdefine_line|#define NI52_TOTAL_SIZE 16
@@ -1288,7 +1288,7 @@ comma
 id|dev-&gt;base_addr
 )paren
 suffix:semicolon
-id|register_iomem
+id|request_region
 c_func
 (paren
 id|ioaddr

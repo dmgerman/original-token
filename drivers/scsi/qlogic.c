@@ -2555,7 +2555,7 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
-id|register_iomem
+id|request_region
 c_func
 (paren
 id|qbase

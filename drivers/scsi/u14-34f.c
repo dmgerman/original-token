@@ -1113,7 +1113,7 @@ id|REG_SYS_MASK
 )paren
 suffix:semicolon
 multiline_comment|/* Register the I/O space that we use */
-id|register_iomem
+id|request_region
 c_func
 (paren
 id|sh

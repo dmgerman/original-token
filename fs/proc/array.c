@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/fs/proc/array.c&n; *&n; *  Copyright (C) 1992  by Linus Torvalds&n; *  based on ideas by Darren Senn&n; *&n; * Fixes:&n; * Michael. K. Johnson: stat,statm extensions.&n; *                      &lt;johnsonm@stolaf.edu&gt;&n; *&n; * Pauline Middelink :  Made cmdline,envline only break at &squot;&bslash;0&squot;s, to&n; *                      make sure SET_PROCTITLE works. Also removed&n; *                      bad &squot;!&squot; which forced address recalculation for&n; *                      EVERY character on the current page.&n; *                      &lt;middelin@polyware.iaf.nl&gt;&n; *&n; * Danny ter Haar    :&t;Some minor additions for cpuinfo&n; * &lt;danny@ow.nl&gt;&n; *&n; * Alessandro Rubini :  profile extension.&n; *                      &lt;rubini@ipvvis.unipv.it&gt;&n; */
+multiline_comment|/*&n; *  linux/fs/proc/array.c&n; *&n; *  Copyright (C) 1992  by Linus Torvalds&n; *  based on ideas by Darren Senn&n; *&n; * Fixes:&n; * Michael. K. Johnson: stat,statm extensions.&n; *                      &lt;johnsonm@stolaf.edu&gt;&n; *&n; * Pauline Middelink :  Made cmdline,envline only break at &squot;&bslash;0&squot;s, to&n; *                      make sure SET_PROCTITLE works. Also removed&n; *                      bad &squot;!&squot; which forced address recalculation for&n; *                      EVERY character on the current page.&n; *                      &lt;middelin@polyware.iaf.nl&gt;&n; *&n; * Danny ter Haar    :&t;Some minor additions for cpuinfo&n; * &lt;danny@ow.nl&gt;&n; *&n; * Alessandro Rubini :  profile extension.&n; *                      &lt;rubini@ipvvis.unipv.it&gt;&n; *&n; * Jeff Tranter      :  added BogoMips field to cpuinfo&n; *                      &lt;Jeff_Tranter@Mitel.COM&gt;&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -12,6 +12,7 @@ macro_line|#include &lt;linux/mman.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 DECL|macro|LOAD_INT
@@ -1074,6 +1075,7 @@ op_star
 id|buffer
 )paren
 (brace
+macro_line|#ifdef __i386__
 r_char
 op_star
 id|model
@@ -1130,6 +1132,7 @@ l_string|&quot;TS Counters&bslash;t: %s&bslash;n&quot;
 l_string|&quot;Pentium MSR&bslash;t: %s&bslash;n&quot;
 l_string|&quot;Mach. Ch. Exep.&bslash;t: %s&bslash;n&quot;
 l_string|&quot;CMPXCHGB8B&bslash;t: %s&bslash;n&quot;
+l_string|&quot;BogoMips&bslash;t: %lu.%02lu&bslash;n&quot;
 comma
 id|x86
 op_plus
@@ -1260,8 +1263,25 @@ c_cond
 l_string|&quot;yes&quot;
 suffix:colon
 l_string|&quot;no&quot;
+comma
+id|loops_per_sec
+op_div
+l_int|500000
+comma
+(paren
+id|loops_per_sec
+op_div
+l_int|5000
+)paren
+op_mod
+l_int|100
 )paren
 suffix:semicolon
+macro_line|#else
+r_return
+l_int|0
+suffix:semicolon
+macro_line|#endif
 )brace
 DECL|function|get_task
 r_static
@@ -1750,6 +1770,7 @@ op_star
 id|p
 )paren
 (brace
+macro_line|#ifdef __i386__
 r_int
 r_int
 id|ebp
@@ -1873,6 +1894,7 @@ OL
 l_int|16
 )paren
 suffix:semicolon
+macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
@@ -2078,6 +2100,7 @@ r_switch
 c_cond
 (paren
 (paren
+r_int
 r_int
 )paren
 (paren

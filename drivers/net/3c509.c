@@ -949,7 +949,7 @@ id|dev-&gt;if_port
 op_assign
 id|if_port
 suffix:semicolon
-id|register_iomem
+id|request_region
 c_func
 (paren
 id|dev-&gt;base_addr

@@ -1724,11 +1724,6 @@ op_assign
 op_amp
 id|sbd-&gt;s_time
 suffix:semicolon
-id|sb-&gt;sv_sb_state
-op_assign
-op_amp
-id|sbd-&gt;s_state
-suffix:semicolon
 id|sb-&gt;sv_block_base
 op_assign
 l_int|0

@@ -864,7 +864,7 @@ suffix:semicolon
 )brace
 macro_line|#endif&t;/* jumpered DMA */
 multiline_comment|/* Grab the region so we can find another board if autoIRQ fails. */
-id|register_iomem
+id|request_region
 c_func
 (paren
 id|ioaddr

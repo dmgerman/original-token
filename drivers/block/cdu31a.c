@@ -10401,7 +10401,7 @@ c_cond
 id|drive_found
 )paren
 (brace
-id|register_iomem
+id|request_region
 c_func
 (paren
 id|sony_cd_base_io

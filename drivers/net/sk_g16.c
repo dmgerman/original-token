@@ -162,8 +162,8 @@ multiline_comment|/* &n; * Portreserve is there to mark the Card I/O Port region
 macro_line|#ifndef HAVE_PORTRESERVE
 DECL|macro|check_region
 mdefine_line|#define check_region(ioaddr, size)              0
-DECL|macro|register_iomem
-mdefine_line|#define register_iomem(ioaddr, size,name);             do ; while (0)
+DECL|macro|request_region
+mdefine_line|#define request_region(ioaddr, size,name);             do ; while (0)
 macro_line|#endif
 multiline_comment|/* &n; * SK_DEBUG&n; *&n; * Here you can choose what level of debugging wanted.&n; *&n; * If SK_DEBUG and SK_DEBUG2 are undefined, then only the&n; *  necessary messages will be printed.&n; *&n; * If SK_DEBUG is defined, there will be many debugging prints&n; *  which can help to find some mistakes in configuration or even&n; *  in the driver code.&n; *&n; * If SK_DEBUG2 is defined, many many messages will be printed &n; *  which normally you don&squot;t need. I used this to check the interrupt&n; *  routine. &n; *&n; * (If you define only SK_DEBUG2 then only the messages for &n; *  checking interrupts will be printed!)&n; *&n; * Normal way of live is: &n; *&n; * For the whole thing get going let both symbolic constants&n; * undefined. If you face any problems and you know what&squot;s going&n; * on (you know something about the card and you can interpret some&n; * hex LANCE register output) then define SK_DEBUG&n; * &n; */
 DECL|macro|SK_DEBUG
@@ -1389,7 +1389,7 @@ l_int|5
 )paren
 suffix:semicolon
 multiline_comment|/* Grab the I/O Port region */
-id|register_iomem
+id|request_region
 c_func
 (paren
 id|ioaddr

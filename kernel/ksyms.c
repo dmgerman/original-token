@@ -962,7 +962,7 @@ comma
 id|X
 c_func
 (paren
-id|register_iomem
+id|request_region
 )paren
 comma
 id|X
