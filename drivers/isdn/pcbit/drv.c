@@ -640,7 +640,7 @@ l_int|0
 suffix:semicolon
 id|dev-&gt;hl_hdrlen
 op_assign
-l_int|10
+l_int|16
 suffix:semicolon
 id|dev_if
 op_assign
@@ -745,7 +745,7 @@ id|pcbit_xmit
 suffix:semicolon
 id|dev_if-&gt;hl_hdrlen
 op_assign
-l_int|10
+l_int|16
 suffix:semicolon
 id|dev_if-&gt;maxbufsize
 op_assign
@@ -1998,13 +1998,6 @@ suffix:semicolon
 id|isdn_ctrl
 id|ictl
 suffix:semicolon
-macro_line|#ifdef DEBUG
-r_struct
-id|msg_fmt
-op_star
-id|fmsg
-suffix:semicolon
-macro_line|#endif
 r_switch
 c_cond
 (paren
@@ -2940,27 +2933,6 @@ id|KERN_DEBUG
 l_string|&quot;pcbit_l3_receive: unknown message %08lx&bslash;n&quot;
 comma
 id|msg
-)paren
-suffix:semicolon
-id|fmsg
-op_assign
-(paren
-r_struct
-id|msg_fmt
-op_star
-)paren
-op_amp
-id|msg
-suffix:semicolon
-id|printk
-c_func
-(paren
-id|KERN_DEBUG
-l_string|&quot;cmd=%02x sub=%02x&bslash;n&quot;
-comma
-id|fmsg-&gt;cmd
-comma
-id|fmsg-&gt;scmd
 )paren
 suffix:semicolon
 r_break

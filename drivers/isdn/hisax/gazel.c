@@ -33,14 +33,22 @@ mdefine_line|#define R753      3
 DECL|macro|R742
 mdefine_line|#define R742      4
 multiline_comment|/* Gazel R685 stuff */
-DECL|macro|GAZEL_MANUFACTURER
-mdefine_line|#define GAZEL_MANUFACTURER     0x10b5
-DECL|macro|GAZEL_R685
-mdefine_line|#define GAZEL_R685             0x1030
-DECL|macro|GAZEL_R753
-mdefine_line|#define GAZEL_R753             0x1152
-DECL|macro|GAZEL_DJINN_ITOO
-mdefine_line|#define GAZEL_DJINN_ITOO       0x1151
+macro_line|#ifndef PCI_VENDOR_ID_PLX
+DECL|macro|PCI_VENDOR_ID_PLX
+mdefine_line|#define PCI_VENDOR_ID_PLX&t;0x10b5
+macro_line|#endif
+macro_line|#ifndef PCI_DEVICE_ID_PLX_R685
+DECL|macro|PCI_DEVICE_ID_PLX_R685
+mdefine_line|#define PCI_DEVICE_ID_PLX_R685&t;0x1030
+macro_line|#endif
+macro_line|#ifndef PCI_DEVICE_ID_PLX_R753
+DECL|macro|PCI_DEVICE_ID_PLX_R753
+mdefine_line|#define PCI_DEVICE_ID_PLX_R753&t;0x1152
+macro_line|#endif
+macro_line|#ifndef PCI_DEVICE_ID_PLX_DJINN_ITOO
+DECL|macro|PCI_DEVICE_ID_PLX_DJINN_ITOO
+mdefine_line|#define PCI_DEVICE_ID_PLX_DJINN_ITOO&t;0x1151
+macro_line|#endif
 DECL|macro|PLX_CNTRL
 mdefine_line|#define PLX_CNTRL    0x50&t;/* registre de controle PLX */
 DECL|macro|RESET_GAZEL
@@ -2829,7 +2837,7 @@ suffix:semicolon
 )brace
 id|seekcard
 op_assign
-id|GAZEL_R685
+id|PCI_DEVICE_ID_PLX_R685
 suffix:semicolon
 r_for
 c_loop
@@ -2855,7 +2863,7 @@ op_assign
 id|pci_find_device
 c_func
 (paren
-id|GAZEL_MANUFACTURER
+id|PCI_VENDOR_ID_PLX
 comma
 id|seekcard
 comma
@@ -2882,21 +2890,23 @@ id|dev_tel-&gt;irq
 suffix:semicolon
 id|pci_ioaddr0
 op_assign
-id|dev_tel-&gt;resource
-(braket
+id|pci_resource_start
+c_func
+(paren
+id|dev_tel
+comma
 l_int|1
-)braket
-dot
-id|start
+)paren
 suffix:semicolon
 id|pci_ioaddr1
 op_assign
-id|dev_tel-&gt;resource
-(braket
+id|pci_resource_start
+c_func
+(paren
+id|dev_tel
+comma
 l_int|2
-)braket
-dot
-id|start
+)paren
 suffix:semicolon
 id|found
 op_assign
@@ -2919,20 +2929,20 @@ id|seekcard
 )paren
 (brace
 r_case
-id|GAZEL_R685
+id|PCI_DEVICE_ID_PLX_R685
 suffix:colon
 id|seekcard
 op_assign
-id|GAZEL_R753
+id|PCI_DEVICE_ID_PLX_R753
 suffix:semicolon
 r_break
 suffix:semicolon
 r_case
-id|GAZEL_R753
+id|PCI_DEVICE_ID_PLX_R753
 suffix:colon
 id|seekcard
 op_assign
-id|GAZEL_DJINN_ITOO
+id|PCI_DEVICE_ID_PLX_DJINN_ITOO
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -3066,7 +3076,7 @@ id|seekcard
 )paren
 (brace
 r_case
-id|GAZEL_R685
+id|PCI_DEVICE_ID_PLX_R685
 suffix:colon
 id|printk
 c_func
@@ -3116,10 +3126,10 @@ suffix:semicolon
 r_break
 suffix:semicolon
 r_case
-id|GAZEL_R753
+id|PCI_DEVICE_ID_PLX_R753
 suffix:colon
 r_case
-id|GAZEL_DJINN_ITOO
+id|PCI_DEVICE_ID_PLX_DJINN_ITOO
 suffix:colon
 id|printk
 c_func

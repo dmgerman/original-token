@@ -3607,8 +3607,7 @@ id|dev_priv-&gt;buf_queue
 suffix:semicolon
 id|dev_priv-&gt;WarpPipe
 op_assign
-op_minus
-l_int|1
+l_int|0xff000000
 suffix:semicolon
 id|DRM_DEBUG
 c_func

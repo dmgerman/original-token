@@ -13,7 +13,7 @@ DECL|macro|HISAX_STATUS_BUFSIZE
 mdefine_line|#define HISAX_STATUS_BUFSIZE 4096
 DECL|macro|INCLUDE_INLINE_FUNCS
 mdefine_line|#define INCLUDE_INLINE_FUNCS
-multiline_comment|/*&n; * This structure array contains one entry per card. An entry looks&n; * like this:&n; *&n; * { type, protocol, p0, p1, p2, NULL }&n; *&n; * type&n; *    1 Teles 16.0       p0=irq p1=membase p2=iobase&n; *    2 Teles  8.0       p0=irq p1=membase&n; *    3 Teles 16.3       p0=irq p1=iobase&n; *    4 Creatix PNP      p0=irq p1=IO0 (ISAC)  p2=IO1 (HSCX)&n; *    5 AVM A1 (Fritz)   p0=irq p1=iobase&n; *    6 ELSA PC          [p0=iobase] or nothing (autodetect)&n; *    7 ELSA Quickstep   p0=irq p1=iobase&n; *    8 Teles PCMCIA     p0=irq p1=iobase&n; *    9 ITK ix1-micro    p0=irq p1=iobase&n; *   10 ELSA PCMCIA      p0=irq p1=iobase&n; *   11 Eicon.Diehl Diva p0=irq p1=iobase&n; *   12 Asuscom ISDNLink p0=irq p1=iobase&n; *   13 Teleint          p0=irq p1=iobase&n; *   14 Teles 16.3c      p0=irq p1=iobase&n; *   15 Sedlbauer speed  p0=irq p1=iobase&n; *   15 Sedlbauer PC/104&t;p0=irq p1=iobase&n; *   15 Sedlbauer speed pci&t;no parameter&n; *   16 USR Sportster internal  p0=irq  p1=iobase&n; *   17 MIC card                p0=irq  p1=iobase&n; *   18 ELSA Quickstep 1000PCI  no parameter&n; *   19 Compaq ISDN S0 ISA card p0=irq  p1=IO0 (HSCX)  p2=IO1 (ISAC) p3=IO2&n; *   20 Travers Technologies NETjet PCI card&n; *   21 TELES PCI               no parameter&n; *   22 Sedlbauer Speed Star    p0=irq p1=iobase&n; *   23 reserved&n; *   24 Dr Neuhaus Niccy PnP/PCI card p0=irq p1=IO0 p2=IO1 (PnP only)&n; *   25 Teles S0Box             p0=irq p1=iobase (from isapnp setup)&n; *   26 AVM A1 PCMCIA (Fritz)   p0=irq p1=iobase&n; *   27 AVM PnP/PCI &t;&t;p0=irq p1=iobase (PCI no parameter)&n; *   28 Sedlbauer Speed Fax+ &t;p0=irq p1=iobase (from isapnp setup)&n; *   29 Siemens I-Surf          p0=irq p1=iobase p2=memory (from isapnp setup)   &n; *   30 ACER P10                p0=irq p1=iobase (from isapnp setup)   &n; *   31 HST Saphir              p0=irq  p1=iobase&n; *   32 Telekom A4T             none&n; *   33 Scitel Quadro&t;&t;p0=subcontroller (4*S0, subctrl 1...4)&n; *   34&t;Gazel ISDN cards&n; *   35 HFC 2BDS0 PCI           none&n; *   36 Winbond 6692 PCI        none&n; *   37 HFC 2BDS0 S+/SP         p0=irq p1=iobase&n; *&n; * protocol can be either ISDN_PTYPE_EURO or ISDN_PTYPE_1TR6 or ISDN_PTYPE_NI1&n; *&n; *&n; */
+multiline_comment|/*&n; * This structure array contains one entry per card. An entry looks&n; * like this:&n; *&n; * { type, protocol, p0, p1, p2, NULL }&n; *&n; * type&n; *    1 Teles 16.0       p0=irq p1=membase p2=iobase&n; *    2 Teles  8.0       p0=irq p1=membase&n; *    3 Teles 16.3       p0=irq p1=iobase&n; *    4 Creatix PNP      p0=irq p1=IO0 (ISAC)  p2=IO1 (HSCX)&n; *    5 AVM A1 (Fritz)   p0=irq p1=iobase&n; *    6 ELSA PC          [p0=iobase] or nothing (autodetect)&n; *    7 ELSA Quickstep   p0=irq p1=iobase&n; *    8 Teles PCMCIA     p0=irq p1=iobase&n; *    9 ITK ix1-micro    p0=irq p1=iobase&n; *   10 ELSA PCMCIA      p0=irq p1=iobase&n; *   11 Eicon.Diehl Diva p0=irq p1=iobase&n; *   12 Asuscom ISDNLink p0=irq p1=iobase&n; *   13 Teleint          p0=irq p1=iobase&n; *   14 Teles 16.3c      p0=irq p1=iobase&n; *   15 Sedlbauer speed  p0=irq p1=iobase&n; *   15 Sedlbauer PC/104&t;p0=irq p1=iobase&n; *   15 Sedlbauer speed pci&t;no parameter&n; *   16 USR Sportster internal  p0=irq  p1=iobase&n; *   17 MIC card                p0=irq  p1=iobase&n; *   18 ELSA Quickstep 1000PCI  no parameter&n; *   19 Compaq ISDN S0 ISA card p0=irq  p1=IO0 (HSCX)  p2=IO1 (ISAC) p3=IO2&n; *   20 Travers Technologies NETjet-S PCI card&n; *   21 TELES PCI               no parameter&n; *   22 Sedlbauer Speed Star    p0=irq p1=iobase&n; *   23 reserved&n; *   24 Dr Neuhaus Niccy PnP/PCI card p0=irq p1=IO0 p2=IO1 (PnP only)&n; *   25 Teles S0Box             p0=irq p1=iobase (from isapnp setup)&n; *   26 AVM A1 PCMCIA (Fritz)   p0=irq p1=iobase&n; *   27 AVM PnP/PCI &t;&t;p0=irq p1=iobase (PCI no parameter)&n; *   28 Sedlbauer Speed Fax+ &t;p0=irq p1=iobase (from isapnp setup)&n; *   29 Siemens I-Surf          p0=irq p1=iobase p2=memory (from isapnp setup)   &n; *   30 ACER P10                p0=irq p1=iobase (from isapnp setup)   &n; *   31 HST Saphir              p0=irq  p1=iobase&n; *   32 Telekom A4T             none&n; *   33 Scitel Quadro&t;&t;p0=subcontroller (4*S0, subctrl 1...4)&n; *   34&t;Gazel ISDN cards&n; *   35 HFC 2BDS0 PCI           none&n; *   36 Winbond 6692 PCI        none&n; *   37 HFC 2BDS0 S+/SP         p0=irq p1=iobase&n; *   38 Travers Technologies NETspider-U PCI card&n; *&n; * protocol can be either ISDN_PTYPE_EURO or ISDN_PTYPE_1TR6 or ISDN_PTYPE_NI1&n; *&n; *&n; */
 DECL|variable|CardType
 r_const
 r_char
@@ -63,7 +63,7 @@ l_string|&quot;Elsa PCI&quot;
 comma
 l_string|&quot;Compaq ISA&quot;
 comma
-l_string|&quot;NETjet&quot;
+l_string|&quot;NETjet-S&quot;
 comma
 l_string|&quot;Teles PCI&quot;
 comma
@@ -98,6 +98,8 @@ comma
 l_string|&quot;Winbond 6692&quot;
 comma
 l_string|&quot;HFC 2BDS0 SX&quot;
+comma
+l_string|&quot;NETspider-U&quot;
 comma
 )brace
 suffix:semicolon
@@ -176,13 +178,6 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|avm_a1_init_pcmcia
-)paren
-suffix:semicolon
-DECL|variable|HiSax_closecard
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|HiSax_closecard
 )paren
 suffix:semicolon
 macro_line|#endif /* CONFIG_HISAX_AVM_A1_PCMCIA */
@@ -334,7 +329,7 @@ macro_line|#undef DEFAULT_CARD
 DECL|macro|DEFAULT_CFG
 macro_line|#undef DEFAULT_CFG
 DECL|macro|DEFAULT_CARD
-mdefine_line|#define DEFAULT_CARD ISDN_CTYPE_NETJET
+mdefine_line|#define DEFAULT_CARD ISDN_CTYPE_NETJET_S
 DECL|macro|DEFAULT_CFG
 mdefine_line|#define DEFAULT_CFG {0,0,0,0}
 macro_line|#endif
@@ -448,21 +443,21 @@ mdefine_line|#define DEFAULT_CARD ISDN_CTYPE_W6692
 DECL|macro|DEFAULT_CFG
 mdefine_line|#define DEFAULT_CFG {0,0,0,0}
 macro_line|#endif
+macro_line|#ifdef CONFIG_HISAX_NETJET_U
+DECL|macro|DEFAULT_CARD
+macro_line|#undef DEFAULT_CARD
+DECL|macro|DEFAULT_CFG
+macro_line|#undef DEFAULT_CFG
+DECL|macro|DEFAULT_CARD
+mdefine_line|#define DEFAULT_CARD ISDN_CTYPE_NETJET_U
+DECL|macro|DEFAULT_CFG
+mdefine_line|#define DEFAULT_CFG {0,0,0,0}
+macro_line|#endif
 macro_line|#ifdef CONFIG_HISAX_1TR6
 DECL|macro|DEFAULT_PROTO
 mdefine_line|#define DEFAULT_PROTO ISDN_PTYPE_1TR6
 DECL|macro|DEFAULT_PROTO_NAME
 mdefine_line|#define DEFAULT_PROTO_NAME &quot;1TR6&quot;
-macro_line|#endif
-macro_line|#ifdef CONFIG_HISAX_EURO
-DECL|macro|DEFAULT_PROTO
-macro_line|#undef DEFAULT_PROTO
-DECL|macro|DEFAULT_PROTO
-mdefine_line|#define DEFAULT_PROTO ISDN_PTYPE_EURO
-DECL|macro|DEFAULT_PROTO_NAME
-macro_line|#undef DEFAULT_PROTO_NAME
-DECL|macro|DEFAULT_PROTO_NAME
-mdefine_line|#define DEFAULT_PROTO_NAME &quot;EURO&quot;
 macro_line|#endif
 macro_line|#ifdef CONFIG_HISAX_NI1
 DECL|macro|DEFAULT_PROTO
@@ -474,6 +469,16 @@ macro_line|#undef DEFAULT_PROTO_NAME
 DECL|macro|DEFAULT_PROTO_NAME
 mdefine_line|#define DEFAULT_PROTO_NAME &quot;NI1&quot;
 macro_line|#endif
+macro_line|#ifdef CONFIG_HISAX_EURO
+DECL|macro|DEFAULT_PROTO
+macro_line|#undef DEFAULT_PROTO
+DECL|macro|DEFAULT_PROTO
+mdefine_line|#define DEFAULT_PROTO ISDN_PTYPE_EURO
+DECL|macro|DEFAULT_PROTO_NAME
+macro_line|#undef DEFAULT_PROTO_NAME
+DECL|macro|DEFAULT_PROTO_NAME
+mdefine_line|#define DEFAULT_PROTO_NAME &quot;EURO&quot;
+macro_line|#endif
 macro_line|#ifndef DEFAULT_PROTO
 DECL|macro|DEFAULT_PROTO
 mdefine_line|#define DEFAULT_PROTO ISDN_PTYPE_UNKNOWN
@@ -483,6 +488,35 @@ macro_line|#endif
 macro_line|#ifndef DEFAULT_CARD
 macro_line|#error &quot;HiSax: No cards configured&quot;
 macro_line|#endif
+r_int
+id|hisax_init_pcmcia
+c_func
+(paren
+r_void
+op_star
+comma
+r_int
+op_star
+comma
+r_struct
+id|IsdnCard
+op_star
+)paren
+suffix:semicolon
+DECL|variable|hisax_init_pcmcia
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|hisax_init_pcmcia
+)paren
+suffix:semicolon
+DECL|variable|HiSax_closecard
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|HiSax_closecard
+)paren
+suffix:semicolon
 DECL|macro|FIRST_CARD
 mdefine_line|#define FIRST_CARD { &bslash;&n;&t;DEFAULT_CARD, &bslash;&n;&t;DEFAULT_PROTO, &bslash;&n;&t;DEFAULT_CFG, &bslash;&n;&t;NULL, &bslash;&n;}
 DECL|macro|EMPTY_CARD
@@ -947,7 +981,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;HiSax: Version 3.3e (module)&bslash;n&quot;
+l_string|&quot;HiSax: Version 3.5 (module)&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#else
@@ -955,7 +989,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;HiSax: Version 3.3e (kernel)&bslash;n&quot;
+l_string|&quot;HiSax: Version 3.5 (kernel)&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -1564,10 +1598,10 @@ id|card
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#if CARD_NETJET
+macro_line|#if CARD_NETJET_S
 r_extern
 r_int
-id|setup_netjet
+id|setup_netjet_s
 c_func
 (paren
 r_struct
@@ -1724,6 +1758,19 @@ macro_line|#if CARD_W6692
 r_extern
 r_int
 id|setup_w6692
+c_func
+(paren
+r_struct
+id|IsdnCard
+op_star
+id|card
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#if CARD_NETJET_U
+r_extern
+r_int
+id|setup_netjet_u
 c_func
 (paren
 r_struct
@@ -2731,12 +2778,7 @@ op_amp
 id|ic
 )paren
 suffix:semicolon
-id|CallcFreeChan
-c_func
-(paren
-id|cs
-)paren
-suffix:semicolon
+singleline_comment|//&t;CallcFreeChan(cs);
 )brace
 r_static
 r_void
@@ -3385,6 +3427,22 @@ op_assign
 id|I4L_IRQ_FLAG
 suffix:semicolon
 macro_line|#if TEI_PER_CARD
+r_if
+c_cond
+(paren
+id|card-&gt;protocol
+op_eq
+id|ISDN_PTYPE_NI1
+)paren
+id|test_and_set_bit
+c_func
+(paren
+id|FLG_TWO_DCHAN
+comma
+op_amp
+id|cs-&gt;HW_Flags
+)paren
+suffix:semicolon
 macro_line|#else
 id|test_and_set_bit
 c_func
@@ -3908,13 +3966,13 @@ suffix:semicolon
 r_break
 suffix:semicolon
 macro_line|#endif
-macro_line|#if CARD_NETJET
+macro_line|#if CARD_NETJET_S
 r_case
-id|ISDN_CTYPE_NETJET
+id|ISDN_CTYPE_NETJET_S
 suffix:colon
 id|ret
 op_assign
-id|setup_netjet
+id|setup_netjet_s
 c_func
 (paren
 id|card
@@ -4098,6 +4156,21 @@ suffix:colon
 id|ret
 op_assign
 id|setup_w6692
+c_func
+(paren
+id|card
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+macro_line|#endif
+macro_line|#if CARD_NETJET_U
+r_case
+id|ISDN_CTYPE_NETJET_U
+suffix:colon
+id|ret
+op_assign
+id|setup_netjet_u
 c_func
 (paren
 id|card
@@ -4744,6 +4817,17 @@ dot
 id|cs
 )paren
 suffix:semicolon
+id|CallcFreeChan
+c_func
+(paren
+id|cards
+(braket
+id|cardnr
+)braket
+dot
+id|cs
+)paren
+suffix:semicolon
 id|closecard
 c_func
 (paren
@@ -5174,6 +5258,8 @@ r_void
 (brace
 r_int
 id|i
+comma
+id|j
 suffix:semicolon
 macro_line|#ifdef MODULE
 r_int
@@ -5181,6 +5267,46 @@ id|nzproto
 op_assign
 l_int|0
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|type
+(braket
+l_int|0
+)braket
+)paren
+(brace
+multiline_comment|/* We &squot;ll register drivers later, but init basic functions*/
+id|CallcNew
+c_func
+(paren
+)paren
+suffix:semicolon
+id|Isdnl3New
+c_func
+(paren
+)paren
+suffix:semicolon
+id|Isdnl2New
+c_func
+(paren
+)paren
+suffix:semicolon
+id|TeiNew
+c_func
+(paren
+)paren
+suffix:semicolon
+id|Isdnl1New
+c_func
+(paren
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
 macro_line|#ifdef CONFIG_HISAX_ELSA
 r_if
 c_cond
@@ -5261,9 +5387,11 @@ c_loop
 (paren
 id|i
 op_assign
+id|j
+op_assign
 l_int|0
 suffix:semicolon
-id|i
+id|j
 OL
 id|HISAX_MAX_CARDS
 suffix:semicolon
@@ -5273,7 +5401,7 @@ op_increment
 (brace
 id|cards
 (braket
-id|i
+id|j
 )braket
 dot
 id|typ
@@ -5294,7 +5422,7 @@ id|i
 (brace
 id|cards
 (braket
-id|i
+id|j
 )braket
 dot
 id|protocol
@@ -5322,7 +5450,7 @@ id|ISDN_CTYPE_16_0
 suffix:colon
 id|cards
 (braket
-id|i
+id|j
 )braket
 dot
 id|para
@@ -5337,7 +5465,7 @@ id|i
 suffix:semicolon
 id|cards
 (braket
-id|i
+id|j
 )braket
 dot
 id|para
@@ -5352,7 +5480,7 @@ id|i
 suffix:semicolon
 id|cards
 (braket
-id|i
+id|j
 )braket
 dot
 id|para
@@ -5372,7 +5500,7 @@ id|ISDN_CTYPE_8_0
 suffix:colon
 id|cards
 (braket
-id|i
+id|j
 )braket
 dot
 id|para
@@ -5387,7 +5515,7 @@ id|i
 suffix:semicolon
 id|cards
 (braket
-id|i
+id|j
 )braket
 dot
 id|para
@@ -5411,7 +5539,7 @@ id|ISDN_CTYPE_NICCY
 suffix:colon
 id|cards
 (braket
-id|i
+id|j
 )braket
 dot
 id|para
@@ -5426,7 +5554,7 @@ id|i
 suffix:semicolon
 id|cards
 (braket
-id|i
+id|j
 )braket
 dot
 id|para
@@ -5441,7 +5569,7 @@ id|i
 suffix:semicolon
 id|cards
 (braket
-id|i
+id|j
 )braket
 dot
 id|para
@@ -5461,7 +5589,7 @@ id|ISDN_CTYPE_COMPAQ_ISA
 suffix:colon
 id|cards
 (braket
-id|i
+id|j
 )braket
 dot
 id|para
@@ -5476,7 +5604,7 @@ id|i
 suffix:semicolon
 id|cards
 (braket
-id|i
+id|j
 )braket
 dot
 id|para
@@ -5491,7 +5619,7 @@ id|i
 suffix:semicolon
 id|cards
 (braket
-id|i
+id|j
 )braket
 dot
 id|para
@@ -5506,7 +5634,7 @@ id|i
 suffix:semicolon
 id|cards
 (braket
-id|i
+id|j
 )braket
 dot
 id|para
@@ -5530,7 +5658,7 @@ id|ISDN_CTYPE_HFC_PCI
 suffix:colon
 id|cards
 (braket
-id|i
+id|j
 )braket
 dot
 id|para
@@ -5613,7 +5741,7 @@ id|ISDN_CTYPE_HFC_SX
 suffix:colon
 id|cards
 (braket
-id|i
+id|j
 )braket
 dot
 id|para
@@ -5628,7 +5756,7 @@ id|i
 suffix:semicolon
 id|cards
 (braket
-id|i
+id|j
 )braket
 dot
 id|para
@@ -5648,7 +5776,7 @@ id|ISDN_CTYPE_ISURF
 suffix:colon
 id|cards
 (braket
-id|i
+id|j
 )braket
 dot
 id|para
@@ -5663,7 +5791,7 @@ id|i
 suffix:semicolon
 id|cards
 (braket
-id|i
+id|j
 )braket
 dot
 id|para
@@ -5678,7 +5806,7 @@ id|i
 suffix:semicolon
 id|cards
 (braket
-id|i
+id|j
 )braket
 dot
 id|para
@@ -5697,7 +5825,7 @@ r_case
 id|ISDN_CTYPE_ELSA_PCI
 suffix:colon
 r_case
-id|ISDN_CTYPE_NETJET
+id|ISDN_CTYPE_NETJET_S
 suffix:colon
 r_case
 id|ISDN_CTYPE_AMD7930
@@ -5707,6 +5835,9 @@ id|ISDN_CTYPE_TELESPCI
 suffix:colon
 r_case
 id|ISDN_CTYPE_W6692
+suffix:colon
+r_case
+id|ISDN_CTYPE_NETJET_U
 suffix:colon
 r_break
 suffix:semicolon
@@ -5718,9 +5849,18 @@ suffix:semicolon
 r_case
 id|ISDN_CTYPE_SCT_QUADRO
 suffix:colon
-id|cards
+r_if
+c_cond
+(paren
+id|irq
 (braket
 id|i
+)braket
+)paren
+(brace
+id|cards
+(braket
+id|j
 )braket
 dot
 id|para
@@ -5733,9 +5873,131 @@ id|irq
 id|i
 )braket
 suffix:semicolon
+)brace
+r_else
+(brace
+multiline_comment|/* QUADRO is a 4 BRI card */
+id|cards
+(braket
+id|j
+op_increment
+)braket
+dot
+id|para
+(braket
+l_int|0
+)braket
+op_assign
+l_int|1
+suffix:semicolon
+id|cards
+(braket
+id|j
+)braket
+dot
+id|typ
+op_assign
+id|ISDN_CTYPE_SCT_QUADRO
+suffix:semicolon
+id|cards
+(braket
+id|j
+)braket
+dot
+id|protocol
+op_assign
+id|protocol
+(braket
+id|i
+)braket
+suffix:semicolon
+id|cards
+(braket
+id|j
+op_increment
+)braket
+dot
+id|para
+(braket
+l_int|0
+)braket
+op_assign
+l_int|2
+suffix:semicolon
+id|cards
+(braket
+id|j
+)braket
+dot
+id|typ
+op_assign
+id|ISDN_CTYPE_SCT_QUADRO
+suffix:semicolon
+id|cards
+(braket
+id|j
+)braket
+dot
+id|protocol
+op_assign
+id|protocol
+(braket
+id|i
+)braket
+suffix:semicolon
+id|cards
+(braket
+id|j
+op_increment
+)braket
+dot
+id|para
+(braket
+l_int|0
+)braket
+op_assign
+l_int|3
+suffix:semicolon
+id|cards
+(braket
+id|j
+)braket
+dot
+id|typ
+op_assign
+id|ISDN_CTYPE_SCT_QUADRO
+suffix:semicolon
+id|cards
+(braket
+id|j
+)braket
+dot
+id|protocol
+op_assign
+id|protocol
+(braket
+id|i
+)braket
+suffix:semicolon
+id|cards
+(braket
+id|j
+)braket
+dot
+id|para
+(braket
+l_int|0
+)braket
+op_assign
+l_int|4
+suffix:semicolon
+)brace
 r_break
 suffix:semicolon
 )brace
+id|j
+op_increment
+suffix:semicolon
 )brace
 r_if
 c_cond
@@ -6890,4 +7152,100 @@ l_int|0
 suffix:semicolon
 )brace
 macro_line|#endif
+DECL|function|hisax_init_pcmcia
+r_int
+id|hisax_init_pcmcia
+c_func
+(paren
+r_void
+op_star
+id|pcm_iob
+comma
+r_int
+op_star
+id|busy_flag
+comma
+r_struct
+id|IsdnCard
+op_star
+id|card
+)paren
+(brace
+id|u_char
+id|ids
+(braket
+l_int|16
+)braket
+suffix:semicolon
+r_int
+id|ret
+op_assign
+op_minus
+l_int|1
+suffix:semicolon
+id|cards
+(braket
+id|nrcards
+)braket
+op_assign
+op_star
+id|card
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|nrcards
+)paren
+id|sprintf
+c_func
+(paren
+id|ids
+comma
+l_string|&quot;HiSax%d&quot;
+comma
+id|nrcards
+)paren
+suffix:semicolon
+r_else
+id|sprintf
+c_func
+(paren
+id|ids
+comma
+l_string|&quot;HiSax&quot;
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|checkcard
+c_func
+(paren
+id|nrcards
+comma
+id|ids
+comma
+id|busy_flag
+)paren
+)paren
+(brace
+r_return
+op_minus
+l_int|1
+suffix:semicolon
+)brace
+id|ret
+op_assign
+id|nrcards
+suffix:semicolon
+id|nrcards
+op_increment
+suffix:semicolon
+r_return
+(paren
+id|ret
+)paren
+suffix:semicolon
+)brace
 eof

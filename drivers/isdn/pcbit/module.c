@@ -146,8 +146,8 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-id|KERN_INFO
-l_string|&quot;PCBIT-D device driver v 0.5 - &quot;
+id|KERN_NOTICE
+l_string|&quot;PCBIT-D device driver v 0.5-fjpc0 19991204 - &quot;
 l_string|&quot;Copyright (C) 1996 Universidade de Lisboa&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -347,7 +347,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-id|KERN_INFO
+id|KERN_NOTICE
 l_string|&quot;PCBIT-D module unloaded&bslash;n&quot;
 )paren
 suffix:semicolon

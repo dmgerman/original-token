@@ -494,6 +494,8 @@ suffix:semicolon
 )brace
 r_else
 (brace
+r_do
+(brace
 id|spin_lock
 c_func
 (paren
@@ -501,8 +503,6 @@ op_amp
 id|lock
 )paren
 suffix:semicolon
-r_do
-(brace
 r_if
 c_cond
 (paren
@@ -518,6 +518,13 @@ op_assign
 id|sequence
 op_increment
 suffix:semicolon
+id|spin_unlock
+c_func
+(paren
+op_amp
+id|lock
+)paren
+suffix:semicolon
 )brace
 r_while
 c_loop
@@ -529,13 +536,6 @@ id|dev
 comma
 id|auth.magic
 )paren
-)paren
-suffix:semicolon
-id|spin_unlock
-c_func
-(paren
-op_amp
-id|lock
 )paren
 suffix:semicolon
 id|priv-&gt;magic

@@ -631,7 +631,7 @@ suffix:semicolon
 id|panic
 c_func
 (paren
-l_string|&quot;cannot handle bus - mail to linux-smp@vger.rutgers.edu&quot;
+l_string|&quot;cannot handle bus - mail to linux-smp@vger.kernel.org&quot;
 )paren
 suffix:semicolon
 )brace
@@ -2210,7 +2210,7 @@ id|printk
 c_func
 (paren
 id|KERN_WARNING
-l_string|&quot;WARNING: MP table in the EBDA can be UNSAFE, contact linux-smp@vger.rutgers.edu if you experience SMP problems!&bslash;n&quot;
+l_string|&quot;WARNING: MP table in the EBDA can be UNSAFE, contact linux-smp@vger.kernel.org if you experience SMP problems!&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace

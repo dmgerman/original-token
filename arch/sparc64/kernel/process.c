@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: process.c,v 1.110 2000/07/28 09:43:39 davem Exp $&n; *  arch/sparc64/kernel/process.c&n; *&n; *  Copyright (C) 1995, 1996 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1996       Eddie C. Dost   (ecd@skynet.be)&n; *  Copyright (C) 1997, 1998 Jakub Jelinek   (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/*  $Id: process.c,v 1.111 2000/08/16 11:13:12 davem Exp $&n; *  arch/sparc64/kernel/process.c&n; *&n; *  Copyright (C) 1995, 1996 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1996       Eddie C. Dost   (ecd@skynet.be)&n; *  Copyright (C) 1997, 1998 Jakub Jelinek   (jj@sunsite.mff.cuni.cz)&n; */
 multiline_comment|/*&n; * This file handles the architecture-dependent parts of process handling..&n; */
 DECL|macro|__KERNEL_SYSCALLS__
 mdefine_line|#define __KERNEL_SYSCALLS__
@@ -73,6 +73,17 @@ suffix:semicolon
 )paren
 (brace
 multiline_comment|/* If current-&gt;need_resched is zero we should really&n;&t;&t; * setup for a system wakup event and execute a shutdown&n;&t;&t; * instruction.&n;&t;&t; *&n;&t;&t; * But this requires writing back the contents of the&n;&t;&t; * L2 cache etc. so implement this later. -DaveM&n;&t;&t; */
+r_while
+c_loop
+(paren
+op_logical_neg
+id|current-&gt;need_resched
+)paren
+id|barrier
+c_func
+(paren
+)paren
+suffix:semicolon
 id|schedule
 c_func
 (paren

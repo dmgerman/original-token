@@ -1144,8 +1144,10 @@ c_func
 (paren
 r_int
 r_int
+r_int
 id|start
 comma
+r_int
 r_int
 r_int
 id|size
@@ -1210,14 +1212,16 @@ suffix:semicolon
 multiline_comment|/* add_memory_region */
 DECL|macro|E820_DEBUG
 mdefine_line|#define E820_DEBUG&t;1
-DECL|function|print_e820_map
+DECL|function|print_memory_map
 r_static
 r_void
 id|__init
-id|print_e820_map
+id|print_memory_map
 c_func
 (paren
-r_void
+r_char
+op_star
+id|who
 )paren
 (brace
 r_int
@@ -1241,7 +1245,9 @@ op_increment
 id|printk
 c_func
 (paren
-l_string|&quot; e820: %016Lx @ %016Lx &quot;
+l_string|&quot; %s: %016Lx @ %016Lx &quot;
+comma
+id|who
 comma
 id|e820.map
 (braket
@@ -1388,6 +1394,7 @@ op_plus
 id|size
 suffix:semicolon
 r_int
+r_int
 id|type
 op_assign
 id|biosmap-&gt;type
@@ -1418,7 +1425,7 @@ c_cond
 (paren
 id|start
 template_param
-l_int|0xA0000
+l_int|0xA0000ULL
 )paren
 (brace
 r_if
@@ -1426,14 +1433,14 @@ c_cond
 (paren
 id|start
 OL
-l_int|0xA0000
+l_int|0xA0000ULL
 )paren
 id|add_memory_region
 c_func
 (paren
 id|start
 comma
-l_int|0xA0000
+l_int|0xA0000ULL
 op_minus
 id|start
 comma
@@ -1445,13 +1452,13 @@ c_cond
 (paren
 id|end
 OL
-l_int|0x100000
+l_int|0x100000ULL
 )paren
 r_continue
 suffix:semicolon
 id|start
 op_assign
-l_int|0x100000
+l_int|0x100000ULL
 suffix:semicolon
 id|size
 op_assign
@@ -1498,6 +1505,12 @@ c_func
 r_void
 )paren
 (brace
+r_char
+op_star
+id|who
+op_assign
+l_string|&quot;BIOS-e820&quot;
+suffix:semicolon
 multiline_comment|/*&n;&t; * Try to copy the BIOS-supplied E820-map.&n;&t; *&n;&t; * Otherwise fake a memory map; one section from 0k-&gt;640k,&n;&t; * the next section from 1mb-&gt;appropriate_mem_k&n;&t; */
 r_if
 c_cond
@@ -1517,19 +1530,35 @@ r_int
 r_int
 id|mem_size
 suffix:semicolon
-id|mem_size
-op_assign
+multiline_comment|/* compare results from other methods and take the greater */
+r_if
+c_cond
 (paren
 id|ALT_MEM_K
 OL
 id|EXT_MEM_K
 )paren
-ques
-c_cond
+(brace
+id|mem_size
+op_assign
 id|EXT_MEM_K
-suffix:colon
+suffix:semicolon
+id|who
+op_assign
+l_string|&quot;BIOS-88&quot;
+suffix:semicolon
+)brace
+r_else
+(brace
+id|mem_size
+op_assign
 id|ALT_MEM_K
 suffix:semicolon
+id|who
+op_assign
+l_string|&quot;BIOS-e801&quot;
+suffix:semicolon
+)brace
 id|e820.nr_map
 op_assign
 l_int|0
@@ -1566,9 +1595,10 @@ c_func
 l_string|&quot;BIOS-provided physical RAM map:&bslash;n&quot;
 )paren
 suffix:semicolon
-id|print_e820_map
+id|print_memory_map
 c_func
 (paren
+id|who
 )paren
 suffix:semicolon
 )brace
@@ -1887,9 +1917,10 @@ c_func
 l_string|&quot;user-defined physical RAM map:&bslash;n&quot;
 )paren
 suffix:semicolon
-id|print_e820_map
+id|print_memory_map
 c_func
 (paren
+l_string|&quot;user&quot;
 )paren
 suffix:semicolon
 )brace

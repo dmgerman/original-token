@@ -40,10 +40,14 @@ DECL|macro|HW_ACTIVATE
 mdefine_line|#define HW_ACTIVATE&t;0x0010
 DECL|macro|HW_DEACTIVATE
 mdefine_line|#define HW_DEACTIVATE&t;0x0018
+DECL|macro|HW_INFO1
+mdefine_line|#define HW_INFO1&t;0x0010
 DECL|macro|HW_INFO2
 mdefine_line|#define HW_INFO2&t;0x0020
 DECL|macro|HW_INFO3
 mdefine_line|#define HW_INFO3&t;0x0030
+DECL|macro|HW_INFO4
+mdefine_line|#define HW_INFO4&t;0x0040
 DECL|macro|HW_INFO4_P8
 mdefine_line|#define HW_INFO4_P8&t;0x0040
 DECL|macro|HW_INFO4_P10
@@ -136,6 +140,8 @@ DECL|macro|CC_PROCEED_SEND
 mdefine_line|#define CC_PROCEED_SEND 0x0374
 DECL|macro|CC_REDIR
 mdefine_line|#define CC_REDIR        0x0378
+DECL|macro|CC_T302
+mdefine_line|#define CC_T302&t;&t;0x0382
 DECL|macro|CC_T303
 mdefine_line|#define CC_T303&t;&t;0x0383
 DECL|macro|CC_T304
@@ -156,6 +162,8 @@ DECL|macro|CC_T318
 mdefine_line|#define CC_T318&t;&t;0x0398
 DECL|macro|CC_T319
 mdefine_line|#define CC_T319&t;&t;0x0399
+DECL|macro|CC_TSPID
+mdefine_line|#define CC_TSPID&t;0x03A0
 DECL|macro|CC_NOSETUP_RSP
 mdefine_line|#define CC_NOSETUP_RSP&t;0x03E0
 DECL|macro|CC_SETUP_ERR
@@ -172,11 +180,13 @@ DECL|macro|CC_RESTART
 mdefine_line|#define CC_RESTART&t;0x03F4
 DECL|macro|CC_TDSS1_IO
 mdefine_line|#define CC_TDSS1_IO     0x13F4    /* DSS1 IO user timer */
+DECL|macro|CC_TNI1_IO
+mdefine_line|#define CC_TNI1_IO      0x13F5    /* NI1 IO user timer */
 multiline_comment|/* define maximum number of possible waiting incoming calls */
 DECL|macro|MAX_WAITING_CALLS
 mdefine_line|#define MAX_WAITING_CALLS 2
 macro_line|#ifdef __KERNEL__
-multiline_comment|/* include only l3dss1 specific process structures, but no other defines */
+multiline_comment|/* include l3dss1 &amp; ni1 specific process structures, but no other defines */
 macro_line|#ifdef CONFIG_HISAX_EURO
 DECL|macro|l3dss1_process
 mdefine_line|#define l3dss1_process
@@ -184,6 +194,13 @@ macro_line|#include &quot;l3dss1.h&quot;
 DECL|macro|l3dss1_process
 macro_line|#undef  l3dss1_process
 macro_line|#endif CONFIG_HISAX_EURO
+macro_line|#ifdef CONFIG_HISAX_NI1
+DECL|macro|l3ni1_process
+mdefine_line|#define l3ni1_process
+macro_line|#include &quot;l3ni1.h&quot; 
+DECL|macro|l3ni1_process
+macro_line|#undef  l3ni1_process
+macro_line|#endif CONFIG_HISAX_NI1
 DECL|macro|MAX_DFRAME_LEN
 mdefine_line|#define MAX_DFRAME_LEN&t;260
 DECL|macro|MAX_DFRAME_LEN_L1
@@ -397,6 +414,8 @@ DECL|macro|FLG_L1_T3RUN
 mdefine_line|#define FLG_L1_T3RUN&t;&t;5
 DECL|macro|FLG_L1_PULL_REQ
 mdefine_line|#define FLG_L1_PULL_REQ&t;&t;6
+DECL|macro|FLG_L1_UINT
+mdefine_line|#define FLG_L1_UINT&t;&t;7
 DECL|struct|Layer1
 r_struct
 id|Layer1
@@ -994,7 +1013,7 @@ DECL|member|protocol
 r_int
 id|protocol
 suffix:semicolon
-multiline_comment|/* EDSS1 or 1TR6 */
+multiline_comment|/* EDSS1, 1TR6 or NI1 */
 multiline_comment|/* protocol specific data fields */
 r_union
 DECL|member|uuuu
@@ -1010,6 +1029,13 @@ id|dss1
 suffix:semicolon
 multiline_comment|/* private dss1 data */
 macro_line|#endif CONFIG_HISAX_EURO              
+macro_line|#ifdef CONFIG_HISAX_NI1
+DECL|member|ni1
+id|ni1_stk_priv
+id|ni1
+suffix:semicolon
+multiline_comment|/* private ni1 data */
+macro_line|#endif CONFIG_HISAX_NI1              
 DECL|member|prot
 )brace
 id|prot
@@ -1083,6 +1109,13 @@ id|dss1
 suffix:semicolon
 multiline_comment|/* private dss1 data */
 macro_line|#endif CONFIG_HISAX_EURO            
+macro_line|#ifdef CONFIG_HISAX_NI1
+DECL|member|ni1
+id|ni1_proc_priv
+id|ni1
+suffix:semicolon
+multiline_comment|/* private ni1 data */
+macro_line|#endif CONFIG_HISAX_NI1              
 DECL|member|prot
 )brace
 id|prot
@@ -1260,20 +1293,10 @@ DECL|struct|hdlc_stat_reg
 r_struct
 id|hdlc_stat_reg
 (brace
-DECL|member|cmd
+macro_line|#ifdef __BIG_ENDIAN
+DECL|member|fill
 id|u_char
-id|cmd
-id|__attribute__
-c_func
-(paren
-(paren
-id|packed
-)paren
-)paren
-suffix:semicolon
-DECL|member|xml
-id|u_char
-id|xml
+id|fill
 id|__attribute__
 c_func
 (paren
@@ -1293,7 +1316,59 @@ id|packed
 )paren
 )paren
 suffix:semicolon
-DECL|member|fill
+DECL|member|xml
+id|u_char
+id|xml
+id|__attribute__
+c_func
+(paren
+(paren
+id|packed
+)paren
+)paren
+suffix:semicolon
+DECL|member|cmd
+id|u_char
+id|cmd
+id|__attribute__
+c_func
+(paren
+(paren
+id|packed
+)paren
+)paren
+suffix:semicolon
+macro_line|#else
+id|u_char
+id|cmd
+id|__attribute__
+c_func
+(paren
+(paren
+id|packed
+)paren
+)paren
+suffix:semicolon
+id|u_char
+id|xml
+id|__attribute__
+c_func
+(paren
+(paren
+id|packed
+)paren
+)paren
+suffix:semicolon
+id|u_char
+id|mode
+id|__attribute__
+c_func
+(paren
+(paren
+id|packed
+)paren
+)paren
+suffix:semicolon
 id|u_char
 id|fill
 id|__attribute__
@@ -1304,6 +1379,7 @@ id|packed
 )paren
 )paren
 suffix:semicolon
+macro_line|#endif
 )brace
 suffix:semicolon
 DECL|struct|hdlc_hw
@@ -3040,6 +3116,69 @@ id|ph_state
 suffix:semicolon
 )brace
 suffix:semicolon
+DECL|struct|icc_chip
+r_struct
+id|icc_chip
+(brace
+DECL|member|ph_state
+r_int
+id|ph_state
+suffix:semicolon
+DECL|member|mon_tx
+id|u_char
+op_star
+id|mon_tx
+suffix:semicolon
+DECL|member|mon_rx
+id|u_char
+op_star
+id|mon_rx
+suffix:semicolon
+DECL|member|mon_txp
+r_int
+id|mon_txp
+suffix:semicolon
+DECL|member|mon_txc
+r_int
+id|mon_txc
+suffix:semicolon
+DECL|member|mon_rxp
+r_int
+id|mon_rxp
+suffix:semicolon
+DECL|member|arcofi_list
+r_struct
+id|arcofi_msg
+op_star
+id|arcofi_list
+suffix:semicolon
+DECL|member|arcofitimer
+r_struct
+id|timer_list
+id|arcofitimer
+suffix:semicolon
+DECL|member|arcofi_wait
+id|wait_queue_head_t
+id|arcofi_wait
+suffix:semicolon
+DECL|member|arcofi_bc
+id|u_char
+id|arcofi_bc
+suffix:semicolon
+DECL|member|arcofi_state
+id|u_char
+id|arcofi_state
+suffix:semicolon
+DECL|member|mocr
+id|u_char
+id|mocr
+suffix:semicolon
+DECL|member|adf2
+id|u_char
+id|adf2
+suffix:semicolon
+)brace
+suffix:semicolon
 DECL|macro|HW_IOM1
 mdefine_line|#define HW_IOM1&t;&t;&t;0
 DECL|macro|HW_IPAC
@@ -3060,6 +3199,8 @@ DECL|macro|FLG_ARCOFI_TIMER
 mdefine_line|#define FLG_ARCOFI_TIMER&t;8
 DECL|macro|FLG_ARCOFI_ERROR
 mdefine_line|#define FLG_ARCOFI_ERROR&t;9
+DECL|macro|FLG_HW_L1_UINT
+mdefine_line|#define FLG_HW_L1_UINT&t;&t;10
 DECL|struct|IsdnCardState
 r_struct
 id|IsdnCardState
@@ -3515,6 +3656,11 @@ r_struct
 id|w6692_chip
 id|w6692
 suffix:semicolon
+DECL|member|icc
+r_struct
+id|icc_chip
+id|icc
+suffix:semicolon
 DECL|member|dc
 )brace
 id|dc
@@ -3616,8 +3762,8 @@ DECL|macro|ISDN_CTYPE_ELSA_PCI
 mdefine_line|#define  ISDN_CTYPE_ELSA_PCI&t;18
 DECL|macro|ISDN_CTYPE_COMPAQ_ISA
 mdefine_line|#define  ISDN_CTYPE_COMPAQ_ISA&t;19
-DECL|macro|ISDN_CTYPE_NETJET
-mdefine_line|#define  ISDN_CTYPE_NETJET&t;20
+DECL|macro|ISDN_CTYPE_NETJET_S
+mdefine_line|#define  ISDN_CTYPE_NETJET_S&t;20
 DECL|macro|ISDN_CTYPE_TELESPCI
 mdefine_line|#define  ISDN_CTYPE_TELESPCI&t;21
 DECL|macro|ISDN_CTYPE_SEDLBAUER_PCMCIA
@@ -3652,8 +3798,10 @@ DECL|macro|ISDN_CTYPE_W6692
 mdefine_line|#define  ISDN_CTYPE_W6692&t;36
 DECL|macro|ISDN_CTYPE_HFC_SX
 mdefine_line|#define  ISDN_CTYPE_HFC_SX      37
+DECL|macro|ISDN_CTYPE_NETJET_U
+mdefine_line|#define  ISDN_CTYPE_NETJET_U&t;38
 DECL|macro|ISDN_CTYPE_COUNT
-mdefine_line|#define  ISDN_CTYPE_COUNT&t;37
+mdefine_line|#define  ISDN_CTYPE_COUNT&t;38
 macro_line|#ifdef ISDN_CHIP_ISAC
 DECL|macro|ISDN_CHIP_ISAC
 macro_line|#undef ISDN_CHIP_ISAC
@@ -3833,15 +3981,15 @@ DECL|macro|CARD_MIC
 mdefine_line|#define CARD_MIC 0
 macro_line|#endif
 macro_line|#ifdef  CONFIG_HISAX_NETJET
-DECL|macro|CARD_NETJET
-mdefine_line|#define CARD_NETJET 1
+DECL|macro|CARD_NETJET_S
+mdefine_line|#define CARD_NETJET_S 1
 macro_line|#ifndef ISDN_CHIP_ISAC
 DECL|macro|ISDN_CHIP_ISAC
 mdefine_line|#define ISDN_CHIP_ISAC 1
 macro_line|#endif
 macro_line|#else
-DECL|macro|CARD_NETJET
-mdefine_line|#define CARD_NETJET 0
+DECL|macro|CARD_NETJET_S
+mdefine_line|#define CARD_NETJET_S 0
 macro_line|#endif
 macro_line|#ifdef&t;CONFIG_HISAX_HFCS
 DECL|macro|CARD_HFCS
@@ -3972,20 +4120,23 @@ macro_line|#else
 DECL|macro|CARD_W6692
 mdefine_line|#define&t;CARD_W6692&t;0
 macro_line|#endif
-DECL|macro|TEI_PER_CARD
-mdefine_line|#define TEI_PER_CARD 0
-macro_line|#ifdef CONFIG_HISAX_1TR6
-DECL|macro|TEI_PER_CARD
-macro_line|#undef TEI_PER_CARD
+macro_line|#ifdef  CONFIG_HISAX_NETJET_U
+DECL|macro|CARD_NETJET_U
+mdefine_line|#define CARD_NETJET_U 1
+macro_line|#ifndef ISDN_CHIP_ICC
+DECL|macro|ISDN_CHIP_ICC
+mdefine_line|#define ISDN_CHIP_ICC 1
+macro_line|#endif
+macro_line|#ifndef HISAX_UINTERFACE
+DECL|macro|HISAX_UINTERFACE
+mdefine_line|#define HISAX_UINTERFACE 1
+macro_line|#endif
+macro_line|#else
+DECL|macro|CARD_NETJET_U
+mdefine_line|#define CARD_NETJET_U 0
+macro_line|#endif
 DECL|macro|TEI_PER_CARD
 mdefine_line|#define TEI_PER_CARD 1
-macro_line|#endif
-macro_line|#ifdef CONFIG_HISAX_EURO
-DECL|macro|TEI_PER_CARD
-macro_line|#undef TEI_PER_CARD
-DECL|macro|TEI_PER_CARD
-mdefine_line|#define TEI_PER_CARD 1
-macro_line|#endif
 multiline_comment|/* L1 Debug */
 DECL|macro|L1_DEB_WARN
 mdefine_line|#define&t;L1_DEB_WARN&t;&t;0x01
@@ -4050,7 +4201,7 @@ DECL|member|protocol
 r_int
 id|protocol
 suffix:semicolon
-multiline_comment|/* EDSS1 or 1TR6 */
+multiline_comment|/* EDSS1, 1TR6 or NI1 */
 DECL|member|para
 r_int
 r_int

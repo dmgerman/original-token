@@ -7,16 +7,22 @@ macro_line|#include &quot;w6692.h&quot;
 macro_line|#include &quot;isdnl1.h&quot;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
-DECL|macro|PCI_VEND_ASUSCOM
-mdefine_line|#define&t;PCI_VEND_ASUSCOM&t;0x675
-DECL|macro|PCI_DEV_ASUSCOMPCI1
-mdefine_line|#define&t;PCI_DEV_ASUSCOMPCI1&t;0x1702
+macro_line|#ifndef PCI_VENDOR_ID_ASUSCOM
+DECL|macro|PCI_VENDOR_ID_ASUSCOM
+mdefine_line|#define PCI_VENDOR_ID_ASUSCOM&t;0x675
+macro_line|#endif
+macro_line|#ifndef PCI_DEVICE_ID_ASUSCOM_TA1
+DECL|macro|PCI_DEVICE_ID_ASUSCOM_TA1
+mdefine_line|#define PCI_DEVICE_ID_ASUSCOM_TA1&t;0x1702
+macro_line|#endif
 macro_line|#ifndef PCI_VENDOR_ID_WINBOND2
 DECL|macro|PCI_VENDOR_ID_WINBOND2
 mdefine_line|#define PCI_VENDOR_ID_WINBOND2&t;0x1050
 macro_line|#endif
-DECL|macro|PCI_DEVICE_W6692
-mdefine_line|#define&t;PCI_DEVICE_W6692&t;0x6692
+macro_line|#ifndef PCI_DEVICE_ID_WINBOND_6692
+DECL|macro|PCI_DEVICE_ID_WINBOND_6692
+mdefine_line|#define&t;PCI_DEVICE_ID_WINBOND_6692&t;0x6692
+macro_line|#endif
 multiline_comment|/* table entry in the PCI devices list */
 r_typedef
 r_struct
@@ -53,9 +59,9 @@ id|id_list
 op_assign
 (brace
 (brace
-id|PCI_VEND_ASUSCOM
+id|PCI_VENDOR_ID_ASUSCOM
 comma
-id|PCI_DEV_ASUSCOMPCI1
+id|PCI_DEVICE_ID_ASUSCOM_TA1
 comma
 l_string|&quot;AsusCom&quot;
 comma
@@ -65,7 +71,7 @@ comma
 (brace
 id|PCI_VENDOR_ID_WINBOND2
 comma
-id|PCI_DEVICE_W6692
+id|PCI_DEVICE_ID_WINBOND_6692
 comma
 l_string|&quot;Winbond&quot;
 comma
@@ -97,7 +103,7 @@ r_char
 op_star
 id|w6692_revision
 op_assign
-l_string|&quot;$Revision: 1.4 $&quot;
+l_string|&quot;$Revision: 1.7 $&quot;
 suffix:semicolon
 DECL|macro|DBUSY_TIMER_VALUE
 mdefine_line|#define DBUSY_TIMER_VALUE 80
@@ -1158,7 +1164,7 @@ c_func
 (paren
 id|cs
 comma
-id|bcs-&gt;hw.w6692.bchan
+id|bcs-&gt;channel
 comma
 id|W_B_CMDR
 comma
@@ -1200,7 +1206,7 @@ c_func
 (paren
 id|cs
 comma
-id|bcs-&gt;hw.w6692.bchan
+id|bcs-&gt;channel
 comma
 id|ptr
 comma
@@ -1214,7 +1220,7 @@ c_func
 (paren
 id|cs
 comma
-id|bcs-&gt;hw.w6692.bchan
+id|bcs-&gt;channel
 comma
 id|W_B_CMDR
 comma
@@ -1252,12 +1258,9 @@ id|t
 comma
 l_string|&quot;W6692B_empty_fifo %c cnt %d&quot;
 comma
-id|bcs-&gt;hw.w6692.bchan
-ques
-c_cond
-l_char|&squot;B&squot;
-suffix:colon
-l_char|&squot;A&squot;
+id|bcs-&gt;channel
+op_plus
+l_char|&squot;1&squot;
 comma
 id|count
 )paren
@@ -1426,7 +1429,7 @@ c_func
 (paren
 id|cs
 comma
-id|bcs-&gt;hw.w6692.bchan
+id|bcs-&gt;channel
 comma
 id|ptr
 comma
@@ -1440,7 +1443,7 @@ c_func
 (paren
 id|cs
 comma
-id|bcs-&gt;hw.w6692.bchan
+id|bcs-&gt;channel
 comma
 id|W_B_CMDR
 comma
@@ -1487,12 +1490,9 @@ id|t
 comma
 l_string|&quot;W6692B_fill_fifo %c cnt %d&quot;
 comma
-id|bcs-&gt;hw.w6692.bchan
-ques
-c_cond
-l_char|&squot;B&squot;
-suffix:colon
-l_char|&squot;A&squot;
+id|bcs-&gt;channel
+op_plus
+l_char|&squot;1&squot;
 comma
 id|count
 )paren
@@ -1542,8 +1542,6 @@ r_struct
 id|BCState
 op_star
 id|bcs
-op_assign
-id|cs-&gt;bcs
 suffix:semicolon
 r_struct
 id|sk_buff
@@ -1553,17 +1551,23 @@ suffix:semicolon
 r_int
 id|count
 suffix:semicolon
-r_if
-c_cond
+id|bcs
+op_assign
 (paren
-id|bcs-&gt;channel
-op_ne
+id|cs-&gt;bcs-&gt;channel
+op_eq
 id|bchan
 )paren
-id|bcs
-op_increment
+ques
+c_cond
+id|cs-&gt;bcs
+suffix:colon
+(paren
+id|cs-&gt;bcs
+op_plus
+l_int|1
+)paren
 suffix:semicolon
-multiline_comment|/* hardware bchan must match ! */
 id|val
 op_assign
 id|cs
@@ -2126,7 +2130,7 @@ c_func
 (paren
 id|cs
 comma
-id|bcs-&gt;hw.w6692.bchan
+id|bchan
 comma
 id|W_B_CMDR
 comma
@@ -4012,7 +4016,7 @@ r_int
 id|mode
 comma
 r_int
-id|bc
+id|bchan
 )paren
 (brace
 r_struct
@@ -4021,15 +4025,6 @@ op_star
 id|cs
 op_assign
 id|bcs-&gt;cs
-suffix:semicolon
-r_int
-id|bchan
-op_assign
-id|bc
-suffix:semicolon
-id|bcs-&gt;hw.w6692.bchan
-op_assign
-id|bc
 suffix:semicolon
 r_if
 c_cond
@@ -4051,7 +4046,7 @@ id|bchan
 comma
 id|mode
 comma
-id|bc
+id|bchan
 )paren
 suffix:semicolon
 id|bcs-&gt;mode
@@ -4060,7 +4055,11 @@ id|mode
 suffix:semicolon
 id|bcs-&gt;channel
 op_assign
-id|bc
+id|bchan
+suffix:semicolon
+id|bcs-&gt;hw.w6692.bchan
+op_assign
+id|bchan
 suffix:semicolon
 r_switch
 c_cond
@@ -5089,24 +5088,6 @@ id|BC_Close
 op_assign
 id|close_w6692state
 suffix:semicolon
-id|cs-&gt;bcs
-(braket
-l_int|0
-)braket
-dot
-id|hw.w6692.bchan
-op_assign
-l_int|0
-suffix:semicolon
-id|cs-&gt;bcs
-(braket
-l_int|1
-)braket
-dot
-id|hw.w6692.bchan
-op_assign
-l_int|1
-suffix:semicolon
 id|W6692Bmode
 c_func
 (paren
@@ -5549,6 +5530,9 @@ id|pci_ioaddr
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#ifdef __BIG_ENDIAN
+macro_line|#error &quot;not running on big endian machines now&quot;
+macro_line|#endif
 id|strcpy
 c_func
 (paren

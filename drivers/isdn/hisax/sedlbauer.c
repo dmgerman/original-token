@@ -1,7 +1,5 @@
 multiline_comment|/* $Id: sedlbauer.c,v 1.23 2000/06/26 08:59:14 keil Exp $&n; *&n; * sedlbauer.c  low level stuff for Sedlbauer cards&n; *              includes support for the Sedlbauer speed star (speed star II),&n; *              support for the Sedlbauer speed fax+,&n; *              support for the Sedlbauer ISDN-Controller PC/104 and&n; *              support for the Sedlbauer speed pci&n; *              derived from the original file asuscom.c from Karsten Keil&n; *&n; * Copyright (C) 1997,1998 Marcus Niemann (for the modifications to&n; *                                         the original file asuscom.c)&n; *&n; * Author     Marcus Niemann (niemann@www-bib.fh-bielefeld.de)&n; *&n; * Thanks to  Karsten Keil&n; *            Sedlbauer AG for informations&n; *            Edgar Toernig&n; *&n; * This file is (c) under GNU PUBLIC LICENSE&n; *&n; */
 multiline_comment|/* Supported cards:&n; * Card:&t;Chip:&t;&t;Configuration:&t;Comment:&n; * ---------------------------------------------------------------------&n; * Speed Card&t;ISAC_HSCX&t;DIP-SWITCH&n; * Speed Win&t;ISAC_HSCX&t;ISAPNP&n; * Speed Fax+&t;ISAC_ISAR&t;ISAPNP&t;&t;Full analog support&n; * Speed Star&t;ISAC_HSCX&t;CARDMGR&n; * Speed Win2&t;IPAC&t;&t;ISAPNP&n; * ISDN PC/104&t;IPAC&t;&t;DIP-SWITCH&n; * Speed Star2&t;IPAC&t;&t;CARDMGR&n; * Speed PCI&t;IPAC&t;&t;PCI PNP&t;&t;&n; * Speed Fax+ &t;ISAC_ISAR&t;PCI PNP&t;&t;Full analog support&n; *&n; * Important:&n; * For the sedlbauer speed fax+ to work properly you have to download &n; * the firmware onto the card.&n; * For example: hisaxctrl &lt;DriverID&gt; 9 ISAR.BIN&n;*/
-DECL|macro|SEDLBAUER_PCI
-mdefine_line|#define SEDLBAUER_PCI 1
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &lt;linux/config.h&gt;
@@ -26,7 +24,7 @@ r_char
 op_star
 id|Sedlbauer_revision
 op_assign
-l_string|&quot;$Revision: 1.20 $&quot;
+l_string|&quot;$Revision: 1.23 $&quot;
 suffix:semicolon
 DECL|variable|Sedlbauer_Types
 r_const
@@ -51,19 +49,27 @@ l_string|&quot;speed star II&quot;
 comma
 l_string|&quot;speed pci&quot;
 comma
+l_string|&quot;speed fax+ pyramid&quot;
+comma
 l_string|&quot;speed fax+ pci&quot;
 )brace
 suffix:semicolon
-macro_line|#ifdef SEDLBAUER_PCI
-DECL|macro|PCI_VENDOR_SEDLBAUER
-mdefine_line|#define PCI_VENDOR_SEDLBAUER&t;0xe159
-DECL|macro|PCI_SPEEDPCI_ID
-mdefine_line|#define PCI_SPEEDPCI_ID&t;&t;0x02
-DECL|macro|PCI_SUBVENDOR_SEDLBAUER
-mdefine_line|#define PCI_SUBVENDOR_SEDLBAUER&t;0x51
-DECL|macro|PCI_SUB_ID_SPEEDFAXP
-mdefine_line|#define PCI_SUB_ID_SPEEDFAXP&t;0x01
+macro_line|#ifndef PCI_VENDOR_ID_TIGERJET
+DECL|macro|PCI_VENDOR_ID_TIGERJET
+mdefine_line|#define PCI_VENDOR_ID_TIGERJET&t;&t;0xe159
 macro_line|#endif
+macro_line|#ifndef PCI_DEVICE_ID_TIGERJET_100
+DECL|macro|PCI_DEVICE_ID_TIGERJET_100
+mdefine_line|#define PCI_DEVICE_ID_TIGERJET_100&t;0x0002
+macro_line|#endif
+DECL|macro|PCI_SUBVENDOR_SPEEDFAX_PYRAMID
+mdefine_line|#define PCI_SUBVENDOR_SPEEDFAX_PYRAMID&t;0x51
+DECL|macro|PCI_SUBVENDOR_SEDLBAUER_PCI
+mdefine_line|#define PCI_SUBVENDOR_SEDLBAUER_PCI&t;0x53
+DECL|macro|PCI_SUBVENDOR_SPEEDFAX_PCI
+mdefine_line|#define PCI_SUBVENDOR_SPEEDFAX_PCI&t;0x54
+DECL|macro|PCI_SUB_ID_SEDLBAUER
+mdefine_line|#define PCI_SUB_ID_SEDLBAUER&t;&t;0x01
 DECL|macro|SEDL_SPEED_CARD_WIN
 mdefine_line|#define SEDL_SPEED_CARD_WIN&t;1
 DECL|macro|SEDL_SPEED_STAR
@@ -76,8 +82,10 @@ DECL|macro|SEDL_SPEED_STAR2
 mdefine_line|#define SEDL_SPEED_STAR2 &t;5
 DECL|macro|SEDL_SPEED_PCI
 mdefine_line|#define SEDL_SPEED_PCI   &t;6
+DECL|macro|SEDL_SPEEDFAX_PYRAMID
+mdefine_line|#define SEDL_SPEEDFAX_PYRAMID&t;7
 DECL|macro|SEDL_SPEEDFAX_PCI
-mdefine_line|#define SEDL_SPEEDFAX_PCI&t;7
+mdefine_line|#define SEDL_SPEEDFAX_PCI&t;8
 DECL|macro|SEDL_CHIP_TEST
 mdefine_line|#define SEDL_CHIP_TEST&t;&t;0
 DECL|macro|SEDL_CHIP_ISAC_HSCX
@@ -914,7 +922,7 @@ l_int|1
 )paren
 )paren
 (brace
-multiline_comment|/* The card tends to generate interrupts while being removed&n;             causing us to just crash the kernel. bad. */
+multiline_comment|/* The card tends to generate interrupts while being removed&n;&t;&t;   causing us to just crash the kernel. bad. */
 id|printk
 c_func
 (paren
@@ -1384,11 +1392,19 @@ c_cond
 op_logical_neg
 id|icnt
 )paren
-id|printk
+r_if
+c_cond
+(paren
+id|cs-&gt;debug
+op_amp
+id|L1_DEB_ISAC
+)paren
+id|debugl1
 c_func
 (paren
-id|KERN_WARNING
-l_string|&quot;Sedlbauer IRQ LOOP&bslash;n&quot;
+id|cs
+comma
+l_string|&quot;Sedlbauer IRQ LOOP&quot;
 )paren
 suffix:semicolon
 id|writereg
@@ -1611,11 +1627,19 @@ c_cond
 op_logical_neg
 id|cnt
 )paren
-id|printk
+r_if
+c_cond
+(paren
+id|cs-&gt;debug
+op_amp
+id|L1_DEB_ISAC
+)paren
+id|debugl1
 c_func
 (paren
-id|KERN_WARNING
-l_string|&quot;Sedlbauer IRQ LOOP&bslash;n&quot;
+id|cs
+comma
+l_string|&quot;Sedlbauer IRQ LOOP&quot;
 )paren
 suffix:semicolon
 id|writereg
@@ -2282,7 +2306,7 @@ c_cond
 (paren
 id|cs-&gt;subtyp
 op_ne
-id|SEDL_SPEEDFAX_PCI
+id|SEDL_SPEEDFAX_PYRAMID
 )paren
 r_return
 l_int|0
@@ -2326,7 +2350,7 @@ c_cond
 (paren
 id|cs-&gt;subtyp
 op_ne
-id|SEDL_SPEEDFAX_PCI
+id|SEDL_SPEEDFAX_PYRAMID
 )paren
 r_return
 l_int|0
@@ -2365,7 +2389,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#ifdef SEDLBAUER_PCI
 DECL|variable|__initdata
 r_static
 r_struct
@@ -2376,7 +2399,6 @@ id|__initdata
 op_assign
 l_int|NULL
 suffix:semicolon
-macro_line|#endif
 DECL|function|__initfunc
 id|__initfunc
 c_func
@@ -2556,7 +2578,6 @@ suffix:semicolon
 r_else
 (brace
 multiline_comment|/* Probe for Sedlbauer speed pci */
-macro_line|#if SEDLBAUER_PCI
 macro_line|#if CONFIG_PCI
 r_if
 c_cond
@@ -2588,9 +2609,9 @@ op_assign
 id|pci_find_device
 c_func
 (paren
-id|PCI_VENDOR_SEDLBAUER
+id|PCI_VENDOR_ID_TIGERJET
 comma
-id|PCI_SPEEDPCI_ID
+id|PCI_DEVICE_ID_TIGERJET_100
 comma
 id|dev_sedl
 )paren
@@ -2607,9 +2628,7 @@ id|dev_sedl
 )paren
 )paren
 r_return
-(paren
 l_int|0
-)paren
 suffix:semicolon
 id|cs-&gt;irq
 op_assign
@@ -2696,17 +2715,48 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|sub_id
+op_ne
+id|PCI_SUB_ID_SEDLBAUER
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;Sedlbauer: unknown sub id %#x&bslash;n&quot;
+comma
+id|sub_id
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+r_if
+c_cond
 (paren
 id|sub_vendor_id
 op_eq
-id|PCI_SUBVENDOR_SEDLBAUER
+id|PCI_SUBVENDOR_SPEEDFAX_PYRAMID
 )paren
-op_logical_and
+(brace
+id|cs-&gt;hw.sedl.chip
+op_assign
+id|SEDL_CHIP_ISAC_ISAR
+suffix:semicolon
+id|cs-&gt;subtyp
+op_assign
+id|SEDL_SPEEDFAX_PYRAMID
+suffix:semicolon
+)brace
+r_else
+r_if
+c_cond
 (paren
-id|sub_id
+id|sub_vendor_id
 op_eq
-id|PCI_SUB_ID_SPEEDFAXP
-)paren
+id|PCI_SUBVENDOR_SPEEDFAX_PCI
 )paren
 (brace
 id|cs-&gt;hw.sedl.chip
@@ -2719,6 +2769,13 @@ id|SEDL_SPEEDFAX_PCI
 suffix:semicolon
 )brace
 r_else
+r_if
+c_cond
+(paren
+id|sub_vendor_id
+op_eq
+id|PCI_SUBVENDOR_SEDLBAUER_PCI
+)paren
 (brace
 id|cs-&gt;hw.sedl.chip
 op_assign
@@ -2727,6 +2784,21 @@ suffix:semicolon
 id|cs-&gt;subtyp
 op_assign
 id|SEDL_SPEED_PCI
+suffix:semicolon
+)brace
+r_else
+(brace
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;Sedlbauer: unknown sub vendor id %#x&bslash;n&quot;
+comma
+id|sub_vendor_id
+)paren
+suffix:semicolon
+r_return
+l_int|0
 suffix:semicolon
 )brace
 id|bytecnt
@@ -2844,7 +2916,6 @@ l_int|0
 )paren
 suffix:semicolon
 macro_line|#endif /* CONFIG_PCI */
-macro_line|#endif /* SEDLBAUER_PCI */
 )brace
 multiline_comment|/* In case of the sedlbauer pcmcia card, this region is in use,&n;           reserved for us by the card manager. So we do not check it&n;           here, it would fail. */
 r_if
@@ -3032,7 +3103,6 @@ op_eq
 id|SEDL_CHIP_IPAC
 )paren
 (brace
-multiline_comment|/* IPAC */
 r_if
 c_cond
 (paren

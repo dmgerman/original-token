@@ -131,7 +131,7 @@ c_cond
 id|skb-&gt;nh.raw
 op_plus
 l_int|20
-OL
+OG
 id|skb-&gt;tail
 )paren
 r_return

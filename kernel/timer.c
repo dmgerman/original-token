@@ -725,7 +725,11 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|timer-&gt;list.next
+id|timer_pending
+c_func
+(paren
+id|timer
+)paren
 )paren
 r_goto
 id|bug
@@ -736,8 +740,6 @@ c_func
 id|timer
 )paren
 suffix:semicolon
-id|out
-suffix:colon
 id|spin_unlock_irqrestore
 c_func
 (paren
@@ -751,6 +753,15 @@ r_return
 suffix:semicolon
 id|bug
 suffix:colon
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|timerlist_lock
+comma
+id|flags
+)paren
+suffix:semicolon
 id|printk
 c_func
 (paren
@@ -762,9 +773,6 @@ c_func
 l_int|0
 )paren
 )paren
-suffix:semicolon
-r_goto
-id|out
 suffix:semicolon
 )brace
 DECL|function|detach_timer

@@ -1488,7 +1488,7 @@ l_int|11
 id|panic
 c_func
 (paren
-l_string|&quot;Kernel compiled for PPro+, assumes a local APIC without the read-before-write bug!&quot;
+l_string|&quot;Kernel compiled for PMMX+, assumes a local APIC without the read-before-write bug!&quot;
 )paren
 suffix:semicolon
 macro_line|#endif

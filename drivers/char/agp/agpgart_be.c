@@ -2469,7 +2469,7 @@ id|table
 )paren
 suffix:semicolon
 id|page
-OL
+op_le
 id|virt_to_page
 c_func
 (paren
@@ -2549,7 +2549,7 @@ id|table
 )paren
 suffix:semicolon
 id|page
-OL
+op_le
 id|virt_to_page
 c_func
 (paren
@@ -2786,7 +2786,7 @@ id|table
 )paren
 suffix:semicolon
 id|page
-OL
+op_le
 id|virt_to_page
 c_func
 (paren
@@ -4027,6 +4027,11 @@ id|agp_bridge.scratch_page
 )paren
 suffix:semicolon
 )brace
+id|CACHE_FLUSH
+c_func
+(paren
+)paren
+suffix:semicolon
 id|agp_bridge
 dot
 id|tlb_flush

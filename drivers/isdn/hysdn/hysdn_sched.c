@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: hysdn_sched.c,v 1.1 2000/02/10 19:45:18 werner Exp $&n;&n; * Linux driver for HYSDN cards, scheduler routines for handling exchange card &lt;-&gt; pc.&n; *&n; * written by Werner Cornelius (werner@titro.de) for Hypercope GmbH&n; *&n; * Copyright 1999  by Werner Cornelius (werner@titro.de)&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * $Log: hysdn_sched.c,v $&n; * Revision 1.1  2000/02/10 19:45:18  werner&n; *&n; * Initial release&n; *&n; *&n; */
+multiline_comment|/* $Id: hysdn_sched.c,v 1.3 2000/05/17 11:41:30 ualbrecht Exp $&n;&n; * Linux driver for HYSDN cards, scheduler routines for handling exchange card &lt;-&gt; pc.&n; *&n; * written by Werner Cornelius (werner@titro.de) for Hypercope GmbH&n; *&n; * Copyright 1999  by Werner Cornelius (werner@titro.de)&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * $Log: hysdn_sched.c,v $&n; * Revision 1.3  2000/05/17 11:41:30  ualbrecht&n; * CAPI 2.0 support added&n; *&n; * Revision 1.2  2000/04/23 14:18:36  kai&n; * merge changes from main tree&n; *&n; * Revision 1.1  2000/02/10 19:45:18  werner&n; *&n; * Initial release&n; *&n; *&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &lt;linux/module.h&gt;
@@ -89,6 +89,24 @@ suffix:semicolon
 multiline_comment|/* start new fetch */
 r_break
 suffix:semicolon
+macro_line|#ifdef CONFIG_HYSDN_CAPI
+r_case
+id|CHAN_CAPI
+suffix:colon
+multiline_comment|/* give packet to CAPI handler */
+id|hycapi_rx_capipkt
+c_func
+(paren
+id|card
+comma
+id|buf
+comma
+id|len
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+macro_line|#endif /* CONFIG_HYSDN_CAPI */
 r_default
 suffix:colon
 id|printk
@@ -395,6 +413,66 @@ suffix:semicolon
 multiline_comment|/* aknowledge packet -&gt; throw away */
 )brace
 multiline_comment|/* send a network packet if available */
+macro_line|#ifdef CONFIG_HYSDN_CAPI
+r_if
+c_cond
+(paren
+(paren
+id|skb
+op_assign
+id|hycapi_tx_capiget
+c_func
+(paren
+id|card
+)paren
+)paren
+op_ne
+l_int|NULL
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|skb-&gt;len
+op_le
+id|maxlen
+)paren
+(brace
+id|memcpy
+c_func
+(paren
+id|buf
+comma
+id|skb-&gt;data
+comma
+id|skb-&gt;len
+)paren
+suffix:semicolon
+op_star
+id|len
+op_assign
+id|skb-&gt;len
+suffix:semicolon
+op_star
+id|chan
+op_assign
+id|CHAN_CAPI
+suffix:semicolon
+id|hycapi_tx_capiack
+c_func
+(paren
+id|card
+)paren
+suffix:semicolon
+r_return
+(paren
+l_int|1
+)paren
+suffix:semicolon
+multiline_comment|/* go and send the data */
+)brace
+)brace
+macro_line|#endif /* CONFIG_HYSDN_CAPI */
 r_return
 (paren
 l_int|0

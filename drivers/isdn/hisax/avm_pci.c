@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: avm_pci.c,v 1.17 2000/06/26 08:59:12 keil Exp $&n; *&n; * avm_pci.c    low level stuff for AVM Fritz!PCI and ISA PnP isdn cards&n; *              Thanks to AVM, Berlin for informations&n; *&n; * Author       Karsten Keil (keil@isdn4linux.de)&n; *&n; * This file is (c) under GNU PUBLIC LICENSE&n; *&n; */
+multiline_comment|/* $Id: avm_pci.c,v 1.18 2000/08/20 07:34:04 keil Exp $&n; *&n; * avm_pci.c    low level stuff for AVM Fritz!PCI and ISA PnP isdn cards&n; *              Thanks to AVM, Berlin for informations&n; *&n; * Author       Karsten Keil (keil@isdn4linux.de)&n; *&n; * This file is (c) under GNU PUBLIC LICENSE&n; *&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &lt;linux/config.h&gt;
@@ -22,16 +22,20 @@ r_char
 op_star
 id|avm_pci_rev
 op_assign
-l_string|&quot;$Revision: 1.15 $&quot;
+l_string|&quot;$Revision: 1.18 $&quot;
 suffix:semicolon
 DECL|macro|AVM_FRITZ_PCI
 mdefine_line|#define  AVM_FRITZ_PCI&t;&t;1
 DECL|macro|AVM_FRITZ_PNP
 mdefine_line|#define  AVM_FRITZ_PNP&t;&t;2
-DECL|macro|PCI_VENDOR_AVM
-mdefine_line|#define  PCI_VENDOR_AVM&t;&t;0x1244
-DECL|macro|PCI_FRITZPCI_ID
-mdefine_line|#define  PCI_FRITZPCI_ID&t;0xa00
+macro_line|#ifndef PCI_VENDOR_ID_AVM
+DECL|macro|PCI_VENDOR_ID_AVM
+mdefine_line|#define PCI_VENDOR_ID_AVM&t;0x1244
+macro_line|#endif
+macro_line|#ifndef PCI_DEVICE_ID_AVM_FRITZ
+DECL|macro|PCI_DEVICE_ID_AVM_FRITZ
+mdefine_line|#define PCI_DEVICE_ID_AVM_FRITZ&t;0xa00
+macro_line|#endif
 DECL|macro|HDLC_FIFO
 mdefine_line|#define  HDLC_FIFO&t;&t;0x0
 DECL|macro|HDLC_STATUS
@@ -1354,6 +1358,47 @@ OL
 id|count
 )paren
 (brace
+macro_line|#ifdef __powerpc__
+macro_line|#ifdef CONFIG_APUS
+op_star
+id|ptr
+op_increment
+op_assign
+id|in_le32
+c_func
+(paren
+(paren
+r_int
+op_star
+)paren
+(paren
+id|cs-&gt;hw.avm.isac
+op_plus
+id|_IO_BASE
+)paren
+)paren
+suffix:semicolon
+macro_line|#else
+op_star
+id|ptr
+op_increment
+op_assign
+id|in_be32
+c_func
+(paren
+(paren
+r_int
+op_star
+)paren
+(paren
+id|cs-&gt;hw.avm.isac
+op_plus
+id|_IO_BASE
+)paren
+)paren
+suffix:semicolon
+macro_line|#endif /* CONFIG_APUS */
+macro_line|#else
 op_star
 id|ptr
 op_increment
@@ -1364,6 +1409,7 @@ c_func
 id|cs-&gt;hw.avm.isac
 )paren
 suffix:semicolon
+macro_line|#endif /* __powerpc__ */
 id|cnt
 op_add_assign
 l_int|4
@@ -1684,6 +1730,47 @@ OL
 id|count
 )paren
 (brace
+macro_line|#ifdef __powerpc__
+macro_line|#ifdef CONFIG_APUS
+id|out_le32
+c_func
+(paren
+(paren
+r_int
+op_star
+)paren
+(paren
+id|cs-&gt;hw.avm.isac
+op_plus
+id|_IO_BASE
+)paren
+comma
+op_star
+id|ptr
+op_increment
+)paren
+suffix:semicolon
+macro_line|#else
+id|out_be32
+c_func
+(paren
+(paren
+r_int
+op_star
+)paren
+(paren
+id|cs-&gt;hw.avm.isac
+op_plus
+id|_IO_BASE
+)paren
+comma
+op_star
+id|ptr
+op_increment
+)paren
+suffix:semicolon
+macro_line|#endif /* CONFIG_APUS */
+macro_line|#else
 id|outl
 c_func
 (paren
@@ -1694,6 +1781,7 @@ comma
 id|cs-&gt;hw.avm.isac
 )paren
 suffix:semicolon
+macro_line|#endif /* __powerpc__ */
 id|cnt
 op_add_assign
 l_int|4
@@ -4154,9 +4242,9 @@ op_assign
 id|pci_find_device
 c_func
 (paren
-id|PCI_VENDOR_AVM
+id|PCI_VENDOR_ID_AVM
 comma
-id|PCI_FRITZPCI_ID
+id|PCI_DEVICE_ID_AVM_FRITZ
 comma
 id|dev_avm
 )paren
@@ -4200,6 +4288,7 @@ suffix:semicolon
 id|cs-&gt;hw.avm.cfg_reg
 op_assign
 id|pci_resource_start
+c_func
 (paren
 id|dev_avm
 comma
@@ -4216,7 +4305,7 @@ id|cs-&gt;hw.avm.cfg_reg
 id|printk
 c_func
 (paren
-id|KERN_WARNING
+id|KERN_ERR
 l_string|&quot;FritzPCI: No IO-Adr for PCI card found&bslash;n&quot;
 )paren
 suffix:semicolon

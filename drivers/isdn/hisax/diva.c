@@ -58,18 +58,22 @@ mdefine_line|#define DIVA_IPAC_ISA&t;3
 DECL|macro|DIVA_IPAC_PCI
 mdefine_line|#define DIVA_IPAC_PCI&t;4
 multiline_comment|/* PCI stuff */
-DECL|macro|PCI_VENDOR_EICON_DIEHL
-mdefine_line|#define PCI_VENDOR_EICON_DIEHL&t;0x1133
-DECL|macro|PCI_DIVA20PRO_ID
-mdefine_line|#define PCI_DIVA20PRO_ID&t;0xe001
-DECL|macro|PCI_DIVA20_ID
-mdefine_line|#define PCI_DIVA20_ID&t;&t;0xe002
-DECL|macro|PCI_DIVA20PRO_U_ID
-mdefine_line|#define PCI_DIVA20PRO_U_ID&t;0xe003
-DECL|macro|PCI_DIVA20_U_ID
-mdefine_line|#define PCI_DIVA20_U_ID&t;&t;0xe004
-DECL|macro|PCI_DIVA_201
-mdefine_line|#define PCI_DIVA_201&t;&t;0xe005
+macro_line|#ifndef PCI_VENDOR_ID_EICON
+DECL|macro|PCI_VENDOR_ID_EICON
+mdefine_line|#define PCI_VENDOR_ID_EICON&t;0x1133
+macro_line|#endif
+macro_line|#ifndef PCI_DEVICE_ID_EICON_DIVA20
+DECL|macro|PCI_DEVICE_ID_EICON_DIVA20
+mdefine_line|#define PCI_DEVICE_ID_EICON_DIVA20&t;0xe002
+macro_line|#endif
+macro_line|#ifndef PCI_DEVICE_ID_EICON_DIVA20_U
+DECL|macro|PCI_DEVICE_ID_EICON_DIVA20_U
+mdefine_line|#define PCI_DEVICE_ID_EICON_DIVA20_U&t;0xe004
+macro_line|#endif
+macro_line|#ifndef PCI_DEVICE_ID_EICON_DIVA201
+DECL|macro|PCI_DEVICE_ID_EICON_DIVA201
+mdefine_line|#define PCI_DEVICE_ID_EICON_DIVA201&t;0xe005
+macro_line|#endif
 multiline_comment|/* CTRL (Read) */
 DECL|macro|DIVA_IRQ_STAT
 mdefine_line|#define DIVA_IRQ_STAT&t;0x01
@@ -95,14 +99,23 @@ mdefine_line|#define DIVA_IRQ_CLR&t;0x80
 multiline_comment|/* Siemens PITA */
 DECL|macro|PITA_MISC_REG
 mdefine_line|#define PITA_MISC_REG&t;&t;0x1c
+macro_line|#ifdef __BIG_ENDIAN
+DECL|macro|PITA_PARA_SOFTRESET
+mdefine_line|#define PITA_PARA_SOFTRESET&t;0x00000001
+DECL|macro|PITA_PARA_MPX_MODE
+mdefine_line|#define PITA_PARA_MPX_MODE&t;0x00000004
+DECL|macro|PITA_INT0_ENABLE
+mdefine_line|#define PITA_INT0_ENABLE&t;0x00000200
+macro_line|#else
 DECL|macro|PITA_PARA_SOFTRESET
 mdefine_line|#define PITA_PARA_SOFTRESET&t;0x01000000
 DECL|macro|PITA_PARA_MPX_MODE
 mdefine_line|#define PITA_PARA_MPX_MODE&t;0x04000000
 DECL|macro|PITA_INT0_ENABLE
 mdefine_line|#define PITA_INT0_ENABLE&t;0x00020000
+macro_line|#endif
 DECL|macro|PITA_INT0_STATUS
-mdefine_line|#define PITA_INT0_STATUS&t;0x00000002
+mdefine_line|#define PITA_INT0_STATUS&t;0x02
 r_static
 r_inline
 id|u_char
@@ -335,13 +348,11 @@ id|off
 )paren
 (brace
 r_return
-l_int|0xff
-op_amp
 op_star
 (paren
 (paren
 r_int
-r_int
+r_char
 op_star
 )paren
 (paren
@@ -4553,9 +4564,9 @@ op_assign
 id|pci_find_device
 c_func
 (paren
-id|PCI_VENDOR_EICON_DIEHL
+id|PCI_VENDOR_ID_EICON
 comma
-id|PCI_DIVA20_ID
+id|PCI_DEVICE_ID_EICON_DIVA20
 comma
 id|dev_diva
 )paren
@@ -4572,9 +4583,7 @@ id|dev_diva
 )paren
 )paren
 r_return
-(paren
 l_int|0
-)paren
 suffix:semicolon
 id|cs-&gt;subtyp
 op_assign
@@ -4605,9 +4614,9 @@ op_assign
 id|pci_find_device
 c_func
 (paren
-id|PCI_VENDOR_EICON_DIEHL
+id|PCI_VENDOR_ID_EICON
 comma
-id|PCI_DIVA20_U_ID
+id|PCI_DEVICE_ID_EICON_DIVA20_U
 comma
 id|dev_diva_u
 )paren
@@ -4624,9 +4633,7 @@ id|dev_diva_u
 )paren
 )paren
 r_return
-(paren
 l_int|0
-)paren
 suffix:semicolon
 id|cs-&gt;subtyp
 op_assign
@@ -4657,9 +4664,9 @@ op_assign
 id|pci_find_device
 c_func
 (paren
-id|PCI_VENDOR_EICON_DIEHL
+id|PCI_VENDOR_ID_EICON
 comma
-id|PCI_DIVA_201
+id|PCI_DEVICE_ID_EICON_DIVA201
 comma
 id|dev_diva201
 )paren
@@ -4676,9 +4683,7 @@ id|dev_diva201
 )paren
 )paren
 r_return
-(paren
 l_int|0
-)paren
 suffix:semicolon
 id|cs-&gt;subtyp
 op_assign

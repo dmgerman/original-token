@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: boardergo.c,v 1.1 2000/02/10 19:45:18 werner Exp $&n;&n; * Linux driver for HYSDN cards, specific routines for ergo type boards.&n; *&n; * As all Linux supported cards Champ2, Ergo and Metro2/4 use the same&n; * DPRAM interface and layout with only minor differences all related&n; * stuff is done here, not in separate modules.&n; *&n; * written by Werner Cornelius (werner@titro.de) for Hypercope GmbH&n; *&n; * Copyright 1999  by Werner Cornelius (werner@titro.de)&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * $Log: boardergo.c,v $&n; * Revision 1.1  2000/02/10 19:45:18  werner&n; *&n; * Initial release&n; *&n; *&n; */
+multiline_comment|/* $Id: boardergo.c,v 1.3 2000/05/17 11:41:30 ualbrecht Exp $&n;&n; * Linux driver for HYSDN cards, specific routines for ergo type boards.&n; *&n; * As all Linux supported cards Champ2, Ergo and Metro2/4 use the same&n; * DPRAM interface and layout with only minor differences all related&n; * stuff is done here, not in separate modules.&n; *&n; * written by Werner Cornelius (werner@titro.de) for Hypercope GmbH&n; *&n; * Copyright 1999  by Werner Cornelius (werner@titro.de)&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * $Log: boardergo.c,v $&n; * Revision 1.3  2000/05/17 11:41:30  ualbrecht&n; * CAPI 2.0 support added&n; *&n; * Revision 1.2  2000/04/23 14:18:36  kai&n; * merge changes from main tree&n; *&n; * Revision 1.1  2000/02/10 19:45:18  werner&n; *&n; * Initial release&n; *&n; *&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &lt;linux/module.h&gt;
@@ -400,6 +400,14 @@ id|card
 )paren
 suffix:semicolon
 multiline_comment|/* first release the net device if existing */
+macro_line|#ifdef CONFIG_HYSDN_CAPI
+id|hycapi_capi_stop
+c_func
+(paren
+id|card
+)paren
+suffix:semicolon
+macro_line|#endif /* CONFIG_HYSDN_CAPI */
 id|save_flags
 c_func
 (paren
@@ -1499,6 +1507,30 @@ id|i
 )paren
 suffix:semicolon
 )brace
+macro_line|#ifdef CONFIG_HYSDN_CAPI
+r_if
+c_cond
+(paren
+(paren
+id|i
+op_assign
+id|hycapi_capi_create
+c_func
+(paren
+id|card
+)paren
+)paren
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_WARNING
+l_string|&quot;HYSDN: failed to create capi-interface.&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif /* CONFIG_HYSDN_CAPI */
 r_return
 (paren
 l_int|0

@@ -1778,7 +1778,7 @@ c_func
 id|qdisc
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_NET_SCH_INGRESS
+macro_line|#if defined(CONFIG_NET_SCH_INGRESS) || defined(CONFIG_NET_SCH_INGRESS_MODULE)
 r_if
 c_cond
 (paren

@@ -27,6 +27,8 @@ DECL|macro|MOVE_MEDIUM_TIMEOUT
 mdefine_line|#define MOVE_MEDIUM_TIMEOUT&t;&t;(5 * 60 * HZ)
 DECL|macro|READ_ELEMENT_STATUS_TIMEOUT
 mdefine_line|#define READ_ELEMENT_STATUS_TIMEOUT&t;(5 * 60 * HZ)
+DECL|macro|READ_DEFECT_DATA_TIMEOUT
+mdefine_line|#define READ_DEFECT_DATA_TIMEOUT&t;(60 * HZ )  /* ZIP-250 on parallel port takes as long! */
 DECL|macro|MAX_BUF
 mdefine_line|#define MAX_BUF PAGE_SIZE
 DECL|macro|max
@@ -877,6 +879,19 @@ suffix:semicolon
 id|retries
 op_assign
 id|NORMAL_RETRIES
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|READ_DEFECT_DATA
+suffix:colon
+id|timeout
+op_assign
+id|READ_DEFECT_DATA_TIMEOUT
+suffix:semicolon
+id|retries
+op_assign
+l_int|1
 suffix:semicolon
 r_break
 suffix:semicolon

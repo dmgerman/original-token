@@ -14,19 +14,27 @@ mdefine_line|#define&t;SCT_4&t;&t;4
 DECL|macro|BKM_A4T
 mdefine_line|#define BKM_A4T&t;&t;5
 multiline_comment|/* A4T&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;*/
-DECL|macro|I20_DEVICE_ID
-mdefine_line|#define I20_DEVICE_ID       &t;0x6120  /* I20 PCI device ID */
-DECL|macro|I20_VENDOR_ID
-mdefine_line|#define I20_VENDOR_ID       &t;0x11DE  /* I20 PCI vendor ID */
+macro_line|#ifndef PCI_VENDOR_ID_ZORAN
+DECL|macro|PCI_VENDOR_ID_ZORAN
+mdefine_line|#define PCI_VENDOR_ID_ZORAN&t;0x11DE
+macro_line|#endif
+macro_line|#ifndef PCI_DEVICE_ID_ZORAN_36120
+DECL|macro|PCI_DEVICE_ID_ZORAN_36120
+mdefine_line|#define PCI_DEVICE_ID_ZORAN_36120&t;0x6120
+macro_line|#endif
 DECL|macro|A4T_SUBVEN_ID
 mdefine_line|#define&t;A4T_SUBVEN_ID&t;&t;0x0871&t;
 DECL|macro|A4T_SUBSYS_ID
 mdefine_line|#define&t;A4T_SUBSYS_ID&t;&t;0xFFA4
 multiline_comment|/* Scitel Quadro &t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;*/
-DECL|macro|PLX_DEVICE_ID
-mdefine_line|#define&t;PLX_DEVICE_ID&t;&t;0x9050&t;/* Scitel Quadro PLX */
-DECL|macro|PLX_VENDOR_ID
-mdefine_line|#define&t;PLX_VENDOR_ID&t;&t;0x10B5
+macro_line|#ifndef PCI_VENDOR_ID_PLX
+DECL|macro|PCI_VENDOR_ID_PLX
+mdefine_line|#define PCI_VENDOR_ID_PLX&t;0x10B5
+macro_line|#endif
+macro_line|#ifndef PCI_DEVICE_ID_PLX_9050
+DECL|macro|PCI_DEVICE_ID_PLX_9050
+mdefine_line|#define PCI_DEVICE_ID_PLX_9050&t;0x9050
+macro_line|#endif
 DECL|macro|SCT_SUBVEN_ID
 mdefine_line|#define&t;SCT_SUBVEN_ID&t;&t;0x0871
 DECL|macro|SCT_SUBSYS_ID

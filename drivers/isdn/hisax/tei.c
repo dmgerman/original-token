@@ -863,6 +863,15 @@ id|tei
 )paren
 (brace
 multiline_comment|/* same tei is in use */
+r_if
+c_cond
+(paren
+id|ri
+op_ne
+id|ost-&gt;ma.ri
+)paren
+(brace
+multiline_comment|/* and it wasn&squot;t our request */
 id|st-&gt;ma.tei_m
 dot
 id|printdebug
@@ -887,6 +896,7 @@ comma
 l_int|NULL
 )paren
 suffix:semicolon
+)brace
 )brace
 )brace
 r_static

@@ -1,4 +1,7 @@
-multiline_comment|/* $Id: hysdn_defs.h,v 1.1 2000/02/10 19:44:30 werner Exp $&n;&n; * Linux driver for HYSDN cards, global definitions and exported vars and functions.&n; * written by Werner Cornelius (werner@titro.de) for Hypercope GmbH&n; *&n; * Copyright 1999  by Werner Cornelius (werner@titro.de)&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * $Log: hysdn_defs.h,v $&n; * Revision 1.1  2000/02/10 19:44:30  werner&n; *&n; * Initial release&n; *&n; *&n; */
+multiline_comment|/* $Id: hysdn_defs.h,v 1.3 2000/06/13 09:14:26 ualbrecht Exp $&n;&n; * Linux driver for HYSDN cards, global definitions and exported vars and functions.&n; * written by Werner Cornelius (werner@titro.de) for Hypercope GmbH&n; *&n; * Copyright 1999  by Werner Cornelius (werner@titro.de)&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * $Log: hysdn_defs.h,v $&n; * Revision 1.3  2000/06/13 09:14:26  ualbrecht&n; * Removed obsolete struct for CAPI-application tracking.&n; *&n; * Revision 1.2  2000/05/17 11:41:30  ualbrecht&n; * CAPI 2.0 support added&n; *&n; * Revision 1.1  2000/02/10 19:44:30  werner&n; *&n; * Initial release&n; *&n; *&n; */
+macro_line|#ifndef HYSDN_DEFS_H
+DECL|macro|HYSDN_DEFS_H
+mdefine_line|#define HYSDN_DEFS_H
 macro_line|#include &lt;linux/hysdn_if.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/tqueue.h&gt;
@@ -15,6 +18,74 @@ mdefine_line|#define ulong unsigned long
 DECL|macro|word
 mdefine_line|#define word unsigned short
 macro_line|#include &quot;ince1pc.h&quot;
+macro_line|#ifdef CONFIG_HYSDN_CAPI
+macro_line|#include &lt;linux/capi.h&gt;
+macro_line|#include &quot;../avmb1/capicmd.h&quot;
+macro_line|#include &quot;../avmb1/capiutil.h&quot;
+macro_line|#include &quot;../avmb1/capilli.h&quot;
+multiline_comment|/***************************/
+multiline_comment|/*   CAPI-Profile values.  */
+multiline_comment|/***************************/
+DECL|macro|GLOBAL_OPTION_INTERNAL_CONTROLLER
+mdefine_line|#define GLOBAL_OPTION_INTERNAL_CONTROLLER 0x0001
+DECL|macro|GLOBAL_OPTION_EXTERNAL_CONTROLLER
+mdefine_line|#define GLOBAL_OPTION_EXTERNAL_CONTROLLER 0x0002
+DECL|macro|GLOBAL_OPTION_HANDSET
+mdefine_line|#define GLOBAL_OPTION_HANDSET             0x0004
+DECL|macro|GLOBAL_OPTION_DTMF
+mdefine_line|#define GLOBAL_OPTION_DTMF                0x0008
+DECL|macro|GLOBAL_OPTION_SUPPL_SERVICES
+mdefine_line|#define GLOBAL_OPTION_SUPPL_SERVICES      0x0010
+DECL|macro|GLOBAL_OPTION_CHANNEL_ALLOCATION
+mdefine_line|#define GLOBAL_OPTION_CHANNEL_ALLOCATION  0x0020
+DECL|macro|GLOBAL_OPTION_B_CHANNEL_OPERATION
+mdefine_line|#define GLOBAL_OPTION_B_CHANNEL_OPERATION 0x0040
+DECL|macro|B1_PROT_64KBIT_HDLC
+mdefine_line|#define B1_PROT_64KBIT_HDLC        0x0001
+DECL|macro|B1_PROT_64KBIT_TRANSPARENT
+mdefine_line|#define B1_PROT_64KBIT_TRANSPARENT 0x0002
+DECL|macro|B1_PROT_V110_ASYNCH
+mdefine_line|#define B1_PROT_V110_ASYNCH        0x0004 
+DECL|macro|B1_PROT_V110_SYNCH
+mdefine_line|#define B1_PROT_V110_SYNCH         0x0008
+DECL|macro|B1_PROT_T30
+mdefine_line|#define B1_PROT_T30                0x0010
+DECL|macro|B1_PROT_64KBIT_INV_HDLC
+mdefine_line|#define B1_PROT_64KBIT_INV_HDLC    0x0020
+DECL|macro|B1_PROT_56KBIT_TRANSPARENT
+mdefine_line|#define B1_PROT_56KBIT_TRANSPARENT 0x0040
+DECL|macro|B2_PROT_ISO7776
+mdefine_line|#define B2_PROT_ISO7776            0x0001
+DECL|macro|B2_PROT_TRANSPARENT
+mdefine_line|#define B2_PROT_TRANSPARENT        0x0002
+DECL|macro|B2_PROT_SDLC
+mdefine_line|#define B2_PROT_SDLC               0x0004
+DECL|macro|B2_PROT_LAPD
+mdefine_line|#define B2_PROT_LAPD               0x0008
+DECL|macro|B2_PROT_T30
+mdefine_line|#define B2_PROT_T30                0x0010
+DECL|macro|B2_PROT_PPP
+mdefine_line|#define B2_PROT_PPP                0x0020
+DECL|macro|B2_PROT_TRANSPARENT_IGNORE_B1_FRAMING_ERRORS
+mdefine_line|#define B2_PROT_TRANSPARENT_IGNORE_B1_FRAMING_ERRORS 0x0040
+DECL|macro|B3_PROT_TRANSPARENT
+mdefine_line|#define B3_PROT_TRANSPARENT        0x0001
+DECL|macro|B3_PROT_T90NL
+mdefine_line|#define B3_PROT_T90NL              0x0002
+DECL|macro|B3_PROT_ISO8208
+mdefine_line|#define B3_PROT_ISO8208            0x0004
+DECL|macro|B3_PROT_X25_DCE
+mdefine_line|#define B3_PROT_X25_DCE            0x0008
+DECL|macro|B3_PROT_T30
+mdefine_line|#define B3_PROT_T30                0x0010
+DECL|macro|B3_PROT_T30EXT
+mdefine_line|#define B3_PROT_T30EXT             0x0020
+DECL|macro|HYSDN_MAXVERSION
+mdefine_line|#define HYSDN_MAXVERSION&t;&t;8
+multiline_comment|/* Number of sendbuffers in CAPI-queue */
+DECL|macro|HYSDN_MAX_CAPI_SKB
+mdefine_line|#define HYSDN_MAX_CAPI_SKB             20
+macro_line|#endif /* CONFIG_HYSDN_CAPI*/
 multiline_comment|/************************************************/
 multiline_comment|/* constants and bits for debugging/log outputs */
 multiline_comment|/************************************************/
@@ -409,10 +480,108 @@ id|HYSDN_CARD
 op_star
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_HYSDN_CAPI
+DECL|struct|hycapictrl_info
+r_struct
+id|hycapictrl_info
+(brace
+DECL|member|cardname
+r_char
+id|cardname
+(braket
+l_int|32
+)braket
+suffix:semicolon
+DECL|member|lock
+id|spinlock_t
+id|lock
+suffix:semicolon
+DECL|member|versionlen
+r_int
+id|versionlen
+suffix:semicolon
+DECL|member|versionbuf
+r_char
+id|versionbuf
+(braket
+l_int|1024
+)braket
+suffix:semicolon
+DECL|member|version
+r_char
+op_star
+id|version
+(braket
+id|HYSDN_MAXVERSION
+)braket
+suffix:semicolon
+DECL|member|infobuf
+r_char
+id|infobuf
+(braket
+l_int|128
+)braket
+suffix:semicolon
+multiline_comment|/* for function procinfo */
+DECL|member|card
+r_struct
+id|HYSDN_CARD
+op_star
+id|card
+suffix:semicolon
+DECL|member|capi_ctrl
+r_struct
+id|capi_ctr
+op_star
+id|capi_ctrl
+suffix:semicolon
+DECL|member|skbs
+r_struct
+id|sk_buff
+op_star
+id|skbs
+(braket
+id|HYSDN_MAX_CAPI_SKB
+)braket
+suffix:semicolon
+DECL|member|in_idx
+DECL|member|out_idx
+r_int
+id|in_idx
+comma
+id|out_idx
+suffix:semicolon
+multiline_comment|/* indexes to buffer ring */
+DECL|member|sk_count
+r_int
+id|sk_count
+suffix:semicolon
+multiline_comment|/* number of buffers currently in ring */
+DECL|member|tx_skb
+r_struct
+id|sk_buff
+op_star
+id|tx_skb
+suffix:semicolon
+multiline_comment|/* buffer for tx operation */
+DECL|member|hyctrlinfo
+)brace
+op_star
+id|hyctrlinfo
+suffix:semicolon
+macro_line|#endif /* CONFIG_HYSDN_CAPI */
 DECL|typedef|hysdn_card
 )brace
 id|hysdn_card
 suffix:semicolon
+macro_line|#ifdef CONFIG_HYSDN_CAPI
+DECL|typedef|hycapictrl_info
+r_typedef
+r_struct
+id|hycapictrl_info
+id|hycapictrl_info
+suffix:semicolon
+macro_line|#endif /* CONFIG_HYSDN_CAPI */
 multiline_comment|/*****************/
 multiline_comment|/* exported vars */
 multiline_comment|/*****************/
@@ -733,4 +902,217 @@ id|word
 )paren
 suffix:semicolon
 multiline_comment|/* rxed packet from network */
+macro_line|#ifdef CONFIG_HYSDN_CAPI
+r_extern
+r_struct
+id|capi_driver_interface
+op_star
+id|hy_di
+suffix:semicolon
+r_extern
+r_int
+id|hycapi_capi_create
+c_func
+(paren
+id|hysdn_card
+op_star
+)paren
+suffix:semicolon
+multiline_comment|/* create a new capi device */
+r_extern
+r_int
+id|hycapi_capi_release
+c_func
+(paren
+id|hysdn_card
+op_star
+)paren
+suffix:semicolon
+multiline_comment|/* delete the device */
+r_extern
+r_int
+id|hycapi_capi_stop
+c_func
+(paren
+id|hysdn_card
+op_star
+id|card
+)paren
+suffix:semicolon
+multiline_comment|/* suspend */
+r_extern
+r_int
+id|hycapi_load_firmware
+c_func
+(paren
+r_struct
+id|capi_ctr
+op_star
+comma
+id|capiloaddata
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|hycapi_reset_ctr
+c_func
+(paren
+r_struct
+id|capi_ctr
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|hycapi_remove_ctr
+c_func
+(paren
+r_struct
+id|capi_ctr
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|hycapi_register_appl
+c_func
+(paren
+r_struct
+id|capi_ctr
+op_star
+comma
+id|__u16
+id|appl
+comma
+id|capi_register_params
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|hycapi_release_appl
+c_func
+(paren
+r_struct
+id|capi_ctr
+op_star
+comma
+id|__u16
+id|appl
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|hycapi_send_message
+c_func
+(paren
+r_struct
+id|capi_ctr
+op_star
+comma
+r_struct
+id|sk_buff
+op_star
+id|skb
+)paren
+suffix:semicolon
+r_extern
+r_char
+op_star
+id|hycapi_procinfo
+c_func
+(paren
+r_struct
+id|capi_ctr
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|hycapi_read_proc
+c_func
+(paren
+r_char
+op_star
+id|page
+comma
+r_char
+op_star
+op_star
+id|start
+comma
+id|off_t
+id|off
+comma
+r_int
+id|count
+comma
+r_int
+op_star
+id|eof
+comma
+r_struct
+id|capi_ctr
+op_star
+id|card
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|hycapi_rx_capipkt
+c_func
+(paren
+id|hysdn_card
+op_star
+id|card
+comma
+id|uchar
+op_star
+id|buf
+comma
+id|word
+id|len
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|hycapi_tx_capiack
+c_func
+(paren
+id|hysdn_card
+op_star
+id|card
+)paren
+suffix:semicolon
+r_extern
+r_struct
+id|sk_buff
+op_star
+id|hycapi_tx_capiget
+c_func
+(paren
+id|hysdn_card
+op_star
+id|card
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|hycapi_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|hycapi_cleanup
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+macro_line|#endif /* CONFIG_HYSDN_CAPI */
+macro_line|#endif /* HYSDN_DEFS_H */
 eof

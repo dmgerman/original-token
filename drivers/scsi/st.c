@@ -1,4 +1,4 @@
-multiline_comment|/*&n;   SCSI Tape Driver for Linux version 1.1 and newer. See the accompanying&n;   file README.st for more information.&n;&n;   History:&n;   Rewritten from Dwayne Forsyth&squot;s SCSI tape driver by Kai Makisara.&n;   Contribution and ideas from several people including (in alphabetical&n;   order) Klaus Ehrenfried, Eric Lee Green, Wolfgang Denk, Steve Hirsch,&n;   Andreas Koppenh&quot;ofer, Michael Leodolter, Eyal Lebedinsky, Michael Schaefer,&n;   J&quot;org Weule, and Eric Youngdale.&n;&n;   Copyright 1992 - 2000 Kai Makisara&n;   email Kai.Makisara@metla.fi&n;&n;   Last modified: Sun Aug  6 23:02:13 2000 by makisara@kai.makisara.local&n;   Some small formal changes - aeb, 950809&n;&n;   Last modified: 18-JAN-1998 Richard Gooch &lt;rgooch@atnf.csiro.au&gt; Devfs support&n;&n;   Reminder: write_lock_irqsave() can be replaced by write_lock() when the old SCSI&n;   error handling will be discarded.&n; */
+multiline_comment|/*&n;   SCSI Tape Driver for Linux version 1.1 and newer. See the accompanying&n;   file README.st for more information.&n;&n;   History:&n;   Rewritten from Dwayne Forsyth&squot;s SCSI tape driver by Kai Makisara.&n;   Contribution and ideas from several people including (in alphabetical&n;   order) Klaus Ehrenfried, Eric Lee Green, Wolfgang Denk, Steve Hirsch,&n;   Andreas Koppenh&quot;ofer, Michael Leodolter, Eyal Lebedinsky, Michael Schaefer,&n;   J&quot;org Weule, and Eric Youngdale.&n;&n;   Copyright 1992 - 2000 Kai Makisara&n;   email Kai.Makisara@metla.fi&n;&n;   Last modified: Tue Aug 15 16:56:35 2000 by makisara@kai.makisara.local&n;   Some small formal changes - aeb, 950809&n;&n;   Last modified: 18-JAN-1998 Richard Gooch &lt;rgooch@atnf.csiro.au&gt; Devfs support&n;&n;   Reminder: write_lock_irqsave() can be replaced by write_lock() when the old SCSI&n;   error handling will be discarded.&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -15434,6 +15434,22 @@ id|MTLOAD
 op_logical_or
 id|mtc.mt_op
 op_eq
+id|MTFSF
+op_logical_or
+id|mtc.mt_op
+op_eq
+id|MTFSFM
+op_logical_or
+id|mtc.mt_op
+op_eq
+id|MTBSF
+op_logical_or
+id|mtc.mt_op
+op_eq
+id|MTBSFM
+op_logical_or
+id|mtc.mt_op
+op_eq
 id|MTCOMPRESSION
 suffix:semicolon
 )brace
@@ -16734,10 +16750,6 @@ id|scatterlist
 suffix:semicolon
 id|tb
 op_assign
-(paren
-id|ST_buffer
-op_star
-)paren
 id|kmalloc
 c_func
 (paren
@@ -18533,11 +18545,6 @@ suffix:semicolon
 )brace
 id|tmp_da
 op_assign
-(paren
-id|Scsi_Tape
-op_star
-op_star
-)paren
 id|kmalloc
 c_func
 (paren
@@ -18554,11 +18561,6 @@ id|GFP_ATOMIC
 suffix:semicolon
 id|tmp_ba
 op_assign
-(paren
-id|ST_buffer
-op_star
-op_star
-)paren
 id|kmalloc
 c_func
 (paren
@@ -18769,10 +18771,6 @@ l_string|&quot;scsi_devices corrupt (st)&quot;
 suffix:semicolon
 id|tpnt
 op_assign
-(paren
-id|Scsi_Tape
-op_star
-)paren
 id|kmalloc
 c_func
 (paren

@@ -1,8 +1,8 @@
 macro_line|#ifndef __INCE1PC_H__
 DECL|macro|__INCE1PC_H__
 mdefine_line|#define __INCE1PC_H__
-multiline_comment|/****************************************************************************&r;&n;&r;&n;    FILE:       ince1pc.h&r;&n;&r;&n;    AUTHOR:     M.Steinkopf&r;&n;&r;&n;    PURPOSE:    common definitions for both sides of the bus:&r;&n;&t;&t;- conventions both spoolers must know&r;&n;&t;&t;- channel numbers agreed upon&r;&n;&r;&n;*****************************************************************************/
-multiline_comment|/*  basic scalar definitions have same meanning,&r;&n; *  but their declaration location depends on environment&r;&n; */
+multiline_comment|/****************************************************************************&n;&n;    FILE:       ince1pc.h&n;&n;    AUTHOR:     M.Steinkopf&n;&n;    PURPOSE:    common definitions for both sides of the bus:&n;&t;&t;- conventions both spoolers must know&n;&t;&t;- channel numbers agreed upon&n;&n;*****************************************************************************/
+multiline_comment|/*  basic scalar definitions have same meanning,&n; *  but their declaration location depends on environment&n; */
 multiline_comment|/*--------------------------------------channel numbers---------------------*/
 DECL|macro|CHAN_SYSTEM
 mdefine_line|#define CHAN_SYSTEM     0x0001      /* system channel (spooler to spooler) */
@@ -39,7 +39,7 @@ DECL|macro|SYSR_TOK_B_CHAN_DEF
 mdefine_line|#define SYSR_TOK_B_CHAN_DEF     2   /* assume 2 B-Channels */
 DECL|macro|SYSR_TOK_FAX_CHAN_DEF
 mdefine_line|#define SYSR_TOK_FAX_CHAN_DEF   1   /* assume 1 FAX Channel */
-multiline_comment|/*  syntax of new SYSR token stream:&r;&n; *  channel: CHAN_SYSTEM&r;&n; *  msgsize: MIN_RDY_MSG_SIZE &lt;= x &lt;= MAX_RDY_MSG_SIZE&r;&n; *           RDY_MAGIC_SIZE   &lt;= x &lt;= (RDY_MAGIC_SIZE+MAX_N_TOK_BYTES)&r;&n; *  msg    : 0 1 2 3 {4 5 6 ..}&r;&n; *           S Y S R  MAX_N_TOK_BYTES bytes of TokenStream&r;&n; *&r;&n; *  TokenStream     :=   empty&r;&n; *                     | {NonEndTokenChunk} EndToken RotlCRC&r;&n; *  NonEndTokenChunk:= NonEndTokenId DataLen [Data]&r;&n; *  NonEndTokenId   := 0x01 .. 0xFE                 1 BYTE&r;&n; *  DataLen         := 0x00 .. 0xFF                 1 BYTE&r;&n; *  Data            := DataLen bytes&r;&n; *  EndToken        := 0x00&r;&n; *  RotlCRC         := special 1 byte CRC over all NonEndTokenChunk bytes&r;&n; *                     s. RotlCRC algorithm&r;&n; *&r;&n; *  RotlCRC algorithm:&r;&n; *      ucSum= 0                        1 uchar&r;&n; *      for all NonEndTokenChunk bytes:&r;&n; *          ROTL(ucSum,1)               rotate left by 1&r;&n; *          ucSum += Char;              add current byte with swap around&r;&n; *      RotlCRC= ~ucSum;                invert all bits for result&r;&n; *&r;&n; *  note:&r;&n; *  - for 16-bit FIFO add padding 0 byte to achieve even token data bytes!&r;&n; */
+multiline_comment|/*  syntax of new SYSR token stream:&n; *  channel: CHAN_SYSTEM&n; *  msgsize: MIN_RDY_MSG_SIZE &lt;= x &lt;= MAX_RDY_MSG_SIZE&n; *           RDY_MAGIC_SIZE   &lt;= x &lt;= (RDY_MAGIC_SIZE+MAX_N_TOK_BYTES)&n; *  msg    : 0 1 2 3 {4 5 6 ..}&n; *           S Y S R  MAX_N_TOK_BYTES bytes of TokenStream&n; *&n; *  TokenStream     :=   empty&n; *                     | {NonEndTokenChunk} EndToken RotlCRC&n; *  NonEndTokenChunk:= NonEndTokenId DataLen [Data]&n; *  NonEndTokenId   := 0x01 .. 0xFE                 1 BYTE&n; *  DataLen         := 0x00 .. 0xFF                 1 BYTE&n; *  Data            := DataLen bytes&n; *  EndToken        := 0x00&n; *  RotlCRC         := special 1 byte CRC over all NonEndTokenChunk bytes&n; *                     s. RotlCRC algorithm&n; *&n; *  RotlCRC algorithm:&n; *      ucSum= 0                        1 uchar&n; *      for all NonEndTokenChunk bytes:&n; *          ROTL(ucSum,1)               rotate left by 1&n; *          ucSum += Char;              add current byte with swap around&n; *      RotlCRC= ~ucSum;                invert all bits for result&n; *&n; *  note:&n; *  - for 16-bit FIFO add padding 0 byte to achieve even token data bytes!&n; */
 multiline_comment|/*--------------------------------------error logger------------------------*/
 multiline_comment|/* note: pof needs final 0 ! */
 DECL|macro|ERRLOG_CMD_REQ
@@ -92,32 +92,34 @@ suffix:semicolon
 macro_line|#if defined(__TURBOC__)
 macro_line|#if sizeof(tErrLogEntry) != ERRLOG_ENTRY_SIZE
 macro_line|#error size of tErrLogEntry != ERRLOG_ENTRY_SIZE
-macro_line|#endif&t;&t;&t;&t;/* &r; */
-macro_line|#endif&t;&t;&t;&t;/* &r; */
+macro_line|#endif&t;&t;&t;&t;/*  */
+macro_line|#endif&t;&t;&t;&t;/*  */
 multiline_comment|/*--------------------------------------DPRAM boot spooler------------------*/
-multiline_comment|/*  this is the struture used between pc and&r;&n;&t;&t;&t;&t; *  hyperstone to exchange boot data&r;&n;&t;&t;&t;&t; */
+multiline_comment|/*  this is the struture used between pc and&n;&t;&t;&t;&t; *  hyperstone to exchange boot data&n;&t;&t;&t;&t; */
+DECL|macro|DPRAM_SPOOLER_DATA_SIZE
 mdefine_line|#define DPRAM_SPOOLER_DATA_SIZE 0x20
-DECL|member|Len
+DECL|struct|DpramBootSpooler_tag
 r_typedef
 r_struct
 id|DpramBootSpooler_tag
 (brace
-DECL|member|RdPtr
+DECL|member|Len
 multiline_comment|/*00 */
 id|uchar
 id|Len
 suffix:semicolon
-DECL|member|WrPtr
+DECL|member|RdPtr
 multiline_comment|/*01 */
 r_volatile
 id|uchar
 id|RdPtr
 suffix:semicolon
-DECL|member|Data
+DECL|member|WrPtr
 multiline_comment|/*02 */
 id|uchar
 id|WrPtr
 suffix:semicolon
+DECL|member|Data
 multiline_comment|/*03 */
 id|uchar
 id|Data
@@ -126,14 +128,17 @@ id|DPRAM_SPOOLER_DATA_SIZE
 )braket
 suffix:semicolon
 multiline_comment|/*23 */
+DECL|typedef|tDpramBootSpooler
 )brace
 id|tDpramBootSpooler
 suffix:semicolon
+DECL|macro|DPRAM_SPOOLER_MIN_SIZE
 mdefine_line|#define DPRAM_SPOOLER_MIN_SIZE  5       /* Len+RdPtr+Wrptr+2*data */
+DECL|macro|DPRAM_SPOOLER_DEF_SIZE
 mdefine_line|#define DPRAM_SPOOLER_DEF_SIZE  0x23    /* current default size   */
-DECL|macro|SIZE_RSV_SOFT_UART
 multiline_comment|/*--------------------------------------HYCARD/ERGO DPRAM SoftUart----------*/
 multiline_comment|/* at DPRAM offset 0x1C00: */
+DECL|macro|SIZE_RSV_SOFT_UART
 mdefine_line|#define SIZE_RSV_SOFT_UART  0x1B0   /* 432 bytes reserved for SoftUart */
 macro_line|#endif&t;/* __INCE1PC_H__ */
 eof

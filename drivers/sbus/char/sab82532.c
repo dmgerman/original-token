@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sab82532.c,v 1.46 2000/07/06 01:41:37 davem Exp $&n; * sab82532.c: ASYNC Driver for the SIEMENS SAB82532 DUSCC.&n; *&n; * Copyright (C) 1997  Eddie C. Dost  (ecd@skynet.be)&n; *&n; */
+multiline_comment|/* $Id: sab82532.c,v 1.47 2000/08/16 21:12:14 ecd Exp $&n; * sab82532.c: ASYNC Driver for the SIEMENS SAB82532 DUSCC.&n; *&n; * Copyright (C) 1997  Eddie C. Dost  (ecd@skynet.be)&n; *&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -1490,22 +1490,6 @@ id|info-&gt;icount.frame
 op_increment
 suffix:semicolon
 )brace
-macro_line|#ifdef CMSPAR
-r_else
-r_if
-c_cond
-(paren
-id|status
-op_amp
-id|SAB82532_RSTAT_PARITY
-)paren
-op_star
-id|tty-&gt;flip.flag_buf_ptr
-op_increment
-op_assign
-id|TTY_PARITY
-suffix:semicolon
-macro_line|#endif
 r_else
 op_star
 id|tty-&gt;flip.flag_buf_ptr
@@ -9656,7 +9640,7 @@ r_char
 op_star
 id|revision
 op_assign
-l_string|&quot;$Revision: 1.46 $&quot;
+l_string|&quot;$Revision: 1.47 $&quot;
 suffix:semicolon
 r_char
 op_star

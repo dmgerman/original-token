@@ -37,6 +37,14 @@ DECL|macro|ZORAN_PO_GREG1
 mdefine_line|#define ZORAN_PO_GREG1&t;0x00010000
 DECL|macro|ZORAN_PO_DMASK
 mdefine_line|#define ZORAN_PO_DMASK&t;0xFF
+macro_line|#ifndef PCI_VENDOR_ID_ZORAN
+DECL|macro|PCI_VENDOR_ID_ZORAN
+mdefine_line|#define PCI_VENDOR_ID_ZORAN&t;0x11DE
+macro_line|#endif
+macro_line|#ifndef PCI_DEVICE_ID_ZORAN_36120
+DECL|macro|PCI_DEVICE_ID_ZORAN_36120
+mdefine_line|#define PCI_DEVICE_ID_ZORAN_36120&t;0x6120
+macro_line|#endif
 DECL|macro|WRITE_ADDR_ISAC
 mdefine_line|#define WRITE_ADDR_ISAC&t;(ZORAN_PO_WR | ZORAN_PO_GID0 | ZORAN_PO_GREG0)
 DECL|macro|READ_DATA_ISAC
@@ -1174,6 +1182,9 @@ id|tmp
 l_int|64
 )braket
 suffix:semicolon
+macro_line|#ifdef __BIG_ENDIAN
+macro_line|#error &quot;not running on big endian machines now&quot;
+macro_line|#endif
 id|strcpy
 c_func
 (paren
@@ -1237,9 +1248,9 @@ id|dev_tel
 op_assign
 id|pci_find_device
 (paren
-l_int|0x11DE
+id|PCI_VENDOR_ID_ZORAN
 comma
-l_int|0x6120
+id|PCI_DEVICE_ID_ZORAN_36120
 comma
 id|dev_tel
 )paren
@@ -1256,9 +1267,7 @@ id|dev_tel
 )paren
 )paren
 r_return
-(paren
 l_int|0
-)paren
 suffix:semicolon
 id|cs-&gt;irq
 op_assign
@@ -1290,12 +1299,13 @@ id|u_long
 id|ioremap
 c_func
 (paren
-id|dev_tel-&gt;resource
-(braket
+id|pci_resource_start
+c_func
+(paren
+id|dev_tel
+comma
 l_int|0
-)braket
-dot
-id|start
+)paren
 comma
 id|PAGE_SIZE
 )paren
@@ -1306,12 +1316,13 @@ c_func
 id|KERN_INFO
 l_string|&quot;Found: Zoran, base-address: 0x%lx, irq: 0x%x&bslash;n&quot;
 comma
-id|dev_tel-&gt;resource
-(braket
+id|pci_resource_start
+c_func
+(paren
+id|dev_tel
+comma
 l_int|0
-)braket
-dot
-id|start
+)paren
 comma
 id|dev_tel-&gt;irq
 )paren

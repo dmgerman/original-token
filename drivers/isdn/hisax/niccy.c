@@ -45,10 +45,14 @@ mdefine_line|#define NICCY_PNP&t;1
 DECL|macro|NICCY_PCI
 mdefine_line|#define NICCY_PCI&t;2
 multiline_comment|/* PCI stuff */
-DECL|macro|PCI_VENDOR_DR_NEUHAUS
-mdefine_line|#define PCI_VENDOR_DR_NEUHAUS&t;0x1267
-DECL|macro|PCI_NICCY_ID
-mdefine_line|#define PCI_NICCY_ID&t;&t;0x1016
+macro_line|#ifndef PCI_VENDOR_ID_SATSAGEM
+DECL|macro|PCI_VENDOR_ID_SATSAGEM
+mdefine_line|#define PCI_VENDOR_ID_SATSAGEM&t;0x1267
+macro_line|#endif
+macro_line|#ifndef PCI_DEVICE_ID_SATSAGEM_NICCY
+DECL|macro|PCI_DEVICE_ID_SATSAGEM_NICCY
+mdefine_line|#define PCI_DEVICE_ID_SATSAGEM_NICCY&t;0x1016
+macro_line|#endif
 DECL|macro|PCI_IRQ_CTRL_REG
 mdefine_line|#define PCI_IRQ_CTRL_REG&t;0x38
 DECL|macro|PCI_IRQ_ENABLE
@@ -1285,9 +1289,9 @@ op_assign
 id|pci_find_device
 c_func
 (paren
-id|PCI_VENDOR_DR_NEUHAUS
+id|PCI_VENDOR_ID_SATSAGEM
 comma
-id|PCI_NICCY_ID
+id|PCI_DEVICE_ID_SATSAGEM_NICCY
 comma
 id|niccy_dev
 )paren
@@ -1304,9 +1308,7 @@ id|niccy_dev
 )paren
 )paren
 r_return
-(paren
 l_int|0
-)paren
 suffix:semicolon
 multiline_comment|/* get IRQ */
 r_if
@@ -1331,29 +1333,6 @@ id|cs-&gt;irq
 op_assign
 id|niccy_dev-&gt;irq
 suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|niccy_dev-&gt;resource
-(braket
-l_int|0
-)braket
-dot
-id|start
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_WARNING
-l_string|&quot;Niccy: No IO-Adr for PCI cfg found&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
 id|cs-&gt;hw.niccy.cfg_reg
 op_assign
 id|pci_resource_start
@@ -1368,19 +1347,14 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|niccy_dev-&gt;resource
-(braket
-l_int|1
-)braket
-dot
-id|start
+id|cs-&gt;hw.niccy.cfg_reg
 )paren
 (brace
 id|printk
 c_func
 (paren
 id|KERN_WARNING
-l_string|&quot;Niccy: No IO-Adr for PCI card found&bslash;n&quot;
+l_string|&quot;Niccy: No IO-Adr for PCI cfg found&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -1397,6 +1371,24 @@ comma
 l_int|1
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|pci_ioaddr
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_WARNING
+l_string|&quot;Niccy: No IO-Adr for PCI card found&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
 id|cs-&gt;subtyp
 op_assign
 id|NICCY_PCI

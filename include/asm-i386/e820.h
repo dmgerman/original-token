@@ -34,16 +34,19 @@ id|e820entry
 DECL|member|addr
 r_int
 r_int
+r_int
 id|addr
 suffix:semicolon
 multiline_comment|/* start of memory segment */
 DECL|member|size
 r_int
 r_int
+r_int
 id|size
 suffix:semicolon
 multiline_comment|/* size of memory segment */
 DECL|member|type
+r_int
 r_int
 id|type
 suffix:semicolon

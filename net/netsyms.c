@@ -413,13 +413,6 @@ c_func
 id|sock_rmalloc
 )paren
 suffix:semicolon
-DECL|variable|sock_rspace
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|sock_rspace
-)paren
-suffix:semicolon
 DECL|variable|skb_recv_datagram
 id|EXPORT_SYMBOL
 c_func

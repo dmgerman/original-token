@@ -2901,83 +2901,51 @@ c_func
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/*&n;&t; * If we couldn&squot;t find a local APIC, then get out of here now!&n;&t; */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|verify_local_APIC
+c_func
+(paren
+)paren
+)paren
 (brace
-r_int
-id|reg
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;BIOS bug, local APIC at 0x%lX not detected!...&bslash;n&quot;
+comma
+id|mp_lapic_addr
+)paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; * This is to verify that we&squot;re looking at&n;&t;&t; * a real local APIC.  Check these against&n;&t;&t; * your board if the CPUs aren&squot;t getting&n;&t;&t; * started for no apparent reason.&n;&t;&t; */
-id|reg
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;... forcing use of dummy APIC emulation. (tell your hw vendor)&bslash;n&quot;
+)paren
+suffix:semicolon
+macro_line|#ifndef CONFIG_VISWS
+id|io_apic_irqs
 op_assign
-id|apic_read
-c_func
-(paren
-id|APIC_LVR
-)paren
-suffix:semicolon
-id|Dprintk
-c_func
-(paren
-l_string|&quot;Getting VERSION: %x&bslash;n&quot;
-comma
-id|reg
-)paren
-suffix:semicolon
-id|apic_write
-c_func
-(paren
-id|APIC_LVR
-comma
 l_int|0
-)paren
 suffix:semicolon
-id|reg
+macro_line|#endif
+id|cpu_online_map
 op_assign
-id|apic_read
-c_func
-(paren
-id|APIC_LVR
-)paren
-suffix:semicolon
-id|Dprintk
-c_func
-(paren
-l_string|&quot;Getting VERSION: %x&bslash;n&quot;
-comma
-id|reg
-)paren
-suffix:semicolon
-multiline_comment|/*&n;&t;&t; * The two version reads above should print the same&n;&t;&t; * NON-ZERO!!! numbers.  If the second one is zero,&n;&t;&t; * there is a problem with the APIC write/read&n;&t;&t; * definitions.&n;&t;&t; *&n;&t;&t; * The next two are just to see if we have sane values.&n;&t;&t; * They&squot;re only really relevant if we&squot;re in Virtual Wire&n;&t;&t; * compatibility mode, but most boxes are anymore.&n;&t;&t; */
-id|reg
+id|phys_cpu_present_map
 op_assign
-id|apic_read
-c_func
-(paren
-id|APIC_LVT0
-)paren
+l_int|1
 suffix:semicolon
-id|Dprintk
-c_func
-(paren
-l_string|&quot;Getting LVT0: %x&bslash;n&quot;
-comma
-id|reg
-)paren
-suffix:semicolon
-id|reg
+id|smp_num_cpus
 op_assign
-id|apic_read
-c_func
-(paren
-id|APIC_LVT1
-)paren
+l_int|1
 suffix:semicolon
-id|Dprintk
-c_func
-(paren
-l_string|&quot;Getting LVT1: %x&bslash;n&quot;
-comma
-id|reg
-)paren
+r_goto
+id|smp_done
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; * If SMP should be disabled, then really disable it!&n;&t; */

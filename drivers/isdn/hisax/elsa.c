@@ -25,7 +25,7 @@ r_char
 op_star
 id|Elsa_revision
 op_assign
-l_string|&quot;$Revision: 2.20 $&quot;
+l_string|&quot;$Revision: 2.23 $&quot;
 suffix:semicolon
 DECL|variable|Elsa_Types
 r_const
@@ -54,7 +54,7 @@ l_string|&quot;QS 1000&quot;
 comma
 l_string|&quot;QS 3000&quot;
 comma
-l_string|&quot;QS 1000 PCI&quot;
+l_string|&quot;Microlink PCI&quot;
 comma
 l_string|&quot;QS 3000 PCI&quot;
 comma
@@ -134,12 +134,18 @@ mdefine_line|#define ELSA_QS3000PCI 10
 DECL|macro|ELSA_PCMCIA_IPAC
 mdefine_line|#define ELSA_PCMCIA_IPAC 11
 multiline_comment|/* PCI stuff */
-DECL|macro|PCI_VENDOR_ELSA
-mdefine_line|#define PCI_VENDOR_ELSA&t;0x1048
-DECL|macro|PCI_QS1000_ID
-mdefine_line|#define PCI_QS1000_ID&t;0x1000
-DECL|macro|PCI_QS3000_ID
-mdefine_line|#define PCI_QS3000_ID&t;0x3000
+macro_line|#ifndef PCI_VENDOR_ID_ELSA
+DECL|macro|PCI_VENDOR_ID_ELSA
+mdefine_line|#define PCI_VENDOR_ID_ELSA&t;0x1048
+macro_line|#endif
+macro_line|#ifndef PCI_DEVICE_ID_ELSA_MIRCOLINK
+DECL|macro|PCI_DEVICE_ID_ELSA_MIRCOLINK
+mdefine_line|#define PCI_DEVICE_ID_ELSA_MIRCOLINK&t;0x1000
+macro_line|#endif
+macro_line|#ifndef PCI_DEVICE_ID_ELSA_QS3000
+DECL|macro|PCI_DEVICE_ID_ELSA_QS3000
+mdefine_line|#define PCI_DEVICE_ID_ELSA_QS3000&t;0x3000
+macro_line|#endif
 DECL|macro|ELSA_PCI_IRQ_MASK
 mdefine_line|#define ELSA_PCI_IRQ_MASK&t;0x04
 multiline_comment|/* ITAC Registeradressen (only Microlink PC) */
@@ -3750,15 +3756,17 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|abs
-c_func
 (paren
 id|cs-&gt;hw.elsa.counter
-op_minus
-l_int|13
+OG
+l_int|10
 )paren
+op_logical_and
+(paren
+id|cs-&gt;hw.elsa.counter
 OL
-l_int|3
+l_int|16
+)paren
 )paren
 (brace
 id|printk
@@ -5171,9 +5179,9 @@ op_assign
 id|pci_find_device
 c_func
 (paren
-id|PCI_VENDOR_ELSA
+id|PCI_VENDOR_ID_ELSA
 comma
-id|PCI_QS1000_ID
+id|PCI_DEVICE_ID_ELSA_MIRCOLINK
 comma
 id|dev_qs1000
 )paren
@@ -5190,9 +5198,7 @@ id|dev_qs1000
 )paren
 )paren
 r_return
-(paren
 l_int|0
-)paren
 suffix:semicolon
 id|cs-&gt;subtyp
 op_assign
@@ -5233,9 +5239,9 @@ op_assign
 id|pci_find_device
 c_func
 (paren
-id|PCI_VENDOR_ELSA
+id|PCI_VENDOR_ID_ELSA
 comma
-id|PCI_QS3000_ID
+id|PCI_DEVICE_ID_ELSA_QS3000
 comma
 id|dev_qs3000
 )paren
@@ -5248,13 +5254,11 @@ c_cond
 id|pci_enable_device
 c_func
 (paren
-id|dev_qs1000
+id|dev_qs3000
 )paren
 )paren
 r_return
-(paren
 l_int|0
-)paren
 suffix:semicolon
 id|cs-&gt;subtyp
 op_assign

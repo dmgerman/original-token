@@ -1,4 +1,5 @@
 multiline_comment|/*&n; * Copyright (C) 1996 Universidade de Lisboa&n; * &n; * Written by Pedro Roque Marques (roque@di.fc.ul.pt)&n; *&n; * This software may be used and distributed according to the terms of &n; * the GNU Public License, incorporated herein by reference.&n; */
+multiline_comment|/*&n; * 19991203 - Fernando Carvalho - takion@superbofh.org&n; * Hacked to compile with egcs and run with current version of isdn modules&n;*/
 multiline_comment|/*        &n; *        PCBIT-D low-layer interface definitions&n; */
 macro_line|#ifndef LAYER2_H
 DECL|macro|LAYER2_H
@@ -89,48 +90,26 @@ mdefine_line|#define MSG_INFO_RESP           0x08002603
 DECL|macro|MSG_DEBUG_188
 mdefine_line|#define MSG_DEBUG_188           0x0000ff00
 multiline_comment|/*&n;   &n;   long  4 3 2 1&n;   Intel 1 2 3 4&n;*/
-DECL|struct|msg_fmt
-r_struct
-id|msg_fmt
-(brace
-macro_line|#ifdef __LITTLE_ENDIAN              /* Little Endian */
-DECL|member|scmd
-id|u_char
-id|scmd
-suffix:semicolon
-DECL|member|cmd
-id|u_char
-id|cmd
-suffix:semicolon
-DECL|member|proc
-id|u_char
-id|proc
-suffix:semicolon
-DECL|member|cpu
-id|u_char
-id|cpu
-suffix:semicolon
+macro_line|#ifdef __LITTLE_ENDIAN
+DECL|macro|SET_MSG_SCMD
+mdefine_line|#define SET_MSG_SCMD(msg, ch) &t;(msg = (msg &amp; 0xffffff00) | (((ch) &amp; 0xff)))
+DECL|macro|SET_MSG_CMD
+mdefine_line|#define SET_MSG_CMD(msg, ch) &t;(msg = (msg &amp; 0xffff00ff) | (((ch) &amp; 0xff) &lt;&lt; 8))
+DECL|macro|SET_MSG_PROC
+mdefine_line|#define SET_MSG_PROC(msg, ch) &t;(msg = (msg &amp; 0xff00ffff) | (((ch) &amp; 0xff) &lt;&lt; 16))
+DECL|macro|SET_MSG_CPU
+mdefine_line|#define SET_MSG_CPU(msg, ch) &t;(msg = (msg &amp; 0x00ffffff) | (((ch) &amp; 0xff) &lt;&lt; 24))
+DECL|macro|GET_MSG_SCMD
+mdefine_line|#define GET_MSG_SCMD(msg) &t;((msg) &amp; 0xFF)
+DECL|macro|GET_MSG_CMD
+mdefine_line|#define GET_MSG_CMD(msg) &t;((msg) &gt;&gt; 8 &amp; 0xFF)
+DECL|macro|GET_MSG_PROC
+mdefine_line|#define GET_MSG_PROC(msg) &t;((msg) &gt;&gt; 16 &amp; 0xFF)
+DECL|macro|GET_MSG_CPU
+mdefine_line|#define GET_MSG_CPU(msg) &t;((msg) &gt;&gt; 24)
 macro_line|#else
 macro_line|#error &quot;Non-Intel CPU&quot;
-DECL|member|cpu
-id|u_char
-id|cpu
-suffix:semicolon
-DECL|member|proc
-id|u_char
-id|proc
-suffix:semicolon
-DECL|member|cmd
-id|u_char
-id|cmd
-suffix:semicolon
-DECL|member|scmd
-id|u_char
-id|scmd
-suffix:semicolon
 macro_line|#endif
-)brace
-suffix:semicolon
 DECL|macro|MAX_QUEUED
 mdefine_line|#define MAX_QUEUED 7
 DECL|macro|SCHED_READ

@@ -7,8 +7,8 @@ macro_line|#include &quot;isac.h&quot;
 macro_line|#include &quot;hscx.h&quot;
 macro_line|#include &quot;jade.h&quot;
 macro_line|#include &quot;isdnl1.h&quot;
-macro_line|#include &quot;bkm_ax.h&quot;
 macro_line|#include &lt;linux/pci.h&gt;
+macro_line|#include &quot;bkm_ax.h&quot;
 r_extern
 r_const
 r_char
@@ -23,7 +23,7 @@ r_char
 op_star
 id|bkm_a4t_revision
 op_assign
-l_string|&quot;$Revision: 1.9 $&quot;
+l_string|&quot;$Revision: 1.11 $&quot;
 suffix:semicolon
 r_static
 r_inline
@@ -1277,8 +1277,8 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
-r_if
-c_cond
+r_while
+c_loop
 (paren
 (paren
 id|dev_a4t
@@ -1286,20 +1286,45 @@ op_assign
 id|pci_find_device
 c_func
 (paren
-id|I20_VENDOR_ID
+id|PCI_VENDOR_ID_ZORAN
 comma
-id|I20_DEVICE_ID
+id|PCI_DEVICE_ID_ZORAN_36120
 comma
 id|dev_a4t
 )paren
 )paren
 )paren
 (brace
-id|u_int
-id|sub_sys_id
-op_assign
-l_int|0
+id|u16
+id|sub_sys
 suffix:semicolon
+id|u16
+id|sub_vendor
+suffix:semicolon
+id|sub_vendor
+op_assign
+id|dev_a4t-&gt;subsystem_vendor
+suffix:semicolon
+id|sub_sys
+op_assign
+id|dev_a4t-&gt;subsystem_device
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|sub_sys
+op_eq
+id|A4T_SUBSYS_ID
+)paren
+op_logical_and
+(paren
+id|sub_vendor
+op_eq
+id|A4T_SUBVEN_ID
+)paren
+)paren
+(brace
 r_if
 c_cond
 (paren
@@ -1310,37 +1335,8 @@ id|dev_a4t
 )paren
 )paren
 r_return
-(paren
 l_int|0
-)paren
 suffix:semicolon
-id|pci_read_config_dword
-c_func
-(paren
-id|dev_a4t
-comma
-id|PCI_SUBSYSTEM_VENDOR_ID
-comma
-op_amp
-id|sub_sys_id
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|sub_sys_id
-op_eq
-(paren
-(paren
-id|A4T_SUBSYS_ID
-op_lshift
-l_int|16
-)paren
-op_or
-id|A4T_SUBVEN_ID
-)paren
-)paren
-(brace
 id|found
 op_assign
 l_int|1
@@ -1348,6 +1344,7 @@ suffix:semicolon
 id|pci_memaddr
 op_assign
 id|pci_resource_start
+c_func
 (paren
 id|dev_a4t
 comma
@@ -1357,6 +1354,8 @@ suffix:semicolon
 id|cs-&gt;irq
 op_assign
 id|dev_a4t-&gt;irq
+suffix:semicolon
+r_break
 suffix:semicolon
 )brace
 )brace

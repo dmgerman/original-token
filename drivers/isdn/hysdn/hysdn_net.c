@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: hysdn_net.c,v 1.3 2000/02/14 19:24:12 werner Exp $&n;&n; * Linux driver for HYSDN cards, net (ethernet type) handling routines.&n; *&n; * written by Werner Cornelius (werner@titro.de) for Hypercope GmbH&n; *&n; * Copyright 1999  by Werner Cornelius (werner@titro.de)&n; *&n; * This net module has been inspired by the skeleton driver from&n; * Donald Becker (becker@CESDIS.gsfc.nasa.gov)&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * $Log: hysdn_net.c,v $&n; * Revision 1.3  2000/02/14 19:24:12  werner&n; *&n; * Removed superflous file&n; *&n; * Revision 1.2  2000/02/13 17:32:19  werner&n; *&n; * Added support for new network layer of 2.3.43 and 44 kernels and tested driver.&n; *&n; * Revision 1.1  2000/02/10 19:45:18  werner&n; *&n; * Initial release&n; *&n; *&n; */
+multiline_comment|/* $Id: hysdn_net.c,v 1.7 2000/05/23 06:48:54 ualbrecht Exp $&n;&n; * Linux driver for HYSDN cards, net (ethernet type) handling routines.&n; *&n; * written by Werner Cornelius (werner@titro.de) for Hypercope GmbH&n; *&n; * Copyright 1999  by Werner Cornelius (werner@titro.de)&n; *&n; * This net module has been inspired by the skeleton driver from&n; * Donald Becker (becker@CESDIS.gsfc.nasa.gov)&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * $Log: hysdn_net.c,v $&n; * Revision 1.7  2000/05/23 06:48:54  ualbrecht&n; * Reverted last change in dev-&gt;name assignment (broken netdevice.h in 2.3.99pre6?)&n; *&n; * Revision 1.6  2000/05/17 11:43:03  ualbrecht&n; * Fixed a NULL-pointer kernel-oops assigning the device-name&n; *&n; * Revision 1.5  2000/05/06 00:52:38  kai&n; * merged changes from kernel tree&n; * fixed timer and net_device-&gt;name breakage&n; *&n; * Revision 1.4  2000/04/23 14:18:36  kai&n; * merge changes from main tree&n; *&n; * Revision 1.3  2000/02/14 19:24:12  werner&n; *&n; * Removed superflous file&n; *&n; * Revision 1.2  2000/02/13 17:32:19  werner&n; *&n; * Added support for new network layer of 2.3.43 and 44 kernels and tested driver.&n; *&n; * Revision 1.1  2000/02/10 19:45:18  werner&n; *&n; * Initial release&n; *&n; *&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &lt;linux/module.h&gt;
@@ -16,7 +16,7 @@ r_char
 op_star
 id|hysdn_net_revision
 op_assign
-l_string|&quot;$Revision: 1.3 $&quot;
+l_string|&quot;$Revision: 1.7 $&quot;
 suffix:semicolon
 DECL|macro|MAX_SKB_BUFFERS
 mdefine_line|#define MAX_SKB_BUFFERS 20&t;/* number of buffers for keeping TX-data */
@@ -899,6 +899,27 @@ suffix:semicolon
 r_int
 id|i
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|card
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_WARNING
+l_string|&quot;No card-pt in hysdn_net_create!&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+(paren
+op_minus
+id|ENOMEM
+)paren
+suffix:semicolon
+)brace
 id|hysdn_net_release
 c_func
 (paren
@@ -996,6 +1017,30 @@ op_assign
 id|net_init
 suffix:semicolon
 multiline_comment|/* the init function of the device */
+r_if
+c_cond
+(paren
+id|dev-&gt;name
+)paren
+(brace
+id|strcpy
+c_func
+(paren
+id|dev-&gt;name
+comma
+(paren
+(paren
+r_struct
+id|net_local
+op_star
+)paren
+id|dev
+)paren
+op_member_access_from_pointer
+id|dev_name
+)paren
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren

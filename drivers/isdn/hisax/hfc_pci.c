@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: hfc_pci.c,v 1.30 2000/06/26 08:59:13 keil Exp $&n;&n; * hfc_pci.c     low level driver for CCD&#xfffd;s hfc-pci based cards&n; *&n; * Author     Werner Cornelius (werner@isdn4linux.de)&n; *            based on existing driver for CCD hfc ISA cards&n; *&n; * Copyright 1999  by Werner Cornelius (werner@isdn4linux.de)&n; * Copyright 1999  by Karsten Keil (keil@isdn4linux.de)&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; */
+multiline_comment|/* $Id: hfc_pci.c,v 1.31 2000/08/20 07:32:55 keil Exp $&n;&n; * hfc_pci.c     low level driver for CCD&#xfffd;s hfc-pci based cards&n; *&n; * Author     Werner Cornelius (werner@isdn4linux.de)&n; *            based on existing driver for CCD hfc ISA cards&n; *&n; * Copyright 1999  by Werner Cornelius (werner@isdn4linux.de)&n; * Copyright 1999  by Karsten Keil (keil@isdn4linux.de)&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; */
 macro_line|#include &lt;linux/config.h&gt;
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
@@ -22,7 +22,7 @@ r_char
 op_star
 id|hfcpci_revision
 op_assign
-l_string|&quot;$Revision: 1.30 $&quot;
+l_string|&quot;$Revision: 1.31 $&quot;
 suffix:semicolon
 multiline_comment|/* table entry in the PCI devices list */
 r_typedef
@@ -51,7 +51,11 @@ DECL|typedef|PCI_ENTRY
 id|PCI_ENTRY
 suffix:semicolon
 DECL|macro|NT_T1_COUNT
-mdefine_line|#define NT_T1_COUNT 20&t;&t;/* number of 3.125ms interrupts for G2 timeout */
+mdefine_line|#define NT_T1_COUNT&t;20&t;/* number of 3.125ms interrupts for G2 timeout */
+DECL|macro|CLKDEL_TE
+mdefine_line|#define CLKDEL_TE&t;0x0e&t;/* CLKDEL in TE mode */
+DECL|macro|CLKDEL_NT
+mdefine_line|#define CLKDEL_NT&t;0x6c&t;/* CLKDEL in NT mode */
 DECL|variable|id_list
 r_static
 r_const
@@ -212,13 +216,43 @@ l_string|&quot;2BD0&quot;
 )brace
 comma
 (brace
-l_int|0x114f
+l_int|0x114F
+comma
+l_int|0x70
+comma
+l_string|&quot;Digi International&quot;
+comma
+l_string|&quot;Digi DataFire Micro V IOM2 (Europe)&quot;
+)brace
+comma
+(brace
+l_int|0x114F
 comma
 l_int|0x71
 comma
-l_string|&quot;Digi intl.&quot;
+l_string|&quot;Digi International&quot;
 comma
-l_string|&quot;Digicom&quot;
+l_string|&quot;Digi DataFire Micro V (Europe)&quot;
+)brace
+comma
+(brace
+l_int|0x114F
+comma
+l_int|0x72
+comma
+l_string|&quot;Digi International&quot;
+comma
+l_string|&quot;Digi DataFire Micro V IOM2 (North America)&quot;
+)brace
+comma
+(brace
+l_int|0x114F
+comma
+l_int|0x73
+comma
+l_string|&quot;Digi International&quot;
+comma
+l_string|&quot;Digi DataFire Micro V (North America)&quot;
 )brace
 comma
 (brace
@@ -572,7 +606,7 @@ id|cs
 comma
 id|HFCPCI_CLKDEL
 comma
-l_int|0x0e
+id|CLKDEL_TE
 )paren
 suffix:semicolon
 multiline_comment|/* ST-Bit delay for TE-Mode */
@@ -1208,6 +1242,11 @@ comma
 id|count
 )paren
 suffix:semicolon
+macro_line|#ifdef ERROR_STATISTIC
+id|bcs-&gt;err_inv
+op_increment
+suffix:semicolon
+macro_line|#endif
 id|bz-&gt;za
 (braket
 id|new_f2
@@ -1591,6 +1630,11 @@ id|zp-&gt;z1
 )braket
 )paren
 suffix:semicolon
+macro_line|#ifdef ERROR_STATISTIC
+id|cs-&gt;err_rx
+op_increment
+suffix:semicolon
+macro_line|#endif
 id|df-&gt;f2
 op_assign
 (paren
@@ -2659,6 +2703,11 @@ comma
 l_string|&quot;hfcpci_fill_Dfifo more as 14 frames&quot;
 )paren
 suffix:semicolon
+macro_line|#ifdef ERROR_STATISTIC
+id|cs-&gt;err_tx
+op_increment
+suffix:semicolon
+macro_line|#endif
 r_return
 suffix:semicolon
 )brace
@@ -4036,6 +4085,17 @@ c_func
 (paren
 )paren
 suffix:semicolon
+id|Write_hfc
+c_func
+(paren
+id|cs
+comma
+id|HFCPCI_CLKDEL
+comma
+id|CLKDEL_NT
+)paren
+suffix:semicolon
+multiline_comment|/* ST-Bit delay for NT-Mode */
 id|Write_hfc
 c_func
 (paren
@@ -8879,6 +8939,9 @@ id|tmp_hfcpci
 op_assign
 l_int|NULL
 suffix:semicolon
+macro_line|#ifdef __BIG_ENDIAN
+macro_line|#error &quot;not running on big endian machines now&quot;
+macro_line|#endif
 id|strcpy
 c_func
 (paren
@@ -9017,12 +9080,15 @@ id|card-&gt;para
 l_int|0
 )braket
 op_ne
-id|pci_resource_start
-c_func
 (paren
-id|tmp_hfcpci
-comma
+id|tmp_hfcpci-&gt;resource
+(braket
 l_int|0
+)braket
+dot
+id|start
+op_amp
+id|PCI_BASE_ADDRESS_IO_MASK
 )paren
 )paren
 )paren

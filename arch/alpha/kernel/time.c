@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/arch/alpha/kernel/time.c&n; *&n; *  Copyright (C) 1991, 1992, 1995, 1999  Linus Torvalds&n; *&n; * This file contains the PC-specific time handling details:&n; * reading the RTC at bootup, etc..&n; * 1994-07-02    Alan Modra&n; *&t;fixed set_rtc_mmss, fixed time.year for &gt;= 2000, new mktime&n; * 1995-03-26    Markus Kuhn&n; *      fixed 500 ms bug at call to set_rtc_mmss, fixed DS12887&n; *      precision CMOS clock update&n; * 1997-09-10&t;Updated NTP code according to technical memorandum Jan &squot;96&n; *&t;&t;&quot;A Kernel Model for Precision Timekeeping&quot; by Dave Mills&n; * 1997-01-09    Adrian Sun&n; *      use interval timer if CONFIG_RTC=y&n; * 1997-10-29    John Bowman (bowman@math.ualberta.ca)&n; *      fixed tick loss calculation in timer_interrupt&n; *      (round system clock to nearest tick instead of truncating)&n; *      fixed algorithm in time_init for getting time from CMOS clock&n; * 1999-04-16&t;Thorsten Kranzkowski (dl8bcu@gmx.net)&n; *&t;fixed algorithm in do_gettimeofday() for calculating the precise time&n; *&t;from processor cycle counter (now taking lost_ticks into account)&n; */
+multiline_comment|/*&n; *  linux/arch/alpha/kernel/time.c&n; *&n; *  Copyright (C) 1991, 1992, 1995, 1999, 2000  Linus Torvalds&n; *&n; * This file contains the PC-specific time handling details:&n; * reading the RTC at bootup, etc..&n; * 1994-07-02    Alan Modra&n; *&t;fixed set_rtc_mmss, fixed time.year for &gt;= 2000, new mktime&n; * 1995-03-26    Markus Kuhn&n; *      fixed 500 ms bug at call to set_rtc_mmss, fixed DS12887&n; *      precision CMOS clock update&n; * 1997-09-10&t;Updated NTP code according to technical memorandum Jan &squot;96&n; *&t;&t;&quot;A Kernel Model for Precision Timekeeping&quot; by Dave Mills&n; * 1997-01-09    Adrian Sun&n; *      use interval timer if CONFIG_RTC=y&n; * 1997-10-29    John Bowman (bowman@math.ualberta.ca)&n; *      fixed tick loss calculation in timer_interrupt&n; *      (round system clock to nearest tick instead of truncating)&n; *      fixed algorithm in time_init for getting time from CMOS clock&n; * 1999-04-16&t;Thorsten Kranzkowski (dl8bcu@gmx.net)&n; *&t;fixed algorithm in do_gettimeofday() for calculating the precise time&n; *&t;from processor cycle counter (now taking lost_ticks into account)&n; * 2000-08-13&t;Jan-Benedict Glaw &lt;jbglaw@lug-owl.de&gt;&n; * &t;Fixed time_init to be aware of epoches != 1900. This prevents&n; * &t;booting up in 2048 for me;) Code is stolen from rtc.c.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -612,6 +612,8 @@ comma
 id|cc1
 comma
 id|cc2
+comma
+id|epoch
 suffix:semicolon
 r_int
 r_int
@@ -889,20 +891,77 @@ id|year
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifdef ALPHA_PRE_V1_2_SRM_CONSOLE
-multiline_comment|/*&n;&t; * The meaning of life, the universe, and everything. Plus&n;&t; * this makes the year come out right on SRM consoles earlier&n;&t; * than v1.2.&n;&t; */
-id|year
-op_sub_assign
-l_int|42
+multiline_comment|/* PC-like is standard; used for year &lt;= 20 || year &gt;= 100 */
+id|epoch
+op_assign
+l_int|1900
 suffix:semicolon
-macro_line|#endif
+r_if
+c_cond
+(paren
+id|year
+OG
+l_int|20
+op_logical_and
+id|year
+OL
+l_int|48
+)paren
+multiline_comment|/* ARC console, used on some not so old boards */
+id|epoch
+op_assign
+l_int|1980
+suffix:semicolon
+r_else
+r_if
+c_cond
+(paren
+id|year
+op_ge
+l_int|48
+op_logical_and
+id|year
+OL
+l_int|70
+)paren
+multiline_comment|/* Digital UNIX, used on older boards (eg. AXPpxi33) */
+id|epoch
+op_assign
+l_int|1952
+suffix:semicolon
+r_else
+r_if
+c_cond
+(paren
+id|year
+op_ge
+l_int|70
+op_logical_and
+id|year
+OL
+l_int|100
+)paren
+multiline_comment|/* Digital DECstations, very old... */
+id|epoch
+op_assign
+l_int|1928
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_INFO
+l_string|&quot;Using epoch = %d&bslash;n&quot;
+comma
+id|epoch
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
 (paren
 id|year
 op_add_assign
-l_int|1900
+id|epoch
 )paren
 OL
 l_int|1970

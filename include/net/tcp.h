@@ -2819,9 +2819,6 @@ id|TCP_RTO_MAX
 )paren
 (brace
 macro_line|#ifdef TCP_DEBUG
-id|__label__
-id|here
-suffix:semicolon
 id|printk
 c_func
 (paren
@@ -2834,12 +2831,12 @@ id|what
 comma
 id|when
 comma
-op_logical_and
-id|here
+id|current_text_addr
+c_func
+(paren
+)paren
 )paren
 suffix:semicolon
-id|here
-suffix:colon
 macro_line|#endif
 id|when
 op_assign

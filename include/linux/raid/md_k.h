@@ -237,7 +237,7 @@ DECL|macro|MAX_CHUNK_SIZE
 mdefine_line|#define MAX_CHUNK_SIZE (4096*1024)
 multiline_comment|/*&n; * default readahead&n; */
 DECL|macro|MD_READAHEAD
-mdefine_line|#define MD_READAHEAD&t;(256 * 512)
+mdefine_line|#define MD_READAHEAD&t;MAX_READAHEAD
 DECL|function|disk_faulty
 r_extern
 r_inline

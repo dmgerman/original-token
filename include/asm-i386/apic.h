@@ -214,6 +214,13 @@ r_void
 )paren
 suffix:semicolon
 r_extern
+r_int
+id|verify_local_APIC
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
 r_void
 id|cache_APIC_registers
 (paren

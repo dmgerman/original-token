@@ -498,7 +498,6 @@ suffix:semicolon
 macro_line|#endif
 )brace
 suffix:semicolon
-macro_line|#ifdef CONFIG_NET_CLS_TCINDEX
 id|skb-&gt;tc_index
 op_assign
 id|TC_H_MIN
@@ -507,7 +506,6 @@ c_func
 id|res.classid
 )paren
 suffix:semicolon
-macro_line|#endif
 r_return
 id|result
 suffix:semicolon

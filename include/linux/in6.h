@@ -31,18 +31,6 @@ id|u6_addr32
 l_int|4
 )braket
 suffix:semicolon
-macro_line|#if (~0UL) &gt; 0xffffffff
-macro_line|#ifndef __RELAX_IN6_ADDR_ALIGNMENT
-multiline_comment|/* Alas, protocols do not respect 64bit alignmnet.&n;&t;&t;   rsvp/pim/... are broken. However, it is good&n;&t;&t;   idea to force correct alignment always, when&n;&t;&t;   it is possible.&n;&t;&t; */
-DECL|member|u6_addr64
-id|__u64
-id|u6_addr64
-(braket
-l_int|2
-)braket
-suffix:semicolon
-macro_line|#endif
-macro_line|#endif
 DECL|member|in6_u
 )brace
 id|in6_u
@@ -53,8 +41,6 @@ DECL|macro|s6_addr16
 mdefine_line|#define s6_addr16&t;&t;in6_u.u6_addr16
 DECL|macro|s6_addr32
 mdefine_line|#define s6_addr32&t;&t;in6_u.u6_addr32
-DECL|macro|s6_addr64
-mdefine_line|#define s6_addr64&t;&t;in6_u.u6_addr64
 )brace
 suffix:semicolon
 DECL|struct|sockaddr_in6

@@ -1,4 +1,5 @@
 multiline_comment|/*&n; * Copyright (C) 1996 Universidade de Lisboa&n; *&n; * Written by Pedro Roque Marques (roque@di.fc.ul.pt)&n; *&n; * This software may be used and distributed according to the terms of&n; * the GNU Public License, incorporated herein by reference.&n; */
+multiline_comment|/*&n; * 19991203 - Fernando Carvalho - takion@superbofh.org&n; * Hacked to compile with egcs and run with current version of isdn modules&n;*/
 multiline_comment|/*&n; *        PCBIT-D low-layer interface&n; */
 multiline_comment|/*&n; *        Based on documentation provided by Inesc:&n; *        - &quot;Interface com bus do PC para o PCBIT e PCBIT-D&quot;, Inesc, Jan 93&n; */
 multiline_comment|/*&n; *        TODO: better handling of errors&n; *              re-write/remove debug printks&n; */
@@ -584,9 +585,7 @@ l_int|0
 )paren
 (brace
 multiline_comment|/* Type 0 frame */
-r_struct
-id|msg_fmt
-op_star
+id|ulong
 id|msg
 suffix:semicolon
 r_if
@@ -621,15 +620,7 @@ id|free
 suffix:semicolon
 id|msg
 op_assign
-(paren
-r_struct
-id|msg_fmt
-op_star
-)paren
-op_amp
-(paren
 id|frame-&gt;msg
-)paren
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t; *  Board level 2 header&n;&t;&t;&t; */
 id|pcbit_writew
@@ -647,7 +638,11 @@ c_func
 (paren
 id|dev
 comma
-id|msg-&gt;cpu
+id|GET_MSG_CPU
+c_func
+(paren
+id|msg
+)paren
 )paren
 suffix:semicolon
 id|pcbit_writeb
@@ -655,7 +650,11 @@ c_func
 (paren
 id|dev
 comma
-id|msg-&gt;proc
+id|GET_MSG_PROC
+c_func
+(paren
+id|msg
+)paren
 )paren
 suffix:semicolon
 multiline_comment|/* TH */
@@ -705,7 +704,11 @@ c_func
 (paren
 id|dev
 comma
-id|msg-&gt;cmd
+id|GET_MSG_CMD
+c_func
+(paren
+id|msg
+)paren
 )paren
 suffix:semicolon
 id|pcbit_writeb
@@ -713,7 +716,11 @@ c_func
 (paren
 id|dev
 comma
-id|msg-&gt;scmd
+id|GET_MSG_SCMD
+c_func
+(paren
+id|msg
+)paren
 )paren
 suffix:semicolon
 multiline_comment|/* NUM */
@@ -945,9 +952,7 @@ suffix:semicolon
 r_int
 r_int
 id|flags
-suffix:semicolon
-r_struct
-id|msg_fmt
+comma
 id|msg
 suffix:semicolon
 r_struct
@@ -993,27 +998,43 @@ c_func
 id|flags
 )paren
 suffix:semicolon
-id|msg.cpu
-op_assign
+id|SET_MSG_CPU
+c_func
+(paren
+id|msg
+comma
 l_int|0
+)paren
 suffix:semicolon
-id|msg.proc
-op_assign
+id|SET_MSG_PROC
+c_func
+(paren
+id|msg
+comma
 l_int|0
+)paren
 suffix:semicolon
-id|msg.cmd
-op_assign
+id|SET_MSG_CMD
+c_func
+(paren
+id|msg
+comma
 id|frame-&gt;skb-&gt;data
 (braket
 l_int|2
 )braket
+)paren
 suffix:semicolon
-id|msg.scmd
-op_assign
+id|SET_MSG_SCMD
+c_func
+(paren
+id|msg
+comma
 id|frame-&gt;skb-&gt;data
 (braket
 l_int|3
 )braket
+)paren
 suffix:semicolon
 id|frame-&gt;refnum
 op_assign

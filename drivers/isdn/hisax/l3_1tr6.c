@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: l3_1tr6.c,v 2.11 2000/06/26 08:59:14 keil Exp $&n; *&n; *  German 1TR6 D-channel protocol&n; *&n; * Author       Karsten Keil (keil@isdn4linux.de)&n; *&n; *&t;&t;This file is (c) under GNU PUBLIC LICENSE&n; *&t;&t;For changes and modifications please read&n; *&t;&t;../../../Documentation/isdn/HiSax.cert&n; *&n; */
+multiline_comment|/* $Id: l3_1tr6.c,v 2.12 2000/08/20 07:31:30 keil Exp $&n; *&n; *  German 1TR6 D-channel protocol&n; *&n; * Author       Karsten Keil (keil@isdn4linux.de)&n; *&n; *&t;&t;This file is (c) under GNU PUBLIC LICENSE&n; *&t;&t;For changes and modifications please read&n; *&t;&t;../../../Documentation/isdn/HiSax.cert&n; *&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &quot;hisax.h&quot;
@@ -23,7 +23,7 @@ r_char
 op_star
 id|l3_1tr6_revision
 op_assign
-l_string|&quot;$Revision: 2.11 $&quot;
+l_string|&quot;$Revision: 2.12 $&quot;
 suffix:semicolon
 DECL|macro|MsgHead
 mdefine_line|#define MsgHead(ptr, cref, mty, dis) &bslash;&n;&t;*ptr++ = dis; &bslash;&n;&t;*ptr++ = 0x1; &bslash;&n;&t;*ptr++ = cref ^ 0x80; &bslash;&n;&t;*ptr++ = mty
@@ -5298,6 +5298,7 @@ op_assign
 id|proc
 suffix:semicolon
 id|memcpy
+c_func
 (paren
 op_amp
 id|proc-&gt;para.setup
@@ -5307,7 +5308,7 @@ id|chan-&gt;setup
 comma
 r_sizeof
 (paren
-id|chan-&gt;setup
+id|setup_parm
 )paren
 )paren
 suffix:semicolon

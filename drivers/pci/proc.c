@@ -1167,6 +1167,16 @@ id|buf
 op_add_assign
 id|len
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|cnt
+op_ge
+id|count
+)paren
+multiline_comment|/*&n;&t;&t;&t;&t; * proc_file_read() gives us 1KB of slack so it&squot;s OK if the&n;&t;&t;&t;&t; * above printfs write a little beyond the buffer end (we&n;&t;&t;&t;&t; * never write more than 1KB beyond the buffer end).&n;&t;&t;&t;&t; */
+r_break
+suffix:semicolon
 )brace
 )brace
 r_return

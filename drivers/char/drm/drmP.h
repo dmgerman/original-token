@@ -822,6 +822,10 @@ id|atomic_t
 id|wfh
 suffix:semicolon
 multiline_comment|/* If waiting for high mark&t;   */
+DECL|member|lock
+id|spinlock_t
+id|lock
+suffix:semicolon
 DECL|typedef|drm_freelist_t
 )brace
 id|drm_freelist_t

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * for the TEA6420 chip (only found on 3DFX (STB) TV/FM cards to the best&n; * of my knowledge)&n; * Copyright (C) 2000 Dave Stuart &lt;justdave@ynn.com&gt;&n; * This code is placed under the terms of the GNU General Public License&n; * Code liberally copied from tea6300 by . . .&n; *&n; * Copyright (c) 1998 Greg Alexander &lt;galexand@acm.org&gt;&n; * This code is placed under the terms of the GNU General Public License&n; * Code liberally copied from msp3400.c, which is by Gerd Knorr&n; *&n; */
+multiline_comment|/*&n; * for the TEA6420 chip (only found on 3DFX (STB) TV/FM cards to the best&n; * of my knowledge)&n; * Copyright (C) 2000 Dave Stuart &lt;justdave@ynn.com&gt;&n; * This code is placed under the terms of the GNU General Public License&n; * Code liberally copied from tea6300 by . . .&n; *&n; * Copyright (c) 1998 Greg Alexander &lt;galexand@acm.org&gt;&n; * This code is placed under the terms of the GNU General Public License&n; * Code liberally copied from msp3400.c, which is by Gerd Knorr&n; *&n; * Changes:&n; * Arnaldo Carvalho de Melo &lt;acme@conectiva.com.br&gt; - 08/14/2000&n; * - resource allocation fixes in tea6300_attach&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -531,10 +531,18 @@ c_cond
 op_logical_neg
 id|tea
 )paren
+(brace
+id|kfree
+c_func
+(paren
+id|client
+)paren
+suffix:semicolon
 r_return
 op_minus
 id|ENOMEM
 suffix:semicolon
+)brace
 id|memset
 c_func
 (paren

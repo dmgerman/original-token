@@ -28,28 +28,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;HiSax: Approved with ELSA Quickstep series cards&bslash;n&quot;
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-id|KERN_INFO
-l_string|&quot;HiSax: Approval registration numbers:&bslash;n&quot;
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-id|KERN_INFO
-l_string|&quot;HiSax: German D133361J CETECOM ICT Services GmbH&bslash;n&quot;
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-id|KERN_INFO
-l_string|&quot;HiSax: EU (D133362J) CETECOM ICT Services GmbH&bslash;n&quot;
+l_string|&quot;HiSax: Approved with ELSA Microlink PCI cards&bslash;n&quot;
 )paren
 suffix:semicolon
 id|printk
@@ -57,6 +36,13 @@ c_func
 (paren
 id|KERN_INFO
 l_string|&quot;HiSax: Approved with Eicon Technology Diva 2.01 PCI cards&bslash;n&quot;
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_INFO
+l_string|&quot;HiSax: Approved with Sedlbauer Speedfax + cards&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace

@@ -1,8 +1,8 @@
 multiline_comment|/*&n;&n;  Linux Driver for Mylex DAC960/AcceleRAID/eXtremeRAID PCI RAID Controllers&n;&n;  Copyright 1998-2000 by Leonard N. Zubkoff &lt;lnz@dandelion.com&gt;&n;&n;  This program is free software; you may redistribute and/or modify it under&n;  the terms of the GNU General Public License Version 2 as published by the&n;  Free Software Foundation.&n;&n;  This program is distributed in the hope that it will be useful, but&n;  WITHOUT ANY WARRANTY, without even the implied warranty of MERCHANTABILITY&n;  or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License&n;  for complete details.&n;&n;  The author respectfully requests that any modifications to this software be&n;  sent directly to him for evaluation and testing.&n;&n;*/
 DECL|macro|DAC960_DriverVersion
-mdefine_line|#define DAC960_DriverVersion&t;&t;&t;&quot;2.4.7&quot;
+mdefine_line|#define DAC960_DriverVersion&t;&t;&t;&quot;2.4.8&quot;
 DECL|macro|DAC960_DriverDate
-mdefine_line|#define DAC960_DriverDate&t;&t;&t;&quot;1 August 2000&quot;
+mdefine_line|#define DAC960_DriverDate&t;&t;&t;&quot;19 August 2000&quot;
 macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -8494,16 +8494,6 @@ id|Controller-&gt;Function
 op_assign
 id|Function
 suffix:semicolon
-id|sprintf
-c_func
-(paren
-id|Controller-&gt;ControllerName
-comma
-l_string|&quot;c%d&quot;
-comma
-id|Controller-&gt;ControllerNumber
-)paren
-suffix:semicolon
 multiline_comment|/*&n;&t;Map the Controller Register Window.&n;      */
 r_if
 c_cond
@@ -14434,25 +14424,25 @@ comma
 (brace
 l_int|0x0090
 comma
-l_string|&quot;L Initialization Started&quot;
+l_string|&quot;M Initialization Started&quot;
 )brace
 comma
 (brace
 l_int|0x0091
 comma
-l_string|&quot;L Initialization Completed&quot;
+l_string|&quot;M Initialization Completed&quot;
 )brace
 comma
 (brace
 l_int|0x0092
 comma
-l_string|&quot;L Initialization Cancelled&quot;
+l_string|&quot;M Initialization Cancelled&quot;
 )brace
 comma
 (brace
 l_int|0x0093
 comma
-l_string|&quot;L Initialization Failed&quot;
+l_string|&quot;M Initialization Failed&quot;
 )brace
 comma
 (brace
@@ -14470,19 +14460,19 @@ comma
 (brace
 l_int|0x0096
 comma
-l_string|&quot;L Expand Capacity Started&quot;
+l_string|&quot;M Expand Capacity Started&quot;
 )brace
 comma
 (brace
 l_int|0x0097
 comma
-l_string|&quot;L Expand Capacity Completed&quot;
+l_string|&quot;M Expand Capacity Completed&quot;
 )brace
 comma
 (brace
 l_int|0x0098
 comma
-l_string|&quot;L Expand Capacity Failed&quot;
+l_string|&quot;M Expand Capacity Failed&quot;
 )brace
 comma
 (brace
@@ -14681,6 +14671,41 @@ id|EventType
 comma
 op_star
 id|EventMessage
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|Event-&gt;EventCode
+op_eq
+l_int|0x1C
+op_logical_and
+id|RequestSense-&gt;SenseKey
+op_eq
+id|DAC960_SenseKey_VendorSpecific
+op_logical_and
+(paren
+id|RequestSense-&gt;AdditionalSenseCode
+op_eq
+l_int|0x80
+op_logical_or
+id|RequestSense-&gt;AdditionalSenseCode
+op_eq
+l_int|0x81
+)paren
+)paren
+id|Event-&gt;EventCode
+op_assign
+(paren
+(paren
+id|RequestSense-&gt;AdditionalSenseCode
+op_minus
+l_int|0x80
+)paren
+op_lshift
+l_int|8
+)paren
+op_or
+id|RequestSense-&gt;AdditionalSenseCodeQualifier
 suffix:semicolon
 r_while
 c_loop
@@ -14951,6 +14976,13 @@ suffix:semicolon
 r_case
 l_char|&squot;E&squot;
 suffix:colon
+r_if
+c_cond
+(paren
+id|Controller-&gt;SuppressEnclosureMessages
+)paren
+r_break
+suffix:semicolon
 id|sprintf
 c_func
 (paren
@@ -16427,7 +16459,7 @@ c_func
 (paren
 id|Controller
 comma
-l_string|&quot;BackgroundInitialization&quot;
+l_string|&quot;Background Initialization&quot;
 comma
 id|LogicalDeviceNumber
 comma
@@ -18446,6 +18478,17 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|File
+op_eq
+l_int|NULL
+)paren
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
+r_if
+c_cond
+(paren
 id|File-&gt;f_flags
 op_amp
 id|O_NONBLOCK
@@ -19454,6 +19497,17 @@ l_int|0
 )paren
 r_goto
 id|Failure1
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|DCDB.Channel
+op_ge
+id|DAC960_V1_MaxChannels
+)paren
+r_return
+op_minus
+id|EINVAL
 suffix:semicolon
 r_if
 c_cond
@@ -21130,6 +21184,17 @@ id|DAC960_V1_DCDB
 id|DCDB
 op_assign
 id|KernelCommand-&gt;DCDB
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|DCDB-&gt;Channel
+op_ge
+id|DAC960_V1_MaxChannels
+)paren
+r_return
+op_minus
+id|EINVAL
 suffix:semicolon
 r_if
 c_cond
@@ -24688,6 +24753,24 @@ l_string|&quot;Not Cancelled&quot;
 suffix:semicolon
 )brace
 r_else
+r_if
+c_cond
+(paren
+id|strcmp
+c_func
+(paren
+id|UserCommand
+comma
+l_string|&quot;suppress-enclosure-messages&quot;
+)paren
+op_eq
+l_int|0
+)paren
+id|Controller-&gt;SuppressEnclosureMessages
+op_assign
+l_bool|true
+suffix:semicolon
+r_else
 id|DAC960_UserCritical
 c_func
 (paren
@@ -25544,6 +25627,16 @@ op_eq
 l_int|NULL
 )paren
 r_continue
+suffix:semicolon
+id|sprintf
+c_func
+(paren
+id|Controller-&gt;ControllerName
+comma
+l_string|&quot;c%d&quot;
+comma
+id|Controller-&gt;ControllerNumber
+)paren
 suffix:semicolon
 id|ControllerProcEntry
 op_assign

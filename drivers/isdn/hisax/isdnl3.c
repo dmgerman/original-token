@@ -884,7 +884,7 @@ id|st
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef        CONFIG_HISAX_NI1
+macro_line|#ifdef  CONFIG_HISAX_NI1
 r_extern
 r_void
 id|setstack_ni1
@@ -1443,7 +1443,7 @@ suffix:semicolon
 )brace
 r_else
 macro_line|#endif
-macro_line|#ifdef        CONFIG_HISAX_NI1
+macro_line|#ifdef  CONFIG_HISAX_NI1
 r_if
 c_cond
 (paren

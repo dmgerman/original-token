@@ -317,7 +317,7 @@ mdefine_line|#define HDLC_ERR_FAD&t;0x10
 DECL|macro|HDLC_ERR_RER
 mdefine_line|#define HDLC_ERR_RER&t;0x08
 DECL|macro|HDLC_ERR_CER
-mdefine_line|#define HDLC_ERR_CER&t;0x01
+mdefine_line|#define HDLC_ERR_CER&t;0x04
 DECL|macro|SART_NMD
 mdefine_line|#define SART_NMD&t;0x01
 DECL|macro|BSTAT_RDM0

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * $Id: ns558.c,v 1.11 2000/06/20 23:35:03 vojtech Exp $&n; *&n; *  Copyright (c) 1999-2000 Vojtech Pavlik&n; *  Copyright (c) 1999 Brian Gerst&n; *&n; *  Sponsored by SuSE&n; */
+multiline_comment|/*&n; * $Id: ns558.c,v 1.16 2000/08/17 20:03:56 vojtech Exp $&n; *&n; *  Copyright (c) 1999-2000 Vojtech Pavlik&n; *  Copyright (c) 1999 Brian Gerst&n; *&n; *  Sponsored by SuSE&n; */
 multiline_comment|/*&n; * NS558 based standard IBM game port driver for Linux&n; */
 multiline_comment|/*&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2 of the License, or &n; * (at your option) any later version.&n; * &n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; * &n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA&n; * &n; * Should you need to contact me, the author, you can do so either by&n; * e-mail - mail your message to &lt;vojtech@ucw.cz&gt;, or by paper mail:&n; * Vojtech Pavlik, Ucitelska 1576, Prague 8, 182 00 Czech Republic&n; */
 macro_line|#include &lt;asm/io.h&gt;
@@ -492,6 +492,13 @@ suffix:semicolon
 id|port-&gt;gameport.io
 op_assign
 id|io
+op_amp
+(paren
+op_minus
+l_int|1
+op_lshift
+id|i
+)paren
 suffix:semicolon
 id|port-&gt;gameport.size
 op_assign
@@ -894,6 +901,12 @@ comma
 id|port-&gt;gameport.size
 )paren
 suffix:semicolon
+id|kfree
+c_func
+(paren
+id|port
+)paren
+suffix:semicolon
 )brace
 DECL|variable|ns558_pci_driver
 r_static
@@ -920,8 +933,19 @@ id|ns558_pci_remove
 comma
 )brace
 suffix:semicolon
+macro_line|#else
+DECL|variable|ns558_pci_driver
+r_static
+r_struct
+id|pci_driver
+id|ns558_pci_driver
+suffix:semicolon
 macro_line|#endif /* CONFIG_PCI */
-macro_line|#ifdef CONFIG_ISAPNP
+macro_line|#if defined(CONFIG_ISAPNP) || (defined(CONFIG_ISAPNP_MODULE) &amp;&amp; defined(MODULE))
+DECL|macro|NSS558_ISAPNP
+mdefine_line|#define NSS558_ISAPNP
+macro_line|#endif
+macro_line|#ifdef NSS558_ISAPNP
 multiline_comment|/*&n; * PnP IDs:&n; *&n; * CTL00c1 - SB AWE32 PnP&n; * CTL00c3 - SB AWE64 PnP&n; * CTL00f0 - SB16 PnP / Vibra 16x&n; * CTL7001 - SB Vibra16C PnP&n; * CSC0b35 - Crystal ** doesn&squot;t have compatibility ID **&n; * TER1141 - Terratec AD1818&n; * YMM0800 - Yamaha OPL3-SA3&n; *&n; * PNPb02f - Generic gameport&n; */
 DECL|struct|pnp_devid
 r_static
@@ -1286,7 +1310,7 @@ id|i
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#ifdef CONFIG_ISAPNP
+macro_line|#ifdef NSS558_ISAPNP
 r_struct
 id|pci_dev
 op_star
@@ -1323,18 +1347,8 @@ comma
 id|ns558
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * Probe for PCI ports.&n; */
-macro_line|#ifdef CONFIG_PCI
-id|pci_register_driver
-c_func
-(paren
-op_amp
-id|ns558_pci_driver
-)paren
-suffix:semicolon
-macro_line|#endif
 multiline_comment|/*&n; * Probe for PnP ports.&n; */
-macro_line|#ifdef CONFIG_ISAPNP
+macro_line|#ifdef NSS558_ISAPNP
 r_for
 c_loop
 (paren
@@ -1381,6 +1395,24 @@ suffix:semicolon
 )brace
 )brace
 macro_line|#endif
+multiline_comment|/*&n; * Probe for PCI ports.&n; */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|ns558
+op_logical_and
+id|pci_module_init
+c_func
+(paren
+op_amp
+id|ns558_pci_driver
+)paren
+)paren
+r_return
+op_minus
+id|ENODEV
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -1420,7 +1452,7 @@ c_cond
 id|port-&gt;type
 )paren
 (brace
-macro_line|#ifdef CONFIG_ISAPNP
+macro_line|#ifdef NSS558_ISAPNP
 r_case
 id|NS558_PNP
 suffix:colon
@@ -1462,7 +1494,6 @@ op_assign
 id|port-&gt;next
 suffix:semicolon
 )brace
-macro_line|#ifdef CONFIG_PCI
 id|pci_unregister_driver
 c_func
 (paren
@@ -1470,7 +1501,6 @@ op_amp
 id|ns558_pci_driver
 )paren
 suffix:semicolon
-macro_line|#endif
 )brace
 DECL|variable|ns558_init
 id|module_init

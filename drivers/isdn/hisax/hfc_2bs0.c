@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: hfc_2bs0.c,v 1.14 2000/06/26 08:59:13 keil Exp $&n; *&n; *  specific routines for CCD&squot;s HFC 2BS0&n; *&n; * Author       Karsten Keil (keil@isdn4linux.de)&n; *&n; * This file is (c) under GNU PUBLIC LICENSE&n; *&n; */
+multiline_comment|/* $Id: hfc_2bs0.c,v 1.15 2000/07/26 20:46:47 keil Exp $&n; *&n; *  specific routines for CCD&squot;s HFC 2BS0&n; *&n; * Author       Karsten Keil (keil@isdn4linux.de)&n; *&n; * This file is (c) under GNU PUBLIC LICENSE&n; *&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &quot;hisax.h&quot;
@@ -1270,8 +1270,6 @@ c_loop
 id|idx
 OL
 id|count
-op_minus
-l_int|3
 )paren
 op_logical_and
 id|WaitNoBusy
