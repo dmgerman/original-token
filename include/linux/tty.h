@@ -914,7 +914,8 @@ comma
 r_int
 id|sel_type
 comma
-id|select_table
+r_struct
+id|select_table_struct
 op_star
 id|wait
 )paren

@@ -1092,6 +1092,9 @@ id|current-&gt;pwd
 op_assign
 id|inode
 suffix:semicolon
+id|inode-&gt;i_count
+op_increment
+suffix:semicolon
 r_return
 (paren
 l_int|0

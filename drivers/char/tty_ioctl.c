@@ -1013,24 +1013,6 @@ id|tty-&gt;link-&gt;secondary.proc_list
 )paren
 suffix:semicolon
 )brace
-macro_line|#if 0
-multiline_comment|/* puting mpty&squot;s into echo mode is very bad, and I think under&n;&t;   some situations can cause the kernel to do nothing but&n;&t;   copy characters back and forth. -RAB */
-multiline_comment|/* This can no longer happen because a set_termios is redirected&n;&t;   to the pty slave.  -- jrs */
-r_if
-c_cond
-(paren
-id|IS_A_PTY_MASTER
-c_func
-(paren
-id|channel
-)paren
-)paren
-id|tty-&gt;termios-&gt;c_lflag
-op_and_assign
-op_complement
-id|ECHO
-suffix:semicolon
-macro_line|#endif
 id|unset_locked_termios
 c_func
 (paren
@@ -1045,26 +1027,6 @@ id|tty-&gt;line
 )braket
 )paren
 suffix:semicolon
-macro_line|#if 0
-id|retval
-op_assign
-id|tty_set_ldisc
-c_func
-(paren
-id|tty
-comma
-id|tty-&gt;termios-&gt;c_line
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|retval
-)paren
-r_return
-id|retval
-suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren

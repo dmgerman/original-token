@@ -661,7 +661,7 @@ id|translations
 )braket
 op_assign
 (brace
-multiline_comment|/* 8-bit Latin-1 mapped to the PC charater set: &squot;&bslash;0&squot; means non-printable */
+multiline_comment|/* 8-bit Latin-1 mapped to the PC character set: &squot;&bslash;0&squot; means non-printable */
 (paren
 r_int
 r_char

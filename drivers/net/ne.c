@@ -7,7 +7,7 @@ r_char
 op_star
 id|version
 op_assign
-l_string|&quot;ne.c:v0.99-15 1/19/93 Donald Becker (becker@super.org)&bslash;n&quot;
+l_string|&quot;ne.c:v0.99-14a 12/3/93 Donald Becker (becker@super.org)&bslash;n&quot;
 suffix:semicolon
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -439,27 +439,6 @@ comma
 id|ioaddr
 )paren
 suffix:semicolon
-multiline_comment|/* First hard-reset the ethercard. */
-id|i
-op_assign
-id|inb_p
-c_func
-(paren
-id|ioaddr
-op_plus
-id|NE_RESET
-)paren
-suffix:semicolon
-id|outb_p
-c_func
-(paren
-id|i
-comma
-id|ioaddr
-op_plus
-id|NE_RESET
-)paren
-suffix:semicolon
 multiline_comment|/* Read the 16 bytes of station address prom, returning 1 for&n;       an eight-bit interface and 2 for a 16-bit interface.&n;       We must first initialize registers, similar to NS8390_init(eifdev, 0).&n;       We can&squot;t reliably read the SAPROM address without this.&n;       (I learned the hard way!). */
 (brace
 r_struct
@@ -707,7 +686,7 @@ op_assign
 id|inb_p
 c_func
 (paren
-id|ioaddr
+id|NE_BASE
 op_plus
 id|NE_RESET
 )paren
@@ -717,7 +696,7 @@ c_func
 (paren
 id|tmp
 comma
-id|ioaddr
+id|NE_BASE
 op_plus
 id|NE_RESET
 )paren

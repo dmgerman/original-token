@@ -3192,6 +3192,12 @@ suffix:semicolon
 id|sk-&gt;rtt
 op_assign
 id|TCP_WRITE_TIME
+op_lshift
+l_int|3
+suffix:semicolon
+id|sk-&gt;rto
+op_assign
+id|TCP_WRITE_TIME
 suffix:semicolon
 id|sk-&gt;mdev
 op_assign
@@ -3210,11 +3216,18 @@ op_assign
 l_int|1
 suffix:semicolon
 multiline_comment|/* start with only sending one packet at a time. */
-id|sk-&gt;exp_growth
+id|sk-&gt;cong_count
 op_assign
-l_int|1
+l_int|0
 suffix:semicolon
-multiline_comment|/* if set cong_window grow exponentially every time&n;&t;&t;&t;  we get an ack. */
+id|sk-&gt;ssthresh
+op_assign
+l_int|0
+suffix:semicolon
+id|sk-&gt;max_window
+op_assign
+l_int|0
+suffix:semicolon
 id|sk-&gt;urginline
 op_assign
 l_int|0

@@ -48,6 +48,18 @@ r_int
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#if defined (CONFIG_SBPCD)
+r_extern
+r_int
+id|check_sbpcd_media_change
+c_func
+(paren
+r_int
+comma
+r_int
+)paren
+suffix:semicolon
+macro_line|#endif CONFIG_SBPCD
 macro_line|#ifdef LEAK_CHECK
 DECL|variable|check_malloc
 r_static
@@ -1433,6 +1445,36 @@ suffix:semicolon
 )brace
 )brace
 macro_line|#endif
+macro_line|#if defined(CONFIG_SBPCD)
+r_if
+c_cond
+(paren
+id|MAJOR
+c_func
+(paren
+id|s-&gt;s_dev
+)paren
+op_eq
+id|MATSUSHITA_CDROM_MAJOR
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|check_sbpcd_media_change
+c_func
+(paren
+id|s-&gt;s_dev
+comma
+l_int|0
+)paren
+)paren
+r_goto
+id|out
+suffix:semicolon
+)brace
+suffix:semicolon
+macro_line|#endif CONFIG_SBPCD
 r_return
 id|s
 suffix:semicolon

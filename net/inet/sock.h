@@ -110,9 +110,6 @@ comma
 DECL|member|no_check
 id|no_check
 comma
-DECL|member|exp_growth
-id|exp_growth
-comma
 DECL|member|zapped
 id|zapped
 comma
@@ -235,6 +232,11 @@ r_int
 r_int
 id|mtu
 suffix:semicolon
+DECL|member|max_window
+r_int
+r_int
+id|max_window
+suffix:semicolon
 DECL|member|num
 r_int
 r_int
@@ -245,6 +247,18 @@ r_volatile
 r_int
 r_int
 id|cong_window
+suffix:semicolon
+DECL|member|cong_count
+r_volatile
+r_int
+r_int
+id|cong_count
+suffix:semicolon
+DECL|member|ssthresh
+r_volatile
+r_int
+r_int
+id|ssthresh
 suffix:semicolon
 DECL|member|packets_out
 r_volatile
@@ -281,6 +295,13 @@ r_int
 r_int
 id|mdev
 suffix:semicolon
+DECL|member|rto
+r_volatile
+r_int
+r_int
+id|rto
+suffix:semicolon
+multiline_comment|/* currently backoff isn&squot;t used, but I&squot;m maintaining it in case&n; * we want to go back to a backoff formula that needs it&n; */
 DECL|member|backoff
 r_volatile
 r_int

@@ -563,6 +563,22 @@ op_star
 id|ints
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_SBPCD
+r_extern
+r_void
+id|sbpcd_setup
+c_func
+(paren
+r_char
+op_star
+id|str
+comma
+r_int
+op_star
+id|ints
+)paren
+suffix:semicolon
+macro_line|#endif CONFIG_SBPCD
 macro_line|#ifdef CONFIG_SYSVIPC
 r_extern
 r_void
@@ -1027,6 +1043,14 @@ id|sound_setup
 )brace
 comma
 macro_line|#endif
+macro_line|#ifdef CONFIG_SBPCD
+(brace
+l_string|&quot;sbpcd=&quot;
+comma
+id|sbpcd_setup
+)brace
+comma
+macro_line|#endif CONFIG_SBPCD
 (brace
 l_int|0
 comma
