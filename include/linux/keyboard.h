@@ -639,6 +639,8 @@ DECL|macro|K_INCRCONSOLE
 mdefine_line|#define K_INCRCONSOLE&t;K(KT_SPEC,17)
 DECL|macro|K_SPAWNCONSOLE
 mdefine_line|#define K_SPAWNCONSOLE&t;K(KT_SPEC,18)
+DECL|macro|K_BARENUMLOCK
+mdefine_line|#define K_BARENUMLOCK&t;K(KT_SPEC,19)
 DECL|macro|K_ALLOCATED
 mdefine_line|#define K_ALLOCATED&t;K(KT_SPEC,126) /* dynamically allocated keymap */
 DECL|macro|K_NOSUCHMAP

@@ -2,9 +2,9 @@ multiline_comment|/*&n; * include/asm-alpha/processor.h&n; *&n; * Copyright (C) 
 macro_line|#ifndef __ASM_ALPHA_PROCESSOR_H
 DECL|macro|__ASM_ALPHA_PROCESSOR_H
 mdefine_line|#define __ASM_ALPHA_PROCESSOR_H
-multiline_comment|/*&n; * We have a 8GB user address space to start with: 33 bits of vm&n; * can be handled with just 2 page table levels.&n; *&n; * Eventually, this should be bumped to 40 bits or so..&n; */
+multiline_comment|/*&n; * We have a 41-bit user address space: 2TB user VM...&n; */
 DECL|macro|TASK_SIZE
-mdefine_line|#define TASK_SIZE (0x200000000UL)
+mdefine_line|#define TASK_SIZE (0x20000000000UL)
 multiline_comment|/*&n; * Bus types&n; */
 DECL|macro|EISA_bus
 mdefine_line|#define EISA_bus 1
@@ -68,6 +68,8 @@ id|res2
 suffix:semicolon
 )brace
 suffix:semicolon
+DECL|macro|INIT_MMAP
+mdefine_line|#define INIT_MMAP { &amp;init_task, 0xfffffc0000300000,  0xfffffc0010000000, &bslash;&n;&t;PAGE_SHARED, VM_READ | VM_WRITE | VM_EXEC }
 DECL|macro|INIT_TSS
 mdefine_line|#define INIT_TSS  { &bslash;&n;&t;0, 0, 0, &bslash;&n;&t;0, 0, 0, &bslash;&n;&t;0, 0, 0, &bslash;&n;}
 multiline_comment|/*&n; * These are the &quot;cli()&quot; and &quot;sti()&quot; for software interrupts&n; * They work by increasing/decreasing the &quot;intr_count&quot; value, &n; * and as such can be nested arbitrarily.&n; */

@@ -708,6 +708,24 @@ id|prot
 suffix:semicolon
 r_extern
 r_void
+id|handle_mm_fault
+c_func
+(paren
+r_struct
+id|vm_area_struct
+op_star
+id|vma
+comma
+r_int
+r_int
+id|address
+comma
+r_int
+id|write_access
+)paren
+suffix:semicolon
+r_extern
+r_void
 id|do_wp_page
 c_func
 (paren
@@ -909,6 +927,7 @@ id|buf
 suffix:semicolon
 multiline_comment|/* mmap.c */
 r_extern
+r_int
 r_int
 id|do_mmap
 c_func

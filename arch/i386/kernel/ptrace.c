@@ -573,7 +573,7 @@ id|vma
 comma
 id|addr
 comma
-l_int|0
+l_int|1
 )paren
 suffix:semicolon
 r_goto

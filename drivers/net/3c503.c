@@ -1482,7 +1482,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;%#x=%#02x %#x=%#02x %#x=%#02x...&quot;
+l_string|&quot;%#lx=%#02x %#lx=%#02x %#lx=%#02x...&quot;
 comma
 id|E33G_IDCFR
 comma

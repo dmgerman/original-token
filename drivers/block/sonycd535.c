@@ -5910,7 +5910,7 @@ op_assign
 id|tmp_irq
 suffix:semicolon
 macro_line|#ifndef MODULE
-multiline_comment|/* This code is not in MODULEs by default, since the autoirq stuff might&n; * not be in the module-accessable symbol table.&n; */
+multiline_comment|/* This code is not in MODULEs by default, since the autoirq stuff might&n; * not be in the module-accessible symbol table.&n; */
 multiline_comment|/* A negative sony535_irq_used will attempt an autoirq. */
 r_if
 c_cond

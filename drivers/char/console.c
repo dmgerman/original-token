@@ -21,6 +21,7 @@ macro_line|#include &lt;linux/kd.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/major.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
+macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
@@ -4359,9 +4360,11 @@ id|old
 op_xor
 (paren
 (paren
+(paren
 id|old
 op_amp
 l_int|0x0700
+)paren
 op_eq
 l_int|0x0100
 )paren
@@ -8820,6 +8823,16 @@ id|display_desc
 op_assign
 l_string|&quot;EGA+&quot;
 suffix:semicolon
+id|request_region
+c_func
+(paren
+l_int|0x3b4
+comma
+l_int|2
+comma
+l_string|&quot;ega+&quot;
+)paren
+suffix:semicolon
 )brace
 r_else
 (brace
@@ -8834,6 +8847,36 @@ suffix:semicolon
 id|display_desc
 op_assign
 l_string|&quot;*MDA&quot;
+suffix:semicolon
+id|request_region
+c_func
+(paren
+l_int|0x3b4
+comma
+l_int|2
+comma
+l_string|&quot;mda&quot;
+)paren
+suffix:semicolon
+id|request_region
+c_func
+(paren
+l_int|0x3b8
+comma
+l_int|1
+comma
+l_string|&quot;mda&quot;
+)paren
+suffix:semicolon
+id|request_region
+c_func
+(paren
+l_int|0x3bf
+comma
+l_int|1
+comma
+l_string|&quot;mda&quot;
+)paren
 suffix:semicolon
 )brace
 )brace
@@ -8880,6 +8923,16 @@ id|display_desc
 op_assign
 l_string|&quot;EGA+&quot;
 suffix:semicolon
+id|request_region
+c_func
+(paren
+l_int|0x3d4
+comma
+l_int|2
+comma
+l_string|&quot;ega+&quot;
+)paren
+suffix:semicolon
 )brace
 r_else
 (brace
@@ -8894,6 +8947,16 @@ suffix:semicolon
 id|display_desc
 op_assign
 l_string|&quot;*CGA&quot;
+suffix:semicolon
+id|request_region
+c_func
+(paren
+l_int|0x3d4
+comma
+l_int|2
+comma
+l_string|&quot;cga&quot;
+)paren
 suffix:semicolon
 )brace
 )brace

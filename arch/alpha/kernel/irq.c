@@ -10,6 +10,7 @@ macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
+macro_line|#include &lt;asm/dma.h&gt;
 DECL|variable|cache_21
 r_static
 r_int
@@ -1711,9 +1712,20 @@ r_int
 r_int
 id|la_ptr
 comma
+r_int
+r_int
+id|a3
+comma
+r_int
+r_int
+id|a4
+comma
+r_int
+r_int
+id|a5
+comma
 r_struct
 id|pt_regs
-op_star
 id|regs
 )paren
 (brace
@@ -1743,6 +1755,7 @@ c_func
 (paren
 l_int|0
 comma
+op_amp
 id|regs
 )paren
 suffix:semicolon
@@ -1758,6 +1771,7 @@ id|vector
 comma
 id|la_ptr
 comma
+op_amp
 id|regs
 )paren
 suffix:semicolon
@@ -1771,6 +1785,7 @@ c_func
 (paren
 id|vector
 comma
+op_amp
 id|regs
 )paren
 suffix:semicolon
@@ -1806,9 +1821,9 @@ c_func
 (paren
 l_string|&quot;PC = %016lx PS=%04lx&bslash;n&quot;
 comma
-id|regs-&gt;pc
+id|regs.pc
 comma
-id|regs-&gt;ps
+id|regs.ps
 )paren
 suffix:semicolon
 )brace
@@ -1835,6 +1850,38 @@ c_func
 id|entInt
 comma
 l_int|0
+)paren
+suffix:semicolon
+id|dma_outb
+c_func
+(paren
+l_int|0
+comma
+id|DMA1_RESET_REG
+)paren
+suffix:semicolon
+id|dma_outb
+c_func
+(paren
+l_int|0
+comma
+id|DMA2_RESET_REG
+)paren
+suffix:semicolon
+id|dma_outb
+c_func
+(paren
+l_int|0
+comma
+id|DMA1_CLR_MASK_REG
+)paren
+suffix:semicolon
+id|dma_outb
+c_func
+(paren
+l_int|0
+comma
+id|DMA2_CLR_MASK_REG
 )paren
 suffix:semicolon
 )brace

@@ -21,6 +21,10 @@ DECL|macro|INT_ENABLE_REG_PHYSADR
 mdefine_line|#define INT_ENABLE_REG_PHYSADR      0xf5000000
 DECL|macro|INTS_ENAB
 mdefine_line|#define INTS_ENAB   0x01
+DECL|macro|BOOT_MSG_LEN
+mdefine_line|#define BOOT_MSG_LEN    61
+DECL|macro|BOOT_MSG2_LEN
+mdefine_line|#define BOOT_MSG2_LEN   50
 DECL|macro|WRITE_PAUSE
 mdefine_line|#define WRITE_PAUSE     nop; nop; nop;
 DECL|macro|PAGE_SIZE

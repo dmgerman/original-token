@@ -22,8 +22,7 @@ id|inode
 op_star
 id|inode
 comma
-r_int
-r_int
+id|u32
 op_star
 id|block
 comma
@@ -162,8 +161,7 @@ id|inode
 op_star
 id|inode
 comma
-r_int
-r_int
+id|u32
 op_star
 id|iblock
 comma
@@ -356,8 +354,7 @@ id|inode
 op_star
 id|inode
 comma
-r_int
-r_int
+id|u32
 op_star
 id|iblock
 comma
@@ -428,8 +425,7 @@ id|inode
 comma
 (paren
 (paren
-r_int
-r_int
+id|u32
 op_star
 )paren
 id|ind_bh-&gt;b_data
@@ -478,8 +474,7 @@ id|inode
 op_star
 id|inode
 comma
-r_int
-r_int
+id|u32
 op_star
 id|diblock
 comma
@@ -550,8 +545,7 @@ id|inode
 comma
 (paren
 (paren
-r_int
-r_int
+id|u32
 op_star
 )paren
 id|dind_bh-&gt;b_data
@@ -600,8 +594,7 @@ id|inode
 op_star
 id|inode
 comma
-r_int
-r_int
+id|u32
 op_star
 id|tiblock
 comma
@@ -672,8 +665,7 @@ id|inode
 comma
 (paren
 (paren
-r_int
-r_int
+id|u32
 op_star
 )paren
 id|tind_bh-&gt;b_data

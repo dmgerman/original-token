@@ -82,11 +82,23 @@ id|regs
 id|printk
 c_func
 (paren
-l_string|&quot;&bslash;nPS: %04lx PC: %016lx&bslash;n&quot;
+l_string|&quot;&bslash;nps: %04lx pc: %016lx&bslash;n&quot;
 comma
 id|regs-&gt;ps
 comma
 id|regs-&gt;pc
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;rp: %04lx sp: %p&bslash;n&quot;
+comma
+id|regs-&gt;r26
+comma
+id|regs
+op_plus
+l_int|1
 )paren
 suffix:semicolon
 )brace
@@ -99,11 +111,6 @@ c_func
 r_void
 )paren
 (brace
-id|halt
-c_func
-(paren
-)paren
-suffix:semicolon
 )brace
 DECL|function|flush_thread
 r_void
@@ -113,13 +120,120 @@ c_func
 r_void
 )paren
 (brace
-id|halt
+)brace
+DECL|struct|alpha_switch_stack
+r_struct
+id|alpha_switch_stack
+(brace
+DECL|member|r9
+r_int
+r_int
+id|r9
+suffix:semicolon
+DECL|member|r10
+r_int
+r_int
+id|r10
+suffix:semicolon
+DECL|member|r11
+r_int
+r_int
+id|r11
+suffix:semicolon
+DECL|member|r12
+r_int
+r_int
+id|r12
+suffix:semicolon
+DECL|member|r13
+r_int
+r_int
+id|r13
+suffix:semicolon
+DECL|member|r14
+r_int
+r_int
+id|r14
+suffix:semicolon
+DECL|member|r15
+r_int
+r_int
+id|r15
+suffix:semicolon
+DECL|member|r26
+r_int
+r_int
+id|r26
+suffix:semicolon
+)brace
+suffix:semicolon
+multiline_comment|/*&n; * &quot;alpha_switch_to()&quot;.. Done completely in assembly, due to the&n; * fact that we obviously don&squot;t returns to the caller directly.&n; * Also, we have to save the regs that the C compiler expects to be&n; * saved across a function call.. (9-15)&n; *&n; * NOTE! The stack switches from under us when we do the swpctx call:&n; * this *looks* like it restores the same registers that it just saved,&n; * but it actually restores the new context regs and return address.&n; */
+id|__asm__
 c_func
 (paren
+l_string|&quot;.align 3&bslash;n&bslash;t&quot;
+l_string|&quot;.globl alpha_switch_to&bslash;n&bslash;t&quot;
+l_string|&quot;.ent alpha_switch_to&bslash;n&quot;
+l_string|&quot;alpha_switch_to:&bslash;n&bslash;t&quot;
+l_string|&quot;subq $30,64,$30&bslash;n&bslash;t&quot;
+l_string|&quot;stq  $9,0($30)&bslash;n&bslash;t&quot;
+l_string|&quot;stq $10,8($30)&bslash;n&bslash;t&quot;
+l_string|&quot;stq $11,16($30)&bslash;n&bslash;t&quot;
+l_string|&quot;stq $12,24($30)&bslash;n&bslash;t&quot;
+l_string|&quot;stq $13,32($30)&bslash;n&bslash;t&quot;
+l_string|&quot;stq $14,40($30)&bslash;n&bslash;t&quot;
+l_string|&quot;stq $15,48($30)&bslash;n&bslash;t&quot;
+l_string|&quot;stq $26,56($30)&bslash;n&bslash;t&quot;
+l_string|&quot;call_pal 48&bslash;n&bslash;t&quot;
+l_string|&quot;ldq  $9,0($30)&bslash;n&bslash;t&quot;
+l_string|&quot;ldq $10,8($30)&bslash;n&bslash;t&quot;
+l_string|&quot;ldq $11,16($30)&bslash;n&bslash;t&quot;
+l_string|&quot;ldq $12,24($30)&bslash;n&bslash;t&quot;
+l_string|&quot;ldq $13,32($30)&bslash;n&bslash;t&quot;
+l_string|&quot;ldq $14,40($30)&bslash;n&bslash;t&quot;
+l_string|&quot;ldq $15,48($30)&bslash;n&bslash;t&quot;
+l_string|&quot;ldq $26,56($30)&bslash;n&bslash;t&quot;
+l_string|&quot;addq $30,64,$30&bslash;n&bslash;t&quot;
+l_string|&quot;ret $31,($26),1&bslash;n&bslash;t&quot;
+l_string|&quot;.end alpha_switch_to&quot;
+)paren
+suffix:semicolon
+multiline_comment|/*&n; * &quot;alpha_fork()&quot;.. By the time we get here, the&n; * non-volatile registers have also been saved on the&n; * stack. We do some ugly pointer stuff here.. (see&n; * also copy_thread)&n; */
+DECL|function|alpha_fork
+r_int
+id|alpha_fork
+c_func
+(paren
+r_struct
+id|alpha_switch_stack
+op_star
+id|swstack
+)paren
+(brace
+r_return
+id|do_fork
+c_func
+(paren
+id|COPYVM
+op_or
+id|SIGCHLD
+comma
+l_int|0
+comma
+(paren
+r_struct
+id|pt_regs
+op_star
+)paren
+(paren
+id|swstack
+op_plus
+l_int|1
+)paren
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * This needs some work still..&n; */
+multiline_comment|/*&n; * Copy an alpha thread..&n; */
 DECL|function|copy_thread
 r_void
 id|copy_thread
@@ -152,9 +266,13 @@ id|pt_regs
 op_star
 id|childregs
 suffix:semicolon
-id|p-&gt;tss.usp
-op_assign
-id|usp
+r_struct
+id|alpha_switch_stack
+op_star
+id|childstack
+comma
+op_star
+id|stack
 suffix:semicolon
 id|childregs
 op_assign
@@ -179,20 +297,57 @@ op_assign
 op_star
 id|regs
 suffix:semicolon
+id|childregs-&gt;r0
+op_assign
+l_int|0
+suffix:semicolon
+id|regs-&gt;r0
+op_assign
+id|p-&gt;pid
+suffix:semicolon
+id|stack
+op_assign
+(paren
+(paren
+r_struct
+id|alpha_switch_stack
+op_star
+)paren
+id|regs
+)paren
+op_minus
+l_int|1
+suffix:semicolon
+id|childstack
+op_assign
+(paren
+(paren
+r_struct
+id|alpha_switch_stack
+op_star
+)paren
+id|childregs
+)paren
+op_minus
+l_int|1
+suffix:semicolon
+op_star
+id|childstack
+op_assign
+op_star
+id|stack
+suffix:semicolon
+id|p-&gt;tss.usp
+op_assign
+id|usp
+suffix:semicolon
 id|p-&gt;tss.ksp
 op_assign
 (paren
 r_int
 r_int
 )paren
-id|childregs
-suffix:semicolon
-multiline_comment|/*&t;p-&gt;tss.pc = XXXX; */
-id|panic
-c_func
-(paren
-l_string|&quot;copy_thread not implemented&quot;
-)paren
+id|childstack
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * fill in the user structure for a core dump..&n; */
@@ -314,60 +469,7 @@ r_return
 id|error
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * sys_fork() does the obvious thing, but not the obvious way.&n; * See sys_execve() above.&n; */
-DECL|function|sys_fork
-id|asmlinkage
-r_int
-id|sys_fork
-c_func
-(paren
-r_int
-r_int
-id|a0
-comma
-r_int
-r_int
-id|a1
-comma
-r_int
-r_int
-id|a2
-comma
-r_int
-r_int
-id|a3
-comma
-r_int
-r_int
-id|a4
-comma
-r_int
-r_int
-id|a5
-comma
-r_struct
-id|pt_regs
-id|regs
-)paren
-(brace
-r_return
-id|do_fork
-c_func
-(paren
-id|COPYVM
-op_or
-id|SIGCHLD
-comma
-id|rdusp
-c_func
-(paren
-)paren
-comma
-op_amp
-id|regs
-)paren
-suffix:semicolon
-)brace
+multiline_comment|/*&n; * This doesn&squot;t actually work correctly like this: we need to do the&n; * same stack setups that fork() does first.&n; */
 DECL|function|sys_clone
 id|asmlinkage
 r_int

@@ -16,13 +16,13 @@ DECL|macro|PGDIR_SIZE
 mdefine_line|#define PGDIR_SIZE&t;(1UL &lt;&lt; PGDIR_SHIFT)
 DECL|macro|PGDIR_MASK
 mdefine_line|#define PGDIR_MASK&t;(~(PGDIR_SIZE-1))
-multiline_comment|/*&n; * entries per page directory level: the alpha is three-level, with&n; * all levels having a one-page page table.&n; */
+multiline_comment|/*&n; * entries per page directory level: the alpha is three-level, with&n; * all levels having a one-page page table.&n; *&n; * The PGD is special: the last entry is reserved for self-mapping.&n; */
 DECL|macro|PTRS_PER_PTE
 mdefine_line|#define PTRS_PER_PTE&t;(1UL &lt;&lt; (PAGE_SHIFT-3))
 DECL|macro|PTRS_PER_PMD
 mdefine_line|#define PTRS_PER_PMD&t;(1UL &lt;&lt; (PAGE_SHIFT-3))
 DECL|macro|PTRS_PER_PGD
-mdefine_line|#define PTRS_PER_PGD&t;(1UL &lt;&lt; (PAGE_SHIFT-3))
+mdefine_line|#define PTRS_PER_PGD&t;((1UL &lt;&lt; (PAGE_SHIFT-3))-1)
 multiline_comment|/* the no. of pointers that fit on a page: this will go away */
 DECL|macro|PTRS_PER_PAGE
 mdefine_line|#define PTRS_PER_PAGE&t;(1UL &lt;&lt; (PAGE_SHIFT-3))
@@ -507,7 +507,7 @@ c_func
 id|ptep
 )paren
 )braket
-OG
+op_ne
 l_int|1
 suffix:semicolon
 )brace
@@ -669,7 +669,7 @@ c_func
 id|pmdp
 )paren
 )braket
-OG
+op_ne
 l_int|1
 suffix:semicolon
 )brace
@@ -831,7 +831,7 @@ c_func
 id|pgdp
 )paren
 )braket
-OG
+op_ne
 l_int|1
 suffix:semicolon
 )brace
@@ -1316,7 +1316,7 @@ r_return
 id|pte
 suffix:semicolon
 )brace
-multiline_comment|/* to set the page-dir */
+multiline_comment|/* to set the page-dir. Note the self-mapping in the last entry */
 DECL|function|SET_PAGE_DIR
 r_extern
 r_inline
@@ -1334,6 +1334,31 @@ op_star
 id|pgdir
 )paren
 (brace
+id|pgd_val
+c_func
+(paren
+id|pgdir
+(braket
+id|PTRS_PER_PGD
+)braket
+)paren
+op_assign
+id|pte_val
+c_func
+(paren
+id|mk_pte
+c_func
+(paren
+(paren
+r_int
+r_int
+)paren
+id|pgdir
+comma
+id|PAGE_KERNEL
+)paren
+)paren
+suffix:semicolon
 id|tsk-&gt;tss.ptbr
 op_assign
 (paren
@@ -1363,7 +1388,7 @@ suffix:semicolon
 )brace
 DECL|macro|PAGE_DIR_OFFSET
 mdefine_line|#define PAGE_DIR_OFFSET(tsk,address) pgd_offset((tsk),(address))
-multiline_comment|/* to find an entry in a page-table-directory */
+multiline_comment|/* to find an entry in a page-table-directory. */
 DECL|function|pgd_offset
 r_extern
 r_inline
@@ -1405,7 +1430,7 @@ id|PGDIR_SHIFT
 )paren
 op_amp
 (paren
-id|PTRS_PER_PGD
+id|PTRS_PER_PAGE
 op_minus
 l_int|1
 )paren
@@ -1450,7 +1475,7 @@ id|PMD_SHIFT
 )paren
 op_amp
 (paren
-id|PTRS_PER_PMD
+id|PTRS_PER_PAGE
 op_minus
 l_int|1
 )paren
@@ -1495,7 +1520,7 @@ id|PAGE_SHIFT
 )paren
 op_amp
 (paren
-id|PTRS_PER_PTE
+id|PTRS_PER_PAGE
 op_minus
 l_int|1
 )paren
@@ -2352,5 +2377,27 @@ id|swapper_pg_dir
 l_int|1024
 )braket
 suffix:semicolon
+multiline_comment|/*&n; * The alpha doesn&squot;t have any external MMU info: the kernel page&n; * tables contain all the necessary information.&n; */
+DECL|function|update_mmu_cache
+r_extern
+r_inline
+r_void
+id|update_mmu_cache
+c_func
+(paren
+r_struct
+id|vm_area_struct
+op_star
+id|vma
+comma
+r_int
+r_int
+id|address
+comma
+id|pte_t
+id|pte
+)paren
+(brace
+)brace
 macro_line|#endif /* _ALPHA_PGTABLE_H */
 eof

@@ -75,7 +75,7 @@ r_struct
 id|msdos_boot_sector
 (brace
 DECL|member|ignored
-r_char
+id|__s8
 id|ignored
 (braket
 l_int|3
@@ -83,16 +83,15 @@ l_int|3
 suffix:semicolon
 multiline_comment|/* Boot strap short or near jump */
 DECL|member|system_id
-r_char
+id|__s8
 id|system_id
 (braket
 l_int|8
 )braket
 suffix:semicolon
-multiline_comment|/* Name - can be used to special case&n;&t;&t;&t;&t;       partition manager volumes */
+multiline_comment|/* Name - can be used to special case&n;&t;&t;&t;&t;   partition manager volumes */
 DECL|member|sector_size
-r_int
-r_char
+id|__u8
 id|sector_size
 (braket
 l_int|2
@@ -100,26 +99,22 @@ l_int|2
 suffix:semicolon
 multiline_comment|/* bytes per logical sector */
 DECL|member|cluster_size
-r_int
-r_char
+id|__u8
 id|cluster_size
 suffix:semicolon
 multiline_comment|/* sectors/cluster */
 DECL|member|reserved
-r_int
-r_int
+id|__u16
 id|reserved
 suffix:semicolon
 multiline_comment|/* reserved sectors */
 DECL|member|fats
-r_int
-r_char
+id|__u8
 id|fats
 suffix:semicolon
 multiline_comment|/* number of FATs */
 DECL|member|dir_entries
-r_int
-r_char
+id|__u8
 id|dir_entries
 (braket
 l_int|2
@@ -127,8 +122,7 @@ l_int|2
 suffix:semicolon
 multiline_comment|/* root directory entries */
 DECL|member|sectors
-r_int
-r_char
+id|__u8
 id|sectors
 (braket
 l_int|2
@@ -136,38 +130,32 @@ l_int|2
 suffix:semicolon
 multiline_comment|/* number of sectors */
 DECL|member|media
-r_int
-r_char
+id|__u8
 id|media
 suffix:semicolon
 multiline_comment|/* media code (unused) */
 DECL|member|fat_length
-r_int
-r_int
+id|__u16
 id|fat_length
 suffix:semicolon
 multiline_comment|/* sectors/FAT */
 DECL|member|secs_track
-r_int
-r_int
+id|__u16
 id|secs_track
 suffix:semicolon
 multiline_comment|/* sectors per track */
 DECL|member|heads
-r_int
-r_int
+id|__u16
 id|heads
 suffix:semicolon
 multiline_comment|/* number of heads */
 DECL|member|hidden
-r_int
-r_int
+id|__u32
 id|hidden
 suffix:semicolon
 multiline_comment|/* hidden sectors (unused) */
 DECL|member|total_sect
-r_int
-r_int
+id|__u32
 id|total_sect
 suffix:semicolon
 multiline_comment|/* number of sectors (if sectors == 0) */
@@ -179,7 +167,7 @@ id|msdos_dir_entry
 (brace
 DECL|member|name
 DECL|member|ext
-r_char
+id|__s8
 id|name
 (braket
 l_int|8
@@ -192,13 +180,12 @@ l_int|3
 suffix:semicolon
 multiline_comment|/* name and extension */
 DECL|member|attr
-r_int
-r_char
+id|__u8
 id|attr
 suffix:semicolon
 multiline_comment|/* attribute bits */
 DECL|member|unused
-r_char
+id|__u8
 id|unused
 (braket
 l_int|10
@@ -207,8 +194,7 @@ suffix:semicolon
 DECL|member|time
 DECL|member|date
 DECL|member|start
-r_int
-r_int
+id|__u16
 id|time
 comma
 id|date
@@ -217,8 +203,7 @@ id|start
 suffix:semicolon
 multiline_comment|/* time, date and first cluster */
 DECL|member|size
-r_int
-r_int
+id|__u32
 id|size
 suffix:semicolon
 multiline_comment|/* file size (in bytes) */
@@ -350,12 +335,10 @@ r_int
 id|date_dos2unix
 c_func
 (paren
-r_int
-r_int
+id|__u16
 id|time
 comma
-r_int
-r_int
+id|__u16
 id|date
 )paren
 suffix:semicolon
@@ -367,13 +350,11 @@ c_func
 r_int
 id|unix_date
 comma
-r_int
-r_int
+id|__u16
 op_star
 id|time
 comma
-r_int
-r_int
+id|__u16
 op_star
 id|date
 )paren

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;Linux NET3:&t;Multicast List maintenance. &n; *&n; *&t;Authors:&n; *&t;&t;Tim Kordas &lt;tjk@nostromo.eeap.cwru.edu&gt; &n; *&t;&t;Richard Underwood &lt;richard@wuzz.demon.co.uk&gt;&n; *&n; *&t;Stir fried together from the IP multicast and CAP patches above&n; *&t;&t;Alan Cox &lt;Alan.Cox@linux.org&gt;&t;&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; *&t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; *&t;Linux NET3:&t;Multicast List maintenance. &n; *&n; *&t;Authors:&n; *&t;&t;Tim Kordas &lt;tjk@nostromo.eeap.cwru.edu&gt; &n; *&t;&t;Richard Underwood &lt;richard@wuzz.demon.co.uk&gt;&n; *&n; *&t;Stir fried together from the IP multicast and CAP patches above&n; *&t;&t;Alan Cox &lt;Alan.Cox@linux.org&gt;&t;&n; *&n; *&t;Fixes:&n; *&t;&t;Alan Cox&t;:&t;Update the device on a real delete&n; *&t;&t;&t;&t;&t;rather than any time but...&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; *&t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
@@ -344,16 +344,16 @@ id|tmp
 )paren
 )paren
 suffix:semicolon
-r_return
-suffix:semicolon
-)brace
-)brace
 id|dev_mc_upload
 c_func
 (paren
 id|dev
 )paren
 suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+)brace
 )brace
 multiline_comment|/*&n; *&t;Add a device level multicast&n; */
 DECL|function|dev_mc_add

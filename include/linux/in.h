@@ -181,7 +181,7 @@ mdefine_line|#define&t;IN_CLASSB_HOST&t;&t;(0xffffffff &amp; ~IN_CLASSB_NET)
 DECL|macro|IN_CLASSB_MAX
 mdefine_line|#define&t;IN_CLASSB_MAX&t;&t;65536
 DECL|macro|IN_CLASSC
-mdefine_line|#define&t;IN_CLASSC(a)&t;&t;((((long int) (a)) &amp; 0xc0000000) == 0xc0000000)
+mdefine_line|#define&t;IN_CLASSC(a)&t;&t;((((long int) (a)) &amp; 0xe0000000) == 0xc0000000)
 DECL|macro|IN_CLASSC_NET
 mdefine_line|#define&t;IN_CLASSC_NET&t;&t;0xffffff00
 DECL|macro|IN_CLASSC_NSHIFT

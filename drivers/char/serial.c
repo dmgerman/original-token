@@ -8993,7 +8993,7 @@ op_assign
 op_star
 id|tty-&gt;termios
 suffix:semicolon
-multiline_comment|/*&n;&t; * Now we wait for the trnasmit buffer to clear; and we notify &n;&t; * the line discpline only process XON/XOFF characters.&n;&t; */
+multiline_comment|/*&n;&t; * Now we wait for the transmit buffer to clear; and we notify &n;&t; * the line discipline to only process XON/XOFF characters.&n;&t; */
 id|tty-&gt;closing
 op_assign
 l_int|1

@@ -164,8 +164,8 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;ld [%1],%2&bslash;n&bslash;t&quot;
-l_string|&quot;st %0, [%1]&bslash;n&bslash;t&quot;
+l_string|&quot;ld %1,%2   ! xchg_u32() is here&bslash;n&bslash;t&quot;
+l_string|&quot;st %0, %1&bslash;n&bslash;t&quot;
 l_string|&quot;or %%g0, %2, %0&quot;
 suffix:colon
 l_string|&quot;=r&quot;
@@ -173,8 +173,9 @@ l_string|&quot;=r&quot;
 id|val
 )paren
 comma
-l_string|&quot;=r&quot;
+l_string|&quot;=m&quot;
 (paren
+op_star
 id|m
 )paren
 comma

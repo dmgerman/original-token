@@ -234,6 +234,8 @@ DECL|macro|R_SECTOR
 mdefine_line|#define R_SECTOR (reply_buffer[5])
 DECL|macro|R_SIZECODE
 mdefine_line|#define R_SIZECODE (reply_buffer[6])
+DECL|macro|SEL_DLY
+mdefine_line|#define SEL_DLY (2*HZ/100)
 DECL|macro|ARRAY_SIZE
 mdefine_line|#define ARRAY_SIZE(x) (sizeof(x) / sizeof( (x)[0] ))
 multiline_comment|/*&n; * this struct defines the different floppy drive types.&n; */
@@ -258,7 +260,7 @@ id|default_drive_params
 )braket
 op_assign
 (brace
-multiline_comment|/* NOTE: the time values in jiffies should be in msec!&n; CMOS drive type&n;  |     Maximum data rate supported by drive type&n;  |     |   Head load time, msec&n;  |     |   |   Head unload time, msec (not used)&n;  |     |   |   |     Step rate interval, usec&n;  |     |   |   |     |    Time needed for spinup time (jiffies)&n;  |     |   |   |     |    |    Timeout for spinning down (jiffies)&n;  |     |   |   |     |    |    |   Spindown offset (where disk stops)&n;  |     |   |   |     |    |    |   |  Select delay&n;  |     |   |   |     |    |    |   |  |  RPS&n;  |     |   |   |     |    |    |   |  |  |    Max number of tracks&n;  |     |   |   |     |    |    |   |  |  |    |     Interrupt timeout&n;  |     |   |   |     |    |    |   |  |  |    |     |   Max nonintlv. sectors&n;  |     |   |   |     |    |    |   |  |  |    |     |   | -Max Errors- flags */
+multiline_comment|/* NOTE: the time values in jiffies should be in msec!&n; CMOS drive type&n;  |     Maximum data rate supported by drive type&n;  |     |   Head load time, msec&n;  |     |   |   Head unload time, msec (not used)&n;  |     |   |   |     Step rate interval, usec&n;  |     |   |   |     |       Time needed for spinup time (jiffies)&n;  |     |   |   |     |       |      Timeout for spinning down (jiffies)&n;  |     |   |   |     |       |      |   Spindown offset (where disk stops)&n;  |     |   |   |     |       |      |   |     Select delay&n;  |     |   |   |     |       |      |   |     |     RPS&n;  |     |   |   |     |       |      |   |     |     |    Max number of tracks&n;  |     |   |   |     |       |      |   |     |     |    |     Interrupt timeout&n;  |     |   |   |     |       |      |   |     |     |    |     |   Max nonintlv. sectors&n;  |     |   |   |     |       |      |   |     |     |    |     |   | -Max Errors- flags */
 (brace
 (brace
 l_int|0
@@ -271,13 +273,17 @@ l_int|16
 comma
 l_int|8000
 comma
-l_int|100
+l_int|1
+op_star
+id|HZ
 comma
-l_int|300
+l_int|3
+op_star
+id|HZ
 comma
 l_int|0
 comma
-l_int|2
+id|SEL_DLY
 comma
 l_int|5
 comma
@@ -323,7 +329,11 @@ comma
 l_int|10
 )brace
 comma
-l_int|150
+l_int|3
+op_star
+id|HZ
+op_div
+l_int|2
 comma
 l_int|0
 )brace
@@ -343,13 +353,17 @@ l_int|16
 comma
 l_int|8000
 comma
-l_int|100
+l_int|1
+op_star
+id|HZ
 comma
-l_int|300
+l_int|3
+op_star
+id|HZ
 comma
 l_int|0
 comma
-l_int|2
+id|SEL_DLY
 comma
 l_int|5
 comma
@@ -395,7 +409,11 @@ comma
 l_int|0
 )brace
 comma
-l_int|150
+l_int|3
+op_star
+id|HZ
+op_div
+l_int|2
 comma
 l_int|1
 )brace
@@ -416,13 +434,19 @@ l_int|16
 comma
 l_int|6000
 comma
-l_int|40
+l_int|4
+op_star
+id|HZ
+op_div
+l_int|10
 comma
-l_int|300
+l_int|3
+op_star
+id|HZ
 comma
 l_int|14
 comma
-l_int|2
+id|SEL_DLY
 comma
 l_int|6
 comma
@@ -468,7 +492,11 @@ comma
 l_int|0
 )brace
 comma
-l_int|150
+l_int|3
+op_star
+id|HZ
+op_div
+l_int|2
 comma
 l_int|2
 )brace
@@ -489,13 +517,17 @@ l_int|16
 comma
 l_int|3000
 comma
-l_int|100
+l_int|1
+op_star
+id|HZ
 comma
-l_int|300
+l_int|3
+op_star
+id|HZ
 comma
 l_int|0
 comma
-l_int|2
+id|SEL_DLY
 comma
 l_int|5
 comma
@@ -541,7 +573,11 @@ comma
 l_int|0
 )brace
 comma
-l_int|150
+l_int|3
+op_star
+id|HZ
+op_div
+l_int|2
 comma
 l_int|4
 )brace
@@ -562,13 +598,19 @@ l_int|16
 comma
 l_int|4000
 comma
-l_int|40
+l_int|4
+op_star
+id|HZ
+op_div
+l_int|10
 comma
-l_int|300
+l_int|3
+op_star
+id|HZ
 comma
 l_int|10
 comma
-l_int|2
+id|SEL_DLY
 comma
 l_int|5
 comma
@@ -614,7 +656,11 @@ comma
 l_int|11
 )brace
 comma
-l_int|150
+l_int|3
+op_star
+id|HZ
+op_div
+l_int|2
 comma
 l_int|7
 )brace
@@ -635,13 +681,19 @@ l_int|8
 comma
 l_int|3000
 comma
-l_int|40
+l_int|4
+op_star
+id|HZ
+op_div
+l_int|10
 comma
-l_int|300
+l_int|3
+op_star
+id|HZ
 comma
 l_int|10
 comma
-l_int|2
+id|SEL_DLY
 comma
 l_int|5
 comma
@@ -687,7 +739,11 @@ comma
 l_int|21
 )brace
 comma
-l_int|150
+l_int|3
+op_star
+id|HZ
+op_div
+l_int|2
 comma
 l_int|8
 )brace
@@ -708,13 +764,19 @@ l_int|8
 comma
 l_int|3000
 comma
-l_int|40
+l_int|4
+op_star
+id|HZ
+op_div
+l_int|10
 comma
-l_int|300
+l_int|3
+op_star
+id|HZ
 comma
 l_int|10
 comma
-l_int|2
+id|SEL_DLY
 comma
 l_int|5
 comma
@@ -760,7 +822,11 @@ comma
 l_int|21
 )brace
 comma
-l_int|150
+l_int|3
+op_star
+id|HZ
+op_div
+l_int|2
 comma
 l_int|8
 )brace
@@ -768,7 +834,7 @@ comma
 l_string|&quot;2.88M&quot;
 )brace
 multiline_comment|/*3 1/2 ED*/
-multiline_comment|/*    |  ---autodetected formats--   |   |      |&n;      read_track                     |   |    Name printed when booting&n;                                     |  Native format&n;                                   Frequency of disk change checks */
+multiline_comment|/*    |  ---autodetected formats--   |      |      |&n;      read_track                     |      |    Name printed when booting&n;                                     |     Native format&n;                                   Frequency of disk change checks */
 )brace
 suffix:semicolon
 DECL|variable|drive_params
@@ -14590,6 +14656,10 @@ dot
 id|params.select_delay
 op_assign
 l_int|2
+op_star
+id|HZ
+op_div
+l_int|100
 suffix:semicolon
 id|default_drive_params
 (braket

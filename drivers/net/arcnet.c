@@ -1,8 +1,17 @@
-multiline_comment|/*&n;&t;arcnet.c written 1994 by Avery Pennarun, derived from skeleton.c&n;&t;by Donald Becker.&n;&t;&n;&t;Contact Avery at: apenwarr@tourism.807-city.on.ca or&n;&t;RR #5 Pole Line Road, Thunder Bay, ON, Canada P7C 5M9&n;&t;&n;&t;!!! This is a dangerous alpha version !!!&n;&t;&n;&t;**********************&n;&n;&t;skeleton.c Written 1993 by Donald Becker.&n;&t;Copyright 1993 United States Government as represented by the Director,&n;&t;National Security Agency.  This software may only be used and distributed&n;&t;according to the terms of the GNU Public License as modified by SRC,&n;&t;incorporated herein by reference.&n;&n;        The author may be reached as becker@CESDIS.gsfc.nasa.gov, or C/O&n;         Center of Excellence in Space Data and Information Sciences&n;         Code 930.5, Goddard Space Flight Center, Greenbelt MD 20771&n;         &n;&t;**********************&n;&t;&n;         &n;&t;TO DO:&n;&t;&n;         - Polled transmits probably take a lot more CPU time than needed.&n;           Perhaps use the system timer?  A better solution would be to&n;           just figure out how to get both xmit and receive IRQ&squot;s working&n;           at the same time.  No luck yet...&n;         - I&squot;d also like to get ping-pong TX buffers working.&n;         - Test in systems with NON-ARCnet network cards, just to see if&n;           autoprobe kills anything.  With any luck, it won&squot;t.  (It&squot;s pretty&n;           strict and careful.)&n;         - cards with shared memory that can be &quot;turned off?&quot;&n;         &t;- examine TRXNET for information about this&n; */
+multiline_comment|/* arcnet.c&n;&t;Written 1994-95 by Avery Pennarun, derived from skeleton.c by&n;        Donald Becker.&n;&n;&t;Contact Avery at: apenwarr@tourism.807-city.on.ca or&n;&t;RR #5 Pole Line Road, Thunder Bay, ON, Canada P7C 5M9&n;&t;&n;&t;**********************&n;&n;&t;skeleton.c Written 1993 by Donald Becker.&n;&t;Copyright 1993 United States Government as represented by the&n;        Director, National Security Agency.  This software may only be used&n;        and distributed according to the terms of the GNU Public License as&n;        modified by SRC, incorporated herein by reference.&n;         &n;&t;**********************&n;&n;&n;&t;v1.0 (95/02/15)&n;&t;  - Initial non-alpha release.&n;&t;&n;         &n;&t;TO DO:&n;&t;&n;         - Test in systems with NON-ARCnet network cards, just to see if&n;           autoprobe kills anything.  With any luck, it won&squot;t.  (It&squot;s pretty&n;           careful.)&n;           &t;- Except some unfriendly NE2000&squot;s die. (0.40)&n;         - cards with shared memory that can be &quot;turned off?&quot;&n;         - NFS mount freezes after several megabytes to SOSS for DOS. &n; &t;   unmount/remount works.  Is this arcnet-specific?  I don&squot;t know.&n; &t; - Add support for the various stupid bugs (&quot;I didn&squot;t read the RFC&quot;&n; &t;   syndrome) in MS Windows for Workgroups and LanMan.&n; &t;   &n; &t; - get the net people to probe last for arcnet, and first for ne2000&n; &t;   in Space.c...  &n; */
 multiline_comment|/**************************************************************************/
-multiline_comment|/* define this for &quot;careful&quot; transmitting.  Try with and without if you have&n; * problems.&n; */
+multiline_comment|/* define this if you want to use the new but possibly dangerous ioprobe&n; * If you get lockups right after status5, you probably need&n; * to undefine this.  It should make more cards probe correctly,&n; * I hope.&n; */
+DECL|macro|DANGER_PROBE
+mdefine_line|#define DANGER_PROBE
+multiline_comment|/* define this if you want to use the &quot;extra delays&quot; which were removed&n; * in 0.41 since they seemed needless.&n; */
+DECL|macro|EXTRA_DELAYS
+macro_line|#undef EXTRA_DELAYS
+multiline_comment|/* undefine this if you want to use the non-IRQ-driven transmitter. (possibly&n; * safer, although it takes more CPU time and IRQ_XMIT seems fine right now)&n; */
+DECL|macro|IRQ_XMIT
+mdefine_line|#define IRQ_XMIT
+multiline_comment|/* define this for &quot;careful&quot; transmitting.  Try with and without if you have&n; * problems.  If you use IRQ_XMIT, do NOT define this.&n; */
 DECL|macro|CAREFUL_XMIT
-mdefine_line|#define CAREFUL_XMIT
+macro_line|#undef CAREFUL_XMIT
 multiline_comment|/* define this for an extra-careful memory detect.  This should work all&n; * the time now, but you never know.&n; */
 DECL|macro|STRICT_MEM_DETECT
 mdefine_line|#define STRICT_MEM_DETECT
@@ -19,11 +28,14 @@ r_char
 op_star
 id|version
 op_assign
-l_string|&quot;arcnet.c:v0.32 ALPHA 94/12/26 Avery Pennarun &lt;apenwarr@tourism.807-city.on.ca&gt;&bslash;n&quot;
+l_string|&quot;arcnet.c:v1.00 95/02/15 Avery Pennarun &lt;apenwarr@tourism.807-city.on.ca&gt;&bslash;n&quot;
 suffix:semicolon
-multiline_comment|/* Always include &squot;config.h&squot; first in case the user wants to turn on&n;   or override something. */
+multiline_comment|/*&n;  Sources:&n;&t;Crynwr arcnet.com/arcether.com packet drivers.&n;&t;arcnet.c v0.00 dated 1/1/94 and apparently by&n;&t;&t;Donald Becker - it didn&squot;t work :)&n;&t;skeleton.c v0.05 dated 11/16/93 by Donald Becker&n;&t;&t;(from Linux Kernel 1.1.45)&n;&t;...I sure wish I had the ARCnet data sheets right about now!&n;&t;RFC&squot;s 1201 and 1051 (mostly 1201) - re: ARCnet IP packets&n;&t;net/inet/eth.c (from kernel 1.1.50) for header-building info...&n;&t;Alternate Linux ARCnet source by V.Shergin &lt;vsher@sao.stavropol.su&gt;&n;&t;Textual information and more alternate source from Joachim Koenig&n;&t;&t;&lt;jojo@repas.de&gt;&n;*/
 macro_line|#include &lt;linux/config.h&gt;
-multiline_comment|/*&n;  Sources:&n;&t;Crynwr arcnet.com/arcether.com packet drivers.&n;&t;arcnet.c v0.00 dated 1/1/94 and apparently by&n;&t;&t;Donald Becker - it didn&squot;t work :)&n;&t;skeleton.c v0.05 dated 11/16/93 by Donald Becker&n;&t;&t;(from Linux Kernel 1.1.45)&n;&t;...I sure wish I had the ARCnet data sheets right about now!&n;&t;RFC&squot;s 1201 and 1051 (mostly 1201) - re: ARCnet IP packets&n;&t;net/inet/eth.c (from kernel 1.1.50) for header-building info...&n;*/
+macro_line|#ifdef MODULE
+macro_line|#include &lt;linux/module.h&gt;
+macro_line|#include &lt;linux/version.h&gt;
+macro_line|#endif /* MODULE */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -36,6 +48,7 @@ macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
+macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
@@ -105,8 +118,8 @@ macro_line|#endif
 macro_line|#ifndef HAVE_PORTRESERVE
 DECL|macro|check_region
 mdefine_line|#define check_region(ioaddr, size) &t;&t;0
-DECL|macro|snarf_region
-mdefine_line|#define&t;snarf_region(ioaddr, size);&t;&t;do ; while (0)
+DECL|macro|request_region
+mdefine_line|#define&t;request_region(ioaddr, size)&t;&t;do ; while (0)
 macro_line|#endif
 multiline_comment|/* macro to simplify debug checking */
 DECL|macro|BUGLVL
@@ -128,9 +141,9 @@ multiline_comment|/* time needed for various things (in clock ticks, 1/100 sec) 
 DECL|macro|RESETtime
 mdefine_line|#define RESETtime 40&t;&t;/* reset */
 DECL|macro|XMITtime
-mdefine_line|#define XMITtime 10&t;&t;/* send */
+mdefine_line|#define XMITtime 10&t;&t;/* send (?) */
 DECL|macro|ACKtime
-mdefine_line|#define ACKtime 10&t;&t;/* acknowledge */
+mdefine_line|#define ACKtime 10&t;&t;/* acknowledge (?) */
 multiline_comment|/* these are the max/min lengths of packet data. (including&n;&t; * ClientData header)&n;&t; * note: packet sizes 250, 251, 252 are impossible (God knows why)&n;&t; *  so exception packets become necessary.&n;&t; *&n;&t; * These numbers are compared with the length of the full packet,&n;&t; * including ClientData header.&n;&t; */
 DECL|macro|MTU
 mdefine_line|#define MTU&t;(253+EXTRA_CLIENTDATA)  /* normal packet max size */
@@ -192,8 +205,7 @@ mdefine_line|#define EXTconf         0x008            /* 250-504 byte packets */
 multiline_comment|/* buffers (4 total) used for receive and xmit.&n;&t; */
 DECL|macro|EnableReceiver
 mdefine_line|#define EnableReceiver()&t;outb(RXcmd|(recbuf&lt;&lt;3)|RXbcasts,COMMAND)
-DECL|macro|TXbuf
-mdefine_line|#define TXbuf&t;&t;2
+multiline_comment|/*#define TXbuf&t;&t;2 (Obsoleted by ping-pong xmits) */
 multiline_comment|/* Protocol ID&squot;s */
 DECL|macro|ARC_P_IP
 mdefine_line|#define ARC_P_IP&t;212&t;&t;/* 0xD4 */
@@ -201,6 +213,12 @@ DECL|macro|ARC_P_ARP
 mdefine_line|#define ARC_P_ARP&t;213&t;&t;/* 0xD5 */
 DECL|macro|ARC_P_RARP
 mdefine_line|#define ARC_P_RARP&t;214&t;&t;/* 0xD6 */
+DECL|macro|ARC_P_IPX
+mdefine_line|#define ARC_P_IPX&t;250&t;&t;/* 0xFA */
+DECL|macro|ARC_P_LANSOFT
+mdefine_line|#define ARC_P_LANSOFT&t;251&t;&t;/* 0xFB */
+DECL|macro|ARC_P_ATALK
+mdefine_line|#define ARC_P_ATALK&t;0xDD
 multiline_comment|/* Length of time between &quot;stuck&quot; checks */
 DECL|macro|TIMERval
 mdefine_line|#define TIMERval&t;(HZ/8)&t;&t;/* about 1/8 second */
@@ -320,6 +338,53 @@ suffix:semicolon
 multiline_comment|/* sequence number of assembly&t;  */
 )brace
 suffix:semicolon
+DECL|struct|Outgoing
+r_struct
+id|Outgoing
+(brace
+DECL|member|skb
+r_struct
+id|sk_buff
+op_star
+id|skb
+suffix:semicolon
+multiline_comment|/* buffer from upper levels */
+DECL|member|hdr
+r_struct
+id|ClientData
+op_star
+id|hdr
+suffix:semicolon
+multiline_comment|/* clientdata of last packet */
+DECL|member|data
+id|u_char
+op_star
+id|data
+suffix:semicolon
+multiline_comment|/* pointer to data in packet */
+DECL|member|length
+r_int
+id|length
+comma
+multiline_comment|/* bytes total */
+DECL|member|dataleft
+id|dataleft
+comma
+multiline_comment|/* bytes left */
+DECL|member|segnum
+id|segnum
+comma
+multiline_comment|/* segment being sent */
+DECL|member|numsegs
+id|numsegs
+comma
+multiline_comment|/* number of segments */
+DECL|member|seglen
+id|seglen
+suffix:semicolon
+multiline_comment|/* length of segment */
+)brace
+suffix:semicolon
 multiline_comment|/* Information that needs to be kept for each board. */
 DECL|struct|arcnet_local
 r_struct
@@ -343,13 +408,34 @@ multiline_comment|/* sequence number (incs with each packet) */
 DECL|member|recbuf
 id|u_char
 id|recbuf
-suffix:semicolon
+comma
 multiline_comment|/* receive buffer # (0 or 1) */
+DECL|member|txbuf
+id|txbuf
+comma
+multiline_comment|/* transmit buffer # (2 or 3) */
+DECL|member|txready
+id|txready
+suffix:semicolon
+multiline_comment|/* buffer where a packet is ready to send */
 DECL|member|intx
 r_int
 id|intx
-suffix:semicolon
+comma
 multiline_comment|/* in TX routine? */
+DECL|member|in_txhandler
+id|in_txhandler
+comma
+multiline_comment|/* in TX_IRQ handler? */
+DECL|member|sending
+id|sending
+suffix:semicolon
+multiline_comment|/* transmit in progress? */
+DECL|member|tx_left
+r_int
+id|tx_left
+suffix:semicolon
+multiline_comment|/* segments of split packet left to TX */
 DECL|member|timer
 r_struct
 id|timer_list
@@ -365,6 +451,12 @@ l_int|256
 )braket
 suffix:semicolon
 multiline_comment|/* one from each address */
+DECL|member|outgoing
+r_struct
+id|Outgoing
+id|outgoing
+suffix:semicolon
+multiline_comment|/* packet currently being sent */
 )brace
 suffix:semicolon
 multiline_comment|/* Index to functions, as function prototypes. */
@@ -379,6 +471,7 @@ op_star
 id|dev
 )paren
 suffix:semicolon
+macro_line|#ifndef MODULE
 r_static
 r_int
 id|arcnet_memprobe
@@ -408,6 +501,7 @@ r_int
 id|ioaddr
 )paren
 suffix:semicolon
+macro_line|#endif
 r_static
 r_int
 id|arcnet_open
@@ -446,6 +540,7 @@ op_star
 id|dev
 )paren
 suffix:semicolon
+macro_line|#ifdef CAREFUL_XMIT
 r_static
 r_void
 id|careful_xmit_wait
@@ -457,9 +552,24 @@ op_star
 id|dev
 )paren
 suffix:semicolon
+macro_line|#else
+DECL|macro|careful_xmit_wait
+mdefine_line|#define careful_xmit_wait(dev)
+macro_line|#endif
 r_static
-r_int
-id|arcnet_tx
+r_void
+id|arcnet_continue_tx
+c_func
+(paren
+r_struct
+id|device
+op_star
+id|dev
+)paren
+suffix:semicolon
+r_static
+r_void
+id|arcnet_prepare_tx
 c_func
 (paren
 r_struct
@@ -478,6 +588,17 @@ comma
 r_char
 op_star
 id|data
+)paren
+suffix:semicolon
+r_static
+r_void
+id|arcnet_go_tx
+c_func
+(paren
+r_struct
+id|device
+op_star
+id|dev
 )paren
 suffix:semicolon
 r_static
@@ -519,6 +640,7 @@ r_int
 id|recbuf
 )paren
 suffix:semicolon
+macro_line|#ifdef USE_TIMER_HANDLER
 r_static
 r_void
 id|arcnet_timer
@@ -529,6 +651,7 @@ r_int
 id|arg
 )paren
 suffix:semicolon
+macro_line|#endif
 r_static
 r_struct
 id|enet_statistics
@@ -635,10 +758,6 @@ op_star
 id|dev
 )paren
 suffix:semicolon
-DECL|macro|tx_done
-mdefine_line|#define tx_done(dev) 1
-DECL|macro|JIFFER
-mdefine_line|#define JIFFER(time) for (delayval=jiffies+(time); delayval&gt;=jiffies;);
 r_static
 r_int
 id|arcnet_reset
@@ -650,6 +769,34 @@ op_star
 id|dev
 )paren
 suffix:semicolon
+macro_line|#ifdef MODULE
+r_int
+id|init_module
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_void
+id|cleanup_module
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+macro_line|#endif
+DECL|macro|tx_done
+mdefine_line|#define tx_done(dev) 1
+multiline_comment|/*&n;#define JIFFER(time) for (delayval=jiffies+(time); delayval&gt;jiffies;);&n;*/
+DECL|macro|JIFFER
+mdefine_line|#define JIFFER(time) for (delayval=0; delayval&lt;(time*10); delayval++) &bslash;&n;&t;&t;udelay(1000);
+macro_line|#ifdef EXTRA_DELAYS
+DECL|macro|XJIFFER
+mdefine_line|#define XJIFFER(time) JIFFER(time)
+macro_line|#else
+DECL|macro|XJIFFER
+mdefine_line|#define XJIFFER(time)
+macro_line|#endif
 "&f;"
 multiline_comment|/* Check for a network adaptor of this type, and return &squot;0&squot; if one exists.&n; *  If dev-&gt;base_addr == 0, probe all likely locations.&n; *  If dev-&gt;base_addr == 1, always return failure.&n; *  If dev-&gt;base_addr == 2, allocate space for the device and return success&n; *  (detachable devices only).&n; */
 r_int
@@ -663,6 +810,7 @@ op_star
 id|dev
 )paren
 (brace
+macro_line|#ifndef MODULE
 multiline_comment|/* I refuse to probe anything less than 0x200, because anyone using&n;&t; * an address like that should probably be shot.&n;&t; */
 r_int
 op_star
@@ -729,12 +877,7 @@ l_int|0x390
 comma
 l_int|0x3a0
 comma
-l_int|0x3b0
-comma
-l_int|0x3c0
-comma
-l_int|0x3d0
-comma
+multiline_comment|/* video ports, */
 l_int|0x3e0
 comma
 l_int|0x3f0
@@ -743,7 +886,7 @@ multiline_comment|/* a null ends the list */
 l_int|0
 )brace
 suffix:semicolon
-multiline_comment|/* I&squot;m not going to probe under 0xA0000 either, for similar reasons.&n;&t; */
+multiline_comment|/* I&squot;m not going to probe below 0xA0000 either, for similar reasons.&n;&t; */
 r_int
 r_int
 op_star
@@ -807,7 +950,9 @@ comma
 id|status
 op_assign
 l_int|0
-comma
+suffix:semicolon
+macro_line|#endif /* MODULE */
+r_int
 id|delayval
 suffix:semicolon
 r_struct
@@ -820,12 +965,32 @@ c_cond
 (paren
 id|net_debug
 )paren
+(brace
 id|printk
 c_func
 (paren
 id|version
 )paren
 suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;arcnet: ***&bslash;n&quot;
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;arcnet: * Read linux/drivers/net/README.arcnet for important release notes!&bslash;n&quot;
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;arcnet: ***&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
 id|BUGLVL
 c_func
 (paren
@@ -834,7 +999,7 @@ id|D_INIT
 id|printk
 c_func
 (paren
-l_string|&quot;arcnet: given: base %Xh, IRQ %Xh, shmem %lXh&bslash;n&quot;
+l_string|&quot;arcnet: given: base %lXh, IRQ %Xh, shmem %lXh&bslash;n&quot;
 comma
 id|dev-&gt;base_addr
 comma
@@ -843,6 +1008,7 @@ comma
 id|dev-&gt;mem_start
 )paren
 suffix:semicolon
+macro_line|#ifndef MODULE
 r_if
 c_cond
 (paren
@@ -1071,6 +1237,46 @@ r_return
 id|status
 suffix:semicolon
 )brace
+macro_line|#else /* MODULE */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|dev-&gt;base_addr
+op_logical_or
+op_logical_neg
+id|dev-&gt;irq
+op_logical_or
+op_logical_neg
+id|dev-&gt;mem_start
+op_logical_or
+op_logical_neg
+id|dev-&gt;rmem_start
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;arcnet: loadable modules can&squot;t autoprobe!&bslash;n&quot;
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;arcnet:  try using io=, irqnum=, and shmem= on the insmod line.&bslash;n&quot;
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;arcnet:  you may also need num= to change the device name. (ie. num=1 for arc1)&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+id|ENODEV
+suffix:semicolon
+)brace
+macro_line|#endif
 multiline_comment|/* now reserve the irq... */
 (brace
 r_int
@@ -1113,18 +1319,20 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/* Grab the region so we can find another board if autoIRQ fails. */
-id|snarf_region
+id|request_region
 c_func
 (paren
 id|dev-&gt;base_addr
 comma
 id|ETHERCARD_TOTAL_SIZE
+comma
+l_string|&quot;arcnet&quot;
 )paren
 suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;%s: ARCnet card found at %03Xh, IRQ %d, ShMem at %lXh.&bslash;n&quot;
+l_string|&quot;%s: ARCnet card found at %03lXh, IRQ %d, ShMem at %lXh.&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma
@@ -1350,7 +1558,6 @@ id|dev-&gt;hard_header
 op_assign
 id|arc_header
 suffix:semicolon
-multiline_comment|/*&t;dev-&gt;add_arp            = arc_add_arp;  AVE unavailable in 1.1.51?! */
 id|dev-&gt;rebuild_header
 op_assign
 id|arc_rebuild_header
@@ -1363,6 +1570,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#ifndef MODULE
 DECL|function|arcnet_ioprobe
 r_int
 id|arcnet_ioprobe
@@ -1547,7 +1755,7 @@ comma
 id|COMMAND
 )paren
 suffix:semicolon
-id|JIFFER
+id|XJIFFER
 c_func
 (paren
 id|ACKtime
@@ -1594,7 +1802,7 @@ c_func
 l_int|0
 )paren
 suffix:semicolon
-multiline_comment|/* enable reset IRQ&squot;s (shouldn&squot;t be necessary, but hey) */
+multiline_comment|/* enable reset IRQ&squot;s (shouldn&squot;t be necessary, but worth a try) */
 id|outb
 c_func
 (paren
@@ -1633,15 +1841,6 @@ id|STATUS
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/* enable reset IRQ&squot;s again */
-id|outb
-c_func
-(paren
-id|RESETflag
-comma
-id|INTMASK
-)paren
-suffix:semicolon
 multiline_comment|/* and turn the reset flag back off */
 id|outb
 c_func
@@ -1655,7 +1854,7 @@ comma
 id|COMMAND
 )paren
 suffix:semicolon
-id|JIFFER
+id|XJIFFER
 c_func
 (paren
 id|ACKtime
@@ -1676,6 +1875,15 @@ c_func
 (paren
 id|STATUS
 )paren
+)paren
+suffix:semicolon
+multiline_comment|/* enable reset IRQ&squot;s again */
+id|outb
+c_func
+(paren
+id|RESETflag
+comma
+id|INTMASK
 )paren
 suffix:semicolon
 multiline_comment|/* now reset it again to generate an IRQ */
@@ -1706,6 +1914,50 @@ c_func
 (paren
 id|STATUS
 )paren
+)paren
+suffix:semicolon
+multiline_comment|/* if we do this, we&squot;re sure to get an IRQ since the card has&n;&t; * just reset and the NORXflag is on until we tell it to start&n;&t; * receiving.&n;&t; *&n;&t; * However, this could, theoretically, cause a lockup.  Maybe I&squot;m just&n;&t; * not very good at theory! :)&n;&t; */
+macro_line|#ifdef DANGER_PROBE
+id|outb
+c_func
+(paren
+id|NORXflag
+comma
+id|INTMASK
+)paren
+suffix:semicolon
+id|JIFFER
+c_func
+(paren
+id|RESETtime
+)paren
+suffix:semicolon
+id|outb
+c_func
+(paren
+l_int|0
+comma
+id|INTMASK
+)paren
+suffix:semicolon
+macro_line|#endif
+multiline_comment|/* and turn the reset flag back off */
+id|outb
+c_func
+(paren
+id|CFLAGScmd
+op_or
+id|RESETclear
+op_or
+id|CONFIGclear
+comma
+id|COMMAND
+)paren
+suffix:semicolon
+id|XJIFFER
+c_func
+(paren
+id|ACKtime
 )paren
 suffix:semicolon
 id|airq
@@ -1790,7 +2042,7 @@ comma
 id|COMMAND
 )paren
 suffix:semicolon
-id|JIFFER
+id|XJIFFER
 c_func
 (paren
 id|ACKtime
@@ -1890,7 +2142,7 @@ id|D_INIT
 id|printk
 c_func
 (paren
-l_string|&quot;arcnet: irq and base address seem okay. (%Xh, IRQ %d)&bslash;n&quot;
+l_string|&quot;arcnet: irq and base address seem okay. (%lXh, IRQ %d)&bslash;n&quot;
 comma
 id|dev-&gt;base_addr
 comma
@@ -2105,6 +2357,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#endif /* MODULE */
 "&f;"
 multiline_comment|/* Open/initialize the board.  This is called (in the current kernel)&n;   sometime after booting when the &squot;ifconfig&squot; program is run.&n;&n;   This routine should set everything up anew at each open, even&n;   registers that &quot;should&quot; only need to be set once at boot, so that&n;   there is non-reboot way to recover if something goes wrong.&n;   */
 r_static
@@ -2132,6 +2385,25 @@ op_star
 id|dev-&gt;priv
 suffix:semicolon
 multiline_comment|/*&t;int ioaddr = dev-&gt;base_addr;*/
+r_if
+c_cond
+(paren
+id|dev-&gt;metric
+op_ge
+l_int|10
+)paren
+(brace
+id|net_debug
+op_assign
+id|dev-&gt;metric
+op_minus
+l_int|10
+suffix:semicolon
+id|dev-&gt;metric
+op_assign
+l_int|1
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -2187,9 +2459,16 @@ c_func
 l_string|&quot;arcnet: arcnet_open: resetting card.&bslash;n&quot;
 )paren
 suffix:semicolon
+multiline_comment|/* try to reset - twice if it fails the first time */
 r_if
 c_cond
 (paren
+id|arcnet_reset
+c_func
+(paren
+id|dev
+)paren
+op_logical_and
 id|arcnet_reset
 c_func
 (paren
@@ -2215,6 +2494,15 @@ id|dev-&gt;start
 op_assign
 l_int|1
 suffix:semicolon
+id|lp-&gt;intx
+op_assign
+l_int|0
+suffix:semicolon
+id|lp-&gt;in_txhandler
+op_assign
+l_int|0
+suffix:semicolon
+macro_line|#ifdef USE_TIMER_HANDLER
 multiline_comment|/* grab a timer handler to recover from any missed IRQ&squot;s */
 id|init_timer
 c_func
@@ -2243,13 +2531,16 @@ op_amp
 id|arcnet_timer
 suffix:semicolon
 multiline_comment|/* timer handler */
-macro_line|#ifdef USE_TIMER_HANDLER
 id|add_timer
 c_func
 (paren
 op_amp
 id|lp-&gt;timer
 )paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef MODULE
+id|MOD_INC_USE_COUNT
 suffix:semicolon
 macro_line|#endif
 r_return
@@ -2285,9 +2576,12 @@ r_int
 id|ioaddr
 op_assign
 id|dev-&gt;base_addr
-comma
+suffix:semicolon
+macro_line|#ifdef EXTRA_DELAYS
+r_int
 id|delayval
 suffix:semicolon
+macro_line|#endif
 multiline_comment|/*&t;lp-&gt;open_time = 0;*/
 id|dev-&gt;tbusy
 op_assign
@@ -2326,7 +2620,7 @@ id|COMMAND
 )paren
 suffix:semicolon
 multiline_comment|/* disable transmit */
-id|JIFFER
+id|XJIFFER
 c_func
 (paren
 id|ACKtime
@@ -2341,34 +2635,11 @@ id|COMMAND
 )paren
 suffix:semicolon
 multiline_comment|/* disable receive */
-macro_line|#if 0&t;/* we better not do this - hard wired IRQ&squot;s */
-multiline_comment|/* If not IRQ jumpered, free up the line. */
-id|outw
-c_func
-(paren
-l_int|0x00
-comma
-id|ioaddr
-op_plus
-l_int|0
-)paren
-suffix:semicolon
-multiline_comment|/* Release the physical interrupt line. */
-id|free_irq
-c_func
-(paren
-id|dev-&gt;irq
-)paren
-suffix:semicolon
-id|irq2dev_map
-(braket
-id|dev-&gt;irq
-)braket
-op_assign
-l_int|0
+multiline_comment|/* Update the statistics here. */
+macro_line|#ifdef MODULE
+id|MOD_DEC_USE_COUNT
 suffix:semicolon
 macro_line|#endif
-multiline_comment|/* Update the statistics here. */
 r_return
 l_int|0
 suffix:semicolon
@@ -2406,10 +2677,6 @@ r_int
 id|ioaddr
 op_assign
 id|dev-&gt;base_addr
-comma
-id|stat
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/*&t;short daddr;*/
 id|lp-&gt;intx
@@ -2438,6 +2705,8 @@ r_if
 c_cond
 (paren
 id|dev-&gt;tbusy
+op_logical_or
+id|lp-&gt;in_txhandler
 )paren
 (brace
 multiline_comment|/* If we get here, some higher level has decided we are broken.&n;&t;&t;   There should really be a &quot;kick me&quot; function call instead. */
@@ -2462,6 +2731,50 @@ c_func
 id|STATUS
 )paren
 suffix:semicolon
+multiline_comment|/* resume any stopped tx&squot;s */
+macro_line|#if 0
+r_if
+c_cond
+(paren
+id|lp-&gt;txready
+op_logical_and
+(paren
+id|inb
+c_func
+(paren
+id|STATUS
+)paren
+op_amp
+id|TXFREEflag
+)paren
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;arcnet: kickme: starting a TX (status=%Xh)&bslash;n&quot;
+comma
+id|inb
+c_func
+(paren
+id|STATUS
+)paren
+)paren
+suffix:semicolon
+id|arcnet_go_tx
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
+id|lp-&gt;intx
+op_decrement
+suffix:semicolon
+r_return
+l_int|1
+suffix:semicolon
+)brace
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -2469,9 +2782,35 @@ id|tickssofar
 OL
 l_int|5
 )paren
+(brace
+id|BUGLVL
+c_func
+(paren
+id|D_DURING
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;arcnet: premature kickme! (status=%Xh ticks=%d o.skb=%ph numsegs=%d segnum=%d&bslash;n&quot;
+comma
+id|status
+comma
+id|tickssofar
+comma
+id|lp-&gt;outgoing.skb
+comma
+id|lp-&gt;outgoing.numsegs
+comma
+id|lp-&gt;outgoing.segnum
+)paren
+suffix:semicolon
+id|lp-&gt;intx
+op_decrement
+suffix:semicolon
 r_return
 l_int|1
 suffix:semicolon
+)brace
 id|BUGLVL
 c_func
 (paren
@@ -2521,6 +2860,27 @@ comma
 id|COMMAND
 )paren
 suffix:semicolon
+id|dev-&gt;trans_start
+op_assign
+id|jiffies
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|lp-&gt;outgoing.skb
+)paren
+id|dev_kfree_skb
+c_func
+(paren
+id|lp-&gt;outgoing.skb
+comma
+id|FREE_WRITE
+)paren
+suffix:semicolon
+id|lp-&gt;outgoing.skb
+op_assign
+l_int|NULL
+suffix:semicolon
 id|dev-&gt;tbusy
 op_assign
 l_int|0
@@ -2531,12 +2891,21 @@ c_func
 id|NET_BH
 )paren
 suffix:semicolon
-id|dev-&gt;trans_start
-op_assign
-id|jiffies
-suffix:semicolon
 id|lp-&gt;intx
-op_decrement
+op_assign
+l_int|0
+suffix:semicolon
+id|lp-&gt;in_txhandler
+op_assign
+l_int|0
+suffix:semicolon
+id|lp-&gt;txready
+op_assign
+l_int|0
+suffix:semicolon
+id|lp-&gt;sending
+op_assign
+l_int|0
 suffix:semicolon
 r_return
 l_int|1
@@ -2587,6 +2956,33 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|lp-&gt;txready
+)paren
+multiline_comment|/* transmit already in progress! */
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;arcnet: trying to start new packet while busy!&bslash;n&quot;
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;arcnet: marking as not ready.&bslash;n&quot;
+)paren
+suffix:semicolon
+id|lp-&gt;txready
+op_assign
+l_int|0
+suffix:semicolon
+r_return
+l_int|1
+suffix:semicolon
+)brace
 multiline_comment|/* Block a timer-based transmit from overlapping.  This could better be&n;&t;   done with atomic_swap(1, dev-&gt;tbusy), but set_bit() works as well. */
 r_if
 c_cond
@@ -2610,7 +3006,7 @@ l_int|0
 id|printk
 c_func
 (paren
-l_string|&quot;arcnet: Transmitter called with busy bit set! (status=%Xh, inTX=%d, tickssofar=%ld)&bslash;n&quot;
+l_string|&quot;arcnet: transmitter called with busy bit set! (status=%Xh, inTX=%d, tickssofar=%ld)&bslash;n&quot;
 comma
 id|inb
 c_func
@@ -2625,16 +3021,27 @@ op_minus
 id|dev-&gt;trans_start
 )paren
 suffix:semicolon
-id|stat
-op_assign
+id|lp-&gt;intx
+op_decrement
+suffix:semicolon
+r_return
 op_minus
 id|EBUSY
 suffix:semicolon
 )brace
 r_else
 (brace
-r_int
-id|length
+r_struct
+id|Outgoing
+op_star
+id|out
+op_assign
+op_amp
+(paren
+id|lp-&gt;outgoing
+)paren
+suffix:semicolon
+id|out-&gt;length
 op_assign
 id|ETH_ZLEN
 OL
@@ -2645,10 +3052,7 @@ id|skb-&gt;len
 suffix:colon
 id|ETH_ZLEN
 suffix:semicolon
-r_struct
-id|ClientData
-op_star
-id|hdr
+id|out-&gt;hdr
 op_assign
 (paren
 r_struct
@@ -2657,10 +3061,35 @@ op_star
 )paren
 id|skb-&gt;data
 suffix:semicolon
+id|out-&gt;skb
+op_assign
+id|skb
+suffix:semicolon
+macro_line|#ifdef IRQ_XMIT
 r_if
 c_cond
 (paren
-id|length
+id|lp-&gt;txready
+op_logical_and
+id|inb
+c_func
+(paren
+id|STATUS
+)paren
+op_amp
+id|TXFREEflag
+)paren
+id|arcnet_go_tx
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
+macro_line|#endif
+r_if
+c_cond
+(paren
+id|out-&gt;length
 op_le
 id|XMTU
 )paren
@@ -2676,9 +3105,9 @@ c_func
 (paren
 l_string|&quot;arcnet: not splitting %d-byte packet. (split_flag=%d)&bslash;n&quot;
 comma
-id|length
+id|out-&gt;length
 comma
-id|hdr-&gt;split_flag
+id|out-&gt;hdr-&gt;split_flag
 )paren
 suffix:semicolon
 id|BUGLVL
@@ -2689,26 +3118,32 @@ id|D_INIT
 r_if
 c_cond
 (paren
-id|hdr-&gt;split_flag
+id|out-&gt;hdr-&gt;split_flag
 )paren
 id|printk
 c_func
 (paren
 l_string|&quot;arcnet: short packet has split_flag set?! (split_flag=%d)&bslash;n&quot;
 comma
-id|hdr-&gt;split_flag
+id|out-&gt;hdr-&gt;split_flag
 )paren
 suffix:semicolon
-id|stat
+id|out-&gt;numsegs
 op_assign
-id|arcnet_tx
+l_int|1
+suffix:semicolon
+id|out-&gt;segnum
+op_assign
+l_int|1
+suffix:semicolon
+id|arcnet_prepare_tx
 c_func
 (paren
 id|dev
 comma
-id|hdr
+id|out-&gt;hdr
 comma
-id|length
+id|out-&gt;length
 op_minus
 r_sizeof
 (paren
@@ -2731,13 +3166,66 @@ id|ClientData
 )paren
 )paren
 suffix:semicolon
+id|careful_xmit_wait
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
+multiline_comment|/* done right away */
+id|dev_kfree_skb
+c_func
+(paren
+id|out-&gt;skb
+comma
+id|FREE_WRITE
+)paren
+suffix:semicolon
+id|out-&gt;skb
+op_assign
+l_int|NULL
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|lp-&gt;sending
+)paren
+(brace
+id|arcnet_go_tx
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
+multiline_comment|/* inform upper layers */
+id|dev-&gt;tbusy
+op_assign
+l_int|0
+suffix:semicolon
+id|mark_bh
+c_func
+(paren
+id|NET_BH
+)paren
+suffix:semicolon
+)brace
 )brace
 r_else
 multiline_comment|/* too big for one - split it */
 (brace
-id|u_char
-op_star
-id|data
+r_int
+id|maxsegsize
+op_assign
+id|XMTU
+op_minus
+r_sizeof
+(paren
+r_struct
+id|ClientData
+)paren
+suffix:semicolon
+id|out-&gt;data
 op_assign
 (paren
 id|u_char
@@ -2751,31 +3239,20 @@ r_struct
 id|ClientData
 )paren
 suffix:semicolon
-r_int
-id|dataleft
+id|out-&gt;dataleft
 op_assign
-id|length
+id|out-&gt;length
 op_minus
 r_sizeof
 (paren
 r_struct
 id|ClientData
 )paren
-comma
-id|maxsegsize
-op_assign
-id|XMTU
-op_minus
-r_sizeof
-(paren
-r_struct
-id|ClientData
-)paren
-comma
-id|numsegs
+suffix:semicolon
+id|out-&gt;numsegs
 op_assign
 (paren
-id|dataleft
+id|out-&gt;dataleft
 op_plus
 id|maxsegsize
 op_minus
@@ -2783,10 +3260,8 @@ l_int|1
 )paren
 op_div
 id|maxsegsize
-comma
-id|seglen
-comma
-id|segnum
+suffix:semicolon
+id|out-&gt;segnum
 op_assign
 l_int|0
 suffix:semicolon
@@ -2800,147 +3275,111 @@ c_func
 (paren
 l_string|&quot;arcnet: packet (%d bytes) split into %d fragments:&bslash;n&quot;
 comma
-id|length
+id|out-&gt;length
 comma
-id|numsegs
+id|out-&gt;numsegs
 )paren
 suffix:semicolon
-r_while
-c_loop
+macro_line|#ifdef IRQ_XMIT
+multiline_comment|/* if a packet waiting, launch it */
+r_if
+c_cond
 (paren
-op_logical_neg
-id|stat
+id|lp-&gt;txready
 op_logical_and
-id|dataleft
-)paren
-(brace
-r_if
-c_cond
-(paren
-op_logical_neg
-id|segnum
-)paren
-multiline_comment|/* first packet */
-id|hdr-&gt;split_flag
-op_assign
-(paren
-(paren
-id|numsegs
-op_minus
-l_int|2
-)paren
-op_lshift
-l_int|1
-)paren
-op_plus
-l_int|1
-suffix:semicolon
-r_else
-id|hdr-&gt;split_flag
-op_assign
-id|segnum
-op_lshift
-l_int|1
-suffix:semicolon
-id|seglen
-op_assign
-id|maxsegsize
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|seglen
-OG
-id|dataleft
-)paren
-id|seglen
-op_assign
-id|dataleft
-suffix:semicolon
-id|BUGLVL
+id|inb
 c_func
 (paren
-id|D_TX
+id|STATUS
 )paren
-id|printk
-c_func
-(paren
-l_string|&quot;arcnet: packet #%d (%d bytes) of %d (%d total), splitflag=%d&bslash;n&quot;
-comma
-id|segnum
-op_plus
-l_int|1
-comma
-id|seglen
-comma
-id|numsegs
-comma
-id|length
-comma
-id|hdr-&gt;split_flag
+op_amp
+id|TXFREEflag
 )paren
-suffix:semicolon
-id|stat
-op_assign
-id|arcnet_tx
+id|arcnet_go_tx
 c_func
 (paren
 id|dev
-comma
-id|hdr
-comma
-id|seglen
-comma
-id|data
 )paren
 suffix:semicolon
-id|dataleft
-op_sub_assign
-id|seglen
-suffix:semicolon
-id|data
-op_add_assign
-id|seglen
-suffix:semicolon
-id|segnum
-op_increment
-suffix:semicolon
-macro_line|#if 0&t;/* sequence # should not update here... I think! */
-multiline_comment|/* sequence number goes up on each packet */
-id|hdr-&gt;sequence
-op_increment
-suffix:semicolon
-id|lp-&gt;sequence
-op_increment
-suffix:semicolon
-macro_line|#endif
-)brace
-)brace
-multiline_comment|/* I don&squot;t know if this should be in or out of these braces,&n;&t;&t; * but freeing it too often seems worse than too little.&n;&t;&t; * (maybe?)  (v0.30)&n;&t;&t; */
 r_if
 c_cond
 (paren
 op_logical_neg
-id|stat
+id|lp-&gt;txready
+)paren
+(brace
+multiline_comment|/* prepare a packet, launch it and prepare&n;                                 * another.&n;                                 */
+id|arcnet_continue_tx
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|lp-&gt;sending
+)paren
+(brace
+id|arcnet_go_tx
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
+id|arcnet_continue_tx
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|lp-&gt;sending
+)paren
+id|arcnet_go_tx
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
+)brace
+)brace
+multiline_comment|/* if segnum==numsegs, the transmission is finished;&n;&t;&t;&t; * free the skb right away.&n;&t;&t;&t; */
+r_if
+c_cond
+(paren
+id|out-&gt;segnum
+op_eq
+id|out-&gt;numsegs
+)paren
+(brace
+multiline_comment|/* transmit completed */
+id|out-&gt;segnum
+op_increment
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|out-&gt;skb
 )paren
 id|dev_kfree_skb
 c_func
 (paren
-id|skb
+id|out-&gt;skb
 comma
 id|FREE_WRITE
 )paren
 suffix:semicolon
-multiline_comment|/* we&squot;re done now */
-r_if
-c_cond
-(paren
-id|stat
-op_ne
-op_minus
-id|EBUSY
-)paren
-(brace
+id|out-&gt;skb
+op_assign
+l_int|NULL
+suffix:semicolon
+macro_line|#if 0
+multiline_comment|/* inform upper layers */
 id|dev-&gt;tbusy
 op_assign
 l_int|0
@@ -2951,24 +3390,249 @@ c_func
 id|NET_BH
 )paren
 suffix:semicolon
-multiline_comment|/* Inform upper layers. */
-multiline_comment|/* this should be on an IRQ, but can&squot;t&n;&t;&t;&t; * because ARCnets (at least mine) are stupid.&n;&t;&t;&t; */
+macro_line|#endif
+)brace
+macro_line|#else /* non-irq xmit */
+r_while
+c_loop
+(paren
+id|out-&gt;segnum
+OL
+id|out-&gt;numsegs
+)paren
+(brace
+id|arcnet_continue_tx
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
+id|careful_xmit_wait
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
+id|arcnet_go_tx
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
+id|dev-&gt;trans_start
+op_assign
+id|jiffies
+suffix:semicolon
+)brace
+id|dev_kfree_skb
+c_func
+(paren
+id|out-&gt;skb
+comma
+id|FREE_WRITE
+)paren
+suffix:semicolon
+id|out-&gt;skb
+op_assign
+l_int|NULL
+suffix:semicolon
+multiline_comment|/* inform upper layers */
+id|dev-&gt;tbusy
+op_assign
+l_int|0
+suffix:semicolon
+id|mark_bh
+c_func
+(paren
+id|NET_BH
+)paren
+suffix:semicolon
+macro_line|#endif
 )brace
 )brace
 id|lp-&gt;intx
 op_decrement
 suffix:semicolon
+id|lp-&gt;stats.tx_packets
+op_increment
+suffix:semicolon
+id|dev-&gt;trans_start
+op_assign
+id|jiffies
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+DECL|function|arcnet_continue_tx
+r_static
+r_void
+id|arcnet_continue_tx
+c_func
+(paren
+r_struct
+id|device
+op_star
+id|dev
+)paren
+(brace
+r_struct
+id|arcnet_local
+op_star
+id|lp
+op_assign
+(paren
+r_struct
+id|arcnet_local
+op_star
+)paren
+id|dev-&gt;priv
+suffix:semicolon
+r_int
+id|maxsegsize
+op_assign
+id|XMTU
+op_minus
+r_sizeof
+(paren
+r_struct
+id|ClientData
+)paren
+suffix:semicolon
+r_struct
+id|Outgoing
+op_star
+id|out
+op_assign
+op_amp
+(paren
+id|lp-&gt;outgoing
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|lp-&gt;txready
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;arcnet: continue_tx: called with packet in buffer!&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|out-&gt;segnum
+op_ge
+id|out-&gt;numsegs
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;arcnet: continue_tx: building segment %d of %d!&bslash;n&quot;
+comma
+id|out-&gt;segnum
+op_plus
+l_int|1
+comma
+id|out-&gt;numsegs
+)paren
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
 op_logical_neg
-id|stat
+id|out-&gt;segnum
 )paren
-id|lp-&gt;stats.tx_packets
-op_increment
+multiline_comment|/* first packet */
+id|out-&gt;hdr-&gt;split_flag
+op_assign
+(paren
+(paren
+id|out-&gt;numsegs
+op_minus
+l_int|2
+)paren
+op_lshift
+l_int|1
+)paren
+op_plus
+l_int|1
 suffix:semicolon
-r_return
-id|stat
+r_else
+id|out-&gt;hdr-&gt;split_flag
+op_assign
+id|out-&gt;segnum
+op_lshift
+l_int|1
+suffix:semicolon
+id|out-&gt;seglen
+op_assign
+id|maxsegsize
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|out-&gt;seglen
+OG
+id|out-&gt;dataleft
+)paren
+id|out-&gt;seglen
+op_assign
+id|out-&gt;dataleft
+suffix:semicolon
+id|BUGLVL
+c_func
+(paren
+id|D_TX
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;arcnet: building packet #%d (%d bytes) of %d (%d total), splitflag=%d&bslash;n&quot;
+comma
+id|out-&gt;segnum
+op_plus
+l_int|1
+comma
+id|out-&gt;seglen
+comma
+id|out-&gt;numsegs
+comma
+id|out-&gt;length
+comma
+id|out-&gt;hdr-&gt;split_flag
+)paren
+suffix:semicolon
+id|arcnet_prepare_tx
+c_func
+(paren
+id|dev
+comma
+id|out-&gt;hdr
+comma
+id|out-&gt;seglen
+comma
+id|out-&gt;data
+)paren
+suffix:semicolon
+id|out-&gt;dataleft
+op_sub_assign
+id|out-&gt;seglen
+suffix:semicolon
+id|out-&gt;data
+op_add_assign
+id|out-&gt;seglen
+suffix:semicolon
+id|out-&gt;segnum
+op_increment
 suffix:semicolon
 )brace
 macro_line|#ifdef CAREFUL_XMIT
@@ -3084,9 +3748,9 @@ suffix:semicolon
 )brace
 macro_line|#endif
 r_static
-r_int
-DECL|function|arcnet_tx
-id|arcnet_tx
+r_void
+DECL|function|arcnet_prepare_tx
+id|arcnet_prepare_tx
 c_func
 (paren
 r_struct
@@ -3107,12 +3771,7 @@ op_star
 id|data
 )paren
 (brace
-r_int
-id|ioaddr
-op_assign
-id|dev-&gt;base_addr
-suffix:semicolon
-macro_line|#if 0
+multiline_comment|/*&t;int ioaddr = dev-&gt;base_addr;*/
 r_struct
 id|arcnet_local
 op_star
@@ -3125,7 +3784,6 @@ op_star
 )paren
 id|dev-&gt;priv
 suffix:semicolon
-macro_line|#endif
 r_struct
 id|ClientData
 op_star
@@ -3146,7 +3804,11 @@ id|dev-&gt;mem_start
 op_plus
 l_int|512
 op_star
-id|TXbuf
+(paren
+id|lp-&gt;txbuf
+op_xor
+l_int|1
+)paren
 )paren
 suffix:semicolon
 id|u_char
@@ -3158,6 +3820,13 @@ suffix:semicolon
 r_int
 id|daddr
 suffix:semicolon
+id|lp-&gt;txbuf
+op_assign
+id|lp-&gt;txbuf
+op_xor
+l_int|1
+suffix:semicolon
+multiline_comment|/* XOR with 1 to alternate between 2 and 3 */
 id|length
 op_add_assign
 r_sizeof
@@ -3174,7 +3843,7 @@ id|D_TX
 id|printk
 c_func
 (paren
-l_string|&quot;arcnet: arcnet_tx: hdr:%ph, length:%d, data:%ph&bslash;n&quot;
+l_string|&quot;arcnet: arcnet_prep_tx: hdr:%ph, length:%d, data:%ph&bslash;n&quot;
 comma
 id|hdr
 comma
@@ -3183,55 +3852,6 @@ comma
 id|data
 )paren
 suffix:semicolon
-macro_line|#if 0
-multiline_comment|/* make sure transmitter is available before sending */
-r_if
-c_cond
-(paren
-op_logical_neg
-(paren
-id|inb
-c_func
-(paren
-id|STATUS
-)paren
-op_amp
-id|TXFREEflag
-)paren
-)paren
-(brace
-id|BUGLVL
-c_func
-(paren
-id|D_TX
-)paren
-id|printk
-c_func
-(paren
-l_string|&quot;arcnet: transmitter in use! (status=%Xh)&bslash;n&quot;
-comma
-id|inb
-c_func
-(paren
-id|STATUS
-)paren
-)paren
-suffix:semicolon
-r_return
-op_minus
-id|EBUSY
-suffix:semicolon
-)brace
-macro_line|#endif
-multiline_comment|/* &lt;blah&gt; Gruesome hack because tx+rx irq&squot;s don&squot;t work at&n;&t; * the same time (or so it seems to me)&n;&t; *&n;&t; * Our transmits just won&squot;t be interrupt driven, I guess. (ugh)&n;&t; */
-macro_line|#ifdef CAREFUL_XMIT
-id|careful_xmit_wait
-c_func
-(paren
-id|dev
-)paren
-suffix:semicolon
-macro_line|#endif
 multiline_comment|/* clean out the page to make debugging make more sense :) */
 id|BUGLVL
 c_func
@@ -3247,7 +3867,7 @@ op_star
 )paren
 id|dev-&gt;mem_start
 op_plus
-id|TXbuf
+id|lp-&gt;txbuf
 op_star
 l_int|512
 comma
@@ -3592,42 +4212,6 @@ l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* start sending */
-id|outb
-c_func
-(paren
-id|TXcmd
-op_or
-(paren
-id|TXbuf
-op_lshift
-l_int|3
-)paren
-comma
-id|COMMAND
-)paren
-suffix:semicolon
-id|dev-&gt;trans_start
-op_assign
-id|jiffies
-suffix:semicolon
-id|BUGLVL
-c_func
-(paren
-id|D_TX
-)paren
-id|printk
-c_func
-(paren
-l_string|&quot;arcnet: transmit started successfully. (status=%Xh)&bslash;n&quot;
-comma
-id|inb
-c_func
-(paren
-id|STATUS
-)paren
-)paren
-suffix:semicolon
 macro_line|#ifdef CAREFUL_XMIT
 macro_line|#if 0
 id|careful_xmit_wait
@@ -3684,8 +4268,135 @@ multiline_comment|/* &quot;machine is not on the network&quot; */
 )brace
 macro_line|#endif
 macro_line|#endif
+id|lp-&gt;txready
+op_assign
+id|lp-&gt;txbuf
+suffix:semicolon
+multiline_comment|/* packet is ready for sending */
+macro_line|#if 0
+macro_line|#ifdef IRQ_XMIT
+r_if
+c_cond
+(paren
+id|inb
+c_func
+(paren
+id|STATUS
+)paren
+op_amp
+id|TXFREEflag
+)paren
+id|arcnet_go_tx
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#endif
+)brace
+r_static
+r_void
+DECL|function|arcnet_go_tx
+id|arcnet_go_tx
+c_func
+(paren
+r_struct
+id|device
+op_star
+id|dev
+)paren
+(brace
+r_struct
+id|arcnet_local
+op_star
+id|lp
+op_assign
+(paren
+r_struct
+id|arcnet_local
+op_star
+)paren
+id|dev-&gt;priv
+suffix:semicolon
+r_int
+id|ioaddr
+op_assign
+id|dev-&gt;base_addr
+suffix:semicolon
+id|BUGLVL
+c_func
+(paren
+id|D_DURING
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;arcnet: go_tx: status=%Xh&bslash;n&quot;
+comma
+id|inb
+c_func
+(paren
+id|STATUS
+)paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|inb
+c_func
+(paren
+id|STATUS
+)paren
+op_amp
+id|TXFREEflag
+)paren
+op_logical_or
+op_logical_neg
+id|lp-&gt;txready
+)paren
 r_return
+suffix:semicolon
+multiline_comment|/* start sending */
+id|outb
+c_func
+(paren
+id|TXcmd
+op_or
+(paren
+id|lp-&gt;txready
+op_lshift
+l_int|3
+)paren
+comma
+id|COMMAND
+)paren
+suffix:semicolon
+macro_line|#ifdef IRQ_XMIT
+id|outb
+c_func
+(paren
+id|TXFREEflag
+op_or
+id|NORXflag
+comma
+id|INTMASK
+)paren
+suffix:semicolon
+macro_line|#endif
+id|dev-&gt;trans_start
+op_assign
+id|jiffies
+suffix:semicolon
+id|lp-&gt;txready
+op_assign
 l_int|0
+suffix:semicolon
+id|lp-&gt;sending
+op_increment
 suffix:semicolon
 )brace
 "&f;"
@@ -3779,11 +4490,18 @@ id|status
 comma
 id|boguscount
 op_assign
-l_int|20
+l_int|3
+comma
+id|didsomething
 suffix:semicolon
 id|dev-&gt;interrupt
 op_assign
 l_int|1
+suffix:semicolon
+id|sti
+c_func
+(paren
+)paren
 suffix:semicolon
 id|ioaddr
 op_assign
@@ -3798,6 +4516,16 @@ op_star
 )paren
 id|dev-&gt;priv
 suffix:semicolon
+macro_line|#ifdef IRQ_XMIT
+id|outb
+c_func
+(paren
+l_int|0
+comma
+id|INTMASK
+)paren
+suffix:semicolon
+macro_line|#endif
 id|BUGLVL
 c_func
 (paren
@@ -3825,6 +4553,10 @@ c_func
 id|STATUS
 )paren
 suffix:semicolon
+id|didsomething
+op_assign
+l_int|0
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -3842,14 +4574,34 @@ c_func
 (paren
 l_string|&quot;arcnet: ARCnet not yet initialized.  irq ignored. (status=%Xh)&bslash;n&quot;
 comma
-id|inb
-c_func
-(paren
-id|STATUS
-)paren
+id|status
 )paren
 suffix:semicolon
-r_break
+macro_line|#ifdef IRQ_XMIT
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|status
+op_amp
+id|NORXflag
+)paren
+)paren
+id|outb
+c_func
+(paren
+id|NORXflag
+comma
+id|INTMASK
+)paren
+suffix:semicolon
+macro_line|#endif
+id|dev-&gt;interrupt
+op_assign
+l_int|0
+suffix:semicolon
+r_return
 suffix:semicolon
 )brace
 multiline_comment|/* RESET flag was enabled - card is resetting and if RX&n;&t;&t; * is disabled, it&squot;s NOT because we just got a packet.&n;&t;&t; */
@@ -3874,7 +4626,11 @@ comma
 id|status
 )paren
 suffix:semicolon
-r_break
+id|dev-&gt;interrupt
+op_assign
+l_int|0
+suffix:semicolon
+r_return
 suffix:semicolon
 )brace
 macro_line|#if 1&t;/* yes, it&squot;s silly to disable this part but it makes good testing */
@@ -3924,19 +4680,95 @@ op_logical_neg
 id|recbuf
 )paren
 suffix:semicolon
+id|didsomething
+op_increment
+suffix:semicolon
 )brace
 macro_line|#endif
-macro_line|#if 0  /* this doesn&squot;t actually work, and will now zonk everything. leave&n;&t;* disabled until I fix it.&n;&t;*/
-multiline_comment|/* it can only be a xmit-done irq if we&squot;re xmitting :) */
-r_else
+macro_line|#ifdef IRQ_XMIT
+multiline_comment|/* it can only be an xmit-done irq if we&squot;re xmitting :) */
 r_if
 c_cond
 (paren
-id|dev-&gt;tbusy
-op_logical_and
 id|status
 op_amp
 id|TXFREEflag
+op_logical_and
+op_logical_neg
+id|lp-&gt;in_txhandler
+op_logical_and
+id|lp-&gt;sending
+)paren
+(brace
+r_struct
+id|Outgoing
+op_star
+id|out
+op_assign
+op_amp
+(paren
+id|lp-&gt;outgoing
+)paren
+suffix:semicolon
+id|lp-&gt;in_txhandler
+op_increment
+suffix:semicolon
+id|lp-&gt;sending
+op_decrement
+suffix:semicolon
+id|BUGLVL
+c_func
+(paren
+id|D_DURING
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;arcnet: TX IRQ (stat=%Xh, numsegs=%d, segnum=%d, skb=%ph)&bslash;n&quot;
+comma
+id|status
+comma
+id|out-&gt;numsegs
+comma
+id|out-&gt;segnum
+comma
+id|out-&gt;skb
+)paren
+suffix:semicolon
+multiline_comment|/* send packet if there is one */
+r_if
+c_cond
+(paren
+id|lp-&gt;txready
+)paren
+(brace
+id|arcnet_go_tx
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
+id|didsomething
+op_increment
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|lp-&gt;intx
+)paren
+(brace
+id|lp-&gt;in_txhandler
+op_decrement
+suffix:semicolon
+r_continue
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|lp-&gt;outgoing.skb
 )paren
 (brace
 id|BUGLVL
@@ -3947,12 +4779,19 @@ id|D_DURING
 id|printk
 c_func
 (paren
-l_string|&quot;arcnet: transmit IRQ?!? (status=%Xh)&bslash;n&quot;
-comma
-id|status
+l_string|&quot;arcnet: TX IRQ done: no split to continue.&bslash;n&quot;
 )paren
 suffix:semicolon
-multiline_comment|/*lp-&gt;stats.tx_packets++;*/
+multiline_comment|/* inform upper layers */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|lp-&gt;txready
+op_logical_and
+id|dev-&gt;tbusy
+)paren
+(brace
 id|dev-&gt;tbusy
 op_assign
 l_int|0
@@ -3963,25 +4802,110 @@ c_func
 id|NET_BH
 )paren
 suffix:semicolon
-multiline_comment|/* Inform upper layers. */
-r_break
+)brace
+id|lp-&gt;in_txhandler
+op_decrement
+suffix:semicolon
+r_continue
 suffix:semicolon
 )brace
-r_else
-r_break
+multiline_comment|/*lp-&gt;stats.tx_packets++;*/
+multiline_comment|/* if more than one segment, and not all segments&n;&t;&t;&t; * are done, then continue xmit.&n;&t;&t;&t; */
+r_if
+c_cond
+(paren
+id|out-&gt;segnum
+OL
+id|out-&gt;numsegs
+)paren
+id|arcnet_continue_tx
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
-macro_line|#endif
-macro_line|#if 0
-r_break
+r_if
+c_cond
+(paren
+id|lp-&gt;txready
+op_logical_and
+op_logical_neg
+id|lp-&gt;sending
+)paren
+id|arcnet_go_tx
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
-multiline_comment|/* delete me */
-macro_line|#endif
+multiline_comment|/* if segnum==numsegs, the transmission is finished;&n;&t;&t;&t; * free the skb.&n;&t;&t;&t; */
+r_if
+c_cond
+(paren
+id|out-&gt;segnum
+op_ge
+id|out-&gt;numsegs
+)paren
+(brace
+multiline_comment|/* transmit completed */
+id|out-&gt;segnum
+op_increment
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|out-&gt;skb
+)paren
+id|dev_kfree_skb
+c_func
+(paren
+id|out-&gt;skb
+comma
+id|FREE_WRITE
+)paren
+suffix:semicolon
+id|out-&gt;skb
+op_assign
+l_int|NULL
+suffix:semicolon
+multiline_comment|/* inform upper layers */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|lp-&gt;txready
+op_logical_and
+id|dev-&gt;tbusy
+)paren
+(brace
+id|dev-&gt;tbusy
+op_assign
+l_int|0
+suffix:semicolon
+id|mark_bh
+c_func
+(paren
+id|NET_BH
+)paren
+suffix:semicolon
+)brace
+)brace
+id|didsomething
+op_increment
+suffix:semicolon
+id|lp-&gt;in_txhandler
+op_decrement
+suffix:semicolon
+)brace
+macro_line|#endif /* IRQ_XMIT */
 )brace
 r_while
 c_loop
 (paren
 op_decrement
 id|boguscount
+op_logical_and
+id|didsomething
 )paren
 suffix:semicolon
 id|BUGLVL
@@ -4001,11 +4925,37 @@ id|STATUS
 )paren
 )paren
 suffix:semicolon
+macro_line|#ifdef IRQ_XMIT
+r_if
+c_cond
+(paren
+id|dev-&gt;start
+op_logical_and
+id|lp-&gt;sending
+)paren
+id|outb
+c_func
+(paren
+id|NORXflag
+op_or
+id|TXFREEflag
+comma
+id|INTMASK
+)paren
+suffix:semicolon
+r_else
+id|outb
+c_func
+(paren
+id|NORXflag
+comma
+id|INTMASK
+)paren
+suffix:semicolon
+macro_line|#endif
 id|dev-&gt;interrupt
 op_assign
 l_int|0
-suffix:semicolon
-r_return
 suffix:semicolon
 )brace
 multiline_comment|/* A packet has arrived; grab it from the buffers and possibly unsplit it.&n; */
@@ -4642,7 +5592,7 @@ suffix:semicolon
 r_else
 multiline_comment|/* split packet */
 (brace
-multiline_comment|/* NOTE:  MSDOS ARP packet correction should only need to&n;&t;          * apply to unsplit packets, since ARP packets are so short.&n;&t;          *&n;&t;          * My interpretation of the RFC1201 (ARCnet) document is that&n;&t;          * if a packet is received out of order, the entire assembly&n;&t;          * process should be aborted.&n;&t;          *&n;&t;          * The RFC also mentions &quot;it is possible for successfully&n;&t;          * received packets to be retransmitted.&quot;  I&squot;m hoping this&n;&t;          * means only the most recent one, which is the only one&n;&t;          * currently allowed.&n;&t;          *&n;&t;          * We allow multiple assembly processes, one for each&n;&t;          * ARCnet card possible on the network.  Seems rather like&n;&t;          * a waste of memory.  Necessary?&n;&t;          */
+multiline_comment|/* NOTE:  MSDOS ARP packet correction should only need to&n;&t;          * apply to unsplit packets, since ARP packets are so short.&n;&t;          *&n;&t;          * My interpretation of the RFC1201 (ARCnet) document is that&n;&t;          * if a packet is received out of order, the entire assembly&n;&t;          * process should be aborted.&n;&t;          *&n;&t;          * The RFC also mentions &quot;it is possible for successfully&n;&t;          * received packets to be retransmitted.&quot;  As of 0.40 all&n;&t;          * previously received packets are allowed, not just the&n;&t;          * most recent one.&n;&t;          *&n;&t;          * We allow multiple assembly processes, one for each&n;&t;          * ARCnet card possible on the network.  Seems rather like&n;&t;          * a waste of memory.  Necessary?&n;&t;          */
 r_struct
 id|Incoming
 op_star
@@ -4713,8 +5663,6 @@ op_assign
 id|in-&gt;numpackets
 op_assign
 l_int|0
-suffix:semicolon
-r_return
 suffix:semicolon
 )brace
 r_if
@@ -4999,7 +5947,7 @@ r_if
 c_cond
 (paren
 id|packetnum
-op_eq
+op_le
 id|in-&gt;lastpacket
 op_minus
 l_int|1
@@ -5274,6 +6222,7 @@ suffix:semicolon
 multiline_comment|/* If any worth-while packets have been received, dev_rint()&n;&t;   has done a mark_bh(NET_BH) for us and will work on them&n;&t;   when we get to the bottom-half routine. */
 multiline_comment|/* arcnet: pardon? */
 )brace
+macro_line|#ifdef USE_TIMER_HANDLER
 multiline_comment|/* this function is called every once in a while to make sure the ARCnet&n; * isn&squot;t stuck.&n; *&n; * If we miss a receive IRQ, the receiver (and IRQ) is permanently disabled&n; * and we might never receive a packet again!  This will check if this&n; * is the case, and if so, re-enable the receiver.&n; */
 r_static
 r_void
@@ -5383,6 +6332,7 @@ id|lp-&gt;timer
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
 multiline_comment|/* Get the current statistics.&t;This may be called with the card open or&n;   closed. */
 r_static
 r_struct
@@ -5566,13 +6516,21 @@ c_func
 id|CFLAGScmd
 op_or
 id|RESETclear
+comma
+id|COMMAND
+)paren
+suffix:semicolon
+multiline_comment|/* clear flags &amp; end reset */
+id|outb
+c_func
+(paren
+id|CFLAGScmd
 op_or
 id|CONFIGclear
 comma
 id|COMMAND
 )paren
 suffix:semicolon
-multiline_comment|/* clear flags &amp; end reset */
 multiline_comment|/* after a reset, the first byte of shared mem is TESTvalue and the&n;&t; * second byte is our 8-bit ARCnet address&n;&t; */
 (brace
 id|u_char
@@ -5627,19 +6585,11 @@ id|lp-&gt;recbuf
 op_assign
 l_int|0
 suffix:semicolon
-id|dev-&gt;tbusy
+id|lp-&gt;txbuf
 op_assign
-l_int|0
+l_int|2
 suffix:semicolon
-multiline_comment|/* enable IRQ&squot;s on completed receive&n;&t; * I messed around for a long time, but I couldn&squot;t get tx and rx&n;&t; * irq&squot;s to work together.  It looks like one or the other but not&n;&t; * both... &lt;sigh&gt;.  The Crynwr driver uses only rx, and so do I now.&n;&t; */
-id|outb
-c_func
-(paren
-id|NORXflag
-comma
-id|INTMASK
-)paren
-suffix:semicolon
+multiline_comment|/*dev-&gt;tbusy=0;*/
 multiline_comment|/* enable extended (512-byte) packets */
 id|outb
 c_func
@@ -5651,7 +6601,7 @@ comma
 id|COMMAND
 )paren
 suffix:semicolon
-id|JIFFER
+id|XJIFFER
 c_func
 (paren
 id|ACKtime
@@ -5681,6 +6631,15 @@ multiline_comment|/* and enable receive of our first packet to the first buffer 
 id|EnableReceiver
 c_func
 (paren
+)paren
+suffix:semicolon
+multiline_comment|/* re-enable interrupts */
+id|outb
+c_func
+(paren
+id|NORXflag
+comma
+id|INTMASK
 )paren
 suffix:semicolon
 multiline_comment|/* done!  return success. */
@@ -5782,6 +6741,15 @@ suffix:colon
 id|head-&gt;protocol_id
 op_assign
 id|ARC_P_RARP
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|ETH_P_IPX
+suffix:colon
+id|head-&gt;protocol_id
+op_assign
+id|ARC_P_IPX
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -6121,7 +7089,6 @@ c_func
 id|ETH_P_IP
 )paren
 suffix:semicolon
-multiline_comment|/* what the heck is&n;&t;&t;&t;&t;&t;&t;&t; an htons, anyway? */
 r_case
 id|ARC_P_ARP
 suffix:colon
@@ -6143,13 +7110,23 @@ id|ETH_P_RARP
 )paren
 suffix:semicolon
 r_case
-l_int|0xFA
+id|ARC_P_IPX
 suffix:colon
-multiline_comment|/* IPX */
+r_return
+id|htons
+c_func
+(paren
+id|ETH_P_IPX
+)paren
+suffix:semicolon
 r_case
-l_int|0xDD
+id|ARC_P_LANSOFT
 suffix:colon
-multiline_comment|/* Appletalk */
+multiline_comment|/* don&squot;t understand.  fall through. */
+r_case
+id|ARC_P_ATALK
+suffix:colon
+multiline_comment|/* appletalk - don&squot;t understand.  fall through. */
 r_default
 suffix:colon
 id|BUGLVL
@@ -6255,6 +7232,243 @@ id|ETH_P_IP
 )paren
 suffix:semicolon
 )brace
+macro_line|#ifdef MODULE
+DECL|variable|kernel_version
+r_char
+id|kernel_version
+(braket
+)braket
+op_assign
+id|UTS_RELEASE
+suffix:semicolon
+DECL|variable|thisARCnet
+r_static
+r_struct
+id|device
+id|thisARCnet
+op_assign
+(brace
+l_string|&quot;      &quot;
+comma
+multiline_comment|/* if blank, device name inserted by /linux/drivers/net/net_init.c */
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+multiline_comment|/* I/O address, IRQ */
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|NULL
+comma
+id|arcnet_probe
+)brace
+suffix:semicolon
+DECL|variable|io
+r_int
+id|io
+op_assign
+l_int|0x0
+suffix:semicolon
+multiline_comment|/* &lt;--- EDIT THESE LINES FOR YOUR CONFIGURATION */
+DECL|variable|irqnum
+r_int
+id|irqnum
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* or use the insmod io= irq= shmem= options */
+DECL|variable|shmem
+r_int
+id|shmem
+op_assign
+l_int|0
+suffix:semicolon
+DECL|variable|num
+r_int
+id|num
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* number of device (ie for arc0, arc1, arc2...) */
+r_int
+DECL|function|init_module
+id|init_module
+c_func
+(paren
+r_void
+)paren
+(brace
+id|sprintf
+c_func
+(paren
+id|thisARCnet.name
+comma
+l_string|&quot;arc%d&quot;
+comma
+id|num
+)paren
+suffix:semicolon
+id|thisARCnet.base_addr
+op_assign
+id|io
+suffix:semicolon
+id|thisARCnet.irq
+op_assign
+id|irqnum
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|thisARCnet.irq
+op_eq
+l_int|2
+)paren
+id|thisARCnet.irq
+op_assign
+l_int|9
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|shmem
+)paren
+(brace
+id|thisARCnet.mem_start
+op_assign
+id|shmem
+suffix:semicolon
+id|thisARCnet.mem_end
+op_assign
+id|thisARCnet.mem_start
+op_plus
+l_int|512
+op_star
+l_int|4
+op_minus
+l_int|1
+suffix:semicolon
+id|thisARCnet.rmem_start
+op_assign
+id|thisARCnet.mem_start
+op_plus
+l_int|512
+op_star
+l_int|0
+suffix:semicolon
+id|thisARCnet.rmem_end
+op_assign
+id|thisARCnet.mem_start
+op_plus
+l_int|512
+op_star
+l_int|2
+op_minus
+l_int|1
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|register_netdev
+c_func
+(paren
+op_amp
+id|thisARCnet
+)paren
+op_ne
+l_int|0
+)paren
+r_return
+op_minus
+id|EIO
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+r_void
+DECL|function|cleanup_module
+id|cleanup_module
+c_func
+(paren
+r_void
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|MOD_IN_USE
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;%s: device busy, remove delayed&bslash;n&quot;
+comma
+id|thisARCnet.name
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
+r_if
+c_cond
+(paren
+id|thisARCnet.start
+)paren
+id|arcnet_close
+c_func
+(paren
+op_amp
+id|thisARCnet
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|thisARCnet.irq
+)paren
+id|free_irq
+c_func
+(paren
+id|thisARCnet.irq
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|thisARCnet.base_addr
+)paren
+id|release_region
+c_func
+(paren
+id|thisARCnet.base_addr
+comma
+id|ETHERCARD_TOTAL_SIZE
+)paren
+suffix:semicolon
+id|unregister_netdev
+c_func
+(paren
+op_amp
+id|thisARCnet
+)paren
+suffix:semicolon
+)brace
+)brace
+macro_line|#endif /* MODULE */
 "&f;"
 multiline_comment|/*&n; * Local variables:&n; *  compile-command: &quot;gcc -D__KERNEL__ -I/usr/src/linux/net/inet -Wall -Wstrict-prototypes -O6 -m486 -c skeleton.c&quot;&n; *  version-control: t&n; *  kept-new-versions: 5&n; *  tab-width: 4&n; * End:&n; */
 eof

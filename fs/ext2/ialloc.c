@@ -211,6 +211,10 @@ l_string|&quot;block_group = %lu, inode_bitmap = %lu&quot;
 comma
 id|block_group
 comma
+(paren
+r_int
+r_int
+)paren
 id|gdp-&gt;bg_inode_bitmap
 )paren
 suffix:semicolon
@@ -2304,6 +2308,10 @@ comma
 l_string|&quot;Wrong free inodes count in super block, &quot;
 l_string|&quot;stored = %lu, counted = %lu&quot;
 comma
+(paren
+r_int
+r_int
+)paren
 id|es-&gt;s_free_inodes_count
 comma
 id|bitmap_count

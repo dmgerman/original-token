@@ -371,7 +371,7 @@ c_func
 (paren
 l_string|&quot;EAX: %08lx EBX: %08lx ECX: %08lx EDX: %08lx&bslash;n&quot;
 comma
-id|regs-&gt;orig_eax
+id|regs-&gt;eax
 comma
 id|regs-&gt;ebx
 comma
@@ -1108,6 +1108,7 @@ id|pt_regs
 id|regs
 )paren
 (brace
+macro_line|#ifdef CLONE_ACTUALLY_WORKS_OK
 r_int
 r_int
 id|clone_flags
@@ -1157,6 +1158,12 @@ op_amp
 id|regs
 )paren
 suffix:semicolon
+macro_line|#else
+r_return
+op_minus
+id|ENOSYS
+suffix:semicolon
+macro_line|#endif
 )brace
 multiline_comment|/*&n; * sys_execve() executes a new program.&n; */
 DECL|function|sys_execve

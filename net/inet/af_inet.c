@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;AF_INET protocol family socket handler.&n; *&n; * Version:&t;@(#)af_inet.c&t;(from sock.c) 1.0.17&t;06/02/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Florian La Roche, &lt;flla@stud.uni-sb.de&gt;&n; *&t;&t;Alan Cox, &lt;A.Cox@swansea.ac.uk&gt;&n; *&n; * Changes (see also sock.c)&n; *&n; *&t;&t;A.N.Kuznetsov&t;:&t;Socket death error in accept().&n; *&t;&t;John Richardson :&t;Fix non blocking error in connect()&n; *&t;&t;&t;&t;&t;so sockets that fail to connect&n; *&t;&t;&t;&t;&t;don&squot;t return -EINPROGRESS.&n; *&t;&t;Alan Cox&t;:&t;Asynchronous I/O support&n; *&t;&t;Alan Cox&t;:&t;Keep correct socket pointer on sock structures&n; *&t;&t;&t;&t;&t;when accept() ed&n; *&t;&t;Alan Cox&t;:&t;Semantics of SO_LINGER aren&squot;t state moved&n; *&t;&t;&t;&t;&t;to close when you look carefully. With&n; *&t;&t;&t;&t;&t;this fixed and the accept bug fixed &n; *&t;&t;&t;&t;&t;some RPC stuff seems happier.&n; *&t;&t;Niibe Yutaka&t;:&t;4.4BSD style write async I/O&n; *&t;&t;Alan Cox, &n; *&t;&t;Tony Gale &t;:&t;Fixed reuse semantics.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;AF_INET protocol family socket handler.&n; *&n; * Version:&t;@(#)af_inet.c&t;(from sock.c) 1.0.17&t;06/02/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Florian La Roche, &lt;flla@stud.uni-sb.de&gt;&n; *&t;&t;Alan Cox, &lt;A.Cox@swansea.ac.uk&gt;&n; *&n; * Changes (see also sock.c)&n; *&n; *&t;&t;A.N.Kuznetsov&t;:&t;Socket death error in accept().&n; *&t;&t;John Richardson :&t;Fix non blocking error in connect()&n; *&t;&t;&t;&t;&t;so sockets that fail to connect&n; *&t;&t;&t;&t;&t;don&squot;t return -EINPROGRESS.&n; *&t;&t;Alan Cox&t;:&t;Asynchronous I/O support&n; *&t;&t;Alan Cox&t;:&t;Keep correct socket pointer on sock structures&n; *&t;&t;&t;&t;&t;when accept() ed&n; *&t;&t;Alan Cox&t;:&t;Semantics of SO_LINGER aren&squot;t state moved&n; *&t;&t;&t;&t;&t;to close when you look carefully. With&n; *&t;&t;&t;&t;&t;this fixed and the accept bug fixed &n; *&t;&t;&t;&t;&t;some RPC stuff seems happier.&n; *&t;&t;Niibe Yutaka&t;:&t;4.4BSD style write async I/O&n; *&t;&t;Alan Cox, &n; *&t;&t;Tony Gale &t;:&t;Fixed reuse semantics.&n; *&t;&t;Alan Cox&t;:&t;bind() shouldn&squot;t abort existing but dead&n; *&t;&t;&t;&t;&t;sockets. Stops FTP netin:.. I hope.&n; *&t;&t;Alan Cox&t;:&t;bind() works correctly for RAW sockets. Note&n; *&t;&t;&t;&t;&t;that FreeBSD at least is broken in this respect&n; *&t;&t;&t;&t;&t;so be careful with compatibility tests...&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -2793,6 +2793,9 @@ suffix:semicolon
 r_int
 r_int
 id|snum
+op_assign
+l_int|0
+multiline_comment|/* Stoopid compiler.. this IS ok */
 suffix:semicolon
 r_int
 id|chk_addr_ret
@@ -2812,17 +2815,6 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|sk-&gt;num
-op_ne
-l_int|0
-)paren
-r_return
-op_minus
-id|EINVAL
-suffix:semicolon
-r_if
-c_cond
-(paren
 id|addr_len
 OL
 r_sizeof
@@ -2837,6 +2829,25 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|sock-&gt;type
+op_ne
+id|SOCK_RAW
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|sk-&gt;num
+op_ne
+l_int|0
+)paren
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
 id|snum
 op_assign
 id|ntohs
@@ -2845,7 +2856,7 @@ c_func
 id|addr-&gt;sin_port
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * We can&squot;t just leave the socket bound wherever it is, it might&n;&t; * be bound to a privileged port. However, since there seems to&n;&t; * be a bug here, we will leave it if the port is not privileged.&n;&t; */
+multiline_comment|/*&n;&t;&t; * We can&squot;t just leave the socket bound wherever it is, it might&n;&t;&t; * be bound to a privileged port. However, since there seems to&n;&t;&t; * be a bug here, we will leave it if the port is not privileged.&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -2882,6 +2893,7 @@ r_return
 op_minus
 id|EACCES
 suffix:semicolon
+)brace
 id|chk_addr_ret
 op_assign
 id|ip_chk_addr
@@ -2923,14 +2935,20 @@ id|sk-&gt;saddr
 op_assign
 id|addr-&gt;sin_addr.s_addr
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|sock-&gt;type
+op_ne
+id|SOCK_RAW
+)paren
+(brace
 multiline_comment|/* Make sure we are allowed to bind here. */
 id|cli
 c_func
 (paren
 )paren
 suffix:semicolon
-id|outside_loop
-suffix:colon
 r_for
 c_loop
 (paren
@@ -2966,24 +2984,6 @@ id|snum
 )paren
 r_continue
 suffix:semicolon
-macro_line|#if 0
-r_if
-c_cond
-(paren
-id|sk2-&gt;dead
-)paren
-(brace
-id|destroy_sock
-c_func
-(paren
-id|sk2
-)paren
-suffix:semicolon
-r_goto
-id|outside_loop
-suffix:semicolon
-)brace
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -3078,6 +3078,7 @@ id|sk-&gt;dummy_th.dest
 op_assign
 l_int|0
 suffix:semicolon
+)brace
 r_return
 l_int|0
 suffix:semicolon
@@ -3488,7 +3489,7 @@ op_minus
 id|EOPNOTSUPP
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;FIXME: Get BSD behaviour&n; */
+multiline_comment|/*&n; *&t;Accept a pending connection. The TCP layer now gives BSD semantics.&n; */
 DECL|function|inet_accept
 r_static
 r_int

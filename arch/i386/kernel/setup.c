@@ -12,6 +12,7 @@ macro_line|#include &lt;linux/ldt.h&gt;
 macro_line|#include &lt;linux/user.h&gt;
 macro_line|#include &lt;linux/a.out.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
+macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 multiline_comment|/*&n; * Tell us the machine setup..&n; */
@@ -488,6 +489,77 @@ op_star
 id|memory_end_p
 op_assign
 id|memory_end
+suffix:semicolon
+multiline_comment|/* request io space for devices used on all i[345]86 PC&squot;S */
+id|request_region
+c_func
+(paren
+l_int|0x00
+comma
+l_int|0x20
+comma
+l_string|&quot;dma1&quot;
+)paren
+suffix:semicolon
+id|request_region
+c_func
+(paren
+l_int|0x40
+comma
+l_int|0x20
+comma
+l_string|&quot;timer&quot;
+)paren
+suffix:semicolon
+id|request_region
+c_func
+(paren
+l_int|0x70
+comma
+l_int|0x10
+comma
+l_string|&quot;rtc&quot;
+)paren
+suffix:semicolon
+id|request_region
+c_func
+(paren
+l_int|0x80
+comma
+l_int|0x20
+comma
+l_string|&quot;dma page reg&quot;
+)paren
+suffix:semicolon
+id|request_region
+c_func
+(paren
+l_int|0xc0
+comma
+l_int|0x20
+comma
+l_string|&quot;dma2&quot;
+)paren
+suffix:semicolon
+id|request_region
+c_func
+(paren
+l_int|0xf0
+comma
+l_int|0x2
+comma
+l_string|&quot;npu&quot;
+)paren
+suffix:semicolon
+id|request_region
+c_func
+(paren
+l_int|0xf8
+comma
+l_int|0x8
+comma
+l_string|&quot;npu&quot;
+)paren
 suffix:semicolon
 )brace
 eof

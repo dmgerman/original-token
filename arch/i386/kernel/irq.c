@@ -5,6 +5,7 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/kernel_stat.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
+macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/timex.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -1725,6 +1726,26 @@ id|printk
 c_func
 (paren
 l_string|&quot;Unable to get IRQ13 for math-error handler&bslash;n&quot;
+)paren
+suffix:semicolon
+id|request_region
+c_func
+(paren
+l_int|0x20
+comma
+l_int|0x20
+comma
+l_string|&quot;pic1&quot;
+)paren
+suffix:semicolon
+id|request_region
+c_func
+(paren
+l_int|0xa0
+comma
+l_int|0x20
+comma
+l_string|&quot;pic2&quot;
 )paren
 suffix:semicolon
 )brace

@@ -13,6 +13,23 @@ multiline_comment|/* to mask away the intra-page address bits */
 DECL|macro|PAGE_MASK
 mdefine_line|#define PAGE_MASK         (~(PAGE_SIZE-1))
 macro_line|#ifdef __KERNEL__
+multiline_comment|/* The following structure is used to hold the physical&n; * memory configuration of the machine.  This is filled&n; * in probe_memory() and is later used by mem_init() to&n; * set up mem_map[].  We statically allocate 14 of these&n; * structs, this is arbitrary.  The entry after the last&n; * valid one has num_bytes==0.&n; */
+DECL|struct|sparc_phys_banks
+r_struct
+id|sparc_phys_banks
+(brace
+DECL|member|base_addr
+r_int
+r_int
+id|base_addr
+suffix:semicolon
+DECL|member|num_bytes
+r_int
+r_int
+id|num_bytes
+suffix:semicolon
+)brace
+suffix:semicolon
 DECL|macro|CONFIG_STRICT_MM_TYPECHECKS
 mdefine_line|#define CONFIG_STRICT_MM_TYPECHECKS
 macro_line|#ifdef CONFIG_STRICT_MM_TYPECHECKS
@@ -189,7 +206,7 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;lduha [%1] 0x3, %0&quot;
+l_string|&quot;lduba [%1] 0x3, %0&quot;
 suffix:colon
 l_string|&quot;=r&quot;
 (paren
@@ -203,7 +220,11 @@ id|addr
 )paren
 suffix:semicolon
 r_return
+(paren
 id|entry
+op_amp
+l_int|0x7f
+)paren
 suffix:semicolon
 )brace
 DECL|function|put_segmap
@@ -215,7 +236,6 @@ c_func
 (paren
 r_int
 r_int
-op_star
 id|addr
 comma
 r_int
@@ -227,7 +247,7 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;stha %1, [%0] 0x3&quot;
+l_string|&quot;stba %1, [%0] 0x3&quot;
 suffix:colon
 suffix:colon
 l_string|&quot;r&quot;
@@ -238,6 +258,8 @@ comma
 l_string|&quot;r&quot;
 (paren
 id|entry
+op_amp
+l_int|0x7f
 )paren
 )paren
 suffix:semicolon

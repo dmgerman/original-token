@@ -1537,7 +1537,7 @@ l_int|0xb0
 id|printk
 c_func
 (paren
-l_string|&quot;sr_photocd: Hmm, seems the CDROM does&squot;nt support multisession CD&squot;s&bslash;n&quot;
+l_string|&quot;sr_photocd: Hmm, seems the CDROM doesn&squot;t support multisession CD&squot;s&bslash;n&quot;
 )paren
 suffix:semicolon
 id|no_multi
@@ -1769,7 +1769,7 @@ op_eq
 l_int|0x28000002
 )paren
 (brace
-multiline_comment|/* Got a &quot;not ready&quot; - error. No chance to find out if this is&n;&t;   becauce there is no CD in the drive or becauce the drive&n;&t;   don&squot;t knows multisession CD&squot;s. So I need to do an extra check... */
+multiline_comment|/* Got a &quot;not ready&quot; - error. No chance to find out if this is&n;&t;   because there is no CD in the drive or because the drive&n;&t;   don&squot;t knows multisession CD&squot;s. So I need to do an extra check... */
 r_if
 c_cond
 (paren
@@ -1805,7 +1805,7 @@ r_else
 id|printk
 c_func
 (paren
-l_string|&quot;sr_photocd: Hmm, seems the CDROM does&squot;nt support multisession CD&squot;s&bslash;n&quot;
+l_string|&quot;sr_photocd: Hmm, seems the CDROM doesn&squot;t support multisession CD&squot;s&bslash;n&quot;
 )paren
 suffix:semicolon
 id|no_multi

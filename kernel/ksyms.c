@@ -28,6 +28,7 @@ macro_line|#include &lt;linux/net.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/ip.h&gt;
 macro_line|#include &quot;../net/inet/protocol.h&quot;
+macro_line|#include &quot;../net/inet/arp.h&quot;
 macro_line|#endif
 macro_line|#ifdef CONFIG_PCI
 macro_line|#include &lt;linux/pci.h&gt;
@@ -1149,6 +1150,12 @@ id|X
 c_func
 (paren
 id|dev_close
+)paren
+comma
+id|X
+c_func
+(paren
+id|arp_find
 )paren
 comma
 id|X

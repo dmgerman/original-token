@@ -1929,6 +1929,10 @@ l_string|&quot; not in group (block %lu)!&quot;
 comma
 id|i
 comma
+(paren
+r_int
+r_int
+)paren
 id|gdp-&gt;bg_block_bitmap
 )paren
 suffix:semicolon
@@ -1965,6 +1969,10 @@ l_string|&quot; not in group (block %lu)!&quot;
 comma
 id|i
 comma
+(paren
+r_int
+r_int
+)paren
 id|gdp-&gt;bg_inode_bitmap
 )paren
 suffix:semicolon
@@ -2003,6 +2011,10 @@ l_string|&quot; not in group (block %lu)!&quot;
 comma
 id|i
 comma
+(paren
+r_int
+r_int
+)paren
 id|gdp-&gt;bg_inode_table
 )paren
 suffix:semicolon

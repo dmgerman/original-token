@@ -2089,9 +2089,6 @@ id|tmp
 comma
 id|shm_sgn
 suffix:semicolon
-r_int
-id|error
-suffix:semicolon
 multiline_comment|/* clear old mappings */
 id|do_munmap
 c_func
@@ -2187,7 +2184,9 @@ c_cond
 op_logical_neg
 id|page_middle
 )paren
-r_break
+r_return
+op_minus
+id|ENOMEM
 suffix:semicolon
 id|page_table
 op_assign
@@ -2205,7 +2204,9 @@ c_cond
 op_logical_neg
 id|page_table
 )paren
-r_break
+r_return
+op_minus
+id|ENOMEM
 suffix:semicolon
 id|pte_val
 c_func

@@ -1718,6 +1718,10 @@ op_member_access_from_pointer
 id|sectors
 )paren
 comma
+(paren
+r_int
+r_int
+)paren
 id|b-&gt;total_sect
 comma
 id|logical_sector_size

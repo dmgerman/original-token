@@ -9800,8 +9800,7 @@ l_string|&quot;ttyC&quot;
 suffix:semicolon
 id|cy_serial_driver.major
 op_assign
-l_int|19
-multiline_comment|/* TTY_MAJOR */
+id|CYCLADES_MAJOR
 suffix:semicolon
 id|cy_serial_driver.minor_start
 op_assign
@@ -9927,8 +9926,7 @@ l_string|&quot;cub&quot;
 suffix:semicolon
 id|cy_callout_driver.major
 op_assign
-l_int|20
-multiline_comment|/* TTYAUX_MAJOR */
+id|CYCLADESAUX_MAJOR
 suffix:semicolon
 id|cy_callout_driver.subtype
 op_assign

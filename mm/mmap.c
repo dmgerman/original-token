@@ -73,6 +73,7 @@ id|__S111
 suffix:semicolon
 DECL|function|do_mmap
 r_int
+r_int
 id|do_mmap
 c_func
 (paren

@@ -217,7 +217,7 @@ c_func
 id|ptep
 )paren
 )braket
-OG
+op_ne
 l_int|1
 suffix:semicolon
 )brace
@@ -477,7 +477,7 @@ c_func
 id|pgdp
 )paren
 )braket
-OG
+op_ne
 l_int|1
 suffix:semicolon
 )brace
@@ -1893,5 +1893,27 @@ id|swapper_pg_dir
 l_int|1024
 )braket
 suffix:semicolon
+multiline_comment|/*&n; * The i386 doesn&squot;t have any external MMU info: the kernel page&n; * tables contain all the necessary information.&n; */
+DECL|function|update_mmu_cache
+r_extern
+r_inline
+r_void
+id|update_mmu_cache
+c_func
+(paren
+r_struct
+id|vm_area_struct
+op_star
+id|vma
+comma
+r_int
+r_int
+id|address
+comma
+id|pte_t
+id|pte
+)paren
+(brace
+)brace
 macro_line|#endif /* _I386_PAGE_H */
 eof

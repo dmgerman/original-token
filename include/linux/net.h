@@ -715,6 +715,27 @@ r_int
 id|family
 )paren
 suffix:semicolon
+r_extern
+r_struct
+id|socket
+op_star
+id|sock_alloc
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|sock_release
+c_func
+(paren
+r_struct
+id|socket
+op_star
+id|sock
+)paren
+suffix:semicolon
 macro_line|#endif /* __KERNEL__ */
 macro_line|#endif&t;/* _LINUX_NET_H */
 eof

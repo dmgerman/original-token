@@ -9,6 +9,7 @@ macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
+macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &quot;kbd_kern.h&quot;
 macro_line|#include &quot;diacr.h&quot;
@@ -453,6 +454,7 @@ DECL|variable|SAK
 DECL|variable|decr_console
 DECL|variable|incr_console
 DECL|variable|spawn_console
+DECL|variable|bare_num
 id|SAK
 comma
 id|decr_console
@@ -460,6 +462,8 @@ comma
 id|incr_console
 comma
 id|spawn_console
+comma
+id|bare_num
 suffix:semicolon
 DECL|variable|spec_fn_table
 r_static
@@ -506,6 +510,8 @@ comma
 id|incr_console
 comma
 id|spawn_console
+comma
+id|bare_num
 )brace
 suffix:semicolon
 multiline_comment|/* maximum values each key_handler can handle */
@@ -2480,7 +2486,6 @@ comma
 id|VC_APPLIC
 )paren
 )paren
-(brace
 id|applkey
 c_func
 (paren
@@ -2489,16 +2494,29 @@ comma
 l_int|1
 )paren
 suffix:semicolon
-r_return
+r_else
+id|bare_num
+c_func
+(paren
+)paren
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * Bind this to Shift-NumLock if you work in application keypad mode&n; * but want to be able to change the NumLock flag.&n; * Bind this to NumLock if you prefer that the NumLock key always&n; * changes the NumLock flag.&n; */
+DECL|function|bare_num
+r_static
+r_void
+id|bare_num
+c_func
+(paren
+r_void
+)paren
+(brace
 r_if
 c_cond
 (paren
 op_logical_neg
 id|rep
 )paren
-multiline_comment|/* no autorepeat for numlock, ChN */
 id|chg_vc_kbd_led
 c_func
 (paren
@@ -4813,6 +4831,26 @@ comma
 l_int|0
 comma
 l_string|&quot;keyboard&quot;
+)paren
+suffix:semicolon
+id|request_region
+c_func
+(paren
+l_int|0x60
+comma
+l_int|1
+comma
+l_string|&quot;kbd&quot;
+)paren
+suffix:semicolon
+id|request_region
+c_func
+(paren
+l_int|0x64
+comma
+l_int|1
+comma
+l_string|&quot;kbd&quot;
 )paren
 suffix:semicolon
 macro_line|#ifdef __alpha__

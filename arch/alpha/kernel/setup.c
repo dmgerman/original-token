@@ -225,6 +225,11 @@ r_extern
 r_int
 id|_end
 suffix:semicolon
+id|ROOT_DEV
+op_assign
+l_int|0x0200
+suffix:semicolon
+multiline_comment|/* fd0 */
 id|aux_device_present
 op_assign
 l_int|0xaa

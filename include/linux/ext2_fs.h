@@ -71,7 +71,7 @@ macro_line|#endif
 DECL|macro|EXT2_ACLE_PER_BLOCK
 mdefine_line|#define EXT2_ACLE_PER_BLOCK(s)&t;&t;(EXT2_BLOCK_SIZE(s) / sizeof (struct ext2_acl_entry))
 DECL|macro|EXT2_ADDR_PER_BLOCK
-mdefine_line|#define&t;EXT2_ADDR_PER_BLOCK(s)&t;&t;(EXT2_BLOCK_SIZE(s) / sizeof (unsigned long))
+mdefine_line|#define&t;EXT2_ADDR_PER_BLOCK(s)&t;&t;(EXT2_BLOCK_SIZE(s) / sizeof (__u32))
 macro_line|#ifdef __KERNEL__
 DECL|macro|EXT2_BLOCK_SIZE_BITS
 macro_line|# define EXT2_BLOCK_SIZE_BITS(s)&t;((s)-&gt;u.ext2_sb.s_es-&gt;s_log_block_size + 10)
@@ -106,23 +106,19 @@ id|ext2_acl_header
 multiline_comment|/* Header of Access Control Lists */
 (brace
 DECL|member|aclh_size
-r_int
-r_int
+id|__u32
 id|aclh_size
 suffix:semicolon
 DECL|member|aclh_file_count
-r_int
-r_int
+id|__u32
 id|aclh_file_count
 suffix:semicolon
 DECL|member|aclh_acle_count
-r_int
-r_int
+id|__u32
 id|aclh_acle_count
 suffix:semicolon
 DECL|member|aclh_first_acle
-r_int
-r_int
+id|__u32
 id|aclh_first_acle
 suffix:semicolon
 )brace
@@ -133,36 +129,30 @@ id|ext2_acl_entry
 multiline_comment|/* Access Control List Entry */
 (brace
 DECL|member|acle_size
-r_int
-r_int
+id|__u32
 id|acle_size
 suffix:semicolon
 DECL|member|acle_perms
-r_int
-r_int
+id|__u16
 id|acle_perms
 suffix:semicolon
 multiline_comment|/* Access permissions */
 DECL|member|acle_type
-r_int
-r_int
+id|__u16
 id|acle_type
 suffix:semicolon
 multiline_comment|/* Type of entry */
 DECL|member|acle_tag
-r_int
-r_int
+id|__u16
 id|acle_tag
 suffix:semicolon
 multiline_comment|/* User or group identity */
 DECL|member|acle_pad1
-r_int
-r_int
+id|__u16
 id|acle_pad1
 suffix:semicolon
 DECL|member|acle_next
-r_int
-r_int
+id|__u32
 id|acle_next
 suffix:semicolon
 multiline_comment|/* Pointer on next entry for the */
@@ -175,32 +165,27 @@ r_struct
 id|ext2_old_group_desc
 (brace
 DECL|member|bg_block_bitmap
-r_int
-r_int
+id|__u32
 id|bg_block_bitmap
 suffix:semicolon
 multiline_comment|/* Blocks bitmap block */
 DECL|member|bg_inode_bitmap
-r_int
-r_int
+id|__u32
 id|bg_inode_bitmap
 suffix:semicolon
 multiline_comment|/* Inodes bitmap block */
 DECL|member|bg_inode_table
-r_int
-r_int
+id|__u32
 id|bg_inode_table
 suffix:semicolon
 multiline_comment|/* Inodes table block */
 DECL|member|bg_free_blocks_count
-r_int
-r_int
+id|__u16
 id|bg_free_blocks_count
 suffix:semicolon
 multiline_comment|/* Free blocks count */
 DECL|member|bg_free_inodes_count
-r_int
-r_int
+id|__u16
 id|bg_free_inodes_count
 suffix:semicolon
 multiline_comment|/* Free inodes count */
@@ -211,49 +196,41 @@ r_struct
 id|ext2_group_desc
 (brace
 DECL|member|bg_block_bitmap
-r_int
-r_int
+id|__u32
 id|bg_block_bitmap
 suffix:semicolon
 multiline_comment|/* Blocks bitmap block */
 DECL|member|bg_inode_bitmap
-r_int
-r_int
+id|__u32
 id|bg_inode_bitmap
 suffix:semicolon
 multiline_comment|/* Inodes bitmap block */
 DECL|member|bg_inode_table
-r_int
-r_int
+id|__u32
 id|bg_inode_table
 suffix:semicolon
 multiline_comment|/* Inodes table block */
 DECL|member|bg_free_blocks_count
-r_int
-r_int
+id|__u16
 id|bg_free_blocks_count
 suffix:semicolon
 multiline_comment|/* Free blocks count */
 DECL|member|bg_free_inodes_count
-r_int
-r_int
+id|__u16
 id|bg_free_inodes_count
 suffix:semicolon
 multiline_comment|/* Free inodes count */
 DECL|member|bg_used_dirs_count
-r_int
-r_int
+id|__u16
 id|bg_used_dirs_count
 suffix:semicolon
 multiline_comment|/* Directories count */
 DECL|member|bg_pad
-r_int
-r_int
+id|__u16
 id|bg_pad
 suffix:semicolon
 DECL|member|bg_reserved
-r_int
-r_int
+id|__u32
 id|bg_reserved
 (braket
 l_int|3
@@ -318,68 +295,57 @@ r_struct
 id|ext2_inode
 (brace
 DECL|member|i_mode
-r_int
-r_int
+id|__u16
 id|i_mode
 suffix:semicolon
 multiline_comment|/* File mode */
 DECL|member|i_uid
-r_int
-r_int
+id|__u16
 id|i_uid
 suffix:semicolon
 multiline_comment|/* Owner Uid */
 DECL|member|i_size
-r_int
-r_int
+id|__u32
 id|i_size
 suffix:semicolon
 multiline_comment|/* Size in bytes */
 DECL|member|i_atime
-r_int
-r_int
+id|__u32
 id|i_atime
 suffix:semicolon
 multiline_comment|/* Access time */
 DECL|member|i_ctime
-r_int
-r_int
+id|__u32
 id|i_ctime
 suffix:semicolon
 multiline_comment|/* Creation time */
 DECL|member|i_mtime
-r_int
-r_int
+id|__u32
 id|i_mtime
 suffix:semicolon
 multiline_comment|/* Modification time */
 DECL|member|i_dtime
-r_int
-r_int
+id|__u32
 id|i_dtime
 suffix:semicolon
 multiline_comment|/* Deletion Time */
 DECL|member|i_gid
-r_int
-r_int
+id|__u16
 id|i_gid
 suffix:semicolon
 multiline_comment|/* Group Id */
 DECL|member|i_links_count
-r_int
-r_int
+id|__u16
 id|i_links_count
 suffix:semicolon
 multiline_comment|/* Links count */
 DECL|member|i_blocks
-r_int
-r_int
+id|__u32
 id|i_blocks
 suffix:semicolon
 multiline_comment|/* Blocks count */
 DECL|member|i_flags
-r_int
-r_int
+id|__u32
 id|i_flags
 suffix:semicolon
 multiline_comment|/* File flags */
@@ -388,8 +354,7 @@ r_union
 r_struct
 (brace
 DECL|member|l_i_reserved1
-r_int
-r_int
+id|__u32
 id|l_i_reserved1
 suffix:semicolon
 DECL|member|linux1
@@ -399,8 +364,7 @@ suffix:semicolon
 r_struct
 (brace
 DECL|member|h_i_translator
-r_int
-r_int
+id|__u32
 id|h_i_translator
 suffix:semicolon
 DECL|member|hurd1
@@ -410,8 +374,7 @@ suffix:semicolon
 r_struct
 (brace
 DECL|member|m_i_reserved1
-r_int
-r_int
+id|__u32
 id|m_i_reserved1
 suffix:semicolon
 DECL|member|masix1
@@ -424,8 +387,7 @@ id|osd1
 suffix:semicolon
 multiline_comment|/* OS dependent 1 */
 DECL|member|i_block
-r_int
-r_int
+id|__u32
 id|i_block
 (braket
 id|EXT2_N_BLOCKS
@@ -433,26 +395,22 @@ id|EXT2_N_BLOCKS
 suffix:semicolon
 multiline_comment|/* Pointers to blocks */
 DECL|member|i_version
-r_int
-r_int
+id|__u32
 id|i_version
 suffix:semicolon
 multiline_comment|/* File version (for NFS) */
 DECL|member|i_file_acl
-r_int
-r_int
+id|__u32
 id|i_file_acl
 suffix:semicolon
 multiline_comment|/* File ACL */
 DECL|member|i_dir_acl
-r_int
-r_int
+id|__u32
 id|i_dir_acl
 suffix:semicolon
 multiline_comment|/* Directory ACL */
 DECL|member|i_faddr
-r_int
-r_int
+id|__u32
 id|i_faddr
 suffix:semicolon
 multiline_comment|/* Fragment address */
@@ -461,25 +419,21 @@ r_union
 r_struct
 (brace
 DECL|member|l_i_frag
-r_int
-r_char
+id|__u8
 id|l_i_frag
 suffix:semicolon
 multiline_comment|/* Fragment number */
 DECL|member|l_i_fsize
-r_int
-r_char
+id|__u8
 id|l_i_fsize
 suffix:semicolon
 multiline_comment|/* Fragment size */
 DECL|member|i_pad1
-r_int
-r_int
+id|__u16
 id|i_pad1
 suffix:semicolon
 DECL|member|l_i_reserved2
-r_int
-r_int
+id|__u32
 id|l_i_reserved2
 (braket
 l_int|2
@@ -492,35 +446,29 @@ suffix:semicolon
 r_struct
 (brace
 DECL|member|h_i_frag
-r_int
-r_char
+id|__u8
 id|h_i_frag
 suffix:semicolon
 multiline_comment|/* Fragment number */
 DECL|member|h_i_fsize
-r_int
-r_char
+id|__u8
 id|h_i_fsize
 suffix:semicolon
 multiline_comment|/* Fragment size */
 DECL|member|h_i_mode_high
-r_int
-r_int
+id|__u16
 id|h_i_mode_high
 suffix:semicolon
 DECL|member|h_i_uid_high
-r_int
-r_int
+id|__u16
 id|h_i_uid_high
 suffix:semicolon
 DECL|member|h_i_gid_high
-r_int
-r_int
+id|__u16
 id|h_i_gid_high
 suffix:semicolon
 DECL|member|h_i_author
-r_int
-r_int
+id|__u32
 id|h_i_author
 suffix:semicolon
 DECL|member|hurd2
@@ -530,25 +478,21 @@ suffix:semicolon
 r_struct
 (brace
 DECL|member|m_i_frag
-r_int
-r_char
+id|__u8
 id|m_i_frag
 suffix:semicolon
 multiline_comment|/* Fragment number */
 DECL|member|m_i_fsize
-r_int
-r_char
+id|__u8
 id|m_i_fsize
 suffix:semicolon
 multiline_comment|/* Fragment size */
 DECL|member|m_pad1
-r_int
-r_int
+id|__u16
 id|m_pad1
 suffix:semicolon
 DECL|member|m_i_reserved2
-r_int
-r_int
+id|__u32
 id|m_i_reserved2
 (braket
 l_int|2
@@ -649,155 +593,131 @@ r_struct
 id|ext2_super_block
 (brace
 DECL|member|s_inodes_count
-r_int
-r_int
+id|__u32
 id|s_inodes_count
 suffix:semicolon
 multiline_comment|/* Inodes count */
 DECL|member|s_blocks_count
-r_int
-r_int
+id|__u32
 id|s_blocks_count
 suffix:semicolon
 multiline_comment|/* Blocks count */
 DECL|member|s_r_blocks_count
-r_int
-r_int
+id|__u32
 id|s_r_blocks_count
 suffix:semicolon
 multiline_comment|/* Reserved blocks count */
 DECL|member|s_free_blocks_count
-r_int
-r_int
+id|__u32
 id|s_free_blocks_count
 suffix:semicolon
 multiline_comment|/* Free blocks count */
 DECL|member|s_free_inodes_count
-r_int
-r_int
+id|__u32
 id|s_free_inodes_count
 suffix:semicolon
 multiline_comment|/* Free inodes count */
 DECL|member|s_first_data_block
-r_int
-r_int
+id|__u32
 id|s_first_data_block
 suffix:semicolon
 multiline_comment|/* First Data Block */
 DECL|member|s_log_block_size
-r_int
-r_int
+id|__u32
 id|s_log_block_size
 suffix:semicolon
 multiline_comment|/* Block size */
 DECL|member|s_log_frag_size
-r_int
+id|__s32
 id|s_log_frag_size
 suffix:semicolon
 multiline_comment|/* Fragment size */
 DECL|member|s_blocks_per_group
-r_int
-r_int
+id|__u32
 id|s_blocks_per_group
 suffix:semicolon
 multiline_comment|/* # Blocks per group */
 DECL|member|s_frags_per_group
-r_int
-r_int
+id|__u32
 id|s_frags_per_group
 suffix:semicolon
 multiline_comment|/* # Fragments per group */
 DECL|member|s_inodes_per_group
-r_int
-r_int
+id|__u32
 id|s_inodes_per_group
 suffix:semicolon
 multiline_comment|/* # Inodes per group */
 DECL|member|s_mtime
-r_int
-r_int
+id|__u32
 id|s_mtime
 suffix:semicolon
 multiline_comment|/* Mount time */
 DECL|member|s_wtime
-r_int
-r_int
+id|__u32
 id|s_wtime
 suffix:semicolon
 multiline_comment|/* Write time */
 DECL|member|s_mnt_count
-r_int
-r_int
+id|__u16
 id|s_mnt_count
 suffix:semicolon
 multiline_comment|/* Mount count */
 DECL|member|s_max_mnt_count
-r_int
+id|__s16
 id|s_max_mnt_count
 suffix:semicolon
 multiline_comment|/* Maximal mount count */
 DECL|member|s_magic
-r_int
-r_int
+id|__u16
 id|s_magic
 suffix:semicolon
 multiline_comment|/* Magic signature */
 DECL|member|s_state
-r_int
-r_int
+id|__u16
 id|s_state
 suffix:semicolon
 multiline_comment|/* File system state */
 DECL|member|s_errors
-r_int
-r_int
+id|__u16
 id|s_errors
 suffix:semicolon
 multiline_comment|/* Behaviour when detecting errors */
 DECL|member|s_pad
-r_int
-r_int
+id|__u16
 id|s_pad
 suffix:semicolon
 DECL|member|s_lastcheck
-r_int
-r_int
+id|__u32
 id|s_lastcheck
 suffix:semicolon
 multiline_comment|/* time of last check */
 DECL|member|s_checkinterval
-r_int
-r_int
+id|__u32
 id|s_checkinterval
 suffix:semicolon
 multiline_comment|/* max. time between checks */
 DECL|member|s_creator_os
-r_int
-r_int
+id|__u32
 id|s_creator_os
 suffix:semicolon
 multiline_comment|/* OS */
 DECL|member|s_rev_level
-r_int
-r_int
+id|__u32
 id|s_rev_level
 suffix:semicolon
 multiline_comment|/* Revision level */
 DECL|member|s_def_resuid
-r_int
-r_int
+id|__u16
 id|s_def_resuid
 suffix:semicolon
 multiline_comment|/* Default uid for reserved blocks */
 DECL|member|s_def_resgid
-r_int
-r_int
+id|__u16
 id|s_def_resgid
 suffix:semicolon
 multiline_comment|/* Default gid for reserved blocks */
 DECL|member|s_reserved
-r_int
-r_int
+id|__u32
 id|s_reserved
 (braket
 l_int|235
@@ -826,20 +746,17 @@ r_struct
 id|ext2_dir_entry
 (brace
 DECL|member|inode
-r_int
-r_int
+id|__u32
 id|inode
 suffix:semicolon
 multiline_comment|/* Inode number */
 DECL|member|rec_len
-r_int
-r_int
+id|__u16
 id|rec_len
 suffix:semicolon
 multiline_comment|/* Directory entry length */
 DECL|member|name_len
-r_int
-r_int
+id|__u16
 id|name_len
 suffix:semicolon
 multiline_comment|/* Name length */
@@ -902,12 +819,10 @@ comma
 r_int
 r_int
 comma
-r_int
-r_int
+id|__u32
 op_star
 comma
-r_int
-r_int
+id|__u32
 op_star
 )paren
 suffix:semicolon

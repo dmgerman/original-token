@@ -168,8 +168,7 @@ c_func
 suffix:semicolon
 )brace
 DECL|function|copy_thread
-r_int
-r_int
+r_void
 id|copy_thread
 c_func
 (paren
@@ -179,6 +178,10 @@ comma
 r_int
 r_int
 id|clone_flags
+comma
+r_int
+r_int
+id|sp
 comma
 r_struct
 id|task_struct
@@ -227,13 +230,16 @@ op_assign
 op_star
 id|regs
 suffix:semicolon
+id|childregs-&gt;sp
+op_assign
+id|sp
+suffix:semicolon
 id|p-&gt;tss.psr
 op_assign
 id|regs-&gt;psr
 suffix:semicolon
 multiline_comment|/* for condition codes */
 r_return
-id|clone_flags
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * fill in the user structure for a core dump..&n; */
@@ -256,6 +262,32 @@ id|dump
 r_return
 suffix:semicolon
 multiline_comment|/* solaris does this enough */
+)brace
+DECL|function|sys_fork
+id|asmlinkage
+r_int
+id|sys_fork
+c_func
+(paren
+r_struct
+id|pt_regs
+id|regs
+)paren
+(brace
+r_return
+id|do_fork
+c_func
+(paren
+id|COPYVM
+op_or
+id|SIGCHLD
+comma
+id|regs.sp
+comma
+op_amp
+id|regs
+)paren
+suffix:semicolon
 )brace
 multiline_comment|/*&n; * sys_execve() executes a new program.&n; */
 DECL|function|sys_execve

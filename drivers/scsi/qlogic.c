@@ -1,5 +1,5 @@
 multiline_comment|/*----------------------------------------------------------------*/
-multiline_comment|/*&n;   Qlogic linux driver - work in progress. No Warranty express or implied.&n;   Use at your own risk.  Support Tort Reform so you won&squot;t have to read all&n;   these silly disclaimers.&n;&n;   Copyright 1994, Tom Zerucha.   &n;   zerucha@shell.portal.com&n;&n;   Additional Code, and much appreciated help by&n;   Michael A. Griffith&n;   grif@cs.ucr.edu&n;&n;   Thanks to Eric Youngdale and Dave Hinds for loadable module and PCMCIA&n;   help respectively, and for suffering through my foolishness during the&n;   debugging process.&n;&n;   Reference Qlogic FAS408 Technical Manual, 53408-510-00A, May 10, 1994&n;   (you can reference it, but it is incomplete and inaccurate in places)&n;&n;   Version 0.40a&n;&n;   Functions as standalone, loadable, and PCMCIA driver, the latter from&n;   Dave Hind&squot;s PCMCIA package.&n;&n;   Redistributable under terms of the GNU Public License&n;&n;*/
+multiline_comment|/*&n;   Qlogic linux driver - work in progress. No Warranty express or implied.&n;   Use at your own risk.  Support Tort Reform so you won&squot;t have to read all&n;   these silly disclaimers.&n;&n;   Copyright 1994, Tom Zerucha.   &n;   zerucha@shell.portal.com&n;&n;   Additional Code, and much appreciated help by&n;   Michael A. Griffith&n;   grif@cs.ucr.edu&n;&n;   Thanks to Eric Youngdale and Dave Hinds for loadable module and PCMCIA&n;   help respectively, and for suffering through my foolishness during the&n;   debugging process.&n;&n;   Reference Qlogic FAS408 Technical Manual, 53408-510-00A, May 10, 1994&n;   (you can reference it, but it is incomplete and inaccurate in places)&n;&n;   Version 0.41&n;&n;   Functions as standalone, loadable, and PCMCIA driver, the latter from&n;   Dave Hind&squot;s PCMCIA package.&n;&n;   Redistributable under terms of the GNU Public License&n;&n;*/
 multiline_comment|/*----------------------------------------------------------------*/
 multiline_comment|/* Configuration */
 multiline_comment|/* Set the following to 1 to enable the use of interrupts.  Note that 0 tends&n;   to be more stable, but slower (or ties up the system more) */
@@ -8,33 +8,39 @@ mdefine_line|#define QL_USE_IRQ 1
 multiline_comment|/* Set the following to max out the speed of the PIO PseudoDMA transfers,&n;   again, 0 tends to be slower, but more stable.  */
 DECL|macro|QL_TURBO_PDMA
 mdefine_line|#define QL_TURBO_PDMA 1
+multiline_comment|/* This should be 1 to enable parity detection */
+DECL|macro|QL_ENABLE_PARITY
+mdefine_line|#define QL_ENABLE_PARITY 1
 multiline_comment|/* This will reset all devices when the driver is initialized (during bootup).&n;   The other linux drivers don&squot;t do this, but the DOS drivers do, and after&n;   using DOS or some kind of crash or lockup this will bring things back&n;   without requiring a cold boot.  It does take some time to recover from a&n;   reset, so it is slower, and I have seen timeouts so that devices weren&squot;t&n;   recognized when this was set. */
 DECL|macro|QL_RESET_AT_START
 mdefine_line|#define QL_RESET_AT_START 0
-multiline_comment|/* crystal frequency in megahertz (for offset 5 and 9) */
+multiline_comment|/* crystal frequency in megahertz (for offset 5 and 9)&n;   Please set this for your card.  Most Qlogic cards are 40 Mhz.  The&n;   Control Concepts ISA (not VLB) is 24 Mhz */
 DECL|macro|XTALFREQ
 mdefine_line|#define XTALFREQ&t;40
-multiline_comment|/*****/
-multiline_comment|/* offset 0xc */
-multiline_comment|/* This will set fast (10Mhz) synchronous timing when set to 1&n;   FASTCLK must also be 0 */
-DECL|macro|FASTSCSI
-mdefine_line|#define FASTSCSI  0
-multiline_comment|/* This when set to 1 will set a faster sync transfer rate */
-DECL|macro|FASTCLK
-mdefine_line|#define FASTCLK   0
+multiline_comment|/**********/
+multiline_comment|/* DANGER! modify these at your own risk */
+multiline_comment|/* SLOWCABLE can usually be reset to zero if you have a clean setup and&n;   proper termination.  The rest are for synchronous transfers and other&n;   advanced features if your device can transfer faster than 5Mb/sec.&n;   If you are really curious, email me for a quick howto until I have&n;   something official */
+multiline_comment|/**********/
 multiline_comment|/*****/
 multiline_comment|/* config register 1 (offset 8) options */
 multiline_comment|/* This needs to be set to 1 if your cabling is long or noisy */
 DECL|macro|SLOWCABLE
-mdefine_line|#define SLOWCABLE 0
-multiline_comment|/* This should be 1 to enable parity detection */
-DECL|macro|QL_ENABLE_PARITY
-mdefine_line|#define QL_ENABLE_PARITY 1
+mdefine_line|#define SLOWCABLE 1
+multiline_comment|/*****/
+multiline_comment|/* offset 0xc */
+multiline_comment|/* This will set fast (10Mhz) synchronous timing when set to 1&n;   For this to have an effect, FASTCLK must also be 1 */
+DECL|macro|FASTSCSI
+mdefine_line|#define FASTSCSI 0
+multiline_comment|/* This when set to 1 will set a faster sync transfer rate */
+DECL|macro|FASTCLK
+mdefine_line|#define FASTCLK 0
+multiline_comment|/*(XTALFREQ&gt;25?1:0)*/
 multiline_comment|/*****/
 multiline_comment|/* offset 6 */
-multiline_comment|/* This is the sync transfer divisor, 40Mhz/X will be the data rate&n;&t;The power on default is 5, the maximum normal value is 5 */
+multiline_comment|/* This is the sync transfer divisor, XTALFREQ/X will be the maximum&n;   achievable data rate (assuming the rest of the system is capable&n;   and set properly) */
 DECL|macro|SYNCXFRPD
 mdefine_line|#define SYNCXFRPD 4
+multiline_comment|/*(XTALFREQ/5)*/
 multiline_comment|/*****/
 multiline_comment|/* offset 7 */
 multiline_comment|/* This is the count of how many synchronous transfers can take place&n;&t;i.e. how many reqs can occur before an ack is given.&n;&t;The maximum value for this is 15, the upper bits can modify&n;&t;REQ/ACK assertion and deassertion during synchronous transfers&n;&t;If this is 0, the bus will only transfer asynchronously */
@@ -319,6 +325,11 @@ l_int|1
 (brace
 multiline_comment|/* in */
 macro_line|#if QL_TURBO_PDMA
+id|rtrc
+c_func
+(paren
+l_int|4
+)paren
 multiline_comment|/* empty fifo in large chunks */
 r_if
 c_cond
@@ -460,6 +471,11 @@ suffix:semicolon
 )brace
 macro_line|#endif
 multiline_comment|/* until both empty and int (or until reclen is 0) */
+id|rtrc
+c_func
+(paren
+l_int|7
+)paren
 id|j
 op_assign
 l_int|0
@@ -554,6 +570,11 @@ r_else
 (brace
 multiline_comment|/* out */
 macro_line|#if QL_TURBO_PDMA
+id|rtrc
+c_func
+(paren
+l_int|4
+)paren
 r_if
 c_cond
 (paren
@@ -696,6 +717,11 @@ suffix:semicolon
 )brace
 macro_line|#endif
 multiline_comment|/* until full and int (or until reclen is 0) */
+id|rtrc
+c_func
+(paren
+l_int|7
+)paren
 id|j
 op_assign
 l_int|0
@@ -1258,6 +1284,11 @@ r_int
 id|sgcount
 suffix:semicolon
 multiline_comment|/* sg counter */
+id|rtrc
+c_func
+(paren
+l_int|1
+)paren
 id|j
 op_assign
 id|inb
@@ -1449,7 +1480,7 @@ multiline_comment|/* data phase */
 id|rtrc
 c_func
 (paren
-l_int|1
+l_int|2
 )paren
 id|outb
 c_func
@@ -1624,11 +1655,6 @@ id|jiffies
 op_plus
 id|WATCHDOG
 suffix:semicolon
-id|rtrc
-c_func
-(paren
-l_int|4
-)paren
 r_while
 c_loop
 (paren
@@ -1840,7 +1866,7 @@ multiline_comment|/* done, disconnect */
 id|rtrc
 c_func
 (paren
-l_int|3
+l_int|1
 )paren
 r_if
 c_cond
@@ -2795,7 +2821,7 @@ c_func
 (paren
 id|qinfo
 comma
-l_string|&quot;Qlogic Driver version 0.40a, chip %02X at %03X, IRQ %d, TPdma:%d&quot;
+l_string|&quot;Qlogic Driver version 0.41, chip %02X at %03X, IRQ %d, TPdma:%d&quot;
 comma
 id|qltyp
 comma

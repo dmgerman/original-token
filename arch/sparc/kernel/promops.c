@@ -3,7 +3,7 @@ macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;asm/openprom.h&gt;
 multiline_comment|/* #define DEBUG_PROMOPS */
 DECL|macro|MAX_PR_LEN
-mdefine_line|#define MAX_PR_LEN   16           /* exotic hardware probably overshoots this */
+mdefine_line|#define MAX_PR_LEN   64           /* exotic hardware probably overshoots this */
 DECL|variable|prom_node_root
 r_int
 id|prom_node_root
@@ -59,6 +59,11 @@ id|node
 suffix:semicolon
 )brace
 multiline_comment|/* The following routine is used during device probing to determine&n; * an integer value property about a (perhaps virtual) device. This&n; * could be anything, like the size of the mmu cache lines, etc.&n; * the default return value is -1 is the prom has nothing interesting.&n; */
+DECL|variable|prom_int_null
+r_int
+r_int
+id|prom_int_null
+suffix:semicolon
 r_int
 r_int
 op_star
@@ -86,7 +91,8 @@ suffix:semicolon
 op_star
 id|value
 op_assign
-l_int|0
+op_amp
+id|prom_int_null
 suffix:semicolon
 multiline_comment|/* duh, I was returning -1 as an unsigned int, prom_panic() */
 id|pr_len
@@ -266,6 +272,10 @@ c_func
 (paren
 l_int|0
 )paren
+suffix:semicolon
+id|prom_int_null
+op_assign
+l_int|0
 suffix:semicolon
 r_return
 suffix:semicolon

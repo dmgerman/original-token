@@ -297,6 +297,10 @@ id|error_msg
 comma
 id|offset
 comma
+(paren
+r_int
+r_int
+)paren
 id|de-&gt;inode
 comma
 id|de-&gt;rec_len

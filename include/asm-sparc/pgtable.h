@@ -4,14 +4,14 @@ mdefine_line|#define _SPARC_PGTABLE_H
 multiline_comment|/*  asm-sparc/pgtable.h:  Defines and functions used to work&n; *                        with Sparc page tables.&n; *&n; *  Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 multiline_comment|/* PMD_SHIFT determines the size of the area a second-level page table can map */
 DECL|macro|PMD_SHIFT
-mdefine_line|#define PMD_SHIFT       22
+mdefine_line|#define PMD_SHIFT       18
 DECL|macro|PMD_SIZE
 mdefine_line|#define PMD_SIZE        (1UL &lt;&lt; PMD_SHIFT)
 DECL|macro|PMD_MASK
 mdefine_line|#define PMD_MASK        (~(PMD_SIZE-1))
 multiline_comment|/* PGDIR_SHIFT determines what a third-level page table entry can map */
 DECL|macro|PGDIR_SHIFT
-mdefine_line|#define PGDIR_SHIFT       22
+mdefine_line|#define PGDIR_SHIFT       18
 DECL|macro|PGDIR_SIZE
 mdefine_line|#define PGDIR_SIZE        (1UL &lt;&lt; PGDIR_SHIFT)
 DECL|macro|PGDIR_MASK
@@ -42,8 +42,10 @@ DECL|macro|_PAGE_WRITE
 mdefine_line|#define _PAGE_WRITE     0x40000000   /* can be written to */
 DECL|macro|_PAGE_PRIV
 mdefine_line|#define _PAGE_PRIV      0x20000000   /* bit to signify privileged page */
+DECL|macro|_PAGE_NOCACHE
+mdefine_line|#define _PAGE_NOCACHE   0x10000000   /* non-cacheable page */
 DECL|macro|_PAGE_REF
-mdefine_line|#define _PAGE_REF       0x02000000   /* Page had been accessed/referenced */
+mdefine_line|#define _PAGE_REF       0x02000000   /* Page has been accessed/referenced */
 DECL|macro|_PAGE_DIRTY
 mdefine_line|#define _PAGE_DIRTY     0x01000000   /* Page has been modified, is dirty */
 DECL|macro|_PAGE_COW
@@ -63,7 +65,9 @@ mdefine_line|#define PAGE_COPY       __pgprot(_PAGE_VALID | _PAGE_REF | _PAGE_CO
 DECL|macro|PAGE_READONLY
 mdefine_line|#define PAGE_READONLY   __pgprot(_PAGE_VALID | _PAGE_REF)
 DECL|macro|PAGE_KERNEL
-mdefine_line|#define PAGE_KERNEL     __pgprot(_PAGE_VALID | _PAGE_PRIV)
+mdefine_line|#define PAGE_KERNEL     __pgprot(_PAGE_VALID | _PAGE_WRITE | _PAGE_NOCACHE | _PAGE_REF | _PAGE_PRIV)
+DECL|macro|PAGE_INVALID
+mdefine_line|#define PAGE_INVALID    __pgprot(_PAGE_PRIV)
 DECL|macro|_PAGE_NORMAL
 mdefine_line|#define _PAGE_NORMAL(x) __pgprot(_PAGE_VALID | _PAGE_REF | (x))
 multiline_comment|/* I define these like the i386 does because the check for text or data fault&n; * is done at trap time by the low level handler. Maybe I can set these bits&n; * then once determined. I leave them like this for now though.&n; */

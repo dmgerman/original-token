@@ -136,8 +136,18 @@ r_void
 suffix:semicolon
 DECL|macro|halt
 mdefine_line|#define halt() __asm__ __volatile__(&quot;.long 0&quot;);
+r_extern
+r_void
+id|alpha_switch_to
+c_func
+(paren
+r_int
+r_int
+id|pctxp
+)paren
+suffix:semicolon
 DECL|macro|switch_to
-mdefine_line|#define switch_to(x)&t;&t;panic(&quot;switch_to() not yet done&quot;)
+mdefine_line|#define switch_to(p) do { &bslash;&n;&t;current = p; &bslash;&n;&t;alpha_switch_to((unsigned long) &amp;(p)-&gt;tss - 0xfffffc0000000000); &bslash;&n;} while (0)
 macro_line|#ifndef mb
 DECL|macro|mb
 mdefine_line|#define mb() __asm__ __volatile__(&quot;mb&quot;: : :&quot;memory&quot;)

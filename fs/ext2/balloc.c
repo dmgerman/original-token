@@ -213,6 +213,10 @@ l_string|&quot;block_group = %d, block_bitmap = %lu&quot;
 comma
 id|block_group
 comma
+(paren
+r_int
+r_int
+)paren
 id|gdp-&gt;bg_block_bitmap
 )paren
 suffix:semicolon
@@ -974,13 +978,11 @@ r_int
 r_int
 id|goal
 comma
-r_int
-r_int
+id|u32
 op_star
 id|prealloc_count
 comma
-r_int
-r_int
+id|u32
 op_star
 id|prealloc_block
 )paren
@@ -2620,6 +2622,10 @@ comma
 l_string|&quot;Wrong free blocks count in super block, &quot;
 l_string|&quot;stored = %lu, counted = %lu&quot;
 comma
+(paren
+r_int
+r_int
+)paren
 id|es-&gt;s_free_blocks_count
 comma
 id|bitmap_count

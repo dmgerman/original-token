@@ -610,7 +610,7 @@ macro_line|#ifdef DEBUG
 id|printk
 c_func
 (paren
-l_string|&quot;Autodetecting seagate ST0x&bslash;n&quot;
+l_string|&quot;Autodetecting ST0x / TMC-8xx&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -960,6 +960,31 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
+id|printk
+c_func
+(paren
+l_string|&quot;%s options:&quot;
+macro_line|#ifdef ARBITRATE
+l_string|&quot; ARBITRATE&quot;
+macro_line|#endif
+macro_line|#ifdef SLOW_HANDSHAKE
+l_string|&quot; SLOW_HANDSHAKE&quot;
+macro_line|#endif
+macro_line|#ifdef FAST
+macro_line|#ifdef FAST32
+l_string|&quot; FAST32&quot;
+macro_line|#else
+l_string|&quot; FAST&quot;
+macro_line|#endif
+macro_line|#endif
+macro_line|#ifdef LINKED
+l_string|&quot; LINKED&quot;
+macro_line|#endif
+l_string|&quot;&bslash;n&quot;
+comma
+id|tpnt-&gt;name
+)paren
+suffix:semicolon
 r_return
 l_int|1
 suffix:semicolon
@@ -970,7 +995,7 @@ macro_line|#ifdef DEBUG
 id|printk
 c_func
 (paren
-l_string|&quot;ST0x not detected.&bslash;n&quot;
+l_string|&quot;ST0x / TMC-8xx not detected.&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -996,7 +1021,7 @@ r_static
 r_char
 id|buffer
 (braket
-l_int|256
+l_int|64
 )braket
 suffix:semicolon
 id|sprintf
@@ -1004,26 +1029,7 @@ c_func
 (paren
 id|buffer
 comma
-l_string|&quot;scsi%d : %s at irq %d address %p options :&quot;
-macro_line|#ifdef ARBITRATE
-l_string|&quot; ARBITRATE&quot;
-macro_line|#endif
-macro_line|#ifdef SLOW_HANDSHAKE
-l_string|&quot; SLOW_HANDSHAKE&quot;
-macro_line|#endif
-macro_line|#ifdef FAST
-macro_line|#ifdef FAST32
-l_string|&quot; FAST32&quot;
-macro_line|#else
-l_string|&quot; FAST&quot;
-macro_line|#endif
-macro_line|#endif
-macro_line|#ifdef LINKED
-l_string|&quot; LINKED&quot;
-macro_line|#endif
-l_string|&quot;&bslash;n&quot;
-comma
-id|hostno
+l_string|&quot;%s at irq %d, address 0x%05X&quot;
 comma
 (paren
 id|controller_type
@@ -1038,6 +1044,10 @@ id|FD_ID_STR
 comma
 id|irq
 comma
+(paren
+r_int
+r_int
+)paren
 id|base_address
 )paren
 suffix:semicolon

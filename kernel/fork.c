@@ -573,10 +573,6 @@ op_amp
 id|COPYVM
 )paren
 (brace
-id|p-&gt;mm-&gt;swappable
-op_assign
-l_int|1
-suffix:semicolon
 id|p-&gt;mm-&gt;min_flt
 op_assign
 id|p-&gt;mm-&gt;maj_flt
@@ -833,12 +829,6 @@ id|p-&gt;p_cptr
 op_assign
 l_int|NULL
 suffix:semicolon
-id|SET_LINKS
-c_func
-(paren
-id|p
-)paren
-suffix:semicolon
 id|p-&gt;signal
 op_assign
 l_int|0
@@ -884,12 +874,23 @@ id|p-&gt;start_time
 op_assign
 id|jiffies
 suffix:semicolon
+id|p-&gt;mm-&gt;swappable
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* don&squot;t try to swap it out before it&squot;s set up */
 id|task
 (braket
 id|nr
 )braket
 op_assign
 id|p
+suffix:semicolon
+id|SET_LINKS
+c_func
+(paren
+id|p
+)paren
 suffix:semicolon
 multiline_comment|/* copy all the process information */
 id|copy_thread
@@ -941,6 +942,10 @@ id|p
 )paren
 suffix:semicolon
 multiline_comment|/* ok, now we should be set up.. */
+id|p-&gt;mm-&gt;swappable
+op_assign
+l_int|1
+suffix:semicolon
 id|p-&gt;exit_signal
 op_assign
 id|clone_flags
