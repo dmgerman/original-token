@@ -79,6 +79,12 @@ DECL|struct|hw_interrupt_type
 r_struct
 id|hw_interrupt_type
 (brace
+DECL|member|typename
+r_const
+r_char
+op_star
+r_typename
+suffix:semicolon
 DECL|member|handle
 r_void
 (paren
@@ -167,6 +173,8 @@ id|hw_interrupt_type
 id|i8259A_irq_type
 op_assign
 (brace
+l_string|&quot;XT-PIC&quot;
+comma
 id|do_8259A_IRQ
 comma
 id|enable_8259A_irq
@@ -218,6 +226,8 @@ id|hw_interrupt_type
 id|ioapic_edge_irq_type
 op_assign
 (brace
+l_string|&quot;IO-APIC-edge&quot;
+comma
 id|do_edge_ioapic_IRQ
 comma
 id|enable_edge_ioapic_irq
@@ -267,6 +277,8 @@ id|hw_interrupt_type
 id|ioapic_level_irq_type
 op_assign
 (brace
+l_string|&quot;IO-APIC-level&quot;
+comma
 id|do_level_ioapic_IRQ
 comma
 id|enable_level_ioapic_irq
@@ -1033,16 +1045,6 @@ id|i
 )paren
 suffix:semicolon
 macro_line|#endif
-r_if
-c_cond
-(paren
-id|IO_APIC_IRQ
-c_func
-(paren
-id|i
-)paren
-)paren
-(brace
 id|p
 op_add_assign
 id|sprintf
@@ -1050,55 +1052,16 @@ c_func
 (paren
 id|p
 comma
-l_string|&quot; IO-APIC&quot;
-)paren
-suffix:semicolon
-macro_line|#ifdef __SMP__
-r_if
-c_cond
-(paren
+l_string|&quot; %14s&quot;
+comma
 id|irq_desc
 (braket
 id|i
 )braket
 dot
 id|handler
-op_eq
-op_amp
-id|ioapic_level_irq_type
-)paren
-id|p
-op_add_assign
-id|sprintf
-c_func
-(paren
-id|p
-comma
-l_string|&quot;-level &quot;
-)paren
-suffix:semicolon
-r_else
-id|p
-op_add_assign
-id|sprintf
-c_func
-(paren
-id|p
-comma
-l_string|&quot;-edge  &quot;
-)paren
-suffix:semicolon
-macro_line|#endif
-)brace
-r_else
-id|p
-op_add_assign
-id|sprintf
-c_func
-(paren
-id|p
-comma
-l_string|&quot;  XT-PIC       &quot;
+op_member_access_from_pointer
+r_typename
 )paren
 suffix:semicolon
 id|p
@@ -1175,11 +1138,6 @@ comma
 l_string|&quot;IPI: %10lu&bslash;n&quot;
 comma
 id|ipi_count
-)paren
-suffix:semicolon
-id|print_IO_APIC
-c_func
-(paren
 )paren
 suffix:semicolon
 macro_line|#endif&t;&t;
@@ -3406,6 +3364,15 @@ suffix:semicolon
 )brace
 )brace
 macro_line|#endif
+id|irq_desc
+(braket
+id|irq
+)braket
+dot
+id|status
+op_assign
+l_int|0
+suffix:semicolon
 id|irq_desc
 (braket
 id|irq
