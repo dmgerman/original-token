@@ -3256,48 +3256,66 @@ macro_line|#if 0
 id|printk
 c_func
 (paren
-l_string|&quot;(start_brk) %x&bslash;n&quot;
+l_string|&quot;(start_brk) %lx&bslash;n&quot;
 comma
+(paren
+r_int
+)paren
 id|current-&gt;mm-&gt;start_brk
 )paren
 suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;(end_code) %x&bslash;n&quot;
+l_string|&quot;(end_code) %lx&bslash;n&quot;
 comma
+(paren
+r_int
+)paren
 id|current-&gt;mm-&gt;end_code
 )paren
 suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;(start_code) %x&bslash;n&quot;
+l_string|&quot;(start_code) %lx&bslash;n&quot;
 comma
+(paren
+r_int
+)paren
 id|current-&gt;mm-&gt;start_code
 )paren
 suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;(end_data) %x&bslash;n&quot;
+l_string|&quot;(end_data) %lx&bslash;n&quot;
 comma
+(paren
+r_int
+)paren
 id|current-&gt;mm-&gt;end_data
 )paren
 suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;(start_stack) %x&bslash;n&quot;
+l_string|&quot;(start_stack) %lx&bslash;n&quot;
 comma
+(paren
+r_int
+)paren
 id|current-&gt;mm-&gt;start_stack
 )paren
 suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;(brk) %x&bslash;n&quot;
+l_string|&quot;(brk) %lx&bslash;n&quot;
 comma
+(paren
+r_int
+)paren
 id|current-&gt;mm-&gt;brk
 )paren
 suffix:semicolon

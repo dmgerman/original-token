@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: module.c,v 1.7 1998/02/12 23:06:52 keil Exp $&n; *&n; * ISDN lowlevel-module for the IBM ISDN-S0 Active 2000.&n; *&n; * Copyright 1997 by Fritz Elfert (fritz@wuemaus.franken.de)&n; * Thanks to Friedemann Baitinger and IBM Germany&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA. &n; *&n; * $Log: module.c,v $&n; * Revision 1.7  1998/02/12 23:06:52  keil&n; * change for 2.1.86 (removing FREE_READ/FREE_WRITE from [dev]_kfree_skb()&n; *&n; * Revision 1.6  1998/01/31 22:10:42  keil&n; * changes for 2.1.82&n; *&n; * Revision 1.5  1997/10/09 22:23:04  fritz&n; * New HL&lt;-&gt;LL interface:&n; *   New BSENT callback with nr. of bytes included.&n; *   Sending without ACK.&n; *&n; * Revision 1.4  1997/09/25 17:25:43  fritz&n; * Support for adding cards at runtime.&n; * Support for new Firmware.&n; *&n; * Revision 1.3  1997/09/24 23:11:45  fritz&n; * Optimized IRQ load and polling-mode.&n; *&n; * Revision 1.2  1997/09/24 19:44:17  fritz&n; * Added MSN mapping support, some cleanup.&n; *&n; * Revision 1.1  1997/09/23 18:00:13  fritz&n; * New driver for IBM Active 2000.&n; *&n; */
+multiline_comment|/* $Id: module.c,v 1.9 1999/04/12 13:13:56 fritz Exp $&n; *&n; * ISDN lowlevel-module for the IBM ISDN-S0 Active 2000.&n; *&n; * Copyright 1998 by Fritz Elfert (fritz@isdn4linux.de)&n; * Thanks to Friedemann Baitinger and IBM Germany&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA. &n; *&n; * $Log: module.c,v $&n; * Revision 1.9  1999/04/12 13:13:56  fritz&n; * Made cards pointer static to avoid name-clash.&n; *&n; * Revision 1.8  1998/11/05 22:12:51  fritz&n; * Changed mail-address.&n; *&n; * Revision 1.7  1998/02/12 23:06:52  keil&n; * change for 2.1.86 (removing FREE_READ/FREE_WRITE from [dev]_kfree_skb()&n; *&n; * Revision 1.6  1998/01/31 22:10:42  keil&n; * changes for 2.1.82&n; *&n; * Revision 1.5  1997/10/09 22:23:04  fritz&n; * New HL&lt;-&gt;LL interface:&n; *   New BSENT callback with nr. of bytes included.&n; *   Sending without ACK.&n; *&n; * Revision 1.4  1997/09/25 17:25:43  fritz&n; * Support for adding cards at runtime.&n; * Support for new Firmware.&n; *&n; * Revision 1.3  1997/09/24 23:11:45  fritz&n; * Optimized IRQ load and polling-mode.&n; *&n; * Revision 1.2  1997/09/24 19:44:17  fritz&n; * Added MSN mapping support, some cleanup.&n; *&n; * Revision 1.1  1997/09/23 18:00:13  fritz&n; * New driver for IBM Active 2000.&n; *&n; */
 macro_line|#include &quot;act2000.h&quot;
 macro_line|#include &quot;act2000_isa.h&quot;
 macro_line|#include &quot;capi.h&quot;
@@ -43,10 +43,11 @@ comma
 suffix:semicolon
 DECL|macro|ISA_NRPORTS
 mdefine_line|#define ISA_NRPORTS (sizeof(isa_ports)/sizeof(unsigned short))
-DECL|variable|actcards
+DECL|variable|cards
+r_static
 id|act2000_card
 op_star
-id|actcards
+id|cards
 op_assign
 (paren
 id|act2000_card
@@ -2688,7 +2689,7 @@ id|act2000_card
 op_star
 id|p
 op_assign
-id|actcards
+id|cards
 suffix:semicolon
 r_while
 c_loop
@@ -3289,9 +3290,9 @@ id|irq
 suffix:semicolon
 id|card-&gt;next
 op_assign
-id|actcards
+id|cards
 suffix:semicolon
-id|actcards
+id|cards
 op_assign
 id|card
 suffix:semicolon
@@ -3625,14 +3626,14 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|actcards
+id|cards
 )paren
 r_return
 l_int|1
 suffix:semicolon
 id|p
 op_assign
-id|actcards
+id|cards
 suffix:semicolon
 r_while
 c_loop
@@ -3858,7 +3859,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|actcards
+id|cards
 op_assign
 id|p-&gt;next
 suffix:semicolon
@@ -3870,7 +3871,7 @@ id|p
 suffix:semicolon
 id|p
 op_assign
-id|actcards
+id|cards
 suffix:semicolon
 )brace
 id|failed
@@ -3913,7 +3914,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|actcards
+id|cards
 )paren
 id|act2000_addcard
 c_func
@@ -3931,7 +3932,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|actcards
+id|cards
 )paren
 id|printk
 c_func
@@ -3960,7 +3961,7 @@ id|act2000_card
 op_star
 id|card
 op_assign
-id|actcards
+id|cards
 suffix:semicolon
 id|act2000_card
 op_star
@@ -3992,7 +3993,7 @@ suffix:semicolon
 )brace
 id|card
 op_assign
-id|actcards
+id|cards
 suffix:semicolon
 r_while
 c_loop

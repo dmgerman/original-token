@@ -3,6 +3,8 @@ macro_line|#ifndef _LINUX_SKBUFF_H
 DECL|macro|_LINUX_SKBUFF_H
 mdefine_line|#define _LINUX_SKBUFF_H
 macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;linux/kernel.h&gt;
+macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/time.h&gt;
 macro_line|#include &lt;asm/atomic.h&gt;
 macro_line|#include &lt;asm/types.h&gt;
@@ -1973,9 +1975,6 @@ OG
 id|skb-&gt;end
 )paren
 (brace
-id|__label__
-id|here
-suffix:semicolon
 id|skb_over_panic
 c_func
 (paren
@@ -1983,12 +1982,11 @@ id|skb
 comma
 id|len
 comma
-op_logical_and
-id|here
+id|current_text_addr
+c_func
+(paren
 )paren
-suffix:semicolon
-id|here
-suffix:colon
+)paren
 suffix:semicolon
 )brace
 r_return
@@ -2061,9 +2059,6 @@ OL
 id|skb-&gt;head
 )paren
 (brace
-id|__label__
-id|here
-suffix:semicolon
 id|skb_under_panic
 c_func
 (paren
@@ -2071,12 +2066,11 @@ id|skb
 comma
 id|len
 comma
-op_logical_and
-id|here
+id|current_text_addr
+c_func
+(paren
 )paren
-suffix:semicolon
-id|here
-suffix:colon
+)paren
 suffix:semicolon
 )brace
 r_return

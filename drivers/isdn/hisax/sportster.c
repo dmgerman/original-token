@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sportster.c,v 1.5 1998/02/02 13:29:46 keil Exp $&n;&n; * sportster.c     low level stuff for USR Sportster internal TA&n; *&n; * Author       Karsten Keil (keil@temic-ech.spacenet.de)&n; *&n; * Thanks to Christian &quot;naddy&quot; Weisgerber (3Com, US Robotics) for documentation&n; *&n; * $Log: sportster.c,v $&n; * Revision 1.5  1998/02/02 13:29:46  keil&n; * fast io&n; *&n; * Revision 1.4  1997/11/08 21:35:52  keil&n; * new l1 init&n; *&n; * Revision 1.3  1997/11/06 17:09:29  keil&n; * New 2.1 init code&n; *&n; * Revision 1.2  1997/10/29 18:51:18  keil&n; * New files&n; *&n; * Revision 1.1.2.1  1997/10/17 22:10:58  keil&n; * new files on 2.0&n; *&n; */
+multiline_comment|/* $Id: sportster.c,v 1.7 1998/11/15 23:55:22 keil Exp $&n;&n; * sportster.c     low level stuff for USR Sportster internal TA&n; *&n; * Author       Karsten Keil (keil@temic-ech.spacenet.de)&n; *&n; * Thanks to Christian &quot;naddy&quot; Weisgerber (3Com, US Robotics) for documentation&n; *&n; * $Log: sportster.c,v $&n; * Revision 1.7  1998/11/15 23:55:22  keil&n; * changes from 2.0&n; *&n; * Revision 1.6  1998/04/15 16:44:35  keil&n; * new init code&n; *&n; * Revision 1.5  1998/02/02 13:29:46  keil&n; * fast io&n; *&n; * Revision 1.4  1997/11/08 21:35:52  keil&n; * new l1 init&n; *&n; * Revision 1.3  1997/11/06 17:09:29  keil&n; * New 2.1 init code&n; *&n; * Revision 1.2  1997/10/29 18:51:18  keil&n; * New files&n; *&n; * Revision 1.1.2.1  1997/10/17 22:10:58  keil&n; * new files on 2.0&n; *&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &quot;hisax.h&quot;
@@ -19,7 +19,7 @@ r_char
 op_star
 id|sportster_revision
 op_assign
-l_string|&quot;$Revision: 1.5 $&quot;
+l_string|&quot;$Revision: 1.7 $&quot;
 suffix:semicolon
 DECL|macro|byteout
 mdefine_line|#define byteout(addr,val) outb(val,addr)
@@ -742,28 +742,12 @@ suffix:semicolon
 r_case
 id|CARD_INIT
 suffix:colon
-id|clear_pending_isac_ints
+id|inithscxisac
 c_func
 (paren
 id|cs
-)paren
-suffix:semicolon
-id|clear_pending_hscx_ints
-c_func
-(paren
-id|cs
-)paren
-suffix:semicolon
-id|initisac
-c_func
-(paren
-id|cs
-)paren
-suffix:semicolon
-id|inithscx
-c_func
-(paren
-id|cs
+comma
+l_int|1
 )paren
 suffix:semicolon
 id|cs-&gt;hw.spt.res_irq
@@ -779,6 +763,14 @@ op_plus
 id|SPORTSTER_RES_IRQ
 comma
 id|cs-&gt;hw.spt.res_irq
+)paren
+suffix:semicolon
+id|inithscxisac
+c_func
+(paren
+id|cs
+comma
+l_int|2
 )paren
 suffix:semicolon
 r_return

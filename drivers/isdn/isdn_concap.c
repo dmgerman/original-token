@@ -1,20 +1,10 @@
-multiline_comment|/* $Id: isdn_concap.c,v 1.2 1998/01/31 22:49:21 keil Exp $&n; &n; * Stuff to support the concap_proto by isdn4linux. isdn4linux - specific&n; * stuff goes here. Stuff that depends only on the concap protocol goes to&n; * another -- protocol specific -- source file.&n; *&n; * $Log: isdn_concap.c,v $&n; * Revision 1.2  1998/01/31 22:49:21  keil&n; * correct comments&n; *&n; * Revision 1.1  1998/01/31 22:27:57  keil&n; * New files from Henner Eisen for X.25 support&n; *&n; */
+multiline_comment|/* $Id: isdn_concap.c,v 1.5 1998/10/30 18:44:48 he Exp $&n; &n; * Stuff to support the concap_proto by isdn4linux. isdn4linux - specific&n; * stuff goes here. Stuff that depends only on the concap protocol goes to&n; * another -- protocol specific -- source file.&n; *&n; * $Log: isdn_concap.c,v $&n; * Revision 1.5  1998/10/30 18:44:48  he&n; * pass return value from isdn_net_dial_req for dialmode change&n; *&n; * Revision 1.4  1998/10/30 17:55:24  he&n; * dialmode for x25iface and multulink ppp&n; *&n; * Revision 1.3  1998/05/26 22:39:22  he&n; * sync&squot;ed with 2.1.102 where appropriate (CAPABILITY changes)&n; * concap typo&n; * cleared dev.tbusy in isdn_net BCONN status callback&n; *&n; * Revision 1.2  1998/01/31 22:49:21  keil&n; * correct comments&n; *&n; * Revision 1.1  1998/01/31 22:27:57  keil&n; * New files from Henner Eisen for X.25 support&n; *&n; */
 macro_line|#include &lt;linux/isdn.h&gt;
 macro_line|#include &quot;isdn_x25iface.h&quot;
 macro_line|#include &quot;isdn_net.h&quot;
 macro_line|#include &lt;linux/concap.h&gt;
 macro_line|#include &quot;isdn_concap.h&quot;
-multiline_comment|/* The declaration of this (or a plublic variant thereof) should really go&n;   in linux/isdn.h. But we really need it here (and isdn_ppp, like us, also&n;   refers to that private function currently owned by isdn_net.c) */
-r_extern
-r_int
-id|isdn_net_force_dial_lp
-c_func
-(paren
-id|isdn_net_local
-op_star
-)paren
-suffix:semicolon
-multiline_comment|/* The following set of device service operations are for encapsulation&n;   protocols that require for reliable datalink sematics. That means:&n;&n;   - before any data is to be submitted the connection must explicitly&n;     be set up.&n;   - after the successful set up of the connection is signalled the&n;     connection is considered to be reliably up.&n;&n;   Auto-dialing ist not compatible with this requirements. Thus, auto-dialing &n;   is completely bypassed.&n;&n;   It might be possible to implement a (non standardized) datalink protocol&n;   that provides a reliable data link service while using some auto dialing&n;   mechanism. Such a protocol would need an auxiliary channel (i.e. user-user-&n;   signaling on the D-channel) while the B-channel is down.&n;   */
+multiline_comment|/* The following set of device service operations are for encapsulation&n;   protocols that require for reliable datalink semantics. That means:&n;&n;   - before any data is to be submitted the connection must explicitly&n;     be set up.&n;   - after the successful set up of the connection is signalled the&n;     connection is considered to be reliably up.&n;&n;   Auto-dialing ist not compatible with this requirements. Thus, auto-dialing &n;   is completely bypassed.&n;&n;   It might be possible to implement a (non standardized) datalink protocol&n;   that provides a reliable data link service while using some auto dialing&n;   mechanism. Such a protocol would need an auxiliary channel (i.e. user-user-&n;   signaling on the D-channel) while the B-channel is down.&n;   */
 DECL|function|isdn_concap_dl_data_req
 r_int
 id|isdn_concap_dl_data_req
@@ -141,7 +131,7 @@ suffix:semicolon
 multiline_comment|/* dial ... */
 id|ret
 op_assign
-id|isdn_net_force_dial_lp
+id|isdn_net_dial_req
 c_func
 (paren
 id|lp
@@ -159,7 +149,7 @@ l_string|&quot;dialing failed&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
-l_int|0
+id|ret
 suffix:semicolon
 )brace
 DECL|function|isdn_concap_dl_disconn_req

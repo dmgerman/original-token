@@ -426,13 +426,6 @@ id|drive-&gt;hwif
 op_assign
 id|hwif
 suffix:semicolon
-id|init_waitqueue_head
-c_func
-(paren
-op_amp
-id|drive-&gt;wqueue
-)paren
-suffix:semicolon
 id|drive-&gt;ctl
 op_assign
 l_int|0x08
@@ -3799,6 +3792,9 @@ id|byte
 id|stat
 suffix:semicolon
 r_int
+id|i
+suffix:semicolon
+r_int
 r_int
 id|flags
 suffix:semicolon
@@ -3902,13 +3898,28 @@ id|flags
 suffix:semicolon
 multiline_comment|/* local CPU only */
 )brace
+multiline_comment|/*&n;&t; * Allow status to settle, then read it again.&n;&t; * A few rare drives vastly violate the 400ns spec here,&n;&t; * so we&squot;ll wait up to 10usec for a &quot;good&quot; status&n;&t; * rather than expensively fail things immediately.&n;&t; * This fix courtesy of Matthew Faupel &amp; Niccolo Rigacci.&n;&t; */
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+l_int|10
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
 id|udelay
 c_func
 (paren
 l_int|1
 )paren
 suffix:semicolon
-multiline_comment|/* allow status to settle, then read it again */
 r_if
 c_cond
 (paren
@@ -3932,6 +3943,7 @@ id|bad
 r_return
 l_int|0
 suffix:semicolon
+)brace
 id|ide_error
 c_func
 (paren

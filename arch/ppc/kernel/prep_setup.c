@@ -23,6 +23,7 @@ macro_line|#include &lt;linux/console.h&gt;
 macro_line|#include &lt;linux/timex.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/openpic.h&gt;
+macro_line|#include &lt;linux/ide.h&gt;
 macro_line|#include &lt;asm/mmu.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;
 macro_line|#include &lt;asm/residual.h&gt;
@@ -1068,10 +1069,10 @@ op_assign
 id|to_kdev_t
 c_func
 (paren
-l_int|0x0801
+l_int|0x0802
 )paren
 suffix:semicolon
-multiline_comment|/* sda1 */
+multiline_comment|/* sda2 */
 r_break
 suffix:semicolon
 r_case
@@ -3104,20 +3105,10 @@ id|ppc_md.init_IRQ
 op_assign
 id|prep_init_IRQ
 suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|OpenPIC
-)paren
+multiline_comment|/* this gets changed later on if we have an OpenPIC -- Cort */
 id|ppc_md.do_IRQ
 op_assign
 id|prep_do_IRQ
-suffix:semicolon
-r_else
-id|ppc_md.do_IRQ
-op_assign
-id|chrp_do_IRQ
 suffix:semicolon
 id|ppc_md.init
 op_assign

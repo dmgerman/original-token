@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: teles3c.c,v 1.2 1998/02/02 13:27:07 keil Exp $&n;&n; * teles3c.c     low level stuff for teles 16.3c&n; *&n; * Author     Karsten Keil (keil@temic-ech.spacenet.de)&n; *&n; *&n; * $Log: teles3c.c,v $&n; * Revision 1.2  1998/02/02 13:27:07  keil&n; * New&n; *&n; *&n; *&n; */
+multiline_comment|/* $Id: teles3c.c,v 1.3 1998/11/15 23:55:27 keil Exp $&n;&n; * teles3c.c     low level stuff for teles 16.3c&n; *&n; * Author     Karsten Keil (keil@isdn4linux.de)&n; *&n; *&n; * $Log: teles3c.c,v $&n; * Revision 1.3  1998/11/15 23:55:27  keil&n; * changes from 2.0&n; *&n; * Revision 1.2  1998/02/02 13:27:07  keil&n; * New&n; *&n; *&n; *&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &quot;hisax.h&quot;
@@ -18,7 +18,7 @@ r_char
 op_star
 id|teles163c_revision
 op_assign
-l_string|&quot;$Revision: 1.2 $&quot;
+l_string|&quot;$Revision: 1.3 $&quot;
 suffix:semicolon
 r_static
 r_void
@@ -50,12 +50,6 @@ id|u_char
 id|val
 comma
 id|stat
-suffix:semicolon
-r_char
-id|tmp
-(braket
-l_int|32
-)braket
 suffix:semicolon
 r_if
 c_cond
@@ -121,11 +115,10 @@ id|cs-&gt;debug
 op_amp
 id|L1_DEB_ISAC
 )paren
-(brace
-id|sprintf
+id|debugl1
 c_func
 (paren
-id|tmp
+id|cs
 comma
 l_string|&quot;teles3c: stat(%02x) s1(%02x)&quot;
 comma
@@ -134,15 +127,6 @@ comma
 id|val
 )paren
 suffix:semicolon
-id|debugl1
-c_func
-(paren
-id|cs
-comma
-id|tmp
-)paren
-suffix:semicolon
-)brace
 id|hfc2bds0_interrupt
 c_func
 (paren
@@ -161,26 +145,16 @@ id|cs-&gt;debug
 op_amp
 id|L1_DEB_ISAC
 )paren
-(brace
-id|sprintf
+id|debugl1
 c_func
 (paren
-id|tmp
+id|cs
 comma
 l_string|&quot;teles3c: irq_no_irq stat(%02x)&quot;
 comma
 id|stat
 )paren
 suffix:semicolon
-id|debugl1
-c_func
-(paren
-id|cs
-comma
-id|tmp
-)paren
-suffix:semicolon
-)brace
 )brace
 )brace
 r_static
@@ -555,12 +529,6 @@ id|arg
 r_int
 id|flags
 suffix:semicolon
-r_char
-id|tmp
-(braket
-l_int|32
-)braket
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -568,26 +536,16 @@ id|cs-&gt;debug
 op_amp
 id|L1_DEB_ISAC
 )paren
-(brace
-id|sprintf
+id|debugl1
 c_func
 (paren
-id|tmp
+id|cs
 comma
 l_string|&quot;teles3c: card_msg %x&quot;
 comma
 id|mt
 )paren
 suffix:semicolon
-id|debugl1
-c_func
-(paren
-id|cs
-comma
-id|tmp
-)paren
-suffix:semicolon
-)brace
 r_switch
 c_cond
 (paren

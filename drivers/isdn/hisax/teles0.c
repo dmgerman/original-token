@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: teles0.c,v 2.6 1998/02/03 23:27:47 keil Exp $&n;&n; * teles0.c     low level stuff for Teles Memory IO isdn cards&n; *              based on the teles driver from Jan den Ouden&n; *&n; * Author       Karsten Keil (keil@temic-ech.spacenet.de)&n; *&n; * Thanks to    Jan den Ouden&n; *              Fritz Elfert&n; *              Beat Doebeli&n; *&n; * $Log: teles0.c,v $&n; * Revision 2.6  1998/02/03 23:27:47  keil&n; * IRQ 9&n; *&n; * Revision 2.5  1998/02/02 13:29:47  keil&n; * fast io&n; *&n; * Revision 2.4  1997/11/08 21:35:54  keil&n; * new l1 init&n; *&n; * Revision 2.3  1997/11/06 17:09:31  keil&n; * New 2.1 init code&n; *&n; * Revision 2.2  1997/10/29 18:55:57  keil&n; * changes for 2.1.60 (irq2dev_map)&n; *&n; * Revision 2.1  1997/07/27 21:47:10  keil&n; * new interface structures&n; *&n; * Revision 2.0  1997/06/26 11:02:43  keil&n; * New Layer and card interface&n; *&n; * Revision 1.8  1997/04/13 19:54:04  keil&n; * Change in IRQ check delay for SMP&n; *&n; * Revision 1.7  1997/04/06 22:54:04  keil&n; * Using SKB&squot;s&n; *&n; * removed old log info /KKe&n; *&n; */
+multiline_comment|/* $Id: teles0.c,v 2.8 1998/04/15 16:44:28 keil Exp $&n;&n; * teles0.c     low level stuff for Teles Memory IO isdn cards&n; *              based on the teles driver from Jan den Ouden&n; *&n; * Author       Karsten Keil (keil@temic-ech.spacenet.de)&n; *&n; * Thanks to    Jan den Ouden&n; *              Fritz Elfert&n; *              Beat Doebeli&n; *&n; * $Log: teles0.c,v $&n; * Revision 2.8  1998/04/15 16:44:28  keil&n; * new init code&n; *&n; * Revision 2.7  1998/03/07 22:57:08  tsbogend&n; * made HiSax working on Linux/Alpha&n; *&n; * Revision 2.6  1998/02/03 23:27:47  keil&n; * IRQ 9&n; *&n; * Revision 2.5  1998/02/02 13:29:47  keil&n; * fast io&n; *&n; * Revision 2.4  1997/11/08 21:35:54  keil&n; * new l1 init&n; *&n; * Revision 2.3  1997/11/06 17:09:31  keil&n; * New 2.1 init code&n; *&n; * Revision 2.2  1997/10/29 18:55:57  keil&n; * changes for 2.1.60 (irq2dev_map)&n; *&n; * Revision 2.1  1997/07/27 21:47:10  keil&n; * new interface structures&n; *&n; * Revision 2.0  1997/06/26 11:02:43  keil&n; * New Layer and card interface&n; *&n; * Revision 1.8  1997/04/13 19:54:04  keil&n; * Change in IRQ check delay for SMP&n; *&n; * Revision 1.7  1997/04/06 22:54:04  keil&n; * Using SKB&squot;s&n; *&n; * removed old log info /KKe&n; *&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &quot;hisax.h&quot;
@@ -19,7 +19,7 @@ r_char
 op_star
 id|teles0_revision
 op_assign
-l_string|&quot;$Revision: 2.6 $&quot;
+l_string|&quot;$Revision: 2.8 $&quot;
 suffix:semicolon
 DECL|macro|byteout
 mdefine_line|#define byteout(addr,val) outb(val,addr)
@@ -102,6 +102,11 @@ l_int|0x100
 )paren
 op_plus
 id|off
+)paren
+suffix:semicolon
+id|mb
+c_func
+(paren
 )paren
 suffix:semicolon
 )brace
@@ -208,6 +213,11 @@ op_plus
 id|off
 )paren
 suffix:semicolon
+id|mb
+c_func
+(paren
+)paren
+suffix:semicolon
 )brace
 r_static
 r_inline
@@ -242,6 +252,9 @@ id|u_char
 op_star
 )paren
 (paren
+(paren
+r_int
+)paren
 id|adr
 op_plus
 l_int|0x100
@@ -306,6 +319,9 @@ id|u_char
 op_star
 )paren
 (paren
+(paren
+r_int
+)paren
 id|adr
 op_plus
 l_int|0x100
@@ -325,6 +341,7 @@ suffix:semicolon
 id|i
 op_increment
 )paren
+(brace
 id|writeb
 c_func
 (paren
@@ -336,6 +353,12 @@ comma
 id|ad
 )paren
 suffix:semicolon
+id|mb
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
 )brace
 r_static
 r_inline
@@ -373,6 +396,9 @@ id|u_char
 op_star
 )paren
 (paren
+(paren
+r_int
+)paren
 id|adr
 op_plus
 (paren
@@ -446,6 +472,9 @@ id|u_char
 op_star
 )paren
 (paren
+(paren
+r_int
+)paren
 id|adr
 op_plus
 (paren
@@ -472,6 +501,7 @@ suffix:semicolon
 id|i
 op_increment
 )paren
+(brace
 id|writeb
 c_func
 (paren
@@ -483,6 +513,12 @@ comma
 id|ad
 )paren
 suffix:semicolon
+id|mb
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
 )brace
 multiline_comment|/* Interface functions */
 r_static
@@ -1178,6 +1214,11 @@ op_plus
 l_int|0x80
 )paren
 suffix:semicolon
+id|mb
+c_func
+(paren
+)paren
+suffix:semicolon
 id|HZDELAY
 c_func
 (paren
@@ -1196,6 +1237,11 @@ comma
 id|cs-&gt;hw.teles0.membase
 op_plus
 l_int|0x80
+)paren
+suffix:semicolon
+id|mb
+c_func
+(paren
 )paren
 suffix:semicolon
 id|HZDELAY
@@ -1289,28 +1335,12 @@ suffix:semicolon
 r_case
 id|CARD_INIT
 suffix:colon
-id|clear_pending_isac_ints
+id|inithscxisac
 c_func
 (paren
 id|cs
-)paren
-suffix:semicolon
-id|clear_pending_hscx_ints
-c_func
-(paren
-id|cs
-)paren
-suffix:semicolon
-id|initisac
-c_func
-(paren
-id|cs
-)paren
-suffix:semicolon
-id|inithscx
-c_func
-(paren
-id|cs
+comma
+l_int|3
 )paren
 suffix:semicolon
 r_return

@@ -27,10 +27,7 @@ r_void
 op_star
 id|data
 suffix:semicolon
-DECL|variable|p
 )brace
-op_star
-id|p
 suffix:semicolon
 multiline_comment|/* The subfunctions (for the op field) */
 DECL|macro|BLKPG_ADD_PARTITION

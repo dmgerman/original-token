@@ -16,6 +16,8 @@ macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;
 multiline_comment|/* Eventually we may need a look-up table, but this works for now.&n;*/
+DECL|macro|LFS
+mdefine_line|#define LFS&t;48
 DECL|macro|LFD
 mdefine_line|#define LFD&t;50
 DECL|macro|LFDU
@@ -226,6 +228,54 @@ op_assign
 id|uint
 )paren
 id|ea
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|LFS
+suffix:colon
+id|sdisp
+op_assign
+(paren
+id|instword
+op_amp
+l_int|0xffff
+)paren
+suffix:semicolon
+id|ea
+op_assign
+(paren
+id|uint
+op_star
+)paren
+(paren
+id|regs-&gt;gpr
+(braket
+id|idxreg
+)braket
+op_plus
+id|sdisp
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|copy_from_user
+c_func
+(paren
+id|ip
+comma
+id|ea
+comma
+r_sizeof
+(paren
+r_float
+)paren
+)paren
+)paren
+id|retval
+op_assign
+id|EFAULT
 suffix:semicolon
 r_break
 suffix:semicolon

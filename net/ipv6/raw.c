@@ -68,7 +68,7 @@ id|raw_v6_htable
 id|num
 )braket
 suffix:semicolon
-id|SOCKHASH_LOCK
+id|SOCKHASH_LOCK_WRITE
 c_func
 (paren
 )paren
@@ -87,7 +87,7 @@ id|sk-&gt;hashent
 op_assign
 id|num
 suffix:semicolon
-id|SOCKHASH_UNLOCK
+id|SOCKHASH_UNLOCK_WRITE
 c_func
 (paren
 )paren
@@ -132,7 +132,7 @@ id|raw_v6_htable
 id|num
 )braket
 suffix:semicolon
-id|SOCKHASH_LOCK
+id|SOCKHASH_LOCK_WRITE
 c_func
 (paren
 )paren
@@ -176,7 +176,7 @@ id|next
 )paren
 suffix:semicolon
 )brace
-id|SOCKHASH_UNLOCK
+id|SOCKHASH_UNLOCK_WRITE
 c_func
 (paren
 )paren
@@ -226,7 +226,7 @@ id|raw_v6_htable
 id|oldnum
 )braket
 suffix:semicolon
-id|SOCKHASH_LOCK
+id|SOCKHASH_LOCK_WRITE
 c_func
 (paren
 )paren
@@ -288,7 +288,7 @@ id|sk-&gt;hashent
 op_assign
 id|num
 suffix:semicolon
-id|SOCKHASH_UNLOCK
+id|SOCKHASH_UNLOCK_WRITE
 c_func
 (paren
 )paren
@@ -2666,6 +2666,12 @@ r_int
 id|timeout
 )paren
 (brace
+id|bh_lock_sock
+c_func
+(paren
+id|sk
+)paren
+suffix:semicolon
 multiline_comment|/* See for explanation: raw_close in ipv4/raw.c */
 id|sk-&gt;state
 op_assign

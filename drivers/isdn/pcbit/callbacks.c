@@ -1,5 +1,6 @@
 multiline_comment|/*&n; * Copyright (C) 1996 Universidade de Lisboa&n; * &n; * Written by Pedro Roque Marques (roque@di.fc.ul.pt)&n; *&n; * This software may be used and distributed according to the terms of &n; * the GNU Public License, incorporated herein by reference.&n; */
 multiline_comment|/*        &n; *        callbacks for the FSM&n; */
+multiline_comment|/*&n; * Fix: 19981230 - Carlos Morgado &lt;chbm@techie.com&gt;&n; * Port of Nelson Escravana&squot;s &lt;nelson.escravana@usa.net&gt; fix to CalledPN &n; * NULL pointer dereference in cb_in_1 (originally fixed in 2.0)&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &lt;linux/module.h&gt;
@@ -403,6 +404,32 @@ op_assign
 id|chan-&gt;id
 suffix:semicolon
 multiline_comment|/*&n;         *  ictl.num &gt;= strlen() + strlen() + 5&n;         */
+r_if
+c_cond
+(paren
+id|cbdata-&gt;data.setup.CallingPN
+op_eq
+l_int|NULL
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_DEBUG
+l_string|&quot;NULL CallingPN to phone; using 0&bslash;n&quot;
+)paren
+suffix:semicolon
+id|strcpy
+c_func
+(paren
+id|ictl.parm.setup.phone
+comma
+l_string|&quot;0&quot;
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
 id|strcpy
 c_func
 (paren
@@ -411,6 +438,33 @@ comma
 id|cbdata-&gt;data.setup.CallingPN
 )paren
 suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|cbdata-&gt;data.setup.CalledPN
+op_eq
+l_int|NULL
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_DEBUG
+l_string|&quot;NULL CalledPN to eazmsn; using 0&bslash;n&quot;
+)paren
+suffix:semicolon
+id|strcpy
+c_func
+(paren
+id|ictl.parm.setup.eazmsn
+comma
+l_string|&quot;0&quot;
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
 id|strcpy
 c_func
 (paren
@@ -419,6 +473,7 @@ comma
 id|cbdata-&gt;data.setup.CalledPN
 )paren
 suffix:semicolon
+)brace
 id|ictl.parm.setup.si1
 op_assign
 l_int|7

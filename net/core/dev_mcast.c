@@ -606,9 +606,11 @@ id|device
 op_star
 id|dev
 suffix:semicolon
-id|start_bh_atomic
+id|read_lock_bh
 c_func
 (paren
+op_amp
+id|dev_base_lock
 )paren
 suffix:semicolon
 r_for
@@ -749,9 +751,11 @@ l_int|1
 suffix:semicolon
 id|done
 suffix:colon
-id|end_bh_atomic
+id|read_unlock_bh
 c_func
 (paren
+op_amp
+id|dev_base_lock
 )paren
 suffix:semicolon
 op_star

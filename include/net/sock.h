@@ -110,6 +110,10 @@ DECL|member|inflight
 r_int
 id|inflight
 suffix:semicolon
+DECL|member|user_count
+id|atomic_t
+id|user_count
+suffix:semicolon
 )brace
 suffix:semicolon
 macro_line|#ifdef CONFIG_NETLINK
@@ -778,6 +782,29 @@ macro_line|#else
 DECL|macro|SOCK_DEBUG
 mdefine_line|#define SOCK_DEBUG(sk, msg...) do { } while (0)
 macro_line|#endif
+multiline_comment|/* This is the per-socket lock.  The spinlock provides a synchronization&n; * between user contexts and software interrupt processing, whereas the&n; * mini-semaphore synchronizes multiple users amongst themselves.&n; */
+r_typedef
+r_struct
+(brace
+DECL|member|slock
+id|spinlock_t
+id|slock
+suffix:semicolon
+DECL|member|users
+r_int
+r_int
+id|users
+suffix:semicolon
+DECL|member|wq
+id|wait_queue_head_t
+id|wq
+suffix:semicolon
+DECL|typedef|socket_lock_t
+)brace
+id|socket_lock_t
+suffix:semicolon
+DECL|macro|sock_lock_init
+mdefine_line|#define sock_lock_init(__sk) &bslash;&n;do {&t;spin_lock_init(&amp;((__sk)-&gt;lock.slock)); &bslash;&n;&t;(__sk)-&gt;lock.users = 0; &bslash;&n;&t;init_waitqueue_head(&amp;((__sk)-&gt;lock.wq)); &bslash;&n;} while(0);
 DECL|struct|sock
 r_struct
 id|sock
@@ -882,11 +909,11 @@ DECL|member|nonagle
 id|nonagle
 suffix:semicolon
 multiline_comment|/* Disable Nagle algorithm?&t;&t;*/
-DECL|member|sock_readers
-id|atomic_t
-id|sock_readers
+DECL|member|lock
+id|socket_lock_t
+id|lock
 suffix:semicolon
-multiline_comment|/* User count&t;&t;&t;&t;*/
+multiline_comment|/* Synchronizer...&t;&t;&t;*/
 DECL|member|rcvbuf
 r_int
 id|rcvbuf
@@ -1008,13 +1035,29 @@ id|sock
 op_star
 id|pair
 suffix:semicolon
-multiline_comment|/* Error and backlog packet queues, rarely used. */
-DECL|member|back_log
+multiline_comment|/* The backlog queue is special, it is always used with&n;&t; * the per-socket spinlock held and requires low latency&n;&t; * access.  Therefore we special case it&squot;s implementation.&n;&t; */
+r_struct
+(brace
+DECL|member|head
+r_struct
+id|sk_buff
+op_star
+id|head
+suffix:semicolon
+DECL|member|tail
+r_struct
+id|sk_buff
+op_star
+id|tail
+suffix:semicolon
+DECL|member|backlog
+)brace
+id|backlog
+suffix:semicolon
+multiline_comment|/* Error queue, rarely used. */
+DECL|member|error_queue
 r_struct
 id|sk_buff_head
-id|back_log
-comma
-DECL|member|error_queue
 id|error_queue
 suffix:semicolon
 DECL|member|prot
@@ -1402,6 +1445,9 @@ id|sk
 suffix:semicolon
 )brace
 suffix:semicolon
+multiline_comment|/* The per-socket spinlock must be held here. */
+DECL|macro|sk_add_backlog
+mdefine_line|#define sk_add_backlog(__sk, __skb)&t;&t;&t;&bslash;&n;do {&t;if((__sk)-&gt;backlog.tail == NULL) {&t;&t;&bslash;&n;&t;&t;(__sk)-&gt;backlog.head =&t;&t;&t;&bslash;&n;&t;&t;     (__sk)-&gt;backlog.tail = (__skb);&t;&bslash;&n;&t;} else {&t;&t;&t;&t;&t;&bslash;&n;&t;&t;((__sk)-&gt;backlog.tail)-&gt;next = (__skb);&t;&bslash;&n;&t;&t;(__sk)-&gt;backlog.tail = (__skb);&t;&t;&bslash;&n;&t;}&t;&t;&t;&t;&t;&t;&bslash;&n;&t;(__skb)-&gt;next = NULL;&t;&t;&t;&t;&bslash;&n;} while(0)
 multiline_comment|/* IP protocol blocks we attach to sockets.&n; * socket layer -&gt; transport layer interface&n; * transport -&gt; network interface is defined by struct inet_proto&n; */
 DECL|struct|proto
 r_struct
@@ -1870,10 +1916,27 @@ mdefine_line|#define RCV_SHUTDOWN&t;1
 DECL|macro|SEND_SHUTDOWN
 mdefine_line|#define SEND_SHUTDOWN&t;2
 multiline_comment|/* Per-protocol hash table implementations use this to make sure&n; * nothing changes.&n; */
-DECL|macro|SOCKHASH_LOCK
-mdefine_line|#define SOCKHASH_LOCK()&t;&t;start_bh_atomic()
-DECL|macro|SOCKHASH_UNLOCK
-mdefine_line|#define SOCKHASH_UNLOCK()&t;end_bh_atomic()
+r_extern
+id|rwlock_t
+id|sockhash_lock
+suffix:semicolon
+DECL|macro|SOCKHASH_LOCK_READ
+mdefine_line|#define SOCKHASH_LOCK_READ()&t;&t;read_lock_bh(&amp;sockhash_lock)
+DECL|macro|SOCKHASH_UNLOCK_READ
+mdefine_line|#define SOCKHASH_UNLOCK_READ()&t;&t;read_unlock_bh(&amp;sockhash_lock)
+DECL|macro|SOCKHASH_LOCK_WRITE
+mdefine_line|#define SOCKHASH_LOCK_WRITE()&t;&t;write_lock_bh(&amp;sockhash_lock)
+DECL|macro|SOCKHASH_UNLOCK_WRITE
+mdefine_line|#define SOCKHASH_UNLOCK_WRITE()&t;&t;write_unlock_bh(&amp;sockhash_lock)
+multiline_comment|/* The following variants must _only_ be used when you know you&n; * can only be executing in a BH context.&n; */
+DECL|macro|SOCKHASH_LOCK_READ_BH
+mdefine_line|#define SOCKHASH_LOCK_READ_BH()&t;&t;read_lock(&amp;sockhash_lock)
+DECL|macro|SOCKHASH_UNLOCK_READ_BH
+mdefine_line|#define SOCKHASH_UNLOCK_READ_BH()&t;read_unlock(&amp;sockhash_lock)
+DECL|macro|SOCKHASH_LOCK_WRITE_BH
+mdefine_line|#define SOCKHASH_LOCK_WRITE_BH()&t;write_lock(&amp;sockhash_lock)
+DECL|macro|SOCKHASH_UNLOCK_WRITE_BH
+mdefine_line|#define SOCKHASH_UNLOCK_WRITE_BH()&t;write_unlock(&amp;sockhash_lock)
 multiline_comment|/* Some things in the kernel just want to get at a protocols&n; * entire socket list commensurate, thus...&n; */
 DECL|function|add_to_prot_sklist
 r_static
@@ -1888,7 +1951,7 @@ op_star
 id|sk
 )paren
 (brace
-id|SOCKHASH_LOCK
+id|SOCKHASH_LOCK_WRITE
 c_func
 (paren
 )paren
@@ -1947,7 +2010,7 @@ id|sk-&gt;prot-&gt;inuse
 suffix:semicolon
 )brace
 )brace
-id|SOCKHASH_UNLOCK
+id|SOCKHASH_UNLOCK_WRITE
 c_func
 (paren
 )paren
@@ -1966,7 +2029,7 @@ op_star
 id|sk
 )paren
 (brace
-id|SOCKHASH_LOCK
+id|SOCKHASH_LOCK_WRITE
 c_func
 (paren
 )paren
@@ -1993,27 +2056,14 @@ id|sk-&gt;prot-&gt;inuse
 op_decrement
 suffix:semicolon
 )brace
-id|SOCKHASH_UNLOCK
+id|SOCKHASH_UNLOCK_WRITE
 c_func
 (paren
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Used by processes to &quot;lock&quot; a socket state, so that&n; * interrupts and bottom half handlers won&squot;t change it&n; * from under us. It essentially blocks any incoming&n; * packets, so that we won&squot;t get any new data or any&n; * packets that change the state of the socket.&n; *&n; * Note the &squot;barrier()&squot; calls: gcc may not move a lock&n; * &quot;downwards&quot; or a unlock &quot;upwards&quot; when optimizing.&n; */
+multiline_comment|/* Used by processes to &quot;lock&quot; a socket state, so that&n; * interrupts and bottom half handlers won&squot;t change it&n; * from under us. It essentially blocks any incoming&n; * packets, so that we won&squot;t get any new data or any&n; * packets that change the state of the socket.&n; *&n; * While locked, BH processing will add new packets to&n; * the backlog queue.  This queue is processed by the&n; * owner of the socket lock right before it is released.&n; */
 r_extern
-r_void
-id|__release_sock
-c_func
-(paren
-r_struct
-id|sock
-op_star
-id|sk
-)paren
-suffix:semicolon
-DECL|function|lock_sock
-r_static
-r_inline
 r_void
 id|lock_sock
 c_func
@@ -2023,53 +2073,8 @@ id|sock
 op_star
 id|sk
 )paren
-(brace
-macro_line|#if 0
-multiline_comment|/* debugging code: the test isn&squot;t even 100% correct, but it can catch bugs */
-multiline_comment|/* Note that a double lock is ok in theory - it&squot;s just _usually_ a bug */
-r_if
-c_cond
-(paren
-id|atomic_read
-c_func
-(paren
-op_amp
-id|sk-&gt;sock_readers
-)paren
-)paren
-(brace
-id|__label__
-id|here
 suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;double lock on socket at %p&bslash;n&quot;
-comma
-op_logical_and
-id|here
-)paren
-suffix:semicolon
-id|here
-suffix:colon
-)brace
-macro_line|#endif
-id|atomic_inc
-c_func
-(paren
-op_amp
-id|sk-&gt;sock_readers
-)paren
-suffix:semicolon
-id|synchronize_bh
-c_func
-(paren
-)paren
-suffix:semicolon
-)brace
-DECL|function|release_sock
-r_static
-r_inline
+r_extern
 r_void
 id|release_sock
 c_func
@@ -2079,29 +2084,12 @@ id|sock
 op_star
 id|sk
 )paren
-(brace
-id|barrier
-c_func
-(paren
-)paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|atomic_dec_and_test
-c_func
-(paren
-op_amp
-id|sk-&gt;sock_readers
-)paren
-)paren
-id|__release_sock
-c_func
-(paren
-id|sk
-)paren
-suffix:semicolon
-)brace
+multiline_comment|/* BH context may only use the following locking interface. */
+DECL|macro|bh_lock_sock
+mdefine_line|#define bh_lock_sock(__sk)&t;spin_lock(&amp;((__sk)-&gt;lock.slock))
+DECL|macro|bh_unlock_sock
+mdefine_line|#define bh_unlock_sock(__sk)&t;spin_unlock(&amp;((__sk)-&gt;lock.slock))
 multiline_comment|/*&n; *&t;This might not be the most appropriate place for this two&t; &n; *&t;but since they are used by a lot of the net related code&n; *&t;at least they get declared on a include that is common to all&n; */
 DECL|function|min
 r_static

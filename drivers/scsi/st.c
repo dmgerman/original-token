@@ -1,4 +1,4 @@
-multiline_comment|/*&n;  SCSI Tape Driver for Linux version 1.1 and newer. See the accompanying&n;  file README.st for more information.&n;&n;  History:&n;  Rewritten from Dwayne Forsyth&squot;s SCSI tape driver by Kai Makisara.&n;  Contribution and ideas from several people including (in alphabetical&n;  order) Klaus Ehrenfried, Wolfgang Denk, Steve Hirsch, Andreas Koppenh&quot;ofer,&n;  Michael Leodolter, Eyal Lebedinsky, J&quot;org Weule, and Eric Youngdale.&n;&n;  Copyright 1992 - 1999 Kai Makisara&n;&t;&t; email Kai.Makisara@metla.fi&n;&n;  Last modified: Sun Mar  7 09:03:17 1999 by makisara@home&n;  Some small formal changes - aeb, 950809&n;*/
+multiline_comment|/*&n;  SCSI Tape Driver for Linux version 1.1 and newer. See the accompanying&n;  file README.st for more information.&n;&n;  History:&n;  Rewritten from Dwayne Forsyth&squot;s SCSI tape driver by Kai Makisara.&n;  Contribution and ideas from several people including (in alphabetical&n;  order) Klaus Ehrenfried, Wolfgang Denk, Steve Hirsch, Andreas Koppenh&quot;ofer,&n;  Michael Leodolter, Eyal Lebedinsky, J&quot;org Weule, and Eric Youngdale.&n;&n;  Copyright 1992 - 1999 Kai Makisara&n;&t;&t; email Kai.Makisara@metla.fi&n;&n;  Last modified: Tue May 18 08:32:34 1999 by makisara@home&n;  Some small formal changes - aeb, 950809&n;*/
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -524,13 +524,6 @@ c_func
 l_string|&quot;st&quot;
 comma
 id|SCpnt
-)paren
-suffix:semicolon
-r_else
-id|printk
-c_func
-(paren
-l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
@@ -1224,6 +1217,10 @@ id|STp-&gt;buffer
 )paren
 op_member_access_from_pointer
 id|b_data
+suffix:semicolon
+id|SCpnt-&gt;cmd_len
+op_assign
+l_int|0
 suffix:semicolon
 id|SCpnt-&gt;request.sem
 op_assign
@@ -17856,10 +17853,6 @@ suffix:semicolon
 id|tpnt-&gt;dirty
 op_assign
 l_int|0
-suffix:semicolon
-id|tpnt-&gt;waiting
-op_assign
-l_int|NULL
 suffix:semicolon
 id|tpnt-&gt;in_use
 op_assign

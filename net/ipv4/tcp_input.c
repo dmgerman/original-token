@@ -3188,6 +3188,7 @@ op_star
 id|tw
 )paren
 suffix:semicolon
+multiline_comment|/* Must be called only from BH context. */
 DECL|function|tcp_timewait_kill
 r_void
 id|tcp_timewait_kill
@@ -3199,6 +3200,11 @@ op_star
 id|tw
 )paren
 (brace
+id|SOCKHASH_LOCK_WRITE_BH
+c_func
+(paren
+)paren
+suffix:semicolon
 multiline_comment|/* Unlink from various places. */
 r_if
 c_cond
@@ -3257,6 +3263,11 @@ suffix:semicolon
 id|tw-&gt;sklist_prev-&gt;sklist_next
 op_assign
 id|tw-&gt;sklist_next
+suffix:semicolon
+id|SOCKHASH_UNLOCK_WRITE_BH
+c_func
+(paren
+)paren
 suffix:semicolon
 multiline_comment|/* Ok, now free it up. */
 id|kmem_cache_free
@@ -3332,6 +3343,9 @@ suffix:semicolon
 id|__u32
 id|isn
 suffix:semicolon
+r_int
+id|ret
+suffix:semicolon
 id|isn
 op_assign
 id|tw-&gt;rcv_nxt
@@ -3389,19 +3403,31 @@ id|sk
 comma
 id|skb
 )paren
-op_logical_or
-id|atomic_read
-c_func
-(paren
-op_amp
-id|sk-&gt;sock_readers
-)paren
-op_ne
-l_int|0
 )paren
 (brace
 r_return
 l_int|0
+suffix:semicolon
+)brace
+id|bh_lock_sock
+c_func
+(paren
+id|sk
+)paren
+suffix:semicolon
+multiline_comment|/* Default is to discard the frame. */
+id|ret
+op_assign
+l_int|0
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|sk-&gt;lock.users
+)paren
+(brace
+r_goto
+id|out_unlock
 suffix:semicolon
 )brace
 id|skb_set_owner_r
@@ -3434,15 +3460,23 @@ OL
 l_int|0
 )paren
 (brace
-r_return
+id|ret
+op_assign
 l_int|1
 suffix:semicolon
 )brace
 multiline_comment|/* Toss a reset back. */
-r_return
-l_int|0
+id|out_unlock
+suffix:colon
+id|bh_unlock_sock
+c_func
+(paren
+id|sk
+)paren
 suffix:semicolon
-multiline_comment|/* Discard the frame. */
+r_return
+id|ret
+suffix:semicolon
 )brace
 multiline_comment|/* Check RST or SYN */
 r_if
@@ -3649,14 +3683,14 @@ multiline_comment|/* Step 4: Hash TW into TIMEWAIT half of established hash tabl
 id|head
 op_assign
 op_amp
-id|tcp_established_hash
+id|tcp_ehash
 (braket
 id|sk-&gt;hashent
 op_plus
 (paren
-id|TCP_HTABLE_SIZE
-op_div
-l_int|2
+id|tcp_ehash_size
+op_rshift
+l_int|1
 )paren
 )braket
 suffix:semicolon
@@ -3826,12 +3860,22 @@ suffix:semicolon
 )brace
 macro_line|#endif
 multiline_comment|/* Linkage updates. */
+id|SOCKHASH_LOCK_WRITE
+c_func
+(paren
+)paren
+suffix:semicolon
 id|tcp_tw_hashdance
 c_func
 (paren
 id|sk
 comma
 id|tw
+)paren
+suffix:semicolon
+id|SOCKHASH_UNLOCK_WRITE
+c_func
+(paren
 )paren
 suffix:semicolon
 multiline_comment|/* Get the TIME_WAIT timeout firing. */

@@ -332,6 +332,15 @@ DECL|macro|__save_flags
 mdefine_line|#define __save_flags(x) &bslash;&n;__asm__ __volatile__(&quot;pushfl ; popl %0&quot;:&quot;=g&quot; (x): /* no input */ :&quot;memory&quot;)
 DECL|macro|__restore_flags
 mdefine_line|#define __restore_flags(x) &bslash;&n;__asm__ __volatile__(&quot;pushl %0 ; popfl&quot;: /* no output */ :&quot;g&quot; (x):&quot;memory&quot;)
+multiline_comment|/* For spinlocks etc */
+DECL|macro|local_irq_save
+mdefine_line|#define local_irq_save(x)&t;__asm__ __volatile__(&quot;pushfl ; popl %0 ; cli&quot;:&quot;=g&quot; (x): /* no input */ :&quot;memory&quot;)
+DECL|macro|local_irq_restore
+mdefine_line|#define local_irq_restore(x)&t;__asm__ __volatile__(&quot;pushl %0 ; popfl&quot;: /* no output */ :&quot;g&quot; (x):&quot;memory&quot;)
+DECL|macro|local_irq_disable
+mdefine_line|#define local_irq_disable()&t;__asm__ __volatile__(&quot;cli&quot;: : :&quot;memory&quot;)
+DECL|macro|local_irq_enable
+mdefine_line|#define local_irq_enable()&t;__asm__ __volatile__(&quot;sti&quot;: : :&quot;memory&quot;)
 macro_line|#ifdef __SMP__
 r_extern
 r_void

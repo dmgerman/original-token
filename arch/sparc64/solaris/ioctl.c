@@ -4354,6 +4354,13 @@ id|i
 op_assign
 l_int|0
 suffix:semicolon
+id|read_lock_bh
+c_func
+(paren
+op_amp
+id|dev_base_lock
+)paren
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -4369,6 +4376,13 @@ id|d-&gt;next
 )paren
 id|i
 op_increment
+suffix:semicolon
+id|read_unlock_bh
+c_func
+(paren
+op_amp
+id|dev_base_lock
+)paren
 suffix:semicolon
 r_if
 c_cond

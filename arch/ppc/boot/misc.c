@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * misc.c&n; *&n; * $Id: misc.c,v 1.64 1999/04/30 05:52:46 cort Exp $&n; * &n; * Adapted for PowerPC by Gary Thomas&n; *&n; * Rewritten by Cort Dougan (cort@cs.nmt.edu)&n; * One day to be replaced by a single bootloader for chrp/prep/pmac. -- Cort&n; */
+multiline_comment|/*&n; * misc.c&n; *&n; * $Id: misc.c,v 1.65 1999/05/17 19:11:13 cort Exp $&n; * &n; * Adapted for PowerPC by Gary Thomas&n; *&n; * Rewritten by Cort Dougan (cort@cs.nmt.edu)&n; * One day to be replaced by a single bootloader for chrp/prep/pmac. -- Cort&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &quot;../coffboot/zlib.h&quot;
 macro_line|#include &quot;asm/residual.h&quot;
@@ -1693,7 +1693,7 @@ c_cond
 (paren
 id|base_mod
 op_eq
-l_int|0x9
+l_int|0xFA
 )paren
 op_logical_or
 (paren

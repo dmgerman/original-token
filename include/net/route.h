@@ -134,15 +134,6 @@ suffix:semicolon
 macro_line|#endif
 )brace
 suffix:semicolon
-r_extern
-r_struct
-id|rtable
-op_star
-id|rt_hash_table
-(braket
-id|RT_HASH_DIVISOR
-)braket
-suffix:semicolon
 DECL|struct|ip_rt_acct
 r_struct
 id|ip_rt_acct

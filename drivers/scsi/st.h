@@ -213,10 +213,6 @@ DECL|member|capacity
 r_int
 id|capacity
 suffix:semicolon
-DECL|member|waiting
-id|wait_queue_head_t
-id|waiting
-suffix:semicolon
 DECL|member|device
 id|Scsi_Device
 op_star

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * $Id: prep_pci.c,v 1.33 1999/05/09 20:15:54 cort Exp $&n; * PReP pci functions.&n; * Originally by Gary Thomas&n; * rewritten and updated by Cort Dougan (cort@cs.nmt.edu)&n; *&n; * The motherboard routes/maps will disappear shortly. -- Cort&n; */
+multiline_comment|/*&n; * $Id: prep_pci.c,v 1.35 1999/05/10 23:31:03 cort Exp $&n; * PReP pci functions.&n; * Originally by Gary Thomas&n; * rewritten and updated by Cort Dougan (cort@cs.nmt.edu)&n; *&n; * The motherboard routes/maps will disappear shortly. -- Cort&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -44,6 +44,20 @@ r_int
 r_int
 op_star
 id|ProcInfo
+suffix:semicolon
+r_extern
+r_void
+id|chrp_do_IRQ
+c_func
+(paren
+r_struct
+id|pt_regs
+op_star
+comma
+r_int
+comma
+r_int
+)paren
 suffix:semicolon
 multiline_comment|/* Tables for known hardware */
 multiline_comment|/* Motorola PowerStackII - Utah */
@@ -2157,6 +2171,10 @@ r_sizeof
 (paren
 id|mvme2600_openpic_initsenses
 )paren
+suffix:semicolon
+id|ppc_md.do_IRQ
+op_assign
+id|chrp_do_IRQ
 suffix:semicolon
 multiline_comment|/* If raven is present on Motorola store the system config register&n;&t; * for later use.&n;&t; */
 id|ProcInfo

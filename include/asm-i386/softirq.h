@@ -133,6 +133,11 @@ c_func
 r_void
 )paren
 suffix:semicolon
+multiline_comment|/*&n; * This is suboptimal. We only need to disable bh&squot;s locally&n; * on this CPU...&n; */
+DECL|macro|local_bh_disable
+mdefine_line|#define local_bh_disable()&t;atomic_inc(&amp;global_bh_lock)
+DECL|macro|local_bh_enable
+mdefine_line|#define local_bh_enable()&t;atomic_dec(&amp;global_bh_lock)
 DECL|function|start_bh_atomic
 r_static
 r_inline

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * $Id: setup.c,v 1.132 1999/03/24 00:32:19 cort Exp $&n; * Common prep/pmac/chrp boot and setup code.&n; */
+multiline_comment|/*&n; * $Id: setup.c,v 1.133 1999/05/14 07:24:30 davem Exp $&n; * Common prep/pmac/chrp boot and setup code.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/string.h&gt;

@@ -2,6 +2,9 @@ multiline_comment|/*&n; * include/asm-alpha/processor.h&n; *&n; * Copyright (C) 
 macro_line|#ifndef __ASM_ALPHA_PROCESSOR_H
 DECL|macro|__ASM_ALPHA_PROCESSOR_H
 mdefine_line|#define __ASM_ALPHA_PROCESSOR_H
+multiline_comment|/*&n; * Default implementation of macro that returns current&n; * instruction pointer (&quot;program counter&quot;).&n; */
+DECL|macro|current_text_addr
+mdefine_line|#define current_text_addr() ({ __label__ _l; _l: &amp;&amp;_l;})
 multiline_comment|/*&n; * We have a 42-bit user address space: 4TB user VM...&n; */
 DECL|macro|TASK_SIZE
 mdefine_line|#define TASK_SIZE (0x40000000000UL)

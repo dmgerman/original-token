@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: isdn_tty.h,v 1.10 1997/03/02 14:29:26 fritz Exp $&n;&n; * header for Linux ISDN subsystem, tty related functions (linklevel).&n; *&n; * Copyright 1994,95,96 by Fritz Elfert (fritz@wuemaus.franken.de)&n; * Copyright 1995,96    by Thinking Objects Software GmbH Wuerzburg&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * $Log: isdn_tty.h,v $&n; * Revision 1.10  1997/03/02 14:29:26  fritz&n; * More ttyI related cleanup.&n; *&n; * Revision 1.9  1997/02/28 02:32:49  fritz&n; * Cleanup: Moved some tty related stuff from isdn_common.c&n; *          to isdn_tty.c&n; * Bugfix:  Bisync protocol did not behave like documented.&n; *&n; * Revision 1.8  1997/02/10 20:12:50  fritz&n; * Changed interface for reporting incoming calls.&n; *&n; * Revision 1.7  1997/02/03 23:06:10  fritz&n; * Reformatted according CodingStyle&n; *&n; * Revision 1.6  1997/01/14 01:35:19  fritz&n; * Changed prototype of isdn_tty_modem_hup.&n; *&n; * Revision 1.5  1996/05/17 03:52:31  fritz&n; * Changed DLE handling for audio receive.&n; *&n; * Revision 1.4  1996/05/11 21:52:34  fritz&n; * Changed queue management to use sk_buffs.&n; *&n; * Revision 1.3  1996/05/07 09:16:34  fritz&n; * Changed isdn_try_read parameter.&n; *&n; * Revision 1.2  1996/04/30 21:05:27  fritz&n; * Test commit&n; *&n; * Revision 1.1  1996/01/10 21:39:22  fritz&n; * Initial revision&n; *&n; */
+multiline_comment|/* $Id: isdn_tty.h,v 1.13 1999/04/12 12:33:46 fritz Exp $&n;&n; * header for Linux ISDN subsystem, tty related functions (linklevel).&n; *&n; * Copyright 1994-1999  by Fritz Elfert (fritz@isdn4linux.de)&n; * Copyright 1995,96    by Thinking Objects Software GmbH Wuerzburg&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * $Log: isdn_tty.h,v $&n; * Revision 1.13  1999/04/12 12:33:46  fritz&n; * Changes from 2.0 tree.&n; *&n; * Revision 1.12  1999/03/02 12:04:51  armin&n; * -added ISDN_STAT_ADDCH to increase supported channels after&n; *  register_isdn().&n; * -ttyI now goes on-hook on ATZ when B-Ch is connected.&n; * -added timer-function for register S7 (Wait for Carrier).&n; * -analog modem (ISDN_PROTO_L2_MODEM) implementations.&n; * -on L2_MODEM a string will be appended to the CONNECT-Message,&n; *  which is provided by the HL-Driver in parm.num in ISDN_STAT_BCONN.&n; * -variable &quot;dialing&quot; used for ATA also, for interrupting call&n; *  establishment and register S7.&n; *&n; * Revision 1.11  1998/03/19 13:18:27  keil&n; * Start of a CAPI like interface for supplementary Service&n; * first service: SUSPEND&n; *&n; * Revision 1.10  1997/03/02 14:29:26  fritz&n; * More ttyI related cleanup.&n; *&n; * Revision 1.9  1997/02/28 02:32:49  fritz&n; * Cleanup: Moved some tty related stuff from isdn_common.c&n; *          to isdn_tty.c&n; * Bugfix:  Bisync protocol did not behave like documented.&n; *&n; * Revision 1.8  1997/02/10 20:12:50  fritz&n; * Changed interface for reporting incoming calls.&n; *&n; * Revision 1.7  1997/02/03 23:06:10  fritz&n; * Reformatted according CodingStyle&n; *&n; * Revision 1.6  1997/01/14 01:35:19  fritz&n; * Changed prototype of isdn_tty_modem_hup.&n; *&n; * Revision 1.5  1996/05/17 03:52:31  fritz&n; * Changed DLE handling for audio receive.&n; *&n; * Revision 1.4  1996/05/11 21:52:34  fritz&n; * Changed queue management to use sk_buffs.&n; *&n; * Revision 1.3  1996/05/07 09:16:34  fritz&n; * Changed isdn_try_read parameter.&n; *&n; * Revision 1.2  1996/04/30 21:05:27  fritz&n; * Test commit&n; *&n; * Revision 1.1  1996/01/10 21:39:22  fritz&n; * Initial revision&n; *&n; */
 r_extern
 r_void
 id|isdn_tty_modem_escape
@@ -10,6 +10,14 @@ suffix:semicolon
 r_extern
 r_void
 id|isdn_tty_modem_ring
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|isdn_tty_carrier_timeout
 c_func
 (paren
 r_void
@@ -85,6 +93,16 @@ comma
 r_struct
 id|sk_buff
 op_star
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|isdn_tty_capi_facility
+c_func
+(paren
+id|capi_msg
+op_star
+id|cm
 )paren
 suffix:semicolon
 eof

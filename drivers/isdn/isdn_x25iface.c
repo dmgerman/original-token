@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: isdn_x25iface.c,v 1.3 1998/02/20 17:25:20 fritz Exp $&n; * stuff needed to support the Linux X.25 PLP code on top of devices that&n; * can provide a lab_b service using the concap_proto mechanism.&n; * This module supports a network interface wich provides lapb_sematics&n; * -- as defined in ../../Documentation/networking/x25-iface.txt -- to&n; * the upper layer and assumes that the lower layer provides a reliable&n; * data link service by means of the concap_device_ops callbacks.&n; *&n; * Only protocol specific stuff goes here. Device specific stuff&n; * goes to another -- device related -- concap_proto support source file.&n; *&n; * $Log: isdn_x25iface.c,v $&n; * Revision 1.3  1998/02/20 17:25:20  fritz&n; * Changes for recent kernels.&n; *&n; * Revision 1.2  1998/01/31 22:49:22  keil&n; * correct comments&n; *&n; * Revision 1.1  1998/01/31 22:27:58  keil&n; * New files from Henner Eisen for X.25 support&n; *&n; */
+multiline_comment|/* $Id: isdn_x25iface.c,v 1.6 1999/01/27 22:53:19 he Exp $&n; * stuff needed to support the Linux X.25 PLP code on top of devices that&n; * can provide a lab_b service using the concap_proto mechanism.&n; * This module supports a network interface wich provides lapb_sematics&n; * -- as defined in ../../Documentation/networking/x25-iface.txt -- to&n; * the upper layer and assumes that the lower layer provides a reliable&n; * data link service by means of the concap_device_ops callbacks.&n; *&n; * Only protocol specific stuff goes here. Device specific stuff&n; * goes to another -- device related -- concap_proto support source file.&n; *&n; * $Log: isdn_x25iface.c,v $&n; * Revision 1.6  1999/01/27 22:53:19  he&n; * minor updates (spellings, jiffies wrap around in isdn_tty)&n; *&n; * Revision 1.5  1998/10/30 17:55:39  he&n; * dialmode for x25iface and multulink ppp&n; *&n; * Revision 1.4  1998/06/17 19:51:00  he&n; * merged with 2.1.10[34] (cosmetics and udelay() -&gt; mdelay())&n; * brute force fix to avoid Ugh&squot;s in isdn_tty_write()&n; * cleaned up some dead code&n; *&n; * Revision 1.3  1998/02/20 17:25:20  fritz&n; * Changes for recent kernels.&n; *&n; * Revision 1.2  1998/01/31 22:49:22  keil&n; * correct comments&n; *&n; * Revision 1.1  1998/01/31 22:27:58  keil&n; * New files from Henner Eisen for X.25 support&n; *&n; */
 multiline_comment|/* #include &lt;linux/isdn.h&gt; */
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/concap.h&gt;
@@ -1338,6 +1338,8 @@ id|state
 op_assign
 id|WAN_CONNECTING
 suffix:semicolon
+id|ret
+op_assign
 id|cprot
 op_member_access_from_pointer
 id|dops
@@ -1348,6 +1350,20 @@ c_func
 id|cprot
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|ret
+)paren
+(brace
+multiline_comment|/* reset state and notify upper layer about&n;&t;&t;&t;&t; * immidiatly failed attempts */
+id|isdn_x25iface_disconn_ind
+c_func
+(paren
+id|cprot
+)paren
+suffix:semicolon
+)brace
 )brace
 r_else
 (brace

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: isdn_net.h,v 1.6 1997/10/09 21:28:54 fritz Exp $&n;&n; * header for Linux ISDN subsystem, network related functions (linklevel).&n; *&n; * Copyright 1994,95,96 by Fritz Elfert (fritz@wuemaus.franken.de)&n; * Copyright 1995,96    by Thinking Objects Software GmbH Wuerzburg&n; * Copyright 1995,96    by Michael Hipp (Michael.Hipp@student.uni-tuebingen.de)&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * $Log: isdn_net.h,v $&n; * Revision 1.6  1997/10/09 21:28:54  fritz&n; * New HL&lt;-&gt;LL interface:&n; *   New BSENT callback with nr. of bytes included.&n; *   Sending without ACK.&n; *   New L1 error status (not yet in use).&n; *   Cleaned up obsolete structures.&n; * Implemented Cisco-SLARP.&n; * Changed local net-interface data to be dynamically allocated.&n; * Removed old 2.0 compatibility stuff.&n; *&n; * Revision 1.5  1997/02/10 20:12:47  fritz&n; * Changed interface for reporting incoming calls.&n; *&n; * Revision 1.4  1997/02/03 23:16:48  fritz&n; * Removed isdn_net_receive_callback prototype.&n; *&n; * Revision 1.3  1997/01/17 01:19:30  fritz&n; * Applied chargeint patch.&n; *&n; * Revision 1.2  1996/04/20 16:29:43  fritz&n; * Misc. typos&n; *&n; * Revision 1.1  1996/02/11 02:35:13  fritz&n; * Initial revision&n; *&n; */
+multiline_comment|/* $Id: isdn_net.h,v 1.9 1999/04/12 12:33:27 fritz Exp $&n;&n; * header for Linux ISDN subsystem, network related functions (linklevel).&n; *&n; * Copyright 1994-1999  by Fritz Elfert (fritz@isdn4linux.de)&n; * Copyright 1995,96    by Thinking Objects Software GmbH Wuerzburg&n; * Copyright 1995,96    by Michael Hipp (Michael.Hipp@student.uni-tuebingen.de)&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * $Log: isdn_net.h,v $&n; * Revision 1.9  1999/04/12 12:33:27  fritz&n; * Changes from 2.0 tree.&n; *&n; * Revision 1.8  1998/10/30 17:55:33  he&n; * dialmode for x25iface and multulink ppp&n; *&n; * Revision 1.7  1998/08/31 21:09:55  he&n; * new ioctl IIOCNETGPN for /dev/isdninfo (get network interface&squot;&n; *     peer phone number)&n; *&n; * Revision 1.6  1997/10/09 21:28:54  fritz&n; * New HL&lt;-&gt;LL interface:&n; *   New BSENT callback with nr. of bytes included.&n; *   Sending without ACK.&n; *   New L1 error status (not yet in use).&n; *   Cleaned up obsolete structures.&n; * Implemented Cisco-SLARP.&n; * Changed local net-interface data to be dynamically allocated.&n; * Removed old 2.0 compatibility stuff.&n; *&n; * Revision 1.5  1997/02/10 20:12:47  fritz&n; * Changed interface for reporting incoming calls.&n; *&n; * Revision 1.4  1997/02/03 23:16:48  fritz&n; * Removed isdn_net_receive_callback prototype.&n; *&n; * Revision 1.3  1997/01/17 01:19:30  fritz&n; * Applied chargeint patch.&n; *&n; * Revision 1.2  1996/04/20 16:29:43  fritz&n; * Misc. typos&n; *&n; * Revision 1.1  1996/02/11 02:35:13  fritz&n; * Initial revision&n; *&n; */
 multiline_comment|/* Definitions for hupflags:                */
 DECL|macro|ISDN_WAITCHARGE
 mdefine_line|#define ISDN_WAITCHARGE  1      /* did not get a charge info yet            */
@@ -208,6 +208,18 @@ op_star
 suffix:semicolon
 r_extern
 r_int
+id|isdn_net_getpeer
+c_func
+(paren
+id|isdn_net_ioctl_phone
+op_star
+comma
+id|isdn_net_ioctl_phone
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_int
 id|isdn_net_delphone
 c_func
 (paren
@@ -318,6 +330,15 @@ id|isdn_net_slarp_out
 c_func
 (paren
 r_void
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|isdn_net_dial_req
+c_func
+(paren
+id|isdn_net_local
+op_star
 )paren
 suffix:semicolon
 eof

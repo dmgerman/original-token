@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: isac.h,v 1.4 1997/10/29 19:09:34 keil Exp $&n;&n; * isac.h   ISAC specific defines&n; *&n; * Author       Karsten Keil (keil@temic-ech.spacenet.de)&n; *&n; *&n; * $Log: isac.h,v $&n; * Revision 1.4  1997/10/29 19:09:34  keil&n; * new L1&n; *&n; * Revision 1.3  1997/07/27 21:37:41  keil&n; * T3 implemented; supervisor l1timer; B-channel TEST_LOOP&n; *&n; * Revision 1.2  1997/06/26 11:16:16  keil&n; * first version&n; *&n; *&n; */
+multiline_comment|/* $Id: isac.h,v 1.5 1998/05/25 12:58:03 keil Exp $&n;&n; * isac.h   ISAC specific defines&n; *&n; * Author       Karsten Keil (keil@temic-ech.spacenet.de)&n; *&n; *&n; * $Log: isac.h,v $&n; * Revision 1.5  1998/05/25 12:58:03  keil&n; * HiSax golden code from certification, Don&squot;t use !!!&n; * No leased lines, no X75, but many changes.&n; *&n; * Revision 1.4  1997/10/29 19:09:34  keil&n; * new L1&n; *&n; * Revision 1.3  1997/07/27 21:37:41  keil&n; * T3 implemented; supervisor l1timer; B-channel TEST_LOOP&n; *&n; * Revision 1.2  1997/06/26 11:16:16  keil&n; * first version&n; *&n; *&n; */
 multiline_comment|/* All Registers original Siemens Spec  */
 DECL|macro|ISAC_MASK
 mdefine_line|#define ISAC_MASK 0x20
@@ -10,8 +10,6 @@ DECL|macro|ISAC_CMDR
 mdefine_line|#define ISAC_CMDR 0x21
 DECL|macro|ISAC_EXIR
 mdefine_line|#define ISAC_EXIR 0x24
-DECL|macro|ISAC_RBCH
-mdefine_line|#define ISAC_RBCH 0x2a
 DECL|macro|ISAC_ADF2
 mdefine_line|#define ISAC_ADF2 0x39
 DECL|macro|ISAC_SPCR
@@ -22,6 +20,10 @@ DECL|macro|ISAC_CIR0
 mdefine_line|#define ISAC_CIR0 0x31
 DECL|macro|ISAC_CIX0
 mdefine_line|#define ISAC_CIX0 0x31
+DECL|macro|ISAC_CIR1
+mdefine_line|#define ISAC_CIR1 0x33
+DECL|macro|ISAC_CIX1
+mdefine_line|#define ISAC_CIX1 0x33
 DECL|macro|ISAC_STCR
 mdefine_line|#define ISAC_STCR 0x37
 DECL|macro|ISAC_MODE
@@ -30,6 +32,8 @@ DECL|macro|ISAC_RSTA
 mdefine_line|#define ISAC_RSTA 0x27
 DECL|macro|ISAC_RBCL
 mdefine_line|#define ISAC_RBCL 0x25
+DECL|macro|ISAC_RBCH
+mdefine_line|#define ISAC_RBCH 0x2A
 DECL|macro|ISAC_TIMR
 mdefine_line|#define ISAC_TIMR 0x23
 DECL|macro|ISAC_SQXR
@@ -46,6 +50,8 @@ DECL|macro|ISAC_MOR1
 mdefine_line|#define ISAC_MOR1 0x34
 DECL|macro|ISAC_MOX1
 mdefine_line|#define ISAC_MOX1 0x34
+DECL|macro|ISAC_RBCH_XAC
+mdefine_line|#define ISAC_RBCH_XAC 0x80
 DECL|macro|ISAC_CMD_TIM
 mdefine_line|#define ISAC_CMD_TIM&t;0x0
 DECL|macro|ISAC_CMD_RS

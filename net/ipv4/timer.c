@@ -105,15 +105,16 @@ op_assign
 id|sk-&gt;timeout
 suffix:semicolon
 multiline_comment|/* Only process if socket is not in use. */
+id|bh_lock_sock
+c_func
+(paren
+id|sk
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
-id|atomic_read
-c_func
-(paren
-op_amp
-id|sk-&gt;sock_readers
-)paren
+id|sk-&gt;lock.users
 )paren
 (brace
 multiline_comment|/* Try again later. */
@@ -128,6 +129,12 @@ op_plus
 id|HZ
 op_div
 l_int|20
+)paren
+suffix:semicolon
+id|bh_unlock_sock
+c_func
+(paren
+id|sk
 )paren
 suffix:semicolon
 r_return
@@ -214,11 +221,12 @@ r_break
 suffix:semicolon
 )brace
 id|destroy_sock
+c_func
 (paren
 id|sk
 )paren
 suffix:semicolon
-r_break
+r_return
 suffix:semicolon
 r_case
 id|TIME_DESTROY
@@ -230,7 +238,7 @@ c_func
 id|sk
 )paren
 suffix:semicolon
-r_break
+r_return
 suffix:semicolon
 r_case
 id|TIME_CLOSE
@@ -286,5 +294,12 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
+multiline_comment|/* We only need to unlock if the socket was not destroyed. */
+id|bh_unlock_sock
+c_func
+(paren
+id|sk
+)paren
+suffix:semicolon
 )brace
 eof

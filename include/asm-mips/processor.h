@@ -2,6 +2,9 @@ multiline_comment|/* $Id: processor.h,v 1.18 1998/10/14 20:31:12 ralf Exp $&n; *
 macro_line|#ifndef __ASM_MIPS_PROCESSOR_H
 DECL|macro|__ASM_MIPS_PROCESSOR_H
 mdefine_line|#define __ASM_MIPS_PROCESSOR_H
+multiline_comment|/*&n; * Default implementation of macro that returns current&n; * instruction pointer (&quot;program counter&quot;).&n; */
+DECL|macro|current_text_addr
+mdefine_line|#define current_text_addr() ({ __label__ _l; _l: &amp;&amp;_l;})
 macro_line|#if !defined (_LANGUAGE_ASSEMBLY)
 macro_line|#include &lt;asm/cachectl.h&gt;
 macro_line|#include &lt;asm/mipsregs.h&gt;

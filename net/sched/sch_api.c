@@ -3079,6 +3079,13 @@ id|cb-&gt;args
 l_int|1
 )braket
 suffix:semicolon
+id|read_lock_bh
+c_func
+(paren
+op_amp
+id|dev_base_lock
+)paren
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -3186,6 +3193,13 @@ suffix:semicolon
 )brace
 id|done
 suffix:colon
+id|read_unlock_bh
+c_func
+(paren
+op_amp
+id|dev_base_lock
+)paren
+suffix:semicolon
 id|cb-&gt;args
 (braket
 l_int|0

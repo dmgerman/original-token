@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: isdnl3.h,v 2.0 1997/07/27 21:15:42 keil Exp $&n;&n; * $Log: isdnl3.h,v $&n; * Revision 2.0  1997/07/27 21:15:42  keil&n; * New Callref based layer3&n; *&n; * Revision 1.4  1997/06/26 11:20:57  keil&n; * ?&n; *&n; * Revision 1.3  1997/04/06 22:54:17  keil&n; * Using SKB&squot;s&n; *&n; * Revision 1.2  1997/01/21 22:31:28  keil&n; * new statemachine; L3 timers&n; *&n; * Revision 1.1  1996/10/13 20:03:47  keil&n; * Initial revision&n; *&n; *&n; */
+multiline_comment|/* $Id: isdnl3.h,v 2.3 1998/11/15 23:55:06 keil Exp $&n;&n; * $Log: isdnl3.h,v $&n; * Revision 2.3  1998/11/15 23:55:06  keil&n; * changes from 2.0&n; *&n; * Revision 2.2  1998/05/25 14:10:17  keil&n; * HiSax 3.0&n; * X.75 and leased are working again.&n; *&n; * Revision 2.1  1998/05/25 12:58:13  keil&n; * HiSax golden code from certification, Don&squot;t use !!!&n; * No leased lines, no X75, but many changes.&n; *&n; * Revision 2.0  1997/07/27 21:15:42  keil&n; * New Callref based layer3&n; *&n; * Revision 1.4  1997/06/26 11:20:57  keil&n; * ?&n; *&n; * Revision 1.3  1997/04/06 22:54:17  keil&n; * Using SKB&squot;s&n; *&n; * Revision 1.2  1997/01/21 22:31:28  keil&n; * new statemachine; L3 timers&n; *&n; * Revision 1.1  1996/10/13 20:03:47  keil&n; * Initial revision&n; *&n; *&n; */
 DECL|macro|SBIT
 mdefine_line|#define SBIT(state) (1&lt;&lt;state)
 DECL|macro|ALL_STATES
@@ -22,7 +22,7 @@ r_int
 id|state
 suffix:semicolon
 DECL|member|primitive
-id|u_char
+r_int
 id|primitive
 suffix:semicolon
 DECL|member|rout
@@ -44,21 +44,8 @@ op_star
 suffix:semicolon
 )brace
 suffix:semicolon
-r_extern
-r_void
-id|l3_debug
-c_func
-(paren
-r_struct
-id|PStack
-op_star
-id|st
-comma
-r_char
-op_star
-id|s
-)paren
-suffix:semicolon
+DECL|macro|l3_debug
+mdefine_line|#define l3_debug(st, fmt, args...) HiSax_putstatus(st-&gt;l1.hardware, &quot;l3 &quot;, fmt, ## args)
 r_extern
 r_void
 id|newl3state
@@ -180,6 +167,24 @@ id|st
 comma
 r_int
 id|cr
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|l3_msg
+c_func
+(paren
+r_struct
+id|PStack
+op_star
+id|st
+comma
+r_int
+id|pr
+comma
+r_void
+op_star
+id|arg
 )paren
 suffix:semicolon
 eof

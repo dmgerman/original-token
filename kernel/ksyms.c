@@ -982,6 +982,13 @@ id|tty_std_termios
 )paren
 suffix:semicolon
 multiline_comment|/* block device driver support */
+DECL|variable|blk_ioctl
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|blk_ioctl
+)paren
+suffix:semicolon
 DECL|variable|block_read
 id|EXPORT_SYMBOL
 c_func

@@ -3137,6 +3137,17 @@ id|child-&gt;sgid
 )paren
 op_logical_or
 (paren
+op_logical_neg
+id|cap_issubset
+c_func
+(paren
+id|child-&gt;cap_permitted
+comma
+id|current-&gt;cap_permitted
+)paren
+)paren
+op_logical_or
+(paren
 id|current-&gt;gid
 op_ne
 id|child-&gt;gid

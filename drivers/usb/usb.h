@@ -38,6 +38,14 @@ r_void
 )paren
 suffix:semicolon
 r_extern
+r_int
+id|usb_printer_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
 r_void
 id|hub_cleanup
 c_func
@@ -231,6 +239,8 @@ DECL|macro|USB_MAXINTERFACES
 mdefine_line|#define USB_MAXINTERFACES&t;32
 DECL|macro|USB_MAXENDPOINTS
 mdefine_line|#define USB_MAXENDPOINTS&t;32
+DECL|macro|USB_MAXSTRINGS
+mdefine_line|#define USB_MAXSTRINGS&t;&t;16
 DECL|struct|usb_device_descriptor
 r_struct
 id|usb_device_descriptor
@@ -441,6 +451,13 @@ DECL|member|bDescriptorType
 id|__u8
 id|bDescriptorType
 suffix:semicolon
+DECL|member|wData
+id|__u16
+id|wData
+(braket
+l_int|1
+)braket
+suffix:semicolon
 )brace
 suffix:semicolon
 multiline_comment|/* Hub descriptor */
@@ -612,6 +629,10 @@ r_void
 op_star
 comma
 r_int
+comma
+r_int
+r_int
+op_star
 )paren
 suffix:semicolon
 DECL|member|request_irq
@@ -692,6 +713,31 @@ r_int
 id|maxpacketsize
 suffix:semicolon
 multiline_comment|/* Maximum packet size */
+DECL|member|toggle
+id|__u16
+id|toggle
+suffix:semicolon
+multiline_comment|/* one bit for each endpoint */
+DECL|member|actconfig
+r_struct
+id|usb_config_descriptor
+op_star
+id|actconfig
+suffix:semicolon
+multiline_comment|/* the active configuration */
+DECL|member|epmaxpacket
+r_int
+id|epmaxpacket
+(braket
+l_int|16
+)braket
+suffix:semicolon
+multiline_comment|/* endpoint specific maximums */
+DECL|member|ifnum
+r_int
+id|ifnum
+suffix:semicolon
+multiline_comment|/* active interface number */
 DECL|member|bus
 r_struct
 id|usb_bus
@@ -725,6 +771,24 @@ id|usb_device
 op_star
 id|parent
 suffix:semicolon
+DECL|member|stringtable
+r_char
+op_star
+id|stringtable
+suffix:semicolon
+multiline_comment|/* Strings (multiple, null term) */
+DECL|member|stringindex
+r_char
+op_star
+op_star
+id|stringindex
+suffix:semicolon
+multiline_comment|/* pointers to strings */
+DECL|member|maxstring
+r_int
+id|maxstring
+suffix:semicolon
+multiline_comment|/* max valid index */
 multiline_comment|/*&n;&t; * Child devices - these can be either new devices&n;&t; * (if this is a hub device), or different instances&n;&t; * of this same device.&n;&t; *&n;&t; * Each instance needs its own set of data structuctures.&n;&t; */
 DECL|member|maxchild
 r_int
@@ -869,7 +933,7 @@ id|dev
 suffix:semicolon
 multiline_comment|/*&n; * Calling this entity a &quot;pipe&quot; is glorifying it. A USB pipe&n; * is something embarrassingly simple: it basically consists&n; * of the following information:&n; *  - device number (7 bits)&n; *  - endpoint number (4 bits)&n; *  - current Data0/1 state (1 bit)&n; *  - direction (1 bit)&n; *  - speed (1 bit)&n; *  - max packet size (2 bits: 8, 16, 32 or 64)&n; *  - pipe type (2 bits: control, interrupt, bulk, isochronous)&n; *&n; * That&squot;s 18 bits. Really. Nothing more. And the USB people have&n; * documented these eighteen bits as some kind of glorious&n; * virtual data structure.&n; *&n; * Let&squot;s not fall in that trap. We&squot;ll just encode it as a simple&n; * unsigned int. The encoding is:&n; *&n; *  - device:&t;&t;bits 8-14&n; *  - endpoint:&t;&t;bits 15-18&n; *  - Data0/1:&t;&t;bit 19&n; *  - direction:&t;bit 7&t;&t;(0 = Host-to-Device, 1 = Device-to-Host)&n; *  - speed:&t;&t;bit 26&t;&t;(0 = High, 1 = Low Speed)&n; *  - max size:&t;&t;bits 0-1&t;(00 = 8, 01 = 16, 10 = 32, 11 = 64)&n; *  - pipe type:&t;bits 30-31&t;(00 = isochronous, 01 = interrupt, 10 = control, 11 = bulk)&n; *&n; * Why? Because it&squot;s arbitrary, and whatever encoding we select is really&n; * up to us. This one happens to share a lot of bit positions with the UCHI&n; * specification, so that much of the uhci driver can just mask the bits&n; * appropriately.&n; */
 DECL|macro|usb_maxpacket
-mdefine_line|#define usb_maxpacket(pipe)&t;(8 &lt;&lt; ((pipe) &amp; 3))
+mdefine_line|#define usb_maxpacket(dev,pipe)&t;((dev)-&gt;epmaxpacket[usb_pipeendpoint(pipe)])
 DECL|macro|usb_packetid
 mdefine_line|#define usb_packetid(pipe)&t;(((pipe) &amp; 0x80) ? 0x69 : 0xE1)
 DECL|macro|usb_pipedevice
@@ -894,6 +958,13 @@ DECL|macro|usb_pipebulk
 mdefine_line|#define usb_pipebulk(pipe)&t;(usb_pipetype((pipe)) == 3)
 DECL|macro|usb_pipe_endpdev
 mdefine_line|#define usb_pipe_endpdev(pipe)&t;(((pipe) &gt;&gt; 8) &amp; 0x7ff)
+multiline_comment|/* The D0/D1 toggle bits */
+DECL|macro|usb_gettoggle
+mdefine_line|#define usb_gettoggle(dev, ep) (((dev)-&gt;toggle &gt;&gt; ep) &amp; 1)
+DECL|macro|usb_dotoggle
+mdefine_line|#define&t;usb_dotoggle(dev, ep)&t;((dev)-&gt;toggle ^= (1 &lt;&lt;&t;ep))
+DECL|macro|usb_settoggle
+mdefine_line|#define usb_settoggle(dev, ep, bit) ((dev)-&gt;toggle = ((dev)-&gt;toggle &amp; (0xfffe &lt;&lt; ep)) | (bit &lt;&lt; ep))
 DECL|function|__create_pipe
 r_static
 r_inline
@@ -965,6 +1036,10 @@ DECL|macro|usb_sndisocpipe
 mdefine_line|#define usb_sndisocpipe(dev,endpoint)&t;((0 &lt;&lt; 30) | __create_pipe(dev,endpoint))
 DECL|macro|usb_rcvisocpipe
 mdefine_line|#define usb_rcvisocpipe(dev,endpoint)&t;((0 &lt;&lt; 30) | __create_pipe(dev,endpoint) | 0x80)
+DECL|macro|usb_sndbulkpipe
+mdefine_line|#define usb_sndbulkpipe(dev,endpoint)&t;((3 &lt;&lt; 30) | __create_pipe(dev,endpoint))
+DECL|macro|usb_rcvbulkpipe
+mdefine_line|#define usb_rcvbulkpipe(dev,endpoint)&t;((3 &lt;&lt; 30) | __create_pipe(dev,endpoint) | 0x80)
 DECL|macro|usb_snddefctrl
 mdefine_line|#define usb_snddefctrl(dev)&t;&t;((2 &lt;&lt; 30) | __default_pipe(dev))
 DECL|macro|usb_rcvdefctrl
@@ -1221,6 +1296,23 @@ c_func
 r_struct
 id|usb_device
 op_star
+)paren
+suffix:semicolon
+r_void
+id|usb_show_string
+c_func
+(paren
+r_struct
+id|usb_device
+op_star
+id|dev
+comma
+r_char
+op_star
+id|id
+comma
+r_int
+id|index
 )paren
 suffix:semicolon
 multiline_comment|/*&n; * Audio parsing helpers&n; */

@@ -259,6 +259,15 @@ id|global_bh_lock
 )paren
 op_eq
 l_int|0
+op_logical_and
+id|cpu_data
+(braket
+id|cpu
+)braket
+dot
+id|bh_count
+op_eq
+l_int|0
 )paren
 (brace
 op_increment

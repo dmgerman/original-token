@@ -1,10 +1,19 @@
 macro_line|#ifndef __ASM_PPC_PROCESSOR_H
 DECL|macro|__ASM_PPC_PROCESSOR_H
 mdefine_line|#define __ASM_PPC_PROCESSOR_H
+multiline_comment|/*&n; * Default implementation of macro that returns current&n; * instruction pointer (&quot;program counter&quot;).&n; */
+DECL|macro|current_text_addr
+mdefine_line|#define current_text_addr() ({ __label__ _l; _l: &amp;&amp;_l;})
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/ptrace.h&gt;
 macro_line|#include &lt;asm/residual.h&gt;
 multiline_comment|/* Bit encodings for Machine State Register (MSR) */
+macro_line|#ifdef CONFIG_PPC64
+DECL|macro|MSR_SF
+mdefine_line|#define MSR_SF&t;&t;(1&lt;&lt;63)
+DECL|macro|MSR_ISF
+mdefine_line|#define MSR_ISF&t;&t;(1&lt;&lt;61)
+macro_line|#endif /* CONFIG_PPC64 */
 DECL|macro|MSR_POW
 mdefine_line|#define MSR_POW&t;&t;(1&lt;&lt;18)&t;&t;/* Enable Power Management */
 DECL|macro|MSR_TGPR

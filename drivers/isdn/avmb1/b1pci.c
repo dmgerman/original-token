@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * $Id: b1pci.c,v 1.5 1998/01/31 11:14:43 calle Exp $&n; * &n; * Module for AVM B1 PCI-card.&n; * &n; * (c) Copyright 1997 by Carsten Paeth (calle@calle.in-berlin.de)&n; * &n; * $Log: b1pci.c,v $&n; * Revision 1.5  1998/01/31 11:14:43  calle&n; * merged changes to 2.0 tree, prepare 2.1.82 to work.&n; *&n; * Revision 1.4  1997/12/10 20:00:50  calle&n; * get changes from 2.0 version&n; *&n; * Revision 1.3  1997/10/01 09:21:14  fritz&n; * Removed old compatibility stuff for 2.0.X kernels.&n; * From now on, this code is for 2.1.X ONLY!&n; * Old stuff is still in the separate branch.&n; *&n; * Revision 1.2  1997/05/18 09:24:13  calle&n; * added verbose disconnect reason reporting to avmb1.&n; * some fixes in capi20 interface.&n; * changed info messages for B1-PCI&n; *&n; * Revision 1.1  1997/03/30 17:10:42  calle&n; * added support for AVM-B1-PCI card.&n; *&n; */
+multiline_comment|/*&n; * $Id: b1pci.c,v 1.9 1999/04/15 19:49:32 calle Exp $&n; * &n; * Module for AVM B1 PCI-card.&n; * &n; * (c) Copyright 1997 by Carsten Paeth (calle@calle.in-berlin.de)&n; * &n; * $Log: b1pci.c,v $&n; * Revision 1.9  1999/04/15 19:49:32  calle&n; * fix fuer die B1-PCI. Jetzt geht z.B. auch IRQ 17 ...&n; *&n; * Revision 1.8  1998/06/17 19:51:16  he&n; * merged with 2.1.10[34] (cosmetics and udelay() -&gt; mdelay())&n; * brute force fix to avoid Ugh&squot;s in isdn_tty_write()&n; * cleaned up some dead code&n; *&n; * Revision 1.7  1998/03/29 16:06:02  calle&n; * changes from 2.0 tree merged.&n; *&n; * Revision 1.2.2.2  1998/01/23 16:49:30  calle&n; * added functions for pcmcia cards,&n; * avmb1_addcard returns now the controller number.&n; *&n; * Revision 1.6  1998/02/25 09:15:36  fritz&n; * apply Martin&squot;s pci driver patch to isdn drivers (vgerCVS)&n; *&n; * Revision 1.5  1998/01/31 11:14:43  calle&n; * merged changes to 2.0 tree, prepare 2.1.82 to work.&n; *&n; * Revision 1.4  1997/12/10 20:00:50  calle&n; * get changes from 2.0 version&n; *&n; * Revision 1.3  1997/10/01 09:21:14  fritz&n; * Removed old compatibility stuff for 2.0.X kernels.&n; * From now on, this code is for 2.1.X ONLY!&n; * Old stuff is still in the separate branch.&n; *&n; * Revision 1.2  1997/05/18 09:24:13  calle&n; * added verbose disconnect reason reporting to avmb1.&n; * some fixes in capi20 interface.&n; * changed info messages for B1-PCI&n; *&n; * Revision 1.1  1997/03/30 17:10:42  calle&n; * added support for AVM-B1-PCI card.&n; *&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -21,7 +21,7 @@ r_char
 op_star
 id|revision
 op_assign
-l_string|&quot;$Revision: 1.5 $&quot;
+l_string|&quot;$Revision: 1.9 $&quot;
 suffix:semicolon
 multiline_comment|/* ------------------------------------------------------------- */
 id|MODULE_AUTHOR
@@ -209,7 +209,7 @@ id|ioaddr
 comma
 id|irq
 comma
-id|AVM_CARDTYPE_B1
+id|AVM_CARDTYPE_B1PCI
 )paren
 )paren
 op_ne
@@ -244,7 +244,7 @@ id|ioaddr
 comma
 id|irq
 comma
-id|AVM_CARDTYPE_B1
+id|AVM_CARDTYPE_B1PCI
 )paren
 )paren
 OL

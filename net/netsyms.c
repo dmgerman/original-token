@@ -158,6 +158,14 @@ c_func
 id|skb_under_panic
 )paren
 suffix:semicolon
+multiline_comment|/* Socket layer global data */
+DECL|variable|sockhash_lock
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|sockhash_lock
+)paren
+suffix:semicolon
 multiline_comment|/* Socket layer registration */
 DECL|variable|sock_register
 id|EXPORT_SYMBOL
@@ -171,6 +179,21 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|sock_unregister
+)paren
+suffix:semicolon
+multiline_comment|/* Socket locking */
+DECL|variable|lock_sock
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|lock_sock
+)paren
+suffix:semicolon
+DECL|variable|release_sock
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|release_sock
 )paren
 suffix:semicolon
 multiline_comment|/* Socket layer support routines */
@@ -925,13 +948,6 @@ c_func
 id|ip_cmsg_recv
 )paren
 suffix:semicolon
-DECL|variable|__release_sock
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|__release_sock
-)paren
-suffix:semicolon
 multiline_comment|/* Route manipulation */
 DECL|variable|ip_rt_ioctl
 id|EXPORT_SYMBOL
@@ -1088,11 +1104,18 @@ c_func
 id|tcp_good_socknum
 )paren
 suffix:semicolon
-DECL|variable|tcp_established_hash
+DECL|variable|tcp_ehash
 id|EXPORT_SYMBOL
 c_func
 (paren
-id|tcp_established_hash
+id|tcp_ehash
+)paren
+suffix:semicolon
+DECL|variable|tcp_ehash_size
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|tcp_ehash_size
 )paren
 suffix:semicolon
 DECL|variable|tcp_listening_hash
@@ -1102,11 +1125,18 @@ c_func
 id|tcp_listening_hash
 )paren
 suffix:semicolon
-DECL|variable|tcp_bound_hash
+DECL|variable|tcp_bhash
 id|EXPORT_SYMBOL
 c_func
 (paren
-id|tcp_bound_hash
+id|tcp_bhash
+)paren
+suffix:semicolon
+DECL|variable|tcp_bhash_size
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|tcp_bhash_size
 )paren
 suffix:semicolon
 DECL|variable|udp_good_socknum
@@ -2100,6 +2130,13 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|dev_base
+)paren
+suffix:semicolon
+DECL|variable|dev_base_lock
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|dev_base_lock
 )paren
 suffix:semicolon
 DECL|variable|dev_close

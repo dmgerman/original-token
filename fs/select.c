@@ -1070,11 +1070,22 @@ r_if
 c_cond
 (paren
 id|n
-template_param
-id|KFDS_NR
+OL
+l_int|0
 )paren
 r_goto
 id|out_nofds
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|n
+OG
+id|KFDS_NR
+)paren
+id|n
+op_assign
+id|KFDS_NR
 suffix:semicolon
 multiline_comment|/*&n;&t; * We need 6 bitmaps (in/out/ex for both incoming and outgoing),&n;&t; * since we used fdset we need to allocate memory in units of&n;&t; * long-words. &n;&t; */
 id|ret

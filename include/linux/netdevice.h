@@ -643,6 +643,11 @@ r_int
 id|tx_queue_len
 suffix:semicolon
 multiline_comment|/* Max frames per queue allowed */
+multiline_comment|/* hard_start_xmit synchronizer */
+DECL|member|xmit_lock
+id|spinlock_t
+id|xmit_lock
+suffix:semicolon
 multiline_comment|/* Pointers to interface service routines.&t;*/
 DECL|member|open
 r_int
@@ -1012,6 +1017,11 @@ op_star
 id|dev_base
 suffix:semicolon
 multiline_comment|/* All devices */
+r_extern
+id|rwlock_t
+id|dev_base_lock
+suffix:semicolon
+multiline_comment|/* Device list lock */
 r_extern
 r_struct
 id|packet_type

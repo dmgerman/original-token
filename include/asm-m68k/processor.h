@@ -2,6 +2,9 @@ multiline_comment|/*&n; * include/asm-m68k/processor.h&n; *&n; * Copyright (C) 1
 macro_line|#ifndef __ASM_M68K_PROCESSOR_H
 DECL|macro|__ASM_M68K_PROCESSOR_H
 mdefine_line|#define __ASM_M68K_PROCESSOR_H
+multiline_comment|/*&n; * Default implementation of macro that returns current&n; * instruction pointer (&quot;program counter&quot;).&n; */
+DECL|macro|current_text_addr
+mdefine_line|#define current_text_addr() ({ __label__ _l; _l: &amp;&amp;_l;})
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/fpu.h&gt;
 multiline_comment|/*&n; * User space process size: 3.75GB. This is hardcoded into a few places,&n; * so don&squot;t change it unless you know what you are doing.&n; */

@@ -2684,6 +2684,13 @@ id|device
 op_star
 id|dev
 suffix:semicolon
+id|read_lock_bh
+c_func
+(paren
+op_amp
+id|dev_base_lock
+)paren
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -2862,6 +2869,13 @@ l_int|1
 suffix:semicolon
 id|done
 suffix:colon
+id|read_unlock_bh
+c_func
+(paren
+op_amp
+id|dev_base_lock
+)paren
+suffix:semicolon
 op_star
 id|start
 op_assign

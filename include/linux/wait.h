@@ -8,10 +8,12 @@ mdefine_line|#define WUNTRACED&t;0x00000002
 DECL|macro|__WCLONE
 mdefine_line|#define __WCLONE&t;0x80000000
 macro_line|#ifdef __KERNEL__
-macro_line|#include &lt;asm/page.h&gt;
-macro_line|#include &lt;asm/spinlock.h&gt;
+macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/list.h&gt;
 macro_line|#include &lt;linux/stddef.h&gt;
+macro_line|#include &lt;asm/page.h&gt;
+macro_line|#include &lt;asm/spinlock.h&gt;
+macro_line|#include &lt;asm/processor.h&gt;
 multiline_comment|/*&n; * Temporary debugging help until all code is converted to the new&n; * waitqueue usage.&n; */
 DECL|macro|WAITQUEUE_DEBUG
 mdefine_line|#define WAITQUEUE_DEBUG 1
@@ -185,9 +187,6 @@ id|q
 )paren
 (brace
 macro_line|#if WAITQUEUE_DEBUG
-id|__label__
-id|__x
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -220,15 +219,15 @@ r_int
 op_amp
 id|q-&gt;__magic
 suffix:semicolon
-id|__x
-suffix:colon
 id|q-&gt;__creator
 op_assign
 (paren
 r_int
 )paren
-op_logical_and
-id|__x
+id|current_text_addr
+c_func
+(paren
+)paren
 suffix:semicolon
 macro_line|#endif
 )brace

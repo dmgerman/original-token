@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: l3_1tr6.h,v 2.0 1997/07/27 21:15:47 keil Exp $&n; *&n; *  German 1TR6 D-channel protocol defines&n; *&n; * $Log: l3_1tr6.h,v $&n; * Revision 2.0  1997/07/27 21:15:47  keil&n; * New Callref based layer3&n; *&n; * Revision 1.1  1996/10/13 20:03:48  keil&n; * Initial revision&n; *&n; */
+multiline_comment|/* $Id: l3_1tr6.h,v 2.1 1998/08/13 23:36:48 keil Exp $&n; *&n; *  German 1TR6 D-channel protocol defines&n; *&n; * $Log: l3_1tr6.h,v $&n; * Revision 2.1  1998/08/13 23:36:48  keil&n; * HiSax 3.1 - don&squot;t work stable with current LinkLevel&n; *&n; * Revision 2.0  1997/07/27 21:15:47  keil&n; * New Callref based layer3&n; *&n; * Revision 1.1  1996/10/13 20:03:48  keil&n; * Initial revision&n; *&n; */
 macro_line|#ifndef l3_1tr6
 DECL|macro|l3_1tr6
 mdefine_line|#define l3_1tr6
@@ -88,6 +88,8 @@ DECL|macro|MT_N1_REG_REJ
 mdefine_line|#define MT_N1_REG_REJ 0x6F
 DECL|macro|MT_N1_STAT
 mdefine_line|#define MT_N1_STAT 0x63
+DECL|macro|MT_N1_INVALID
+mdefine_line|#define MT_N1_INVALID 0
 multiline_comment|/*&n; * W Elemente&n; */
 DECL|macro|WE_Shift_F0
 mdefine_line|#define WE_Shift_F0 0x90

@@ -6559,6 +6559,13 @@ op_plus
 l_int|1
 )braket
 suffix:semicolon
+id|write_lock_bh
+c_func
+(paren
+op_amp
+id|dev_base_lock
+)paren
+suffix:semicolon
 id|arcnet_devs
 (braket
 id|c
@@ -6575,6 +6582,13 @@ id|arcnet_devs
 (braket
 l_int|0
 )braket
+suffix:semicolon
+id|write_unlock_bh
+c_func
+(paren
+op_amp
+id|dev_base_lock
+)paren
 suffix:semicolon
 multiline_comment|/* Give names to those without them */
 r_for
@@ -6747,6 +6761,13 @@ comma
 id|arcnum
 )paren
 suffix:semicolon
+id|read_lock_bh
+c_func
+(paren
+op_amp
+id|dev_base_lock
+)paren
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -6777,6 +6798,13 @@ id|device
 )paren
 )paren
 r_break
+suffix:semicolon
+id|read_unlock_bh
+c_func
+(paren
+op_amp
+id|dev_base_lock
+)paren
 suffix:semicolon
 r_if
 c_cond

@@ -175,16 +175,6 @@ r_int
 suffix:semicolon
 r_extern
 r_void
-id|instruction_dump
-c_func
-(paren
-r_int
-r_int
-op_star
-)paren
-suffix:semicolon
-r_extern
-r_void
 id|print_backtrace
 c_func
 (paren

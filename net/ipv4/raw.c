@@ -80,7 +80,7 @@ id|raw_v4_htable
 id|num
 )braket
 suffix:semicolon
-id|SOCKHASH_LOCK
+id|SOCKHASH_LOCK_WRITE
 c_func
 (paren
 )paren
@@ -99,7 +99,7 @@ id|sk-&gt;hashent
 op_assign
 id|num
 suffix:semicolon
-id|SOCKHASH_UNLOCK
+id|SOCKHASH_UNLOCK_WRITE
 c_func
 (paren
 )paren
@@ -144,7 +144,7 @@ id|raw_v4_htable
 id|num
 )braket
 suffix:semicolon
-id|SOCKHASH_LOCK
+id|SOCKHASH_LOCK_WRITE
 c_func
 (paren
 )paren
@@ -188,7 +188,7 @@ id|next
 )paren
 suffix:semicolon
 )brace
-id|SOCKHASH_UNLOCK
+id|SOCKHASH_UNLOCK_WRITE
 c_func
 (paren
 )paren
@@ -238,7 +238,7 @@ id|raw_v4_htable
 id|oldnum
 )braket
 suffix:semicolon
-id|SOCKHASH_LOCK
+id|SOCKHASH_LOCK_WRITE
 c_func
 (paren
 )paren
@@ -300,7 +300,7 @@ id|sk-&gt;hashent
 op_assign
 id|num
 suffix:semicolon
-id|SOCKHASH_UNLOCK
+id|SOCKHASH_UNLOCK_WRITE
 c_func
 (paren
 )paren
@@ -342,7 +342,7 @@ id|s
 op_assign
 id|sk
 suffix:semicolon
-id|SOCKHASH_LOCK
+id|SOCKHASH_LOCK_READ
 c_func
 (paren
 )paren
@@ -414,7 +414,7 @@ suffix:semicolon
 )brace
 multiline_comment|/* gotcha */
 )brace
-id|SOCKHASH_UNLOCK
+id|SOCKHASH_UNLOCK_READ
 c_func
 (paren
 )paren
@@ -1416,6 +1416,12 @@ r_int
 id|timeout
 )paren
 (brace
+id|bh_lock_sock
+c_func
+(paren
+id|sk
+)paren
+suffix:semicolon
 multiline_comment|/* Observation: when raw_close is called, processes have&n;&t;   no access to socket anymore. But net still has.&n;&t;   Step one, detach it from networking:&n;&n;&t;   A. Remove from hash tables.&n;&t; */
 id|sk-&gt;state
 op_assign

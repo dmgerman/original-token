@@ -22,12 +22,14 @@ id|page
 r_return
 id|PAGE_OFFSET
 op_plus
-id|PAGE_SIZE
-op_star
+(paren
 (paren
 id|page
 op_minus
 id|mem_map
+)paren
+op_lshift
+id|PAGE_SHIFT
 )paren
 suffix:semicolon
 )brace

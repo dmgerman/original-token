@@ -2,15 +2,6 @@ macro_line|#ifndef _LINUX_LP_H
 DECL|macro|_LINUX_LP_H
 mdefine_line|#define _LINUX_LP_H
 multiline_comment|/*&n; * usr/include/linux/lp.h c.1991-1992 James Wiegand&n; * many modifications copyright (C) 1992 Michael K. Johnson&n; * Interrupt support added 1993 Nigel Gamble&n; */
-multiline_comment|/* Magic numbers for defining port-device mappings */
-DECL|macro|LP_PARPORT_UNSPEC
-mdefine_line|#define LP_PARPORT_UNSPEC -4
-DECL|macro|LP_PARPORT_AUTO
-mdefine_line|#define LP_PARPORT_AUTO -3
-DECL|macro|LP_PARPORT_OFF
-mdefine_line|#define LP_PARPORT_OFF -2
-DECL|macro|LP_PARPORT_NONE
-mdefine_line|#define LP_PARPORT_NONE -1
 multiline_comment|/*&n; * Per POSIX guidelines, this module reserves the LP and lp prefixes&n; * These are the lp_table[minor].flags flags...&n; */
 DECL|macro|LP_EXIST
 mdefine_line|#define LP_EXIST 0x0001
@@ -78,6 +69,16 @@ DECL|macro|LP_TIMEOUT_INTERRUPT
 mdefine_line|#define LP_TIMEOUT_INTERRUPT&t;(60 * HZ)
 DECL|macro|LP_TIMEOUT_POLLED
 mdefine_line|#define LP_TIMEOUT_POLLED&t;(10 * HZ)
+macro_line|#ifdef __KERNEL__
+multiline_comment|/* Magic numbers for defining port-device mappings */
+DECL|macro|LP_PARPORT_UNSPEC
+mdefine_line|#define LP_PARPORT_UNSPEC -4
+DECL|macro|LP_PARPORT_AUTO
+mdefine_line|#define LP_PARPORT_AUTO -3
+DECL|macro|LP_PARPORT_OFF
+mdefine_line|#define LP_PARPORT_OFF -2
+DECL|macro|LP_PARPORT_NONE
+mdefine_line|#define LP_PARPORT_NONE -1
 DECL|macro|LP_F
 mdefine_line|#define LP_F(minor)&t;lp_table[(minor)].flags&t;&t;/* flags for busy, etc. */
 DECL|macro|LP_CHAR
@@ -256,5 +257,6 @@ c_func
 r_void
 )paren
 suffix:semicolon
+macro_line|#endif
 macro_line|#endif
 eof

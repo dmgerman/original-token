@@ -254,17 +254,6 @@ c_func
 id|regs
 )paren
 suffix:semicolon
-id|instruction_dump
-c_func
-(paren
-(paren
-r_int
-r_int
-op_star
-)paren
-id|regs-&gt;nip
-)paren
-suffix:semicolon
 macro_line|#if defined(CONFIG_XMON) || defined(CONFIG_KGDB)
 r_if
 c_cond
@@ -581,17 +570,6 @@ id|regs-&gt;gpr
 (braket
 l_int|1
 )braket
-)paren
-suffix:semicolon
-id|instruction_dump
-c_func
-(paren
-(paren
-r_int
-r_int
-op_star
-)paren
-id|regs-&gt;nip
 )paren
 suffix:semicolon
 macro_line|#if defined(CONFIG_XMON) || defined(CONFIG_KGDB)

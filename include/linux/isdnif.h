@@ -1,5 +1,4 @@
-multiline_comment|/* X25 changes:&n;   Added constants ISDN_PROTO_L2_X25DTE/DCE and corresponding ISDN_FEATURE_..&n;   */
-multiline_comment|/* $Id: isdnif.h,v 1.23 1998/02/20 17:36:52 fritz Exp $&n; *&n; * Linux ISDN subsystem&n; *&n; * Definition of the interface between the subsystem and its low-level drivers.&n; *&n; * Copyright 1994,95,96 by Fritz Elfert (fritz@wuemaus.franken.de)&n; * Copyright 1995,96    Thinking Objects Software GmbH Wuerzburg&n; * &n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA. &n; *&n; * $Log: isdnif.h,v $&n; * Revision 1.23  1998/02/20 17:36:52  fritz&n; * Added L2-protocols for V.110, changed FEATURE-Flag-constants.&n; *&n; * Revision 1.22  1998/01/31 22:14:12  keil&n; * changes for 2.1.82&n; *&n; * Revision 1.21  1997/10/09 21:28:13  fritz&n; * New HL&lt;-&gt;LL interface:&n; *   New BSENT callback with nr. of bytes included.&n; *   Sending without ACK.&n; *   New L1 error status (not yet in use).&n; *   Cleaned up obsolete structures.&n; * Implemented Cisco-SLARP.&n; * Changed local net-interface data to be dynamically allocated.&n; * Removed old 2.0 compatibility stuff.&n; *&n; * Revision 1.20  1997/05/27 15:18:06  fritz&n; * Added changes for recent 2.1.x kernels:&n; *   changed return type of isdn_close&n; *   queue_task_* -&gt; queue_task&n; *   clear/set_bit -&gt; test_and_... where apropriate.&n; *   changed type of hard_header_cache parameter.&n; *&n; * Revision 1.19  1997/03/25 23:13:56  keil&n; * NI-1 US protocol&n; *&n; * Revision 1.18  1997/03/04 22:09:18  calle&n; * Change macros copy_from_user and copy_to_user in inline function.&n; * These are now correct replacements of the functions for 2.1.xx&n; *&n; * Revision 1.17  1997/02/10 21:12:53  fritz&n; * More setup-interface changes.&n; *&n; * Revision 1.16  1997/02/10 19:42:57  fritz&n; * New interface for reporting incoming calls.&n; *&n; * Revision 1.15  1997/02/09 00:18:42  keil&n; * leased line support&n; *&n; * Revision 1.14  1997/02/03 23:43:00  fritz&n; * Misc changes for Kernel 2.1.X compatibility.&n; *&n; * Revision 1.13  1996/11/13 02:39:59  fritz&n; * More compatibility changes.&n; *&n; * Revision 1.12  1996/11/06 17:38:48  keil&n; * more changes for 2.1.X&n; *&n; * Revision 1.11  1996/10/23 11:59:42  fritz&n; * More compatibility changes.&n; *&n; * Revision 1.10  1996/10/22 23:14:19  fritz&n; * Changes for compatibility to 2.0.X and 2.1.X kernels.&n; *&n; * Revision 1.9  1996/06/06 21:24:24  fritz&n; * Started adding support for suspend/resume.&n; *&n; * Revision 1.8  1996/05/18 01:45:37  fritz&n; * More spelling corrections.&n; *&n; * Revision 1.7  1996/05/18 01:37:19  fritz&n; * Added spelling corrections and some minor changes&n; * to stay in sync with kernel.&n; *&n; * Revision 1.6  1996/05/17 03:59:28  fritz&n; * Marked rcvcallb and writebuf obsolete.&n; *&n; * Revision 1.5  1996/05/01 11:43:54  fritz&n; * Removed STANDALONE&n; *&n; * Revision 1.4  1996/05/01 11:38:40  fritz&n; * Added ISDN_FEATURE_L2_TRANS&n; *&n; * Revision 1.3  1996/04/29 22:57:54  fritz&n; * Added driverId and channel parameters to&n; * writecmd() and readstat().&n; * Added constant for voice-support.&n; *&n; * Revision 1.2  1996/04/20 17:02:40  fritz&n; * Changes to support skbuffs for Lowlevel-Drivers.&n; * Misc. typos&n; *&n; * Revision 1.1  1996/01/09 05:50:51  fritz&n; * Initial revision&n; *&n; */
+multiline_comment|/* $Id: isdnif.h,v 1.25 1998/06/17 19:51:55 he Exp $&n; *&n; * Linux ISDN subsystem&n; *&n; * Definition of the interface between the subsystem and its low-level drivers.&n; *&n; * Copyright 1994,95,96 by Fritz Elfert (fritz@wuemaus.franken.de)&n; * Copyright 1995,96    Thinking Objects Software GmbH Wuerzburg&n; * &n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA. &n; *&n; * $Log: isdnif.h,v $&n; * Revision 1.25  1998/06/17 19:51:55  he&n; * merged with 2.1.10[34] (cosmetics and udelay() -&gt; mdelay())&n; * brute force fix to avoid Ugh&squot;s in isdn_tty_write()&n; * cleaned up some dead code&n; *&n; * Revision 1.24  1998/03/19 13:18:57  keil&n; * Start of a CAPI like interface for supplementary Service&n; * first service: SUSPEND&n; *&n; * Revision 1.23  1998/02/20 17:36:52  fritz&n; * Added L2-protocols for V.110, changed FEATURE-Flag-constants.&n; *&n; * Revision 1.22  1998/01/31 22:14:12  keil&n; * changes for 2.1.82&n; *&n; * Revision 1.21  1997/10/09 21:28:13  fritz&n; * New HL&lt;-&gt;LL interface:&n; *   New BSENT callback with nr. of bytes included.&n; *   Sending without ACK.&n; *   New L1 error status (not yet in use).&n; *   Cleaned up obsolete structures.&n; * Implemented Cisco-SLARP.&n; * Changed local net-interface data to be dynamically allocated.&n; * Removed old 2.0 compatibility stuff.&n; *&n; * Revision 1.20  1997/05/27 15:18:06  fritz&n; * Added changes for recent 2.1.x kernels:&n; *   changed return type of isdn_close&n; *   queue_task_* -&gt; queue_task&n; *   clear/set_bit -&gt; test_and_... where apropriate.&n; *   changed type of hard_header_cache parameter.&n; *&n; * Revision 1.19  1997/03/25 23:13:56  keil&n; * NI-1 US protocol&n; *&n; * Revision 1.18  1997/03/04 22:09:18  calle&n; * Change macros copy_from_user and copy_to_user in inline function.&n; * These are now correct replacements of the functions for 2.1.xx&n; *&n; * Revision 1.17  1997/02/10 21:12:53  fritz&n; * More setup-interface changes.&n; *&n; * Revision 1.16  1997/02/10 19:42:57  fritz&n; * New interface for reporting incoming calls.&n; *&n; * Revision 1.15  1997/02/09 00:18:42  keil&n; * leased line support&n; *&n; * Revision 1.14  1997/02/03 23:43:00  fritz&n; * Misc changes for Kernel 2.1.X compatibility.&n; *&n; * Revision 1.13  1996/11/13 02:39:59  fritz&n; * More compatibility changes.&n; *&n; * Revision 1.12  1996/11/06 17:38:48  keil&n; * more changes for 2.1.X&n; *&n; * Revision 1.11  1996/10/23 11:59:42  fritz&n; * More compatibility changes.&n; *&n; * Revision 1.10  1996/10/22 23:14:19  fritz&n; * Changes for compatibility to 2.0.X and 2.1.X kernels.&n; *&n; * Revision 1.9  1996/06/06 21:24:24  fritz&n; * Started adding support for suspend/resume.&n; *&n; * Revision 1.8  1996/05/18 01:45:37  fritz&n; * More spelling corrections.&n; *&n; * Revision 1.7  1996/05/18 01:37:19  fritz&n; * Added spelling corrections and some minor changes&n; * to stay in sync with kernel.&n; *&n; * Revision 1.6  1996/05/17 03:59:28  fritz&n; * Marked rcvcallb and writebuf obsolete.&n; *&n; * Revision 1.5  1996/05/01 11:43:54  fritz&n; * Removed STANDALONE&n; *&n; * Revision 1.4  1996/05/01 11:38:40  fritz&n; * Added ISDN_FEATURE_L2_TRANS&n; *&n; * Revision 1.3  1996/04/29 22:57:54  fritz&n; * Added driverId and channel parameters to&n; * writecmd() and readstat().&n; * Added constant for voice-support.&n; *&n; * Revision 1.2  1996/04/20 17:02:40  fritz&n; * Changes to support skbuffs for Lowlevel-Drivers.&n; * Misc. typos&n; *&n; * Revision 1.1  1996/01/09 05:50:51  fritz&n; * Initial revision&n; *&n; */
 macro_line|#ifndef isdnif_h
 DECL|macro|isdnif_h
 mdefine_line|#define isdnif_h
@@ -37,6 +36,8 @@ DECL|macro|ISDN_PROTO_L2_V11019
 mdefine_line|#define ISDN_PROTO_L2_V11019 8   /* V.110 bitrate adaption 19200 Baud */
 DECL|macro|ISDN_PROTO_L2_V11038
 mdefine_line|#define ISDN_PROTO_L2_V11038 9   /* V.110 bitrate adaption 38400 Baud */
+DECL|macro|ISDN_PROTO_L2_MODEM
+mdefine_line|#define ISDN_PROTO_L2_MODEM  10  /* Analog Modem on Board */
 DECL|macro|ISDN_PROTO_L2_MAX
 mdefine_line|#define ISDN_PROTO_L2_MAX    15  /* Max. 16 Protocols                 */
 multiline_comment|/*&n; * Values for Layer-3-protocol-selection&n; */
@@ -83,6 +84,8 @@ DECL|macro|ISDN_CMD_SUSPEND
 mdefine_line|#define ISDN_CMD_SUSPEND 16       /* Suspend connection                    */
 DECL|macro|ISDN_CMD_RESUME
 mdefine_line|#define ISDN_CMD_RESUME  17       /* Resume connection                     */
+DECL|macro|CAPI_PUT_MESSAGE
+mdefine_line|#define CAPI_PUT_MESSAGE 18       /* CAPI message send down or up          */
 multiline_comment|/*&n; * Status-Values delivered from lowlevel to linklevel via&n; * statcallb().&n; *&n; */
 DECL|macro|ISDN_STAT_STAVAIL
 mdefine_line|#define ISDN_STAT_STAVAIL 256    /* Raw status-data available             */
@@ -143,6 +146,8 @@ DECL|macro|ISDN_FEATURE_L2_V11019
 mdefine_line|#define ISDN_FEATURE_L2_V11019  (0x0001 &lt;&lt; ISDN_PROTO_L2_V11019)
 DECL|macro|ISDN_FEATURE_L2_V11038
 mdefine_line|#define ISDN_FEATURE_L2_V11038  (0x0001 &lt;&lt; ISDN_PROTO_L2_V11038)
+DECL|macro|ISDN_FEATURE_L2_MODEM
+mdefine_line|#define ISDN_FEATURE_L2_MODEM   (0x0001 &lt;&lt; ISDN_PROTO_L2_MODEM)
 DECL|macro|ISDN_FEATURE_L2_MASK
 mdefine_line|#define ISDN_FEATURE_L2_MASK    (0x0FFFF) /* Max. 16 protocols */
 DECL|macro|ISDN_FEATURE_L2_SHIFT
@@ -173,6 +178,7 @@ r_struct
 id|setup_parm
 (brace
 DECL|member|phone
+r_int
 r_char
 id|phone
 (braket
@@ -181,6 +187,7 @@ l_int|32
 suffix:semicolon
 multiline_comment|/* Remote Phone-Number */
 DECL|member|eazmsn
+r_int
 r_char
 id|eazmsn
 (braket
@@ -216,6 +223,64 @@ DECL|typedef|setup_parm
 )brace
 id|setup_parm
 suffix:semicolon
+multiline_comment|/* CAPI structs */
+multiline_comment|/* this is compatible to the old union size */
+DECL|macro|MAX_CAPI_PARA_LEN
+mdefine_line|#define MAX_CAPI_PARA_LEN 50
+r_typedef
+r_struct
+(brace
+multiline_comment|/* Header */
+DECL|member|Length
+id|__u16
+id|Length
+suffix:semicolon
+DECL|member|ApplId
+id|__u16
+id|ApplId
+suffix:semicolon
+DECL|member|Command
+id|__u8
+id|Command
+suffix:semicolon
+DECL|member|Subcommand
+id|__u8
+id|Subcommand
+suffix:semicolon
+DECL|member|Messagenumber
+id|__u16
+id|Messagenumber
+suffix:semicolon
+multiline_comment|/* Parameter */
+r_union
+(brace
+DECL|member|Controller
+id|__u32
+id|Controller
+suffix:semicolon
+DECL|member|PLCI
+id|__u32
+id|PLCI
+suffix:semicolon
+DECL|member|NCCI
+id|__u32
+id|NCCI
+suffix:semicolon
+DECL|member|adr
+)brace
+id|adr
+suffix:semicolon
+DECL|member|para
+id|__u8
+id|para
+(braket
+id|MAX_CAPI_PARA_LEN
+)braket
+suffix:semicolon
+DECL|typedef|capi_msg
+)brace
+id|capi_msg
+suffix:semicolon
 multiline_comment|/*&n; * Structure for exchanging above infos&n; *&n; */
 r_typedef
 r_struct
@@ -248,17 +313,23 @@ id|length
 suffix:semicolon
 multiline_comment|/* Amount of bytes sent with STAT_BSENT  */
 DECL|member|num
-r_char
+id|u_char
 id|num
 (braket
 l_int|50
 )braket
 suffix:semicolon
-multiline_comment|/* Additional Data                       */
+multiline_comment|/* Additional Data&t;&t;&t;*/
 DECL|member|setup
 id|setup_parm
 id|setup
 suffix:semicolon
+multiline_comment|/* For SETUP msg&t;&t;&t;*/
+DECL|member|cmsg
+id|capi_msg
+id|cmsg
+suffix:semicolon
+multiline_comment|/* For CAPI like messages&t;&t;*/
 DECL|member|parm
 )brace
 id|parm

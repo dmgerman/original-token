@@ -2786,6 +2786,12 @@ id|child-&gt;uid
 )paren
 op_logical_or
 (paren
+id|current-&gt;uid
+op_ne
+id|child-&gt;suid
+)paren
+op_logical_or
+(paren
 id|current-&gt;gid
 op_ne
 id|child-&gt;egid

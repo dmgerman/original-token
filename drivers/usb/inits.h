@@ -33,6 +33,13 @@ c_func
 r_void
 )paren
 suffix:semicolon
+r_int
+id|usb_printer_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
 r_void
 id|hub_cleanup
 c_func

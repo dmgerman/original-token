@@ -7,24 +7,21 @@ macro_line|#include &lt;linux/tcp.h&gt;
 macro_line|#include &lt;linux/slab.h&gt;
 macro_line|#include &lt;net/checksum.h&gt;
 multiline_comment|/* This is for all connections with a full identity, no wildcards.&n; * New scheme, half the table is for TIME_WAIT, the other half is&n; * for the rest.  I&squot;ll experiment with dynamic table growth later.&n; */
-DECL|macro|TCP_HTABLE_SIZE
-mdefine_line|#define TCP_HTABLE_SIZE&t;&t;512
-multiline_comment|/* This is for listening sockets, thus all sockets which possess wildcards. */
-DECL|macro|TCP_LHTABLE_SIZE
-mdefine_line|#define TCP_LHTABLE_SIZE&t;32&t;/* Yes, really, this is all you need. */
-multiline_comment|/* This is for all sockets, to keep track of the local port allocations. */
-DECL|macro|TCP_BHTABLE_SIZE
-mdefine_line|#define TCP_BHTABLE_SIZE&t;512
-multiline_comment|/* tcp_ipv4.c: These need to be shared by v4 and v6 because the lookup&n; *             and hashing code needs to work with different AF&squot;s yet&n; *             the port space is shared.&n; */
+r_extern
+r_int
+id|tcp_ehash_size
+suffix:semicolon
 r_extern
 r_struct
 id|sock
 op_star
-id|tcp_established_hash
-(braket
-id|TCP_HTABLE_SIZE
-)braket
+op_star
+id|tcp_ehash
 suffix:semicolon
+multiline_comment|/* This is for listening sockets, thus all sockets which possess wildcards. */
+DECL|macro|TCP_LHTABLE_SIZE
+mdefine_line|#define TCP_LHTABLE_SIZE&t;32&t;/* Yes, really, this is all you need. */
+multiline_comment|/* tcp_ipv4.c: These need to be shared by v4 and v6 because the lookup&n; *             and hashing code needs to work with different AF&squot;s yet&n; *             the port space is shared.&n; */
 r_extern
 r_struct
 id|sock
@@ -80,10 +77,12 @@ r_extern
 r_struct
 id|tcp_bind_bucket
 op_star
-id|tcp_bound_hash
-(braket
-id|TCP_BHTABLE_SIZE
-)braket
+op_star
+id|tcp_bhash
+suffix:semicolon
+r_extern
+r_int
+id|tcp_bhash_size
 suffix:semicolon
 r_extern
 id|kmem_cache_t
@@ -200,7 +199,7 @@ r_return
 id|lport
 op_amp
 (paren
-id|TCP_BHTABLE_SIZE
+id|tcp_bhash_size
 op_minus
 l_int|1
 )paren
@@ -236,7 +235,7 @@ c_loop
 (paren
 id|tb
 op_assign
-id|tcp_bound_hash
+id|tcp_bhash
 (braket
 id|tcp_bhashfn
 c_func

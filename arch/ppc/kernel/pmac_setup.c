@@ -20,6 +20,7 @@ macro_line|#include &lt;linux/major.h&gt;
 macro_line|#include &lt;linux/blk.h&gt;
 macro_line|#include &lt;linux/vt_kern.h&gt;
 macro_line|#include &lt;linux/console.h&gt;
+macro_line|#include &lt;linux/ide.h&gt;
 macro_line|#include &lt;asm/prom.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
@@ -2205,6 +2206,7 @@ id|id
 )paren
 suffix:semicolon
 )brace
+macro_line|#if defined(CONFIG_BLK_DEV_IDE_PMAC)
 multiline_comment|/* This is declared in drivers/block/ide-pmac.c */
 r_void
 id|pmac_ide_init_hwif_ports
@@ -2224,16 +2226,30 @@ op_star
 id|irq
 )paren
 suffix:semicolon
+macro_line|#else
 multiline_comment|/*&n; * This registers the standard ports for this architecture with the IDE&n; * driver.&n; */
+DECL|function|pmac_ide_init_hwif_ports
 r_void
-DECL|function|ide_init_default_hwifs
-id|ide_init_default_hwifs
+id|pmac_ide_init_hwif_ports
 c_func
 (paren
-r_void
+id|hw_regs_t
+op_star
+id|hw
+comma
+id|ide_ioreg_t
+id|data_port
+comma
+id|ide_ioreg_t
+id|ctrl_port
+comma
+r_int
+op_star
+id|irq
 )paren
 (brace
 )brace
+macro_line|#endif
 macro_line|#endif
 DECL|function|__initfunc
 id|__initfunc

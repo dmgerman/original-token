@@ -2,6 +2,9 @@ multiline_comment|/*&n; * include/asm-arm/processor.h&n; *&n; * Copyright (C) 19
 macro_line|#ifndef __ASM_ARM_PROCESSOR_H
 DECL|macro|__ASM_ARM_PROCESSOR_H
 mdefine_line|#define __ASM_ARM_PROCESSOR_H
+multiline_comment|/*&n; * Default implementation of macro that returns current&n; * instruction pointer (&quot;program counter&quot;).&n; */
+DECL|macro|current_text_addr
+mdefine_line|#define current_text_addr() ({ __label__ _l; _l: &amp;&amp;_l;})
 DECL|macro|FP_SIZE
 mdefine_line|#define FP_SIZE 35
 DECL|struct|fp_hard_struct

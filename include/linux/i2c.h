@@ -2,6 +2,7 @@ macro_line|#ifndef I2C_H
 DECL|macro|I2C_H
 mdefine_line|#define I2C_H
 multiline_comment|/*&n; * linux i2c interface.  Works a little bit like the scsi subsystem.&n; * There are:&n; *&n; *     i2c          the basic control module        (like scsi_mod)&n; *     bus driver   a driver with a i2c bus         (hostadapter driver)&n; *     chip driver  a driver for a chip connected&n; *                  to a i2c bus                    (cdrom/hd driver)&n; *&n; * A device will be attached to one bus and one chip driver.  Every chip&n; * driver gets a unique ID.&n; *&n; * A chip driver can provide a ioctl-like callback for the&n; * communication with other parts of the kernel (not every i2c chip is&n; * useful without other devices, a TV card tuner for example). &n; *&n; * &quot;i2c internal&quot; parts of the structs: only the i2c module is allowed to&n; * write to them, for others they are read-only.&n; *&n; */
+macro_line|#include &lt;linux/version.h&gt;
 DECL|macro|I2C_BUS_MAX
 mdefine_line|#define I2C_BUS_MAX       4    /* max # of bus drivers  */
 DECL|macro|I2C_DRIVER_MAX
@@ -25,6 +26,8 @@ DECL|macro|I2C_DRIVERID_VIDEOTEXT
 mdefine_line|#define I2C_DRIVERID_VIDEOTEXT&t; 3
 DECL|macro|I2C_BUSID_BT848
 mdefine_line|#define I2C_BUSID_BT848&t;&t;1&t;/* I2C bus on a BT848 */
+DECL|macro|I2C_BUSID_PARPORT
+mdefine_line|#define I2C_BUSID_PARPORT&t;2&t;/* Bit banging on a parallel port */
 multiline_comment|/*&n; * struct for a driver for a i2c chip (tuner, soundprocessor,&n; * videotext, ... ).&n; *&n; * a driver will register within the i2c module.  The i2c module will&n; * callback the driver (i2c_attach) for every device it finds on a i2c&n; * bus at the specified address.  If the driver decides to &quot;accept&quot;&n; * the, device, it must return a struct i2c_device, and NULL&n; * otherwise.&n; *&n; * i2c_detach = i2c_attach ** -1&n; * &n; * i2c_command will be used to pass commands to the driver in a&n; * ioctl-line manner.&n; *&n; */
 DECL|struct|i2c_driver
 r_struct

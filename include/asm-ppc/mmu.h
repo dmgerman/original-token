@@ -9,22 +9,27 @@ r_typedef
 r_struct
 id|_PTE
 (brace
-DECL|member|v
-r_int
-r_int
-id|v
-suffix:colon
-l_int|1
-suffix:semicolon
-multiline_comment|/* Entry is valid */
+macro_line|#ifdef CONFIG_PPC64
 DECL|member|vsid
+r_int
 r_int
 r_int
 id|vsid
 suffix:colon
-l_int|24
+l_int|52
 suffix:semicolon
-multiline_comment|/* Virtual segment identifier */
+DECL|member|api
+r_int
+r_int
+id|api
+suffix:colon
+l_int|5
+suffix:semicolon
+r_int
+r_int
+suffix:colon
+l_int|5
+suffix:semicolon
 DECL|member|h
 r_int
 r_int
@@ -32,8 +37,43 @@ id|h
 suffix:colon
 l_int|1
 suffix:semicolon
+DECL|member|v
+r_int
+r_int
+id|v
+suffix:colon
+l_int|1
+suffix:semicolon
+DECL|member|rpn
+r_int
+r_int
+r_int
+id|rpn
+suffix:colon
+l_int|52
+suffix:semicolon
+macro_line|#else /* CONFIG_PPC64 */
+r_int
+r_int
+id|v
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* Entry is valid */
+r_int
+r_int
+id|vsid
+suffix:colon
+l_int|24
+suffix:semicolon
+multiline_comment|/* Virtual segment identifier */
+r_int
+r_int
+id|h
+suffix:colon
+l_int|1
+suffix:semicolon
 multiline_comment|/* Hash algorithm indicator */
-DECL|member|api
 r_int
 r_int
 id|api
@@ -41,7 +81,6 @@ suffix:colon
 l_int|6
 suffix:semicolon
 multiline_comment|/* Abbreviated page index */
-DECL|member|rpn
 r_int
 r_int
 id|rpn
@@ -49,6 +88,7 @@ suffix:colon
 l_int|20
 suffix:semicolon
 multiline_comment|/* Real (physical) page number */
+macro_line|#endif /* CONFIG_PPC64 */
 r_int
 r_int
 suffix:colon
@@ -264,7 +304,16 @@ r_struct
 id|_BATU
 (brace
 multiline_comment|/* Upper part of BAT (all except 601) */
+macro_line|#ifdef CONFIG_PPC64
 DECL|member|bepi
+r_int
+r_int
+r_int
+id|bepi
+suffix:colon
+l_int|47
+suffix:semicolon
+macro_line|#else /* CONFIG_PPC64 */
 r_int
 r_int
 id|bepi
@@ -272,6 +321,7 @@ suffix:colon
 l_int|15
 suffix:semicolon
 multiline_comment|/* Effective page index (virtual address) */
+macro_line|#endif /* CONFIG_PPC64 */
 r_int
 r_int
 suffix:colon
@@ -352,7 +402,16 @@ r_struct
 id|_BATL
 (brace
 multiline_comment|/* Lower part of BAT (all except 601) */
+macro_line|#ifdef CONFIG_PPC64
 DECL|member|brpn
+r_int
+r_int
+r_int
+id|brpn
+suffix:colon
+l_int|47
+suffix:semicolon
+macro_line|#else /* CONFIG_PPC64 */
 r_int
 r_int
 id|brpn
@@ -360,6 +419,7 @@ suffix:colon
 l_int|15
 suffix:semicolon
 multiline_comment|/* Real page index (physical address) */
+macro_line|#endif /* CONFIG_PPC64 */
 r_int
 r_int
 suffix:colon

@@ -1329,6 +1329,12 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|hwif-&gt;dma_base
+)paren
+(brace
+r_if
+c_cond
+(paren
 id|class_rev
 op_eq
 l_int|0x01
@@ -1347,6 +1353,7 @@ op_assign
 op_amp
 id|cmd646_dmaproc
 suffix:semicolon
+)brace
 )brace
 )brace
 eof

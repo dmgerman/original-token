@@ -44,8 +44,6 @@ r_struct
 id|device
 op_star
 id|d
-op_assign
-id|dev_base
 suffix:semicolon
 r_if
 c_cond
@@ -58,6 +56,17 @@ op_star
 id|str
 )paren
 r_return
+suffix:semicolon
+id|read_lock_bh
+c_func
+(paren
+op_amp
+id|dev_base_lock
+)paren
+suffix:semicolon
+id|d
+op_assign
+id|dev_base
 suffix:semicolon
 r_while
 c_loop
@@ -154,6 +163,13 @@ op_assign
 id|d-&gt;next
 suffix:semicolon
 )brace
+id|read_unlock_bh
+c_func
+(paren
+op_amp
+id|dev_base_lock
+)paren
+suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t; Create the Ethernet MAC header for an arbitrary protocol layer &n; *&n; *&t;saddr=NULL&t;means use device source address&n; *&t;daddr=NULL&t;means leave destination address (eg unresolved arp)&n; */
 DECL|function|eth_header

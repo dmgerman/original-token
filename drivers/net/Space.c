@@ -3944,4 +3944,10 @@ op_assign
 op_amp
 id|loopback_dev
 suffix:semicolon
+DECL|variable|dev_base_lock
+id|rwlock_t
+id|dev_base_lock
+op_assign
+id|RW_LOCK_UNLOCKED
+suffix:semicolon
 eof

@@ -828,7 +828,7 @@ r_return
 id|error
 suffix:semicolon
 )brace
-macro_line|#ifndef __alpha__
+macro_line|#if !(defined(__alpha__) || defined(__ia64__))
 multiline_comment|/*&n; * sys_utime() can be implemented in user-level using sys_utimes().&n; * Is this for backwards compatibility?  If so, why not move it&n; * into the appropriate arch directory (for those architectures that&n; * need it).&n; */
 multiline_comment|/* If times==NULL, set access and modification to current time,&n; * must be owner or have write permission.&n; * Else, update from *times, must be owner or super user.&n; */
 DECL|function|sys_utime

@@ -268,6 +268,13 @@ op_assign
 op_amp
 id|ic_first_dev
 suffix:semicolon
+id|read_lock_bh
+c_func
+(paren
+op_amp
+id|dev_base_lock
+)paren
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -281,6 +288,7 @@ id|dev
 op_assign
 id|dev-&gt;next
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -480,6 +488,14 @@ id|able
 )paren
 suffix:semicolon
 )brace
+)brace
+id|read_unlock_bh
+c_func
+(paren
+op_amp
+id|dev_base_lock
+)paren
+suffix:semicolon
 op_star
 id|last
 op_assign

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: teleint.c,v 1.5 1998/02/02 13:40:47 keil Exp $&n;&n; * teleint.c     low level stuff for TeleInt isdn cards&n; *&n; * Author     Karsten Keil (keil@temic-ech.spacenet.de)&n; *&n; *&n; * $Log: teleint.c,v $&n; * Revision 1.5  1998/02/02 13:40:47  keil&n; * fast io&n; *&n; * Revision 1.4  1997/11/08 21:35:53  keil&n; * new l1 init&n; *&n; * Revision 1.3  1997/11/06 17:09:30  keil&n; * New 2.1 init code&n; *&n; * Revision 1.2  1997/10/29 18:55:53  keil&n; * changes for 2.1.60 (irq2dev_map)&n; *&n; * Revision 1.1  1997/09/11 17:32:32  keil&n; * new&n; *&n; *&n; */
+multiline_comment|/* $Id: teleint.c,v 1.7 1998/11/15 23:55:26 keil Exp $&n;&n; * teleint.c     low level stuff for TeleInt isdn cards&n; *&n; * Author     Karsten Keil (keil@isdn4linux.de)&n; *&n; *&n; * $Log: teleint.c,v $&n; * Revision 1.7  1998/11/15 23:55:26  keil&n; * changes from 2.0&n; *&n; * Revision 1.6  1998/04/15 16:45:31  keil&n; * new init code&n; *&n; * Revision 1.5  1998/02/02 13:40:47  keil&n; * fast io&n; *&n; * Revision 1.4  1997/11/08 21:35:53  keil&n; * new l1 init&n; *&n; * Revision 1.3  1997/11/06 17:09:30  keil&n; * New 2.1 init code&n; *&n; * Revision 1.2  1997/10/29 18:55:53  keil&n; * changes for 2.1.60 (irq2dev_map)&n; *&n; * Revision 1.1  1997/09/11 17:32:32  keil&n; * new&n; *&n; *&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &quot;hisax.h&quot;
@@ -19,7 +19,7 @@ r_char
 op_star
 id|TeleInt_revision
 op_assign
-l_string|&quot;$Revision: 1.5 $&quot;
+l_string|&quot;$Revision: 1.7 $&quot;
 suffix:semicolon
 DECL|macro|byteout
 mdefine_line|#define byteout(addr,val) outb(val,addr)
@@ -179,10 +179,15 @@ r_register
 id|u_char
 id|ret
 suffix:semicolon
+r_register
 r_int
 id|max_delay
 op_assign
-l_int|2000
+l_int|20000
+suffix:semicolon
+r_register
+r_int
+id|i
 suffix:semicolon
 id|byteout
 c_func
@@ -192,6 +197,21 @@ comma
 id|off
 )paren
 suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|size
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
 id|ret
 op_assign
 id|HFC_BUSY
@@ -237,16 +257,18 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-id|insb
+id|data
+(braket
+id|i
+)braket
+op_assign
+id|bytein
 c_func
 (paren
 id|adr
-comma
-id|data
-comma
-id|size
 )paren
 suffix:semicolon
+)brace
 )brace
 r_static
 r_inline
@@ -397,10 +419,15 @@ r_register
 id|u_char
 id|ret
 suffix:semicolon
+r_register
 r_int
 id|max_delay
 op_assign
-l_int|2000
+l_int|20000
+suffix:semicolon
+r_register
+r_int
+id|i
 suffix:semicolon
 multiline_comment|/* fifo write without cli because it&squot;s allready done  */
 id|byteout
@@ -411,6 +438,21 @@ comma
 id|off
 )paren
 suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|size
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
 id|ret
 op_assign
 id|HFC_BUSY
@@ -456,16 +498,18 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-id|outsb
+id|byteout
 c_func
 (paren
 id|adr
 comma
 id|data
-comma
-id|size
+(braket
+id|i
+)braket
 )paren
 suffix:semicolon
+)brace
 )brace
 multiline_comment|/* Interface functions */
 r_static
@@ -683,17 +727,10 @@ op_ne
 l_int|2
 )paren
 )paren
-(brace
-r_char
-id|tmp
-(braket
-l_int|32
-)braket
-suffix:semicolon
-id|sprintf
+id|debugl1
 c_func
 (paren
-id|tmp
+id|cs
 comma
 l_string|&quot;hfc RD %02x %02x&quot;
 comma
@@ -702,15 +739,6 @@ comma
 id|ret
 )paren
 suffix:semicolon
-id|debugl1
-c_func
-(paren
-id|cs
-comma
-id|tmp
-)paren
-suffix:semicolon
-)brace
 )brace
 r_else
 id|ret
@@ -790,17 +818,10 @@ op_ne
 l_int|2
 )paren
 )paren
-(brace
-r_char
-id|tmp
-(braket
-l_int|32
-)braket
-suffix:semicolon
-id|sprintf
+id|debugl1
 c_func
 (paren
-id|tmp
+id|cs
 comma
 l_string|&quot;hfc W%c %02x %02x&quot;
 comma
@@ -816,15 +837,6 @@ comma
 id|value
 )paren
 suffix:semicolon
-id|debugl1
-c_func
-(paren
-id|cs
-comma
-id|tmp
-)paren
-suffix:semicolon
-)brace
 )brace
 r_static
 r_void
@@ -1287,6 +1299,31 @@ id|initisac
 c_func
 (paren
 id|cs
+)paren
+suffix:semicolon
+multiline_comment|/* Reenable all IRQ */
+id|cs
+op_member_access_from_pointer
+id|writeisac
+c_func
+(paren
+id|cs
+comma
+id|ISAC_MASK
+comma
+l_int|0
+)paren
+suffix:semicolon
+id|cs
+op_member_access_from_pointer
+id|writeisac
+c_func
+(paren
+id|cs
+comma
+id|ISAC_CMDR
+comma
+l_int|0x41
 )paren
 suffix:semicolon
 id|cs-&gt;hw.hfc.timer.expires

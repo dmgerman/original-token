@@ -894,6 +894,7 @@ c_cond
 op_logical_neg
 id|up_flag
 )paren
+(brace
 id|handle_sysrq
 c_func
 (paren
@@ -911,6 +912,7 @@ id|tty
 suffix:semicolon
 r_return
 suffix:semicolon
+)brace
 )brace
 macro_line|#endif
 r_if
@@ -1801,16 +1803,6 @@ c_func
 r_void
 )paren
 (brace
-r_if
-c_cond
-(paren
-id|kbd-&gt;slockstate
-op_amp
-op_complement
-id|shift_state
-)paren
-r_return
-suffix:semicolon
 id|ctrl_alt_del
 c_func
 (paren

@@ -257,6 +257,15 @@ id|pcbit_dev
 )paren
 )paren
 suffix:semicolon
+macro_line|#if LINUX_VERSION_CODE &gt;= 131841
+id|init_waitqueue_head
+c_func
+(paren
+op_amp
+id|dev-&gt;set_running_wq
+)paren
+suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren

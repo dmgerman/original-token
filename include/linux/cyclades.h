@@ -1218,9 +1218,13 @@ r_int
 id|count
 suffix:semicolon
 multiline_comment|/* # of fd on device */
-DECL|member|x_break
+DECL|member|breakon
 r_int
-id|x_break
+id|breakon
+suffix:semicolon
+DECL|member|breakoff
+r_int
+id|breakoff
 suffix:semicolon
 DECL|member|blocked_open
 r_int

@@ -100,6 +100,10 @@ id|mm_struct
 id|init_mm
 op_assign
 id|INIT_MM
+c_func
+(paren
+id|init_mm
+)paren
 suffix:semicolon
 DECL|variable|init_task_union
 r_union
@@ -121,6 +125,10 @@ op_assign
 id|task
 suffix:colon
 id|INIT_TASK
+c_func
+(paren
+id|init_task_union.task
+)paren
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * No need to acquire the kernel lock, we&squot;re entirely local..&n; */

@@ -322,31 +322,7 @@ id|skb
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Now the backlog. */
-r_while
-c_loop
-(paren
-(paren
-id|skb
-op_assign
-id|skb_dequeue
-c_func
-(paren
-op_amp
-id|sk-&gt;back_log
-)paren
-)paren
-op_ne
-l_int|NULL
-)paren
-(brace
-id|kfree_skb
-c_func
-(paren
-id|skb
-)paren
-suffix:semicolon
-)brace
+multiline_comment|/* It is _impossible_ for the backlog to contain anything&n;&t; * when we get here.  All user references to this socket&n;&t; * have gone away, only the net layer knows can touch it.&n;&t; */
 )brace
 DECL|function|kill_sk_now
 r_static
@@ -452,7 +428,7 @@ id|sk-&gt;ack_backlog
 op_assign
 l_int|0
 suffix:semicolon
-id|release_sock
+id|bh_unlock_sock
 c_func
 (paren
 id|sk
@@ -469,6 +445,7 @@ id|SOCK_DESTROY_TIME
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* Callers must hold the BH spinlock.&n; *&n; * At this point, there should be no process reference to this&n; * socket, and thus no user references at all.  Therefore we&n; * can assume the socket waitqueue is inactive and nobody will&n; * try to jump onto it.&n; */
 DECL|function|destroy_sock
 r_void
 id|destroy_sock
@@ -480,13 +457,6 @@ op_star
 id|sk
 )paren
 (brace
-id|lock_sock
-c_func
-(paren
-id|sk
-)paren
-suffix:semicolon
-multiline_comment|/* just to be safe. */
 multiline_comment|/* Now we can no longer get new packets or once the&n;  &t; * timers are killed, send them.&n;  &t; */
 id|net_delete_timer
 c_func

@@ -70,7 +70,7 @@ id|sk_reuse
 op_assign
 id|sk-&gt;reuse
 suffix:semicolon
-id|SOCKHASH_LOCK
+id|SOCKHASH_LOCK_READ
 c_func
 (paren
 )paren
@@ -226,7 +226,7 @@ suffix:semicolon
 )brace
 )brace
 )brace
-id|SOCKHASH_UNLOCK
+id|SOCKHASH_UNLOCK_READ
 c_func
 (paren
 )paren
@@ -274,7 +274,7 @@ id|udp_hash
 id|num
 )braket
 suffix:semicolon
-id|SOCKHASH_LOCK
+id|SOCKHASH_LOCK_WRITE
 c_func
 (paren
 )paren
@@ -293,7 +293,7 @@ id|sk-&gt;hashent
 op_assign
 id|num
 suffix:semicolon
-id|SOCKHASH_UNLOCK
+id|SOCKHASH_UNLOCK_WRITE
 c_func
 (paren
 )paren
@@ -338,7 +338,7 @@ id|udp_hash
 id|num
 )braket
 suffix:semicolon
-id|SOCKHASH_LOCK
+id|SOCKHASH_LOCK_WRITE
 c_func
 (paren
 )paren
@@ -382,7 +382,7 @@ id|next
 )paren
 suffix:semicolon
 )brace
-id|SOCKHASH_UNLOCK
+id|SOCKHASH_UNLOCK_WRITE
 c_func
 (paren
 )paren
@@ -432,7 +432,7 @@ id|udp_hash
 id|oldnum
 )braket
 suffix:semicolon
-id|SOCKHASH_LOCK
+id|SOCKHASH_LOCK_WRITE
 c_func
 (paren
 )paren
@@ -494,7 +494,7 @@ id|sk-&gt;hashent
 op_assign
 id|num
 suffix:semicolon
-id|SOCKHASH_UNLOCK
+id|SOCKHASH_UNLOCK_WRITE
 c_func
 (paren
 )paren
@@ -553,6 +553,11 @@ id|badness
 op_assign
 op_minus
 l_int|1
+suffix:semicolon
+id|SOCKHASH_LOCK_READ
+c_func
+(paren
+)paren
 suffix:semicolon
 r_for
 c_loop
@@ -760,6 +765,11 @@ suffix:semicolon
 )brace
 )brace
 )brace
+id|SOCKHASH_UNLOCK_READ
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
 id|result
 suffix:semicolon
@@ -1371,6 +1381,12 @@ r_int
 id|timeout
 )paren
 (brace
+id|bh_lock_sock
+c_func
+(paren
+id|sk
+)paren
+suffix:semicolon
 multiline_comment|/* See for explanation: raw_close in ipv4/raw.c */
 id|sk-&gt;state
 op_assign

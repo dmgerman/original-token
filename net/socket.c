@@ -233,6 +233,13 @@ id|sockets_in_use
 op_assign
 l_int|0
 suffix:semicolon
+multiline_comment|/*&n; *&t;Socket hashing lock.&n; */
+DECL|variable|sockhash_lock
+id|rwlock_t
+id|sockhash_lock
+op_assign
+id|RW_LOCK_UNLOCKED
+suffix:semicolon
 multiline_comment|/*&n; *&t;Support routines. Move socket addresses back and forth across the kernel/user&n; *&t;divide and look after the messy bits.&n; */
 DECL|macro|MAX_SOCK_ADDR
 mdefine_line|#define MAX_SOCK_ADDR&t;128&t;&t;/* 108 for Unix domain - &n;&t;&t;&t;&t;&t;   16 for IP, 16 for IPX,&n;&t;&t;&t;&t;&t;   24 for IPv6,&n;&t;&t;&t;&t;&t;   about 80 for AX.25 &n;&t;&t;&t;&t;&t;   must be at least one bigger than&n;&t;&t;&t;&t;&t;   the AF_UNIX size (see net/unix/af_unix.c&n;&t;&t;&t;&t;&t;   :unix_mkname()).  &n;&t;&t;&t;&t;&t; */
@@ -1920,6 +1927,14 @@ l_int|0
 suffix:colon
 id|call_kill
 suffix:colon
+r_if
+c_cond
+(paren
+id|sock-&gt;fasync_list
+op_ne
+l_int|NULL
+)paren
+(brace
 id|kill_fasync
 c_func
 (paren
@@ -1928,6 +1943,7 @@ comma
 id|SIGIO
 )paren
 suffix:semicolon
+)brace
 r_break
 suffix:semicolon
 )brace

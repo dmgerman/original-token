@@ -1,5 +1,5 @@
 multiline_comment|/*****************************************************************************/
-multiline_comment|/*&n; *      es1370.c  --  Ensoniq ES1370/Asahi Kasei AK4531 audio driver.&n; *&n; *      Copyright (C) 1998-1999  Thomas Sailer (sailer@ife.ee.ethz.ch)&n; *&n; *      This program is free software; you can redistribute it and/or modify&n; *      it under the terms of the GNU General Public License as published by&n; *      the Free Software Foundation; either version 2 of the License, or&n; *      (at your option) any later version.&n; *&n; *      This program is distributed in the hope that it will be useful,&n; *      but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *      GNU General Public License for more details.&n; *&n; *      You should have received a copy of the GNU General Public License&n; *      along with this program; if not, write to the Free Software&n; *      Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * Special thanks to David C. Niemi&n; *&n; *&n; * Module command line parameters:&n; *   joystick if 1 enables the joystick interface on the card; but it still&n; *            needs a driver for joysticks connected to a standard IBM-PC&n; *&t;      joyport. It is tested with the joy-analog driver. This &n; *&t;      module must be loaded before the joystick driver. Kmod will&n; *&t;      not ensure that.&n; *   lineout  if 1 the LINE jack is used as an output instead of an input.&n; *            LINE then contains the unmixed dsp output. This can be used&n; *            to make the card a four channel one: use dsp to output two&n; *            channels to LINE and dac to output the other two channels to&n; *            SPKR. Set the mixer to only output synth to SPKR.&n; *   micz     it looks like this changes the MIC input impedance. I don&squot;t know&n; *            any detail though.&n; *&n; *  Note: sync mode is not yet supported (i.e. running dsp and dac from the same&n; *  clock source)&n; *&n; *  Supported devices:&n; *  /dev/dsp    standard /dev/dsp device, (mostly) OSS compatible&n; *  /dev/mixer  standard /dev/mixer device, (mostly) OSS compatible&n; *  /dev/dsp1   additional DAC, like /dev/dsp, but output only,&n; *              only 5512, 11025, 22050 and 44100 samples/s,&n; *              outputs to mixer &quot;SYNTH&quot; setting&n; *  /dev/midi   simple MIDI UART interface, no ioctl&n; *&n; *  NOTE: the card does not have any FM/Wavetable synthesizer, it is supposed&n; *  to be done in software. That is what /dev/dac is for. By now (Q2 1998)&n; *  there are several MIDI to PCM (WAV) packages, one of them is timidity.&n; *&n; *  Revision history&n; *    26.03.98   0.1   Initial release&n; *    31.03.98   0.2   Fix bug in GETOSPACE&n; *    04.04.98   0.3   Make it work (again) under 2.0.33&n; *                     Fix mixer write operation not returning the actual&n; *                     settings&n; *    05.04.98   0.4   First attempt at using the new PCI stuff&n; *    29.04.98   0.5   Fix hang when ^C is pressed on amp&n; *    07.05.98   0.6   Don&squot;t double lock around stop_*() in *_release()&n; *    10.05.98   0.7   First stab at a simple midi interface (no bells&amp;whistles)&n; *    14.05.98   0.8   Don&squot;t allow excessive interrupt rates&n; *    08.06.98   0.9   First release using Alan Cox&squot; soundcore instead of&n; *                     miscdevice&n; *    05.07.98   0.10  Fixed the driver to correctly maintin OSS style volume&n; *                     settings (not sure if this should be standard)&n; *                     Fixed many references: f_flags should be f_mode&n; *                     -- Gerald Britton &lt;gbritton@mit.edu&gt;&n; *    03.08.98   0.11  Now mixer behaviour can basically be selected between&n; *                     &quot;OSS documented&quot; and &quot;OSS actual&quot; behaviour&n; *                     Fixed mixer table thanks to Hakan.Lennestal@lu.erisoft.se&n; *                     On module startup, set DAC2 to 11kSPS instead of 5.5kSPS,&n; *                     as it produces an annoying ssssh in the lower sampling rate&n; *                     Do not include modversions.h&n; *    22.08.98   0.12  Mixer registers actually have 5 instead of 4 bits&n; *                     pointed out by Itai Nahshon&n; *    31.08.98   0.13  Fix realplayer problems - dac.count issues&n; *    08.10.98   0.14  Joystick support fixed&n; *&t;&t;       -- Oliver Neukum &lt;c188@org.chemie.uni-muenchen.de&gt;&n; *    10.12.98   0.15  Fix drain_dac trying to wait on not yet initialized DMA&n; *    16.12.98   0.16  Don&squot;t wake up app until there are fragsize bytes to read/write&n; *    06.01.99   0.17  remove the silly SA_INTERRUPT flag.&n; *                     hopefully killed the egcs section type conflict&n; *    12.03.99   0.18  cinfo.blocks should be reset after GETxPTR ioctl.&n; *                     reported by Johan Maes &lt;joma@telindus.be&gt;&n; *    22.03.99   0.19  return EAGAIN instead of EBUSY when O_NONBLOCK&n; *                     read/write cannot be executed&n; *    07.04.99   0.20  implemented the following ioctl&squot;s: SOUND_PCM_READ_RATE, &n; *                     SOUND_PCM_READ_CHANNELS, SOUND_PCM_READ_BITS; &n; *                     Alpha fixes reported by Peter Jones &lt;pjones@redhat.com&gt;&n; *                     Note: joystick address handling might still be wrong on archs&n; *                     other than i386&n; *&n; * some important things missing in Ensoniq documentation:&n; *&n; * Experimental PCLKDIV results:  play the same waveforms on both DAC1 and DAC2&n; * and vary PCLKDIV to obtain zero beat.&n; *  5512sps:  254&n; * 44100sps:   30&n; * seems to be fs = 1411200/(PCLKDIV+2)&n; *&n; * should find out when curr_sample_ct is cleared and&n; * where exactly the CCB fetches data&n; *&n; * The card uses a 22.5792 MHz crystal.&n; * The LINEIN jack may be converted to an AOUT jack by&n; * setting pin 47 (XCTL0) of the ES1370 to high.&n; * Pin 48 (XCTL1) of the ES1370 presumably changes the input impedance of the&n; * MIC jack.&n; *&n; */
+multiline_comment|/*&n; *      es1370.c  --  Ensoniq ES1370/Asahi Kasei AK4531 audio driver.&n; *&n; *      Copyright (C) 1998-1999  Thomas Sailer (sailer@ife.ee.ethz.ch)&n; *&n; *      This program is free software; you can redistribute it and/or modify&n; *      it under the terms of the GNU General Public License as published by&n; *      the Free Software Foundation; either version 2 of the License, or&n; *      (at your option) any later version.&n; *&n; *      This program is distributed in the hope that it will be useful,&n; *      but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *      GNU General Public License for more details.&n; *&n; *      You should have received a copy of the GNU General Public License&n; *      along with this program; if not, write to the Free Software&n; *      Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * Special thanks to David C. Niemi&n; *&n; *&n; * Module command line parameters:&n; *   joystick if 1 enables the joystick interface on the card; but it still&n; *            needs a driver for joysticks connected to a standard IBM-PC&n; *&t;      joyport. It is tested with the joy-analog driver. This &n; *&t;      module must be loaded before the joystick driver. Kmod will&n; *&t;      not ensure that.&n; *   lineout  if 1 the LINE jack is used as an output instead of an input.&n; *            LINE then contains the unmixed dsp output. This can be used&n; *            to make the card a four channel one: use dsp to output two&n; *            channels to LINE and dac to output the other two channels to&n; *            SPKR. Set the mixer to only output synth to SPKR.&n; *   micbias  sets the +5V bias to the mic if using an electretmic.&n; *            &n; *&n; *  Note: sync mode is not yet supported (i.e. running dsp and dac from the same&n; *  clock source)&n; *&n; *  Supported devices:&n; *  /dev/dsp    standard /dev/dsp device, (mostly) OSS compatible&n; *  /dev/mixer  standard /dev/mixer device, (mostly) OSS compatible&n; *  /dev/dsp1   additional DAC, like /dev/dsp, but output only,&n; *              only 5512, 11025, 22050 and 44100 samples/s,&n; *              outputs to mixer &quot;SYNTH&quot; setting&n; *  /dev/midi   simple MIDI UART interface, no ioctl&n; *&n; *  NOTE: the card does not have any FM/Wavetable synthesizer, it is supposed&n; *  to be done in software. That is what /dev/dac is for. By now (Q2 1998)&n; *  there are several MIDI to PCM (WAV) packages, one of them is timidity.&n; *&n; *  Revision history&n; *    26.03.98   0.1   Initial release&n; *    31.03.98   0.2   Fix bug in GETOSPACE&n; *    04.04.98   0.3   Make it work (again) under 2.0.33&n; *                     Fix mixer write operation not returning the actual&n; *                     settings&n; *    05.04.98   0.4   First attempt at using the new PCI stuff&n; *    29.04.98   0.5   Fix hang when ^C is pressed on amp&n; *    07.05.98   0.6   Don&squot;t double lock around stop_*() in *_release()&n; *    10.05.98   0.7   First stab at a simple midi interface (no bells&amp;whistles)&n; *    14.05.98   0.8   Don&squot;t allow excessive interrupt rates&n; *    08.06.98   0.9   First release using Alan Cox&squot; soundcore instead of&n; *                     miscdevice&n; *    05.07.98   0.10  Fixed the driver to correctly maintin OSS style volume&n; *                     settings (not sure if this should be standard)&n; *                     Fixed many references: f_flags should be f_mode&n; *                     -- Gerald Britton &lt;gbritton@mit.edu&gt;&n; *    03.08.98   0.11  Now mixer behaviour can basically be selected between&n; *                     &quot;OSS documented&quot; and &quot;OSS actual&quot; behaviour&n; *                     Fixed mixer table thanks to Hakan.Lennestal@lu.erisoft.se&n; *                     On module startup, set DAC2 to 11kSPS instead of 5.5kSPS,&n; *                     as it produces an annoying ssssh in the lower sampling rate&n; *                     Do not include modversions.h&n; *    22.08.98   0.12  Mixer registers actually have 5 instead of 4 bits&n; *                     pointed out by Itai Nahshon&n; *    31.08.98   0.13  Fix realplayer problems - dac.count issues&n; *    08.10.98   0.14  Joystick support fixed&n; *&t;&t;       -- Oliver Neukum &lt;c188@org.chemie.uni-muenchen.de&gt;&n; *    10.12.98   0.15  Fix drain_dac trying to wait on not yet initialized DMA&n; *    16.12.98   0.16  Don&squot;t wake up app until there are fragsize bytes to read/write&n; *    06.01.99   0.17  remove the silly SA_INTERRUPT flag.&n; *                     hopefully killed the egcs section type conflict&n; *    12.03.99   0.18  cinfo.blocks should be reset after GETxPTR ioctl.&n; *                     reported by Johan Maes &lt;joma@telindus.be&gt;&n; *    22.03.99   0.19  return EAGAIN instead of EBUSY when O_NONBLOCK&n; *                     read/write cannot be executed&n; *    07.04.99   0.20  implemented the following ioctl&squot;s: SOUND_PCM_READ_RATE, &n; *                     SOUND_PCM_READ_CHANNELS, SOUND_PCM_READ_BITS; &n; *                     Alpha fixes reported by Peter Jones &lt;pjones@redhat.com&gt;&n; *                     Note: joystick address handling might still be wrong on archs&n; *                     other than i386&n; *    10.05.99   0.21  Added support for an electret mic for SB PCI64&n; *                     to the Linux kernel sound driver. This mod also straighten&n; *                     out the question marks around the mic impedance setting&n; *                     (micz). From Kim.Berts@fisub.mail.abb.com&n; *    11.05.99   0.22  Implemented the IMIX call to mute recording monitor.&n; *                     Guenter Geiger &lt;geiger@epy.co.at&gt;&n; *&n; * some important things missing in Ensoniq documentation:&n; *&n; * Experimental PCLKDIV results:  play the same waveforms on both DAC1 and DAC2&n; * and vary PCLKDIV to obtain zero beat.&n; *  5512sps:  254&n; * 44100sps:   30&n; * seems to be fs = 1411200/(PCLKDIV+2)&n; *&n; * should find out when curr_sample_ct is cleared and&n; * where exactly the CCB fetches data&n; *&n; * The card uses a 22.5792 MHz crystal.&n; * The LINEIN jack may be converted to an AOUT jack by&n; * setting pin 47 (XCTL0) of the ES1370 to high.&n; * Pin 48 (XCTL1) of the ES1370 sets the +5V bias for an electretmic&n; * &n; *&n; */
 multiline_comment|/*****************************************************************************/
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
@@ -151,7 +151,7 @@ mdefine_line|#define DAC2_DIVTOSR(x) (1411200/((x)+2))
 DECL|macro|CTRL_ADC_STOP
 mdefine_line|#define CTRL_ADC_STOP   0x80000000  /* 1 = ADC stopped */
 DECL|macro|CTRL_XCTL1
-mdefine_line|#define CTRL_XCTL1      0x40000000  /* ? mic impedance */
+mdefine_line|#define CTRL_XCTL1      0x40000000  /* electret mic bias */
 DECL|macro|CTRL_OPEN
 mdefine_line|#define CTRL_OPEN       0x20000000  /* no function, can be read and written */
 DECL|macro|CTRL_PCLKDIV
@@ -370,6 +370,11 @@ DECL|member|micpreamp
 r_int
 r_int
 id|micpreamp
+suffix:semicolon
+DECL|member|imix
+r_int
+r_int
+id|imix
 suffix:semicolon
 DECL|member|mix
 )brace
@@ -3865,11 +3870,13 @@ r_case
 id|SOUND_MIXER_DEVMASK
 suffix:colon
 multiline_comment|/* Arg contains a bit for each supported device */
+id|val
+op_assign
+id|SOUND_MASK_IMIX
+suffix:semicolon
 r_for
 c_loop
 (paren
-id|val
-op_assign
 id|i
 op_assign
 l_int|0
@@ -4024,6 +4031,22 @@ op_star
 id|arg
 )paren
 suffix:semicolon
+r_case
+id|SOUND_MIXER_IMIX
+suffix:colon
+r_return
+id|put_user
+c_func
+(paren
+id|s-&gt;mix.imix
+comma
+(paren
+r_int
+op_star
+)paren
+id|arg
+)paren
+suffix:semicolon
 r_default
 suffix:colon
 id|i
@@ -4108,6 +4131,40 @@ id|cmd
 )paren
 )paren
 (brace
+r_case
+id|SOUND_MIXER_IMIX
+suffix:colon
+r_if
+c_cond
+(paren
+id|arg
+op_eq
+l_int|0
+)paren
+r_return
+op_minus
+id|EFAULT
+suffix:semicolon
+id|get_user_ret
+c_func
+(paren
+id|s-&gt;mix.imix
+comma
+(paren
+r_int
+op_star
+)paren
+id|arg
+comma
+op_minus
+id|EFAULT
+)paren
+suffix:semicolon
+id|val
+op_assign
+id|s-&gt;mix.recsrc
+suffix:semicolon
+multiline_comment|/* fall through */
 r_case
 id|SOUND_MIXER_RECSRC
 suffix:colon
@@ -4272,8 +4329,21 @@ op_amp
 l_int|0x3000
 )paren
 op_or
-l_int|0xc30
+l_int|0xc60
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|s-&gt;mix.imix
+)paren
+(brace
+id|i
+op_and_assign
+l_int|0xff60
+suffix:semicolon
+multiline_comment|/* mute record and line monitor */
+)brace
 id|wrcodec
 c_func
 (paren
@@ -12574,10 +12644,10 @@ l_int|0
 comma
 )brace
 suffix:semicolon
-DECL|variable|micz
+DECL|variable|micbias
 r_static
 r_int
-id|micz
+id|micbias
 (braket
 id|NR_DEVICE
 )braket
@@ -12737,7 +12807,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;es1370: version v0.20 time &quot;
+l_string|&quot;es1370: version v0.22 time &quot;
 id|__TIME__
 l_string|&quot; &quot;
 id|__DATE__
@@ -12982,11 +13052,10 @@ id|err_irq
 suffix:semicolon
 )brace
 multiline_comment|/* initialize codec registers */
+multiline_comment|/* note: setting CTRL_SERR_DIS is reported to break&n;&t;&t; * mic bias setting (by Kim.Berts@fisub.mail.abb.com) */
 id|s-&gt;ctrl
 op_assign
 id|CTRL_CDC_EN
-op_or
-id|CTRL_SERR_DIS
 op_or
 (paren
 id|DAC2_SRTODIV
@@ -13052,7 +13121,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|micz
+id|micbias
 (braket
 id|index
 )braket
@@ -13267,6 +13336,10 @@ l_int|1
 )paren
 suffix:semicolon
 multiline_comment|/* turn on MIC preamp */
+id|s-&gt;mix.imix
+op_assign
+l_int|1
+suffix:semicolon
 id|fs
 op_assign
 id|get_fs
@@ -13508,7 +13581,7 @@ suffix:semicolon
 id|MODULE_PARM
 c_func
 (paren
-id|micz
+id|micbias
 comma
 l_string|&quot;1-&quot;
 id|__MODULE_STRING
@@ -13522,9 +13595,9 @@ suffix:semicolon
 id|MODULE_PARM_DESC
 c_func
 (paren
-id|micz
+id|micbias
 comma
-l_string|&quot;changes (??) the microphone impedance&quot;
+l_string|&quot;sets the +5V bias for an electret microphone&quot;
 )paren
 suffix:semicolon
 id|MODULE_AUTHOR

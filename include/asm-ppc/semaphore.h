@@ -1,8 +1,10 @@
-macro_line|#ifndef _PPC_SEMAPHORE_H
-DECL|macro|_PPC_SEMAPHORE_H
-mdefine_line|#define _PPC_SEMAPHORE_H
-multiline_comment|/*&n; * SMP- and interrupt-safe semaphores..&n; *&n; * (C) Copyright 1996 Linus Torvalds&n; * Adapted for PowerPC by Gary Thomas and Paul Mackerras&n; */
+macro_line|#ifndef _SPARC_SEMAPHORE_H
+DECL|macro|_SPARC_SEMAPHORE_H
+mdefine_line|#define _SPARC_SEMAPHORE_H
+multiline_comment|/*&n; * Swiped from asm-sparc/semaphore.h and modified&n; * -- Cort (cort@cs.nmt.edu)&n; */
+macro_line|#ifdef __KERNEL__
 macro_line|#include &lt;asm/atomic.h&gt;
+macro_line|#include &lt;linux/wait.h&gt;
 DECL|struct|semaphore
 r_struct
 id|semaphore
@@ -19,14 +21,124 @@ DECL|member|wait
 id|wait_queue_head_t
 id|wait
 suffix:semicolon
+macro_line|#if WAITQUEUE_DEBUG
+DECL|member|__magic
+r_int
+id|__magic
+suffix:semicolon
+macro_line|#endif
 )brace
 suffix:semicolon
-DECL|macro|sema_init
-mdefine_line|#define sema_init(sem, val)&t;atomic_set(&amp;((sem)-&gt;count), (val))
-DECL|macro|MUTEX
-mdefine_line|#define MUTEX&t;&t;((struct semaphore) &bslash;&n;&t;&t;&t; { ATOMIC_INIT(1), ATOMIC_INIT(0), NULL })
-DECL|macro|MUTEX_LOCKED
-mdefine_line|#define MUTEX_LOCKED&t;((struct semaphore) &bslash;&n;&t;&t;&t; { ATOMIC_INIT(0), ATOMIC_INIT(0), NULL })
+macro_line|#if WAITQUEUE_DEBUG
+DECL|macro|__SEM_DEBUG_INIT
+macro_line|# define __SEM_DEBUG_INIT(name) &bslash;&n;&t;&t;, (long)&amp;(name).__magic
+macro_line|#else
+DECL|macro|__SEM_DEBUG_INIT
+macro_line|# define __SEM_DEBUG_INIT(name)
+macro_line|#endif
+DECL|macro|__SEMAPHORE_INITIALIZER
+mdefine_line|#define __SEMAPHORE_INITIALIZER(name,count) &bslash;&n;{ ATOMIC_INIT(count), ATOMIC_INIT(0), __WAIT_QUEUE_HEAD_INITIALIZER((name).wait) &bslash;&n;&t;__SEM_DEBUG_INIT(name) }
+DECL|macro|__MUTEX_INITIALIZER
+mdefine_line|#define __MUTEX_INITIALIZER(name) &bslash;&n;&t;__SEMAPHORE_INITIALIZER(name,1)
+DECL|macro|__DECLARE_SEMAPHORE_GENERIC
+mdefine_line|#define __DECLARE_SEMAPHORE_GENERIC(name,count) &bslash;&n;&t;struct semaphore name = __SEMAPHORE_INITIALIZER(name,count)
+DECL|macro|DECLARE_MUTEX
+mdefine_line|#define DECLARE_MUTEX(name) __DECLARE_SEMAPHORE_GENERIC(name,1)
+DECL|macro|DECLARE_MUTEX_LOCKED
+mdefine_line|#define DECLARE_MUTEX_LOCKED(name) __DECLARE_SEMAPHORE_GENERIC(name,0)
+DECL|function|sema_init
+r_extern
+r_inline
+r_void
+id|sema_init
+(paren
+r_struct
+id|semaphore
+op_star
+id|sem
+comma
+r_int
+id|val
+)paren
+(brace
+id|atomic_set
+c_func
+(paren
+op_amp
+id|sem-&gt;count
+comma
+id|val
+)paren
+suffix:semicolon
+id|atomic_set
+c_func
+(paren
+op_amp
+id|sem-&gt;waking
+comma
+l_int|0
+)paren
+suffix:semicolon
+id|init_waitqueue_head
+c_func
+(paren
+op_amp
+id|sem-&gt;wait
+)paren
+suffix:semicolon
+macro_line|#if WAITQUEUE_DEBUG
+id|sem-&gt;__magic
+op_assign
+(paren
+r_int
+)paren
+op_amp
+id|sem-&gt;__magic
+suffix:semicolon
+macro_line|#endif
+)brace
+DECL|function|init_MUTEX
+r_static
+r_inline
+r_void
+id|init_MUTEX
+(paren
+r_struct
+id|semaphore
+op_star
+id|sem
+)paren
+(brace
+id|sema_init
+c_func
+(paren
+id|sem
+comma
+l_int|1
+)paren
+suffix:semicolon
+)brace
+DECL|function|init_MUTEX_LOCKED
+r_static
+r_inline
+r_void
+id|init_MUTEX_LOCKED
+(paren
+r_struct
+id|semaphore
+op_star
+id|sem
+)paren
+(brace
+id|sema_init
+c_func
+(paren
+id|sem
+comma
+l_int|0
+)paren
+suffix:semicolon
+)brace
 r_extern
 r_void
 id|__down
@@ -242,5 +354,6 @@ id|sem
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif /* !(_PPC_SEMAPHORE_H) */
+macro_line|#endif /* __KERNEL__ */
+macro_line|#endif /* !(_SPARC_SEMAPHORE_H) */
 eof

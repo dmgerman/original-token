@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: avm_a1.c,v 2.7 1998/02/02 13:29:37 keil Exp $&n;&n; * avm_a1.c     low level stuff for AVM A1 (Fritz) isdn cards&n; *&n; * Author       Karsten Keil (keil@temic-ech.spacenet.de)&n; *&n; *&n; * $Log: avm_a1.c,v $&n; * Revision 2.7  1998/02/02 13:29:37  keil&n; * fast io&n; *&n; * Revision 2.6  1998/01/13 23:09:46  keil&n; * really disable timer&n; *&n; * Revision 2.5  1998/01/02 06:50:29  calle&n; * Perodic timer of A1 now disabled, no need for linux driver.&n; *&n; * Revision 2.4  1997/11/08 21:35:42  keil&n; * new l1 init&n; *&n; * Revision 2.3  1997/11/06 17:13:32  keil&n; * New 2.1 init code&n; *&n; * Revision 2.2  1997/10/29 18:55:48  keil&n; * changes for 2.1.60 (irq2dev_map)&n; *&n; * Revision 2.1  1997/07/27 21:47:13  keil&n; * new interface structures&n; *&n; * Revision 2.0  1997/06/26 11:02:48  keil&n; * New Layer and card interface&n; *&n; * Revision 1.6  1997/04/13 19:54:07  keil&n; * Change in IRQ check delay for SMP&n; *&n; * Revision 1.5  1997/04/06 22:54:10  keil&n; * Using SKB&squot;s&n; *&n; * Revision 1.4  1997/01/27 15:50:21  keil&n; * SMP proof,cosmetics&n; *&n; * Revision 1.3  1997/01/21 22:14:20  keil&n; * cleanups&n; *&n; * Revision 1.2  1996/10/27 22:07:31  keil&n; * cosmetic changes&n; *&n; * Revision 1.1  1996/10/13 20:04:49  keil&n; * Initial revision&n; *&n; *&n; */
+multiline_comment|/* $Id: avm_a1.c,v 2.10 1998/11/15 23:54:21 keil Exp $&n;&n; * avm_a1.c     low level stuff for AVM A1 (Fritz) isdn cards&n; *&n; * Author       Karsten Keil (keil@isdn4linux.de)&n; *&n; *&n; * $Log: avm_a1.c,v $&n; * Revision 2.10  1998/11/15 23:54:21  keil&n; * changes from 2.0&n; *&n; * Revision 2.9  1998/08/13 23:36:12  keil&n; * HiSax 3.1 - don&squot;t work stable with current LinkLevel&n; *&n; * Revision 2.8  1998/04/15 16:44:27  keil&n; * new init code&n; *&n; * Revision 2.7  1998/02/02 13:29:37  keil&n; * fast io&n; *&n; * Revision 2.6  1998/01/13 23:09:46  keil&n; * really disable timer&n; *&n; * Revision 2.5  1998/01/02 06:50:29  calle&n; * Perodic timer of A1 now disabled, no need for linux driver.&n; *&n; * Revision 2.4  1997/11/08 21:35:42  keil&n; * new l1 init&n; *&n; * Revision 2.3  1997/11/06 17:13:32  keil&n; * New 2.1 init code&n; *&n; * Revision 2.2  1997/10/29 18:55:48  keil&n; * changes for 2.1.60 (irq2dev_map)&n; *&n; * Revision 2.1  1997/07/27 21:47:13  keil&n; * new interface structures&n; *&n; * Revision 2.0  1997/06/26 11:02:48  keil&n; * New Layer and card interface&n; *&n; * Revision 1.6  1997/04/13 19:54:07  keil&n; * Change in IRQ check delay for SMP&n; *&n; * Revision 1.5  1997/04/06 22:54:10  keil&n; * Using SKB&squot;s&n; *&n; * Revision 1.4  1997/01/27 15:50:21  keil&n; * SMP proof,cosmetics&n; *&n; * Revision 1.3  1997/01/21 22:14:20  keil&n; * cleanups&n; *&n; * Revision 1.2  1996/10/27 22:07:31  keil&n; * cosmetic changes&n; *&n; * Revision 1.1  1996/10/13 20:04:49  keil&n; * Initial revision&n; *&n; *&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &quot;hisax.h&quot;
@@ -14,12 +14,13 @@ id|CardType
 )braket
 suffix:semicolon
 DECL|variable|avm_revision
+r_static
 r_const
 r_char
 op_star
 id|avm_revision
 op_assign
-l_string|&quot;$Revision: 2.7 $&quot;
+l_string|&quot;$Revision: 2.10 $&quot;
 suffix:semicolon
 DECL|macro|AVM_A1_STAT_ISAC
 mdefine_line|#define&t; AVM_A1_STAT_ISAC&t;0x01
@@ -376,12 +377,6 @@ id|stat
 op_assign
 l_int|0
 suffix:semicolon
-r_char
-id|tmp
-(braket
-l_int|32
-)braket
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -455,26 +450,16 @@ id|cs-&gt;debug
 op_amp
 id|L1_DEB_INTSTAT
 )paren
-(brace
-id|sprintf
+id|debugl1
 c_func
 (paren
-id|tmp
+id|cs
 comma
 l_string|&quot;avm IntStatus %x&quot;
 comma
 id|sval
 )paren
 suffix:semicolon
-id|debugl1
-c_func
-(paren
-id|cs
-comma
-id|tmp
-)paren
-suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -852,28 +837,36 @@ suffix:semicolon
 r_case
 id|CARD_INIT
 suffix:colon
-id|clear_pending_isac_ints
+id|inithscxisac
 c_func
 (paren
 id|cs
+comma
+l_int|1
 )paren
 suffix:semicolon
-id|clear_pending_hscx_ints
+id|byteout
 c_func
 (paren
-id|cs
+id|cs-&gt;hw.avm.cfg_reg
+comma
+l_int|0x16
 )paren
 suffix:semicolon
-id|initisac
+id|byteout
 c_func
 (paren
-id|cs
+id|cs-&gt;hw.avm.cfg_reg
+comma
+l_int|0x1E
 )paren
 suffix:semicolon
-id|inithscx
+id|inithscxisac
 c_func
 (paren
 id|cs
+comma
+l_int|2
 )paren
 suffix:semicolon
 r_return
@@ -1677,14 +1670,6 @@ op_plus
 l_int|2
 comma
 id|val
-)paren
-suffix:semicolon
-id|byteout
-c_func
-(paren
-id|cs-&gt;hw.avm.cfg_reg
-comma
-l_int|0x1E
 )paren
 suffix:semicolon
 id|val

@@ -606,6 +606,18 @@ r_return
 op_minus
 id|EINVAL
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|off
+op_amp
+op_complement
+id|PAGE_MASK
+)paren
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
 multiline_comment|/* offset overflow? */
 r_if
 c_cond

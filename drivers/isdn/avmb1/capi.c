@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * $Id: capi.c,v 1.10 1998/02/13 07:09:13 calle Exp $&n; *&n; * CAPI 2.0 Interface for Linux&n; *&n; * Copyright 1996 by Carsten Paeth (calle@calle.in-berlin.de)&n; *&n; * $Log: capi.c,v $&n; * Revision 1.10  1998/02/13 07:09:13  calle&n; * change for 2.1.86 (removing FREE_READ/FREE_WRITE from [dev]_kfree_skb()&n; *&n; * Revision 1.9  1998/01/31 11:14:44  calle&n; * merged changes to 2.0 tree, prepare 2.1.82 to work.&n; *&n; * Revision 1.8  1997/11/04 06:12:08  calle&n; * capi.c: new read/write in file_ops since 2.1.60&n; * capidrv.c: prepared isdnlog interface for d2-trace in newer firmware.&n; * capiutil.c: needs config.h (CONFIG_ISDN_DRV_AVMB1_VERBOSE_REASON)&n; * compat.h: added #define LinuxVersionCode&n; *&n; * Revision 1.7  1997/10/11 10:29:34  calle&n; * llseek() parameters changed in 2.1.56.&n; *&n; * Revision 1.6  1997/10/01 09:21:15  fritz&n; * Removed old compatibility stuff for 2.0.X kernels.&n; * From now on, this code is for 2.1.X ONLY!&n; * Old stuff is still in the separate branch.&n; *&n; * Revision 1.5  1997/08/21 23:11:55  fritz&n; * Added changes for kernels &gt;= 2.1.45&n; *&n; * Revision 1.4  1997/05/27 15:17:50  fritz&n; * Added changes for recent 2.1.x kernels:&n; *   changed return type of isdn_close&n; *   queue_task_* -&gt; queue_task&n; *   clear/set_bit -&gt; test_and_... where apropriate.&n; *   changed type of hard_header_cache parameter.&n; *&n; * Revision 1.3  1997/05/18 09:24:14  calle&n; * added verbose disconnect reason reporting to avmb1.&n; * some fixes in capi20 interface.&n; * changed info messages for B1-PCI&n; *&n; * Revision 1.2  1997/03/05 21:17:59  fritz&n; * Added capi_poll for compiling under 2.1.27&n; *&n; * Revision 1.1  1997/03/04 21:50:29  calle&n; * Frirst version in isdn4linux&n; *&n; * Revision 2.2  1997/02/12 09:31:39  calle&n; * new version&n; *&n; * Revision 1.1  1997/01/31 10:32:20  calle&n; * Initial revision&n; *&n; */
+multiline_comment|/*&n; * $Id: capi.c,v 1.13 1998/08/28 04:32:25 calle Exp $&n; *&n; * CAPI 2.0 Interface for Linux&n; *&n; * Copyright 1996 by Carsten Paeth (calle@calle.in-berlin.de)&n; *&n; * $Log: capi.c,v $&n; * Revision 1.13  1998/08/28 04:32:25  calle&n; * Added patch send by Michael.Mueller4@post.rwth-aachen.de, to get AVM B1&n; * driver running with 2.1.118.&n; *&n; * Revision 1.12  1998/05/26 22:39:34  he&n; * sync&squot;ed with 2.1.102 where appropriate (CAPABILITY changes)&n; * concap typo&n; * cleared dev.tbusy in isdn_net BCONN status callback&n; *&n; * Revision 1.11  1998/03/09 17:46:37  he&n; * merged in 2.1.89 changes&n; *&n; * Revision 1.10  1998/02/13 07:09:13  calle&n; * change for 2.1.86 (removing FREE_READ/FREE_WRITE from [dev]_kfree_skb()&n; *&n; * Revision 1.9  1998/01/31 11:14:44  calle&n; * merged changes to 2.0 tree, prepare 2.1.82 to work.&n; *&n; * Revision 1.8  1997/11/04 06:12:08  calle&n; * capi.c: new read/write in file_ops since 2.1.60&n; * capidrv.c: prepared isdnlog interface for d2-trace in newer firmware.&n; * capiutil.c: needs config.h (CONFIG_ISDN_DRV_AVMB1_VERBOSE_REASON)&n; * compat.h: added #define LinuxVersionCode&n; *&n; * Revision 1.7  1997/10/11 10:29:34  calle&n; * llseek() parameters changed in 2.1.56.&n; *&n; * Revision 1.6  1997/10/01 09:21:15  fritz&n; * Removed old compatibility stuff for 2.0.X kernels.&n; * From now on, this code is for 2.1.X ONLY!&n; * Old stuff is still in the separate branch.&n; *&n; * Revision 1.5  1997/08/21 23:11:55  fritz&n; * Added changes for kernels &gt;= 2.1.45&n; *&n; * Revision 1.4  1997/05/27 15:17:50  fritz&n; * Added changes for recent 2.1.x kernels:&n; *   changed return type of isdn_close&n; *   queue_task_* -&gt; queue_task&n; *   clear/set_bit -&gt; test_and_... where apropriate.&n; *   changed type of hard_header_cache parameter.&n; *&n; * Revision 1.3  1997/05/18 09:24:14  calle&n; * added verbose disconnect reason reporting to avmb1.&n; * some fixes in capi20 interface.&n; * changed info messages for B1-PCI&n; *&n; * Revision 1.2  1997/03/05 21:17:59  fritz&n; * Added capi_poll for compiling under 2.1.27&n; *&n; * Revision 1.1  1997/03/04 21:50:29  calle&n; * Frirst version in isdn4linux&n; *&n; * Revision 2.2  1997/02/12 09:31:39  calle&n; * new version&n; *&n; * Revision 1.1  1997/01/31 10:32:20  calle&n; * Initial revision&n; *&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -834,6 +834,10 @@ id|capidevs
 id|minor
 )braket
 suffix:semicolon
+macro_line|#if (LINUX_VERSION_CODE &lt; 0x020159) /* 2.1.89 */
+DECL|macro|poll_wait
+mdefine_line|#define poll_wait(f,wq,w) poll_wait((wq),(w))
+macro_line|#endif
 id|poll_wait
 c_func
 (paren
@@ -1925,9 +1929,11 @@ comma
 multiline_comment|/* capi_mmap */
 id|capi_open
 comma
+macro_line|#if LINUX_VERSION_CODE &gt;= KERNEL_VERSION(2,1,118)
 l_int|NULL
 comma
-multiline_comment|/* flush */
+multiline_comment|/* capi_flush */
+macro_line|#endif
 id|capi_release
 comma
 l_int|NULL
@@ -1964,6 +1970,11 @@ c_func
 r_void
 )paren
 (brace
+macro_line|#if LINUX_VERSION_CODE &gt;= 131841
+r_int
+id|j
+suffix:semicolon
+macro_line|#endif
 id|memset
 c_func
 (paren
@@ -1977,6 +1988,38 @@ id|capidevs
 )paren
 )paren
 suffix:semicolon
+macro_line|#if LINUX_VERSION_CODE &gt;= 131841
+r_for
+c_loop
+(paren
+id|j
+op_assign
+l_int|0
+suffix:semicolon
+id|j
+OL
+id|CAPI_MAXMINOR
+op_plus
+l_int|1
+suffix:semicolon
+id|j
+op_increment
+)paren
+(brace
+id|init_waitqueue_head
+c_func
+(paren
+op_amp
+id|capidevs
+(braket
+id|j
+)braket
+dot
+id|recv_wait
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
 r_if
 c_cond
 (paren

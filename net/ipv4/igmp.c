@@ -2370,6 +2370,13 @@ comma
 l_string|&quot;Idx&bslash;tDevice    : Count Querier&bslash;tGroup    Users Timer&bslash;tReporter&bslash;n&quot;
 )paren
 suffix:semicolon
+id|read_lock_bh
+c_func
+(paren
+op_amp
+id|dev_base_lock
+)paren
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -2518,6 +2525,13 @@ suffix:semicolon
 )brace
 id|done
 suffix:colon
+id|read_unlock_bh
+c_func
+(paren
+op_amp
+id|dev_base_lock
+)paren
+suffix:semicolon
 op_star
 id|start
 op_assign

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: l3dss1.h,v 1.5 1998/02/02 13:34:30 keil Exp $&n; *&n; *  DSS1 (Euro) D-channel protocol defines&n; *&n; * $Log: l3dss1.h,v $&n; * Revision 1.5  1998/02/02 13:34:30  keil&n; * Support australian Microlink net and german AOCD&n; *&n; * Revision 1.4  1997/10/29 19:07:54  keil&n; * changes for 2.1&n; *&n; * Revision 1.3  1997/08/07 17:44:37  keil&n; * Fix RESTART&n; *&n; * Revision 1.2  1997/08/03 14:36:34  keil&n; * Implement RESTART procedure&n; *&n; * Revision 1.1  1997/07/27 21:08:38  keil&n; * new&n; *&n; *&n; *&n; */
+multiline_comment|/* $Id: l3dss1.h,v 1.6 1998/03/19 13:18:50 keil Exp $&n; *&n; *  DSS1 (Euro) D-channel protocol defines&n; *&n; * $Log: l3dss1.h,v $&n; * Revision 1.6  1998/03/19 13:18:50  keil&n; * Start of a CAPI like interface for supplementary Service&n; * first service: SUSPEND&n; *&n; * Revision 1.5  1998/02/02 13:34:30  keil&n; * Support australian Microlink net and german AOCD&n; *&n; * Revision 1.4  1997/10/29 19:07:54  keil&n; * changes for 2.1&n; *&n; * Revision 1.3  1997/08/07 17:44:37  keil&n; * Fix RESTART&n; *&n; * Revision 1.2  1997/08/03 14:36:34  keil&n; * Implement RESTART procedure&n; *&n; * Revision 1.1  1997/07/27 21:08:38  keil&n; * new&n; *&n; *&n; *&n; */
 DECL|macro|T303
 mdefine_line|#define T303&t;4000
 DECL|macro|T304
@@ -70,10 +70,12 @@ DECL|macro|MT_STATUS_ENQUIRY
 mdefine_line|#define MT_STATUS_ENQUIRY      0x75
 DECL|macro|MT_INVALID
 mdefine_line|#define MT_INVALID             0xff
-DECL|macro|IE_CAUSE
-mdefine_line|#define IE_CAUSE               0x08
 DECL|macro|IE_BEARER
 mdefine_line|#define IE_BEARER              0x04
+DECL|macro|IE_CAUSE
+mdefine_line|#define IE_CAUSE               0x08
+DECL|macro|IE_CALLID
+mdefine_line|#define IE_CALLID              0x10
 DECL|macro|IE_FACILITY
 mdefine_line|#define IE_FACILITY            0x1c
 DECL|macro|IE_CALL_STATE

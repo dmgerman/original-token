@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * $Id: capidrv.c,v 1.11 1998/02/13 07:09:15 calle Exp $&n; *&n; * ISDN4Linux Driver, using capi20 interface (kernelcapi)&n; *&n; * Copyright 1997 by Carsten Paeth (calle@calle.in-berlin.de)&n; *&n; * $Log: capidrv.c,v $&n; * Revision 1.11  1998/02/13 07:09:15  calle&n; * change for 2.1.86 (removing FREE_READ/FREE_WRITE from [dev]_kfree_skb()&n; *&n; * Revision 1.10  1998/02/02 19:52:23  calle&n; * Fixed vbox (audio) acceptb.&n; *&n; * Revision 1.9  1998/01/31 11:14:45  calle&n; * merged changes to 2.0 tree, prepare 2.1.82 to work.&n; *&n; * Revision 1.8  1997/11/04 06:12:09  calle&n; * capi.c: new read/write in file_ops since 2.1.60&n; * capidrv.c: prepared isdnlog interface for d2-trace in newer firmware.&n; * capiutil.c: needs config.h (CONFIG_ISDN_DRV_AVMB1_VERBOSE_REASON)&n; * compat.h: added #define LinuxVersionCode&n; *&n; * Revision 1.7  1997/10/11 10:36:34  calle&n; * Added isdnlog support. patch to isdnlog needed.&n; *&n; * Revision 1.6  1997/10/11 10:25:55  calle&n; * New interface for lowlevel drivers. BSENT with nr. of bytes sent,&n; * allow sending without ACK.&n; *&n; * Revision 1.5  1997/10/01 09:21:16  fritz&n; * Removed old compatibility stuff for 2.0.X kernels.&n; * From now on, this code is for 2.1.X ONLY!&n; * Old stuff is still in the separate branch.&n; *&n; * Revision 1.4  1997/07/13 12:22:43  calle&n; * bug fix for more than one controller in connect_req.&n; * debugoutput now with contrnr.&n; *&n; * Revision 1.3  1997/05/18 09:24:15  calle&n; * added verbose disconnect reason reporting to avmb1.&n; * some fixes in capi20 interface.&n; * changed info messages for B1-PCI&n; *&n; * Revision 1.2  1997/03/05 21:19:59  fritz&n; * Removed include of config.h (mkdep stated this is unneded).&n; *&n; * Revision 1.1  1997/03/04 21:50:31  calle&n; * Frirst version in isdn4linux&n; *&n; * Revision 2.2  1997/02/12 09:31:39  calle&n; * new version&n; *&n; * Revision 1.1  1997/01/31 10:32:20  calle&n; * Initial revision&n; *&n; */
+multiline_comment|/*&n; * $Id: capidrv.c,v 1.13 1998/06/26 15:12:55 fritz Exp $&n; *&n; * ISDN4Linux Driver, using capi20 interface (kernelcapi)&n; *&n; * Copyright 1997 by Carsten Paeth (calle@calle.in-berlin.de)&n; *&n; * $Log: capidrv.c,v $&n; * Revision 1.13  1998/06/26 15:12:55  fritz&n; * Added handling of STAT_ICALL with incomplete CPN.&n; * Added AT&amp;L for ttyI emulator.&n; * Added more locking stuff in tty_write.&n; *&n; * Revision 1.12  1998/03/29 16:06:03  calle&n; * changes from 2.0 tree merged.&n; *&n; * Revision 1.3.2.10  1998/03/20 14:38:24  calle&n; * capidrv: prepared state machines for suspend/resume/hold&n; * capidrv: fix bug in state machine if B1/T1 is out of nccis&n; * b1capi: changed some errno returns.&n; * b1capi: detect if you try to add same T1 to different io address.&n; * b1capi: change number of nccis depending on number of channels.&n; * b1lli: cosmetics&n; *&n; * Revision 1.3.2.9  1998/03/20 09:01:12  calle&n; * Changes capi_register handling to get full support for 30 bchannels.&n; *&n; * Revision 1.3.2.8  1998/03/18 17:51:28  calle&n; * added controller number to error messages&n; *&n; * Revision 1.3.2.7  1998/02/27 15:40:47  calle&n; * T1 running with slow link. bugfix in capi_release.&n; *&n; * Revision 1.11  1998/02/13 07:09:15  calle&n; * change for 2.1.86 (removing FREE_READ/FREE_WRITE from [dev]_kfree_skb()&n; *&n; * Revision 1.10  1998/02/02 19:52:23  calle&n; * Fixed vbox (audio) acceptb.&n; *&n; * Revision 1.9  1998/01/31 11:14:45  calle&n; * merged changes to 2.0 tree, prepare 2.1.82 to work.&n; *&n; * Revision 1.8  1997/11/04 06:12:09  calle&n; * capi.c: new read/write in file_ops since 2.1.60&n; * capidrv.c: prepared isdnlog interface for d2-trace in newer firmware.&n; * capiutil.c: needs config.h (CONFIG_ISDN_DRV_AVMB1_VERBOSE_REASON)&n; * compat.h: added #define LinuxVersionCode&n; *&n; * Revision 1.7  1997/10/11 10:36:34  calle&n; * Added isdnlog support. patch to isdnlog needed.&n; *&n; * Revision 1.6  1997/10/11 10:25:55  calle&n; * New interface for lowlevel drivers. BSENT with nr. of bytes sent,&n; * allow sending without ACK.&n; *&n; * Revision 1.5  1997/10/01 09:21:16  fritz&n; * Removed old compatibility stuff for 2.0.X kernels.&n; * From now on, this code is for 2.1.X ONLY!&n; * Old stuff is still in the separate branch.&n; *&n; * Revision 1.4  1997/07/13 12:22:43  calle&n; * bug fix for more than one controller in connect_req.&n; * debugoutput now with contrnr.&n; *&n; * Revision 1.3  1997/05/18 09:24:15  calle&n; * added verbose disconnect reason reporting to avmb1.&n; * some fixes in capi20 interface.&n; * changed info messages for B1-PCI&n; *&n; * Revision 1.2  1997/03/05 21:19:59  fritz&n; * Removed include of config.h (mkdep stated this is unneded).&n; *&n; * Revision 1.1  1997/03/04 21:50:31  calle&n; * Frirst version in isdn4linux&n; *&n; * Revision 2.2  1997/02/12 09:31:39  calle&n; * new version&n; *&n; * Revision 1.1  1997/01/31 10:32:20  calle&n; * Initial revision&n; *&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -26,7 +26,7 @@ r_char
 op_star
 id|revision
 op_assign
-l_string|&quot;$Revision: 1.11 $&quot;
+l_string|&quot;$Revision: 1.13 $&quot;
 suffix:semicolon
 DECL|variable|debugmode
 r_int
@@ -1463,7 +1463,9 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;capidrv: free_plci %p (0x%x) not found, Huh?&bslash;n&quot;
+l_string|&quot;capidrv-%d: free_plci %p (0x%x) not found, Huh?&bslash;n&quot;
+comma
+id|card-&gt;contrnr
 comma
 id|plcip
 comma
@@ -2232,7 +2234,9 @@ id|printk
 c_func
 (paren
 id|KERN_DEBUG
-l_string|&quot;capidrv: listen_change_state %d -&gt; %d&bslash;n&quot;
+l_string|&quot;capidrv-%d: listen_change_state %d -&gt; %d&bslash;n&quot;
+comma
+id|card-&gt;contrnr
 comma
 id|card-&gt;state
 comma
@@ -2254,7 +2258,9 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;capidrv: listen_change_state state=%d event=%d ????&bslash;n&quot;
+l_string|&quot;capidrv-%d: listen_change_state state=%d event=%d ????&bslash;n&quot;
+comma
+id|card-&gt;contrnr
 comma
 id|card-&gt;state
 comma
@@ -2395,6 +2401,16 @@ comma
 l_int|0
 )brace
 comma
+(brace
+id|ST_PLCI_NONE
+comma
+id|ST_PLCI_RESUMEING
+comma
+id|EV_PLCI_RESUME_REQ
+comma
+l_int|0
+)brace
+comma
 multiline_comment|/* P-0.1 */
 (brace
 id|ST_PLCI_OUTGOING
@@ -2508,6 +2524,26 @@ comma
 l_int|0
 )brace
 comma
+(brace
+id|ST_PLCI_ACTIVE
+comma
+id|ST_PLCI_HELD
+comma
+id|EV_PLCI_HOLD_IND
+comma
+l_int|0
+)brace
+comma
+(brace
+id|ST_PLCI_ACTIVE
+comma
+id|ST_PLCI_DISCONNECTING
+comma
+id|EV_PLCI_SUSPEND_IND
+comma
+l_int|0
+)brace
+comma
 multiline_comment|/* P-2 */
 (brace
 id|ST_PLCI_INCOMING
@@ -2565,6 +2601,16 @@ comma
 id|ST_PLCI_DISCONNECTED
 comma
 id|EV_PLCI_DISCONNECT_IND
+comma
+l_int|0
+)brace
+comma
+(brace
+id|ST_PLCI_INCOMING
+comma
+id|ST_PLCI_DISCONNECTING
+comma
+id|EV_PLCI_CD_IND
 comma
 l_int|0
 )brace
@@ -2683,6 +2729,49 @@ comma
 id|p0
 )brace
 comma
+multiline_comment|/* P-0.Res */
+(brace
+id|ST_PLCI_RESUMEING
+comma
+id|ST_PLCI_NONE
+comma
+id|EV_PLCI_RESUME_CONF_ERROR
+comma
+id|p0
+)brace
+comma
+(brace
+id|ST_PLCI_RESUMEING
+comma
+id|ST_PLCI_RESUME
+comma
+id|EV_PLCI_RESUME_CONF_OK
+comma
+l_int|0
+)brace
+comma
+multiline_comment|/* P-RES */
+(brace
+id|ST_PLCI_RESUME
+comma
+id|ST_PLCI_ACTIVE
+comma
+id|EV_PLCI_RESUME_IND
+comma
+l_int|0
+)brace
+comma
+multiline_comment|/* P-HELD */
+(brace
+id|ST_PLCI_HELD
+comma
+id|ST_PLCI_ACTIVE
+comma
+id|EV_PLCI_RETRIEVE_IND
+comma
+l_int|0
+)brace
+comma
 (brace
 )brace
 comma
@@ -2740,7 +2829,9 @@ id|printk
 c_func
 (paren
 id|KERN_DEBUG
-l_string|&quot;capidrv: plci_change_state:0x%x %d -&gt; %d&bslash;n&quot;
+l_string|&quot;capidrv-%d: plci_change_state:0x%x %d -&gt; %d&bslash;n&quot;
+comma
+id|card-&gt;contrnr
 comma
 id|plci-&gt;plci
 comma
@@ -2779,7 +2870,9 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;capidrv: plci_change_state:0x%x state=%d event=%d ????&bslash;n&quot;
+l_string|&quot;capidrv-%d: plci_change_state:0x%x state=%d event=%d ????&bslash;n&quot;
+comma
+id|card-&gt;contrnr
 comma
 id|plci-&gt;plci
 comma
@@ -2835,6 +2928,7 @@ multiline_comment|/* Keypadfacility */
 l_int|0
 comma
 multiline_comment|/* Useruserdata */
+multiline_comment|/* $$$$ */
 l_int|0
 multiline_comment|/* Facilitydataarray */
 )paren
@@ -2971,7 +3065,7 @@ id|ST_NCCI_NONE
 comma
 id|EV_NCCI_CONNECT_B3_CONF_ERROR
 comma
-l_int|0
+id|n0
 )brace
 comma
 multiline_comment|/* N-1 */
@@ -3047,6 +3141,16 @@ l_int|0
 )brace
 comma
 multiline_comment|/* N-ACT */
+(brace
+id|ST_NCCI_ACTIVE
+comma
+id|ST_NCCI_ACTIVE
+comma
+id|EV_NCCI_RESET_B3_IND
+comma
+l_int|0
+)brace
+comma
 (brace
 id|ST_NCCI_ACTIVE
 comma
@@ -3197,7 +3301,9 @@ id|printk
 c_func
 (paren
 id|KERN_DEBUG
-l_string|&quot;capidrv: ncci_change_state:0x%x %d -&gt; %d&bslash;n&quot;
+l_string|&quot;capidrv-%d: ncci_change_state:0x%x %d -&gt; %d&bslash;n&quot;
+comma
+id|card-&gt;contrnr
 comma
 id|ncci-&gt;ncci
 comma
@@ -3260,7 +3366,9 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;capidrv: ncci_change_state:0x%x state=%d event=%d ????&bslash;n&quot;
+l_string|&quot;capidrv-%d: ncci_change_state:0x%x state=%d event=%d ????&bslash;n&quot;
+comma
+id|card-&gt;contrnr
 comma
 id|ncci-&gt;ncci
 comma
@@ -3411,7 +3519,9 @@ id|printk
 c_func
 (paren
 id|KERN_DEBUG
-l_string|&quot;capidrv: listenconf Info=0x%4x (%s) cipmask=0x%x&bslash;n&quot;
+l_string|&quot;capidrv-%d: listenconf Info=0x%4x (%s) cipmask=0x%x&bslash;n&quot;
+comma
+id|card-&gt;contrnr
 comma
 id|cmsg-&gt;Info
 comma
@@ -3675,7 +3785,9 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;capidrv: %s from controller 0x%x layer 0x%x, ignored&bslash;n&quot;
+l_string|&quot;capidrv-%d: %s from controller 0x%x layer 0x%x, ignored&bslash;n&quot;
+comma
+id|card-&gt;contrnr
 comma
 id|capi_cmd2str
 c_func
@@ -3761,7 +3873,9 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;capidrv: %s from controller 0x%x function %d: %s&bslash;n&quot;
+l_string|&quot;capidrv-%d: %s from controller 0x%x function %d: %s&bslash;n&quot;
+comma
+id|card-&gt;contrnr
 comma
 id|capi_cmd2str
 c_func
@@ -3818,7 +3932,9 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;capidrv: got %s from controller 0x%x ???&quot;
+l_string|&quot;capidrv-%d: got %s from controller 0x%x ???&quot;
+comma
+id|card-&gt;contrnr
 comma
 id|capi_cmd2str
 c_func
@@ -3840,7 +3956,9 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;capidrv: %s from controller 0x%x ignored&bslash;n&quot;
+l_string|&quot;capidrv-%d: %s from controller 0x%x ignored&bslash;n&quot;
+comma
+id|card-&gt;contrnr
 comma
 id|capi_cmd2str
 c_func
@@ -3904,7 +4022,9 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;capidrv: incoming call on not existing bchan ?&bslash;n&quot;
+l_string|&quot;capidrv-%d: incoming call on not existing bchan ?&bslash;n&quot;
+comma
+id|card-&gt;contrnr
 )paren
 suffix:semicolon
 r_return
@@ -3940,7 +4060,9 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;capidrv: incoming call: no memory, sorry.&bslash;n&quot;
+l_string|&quot;capidrv-%d: incoming call: no memory, sorry.&bslash;n&quot;
+comma
+id|card-&gt;contrnr
 )paren
 suffix:semicolon
 r_return
@@ -4058,7 +4180,9 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;capidrv: incoming call %s,%d,%d,%s&bslash;n&quot;
+l_string|&quot;capidrv-%d: incoming call %s,%d,%d,%s&bslash;n&quot;
+comma
+id|card-&gt;contrnr
 comma
 id|cmd.parm.setup.phone
 comma
@@ -4084,6 +4208,9 @@ id|cmd
 (brace
 r_case
 l_int|0
+suffix:colon
+r_case
+l_int|3
 suffix:colon
 multiline_comment|/* No device matching this call.&n;&t;&t; * and isdn_common.c has send a HANGUP command&n;&t;&t; * which is ignored in state ST_PLCI_INCOMING,&n;&t;&t; * so we send RESP to ignore the call&n;&t;&t; */
 id|capi_cmsg_answer
@@ -4119,7 +4246,9 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;capidrv: incoming call %s,%d,%d,%s ignored&bslash;n&quot;
+l_string|&quot;capidrv-%d: incoming call %s,%d,%d,%s ignored&bslash;n&quot;
+comma
+id|card-&gt;contrnr
 comma
 id|cmd.parm.setup.phone
 comma
@@ -4148,7 +4277,9 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;capidrv: incoming call %s,%d,%d,%s tty alerting&bslash;n&quot;
+l_string|&quot;capidrv-%d: incoming call %s,%d,%d,%s tty alerting&bslash;n&quot;
+comma
+id|card-&gt;contrnr
 comma
 id|cmd.parm.setup.phone
 comma
@@ -4204,7 +4335,9 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;capidrv: incoming call %s,%d,%d,%s on netdev&bslash;n&quot;
+l_string|&quot;capidrv-%d: incoming call %s,%d,%d,%s on netdev&bslash;n&quot;
+comma
+id|card-&gt;contrnr
 comma
 id|cmd.parm.setup.phone
 comma
@@ -4376,7 +4509,9 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;capidrv: %s reason 0x%x (%s) for plci 0x%x&bslash;n&quot;
+l_string|&quot;capidrv-%d: %s reason 0x%x (%s) for plci 0x%x&bslash;n&quot;
+comma
+id|card-&gt;contrnr
 comma
 id|capi_cmd2str
 c_func
@@ -4492,7 +4627,9 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;capidrv: %s info 0x%x (%s) for plci 0x%x&bslash;n&quot;
+l_string|&quot;capidrv-%d: %s info 0x%x (%s) for plci 0x%x&bslash;n&quot;
+comma
+id|card-&gt;contrnr
 comma
 id|capi_cmd2str
 c_func
@@ -4558,7 +4695,9 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;capidrv: %s info 0x%x (%s) for plci 0x%x&bslash;n&quot;
+l_string|&quot;capidrv-%d: %s info 0x%x (%s) for plci 0x%x&bslash;n&quot;
+comma
+id|card-&gt;contrnr
 comma
 id|capi_cmd2str
 c_func
@@ -4610,7 +4749,9 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;capidrv: %s info 0x%x (%s) for plci 0x%x&bslash;n&quot;
+l_string|&quot;capidrv-%d: %s info 0x%x (%s) for plci 0x%x&bslash;n&quot;
+comma
+id|card-&gt;contrnr
 comma
 id|capi_cmd2str
 c_func
@@ -4789,7 +4930,9 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;capidrv: no mem for ncci, sorry&bslash;n&quot;
+l_string|&quot;capidrv-%d: no mem for ncci, sorry&bslash;n&quot;
+comma
+id|card-&gt;contrnr
 )paren
 suffix:semicolon
 r_break
@@ -5004,7 +5147,9 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;capidrv: %s&bslash;n&quot;
+l_string|&quot;capidrv-%d: %s&bslash;n&quot;
+comma
+id|card-&gt;contrnr
 comma
 id|capi_cmsg2str
 c_func
@@ -5056,7 +5201,9 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;capidrv: got %s for plci 0x%x ???&quot;
+l_string|&quot;capidrv-%d: got %s for plci 0x%x ???&quot;
+comma
+id|card-&gt;contrnr
 comma
 id|capi_cmd2str
 c_func
@@ -5078,7 +5225,9 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;capidrv: %s for plci 0x%x ignored&bslash;n&quot;
+l_string|&quot;capidrv-%d: %s for plci 0x%x ignored&bslash;n&quot;
+comma
+id|card-&gt;contrnr
 comma
 id|capi_cmd2str
 c_func
@@ -5099,7 +5248,9 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;capidrv: %s: plci 0x%x not found&bslash;n&quot;
+l_string|&quot;capidrv-%d: %s: plci 0x%x not found&bslash;n&quot;
+comma
+id|card-&gt;contrnr
 comma
 id|capi_cmd2str
 c_func
@@ -5265,7 +5416,9 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;capidrv: chan %d up with ncci 0x%x&bslash;n&quot;
+l_string|&quot;capidrv-%d: chan %d up with ncci 0x%x&bslash;n&quot;
+comma
+id|card-&gt;contrnr
 comma
 id|nccip-&gt;chan
 comma
@@ -5374,7 +5527,9 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;capidrv: no mem for ncci, sorry&bslash;n&quot;
+l_string|&quot;capidrv-%d: no mem for ncci, sorry&bslash;n&quot;
+comma
+id|card-&gt;contrnr
 )paren
 suffix:semicolon
 )brace
@@ -5384,7 +5539,9 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;capidrv: %s: plci for ncci 0x%x not found&bslash;n&quot;
+l_string|&quot;capidrv-%d: %s: plci for ncci 0x%x not found&bslash;n&quot;
+comma
+id|card-&gt;contrnr
 comma
 id|capi_cmd2str
 c_func
@@ -5466,7 +5623,9 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;capidrv: %s info 0x%x (%s) for ncci 0x%x&bslash;n&quot;
+l_string|&quot;capidrv-%d: %s info 0x%x (%s) for ncci 0x%x&bslash;n&quot;
+comma
+id|card-&gt;contrnr
 comma
 id|capi_cmd2str
 c_func
@@ -5714,7 +5873,9 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;capidrv: %s info 0x%x (%s) for ncci 0x%x&bslash;n&quot;
+l_string|&quot;capidrv-%d: %s info 0x%x (%s) for ncci 0x%x&bslash;n&quot;
+comma
+id|card-&gt;contrnr
 comma
 id|capi_cmd2str
 c_func
@@ -5752,6 +5913,35 @@ r_case
 id|CAPI_RESET_B3_IND
 suffix:colon
 multiline_comment|/* ncci */
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|nccip
+op_assign
+id|find_ncci
+c_func
+(paren
+id|card
+comma
+id|cmsg-&gt;adr.adrNCCI
+)paren
+)paren
+)paren
+r_goto
+id|notfound
+suffix:semicolon
+id|ncci_change_state
+c_func
+(paren
+id|card
+comma
+id|nccip
+comma
+id|EV_NCCI_RESET_B3_IND
+)paren
+suffix:semicolon
 id|capi_cmsg_answer
 c_func
 (paren
@@ -5796,7 +5986,9 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;capidrv: got %s for ncci 0x%x ???&quot;
+l_string|&quot;capidrv-%d: got %s for ncci 0x%x ???&quot;
+comma
+id|card-&gt;contrnr
 comma
 id|capi_cmd2str
 c_func
@@ -5818,7 +6010,9 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;capidrv: %s for ncci 0x%x ignored&bslash;n&quot;
+l_string|&quot;capidrv-%d: %s for ncci 0x%x ignored&bslash;n&quot;
+comma
+id|card-&gt;contrnr
 comma
 id|capi_cmd2str
 c_func
@@ -5839,7 +6033,9 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;capidrv: %s: ncci 0x%x not found&bslash;n&quot;
+l_string|&quot;capidrv-%d: %s: ncci 0x%x not found&bslash;n&quot;
+comma
+id|card-&gt;contrnr
 comma
 id|capi_cmd2str
 c_func
@@ -5935,7 +6131,9 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;capidrv: %s: ncci 0x%x not found&bslash;n&quot;
+l_string|&quot;capidrv-%d: %s: ncci 0x%x not found&bslash;n&quot;
+comma
+id|card-&gt;contrnr
 comma
 id|capi_cmd2str
 c_func
@@ -6061,7 +6259,9 @@ id|printk
 c_func
 (paren
 id|KERN_DEBUG
-l_string|&quot;capidrv_signal: %s&bslash;n&quot;
+l_string|&quot;capidrv_signal: applid=%d %s&bslash;n&quot;
+comma
+id|applid
 comma
 id|capi_cmsg2str
 c_func
@@ -6199,7 +6399,9 @@ id|printk
 c_func
 (paren
 id|KERN_DEBUG
-l_string|&quot;avmb1_q931_data: len == %d&bslash;n&quot;
+l_string|&quot;capidrv-%d: avmb1_q931_data: len == %d&bslash;n&quot;
+comma
+id|card-&gt;contrnr
 comma
 id|len
 )paren
@@ -6472,7 +6674,9 @@ id|printk
 c_func
 (paren
 id|KERN_DEBUG
-l_string|&quot;capidrv: capidrv_ioctl(%ld) called ??&bslash;n&quot;
+l_string|&quot;capidrv-%d: capidrv_ioctl(%ld) called ??&bslash;n&quot;
+comma
+id|card-&gt;contrnr
 comma
 id|c-&gt;arg
 )paren
@@ -6566,7 +6770,9 @@ id|printk
 c_func
 (paren
 id|KERN_DEBUG
-l_string|&quot;capidrv: ISDN_CMD_DIAL(ch=%ld,&bslash;&quot;%s,%d,%d,%s&bslash;&quot;)&bslash;n&quot;
+l_string|&quot;capidrv-%d: ISDN_CMD_DIAL(ch=%ld,&bslash;&quot;%s,%d,%d,%s&bslash;&quot;)&bslash;n&quot;
+comma
+id|card-&gt;contrnr
 comma
 id|c-&gt;arg
 comma
@@ -6599,7 +6805,9 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;capidrv: dail ch=%ld,&bslash;&quot;%s,%d,%d,%s&bslash;&quot; in use (plci=0x%x)&bslash;n&quot;
+l_string|&quot;capidrv-%d: dail ch=%ld,&bslash;&quot;%s,%d,%d,%s&bslash;&quot; in use (plci=0x%x)&bslash;n&quot;
+comma
+id|card-&gt;contrnr
 comma
 id|c-&gt;arg
 comma
@@ -6898,20 +7106,6 @@ suffix:semicolon
 r_case
 id|ISDN_CMD_ACCEPTD
 suffix:colon
-r_if
-c_cond
-(paren
-id|debugmode
-)paren
-id|printk
-c_func
-(paren
-id|KERN_DEBUG
-l_string|&quot;capidrv: ISDN_CMD_ACCEPTD(ch=%ld)&bslash;n&quot;
-comma
-id|c-&gt;arg
-)paren
-suffix:semicolon
 id|bchan
 op_assign
 op_amp
@@ -6921,6 +7115,26 @@ id|c-&gt;arg
 op_mod
 id|card-&gt;nbchan
 )braket
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|debugmode
+)paren
+id|printk
+c_func
+(paren
+id|KERN_DEBUG
+l_string|&quot;capidrv-%d: ISDN_CMD_ACCEPTD(ch=%ld) l2=%d l3=%d&bslash;n&quot;
+comma
+id|card-&gt;contrnr
+comma
+id|c-&gt;arg
+comma
+id|bchan-&gt;l2
+comma
+id|bchan-&gt;l3
+)paren
 suffix:semicolon
 id|capi_fill_CONNECT_RESP
 c_func
@@ -7040,7 +7254,9 @@ id|printk
 c_func
 (paren
 id|KERN_DEBUG
-l_string|&quot;capidrv: ISDN_CMD_ACCEPTB(ch=%ld)&bslash;n&quot;
+l_string|&quot;capidrv-%d: ISDN_CMD_ACCEPTB(ch=%ld)&bslash;n&quot;
+comma
+id|card-&gt;contrnr
 comma
 id|c-&gt;arg
 )paren
@@ -7061,7 +7277,9 @@ id|printk
 c_func
 (paren
 id|KERN_DEBUG
-l_string|&quot;capidrv: ISDN_CMD_HANGUP(ch=%ld)&bslash;n&quot;
+l_string|&quot;capidrv-%d: ISDN_CMD_HANGUP(ch=%ld)&bslash;n&quot;
+comma
+id|card-&gt;contrnr
 comma
 id|c-&gt;arg
 )paren
@@ -7091,7 +7309,9 @@ id|printk
 c_func
 (paren
 id|KERN_DEBUG
-l_string|&quot;capidrv: chan %ld already disconnecting ...&bslash;n&quot;
+l_string|&quot;capidrv-%d: chan %ld already disconnecting ...&bslash;n&quot;
+comma
+id|card-&gt;contrnr
 comma
 id|c-&gt;arg
 )paren
@@ -7230,7 +7450,9 @@ id|printk
 c_func
 (paren
 id|KERN_DEBUG
-l_string|&quot;capidrv: set L2 on chan %ld to %ld&bslash;n&quot;
+l_string|&quot;capidrv-%d: set L2 on chan %ld to %ld&bslash;n&quot;
+comma
+id|card-&gt;contrnr
 comma
 (paren
 id|c-&gt;arg
@@ -7250,7 +7472,11 @@ op_assign
 op_amp
 id|card-&gt;bchans
 (braket
+(paren
 id|c-&gt;arg
+op_amp
+l_int|0xff
+)paren
 op_mod
 id|card-&gt;nbchan
 )braket
@@ -7278,7 +7504,9 @@ id|printk
 c_func
 (paren
 id|KERN_DEBUG
-l_string|&quot;capidrv: set L3 on chan %ld to %ld&bslash;n&quot;
+l_string|&quot;capidrv-%d: set L3 on chan %ld to %ld&bslash;n&quot;
+comma
+id|card-&gt;contrnr
 comma
 (paren
 id|c-&gt;arg
@@ -7298,7 +7526,11 @@ op_assign
 op_amp
 id|card-&gt;bchans
 (braket
+(paren
 id|c-&gt;arg
+op_amp
+l_int|0xff
+)paren
 op_mod
 id|card-&gt;nbchan
 )braket
@@ -7326,7 +7558,9 @@ id|printk
 c_func
 (paren
 id|KERN_DEBUG
-l_string|&quot;capidrv: set EAZ &bslash;&quot;%s&bslash;&quot; on chan %ld&bslash;n&quot;
+l_string|&quot;capidrv-%d: set EAZ &bslash;&quot;%s&bslash;&quot; on chan %ld&bslash;n&quot;
+comma
+id|card-&gt;contrnr
 comma
 id|c-&gt;parm.num
 comma
@@ -7368,7 +7602,9 @@ id|printk
 c_func
 (paren
 id|KERN_DEBUG
-l_string|&quot;capidrv: clearing EAZ on chan %ld&bslash;n&quot;
+l_string|&quot;capidrv-%d: clearing EAZ on chan %ld&bslash;n&quot;
+comma
+id|card-&gt;contrnr
 comma
 id|c-&gt;arg
 )paren
@@ -7407,7 +7643,9 @@ id|printk
 c_func
 (paren
 id|KERN_DEBUG
-l_string|&quot;capidrv: ISDN_CMD_LOCK (%ld)&bslash;n&quot;
+l_string|&quot;capidrv-%d: ISDN_CMD_LOCK (%ld)&bslash;n&quot;
+comma
+id|card-&gt;contrnr
 comma
 id|c-&gt;arg
 )paren
@@ -7430,7 +7668,9 @@ id|printk
 c_func
 (paren
 id|KERN_DEBUG
-l_string|&quot;capidrv: ISDN_CMD_UNLOCK (%ld)&bslash;n&quot;
+l_string|&quot;capidrv-%d: ISDN_CMD_UNLOCK (%ld)&bslash;n&quot;
+comma
+id|card-&gt;contrnr
 comma
 id|c-&gt;arg
 )paren
@@ -7452,7 +7692,9 @@ id|printk
 c_func
 (paren
 id|KERN_DEBUG
-l_string|&quot;capidrv: ISDN_CMD_GETL2&bslash;n&quot;
+l_string|&quot;capidrv-%d: ISDN_CMD_GETL2&bslash;n&quot;
+comma
+id|card-&gt;contrnr
 )paren
 suffix:semicolon
 r_return
@@ -7471,7 +7713,9 @@ id|printk
 c_func
 (paren
 id|KERN_DEBUG
-l_string|&quot;capidrv: ISDN_CMD_GETL3&bslash;n&quot;
+l_string|&quot;capidrv-%d: ISDN_CMD_GETL3&bslash;n&quot;
+comma
+id|card-&gt;contrnr
 )paren
 suffix:semicolon
 r_return
@@ -7490,7 +7734,9 @@ id|printk
 c_func
 (paren
 id|KERN_DEBUG
-l_string|&quot;capidrv: ISDN_CMD_GETEAZ&bslash;n&quot;
+l_string|&quot;capidrv-%d: ISDN_CMD_GETEAZ&bslash;n&quot;
+comma
+id|card-&gt;contrnr
 )paren
 suffix:semicolon
 r_return
@@ -7509,7 +7755,9 @@ id|printk
 c_func
 (paren
 id|KERN_DEBUG
-l_string|&quot;capidrv: ISDN_CMD_SETSIL&bslash;n&quot;
+l_string|&quot;capidrv-%d: ISDN_CMD_SETSIL&bslash;n&quot;
+comma
+id|card-&gt;contrnr
 )paren
 suffix:semicolon
 r_return
@@ -7528,7 +7776,9 @@ id|printk
 c_func
 (paren
 id|KERN_DEBUG
-l_string|&quot;capidrv: ISDN_CMD_GETSIL&bslash;n&quot;
+l_string|&quot;capidrv-%d: ISDN_CMD_GETSIL&bslash;n&quot;
+comma
+id|card-&gt;contrnr
 )paren
 suffix:semicolon
 r_return
@@ -7541,7 +7791,9 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;capidrv: ISDN_CMD_%d, Huh?&bslash;n&quot;
+l_string|&quot;capidrv-%d: ISDN_CMD_%d, Huh?&bslash;n&quot;
+comma
+id|card-&gt;contrnr
 comma
 id|c-&gt;command
 )paren
@@ -7594,7 +7846,9 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;capidrv: if_command %d called with invalid driverId %d!&bslash;n&quot;
+l_string|&quot;capidrv-%d: if_command %d called with invalid driverId %d!&bslash;n&quot;
+comma
+id|card-&gt;contrnr
 comma
 id|c-&gt;command
 comma
@@ -7675,7 +7929,9 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;capidrv: if_sendbuf called with invalid driverId %d!&bslash;n&quot;
+l_string|&quot;capidrv-%d: if_sendbuf called with invalid driverId %d!&bslash;n&quot;
+comma
+id|card-&gt;contrnr
 comma
 id|id
 )paren
@@ -7713,7 +7969,9 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;capidrv: if_sendbuf: %s:%d: chan not up!&bslash;n&quot;
+l_string|&quot;capidrv-%d: if_sendbuf: %s:%d: chan not up!&bslash;n&quot;
+comma
+id|card-&gt;contrnr
 comma
 id|card-&gt;name
 comma
@@ -7835,7 +8093,9 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;capidrv: if_sendbuf: no memory&bslash;n&quot;
+l_string|&quot;capidrv-%d: if_sendbuf: no memory&bslash;n&quot;
+comma
+id|card-&gt;contrnr
 )paren
 suffix:semicolon
 (paren
@@ -7858,7 +8118,9 @@ id|printk
 c_func
 (paren
 id|KERN_DEBUG
-l_string|&quot;capidrv: only %d bytes headroom&bslash;n&quot;
+l_string|&quot;capidrv-%d: only %d bytes headroom&bslash;n&quot;
+comma
+id|card-&gt;contrnr
 comma
 id|skb_headroom
 c_func
@@ -8082,7 +8344,9 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;capidrv: if_readstat called with invalid driverId %d!&bslash;n&quot;
+l_string|&quot;capidrv-%d: if_readstat called with invalid driverId %d!&bslash;n&quot;
+comma
+id|card-&gt;contrnr
 comma
 id|id
 )paren
@@ -8353,7 +8617,7 @@ id|avmversion
 l_int|1
 )braket
 OG
-l_int|5
+l_int|6
 )paren
 )paren
 (brace
@@ -8857,6 +9121,14 @@ comma
 id|card-&gt;nbchan
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|card-&gt;nbchan
+op_eq
+l_int|2
+)paren
+multiline_comment|/* no T1 */
 id|enable_dchannel_trace
 c_func
 (paren
@@ -9265,11 +9537,13 @@ l_string|&quot; ??? &quot;
 suffix:semicolon
 id|rparam.level3cnt
 op_assign
+op_minus
 l_int|2
 suffix:semicolon
+multiline_comment|/* number of bchannels twice */
 id|rparam.datablkcnt
 op_assign
-l_int|8
+l_int|16
 suffix:semicolon
 id|rparam.datablklen
 op_assign

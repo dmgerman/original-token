@@ -194,6 +194,13 @@ id|dev
 op_assign
 id|q-&gt;dev
 suffix:semicolon
+id|spin_lock_bh
+c_func
+(paren
+op_amp
+id|dev-&gt;xmit_lock
+)paren
+suffix:semicolon
 r_while
 c_loop
 (paren
@@ -213,6 +220,13 @@ OL
 l_int|0
 )paren
 multiline_comment|/* NOTHING */
+suffix:semicolon
+id|spin_unlock_bh
+c_func
+(paren
+op_amp
+id|dev-&gt;xmit_lock
+)paren
 suffix:semicolon
 multiline_comment|/* An explanation is necessary here.&n;&t;&t;   qdisc_restart called dev-&gt;hard_start_xmit,&n;&t;&t;   if device is virtual, it could trigger one more&n;&t;&t;   dev_queue_xmit and a new device could appear&n;&t;&t;   in the active chain. In this case we cannot unlink&n;&t;&t;   the empty queue, because we lost the back pointer.&n;&t;&t;   No problem, we will unlink it during the next round.&n;&t;&t; */
 r_if
@@ -329,6 +343,13 @@ id|dev
 op_assign
 id|q-&gt;dev
 suffix:semicolon
+id|spin_lock_bh
+c_func
+(paren
+op_amp
+id|dev-&gt;xmit_lock
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -344,6 +365,13 @@ id|qdisc_restart
 c_func
 (paren
 id|dev
+)paren
+suffix:semicolon
+id|spin_unlock_bh
+c_func
+(paren
+op_amp
+id|dev-&gt;xmit_lock
 )paren
 suffix:semicolon
 )brace

@@ -1,6 +1,43 @@
 macro_line|#ifndef __ASM_SPINLOCK_H
 DECL|macro|__ASM_SPINLOCK_H
 mdefine_line|#define __ASM_SPINLOCK_H
+multiline_comment|/*&n; * These are the generic versions of the spinlocks&n; * and read-write locks.. We should actually do a&n; * &lt;linux/spinlock.h&gt; with all of this. Oh, well.&n; */
+DECL|macro|spin_lock_irqsave
+mdefine_line|#define spin_lock_irqsave(lock, flags)&t;&t;do { local_irq_save(flags);       spin_lock(lock); } while (0)
+DECL|macro|spin_lock_irq
+mdefine_line|#define spin_lock_irq(lock)&t;&t;&t;do { local_irq_disable();         spin_lock(lock); } while (0)
+DECL|macro|spin_lock_bh
+mdefine_line|#define spin_lock_bh(lock)&t;&t;&t;do { local_bh_disable();          spin_lock(lock); } while (0)
+DECL|macro|read_lock_irqsave
+mdefine_line|#define read_lock_irqsave(lock, flags)&t;&t;do { local_irq_save(flags);       read_lock(lock); } while (0)
+DECL|macro|read_lock_irq
+mdefine_line|#define read_lock_irq(lock)&t;&t;&t;do { local_irq_disable();         read_lock(lock); } while (0)
+DECL|macro|read_lock_bh
+mdefine_line|#define read_lock_bh(lock)&t;&t;&t;do { local_bh_disable();          read_lock(lock); } while (0)
+DECL|macro|write_lock_irqsave
+mdefine_line|#define write_lock_irqsave(lock, flags)&t;&t;do { local_irq_save(flags);      write_lock(lock); } while (0)
+DECL|macro|write_lock_irq
+mdefine_line|#define write_lock_irq(lock)&t;&t;&t;do { local_irq_disable();        write_lock(lock); } while (0)
+DECL|macro|write_lock_bh
+mdefine_line|#define write_lock_bh(lock)&t;&t;&t;do { local_bh_disable();         write_lock(lock); } while (0)
+DECL|macro|spin_unlock_irqrestore
+mdefine_line|#define spin_unlock_irqrestore(lock, flags)&t;do { spin_unlock(lock);  local_irq_restore(flags); } while (0)
+DECL|macro|spin_unlock_irq
+mdefine_line|#define spin_unlock_irq(lock)&t;&t;&t;do { spin_unlock(lock);  local_irq_enable();       } while (0)
+DECL|macro|spin_unlock_bh
+mdefine_line|#define spin_unlock_bh(lock)&t;&t;&t;do { spin_unlock(lock);  local_bh_enable();        } while (0)
+DECL|macro|read_unlock_irqrestore
+mdefine_line|#define read_unlock_irqrestore(lock, flags)&t;do { read_unlock(lock);  local_irq_restore(flags); } while (0)
+DECL|macro|read_unlock_irq
+mdefine_line|#define read_unlock_irq(lock)&t;&t;&t;do { read_unlock(lock);  local_irq_enable();       } while (0)
+DECL|macro|read_unlock_bh
+mdefine_line|#define read_unlock_bh(lock)&t;&t;&t;do { read_unlock(lock);  local_bh_enable();        } while (0)
+DECL|macro|write_unlock_irqrestore
+mdefine_line|#define write_unlock_irqrestore(lock, flags)&t;do { write_unlock(lock); local_irq_restore(flags); } while (0)
+DECL|macro|write_unlock_irq
+mdefine_line|#define write_unlock_irq(lock)&t;&t;&t;do { write_unlock(lock); local_irq_enable();       } while (0)
+DECL|macro|write_unlock_bh
+mdefine_line|#define write_unlock_bh(lock)&t;&t;&t;do { write_unlock(lock); local_bh_enable();        } while (0)
 macro_line|#ifndef __SMP__
 DECL|macro|DEBUG_SPINLOCKS
 mdefine_line|#define DEBUG_SPINLOCKS&t;0&t;/* 0 == no debugging, 1 == maintain lock state, 2 == full debug */
@@ -41,14 +78,6 @@ DECL|macro|spin_unlock_wait
 mdefine_line|#define spin_unlock_wait(lock)&t;do { } while(0)
 DECL|macro|spin_unlock
 mdefine_line|#define spin_unlock(lock)&t;do { } while(0)
-DECL|macro|spin_lock_irq
-mdefine_line|#define spin_lock_irq(lock)&t;cli()
-DECL|macro|spin_unlock_irq
-mdefine_line|#define spin_unlock_irq(lock)&t;sti()
-DECL|macro|spin_lock_irqsave
-mdefine_line|#define spin_lock_irqsave(lock, flags) &bslash;&n;&t;do { save_flags(flags); cli(); } while (0)
-DECL|macro|spin_unlock_irqrestore
-mdefine_line|#define spin_unlock_irqrestore(lock, flags) &bslash;&n;&t;restore_flags(flags)
 macro_line|#elif (DEBUG_SPINLOCKS &lt; 2)
 r_typedef
 r_struct
@@ -75,14 +104,6 @@ DECL|macro|spin_unlock_wait
 mdefine_line|#define spin_unlock_wait(x)&t;do { } while (0)
 DECL|macro|spin_unlock
 mdefine_line|#define spin_unlock(x)&t;&t;do { (x)-&gt;lock = 0; } while (0)
-DECL|macro|spin_lock_irq
-mdefine_line|#define spin_lock_irq(x)&t;do { cli(); spin_lock(x); } while (0)
-DECL|macro|spin_unlock_irq
-mdefine_line|#define spin_unlock_irq(x)&t;do { spin_unlock(x); sti(); } while (0)
-DECL|macro|spin_lock_irqsave
-mdefine_line|#define spin_lock_irqsave(x, flags) &bslash;&n;&t;do { save_flags(flags); spin_lock_irq(x); } while (0)
-DECL|macro|spin_unlock_irqrestore
-mdefine_line|#define spin_unlock_irqrestore(x, flags) &bslash;&n;&t;do { spin_unlock(x); restore_flags(flags); } while (0)
 macro_line|#else /* (DEBUG_SPINLOCKS &gt;= 2) */
 r_typedef
 r_struct
@@ -122,14 +143,6 @@ DECL|macro|spin_unlock_wait
 mdefine_line|#define spin_unlock_wait(x)&t;do {unsigned long __spinflags; save_flags(__spinflags); cli(); if ((x)-&gt;lock&amp;&amp;(x)-&gt;babble) {printk(&quot;%s:%d: spin_unlock_wait(%s:%p) deadlock&bslash;n&quot;, __BASE_FILE__,__LINE__, (x)-&gt;module, (x));(x)-&gt;babble--;} restore_flags(__spinflags);} while (0)
 DECL|macro|spin_unlock
 mdefine_line|#define spin_unlock(x)&t;&t;do {unsigned long __spinflags; save_flags(__spinflags); cli(); if (!(x)-&gt;lock&amp;&amp;(x)-&gt;babble) {printk(&quot;%s:%d: spin_unlock(%s:%p) not locked&bslash;n&quot;, __BASE_FILE__,__LINE__, (x)-&gt;module, (x));(x)-&gt;babble--;} (x)-&gt;lock = 0; restore_flags(__spinflags);} while (0)
-DECL|macro|spin_lock_irq
-mdefine_line|#define spin_lock_irq(x)&t;do {cli(); if ((x)-&gt;lock&amp;&amp;(x)-&gt;babble) {printk(&quot;%s:%d: spin_lock_irq(%s:%p) already locked&bslash;n&quot;, __BASE_FILE__,__LINE__, (x)-&gt;module, (x));(x)-&gt;babble--;} (x)-&gt;lock = 1;} while (0)
-DECL|macro|spin_unlock_irq
-mdefine_line|#define spin_unlock_irq(x)&t;do {cli(); if (!(x)-&gt;lock&amp;&amp;(x)-&gt;babble) {printk(&quot;%s:%d: spin_lock(%s:%p) not locked&bslash;n&quot;, __BASE_FILE__,__LINE__, (x)-&gt;module, (x));(x)-&gt;babble--;} (x)-&gt;lock = 0; sti();} while (0)
-DECL|macro|spin_lock_irqsave
-mdefine_line|#define spin_lock_irqsave(x,flags)      do {save_flags(flags); cli(); if ((x)-&gt;lock&amp;&amp;(x)-&gt;babble) {printk(&quot;%s:%d: spin_lock_irqsave(%s:%p) already locked&bslash;n&quot;, __BASE_FILE__,__LINE__, (x)-&gt;module, (x));(x)-&gt;babble--;} (x)-&gt;lock = 1;} while (0)
-DECL|macro|spin_unlock_irqrestore
-mdefine_line|#define spin_unlock_irqrestore(x,flags) do {cli(); if (!(x)-&gt;lock&amp;&amp;(x)-&gt;babble) {printk(&quot;%s:%d: spin_unlock_irqrestore(%s:%p) not locked&bslash;n&quot;, __BASE_FILE__,__LINE__, (x)-&gt;module, (x));(x)-&gt;babble--;} (x)-&gt;lock = 0; restore_flags(flags);} while (0)
 macro_line|#endif&t;/* DEBUG_SPINLOCKS */
 multiline_comment|/*&n; * Read-write spinlocks, allowing multiple readers&n; * but only one writer.&n; *&n; * NOTE! it is quite common to have readers in interrupts&n; * but no interrupt writers. For those circumstances we&n; * can &quot;mix&quot; irq-safe locks - any writer needs to get a&n; * irq-safe write-lock, but readers can get non-irqsafe&n; * read-locks.&n; *&n; * Gcc-2.7.x has a nasty bug with empty initializers.&n; */
 macro_line|#if (__GNUC__ &gt; 2) || (__GNUC__ == 2 &amp;&amp; __GNUC_MINOR__ &gt;= 8)
@@ -165,22 +178,6 @@ DECL|macro|write_lock
 mdefine_line|#define write_lock(lock)&t;do { } while(0)
 DECL|macro|write_unlock
 mdefine_line|#define write_unlock(lock)&t;do { } while(0)
-DECL|macro|read_lock_irq
-mdefine_line|#define read_lock_irq(lock)&t;cli()
-DECL|macro|read_unlock_irq
-mdefine_line|#define read_unlock_irq(lock)&t;sti()
-DECL|macro|write_lock_irq
-mdefine_line|#define write_lock_irq(lock)&t;cli()
-DECL|macro|write_unlock_irq
-mdefine_line|#define write_unlock_irq(lock)&t;sti()
-DECL|macro|read_lock_irqsave
-mdefine_line|#define read_lock_irqsave(lock, flags)&t;&bslash;&n;&t;do { save_flags(flags); cli(); } while (0)
-DECL|macro|read_unlock_irqrestore
-mdefine_line|#define read_unlock_irqrestore(lock, flags) &bslash;&n;&t;restore_flags(flags)
-DECL|macro|write_lock_irqsave
-mdefine_line|#define write_lock_irqsave(lock, flags)&t;&bslash;&n;&t;do { save_flags(flags); cli(); } while (0)
-DECL|macro|write_unlock_irqrestore
-mdefine_line|#define write_unlock_irqrestore(lock, flags) &bslash;&n;&t;restore_flags(flags)
 macro_line|#else&t;/* __SMP__ */
 multiline_comment|/*&n; * Your basic spinlocks, allowing only a single CPU anywhere&n; */
 r_typedef
@@ -230,14 +227,6 @@ DECL|macro|spin_unlock
 mdefine_line|#define spin_unlock(lock) &bslash;&n;__asm__ __volatile__( &bslash;&n;&t;spin_unlock_string &bslash;&n;&t;:&quot;=m&quot; (__dummy_lock(lock)))
 DECL|macro|spin_trylock
 mdefine_line|#define spin_trylock(lock) (!test_and_set_bit(0,(lock)))
-DECL|macro|spin_lock_irq
-mdefine_line|#define spin_lock_irq(lock) &bslash;&n;&t;do { __cli(); spin_lock(lock); } while (0)
-DECL|macro|spin_unlock_irq
-mdefine_line|#define spin_unlock_irq(lock) &bslash;&n;&t;do { spin_unlock(lock); __sti(); } while (0)
-DECL|macro|spin_lock_irqsave
-mdefine_line|#define spin_lock_irqsave(lock, flags) &bslash;&n;&t;do { __save_flags(flags); __cli(); spin_lock(lock); } while (0)
-DECL|macro|spin_unlock_irqrestore
-mdefine_line|#define spin_unlock_irqrestore(lock, flags) &bslash;&n;&t;do { spin_unlock(lock); __restore_flags(flags); } while (0)
 multiline_comment|/*&n; * Read-write spinlocks, allowing multiple readers&n; * but only one writer.&n; *&n; * NOTE! it is quite common to have readers in interrupts&n; * but no interrupt writers. For those circumstances we&n; * can &quot;mix&quot; irq-safe locks - any writer needs to get a&n; * irq-safe write-lock, but readers can get non-irqsafe&n; * read-locks.&n; */
 r_typedef
 r_struct
@@ -268,22 +257,6 @@ DECL|macro|write_lock
 mdefine_line|#define write_lock(rw) &bslash;&n;&t;asm volatile(&quot;&bslash;n1:&bslash;t&quot; &bslash;&n;&t;&t;     &quot;lock ; btsl $31,%0&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;     &quot;jc 4f&bslash;n&quot; &bslash;&n;&t;&t;     &quot;2:&bslash;ttestl $0x7fffffff,%0&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;     &quot;jne 3f&bslash;n&quot; &bslash;&n;&t;&t;     &quot;.section .text.lock,&bslash;&quot;ax&bslash;&quot;&bslash;n&quot; &bslash;&n;&t;&t;     &quot;3:&bslash;tlock ; btrl $31,%0&bslash;n&quot; &bslash;&n;&t;&t;     &quot;4:&bslash;tcmp $0,%0&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;     &quot;jne 4b&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;     &quot;jmp 1b&bslash;n&quot; &bslash;&n;&t;&t;     &quot;.previous&quot; &bslash;&n;&t;&t;     :&quot;=m&quot; (__dummy_lock(&amp;(rw)-&gt;lock)))
 DECL|macro|write_unlock
 mdefine_line|#define write_unlock(rw) &bslash;&n;&t;asm volatile(&quot;lock ; btrl $31,%0&quot;:&quot;=m&quot; (__dummy_lock(&amp;(rw)-&gt;lock)))
-DECL|macro|read_lock_irq
-mdefine_line|#define read_lock_irq(lock)&t;do { __cli(); read_lock(lock); } while (0)
-DECL|macro|read_unlock_irq
-mdefine_line|#define read_unlock_irq(lock)&t;do { read_unlock(lock); __sti(); } while (0)
-DECL|macro|write_lock_irq
-mdefine_line|#define write_lock_irq(lock)&t;do { __cli(); write_lock(lock); } while (0)
-DECL|macro|write_unlock_irq
-mdefine_line|#define write_unlock_irq(lock)&t;do { write_unlock(lock); __sti(); } while (0)
-DECL|macro|read_lock_irqsave
-mdefine_line|#define read_lock_irqsave(lock, flags)&t;&bslash;&n;&t;do { __save_flags(flags); __cli(); read_lock(lock); } while (0)
-DECL|macro|read_unlock_irqrestore
-mdefine_line|#define read_unlock_irqrestore(lock, flags) &bslash;&n;&t;do { read_unlock(lock); __restore_flags(flags); } while (0)
-DECL|macro|write_lock_irqsave
-mdefine_line|#define write_lock_irqsave(lock, flags)&t;&bslash;&n;&t;do { __save_flags(flags); __cli(); write_lock(lock); } while (0)
-DECL|macro|write_unlock_irqrestore
-mdefine_line|#define write_unlock_irqrestore(lock, flags) &bslash;&n;&t;do { write_unlock(lock); __restore_flags(flags); } while (0)
 macro_line|#endif /* __SMP__ */
 macro_line|#endif /* __ASM_SPINLOCK_H */
 eof

@@ -650,7 +650,7 @@ c_func
 (paren
 id|portbase
 comma
-l_string|&quot;Port address of first card&quot;
+l_string|&quot;Port adress of first card&quot;
 )paren
 suffix:semicolon
 id|MODULE_PARM
@@ -666,7 +666,7 @@ c_func
 (paren
 id|membase
 comma
-l_string|&quot;Shared memory address of all cards&quot;
+l_string|&quot;Shared memory adress of all cards&quot;
 )paren
 suffix:semicolon
 id|MODULE_PARM

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: lmgr.c,v 1.2 1997/10/29 19:09:34 keil Exp $&n;&n; * Author       Karsten Keil (keil@temic-ech.spacenet.de)&n; *&n; *&n; *  Layermanagement module&n; *&n; * $Log: lmgr.c,v $&n; * Revision 1.2  1997/10/29 19:09:34  keil&n; * new L1&n; *&n; * Revision 1.1  1997/06/26 11:17:25  keil&n; * first version&n; *&n; *&n; */
+multiline_comment|/* $Id: lmgr.c,v 1.5 1998/11/15 23:55:12 keil Exp $&n;&n; * Author       Karsten Keil (keil@isdn4linux.de)&n; *&n; *&n; *  Layermanagement module&n; *&n; * $Log: lmgr.c,v $&n; * Revision 1.5  1998/11/15 23:55:12  keil&n; * changes from 2.0&n; *&n; * Revision 1.4  1998/05/25 12:58:19  keil&n; * HiSax golden code from certification, Don&squot;t use !!!&n; * No leased lines, no X75, but many changes.&n; *&n; * Revision 1.3  1998/03/07 22:57:06  tsbogend&n; * made HiSax working on Linux/Alpha&n; *&n; * Revision 1.2  1997/10/29 19:09:34  keil&n; * new L1&n; *&n; * Revision 1.1  1997/06/26 11:17:25  keil&n; * first version&n; *&n; *&n; */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &quot;hisax.h&quot;
@@ -42,7 +42,9 @@ c_func
 (paren
 id|st
 comma
-id|MDL_ERROR_REQ
+id|MDL_ERROR
+op_or
+id|REQUEST
 comma
 l_int|NULL
 )paren
@@ -70,17 +72,6 @@ op_star
 id|arg
 )paren
 (brace
-r_char
-id|tm
-(braket
-l_int|32
-)braket
-comma
-id|str
-(braket
-l_int|256
-)braket
-suffix:semicolon
 r_int
 id|Code
 suffix:semicolon
@@ -91,7 +82,11 @@ id|pr
 )paren
 (brace
 r_case
-id|MDL_ERROR_IND
+(paren
+id|MDL_ERROR
+op_or
+id|INDICATION
+)paren
 suffix:colon
 id|Code
 op_assign
@@ -100,23 +95,18 @@ r_int
 )paren
 id|arg
 suffix:semicolon
-id|jiftime
+id|HiSax_putstatus
 c_func
 (paren
-id|tm
+id|st-&gt;l1.hardware
 comma
-id|jiffies
+l_string|&quot;manager: MDL_ERROR&quot;
+comma
+l_string|&quot;%c %s&bslash;n&quot;
+comma
+(paren
+r_char
 )paren
-suffix:semicolon
-id|sprintf
-c_func
-(paren
-id|str
-comma
-l_string|&quot;%s manager: MDL_ERROR %c %s&bslash;n&quot;
-comma
-id|tm
-comma
 id|Code
 comma
 id|test_bit
@@ -132,14 +122,6 @@ c_cond
 l_string|&quot;D-channel&quot;
 suffix:colon
 l_string|&quot;B-channel&quot;
-)paren
-suffix:semicolon
-id|HiSax_putstatus
-c_func
-(paren
-id|st-&gt;l1.hardware
-comma
-id|str
 )paren
 suffix:semicolon
 r_if
