@@ -1544,6 +1544,13 @@ id|page
 )paren
 suffix:semicolon
 )brace
+id|spin_unlock
+c_func
+(paren
+op_amp
+id|pagecache_lock
+)paren
+suffix:semicolon
 r_return
 id|retval
 suffix:semicolon

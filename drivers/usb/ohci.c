@@ -162,6 +162,7 @@ l_int|0
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;eek! an ED without a dummy_td&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -570,6 +571,7 @@ macro_line|#ifdef OHCI_DEBUG
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;usb-ohci: Using INT ED queue %d for %dms period&bslash;n&quot;
 comma
 id|ms_to_ed_int
@@ -662,6 +664,74 @@ c_func
 id|start_of_frame_wakeup
 )paren
 suffix:semicolon
+DECL|function|ohci_wait_sof
+r_static
+r_void
+id|ohci_wait_sof
+c_func
+(paren
+r_struct
+id|ohci_regs
+op_star
+id|regs
+)paren
+(brace
+id|DECLARE_WAITQUEUE
+c_func
+(paren
+id|wait
+comma
+id|current
+)paren
+suffix:semicolon
+id|add_wait_queue
+c_func
+(paren
+op_amp
+id|start_of_frame_wakeup
+comma
+op_amp
+id|wait
+)paren
+suffix:semicolon
+multiline_comment|/* clear the SOF interrupt status and enable it */
+id|writel
+c_func
+(paren
+id|OHCI_INTR_SF
+comma
+op_amp
+id|regs-&gt;intrstatus
+)paren
+suffix:semicolon
+id|writel
+c_func
+(paren
+id|OHCI_INTR_SF
+comma
+op_amp
+id|regs-&gt;intrenable
+)paren
+suffix:semicolon
+id|schedule_timeout
+c_func
+(paren
+id|HZ
+op_div
+l_int|10
+)paren
+suffix:semicolon
+id|remove_wait_queue
+c_func
+(paren
+op_amp
+id|start_of_frame_wakeup
+comma
+op_amp
+id|wait
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/*&n; * Guarantee that an ED is safe to be modified by the HCD (us).&n; *&n; * This function can NOT be called from an interrupt.&n; */
 DECL|function|ohci_wait_for_ed_safe
 r_void
@@ -756,18 +826,11 @@ id|hw_listcurrent
 )paren
 )paren
 (brace
-id|DECLARE_WAITQUEUE
-c_func
-(paren
-id|wait
-comma
-id|current
-)paren
-suffix:semicolon
 macro_line|#ifdef OHCI_DEBUG
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;Waiting a frame for OHC to finish with ED %p [%x %x %x %x]&bslash;n&quot;
 comma
 id|ed
@@ -780,51 +843,10 @@ id|ed
 )paren
 suffix:semicolon
 macro_line|#endif
-id|add_wait_queue
+id|ohci_wait_sof
 c_func
 (paren
-op_amp
-id|start_of_frame_wakeup
-comma
-op_amp
-id|wait
-)paren
-suffix:semicolon
-multiline_comment|/* clear the SOF interrupt status and enable it */
-id|writel
-c_func
-(paren
-id|OHCI_INTR_SF
-comma
-op_amp
-id|regs-&gt;intrstatus
-)paren
-suffix:semicolon
-id|writel
-c_func
-(paren
-id|OHCI_INTR_SF
-comma
-op_amp
-id|regs-&gt;intrenable
-)paren
-suffix:semicolon
-id|schedule_timeout
-c_func
-(paren
-id|HZ
-op_div
-l_int|10
-)paren
-suffix:semicolon
-id|remove_wait_queue
-c_func
-(paren
-op_amp
-id|start_of_frame_wakeup
-comma
-op_amp
-id|wait
+id|regs
 )paren
 suffix:semicolon
 )brace
@@ -897,6 +919,14 @@ id|bus_ed
 )paren
 r_return
 suffix:semicolon
+id|ed-&gt;status
+op_or_assign
+id|cpu_to_le32
+c_func
+(paren
+id|OHCI_ED_SKIP
+)paren
+suffix:semicolon
 r_switch
 c_cond
 (paren
@@ -928,6 +958,7 @@ suffix:colon
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;Unknown HCD ED type %d.&bslash;n&quot;
 comma
 id|ed_type
@@ -936,17 +967,6 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; * Tell the controller to this skip ED and make sure it is not the&n;&t; * being accessed by the HC as we speak.&n;&t; */
-id|ohci_wait_for_ed_safe
-c_func
-(paren
-id|regs
-comma
-id|ed
-comma
-id|ed_type
-)paren
-suffix:semicolon
 id|bus_cur
 op_assign
 id|readl
@@ -994,7 +1014,12 @@ id|bus_ed
 id|writel
 c_func
 (paren
+id|le32_to_cpup
+c_func
+(paren
+op_amp
 id|cur-&gt;next_ed
+)paren
 comma
 id|hw_listhead_p
 )paren
@@ -1037,13 +1062,9 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|virt_to_bus
-c_func
-(paren
 id|cur
-)paren
 op_eq
-id|bus_ed
+id|ed
 )paren
 (brace
 multiline_comment|/* unlink from the list */
@@ -1064,6 +1085,17 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/*&n;&t; * Make sure this ED is not being accessed by the HC as we speak.&n;&t; */
+id|ohci_wait_for_ed_safe
+c_func
+(paren
+id|regs
+comma
+id|ed
+comma
+id|ed_type
+)paren
+suffix:semicolon
 multiline_comment|/* clear any links from the ED for safety */
 id|ed-&gt;next_ed
 op_assign
@@ -1135,6 +1167,284 @@ comma
 id|ed
 comma
 id|HCD_ED_BULK
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/*&n; * Remove all the EDs which have a given device address from a list.&n; * Used when the device is unplugged.&n; * Returns 1 if anything was changed.&n; */
+DECL|function|ohci_remove_device_list
+r_static
+r_int
+id|ohci_remove_device_list
+c_func
+(paren
+id|__u32
+op_star
+id|headp
+comma
+r_int
+id|devnum
+)paren
+(brace
+r_struct
+id|ohci_ed
+op_star
+id|ed
+suffix:semicolon
+id|__u32
+op_star
+id|prevp
+op_assign
+id|headp
+suffix:semicolon
+r_int
+id|removed
+op_assign
+l_int|0
+suffix:semicolon
+r_while
+c_loop
+(paren
+op_star
+id|prevp
+op_ne
+l_int|0
+)paren
+(brace
+id|ed
+op_assign
+id|bus_to_virt
+c_func
+(paren
+id|le32_to_cpup
+c_func
+(paren
+id|prevp
+)paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|le32_to_cpup
+c_func
+(paren
+op_amp
+id|ed-&gt;status
+)paren
+op_amp
+id|OHCI_ED_FA
+)paren
+op_eq
+id|devnum
+)paren
+(brace
+multiline_comment|/* set the controller to skip this one&n;&t;&t;&t;   and remove it from the list */
+id|ed-&gt;status
+op_or_assign
+id|cpu_to_le32
+c_func
+(paren
+id|OHCI_ED_SKIP
+)paren
+suffix:semicolon
+op_star
+id|prevp
+op_assign
+id|ed-&gt;next_ed
+suffix:semicolon
+id|removed
+op_assign
+l_int|1
+suffix:semicolon
+)brace
+r_else
+(brace
+id|prevp
+op_assign
+op_amp
+id|ed-&gt;next_ed
+suffix:semicolon
+)brace
+)brace
+id|wmb
+c_func
+(paren
+)paren
+suffix:semicolon
+r_return
+id|removed
+suffix:semicolon
+)brace
+multiline_comment|/*&n; * Remove all the EDs for a given device from all lists.&n; */
+DECL|function|ohci_remove_device
+r_void
+id|ohci_remove_device
+c_func
+(paren
+r_struct
+id|ohci
+op_star
+id|ohci
+comma
+r_int
+id|devnum
+)paren
+(brace
+r_int
+r_int
+id|flags
+suffix:semicolon
+id|__u32
+id|head
+suffix:semicolon
+r_struct
+id|ohci_regs
+op_star
+id|regs
+op_assign
+id|ohci-&gt;regs
+suffix:semicolon
+r_struct
+id|ohci_device
+op_star
+id|root_hub
+op_assign
+id|usb_to_ohci
+c_func
+(paren
+id|ohci-&gt;bus-&gt;root_hub
+)paren
+suffix:semicolon
+id|spin_lock_irqsave
+c_func
+(paren
+op_amp
+id|ohci_edtd_lock
+comma
+id|flags
+)paren
+suffix:semicolon
+multiline_comment|/* Control list */
+id|head
+op_assign
+id|cpu_to_le32
+c_func
+(paren
+id|readl
+c_func
+(paren
+op_amp
+id|regs-&gt;ed_controlhead
+)paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ohci_remove_device_list
+c_func
+(paren
+op_amp
+id|head
+comma
+id|devnum
+)paren
+)paren
+id|writel
+c_func
+(paren
+id|le32_to_cpup
+c_func
+(paren
+op_amp
+id|head
+)paren
+comma
+op_amp
+id|regs-&gt;ed_controlhead
+)paren
+suffix:semicolon
+multiline_comment|/* Bulk list */
+id|head
+op_assign
+id|cpu_to_le32
+c_func
+(paren
+id|readl
+c_func
+(paren
+op_amp
+id|regs-&gt;ed_bulkhead
+)paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ohci_remove_device_list
+c_func
+(paren
+op_amp
+id|head
+comma
+id|devnum
+)paren
+)paren
+id|writel
+c_func
+(paren
+id|le32_to_cpup
+c_func
+(paren
+op_amp
+id|head
+)paren
+comma
+op_amp
+id|regs-&gt;ed_bulkhead
+)paren
+suffix:semicolon
+multiline_comment|/* Interrupt/iso list */
+id|head
+op_assign
+id|cpu_to_le32
+c_func
+(paren
+id|virt_to_bus
+c_func
+(paren
+op_amp
+id|root_hub-&gt;ed
+(braket
+id|ED_INT_32
+)braket
+)paren
+)paren
+suffix:semicolon
+id|ohci_remove_device_list
+c_func
+(paren
+op_amp
+id|head
+comma
+id|devnum
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t; * Wait until the start of the next frame to ensure&n;&t; * that the HC has seen any changes.&n;&t; */
+id|ohci_wait_sof
+c_func
+(paren
+id|ohci-&gt;regs
+)paren
+suffix:semicolon
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|ohci_edtd_lock
+comma
+id|flags
 )paren
 suffix:semicolon
 )brace
@@ -1496,6 +1806,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;usb-ohci: unable to allocate a TD&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -1602,6 +1913,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;usb-ohci: unable to allocate an ED&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -1926,6 +2238,7 @@ id|ed
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;Reusing a non-empty ED %p!&bslash;n&quot;
 comma
 id|ed
@@ -1957,6 +2270,7 @@ l_int|NULL
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;Error allocating dummy TD for ED %p&bslash;n&quot;
 comma
 id|ed
@@ -2015,6 +2329,7 @@ id|dummy_td
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;ED %p&squot;s dummy %p is screwy&bslash;n&quot;
 comma
 id|ed
@@ -2160,6 +2475,7 @@ id|interrupt_ed
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;Out of EDs on device %p in ohci_request_irq&bslash;n&quot;
 comma
 id|dev
@@ -2188,6 +2504,7 @@ id|td
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;Out of TDs in ohci_request_irq&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -2532,6 +2849,7 @@ id|control_ed
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;usb-ohci: couldn&squot;t get ED for dev %p&bslash;n&quot;
 comma
 id|dev
@@ -2561,6 +2879,7 @@ id|setup_td
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;usb-ohci: couldn&squot;t get TD for dev %p [cntl setup]&bslash;n&quot;
 comma
 id|dev
@@ -2652,6 +2971,7 @@ id|data_td
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;usb-ohci: couldn&squot;t get TD for dev %p [cntl data]&bslash;n&quot;
 comma
 id|dev
@@ -2746,6 +3066,7 @@ id|status_td
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;usb-ohci: couldn&squot;t get TD for dev %p [cntl status]&bslash;n&quot;
 comma
 id|dev
@@ -3153,18 +3474,35 @@ op_ne
 l_int|0
 )paren
 (brace
-id|printk
-c_func
+r_char
+op_star
+id|what
+op_assign
 (paren
-id|KERN_ERR
-l_string|&quot;ohci_control_msg: %s on cmd %x %x %x %x %x&bslash;n&quot;
-comma
+id|completion_status
+OL
+l_int|0
+)paren
+ques
+c_cond
+l_string|&quot;timed out&quot;
+suffix:colon
 id|cc_names
 (braket
 id|completion_status
 op_amp
 l_int|0xf
 )braket
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;ohci_control_msg: %s on pipe %x cmd %x %x %x %x %x&bslash;n&quot;
+comma
+id|what
+comma
+id|pipe
 comma
 id|cmd-&gt;requesttype
 comma
@@ -3204,7 +3542,7 @@ id|printk
 c_func
 (paren
 id|KERN_DEBUG
-l_string|&quot;ctrl msg %x %x %x %x %x returned:&quot;
+l_string|&quot;ctrl msg %x %x %x %x %x on pipe %x returned:&quot;
 comma
 id|cmd-&gt;requesttype
 comma
@@ -3215,6 +3553,8 @@ comma
 id|cmd-&gt;index
 comma
 id|cmd-&gt;length
+comma
+id|pipe
 )paren
 suffix:semicolon
 r_for
@@ -3468,22 +3808,27 @@ op_star
 id|usb_dev
 )paren
 (brace
-id|kfree
-c_func
-(paren
+r_struct
+id|ohci_device
+op_star
+id|dev
+op_assign
 id|usb_to_ohci
 c_func
 (paren
 id|usb_dev
 )paren
-)paren
 suffix:semicolon
-id|kfree
+id|ohci_remove_device
 c_func
 (paren
-id|usb_dev
+id|dev-&gt;ohci
+comma
+id|usb_dev-&gt;devnum
 )paren
 suffix:semicolon
+multiline_comment|/* kfree(usb_to_ohci(usb_dev)); */
+multiline_comment|/* kfree(usb_dev); */
 r_return
 l_int|0
 suffix:semicolon
@@ -3599,6 +3944,7 @@ id|timeout
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;usb-ohci: USB HC reset timed out!&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -3617,7 +3963,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-id|KERN_INFO
+id|KERN_DEBUG
 l_string|&quot;usb-ohci: HC %p reset.&bslash;n&quot;
 comma
 id|ohci
@@ -3715,13 +4061,16 @@ id|ohci-&gt;regs-&gt;hcca
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * XXX Should fminterval also be set here?&n;&t; * The spec suggests 0x2edf [11,999]. (FIXME: make this a constant)&n;&t; */
+multiline_comment|/* fminterval |= (0x2edf &lt;&lt; 16); */
 id|fminterval
-op_or_assign
+op_assign
 (paren
-l_int|0x2edf
+l_int|10240
 op_lshift
 l_int|16
 )paren
+op_or
+l_int|11999
 suffix:semicolon
 id|writel
 c_func
@@ -3833,6 +4182,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;usb-ohci: host controller operational&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -3873,6 +4223,7 @@ id|MAX_ROOT_PORTS
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;usb-ohci: bad port #%d in ohci_reset_port&bslash;n&quot;
 comma
 id|port
@@ -3930,6 +4281,7 @@ multiline_comment|/* reset failed, try harder? */
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;usb-ohci: port %d reset failed, retrying&bslash;n&quot;
 comma
 id|port
@@ -4568,6 +4920,7 @@ id|td
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;yikes! reaping a dummy TD&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -5507,6 +5860,7 @@ id|MAX_ROOT_PORTS
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;usb-ohci: Limited to %d ports&bslash;n&quot;
 comma
 id|MAX_ROOT_PORTS
@@ -5528,6 +5882,7 @@ l_int|1
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;usb-ohci: Less than one root hub port? Impossible!&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -5539,6 +5894,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;usb-ohci: %d root hub ports found&bslash;n&quot;
 comma
 id|usb-&gt;maxchild
@@ -5839,7 +6195,7 @@ macro_line|#ifdef OHCI_DEBUG
 id|printk
 c_func
 (paren
-id|KERN_INFO
+id|KERN_DEBUG
 l_string|&quot;alloc_ohci(): controller&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -5861,12 +6217,6 @@ id|ohci
 )paren
 suffix:semicolon
 macro_line|#endif
-id|printk
-c_func
-(paren
-l_string|&quot;alloc_ohci done&bslash;n&quot;
-)paren
-suffix:semicolon
 r_return
 id|ohci
 suffix:semicolon
@@ -6048,7 +6398,7 @@ multiline_comment|/*&n;&t; * This thread doesn&squot;t need any user-level acces
 id|printk
 c_func
 (paren
-id|KERN_INFO
+id|KERN_DEBUG
 l_string|&quot;ohci-control thread code for 0x%p code at 0x%p&bslash;n&quot;
 comma
 id|__ohci
@@ -6105,6 +6455,7 @@ l_int|0
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;usb-ohci: failed to start the controller&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -6176,7 +6527,7 @@ macro_line|#endif
 id|printk
 c_func
 (paren
-id|KERN_INFO
+id|KERN_DEBUG
 l_string|&quot;ohci-control thread sleeping&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -6336,7 +6687,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-id|KERN_INFO
+id|KERN_DEBUG
 l_string|&quot;ohci-control thread for 0x%p exiting&bslash;n&quot;
 comma
 id|__ohci
@@ -6645,7 +6996,7 @@ macro_line|#ifdef OHCI_DEBUG
 id|printk
 c_func
 (paren
-id|KERN_INFO
+id|KERN_DEBUG
 l_string|&quot;usb-ohci: forking ohci-control thread for 0x%p&bslash;n&quot;
 comma
 id|ohci
@@ -6691,6 +7042,7 @@ r_else
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;usb-ohci: Couldn&squot;t allocate interrupt %d&bslash;n&quot;
 comma
 id|irq
@@ -6772,6 +7124,7 @@ l_int|0
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;usb-ohci: no irq assigned? check your BIOS settings.&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -6805,6 +7158,7 @@ id|mem_base
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;Error mapping OHCI memory&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -6819,12 +7173,14 @@ macro_line|#ifdef OHCI_DEBUG
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;usb-ohci: Warning! Gobs of debugging output has been enabled.&bslash;n&quot;
 )paren
 suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;          Check your kern.debug logs for the bulk of it.&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -6897,6 +7253,7 @@ l_int|4096
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;usb-ohci: struct ohci_device to large&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -6908,6 +7265,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;OHCI USB Driver loading&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -7005,6 +7363,7 @@ macro_line|#&t;endif
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;usb-ohci: module unloaded&bslash;n&quot;
 )paren
 suffix:semicolon
