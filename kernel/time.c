@@ -786,6 +786,7 @@ id|txc-&gt;modes
 op_amp
 id|ADJ_OFFSET
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -1042,6 +1043,7 @@ id|time_tolerance
 suffix:semicolon
 )brace
 multiline_comment|/* STA_PLL || STA_PPSTIME */
+)brace
 r_if
 c_cond
 (paren

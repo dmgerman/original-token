@@ -131,7 +131,7 @@ DECL|macro|UMSDOS_HIDDEN
 mdefine_line|#define UMSDOS_HIDDEN&t;1&t;/* Never show this entry in directory search */
 DECL|macro|UMSDOS_HLINK
 mdefine_line|#define UMSDOS_HLINK&t;2&t;/* It is a (pseudo) hard link */
-multiline_comment|/* #Specification: EMD file / record size&n;&t;Entry are 64 bytes wide in the EMD file. It allows for a 30 characters&n;&t;name. If a name is longer, contiguous entries are allocated. So a&n;&t;umsdos_dirent may span multiple records.&n;*/
+multiline_comment|/* #Specification: EMD file / record size&n; * Entry are 64 bytes wide in the EMD file. It allows for a 30 characters&n; * name. If a name is longer, contiguous entries are allocated. So a&n; * umsdos_dirent may span multiple records.&n; */
 DECL|macro|UMSDOS_REC_SIZE
 mdefine_line|#define UMSDOS_REC_SIZE&t;&t;64
 multiline_comment|/* Translation between MSDOS name and UMSDOS name */
@@ -159,9 +159,7 @@ DECL|member|f_pos
 id|off_t
 id|f_pos
 suffix:semicolon
-multiline_comment|/* offset of the entry in the EMD file */
-multiline_comment|/* or offset where the entry may be store */
-multiline_comment|/* if it is a new entry */
+multiline_comment|/* offset of the entry in the EMD file&n;&t;&t;&t;&t; * or offset where the entry may be store&n;&t;&t;&t;&t; * if it is a new entry&n;&t;&t;&t;&t; */
 DECL|member|recsize
 r_int
 id|recsize
@@ -169,34 +167,30 @@ suffix:semicolon
 multiline_comment|/* Record size needed to store entry */
 )brace
 suffix:semicolon
-multiline_comment|/* Definitions for ioctl (number randomly chosen) */
-multiline_comment|/* The next ioctl commands operate only on the DOS directory */
-multiline_comment|/* The file umsdos_progs/umsdosio.c contain a string table */
-multiline_comment|/* based on the order of those definition. Keep it in sync */
+multiline_comment|/* Definitions for ioctl (number randomly chosen)&n; * The next ioctl commands operate only on the DOS directory&n; * The file umsdos_progs/umsdosio.c contain a string table&n; * based on the order of those definition. Keep it in sync&n; */
 DECL|macro|UMSDOS_READDIR_DOS
-mdefine_line|#define UMSDOS_READDIR_DOS _IO(0x04,210) /* Do a readdir of the DOS directory */
+mdefine_line|#define UMSDOS_READDIR_DOS _IO(0x04,210)&t;/* Do a readdir of the DOS directory */
 DECL|macro|UMSDOS_UNLINK_DOS
-mdefine_line|#define UMSDOS_UNLINK_DOS  _IO(0x04,211) /* Erase in the DOS directory only */
+mdefine_line|#define UMSDOS_UNLINK_DOS  _IO(0x04,211)&t;/* Erase in the DOS directory only */
 DECL|macro|UMSDOS_RMDIR_DOS
-mdefine_line|#define UMSDOS_RMDIR_DOS   _IO(0x04,212) /* rmdir in the DOS directory only */
+mdefine_line|#define UMSDOS_RMDIR_DOS   _IO(0x04,212)&t;/* rmdir in the DOS directory only */
 DECL|macro|UMSDOS_STAT_DOS
-mdefine_line|#define UMSDOS_STAT_DOS    _IO(0x04,213) /* Get info about a file */
+mdefine_line|#define UMSDOS_STAT_DOS    _IO(0x04,213)&t;/* Get info about a file */
 multiline_comment|/* The next ioctl commands operate only on the EMD file */
 DECL|macro|UMSDOS_CREAT_EMD
-mdefine_line|#define UMSDOS_CREAT_EMD   _IO(0x04,214) /* Create a file */
+mdefine_line|#define UMSDOS_CREAT_EMD   _IO(0x04,214)&t;/* Create a file */
 DECL|macro|UMSDOS_UNLINK_EMD
-mdefine_line|#define UMSDOS_UNLINK_EMD  _IO(0x04,215) /* unlink (rmdir) a file */
+mdefine_line|#define UMSDOS_UNLINK_EMD  _IO(0x04,215)&t;/* unlink (rmdir) a file */
 DECL|macro|UMSDOS_READDIR_EMD
-mdefine_line|#define UMSDOS_READDIR_EMD _IO(0x04,216) /* read the EMD file only. */
+mdefine_line|#define UMSDOS_READDIR_EMD _IO(0x04,216)&t;/* read the EMD file only. */
 DECL|macro|UMSDOS_GETVERSION
-mdefine_line|#define UMSDOS_GETVERSION  _IO(0x04,217) /* Get the release number of UMSDOS */
+mdefine_line|#define UMSDOS_GETVERSION  _IO(0x04,217)&t;/* Get the release number of UMSDOS */
 DECL|macro|UMSDOS_INIT_EMD
-mdefine_line|#define UMSDOS_INIT_EMD    _IO(0x04,218) /* Create the EMD file if not there */
+mdefine_line|#define UMSDOS_INIT_EMD    _IO(0x04,218)&t;/* Create the EMD file if not there */
 DECL|macro|UMSDOS_DOS_SETUP
-mdefine_line|#define UMSDOS_DOS_SETUP   _IO(0x04,219) /* Set the defaults of the MsDOS driver */
+mdefine_line|#define UMSDOS_DOS_SETUP   _IO(0x04,219)&t;/* Set the defaults of the MsDOS driver */
 DECL|macro|UMSDOS_RENAME_DOS
-mdefine_line|#define UMSDOS_RENAME_DOS  _IO(0x04,220) /* rename a file/directory in the DOS */
-multiline_comment|/* directory only */
+mdefine_line|#define UMSDOS_RENAME_DOS  _IO(0x04,220)&t;/* rename a file/directory in the DOS&n;&t;&t;&t;&t;&t;&t; * directory only */
 DECL|struct|umsdos_ioctl
 r_struct
 id|umsdos_ioctl
@@ -211,14 +205,7 @@ r_struct
 id|umsdos_dirent
 id|umsdos_dirent
 suffix:semicolon
-multiline_comment|/* The following structure is used to exchange some data */
-multiline_comment|/* with utilities (umsdos_progs/util/umsdosio.c). The first */
-multiline_comment|/* releases were using struct stat from &quot;sys/stat.h&quot;. This was */
-multiline_comment|/* causing some problem for cross compilation of the kernel */
-multiline_comment|/* Since I am not really using the structure stat, but only some field */
-multiline_comment|/* of it, I have decided to replicate the structure here */
-multiline_comment|/* for compatibility with the binaries out there */
-multiline_comment|/* FIXME PTW 1998, this has probably changed */
+multiline_comment|/* The following structure is used to exchange some data&n;&t; * with utilities (umsdos_progs/util/umsdosio.c). The first&n;&t; * releases were using struct stat from &quot;sys/stat.h&quot;. This was&n;&t; * causing some problem for cross compilation of the kernel&n;&t; * Since I am not really using the structure stat, but only some field&n;&t; * of it, I have decided to replicate the structure here&n;&t; * for compatibility with the binaries out there&n;&t; * FIXME PTW 1998, this has probably changed&n;&t; */
 r_struct
 (brace
 DECL|member|st_dev
@@ -363,12 +350,11 @@ suffix:semicolon
 r_extern
 r_int
 id|init_umsdos_fs
-c_func
 (paren
 r_void
 )paren
 suffix:semicolon
 macro_line|#include &lt;linux/umsdos_fs.p&gt;
-macro_line|#endif /* __KERNEL__ */
+macro_line|#endif&t;&t;&t;&t;/* __KERNEL__ */
 macro_line|#endif
 eof

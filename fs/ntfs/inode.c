@@ -2550,6 +2550,7 @@ c_cond
 (paren
 id|attr-&gt;compressed
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -2584,6 +2585,7 @@ comma
 id|dest
 )paren
 suffix:semicolon
+)brace
 id|vcn
 op_assign
 l_int|0

@@ -348,31 +348,31 @@ DECL|macro|CAUSEB_BD
 mdefine_line|#define  CAUSEB_BD&t;&t;31
 DECL|macro|CAUSEF_BD
 mdefine_line|#define  CAUSEF_BD&t;&t;(1   &lt;&lt; 31)
-multiline_comment|/*&n; * Bits in the coprozessor 0 config register.&n; */
-DECL|macro|CONFIG_CM_CACHABLE_NO_WA
-mdefine_line|#define CONFIG_CM_CACHABLE_NO_WA&t;0
-DECL|macro|CONFIG_CM_CACHABLE_WA
-mdefine_line|#define CONFIG_CM_CACHABLE_WA&t;&t;1
-DECL|macro|CONFIG_CM_UNCACHED
-mdefine_line|#define CONFIG_CM_UNCACHED&t;&t;2
-DECL|macro|CONFIG_CM_CACHABLE_NONCOHERENT
-mdefine_line|#define CONFIG_CM_CACHABLE_NONCOHERENT&t;3
-DECL|macro|CONFIG_CM_CACHABLE_CE
-mdefine_line|#define CONFIG_CM_CACHABLE_CE&t;&t;4
-DECL|macro|CONFIG_CM_CACHABLE_COW
-mdefine_line|#define CONFIG_CM_CACHABLE_COW&t;&t;5
-DECL|macro|CONFIG_CM_CACHABLE_CUW
-mdefine_line|#define CONFIG_CM_CACHABLE_CUW&t;&t;6
-DECL|macro|CONFIG_CM_CACHABLE_ACCELERATED
-mdefine_line|#define CONFIG_CM_CACHABLE_ACCELERATED&t;7
-DECL|macro|CONFIG_CM_CMASK
-mdefine_line|#define CONFIG_CM_CMASK&t;&t;&t;7
-DECL|macro|CONFIG_DB
-mdefine_line|#define CONFIG_DB&t;&t;&t;(1 &lt;&lt;  4)
-DECL|macro|CONFIG_IB
-mdefine_line|#define CONFIG_IB&t;&t;&t;(1 &lt;&lt;  5)
-DECL|macro|CONFIG_SC
-mdefine_line|#define CONFIG_SC&t;&t;&t;(1 &lt;&lt; 17)
+multiline_comment|/*&n; * Bits in the coprocessor 0 config register.&n; */
+DECL|macro|CONF_REG_CM_CACHABLE_NO_WA
+mdefine_line|#define CONF_REG_CM_CACHABLE_NO_WA&t;0
+DECL|macro|CONF_REG_CM_CACHABLE_WA
+mdefine_line|#define CONF_REG_CM_CACHABLE_WA&t;&t;1
+DECL|macro|CONF_REG_CM_UNCACHED
+mdefine_line|#define CONF_REG_CM_UNCACHED&t;&t;2
+DECL|macro|CONF_REG_CM_CACHABLE_NONCOHERENT
+mdefine_line|#define CONF_REG_CM_CACHABLE_NONCOHERENT&t;3
+DECL|macro|CONF_REG_CM_CACHABLE_CE
+mdefine_line|#define CONF_REG_CM_CACHABLE_CE&t;&t;4
+DECL|macro|CONF_REG_CM_CACHABLE_COW
+mdefine_line|#define CONF_REG_CM_CACHABLE_COW&t;&t;5
+DECL|macro|CONF_REG_CM_CACHABLE_CUW
+mdefine_line|#define CONF_REG_CM_CACHABLE_CUW&t;&t;6
+DECL|macro|CONF_REG_CM_CACHABLE_ACCELERATED
+mdefine_line|#define CONF_REG_CM_CACHABLE_ACCELERATED&t;7
+DECL|macro|CONF_REG_CM_CMASK
+mdefine_line|#define CONF_REG_CM_CMASK&t;&t;&t;7
+DECL|macro|CONF_REG_DB
+mdefine_line|#define CONF_REG_DB&t;&t;&t;(1 &lt;&lt;  4)
+DECL|macro|CONF_REG_IB
+mdefine_line|#define CONF_REG_IB&t;&t;&t;(1 &lt;&lt;  5)
+DECL|macro|CONF_REG_SC
+mdefine_line|#define CONF_REG_SC&t;&t;&t;(1 &lt;&lt; 17)
 multiline_comment|/*&n; * R10000 performance counter definitions.&n; *&n; * FIXME: The R10000 performance counter opens a nice way to implement CPU&n; *        time accounting with a precission of one cycle.  I don&squot;t have&n; *        R10000 silicon but just a manual, so ...&n; */
 multiline_comment|/*&n; * Events counted by counter #0&n; */
 DECL|macro|CE0_CYCLES

@@ -218,6 +218,7 @@ id|namelen
 OG
 id|SYSV_NAMELEN
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -231,6 +232,7 @@ r_else
 r_return
 l_int|NULL
 suffix:semicolon
+)brace
 id|bh
 op_assign
 l_int|NULL
@@ -582,6 +584,7 @@ id|namelen
 OG
 id|SYSV_NAMELEN
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -596,6 +599,7 @@ r_return
 op_minus
 id|ENAMETOOLONG
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren

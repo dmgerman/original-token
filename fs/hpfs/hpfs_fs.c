@@ -3371,6 +3371,7 @@ id|c
 OL
 l_char|&squot; &squot;
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -3407,6 +3408,7 @@ id|bvote
 op_add_assign
 l_int|5
 suffix:semicolon
+)brace
 r_else
 r_if
 c_cond

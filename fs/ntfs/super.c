@@ -2755,6 +2755,7 @@ id|io.size
 op_eq
 l_int|0
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -2774,6 +2775,7 @@ suffix:semicolon
 r_goto
 id|fail
 suffix:semicolon
+)brace
 )brace
 id|loc
 op_assign

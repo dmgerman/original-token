@@ -2006,11 +2006,6 @@ r_int
 id|ide_spin_wait_hwgroup
 c_func
 (paren
-r_const
-r_char
-op_star
-id|msg
-comma
 id|ide_drive_t
 op_star
 id|drive

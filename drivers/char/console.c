@@ -8117,6 +8117,7 @@ c_cond
 op_logical_neg
 id|ques
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -8152,6 +8153,7 @@ comma
 id|tty
 )paren
 suffix:semicolon
+)brace
 r_continue
 suffix:semicolon
 )brace

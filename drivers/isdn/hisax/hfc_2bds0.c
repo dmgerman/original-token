@@ -5847,6 +5847,7 @@ c_cond
 (paren
 id|cs-&gt;tx_skb
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -5914,6 +5915,7 @@ id|cs-&gt;tx_skb
 op_assign
 l_int|NULL
 suffix:semicolon
+)brace
 )brace
 r_if
 c_cond

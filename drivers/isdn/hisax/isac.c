@@ -1496,6 +1496,7 @@ c_cond
 (paren
 id|cs-&gt;tx_skb
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -1528,6 +1529,7 @@ id|cs-&gt;tx_skb
 op_assign
 l_int|NULL
 suffix:semicolon
+)brace
 )brace
 r_if
 c_cond
@@ -1766,6 +1768,7 @@ c_cond
 op_logical_neg
 id|cs-&gt;mon_rx
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -1827,6 +1830,7 @@ id|cs-&gt;mon_rxp
 op_assign
 l_int|0
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -1968,6 +1972,7 @@ c_cond
 op_logical_neg
 id|cs-&gt;mon_rx
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -2029,6 +2034,7 @@ id|cs-&gt;mon_rxp
 op_assign
 l_int|0
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren

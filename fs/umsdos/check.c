@@ -14,7 +14,6 @@ DECL|function|check_one_table
 r_static
 r_int
 id|check_one_table
-c_func
 (paren
 r_struct
 id|pde
@@ -26,7 +25,6 @@ r_if
 c_cond
 (paren
 id|pgd_none
-c_func
 (paren
 op_star
 id|page_dir
@@ -39,7 +37,6 @@ r_if
 c_cond
 (paren
 id|pgd_bad
-c_func
 (paren
 op_star
 id|page_dir
@@ -56,7 +53,6 @@ multiline_comment|/*&n; * This function checks all page tables of &quot;current&
 DECL|function|check_page_tables
 r_void
 id|check_page_tables
-c_func
 (paren
 r_void
 )paren
@@ -102,7 +98,6 @@ suffix:semicolon
 id|pg_dir
 op_assign
 id|PAGE_DIR_OFFSET
-c_func
 (paren
 id|current
 comma
@@ -142,7 +137,6 @@ r_int
 id|notok
 op_assign
 id|check_one_table
-c_func
 (paren
 id|page_dir
 )paren

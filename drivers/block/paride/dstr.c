@@ -1,6 +1,7 @@
-multiline_comment|/* &n;        dstr.c    (c) 1997  Grant R. Guenther &lt;grant@torque.net&gt;&n;                            Under the terms of the GNU public license.&n;&n;        dstr.c is a low-level protocol driver for the &n;        DataStor EP2000 parallel to IDE adapter chip.&n;&n;*/
+multiline_comment|/* &n;        dstr.c    (c) 1997-8  Grant R. Guenther &lt;grant@torque.net&gt;&n;                              Under the terms of the GNU public license.&n;&n;        dstr.c is a low-level protocol driver for the &n;        DataStor EP2000 parallel to IDE adapter chip.&n;&n;*/
+multiline_comment|/* Changes:&n;&n;        1.01    GRG 1998.05.06 init_proto, release_proto&n;&n;*/
 DECL|macro|DSTR_VERSION
-mdefine_line|#define DSTR_VERSION      &quot;1.0&quot;
+mdefine_line|#define DSTR_VERSION      &quot;1.01&quot;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -1125,23 +1126,29 @@ id|pi-&gt;delay
 )paren
 suffix:semicolon
 )brace
-DECL|function|dstr_inc_use
+DECL|function|dstr_init_proto
 r_static
 r_void
-id|dstr_inc_use
+id|dstr_init_proto
+c_func
 (paren
-r_void
+id|PIA
+op_star
+id|pi
 )paren
 (brace
 id|MOD_INC_USE_COUNT
 suffix:semicolon
 )brace
-DECL|function|dstr_dec_use
+DECL|function|dstr_release_proto
 r_static
 r_void
-id|dstr_dec_use
+id|dstr_release_proto
+c_func
 (paren
-r_void
+id|PIA
+op_star
+id|pi
 )paren
 (brace
 id|MOD_DEC_USE_COUNT
@@ -1185,9 +1192,9 @@ l_int|0
 comma
 id|dstr_log_adapter
 comma
-id|dstr_inc_use
+id|dstr_init_proto
 comma
-id|dstr_dec_use
+id|dstr_release_proto
 )brace
 suffix:semicolon
 macro_line|#ifdef MODULE

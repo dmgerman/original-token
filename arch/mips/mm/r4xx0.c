@@ -1,5 +1,4 @@
 multiline_comment|/*&n; * r4xx0.c: R4000 processor variant specific MMU/Cache routines.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; *&n; * $Id: r4xx0.c,v 1.11 1998/05/04 09:18:31 ralf Exp $&n; *&n; * To do:&n; *&n; *  - this code is a overbloated pig&n; *  - many of the bug workarounds are not efficient at all, but at&n; *    least they are functional ...&n; */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -10572,9 +10571,9 @@ suffix:semicolon
 id|set_cp0_config
 c_func
 (paren
-id|CONFIG_CM_CMASK
+id|CONF_REG_CM_CMASK
 comma
-id|CONFIG_CM_CACHABLE_NONCOHERENT
+id|CONF_REG_CM_CACHABLE_NONCOHERENT
 )paren
 suffix:semicolon
 id|probe_icache

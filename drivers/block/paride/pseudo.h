@@ -1,4 +1,7 @@
-multiline_comment|/* &n;        pseudo.h    (c) 1997  Grant R. Guenther &lt;grant@torque.net&gt;&n;                              Under the terms of the GNU public license.&n;&n;&t;This is the &quot;pseudo-interrupt&quot; logic for parallel port drivers.&n;&n;        This module is #included into each driver.  It makes one&n;        function available:&n;&n;&t;&t;ps_set_intr( void (*continuation)(void),&n;&t;&t;&t;     int  (*ready)(void),&n;&t;&t;&t;     int timeout,&n;&t;&t;&t;     int nice )&n;&n;&t;Which will arrange for ready() to be evaluated frequently and&n;&t;when either it returns true, or timeout jiffies have passed,&n;&t;continuation() will be invoked.&n;&n;&t;If nice is true, the test will done approximately once a&n;&t;jiffy.  If nice is 0, the test will also be done whenever&n;&t;the scheduler runs (by adding it to a task queue).&n;&n;*/
+multiline_comment|/* &n;        pseudo.h    (c) 1997-8  Grant R. Guenther &lt;grant@torque.net&gt;&n;                                Under the terms of the GNU public license.&n;&n;&t;This is the &quot;pseudo-interrupt&quot; logic for parallel port drivers.&n;&n;        This module is #included into each driver.  It makes one&n;        function available:&n;&n;&t;&t;ps_set_intr( void (*continuation)(void),&n;&t;&t;&t;     int  (*ready)(void),&n;&t;&t;&t;     int timeout,&n;&t;&t;&t;     int nice )&n;&n;&t;Which will arrange for ready() to be evaluated frequently and&n;&t;when either it returns true, or timeout jiffies have passed,&n;&t;continuation() will be invoked.&n;&n;&t;If nice is true, the test will done approximately once a&n;&t;jiffy.  If nice is 0, the test will also be done whenever&n;&t;the scheduler runs (by adding it to a task queue).&n;&n;*/
+multiline_comment|/* Changes:&n;&n;&t;1.01&t;1998.05.03&t;Switched from cli()/sti() to spinlocks&n;&n;*/
+DECL|macro|PS_VERSION
+mdefine_line|#define PS_VERSION&t;&quot;1.01&quot;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;linux/tqueue.h&gt;
@@ -75,6 +78,12 @@ id|ps_tq_active
 op_assign
 l_int|0
 suffix:semicolon
+DECL|variable|ps_spinlock
+id|spinlock_t
+id|ps_spinlock
+op_assign
+id|SPIN_LOCK_UNLOCKED
+suffix:semicolon
 DECL|variable|ps_timer
 r_static
 r_struct
@@ -143,15 +152,13 @@ id|nice
 r_int
 id|flags
 suffix:semicolon
-id|save_flags
+id|spin_lock_irqsave
 c_func
 (paren
+op_amp
+id|ps_spinlock
+comma
 id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
 )paren
 suffix:semicolon
 id|ps_continuation
@@ -231,9 +238,12 @@ id|ps_timer
 )paren
 suffix:semicolon
 )brace
-id|restore_flags
+id|spin_unlock_irqrestore
 c_func
 (paren
+op_amp
+id|ps_spinlock
+comma
 id|flags
 )paren
 suffix:semicolon
@@ -261,15 +271,13 @@ suffix:semicolon
 r_int
 id|flags
 suffix:semicolon
-id|save_flags
+id|spin_lock_irqsave
 c_func
 (paren
+op_amp
+id|ps_spinlock
+comma
 id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
 )paren
 suffix:semicolon
 id|con
@@ -294,9 +302,12 @@ op_logical_neg
 id|con
 )paren
 (brace
-id|restore_flags
+id|spin_unlock_irqrestore
 c_func
 (paren
+op_amp
+id|ps_spinlock
+comma
 id|flags
 )paren
 suffix:semicolon
@@ -306,6 +317,9 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
+id|ps_ready
+op_logical_or
 id|ps_ready
 c_func
 (paren
@@ -322,9 +336,12 @@ id|ps_continuation
 op_assign
 l_int|NULL
 suffix:semicolon
-id|restore_flags
+id|spin_unlock_irqrestore
 c_func
 (paren
+op_amp
+id|ps_spinlock
+comma
 id|flags
 )paren
 suffix:semicolon
@@ -357,9 +374,12 @@ op_amp
 id|tq_scheduler
 )paren
 suffix:semicolon
-id|restore_flags
+id|spin_unlock_irqrestore
 c_func
 (paren
+op_amp
+id|ps_spinlock
+comma
 id|flags
 )paren
 suffix:semicolon
@@ -387,15 +407,13 @@ suffix:semicolon
 r_int
 id|flags
 suffix:semicolon
-id|save_flags
+id|spin_lock_irqsave
 c_func
 (paren
+op_amp
+id|ps_spinlock
+comma
 id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
 )paren
 suffix:semicolon
 id|con
@@ -413,9 +431,12 @@ op_logical_neg
 id|con
 )paren
 (brace
-id|restore_flags
+id|spin_unlock_irqrestore
 c_func
 (paren
+op_amp
+id|ps_spinlock
+comma
 id|flags
 )paren
 suffix:semicolon
@@ -425,6 +446,9 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
+id|ps_ready
+op_logical_or
 id|ps_ready
 c_func
 (paren
@@ -441,9 +465,12 @@ id|ps_continuation
 op_assign
 l_int|NULL
 suffix:semicolon
-id|restore_flags
+id|spin_unlock_irqrestore
 c_func
 (paren
+op_amp
+id|ps_spinlock
+comma
 id|flags
 )paren
 suffix:semicolon
@@ -470,9 +497,12 @@ op_amp
 id|ps_timer
 )paren
 suffix:semicolon
-id|restore_flags
+id|spin_unlock_irqrestore
 c_func
 (paren
+op_amp
+id|ps_spinlock
+comma
 id|flags
 )paren
 suffix:semicolon

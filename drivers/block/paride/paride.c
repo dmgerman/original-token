@@ -1,12 +1,14 @@
-multiline_comment|/* &n;        paride.c  (c) 1997  Grant R. Guenther &lt;grant@torque.net&gt;&n;                            Under the terms of the GNU public license.&n;&n;&t;This is the base module for the family of device drivers&n;        that support parallel port IDE devices.  &n;&n;*/
+multiline_comment|/* &n;        paride.c  (c) 1997-8  Grant R. Guenther &lt;grant@torque.net&gt;&n;                              Under the terms of the GNU public license.&n;&n;&t;This is the base module for the family of device drivers&n;        that support parallel port IDE devices.  &n;&n;*/
+multiline_comment|/* Changes:&n;&n;&t;1.01&t;GRG 1998.05.03&t;Use spinlocks&n;&t;1.02&t;GRG 1998.05.05  init_proto, release_proto, ktti&n;&n;*/
 DECL|macro|PI_VERSION
-mdefine_line|#define PI_VERSION      &quot;1.0&quot;
+mdefine_line|#define PI_VERSION      &quot;1.02&quot;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
+macro_line|#include &lt;asm/spinlock.h&gt;
 macro_line|#ifdef CONFIG_PARPORT_MODULE
 DECL|macro|CONFIG_PARPORT
 mdefine_line|#define CONFIG_PARPORT
@@ -26,6 +28,12 @@ id|protocols
 (braket
 id|MAX_PROTOS
 )braket
+suffix:semicolon
+DECL|variable|pi_spinlock
+id|spinlock_t
+id|pi_spinlock
+op_assign
+id|SPIN_LOCK_UNLOCKED
 suffix:semicolon
 DECL|function|pi_write_regr
 r_void
@@ -187,15 +195,13 @@ r_void
 op_assign
 l_int|NULL
 suffix:semicolon
-id|save_flags
+id|spin_lock_irqsave
 c_func
 (paren
+op_amp
+id|pi_spinlock
+comma
 id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
 )paren
 suffix:semicolon
 r_if
@@ -224,9 +230,12 @@ op_assign
 l_int|1
 suffix:semicolon
 )brace
-id|restore_flags
+id|spin_unlock_irqrestore
 c_func
 (paren
+op_amp
+id|pi_spinlock
+comma
 id|flags
 )paren
 suffix:semicolon
@@ -274,15 +283,13 @@ macro_line|#ifdef CONFIG_PARPORT
 r_int
 id|flags
 suffix:semicolon
-id|save_flags
+id|spin_lock_irqsave
 c_func
 (paren
+op_amp
+id|pi_spinlock
+comma
 id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
 )paren
 suffix:semicolon
 r_if
@@ -303,9 +310,12 @@ id|pi-&gt;claimed
 op_assign
 l_int|1
 suffix:semicolon
-id|restore_flags
+id|spin_unlock_irqrestore
 c_func
 (paren
+op_amp
+id|pi_spinlock
+comma
 id|flags
 )paren
 suffix:semicolon
@@ -321,9 +331,12 @@ id|pi-&gt;claim_cont
 op_assign
 id|cont
 suffix:semicolon
-id|restore_flags
+id|spin_unlock_irqrestore
 c_func
 (paren
+op_amp
+id|pi_spinlock
+comma
 id|flags
 )paren
 suffix:semicolon
@@ -555,9 +568,10 @@ id|pi-&gt;reserved
 suffix:semicolon
 id|pi-&gt;proto
 op_member_access_from_pointer
-id|dec_use
+id|release_proto
 c_func
 (paren
+id|pi
 )paren
 suffix:semicolon
 )brace
@@ -1715,11 +1729,18 @@ id|protocols
 id|p
 )braket
 suffix:semicolon
+id|pi
+op_member_access_from_pointer
+r_private
+op_assign
+l_int|0
+suffix:semicolon
 id|pi-&gt;proto
 op_member_access_from_pointer
-id|inc_use
+id|init_proto
 c_func
 (paren
+id|pi
 )paren
 suffix:semicolon
 r_if
@@ -1746,12 +1767,6 @@ suffix:semicolon
 id|pi-&gt;device
 op_assign
 id|device
-suffix:semicolon
-id|pi
-op_member_access_from_pointer
-r_private
-op_assign
-l_int|0
 suffix:semicolon
 id|pi-&gt;parname
 op_assign
@@ -1858,9 +1873,10 @@ suffix:semicolon
 )brace
 id|pi-&gt;proto
 op_member_access_from_pointer
-id|dec_use
+id|release_proto
 c_func
 (paren
+id|pi
 )paren
 suffix:semicolon
 )brace
@@ -2129,6 +2145,23 @@ suffix:semicolon
 )brace
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef CONFIG_PARIDE_FIT2
+(brace
+r_extern
+r_struct
+id|pi_protocol
+id|fit2
+suffix:semicolon
+id|pi_register
+c_func
+(paren
+op_amp
+id|fit2
+)paren
+suffix:semicolon
+)brace
+suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef CONFIG_PARIDE_KBIC
 (brace
 r_extern
@@ -2153,6 +2186,23 @@ c_func
 (paren
 op_amp
 id|k971
+)paren
+suffix:semicolon
+)brace
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_PARIDE_KTTI
+(brace
+r_extern
+r_struct
+id|pi_protocol
+id|ktti
+suffix:semicolon
+id|pi_register
+c_func
+(paren
+op_amp
+id|ktti
 )paren
 suffix:semicolon
 )brace

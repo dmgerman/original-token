@@ -149,13 +149,6 @@ id|scsi_bh_queue_tail
 op_assign
 l_int|NULL
 suffix:semicolon
-DECL|variable|scsi_bh_queue_spin
-r_static
-id|spinlock_t
-id|scsi_bh_queue_spin
-op_assign
-id|SPIN_LOCK_UNLOCKED
-suffix:semicolon
 DECL|variable|dma_malloc_freelist
 r_static
 id|FreeSectorBitmap
@@ -4877,12 +4870,7 @@ op_logical_and
 op_logical_neg
 id|SCpnt-&gt;host-&gt;eh_active
 op_logical_and
-id|atomic_read
-c_func
-(paren
-op_amp
-id|SCpnt-&gt;host-&gt;host_active
-)paren
+id|SCpnt-&gt;host-&gt;host_busy
 op_eq
 id|SCpnt-&gt;host-&gt;host_failed
 )paren
@@ -5685,10 +5673,6 @@ op_star
 id|SCpnt
 )paren
 (brace
-r_int
-r_int
-id|flags
-suffix:semicolon
 multiline_comment|/*&n;   * We don&squot;t have to worry about this one timing out any more.&n;   */
 id|scsi_delete_timer
 c_func
@@ -5696,7 +5680,12 @@ c_func
 id|SCpnt
 )paren
 suffix:semicolon
-multiline_comment|/*&n;   * First, see whether this command already timed out.  If so, we ignore&n;   * the response.  We treat it as if the command never finished.&n;   */
+multiline_comment|/* Set the serial numbers back to zero */
+id|SCpnt-&gt;serial_number
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/*&n;   * First, see whether this command already timed out.  If so, we ignore&n;   * the response.  We treat it as if the command never finished.&n;   *&n;   * Since serial_number is now 0, the error handler cound detect this&n;   * situation and avoid to call the the low level driver abort routine.&n;   * (DB)&n;   */
 r_if
 c_cond
 (paren
@@ -5722,11 +5711,6 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/* Set the serial numbers back to zero */
-id|SCpnt-&gt;serial_number
-op_assign
-l_int|0
-suffix:semicolon
 id|SCpnt-&gt;serial_number_at_timeout
 op_assign
 l_int|0
@@ -5743,16 +5727,7 @@ id|SCpnt-&gt;bh_next
 op_assign
 l_int|NULL
 suffix:semicolon
-multiline_comment|/*&n;   * Next, put this command in the BH queue.  All processing of the command&n;   * past this point will take place with interrupts turned on.&n;   * We start by atomicly swapping the pointer into the queue head slot.&n;   * If it was NULL before, then everything is fine, and we are done&n;   * (this is the normal case).  If it was not NULL, then we block interrupts,&n;   * and link them together.&n;   * We need a spinlock here, or compare and exchange if we can reorder incoming&n;   * Scsi_Cmnds, as it happens pretty often scsi_done is called multiple times&n;   * before bh is serviced. -jj&n;   */
-id|spin_lock_irqsave
-c_func
-(paren
-op_amp
-id|scsi_bh_queue_spin
-comma
-id|flags
-)paren
-suffix:semicolon
+multiline_comment|/*&n;   * Next, put this command in the BH queue.&n;   * &n;   * We need a spinlock here, or compare and exchange if we can reorder incoming&n;   * Scsi_Cmnds, as it happens pretty often scsi_done is called multiple times&n;   * before bh is serviced. -jj&n;   *&n;   * We already have the io_request_lock here, since we are called from the&n;   * interrupt handler or the error handler. (DB)&n;   *&n;   */
 r_if
 c_cond
 (paren
@@ -5780,15 +5755,6 @@ op_assign
 id|SCpnt
 suffix:semicolon
 )brace
-id|spin_unlock_irqrestore
-c_func
-(paren
-op_amp
-id|scsi_bh_queue_spin
-comma
-id|flags
-)paren
-suffix:semicolon
 multiline_comment|/*&n;   * Mark the bottom half handler to be run.&n;   */
 id|mark_bh
 c_func
@@ -5797,7 +5763,7 @@ id|SCSI_BH
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Procedure:   scsi_bottom_half_handler&n; *&n; * Purpose:     Called after we have finished processing interrupts, it&n; *              performs post-interrupt handling for commands that may&n; *              have completed.&n; *&n; * Notes:       This is called with all interrupts enabled.  This should reduce&n; *              interrupt latency, stack depth, and reentrancy of the low-level&n; *              drivers.&n; */
+multiline_comment|/*&n; * Procedure:   scsi_bottom_half_handler&n; *&n; * Purpose:     Called after we have finished processing interrupts, it&n; *              performs post-interrupt handling for commands that may&n; *              have completed.&n; *&n; * Notes:       This is called with all interrupts enabled.  This should reduce&n; *              interrupt latency, stack depth, and reentrancy of the low-level&n; *              drivers.&n; *&n; * The io_request_lock is required in all the routine. There was a subtle&n; * race condition when scsi_done is called after a command has already&n; * timed out but before the time out is processed by the error handler.&n; * (DB)&n; */
 DECL|function|scsi_bottom_half_handler
 r_void
 id|scsi_bottom_half_handler
@@ -5814,109 +5780,10 @@ id|Scsi_Cmnd
 op_star
 id|SCnext
 suffix:semicolon
-r_static
-id|atomic_t
-id|recursion_depth
-suffix:semicolon
 r_int
 r_int
 id|flags
 suffix:semicolon
-r_while
-c_loop
-(paren
-l_int|1
-op_eq
-l_int|1
-)paren
-(brace
-multiline_comment|/*&n;       * If the counter is &gt; 0, that means that there is another interrupt handler&n;       * out there somewhere processing commands.  We don&squot;t want to get these guys&n;       * nested as this can lead to stack overflow problems, and there isn&squot;t any&n;       * real sense in it anyways.&n;       */
-r_if
-c_cond
-(paren
-id|atomic_read
-c_func
-(paren
-op_amp
-id|recursion_depth
-)paren
-OG
-l_int|0
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;SCSI bottom half recursion depth = %d &bslash;n&quot;
-comma
-id|atomic_read
-c_func
-(paren
-op_amp
-id|recursion_depth
-)paren
-)paren
-suffix:semicolon
-id|SCSI_LOG_MLCOMPLETE
-c_func
-(paren
-l_int|1
-comma
-id|printk
-c_func
-(paren
-l_string|&quot;SCSI bottom half recursion depth = %d &bslash;n&quot;
-comma
-id|atomic_read
-c_func
-(paren
-op_amp
-id|recursion_depth
-)paren
-)paren
-)paren
-suffix:semicolon
-r_break
-suffix:semicolon
-)brace
-multiline_comment|/*&n;       * We need to hold the spinlock, so that nobody is tampering with the queue. -jj&n;       * We will process everything we find in the list here.&n;       */
-id|spin_lock_irqsave
-c_func
-(paren
-op_amp
-id|scsi_bh_queue_spin
-comma
-id|flags
-)paren
-suffix:semicolon
-id|SCpnt
-op_assign
-id|scsi_bh_queue_head
-suffix:semicolon
-id|scsi_bh_queue_head
-op_assign
-l_int|NULL
-suffix:semicolon
-id|spin_unlock_irqrestore
-c_func
-(paren
-op_amp
-id|scsi_bh_queue_spin
-comma
-id|flags
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|SCpnt
-op_eq
-l_int|NULL
-)paren
-(brace
-r_return
-suffix:semicolon
-)brace
 id|spin_lock_irqsave
 c_func
 (paren
@@ -5926,13 +5793,42 @@ comma
 id|flags
 )paren
 suffix:semicolon
-id|atomic_inc
+r_while
+c_loop
+(paren
+l_int|1
+op_eq
+l_int|1
+)paren
+(brace
+id|SCpnt
+op_assign
+id|scsi_bh_queue_head
+suffix:semicolon
+id|scsi_bh_queue_head
+op_assign
+l_int|NULL
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|SCpnt
+op_eq
+l_int|NULL
+)paren
+(brace
+id|spin_unlock_irqrestore
 c_func
 (paren
 op_amp
-id|recursion_depth
+id|io_request_lock
+comma
+id|flags
 )paren
 suffix:semicolon
+r_return
+suffix:semicolon
+)brace
 id|SCnext
 op_assign
 id|SCpnt-&gt;bh_next
@@ -6124,12 +6020,7 @@ multiline_comment|/*&n;                   * If the host is having troubles, then
 r_if
 c_cond
 (paren
-id|atomic_read
-c_func
-(paren
-op_amp
-id|SCpnt-&gt;host-&gt;host_active
-)paren
+id|SCpnt-&gt;host-&gt;host_busy
 op_eq
 id|SCpnt-&gt;host-&gt;host_failed
 )paren
@@ -6174,13 +6065,8 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/* for(; SCpnt...) */
-id|atomic_dec
-c_func
-(paren
-op_amp
-id|recursion_depth
-)paren
-suffix:semicolon
+)brace
+multiline_comment|/* while(1==1) */
 id|spin_unlock_irqrestore
 c_func
 (paren
@@ -6190,8 +6076,6 @@ comma
 id|flags
 )paren
 suffix:semicolon
-)brace
-multiline_comment|/* while(1==1) */
 )brace
 multiline_comment|/*&n; * Function:    scsi_retry_command&n; *&n; * Purpose:     Send a command back to the low level to be retried.&n; *&n; * Notes:       This command is always executed in the context of the&n; *              bottom half handler, or the error handler thread. Low&n; *              level drivers should not become re-entrant as a result of&n; *              this.&n; */
 r_int
@@ -6415,6 +6299,11 @@ suffix:semicolon
 id|SCpnt-&gt;state
 op_assign
 id|SCSI_STATE_FINISHED
+suffix:semicolon
+multiline_comment|/* We can get here with use_sg=0, causing a panic in the upper level (DB) */
+id|SCpnt-&gt;use_sg
+op_assign
+id|SCpnt-&gt;old_use_sg
 suffix:semicolon
 id|SCpnt-&gt;done
 (paren
@@ -8823,6 +8712,7 @@ comma
 id|lun
 )paren
 suffix:semicolon
+multiline_comment|/* FIXME (DB) This assumes that the queue_depth routines can be used&n;           in this context as well, while they were all designed to be&n;           called only once after the detect routine. (DB) */
 r_if
 c_cond
 (paren
@@ -9935,6 +9825,10 @@ r_char
 op_star
 id|name
 suffix:semicolon
+r_int
+r_int
+id|flags
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -9951,10 +9845,22 @@ id|pcount
 op_assign
 id|next_scsi_host
 suffix:semicolon
+multiline_comment|/* The detect routine must carefully spinunlock/spinlock if &n;       it enables interrupts, since all interrupt handlers do &n;       spinlock as well.&n;       All lame drivers are going to fail due to the following &n;       spinlock. For the time beeing let&squot;s use it only for drivers &n;       using the new scsi code. NOTE: the detect routine could&n;       redefine the value tpnt-&gt;use_new_eh_code. (DB, 13 May 1998) */
 r_if
 c_cond
 (paren
+id|tpnt-&gt;use_new_eh_code
+)paren
+(brace
+id|spin_lock_irqsave
+c_func
 (paren
+op_amp
+id|io_request_lock
+comma
+id|flags
+)paren
+suffix:semicolon
 id|tpnt-&gt;present
 op_assign
 id|tpnt
@@ -9964,7 +9870,32 @@ c_func
 (paren
 id|tpnt
 )paren
+suffix:semicolon
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|io_request_lock
+comma
+id|flags
 )paren
+suffix:semicolon
+)brace
+r_else
+id|tpnt-&gt;present
+op_assign
+id|tpnt
+op_member_access_from_pointer
+id|detect
+c_func
+(paren
+id|tpnt
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|tpnt-&gt;present
 )paren
 (brace
 r_if
@@ -10641,11 +10572,17 @@ id|RQ_INACTIVE
 id|printk
 c_func
 (paren
-l_string|&quot;SCSI device not inactive - state=%d, id=%d&bslash;n&quot;
+l_string|&quot;SCSI device not inactive - rq_status=%d, target=%d, pid=%ld, state=%d, owner=%d.&bslash;n&quot;
 comma
 id|SCpnt-&gt;request.rq_status
 comma
 id|SCpnt-&gt;target
+comma
+id|SCpnt-&gt;pid
+comma
+id|SCpnt-&gt;state
+comma
+id|SCpnt-&gt;owner
 )paren
 suffix:semicolon
 r_for

@@ -169,6 +169,13 @@ r_int
 r_int
 id|BIOS_revision
 suffix:semicolon
+multiline_comment|/* Lazy FPU handling on uni-processor */
+r_extern
+r_struct
+id|task_struct
+op_star
+id|last_task_used_math
+suffix:semicolon
 multiline_comment|/*&n; * User space process size: 3GB (default).&n; */
 DECL|macro|TASK_SIZE
 mdefine_line|#define TASK_SIZE&t;(PAGE_OFFSET)

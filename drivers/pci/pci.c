@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;$Id: pci.c,v 1.84 1998/05/02 19:22:06 mj Exp $&n; *&n; *&t;PCI Bus Services&n; *&n; *&t;Copyright 1993 -- 1998 Drew Eckhardt, Frederic Potter,&n; *&t;David Mosberger-Tang, Martin Mares&n; */
+multiline_comment|/*&n; *&t;$Id: pci.c,v 1.85 1998/05/12 07:36:01 mj Exp $&n; *&n; *&t;PCI Bus Services, see include/linux/pci.h for further explanation.&n; *&n; *&t;Copyright 1993 -- 1997 Drew Eckhardt, Frederic Potter,&n; *&t;David Mosberger-Tang&n; *&n; *&t;Copyright 1997 -- 1998 Martin Mares &lt;mj@atrey.karlin.mff.cuni.cz&gt;&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -1681,7 +1681,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;PCI: Probing PCI hardware.&bslash;n&quot;
+l_string|&quot;PCI: Probing PCI hardware&bslash;n&quot;
 )paren
 suffix:semicolon
 id|memset

@@ -280,14 +280,6 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/*&n; *&t;Init task must be ok at boot for the ix86 as we will check its signals&n; *&t;via the SMP irq return path.&n; */
-DECL|variable|last_task_used_math
-r_struct
-id|task_struct
-op_star
-id|last_task_used_math
-op_assign
-l_int|NULL
-suffix:semicolon
 DECL|variable|task
 r_struct
 id|task_struct

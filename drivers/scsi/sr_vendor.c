@@ -1047,6 +1047,14 @@ id|sector
 op_sub_assign
 id|CD_MSF_OFFSET
 suffix:semicolon
+id|sr_set_blocklength
+c_func
+(paren
+id|minor
+comma
+l_int|2048
+)paren
+suffix:semicolon
 r_break
 suffix:semicolon
 )brace

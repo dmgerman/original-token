@@ -1,6 +1,7 @@
-multiline_comment|/* paride.h&t;(c) 1997  Grant R. Guenther &lt;grant@torque.net&gt;&n;   &t;&t;          Under the terms of the GPL.&n;&n;   This file defines the interface between the high-level parallel&n;   IDE device drivers (pd, pf, pcd, pt) and the adapter chips.&n;&n;*/
+multiline_comment|/* &n;&t;paride.h&t;(c) 1997-8  Grant R. Guenther &lt;grant@torque.net&gt;&n;   &t;&t;                    Under the terms of the GPL.&n;&n;   This file defines the interface between the high-level parallel&n;   IDE device drivers (pd, pf, pcd, pt) and the adapter chips.&n;&n;*/
+multiline_comment|/* Changes:&n;&n;&t;1.01&t;GRG 1998.05.05&t;init_proto, release_proto&n;*/
 DECL|macro|PARIDE_H_VERSION
-mdefine_line|#define PARIDE_H_VERSION &t;&quot;1.0&quot;
+mdefine_line|#define PARIDE_H_VERSION &t;&quot;1.01&quot;
 multiline_comment|/* Some adapters need to know what kind of device they are in&n;&n;   Values for devtype:&n;*/
 DECL|macro|PI_PD
 mdefine_line|#define&t;PI_PD&t;0&t;/* IDE disk */
@@ -645,24 +646,26 @@ comma
 r_int
 )paren
 suffix:semicolon
-DECL|member|inc_use
+DECL|member|init_proto
 r_void
 (paren
 op_star
-id|inc_use
+id|init_proto
 )paren
 (paren
-r_void
+id|PIA
+op_star
 )paren
 suffix:semicolon
-DECL|member|dec_use
+DECL|member|release_proto
 r_void
 (paren
 op_star
-id|dec_use
+id|release_proto
 )paren
 (paren
-r_void
+id|PIA
+op_star
 )paren
 suffix:semicolon
 )brace

@@ -618,6 +618,7 @@ id|stat
 op_amp
 id|HA_SDRQ
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -977,6 +978,7 @@ id|odd
 op_assign
 id|FALSE
 suffix:semicolon
+)brace
 )brace
 )brace
 )brace

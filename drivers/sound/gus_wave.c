@@ -2404,6 +2404,7 @@ op_ne
 op_minus
 l_int|1
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -2462,6 +2463,7 @@ op_amp
 id|WAVE_16_BITS
 )paren
 suffix:semicolon
+)brace
 )brace
 DECL|function|gus_voice_init
 r_static

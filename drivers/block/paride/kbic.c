@@ -1,6 +1,7 @@
-multiline_comment|/*&n;        kbic.c    (c) 1997  Grant R. Guenther &lt;grant@torque.net&gt;&n;                            Under the terms of the GNU public license.&n;&n;        This is a low-level driver for the KBIC-951A and KBIC-971A&n;        parallel to IDE adapter chips from KingByte Information Systems.&n;&n;&t;The chips are almost identical, however, the wakeup code &n;&t;required for the 971A interferes with the correct operation of&n;        the 951A, so this driver registers itself twice, once for&n;&t;each chip.&n;&n;*/
+multiline_comment|/*&n;        kbic.c    (c) 1997-8  Grant R. Guenther &lt;grant@torque.net&gt;&n;                              Under the terms of the GNU public license.&n;&n;        This is a low-level driver for the KBIC-951A and KBIC-971A&n;        parallel to IDE adapter chips from KingByte Information Systems.&n;&n;&t;The chips are almost identical, however, the wakeup code &n;&t;required for the 971A interferes with the correct operation of&n;        the 951A, so this driver registers itself twice, once for&n;&t;each chip.&n;&n;*/
+multiline_comment|/* Changes:&n;&n;        1.01    GRG 1998.05.06 init_proto, release_proto&n;&n;*/
 DECL|macro|KBIC_VERSION
-mdefine_line|#define KBIC_VERSION      &quot;1.0&quot;
+mdefine_line|#define KBIC_VERSION      &quot;1.01&quot;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -1855,23 +1856,29 @@ l_string|&quot;KBIC-971A&quot;
 )paren
 suffix:semicolon
 )brace
-DECL|function|kbic_inc_use
+DECL|function|kbic_init_proto
 r_static
 r_void
-id|kbic_inc_use
+id|kbic_init_proto
+c_func
 (paren
-r_void
+id|PIA
+op_star
+id|pi
 )paren
 (brace
 id|MOD_INC_USE_COUNT
 suffix:semicolon
 )brace
-DECL|function|kbic_dec_use
+DECL|function|kbic_release_proto
 r_static
 r_void
-id|kbic_dec_use
+id|kbic_release_proto
+c_func
 (paren
-r_void
+id|PIA
+op_star
+id|pi
 )paren
 (brace
 id|MOD_DEC_USE_COUNT
@@ -1915,9 +1922,9 @@ l_int|0
 comma
 id|k951_log_adapter
 comma
-id|kbic_inc_use
+id|kbic_init_proto
 comma
-id|kbic_dec_use
+id|kbic_release_proto
 )brace
 suffix:semicolon
 DECL|variable|k971
@@ -1958,9 +1965,9 @@ l_int|0
 comma
 id|k971_log_adapter
 comma
-id|kbic_inc_use
+id|kbic_init_proto
 comma
-id|kbic_dec_use
+id|kbic_release_proto
 )brace
 suffix:semicolon
 macro_line|#ifdef MODULE

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/fs/umsdos/file.c&n; *&n; *  Written 1993 by Jacques Gelinas&n; *&t;inspired from linux/fs/msdos/file.c Werner Almesberger&n; *&n; *  Extended MS-DOS regular file handling primitives&n; */
+multiline_comment|/*&n; *  linux/fs/umsdos/file.c&n; *&n; *  Written 1993 by Jacques Gelinas&n; *      inspired from linux/fs/msdos/file.c Werner Almesberger&n; *&n; *  Extended MS-DOS regular file handling primitives&n; */
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/msdos_fs.h&gt;
@@ -13,12 +13,11 @@ DECL|macro|PRINTK
 mdefine_line|#define PRINTK(x)
 DECL|macro|Printk
 mdefine_line|#define Printk(x)&t;printk x
-multiline_comment|/*&n;&t;Read a file into user space memory&n;*/
+multiline_comment|/*&n; * Read a file into user space memory&n; */
 DECL|function|UMSDOS_file_read
 r_static
 id|ssize_t
 id|UMSDOS_file_read
-c_func
 (paren
 r_struct
 id|file
@@ -57,7 +56,6 @@ r_int
 id|ret
 op_assign
 id|fat_file_read
-c_func
 (paren
 id|filp
 comma
@@ -73,7 +71,6 @@ c_cond
 (paren
 op_logical_neg
 id|IS_RDONLY
-c_func
 (paren
 id|inode
 )paren
@@ -83,18 +80,17 @@ id|inode-&gt;i_atime
 op_assign
 id|CURRENT_TIME
 suffix:semicolon
-multiline_comment|/* FIXME &n;&t;&t;inode-&gt;i_dirt = 1;&n;&t;&t;*/
+multiline_comment|/* FIXME &n;&t;&t; * inode-&gt;i_dirt = 1;&n;&t;&t; */
 )brace
 r_return
 id|ret
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t;Write a file from user space memory&n;*/
+multiline_comment|/*&n; * Write a file from user space memory&n; */
 DECL|function|UMSDOS_file_write
 r_static
 id|ssize_t
 id|UMSDOS_file_write
-c_func
 (paren
 r_struct
 id|file
@@ -116,7 +112,6 @@ id|ppos
 (brace
 r_return
 id|fat_file_write
-c_func
 (paren
 id|filp
 comma
@@ -128,12 +123,11 @@ id|ppos
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t;Truncate a file to 0 length.&n;*/
+multiline_comment|/*&n; * Truncate a file to 0 length.&n; */
 DECL|function|UMSDOS_truncate
 r_static
 r_void
 id|UMSDOS_truncate
-c_func
 (paren
 r_struct
 id|inode
@@ -159,7 +153,7 @@ id|inode-&gt;i_mtime
 op_assign
 id|CURRENT_TIME
 suffix:semicolon
-multiline_comment|/*FIXME&t;inode-&gt;i_dirt = 1; */
+multiline_comment|/*FIXME inode-&gt;i_dirt = 1; */
 )brace
 multiline_comment|/* Function for normal file system (512 bytes hardware sector size) */
 DECL|variable|umsdos_file_operations

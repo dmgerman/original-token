@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;$Id: pcisyms.c,v 1.7 1998/05/02 19:20:06 mj Exp $&n; *&n; *&t;PCI Bus Services -- Exported Symbols&n; *&n; *&t;Copyright 1998 Martin Mares&n; */
+multiline_comment|/*&n; *&t;$Id: pcisyms.c,v 1.8 1998/05/12 07:36:04 mj Exp $&n; *&n; *&t;PCI Bus Services -- Exported Symbols&n; *&n; *&t;Copyright 1998 Martin Mares&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 DECL|variable|pcibios_present
@@ -132,6 +132,20 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|pci_set_master
+)paren
+suffix:semicolon
+DECL|variable|pci_proc_attach_device
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|pci_proc_attach_device
+)paren
+suffix:semicolon
+DECL|variable|pci_proc_detach_device
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|pci_proc_detach_device
 )paren
 suffix:semicolon
 multiline_comment|/* Backward compatibility */

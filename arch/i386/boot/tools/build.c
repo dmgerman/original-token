@@ -105,7 +105,7 @@ multiline_comment|/* Reading of ld86 output (Minix format) */
 DECL|macro|MINIX_HEADER_LEN
 mdefine_line|#define MINIX_HEADER_LEN 32
 DECL|function|minix_open
-r_int
+r_void
 id|minix_open
 c_func
 (paren

@@ -1038,6 +1038,7 @@ c_cond
 (paren
 id|ptr
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -1059,6 +1060,7 @@ op_star
 )paren
 id|ptr-&gt;host_scribble
 suffix:semicolon
+)brace
 r_return
 id|ptr
 suffix:semicolon
@@ -6744,6 +6746,7 @@ comma
 id|SELTO
 )paren
 )paren
+(brace
 multiline_comment|/* no timeout */
 r_if
 c_cond
@@ -7110,6 +7113,7 @@ comma
 l_string|&quot;neither timeout nor selection&bslash;007&quot;
 )paren
 suffix:semicolon
+)brace
 r_else
 (brace
 macro_line|#if defined(DEBUG_SELECTION) || defined(DEBUG_PHASES)

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/fs/umsdos/dir.c&n; *&n; *  Written 1993 by Jacques Gelinas&n; *&t;Inspired from linux/fs/msdos/... : Werner Almesberger&n; *&n; *  Extended MS-DOS directory handling functions&n; */
+multiline_comment|/*&n; *  linux/fs/umsdos/dir.c&n; *&n; *  Written 1993 by Jacques Gelinas&n; *      Inspired from linux/fs/msdos/... : Werner Almesberger&n; *&n; *  Extended MS-DOS directory handling functions&n; */
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
@@ -21,7 +21,8 @@ id|inode
 op_star
 id|pseudo_root
 suffix:semicolon
-multiline_comment|/* P.T.Waltenberg&n;   I&squot;ve retained this to facilitate the lookup of some of the hard-wired files/directories UMSDOS&n;   uses. It&squot;s easier to do once than hack all the other instances. Probably safer as well&n;*/
+multiline_comment|/* P.T.Waltenberg&n; * I&squot;ve retained this to facilitate the lookup of some of the hard-wired files/directories UMSDOS&n; * uses. It&squot;s easier to do once than hack all the other instances. Probably safer as well&n; */
+multiline_comment|/* FIXME: it returns inode with i_count of 0. this should be redesigned to return dentry instead,&n;   and correct dentry (with correct d_parent) */
 DECL|function|compat_umsdos_real_lookup
 r_int
 id|compat_umsdos_real_lookup
@@ -54,6 +55,23 @@ id|dentry
 op_star
 id|dentry
 suffix:semicolon
+r_int
+r_int
+id|ino
+suffix:semicolon
+id|Printk
+(paren
+(paren
+id|KERN_DEBUG
+l_string|&quot;compat_umsdos_real_lookup !!CNTx!!: start&bslash;n&quot;
+)paren
+)paren
+suffix:semicolon
+id|check_inode
+(paren
+id|dir
+)paren
+suffix:semicolon
 id|dentry
 op_assign
 id|creat_dentry
@@ -70,26 +88,85 @@ suffix:semicolon
 id|rv
 op_assign
 id|umsdos_real_lookup
-c_func
 (paren
 id|dir
 comma
 id|dentry
 )paren
 suffix:semicolon
+id|iput
+(paren
+id|dir
+)paren
+suffix:semicolon
+multiline_comment|/* should be here, because umsdos_real_lookup does inc_count(dir) */
 r_if
 c_cond
 (paren
+id|rv
+)paren
+(brace
+id|Printk
+(paren
+(paren
+id|KERN_WARNING
+l_string|&quot;compat_umsdos_real_lookup failed with %d&bslash;n&quot;
+comma
+id|rv
+)paren
+)paren
+suffix:semicolon
+r_return
+id|rv
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+op_logical_neg
 id|inode
 )paren
+(brace
+id|Printk
+(paren
+(paren
+id|KERN_ERR
+l_string|&quot;inode should be set here. Arrgh! segfaulting...&bslash;n&quot;
+)paren
+)paren
+suffix:semicolon
+)brace
+id|ino
+op_assign
+id|dentry-&gt;d_inode-&gt;i_ino
+suffix:semicolon
 op_star
 id|inode
 op_assign
 id|dentry-&gt;d_inode
 suffix:semicolon
-id|kill_dentry
+id|dput
 (paren
 id|dentry
+)paren
+suffix:semicolon
+multiline_comment|/* we are done with it: FIXME: does this work /mn/ ? */
+id|check_dentry
+(paren
+id|dentry
+)paren
+suffix:semicolon
+id|check_inode
+(paren
+id|dir
+)paren
+suffix:semicolon
+id|Printk
+(paren
+(paren
+id|KERN_DEBUG
+l_string|&quot;compat_umsdos_real_lookup !!CNTx!!: end&bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 r_return
@@ -99,7 +176,6 @@ suffix:semicolon
 DECL|function|compat_msdos_create
 r_int
 id|compat_msdos_create
-c_func
 (paren
 r_struct
 id|inode
@@ -132,6 +208,11 @@ id|dentry
 op_star
 id|dentry
 suffix:semicolon
+id|check_inode
+(paren
+id|dir
+)paren
+suffix:semicolon
 id|dentry
 op_assign
 id|creat_dentry
@@ -145,16 +226,25 @@ comma
 l_int|NULL
 )paren
 suffix:semicolon
+id|check_dentry
+(paren
+id|dentry
+)paren
+suffix:semicolon
 id|rv
 op_assign
 id|msdos_create
-c_func
 (paren
 id|dir
 comma
 id|dentry
 comma
 id|mode
+)paren
+suffix:semicolon
+id|check_dentry
+(paren
+id|dentry
 )paren
 suffix:semicolon
 r_if
@@ -164,22 +254,24 @@ id|inode
 op_ne
 l_int|NULL
 )paren
-(brace
 op_star
 id|inode
 op_assign
 id|dentry-&gt;d_inode
 suffix:semicolon
-)brace
+id|check_inode
+(paren
+id|dir
+)paren
+suffix:semicolon
 r_return
 id|rv
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t;So  grep *  doesn&squot;t complain in the presence of directories.&n;*/
+multiline_comment|/*&n; * So  grep *  doesn&squot;t complain in the presence of directories.&n; */
 DECL|function|UMSDOS_dir_read
 r_int
 id|UMSDOS_dir_read
-c_func
 (paren
 r_struct
 id|file
@@ -226,12 +318,11 @@ id|stop
 suffix:semicolon
 )brace
 suffix:semicolon
-multiline_comment|/*&n;&t;Record a single entry the first call.&n;&t;Return -EINVAL the next one.&n;&t;NOTE: filldir DOES NOT use a dentry&n;*/
+multiline_comment|/*&n; * Record a single entry the first call.&n; * Return -EINVAL the next one.&n; * NOTE: filldir DOES NOT use a dentry&n; */
 DECL|function|umsdos_dir_once
 r_static
 r_int
 id|umsdos_dir_once
-c_func
 (paren
 r_void
 op_star
@@ -322,12 +413,11 @@ r_return
 id|ret
 suffix:semicolon
 )brace
-multiline_comment|/*&n;  Read count directory entries from directory filp&n;  Return a negative value from linux/errno.h.&n;  Return &gt; 0 if success (The amount of byte written by filldir).&n;  &n;  This function is used by the normal readdir VFS entry point and by&n;  some function who try to find out info on a file from a pure MSDOS&n;  inode. See umsdos_locate_ancestor() below.&n;*/
+multiline_comment|/*&n; * Read count directory entries from directory filp&n; * Return a negative value from linux/errno.h.&n; * Return &gt; 0 if success (The amount of byte written by filldir).&n; * &n; * This function is used by the normal readdir VFS entry point and by&n; * some function who try to find out info on a file from a pure MSDOS&n; * inode. See umsdos_locate_ancestor() below.&n; */
 DECL|function|umsdos_readdir_x
 r_static
 r_int
 id|umsdos_readdir_x
-c_func
 (paren
 r_struct
 id|inode
@@ -369,23 +459,7 @@ id|ret
 op_assign
 l_int|0
 suffix:semicolon
-r_struct
-id|inode
-op_star
-id|root_inode
-suffix:semicolon
-id|root_inode
-op_assign
-id|iget
-c_func
-(paren
-id|dir-&gt;i_sb
-comma
-id|UMSDOS_ROOT_INO
-)paren
-suffix:semicolon
 id|umsdos_startlookup
-c_func
 (paren
 id|dir
 )paren
@@ -414,8 +488,8 @@ l_string|&quot;umsdos_readdir_x: what UMSDOS_SPECIAL_DIRFPOS /mn/?&bslash;n&quot
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;      We don&squot;t need to simulate this pseudo directory&n;      when umsdos_readdir_x is called for internal operation&n;      of umsdos. This is why dirent_in_fs is tested&n;    */
-multiline_comment|/* #Specification: pseudo root / directory /DOS&n;       When umsdos operates in pseudo root mode (C:&bslash;linux is the&n;       linux root), it simulate a directory /DOS which points to&n;       the real root of the file system.&n;    */
+multiline_comment|/*&n;&t;&t; * We don&squot;t need to simulate this pseudo directory&n;&t;&t; * when umsdos_readdir_x is called for internal operation&n;&t;&t; * of umsdos. This is why dirent_in_fs is tested&n;&t;&t; */
+multiline_comment|/* #Specification: pseudo root / directory /DOS&n;&t;&t; * When umsdos operates in pseudo root mode (C:&bslash;linux is the&n;&t;&t; * linux root), it simulate a directory /DOS which points to&n;&t;&t; * the real root of the file system.&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -449,9 +523,9 @@ OL
 l_int|2
 op_logical_or
 (paren
-id|dir
+id|dir-&gt;i_ino
 op_ne
-id|root_inode
+id|UMSDOS_ROOT_INO
 op_logical_and
 id|filp-&gt;f_pos
 op_eq
@@ -459,8 +533,9 @@ l_int|32
 )paren
 )paren
 (brace
-multiline_comment|/* #Specification: readdir / . and ..&n;       The msdos filesystem manage the . and .. entry properly&n;       so the EMD file won&squot;t hold any info about it.&n;       &n;       In readdir, we assume that for the root directory&n;       the read position will be 0 for &quot;.&quot;, 1 for &quot;..&quot;. For&n;       a non root directory, the read position will be 0 for &quot;.&quot;&n;       and 32 for &quot;..&quot;.&n;    */
-multiline_comment|/*&n;      This is a trick used by the msdos file system (fs/msdos/dir.c)&n;      to manage . and .. for the root directory of a file system.&n;      Since there is no such entry in the root, fs/msdos/dir.c&n;      use the following:&n;      &n;      if f_pos == 0, return &quot;.&quot;.&n;      if f_pos == 1, return &quot;..&quot;.&n;      &n;      So let msdos handle it&n;      &n;      Since umsdos entries are much larger, we share the same f_pos.&n;      if f_pos is 0 or 1 or 32, we are clearly looking at . and&n;      ..&n;      &n;      As soon as we get f_pos == 2 or f_pos == 64, then back to&n;      0, but this time we are reading the EMD file.&n;      &n;      Well, not so true. The problem, is that UMSDOS_REC_SIZE is&n;      also 64, so as soon as we read the first record in the&n;      EMD, we are back at offset 64. So we set the offset&n;      to UMSDOS_SPECIAL_DIRFPOS(3) as soon as we have read the&n;      .. entry from msdos.&n;      &n;      Now (linux 1.3), umsdos_readdir can read more than one&n;      entry even if we limit (umsdos_dir_once) to only one:&n;      It skips over hidden file. So we switch to&n;      UMSDOS_SPECIAL_DIRFPOS as soon as we have read successfully&n;      the .. entry.&n;    */
+multiline_comment|/* FIXME: that was in 2.0.x: else if (filp-&gt;f_pos &lt; 2 || (dir != dir-&gt;i_sb-&gt;s_mounted &amp;&amp; filp-&gt;f_pos == 32))&n;&t; * I&squot;m probably screwing up pseudo-root and stuff with this. It needs proper fix.&n;&t; */
+multiline_comment|/* #Specification: readdir / . and ..&n;&t;&t; * The msdos filesystem manage the . and .. entry properly&n;&t;&t; * so the EMD file won&squot;t hold any info about it.&n;&t;&t; * &n;&t;&t; * In readdir, we assume that for the root directory&n;&t;&t; * the read position will be 0 for &quot;.&quot;, 1 for &quot;..&quot;. For&n;&t;&t; * a non root directory, the read position will be 0 for &quot;.&quot;&n;&t;&t; * and 32 for &quot;..&quot;.&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; * This is a trick used by the msdos file system (fs/msdos/dir.c)&n;&t;&t; * to manage . and .. for the root directory of a file system.&n;&t;&t; * Since there is no such entry in the root, fs/msdos/dir.c&n;&t;&t; * use the following:&n;&t;&t; * &n;&t;&t; * if f_pos == 0, return &quot;.&quot;.&n;&t;&t; * if f_pos == 1, return &quot;..&quot;.&n;&t;&t; * &n;&t;&t; * So let msdos handle it&n;&t;&t; * &n;&t;&t; * Since umsdos entries are much larger, we share the same f_pos.&n;&t;&t; * if f_pos is 0 or 1 or 32, we are clearly looking at . and&n;&t;&t; * ..&n;&t;&t; * &n;&t;&t; * As soon as we get f_pos == 2 or f_pos == 64, then back to&n;&t;&t; * 0, but this time we are reading the EMD file.&n;&t;&t; * &n;&t;&t; * Well, not so true. The problem, is that UMSDOS_REC_SIZE is&n;&t;&t; * also 64, so as soon as we read the first record in the&n;&t;&t; * EMD, we are back at offset 64. So we set the offset&n;&t;&t; * to UMSDOS_SPECIAL_DIRFPOS(3) as soon as we have read the&n;&t;&t; * .. entry from msdos.&n;&t;&t; * &n;&t;&t; * Now (linux 1.3), umsdos_readdir can read more than one&n;&t;&t; * entry even if we limit (umsdos_dir_once) to only one:&n;&t;&t; * It skips over hidden file. So we switch to&n;&t;&t; * UMSDOS_SPECIAL_DIRFPOS as soon as we have read successfully&n;&t;&t; * the .. entry.&n;&t;&t; */
 r_int
 id|last_f_pos
 op_assign
@@ -492,7 +567,6 @@ suffix:semicolon
 id|ret
 op_assign
 id|fat_readdir
-c_func
 (paren
 id|filp
 comma
@@ -546,7 +620,6 @@ suffix:semicolon
 id|emd_dir
 op_assign
 id|umsdos_emd_dir_lookup
-c_func
 (paren
 id|dir
 comma
@@ -653,7 +726,7 @@ op_ne
 l_int|0
 )paren
 (brace
-multiline_comment|/* #Specification: umsdos / readdir&n;&t;     umsdos_readdir() should fill a struct dirent with&n;&t;     an inode number. The cheap way to get it is to&n;&t;     do a lookup in the MSDOS directory for each&n;&t;     entry processed by the readdir() function.&n;&t;     This is not very efficient, but very simple. The&n;&t;     other way around is to maintain a copy of the inode&n;&t;     number in the EMD file. This is a problem because&n;&t;     this has to be maintained in sync using tricks.&n;&t;     Remember that MSDOS (the OS) does not update the&n;&t;     modification time (mtime) of a directory. There is&n;&t;     no easy way to tell that a directory was modified&n;&t;     during a DOS session and synchronise the EMD file.&n;&t;     &n;&t;     Suggestion welcome.&n;&t;     &n;&t;     So the easy way is used!&n;&t;  */
+multiline_comment|/* #Specification: umsdos / readdir&n;&t;&t;&t;&t;&t; * umsdos_readdir() should fill a struct dirent with&n;&t;&t;&t;&t;&t; * an inode number. The cheap way to get it is to&n;&t;&t;&t;&t;&t; * do a lookup in the MSDOS directory for each&n;&t;&t;&t;&t;&t; * entry processed by the readdir() function.&n;&t;&t;&t;&t;&t; * This is not very efficient, but very simple. The&n;&t;&t;&t;&t;&t; * other way around is to maintain a copy of the inode&n;&t;&t;&t;&t;&t; * number in the EMD file. This is a problem because&n;&t;&t;&t;&t;&t; * this has to be maintained in sync using tricks.&n;&t;&t;&t;&t;&t; * Remember that MSDOS (the OS) does not update the&n;&t;&t;&t;&t;&t; * modification time (mtime) of a directory. There is&n;&t;&t;&t;&t;&t; * no easy way to tell that a directory was modified&n;&t;&t;&t;&t;&t; * during a DOS session and synchronise the EMD file.&n;&t;&t;&t;&t;&t; * &n;&t;&t;&t;&t;&t; * Suggestion welcome.&n;&t;&t;&t;&t;&t; * &n;&t;&t;&t;&t;&t; * So the easy way is used!&n;&t;&t;&t;&t;&t; */
 r_struct
 id|umsdos_info
 id|info
@@ -686,7 +759,6 @@ op_amp
 id|info
 )paren
 suffix:semicolon
-multiline_comment|/* FIXME, fake a dentry --&gt; /mn/ fixed ? */
 id|lret
 op_assign
 id|compat_umsdos_real_lookup
@@ -735,6 +807,14 @@ id|inode
 op_star
 id|rinode
 suffix:semicolon
+id|Printk
+(paren
+(paren
+id|KERN_DEBUG
+l_string|&quot;umsdos_hlink2inode now&bslash;n&quot;
+)paren
+)paren
+suffix:semicolon
 id|lret
 op_assign
 id|umsdos_hlink2inode
@@ -758,7 +838,7 @@ op_eq
 l_int|0
 )paren
 (brace
-multiline_comment|/* #Specification: pseudo root / reading real root&n;&t;       The pseudo root (/linux) is logically&n;&t;       erased from the real root. This mean that&n;&t;       ls /DOS, won&squot;t show &quot;linux&quot;. This avoids&n;&t;       infinite recursion /DOS/linux/DOS/linux while&n;&t;       walking the file system.&n;&t;    */
+multiline_comment|/* #Specification: pseudo root / reading real root&n;&t;&t;&t;&t;&t;&t; * The pseudo root (/linux) is logically&n;&t;&t;&t;&t;&t;&t; * erased from the real root. This mean that&n;&t;&t;&t;&t;&t;&t; * ls /DOS, won&squot;t show &quot;linux&quot;. This avoids&n;&t;&t;&t;&t;&t;&t; * infinite recursion /DOS/linux/DOS/linux while&n;&t;&t;&t;&t;&t;&t; * walking the file system.&n;&t;&t;&t;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -778,6 +858,14 @@ id|UMSDOS_HIDDEN
 )paren
 )paren
 (brace
+id|Printk
+(paren
+(paren
+id|KERN_DEBUG
+l_string|&quot;filldir now&bslash;n&quot;
+)paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -823,15 +911,37 @@ id|u_entry
 op_assign
 id|entry
 suffix:semicolon
-multiline_comment|/* iput (inode); FIXME */
+id|iput
+(paren
+id|inode
+)paren
+suffix:semicolon
+multiline_comment|/* FIXME? */
 r_break
 suffix:semicolon
 )brace
-multiline_comment|/* iput (inode); FIXME */
+id|Printk
+(paren
+(paren
+id|KERN_DEBUG
+l_string|&quot; dir.c:Putting inode %lu with i_count=%d&bslash;n&quot;
+comma
+id|inode-&gt;i_ino
+comma
+id|inode-&gt;i_count
+)paren
+)paren
+suffix:semicolon
+id|iput
+(paren
+id|inode
+)paren
+suffix:semicolon
+multiline_comment|/* FIXME? */
 )brace
 r_else
 (brace
-multiline_comment|/* #Specification: umsdos / readdir / not in MSDOS&n;&t;       During a readdir operation, if the file is not&n;&t;       in the MSDOS directory anymore, the entry is&n;&t;       removed from the EMD file silently.&n;&t;    */
+multiline_comment|/* #Specification: umsdos / readdir / not in MSDOS&n;&t;&t;&t;&t;&t;&t; * During a readdir operation, if the file is not&n;&t;&t;&t;&t;&t;&t; * in the MSDOS directory anymore, the entry is&n;&t;&t;&t;&t;&t;&t; * removed from the EMD file silently.&n;&t;&t;&t;&t;&t;&t; */
 id|Printk
 (paren
 (paren
@@ -867,7 +977,7 @@ suffix:semicolon
 )brace
 )brace
 )brace
-multiline_comment|/*&n;&t;If the fillbuf has failed, f_pos is back to 0.&n;&t;To avoid getting back into the . and .. state&n;&t;(see comments at the beginning), we put back&n;&t;the special offset.&n;      */
+multiline_comment|/*&n;&t;&t;&t; * If the fillbuf has failed, f_pos is back to 0.&n;&t;&t;&t; * To avoid getting back into the . and .. state&n;&t;&t;&t; * (see comments at the beginning), we put back&n;&t;&t;&t; * the special offset.&n;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -879,11 +989,27 @@ id|filp-&gt;f_pos
 op_assign
 id|start_fpos
 suffix:semicolon
-multiline_comment|/* iput(emd_dir); FIXME */
+id|Printk
+(paren
+(paren
+id|KERN_DEBUG
+l_string|&quot; dir.c:Putting emd_dir %lu with i_count=%d&bslash;n&quot;
+comma
+id|emd_dir-&gt;i_ino
+comma
+id|emd_dir-&gt;i_count
+)paren
+)paren
+suffix:semicolon
+id|iput
+(paren
+id|emd_dir
+)paren
+suffix:semicolon
+multiline_comment|/* FIXME? */
 )brace
 )brace
 id|umsdos_endlookup
-c_func
 (paren
 id|dir
 )paren
@@ -905,12 +1031,11 @@ r_return
 id|ret
 suffix:semicolon
 )brace
-multiline_comment|/*&n;  Read count directory entries from directory filp&n;  Return a negative value from linux/errno.h.&n;  Return 0 or positive if successful&n;*/
+multiline_comment|/*&n; * Read count directory entries from directory filp&n; * Return a negative value from linux/errno.h.&n; * Return 0 or positive if successful&n; */
 DECL|function|UMSDOS_readdir
 r_static
 r_int
 id|UMSDOS_readdir
-c_func
 (paren
 r_struct
 id|file
@@ -1066,7 +1191,7 @@ suffix:colon
 id|ret
 suffix:semicolon
 )brace
-multiline_comment|/*&n;  Complete the inode content with info from the EMD file&n;*/
+multiline_comment|/*&n; * Complete the inode content with info from the EMD file&n; */
 DECL|function|umsdos_lookup_patch
 r_void
 id|umsdos_lookup_patch
@@ -1090,9 +1215,9 @@ id|off_t
 id|emd_pos
 )paren
 (brace
-multiline_comment|/*&n;    This function modify the state of a dir inode. It decides&n;    if the dir is a umsdos dir or a dos dir. This is done&n;    deeper in umsdos_patch_inode() called at the end of this function.&n;    &n;    umsdos_patch_inode() may block because it is doing disk access.&n;    At the same time, another process may get here to initialise&n;    the same dir inode. There is 3 cases.&n;    &n;    1-The inode is already initialised. We do nothing.&n;    2-The inode is not initialised. We lock access and do it.&n;    3-Like 2 but another process has lock the inode, so we try&n;    to lock it and right after check if initialisation is still&n;    needed.&n;    &n;    &n;    Thanks to the mem option of the kernel command line, it was&n;    possible to consistently reproduce this problem by limiting&n;    my mem to 4 meg and running X.&n;  */
-multiline_comment|/*&n;    Do this only if the inode is freshly read, because we will lose&n;    the current (updated) content.&n;  */
-multiline_comment|/*&n;    A lookup of a mount point directory yield the inode into&n;    the other fs, so we don&squot;t care about initialising it. iget()&n;    does this automatically.&n;  */
+multiline_comment|/*&n;&t; * This function modify the state of a dir inode. It decides&n;&t; * if the dir is a umsdos dir or a dos dir. This is done&n;&t; * deeper in umsdos_patch_inode() called at the end of this function.&n;&t; * &n;&t; * umsdos_patch_inode() may block because it is doing disk access.&n;&t; * At the same time, another process may get here to initialise&n;&t; * the same dir inode. There is 3 cases.&n;&t; * &n;&t; * 1-The inode is already initialised. We do nothing.&n;&t; * 2-The inode is not initialised. We lock access and do it.&n;&t; * 3-Like 2 but another process has lock the inode, so we try&n;&t; * to lock it and right after check if initialisation is still&n;&t; * needed.&n;&t; * &n;&t; * &n;&t; * Thanks to the mem option of the kernel command line, it was&n;&t; * possible to consistently reproduce this problem by limiting&n;&t; * my mem to 4 meg and running X.&n;&t; */
+multiline_comment|/*&n;&t; * Do this only if the inode is freshly read, because we will lose&n;&t; * the current (updated) content.&n;&t; */
+multiline_comment|/*&n;&t; * A lookup of a mount point directory yield the inode into&n;&t; * the other fs, so we don&squot;t care about initialising it. iget()&n;&t; * does this automatically.&n;&t; */
 r_if
 c_cond
 (paren
@@ -1102,7 +1227,6 @@ id|dir-&gt;i_sb
 op_logical_and
 op_logical_neg
 id|umsdos_isinit
-c_func
 (paren
 id|inode
 )paren
@@ -1112,13 +1236,11 @@ r_if
 c_cond
 (paren
 id|S_ISDIR
-c_func
 (paren
 id|inode-&gt;i_mode
 )paren
 )paren
 id|umsdos_lockcreate
-c_func
 (paren
 id|inode
 )paren
@@ -1128,18 +1250,16 @@ c_cond
 (paren
 op_logical_neg
 id|umsdos_isinit
-c_func
 (paren
 id|inode
 )paren
 )paren
 (brace
-multiline_comment|/* #Specification: umsdos / lookup / inode info&n;&t; After successfully reading an inode from the MSDOS&n;&t; filesystem, we use the EMD file to complete it.&n;&t; We update the following field.&n;&t; &n;&t; uid, gid, atime, ctime, mtime, mode.&n;&t; &n;&t; We rely on MSDOS for mtime. If the file&n;&t; was modified during an MSDOS session, at least&n;&t; mtime will be meaningful. We do this only for regular&n;&t; file.&n;&t; &n;&t; We don&squot;t rely on MSDOS for mtime for directory because&n;&t; the MSDOS directory date is creation time (strange&n;&t; MSDOS behavior) which fit nowhere in the three UNIX&n;&t; time stamp.&n;      */
+multiline_comment|/* #Specification: umsdos / lookup / inode info&n;&t;&t;&t; * After successfully reading an inode from the MSDOS&n;&t;&t;&t; * filesystem, we use the EMD file to complete it.&n;&t;&t;&t; * We update the following field.&n;&t;&t;&t; * &n;&t;&t;&t; * uid, gid, atime, ctime, mtime, mode.&n;&t;&t;&t; * &n;&t;&t;&t; * We rely on MSDOS for mtime. If the file&n;&t;&t;&t; * was modified during an MSDOS session, at least&n;&t;&t;&t; * mtime will be meaningful. We do this only for regular&n;&t;&t;&t; * file.&n;&t;&t;&t; * &n;&t;&t;&t; * We don&squot;t rely on MSDOS for mtime for directory because&n;&t;&t;&t; * the MSDOS directory date is creation time (strange&n;&t;&t;&t; * MSDOS behavior) which fit nowhere in the three UNIX&n;&t;&t;&t; * time stamp.&n;&t;&t;&t; */
 r_if
 c_cond
 (paren
 id|S_ISREG
-c_func
 (paren
 id|entry-&gt;mode
 )paren
@@ -1155,7 +1275,6 @@ suffix:semicolon
 id|inode-&gt;i_rdev
 op_assign
 id|to_kdev_t
-c_func
 (paren
 id|entry-&gt;rdev
 )paren
@@ -1180,10 +1299,9 @@ id|inode-&gt;i_gid
 op_assign
 id|entry-&gt;gid
 suffix:semicolon
-multiline_comment|/* #Specification: umsdos / conversion mode&n;&t; The msdos fs can do some inline conversion&n;&t; of the data of a file. It can translate&n;&t; silently from MsDOS text file format to Unix&n;&t; one (crlf -&gt; lf) while reading, and the reverse&n;&t; while writing. This is activated using the mount&n;&t; option conv=....&n;&t; &n;&t; This is not useful for Linux file in promoted&n;&t; directory. It can even be harmful. For this&n;&t; reason, the binary (no conversion) mode is&n;&t; always activated.&n;      */
-multiline_comment|/* #Specification: umsdos / conversion mode / todo&n;&t; A flag could be added to file and directories&n;&t; forcing an automatic conversion mode (as&n;&t; done with the msdos fs).&n;&t; &n;&t; This flag could be setup on a directory basis&n;&t; (instead of file) and all file in it would&n;&t; logically inherited. If the conversion mode&n;&t; is active (conv=) then the i_binary flag would&n;&t; be left untouched in those directories.&n;&t; &n;&t; It was proposed that the sticky bit was used&n;&t; to set this. The problem is that new file would&n;&t; be written incorrectly. The other problem is that&n;&t; the sticky bit has a meaning for directories. So&n;&t; another bit should be used (there is some space&n;&t; in the EMD file for it) and a special utilities&n;&t; would be used to assign the flag to a directory).&n;&t; I don&squot;t think it is useful to assign this flag&n;&t; on a single file.&n;      */
+multiline_comment|/* #Specification: umsdos / conversion mode&n;&t;&t;&t; * The msdos fs can do some inline conversion&n;&t;&t;&t; * of the data of a file. It can translate&n;&t;&t;&t; * silently from MsDOS text file format to Unix&n;&t;&t;&t; * one (crlf -&gt; lf) while reading, and the reverse&n;&t;&t;&t; * while writing. This is activated using the mount&n;&t;&t;&t; * option conv=....&n;&t;&t;&t; * &n;&t;&t;&t; * This is not useful for Linux file in promoted&n;&t;&t;&t; * directory. It can even be harmful. For this&n;&t;&t;&t; * reason, the binary (no conversion) mode is&n;&t;&t;&t; * always activated.&n;&t;&t;&t; */
+multiline_comment|/* #Specification: umsdos / conversion mode / todo&n;&t;&t;&t; * A flag could be added to file and directories&n;&t;&t;&t; * forcing an automatic conversion mode (as&n;&t;&t;&t; * done with the msdos fs).&n;&t;&t;&t; * &n;&t;&t;&t; * This flag could be setup on a directory basis&n;&t;&t;&t; * (instead of file) and all file in it would&n;&t;&t;&t; * logically inherited. If the conversion mode&n;&t;&t;&t; * is active (conv=) then the i_binary flag would&n;&t;&t;&t; * be left untouched in those directories.&n;&t;&t;&t; * &n;&t;&t;&t; * It was proposed that the sticky bit was used&n;&t;&t;&t; * to set this. The problem is that new file would&n;&t;&t;&t; * be written incorrectly. The other problem is that&n;&t;&t;&t; * the sticky bit has a meaning for directories. So&n;&t;&t;&t; * another bit should be used (there is some space&n;&t;&t;&t; * in the EMD file for it) and a special utilities&n;&t;&t;&t; * would be used to assign the flag to a directory).&n;&t;&t;&t; * I don&squot;t think it is useful to assign this flag&n;&t;&t;&t; * on a single file.&n;&t;&t;&t; */
 id|MSDOS_I
-c_func
 (paren
 id|inode
 )paren
@@ -1192,13 +1310,12 @@ id|i_binary
 op_assign
 l_int|1
 suffix:semicolon
-multiline_comment|/* #Specification: umsdos / i_nlink&n;&t; The nlink field of an inode is maintain by the MSDOS file system&n;&t; for directory and by UMSDOS for other file. The logic is that&n;&t; MSDOS is already figuring out what to do for directories and&n;&t; does nothing for other files. For MSDOS, there are no hard link&n;&t; so all file carry nlink==1. UMSDOS use some info in the&n;&t; EMD file to plug the correct value.&n;      */
+multiline_comment|/* #Specification: umsdos / i_nlink&n;&t;&t;&t; * The nlink field of an inode is maintain by the MSDOS file system&n;&t;&t;&t; * for directory and by UMSDOS for other file. The logic is that&n;&t;&t;&t; * MSDOS is already figuring out what to do for directories and&n;&t;&t;&t; * does nothing for other files. For MSDOS, there are no hard link&n;&t;&t;&t; * so all file carry nlink==1. UMSDOS use some info in the&n;&t;&t;&t; * EMD file to plug the correct value.&n;&t;&t;&t; */
 r_if
 c_cond
 (paren
 op_logical_neg
 id|S_ISDIR
-c_func
 (paren
 id|entry-&gt;mode
 )paren
@@ -1228,7 +1345,6 @@ suffix:semicolon
 )brace
 )brace
 id|umsdos_patch_inode
-c_func
 (paren
 id|inode
 comma
@@ -1242,13 +1358,11 @@ r_if
 c_cond
 (paren
 id|S_ISDIR
-c_func
 (paren
 id|inode-&gt;i_mode
 )paren
 )paren
 id|umsdos_unlockcreate
-c_func
 (paren
 id|inode
 )paren
@@ -1283,12 +1397,11 @@ id|ino
 suffix:semicolon
 )brace
 suffix:semicolon
-multiline_comment|/*&n;  Just to record the offset of one entry.&n;*/
+multiline_comment|/*&n; * Just to record the offset of one entry.&n; */
 DECL|function|umsdos_filldir_k
 r_static
 r_int
 id|umsdos_filldir_k
-c_func
 (paren
 r_void
 op_star
@@ -1436,7 +1549,7 @@ r_return
 id|ret
 suffix:semicolon
 )brace
-multiline_comment|/*&n;  Locate entry of an inode in a directory.&n;  Return 0 or a negative error code.&n;  &n;  Normally, this function must succeed. It means a strange corruption&n;  in the file system if not.&n;*/
+multiline_comment|/*&n; * Locate entry of an inode in a directory.&n; * Return 0 or a negative error code.&n; * &n; * Normally, this function must succeed. It means a strange corruption&n; * in the file system if not.&n; */
 DECL|function|umsdos_inode2entry
 r_int
 id|umsdos_inode2entry
@@ -1456,8 +1569,8 @@ id|umsdos_dirent
 op_star
 id|entry
 )paren
-multiline_comment|/* Will hold the entry */
 (brace
+multiline_comment|/* Will hold the entry */
 r_int
 id|ret
 op_assign
@@ -1474,7 +1587,7 @@ op_eq
 id|pseudo_root
 )paren
 (brace
-multiline_comment|/*&n;      Quick way to find the name.&n;      Also umsdos_readdir_x won&squot;t show /linux anyway&n;    */
+multiline_comment|/*&n;&t;&t; * Quick way to find the name.&n;&t;&t; * Also umsdos_readdir_x won&squot;t show /linux anyway&n;&t;&t; */
 id|memcpy
 (paren
 id|entry-&gt;name
@@ -1503,14 +1616,18 @@ op_star
 id|emddir
 op_assign
 id|umsdos_emd_dir_lookup
-c_func
 (paren
 id|dir
 comma
 l_int|0
 )paren
 suffix:semicolon
-multiline_comment|/* iput (emddir); FIXME */
+id|iput
+(paren
+id|emddir
+)paren
+suffix:semicolon
+multiline_comment|/* FIXME? */
 r_if
 c_cond
 (paren
@@ -1528,19 +1645,37 @@ r_struct
 id|file
 id|filp
 suffix:semicolon
+r_struct
+id|dentry
+op_star
+id|i2e
+suffix:semicolon
+id|i2e
+op_assign
+id|creat_dentry
+(paren
+l_string|&quot;i2e.nul&quot;
+comma
+l_int|7
+comma
+id|dir
+comma
+l_int|NULL
+)paren
+suffix:semicolon
 id|fill_new_filp
 (paren
 op_amp
 id|filp
 comma
-l_int|NULL
+id|i2e
 )paren
 suffix:semicolon
 id|Printk
 (paren
 (paren
 id|KERN_ERR
-l_string|&quot;umsdos_inode2entry emddir==NULL: WARNING: Known filp problem. segfaulting :) /mn/&bslash;n&quot;
+l_string|&quot;umsdos_inode2entry emddir==NULL: WARNING: Known filp problem. segfaulting :) fixed ?/mn/&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
@@ -1590,7 +1725,6 @@ op_assign
 l_int|0
 suffix:semicolon
 id|umsdos_setup_dir_inode
-c_func
 (paren
 id|inode
 )paren
@@ -1604,12 +1738,30 @@ r_struct
 id|file
 id|filp
 suffix:semicolon
+r_struct
+id|dentry
+op_star
+id|i2e
+suffix:semicolon
+id|i2e
+op_assign
+id|creat_dentry
+(paren
+l_string|&quot;i2e.nn&quot;
+comma
+l_int|6
+comma
+id|dir
+comma
+l_int|NULL
+)paren
+suffix:semicolon
 id|fill_new_filp
 (paren
 op_amp
 id|filp
 comma
-l_int|NULL
+id|i2e
 )paren
 suffix:semicolon
 id|filp.f_reada
@@ -1624,7 +1776,7 @@ id|Printk
 (paren
 (paren
 id|KERN_ERR
-l_string|&quot;umsdos_inode2entry skip./..: WARNING: Known filp problem. segfaulting :) /mn/&bslash;n&quot;
+l_string|&quot;umsdos_inode2entry skip...: WARNING: Known filp problem. segfaulting :) fixed ?/mn/&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
@@ -1642,7 +1794,6 @@ r_if
 c_cond
 (paren
 id|umsdos_readdir_x
-c_func
 (paren
 id|dir
 comma
@@ -1708,7 +1859,7 @@ r_return
 id|ret
 suffix:semicolon
 )brace
-multiline_comment|/*&n;  Locate the parent of a directory and the info on that directory&n;  Return 0 or a negative error code.&n;*/
+multiline_comment|/*&n; * Locate the parent of a directory and the info on that directory&n; * Return 0 or a negative error code.&n; */
 DECL|function|umsdos_locate_ancestor
 r_static
 r_int
@@ -1808,7 +1959,7 @@ r_return
 id|ret
 suffix:semicolon
 )brace
-multiline_comment|/*&n;  Build the path name of an inode (relative to the file system.&n;  This function is need to set (pseudo) hard link.&n;  &n;  It uses the same strategy as the standard getcwd().&n;*/
+multiline_comment|/*&n; * Build the path name of an inode (relative to the file system.&n; * This function is need to set (pseudo) hard link.&n; * &n; * It uses the same strategy as the standard getcwd().&n; */
 DECL|function|umsdos_locate_path
 r_int
 id|umsdos_locate_path
@@ -1849,7 +2000,6 @@ r_char
 op_star
 )paren
 id|kmalloc
-c_func
 (paren
 id|PATH_MAX
 comma
@@ -1859,7 +2009,6 @@ suffix:semicolon
 id|root_inode
 op_assign
 id|iget
-c_func
 (paren
 id|inode-&gt;i_sb
 comma
@@ -1915,7 +2064,6 @@ c_cond
 (paren
 op_logical_neg
 id|S_ISDIR
-c_func
 (paren
 id|inode-&gt;i_mode
 )paren
@@ -1997,8 +2145,10 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|dir-&gt;i_count
-op_increment
+id|inc_count
+(paren
+id|dir
+)paren
 suffix:semicolon
 )brace
 r_if
@@ -2119,12 +2269,17 @@ l_string|&quot;&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/* iput (dir); FIXME */
+id|iput
+(paren
+id|dir
+)paren
+suffix:semicolon
+multiline_comment|/* FIXME?? */
 r_return
 id|ret
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t;Return != 0 if an entry is the pseudo DOS entry in the pseudo root.&n;*/
+multiline_comment|/*&n; * Return != 0 if an entry is the pseudo DOS entry in the pseudo root.&n; */
 DECL|function|umsdos_is_pseudodos
 r_int
 id|umsdos_is_pseudodos
@@ -2140,7 +2295,7 @@ op_star
 id|dentry
 )paren
 (brace
-multiline_comment|/* #Specification: pseudo root / DOS hard coded&n;     The pseudo sub-directory DOS in the pseudo root is hard coded.&n;     The name is DOS. This is done this way to help standardised&n;     the umsdos layout. The idea is that from now on /DOS is&n;     a reserved path and nobody will think of using such a path&n;     for a package.&n;  */
+multiline_comment|/* #Specification: pseudo root / DOS hard coded&n;&t; * The pseudo sub-directory DOS in the pseudo root is hard coded.&n;&t; * The name is DOS. This is done this way to help standardised&n;&t; * the umsdos layout. The idea is that from now on /DOS is&n;&t; * a reserved path and nobody will think of using such a path&n;&t; * for a package.&n;&t; */
 r_return
 id|pseudo_root
 op_logical_and
@@ -2174,7 +2329,7 @@ op_eq
 l_char|&squot;S&squot;
 suffix:semicolon
 )brace
-multiline_comment|/*&n;  Check if a file exist in the current directory.&n;  Return 0 if ok, negative error code if not (ex: -ENOENT).&n;*/
+multiline_comment|/*&n; * Check if a file exist in the current directory.&n; * Return 0 if ok, negative error code if not (ex: -ENOENT).&n; */
 DECL|function|umsdos_lookup_x
 r_int
 id|umsdos_lookup_x
@@ -2192,8 +2347,8 @@ comma
 r_int
 id|nopseudo
 )paren
-multiline_comment|/* Don&squot;t care about pseudo root mode */
 (brace
+multiline_comment|/* Don&squot;t care about pseudo root mode */
 r_int
 id|ret
 op_assign
@@ -2204,13 +2359,6 @@ r_struct
 id|inode
 op_star
 id|root_inode
-suffix:semicolon
-r_struct
-id|inode
-op_star
-id|pseudo_root_inode
-op_assign
-l_int|NULL
 suffix:semicolon
 r_int
 id|len
@@ -2224,11 +2372,11 @@ id|name
 op_assign
 id|dentry-&gt;d_name.name
 suffix:semicolon
-id|Printk
+id|PRINTK
 (paren
 (paren
 id|KERN_DEBUG
-l_string|&quot;umsdos_lookup_x: /mn/ name=%.*s, dir=%lu, d_parent=%p&bslash;n&quot;
+l_string|&quot;umsdos_lookup_x: /mn/ name=%.*s, dir=%lu (i_count=%d), d_parent=%p&bslash;n&quot;
 comma
 (paren
 r_int
@@ -2238,6 +2386,8 @@ comma
 id|dentry-&gt;d_name.name
 comma
 id|dir-&gt;i_ino
+comma
+id|dir-&gt;i_count
 comma
 id|dentry-&gt;d_parent
 )paren
@@ -2249,7 +2399,7 @@ c_cond
 (paren
 id|dentry-&gt;d_parent
 )paren
-id|Printk
+id|PRINTK
 (paren
 (paren
 id|KERN_DEBUG
@@ -2268,20 +2418,35 @@ multiline_comment|/* FIXME : delme /mn/ */
 id|root_inode
 op_assign
 id|iget
-c_func
 (paren
 id|dir-&gt;i_sb
 comma
 id|UMSDOS_ROOT_INO
 )paren
 suffix:semicolon
-multiline_comment|/*&t;pseudo_root_inode = iget( ... ) ? */
-id|dentry-&gt;d_inode
-op_assign
+id|Printk
+(paren
+(paren
+id|KERN_ERR
+l_string|&quot;umsdos_lookup_x (CNT!): entering root_count=%d, dir %lu _count=%d&bslash;n&quot;
+comma
+id|root_inode-&gt;i_count
+comma
+id|dir-&gt;i_ino
+comma
+id|dir-&gt;i_count
+)paren
+)paren
+suffix:semicolon
+multiline_comment|/* FIXME: DEBUG, DELME */
+id|d_instantiate
+(paren
+id|dentry
+comma
 l_int|NULL
+)paren
 suffix:semicolon
 id|umsdos_startlookup
-c_func
 (paren
 id|dir
 )paren
@@ -2308,8 +2473,10 @@ comma
 id|dir
 )paren
 suffix:semicolon
-id|dir-&gt;i_count
-op_increment
+id|inc_count
+(paren
+id|dir
+)paren
 suffix:semicolon
 id|ret
 op_assign
@@ -2346,10 +2513,10 @@ id|pseudo_root
 op_logical_and
 id|dir
 op_eq
-id|pseudo_root_inode
+id|pseudo_root
 )paren
 (brace
-multiline_comment|/* #Specification: pseudo root / .. in real root&n;&t; Whenever a lookup is those in the real root for&n;&t; the directory .., and pseudo root is active, the&n;&t; pseudo root is returned.&n;      */
+multiline_comment|/* #Specification: pseudo root / .. in real root&n;&t;&t;&t; * Whenever a lookup is those in the real root for&n;&t;&t;&t; * the directory .., and pseudo root is active, the&n;&t;&t;&t; * pseudo root is returned.&n;&t;&t;&t; */
 id|ret
 op_assign
 l_int|0
@@ -2361,13 +2528,15 @@ comma
 id|pseudo_root
 )paren
 suffix:semicolon
-id|pseudo_root-&gt;i_count
-op_increment
+id|inc_count
+(paren
+id|pseudo_root
+)paren
 suffix:semicolon
 )brace
 r_else
 (brace
-multiline_comment|/* #Specification: locating .. / strategy&n;&t; We use the msdos filesystem to locate the parent directory.&n;&t; But it is more complicated than that.&n;&t; &n;&t; We have to step back even further to&n;&t; get the parent of the parent, so we can get the EMD&n;&t; of the parent of the parent. Using the EMD file, we can&n;&t; locate all the info on the parent, such a permissions&n;&t; and owner.&n;      */
+multiline_comment|/* #Specification: locating .. / strategy&n;&t;&t;&t; * We use the msdos filesystem to locate the parent directory.&n;&t;&t;&t; * But it is more complicated than that.&n;&t;&t;&t; * &n;&t;&t;&t; * We have to step back even further to&n;&t;&t;&t; * get the parent of the parent, so we can get the EMD&n;&t;&t;&t; * of the parent of the parent. Using the EMD file, we can&n;&t;&t;&t; * locate all the info on the parent, such a permissions&n;&t;&t;&t; * and owner.&n;&t;&t;&t; */
 id|ret
 op_assign
 id|compat_umsdos_real_lookup
@@ -2433,7 +2602,12 @@ op_amp
 id|entry
 )paren
 suffix:semicolon
-multiline_comment|/* iput (aadir); FIXME */
+id|iput
+(paren
+id|aadir
+)paren
+suffix:semicolon
+multiline_comment|/* FIXME */
 )brace
 )brace
 )brace
@@ -2442,7 +2616,6 @@ r_if
 c_cond
 (paren
 id|umsdos_is_pseudodos
-c_func
 (paren
 id|dir
 comma
@@ -2450,7 +2623,7 @@ id|dentry
 )paren
 )paren
 (brace
-multiline_comment|/* #Specification: pseudo root / lookup(DOS)&n;       A lookup of DOS in the pseudo root will always succeed&n;       and return the inode of the real root.&n;    */
+multiline_comment|/* #Specification: pseudo root / lookup(DOS)&n;&t;&t; * A lookup of DOS in the pseudo root will always succeed&n;&t;&t; * and return the inode of the real root.&n;&t;&t; */
 id|d_add
 (paren
 id|dentry
@@ -2458,12 +2631,10 @@ comma
 id|root_inode
 )paren
 suffix:semicolon
+id|inc_count
 (paren
 id|dentry-&gt;d_inode
 )paren
-op_member_access_from_pointer
-id|i_count
-op_increment
 suffix:semicolon
 id|ret
 op_assign
@@ -2532,7 +2703,7 @@ op_eq
 l_int|0
 )paren
 (brace
-multiline_comment|/* #Specification: umsdos / lookup&n;&t; A lookup for a file is done in two step. First, we locate&n;&t; the file in the EMD file. If not present, we return&n;&t; an error code (-ENOENT). If it is there, we repeat the&n;&t; operation on the msdos file system. If this fails, it means&n;&t; that the file system is not in sync with the emd file.&n;&t; We silently remove this entry from the emd file,&n;&t; and return ENOENT.&n;      */
+multiline_comment|/* #Specification: umsdos / lookup&n;&t;&t;&t; * A lookup for a file is done in two step. First, we locate&n;&t;&t;&t; * the file in the EMD file. If not present, we return&n;&t;&t;&t; * an error code (-ENOENT). If it is there, we repeat the&n;&t;&t;&t; * operation on the msdos file system. If this fails, it means&n;&t;&t;&t; * that the file system is not in sync with the emd file.&n;&t;&t;&t; * We silently remove this entry from the emd file,&n;&t;&t;&t; * and return ENOENT.&n;&t;&t;&t; */
 r_struct
 id|inode
 op_star
@@ -2594,7 +2765,6 @@ op_amp
 id|info
 comma
 id|S_ISDIR
-c_func
 (paren
 id|info.entry.mode
 )paren
@@ -2613,18 +2783,12 @@ id|inode-&gt;i_ino
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/* we&squot;ve found it. now get inode and put it in dentry. Is this ok /mn/ ? */
+multiline_comment|/* we&squot;ve found it. now put inode in dentry */
 id|d_add
 (paren
 id|dentry
 comma
-id|iget
-c_func
-(paren
-id|dir-&gt;i_sb
-comma
-id|inode-&gt;i_ino
-)paren
+id|inode
 )paren
 suffix:semicolon
 id|umsdos_lookup_patch
@@ -2690,8 +2854,8 @@ op_logical_neg
 id|nopseudo
 )paren
 (brace
-multiline_comment|/* #Specification: pseudo root / dir lookup&n;&t;     For the same reason as readdir, a lookup in /DOS for&n;&t;     the pseudo root directory (linux) will fail.&n;&t;  */
-multiline_comment|/*&n;&t;    This has to be allowed for resolving hard link&n;&t;    which are recorded independently of the pseudo-root&n;&t;    mode.&n;&t;  */
+multiline_comment|/* #Specification: pseudo root / dir lookup&n;&t;&t;&t;&t;&t; * For the same reason as readdir, a lookup in /DOS for&n;&t;&t;&t;&t;&t; * the pseudo root directory (linux) will fail.&n;&t;&t;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t;&t; * This has to be allowed for resolving hard link&n;&t;&t;&t;&t;&t; * which are recorded independently of the pseudo-root&n;&t;&t;&t;&t;&t; * mode.&n;&t;&t;&t;&t;&t; */
 id|Printk
 (paren
 (paren
@@ -2700,11 +2864,20 @@ l_string|&quot;umsdos_lookup_x: warning: untested /mn/ Pseudo_root thingy&bslash
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/* iput (pseudo_root); FIXME */
-id|dentry-&gt;d_inode
-op_assign
-l_int|NULL
+id|iput
+(paren
+id|pseudo_root
+)paren
 suffix:semicolon
+multiline_comment|/* FIXME?? */
+id|d_instantiate
+(paren
+id|dentry
+comma
+l_int|NULL
+)paren
+suffix:semicolon
+multiline_comment|/* FIXME: should be dput(dentry) ? */
 id|ret
 op_assign
 op_minus
@@ -2715,27 +2888,53 @@ suffix:semicolon
 )brace
 )brace
 id|umsdos_endlookup
-c_func
 (paren
 id|dir
 )paren
 suffix:semicolon
-multiline_comment|/* iput (dir); FIXME */
-id|Printk
+id|PRINTK
 (paren
 (paren
 id|KERN_DEBUG
-l_string|&quot;umsdos_lookup_x: returning %d&bslash;n&quot;
+l_string|&quot;umsdos_lookup_x: returning %d : name=%.*s (i_count=%d), dir=%lu (i_count=%d)&bslash;n&quot;
 comma
 id|ret
+comma
+(paren
+r_int
+)paren
+id|dentry-&gt;d_name.len
+comma
+id|dentry-&gt;d_name.name
+comma
+id|dentry-&gt;d_inode-&gt;i_count
+comma
+id|dir-&gt;i_ino
+comma
+id|dir-&gt;i_count
 )paren
 )paren
 suffix:semicolon
+id|Printk
+(paren
+(paren
+id|KERN_ERR
+l_string|&quot;umsdos_lookup_x (CNT!): exiting root_count=%d, dir %lu _count=%d&bslash;n&quot;
+comma
+id|root_inode-&gt;i_count
+comma
+id|dir-&gt;i_ino
+comma
+id|dir-&gt;i_count
+)paren
+)paren
+suffix:semicolon
+multiline_comment|/* FIXME: DEBUG, DELME */
 r_return
 id|ret
 suffix:semicolon
 )brace
-multiline_comment|/*&n;  Check if a file exist in the current directory.&n;  Return 0 if ok, negative error code if not (ex: -ENOENT).&n;  &n;  &n;*/
+multiline_comment|/*&n; * Check if a file exist in the current directory.&n; * Return 0 if ok, negative error code if not (ex: -ENOENT).&n; * &n; * &n; */
 DECL|function|UMSDOS_lookup
 r_int
 id|UMSDOS_lookup
@@ -2754,16 +2953,25 @@ id|dentry
 r_int
 id|ret
 suffix:semicolon
+id|check_dentry
+(paren
+id|dentry
+)paren
+suffix:semicolon
 id|ret
 op_assign
 id|umsdos_lookup_x
-c_func
 (paren
 id|dir
 comma
 id|dentry
 comma
 l_int|0
+)paren
+suffix:semicolon
+id|check_dentry
+(paren
+id|dentry
 )paren
 suffix:semicolon
 macro_line|#if 1
@@ -2779,7 +2987,7 @@ id|ENOENT
 id|Printk
 (paren
 (paren
-id|KERN_INFO
+id|KERN_DEBUG
 l_string|&quot;UMSDOS_lookup: converting -ENOENT to negative dentry !&bslash;n&quot;
 )paren
 )paren
@@ -2802,7 +3010,7 @@ r_return
 id|ret
 suffix:semicolon
 )brace
-multiline_comment|/*&n;  Locate the inode pointed by a (pseudo) hard link&n;  Return 0 if ok, a negative error code if not.&n;*/
+multiline_comment|/*&n; * Locate the inode pointed by a (pseudo) hard link&n; * Return 0 if ok, a negative error code if not.&n; */
 DECL|function|umsdos_hlink2inode
 r_int
 id|umsdos_hlink2inode
@@ -2842,7 +3050,7 @@ r_char
 op_star
 id|path
 suffix:semicolon
-macro_line|#if 0  &t;/* FIXME: DELME */
+macro_line|#if 0&t;&t;&t;&t;/* FIXME: DELME */
 id|Printk
 (paren
 (paren
@@ -2863,7 +3071,6 @@ r_char
 op_star
 )paren
 id|kmalloc
-c_func
 (paren
 id|PATH_MAX
 comma
@@ -2873,7 +3080,6 @@ suffix:semicolon
 id|root_inode
 op_assign
 id|iget
-c_func
 (paren
 id|hlink-&gt;i_sb
 comma
@@ -2898,7 +3104,12 @@ op_assign
 op_minus
 id|ENOMEM
 suffix:semicolon
-multiline_comment|/* iput (hlink); FIXME */
+id|iput
+(paren
+id|hlink
+)paren
+suffix:semicolon
+multiline_comment|/* FIXME? */
 )brace
 r_else
 (brace
@@ -2910,14 +3121,6 @@ id|loff_t
 id|offs
 op_assign
 l_int|0
-suffix:semicolon
-id|fill_new_filp
-(paren
-op_amp
-id|filp
-comma
-l_int|NULL
-)paren
 suffix:semicolon
 id|dentry_src
 op_assign
@@ -2932,41 +3135,18 @@ comma
 l_int|NULL
 )paren
 suffix:semicolon
-id|memset
+id|fill_new_filp
 (paren
 op_amp
 id|filp
 comma
-l_int|0
-comma
-r_sizeof
-(paren
-id|filp
+id|dentry_src
 )paren
-)paren
-suffix:semicolon
-id|filp.f_pos
-op_assign
-l_int|0
-suffix:semicolon
-id|filp.f_reada
-op_assign
-l_int|1
 suffix:semicolon
 id|filp.f_flags
 op_assign
 id|O_RDONLY
 suffix:semicolon
-id|filp.f_dentry
-op_assign
-id|dentry_src
-suffix:semicolon
-id|filp.f_op
-op_assign
-op_amp
-id|umsdos_file_operations
-suffix:semicolon
-multiline_comment|/* /mn/ - we have to fill it with dummy values so we won&squot;t segfault */
 id|Printk
 (paren
 (paren
@@ -3017,9 +3197,16 @@ id|hlink-&gt;i_size
 op_assign
 l_char|&squot;&bslash;0&squot;
 suffix:semicolon
-multiline_comment|/*&t;iput (hlink); / * FIXME! /mn/ */
-id|dir-&gt;i_count
-op_increment
+id|iput
+(paren
+id|hlink
+)paren
+suffix:semicolon
+multiline_comment|/* FIXME? */
+id|inc_count
+(paren
+id|dir
+)paren
 suffix:semicolon
 r_while
 c_loop
@@ -3117,7 +3304,6 @@ suffix:semicolon
 id|ret
 op_assign
 id|umsdos_rlookup_x
-c_func
 (paren
 id|dir
 comma
@@ -3146,7 +3332,6 @@ suffix:semicolon
 id|ret
 op_assign
 id|umsdos_lookup_x
-c_func
 (paren
 id|dir
 comma
@@ -3217,7 +3402,12 @@ l_string|&quot;umsdos_hlink2inode: all those iput&squot;s() frighten me /mn/. Wh
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/* iput (hlink); / * FIXME */
+id|iput
+(paren
+id|hlink
+)paren
+suffix:semicolon
+multiline_comment|/* FIXME? */
 )brace
 id|Printk
 (paren

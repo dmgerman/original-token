@@ -1390,6 +1390,7 @@ id|base
 id|i
 )braket
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -1475,6 +1476,7 @@ id|tmr_offset
 op_plus
 id|TMR_CNT1
 suffix:semicolon
+)brace
 )brace
 multiline_comment|/* Start timers */
 r_for

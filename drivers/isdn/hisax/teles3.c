@@ -755,6 +755,7 @@ c_cond
 (paren
 id|cs-&gt;hw.teles3.cfg_reg
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -782,6 +783,7 @@ comma
 l_int|8
 )paren
 suffix:semicolon
+)brace
 )brace
 id|release_ioregs
 c_func
@@ -1727,6 +1729,7 @@ c_cond
 (paren
 id|cs-&gt;hw.teles3.cfg_reg
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -1754,6 +1757,7 @@ comma
 l_int|8
 )paren
 suffix:semicolon
+)brace
 )brace
 r_return
 (paren
@@ -1824,6 +1828,7 @@ c_cond
 (paren
 id|cs-&gt;hw.teles3.cfg_reg
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -1851,6 +1856,7 @@ comma
 l_int|8
 )paren
 suffix:semicolon
+)brace
 )brace
 id|release_ioregs
 c_func
@@ -1932,6 +1938,7 @@ c_cond
 (paren
 id|cs-&gt;hw.teles3.cfg_reg
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -1959,6 +1966,7 @@ comma
 l_int|8
 )paren
 suffix:semicolon
+)brace
 )brace
 id|release_ioregs
 c_func

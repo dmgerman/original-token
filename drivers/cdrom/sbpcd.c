@@ -32481,6 +32481,7 @@ id|i
 OL
 l_int|0
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -32499,6 +32500,7 @@ comma
 id|i
 )paren
 suffix:semicolon
+)brace
 r_else
 (brace
 r_if

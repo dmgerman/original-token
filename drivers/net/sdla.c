@@ -2410,6 +2410,7 @@ c_cond
 (paren
 id|slave-&gt;start
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -2447,6 +2448,7 @@ comma
 l_int|NULL
 )paren
 suffix:semicolon
+)brace
 r_return
 l_int|0
 suffix:semicolon
@@ -2537,6 +2539,7 @@ c_cond
 (paren
 id|slave-&gt;start
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -2574,6 +2577,7 @@ comma
 l_int|NULL
 )paren
 suffix:semicolon
+)brace
 r_return
 l_int|0
 suffix:semicolon
@@ -2677,6 +2681,7 @@ c_cond
 (paren
 id|slave-&gt;start
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -2755,6 +2760,7 @@ comma
 l_int|NULL
 )paren
 suffix:semicolon
+)brace
 r_return
 id|ret
 op_eq

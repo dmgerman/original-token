@@ -1,6 +1,7 @@
-multiline_comment|/* &n;        comm.c    (c) 1997  Grant R. Guenther &lt;grant@torque.net&gt;&n;                            Under the terms of the GNU public license.&n;&n;&t;comm.c is a low-level protocol driver for some older models&n;&t;of the DataStor &quot;Commuter&quot; parallel to IDE adapter.  Some of&n;&t;the parallel port devices marketed by Arista currently&n;&t;use this adapter.&n;*/
+multiline_comment|/* &n;        comm.c    (c) 1997-8  Grant R. Guenther &lt;grant@torque.net&gt;&n;                              Under the terms of the GNU public license.&n;&n;&t;comm.c is a low-level protocol driver for some older models&n;&t;of the DataStor &quot;Commuter&quot; parallel to IDE adapter.  Some of&n;&t;the parallel port devices marketed by Arista currently&n;&t;use this adapter.&n;*/
+multiline_comment|/* Changes:&n;&n;&t;1.01&t;GRG 1998.05.05  init_proto, release_proto&n;&n;*/
 DECL|macro|COMM_VERSION
-mdefine_line|#define COMM_VERSION      &quot;1.0&quot;
+mdefine_line|#define COMM_VERSION      &quot;1.01&quot;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -1122,23 +1123,29 @@ id|pi-&gt;delay
 )paren
 suffix:semicolon
 )brace
-DECL|function|comm_inc_use
+DECL|function|comm_init_proto
 r_static
 r_void
-id|comm_inc_use
+id|comm_init_proto
+c_func
 (paren
-r_void
+id|PIA
+op_star
+id|pi
 )paren
 (brace
 id|MOD_INC_USE_COUNT
 suffix:semicolon
 )brace
-DECL|function|comm_dec_use
+DECL|function|comm_release_proto
 r_static
 r_void
-id|comm_dec_use
+id|comm_release_proto
+c_func
 (paren
-r_void
+id|PIA
+op_star
+id|pi
 )paren
 (brace
 id|MOD_DEC_USE_COUNT
@@ -1182,9 +1189,9 @@ l_int|0
 comma
 id|comm_log_adapter
 comma
-id|comm_inc_use
+id|comm_init_proto
 comma
-id|comm_dec_use
+id|comm_release_proto
 )brace
 suffix:semicolon
 macro_line|#ifdef MODULE

@@ -1778,6 +1778,7 @@ c_cond
 (paren
 id|wd7000_card_num
 )paren
+(brace
 r_for
 c_loop
 (paren
@@ -1897,6 +1898,7 @@ id|ints
 suffix:semicolon
 r_return
 suffix:semicolon
+)brace
 )brace
 macro_line|#ifdef WD7000_DEBUG
 id|printk
@@ -3461,11 +3463,8 @@ suffix:semicolon
 multiline_comment|/* Aaaargh! (Zaga) */
 id|scb
 op_assign
-(paren
-r_struct
-id|scb
-op_star
-)paren
+id|bus_to_virt
+c_func
 (paren
 id|scsi2int
 (paren
@@ -3480,8 +3479,6 @@ id|icmb
 dot
 id|scbptr
 )paren
-op_or
-id|PAGE_OFFSET
 )paren
 suffix:semicolon
 id|icmbs

@@ -1,6 +1,7 @@
-multiline_comment|/* &n;        epat.c  (c) 1997  Grant R. Guenther &lt;grant@torque.net&gt;&n;                          Under the terms of the GNU public license.&n;&n;&t;This is the low level protocol driver for the EPAT parallel&n;        to IDE adapter from Shuttle Technologies.  This adapter is&n;        used in many popular parallel port disk products such as the&n;        SyQuest EZ drives, the Avatar Shark and the Imation SuperDisk.&n;&t;&n;*/
+multiline_comment|/* &n;        epat.c  (c) 1997-8  Grant R. Guenther &lt;grant@torque.net&gt;&n;                            Under the terms of the GNU public license.&n;&n;&t;This is the low level protocol driver for the EPAT parallel&n;        to IDE adapter from Shuttle Technologies.  This adapter is&n;        used in many popular parallel port disk products such as the&n;        SyQuest EZ drives, the Avatar Shark and the Imation SuperDisk.&n;&t;&n;*/
+multiline_comment|/* Changes:&n;&n;        1.01    GRG 1998.05.06 init_proto, release_proto&n;&n;*/
 DECL|macro|EPAT_VERSION
-mdefine_line|#define EPAT_VERSION      &quot;1.0&quot;
+mdefine_line|#define EPAT_VERSION      &quot;1.01&quot;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -1936,23 +1937,29 @@ id|pi-&gt;delay
 )paren
 suffix:semicolon
 )brace
-DECL|function|epat_inc_use
+DECL|function|epat_init_proto
 r_static
 r_void
-id|epat_inc_use
+id|epat_init_proto
+c_func
 (paren
-r_void
+id|PIA
+op_star
+id|pi
 )paren
 (brace
 id|MOD_INC_USE_COUNT
 suffix:semicolon
 )brace
-DECL|function|epat_dec_use
+DECL|function|epat_release_proto
 r_static
 r_void
-id|epat_dec_use
+id|epat_release_proto
+c_func
 (paren
-r_void
+id|PIA
+op_star
+id|pi
 )paren
 (brace
 id|MOD_DEC_USE_COUNT
@@ -1996,9 +2003,9 @@ id|epat_test_proto
 comma
 id|epat_log_adapter
 comma
-id|epat_inc_use
+id|epat_init_proto
 comma
-id|epat_dec_use
+id|epat_release_proto
 )brace
 suffix:semicolon
 macro_line|#ifdef MODULE

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;$Id: pci.h,v 1.70 1998/05/02 19:20:03 mj Exp $&n; *&n; *&t;PCI defines and function prototypes&n; *&t;Copyright 1994, Drew Eckhardt&n; *&t;Copyright 1997, Martin Mares &lt;mj@atrey.karlin.mff.cuni.cz&gt;&n; *&n; *&t;For more information, please consult &n; * &n; *&t;PCI BIOS Specification Revision&n; *&t;PCI Local Bus Specification&n; *&t;PCI System Design Guide&n; *&n; *&t;PCI Special Interest Group&n; *&t;M/S HF3-15A&n; *&t;5200 N.E. Elam Young Parkway&n; *&t;Hillsboro, Oregon 97124-6497&n; *&t;+1 (503) 696-2000 &n; *&t;+1 (800) 433-5177&n; * &n; *&t;Manuals are $25 each or $50 for all three, plus $7 shipping &n; *&t;within the United States, $35 abroad.&n; */
+multiline_comment|/*&n; *&t;$Id: pci.h,v 1.72 1998/05/12 07:35:54 mj Exp $&n; *&n; *&t;PCI defines and function prototypes&n; *&t;Copyright 1994, Drew Eckhardt&n; *&t;Copyright 1997, 1998 Martin Mares &lt;mj@atrey.karlin.mff.cuni.cz&gt;&n; *&n; *&t;For more information, please consult the following manuals (look at&n; *&t;http://www.pcisig.com/ for how to get them):&n; *&n; *&t;PCI BIOS Specification&n; *&t;PCI Local Bus Specification&n; *&t;PCI to PCI Bridge Specification&n; *&t;PCI System Design Guide&n; */
 macro_line|#ifndef LINUX_PCI_H
 DECL|macro|LINUX_PCI_H
 mdefine_line|#define LINUX_PCI_H
@@ -1898,6 +1898,13 @@ op_star
 id|sysdata
 suffix:semicolon
 multiline_comment|/* hook for sys-specific extension */
+DECL|member|procent
+r_struct
+id|proc_dir_entry
+op_star
+id|procent
+suffix:semicolon
+multiline_comment|/* device entry in /proc/bus/pci */
 DECL|member|devfn
 r_int
 r_int
@@ -2002,6 +2009,13 @@ op_star
 id|sysdata
 suffix:semicolon
 multiline_comment|/* hook for sys-specific extension */
+DECL|member|procdir
+r_struct
+id|proc_dir_entry
+op_star
+id|procdir
+suffix:semicolon
+multiline_comment|/* directory entry in /proc/bus/pci */
 DECL|member|number
 r_int
 r_char
@@ -2100,6 +2114,26 @@ c_func
 r_char
 op_star
 id|buf
+)paren
+suffix:semicolon
+r_int
+id|pci_proc_attach_device
+c_func
+(paren
+r_struct
+id|pci_dev
+op_star
+id|dev
+)paren
+suffix:semicolon
+r_int
+id|pci_proc_detach_device
+c_func
+(paren
+r_struct
+id|pci_dev
+op_star
+id|dev
 )paren
 suffix:semicolon
 r_struct

@@ -214,6 +214,8 @@ DECL|macro|DID_BAD_INTR
 mdefine_line|#define DID_BAD_INTR    0x09 /* Got an interrupt we weren&squot;t expecting.  */ 
 DECL|macro|DID_PASSTHROUGH
 mdefine_line|#define DID_PASSTHROUGH 0x0a /* Force command past mid-layer            */
+DECL|macro|DID_SOFT_ERROR
+mdefine_line|#define DID_SOFT_ERROR  0x0b /* The low level driver just wish a retry  */
 DECL|macro|DRIVER_OK
 mdefine_line|#define DRIVER_OK       0x00 /* Driver status                           */ 
 multiline_comment|/*&n; *  These indicate the error that occurred, and what is available.&n; */

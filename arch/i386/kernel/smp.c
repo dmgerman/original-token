@@ -1277,15 +1277,7 @@ id|m-&gt;mpc_apicaddr
 suffix:semicolon
 id|io_apic_addr
 op_assign
-(paren
-r_int
-r_int
-)paren
-id|phys_to_virt
-c_func
-(paren
 id|m-&gt;mpc_apicaddr
-)paren
 suffix:semicolon
 )brace
 id|mpt
@@ -4914,10 +4906,7 @@ c_func
 r_void
 )paren
 (brace
-id|ack_APIC_irq
-(paren
-)paren
-suffix:semicolon
+multiline_comment|/* ack_APIC_irq ();   see sw-dev-man vol 3, chapter 7.4.13.5 */
 id|printk
 c_func
 (paren

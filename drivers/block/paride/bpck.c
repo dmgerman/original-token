@@ -1,6 +1,7 @@
-multiline_comment|/* &n;&t;bpck.c&t;(c) 1996,1997  Grant R. Guenther &lt;grant@torque.net&gt;&n;&t;&t;               Under the terms of the GNU public license.&n;&n;&t;bpck.c is a low-level protocol driver for the MicroSolutions &n;&t;&quot;backpack&quot; parallel port IDE adapter.  &n;&n;*/
+multiline_comment|/* &n;&t;bpck.c&t;(c) 1996-8  Grant R. Guenther &lt;grant@torque.net&gt;&n;&t;&t;            Under the terms of the GNU public license.&n;&n;&t;bpck.c is a low-level protocol driver for the MicroSolutions &n;&t;&quot;backpack&quot; parallel port IDE adapter.  &n;&n;*/
+multiline_comment|/* Changes:&n;&n;&t;1.01&t;GRG 1998.05.05 init_proto, release_proto, pi-&gt;delay &n;&n;*/
 DECL|macro|BPCK_VERSION
-mdefine_line|#define&t;BPCK_VERSION&t;&quot;1.0&quot; 
+mdefine_line|#define&t;BPCK_VERSION&t;&quot;1.01&quot; 
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -2475,6 +2476,8 @@ comma
 id|f
 comma
 id|om
+comma
+id|od
 suffix:semicolon
 id|bpck_force_spp
 c_func
@@ -2486,9 +2489,17 @@ id|om
 op_assign
 id|pi-&gt;mode
 suffix:semicolon
+id|od
+op_assign
+id|pi-&gt;delay
+suffix:semicolon
 id|pi-&gt;mode
 op_assign
 l_int|0
+suffix:semicolon
+id|pi-&gt;delay
+op_assign
+l_int|6
 suffix:semicolon
 id|bpck_connect
 c_func
@@ -2779,6 +2790,10 @@ suffix:semicolon
 id|pi-&gt;mode
 op_assign
 id|om
+suffix:semicolon
+id|pi-&gt;delay
+op_assign
+id|od
 suffix:semicolon
 )brace
 DECL|function|bpck_test_port
@@ -3157,25 +3172,29 @@ id|pi-&gt;delay
 )paren
 suffix:semicolon
 )brace
-DECL|function|bpck_inc_use
+DECL|function|bpck_init_proto
 r_static
 r_void
-id|bpck_inc_use
+id|bpck_init_proto
 c_func
 (paren
-r_void
+id|PIA
+op_star
+id|pi
 )paren
 (brace
 id|MOD_INC_USE_COUNT
 suffix:semicolon
 )brace
-DECL|function|bpck_dec_use
+DECL|function|bpck_release_proto
 r_static
 r_void
-id|bpck_dec_use
+id|bpck_release_proto
 c_func
 (paren
-r_void
+id|PIA
+op_star
+id|pi
 )paren
 (brace
 id|MOD_DEC_USE_COUNT
@@ -3195,7 +3214,7 @@ l_int|5
 comma
 l_int|2
 comma
-l_int|4
+l_int|1
 comma
 l_int|256
 comma
@@ -3219,9 +3238,9 @@ id|bpck_test_proto
 comma
 id|bpck_log_adapter
 comma
-id|bpck_inc_use
+id|bpck_init_proto
 comma
-id|bpck_dec_use
+id|bpck_release_proto
 )brace
 suffix:semicolon
 macro_line|#ifdef MODULE

@@ -2973,8 +2973,6 @@ c_cond
 id|ide_spin_wait_hwgroup
 c_func
 (paren
-l_string|&quot;set_nowerr&quot;
-comma
 id|drive
 comma
 op_amp

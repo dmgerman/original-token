@@ -1,4 +1,5 @@
-multiline_comment|/*&n;&t;setup.h&t;   (c) 1997 Grant R. Guenther &lt;grant@torque.net&gt;&n;&t;&t;            Under the terms of the GNU public license.&n;&n;        This is a table driven setup function for kernel modules&n;        using the module.variable=val,... command line notation.&n;&n;*/
+multiline_comment|/*&n;&t;setup.h&t;   (c) 1997-8   Grant R. Guenther &lt;grant@torque.net&gt;&n;&t;&t;                Under the terms of the GNU public license.&n;&n;        This is a table driven setup function for kernel modules&n;        using the module.variable=val,... command line notation.&n;&n;*/
+multiline_comment|/* Changes:&n;&n;&t;1.01&t;GRG 1998.05.05&t;Allow negative and defaulted values&n;&n;*/
 macro_line|#include &lt;linux/ctype.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 DECL|struct|setup_tab_t
@@ -54,6 +55,8 @@ r_int
 id|j
 comma
 id|k
+comma
+id|sgn
 suffix:semicolon
 id|k
 op_assign
@@ -174,13 +177,6 @@ c_loop
 (paren
 id|ss
 op_logical_and
-id|isdigit
-c_func
-(paren
-op_star
-id|ss
-)paren
-op_logical_and
 (paren
 id|k
 OL
@@ -193,6 +189,56 @@ id|size
 )paren
 )paren
 (brace
+r_if
+c_cond
+(paren
+op_logical_neg
+op_star
+id|ss
+)paren
+r_break
+suffix:semicolon
+id|sgn
+op_assign
+l_int|1
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_star
+id|ss
+op_eq
+l_char|&squot;-&squot;
+)paren
+(brace
+id|ss
+op_increment
+suffix:semicolon
+id|sgn
+op_assign
+op_minus
+l_int|1
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+op_logical_neg
+op_star
+id|ss
+)paren
+r_break
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|isdigit
+c_func
+(paren
+op_star
+id|ss
+)paren
+)paren
 id|t
 (braket
 id|j
@@ -201,9 +247,10 @@ dot
 id|iv
 (braket
 id|k
-op_increment
 )braket
 op_assign
+id|sgn
+op_star
 id|simple_strtoul
 c_func
 (paren
@@ -213,6 +260,9 @@ l_int|NULL
 comma
 l_int|0
 )paren
+suffix:semicolon
+id|k
+op_increment
 suffix:semicolon
 r_if
 c_cond

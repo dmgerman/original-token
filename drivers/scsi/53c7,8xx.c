@@ -7053,6 +7053,7 @@ id|left
 OL
 l_int|0
 )paren
+(brace
 id|printk
 c_func
 (paren
@@ -7061,12 +7062,14 @@ comma
 id|host-&gt;host_no
 )paren
 suffix:semicolon
+)brace
 r_else
 r_if
 c_cond
 (paren
 id|ncr_search
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -7118,6 +7121,7 @@ id|found
 op_assign
 l_int|1
 suffix:semicolon
+)brace
 )brace
 multiline_comment|/*&n;     * Traverse the host running list until we find this command or discover&n;     * we have too many elements, pointing linux_prev at the next field of the &n;     * linux_previous element or head of the list, search at this element.&n;     */
 r_for
@@ -23620,6 +23624,7 @@ id|ISTAT_DIP
 )paren
 )paren
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -23640,6 +23645,7 @@ l_int|3
 )paren
 r_break
 suffix:semicolon
+)brace
 )brace
 id|hostdata-&gt;state
 op_assign

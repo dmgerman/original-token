@@ -408,6 +408,7 @@ id|whichDev
 OL
 id|SOUND_MIXER_NRDEVICES
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -428,6 +429,7 @@ id|mixer
 op_assign
 l_int|0x00
 suffix:semicolon
+)brace
 r_switch
 c_cond
 (paren

@@ -897,12 +897,6 @@ r_extern
 r_struct
 id|task_struct
 op_star
-id|last_task_used_math
-suffix:semicolon
-r_extern
-r_struct
-id|task_struct
-op_star
 op_star
 id|tarray_freelist
 suffix:semicolon

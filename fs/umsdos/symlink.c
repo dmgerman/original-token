@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/fs/umsdos/file.c&n; *&n; *  Written 1992 by Jacques Gelinas&n; *&t;inspired from linux/fs/msdos/file.c Werner Almesberger&n; *&n; *  Extended MS-DOS regular file handling primitives&n; */
+multiline_comment|/*&n; *  linux/fs/umsdos/file.c&n; *&n; *  Written 1992 by Jacques Gelinas&n; *      inspired from linux/fs/msdos/file.c Werner Almesberger&n; *&n; *  Extended MS-DOS regular file handling primitives&n; */
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/msdos_fs.h&gt;
@@ -19,7 +19,7 @@ r_struct
 id|file_operations
 id|umsdos_symlink_operations
 suffix:semicolon
-multiline_comment|/*&n;&t;Read the data associate with the symlink.&n;&t;Return length read in buffer or  a negative error code.&n;&t;&n;*/
+multiline_comment|/*&n; * Read the data associate with the symlink.&n; * Return length read in buffer or  a negative error code.&n; * &n; */
 DECL|function|umsdos_readlink_x
 r_static
 r_int
@@ -50,34 +50,22 @@ r_struct
 id|file
 id|filp
 suffix:semicolon
+id|ret
+op_assign
+id|dentry-&gt;d_inode-&gt;i_size
+suffix:semicolon
+id|check_dentry
+(paren
+id|dentry
+)paren
+suffix:semicolon
 id|fill_new_filp
 (paren
 op_amp
 id|filp
 comma
-l_int|NULL
+id|dentry
 )paren
-suffix:semicolon
-id|ret
-op_assign
-id|dentry-&gt;d_inode-&gt;i_size
-suffix:semicolon
-id|memset
-(paren
-op_amp
-id|filp
-comma
-l_int|0
-comma
-r_sizeof
-(paren
-id|filp
-)paren
-)paren
-suffix:semicolon
-id|filp.f_pos
-op_assign
-l_int|0
 suffix:semicolon
 id|filp.f_reada
 op_assign
@@ -86,10 +74,6 @@ suffix:semicolon
 id|filp.f_flags
 op_assign
 id|O_RDONLY
-suffix:semicolon
-id|filp.f_dentry
-op_assign
-id|dentry
 suffix:semicolon
 id|filp.f_op
 op_assign
@@ -179,7 +163,6 @@ id|KERN_DEBUG
 l_string|&quot;  i_binary(sb)=%d&bslash;n&quot;
 comma
 id|MSDOS_I
-c_func
 (paren
 id|filp.f_dentry-&gt;d_inode
 )paren
@@ -283,7 +266,7 @@ op_minus
 id|EIO
 suffix:semicolon
 )brace
-macro_line|#if 0&t;/* DEBUG */
+macro_line|#if 0&t;&t;&t;&t;/* DEBUG */
 (brace
 r_struct
 id|umsdos_dirent
@@ -323,7 +306,7 @@ id|mydirent-&gt;name
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif  
+macro_line|#endif
 id|PRINTK
 (paren
 (paren
@@ -344,7 +327,6 @@ DECL|function|UMSDOS_readlink
 r_static
 r_int
 id|UMSDOS_readlink
-c_func
 (paren
 r_struct
 id|dentry
@@ -422,7 +404,6 @@ r_struct
 id|dentry
 op_star
 id|UMSDOS_followlink
-c_func
 (paren
 r_struct
 id|dentry
@@ -457,7 +438,6 @@ id|mm_segment_t
 id|old_fs
 op_assign
 id|get_fs
-c_func
 (paren
 )paren
 suffix:semicolon
@@ -495,7 +475,6 @@ op_logical_neg
 id|symname
 op_assign
 id|kmalloc
-c_func
 (paren
 id|len
 op_plus
@@ -509,7 +488,6 @@ id|GFP_KERNEL
 id|dentry
 op_assign
 id|ERR_PTR
-c_func
 (paren
 op_minus
 id|EAGAIN
@@ -595,7 +573,6 @@ id|cnt
 id|dentry
 op_assign
 id|ERR_PTR
-c_func
 (paren
 op_minus
 id|EIO
@@ -616,7 +593,6 @@ suffix:semicolon
 id|dentry
 op_assign
 id|lookup_dentry
-c_func
 (paren
 id|symname
 comma
@@ -626,7 +602,6 @@ l_int|1
 )paren
 suffix:semicolon
 id|kfree
-c_func
 (paren
 id|symname
 )paren
@@ -640,7 +615,6 @@ l_int|0
 id|out
 suffix:colon
 id|kfree
-c_func
 (paren
 id|symname
 )paren
@@ -648,7 +622,6 @@ suffix:semicolon
 id|outnobuf
 suffix:colon
 id|dput
-c_func
 (paren
 id|base
 )paren

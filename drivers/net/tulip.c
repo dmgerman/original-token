@@ -1533,6 +1533,7 @@ id|pci_device_fn
 op_ne
 id|PCIBIOS_SUCCESSFUL
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -1543,6 +1544,7 @@ suffix:semicolon
 r_else
 r_break
 suffix:semicolon
+)brace
 id|pcibios_read_config_word
 c_func
 (paren
@@ -8660,6 +8662,7 @@ id|dev-&gt;if_port
 op_eq
 l_int|2
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -8680,6 +8683,7 @@ id|dev-&gt;if_port
 op_assign
 l_int|0
 suffix:semicolon
+)brace
 r_else
 id|dev-&gt;if_port
 op_assign

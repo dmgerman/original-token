@@ -1110,6 +1110,7 @@ id|base_addr
 OG
 l_int|0x1ff
 )paren
+(brace
 multiline_comment|/* Check a single specified location. */
 r_if
 c_cond
@@ -1148,6 +1149,7 @@ comma
 id|base_addr
 )paren
 suffix:semicolon
+)brace
 )brace
 r_else
 r_if

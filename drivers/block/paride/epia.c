@@ -1,6 +1,7 @@
-multiline_comment|/* &n;        epia.c    (c) 1997  Grant R. Guenther &lt;grant@torque.net&gt;&n;                            Under the terms of the GNU public license.&n;&n;        epia.c is a low-level protocol driver for Shuttle Technologies &n;&t;EPIA parallel to IDE adapter chip.  This device is now obsolete&n;&t;and has been replaced with the EPAT chip, which is supported&n;&t;by epat.c, however, some devices based on EPIA are still&n;&t;available.&n;&n;*/
+multiline_comment|/* &n;        epia.c    (c) 1997-8  Grant R. Guenther &lt;grant@torque.net&gt;&n;                              Under the terms of the GNU public license.&n;&n;        epia.c is a low-level protocol driver for Shuttle Technologies &n;&t;EPIA parallel to IDE adapter chip.  This device is now obsolete&n;&t;and has been replaced with the EPAT chip, which is supported&n;&t;by epat.c, however, some devices based on EPIA are still&n;&t;available.&n;&n;*/
+multiline_comment|/* Changes:&n;&n;        1.01    GRG 1998.05.06 init_proto, release_proto&n;&n;*/
 DECL|macro|EPIA_VERSION
-mdefine_line|#define EPIA_VERSION      &quot;1.0&quot;
+mdefine_line|#define EPIA_VERSION      &quot;1.01&quot;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -1931,23 +1932,29 @@ id|pi-&gt;delay
 )paren
 suffix:semicolon
 )brace
-DECL|function|epia_inc_use
+DECL|function|epia_init_proto
 r_static
 r_void
-id|epia_inc_use
+id|epia_init_proto
+c_func
 (paren
-r_void
+id|PIA
+op_star
+id|pi
 )paren
 (brace
 id|MOD_INC_USE_COUNT
 suffix:semicolon
 )brace
-DECL|function|epia_dec_use
+DECL|function|epia_release_proto
 r_static
 r_void
-id|epia_dec_use
+id|epia_release_proto
+c_func
 (paren
-r_void
+id|PIA
+op_star
+id|pi
 )paren
 (brace
 id|MOD_DEC_USE_COUNT
@@ -1991,9 +1998,9 @@ id|epia_test_proto
 comma
 id|epia_log_adapter
 comma
-id|epia_inc_use
+id|epia_init_proto
 comma
-id|epia_dec_use
+id|epia_release_proto
 )brace
 suffix:semicolon
 macro_line|#ifdef MODULE

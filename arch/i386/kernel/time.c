@@ -1021,6 +1021,7 @@ op_rshift
 l_int|1
 )paren
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -1044,6 +1045,7 @@ op_minus
 l_int|600
 suffix:semicolon
 multiline_comment|/* do it again in 60 s */
+)brace
 macro_line|#if 0
 multiline_comment|/* As we return to user mode fire off the other CPU schedulers.. this is &n;&t;   basically because we don&squot;t yet share IRQ&squot;s around. This message is&n;&t;   rigged to be safe on the 386 - basically it&squot;s a hack, so don&squot;t look&n;&t;   closely for now.. */
 id|smp_message_pass
@@ -1537,6 +1539,8 @@ id|xtime.tv_usec
 op_assign
 l_int|0
 suffix:semicolon
+multiline_comment|/*&n; * If we have APM enabled we can&squot;t currently depend&n; * on the cycle counter, because a suspend to disk&n; * will reset it. Somebody should come up with a&n; * better solution than to just disable the fast time&n; * code..&n; */
+macro_line|#ifndef CONFIG_APM
 multiline_comment|/* If we have the CPU hardware time counters, use them */
 r_if
 c_cond
@@ -1614,6 +1618,7 @@ op_assign
 id|pentium_timer_interrupt
 suffix:semicolon
 )brace
+macro_line|#endif
 id|setup_x86_irq
 c_func
 (paren

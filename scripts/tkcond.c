@@ -140,6 +140,7 @@ r_void
 id|fix_choice_cond
 c_func
 (paren
+r_void
 )paren
 (brace
 r_struct

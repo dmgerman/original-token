@@ -41,7 +41,6 @@ DECL|function|rdir_filldir
 r_static
 r_int
 id|rdir_filldir
-c_func
 (paren
 r_void
 op_star
@@ -110,7 +109,6 @@ op_ne
 id|UMSDOS_PSDROOT_LEN
 op_logical_or
 id|memcmp
-c_func
 (paren
 id|name
 comma
@@ -263,7 +261,6 @@ op_logical_and
 id|dir
 op_eq
 id|iget
-c_func
 (paren
 id|dir-&gt;i_sb
 comma
@@ -273,7 +270,6 @@ op_logical_and
 id|dir
 op_eq
 id|iget
-c_func
 (paren
 id|pseudo_root-&gt;i_sb
 comma
@@ -292,7 +288,6 @@ id|filldir
 suffix:semicolon
 r_return
 id|fat_readdir
-c_func
 (paren
 id|filp
 comma
@@ -303,11 +298,10 @@ id|rdir_filldir
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n;  Lookup into a non promoted directory.&n;  If the result is a directory, make sure we find out if it is&n;  a promoted one or not (calling umsdos_setup_dir_inode(inode)).&n;*/
+multiline_comment|/*&n; * Lookup into a non promoted directory.&n; * If the result is a directory, make sure we find out if it is&n; * a promoted one or not (calling umsdos_setup_dir_inode(inode)).&n; */
 DECL|function|umsdos_rlookup_x
 r_int
 id|umsdos_rlookup_x
-c_func
 (paren
 r_struct
 id|inode
@@ -322,9 +316,9 @@ comma
 r_int
 id|nopseudo
 )paren
+(brace
 multiline_comment|/* Don&squot;t care about pseudo root mode */
 multiline_comment|/* so locating &quot;linux&quot; will work */
-(brace
 r_int
 id|len
 op_assign
@@ -371,7 +365,6 @@ op_logical_and
 id|dir
 op_eq
 id|iget
-c_func
 (paren
 id|dir-&gt;i_sb
 comma
@@ -381,7 +374,6 @@ op_logical_and
 id|dir
 op_eq
 id|iget
-c_func
 (paren
 id|pseudo_root-&gt;i_sb
 comma
@@ -389,7 +381,7 @@ id|UMSDOS_ROOT_INO
 )paren
 )paren
 (brace
-multiline_comment|/*    *result = pseudo_root;*/
+multiline_comment|/*    *result = pseudo_root; */
 id|Printk
 (paren
 (paren
@@ -398,14 +390,16 @@ l_string|&quot;umsdos_rlookup_x: we are at pseudo-root thingy?&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
-id|pseudo_root-&gt;i_count
-op_increment
+id|inc_count
+(paren
+id|pseudo_root
+)paren
 suffix:semicolon
 id|ret
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* #Specification: pseudo root / DOS/..&n;       In the real root directory (c:&bslash;), the directory ..&n;       is the pseudo root (c:&bslash;linux).&n;    */
+multiline_comment|/* #Specification: pseudo root / DOS/..&n;&t;&t; * In the real root directory (c:&bslash;), the directory ..&n;&t;&t; * is the pseudo root (c:&bslash;linux).&n;&t;&t; */
 )brace
 r_else
 (brace
@@ -504,7 +498,7 @@ op_logical_neg
 id|nopseudo
 )paren
 (brace
-multiline_comment|/* #Specification: pseudo root / DOS/linux&n;&t; Even in the real root directory (c:&bslash;), the directory&n;&t; /linux won&squot;t show&n;      */
+multiline_comment|/* #Specification: pseudo root / DOS/linux&n;&t;&t;&t;&t; * Even in the real root directory (c:&bslash;), the directory&n;&t;&t;&t;&t; * /linux won&squot;t show&n;&t;&t;&t;&t; */
 id|Printk
 (paren
 (paren
@@ -518,14 +512,18 @@ op_assign
 op_minus
 id|ENOENT
 suffix:semicolon
-multiline_comment|/* iput (pseudo_root); FIXME */
+id|iput
+(paren
+id|pseudo_root
+)paren
+suffix:semicolon
+multiline_comment|/* FIXME? */
 )brace
 r_else
 r_if
 c_cond
 (paren
 id|S_ISDIR
-c_func
 (paren
 id|inode-&gt;i_mode
 )paren
@@ -551,7 +549,12 @@ suffix:semicolon
 )brace
 )brace
 )brace
-multiline_comment|/* iput (dir); FIXME */
+id|iput
+(paren
+id|dir
+)paren
+suffix:semicolon
+multiline_comment|/* FIXME? */
 id|PRINTK
 (paren
 (paren
@@ -569,7 +572,6 @@ suffix:semicolon
 DECL|function|UMSDOS_rlookup
 r_int
 id|UMSDOS_rlookup
-c_func
 (paren
 r_struct
 id|inode
@@ -601,7 +603,6 @@ id|dentry-&gt;d_name.name
 suffix:semicolon
 r_return
 id|umsdos_rlookup_x
-c_func
 (paren
 id|dir
 comma
@@ -627,7 +628,7 @@ op_star
 id|dentry
 )paren
 (brace
-multiline_comment|/* #Specification: dual mode / rmdir in a DOS directory&n;     In a DOS (not EMD in it) directory, we use a reverse strategy&n;     compared with an Umsdos directory. We assume that a subdirectory&n;     of a DOS directory is also a DOS directory. This is not always&n;     true (umssync may be used anywhere), but make sense.&n;     &n;     So we call msdos_rmdir() directly. If it failed with a -ENOTEMPTY&n;     then we check if it is a Umsdos directory. We check if it is&n;     really empty (only . .. and --linux-.--- in it). If it is true&n;     we remove the EMD and do a msdos_rmdir() again.&n;&n;     In a Umsdos directory, we assume all subdirectory are also&n;     Umsdos directory, so we check the EMD file first.&n;  */
+multiline_comment|/* #Specification: dual mode / rmdir in a DOS directory&n;&t; * In a DOS (not EMD in it) directory, we use a reverse strategy&n;&t; * compared with an Umsdos directory. We assume that a subdirectory&n;&t; * of a DOS directory is also a DOS directory. This is not always&n;&t; * true (umssync may be used anywhere), but make sense.&n;&t; * &n;&t; * So we call msdos_rmdir() directly. If it failed with a -ENOTEMPTY&n;&t; * then we check if it is a Umsdos directory. We check if it is&n;&t; * really empty (only . .. and --linux-.--- in it). If it is true&n;&t; * we remove the EMD and do a msdos_rmdir() again.&n;&t; * &n;&t; * In a Umsdos directory, we assume all subdirectory are also&n;&t; * Umsdos directory, so we check the EMD file first.&n;&t; */
 r_int
 id|ret
 suffix:semicolon
@@ -635,7 +636,6 @@ r_if
 c_cond
 (paren
 id|umsdos_is_pseudodos
-c_func
 (paren
 id|dir
 comma
@@ -643,7 +643,7 @@ id|dentry
 )paren
 )paren
 (brace
-multiline_comment|/* #Specification: pseudo root / rmdir /DOS&n;       The pseudo sub-directory /DOS can&squot;t be removed!&n;       This is done even if the pseudo root is not a Umsdos&n;       directory anymore (very unlikely), but an accident (under&n;       MsDOS) is always possible.&n;       &n;       EPERM is returned.&n;    */
+multiline_comment|/* #Specification: pseudo root / rmdir /DOS&n;&t;&t; * The pseudo sub-directory /DOS can&squot;t be removed!&n;&t;&t; * This is done even if the pseudo root is not a Umsdos&n;&t;&t; * directory anymore (very unlikely), but an accident (under&n;&t;&t; * MsDOS) is always possible.&n;&t;&t; * &n;&t;&t; * EPERM is returned.&n;&t;&t; */
 id|ret
 op_assign
 op_minus
@@ -657,8 +657,10 @@ id|umsdos_lockcreate
 id|dir
 )paren
 suffix:semicolon
-id|dir-&gt;i_count
-op_increment
+id|inc_count
+(paren
+id|dir
+)paren
 suffix:semicolon
 id|ret
 op_assign
@@ -683,8 +685,10 @@ id|inode
 op_star
 id|sdir
 suffix:semicolon
-id|dir-&gt;i_count
-op_increment
+id|inc_count
+(paren
+id|dir
+)paren
 suffix:semicolon
 id|ret
 op_assign
@@ -742,7 +746,6 @@ comma
 id|empty
 comma
 id|atomic_read
-c_func
 (paren
 op_amp
 id|sdir-&gt;i_count
@@ -758,7 +761,7 @@ op_eq
 l_int|2
 )paren
 (brace
-multiline_comment|/*&n;&t;      Not a Umsdos directory, so the previous msdos_rmdir&n;&t;      was not lying :-)&n;&t;    */
+multiline_comment|/*&n;&t;&t;&t;&t;&t;&t; * Not a Umsdos directory, so the previous msdos_rmdir&n;&t;&t;&t;&t;&t;&t; * was not lying :-)&n;&t;&t;&t;&t;&t;&t; */
 id|ret
 op_assign
 op_minus
@@ -780,6 +783,14 @@ id|dentry
 op_star
 id|temp
 suffix:semicolon
+id|Printk
+(paren
+(paren
+id|KERN_WARNING
+l_string|&quot;UMSDOS_rmdir: hmmm... whatabout inode ? FIXME&bslash;n&quot;
+)paren
+)paren
+suffix:semicolon
 id|temp
 op_assign
 id|creat_dentry
@@ -797,7 +808,6 @@ multiline_comment|/* FIXME: prolly should fill inode part ? */
 id|ret
 op_assign
 id|msdos_unlink
-c_func
 (paren
 id|sdir
 comma
@@ -816,8 +826,10 @@ op_eq
 l_int|0
 )paren
 (brace
-id|dir-&gt;i_count
-op_increment
+id|inc_count
+(paren
+id|dir
+)paren
 suffix:semicolon
 id|ret
 op_assign
@@ -853,7 +865,7 @@ r_return
 id|ret
 suffix:semicolon
 )brace
-multiline_comment|/* #Specification: dual mode / introduction&n;   One goal of UMSDOS is to allow a practical and simple coexistence&n;   between MsDOS and Linux in a single partition. Using the EMD file&n;   in each directory, UMSDOS add Unix semantics and capabilities to&n;   normal DOS file system. To help and simplify coexistence, here is&n;   the logic related to the EMD file.&n;   &n;   If it is missing, then the directory is managed by the MsDOS driver.&n;   The names are limited to DOS limits (8.3). No links, no device special&n;   and pipe and so on.&n;&n;   If it is there, it is the directory. If it is there but empty, then&n;   the directory looks empty. The utility umssync allows synchronisation&n;   of the real DOS directory and the EMD.&n;&n;   Whenever umssync is applied to a directory without EMD, one is&n;   created on the fly. The directory is promoted to full unix semantic.&n;   Of course, the ls command will show exactly the same content as before&n;   the umssync session.&n;&n;   It is believed that the user/admin will promote directories to unix&n;   semantic as needed.&n;&n;   The strategy to implement this is to use two function table (struct&n;   inode_operations). One for true UMSDOS directory and one for directory&n;   with missing EMD.&n;&n;   Functions related to the DOS semantic (but aware of UMSDOS) generally&n;   have a &quot;r&quot; prefix (r for real) such as UMSDOS_rlookup, to differentiate&n;   from the one with full UMSDOS semantic.&n;*/
+multiline_comment|/* #Specification: dual mode / introduction&n; * One goal of UMSDOS is to allow a practical and simple coexistence&n; * between MsDOS and Linux in a single partition. Using the EMD file&n; * in each directory, UMSDOS add Unix semantics and capabilities to&n; * normal DOS file system. To help and simplify coexistence, here is&n; * the logic related to the EMD file.&n; * &n; * If it is missing, then the directory is managed by the MsDOS driver.&n; * The names are limited to DOS limits (8.3). No links, no device special&n; * and pipe and so on.&n; * &n; * If it is there, it is the directory. If it is there but empty, then&n; * the directory looks empty. The utility umssync allows synchronisation&n; * of the real DOS directory and the EMD.&n; * &n; * Whenever umssync is applied to a directory without EMD, one is&n; * created on the fly. The directory is promoted to full unix semantic.&n; * Of course, the ls command will show exactly the same content as before&n; * the umssync session.&n; * &n; * It is believed that the user/admin will promote directories to unix&n; * semantic as needed.&n; * &n; * The strategy to implement this is to use two function table (struct&n; * inode_operations). One for true UMSDOS directory and one for directory&n; * with missing EMD.&n; * &n; * Functions related to the DOS semantic (but aware of UMSDOS) generally&n; * have a &quot;r&quot; prefix (r for real) such as UMSDOS_rlookup, to differentiate&n; * from the one with full UMSDOS semantic.&n; */
 DECL|variable|umsdos_rdir_operations
 r_static
 r_struct

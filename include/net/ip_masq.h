@@ -952,7 +952,7 @@ r_void
 suffix:semicolon
 macro_line|#ifndef CONFIG_IP_MASQ_NDEBUG
 DECL|macro|IP_MASQ_DEBUG
-mdefine_line|#define IP_MASQ_DEBUG(level, msg...) &bslash;&n;&t;if (level &lt;= ip_masq_get_debug_level()) &bslash;&n;&t;&t;printk(KERN_DEBUG &quot;IP_MASQ:&quot; ## msg)
+mdefine_line|#define IP_MASQ_DEBUG(level, msg...) do { &bslash;&n;&t;if (level &lt;= ip_masq_get_debug_level()) &bslash;&n;&t;&t;printk(KERN_DEBUG &quot;IP_MASQ:&quot; ## msg); &bslash;&n;&t;} while (0)
 macro_line|#else&t;/* NO DEBUGGING at ALL */
 DECL|macro|IP_MASQ_DEBUG
 mdefine_line|#define IP_MASQ_DEBUG(level, msg...) do { } while (0)

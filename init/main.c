@@ -2191,6 +2191,48 @@ l_int|0x2400
 )brace
 comma
 macro_line|#endif
+macro_line|#ifdef CONFIG_PARIDE_PD
+(brace
+l_string|&quot;pda&quot;
+comma
+l_int|0x2d00
+)brace
+comma
+(brace
+l_string|&quot;pdb&quot;
+comma
+l_int|0x2d10
+)brace
+comma
+(brace
+l_string|&quot;pdc&quot;
+comma
+l_int|0x2d20
+)brace
+comma
+(brace
+l_string|&quot;pdd&quot;
+comma
+l_int|0x2d30
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_PARIDE_PCD
+(brace
+l_string|&quot;pcd&quot;
+comma
+l_int|0x2e00
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_PARIDE_PF
+(brace
+l_string|&quot;pf&quot;
+comma
+l_int|0x2f00
+)brace
+comma
+macro_line|#endif
 macro_line|#if CONFIG_APBLOCK
 (brace
 l_string|&quot;apblock&quot;

@@ -24,6 +24,7 @@ macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
+macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/config.h&gt;&t;/* for CONFIG_PCI */
 DECL|variable|proc_scsi_fdomain
 r_struct
@@ -1161,21 +1162,22 @@ id|amount
 )paren
 multiline_comment|/* Pause for amount*10 milliseconds */
 (brace
-r_int
-r_int
-id|the_time
-op_assign
-id|jiffies
-op_plus
-id|amount
+r_do
+(brace
+id|udelay
+c_func
+(paren
+l_int|10
+op_star
+l_int|1000
+)paren
 suffix:semicolon
-multiline_comment|/* 0.01 seconds per jiffy */
+)brace
 r_while
 c_loop
 (paren
-id|jiffies
-OL
-id|the_time
+op_decrement
+id|amount
 )paren
 suffix:semicolon
 )brace
@@ -3592,18 +3594,9 @@ suffix:semicolon
 multiline_comment|/* Start arbitration */
 id|timeout
 op_assign
-id|jiffies
-op_plus
-l_int|50
+l_int|500
 suffix:semicolon
-multiline_comment|/* 500 mS */
-r_while
-c_loop
-(paren
-id|jiffies
-OL
-id|timeout
-)paren
+r_do
 (brace
 id|status
 op_assign
@@ -3625,7 +3618,21 @@ multiline_comment|/* Arbitration complete */
 r_return
 l_int|0
 suffix:semicolon
+id|udelay
+c_func
+(paren
+l_int|1000
+)paren
+suffix:semicolon
+multiline_comment|/* Wait one millisecond */
 )brace
+r_while
+c_loop
+(paren
+op_decrement
+id|timeout
+)paren
+suffix:semicolon
 multiline_comment|/* Make bus idle */
 id|fdomain_make_bus_idle
 c_func
@@ -3714,18 +3721,10 @@ id|TMC_Cntl_port
 suffix:semicolon
 id|timeout
 op_assign
-id|jiffies
-op_plus
-l_int|35
+l_int|350
 suffix:semicolon
-multiline_comment|/* 350mS -- because of timeouts&n;&t;&t;&t;&t;&t;   (was 250mS) */
-r_while
-c_loop
-(paren
-id|jiffies
-OL
-id|timeout
-)paren
+multiline_comment|/* 350 msec */
+r_do
 (brace
 id|status
 op_assign
@@ -3758,7 +3757,21 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+id|udelay
+c_func
+(paren
+l_int|1000
+)paren
+suffix:semicolon
+multiline_comment|/* wait one msec */
 )brace
+r_while
+c_loop
+(paren
+op_decrement
+id|timeout
+)paren
+suffix:semicolon
 multiline_comment|/* Make bus idle */
 id|fdomain_make_bus_idle
 c_func

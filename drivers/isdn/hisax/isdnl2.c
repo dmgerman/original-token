@@ -3409,6 +3409,7 @@ op_amp
 id|st-&gt;l2.flag
 )paren
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -3427,6 +3428,7 @@ id|est
 op_assign
 l_int|0
 suffix:semicolon
+)brace
 id|st-&gt;l2.vs
 op_assign
 l_int|0

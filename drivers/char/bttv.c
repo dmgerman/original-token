@@ -7322,8 +7322,9 @@ suffix:semicolon
 r_else
 id|btv-&gt;win.vidadr
 op_assign
-id|PAGE_OFFSET
-op_or
+id|__va
+c_func
+(paren
 id|uvirt_to_bus
 c_func
 (paren
@@ -7331,6 +7332,7 @@ c_func
 id|uint
 )paren
 id|v.base
+)paren
 )paren
 suffix:semicolon
 id|btv-&gt;win.sheight

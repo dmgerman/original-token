@@ -757,6 +757,7 @@ OG
 id|l-&gt;onhtime
 )paren
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -911,6 +912,7 @@ op_amp
 id|p-&gt;dev
 )paren
 suffix:semicolon
+)brace
 )brace
 id|p
 op_assign
@@ -2252,6 +2254,7 @@ op_increment
 OG
 id|ISDN_TIMER_DTIMEOUT10
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -2273,6 +2276,7 @@ op_amp
 id|p-&gt;dev
 )paren
 suffix:semicolon
+)brace
 id|anymore
 op_assign
 l_int|1

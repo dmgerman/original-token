@@ -3381,6 +3381,7 @@ id|flags
 op_amp
 id|QUOTA_SYSCALL
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -3414,6 +3415,7 @@ l_int|0
 r_return
 id|error
 suffix:semicolon
+)brace
 r_else
 id|memcpy
 c_func

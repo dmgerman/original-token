@@ -10529,6 +10529,7 @@ suffix:semicolon
 id|i
 op_increment
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -10539,6 +10540,7 @@ id|i
 op_ne
 l_int|0
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -10612,6 +10614,8 @@ id|i
 op_assign
 l_int|9
 suffix:semicolon
+)brace
+)brace
 r_if
 c_cond
 (paren

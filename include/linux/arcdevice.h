@@ -65,7 +65,7 @@ mdefine_line|#define BUGLVL(x) if ((ARCNET_DEBUG_MAX)&amp;arcnet_debug&amp;(x))
 DECL|macro|BUGMSG2
 mdefine_line|#define BUGMSG2(x,msg,args...) BUGLVL(x) printk(msg, ## args)
 DECL|macro|BUGMSG
-mdefine_line|#define BUGMSG(x,msg,args...) BUGMSG2(x,&quot;%s%6s: &quot; msg, &bslash;&n;            x==D_NORMAL&t;? KERN_WARNING : &bslash;&n;      x&lt;=D_INIT_REASONS&t;? KERN_INFO    : KERN_DEBUG , &bslash;&n;&t;dev-&gt;name , ## args)
+mdefine_line|#define BUGMSG(x,msg,args...) do { &bslash;&n;&t;BUGMSG2(x,&quot;%s%6s: &quot; msg, &bslash;&n;            x==D_NORMAL&t;? KERN_WARNING : &bslash;&n;      x&lt;=D_INIT_REASONS&t;? KERN_INFO    : KERN_DEBUG , &bslash;&n;&t;dev-&gt;name , ## args); } while (0)
 DECL|macro|SETMASK
 mdefine_line|#define SETMASK AINTMASK(lp-&gt;intmask)
 multiline_comment|/* Time needed to resetthe card - in jiffies.  This works on my SMC&n;&t; * PC100.  I can&squot;t find a reference that tells me just how long I&n;&t; * should wait.&n;&t; */

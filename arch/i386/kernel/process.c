@@ -36,6 +36,14 @@ macro_line|#ifdef CONFIG_MATH_EMULATION
 macro_line|#include &lt;asm/math_emu.h&gt;
 macro_line|#endif
 macro_line|#include &quot;irq.h&quot;
+DECL|variable|last_task_used_math
+r_struct
+id|task_struct
+op_star
+id|last_task_used_math
+op_assign
+l_int|NULL
+suffix:semicolon
 macro_line|#ifdef __SMP__
 id|asmlinkage
 r_void
@@ -1683,17 +1691,14 @@ r_struct
 id|thread_struct
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * This tried to copy the FPU state, but I wonder whether we really&n; * want this at all. It is probably nicer to just have a newly started&n; * process start with a clean slate wrt the fpu.  - Linus&n; */
-macro_line|#if 1
-id|current-&gt;used_math
-op_assign
-l_int|0
-suffix:semicolon
+macro_line|#ifdef __SMP__
+r_if
+c_cond
+(paren
 id|current-&gt;flags
-op_and_assign
-op_complement
+op_amp
 id|PF_USEDFPU
-suffix:semicolon
+)paren
 macro_line|#else
 r_if
 c_cond
@@ -1702,6 +1707,7 @@ id|last_task_used_math
 op_eq
 id|current
 )paren
+macro_line|#endif
 id|__asm__
 c_func
 (paren
@@ -1713,7 +1719,6 @@ id|p-&gt;tss.i387
 )paren
 )paren
 suffix:semicolon
-macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
