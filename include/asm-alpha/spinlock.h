@@ -5,9 +5,9 @@ macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;asm/current.h&gt;
 DECL|macro|DEBUG_SPINLOCK
-mdefine_line|#define DEBUG_SPINLOCK 1
+mdefine_line|#define DEBUG_SPINLOCK 0
 DECL|macro|DEBUG_RWLOCK
-mdefine_line|#define DEBUG_RWLOCK 1
+mdefine_line|#define DEBUG_RWLOCK 0
 multiline_comment|/*&n; * Simple spin lock operations.  There are two variants, one clears IRQ&squot;s&n; * on the local processor, one does not.&n; *&n; * We make no fairness assumptions. They have a cost.&n; */
 r_typedef
 r_struct
@@ -65,23 +65,6 @@ DECL|macro|spin_is_locked
 mdefine_line|#define spin_is_locked(x)&t;((x)-&gt;lock != 0)
 DECL|macro|spin_unlock_wait
 mdefine_line|#define spin_unlock_wait(x)&t;({ do { barrier(); } while ((x)-&gt;lock); })
-DECL|member|a
-DECL|typedef|__dummy_lock_t
-r_typedef
-r_struct
-(brace
-r_int
-r_int
-id|a
-(braket
-l_int|100
-)braket
-suffix:semicolon
-)brace
-id|__dummy_lock_t
-suffix:semicolon
-DECL|macro|__dummy_lock
-mdefine_line|#define __dummy_lock(lock) (*(__dummy_lock_t *)(lock))
 macro_line|#if DEBUG_SPINLOCK
 r_extern
 r_void
@@ -193,21 +176,15 @@ id|tmp
 comma
 l_string|&quot;=m&quot;
 (paren
-id|__dummy_lock
-c_func
-(paren
-id|lock
-)paren
+id|lock-&gt;lock
 )paren
 suffix:colon
 l_string|&quot;m&quot;
 (paren
-id|__dummy_lock
-c_func
-(paren
-id|lock
+id|lock-&gt;lock
 )paren
-)paren
+suffix:colon
+l_string|&quot;memory&quot;
 )paren
 suffix:semicolon
 )brace
@@ -294,11 +271,13 @@ l_string|&quot;.previous&quot;
 suffix:colon
 l_string|&quot;=m&quot;
 (paren
-id|__dummy_lock
-c_func
+op_star
 (paren
-id|lock
+r_volatile
+r_int
+op_star
 )paren
+id|lock
 )paren
 comma
 l_string|&quot;=&amp;r&quot;
@@ -308,12 +287,16 @@ id|regx
 suffix:colon
 l_string|&quot;0&quot;
 (paren
-id|__dummy_lock
-c_func
+op_star
 (paren
+r_volatile
+r_int
+op_star
+)paren
 id|lock
 )paren
-)paren
+suffix:colon
+l_string|&quot;memory&quot;
 )paren
 suffix:semicolon
 )brace
@@ -350,11 +333,13 @@ l_string|&quot;.previous&quot;
 suffix:colon
 l_string|&quot;=m&quot;
 (paren
-id|__dummy_lock
-c_func
+op_star
 (paren
-id|lock
+r_volatile
+r_int
+op_star
 )paren
+id|lock
 )paren
 comma
 l_string|&quot;=&amp;r&quot;
@@ -364,12 +349,16 @@ id|regx
 suffix:colon
 l_string|&quot;m&quot;
 (paren
-id|__dummy_lock
-c_func
+op_star
 (paren
+r_volatile
+r_int
+op_star
+)paren
 id|lock
 )paren
-)paren
+suffix:colon
+l_string|&quot;memory&quot;
 )paren
 suffix:semicolon
 )brace
@@ -421,6 +410,7 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
+l_string|&quot;&t;mb&bslash;n&quot;
 l_string|&quot;1:&t;ldl_l&t;%1,%0&bslash;n&quot;
 l_string|&quot;&t;addl&t;%1,2,%1&bslash;n&quot;
 l_string|&quot;&t;stl_c&t;%1,%0&bslash;n&quot;
@@ -431,11 +421,13 @@ l_string|&quot;.previous&quot;
 suffix:colon
 l_string|&quot;=m&quot;
 (paren
-id|__dummy_lock
-c_func
+op_star
 (paren
-id|lock
+r_volatile
+r_int
+op_star
 )paren
+id|lock
 )paren
 comma
 l_string|&quot;=&amp;r&quot;
@@ -445,12 +437,16 @@ id|regx
 suffix:colon
 l_string|&quot;m&quot;
 (paren
-id|__dummy_lock
-c_func
+op_star
 (paren
+r_volatile
+r_int
+op_star
+)paren
 id|lock
 )paren
-)paren
+suffix:colon
+l_string|&quot;memory&quot;
 )paren
 suffix:semicolon
 )brace

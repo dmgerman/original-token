@@ -1234,8 +1234,8 @@ mdefine_line|#define&t;HFS_I(X)&t;(&amp;((X)-&gt;u.hfs_i))
 DECL|macro|HFS_SB
 mdefine_line|#define&t;HFS_SB(X)&t;(&amp;((X)-&gt;u.hfs_sb))
 DECL|function|hfs_nameout
-r_extern
-id|__inline__
+r_static
+r_inline
 r_void
 id|hfs_nameout
 c_func
@@ -1277,8 +1277,8 @@ id|len
 suffix:semicolon
 )brace
 DECL|function|hfs_namein
-r_extern
-id|__inline__
+r_static
+r_inline
 r_int
 id|hfs_namein
 c_func

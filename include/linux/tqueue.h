@@ -237,7 +237,7 @@ id|p
 op_member_access_from_pointer
 id|next
 suffix:semicolon
-id|mb
+id|smp_mb
 c_func
 (paren
 )paren

@@ -1538,11 +1538,14 @@ op_amp
 id|__GFP_WAIT
 )paren
 (brace
-id|wakeup_kswapd
+id|try_to_free_pages
 c_func
 (paren
-l_int|1
+id|gfp_mask
 )paren
+suffix:semicolon
+id|memory_pressure
+op_increment
 suffix:semicolon
 r_goto
 id|try_again

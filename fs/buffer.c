@@ -2965,22 +2965,10 @@ id|size
 )paren
 )paren
 (brace
-id|balance_dirty
+id|try_to_free_pages
 c_func
 (paren
-id|NODEV
-)paren
-suffix:semicolon
-id|wakeup_kswapd
-c_func
-(paren
-l_int|0
-)paren
-suffix:semicolon
-multiline_comment|/* We can&squot;t wait because of __GFP_IO */
-id|schedule
-c_func
-(paren
+id|GFP_BUFFER
 )paren
 suffix:semicolon
 )brace

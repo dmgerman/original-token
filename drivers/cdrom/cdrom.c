@@ -3992,6 +3992,15 @@ id|rpc_state_t
 )paren
 )paren
 suffix:semicolon
+id|cgc.buffer
+op_assign
+(paren
+r_char
+op_star
+)paren
+op_amp
+id|rpc_state
+suffix:semicolon
 r_if
 c_cond
 (paren

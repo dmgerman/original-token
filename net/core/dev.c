@@ -3194,6 +3194,11 @@ id|head
 op_assign
 id|head-&gt;next_sched
 suffix:semicolon
+id|smp_mb__before_clear_bit
+c_func
+(paren
+)paren
+suffix:semicolon
 id|clear_bit
 c_func
 (paren

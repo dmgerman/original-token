@@ -337,7 +337,7 @@ id|ppp_channel_ops
 id|pppoe_chan_ops
 suffix:semicolon
 r_extern
-r_void
+r_int
 id|pppox_proto_init
 c_func
 (paren

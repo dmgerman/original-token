@@ -7247,7 +7247,8 @@ id|OHCI_CTRL_HCFS
 op_ne
 id|OHCI_USB_OPER
 )paren
-r_return
+r_goto
+id|out
 suffix:semicolon
 r_if
 c_cond
@@ -7304,6 +7305,8 @@ id|urb
 suffix:semicolon
 )brace
 )brace
+id|out
+suffix:colon
 id|rh_init_int_timer
 (paren
 id|urb

@@ -11,10 +11,16 @@ macro_line|#include &quot;hwaccess.h&quot;
 macro_line|#include &quot;cardmo.h&quot;
 macro_line|#include &quot;cardmi.h&quot;
 macro_line|#include &quot;midi.h&quot;
-DECL|variable|midi_spinlock
 r_static
 id|spinlock_t
 id|midi_spinlock
+id|__attribute
+c_func
+(paren
+(paren
+id|unused
+)paren
+)paren
 op_assign
 id|SPIN_LOCK_UNLOCKED
 suffix:semicolon

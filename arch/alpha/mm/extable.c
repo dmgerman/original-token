@@ -353,7 +353,6 @@ id|printk
 c_func
 (paren
 id|KERN_ALERT
-comma
 l_string|&quot;%s: [%lx] EX_TABLE search fail with&quot;
 l_string|&quot;exc frame GP, success with raw GP&bslash;n&quot;
 comma

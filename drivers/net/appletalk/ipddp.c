@@ -9,35 +9,15 @@ op_assign
 l_string|&quot;ipddp.c:v0.01 8/28/97 Bradford W. Johnson &lt;johns393@maroon.tc.umn.edu&gt;&bslash;n&quot;
 suffix:semicolon
 macro_line|#include &lt;linux/config.h&gt;
-macro_line|#ifdef MODULE
 macro_line|#include &lt;linux/module.h&gt;
-macro_line|#include &lt;linux/version.h&gt;
-macro_line|#endif
 macro_line|#include &lt;linux/kernel.h&gt;
-macro_line|#include &lt;linux/sched.h&gt;
-macro_line|#include &lt;linux/types.h&gt;
-macro_line|#include &lt;linux/fcntl.h&gt;
-macro_line|#include &lt;linux/interrupt.h&gt;
-macro_line|#include &lt;linux/ptrace.h&gt;
-macro_line|#include &lt;linux/ioport.h&gt;
-macro_line|#include &lt;linux/in.h&gt;
-macro_line|#include &lt;linux/malloc.h&gt;
-macro_line|#include &lt;linux/string.h&gt;
-macro_line|#include &lt;asm/uaccess.h&gt;
-macro_line|#include &lt;asm/system.h&gt;
-macro_line|#include &lt;asm/bitops.h&gt;
-macro_line|#include &lt;asm/io.h&gt;
-macro_line|#include &lt;asm/dma.h&gt;
-macro_line|#include &lt;linux/errno.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
-macro_line|#include &lt;linux/inetdevice.h&gt;
-macro_line|#include &lt;linux/etherdevice.h&gt;
-macro_line|#include &lt;linux/skbuff.h&gt;
-macro_line|#include &lt;linux/if_arp.h&gt;
-macro_line|#include &lt;linux/atalk.h&gt;
 macro_line|#include &lt;linux/ip.h&gt;
+macro_line|#include &lt;linux/atalk.h&gt;
+macro_line|#include &lt;linux/if_arp.h&gt;
 macro_line|#include &lt;net/route.h&gt;
-macro_line|#include &lt;linux/inet.h&gt;
+macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &quot;ipddp.h&quot;&t;&t;/* Our stuff */
 DECL|variable|ipddp_route_list
 r_static
@@ -174,10 +154,8 @@ op_star
 id|dev
 )paren
 (brace
-macro_line|#ifdef MODULE
 id|MOD_INC_USE_COUNT
 suffix:semicolon
-macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
@@ -194,16 +172,16 @@ op_star
 id|dev
 )paren
 (brace
-macro_line|#ifdef MODULE
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
-macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
 )brace
 DECL|function|ipddp_init
+r_static
 r_int
+id|__init
 id|ipddp_init
 c_func
 (paren
@@ -388,11 +366,6 @@ id|dev
 )paren
 (brace
 r_return
-(paren
-r_struct
-id|net_device_stats
-op_star
-)paren
 id|dev-&gt;priv
 suffix:semicolon
 )brace
@@ -1094,7 +1067,6 @@ id|EINVAL
 suffix:semicolon
 )brace
 )brace
-macro_line|#ifdef MODULE&t;/* Module specific functions for ipddp.c */
 DECL|variable|dev_ipddp
 r_static
 r_struct
@@ -1102,28 +1074,8 @@ id|net_device
 id|dev_ipddp
 op_assign
 (brace
-l_string|&quot;ipddp0&bslash;0   &quot;
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0x0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|NULL
-comma
+id|init
+suffix:colon
 id|ipddp_init
 )brace
 suffix:semicolon
@@ -1135,9 +1087,11 @@ comma
 l_string|&quot;i&quot;
 )paren
 suffix:semicolon
-DECL|function|init_module
+DECL|function|ipddp_init_module
+r_static
 r_int
-id|init_module
+id|__init
+id|ipddp_init_module
 c_func
 (paren
 r_void
@@ -1191,9 +1145,11 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|cleanup_module
+DECL|function|ipddp_cleanup_module
+r_static
 r_void
-id|cleanup_module
+id|__exit
+id|ipddp_cleanup_module
 c_func
 (paren
 r_void
@@ -1212,10 +1168,37 @@ c_func
 id|dev_ipddp.priv
 )paren
 suffix:semicolon
-id|dev_ipddp.priv
+id|memset
+c_func
+(paren
+op_amp
+id|dev_ipddp
+comma
+l_int|0
+comma
+r_sizeof
+(paren
+id|dev_ipddp
+)paren
+)paren
+suffix:semicolon
+id|dev_ipddp.init
 op_assign
-l_int|NULL
+id|ipddp_init
 suffix:semicolon
 )brace
-macro_line|#endif /* MODULE */
+DECL|variable|ipddp_init_module
+id|module_init
+c_func
+(paren
+id|ipddp_init_module
+)paren
+suffix:semicolon
+DECL|variable|ipddp_cleanup_module
+id|module_exit
+c_func
+(paren
+id|ipddp_cleanup_module
+)paren
+suffix:semicolon
 eof

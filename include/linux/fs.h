@@ -67,6 +67,14 @@ id|max_super_blocks
 comma
 id|nr_super_blocks
 suffix:semicolon
+r_extern
+r_int
+id|leases_enable
+comma
+id|dir_notify_enable
+comma
+id|lease_break_time
+suffix:semicolon
 DECL|macro|NR_FILE
 mdefine_line|#define NR_FILE  8192&t;/* this can well be larger on a larger system */
 DECL|macro|NR_RESERVED_FILES
@@ -938,6 +946,19 @@ id|block_device
 op_star
 id|i_bdev
 suffix:semicolon
+DECL|member|i_dnotify_mask
+r_int
+r_int
+id|i_dnotify_mask
+suffix:semicolon
+multiline_comment|/* Directory notify events */
+DECL|member|i_dnotify
+r_struct
+id|dnotify_struct
+op_star
+id|i_dnotify
+suffix:semicolon
+multiline_comment|/* for directory notifications */
 DECL|member|i_state
 r_int
 r_int
@@ -1301,6 +1322,8 @@ DECL|macro|FL_ACCESS
 mdefine_line|#define FL_ACCESS&t;8&t;/* for processes suspended by mandatory locking */
 DECL|macro|FL_LOCKD
 mdefine_line|#define FL_LOCKD&t;16&t;/* lock held by rpc.lockd */
+DECL|macro|FL_LEASE
+mdefine_line|#define FL_LEASE&t;32&t;/* lease held on this file */
 multiline_comment|/*&n; * The POSIX file lock owner is determined by&n; * the &quot;struct files_struct&quot; in the thread group&n; * (or NULL for no owner - BSD locks).&n; *&n; * Lockd stuffs a &quot;host&quot; pointer into this.&n; */
 DECL|typedef|fl_owner_t
 r_typedef
@@ -1332,6 +1355,12 @@ id|list_head
 id|fl_block
 suffix:semicolon
 multiline_comment|/* circular list of blocked processes */
+DECL|member|fl_list
+r_struct
+id|list_head
+id|fl_list
+suffix:semicolon
+multiline_comment|/* block list member */
 DECL|member|fl_owner
 id|fl_owner_t
 id|fl_owner
@@ -1408,6 +1437,13 @@ op_star
 )paren
 suffix:semicolon
 multiline_comment|/* lock removal callback */
+DECL|member|fl_fasync
+r_struct
+id|fasync_struct
+op_star
+id|fl_fasync
+suffix:semicolon
+multiline_comment|/* for lease break notifications */
 r_union
 (brace
 DECL|member|nfs_fl
@@ -1434,6 +1470,11 @@ r_extern
 r_struct
 id|list_head
 id|file_lock_list
+suffix:semicolon
+r_extern
+r_struct
+id|semaphore
+id|file_lock_sem
 suffix:semicolon
 macro_line|#include &lt;linux/fcntl.h&gt;
 r_extern
@@ -1495,6 +1536,30 @@ op_star
 )paren
 suffix:semicolon
 multiline_comment|/* fs/locks.c */
+r_extern
+r_void
+id|locks_init_lock
+c_func
+(paren
+r_struct
+id|file_lock
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|locks_copy_lock
+c_func
+(paren
+r_struct
+id|file_lock
+op_star
+comma
+r_struct
+id|file_lock
+op_star
+)paren
+suffix:semicolon
 r_extern
 r_void
 id|locks_remove_posix
@@ -1572,6 +1637,65 @@ c_func
 r_struct
 id|file_lock
 op_star
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|__get_lease
+c_func
+(paren
+r_struct
+id|inode
+op_star
+id|inode
+comma
+r_int
+r_int
+id|flags
+)paren
+suffix:semicolon
+r_extern
+id|time_t
+id|lease_get_mtime
+c_func
+(paren
+r_struct
+id|inode
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|lock_may_read
+c_func
+(paren
+r_struct
+id|inode
+op_star
+comma
+id|loff_t
+id|start
+comma
+r_int
+r_int
+id|count
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|lock_may_write
+c_func
+(paren
+r_struct
+id|inode
+op_star
+comma
+id|loff_t
+id|start
+comma
+r_int
+r_int
+id|count
 )paren
 suffix:semicolon
 DECL|struct|fasync_struct
@@ -3427,6 +3551,47 @@ id|size
 op_minus
 id|inode-&gt;i_size
 )paren
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+DECL|function|get_lease
+r_extern
+r_inline
+r_int
+id|get_lease
+c_func
+(paren
+r_struct
+id|inode
+op_star
+id|inode
+comma
+r_int
+r_int
+id|mode
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|inode-&gt;i_flock
+op_logical_and
+(paren
+id|inode-&gt;i_flock-&gt;fl_flags
+op_amp
+id|FL_LEASE
+)paren
+)paren
+r_return
+id|__get_lease
+c_func
+(paren
+id|inode
+comma
+id|mode
 )paren
 suffix:semicolon
 r_return

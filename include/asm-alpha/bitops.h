@@ -1,8 +1,11 @@
 macro_line|#ifndef _ALPHA_BITOPS_H
 DECL|macro|_ALPHA_BITOPS_H
 mdefine_line|#define _ALPHA_BITOPS_H
+macro_line|#include &lt;linux/config.h&gt;
 multiline_comment|/*&n; * Copyright 1994, Linus Torvalds.&n; */
 multiline_comment|/*&n; * These have to be done with inline assembly: that way the bit-setting&n; * is guaranteed to be atomic. All bit operations return 0 if the bit&n; * was cleared before the operation and != 0 if it was not.&n; *&n; * To get proper branch prediction for the main line, we must branch&n; * forward to code at the end of this object&squot;s .text section, then&n; * branch back to restart the operation.&n; *&n; * bit 0 is the LSB of addr; bit 64 is the LSB of (addr+1).&n; */
+DECL|macro|BITOPS_NO_BRANCH
+mdefine_line|#define BITOPS_NO_BRANCH
 DECL|function|set_bit
 r_extern
 id|__inline__
@@ -20,10 +23,12 @@ op_star
 id|addr
 )paren
 (brace
+macro_line|#ifndef BITOPS_NO_BRANCH
 r_int
 r_int
 id|oldbit
 suffix:semicolon
+macro_line|#endif
 r_int
 r_int
 id|temp
@@ -48,11 +53,12 @@ op_rshift
 l_int|5
 )paren
 suffix:semicolon
+macro_line|#ifndef BITOPS_NO_BRANCH
 id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;1:&t;ldl_l %0,%1&bslash;n&quot;
+l_string|&quot;1:&t;ldl_l %0,%4&bslash;n&quot;
 l_string|&quot;&t;and %0,%3,%2&bslash;n&quot;
 l_string|&quot;&t;bne %2,2f&bslash;n&quot;
 l_string|&quot;&t;xor %0,%3,%0&bslash;n&quot;
@@ -97,7 +103,148 @@ id|m
 )paren
 )paren
 suffix:semicolon
+macro_line|#else
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;1:&t;ldl_l %0,%3&bslash;n&quot;
+l_string|&quot;&t;bis %0,%2,%0&bslash;n&quot;
+l_string|&quot;&t;stl_c %0,%1&bslash;n&quot;
+l_string|&quot;&t;beq %0,2f&bslash;n&quot;
+l_string|&quot;.subsection 2&bslash;n&quot;
+l_string|&quot;2:&t;br 1b&bslash;n&quot;
+l_string|&quot;.previous&quot;
+suffix:colon
+l_string|&quot;=&amp;r&quot;
+(paren
+id|temp
+)paren
+comma
+l_string|&quot;=m&quot;
+(paren
+op_star
+id|m
+)paren
+suffix:colon
+l_string|&quot;Ir&quot;
+(paren
+l_int|1UL
+op_lshift
+(paren
+id|nr
+op_amp
+l_int|31
+)paren
+)paren
+comma
+l_string|&quot;m&quot;
+(paren
+op_star
+id|m
+)paren
+)paren
+suffix:semicolon
+macro_line|#endif
 )brace
+multiline_comment|/*&n; * WARNING: non atomic version.&n; */
+DECL|function|__set_bit
+r_extern
+id|__inline__
+r_void
+id|__set_bit
+c_func
+(paren
+r_int
+r_int
+id|nr
+comma
+r_volatile
+r_void
+op_star
+id|addr
+)paren
+(brace
+r_int
+r_int
+op_star
+id|m
+op_assign
+(paren
+(paren
+r_int
+r_int
+op_star
+)paren
+id|addr
+)paren
+op_plus
+(paren
+id|nr
+op_rshift
+l_int|5
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t; * Asm and C produces the same thing so let&n;&t; * the compiler to do its good work.&n;&t; */
+macro_line|#if 0
+r_int
+id|tmp
+suffix:semicolon
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;ldl %0,%3&bslash;n&bslash;t&quot;
+l_string|&quot;bis %0,%2,%0&bslash;n&bslash;t&quot;
+l_string|&quot;stl %0,%1&quot;
+suffix:colon
+l_string|&quot;=&amp;r&quot;
+(paren
+id|tmp
+)paren
+comma
+l_string|&quot;=m&quot;
+(paren
+op_star
+id|m
+)paren
+suffix:colon
+l_string|&quot;Ir&quot;
+(paren
+l_int|1UL
+op_lshift
+(paren
+id|nr
+op_amp
+l_int|31
+)paren
+)paren
+comma
+l_string|&quot;m&quot;
+(paren
+op_star
+id|m
+)paren
+)paren
+suffix:semicolon
+macro_line|#else
+op_star
+id|m
+op_or_assign
+l_int|1UL
+op_lshift
+(paren
+id|nr
+op_amp
+l_int|31
+)paren
+suffix:semicolon
+macro_line|#endif
+)brace
+DECL|macro|smp_mb__before_clear_bit
+mdefine_line|#define smp_mb__before_clear_bit()&t;smp_mb()
+DECL|macro|smp_mb__after_clear_bit
+mdefine_line|#define smp_mb__after_clear_bit()&t;smp_mb()
 DECL|function|clear_bit
 r_extern
 id|__inline__
@@ -115,10 +262,12 @@ op_star
 id|addr
 )paren
 (brace
+macro_line|#ifndef BITOPS_NO_BRANCH
 r_int
 r_int
 id|oldbit
 suffix:semicolon
+macro_line|#endif
 r_int
 r_int
 id|temp
@@ -143,11 +292,12 @@ op_rshift
 l_int|5
 )paren
 suffix:semicolon
+macro_line|#ifndef BITOPS_NO_BRANCH
 id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;1:&t;ldl_l %0,%1&bslash;n&quot;
+l_string|&quot;1:&t;ldl_l %0,%4&bslash;n&quot;
 l_string|&quot;&t;and %0,%3,%2&bslash;n&quot;
 l_string|&quot;&t;beq %2,2f&bslash;n&quot;
 l_string|&quot;&t;xor %0,%3,%0&bslash;n&quot;
@@ -192,6 +342,52 @@ id|m
 )paren
 )paren
 suffix:semicolon
+macro_line|#else
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;1:&t;ldl_l %0,%3&bslash;n&quot;
+l_string|&quot;&t;and %0,%2,%0&bslash;n&quot;
+l_string|&quot;&t;stl_c %0,%1&bslash;n&quot;
+l_string|&quot;&t;beq %0,2f&bslash;n&quot;
+l_string|&quot;.subsection 2&bslash;n&quot;
+l_string|&quot;2:&t;br 1b&bslash;n&quot;
+l_string|&quot;.previous&quot;
+suffix:colon
+l_string|&quot;=&amp;r&quot;
+(paren
+id|temp
+)paren
+comma
+l_string|&quot;=m&quot;
+(paren
+op_star
+id|m
+)paren
+suffix:colon
+l_string|&quot;Ir&quot;
+(paren
+op_complement
+(paren
+l_int|1UL
+op_lshift
+(paren
+id|nr
+op_amp
+l_int|31
+)paren
+)paren
+)paren
+comma
+l_string|&quot;m&quot;
+(paren
+op_star
+id|m
+)paren
+)paren
+suffix:semicolon
+macro_line|#endif
 )brace
 DECL|function|change_bit
 r_extern
@@ -238,12 +434,12 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;1:&t;ldl_l %0,%1&bslash;n&quot;
+l_string|&quot;1:&t;ldl_l %0,%3&bslash;n&quot;
 l_string|&quot;&t;xor %0,%2,%0&bslash;n&quot;
 l_string|&quot;&t;stl_c %0,%1&bslash;n&quot;
-l_string|&quot;&t;beq %0,3f&bslash;n&quot;
+l_string|&quot;&t;beq %0,2f&bslash;n&quot;
 l_string|&quot;.subsection 2&bslash;n&quot;
-l_string|&quot;3:&t;br 1b&bslash;n&quot;
+l_string|&quot;2:&t;br 1b&bslash;n&quot;
 l_string|&quot;.previous&quot;
 suffix:colon
 l_string|&quot;=&amp;r&quot;
@@ -325,17 +521,118 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;1:&t;ldl_l %0,%1&bslash;n&quot;
+l_string|&quot;1:&t;ldl_l %0,%4&bslash;n&quot;
 l_string|&quot;&t;and %0,%3,%2&bslash;n&quot;
 l_string|&quot;&t;bne %2,2f&bslash;n&quot;
 l_string|&quot;&t;xor %0,%3,%0&bslash;n&quot;
 l_string|&quot;&t;stl_c %0,%1&bslash;n&quot;
 l_string|&quot;&t;beq %0,3f&bslash;n&quot;
+macro_line|#ifdef CONFIG_SMP
 l_string|&quot;&t;mb&bslash;n&quot;
+macro_line|#endif
 l_string|&quot;2:&bslash;n&quot;
 l_string|&quot;.subsection 2&bslash;n&quot;
 l_string|&quot;3:&t;br 1b&bslash;n&quot;
 l_string|&quot;.previous&quot;
+suffix:colon
+l_string|&quot;=&amp;r&quot;
+(paren
+id|temp
+)paren
+comma
+l_string|&quot;=m&quot;
+(paren
+op_star
+id|m
+)paren
+comma
+l_string|&quot;=&amp;r&quot;
+(paren
+id|oldbit
+)paren
+suffix:colon
+l_string|&quot;Ir&quot;
+(paren
+l_int|1UL
+op_lshift
+(paren
+id|nr
+op_amp
+l_int|31
+)paren
+)paren
+comma
+l_string|&quot;m&quot;
+(paren
+op_star
+id|m
+)paren
+suffix:colon
+l_string|&quot;memory&quot;
+)paren
+suffix:semicolon
+r_return
+id|oldbit
+op_ne
+l_int|0
+suffix:semicolon
+)brace
+multiline_comment|/*&n; * WARNING: non atomic version.&n; */
+DECL|function|__test_and_set_bit
+r_extern
+id|__inline__
+r_int
+id|__test_and_set_bit
+c_func
+(paren
+r_int
+r_int
+id|nr
+comma
+r_volatile
+r_void
+op_star
+id|addr
+)paren
+(brace
+r_int
+r_int
+id|oldbit
+suffix:semicolon
+r_int
+r_int
+id|temp
+suffix:semicolon
+r_int
+r_int
+op_star
+id|m
+op_assign
+(paren
+(paren
+r_int
+r_int
+op_star
+)paren
+id|addr
+)paren
+op_plus
+(paren
+id|nr
+op_rshift
+l_int|5
+)paren
+suffix:semicolon
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;&t;ldl %0,%4&bslash;n&quot;
+l_string|&quot;&t;and %0,%3,%2&bslash;n&quot;
+l_string|&quot;&t;bne %2,1f&bslash;n&quot;
+l_string|&quot;&t;xor %0,%3,%0&bslash;n&quot;
+l_string|&quot;&t;stl %0,%1&bslash;n&quot;
+l_string|&quot;1:&bslash;n&quot;
 suffix:colon
 l_string|&quot;=&amp;r&quot;
 (paren
@@ -426,17 +723,118 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;1:&t;ldl_l %0,%1&bslash;n&quot;
+l_string|&quot;1:&t;ldl_l %0,%4&bslash;n&quot;
 l_string|&quot;&t;and %0,%3,%2&bslash;n&quot;
 l_string|&quot;&t;beq %2,2f&bslash;n&quot;
 l_string|&quot;&t;xor %0,%3,%0&bslash;n&quot;
 l_string|&quot;&t;stl_c %0,%1&bslash;n&quot;
 l_string|&quot;&t;beq %0,3f&bslash;n&quot;
+macro_line|#ifdef CONFIG_SMP
 l_string|&quot;&t;mb&bslash;n&quot;
+macro_line|#endif
 l_string|&quot;2:&bslash;n&quot;
 l_string|&quot;.subsection 2&bslash;n&quot;
 l_string|&quot;3:&t;br 1b&bslash;n&quot;
 l_string|&quot;.previous&quot;
+suffix:colon
+l_string|&quot;=&amp;r&quot;
+(paren
+id|temp
+)paren
+comma
+l_string|&quot;=m&quot;
+(paren
+op_star
+id|m
+)paren
+comma
+l_string|&quot;=&amp;r&quot;
+(paren
+id|oldbit
+)paren
+suffix:colon
+l_string|&quot;Ir&quot;
+(paren
+l_int|1UL
+op_lshift
+(paren
+id|nr
+op_amp
+l_int|31
+)paren
+)paren
+comma
+l_string|&quot;m&quot;
+(paren
+op_star
+id|m
+)paren
+suffix:colon
+l_string|&quot;memory&quot;
+)paren
+suffix:semicolon
+r_return
+id|oldbit
+op_ne
+l_int|0
+suffix:semicolon
+)brace
+multiline_comment|/*&n; * WARNING: non atomic version.&n; */
+DECL|function|__test_and_clear_bit
+r_extern
+id|__inline__
+r_int
+id|__test_and_clear_bit
+c_func
+(paren
+r_int
+r_int
+id|nr
+comma
+r_volatile
+r_void
+op_star
+id|addr
+)paren
+(brace
+r_int
+r_int
+id|oldbit
+suffix:semicolon
+r_int
+r_int
+id|temp
+suffix:semicolon
+r_int
+r_int
+op_star
+id|m
+op_assign
+(paren
+(paren
+r_int
+r_int
+op_star
+)paren
+id|addr
+)paren
+op_plus
+(paren
+id|nr
+op_rshift
+l_int|5
+)paren
+suffix:semicolon
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;&t;ldl %0,%4&bslash;n&quot;
+l_string|&quot;&t;and %0,%3,%2&bslash;n&quot;
+l_string|&quot;&t;beq %2,1f&bslash;n&quot;
+l_string|&quot;&t;xor %0,%3,%0&bslash;n&quot;
+l_string|&quot;&t;stl %0,%1&bslash;n&quot;
+l_string|&quot;1:&bslash;n&quot;
 suffix:colon
 l_string|&quot;=&amp;r&quot;
 (paren
@@ -527,12 +925,14 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;1:&t;ldl_l %0,%1&bslash;n&quot;
+l_string|&quot;1:&t;ldl_l %0,%4&bslash;n&quot;
 l_string|&quot;&t;and %0,%3,%2&bslash;n&quot;
 l_string|&quot;&t;xor %0,%3,%0&bslash;n&quot;
 l_string|&quot;&t;stl_c %0,%1&bslash;n&quot;
 l_string|&quot;&t;beq %0,3f&bslash;n&quot;
+macro_line|#ifdef CONFIG_SMP
 l_string|&quot;&t;mb&bslash;n&quot;
+macro_line|#endif
 l_string|&quot;.subsection 2&bslash;n&quot;
 l_string|&quot;3:&t;br 1b&bslash;n&quot;
 l_string|&quot;.previous&quot;
@@ -569,6 +969,8 @@ l_string|&quot;m&quot;
 op_star
 id|m
 )paren
+suffix:colon
+l_string|&quot;memory&quot;
 )paren
 suffix:semicolon
 r_return
@@ -1111,9 +1513,9 @@ DECL|macro|find_first_zero_bit
 mdefine_line|#define find_first_zero_bit(addr, size) &bslash;&n;&t;find_next_zero_bit((addr), (size), 0)
 macro_line|#ifdef __KERNEL__
 DECL|macro|ext2_set_bit
-mdefine_line|#define ext2_set_bit                 test_and_set_bit
+mdefine_line|#define ext2_set_bit                 __test_and_set_bit
 DECL|macro|ext2_clear_bit
-mdefine_line|#define ext2_clear_bit               test_and_clear_bit
+mdefine_line|#define ext2_clear_bit               __test_and_clear_bit
 DECL|macro|ext2_test_bit
 mdefine_line|#define ext2_test_bit                test_bit
 DECL|macro|ext2_find_first_zero_bit
@@ -1122,11 +1524,11 @@ DECL|macro|ext2_find_next_zero_bit
 mdefine_line|#define ext2_find_next_zero_bit      find_next_zero_bit
 multiline_comment|/* Bitmap functions for the minix filesystem.  */
 DECL|macro|minix_test_and_set_bit
-mdefine_line|#define minix_test_and_set_bit(nr,addr) test_and_set_bit(nr,addr)
+mdefine_line|#define minix_test_and_set_bit(nr,addr) __test_and_set_bit(nr,addr)
 DECL|macro|minix_set_bit
-mdefine_line|#define minix_set_bit(nr,addr) set_bit(nr,addr)
+mdefine_line|#define minix_set_bit(nr,addr) __set_bit(nr,addr)
 DECL|macro|minix_test_and_clear_bit
-mdefine_line|#define minix_test_and_clear_bit(nr,addr) test_and_clear_bit(nr,addr)
+mdefine_line|#define minix_test_and_clear_bit(nr,addr) __test_and_clear_bit(nr,addr)
 DECL|macro|minix_test_bit
 mdefine_line|#define minix_test_bit(nr,addr) test_bit(nr,addr)
 DECL|macro|minix_find_first_zero_bit

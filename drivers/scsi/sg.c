@@ -1,22 +1,24 @@
 multiline_comment|/*&n; *  History:&n; *  Started: Aug 9 by Lawrence Foard (entropy@world.std.com),&n; *           to allow user process control of SCSI devices.&n; *  Development Sponsored by Killy Corp. NY NY&n; *&n; * Original driver (sg.c):&n; *        Copyright (C) 1992 Lawrence Foard&n; * Version 2 and 3 extensions to driver:&n; *        Copyright (C) 1998 - 2000 Douglas Gilbert&n; *&n; *  Modified  19-JAN-1998  Richard Gooch &lt;rgooch@atnf.csiro.au&gt;  Devfs support&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; */
+macro_line|#include &lt;linux/config.h&gt;
+macro_line|#ifdef CONFIG_PROC_FS
 DECL|variable|sg_version_str
 r_static
 r_char
 op_star
 id|sg_version_str
 op_assign
-l_string|&quot;Version: 3.1.16 (20000716)&quot;
+l_string|&quot;Version: 3.1.17 (20000921)&quot;
 suffix:semicolon
+macro_line|#endif
 DECL|variable|sg_version_num
 r_static
 r_int
 id|sg_version_num
 op_assign
-l_int|30116
+l_int|30117
 suffix:semicolon
 multiline_comment|/* 2 digits for each component */
 multiline_comment|/*&n; *  D. P. Gilbert (dgilbert@interlog.com, dougg@triode.net.au), notes:&n; *      - scsi logging is available via SCSI_LOG_TIMEOUT macros. First&n; *        the kernel/module needs to be built with CONFIG_SCSI_LOGGING&n; *        (otherwise the macros compile to empty statements).&n; *        Then before running the program to be debugged enter:&n; *          # echo &quot;scsi log timeout 7&quot; &gt; /proc/scsi/scsi&n; *        This will send copious output to the console and the log which&n; *        is usually /var/log/messages. To turn off debugging enter:&n; *          # echo &quot;scsi log timeout 0&quot; &gt; /proc/scsi/scsi&n; *        The &squot;timeout&squot; token was chosen because it is relatively unused.&n; *        The token &squot;hlcomplete&squot; should be used but that triggers too&n; *        much output from the sd device driver. To dump the current&n; *        state of the SCSI mid level data structures enter:&n; *          # echo &quot;scsi dump 1&quot; &gt; /proc/scsi/scsi&n; *        To dump the state of sg&squot;s data structures use:&n; *          # cat /proc/scsi/sg/debug&n; *&n; */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -1011,14 +1013,6 @@ id|dev_type
 suffix:semicolon
 r_static
 r_int
-id|sg_last_dev
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_static
-r_int
 id|sg_build_dir
 c_func
 (paren
@@ -1057,6 +1051,16 @@ r_int
 id|dev
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_PROC_FS
+r_static
+r_int
+id|sg_last_dev
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+macro_line|#endif
 DECL|variable|sg_dev_arr
 r_static
 id|Sg_device
@@ -7262,14 +7266,18 @@ comma
 l_string|&quot;size of buffer reserved for each fd&quot;
 )paren
 suffix:semicolon
-DECL|function|init_module
+macro_line|#endif /* MODULE */
+DECL|function|init_sg
+r_static
 r_int
-id|init_module
+id|__init
+id|init_sg
 c_func
 (paren
 r_void
 )paren
 (brace
+macro_line|#ifdef MODULE
 r_if
 c_cond
 (paren
@@ -7281,6 +7289,7 @@ id|sg_big_buff
 op_assign
 id|def_reserved_size
 suffix:semicolon
+macro_line|#endif /* MODULE */
 id|sg_template.module
 op_assign
 id|THIS_MODULE
@@ -7296,9 +7305,11 @@ id|sg_template
 )paren
 suffix:semicolon
 )brace
-DECL|function|cleanup_module
+DECL|function|exit_sg
+r_static
 r_void
-id|cleanup_module
+id|__exit
+id|exit_sg
 c_func
 (paren
 r_void
@@ -7358,7 +7369,6 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#endif /* MODULE */
 macro_line|#if 0
 r_extern
 r_void
@@ -11182,6 +11192,7 @@ r_return
 id|resp
 suffix:semicolon
 )brace
+macro_line|#ifdef CONFIG_PROC_FS
 DECL|function|sg_get_nth_request
 r_static
 id|Sg_request
@@ -11257,6 +11268,7 @@ r_return
 id|resp
 suffix:semicolon
 )brace
+macro_line|#endif
 multiline_comment|/* always adds to end of list */
 DECL|function|sg_add_request
 r_static
@@ -11604,6 +11616,7 @@ r_return
 id|res
 suffix:semicolon
 )brace
+macro_line|#ifdef CONFIG_PROC_FS
 DECL|function|sg_get_nth_sfp
 r_static
 id|Sg_fd
@@ -11679,6 +11692,7 @@ r_return
 id|resp
 suffix:semicolon
 )brace
+macro_line|#endif
 DECL|function|sg_add_sfp
 r_static
 id|Sg_fd
@@ -13504,6 +13518,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#ifdef CONFIG_PROC_FS
 DECL|function|sg_last_dev
 r_static
 r_int
@@ -13577,6 +13592,7 @@ l_int|1
 suffix:semicolon
 multiline_comment|/* origin 1 */
 )brace
+macro_line|#endif
 DECL|function|sg_get_dev
 r_static
 id|Sg_device
@@ -15994,4 +16010,18 @@ l_int|1
 suffix:semicolon
 )brace
 macro_line|#endif  /* CONFIG_PROC_FS */
+DECL|variable|init_sg
+id|module_init
+c_func
+(paren
+id|init_sg
+)paren
+suffix:semicolon
+DECL|variable|exit_sg
+id|module_exit
+c_func
+(paren
+id|exit_sg
+)paren
+suffix:semicolon
 eof

@@ -4,6 +4,7 @@ macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/raid/md.h&gt;
 macro_line|#include &lt;linux/raid/xor.h&gt;
 macro_line|#include &lt;linux/devfs_fs_kernel.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#ifdef CONFIG_KMOD
 macro_line|#include &lt;linux/kmod.h&gt;
 macro_line|#endif
@@ -16031,6 +16032,22 @@ c_func
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
+DECL|variable|md_init
+id|__initcall
+c_func
+(paren
+id|md_init
+)paren
+suffix:semicolon
+macro_line|#ifdef CONFIG_AUTODETECT_RAID
+DECL|variable|md_run_setup
+id|__initcall
+c_func
+(paren
+id|md_run_setup
+)paren
+suffix:semicolon
 macro_line|#endif
 DECL|variable|md_size
 id|MD_EXPORT_SYMBOL

@@ -3794,55 +3794,6 @@ macro_line|#undef  NEXT_DEV
 DECL|macro|NEXT_DEV
 mdefine_line|#define NEXT_DEV        (&amp;escon0_dev)                                  
 macro_line|#endif  
-macro_line|#ifdef CONFIG_TUN
-r_extern
-r_int
-id|tun_init
-c_func
-(paren
-r_struct
-id|net_device
-op_star
-id|dev
-)paren
-suffix:semicolon
-DECL|variable|tun_dev
-r_static
-r_struct
-id|net_device
-id|tun_dev
-op_assign
-(brace
-l_string|&quot;tun&quot;
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-id|NEXT_DEV
-comma
-id|tun_init
-)brace
-suffix:semicolon
-DECL|macro|NEXT_DEV
-macro_line|#   undef       NEXT_DEV
-DECL|macro|NEXT_DEV
-macro_line|#   define      NEXT_DEV        (&amp;tun_dev)
-macro_line|#endif    
 multiline_comment|/*&n; *&t;The loopback device is global so it can be directly referenced&n; *&t;by the network code. Also, it must be first on device list.&n; */
 r_extern
 r_int

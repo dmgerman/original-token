@@ -947,7 +947,7 @@ suffix:semicolon
 id|dbg
 c_func
 (paren
-l_string|&quot;bw_alloc increased by %d to %d for %d requesters&quot;
+l_string|&quot;bandwidth alloc increased by %d to %d for %d requesters&quot;
 comma
 id|bustime
 comma
@@ -998,7 +998,7 @@ suffix:semicolon
 id|dbg
 c_func
 (paren
-l_string|&quot;bw_alloc reduced by %d to %d for %d requesters&quot;
+l_string|&quot;bandwidth alloc reduced by %d to %d for %d requesters&quot;
 comma
 id|urb-&gt;bandwidth
 comma

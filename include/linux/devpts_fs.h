@@ -113,7 +113,7 @@ id|unix98_max_ptys
 suffix:semicolon
 macro_line|#endif
 macro_line|#ifndef BUILDING_DEVPTS
-r_extern
+r_static
 r_inline
 r_void
 DECL|function|devpts_pty_new
@@ -142,7 +142,7 @@ id|device
 )paren
 suffix:semicolon
 )brace
-r_extern
+r_static
 r_inline
 r_void
 DECL|function|devpts_pty_kill
@@ -168,7 +168,7 @@ suffix:semicolon
 )brace
 macro_line|#endif
 macro_line|#else  /* No /dev/pts filesystem at all */
-r_extern
+r_static
 r_inline
 r_void
 DECL|function|devpts_pty_new
@@ -183,7 +183,7 @@ id|device
 )paren
 (brace
 )brace
-r_extern
+r_static
 r_inline
 r_void
 DECL|function|devpts_pty_kill

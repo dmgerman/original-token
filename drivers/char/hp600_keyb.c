@@ -2,7 +2,7 @@ multiline_comment|/*&n; *&t;$Id: hp600_keyb.c,v 1.1 2000/06/10 21:45:30 yaegashi
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
-macro_line|#include &lt;asm/delay.h&gt;
+macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &quot;scan_keyb.h&quot;
 DECL|macro|PCDR

@@ -1086,7 +1086,11 @@ c_func
 (paren
 id|p
 comma
-id|inode-&gt;i_mtime
+id|lease_get_mtime
+c_func
+(paren
+id|inode
+)paren
 )paren
 suffix:semicolon
 id|p

@@ -5,6 +5,7 @@ mdefine_line|#define _ECARD_H
 macro_line|#include &quot;8010.h&quot;
 macro_line|#include &quot;hwaccess.h&quot;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/sched.h&gt;
 multiline_comment|/* In A1 Silicon, these bits are in the HC register */
 DECL|macro|HOOKN_BIT
 mdefine_line|#define HOOKN_BIT   (1L &lt;&lt; 12)

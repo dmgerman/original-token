@@ -11122,6 +11122,17 @@ comma
 )brace
 comma
 (brace
+id|PCI_VENDOR_ID_INTEL
+comma
+id|PCI_DEVICE_ID_INTEL_82820FW_4
+comma
+id|PCI_ANY_ID
+comma
+id|PCI_ANY_ID
+comma
+)brace
+comma
+(brace
 l_int|0
 comma
 )brace

@@ -86,7 +86,7 @@ id|hfs_alloc
 suffix:semicolon
 macro_line|#endif
 DECL|function|hfs_malloc
-r_extern
+r_static
 r_inline
 r_void
 op_star
@@ -127,7 +127,7 @@ id|GFP_KERNEL
 suffix:semicolon
 )brace
 DECL|function|hfs_free
-r_extern
+r_static
 r_inline
 r_void
 id|hfs_free
@@ -174,7 +174,7 @@ macro_line|#endif
 )brace
 multiline_comment|/* handle conversion between times. &n; *&n; * NOTE: hfs+ doesn&squot;t need this. also, we don&squot;t use tz_dsttime as that&squot;s&n; *       not a good thing to do. instead, we depend upon tz_minuteswest&n; *       having the correct daylight savings correction. &n; */
 DECL|function|hfs_from_utc
-r_extern
+r_static
 r_inline
 id|hfs_u32
 id|hfs_from_utc
@@ -193,7 +193,7 @@ l_int|60
 suffix:semicolon
 )brace
 DECL|function|hfs_to_utc
-r_extern
+r_static
 r_inline
 id|hfs_s32
 id|hfs_to_utc
@@ -212,7 +212,7 @@ l_int|60
 suffix:semicolon
 )brace
 DECL|function|hfs_time
-r_extern
+r_static
 r_inline
 id|hfs_u32
 id|hfs_time
@@ -242,7 +242,7 @@ id|wait_queue_head_t
 id|hfs_wait_queue
 suffix:semicolon
 DECL|function|hfs_init_waitqueue
-r_extern
+r_static
 r_inline
 r_void
 id|hfs_init_waitqueue
@@ -261,7 +261,7 @@ id|queue
 suffix:semicolon
 )brace
 DECL|function|hfs_sleep_on
-r_extern
+r_static
 r_inline
 r_void
 id|hfs_sleep_on
@@ -280,7 +280,7 @@ id|queue
 suffix:semicolon
 )brace
 DECL|function|hfs_wake_up
-r_extern
+r_static
 r_inline
 r_void
 id|hfs_wake_up
@@ -299,7 +299,7 @@ id|queue
 suffix:semicolon
 )brace
 DECL|function|hfs_relinquish
-r_extern
+r_static
 r_inline
 r_void
 id|hfs_relinquish
@@ -323,7 +323,7 @@ op_star
 id|hfs_sysmdb
 suffix:semicolon
 DECL|function|hfs_mdb_dirty
-r_extern
+r_static
 r_inline
 r_void
 id|hfs_mdb_dirty
@@ -339,7 +339,7 @@ l_int|1
 suffix:semicolon
 )brace
 DECL|function|hfs_mdb_name
-r_extern
+r_static
 r_inline
 r_const
 r_char
@@ -394,7 +394,7 @@ r_int
 )paren
 suffix:semicolon
 DECL|function|hfs_buffer_ok
-r_extern
+r_static
 r_inline
 r_int
 id|hfs_buffer_ok
@@ -413,7 +413,7 @@ l_int|NULL
 suffix:semicolon
 )brace
 DECL|function|hfs_buffer_put
-r_extern
+r_static
 r_inline
 r_void
 id|hfs_buffer_put
@@ -431,7 +431,7 @@ id|buffer
 suffix:semicolon
 )brace
 DECL|function|hfs_buffer_dirty
-r_extern
+r_static
 r_inline
 r_void
 id|hfs_buffer_dirty
@@ -449,7 +449,7 @@ id|buffer
 suffix:semicolon
 )brace
 DECL|function|hfs_buffer_sync
-r_extern
+r_static
 r_inline
 r_void
 id|hfs_buffer_sync
@@ -506,7 +506,7 @@ suffix:semicolon
 )brace
 )brace
 DECL|function|hfs_buffer_data
-r_extern
+r_static
 r_inline
 r_void
 op_star
@@ -551,7 +551,7 @@ macro_line|#else
 macro_line|#&t;error &quot;Don&squot;t know if bytes are big- or little-endian!&quot;
 macro_line|#endif
 DECL|function|hfs_clear_bit
-r_extern
+r_static
 r_inline
 r_int
 id|hfs_clear_bit
@@ -580,7 +580,7 @@ id|lword
 suffix:semicolon
 )brace
 DECL|function|hfs_set_bit
-r_extern
+r_static
 r_inline
 r_int
 id|hfs_set_bit
@@ -609,7 +609,7 @@ id|lword
 suffix:semicolon
 )brace
 DECL|function|hfs_test_bit
-r_extern
+r_static
 r_inline
 r_int
 id|hfs_test_bit

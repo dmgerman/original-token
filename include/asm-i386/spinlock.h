@@ -106,11 +106,7 @@ id|oldval
 comma
 l_string|&quot;=m&quot;
 (paren
-id|__dummy_lock
-c_func
-(paren
-id|lock
-)paren
+id|lock-&gt;lock
 )paren
 suffix:colon
 l_string|&quot;0&quot;
@@ -128,7 +124,7 @@ l_int|0
 suffix:semicolon
 )brace
 DECL|function|spin_lock
-r_extern
+r_static
 r_inline
 r_void
 id|spin_lock
@@ -177,11 +173,7 @@ id|spin_lock_string
 suffix:colon
 l_string|&quot;=m&quot;
 (paren
-id|__dummy_lock
-c_func
-(paren
-id|lock
-)paren
+id|lock-&gt;lock
 )paren
 suffix:colon
 suffix:colon
@@ -190,7 +182,7 @@ l_string|&quot;memory&quot;
 suffix:semicolon
 )brace
 DECL|function|spin_unlock
-r_extern
+r_static
 r_inline
 r_void
 id|spin_unlock
@@ -238,11 +230,7 @@ id|spin_unlock_string
 suffix:colon
 l_string|&quot;=m&quot;
 (paren
-id|__dummy_lock
-c_func
-(paren
-id|lock
-)paren
+id|lock-&gt;lock
 )paren
 suffix:colon
 suffix:colon
@@ -286,7 +274,7 @@ mdefine_line|#define rwlock_init(x)&t;do { *(x) = RW_LOCK_UNLOCKED; } while(0)
 multiline_comment|/*&n; * On x86, we implement read-write locks as a 32-bit counter&n; * with the high bit (sign) being the &quot;contended&quot; bit.&n; *&n; * The inline assembly is non-obvious. Think about it.&n; *&n; * Changed to use the same technique as rw semaphores.  See&n; * semaphore.h for details.  -ben&n; */
 multiline_comment|/* the spinlock helpers are in arch/i386/kernel/semaphore.S */
 DECL|function|read_lock
-r_extern
+r_static
 r_inline
 r_void
 id|read_lock
@@ -321,7 +309,7 @@ l_string|&quot;__read_lock_failed&quot;
 suffix:semicolon
 )brace
 DECL|function|write_lock
-r_extern
+r_static
 r_inline
 r_void
 id|write_lock
@@ -356,11 +344,11 @@ l_string|&quot;__write_lock_failed&quot;
 suffix:semicolon
 )brace
 DECL|macro|read_unlock
-mdefine_line|#define read_unlock(rw)&t;&t;asm volatile(&quot;lock ; incl %0&quot; :&quot;=m&quot; (__dummy_lock(&amp;(rw)-&gt;lock)))
+mdefine_line|#define read_unlock(rw)&t;&t;asm volatile(&quot;lock ; incl %0&quot; :&quot;=m&quot; ((rw)-&gt;lock) : : &quot;memory&quot;)
 DECL|macro|write_unlock
-mdefine_line|#define write_unlock(rw)&t;asm volatile(&quot;lock ; addl $&quot; RW_LOCK_BIAS_STR &quot;,%0&quot;:&quot;=m&quot; (__dummy_lock(&amp;(rw)-&gt;lock)))
+mdefine_line|#define write_unlock(rw)&t;asm volatile(&quot;lock ; addl $&quot; RW_LOCK_BIAS_STR &quot;,%0&quot;:&quot;=m&quot; ((rw)-&gt;lock) : : &quot;memory&quot;)
 DECL|function|write_trylock
-r_extern
+r_static
 r_inline
 r_int
 id|write_trylock

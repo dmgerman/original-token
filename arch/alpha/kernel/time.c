@@ -10,6 +10,7 @@ macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/irq.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/hwrpb.h&gt;
@@ -473,6 +474,7 @@ c_func
 suffix:semicolon
 )brace
 r_void
+id|__init
 DECL|function|time_init
 id|time_init
 c_func
@@ -776,7 +778,7 @@ id|year
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* PC-like is standard; used for year &lt;= 20 || year &gt;= 100 */
+multiline_comment|/* PC-like is standard; used for year &lt; 20 || year &gt;= 70 */
 id|epoch
 op_assign
 l_int|1900
@@ -785,14 +787,14 @@ r_if
 c_cond
 (paren
 id|year
-OG
+op_ge
 l_int|20
 op_logical_and
 id|year
 OL
 l_int|48
 )paren
-multiline_comment|/* ARC console, used on some not so old boards */
+multiline_comment|/* NT epoch */
 id|epoch
 op_assign
 l_int|1980
@@ -809,27 +811,10 @@ id|year
 OL
 l_int|70
 )paren
-multiline_comment|/* Digital UNIX, used on older boards (eg. AXPpxi33) */
+multiline_comment|/* Digital UNIX epoch */
 id|epoch
 op_assign
 l_int|1952
-suffix:semicolon
-r_else
-r_if
-c_cond
-(paren
-id|year
-op_ge
-l_int|70
-op_logical_and
-id|year
-OL
-l_int|100
-)paren
-multiline_comment|/* Digital DECstations, very old... */
-id|epoch
-op_assign
-l_int|1928
 suffix:semicolon
 id|printk
 c_func

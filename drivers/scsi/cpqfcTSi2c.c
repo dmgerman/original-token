@@ -45,7 +45,6 @@ id|ULONG
 suffix:semicolon
 macro_line|#endif
 macro_line|#include &lt;linux/string.h&gt;
-macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;

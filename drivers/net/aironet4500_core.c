@@ -11729,11 +11729,8 @@ c_func
 (paren
 l_int|2
 comma
-l_string|&quot; awc_reset dev %x &bslash;n&quot;
+l_string|&quot; awc_reset dev %p &bslash;n&quot;
 comma
-(paren
-r_int
-)paren
 id|dev
 )paren
 suffix:semicolon

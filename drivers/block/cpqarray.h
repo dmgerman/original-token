@@ -213,18 +213,13 @@ DECL|member|phys_drives
 r_int
 id|phys_drives
 suffix:semicolon
-DECL|member|pci_bus
-r_int
-r_char
-id|pci_bus
+DECL|member|pci_dev
+r_struct
+id|pci_dev
+op_star
+id|pci_dev
 suffix:semicolon
-multiline_comment|/* 0 if EISA */
-DECL|member|pci_dev_fn
-r_int
-r_char
-id|pci_dev_fn
-suffix:semicolon
-multiline_comment|/* 0 if EISA */
+multiline_comment|/* NULL if EISA */
 DECL|member|board_id
 id|__u32
 id|board_id
@@ -235,15 +230,18 @@ op_star
 id|product_name
 suffix:semicolon
 DECL|member|vaddr
-id|__u32
+r_void
+op_star
 id|vaddr
 suffix:semicolon
 DECL|member|paddr
-id|__u32
+r_int
+r_int
 id|paddr
 suffix:semicolon
 DECL|member|ioaddr
-id|__u32
+r_int
+r_int
 id|ioaddr
 suffix:semicolon
 DECL|member|intr

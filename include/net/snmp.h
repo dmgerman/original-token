@@ -1,8 +1,10 @@
-multiline_comment|/*&n; *&n; *&t;&t;SNMP MIB entries for the IP subsystem.&n; *&t;&t;&n; *&t;&t;Alan Cox &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&n; *&t;&t;We don&squot;t chose to implement SNMP in the kernel (this would&n; *&t;&t;be silly as SNMP is a pain in the backside in places). We do&n; *&t;&t;however need to collect the MIB statistics and export them&n; *&t;&t;out of /proc (eventually)&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; */
+multiline_comment|/*&n; *&n; *&t;&t;SNMP MIB entries for the IP subsystem.&n; *&t;&t;&n; *&t;&t;Alan Cox &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&n; *&t;&t;We don&squot;t chose to implement SNMP in the kernel (this would&n; *&t;&t;be silly as SNMP is a pain in the backside in places). We do&n; *&t;&t;however need to collect the MIB statistics and export them&n; *&t;&t;out of /proc (eventually)&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;&t;$Id: snmp.h,v 1.17 2000/09/21 01:31:50 davem Exp $&n; *&n; */
 macro_line|#ifndef _SNMP_H
 DECL|macro|_SNMP_H
 mdefine_line|#define _SNMP_H
+macro_line|#include &lt;linux/cache.h&gt;
 multiline_comment|/*&n; *&t;We use all unsigned longs. Linux will soon be so reliable that even these&n; *&t;will rapidly get too small 8-). Seriously consider the IpInReceives count&n; *&t;on the 20Gb/s + networks people expect in a few years time!&n; */
+multiline_comment|/* &n; * The rule for padding: &n; * Best is power of two because then the right structure can be found by a simple&n; * shift. The structure should be always cache line aligned.&n; * gcc needs n=alignto(cachelinesize, popcnt(sizeof(bla_mib))) shift/add instructions&n; * to emulate multiply in case it is not power-of-two. Currently n is always &lt;=3 for&n; * all sizes so simple cache line alignment is enough. &n; * &n; * The best solution would be a global CPU local area , especially on 64 and 128byte &n; * cacheline machine it makes a *lot* of sense -AK&n; */
 DECL|struct|ip_mib
 r_struct
 id|ip_mib
@@ -97,12 +99,12 @@ r_int
 r_int
 id|__pad
 (braket
-l_int|32
-op_minus
-l_int|19
+l_int|0
 )braket
 suffix:semicolon
+DECL|variable|____cacheline_aligned
 )brace
+id|____cacheline_aligned
 suffix:semicolon
 DECL|struct|ipv6_mib
 r_struct
@@ -223,12 +225,12 @@ r_int
 r_int
 id|__pad
 (braket
-l_int|32
-op_minus
-l_int|22
+l_int|0
 )braket
 suffix:semicolon
+DECL|variable|____cacheline_aligned
 )brace
+id|____cacheline_aligned
 suffix:semicolon
 DECL|struct|icmp_mib
 r_struct
@@ -369,12 +371,12 @@ r_int
 r_int
 id|__pad
 (braket
-l_int|32
-op_minus
-l_int|26
+l_int|0
 )braket
 suffix:semicolon
+DECL|variable|____cacheline_aligned
 )brace
+id|____cacheline_aligned
 suffix:semicolon
 DECL|struct|icmpv6_mib
 r_struct
@@ -525,12 +527,12 @@ r_int
 r_int
 id|__pad
 (braket
-l_int|32
-op_minus
-l_int|28
+l_int|0
 )braket
 suffix:semicolon
+DECL|variable|____cacheline_aligned
 )brace
+id|____cacheline_aligned
 suffix:semicolon
 DECL|struct|tcp_mib
 r_struct
@@ -611,12 +613,12 @@ r_int
 r_int
 id|__pad
 (braket
-l_int|16
-op_minus
-l_int|14
+l_int|0
 )braket
 suffix:semicolon
+DECL|variable|____cacheline_aligned
 )brace
+id|____cacheline_aligned
 suffix:semicolon
 DECL|struct|udp_mib
 r_struct
@@ -650,7 +652,9 @@ id|__pad
 l_int|0
 )braket
 suffix:semicolon
+DECL|variable|____cacheline_aligned
 )brace
+id|____cacheline_aligned
 suffix:semicolon
 DECL|struct|linux_mib
 r_struct
@@ -981,13 +985,14 @@ r_int
 r_int
 id|__pad
 (braket
-l_int|64
-op_minus
-l_int|64
+l_int|0
 )braket
 suffix:semicolon
+DECL|variable|____cacheline_aligned
 )brace
+id|____cacheline_aligned
 suffix:semicolon
+multiline_comment|/* &n; * FIXME: On x86 and some other CPUs the split into user and softirq parts is not needed because &n; * addl $1,memory is atomic against interrupts (but atomic_inc would be overkill because of the lock &n; * cycles). Wants new nonlocked_atomic_inc() primitives -AK&n; */
 DECL|macro|SNMP_INC_STATS
 mdefine_line|#define SNMP_INC_STATS(mib, field) ((mib)[2*smp_processor_id()+!in_softirq()].field++)
 DECL|macro|SNMP_INC_STATS_BH

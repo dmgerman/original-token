@@ -617,6 +617,11 @@ r_struct
 id|list_head
 id|run_list
 suffix:semicolon
+DECL|member|sleep_time
+r_int
+r_int
+id|sleep_time
+suffix:semicolon
 DECL|member|next_task
 DECL|member|prev_task
 r_struct
@@ -924,6 +929,12 @@ op_star
 id|tty
 suffix:semicolon
 multiline_comment|/* NULL if no tty */
+DECL|member|locks
+r_int
+r_int
+id|locks
+suffix:semicolon
+multiline_comment|/* How many file locks are being held */
 multiline_comment|/* ipc stuff */
 DECL|member|semundo
 r_struct
@@ -2591,6 +2602,10 @@ id|p
 (brace
 id|nr_running
 op_decrement
+suffix:semicolon
+id|p-&gt;sleep_time
+op_assign
+id|jiffies
 suffix:semicolon
 id|list_del
 c_func

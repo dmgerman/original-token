@@ -2070,6 +2070,14 @@ id|VM_MASK
 r_goto
 id|debug_vm86
 suffix:semicolon
+multiline_comment|/* Save debug status register where ptrace can see it */
+id|tsk-&gt;thread.debugreg
+(braket
+l_int|6
+)braket
+op_assign
+id|condition
+suffix:semicolon
 multiline_comment|/* Mask out spurious TF errors due to lazy TF clearing */
 r_if
 c_cond

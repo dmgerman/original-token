@@ -192,6 +192,8 @@ DECL|macro|N_MOUSE
 mdefine_line|#define N_MOUSE&t;&t;2
 DECL|macro|N_PPP
 mdefine_line|#define N_PPP&t;&t;3
+DECL|macro|N_STRIP
+mdefine_line|#define N_STRIP&t;&t;4
 DECL|macro|N_AX25
 mdefine_line|#define N_AX25&t;&t;5
 DECL|macro|N_X25

@@ -307,7 +307,7 @@ suffix:semicolon
 )brace
 suffix:semicolon
 DECL|function|hdlcdrv_add_bitbuffer
-r_extern
+r_static
 r_inline
 r_void
 id|hdlcdrv_add_bitbuffer
@@ -380,7 +380,7 @@ suffix:semicolon
 )brace
 )brace
 DECL|function|hdlcdrv_add_bitbuffer_word
-r_extern
+r_static
 r_inline
 r_void
 id|hdlcdrv_add_bitbuffer_word
@@ -739,7 +739,7 @@ suffix:semicolon
 suffix:semicolon
 multiline_comment|/* -------------------------------------------------------------------- */
 DECL|function|hdlcdrv_hbuf_full
-r_extern
+r_static
 r_inline
 r_int
 id|hdlcdrv_hbuf_full
@@ -799,7 +799,7 @@ suffix:semicolon
 )brace
 multiline_comment|/* -------------------------------------------------------------------- */
 DECL|function|hdlcdrv_hbuf_empty
-r_extern
+r_static
 r_inline
 r_int
 id|hdlcdrv_hbuf_empty
@@ -850,7 +850,7 @@ suffix:semicolon
 )brace
 multiline_comment|/* -------------------------------------------------------------------- */
 DECL|function|hdlcdrv_hbuf_get
-r_extern
+r_static
 r_inline
 r_int
 r_int
@@ -933,7 +933,7 @@ suffix:semicolon
 )brace
 multiline_comment|/* -------------------------------------------------------------------- */
 DECL|function|hdlcdrv_hbuf_put
-r_extern
+r_static
 r_inline
 r_void
 id|hdlcdrv_hbuf_put
@@ -1009,7 +1009,7 @@ suffix:semicolon
 )brace
 multiline_comment|/* -------------------------------------------------------------------- */
 DECL|function|hdlcdrv_putbits
-r_extern
+r_static
 r_inline
 r_void
 id|hdlcdrv_putbits
@@ -1036,7 +1036,7 @@ id|bits
 suffix:semicolon
 )brace
 DECL|function|hdlcdrv_getbits
-r_extern
+r_static
 r_inline
 r_int
 r_int
@@ -1110,7 +1110,7 @@ id|ret
 suffix:semicolon
 )brace
 DECL|function|hdlcdrv_channelbit
-r_extern
+r_static
 r_inline
 r_void
 id|hdlcdrv_channelbit
@@ -1139,7 +1139,7 @@ suffix:semicolon
 macro_line|#endif /* HDLCDRV_DEBUG */
 )brace
 DECL|function|hdlcdrv_setdcd
-r_extern
+r_static
 r_inline
 r_void
 id|hdlcdrv_setdcd
@@ -1162,7 +1162,7 @@ id|dcd
 suffix:semicolon
 )brace
 DECL|function|hdlcdrv_ptt
-r_extern
+r_static
 r_inline
 r_int
 id|hdlcdrv_ptt

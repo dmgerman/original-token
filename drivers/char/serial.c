@@ -571,6 +571,10 @@ macro_line|#ifndef IS_PCI_REGION_IOPORT
 DECL|macro|IS_PCI_REGION_IOPORT
 mdefine_line|#define IS_PCI_REGION_IOPORT(dev, r) (pci_resource_flags((dev), (r)) &amp; &bslash;&n;&t;&t;&t;&t;      IORESOURCE_IO)
 macro_line|#endif
+macro_line|#ifndef IS_PCI_REGION_IOMEM
+DECL|macro|IS_PCI_REGION_IOMEM
+mdefine_line|#define IS_PCI_REGION_IOMEM(dev, r) (pci_resource_flags((dev), (r)) &amp; &bslash;&n;&t;&t;&t;&t;      IORESOURCE_MEM)
+macro_line|#endif
 macro_line|#ifndef PCI_IRQ_RESOURCE
 DECL|macro|PCI_IRQ_RESOURCE
 mdefine_line|#define PCI_IRQ_RESOURCE(dev, r) ((dev)-&gt;irq_resource[r].start)
@@ -17487,14 +17491,14 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * This is the configuration table for all of the PCI serial boards&n; * which we support.&n; */
-DECL|variable|__initdata
+DECL|variable|__devinitdata
 r_static
 r_struct
 id|pci_board
 id|pci_boards
 (braket
 )braket
-id|__initdata
+id|__devinitdata
 op_assign
 (brace
 multiline_comment|/*&n;&t; * Vendor ID, &t;Device ID,&n;&t; * Subvendor ID,&t;Subdevice ID,&n;&t; * PCI Flags, Number of Ports, Base (Maximum) Baud Rate,&n;&t; * Offset to get to next UART&squot;s registers,&n;&t; * Register shift to use for memory-mapped I/O,&n;&t; * Initialization function, first UART offset&n;&t; */
@@ -19567,12 +19571,20 @@ op_assign
 id|i
 suffix:semicolon
 )brace
-r_else
-(brace
+r_if
+c_cond
+(paren
+id|IS_PCI_REGION_IOMEM
+c_func
+(paren
+id|dev
+comma
+id|i
+)paren
+)paren
 id|num_iomem
 op_increment
 suffix:semicolon
-)brace
 )brace
 multiline_comment|/*&n;&t; * If there is 1 or 0 iomem regions, and exactly one port, use&n;&t; * it.&n;&t; */
 r_if

@@ -69,12 +69,7 @@ id|tmp
 comma
 l_string|&quot;=m&quot;
 (paren
-id|__atomic_fool_gcc
-c_func
-(paren
-op_amp
-id|sem-&gt;waking
-)paren
+id|sem-&gt;waking.counter
 )paren
 suffix:colon
 l_string|&quot;0&quot;

@@ -138,7 +138,7 @@ mdefine_line|#define ADFS_SUPER_MAGIC&t; 0xadf5
 macro_line|#ifdef __KERNEL__
 multiline_comment|/*&n; * Calculate the boot block checksum on an ADFS drive.  Note that this will&n; * appear to be correct if the sector contains all zeros, so also check that&n; * the disk size is non-zero!!!&n; */
 DECL|function|adfs_checkbblk
-r_extern
+r_static
 r_inline
 r_int
 id|adfs_checkbblk

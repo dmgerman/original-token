@@ -623,6 +623,20 @@ id|block
 )paren
 )paren
 suffix:semicolon
+id|locks_init_lock
+c_func
+(paren
+op_amp
+id|block-&gt;b_call.a_args.lock.fl
+)paren
+suffix:semicolon
+id|locks_init_lock
+c_func
+(paren
+op_amp
+id|block-&gt;b_call.a_res.lock.fl
+)paren
+suffix:semicolon
 multiline_comment|/* Set notifier function for VFS, and init args */
 id|lock-&gt;fl.fl_notify
 op_assign
@@ -1282,12 +1296,11 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
 id|list_empty
 c_func
 (paren
 op_amp
-id|block-&gt;b_call.a_args.lock.fl.fl_block
+id|block-&gt;b_call.a_args.lock.fl.fl_list
 )paren
 )paren
 (brace

@@ -185,7 +185,10 @@ id|cii-&gt;c_magic
 op_ne
 id|CODA_CNODE_MAGIC
 )paren
-r_continue
+id|BUG
+c_func
+(paren
+)paren
 suffix:semicolon
 r_if
 c_cond

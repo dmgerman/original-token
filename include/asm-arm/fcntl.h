@@ -81,6 +81,9 @@ DECL|macro|F_EXLCK
 mdefine_line|#define F_EXLCK&t;&t;4&t;/* or 3 */
 DECL|macro|F_SHLCK
 mdefine_line|#define F_SHLCK&t;&t;8&t;/* or 4 */
+multiline_comment|/* for leases */
+DECL|macro|F_INPROGRESS
+mdefine_line|#define F_INPROGRESS&t;16
 multiline_comment|/* operations for bsd flock(), also used by the kernel implementation */
 DECL|macro|LOCK_SH
 mdefine_line|#define LOCK_SH&t;&t;1&t;/* shared lock */
@@ -90,6 +93,14 @@ DECL|macro|LOCK_NB
 mdefine_line|#define LOCK_NB&t;&t;4&t;/* or&squot;d with one of the above to prevent&n;&t;&t;&t;&t;   blocking */
 DECL|macro|LOCK_UN
 mdefine_line|#define LOCK_UN&t;&t;8&t;/* remove lock */
+DECL|macro|LOCK_MAND
+mdefine_line|#define LOCK_MAND&t;32&t;/* This is a mandatory flock */
+DECL|macro|LOCK_READ
+mdefine_line|#define LOCK_READ&t;64&t;/* ... Which allows concurrent read operations */
+DECL|macro|LOCK_WRITE
+mdefine_line|#define LOCK_WRITE&t;128&t;/* ... Which allows concurrent write operations */
+DECL|macro|LOCK_RW
+mdefine_line|#define LOCK_RW&t;&t;192&t;/* ... Which allows concurrent read &amp; write ops */
 DECL|struct|flock
 r_struct
 id|flock
@@ -142,5 +153,7 @@ id|l_pid
 suffix:semicolon
 )brace
 suffix:semicolon
+DECL|macro|F_LINUX_SPECIFIC_BASE
+mdefine_line|#define F_LINUX_SPECIFIC_BASE&t;1024
 macro_line|#endif
 eof

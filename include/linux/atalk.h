@@ -489,8 +489,8 @@ suffix:semicolon
 multiline_comment|/* Inter module exports */
 multiline_comment|/*&n; *&t;Give a device find its atif control structure&n; */
 DECL|function|atalk_find_dev
-r_extern
-id|__inline__
+r_static
+r_inline
 r_struct
 id|atalk_iface
 op_star

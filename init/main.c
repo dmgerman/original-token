@@ -2873,13 +2873,6 @@ op_ne
 l_int|0
 )paren
 (brace
-macro_line|#ifdef CONFIG_BLK_DEV_MD
-id|md_run_setup
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
 id|error
 op_assign
 id|change_root

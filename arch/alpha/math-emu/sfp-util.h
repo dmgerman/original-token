@@ -9,34 +9,27 @@ DECL|macro|sub_ddmmss
 mdefine_line|#define sub_ddmmss(sh, sl, ah, al, bh, bl) &bslash;&n;  ((sl) = (al) - (bl), (sh) = (ah) - (bh) - ((al) &lt; (bl)))
 DECL|macro|umul_ppmm
 mdefine_line|#define umul_ppmm(wh, wl, u, v)&t;&t;&t;&bslash;&n;  __asm__ (&quot;mulq %2,%3,%1; umulh %2,%3,%0&quot;&t;&bslash;&n;&t;   : &quot;=r&quot; ((UDItype)(wh)),&t;&t;&bslash;&n;&t;     &quot;=&amp;r&quot; ((UDItype)(wl))&t;&t;&bslash;&n;&t;   : &quot;r&quot; ((UDItype)(u)),&t;&t;&bslash;&n;&t;     &quot;r&quot; ((UDItype)(v)))
+DECL|macro|udiv_qrnnd
+mdefine_line|#define udiv_qrnnd(q, r, n1, n0, d)&t;&t;&t;&t;&bslash;&n;  do { unsigned long __r;&t;&t;&t;&t;&t;&bslash;&n;    (q) = __udiv_qrnnd (&amp;__r, (n1), (n0), (d));&t;&t;&t;&bslash;&n;    (r) = __r;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;  } while (0)
 r_extern
-r_void
-id|udiv128
-c_func
+r_int
+r_int
+id|__udiv_qrnnd
 (paren
 r_int
 r_int
-comma
-r_int
-r_int
-comma
-r_int
-r_int
-comma
-r_int
-r_int
-comma
-r_int
-r_int
 op_star
 comma
 r_int
 r_int
-op_star
+comma
+r_int
+r_int
+comma
+r_int
+r_int
 )paren
 suffix:semicolon
-DECL|macro|udiv_qrnnd
-mdefine_line|#define udiv_qrnnd(q, r, n1, n0, d)&t;&t;&bslash;&n;  do {&t;&t;&t;&t;&t;&t;&bslash;&n;    unsigned long xr, xi;&t;&t;&t;&bslash;&n;    udiv128((n0), (n1), 0, (d), &amp;xr, &amp;xi);&t;&bslash;&n;    (q) = xr; &t;&t;&t;&t;&t;&bslash;&n;    (r) = xi;&t;&t;&t;&t;&t;&bslash;&n;  } while (0)
 DECL|macro|UDIV_NEEDS_NORMALIZATION
 mdefine_line|#define UDIV_NEEDS_NORMALIZATION 1  
 DECL|macro|abort

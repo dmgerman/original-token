@@ -373,10 +373,23 @@ DECL|macro|rmb
 mdefine_line|#define rmb() &bslash;&n;__asm__ __volatile__(&quot;mb&quot;: : :&quot;memory&quot;)
 DECL|macro|wmb
 mdefine_line|#define wmb() &bslash;&n;__asm__ __volatile__(&quot;wmb&quot;: : :&quot;memory&quot;)
+macro_line|#ifdef __SMP__
+DECL|macro|smp_mb
+mdefine_line|#define smp_mb()&t;mb()
+DECL|macro|smp_rmb
+mdefine_line|#define smp_rmb()&t;rmb()
+DECL|macro|smp_wmb
+mdefine_line|#define smp_wmb()&t;wmb()
+macro_line|#else
+DECL|macro|smp_mb
+mdefine_line|#define smp_mb()&t;barrier()
+DECL|macro|smp_rmb
+mdefine_line|#define smp_rmb()&t;barrier()
+DECL|macro|smp_wmb
+mdefine_line|#define smp_wmb()&t;barrier()
+macro_line|#endif
 DECL|macro|set_mb
 mdefine_line|#define set_mb(var, value) &bslash;&n;do { var = value; mb(); } while (0)
-DECL|macro|set_rmb
-mdefine_line|#define set_rmb(var, value) &bslash;&n;do { var = value; rmb(); } while (0)
 DECL|macro|set_wmb
 mdefine_line|#define set_wmb(var, value) &bslash;&n;do { var = value; wmb(); } while (0)
 DECL|macro|imb
@@ -633,15 +646,15 @@ mdefine_line|#define getipl()&t;&t;(rdps() &amp; 7)
 DECL|macro|setipl
 mdefine_line|#define setipl(ipl)&t;&t;((void) swpipl(ipl))
 DECL|macro|__cli
-mdefine_line|#define __cli()&t;&t;&t;setipl(IPL_MAX)
+mdefine_line|#define __cli()&t;&t;&t;do { setipl(IPL_MAX); barrier(); } while(0)
 DECL|macro|__sti
-mdefine_line|#define __sti()&t;&t;&t;setipl(IPL_MIN)
+mdefine_line|#define __sti()&t;&t;&t;do { barrier(); setipl(IPL_MIN); } while(0)
 DECL|macro|__save_flags
 mdefine_line|#define __save_flags(flags)&t;((flags) = rdps())
 DECL|macro|__save_and_cli
-mdefine_line|#define __save_and_cli(flags)&t;((flags) = swpipl(IPL_MAX))
+mdefine_line|#define __save_and_cli(flags)&t;do { (flags) = swpipl(IPL_MAX); barrier(); } while(0)
 DECL|macro|__restore_flags
-mdefine_line|#define __restore_flags(flags)&t;setipl(flags)
+mdefine_line|#define __restore_flags(flags)&t;do { barrier(); setipl(flags); barrier(); } while(0)
 DECL|macro|local_irq_save
 mdefine_line|#define local_irq_save(flags)&t;&t;__save_and_cli(flags)
 DECL|macro|local_irq_restore
@@ -727,7 +740,7 @@ DECL|macro|tbiap
 mdefine_line|#define tbiap()&t;&t;__tbi(-1, /* no second argument */)
 DECL|macro|tbia
 mdefine_line|#define tbia()&t;&t;__tbi(-2, /* no second argument */)
-multiline_comment|/*&n; * Atomic exchange.&n; */
+multiline_comment|/*&n; * Atomic exchange.&n; * Since it can be used to implement critical sections&n; * it must clobber &quot;memory&quot; (also for interrupts in UP).&n; */
 r_extern
 id|__inline__
 r_int
@@ -754,11 +767,13 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;1:&t;ldl_l %0,%2&bslash;n&quot;
+l_string|&quot;1:&t;ldl_l %0,%4&bslash;n&quot;
 l_string|&quot;&t;bis $31,%3,%1&bslash;n&quot;
 l_string|&quot;&t;stl_c %1,%2&bslash;n&quot;
 l_string|&quot;&t;beq %1,2f&bslash;n&quot;
+macro_line|#ifdef CONFIG_SMP
 l_string|&quot;&t;mb&bslash;n&quot;
+macro_line|#endif
 l_string|&quot;.subsection 2&bslash;n&quot;
 l_string|&quot;2:&t;br 1b&bslash;n&quot;
 l_string|&quot;.previous&quot;
@@ -789,6 +804,8 @@ l_string|&quot;m&quot;
 op_star
 id|m
 )paren
+suffix:colon
+l_string|&quot;memory&quot;
 )paren
 suffix:semicolon
 r_return
@@ -821,11 +838,13 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;1:&t;ldq_l %0,%2&bslash;n&quot;
+l_string|&quot;1:&t;ldq_l %0,%4&bslash;n&quot;
 l_string|&quot;&t;bis $31,%3,%1&bslash;n&quot;
 l_string|&quot;&t;stq_c %1,%2&bslash;n&quot;
 l_string|&quot;&t;beq %1,2f&bslash;n&quot;
+macro_line|#ifdef CONFIG_SMP
 l_string|&quot;&t;mb&bslash;n&quot;
+macro_line|#endif
 l_string|&quot;.subsection 2&bslash;n&quot;
 l_string|&quot;2:&t;br 1b&bslash;n&quot;
 l_string|&quot;.previous&quot;
@@ -856,6 +875,8 @@ l_string|&quot;m&quot;
 op_star
 id|m
 )paren
+suffix:colon
+l_string|&quot;memory&quot;
 )paren
 suffix:semicolon
 r_return
@@ -936,7 +957,7 @@ DECL|macro|xchg
 mdefine_line|#define xchg(ptr,x)&t;&t;&t;&t;&t;&t;&t;     &bslash;&n;  ({&t;&t;&t;&t;&t;&t;&t;&t;&t;     &bslash;&n;     __typeof__(*(ptr)) _x_ = (x);&t;&t;&t;&t;&t;     &bslash;&n;     (__typeof__(*(ptr))) __xchg((ptr), (unsigned long)_x_, sizeof(*(ptr))); &bslash;&n;  })
 DECL|macro|tas
 mdefine_line|#define tas(ptr) (xchg((ptr),1))
-multiline_comment|/* &n; * Atomic compare and exchange.  Compare OLD with MEM, if identical,&n; * store NEW in MEM.  Return the initial value in MEM.  Success is&n; * indicated by comparing RETURN with OLD.&n; */
+multiline_comment|/* &n; * Atomic compare and exchange.  Compare OLD with MEM, if identical,&n; * store NEW in MEM.  Return the initial value in MEM.  Success is&n; * indicated by comparing RETURN with OLD.&n; *&n; * The memory barrier should be placed in SMP only when we actually&n; * make the change. If we don&squot;t change anything (so if the returned&n; * prev is equal to old) then we aren&squot;t acquiring anything new and&n; * we don&squot;t need any memory barrier as far I can tell.&n; */
 DECL|macro|__HAVE_ARCH_CMPXCHG
 mdefine_line|#define __HAVE_ARCH_CMPXCHG 1
 r_extern
@@ -969,13 +990,16 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;1:&t;ldl_l %0,%2&bslash;n&quot;
+l_string|&quot;1:&t;ldl_l %0,%5&bslash;n&quot;
 l_string|&quot;&t;cmpeq %0,%3,%1&bslash;n&quot;
 l_string|&quot;&t;beq %1,2f&bslash;n&quot;
 l_string|&quot;&t;mov %4,%1&bslash;n&quot;
 l_string|&quot;&t;stl_c %1,%2&bslash;n&quot;
 l_string|&quot;&t;beq %1,3f&bslash;n&quot;
-l_string|&quot;2:&t;mb&bslash;n&quot;
+macro_line|#ifdef CONFIG_SMP
+l_string|&quot;&t;mb&bslash;n&quot;
+macro_line|#endif
+l_string|&quot;2:&bslash;n&quot;
 l_string|&quot;.subsection 2&bslash;n&quot;
 l_string|&quot;3:&t;br 1b&bslash;n&quot;
 l_string|&quot;.previous&quot;
@@ -1014,6 +1038,8 @@ l_string|&quot;m&quot;
 op_star
 id|m
 )paren
+suffix:colon
+l_string|&quot;memory&quot;
 )paren
 suffix:semicolon
 r_return
@@ -1052,13 +1078,16 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;1:&t;ldq_l %0,%2&bslash;n&quot;
+l_string|&quot;1:&t;ldq_l %0,%5&bslash;n&quot;
 l_string|&quot;&t;cmpeq %0,%3,%1&bslash;n&quot;
 l_string|&quot;&t;beq %1,2f&bslash;n&quot;
 l_string|&quot;&t;mov %4,%1&bslash;n&quot;
 l_string|&quot;&t;stq_c %1,%2&bslash;n&quot;
 l_string|&quot;&t;beq %1,3f&bslash;n&quot;
-l_string|&quot;2:&t;mb&bslash;n&quot;
+macro_line|#ifdef CONFIG_SMP
+l_string|&quot;&t;mb&bslash;n&quot;
+macro_line|#endif
+l_string|&quot;2:&bslash;n&quot;
 l_string|&quot;.subsection 2&bslash;n&quot;
 l_string|&quot;3:&t;br 1b&bslash;n&quot;
 l_string|&quot;.previous&quot;
@@ -1097,6 +1126,8 @@ l_string|&quot;m&quot;
 op_star
 id|m
 )paren
+suffix:colon
+l_string|&quot;memory&quot;
 )paren
 suffix:semicolon
 r_return

@@ -1,26 +1,10 @@
 multiline_comment|/* dummy.c: a dummy net driver&n;&n;&t;The purpose of this driver is to provide a device to point a&n;&t;route through, but not to actually transmit packets.&n;&n;&t;Why?  If you have a machine whose only connection is an occasional&n;&t;PPP/SLIP/PLIP link, you can only connect to your own hostname&n;&t;when the link is up.  Otherwise you have to use localhost.&n;&t;This isn&squot;t very consistent.&n;&n;&t;One solution is to set up a dummy link using PPP/SLIP/PLIP,&n;&t;but this seems (to me) too much overhead for too little gain.&n;&t;This driver provides a small alternative. Thus you can do&n;&t;&n;&t;[when not running slip]&n;&t;&t;ifconfig dummy slip.addr.ess.here up&n;&t;[to go to slip]&n;&t;&t;ifconfig dummy down&n;&t;&t;dip whatever&n;&n;&t;This was written by looking at Donald Becker&squot;s skeleton driver&n;&t;and the loopback driver.  I then threw away anything that didn&squot;t&n;&t;apply!&t;Thanks to Alan Cox for the key clue on what to do with&n;&t;misguided packets.&n;&n;&t;&t;&t;Nick Holloway, 27th May 1994&n;&t;[I tweaked this explanation a little but that&squot;s all]&n;&t;&t;&t;Alan Cox, 30th May 1994&n;*/
 multiline_comment|/* To have statistics (just packets sent) define this */
 macro_line|#include &lt;linux/config.h&gt;
-macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
-macro_line|#include &lt;linux/sched.h&gt;
-macro_line|#include &lt;linux/types.h&gt;
-macro_line|#include &lt;linux/fcntl.h&gt;
-macro_line|#include &lt;linux/interrupt.h&gt;
-macro_line|#include &lt;linux/ptrace.h&gt;
-macro_line|#include &lt;linux/ioport.h&gt;
-macro_line|#include &lt;linux/in.h&gt;
-macro_line|#include &lt;linux/malloc.h&gt;
-macro_line|#include &lt;linux/string.h&gt;
-macro_line|#include &lt;linux/init.h&gt;
-macro_line|#include &lt;asm/system.h&gt;
-macro_line|#include &lt;asm/bitops.h&gt;
-macro_line|#include &lt;asm/io.h&gt;
-macro_line|#include &lt;asm/dma.h&gt;
-macro_line|#include &lt;linux/errno.h&gt;
+macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
-macro_line|#include &lt;linux/etherdevice.h&gt;
-macro_line|#include &lt;linux/skbuff.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 r_static
 r_int
 id|dummy_xmit
@@ -125,6 +109,7 @@ suffix:semicolon
 )brace
 macro_line|#endif
 DECL|function|dummy_init
+r_static
 r_int
 id|__init
 id|dummy_init
@@ -288,44 +273,8 @@ op_star
 id|dev
 )paren
 (brace
-r_struct
-id|net_device_stats
-op_star
-id|stats
-op_assign
-(paren
-r_struct
-id|net_device_stats
-op_star
-)paren
+r_return
 id|dev-&gt;priv
-suffix:semicolon
-r_return
-id|stats
-suffix:semicolon
-)brace
-macro_line|#ifdef MODULE
-DECL|function|dummy_probe
-r_static
-r_int
-id|__init
-id|dummy_probe
-c_func
-(paren
-r_struct
-id|net_device
-op_star
-id|dev
-)paren
-(brace
-id|dummy_init
-c_func
-(paren
-id|dev
-)paren
-suffix:semicolon
-r_return
-l_int|0
 suffix:semicolon
 )brace
 DECL|variable|dev_dummy
@@ -335,34 +284,16 @@ id|net_device
 id|dev_dummy
 op_assign
 (brace
-l_string|&quot;&quot;
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0x0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|NULL
-comma
-id|dummy_probe
+id|init
+suffix:colon
+id|dummy_init
 )brace
 suffix:semicolon
-DECL|function|init_module
+DECL|function|dummy_init_module
+r_static
 r_int
-id|init_module
+id|__init
+id|dummy_init_module
 c_func
 (paren
 r_void
@@ -413,9 +344,11 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|cleanup_module
+DECL|function|dummy_cleanup_module
+r_static
 r_void
-id|cleanup_module
+id|__exit
+id|dummy_cleanup_module
 c_func
 (paren
 r_void
@@ -434,10 +367,37 @@ c_func
 id|dev_dummy.priv
 )paren
 suffix:semicolon
-id|dev_dummy.priv
+id|memset
+c_func
+(paren
+op_amp
+id|dev_dummy
+comma
+l_int|0
+comma
+r_sizeof
+(paren
+id|dev_dummy
+)paren
+)paren
+suffix:semicolon
+id|dev_dummy.init
 op_assign
-l_int|NULL
+id|dummy_init
 suffix:semicolon
 )brace
-macro_line|#endif /* MODULE */
+DECL|variable|dummy_init_module
+id|module_init
+c_func
+(paren
+id|dummy_init_module
+)paren
+suffix:semicolon
+DECL|variable|dummy_cleanup_module
+id|module_exit
+c_func
+(paren
+id|dummy_cleanup_module
+)paren
+suffix:semicolon
 eof

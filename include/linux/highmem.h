@@ -66,7 +66,7 @@ id|bh_orig
 suffix:semicolon
 macro_line|#else /* CONFIG_HIGHMEM */
 DECL|function|nr_free_highpages
-r_extern
+r_static
 r_inline
 r_int
 r_int

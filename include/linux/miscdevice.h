@@ -53,6 +53,8 @@ mdefine_line|#define SGI_STREAMS_KEYBOARD 150
 multiline_comment|/* drivers/sgi/char/usema.c */
 DECL|macro|SGI_USEMACLONE
 mdefine_line|#define SGI_USEMACLONE&t;     151
+DECL|macro|TUN_MINOR
+mdefine_line|#define TUN_MINOR&t;     200
 r_extern
 r_int
 id|misc_init

@@ -3824,13 +3824,6 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif CONFIG_SJCD
-macro_line|#ifdef CONFIG_BLK_DEV_MD
-id|md_init
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif CONFIG_BLK_DEV_MD
 macro_line|#ifdef CONFIG_APBLOCK
 id|ap_init
 c_func

@@ -227,8 +227,6 @@ DECL|macro|USB_ACM_AUX_MAJOR
 mdefine_line|#define USB_ACM_AUX_MAJOR&t;167
 DECL|macro|USB_CHAR_MAJOR
 mdefine_line|#define USB_CHAR_MAJOR&t;&t;180
-DECL|macro|TUN_MAJOR
-mdefine_line|#define TUN_MAJOR               195 
 DECL|macro|UNIX98_PTY_MASTER_MAJOR
 mdefine_line|#define UNIX98_PTY_MASTER_MAJOR&t;128
 DECL|macro|UNIX98_PTY_MAJOR_COUNT

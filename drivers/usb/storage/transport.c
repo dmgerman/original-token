@@ -3,6 +3,7 @@ macro_line|#include &quot;transport.h&quot;
 macro_line|#include &quot;protocol.h&quot;
 macro_line|#include &quot;usb.h&quot;
 macro_line|#include &quot;debug.h&quot;
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;

@@ -2867,7 +2867,7 @@ id|NPROTO
 (brace
 r_return
 op_minus
-id|EINVAL
+id|EAFNOSUPPORT
 suffix:semicolon
 )brace
 multiline_comment|/* Compatibility.&n;&n;&t;   This uglymoron is moved from INET layer to here to avoid&n;&t;   deadlock in module load.&n;&t; */

@@ -2448,7 +2448,7 @@ r_if
 c_cond
 (paren
 id|year
-OG
+op_ge
 l_int|20
 op_logical_and
 id|year

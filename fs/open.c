@@ -5,6 +5,7 @@ macro_line|#include &lt;linux/utime.h&gt;
 macro_line|#include &lt;linux/file.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/quotaops.h&gt;
+macro_line|#include &lt;linux/dnotify.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/slab.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
@@ -502,6 +503,25 @@ c_func
 (paren
 id|inode
 )paren
+)paren
+r_goto
+id|dput_and_out
+suffix:semicolon
+multiline_comment|/*&n;&t; * Make sure that there are no leases.&n;&t; */
+id|error
+op_assign
+id|get_lease
+c_func
+(paren
+id|inode
+comma
+id|FMODE_WRITE
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|error
 )paren
 r_goto
 id|dput_and_out
@@ -3373,6 +3393,16 @@ c_func
 )paren
 suffix:semicolon
 )brace
+id|fcntl_dirnotify
+c_func
+(paren
+l_int|0
+comma
+id|filp
+comma
+l_int|0
+)paren
+suffix:semicolon
 id|locks_remove_posix
 c_func
 (paren

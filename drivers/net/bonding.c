@@ -1,25 +1,8 @@
 multiline_comment|/*&n; * originally based on the dummy device.&n; *&n; * Copyright 1999, Thomas Davis, tadavis@lbl.gov.  &n; * Licensed under the GPL. Based on dummy.c, and eql.c devices.&n; *&n; * bond.c: a bonding/etherchannel/sun trunking net driver&n; *&n; * This is useful to talk to a Cisco 5500, running Etherchannel, aka:&n; *&t;Linux Channel Bonding&n; *&t;Sun Trunking (Solaris)&n; *&n; * How it works:&n; *    ifconfig bond0 ipaddress netmask up&n; *      will setup a network device, with an ip address.  No mac address &n; *&t;will be assigned at this time.  The hw mac address will come from &n; *&t;the first slave bonded to the channel.  All slaves will then use &n; *&t;this hw mac address.&n; *&n; *    ifconfig bond0 down&n; *         will release all slaves, marking them as down.&n; *&n; *    ifenslave bond0 eth0&n; *&t;will attache eth0 to bond0 as a slave.  eth0 hw mac address will either&n; *&t;a: be used as initial mac address&n; *&t;b: if a hw mac address already is there, eth0&squot;s hw mac address &n; *&t;   will then  be set from bond0.&n; *&n; * v0.1 - first working version.&n; * v0.2 - changed stats to be calculated by summing slaves stats.&n; * &n; */
-macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
-macro_line|#include &lt;linux/sched.h&gt;
-macro_line|#include &lt;linux/types.h&gt;
-macro_line|#include &lt;linux/fcntl.h&gt;
-macro_line|#include &lt;linux/interrupt.h&gt;
-macro_line|#include &lt;linux/ptrace.h&gt;
-macro_line|#include &lt;linux/ioport.h&gt;
-macro_line|#include &lt;linux/in.h&gt;
-macro_line|#include &lt;linux/malloc.h&gt;
-macro_line|#include &lt;linux/string.h&gt;
-macro_line|#include &lt;linux/init.h&gt;
-macro_line|#include &lt;asm/system.h&gt;
-macro_line|#include &lt;asm/bitops.h&gt;
-macro_line|#include &lt;asm/io.h&gt;
-macro_line|#include &lt;asm/dma.h&gt;
-macro_line|#include &lt;asm/uaccess.h&gt;
-macro_line|#include &lt;linux/errno.h&gt;
+macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
-macro_line|#include &lt;linux/etherdevice.h&gt;
-macro_line|#include &lt;linux/skbuff.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/if_bonding.h&gt;
 DECL|struct|slave
 r_typedef
@@ -760,6 +743,7 @@ id|NOTIFY_DONE
 suffix:semicolon
 )brace
 DECL|variable|bond_netdev_notifier
+r_static
 r_struct
 id|notifier_block
 id|bond_netdev_notifier
@@ -767,6 +751,7 @@ op_assign
 initialization_block
 suffix:semicolon
 DECL|function|bond_init
+r_static
 r_int
 id|__init
 id|bond_init
@@ -1067,7 +1052,6 @@ op_amp
 id|bond-&gt;stats
 suffix:semicolon
 )brace
-macro_line|#ifdef MODULE
 DECL|variable|dev_bond
 r_static
 r_struct
@@ -1100,9 +1084,11 @@ comma
 id|bond_init
 )brace
 suffix:semicolon
-DECL|function|init_module
+DECL|function|bonding_init
+r_static
 r_int
-id|init_module
+id|__init
+id|bonding_init
 c_func
 (paren
 r_void
@@ -1151,9 +1137,11 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|cleanup_module
+DECL|function|bonding_exit
+r_static
 r_void
-id|cleanup_module
+id|__exit
+id|bonding_exit
 c_func
 (paren
 r_void
@@ -1180,6 +1168,19 @@ id|dev_bond.priv
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif /* MODULE */
+DECL|variable|bonding_init
+id|module_init
+c_func
+(paren
+id|bonding_init
+)paren
+suffix:semicolon
+DECL|variable|bonding_exit
+id|module_exit
+c_func
+(paren
+id|bonding_exit
+)paren
+suffix:semicolon
 multiline_comment|/*&n; * Local variables:&n; *  c-indent-level: 8&n; *  c-basic-offset: 8&n; *  tab-width: 8&n; * End:&n; */
 eof

@@ -16,7 +16,7 @@ id|NR_CPUS
 )braket
 suffix:semicolon
 macro_line|#endif&t;/* CONFIG_ARCH_S390 */
-DECL|variable|softirq_vec
+DECL|variable|__cacheline_aligned
 r_static
 r_struct
 id|softirq_action
@@ -24,6 +24,7 @@ id|softirq_vec
 (braket
 l_int|32
 )braket
+id|__cacheline_aligned
 suffix:semicolon
 DECL|function|do_softirq
 id|asmlinkage
@@ -417,6 +418,14 @@ c_func
 id|t-&gt;data
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t;&t;&t;&t; * talklet_trylock() uses test_and_set_bit that imply&n;&t;&t;&t;&t; * an mb when it returns zero, thus we need the explicit&n;&t;&t;&t;&t; * mb only here: while closing the critical section.&n;&t;&t;&t;&t; */
+macro_line|#ifdef CONFIG_SMP
+id|smp_mb__before_clear_bit
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
 id|tasklet_unlock
 c_func
 (paren

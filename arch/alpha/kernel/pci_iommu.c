@@ -1625,6 +1625,7 @@ id|leader
 suffix:semicolon
 r_do
 (brace
+macro_line|#if DEBUG_ALLOC &gt; 0
 r_struct
 id|scatterlist
 op_star
@@ -1632,6 +1633,7 @@ id|last_sg
 op_assign
 id|sg
 suffix:semicolon
+macro_line|#endif
 id|size
 op_assign
 id|sg-&gt;length

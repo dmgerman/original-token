@@ -859,7 +859,11 @@ c_func
 (paren
 id|u32
 )paren
-id|inode-&gt;i_mtime
+id|lease_get_mtime
+c_func
+(paren
+id|inode
+)paren
 )paren
 suffix:semicolon
 op_star

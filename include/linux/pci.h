@@ -448,6 +448,14 @@ DECL|macro|DEVICE_COUNT_DMA
 mdefine_line|#define DEVICE_COUNT_DMA&t;2
 DECL|macro|DEVICE_COUNT_RESOURCE
 mdefine_line|#define DEVICE_COUNT_RESOURCE&t;12
+DECL|macro|PCI_ANY_ID
+mdefine_line|#define PCI_ANY_ID (~0)
+DECL|macro|pci_present
+mdefine_line|#define pci_present pcibios_present
+DECL|macro|pci_for_each_dev
+mdefine_line|#define pci_for_each_dev(dev) &bslash;&n;&t;for(dev = pci_dev_g(pci_devices.next); dev != pci_dev_g(&amp;pci_devices); dev = pci_dev_g(dev-&gt;global_list.next))
+DECL|macro|pci_for_each_dev_reverse
+mdefine_line|#define pci_for_each_dev_reverse(dev) &bslash;&n;&t;for(dev = pci_dev_g(pci_devices.prev); dev != pci_dev_g(&amp;pci_devices); dev = pci_dev_g(dev-&gt;global_list.prev))
 multiline_comment|/*&n; * The pci_dev structure is used to describe both PCI and ISAPnP devices.&n; */
 DECL|struct|pci_dev
 r_struct
@@ -998,6 +1006,133 @@ id|mem_end
 suffix:semicolon
 )brace
 suffix:semicolon
+DECL|struct|pci_device_id
+r_struct
+id|pci_device_id
+(brace
+DECL|member|vendor
+DECL|member|device
+r_int
+r_int
+id|vendor
+comma
+id|device
+suffix:semicolon
+multiline_comment|/* Vendor and device ID or PCI_ANY_ID */
+DECL|member|subvendor
+DECL|member|subdevice
+r_int
+r_int
+id|subvendor
+comma
+id|subdevice
+suffix:semicolon
+multiline_comment|/* Subsystem ID&squot;s or PCI_ANY_ID */
+DECL|member|class
+DECL|member|class_mask
+r_int
+r_int
+r_class
+comma
+id|class_mask
+suffix:semicolon
+multiline_comment|/* (class,subclass,prog-if) triplet */
+DECL|member|driver_data
+r_int
+r_int
+id|driver_data
+suffix:semicolon
+multiline_comment|/* Data private to the driver */
+)brace
+suffix:semicolon
+DECL|struct|pci_driver
+r_struct
+id|pci_driver
+(brace
+DECL|member|node
+r_struct
+id|list_head
+id|node
+suffix:semicolon
+DECL|member|name
+r_char
+op_star
+id|name
+suffix:semicolon
+DECL|member|id_table
+r_const
+r_struct
+id|pci_device_id
+op_star
+id|id_table
+suffix:semicolon
+multiline_comment|/* NULL if wants all devices */
+DECL|member|probe
+r_int
+(paren
+op_star
+id|probe
+)paren
+(paren
+r_struct
+id|pci_dev
+op_star
+id|dev
+comma
+r_const
+r_struct
+id|pci_device_id
+op_star
+id|id
+)paren
+suffix:semicolon
+multiline_comment|/* New device inserted */
+DECL|member|remove
+r_void
+(paren
+op_star
+id|remove
+)paren
+(paren
+r_struct
+id|pci_dev
+op_star
+id|dev
+)paren
+suffix:semicolon
+multiline_comment|/* Device removed (NULL if not a hot-plug capable driver) */
+DECL|member|suspend
+r_void
+(paren
+op_star
+id|suspend
+)paren
+(paren
+r_struct
+id|pci_dev
+op_star
+id|dev
+)paren
+suffix:semicolon
+multiline_comment|/* Device suspended */
+DECL|member|resume
+r_void
+(paren
+op_star
+id|resume
+)paren
+(paren
+r_struct
+id|pci_dev
+op_star
+id|dev
+)paren
+suffix:semicolon
+multiline_comment|/* Device woken up */
+)brace
+suffix:semicolon
+multiline_comment|/* these external functions are only available when PCI support is enabled */
+macro_line|#ifdef CONFIG_PCI
 r_void
 id|pcibios_init
 c_func
@@ -1100,8 +1235,6 @@ c_func
 r_void
 )paren
 suffix:semicolon
-DECL|macro|pci_present
-mdefine_line|#define pci_present pcibios_present
 r_int
 id|pcibios_read_config_byte
 (paren
@@ -1520,8 +1653,6 @@ r_int
 id|cap
 )paren
 suffix:semicolon
-DECL|macro|PCI_ANY_ID
-mdefine_line|#define PCI_ANY_ID (~0)
 r_int
 id|pci_read_config_byte
 c_func
@@ -1667,10 +1798,6 @@ r_int
 id|i
 )paren
 suffix:semicolon
-DECL|macro|pci_for_each_dev
-mdefine_line|#define pci_for_each_dev(dev) &bslash;&n;&t;for(dev = pci_dev_g(pci_devices.next); dev != pci_dev_g(&amp;pci_devices); dev = pci_dev_g(dev-&gt;global_list.next))
-DECL|macro|pci_for_each_dev_reverse
-mdefine_line|#define pci_for_each_dev_reverse(dev) &bslash;&n;&t;for(dev = pci_dev_g(pci_devices.prev); dev != pci_dev_g(&amp;pci_devices); dev = pci_dev_g(dev-&gt;global_list.prev))
 multiline_comment|/* Helper functions for low-level code (drivers/pci/setup.c) */
 r_int
 id|pci_claim_resource
@@ -1740,131 +1867,6 @@ id|u8
 )paren
 suffix:semicolon
 multiline_comment|/* New-style probing supporting hot-pluggable devices */
-DECL|struct|pci_device_id
-r_struct
-id|pci_device_id
-(brace
-DECL|member|vendor
-DECL|member|device
-r_int
-r_int
-id|vendor
-comma
-id|device
-suffix:semicolon
-multiline_comment|/* Vendor and device ID or PCI_ANY_ID */
-DECL|member|subvendor
-DECL|member|subdevice
-r_int
-r_int
-id|subvendor
-comma
-id|subdevice
-suffix:semicolon
-multiline_comment|/* Subsystem ID&squot;s or PCI_ANY_ID */
-DECL|member|class
-DECL|member|class_mask
-r_int
-r_int
-r_class
-comma
-id|class_mask
-suffix:semicolon
-multiline_comment|/* (class,subclass,prog-if) triplet */
-DECL|member|driver_data
-r_int
-r_int
-id|driver_data
-suffix:semicolon
-multiline_comment|/* Data private to the driver */
-)brace
-suffix:semicolon
-DECL|struct|pci_driver
-r_struct
-id|pci_driver
-(brace
-DECL|member|node
-r_struct
-id|list_head
-id|node
-suffix:semicolon
-DECL|member|name
-r_char
-op_star
-id|name
-suffix:semicolon
-DECL|member|id_table
-r_const
-r_struct
-id|pci_device_id
-op_star
-id|id_table
-suffix:semicolon
-multiline_comment|/* NULL if wants all devices */
-DECL|member|probe
-r_int
-(paren
-op_star
-id|probe
-)paren
-(paren
-r_struct
-id|pci_dev
-op_star
-id|dev
-comma
-r_const
-r_struct
-id|pci_device_id
-op_star
-id|id
-)paren
-suffix:semicolon
-multiline_comment|/* New device inserted */
-DECL|member|remove
-r_void
-(paren
-op_star
-id|remove
-)paren
-(paren
-r_struct
-id|pci_dev
-op_star
-id|dev
-)paren
-suffix:semicolon
-multiline_comment|/* Device removed (NULL if not a hot-plug capable driver) */
-DECL|member|suspend
-r_void
-(paren
-op_star
-id|suspend
-)paren
-(paren
-r_struct
-id|pci_dev
-op_star
-id|dev
-)paren
-suffix:semicolon
-multiline_comment|/* Device suspended */
-DECL|member|resume
-r_void
-(paren
-op_star
-id|resume
-)paren
-(paren
-r_struct
-id|pci_dev
-op_star
-id|dev
-)paren
-suffix:semicolon
-multiline_comment|/* Device woken up */
-)brace
-suffix:semicolon
 r_int
 id|pci_register_driver
 c_func
@@ -1937,6 +1939,7 @@ op_star
 id|dev
 )paren
 suffix:semicolon
+macro_line|#endif /* CONFIG_PCI */
 multiline_comment|/* Include architecture-dependent settings and functions */
 macro_line|#include &lt;asm/pci.h&gt;
 multiline_comment|/*&n; *  If the system does not have PCI, clearly these return errors.  Define&n; *  these as simple inline functions to avoid hair in drivers.&n; */

@@ -922,8 +922,6 @@ op_assign
 id|SPIN_LOCK_UNLOCKED
 suffix:semicolon
 DECL|struct|call_data_struct
-r_static
-r_volatile
 r_struct
 id|call_data_struct
 (brace
@@ -956,8 +954,12 @@ DECL|member|wait
 r_int
 id|wait
 suffix:semicolon
-DECL|variable|call_data
 )brace
+suffix:semicolon
+DECL|variable|call_data
+r_static
+r_struct
+id|call_data_struct
 op_star
 id|call_data
 op_assign

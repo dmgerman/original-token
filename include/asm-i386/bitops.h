@@ -11,180 +11,10 @@ macro_line|#else
 DECL|macro|LOCK_PREFIX
 mdefine_line|#define LOCK_PREFIX &quot;&quot;
 macro_line|#endif
-multiline_comment|/*&n; * Function prototypes to keep gcc -Wall happy&n; */
-r_extern
-r_void
-id|set_bit
-c_func
-(paren
-r_int
-id|nr
-comma
-r_volatile
-r_void
-op_star
-id|addr
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|clear_bit
-c_func
-(paren
-r_int
-id|nr
-comma
-r_volatile
-r_void
-op_star
-id|addr
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|change_bit
-c_func
-(paren
-r_int
-id|nr
-comma
-r_volatile
-r_void
-op_star
-id|addr
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|test_and_set_bit
-c_func
-(paren
-r_int
-id|nr
-comma
-r_volatile
-r_void
-op_star
-id|addr
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|test_and_clear_bit
-c_func
-(paren
-r_int
-id|nr
-comma
-r_volatile
-r_void
-op_star
-id|addr
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|test_and_change_bit
-c_func
-(paren
-r_int
-id|nr
-comma
-r_volatile
-r_void
-op_star
-id|addr
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|__constant_test_bit
-c_func
-(paren
-r_int
-id|nr
-comma
-r_const
-r_volatile
-r_void
-op_star
-id|addr
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|__test_bit
-c_func
-(paren
-r_int
-id|nr
-comma
-r_volatile
-r_void
-op_star
-id|addr
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|find_first_zero_bit
-c_func
-(paren
-r_void
-op_star
-id|addr
-comma
-r_int
-id|size
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|find_next_zero_bit
-(paren
-r_void
-op_star
-id|addr
-comma
-r_int
-id|size
-comma
-r_int
-id|offset
-)paren
-suffix:semicolon
-r_extern
-r_int
-r_int
-id|ffz
-c_func
-(paren
-r_int
-r_int
-id|word
-)paren
-suffix:semicolon
-multiline_comment|/*&n; * Some hacks to defeat gcc over-optimizations..&n; */
-DECL|struct|__dummy
-DECL|member|a
-r_struct
-id|__dummy
-(brace
-r_int
-r_int
-id|a
-(braket
-l_int|100
-)braket
-suffix:semicolon
-)brace
-suffix:semicolon
 DECL|macro|ADDR
-mdefine_line|#define ADDR (*(volatile struct __dummy *) addr)
-DECL|macro|CONST_ADDR
-mdefine_line|#define CONST_ADDR (*(volatile const struct __dummy *) addr)
+mdefine_line|#define ADDR (*(volatile long *) addr)
 DECL|function|set_bit
-r_extern
+r_static
 id|__inline__
 r_void
 id|set_bit
@@ -218,8 +48,47 @@ id|nr
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* WARNING: non atomic and it can be reordered! */
+DECL|function|__set_bit
+r_static
+id|__inline__
+r_void
+id|__set_bit
+c_func
+(paren
+r_int
+id|nr
+comma
+r_volatile
+r_void
+op_star
+id|addr
+)paren
+(brace
+id|__asm__
+c_func
+(paren
+l_string|&quot;btsl %1,%0&quot;
+suffix:colon
+l_string|&quot;=m&quot;
+(paren
+id|ADDR
+)paren
+suffix:colon
+l_string|&quot;Ir&quot;
+(paren
+id|nr
+)paren
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/*&n; * clear_bit() doesn&squot;t provide any barrier for the compiler.&n; */
+DECL|macro|smp_mb__before_clear_bit
+mdefine_line|#define smp_mb__before_clear_bit()&t;barrier()
+DECL|macro|smp_mb__after_clear_bit
+mdefine_line|#define smp_mb__after_clear_bit()&t;barrier()
 DECL|function|clear_bit
-r_extern
+r_static
 id|__inline__
 r_void
 id|clear_bit
@@ -254,7 +123,7 @@ id|nr
 suffix:semicolon
 )brace
 DECL|function|change_bit
-r_extern
+r_static
 id|__inline__
 r_void
 id|change_bit
@@ -288,8 +157,9 @@ id|nr
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * It will also imply a memory barrier, thus it must clobber memory&n; * to make sure to reload anything that was cached into registers&n; * outside _this_ critical section.&n; */
 DECL|function|test_and_set_bit
-r_extern
+r_static
 id|__inline__
 r_int
 id|test_and_set_bit
@@ -328,6 +198,53 @@ l_string|&quot;Ir&quot;
 (paren
 id|nr
 )paren
+suffix:colon
+l_string|&quot;memory&quot;
+)paren
+suffix:semicolon
+r_return
+id|oldbit
+suffix:semicolon
+)brace
+multiline_comment|/* WARNING: non atomic and it can be reordered! */
+DECL|function|__test_and_set_bit
+r_static
+id|__inline__
+r_int
+id|__test_and_set_bit
+c_func
+(paren
+r_int
+id|nr
+comma
+r_volatile
+r_void
+op_star
+id|addr
+)paren
+(brace
+r_int
+id|oldbit
+suffix:semicolon
+id|__asm__
+c_func
+(paren
+l_string|&quot;btsl %2,%1&bslash;n&bslash;tsbbl %0,%0&quot;
+suffix:colon
+l_string|&quot;=r&quot;
+(paren
+id|oldbit
+)paren
+comma
+l_string|&quot;=m&quot;
+(paren
+id|ADDR
+)paren
+suffix:colon
+l_string|&quot;Ir&quot;
+(paren
+id|nr
+)paren
 )paren
 suffix:semicolon
 r_return
@@ -335,7 +252,7 @@ id|oldbit
 suffix:semicolon
 )brace
 DECL|function|test_and_clear_bit
-r_extern
+r_static
 id|__inline__
 r_int
 id|test_and_clear_bit
@@ -374,6 +291,53 @@ l_string|&quot;Ir&quot;
 (paren
 id|nr
 )paren
+suffix:colon
+l_string|&quot;memory&quot;
+)paren
+suffix:semicolon
+r_return
+id|oldbit
+suffix:semicolon
+)brace
+multiline_comment|/* WARNING: non atomic and it can be reordered! */
+DECL|function|__test_and_clear_bit
+r_static
+id|__inline__
+r_int
+id|__test_and_clear_bit
+c_func
+(paren
+r_int
+id|nr
+comma
+r_volatile
+r_void
+op_star
+id|addr
+)paren
+(brace
+r_int
+id|oldbit
+suffix:semicolon
+id|__asm__
+c_func
+(paren
+l_string|&quot;btrl %2,%1&bslash;n&bslash;tsbbl %0,%0&quot;
+suffix:colon
+l_string|&quot;=r&quot;
+(paren
+id|oldbit
+)paren
+comma
+l_string|&quot;=m&quot;
+(paren
+id|ADDR
+)paren
+suffix:colon
+l_string|&quot;Ir&quot;
+(paren
+id|nr
+)paren
 )paren
 suffix:semicolon
 r_return
@@ -381,7 +345,7 @@ id|oldbit
 suffix:semicolon
 )brace
 DECL|function|test_and_change_bit
-r_extern
+r_static
 id|__inline__
 r_int
 id|test_and_change_bit
@@ -420,6 +384,8 @@ l_string|&quot;Ir&quot;
 (paren
 id|nr
 )paren
+suffix:colon
+l_string|&quot;memory&quot;
 )paren
 suffix:semicolon
 r_return
@@ -427,11 +393,11 @@ id|oldbit
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * This routine doesn&squot;t need to be atomic.&n; */
-DECL|function|__constant_test_bit
-r_extern
+DECL|function|constant_test_bit
+r_static
 id|__inline__
 r_int
-id|__constant_test_bit
+id|constant_test_bit
 c_func
 (paren
 r_int
@@ -478,11 +444,11 @@ op_ne
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|__test_bit
-r_extern
+DECL|function|variable_test_bit
+r_static
 id|__inline__
 r_int
-id|__test_bit
+id|variable_test_bit
 c_func
 (paren
 r_int
@@ -524,10 +490,10 @@ id|oldbit
 suffix:semicolon
 )brace
 DECL|macro|test_bit
-mdefine_line|#define test_bit(nr,addr) &bslash;&n;(__builtin_constant_p(nr) ? &bslash;&n; __constant_test_bit((nr),(addr)) : &bslash;&n; __test_bit((nr),(addr)))
+mdefine_line|#define test_bit(nr,addr) &bslash;&n;(__builtin_constant_p(nr) ? &bslash;&n; constant_test_bit((nr),(addr)) : &bslash;&n; variable_test_bit((nr),(addr)))
 multiline_comment|/*&n; * Find-bit routines..&n; */
 DECL|function|find_first_zero_bit
-r_extern
+r_static
 id|__inline__
 r_int
 id|find_first_zero_bit
@@ -623,7 +589,7 @@ id|res
 suffix:semicolon
 )brace
 DECL|function|find_next_zero_bit
-r_extern
+r_static
 id|__inline__
 r_int
 id|find_next_zero_bit
@@ -765,7 +731,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * ffz = Find First Zero in word. Undefined if no zero exists,&n; * so code should check against ~0UL first..&n; */
 DECL|function|ffz
-r_extern
+r_static
 id|__inline__
 r_int
 r_int
@@ -801,7 +767,7 @@ suffix:semicolon
 macro_line|#ifdef __KERNEL__
 multiline_comment|/*&n; * ffs: find first bit set. This is defined the same way as&n; * the libc and compiler builtin ffs routines, therefore&n; * differs in spirit from the above ffz (man ffs).&n; */
 DECL|function|ffs
-r_extern
+r_static
 id|__inline__
 r_int
 id|ffs
@@ -849,9 +815,9 @@ mdefine_line|#define hweight8(x) generic_hweight8(x)
 macro_line|#endif /* __KERNEL__ */
 macro_line|#ifdef __KERNEL__
 DECL|macro|ext2_set_bit
-mdefine_line|#define ext2_set_bit                 test_and_set_bit
+mdefine_line|#define ext2_set_bit                 __test_and_set_bit
 DECL|macro|ext2_clear_bit
-mdefine_line|#define ext2_clear_bit               test_and_clear_bit
+mdefine_line|#define ext2_clear_bit               __test_and_clear_bit
 DECL|macro|ext2_test_bit
 mdefine_line|#define ext2_test_bit                test_bit
 DECL|macro|ext2_find_first_zero_bit
@@ -860,11 +826,11 @@ DECL|macro|ext2_find_next_zero_bit
 mdefine_line|#define ext2_find_next_zero_bit      find_next_zero_bit
 multiline_comment|/* Bitmap functions for the minix filesystem.  */
 DECL|macro|minix_test_and_set_bit
-mdefine_line|#define minix_test_and_set_bit(nr,addr) test_and_set_bit(nr,addr)
+mdefine_line|#define minix_test_and_set_bit(nr,addr) __test_and_set_bit(nr,addr)
 DECL|macro|minix_set_bit
-mdefine_line|#define minix_set_bit(nr,addr) set_bit(nr,addr)
+mdefine_line|#define minix_set_bit(nr,addr) __set_bit(nr,addr)
 DECL|macro|minix_test_and_clear_bit
-mdefine_line|#define minix_test_and_clear_bit(nr,addr) test_and_clear_bit(nr,addr)
+mdefine_line|#define minix_test_and_clear_bit(nr,addr) __test_and_clear_bit(nr,addr)
 DECL|macro|minix_test_bit
 mdefine_line|#define minix_test_bit(nr,addr) test_bit(nr,addr)
 DECL|macro|minix_find_first_zero_bit

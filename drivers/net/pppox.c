@@ -440,7 +440,7 @@ c_func
 r_void
 )paren
 macro_line|#else
-r_void
+r_int
 id|__init
 id|pppox_proto_init
 c_func
@@ -473,6 +473,7 @@ id|err
 op_eq
 l_int|0
 )paren
+(brace
 id|printk
 c_func
 (paren
@@ -485,6 +486,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
+)brace
 r_return
 id|err
 suffix:semicolon

@@ -11,9 +11,6 @@ DECL|macro|LOCK
 mdefine_line|#define LOCK &quot;&quot;
 macro_line|#endif
 multiline_comment|/*&n; * Make sure gcc doesn&squot;t try to be clever and move things around&n; * on us. We need to use _exactly_ the address the user gave us,&n; * not some alias that contains the same information.&n; */
-DECL|macro|__atomic_fool_gcc
-mdefine_line|#define __atomic_fool_gcc(x) (*(volatile struct { int a[100]; } *)x)
-macro_line|#ifdef CONFIG_SMP
 DECL|member|counter
 DECL|typedef|atomic_t
 r_typedef
@@ -26,19 +23,6 @@ suffix:semicolon
 )brace
 id|atomic_t
 suffix:semicolon
-macro_line|#else
-DECL|member|counter
-DECL|typedef|atomic_t
-r_typedef
-r_struct
-(brace
-r_int
-id|counter
-suffix:semicolon
-)brace
-id|atomic_t
-suffix:semicolon
-macro_line|#endif
 DECL|macro|ATOMIC_INIT
 mdefine_line|#define ATOMIC_INIT(i)&t;{ (i) }
 DECL|macro|atomic_read
@@ -55,7 +39,6 @@ c_func
 r_int
 id|i
 comma
-r_volatile
 id|atomic_t
 op_star
 id|v
@@ -70,11 +53,7 @@ l_string|&quot;addl %1,%0&quot;
 suffix:colon
 l_string|&quot;=m&quot;
 (paren
-id|__atomic_fool_gcc
-c_func
-(paren
-id|v
-)paren
+id|v-&gt;counter
 )paren
 suffix:colon
 l_string|&quot;ir&quot;
@@ -84,11 +63,7 @@ id|i
 comma
 l_string|&quot;m&quot;
 (paren
-id|__atomic_fool_gcc
-c_func
-(paren
-id|v
-)paren
+id|v-&gt;counter
 )paren
 )paren
 suffix:semicolon
@@ -103,7 +78,6 @@ c_func
 r_int
 id|i
 comma
-r_volatile
 id|atomic_t
 op_star
 id|v
@@ -118,11 +92,7 @@ l_string|&quot;subl %1,%0&quot;
 suffix:colon
 l_string|&quot;=m&quot;
 (paren
-id|__atomic_fool_gcc
-c_func
-(paren
-id|v
-)paren
+id|v-&gt;counter
 )paren
 suffix:colon
 l_string|&quot;ir&quot;
@@ -132,11 +102,7 @@ id|i
 comma
 l_string|&quot;m&quot;
 (paren
-id|__atomic_fool_gcc
-c_func
-(paren
-id|v
-)paren
+id|v-&gt;counter
 )paren
 )paren
 suffix:semicolon
@@ -151,7 +117,6 @@ c_func
 r_int
 id|i
 comma
-r_volatile
 id|atomic_t
 op_star
 id|v
@@ -170,11 +135,7 @@ l_string|&quot;subl %2,%0; sete %1&quot;
 suffix:colon
 l_string|&quot;=m&quot;
 (paren
-id|__atomic_fool_gcc
-c_func
-(paren
-id|v
-)paren
+id|v-&gt;counter
 )paren
 comma
 l_string|&quot;=qm&quot;
@@ -189,12 +150,10 @@ id|i
 comma
 l_string|&quot;m&quot;
 (paren
-id|__atomic_fool_gcc
-c_func
-(paren
-id|v
+id|v-&gt;counter
 )paren
-)paren
+suffix:colon
+l_string|&quot;memory&quot;
 )paren
 suffix:semicolon
 r_return
@@ -208,7 +167,6 @@ r_void
 id|atomic_inc
 c_func
 (paren
-r_volatile
 id|atomic_t
 op_star
 id|v
@@ -223,20 +181,12 @@ l_string|&quot;incl %0&quot;
 suffix:colon
 l_string|&quot;=m&quot;
 (paren
-id|__atomic_fool_gcc
-c_func
-(paren
-id|v
-)paren
+id|v-&gt;counter
 )paren
 suffix:colon
 l_string|&quot;m&quot;
 (paren
-id|__atomic_fool_gcc
-c_func
-(paren
-id|v
-)paren
+id|v-&gt;counter
 )paren
 )paren
 suffix:semicolon
@@ -248,7 +198,6 @@ r_void
 id|atomic_dec
 c_func
 (paren
-r_volatile
 id|atomic_t
 op_star
 id|v
@@ -263,20 +212,12 @@ l_string|&quot;decl %0&quot;
 suffix:colon
 l_string|&quot;=m&quot;
 (paren
-id|__atomic_fool_gcc
-c_func
-(paren
-id|v
-)paren
+id|v-&gt;counter
 )paren
 suffix:colon
 l_string|&quot;m&quot;
 (paren
-id|__atomic_fool_gcc
-c_func
-(paren
-id|v
-)paren
+id|v-&gt;counter
 )paren
 )paren
 suffix:semicolon
@@ -288,7 +229,6 @@ r_int
 id|atomic_dec_and_test
 c_func
 (paren
-r_volatile
 id|atomic_t
 op_star
 id|v
@@ -307,11 +247,7 @@ l_string|&quot;decl %0; sete %1&quot;
 suffix:colon
 l_string|&quot;=m&quot;
 (paren
-id|__atomic_fool_gcc
-c_func
-(paren
-id|v
-)paren
+id|v-&gt;counter
 )paren
 comma
 l_string|&quot;=qm&quot;
@@ -321,12 +257,10 @@ id|c
 suffix:colon
 l_string|&quot;m&quot;
 (paren
-id|__atomic_fool_gcc
-c_func
-(paren
-id|v
+id|v-&gt;counter
 )paren
-)paren
+suffix:colon
+l_string|&quot;memory&quot;
 )paren
 suffix:semicolon
 r_return
@@ -342,7 +276,6 @@ r_int
 id|atomic_inc_and_test
 c_func
 (paren
-r_volatile
 id|atomic_t
 op_star
 id|v
@@ -361,11 +294,7 @@ l_string|&quot;incl %0; sete %1&quot;
 suffix:colon
 l_string|&quot;=m&quot;
 (paren
-id|__atomic_fool_gcc
-c_func
-(paren
-id|v
-)paren
+id|v-&gt;counter
 )paren
 comma
 l_string|&quot;=qm&quot;
@@ -375,12 +304,10 @@ id|c
 suffix:colon
 l_string|&quot;m&quot;
 (paren
-id|__atomic_fool_gcc
-c_func
-(paren
-id|v
+id|v-&gt;counter
 )paren
-)paren
+suffix:colon
+l_string|&quot;memory&quot;
 )paren
 suffix:semicolon
 r_return
@@ -390,7 +317,7 @@ l_int|0
 suffix:semicolon
 )brace
 DECL|function|atomic_add_negative
-r_extern
+r_static
 id|__inline__
 r_int
 id|atomic_add_negative
@@ -399,7 +326,6 @@ c_func
 r_int
 id|i
 comma
-r_volatile
 id|atomic_t
 op_star
 id|v
@@ -418,11 +344,7 @@ l_string|&quot;addl %2,%0; sets %1&quot;
 suffix:colon
 l_string|&quot;=m&quot;
 (paren
-id|__atomic_fool_gcc
-c_func
-(paren
-id|v
-)paren
+id|v-&gt;counter
 )paren
 comma
 l_string|&quot;=qm&quot;
@@ -437,12 +359,10 @@ id|i
 comma
 l_string|&quot;m&quot;
 (paren
-id|__atomic_fool_gcc
-c_func
-(paren
-id|v
+id|v-&gt;counter
 )paren
-)paren
+suffix:colon
+l_string|&quot;memory&quot;
 )paren
 suffix:semicolon
 r_return
@@ -451,8 +371,8 @@ suffix:semicolon
 )brace
 multiline_comment|/* These are x86-specific, used by some header files */
 DECL|macro|atomic_clear_mask
-mdefine_line|#define atomic_clear_mask(mask, addr) &bslash;&n;__asm__ __volatile__(LOCK &quot;andl %0,%1&quot; &bslash;&n;: : &quot;r&quot; (~(mask)),&quot;m&quot; (__atomic_fool_gcc(addr)) : &quot;memory&quot;)
+mdefine_line|#define atomic_clear_mask(mask, addr) &bslash;&n;__asm__ __volatile__(LOCK &quot;andl %0,%1&quot; &bslash;&n;: : &quot;r&quot; (~(mask)),&quot;m&quot; (*addr) : &quot;memory&quot;)
 DECL|macro|atomic_set_mask
-mdefine_line|#define atomic_set_mask(mask, addr) &bslash;&n;__asm__ __volatile__(LOCK &quot;orl %0,%1&quot; &bslash;&n;: : &quot;r&quot; (mask),&quot;m&quot; (__atomic_fool_gcc(addr)) : &quot;memory&quot;)
+mdefine_line|#define atomic_set_mask(mask, addr) &bslash;&n;__asm__ __volatile__(LOCK &quot;orl %0,%1&quot; &bslash;&n;: : &quot;r&quot; (mask),&quot;m&quot; (*addr) : &quot;memory&quot;)
 macro_line|#endif
 eof

@@ -8,8 +8,8 @@ macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
-macro_line|#include &lt;linux/pci_ids.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/slab.h&gt;
 macro_line|#include &lt;linux/gameport.h&gt;
 DECL|macro|PCI_VENDOR_ID_AUREAL
 mdefine_line|#define PCI_VENDOR_ID_AUREAL&t;0x12eb

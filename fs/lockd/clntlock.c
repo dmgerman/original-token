@@ -461,6 +461,13 @@ c_func
 (paren
 )paren
 suffix:semicolon
+id|down
+c_func
+(paren
+op_amp
+id|file_lock_sem
+)paren
+suffix:semicolon
 multiline_comment|/* First, reclaim all locks that have been granted previously. */
 id|restart
 suffix:colon
@@ -553,6 +560,13 @@ op_assign
 id|tmp-&gt;next
 suffix:semicolon
 )brace
+id|up
+c_func
+(paren
+op_amp
+id|file_lock_sem
+)paren
+suffix:semicolon
 id|host-&gt;h_reclaiming
 op_assign
 l_int|0

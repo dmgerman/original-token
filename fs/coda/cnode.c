@@ -298,9 +298,17 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|cii-&gt;c_magic
-op_eq
-id|CODA_CNODE_MAGIC
+id|cii-&gt;c_fid.Volume
+op_ne
+l_int|0
+op_logical_or
+id|cii-&gt;c_fid.Vnode
+op_ne
+l_int|0
+op_logical_or
+id|cii-&gt;c_fid.Unique
+op_ne
+l_int|0
 )paren
 (brace
 multiline_comment|/* see if it is the right one (might have an inode collision) */
@@ -359,10 +367,6 @@ suffix:semicolon
 )brace
 multiline_comment|/* new, empty inode found... initializing */
 multiline_comment|/* Initialize the Coda inode info structure */
-id|cii-&gt;c_magic
-op_assign
-id|CODA_CNODE_MAGIC
-suffix:semicolon
 id|cii-&gt;c_fid
 op_assign
 op_star
@@ -660,23 +664,6 @@ r_return
 l_int|NULL
 suffix:semicolon
 )brace
-r_if
-c_cond
-(paren
-op_logical_neg
-id|fid
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;coda_fid_to_inode: no fid!&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-l_int|NULL
-suffix:semicolon
-)brace
 id|CDEBUG
 c_func
 (paren
@@ -747,7 +734,10 @@ id|cii-&gt;c_magic
 op_ne
 id|CODA_CNODE_MAGIC
 )paren
-r_continue
+id|BUG
+c_func
+(paren
+)paren
 suffix:semicolon
 id|CDEBUG
 c_func
@@ -866,10 +856,6 @@ multiline_comment|/* make sure this is the one we want */
 r_if
 c_cond
 (paren
-id|cii-&gt;c_magic
-op_eq
-id|CODA_CNODE_MAGIC
-op_logical_and
 id|coda_fideq
 c_func
 (paren

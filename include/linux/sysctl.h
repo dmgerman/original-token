@@ -617,6 +617,11 @@ DECL|enumerator|NET_CORE_HOT_LIST_LENGTH
 id|NET_CORE_HOT_LIST_LENGTH
 op_assign
 l_int|11
+comma
+DECL|enumerator|NET_CORE_DIVERT_VERSION
+id|NET_CORE_DIVERT_VERSION
+op_assign
+l_int|12
 )brace
 suffix:semicolon
 multiline_comment|/* /proc/sys/net/ethernet */
@@ -1853,7 +1858,26 @@ DECL|enumerator|FS_OVERFLOWGID
 id|FS_OVERFLOWGID
 op_assign
 l_int|12
+comma
 multiline_comment|/* int: overflow GID */
+DECL|enumerator|FS_LEASES
+id|FS_LEASES
+op_assign
+l_int|13
+comma
+multiline_comment|/* int: leases enabled */
+DECL|enumerator|FS_DIR_NOTIFY
+id|FS_DIR_NOTIFY
+op_assign
+l_int|14
+comma
+multiline_comment|/* int: directory notification enabled */
+DECL|enumerator|FS_LEASE_TIME
+id|FS_LEASE_TIME
+op_assign
+l_int|15
+comma
+multiline_comment|/* int: maximum time to wait for a lease break */
 )brace
 suffix:semicolon
 multiline_comment|/* CTL_DEBUG names: */

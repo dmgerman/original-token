@@ -2049,13 +2049,6 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef CONFIG_BLK_DEV_MD
-id|md_run_setup
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon

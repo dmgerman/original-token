@@ -240,7 +240,7 @@ id|ctr
 )paren
 op_increment
 suffix:semicolon
-id|rmb
+id|mb
 c_func
 (paren
 )paren
@@ -261,11 +261,12 @@ id|ctr
 )paren
 op_decrement
 suffix:semicolon
-id|rmb
+id|wmb
 c_func
 (paren
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t;&t;&t;* The release of the ctr must become visible&n;&t;&t;&t;* to the other cpus eventually thus wmb(),&n;&t;&t;&t;* we don&squot;t care if spin_is_locked is reordered&n;&t;&t;&t;* before the releasing of the ctr.&n;&t;&t;&t;* However IMHO this wmb() is superflous even in theory.&n;&t;&t;&t;* It would not be superflous only if on the&n;&t;&t;&t;* other CPUs doing a ldl_l instead of an ldl&n;&t;&t;&t;* would make a difference and I don&squot;t think this is&n;&t;&t;&t;* the case.&n;&t;&t;&t;* I&squot;d like to clarify this issue further&n;&t;&t;&t;* but for now this is a slow path so adding the&n;&t;&t;&t;* wmb() will keep us on the safe side.&n;&t;&t;&t;*/
 r_while
 c_loop
 (paren

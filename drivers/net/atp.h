@@ -1,42 +1,8 @@
+multiline_comment|/* Linux header file for the ATP pocket ethernet adapter. */
+multiline_comment|/* v1.09 8/9/2000 becker@scyld.com. */
 macro_line|#include &lt;linux/if_ether.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
-macro_line|#include &lt;asm/io.h&gt;
-DECL|struct|net_local
-r_struct
-id|net_local
-(brace
-DECL|member|stats
-r_struct
-id|net_device_stats
-id|stats
-suffix:semicolon
-DECL|member|saved_tx_size
-id|ushort
-id|saved_tx_size
-suffix:semicolon
-r_int
-r_char
-DECL|member|re_tx
-id|re_tx
-comma
-multiline_comment|/* Number of packet retransmissions. */
-DECL|member|tx_unit_busy
-id|tx_unit_busy
-comma
-DECL|member|addr_mode
-id|addr_mode
-comma
-multiline_comment|/* Current Rx filter e.g. promiscuous, etc. */
-DECL|member|pac_cnt_in_tx_buf
-id|pac_cnt_in_tx_buf
-suffix:semicolon
-DECL|member|lock
-id|spinlock_t
-id|lock
-suffix:semicolon
-multiline_comment|/* Safety lock */
-)brace
-suffix:semicolon
+multiline_comment|/* The header prepended to received packets. */
 DECL|struct|rx_header
 r_struct
 id|rx_header
@@ -45,7 +11,7 @@ DECL|member|pad
 id|ushort
 id|pad
 suffix:semicolon
-multiline_comment|/* The first read is always corrupted. */
+multiline_comment|/* Pad. */
 DECL|member|rx_count
 id|ushort
 id|rx_count
@@ -68,6 +34,17 @@ DECL|macro|PAR_STATUS
 mdefine_line|#define PAR_STATUS&t;1
 DECL|macro|PAR_CONTROL
 mdefine_line|#define PAR_CONTROL 2
+DECL|enum|chip_type
+DECL|enumerator|RTL8002
+DECL|enumerator|RTL8012
+r_enum
+id|chip_type
+(brace
+id|RTL8002
+comma
+id|RTL8012
+)brace
+suffix:semicolon
 DECL|macro|Ctrl_LNibRead
 mdefine_line|#define Ctrl_LNibRead&t;0x08&t;/* LP_PSELECP */
 DECL|macro|Ctrl_HNibRead
@@ -170,12 +147,18 @@ op_assign
 l_int|13
 comma
 multiline_comment|/* Command register 2. */
+DECL|enumerator|MODSEL
+id|MODSEL
+op_assign
+l_int|14
+comma
+multiline_comment|/* Mode select register. */
 DECL|enumerator|MAR
 id|MAR
 op_assign
 l_int|14
 comma
-multiline_comment|/* Memory address register. */
+multiline_comment|/* Memory address register (?). */
 DECL|enumerator|CMR2_h
 id|CMR2_h
 op_assign
@@ -184,10 +167,10 @@ comma
 )brace
 suffix:semicolon
 DECL|enum|eepage_regs
-DECL|enumerator|PROM_CMD
-DECL|enumerator|PROM_DATA
 r_enum
 id|eepage_regs
+DECL|enumerator|PROM_CMD
+DECL|enumerator|PROM_DATA
 (brace
 id|PROM_CMD
 op_assign
@@ -207,6 +190,8 @@ DECL|macro|ISR_TxErr
 mdefine_line|#define ISR_TxErr&t;0x02
 DECL|macro|ISRh_RxErr
 mdefine_line|#define ISRh_RxErr&t;0x11&t;/* ISR, high nibble */
+DECL|macro|CMR1h_MUX
+mdefine_line|#define CMR1h_MUX&t;0x08&t;/* Select printer multiplexor on 8012. */
 DECL|macro|CMR1h_RESET
 mdefine_line|#define CMR1h_RESET&t;0x04&t;/* Reset. */
 DECL|macro|CMR1h_RxENABLE
@@ -243,7 +228,7 @@ DECL|macro|CMR2h_PROMISC
 mdefine_line|#define CMR2h_PROMISC&t;3&t;/* Promiscuous mode. */
 multiline_comment|/* An inline function used below: it differs from inb() by explicitly return an unsigned&n;   char, saving a truncation. */
 DECL|function|inbyte
-r_extern
+r_static
 r_inline
 r_int
 r_char
@@ -281,7 +266,7 @@ suffix:semicolon
 )brace
 multiline_comment|/* Read register OFFSET.&n;   This command should always be terminated with read_end(). */
 DECL|function|read_nibble
-r_extern
+r_static
 r_inline
 r_int
 r_char
@@ -362,7 +347,7 @@ suffix:semicolon
 multiline_comment|/* Functions for bulk data read.  The interrupt line is always disabled. */
 multiline_comment|/* Get a byte using read mode 0, reading data from the control lines. */
 DECL|function|read_byte_mode0
-r_extern
+r_static
 r_inline
 r_int
 r_char
@@ -461,7 +446,7 @@ suffix:semicolon
 )brace
 multiline_comment|/* The same as read_byte_mode0(), but does multiple inb()s for stability. */
 DECL|function|read_byte_mode2
-r_extern
+r_static
 r_inline
 r_int
 r_char
@@ -551,7 +536,7 @@ suffix:semicolon
 )brace
 multiline_comment|/* Read a byte through the data register. */
 DECL|function|read_byte_mode4
-r_extern
+r_static
 r_inline
 r_int
 r_char
@@ -630,7 +615,7 @@ suffix:semicolon
 )brace
 multiline_comment|/* Read a byte through the data register, double reading to allow settling. */
 DECL|function|read_byte_mode6
-r_extern
+r_static
 r_inline
 r_int
 r_char
@@ -723,10 +708,10 @@ l_int|0xf0
 )paren
 suffix:semicolon
 )brace
-DECL|function|write_reg
-r_extern
+r_static
 r_inline
 r_void
+DECL|function|write_reg
 id|write_reg
 c_func
 (paren
@@ -840,10 +825,10 @@ id|PAR_DATA
 )paren
 suffix:semicolon
 )brace
-DECL|function|write_reg_high
-r_extern
+r_static
 r_inline
 r_void
+DECL|function|write_reg_high
 id|write_reg_high
 c_func
 (paren
@@ -969,10 +954,10 @@ id|PAR_DATA
 suffix:semicolon
 )brace
 multiline_comment|/* Write a byte out using nibble mode.  The low nibble is written first. */
-DECL|function|write_reg_byte
-r_extern
+r_static
 r_inline
 r_void
+DECL|function|write_reg_byte
 id|write_reg_byte
 c_func
 (paren
@@ -1118,7 +1103,7 @@ multiline_comment|/* Reset the address register. */
 )brace
 multiline_comment|/*&n; * Bulk data writes to the packet buffer.  The interrupt line remains enabled.&n; * The first, faster method uses only the dataport (data modes 0, 2 &amp; 4).&n; * The second (backup) method uses data and control regs (modes 1, 3 &amp; 5).&n; * It should only be needed when there is skew between the individual data&n; * lines.&n; */
 DECL|function|write_byte_mode0
-r_extern
+r_static
 r_inline
 r_void
 id|write_byte_mode0
@@ -1162,7 +1147,7 @@ id|PAR_DATA
 suffix:semicolon
 )brace
 DECL|function|write_byte_mode1
-r_extern
+r_static
 r_inline
 r_void
 id|write_byte_mode1
@@ -1231,7 +1216,7 @@ suffix:semicolon
 )brace
 multiline_comment|/* Write 16bit VALUE to the packet buffer: the same as above just doubled. */
 DECL|function|write_word_mode0
-r_extern
+r_static
 r_inline
 r_void
 id|write_word_mode0
@@ -1327,6 +1312,9 @@ DECL|macro|EE_DATA_WRITE
 mdefine_line|#define EE_DATA_WRITE&t;0x01&t;/* EEPROM chip data in. */
 DECL|macro|EE_DATA_READ
 mdefine_line|#define EE_DATA_READ&t;0x08&t;/* EEPROM chip data out. */
+multiline_comment|/* Delay between EEPROM clock transitions. */
+DECL|macro|eeprom_delay
+mdefine_line|#define eeprom_delay(ticks) &bslash;&n;do { int _i = 40; while (--_i &gt; 0) { __SLOW_DOWN_IO; }} while (0)
 multiline_comment|/* The EEPROM commands include the alway-set leading bit. */
 DECL|macro|EE_WRITE_CMD
 mdefine_line|#define EE_WRITE_CMD(offset)&t;(((5 &lt;&lt; 6) + (offset)) &lt;&lt; 17)

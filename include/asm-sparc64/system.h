@@ -168,9 +168,9 @@ mdefine_line|#define nop() &t;&t;__asm__ __volatile__ (&quot;nop&quot;)
 DECL|macro|membar
 mdefine_line|#define membar(type)&t;__asm__ __volatile__ (&quot;membar &quot; type : : : &quot;memory&quot;);
 DECL|macro|rmb
-mdefine_line|#define rmb()&t;&t;membar(&quot;#LoadLoad | #LoadStore&quot;)
+mdefine_line|#define rmb()&t;&t;membar(&quot;#LoadLoad&quot;)
 DECL|macro|wmb
-mdefine_line|#define wmb()&t;&t;membar(&quot;#StoreLoad | #StoreStore&quot;)
+mdefine_line|#define wmb()&t;&t;membar(&quot;#StoreStore&quot;)
 DECL|macro|set_mb
 mdefine_line|#define set_mb(__var, __value) &bslash;&n;&t;do { __var = __value; membar(&quot;#StoreLoad | #StoreStore&quot;); } while(0)
 DECL|macro|set_wmb

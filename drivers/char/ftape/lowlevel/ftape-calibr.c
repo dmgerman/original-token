@@ -535,7 +535,7 @@ suffix:semicolon
 )brace
 macro_line|#elif defined(__alpha__)
 macro_line|#if CONFIG_FT_ALPHA_CLOCK == 0
-macro_line|#error You must define and set CONFIG_FT_ALPHA_CLOCK in the Makefile !
+macro_line|#error You must define and set CONFIG_FT_ALPHA_CLOCK in &squot;make config&squot; !
 macro_line|#endif
 r_extern
 r_struct

@@ -1,3 +1,6 @@
+macro_line|#ifndef __DRIVERS_PARIDE_H__
+DECL|macro|__DRIVERS_PARIDE_H__
+mdefine_line|#define __DRIVERS_PARIDE_H__
 multiline_comment|/* &n;&t;paride.h&t;(c) 1997-8  Grant R. Guenther &lt;grant@torque.net&gt;&n;   &t;&t;                    Under the terms of the GPL.&n;&n;   This file defines the interface between the high-level parallel&n;   IDE device drivers (pd, pf, pcd, pt) and the adapter chips.&n;&n;*/
 multiline_comment|/* Changes:&n;&n;&t;1.01&t;GRG 1998.05.05&t;init_proto, release_proto&n;*/
 DECL|macro|PARIDE_H_VERSION
@@ -693,5 +696,6 @@ id|PIP
 op_star
 )paren
 suffix:semicolon
+macro_line|#endif /* __DRIVERS_PARIDE_H__ */
 multiline_comment|/* end of paride.h */
 eof

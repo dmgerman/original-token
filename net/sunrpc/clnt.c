@@ -3211,6 +3211,8 @@ l_string|&quot;call_verify: server requires stronger &quot;
 l_string|&quot;authentication.&bslash;n&quot;
 )paren
 suffix:semicolon
+r_break
+suffix:semicolon
 r_default
 suffix:colon
 id|printk

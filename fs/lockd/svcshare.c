@@ -209,10 +209,6 @@ id|file-&gt;f_shares
 op_assign
 id|share
 suffix:semicolon
-id|file-&gt;f_count
-op_add_assign
-l_int|1
-suffix:semicolon
 id|update
 suffix:colon
 id|share-&gt;s_access

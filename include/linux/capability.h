@@ -227,6 +227,9 @@ mdefine_line|#define CAP_SYS_TTY_CONFIG   26
 multiline_comment|/* Allow the privileged aspects of mknod() */
 DECL|macro|CAP_MKNOD
 mdefine_line|#define CAP_MKNOD            27
+multiline_comment|/* Allow taking of leases on files */
+DECL|macro|CAP_LEASE
+mdefine_line|#define CAP_LEASE            28
 macro_line|#ifdef __KERNEL__
 multiline_comment|/* &n; * Bounding set&n; */
 r_extern

@@ -3,13 +3,28 @@ multiline_comment|/*&n; * Modification history timex.h&n; *&n; * 29 Dec 97&t;Rus
 macro_line|#ifndef _LINUX_TIMEX_H
 DECL|macro|_LINUX_TIMEX_H
 mdefine_line|#define _LINUX_TIMEX_H
+macro_line|#include &lt;asm/param.h&gt;
 multiline_comment|/*&n; * The following defines establish the engineering parameters of the PLL&n; * model. The HZ variable establishes the timer interrupt frequency, 100 Hz&n; * for the SunOS kernel, 256 Hz for the Ultrix kernel and 1024 Hz for the&n; * OSF/1 kernel. The SHIFT_HZ define expresses the same value as the&n; * nearest power of two in order to avoid hardware multiply operations.&n; */
-macro_line|#ifdef __alpha__
+macro_line|#if HZ &gt;= 24 &amp;&amp; HZ &lt; 48
 DECL|macro|SHIFT_HZ
-macro_line|# define SHIFT_HZ 10&t;&t;/* log2(HZ) */
+macro_line|# define SHIFT_HZ&t;5
+macro_line|#elif HZ &gt;= 48 &amp;&amp; HZ &lt; 96
+DECL|macro|SHIFT_HZ
+macro_line|# define SHIFT_HZ&t;6
+macro_line|#elif HZ &gt;= 96 &amp;&amp; HZ &lt; 192
+DECL|macro|SHIFT_HZ
+macro_line|# define SHIFT_HZ&t;7
+macro_line|#elif HZ &gt;= 192 &amp;&amp; HZ &lt; 384
+DECL|macro|SHIFT_HZ
+macro_line|# define SHIFT_HZ&t;8
+macro_line|#elif HZ &gt;= 384 &amp;&amp; HZ &lt; 768
+DECL|macro|SHIFT_HZ
+macro_line|# define SHIFT_HZ&t;9
+macro_line|#elif HZ &gt;= 768 &amp;&amp; HZ &lt; 1536
+DECL|macro|SHIFT_HZ
+macro_line|# define SHIFT_HZ&t;10
 macro_line|#else
-DECL|macro|SHIFT_HZ
-macro_line|# define SHIFT_HZ 7&t;&t;/* log2(HZ) */
+macro_line|# error You lose.
 macro_line|#endif
 multiline_comment|/*&n; * SHIFT_KG and SHIFT_KF establish the damping of the PLL and are chosen&n; * for a slightly underdamped convergence characteristic. SHIFT_KH&n; * establishes the damping of the FLL and is chosen by wisdom and black&n; * art.&n; *&n; * MAXTC establishes the maximum time constant of the PLL. With the&n; * SHIFT_KG and SHIFT_KF values given and a time constant range from&n; * zero to MAXTC, the PLL will converge in 15 minutes to 16 hours,&n; * respectively.&n; */
 DECL|macro|SHIFT_KG

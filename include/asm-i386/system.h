@@ -681,13 +681,28 @@ DECL|macro|rmb
 mdefine_line|#define rmb()&t;mb()
 DECL|macro|wmb
 mdefine_line|#define wmb()&t;__asm__ __volatile__ (&quot;&quot;: : :&quot;memory&quot;)
+macro_line|#ifdef __SMP__
+DECL|macro|smp_mb
+mdefine_line|#define smp_mb()&t;mb()
+DECL|macro|smp_rmb
+mdefine_line|#define smp_rmb()&t;rmb()
+DECL|macro|smp_wmb
+mdefine_line|#define smp_wmb()&t;wmb()
+macro_line|#else
+DECL|macro|smp_mb
+mdefine_line|#define smp_mb()&t;barrier()
+DECL|macro|smp_rmb
+mdefine_line|#define smp_rmb()&t;barrier()
+DECL|macro|smp_wmb
+mdefine_line|#define smp_wmb()&t;barrier()
+macro_line|#endif
 DECL|macro|set_mb
 mdefine_line|#define set_mb(var, value) do { xchg(&amp;var, value); } while (0)
 DECL|macro|set_wmb
 mdefine_line|#define set_wmb(var, value) do { var = value; wmb(); } while (0)
 multiline_comment|/* interrupt control.. */
 DECL|macro|__save_flags
-mdefine_line|#define __save_flags(x)&t;&t;__asm__ __volatile__(&quot;pushfl ; popl %0&quot;:&quot;=g&quot; (x): /* no input */ :&quot;memory&quot;)
+mdefine_line|#define __save_flags(x)&t;&t;__asm__ __volatile__(&quot;pushfl ; popl %0&quot;:&quot;=g&quot; (x): /* no input */)
 DECL|macro|__restore_flags
 mdefine_line|#define __restore_flags(x) &t;__asm__ __volatile__(&quot;pushl %0 ; popfl&quot;: /* no output */ :&quot;g&quot; (x):&quot;memory&quot;)
 DECL|macro|__cli
@@ -701,11 +716,11 @@ multiline_comment|/* For spinlocks etc */
 DECL|macro|local_irq_save
 mdefine_line|#define local_irq_save(x)&t;__asm__ __volatile__(&quot;pushfl ; popl %0 ; cli&quot;:&quot;=g&quot; (x): /* no input */ :&quot;memory&quot;)
 DECL|macro|local_irq_restore
-mdefine_line|#define local_irq_restore(x)&t;__asm__ __volatile__(&quot;pushl %0 ; popfl&quot;: /* no output */ :&quot;g&quot; (x):&quot;memory&quot;)
+mdefine_line|#define local_irq_restore(x)&t;__restore_flags(x)
 DECL|macro|local_irq_disable
-mdefine_line|#define local_irq_disable()&t;__asm__ __volatile__(&quot;cli&quot;: : :&quot;memory&quot;)
+mdefine_line|#define local_irq_disable()&t;__cli()
 DECL|macro|local_irq_enable
-mdefine_line|#define local_irq_enable()&t;__asm__ __volatile__(&quot;sti&quot;: : :&quot;memory&quot;)
+mdefine_line|#define local_irq_enable()&t;__sti()
 macro_line|#ifdef CONFIG_SMP
 r_extern
 r_void

@@ -1,7 +1,7 @@
-multiline_comment|/*&n; *  TUN - Universal TUN/TAP device driver.&n; *  Copyright (C) 1999-2000 Maxim Krasnyansky &lt;max_mk@yahoo.com&gt;&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the&n; *  GNU General Public License for more details.&n; *&n; *  $Id: tun.c,v 1.1 2000/08/23 05:59:28 davem Exp $&n; */
+multiline_comment|/*&n; *  TUN - Universal TUN/TAP device driver.&n; *  Copyright (C) 1999-2000 Maxim Krasnyansky &lt;max_mk@yahoo.com&gt;&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the&n; *  GNU General Public License for more details.&n; *&n; *  $Id: tun.c,v 1.2 2000/09/22 12:40:31 maxk Exp $&n; */
 multiline_comment|/*&n; *  Daniel Podlejski &lt;underley@underley.eu.org&gt;&n; *    Modifications for 2.3.99-pre5 kernel.&n; */
 DECL|macro|TUN_VER
-mdefine_line|#define TUN_VER &quot;1.1&quot;
+mdefine_line|#define TUN_VER &quot;1.2&quot;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -11,11 +11,11 @@ macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/poll.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
-macro_line|#include &lt;linux/devfs_fs_kernel.h&gt;
 macro_line|#include &lt;linux/random.h&gt;
+macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
-macro_line|#include &lt;linux/skbuff.h&gt;
+macro_line|#include &lt;linux/miscdevice.h&gt;
 macro_line|#include &lt;linux/rtnetlink.h&gt;
 macro_line|#include &lt;linux/if.h&gt;
 macro_line|#include &lt;linux/if_arp.h&gt;
@@ -1905,12 +1905,20 @@ suffix:colon
 id|tun_chr_fasync
 )brace
 suffix:semicolon
-DECL|variable|devfs_handle
+DECL|variable|tun_miscdev
 r_static
-id|devfs_handle_t
-id|devfs_handle
+r_struct
+id|miscdevice
+id|tun_miscdev
 op_assign
-l_int|NULL
+(brace
+id|TUN_MINOR
+comma
+l_string|&quot;net/tun&quot;
+comma
+op_amp
+id|tun_fops
+)brace
 suffix:semicolon
 DECL|function|tun_init
 r_int
@@ -1934,15 +1942,11 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|devfs_register_chrdev
+id|misc_register
 c_func
 (paren
-id|TUN_MAJOR
-comma
-l_string|&quot;tun&quot;
-comma
 op_amp
-id|tun_fops
+id|tun_miscdev
 )paren
 )paren
 (brace
@@ -1950,9 +1954,9 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;tun: Can&squot;t register char device %d&bslash;n&quot;
+l_string|&quot;tun: Can&squot;t register misc device %d&bslash;n&quot;
 comma
-id|TUN_MAJOR
+id|TUN_MINOR
 )paren
 suffix:semicolon
 r_return
@@ -1960,43 +1964,9 @@ op_minus
 id|EIO
 suffix:semicolon
 )brace
-id|devfs_handle
-op_assign
-id|devfs_register
-c_func
-(paren
-l_int|NULL
-comma
-l_string|&quot;net/tun&quot;
-comma
-id|DEVFS_FL_DEFAULT
-comma
-id|TUN_MAJOR
-comma
-l_int|0
-comma
-id|S_IFCHR
-op_or
-id|S_IRUSR
-op_or
-id|S_IWUSR
-comma
-op_amp
-id|tun_fops
-comma
-l_int|NULL
-)paren
-suffix:semicolon
-macro_line|#ifdef MODULE
 r_return
 l_int|0
 suffix:semicolon
-macro_line|#else
-multiline_comment|/* If driver is not module, tun_init will be called from Space.c.&n;&t; * Return non-zero not to register fake device.&n;&t; */
-r_return
-l_int|1
-suffix:semicolon
-macro_line|#endif
 )brace
 DECL|function|tun_cleanup
 r_void
@@ -2006,18 +1976,11 @@ c_func
 r_void
 )paren
 (brace
-id|devfs_unregister_chrdev
+id|misc_deregister
 c_func
 (paren
-id|TUN_MAJOR
-comma
-l_string|&quot;tun&quot;
-)paren
-suffix:semicolon
-id|devfs_unregister
-c_func
-(paren
-id|devfs_handle
+op_amp
+id|tun_miscdev
 )paren
 suffix:semicolon
 )brace

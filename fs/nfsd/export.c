@@ -1,3 +1,5 @@
+DECL|macro|MSNFS
+mdefine_line|#define MSNFS&t;/* HACK HACK */
 multiline_comment|/*&n; * linux/fs/nfsd/export.c&n; *&n; * NFS exporting and validation.&n; *&n; * We maintain a list of clients, each of which has a list of&n; * exports. To export an fs to a given client, you first have&n; * to create the client entry with NFSCTL_ADDCLIENT, which&n; * creates a client control block and adds it to the hash&n; * table. Then, you call NFSCTL_EXPORT for each fs.&n; *&n; *&n; * Copyright (C) 1995, 1996 Olaf Kirch, &lt;okir@monad.swb.de&gt;&n; */
 macro_line|#include &lt;linux/unistd.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
@@ -2303,6 +2305,18 @@ l_string|&quot;&quot;
 )brace
 )brace
 comma
+macro_line|#ifdef NSMFS
+(brace
+id|NFSEXP_MSNFS
+comma
+(brace
+l_string|&quot;msnfs&quot;
+comma
+l_string|&quot;&quot;
+)brace
+)brace
+comma
+macro_line|#endif
 (brace
 l_int|0
 comma
