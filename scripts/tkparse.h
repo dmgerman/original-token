@@ -38,6 +38,9 @@ comma
 DECL|enumerator|tok_hex
 id|tok_hex
 comma
+DECL|enumerator|tok_string
+id|tok_string
+comma
 DECL|enumerator|tok_make
 id|tok_make
 comma

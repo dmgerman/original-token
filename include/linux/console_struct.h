@@ -278,6 +278,13 @@ id|vc_need_wrap
 suffix:colon
 l_int|1
 suffix:semicolon
+DECL|member|vc_can_do_color
+r_int
+r_int
+id|vc_can_do_color
+suffix:colon
+l_int|1
+suffix:semicolon
 DECL|member|vc_has_scrolled
 r_int
 r_int

@@ -1705,9 +1705,6 @@ comma
 multiline_comment|/* readlink */
 l_int|NULL
 comma
-multiline_comment|/* follow_link */
-l_int|NULL
-comma
 multiline_comment|/* readpage */
 l_int|NULL
 comma
@@ -1928,8 +1925,12 @@ id|i
 suffix:semicolon
 id|close_f12_inode
 suffix:colon
+id|atomic_dec
+c_func
+(paren
+op_amp
 id|inode-&gt;i_count
-op_decrement
+)paren
 suffix:semicolon
 id|iput
 c_func

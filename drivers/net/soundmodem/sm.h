@@ -4,14 +4,10 @@ macro_line|#ifndef _SM_H
 DECL|macro|_SM_H
 mdefine_line|#define _SM_H
 multiline_comment|/* ---------------------------------------------------------------------- */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/hdlcdrv.h&gt;
 macro_line|#include &lt;linux/soundmodem.h&gt;
 DECL|macro|SM_DEBUG
 mdefine_line|#define SM_DEBUG
-multiline_comment|/* --------------------------------------------------------------------- */
-DECL|macro|DMA_MODE_AUTOINIT
-mdefine_line|#define DMA_MODE_AUTOINIT      0x10
 multiline_comment|/* ---------------------------------------------------------------------- */
 multiline_comment|/*&n; * Information that need to be kept for each board.&n; */
 DECL|struct|sm_state
@@ -45,6 +41,56 @@ op_star
 id|hwdrv
 suffix:semicolon
 multiline_comment|/*&n;&t; * Hardware (soundcard) access routines state&n;&t; */
+r_struct
+(brace
+DECL|member|ibuf
+r_void
+op_star
+id|ibuf
+suffix:semicolon
+DECL|member|ifragsz
+r_int
+r_int
+id|ifragsz
+suffix:semicolon
+DECL|member|ifragptr
+r_int
+r_int
+id|ifragptr
+suffix:semicolon
+DECL|member|i16bit
+r_int
+r_int
+id|i16bit
+suffix:semicolon
+DECL|member|obuf
+r_void
+op_star
+id|obuf
+suffix:semicolon
+DECL|member|ofragsz
+r_int
+r_int
+id|ofragsz
+suffix:semicolon
+DECL|member|ofragptr
+r_int
+r_int
+id|ofragptr
+suffix:semicolon
+DECL|member|o16bit
+r_int
+r_int
+id|o16bit
+suffix:semicolon
+DECL|member|ptt_cnt
+r_int
+id|ptt_cnt
+suffix:semicolon
+DECL|member|dma
+)brace
+id|dma
+suffix:semicolon
 r_union
 (brace
 DECL|member|hw
@@ -194,16 +240,11 @@ DECL|member|bitrate
 r_int
 id|bitrate
 suffix:semicolon
-DECL|member|dmabuflenmodulo
-r_int
-r_int
-id|dmabuflenmodulo
-suffix:semicolon
-DECL|member|modulator
+DECL|member|modulator_u8
 r_void
 (paren
 op_star
-id|modulator
+id|modulator_u8
 )paren
 (paren
 r_struct
@@ -214,6 +255,25 @@ r_int
 r_char
 op_star
 comma
+r_int
+r_int
+)paren
+suffix:semicolon
+DECL|member|modulator_s16
+r_void
+(paren
+op_star
+id|modulator_s16
+)paren
+(paren
+r_struct
+id|sm_state
+op_star
+comma
+r_int
+op_star
+comma
+r_int
 r_int
 )paren
 suffix:semicolon
@@ -254,31 +314,52 @@ DECL|member|bitrate
 r_int
 id|bitrate
 suffix:semicolon
-DECL|member|dmabuflenmodulo
+DECL|member|overlap
 r_int
 r_int
-id|dmabuflenmodulo
+id|overlap
 suffix:semicolon
 DECL|member|sperbit
 r_int
 r_int
 id|sperbit
 suffix:semicolon
-DECL|member|demodulator
+DECL|member|demodulator_u8
 r_void
 (paren
 op_star
-id|demodulator
+id|demodulator_u8
 )paren
 (paren
 r_struct
 id|sm_state
 op_star
 comma
+r_const
 r_int
 r_char
 op_star
 comma
+r_int
+r_int
+)paren
+suffix:semicolon
+DECL|member|demodulator_s16
+r_void
+(paren
+op_star
+id|demodulator_s16
+)paren
+(paren
+r_struct
+id|sm_state
+op_star
+comma
+r_const
+r_int
+op_star
+comma
+r_int
 r_int
 )paren
 suffix:semicolon
@@ -1176,20 +1257,38 @@ suffix:semicolon
 )brace
 multiline_comment|/* --------------------------------------------------------------------- */
 multiline_comment|/*&n; * ===================== profiling =======================================&n; */
-macro_line|#if defined(SM_DEBUG) &amp;&amp; (defined(CONFIG_M586) || defined(CONFIG_M686))
+macro_line|#ifdef __i386__
+r_extern
+r_int
+id|sm_x86_capability
+suffix:semicolon
+DECL|macro|HAS_RDTSC
+mdefine_line|#define HAS_RDTSC (sm_x86_capability &amp; 0x10)
 multiline_comment|/*&n; * only do 32bit cycle counter arithmetic; we hope we won&squot;t overflow :-)&n; * in fact, overflowing modems would require over 2THz clock speeds :-)&n; */
 DECL|macro|time_exec
-mdefine_line|#define time_exec(var,cmd)                                      &bslash;&n;({                                                              &bslash;&n;&t;unsigned int cnt1, cnt2, cnt3;                          &bslash;&n;&t;__asm__(&quot;.byte 0x0f,0x31&quot; : &quot;=a&quot; (cnt1), &quot;=d&quot; (cnt3));  &bslash;&n;&t;cmd;                                                    &bslash;&n;&t;__asm__(&quot;.byte 0x0f,0x31&quot; : &quot;=a&quot; (cnt2), &quot;=d&quot; (cnt3));  &bslash;&n;&t;var = cnt2-cnt1;                                        &bslash;&n;})
-macro_line|#else /* defined(SM_DEBUG) &amp;&amp; (defined(CONFIG_M586) || defined(CONFIG_M686)) */
+mdefine_line|#define time_exec(var,cmd)                                              &bslash;&n;({                                                                      &bslash;&n;&t;if (HAS_RDTSC) {                                                &bslash;&n;&t;&t;unsigned int cnt1, cnt2, cnt3;                          &bslash;&n;&t;&t;__asm__(&quot;.byte 0x0f,0x31&quot; : &quot;=a&quot; (cnt1), &quot;=d&quot; (cnt3));  &bslash;&n;&t;&t;cmd;                                                    &bslash;&n;&t;&t;__asm__(&quot;.byte 0x0f,0x31&quot; : &quot;=a&quot; (cnt2), &quot;=d&quot; (cnt3));  &bslash;&n;&t;&t;var = cnt2-cnt1;                                        &bslash;&n;&t;} else {                                                        &bslash;&n;&t;&t;cmd;                                                    &bslash;&n;&t;}                                                               &bslash;&n;})
+macro_line|#else /* __i386__ */
 DECL|macro|time_exec
 mdefine_line|#define time_exec(var,cmd) cmd
-macro_line|#endif /* defined(SM_DEBUG) &amp;&amp; (defined(CONFIG_M586) || defined(CONFIG_M686)) */
+macro_line|#endif /* __i386__ */
 multiline_comment|/* --------------------------------------------------------------------- */
 r_extern
 r_const
 r_struct
 id|modem_tx_info
 id|sm_afsk1200_tx
+suffix:semicolon
+r_extern
+r_const
+r_struct
+id|modem_tx_info
+id|sm_afsk2400_7_tx
+suffix:semicolon
+r_extern
+r_const
+r_struct
+id|modem_tx_info
+id|sm_afsk2400_8_tx
 suffix:semicolon
 r_extern
 r_const
@@ -1244,6 +1343,18 @@ r_const
 r_struct
 id|modem_rx_info
 id|sm_afsk1200_rx
+suffix:semicolon
+r_extern
+r_const
+r_struct
+id|modem_rx_info
+id|sm_afsk2400_7_rx
+suffix:semicolon
+r_extern
+r_const
+r_struct
+id|modem_rx_info
+id|sm_afsk2400_8_rx
 suffix:semicolon
 r_extern
 r_const

@@ -142,9 +142,6 @@ comma
 multiline_comment|/* readlink */
 l_int|NULL
 comma
-multiline_comment|/* follow_link */
-l_int|NULL
-comma
 multiline_comment|/* readpage */
 l_int|NULL
 comma
@@ -850,31 +847,9 @@ id|de-&gt;inode
 )paren
 )paren
 (brace
-multiline_comment|/* We might block in the next section&n;&t;&t;&t;&t; * if the data destination is&n;&t;&t;&t;&t; * currently swapped out.  So, use a&n;&t;&t;&t;&t; * version stamp to detect whether or&n;&t;&t;&t;&t; * not the directory has been modified&n;&t;&t;&t;&t; * during the copy operation. */
+multiline_comment|/* We might block in the next section&n;&t;&t;&t;&t; * if the data destination is&n;&t;&t;&t;&t; * currently swapped out.  So, use a&n;&t;&t;&t;&t; * version stamp to detect whether or&n;&t;&t;&t;&t; * not the directory has been modified&n;&t;&t;&t;&t; * during the copy operation.&n;&t;&t;&t;&t; */
 r_int
 r_int
-id|version
-suffix:semicolon
-id|dcache_add
-c_func
-(paren
-id|inode
-comma
-id|de-&gt;name
-comma
-id|le16_to_cpu
-c_func
-(paren
-id|de-&gt;name_len
-)paren
-comma
-id|le32_to_cpu
-c_func
-(paren
-id|de-&gt;inode
-)paren
-)paren
-suffix:semicolon
 id|version
 op_assign
 id|inode-&gt;i_version

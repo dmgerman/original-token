@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: cgfourteen.c,v 1.19 1997/04/14 17:04:57 jj Exp $&n; * cgfourteen.c: Sun SparcStation console support.&n; *&n; * Copyright (C) 1995 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; * Copyright (C) 1996 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; *&n; * TODO:&n; *&n; * Add the ioctls for CLUT manipulation.&n; * Map only the amount requested, not a constant amount.&n; * XBGR mapping.&n; * Add the interrupt handler.&n;*/
+multiline_comment|/* $Id: cgfourteen.c,v 1.22 1997/06/04 08:27:27 davem Exp $&n; * cgfourteen.c: Sun SparcStation console support.&n; *&n; * Copyright (C) 1995 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; * Copyright (C) 1996 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; *&n; * TODO:&n; *&n; * Add the ioctls for CLUT manipulation.&n; * Map only the amount requested, not a constant amount.&n; * XBGR mapping.&n; * Add the interrupt handler.&n;*/
 macro_line|#include &lt;linux/kd.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
@@ -8,9 +8,10 @@ macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/fbio.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
-macro_line|#include &quot;../../char/vt_kern.h&quot;
-macro_line|#include &quot;../../char/selection.h&quot;
-macro_line|#include &quot;../../char/console_struct.h&quot;
+multiline_comment|/* These must be included after asm/fbio.h */
+macro_line|#include &lt;linux/vt_kern.h&gt;
+macro_line|#include &lt;linux/selection.h&gt;
+macro_line|#include &lt;linux/console_struct.h&gt;
 macro_line|#include &quot;fb.h&quot;
 DECL|macro|CG14_MCR_INTENABLE_SHIFT
 mdefine_line|#define CG14_MCR_INTENABLE_SHIFT&t;7
@@ -1044,8 +1045,12 @@ id|vma-&gt;vm_inode
 op_assign
 id|inode
 suffix:semicolon
+id|atomic_inc
+c_func
+(paren
+op_amp
 id|inode-&gt;i_count
-op_increment
+)paren
 suffix:semicolon
 r_return
 l_int|0

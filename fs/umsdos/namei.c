@@ -620,8 +620,12 @@ op_eq
 l_int|0
 )paren
 (brace
+id|atomic_inc
+c_func
+(paren
+op_amp
 id|dir-&gt;i_count
-op_increment
+)paren
 suffix:semicolon
 id|ret
 op_assign
@@ -675,7 +679,12 @@ l_string|&quot;inode %p[%d] &quot;
 comma
 id|inode
 comma
+id|atomic_read
+c_func
+(paren
+op_amp
 id|inode-&gt;i_count
+)paren
 )paren
 )paren
 suffix:semicolon
@@ -1136,11 +1145,19 @@ l_string|&quot;msdos_rename &quot;
 )paren
 )paren
 suffix:semicolon
+id|atomic_inc
+c_func
+(paren
+op_amp
 id|old_dir-&gt;i_count
-op_increment
+)paren
 suffix:semicolon
+id|atomic_inc
+c_func
+(paren
+op_amp
 id|new_dir-&gt;i_count
-op_increment
+)paren
 suffix:semicolon
 multiline_comment|/* Both inode are needed later */
 id|ret
@@ -1158,8 +1175,6 @@ comma
 id|new_info.fake.fname
 comma
 id|new_info.fake.len
-comma
-l_int|0
 )paren
 suffix:semicolon
 id|chkstk
@@ -1241,8 +1256,12 @@ id|inode
 op_star
 id|inode
 suffix:semicolon
+id|atomic_inc
+c_func
+(paren
+op_amp
 id|new_dir-&gt;i_count
-op_increment
+)paren
 suffix:semicolon
 id|PRINTK
 (paren
@@ -1429,8 +1448,12 @@ suffix:semicolon
 r_int
 id|ret
 suffix:semicolon
+id|atomic_inc
+c_func
+(paren
+op_amp
 id|dir-&gt;i_count
-op_increment
+)paren
 suffix:semicolon
 multiline_comment|/* We keep the inode in case we need it */
 multiline_comment|/* later */
@@ -1726,7 +1749,12 @@ id|oldinode-&gt;u.umsdos_i.i_dir_owner
 comma
 id|olddir
 comma
+id|atomic_read
+c_func
+(paren
+op_amp
 id|olddir-&gt;i_count
+)paren
 )paren
 )paren
 suffix:semicolon
@@ -1817,16 +1845,26 @@ op_eq
 l_int|0
 )paren
 (brace
-id|olddir-&gt;i_count
-op_add_assign
+id|atomic_add
+c_func
+(paren
 l_int|2
+comma
+op_amp
+id|olddir-&gt;i_count
+)paren
 suffix:semicolon
 id|PRINTK
 (paren
 (paren
 l_string|&quot;olddir[%d] &quot;
 comma
+id|atomic_read
+c_func
+(paren
+op_amp
 id|olddir-&gt;i_count
+)paren
 )paren
 )paren
 suffix:semicolon
@@ -1894,7 +1932,12 @@ id|PRINTK
 (paren
 l_string|&quot;olddir[%d] &quot;
 comma
+id|atomic_read
+c_func
+(paren
+op_amp
 id|olddir-&gt;i_count
+)paren
 )paren
 )paren
 suffix:semicolon
@@ -1912,7 +1955,12 @@ id|PRINTK
 (paren
 l_string|&quot;olddir[%d] &quot;
 comma
+id|atomic_read
+c_func
+(paren
+op_amp
 id|olddir-&gt;i_count
+)paren
 )paren
 )paren
 suffix:semicolon
@@ -1924,8 +1972,12 @@ op_eq
 l_int|0
 )paren
 (brace
+id|atomic_inc
+c_func
+(paren
+op_amp
 id|olddir-&gt;i_count
-op_increment
+)paren
 suffix:semicolon
 id|ret
 op_assign
@@ -1954,8 +2006,12 @@ op_eq
 l_int|0
 )paren
 (brace
+id|atomic_inc
+c_func
+(paren
+op_amp
 id|dir-&gt;i_count
-op_increment
+)paren
 suffix:semicolon
 id|ret
 op_assign
@@ -2038,8 +2094,12 @@ op_eq
 l_int|0
 )paren
 (brace
+id|atomic_inc
+c_func
+(paren
+op_amp
 id|dir-&gt;i_count
-op_increment
+)paren
 suffix:semicolon
 id|ret
 op_assign
@@ -2350,8 +2410,12 @@ op_eq
 l_int|0
 )paren
 (brace
+id|atomic_inc
+c_func
+(paren
+op_amp
 id|dir-&gt;i_count
-op_increment
+)paren
 suffix:semicolon
 id|ret
 op_assign
@@ -2608,8 +2672,12 @@ id|inode
 op_star
 id|sdir
 suffix:semicolon
+id|atomic_inc
+c_func
+(paren
+op_amp
 id|dir-&gt;i_count
-op_increment
+)paren
 suffix:semicolon
 id|ret
 op_assign
@@ -2654,7 +2722,12 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|atomic_read
+c_func
+(paren
+op_amp
 id|sdir-&gt;i_count
+)paren
 OG
 l_int|1
 )paren
@@ -2688,7 +2761,12 @@ l_string|&quot;isempty %d i_count %d &quot;
 comma
 id|empty
 comma
+id|atomic_read
+c_func
+(paren
+op_amp
 id|sdir-&gt;i_count
+)paren
 )paren
 )paren
 suffix:semicolon
@@ -2776,8 +2854,12 @@ r_struct
 id|umsdos_info
 id|info
 suffix:semicolon
+id|atomic_inc
+c_func
+(paren
+op_amp
 id|dir-&gt;i_count
-op_increment
+)paren
 suffix:semicolon
 id|umsdos_parse
 (paren
@@ -3037,8 +3119,12 @@ id|inode
 op_star
 id|inode
 suffix:semicolon
+id|atomic_inc
+c_func
+(paren
+op_amp
 id|dir-&gt;i_count
-op_increment
+)paren
 suffix:semicolon
 id|ret
 op_assign
@@ -3205,8 +3291,12 @@ id|info.fake.fname
 )paren
 )paren
 suffix:semicolon
+id|atomic_inc
+c_func
+(paren
+op_amp
 id|dir-&gt;i_count
-op_increment
+)paren
 suffix:semicolon
 id|ret
 op_assign
@@ -3310,9 +3400,6 @@ id|new_name
 comma
 r_int
 id|new_len
-comma
-r_int
-id|must_be_dir
 )paren
 (brace
 multiline_comment|/* #Specification: weakness / rename&n;&t;&t;There is a case where UMSDOS rename has a different behavior&n;&t;&t;than normal UNIX file system. Renaming an open file across&n;&t;&t;directory boundary does not work. Renaming an open file within&n;&t;&t;a directory does work however.&n;&n;&t;&t;The problem (not sure) is in the linux VFS msdos driver.&n;&t;&t;I believe this is not a bug but a design feature, because&n;&t;&t;an inode number represent some sort of directory address&n;&t;&t;in the MSDOS directory structure. So moving the file into&n;&t;&t;another directory does not preserve the inode number.&n;&t;*/
@@ -3341,11 +3428,19 @@ l_int|0
 )paren
 (brace
 multiline_comment|/* umsdos_rename_f eat the inode and we may need those later */
+id|atomic_inc
+c_func
+(paren
+op_amp
 id|old_dir-&gt;i_count
-op_increment
+)paren
 suffix:semicolon
+id|atomic_inc
+c_func
+(paren
+op_amp
 id|new_dir-&gt;i_count
-op_increment
+)paren
 suffix:semicolon
 id|ret
 op_assign
@@ -3378,8 +3473,12 @@ id|EEXIST
 multiline_comment|/* #Specification: rename / new name exist&n;&t;&t;&t;        If the destination name already exist, it will&n;&t;&t;&t;&t;silently be removed. EXT2 does it this way&n;&t;&t;&t;&t;and this is the spec of SUNOS. So does UMSDOS.&n;&n;&t;&t;&t;&t;If the destination is an empty directory it will&n;&t;&t;&t;&t;also be removed.&n;&t;&t;&t;*/
 multiline_comment|/* #Specification: rename / new name exist / possible flaw&n;&t;&t;&t;&t;The code to handle the deletion of the target (file&n;&t;&t;&t;&t;and directory) use to be in umsdos_rename_f, surrounded&n;&t;&t;&t;&t;by proper directory locking. This was insuring that only&n;&t;&t;&t;&t;one process could achieve a rename (modification) operation&n;&t;&t;&t;&t;in the source and destination directory. This was also&n;&t;&t;&t;&t;insuring the operation was &quot;atomic&quot;.&n;&n;&t;&t;&t;&t;This has been changed because this was creating a kernel&n;&t;&t;&t;&t;stack overflow (stack is only 4k in the kernel). To avoid&n;&t;&t;&t;&t;the code doing the deletion of the target (if exist) has&n;&t;&t;&t;&t;been moved to a upper layer. umsdos_rename_f is tried&n;&t;&t;&t;&t;once and if it fails with EEXIST, the target is removed&n;&t;&t;&t;&t;and umsdos_rename_f is done again.&n;&n;&t;&t;&t;&t;This makes the code cleaner and (not sure) solve a&n;&t;&t;&t;&t;deadlock problem one tester was experiencing.&n;&n;&t;&t;&t;&t;The point is to mention that possibly, the semantic of&n;&t;&t;&t;&t;&quot;rename&quot; may be wrong. Anyone dare to check that :-)&n;&t;&t;&t;&t;Be aware that IF it is wrong, to produce the problem you&n;&t;&t;&t;&t;will need two process trying to rename a file to the&n;&t;&t;&t;&t;same target at the same time. Again, I am not sure it&n;&t;&t;&t;&t;is a problem at all.&n;&t;&t;&t;*/
 multiline_comment|/* This is not super efficient but should work */
+id|atomic_inc
+c_func
+(paren
+op_amp
 id|new_dir-&gt;i_count
-op_increment
+)paren
 suffix:semicolon
 id|ret
 op_assign
@@ -3417,8 +3516,12 @@ op_minus
 id|EISDIR
 )paren
 (brace
+id|atomic_inc
+c_func
+(paren
+op_amp
 id|new_dir-&gt;i_count
-op_increment
+)paren
 suffix:semicolon
 id|ret
 op_assign

@@ -263,6 +263,8 @@ c_func
 id|sk
 comma
 id|len
+op_plus
+id|dev-&gt;hard_header_len
 comma
 l_int|0
 comma
@@ -284,6 +286,15 @@ id|ENOBUFS
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; *&t;Fill it in &n;&t; */
+multiline_comment|/* FIXME: Save some space for broken drivers that write a&n;&t; * hard header at transmission time by themselves. PPP is the&n;&t; * notable one here. This should really be fixed at the driver level.&n;&t; */
+id|skb_reserve
+c_func
+(paren
+id|skb
+comma
+id|dev-&gt;hard_header_len
+)paren
+suffix:semicolon
 id|err
 op_assign
 id|memcpy_fromiovec

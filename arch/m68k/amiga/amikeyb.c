@@ -11,31 +11,24 @@ macro_line|#include &lt;linux/kd.h&gt;
 macro_line|#include &lt;linux/random.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/kbd_ll.h&gt;
 macro_line|#include &lt;asm/amigaints.h&gt;
 macro_line|#include &lt;asm/amigahw.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
-r_extern
-r_void
-id|handle_scancode
-c_func
-(paren
-r_int
-r_char
-)paren
-suffix:semicolon
 DECL|macro|AMIKEY_CAPS
 mdefine_line|#define AMIKEY_CAPS&t;(0x62)
 DECL|macro|BREAK_MASK
 mdefine_line|#define BREAK_MASK&t;(0x80)
 DECL|macro|RESET_WARNING
 mdefine_line|#define RESET_WARNING&t;(0xf0)&t;/* before rotation */
-DECL|variable|amiplain_map
+DECL|variable|__initdata
 r_static
 id|u_short
 id|amiplain_map
 (braket
 id|NR_KEYS
 )braket
+id|__initdata
 op_assign
 (brace
 l_int|0xf060
@@ -1953,12 +1946,6 @@ comma
 id|amikeyb_rep
 )brace
 suffix:semicolon
-r_extern
-r_struct
-id|pt_regs
-op_star
-id|pt_regs
-suffix:semicolon
 DECL|function|amikeyb_rep
 r_static
 r_void
@@ -1985,7 +1972,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|pt_regs
+id|kbd_pt_regs
 op_assign
 l_int|NULL
 suffix:semicolon
@@ -2053,13 +2040,8 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* save frame for register dump */
-id|pt_regs
+id|kbd_pt_regs
 op_assign
-(paren
-r_struct
-id|pt_regs
-op_star
-)paren
 id|fp
 suffix:semicolon
 multiline_comment|/* get and invert scancode (keyboard is active low) */
@@ -2399,12 +2381,18 @@ op_minus
 id|EIO
 suffix:semicolon
 multiline_comment|/* setup key map */
-id|key_maps
-(braket
-l_int|0
-)braket
-op_assign
+id|memcpy
+c_func
+(paren
+id|plain_map
+comma
 id|amiplain_map
+comma
+r_sizeof
+(paren
+id|plain_map
+)paren
+)paren
 suffix:semicolon
 id|key_maps
 (braket
@@ -2447,19 +2435,6 @@ l_int|12
 )braket
 op_assign
 id|amictrl_alt_map
-suffix:semicolon
-id|memcpy
-c_func
-(paren
-id|plain_map
-comma
-id|amiplain_map
-comma
-r_sizeof
-(paren
-id|plain_map
-)paren
-)paren
 suffix:semicolon
 multiline_comment|/*&n;     * Initialize serial data direction.&n;     */
 id|ciaa.cra

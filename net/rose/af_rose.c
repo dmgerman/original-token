@@ -424,12 +424,6 @@ op_star
 id|sk
 )paren
 (brace
-id|kfree
-c_func
-(paren
-id|sk-&gt;protinfo.rose
-)paren
-suffix:semicolon
 id|sk_free
 c_func
 (paren

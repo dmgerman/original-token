@@ -140,12 +140,6 @@ op_star
 id|sk
 )paren
 (brace
-id|kfree
-c_func
-(paren
-id|sk-&gt;protinfo.nr
-)paren
-suffix:semicolon
 id|sk_free
 c_func
 (paren

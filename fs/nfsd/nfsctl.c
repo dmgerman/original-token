@@ -28,8 +28,8 @@ macro_line|# define copy_to_user&t;&t;memcpy_tofs
 DECL|macro|access_ok
 macro_line|# define access_ok&t;&t;!verify_area
 macro_line|#endif
-macro_line|#include &lt;asm/smp.h&gt;
-macro_line|#include &lt;asm/smp_lock.h&gt;
+macro_line|#include &lt;linux/smp.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 r_extern
 r_int
 id|sys_call_table
@@ -804,12 +804,6 @@ l_string|&quot;Olaf Kirch &lt;okir@monad.swb.de&gt;&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
-DECL|variable|old_syscallvec
-r_static
-r_int
-r_int
-id|old_syscallvec
-suffix:semicolon
 r_extern
 r_int
 (paren

@@ -29,6 +29,20 @@ macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/checksum.h&gt;
 DECL|macro|min
 mdefine_line|#define min(a,b)&t;(((a)&lt;(b))?(a):(b))
+DECL|variable|sysctl_unix_delete_delay
+r_int
+id|sysctl_unix_delete_delay
+op_assign
+id|HZ
+suffix:semicolon
+DECL|variable|sysctl_unix_destroy_delay
+r_int
+id|sysctl_unix_destroy_delay
+op_assign
+l_int|10
+op_star
+id|HZ
+suffix:semicolon
 DECL|variable|unix_socket_table
 id|unix_socket
 op_star
@@ -213,6 +227,32 @@ id|addr
 )paren
 suffix:semicolon
 )brace
+)brace
+DECL|function|unix_destruct_addr
+r_static
+r_void
+id|unix_destruct_addr
+c_func
+(paren
+r_struct
+id|sock
+op_star
+id|sk
+)paren
+(brace
+r_struct
+id|unix_address
+op_star
+id|addr
+op_assign
+id|sk-&gt;protinfo.af_unix.addr
+suffix:semicolon
+id|unix_release_addr
+c_func
+(paren
+id|addr
+)paren
+suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;Check unix socket name:&n; *&t;&t;- should be not zero length.&n; *&t;        - if started by not zero, should be NULL terminated (FS object)&n; *&t;&t;- if started by zero, it is abstract name.&n; */
 DECL|function|unix_mkname
@@ -656,12 +696,6 @@ op_eq
 l_int|0
 )paren
 (brace
-id|unix_release_addr
-c_func
-(paren
-id|sk-&gt;protinfo.af_unix.addr
-)paren
-suffix:semicolon
 id|sk_free
 c_func
 (paren
@@ -676,9 +710,7 @@ id|sk-&gt;timer.expires
 op_assign
 id|jiffies
 op_plus
-l_int|10
-op_star
-id|HZ
+id|sysctl_unix_destroy_delay
 suffix:semicolon
 multiline_comment|/* No real hurry try it every 10 seconds or so */
 id|add_timer
@@ -712,7 +744,7 @@ id|sk-&gt;timer.expires
 op_assign
 id|jiffies
 op_plus
-id|HZ
+id|sysctl_unix_delete_delay
 suffix:semicolon
 multiline_comment|/* Normally 1 second after will clean up. After that we try every 10 */
 id|sk-&gt;timer.function
@@ -856,12 +888,6 @@ op_eq
 l_int|0
 )paren
 (brace
-id|unix_release_addr
-c_func
-(paren
-id|sk-&gt;protinfo.af_unix.addr
-)paren
-suffix:semicolon
 id|sk_free
 c_func
 (paren
@@ -1084,6 +1110,10 @@ id|sock
 comma
 id|sk
 )paren
+suffix:semicolon
+id|sk-&gt;destruct
+op_assign
+id|unix_destruct_addr
 suffix:semicolon
 id|sk-&gt;protinfo.af_unix.family
 op_assign
@@ -3101,8 +3131,12 @@ c_cond
 id|sk-&gt;protinfo.af_unix.inode
 )paren
 (brace
+id|atomic_inc
+c_func
+(paren
+op_amp
 id|sk-&gt;protinfo.af_unix.inode-&gt;i_count
-op_increment
+)paren
 suffix:semicolon
 id|newsk-&gt;protinfo.af_unix.inode
 op_assign

@@ -148,7 +148,12 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|atomic_read
+c_func
+(paren
+op_amp
 id|inode-&gt;i_count
+)paren
 op_ne
 l_int|1
 )paren
@@ -158,7 +163,12 @@ c_func
 (paren
 l_string|&quot;sysv_free_inode: inode has count=%d&bslash;n&quot;
 comma
+id|atomic_read
+c_func
+(paren
+op_amp
 id|inode-&gt;i_count
+)paren
 )paren
 suffix:semicolon
 r_return
@@ -726,9 +736,14 @@ op_assign
 l_int|1
 suffix:semicolon
 multiline_comment|/* and needs time stamp */
+id|atomic_set
+c_func
+(paren
+op_amp
 id|inode-&gt;i_count
-op_assign
+comma
 l_int|1
+)paren
 suffix:semicolon
 id|inode-&gt;i_nlink
 op_assign

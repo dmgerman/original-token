@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: process.c,v 1.12 1997/05/23 09:35:43 jj Exp $&n; *  arch/sparc64/kernel/process.c&n; *&n; *  Copyright (C) 1995, 1996 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1996 Eddie C. Dost   (ecd@skynet.be)&n; *  Copyright (C) 1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/*  $Id: process.c,v 1.17 1997/06/02 06:33:32 davem Exp $&n; *  arch/sparc64/kernel/process.c&n; *&n; *  Copyright (C) 1995, 1996 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1996 Eddie C. Dost   (ecd@skynet.be)&n; *  Copyright (C) 1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 multiline_comment|/*&n; * This file handles the architecture-dependent parts of process handling..&n; */
 DECL|macro|__KERNEL_SYSCALLS__
 mdefine_line|#define __KERNEL_SYSCALLS__
@@ -1635,6 +1635,58 @@ id|PF_USEDFPU
 )paren
 (brace
 macro_line|#endif
+id|fprs_write
+c_func
+(paren
+id|FPRS_FEF
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|current-&gt;tss.flags
+op_amp
+id|SPARC_FLAG_32BIT
+)paren
+(brace
+id|fpsave32
+c_func
+(paren
+(paren
+r_int
+r_int
+op_star
+)paren
+op_amp
+id|current-&gt;tss.float_regs
+(braket
+l_int|0
+)braket
+comma
+op_amp
+id|current-&gt;tss.fsr
+)paren
+suffix:semicolon
+)brace
+r_else
+id|fpsave
+c_func
+(paren
+(paren
+r_int
+r_int
+op_star
+)paren
+op_amp
+id|current-&gt;tss.float_regs
+(braket
+l_int|0
+)braket
+comma
+op_amp
+id|current-&gt;tss.fsr
+)paren
+suffix:semicolon
 macro_line|#ifndef __SMP__
 id|last_task_used_math
 op_assign
@@ -1693,6 +1745,58 @@ id|PF_USEDFPU
 )paren
 (brace
 macro_line|#endif
+id|fprs_write
+c_func
+(paren
+id|FPRS_FEF
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|current-&gt;tss.flags
+op_amp
+id|SPARC_FLAG_32BIT
+)paren
+(brace
+id|fpsave32
+c_func
+(paren
+(paren
+r_int
+r_int
+op_star
+)paren
+op_amp
+id|current-&gt;tss.float_regs
+(braket
+l_int|0
+)braket
+comma
+op_amp
+id|current-&gt;tss.fsr
+)paren
+suffix:semicolon
+)brace
+r_else
+id|fpsave
+c_func
+(paren
+(paren
+r_int
+r_int
+op_star
+)paren
+op_amp
+id|current-&gt;tss.float_regs
+(braket
+l_int|0
+)braket
+comma
+op_amp
+id|current-&gt;tss.fsr
+)paren
+suffix:semicolon
 macro_line|#ifndef __SMP__
 id|last_task_used_math
 op_assign
@@ -1973,6 +2077,7 @@ r_return
 id|sp
 suffix:semicolon
 )brace
+multiline_comment|/* #define DEBUG_WINFIXUPS */
 multiline_comment|/* Standard stuff. */
 DECL|function|shift_window_buffer
 r_static
@@ -2068,8 +2173,6 @@ suffix:semicolon
 r_int
 r_int
 id|window
-op_assign
-id|tp-&gt;w_saved
 suffix:semicolon
 id|flush_user_windows
 c_func
@@ -2079,7 +2182,13 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+(paren
 id|window
+op_assign
+id|tp-&gt;w_saved
+)paren
+op_ne
+l_int|0
 )paren
 (brace
 r_int
@@ -2087,6 +2196,19 @@ id|winsize
 op_assign
 id|REGWIN_SZ
 suffix:semicolon
+macro_line|#ifdef DEBUG_WINFIXUPS
+id|printk
+c_func
+(paren
+l_string|&quot;sus(%d&quot;
+comma
+(paren
+r_int
+)paren
+id|window
+)paren
+suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -2171,6 +2293,14 @@ op_decrement
 (brace
 suffix:semicolon
 )brace
+macro_line|#ifdef DEBUG_WINFIXUPS
+id|printk
+c_func
+(paren
+l_string|&quot;)&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
 )brace
 )brace
 DECL|function|fault_in_user_windows
@@ -2195,8 +2325,6 @@ suffix:semicolon
 r_int
 r_int
 id|window
-op_assign
-id|tp-&gt;w_saved
 suffix:semicolon
 r_int
 id|winsize
@@ -2216,10 +2344,34 @@ op_assign
 id|REGWIN32_SZ
 suffix:semicolon
 )brace
+id|flush_user_windows
+c_func
+(paren
+)paren
+suffix:semicolon
+id|window
+op_assign
+id|tp-&gt;w_saved
+suffix:semicolon
+macro_line|#ifdef DEBUG_WINFIXUPS
+id|printk
+c_func
+(paren
+l_string|&quot;fiuw(%d&quot;
+comma
+(paren
+r_int
+)paren
+id|window
+)paren
+suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
 id|window
+op_ne
+l_int|0
 )paren
 (brace
 id|window
@@ -2288,6 +2440,14 @@ id|current-&gt;tss.w_saved
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#ifdef DEBUG_WINFIXUPS
+id|printk
+c_func
+(paren
+l_string|&quot;)&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
 )brace
 multiline_comment|/* Copy a Sparc thread.  The fork() return value conventions&n; * under SunOS are nothing short of bletcherous:&n; * Parent --&gt;  %o0 == childs  pid, %o1 == 0&n; * Child  --&gt;  %o0 == parents pid, %o1 == 1&n; *&n; * NOTE: We have a separate fork kpsr/kwim because&n; *       the parent could change these values between&n; *       sys_fork invocation and when we reach here&n; *       if the parent should sleep while trying to&n; *       allocate the task_struct and kernel stack in&n; *       do_fork().&n; */
 r_extern
@@ -2342,7 +2502,6 @@ r_int
 r_int
 id|stack_offset
 suffix:semicolon
-macro_line|#if 0
 macro_line|#ifndef __SMP__
 r_if
 c_cond
@@ -2362,20 +2521,20 @@ id|PF_USEDFPU
 )paren
 (brace
 macro_line|#endif
-id|put_psr
+id|fprs_write
 c_func
 (paren
-id|get_psr
-c_func
-(paren
-)paren
-op_or
-id|PSR_EF
+id|FPRS_FEF
 )paren
 suffix:semicolon
 id|fpsave
 c_func
 (paren
+(paren
+r_int
+r_int
+op_star
+)paren
 op_amp
 id|p-&gt;tss.float_regs
 (braket
@@ -2394,7 +2553,6 @@ id|PF_USEDFPU
 suffix:semicolon
 macro_line|#endif
 )brace
-macro_line|#endif&t;
 multiline_comment|/* Calculate offset to stack_frame &amp; pt_regs */
 id|stack_offset
 op_assign

@@ -68,8 +68,7 @@ mdefine_line|#define write_unlock_irqrestore(lock, flags)&t;restore_flags(flags)
 macro_line|#else /* !(__SMP__) */
 macro_line|#include &lt;asm/psr.h&gt;
 multiline_comment|/* Define this to use the verbose/debugging versions in arch/sparc/lib/debuglocks.c */
-DECL|macro|SPIN_LOCK_DEBUG
-mdefine_line|#define SPIN_LOCK_DEBUG
+multiline_comment|/* #define SPIN_LOCK_DEBUG */
 macro_line|#ifdef SPIN_LOCK_DEBUG
 DECL|struct|_spinlock_debug
 r_struct

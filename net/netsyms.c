@@ -1450,6 +1450,39 @@ c_func
 id|arp_rcv
 )paren
 suffix:semicolon
+macro_line|#if defined(CONFIG_ATALK) || defined(CONFIG_ATALK_MODULE) 
+macro_line|#include&lt;linux/if_ltalk.h&gt;
+DECL|variable|ltalk_setup
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|ltalk_setup
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_DLCI_MODULE
+r_extern
+r_int
+(paren
+op_star
+id|dlci_ioctl_hook
+)paren
+(paren
+r_int
+r_int
+comma
+r_void
+op_star
+)paren
+suffix:semicolon
+DECL|variable|dlci_ioctl_hook
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|dlci_ioctl_hook
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#endif  /* CONFIG_NET */
 macro_line|#ifdef CONFIG_NETLINK
 DECL|variable|netlink_attach

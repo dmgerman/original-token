@@ -1288,8 +1288,12 @@ r_return
 op_minus
 id|EPERM
 suffix:semicolon
+id|atomic_inc
+c_func
+(paren
+op_amp
 id|exp-&gt;ex_inode-&gt;i_count
-op_increment
+)paren
 suffix:semicolon
 id|fh_compose
 c_func

@@ -27,7 +27,6 @@ r_int
 id|value
 suffix:semicolon
 multiline_comment|/* VKEY_UP, VKEY_DOWN or delta */
-multiline_comment|/* XXX Timeval could hose old 32-bit programs, investigate and fixme XXX */
 DECL|member|time
 r_struct
 id|timeval

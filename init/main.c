@@ -22,6 +22,7 @@ macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/slab.h&gt;
 macro_line|#include &lt;linux/major.h&gt;
 macro_line|#include &lt;linux/blk.h&gt;
+macro_line|#include &lt;linux/nametrans.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#ifdef CONFIG_ROOT_NFS
 macro_line|#include &lt;linux/nfs_fs.h&gt;
@@ -161,6 +162,14 @@ r_void
 suffix:semicolon
 r_extern
 r_void
+id|filescache_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_void
 id|smp_setup
 c_func
 (paren
@@ -287,6 +296,22 @@ op_star
 id|ints
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_DECNET
+r_extern
+r_void
+id|decnet_setup
+c_func
+(paren
+r_char
+op_star
+id|str
+comma
+r_int
+op_star
+id|ints
+)paren
+suffix:semicolon
+macro_line|#endif
 r_extern
 r_void
 id|xd_setup
@@ -1736,6 +1761,14 @@ id|eth_setup
 )brace
 comma
 macro_line|#endif
+macro_line|#ifdef CONFIG_DECNET
+(brace
+l_string|&quot;decnet=&quot;
+comma
+id|decnet_setup
+)brace
+comma
+macro_line|#endif
 macro_line|#ifdef CONFIG_PRINTER
 (brace
 l_string|&quot;lp=&quot;
@@ -2496,6 +2529,35 @@ id|ide_setup
 c_func
 (paren
 id|line
+)paren
+suffix:semicolon
+r_return
+l_int|1
+suffix:semicolon
+)brace
+macro_line|#endif
+macro_line|#ifdef CONFIG_TRANS_NAMES
+r_if
+c_cond
+(paren
+op_logical_neg
+id|strncmp
+c_func
+(paren
+id|line
+comma
+l_string|&quot;nametrans=&quot;
+comma
+l_int|10
+)paren
+)paren
+(brace
+id|nametrans_setup
+c_func
+(paren
+id|line
+op_plus
+l_int|10
 )paren
 suffix:semicolon
 r_return
@@ -4017,6 +4079,11 @@ c_func
 suffix:semicolon
 macro_line|#endif
 id|uidcache_init
+c_func
+(paren
+)paren
+suffix:semicolon
+id|filescache_init
 c_func
 (paren
 )paren

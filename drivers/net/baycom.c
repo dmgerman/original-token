@@ -1,5 +1,5 @@
 multiline_comment|/*****************************************************************************/
-multiline_comment|/*&n; *&t;baycom.c  -- baycom ser12 and par96 radio modem driver.&n; *&n; *&t;Copyright (C) 1996  Thomas Sailer (sailer@ife.ee.ethz.ch)&n; *&n; *&t;This program is free software; you can redistribute it and/or modify&n; *&t;it under the terms of the GNU General Public License as published by&n; *&t;the Free Software Foundation; either version 2 of the License, or&n; *&t;(at your option) any later version.&n; *&n; *&t;This program is distributed in the hope that it will be useful,&n; *&t;but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *&t;MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *&t;GNU General Public License for more details.&n; *&n; *&t;You should have received a copy of the GNU General Public License&n; *&t;along with this program; if not, write to the Free Software&n; *&t;Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; *  Please note that the GPL allows you to use the driver, NOT the radio.&n; *  In order to use the radio, you need a license from the communications&n; *  authority of your country.&n; *&n; *&n; *  Supported modems&n; *&n; *  ser12:  This is a very simple 1200 baud AFSK modem. The modem consists only&n; *          of a modulator/demodulator chip, usually a TI TCM3105. The computer&n; *          is responsible for regenerating the receiver bit clock, as well as&n; *          for handling the HDLC protocol. The modem connects to a serial port,&n; *          hence the name. Since the serial port is not used as an async serial&n; *          port, the kernel driver for serial ports cannot be used, and this&n; *          driver only supports standard serial hardware (8250, 16450, 16550)&n; *&n; *  par96:  This is a modem for 9600 baud FSK compatible to the G3RUH standard.&n; *          The modem does all the filtering and regenerates the receiver clock.&n; *          Data is transferred from and to the PC via a shift register.&n; *          The shift register is filled with 16 bits and an interrupt is&n; *          signalled. The PC then empties the shift register in a burst. This&n; *          modem connects to the parallel port, hence the name. The modem&n; *          leaves the implementation of the HDLC protocol and the scrambler&n; *          polynomial to the PC. This modem is no longer available (at least&n; *          from Baycom) and has been replaced by the PICPAR modem (see below).&n; *          You may however still build one from the schematics published in&n; *          cq-DL :-).&n; *&n; *  picpar: This is a redesign of the par96 modem by Henning Rech, DF9IC. The&n; *          modem is protocol compatible to par96, but uses only three low&n; *          power ICs and can therefore be fed from the parallel port and&n; *          does not require an additional power supply. It features&n; *          built in DCD circuitry. The driver should therefore be configured&n; *          for hardware DCD.&n; *&n; *&n; *  Command line options (insmod command line)&n; *&n; *  mode     driver mode string. Valid choices are ser12 and par96. An&n; *           optional * enables software DCD.&n; *           2=par96/par97, any other value invalid&n; *  iobase   base address of the port; common values are for ser12 0x3f8,&n; *           0x2f8, 0x3e8, 0x2e8 and for par96/par97 0x378, 0x278, 0x3bc&n; *  irq      interrupt line of the port; common values are for ser12 3,4&n; *           and for par96/par97 7&n; *&n; *&n; *  History:&n; *   0.1  26.06.96  Adapted from baycom.c and made network driver interface&n; *        18.10.96  Changed to new user space access routines (copy_{to,from}_user)&n; */
+multiline_comment|/*&n; *&t;baycom.c  -- baycom ser12 and par96 radio modem driver.&n; *&n; *&t;Copyright (C) 1996  Thomas Sailer (sailer@ife.ee.ethz.ch)&n; *&n; *&t;This program is free software; you can redistribute it and/or modify&n; *&t;it under the terms of the GNU General Public License as published by&n; *&t;the Free Software Foundation; either version 2 of the License, or&n; *&t;(at your option) any later version.&n; *&n; *&t;This program is distributed in the hope that it will be useful,&n; *&t;but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *&t;MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *&t;GNU General Public License for more details.&n; *&n; *&t;You should have received a copy of the GNU General Public License&n; *&t;along with this program; if not, write to the Free Software&n; *&t;Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; *  Please note that the GPL allows you to use the driver, NOT the radio.&n; *  In order to use the radio, you need a license from the communications&n; *  authority of your country.&n; *&n; *&n; *  Supported modems&n; *&n; *  ser12:  This is a very simple 1200 baud AFSK modem. The modem consists only&n; *          of a modulator/demodulator chip, usually a TI TCM3105. The computer&n; *          is responsible for regenerating the receiver bit clock, as well as&n; *          for handling the HDLC protocol. The modem connects to a serial port,&n; *          hence the name. Since the serial port is not used as an async serial&n; *          port, the kernel driver for serial ports cannot be used, and this&n; *          driver only supports standard serial hardware (8250, 16450, 16550)&n; *&n; *  par96:  This is a modem for 9600 baud FSK compatible to the G3RUH standard.&n; *          The modem does all the filtering and regenerates the receiver clock.&n; *          Data is transferred from and to the PC via a shift register.&n; *          The shift register is filled with 16 bits and an interrupt is&n; *          signalled. The PC then empties the shift register in a burst. This&n; *          modem connects to the parallel port, hence the name. The modem&n; *          leaves the implementation of the HDLC protocol and the scrambler&n; *          polynomial to the PC. This modem is no longer available (at least&n; *          from Baycom) and has been replaced by the PICPAR modem (see below).&n; *          You may however still build one from the schematics published in&n; *          cq-DL :-).&n; *&n; *  picpar: This is a redesign of the par96 modem by Henning Rech, DF9IC. The&n; *          modem is protocol compatible to par96, but uses only three low&n; *          power ICs and can therefore be fed from the parallel port and&n; *          does not require an additional power supply. It features&n; *          built in DCD circuitry. The driver should therefore be configured&n; *          for hardware DCD.&n; *&n; *&n; *  Command line options (insmod command line)&n; *&n; *  mode     driver mode string. Valid choices are ser12 and par96. An&n; *           optional * enables software DCD.&n; *           2=par96/par97, any other value invalid&n; *  iobase   base address of the port; common values are for ser12 0x3f8,&n; *           0x2f8, 0x3e8, 0x2e8 and for par96/par97 0x378, 0x278, 0x3bc&n; *  irq      interrupt line of the port; common values are for ser12 3,4&n; *           and for par96/par97 7&n; *&n; *&n; *  History:&n; *   0.1  26.06.96  Adapted from baycom.c and made network driver interface&n; *        18.10.96  Changed to new user space access routines (copy_{to,from}_user)&n; *   0.3  26.04.96  init code/data tagged&n; */
 multiline_comment|/*****************************************************************************/
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -18,7 +18,6 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/hdlcdrv.h&gt;
 macro_line|#include &lt;linux/baycom.h&gt;
-macro_line|#include &lt;linux/init.h&gt;
 multiline_comment|/* --------------------------------------------------------------------- */
 multiline_comment|/*&n; * currently this module is supposed to support both module styles, i.e.&n; * the old one present up to about 2.1.9, and the new one functioning&n; * starting with 2.1.21. The reason is I have a kit allowing to compile&n; * this module also under 2.0.x which was requested by several people.&n; * This will go in 2.2&n; */
 macro_line|#include &lt;linux/version.h&gt;
@@ -147,6 +146,16 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#endif
+macro_line|#if LINUX_VERSION_CODE &gt;= 0x20123
+macro_line|#include &lt;linux/init.h&gt;
+macro_line|#else
+DECL|macro|__init
+mdefine_line|#define __init
+DECL|macro|__initdata
+mdefine_line|#define __initdata
+DECL|macro|__initfunc
+mdefine_line|#define __initfunc(x) x
 macro_line|#endif
 multiline_comment|/* --------------------------------------------------------------------- */
 DECL|macro|BAYCOM_DEBUG
@@ -4161,12 +4170,16 @@ l_string|&quot;Baycom ser12, par96 and picpar amateur radio modem driver&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
-DECL|function|init_module
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|init_module
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 id|baycom_ports

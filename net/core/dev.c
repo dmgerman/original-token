@@ -4190,9 +4190,6 @@ r_case
 id|SIOCGIFHWADDR
 suffix:colon
 r_case
-id|SIOCSIFHWADDR
-suffix:colon
-r_case
 id|SIOCGIFSLAVE
 suffix:colon
 r_case
@@ -4222,6 +4219,9 @@ id|SIOCSIFMTU
 suffix:colon
 r_case
 id|SIOCSIFMEM
+suffix:colon
+r_case
+id|SIOCSIFHWADDR
 suffix:colon
 r_case
 id|SIOCSIFMAP

@@ -831,6 +831,10 @@ comma
 id|count
 )paren
 suffix:semicolon
+id|inode-&gt;i_status
+op_or_assign
+id|ST_MODIFIED
+suffix:semicolon
 id|up
 c_func
 (paren
@@ -1229,6 +1233,7 @@ suffix:semicolon
 id|count
 op_decrement
 suffix:semicolon
+multiline_comment|/* Any particular reason why we do not grab the inode semaphore&n;&t;&t; * when doing writes here? -DaveM&n;&t;&t; */
 id|nr
 op_assign
 id|fn
@@ -1277,6 +1282,22 @@ op_ne
 id|len
 )paren
 r_break
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|fn
+op_eq
+(paren
+id|IO_fn_t
+)paren
+id|file-&gt;f_op-&gt;write
+)paren
+(brace
+id|inode-&gt;i_status
+op_or_assign
+id|ST_MODIFIED
 suffix:semicolon
 )brace
 r_if

@@ -1,4 +1,5 @@
-multiline_comment|/*&n; * linux/drivers/char/keyboard.c&n; *&n; * Written for linux by Johan Myreen as a translation from&n; * the assembly version by Linus (with diacriticals added)&n; *&n; * Some additional features added by Christoph Niemann (ChN), March 1993&n; *&n; * Loadable keymaps by Risto Kankkunen, May 1993&n; *&n; * Diacriticals redone &amp; other small changes, aeb@cwi.nl, June 1993&n; * Added decr/incr_console, dynamic keymaps, Unicode support,&n; * dynamic function/string keys, led setting,  Sept 1994&n; * `Sticky&squot; modifier keys, 951006.&n; * 11-11-96: SAK should now work in the raw mode (Martin Mares)&n; * &n; * Modified to provide &squot;generic&squot; keyboard support by Hamish Macdonald&n; * Merge with the m68k keyboard driver and split-off of the PC low-level&n; * parts by Geert Uytterhoeven, May 1997&n; */
+multiline_comment|/*&n; * linux/drivers/char/keyboard.c&n; *&n; * Written for linux by Johan Myreen as a translation from&n; * the assembly version by Linus (with diacriticals added)&n; *&n; * Some additional features added by Christoph Niemann (ChN), March 1993&n; *&n; * Loadable keymaps by Risto Kankkunen, May 1993&n; *&n; * Diacriticals redone &amp; other small changes, aeb@cwi.nl, June 1993&n; * Added decr/incr_console, dynamic keymaps, Unicode support,&n; * dynamic function/string keys, led setting,  Sept 1994&n; * `Sticky&squot; modifier keys, 951006.&n; * 11-11-96: SAK should now work in the raw mode (Martin Mares)&n; * &n; * Modified to provide &squot;generic&squot; keyboard support by Hamish Macdonald&n; * Merge with the m68k keyboard driver and split-off of the PC low-level&n; * parts by Geert Uytterhoeven, May 1997&n; *&n; * 27-05-97: Added support for the Magic SysRq Key (Martin Mares)&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/tty_flip.h&gt;
@@ -8,9 +9,10 @@ macro_line|#include &lt;linux/random.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/keyboard.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
-macro_line|#include &quot;kbd_kern.h&quot;
-macro_line|#include &quot;diacr.h&quot;
-macro_line|#include &quot;vt_kern.h&quot;
+macro_line|#include &lt;linux/kbd_kern.h&gt;
+macro_line|#include &lt;linux/kbd_diacr.h&gt;
+macro_line|#include &lt;linux/vt_kern.h&gt;
+macro_line|#include &lt;linux/kbd_ll.h&gt;
 DECL|macro|SIZE
 mdefine_line|#define SIZE(x) (sizeof(x)/sizeof((x)[0]))
 macro_line|#ifndef KBD_DEFMODE
@@ -128,7 +130,6 @@ l_int|0
 suffix:semicolon
 multiline_comment|/* &n; * In order to retrieve the shift_state (for the mouse server), either&n; * the variable must be global, or a new procedure must be created to &n; * return the value. I chose the former way.&n; */
 DECL|variable|shift_state
-multiline_comment|/*static*/
 r_int
 id|shift_state
 op_assign
@@ -537,13 +538,42 @@ r_int
 r_char
 )paren
 suffix:semicolon
-multiline_comment|/* pt_regs - set by keyboard_interrupt(), used by show_ptregs() */
-DECL|variable|pt_regs
+multiline_comment|/* kbd_pt_regs - set by keyboard_interrupt(), used by show_ptregs() */
+DECL|variable|kbd_pt_regs
 r_struct
 id|pt_regs
 op_star
-id|pt_regs
+id|kbd_pt_regs
 suffix:semicolon
+macro_line|#ifdef CONFIG_MAGIC_SYSRQ
+DECL|macro|SYSRQ_KEY
+mdefine_line|#define SYSRQ_KEY 0x54
+r_extern
+r_void
+id|handle_sysrq
+c_func
+(paren
+r_int
+comma
+r_struct
+id|pt_regs
+op_star
+comma
+r_struct
+id|kbd_struct
+op_star
+comma
+r_struct
+id|tty_struct
+op_star
+)paren
+suffix:semicolon
+DECL|variable|sysrq_pressed
+r_static
+r_int
+id|sysrq_pressed
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/*&n; * Many other routines do put_queue, but I think either&n; * they produce ASCII, or they produce some user-assigned&n; * string, and in both cases we might assume that it is&n; * in utf-8 already.&n; */
 DECL|function|to_utf8
 r_void
@@ -853,6 +883,52 @@ comma
 id|key_down
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_MAGIC_SYSRQ&t;&t;/* Handle the SysRq Hack */
+r_if
+c_cond
+(paren
+id|keycode
+op_eq
+id|SYSRQ_KEY
+)paren
+(brace
+id|sysrq_pressed
+op_assign
+op_logical_neg
+id|up_flag
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+r_else
+r_if
+c_cond
+(paren
+id|sysrq_pressed
+)paren
+(brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|up_flag
+)paren
+id|handle_sysrq
+c_func
+(paren
+id|keycode
+comma
+id|kbd_pt_regs
+comma
+id|kbd
+comma
+id|tty
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -1397,12 +1473,12 @@ r_void
 r_if
 c_cond
 (paren
-id|pt_regs
+id|kbd_pt_regs
 )paren
 id|show_regs
 c_func
 (paren
-id|pt_regs
+id|kbd_pt_regs
 )paren
 suffix:semicolon
 )brace

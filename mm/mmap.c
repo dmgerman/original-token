@@ -1531,8 +1531,12 @@ c_cond
 (paren
 id|mpnt-&gt;vm_inode
 )paren
+id|atomic_inc
+c_func
+(paren
+op_amp
 id|mpnt-&gt;vm_inode-&gt;i_count
-op_increment
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -2524,8 +2528,12 @@ c_cond
 (paren
 id|mpnt-&gt;vm_inode
 )paren
+id|atomic_dec
+c_func
+(paren
+op_amp
 id|mpnt-&gt;vm_inode-&gt;i_count
-op_decrement
+)paren
 suffix:semicolon
 id|kmem_cache_free
 c_func

@@ -230,9 +230,6 @@ multiline_comment|/* rename */
 l_int|NULL
 comma
 multiline_comment|/* readlink */
-l_int|NULL
-comma
-multiline_comment|/* follow_link */
 id|generic_readpage
 comma
 multiline_comment|/* readpage */
@@ -419,9 +416,6 @@ multiline_comment|/* rename */
 l_int|NULL
 comma
 multiline_comment|/* readlink */
-l_int|NULL
-comma
-multiline_comment|/* follow_link */
 l_int|NULL
 comma
 multiline_comment|/* readpage */
@@ -6150,11 +6144,11 @@ id|file_system_type
 id|hpfs_fs_type
 op_assign
 (brace
-id|hpfs_read_super
-comma
 l_string|&quot;hpfs&quot;
 comma
-l_int|1
+id|FS_REQUIRES_DEV
+comma
+id|hpfs_read_super
 comma
 l_int|NULL
 )brace

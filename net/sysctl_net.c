@@ -18,14 +18,6 @@ id|ipx_table
 )braket
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef CONFIG_ATALK
-r_extern
-id|ctl_table
-id|atalk_table
-(braket
-)braket
-suffix:semicolon
-macro_line|#endif
 r_extern
 id|ctl_table
 id|core_table
@@ -166,22 +158,6 @@ comma
 l_int|0555
 comma
 id|ipx_table
-)brace
-comma
-macro_line|#endif
-macro_line|#ifdef CONFIG_ATALK
-(brace
-id|NET_ATALK
-comma
-l_string|&quot;appletalk&quot;
-comma
-l_int|NULL
-comma
-l_int|0
-comma
-l_int|0555
-comma
-id|atalk_table
 )brace
 comma
 macro_line|#endif

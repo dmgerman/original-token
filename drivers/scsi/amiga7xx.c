@@ -187,9 +187,6 @@ comma
 l_int|0
 comma
 id|IRQ_AMIGA_PORTS
-op_amp
-op_complement
-id|IRQ_MACHSPEC
 comma
 id|DMA_NONE
 comma
@@ -392,9 +389,6 @@ comma
 l_int|0
 comma
 id|IRQ_AMIGA_PORTS
-op_amp
-op_complement
-id|IRQ_MACHSPEC
 comma
 id|DMA_NONE
 comma

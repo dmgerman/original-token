@@ -1502,8 +1502,12 @@ id|lo-&gt;lo_inode
 op_assign
 id|inode
 suffix:semicolon
+id|atomic_inc
+c_func
+(paren
+op_amp
 id|lo-&gt;lo_inode-&gt;i_count
-op_increment
+)paren
 suffix:semicolon
 id|lo-&gt;transfer
 op_assign

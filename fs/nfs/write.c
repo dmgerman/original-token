@@ -1082,8 +1082,12 @@ id|wreq-&gt;wb_bytes
 op_assign
 id|bytes
 suffix:semicolon
+id|atomic_inc
+c_func
+(paren
+op_amp
 id|inode-&gt;i_count
-op_increment
+)paren
 suffix:semicolon
 id|atomic_inc
 c_func
@@ -2852,8 +2856,12 @@ comma
 id|req
 )paren
 suffix:semicolon
+id|atomic_inc
+c_func
+(paren
+op_amp
 id|inode-&gt;i_count
-op_increment
+)paren
 suffix:semicolon
 )brace
 id|clear_bit

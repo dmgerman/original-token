@@ -18,6 +18,8 @@ DECL|macro|ATADDR_BCAST
 mdefine_line|#define ATADDR_BCAST&t;(__u8)255
 DECL|macro|DDP_MAXSZ
 mdefine_line|#define DDP_MAXSZ&t;587
+DECL|macro|SIOCATALKDIFADDR
+mdefine_line|#define SIOCATALKDIFADDR       (SIOCPROTOPRIVATE + 0)
 DECL|struct|at_addr
 r_struct
 id|at_addr

@@ -14,11 +14,11 @@ id|file_system_type
 id|autofs_fs_type
 op_assign
 (brace
-id|autofs_read_super
-comma
 l_string|&quot;autofs&quot;
 comma
-l_int|0
+id|FS_NO_DCACHE
+comma
+id|autofs_read_super
 comma
 l_int|NULL
 )brace

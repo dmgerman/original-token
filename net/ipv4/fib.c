@@ -9060,10 +9060,13 @@ id|printk
 c_func
 (paren
 id|KERN_DEBUG
-l_string|&quot;%s changes brd %08lX -&gt; %08X&bslash;n&quot;
+l_string|&quot;%s changes brd %08X -&gt; %08X&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma
+(paren
+id|u32
+)paren
 id|dev-&gt;pa_brdaddr
 comma
 id|new_brd
@@ -9180,10 +9183,13 @@ id|printk
 c_func
 (paren
 id|KERN_DEBUG
-l_string|&quot;%s changes dst %08lX -&gt; %08X&bslash;n&quot;
+l_string|&quot;%s changes dst %08X -&gt; %08X&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma
+(paren
+id|u32
+)paren
 id|dev-&gt;pa_dstaddr
 comma
 id|dstaddr
@@ -9277,10 +9283,13 @@ id|printk
 c_func
 (paren
 id|KERN_DEBUG
-l_string|&quot;%s changes netmask %08lX -&gt; %08X&bslash;n&quot;
+l_string|&quot;%s changes netmask %08X -&gt; %08X&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma
+(paren
+id|u32
+)paren
 id|dev-&gt;pa_mask
 comma
 id|mask
@@ -9493,7 +9502,7 @@ id|printk
 c_func
 (paren
 id|KERN_DEBUG
-l_string|&quot;%s(%s) changes state fl=%08x pa=%08lX/%08lX brd=%08lX dst=%08lX&bslash;n&quot;
+l_string|&quot;%s(%s) changes state fl=%08x pa=%08X/%08X brd=%08X dst=%08X&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma
@@ -9501,12 +9510,24 @@ id|current-&gt;comm
 comma
 id|dev-&gt;flags
 comma
+(paren
+id|u32
+)paren
 id|dev-&gt;pa_addr
 comma
+(paren
+id|u32
+)paren
 id|dev-&gt;pa_mask
 comma
+(paren
+id|u32
+)paren
 id|dev-&gt;pa_brdaddr
 comma
+(paren
+id|u32
+)paren
 id|dev-&gt;pa_dstaddr
 )paren
 suffix:semicolon
@@ -9660,18 +9681,30 @@ id|printk
 c_func
 (paren
 id|KERN_DEBUG
-l_string|&quot;%s UP fl=%08x pa=%08lX/%08lX brd=%08lX dst=%08lX&bslash;n&quot;
+l_string|&quot;%s UP fl=%08x pa=%08X/%08X brd=%08X dst=%08X&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma
 id|dev-&gt;flags
 comma
+(paren
+id|u32
+)paren
 id|dev-&gt;pa_addr
 comma
+(paren
+id|u32
+)paren
 id|dev-&gt;pa_mask
 comma
+(paren
+id|u32
+)paren
 id|dev-&gt;pa_brdaddr
 comma
+(paren
+id|u32
+)paren
 id|dev-&gt;pa_dstaddr
 )paren
 suffix:semicolon

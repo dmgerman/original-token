@@ -1357,8 +1357,6 @@ r_char
 op_star
 comma
 r_int
-comma
-r_int
 )paren
 suffix:semicolon
 multiline_comment|/* super.c */

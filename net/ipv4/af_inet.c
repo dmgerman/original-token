@@ -52,6 +52,10 @@ macro_line|#endif&t;/* CONFIG_NET_RADIO */
 DECL|macro|min
 mdefine_line|#define min(a,b)&t;((a)&lt;(b)?(a):(b))
 r_extern
+r_int
+id|sysctl_core_destroy_delay
+suffix:semicolon
+r_extern
 r_struct
 id|proto
 id|packet_prot
@@ -442,7 +446,7 @@ id|sk
 comma
 id|TIME_DESTROY
 comma
-id|SOCK_DESTROY_TIME
+id|sysctl_core_destroy_delay
 )paren
 suffix:semicolon
 )brace
@@ -1097,6 +1101,10 @@ id|sock
 comma
 id|sk
 )paren
+suffix:semicolon
+id|sk-&gt;destruct
+op_assign
+l_int|NULL
 suffix:semicolon
 id|sk-&gt;zapped
 op_assign

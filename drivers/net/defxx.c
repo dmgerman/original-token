@@ -34,8 +34,9 @@ DECL|macro|DYNAMIC_BUFFERS
 mdefine_line|#define DYNAMIC_BUFFERS 1
 DECL|macro|SKBUFF_RX_COPYBREAK
 mdefine_line|#define SKBUFF_RX_COPYBREAK 200
+multiline_comment|/*&n; * NEW_SKB_SIZE = PI_RCV_DATA_K_SIZE_MAX+128 to allow 128 byte&n; * alignment for compatibility with old EISA boards.&n; */
 DECL|macro|NEW_SKB_SIZE
-mdefine_line|#define NEW_SKB_SIZE (PI_RCV_DATA_K_SIZE_MAX)
+mdefine_line|#define NEW_SKB_SIZE (PI_RCV_DATA_K_SIZE_MAX+128)
 multiline_comment|/* Define global routines */
 r_int
 id|dfx_probe
@@ -6259,6 +6260,28 @@ c_func
 id|NEW_SKB_SIZE
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t;&t;&t; * align to 128 bytes for compatibility with&n;&t;&t;&t; * the old EISA boards.&n;&t;&t;&t; */
+id|newskb-&gt;data
+op_assign
+(paren
+r_char
+op_star
+)paren
+(paren
+(paren
+r_int
+r_int
+)paren
+(paren
+id|newskb-&gt;data
+op_plus
+l_int|127
+)paren
+op_amp
+op_complement
+l_int|128
+)paren
+suffix:semicolon
 id|bp-&gt;descr_block_virt-&gt;rcv_data
 (braket
 id|i
@@ -6455,10 +6478,6 @@ op_star
 id|skb
 suffix:semicolon
 multiline_comment|/* pointer to a sk_buff to hold incoming packet data */
-r_static
-r_int
-id|testing_dyn
-suffix:semicolon
 multiline_comment|/* Service all consumed LLC receive frames */
 id|p_type_2_cons
 op_assign
@@ -6641,25 +6660,27 @@ id|rx_in_place
 op_assign
 l_int|1
 suffix:semicolon
-DECL|macro|JES_TESTING
-mdefine_line|#define JES_TESTING
-macro_line|#ifdef JES_TESTING
-r_if
-c_cond
+id|newskb-&gt;data
+op_assign
 (paren
-id|testing_dyn
-op_increment
-OL
-l_int|5
+r_char
+op_star
 )paren
-(brace
-id|printk
-c_func
 (paren
-l_string|&quot;Skipping a memcpy&bslash;n&quot;
+(paren
+r_int
+r_int
+)paren
+(paren
+id|newskb-&gt;data
+op_plus
+l_int|127
+)paren
+op_amp
+op_complement
+l_int|128
 )paren
 suffix:semicolon
-)brace
 id|skb
 op_assign
 (paren
@@ -6700,26 +6721,6 @@ c_func
 id|newskb-&gt;data
 )paren
 suffix:semicolon
-macro_line|#else
-id|memcpy
-c_func
-(paren
-id|newskb-&gt;data
-comma
-id|p_buff
-op_plus
-id|RCV_BUFF_K_PADDING
-comma
-id|pkt_len
-op_plus
-l_int|3
-)paren
-suffix:semicolon
-id|skb
-op_assign
-id|newskb
-suffix:semicolon
-macro_line|#endif
 )brace
 r_else
 id|skb
@@ -7009,7 +7010,7 @@ id|prod
 )braket
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * Get pointer to auxiliary queue entry to contain information for this packet.&n;&t; *&n;&t; * Note: The current xmt producer index will become the current xmt completion&n;&t; *       index when we complete this packet later on.  So, we&squot;ll get the&n;&t; *       pointer to the next auxiliary queue entry now before we bump the&n;&t; *&t;&t; producer index.&n;&t; */
+multiline_comment|/*&n;&t; * Get pointer to auxiliary queue entry to contain information&n;&t; * for this packet.&n;&t; *&n;&t; * Note: The current xmt producer index will become the&n;&t; *&t; current xmt completion index when we complete this&n;&t; *&t; packet later on.  So, we&squot;ll get the pointer to the&n;&t; *&t; next auxiliary queue entry now before we bump the&n;&t; *&t; producer index.&n;&t; */
 id|p_xmt_drv_descr
 op_assign
 op_amp
@@ -7100,7 +7101,7 @@ op_minus
 l_int|3
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * Verify that descriptor is actually available&n;&t; *&n;&t; * Note: If descriptor isn&squot;t available, return 1 which tells&n;&t; *&t;&t; the upper layer to requeue the packet for later&n;&t; *&t;&t; transmission.&n;&t; *&n;&t; *       We need to ensure that the producer never reaches the&n;&t; *&t;&t; completion, except to indicate that the queue is empty.&n;&t; */
+multiline_comment|/*&n;&t; * Verify that descriptor is actually available&n;&t; *&n;&t; * Note: If descriptor isn&squot;t available, return 1 which tells&n;&t; *&t; the upper layer to requeue the packet for later&n;&t; *&t; transmission.&n;&t; *&n;&t; *       We need to ensure that the producer never reaches the&n;&t; *&t; completion, except to indicate that the queue is empty.&n;&t; */
 r_if
 c_cond
 (paren
@@ -7112,7 +7113,7 @@ r_return
 l_int|1
 suffix:semicolon
 multiline_comment|/* requeue packet for later */
-multiline_comment|/*&n;&t; * Save info for this packet for xmt done indication routine&n;&t; *&n;&t; * Normally, we&squot;d save the producer index in the p_xmt_drv_descr&n;&t; * structure so that we&squot;d have it handy when we complete this&n;&t; * packet later (in dfx_xmt_done).  However, since the current&n;&t; * transmit architecture guarantees a single fragment for the&n;&t; * entire packet, we can simply bump the completion index by&n;&t; * one (1) for each completed packet.&n;&t; *&n;&t; * Note: If this assumption changes and we&squot;re presented with&n;&t; *&t;&t; an inconsistent number of transmit fragments for packet&n;&t; *&t;&t; data, we&squot;ll need to modify this code to save the current&n;&t; *&t;&t; transmit producer index.&n;&t; */
+multiline_comment|/*&n;&t; * Save info for this packet for xmt done indication routine&n;&t; *&n;&t; * Normally, we&squot;d save the producer index in the p_xmt_drv_descr&n;&t; * structure so that we&squot;d have it handy when we complete this&n;&t; * packet later (in dfx_xmt_done).  However, since the current&n;&t; * transmit architecture guarantees a single fragment for the&n;&t; * entire packet, we can simply bump the completion index by&n;&t; * one (1) for each completed packet.&n;&t; *&n;&t; * Note: If this assumption changes and we&squot;re presented with&n;&t; *&t; an inconsistent number of transmit fragments for packet&n;&t; *&t; data, we&squot;ll need to modify this code to save the current&n;&t; *&t; transmit producer index.&n;&t; */
 id|p_xmt_drv_descr-&gt;p_skb
 op_assign
 id|skb

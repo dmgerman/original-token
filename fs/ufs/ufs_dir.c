@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/fs/ufs/ufs_dir.c&n; *&n; * Copyright (C) 1996&n; * Adrian Rodriguez (adrian@franklins-tower.rutgers.edu)&n; * Laboratory for Computer Science Research Computing Facility&n; * Rutgers, The State University of New Jersey&n; *&n; * $Id: ufs_dir.c,v 1.8 1997/01/26 07:14:28 davem Exp $&n; *&n; */
+multiline_comment|/*&n; *  linux/fs/ufs/ufs_dir.c&n; *&n; * Copyright (C) 1996&n; * Adrian Rodriguez (adrian@franklins-tower.rutgers.edu)&n; * Laboratory for Computer Science Research Computing Facility&n; * Rutgers, The State University of New Jersey&n; *&n; * $Id: ufs_dir.c,v 1.10 1997/06/05 01:29:06 davem Exp $&n; *&n; */
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/ufs_fs.h&gt;
 multiline_comment|/*&n; * This is blatantly stolen from ext2fs&n; */
@@ -433,28 +433,6 @@ multiline_comment|/* We might block in the next section&n;&t;&t;&t;&t; * if the 
 r_int
 r_int
 id|version
-suffix:semicolon
-id|dcache_add
-c_func
-(paren
-id|inode
-comma
-id|de-&gt;d_name
-comma
-id|ufs_swab16
-c_func
-(paren
-id|de-&gt;d_namlen
-)paren
-comma
-id|ufs_swab32
-c_func
-(paren
-id|de-&gt;d_ino
-)paren
-)paren
-suffix:semicolon
-id|version
 op_assign
 id|inode-&gt;i_version
 suffix:semicolon
@@ -661,9 +639,6 @@ comma
 multiline_comment|/* readlink */
 l_int|NULL
 comma
-multiline_comment|/* follow_link */
-l_int|NULL
-comma
 multiline_comment|/* readpage */
 l_int|NULL
 comma
@@ -682,5 +657,4 @@ comma
 multiline_comment|/* smap */
 )brace
 suffix:semicolon
-multiline_comment|/*&n; * Local Variables: ***&n; * c-indent-level: 8 ***&n; * c-continued-statement-offset: 8 ***&n; * c-brace-offset: -8 ***&n; * c-argdecl-indent: 0 ***&n; * c-label-offset: -8 ***&n; * End: ***&n; */
 eof

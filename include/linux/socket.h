@@ -288,8 +288,8 @@ DECL|macro|AF_INET6
 mdefine_line|#define AF_INET6&t;10&t;/* IP version 6&t;&t;&t;*/
 DECL|macro|AF_ROSE
 mdefine_line|#define AF_ROSE&t;&t;11&t;/* Amateur Radio X.25 PLP&t;*/
-DECL|macro|AF_DECNET
-mdefine_line|#define AF_DECNET&t;12&t;/* Reserved for DECnet project&t;*/
+DECL|macro|AF_DECnet
+mdefine_line|#define AF_DECnet&t;12&t;/* Reserved for DECnet project&t;*/
 DECL|macro|AF_NETBEUI
 mdefine_line|#define AF_NETBEUI&t;13&t;/* Reserved for 802.2LLC project*/
 DECL|macro|AF_SECURITY
@@ -325,8 +325,8 @@ DECL|macro|PF_INET6
 mdefine_line|#define PF_INET6&t;AF_INET6
 DECL|macro|PF_ROSE
 mdefine_line|#define PF_ROSE&t;&t;AF_ROSE
-DECL|macro|PF_DECNET
-mdefine_line|#define PF_DECNET&t;AF_DECNET
+DECL|macro|PF_DECnet
+mdefine_line|#define PF_DECnet&t;AF_DECnet
 DECL|macro|PF_NETBEUI
 mdefine_line|#define PF_NETBEUI&t;AF_NETBEUI
 DECL|macro|PF_SECURITY

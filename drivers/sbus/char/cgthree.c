@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: cgthree.c,v 1.18 1997/04/16 17:51:09 jj Exp $&n; * cgtree.c: cg3 frame buffer driver&n; *&n; * Copyright (C) 1996 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; * Copyright (C) 1996 Jakub Jelinek   (jj@sunsite.mff.cuni.cz)&n; * Copyright (C) 1997 Eddie C. Dost   (ecd@skynet.be)&n; *&n; * Support for cgRDI added, Nov/96, jj.&n; */
+multiline_comment|/* $Id: cgthree.c,v 1.21 1997/06/04 08:27:29 davem Exp $&n; * cgtree.c: cg3 frame buffer driver&n; *&n; * Copyright (C) 1996 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; * Copyright (C) 1996 Jakub Jelinek   (jj@sunsite.mff.cuni.cz)&n; * Copyright (C) 1997 Eddie C. Dost   (ecd@skynet.be)&n; *&n; * Support for cgRDI added, Nov/96, jj.&n; */
 macro_line|#include &lt;linux/kd.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
@@ -7,9 +7,10 @@ macro_line|#include &lt;asm/sbus.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/fbio.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
-macro_line|#include &quot;../../char/vt_kern.h&quot;
-macro_line|#include &quot;../../char/selection.h&quot;
-macro_line|#include &quot;../../char/console_struct.h&quot;
+multiline_comment|/* These must be included after asm/fbio.h */
+macro_line|#include &lt;linux/vt_kern.h&gt;
+macro_line|#include &lt;linux/selection.h&gt;
+macro_line|#include &lt;linux/console_struct.h&gt;
 macro_line|#include &quot;fb.h&quot;
 macro_line|#include &quot;cg_common.h&quot;
 multiline_comment|/* Control Register Constants */
@@ -444,8 +445,12 @@ id|vma-&gt;vm_inode
 op_assign
 id|inode
 suffix:semicolon
+id|atomic_inc
+c_func
+(paren
+op_amp
 id|inode-&gt;i_count
-op_increment
+)paren
 suffix:semicolon
 r_return
 l_int|0

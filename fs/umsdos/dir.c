@@ -1752,8 +1752,12 @@ suffix:semicolon
 )brace
 r_else
 (brace
+id|atomic_inc
+c_func
+(paren
+op_amp
 id|dir-&gt;i_count
-op_increment
+)paren
 suffix:semicolon
 )brace
 r_if
@@ -2004,8 +2008,12 @@ id|result
 op_assign
 id|dir
 suffix:semicolon
+id|atomic_inc
+c_func
+(paren
+op_amp
 id|dir-&gt;i_count
-op_increment
+)paren
 suffix:semicolon
 id|ret
 op_assign
@@ -2057,8 +2065,12 @@ id|result
 op_assign
 id|pseudo_root
 suffix:semicolon
+id|atomic_inc
+c_func
+(paren
+op_amp
 id|pseudo_root-&gt;i_count
-op_increment
+)paren
 suffix:semicolon
 )brace
 r_else
@@ -2161,13 +2173,19 @@ id|result
 op_assign
 id|dir-&gt;i_sb-&gt;s_mounted
 suffix:semicolon
+id|atomic_inc
+c_func
+(paren
+op_amp
+(paren
 (paren
 op_star
 id|result
 )paren
 op_member_access_from_pointer
 id|i_count
-op_increment
+)paren
+)paren
 suffix:semicolon
 id|ret
 op_assign
@@ -2550,8 +2568,12 @@ id|iput
 id|hlink
 )paren
 suffix:semicolon
+id|atomic_inc
+c_func
+(paren
+op_amp
 id|dir-&gt;i_count
-op_increment
+)paren
 suffix:semicolon
 r_while
 c_loop
@@ -2801,9 +2823,6 @@ multiline_comment|/* rename */
 l_int|NULL
 comma
 multiline_comment|/* readlink */
-l_int|NULL
-comma
-multiline_comment|/* follow_link */
 l_int|NULL
 comma
 multiline_comment|/* readpage */

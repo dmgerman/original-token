@@ -1515,6 +1515,10 @@ op_plus
 l_int|1
 )braket
 id|__initdata
+op_assign
+(brace
+l_int|0
+)brace
 suffix:semicolon
 DECL|variable|__initdata
 r_static
@@ -1532,6 +1536,10 @@ op_plus
 l_int|1
 )braket
 id|__initdata
+op_assign
+(brace
+l_int|0
+)brace
 suffix:semicolon
 DECL|function|__initfunc
 id|__initfunc

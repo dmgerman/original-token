@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;The IP fragmentation functionality.&n; *&t;&t;&n; * Version:&t;$Id: ip_fragment.c,v 1.22 1997/05/17 05:21:56 freitag Exp $&n; *&n; * Authors:&t;Fred N. van Kempen &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Alan Cox &lt;Alan.Cox@linux.org&gt;&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;:&t;Split from ip.c , see ip_input.c for history.&n; *&t;&t;David S. Miller :&t;Begin massive cleanup...&n; *&t;&t;Andi Kleen&t;:&t;Add sysctls.&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;The IP fragmentation functionality.&n; *&t;&t;&n; * Version:&t;$Id: ip_fragment.c,v 1.23 1997/05/31 12:36:35 freitag Exp $&n; *&n; * Authors:&t;Fred N. van Kempen &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Alan Cox &lt;Alan.Cox@linux.org&gt;&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;:&t;Split from ip.c , see ip_input.c for history.&n; *&t;&t;David S. Miller :&t;Begin massive cleanup...&n; *&t;&t;Andi Kleen&t;:&t;Add sysctls.&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -31,6 +31,12 @@ op_assign
 l_int|192
 op_star
 l_int|1024
+suffix:semicolon
+DECL|variable|sysctl_ipfrag_time
+r_int
+id|sysctl_ipfrag_time
+op_assign
+id|IP_FRAG_TIME
 suffix:semicolon
 multiline_comment|/* Describe an IP fragment. */
 DECL|struct|ipfrag
@@ -943,7 +949,7 @@ id|qp-&gt;timer.expires
 op_assign
 id|jiffies
 op_plus
-id|IP_FRAG_TIME
+id|sysctl_ipfrag_time
 suffix:semicolon
 multiline_comment|/* about 30 seconds&t;*/
 id|qp-&gt;timer.data
@@ -1616,7 +1622,7 @@ id|qp-&gt;timer.expires
 op_assign
 id|jiffies
 op_plus
-id|IP_FRAG_TIME
+id|sysctl_ipfrag_time
 suffix:semicolon
 multiline_comment|/* about 30 seconds */
 id|qp-&gt;timer.data

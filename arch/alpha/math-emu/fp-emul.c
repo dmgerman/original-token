@@ -14,11 +14,11 @@ mdefine_line|#define OPC_INTS&t;0x12
 DECL|macro|OPC_INTM
 mdefine_line|#define OPC_INTM&t;0x13
 DECL|macro|OPC_FLTV
-mdefine_line|#define OPC_FLTV&t;0x14
+mdefine_line|#define OPC_FLTV&t;0x15
 DECL|macro|OPC_FLTI
-mdefine_line|#define OPC_FLTI&t;0x15
+mdefine_line|#define OPC_FLTI&t;0x16
 DECL|macro|OPC_FLTL
-mdefine_line|#define OPC_FLTL&t;0x16
+mdefine_line|#define OPC_FLTL&t;0x17
 DECL|macro|OPC_MISC
 mdefine_line|#define OPC_MISC&t;0x18
 DECL|macro|OPC_JSR
@@ -1613,18 +1613,48 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; * Take the appropriate action for each possible&n;&t; * floating-point result:&n;&t; *&n;&t; *&t;- Set the appropriate bits in the FPCR&n;&t; *&t;- If the specified exception is enabled in the FPCR,&n;&t; *&t;  return.  The caller (mxr_signal_handler) will dispatch&n;&t; *&t;  the appropriate signal to the translated program.&n;&t; */
+multiline_comment|/*&n;&t; * Take the appropriate action for each possible&n;&t; * floating-point result:&n;&t; *&n;&t; *&t;- Set the appropriate bits in the FPCR&n;&t; *&t;- If the specified exception is enabled in the FPCR,&n;&t; *&t;  return.  The caller (entArith) will dispatch&n;&t; *&t;  the appropriate signal to the translated program.&n;&t; *&n;&t; * In addition, properly track the exception state in software&n;&t; * as described in the Alpha Architectre Handbook section 4.7.7.3.&n;&t; */
 r_if
 c_cond
 (paren
 id|res
 )paren
 (brace
+multiline_comment|/* Record exceptions in software control word.  */
+id|current-&gt;tss.flags
+op_assign
+id|fpcw
+op_or_assign
+id|res
+op_rshift
+l_int|35
+suffix:semicolon
+multiline_comment|/* Update hardware control register */
+id|fpcr
+op_and_assign
+(paren
+op_complement
+id|FPCR_MASK
+op_or
+id|FPCR_DYN_MASK
+)paren
+suffix:semicolon
 id|fpcr
 op_or_assign
-id|FPCR_SUM
+id|ieee_swcr_to_fpcr
+c_func
+(paren
+id|fpcw
 op_or
-id|res
+(paren
+op_complement
+id|fpcw
+op_amp
+id|IEEE_STATUS_MASK
+)paren
+op_rshift
+l_int|16
+)paren
 suffix:semicolon
 id|wrfpcr
 c_func
@@ -1632,78 +1662,17 @@ c_func
 id|fpcr
 )paren
 suffix:semicolon
+multiline_comment|/* Do we generate a signal?  */
 r_if
 c_cond
 (paren
-(paren
-(paren
 id|res
+op_rshift
+l_int|51
 op_amp
-id|FPCR_INV
-)paren
-op_logical_and
-(paren
 id|fpcw
 op_amp
-id|IEEE_TRAP_ENABLE_INV
-)paren
-)paren
-op_logical_or
-(paren
-(paren
-id|res
-op_amp
-id|FPCR_DZE
-)paren
-op_logical_and
-(paren
-id|fpcw
-op_amp
-id|IEEE_TRAP_ENABLE_DZE
-)paren
-)paren
-op_logical_or
-(paren
-(paren
-id|res
-op_amp
-id|FPCR_OVF
-)paren
-op_logical_and
-(paren
-id|fpcw
-op_amp
-id|IEEE_TRAP_ENABLE_OVF
-)paren
-)paren
-op_logical_or
-(paren
-(paren
-id|res
-op_amp
-id|FPCR_UNF
-)paren
-op_logical_and
-(paren
-id|fpcw
-op_amp
-id|IEEE_TRAP_ENABLE_UNF
-)paren
-)paren
-op_logical_or
-(paren
-(paren
-id|res
-op_amp
-id|FPCR_INE
-)paren
-op_logical_and
-(paren
-id|fpcw
-op_amp
-id|IEEE_TRAP_ENABLE_INE
-)paren
-)paren
+id|IEEE_TRAP_ENABLE_MASK
 )paren
 r_return
 l_int|0

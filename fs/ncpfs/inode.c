@@ -1864,11 +1864,11 @@ id|file_system_type
 id|ncp_fs_type
 op_assign
 (brace
-id|ncp_read_super
-comma
 l_string|&quot;ncpfs&quot;
 comma
-l_int|0
+id|FS_NO_DCACHE
+comma
+id|ncp_read_super
 comma
 l_int|NULL
 )brace

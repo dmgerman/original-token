@@ -177,6 +177,12 @@ DECL|enumerator|KERN_PRINTK
 id|KERN_PRINTK
 comma
 multiline_comment|/* sturct: control printk logging parameters */
+DECL|enumerator|KERN_NAMETRANS
+id|KERN_NAMETRANS
+comma
+multiline_comment|/* Name translation */
+DECL|enumerator|KERN_STATINODE
+id|KERN_STATINODE
 )brace
 suffix:semicolon
 multiline_comment|/* CTL_VM names: */
@@ -188,10 +194,6 @@ op_assign
 l_int|1
 comma
 multiline_comment|/* struct: Set vm swapping control */
-DECL|enumerator|VM_KSWAPD
-id|VM_KSWAPD
-comma
-multiline_comment|/* struct: control background pageout */
 DECL|enumerator|VM_SWAPOUT
 id|VM_SWAPOUT
 comma
@@ -257,6 +259,8 @@ comma
 DECL|enumerator|NET_TR
 id|NET_TR
 comma
+DECL|enumerator|NET_DECNET
+id|NET_DECNET
 )brace
 suffix:semicolon
 multiline_comment|/* /proc/sys/net/core */
@@ -276,11 +280,26 @@ comma
 DECL|enumerator|NET_CORE_RMEM_DEFAULT
 id|NET_CORE_RMEM_DEFAULT
 comma
+DECL|enumerator|NET_CORE_DESTROY_DELAY
+id|NET_CORE_DESTROY_DELAY
+comma
 )brace
 suffix:semicolon
 multiline_comment|/* /proc/sys/net/ethernet */
 multiline_comment|/* /proc/sys/net/802 */
 multiline_comment|/* /proc/sys/net/unix */
+r_enum
+(brace
+DECL|enumerator|NET_UNIX_DESTROY_DELAY
+id|NET_UNIX_DESTROY_DELAY
+op_assign
+l_int|1
+comma
+DECL|enumerator|NET_UNIX_DELETE_DELAY
+id|NET_UNIX_DELETE_DELAY
+comma
+)brace
+suffix:semicolon
 multiline_comment|/* /proc/sys/net/ipv4 */
 r_enum
 (brace
@@ -294,6 +313,9 @@ id|NET_IPV4_ARP_DEAD_RES_TIME
 comma
 DECL|enumerator|NET_IPV4_ARP_MAX_TRIES
 id|NET_IPV4_ARP_MAX_TRIES
+comma
+DECL|enumerator|NET_IPV4_ARP_MAX_PINGS
+id|NET_IPV4_ARP_MAX_PINGS
 comma
 DECL|enumerator|NET_IPV4_ARP_TIMEOUT
 id|NET_IPV4_ARP_TIMEOUT
@@ -364,14 +386,53 @@ comma
 DECL|enumerator|NET_IPV4_RFC1620_REDIRECTS
 id|NET_IPV4_RFC1620_REDIRECTS
 comma
-DECL|enumerator|NET_TCP_SYN_RETRIES
-id|NET_TCP_SYN_RETRIES
+DECL|enumerator|NET_IPV4_TCP_SYN_RETRIES
+id|NET_IPV4_TCP_SYN_RETRIES
 comma
-DECL|enumerator|NET_IPFRAG_HIGH_THRESH
-id|NET_IPFRAG_HIGH_THRESH
+DECL|enumerator|NET_IPV4_IPFRAG_HIGH_THRESH
+id|NET_IPV4_IPFRAG_HIGH_THRESH
 comma
-DECL|enumerator|NET_IPFRAG_LOW_THRESH
-id|NET_IPFRAG_LOW_THRESH
+DECL|enumerator|NET_IPV4_IPFRAG_LOW_THRESH
+id|NET_IPV4_IPFRAG_LOW_THRESH
+comma
+DECL|enumerator|NET_IPV4_IPFRAG_TIME
+id|NET_IPV4_IPFRAG_TIME
+comma
+DECL|enumerator|NET_IPV4_TCP_MAX_KA_PROBES
+id|NET_IPV4_TCP_MAX_KA_PROBES
+comma
+DECL|enumerator|NET_IPV4_TCP_KEEPALIVE_TIME
+id|NET_IPV4_TCP_KEEPALIVE_TIME
+comma
+DECL|enumerator|NET_IPV4_TCP_KEEPALIVE_PROBES
+id|NET_IPV4_TCP_KEEPALIVE_PROBES
+comma
+DECL|enumerator|NET_IPV4_TCP_RETRIES1
+id|NET_IPV4_TCP_RETRIES1
+comma
+DECL|enumerator|NET_IPV4_TCP_RETRIES2
+id|NET_IPV4_TCP_RETRIES2
+comma
+DECL|enumerator|NET_IPV4_TCP_MAX_DELAY_ACKS
+id|NET_IPV4_TCP_MAX_DELAY_ACKS
+comma
+DECL|enumerator|NET_IPV4_TCP_FIN_TIMEOUT
+id|NET_IPV4_TCP_FIN_TIMEOUT
+comma
+DECL|enumerator|NET_IPV4_IGMP_MAX_HOST_REPORT_DELAY
+id|NET_IPV4_IGMP_MAX_HOST_REPORT_DELAY
+comma
+DECL|enumerator|NET_IPV4_IGMP_TIMER_SCALE
+id|NET_IPV4_IGMP_TIMER_SCALE
+comma
+DECL|enumerator|NET_IPV4_IGMP_AGE_THRESHOLD
+id|NET_IPV4_IGMP_AGE_THRESHOLD
+comma
+DECL|enumerator|NET_TCP_SYNCOOKIES
+id|NET_TCP_SYNCOOKIES
+comma
+DECL|enumerator|NET_TCP_ALWAYS_SYNCOOKIE
+id|NET_TCP_ALWAYS_SYNCOOKIE
 comma
 )brace
 suffix:semicolon
@@ -426,6 +487,24 @@ comma
 suffix:semicolon
 multiline_comment|/* /proc/sys/net/ipx */
 multiline_comment|/* /proc/sys/net/appletalk */
+r_enum
+(brace
+DECL|enumerator|NET_ATALK_AARP_EXPIRY_TIME
+id|NET_ATALK_AARP_EXPIRY_TIME
+op_assign
+l_int|1
+comma
+DECL|enumerator|NET_ATALK_AARP_TICK_TIME
+id|NET_ATALK_AARP_TICK_TIME
+comma
+DECL|enumerator|NET_ATALK_AARP_RETRANSMIT_LIMIT
+id|NET_ATALK_AARP_RETRANSMIT_LIMIT
+comma
+DECL|enumerator|NET_ATALK_AARP_RESOLVE_TIME
+id|NET_ATALK_AARP_RESOLVE_TIME
+comma
+)brace
+suffix:semicolon
 multiline_comment|/* /proc/sys/net/netrom */
 r_enum
 (brace
@@ -579,6 +658,30 @@ op_assign
 l_int|1
 )brace
 suffix:semicolon
+multiline_comment|/* /proc/sys/net/decnet */
+r_enum
+(brace
+DECL|enumerator|NET_DECNET_DEF_T3_BROADCAST
+id|NET_DECNET_DEF_T3_BROADCAST
+op_assign
+l_int|1
+comma
+DECL|enumerator|NET_DECNET_DEF_T3_POINTTOPOINT
+id|NET_DECNET_DEF_T3_POINTTOPOINT
+comma
+DECL|enumerator|NET_DECNET_DEF_T1
+id|NET_DECNET_DEF_T1
+comma
+DECL|enumerator|NET_DECNET_DEF_BCT1
+id|NET_DECNET_DEF_BCT1
+comma
+DECL|enumerator|NET_DECNET_CACHETIMEOUT
+id|NET_DECNET_CACHETIMEOUT
+comma
+DECL|enumerator|NET_DECNET_DEBUG_LEVEL
+id|NET_DECNET_DEBUG_LEVEL
+)brace
+suffix:semicolon
 multiline_comment|/* CTL_PROC names: */
 multiline_comment|/* CTL_FS names: */
 multiline_comment|/* CTL_DEBUG names: */
@@ -717,6 +820,27 @@ suffix:semicolon
 r_extern
 r_int
 id|proc_dointvec_minmax
+c_func
+(paren
+id|ctl_table
+op_star
+comma
+r_int
+comma
+r_struct
+id|file
+op_star
+comma
+r_void
+op_star
+comma
+r_int
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|proc_dointvec_jiffies
 c_func
 (paren
 id|ctl_table

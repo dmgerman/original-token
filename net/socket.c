@@ -501,8 +501,12 @@ c_cond
 (paren
 id|inode
 )paren
+id|atomic_inc
+c_func
+(paren
+op_amp
 id|inode-&gt;i_count
-op_increment
+)paren
 suffix:semicolon
 id|file-&gt;f_pos
 op_assign
@@ -2801,6 +2805,8 @@ c_func
 (paren
 )paren
 suffix:semicolon
+id|restart
+suffix:colon
 r_if
 c_cond
 (paren
@@ -2970,6 +2976,10 @@ c_cond
 id|upeer_sockaddr
 )paren
 (brace
+multiline_comment|/* Handle the race where the accept works and we&n;&t;&t;&t;   then getname after it has closed again */
+r_if
+c_cond
+(paren
 id|newsock-&gt;ops
 op_member_access_from_pointer
 id|getname
@@ -2989,7 +2999,20 @@ id|len
 comma
 l_int|1
 )paren
+OL
+l_int|0
+)paren
+(brace
+id|sys_close
+c_func
+(paren
+id|err
+)paren
 suffix:semicolon
+r_goto
+id|restart
+suffix:semicolon
+)brace
 id|move_addr_to_user
 c_func
 (paren

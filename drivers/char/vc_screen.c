@@ -8,9 +8,9 @@ macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/vt_kern.h&gt;
+macro_line|#include &lt;linux/selection.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
-macro_line|#include &quot;vt_kern.h&quot;
-macro_line|#include &quot;selection.h&quot;
 DECL|macro|attr
 macro_line|#undef attr
 DECL|macro|org

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sunfb.c,v 1.22 1997/04/03 08:47:56 davem Exp $&n; * sunfb.c: Sun generic frame buffer support.&n; *&n; * Copyright (C) 1995, 1996 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * &n; * Added getcmap ioctl, may, 96&n; * Support for multiple fbs, sep, 96&n; */
+multiline_comment|/* $Id: sunfb.c,v 1.23 1997/05/31 18:33:26 mj Exp $&n; * sunfb.c: Sun generic frame buffer support.&n; *&n; * Copyright (C) 1995, 1996 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * &n; * Added getcmap ioctl, may, 96&n; * Support for multiple fbs, sep, 96&n; */
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
@@ -22,11 +22,11 @@ macro_line|#include &lt;asm/oplib.h&gt;
 macro_line|#include &lt;asm/sbus.h&gt;
 macro_line|#include &lt;asm/fbio.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
-macro_line|#include &quot;../../char/kbd_kern.h&quot;
-macro_line|#include &quot;../../char/vt_kern.h&quot;
-macro_line|#include &quot;../../char/consolemap.h&quot;
-macro_line|#include &quot;../../char/selection.h&quot;
-macro_line|#include &quot;../../char/console_struct.h&quot;
+macro_line|#include &lt;linux/kbd_kern.h&gt;
+macro_line|#include &lt;linux/vt_kern.h&gt;
+macro_line|#include &lt;linux/consolemap.h&gt;
+macro_line|#include &lt;linux/selection.h&gt;
+macro_line|#include &lt;linux/console_struct.h&gt;
 macro_line|#include &quot;fb.h&quot;
 r_extern
 r_void

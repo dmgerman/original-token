@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: signal.c,v 1.4 1997/05/27 06:28:05 davem Exp $&n; *  arch/sparc64/kernel/signal.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *  Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1996 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; *  Copyright (C) 1997 Eddie C. Dost   (ecd@skynet.be)&n; *  Copyright (C) 1997 Jakub Jelinek   (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/*  $Id: signal.c,v 1.6 1997/05/29 12:44:48 jj Exp $&n; *  arch/sparc64/kernel/signal.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *  Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1996 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; *  Copyright (C) 1997 Eddie C. Dost   (ecd@skynet.be)&n; *  Copyright (C) 1997 Jakub Jelinek   (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
@@ -730,9 +730,20 @@ op_amp
 id|PF_USEDFPU
 )paren
 (brace
+id|fprs_write
+c_func
+(paren
+id|FPRS_FEF
+)paren
+suffix:semicolon
 id|fpsave
 c_func
 (paren
+(paren
+r_int
+r_int
+op_star
+)paren
 op_amp
 id|current-&gt;tss.float_regs
 (braket
@@ -767,6 +778,12 @@ op_eq
 id|last_task_used_math
 )paren
 (brace
+id|fprs_write
+c_func
+(paren
+id|FPRS_FEF
+)paren
+suffix:semicolon
 id|fpsave
 c_func
 (paren

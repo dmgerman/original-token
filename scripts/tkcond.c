@@ -527,6 +527,10 @@ id|tok_hex
 op_logical_and
 id|cfg-&gt;tok
 op_ne
+id|tok_string
+op_logical_and
+id|cfg-&gt;tok
+op_ne
 id|tok_tristate
 op_logical_and
 id|cfg-&gt;tok
@@ -1108,6 +1112,9 @@ r_case
 id|tok_hex
 suffix:colon
 r_case
+id|tok_string
+suffix:colon
+r_case
 id|tok_choice
 suffix:colon
 r_case
@@ -1227,6 +1234,9 @@ suffix:colon
 r_case
 id|tok_hex
 suffix:colon
+r_case
+id|tok_string
+suffix:colon
 r_for
 c_loop
 (paren
@@ -1266,6 +1276,9 @@ id|tok_int
 suffix:colon
 r_case
 id|tok_hex
+suffix:colon
+r_case
+id|tok_string
 suffix:colon
 r_if
 c_cond

@@ -135,12 +135,10 @@ r_int
 id|bad_mask
 c_func
 (paren
-r_int
-r_int
+id|__u32
 id|mask
 comma
-r_int
-r_int
+id|__u32
 id|addr
 )paren
 (brace

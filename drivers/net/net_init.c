@@ -825,7 +825,7 @@ r_return
 suffix:semicolon
 )brace
 macro_line|#endif
-macro_line|#ifdef CONFIG_ATALK
+macro_line|#if defined(CONFIG_ATALK) || defined(CONFIG_ATALK_MODULE)
 DECL|function|ltalk_change_mtu
 r_static
 r_int

@@ -7,9 +7,9 @@ macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
-macro_line|#include &quot;vt_kern.h&quot;
-macro_line|#include &quot;consolemap.h&quot;
-macro_line|#include &quot;selection.h&quot;
+macro_line|#include &lt;linux/vt_kern.h&gt;
+macro_line|#include &lt;linux/consolemap.h&gt;
+macro_line|#include &lt;linux/selection.h&gt;
 macro_line|#ifndef MIN
 DECL|macro|MIN
 mdefine_line|#define MIN(a,b)&t;((a) &lt; (b) ? (a) : (b))
@@ -266,6 +266,9 @@ c_func
 r_const
 r_int
 id|p
+comma
+r_int
+id|size_row
 )paren
 (brace
 r_return
@@ -274,7 +277,7 @@ op_logical_neg
 (paren
 id|p
 op_mod
-id|video_size_row
+id|size_row
 )paren
 op_logical_or
 op_logical_neg
@@ -285,7 +288,7 @@ op_plus
 l_int|2
 )paren
 op_mod
-id|video_size_row
+id|size_row
 )paren
 )paren
 suffix:semicolon
@@ -986,6 +989,8 @@ id|atedge
 c_func
 (paren
 id|new_sel_end
+comma
+id|size_row
 )paren
 op_logical_and
 id|isspace
@@ -1031,6 +1036,8 @@ id|atedge
 c_func
 (paren
 id|pe
+comma
+id|size_row
 )paren
 )paren
 r_break

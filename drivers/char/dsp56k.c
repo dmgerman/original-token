@@ -2353,7 +2353,7 @@ suffix:semicolon
 )brace
 DECL|function|dsp56k_release
 r_static
-r_void
+r_int
 id|dsp56k_release
 c_func
 (paren
@@ -2405,12 +2405,17 @@ id|dev
 )paren
 suffix:semicolon
 r_return
+op_minus
+id|ENXIO
 suffix:semicolon
 )brace
 macro_line|#ifdef MODULE
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
-macro_line|#endif /* MODULE */
+macro_line|#endif
+r_return
+l_int|0
+suffix:semicolon
 )brace
 DECL|variable|dsp56k_fops
 r_static

@@ -732,7 +732,10 @@ DECL|macro|MIN_THRESHOLD
 mdefine_line|#define&t;MIN_THRESHOLD 1
 DECL|macro|MAX_THRESHOLD
 mdefine_line|#define&t;MAX_THRESHOLD 20&t;/* more seems not reasonable... */
-DECL|function|atari_mouse_setup
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|atari_mouse_setup
 c_func
@@ -744,6 +747,7 @@ comma
 r_int
 op_star
 id|ints
+)paren
 )paren
 (brace
 r_if

@@ -34,6 +34,9 @@ macro_line|#endif
 macro_line|#if defined(CONFIG_ATALK) || defined(CONFIG_ATALK_MODULE)
 macro_line|#include &lt;linux/atalk.h&gt;
 macro_line|#endif
+macro_line|#if defined(CONFIG_DECNET) || defined(CONFIG_DECNET_MODULE)
+macro_line|#include &lt;net/dn.h&gt;
+macro_line|#endif
 macro_line|#include &lt;linux/igmp.h&gt;
 macro_line|#include &lt;asm/atomic.h&gt;
 multiline_comment|/*&n; *&t;The AF_UNIX specific socket options&n; */
@@ -996,6 +999,11 @@ suffix:semicolon
 multiline_comment|/*&n; *&t;This is where all the private (optional) areas that don&squot;t&n; *&t;overlap will eventually live. &n; */
 r_union
 (brace
+DECL|member|destruct_hook
+r_void
+op_star
+id|destruct_hook
+suffix:semicolon
 DECL|member|af_unix
 r_struct
 id|unix_opt
@@ -1056,6 +1064,13 @@ op_star
 id|rose
 suffix:semicolon
 macro_line|#endif
+macro_line|#endif
+macro_line|#if defined(CONFIG_DECNET) || defined(CONFIG_DECNET_MODULE)
+DECL|member|dn
+id|dn_cb
+op_star
+id|dn
+suffix:semicolon
 macro_line|#endif
 DECL|member|protinfo
 )brace
@@ -1229,6 +1244,19 @@ r_struct
 id|sk_buff
 op_star
 id|skb
+)paren
+suffix:semicolon
+DECL|member|destruct
+r_void
+(paren
+op_star
+id|destruct
+)paren
+(paren
+r_struct
+id|sock
+op_star
+id|sk
 )paren
 suffix:semicolon
 )brace

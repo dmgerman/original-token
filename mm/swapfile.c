@@ -1555,6 +1555,8 @@ op_assign
 id|namei
 c_func
 (paren
+id|NAM_FOLLOW_LINK
+comma
 id|specialfile
 comma
 op_amp
@@ -2395,6 +2397,8 @@ op_assign
 id|namei
 c_func
 (paren
+id|NAM_FOLLOW_LINK
+comma
 id|specialfile
 comma
 op_amp
@@ -2421,7 +2425,12 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|atomic_read
+c_func
+(paren
+op_amp
 id|swap_inode-&gt;i_count
+)paren
 op_ne
 l_int|1
 )paren

@@ -8,9 +8,10 @@ macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/fbio.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
-macro_line|#include &quot;../../char/vt_kern.h&quot;
-macro_line|#include &quot;../../char/selection.h&quot;
-macro_line|#include &quot;../../char/console_struct.h&quot;
+multiline_comment|/* These must be included after asm/fbio.h */
+macro_line|#include &lt;linux/vt_kern.h&gt;
+macro_line|#include &lt;linux/selection.h&gt;
+macro_line|#include &lt;linux/console_struct.h&gt;
 macro_line|#include &quot;fb.h&quot;
 DECL|function|__initfunc
 id|__initfunc

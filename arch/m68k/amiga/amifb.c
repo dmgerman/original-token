@@ -4269,6 +4269,14 @@ id|ami_intena_vals
 (braket
 )braket
 suffix:semicolon
+r_extern
+r_void
+id|amiga_init_sound
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
 multiline_comment|/*&n;&t; * Support for Graphics Boards&n;&t; */
 macro_line|#ifdef CONFIG_FB_CYBER&t;&t;&t;/* Cybervision */
 r_extern
@@ -7327,6 +7335,12 @@ id|i
 suffix:semicolon
 id|u_long
 id|chipptr
+suffix:semicolon
+multiline_comment|/*&n;&t; * Our beloved beeper&n;&t; */
+id|amiga_init_sound
+c_func
+(paren
+)paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * Check for a Graphics Board&n;&t; */
 macro_line|#ifdef CONFIG_FB_CYBER

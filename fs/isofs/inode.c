@@ -3697,11 +3697,11 @@ id|file_system_type
 id|iso9660_fs_type
 op_assign
 (brace
-id|isofs_read_super
-comma
 l_string|&quot;iso9660&quot;
 comma
-l_int|1
+id|FS_REQUIRES_DEV
+comma
+id|isofs_read_super
 comma
 l_int|NULL
 )brace

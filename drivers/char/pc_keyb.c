@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/drivers/char/pc_keyb.c&n; *&n; * Written for linux by Johan Myreen as a translation from&n; * the assembly version by Linus (with diacriticals added)&n; *&n; * Some additional features added by Christoph Niemann (ChN), March 1993&n; *&n; * Loadable keymaps by Risto Kankkunen, May 1993&n; *&n; * Diacriticals redone &amp; other small changes, aeb@cwi.nl, June 1993&n; * Added decr/incr_console, dynamic keymaps, Unicode support,&n; * dynamic function/string keys, led setting,  Sept 1994&n; * `Sticky&squot; modifier keys, 951006.&n; * 11-11-96: SAK should now work in the raw mode (Martin Mares)&n; * &n; * Separation of the PC low-level part by Geert Uytterhoeven, May 1997&n; */
+multiline_comment|/*&n; * linux/drivers/char/pc_keyb.c&n; *&n; * Separation of the PC low-level part by Geert Uytterhoeven, May 1997&n; * See keyboard.c for the whole history.&n; *&n; * Major cleanup by Martin Mares, May 1997&n; */
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
@@ -6,29 +6,452 @@ macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/kbd_ll.h&gt;
 macro_line|#include &lt;asm/keyboard.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
-multiline_comment|/*&n; * On non-x86 hardware we do a full keyboard controller&n; * initialization, in case the bootup software hasn&squot;t done&n; * it. On a x86, the BIOS will already have initialized the&n; * keyboard.&n; */
+macro_line|#include &lt;asm/io.h&gt;
+macro_line|#include &lt;asm/system.h&gt;
+multiline_comment|/* Some configuration switches are present in the include file... */
+macro_line|#include &quot;pc_keyb.h&quot;
+multiline_comment|/*&n; * In case we run on a non-x86 hardware we need to initialize both the keyboard&n; * controller and the keyboard. On a x86, the BIOS will already have initialized&n; * them.&n; */
 macro_line|#ifdef INIT_KBD
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_int
+id|kbd_wait_for_input
+c_func
+(paren
+r_void
+)paren
+)paren
+(brace
+r_int
+id|n
+suffix:semicolon
+r_int
+id|status
+comma
+id|data
+suffix:semicolon
+id|n
+op_assign
+id|KBD_TIMEOUT
+suffix:semicolon
+r_do
+(brace
+id|status
+op_assign
+id|inb
+c_func
+(paren
+id|KBD_STATUS_REG
+)paren
+suffix:semicolon
+multiline_comment|/*&n;                 * Wait for input data to become available.  This bit will&n;                 * then be cleared by the following read of the DATA&n;                 * register.&n;                 */
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|status
+op_amp
+id|KBD_STAT_OBF
+)paren
+)paren
+r_continue
+suffix:semicolon
+id|data
+op_assign
+id|inb
+c_func
+(paren
+id|KBD_DATA_REG
+)paren
+suffix:semicolon
+multiline_comment|/*&n;                 * Check to see if a timeout error has occurred.  This means&n;                 * that transmission was started but did not complete in the&n;                 * normal time cycle.  PERR is set when a parity error occurred&n;                 * in the last transmission.&n;                 */
+r_if
+c_cond
+(paren
+id|status
+op_amp
+(paren
+id|KBD_STAT_GTO
+op_or
+id|KBD_STAT_PERR
+)paren
+)paren
+(brace
+r_continue
+suffix:semicolon
+)brace
+r_return
+(paren
+id|data
+op_amp
+l_int|0xff
+)paren
+suffix:semicolon
+)brace
+r_while
+c_loop
+(paren
+op_decrement
+id|n
+)paren
+suffix:semicolon
+r_return
+op_minus
+l_int|1
+suffix:semicolon
+multiline_comment|/* timed-out if fell through to here... */
+)brace
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
+r_static
+r_void
+id|kbd_write
+c_func
+(paren
+r_int
+id|address
+comma
+r_int
+id|data
+)paren
+)paren
+(brace
+r_int
+id|status
+suffix:semicolon
+r_do
+(brace
+id|status
+op_assign
+id|inb
+c_func
+(paren
+id|KBD_STATUS_REG
+)paren
+suffix:semicolon
+)brace
+r_while
+c_loop
+(paren
+id|status
+op_amp
+id|KBD_STAT_IBF
+)paren
+suffix:semicolon
+id|outb
+c_func
+(paren
+id|data
+comma
+id|address
+)paren
+suffix:semicolon
+)brace
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
+r_static
+r_char
+op_star
+id|initialize_kbd2
+c_func
+(paren
+r_void
+)paren
+)paren
+(brace
+multiline_comment|/* Flush any pending input. */
+r_while
+c_loop
+(paren
+id|kbd_wait_for_input
+c_func
+(paren
+)paren
+op_ne
+op_minus
+l_int|1
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t; * Test the keyboard interface.&n;&t; * This seems to be the only way to get it going.&n;&t; * If the test is successful a x55 is placed in the input buffer.&n;&t; */
+id|kbd_write
+c_func
+(paren
+id|KBD_CNTL_REG
+comma
+id|KBD_CCMD_SELF_TEST
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|kbd_wait_for_input
+c_func
+(paren
+)paren
+op_ne
+l_int|0x55
+)paren
+r_return
+l_string|&quot;Keyboard failed self test&quot;
+suffix:semicolon
+multiline_comment|/*&n;&t; * Perform a keyboard interface test.  This causes the controller&n;&t; * to test the keyboard clock and data lines.  The results of the&n;&t; * test are placed in the input buffer.&n;&t; */
+id|kbd_write
+c_func
+(paren
+id|KBD_CNTL_REG
+comma
+id|KBD_CCMD_KBD_TEST
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|kbd_wait_for_input
+c_func
+(paren
+)paren
+op_ne
+l_int|0x00
+)paren
+r_return
+l_string|&quot;Keyboard interface failed self test&quot;
+suffix:semicolon
+multiline_comment|/* Enable the keyboard by allowing the keyboard clock to run. */
+id|kbd_write
+c_func
+(paren
+id|KBD_CNTL_REG
+comma
+id|KBD_CCMD_KBD_ENABLE
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t; * Reset keyboard. If the read times out&n;&t; * then the assumption is that no keyboard is&n;&t; * plugged into the machine.&n;&t; * This defaults the keyboard to scan-code set 2.&n;&t; */
+id|kbd_write
+c_func
+(paren
+id|KBD_DATA_REG
+comma
+id|KBD_CMD_RESET
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|kbd_wait_for_input
+c_func
+(paren
+)paren
+op_ne
+id|KBD_REPLY_ACK
+)paren
+r_return
+l_string|&quot;Keyboard reset failed, no ACK&quot;
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|kbd_wait_for_input
+c_func
+(paren
+)paren
+op_ne
+id|KBD_REPLY_POR
+)paren
+r_return
+l_string|&quot;Keyboard reset failed, no POR&quot;
+suffix:semicolon
+multiline_comment|/*&n;&t; * Set keyboard controller mode. During this, the keyboard should be&n;&t; * in the disabled state.&n;&t; */
+id|kbd_write
+c_func
+(paren
+id|KBD_DATA_REG
+comma
+id|KBD_CMD_DISABLE
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|kbd_wait_for_input
+c_func
+(paren
+)paren
+op_ne
+id|KBD_REPLY_ACK
+)paren
+r_return
+l_string|&quot;Disable keyboard: no ACK&quot;
+suffix:semicolon
+id|kbd_write
+c_func
+(paren
+id|KBD_CNTL_REG
+comma
+id|KBD_CCMD_WRITE_MODE
+)paren
+suffix:semicolon
+id|kbd_write
+c_func
+(paren
+id|KBD_DATA_REG
+comma
+id|KBD_MODE_KBD_INT
+op_or
+id|KBD_MODE_SYS
+op_or
+id|KBD_MODE_DISABLE_MOUSE
+op_or
+id|KBD_MODE_KCC
+)paren
+suffix:semicolon
+id|kbd_write
+c_func
+(paren
+id|KBD_DATA_REG
+comma
+id|KBD_CMD_ENABLE
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|kbd_wait_for_input
+c_func
+(paren
+)paren
+op_ne
+id|KBD_REPLY_ACK
+)paren
+r_return
+l_string|&quot;Enable keyboard: no ACK&quot;
+suffix:semicolon
+multiline_comment|/*&n;&t; * Finally, set the typematic rate to maximum.&n;&t; */
+id|kbd_write
+c_func
+(paren
+id|KBD_DATA_REG
+comma
+id|KBD_CMD_SET_RATE
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|kbd_wait_for_input
+c_func
+(paren
+)paren
+op_ne
+id|KBD_REPLY_ACK
+)paren
+r_return
+l_string|&quot;Set rate: no ACK&quot;
+suffix:semicolon
+id|kbd_write
+c_func
+(paren
+id|KBD_DATA_REG
+comma
+l_int|0x00
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|kbd_wait_for_input
+c_func
+(paren
+)paren
+op_ne
+id|KBD_REPLY_ACK
+)paren
+r_return
+l_string|&quot;Set rate: no ACK&quot;
+suffix:semicolon
+r_return
+l_int|NULL
+suffix:semicolon
+)brace
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
+r_static
+r_void
 id|initialize_kbd
 c_func
 (paren
 r_void
 )paren
+)paren
+(brace
+r_int
+r_int
+id|flags
 suffix:semicolon
-macro_line|#endif
-macro_line|#include &lt;asm/io.h&gt;
-macro_line|#include &lt;asm/system.h&gt;
+r_char
+op_star
+id|msg
+suffix:semicolon
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
+id|msg
+op_assign
+id|initialize_kbd2
+c_func
+(paren
+)paren
+suffix:semicolon
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|msg
+)paren
+id|printk
+c_func
+(paren
+id|KERN_WARNING
+l_string|&quot;initialize_kbd: %s&bslash;n&quot;
+comma
+id|msg
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif /* INIT_KBD */
 DECL|variable|kbd_read_mask
 r_int
 r_char
 id|kbd_read_mask
 op_assign
-l_int|0x01
+id|KBD_STAT_OBF
 suffix:semicolon
-multiline_comment|/* modified by psaux.c */
+multiline_comment|/* Modified by psaux.c */
 multiline_comment|/* used only by send_data - set by keyboard_interrupt */
 DECL|variable|reply_expected
 r_static
@@ -57,7 +480,7 @@ id|resend
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* pt_regs - set by keyboard_interrupt(), used by show_ptregs() */
+multiline_comment|/*&n; *&t;Wait for keyboard controller input buffer is empty.&n; */
 DECL|function|kb_wait
 r_static
 r_inline
@@ -80,7 +503,7 @@ l_int|0
 suffix:semicolon
 id|i
 OL
-l_int|0x100000
+id|KBD_TIMEOUT
 suffix:semicolon
 id|i
 op_increment
@@ -88,17 +511,16 @@ op_increment
 r_if
 c_cond
 (paren
+op_logical_neg
 (paren
 id|inb_p
 c_func
 (paren
-l_int|0x64
+id|KBD_STATUS_REG
 )paren
 op_amp
-l_int|0x02
+id|KBD_STAT_IBF
 )paren
-op_eq
-l_int|0
 )paren
 r_return
 suffix:semicolon
@@ -110,22 +532,6 @@ l_string|&quot;Keyboard timed out&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
-r_extern
-r_struct
-id|pt_regs
-op_star
-id|pt_regs
-suffix:semicolon
-r_extern
-r_void
-id|handle_scancode
-c_func
-(paren
-r_int
-r_char
-id|scancode
-)paren
-suffix:semicolon
 multiline_comment|/*&n; * Translation of escaped scancodes to keycodes.&n; * This is now user-settable.&n; * The keycodes 1-88,96-111,119 are fairly standard, and&n; * should probably not be changed - changing might confuse X.&n; * X also interprets scancode 0x5d (KEY_Begin).&n; *&n; * For 1-88 keycode equals scancode.&n; */
 DECL|macro|E0_KPENTER
 mdefine_line|#define E0_KPENTER 96
@@ -739,14 +1145,14 @@ c_func
 (paren
 id|c
 comma
-l_int|0x64
+id|KBD_CNTL_REG
 )paren
 suffix:semicolon
 )brace
 DECL|macro|disable_keyboard
-mdefine_line|#define disable_keyboard()&t;do { send_cmd(0xAD); kb_wait(); } while (0)
+mdefine_line|#define disable_keyboard()&t;do { send_cmd(KBD_CCMD_KBD_DISABLE); kb_wait(); } while (0)
 DECL|macro|enable_keyboard
-mdefine_line|#define enable_keyboard()&t;send_cmd(0xAE)
+mdefine_line|#define enable_keyboard()&t;send_cmd(KBD_CCMD_KBD_ENABLE)
 macro_line|#else
 DECL|macro|disable_keyboard
 mdefine_line|#define disable_keyboard()&t;/* nothing */
@@ -770,23 +1176,22 @@ c_cond
 id|reply_expected
 )paren
 (brace
-multiline_comment|/* 0xfa, 0xfe only mean &quot;acknowledge&quot;, &quot;resend&quot; for most keyboards */
-multiline_comment|/* but they are the key-up scancodes for PF6, PF10 on a FOCUS 9000 */
-id|reply_expected
-op_assign
-l_int|0
-suffix:semicolon
+multiline_comment|/* Unfortunately, we must recognise these codes only if we know they&n;&t;   * are known to be valid (i.e., after sending a command), because there&n;&t;   * are some brain-damaged keyboards (yes, FOCUS 9000 again) which have&n;&t;   * keys with such codes :(&n;&t;   */
 r_if
 c_cond
 (paren
 id|scancode
 op_eq
-l_int|0xfa
+id|KBD_REPLY_ACK
 )paren
 (brace
 id|acknowledge
 op_assign
 l_int|1
+suffix:semicolon
+id|reply_expected
+op_assign
+l_int|0
 suffix:semicolon
 r_return
 l_int|0
@@ -798,22 +1203,22 @@ c_cond
 (paren
 id|scancode
 op_eq
-l_int|0xfe
+id|KBD_REPLY_RESEND
 )paren
 (brace
 id|resend
 op_assign
 l_int|1
 suffix:semicolon
+id|reply_expected
+op_assign
+l_int|0
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* strange ... */
-id|reply_expected
-op_assign
-l_int|1
-suffix:semicolon
+multiline_comment|/* Should not happen... */
 macro_line|#if 0
 id|printk
 c_func
@@ -1210,7 +1615,7 @@ r_int
 r_char
 id|status
 suffix:semicolon
-id|pt_regs
+id|kbd_pt_regs
 op_assign
 id|regs
 suffix:semicolon
@@ -1224,7 +1629,7 @@ op_assign
 id|inb_p
 c_func
 (paren
-l_int|0x64
+id|KBD_STATUS_REG
 )paren
 suffix:semicolon
 r_do
@@ -1241,7 +1646,7 @@ id|status
 op_amp
 id|kbd_read_mask
 op_amp
-l_int|0x20
+id|KBD_STAT_MOUSE_OBF
 )paren
 r_break
 suffix:semicolon
@@ -1250,7 +1655,7 @@ op_assign
 id|inb
 c_func
 (paren
-l_int|0x60
+id|KBD_DATA_REG
 )paren
 suffix:semicolon
 r_if
@@ -1259,7 +1664,7 @@ c_cond
 (paren
 id|status
 op_amp
-l_int|0x01
+id|KBD_STAT_OBF
 )paren
 op_logical_and
 id|do_acknowledge
@@ -1279,7 +1684,7 @@ op_assign
 id|inb
 c_func
 (paren
-l_int|0x64
+id|KBD_STATUS_REG
 )paren
 suffix:semicolon
 )brace
@@ -1288,7 +1693,11 @@ c_loop
 (paren
 id|status
 op_amp
-l_int|0x01
+(paren
+id|KBD_STAT_OBF
+op_or
+id|KBD_STAT_MOUSE_OBF
+)paren
 )paren
 suffix:semicolon
 id|mark_bh
@@ -1347,7 +1756,7 @@ c_func
 (paren
 id|data
 comma
-l_int|0x60
+id|KBD_DATA_REG
 )paren
 suffix:semicolon
 r_for
@@ -1368,7 +1777,7 @@ op_increment
 id|inb_p
 c_func
 (paren
-l_int|0x64
+id|KBD_STATUS_REG
 )paren
 suffix:semicolon
 multiline_comment|/* just as a delay */
@@ -1428,7 +1837,7 @@ op_logical_neg
 id|send_data
 c_func
 (paren
-l_int|0xed
+id|KBD_CMD_SET_LEDS
 )paren
 op_logical_or
 op_logical_neg
@@ -1441,7 +1850,7 @@ id|leds
 id|send_data
 c_func
 (paren
-l_int|0xf4
+id|KBD_CMD_ENABLE
 )paren
 suffix:semicolon
 multiline_comment|/* re-enable kbd if any errors */
@@ -1490,504 +1899,4 @@ c_func
 suffix:semicolon
 macro_line|#endif
 )brace
-macro_line|#ifdef INIT_KBD
-multiline_comment|/*&n; * keyboard controller registers&n; */
-DECL|macro|KBD_STATUS_REG
-mdefine_line|#define KBD_STATUS_REG      (unsigned int) 0x64
-DECL|macro|KBD_CNTL_REG
-mdefine_line|#define KBD_CNTL_REG        (unsigned int) 0x64
-DECL|macro|KBD_DATA_REG
-mdefine_line|#define KBD_DATA_REG&t;    (unsigned int) 0x60
-multiline_comment|/*&n; * controller commands&n; */
-DECL|macro|KBD_READ_MODE
-mdefine_line|#define KBD_READ_MODE&t;    (unsigned int) 0x20
-DECL|macro|KBD_WRITE_MODE
-mdefine_line|#define KBD_WRITE_MODE&t;    (unsigned int) 0x60
-DECL|macro|KBD_SELF_TEST
-mdefine_line|#define KBD_SELF_TEST&t;    (unsigned int) 0xAA
-DECL|macro|KBD_SELF_TEST2
-mdefine_line|#define KBD_SELF_TEST2&t;    (unsigned int) 0xAB
-DECL|macro|KBD_CNTL_ENABLE
-mdefine_line|#define KBD_CNTL_ENABLE&t;    (unsigned int) 0xAE
-multiline_comment|/*&n; * keyboard commands&n; */
-DECL|macro|KBD_ENABLE
-mdefine_line|#define KBD_ENABLE&t;    (unsigned int) 0xF4
-DECL|macro|KBD_DISABLE
-mdefine_line|#define KBD_DISABLE&t;    (unsigned int) 0xF5
-DECL|macro|KBD_RESET
-mdefine_line|#define KBD_RESET&t;    (unsigned int) 0xFF
-multiline_comment|/*&n; * keyboard replies&n; */
-DECL|macro|KBD_ACK
-mdefine_line|#define KBD_ACK&t;&t;    (unsigned int) 0xFA
-DECL|macro|KBD_POR
-mdefine_line|#define KBD_POR&t;&t;    (unsigned int) 0xAA
-multiline_comment|/*&n; * status register bits&n; */
-DECL|macro|KBD_OBF
-mdefine_line|#define KBD_OBF&t;&t;    (unsigned int) 0x01
-DECL|macro|KBD_IBF
-mdefine_line|#define KBD_IBF&t;&t;    (unsigned int) 0x02
-DECL|macro|KBD_GTO
-mdefine_line|#define KBD_GTO&t;&t;    (unsigned int) 0x40
-DECL|macro|KBD_PERR
-mdefine_line|#define KBD_PERR&t;    (unsigned int) 0x80
-multiline_comment|/*&n; * keyboard controller mode register bits&n; */
-DECL|macro|KBD_EKI
-mdefine_line|#define KBD_EKI&t;&t;    (unsigned int) 0x01
-DECL|macro|KBD_SYS
-mdefine_line|#define KBD_SYS&t;&t;    (unsigned int) 0x04
-DECL|macro|KBD_DMS
-mdefine_line|#define KBD_DMS&t;&t;    (unsigned int) 0x20
-DECL|macro|KBD_KCC
-mdefine_line|#define KBD_KCC&t;&t;    (unsigned int) 0x40
-DECL|macro|TIMEOUT_CONST
-mdefine_line|#define TIMEOUT_CONST&t;    500000
-DECL|function|kbd_wait_for_input
-r_static
-r_int
-id|kbd_wait_for_input
-c_func
-(paren
-r_void
-)paren
-(brace
-r_int
-id|n
-suffix:semicolon
-r_int
-id|status
-comma
-id|data
-suffix:semicolon
-id|n
-op_assign
-id|TIMEOUT_CONST
-suffix:semicolon
-r_do
-(brace
-id|status
-op_assign
-id|inb
-c_func
-(paren
-id|KBD_STATUS_REG
-)paren
-suffix:semicolon
-multiline_comment|/*&n;                 * Wait for input data to become available.  This bit will&n;                 * then be cleared by the following read of the DATA&n;                 * register.&n;                 */
-r_if
-c_cond
-(paren
-op_logical_neg
-(paren
-id|status
-op_amp
-id|KBD_OBF
-)paren
-)paren
-r_continue
-suffix:semicolon
-id|data
-op_assign
-id|inb
-c_func
-(paren
-id|KBD_DATA_REG
-)paren
-suffix:semicolon
-multiline_comment|/*&n;                 * Check to see if a timeout error has occurred.  This means&n;                 * that transmission was started but did not complete in the&n;                 * normal time cycle.  PERR is set when a parity error occurred&n;                 * in the last transmission.&n;                 */
-r_if
-c_cond
-(paren
-id|status
-op_amp
-(paren
-id|KBD_GTO
-op_or
-id|KBD_PERR
-)paren
-)paren
-(brace
-r_continue
-suffix:semicolon
-)brace
-r_return
-(paren
-id|data
-op_amp
-l_int|0xff
-)paren
-suffix:semicolon
-)brace
-r_while
-c_loop
-(paren
-op_decrement
-id|n
-)paren
-suffix:semicolon
-r_return
-(paren
-op_minus
-l_int|1
-)paren
-suffix:semicolon
-multiline_comment|/* timed-out if fell through to here... */
-)brace
-DECL|function|kbd_write
-r_static
-r_void
-id|kbd_write
-c_func
-(paren
-r_int
-id|address
-comma
-r_int
-id|data
-)paren
-(brace
-r_int
-id|status
-suffix:semicolon
-r_do
-(brace
-id|status
-op_assign
-id|inb
-c_func
-(paren
-id|KBD_STATUS_REG
-)paren
-suffix:semicolon
-multiline_comment|/* spin until input buffer empty*/
-)brace
-r_while
-c_loop
-(paren
-id|status
-op_amp
-id|KBD_IBF
-)paren
-suffix:semicolon
-id|outb
-c_func
-(paren
-id|data
-comma
-id|address
-)paren
-suffix:semicolon
-multiline_comment|/* write out the data*/
-)brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
-r_static
-r_int
-id|initialize_kbd
-c_func
-(paren
-r_void
-)paren
-)paren
-(brace
-r_int
-r_int
-id|flags
-suffix:semicolon
-id|save_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
-multiline_comment|/* Flush any pending input. */
-r_while
-c_loop
-(paren
-id|kbd_wait_for_input
-c_func
-(paren
-)paren
-op_ne
-op_minus
-l_int|1
-)paren
-r_continue
-suffix:semicolon
-multiline_comment|/*&n;&t; * Test the keyboard interface.&n;&t; * This seems to be the only way to get it going.&n;&t; * If the test is successful a x55 is placed in the input buffer.&n;&t; */
-id|kbd_write
-c_func
-(paren
-id|KBD_CNTL_REG
-comma
-id|KBD_SELF_TEST
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|kbd_wait_for_input
-c_func
-(paren
-)paren
-op_ne
-l_int|0x55
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_WARNING
-l_string|&quot;initialize_kbd: &quot;
-l_string|&quot;keyboard failed self test.&bslash;n&quot;
-)paren
-suffix:semicolon
-id|restore_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-r_return
-op_minus
-l_int|1
-suffix:semicolon
-)brace
-multiline_comment|/*&n;&t; * Perform a keyboard interface test.  This causes the controller&n;&t; * to test the keyboard clock and data lines.  The results of the&n;&t; * test are placed in the input buffer.&n;&t; */
-id|kbd_write
-c_func
-(paren
-id|KBD_CNTL_REG
-comma
-id|KBD_SELF_TEST2
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|kbd_wait_for_input
-c_func
-(paren
-)paren
-op_ne
-l_int|0x00
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_WARNING
-l_string|&quot;initialize_kbd: &quot;
-l_string|&quot;keyboard failed self test 2.&bslash;n&quot;
-)paren
-suffix:semicolon
-id|restore_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-r_return
-op_minus
-l_int|1
-suffix:semicolon
-)brace
-multiline_comment|/* Enable the keyboard by allowing the keyboard clock to run. */
-id|kbd_write
-c_func
-(paren
-id|KBD_CNTL_REG
-comma
-id|KBD_CNTL_ENABLE
-)paren
-suffix:semicolon
-multiline_comment|/*&n;&t; * Reset keyboard. If the read times out&n;&t; * then the assumption is that no keyboard is&n;&t; * plugged into the machine.&n;&t; * This defaults the keyboard to scan-code set 2.&n;&t; */
-id|kbd_write
-c_func
-(paren
-id|KBD_DATA_REG
-comma
-id|KBD_RESET
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|kbd_wait_for_input
-c_func
-(paren
-)paren
-op_ne
-id|KBD_ACK
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_WARNING
-l_string|&quot;initialize_kbd: &quot;
-l_string|&quot;reset kbd failed, no ACK.&bslash;n&quot;
-)paren
-suffix:semicolon
-id|restore_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-r_return
-op_minus
-l_int|1
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|kbd_wait_for_input
-c_func
-(paren
-)paren
-op_ne
-id|KBD_POR
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_WARNING
-l_string|&quot;initialize_kbd: &quot;
-l_string|&quot;reset kbd failed, not POR.&bslash;n&quot;
-)paren
-suffix:semicolon
-id|restore_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-r_return
-op_minus
-l_int|1
-suffix:semicolon
-)brace
-multiline_comment|/*&n;&t; * now do a DEFAULTS_DISABLE always&n;&t; */
-id|kbd_write
-c_func
-(paren
-id|KBD_DATA_REG
-comma
-id|KBD_DISABLE
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|kbd_wait_for_input
-c_func
-(paren
-)paren
-op_ne
-id|KBD_ACK
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_WARNING
-l_string|&quot;initialize_kbd: &quot;
-l_string|&quot;disable kbd failed, no ACK.&bslash;n&quot;
-)paren
-suffix:semicolon
-id|restore_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-r_return
-op_minus
-l_int|1
-suffix:semicolon
-)brace
-multiline_comment|/*&n;&t; * Enable keyboard interrupt, operate in &quot;sys&quot; mode,&n;&t; *  enable keyboard (by clearing the disable keyboard bit),&n;&t; *  disable mouse, do conversion of keycodes.&n;&t; */
-id|kbd_write
-c_func
-(paren
-id|KBD_CNTL_REG
-comma
-id|KBD_WRITE_MODE
-)paren
-suffix:semicolon
-id|kbd_write
-c_func
-(paren
-id|KBD_DATA_REG
-comma
-id|KBD_EKI
-op_or
-id|KBD_SYS
-op_or
-id|KBD_DMS
-op_or
-id|KBD_KCC
-)paren
-suffix:semicolon
-multiline_comment|/*&n;&t; * now ENABLE the keyboard to set it scanning...&n;&t; */
-id|kbd_write
-c_func
-(paren
-id|KBD_DATA_REG
-comma
-id|KBD_ENABLE
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|kbd_wait_for_input
-c_func
-(paren
-)paren
-op_ne
-id|KBD_ACK
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_WARNING
-l_string|&quot;initialize_kbd: &quot;
-l_string|&quot;keyboard enable failed.&bslash;n&quot;
-)paren
-suffix:semicolon
-id|restore_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-r_return
-op_minus
-l_int|1
-suffix:semicolon
-)brace
-id|restore_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-r_return
-(paren
-l_int|1
-)paren
-suffix:semicolon
-)brace
-macro_line|#endif /* INIT_KBD */
 eof

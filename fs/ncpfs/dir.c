@@ -304,9 +304,6 @@ id|new_name
 comma
 r_int
 id|new_len
-comma
-r_int
-id|must_be_dir
 )paren
 suffix:semicolon
 DECL|function|str_upper
@@ -550,9 +547,6 @@ multiline_comment|/* rename */
 l_int|NULL
 comma
 multiline_comment|/* readlink */
-l_int|NULL
-comma
-multiline_comment|/* follow_link */
 l_int|NULL
 comma
 multiline_comment|/* bmap */
@@ -4616,9 +4610,6 @@ id|new_name
 comma
 r_int
 id|new_len
-comma
-r_int
-id|must_be_dir
 )paren
 (brace
 r_int

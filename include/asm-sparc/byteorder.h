@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: byteorder.h,v 1.13 1997/05/26 23:37:46 davem Exp $ */
+multiline_comment|/* $Id: byteorder.h,v 1.14 1997/05/28 11:35:38 jj Exp $ */
 macro_line|#ifndef _SPARC_BYTEORDER_H
 DECL|macro|_SPARC_BYTEORDER_H
 mdefine_line|#define _SPARC_BYTEORDER_H
@@ -103,81 +103,167 @@ DECL|macro|cpu_to_be16
 mdefine_line|#define cpu_to_be16(x)  (x)
 DECL|macro|cpu_to_be32
 mdefine_line|#define cpu_to_be32(x)  (x)
+multiline_comment|/* The same, but returns converted value from the location pointer by addr. */
+DECL|function|cpu_to_le16p
+r_extern
+id|__inline__
+id|__u16
+id|cpu_to_le16p
+c_func
+(paren
+id|__u16
+op_star
+id|addr
+)paren
+(brace
+r_return
+id|cpu_to_le16
+c_func
+(paren
+op_star
+id|addr
+)paren
+suffix:semicolon
+)brace
+DECL|function|cpu_to_le32p
+r_extern
+id|__inline__
+id|__u32
+id|cpu_to_le32p
+c_func
+(paren
+id|__u32
+op_star
+id|addr
+)paren
+(brace
+r_return
+id|cpu_to_le32
+c_func
+(paren
+op_star
+id|addr
+)paren
+suffix:semicolon
+)brace
+DECL|function|cpu_to_be16p
+r_extern
+id|__inline__
+id|__u16
+id|cpu_to_be16p
+c_func
+(paren
+id|__u16
+op_star
+id|addr
+)paren
+(brace
+r_return
+id|cpu_to_be16
+c_func
+(paren
+op_star
+id|addr
+)paren
+suffix:semicolon
+)brace
+DECL|function|cpu_to_be32p
+r_extern
+id|__inline__
+id|__u32
+id|cpu_to_be32p
+c_func
+(paren
+id|__u32
+op_star
+id|addr
+)paren
+(brace
+r_return
+id|cpu_to_be32
+c_func
+(paren
+op_star
+id|addr
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/* The same, but do the conversion in situ, ie. put the value back to addr. */
+DECL|function|cpu_to_le16s
+r_extern
+id|__inline__
+r_void
+id|cpu_to_le16s
+c_func
+(paren
+id|__u16
+op_star
+id|addr
+)paren
+(brace
+op_star
+id|addr
+op_assign
+id|cpu_to_le16
+c_func
+(paren
+op_star
+id|addr
+)paren
+suffix:semicolon
+)brace
+DECL|function|cpu_to_le32s
+r_extern
+id|__inline__
+r_void
+id|cpu_to_le32s
+c_func
+(paren
+id|__u32
+op_star
+id|addr
+)paren
+(brace
+op_star
+id|addr
+op_assign
+id|cpu_to_le32
+c_func
+(paren
+op_star
+id|addr
+)paren
+suffix:semicolon
+)brace
+DECL|macro|cpu_to_be16s
+mdefine_line|#define cpu_to_be16s(x) do { } while (0)
+DECL|macro|cpu_to_be32s
+mdefine_line|#define cpu_to_be32s(x) do { } while (0)
 multiline_comment|/* Convert from specified byte order, to CPU byte order. */
-DECL|function|le16_to_cpu
-r_extern
-id|__inline__
-id|__u16
-id|le16_to_cpu
-c_func
-(paren
-id|__u16
-id|value
-)paren
-(brace
-r_return
-(paren
-id|value
-op_rshift
-l_int|8
-)paren
-op_or
-(paren
-id|value
-op_lshift
-l_int|8
-)paren
-suffix:semicolon
-)brace
-DECL|function|le32_to_cpu
-r_extern
-id|__inline__
-id|__u32
-id|le32_to_cpu
-c_func
-(paren
-id|__u32
-id|value
-)paren
-(brace
-r_return
-(paren
-id|value
-op_rshift
-l_int|24
-)paren
-op_or
-(paren
-(paren
-id|value
-op_rshift
-l_int|8
-)paren
-op_amp
-l_int|0xff00
-)paren
-op_or
-(paren
-(paren
-id|value
-op_lshift
-l_int|8
-)paren
-op_amp
-l_int|0xff0000
-)paren
-op_or
-(paren
-id|value
-op_lshift
-l_int|24
-)paren
-suffix:semicolon
-)brace
+DECL|macro|le16_to_cpu
+mdefine_line|#define le16_to_cpu(x)  cpu_to_le16(x)
+DECL|macro|le32_to_cpu
+mdefine_line|#define le32_to_cpu(x)  cpu_to_le32(x)
 DECL|macro|be16_to_cpu
-mdefine_line|#define be16_to_cpu(x)  (x)
+mdefine_line|#define be16_to_cpu(x)  cpu_to_be16(x)
 DECL|macro|be32_to_cpu
-mdefine_line|#define be32_to_cpu(x)  (x)
+mdefine_line|#define be32_to_cpu(x)  cpu_to_be32(x)
+DECL|macro|le16_to_cpup
+mdefine_line|#define le16_to_cpup(x) cpu_to_le16p(x)
+DECL|macro|le32_to_cpup
+mdefine_line|#define le32_to_cpup(x) cpu_to_le32p(x)
+DECL|macro|be16_to_cpup
+mdefine_line|#define be16_to_cpup(x) cpu_to_be16p(x)
+DECL|macro|be32_to_cpup
+mdefine_line|#define be32_to_cpup(x) cpu_to_be32p(x)
+DECL|macro|le16_to_cpus
+mdefine_line|#define le16_to_cpus(x) cpu_to_le16s(x)
+DECL|macro|le32_to_cpus
+mdefine_line|#define le32_to_cpus(x) cpu_to_le32s(x)
+DECL|macro|be16_to_cpus
+mdefine_line|#define be16_to_cpus(x) cpu_to_be16s(x)
+DECL|macro|be32_to_cpus
+mdefine_line|#define be32_to_cpus(x) cpu_to_be32s(x)
 macro_line|#endif /* __KERNEL__ */
 macro_line|#endif /* !(_SPARC_BYTEORDER_H) */
 eof

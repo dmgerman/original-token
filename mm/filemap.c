@@ -2951,6 +2951,7 @@ id|retval
 op_assign
 l_int|0
 suffix:semicolon
+multiline_comment|/* inode-&gt;i_status |= ST_MODIFIED is willingly *not* done here */
 id|set_fs
 c_func
 (paren
@@ -4300,8 +4301,12 @@ id|vma-&gt;vm_inode
 op_assign
 id|inode
 suffix:semicolon
+id|atomic_inc
+c_func
+(paren
+op_amp
 id|inode-&gt;i_count
-op_increment
+)paren
 suffix:semicolon
 id|vma-&gt;vm_ops
 op_assign

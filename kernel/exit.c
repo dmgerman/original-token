@@ -14,6 +14,7 @@ macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/smp.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
+macro_line|#include &lt;linux/slab.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/mmu_context.h&gt;
@@ -1635,6 +1636,7 @@ id|set
 op_amp
 l_int|1
 )paren
+(brace
 id|close_fp
 c_func
 (paren
@@ -1644,6 +1646,14 @@ id|i
 )braket
 )paren
 suffix:semicolon
+id|files-&gt;fd
+(braket
+id|i
+)braket
+op_assign
+l_int|NULL
+suffix:semicolon
+)brace
 id|i
 op_increment
 suffix:semicolon
@@ -1654,6 +1664,11 @@ suffix:semicolon
 )brace
 )brace
 )brace
+r_extern
+id|kmem_cache_t
+op_star
+id|files_cachep
+suffix:semicolon
 DECL|function|__exit_files
 r_static
 r_inline
@@ -1698,9 +1713,11 @@ c_func
 id|files
 )paren
 suffix:semicolon
-id|kfree
+id|kmem_cache_free
 c_func
 (paren
+id|files_cachep
+comma
 id|files
 )paren
 suffix:semicolon

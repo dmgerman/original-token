@@ -1963,13 +1963,6 @@ c_func
 id|lp_interrupt
 )paren
 suffix:semicolon
-DECL|variable|lp_init
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|lp_init
-)paren
-suffix:semicolon
 DECL|variable|register_parallel
 id|EXPORT_SYMBOL
 c_func

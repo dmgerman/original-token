@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;TCP over IPv6&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;$Id: tcp_ipv6.c,v 1.31 1997/04/29 21:51:23 davem Exp $&n; *&n; *&t;Based on: &n; *&t;linux/net/ipv4/tcp.c&n; *&t;linux/net/ipv4/tcp_input.c&n; *&t;linux/net/ipv4/tcp_output.c&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; *&t;TCP over IPv6&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;$Id: tcp_ipv6.c,v 1.32 1997/06/04 08:28:58 davem Exp $&n; *&n; *&t;Based on: &n; *&t;linux/net/ipv4/tcp.c&n; *&t;linux/net/ipv4/tcp_input.c&n; *&t;linux/net/ipv4/tcp_output.c&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/socket.h&gt;
@@ -2837,18 +2837,6 @@ op_plus
 l_int|1
 )paren
 suffix:semicolon
-id|th-&gt;doff
-op_assign
-r_sizeof
-(paren
-op_star
-id|th
-)paren
-op_div
-l_int|4
-op_plus
-l_int|1
-suffix:semicolon
 multiline_comment|/* Don&squot;t offer more than they did.&n;&t; * This way we don&squot;t have to memorize who said what.&n;&t; * FIXME: the selection of initial mss here doesn&squot;t quite&n;&t; * match what happens under IPV4. Figure out the right thing to do.&n;&t; */
 id|req-&gt;mss
 op_assign
@@ -2941,26 +2929,28 @@ id|req-&gt;sack_ok
 comma
 id|req-&gt;tstamp_ok
 comma
-id|req-&gt;snd_wscale
+id|req-&gt;wscale_ok
 comma
 id|req-&gt;rcv_wscale
 )paren
 suffix:semicolon
+id|skb-&gt;csum
+op_assign
+l_int|0
+suffix:semicolon
 id|th-&gt;doff
 op_assign
+(paren
 r_sizeof
 (paren
 op_star
 id|th
 )paren
-op_div
-l_int|4
 op_plus
-(paren
 id|tmp
+)paren
 op_rshift
 l_int|2
-)paren
 suffix:semicolon
 id|th-&gt;check
 op_assign

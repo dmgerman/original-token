@@ -1247,8 +1247,12 @@ id|vma-&gt;vm_inode
 op_assign
 id|inode
 suffix:semicolon
+id|atomic_inc
+c_func
+(paren
+op_amp
 id|inode-&gt;i_count
-op_increment
+)paren
 suffix:semicolon
 id|dmap-&gt;mapping_flags
 op_or_assign

@@ -7,6 +7,7 @@ macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/smp.h&gt;
 macro_line|#include &lt;linux/reboot.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/sysrq.h&gt;
 id|asmlinkage
 r_void
 id|sys_sync
@@ -246,7 +247,7 @@ suffix:semicolon
 suffix:semicolon
 )paren
 (brace
-suffix:semicolon
+id|CHECK_EMERGENCY_SYNC
 )brace
 )brace
 eof

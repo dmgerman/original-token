@@ -939,6 +939,10 @@ id|buffer_head
 op_star
 id|bh
 suffix:semicolon
+r_char
+op_star
+id|lcname
+suffix:semicolon
 macro_line|#ifdef DEBUG
 id|printk
 c_func
@@ -988,42 +992,7 @@ op_minus
 id|ENOENT
 suffix:semicolon
 )brace
-id|ino
-op_assign
-l_int|0
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|dcache_lookup
-c_func
-(paren
-id|dir
-comma
-id|name
-comma
-id|len
-comma
-op_amp
-id|ino
-)paren
-)paren
-id|ino_back
-op_assign
-id|dir-&gt;i_ino
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|ino
-)paren
-(brace
-r_char
-op_star
-id|lcname
-suffix:semicolon
-multiline_comment|/* If mounted with check=relaxed (and most likely norock),&n;&t;&t;   then first convert this name to lower case. */
+multiline_comment|/* If mounted with check=relaxed (and most likely norock),&n;&t; * then first convert this name to lower case.&n;&t; */
 r_if
 c_cond
 (paren
@@ -1159,32 +1128,12 @@ op_minus
 id|ENOENT
 suffix:semicolon
 )brace
-r_if
-c_cond
-(paren
-id|ino_back
-op_eq
-id|dir-&gt;i_ino
-)paren
-id|dcache_add
-c_func
-(paren
-id|dir
-comma
-id|name
-comma
-id|len
-comma
-id|ino
-)paren
-suffix:semicolon
 id|brelse
 c_func
 (paren
 id|bh
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -1214,7 +1163,7 @@ op_minus
 id|EACCES
 suffix:semicolon
 )brace
-multiline_comment|/* We need this backlink for the &quot;..&quot; entry unless the name that we&n;&t;   are looking up traversed a mount point (in which case the inode&n;&t;   may not even be on an iso9660 filesystem, and writing to&n;&t;   u.isofs_i would only cause memory corruption).&n;&t;*/
+multiline_comment|/* We need this backlink for the &quot;..&quot; entry unless the name that we&n;&t; * are looking up traversed a mount point (in which case the inode&n;&t; * may not even be on an iso9660 filesystem, and writing to&n;&t; * u.isofs_i would only cause memory corruption).&n;&t; */
 r_if
 c_cond
 (paren
@@ -1237,7 +1186,6 @@ id|i_sb
 op_eq
 id|dir-&gt;i_sb
 )paren
-(brace
 (paren
 op_star
 id|result
@@ -1247,7 +1195,6 @@ id|u.isofs_i.i_backlink
 op_assign
 id|ino_back
 suffix:semicolon
-)brace
 id|iput
 c_func
 (paren

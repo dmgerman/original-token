@@ -157,7 +157,7 @@ mdefine_line|#define BAD_STAT&t;&t;(BAD_R_STAT  | DRQ_STAT)
 DECL|macro|DRIVE_READY
 mdefine_line|#define DRIVE_READY&t;&t;(READY_STAT  | SEEK_STAT)
 DECL|macro|DATA_READY
-mdefine_line|#define DATA_READY&t;&t;(DRIVE_READY | DRQ_STAT)
+mdefine_line|#define DATA_READY&t;&t;(DRQ_STAT)
 multiline_comment|/*&n; * Some more useful definitions&n; */
 DECL|macro|IDE_MAJOR_NAME
 mdefine_line|#define IDE_MAJOR_NAME&t;&quot;ide&quot;&t;/* the same for all i/f; see also genhd.c */

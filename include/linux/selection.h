@@ -357,7 +357,6 @@ id|p
 )paren
 suffix:semicolon
 multiline_comment|/* how to access screen memory */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#if defined(CONFIG_TGA_CONSOLE)
 r_extern
 r_int
@@ -454,7 +453,7 @@ id|addr
 suffix:semicolon
 )brace
 macro_line|#elif defined(CONFIG_SUN_CONSOLE)
-macro_line|#include &quot;vt_kern.h&quot;
+macro_line|#include &lt;linux/vt_kern.h&gt;
 macro_line|#include &lt;linux/kd.h&gt;
 r_extern
 r_int

@@ -464,6 +464,7 @@ op_assign
 id|p
 suffix:semicolon
 )brace
+macro_line|#ifdef __SMP__
 multiline_comment|/*&n; * The tasklist_lock protects the linked list of processes.&n; *&n; * The scheduler lock is protecting against multiple entry&n; * into the scheduling code, and doesn&squot;t need to worry&n; * about interrupts (because interrupts cannot call the&n; * scheduler).&n; *&n; * The run-queue lock locks the parts that actually access&n; * and change the run-queues, and have to be interrupt-safe.&n; */
 DECL|variable|tasklist_lock
 id|rwlock_t
@@ -484,6 +485,7 @@ id|runqueue_lock
 op_assign
 id|SPIN_LOCK_UNLOCKED
 suffix:semicolon
+macro_line|#endif
 multiline_comment|/*&n; * Wake up a process. Put it on the run-queue if it&squot;s not&n; * already there.  The &quot;current&quot; process is always on the&n; * run-queue (except when the actual re-schedule is in&n; * progress), and as such you&squot;re allowed to do the simpler&n; * &quot;current-&gt;state = TASK_RUNNING&quot; to mark yourself runnable&n; * without the overhead of this.&n; */
 DECL|function|wake_up_process
 r_inline

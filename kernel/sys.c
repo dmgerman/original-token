@@ -1,4 +1,5 @@
 multiline_comment|/*&n; *  linux/kernel/sys.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -15,6 +16,7 @@ macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/acct.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
+macro_line|#include &lt;linux/nametrans.h&gt;
 macro_line|#include &lt;linux/smp.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/notifier.h&gt;
@@ -1422,6 +1424,7 @@ id|acct
 )paren
 )paren
 suffix:semicolon
+multiline_comment|/* inode-&gt;i_status |= ST_MODIFIED is willingly *not* done here */
 id|set_fs
 c_func
 (paren
@@ -3581,6 +3584,12 @@ id|len
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#ifdef CONFIG_TRANS_NAMES
+id|translations_dirty
+op_assign
+l_int|1
+suffix:semicolon
+macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
@@ -3717,6 +3726,12 @@ id|len
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#ifdef CONFIG_TRANS_NAMES
+id|translations_dirty
+op_assign
+l_int|1
+suffix:semicolon
+macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon

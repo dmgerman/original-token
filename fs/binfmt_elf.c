@@ -2968,8 +2968,12 @@ id|current-&gt;executable
 op_assign
 id|bprm-&gt;inode
 suffix:semicolon
+id|atomic_inc
+c_func
+(paren
+op_amp
 id|bprm-&gt;inode-&gt;i_count
-op_increment
+)paren
 suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef LOW_ELF_STACK
@@ -3853,6 +3857,10 @@ r_int
 id|nr
 )paren
 (brace
+id|file-&gt;f_inode-&gt;i_status
+op_or_assign
+id|ST_MODIFIED
+suffix:semicolon
 r_return
 id|file-&gt;f_op
 op_member_access_from_pointer

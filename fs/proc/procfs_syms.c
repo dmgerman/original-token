@@ -152,11 +152,11 @@ id|file_system_type
 id|proc_fs_type
 op_assign
 (brace
-id|proc_read_super
-comma
 l_string|&quot;proc&quot;
 comma
-l_int|0
+id|FS_NO_DCACHE
+comma
+id|proc_read_super
 comma
 l_int|NULL
 )brace

@@ -3163,6 +3163,22 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
+DECL|variable|prof_multiplier
+r_int
+r_int
+id|prof_multiplier
+(braket
+id|NR_CPUS
+)braket
+suffix:semicolon
+DECL|variable|prof_counter
+r_int
+r_int
+id|prof_counter
+(braket
+id|NR_CPUS
+)braket
+suffix:semicolon
 multiline_comment|/*&n; *&t;Cycle through the processors sending APIC IPI&squot;s to boot each.&n; */
 DECL|function|__initfunc
 id|__initfunc
@@ -3264,8 +3280,23 @@ c_cond
 op_logical_neg
 id|smp_found_config
 )paren
+(brace
+multiline_comment|/*&n;&t;&t; * For SMP-simulation on one CPU to work, we must initialize these &n;&t;&t; * values for the single CPU here:&n;                 */
+id|prof_counter
+(braket
+l_int|0
+)braket
+op_assign
+id|prof_multiplier
+(braket
+l_int|0
+)braket
+op_assign
+l_int|1
+suffix:semicolon
 r_return
 suffix:semicolon
+)brace
 multiline_comment|/*&n;&t; *&t;Map the local APIC into kernel space&n;&t; */
 id|apic_reg
 op_assign
@@ -4274,22 +4305,6 @@ multiline_comment|/*&n;&t; *&t;Completed.&n;&t; */
 multiline_comment|/*&t;printk(&quot;SMID&bslash;n&quot;);*/
 )brace
 multiline_comment|/*&n; * Local timer interrupt handler. It does both profiling and&n; * process statistics/rescheduling.&n; *&n; * We do profiling in every local tick, statistics/rescheduling&n; * happen only every &squot;profiling multiplier&squot; ticks. The default&n; * multiplier is 1 and it can be changed by writing the new multiplier&n; * value into /proc/profile.&n; */
-DECL|variable|prof_multiplier
-r_int
-r_int
-id|prof_multiplier
-(braket
-id|NR_CPUS
-)braket
-suffix:semicolon
-DECL|variable|prof_counter
-r_int
-r_int
-id|prof_counter
-(braket
-id|NR_CPUS
-)braket
-suffix:semicolon
 DECL|function|smp_local_timer_interrupt
 r_void
 id|smp_local_timer_interrupt

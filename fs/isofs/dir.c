@@ -107,9 +107,6 @@ comma
 multiline_comment|/* readlink */
 l_int|NULL
 comma
-multiline_comment|/* follow_link */
-l_int|NULL
-comma
 multiline_comment|/* readpage */
 l_int|NULL
 comma
@@ -918,18 +915,6 @@ comma
 id|inode_number
 )paren
 suffix:semicolon
-id|dcache_add
-c_func
-(paren
-id|inode
-comma
-id|name
-comma
-id|len
-comma
-id|inode_number
-)paren
-suffix:semicolon
 id|kfree
 c_func
 (paren
@@ -995,18 +980,6 @@ l_int|0
 )paren
 r_break
 suffix:semicolon
-id|dcache_add
-c_func
-(paren
-id|inode
-comma
-id|tmpname
-comma
-id|len
-comma
-id|inode_number
-)paren
-suffix:semicolon
 id|filp-&gt;f_pos
 op_add_assign
 id|de_len
@@ -1034,18 +1007,6 @@ OL
 l_int|0
 )paren
 r_break
-suffix:semicolon
-id|dcache_add
-c_func
-(paren
-id|inode
-comma
-id|name
-comma
-id|len
-comma
-id|inode_number
-)paren
 suffix:semicolon
 id|filp-&gt;f_pos
 op_add_assign

@@ -309,8 +309,6 @@ r_char
 op_star
 comma
 r_int
-comma
-r_int
 )paren
 suffix:semicolon
 DECL|variable|nfs_dir_operations
@@ -391,9 +389,6 @@ multiline_comment|/* rename */
 l_int|NULL
 comma
 multiline_comment|/* readlink */
-l_int|NULL
-comma
-multiline_comment|/* follow_link */
 l_int|NULL
 comma
 multiline_comment|/* readpage */
@@ -1463,6 +1458,7 @@ id|fattr
 suffix:semicolon
 DECL|member|expiration_date
 r_int
+r_int
 id|expiration_date
 suffix:semicolon
 DECL|variable|nfs_lookup_cache
@@ -2204,6 +2200,11 @@ c_cond
 (paren
 id|len
 op_eq
+l_int|0
+op_logical_or
+(paren
+id|len
+op_eq
 l_int|1
 op_logical_and
 id|name
@@ -2213,8 +2214,9 @@ l_int|0
 op_eq
 l_char|&squot;.&squot;
 )paren
+)paren
 (brace
-multiline_comment|/* cheat for &quot;.&quot; */
+multiline_comment|/* cheat for &quot;&quot; and &quot;.&quot; */
 op_star
 id|result
 op_assign
@@ -3193,8 +3195,12 @@ id|slen
 comma
 id|ret
 suffix:semicolon
+id|atomic_inc
+c_func
+(paren
+op_amp
 id|dir-&gt;i_count
-op_increment
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -3222,7 +3228,12 @@ multiline_comment|/* arbitrary */
 r_if
 c_cond
 (paren
+id|atomic_read
+c_func
+(paren
+op_amp
 id|inode-&gt;i_count
+)paren
 op_eq
 l_int|1
 )paren
@@ -3398,8 +3409,12 @@ id|inode
 op_assign
 id|dir
 suffix:semicolon
+id|atomic_inc
+c_func
+(paren
+op_amp
 id|dir-&gt;i_count
-op_increment
+)paren
 suffix:semicolon
 )brace
 id|nfs_invalidate_dircache
@@ -4155,9 +4170,6 @@ id|new_name
 comma
 r_int
 id|new_len
-comma
-r_int
-id|must_be_dir
 )paren
 (brace
 r_int
@@ -4286,16 +4298,6 @@ op_minus
 id|ENAMETOOLONG
 suffix:semicolon
 )brace
-multiline_comment|/* We don&squot;t do rename() with trailing slashes over NFS now. Hmm. */
-r_if
-c_cond
-(paren
-id|must_be_dir
-)paren
-r_return
-op_minus
-id|EINVAL
-suffix:semicolon
 id|error
 op_assign
 id|nfs_proc_rename
@@ -4411,7 +4413,12 @@ id|inode-&gt;i_dev
 comma
 id|inode-&gt;i_ino
 comma
+id|atomic_read
+c_func
+(paren
+op_amp
 id|inode-&gt;i_count
+)paren
 )paren
 suffix:semicolon
 r_if

@@ -360,7 +360,7 @@ id|flags
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * This builds up the IRQ handler stubs using some ugly macros in irq.h&n; *&n; * These macros create the low-level assembly IRQ routines that do all&n; * the operations that are needed to keep the AT interrupt-controller&n; * happy. They are also written to be fast - and to disable interrupts&n; * as little as humanly possible.&n; *&n; * NOTE! These macros expand to three different handlers for each line: one&n; * complete handler that does all the fancy stuff (including signal handling),&n; * and one fast handler that is meant for simple IRQ&squot;s that want to be&n; * atomic. The specific handler is chosen depending on the SA_INTERRUPT&n; * flag when installing a handler. Finally, one &quot;bad interrupt&quot; handler, that&n; * is used when no handler is present.&n; *&n; * The timer interrupt is handled specially to insure that the jiffies&n; * variable is updated at all times.  Specifically, the timer interrupt is&n; * just like the complete handlers except that it is invoked with interrupts&n; * disabled and should never re-enable them.  If other interrupts were&n; * allowed to be processed while the timer interrupt is active, then the&n; * other interrupts would have to avoid using the jiffies variable for delay&n; * and interval timing operations to avoid hanging the system.&n; */
+multiline_comment|/*&n; * This builds up the IRQ handler stubs using some ugly macros in irq.h&n; *&n; * These macros create the low-level assembly IRQ routines that do all&n; * the operations that are needed to keep the AT interrupt-controller&n; * happy. They are also written to be fast - and to disable interrupts&n; * as little as humanly possible.&n; */
 macro_line|#if NR_IRQS != 16
 macro_line|#error make irq stub building NR_IRQS dependent and remove me.
 macro_line|#endif
@@ -2215,6 +2215,21 @@ c_cond
 id|action
 )paren
 (brace
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|action-&gt;flags
+op_amp
+id|SA_INTERRUPT
+)paren
+)paren
+id|__sti
+c_func
+(paren
+)paren
+suffix:semicolon
 r_do
 (brace
 id|status

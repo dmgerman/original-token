@@ -22,6 +22,16 @@ op_assign
 id|TIMER_MARGIN
 suffix:semicolon
 multiline_comment|/* in seconds */
+macro_line|#ifdef MODULE
+id|MODULE_PARM
+c_func
+(paren
+id|soft_margin
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/*&n; *&t;Our timer&n; */
 DECL|variable|watchdog_ticktock
 r_struct

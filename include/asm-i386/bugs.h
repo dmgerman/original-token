@@ -95,6 +95,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;387 failed: trying to reset&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -161,12 +162,14 @@ macro_line|#ifndef CONFIG_MATH_EMULATION
 id|printk
 c_func
 (paren
+id|KERN_EMERG
 l_string|&quot;No coprocessor found and no math emulation present.&bslash;n&quot;
 )paren
 suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_EMERG
 l_string|&quot;Giving up.&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -185,6 +188,7 @@ multiline_comment|/*&n;&t; * check if exception 16 works correctly.. This is tru
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;Checking 386/387 coupling... &quot;
 )paren
 suffix:semicolon
@@ -375,6 +379,7 @@ r_void
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;Checking &squot;hlt&squot; instruction... &quot;
 )paren
 suffix:semicolon
@@ -430,6 +435,7 @@ l_int|3
 id|printk
 c_func
 (paren
+id|KERN_EMERG
 l_string|&quot;CPU is a 386 and this kernel was compiled for 486 or better.&bslash;n&quot;
 )paren
 suffix:semicolon

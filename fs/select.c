@@ -733,7 +733,7 @@ r_return
 id|retval
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * We do a VERIFY_WRITE here even though we are only reading this time:&n; * we&squot;ll write to it eventually..&n; *&n; * Use &quot;int&quot; accesses to let user-mode fd_set&squot;s be int-aligned.&n; */
+multiline_comment|/*&n; * We do a VERIFY_WRITE here even though we are only reading this time:&n; * we&squot;ll write to it eventually..&n; *&n; * Use &quot;unsigned long&quot; accesses to let user-mode fd_set&squot;s be long-aligned.&n; */
 DECL|function|__get_fd_set
 r_static
 r_int
@@ -745,15 +745,17 @@ r_int
 id|nr
 comma
 r_int
+r_int
 op_star
 id|fs_pointer
 comma
+r_int
 r_int
 op_star
 id|fdset
 )paren
 (brace
-multiline_comment|/* round up nr to nearest &quot;int&quot; */
+multiline_comment|/* round up nr to nearest &quot;unsigned long&quot; */
 id|nr
 op_assign
 (paren
@@ -763,6 +765,7 @@ l_int|8
 op_star
 r_sizeof
 (paren
+r_int
 r_int
 )paren
 op_minus
@@ -774,6 +777,7 @@ l_int|8
 op_star
 r_sizeof
 (paren
+r_int
 r_int
 )paren
 )paren
@@ -799,6 +803,7 @@ op_star
 r_sizeof
 (paren
 r_int
+r_int
 )paren
 )paren
 suffix:semicolon
@@ -815,7 +820,7 @@ c_loop
 id|nr
 )paren
 (brace
-id|get_user
+id|__get_user
 c_func
 (paren
 op_star
@@ -871,9 +876,11 @@ r_int
 id|nr
 comma
 r_int
+r_int
 op_star
 id|fs_pointer
 comma
+r_int
 r_int
 op_star
 id|fdset
@@ -895,7 +902,7 @@ op_ge
 l_int|0
 )paren
 (brace
-id|put_user
+id|__put_user
 c_func
 (paren
 op_star
@@ -910,6 +917,7 @@ l_int|8
 op_star
 r_sizeof
 (paren
+r_int
 r_int
 )paren
 suffix:semicolon
@@ -966,11 +974,11 @@ op_increment
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n; * Note a few subtleties: we use &quot;long&quot; for the dummy, not int, and we do a&n; * subtract by 1 on the nr of file descriptors. The former is better for&n; * machines with long &gt; int, and the latter allows us to test the bit count&n; * against &quot;zero or positive&quot;, which can mostly be just a sign bit test..&n; */
+multiline_comment|/*&n; * Note a few subtleties: we use &quot;long&quot; for the dummy, not int, and we do a&n; * subtract by 1 on the nr of file descriptors. The former is better for&n; * machines with long &gt; int, and the latter allows us to test the bit count&n; * against &quot;zero or positive&quot;, which can mostly be just a sign bit test..&n; *&n; * Unfortunately this scheme falls apart on big endian machines where&n; * sizeof(long) &gt; sizeof(int) (ie. V9 Sparc). -DaveM&n; */
 DECL|macro|get_fd_set
-mdefine_line|#define get_fd_set(nr,fsp,fdp) &bslash;&n;__get_fd_set(nr, (int *) (fsp), (int *) (fdp))
+mdefine_line|#define get_fd_set(nr,fsp,fdp) &bslash;&n;__get_fd_set(nr, (unsigned long *) (fsp), (unsigned long *) (fdp))
 DECL|macro|set_fd_set
-mdefine_line|#define set_fd_set(nr,fsp,fdp) &bslash;&n;__set_fd_set((nr)-1, (int *) (fsp), (int *) (fdp))
+mdefine_line|#define set_fd_set(nr,fsp,fdp) &bslash;&n;__set_fd_set((nr)-1, (unsigned long *) (fsp), (unsigned long *) (fdp))
 DECL|macro|zero_fd_set
 mdefine_line|#define zero_fd_set(nr,fdp) &bslash;&n;__zero_fd_set((nr)-1, (unsigned long *) (fdp))
 multiline_comment|/*&n; * We can actually return ERESTARTSYS instead of EINTR, but I&squot;d&n; * like to be certain this leads to no problems. So I return&n; * EINTR just for safety.&n; *&n; * Update: ERESTARTSYS breaks at least the xview clock binary, so&n; * I&squot;m trying ERESTARTNOHAND which restart only when you want to.&n; */
@@ -1148,7 +1156,7 @@ id|error
 r_goto
 id|out
 suffix:semicolon
-id|get_user
+id|__get_user
 c_func
 (paren
 id|timeout
@@ -1176,7 +1184,7 @@ r_int
 r_int
 id|tmp
 suffix:semicolon
-id|get_user
+id|__get_user
 c_func
 (paren
 id|tmp
@@ -1288,7 +1296,7 @@ id|STICKY_TIMEOUTS
 )paren
 )paren
 (brace
-id|put_user
+id|__put_user
 c_func
 (paren
 id|timeout
@@ -1311,7 +1319,7 @@ op_div
 id|HZ
 )paren
 suffix:semicolon
-id|put_user
+id|__put_user
 c_func
 (paren
 id|timeout

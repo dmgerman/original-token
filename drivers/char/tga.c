@@ -21,11 +21,11 @@ macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
-macro_line|#include &quot;kbd_kern.h&quot;
-macro_line|#include &quot;vt_kern.h&quot;
-macro_line|#include &quot;consolemap.h&quot;
-macro_line|#include &quot;selection.h&quot;
-macro_line|#include &quot;console_struct.h&quot;
+macro_line|#include &lt;linux/kbd_kern.h&gt;
+macro_line|#include &lt;linux/vt_kern.h&gt;
+macro_line|#include &lt;linux/consolemap.h&gt;
+macro_line|#include &lt;linux/selection.h&gt;
+macro_line|#include &lt;linux/console_struct.h&gt;
 r_extern
 r_struct
 id|console

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: fault.c,v 1.9 1997/05/19 05:58:54 davem Exp $&n; * arch/sparc64/mm/fault.c: Page fault handlers for the 64-bit Sparc.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: fault.c,v 1.11 1997/06/01 05:46:15 davem Exp $&n; * arch/sparc64/mm/fault.c: Page fault handlers for the 64-bit Sparc.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;asm/head.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -526,6 +526,7 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* #define FAULT_TRACER */
+multiline_comment|/* #define FAULT_TRACER_VERBOSE */
 DECL|function|do_sparc64_fault
 id|asmlinkage
 r_void
@@ -607,10 +608,11 @@ id|rcnt
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#ifdef FAULT_TRACER_VERBOSE
 id|printk
 c_func
 (paren
-l_string|&quot;FAULT(PC[%016lx],t[%d],w[%d],addr[%016lx])&bslash;n&quot;
+l_string|&quot;FAULT(PC[%016lx],t[%d],w[%d],addr[%016lx])...&quot;
 comma
 id|regs-&gt;tpc
 comma
@@ -621,23 +623,85 @@ comma
 id|address
 )paren
 suffix:semicolon
+macro_line|#else
+id|printk
+c_func
+(paren
+l_string|&quot;F[%016lx:%016lx:w(%d)&quot;
+comma
+id|regs-&gt;tpc
+comma
+id|address
+comma
+id|write
+)paren
+suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
 id|address
 op_eq
 id|last_addr
-op_logical_and
+)paren
+(brace
+r_if
+c_cond
+(paren
 id|rcnt
 op_increment
 OG
-l_int|5
+l_int|15
 )paren
 (brace
 id|printk
 c_func
 (paren
 l_string|&quot;Wheee lotsa bogus faults, something wrong, spinning&bslash;n&quot;
+)paren
+suffix:semicolon
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;flushw&quot;
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;o7[%016lx] i7[%016lx]&bslash;n&quot;
+comma
+id|regs-&gt;u_regs
+(braket
+id|UREG_I7
+)braket
+comma
+(paren
+(paren
+r_struct
+id|reg_window
+op_star
+)paren
+(paren
+id|regs-&gt;u_regs
+(braket
+id|UREG_FP
+)braket
+op_plus
+id|STACK_BIAS
+)paren
+)paren
+op_member_access_from_pointer
+id|ins
+(braket
+l_int|7
+)braket
+)paren
+suffix:semicolon
+id|sti
+c_func
+(paren
 )paren
 suffix:semicolon
 r_while
@@ -651,6 +715,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
+)brace
 )brace
 )brace
 r_else
@@ -894,6 +959,45 @@ c_cond
 id|from_user
 )paren
 (brace
+macro_line|#if 1
+r_int
+r_int
+id|cpc
+suffix:semicolon
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;mov %%i7, %0&quot;
+suffix:colon
+l_string|&quot;=r&quot;
+(paren
+id|cpc
+)paren
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;[%s:%d] SIGSEGV pc[%016lx] addr[%016lx] w[%d] sfsr[%016lx] &quot;
+l_string|&quot;caller[%016lx]&bslash;n&quot;
+comma
+id|current-&gt;comm
+comma
+id|current-&gt;pid
+comma
+id|regs-&gt;tpc
+comma
+id|address
+comma
+id|write
+comma
+id|sfsr
+comma
+id|cpc
+)paren
+suffix:semicolon
+macro_line|#endif
 id|tsk-&gt;tss.sig_address
 op_assign
 id|address
@@ -932,5 +1036,22 @@ c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#ifdef FAULT_TRACER
+macro_line|#ifdef FAULT_TRACER_VERBOSE
+id|printk
+c_func
+(paren
+l_string|&quot; done&bslash;n&quot;
+)paren
+suffix:semicolon
+macro_line|#else
+id|printk
+c_func
+(paren
+l_string|&quot;]&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#endif
 )brace
 eof

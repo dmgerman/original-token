@@ -777,8 +777,12 @@ op_ge
 l_int|0
 )paren
 (brace
+id|atomic_inc
+c_func
+(paren
+op_amp
 id|inode-&gt;i_count
-op_increment
+)paren
 suffix:semicolon
 id|atomic_inc
 c_func

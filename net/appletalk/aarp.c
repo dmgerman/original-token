@@ -24,6 +24,30 @@ macro_line|#include &lt;net/datalink.h&gt;
 macro_line|#include &lt;net/psnap.h&gt;
 macro_line|#include &lt;linux/atalk.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+DECL|variable|sysctl_aarp_expiry_time
+r_int
+id|sysctl_aarp_expiry_time
+op_assign
+id|AARP_EXPIRY_TIME
+suffix:semicolon
+DECL|variable|sysctl_aarp_tick_time
+r_int
+id|sysctl_aarp_tick_time
+op_assign
+id|AARP_TICK_TIME
+suffix:semicolon
+DECL|variable|sysctl_aarp_retransmit_limit
+r_int
+id|sysctl_aarp_retransmit_limit
+op_assign
+id|AARP_RETRANSMIT_LIMIT
+suffix:semicolon
+DECL|variable|sysctl_aarp_resolve_time
+r_int
+id|sysctl_aarp_resolve_time
+op_assign
+id|AARP_RESOLVE_TIME
+suffix:semicolon
 multiline_comment|/*&n; *&t;Lists of aarp entries&n; */
 DECL|struct|aarp_entry
 r_struct
@@ -962,7 +986,7 @@ id|n
 op_member_access_from_pointer
 id|xmit_count
 op_ge
-id|AARP_RETRANSMIT_LIMIT
+id|sysctl_aarp_retransmit_limit
 )paren
 (brace
 id|t
@@ -1178,7 +1202,7 @@ id|aarp_timer.expires
 op_assign
 id|jiffies
 op_plus
-id|AARP_EXPIRY_TIME
+id|sysctl_aarp_expiry_time
 suffix:semicolon
 )brace
 r_else
@@ -1186,7 +1210,7 @@ id|aarp_timer.expires
 op_assign
 id|jiffies
 op_plus
-id|AARP_TICK_TIME
+id|sysctl_aarp_tick_time
 suffix:semicolon
 id|add_timer
 c_func
@@ -1613,6 +1637,55 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
+multiline_comment|/*&n;&t; *&t;On a PPP link we neither compress nor aarp.&n;&t; */
+r_if
+c_cond
+(paren
+id|dev-&gt;type
+op_eq
+id|ARPHRD_PPP
+)paren
+(brace
+id|skb-&gt;protocol
+op_assign
+id|htons
+c_func
+(paren
+id|ETH_P_PPPTALK
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|skb-&gt;sk
+op_eq
+l_int|NULL
+)paren
+(brace
+id|skb-&gt;priority
+op_assign
+id|SOPRI_NORMAL
+suffix:semicolon
+)brace
+r_else
+id|skb-&gt;priority
+op_assign
+id|skb-&gt;sk-&gt;priority
+suffix:semicolon
+id|skb-&gt;dev
+op_assign
+id|dev
+suffix:semicolon
+id|dev_queue_xmit
+c_func
+(paren
+id|skb
+)paren
+suffix:semicolon
+r_return
+l_int|1
+suffix:semicolon
+)brace
 multiline_comment|/*&n;&t; *&t;Non ELAP we cannot do.&n;&t; */
 r_if
 c_cond
@@ -1743,7 +1816,7 @@ id|a-&gt;expires_at
 op_assign
 id|jiffies
 op_plus
-id|AARP_EXPIRY_TIME
+id|sysctl_aarp_expiry_time
 op_star
 l_int|10
 suffix:semicolon
@@ -1879,7 +1952,7 @@ id|a-&gt;expires_at
 op_assign
 id|jiffies
 op_plus
-id|AARP_RESOLVE_TIME
+id|sysctl_aarp_resolve_time
 suffix:semicolon
 id|a-&gt;dev
 op_assign
@@ -1944,7 +2017,7 @@ id|aarp_timer.expires
 op_assign
 id|jiffies
 op_plus
-id|AARP_TICK_TIME
+id|sysctl_aarp_tick_time
 suffix:semicolon
 id|add_timer
 c_func
@@ -2049,7 +2122,7 @@ id|a-&gt;expires_at
 op_assign
 id|jiffies
 op_plus
-id|AARP_EXPIRY_TIME
+id|sysctl_aarp_expiry_time
 op_star
 l_int|10
 suffix:semicolon
@@ -2468,7 +2541,7 @@ id|aarp_timer.expires
 op_assign
 id|jiffies
 op_plus
-id|AARP_EXPIRY_TIME
+id|sysctl_aarp_expiry_time
 suffix:semicolon
 id|add_timer
 c_func
@@ -2643,7 +2716,7 @@ id|aarp_timer.expires
 op_assign
 id|jiffies
 op_plus
-id|AARP_EXPIRY_TIME
+id|sysctl_aarp_expiry_time
 suffix:semicolon
 id|add_timer
 c_func

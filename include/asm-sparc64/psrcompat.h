@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: psrcompat.h,v 1.2 1997/04/07 18:57:17 jj Exp $ */
+multiline_comment|/* $Id: psrcompat.h,v 1.3 1997/06/05 06:22:54 davem Exp $ */
 macro_line|#ifndef _SPARC64_PSRCOMPAT_H
 DECL|macro|_SPARC64_PSRCOMPAT_H
 mdefine_line|#define _SPARC64_PSRCOMPAT_H
@@ -151,9 +151,15 @@ suffix:semicolon
 id|tstate
 op_assign
 (paren
+(paren
+r_int
+r_int
+)paren
+(paren
 id|psr
 op_amp
 id|PSR_ICC
+)paren
 )paren
 op_lshift
 l_int|12

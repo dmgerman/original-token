@@ -313,8 +313,12 @@ id|result
 op_assign
 id|pseudo_root
 suffix:semicolon
+id|atomic_inc
+c_func
+(paren
+op_amp
 id|pseudo_root-&gt;i_count
-op_increment
+)paren
 suffix:semicolon
 id|ret
 op_assign
@@ -505,8 +509,12 @@ id|umsdos_lockcreate
 id|dir
 )paren
 suffix:semicolon
+id|atomic_inc
+c_func
+(paren
+op_amp
 id|dir-&gt;i_count
-op_increment
+)paren
 suffix:semicolon
 id|ret
 op_assign
@@ -533,8 +541,12 @@ id|inode
 op_star
 id|sdir
 suffix:semicolon
+id|atomic_inc
+c_func
+(paren
+op_amp
 id|dir-&gt;i_count
-op_increment
+)paren
 suffix:semicolon
 id|ret
 op_assign
@@ -592,7 +604,12 @@ l_string|&quot;isempty %d i_count %d &quot;
 comma
 id|empty
 comma
+id|atomic_read
+c_func
+(paren
+op_amp
 id|sdir-&gt;i_count
+)paren
 )paren
 )paren
 suffix:semicolon
@@ -645,8 +662,12 @@ op_eq
 l_int|0
 )paren
 (brace
+id|atomic_inc
+c_func
+(paren
+op_amp
 id|dir-&gt;i_count
-op_increment
+)paren
 suffix:semicolon
 id|ret
 op_assign
@@ -771,9 +792,6 @@ multiline_comment|/* rename */
 l_int|NULL
 comma
 multiline_comment|/* readlink */
-l_int|NULL
-comma
-multiline_comment|/* follow_link */
 l_int|NULL
 comma
 multiline_comment|/* readpage */

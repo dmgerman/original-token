@@ -622,9 +622,14 @@ id|UMSDOS_RENAME_DOS
 )paren
 (brace
 multiline_comment|/* #Specification: ioctl / UMSDOS_RENAME_DOS&n;&t;&t;&t;&t;&t;A file or directory is rename in a DOS directory&n;&t;&t;&t;&t;&t;(not moved across directory). The source name&n;&t;&t;&t;&t;&t;is in the dos_dirent.name field and the destination&n;&t;&t;&t;&t;&t;is in umsdos_dirent.name field.&n;&n;&t;&t;&t;&t;&t;This ioctl allows umssync to rename a mangle file&n;&t;&t;&t;&t;&t;name before syncing it back in the EMD.&n;&t;&t;&t;&t;*/
-id|dir-&gt;i_count
-op_add_assign
+id|atomic_add
+c_func
+(paren
 l_int|2
+comma
+op_amp
+id|dir-&gt;i_count
+)paren
 suffix:semicolon
 id|ret
 op_assign
@@ -641,8 +646,6 @@ comma
 id|data.umsdos_dirent.name
 comma
 id|data.umsdos_dirent.name_len
-comma
-l_int|0
 )paren
 suffix:semicolon
 )brace
@@ -713,8 +716,12 @@ id|UMSDOS_UNLINK_DOS
 )paren
 (brace
 multiline_comment|/* #Specification: ioctl / UMSDOS_UNLINK_DOS&n;&t;&t;&t;&t;&t;The dos_dirent field of the struct umsdos_ioctl is used to&n;&t;&t;&t;&t;&t;execute a msdos_unlink operation. The d_name and d_reclen&n;&t;&t;&t;&t;&t;fields are used.&n;&n;&t;&t;&t;&t;&t;Return 0 if success.&n;&t;&t;&t;&t;*/
+id|atomic_inc
+c_func
+(paren
+op_amp
 id|dir-&gt;i_count
-op_increment
+)paren
 suffix:semicolon
 id|ret
 op_assign
@@ -738,8 +745,12 @@ id|UMSDOS_RMDIR_DOS
 )paren
 (brace
 multiline_comment|/* #Specification: ioctl / UMSDOS_RMDIR_DOS&n;&t;&t;&t;&t;&t;The dos_dirent field of the struct umsdos_ioctl is used to&n;&t;&t;&t;&t;&t;execute a msdos_unlink operation. The d_name and d_reclen&n;&t;&t;&t;&t;&t;fields are used.&n;&n;&t;&t;&t;&t;&t;Return 0 if success.&n;&t;&t;&t;&t;*/
+id|atomic_inc
+c_func
+(paren
+op_amp
 id|dir-&gt;i_count
-op_increment
+)paren
 suffix:semicolon
 id|ret
 op_assign

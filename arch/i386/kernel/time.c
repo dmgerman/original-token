@@ -1501,7 +1501,7 @@ op_assign
 (brace
 id|timer_interrupt
 comma
-l_int|0
+id|SA_INTERRUPT
 comma
 l_int|0
 comma

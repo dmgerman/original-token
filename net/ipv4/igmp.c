@@ -18,6 +18,24 @@ macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;net/sock.h&gt;
 macro_line|#include &lt;linux/igmp.h&gt;
 macro_line|#include &lt;net/checksum.h&gt;
+DECL|variable|sysctl_igmp_max_host_report_delay
+r_int
+id|sysctl_igmp_max_host_report_delay
+op_assign
+id|IGMP_MAX_HOST_REPORT_DELAY
+suffix:semicolon
+DECL|variable|sysctl_igmp_timer_scale
+r_int
+id|sysctl_igmp_timer_scale
+op_assign
+id|IGMP_TIMER_SCALE
+suffix:semicolon
+DECL|variable|sysctl_igmp_age_threshold
+r_int
+id|sysctl_igmp_age_threshold
+op_assign
+id|IGMP_AGE_THRESHOLD
+suffix:semicolon
 multiline_comment|/*&n; *&t;If time expired, change the router type to IGMP_NEW_ROUTER.&n; */
 DECL|function|ip_router_timer_expire
 r_static
@@ -165,7 +183,7 @@ id|IGMP_NEW_ROUTER
 suffix:semicolon
 id|i-&gt;time
 op_assign
-id|IGMP_AGE_THRESHOLD
+id|sysctl_igmp_age_threshold
 suffix:semicolon
 id|i-&gt;next
 op_assign
@@ -522,7 +540,7 @@ id|max_resp_time
 op_star
 id|HZ
 op_div
-id|IGMP_TIMER_SCALE
+id|sysctl_igmp_timer_scale
 )paren
 suffix:semicolon
 multiline_comment|/* Pick a number any number 8) */
@@ -1191,7 +1209,7 @@ id|max_resp_time
 op_star
 id|HZ
 op_div
-id|IGMP_TIMER_SCALE
+id|sysctl_igmp_timer_scale
 )paren
 (brace
 id|igmp_stop_timer
@@ -1239,9 +1257,9 @@ id|IGMP_OLD_ROUTER
 suffix:semicolon
 id|max_resp_time
 op_assign
-id|IGMP_MAX_HOST_REPORT_DELAY
+id|sysctl_igmp_max_host_report_delay
 op_star
-id|IGMP_TIMER_SCALE
+id|sysctl_igmp_timer_scale
 suffix:semicolon
 r_if
 c_cond
@@ -1253,7 +1271,7 @@ id|dev
 comma
 id|mrouter_type
 comma
-id|IGMP_AGE_THRESHOLD
+id|sysctl_igmp_age_threshold
 )paren
 op_eq
 l_int|NULL

@@ -1769,11 +1769,11 @@ id|file_system_type
 id|smb_fs_type
 op_assign
 (brace
-id|smb_read_super
-comma
 l_string|&quot;smbfs&quot;
 comma
-l_int|0
+id|FS_NO_DCACHE
+comma
+id|smb_read_super
 comma
 l_int|NULL
 )brace

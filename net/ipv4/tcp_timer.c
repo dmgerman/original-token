@@ -1,10 +1,34 @@
 multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Implementation of the Transmission Control Protocol(TCP).&n; *&n; * Version:&t;@(#)tcp.c&t;1.0.16&t;05/25/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&t;&t;Corey Minyard &lt;wf-rch!minyard@relay.EU.net&gt;&n; *&t;&t;Florian La Roche, &lt;flla@stud.uni-sb.de&gt;&n; *&t;&t;Charles Hedrick, &lt;hedrick@klinzhai.rutgers.edu&gt;&n; *&t;&t;Linus Torvalds, &lt;torvalds@cs.helsinki.fi&gt;&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;Matthew Dillon, &lt;dillon@apollo.west.oic.com&gt;&n; *&t;&t;Arnt Gulbrandsen, &lt;agulbra@nvg.unit.no&gt;&n; *&t;&t;Jorge Cwik, &lt;jorge@laser.satlink.net&gt;&n; */
 macro_line|#include &lt;net/tcp.h&gt;
-DECL|variable|sysctl_syn_retries
+DECL|variable|sysctl_tcp_syn_retries
 r_int
-id|sysctl_syn_retries
+id|sysctl_tcp_syn_retries
 op_assign
 id|TCP_SYN_RETRIES
+suffix:semicolon
+DECL|variable|sysctl_tcp_keepalive_time
+r_int
+id|sysctl_tcp_keepalive_time
+op_assign
+id|TCP_KEEPALIVE_TIME
+suffix:semicolon
+DECL|variable|sysctl_tcp_keepalive_probes
+r_int
+id|sysctl_tcp_keepalive_probes
+op_assign
+id|TCP_KEEPALIVE_PROBES
+suffix:semicolon
+DECL|variable|sysctl_tcp_retries1
+r_int
+id|sysctl_tcp_retries1
+op_assign
+id|TCP_RETR1
+suffix:semicolon
+DECL|variable|sysctl_tcp_retries2
+r_int
+id|sysctl_tcp_retries2
+op_assign
+id|TCP_RETR2
 suffix:semicolon
 r_static
 r_void
@@ -574,7 +598,7 @@ id|TCP_ESTABLISHED
 op_logical_and
 id|tp-&gt;retransmits
 OG
-id|TCP_RETR1
+id|sysctl_tcp_retries1
 )paren
 )paren
 (brace
@@ -601,7 +625,7 @@ c_cond
 (paren
 id|tp-&gt;retransmits
 OG
-id|sysctl_syn_retries
+id|sysctl_tcp_syn_retries
 op_logical_and
 id|sk-&gt;state
 op_eq
@@ -670,7 +694,7 @@ c_cond
 (paren
 id|tp-&gt;retransmits
 OG
-id|TCP_RETR2
+id|sysctl_tcp_retries2
 )paren
 (brace
 r_if
@@ -866,7 +890,7 @@ c_cond
 (paren
 id|tp-&gt;probes_out
 OG
-id|TCP_RETR2
+id|sysctl_tcp_retries2
 )paren
 (brace
 r_if
@@ -1002,7 +1026,7 @@ c_cond
 (paren
 id|elapsed
 op_ge
-id|TCP_KEEPALIVE_TIME
+id|sysctl_tcp_keepalive_time
 )paren
 (brace
 r_if
@@ -1010,7 +1034,7 @@ c_cond
 (paren
 id|tp-&gt;probes_out
 OG
-id|TCP_KEEPALIVE_PROBES
+id|sysctl_tcp_keepalive_probes
 )paren
 (brace
 r_if
@@ -1068,6 +1092,12 @@ multiline_comment|/*&n; *&t;Check all sockets for keepalive timer&n; *&t;Called 
 multiline_comment|/*&n; *&t;don&squot;t send over 5 keepopens at a time to avoid burstiness &n; *&t;on big servers [AC]&n; */
 DECL|macro|MAX_KA_PROBES
 mdefine_line|#define MAX_KA_PROBES&t;5
+DECL|variable|sysctl_tcp_max_ka_probes
+r_int
+id|sysctl_tcp_max_ka_probes
+op_assign
+id|MAX_KA_PROBES
+suffix:semicolon
 multiline_comment|/* Keepopen&squot;s are only valid for &quot;established&quot; TCP&squot;s, nicely our listener&n; * hash gets rid of most of the useless testing, so we run through a couple&n; * of the established hash chains each clock tick.  -DaveM&n; *&n; * And now, even more magic... TIME_WAIT TCP&squot;s cannot have keepalive probes&n; * going off for them, so we only need check the first half of the established&n; * hash table, even less testing under heavy load.&n; *&n; * I _really_ would rather do this by adding a new timer_struct to struct sock,&n; * and this way only those who set the keepalive option will get the overhead.&n; * The idea is you set it for 2 hours when the sock is first connected, when it&n; * does fire off (if at all, most sockets die earlier) you check for the keepalive&n; * option and also if the sock has been idle long enough to start probing.&n; */
 DECL|function|tcp_keepalive
 r_static
@@ -1156,7 +1186,7 @@ c_cond
 (paren
 id|count
 op_eq
-id|MAX_KA_PROBES
+id|sysctl_tcp_max_ka_probes
 )paren
 (brace
 r_goto
@@ -1492,7 +1522,7 @@ c_cond
 (paren
 id|conn-&gt;retrans
 op_ge
-id|TCP_RETR1
+id|sysctl_tcp_retries1
 )paren
 (brace
 macro_line|#ifdef TCP_DEBUG

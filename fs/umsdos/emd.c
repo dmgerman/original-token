@@ -528,7 +528,12 @@ id|dir-&gt;u.umsdos_i.i_emd_dir
 comma
 id|ret
 comma
+id|atomic_read
+c_func
+(paren
+op_amp
 id|ret-&gt;i_count
+)paren
 )paren
 )paren
 suffix:semicolon
@@ -591,8 +596,12 @@ l_string|&quot;avant create &quot;
 )paren
 )paren
 suffix:semicolon
+id|atomic_inc
+c_func
+(paren
+op_amp
 id|dir-&gt;i_count
-op_increment
+)paren
 suffix:semicolon
 id|code
 op_assign

@@ -1,4 +1,5 @@
 multiline_comment|/*&n; *  linux/fs/open.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/vfs.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/utime.h&gt;
@@ -15,6 +16,7 @@ macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/file.h&gt;
 macro_line|#include &lt;linux/smp.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
+macro_line|#include &lt;linux/omirr.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 DECL|function|sys_statfs
@@ -76,6 +78,8 @@ op_assign
 id|namei
 c_func
 (paren
+id|NAM_FOLLOW_LINK
+comma
 id|path
 comma
 op_amp
@@ -378,6 +382,10 @@ c_func
 id|inode
 )paren
 suffix:semicolon
+id|inode-&gt;i_status
+op_or_assign
+id|ST_MODIFIED
+suffix:semicolon
 )brace
 id|up
 c_func
@@ -424,6 +432,8 @@ op_assign
 id|namei
 c_func
 (paren
+id|NAM_FOLLOW_LINK
+comma
 id|path
 comma
 op_amp
@@ -826,11 +836,14 @@ c_func
 (paren
 )paren
 suffix:semicolon
+multiline_comment|/* Hmm, should I always follow symlinks or not ? */
 id|error
 op_assign
 id|namei
 c_func
 (paren
+id|NAM_FOLLOW_LINK
+comma
 id|filename
 comma
 op_amp
@@ -859,17 +872,9 @@ c_func
 id|inode
 )paren
 )paren
-(brace
-id|iput
-c_func
-(paren
-id|inode
-)paren
-suffix:semicolon
 r_goto
-id|out
+id|iput_and_out
 suffix:semicolon
-)brace
 multiline_comment|/* Don&squot;t worry, the checks are done in inode_change_ok() */
 id|newattrs.ia_valid
 op_assign
@@ -918,17 +923,9 @@ c_cond
 (paren
 id|error
 )paren
-(brace
-id|iput
-c_func
-(paren
-id|inode
-)paren
-suffix:semicolon
 r_goto
-id|out
+id|iput_and_out
 suffix:semicolon
-)brace
 id|newattrs.ia_valid
 op_or_assign
 id|ATTR_ATIME_SET
@@ -959,17 +956,9 @@ id|MAY_WRITE
 op_ne
 l_int|0
 )paren
-(brace
-id|iput
-c_func
-(paren
-id|inode
-)paren
-suffix:semicolon
 r_goto
-id|out
+id|iput_and_out
 suffix:semicolon
-)brace
 )brace
 id|error
 op_assign
@@ -982,6 +971,32 @@ op_amp
 id|newattrs
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_OMIRR
+r_if
+c_cond
+(paren
+op_logical_neg
+id|error
+)paren
+(brace
+id|omirr_printall
+c_func
+(paren
+id|inode
+comma
+l_string|&quot; U %ld %ld %ld &quot;
+comma
+id|CURRENT_TIME
+comma
+id|newattrs.ia_atime
+comma
+id|newattrs.ia_mtime
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
+id|iput_and_out
+suffix:colon
 id|iput
 c_func
 (paren
@@ -1039,6 +1054,8 @@ op_assign
 id|namei
 c_func
 (paren
+id|NAM_FOLLOW_LINK
+comma
 id|filename
 comma
 op_amp
@@ -1176,6 +1193,30 @@ op_amp
 id|newattrs
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_OMIRR
+r_if
+c_cond
+(paren
+op_logical_neg
+id|error
+)paren
+(brace
+id|omirr_printall
+c_func
+(paren
+id|inode
+comma
+l_string|&quot; U %ld %ld %ld &quot;
+comma
+id|CURRENT_TIME
+comma
+id|newattrs.ia_atime
+comma
+id|newattrs.ia_mtime
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
 id|iput_and_out
 suffix:colon
 id|iput
@@ -1268,6 +1309,8 @@ op_assign
 id|namei
 c_func
 (paren
+id|NAM_FOLLOW_LINK
+comma
 id|filename
 comma
 op_amp
@@ -1334,6 +1377,11 @@ id|inode
 op_star
 id|inode
 suffix:semicolon
+r_struct
+id|inode
+op_star
+id|tmpi
+suffix:semicolon
 r_int
 id|error
 suffix:semicolon
@@ -1347,6 +1395,8 @@ op_assign
 id|namei
 c_func
 (paren
+id|NAM_FOLLOW_LINK
+comma
 id|filename
 comma
 op_amp
@@ -1376,17 +1426,9 @@ c_func
 id|inode-&gt;i_mode
 )paren
 )paren
-(brace
-id|iput
-c_func
-(paren
-id|inode
-)paren
-suffix:semicolon
 r_goto
-id|out
+id|iput_and_out
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -1404,30 +1446,29 @@ id|MAY_EXEC
 op_ne
 l_int|0
 )paren
-(brace
-id|iput
-c_func
-(paren
-id|inode
-)paren
-suffix:semicolon
 r_goto
-id|out
+id|iput_and_out
 suffix:semicolon
-)brace
-id|iput
-c_func
-(paren
+multiline_comment|/* exchange inodes */
+id|tmpi
+op_assign
 id|current-&gt;fs-&gt;pwd
-)paren
 suffix:semicolon
 id|current-&gt;fs-&gt;pwd
 op_assign
 id|inode
 suffix:semicolon
-id|error
+id|inode
 op_assign
-l_int|0
+id|tmpi
+suffix:semicolon
+id|iput_and_out
+suffix:colon
+id|iput
+c_func
+(paren
+id|inode
+)paren
 suffix:semicolon
 id|out
 suffix:colon
@@ -1558,12 +1599,12 @@ id|current-&gt;fs-&gt;pwd
 op_assign
 id|inode
 suffix:semicolon
+id|atomic_inc
+c_func
+(paren
+op_amp
 id|inode-&gt;i_count
-op_increment
-suffix:semicolon
-id|error
-op_assign
-l_int|0
+)paren
 suffix:semicolon
 id|out
 suffix:colon
@@ -1593,6 +1634,11 @@ id|inode
 op_star
 id|inode
 suffix:semicolon
+r_struct
+id|inode
+op_star
+id|tmpi
+suffix:semicolon
 r_int
 id|error
 suffix:semicolon
@@ -1606,6 +1652,8 @@ op_assign
 id|namei
 c_func
 (paren
+id|NAM_FOLLOW_LINK
+comma
 id|filename
 comma
 op_amp
@@ -1635,17 +1683,9 @@ c_func
 id|inode-&gt;i_mode
 )paren
 )paren
-(brace
-id|iput
-c_func
-(paren
-id|inode
-)paren
-suffix:semicolon
 r_goto
-id|out
+id|iput_and_out
 suffix:semicolon
-)brace
 id|error
 op_assign
 op_minus
@@ -1660,30 +1700,32 @@ c_func
 (paren
 )paren
 )paren
-(brace
-id|iput
-c_func
-(paren
-id|inode
-)paren
-suffix:semicolon
 r_goto
-id|out
+id|iput_and_out
 suffix:semicolon
-)brace
-id|iput
-c_func
-(paren
+id|tmpi
+op_assign
 id|current-&gt;fs-&gt;root
-)paren
 suffix:semicolon
 id|current-&gt;fs-&gt;root
 op_assign
 id|inode
+suffix:semicolon
+id|inode
+op_assign
+id|tmpi
 suffix:semicolon
 id|error
 op_assign
 l_int|0
+suffix:semicolon
+id|iput_and_out
+suffix:colon
+id|iput
+c_func
+(paren
+id|inode
+)paren
 suffix:semicolon
 id|out
 suffix:colon
@@ -1864,6 +1906,28 @@ op_amp
 id|newattrs
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_OMIRR
+r_if
+c_cond
+(paren
+op_logical_neg
+id|err
+)paren
+(brace
+id|omirr_printall
+c_func
+(paren
+id|inode
+comma
+l_string|&quot; M %ld %ld &quot;
+comma
+id|CURRENT_TIME
+comma
+id|newattrs.ia_mode
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
 id|out
 suffix:colon
 id|unlock_kernel
@@ -1907,11 +1971,14 @@ c_func
 (paren
 )paren
 suffix:semicolon
+multiline_comment|/* I&squot;m not sure whether to use NAM_FOLLOW_TRAILSLASH instead,&n;&t; * because permissions on symlinks now can never be changed,&n;&t; * but on the other hand they are never needed.&n;&t; */
 id|error
 op_assign
 id|namei
 c_func
 (paren
+id|NAM_FOLLOW_LINK
+comma
 id|filename
 comma
 op_amp
@@ -2017,6 +2084,28 @@ op_amp
 id|newattrs
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_OMIRR
+r_if
+c_cond
+(paren
+op_logical_neg
+id|error
+)paren
+(brace
+id|omirr_printall
+c_func
+(paren
+id|inode
+comma
+l_string|&quot; M %ld %ld &quot;
+comma
+id|CURRENT_TIME
+comma
+id|newattrs.ia_mode
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
 id|iput_and_out
 suffix:colon
 id|iput
@@ -2347,6 +2436,30 @@ op_amp
 id|newattrs
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_OMIRR
+r_if
+c_cond
+(paren
+op_logical_neg
+id|error
+)paren
+(brace
+id|omirr_printall
+c_func
+(paren
+id|inode
+comma
+l_string|&quot; O %d %d &quot;
+comma
+id|CURRENT_TIME
+comma
+id|newattrs.ia_uid
+comma
+id|newattrs.ia_gid
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
 id|out
 suffix:colon
 id|unlock_kernel
@@ -2395,9 +2508,11 @@ c_func
 suffix:semicolon
 id|error
 op_assign
-id|lnamei
+id|namei
 c_func
 (paren
+id|NAM_FOLLOW_TRAILSLASH
+comma
 id|filename
 comma
 op_amp
@@ -2597,7 +2712,7 @@ l_int|0
 )paren
 )paren
 r_goto
-id|out
+id|iput_and_out
 suffix:semicolon
 id|error
 op_assign
@@ -2641,6 +2756,30 @@ op_amp
 id|newattrs
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_OMIRR
+r_if
+c_cond
+(paren
+op_logical_neg
+id|error
+)paren
+(brace
+id|omirr_printall
+c_func
+(paren
+id|inode
+comma
+l_string|&quot; O %d %d &quot;
+comma
+id|CURRENT_TIME
+comma
+id|newattrs.ia_uid
+comma
+id|newattrs.ia_gid
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
 id|iput_and_out
 suffix:colon
 id|iput

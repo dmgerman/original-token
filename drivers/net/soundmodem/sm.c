@@ -1,5 +1,5 @@
 multiline_comment|/*****************************************************************************/
-multiline_comment|/*&n; *&t;sm.c  -- soundcard radio modem driver.&n; *&n; *&t;Copyright (C) 1996  Thomas Sailer (sailer@ife.ee.ethz.ch)&n; *&n; *&t;This program is free software; you can redistribute it and/or modify&n; *&t;it under the terms of the GNU General Public License as published by&n; *&t;the Free Software Foundation; either version 2 of the License, or&n; *&t;(at your option) any later version.&n; *&n; *&t;This program is distributed in the hope that it will be useful,&n; *&t;but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *&t;MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *&t;GNU General Public License for more details.&n; *&n; *&t;You should have received a copy of the GNU General Public License&n; *&t;along with this program; if not, write to the Free Software&n; *&t;Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; *  Please note that the GPL allows you to use the driver, NOT the radio.&n; *  In order to use the radio, you need a license from the communications&n; *  authority of your country.&n; *&n; *&n; *  Command line options (insmod command line)&n; *&n; *  mode     mode string; eg. &quot;wss:afsk1200&quot;&n; *  iobase   base address of the soundcard; common values are 0x220 for sbc,&n; *           0x530 for wss&n; *  irq      interrupt number; common values are 7 or 5 for sbc, 11 for wss&n; *  dma      dma number; common values are 0 or 1&n; *&n; *&n; *  History:&n; *   0.1  21.09.96  Started&n; *        18.10.96  Changed to new user space access routines (copy_{to,from}_user)&n; *   0.4  21.01.97  Separately compileable soundcard/modem modules&n; *   0.5  03.03.97  fixed LPT probing (check_lpt result was interpreted the wrong way round)&n; */
+multiline_comment|/*&n; *&t;sm.c  -- soundcard radio modem driver.&n; *&n; *&t;Copyright (C) 1996  Thomas Sailer (sailer@ife.ee.ethz.ch)&n; *&n; *&t;This program is free software; you can redistribute it and/or modify&n; *&t;it under the terms of the GNU General Public License as published by&n; *&t;the Free Software Foundation; either version 2 of the License, or&n; *&t;(at your option) any later version.&n; *&n; *&t;This program is distributed in the hope that it will be useful,&n; *&t;but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *&t;MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *&t;GNU General Public License for more details.&n; *&n; *&t;You should have received a copy of the GNU General Public License&n; *&t;along with this program; if not, write to the Free Software&n; *&t;Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; *  Please note that the GPL allows you to use the driver, NOT the radio.&n; *  In order to use the radio, you need a license from the communications&n; *  authority of your country.&n; *&n; *&n; *  Command line options (insmod command line)&n; *&n; *  mode     mode string; eg. &quot;wss:afsk1200&quot;&n; *  iobase   base address of the soundcard; common values are 0x220 for sbc,&n; *           0x530 for wss&n; *  irq      interrupt number; common values are 7 or 5 for sbc, 11 for wss&n; *  dma      dma number; common values are 0 or 1&n; *&n; *&n; *  History:&n; *   0.1  21.09.96  Started&n; *        18.10.96  Changed to new user space access routines (copy_{to,from}_user)&n; *   0.4  21.01.97  Separately compileable soundcard/modem modules&n; *   0.5  03.03.97  fixed LPT probing (check_lpt result was interpreted the wrong way round)&n; *   0.6  16.04.97  init code/data tagged&n; */
 multiline_comment|/*****************************************************************************/
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
@@ -15,7 +15,6 @@ macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
-macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &quot;sm.h&quot;
 multiline_comment|/* --------------------------------------------------------------------- */
 multiline_comment|/*&n; * currently this module is supposed to support both module styles, i.e.&n; * the old one present up to about 2.1.9, and the new one functioning&n; * starting with 2.1.21. The reason is I have a kit allowing to compile&n; * this module also under 2.0.x which was requested by several people.&n; * This will go in 2.2&n; */
@@ -146,8 +145,19 @@ l_int|0
 suffix:semicolon
 )brace
 macro_line|#endif
+macro_line|#if LINUX_VERSION_CODE &gt;= 0x20123
+macro_line|#include &lt;linux/init.h&gt;
+macro_line|#else
+DECL|macro|__init
+mdefine_line|#define __init
+DECL|macro|__initdata
+mdefine_line|#define __initdata
+DECL|macro|__initfunc
+mdefine_line|#define __initfunc(x) x
+macro_line|#endif
 multiline_comment|/* --------------------------------------------------------------------- */
 DECL|variable|sm_drvname
+multiline_comment|/*static*/
 r_const
 r_char
 id|sm_drvname
@@ -165,9 +175,9 @@ id|sm_drvinfo
 )braket
 op_assign
 id|KERN_INFO
-l_string|&quot;soundmodem: (C) 1996 Thomas Sailer, HB9JNX/AE4WA&bslash;n&quot;
+l_string|&quot;soundmodem: (C) 1996-1997 Thomas Sailer, HB9JNX/AE4WA&bslash;n&quot;
 id|KERN_INFO
-l_string|&quot;soundmodem: version 0.5 compiled &quot;
+l_string|&quot;soundmodem: version 0.6 compiled &quot;
 id|__TIME__
 l_string|&quot; &quot;
 id|__DATE__
@@ -175,6 +185,7 @@ l_string|&quot;&bslash;n&quot;
 suffix:semicolon
 multiline_comment|/* --------------------------------------------------------------------- */
 DECL|variable|sm_modem_tx_table
+multiline_comment|/*static*/
 r_const
 r_struct
 id|modem_tx_info
@@ -189,6 +200,16 @@ op_amp
 id|sm_afsk1200_tx
 comma
 macro_line|#endif /* CONFIG_SOUNDMODEM_AFSK1200 */
+macro_line|#ifdef CONFIG_SOUNDMODEM_AFSK2400_7
+op_amp
+id|sm_afsk2400_7_tx
+comma
+macro_line|#endif /* CONFIG_SOUNDMODEM_AFSK2400_7 */
+macro_line|#ifdef CONFIG_SOUNDMODEM_AFSK2400_8
+op_amp
+id|sm_afsk2400_8_tx
+comma
+macro_line|#endif /* CONFIG_SOUNDMODEM_AFSK2400_8 */
 macro_line|#ifdef CONFIG_SOUNDMODEM_AFSK2666
 op_amp
 id|sm_afsk2666_tx
@@ -225,6 +246,7 @@ l_int|NULL
 )brace
 suffix:semicolon
 DECL|variable|sm_modem_rx_table
+multiline_comment|/*static*/
 r_const
 r_struct
 id|modem_rx_info
@@ -239,6 +261,16 @@ op_amp
 id|sm_afsk1200_rx
 comma
 macro_line|#endif /* CONFIG_SOUNDMODEM_AFSK1200 */
+macro_line|#ifdef CONFIG_SOUNDMODEM_AFSK2400_7
+op_amp
+id|sm_afsk2400_7_rx
+comma
+macro_line|#endif /* CONFIG_SOUNDMODEM_AFSK2400_7 */
+macro_line|#ifdef CONFIG_SOUNDMODEM_AFSK2400_8
+op_amp
+id|sm_afsk2400_8_rx
+comma
+macro_line|#endif /* CONFIG_SOUNDMODEM_AFSK2400_8 */
 macro_line|#ifdef CONFIG_SOUNDMODEM_AFSK2666
 op_amp
 id|sm_afsk2666_rx
@@ -1223,11 +1255,11 @@ suffix:semicolon
 r_int
 id|ptt
 op_assign
-id|hdlcdrv_ptt
-c_func
+multiline_comment|/*hdlcdrv_ptt(&amp;sm-&gt;hdrv)*/
 (paren
-op_amp
-id|sm-&gt;hdrv
+id|sm-&gt;dma.ptt_cnt
+OG
+l_int|0
 )paren
 op_xor
 id|invert_ptt
@@ -1878,7 +1910,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;%s: %s mode %s.%s at iobase 0x%lx irq %u dma %u&bslash;n&quot;
+l_string|&quot;%s: %s mode %s.%s at iobase 0x%lx irq %u dma %u dma2 %u&bslash;n&quot;
 comma
 id|sm_drvname
 comma
@@ -1893,6 +1925,8 @@ comma
 id|dev-&gt;irq
 comma
 id|dev-&gt;dma
+comma
+id|sm-&gt;hdrv.ptt_out.dma2
 )paren
 suffix:semicolon
 r_return
@@ -3107,7 +3141,275 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/* --------------------------------------------------------------------- */
+macro_line|#ifdef __i386__
+DECL|variable|sm_x86_capability
+r_int
+id|sm_x86_capability
+op_assign
+l_int|0
+suffix:semicolon
 DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
+r_static
+r_void
+id|i386_capability
+c_func
+(paren
+r_void
+)paren
+)paren
+(brace
+r_int
+r_int
+id|flags
+suffix:semicolon
+r_int
+r_int
+id|fl1
+suffix:semicolon
+r_union
+(brace
+r_struct
+(brace
+r_int
+r_int
+id|ebx
+comma
+id|edx
+comma
+id|ecx
+suffix:semicolon
+)brace
+id|r
+suffix:semicolon
+r_int
+r_char
+id|s
+(braket
+l_int|13
+)braket
+suffix:semicolon
+)brace
+id|id
+suffix:semicolon
+r_int
+r_int
+id|eax
+suffix:semicolon
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|flags
+op_or_assign
+l_int|0x200000
+suffix:semicolon
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|fl1
+op_assign
+id|flags
+suffix:semicolon
+id|flags
+op_and_assign
+op_complement
+l_int|0x200000
+suffix:semicolon
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|fl1
+op_amp
+l_int|0x200000
+)paren
+op_logical_or
+(paren
+id|flags
+op_amp
+l_int|0x200000
+)paren
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_WARNING
+l_string|&quot;%s: cpu does not support CPUID&bslash;n&quot;
+comma
+id|sm_drvname
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+id|__asm__
+(paren
+l_string|&quot;cpuid&quot;
+suffix:colon
+l_string|&quot;=a&quot;
+(paren
+id|eax
+)paren
+comma
+l_string|&quot;=b&quot;
+(paren
+id|id.r.ebx
+)paren
+comma
+l_string|&quot;=c&quot;
+(paren
+id|id.r.ecx
+)paren
+comma
+l_string|&quot;=d&quot;
+(paren
+id|id.r.edx
+)paren
+suffix:colon
+l_string|&quot;0&quot;
+(paren
+l_int|0
+)paren
+)paren
+suffix:semicolon
+id|id.s
+(braket
+l_int|12
+)braket
+op_assign
+l_int|0
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|eax
+OL
+l_int|1
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_WARNING
+l_string|&quot;%s: cpu (vendor string %s) does not support capability &quot;
+l_string|&quot;list&bslash;n&quot;
+comma
+id|sm_drvname
+comma
+id|id.s
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+id|printk
+c_func
+(paren
+id|KERN_INFO
+l_string|&quot;%s: cpu: vendor string %s &quot;
+comma
+id|sm_drvname
+comma
+id|id.s
+)paren
+suffix:semicolon
+id|__asm__
+(paren
+l_string|&quot;cpuid&quot;
+suffix:colon
+l_string|&quot;=a&quot;
+(paren
+id|eax
+)paren
+comma
+l_string|&quot;=d&quot;
+(paren
+id|sm_x86_capability
+)paren
+suffix:colon
+l_string|&quot;0&quot;
+(paren
+l_int|1
+)paren
+suffix:colon
+l_string|&quot;ebx&quot;
+comma
+l_string|&quot;ecx&quot;
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;fam %d mdl %d step %d cap 0x%x&bslash;n&quot;
+comma
+(paren
+id|eax
+op_rshift
+l_int|8
+)paren
+op_amp
+l_int|15
+comma
+(paren
+id|eax
+op_rshift
+l_int|4
+)paren
+op_amp
+l_int|15
+comma
+id|eax
+op_amp
+l_int|15
+comma
+id|sm_x86_capability
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif /* __i386__ */&t;
+multiline_comment|/* --------------------------------------------------------------------- */
+macro_line|#ifdef MODULE
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
+r_static
+r_int
+id|sm_init
+c_func
+(paren
+r_void
+)paren
+)paren
+macro_line|#else /* MODULE */
 id|__initfunc
 c_func
 (paren
@@ -3118,6 +3420,7 @@ c_func
 r_void
 )paren
 )paren
+macro_line|#endif /* MODULE */
 (brace
 r_int
 id|i
@@ -3150,6 +3453,13 @@ c_func
 id|sm_drvinfo
 )paren
 suffix:semicolon
+macro_line|#ifdef __i386__
+id|i386_capability
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif /* __i386__ */&t;
 multiline_comment|/*&n;&t; * register net devices&n;&t; */
 r_for
 c_loop
@@ -3575,12 +3885,16 @@ l_string|&quot;Soundcard amateur radio modem driver&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
-DECL|function|init_module
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|init_module
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_if

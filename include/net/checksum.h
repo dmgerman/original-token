@@ -3,6 +3,7 @@ multiline_comment|/*&n; *&t;Fixes:&n; *&n; *&t;Ralf Baechle&t;&t;&t;:&t;generic 
 macro_line|#ifndef _CHECKSUM_H
 DECL|macro|_CHECKSUM_H
 mdefine_line|#define _CHECKSUM_H
+macro_line|#include &lt;asm/types.h&gt;
 macro_line|#include &lt;asm/byteorder.h&gt;
 macro_line|#include &lt;net/ip.h&gt;
 macro_line|#include &lt;asm/checksum.h&gt;

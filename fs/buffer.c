@@ -19,6 +19,7 @@ macro_line|#include &lt;linux/smp.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/vmalloc.h&gt;
 macro_line|#include &lt;linux/blkdev.h&gt;
+macro_line|#include &lt;linux/sysrq.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
@@ -228,14 +229,6 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* Here is the parameter block for the bdflush process. If you add or&n; * remove any of the parameters, make sure to update kernel/sysctl.c.&n; */
-r_static
-r_void
-id|wakeup_bdflush
-c_func
-(paren
-r_int
-)paren
-suffix:semicolon
 DECL|macro|N_PARAM
 mdefine_line|#define N_PARAM 9
 multiline_comment|/* The dummy values in this structure are left in there for compatibility&n; * with old programs that play with the /proc entries.&n; */
@@ -386,6 +379,13 @@ l_int|2047
 comma
 l_int|5
 )brace
+suffix:semicolon
+r_void
+id|wakeup_bdflush
+c_func
+(paren
+r_int
+)paren
 suffix:semicolon
 multiline_comment|/*&n; * Rewrote the wait-routines to use the &quot;new&quot; wait-queue functionality,&n; * and getting rid of the cli-sti pairs. The wait-queue routines still&n; * need cli-sti, but now it&squot;s just a couple of 386 instructions or so.&n; *&n; * Note that the real wait_on_buffer() is an inline function that checks&n; * if &squot;b_wait&squot; is set before calling this, so that the queues aren&squot;t set&n; * up unnecessarily.&n; */
 DECL|function|__wait_on_buffer
@@ -6485,7 +6485,6 @@ op_assign
 l_int|0
 suffix:semicolon
 DECL|function|wakeup_bdflush
-r_static
 r_void
 id|wakeup_bdflush
 c_func
@@ -7088,6 +7087,7 @@ l_string|&quot;bdflush() activated...&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
+id|CHECK_EMERGENCY_SYNC
 id|ncount
 op_assign
 l_int|0

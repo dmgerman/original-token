@@ -17,9 +17,9 @@ macro_line|#include &lt;asm/delay.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/oplib.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
-macro_line|#include &quot;../../char/kbd_kern.h&quot;
-macro_line|#include &quot;../../char/diacr.h&quot;
-macro_line|#include &quot;../../char/vt_kern.h&quot;
+macro_line|#include &lt;linux/kbd_kern.h&gt;
+macro_line|#include &lt;linux/kbd_diacr.h&gt;
+macro_line|#include &lt;linux/vt_kern.h&gt;
 DECL|macro|SIZE
 mdefine_line|#define SIZE(x) (sizeof(x)/sizeof((x)[0]))
 multiline_comment|/* Define this one if you are making a new frame buffer driver */

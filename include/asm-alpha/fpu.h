@@ -68,9 +68,86 @@ DECL|macro|IEEE_STATUS_INE
 mdefine_line|#define IEEE_STATUS_INE&t;&t;(1&lt;&lt;21)
 DECL|macro|IEEE_STATUS_MASK
 mdefine_line|#define IEEE_STATUS_MASK&t;(IEEE_STATUS_INV | IEEE_STATUS_DZE |&t;&bslash;&n;&t;&t;&t;&t; IEEE_STATUS_OVF | IEEE_STATUS_UNF |&t;&bslash;&n;&t;&t;&t;&t; IEEE_STATUS_INE)
+DECL|macro|IEEE_SW_MASK
+mdefine_line|#define IEEE_SW_MASK&t;&t;(IEEE_TRAP_ENABLE_MASK | IEEE_STATUS_MASK)
 DECL|macro|IEEE_STATUS_TO_EXCSUM_SHIFT
 mdefine_line|#define IEEE_STATUS_TO_EXCSUM_SHIFT&t;16
 DECL|macro|IEEE_INHERIT
 mdefine_line|#define IEEE_INHERIT    (1UL&lt;&lt;63)&t;/* inherit on thread create? */
+multiline_comment|/*&n; * Convert the spftware IEEE trap enable and status bits into the&n; * hardware fpcr format.&n; */
+r_static
+r_inline
+r_int
+r_int
+DECL|function|ieee_swcr_to_fpcr
+id|ieee_swcr_to_fpcr
+c_func
+(paren
+r_int
+r_int
+id|sw
+)paren
+(brace
+r_int
+r_int
+id|fp
+suffix:semicolon
+id|fp
+op_assign
+(paren
+id|sw
+op_amp
+id|IEEE_STATUS_MASK
+)paren
+op_lshift
+l_int|35
+suffix:semicolon
+id|fp
+op_or_assign
+id|sw
+op_amp
+id|IEEE_STATUS_MASK
+ques
+c_cond
+id|FPCR_SUM
+suffix:colon
+l_int|0
+suffix:semicolon
+id|fp
+op_or_assign
+(paren
+op_complement
+id|sw
+op_amp
+(paren
+id|IEEE_TRAP_ENABLE_INV
+op_or
+id|IEEE_TRAP_ENABLE_DZE
+op_or
+id|IEEE_TRAP_ENABLE_OVF
+)paren
+)paren
+op_lshift
+l_int|48
+suffix:semicolon
+id|fp
+op_or_assign
+(paren
+op_complement
+id|sw
+op_amp
+(paren
+id|IEEE_TRAP_ENABLE_UNF
+op_or
+id|IEEE_TRAP_ENABLE_INE
+)paren
+)paren
+op_lshift
+l_int|57
+suffix:semicolon
+r_return
+id|fp
+suffix:semicolon
+)brace
 macro_line|#endif /* __ASM_ALPHA_FPU_H */
 eof

@@ -1244,7 +1244,12 @@ id|inode-&gt;i_dev
 comma
 id|inode-&gt;i_ino
 comma
+id|atomic_read
+c_func
+(paren
+op_amp
 id|inode-&gt;i_count
+)paren
 )paren
 suffix:semicolon
 r_return
@@ -1733,11 +1738,11 @@ id|file_system_type
 id|nfs_fs_type
 op_assign
 (brace
-id|nfs_read_super
-comma
 l_string|&quot;nfs&quot;
 comma
-l_int|0
+id|FS_NO_DCACHE
+comma
+id|nfs_read_super
 comma
 l_int|NULL
 )brace

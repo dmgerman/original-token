@@ -8,11 +8,6 @@ DECL|macro|KEYBOARD_IRQ
 mdefine_line|#define KEYBOARD_IRQ&t;&t;&t;1
 DECL|macro|DISABLE_KBD_DURING_INTERRUPTS
 mdefine_line|#define DISABLE_KBD_DURING_INTERRUPTS&t;0
-DECL|macro|KBD_REPORT_ERR
-mdefine_line|#define KBD_REPORT_ERR
-DECL|macro|KBD_REPORT_UNKN
-mdefine_line|#define KBD_REPORT_UNKN
-multiline_comment|/* #define KBD_IS_FOCUS_9000 */
 r_extern
 r_int
 id|pckbd_setkeycode

@@ -3,14 +3,6 @@ DECL|macro|__irq_h
 mdefine_line|#define __irq_h
 multiline_comment|/*&n; * Various low-level irq details needed by irq.c and smp.c&n; *&n; * Interrupt entry/exit code at both C and assembly level&n; */
 macro_line|#ifdef __SMP__
-DECL|macro|INIT_STUCK
-macro_line|#undef INIT_STUCK
-DECL|macro|INIT_STUCK
-mdefine_line|#define INIT_STUCK 200000000
-DECL|macro|STUCK
-macro_line|#undef STUCK
-DECL|macro|STUCK
-mdefine_line|#define STUCK &bslash;&n;if (!--stuck) {printk(&quot;irq_enter stuck (irq=%d, cpu=%d, global=%d)&bslash;n&quot;,irq,cpu,global_irq_holder); stuck = INIT_STUCK;}
 DECL|function|irq_enter
 r_static
 r_inline
@@ -25,11 +17,6 @@ r_int
 id|irq
 )paren
 (brace
-r_int
-id|stuck
-op_assign
-id|INIT_STUCK
-suffix:semicolon
 id|hardirq_enter
 c_func
 (paren
@@ -49,29 +36,6 @@ id|global_irq_lock
 )paren
 )paren
 (brace
-r_if
-c_cond
-(paren
-(paren
-r_int
-r_char
-)paren
-id|cpu
-op_eq
-id|global_irq_holder
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;BAD! Local interrupts enabled, global disabled&bslash;n&quot;
-)paren
-suffix:semicolon
-r_break
-suffix:semicolon
-)brace
-id|STUCK
-suffix:semicolon
 multiline_comment|/* nothing */
 suffix:semicolon
 )brace

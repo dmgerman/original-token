@@ -118,9 +118,6 @@ multiline_comment|/* rename */
 l_int|NULL
 comma
 multiline_comment|/* readlink */
-l_int|NULL
-comma
-multiline_comment|/* follow_link */
 id|generic_readpage
 comma
 multiline_comment|/* readpage */

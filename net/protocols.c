@@ -46,6 +46,9 @@ macro_line|#ifdef CONFIG_ROSE
 macro_line|#include &lt;net/rosecall.h&gt;
 macro_line|#endif
 macro_line|#endif
+macro_line|#if defined(CONFIG_DECNET)
+macro_line|#include &lt;net/decnet_call.h&gt;
+macro_line|#endif
 macro_line|#if defined(CONFIG_ATALK) || defined(CONFIG_ATALK_MODULE)
 DECL|macro|NEED_802
 mdefine_line|#define NEED_802
@@ -166,6 +169,15 @@ comma
 multiline_comment|/* Amateur Radio X.25 PLP */
 macro_line|#endif
 macro_line|#endif  
+macro_line|#ifdef CONFIG_DECNET
+(brace
+l_string|&quot;DECnet&quot;
+comma
+id|decnet_proto_init
+)brace
+comma
+multiline_comment|/* DECnet */
+macro_line|#endif
 macro_line|#ifdef&t;CONFIG_INET
 (brace
 l_string|&quot;INET&quot;
@@ -173,7 +185,7 @@ comma
 id|inet_proto_init
 )brace
 comma
-multiline_comment|/* TCP/IP&t;&t;&t;*/
+multiline_comment|/* TCP/IP */
 macro_line|#ifdef&t;CONFIG_IPV6
 (brace
 l_string|&quot;INET6&quot;

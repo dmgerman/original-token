@@ -191,9 +191,6 @@ multiline_comment|/* rename */
 l_int|NULL
 comma
 multiline_comment|/* readlink */
-l_int|NULL
-comma
-multiline_comment|/* follow_link */
 id|nfs_readpage
 comma
 multiline_comment|/* readpage */
@@ -528,7 +525,12 @@ id|inode-&gt;i_dev
 comma
 id|inode-&gt;i_ino
 comma
+id|atomic_read
+c_func
+(paren
+op_amp
 id|inode-&gt;i_count
+)paren
 comma
 id|count
 comma

@@ -27,8 +27,8 @@ macro_line|#include &lt;asm/font.h&gt;
 macro_line|#include &lt;asm/machdep.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
-macro_line|#include &quot;../../../drivers/char/vt_kern.h&quot;   /* vt_cons and vc_resize_con() */
-macro_line|#include &quot;../../../drivers/char/console_struct.h&quot;
+macro_line|#include &lt;linux/vt_kern.h&gt;
+macro_line|#include &lt;linux/console_struct.h&gt;
 multiline_comment|/* Import console_blanked from console.c */
 r_extern
 r_int

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: weitek.c,v 1.9 1997/04/14 17:04:57 jj Exp $&n; * weitek.c: Tadpole P9100/P9000 console driver&n; *&n; * Copyright (C) 1996 David Redman (djhr@tadpole.co.uk)&n; */
+multiline_comment|/* $Id: weitek.c,v 1.12 1997/06/04 08:27:34 davem Exp $&n; * weitek.c: Tadpole P9100/P9000 console driver&n; *&n; * Copyright (C) 1996 David Redman (djhr@tadpole.co.uk)&n; */
 macro_line|#include &lt;linux/kd.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
@@ -8,9 +8,10 @@ macro_line|#include &lt;asm/sbus.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/fbio.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
-macro_line|#include &quot;../../char/vt_kern.h&quot;
-macro_line|#include &quot;../../char/selection.h&quot;
-macro_line|#include &quot;../../char/console_struct.h&quot;
+multiline_comment|/* These must be included after asm/fbio.h */
+macro_line|#include &lt;linux/vt_kern.h&gt;
+macro_line|#include &lt;linux/selection.h&gt;
+macro_line|#include &lt;linux/console_struct.h&gt;
 macro_line|#include &quot;fb.h&quot;
 macro_line|#include &quot;cg_common.h&quot;
 multiline_comment|/*&n; * mmap info&n; */
@@ -259,8 +260,12 @@ id|vma-&gt;vm_inode
 op_assign
 id|inode
 suffix:semicolon
+id|atomic_inc
+c_func
+(paren
+op_amp
 id|inode-&gt;i_count
-op_increment
+)paren
 suffix:semicolon
 r_return
 l_int|0

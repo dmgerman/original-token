@@ -2077,6 +2077,22 @@ id|NCR5380_hostdata
 op_star
 id|hostdata
 suffix:semicolon
+macro_line|#ifdef NCR5380_STATS
+id|Scsi_Device
+op_star
+id|dev
+suffix:semicolon
+r_extern
+r_const
+r_char
+op_star
+r_const
+id|scsi_device_types
+(braket
+id|MAX_SCSI_DEVICE_CODE
+)braket
+suffix:semicolon
+macro_line|#endif    
 id|cli
 c_func
 (paren

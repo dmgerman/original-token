@@ -4054,7 +4054,7 @@ op_plus
 id|length
 )paren
 (brace
-id|sti
+id|end_bh_atomic
 c_func
 (paren
 )paren

@@ -1279,12 +1279,6 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|kfree
-c_func
-(paren
-id|sk-&gt;protinfo.x25
-)paren
-suffix:semicolon
 id|sk_free
 c_func
 (paren

@@ -1685,6 +1685,13 @@ id|sb
 suffix:semicolon
 )brace
 )brace
+macro_line|#if 0 /* ibasket&squot;s still have unresolved bugs... -DaveM */
+multiline_comment|/* [T. Schoebel-Theuer] This limit should be maintained on disk.&n;&t; * This is just provisionary.&n;&t; */
+id|sb-&gt;s_ibasket_max
+op_assign
+l_int|100
+suffix:semicolon
+macro_line|#endif
 )brace
 DECL|function|ext2_check_descriptors
 r_static
@@ -3625,11 +3632,13 @@ id|file_system_type
 id|ext2_fs_type
 op_assign
 (brace
-id|ext2_read_super
-comma
 l_string|&quot;ext2&quot;
 comma
-l_int|1
+id|FS_REQUIRES_DEV
+multiline_comment|/* | FS_IBASKET */
+comma
+multiline_comment|/* ibaskets have unresolved bugs */
+id|ext2_read_super
 comma
 l_int|NULL
 )brace

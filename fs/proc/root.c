@@ -149,9 +149,6 @@ comma
 multiline_comment|/* readlink */
 l_int|NULL
 comma
-multiline_comment|/* follow_link */
-l_int|NULL
-comma
 multiline_comment|/* readpage */
 l_int|NULL
 comma
@@ -247,9 +244,6 @@ multiline_comment|/* rename */
 l_int|NULL
 comma
 multiline_comment|/* readlink */
-l_int|NULL
-comma
-multiline_comment|/* follow_link */
 l_int|NULL
 comma
 multiline_comment|/* readpage */
@@ -962,9 +956,6 @@ comma
 multiline_comment|/* readlink */
 l_int|NULL
 comma
-multiline_comment|/* follow_link */
-l_int|NULL
-comma
 multiline_comment|/* readpage */
 l_int|NULL
 comma
@@ -1316,82 +1307,6 @@ id|EINVAL
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * /proc/self:&n; */
-DECL|function|proc_self_followlink
-r_static
-r_int
-id|proc_self_followlink
-c_func
-(paren
-r_struct
-id|inode
-op_star
-id|dir
-comma
-r_struct
-id|inode
-op_star
-id|inode
-comma
-r_int
-id|flag
-comma
-r_int
-id|mode
-comma
-r_struct
-id|inode
-op_star
-op_star
-id|res_inode
-)paren
-(brace
-id|iput
-c_func
-(paren
-id|dir
-)paren
-suffix:semicolon
-op_star
-id|res_inode
-op_assign
-id|proc_get_inode
-c_func
-(paren
-id|inode-&gt;i_sb
-comma
-(paren
-id|current-&gt;pid
-op_lshift
-l_int|16
-)paren
-op_plus
-id|PROC_PID_INO
-comma
-op_amp
-id|proc_pid
-)paren
-suffix:semicolon
-id|iput
-c_func
-(paren
-id|inode
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-op_star
-id|res_inode
-)paren
-r_return
-op_minus
-id|ENOENT
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
 DECL|function|proc_self_readlink
 r_static
 r_int
@@ -1503,9 +1418,6 @@ multiline_comment|/* rename */
 id|proc_self_readlink
 comma
 multiline_comment|/* readlink */
-id|proc_self_followlink
-comma
-multiline_comment|/* follow_link */
 l_int|NULL
 comma
 multiline_comment|/* readpage */
@@ -1758,6 +1670,37 @@ op_amp
 id|proc_array_inode_operations
 )brace
 suffix:semicolon
+macro_line|#if defined (CONFIG_AMIGA) || defined (CONFIG_ATARI)
+DECL|variable|proc_root_hardware
+r_static
+r_struct
+id|proc_dir_entry
+id|proc_root_hardware
+op_assign
+(brace
+id|PROC_HARDWARE
+comma
+l_int|8
+comma
+l_string|&quot;hardware&quot;
+comma
+id|S_IFREG
+op_or
+id|S_IRUGO
+comma
+l_int|1
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+op_amp
+id|proc_array_inode_operations
+)brace
+suffix:semicolon
+macro_line|#endif
 DECL|variable|proc_root_self
 r_static
 r_struct
@@ -2324,6 +2267,37 @@ op_amp
 id|proc_array_inode_operations
 )brace
 suffix:semicolon
+macro_line|#ifdef CONFIG_OMIRR
+DECL|variable|proc_root_omirr
+r_static
+r_struct
+id|proc_dir_entry
+id|proc_root_omirr
+op_assign
+(brace
+id|PROC_OMIRR
+comma
+l_int|5
+comma
+l_string|&quot;omirr&quot;
+comma
+id|S_IFREG
+op_or
+id|S_IRUSR
+comma
+l_int|1
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+op_amp
+id|proc_omirr_inode_operations
+)brace
+suffix:semicolon
+macro_line|#endif
 DECL|function|proc_root_init
 r_void
 id|proc_root_init
@@ -2679,6 +2653,18 @@ id|proc_openprom
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#if defined (CONFIG_AMIGA) || defined (CONFIG_ATARI)
+id|proc_register
+c_func
+(paren
+op_amp
+id|proc_root
+comma
+op_amp
+id|proc_root_hardware
+)paren
+suffix:semicolon
+macro_line|#endif
 id|proc_register
 c_func
 (paren
@@ -2896,6 +2882,34 @@ suffix:semicolon
 r_return
 op_minus
 id|EINVAL
+suffix:semicolon
+)brace
+multiline_comment|/* Either remove this as soon as possible due to security problems,&n;&t; * or uncomment the root-only usage.&n;&t; */
+multiline_comment|/* Allow generic inode lookups everywhere.&n;&t; * No other name in /proc must begin with a &squot;[&squot;.&n;&t; */
+r_if
+c_cond
+(paren
+multiline_comment|/*!current-&gt;uid &amp;&amp;*/
+id|name
+(braket
+l_int|0
+)braket
+op_eq
+l_char|&squot;[&squot;
+)paren
+(brace
+r_return
+id|proc_arbitrary_lookup
+c_func
+(paren
+id|dir
+comma
+id|name
+comma
+id|len
+comma
+id|result
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/* Special case &quot;.&quot; and &quot;..&quot;: they aren&squot;t on the directory list */
@@ -3141,8 +3155,12 @@ id|task_struct
 op_star
 id|p
 suffix:semicolon
+id|atomic_inc
+c_func
+(paren
+op_amp
 id|dir-&gt;i_count
-op_increment
+)paren
 suffix:semicolon
 r_if
 c_cond

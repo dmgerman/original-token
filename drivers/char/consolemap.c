@@ -5,7 +5,7 @@ macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
-macro_line|#include &quot;consolemap.h&quot;
+macro_line|#include &lt;linux/consolemap.h&gt;
 DECL|variable|translations
 r_static
 r_int

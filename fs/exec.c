@@ -74,6 +74,13 @@ r_void
 )paren
 )paren
 (brace
+macro_line|#ifdef CONFIG_BINFMT_MISC
+id|init_misc_binfmt
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef CONFIG_BINFMT_ELF
 id|init_elf_binfmt
 c_func
@@ -412,8 +419,12 @@ id|fd
 op_assign
 id|f
 suffix:semicolon
+id|atomic_inc
+c_func
+(paren
+op_amp
 id|inode-&gt;i_count
-op_increment
+)paren
 suffix:semicolon
 )brace
 r_return

@@ -1280,9 +1280,6 @@ id|new_name
 comma
 r_int
 id|new_len
-comma
-r_int
-id|must_be_dir
 )paren
 suffix:semicolon
 multiline_comment|/* fatfs_syms.c */
@@ -1413,9 +1410,6 @@ id|new_name
 comma
 r_int
 id|new_len
-comma
-r_int
-id|must_be_dir
 )paren
 suffix:semicolon
 r_extern

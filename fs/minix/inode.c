@@ -4934,11 +4934,11 @@ id|file_system_type
 id|minix_fs_type
 op_assign
 (brace
-id|minix_read_super
-comma
 l_string|&quot;minix&quot;
 comma
-l_int|1
+id|FS_REQUIRES_DEV
+comma
+id|minix_read_super
 comma
 l_int|NULL
 )brace

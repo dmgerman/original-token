@@ -13,8 +13,8 @@ macro_line|#include &lt;linux/init.h&gt;
 macro_line|#ifdef CONFIG_APM
 macro_line|#include &lt;linux/apm_bios.h&gt;
 macro_line|#endif
-macro_line|#include &lt;linux/tty.h&gt; /* needed by selection.h */
-macro_line|#include &quot;selection.h&quot; /* export its symbols */
+macro_line|#include &lt;linux/tty.h&gt;
+macro_line|#include &lt;linux/selection.h&gt;
 macro_line|#ifdef CONFIG_KERNELD
 macro_line|#include &lt;linux/kerneld.h&gt;
 macro_line|#endif
