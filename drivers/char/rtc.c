@@ -2149,16 +2149,6 @@ id|p
 op_assign
 id|buf
 suffix:semicolon
-id|p
-op_add_assign
-id|sprintf
-c_func
-(paren
-id|p
-comma
-l_string|&quot;Real Time Clock Status:&bslash;n&quot;
-)paren
-suffix:semicolon
 id|get_rtc_time
 c_func
 (paren
@@ -2174,23 +2164,33 @@ c_func
 (paren
 id|p
 comma
-l_string|&quot;&bslash;tRTC reports %02d:%02d:%02d of %d-%d-%d.&bslash;n&quot;
+l_string|&quot;date          : %04d-%02d-%02d&bslash;n&quot;
+comma
+id|tm.tm_year
+op_plus
+l_int|1900
+comma
+id|tm.tm_mon
+op_plus
+l_int|1
+comma
+id|tm.tm_mday
+)paren
+suffix:semicolon
+id|p
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|p
+comma
+l_string|&quot;time          : %02d-%02d-%02d&bslash;n&quot;
 comma
 id|tm.tm_hour
 comma
 id|tm.tm_min
 comma
 id|tm.tm_sec
-comma
-id|tm.tm_mday
-comma
-id|tm.tm_mon
-op_plus
-l_int|1
-comma
-id|tm.tm_year
-op_plus
-l_int|1900
 )paren
 suffix:semicolon
 id|get_rtc_alm_time
@@ -2208,7 +2208,7 @@ c_func
 (paren
 id|p
 comma
-l_string|&quot;&bslash;tAlarm set to match: &quot;
+l_string|&quot;alarm         : &quot;
 )paren
 suffix:semicolon
 r_if
@@ -2225,7 +2225,7 @@ c_func
 (paren
 id|p
 comma
-l_string|&quot;hour=%d, &quot;
+l_string|&quot;%02d&quot;
 comma
 id|tm.tm_hour
 )paren
@@ -2238,7 +2238,17 @@ c_func
 (paren
 id|p
 comma
-l_string|&quot;hour=any, &quot;
+l_string|&quot;**&quot;
+)paren
+suffix:semicolon
+id|p
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|p
+comma
+l_string|&quot;-&quot;
 )paren
 suffix:semicolon
 r_if
@@ -2255,7 +2265,7 @@ c_func
 (paren
 id|p
 comma
-l_string|&quot;min=%d, &quot;
+l_string|&quot;%02d&quot;
 comma
 id|tm.tm_min
 )paren
@@ -2268,7 +2278,17 @@ c_func
 (paren
 id|p
 comma
-l_string|&quot;min=any, &quot;
+l_string|&quot;**&quot;
+)paren
+suffix:semicolon
+id|p
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|p
+comma
+l_string|&quot;-&quot;
 )paren
 suffix:semicolon
 r_if
@@ -2285,7 +2305,7 @@ c_func
 (paren
 id|p
 comma
-l_string|&quot;sec=%d.&bslash;n&quot;
+l_string|&quot;%02d&quot;
 comma
 id|tm.tm_sec
 )paren
@@ -2298,7 +2318,7 @@ c_func
 (paren
 id|p
 comma
-l_string|&quot;sec=any.&bslash;n&quot;
+l_string|&quot;**&quot;
 )paren
 suffix:semicolon
 id|p
@@ -2308,7 +2328,17 @@ c_func
 (paren
 id|p
 comma
-l_string|&quot;&bslash;tMisc. settings: daylight=%s; BCD=%s; 24hr=%s; Sq-Wave=%s.&bslash;n&quot;
+l_string|&quot;&bslash;n&quot;
+)paren
+suffix:semicolon
+id|p
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|p
+comma
+l_string|&quot;daylight      : %s&bslash;n&quot;
 comma
 (paren
 (paren
@@ -2322,6 +2352,16 @@ l_string|&quot;yes&quot;
 suffix:colon
 l_string|&quot;no&quot;
 )paren
+)paren
+suffix:semicolon
+id|p
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|p
+comma
+l_string|&quot;bcd           : %s&bslash;n&quot;
 comma
 (paren
 (paren
@@ -2335,6 +2375,16 @@ l_string|&quot;no&quot;
 suffix:colon
 l_string|&quot;yes&quot;
 )paren
+)paren
+suffix:semicolon
+id|p
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|p
+comma
+l_string|&quot;24hr          : %s&bslash;n&quot;
 comma
 (paren
 (paren
@@ -2348,6 +2398,16 @@ l_string|&quot;yes&quot;
 suffix:colon
 l_string|&quot;no&quot;
 )paren
+)paren
+suffix:semicolon
+id|p
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|p
+comma
+l_string|&quot;sqwave        : %s&bslash;n&quot;
 comma
 (paren
 (paren
@@ -2370,7 +2430,7 @@ c_func
 (paren
 id|p
 comma
-l_string|&quot;&bslash;tInterrupt for: alarm=%s; update=%s; periodic=%s.&bslash;n&quot;
+l_string|&quot;alarm_int     : %s&bslash;n&quot;
 comma
 (paren
 (paren
@@ -2384,6 +2444,16 @@ l_string|&quot;yes&quot;
 suffix:colon
 l_string|&quot;no&quot;
 )paren
+)paren
+suffix:semicolon
+id|p
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|p
+comma
+l_string|&quot;update_int    : %s&bslash;n&quot;
 comma
 (paren
 (paren
@@ -2397,6 +2467,16 @@ l_string|&quot;yes&quot;
 suffix:colon
 l_string|&quot;no&quot;
 )paren
+)paren
+suffix:semicolon
+id|p
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|p
+comma
+l_string|&quot;periodic_int  : %s&bslash;n&quot;
 comma
 (paren
 (paren
@@ -2419,7 +2499,7 @@ c_func
 (paren
 id|p
 comma
-l_string|&quot;&bslash;tPeriodic interrupt rate set to %dHz.&bslash;n&quot;
+l_string|&quot;periodic_freq : %d&bslash;n&quot;
 comma
 (paren
 id|freq
@@ -2446,15 +2526,15 @@ c_func
 (paren
 id|p
 comma
-l_string|&quot;&bslash;tRTC reports that CMOS battery is %s.&bslash;n&quot;
+l_string|&quot;battery_ok    : %s&bslash;n&quot;
 comma
 (paren
 id|batt
 ques
 c_cond
-l_string|&quot;okay&quot;
+l_string|&quot;yes&quot;
 suffix:colon
-l_string|&quot;dead&quot;
+l_string|&quot;no&quot;
 )paren
 )paren
 suffix:semicolon

@@ -1117,6 +1117,10 @@ id|prev-&gt;processor
 op_assign
 id|NO_PROC_ID
 suffix:semicolon
+DECL|macro|idle_task
+mdefine_line|#define idle_task (task[this_cpu])
+macro_line|#else
+mdefine_line|#define idle_task (&amp;init_task)
 macro_line|#endif&t;
 multiline_comment|/*&n; * Note! there may appear new tasks on the run-queue during this, as&n; * interrupts are enabled. However, they will be put on front of the&n; * list, so our list starting at &quot;p&quot; is essentially fixed.&n; */
 multiline_comment|/* this is the scheduler proper: */
@@ -1127,8 +1131,7 @@ l_int|1000
 suffix:semicolon
 id|next
 op_assign
-op_amp
-id|init_task
+id|idle_task
 suffix:semicolon
 r_while
 c_loop
@@ -1196,23 +1199,7 @@ op_plus
 id|p-&gt;priority
 suffix:semicolon
 )brace
-macro_line|#ifdef __SMP__&t;
-multiline_comment|/*&n;&t; *&t;Context switching between two idle threads is pointless.&n;&t; */
-r_if
-c_cond
-(paren
-op_logical_neg
-id|prev-&gt;pid
-op_logical_and
-op_logical_neg
-id|next-&gt;pid
-)paren
-(brace
-id|next
-op_assign
-id|prev
-suffix:semicolon
-)brace
+macro_line|#ifdef __SMP__
 multiline_comment|/*&n;&t; *&t;Allocate process to CPU&n;&t; */
 id|next-&gt;processor
 op_assign
@@ -5605,6 +5592,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#ifndef __SMP__&t;
 id|current_set
 (braket
 id|cpu
@@ -5613,11 +5601,35 @@ op_assign
 op_amp
 id|init_task
 suffix:semicolon
-macro_line|#ifdef __SMP__&t;
+macro_line|#else
 id|init_task.processor
 op_assign
 id|cpu
 suffix:semicolon
+r_for
+c_loop
+(paren
+id|cpu
+op_assign
+l_int|0
+suffix:semicolon
+id|cpu
+OL
+id|NR_CPUS
+suffix:semicolon
+id|cpu
+op_increment
+)paren
+(brace
+id|current_set
+(braket
+id|cpu
+)braket
+op_assign
+op_amp
+id|init_task
+suffix:semicolon
+)brace
 macro_line|#endif
 id|init_bh
 c_func

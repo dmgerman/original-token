@@ -515,6 +515,7 @@ macro_line|#include &lt;linux/iso_fs_i.h&gt;
 macro_line|#include &lt;linux/nfs_fs_i.h&gt;
 macro_line|#include &lt;linux/xia_fs_i.h&gt;
 macro_line|#include &lt;linux/sysv_fs_i.h&gt;
+macro_line|#include &lt;linux/ufs_fs_i.h&gt;
 multiline_comment|/*&n; * Attribute flags.  These should be or-ed together to figure out what&n; * has been changed!&n; */
 DECL|macro|ATTR_MODE
 mdefine_line|#define ATTR_MODE&t;1
@@ -833,6 +834,11 @@ DECL|member|sysv_i
 r_struct
 id|sysv_inode_info
 id|sysv_i
+suffix:semicolon
+DECL|member|ufs_i
+r_struct
+id|ufs_inode_info
+id|ufs_i
 suffix:semicolon
 DECL|member|socket_i
 r_struct
@@ -1257,6 +1263,7 @@ macro_line|#include &lt;linux/iso_fs_sb.h&gt;
 macro_line|#include &lt;linux/nfs_fs_sb.h&gt;
 macro_line|#include &lt;linux/xia_fs_sb.h&gt;
 macro_line|#include &lt;linux/sysv_fs_sb.h&gt;
+macro_line|#include &lt;linux/ufs_fs_sb.h&gt;
 DECL|struct|super_block
 r_struct
 id|super_block
@@ -1387,6 +1394,11 @@ DECL|member|sysv_sb
 r_struct
 id|sysv_sb_info
 id|sysv_sb
+suffix:semicolon
+DECL|member|ufs_sb
+r_struct
+id|ufs_sb_info
+id|ufs_sb
 suffix:semicolon
 DECL|member|generic_sbp
 r_void

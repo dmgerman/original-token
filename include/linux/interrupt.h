@@ -112,6 +112,9 @@ comma
 DECL|enumerator|SERIAL_BH
 id|SERIAL_BH
 comma
+DECL|enumerator|RISCOM8_BH
+id|RISCOM8_BH
+comma
 DECL|enumerator|NET_BH
 id|NET_BH
 comma

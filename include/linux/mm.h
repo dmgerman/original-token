@@ -618,9 +618,9 @@ id|free_page_tables
 c_func
 (paren
 r_struct
-id|task_struct
+id|mm_struct
 op_star
-id|tsk
+id|mm
 )paren
 suffix:semicolon
 r_extern

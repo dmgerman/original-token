@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: pgtable.h,v 1.45 1996/04/18 03:29:21 davem Exp $ */
+multiline_comment|/* $Id: pgtable.h,v 1.46 1996/04/21 11:01:53 davem Exp $ */
 macro_line|#ifndef _SPARC_PGTABLE_H
 DECL|macro|_SPARC_PGTABLE_H
 mdefine_line|#define _SPARC_PGTABLE_H

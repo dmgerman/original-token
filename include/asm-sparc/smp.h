@@ -2,7 +2,6 @@ multiline_comment|/* smp.h: Sparc specific SMP stuff.&n; *&n; * Copyright (C) 19
 macro_line|#ifndef _SPARC_SMP_H
 DECL|macro|_SPARC_SMP_H
 mdefine_line|#define _SPARC_SMP_H
-macro_line|#ifdef __SMP__
 macro_line|#ifndef __ASSEMBLY__
 multiline_comment|/* PROM provided per-processor information we need&n; * to start them all up.&n; */
 DECL|struct|prom_cpuinfo
@@ -19,6 +18,9 @@ id|mid
 suffix:semicolon
 )brace
 suffix:semicolon
+macro_line|#endif /* !(__ASSEMBLY__) */
+macro_line|#ifdef __SMP__
+macro_line|#ifndef __ASSEMBLY__
 r_extern
 r_struct
 id|prom_cpuinfo

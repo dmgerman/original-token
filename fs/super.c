@@ -2587,7 +2587,15 @@ id|unnamed_dev_in_use
 (braket
 l_int|256
 op_div
-l_int|32
+(paren
+l_int|8
+op_star
+r_sizeof
+(paren
+r_int
+r_int
+)paren
+)paren
 )braket
 op_assign
 (brace

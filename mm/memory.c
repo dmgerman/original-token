@@ -431,9 +431,9 @@ id|free_page_tables
 c_func
 (paren
 r_struct
-id|task_struct
+id|mm_struct
 op_star
-id|tsk
+id|mm
 )paren
 (brace
 r_int
@@ -445,7 +445,7 @@ id|page_dir
 suffix:semicolon
 id|page_dir
 op_assign
-id|tsk-&gt;mm-&gt;pgd
+id|mm-&gt;pgd
 suffix:semicolon
 r_if
 c_cond
@@ -461,39 +461,12 @@ id|swapper_pg_dir
 id|printk
 c_func
 (paren
-l_string|&quot;%s trying to free kernel page-directory: not good&bslash;n&quot;
-comma
-id|tsk-&gt;comm
+l_string|&quot;Trying to free kernel page-directory: not good&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-id|flush_cache_mm
-c_func
-(paren
-id|tsk-&gt;mm
-)paren
-suffix:semicolon
-id|flush_tlb_mm
-c_func
-(paren
-id|tsk-&gt;mm
-)paren
-suffix:semicolon
-id|SET_PAGE_DIR
-c_func
-(paren
-id|tsk
-comma
-id|swapper_pg_dir
-)paren
-suffix:semicolon
-id|tsk-&gt;mm-&gt;pgd
-op_assign
-id|swapper_pg_dir
-suffix:semicolon
-multiline_comment|/* or else... */
 r_for
 c_loop
 (paren

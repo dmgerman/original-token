@@ -107,6 +107,10 @@ DECL|macro|NETLINK_MAJOR
 mdefine_line|#define NETLINK_MAJOR&t;36
 DECL|macro|IDETAPE_MAJOR
 mdefine_line|#define IDETAPE_MAJOR&t;37
+DECL|macro|RISCOM8_NORMAL_MAJOR
+mdefine_line|#define RISCOM8_NORMAL_MAJOR 48
+DECL|macro|RISCOM8_CALLOUT_MAJOR
+mdefine_line|#define RISCOM8_CALLOUT_MAJOR 49
 DECL|macro|APBLOCK_MAJOR
 mdefine_line|#define APBLOCK_MAJOR   60   /* AP1000 Block device */
 DECL|macro|DDV_MAJOR

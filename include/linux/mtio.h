@@ -409,6 +409,8 @@ DECL|macro|MT_ST_DEF_WRITES
 mdefine_line|#define MT_ST_DEF_WRITES&t;0x80
 DECL|macro|MT_ST_CAN_BSR
 mdefine_line|#define MT_ST_CAN_BSR&t;&t;0x100
+DECL|macro|MT_ST_NO_BLKLIMS
+mdefine_line|#define MT_ST_NO_BLKLIMS&t;0x200
 multiline_comment|/* The mode parameters to be controlled. Parameter chosen with bits 20-28 */
 DECL|macro|MT_ST_CLEAR_DEFAULT
 mdefine_line|#define MT_ST_CLEAR_DEFAULT&t;0xfffff

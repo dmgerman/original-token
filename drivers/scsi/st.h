@@ -87,6 +87,11 @@ r_int
 r_char
 id|do_buffer_writes
 suffix:semicolon
+DECL|member|do_read_ahead
+r_int
+r_char
+id|do_read_ahead
+suffix:semicolon
 DECL|member|defaults_for_writes
 r_int
 r_char
@@ -158,10 +163,10 @@ op_star
 id|buffer
 suffix:semicolon
 multiline_comment|/* Drive characteristics */
-DECL|member|do_read_ahead
+DECL|member|omit_blklims
 r_int
 r_char
-id|do_read_ahead
+id|omit_blklims
 suffix:semicolon
 DECL|member|do_auto_lock
 r_int

@@ -28,6 +28,8 @@ DECL|macro|IP_MASQ_F_HASHED
 mdefine_line|#define IP_MASQ_F_HASHED&t;&t;0x10 &t;/* hashed entry */
 DECL|macro|IP_MASQ_F_SAW_FIN
 mdefine_line|#define IP_MASQ_F_SAW_FIN&t;&t;0x20 &t;/* tcp fin pkt seen */
+DECL|macro|IP_MASQ_F_SAW_RST
+mdefine_line|#define IP_MASQ_F_SAW_RST&t;&t;0x40 &t;/* tcp rst pkt seen */
 macro_line|#ifdef __KERNEL__
 multiline_comment|/*&n; *&t;Delta seq. info structure&n; *&t;Each MASQ struct has 2 (output AND input seq. changes).&n; */
 DECL|struct|ip_masq_seq
@@ -115,6 +117,12 @@ op_star
 id|app
 suffix:semicolon
 multiline_comment|/* bound ip_masq_app object */
+DECL|member|app_data
+r_void
+op_star
+id|app_data
+suffix:semicolon
+multiline_comment|/* Application private data */
 DECL|member|flags
 r_int
 id|flags
@@ -253,6 +261,12 @@ id|ip_masq_app
 op_star
 id|next
 suffix:semicolon
+DECL|member|name
+r_char
+op_star
+id|name
+suffix:semicolon
+multiline_comment|/* name of application proxy */
 DECL|member|type
 r_int
 id|type
@@ -471,6 +485,30 @@ r_struct
 id|device
 op_star
 id|dev
+)paren
+suffix:semicolon
+multiline_comment|/*&n; *&t;service routine(s).&n; */
+r_extern
+r_struct
+id|ip_masq
+op_star
+id|ip_masq_out_get_2
+c_func
+(paren
+r_int
+id|protocol
+comma
+id|__u32
+id|s_addr
+comma
+id|__u16
+id|s_port
+comma
+id|__u32
+id|d_addr
+comma
+id|__u16
+id|d_port
 )paren
 suffix:semicolon
 multiline_comment|/*&n; *&t;/proc/net entry&n; */

@@ -122,18 +122,28 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;save %sp, -0x68, %sp&bslash;n&bslash;t&quot;
-l_string|&quot;set _clk_ctrl, %l0&bslash;n&bslash;t&quot;
-l_string|&quot;ld [%l0], %l0&bslash;n&bslash;t&quot;
-l_string|&quot;mov 0xcc, %l1&bslash;n&bslash;t&quot;
-l_string|&quot;mov 0x4c, %l2&bslash;n&bslash;t&quot;
-l_string|&quot;mov 0xcf, %l3&bslash;n&bslash;t&quot;
-l_string|&quot;mov 0xdf, %l4&bslash;n&bslash;t&quot;
-l_string|&quot;stb %l1, [%l0+3]&bslash;n&bslash;t&quot;
-l_string|&quot;stb %l2, [%l0+3]&bslash;n&bslash;t&quot;
-l_string|&quot;stb %l3, [%l0+3]&bslash;n&bslash;t&quot;
-l_string|&quot;stb %l4, [%l0+3]&bslash;n&bslash;t&quot;
-l_string|&quot;restore&bslash;n&bslash;t&quot;
+l_string|&quot;mov 0xcc, %%g2&bslash;n&bslash;t&quot;
+l_string|&quot;mov 0x4c, %%g3&bslash;n&bslash;t&quot;
+l_string|&quot;mov 0xcf, %%g4&bslash;n&bslash;t&quot;
+l_string|&quot;mov 0xdf, %%g5&bslash;n&bslash;t&quot;
+l_string|&quot;stb %%g2, [%0+3]&bslash;n&bslash;t&quot;
+l_string|&quot;stb %%g3, [%0+3]&bslash;n&bslash;t&quot;
+l_string|&quot;stb %%g4, [%0+3]&bslash;n&bslash;t&quot;
+l_string|&quot;stb %%g5, [%0+3]&bslash;n&bslash;t&quot;
+suffix:colon
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+id|clk_ctrl
+)paren
+suffix:colon
+l_string|&quot;g2&quot;
+comma
+l_string|&quot;g3&quot;
+comma
+l_string|&quot;g4&quot;
+comma
+l_string|&quot;g5&quot;
 )paren
 suffix:semicolon
 )brace

@@ -25,7 +25,7 @@ id|__volatile__
 (paren
 l_string|&quot;moveb %1,%0&quot;
 suffix:colon
-l_string|&quot;=r&quot;
+l_string|&quot;=dm&quot;
 (paren
 id|_v
 )paren
@@ -67,7 +67,7 @@ l_string|&quot;moveb %0,%1&quot;
 suffix:colon
 multiline_comment|/* no outputs */
 suffix:colon
-l_string|&quot;r&quot;
+l_string|&quot;idm&quot;
 (paren
 id|val
 )paren
@@ -86,5 +86,88 @@ DECL|macro|outb_p
 mdefine_line|#define outb_p(x,addr) put_user_byte_io((x),(char *)(addr))
 DECL|macro|outb
 mdefine_line|#define outb(x,addr) put_user_byte_io((x),(char *)(addr))
+multiline_comment|/*&n; * Change virtual addresses to physical addresses and vv.&n; * These are trivial on the 1:1 Linux/i386 mapping (but if we ever&n; * make the kernel segment mapped at 0, we need to do translation&n; * on the i386 as well)&n; */
+r_extern
+r_int
+r_int
+id|mm_vtop
+c_func
+(paren
+r_int
+r_int
+id|addr
+)paren
+suffix:semicolon
+r_extern
+r_int
+r_int
+id|mm_ptov
+c_func
+(paren
+r_int
+r_int
+id|addr
+)paren
+suffix:semicolon
+DECL|function|virt_to_phys
+r_extern
+r_inline
+r_int
+r_int
+id|virt_to_phys
+c_func
+(paren
+r_volatile
+r_void
+op_star
+id|address
+)paren
+(brace
+r_return
+(paren
+r_int
+r_int
+)paren
+id|mm_vtop
+c_func
+(paren
+(paren
+r_int
+r_int
+)paren
+id|address
+)paren
+suffix:semicolon
+)brace
+DECL|function|phys_to_virt
+r_extern
+r_inline
+r_void
+op_star
+id|phys_to_virt
+c_func
+(paren
+r_int
+r_int
+id|address
+)paren
+(brace
+r_return
+(paren
+r_void
+op_star
+)paren
+id|mm_ptov
+c_func
+(paren
+id|address
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/*&n; * IO bus memory addresses are also 1:1 with the physical address&n; */
+DECL|macro|virt_to_bus
+mdefine_line|#define virt_to_bus virt_to_phys
+DECL|macro|bus_to_virt
+mdefine_line|#define bus_to_virt phys_to_virt
 macro_line|#endif /* _M68K_IO_H */
 eof

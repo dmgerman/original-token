@@ -431,7 +431,7 @@ macro_line|#if DEBUG_CONFIG_IP_MASQ_FTP
 id|printk
 c_func
 (paren
-l_string|&quot;PORT %lX:%X detected&bslash;n&quot;
+l_string|&quot;PORT %X:%X detected&bslash;n&quot;
 comma
 id|from
 comma
@@ -439,7 +439,75 @@ id|port
 )paren
 suffix:semicolon
 macro_line|#endif&t;
-multiline_comment|/*&n;&t;&t; * Now create an masquerade entry for it&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; * Now update or create an masquerade entry for it&n;&t;&t; */
+macro_line|#if DEBUG_CONFIG_IP_MASQ_FTP
+id|printk
+c_func
+(paren
+l_string|&quot;protocol %d %lX:%X %X:%X&bslash;n&quot;
+comma
+id|iph-&gt;protocol
+comma
+id|htonl
+c_func
+(paren
+id|from
+)paren
+comma
+id|htons
+c_func
+(paren
+id|port
+)paren
+comma
+id|iph-&gt;daddr
+comma
+l_int|0
+)paren
+suffix:semicolon
+macro_line|#endif&t;
+id|n_ms
+op_assign
+id|ip_masq_out_get_2
+c_func
+(paren
+id|iph-&gt;protocol
+comma
+id|htonl
+c_func
+(paren
+id|from
+)paren
+comma
+id|htons
+c_func
+(paren
+id|port
+)paren
+comma
+id|iph-&gt;daddr
+comma
+l_int|0
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|n_ms
+)paren
+(brace
+multiline_comment|/* existing masquerade, clear timer */
+id|ip_masq_set_expire
+c_func
+(paren
+id|n_ms
+comma
+l_int|0
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
 id|n_ms
 op_assign
 id|ip_masq_new
@@ -478,12 +546,16 @@ l_int|NULL
 r_return
 l_int|0
 suffix:semicolon
+)brace
+multiline_comment|/*&n;                 * keep for a bit longer than tcp_fin, caller may not reissue&n;                 * PORT before tcp_fin_timeout.&n;                 */
 id|ip_masq_set_expire
 c_func
 (paren
 id|n_ms
 comma
 id|ip_masq_expire-&gt;tcp_fin_timeout
+op_star
+l_int|3
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t;&t; * Replace the old PORT with the new one&n;&t;&t; */
@@ -551,6 +623,18 @@ c_func
 id|buf
 )paren
 suffix:semicolon
+macro_line|#if DEBUG_CONFIG_IP_MASQ_FTP
+id|printk
+c_func
+(paren
+l_string|&quot;new PORT %X:%X&bslash;n&quot;
+comma
+id|from
+comma
+id|port
+)paren
+suffix:semicolon
+macro_line|#endif&t;
 multiline_comment|/*&n;&t;&t; * Calculate required delta-offset to keep TCP happy&n;&t;&t; */
 id|diff
 op_assign
@@ -624,6 +708,9 @@ op_assign
 l_int|NULL
 comma
 multiline_comment|/* next */
+l_string|&quot;ftp&quot;
+comma
+multiline_comment|/* name */
 l_int|0
 comma
 multiline_comment|/* type */

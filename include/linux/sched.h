@@ -68,6 +68,10 @@ id|nr_running
 comma
 id|nr_tasks
 suffix:semicolon
+r_extern
+r_int
+id|last_pid
+suffix:semicolon
 DECL|macro|FIRST_TASK
 mdefine_line|#define FIRST_TASK task[0]
 DECL|macro|LAST_TASK

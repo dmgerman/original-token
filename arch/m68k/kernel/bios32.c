@@ -1,0 +1,21 @@
+multiline_comment|/*&n; * bios 32 replacement&n; */
+DECL|function|bios32_init
+r_int
+r_int
+id|bios32_init
+c_func
+(paren
+r_int
+r_int
+id|memory_start
+comma
+r_int
+r_int
+id|memory_end
+)paren
+(brace
+r_return
+id|memory_start
+suffix:semicolon
+)brace
+eof

@@ -11,6 +11,7 @@ macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
+macro_line|#include &lt;asm/pgtable.h&gt;
 r_extern
 r_void
 id|sem_exit
@@ -2093,16 +2094,40 @@ id|mm
 op_assign
 id|current-&gt;mm
 suffix:semicolon
+multiline_comment|/* Set us up to use the kernel mm state */
+id|flush_cache_mm
+c_func
+(paren
+id|mm
+)paren
+suffix:semicolon
+id|flush_tlb_mm
+c_func
+(paren
+id|mm
+)paren
+suffix:semicolon
+id|init_mm.count
+op_increment
+suffix:semicolon
+id|current-&gt;mm
+op_assign
+op_amp
+id|init_mm
+suffix:semicolon
 id|current-&gt;swappable
 op_assign
 l_int|0
 suffix:semicolon
-r_if
-c_cond
+id|SET_PAGE_DIR
+c_func
 (paren
-id|mm
+id|current
+comma
+id|swapper_pg_dir
 )paren
-(brace
+suffix:semicolon
+multiline_comment|/* free the old state - not used any more */
 r_if
 c_cond
 (paren
@@ -2120,7 +2145,7 @@ suffix:semicolon
 id|free_page_tables
 c_func
 (paren
-id|current
+id|mm
 )paren
 suffix:semicolon
 id|kfree
@@ -2128,11 +2153,6 @@ c_func
 (paren
 id|mm
 )paren
-suffix:semicolon
-)brace
-id|current-&gt;mm
-op_assign
-l_int|NULL
 suffix:semicolon
 )brace
 )brace

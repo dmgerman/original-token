@@ -8,10 +8,12 @@ DECL|macro|DIRECT_BLOCK
 mdefine_line|#define DIRECT_BLOCK&t;&t;((inode-&gt;i_size + 1023) &gt;&gt; 10)
 DECL|macro|INDIRECT_BLOCK
 mdefine_line|#define INDIRECT_BLOCK(offset)&t;(DIRECT_BLOCK-offset)
-DECL|macro|DINDIRECT_BLOCK
-mdefine_line|#define DINDIRECT_BLOCK(offset) ((DIRECT_BLOCK-offset)&gt;&gt;9)
+DECL|macro|V1_DINDIRECT_BLOCK
+mdefine_line|#define V1_DINDIRECT_BLOCK(offset) ((DIRECT_BLOCK-offset)&gt;&gt;9)
+DECL|macro|V2_DINDIRECT_BLOCK
+mdefine_line|#define V2_DINDIRECT_BLOCK(offset) ((DIRECT_BLOCK-offset)&gt;&gt;8)
 DECL|macro|TINDIRECT_BLOCK
-mdefine_line|#define TINDIRECT_BLOCK(offset)&t;((DIRECT_BLOCK-(offset))&gt;&gt;9)
+mdefine_line|#define TINDIRECT_BLOCK(offset) ((DIRECT_BLOCK-(offset))&gt;&gt;8)
 multiline_comment|/*&n; * Truncate has the most races in the whole filesystem: coding it is&n; * a pain in the a**. Especially as I don&squot;t do any locking...&n; *&n; * The code may look a bit weird, but that&squot;s just because I&squot;ve tried to&n; * handle things like file-size changes in a somewhat graceful manner.&n; * Anyway, truncating a file at the same time somebody else writes to it&n; * is likely to result in pretty weird behaviour...&n; *&n; * The new code handles normal truncates (size = 0) as well as the more&n; * general case (size = XXX). I hope.&n; */
 multiline_comment|/*&n; * The functions for minix V1 fs truncation.&n; */
 DECL|function|V1_trunc_direct
@@ -642,7 +644,7 @@ c_loop
 (paren
 id|i
 op_assign
-id|DINDIRECT_BLOCK
+id|V1_DINDIRECT_BLOCK
 c_func
 (paren
 id|offset
@@ -672,7 +674,7 @@ c_cond
 (paren
 id|i
 OL
-id|DINDIRECT_BLOCK
+id|V1_DINDIRECT_BLOCK
 c_func
 (paren
 id|offset
@@ -1553,7 +1555,7 @@ c_loop
 (paren
 id|i
 op_assign
-id|DINDIRECT_BLOCK
+id|V2_DINDIRECT_BLOCK
 c_func
 (paren
 id|offset
@@ -1583,7 +1585,7 @@ c_cond
 (paren
 id|i
 OL
-id|DINDIRECT_BLOCK
+id|V2_DINDIRECT_BLOCK
 c_func
 (paren
 id|offset
@@ -1615,7 +1617,7 @@ op_plus
 (paren
 id|i
 op_lshift
-l_int|9
+l_int|8
 )paren
 comma
 id|dind
@@ -1887,7 +1889,7 @@ op_plus
 (paren
 id|i
 op_lshift
-l_int|9
+l_int|8
 )paren
 comma
 id|tind

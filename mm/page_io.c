@@ -175,6 +175,14 @@ comma
 id|p-&gt;swap_lockmap
 )paren
 )paren
+(brace
+id|run_task_queue
+c_func
+(paren
+op_amp
+id|tq_disk
+)paren
+suffix:semicolon
 id|sleep_on
 c_func
 (paren
@@ -182,6 +190,7 @@ op_amp
 id|lock_queue
 )paren
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren

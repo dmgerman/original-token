@@ -16,7 +16,7 @@ id|loops
 id|__asm__
 c_func
 (paren
-l_string|&quot;&bslash;n&bslash;tmovel %0,d0&bslash;n1:&bslash;tsubql #1,d0&bslash;n&bslash;tbpls 1b&bslash;n&quot;
+l_string|&quot;&bslash;n&bslash;tmovel %0,%/d0&bslash;n1:&bslash;tsubql #1,%/d0&bslash;n&bslash;tbpls 1b&bslash;n&quot;
 suffix:colon
 multiline_comment|/* no outputs */
 suffix:colon
@@ -29,7 +29,7 @@ l_string|&quot;d0&quot;
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * division by multiplication: you don&squot;t have to worry about&n; * loss of precision.&n; *&n; * Use only for very small delays ( &lt; 1 msec).  Should probably use a&n; * lookup table, really, as the multiplications take much too long with&n; * short delays.  This is a &quot;reasonable&quot; implementation, though (and the&n; * first constant multiplications gets optimized away if the delay is&n; * a constant)  &n; */
+multiline_comment|/*&n; * Use only for very small delays ( &lt; 1 msec).  Should probably use a&n; * lookup table, really, as the multiplications take much too long with&n; * short delays.  This is a &quot;reasonable&quot; implementation, though (and the&n; * first constant multiplications gets optimized away if the delay is&n; * a constant)  &n; */
 DECL|function|udelay
 r_extern
 id|__inline__
@@ -42,10 +42,14 @@ r_int
 id|usecs
 )paren
 (brace
+id|usecs
+op_mul_assign
+l_int|0x000010c6
+suffix:semicolon
+multiline_comment|/* 2**32 / 1000000 */
 id|asm
 (paren
-l_string|&quot;mulul %1,d0,%0&bslash;n&bslash;t&quot;
-l_string|&quot;divul  %2,d0,%0&quot;
+l_string|&quot;mulul %1,%0:%2&quot;
 suffix:colon
 l_string|&quot;=d&quot;
 (paren
@@ -57,17 +61,10 @@ l_string|&quot;d&quot;
 id|usecs
 )paren
 comma
-l_string|&quot;i&quot;
-(paren
-l_int|1000000
-)paren
-comma
-l_string|&quot;0&quot;
+l_string|&quot;d&quot;
 (paren
 id|loops_per_sec
 )paren
-suffix:colon
-l_string|&quot;d0&quot;
 )paren
 suffix:semicolon
 id|__delay
@@ -75,6 +72,59 @@ c_func
 (paren
 id|usecs
 )paren
+suffix:semicolon
+)brace
+DECL|function|muldiv
+r_extern
+id|__inline__
+r_int
+r_int
+id|muldiv
+c_func
+(paren
+r_int
+r_int
+id|a
+comma
+r_int
+r_int
+id|b
+comma
+r_int
+r_int
+id|c
+)paren
+(brace
+id|__asm__
+c_func
+(paren
+l_string|&quot;mulul %1,%/d0:%0&bslash;n&bslash;tdivul %2,%/d0:%0&quot;
+suffix:colon
+l_string|&quot;=d&quot;
+(paren
+id|a
+)paren
+suffix:colon
+l_string|&quot;d&quot;
+(paren
+id|b
+)paren
+comma
+l_string|&quot;d&quot;
+(paren
+id|c
+)paren
+comma
+l_string|&quot;0&quot;
+(paren
+id|a
+)paren
+suffix:colon
+l_string|&quot;d0&quot;
+)paren
+suffix:semicolon
+r_return
+id|a
 suffix:semicolon
 )brace
 macro_line|#endif /* defined(_M68K_DELAY_H) */

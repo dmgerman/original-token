@@ -598,6 +598,9 @@ op_assign
 l_int|NULL
 comma
 multiline_comment|/* next */
+l_string|&quot;irc&quot;
+comma
+multiline_comment|/* name */
 l_int|0
 comma
 multiline_comment|/* type */
