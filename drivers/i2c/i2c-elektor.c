@@ -4,7 +4,7 @@ multiline_comment|/* -----------------------------------------------------------
 multiline_comment|/*   Copyright (C) 1995-97 Simon G. Vogl&n;                   1998-99 Hans Berglund&n;&n;    This program is free software; you can redistribute it and/or modify&n;    it under the terms of the GNU General Public License as published by&n;    the Free Software Foundation; either version 2 of the License, or&n;    (at your option) any later version.&n;&n;    This program is distributed in the hope that it will be useful,&n;    but WITHOUT ANY WARRANTY; without even the implied warranty of&n;    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n;    GNU General Public License for more details.&n;&n;    You should have received a copy of the GNU General Public License&n;    along with this program; if not, write to the Free Software&n;    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&t;&t;     */
 multiline_comment|/* ------------------------------------------------------------------------- */
 multiline_comment|/* With some changes from Ky&#xfffd;sti M&#xfffd;lkki &lt;kmalkki@cc.hut.fi&gt; and even&n;   Frodo Looijaard &lt;frodol@dds.nl&gt; */
-multiline_comment|/* $Id: i2c-elektor.c,v 1.16 2000/01/24 02:06:33 mds Exp $ */
+multiline_comment|/* $Id: i2c-elektor.c,v 1.17 2000/03/16 13:07:34 frodo Exp $ */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
@@ -123,6 +123,14 @@ r_int
 id|val
 )paren
 (brace
+r_int
+r_int
+id|j
+op_assign
+id|jiffies
+op_plus
+l_int|10
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -143,7 +151,7 @@ c_func
 id|printk
 c_func
 (paren
-l_string|&quot;i2c-elektor.o: Write control 0x%x&bslash;n&quot;
+l_string|&quot;i2c-elektor.o: Write Ctrl 0x%02X&bslash;n&quot;
 comma
 id|val
 op_or
@@ -151,6 +159,23 @@ id|I2C_PCF_ENI
 )paren
 )paren
 suffix:semicolon
+id|DEB3
+c_func
+(paren
+(brace
+r_while
+(paren
+id|jiffies
+OL
+id|j
+)paren
+id|schedule
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+)paren
 id|outb
 c_func
 (paren
@@ -170,16 +195,37 @@ c_func
 id|printk
 c_func
 (paren
-l_string|&quot;i2c-elektor.o: Write control 0x%x&bslash;n&quot;
+l_string|&quot;i2c-elektor.o: Write Ctrl 0x%02X&bslash;n&quot;
 comma
 id|val
+op_or
+id|I2C_PCF_ENI
 )paren
 )paren
 suffix:semicolon
+id|DEB3
+c_func
+(paren
+(brace
+r_while
+(paren
+id|jiffies
+OL
+id|j
+)paren
+id|schedule
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+)paren
 id|outb
 c_func
 (paren
 id|val
+op_or
+id|I2C_PCF_ENI
 comma
 id|CTRL
 )paren
@@ -194,12 +240,31 @@ c_func
 id|printk
 c_func
 (paren
-l_string|&quot;i2c-elektor.o: Write data 0x%x&bslash;n&quot;
+l_string|&quot;i2c-elektor.o: Write Data 0x%02X&bslash;n&quot;
 comma
 id|val
+op_amp
+l_int|0xff
 )paren
 )paren
 suffix:semicolon
+id|DEB3
+c_func
+(paren
+(brace
+r_while
+(paren
+id|jiffies
+OL
+id|j
+)paren
+id|schedule
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+)paren
 id|outb
 c_func
 (paren
@@ -247,7 +312,7 @@ c_func
 id|printk
 c_func
 (paren
-l_string|&quot;i2c-elektor.o: Read control 0x%x&bslash;n&quot;
+l_string|&quot;i2c-elektor.o: Read Ctrl 0x%02X&bslash;n&quot;
 comma
 id|val
 )paren
@@ -270,7 +335,7 @@ c_func
 id|printk
 c_func
 (paren
-l_string|&quot;i2c-elektor.o: Read data 0x%x&bslash;n&quot;
+l_string|&quot;i2c-elektor.o: Read Data 0x%02X&bslash;n&quot;
 comma
 id|val
 )paren
@@ -694,6 +759,7 @@ comma
 )brace
 suffix:semicolon
 DECL|function|i2c_pcfisa_init
+r_static
 r_int
 id|__init
 id|i2c_pcfisa_init
@@ -887,6 +953,14 @@ id|MODULE_PARM
 c_func
 (paren
 id|own
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|i2c_debug
 comma
 l_string|&quot;i&quot;
 )paren

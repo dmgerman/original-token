@@ -1,6 +1,7 @@
 macro_line|#ifndef _LISTHELP_H
 DECL|macro|_LISTHELP_H
 mdefine_line|#define _LISTHELP_H
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/list.h&gt;
 macro_line|#include &lt;linux/netfilter_ipv4/lockhelp.h&gt;
 multiline_comment|/* Header to do more comprehensive job than linux/list.h; assume list&n;   is first entry in structure. */

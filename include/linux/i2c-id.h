@@ -5,7 +5,7 @@ multiline_comment|/* &t;&t;&t;&t;&t;&t;&t;&t;&t;     */
 multiline_comment|/* ------------------------------------------------------------------------- */
 multiline_comment|/*   Copyright (C) 1995-1999 Simon G. Vogl&n;&n;    This program is free software; you can redistribute it and/or modify&n;    it under the terms of the GNU General Public License as published by&n;    the Free Software Foundation; either version 2 of the License, or&n;    (at your option) any later version.&n;&n;    This program is distributed in the hope that it will be useful,&n;    but WITHOUT ANY WARRANTY; without even the implied warranty of&n;    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n;    GNU General Public License for more details.&n;&n;    You should have received a copy of the GNU General Public License&n;    along with this program; if not, write to the Free Software&n;    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&t;&t;     */
 multiline_comment|/* ------------------------------------------------------------------------- */
-multiline_comment|/* $Id: i2c-id.h,v 1.10 2000/02/04 02:47:41 mds Exp $ */
+multiline_comment|/* $Id: i2c-id.h,v 1.15 2000/03/16 14:01:57 frodo Exp $ */
 macro_line|#ifndef I2C_ID_H
 DECL|macro|I2C_ID_H
 mdefine_line|#define I2C_ID_H
@@ -88,10 +88,8 @@ DECL|macro|I2C_ALGO_SMBUS
 mdefine_line|#define I2C_ALGO_SMBUS&t;0x040000
 DECL|macro|I2C_ALGO_ISA
 mdefine_line|#define I2C_ALGO_ISA &t;0x050000&t;/* lm_sensors ISA pseudo-adapter */
-DECL|macro|I2C_ALGO_SAA714
-mdefine_line|#define I2C_ALGO_SAA714&t;0x060000&t;/* SAA 7146 video decoder bus&t;*/
-DECL|macro|I2C_ALGO_SAA7146A
-mdefine_line|#define I2C_ALGO_SAA7146A 0x060001&t;/* SAA 7146A - enhanced version&t;*/
+DECL|macro|I2C_ALGO_SAA7146
+mdefine_line|#define I2C_ALGO_SAA7146 0x060000&t;/* SAA 7146 video decoder bus&t;*/
 DECL|macro|I2C_ALGO_EXP
 mdefine_line|#define I2C_ALGO_EXP&t;0x800000&t;/* experimental&t;&t;&t;*/
 DECL|macro|I2C_ALGO_MASK
@@ -126,6 +124,8 @@ DECL|macro|I2C_HW_B_G400
 mdefine_line|#define I2C_HW_B_G400&t;0x09&t;/* Matrox G400&t;&t;&t;&t;*/
 DECL|macro|I2C_HW_B_I810
 mdefine_line|#define I2C_HW_B_I810&t;0x0a&t;/* Intel I810 &t;&t;&t;&t;*/
+DECL|macro|I2C_HW_B_VOO
+mdefine_line|#define I2C_HW_B_VOO&t;0x0b&t;/* 3dfx Voodoo 3 / Banshee      &t;*/
 DECL|macro|I2C_HW_B_RIVA
 mdefine_line|#define I2C_HW_B_RIVA&t;0x10&t;/* Riva based graphics cards&t;&t;*/
 DECL|macro|I2C_HW_B_IOC

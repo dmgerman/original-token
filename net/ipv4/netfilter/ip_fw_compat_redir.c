@@ -1,4 +1,5 @@
 multiline_comment|/* This is a file to handle the &quot;simple&quot; NAT cases (redirect and&n;   masquerade) required for the compatibility layer.&n;&n;   `bind to foreign address&squot; and `getpeername&squot; hacks are not&n;   supported.&n;&n;   FIXME: Timing is overly simplistic.  If anyone complains, make it&n;   use conntrack.&n;*/
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/netfilter.h&gt;
 macro_line|#include &lt;linux/ip.h&gt;
 macro_line|#include &lt;linux/udp.h&gt;

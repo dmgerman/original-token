@@ -39,7 +39,7 @@ suffix:semicolon
 r_int
 id|alloc_size
 suffix:semicolon
-multiline_comment|/* 32-byte alignment */
+multiline_comment|/* ensure 32-byte alignment of the private area */
 id|alloc_size
 op_assign
 r_sizeof
@@ -52,11 +52,6 @@ id|IFNAMSIZ
 op_plus
 id|sizeof_priv
 op_plus
-l_int|31
-suffix:semicolon
-id|alloc_size
-op_and_assign
-op_complement
 l_int|31
 suffix:semicolon
 id|dev
@@ -114,14 +109,28 @@ r_void
 op_star
 )paren
 (paren
+(paren
+(paren
+r_int
+)paren
+(paren
 id|dev
 op_plus
 l_int|1
+)paren
+op_plus
+l_int|31
+)paren
+op_amp
+op_complement
+l_int|31
 )paren
 suffix:semicolon
 id|dev-&gt;name
 op_assign
 id|sizeof_priv
+op_plus
+l_int|31
 op_plus
 (paren
 r_char

@@ -1,5 +1,4 @@
 multiline_comment|/*&n; * This is the 1999 rewrite of IP Firewalling, aiming for kernel 2.3.x.&n; *&n; * Copyright (C) 1999 Paul `Rusty&squot; Russell &amp; Michael J. Neuling&n; */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/netfilter_ipv4/ip_tables.h&gt;
 DECL|macro|FILTER_VALID_HOOKS

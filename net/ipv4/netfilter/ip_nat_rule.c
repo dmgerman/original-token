@@ -1,7 +1,6 @@
 multiline_comment|/* Everything about the rules for NAT. */
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/ip.h&gt;
 macro_line|#include &lt;linux/netfilter.h&gt;
@@ -20,7 +19,6 @@ mdefine_line|#define ASSERT_WRITE_LOCK(x) MUST_BE_WRITE_LOCKED(&amp;ip_nat_lock)
 macro_line|#include &lt;linux/netfilter_ipv4/ip_tables.h&gt;
 macro_line|#include &lt;linux/netfilter_ipv4/ip_nat.h&gt;
 macro_line|#include &lt;linux/netfilter_ipv4/ip_nat_core.h&gt;
-macro_line|#include &lt;linux/netfilter_ipv4/ip_nat_rule.h&gt;
 macro_line|#include &lt;linux/netfilter_ipv4/ip_nat_rule.h&gt;
 macro_line|#include &lt;linux/netfilter_ipv4/listhelp.h&gt;
 macro_line|#if 0

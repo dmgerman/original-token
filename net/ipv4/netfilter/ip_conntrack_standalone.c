@@ -4,7 +4,6 @@ macro_line|#ifdef MODULE
 DECL|macro|EXPORT_SYMTAB
 mdefine_line|#define EXPORT_SYMTAB
 macro_line|#endif
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/ip.h&gt;
 macro_line|#include &lt;linux/netfilter.h&gt;

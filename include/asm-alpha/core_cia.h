@@ -4,6 +4,7 @@ mdefine_line|#define __ALPHA_CIA__H__
 multiline_comment|/* Define to experiment with fitting everything into one 512MB HAE window.  */
 DECL|macro|CIA_ONE_HAE_WINDOW
 mdefine_line|#define CIA_ONE_HAE_WINDOW 1
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;asm/compiler.h&gt;
 multiline_comment|/*&n; * CIA is the internal name for the 21171 chipset which provides&n; * memory controller and PCI access for the 21164 chip based systems.&n; * Also supported here is the 21172 (CIA-2) and 21174 (PYXIS).&n; *&n; * The lineage is a bit confused, since the 21174 was reportedly started&n; * from the 21171 Pass 1 mask, and so is missing bug fixes that appear&n; * in 21171 Pass 2 and 21172, but it also contains additional features.&n; *&n; * This file is based on:&n; *&n; * DECchip 21171 Core Logic Chipset&n; * Technical Reference Manual&n; *&n; * EC-QE18B-TE&n; *&n; * david.rusling@reo.mts.dec.com Initial Version.&n; *&n; */
@@ -1437,11 +1438,11 @@ macro_line|# define inw(p)&t;&t;&t;__inw(p)
 DECL|macro|inl
 macro_line|# define inl(p)&t;&t;&t;__inl(p)
 DECL|macro|outb
-macro_line|# define outb(x,p)&t;&t;__outb((x),(port))
+macro_line|# define outb(x,p)&t;&t;__outb((x),(p))
 DECL|macro|outw
-macro_line|# define outw(x,p)&t;&t;__outw((x),(port))
+macro_line|# define outw(x,p)&t;&t;__outw((x),(p))
 DECL|macro|outl
-macro_line|# define outl(x,p)&t;&t;__outl((x),(port))
+macro_line|# define outl(x,p)&t;&t;__outl((x),(p))
 DECL|macro|__raw_readb
 macro_line|# define __raw_readb(a)&t;&t;__readb(a)
 DECL|macro|__raw_readw

@@ -7104,10 +7104,10 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Return the index of a channel.&n; */
-DECL|function|ppp_channel_index
+multiline_comment|/*&n; * Return the unit number associated with a channel.&n; */
+DECL|function|ppp_unit_number
 r_int
-id|ppp_channel_index
+id|ppp_unit_number
 c_func
 (paren
 r_struct
@@ -7124,7 +7124,7 @@ op_assign
 id|chan-&gt;ppp
 suffix:semicolon
 r_return
-id|pch-&gt;file.index
+id|pch-&gt;ppp-&gt;file.index
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Disconnect a channel from the generic layer.&n; * This can be called from mainline or BH/softirq level.&n; */
@@ -9940,11 +9940,11 @@ c_func
 id|ppp_unregister_channel
 )paren
 suffix:semicolon
-DECL|variable|ppp_channel_index
+DECL|variable|ppp_unit_number
 id|EXPORT_SYMBOL
 c_func
 (paren
-id|ppp_channel_index
+id|ppp_unit_number
 )paren
 suffix:semicolon
 DECL|variable|ppp_input

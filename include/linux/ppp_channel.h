@@ -158,10 +158,10 @@ id|ppp_channel
 op_star
 )paren
 suffix:semicolon
-multiline_comment|/* Get the channel number for a channel */
+multiline_comment|/* Get the unit number associated with a channel */
 r_extern
 r_int
-id|ppp_channel_index
+id|ppp_unit_number
 c_func
 (paren
 r_struct

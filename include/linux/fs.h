@@ -2898,13 +2898,8 @@ id|next
 suffix:semicolon
 )brace
 suffix:semicolon
-macro_line|#ifdef MODULE
 DECL|macro|DECLARE_FSTYPE
 mdefine_line|#define DECLARE_FSTYPE(var,type,read,flags) &bslash;&n;struct file_system_type var = { &bslash;&n;&t;name:&t;&t;type, &bslash;&n;&t;read_super:&t;read, &bslash;&n;&t;fs_flags:&t;flags, &bslash;&n;&t;owner:&t;&t;THIS_MODULE, &bslash;&n;}
-macro_line|#else
-DECL|macro|DECLARE_FSTYPE
-mdefine_line|#define DECLARE_FSTYPE(var,type,read,flags) &bslash;&n;struct file_system_type var = { &bslash;&n;&t;name:&t;&t;type, &bslash;&n;&t;read_super:&t;read, &bslash;&n;&t;fs_flags:&t;flags, &bslash;&n;}
-macro_line|#endif
 DECL|macro|DECLARE_FSTYPE_DEV
 mdefine_line|#define DECLARE_FSTYPE_DEV(var,type,read) &bslash;&n;&t;DECLARE_FSTYPE(var,type,read,FS_REQUIRES_DEV)
 r_extern

@@ -7,7 +7,6 @@ macro_line|#include &lt;net/icmp.h&gt;
 macro_line|#include &lt;net/udp.h&gt;
 macro_line|#include &lt;net/tcp.h&gt;
 macro_line|#include &lt;linux/netfilter_ipv4/ip_tables.h&gt;
-macro_line|#include &lt;linux/spinlock.h&gt;
 r_struct
 id|in_device
 suffix:semicolon

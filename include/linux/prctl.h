@@ -20,5 +20,10 @@ DECL|macro|PR_UNALIGN_NOPRINT
 macro_line|# define PR_UNALIGN_NOPRINT&t;1&t;/* silently fix up unaligned user accesses */
 DECL|macro|PR_UNALIGN_SIGBUS
 macro_line|# define PR_UNALIGN_SIGBUS&t;2&t;/* generate SIGBUS on unaligned user access */
+multiline_comment|/* Get/set whether or not to drop capabilities on setuid() away from uid 0 */
+DECL|macro|PR_GET_KEEPCAPS
+mdefine_line|#define PR_GET_KEEPCAPS   7
+DECL|macro|PR_SET_KEEPCAPS
+mdefine_line|#define PR_SET_KEEPCAPS   8
 macro_line|#endif /* _LINUX_PRCTL_H */
 eof

@@ -2,7 +2,6 @@ multiline_comment|/* Minor modifications to fit on compatibility framework:&n;  
 macro_line|#ifndef __LINUX_FIREWALL_H
 DECL|macro|__LINUX_FIREWALL_H
 mdefine_line|#define __LINUX_FIREWALL_H
-macro_line|#include &lt;linux/config.h&gt;
 multiline_comment|/*&n; *&t;Definitions for loadable firewall modules&n; */
 DECL|macro|FW_QUEUE
 mdefine_line|#define FW_QUEUE&t;0

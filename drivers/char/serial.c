@@ -18337,6 +18337,37 @@ comma
 l_int|115200
 )brace
 comma
+multiline_comment|/* SupraExpress 28.8 Data/Fax PnP modem */
+(brace
+id|ISAPNP_VENDOR
+c_func
+(paren
+l_char|&squot;S&squot;
+comma
+l_char|&squot;U&squot;
+comma
+l_char|&squot;P&squot;
+)paren
+comma
+id|ISAPNP_DEVICE
+c_func
+(paren
+l_int|0x1310
+)paren
+comma
+l_int|0
+comma
+l_int|0
+comma
+id|SPCI_FL_BASE0
+op_or
+id|SPCI_FL_PNPDEFAULT
+comma
+l_int|1
+comma
+l_int|115200
+)brace
+comma
 multiline_comment|/* These ID&squot;s are taken from M$ documentation */
 multiline_comment|/* Compaq 14400 Modem */
 (brace

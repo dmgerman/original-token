@@ -625,7 +625,6 @@ DECL|macro|IPT_ENTRY_ITERATE
 mdefine_line|#define IPT_ENTRY_ITERATE(entries, size, fn, args...)&t;&t;&bslash;&n;({&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;unsigned int __i;&t;&t;&t;&t;&t;&bslash;&n;&t;int __ret = 0;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;struct ipt_entry *__e;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;for (__i = 0; __i &lt; (size); __i += __e-&gt;next_offset) {&t;&bslash;&n;&t;&t;__e = (void *)(entries) + __i;&t;&t;&t;&bslash;&n;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;__ret = fn(__e , ## args);&t;&t;&t;&bslash;&n;&t;&t;if (__ret != 0)&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;break;&t;&t;&t;&t;&t;&bslash;&n;&t;}&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;__ret;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;})
 multiline_comment|/*&n; *&t;Main firewall chains definitions and global var&squot;s definitions.&n; */
 macro_line|#ifdef __KERNEL__
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 r_extern
 r_void

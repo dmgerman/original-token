@@ -731,7 +731,7 @@ c_cond
 id|put_user
 c_func
 (paren
-id|ppp_channel_index
+id|ppp_unit_number
 c_func
 (paren
 op_amp

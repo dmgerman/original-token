@@ -2,6 +2,7 @@ macro_line|#ifndef _IP_CONNTRACK_H
 DECL|macro|_IP_CONNTRACK_H
 mdefine_line|#define _IP_CONNTRACK_H
 multiline_comment|/* Connection state tracking for netfilter.  This is separated from,&n;   but required by, the NAT layer; it can also be used by an iptables&n;   extension. */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/netfilter_ipv4/ip_conntrack_tuple.h&gt;
 DECL|enum|ip_conntrack_info
 r_enum

@@ -2940,6 +2940,10 @@ id|current-&gt;dumpable
 op_assign
 l_int|0
 suffix:semicolon
+id|current-&gt;keep_capabilities
+op_assign
+l_int|0
+suffix:semicolon
 )brace
 DECL|function|remove_arg_zero
 r_void

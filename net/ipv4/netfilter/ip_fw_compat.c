@@ -2,7 +2,6 @@ multiline_comment|/* Compatibility framework for ipchains and ipfwadm support; d
 r_struct
 id|notifier_block
 suffix:semicolon
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/netfilter_ipv4.h&gt;
 macro_line|#include &lt;linux/ip.h&gt;
 macro_line|#include &lt;net/icmp.h&gt;

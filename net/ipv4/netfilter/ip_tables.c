@@ -1629,7 +1629,7 @@ suffix:semicolon
 )brace
 macro_line|#ifndef CONFIG_KMOD
 DECL|macro|find_inlist_lock
-mdefine_line|#define find_inlist_lock(h,n,e,p,m) find_inlist_lock_noload((h),(n),(e),(m))
+mdefine_line|#define find_inlist_lock(h,n,p,e,m) find_inlist_lock_noload((h),(n),(e),(m))
 macro_line|#else
 r_static
 r_void

@@ -3,8 +3,8 @@ multiline_comment|/* i2c-algo-pcf.c i2c driver algorithms for PCF8584 adapters&t
 multiline_comment|/* ------------------------------------------------------------------------- */
 multiline_comment|/*   Copyright (C) 1995-1997 Simon G. Vogl&n;                   1998-2000 Hans Berglund&n;&n;    This program is free software; you can redistribute it and/or modify&n;    it under the terms of the GNU General Public License as published by&n;    the Free Software Foundation; either version 2 of the License, or&n;    (at your option) any later version.&n;&n;    This program is distributed in the hope that it will be useful,&n;    but WITHOUT ANY WARRANTY; without even the implied warranty of&n;    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n;    GNU General Public License for more details.&n;&n;    You should have received a copy of the GNU General Public License&n;    along with this program; if not, write to the Free Software&n;    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&t;&t;     */
 multiline_comment|/* ------------------------------------------------------------------------- */
-multiline_comment|/* With some changes from Ky&#xfffd;sti M&#xfffd;lkki &lt;kmalkki@cc.hut.fi&gt; and &n;   Frodo Looijaard &lt;frodol@dds.nl&gt; */
-multiline_comment|/* $Id: i2c-algo-pcf.c,v 1.20 2000/01/24 02:06:33 mds Exp $ */
+multiline_comment|/* With some changes from Ky&#xfffd;sti M&#xfffd;lkki &lt;kmalkki@cc.hut.fi&gt; and &n;   Frodo Looijaard &lt;frodol@dds.nl&gt; ,and also from Martin Bailey&n;   &lt;mbailey@littlefeet-inc.com&gt; */
+multiline_comment|/* $Id: i2c-algo-pcf.c,v 1.21 2000/03/16 13:07:34 frodo Exp $ */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
@@ -209,6 +209,7 @@ comma
 l_int|1
 )paren
 suffix:semicolon
+macro_line|#ifndef STUB_I2C
 r_while
 c_loop
 (paren
@@ -241,6 +242,7 @@ l_int|1
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -314,6 +316,7 @@ comma
 l_int|1
 )paren
 suffix:semicolon
+macro_line|#ifndef STUB_I2C
 r_while
 c_loop
 (paren
@@ -347,6 +350,7 @@ l_int|1
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -987,7 +991,7 @@ c_cond
 (paren
 (paren
 id|status
-op_logical_and
+op_amp
 id|I2C_PCF_LRB
 )paren
 op_eq
@@ -1136,18 +1140,19 @@ c_cond
 id|timeout
 )paren
 (brace
-id|printk
-c_func
-(paren
-l_string|&quot;i2c-algo-pcf.o: %s i2c_write: error - timeout.&bslash;n&quot;
-comma
-id|i2c_adap-&gt;name
-)paren
-suffix:semicolon
 id|i2c_stop
 c_func
 (paren
 id|adap
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;i2c-algo-pcf.o: %s i2c_write: &quot;
+l_string|&quot;error - timeout.&bslash;n&quot;
+comma
+id|i2c_adap-&gt;name
 )paren
 suffix:semicolon
 r_return
@@ -1156,6 +1161,7 @@ id|EREMOTEIO
 suffix:semicolon
 multiline_comment|/* got a better one ?? */
 )brace
+macro_line|#ifndef STUB_I2C
 r_if
 c_cond
 (paren
@@ -1164,18 +1170,19 @@ op_amp
 id|I2C_PCF_LRB
 )paren
 (brace
-id|printk
-c_func
-(paren
-l_string|&quot;i2c-algo-pcf.o: %s i2c_write: error - no ack.&bslash;n&quot;
-comma
-id|i2c_adap-&gt;name
-)paren
-suffix:semicolon
 id|i2c_stop
 c_func
 (paren
 id|adap
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;i2c-algo-pcf.o: %s i2c_write: &quot;
+l_string|&quot;error - no ack.&bslash;n&quot;
+comma
+id|i2c_adap-&gt;name
 )paren
 suffix:semicolon
 r_return
@@ -1184,7 +1191,14 @@ id|EREMOTEIO
 suffix:semicolon
 multiline_comment|/* got a better one ?? */
 )brace
+macro_line|#endif
 )brace
+id|i2c_stop
+c_func
+(paren
+id|adap
+)paren
+suffix:semicolon
 r_return
 (paren
 id|wrcount
@@ -1272,9 +1286,11 @@ l_int|0
 suffix:semicolon
 )brace
 r_else
+(brace
 id|rdcount
 op_increment
 suffix:semicolon
+)brace
 id|timeout
 op_assign
 id|wait_for_pin
@@ -1292,10 +1308,17 @@ c_cond
 id|timeout
 )paren
 (brace
+id|i2c_stop
+c_func
+(paren
+id|adap
+)paren
+suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;i2c-algo-pcf.o: i2c_read: i2c_inb timed out.&bslash;n&quot;
+l_string|&quot;i2c-algo-pcf.o: i2c_read: &quot;
+l_string|&quot;i2c_inb timed out.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -1305,6 +1328,7 @@ l_int|1
 )paren
 suffix:semicolon
 )brace
+macro_line|#ifndef STUB_I2C
 r_if
 c_cond
 (paren
@@ -1313,6 +1337,12 @@ op_amp
 id|I2C_PCF_LRB
 )paren
 (brace
+id|i2c_stop
+c_func
+(paren
+id|adap
+)paren
+suffix:semicolon
 id|printk
 c_func
 (paren
@@ -1326,6 +1356,7 @@ l_int|1
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
 )brace
 id|set_pcf
 c_func
@@ -1360,9 +1391,11 @@ l_int|0
 suffix:semicolon
 )brace
 r_else
+(brace
 id|rdcount
 op_increment
 suffix:semicolon
+)brace
 id|timeout
 op_assign
 id|wait_for_pin
@@ -1380,6 +1413,12 @@ c_cond
 id|timeout
 )paren
 (brace
+id|i2c_stop
+c_func
+(paren
+id|adap
+)paren
+suffix:semicolon
 id|printk
 c_func
 (paren
@@ -1393,6 +1432,25 @@ l_int|1
 )paren
 suffix:semicolon
 )brace
+id|i2c_stop
+c_func
+(paren
+id|adap
+)paren
+suffix:semicolon
+multiline_comment|/* Read final byte from S0 register */
+id|buf
+(braket
+id|rdcount
+op_increment
+)braket
+op_assign
+id|i2c_inb
+c_func
+(paren
+id|adap
+)paren
+suffix:semicolon
 r_return
 (paren
 id|rdcount
@@ -1666,13 +1724,47 @@ id|pmsg
 suffix:semicolon
 r_int
 id|i
-comma
+op_assign
+l_int|0
+suffix:semicolon
+r_int
 id|ret
 comma
 id|timeout
 comma
 id|status
 suffix:semicolon
+id|pmsg
+op_assign
+op_amp
+id|msgs
+(braket
+id|i
+)braket
+suffix:semicolon
+multiline_comment|/* Send address here if Read */
+r_if
+c_cond
+(paren
+id|pmsg-&gt;flags
+op_amp
+id|I2C_M_RD
+)paren
+(brace
+id|ret
+op_assign
+id|pcf_doAddress
+c_func
+(paren
+id|adap
+comma
+id|pmsg
+comma
+id|i2c_adap-&gt;retries
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/* Check for bus busy */
 id|timeout
 op_assign
 id|wait_for_bb
@@ -1693,7 +1785,8 @@ c_func
 id|printk
 c_func
 (paren
-l_string|&quot;i2c-algo-pcf.o: Timeout waiting for BB in pcf_xfer&bslash;n&quot;
+l_string|&quot;i2c-algo-pcf.o: &quot;
+l_string|&quot;Timeout waiting for BB in pcf_xfer&bslash;n&quot;
 )paren
 suffix:semicolon
 )paren
@@ -1702,35 +1795,7 @@ op_minus
 id|EIO
 suffix:semicolon
 )brace
-id|i2c_start
-c_func
-(paren
-id|adap
-)paren
-suffix:semicolon
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-id|num
-suffix:semicolon
-id|i
-op_increment
-)paren
-(brace
-id|pmsg
-op_assign
-op_amp
-id|msgs
-(braket
-id|i
-)braket
-suffix:semicolon
+multiline_comment|/* Send address here if Write */
 r_if
 c_cond
 (paren
@@ -1738,21 +1803,10 @@ op_logical_neg
 (paren
 id|pmsg-&gt;flags
 op_amp
-id|I2C_M_NOSTART
+id|I2C_M_RD
 )paren
 )paren
 (brace
-r_if
-c_cond
-(paren
-id|i
-)paren
-id|i2c_repstart
-c_func
-(paren
-id|adap
-)paren
-suffix:semicolon
 id|ret
 op_assign
 id|pcf_doAddress
@@ -1765,6 +1819,15 @@ comma
 id|i2c_adap-&gt;retries
 )paren
 suffix:semicolon
+)brace
+multiline_comment|/* Send START */
+id|i2c_start
+c_func
+(paren
+id|adap
+)paren
+suffix:semicolon
+multiline_comment|/* Wait for PIN (pending interrupt NOT) */
 id|timeout
 op_assign
 id|wait_for_pin
@@ -1782,13 +1845,20 @@ c_cond
 id|timeout
 )paren
 (brace
+id|i2c_stop
+c_func
+(paren
+id|adap
+)paren
+suffix:semicolon
 id|DEB2
 c_func
 (paren
 id|printk
 c_func
 (paren
-l_string|&quot;i2c-algo-pcf.o: Timeout waiting for PIN(1) in pcf_xfer&bslash;n&quot;
+l_string|&quot;i2c-algo-pcf.o: Timeout waiting &quot;
+l_string|&quot;for PIN(1) in pcf_xfer&bslash;n&quot;
 )paren
 suffix:semicolon
 )paren
@@ -1799,6 +1869,8 @@ id|EREMOTEIO
 )paren
 suffix:semicolon
 )brace
+macro_line|#ifndef STUB_I2C
+multiline_comment|/* Check LRB (last rcvd bit - slave ack) */
 r_if
 c_cond
 (paren
@@ -1830,7 +1902,7 @@ id|EREMOTEIO
 )paren
 suffix:semicolon
 )brace
-)brace
+macro_line|#endif
 id|DEB3
 c_func
 (paren
@@ -1864,6 +1936,7 @@ id|len
 )paren
 suffix:semicolon
 )paren
+multiline_comment|/* Read */
 r_if
 c_cond
 (paren
@@ -1885,6 +1958,30 @@ comma
 id|pmsg-&gt;len
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|ret
+op_ne
+id|pmsg-&gt;len
+)paren
+(brace
+id|DEB2
+c_func
+(paren
+id|printk
+c_func
+(paren
+l_string|&quot;i2c-algo-pcf.o: fail: &quot;
+l_string|&quot;only read %d bytes.&bslash;n&quot;
+comma
+id|ret
+)paren
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
 id|DEB2
 c_func
 (paren
@@ -1898,9 +1995,11 @@ id|ret
 )paren
 suffix:semicolon
 )brace
+)brace
 r_else
 (brace
-multiline_comment|/* write bytes from buffer */
+multiline_comment|/* Write */
+multiline_comment|/* Write bytes from buffer */
 id|ret
 op_assign
 id|pcf_sendbytes
@@ -1913,6 +2012,30 @@ comma
 id|pmsg-&gt;len
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|ret
+op_ne
+id|pmsg-&gt;len
+)paren
+(brace
+id|DEB2
+c_func
+(paren
+id|printk
+c_func
+(paren
+l_string|&quot;i2c-algo-pcf.o: fail: &quot;
+l_string|&quot;only wrote %d bytes.&bslash;n&quot;
+comma
+id|ret
+)paren
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
 id|DEB2
 c_func
 (paren
@@ -1927,12 +2050,6 @@ id|ret
 suffix:semicolon
 )brace
 )brace
-id|i2c_stop
-c_func
-(paren
-id|adap
-)paren
-suffix:semicolon
 r_return
 (paren
 id|num
@@ -2179,7 +2296,7 @@ op_logical_and
 (paren
 (paren
 id|status
-op_logical_and
+op_amp
 id|I2C_PCF_LRB
 )paren
 op_eq
@@ -2269,6 +2386,7 @@ l_int|0
 suffix:semicolon
 )brace
 DECL|function|i2c_algo_pcf_init
+r_static
 r_int
 id|__init
 id|i2c_algo_pcf_init

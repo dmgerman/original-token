@@ -3,7 +3,7 @@ multiline_comment|/* -----------------------------------------------------------
 multiline_comment|/*   Copyright (C) 1995-99 Simon G. Vogl&n;&n;    This program is free software; you can redistribute it and/or modify&n;    it under the terms of the GNU General Public License as published by&n;    the Free Software Foundation; either version 2 of the License, or&n;    (at your option) any later version.&n;&n;    This program is distributed in the hope that it will be useful,&n;    but WITHOUT ANY WARRANTY; without even the implied warranty of&n;    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n;    GNU General Public License for more details.&n;&n;    You should have received a copy of the GNU General Public License&n;    along with this program; if not, write to the Free Software&n;    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&t;&t;     */
 multiline_comment|/* ------------------------------------------------------------------------- */
 multiline_comment|/* With some changes from Ky&#xfffd;sti M&#xfffd;lkki &lt;kmalkki@cc.hut.fi&gt;.&n;   All SMBus-related things are written by Frodo Looijaard &lt;frodol@dds.nl&gt; */
-multiline_comment|/* $Id: i2c-core.c,v 1.50 2000/02/02 23:29:54 frodo Exp $ */
+multiline_comment|/* $Id: i2c-core.c,v 1.52 2000/02/27 10:43:29 frodo Exp $ */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -210,6 +210,19 @@ id|i2cproc_bus_read
 comma
 )brace
 suffix:semicolon
+macro_line|#if (LINUX_VERSION_CODE &lt; KERNEL_VERSION(2,3,48))
+DECL|variable|i2cproc_inode_operations
+r_static
+r_struct
+id|inode_operations
+id|i2cproc_inode_operations
+op_assign
+(brace
+op_amp
+id|i2cproc_operations
+)brace
+suffix:semicolon
+macro_line|#endif
 DECL|variable|i2cproc_initialized
 r_static
 r_int
@@ -389,11 +402,19 @@ op_minus
 id|ENOENT
 suffix:semicolon
 )brace
+macro_line|#if (LINUX_VERSION_CODE &gt;= KERNEL_VERSION(2,3,48))
 id|proc_entry-&gt;proc_fops
 op_assign
 op_amp
 id|i2cproc_operations
 suffix:semicolon
+macro_line|#else
+id|proc_entry-&gt;ops
+op_assign
+op_amp
+id|i2cproc_inode_operations
+suffix:semicolon
+macro_line|#endif
 macro_line|#if (LINUX_VERSION_CODE &gt;= KERNEL_VERSION(2,3,27))
 id|proc_entry-&gt;owner
 op_assign

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/ipc/shm.c&n; * Copyright (C) 1992, 1993 Krishna Balasubramanian&n; *&t; Many improvements/fixes by Bruno Haible.&n; * Replaced `struct shm_desc&squot; by `struct vm_area_struct&squot;, July 1994.&n; * Fixed the shm swap deallocation (shm_unuse()), August 1998 Andrea Arcangeli.&n; *&n; * /proc/sysvipc/shm support (c) 1999 Dragos Acostachioaie &lt;dragos@iname.com&gt;&n; * BIGMEM support, Andrea Arcangeli &lt;andrea@suse.de&gt;&n; * SMP thread shm, Jean-Luc Boyard &lt;jean-luc.boyard@siemens.fr&gt;&n; * HIGHMEM support, Ingo Molnar &lt;mingo@redhat.com&gt;&n; * avoid vmalloc and make shmmax, shmall, shmmni sysctl&squot;able,&n; *                         Christoph Rohland &lt;hans-christoph.rohland@sap.com&gt;&n; * Shared /dev/zero support, Kanoj Sarcar &lt;kanoj@sgi.com&gt;&n; * make it a file system,  Christoph Rohland &lt;hans-christoph.rohland@sap.com&gt;&n; *&n; * The filesystem has the following restrictions/bugs:&n; * 1) It only can handle one directory.&n; * 2) Because the directory is represented by the SYSV shm array it&n; *    can only be mounted one time.&n; * 3) Read and write are not implemented (should they?)&n; * 4) No special nodes are supported&n; */
+multiline_comment|/*&n; * linux/ipc/shm.c&n; * Copyright (C) 1992, 1993 Krishna Balasubramanian&n; *&t; Many improvements/fixes by Bruno Haible.&n; * Replaced `struct shm_desc&squot; by `struct vm_area_struct&squot;, July 1994.&n; * Fixed the shm swap deallocation (shm_unuse()), August 1998 Andrea Arcangeli.&n; *&n; * /proc/sysvipc/shm support (c) 1999 Dragos Acostachioaie &lt;dragos@iname.com&gt;&n; * BIGMEM support, Andrea Arcangeli &lt;andrea@suse.de&gt;&n; * SMP thread shm, Jean-Luc Boyard &lt;jean-luc.boyard@siemens.fr&gt;&n; * HIGHMEM support, Ingo Molnar &lt;mingo@redhat.com&gt;&n; * avoid vmalloc and make shmmax, shmall, shmmni sysctl&squot;able,&n; *                         Christoph Rohland &lt;hans-christoph.rohland@sap.com&gt;&n; * Shared /dev/zero support, Kanoj Sarcar &lt;kanoj@sgi.com&gt;&n; * make it a file system,  Christoph Rohland &lt;hans-christoph.rohland@sap.com&gt;&n; *&n; * The filesystem has the following restrictions/bugs:&n; * 1) It only can handle one directory.&n; * 2) Because the directory is represented by the SYSV shm array it&n; *    can only be mounted one time.&n; * 3) Read and write are not implemented (should they?)&n; * 4) No special nodes are supported&n; *&n; * There are the following mount options:&n; * - nr_blocks (^= shmall) is the number of blocks of size PAGE_SIZE&n; *   we are allowed to allocate&n; * - nr_inodes (^= shmmni) is the number of files we are allowed to&n; *   allocate&n; * - mode is the mode for the root directory (default S_IRWXUGO | S_ISVTX)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/shm.h&gt;
@@ -224,11 +224,6 @@ DECL|member|id
 r_int
 id|id
 suffix:semicolon
-DECL|member|destroyed
-r_int
-id|destroyed
-suffix:semicolon
-multiline_comment|/* set if the final detach kills */
 DECL|union|permap
 r_union
 id|permap
@@ -256,6 +251,10 @@ suffix:semicolon
 DECL|member|lpid
 id|pid_t
 id|lpid
+suffix:semicolon
+DECL|member|unlinked
+r_int
+id|unlinked
 suffix:semicolon
 DECL|member|nlen
 r_int
@@ -310,6 +309,8 @@ DECL|macro|shm_namelen
 mdefine_line|#define shm_namelen&t;permap.shmem.nlen
 DECL|macro|shm_name
 mdefine_line|#define shm_name&t;permap.shmem.nm
+DECL|macro|shm_unlinked
+mdefine_line|#define shm_unlinked&t;permap.shmem.unlinked
 DECL|macro|zsem
 mdefine_line|#define zsem&t;&t;permap.zero.sema
 DECL|macro|zero_list
@@ -391,7 +392,7 @@ id|shmd
 )paren
 suffix:semicolon
 r_static
-r_void
+r_int
 id|shm_remove_name
 c_func
 (paren
@@ -2049,9 +2050,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|shp-&gt;shm_perm.mode
-op_amp
-id|SHM_DEST
+id|shp-&gt;shm_unlinked
 )paren
 r_continue
 suffix:semicolon
@@ -2206,9 +2205,7 @@ c_cond
 (paren
 op_logical_neg
 (paren
-id|shp-&gt;shm_perm.mode
-op_amp
-id|SHM_DEST
+id|shp-&gt;shm_unlinked
 )paren
 op_logical_and
 id|dent-&gt;d_name.len
@@ -2378,6 +2375,10 @@ c_func
 (paren
 )paren
 suffix:semicolon
+id|shp-&gt;shm_unlinked
+op_assign
+l_int|1
+suffix:semicolon
 id|shp-&gt;shm_perm.mode
 op_or_assign
 id|SHM_DEST
@@ -2402,6 +2403,33 @@ id|inode-&gt;i_nlink
 op_sub_assign
 l_int|1
 suffix:semicolon
+multiline_comment|/*&n;&t; * If it&squot;s a reserved name we have to drop the dentry instead&n;&t; * of creating a negative dentry&n;&t; */
+r_if
+c_cond
+(paren
+id|dent-&gt;d_name.len
+op_eq
+id|SHM_FMT_LEN
+op_logical_and
+id|memcmp
+(paren
+id|SHM_FMT
+comma
+id|dent-&gt;d_name.name
+comma
+id|SHM_FMT_LEN
+op_minus
+l_int|8
+)paren
+op_eq
+l_int|0
+)paren
+id|d_drop
+(paren
+id|dent
+)paren
+suffix:semicolon
+r_else
 id|d_delete
 (paren
 id|dent
@@ -3081,6 +3109,11 @@ id|shmid_kernel
 op_star
 id|shp
 suffix:semicolon
+id|pte_t
+op_star
+op_star
+id|dir
+suffix:semicolon
 id|shp
 op_assign
 (paren
@@ -3108,9 +3141,14 @@ op_logical_neg
 id|shp
 )paren
 r_return
-l_int|0
+id|ERR_PTR
+c_func
+(paren
+op_minus
+id|ENOMEM
+)paren
 suffix:semicolon
-id|shp-&gt;shm_dir
+id|dir
 op_assign
 id|shm_alloc
 (paren
@@ -3120,8 +3158,11 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
-id|shp-&gt;shm_dir
+id|IS_ERR
+c_func
+(paren
+id|dir
+)paren
 )paren
 (brace
 id|kfree
@@ -3131,9 +3172,21 @@ id|shp
 )paren
 suffix:semicolon
 r_return
-l_int|0
+id|ERR_PTR
+c_func
+(paren
+id|PTR_ERR
+c_func
+(paren
+id|dir
+)paren
+)paren
 suffix:semicolon
 )brace
+id|shp-&gt;shm_dir
+op_assign
+id|dir
+suffix:semicolon
 id|shp-&gt;shm_npages
 op_assign
 id|numpages
@@ -3335,6 +3388,10 @@ id|id
 comma
 id|shp-&gt;shm_perm.seq
 )paren
+suffix:semicolon
+id|shp-&gt;shm_unlinked
+op_assign
+l_int|0
 suffix:semicolon
 r_if
 c_cond
@@ -4951,6 +5008,13 @@ op_eq
 l_int|NULL
 )paren
 (brace
+id|up
+c_func
+(paren
+op_amp
+id|shm_ids.sem
+)paren
+suffix:semicolon
 id|unlock_kernel
 c_func
 (paren
@@ -4999,26 +5063,46 @@ c_func
 id|shmid
 )paren
 suffix:semicolon
+id|up
+c_func
+(paren
+op_amp
+id|shm_ids.sem
+)paren
+suffix:semicolon
 multiline_comment|/* The kernel lock prevents new attaches from&n;&t;&t;&t;&t; * being happening.  We can&squot;t hold shm_lock here&n;&t;&t;&t;&t; * else we will deadlock in shm_lookup when we&n;&t;&t;&t;&t; * try to recursively grab it.&n;&t;&t;&t;&t; */
+id|err
+op_assign
 id|shm_remove_name
 c_func
 (paren
 id|id
 )paren
 suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+r_return
+id|err
+suffix:semicolon
 )brace
-r_else
-(brace
 multiline_comment|/* Do not find me any more */
-id|shp-&gt;destroyed
-op_assign
-l_int|1
+id|shp-&gt;shm_perm.mode
+op_or_assign
+id|SHM_DEST
 suffix:semicolon
 id|shp-&gt;shm_perm.key
 op_assign
 id|IPC_PRIVATE
 suffix:semicolon
 multiline_comment|/* Do not find it any more */
+id|err
+op_assign
+l_int|0
+suffix:semicolon
+)brace
 multiline_comment|/* Unlock */
 id|shm_unlock
 c_func
@@ -5026,21 +5110,6 @@ c_func
 id|shmid
 )paren
 suffix:semicolon
-)brace
-id|err
-op_assign
-l_int|0
-suffix:semicolon
-)brace
-r_else
-(brace
-id|shm_unlock
-c_func
-(paren
-id|shmid
-)paren
-suffix:semicolon
-)brace
 id|up
 c_func
 (paren
@@ -5518,16 +5587,9 @@ id|IS_ERR
 id|file
 )paren
 )paren
-(brace
-id|unlock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 r_goto
 id|bad_file
 suffix:semicolon
-)brace
 op_star
 id|raddr
 op_assign
@@ -5596,6 +5658,11 @@ id|err
 suffix:semicolon
 id|bad_file
 suffix:colon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -5641,7 +5708,7 @@ suffix:semicolon
 multiline_comment|/*&n; *&t;Remove a name. Must be called with lock_kernel&n; */
 DECL|function|shm_remove_name
 r_static
-r_void
+r_int
 id|shm_remove_name
 c_func
 (paren
@@ -5666,9 +5733,7 @@ comma
 id|id
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
+r_return
 id|do_unlink
 (paren
 id|name
@@ -5679,18 +5744,7 @@ c_func
 id|shm_sb-&gt;s_root
 )paren
 )paren
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_ERR
-l_string|&quot;Unlink of SHM object &squot;%s&squot; failed.&bslash;n&quot;
-comma
-id|name
-)paren
 suffix:semicolon
-)brace
 )brace
 multiline_comment|/*&n; * remove the attach descriptor shmd.&n; * free memory for segment if it is marked destroyed.&n; * The descriptor has already been removed from the current-&gt;mm-&gt;mmap list&n; * and will later be kfree()d.&n; */
 DECL|function|shm_close
@@ -5759,7 +5813,9 @@ id|shp-&gt;shm_nattch
 op_eq
 l_int|0
 op_logical_and
-id|shp-&gt;destroyed
+id|shp-&gt;shm_perm.mode
+op_amp
+id|SHM_DEST
 )paren
 (brace
 r_int
@@ -5767,9 +5823,8 @@ id|pid
 op_assign
 id|shp-&gt;id
 suffix:semicolon
-id|shp-&gt;destroyed
-op_assign
-l_int|0
+r_int
+id|err
 suffix:semicolon
 id|shm_unlock
 c_func
@@ -5778,12 +5833,37 @@ id|id
 )paren
 suffix:semicolon
 multiline_comment|/* The kernel lock prevents new attaches from&n;&t;&t; * being happening.  We can&squot;t hold shm_lock here&n;&t;&t; * else we will deadlock in shm_lookup when we&n;&t;&t; * try to recursively grab it.&n;&t;&t; */
+id|err
+op_assign
 id|shm_remove_name
 c_func
 (paren
 id|pid
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|err
+op_logical_and
+id|err
+op_ne
+op_minus
+id|ENOENT
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;Unlink of SHM id %d failed (%d).&bslash;n&quot;
+comma
+id|pid
+comma
+id|err
+)paren
+suffix:semicolon
+)brace
 )brace
 r_else
 (brace
@@ -7267,9 +7347,9 @@ l_int|NULL
 )paren
 (brace
 DECL|macro|SMALL_STRING
-mdefine_line|#define SMALL_STRING &quot;%10d %10d  %4o %10u %5u %5u  %5d %5u %5u %5u %5u %10lu %10lu %10lu %.*s&bslash;n&quot;
+mdefine_line|#define SMALL_STRING &quot;%10d %10d  %4o %10u %5u %5u  %5d %5u %5u %5u %5u %10lu %10lu %10lu %.*s%s&bslash;n&quot;
 DECL|macro|BIG_STRING
-mdefine_line|#define BIG_STRING   &quot;%10d %10d  %4o %21u %5u %5u  %5d %5u %5u %5u %5u %10lu %10lu %10lu %.*s&bslash;n&quot;
+mdefine_line|#define BIG_STRING   &quot;%10d %10d  %4o %21u %5u %5u  %5d %5u %5u %5u %5u %10lu %10lu %10lu %.*s%s&bslash;n&quot;
 r_char
 op_star
 id|format
@@ -7344,6 +7424,13 @@ comma
 id|shp-&gt;shm_namelen
 comma
 id|shp-&gt;shm_name
+comma
+id|shp-&gt;shm_unlinked
+ques
+c_cond
+l_string|&quot; (deleted)&quot;
+suffix:colon
+l_string|&quot;&quot;
 )paren
 suffix:semicolon
 id|shm_unlock
@@ -7715,7 +7802,8 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
+id|IS_ERR
+c_func
 (paren
 id|shp
 op_assign
@@ -7735,8 +7823,11 @@ l_int|0
 )paren
 )paren
 r_return
-op_minus
-id|ENOMEM
+id|PTR_ERR
+c_func
+(paren
+id|shp
+)paren
 suffix:semicolon
 r_if
 c_cond

@@ -370,9 +370,9 @@ DECL|macro|MOD_DEC_USE_COUNT
 mdefine_line|#define MOD_DEC_USE_COUNT&t;__MOD_DEC_USE_COUNT(THIS_MODULE)
 DECL|macro|MOD_IN_USE
 mdefine_line|#define MOD_IN_USE&t;&t;__MOD_IN_USE(THIS_MODULE)
-macro_line|#ifndef __NO_VERSION__
 macro_line|#include &lt;linux/version.h&gt;
 DECL|variable|__module_kernel_version
+r_static
 r_const
 r_char
 id|__module_kernel_version
@@ -395,6 +395,7 @@ id|UTS_RELEASE
 suffix:semicolon
 macro_line|#ifdef MODVERSIONS
 DECL|variable|__module_using_checksums
+r_static
 r_const
 r_char
 id|__module_using_checksums
@@ -414,7 +415,6 @@ l_string|&quot;.modinfo&quot;
 op_assign
 l_string|&quot;using_checksums=1&quot;
 suffix:semicolon
-macro_line|#endif
 macro_line|#endif
 macro_line|#else /* MODULE */
 DECL|macro|MODULE_AUTHOR
