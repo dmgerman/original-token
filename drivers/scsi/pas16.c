@@ -27,27 +27,6 @@ macro_line|#include &quot;constants.h&quot;
 macro_line|#include &quot;sd.h&quot;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
-DECL|variable|proc_scsi_pas16
-r_struct
-id|proc_dir_entry
-id|proc_scsi_pas16
-op_assign
-(brace
-id|PROC_SCSI_PAS16
-comma
-l_int|5
-comma
-l_string|&quot;pas16&quot;
-comma
-id|S_IFDIR
-op_or
-id|S_IRUGO
-op_or
-id|S_IXUGO
-comma
-l_int|2
-)brace
-suffix:semicolon
 DECL|variable|pas_maxi
 r_static
 r_int
@@ -867,10 +846,9 @@ suffix:semicolon
 r_int
 id|count
 suffix:semicolon
-id|tpnt-&gt;proc_dir
+id|tpnt-&gt;proc_name
 op_assign
-op_amp
-id|proc_scsi_pas16
+l_string|&quot;pas16&quot;
 suffix:semicolon
 id|tpnt-&gt;proc_info
 op_assign

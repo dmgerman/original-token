@@ -418,6 +418,12 @@ id|buffer_head
 op_star
 id|buffers
 suffix:semicolon
+DECL|member|virtual
+r_int
+r_int
+r_virtual
+suffix:semicolon
+multiline_comment|/* nonzero if kmapped */
 DECL|typedef|mem_map_t
 )brace
 id|mem_map_t
@@ -525,7 +531,7 @@ id|mem_map_t
 op_star
 id|mem_map
 suffix:semicolon
-multiline_comment|/*&n; * This is timing-critical - most of the time in getting a new page&n; * goes to clearing the page. If you want a page without the clearing&n; * overhead, just use __get_free_page() directly..&n; */
+multiline_comment|/*&n; * This is timing-critical - most of the time in getting a new page&n; * goes to clearing the page. If you want a page without the clearing&n; * overhead, just use __get_free_page() directly..&n; *&n; * We have two allocation namespaces - the *get*page*() variants&n; * return virtual kernel addresses to the allocated page(s), the&n; * alloc_page*() variants return &squot;struct page *&squot;.&n; */
 DECL|macro|__get_free_page
 mdefine_line|#define __get_free_page(gfp_mask) __get_free_pages((gfp_mask),0)
 DECL|macro|__get_dma_pages
@@ -544,7 +550,7 @@ id|gfp_mask
 comma
 r_int
 r_int
-id|gfp_order
+id|order
 )paren
 )paren
 suffix:semicolon
@@ -552,13 +558,23 @@ r_extern
 r_struct
 id|page
 op_star
-id|get_free_highpage
+id|FASTCALL
+c_func
+(paren
+id|alloc_pages
 c_func
 (paren
 r_int
 id|gfp_mask
+comma
+r_int
+r_int
+id|order
+)paren
 )paren
 suffix:semicolon
+DECL|macro|alloc_page
+mdefine_line|#define alloc_page(gfp_mask) alloc_pages(gfp_mask, 0)
 DECL|function|get_zeroed_page
 r_extern
 r_inline

@@ -3427,7 +3427,7 @@ id|tsk-&gt;mm-&gt;page_table_lock
 suffix:semicolon
 id|new_page
 op_assign
-id|get_free_highpage
+id|alloc_page
 c_func
 (paren
 id|GFP_HIGHUSER
@@ -4498,7 +4498,7 @@ id|write_access
 (brace
 id|page
 op_assign
-id|get_free_highpage
+id|alloc_page
 c_func
 (paren
 id|GFP_HIGHUSER

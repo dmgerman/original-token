@@ -29,28 +29,6 @@ mdefine_line|#define DPRINTK( when, msg... ) do { } while (0)
 macro_line|#endif
 DECL|macro|DANY
 mdefine_line|#define DANY( msg... ) DPRINTK( 0xffff, msg );
-DECL|variable|proc_scsi_seagate
-r_static
-r_struct
-id|proc_dir_entry
-id|proc_scsi_seagate
-op_assign
-(brace
-id|PROC_SCSI_SEAGATE
-comma
-l_int|7
-comma
-l_string|&quot;seagate&quot;
-comma
-id|S_IFDIR
-op_or
-id|S_IRUGO
-op_or
-id|S_IXUGO
-comma
-l_int|2
-)brace
-suffix:semicolon
 macro_line|#ifndef IRQ
 DECL|macro|IRQ
 mdefine_line|#define IRQ 5
@@ -738,10 +716,9 @@ id|i
 comma
 id|j
 suffix:semicolon
-id|tpnt-&gt;proc_dir
+id|tpnt-&gt;proc_name
 op_assign
-op_amp
-id|proc_scsi_seagate
+l_string|&quot;seagate&quot;
 suffix:semicolon
 multiline_comment|/*&n; *    First, we try for the manual override.  */
 id|DANY

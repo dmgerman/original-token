@@ -54,6 +54,22 @@ id|page
 op_star
 )paren
 suffix:semicolon
+r_extern
+r_struct
+id|buffer_head
+op_star
+id|create_bounce
+c_func
+(paren
+r_int
+id|rw
+comma
+r_struct
+id|buffer_head
+op_star
+id|bh_orig
+)paren
+suffix:semicolon
 macro_line|#else /* CONFIG_HIGHMEM */
 DECL|function|nr_free_highpages
 r_extern
@@ -75,9 +91,9 @@ mdefine_line|#define prepare_highmem_swapout(page) page
 DECL|macro|replace_with_highmem
 mdefine_line|#define replace_with_highmem(page) page
 DECL|macro|kmap
-mdefine_line|#define kmap(page, type) page_address(page)
+mdefine_line|#define kmap(page) page_address(page)
 DECL|macro|kunmap
-mdefine_line|#define kunmap(vaddr, type) do { } while (0)
+mdefine_line|#define kunmap(page) do { } while (0)
 macro_line|#endif /* CONFIG_HIGHMEM */
 multiline_comment|/* when CONFIG_HIGHMEM is not set these will be plain clear/copy_page */
 DECL|function|clear_highpage
@@ -103,8 +119,6 @@ id|kmap
 c_func
 (paren
 id|page
-comma
-id|KM_WRITE
 )paren
 suffix:semicolon
 id|clear_page
@@ -120,9 +134,7 @@ suffix:semicolon
 id|kunmap
 c_func
 (paren
-id|kaddr
-comma
-id|KM_WRITE
+id|page
 )paren
 suffix:semicolon
 )brace
@@ -171,8 +183,6 @@ id|kmap
 c_func
 (paren
 id|page
-comma
-id|KM_WRITE
 )paren
 suffix:semicolon
 id|memset
@@ -196,9 +206,7 @@ suffix:semicolon
 id|kunmap
 c_func
 (paren
-id|kaddr
-comma
-id|KM_WRITE
+id|page
 )paren
 suffix:semicolon
 )brace
@@ -248,8 +256,6 @@ id|kmap
 c_func
 (paren
 id|page
-comma
-id|KM_WRITE
 )paren
 suffix:semicolon
 id|memset
@@ -279,9 +285,7 @@ suffix:semicolon
 id|kunmap
 c_func
 (paren
-id|kaddr
-comma
-id|KM_WRITE
+id|page
 )paren
 suffix:semicolon
 )brace
@@ -315,8 +319,6 @@ id|kmap
 c_func
 (paren
 id|from
-comma
-id|KM_READ
 )paren
 suffix:semicolon
 id|vto
@@ -325,8 +327,6 @@ id|kmap
 c_func
 (paren
 id|to
-comma
-id|KM_WRITE
 )paren
 suffix:semicolon
 id|copy_page
@@ -348,17 +348,13 @@ suffix:semicolon
 id|kunmap
 c_func
 (paren
-id|vfrom
-comma
-id|KM_READ
+id|from
 )paren
 suffix:semicolon
 id|kunmap
 c_func
 (paren
-id|vto
-comma
-id|KM_WRITE
+id|to
 )paren
 suffix:semicolon
 )brace

@@ -1575,11 +1575,6 @@ DECL|typedef|mega_host_config
 )brace
 id|mega_host_config
 suffix:semicolon
-r_extern
-r_struct
-id|proc_dir_entry
-id|proc_scsi_megaraid
-suffix:semicolon
 r_const
 r_char
 op_star

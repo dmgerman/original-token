@@ -15,11 +15,6 @@ mdefine_line|#define I2O_SCSI_CAN_QUEUE 4
 DECL|macro|I2O_SCSI_CMD_PER_LUN
 mdefine_line|#define I2O_SCSI_CMD_PER_LUN 6
 r_extern
-r_struct
-id|proc_dir_entry
-id|proc_scsi_i2o_scsi
-suffix:semicolon
-r_extern
 r_int
 id|i2o_scsi_detect
 c_func
@@ -118,6 +113,6 @@ id|ints
 )paren
 suffix:semicolon
 DECL|macro|I2OSCSI
-mdefine_line|#define I2OSCSI {                                          &bslash;&n;&t;&t;  next: NULL,&t;&t;&t;&t;    &bslash;&n;                  proc_dir:          &amp;proc_scsi_i2o_scsi,   &bslash;&n;                  name:              &quot;I2O SCSI Layer&quot;, &t;    &bslash;&n;                  detect:            i2o_scsi_detect,       &bslash;&n;                  release:&t;     i2o_scsi_release,&t;    &bslash;&n;                  info:              i2o_scsi_info,         &bslash;&n;                  command:           i2o_scsi_command,      &bslash;&n;                  queuecommand:      i2o_scsi_queuecommand, &bslash;&n;                  abort:             i2o_scsi_abort,        &bslash;&n;                  reset:             i2o_scsi_reset,        &bslash;&n;                  bios_param:        i2o_scsi_bios_param,   &bslash;&n;                  can_queue:         I2O_SCSI_CAN_QUEUE,    &bslash;&n;                  this_id:           I2O_SCSI_ID,           &bslash;&n;                  sg_tablesize:      8,                     &bslash;&n;                  cmd_per_lun:       I2O_SCSI_CMD_PER_LUN,  &bslash;&n;                  unchecked_isa_dma: 0,                     &bslash;&n;                  use_clustering:    ENABLE_CLUSTERING     &bslash;&n;                  }
+mdefine_line|#define I2OSCSI {                                          &bslash;&n;&t;&t;  next: NULL,&t;&t;&t;&t;    &bslash;&n;                  proc_name:         &quot;i2o_scsi&quot;,   &bslash;&n;                  name:              &quot;I2O SCSI Layer&quot;, &t;    &bslash;&n;                  detect:            i2o_scsi_detect,       &bslash;&n;                  release:&t;     i2o_scsi_release,&t;    &bslash;&n;                  info:              i2o_scsi_info,         &bslash;&n;                  command:           i2o_scsi_command,      &bslash;&n;                  queuecommand:      i2o_scsi_queuecommand, &bslash;&n;                  abort:             i2o_scsi_abort,        &bslash;&n;                  reset:             i2o_scsi_reset,        &bslash;&n;                  bios_param:        i2o_scsi_bios_param,   &bslash;&n;                  can_queue:         I2O_SCSI_CAN_QUEUE,    &bslash;&n;                  this_id:           I2O_SCSI_ID,           &bslash;&n;                  sg_tablesize:      8,                     &bslash;&n;                  cmd_per_lun:       I2O_SCSI_CMD_PER_LUN,  &bslash;&n;                  unchecked_isa_dma: 0,                     &bslash;&n;                  use_clustering:    ENABLE_CLUSTERING     &bslash;&n;                  }
 macro_line|#endif
 eof

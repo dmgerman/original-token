@@ -87,20 +87,6 @@ c_func
 id|proc_bus
 )paren
 suffix:semicolon
-DECL|variable|proc_lookup
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|proc_lookup
-)paren
-suffix:semicolon
-DECL|variable|proc_readdir
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|proc_readdir
-)paren
-suffix:semicolon
 macro_line|#if defined(CONFIG_SUN_OPENPROMFS_MODULE)
 DECL|variable|proc_openprom_register
 id|EXPORT_SYMBOL

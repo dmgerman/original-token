@@ -246,6 +246,14 @@ DECL|macro|VID_TYPE_MONOCHROME
 mdefine_line|#define VID_TYPE_MONOCHROME&t;256&t;/* Monochrome only */
 DECL|macro|VID_TYPE_SUBCAPTURE
 mdefine_line|#define VID_TYPE_SUBCAPTURE&t;512&t;/* Can capture subareas of the image */
+DECL|macro|VID_TYPE_MPEG_DECODER
+mdefine_line|#define VID_TYPE_MPEG_DECODER&t;1024&t;/* Can decode MPEG streams */
+DECL|macro|VID_TYPE_MPEG_ENCODER
+mdefine_line|#define VID_TYPE_MPEG_ENCODER&t;2048&t;/* Can encode MPEG streams */
+DECL|macro|VID_TYPE_MJPEG_DECODER
+mdefine_line|#define VID_TYPE_MJPEG_DECODER&t;4096&t;/* Can decode MJPEG streams */
+DECL|macro|VID_TYPE_MJPEG_ENCODER
+mdefine_line|#define VID_TYPE_MJPEG_ENCODER&t;8192&t;/* Can encode MJPEG streams */
 DECL|struct|video_capability
 r_struct
 id|video_capability
@@ -774,6 +782,96 @@ suffix:semicolon
 multiline_comment|/* Teletext minor */
 )brace
 suffix:semicolon
+multiline_comment|/* video_info is biased towards hardware mpeg encode/decode */
+multiline_comment|/* but it could apply generically to any hardware compressor/decompressor */
+DECL|struct|video_info
+r_struct
+id|video_info
+(brace
+DECL|member|frame_count
+id|__u32
+id|frame_count
+suffix:semicolon
+multiline_comment|/* frames output since decode/encode began */
+DECL|member|h_size
+id|__u32
+id|h_size
+suffix:semicolon
+multiline_comment|/* current unscaled horizontal size */
+DECL|member|v_size
+id|__u32
+id|v_size
+suffix:semicolon
+multiline_comment|/* current unscaled veritcal size */
+DECL|member|smpte_timecode
+id|__u32
+id|smpte_timecode
+suffix:semicolon
+multiline_comment|/* current SMPTE timecode (for current GOP) */
+DECL|member|picture_type
+id|__u32
+id|picture_type
+suffix:semicolon
+multiline_comment|/* current picture type */
+DECL|member|temporal_reference
+id|__u32
+id|temporal_reference
+suffix:semicolon
+multiline_comment|/* current temporal reference */
+DECL|member|user_data
+id|__u8
+id|user_data
+(braket
+l_int|256
+)braket
+suffix:semicolon
+multiline_comment|/* user data last found in compressed stream */
+multiline_comment|/* user_data[0] contains user data flags, user_data[1] has count */
+)brace
+suffix:semicolon
+multiline_comment|/* generic structure for setting playback modes */
+DECL|struct|video_play_mode
+r_struct
+id|video_play_mode
+(brace
+DECL|member|mode
+r_int
+id|mode
+suffix:semicolon
+DECL|member|p1
+r_int
+id|p1
+suffix:semicolon
+DECL|member|p2
+r_int
+id|p2
+suffix:semicolon
+)brace
+suffix:semicolon
+multiline_comment|/* for loading microcode / fpga programming */
+DECL|struct|video_code
+r_struct
+id|video_code
+(brace
+DECL|member|loadwhat
+r_char
+id|loadwhat
+(braket
+l_int|16
+)braket
+suffix:semicolon
+multiline_comment|/* name or tag of file being passed */
+DECL|member|datasize
+r_int
+id|datasize
+suffix:semicolon
+DECL|member|data
+id|__u8
+op_star
+id|data
+suffix:semicolon
+)brace
+suffix:semicolon
 DECL|macro|VIDIOCGCAP
 mdefine_line|#define VIDIOCGCAP&t;&t;_IOR(&squot;v&squot;,1,struct video_capability)&t;/* Get capabilities */
 DECL|macro|VIDIOCGCHAN
@@ -820,8 +918,71 @@ DECL|macro|VIDIOCGCAPTURE
 mdefine_line|#define VIDIOCGCAPTURE&t;&t;_IOR(&squot;v&squot;,22, struct video_capture)&t;/* Get frame buffer */
 DECL|macro|VIDIOCSCAPTURE
 mdefine_line|#define VIDIOCSCAPTURE&t;&t;_IOW(&squot;v&squot;,23, struct video_capture)&t;/* Set frame buffer - root only */
+DECL|macro|VIDIOCSPLAYMODE
+mdefine_line|#define VIDIOCSPLAYMODE&t;&t;_IOW(&squot;v&squot;,24, struct video_play_mode)&t;/* Set output video mode/feature */
+DECL|macro|VIDIOCSWRITEMODE
+mdefine_line|#define VIDIOCSWRITEMODE&t;_IOW(&squot;v&squot;,25, int)&t;&t;&t;/* Set write mode */
+DECL|macro|VIDIOCGPLAYINFO
+mdefine_line|#define VIDIOCGPLAYINFO&t;&t;_IOR(&squot;v&squot;,26, struct video_info)&t;&t;/* Get current playback info from hardware */
+DECL|macro|VIDIOCSMICROCODE
+mdefine_line|#define VIDIOCSMICROCODE&t;_IOW(&squot;v&squot;,27, struct video_code)&t;&t;/* Load microcode into hardware */
 DECL|macro|BASE_VIDIOCPRIVATE
 mdefine_line|#define BASE_VIDIOCPRIVATE&t;192&t;&t;/* 192-255 are private */
+multiline_comment|/* VIDIOCSWRITEMODE */
+DECL|macro|VID_WRITE_MPEG_AUD
+mdefine_line|#define VID_WRITE_MPEG_AUD&t;&t;0
+DECL|macro|VID_WRITE_MPEG_VID
+mdefine_line|#define VID_WRITE_MPEG_VID&t;&t;1
+DECL|macro|VID_WRITE_OSD
+mdefine_line|#define VID_WRITE_OSD&t;&t;&t;2
+DECL|macro|VID_WRITE_TTX
+mdefine_line|#define VID_WRITE_TTX&t;&t;&t;3
+DECL|macro|VID_WRITE_CC
+mdefine_line|#define VID_WRITE_CC&t;&t;&t;4
+DECL|macro|VID_WRITE_MJPEG
+mdefine_line|#define VID_WRITE_MJPEG&t;&t;&t;5
+multiline_comment|/* VIDIOCSPLAYMODE */
+DECL|macro|VID_PLAY_VID_OUT_MODE
+mdefine_line|#define VID_PLAY_VID_OUT_MODE&t;&t;0
+multiline_comment|/* p1: = VIDEO_MODE_PAL, VIDEO_MODE_NTSC, etc ... */
+DECL|macro|VID_PLAY_GENLOCK
+mdefine_line|#define VID_PLAY_GENLOCK&t;&t;1
+multiline_comment|/* p1: 0 = OFF, 1 = ON */
+multiline_comment|/* p2: GENLOCK FINE DELAY value */
+DECL|macro|VID_PLAY_NORMAL
+mdefine_line|#define VID_PLAY_NORMAL&t;&t;&t;2
+DECL|macro|VID_PLAY_PAUSE
+mdefine_line|#define VID_PLAY_PAUSE&t;&t;&t;3
+DECL|macro|VID_PLAY_SINGLE_FRAME
+mdefine_line|#define VID_PLAY_SINGLE_FRAME&t;&t;4
+DECL|macro|VID_PLAY_FAST_FORWARD
+mdefine_line|#define VID_PLAY_FAST_FORWARD&t;&t;5
+DECL|macro|VID_PLAY_SLOW_MOTION
+mdefine_line|#define VID_PLAY_SLOW_MOTION&t;&t;6
+DECL|macro|VID_PLAY_IMMEDIATE_NORMAL
+mdefine_line|#define VID_PLAY_IMMEDIATE_NORMAL&t;7
+DECL|macro|VID_PLAY_SWITCH_CHANNELS
+mdefine_line|#define VID_PLAY_SWITCH_CHANNELS&t;8
+DECL|macro|VID_PLAY_FREEZE_FRAME
+mdefine_line|#define VID_PLAY_FREEZE_FRAME&t;&t;9
+DECL|macro|VID_PLAY_STILL_MODE
+mdefine_line|#define VID_PLAY_STILL_MODE&t;&t;10
+DECL|macro|VID_PLAY_MASTER_MODE
+mdefine_line|#define VID_PLAY_MASTER_MODE&t;&t;11
+multiline_comment|/* p1: see below */
+DECL|macro|VID_PLAY_MASTER_NONE
+mdefine_line|#define&t;&t;VID_PLAY_MASTER_NONE&t;1
+DECL|macro|VID_PLAY_MASTER_VIDEO
+mdefine_line|#define&t;&t;VID_PLAY_MASTER_VIDEO&t;2
+DECL|macro|VID_PLAY_MASTER_AUDIO
+mdefine_line|#define&t;&t;VID_PLAY_MASTER_AUDIO&t;3
+DECL|macro|VID_PLAY_ACTIVE_SCANLINES
+mdefine_line|#define VID_PLAY_ACTIVE_SCANLINES&t;12
+multiline_comment|/* p1 = first active; p2 = last active */
+DECL|macro|VID_PLAY_RESET
+mdefine_line|#define VID_PLAY_RESET&t;&t;&t;13
+DECL|macro|VID_PLAY_END_MARK
+mdefine_line|#define VID_PLAY_END_MARK&t;&t;14
 DECL|macro|VID_HARDWARE_BT848
 mdefine_line|#define VID_HARDWARE_BT848&t;1
 DECL|macro|VID_HARDWARE_QCAM_BW
@@ -861,7 +1022,7 @@ mdefine_line|#define VID_HARDWARE_GEMTEK&t;18
 DECL|macro|VID_HARDWARE_TYPHOON
 mdefine_line|#define VID_HARDWARE_TYPHOON&t;19
 DECL|macro|VID_HARDWARE_VINO
-mdefine_line|#define VID_HARDWARE_VINO&t;20&t;/* Reserved for SGI Indy Vino */
+mdefine_line|#define VID_HARDWARE_VINO&t;20&t;/* SGI Indy Vino */
 DECL|macro|VID_HARDWARE_CADET
 mdefine_line|#define VID_HARDWARE_CADET&t;21&t;/* Cadet radio */
 DECL|macro|VID_HARDWARE_TRUST

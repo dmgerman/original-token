@@ -231,8 +231,6 @@ id|kmap
 c_func
 (paren
 id|page
-comma
-id|KM_WRITE
 )paren
 suffix:semicolon
 id|memcpy
@@ -265,9 +263,7 @@ suffix:semicolon
 id|kunmap
 c_func
 (paren
-id|maddr
-comma
-id|KM_WRITE
+id|page
 )paren
 suffix:semicolon
 )brace
@@ -279,8 +275,6 @@ id|kmap
 c_func
 (paren
 id|page
-comma
-id|KM_READ
 )paren
 suffix:semicolon
 id|memcpy
@@ -313,9 +307,7 @@ suffix:semicolon
 id|kunmap
 c_func
 (paren
-id|maddr
-comma
-id|KM_READ
+id|page
 )paren
 suffix:semicolon
 )brace

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;fs/proc/kcore.c kernel ELF/AOUT core dumper&n; *&n; *&t;Modelled on fs/exec.c:aout_core_dump()&n; *&t;Jeremy Fitzhardinge &lt;jeremy@sw.oz.au&gt;&n; *&t;Implemented by David Howells &lt;David.Howells@nexor.co.uk&gt;&n; *&t;Modified and incorporated into 2.3.x by Tigran Aivazian &lt;tigran@sco.com&gt;&n; *&t;Support to dump module&squot;s data structures (ELF only), Tigran Aivazian &lt;tigran@sco.com&gt;&n; */
+multiline_comment|/*&n; *&t;fs/proc/kcore.c kernel ELF/AOUT core dumper&n; *&n; *&t;Modelled on fs/exec.c:aout_core_dump()&n; *&t;Jeremy Fitzhardinge &lt;jeremy@sw.oz.au&gt;&n; *&t;Implemented by David Howells &lt;David.Howells@nexor.co.uk&gt;&n; *&t;Modified and incorporated into 2.3.x by Tigran Aivazian &lt;tigran@sco.com&gt;&n; *&t;Support to dump vmalloc&squot;d data structures (ELF only), Tigran Aivazian &lt;tigran@sco.com&gt;&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
@@ -6,11 +6,102 @@ macro_line|#include &lt;linux/user.h&gt;
 macro_line|#include &lt;linux/a.out.h&gt;
 macro_line|#include &lt;linux/elf.h&gt;
 macro_line|#include &lt;linux/elfcore.h&gt;
-macro_line|#include &lt;linux/module.h&gt;
-macro_line|#include &lt;linux/smp_lock.h&gt;
+macro_line|#include &lt;linux/vmalloc.h&gt;
+macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
+DECL|function|open_kcore
+r_static
+r_int
+id|open_kcore
+c_func
+(paren
+r_struct
+id|inode
+op_star
+id|inode
+comma
+r_struct
+id|file
+op_star
+id|filp
+)paren
+(brace
+r_return
+id|capable
+c_func
+(paren
+id|CAP_SYS_RAWIO
+)paren
+ques
+c_cond
+l_int|0
+suffix:colon
+op_minus
+id|EPERM
+suffix:semicolon
+)brace
+r_static
+id|ssize_t
+id|read_kcore
+c_func
+(paren
+r_struct
+id|file
+op_star
+comma
+r_char
+op_star
+comma
+r_int
+comma
+id|loff_t
+op_star
+)paren
+suffix:semicolon
+DECL|variable|proc_kcore_operations
+r_static
+r_struct
+id|file_operations
+id|proc_kcore_operations
+op_assign
+(brace
+l_int|NULL
+comma
+multiline_comment|/* lseek */
+id|read_kcore
+comma
+l_int|NULL
+comma
+multiline_comment|/* write */
+l_int|NULL
+comma
+multiline_comment|/* readdir */
+l_int|NULL
+comma
+multiline_comment|/* poll */
+l_int|NULL
+comma
+multiline_comment|/* ioctl */
+l_int|NULL
+comma
+multiline_comment|/* mmap */
+id|open_kcore
+)brace
+suffix:semicolon
+DECL|variable|proc_kcore_inode_operations
+r_struct
+id|inode_operations
+id|proc_kcore_inode_operations
+op_assign
+(brace
+op_amp
+id|proc_kcore_operations
+comma
+)brace
+suffix:semicolon
 macro_line|#ifdef CONFIG_KCORE_AOUT
 DECL|function|read_kcore
+r_static
 id|ssize_t
 id|read_kcore
 c_func
@@ -313,7 +404,7 @@ r_return
 id|read
 suffix:semicolon
 )brace
-macro_line|#else
+macro_line|#else /* CONFIG_KCORE_AOUT */
 DECL|macro|roundup
 mdefine_line|#define roundup(x, y)  ((((x)+((y)-1))/(y))*(y))
 multiline_comment|/* An ELF note in memory */
@@ -349,6 +440,157 @@ id|saved_command_line
 (braket
 )braket
 suffix:semicolon
+DECL|function|get_kcore_size
+r_static
+r_int
+id|get_kcore_size
+c_func
+(paren
+r_int
+op_star
+id|num_vma
+comma
+r_int
+op_star
+id|elf_buflen
+)paren
+(brace
+r_int
+r_try
+comma
+id|size
+op_assign
+l_int|0
+suffix:semicolon
+r_struct
+id|vm_struct
+op_star
+id|m
+suffix:semicolon
+op_star
+id|num_vma
+op_assign
+l_int|0
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|vmlist
+)paren
+(brace
+op_star
+id|elf_buflen
+op_assign
+id|PAGE_SIZE
+suffix:semicolon
+r_return
+(paren
+(paren
+r_int
+)paren
+id|high_memory
+op_minus
+id|PAGE_OFFSET
+op_plus
+id|PAGE_SIZE
+)paren
+suffix:semicolon
+)brace
+r_for
+c_loop
+(paren
+id|m
+op_assign
+id|vmlist
+suffix:semicolon
+id|m
+suffix:semicolon
+id|m
+op_assign
+id|m-&gt;next
+)paren
+(brace
+r_try
+op_assign
+(paren
+r_int
+)paren
+id|m-&gt;addr
+op_plus
+id|m-&gt;size
+suffix:semicolon
+r_if
+c_cond
+(paren
+r_try
+OG
+id|size
+)paren
+id|size
+op_assign
+r_try
+suffix:semicolon
+op_star
+id|num_vma
+op_assign
+op_star
+id|num_vma
+op_plus
+l_int|1
+suffix:semicolon
+)brace
+op_star
+id|elf_buflen
+op_assign
+r_sizeof
+(paren
+r_struct
+id|elfhdr
+)paren
+op_plus
+(paren
+op_star
+id|num_vma
+op_plus
+l_int|2
+)paren
+op_star
+r_sizeof
+(paren
+r_struct
+id|elf_phdr
+)paren
+op_plus
+l_int|3
+op_star
+r_sizeof
+(paren
+r_struct
+id|memelfnote
+)paren
+suffix:semicolon
+op_star
+id|elf_buflen
+op_assign
+id|PAGE_ALIGN
+c_func
+(paren
+op_star
+id|elf_buflen
+)paren
+suffix:semicolon
+r_return
+(paren
+id|size
+op_minus
+id|PAGE_OFFSET
+op_plus
+op_star
+id|elf_buflen
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/*****************************************************************************/
 multiline_comment|/*&n; * determine size of ELF note&n; */
 DECL|function|notesize
@@ -516,8 +758,7 @@ id|bufp
 suffix:semicolon
 )brace
 multiline_comment|/* end storenote() */
-multiline_comment|/*****************************************************************************/
-multiline_comment|/*&n; * store an ELF coredump header in the supplied buffer&n; * - assume the memory image is the size specified&n; */
+multiline_comment|/*&n; * store an ELF coredump header in the supplied buffer&n; * num_vma is the number of elements in vmlist&n; */
 DECL|function|elf_kcore_store_hdr
 r_static
 r_void
@@ -527,6 +768,12 @@ c_func
 r_char
 op_star
 id|bufp
+comma
+r_int
+id|num_vma
+comma
+r_int
+id|elf_buflen
 )paren
 (brace
 r_struct
@@ -536,7 +783,7 @@ suffix:semicolon
 multiline_comment|/* NT_PRSTATUS */
 r_struct
 id|elf_prpsinfo
-id|psinfo
+id|prpsinfo
 suffix:semicolon
 multiline_comment|/* NT_PRPSINFO */
 r_struct
@@ -545,7 +792,7 @@ op_star
 id|nhdr
 comma
 op_star
-id|dhdr
+id|phdr
 suffix:semicolon
 r_struct
 id|elfhdr
@@ -564,7 +811,12 @@ id|offset
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* acquire an ELF header block from the buffer */
+r_struct
+id|vm_struct
+op_star
+id|m
+suffix:semicolon
+multiline_comment|/* setup ELF header */
 id|elf
 op_assign
 (paren
@@ -590,7 +842,6 @@ r_struct
 id|elfhdr
 )paren
 suffix:semicolon
-multiline_comment|/* set up header */
 id|memcpy
 c_func
 (paren
@@ -686,9 +937,10 @@ id|elf_phdr
 suffix:semicolon
 id|elf-&gt;e_phnum
 op_assign
-l_int|1
+l_int|2
+op_plus
+id|num_vma
 suffix:semicolon
-multiline_comment|/* no. of segments  = 1 + Nmodules */
 id|elf-&gt;e_shentsize
 op_assign
 l_int|0
@@ -701,7 +953,7 @@ id|elf-&gt;e_shstrndx
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* acquire an ELF program header blocks from the buffer for notes */
+multiline_comment|/* setup ELF PT_NOTE program header */
 id|nhdr
 op_assign
 (paren
@@ -727,7 +979,6 @@ r_struct
 id|elf_phdr
 )paren
 suffix:semicolon
-multiline_comment|/* store program headers for notes dump */
 id|nhdr-&gt;p_type
 op_assign
 id|PT_NOTE
@@ -760,8 +1011,8 @@ id|nhdr-&gt;p_align
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* acquire an ELF program header blocks from the buffer for data */
-id|dhdr
+multiline_comment|/* setup ELF PT_LOAD program header */
+id|phdr
 op_assign
 (paren
 r_struct
@@ -786,12 +1037,11 @@ r_struct
 id|elf_phdr
 )paren
 suffix:semicolon
-multiline_comment|/* store program headers for data dump */
-id|dhdr-&gt;p_type
+id|phdr-&gt;p_type
 op_assign
 id|PT_LOAD
 suffix:semicolon
-id|dhdr-&gt;p_flags
+id|phdr-&gt;p_flags
 op_assign
 id|PF_R
 op_or
@@ -799,15 +1049,15 @@ id|PF_W
 op_or
 id|PF_X
 suffix:semicolon
-id|dhdr-&gt;p_offset
+id|phdr-&gt;p_offset
 op_assign
-id|PAGE_SIZE
+id|elf_buflen
 suffix:semicolon
-id|dhdr-&gt;p_vaddr
+id|phdr-&gt;p_vaddr
 op_assign
 id|PAGE_OFFSET
 suffix:semicolon
-id|dhdr-&gt;p_paddr
+id|phdr-&gt;p_paddr
 op_assign
 id|__pa
 c_func
@@ -815,7 +1065,9 @@ c_func
 id|PAGE_OFFSET
 )paren
 suffix:semicolon
-id|dhdr-&gt;p_filesz
+id|phdr-&gt;p_filesz
+op_assign
+id|phdr-&gt;p_memsz
 op_assign
 (paren
 (paren
@@ -825,46 +1077,18 @@ r_int
 id|high_memory
 op_minus
 id|PAGE_OFFSET
-op_plus
-id|PAGE_SIZE
 )paren
 suffix:semicolon
-id|dhdr-&gt;p_memsz
-op_assign
-(paren
-(paren
-r_int
-r_int
-)paren
-id|high_memory
-op_minus
-id|PAGE_OFFSET
-op_plus
-id|PAGE_SIZE
-)paren
-suffix:semicolon
-id|dhdr-&gt;p_align
+id|phdr-&gt;p_align
 op_assign
 id|PAGE_SIZE
-suffix:semicolon
-macro_line|#ifdef CONFIG_MODULES
-(brace
-r_struct
-id|module
-op_star
-id|m
-suffix:semicolon
-id|lock_kernel
-c_func
-(paren
-)paren
 suffix:semicolon
 r_for
 c_loop
 (paren
 id|m
 op_assign
-id|module_list
+id|vmlist
 suffix:semicolon
 id|m
 suffix:semicolon
@@ -873,7 +1097,7 @@ op_assign
 id|m-&gt;next
 )paren
 (brace
-id|dhdr
+id|phdr
 op_assign
 (paren
 r_struct
@@ -898,11 +1122,11 @@ r_struct
 id|elf_phdr
 )paren
 suffix:semicolon
-id|dhdr-&gt;p_type
+id|phdr-&gt;p_type
 op_assign
 id|PT_LOAD
 suffix:semicolon
-id|dhdr-&gt;p_flags
+id|phdr-&gt;p_flags
 op_assign
 id|PF_R
 op_or
@@ -910,27 +1134,25 @@ id|PF_W
 op_or
 id|PF_X
 suffix:semicolon
-id|dhdr-&gt;p_offset
+id|phdr-&gt;p_offset
 op_assign
 (paren
 r_int
-r_int
 )paren
-id|m
+id|m-&gt;addr
 op_minus
 id|PAGE_OFFSET
 op_plus
-id|PAGE_SIZE
+id|elf_buflen
 suffix:semicolon
-id|dhdr-&gt;p_vaddr
+id|phdr-&gt;p_vaddr
 op_assign
 (paren
 r_int
-r_int
 )paren
-id|m
+id|m-&gt;addr
 suffix:semicolon
-id|dhdr-&gt;p_paddr
+id|phdr-&gt;p_paddr
 op_assign
 id|__pa
 c_func
@@ -938,29 +1160,17 @@ c_func
 id|m
 )paren
 suffix:semicolon
-id|dhdr-&gt;p_filesz
+id|phdr-&gt;p_filesz
+op_assign
+id|phdr-&gt;p_memsz
 op_assign
 id|m-&gt;size
 suffix:semicolon
-id|dhdr-&gt;p_memsz
+id|phdr-&gt;p_align
 op_assign
-id|m-&gt;size
-suffix:semicolon
-id|dhdr-&gt;p_align
-op_assign
-l_int|0
-suffix:semicolon
-id|elf-&gt;e_phnum
-op_increment
+id|PAGE_SIZE
 suffix:semicolon
 )brace
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
-)brace
-macro_line|#endif
 multiline_comment|/*&n;&t; * Set up the notes in similar form to SVR4 core dumps made&n;&t; * with info from their /proc.&n;&t; */
 id|nhdr-&gt;p_offset
 op_assign
@@ -994,7 +1204,8 @@ id|datasz
 op_assign
 r_sizeof
 (paren
-id|prstatus
+r_struct
+id|elf_prstatus
 )paren
 suffix:semicolon
 id|notes
@@ -1017,7 +1228,8 @@ l_int|0
 comma
 r_sizeof
 (paren
-id|prstatus
+r_struct
+id|elf_prstatus
 )paren
 )paren
 suffix:semicolon
@@ -1075,7 +1287,8 @@ id|datasz
 op_assign
 r_sizeof
 (paren
-id|psinfo
+r_struct
+id|elf_prpsinfo
 )paren
 suffix:semicolon
 id|notes
@@ -1086,38 +1299,39 @@ dot
 id|data
 op_assign
 op_amp
-id|psinfo
+id|prpsinfo
 suffix:semicolon
 id|memset
 c_func
 (paren
 op_amp
-id|psinfo
+id|prpsinfo
 comma
 l_int|0
 comma
 r_sizeof
 (paren
-id|psinfo
+r_struct
+id|elf_prpsinfo
 )paren
 )paren
 suffix:semicolon
-id|psinfo.pr_state
+id|prpsinfo.pr_state
 op_assign
 l_int|0
 suffix:semicolon
-id|psinfo.pr_sname
+id|prpsinfo.pr_sname
 op_assign
 l_char|&squot;R&squot;
 suffix:semicolon
-id|psinfo.pr_zomb
+id|prpsinfo.pr_zomb
 op_assign
 l_int|0
 suffix:semicolon
 id|strcpy
 c_func
 (paren
-id|psinfo.pr_fname
+id|prpsinfo.pr_fname
 comma
 l_string|&quot;vmlinux&quot;
 )paren
@@ -1125,7 +1339,7 @@ suffix:semicolon
 id|strncpy
 c_func
 (paren
-id|psinfo.pr_psargs
+id|prpsinfo.pr_psargs
 comma
 id|saved_command_line
 comma
@@ -1186,8 +1400,8 @@ id|datasz
 op_assign
 r_sizeof
 (paren
-op_star
-id|current
+r_struct
+id|task_struct
 )paren
 suffix:semicolon
 id|notes
@@ -1230,6 +1444,7 @@ multiline_comment|/* end elf_kcore_store_hdr() */
 multiline_comment|/*****************************************************************************/
 multiline_comment|/*&n; * read from the ELF header and then kernel memory&n; */
 DECL|function|read_kcore
+r_static
 id|ssize_t
 id|read_kcore
 c_func
@@ -1253,6 +1468,8 @@ id|fpos
 (brace
 id|ssize_t
 id|acc
+op_assign
+l_int|0
 suffix:semicolon
 r_int
 id|size
@@ -1261,9 +1478,18 @@ id|tsz
 suffix:semicolon
 r_char
 op_star
-id|page
+id|elf_buffer
 suffix:semicolon
-multiline_comment|/* work out how much file we allow to be read */
+r_int
+id|elf_buflen
+op_assign
+l_int|0
+comma
+id|num_vma
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* XXX we need to somehow lock vmlist between here&n;&t; * and after elf_kcore_store_hdr() returns.&n;&t; * For now assume that num_vma does not change (TA)&n;&t; */
 id|proc_root_kcore.size
 op_assign
 id|size
@@ -1271,13 +1497,13 @@ op_assign
 id|get_kcore_size
 c_func
 (paren
+op_amp
+id|num_vma
+comma
+op_amp
+id|elf_buflen
 )paren
 suffix:semicolon
-id|acc
-op_assign
-l_int|0
-suffix:semicolon
-multiline_comment|/* see if file pointer already beyond EOF */
 r_if
 c_cond
 (paren
@@ -1318,35 +1544,12 @@ c_cond
 op_star
 id|fpos
 OL
-id|PAGE_SIZE
+id|elf_buflen
 )paren
 (brace
-multiline_comment|/* get a buffer */
-id|page
-op_assign
-(paren
-r_char
-op_star
-)paren
-id|__get_free_page
-c_func
-(paren
-id|GFP_KERNEL
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|page
-)paren
-r_return
-op_minus
-id|ENOMEM
-suffix:semicolon
 id|tsz
 op_assign
-id|PAGE_SIZE
+id|elf_buflen
 op_minus
 op_star
 id|fpos
@@ -1362,32 +1565,60 @@ id|tsz
 op_assign
 id|buflen
 suffix:semicolon
-multiline_comment|/* create a header */
+id|elf_buffer
+op_assign
+id|kmalloc
+c_func
+(paren
+id|elf_buflen
+comma
+id|GFP_KERNEL
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|elf_buffer
+)paren
+r_return
+op_minus
+id|ENOMEM
+suffix:semicolon
 id|memset
 c_func
 (paren
-id|page
+id|elf_buffer
 comma
 l_int|0
 comma
-id|PAGE_SIZE
+id|elf_buflen
 )paren
 suffix:semicolon
 id|elf_kcore_store_hdr
 c_func
 (paren
-id|page
+id|elf_buffer
+comma
+id|num_vma
+comma
+id|elf_buflen
 )paren
 suffix:semicolon
-multiline_comment|/* copy data to the users buffer */
 id|copy_to_user
 c_func
 (paren
 id|buffer
 comma
-id|page
+id|elf_buffer
 comma
 id|tsz
+)paren
+suffix:semicolon
+id|kfree
+c_func
+(paren
+id|elf_buffer
 )paren
 suffix:semicolon
 id|buflen
@@ -1406,16 +1637,6 @@ suffix:semicolon
 id|acc
 op_add_assign
 id|tsz
-suffix:semicolon
-id|free_page
-c_func
-(paren
-(paren
-r_int
-r_int
-)paren
-id|page
-)paren
 suffix:semicolon
 multiline_comment|/* leave now if filled buffer already */
 r_if
@@ -1438,16 +1659,16 @@ op_star
 id|fpos
 OL
 id|PAGE_SIZE
-op_star
-l_int|2
+op_plus
+id|elf_buflen
 )paren
 (brace
 multiline_comment|/* work out how much to clear */
 id|tsz
 op_assign
 id|PAGE_SIZE
-op_star
-l_int|2
+op_plus
+id|elf_buflen
 op_minus
 op_star
 id|fpos
@@ -1551,6 +1772,5 @@ r_return
 id|acc
 suffix:semicolon
 )brace
-multiline_comment|/* end read_kcore() */
-macro_line|#endif
+macro_line|#endif /* CONFIG_KCORE_AOUT */
 eof

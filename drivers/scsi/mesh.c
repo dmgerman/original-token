@@ -100,27 +100,6 @@ DECL|macro|ALLOW_DEBUG
 mdefine_line|#define ALLOW_DEBUG(tgt)&t;((mesh_debug_targets &gt;&gt; (tgt)) &amp; 1)
 DECL|macro|DEBUG_TARGET
 mdefine_line|#define DEBUG_TARGET(cmd)&t;((cmd) &amp;&amp; ALLOW_DEBUG((cmd)-&gt;target))
-DECL|variable|proc_scsi_mesh
-r_struct
-id|proc_dir_entry
-id|proc_scsi_mesh
-op_assign
-(brace
-id|PROC_SCSI_MESH
-comma
-l_int|4
-comma
-l_string|&quot;mesh&quot;
-comma
-id|S_IFDIR
-op_or
-id|S_IRUGO
-op_or
-id|S_IXUGO
-comma
-l_int|2
-)brace
-suffix:semicolon
 DECL|macro|MESH_DBG
 macro_line|#undef MESH_DBG
 DECL|macro|N_DBG_LOG

@@ -483,12 +483,7 @@ macro_line|#ifndef NULL
 DECL|macro|NULL
 mdefine_line|#define NULL 0
 macro_line|#endif
-r_extern
-r_struct
-id|proc_dir_entry
-id|proc_scsi_aha1740
-suffix:semicolon
 DECL|macro|AHA1740
-mdefine_line|#define AHA1740 {  proc_dir:       &amp;proc_scsi_aha1740,&t;&t;&t;&bslash;&n;&t;&t;   proc_info:      aha1740_proc_info,&t;                &bslash;&n;&t;&t;   name:           &quot;Adaptec 174x (EISA)&quot;,&t;&t;&bslash;&n;&t;&t;   detect:         aha1740_detect,&t;&t;&t;&bslash;&n;&t;&t;   command:        aha1740_command,&t;&t;&t;&bslash;&n;&t;&t;   queuecommand:   aha1740_queuecommand,&t;&t;&bslash;&n;&t;&t;   abort:          aha1740_abort,&t;&t;&t;&bslash;&n;&t;&t;   reset:          aha1740_reset,&t;&t;&t;&bslash;&n;&t;&t;   bios_param:     aha1740_biosparam,                   &bslash;&n;&t;&t;   can_queue:      AHA1740_ECBS, &t;&t;&t;&bslash;&n;&t;&t;   this_id:        7, &t;&t;&t;&t;&t;&bslash;&n;&t;&t;   sg_tablesize:   AHA1740_SCATTER, &t;&t;&t;&bslash;&n;&t;&t;   cmd_per_lun:    AHA1740_CMDLUN, &t;&t;&t;&bslash;&n;&t;&t;   use_clustering: ENABLE_CLUSTERING}
+mdefine_line|#define AHA1740 {  proc_name:      &quot;aha1740&quot;,&t;&t;&t;&t;&bslash;&n;&t;&t;   proc_info:      aha1740_proc_info,&t;                &bslash;&n;&t;&t;   name:           &quot;Adaptec 174x (EISA)&quot;,&t;&t;&bslash;&n;&t;&t;   detect:         aha1740_detect,&t;&t;&t;&bslash;&n;&t;&t;   command:        aha1740_command,&t;&t;&t;&bslash;&n;&t;&t;   queuecommand:   aha1740_queuecommand,&t;&t;&bslash;&n;&t;&t;   abort:          aha1740_abort,&t;&t;&t;&bslash;&n;&t;&t;   reset:          aha1740_reset,&t;&t;&t;&bslash;&n;&t;&t;   bios_param:     aha1740_biosparam,                   &bslash;&n;&t;&t;   can_queue:      AHA1740_ECBS, &t;&t;&t;&bslash;&n;&t;&t;   this_id:        7, &t;&t;&t;&t;&t;&bslash;&n;&t;&t;   sg_tablesize:   AHA1740_SCATTER, &t;&t;&t;&bslash;&n;&t;&t;   cmd_per_lun:    AHA1740_CMDLUN, &t;&t;&t;&bslash;&n;&t;&t;   use_clustering: ENABLE_CLUSTERING}
 macro_line|#endif
 eof

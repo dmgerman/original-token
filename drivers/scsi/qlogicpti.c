@@ -668,28 +668,6 @@ DECL|macro|REQ_QUEUE_DEPTH
 mdefine_line|#define REQ_QUEUE_DEPTH(in, out)&t;QUEUE_DEPTH(in, out, &t;&t;     &bslash;&n;&t;&t;&t;&t;&t;&t;    QLOGICISP_REQ_QUEUE_LEN)
 DECL|macro|RES_QUEUE_DEPTH
 mdefine_line|#define RES_QUEUE_DEPTH(in, out)&t;QUEUE_DEPTH(in, out, RES_QUEUE_LEN)
-DECL|variable|proc_scsi_qlogicpti
-r_static
-r_struct
-id|proc_dir_entry
-id|proc_scsi_qlogicpti
-op_assign
-(brace
-id|PROC_SCSI_QLOGICPTI
-comma
-l_int|7
-comma
-l_string|&quot;qlogicpti&quot;
-comma
-id|S_IFDIR
-op_or
-id|S_IRUGO
-op_or
-id|S_IXUGO
-comma
-l_int|2
-)brace
-suffix:semicolon
 DECL|function|qlogicpti_enable_irqs
 r_static
 r_inline
@@ -3201,10 +3179,9 @@ suffix:semicolon
 r_int
 id|is_pti
 suffix:semicolon
-id|tpnt-&gt;proc_dir
+id|tpnt-&gt;proc_name
 op_assign
-op_amp
-id|proc_scsi_qlogicpti
+l_string|&quot;qlogicpti&quot;
 suffix:semicolon
 id|qptichain
 op_assign

@@ -1,4 +1,4 @@
-multiline_comment|/*======================================================================&n;&n;    PCMCIA Card Services -- core services&n;&n;    cs.c 1.232 1999/10/20 22:17:24&n;    &n;    The contents of this file are subject to the Mozilla Public&n;    License Version 1.1 (the &quot;License&quot;); you may not use this file&n;    except in compliance with the License. You may obtain a copy of&n;    the License at http://www.mozilla.org/MPL/&n;&n;    Software distributed under the License is distributed on an &quot;AS&n;    IS&quot; basis, WITHOUT WARRANTY OF ANY KIND, either express or&n;    implied. See the License for the specific language governing&n;    rights and limitations under the License.&n;&n;    The initial developer of the original code is David A. Hinds&n;    &lt;dhinds@hyper.stanford.edu&gt;.  Portions created by David A. Hinds&n;    are Copyright (C) 1999 David A. Hinds.  All Rights Reserved.&n;&n;    Alternatively, the contents of this file may be used under the&n;    terms of the GNU Public License version 2 (the &quot;GPL&quot;), in which&n;    case the provisions of the GPL are applicable instead of the&n;    above.  If you wish to allow the use of your version of this file&n;    only under the terms of the GPL and not to allow others to use&n;    your version of this file under the MPL, indicate your decision&n;    by deleting the provisions above and replace them with the notice&n;    and other provisions required by the GPL.  If you do not delete&n;    the provisions above, a recipient may use your version of this&n;    file under either the MPL or the GPL.&n;    &n;======================================================================*/
+multiline_comment|/*======================================================================&n;&n;    PCMCIA Card Services -- core services&n;&n;    cs.c 1.235 1999/11/11 17:52:05&n;    &n;    The contents of this file are subject to the Mozilla Public&n;    License Version 1.1 (the &quot;License&quot;); you may not use this file&n;    except in compliance with the License. You may obtain a copy of&n;    the License at http://www.mozilla.org/MPL/&n;&n;    Software distributed under the License is distributed on an &quot;AS&n;    IS&quot; basis, WITHOUT WARRANTY OF ANY KIND, either express or&n;    implied. See the License for the specific language governing&n;    rights and limitations under the License.&n;&n;    The initial developer of the original code is David A. Hinds&n;    &lt;dhinds@pcmcia.sourceforge.org&gt;.  Portions created by David A. Hinds&n;    are Copyright (C) 1999 David A. Hinds.  All Rights Reserved.&n;&n;    Alternatively, the contents of this file may be used under the&n;    terms of the GNU Public License version 2 (the &quot;GPL&quot;), in which&n;    case the provisions of the GPL are applicable instead of the&n;    above.  If you wish to allow the use of your version of this file&n;    only under the terms of the GPL and not to allow others to use&n;    your version of this file under the MPL, indicate your decision&n;    by deleting the provisions above and replace them with the notice&n;    and other provisions required by the GPL.  If you do not delete&n;    the provisions above, a recipient may use your version of this&n;    file under either the MPL or the GPL.&n;    &n;======================================================================*/
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -62,7 +62,7 @@ r_char
 op_star
 id|version
 op_assign
-l_string|&quot;cs.c 1.232 1999/10/20 22:17:24 (David Hinds)&quot;
+l_string|&quot;cs.c 1.235 1999/11/11 17:52:05 (David Hinds)&quot;
 suffix:semicolon
 macro_line|#endif
 DECL|variable|release
@@ -149,7 +149,7 @@ id|vcc_settle
 op_assign
 id|HZ
 op_star
-l_int|3
+l_int|4
 op_div
 l_int|10
 suffix:semicolon
@@ -1012,6 +1012,7 @@ suffix:semicolon
 multiline_comment|/*====================================================================*/
 macro_line|#if defined(CONFIG_PROC_FS) &amp;&amp; defined(PCMCIA_DEBUG)
 DECL|function|proc_read_clients
+r_static
 r_int
 id|proc_read_clients
 c_func
@@ -3122,6 +3123,9 @@ comma
 id|ioaddr_t
 id|num
 comma
+id|u_int
+id|lines
+comma
 r_char
 op_star
 id|name
@@ -3132,7 +3136,106 @@ id|i
 suffix:semicolon
 id|ioaddr_t
 r_try
+comma
+id|align
 suffix:semicolon
+id|align
+op_assign
+(paren
+op_star
+id|base
+)paren
+ques
+c_cond
+(paren
+l_int|1
+op_lshift
+id|lines
+)paren
+suffix:colon
+l_int|1
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|align
+op_logical_and
+(paren
+id|align
+OL
+id|num
+)paren
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_INFO
+l_string|&quot;odd IO request: num %04x align %04x&bslash;n&quot;
+comma
+id|num
+comma
+id|align
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_star
+id|base
+)paren
+id|align
+op_assign
+l_int|0
+suffix:semicolon
+r_else
+r_while
+c_loop
+(paren
+id|align
+op_logical_and
+(paren
+id|align
+OL
+id|num
+)paren
+)paren
+id|align
+op_lshift_assign
+l_int|1
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+op_star
+id|base
+op_amp
+op_complement
+(paren
+id|align
+op_minus
+l_int|1
+)paren
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_INFO
+l_string|&quot;odd IO request: base %04x align %04x&bslash;n&quot;
+comma
+op_star
+id|base
+comma
+id|align
+)paren
+suffix:semicolon
+id|align
+op_assign
+l_int|0
+suffix:semicolon
+)brace
 r_for
 c_loop
 (paren
@@ -3170,6 +3273,8 @@ c_func
 id|base
 comma
 id|num
+comma
+id|align
 comma
 id|name
 )paren
@@ -3280,6 +3385,8 @@ r_try
 comma
 id|num
 comma
+l_int|0
+comma
 id|name
 )paren
 op_eq
@@ -3351,6 +3458,8 @@ op_amp
 r_try
 comma
 id|num
+comma
+l_int|0
 comma
 id|name
 )paren
@@ -8008,6 +8117,8 @@ id|req-&gt;BasePort1
 comma
 id|req-&gt;NumPorts1
 comma
+id|req-&gt;IOAddrLines
+comma
 id|handle-&gt;dev_info
 )paren
 )paren
@@ -8034,6 +8145,8 @@ op_amp
 id|req-&gt;BasePort2
 comma
 id|req-&gt;NumPorts2
+comma
+id|req-&gt;IOAddrLines
 comma
 id|handle-&gt;dev_info
 )paren
@@ -8660,13 +8773,6 @@ comma
 id|win-&gt;size
 comma
 (paren
-op_star
-id|handle
-)paren
-op_member_access_from_pointer
-id|dev_info
-comma
-(paren
 id|align
 ques
 c_cond
@@ -8687,6 +8793,13 @@ id|s-&gt;cap.features
 op_amp
 id|SS_CAP_PAGE_REGS
 )paren
+comma
+(paren
+op_star
+id|handle
+)paren
+op_member_access_from_pointer
+id|dev_info
 )paren
 )paren
 r_return
@@ -10553,6 +10666,15 @@ c_func
 id|MTDHelperEntry
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_PROC_FS
+DECL|variable|proc_pccard
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|proc_pccard
+)paren
+suffix:semicolon
+macro_line|#endif
 DECL|function|init_pcmcia_cs
 r_static
 r_int

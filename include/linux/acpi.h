@@ -165,32 +165,46 @@ id|acpi_dstate_t
 id|state
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * ACPI device information&n; */
-DECL|struct|acpi_dev
+multiline_comment|/*&n; * Static device information&n; */
+DECL|struct|acpi_dev_info
 r_struct
-id|acpi_dev
+id|acpi_dev_info
 (brace
 DECL|member|type
 id|acpi_dev_t
 id|type
 suffix:semicolon
 multiline_comment|/* device type */
+DECL|member|hid
+id|acpi_hid_t
+id|hid
+suffix:semicolon
+multiline_comment|/* PnP identifier */
+DECL|member|transition
+id|acpi_transition
+id|transition
+suffix:semicolon
+multiline_comment|/* state transition callback */
+multiline_comment|/* other information like D-states supported,&n;&t; * D-state latencies, and in-rush current needs&n;&t; * will go here&n;&t; */
+)brace
+suffix:semicolon
+multiline_comment|/*&n; * Dynamic device information&n; */
+DECL|struct|acpi_dev
+r_struct
+id|acpi_dev
+(brace
+DECL|member|info
+r_struct
+id|acpi_dev_info
+id|info
+suffix:semicolon
+multiline_comment|/* static device info */
 DECL|member|adr
 r_int
 r_int
 id|adr
 suffix:semicolon
 multiline_comment|/* bus address or unique id */
-DECL|member|hid
-id|acpi_hid_t
-id|hid
-suffix:semicolon
-multiline_comment|/* P&amp;P identifier */
-DECL|member|transition
-id|acpi_transition
-id|transition
-suffix:semicolon
-multiline_comment|/* state transition callback */
 DECL|member|state
 id|acpi_dstate_t
 id|state
@@ -228,18 +242,14 @@ op_star
 id|acpi_register
 c_func
 (paren
-id|acpi_dev_t
-id|type
+r_struct
+id|acpi_dev_info
+op_star
+id|info
 comma
 r_int
 r_int
 id|adr
-comma
-id|acpi_hid_t
-id|hid
-comma
-id|acpi_transition
-id|trans
 )paren
 suffix:semicolon
 multiline_comment|/*&n; * Unregister a device with ACPI&n; */
@@ -275,9 +285,14 @@ c_func
 r_struct
 id|acpi_dev
 op_star
-id|dev
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|dev
+)paren
+(brace
 r_if
 c_cond
 (paren
@@ -296,6 +311,7 @@ op_assign
 id|jiffies
 suffix:semicolon
 )brace
+)brace
 multiline_comment|/*&n; * Identify device as currently being idle&n; */
 DECL|function|acpi_dev_idle
 r_extern
@@ -307,6 +323,12 @@ c_func
 r_struct
 id|acpi_dev
 op_star
+id|dev
+)paren
+(brace
+r_if
+c_cond
+(paren
 id|dev
 )paren
 (brace
@@ -332,6 +354,7 @@ id|acpi_idle_wait
 )paren
 suffix:semicolon
 )brace
+)brace
 macro_line|#else /* CONFIG_ACPI */
 r_extern
 r_inline
@@ -342,18 +365,14 @@ DECL|function|acpi_register
 id|acpi_register
 c_func
 (paren
-id|acpi_dev_t
-id|type
+r_struct
+id|acpi_dev_info
+op_star
+id|info
 comma
 r_int
 r_int
 id|adr
-comma
-id|acpi_hid_t
-id|hid
-comma
-id|acpi_transition
-id|trans
 )paren
 (brace
 r_return
@@ -440,6 +459,8 @@ DECL|macro|ACPI_FACP_SIG
 mdefine_line|#define ACPI_FACP_SIG  0x50434146 /* &squot;FACP&squot; */
 DECL|macro|ACPI_DSDT_SIG
 mdefine_line|#define ACPI_DSDT_SIG  0x54445344 /* &squot;DSDT&squot; */
+DECL|macro|ACPI_FACS_SIG
+mdefine_line|#define ACPI_FACS_SIG  0x53434146 /* &squot;FACS&squot; */
 multiline_comment|/* PM1_STS/EN flags */
 DECL|macro|ACPI_TMR
 mdefine_line|#define ACPI_TMR    0x0001
@@ -543,6 +564,12 @@ id|__u32
 id|rsdt
 suffix:semicolon
 )brace
+id|__attribute__
+(paren
+(paren
+id|packed
+)paren
+)paren
 suffix:semicolon
 DECL|struct|acpi_table
 r_struct
@@ -591,6 +618,12 @@ id|__u32
 id|creator_rev
 suffix:semicolon
 )brace
+id|__attribute__
+(paren
+(paren
+id|packed
+)paren
+)paren
 suffix:semicolon
 DECL|struct|acpi_facp
 r_struct
@@ -758,6 +791,12 @@ id|__u32
 id|flags
 suffix:semicolon
 )brace
+id|__attribute__
+(paren
+(paren
+id|packed
+)paren
+)paren
 suffix:semicolon
 DECL|struct|acpi_facs
 r_struct
@@ -788,6 +827,12 @@ id|__u32
 id|flags
 suffix:semicolon
 )brace
+id|__attribute__
+(paren
+(paren
+id|packed
+)paren
+)paren
 suffix:semicolon
 multiline_comment|/*&n; * Sysctl declarations&n; */
 r_enum
@@ -834,9 +879,6 @@ id|ACPI_P_LVL3_LAT
 comma
 DECL|enumerator|ACPI_S5_SLP_TYP
 id|ACPI_S5_SLP_TYP
-comma
-DECL|enumerator|ACPI_KBD
-id|ACPI_KBD
 comma
 )brace
 suffix:semicolon

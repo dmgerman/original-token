@@ -19,27 +19,6 @@ macro_line|#include &quot;hosts.h&quot;
 macro_line|#include &quot;53c7xx.h&quot;
 macro_line|#include &quot;amiga7xx.h&quot;
 macro_line|#include&lt;linux/stat.h&gt;
-DECL|variable|proc_scsi_amiga7xx
-r_struct
-id|proc_dir_entry
-id|proc_scsi_amiga7xx
-op_assign
-(brace
-id|PROC_SCSI_AMIGA7XX
-comma
-l_int|8
-comma
-l_string|&quot;Amiga7xx&quot;
-comma
-id|S_IFDIR
-op_or
-id|S_IRUGO
-op_or
-id|S_IXUGO
-comma
-l_int|2
-)brace
-suffix:semicolon
 r_extern
 r_int
 id|ncr53c7xx_init
@@ -124,10 +103,9 @@ id|MACH_IS_AMIGA
 r_return
 l_int|0
 suffix:semicolon
-id|tpnt-&gt;proc_dir
+id|tpnt-&gt;proc_name
 op_assign
-op_amp
-id|proc_scsi_amiga7xx
+l_string|&quot;Amiga7xx&quot;
 suffix:semicolon
 macro_line|#ifdef CONFIG_BLZ603EPLUS_SCSI
 r_if

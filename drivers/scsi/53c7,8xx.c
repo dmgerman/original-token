@@ -81,29 +81,6 @@ macro_line|#include &quot;constants.h&quot;
 macro_line|#include &quot;sd.h&quot;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/stddef.h&gt;
-macro_line|#ifndef LINUX_1_2
-DECL|variable|proc_scsi_ncr53c7xx
-r_struct
-id|proc_dir_entry
-id|proc_scsi_ncr53c7xx
-op_assign
-(brace
-id|PROC_SCSI_NCR53C7xx
-comma
-l_int|9
-comma
-l_string|&quot;ncr53c7xx&quot;
-comma
-id|S_IFDIR
-op_or
-id|S_IRUGO
-op_or
-id|S_IXUGO
-comma
-l_int|2
-)brace
-suffix:semicolon
-macro_line|#endif
 r_static
 r_int
 id|check_address
@@ -4275,13 +4252,10 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* Device index to PCI BIOS calls */
-macro_line|#ifndef LINUX_1_2
-id|tpnt-&gt;proc_dir
+id|tpnt-&gt;proc_name
 op_assign
-op_amp
-id|proc_scsi_ncr53c7xx
+l_string|&quot;ncr53c7xx&quot;
 suffix:semicolon
-macro_line|#endif
 r_for
 c_loop
 (paren

@@ -776,11 +776,11 @@ DECL|macro|GFP_DMA_32BIT
 mdefine_line|#define GFP_DMA_32BIT&t;0&t;/* Will this flag ever exist */
 macro_line|#endif
 macro_line|#if LINUX_VERSION_CODE &gt;= LinuxVersionCode(2,1,0)
-DECL|macro|get_pages
-mdefine_line|#define get_pages(order) __get_free_pages(GFP_ATOMIC | GFP_DMA_32BIT, order)
+DECL|macro|sym53c8xx_get_pages
+mdefine_line|#define sym53c8xx_get_pages(order) __get_free_pages(GFP_ATOMIC | GFP_DMA_32BIT, order)
 macro_line|#else
-DECL|macro|get_pages
-mdefine_line|#define get_pages(order) __get_free_pages(GFP_ATOMIC | GFP_DMA_32BIT, order, 0)
+DECL|macro|sym53c8xx_get_pages
+mdefine_line|#define sym53c8xx_get_pages(order) __get_free_pages(GFP_ATOMIC | GFP_DMA_32BIT, order, 0)
 macro_line|#endif
 multiline_comment|/*&n;**&t;Lists of available memory chunks.&n;**&t;Starts with 16 bytes chunks until 1 PAGE chunks.&n;*/
 DECL|variable|h
@@ -900,7 +900,7 @@ r_struct
 id|m_link
 op_star
 )paren
-id|get_pages
+id|sym53c8xx_get_pages
 c_func
 (paren
 id|MEMO_PAGE_ORDER
@@ -1501,28 +1501,6 @@ op_assign
 l_int|NULL
 suffix:semicolon
 multiline_comment|/*&n;**&t;/proc directory entry and proc_info function&n;*/
-DECL|variable|proc_scsi_sym53c8xx
-r_static
-r_struct
-id|proc_dir_entry
-id|proc_scsi_sym53c8xx
-op_assign
-(brace
-id|PROC_SCSI_SYM53C8XX
-comma
-l_int|9
-comma
-id|NAME53C8XX
-comma
-id|S_IFDIR
-op_or
-id|S_IRUGO
-op_or
-id|S_IXUGO
-comma
-l_int|2
-)brace
-suffix:semicolon
 macro_line|#ifdef SCSI_NCR_PROC_INFO_SUPPORT
 r_static
 r_int
@@ -33168,10 +33146,9 @@ l_int|0
 suffix:semicolon
 multiline_comment|/*&n;&t;**    Initialize driver general stuff.&n;&t;*/
 macro_line|#ifdef SCSI_NCR_PROC_INFO_SUPPORT
-id|tpnt-&gt;proc_dir
+id|tpnt-&gt;proc_name
 op_assign
-op_amp
-id|proc_scsi_sym53c8xx
+id|NAME53C8XX
 suffix:semicolon
 id|tpnt-&gt;proc_info
 op_assign

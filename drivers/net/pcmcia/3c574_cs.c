@@ -1,4 +1,4 @@
-multiline_comment|/* 3c574.c: A PCMCIA ethernet driver for the 3com 3c574 &quot;RoadRunner&quot;.&n;&n;&t;Written 1993-1998 by&n;&t;Donald Becker, becker@cesdis.gsfc.nasa.gov, (driver core) and&n;&t;David Hinds, dhinds@allegro.stanford.edu (derived from his PC card code).&n;&n;&t;This software may be used and distributed according to the terms of&n;&t;the GNU Public License, incorporated herein by reference.&n;&n;&t;This driver derives from Donald Becker&squot;s 3c509 core, which has the&n;&t;following copyright:&n;&t;Copyright 1993 United States Government as represented by the&n;&t;Director, National Security Agency.&n;&n;*/
+multiline_comment|/* 3c574.c: A PCMCIA ethernet driver for the 3com 3c574 &quot;RoadRunner&quot;.&n;&n;&t;Written 1993-1998 by&n;&t;Donald Becker, becker@cesdis.gsfc.nasa.gov, (driver core) and&n;&t;David Hinds, dhinds@pcmcia.sourceforge.org (from his PC card code).&n;&n;&t;This software may be used and distributed according to the terms of&n;&t;the GNU Public License, incorporated herein by reference.&n;&n;&t;This driver derives from Donald Becker&squot;s 3c509 core, which has the&n;&t;following copyright:&n;&t;Copyright 1993 United States Government as represented by the&n;&t;Director, National Security Agency.&n;&n;*/
 multiline_comment|/* Driver author info must always be in the binary.  Version too.. */
 DECL|variable|tc574_version
 r_static
@@ -1249,10 +1249,6 @@ id|link-&gt;io.Attributes1
 op_assign
 id|IO_DATA_PATH_WIDTH_16
 suffix:semicolon
-id|link-&gt;io.IOAddrLines
-op_assign
-l_int|5
-suffix:semicolon
 id|link-&gt;irq.Attributes
 op_assign
 id|IRQ_TYPE_EXCLUSIVE
@@ -1926,6 +1922,10 @@ multiline_comment|/* Configure card */
 id|link-&gt;state
 op_or_assign
 id|DEV_CONFIG
+suffix:semicolon
+id|link-&gt;io.IOAddrLines
+op_assign
+l_int|16
 suffix:semicolon
 r_for
 c_loop

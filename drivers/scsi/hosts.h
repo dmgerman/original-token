@@ -345,6 +345,12 @@ id|emulated
 suffix:colon
 l_int|1
 suffix:semicolon
+multiline_comment|/*&n;     * Name of proc directory&n;     */
+DECL|member|proc_name
+r_char
+op_star
+id|proc_name
+suffix:semicolon
 DECL|typedef|Scsi_Host_Template
 )brace
 id|Scsi_Host_Template
@@ -449,6 +455,13 @@ r_int
 id|host_no
 suffix:semicolon
 multiline_comment|/* Used for IOCTL_GET_IDLUN, /proc/scsi et al. */
+DECL|member|proc_name
+r_char
+id|proc_name
+(braket
+l_int|4
+)braket
+suffix:semicolon
 DECL|member|resetting
 r_int
 id|resetting

@@ -17,27 +17,6 @@ macro_line|#include &quot;hosts.h&quot;
 macro_line|#include &quot;wd33c93.h&quot;
 macro_line|#include &quot;gvp11.h&quot;
 macro_line|#include&lt;linux/stat.h&gt;
-DECL|variable|proc_scsi_gvp11
-r_struct
-id|proc_dir_entry
-id|proc_scsi_gvp11
-op_assign
-(brace
-id|PROC_SCSI_GVP11
-comma
-l_int|5
-comma
-l_string|&quot;GVP11&quot;
-comma
-id|S_IFDIR
-op_or
-id|S_IRUGO
-op_or
-id|S_IXUGO
-comma
-l_int|2
-)brace
-suffix:semicolon
 DECL|macro|DMA
 mdefine_line|#define DMA(ptr) ((gvp11_scsiregs *)((ptr)-&gt;base))
 DECL|macro|HDATA
@@ -913,10 +892,9 @@ id|called
 op_assign
 l_int|1
 suffix:semicolon
-id|tpnt-&gt;proc_dir
+id|tpnt-&gt;proc_name
 op_assign
-op_amp
-id|proc_scsi_gvp11
+l_string|&quot;GVP11&quot;
 suffix:semicolon
 id|tpnt-&gt;proc_info
 op_assign

@@ -121,27 +121,6 @@ DECL|macro|SPIN_UNLOCK
 mdefine_line|#define SPIN_UNLOCK spin_unlock_irq(&amp;io_request_lock);
 DECL|macro|SPIN_UNLOCK_RESTORE
 mdefine_line|#define SPIN_UNLOCK_RESTORE &bslash;&n;                  spin_unlock_irqrestore(&amp;io_request_lock, spin_flags);
-DECL|variable|proc_scsi_u14_34f
-r_struct
-id|proc_dir_entry
-id|proc_scsi_u14_34f
-op_assign
-(brace
-id|PROC_SCSI_U14_34F
-comma
-l_int|6
-comma
-l_string|&quot;u14_34f&quot;
-comma
-id|S_IFDIR
-op_or
-id|S_IRUGO
-op_or
-id|S_IXUGO
-comma
-l_int|2
-)brace
-suffix:semicolon
 multiline_comment|/* Values for the PRODUCT_ID ports for the 14/34F */
 DECL|macro|PRODUCT_ID1
 mdefine_line|#define PRODUCT_ID1  0x56
@@ -3354,10 +3333,9 @@ l_int|0
 comma
 id|k
 suffix:semicolon
-id|tpnt-&gt;proc_dir
+id|tpnt-&gt;proc_name
 op_assign
-op_amp
-id|proc_scsi_u14_34f
+l_string|&quot;u14-34f&quot;
 suffix:semicolon
 r_if
 c_cond

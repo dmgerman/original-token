@@ -27,27 +27,6 @@ macro_line|#include &quot;eata_dma.h&quot;
 macro_line|#include &quot;eata_dma_proc.h&quot; 
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/config.h&gt;&t;/* for CONFIG_PCI */
-DECL|variable|proc_scsi_eata_dma
-r_struct
-id|proc_dir_entry
-id|proc_scsi_eata_dma
-op_assign
-(brace
-id|PROC_SCSI_EATA
-comma
-l_int|8
-comma
-l_string|&quot;eata_dma&quot;
-comma
-id|S_IFDIR
-op_or
-id|S_IRUGO
-op_or
-id|S_IXUGO
-comma
-l_int|2
-)brace
-suffix:semicolon
 DECL|variable|ISAbases
 r_static
 id|u32
@@ -7899,10 +7878,9 @@ l_string|&quot;Using lots of delays to let you read the debugging output&bslash;
 )paren
 )paren
 suffix:semicolon
-id|tpnt-&gt;proc_dir
+id|tpnt-&gt;proc_name
 op_assign
-op_amp
-id|proc_scsi_eata_dma
+l_string|&quot;eata_dma&quot;
 suffix:semicolon
 id|status
 op_assign

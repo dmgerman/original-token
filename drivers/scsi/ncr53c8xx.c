@@ -952,28 +952,6 @@ op_assign
 l_int|NULL
 suffix:semicolon
 multiline_comment|/*&n;**&t;/proc directory entry and proc_info function&n;*/
-DECL|variable|proc_scsi_ncr53c8xx
-r_static
-r_struct
-id|proc_dir_entry
-id|proc_scsi_ncr53c8xx
-op_assign
-(brace
-id|PROC_SCSI_NCR53C8XX
-comma
-l_int|9
-comma
-l_string|&quot;ncr53c8xx&quot;
-comma
-id|S_IFDIR
-op_or
-id|S_IRUGO
-op_or
-id|S_IXUGO
-comma
-l_int|2
-)brace
-suffix:semicolon
 macro_line|#ifdef SCSI_NCR_PROC_INFO_SUPPORT
 r_static
 r_int
@@ -28318,10 +28296,9 @@ op_assign
 id|driver_setup.debug
 suffix:semicolon
 macro_line|#endif
-id|tpnt-&gt;proc_dir
+id|tpnt-&gt;proc_name
 op_assign
-op_amp
-id|proc_scsi_ncr53c8xx
+l_string|&quot;ncr53c8xx&quot;
 suffix:semicolon
 macro_line|#ifdef SCSI_NCR_PROC_INFO_SUPPORT
 id|tpnt-&gt;proc_info

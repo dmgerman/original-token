@@ -3,9 +3,7 @@ macro_line|#ifdef PCMCIA
 DECL|macro|MODULE
 mdefine_line|#define MODULE
 macro_line|#endif
-macro_line|#ifdef MODULE
 macro_line|#include &lt;linux/module.h&gt;
-macro_line|#endif
 macro_line|#ifdef PCMCIA
 DECL|macro|MODULE
 macro_line|#undef MODULE
@@ -26,27 +24,6 @@ macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/config.h&gt;&t;/* for CONFIG_PCI */
-DECL|variable|proc_scsi_fdomain
-r_struct
-id|proc_dir_entry
-id|proc_scsi_fdomain
-op_assign
-(brace
-id|PROC_SCSI_FDOMAIN
-comma
-l_int|7
-comma
-l_string|&quot;fdomain&quot;
-comma
-id|S_IFDIR
-op_or
-id|S_IRUGO
-op_or
-id|S_IXUGO
-comma
-l_int|2
-)brace
-suffix:semicolon
 DECL|macro|VERSION
 mdefine_line|#define VERSION          &quot;$Revision: 5.50 $&quot;
 multiline_comment|/* START OF USER DEFINABLE OPTIONS */
@@ -2384,10 +2361,9 @@ id|buflen
 )braket
 suffix:semicolon
 macro_line|#endif
-id|tpnt-&gt;proc_dir
+id|tpnt-&gt;proc_name
 op_assign
-op_amp
-id|proc_scsi_fdomain
+l_string|&quot;fdomain&quot;
 suffix:semicolon
 macro_line|#ifdef MODULE
 r_if

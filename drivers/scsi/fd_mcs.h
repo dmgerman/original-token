@@ -117,12 +117,7 @@ id|Scsi_Host
 op_star
 )paren
 suffix:semicolon
-r_extern
-r_struct
-id|proc_dir_entry
-id|proc_scsi_fd_mcs
-suffix:semicolon
 DECL|macro|FD_MCS
-mdefine_line|#define FD_MCS {&bslash;&n;                    proc_dir:       &amp;proc_scsi_fd_mcs,          &bslash;&n;                    proc_info:      fd_mcs_proc_info,           &bslash;&n;&t;&t;    detect:         fd_mcs_detect,              &bslash;&n;&t;&t;    release:        fd_mcs_release,             &bslash;&n;&t;&t;    info:           fd_mcs_info,                &bslash;&n;&t;&t;    command:        fd_mcs_command,             &bslash;&n;&t;&t;    queuecommand:   fd_mcs_queue,               &bslash;&n;&t;&t;    abort:          fd_mcs_abort,               &bslash;&n;&t;&t;    reset:          fd_mcs_reset,               &bslash;&n;&t;&t;    bios_param:     fd_mcs_biosparam,           &bslash;&n;&t;&t;    can_queue:      1, &t;&t;&t;&t;&bslash;&n;&t;&t;    this_id:        7, &t;&t;&t;&t;&bslash;&n;&t;&t;    sg_tablesize:   64, &t;&t;&t;&bslash;&n;&t;&t;    cmd_per_lun:    1, &t;&t;&t;&t;&bslash;&n;&t;&t;    use_clustering: DISABLE_CLUSTERING }
+mdefine_line|#define FD_MCS {&bslash;&n;                    proc_name:      &quot;fd_mcs&quot;,                   &bslash;&n;                    proc_info:      fd_mcs_proc_info,           &bslash;&n;&t;&t;    detect:         fd_mcs_detect,              &bslash;&n;&t;&t;    release:        fd_mcs_release,             &bslash;&n;&t;&t;    info:           fd_mcs_info,                &bslash;&n;&t;&t;    command:        fd_mcs_command,             &bslash;&n;&t;&t;    queuecommand:   fd_mcs_queue,               &bslash;&n;&t;&t;    abort:          fd_mcs_abort,               &bslash;&n;&t;&t;    reset:          fd_mcs_reset,               &bslash;&n;&t;&t;    bios_param:     fd_mcs_biosparam,           &bslash;&n;&t;&t;    can_queue:      1, &t;&t;&t;&t;&bslash;&n;&t;&t;    this_id:        7, &t;&t;&t;&t;&bslash;&n;&t;&t;    sg_tablesize:   64, &t;&t;&t;&bslash;&n;&t;&t;    cmd_per_lun:    1, &t;&t;&t;&t;&bslash;&n;&t;&t;    use_clustering: DISABLE_CLUSTERING }
 macro_line|#endif /* _FD_MCS_H */
 eof

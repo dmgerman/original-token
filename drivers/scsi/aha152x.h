@@ -113,14 +113,9 @@ DECL|macro|AHA152X_MAXQUEUE
 mdefine_line|#define AHA152X_MAXQUEUE 7
 DECL|macro|AHA152X_REVID
 mdefine_line|#define AHA152X_REVID &quot;Adaptec 152x SCSI driver; $Revision: 1.7 $&quot;
-r_extern
-r_struct
-id|proc_dir_entry
-id|proc_scsi_aha152x
-suffix:semicolon
 multiline_comment|/* Initial value of Scsi_Host entry */
 DECL|macro|AHA152X
-mdefine_line|#define AHA152X { proc_dir:           &amp;proc_scsi_aha152x, &bslash;&n;                  proc_info:          aha152x_proc_info,  &bslash;&n;                  name:               AHA152X_REVID,&t;  &bslash;&n;                  detect:             aha152x_detect,&t;  &bslash;&n;                  command:&t;      aha152x_command,&t;  &bslash;&n;                  queuecommand:       aha152x_queue,&t;  &bslash;&n;                  abort:              aha152x_abort,&t;  &bslash;&n;                  reset:              aha152x_reset,&t;  &bslash;&n;                  release:            aha152x_release,&t;  &bslash;&n;                  slave_attach:       0,&t;&t;  &bslash;&n;                  bios_param:         aha152x_biosparam,  &bslash;&n;                  can_queue:          1,&t;&t;  &bslash;&n;                  this_id:            7,&t;&t;  &bslash;&n;                  sg_tablesize:       SG_ALL,&t;&t;  &bslash;&n;                  cmd_per_lun:        1,&t;&t;  &bslash;&n;                  present:            0,&t;&t;  &bslash;&n;                  unchecked_isa_dma:  0,&t;&t;  &bslash;&n;                  use_clustering:     DISABLE_CLUSTERING }
+mdefine_line|#define AHA152X { proc_name:          &quot;a152x&quot;,&t;&t;  &bslash;&n;                  proc_info:          aha152x_proc_info,  &bslash;&n;                  name:               AHA152X_REVID,&t;  &bslash;&n;                  detect:             aha152x_detect,&t;  &bslash;&n;                  command:&t;      aha152x_command,&t;  &bslash;&n;                  queuecommand:       aha152x_queue,&t;  &bslash;&n;                  abort:              aha152x_abort,&t;  &bslash;&n;                  reset:              aha152x_reset,&t;  &bslash;&n;                  release:            aha152x_release,&t;  &bslash;&n;                  slave_attach:       0,&t;&t;  &bslash;&n;                  bios_param:         aha152x_biosparam,  &bslash;&n;                  can_queue:          1,&t;&t;  &bslash;&n;                  this_id:            7,&t;&t;  &bslash;&n;                  sg_tablesize:       SG_ALL,&t;&t;  &bslash;&n;                  cmd_per_lun:        1,&t;&t;  &bslash;&n;                  present:            0,&t;&t;  &bslash;&n;                  unchecked_isa_dma:  0,&t;&t;  &bslash;&n;                  use_clustering:     DISABLE_CLUSTERING }
 macro_line|#endif
 multiline_comment|/* port addresses */
 DECL|macro|SCSISEQ

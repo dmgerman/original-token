@@ -1478,8 +1478,9 @@ suffix:semicolon
 id|val-&gt;freeram
 op_assign
 id|nr_free_pages
-op_lshift
-id|PAGE_SHIFT
+c_func
+(paren
+)paren
 suffix:semicolon
 id|val-&gt;bufferram
 op_assign
@@ -5458,12 +5459,6 @@ id|alloc_bootmem_pages
 c_func
 (paren
 id|PAGE_SIZE
-)paren
-suffix:semicolon
-id|free_area_init
-c_func
-(paren
-id|max_low_pfn
 )paren
 suffix:semicolon
 )brace

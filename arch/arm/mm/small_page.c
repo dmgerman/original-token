@@ -14,7 +14,7 @@ macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 DECL|macro|PEDANTIC
 mdefine_line|#define PEDANTIC
-multiline_comment|/*&n; * Requirement:&n; *  We need to be able to allocate naturally aligned memory of finer&n; *  granularity than the page size.  This is typically used for the&n; *  second level page tables on 32-bit ARMs.&n; *&n; * Theory:&n; *  We &quot;misuse&quot; the Linux memory management system.  We use __get_pages&n; *  to allocate a page and then mark it as reserved.  The Linux memory&n; *  management system will then ignore the &quot;offset&quot;, &quot;next_hash&quot; and&n; *  &quot;pprev_hash&quot; entries in the mem_map for this page.&n; *&n; *  We then use a bitstring in the &quot;offset&quot; field to mark which segments&n; *  of the page are in use, and manipulate this as required during the&n; *  allocation and freeing of these small pages.&n; *&n; *  We also maintain a queue of pages being used for this purpose using&n; *  the &quot;next_hash&quot; and &quot;pprev_hash&quot; entries of mem_map;&n; */
+multiline_comment|/*&n; * Requirement:&n; *  We need to be able to allocate naturally aligned memory of finer&n; *  granularity than the page size.  This is typically used for the&n; *  second level page tables on 32-bit ARMs.&n; *&n; * Theory:&n; *  We &quot;misuse&quot; the Linux memory management system.  We use alloc_page&n; *  to allocate a page and then mark it as reserved.  The Linux memory&n; *  management system will then ignore the &quot;offset&quot;, &quot;next_hash&quot; and&n; *  &quot;pprev_hash&quot; entries in the mem_map for this page.&n; *&n; *  We then use a bitstring in the &quot;offset&quot; field to mark which segments&n; *  of the page are in use, and manipulate this as required during the&n; *  allocation and freeing of these small pages.&n; *&n; *  We also maintain a queue of pages being used for this purpose using&n; *  the &quot;next_hash&quot; and &quot;pprev_hash&quot; entries of mem_map;&n; */
 DECL|struct|order
 r_struct
 id|order
@@ -341,12 +341,10 @@ id|need_new_page
 suffix:colon
 id|page
 op_assign
-id|__get_pages
+id|alloc_page
 c_func
 (paren
 id|priority
-comma
-l_int|0
 )paren
 suffix:semicolon
 r_if

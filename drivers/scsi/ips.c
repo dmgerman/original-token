@@ -96,36 +96,6 @@ DECL|macro|IPS_VERSION_HIGH
 mdefine_line|#define IPS_VERSION_HIGH        &quot;1.00&quot;  /* MUST be 4 chars */
 DECL|macro|IPS_VERSION_LOW
 mdefine_line|#define IPS_VERSION_LOW         &quot;.00 &quot;  /* MUST be 4 chars */
-DECL|variable|proc_scsi_ips
-r_struct
-id|proc_dir_entry
-id|proc_scsi_ips
-op_assign
-(brace
-macro_line|#if !defined(PROC_SCSI_IPS)
-l_int|0
-comma
-multiline_comment|/* Use dynamic inode allocation */
-macro_line|#else
-id|PROC_SCSI_IPS
-comma
-macro_line|#endif
-l_int|3
-comma
-l_string|&quot;ips&quot;
-comma
-id|S_IFDIR
-op_or
-id|S_IRUGO
-op_or
-id|S_IXUGO
-comma
-l_int|2
-)brace
-suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &lt; LinuxVersionCode(2,1,93)
-macro_line|#include &lt;linux/bios32.h&gt;
-macro_line|#endif
 macro_line|#if !defined(__i386__)
 macro_line|#error &quot;This driver has only been tested on the x86 platform&quot;
 macro_line|#endif
@@ -964,10 +934,9 @@ id|SHT-&gt;proc_info
 op_assign
 id|ips_proc_info
 suffix:semicolon
-id|SHT-&gt;proc_dir
+id|SHT-&gt;proc_name
 op_assign
-op_amp
-id|proc_scsi_ips
+l_string|&quot;ips&quot;
 suffix:semicolon
 macro_line|#if defined(CONFIG_PCI)
 multiline_comment|/* initalize number of controllers */

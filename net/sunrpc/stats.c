@@ -696,12 +696,10 @@ c_cond
 id|ent
 )paren
 (brace
-macro_line|#ifdef MODULE
-id|ent-&gt;fill_inode
+id|ent-&gt;owner
 op_assign
-id|rpc_modcount
+id|THIS_MODULE
 suffix:semicolon
-macro_line|#endif
 id|proc_net_rpc
 op_assign
 id|ent
@@ -744,32 +742,6 @@ suffix:semicolon
 )brace
 )brace
 macro_line|#ifdef MODULE
-multiline_comment|/*&n; * This is called as the proc_dir_entry fill_inode function&n; * when an inode is going into or out of service (fill == 1&n; * or 0 respectively).&n; *&n; * We use it here to keep the module from being unloaded&n; * while /proc inodes are in use.&n; */
-DECL|function|rpc_modcount
-r_void
-id|rpc_modcount
-c_func
-(paren
-r_struct
-id|inode
-op_star
-id|inode
-comma
-r_int
-id|fill
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|fill
-)paren
-id|MOD_INC_USE_COUNT
-suffix:semicolon
-r_else
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
-)brace
 r_int
 DECL|function|init_module
 id|init_module

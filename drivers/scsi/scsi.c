@@ -11465,33 +11465,27 @@ r_if
 c_cond
 (paren
 id|shpnt-&gt;hostt
-op_eq
+op_ne
 id|tpnt
-)paren
-(brace
-r_if
-c_cond
-(paren
+op_logical_or
+op_logical_neg
 id|shpnt-&gt;loaded_as_module
 )paren
-(brace
+r_continue
+suffix:semicolon
 id|pcount
 op_assign
 id|next_scsi_host
 suffix:semicolon
 multiline_comment|/* Remove the /proc/scsi directory entry */
-macro_line|#ifdef CONFIG_PROC_FS
-id|proc_scsi_unregister
+id|remove_proc_entry
 c_func
 (paren
-id|tpnt-&gt;proc_dir
+id|shpnt-&gt;proc_name
 comma
-id|shpnt-&gt;host_no
-op_plus
-id|PROC_SCSI_FILE
+id|tpnt-&gt;proc_dir
 )paren
 suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -11507,7 +11501,7 @@ id|shpnt
 suffix:semicolon
 r_else
 (brace
-multiline_comment|/* This is the default case for the release function.&n;&t;&t;&t;&t;&t; * It should do the right thing for most correctly&n;&t;&t;&t;&t;&t; * written host adapters.&n;&t;&t;&t;&t;&t; */
+multiline_comment|/* This is the default case for the release function.&n;&t;&t;&t; * It should do the right thing for most correctly&n;&t;&t;&t; * written host adapters.&n;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -11566,8 +11560,6 @@ suffix:semicolon
 id|tpnt-&gt;present
 op_decrement
 suffix:semicolon
-)brace
-)brace
 )brace
 multiline_comment|/*&n;&t; * If there are absolutely no more hosts left, it is safe&n;&t; * to completely nuke the DMA pool.  The resize operation will&n;&t; * do the right thing and free everything.&n;&t; */
 r_if
@@ -11697,16 +11689,14 @@ r_break
 suffix:semicolon
 )brace
 multiline_comment|/* Rebuild the /proc/scsi directory entries */
-macro_line|#ifdef CONFIG_PROC_FS
-id|proc_scsi_unregister
+id|remove_proc_entry
 c_func
 (paren
-id|tpnt-&gt;proc_dir
+id|tpnt-&gt;proc_name
 comma
-id|tpnt-&gt;proc_dir-&gt;low_ino
+id|proc_scsi
 )paren
 suffix:semicolon
-macro_line|#endif
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
 )brace

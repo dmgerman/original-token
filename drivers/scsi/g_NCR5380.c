@@ -48,27 +48,6 @@ macro_line|#include &quot;sd.h&quot;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include&lt;linux/ioport.h&gt;
-DECL|variable|proc_scsi_g_ncr5380
-r_struct
-id|proc_dir_entry
-id|proc_scsi_g_ncr5380
-op_assign
-(brace
-id|PROC_SCSI_GENERIC_NCR5380
-comma
-l_int|9
-comma
-l_string|&quot;g_NCR5380&quot;
-comma
-id|S_IFDIR
-op_or
-id|S_IRUGO
-op_or
-id|S_IXUGO
-comma
-l_int|2
-)brace
-suffix:semicolon
 DECL|macro|NCR_NOT_SET
 mdefine_line|#define NCR_NOT_SET 0
 DECL|variable|ncr_irq
@@ -704,10 +683,9 @@ id|board
 op_assign
 id|BOARD_DTC3181E
 suffix:semicolon
-id|tpnt-&gt;proc_dir
+id|tpnt-&gt;proc_name
 op_assign
-op_amp
-id|proc_scsi_g_ncr5380
+l_string|&quot;g_NCR5380&quot;
 suffix:semicolon
 r_for
 c_loop

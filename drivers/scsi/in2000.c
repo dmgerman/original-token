@@ -6852,12 +6852,10 @@ r_continue
 suffix:semicolon
 )brace
 multiline_comment|/* Ok. We accept that there&squot;s an IN2000 at ioaddr &squot;base&squot;. Now&n; * initialize it.&n; */
-id|tpnt-&gt;proc_dir
+id|tpnt-&gt;proc_name
 op_assign
-op_amp
-id|proc_scsi_in2000
+l_string|&quot;in2000&quot;
 suffix:semicolon
-multiline_comment|/* done more than once? harmless. */
 id|detect_count
 op_increment
 suffix:semicolon
@@ -7755,27 +7753,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|variable|proc_scsi_in2000
-r_struct
-id|proc_dir_entry
-id|proc_scsi_in2000
-op_assign
-(brace
-id|PROC_SCSI_IN2000
-comma
-l_int|6
-comma
-l_string|&quot;in2000&quot;
-comma
-id|S_IFDIR
-op_or
-id|S_IRUGO
-op_or
-id|S_IXUGO
-comma
-l_int|2
-)brace
-suffix:semicolon
 DECL|function|in2000_proc_info
 r_int
 id|in2000_proc_info

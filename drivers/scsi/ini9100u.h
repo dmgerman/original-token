@@ -65,7 +65,6 @@ r_int
 r_int
 )paren
 suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &gt;= CVT_LINUX_VERSION(1, 3, 0)
 r_extern
 r_int
 id|i91u_biosparam
@@ -86,37 +85,11 @@ r_struct
 id|proc_dir_entry
 id|proc_scsi_ini9100u
 suffix:semicolon
-macro_line|#else
-r_extern
-r_int
-id|i91u_biosparam
-c_func
-(paren
-id|Disk
-op_star
-comma
-r_int
-comma
-r_int
-op_star
-)paren
-suffix:semicolon
-multiline_comment|/*for linux v1.13 */
 macro_line|#endif
 DECL|macro|i91u_REVID
 mdefine_line|#define i91u_REVID &quot;Initio INI-9X00U/UW SCSI device driver; Revision: 1.03g&quot;
-macro_line|#if LINUX_VERSION_CODE &lt; CVT_LINUX_VERSION(1, 3, 0)
 DECL|macro|INI9100U
-mdefine_line|#define INI9100U&t;{ &bslash;&n;&t;&t;NULL, &bslash;&n;&t;&t;NULL, &bslash;&n;&t;&t;i91u_REVID, &bslash;&n;&t;&t;i91u_detect, &bslash;&n;&t;&t;NULL, &bslash;&n;&t;&t;NULL, &bslash;&n;&t;&t;i91u_command, &bslash;&n;&t;&t;i91u_queue, &bslash;&n;&t;&t;i91u_abort, &bslash;&n;&t;&t;i91u_reset, &bslash;&n;&t;&t;NULL, &bslash;&n;&t;&t;i91u_biosparam, &bslash;&n;&t;&t;1, &bslash;&n;&t;&t;7, &bslash;&n;&t;&t;SG_ALL, &bslash;&n;&t;&t;1, &bslash;&n;&t;&t;0, &bslash;&n;&t;&t;0, &bslash;&n;&t;&t;ENABLE_CLUSTERING &bslash;&n;}
-macro_line|#else
-macro_line|#if LINUX_VERSION_CODE &lt; CVT_LINUX_VERSION(2, 1, 75)
-DECL|macro|INI9100U
-mdefine_line|#define INI9100U&t;{ &bslash;&n;&t;&t;NULL, &bslash;&n;&t;&t;NULL, &bslash;&n;&t;&t;&amp;proc_scsi_ini9100u, &bslash;&n;&t;&t;NULL, &bslash;&n;&t;&t;i91u_REVID, &bslash;&n;&t;&t;i91u_detect, &bslash;&n;&t;&t;NULL, &bslash;&n;&t;&t;NULL, &bslash;&n;&t;&t;i91u_command, &bslash;&n;&t;&t;i91u_queue, &bslash;&n;&t;&t;i91u_abort, &bslash;&n;&t;&t;i91u_reset, &bslash;&n;&t;&t;NULL, &bslash;&n;&t;&t;i91u_biosparam, &bslash;&n;&t;&t;1, &bslash;&n;&t;&t;7, &bslash;&n;&t;&t;SG_ALL, &bslash;&n;&t;&t;1, &bslash;&n;&t;&t;0, &bslash;&n;&t;&t;0, &bslash;&n;&t;&t;ENABLE_CLUSTERING &bslash;&n;}
-macro_line|#else&t;&t;&t;&t;/* Version &gt;= 2.1.75 */
-DECL|macro|INI9100U
-mdefine_line|#define INI9100U&t;{ &bslash;&n;&t;next:&t;&t;NULL,&t;&t;&t;&t;&t;&t;&bslash;&n;&t;module:&t;&t;NULL,&t;&t;&t;&t;&t;&t;&bslash;&n;&t;proc_dir:&t;&amp;proc_scsi_ini9100u, &bslash;&n;&t;proc_info:&t;NULL,&t;&t;&t;&t;&bslash;&n;&t;name:&t;&t;i91u_REVID, &bslash;&n;&t;detect:&t;&t;i91u_detect, &bslash;&n;&t;release:&t;NULL, &bslash;&n;&t;info:&t;&t;NULL,&t;&t;&t;&t;&t;&bslash;&n;&t;command:&t;i91u_command, &bslash;&n;&t;queuecommand:&t;i91u_queue, &bslash;&n; &t;eh_strategy_handler: NULL, &bslash;&n; &t;eh_abort_handler: NULL, &bslash;&n; &t;eh_device_reset_handler: NULL, &bslash;&n; &t;eh_bus_reset_handler: NULL, &bslash;&n; &t;eh_host_reset_handler: NULL, &bslash;&n;&t;abort:&t;&t;i91u_abort, &bslash;&n;&t;reset:&t;&t;i91u_reset, &bslash;&n;&t;slave_attach:&t;NULL, &bslash;&n;&t;bios_param:&t;i91u_biosparam, &bslash;&n;&t;can_queue:&t;1, &bslash;&n;&t;this_id:&t;1, &bslash;&n;&t;sg_tablesize:&t;SG_ALL, &bslash;&n;&t;cmd_per_lun: &t;1, &bslash;&n;&t;present:&t;0, &bslash;&n;&t;unchecked_isa_dma: 0, &bslash;&n;&t;use_clustering:&t;ENABLE_CLUSTERING, &bslash;&n; use_new_eh_code: 0 &bslash;&n;}
-macro_line|#endif
-macro_line|#endif
+mdefine_line|#define INI9100U&t;{ &bslash;&n;&t;next:&t;&t;NULL,&t;&t;&t;&t;&t;&t;&bslash;&n;&t;module:&t;&t;NULL,&t;&t;&t;&t;&t;&t;&bslash;&n;&t;proc_name:&t;&quot;INI9100U&quot;, &bslash;&n;&t;proc_info:&t;NULL,&t;&t;&t;&t;&bslash;&n;&t;name:&t;&t;i91u_REVID, &bslash;&n;&t;detect:&t;&t;i91u_detect, &bslash;&n;&t;release:&t;NULL, &bslash;&n;&t;info:&t;&t;NULL,&t;&t;&t;&t;&t;&bslash;&n;&t;command:&t;i91u_command, &bslash;&n;&t;queuecommand:&t;i91u_queue, &bslash;&n; &t;eh_strategy_handler: NULL, &bslash;&n; &t;eh_abort_handler: NULL, &bslash;&n; &t;eh_device_reset_handler: NULL, &bslash;&n; &t;eh_bus_reset_handler: NULL, &bslash;&n; &t;eh_host_reset_handler: NULL, &bslash;&n;&t;abort:&t;&t;i91u_abort, &bslash;&n;&t;reset:&t;&t;i91u_reset, &bslash;&n;&t;slave_attach:&t;NULL, &bslash;&n;&t;bios_param:&t;i91u_biosparam, &bslash;&n;&t;can_queue:&t;1, &bslash;&n;&t;this_id:&t;1, &bslash;&n;&t;sg_tablesize:&t;SG_ALL, &bslash;&n;&t;cmd_per_lun: &t;1, &bslash;&n;&t;present:&t;0, &bslash;&n;&t;unchecked_isa_dma: 0, &bslash;&n;&t;use_clustering:&t;ENABLE_CLUSTERING, &bslash;&n; use_new_eh_code: 0 &bslash;&n;}
 DECL|macro|VIRT_TO_BUS
 mdefine_line|#define VIRT_TO_BUS(i)  (unsigned int) virt_to_bus((void *)(i))
 DECL|macro|ULONG
@@ -530,7 +503,6 @@ op_star
 id|pSRB_tail
 suffix:semicolon
 multiline_comment|/* SRB save queue tail       */
-macro_line|#if LINUX_VERSION_CODE &gt;= CVT_LINUX_VERSION(2,1,95)
 DECL|member|HCS_AvailLock
 id|spinlock_t
 id|HCS_AvailLock
@@ -543,7 +515,6 @@ DECL|member|pSRB_lock
 id|spinlock_t
 id|pSRB_lock
 suffix:semicolon
-macro_line|#endif
 DECL|typedef|HCS
 )brace
 id|HCS

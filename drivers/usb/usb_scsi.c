@@ -253,6 +253,7 @@ op_assign
 (brace
 id|PROC_SCSI_USB_SCSI
 comma
+multiline_comment|/* It&squot;s currently b0rken */
 l_int|0
 comma
 l_int|NULL

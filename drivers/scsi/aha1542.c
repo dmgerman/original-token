@@ -21,27 +21,6 @@ mdefine_line|#define SCSI_PA(address) virt_to_bus(address)
 DECL|macro|BAD_DMA
 mdefine_line|#define BAD_DMA(msg, address, length) &bslash;&n;  { &bslash;&n;    printk(KERN_CRIT &quot;%s address %p length %d&bslash;n&quot;, msg, address, length); &bslash;&n;    panic(&quot;Buffer at physical address &gt; 16Mb used for aha1542&quot;); &bslash;&n;  }
 macro_line|#include&lt;linux/stat.h&gt;
-DECL|variable|proc_scsi_aha1542
-r_struct
-id|proc_dir_entry
-id|proc_scsi_aha1542
-op_assign
-(brace
-id|PROC_SCSI_AHA1542
-comma
-l_int|7
-comma
-l_string|&quot;aha1542&quot;
-comma
-id|S_IFDIR
-op_or
-id|S_IRUGO
-op_or
-id|S_IXUGO
-comma
-l_int|2
-)brace
-suffix:semicolon
 macro_line|#ifdef DEBUG
 DECL|macro|DEB
 mdefine_line|#define DEB(x) x
@@ -4737,10 +4716,9 @@ l_string|&quot;aha1542_detect: &bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
-id|tpnt-&gt;proc_dir
+id|tpnt-&gt;proc_name
 op_assign
-op_amp
-id|proc_scsi_aha1542
+l_string|&quot;aha1542&quot;
 suffix:semicolon
 macro_line|#ifdef MODULE
 id|bases

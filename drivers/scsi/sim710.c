@@ -100,27 +100,6 @@ macro_line|#ifndef offsetof
 DECL|macro|offsetof
 mdefine_line|#define offsetof(t, m)      ((size_t) (&amp;((t *)0)-&gt;m))
 macro_line|#endif
-DECL|variable|proc_scsi_sim710
-r_struct
-id|proc_dir_entry
-id|proc_scsi_sim710
-op_assign
-(brace
-id|PROC_SCSI_SIM710
-comma
-l_int|6
-comma
-l_string|&quot;sim710&quot;
-comma
-id|S_IFDIR
-op_or
-id|S_IRUGO
-op_or
-id|S_IXUGO
-comma
-l_int|2
-)brace
-suffix:semicolon
 DECL|macro|STATE_INITIALISED
 mdefine_line|#define STATE_INITIALISED&t;0
 DECL|macro|STATE_HALTED
@@ -5810,10 +5789,9 @@ id|order
 )paren
 )paren
 suffix:semicolon
-id|tpnt-&gt;proc_dir
+id|tpnt-&gt;proc_name
 op_assign
-op_amp
-id|proc_scsi_sim710
+l_string|&quot;sim710&quot;
 suffix:semicolon
 r_for
 c_loop

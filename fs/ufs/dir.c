@@ -715,7 +715,7 @@ id|sb
 comma
 id|function
 comma
-l_string|&quot;bad entry in directory #%lu, size %lu: %s - &quot;
+l_string|&quot;bad entry in directory #%lu, size %Lu: %s - &quot;
 l_string|&quot;offset=%lu, inode=%lu, reclen=%d, namlen=%d&quot;
 comma
 id|dir-&gt;i_ino

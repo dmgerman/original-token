@@ -102,13 +102,8 @@ mdefine_line|#define sim710_release&t;NULL
 macro_line|#endif
 macro_line|#if defined(HOSTS_C) || defined(MODULE)
 macro_line|#include &lt;scsi/scsicam.h&gt;
-r_extern
-r_struct
-id|proc_dir_entry
-id|proc_scsi_sim710
-suffix:semicolon
 DECL|macro|SIM710_SCSI
-mdefine_line|#define SIM710_SCSI { proc_dir:&t;&t;&t;&amp;proc_scsi_sim710,&t;&bslash;&n;&t;&t;      name:&t;&t;&t;&quot;Simple 53c710&quot;, &t;&bslash;&n;&t;&t;      detect:&t;&t;&t;sim710_detect,&t;&t;&bslash;&n;&t;&t;      release:&t;&t;&t;sim710_release,&t;&t;&bslash;&n;&t;&t;      queuecommand:&t;&t;sim710_queuecommand,&t;&bslash;&n;&t;&t;      eh_abort_handler:&t;&t;sim710_abort,&t;&t;&bslash;&n;&t;&t;      eh_device_reset_handler:&t;sim710_dev_reset,&t;&bslash;&n;&t;&t;      eh_bus_reset_handler:&t;sim710_bus_reset,&t;&bslash;&n;&t;&t;      eh_host_reset_handler:&t;sim710_host_reset,&t;&bslash;&n;&t;&t;      bios_param:&t;&t;scsicam_bios_param,&t;&bslash;&n;&t;&t;      can_queue:&t;&t;8,&t;&t; &t;&bslash;&n;&t;&t;      this_id:&t;&t;&t;7, &t;&t;&t;&bslash;&n;&t;&t;      sg_tablesize:&t;&t;128,&t;&t; &t;&bslash;&n;&t;&t;      cmd_per_lun:&t;&t;1,&t;&t; &t;&bslash;&n;&t;&t;      use_clustering:&t;&t;DISABLE_CLUSTERING,&t;&bslash;&n;&t;&t;      use_new_eh_code:&t;&t;1}
+mdefine_line|#define SIM710_SCSI { proc_name:&t;&t;&quot;sim710&quot;,&t;&bslash;&n;&t;&t;      name:&t;&t;&t;&quot;Simple 53c710&quot;, &t;&bslash;&n;&t;&t;      detect:&t;&t;&t;sim710_detect,&t;&t;&bslash;&n;&t;&t;      release:&t;&t;&t;sim710_release,&t;&t;&bslash;&n;&t;&t;      queuecommand:&t;&t;sim710_queuecommand,&t;&bslash;&n;&t;&t;      eh_abort_handler:&t;&t;sim710_abort,&t;&t;&bslash;&n;&t;&t;      eh_device_reset_handler:&t;sim710_dev_reset,&t;&bslash;&n;&t;&t;      eh_bus_reset_handler:&t;sim710_bus_reset,&t;&bslash;&n;&t;&t;      eh_host_reset_handler:&t;sim710_host_reset,&t;&bslash;&n;&t;&t;      bios_param:&t;&t;scsicam_bios_param,&t;&bslash;&n;&t;&t;      can_queue:&t;&t;8,&t;&t; &t;&bslash;&n;&t;&t;      this_id:&t;&t;&t;7, &t;&t;&t;&bslash;&n;&t;&t;      sg_tablesize:&t;&t;128,&t;&t; &t;&bslash;&n;&t;&t;      cmd_per_lun:&t;&t;1,&t;&t; &t;&bslash;&n;&t;&t;      use_clustering:&t;&t;DISABLE_CLUSTERING,&t;&bslash;&n;&t;&t;      use_new_eh_code:&t;&t;1}
 macro_line|#endif
 macro_line|#ifndef HOSTS_C
 macro_line|#ifdef __BIG_ENDIAN

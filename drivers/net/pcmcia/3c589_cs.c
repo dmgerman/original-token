@@ -1,4 +1,4 @@
-multiline_comment|/*======================================================================&n;&n;    A PCMCIA ethernet driver for the 3com 3c589 card.&n;    &n;    Copyright (C) 1999 David A. Hinds -- dhinds@hyper.stanford.edu&n;&n;    3c589_cs.c 1.135 1999/10/07 20:14:54&n;&n;    The network driver code is based on Donald Becker&squot;s 3c589 code:&n;    &n;    Written 1994 by Donald Becker.&n;    Copyright 1993 United States Government as represented by the&n;    Director, National Security Agency.  This software may be used and&n;    distributed according to the terms of the GNU Public License,&n;    incorporated herein by reference.&n;    Donald Becker may be reached at becker@cesdis1.gsfc.nasa.gov&n;&n;======================================================================*/
+multiline_comment|/*======================================================================&n;&n;    A PCMCIA ethernet driver for the 3com 3c589 card.&n;    &n;    Copyright (C) 1999 David A. Hinds -- dhinds@pcmcia.sourceforge.org&n;&n;    3c589_cs.c 1.137 1999/11/08 20:46:17&n;&n;    The network driver code is based on Donald Becker&squot;s 3c589 code:&n;    &n;    Written 1994 by Donald Becker.&n;    Copyright 1993 United States Government as represented by the&n;    Director, National Security Agency.  This software may be used and&n;    distributed according to the terms of the GNU Public License,&n;    incorporated herein by reference.&n;    Donald Becker may be reached at becker@cesdis1.gsfc.nasa.gov&n;&n;======================================================================*/
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -368,7 +368,7 @@ r_char
 op_star
 id|version
 op_assign
-l_string|&quot;3c589_cs.c 1.135 1999/10/07 20:14:54 (David Hinds)&quot;
+l_string|&quot;3c589_cs.c 1.137 1999/11/08 20:46:17 (David Hinds)&quot;
 suffix:semicolon
 macro_line|#else
 DECL|macro|DEBUG
@@ -845,10 +845,6 @@ suffix:semicolon
 id|link-&gt;io.Attributes1
 op_assign
 id|IO_DATA_PATH_WIDTH_16
-suffix:semicolon
-id|link-&gt;io.IOAddrLines
-op_assign
-l_int|4
 suffix:semicolon
 id|link-&gt;irq.Attributes
 op_assign
@@ -1612,6 +1608,10 @@ op_or_assign
 id|DEV_CONFIG
 suffix:semicolon
 multiline_comment|/* For the 3c562, the base address must be xx00-xx7f */
+id|link-&gt;io.IOAddrLines
+op_assign
+l_int|16
+suffix:semicolon
 r_for
 c_loop
 (paren

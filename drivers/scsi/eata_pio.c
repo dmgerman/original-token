@@ -18,27 +18,6 @@ macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/config.h&gt;&t;/* for CONFIG_PCI */
 macro_line|#include &lt;linux/blk.h&gt;
 macro_line|#include &lt;linux/spinlock.h&gt;
-DECL|variable|proc_scsi_eata_pio
-r_struct
-id|proc_dir_entry
-id|proc_scsi_eata_pio
-op_assign
-(brace
-id|PROC_SCSI_EATA_PIO
-comma
-l_int|9
-comma
-l_string|&quot;eata_pio&quot;
-comma
-id|S_IFDIR
-op_or
-id|S_IRUGO
-op_or
-id|S_IXUGO
-comma
-l_int|2
-)brace
-suffix:semicolon
 DECL|variable|ISAbases
 r_static
 id|uint
@@ -5294,10 +5273,9 @@ l_string|&quot;Using lots of delays to let you read the debugging output&bslash;
 )paren
 )paren
 suffix:semicolon
-id|tpnt-&gt;proc_dir
+id|tpnt-&gt;proc_name
 op_assign
-op_amp
-id|proc_scsi_eata_pio
+l_string|&quot;eata_pio&quot;
 suffix:semicolon
 id|find_pio_PCI
 c_func

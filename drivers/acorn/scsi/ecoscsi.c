@@ -17,28 +17,6 @@ macro_line|#include &quot;../../scsi/hosts.h&quot;
 macro_line|#include &quot;ecoscsi.h&quot;
 macro_line|#include &quot;../../scsi/NCR5380.h&quot;
 macro_line|#include &quot;../../scsi/constants.h&quot;
-DECL|variable|proc_scsi_ecoscsi
-r_static
-r_struct
-id|proc_dir_entry
-id|proc_scsi_ecoscsi
-op_assign
-(brace
-id|PROC_SCSI_GENERIC_NCR5380
-comma
-l_int|7
-comma
-l_string|&quot;ecoscsi&quot;
-comma
-id|S_IFDIR
-op_or
-id|S_IRUGO
-op_or
-id|S_IXUGO
-comma
-l_int|2
-)brace
-suffix:semicolon
 DECL|function|ecoscsi_read
 r_static
 r_char
@@ -155,10 +133,9 @@ id|Scsi_Host
 op_star
 id|instance
 suffix:semicolon
-id|tpnt-&gt;proc_dir
+id|tpnt-&gt;proc_name
 op_assign
-op_amp
-id|proc_scsi_ecoscsi
+l_string|&quot;ecoscsi&quot;
 suffix:semicolon
 id|instance
 op_assign

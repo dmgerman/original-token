@@ -1,4 +1,4 @@
-multiline_comment|/*======================================================================&n;&n;    Device driver for Intel 82365 and compatible PC Card controllers,&n;    and Yenta-compatible PCI-to-CardBus controllers.&n;&n;    i82365.c 1.260 1999/10/21 00:56:07&n;&n;    The contents of this file are subject to the Mozilla Public&n;    License Version 1.1 (the &quot;License&quot;); you may not use this file&n;    except in compliance with the License. You may obtain a copy of&n;    the License at http://www.mozilla.org/MPL/&n;&n;    Software distributed under the License is distributed on an &quot;AS&n;    IS&quot; basis, WITHOUT WARRANTY OF ANY KIND, either express or&n;    implied. See the License for the specific language governing&n;    rights and limitations under the License.&n;&n;    The initial developer of the original code is David A. Hinds&n;    &lt;dhinds@hyper.stanford.edu&gt;.  Portions created by David A. Hinds&n;    are Copyright (C) 1999 David A. Hinds.  All Rights Reserved.&n;&n;    Alternatively, the contents of this file may be used under the&n;    terms of the GNU Public License version 2 (the &quot;GPL&quot;), in which&n;    case the provisions of the GPL are applicable instead of the&n;    above.  If you wish to allow the use of your version of this file&n;    only under the terms of the GPL and not to allow others to use&n;    your version of this file under the MPL, indicate your decision&n;    by deleting the provisions above and replace them with the notice&n;    and other provisions required by the GPL.  If you do not delete&n;    the provisions above, a recipient may use your version of this&n;    file under either the MPL or the GPL.&n;    &n;======================================================================*/
+multiline_comment|/*======================================================================&n;&n;    Device driver for Intel 82365 and compatible PC Card controllers,&n;    and Yenta-compatible PCI-to-CardBus controllers.&n;&n;    i82365.c 1.265 1999/11/10 18:36:21&n;&n;    The contents of this file are subject to the Mozilla Public&n;    License Version 1.1 (the &quot;License&quot;); you may not use this file&n;    except in compliance with the License. You may obtain a copy of&n;    the License at http://www.mozilla.org/MPL/&n;&n;    Software distributed under the License is distributed on an &quot;AS&n;    IS&quot; basis, WITHOUT WARRANTY OF ANY KIND, either express or&n;    implied. See the License for the specific language governing&n;    rights and limitations under the License.&n;&n;    The initial developer of the original code is David A. Hinds&n;    &lt;dhinds@pcmcia.sourceforge.org&gt;.  Portions created by David A. Hinds&n;    are Copyright (C) 1999 David A. Hinds.  All Rights Reserved.&n;&n;    Alternatively, the contents of this file may be used under the&n;    terms of the GNU Public License version 2 (the &quot;GPL&quot;), in which&n;    case the provisions of the GPL are applicable instead of the&n;    above.  If you wish to allow the use of your version of this file&n;    only under the terms of the GPL and not to allow others to use&n;    your version of this file under the MPL, indicate your decision&n;    by deleting the provisions above and replace them with the notice&n;    and other provisions required by the GPL.  If you do not delete&n;    the provisions above, a recipient may use your version of this&n;    file under either the MPL or the GPL.&n;    &n;======================================================================*/
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
@@ -59,7 +59,7 @@ r_char
 op_star
 id|version
 op_assign
-l_string|&quot;i82365.c 1.260 1999/10/21 00:56:07 (David Hinds)&quot;
+l_string|&quot;i82365.c 1.265 1999/11/10 18:36:21 (David Hinds)&quot;
 suffix:semicolon
 macro_line|#else
 DECL|macro|DEBUG
@@ -670,7 +670,7 @@ r_static
 r_int
 id|pci_csc
 op_assign
-l_int|1
+l_int|0
 suffix:semicolon
 multiline_comment|/* PCI IO card functional interrupts? */
 DECL|variable|pci_int
@@ -4423,6 +4423,12 @@ id|t-&gt;revision
 op_eq
 l_int|0x62
 )paren
+op_logical_or
+(paren
+id|t-&gt;type
+op_eq
+id|IS_OZ6812
+)paren
 )paren
 (brace
 id|p-&gt;mode_a
@@ -4574,6 +4580,12 @@ op_logical_or
 id|t-&gt;revision
 op_eq
 l_int|0x62
+)paren
+op_logical_or
+(paren
+id|t-&gt;type
+op_eq
+id|IS_OZ6812
 )paren
 )paren
 (brace
@@ -5086,6 +5098,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
+multiline_comment|/* no ISA card status change irq */
 r_return
 op_logical_neg
 id|pcsc
@@ -8264,11 +8277,17 @@ op_assign
 (paren
 id|mask
 op_amp
+l_int|0xff20
+)paren
+suffix:semicolon
+id|tmp
+op_assign
+id|tmp
+op_amp
 (paren
-id|mask
+id|tmp
 op_minus
 l_int|1
-)paren
 )paren
 suffix:semicolon
 r_if
@@ -8842,6 +8861,8 @@ id|u_short
 id|d
 comma
 id|ns
+comma
+id|i
 suffix:semicolon
 id|u_char
 id|a
@@ -9153,9 +9174,6 @@ op_eq
 l_int|0
 )paren
 (brace
-r_int
-id|i
-suffix:semicolon
 id|pci_writew
 c_func
 (paren
@@ -9491,18 +9509,106 @@ comma
 id|type
 )paren
 suffix:semicolon
-multiline_comment|/* Re-do card type &amp; voltage detection */
-id|cb_writel
-c_func
+multiline_comment|/* Re-do card voltage detection, if needed: this checks for&n;       card presence with no voltage detect bits set */
+r_for
+c_loop
 (paren
+id|a
+op_assign
 id|sockets
 op_minus
 id|ns
+suffix:semicolon
+id|a
+OL
+id|sockets
+suffix:semicolon
+id|a
+op_increment
+)paren
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|cb_readl
+c_func
+(paren
+id|a
+comma
+id|CB_SOCKET_STATE
+)paren
+op_amp
+l_int|0x3c86
+)paren
+)paren
+id|cb_writel
+c_func
+(paren
+id|a
 comma
 id|CB_SOCKET_FORCE
 comma
 id|CB_SF_CVSTEST
 )paren
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+l_int|200
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
+r_for
+c_loop
+(paren
+id|a
+op_assign
+id|sockets
+op_minus
+id|ns
+suffix:semicolon
+id|a
+OL
+id|sockets
+suffix:semicolon
+id|a
+op_increment
+)paren
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|cb_readl
+c_func
+(paren
+id|a
+comma
+id|CB_SOCKET_STATE
+)paren
+op_amp
+l_int|0x3c86
+)paren
+)paren
+r_break
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|a
+op_eq
+id|sockets
+)paren
+r_break
 suffix:semicolon
 id|__set_current_state
 c_func
@@ -9515,7 +9621,23 @@ c_func
 (paren
 id|HZ
 op_div
-l_int|5
+l_int|20
+)paren
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|i
+op_eq
+l_int|200
+)paren
+id|printk
+c_func
+(paren
+id|KERN_NOTICE
+l_string|&quot;i82365: card voltage interrogation&quot;
+l_string|&quot; timed out!&bslash;n&quot;
 )paren
 suffix:semicolon
 multiline_comment|/* Set up PCI bus bridge structures if needed */

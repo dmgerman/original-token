@@ -113,11 +113,7 @@ macro_line|#ifndef CAN_QUEUE
 DECL|macro|CAN_QUEUE
 mdefine_line|#define CAN_QUEUE 16
 macro_line|#endif
-macro_line|#ifndef PROC_SCSI_AKA30
 macro_line|#include &quot;linux/proc_fs.h&quot;
-DECL|macro|PROC_SCSI_AKA30
-mdefine_line|#define PROC_SCSI_AKA30 PROC_SCSI_EATA
-macro_line|#endif
 macro_line|#include &lt;scsi/scsicam.h&gt;
 DECL|macro|ACORNSCSI_3
 mdefine_line|#define ACORNSCSI_3 {&t;&t;&t;&t;&t;&t;&t;&bslash;&n;proc_info:&t;&t;acornscsi_proc_info,&t;&t;&t;&t;&bslash;&n;name:&t;&t;&t;&quot;AcornSCSI&quot;,&t;&t;&t;&t;&t;&bslash;&n;detect:&t;&t;&t;acornscsi_detect,&t;&t;&t;&t;&bslash;&n;release:&t;&t;acornscsi_release,&t;/* Release */&t;&t;&bslash;&n;info:&t;&t;&t;acornscsi_info,&t;&t;&t;&t;&t;&bslash;&n;queuecommand:&t;&t;acornscsi_queuecmd,&t;&t;&t;&t;&bslash;&n;abort:&t;&t;&t;acornscsi_abort,&t;&t;&t;&t;&bslash;&n;reset:&t;&t;&t;acornscsi_reset,&t;&t;&t;&t;&bslash;&n;bios_param:&t;&t;scsicam_bios_param,&t;&t;&t;&t;&bslash;&n;can_queue:&t;&t;CAN_QUEUE,&t;&t;/* can_queue */&t;&t;&bslash;&n;this_id:&t;&t;7,&t;&t;&t;/* this id */&t;&t;&bslash;&n;sg_tablesize:&t;&t;SG_ALL,&t;&t;&t;/* sg_tablesize */&t;&bslash;&n;cmd_per_lun:&t;&t;CMD_PER_LUN,&t;&t;/* cmd_per_lun */&t;&bslash;&n;unchecked_isa_dma:&t;0,&t;&t;&t;/* unchecked isa dma */&t;&bslash;&n;use_clustering:&t;&t;DISABLE_CLUSTERING&t;&t;&t;&t;&bslash;&n;&t;}

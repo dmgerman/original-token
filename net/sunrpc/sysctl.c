@@ -6,6 +6,7 @@ macro_line|#include &lt;linux/linkage.h&gt;
 macro_line|#include &lt;linux/ctype.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/sysctl.h&gt;
+macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;linux/sunrpc/types.h&gt;
 macro_line|#include &lt;linux/sunrpc/sched.h&gt;
@@ -81,7 +82,6 @@ comma
 l_int|1
 )paren
 suffix:semicolon
-macro_line|#ifdef MODULE
 macro_line|#ifdef CONFIG_PROC_FS
 r_if
 c_cond
@@ -98,11 +98,10 @@ id|sunrpc_table
 l_int|0
 )braket
 dot
-id|de-&gt;fill_inode
+id|de-&gt;owner
 op_assign
-id|rpc_modcount
+id|THIS_MODULE
 suffix:semicolon
-macro_line|#endif
 macro_line|#endif
 )brace
 )brace

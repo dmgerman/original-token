@@ -5,8 +5,6 @@ macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/kernel_stat.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
-macro_line|#include &lt;linux/user.h&gt;
-macro_line|#include &lt;linux/a.out.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/mman.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
@@ -722,6 +720,8 @@ l_string|&quot;Buffers:   %8lu kB&bslash;n&quot;
 l_string|&quot;Cached:    %8u kB&bslash;n&quot;
 l_string|&quot;HighTotal: %8lu kB&bslash;n&quot;
 l_string|&quot;HighFree:  %8lu kB&bslash;n&quot;
+l_string|&quot;LowTotal:  %8lu kB&bslash;n&quot;
+l_string|&quot;LowFree:   %8lu kB&bslash;n&quot;
 l_string|&quot;SwapTotal: %8lu kB&bslash;n&quot;
 l_string|&quot;SwapFree:  %8lu kB&bslash;n&quot;
 comma
@@ -769,6 +769,22 @@ comma
 id|K
 c_func
 (paren
+id|i.freehigh
+)paren
+comma
+id|K
+c_func
+(paren
+id|i.totalram
+op_minus
+id|i.totalhigh
+)paren
+comma
+id|K
+c_func
+(paren
+id|i.freeram
+op_minus
 id|i.freehigh
 )paren
 comma
@@ -3271,97 +3287,6 @@ r_return
 id|len
 suffix:semicolon
 )brace
-DECL|function|open_kcore
-r_static
-r_int
-id|open_kcore
-c_func
-(paren
-r_struct
-id|inode
-op_star
-id|inode
-comma
-r_struct
-id|file
-op_star
-id|filp
-)paren
-(brace
-r_return
-id|capable
-c_func
-(paren
-id|CAP_SYS_RAWIO
-)paren
-ques
-c_cond
-l_int|0
-suffix:colon
-op_minus
-id|EPERM
-suffix:semicolon
-)brace
-r_extern
-id|ssize_t
-id|read_kcore
-c_func
-(paren
-r_struct
-id|file
-op_star
-comma
-r_char
-op_star
-comma
-r_int
-comma
-id|loff_t
-op_star
-)paren
-suffix:semicolon
-DECL|variable|proc_kcore_operations
-r_static
-r_struct
-id|file_operations
-id|proc_kcore_operations
-op_assign
-(brace
-l_int|NULL
-comma
-multiline_comment|/* lseek */
-id|read_kcore
-comma
-l_int|NULL
-comma
-multiline_comment|/* write */
-l_int|NULL
-comma
-multiline_comment|/* readdir */
-l_int|NULL
-comma
-multiline_comment|/* poll */
-l_int|NULL
-comma
-multiline_comment|/* ioctl */
-l_int|NULL
-comma
-multiline_comment|/* mmap */
-id|open_kcore
-)brace
-suffix:semicolon
-DECL|variable|proc_kcore_inode_operations
-r_static
-r_struct
-id|inode_operations
-id|proc_kcore_inode_operations
-op_assign
-(brace
-op_amp
-id|proc_kcore_operations
-comma
-)brace
-suffix:semicolon
 multiline_comment|/*&n; * This function accesses profiling information. The returned data is&n; * binary: the sampling step and the actual contents of the profile&n; * buffer. Use of the program readprofile is recommended in order to&n; * get meaningful info out of these data.&n; */
 DECL|function|read_profile
 r_static
@@ -4047,10 +3972,14 @@ id|proc_root_kcore
 suffix:semicolon
 id|proc_root_kcore.size
 op_assign
-id|get_kcore_size
-c_func
 (paren
+r_int
 )paren
+id|high_memory
+op_minus
+id|PAGE_OFFSET
+op_plus
+id|PAGE_SIZE
 suffix:semicolon
 r_if
 c_cond

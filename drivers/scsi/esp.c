@@ -303,27 +303,6 @@ multiline_comment|/*5*/
 id|do_intr_end
 )brace
 suffix:semicolon
-DECL|variable|proc_scsi_esp
-r_struct
-id|proc_dir_entry
-id|proc_scsi_esp
-op_assign
-(brace
-id|PROC_SCSI_ESP
-comma
-l_int|3
-comma
-l_string|&quot;esp&quot;
-comma
-id|S_IFDIR
-op_or
-id|S_IRUGO
-op_or
-id|S_IXUGO
-comma
-l_int|2
-)brace
-suffix:semicolon
 multiline_comment|/* The master ring of all esp hosts we are managing in this driver. */
 DECL|variable|espchain
 r_static

@@ -4,8 +4,6 @@ macro_line|#include &quot;swab.h&quot;
 multiline_comment|/*&n; * some useful macros&n; */
 DECL|macro|in_range
 mdefine_line|#define in_range(b,first,len)&t;((b)&gt;=(first)&amp;&amp;(b)&lt;(first)+(len))
-DECL|macro|howmany
-mdefine_line|#define howmany(x,y)&t;&t;(((x)+(y)-1)/(y))
 DECL|macro|min
 mdefine_line|#define min(x,y)&t;&t;((x)&lt;(y)?(x):(y))
 DECL|macro|max

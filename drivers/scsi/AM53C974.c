@@ -876,27 +876,6 @@ comma
 )brace
 suffix:semicolon
 multiline_comment|/* LILO overrides */
-DECL|variable|proc_scsi_am53c974
-r_struct
-id|proc_dir_entry
-id|proc_scsi_am53c974
-op_assign
-(brace
-id|PROC_SCSI_AM53C974
-comma
-l_int|8
-comma
-l_string|&quot;am53c974&quot;
-comma
-id|S_IFDIR
-op_or
-id|S_IRUGO
-op_or
-id|S_IXUGO
-comma
-l_int|2
-)brace
-suffix:semicolon
 macro_line|#ifdef AM53C974_DEBUG
 DECL|variable|deb_stop
 r_static
@@ -2091,10 +2070,9 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* number of boards detected */
-id|tpnt-&gt;proc_dir
+id|tpnt-&gt;proc_name
 op_assign
-op_amp
-id|proc_scsi_am53c974
+l_string|&quot;am53c974&quot;
 suffix:semicolon
 macro_line|#if defined (CONFIG_PCI)
 r_if

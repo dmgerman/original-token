@@ -3,6 +3,7 @@ macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
+macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/sunrpc/svc.h&gt;
 macro_line|#include &lt;linux/sunrpc/stats.h&gt;
 macro_line|#include &lt;linux/nfsd/nfsd.h&gt;
@@ -228,12 +229,10 @@ id|ent-&gt;read_proc
 op_assign
 id|nfsd_proc_read
 suffix:semicolon
-macro_line|#ifdef MODULE
-id|ent-&gt;fill_inode
+id|ent-&gt;owner
 op_assign
-id|nfsd_modcount
+id|THIS_MODULE
 suffix:semicolon
-macro_line|#endif
 )brace
 )brace
 r_void

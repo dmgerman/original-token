@@ -740,7 +740,7 @@ id|ppp_init
 c_func
 (paren
 )paren
-suffix:colon
+suffix:semicolon
 macro_line|#endif
 )brace
 DECL|function|appletalk_device_init

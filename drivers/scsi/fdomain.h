@@ -105,11 +105,6 @@ r_int
 id|inout
 )paren
 suffix:semicolon
-r_extern
-r_struct
-id|proc_dir_entry
-id|proc_scsi_fdomain
-suffix:semicolon
 DECL|macro|FDOMAIN_16X0
 mdefine_line|#define FDOMAIN_16X0 { proc_info:      fdomain_16x0_proc_info,           &bslash;&n;&t;&t;       detect:         fdomain_16x0_detect,              &bslash;&n;&t;&t;       info:           fdomain_16x0_info,                &bslash;&n;&t;&t;       command:        fdomain_16x0_command,             &bslash;&n;&t;&t;       queuecommand:   fdomain_16x0_queue,               &bslash;&n;&t;&t;       abort:          fdomain_16x0_abort,               &bslash;&n;&t;&t;       reset:          fdomain_16x0_reset,               &bslash;&n;&t;&t;       bios_param:     fdomain_16x0_biosparam,           &bslash;&n;&t;&t;       can_queue:      1, &t;&t;&t;&t; &bslash;&n;&t;&t;       this_id:        6, &t;&t;&t;&t; &bslash;&n;&t;&t;       sg_tablesize:   64, &t;&t;&t;&t; &bslash;&n;&t;&t;       cmd_per_lun:    1, &t;&t;&t;&t; &bslash;&n;&t;&t;       use_clustering: DISABLE_CLUSTERING }
 macro_line|#endif

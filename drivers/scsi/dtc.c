@@ -86,27 +86,6 @@ mdefine_line|#define DTC_5380_OFFSET&t;&t;0x3880&t;/* 8 registers here, see NCR5
 multiline_comment|/*!!!! for dtc, it&squot;s a 128 byte buffer at 3900 !!! */
 DECL|macro|DTC_DATA_BUF
 mdefine_line|#define DTC_DATA_BUF&t;&t;0x3900  /* rw 128 bytes long */
-DECL|variable|proc_scsi_dtc
-r_struct
-id|proc_dir_entry
-id|proc_scsi_dtc
-op_assign
-(brace
-id|PROC_SCSI_T128
-comma
-l_int|7
-comma
-l_string|&quot;dtc3x80&quot;
-comma
-id|S_IFDIR
-op_or
-id|S_IRUGO
-op_or
-id|S_IXUGO
-comma
-l_int|2
-)brace
-suffix:semicolon
 DECL|struct|override
 r_static
 r_struct
@@ -408,10 +387,9 @@ id|sig
 comma
 id|count
 suffix:semicolon
-id|tpnt-&gt;proc_dir
+id|tpnt-&gt;proc_name
 op_assign
-op_amp
-id|proc_scsi_dtc
+l_string|&quot;dtc3x80&quot;
 suffix:semicolon
 id|tpnt-&gt;proc_info
 op_assign

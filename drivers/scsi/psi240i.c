@@ -17,27 +17,6 @@ macro_line|#include &quot;hosts.h&quot;
 macro_line|#include &quot;psi240i.h&quot;
 macro_line|#include &quot;psi_chip.h&quot;
 macro_line|#include&lt;linux/stat.h&gt;
-DECL|variable|Proc_Scsi_Psi240i
-r_struct
-id|proc_dir_entry
-id|Proc_Scsi_Psi240i
-op_assign
-(brace
-id|PROC_SCSI_PSI240I
-comma
-l_int|7
-comma
-l_string|&quot;psi240i&quot;
-comma
-id|S_IFDIR
-op_or
-id|S_IRUGO
-op_or
-id|S_IXUGO
-comma
-l_int|2
-)brace
-suffix:semicolon
 singleline_comment|//#define DEBUG 1
 macro_line|#ifdef DEBUG
 DECL|macro|DEB

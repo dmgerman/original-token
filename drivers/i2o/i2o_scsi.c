@@ -26,27 +26,6 @@ DECL|macro|dprintk
 mdefine_line|#define dprintk(x)
 DECL|macro|MAXHOSTS
 mdefine_line|#define MAXHOSTS 32
-DECL|variable|proc_scsi_i2o_scsi
-r_struct
-id|proc_dir_entry
-id|proc_scsi_i2o_scsi
-op_assign
-(brace
-id|PROC_SCSI_I2O
-comma
-l_int|8
-comma
-l_string|&quot;i2o_scsi&quot;
-comma
-id|S_IFDIR
-op_or
-id|S_IRUGO
-op_or
-id|S_IXUGO
-comma
-l_int|2
-)brace
-suffix:semicolon
 DECL|struct|i2o_scsi_host
 r_struct
 id|i2o_scsi_host

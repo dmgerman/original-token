@@ -21,9 +21,9 @@ mdefine_line|#define UFSD(x)
 macro_line|#endif
 multiline_comment|/*&n; * Secure deletion currently doesn&squot;t work. It interacts very badly&n; * with buffers shared with memory mappings, and for that reason&n; * can&squot;t be done in the truncate() routines. It should instead be&n; * done separately in &quot;release()&quot; before calling the truncate routines&n; * that will release the actual file blocks.&n; *&n; *&t;&t;Linus&n; */
 DECL|macro|DIRECT_BLOCK
-mdefine_line|#define DIRECT_BLOCK howmany (inode-&gt;i_size, uspi-&gt;s_bsize)
+mdefine_line|#define DIRECT_BLOCK ((inode-&gt;i_size + uspi-&gt;s_bsize - 1) &gt;&gt; uspi-&gt;s_bshift)
 DECL|macro|DIRECT_FRAGMENT
-mdefine_line|#define DIRECT_FRAGMENT howmany (inode-&gt;i_size, uspi-&gt;s_fsize)
+mdefine_line|#define DIRECT_FRAGMENT ((inode-&gt;i_size + uspi-&gt;s_fsize - 1) &gt;&gt; uspi-&gt;s_fshift)
 DECL|macro|DATA_BUFFER_USED
 mdefine_line|#define DATA_BUFFER_USED(bh) &bslash;&n;&t;(atomic_read(&amp;bh-&gt;b_count) || buffer_locked(bh))
 DECL|function|ufs_trunc_direct
@@ -1400,8 +1400,8 @@ id|DIRECT_BLOCK
 op_minus
 id|offset
 )paren
-op_div
-id|uspi-&gt;s_apb
+op_rshift
+id|uspi-&gt;s_apbshift
 )paren
 suffix:colon
 l_int|0
@@ -1797,8 +1797,8 @@ id|uspi-&gt;s_apb
 op_minus
 id|uspi-&gt;s_2apb
 )paren
-op_div
-id|uspi-&gt;s_2apb
+op_rshift
+id|uspi-&gt;s_2apbshift
 )paren
 suffix:colon
 l_int|0
@@ -2357,12 +2357,7 @@ id|CURRENT_TIME
 suffix:semicolon
 id|inode-&gt;u.ufs_i.i_lastfrag
 op_assign
-id|howmany
-(paren
-id|inode-&gt;i_size
-comma
-id|uspi-&gt;s_fsize
-)paren
+id|DIRECT_FRAGMENT
 suffix:semicolon
 id|mark_inode_dirty
 c_func

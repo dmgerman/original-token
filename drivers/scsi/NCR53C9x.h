@@ -1493,11 +1493,6 @@ DECL|macro|ESP_MHZ_TO_CYCLE
 mdefine_line|#define ESP_MHZ_TO_CYCLE(mhertz)  ((1000000000) / ((mhertz) / 1000))
 DECL|macro|ESP_TICK
 mdefine_line|#define ESP_TICK(ccf, cycle)  ((7682 * (ccf) * (cycle) / 1000))
-r_extern
-r_struct
-id|proc_dir_entry
-id|proc_scsi_esp
-suffix:semicolon
 multiline_comment|/* UGLY, UGLY, UGLY! */
 r_extern
 r_int

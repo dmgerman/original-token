@@ -198,6 +198,12 @@ l_string|&quot;stor.&quot;
 )brace
 comma
 (brace
+id|USB_CLASS_DATA
+comma
+l_string|&quot;data&quot;
+)brace
+comma
+(brace
 id|USB_CLASS_VENDOR_SPEC
 comma
 l_string|&quot;vend.&quot;

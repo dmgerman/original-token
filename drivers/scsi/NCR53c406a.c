@@ -367,27 +367,6 @@ id|info_msg
 l_int|256
 )braket
 suffix:semicolon
-DECL|variable|proc_scsi_NCR53c406a
-r_struct
-id|proc_dir_entry
-id|proc_scsi_NCR53c406a
-op_assign
-(brace
-id|PROC_SCSI_NCR53C406A
-comma
-l_int|7
-comma
-l_string|&quot;NCR53c406a&quot;
-comma
-id|S_IFDIR
-op_or
-id|S_IRUGO
-op_or
-id|S_IXUGO
-comma
-l_int|2
-)brace
-suffix:semicolon
 multiline_comment|/* ================================================================= */
 multiline_comment|/* possible BIOS locations */
 macro_line|#if USE_BIOS
@@ -2106,10 +2085,9 @@ id|tpnt-&gt;present
 op_assign
 l_int|1
 suffix:semicolon
-id|tpnt-&gt;proc_dir
+id|tpnt-&gt;proc_name
 op_assign
-op_amp
-id|proc_scsi_NCR53c406a
+l_string|&quot;NCR53c406a&quot;
 suffix:semicolon
 id|shpnt
 op_assign

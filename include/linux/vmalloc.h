@@ -104,5 +104,11 @@ r_int
 id|size
 )paren
 suffix:semicolon
+r_extern
+r_struct
+id|vm_struct
+op_star
+id|vmlist
+suffix:semicolon
 macro_line|#endif
 eof

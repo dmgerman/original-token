@@ -2,10 +2,6 @@ multiline_comment|/* [xirc2ps_cs.c wk 14.04.97] (1.31 1998/12/09 19:32:55)&n; * 
 multiline_comment|/* Enable the bug fix for CEM56 to use modem and ethernet simultaneously */
 DECL|macro|CEM56_FIX
 mdefine_line|#define CEM56_FIX
-macro_line|#if !defined(PCMCIA_DEBUG) &amp;&amp; 0
-DECL|macro|PCMCIA_DEBUG
-mdefine_line|#define PCMCIA_DEBUG 4
-macro_line|#endif
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
@@ -409,6 +405,11 @@ comma
 l_string|&quot;i&quot;
 )paren
 suffix:semicolon
+DECL|macro|DEBUG
+mdefine_line|#define DEBUG(n, args...) if (pc_debug&gt;(n)) printk(KDBG_XIRC args)
+macro_line|#else
+DECL|macro|DEBUG
+mdefine_line|#define DEBUG(n, args...)
 macro_line|#endif
 DECL|variable|version
 r_static
@@ -792,6 +793,11 @@ r_int
 id|dingo
 suffix:semicolon
 multiline_comment|/* a CEM56 type card */
+DECL|member|new_mii
+r_int
+id|new_mii
+suffix:semicolon
+multiline_comment|/* has full 10baseT/100baseT MII */
 DECL|member|modem
 r_int
 id|modem
@@ -1127,11 +1133,9 @@ id|tuple
 )paren
 )paren
 )paren
-(brace
 r_return
 id|err
 suffix:semicolon
-)brace
 r_return
 id|CardServices
 c_func
@@ -1185,11 +1189,9 @@ id|tuple
 )paren
 )paren
 )paren
-(brace
 r_return
 id|err
 suffix:semicolon
-)brace
 r_return
 id|CardServices
 c_func
@@ -1256,9 +1258,7 @@ id|timeout
 op_ge
 id|jiffies
 )paren
-(brace
 suffix:semicolon
-)brace
 id|restore_flags
 c_func
 (paren
@@ -1319,7 +1319,6 @@ suffix:semicolon
 id|i
 op_increment
 )paren
-(brace
 id|printk
 c_func
 (paren
@@ -1332,7 +1331,6 @@ id|i
 )paren
 )paren
 suffix:semicolon
-)brace
 id|printk
 c_func
 (paren
@@ -1383,7 +1381,6 @@ suffix:semicolon
 id|i
 op_increment
 )paren
-(brace
 id|printk
 c_func
 (paren
@@ -1396,7 +1393,6 @@ id|i
 )paren
 )paren
 suffix:semicolon
-)brace
 id|printk
 c_func
 (paren
@@ -1446,10 +1442,8 @@ op_le
 l_int|0x5e
 )paren
 )paren
-(brace
 r_continue
 suffix:semicolon
-)brace
 id|printk
 c_func
 (paren
@@ -1479,7 +1473,6 @@ suffix:semicolon
 id|i
 op_increment
 )paren
-(brace
 id|printk
 c_func
 (paren
@@ -1492,7 +1485,6 @@ id|i
 )paren
 )paren
 suffix:semicolon
-)brace
 id|printk
 c_func
 (paren
@@ -1829,7 +1821,6 @@ id|m
 op_rshift_assign
 l_int|1
 )paren
-(brace
 id|mii_putbit
 c_func
 (paren
@@ -1840,7 +1831,6 @@ op_amp
 id|m
 )paren
 suffix:semicolon
-)brace
 )brace
 r_static
 r_int
@@ -1888,7 +1878,6 @@ suffix:semicolon
 id|i
 op_increment
 )paren
-(brace
 multiline_comment|/* 32 bit preamble */
 id|mii_putbit
 c_func
@@ -1898,7 +1887,6 @@ comma
 l_int|1
 )paren
 suffix:semicolon
-)brace
 id|mii_wbits
 c_func
 (paren
@@ -1969,12 +1957,10 @@ c_func
 id|ioaddr
 )paren
 )paren
-(brace
 id|data
 op_or_assign
 id|m
 suffix:semicolon
-)brace
 id|mii_idle
 c_func
 (paren
@@ -2030,7 +2016,6 @@ suffix:semicolon
 id|i
 op_increment
 )paren
-(brace
 multiline_comment|/* 32 bit preamble */
 id|mii_putbit
 c_func
@@ -2040,7 +2025,6 @@ comma
 l_int|1
 )paren
 suffix:semicolon
-)brace
 id|mii_wbits
 c_func
 (paren
@@ -2171,14 +2155,12 @@ c_cond
 (paren
 id|i
 )paren
-(brace
 id|printk
 c_func
 (paren
 l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
-)brace
 id|printk
 c_func
 (paren
@@ -2245,22 +2227,14 @@ suffix:semicolon
 r_int
 id|err
 suffix:semicolon
-macro_line|#ifdef PCMCIA_DEBUG
-r_if
-c_cond
-(paren
-id|pc_debug
-)paren
-(brace
-id|printk
+id|DEBUG
 c_func
 (paren
-id|KDBG_XIRC
+l_int|0
+comma
 l_string|&quot;attach()&bslash;n&quot;
 )paren
 suffix:semicolon
-)brace
-macro_line|#endif
 id|flush_stale_links
 c_func
 (paren
@@ -2558,24 +2532,16 @@ suffix:semicolon
 r_int
 id|flags
 suffix:semicolon
-macro_line|#ifdef PCMCIA_DEBUG
-r_if
-c_cond
-(paren
-id|pc_debug
-)paren
-(brace
-id|printk
+id|DEBUG
 c_func
 (paren
-id|KDBG_XIRC
+l_int|0
+comma
 l_string|&quot;detach(0x%p)&bslash;n&quot;
 comma
 id|link
 )paren
 suffix:semicolon
-)brace
-macro_line|#endif
 multiline_comment|/* Locate device structure */
 r_for
 c_loop
@@ -2606,10 +2572,8 @@ id|linkp
 op_eq
 id|link
 )paren
-(brace
 r_break
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -2618,17 +2582,16 @@ op_star
 id|linkp
 )paren
 (brace
-macro_line|#ifdef PCMCIA_DEBUG
-id|printk
+id|DEBUG
 c_func
 (paren
-id|KDBG_XIRC
+l_int|0
+comma
 l_string|&quot;detach(0x%p): dev_link lost&bslash;n&quot;
 comma
 id|link
 )paren
 suffix:semicolon
-macro_line|#endif
 r_return
 suffix:semicolon
 )brace
@@ -2679,18 +2642,16 @@ op_amp
 id|DEV_CONFIG
 )paren
 (brace
-macro_line|#ifdef PCMCIA_DEBUG
-id|printk
+id|DEBUG
 c_func
 (paren
-id|KDBG_XIRC
-l_string|&quot;detach postponed, &squot;%s&squot; &quot;
-l_string|&quot;still locked&bslash;n&quot;
+l_int|0
+comma
+l_string|&quot;detach postponed, &squot;%s&squot; still locked&bslash;n&quot;
 comma
 id|link-&gt;dev-&gt;dev_name
 )paren
 suffix:semicolon
-macro_line|#endif
 id|link-&gt;state
 op_or_assign
 id|DEV_STALE_LINK
@@ -2704,7 +2665,6 @@ c_cond
 (paren
 id|link-&gt;handle
 )paren
-(brace
 id|CardServices
 c_func
 (paren
@@ -2713,7 +2673,6 @@ comma
 id|link-&gt;handle
 )paren
 suffix:semicolon
-)brace
 multiline_comment|/* Unlink device structure, free pieces */
 op_star
 id|linkp
@@ -2751,14 +2710,12 @@ c_cond
 (paren
 id|dev-&gt;priv
 )paren
-(brace
 id|kfree
 c_func
 (paren
 id|dev-&gt;priv
 )paren
 suffix:semicolon
-)brace
 id|kfree
 c_func
 (paren
@@ -2854,17 +2811,11 @@ id|s
 l_int|4
 )braket
 suffix:semicolon
-macro_line|#ifdef PCMCIA_DEBUG
-r_if
-c_cond
-(paren
-id|pc_debug
-)paren
-(brace
-id|printk
+id|DEBUG
 c_func
 (paren
-id|KDBG_XIRC
+l_int|0
+comma
 l_string|&quot;cisrev=%02x mediaid=%02x prodid=%02x&bslash;n&quot;
 comma
 id|cisrev
@@ -2874,8 +2825,6 @@ comma
 id|prodid
 )paren
 suffix:semicolon
-)brace
-macro_line|#endif
 id|local-&gt;mohawk
 op_assign
 l_int|0
@@ -3110,19 +3059,17 @@ id|local-&gt;card_type
 op_eq
 id|XIR_UNKNOWN
 )paren
-(brace
 id|printk
 c_func
 (paren
 id|KNOT_XIRC
-l_string|&quot;Warning: Unknown card (mediaid=%02x prodid=%02x)&bslash;n&quot;
+l_string|&quot;unknown card (mediaid=%02x prodid=%02x)&bslash;n&quot;
 comma
 id|mediaid
 comma
 id|prodid
 )paren
 suffix:semicolon
-)brace
 r_return
 l_int|1
 suffix:semicolon
@@ -3213,11 +3160,9 @@ comma
 l_string|&quot;CE2&quot;
 )paren
 )paren
-(brace
 r_return
 l_int|1
 suffix:semicolon
-)brace
 )brace
 r_return
 l_int|0
@@ -3300,24 +3245,16 @@ id|local-&gt;dingo_ccr
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#ifdef PCMCIA_DEBUG
-r_if
-c_cond
-(paren
-id|pc_debug
-)paren
-(brace
-id|printk
+id|DEBUG
 c_func
 (paren
-id|KDBG_XIRC
+l_int|0
+comma
 l_string|&quot;config(0x%p)&bslash;n&quot;
 comma
 id|link
 )paren
 suffix:semicolon
-)brace
-macro_line|#endif
 multiline_comment|/*&n;     * This reads the card&squot;s CONFIG tuple to find its configuration&n;     * registers.&n;     */
 id|tuple.Attributes
 op_assign
@@ -3384,22 +3321,14 @@ id|local-&gt;manf_str
 op_assign
 l_string|&quot;Xircom&quot;
 suffix:semicolon
-macro_line|#ifdef PCMCIA_DEBUG
-r_if
-c_cond
-(paren
-id|pc_debug
-)paren
-(brace
-id|printk
+id|DEBUG
 c_func
 (paren
-id|KDBG_XIRC
+l_int|0
+comma
 l_string|&quot;found xircom card&bslash;n&quot;
 )paren
 suffix:semicolon
-)brace
-macro_line|#endif
 r_break
 suffix:semicolon
 r_case
@@ -3409,22 +3338,14 @@ id|local-&gt;manf_str
 op_assign
 l_string|&quot;Accton&quot;
 suffix:semicolon
-macro_line|#ifdef PCMCIA_DEBUG
-r_if
-c_cond
-(paren
-id|pc_debug
-)paren
-(brace
-id|printk
+id|DEBUG
 c_func
 (paren
-id|KDBG_XIRC
+l_int|0
+comma
 l_string|&quot;found Accton card&bslash;n&quot;
 )paren
 suffix:semicolon
-)brace
-macro_line|#endif
 r_break
 suffix:semicolon
 r_case
@@ -3437,22 +3358,14 @@ id|local-&gt;manf_str
 op_assign
 l_string|&quot;Compaq&quot;
 suffix:semicolon
-macro_line|#ifdef PCMCIA_DEBUG
-r_if
-c_cond
-(paren
-id|pc_debug
-)paren
-(brace
-id|printk
+id|DEBUG
 c_func
 (paren
-id|KDBG_XIRC
+l_int|0
+comma
 l_string|&quot;found Compaq card&bslash;n&quot;
 )paren
 suffix:semicolon
-)brace
-macro_line|#endif
 r_break
 suffix:semicolon
 r_case
@@ -3462,22 +3375,14 @@ id|local-&gt;manf_str
 op_assign
 l_string|&quot;Intel&quot;
 suffix:semicolon
-macro_line|#ifdef PCMCIA_DEBUG
-r_if
-c_cond
-(paren
-id|pc_debug
-)paren
-(brace
-id|printk
+id|DEBUG
 c_func
 (paren
-id|KDBG_XIRC
+l_int|0
+comma
 l_string|&quot;found Intel card&bslash;n&quot;
 )paren
 suffix:semicolon
-)brace
-macro_line|#endif
 r_break
 suffix:semicolon
 r_default
@@ -3546,11 +3451,9 @@ id|parse
 )paren
 )paren
 )paren
-(brace
 r_goto
 id|cis_error
 suffix:semicolon
-)brace
 id|link-&gt;conf.ConfigBase
 op_assign
 id|parse.config.base
@@ -3620,10 +3523,8 @@ id|parse.funce.data
 op_member_access_from_pointer
 id|nb
 )paren
-(brace
 r_break
 suffix:semicolon
-)brace
 )brace
 r_if
 c_cond
@@ -3669,7 +3570,6 @@ id|buf
 op_eq
 id|CISTPL_FUNCE_LAN_NODE_ID
 )paren
-(brace
 id|memcpy
 c_func
 (paren
@@ -3681,7 +3581,6 @@ comma
 l_int|8
 )paren
 suffix:semicolon
-)brace
 r_else
 id|err
 op_assign
@@ -3845,7 +3744,6 @@ suffix:semicolon
 id|i
 op_increment
 )paren
-(brace
 id|dev-&gt;dev_addr
 (braket
 id|i
@@ -3856,7 +3754,6 @@ id|node_id-&gt;id
 id|i
 )braket
 suffix:semicolon
-)brace
 multiline_comment|/* Configure card */
 id|link-&gt;state
 op_or_assign
@@ -3891,12 +3788,10 @@ op_eq
 op_minus
 l_int|1
 )paren
-(brace
 id|link-&gt;irq.IRQInfo2
 op_assign
 id|irq_mask
 suffix:semicolon
-)brace
 r_else
 (brace
 r_for
@@ -3913,7 +3808,6 @@ suffix:semicolon
 id|i
 op_increment
 )paren
-(brace
 id|link-&gt;irq.IRQInfo2
 op_or_assign
 l_int|1
@@ -3923,7 +3817,6 @@ id|irq_list
 id|i
 )braket
 suffix:semicolon
-)brace
 )brace
 id|link-&gt;irq.Handler
 op_assign
@@ -4095,11 +3988,9 @@ id|link-&gt;io
 )paren
 )paren
 )paren
-(brace
 r_goto
 id|port_found
 suffix:semicolon
-)brace
 )brace
 )brace
 )brace
@@ -4251,11 +4142,9 @@ id|link-&gt;io
 )paren
 )paren
 )paren
-(brace
 r_goto
 id|port_found
 suffix:semicolon
-)brace
 )brace
 )brace
 )brace
@@ -4318,11 +4207,9 @@ id|link-&gt;io
 )paren
 )paren
 )paren
-(brace
 r_goto
 id|port_found
 suffix:semicolon
-)brace
 )brace
 id|link-&gt;io.BasePort1
 op_assign
@@ -4370,11 +4257,9 @@ c_cond
 (paren
 id|err
 )paren
-(brace
 r_goto
 id|config_error
 suffix:semicolon
-)brace
 multiline_comment|/****************&n;     * Now allocate an interrupt line.&t;Note that this does not&n;     * actually assign a handler to the interrupt.&n;     */
 r_if
 c_cond
@@ -4972,18 +4857,16 @@ op_eq
 l_int|4
 )paren
 )paren
-(brace
 id|dev-&gt;if_port
 op_assign
 id|if_port
 suffix:semicolon
-)brace
 r_else
 id|printk
 c_func
 (paren
-id|KERN_NOTICE
-l_string|&quot;xirc2ps_cs: invalid if_port requested&bslash;n&quot;
+id|KNOT_XIRC
+l_string|&quot;invalid if_port requested&bslash;n&quot;
 )paren
 suffix:semicolon
 multiline_comment|/* we can now register the device with the net subsystem */
@@ -5016,8 +4899,8 @@ id|dev
 id|printk
 c_func
 (paren
-id|KERN_NOTICE
-l_string|&quot;xirc2ps_cs: register_netdev() failed&bslash;n&quot;
+id|KNOT_XIRC
+l_string|&quot;register_netdev() failed&bslash;n&quot;
 )paren
 suffix:semicolon
 r_goto
@@ -5039,7 +4922,6 @@ c_cond
 (paren
 id|local-&gt;dingo
 )paren
-(brace
 id|do_reset
 c_func
 (paren
@@ -5048,7 +4930,6 @@ comma
 l_int|1
 )paren
 suffix:semicolon
-)brace
 multiline_comment|/* a kludge to make the cem56 work */
 multiline_comment|/* give some infos about the hardware */
 id|printk
@@ -5086,7 +4967,6 @@ suffix:semicolon
 id|i
 op_increment
 )paren
-(brace
 id|printk
 c_func
 (paren
@@ -5105,7 +4985,6 @@ id|i
 )braket
 )paren
 suffix:semicolon
-)brace
 id|printk
 c_func
 (paren
@@ -5137,8 +5016,8 @@ suffix:colon
 id|printk
 c_func
 (paren
-id|KERN_NOTICE
-l_string|&quot;xirc2ps_cs: unable to parse CIS&bslash;n&quot;
+id|KNOT_XIRC
+l_string|&quot;unable to parse CIS&bslash;n&quot;
 )paren
 suffix:semicolon
 id|failure
@@ -5178,24 +5057,16 @@ id|dev
 op_assign
 id|link-&gt;priv
 suffix:semicolon
-macro_line|#ifdef PCMCIA_DEBUG
-r_if
-c_cond
-(paren
-id|pc_debug
-)paren
-(brace
-id|printk
+id|DEBUG
 c_func
 (paren
-id|KDBG_XIRC
+l_int|0
+comma
 l_string|&quot;release(0x%p)&bslash;n&quot;
 comma
 id|link
 )paren
 suffix:semicolon
-)brace
-macro_line|#endif
 multiline_comment|/*&n;     * If the device is currently in use, we won&squot;t release until it&n;     * is actually closed.&n;     */
 r_if
 c_cond
@@ -5203,25 +5074,17 @@ c_cond
 id|link-&gt;open
 )paren
 (brace
-macro_line|#ifdef PCMCIA_DEBUG
-r_if
-c_cond
-(paren
-id|pc_debug
-)paren
-(brace
-id|printk
+id|DEBUG
 c_func
 (paren
-id|KDBG_XIRC
+l_int|0
+comma
 l_string|&quot;release postponed, &squot;%s&squot; &quot;
 l_string|&quot;still open&bslash;n&quot;
 comma
 id|link-&gt;dev-&gt;dev_name
 )paren
 suffix:semicolon
-)brace
-macro_line|#endif
 id|link-&gt;state
 op_or_assign
 id|DEV_STALE_CONFIG
@@ -5246,7 +5109,6 @@ c_cond
 (paren
 id|local-&gt;dingo
 )paren
-(brace
 id|iounmap
 c_func
 (paren
@@ -5255,7 +5117,6 @@ op_minus
 l_int|0x0800
 )paren
 suffix:semicolon
-)brace
 id|CardServices
 c_func
 (paren
@@ -5349,17 +5210,11 @@ id|dev-&gt;priv
 suffix:colon
 l_int|NULL
 suffix:semicolon
-macro_line|#ifdef PCMCIA_DEBUG
-r_if
-c_cond
-(paren
-id|pc_debug
-)paren
-(brace
-id|printk
+id|DEBUG
 c_func
 (paren
-id|KDBG_XIRC
+l_int|0
+comma
 l_string|&quot;event(%d)&bslash;n&quot;
 comma
 (paren
@@ -5368,8 +5223,6 @@ r_int
 id|event
 )paren
 suffix:semicolon
-)brace
-macro_line|#endif
 r_switch
 c_cond
 (paren
@@ -5379,22 +5232,14 @@ id|event
 r_case
 id|CS_EVENT_REGISTRATION_COMPLETE
 suffix:colon
-macro_line|#ifdef PCMCIA_DEBUG
-r_if
-c_cond
-(paren
-id|pc_debug
-)paren
-(brace
-id|printk
+id|DEBUG
 c_func
 (paren
-id|KDBG_XIRC
+l_int|0
+comma
 l_string|&quot;registration complete&bslash;n&quot;
 )paren
 suffix:semicolon
-)brace
-macro_line|#endif
 r_break
 suffix:semicolon
 r_case
@@ -5650,10 +5495,8 @@ c_cond
 op_logical_neg
 id|dev-&gt;start
 )paren
-(brace
 r_return
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -5702,19 +5545,11 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifdef PCMCIA_DEBUG
-r_if
-c_cond
-(paren
-id|pc_debug
-OG
-l_int|6
-)paren
-(brace
-id|printk
+id|DEBUG
 c_func
 (paren
-id|KERN_DEBUG
+l_int|6
+comma
 l_string|&quot;%s: interrupt %d at %#x.&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -5724,8 +5559,6 @@ comma
 id|ioaddr
 )paren
 suffix:semicolon
-)brace
-macro_line|#endif
 id|saved_page
 op_assign
 id|GetByte
@@ -5758,19 +5591,11 @@ l_int|0xff
 )paren
 (brace
 multiline_comment|/* card may be ejected */
-macro_line|#ifdef PCMCIA_DEBUG
-r_if
-c_cond
-(paren
-id|pc_debug
-OG
-l_int|3
-)paren
-(brace
-id|printk
+id|DEBUG
 c_func
 (paren
-id|KERN_DEBUG
+l_int|3
+comma
 l_string|&quot;%s: interrupt %d for dead card&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -5778,8 +5603,6 @@ comma
 id|irq
 )paren
 suffix:semicolon
-)brace
-macro_line|#endif
 r_goto
 id|leave
 suffix:semicolon
@@ -5853,19 +5676,11 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-macro_line|#ifdef PCMCIA_DEBUG
-r_if
-c_cond
-(paren
-id|pc_debug
-OG
-l_int|3
-)paren
-(brace
-id|printk
+id|DEBUG
 c_func
 (paren
-id|KERN_DEBUG
+l_int|3
+comma
 l_string|&quot;%s: ISR=%#2.2x ESR=%#2.2x RSR=%#2.2x TSR=%#4.4x&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -5879,8 +5694,6 @@ comma
 id|tx_status
 )paren
 suffix:semicolon
-)brace
-macro_line|#endif
 multiline_comment|/***** receive section ******/
 id|SelectPage
 c_func
@@ -5922,26 +5735,15 @@ multiline_comment|/* too many bytes received during this int, drop the rest of t
 id|lp-&gt;stats.rx_dropped
 op_increment
 suffix:semicolon
-macro_line|#ifdef PCMCIA_DEBUG
-r_if
-c_cond
-(paren
-id|pc_debug
-OG
-l_int|3
-)paren
-(brace
 id|printk
 c_func
 (paren
-id|KNOT_XIRC
+id|KINF_XIRC
 l_string|&quot;%s: RX drop, too much done&bslash;n&quot;
 comma
 id|dev-&gt;name
 )paren
 suffix:semicolon
-)brace
-macro_line|#endif
 id|PutWord
 c_func
 (paren
@@ -5978,19 +5780,11 @@ id|bytes_rcvd
 op_add_assign
 id|pktlen
 suffix:semicolon
-macro_line|#ifdef PCMCIA_DEBUG
-r_if
-c_cond
-(paren
-id|pc_debug
-OG
-l_int|5
-)paren
-(brace
-id|printk
+id|DEBUG
 c_func
 (paren
-id|KDBG_XIRC
+l_int|5
+comma
 l_string|&quot;rsr=%#02x packet_length=%u&bslash;n&quot;
 comma
 id|rsr
@@ -5998,8 +5792,6 @@ comma
 id|pktlen
 )paren
 suffix:semicolon
-)brace
-macro_line|#endif
 id|skb
 op_assign
 id|dev_alloc_skb
@@ -6018,13 +5810,6 @@ op_logical_neg
 id|skb
 )paren
 (brace
-macro_line|#ifdef PCMCIA_DEBUG
-r_if
-c_cond
-(paren
-id|pc_debug
-)paren
-(brace
 id|printk
 c_func
 (paren
@@ -6034,8 +5819,6 @@ comma
 id|pktlen
 )paren
 suffix:semicolon
-)brace
-macro_line|#endif
 id|lp-&gt;stats.rx_dropped
 op_increment
 suffix:semicolon
@@ -6096,12 +5879,10 @@ id|rhsa
 op_ge
 l_int|0x8000
 )paren
-(brace
 id|rhsa
 op_assign
 l_int|0
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -6354,11 +6135,9 @@ op_amp
 id|PhyPkt
 )paren
 )paren
-(brace
 id|lp-&gt;stats.multicast
 op_increment
 suffix:semicolon
-)brace
 )brace
 id|PutWord
 c_func
@@ -6372,25 +6151,16 @@ multiline_comment|/* issue cmd: skip_rx_packet */
 )brace
 r_else
 (brace
-macro_line|#ifdef PCMCIA_DEBUG
-r_if
-c_cond
-(paren
-id|pc_debug
-OG
-l_int|5
-)paren
-(brace
-id|printk
+id|DEBUG
 c_func
 (paren
+l_int|5
+comma
 l_string|&quot;rsr=%#02x&bslash;n&quot;
 comma
 id|rsr
 )paren
 suffix:semicolon
-)brace
-macro_line|#endif
 )brace
 r_if
 c_cond
@@ -6403,26 +6173,16 @@ id|PktTooLong
 id|lp-&gt;stats.rx_frame_errors
 op_increment
 suffix:semicolon
-macro_line|#ifdef PCMCIA_DEBUG
-r_if
-c_cond
-(paren
-id|pc_debug
-OG
-l_int|3
-)paren
-(brace
-id|printk
+id|DEBUG
 c_func
 (paren
-id|KNOT_XIRC
+l_int|3
+comma
 l_string|&quot;%s: Packet too long&bslash;n&quot;
 comma
 id|dev-&gt;name
 )paren
 suffix:semicolon
-)brace
-macro_line|#endif
 )brace
 r_if
 c_cond
@@ -6435,26 +6195,16 @@ id|CRCErr
 id|lp-&gt;stats.rx_crc_errors
 op_increment
 suffix:semicolon
-macro_line|#ifdef PCMCIA_DEBUG
-r_if
-c_cond
-(paren
-id|pc_debug
-OG
-l_int|3
-)paren
-(brace
-id|printk
+id|DEBUG
 c_func
 (paren
-id|KNOT_XIRC
+l_int|3
+comma
 l_string|&quot;%s: CRC error&bslash;n&quot;
 comma
 id|dev-&gt;name
 )paren
 suffix:semicolon
-)brace
-macro_line|#endif
 )brace
 r_if
 c_cond
@@ -6468,26 +6218,16 @@ id|lp-&gt;stats.rx_fifo_errors
 op_increment
 suffix:semicolon
 multiline_comment|/* okay ? */
-macro_line|#ifdef PCMCIA_DEBUG
-r_if
-c_cond
-(paren
-id|pc_debug
-OG
-l_int|3
-)paren
-(brace
-id|printk
+id|DEBUG
 c_func
 (paren
-id|KNOT_XIRC
+l_int|3
+comma
 l_string|&quot;%s: Alignment error&bslash;n&quot;
 comma
 id|dev-&gt;name
 )paren
 suffix:semicolon
-)brace
-macro_line|#endif
 )brace
 multiline_comment|/* get the new ethernet status */
 id|eth_status
@@ -6519,24 +6259,14 @@ comma
 id|ClearRxOvrun
 )paren
 suffix:semicolon
-macro_line|#ifdef PCMCIA_DEBUG
-r_if
-c_cond
-(paren
-id|pc_debug
-OG
-l_int|3
-)paren
-(brace
-id|printk
+id|DEBUG
 c_func
 (paren
-id|KDBG_XIRC
+l_int|3
+comma
 l_string|&quot;receive overrun cleared&bslash;n&quot;
 )paren
 suffix:semicolon
-)brace
-macro_line|#endif
 )brace
 multiline_comment|/***** transmit section ******/
 r_if
@@ -6575,7 +6305,6 @@ id|nn
 OL
 id|n
 )paren
-(brace
 multiline_comment|/* rollover */
 id|lp-&gt;stats.tx_packets
 op_add_assign
@@ -6583,7 +6312,6 @@ l_int|256
 op_minus
 id|n
 suffix:semicolon
-)brace
 r_else
 r_if
 c_cond
@@ -6594,22 +6322,14 @@ id|nn
 )paren
 (brace
 multiline_comment|/* happens sometimes - don&squot;t know why */
-macro_line|#ifdef PCMCIA_DEBUG
-r_if
-c_cond
-(paren
-id|pc_debug
-)paren
-(brace
-id|printk
+id|DEBUG
 c_func
 (paren
-id|KDBG_XIRC
+l_int|0
+comma
 l_string|&quot;PTR not changed?&bslash;n&quot;
 )paren
 suffix:semicolon
-)brace
-macro_line|#endif
 )brace
 r_else
 id|lp-&gt;stats.tx_packets
@@ -6639,22 +6359,14 @@ l_int|0x0002
 )paren
 (brace
 multiline_comment|/* Execessive collissions */
-macro_line|#ifdef PCMCIA_DEBUG
-r_if
-c_cond
-(paren
-id|pc_debug
-)paren
-(brace
-id|printk
+id|DEBUG
 c_func
 (paren
-id|KDBG_XIRC
+l_int|0
+comma
 l_string|&quot;tx restarted due to execssive collissions&bslash;n&quot;
 )paren
 suffix:semicolon
-)brace
-macro_line|#endif
 id|PutByte
 c_func
 (paren
@@ -6672,11 +6384,9 @@ id|tx_status
 op_amp
 l_int|0x0040
 )paren
-(brace
 id|lp-&gt;stats.tx_aborted_errors
 op_increment
 suffix:semicolon
-)brace
 multiline_comment|/* recalculate our work chunk so that we limit the duration of this&n;     * ISR to about 1/10 of a second.&n;     * Calculate only if we received a reasonable amount of bytes.&n;     */
 r_if
 c_cond
@@ -6725,12 +6435,10 @@ id|maxrx_bytes
 OL
 l_int|2000
 )paren
-(brace
 id|maxrx_bytes
 op_assign
 l_int|2000
 suffix:semicolon
-)brace
 r_else
 r_if
 c_cond
@@ -6739,25 +6447,15 @@ id|maxrx_bytes
 OG
 l_int|22000
 )paren
-(brace
 id|maxrx_bytes
 op_assign
 l_int|22000
 suffix:semicolon
-)brace
-macro_line|#ifdef PCMCIA_DEBUG
-r_if
-c_cond
-(paren
-id|pc_debug
-OG
-l_int|1
-)paren
-(brace
-id|printk
+id|DEBUG
 c_func
 (paren
-id|KDBG_XIRC
+l_int|1
+comma
 l_string|&quot;set maxrx=%u (rcvd=%u ticks=%lu)&bslash;n&quot;
 comma
 id|maxrx_bytes
@@ -6767,8 +6465,6 @@ comma
 id|duration
 )paren
 suffix:semicolon
-)brace
-macro_line|#endif
 )brace
 r_else
 r_if
@@ -6782,7 +6478,7 @@ OL
 l_int|22000
 )paren
 (brace
-multiline_comment|/* now much faster*/
+multiline_comment|/* now much faster */
 id|maxrx_bytes
 op_add_assign
 l_int|2000
@@ -6794,32 +6490,20 @@ id|maxrx_bytes
 OG
 l_int|22000
 )paren
-(brace
 id|maxrx_bytes
 op_assign
 l_int|22000
 suffix:semicolon
-)brace
-macro_line|#ifdef PCMCIA_DEBUG
-r_if
-c_cond
-(paren
-id|pc_debug
-OG
-l_int|1
-)paren
-(brace
-id|printk
+id|DEBUG
 c_func
 (paren
-id|KDBG_XIRC
+l_int|1
+comma
 l_string|&quot;set maxrx=%u&bslash;n&quot;
 comma
 id|maxrx_bytes
 )paren
 suffix:semicolon
-)brace
-macro_line|#endif
 )brace
 )brace
 id|leave
@@ -6849,11 +6533,9 @@ id|XIRCREG_ISR
 op_ne
 l_int|0
 )paren
-(brace
 r_goto
 id|loop_entry
 suffix:semicolon
-)brace
 )brace
 id|SelectPage
 c_func
@@ -6874,7 +6556,7 @@ id|EnableIntr
 )paren
 suffix:semicolon
 multiline_comment|/* re-enable interrupts */
-multiline_comment|/* Instead of dropping packets during a receive, we could&n;     * force an interrupt with this command:&n;     *&t;  PutByte(XIRCREG_CR, EnableIntr|ForceIntr );&n;     */
+multiline_comment|/* Instead of dropping packets during a receive, we could&n;     * force an interrupt with this command:&n;     *&t;  PutByte(XIRCREG_CR, EnableIntr|ForceIntr);&n;     */
 )brace
 multiline_comment|/* xirc2ps_interrupt */
 multiline_comment|/*====================================================================*/
@@ -6922,19 +6604,11 @@ id|skb-&gt;len
 suffix:colon
 l_int|0
 suffix:semicolon
-macro_line|#ifdef PCMCIA_DEBUG
-r_if
-c_cond
-(paren
-id|pc_debug
-OG
-l_int|1
-)paren
-(brace
-id|printk
+id|DEBUG
 c_func
 (paren
-id|KDBG_XIRC
+l_int|1
+comma
 l_string|&quot;do_start_xmit(skb=%p, dev=%p) len=%u&bslash;n&quot;
 comma
 id|skb
@@ -6944,8 +6618,6 @@ comma
 id|pktlen
 )paren
 suffix:semicolon
-)brace
-macro_line|#endif
 multiline_comment|/* Transmitter timeout, serious problems */
 r_if
 c_cond
@@ -6989,11 +6661,9 @@ id|tickssofar
 OL
 id|TX_TIMEOUT
 )paren
-(brace
 r_return
 l_int|1
 suffix:semicolon
-)brace
 id|printk
 c_func
 (paren
@@ -7065,12 +6735,10 @@ id|pktlen
 OL
 id|ETH_ZLEN
 )paren
-(brace
 id|pktlen
 op_assign
 id|ETH_ZLEN
 suffix:semicolon
-)brace
 id|SelectPage
 c_func
 (paren
@@ -7117,12 +6785,9 @@ l_int|2
 OL
 id|freespace
 suffix:semicolon
-macro_line|#ifdef PCMCIA_DEBUG
-r_if
-c_cond
+id|DEBUG
+c_func
 (paren
-id|pc_debug
-OG
 l_int|2
 op_plus
 (paren
@@ -7133,12 +6798,7 @@ l_int|2
 suffix:colon
 l_int|0
 )paren
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_DEBUG
+comma
 l_string|&quot;%s: avail. tx space=%u%s&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -7153,8 +6813,6 @@ suffix:colon
 l_string|&quot; (not enough)&quot;
 )paren
 suffix:semicolon
-)brace
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -7205,7 +6863,6 @@ id|pktlen
 op_amp
 l_int|1
 )paren
-(brace
 id|PutByte
 c_func
 (paren
@@ -7219,13 +6876,11 @@ l_int|1
 )braket
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
 id|lp-&gt;mohawk
 )paren
-(brace
 id|PutByte
 c_func
 (paren
@@ -7236,7 +6891,6 @@ op_or
 id|EnableIntr
 )paren
 suffix:semicolon
-)brace
 id|dev_kfree_skb
 (paren
 id|skb
@@ -7375,10 +7029,8 @@ id|n
 OG
 l_int|9
 )paren
-(brace
 r_break
 suffix:semicolon
-)brace
 id|i
 op_assign
 l_int|0
@@ -7437,7 +7089,6 @@ c_cond
 (paren
 id|lp-&gt;mohawk
 )paren
-(brace
 id|PutByte
 c_func
 (paren
@@ -7451,7 +7102,6 @@ id|i
 )braket
 )paren
 suffix:semicolon
-)brace
 r_else
 id|PutByte
 c_func
@@ -7625,24 +7275,16 @@ op_star
 id|dev
 )paren
 (brace
-macro_line|#ifdef PCMCIA_DEBUG
-r_if
-c_cond
-(paren
-id|pc_debug
-)paren
-(brace
-id|printk
+id|DEBUG
 c_func
 (paren
-id|KDBG_XIRC
+l_int|0
+comma
 l_string|&quot;do_init(%p)&bslash;n&quot;
 comma
 id|dev
 )paren
 suffix:semicolon
-)brace
-macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
@@ -7670,24 +7312,16 @@ id|local
 op_assign
 id|dev-&gt;priv
 suffix:semicolon
-macro_line|#ifdef PCMCIA_DEBUG
-r_if
-c_cond
-(paren
-id|pc_debug
-)paren
-(brace
-id|printk
+id|DEBUG
 c_func
 (paren
-id|KDBG_XIRC
+l_int|0
+comma
 l_string|&quot;do_config(%p)&bslash;n&quot;
 comma
 id|dev
 )paren
 suffix:semicolon
-)brace
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -7703,11 +7337,23 @@ id|dev-&gt;if_port
 r_if
 c_cond
 (paren
+id|local-&gt;new_mii
+)paren
+r_return
+op_minus
+id|EOPNOTSUPP
+suffix:semicolon
+r_if
+c_cond
+(paren
 id|map-&gt;port
-op_le
+OG
 l_int|4
 )paren
-(brace
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -7759,21 +7405,11 @@ l_int|1
 suffix:semicolon
 multiline_comment|/* not the fine way :-) */
 )brace
-r_else
-r_return
-op_minus
-id|EINVAL
-suffix:semicolon
-)brace
 macro_line|#ifdef PCMCIA_DEBUG
 r_else
 r_if
 c_cond
 (paren
-id|map-&gt;port
-op_eq
-id|dev-&gt;if_port
-op_logical_and
 id|local-&gt;mohawk
 )paren
 (brace
@@ -7813,24 +7449,16 @@ id|dev_link_t
 op_star
 id|link
 suffix:semicolon
-macro_line|#ifdef PCMCIA_DEBUG
-r_if
-c_cond
-(paren
-id|pc_debug
-)paren
-(brace
-id|printk
+id|DEBUG
 c_func
 (paren
-id|KDBG_XIRC
+l_int|0
+comma
 l_string|&quot;do_open(%p)&bslash;n&quot;
 comma
 id|dev
 )paren
 suffix:semicolon
-)brace
-macro_line|#endif
 multiline_comment|/* Check that the PCMCIA card is still here. */
 r_for
 c_loop
@@ -7852,10 +7480,8 @@ id|link-&gt;priv
 op_eq
 id|dev
 )paren
-(brace
 r_break
 suffix:semicolon
-)brace
 multiline_comment|/* Physical device present signature. */
 r_if
 c_cond
@@ -7867,12 +7493,10 @@ c_func
 id|link
 )paren
 )paren
-(brace
 r_return
 op_minus
 id|ENODEV
 suffix:semicolon
-)brace
 multiline_comment|/* okay */
 id|link-&gt;open
 op_increment
@@ -7949,19 +7573,11 @@ op_star
 op_amp
 id|rq-&gt;ifr_data
 suffix:semicolon
-macro_line|#ifdef PCMCIA_DEBUG
-r_if
-c_cond
-(paren
-id|pc_debug
-OG
-l_int|1
-)paren
-(brace
-id|printk
+id|DEBUG
 c_func
 (paren
-id|KERN_DEBUG
+l_int|1
+comma
 l_string|&quot;%s: ioctl(%-.6s, %#04x) %04x %04x %04x %04x&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -7991,20 +7607,16 @@ l_int|3
 )braket
 )paren
 suffix:semicolon
-)brace
-macro_line|#endif
 r_if
 c_cond
 (paren
 op_logical_neg
 id|local-&gt;mohawk
 )paren
-(brace
 r_return
 op_minus
 id|EOPNOTSUPP
 suffix:semicolon
-)brace
 r_switch
 c_cond
 (paren
@@ -8072,12 +7684,10 @@ c_func
 (paren
 )paren
 )paren
-(brace
 r_return
 op_minus
 id|EPERM
 suffix:semicolon
-)brace
 id|mii_wr
 c_func
 (paren
@@ -8176,7 +7786,6 @@ c_cond
 (paren
 id|local-&gt;mohawk
 )paren
-(brace
 id|PutByte
 c_func
 (paren
@@ -8185,7 +7794,6 @@ comma
 l_int|1
 )paren
 suffix:semicolon
-)brace
 multiline_comment|/* set bit 0: power up */
 r_else
 id|PutByte
@@ -8238,17 +7846,11 @@ suffix:semicolon
 r_int
 id|value
 suffix:semicolon
-macro_line|#ifdef PCMCIA_DEBUG
-r_if
-c_cond
-(paren
-id|pc_debug
-)paren
-(brace
-id|printk
+id|DEBUG
 c_func
 (paren
-id|KERN_DEBUG
+l_int|0
+comma
 l_string|&quot;%s: do_reset(%p,%d)&bslash;n&quot;
 comma
 id|dev
@@ -8263,8 +7865,6 @@ comma
 id|full
 )paren
 suffix:semicolon
-)brace
-macro_line|#endif
 id|hardreset
 c_func
 (paren
@@ -8531,12 +8131,10 @@ c_cond
 (paren
 id|local-&gt;mohawk
 )paren
-(brace
 id|value
 op_or_assign
 id|DisableLinkPulse
 suffix:semicolon
-)brace
 id|PutByte
 c_func
 (paren
@@ -8546,17 +8144,11 @@ id|value
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef PCMCIA_DEBUG
-r_if
-c_cond
-(paren
-id|pc_debug
-)paren
-(brace
-id|printk
+id|DEBUG
 c_func
 (paren
-id|KERN_DEBUG
+l_int|0
+comma
 l_string|&quot;%s: ECR is: %#02x&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -8564,8 +8156,6 @@ comma
 id|value
 )paren
 suffix:semicolon
-)brace
-macro_line|#endif
 id|SelectPage
 c_func
 (paren
@@ -8610,14 +8200,12 @@ c_cond
 (paren
 id|full
 )paren
-(brace
 id|set_addresses
 c_func
 (paren
 id|dev
 )paren
 suffix:semicolon
-)brace
 multiline_comment|/* Hardware workaround:&n;     * The receive byte pointer after reset is off by 1 so we need&n;     * to move the offset pointer back to 0.&n;     */
 id|SelectPage
 c_func
@@ -8718,66 +8306,19 @@ op_eq
 l_int|4
 op_logical_or
 id|local-&gt;dingo
-)paren
-(brace
-multiline_comment|/* and use it */
-id|SelectPage
-c_func
-(paren
-l_int|2
-)paren
-suffix:semicolon
-id|value
-op_assign
-id|GetByte
-c_func
-(paren
-id|XIRCREG2_MSR
-)paren
-suffix:semicolon
-id|value
-op_or_assign
-l_int|0x08
-suffix:semicolon
-multiline_comment|/* Select MII */
-id|PutByte
-c_func
-(paren
-id|XIRCREG2_MSR
-comma
-id|value
-)paren
-suffix:semicolon
-id|busy_loop
-c_func
-(paren
-id|HZ
-op_div
-l_int|50
-)paren
-suffix:semicolon
-multiline_comment|/* wait 20 msec */
-macro_line|#ifdef PCMCIA_DEBUG
-r_if
-c_cond
-(paren
-id|pc_debug
+op_logical_or
+id|local-&gt;new_mii
 )paren
 (brace
 id|printk
 c_func
 (paren
-id|KERN_DEBUG
+id|KERN_INFO
 l_string|&quot;%s: MII selected&bslash;n&quot;
 comma
 id|dev-&gt;name
 )paren
 suffix:semicolon
-)brace
-macro_line|#endif
-)brace
-r_else
-(brace
 id|SelectPage
 c_func
 (paren
@@ -8806,24 +8347,18 @@ op_div
 l_int|50
 )paren
 suffix:semicolon
-macro_line|#ifdef PCMCIA_DEBUG
-r_if
-c_cond
-(paren
-id|pc_debug
-)paren
+)brace
+r_else
 (brace
 id|printk
 c_func
 (paren
-id|KERN_DEBUG
+id|KERN_INFO
 l_string|&quot;%s: MII detected; using 10mbs&bslash;n&quot;
 comma
 id|dev-&gt;name
 )paren
 suffix:semicolon
-)brace
-macro_line|#endif
 id|SelectPage
 c_func
 (paren
@@ -8837,7 +8372,6 @@ id|dev-&gt;if_port
 op_eq
 l_int|2
 )paren
-(brace
 multiline_comment|/* enable 10Base2 */
 id|PutByte
 c_func
@@ -8847,7 +8381,6 @@ comma
 l_int|0xC0
 )paren
 suffix:semicolon
-)brace
 r_else
 multiline_comment|/* enable 10BaseT */
 id|PutByte
@@ -8919,7 +8452,6 @@ id|dev-&gt;if_port
 op_eq
 l_int|4
 )paren
-(brace
 multiline_comment|/* TP: Link and Activity */
 id|PutByte
 c_func
@@ -8929,7 +8461,6 @@ comma
 l_int|0x3b
 )paren
 suffix:semicolon
-)brace
 r_else
 multiline_comment|/* Coax: Not-Collision and Activity */
 id|PutByte
@@ -9037,7 +8568,6 @@ op_amp
 l_int|0x01
 )paren
 )paren
-(brace
 id|PutByte
 c_func
 (paren
@@ -9046,7 +8576,6 @@ comma
 l_int|0x11
 )paren
 suffix:semicolon
-)brace
 multiline_comment|/* unmask master-int bit */
 )brace
 r_if
@@ -9054,7 +8583,6 @@ c_cond
 (paren
 id|full
 )paren
-(brace
 id|printk
 c_func
 (paren
@@ -9071,7 +8599,6 @@ comma
 id|local-&gt;silicon
 )paren
 suffix:semicolon
-)brace
 multiline_comment|/* We should switch back to page 0 to avoid a bug in revision 0&n;     * where regs with offset below 8 can&squot;t be read after an access&n;     * to the MAC registers */
 id|SelectPage
 c_func
@@ -9154,23 +8681,37 @@ l_int|0xff00
 op_ne
 l_int|0x7800
 )paren
-(brace
 r_return
 l_int|0
 suffix:semicolon
-)brace
 multiline_comment|/* No MII */
+id|local-&gt;new_mii
+op_assign
+(paren
+id|mii_rd
+c_func
+(paren
+id|ioaddr
+comma
+l_int|0
+comma
+l_int|2
+)paren
+op_ne
+l_int|0xffff
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
+id|local-&gt;new_mii
+op_logical_or
 id|local-&gt;probe_port
 )paren
-(brace
 id|control
 op_assign
 l_int|0x1000
 suffix:semicolon
-)brace
 multiline_comment|/* auto neg */
 r_else
 r_if
@@ -9180,12 +8721,10 @@ id|dev-&gt;if_port
 op_eq
 l_int|4
 )paren
-(brace
 id|control
 op_assign
 l_int|0x2000
 suffix:semicolon
-)brace
 multiline_comment|/* no auto neg, 100mbs mode */
 r_else
 id|control
@@ -9253,6 +8792,8 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|local-&gt;new_mii
+op_logical_or
 id|local-&gt;probe_port
 )paren
 (brace
@@ -9308,10 +8849,8 @@ op_amp
 l_int|0x0004
 )paren
 )paren
-(brace
 r_break
 suffix:semicolon
-)brace
 )brace
 r_if
 c_cond
@@ -9327,13 +8866,20 @@ l_int|0x0020
 id|printk
 c_func
 (paren
-id|KERN_NOTICE
+id|KERN_INFO
 l_string|&quot;%s: auto negotation failed;&quot;
 l_string|&quot; using 10mbs&bslash;n&quot;
 comma
 id|dev-&gt;name
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|local-&gt;new_mii
+)paren
+(brace
 id|control
 op_assign
 l_int|0x0000
@@ -9382,6 +8928,7 @@ suffix:colon
 l_int|2
 suffix:semicolon
 )brace
+)brace
 r_else
 (brace
 id|linkpartner
@@ -9415,7 +8962,6 @@ op_amp
 l_int|0x0080
 )paren
 (brace
-multiline_comment|/* 100BaseTx capability */
 id|dev-&gt;if_port
 op_assign
 l_int|4
@@ -9438,14 +8984,12 @@ c_cond
 (paren
 id|pc_debug
 )paren
-(brace
 id|mii_dump
 c_func
 (paren
 id|dev
 )paren
 suffix:semicolon
-)brace
 macro_line|#endif
 r_return
 l_int|1
@@ -9468,24 +9012,16 @@ id|ioaddr
 op_assign
 id|dev-&gt;base_addr
 suffix:semicolon
-macro_line|#ifdef PCMCIA_DEBUG
-r_if
-c_cond
-(paren
-id|pc_debug
-)paren
-(brace
-id|printk
+id|DEBUG
 c_func
 (paren
-id|KDBG_XIRC
+l_int|0
+comma
 l_string|&quot;do_powerdown(%p)&bslash;n&quot;
 comma
 id|dev
 )paren
 suffix:semicolon
-)brace
-macro_line|#endif
 id|SelectPage
 c_func
 (paren
@@ -9529,24 +9065,16 @@ id|dev_link_t
 op_star
 id|link
 suffix:semicolon
-macro_line|#ifdef PCMCIA_DEBUG
-r_if
-c_cond
-(paren
-id|pc_debug
-)paren
-(brace
-id|printk
+id|DEBUG
 c_func
 (paren
-id|KDBG_XIRC
+l_int|0
+comma
 l_string|&quot;do_stop(%p)&bslash;n&quot;
 comma
 id|dev
 )paren
 suffix:semicolon
-)brace
-macro_line|#endif
 r_for
 c_loop
 (paren
@@ -9567,38 +9095,18 @@ id|link-&gt;priv
 op_eq
 id|dev
 )paren
-(brace
 r_break
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
 op_logical_neg
 id|link
 )paren
-(brace
 r_return
 op_minus
 id|ENODEV
 suffix:semicolon
-)brace
-macro_line|#ifdef PCMCIA_DEBUG
-r_if
-c_cond
-(paren
-id|pc_debug
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KDBG_XIRC
-l_string|&quot;shutting down&bslash;n&quot;
-)paren
-suffix:semicolon
-)brace
-macro_line|#endif
 id|dev-&gt;tbusy
 op_assign
 l_int|1
@@ -9726,7 +9234,6 @@ c_cond
 (paren
 id|card_type
 )paren
-(brace
 id|printk
 c_func
 (paren
@@ -9734,13 +9241,11 @@ id|KINF_XIRC
 l_string|&quot;option card_type is obsolete&bslash;n&quot;
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
 id|lockup_hack
 )paren
-(brace
 id|printk
 c_func
 (paren
@@ -9748,7 +9253,6 @@ id|KINF_XIRC
 l_string|&quot;lockup hack is enabled&bslash;n&quot;
 )paren
 suffix:semicolon
-)brace
 id|CardServices
 c_func
 (paren
@@ -9778,24 +9282,16 @@ op_minus
 l_int|1
 suffix:semicolon
 )brace
-macro_line|#ifdef PCMCIA_DEBUG
-r_if
-c_cond
-(paren
-id|pc_debug
-)paren
-(brace
-id|printk
+id|DEBUG
 c_func
 (paren
-id|KDBG_XIRC
+l_int|0
+comma
 l_string|&quot;pc_debug=%d&bslash;n&quot;
 comma
 id|pc_debug
 )paren
 suffix:semicolon
-)brace
-macro_line|#endif
 id|register_pccard_driver
 c_func
 (paren
@@ -9823,22 +9319,14 @@ c_func
 r_void
 )paren
 (brace
-macro_line|#ifdef PCMCIA_DEBUG
-r_if
-c_cond
-(paren
-id|pc_debug
-)paren
-(brace
-id|printk
+id|DEBUG
 c_func
 (paren
-id|KDBG_XIRC
+l_int|0
+comma
 l_string|&quot;unloading&bslash;n&quot;
 )paren
 suffix:semicolon
-)brace
-macro_line|#endif
 id|unregister_pccard_driver
 c_func
 (paren
@@ -9859,7 +9347,6 @@ id|dev_list-&gt;state
 op_amp
 id|DEV_CONFIG
 )paren
-(brace
 id|xirc2ps_release
 c_func
 (paren
@@ -9869,13 +9356,11 @@ id|u_long
 id|dev_list
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
 id|dev_list
 )paren
-(brace
 multiline_comment|/* xirc2ps_release() might already have detached... */
 id|xirc2ps_detach
 c_func
@@ -9883,7 +9368,6 @@ c_func
 id|dev_list
 )paren
 suffix:semicolon
-)brace
 )brace
 )brace
 DECL|variable|init_xirc2ps_cs

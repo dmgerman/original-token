@@ -461,48 +461,6 @@ comma
 multiline_comment|/* special = 4 */
 )brace
 suffix:semicolon
-multiline_comment|/*for /proc filesystem */
-DECL|variable|proc_scsi_ibmmca
-r_struct
-id|proc_dir_entry
-id|proc_scsi_ibmmca
-op_assign
-(brace
-id|PROC_SCSI_IBMMCA
-comma
-l_int|6
-comma
-l_string|&quot;ibmmca&quot;
-comma
-id|S_IFDIR
-op_or
-id|S_IRUGO
-op_or
-id|S_IXUGO
-comma
-l_int|2
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|NULL
-comma
-l_int|NULL
-comma
-l_int|NULL
-comma
-l_int|NULL
-comma
-l_int|NULL
-comma
-l_int|NULL
-comma
-l_int|NULL
-)brace
-suffix:semicolon
 multiline_comment|/* Max number of logical devices (can be up from 0 to 14).  15 is the address&n;of the adapter itself. */
 DECL|macro|MAX_LOG_DEV
 mdefine_line|#define MAX_LOG_DEV  15

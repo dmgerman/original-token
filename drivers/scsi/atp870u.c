@@ -16,27 +16,6 @@ macro_line|#include &quot;scsi.h&quot;
 macro_line|#include &quot;hosts.h&quot;
 macro_line|#include &quot;atp870u.h&quot;
 macro_line|#include&lt;linux/stat.h&gt;
-DECL|variable|proc_scsi_atp870u
-r_struct
-id|proc_dir_entry
-id|proc_scsi_atp870u
-op_assign
-(brace
-id|PROC_SCSI_ATP870U
-comma
-l_int|7
-comma
-l_string|&quot;atp870u&quot;
-comma
-id|S_IFDIR
-op_or
-id|S_IRUGO
-op_or
-id|S_IXUGO
-comma
-l_int|2
-)brace
-suffix:semicolon
 r_void
 id|mydlyu
 c_func
@@ -9584,10 +9563,9 @@ r_return
 id|count
 suffix:semicolon
 )brace
-id|tpnt-&gt;proc_dir
+id|tpnt-&gt;proc_name
 op_assign
-op_amp
-id|proc_scsi_atp870u
+l_string|&quot;atp870u&quot;
 suffix:semicolon
 r_for
 c_loop

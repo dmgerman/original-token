@@ -13,6 +13,7 @@ macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;linux/blk.h&gt;
+macro_line|#include &lt;linux/highmem.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 multiline_comment|/*&n; * MAC Floppy IWM hooks&n; */
 macro_line|#ifdef CONFIG_MAC_FLOPPY_IWM
@@ -1872,6 +1873,19 @@ c_func
 (paren
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t; * Temporary solution - in 2.5 this will be done by the lowlevel&n;&t; * driver. Create a bounce buffer if the buffer data points into&n;&t; * high memory - keep the original buffer otherwise.&n;&t; */
+macro_line|#if CONFIG_HIGHMEM
+id|bh
+op_assign
+id|create_bounce
+c_func
+(paren
+id|rw
+comma
+id|bh
+)paren
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/* look for a free request. */
 multiline_comment|/* Loop uses two requests, 1 for loop and 1 for the real device.&n;        * Cut max_req in half to avoid running out and deadlocking. */
 r_if

@@ -17,22 +17,12 @@ macro_line|#include &lt;linux/in.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;linux/time.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
-macro_line|#if LINUX_VERSION_CODE &gt;= 0x020100
 macro_line|#include &lt;linux/reboot.h&gt;
-macro_line|#else
-macro_line|#include &lt;linux/bios32.h&gt;
-macro_line|#endif
 macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
-macro_line|#if LINUX_VERSION_CODE &gt;= 0x02015F
 macro_line|#include &lt;linux/spinlock.h&gt;
-macro_line|#endif
-macro_line|#if LINUX_VERSION_CODE &gt;= 0x010300
 macro_line|#include &lt;linux/blk.h&gt;
-macro_line|#else
-macro_line|#include &quot;../block/blk.h&quot;
-macro_line|#endif
 macro_line|#include &quot;scsi.h&quot;
 macro_line|#include &quot;hosts.h&quot;
 macro_line|#include &quot;sd.h&quot;
@@ -67,7 +57,6 @@ op_star
 id|secs
 )paren
 suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &gt;= 0x010346
 r_static
 r_void
 id|gdth_interrupt
@@ -86,22 +75,6 @@ op_star
 id|regs
 )paren
 suffix:semicolon
-macro_line|#else
-r_static
-r_void
-id|gdth_interrupt
-c_func
-(paren
-r_int
-id|irq
-comma
-r_struct
-id|pt_regs
-op_star
-id|regs
-)paren
-suffix:semicolon
-macro_line|#endif
 r_static
 r_int
 id|gdth_sync_event
@@ -522,7 +495,6 @@ r_int
 id|hanum
 )paren
 suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &gt;= 0x010300
 r_static
 r_void
 id|gdth_flush
@@ -532,7 +504,6 @@ r_int
 id|hanum
 )paren
 suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &gt;= 0x020100
 r_static
 r_int
 id|gdth_halt
@@ -551,23 +522,6 @@ op_star
 id|buf
 )paren
 suffix:semicolon
-macro_line|#else
-DECL|variable|halt_called
-r_static
-r_int
-id|halt_called
-op_assign
-id|FALSE
-suffix:semicolon
-r_void
-id|gdth_halt
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#endif
 macro_line|#ifdef DEBUG_GDTH
 DECL|variable|DebugState
 r_static
@@ -976,209 +930,6 @@ DECL|macro|CMDDATA
 mdefine_line|#define CMDDATA(a)      (&amp;((gdth_ext_str *)((a)-&gt;hostdata))-&gt;cmdext)
 DECL|macro|BUS_L2P
 mdefine_line|#define BUS_L2P(a,b)    ((b)&gt;(a)-&gt;virt_bus ? (b-1):(b))
-macro_line|#if LINUX_VERSION_CODE &lt; 0x010300
-DECL|function|gdth_mmap
-r_static
-r_void
-op_star
-id|gdth_mmap
-c_func
-(paren
-id|ulong
-id|paddr
-comma
-id|ulong
-id|size
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|paddr
-op_ge
-id|high_memory
-)paren
-r_return
-l_int|NULL
-suffix:semicolon
-r_else
-r_return
-(paren
-r_void
-op_star
-)paren
-id|paddr
-suffix:semicolon
-)brace
-DECL|function|gdth_munmap
-r_static
-r_void
-id|gdth_munmap
-c_func
-(paren
-r_void
-op_star
-id|addr
-)paren
-(brace
-)brace
-DECL|function|virt_to_phys
-r_inline
-id|ulong32
-id|virt_to_phys
-c_func
-(paren
-r_volatile
-r_void
-op_star
-id|addr
-)paren
-(brace
-r_return
-(paren
-id|ulong32
-)paren
-id|addr
-suffix:semicolon
-)brace
-DECL|function|phys_to_virt
-r_inline
-r_void
-op_star
-id|phys_to_virt
-c_func
-(paren
-id|ulong32
-id|addr
-)paren
-(brace
-r_return
-(paren
-r_void
-op_star
-)paren
-id|addr
-suffix:semicolon
-)brace
-DECL|macro|virt_to_bus
-mdefine_line|#define virt_to_bus             virt_to_phys
-DECL|macro|bus_to_virt
-mdefine_line|#define bus_to_virt             phys_to_virt
-DECL|macro|gdth_readb
-mdefine_line|#define gdth_readb(addr)        (*(volatile unchar *)(addr))
-DECL|macro|gdth_readw
-mdefine_line|#define gdth_readw(addr)        (*(volatile ushort *)(addr))
-DECL|macro|gdth_readl
-mdefine_line|#define gdth_readl(addr)        (*(volatile ulong32 *)(addr))
-DECL|macro|gdth_writeb
-mdefine_line|#define gdth_writeb(b,addr)     (*(volatile unchar *)(addr) = (b))
-DECL|macro|gdth_writew
-mdefine_line|#define gdth_writew(b,addr)     (*(volatile ushort *)(addr) = (b))
-DECL|macro|gdth_writel
-mdefine_line|#define gdth_writel(b,addr)     (*(volatile ulong32 *)(addr) = (b))
-DECL|macro|memset_io
-mdefine_line|#define memset_io(a,b,c)        memset((void *)(a),(b),(c))
-DECL|macro|memcpy_fromio
-mdefine_line|#define memcpy_fromio(a,b,c)    memcpy((a),(void *)(b),(c))
-DECL|macro|memcpy_toio
-mdefine_line|#define memcpy_toio(a,b,c)      memcpy((void *)(a),(b),(c))
-DECL|macro|PCI_SLOT
-mdefine_line|#define PCI_SLOT(devfn)         ((devfn &gt;&gt; 3) &amp; 0x1f)
-macro_line|#elif LINUX_VERSION_CODE &lt; 0x020100
-DECL|variable|remapped
-r_static
-r_int
-id|remapped
-op_assign
-id|FALSE
-suffix:semicolon
-DECL|function|gdth_mmap
-r_static
-r_void
-op_star
-id|gdth_mmap
-c_func
-(paren
-id|ulong
-id|paddr
-comma
-id|ulong
-id|size
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|paddr
-op_ge
-id|high_memory
-)paren
-(brace
-id|remapped
-op_assign
-id|TRUE
-suffix:semicolon
-r_return
-id|vremap
-c_func
-(paren
-id|paddr
-comma
-id|size
-)paren
-suffix:semicolon
-)brace
-r_else
-(brace
-r_return
-(paren
-r_void
-op_star
-)paren
-id|paddr
-suffix:semicolon
-)brace
-)brace
-DECL|function|gdth_munmap
-r_static
-r_void
-id|gdth_munmap
-c_func
-(paren
-r_void
-op_star
-id|addr
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|remapped
-)paren
-id|vfree
-c_func
-(paren
-id|addr
-)paren
-suffix:semicolon
-id|remapped
-op_assign
-id|FALSE
-suffix:semicolon
-)brace
-DECL|macro|gdth_readb
-mdefine_line|#define gdth_readb(addr)        readb((ulong)(addr))
-DECL|macro|gdth_readw
-mdefine_line|#define gdth_readw(addr)        readw((ulong)(addr))
-DECL|macro|gdth_readl
-mdefine_line|#define gdth_readl(addr)        (ulong32)readl((ulong)(addr))
-DECL|macro|gdth_writeb
-mdefine_line|#define gdth_writeb(b,addr)     writeb((b),(ulong)(addr))
-DECL|macro|gdth_writew
-mdefine_line|#define gdth_writew(b,addr)     writew((b),(ulong)(addr))
-DECL|macro|gdth_writel
-mdefine_line|#define gdth_writel(b,addr)     writel((b),(ulong)(addr))
-macro_line|#else
 DECL|function|gdth_mmap
 r_static
 r_void
@@ -1234,7 +985,6 @@ DECL|macro|gdth_writew
 mdefine_line|#define gdth_writew(b,addr)     writew((b),(ulong)(addr))
 DECL|macro|gdth_writel
 mdefine_line|#define gdth_writel(b,addr)     writel((b),(ulong)(addr))
-macro_line|#endif
 DECL|variable|gdth_drq_tab
 r_static
 id|unchar
@@ -1906,17 +1656,7 @@ id|DUN
 )brace
 suffix:semicolon
 multiline_comment|/* __initfunc, __initdata macros */
-macro_line|#if LINUX_VERSION_CODE &gt;= 0x020126
 macro_line|#include &lt;linux/init.h&gt;
-macro_line|#else
-DECL|macro|__initfunc
-mdefine_line|#define __initfunc(A) A
-DECL|macro|__initdata
-mdefine_line|#define __initdata
-DECL|macro|__init
-mdefine_line|#define __init
-macro_line|#endif
-macro_line|#if LINUX_VERSION_CODE &gt;= 0x02015F
 DECL|macro|GDTH_INIT_LOCK_HA
 mdefine_line|#define GDTH_INIT_LOCK_HA(ha)           spin_lock_init(&amp;(ha)-&gt;smp_lock)
 DECL|macro|GDTH_LOCK_HA
@@ -1931,22 +1671,6 @@ DECL|macro|GDTH_LOCK_SCSI_DOCMD
 mdefine_line|#define GDTH_LOCK_SCSI_DOCMD()          spin_lock_irq(&amp;io_request_lock)
 DECL|macro|GDTH_UNLOCK_SCSI_DOCMD
 mdefine_line|#define GDTH_UNLOCK_SCSI_DOCMD()        spin_unlock_irq(&amp;io_request_lock)
-macro_line|#else
-DECL|macro|GDTH_INIT_LOCK_HA
-mdefine_line|#define GDTH_INIT_LOCK_HA(ha)           do {} while (0)
-DECL|macro|GDTH_LOCK_HA
-mdefine_line|#define GDTH_LOCK_HA(ha,flags)          do {save_flags(flags); cli();} while (0)
-DECL|macro|GDTH_UNLOCK_HA
-mdefine_line|#define GDTH_UNLOCK_HA(ha,flags)        do {restore_flags(flags);} while (0)
-DECL|macro|GDTH_LOCK_SCSI_DONE
-mdefine_line|#define GDTH_LOCK_SCSI_DONE(flags)      do {} while (0)
-DECL|macro|GDTH_UNLOCK_SCSI_DONE
-mdefine_line|#define GDTH_UNLOCK_SCSI_DONE(flags)    do {} while (0)
-DECL|macro|GDTH_LOCK_SCSI_DOCMD
-mdefine_line|#define GDTH_LOCK_SCSI_DOCMD()          do {} while (0)
-DECL|macro|GDTH_UNLOCK_SCSI_DOCMD
-mdefine_line|#define GDTH_UNLOCK_SCSI_DOCMD()        do {} while (0)
-macro_line|#endif
 multiline_comment|/* LILO and modprobe/insmod parameters */
 multiline_comment|/* IRQ list for GDT3000/3020 EISA controllers */
 DECL|variable|__initdata
@@ -2133,7 +1857,6 @@ op_assign
 l_int|0
 suffix:semicolon
 macro_line|#ifdef MODULE
-macro_line|#if LINUX_VERSION_CODE &gt;= 0x02011A
 multiline_comment|/* parameters for modprobe/insmod */
 id|MODULE_PARM
 c_func
@@ -2212,35 +1935,10 @@ l_string|&quot;Achim Leubner&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#endif
 multiline_comment|/* /proc support */
-macro_line|#if LINUX_VERSION_CODE &gt;= 0x010300
 macro_line|#include &lt;linux/stat.h&gt; 
-DECL|variable|proc_scsi_gdth
-r_struct
-id|proc_dir_entry
-id|proc_scsi_gdth
-op_assign
-(brace
-id|PROC_SCSI_GDTH
-comma
-l_int|4
-comma
-l_string|&quot;gdth&quot;
-comma
-id|S_IFDIR
-op_or
-id|S_IRUGO
-op_or
-id|S_IXUGO
-comma
-l_int|2
-)brace
-suffix:semicolon
 macro_line|#include &quot;gdth_proc.h&quot;
 macro_line|#include &quot;gdth_proc.c&quot;
-macro_line|#endif
-macro_line|#if LINUX_VERSION_CODE &gt;= 0x020100
 multiline_comment|/* notifier block to get a notify on system shutdown/halt/reboot */
 DECL|variable|gdth_notifier
 r_static
@@ -2256,7 +1954,6 @@ comma
 l_int|0
 )brace
 suffix:semicolon
-macro_line|#endif
 DECL|function|gdth_delay
 r_static
 r_void
@@ -2284,38 +1981,12 @@ suffix:semicolon
 )brace
 r_else
 (brace
-macro_line|#if LINUX_VERSION_CODE &gt;= 0x020168
 id|mdelay
 c_func
 (paren
 id|milliseconds
 )paren
 suffix:semicolon
-macro_line|#else
-r_int
-id|i
-suffix:semicolon
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-id|milliseconds
-suffix:semicolon
-op_increment
-id|i
-)paren
-id|udelay
-c_func
-(paren
-l_int|1000
-)paren
-suffix:semicolon
-macro_line|#endif
 )brace
 )brace
 DECL|function|gdth_eval_mapping
@@ -2619,20 +2290,11 @@ id|device_id
 comma
 id|cnt
 suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &gt;= 0x2015C
 r_struct
 id|pci_dev
 op_star
 id|pdev
 suffix:semicolon
-macro_line|#else
-r_int
-id|error
-suffix:semicolon
-id|ushort
-id|idx
-suffix:semicolon
-macro_line|#endif
 id|TRACE
 c_func
 (paren
@@ -5503,7 +5165,6 @@ c_func
 id|ha-&gt;brd
 )paren
 suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &gt;= 0x2015C
 id|pci_write_config_dword
 c_func
 (paren
@@ -5514,20 +5175,6 @@ comma
 id|i
 )paren
 suffix:semicolon
-macro_line|#else
-id|pcibios_write_config_dword
-c_func
-(paren
-id|pcistr-&gt;bus
-comma
-id|pcistr-&gt;device_fn
-comma
-id|PCI_BASE_ADDRESS_0
-comma
-id|i
-)paren
-suffix:semicolon
-macro_line|#endif
 id|ha-&gt;brd
 op_assign
 id|gdth_mmap
@@ -7619,7 +7266,6 @@ id|TRUE
 suffix:semicolon
 r_do
 (brace
-macro_line|#if LINUX_VERSION_CODE &gt;= 0x010346
 id|gdth_interrupt
 c_func
 (paren
@@ -7633,19 +7279,6 @@ comma
 l_int|NULL
 )paren
 suffix:semicolon
-macro_line|#else
-id|gdth_interrupt
-c_func
-(paren
-(paren
-r_int
-)paren
-id|ha-&gt;irq
-comma
-l_int|NULL
-)paren
-suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -10006,28 +9639,14 @@ r_int
 )paren
 id|priority
 suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &gt;= 0x020000
 id|b
 op_assign
 id|scp-&gt;channel
 suffix:semicolon
-macro_line|#else
-id|b
-op_assign
-id|NUMDATA
-c_func
-(paren
-id|nscp-&gt;host
-)paren
-op_member_access_from_pointer
-id|busnum
-suffix:semicolon
-macro_line|#endif
 id|t
 op_assign
 id|scp-&gt;target
 suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &gt;= 0x010300
 r_if
 c_cond
 (paren
@@ -10098,7 +9717,6 @@ l_int|0
 suffix:semicolon
 )brace
 )brace
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -10377,23 +9995,10 @@ op_star
 )paren
 id|pscp-&gt;SCp.ptr
 suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &gt;= 0x020000
 id|b
 op_assign
 id|nscp-&gt;channel
 suffix:semicolon
-macro_line|#else
-id|b
-op_assign
-id|NUMDATA
-c_func
-(paren
-id|nscp-&gt;host
-)paren
-op_member_access_from_pointer
-id|busnum
-suffix:semicolon
-macro_line|#endif
 id|t
 op_assign
 id|nscp-&gt;target
@@ -10514,7 +10119,6 @@ op_assign
 id|FALSE
 suffix:semicolon
 )brace
-macro_line|#if LINUX_VERSION_CODE &gt;= 0x010300
 r_if
 c_cond
 (paren
@@ -10522,7 +10126,6 @@ id|nscp-&gt;done
 op_ne
 id|gdth_scsi_done
 )paren
-macro_line|#endif
 (brace
 r_if
 c_cond
@@ -10807,7 +10410,6 @@ suffix:semicolon
 )brace
 )brace
 r_else
-macro_line|#if LINUX_VERSION_CODE &gt;= 0x010300
 r_if
 c_cond
 (paren
@@ -10842,7 +10444,6 @@ id|FALSE
 suffix:semicolon
 )brace
 r_else
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -14320,7 +13921,6 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* SCSI interface functions */
-macro_line|#if LINUX_VERSION_CODE &gt;= 0x010346
 DECL|function|gdth_interrupt
 r_static
 r_void
@@ -14339,21 +13939,6 @@ id|pt_regs
 op_star
 id|regs
 )paren
-macro_line|#else
-r_static
-r_void
-id|gdth_interrupt
-c_func
-(paren
-r_int
-id|irq
-comma
-r_struct
-id|pt_regs
-op_star
-id|regs
-)paren
-macro_line|#endif
 (brace
 r_register
 id|gdth_ha_str
@@ -16330,7 +15915,6 @@ op_lshift
 l_int|1
 )paren
 suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &gt;= 0x010300
 r_if
 c_cond
 (paren
@@ -16338,7 +15922,6 @@ id|scp-&gt;done
 op_ne
 id|gdth_scsi_done
 )paren
-macro_line|#endif 
 (brace
 id|dvr.size
 op_assign
@@ -17732,7 +17315,6 @@ comma
 id|ha-&gt;drq
 )paren
 suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &gt;= 0x010346 
 r_if
 c_cond
 (paren
@@ -17750,23 +17332,6 @@ comma
 id|ha
 )paren
 )paren
-macro_line|#else
-r_if
-c_cond
-(paren
-id|request_irq
-c_func
-(paren
-id|ha-&gt;irq
-comma
-id|gdth_interrupt
-comma
-id|SA_INTERRUPT
-comma
-l_string|&quot;gdth&quot;
-)paren
-)paren
-macro_line|#endif
 (brace
 id|printk
 c_func
@@ -17801,7 +17366,6 @@ c_func
 l_string|&quot;GDT-ISA: Unable to allocate DMA channel&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &gt;= 0x010346 
 id|free_irq
 c_func
 (paren
@@ -17810,14 +17374,6 @@ comma
 l_int|NULL
 )paren
 suffix:semicolon
-macro_line|#else
-id|free_irq
-c_func
-(paren
-id|ha-&gt;irq
-)paren
-suffix:semicolon
-macro_line|#endif
 id|scsi_unregister
 c_func
 (paren
@@ -18021,7 +17577,6 @@ comma
 id|GDTH_SCRATCH
 )paren
 suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &gt;= 0x010346 
 id|free_irq
 c_func
 (paren
@@ -18030,14 +17585,6 @@ comma
 l_int|NULL
 )paren
 suffix:semicolon
-macro_line|#else
-id|free_irq
-c_func
-(paren
-id|ha-&gt;irq
-)paren
-suffix:semicolon
-macro_line|#endif
 id|scsi_unregister
 c_func
 (paren
@@ -18062,7 +17609,6 @@ id|ha-&gt;virt_bus
 op_assign
 id|hdr_channel
 suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &gt;= 0x020000
 id|shp-&gt;max_id
 op_assign
 id|ha-&gt;tid_cnt
@@ -18075,83 +17621,6 @@ id|shp-&gt;max_channel
 op_assign
 id|ha-&gt;bus_cnt
 suffix:semicolon
-macro_line|#else
-multiline_comment|/* register addit. SCSI channels as virtual controllers */
-r_for
-c_loop
-(paren
-id|b
-op_assign
-l_int|1
-suffix:semicolon
-id|b
-OL
-id|ha-&gt;bus_cnt
-op_plus
-l_int|1
-suffix:semicolon
-op_increment
-id|b
-)paren
-(brace
-id|shp
-op_assign
-id|scsi_register
-c_func
-(paren
-id|shtp
-comma
-r_sizeof
-(paren
-id|gdth_num_str
-)paren
-)paren
-suffix:semicolon
-id|shp-&gt;unchecked_isa_dma
-op_assign
-l_int|1
-suffix:semicolon
-id|shp-&gt;irq
-op_assign
-id|ha-&gt;irq
-suffix:semicolon
-id|shp-&gt;dma_channel
-op_assign
-id|ha-&gt;drq
-suffix:semicolon
-id|gdth_ctr_vtab
-(braket
-id|gdth_ctr_vcount
-op_increment
-)braket
-op_assign
-id|shp
-suffix:semicolon
-id|NUMDATA
-c_func
-(paren
-id|shp
-)paren
-op_member_access_from_pointer
-id|hanum
-op_assign
-(paren
-id|ushort
-)paren
-id|hanum
-suffix:semicolon
-id|NUMDATA
-c_func
-(paren
-id|shp
-)paren
-op_member_access_from_pointer
-id|busnum
-op_assign
-id|b
-suffix:semicolon
-)brace
-macro_line|#endif
 id|GDTH_INIT_LOCK_HA
 c_func
 (paren
@@ -18259,7 +17728,6 @@ comma
 id|ha-&gt;irq
 )paren
 suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &gt;= 0x010346 
 r_if
 c_cond
 (paren
@@ -18277,23 +17745,6 @@ comma
 id|ha
 )paren
 )paren
-macro_line|#else
-r_if
-c_cond
-(paren
-id|request_irq
-c_func
-(paren
-id|ha-&gt;irq
-comma
-id|gdth_interrupt
-comma
-id|SA_INTERRUPT
-comma
-l_string|&quot;gdth&quot;
-)paren
-)paren
-macro_line|#endif
 (brace
 id|printk
 c_func
@@ -18506,7 +17957,6 @@ comma
 id|GDTH_SCRATCH
 )paren
 suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &gt;= 0x010346 
 id|free_irq
 c_func
 (paren
@@ -18515,14 +17965,6 @@ comma
 l_int|NULL
 )paren
 suffix:semicolon
-macro_line|#else
-id|free_irq
-c_func
-(paren
-id|ha-&gt;irq
-)paren
-suffix:semicolon
-macro_line|#endif
 id|scsi_unregister
 c_func
 (paren
@@ -18547,7 +17989,6 @@ id|ha-&gt;virt_bus
 op_assign
 id|hdr_channel
 suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &gt;= 0x020000
 id|shp-&gt;max_id
 op_assign
 id|ha-&gt;tid_cnt
@@ -18560,112 +18001,6 @@ id|shp-&gt;max_channel
 op_assign
 id|ha-&gt;bus_cnt
 suffix:semicolon
-macro_line|#else
-multiline_comment|/* register addit. SCSI channels as virtual controllers */
-r_for
-c_loop
-(paren
-id|b
-op_assign
-l_int|1
-suffix:semicolon
-id|b
-OL
-id|ha-&gt;bus_cnt
-op_plus
-l_int|1
-suffix:semicolon
-op_increment
-id|b
-)paren
-(brace
-id|shp
-op_assign
-id|scsi_register
-c_func
-(paren
-id|shtp
-comma
-r_sizeof
-(paren
-id|gdth_num_str
-)paren
-)paren
-suffix:semicolon
-id|shp-&gt;unchecked_isa_dma
-op_assign
-l_int|0
-suffix:semicolon
-id|shp-&gt;irq
-op_assign
-id|ha-&gt;irq
-suffix:semicolon
-id|shp-&gt;dma_channel
-op_assign
-l_int|0xff
-suffix:semicolon
-id|gdth_ctr_vtab
-(braket
-id|gdth_ctr_vcount
-op_increment
-)braket
-op_assign
-id|shp
-suffix:semicolon
-id|NUMDATA
-c_func
-(paren
-id|shp
-)paren
-op_member_access_from_pointer
-id|hanum
-op_assign
-(paren
-id|ushort
-)paren
-id|hanum
-suffix:semicolon
-id|NUMDATA
-c_func
-(paren
-id|shp
-)paren
-op_member_access_from_pointer
-id|busnum
-op_assign
-id|b
-suffix:semicolon
-id|TRACE2
-c_func
-(paren
-(paren
-l_string|&quot;EISA detect Bus %d: shp %x hanum %d&bslash;n&quot;
-comma
-id|NUMDATA
-c_func
-(paren
-id|shp
-)paren
-op_member_access_from_pointer
-id|busnum
-comma
-(paren
-id|ulong32
-)paren
-id|shp
-comma
-id|NUMDATA
-c_func
-(paren
-id|shp
-)paren
-op_member_access_from_pointer
-id|hanum
-)paren
-)paren
-suffix:semicolon
-)brace
-macro_line|#endif
 id|GDTH_INIT_LOCK_HA
 c_func
 (paren
@@ -18681,7 +18016,6 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/* scanning for PCI controllers */
-macro_line|#if LINUX_VERSION_CODE &gt;= 0x2015C
 r_if
 c_cond
 (paren
@@ -18690,16 +18024,6 @@ c_func
 (paren
 )paren
 )paren
-macro_line|#else
-r_if
-c_cond
-(paren
-id|pcibios_present
-c_func
-(paren
-)paren
-)paren
-macro_line|#endif
 (brace
 id|gdth_pci_str
 id|pcistr
@@ -18821,7 +18145,6 @@ comma
 id|ha-&gt;irq
 )paren
 suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &gt;= 0x010346 
 r_if
 c_cond
 (paren
@@ -18841,25 +18164,6 @@ comma
 id|ha
 )paren
 )paren
-macro_line|#else
-r_if
-c_cond
-(paren
-id|request_irq
-c_func
-(paren
-id|ha-&gt;irq
-comma
-id|gdth_interrupt
-comma
-id|SA_INTERRUPT
-op_or
-id|SA_SHIRQ
-comma
-l_string|&quot;gdth&quot;
-)paren
-)paren
-macro_line|#endif
 (brace
 id|printk
 c_func
@@ -19068,7 +18372,6 @@ comma
 id|GDTH_SCRATCH
 )paren
 suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &gt;= 0x010346 
 id|free_irq
 c_func
 (paren
@@ -19077,14 +18380,6 @@ comma
 l_int|NULL
 )paren
 suffix:semicolon
-macro_line|#else
-id|free_irq
-c_func
-(paren
-id|ha-&gt;irq
-)paren
-suffix:semicolon
-macro_line|#endif
 id|scsi_unregister
 c_func
 (paren
@@ -19109,7 +18404,6 @@ id|ha-&gt;virt_bus
 op_assign
 id|hdr_channel
 suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &gt;= 0x020000
 id|shp-&gt;max_id
 op_assign
 id|ha-&gt;tid_cnt
@@ -19122,83 +18416,6 @@ id|shp-&gt;max_channel
 op_assign
 id|ha-&gt;bus_cnt
 suffix:semicolon
-macro_line|#else
-multiline_comment|/* register addit. SCSI channels as virtual controllers */
-r_for
-c_loop
-(paren
-id|b
-op_assign
-l_int|1
-suffix:semicolon
-id|b
-OL
-id|ha-&gt;bus_cnt
-op_plus
-l_int|1
-suffix:semicolon
-op_increment
-id|b
-)paren
-(brace
-id|shp
-op_assign
-id|scsi_register
-c_func
-(paren
-id|shtp
-comma
-r_sizeof
-(paren
-id|gdth_num_str
-)paren
-)paren
-suffix:semicolon
-id|shp-&gt;unchecked_isa_dma
-op_assign
-l_int|0
-suffix:semicolon
-id|shp-&gt;irq
-op_assign
-id|ha-&gt;irq
-suffix:semicolon
-id|shp-&gt;dma_channel
-op_assign
-l_int|0xff
-suffix:semicolon
-id|gdth_ctr_vtab
-(braket
-id|gdth_ctr_vcount
-op_increment
-)braket
-op_assign
-id|shp
-suffix:semicolon
-id|NUMDATA
-c_func
-(paren
-id|shp
-)paren
-op_member_access_from_pointer
-id|hanum
-op_assign
-(paren
-id|ushort
-)paren
-id|hanum
-suffix:semicolon
-id|NUMDATA
-c_func
-(paren
-id|shp
-)paren
-op_member_access_from_pointer
-id|busnum
-op_assign
-id|b
-suffix:semicolon
-)brace
-macro_line|#endif
 id|GDTH_INIT_LOCK_HA
 c_func
 (paren
@@ -19269,7 +18486,6 @@ id|gdth_timer
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#if LINUX_VERSION_CODE &gt;= 0x020100
 id|register_reboot_notifier
 c_func
 (paren
@@ -19277,7 +18493,6 @@ op_amp
 id|gdth_notifier
 )paren
 suffix:semicolon
-macro_line|#endif
 )brace
 id|gdth_polling
 op_assign
@@ -19348,21 +18563,18 @@ id|hanum
 )braket
 )paren
 suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &gt;= 0x010300
 id|gdth_flush
 c_func
 (paren
 id|hanum
 )paren
 suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
 id|shp-&gt;irq
 )paren
 (brace
-macro_line|#if LINUX_VERSION_CODE &gt;= 0x010346
 id|free_irq
 c_func
 (paren
@@ -19371,14 +18583,6 @@ comma
 l_int|NULL
 )paren
 suffix:semicolon
-macro_line|#else
-id|free_irq
-c_func
-(paren
-id|shp-&gt;irq
-)paren
-suffix:semicolon
-macro_line|#endif
 )brace
 r_if
 c_cond
@@ -19439,7 +18643,6 @@ id|gdth_timer
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#if LINUX_VERSION_CODE &gt;= 0x020100
 id|unregister_reboot_notifier
 c_func
 (paren
@@ -19447,7 +18650,6 @@ op_amp
 id|gdth_notifier
 )paren
 suffix:semicolon
-macro_line|#endif
 )brace
 )brace
 id|scsi_unregister
@@ -19661,7 +18863,6 @@ r_return
 id|SCSI_ABORT_SNOOZE
 suffix:semicolon
 )brace
-macro_line|#if LINUX_VERSION_CODE &gt;= 0x010346
 DECL|function|gdth_reset
 r_int
 id|gdth_reset
@@ -19675,16 +18876,6 @@ r_int
 r_int
 id|reset_flags
 )paren
-macro_line|#else
-r_int
-id|gdth_reset
-c_func
-(paren
-id|Scsi_Cmnd
-op_star
-id|scp
-)paren
-macro_line|#endif
 (brace
 id|TRACE2
 c_func
@@ -19698,7 +18889,6 @@ r_return
 id|SCSI_RESET_PUNT
 suffix:semicolon
 )brace
-macro_line|#if LINUX_VERSION_CODE &gt;= 0x02015F
 multiline_comment|/* new error handling */
 DECL|function|gdth_eh_abort
 r_int
@@ -19976,8 +19166,6 @@ r_return
 id|FAILED
 suffix:semicolon
 )brace
-macro_line|#endif
-macro_line|#if LINUX_VERSION_CODE &gt;= 0x010300
 DECL|function|gdth_bios_param
 r_int
 id|gdth_bios_param
@@ -19994,23 +19182,6 @@ r_int
 op_star
 id|ip
 )paren
-macro_line|#else
-r_int
-id|gdth_bios_param
-c_func
-(paren
-id|Disk
-op_star
-id|disk
-comma
-r_int
-id|dev
-comma
-r_int
-op_star
-id|ip
-)paren
-macro_line|#endif
 (brace
 id|unchar
 id|t
@@ -20327,7 +19498,6 @@ id|priority
 op_assign
 id|DEFAULT_PRI
 suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &gt;= 0x010300
 r_if
 c_cond
 (paren
@@ -20339,7 +19509,6 @@ id|priority
 op_assign
 id|scp-&gt;SCp.this_residual
 suffix:semicolon
-macro_line|#endif
 id|gdth_update_timeout
 c_func
 (paren
@@ -20372,7 +19541,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#if LINUX_VERSION_CODE &gt;= 0x010300
 multiline_comment|/* flush routine */
 DECL|function|gdth_flush
 r_static
@@ -20562,7 +19730,6 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/* shutdown routine */
-macro_line|#if LINUX_VERSION_CODE &gt;= 0x020100
 DECL|function|gdth_halt
 r_static
 r_int
@@ -20581,14 +19748,6 @@ r_void
 op_star
 id|buf
 )paren
-macro_line|#else
-r_void
-id|gdth_halt
-c_func
-(paren
-r_void
-)paren
-macro_line|#endif
 (brace
 r_int
 id|hanum
@@ -20604,7 +19763,6 @@ id|gdth_cmd_str
 id|gdtcmd
 suffix:semicolon
 macro_line|#endif
-macro_line|#if LINUX_VERSION_CODE &gt;= 0x020100
 id|TRACE2
 c_func
 (paren
@@ -20633,37 +19791,6 @@ id|SYS_POWER_OFF
 r_return
 id|NOTIFY_DONE
 suffix:semicolon
-macro_line|#else
-id|TRACE2
-c_func
-(paren
-(paren
-l_string|&quot;gdth_halt()&bslash;n&quot;
-)paren
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|halt_called
-)paren
-(brace
-id|TRACE2
-c_func
-(paren
-(paren
-l_string|&quot;already called&bslash;n&quot;
-)paren
-)paren
-suffix:semicolon
-r_return
-suffix:semicolon
-)brace
-id|halt_called
-op_assign
-id|TRUE
-suffix:semicolon
-macro_line|#endif
 id|printk
 c_func
 (paren
@@ -20807,7 +19934,6 @@ id|gdth_timer
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#if LINUX_VERSION_CODE &gt;= 0x020100
 id|unregister_reboot_notifier
 c_func
 (paren
@@ -20818,9 +19944,7 @@ suffix:semicolon
 r_return
 id|NOTIFY_OK
 suffix:semicolon
-macro_line|#endif
 )brace
-macro_line|#endif
 multiline_comment|/* called from init/main.c */
 DECL|function|gdth_setup
 r_void

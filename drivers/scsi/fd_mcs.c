@@ -18,27 +18,6 @@ macro_line|#include &quot;hosts.h&quot;
 macro_line|#include &quot;fd_mcs.h&quot;
 DECL|macro|DRIVER_VERSION
 mdefine_line|#define DRIVER_VERSION &quot;v0.2 by ZP Gu&lt;zpg@castle.net&gt;&quot;
-DECL|variable|proc_scsi_fd_mcs
-r_struct
-id|proc_dir_entry
-id|proc_scsi_fd_mcs
-op_assign
-(brace
-id|PROC_SCSI_FD_MCS
-comma
-l_int|6
-comma
-l_string|&quot;fd_mcs&quot;
-comma
-id|S_IFDIR
-op_or
-id|S_IRUGO
-op_or
-id|S_IXUGO
-comma
-l_int|2
-)brace
-suffix:semicolon
 multiline_comment|/* START OF USER DEFINABLE OPTIONS */
 DECL|macro|DEBUG
 mdefine_line|#define DEBUG            0&t;/* Enable debugging output */

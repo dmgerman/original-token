@@ -240,7 +240,7 @@ mdefine_line|#define PIO_MODE                  0x80
 DECL|macro|IO_RANGE
 mdefine_line|#define IO_RANGE 0x20         /* 0x00 - 0x1F                   */
 DECL|macro|ID
-mdefine_line|#define ID       &quot;sym53c416&quot;
+mdefine_line|#define ID       &quot;sym53c416&quot;&t;/* Attention: copied to the sym53c416.h */
 DECL|macro|PIO_SIZE
 mdefine_line|#define PIO_SIZE 128          /* Size of PIO fifo is 128 bytes */
 DECL|macro|READ_TIMEOUT
@@ -440,27 +440,6 @@ op_star
 id|current_command
 op_assign
 l_int|NULL
-suffix:semicolon
-DECL|variable|proc_scsi_sym53c416
-r_struct
-id|proc_dir_entry
-id|proc_scsi_sym53c416
-op_assign
-(brace
-id|PROC_SCSI_SYM53C416
-comma
-l_int|7
-comma
-id|ID
-comma
-id|S_IFDIR
-op_or
-id|S_IRUGO
-op_or
-id|S_IXUGO
-comma
-l_int|2
-)brace
 suffix:semicolon
 DECL|variable|fastpio
 r_int
@@ -3651,7 +3630,6 @@ suffix:semicolon
 )brace
 multiline_comment|/* Loadable module support */
 macro_line|#ifdef MODULE
-macro_line|#if LINUX_VERSION_CODE &gt;= LinuxVersionCode(2,1,26)
 id|MODULE_AUTHOR
 c_func
 (paren
@@ -3690,7 +3668,6 @@ comma
 l_string|&quot;1-2i&quot;
 )paren
 suffix:semicolon
-macro_line|#endif
 DECL|variable|driver_template
 id|Scsi_Host_Template
 id|driver_template

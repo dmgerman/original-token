@@ -12,11 +12,6 @@ macro_line|#include &lt;linux/kdev_t.h&gt;
 DECL|macro|SYM53C416_SCSI_ID
 mdefine_line|#define SYM53C416_SCSI_ID 7
 r_extern
-r_struct
-id|proc_dir_entry
-id|proc_scsi_sym53c416
-suffix:semicolon
-r_extern
 r_int
 id|sym53c416_detect
 c_func
@@ -114,12 +109,7 @@ op_star
 id|ints
 )paren
 suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &gt;= LinuxVersionCode(2,1,75)
 DECL|macro|SYM53C416
-mdefine_line|#define SYM53C416 {                                          &bslash;&n;                  proc_dir:          &amp;proc_scsi_sym53c416,   &bslash;&n;                  name:              &quot;Symbios Logic 53c416&quot;, &bslash;&n;                  detect:            sym53c416_detect,       &bslash;&n;                  info:              sym53c416_info,         &bslash;&n;                  command:           sym53c416_command,      &bslash;&n;                  queuecommand:      sym53c416_queuecommand, &bslash;&n;                  abort:             sym53c416_abort,        &bslash;&n;                  reset:             sym53c416_reset,        &bslash;&n;                  bios_param:        sym53c416_bios_param,   &bslash;&n;                  can_queue:         1,                      &bslash;&n;                  this_id:           SYM53C416_SCSI_ID,      &bslash;&n;                  sg_tablesize:      32,                     &bslash;&n;                  cmd_per_lun:       1,                      &bslash;&n;                  unchecked_isa_dma: 1,                      &bslash;&n;                  use_clustering:    ENABLE_CLUSTERING       &bslash;&n;                  }
-macro_line|#else
-DECL|macro|SYM53C416
-mdefine_line|#define SYM53C416 {                       &bslash;&n;                  NULL,                   &bslash;&n;                  NULL,                   &bslash;&n;                  &amp;proc_scsi_sym53c416,   &bslash;&n;                  NULL,                   &bslash;&n;                  &quot;Symbios Logic 53c416&quot;, &bslash;&n;                  sym53c416_detect,       &bslash;&n;                  NULL,                   &bslash;&n;                  sym53c416_info,         &bslash;&n;                  sym53c416_command,      &bslash;&n;                  sym53c416_queuecommand, &bslash;&n;                  sym53c416_abort,        &bslash;&n;                  sym53c416_reset,        &bslash;&n;                  NULL,                   &bslash;&n;                  sym53c416_bios_param,   &bslash;&n;                  1,                      &bslash;&n;                  SYM53C416_SCSI_ID,      &bslash;&n;                  32, /* ???? */          &bslash;&n;                  1,                      &bslash;&n;                  0,                      &bslash;&n;                  1,                      &bslash;&n;                  ENABLE_CLUSTERING       &bslash;&n;                  }
-macro_line|#endif
+mdefine_line|#define SYM53C416 {                                          &bslash;&n;                  proc_name:         &quot;sym53c416&quot;,   &bslash;&n;                  name:              &quot;Symbios Logic 53c416&quot;, &bslash;&n;                  detect:            sym53c416_detect,       &bslash;&n;                  info:              sym53c416_info,         &bslash;&n;                  command:           sym53c416_command,      &bslash;&n;                  queuecommand:      sym53c416_queuecommand, &bslash;&n;                  abort:             sym53c416_abort,        &bslash;&n;                  reset:             sym53c416_reset,        &bslash;&n;                  bios_param:        sym53c416_bios_param,   &bslash;&n;                  can_queue:         1,                      &bslash;&n;                  this_id:           SYM53C416_SCSI_ID,      &bslash;&n;                  sg_tablesize:      32,                     &bslash;&n;                  cmd_per_lun:       1,                      &bslash;&n;                  unchecked_isa_dma: 1,                      &bslash;&n;                  use_clustering:    ENABLE_CLUSTERING       &bslash;&n;                  }
 macro_line|#endif
 eof

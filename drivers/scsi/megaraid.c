@@ -9,7 +9,6 @@ macro_line|#include &lt;linux/version.h&gt;
 macro_line|#ifdef MODULE
 macro_line|#include &lt;linux/modversions.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
-macro_line|#if LINUX_VERSION_CODE &gt;= 0x20100
 DECL|variable|kernel_version
 r_char
 id|kernel_version
@@ -29,7 +28,6 @@ l_string|&quot;AMI MegaRAID driver&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#endif
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -45,11 +43,7 @@ macro_line|#include &lt;linux/wait.h&gt;
 macro_line|#include &lt;linux/tqueue.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
-macro_line|#if LINUX_VERSION_CODE &lt; 0x20100
-macro_line|#include &lt;linux/bios32.h&gt;
-macro_line|#else
 macro_line|#include &lt;linux/spinlock.h&gt;
-macro_line|#endif
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
@@ -58,37 +52,10 @@ macro_line|#include &quot;scsi.h&quot;
 macro_line|#include &quot;hosts.h&quot;
 macro_line|#include &quot;megaraid.h&quot;
 multiline_comment|/*================================================================&n; *&n; *                          #Defines&n; *&n; *================================================================&n; */
-macro_line|#if LINUX_VERSION_CODE &lt; 0x020100
-DECL|macro|ioremap
-mdefine_line|#define ioremap vremap
-DECL|macro|iounmap
-mdefine_line|#define iounmap vfree
-multiline_comment|/* simulate spin locks */
-r_typedef
-r_struct
-(brace
-DECL|member|lock
-r_volatile
-r_char
-id|lock
-suffix:semicolon
-DECL|typedef|spinlock_t
-)brace
-id|spinlock_t
-suffix:semicolon
-DECL|macro|spin_lock_init
-mdefine_line|#define spin_lock_init(x) { (x)-&gt;lock = 0;}
-DECL|macro|spin_lock_irqsave
-mdefine_line|#define spin_lock_irqsave(x,flags) { while ((x)-&gt;lock) barrier();&bslash;&n;                                        (x)-&gt;lock=1; save_flags(flags);&bslash;&n;                                        cli();}
-DECL|macro|spin_unlock_irqrestore
-mdefine_line|#define spin_unlock_irqrestore(x,flags) { (x)-&gt;lock=0; restore_flags(flags);}
-macro_line|#endif
-macro_line|#if LINUX_VERSION_CODE &gt;= 0x020100
 DECL|macro|queue_task_irq
 mdefine_line|#define queue_task_irq(a,b)     queue_task(a,b)
 DECL|macro|queue_task_irq_off
 mdefine_line|#define queue_task_irq_off(a,b) queue_task(a,b)
-macro_line|#endif
 DECL|macro|MAX_SERBUF
 mdefine_line|#define MAX_SERBUF 160
 DECL|macro|COM_BASE
@@ -353,7 +320,6 @@ r_char
 op_star
 id|megaraid
 suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &gt; 0x20100
 macro_line|#ifdef MODULE
 id|MODULE_PARM
 c_func
@@ -363,7 +329,6 @@ comma
 l_string|&quot;s&quot;
 )paren
 suffix:semicolon
-macro_line|#endif
 macro_line|#endif
 DECL|variable|skip_id
 r_static
@@ -429,27 +394,6 @@ r_volatile
 r_static
 id|spinlock_t
 id|mega_lock
-suffix:semicolon
-DECL|variable|proc_scsi_megaraid
-r_struct
-id|proc_dir_entry
-id|proc_scsi_megaraid
-op_assign
-(brace
-id|PROC_SCSI_MEGARAID
-comma
-l_int|8
-comma
-l_string|&quot;megaraid&quot;
-comma
-id|S_IFDIR
-op_or
-id|S_IRUGO
-op_or
-id|S_IXUGO
-comma
-l_int|2
-)brace
 suffix:semicolon
 macro_line|#if SERDEBUG
 DECL|variable|strbuf
@@ -3211,7 +3155,6 @@ op_star
 )paren
 id|tmpBox
 suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &gt;= 0x20100
 id|spin_lock_irqsave
 (paren
 op_amp
@@ -3220,7 +3163,6 @@ comma
 id|flags
 )paren
 suffix:semicolon
-macro_line|#endif
 r_while
 c_loop
 (paren
@@ -3619,7 +3561,6 @@ id|flags
 )paren
 suffix:semicolon
 )brace
-macro_line|#if LINUX_VERSION_CODE &gt;= 0x20100
 id|spin_unlock_irqrestore
 (paren
 op_amp
@@ -3628,7 +3569,6 @@ comma
 id|flags
 )paren
 suffix:semicolon
-macro_line|#endif
 )brace
 multiline_comment|/*==================================================*/
 multiline_comment|/* Wait until the controller&squot;s mailbox is available */
@@ -5305,32 +5245,6 @@ id|numFound
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &lt; 0x20100
-r_while
-c_loop
-(paren
-op_logical_neg
-id|pcibios_find_device
-(paren
-id|pciVendor
-comma
-id|pciDev
-comma
-id|pciIdx
-comma
-op_amp
-id|pciBus
-comma
-op_amp
-id|pciDevFun
-)paren
-)paren
-(brace
-macro_line|#if 0
-)brace
-multiline_comment|/* keep auto-indenters happy */
-macro_line|#endif
-macro_line|#else
 r_struct
 id|pci_dev
 op_star
@@ -5363,7 +5277,6 @@ id|pciDevFun
 op_assign
 id|pdev-&gt;devfn
 suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -5729,33 +5642,10 @@ id|count
 op_assign
 l_int|0
 suffix:semicolon
-id|pHostTmpl-&gt;proc_dir
+id|pHostTmpl-&gt;proc_name
 op_assign
-op_amp
-id|proc_scsi_megaraid
+l_string|&quot;megaraid&quot;
 suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &lt; 0x20100
-r_if
-c_cond
-(paren
-op_logical_neg
-id|pcibios_present
-(paren
-)paren
-)paren
-(brace
-id|printk
-(paren
-id|KERN_WARNING
-l_string|&quot;megaraid: PCI bios not present.&quot;
-id|CRLFSTR
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
-macro_line|#endif
 id|skip_id
 op_assign
 op_minus

@@ -1965,36 +1965,6 @@ id|MOD_DEC_USE_COUNT
 suffix:semicolon
 macro_line|#endif
 )brace
-multiline_comment|/*&n; * Function irda_proc_modcount (inode, fill)&n; *&n; *    Use by the proc file system functions to prevent the irda module&n; *    being removed while the use is standing in the net/irda directory&n; */
-DECL|function|irda_proc_modcount
-r_void
-id|irda_proc_modcount
-c_func
-(paren
-r_struct
-id|inode
-op_star
-id|inode
-comma
-r_int
-id|fill
-)paren
-(brace
-macro_line|#ifdef MODULE
-macro_line|#ifdef CONFIG_PROC_FS
-r_if
-c_cond
-(paren
-id|fill
-)paren
-id|MOD_INC_USE_COUNT
-suffix:semicolon
-r_else
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
-macro_line|#endif /* CONFIG_PROC_FS */
-macro_line|#endif /* MODULE */
-)brace
 macro_line|#ifdef MODULE
 id|MODULE_AUTHOR
 c_func

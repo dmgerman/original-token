@@ -3,6 +3,7 @@ DECL|macro|__UDF_DECL_H
 mdefine_line|#define __UDF_DECL_H
 DECL|macro|UDF_VERSION_NOTICE
 mdefine_line|#define UDF_VERSION_NOTICE &quot;v0.8.9.3&quot;
+macro_line|#include &lt;linux/udf_udf.h&gt;
 macro_line|#ifdef __KERNEL__
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/udf_fs.h&gt;
@@ -1011,7 +1012,6 @@ suffix:semicolon
 macro_line|#else
 macro_line|#include &lt;sys/types.h&gt;
 macro_line|#endif /* __KERNEL__ */
-macro_line|#include &lt;linux/udf_udf.h&gt;
 macro_line|#include &quot;udfend.h&quot;
 multiline_comment|/* structures */
 DECL|struct|udf_directory_record

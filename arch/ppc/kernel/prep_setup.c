@@ -907,6 +907,7 @@ DECL|function|prep_setup_arch
 id|prep_setup_arch
 c_func
 (paren
+r_void
 )paren
 (brace
 r_extern

@@ -3,7 +3,6 @@ macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/vmalloc.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 DECL|variable|vmlist
-r_static
 r_struct
 id|vm_struct
 op_star
@@ -491,7 +490,7 @@ l_string|&quot;alloc_area_pte: page already exists&bslash;n&quot;
 suffix:semicolon
 id|page
 op_assign
-id|get_free_highpage
+id|alloc_page
 c_func
 (paren
 id|GFP_KERNEL

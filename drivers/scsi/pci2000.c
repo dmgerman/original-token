@@ -19,33 +19,7 @@ macro_line|#include &quot;hosts.h&quot;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &quot;pci2000.h&quot;
 macro_line|#include &quot;psi_roy.h&quot;
-macro_line|#if LINUX_VERSION_CODE &gt;= LINUXVERSION(2,1,95)
 macro_line|#include &lt;linux/spinlock.h&gt;
-macro_line|#endif
-macro_line|#if LINUX_VERSION_CODE &lt; LINUXVERSION(2,1,93)
-macro_line|#include &lt;linux/bios32.h&gt;
-macro_line|#endif
-DECL|variable|Proc_Scsi_Pci2000
-r_struct
-id|proc_dir_entry
-id|Proc_Scsi_Pci2000
-op_assign
-(brace
-id|PROC_SCSI_PCI2000
-comma
-l_int|7
-comma
-l_string|&quot;pci2000&quot;
-comma
-id|S_IFDIR
-op_or
-id|S_IRUGO
-op_or
-id|S_IXUGO
-comma
-l_int|2
-)brace
-suffix:semicolon
 singleline_comment|//#define DEBUG 1
 macro_line|#ifdef DEBUG
 DECL|macro|DEB
@@ -556,28 +530,10 @@ suffix:semicolon
 r_int
 id|z
 suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &lt; LINUXVERSION(2,1,95)
-r_int
-id|flags
-suffix:semicolon
-macro_line|#else /* version &gt;= v2.1.95 */
 r_int
 r_int
 id|flags
 suffix:semicolon
-macro_line|#endif /* version &gt;= v2.1.95 */
-macro_line|#if LINUX_VERSION_CODE &lt; LINUXVERSION(2,1,95)
-multiline_comment|/* Disable interrupts, if they aren&squot;t already disabled. */
-id|save_flags
-(paren
-id|flags
-)paren
-suffix:semicolon
-id|cli
-(paren
-)paren
-suffix:semicolon
-macro_line|#else /* version &gt;= v2.1.95 */
 multiline_comment|/*&n;     * Disable interrupts, if they aren&squot;t already disabled and acquire&n;     * the I/O spinlock.&n;     */
 id|spin_lock_irqsave
 (paren
@@ -587,7 +543,6 @@ comma
 id|flags
 )paren
 suffix:semicolon
-macro_line|#endif /* version &gt;= v2.1.95 */
 id|DEB
 c_func
 (paren
@@ -1023,14 +978,6 @@ suffix:semicolon
 id|irq_return
 suffix:colon
 suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &lt; LINUXVERSION(2,1,95)
-multiline_comment|/*&n;     * Restore the original flags which will enable interrupts&n;     * if and only if they were enabled on entry.&n;     */
-id|restore_flags
-(paren
-id|flags
-)paren
-suffix:semicolon
-macro_line|#else /* version &gt;= v2.1.95 */
 multiline_comment|/*&n;     * Release the I/O spinlock and restore the original flags&n;     * which will enable interrupts if and only if they were&n;     * enabled on entry.&n;     */
 id|spin_unlock_irqrestore
 (paren
@@ -1040,7 +987,6 @@ comma
 id|flags
 )paren
 suffix:semicolon
-macro_line|#endif /* version &gt;= v2.1.95 */
 )brace
 multiline_comment|/****************************************************************&n; *&t;Name:&t;Pci2000_QueueCommand&n; *&n; *&t;Description:&t;Process a queued command from the SCSI manager.&n; *&n; *&t;Parameters:&t;&t;SCpnt - Pointer to SCSI command structure.&n; *&t;&t;&t;&t;&t;done  - Pointer to done function to call.&n; *&n; *&t;Returns:&t;&t;Status code.&n; *&n; ****************************************************************/
 DECL|function|Pci2000_QueueCommand
@@ -2212,7 +2158,6 @@ suffix:semicolon
 r_int
 id|setirq
 suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &gt; LINUXVERSION(2,1,92)
 r_struct
 id|pci_dev
 op_star
@@ -2220,14 +2165,6 @@ id|pdev
 op_assign
 l_int|NULL
 suffix:semicolon
-macro_line|#else
-id|UCHAR
-id|pci_bus
-comma
-id|pci_device_fn
-suffix:semicolon
-macro_line|#endif
-macro_line|#if LINUX_VERSION_CODE &gt; LINUXVERSION(2,1,92)
 r_if
 c_cond
 (paren
@@ -2236,16 +2173,6 @@ id|pci_present
 (paren
 )paren
 )paren
-macro_line|#else
-r_if
-c_cond
-(paren
-op_logical_neg
-id|pcibios_present
-(paren
-)paren
-)paren
-macro_line|#endif
 (brace
 id|printk
 (paren
@@ -2256,7 +2183,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#if LINUX_VERSION_CODE &gt; LINUXVERSION(2,1,92)
 r_while
 c_loop
 (paren
@@ -2275,27 +2201,6 @@ id|pdev
 op_ne
 l_int|NULL
 )paren
-macro_line|#else
-r_while
-c_loop
-(paren
-op_logical_neg
-id|pcibios_find_device
-(paren
-id|VENDOR_PSI
-comma
-id|DEVICE_ROY_1
-comma
-id|found
-comma
-op_amp
-id|pci_bus
-comma
-op_amp
-id|pci_device_fn
-)paren
-)paren
-macro_line|#endif
 (brace
 id|pshost
 op_assign
@@ -2426,25 +2331,10 @@ id|padapter
 r_goto
 id|unregister
 suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &gt; LINUXVERSION(2,1,92)
 id|pshost-&gt;irq
 op_assign
 id|pdev-&gt;irq
 suffix:semicolon
-macro_line|#else
-id|pcibios_read_config_byte
-(paren
-id|pci_bus
-comma
-id|pci_device_fn
-comma
-id|PCI_INTERRUPT_LINE
-comma
-op_amp
-id|pshost-&gt;irq
-)paren
-suffix:semicolon
-macro_line|#endif
 id|setirq
 op_assign
 l_int|1
@@ -2739,13 +2629,6 @@ c_cond
 (paren
 id|padapter-&gt;irqOwned
 )paren
-macro_line|#if LINUX_VERSION_CODE &lt; LINUXVERSION(1,3,70)
-id|free_irq
-(paren
-id|pshost-&gt;irq
-)paren
-suffix:semicolon
-macro_line|#else /* version &gt;= v1.3.70 */
 id|free_irq
 (paren
 id|pshost-&gt;irq
@@ -2753,7 +2636,6 @@ comma
 id|padapter
 )paren
 suffix:semicolon
-macro_line|#endif /* version &gt;= v1.3.70 */
 id|release_region
 (paren
 id|pshost-&gt;io_port

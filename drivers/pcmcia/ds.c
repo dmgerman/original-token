@@ -1,4 +1,4 @@
-multiline_comment|/*======================================================================&n;&n;    PC Card Driver Services&n;    &n;    ds.c 1.98 1999/09/15 15:32:19&n;    &n;    The contents of this file are subject to the Mozilla Public&n;    License Version 1.1 (the &quot;License&quot;); you may not use this file&n;    except in compliance with the License. You may obtain a copy of&n;    the License at http://www.mozilla.org/MPL/&n;&n;    Software distributed under the License is distributed on an &quot;AS&n;    IS&quot; basis, WITHOUT WARRANTY OF ANY KIND, either express or&n;    implied. See the License for the specific language governing&n;    rights and limitations under the License.&n;&n;    The initial developer of the original code is David A. Hinds&n;    &lt;dhinds@hyper.stanford.edu&gt;.  Portions created by David A. Hinds&n;    are Copyright (C) 1999 David A. Hinds.  All Rights Reserved.&n;&n;    Alternatively, the contents of this file may be used under the&n;    terms of the GNU Public License version 2 (the &quot;GPL&quot;), in which&n;    case the provisions of the GPL are applicable instead of the&n;    above.  If you wish to allow the use of your version of this file&n;    only under the terms of the GPL and not to allow others to use&n;    your version of this file under the MPL, indicate your decision&n;    by deleting the provisions above and replace them with the notice&n;    and other provisions required by the GPL.  If you do not delete&n;    the provisions above, a recipient may use your version of this&n;    file under either the MPL or the GPL.&n;    &n;======================================================================*/
+multiline_comment|/*======================================================================&n;&n;    PC Card Driver Services&n;    &n;    ds.c 1.100 1999/11/08 20:47:02&n;    &n;    The contents of this file are subject to the Mozilla Public&n;    License Version 1.1 (the &quot;License&quot;); you may not use this file&n;    except in compliance with the License. You may obtain a copy of&n;    the License at http://www.mozilla.org/MPL/&n;&n;    Software distributed under the License is distributed on an &quot;AS&n;    IS&quot; basis, WITHOUT WARRANTY OF ANY KIND, either express or&n;    implied. See the License for the specific language governing&n;    rights and limitations under the License.&n;&n;    The initial developer of the original code is David A. Hinds&n;    &lt;dhinds@pcmcia.sourceforge.org&gt;.  Portions created by David A. Hinds&n;    are Copyright (C) 1999 David A. Hinds.  All Rights Reserved.&n;&n;    Alternatively, the contents of this file may be used under the&n;    terms of the GNU Public License version 2 (the &quot;GPL&quot;), in which&n;    case the provisions of the GPL are applicable instead of the&n;    above.  If you wish to allow the use of your version of this file&n;    only under the terms of the GPL and not to allow others to use&n;    your version of this file under the MPL, indicate your decision&n;    by deleting the provisions above and replace them with the notice&n;    and other provisions required by the GPL.  If you do not delete&n;    the provisions above, a recipient may use your version of this&n;    file under either the MPL or the GPL.&n;    &n;======================================================================*/
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -11,6 +11,7 @@ macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;linux/ioctl.h&gt;
+macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;linux/poll.h&gt;
 macro_line|#include &lt;pcmcia/version.h&gt;
 macro_line|#include &lt;pcmcia/cs_types.h&gt;
@@ -42,7 +43,7 @@ r_char
 op_star
 id|version
 op_assign
-l_string|&quot;ds.c 1.98 1999/09/15 15:32:19 (David Hinds)&quot;
+l_string|&quot;ds.c 1.100 1999/11/08 20:47:02 (David Hinds)&quot;
 suffix:semicolon
 macro_line|#else
 DECL|macro|DEBUG
@@ -59,8 +60,11 @@ id|dev_info_t
 id|dev_info
 suffix:semicolon
 DECL|member|use_count
+DECL|member|status
 r_int
 id|use_count
+comma
+id|status
 suffix:semicolon
 DECL|member|attach
 id|dev_link_t
@@ -251,6 +255,20 @@ id|socket_table
 op_assign
 l_int|NULL
 suffix:semicolon
+r_extern
+r_struct
+id|proc_dir_entry
+op_star
+id|proc_pccard
+suffix:semicolon
+multiline_comment|/* We use this to distinguish in-kernel from modular drivers */
+DECL|variable|init_status
+r_static
+r_int
+id|init_status
+op_assign
+l_int|1
+suffix:semicolon
 multiline_comment|/*====================================================================*/
 DECL|function|cs_error
 r_static
@@ -420,6 +438,10 @@ suffix:semicolon
 id|driver-&gt;use_count
 op_assign
 l_int|0
+suffix:semicolon
+id|driver-&gt;status
+op_assign
+id|init_status
 suffix:semicolon
 id|driver-&gt;next
 op_assign
@@ -704,6 +726,86 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* unregister_pccard_driver */
+multiline_comment|/*====================================================================*/
+macro_line|#ifdef CONFIG_PROC_FS
+DECL|function|proc_read_drivers
+r_static
+r_int
+id|proc_read_drivers
+c_func
+(paren
+r_char
+op_star
+id|buf
+comma
+r_char
+op_star
+op_star
+id|start
+comma
+id|off_t
+id|pos
+comma
+r_int
+id|count
+comma
+r_int
+op_star
+id|eof
+comma
+r_void
+op_star
+id|data
+)paren
+(brace
+id|driver_info_t
+op_star
+id|d
+suffix:semicolon
+r_char
+op_star
+id|p
+op_assign
+id|buf
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|d
+op_assign
+id|root_driver
+suffix:semicolon
+id|d
+suffix:semicolon
+id|d
+op_assign
+id|d-&gt;next
+)paren
+id|p
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|p
+comma
+l_string|&quot;%-24.24s %d %d&bslash;n&quot;
+comma
+id|d-&gt;dev_info
+comma
+id|d-&gt;status
+comma
+id|d-&gt;use_count
+)paren
+suffix:semicolon
+r_return
+(paren
+id|p
+op_minus
+id|buf
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
 multiline_comment|/*======================================================================&n;&n;    These manage a ring buffer of events pending for one user process&n;    &n;======================================================================*/
 DECL|function|queue_empty
 r_static
@@ -4082,6 +4184,40 @@ id|major_dev
 op_assign
 id|i
 suffix:semicolon
+macro_line|#ifdef CONFIG_PROC_FS
+r_if
+c_cond
+(paren
+id|proc_pccard
+)paren
+(brace
+r_struct
+id|proc_dir_entry
+op_star
+id|ent
+suffix:semicolon
+id|ent
+op_assign
+id|create_proc_entry
+c_func
+(paren
+l_string|&quot;drivers&quot;
+comma
+l_int|0
+comma
+id|proc_pccard
+)paren
+suffix:semicolon
+id|ent-&gt;read_proc
+op_assign
+id|proc_read_drivers
+suffix:semicolon
+)brace
+id|init_status
+op_assign
+l_int|0
+suffix:semicolon
+macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
@@ -4115,6 +4251,21 @@ r_void
 r_int
 id|i
 suffix:semicolon
+macro_line|#ifdef CONFIG_PROC_FS
+r_if
+c_cond
+(paren
+id|proc_pccard
+)paren
+id|remove_proc_entry
+c_func
+(paren
+l_string|&quot;drivers&quot;
+comma
+id|proc_pccard
+)paren
+suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren

@@ -13,27 +13,6 @@ macro_line|#include &quot;hosts.h&quot;
 macro_line|#include &quot;53c7xx.h&quot;
 macro_line|#include &quot;mvme16x.h&quot;
 macro_line|#include&lt;linux/stat.h&gt;
-DECL|variable|proc_scsi_mvme16x
-r_struct
-id|proc_dir_entry
-id|proc_scsi_mvme16x
-op_assign
-(brace
-id|PROC_SCSI_MVME16x
-comma
-l_int|7
-comma
-l_string|&quot;MVME16x&quot;
-comma
-id|S_IFDIR
-op_or
-id|S_IRUGO
-op_or
-id|S_IXUGO
-comma
-l_int|2
-)brace
-suffix:semicolon
 r_extern
 id|ncr53c7xx_init
 (paren
@@ -125,11 +104,9 @@ id|called
 r_return
 l_int|0
 suffix:semicolon
-id|tpnt-&gt;proc_dir
+id|tpnt-&gt;proc_name
 op_assign
-op_amp
-id|proc_scsi_mvme16x
-suffix:semicolon
+l_string|&quot;MVME16x&quot;
 id|options
 op_assign
 id|OPTION_MEMORY_MAPPED

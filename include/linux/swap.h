@@ -452,20 +452,28 @@ op_star
 suffix:semicolon
 r_extern
 id|swp_entry_t
-id|get_swap_page
+id|__get_swap_page
 c_func
 (paren
-r_void
+r_int
+r_int
 )paren
 suffix:semicolon
+DECL|macro|get_swap_page
+mdefine_line|#define get_swap_page() __get_swap_page(1)
 r_extern
 r_void
-id|swap_free
+id|__swap_free
 c_func
 (paren
 id|swp_entry_t
+comma
+r_int
+r_int
 )paren
 suffix:semicolon
+DECL|macro|swap_free
+mdefine_line|#define swap_free(entry) __swap_free((entry), 1)
 DECL|struct|swap_list_t
 r_struct
 id|swap_list_t

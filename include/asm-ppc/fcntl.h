@@ -3,39 +3,39 @@ DECL|macro|_PPC_FCNTL_H
 mdefine_line|#define _PPC_FCNTL_H
 multiline_comment|/* open/fcntl - O_SYNC is only implemented on blocks devices and on files&n;   located on an ext2 file system */
 DECL|macro|O_ACCMODE
-mdefine_line|#define O_ACCMODE&t;  0003
+mdefine_line|#define O_ACCMODE&t;   0003
 DECL|macro|O_RDONLY
-mdefine_line|#define O_RDONLY&t;    00
+mdefine_line|#define O_RDONLY&t;     00
 DECL|macro|O_WRONLY
-mdefine_line|#define O_WRONLY&t;    01
+mdefine_line|#define O_WRONLY&t;     01
 DECL|macro|O_RDWR
-mdefine_line|#define O_RDWR&t;&t;    02
+mdefine_line|#define O_RDWR&t;&t;     02
 DECL|macro|O_CREAT
-mdefine_line|#define O_CREAT&t;&t;  0100&t;/* not fcntl */
+mdefine_line|#define O_CREAT&t;&t;   0100&t;/* not fcntl */
 DECL|macro|O_EXCL
-mdefine_line|#define O_EXCL&t;&t;  0200&t;/* not fcntl */
+mdefine_line|#define O_EXCL&t;&t;   0200&t;/* not fcntl */
 DECL|macro|O_NOCTTY
-mdefine_line|#define O_NOCTTY&t;  0400&t;/* not fcntl */
+mdefine_line|#define O_NOCTTY&t;   0400&t;/* not fcntl */
 DECL|macro|O_TRUNC
-mdefine_line|#define O_TRUNC&t;&t; 01000&t;/* not fcntl */
+mdefine_line|#define O_TRUNC&t;&t;  01000&t;/* not fcntl */
 DECL|macro|O_APPEND
-mdefine_line|#define O_APPEND&t; 02000
+mdefine_line|#define O_APPEND&t;  02000
 DECL|macro|O_NONBLOCK
-mdefine_line|#define O_NONBLOCK&t; 04000
+mdefine_line|#define O_NONBLOCK&t;  04000
 DECL|macro|O_NDELAY
 mdefine_line|#define O_NDELAY&t;O_NONBLOCK
 DECL|macro|O_SYNC
-mdefine_line|#define O_SYNC&t;&t;010000
+mdefine_line|#define O_SYNC&t;&t; 010000
 DECL|macro|FASYNC
-mdefine_line|#define FASYNC&t;&t;020000&t;/* fcntl, for BSD compatibility */
+mdefine_line|#define FASYNC&t;&t; 020000&t;/* fcntl, for BSD compatibility */
 DECL|macro|O_DIRECTORY
-mdefine_line|#define O_DIRECTORY     040000&t;/* must be a directory */
+mdefine_line|#define O_DIRECTORY      040000&t;/* must be a directory */
 DECL|macro|O_NOFOLLOW
-mdefine_line|#define O_NOFOLLOW      100000&t;/* don&squot;t follow links */
+mdefine_line|#define O_NOFOLLOW      0100000&t;/* don&squot;t follow links */
 DECL|macro|O_LARGEFILE
-mdefine_line|#define O_LARGEFILE     200000
+mdefine_line|#define O_LARGEFILE     0200000
 DECL|macro|O_DIRECT
-mdefine_line|#define O_DIRECT&t;400000&t;/* direct disk access hint - currently ignored */
+mdefine_line|#define O_DIRECT&t;0400000&t;/* direct disk access hint - currently ignored */
 DECL|macro|F_DUPFD
 mdefine_line|#define F_DUPFD&t;&t;0&t;/* dup */
 DECL|macro|F_GETFD

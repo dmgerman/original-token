@@ -27,27 +27,6 @@ macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &quot;aha152x.h&quot;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;scsi/scsicam.h&gt;
-DECL|variable|proc_scsi_aha152x
-r_struct
-id|proc_dir_entry
-id|proc_scsi_aha152x
-op_assign
-(brace
-id|PROC_SCSI_AHA152X
-comma
-l_int|7
-comma
-l_string|&quot;aha152x&quot;
-comma
-id|S_IFDIR
-op_or
-id|S_IRUGO
-op_or
-id|S_IXUGO
-comma
-l_int|2
-)brace
-suffix:semicolon
 multiline_comment|/* DEFINES */
 multiline_comment|/* For PCMCIA cards, always use AUTOCONF */
 macro_line|#if defined(PCMCIA) || defined(MODULE)
@@ -1324,8 +1303,8 @@ id|phase
 suffix:semicolon
 )brace
 )brace
-macro_line|#if 0
-multiline_comment|/* called from init/main.c */
+macro_line|#ifdef PCMCIA
+DECL|function|aha152x_setup
 r_void
 id|aha152x_setup
 c_func
@@ -1605,7 +1584,8 @@ id|setup_count
 op_increment
 suffix:semicolon
 )brace
-macro_line|#endif
+macro_line|#endif /* PCMCIA */
+macro_line|#ifndef MODULE
 DECL|function|do_aha152x_setup
 r_static
 r_int
@@ -1725,7 +1705,6 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
-macro_line|#ifndef MODULE
 id|__setup
 c_func
 (paren
@@ -2091,10 +2070,9 @@ id|aha152x_config
 id|conf
 suffix:semicolon
 macro_line|#endif
-id|tpnt-&gt;proc_dir
+id|tpnt-&gt;proc_name
 op_assign
-op_amp
-id|proc_scsi_aha152x
+l_string|&quot;aha152x&quot;
 suffix:semicolon
 r_for
 c_loop

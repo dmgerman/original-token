@@ -194,28 +194,6 @@ macro_line|#else
 DECL|macro|AFTER_RESET_DELAY
 mdefine_line|#define&t;AFTER_RESET_DELAY&t;(HZ/2)
 macro_line|#endif
-DECL|variable|proc_scsi_mac5380
-r_static
-r_struct
-id|proc_dir_entry
-id|proc_scsi_mac5380
-op_assign
-(brace
-id|PROC_SCSI_MAC
-comma
-l_int|13
-comma
-l_string|&quot;Mac 5380 SCSI&quot;
-comma
-id|S_IFDIR
-op_or
-id|S_IRUGO
-comma
-id|S_IXUGO
-comma
-l_int|2
-)brace
-suffix:semicolon
 DECL|variable|mac_scsi_regp
 r_static
 r_volatile
@@ -653,10 +631,9 @@ id|MAC_SCSI_OLD
 r_return
 l_int|0
 suffix:semicolon
-id|tpnt-&gt;proc_dir
+id|tpnt-&gt;proc_name
 op_assign
-op_amp
-id|proc_scsi_mac5380
+l_string|&quot;Mac 5380 SCSI&quot;
 suffix:semicolon
 multiline_comment|/* setup variables */
 id|tpnt-&gt;can_queue

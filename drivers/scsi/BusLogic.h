@@ -73,10 +73,6 @@ id|SCSI_ScatterList_T
 suffix:semicolon
 multiline_comment|/*&n;  Define prototypes for the BusLogic Driver Interface Functions.&n;*/
 r_extern
-id|PROC_DirectoryEntry_T
-id|BusLogic_ProcDirectoryEntry
-suffix:semicolon
-r_extern
 r_const
 r_char
 op_star
@@ -182,7 +178,7 @@ r_int
 suffix:semicolon
 multiline_comment|/*&n;  Define the BusLogic SCSI Host Template structure.&n;*/
 DECL|macro|BUSLOGIC
-mdefine_line|#define BUSLOGIC&t;&t;&t;&t;&t;&t;&t;       &bslash;&n;  { proc_dir:       &amp;BusLogic_ProcDirectoryEntry, /* ProcFS Directory Entry */ &bslash;&n;    proc_info:      BusLogic_ProcDirectoryInfo,&t;  /* ProcFS Info Function   */ &bslash;&n;    name:           &quot;BusLogic&quot;,&t;&t;&t;  /* Driver Name            */ &bslash;&n;    detect:         BusLogic_DetectHostAdapter,&t;  /* Detect Host Adapter    */ &bslash;&n;    release:        BusLogic_ReleaseHostAdapter,  /* Release Host Adapter   */ &bslash;&n;    info:           BusLogic_DriverInfo,&t;  /* Driver Info Function   */ &bslash;&n;    queuecommand:   BusLogic_QueueCommand,&t;  /* Queue Command Function */ &bslash;&n;    abort:          BusLogic_AbortCommand,&t;  /* Abort Command Function */ &bslash;&n;    reset:          BusLogic_ResetCommand,&t;  /* Reset Command Function */ &bslash;&n;    bios_param:     BusLogic_BIOSDiskParameters,  /* BIOS Disk Parameters   */ &bslash;&n;    unchecked_isa_dma: 1,&t;&t;&t;  /* Default Initial Value  */ &bslash;&n;    use_clustering: ENABLE_CLUSTERING }&t;&t;  /* Enable Clustering&t;    */
+mdefine_line|#define BUSLOGIC&t;&t;&t;&t;&t;&t;&t;       &bslash;&n;  { proc_name:      &quot;BusLogic&quot;,&t;&t;&t;  /* ProcFS Directory Entry */ &bslash;&n;    proc_info:      BusLogic_ProcDirectoryInfo,&t;  /* ProcFS Info Function   */ &bslash;&n;    name:           &quot;BusLogic&quot;,&t;&t;&t;  /* Driver Name            */ &bslash;&n;    detect:         BusLogic_DetectHostAdapter,&t;  /* Detect Host Adapter    */ &bslash;&n;    release:        BusLogic_ReleaseHostAdapter,  /* Release Host Adapter   */ &bslash;&n;    info:           BusLogic_DriverInfo,&t;  /* Driver Info Function   */ &bslash;&n;    queuecommand:   BusLogic_QueueCommand,&t;  /* Queue Command Function */ &bslash;&n;    abort:          BusLogic_AbortCommand,&t;  /* Abort Command Function */ &bslash;&n;    reset:          BusLogic_ResetCommand,&t;  /* Reset Command Function */ &bslash;&n;    bios_param:     BusLogic_BIOSDiskParameters,  /* BIOS Disk Parameters   */ &bslash;&n;    unchecked_isa_dma: 1,&t;&t;&t;  /* Default Initial Value  */ &bslash;&n;    use_clustering: ENABLE_CLUSTERING }&t;&t;  /* Enable Clustering&t;    */
 multiline_comment|/*&n;  BusLogic_DriverVersion protects the private portion of this file.&n;*/
 macro_line|#ifdef BusLogic_DriverVersion
 multiline_comment|/*&n;  FlashPoint support is only available for the Intel x86 Architecture with&n;  CONFIG_PCI set.&n;*/

@@ -1,7 +1,6 @@
 macro_line|#ifndef _LINUX_BOOTMEM_H
 DECL|macro|_LINUX_BOOTMEM_H
 mdefine_line|#define _LINUX_BOOTMEM_H
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
 multiline_comment|/*&n; *  simple boot-time physical memory area allocator.&n; */

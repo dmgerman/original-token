@@ -1800,18 +1800,6 @@ comma
 op_amp
 id|proc_ppc_htab_inode_operations
 comma
-l_int|NULL
-comma
-l_int|NULL
-comma
-multiline_comment|/* get_info, fill_inode */
-l_int|NULL
-comma
-multiline_comment|/* next */
-l_int|NULL
-comma
-l_int|NULL
-multiline_comment|/* parent, subdir */
 )brace
 suffix:semicolon
 macro_line|#endif

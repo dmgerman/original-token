@@ -356,7 +356,14 @@ r_char
 op_star
 id|b_data
 suffix:semicolon
-multiline_comment|/* pointer to data block (1024 bytes) */
+multiline_comment|/* pointer to data block (512 byte) */
+DECL|member|b_page
+r_struct
+id|page
+op_star
+id|b_page
+suffix:semicolon
+multiline_comment|/* the page this bh is mapped to */
 DECL|member|b_end_io
 r_void
 (paren
@@ -445,10 +452,30 @@ DECL|macro|buffer_new
 mdefine_line|#define buffer_new(bh)&t;&t;__buffer_state(bh,New)
 DECL|macro|buffer_protected
 mdefine_line|#define buffer_protected(bh)&t;__buffer_state(bh,Protected)
-DECL|macro|buffer_page
-mdefine_line|#define buffer_page(bh)&t;&t;(mem_map + MAP_NR((bh)-&gt;b_data))
+DECL|macro|bh_offset
+mdefine_line|#define bh_offset(bh)&t;&t;((unsigned long)(bh)-&gt;b_data &amp; ~PAGE_MASK)
+r_extern
+r_void
+id|set_bh_page
+c_func
+(paren
+r_struct
+id|buffer_head
+op_star
+id|bh
+comma
+r_struct
+id|page
+op_star
+id|page
+comma
+r_int
+r_int
+id|offset
+)paren
+suffix:semicolon
 DECL|macro|touch_buffer
-mdefine_line|#define touch_buffer(bh)&t;set_bit(PG_referenced, &amp;buffer_page(bh)-&gt;flags)
+mdefine_line|#define touch_buffer(bh)&t;set_bit(PG_referenced, &amp;bh-&gt;b_page-&gt;flags)
 macro_line|#include &lt;linux/pipe_fs_i.h&gt;
 macro_line|#include &lt;linux/minix_fs_i.h&gt;
 macro_line|#include &lt;linux/ext2_fs_i.h&gt;
@@ -3972,6 +3999,15 @@ r_int
 comma
 r_int
 r_int
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|wakeup_bdflush
+c_func
+(paren
+r_int
+id|wait
 )paren
 suffix:semicolon
 r_extern

@@ -7,30 +7,16 @@ macro_line|#endif
 macro_line|#ifdef MODULE
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#endif
-macro_line|#if LINUX_VERSION_CODE &gt;= CVT_LINUX_VERSION(1,3,0)
 macro_line|#include &lt;stdarg.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
-macro_line|#if LINUX_VERSION_CODE &lt;= CVT_LINUX_VERSION(2,1,92)
-macro_line|#include &lt;linux/bios32.h&gt;
-macro_line|#endif
 macro_line|#include &lt;linux/pci.h&gt;
-macro_line|#if LINUX_VERSION_CODE &gt;= CVT_LINUX_VERSION(2,1,23)
 macro_line|#include &lt;linux/init.h&gt;
-macro_line|#endif
 macro_line|#include &lt;linux/blk.h&gt;
-macro_line|#if LINUX_VERSION_CODE &gt;= CVT_LINUX_VERSION(2,1,95)
 macro_line|#include &lt;linux/spinlock.h&gt;
-macro_line|#endif
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
-macro_line|#else
-macro_line|#include &lt;linux/head.h&gt;
-macro_line|#include &lt;linux/types.h&gt;
-macro_line|#include &lt;asm/system.h&gt;
-macro_line|#include &quot;../block/blk.h&quot;
-macro_line|#endif
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
@@ -81,49 +67,6 @@ id|inia100_Version
 op_assign
 l_string|&quot;v1.02c&quot;
 suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &gt;= CVT_LINUX_VERSION(1,3,0)
-DECL|variable|proc_scsi_inia100
-r_struct
-id|proc_dir_entry
-id|proc_scsi_inia100
-op_assign
-(brace
-id|PROC_SCSI_INIA100
-comma
-l_int|7
-comma
-l_string|&quot;INIA100&quot;
-comma
-id|S_IFDIR
-op_or
-id|S_IRUGO
-op_or
-id|S_IXUGO
-comma
-l_int|2
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|NULL
-comma
-l_int|NULL
-comma
-l_int|NULL
-comma
-l_int|NULL
-comma
-l_int|NULL
-comma
-l_int|NULL
-comma
-l_int|NULL
-)brace
-suffix:semicolon
-macro_line|#endif
 multiline_comment|/* set by inia100_setup according to the command line */
 DECL|variable|setup_called
 r_static
@@ -155,7 +98,6 @@ op_star
 )paren
 l_int|NULL
 suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &gt;= CVT_LINUX_VERSION(1,3,0)
 r_static
 r_void
 id|inia100_intr0
@@ -292,112 +234,6 @@ id|pt_regs
 op_star
 )paren
 suffix:semicolon
-macro_line|#else
-r_static
-r_void
-id|inia100_intr0
-c_func
-(paren
-r_int
-id|irq
-comma
-r_struct
-id|pt_regs
-op_star
-)paren
-suffix:semicolon
-r_static
-r_void
-id|inia100_intr1
-c_func
-(paren
-r_int
-id|irq
-comma
-r_struct
-id|pt_regs
-op_star
-)paren
-suffix:semicolon
-r_static
-r_void
-id|inia100_intr2
-c_func
-(paren
-r_int
-id|irq
-comma
-r_struct
-id|pt_regs
-op_star
-)paren
-suffix:semicolon
-r_static
-r_void
-id|inia100_intr3
-c_func
-(paren
-r_int
-id|irq
-comma
-r_struct
-id|pt_regs
-op_star
-)paren
-suffix:semicolon
-r_static
-r_void
-id|inia100_intr4
-c_func
-(paren
-r_int
-id|irq
-comma
-r_struct
-id|pt_regs
-op_star
-)paren
-suffix:semicolon
-r_static
-r_void
-id|inia100_intr5
-c_func
-(paren
-r_int
-id|irq
-comma
-r_struct
-id|pt_regs
-op_star
-)paren
-suffix:semicolon
-r_static
-r_void
-id|inia100_intr6
-c_func
-(paren
-r_int
-id|irq
-comma
-r_struct
-id|pt_regs
-op_star
-)paren
-suffix:semicolon
-r_static
-r_void
-id|inia100_intr7
-c_func
-(paren
-r_int
-id|irq
-comma
-r_struct
-id|pt_regs
-op_star
-)paren
-suffix:semicolon
-macro_line|#endif
 r_static
 r_void
 id|inia100_panic
@@ -605,7 +441,6 @@ id|pSRB
 id|ULONG
 id|flags
 suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &gt;= CVT_LINUX_VERSION(2,1,95)
 id|spin_lock_irqsave
 c_func
 (paren
@@ -617,19 +452,6 @@ comma
 id|flags
 )paren
 suffix:semicolon
-macro_line|#else
-id|save_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
 id|pSRB-&gt;next
 op_assign
 l_int|NULL
@@ -656,7 +478,6 @@ id|pHCB-&gt;pSRB_tail
 op_assign
 id|pSRB
 suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &gt;= CVT_LINUX_VERSION(2,1,95)
 id|spin_unlock_irqrestore
 c_func
 (paren
@@ -668,14 +489,6 @@ comma
 id|flags
 )paren
 suffix:semicolon
-macro_line|#else
-id|restore_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-macro_line|#endif
 r_return
 suffix:semicolon
 )brace
@@ -699,7 +512,6 @@ suffix:semicolon
 id|ULONG
 id|flags
 suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &gt;= CVT_LINUX_VERSION(2,1,95)
 id|spin_lock_irqsave
 c_func
 (paren
@@ -711,19 +523,6 @@ comma
 id|flags
 )paren
 suffix:semicolon
-macro_line|#else
-id|save_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -749,7 +548,6 @@ op_assign
 l_int|NULL
 suffix:semicolon
 )brace
-macro_line|#if LINUX_VERSION_CODE &gt;= CVT_LINUX_VERSION(2,1,95)
 id|spin_unlock_irqrestore
 c_func
 (paren
@@ -761,14 +559,6 @@ comma
 id|flags
 )paren
 suffix:semicolon
-macro_line|#else
-id|restore_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-macro_line|#endif
 r_return
 (paren
 id|pSRB
@@ -900,7 +690,6 @@ comma
 id|base
 suffix:semicolon
 macro_line|#endif
-macro_line|#if LINUX_VERSION_CODE &gt; CVT_LINUX_VERSION(2,1,92)
 r_struct
 id|pci_dev
 op_star
@@ -908,17 +697,6 @@ id|pdev
 op_assign
 l_int|NULL
 suffix:semicolon
-macro_line|#else
-r_int
-id|index
-suffix:semicolon
-r_int
-r_char
-id|pci_bus
-comma
-id|pci_devfn
-suffix:semicolon
-macro_line|#endif
 id|bPCIBusNum
 op_assign
 l_int|0
@@ -951,7 +729,6 @@ id|i
 op_increment
 )paren
 (brace
-macro_line|#if LINUX_VERSION_CODE &gt; CVT_LINUX_VERSION(2,1,92)
 id|pdev
 op_assign
 l_int|NULL
@@ -983,45 +760,6 @@ id|pdev
 )paren
 )paren
 )paren
-macro_line|#else
-id|index
-op_assign
-l_int|0
-suffix:semicolon
-r_while
-c_loop
-(paren
-op_logical_neg
-(paren
-id|pcibios_find_device
-c_func
-(paren
-id|inia100_pci_devices
-(braket
-id|i
-)braket
-dot
-id|vendor_id
-comma
-id|inia100_pci_devices
-(braket
-id|i
-)braket
-dot
-id|device_id
-comma
-id|index
-op_increment
-comma
-op_amp
-id|pci_bus
-comma
-op_amp
-id|pci_devfn
-)paren
-)paren
-)paren
-macro_line|#endif
 (brace
 r_if
 c_cond
@@ -1046,7 +784,6 @@ multiline_comment|/*&n;&t;&t;&t;&t;&t;   printk(&quot;inia100: The RAID controll
 r_else
 (brace
 multiline_comment|/*&n;&t;&t;&t;&t;&t; * Read sundry information from PCI BIOS.&n;&t;&t;&t;&t;&t; */
-macro_line|#if LINUX_VERSION_CODE &gt; CVT_LINUX_VERSION(2,1,92)
 id|bPCIBusNum
 op_assign
 id|pdev-&gt;bus-&gt;number
@@ -1132,110 +869,6 @@ op_or
 id|PCI_COMMAND_IO
 )paren
 suffix:semicolon
-macro_line|#else
-id|bPCIBusNum
-op_assign
-id|pci_bus
-suffix:semicolon
-id|bPCIDeviceNum
-op_assign
-id|pci_devfn
-suffix:semicolon
-id|pcibios_read_config_dword
-c_func
-(paren
-id|pci_bus
-comma
-id|pci_devfn
-comma
-id|PCI_BASE_ADDRESS_0
-comma
-op_amp
-id|dRegValue
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|dRegValue
-op_eq
-op_minus
-l_int|1
-)paren
-(brace
-multiline_comment|/* Check return code            */
-id|printk
-c_func
-(paren
-l_string|&quot;&bslash;n&bslash;rinia100: Orchid read configuration error.&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-(paren
-l_int|0
-)paren
-suffix:semicolon
-multiline_comment|/* Read configuration space error  */
-)brace
-multiline_comment|/* &lt;02&gt; read from base address + 0x50 offset to get the wBIOS balue. */
-id|wBASE
-op_assign
-(paren
-id|WORD
-)paren
-id|dRegValue
-suffix:semicolon
-multiline_comment|/* Now read the interrupt line  */
-id|pcibios_read_config_dword
-c_func
-(paren
-id|pci_bus
-comma
-id|pci_devfn
-comma
-id|PCI_INTERRUPT_LINE
-comma
-op_amp
-id|dRegValue
-)paren
-suffix:semicolon
-id|bInterrupt
-op_assign
-id|dRegValue
-op_amp
-l_int|0xFF
-suffix:semicolon
-multiline_comment|/* Assign interrupt line      */
-id|pcibios_read_config_word
-c_func
-(paren
-id|pci_bus
-comma
-id|pci_devfn
-comma
-id|PCI_COMMAND
-comma
-op_amp
-id|command
-)paren
-suffix:semicolon
-id|pcibios_write_config_word
-c_func
-(paren
-id|pci_bus
-comma
-id|pci_devfn
-comma
-id|PCI_COMMAND
-comma
-id|command
-op_or
-id|PCI_COMMAND_MASTER
-op_or
-id|PCI_COMMAND_IO
-)paren
-suffix:semicolon
-macro_line|#endif
 id|wBASE
 op_and_assign
 id|PCI_BASE_ADDRESS_IO_MASK
@@ -1264,7 +897,6 @@ op_minus
 id|base
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t;&t;&t; * replace the next line with this one if you are using 2.1.x:&n;&t;&t;&t;&t;&t; * temp_p-&gt;maddr = ioremap(base, page_offset + 256);&n;&t;&t;&t;&t;&t; */
-macro_line|#if LINUX_VERSION_CODE &gt;= CVT_LINUX_VERSION(2,1,0)
 id|wBASE
 op_assign
 id|ioremap
@@ -1277,23 +909,6 @@ op_plus
 l_int|256
 )paren
 suffix:semicolon
-macro_line|#else
-id|wBASE
-op_assign
-(paren
-id|WORD
-)paren
-id|vremap
-c_func
-(paren
-id|base
-comma
-id|page_offset
-op_plus
-l_int|256
-)paren
-suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -1382,13 +997,10 @@ id|BYTE
 op_star
 id|pbBiosAdr
 suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &gt;= CVT_LINUX_VERSION(1,3,0)
-id|tpnt-&gt;proc_dir
+id|tpnt-&gt;proc_name
 op_assign
-op_amp
-id|proc_scsi_inia100
+l_string|&quot;INIA100&quot;
 suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -1536,13 +1148,11 @@ op_assign
 l_int|NULL
 suffix:semicolon
 multiline_comment|/* Initial SRB save queue       */
-macro_line|#if LINUX_VERSION_CODE &gt;= CVT_LINUX_VERSION(2,1,95)
 id|pHCB-&gt;pSRB_lock
 op_assign
 id|SPIN_LOCK_UNLOCKED
 suffix:semicolon
 multiline_comment|/* SRB save queue lock */
-macro_line|#endif
 multiline_comment|/* Get total memory needed for SCB */
 id|sz
 op_assign
@@ -1716,7 +1326,6 @@ op_lshift
 l_int|4
 )paren
 suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &gt;= CVT_LINUX_VERSION(1,3,0)
 id|pbBiosAdr
 op_assign
 id|phys_to_virt
@@ -1725,7 +1334,6 @@ c_func
 id|dBiosAdr
 )paren
 suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -1790,7 +1398,6 @@ op_assign
 id|orc_num_scb
 suffix:semicolon
 multiline_comment|/* 03/05/98                   */
-macro_line|#if LINUX_VERSION_CODE &gt;= CVT_LINUX_VERSION(1,3,0)
 id|hreg-&gt;unique_id
 op_assign
 id|pHCB-&gt;HCS_Base
@@ -1799,7 +1406,6 @@ id|hreg-&gt;max_id
 op_assign
 id|pHCB-&gt;HCS_MaxTar
 suffix:semicolon
-macro_line|#endif
 id|hreg-&gt;max_lun
 op_assign
 l_int|32
@@ -1843,7 +1449,6 @@ c_cond
 id|i
 )paren
 (brace
-macro_line|#if LINUX_VERSION_CODE &gt;= CVT_LINUX_VERSION(1,3,0)
 r_case
 l_int|0
 suffix:colon
@@ -2114,7 +1719,6 @@ l_string|&quot;inia100: driver needs an IRQ.&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
 )brace
 id|tpnt-&gt;this_id
 op_assign
@@ -2287,7 +1891,6 @@ id|pSrbSG
 op_increment
 )paren
 (brace
-macro_line|#if LINUX_VERSION_CODE &gt;= CVT_LINUX_VERSION(1,3,0)
 id|pSG-&gt;SG_Ptr
 op_assign
 (paren
@@ -2301,15 +1904,6 @@ id|pSrbSG-&gt;address
 )paren
 )paren
 suffix:semicolon
-macro_line|#else
-id|pSG-&gt;SG_Ptr
-op_assign
-(paren
-id|U32
-)paren
-id|pSrbSG-&gt;address
-suffix:semicolon
-macro_line|#endif
 id|pSG-&gt;SG_Len
 op_assign
 (paren
@@ -2333,7 +1927,6 @@ id|pSCB-&gt;SCB_SGLen
 op_assign
 l_int|0x8
 suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &gt;= CVT_LINUX_VERSION(1,3,0)
 id|pSG-&gt;SG_Ptr
 op_assign
 (paren
@@ -2347,15 +1940,6 @@ id|SCpnt-&gt;request_buffer
 )paren
 )paren
 suffix:semicolon
-macro_line|#else
-id|pSG-&gt;SG_PTR
-op_assign
-(paren
-id|U32
-)paren
-id|SCpnt-&gt;request_buffer
-suffix:semicolon
-macro_line|#endif
 id|pSG-&gt;SG_Len
 op_assign
 (paren
@@ -2999,7 +2583,6 @@ r_return
 suffix:semicolon
 )brace
 multiline_comment|/*****************************************************************************&n; Function name  : inia100_biosparam&n; Description    : Return the &quot;logical geometry&quot;&n; Input          : pHCB  -       Pointer to host adapter structure&n; Output         : None.&n; Return         : pSRB  -       Pointer to SCSI request block.&n;*****************************************************************************/
-macro_line|#if LINUX_VERSION_CODE &gt;= CVT_LINUX_VERSION(1,3,0)
 DECL|function|inia100_biosparam
 r_int
 id|inia100_biosparam
@@ -3016,23 +2599,6 @@ r_int
 op_star
 id|info_array
 )paren
-macro_line|#else
-r_int
-id|inia100_biosparam
-c_func
-(paren
-id|Scsi_Disk
-op_star
-id|disk
-comma
-r_int
-id|dev
-comma
-r_int
-op_star
-id|info_array
-)paren
-macro_line|#endif
 (brace
 id|ORC_HCS
 op_star
@@ -3172,7 +2738,6 @@ r_int
 id|irqno
 )paren
 (brace
-macro_line|#if LINUX_VERSION_CODE &gt;= CVT_LINUX_VERSION(2,1,95)
 r_int
 r_int
 id|flags
@@ -3186,7 +2751,6 @@ comma
 id|flags
 )paren
 suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -3195,7 +2759,6 @@ op_ne
 id|irqno
 )paren
 (brace
-macro_line|#if LINUX_VERSION_CODE &gt;= CVT_LINUX_VERSION(2,1,95)
 id|spin_unlock_irqrestore
 c_func
 (paren
@@ -3205,7 +2768,6 @@ comma
 id|flags
 )paren
 suffix:semicolon
-macro_line|#endif
 r_return
 suffix:semicolon
 )brace
@@ -3215,7 +2777,6 @@ c_func
 id|pHCB
 )paren
 suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &gt;= CVT_LINUX_VERSION(2,1,95)
 id|spin_unlock_irqrestore
 c_func
 (paren
@@ -3225,10 +2786,8 @@ comma
 id|flags
 )paren
 suffix:semicolon
-macro_line|#endif
 )brace
 multiline_comment|/*&n; * Interrupts handler (main routine of the driver)&n; */
-macro_line|#if LINUX_VERSION_CODE &gt;= CVT_LINUX_VERSION(1,3,0)
 DECL|function|inia100_intr0
 r_static
 r_void
@@ -3247,21 +2806,6 @@ id|pt_regs
 op_star
 id|regs
 )paren
-macro_line|#else
-r_static
-r_void
-id|inia100_intr0
-c_func
-(paren
-r_int
-id|irqno
-comma
-r_struct
-id|pt_regs
-op_star
-id|regs
-)paren
-macro_line|#endif
 (brace
 id|subIntr
 c_func
@@ -3276,7 +2820,6 @@ id|irqno
 )paren
 suffix:semicolon
 )brace
-macro_line|#if LINUX_VERSION_CODE &gt;= CVT_LINUX_VERSION(1,3,0)
 DECL|function|inia100_intr1
 r_static
 r_void
@@ -3295,21 +2838,6 @@ id|pt_regs
 op_star
 id|regs
 )paren
-macro_line|#else
-r_static
-r_void
-id|inia100_intr1
-c_func
-(paren
-r_int
-id|irqno
-comma
-r_struct
-id|pt_regs
-op_star
-id|regs
-)paren
-macro_line|#endif
 (brace
 id|subIntr
 c_func
@@ -3324,7 +2852,6 @@ id|irqno
 )paren
 suffix:semicolon
 )brace
-macro_line|#if LINUX_VERSION_CODE &gt;= CVT_LINUX_VERSION(1,3,0)
 DECL|function|inia100_intr2
 r_static
 r_void
@@ -3343,21 +2870,6 @@ id|pt_regs
 op_star
 id|regs
 )paren
-macro_line|#else
-r_static
-r_void
-id|inia100_intr2
-c_func
-(paren
-r_int
-id|irqno
-comma
-r_struct
-id|pt_regs
-op_star
-id|regs
-)paren
-macro_line|#endif
 (brace
 id|subIntr
 c_func
@@ -3372,7 +2884,6 @@ id|irqno
 )paren
 suffix:semicolon
 )brace
-macro_line|#if LINUX_VERSION_CODE &gt;= CVT_LINUX_VERSION(1,3,0)
 DECL|function|inia100_intr3
 r_static
 r_void
@@ -3391,21 +2902,6 @@ id|pt_regs
 op_star
 id|regs
 )paren
-macro_line|#else
-r_static
-r_void
-id|inia100_intr3
-c_func
-(paren
-r_int
-id|irqno
-comma
-r_struct
-id|pt_regs
-op_star
-id|regs
-)paren
-macro_line|#endif
 (brace
 id|subIntr
 c_func
@@ -3420,7 +2916,6 @@ id|irqno
 )paren
 suffix:semicolon
 )brace
-macro_line|#if LINUX_VERSION_CODE &gt;= CVT_LINUX_VERSION(1,3,0)
 DECL|function|inia100_intr4
 r_static
 r_void
@@ -3439,21 +2934,6 @@ id|pt_regs
 op_star
 id|regs
 )paren
-macro_line|#else
-r_static
-r_void
-id|inia100_intr4
-c_func
-(paren
-r_int
-id|irqno
-comma
-r_struct
-id|pt_regs
-op_star
-id|regs
-)paren
-macro_line|#endif
 (brace
 id|subIntr
 c_func
@@ -3468,7 +2948,6 @@ id|irqno
 )paren
 suffix:semicolon
 )brace
-macro_line|#if LINUX_VERSION_CODE &gt;= CVT_LINUX_VERSION(1,3,0)
 DECL|function|inia100_intr5
 r_static
 r_void
@@ -3487,21 +2966,6 @@ id|pt_regs
 op_star
 id|regs
 )paren
-macro_line|#else
-r_static
-r_void
-id|inia100_intr5
-c_func
-(paren
-r_int
-id|irqno
-comma
-r_struct
-id|pt_regs
-op_star
-id|regs
-)paren
-macro_line|#endif
 (brace
 id|subIntr
 c_func
@@ -3516,7 +2980,6 @@ id|irqno
 )paren
 suffix:semicolon
 )brace
-macro_line|#if LINUX_VERSION_CODE &gt;= CVT_LINUX_VERSION(1,3,0)
 DECL|function|inia100_intr6
 r_static
 r_void
@@ -3535,21 +2998,6 @@ id|pt_regs
 op_star
 id|regs
 )paren
-macro_line|#else
-r_static
-r_void
-id|inia100_intr6
-c_func
-(paren
-r_int
-id|irqno
-comma
-r_struct
-id|pt_regs
-op_star
-id|regs
-)paren
-macro_line|#endif
 (brace
 id|subIntr
 c_func
@@ -3564,7 +3012,6 @@ id|irqno
 )paren
 suffix:semicolon
 )brace
-macro_line|#if LINUX_VERSION_CODE &gt;= CVT_LINUX_VERSION(1,3,0)
 DECL|function|inia100_intr7
 r_static
 r_void
@@ -3583,21 +3030,6 @@ id|pt_regs
 op_star
 id|regs
 )paren
-macro_line|#else
-r_static
-r_void
-id|inia100_intr7
-c_func
-(paren
-r_int
-id|irqno
-comma
-r_struct
-id|pt_regs
-op_star
-id|regs
-)paren
-macro_line|#endif
 (brace
 id|subIntr
 c_func

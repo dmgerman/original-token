@@ -78,12 +78,7 @@ r_int
 r_int
 )paren
 suffix:semicolon
-r_extern
-r_struct
-id|proc_dir_entry
-id|proc_scsi_sgiwd93
-suffix:semicolon
 DECL|macro|SGIWD93_SCSI
-mdefine_line|#define SGIWD93_SCSI {proc_dir:&t;&t;   &amp;proc_scsi_sgiwd93, &bslash;&n;&t;&t;      name:                &quot;SGI WD93&quot;, &bslash;&n;&t;&t;      detect:              sgiwd93_detect,    &bslash;&n;&t;&t;      release:             sgiwd93_release,   &bslash;&n;&t;&t;      queuecommand:        wd33c93_queuecommand, &bslash;&n;&t;&t;      abort:               wd33c93_abort,   &bslash;&n;&t;&t;      reset:               wd33c93_reset,   &bslash;&n;&t;&t;      can_queue:           CAN_QUEUE,       &bslash;&n;&t;&t;      this_id:             7,               &bslash;&n;&t;&t;      sg_tablesize:        SG_ALL,          &bslash;&n;&t;&t;      cmd_per_lun:&t;   CMD_PER_LUN,     &bslash;&n;&t;&t;      use_clustering:      DISABLE_CLUSTERING }
+mdefine_line|#define SGIWD93_SCSI {proc_name:&t;   &quot;SGIWD93&quot;, &bslash;&n;&t;&t;      name:                &quot;SGI WD93&quot;, &bslash;&n;&t;&t;      detect:              sgiwd93_detect,    &bslash;&n;&t;&t;      release:             sgiwd93_release,   &bslash;&n;&t;&t;      queuecommand:        wd33c93_queuecommand, &bslash;&n;&t;&t;      abort:               wd33c93_abort,   &bslash;&n;&t;&t;      reset:               wd33c93_reset,   &bslash;&n;&t;&t;      can_queue:           CAN_QUEUE,       &bslash;&n;&t;&t;      this_id:             7,               &bslash;&n;&t;&t;      sg_tablesize:        SG_ALL,          &bslash;&n;&t;&t;      cmd_per_lun:&t;   CMD_PER_LUN,     &bslash;&n;&t;&t;      use_clustering:      DISABLE_CLUSTERING }
 macro_line|#endif /* !(_SGIWD93_H) */
 eof

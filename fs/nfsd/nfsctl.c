@@ -1051,32 +1051,6 @@ r_void
 op_star
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * This is called as the fill_inode function when an inode&n; * is going into (fill = 1) or out of service (fill = 0).&n; *&n; * We use it here to make sure the module can&squot;t be unloaded&n; * while a /proc inode is in use.&n; */
-DECL|function|nfsd_modcount
-r_void
-id|nfsd_modcount
-c_func
-(paren
-r_struct
-id|inode
-op_star
-id|inode
-comma
-r_int
-id|fill
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|fill
-)paren
-id|MOD_INC_USE_COUNT
-suffix:semicolon
-r_else
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
-)brace
 multiline_comment|/*&n; * Initialize the module&n; */
 r_int
 DECL|function|init_module

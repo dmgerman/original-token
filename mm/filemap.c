@@ -12,9 +12,10 @@ macro_line|#include &lt;linux/file.h&gt;
 macro_line|#include &lt;linux/swapctl.h&gt;
 macro_line|#include &lt;linux/slab.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
-macro_line|#include &lt;linux/highmem.h&gt;
+macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
+macro_line|#include &lt;linux/highmem.h&gt;
 multiline_comment|/*&n; * Shared mappings implemented 30.11.1994. It&squot;s not fully working yet,&n; * though.&n; *&n; * Shared mappings now work. 15.8.1995  Bruno.&n; *&n; * finished &squot;unifying&squot; the page and buffer cache and SMP-threaded the&n; * page-cache, 21.05.1999, Ingo Molnar &lt;mingo@redhat.com&gt;&n; *&n; * SMP-threaded pagemap-LRU 1999, Andrea Arcangeli &lt;andrea@suse.de&gt;&n; */
 DECL|variable|page_cache_size
 id|atomic_t
@@ -3930,15 +3931,12 @@ id|size
 op_assign
 id|count
 suffix:semicolon
-multiline_comment|/*&n;&t; * FIXME: We cannot yet sleep with kmaps held.&n;&t; */
 id|kaddr
 op_assign
 id|kmap
 c_func
 (paren
 id|page
-comma
-id|KM_READ
 )paren
 suffix:semicolon
 id|left
@@ -3964,9 +3962,7 @@ suffix:semicolon
 id|kunmap
 c_func
 (paren
-id|kaddr
-comma
-id|KM_READ
+id|page
 )paren
 suffix:semicolon
 r_if
@@ -4192,8 +4188,6 @@ id|kmap
 c_func
 (paren
 id|page
-comma
-id|KM_READ
 )paren
 suffix:semicolon
 id|written
@@ -4222,9 +4216,7 @@ suffix:semicolon
 id|kunmap
 c_func
 (paren
-id|kaddr
-comma
-id|KM_READ
+id|page
 )paren
 suffix:semicolon
 id|set_fs
@@ -4815,26 +4807,6 @@ c_cond
 id|new_page
 )paren
 (brace
-r_if
-c_cond
-(paren
-id|PageHighMem
-c_func
-(paren
-id|new_page
-)paren
-op_logical_or
-id|PageHighMem
-c_func
-(paren
-id|old_page
-)paren
-)paren
-id|BUG
-c_func
-(paren
-)paren
-suffix:semicolon
 id|copy_highpage
 c_func
 (paren
@@ -5543,20 +5515,6 @@ l_int|0
 suffix:semicolon
 )brace
 )brace
-r_if
-c_cond
-(paren
-id|PageHighMem
-c_func
-(paren
-id|page
-)paren
-)paren
-id|BUG
-c_func
-(paren
-)paren
-suffix:semicolon
 id|pgoff
 op_assign
 (paren

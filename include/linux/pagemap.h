@@ -17,7 +17,7 @@ mdefine_line|#define PAGE_CACHE_MASK&t;&t;PAGE_MASK
 DECL|macro|PAGE_CACHE_ALIGN
 mdefine_line|#define PAGE_CACHE_ALIGN(addr)&t;(((addr)+PAGE_CACHE_SIZE-1)&amp;PAGE_CACHE_MASK)
 DECL|macro|page_cache_alloc
-mdefine_line|#define page_cache_alloc()&t;(mem_map+MAP_NR(__get_free_pages(GFP_USER, 0)))
+mdefine_line|#define page_cache_alloc()&t;alloc_pages(GFP_HIGHUSER, 0)
 DECL|macro|page_cache_free
 mdefine_line|#define page_cache_free(x)&t;__free_page(x)
 DECL|macro|page_cache_release

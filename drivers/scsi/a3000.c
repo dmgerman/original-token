@@ -16,27 +16,6 @@ macro_line|#include &quot;hosts.h&quot;
 macro_line|#include &quot;wd33c93.h&quot;
 macro_line|#include &quot;a3000.h&quot;
 macro_line|#include&lt;linux/stat.h&gt;
-DECL|variable|proc_scsi_a3000
-r_struct
-id|proc_dir_entry
-id|proc_scsi_a3000
-op_assign
-(brace
-id|PROC_SCSI_A3000
-comma
-l_int|5
-comma
-l_string|&quot;A3000&quot;
-comma
-id|S_IFDIR
-op_or
-id|S_IRUGO
-op_or
-id|S_IXUGO
-comma
-l_int|2
-)brace
-suffix:semicolon
 DECL|macro|DMA
 mdefine_line|#define DMA(ptr) ((a3000_scsiregs *)((ptr)-&gt;base))
 DECL|macro|HDATA
@@ -730,10 +709,9 @@ id|A3000_SCSI
 r_return
 l_int|0
 suffix:semicolon
-id|tpnt-&gt;proc_dir
+id|tpnt-&gt;proc_name
 op_assign
-op_amp
-id|proc_scsi_a3000
+l_string|&quot;A3000&quot;
 suffix:semicolon
 id|tpnt-&gt;proc_info
 op_assign

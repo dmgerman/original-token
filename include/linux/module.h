@@ -471,14 +471,5 @@ macro_line|#else
 DECL|macro|EXPORT_NO_SYMBOLS
 mdefine_line|#define EXPORT_NO_SYMBOLS
 macro_line|#endif /* MODULE */
-r_extern
-r_int
-r_int
-id|get_kcore_size
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
 macro_line|#endif /* _LINUX_MODULE_H */
 eof

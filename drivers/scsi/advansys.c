@@ -8040,35 +8040,6 @@ DECL|typedef|PCI_CONFIG_SPACE
 id|PCI_CONFIG_SPACE
 suffix:semicolon
 multiline_comment|/*&n; * --- Driver Data&n; */
-multiline_comment|/* Note: All driver global data should be initialized. */
-macro_line|#if LINUX_VERSION_CODE &gt;= ASC_LINUX_VERSION(1,3,0)
-DECL|variable|proc_scsi_advansys
-r_struct
-id|proc_dir_entry
-id|proc_scsi_advansys
-op_assign
-(brace
-id|PROC_SCSI_ADVANSYS
-comma
-multiline_comment|/* unsigned short low_ino */
-l_int|8
-comma
-multiline_comment|/* unsigned short namelen */
-l_string|&quot;advansys&quot;
-comma
-multiline_comment|/* const char *name */
-id|S_IFDIR
-op_or
-id|S_IRUGO
-op_or
-id|S_IXUGO
-comma
-multiline_comment|/* mode_t mode */
-l_int|2
-multiline_comment|/* nlink_t nlink */
-)brace
-suffix:semicolon
-macro_line|#endif /* version &gt;= v1.3.0 */
 multiline_comment|/* Number of boards detected in system. */
 DECL|variable|asc_board_count
 id|STATIC
@@ -10048,13 +10019,10 @@ comma
 l_string|&quot;advansys_detect: begin&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &gt;= ASC_LINUX_VERSION(1,3,0)
-id|tpnt-&gt;proc_dir
+id|tpnt-&gt;proc_name
 op_assign
-op_amp
-id|proc_scsi_advansys
+l_string|&quot;advansys&quot;
 suffix:semicolon
-macro_line|#endif /* version &gt;= v1.3.0 */
 id|asc_board_count
 op_assign
 l_int|0

@@ -106,12 +106,10 @@ id|pos
 suffix:semicolon
 id|page
 op_assign
-id|__get_pages
+id|alloc_page
 c_func
 (paren
 id|GFP_KERNEL
-comma
-l_int|0
 )paren
 suffix:semicolon
 r_if

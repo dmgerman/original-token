@@ -4344,7 +4344,8 @@ OL
 l_int|0
 )paren
 (brace
-id|spin_unlock
+id|up
+c_func
 (paren
 op_amp
 id|main_lock

@@ -590,6 +590,17 @@ l_int|NULL
 r_if
 c_cond
 (paren
+id|id-&gt;config
+op_eq
+l_int|0x848a
+)paren
+r_return
+l_int|1
+suffix:semicolon
+multiline_comment|/* CompactFlash */
+r_if
+c_cond
+(paren
 op_logical_neg
 id|strncmp
 c_func

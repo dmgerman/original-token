@@ -1446,7 +1446,7 @@ l_int|16
 op_plus
 (paren
 (paren
-id|dev-&gt;host-&gt;hostt-&gt;proc_dir-&gt;low_ino
+id|dev-&gt;host-&gt;host_no
 op_amp
 l_int|0xff
 )paren

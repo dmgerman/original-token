@@ -99,11 +99,6 @@ DECL|macro|DC390_release
 macro_line|# define DC390_release NULL
 macro_line|#endif
 r_extern
-r_struct
-id|proc_dir_entry
-id|DC390_proc_scsi_tmscsim
-suffix:semicolon
-r_extern
 r_int
 id|DC390_proc_info
 c_func
@@ -131,7 +126,7 @@ id|inout
 )paren
 suffix:semicolon
 DECL|macro|DC390_T
-mdefine_line|#define DC390_T    {&t;&t;&t;&t;&t;&bslash;&n;   proc_dir:       &amp;DC390_proc_scsi_tmscsim,&t;&t;&bslash;&n;   proc_info:      DC390_proc_info,&t;&t;&t;&bslash;&n;   name:           DC390_BANNER &quot; V&quot; DC390_VERSION,&t;&bslash;&n;   detect:         DC390_detect,&t;&t;&t;&bslash;&n;   release:        DC390_release,&t;&t;&t;&bslash;&n;   queuecommand:   DC390_queue_command,&t;&t;&t;&bslash;&n;   abort:          DC390_abort,&t;&t;&t;&t;&bslash;&n;   reset:          DC390_reset,&t;&t;&t;&t;&bslash;&n;   bios_param:     DC390_bios_param,&t;&t;&t;&bslash;&n;   can_queue:      17,&t;&t;&t;&t;&t;&bslash;&n;   this_id:        7,&t;&t;&t;&t;&t;&bslash;&n;   sg_tablesize:   SG_ALL,&t;&t;&t;&t;&bslash;&n;   cmd_per_lun:    8,&t;&t;&t;&t;&t;&bslash;&n;   use_clustering: DISABLE_CLUSTERING&t;&t;&t;&bslash;&n;   }
+mdefine_line|#define DC390_T    {&t;&t;&t;&t;&t;&bslash;&n;   proc_name:      &quot;tmscsim&quot;,&t;&t;&t;&t;&bslash;&n;   proc_info:      DC390_proc_info,&t;&t;&t;&bslash;&n;   name:           DC390_BANNER &quot; V&quot; DC390_VERSION,&t;&bslash;&n;   detect:         DC390_detect,&t;&t;&t;&bslash;&n;   release:        DC390_release,&t;&t;&t;&bslash;&n;   queuecommand:   DC390_queue_command,&t;&t;&t;&bslash;&n;   abort:          DC390_abort,&t;&t;&t;&t;&bslash;&n;   reset:          DC390_reset,&t;&t;&t;&t;&bslash;&n;   bios_param:     DC390_bios_param,&t;&t;&t;&bslash;&n;   can_queue:      17,&t;&t;&t;&t;&t;&bslash;&n;   this_id:        7,&t;&t;&t;&t;&t;&bslash;&n;   sg_tablesize:   SG_ALL,&t;&t;&t;&t;&bslash;&n;   cmd_per_lun:    8,&t;&t;&t;&t;&t;&bslash;&n;   use_clustering: DISABLE_CLUSTERING&t;&t;&t;&bslash;&n;   }
 macro_line|#endif /* defined(HOSTS_C) || defined(MODULE) */
 macro_line|#endif /* DC390_H */
 eof

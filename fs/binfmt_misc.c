@@ -2332,35 +2332,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#ifdef MODULE
-multiline_comment|/*&n; * This is called as the fill_inode function when an inode&n; * is going into (fill = 1) or out of service (fill = 0).&n; * We use it here to manage the module use counts.&n; *&n; * Note: only the top-level directory needs to do this; if&n; * a lower level is referenced, the parent will be as well.&n; */
-DECL|function|bm_modcount
-r_static
-r_void
-id|bm_modcount
-c_func
-(paren
-r_struct
-id|inode
-op_star
-id|inode
-comma
-r_int
-id|fill
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|fill
-)paren
-id|MOD_INC_USE_COUNT
-suffix:semicolon
-r_else
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
-)brace
-macro_line|#endif
 DECL|function|init_misc_binfmt
 r_static
 r_int
@@ -2408,12 +2379,10 @@ id|bm_dir
 r_goto
 id|out
 suffix:semicolon
-macro_line|#ifdef MODULE
-id|bm_dir-&gt;fill_inode
+id|bm_dir-&gt;owner
 op_assign
-id|bm_modcount
+id|THIS_MODULE
 suffix:semicolon
-macro_line|#endif
 id|status
 op_assign
 id|create_proc_entry

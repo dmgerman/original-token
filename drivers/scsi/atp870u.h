@@ -92,11 +92,6 @@ DECL|macro|NULL
 mdefine_line|#define NULL 0
 macro_line|#endif
 r_extern
-r_struct
-id|proc_dir_entry
-id|proc_scsi_atp870u
-suffix:semicolon
-r_extern
 r_const
 r_char
 op_star
@@ -130,6 +125,6 @@ r_int
 )paren
 suffix:semicolon
 DECL|macro|ATP870U
-mdefine_line|#define ATP870U {  &t;&t;&t;&t;&t;&t;&bslash;&n;&t;next:&t;&t;&t;&t;NULL, &t;&t;&t;&bslash;&n;&t;module:&t;&t;&t;&t;NULL, &t;&t;&t;&bslash;&n;&t;proc_dir:&t;&t;&t;&amp;proc_scsi_atp870u,&t;&bslash;&n;&t;proc_info:&t;&t;&t;atp870u_proc_info,      &bslash;&n;&t;name:&t;&t;&t;&t;NULL,&t;&t;&t;&bslash;&n;&t;detect:                 &t;atp870u_detect,&t;&t;&bslash;&n;&t;release:               &t; &t;NULL,                   &bslash;&n;&t;info:                   &t;atp870u_info,           &bslash;&n;&t;command:                &t;atp870u_command,&t;&bslash;&n;        queuecommand:           &t;atp870u_queuecommand,&t;&bslash;&n;        eh_strategy_handler: &t;&t;NULL,&t;&t;&t;&bslash;&n;        eh_abort_handler: &t;&t;NULL,&t;&t;&t;&bslash;&n;        eh_device_reset_handler:&t;NULL,&t;&t;&t;&bslash;&n;        eh_bus_reset_handler:&t;&t;NULL,&t;&t;&t;&bslash;&n;        eh_host_reset_handler:&t;&t;NULL,&t;&t;&t;&bslash;&n;&t;abort:&t;&t;&t;&t;atp870u_abort,          &bslash;&n;&t;reset:&t;&t;&t;&t;atp870u_reset,       &t;&bslash;&n;&t;slave_attach:               &t;NULL,                   &bslash;&n;&t;bios_param:                     atp870u_biosparam,&t;&bslash;&n;&t;can_queue:                     &t;qcnt,                   &bslash;&n;&t;this_id:                     &t;1,&t;&t;&t;&bslash;&n;&t;sg_tablesize:                   ATP870U_SCATTER,        &bslash;&n;&t;cmd_per_lun:                    ATP870U_CMDLUN,         &bslash;&n;&t;present:                     &t;0,                      &bslash;&n;&t;unchecked_isa_dma:              0,                      &bslash;&n;&t;use_clustering:                 ENABLE_CLUSTERING,&t;&bslash;&n;&t;use_new_eh_code:&t;&t;0&t;&t;&t;&bslash;&n;}
+mdefine_line|#define ATP870U {  &t;&t;&t;&t;&t;&t;&bslash;&n;&t;proc_name:&t;&t;&t;&quot;atp870u&quot;,&t;&t;&bslash;&n;&t;proc_info:&t;&t;&t;atp870u_proc_info,      &bslash;&n;&t;name:&t;&t;&t;&t;NULL,&t;&t;&t;&bslash;&n;&t;detect:                 &t;atp870u_detect,&t;&t;&bslash;&n;&t;release:               &t; &t;NULL,                   &bslash;&n;&t;info:                   &t;atp870u_info,           &bslash;&n;&t;command:                &t;atp870u_command,&t;&bslash;&n;        queuecommand:           &t;atp870u_queuecommand,&t;&bslash;&n;        eh_strategy_handler: &t;&t;NULL,&t;&t;&t;&bslash;&n;        eh_abort_handler: &t;&t;NULL,&t;&t;&t;&bslash;&n;        eh_device_reset_handler:&t;NULL,&t;&t;&t;&bslash;&n;        eh_bus_reset_handler:&t;&t;NULL,&t;&t;&t;&bslash;&n;        eh_host_reset_handler:&t;&t;NULL,&t;&t;&t;&bslash;&n;&t;abort:&t;&t;&t;&t;atp870u_abort,          &bslash;&n;&t;reset:&t;&t;&t;&t;atp870u_reset,       &t;&bslash;&n;&t;slave_attach:               &t;NULL,                   &bslash;&n;&t;bios_param:                     atp870u_biosparam,&t;&bslash;&n;&t;can_queue:                     &t;qcnt,                   &bslash;&n;&t;this_id:                     &t;1,&t;&t;&t;&bslash;&n;&t;sg_tablesize:                   ATP870U_SCATTER,        &bslash;&n;&t;cmd_per_lun:                    ATP870U_CMDLUN,         &bslash;&n;&t;present:                     &t;0,                      &bslash;&n;&t;unchecked_isa_dma:              0,                      &bslash;&n;&t;use_clustering:                 ENABLE_CLUSTERING,&t;&bslash;&n;&t;use_new_eh_code:&t;&t;0&t;&t;&t;&bslash;&n;}
 macro_line|#endif
 eof

@@ -110,27 +110,6 @@ DECL|variable|BusLogic_CommandFailureReason
 op_star
 id|BusLogic_CommandFailureReason
 suffix:semicolon
-multiline_comment|/*&n;  BusLogic_ProcDirectoryEntry is the BusLogic /proc/scsi directory entry.&n;*/
-id|PROC_DirectoryEntry_T
-DECL|variable|BusLogic_ProcDirectoryEntry
-id|BusLogic_ProcDirectoryEntry
-op_assign
-(brace
-id|PROC_SCSI_BUSLOGIC
-comma
-l_int|8
-comma
-l_string|&quot;BusLogic&quot;
-comma
-id|S_IFDIR
-op_or
-id|S_IRUGO
-op_or
-id|S_IXUGO
-comma
-l_int|2
-)brace
-suffix:semicolon
 multiline_comment|/*&n;  BusLogic_AnnounceDriver announces the Driver Version and Date, Author&squot;s&n;  Name, Copyright Notice, and Electronic Mail Address.&n;*/
 DECL|function|BusLogic_AnnounceDriver
 r_static

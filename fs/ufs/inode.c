@@ -2961,12 +2961,15 @@ id|ufs_inode-&gt;ui_u3.ui_sun.ui_oeftflag
 suffix:semicolon
 id|inode-&gt;u.ufs_i.i_lastfrag
 op_assign
-id|howmany
 (paren
 id|inode-&gt;i_size
-comma
+op_plus
 id|uspi-&gt;s_fsize
+op_minus
+l_int|1
 )paren
+op_rshift
+id|uspi-&gt;s_fshift
 suffix:semicolon
 r_if
 c_cond

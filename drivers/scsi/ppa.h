@@ -177,33 +177,7 @@ comma
 r_int
 )paren
 suffix:semicolon
-DECL|variable|proc_scsi_ppa
-r_struct
-id|proc_dir_entry
-id|proc_scsi_ppa
-op_assign
-(brace
-id|PROC_SCSI_PPA
-comma
-l_int|3
-comma
-l_string|&quot;ppa&quot;
-comma
-id|S_IFDIR
-op_or
-id|S_IRUGO
-op_or
-id|S_IXUGO
-comma
-l_int|2
-)brace
-suffix:semicolon
 macro_line|#else
-r_extern
-r_struct
-id|proc_dir_entry
-id|proc_scsi_ppa
-suffix:semicolon
 DECL|macro|ppa_release
 mdefine_line|#define ppa_release 0
 macro_line|#endif
@@ -302,6 +276,6 @@ op_star
 )paren
 suffix:semicolon
 DECL|macro|PPA
-mdefine_line|#define PPA {&t;proc_dir:&t;&t;&t;&amp;proc_scsi_ppa,&t;&t;&bslash;&n;&t;&t;proc_info:&t;&t;&t;ppa_proc_info,&t;&t;&bslash;&n;&t;&t;name:&t;&t;&t;&t;&quot;Iomega VPI0 (ppa) interface&quot;,&bslash;&n;&t;&t;detect:&t;&t;&t;&t;ppa_detect,&t;&t;&bslash;&n;&t;&t;release:&t;&t;&t;ppa_release,&t;&t;&bslash;&n;&t;&t;command:&t;&t;&t;ppa_command,&t;&t;&bslash;&n;&t;&t;queuecommand:&t;&t;&t;ppa_queuecommand,&t;&bslash;&n;&t;&t;eh_abort_handler:&t;&t;ppa_abort,&t;&t;&bslash;&n;&t;&t;eh_device_reset_handler:&t;NULL,&t;&t;&t;&bslash;&n;&t;&t;eh_bus_reset_handler:&t;&t;ppa_reset,&t;&t;&bslash;&n;&t;&t;eh_host_reset_handler:&t;&t;ppa_reset,&t;&t;&bslash;&n;&t;&t;bios_param:&t;&t;&t;ppa_biosparam,&t;&t;&bslash;&n;&t;&t;this_id:&t;&t;&t;-1,&t;&t;&t;&bslash;&n;&t;&t;sg_tablesize:&t;&t;&t;SG_ALL,&t;&t;&t;&bslash;&n;&t;&t;cmd_per_lun:&t;&t;&t;1,&t;&t;&t;&bslash;&n;&t;&t;use_clustering:&t;&t;&t;ENABLE_CLUSTERING&t;&bslash;&n;}
+mdefine_line|#define PPA {&t;proc_name:&t;&t;&t;&quot;ppa&quot;,&t;&t;&bslash;&n;&t;&t;proc_info:&t;&t;&t;ppa_proc_info,&t;&t;&bslash;&n;&t;&t;name:&t;&t;&t;&t;&quot;Iomega VPI0 (ppa) interface&quot;,&bslash;&n;&t;&t;detect:&t;&t;&t;&t;ppa_detect,&t;&t;&bslash;&n;&t;&t;release:&t;&t;&t;ppa_release,&t;&t;&bslash;&n;&t;&t;command:&t;&t;&t;ppa_command,&t;&t;&bslash;&n;&t;&t;queuecommand:&t;&t;&t;ppa_queuecommand,&t;&bslash;&n;&t;&t;eh_abort_handler:&t;&t;ppa_abort,&t;&t;&bslash;&n;&t;&t;eh_device_reset_handler:&t;NULL,&t;&t;&t;&bslash;&n;&t;&t;eh_bus_reset_handler:&t;&t;ppa_reset,&t;&t;&bslash;&n;&t;&t;eh_host_reset_handler:&t;&t;ppa_reset,&t;&t;&bslash;&n;&t;&t;bios_param:&t;&t;&t;ppa_biosparam,&t;&t;&bslash;&n;&t;&t;this_id:&t;&t;&t;-1,&t;&t;&t;&bslash;&n;&t;&t;sg_tablesize:&t;&t;&t;SG_ALL,&t;&t;&t;&bslash;&n;&t;&t;cmd_per_lun:&t;&t;&t;1,&t;&t;&t;&bslash;&n;&t;&t;use_clustering:&t;&t;&t;ENABLE_CLUSTERING&t;&bslash;&n;}
 macro_line|#endif&t;&t;&t;&t;/* _PPA_H */
 eof

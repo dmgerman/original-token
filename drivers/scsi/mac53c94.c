@@ -16,27 +16,6 @@ macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &quot;scsi.h&quot;
 macro_line|#include &quot;hosts.h&quot;
 macro_line|#include &quot;mac53c94.h&quot;
-DECL|variable|proc_scsi_mac53c94
-r_struct
-id|proc_dir_entry
-id|proc_scsi_mac53c94
-op_assign
-(brace
-id|PROC_SCSI_53C94
-comma
-l_int|5
-comma
-l_string|&quot;53c94&quot;
-comma
-id|S_IFDIR
-op_or
-id|S_IRUGO
-op_or
-id|S_IXUGO
-comma
-l_int|2
-)brace
-suffix:semicolon
 DECL|enum|fsc_phase
 r_enum
 id|fsc_phase

@@ -78,28 +78,6 @@ macro_line|#include &quot;sd.h&quot;
 macro_line|#include &quot;hosts.h&quot;
 macro_line|#include &quot;qlogicfas.h&quot;
 macro_line|#include&lt;linux/stat.h&gt;
-DECL|variable|proc_scsi_qlogicfas
-r_static
-r_struct
-id|proc_dir_entry
-id|proc_scsi_qlogicfas
-op_assign
-(brace
-id|PROC_SCSI_QLOGICFAS
-comma
-l_int|6
-comma
-l_string|&quot;qlogicfas&quot;
-comma
-id|S_IFDIR
-op_or
-id|S_IRUGO
-op_or
-id|S_IXUGO
-comma
-l_int|2
-)brace
-suffix:semicolon
 multiline_comment|/*----------------------------------------------------------------*/
 multiline_comment|/* driver state info, local to driver */
 DECL|variable|qbase
@@ -2453,10 +2431,9 @@ r_int
 r_int
 id|flags
 suffix:semicolon
-id|host-&gt;proc_dir
+id|host-&gt;proc_name
 op_assign
-op_amp
-id|proc_scsi_qlogicfas
+l_string|&quot;qlogicfas&quot;
 suffix:semicolon
 multiline_comment|/* Qlogic Cards only exist at 0x230 or 0x330 (the chip itself decodes the&n;   address - I check 230 first since MIDI cards are typically at 330&n;&n;   Theoretically, two Qlogic cards can coexist in the same system.  This&n;   should work by simply using this as a loadable module for the second&n;   card, but I haven&squot;t tested this.&n;*/
 r_if

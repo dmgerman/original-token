@@ -9,6 +9,7 @@ macro_line|#include &lt;linux/file.h&gt;
 macro_line|#include &lt;linux/locks.h&gt;
 macro_line|#include &lt;linux/limits.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 r_extern
@@ -218,20 +219,15 @@ c_cond
 id|de
 )paren
 (brace
-multiline_comment|/*&n;&t;&t; * Call the fill_inode hook to release module counts.&n;&t;&t; */
 r_if
 c_cond
 (paren
-id|de-&gt;fill_inode
+id|de-&gt;owner
 )paren
-id|de
-op_member_access_from_pointer
-id|fill_inode
+id|__MOD_DEC_USE_COUNT
 c_func
 (paren
-id|inode
-comma
-l_int|0
+id|de-&gt;owner
 )paren
 suffix:semicolon
 id|de_put
@@ -709,20 +705,15 @@ id|inode-&gt;i_nlink
 op_assign
 id|de-&gt;nlink
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; * The fill_inode routine should use this call &n;&t;&t; * to increment module counts, if necessary.&n;&t;&t; */
 r_if
 c_cond
 (paren
-id|de-&gt;fill_inode
+id|de-&gt;owner
 )paren
-id|de
-op_member_access_from_pointer
-id|fill_inode
+id|__MOD_INC_USE_COUNT
 c_func
 (paren
-id|inode
-comma
-l_int|1
+id|de-&gt;owner
 )paren
 suffix:semicolon
 )brace

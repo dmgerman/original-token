@@ -93,27 +93,6 @@ macro_line|#include &lt;asm/atari_stdma.h&gt;
 macro_line|#include &lt;asm/atari_stram.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
-DECL|variable|proc_scsi_atari
-r_struct
-id|proc_dir_entry
-id|proc_scsi_atari
-op_assign
-(brace
-id|PROC_SCSI_ATARI
-comma
-l_int|5
-comma
-l_string|&quot;Atari&quot;
-comma
-id|S_IFDIR
-op_or
-id|S_IRUGO
-op_or
-id|S_IXUGO
-comma
-l_int|2
-)brace
-suffix:semicolon
 DECL|macro|IS_A_TT
 mdefine_line|#define&t;IS_A_TT()&t;ATARIHW_PRESENT(TT_SCSI)
 DECL|macro|SCSI_DMA_WRITE_P
@@ -1741,10 +1720,9 @@ id|called
 r_return
 l_int|0
 suffix:semicolon
-id|host-&gt;proc_dir
+id|host-&gt;proc_name
 op_assign
-op_amp
-id|proc_scsi_atari
+l_string|&quot;Atari&quot;
 suffix:semicolon
 id|atari_scsi_reg_read
 op_assign

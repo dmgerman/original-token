@@ -454,6 +454,11 @@ comma
 id|rev
 suffix:semicolon
 r_struct
+id|net_device
+op_star
+id|dev
+suffix:semicolon
+r_struct
 id|mace_data
 op_star
 id|mp

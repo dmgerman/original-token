@@ -994,13 +994,6 @@ comma
 l_int|20
 )brace
 suffix:semicolon
-DECL|variable|DC390_proc_scsi_tmscsim
-r_struct
-id|proc_dir_entry
-id|DC390_proc_scsi_tmscsim
-op_assign
-initialization_block
-suffix:semicolon
 multiline_comment|/***********************************************************************&n; * Functions for access to DC390 EEPROM&n; * and some to emulate it&n; *&n; **********************************************************************/
 DECL|function|dc390_EnDisableCE
 r_static
@@ -7010,10 +7003,9 @@ c_cond
 (paren
 id|dc390_adapterCnt
 )paren
-id|psht-&gt;proc_dir
+id|psht-&gt;proc_name
 op_assign
-op_amp
-id|DC390_proc_scsi_tmscsim
+l_string|&quot;tmscsim&quot;
 suffix:semicolon
 id|printk
 c_func

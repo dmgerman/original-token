@@ -16,27 +16,6 @@ macro_line|#include &quot;scsi.h&quot;
 macro_line|#include &quot;hosts.h&quot;
 macro_line|#include &quot;sd.h&quot;
 macro_line|#include&lt;linux/stat.h&gt;
-DECL|variable|proc_scsi_scsi_debug
-r_struct
-id|proc_dir_entry
-id|proc_scsi_scsi_debug
-op_assign
-(brace
-id|PROC_SCSI_SCSI_DEBUG
-comma
-l_int|10
-comma
-l_string|&quot;scsi_debug&quot;
-comma
-id|S_IFDIR
-op_or
-id|S_IRUGO
-op_or
-id|S_IXUGO
-comma
-l_int|2
-)brace
-suffix:semicolon
 multiline_comment|/* A few options that we want selected */
 DECL|macro|NR_HOSTS_PRESENT
 mdefine_line|#define NR_HOSTS_PRESENT 20
@@ -2702,11 +2681,11 @@ id|i
 op_increment
 )paren
 (brace
-id|tpnt-&gt;proc_dir
+id|tpnt-&gt;proc_name
 op_assign
-op_amp
-id|proc_scsi_scsi_debug
+l_string|&quot;scsi_debug&quot;
 suffix:semicolon
+multiline_comment|/* Huh? In the loop??? */
 id|scsi_register
 c_func
 (paren
