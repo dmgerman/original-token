@@ -2016,7 +2016,7 @@ op_amp
 id|proc_array_inode_operations
 )brace
 suffix:semicolon
-macro_line|#ifdef CONFIG_PCI
+macro_line|#ifdef CONFIG_PCI_OLD_PROC
 DECL|variable|proc_root_pci
 r_static
 r_struct
@@ -2817,7 +2817,7 @@ op_amp
 id|proc_root_version
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_PCI
+macro_line|#ifdef CONFIG_PCI_OLD_PROC
 id|proc_register
 c_func
 (paren

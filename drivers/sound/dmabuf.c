@@ -468,10 +468,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-r_int
-r_int
-id|r
-suffix:semicolon
 id|set_fs
 c_func
 (paren
@@ -481,8 +477,6 @@ c_func
 )paren
 )paren
 suffix:semicolon
-id|r
-op_assign
 id|audio_devs
 (braket
 id|dev
@@ -511,7 +505,7 @@ id|fs
 )paren
 suffix:semicolon
 r_return
-id|r
+id|bits
 suffix:semicolon
 )brace
 DECL|function|default_set_speed
@@ -535,9 +529,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-r_int
-id|r
-suffix:semicolon
 id|set_fs
 c_func
 (paren
@@ -547,8 +538,6 @@ c_func
 )paren
 )paren
 suffix:semicolon
-id|r
-op_assign
 id|audio_devs
 (braket
 id|dev
@@ -577,7 +566,7 @@ id|fs
 )paren
 suffix:semicolon
 r_return
-id|r
+id|speed
 suffix:semicolon
 )brace
 DECL|function|default_set_channels
@@ -606,9 +595,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-r_int
-id|r
-suffix:semicolon
 id|set_fs
 c_func
 (paren
@@ -618,8 +604,6 @@ c_func
 )paren
 )paren
 suffix:semicolon
-id|r
-op_assign
 id|audio_devs
 (braket
 id|dev
@@ -648,7 +632,7 @@ id|fs
 )paren
 suffix:semicolon
 r_return
-id|r
+id|c
 suffix:semicolon
 )brace
 DECL|function|check_driver

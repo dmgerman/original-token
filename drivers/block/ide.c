@@ -13027,6 +13027,13 @@ c_func
 id|do_ide0_request
 )paren
 suffix:semicolon
+DECL|variable|ide_add_generic_settings
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|ide_add_generic_settings
+)paren
+suffix:semicolon
 macro_line|#if MAX_HWIFS &gt; 1
 DECL|variable|do_ide1_request
 id|EXPORT_SYMBOL

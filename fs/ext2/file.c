@@ -16,8 +16,6 @@ DECL|macro|MIN
 mdefine_line|#define MIN(a,b) (((a)&lt;(b))?(a):(b))
 DECL|macro|MAX
 mdefine_line|#define MAX(a,b) (((a)&gt;(b))?(a):(b))
-macro_line|#include &lt;linux/fs.h&gt;
-macro_line|#include &lt;linux/ext2_fs.h&gt;
 r_static
 r_int
 r_int

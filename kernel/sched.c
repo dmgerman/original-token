@@ -1354,6 +1354,17 @@ id|this_cpu
 r_goto
 id|scheduling_in_interrupt
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|local_bh_count
+(braket
+id|this_cpu
+)braket
+)paren
+r_goto
+id|scheduling_in_interrupt
+suffix:semicolon
 id|release_kernel_lock
 c_func
 (paren

@@ -819,7 +819,7 @@ dot
 id|fixup
 comma
 "&bslash;&quot;"
-id|a
+id|ax
 "&bslash;&quot;"
 macro_line|#
 macro_line|#

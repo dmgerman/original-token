@@ -11,8 +11,6 @@ id|local_bh_count
 id|NR_CPUS
 )braket
 suffix:semicolon
-DECL|macro|in_bh
-mdefine_line|#define in_bh()&t;(local_bh_count[smp_processor_id()] != 0)
 DECL|macro|get_active_bhs
 mdefine_line|#define get_active_bhs()&t;(bh_mask &amp; bh_active)
 DECL|macro|clear_active_bhs
@@ -178,28 +176,20 @@ r_int
 id|cpu
 )paren
 (brace
-r_int
-r_int
-id|flags
-suffix:semicolon
-id|__save_flags
+r_if
+c_cond
+(paren
+op_logical_neg
+id|test_and_set_bit
 c_func
 (paren
-id|flags
-)paren
-suffix:semicolon
-id|__cli
-c_func
-(paren
-)paren
-suffix:semicolon
-id|atomic_inc
-c_func
-(paren
+l_int|0
+comma
 op_amp
 id|global_bh_count
 )paren
-suffix:semicolon
+)paren
+(brace
 r_if
 c_cond
 (paren
@@ -207,38 +197,12 @@ id|atomic_read
 c_func
 (paren
 op_amp
-id|global_bh_count
-)paren
-op_ne
-l_int|1
-op_logical_or
-id|atomic_read
-c_func
-(paren
-op_amp
 id|global_bh_lock
 )paren
-op_ne
+op_eq
 l_int|0
 )paren
 (brace
-id|atomic_dec
-c_func
-(paren
-op_amp
-id|global_bh_count
-)paren
-suffix:semicolon
-id|__restore_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
 op_increment
 id|local_bh_count
 (braket
@@ -247,6 +211,20 @@ id|cpu
 suffix:semicolon
 r_return
 l_int|1
+suffix:semicolon
+)brace
+id|clear_bit
+c_func
+(paren
+l_int|0
+comma
+op_amp
+id|global_bh_count
+)paren
+suffix:semicolon
+)brace
+r_return
+l_int|0
 suffix:semicolon
 )brace
 DECL|function|softirq_endlock
@@ -260,27 +238,19 @@ r_int
 id|cpu
 )paren
 (brace
-id|__cli
-c_func
-(paren
-)paren
-suffix:semicolon
-id|atomic_dec
-c_func
-(paren
-op_amp
-id|global_bh_count
-)paren
-suffix:semicolon
 id|local_bh_count
 (braket
 id|cpu
 )braket
 op_decrement
 suffix:semicolon
-id|__sti
+id|clear_bit
 c_func
 (paren
+l_int|0
+comma
+op_amp
+id|global_bh_count
 )paren
 suffix:semicolon
 )brace
@@ -337,9 +307,9 @@ suffix:semicolon
 )brace
 multiline_comment|/* These are for the irq&squot;s testing the lock */
 DECL|macro|softirq_trylock
-mdefine_line|#define softirq_trylock(cpu)&t;(in_bh() ? 0 : (local_bh_count[smp_processor_id()]=1))
+mdefine_line|#define softirq_trylock(cpu)&t;(local_bh_count[cpu] ? 0 : (local_bh_count[cpu]=1))
 DECL|macro|softirq_endlock
-mdefine_line|#define softirq_endlock(cpu)&t;(local_bh_count[smp_processor_id()] = 0)
+mdefine_line|#define softirq_endlock(cpu)&t;(local_bh_count[cpu] = 0)
 DECL|macro|synchronize_bh
 mdefine_line|#define synchronize_bh()&t;do { } while (0)
 macro_line|#endif&t;/* SMP */

@@ -339,6 +339,13 @@ c_func
 id|synchronize_bh
 )paren
 suffix:semicolon
+DECL|variable|global_bh_count
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|global_bh_count
+)paren
+suffix:semicolon
 DECL|variable|global_bh_lock
 id|EXPORT_SYMBOL
 c_func
