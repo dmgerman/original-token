@@ -804,6 +804,9 @@ comma
 (paren
 id|caddr_t
 )paren
+(paren
+r_int
+)paren
 id|bits
 comma
 l_int|1
@@ -836,6 +839,9 @@ id|SNDCTL_DSP_SPEED
 comma
 (paren
 id|caddr_t
+)paren
+(paren
+r_int
 )paren
 id|speed
 comma
@@ -874,6 +880,9 @@ id|SNDCTL_DSP_CHANNELS
 comma
 (paren
 id|caddr_t
+)paren
+(paren
+r_int
 )paren
 id|c
 comma
@@ -3437,7 +3446,7 @@ op_member_access_from_pointer
 id|dmap_in
 suffix:semicolon
 r_int
-id|iarg
+id|larg
 op_assign
 (paren
 r_int
@@ -3468,10 +3477,7 @@ id|d-&gt;set_speed
 (paren
 id|dev
 comma
-(paren
-r_int
-)paren
-id|arg
+id|larg
 )paren
 suffix:semicolon
 r_return
@@ -3492,7 +3498,7 @@ id|d-&gt;set_speed
 (paren
 id|dev
 comma
-id|get_fs_long
+id|get_user
 (paren
 (paren
 r_int
@@ -3564,10 +3570,7 @@ id|d-&gt;set_channels
 (paren
 id|dev
 comma
-(paren
-r_int
-)paren
-id|arg
+id|larg
 op_plus
 l_int|1
 )paren
@@ -3592,7 +3595,7 @@ id|d-&gt;set_channels
 (paren
 id|dev
 comma
-id|get_fs_long
+id|get_user
 (paren
 (paren
 r_int
@@ -3628,7 +3631,7 @@ comma
 (paren
 r_int
 )paren
-id|iarg
+id|larg
 )paren
 suffix:semicolon
 r_return
@@ -3649,7 +3652,7 @@ id|d-&gt;set_channels
 (paren
 id|dev
 comma
-id|get_fs_long
+id|get_user
 (paren
 (paren
 r_int
@@ -3721,11 +3724,7 @@ id|d-&gt;set_bits
 (paren
 id|dev
 comma
-(paren
-r_int
-r_int
-)paren
-id|arg
+id|larg
 )paren
 suffix:semicolon
 r_return
@@ -3746,7 +3745,7 @@ id|d-&gt;set_bits
 (paren
 id|dev
 comma
-id|get_fs_long
+id|get_user
 (paren
 (paren
 r_int
@@ -3924,7 +3923,7 @@ suffix:colon
 r_int
 id|fact
 op_assign
-id|get_fs_long
+id|get_user
 (paren
 (paren
 r_int
@@ -4033,7 +4032,7 @@ suffix:colon
 r_int
 id|fact
 op_assign
-id|get_fs_long
+id|get_user
 (paren
 (paren
 r_int
@@ -4370,7 +4369,7 @@ suffix:semicolon
 r_int
 id|bits
 op_assign
-id|get_fs_long
+id|get_user
 (paren
 (paren
 r_int

@@ -9373,7 +9373,7 @@ id|arg
 comma
 id|gus_audio_set_speed
 (paren
-id|get_fs_long
+id|get_user
 (paren
 (paren
 r_int
@@ -9443,7 +9443,7 @@ id|arg
 comma
 id|gus_audio_set_channels
 (paren
-id|get_fs_long
+id|get_user
 (paren
 (paren
 r_int
@@ -9488,7 +9488,7 @@ id|arg
 comma
 id|gus_audio_set_channels
 (paren
-id|get_fs_long
+id|get_user
 (paren
 (paren
 r_int
@@ -9554,7 +9554,7 @@ id|arg
 comma
 id|gus_audio_set_bits
 (paren
-id|get_fs_long
+id|get_user
 (paren
 (paren
 r_int
@@ -12786,7 +12786,7 @@ id|SOUND_MIXER_RECSRC
 suffix:colon
 id|gus_recmask
 op_assign
-id|get_fs_long
+id|get_user
 (paren
 (paren
 r_int
@@ -12837,7 +12837,7 @@ suffix:colon
 r_int
 id|vol
 op_assign
-id|get_fs_long
+id|get_user
 (paren
 (paren
 r_int
@@ -12906,7 +12906,7 @@ suffix:colon
 r_int
 id|vol
 op_assign
-id|get_fs_long
+id|get_user
 (paren
 (paren
 r_int
@@ -12973,7 +12973,7 @@ id|SOUND_MIXER_PCM
 suffix:colon
 id|gus_pcm_volume
 op_assign
-id|get_fs_long
+id|get_user
 (paren
 (paren
 r_int
@@ -13039,7 +13039,7 @@ id|voice
 suffix:semicolon
 id|gus_wave_volume
 op_assign
-id|get_fs_long
+id|get_user
 (paren
 (paren
 r_int

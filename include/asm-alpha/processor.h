@@ -23,6 +23,7 @@ DECL|struct|thread_struct
 r_struct
 id|thread_struct
 (brace
+multiline_comment|/* the fields below are used by PALcode and must match struct pcb: */
 DECL|member|ksp
 r_int
 r_int
@@ -53,11 +54,11 @@ r_int
 r_int
 id|unique
 suffix:semicolon
-multiline_comment|/*&n;&t; * bit  0.. 0: floating point enable (used by PALcode)&n;&t; * bit  1.. 5: IEEE_TRAP_ENABLE bits (see fpu.h)&n;&t; */
-DECL|member|flags
+multiline_comment|/*&n;&t; * bit  0: floating point enable&n;&t; * bit 62: performance monitor enable&n;&t; */
+DECL|member|pal_flags
 r_int
 r_int
-id|flags
+id|pal_flags
 suffix:semicolon
 DECL|member|res1
 DECL|member|res2
@@ -67,17 +68,19 @@ id|res1
 comma
 id|res2
 suffix:semicolon
-DECL|member|segment
+multiline_comment|/* the fields below are Linux-specific: */
+multiline_comment|/*&n;&t; * bit 0:    perform syscall argument validation (get/set_fs)&n;&t; * bit 1..5: IEEE_TRAP_ENABLE bits (see fpu.h)&n;&t; */
+DECL|member|flags
 r_int
 r_int
-id|segment
+id|flags
 suffix:semicolon
 )brace
 suffix:semicolon
 DECL|macro|INIT_MMAP
 mdefine_line|#define INIT_MMAP { &amp;init_mm, 0xfffffc0000000000,  0xfffffc0010000000, &bslash;&n;&t;PAGE_SHARED, VM_READ | VM_WRITE | VM_EXEC }
 DECL|macro|INIT_TSS
-mdefine_line|#define INIT_TSS  { &bslash;&n;&t;0, 0, 0, &bslash;&n;&t;0, 0, 0, &bslash;&n;&t;0, 0, 0, KERNEL_DS, &bslash;&n;}
+mdefine_line|#define INIT_TSS  { &bslash;&n;&t;0, 0, 0, &bslash;&n;&t;0, 0, 0, &bslash;&n;&t;0, 0, 0, &bslash;&n;&t;0 &bslash;&n;}
 DECL|macro|alloc_kernel_stack
 mdefine_line|#define alloc_kernel_stack()    get_free_page(GFP_KERNEL)
 DECL|macro|free_kernel_stack

@@ -563,7 +563,7 @@ id|arg
 comma
 id|pcm_set_speed
 (paren
-id|get_fs_long
+id|get_user
 (paren
 (paren
 r_int
@@ -633,7 +633,7 @@ id|arg
 comma
 id|pcm_set_channels
 (paren
-id|get_fs_long
+id|get_user
 (paren
 (paren
 r_int
@@ -678,7 +678,7 @@ id|arg
 comma
 id|pcm_set_channels
 (paren
-id|get_fs_long
+id|get_user
 (paren
 (paren
 r_int
@@ -744,7 +744,7 @@ id|arg
 comma
 id|pcm_set_bits
 (paren
-id|get_fs_long
+id|get_user
 (paren
 (paren
 r_int
@@ -787,7 +787,7 @@ multiline_comment|/*&n;&t;&t;&t;&t;&t; * NOT YET IMPLEMENTED&n;&t;&t;&t;&t;&t; *
 r_if
 c_cond
 (paren
-id|get_fs_long
+id|get_user
 (paren
 (paren
 r_int
@@ -806,7 +806,7 @@ id|EINVAL
 suffix:semicolon
 id|pcm_filter
 op_assign
-id|get_fs_long
+id|get_user
 (paren
 (paren
 r_int

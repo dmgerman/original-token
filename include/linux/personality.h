@@ -129,7 +129,6 @@ op_star
 id|it
 )paren
 suffix:semicolon
-r_extern
 id|asmlinkage
 r_int
 id|sys_personality

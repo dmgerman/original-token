@@ -2668,7 +2668,7 @@ comma
 id|devc
 comma
 op_logical_neg
-id|get_fs_long
+id|get_user
 (paren
 (paren
 r_int
@@ -5751,7 +5751,7 @@ op_assign
 (paren
 r_int
 )paren
-id|get_fs_long
+id|get_user
 (paren
 (paren
 r_int
@@ -5905,7 +5905,7 @@ op_assign
 (paren
 r_int
 )paren
-id|get_fs_long
+id|get_user
 (paren
 (paren
 r_int
@@ -5951,7 +5951,7 @@ op_assign
 (paren
 r_int
 )paren
-id|get_fs_long
+id|get_user
 (paren
 (paren
 r_int
@@ -6050,7 +6050,7 @@ suffix:colon
 r_if
 c_cond
 (paren
-id|get_fs_long
+id|get_user
 (paren
 (paren
 r_int
@@ -6100,7 +6100,7 @@ op_assign
 (paren
 r_int
 )paren
-id|get_fs_long
+id|get_user
 (paren
 (paren
 r_int

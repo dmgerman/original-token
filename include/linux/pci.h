@@ -738,12 +738,18 @@ DECL|macro|PCI_VENDOR_ID_TEKRAM
 mdefine_line|#define PCI_VENDOR_ID_TEKRAM&t;&t;0x1de1
 DECL|macro|PCI_DEVICE_ID_TEKRAM_DC290
 mdefine_line|#define PCI_DEVICE_ID_TEKRAM_DC290&t;0xdc29
+DECL|macro|PCI_VENDOR_ID_3DLABS
+mdefine_line|#define PCI_VENDOR_ID_3DLABS&t;&t;0x3D3D
+DECL|macro|PCI_DEVICE_ID_3DLABS_300SX
+mdefine_line|#define PCI_DEVICE_ID_3DLABS_300SX&t;0x0001
 DECL|macro|PCI_VENDOR_ID_AVANCE
 mdefine_line|#define PCI_VENDOR_ID_AVANCE&t;&t;0x4005
 DECL|macro|PCI_DEVICE_ID_AVANCE_2302
 mdefine_line|#define PCI_DEVICE_ID_AVANCE_2302&t;0x2302
 DECL|macro|PCI_VENDOR_ID_S3
 mdefine_line|#define PCI_VENDOR_ID_S3&t;&t;0x5333
+DECL|macro|PCI_DEVICE_ID_S3_ViRGE
+mdefine_line|#define PCI_DEVICE_ID_S3_ViRGE&t;&t;0x5631
 DECL|macro|PCI_DEVICE_ID_S3_811
 mdefine_line|#define PCI_DEVICE_ID_S3_811&t;&t;0x8811
 DECL|macro|PCI_DEVICE_ID_S3_868

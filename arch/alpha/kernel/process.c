@@ -279,9 +279,11 @@ r_int
 id|sp
 )paren
 (brace
-id|current-&gt;tss.segment
-op_assign
+id|set_fs
+c_func
+(paren
 id|USER_DS
+)paren
 suffix:semicolon
 id|regs-&gt;pc
 op_assign
@@ -558,9 +560,14 @@ r_int
 )paren
 id|childstack
 suffix:semicolon
-id|p-&gt;tss.flags
+id|p-&gt;tss.pal_flags
 op_assign
 l_int|1
+suffix:semicolon
+multiline_comment|/* set FEN, clear everything else */
+id|p-&gt;tss.flags
+op_assign
+id|current-&gt;tss.flags
 suffix:semicolon
 id|p-&gt;mm-&gt;context
 op_assign

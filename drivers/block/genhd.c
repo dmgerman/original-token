@@ -11,6 +11,8 @@ macro_line|#endif
 macro_line|#include &lt;asm/system.h&gt;
 multiline_comment|/*&n; * Many architectures don&squot;t like unaligned accesses, which is&n; * frequently the case with the nr_sects and start_sect partition&n; * table entries.&n; */
 macro_line|#include &lt;asm/unaligned.h&gt;
+DECL|macro|SYS_IND
+mdefine_line|#define SYS_IND(p)&t;get_unaligned(&amp;p-&gt;sys_ind)
 DECL|macro|NR_SECTS
 mdefine_line|#define NR_SECTS(p)&t;get_unaligned(&amp;p-&gt;nr_sects)
 DECL|macro|START_SECT
@@ -290,11 +292,19 @@ id|p
 (brace
 r_return
 (paren
-id|p-&gt;sys_ind
+id|SYS_IND
+c_func
+(paren
+id|p
+)paren
 op_eq
 id|DOS_EXTENDED_PARTITION
 op_logical_or
-id|p-&gt;sys_ind
+id|SYS_IND
+c_func
+(paren
+id|p
+)paren
 op_eq
 id|LINUX_EXTENDED_PARTITION
 )paren
@@ -1066,7 +1076,11 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|p-&gt;sys_ind
+id|SYS_IND
+c_func
+(paren
+id|p
+)paren
 op_eq
 id|EZD_PARTITION
 )paren
@@ -1100,7 +1114,11 @@ r_else
 r_if
 c_cond
 (paren
-id|p-&gt;sys_ind
+id|SYS_IND
+c_func
+(paren
+id|p
+)paren
 op_eq
 id|DM6_PARTITION
 )paren
@@ -1191,11 +1209,19 @@ r_else
 r_if
 c_cond
 (paren
-id|p-&gt;sys_ind
+id|SYS_IND
+c_func
+(paren
+id|p
+)paren
 op_eq
 id|DM6_AUX1PARTITION
 op_logical_or
-id|p-&gt;sys_ind
+id|SYS_IND
+c_func
+(paren
+id|p
+)paren
 op_eq
 id|DM6_AUX3PARTITION
 )paren
@@ -1457,7 +1483,11 @@ macro_line|#ifdef CONFIG_BSD_DISKLABEL
 r_if
 c_cond
 (paren
-id|p-&gt;sys_ind
+id|SYS_IND
+c_func
+(paren
+id|p
+)paren
 op_eq
 id|BSD_PARTITION
 )paren

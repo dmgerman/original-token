@@ -23,7 +23,7 @@ id|IPPROTO_IGMP
 op_assign
 l_int|2
 comma
-multiline_comment|/* Internet Gateway Management Protocol */
+multiline_comment|/* Internet Group Management Protocol&t;*/
 DECL|enumerator|IPPROTO_IPIP
 id|IPPROTO_IPIP
 op_assign

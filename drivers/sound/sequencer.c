@@ -6356,7 +6356,7 @@ id|EINVAL
 suffix:semicolon
 id|pending_timer
 op_assign
-id|get_fs_long
+id|get_user
 (paren
 (paren
 r_int
@@ -6509,7 +6509,7 @@ id|EIO
 suffix:semicolon
 id|midi_dev
 op_assign
-id|get_fs_long
+id|get_user
 (paren
 (paren
 r_int
@@ -6697,7 +6697,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|get_fs_long
+id|get_user
 (paren
 (paren
 r_int
@@ -6737,7 +6737,7 @@ id|err
 suffix:semicolon
 id|dev
 op_assign
-id|get_fs_long
+id|get_user
 (paren
 (paren
 r_int
@@ -6879,7 +6879,7 @@ suffix:colon
 r_int
 id|dev
 op_assign
-id|get_fs_long
+id|get_user
 (paren
 (paren
 r_int
@@ -6962,7 +6962,7 @@ suffix:colon
 r_int
 id|dev
 op_assign
-id|get_fs_long
+id|get_user
 (paren
 (paren
 r_int
@@ -7688,7 +7688,7 @@ suffix:colon
 r_int
 id|tmp
 op_assign
-id|get_fs_long
+id|get_user
 (paren
 (paren
 r_int
@@ -7750,7 +7750,7 @@ suffix:colon
 r_int
 id|val
 op_assign
-id|get_fs_long
+id|get_user
 (paren
 (paren
 r_int

@@ -536,13 +536,14 @@ id|init_task.tss.ptbr
 op_assign
 id|newptbr
 suffix:semicolon
-id|init_task.tss.flags
+id|init_task.tss.pal_flags
 op_assign
 l_int|1
 suffix:semicolon
-id|init_task.tss.segment
+multiline_comment|/* set FEN, clear everything else */
+id|init_task.tss.flags
 op_assign
-id|KERNEL_DS
+l_int|0
 suffix:semicolon
 id|init_task.kernel_stack_page
 op_assign

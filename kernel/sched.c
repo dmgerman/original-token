@@ -3762,14 +3762,6 @@ c_func
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Run the bottom half stuff only about 100 times a second,&n; * we&squot;d just use up unnecessary CPU time for timer handling&n; * otherwise&n; */
-macro_line|#if HZ &gt; 100
-DECL|macro|should_run_timers
-mdefine_line|#define should_run_timers(x) ((x) &gt;= HZ/100)
-macro_line|#else
-DECL|macro|should_run_timers
-mdefine_line|#define should_run_timers(x) (1)
-macro_line|#endif
 DECL|function|do_timer
 r_void
 id|do_timer
@@ -3796,15 +3788,6 @@ suffix:semicolon
 id|lost_ticks
 op_increment
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|should_run_timers
-c_func
-(paren
-id|lost_ticks
-)paren
-)paren
 id|mark_bh
 c_func
 (paren

@@ -886,7 +886,7 @@ multiline_comment|/* Set loudness bit */
 r_int
 id|level
 op_assign
-id|get_fs_long
+id|get_user
 (paren
 (paren
 r_int
@@ -988,7 +988,7 @@ multiline_comment|/* Set enhance bit */
 r_int
 id|level
 op_assign
-id|get_fs_long
+id|get_user
 (paren
 (paren
 r_int
@@ -1126,7 +1126,7 @@ multiline_comment|/* Set mute bit */
 r_int
 id|level
 op_assign
-id|get_fs_long
+id|get_user
 (paren
 (paren
 r_int
@@ -1255,7 +1255,7 @@ id|cmd
 op_amp
 l_int|0xff
 comma
-id|get_fs_long
+id|get_user
 (paren
 (paren
 r_int

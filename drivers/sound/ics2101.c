@@ -486,7 +486,7 @@ id|set_volumes
 (paren
 id|DEV_MIC
 comma
-id|get_fs_long
+id|get_user
 (paren
 (paren
 r_int
@@ -515,7 +515,7 @@ id|set_volumes
 (paren
 id|DEV_CD
 comma
-id|get_fs_long
+id|get_user
 (paren
 (paren
 r_int
@@ -544,7 +544,7 @@ id|set_volumes
 (paren
 id|DEV_LINE
 comma
-id|get_fs_long
+id|get_user
 (paren
 (paren
 r_int
@@ -573,7 +573,7 @@ id|set_volumes
 (paren
 id|DEV_GF1
 comma
-id|get_fs_long
+id|get_user
 (paren
 (paren
 r_int
@@ -602,7 +602,7 @@ id|set_volumes
 (paren
 id|DEV_VOL
 comma
-id|get_fs_long
+id|get_user
 (paren
 (paren
 r_int

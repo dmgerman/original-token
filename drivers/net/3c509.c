@@ -23,6 +23,7 @@ macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;linux/config.h&gt;&t;/* for CONFIG_MCA */
+macro_line|#include &lt;linux/delay.h&gt;&t;/* for udelay() */
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#ifdef EL3_DEBUG
@@ -1362,9 +1363,6 @@ r_int
 id|index
 )paren
 (brace
-r_int
-id|timer
-suffix:semicolon
 id|outw
 c_func
 (paren
@@ -1378,25 +1376,10 @@ l_int|10
 )paren
 suffix:semicolon
 multiline_comment|/* Pause for at least 162 us. for the read to take place. */
-r_for
-c_loop
+id|udelay
 (paren
-id|timer
-op_assign
-l_int|0
-suffix:semicolon
-id|timer
-OL
-l_int|162
-op_star
-l_int|4
-op_plus
-l_int|400
-suffix:semicolon
-id|timer
-op_increment
+l_int|200
 )paren
-id|SLOW_DOWN_IO
 suffix:semicolon
 r_return
 id|inw
@@ -1420,8 +1403,6 @@ id|index
 )paren
 (brace
 r_int
-id|timer
-comma
 id|bit
 comma
 id|word
@@ -1439,26 +1420,11 @@ comma
 id|id_port
 )paren
 suffix:semicolon
-multiline_comment|/* This should really be done by looking at one of the timer channels. */
-r_for
-c_loop
+multiline_comment|/* Pause for at least 162 us. for the read to take place. */
+id|udelay
 (paren
-id|timer
-op_assign
-l_int|0
-suffix:semicolon
-id|timer
-OL
-l_int|162
-op_star
-l_int|4
-op_plus
-l_int|400
-suffix:semicolon
-id|timer
-op_increment
+l_int|200
 )paren
-id|SLOW_DOWN_IO
 suffix:semicolon
 r_for
 c_loop

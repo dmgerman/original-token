@@ -470,11 +470,22 @@ DECL|macro|IMR_TSM
 mdefine_line|#define IMR_TSM    0x00000002       /* Transmission Stopped Mask */
 DECL|macro|IMR_TIM
 mdefine_line|#define IMR_TIM    0x00000001       /* Transmit Interrupt Mask */
-multiline_comment|/*&n;** DC21040 Missed Frame Counter (DE4X5_MFC)&n;*/
+multiline_comment|/*&n;** DC21040 Missed Frames Counter (DE4X5_MFC)&n;*/
 DECL|macro|MFC_OVFL
-mdefine_line|#define MFC_OVFL   0x00010000       /* Counter Overflow Bit */
+mdefine_line|#define MFC_OVFL   0x00010000       /* Missed Frames Counter Overflow Bit */
 DECL|macro|MFC_CNTR
-mdefine_line|#define MFC_CNTR   0x0000ffff       /* Counter Bits */
+mdefine_line|#define MFC_CNTR   0x0000ffff       /* Missed Frames Counter Bits */
+multiline_comment|/*&n;** DC21140 Missed Frames and FIFO Overflow Counters (DE4X5_MFC)&n;*/
+DECL|macro|MFC_FOCO
+mdefine_line|#define MFC_FOCO   0x10000000       /* FIFO Overflow Counter Overflow Bit */
+DECL|macro|MFC_FOC
+mdefine_line|#define MFC_FOC    0x0ffe0000       /* FIFO Overflow Counter Bits */
+DECL|macro|MFC_OVFL
+mdefine_line|#define MFC_OVFL   0x00010000       /* Missed Frames Counter Overflow Bit */
+DECL|macro|MFC_CNTR
+mdefine_line|#define MFC_CNTR   0x0000ffff       /* Missed Frames Counter Bits */
+DECL|macro|MFC_FOCM
+mdefine_line|#define MFC_FOCM   0x1ffe0000       /* FIFO Overflow Counter Mask */
 multiline_comment|/*&n;** DC21040 Ethernet Address PROM (DE4X5_APROM)&n;*/
 DECL|macro|APROM_DN
 mdefine_line|#define APROM_DN   0x80000000       /* Data Not Valid */

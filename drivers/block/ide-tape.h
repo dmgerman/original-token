@@ -13,7 +13,7 @@ mdefine_line|#define&t;IDETAPE_MIN_PIPELINE_STAGES&t;&t;100
 DECL|macro|IDETAPE_MAX_PIPELINE_STAGES
 mdefine_line|#define&t;IDETAPE_MAX_PIPELINE_STAGES&t;&t;200
 DECL|macro|IDETAPE_INCREASE_STAGES_RATE
-mdefine_line|#define&t;IDETAPE_INCREASE_STAGES_RATE&t;&t;0.2
+mdefine_line|#define&t;IDETAPE_INCREASE_STAGES_RATE&t;&t;20
 multiline_comment|/*&n; *&t;Assuming the tape shares an interface with another device, the default&n; *&t;behavior is to service our pending pipeline requests as soon as&n; *&t;possible, but to gracefully postpone them in favor of the other device&n; *&t;when the tape is busy. This has the potential to maximize our&n; *&t;throughput and in the same time, to make efficient use of the IDE bus.&n; *&n; *&t;Note that when we transfer data to / from the tape, we co-operate with&n; *&t;the relatively fast tape buffers and the tape will perform the&n; *&t;actual media access in the background, without blocking the IDE&n; *&t;bus. This means that as long as the maximum IDE bus throughput is much&n; *&t;higher than the sum of our maximum throughput and the maximum&n; *&t;throughput of the other device, we should probably leave the default&n; *&t;behavior.&n; *&n; *&t;However, if it is still desired to give the other device a share even&n; *&t;in our own (small) bus bandwidth, you can set IDETAPE_LOW_TAPE_PRIORITY&n; *&t;to 1. This will let the other device finish *all* its pending requests&n; *&t;before we even check if we can service our next pending request.&n; */
 DECL|macro|IDETAPE_LOW_TAPE_PRIORITY
 mdefine_line|#define IDETAPE_LOW_TAPE_PRIORITY&t;&t;0

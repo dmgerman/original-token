@@ -332,15 +332,15 @@ c_func
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * For segmented architectures, these are used to specify which segment&n; * to use for the above functions.&n; *&n; * The alpha is not segmented, so these are just dummies.&n; */
+multiline_comment|/*&n; * The fs value determines whether argument validity checking should be&n; * performed or not.  If get_fs() == USER_DS, checking is performed, with&n; * get_fs() == KERNEL_DS, checking is bypassed.&n; *&n; * For historical reasons, these macros are grossly misnamed.&n; */
 DECL|macro|KERNEL_DS
-mdefine_line|#define KERNEL_DS 0
+mdefine_line|#define KERNEL_DS&t;0
 DECL|macro|USER_DS
-mdefine_line|#define USER_DS 1
+mdefine_line|#define USER_DS&t;&t;1
 DECL|macro|get_fs
-mdefine_line|#define get_fs()&t;(current-&gt;tss.segment)
+mdefine_line|#define get_fs()  (current-&gt;tss.flags &amp; 0x1)
 DECL|macro|set_fs
-mdefine_line|#define set_fs(x)&t;(current-&gt;tss.segment=(x))
+mdefine_line|#define set_fs(x) (current-&gt;tss.flags = (current-&gt;tss.flags &amp; ~0x1) | ((x) &amp; 0x1))
 DECL|function|get_ds
 r_static
 r_inline

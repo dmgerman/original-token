@@ -2086,7 +2086,7 @@ id|ad1848_set_recmask
 (paren
 id|devc
 comma
-id|get_fs_long
+id|get_user
 (paren
 (paren
 r_int
@@ -2118,7 +2118,7 @@ id|cmd
 op_amp
 l_int|0xff
 comma
-id|get_fs_long
+id|get_user
 (paren
 (paren
 r_int

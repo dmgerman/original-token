@@ -659,7 +659,7 @@ suffix:colon
 r_int
 id|val
 op_assign
-id|get_fs_long
+id|get_user
 (paren
 (paren
 r_int
@@ -723,7 +723,7 @@ suffix:colon
 r_int
 id|val
 op_assign
-id|get_fs_long
+id|get_user
 (paren
 (paren
 r_int
@@ -805,7 +805,7 @@ suffix:colon
 r_if
 c_cond
 (paren
-id|get_fs_long
+id|get_user
 (paren
 (paren
 r_int

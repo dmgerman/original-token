@@ -1581,7 +1581,7 @@ id|set_format
 (paren
 id|dev
 comma
-id|get_fs_long
+id|get_user
 (paren
 (paren
 r_int
