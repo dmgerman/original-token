@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  arch/mips/ddb5074/setup.c -- NEC DDB Vrc-5074 setup routines&n; *&n; *  Copyright (C) 2000 Geert Uytterhoeven &lt;geert@sonycom.com&gt;&n; *                     Sony Suprastructure Center Europe (SUPC-E), Brussels&n; *&n; *  $Id: setup.c,v 1.2 2000/02/14 17:07:36 ralf Exp $&n; */
+multiline_comment|/*&n; *  arch/mips/ddb5074/setup.c -- NEC DDB Vrc-5074 setup routines&n; *&n; *  Copyright (C) 2000 Geert Uytterhoeven &lt;geert@sonycom.com&gt;&n; *                     Sony Software Development Center Europe (SDCE), Brussels&n; *&n; *  $Id: setup.c,v 1.1 2000/01/26 00:07:44 ralf Exp $&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/kbd_ll.h&gt;
@@ -52,6 +52,28 @@ r_struct
 id|rtc_ops
 id|ddb_rtc_ops
 suffix:semicolon
+DECL|variable|back_to_prom
+r_static
+r_void
+(paren
+op_star
+id|back_to_prom
+)paren
+(paren
+r_void
+)paren
+op_assign
+(paren
+r_void
+(paren
+op_star
+)paren
+(paren
+r_void
+)paren
+)paren
+l_int|0xbfc00000
+suffix:semicolon
 DECL|function|ddb_machine_restart
 r_static
 r_void
@@ -65,13 +87,6 @@ id|command
 (brace
 id|u32
 id|t
-suffix:semicolon
-singleline_comment|// FIXME: This doesn&squot;t seem to work...
-id|printk
-c_func
-(paren
-l_string|&quot;Restarting DDB Vrc-5074...&quot;
-)paren
 suffix:semicolon
 multiline_comment|/* PCI cold reset */
 id|t
@@ -119,19 +134,10 @@ comma
 id|t
 )paren
 suffix:semicolon
-id|printk
+multiline_comment|/* Call the PROM */
+id|back_to_prom
 c_func
 (paren
-l_string|&quot;Restart failed!&bslash;n&quot;
-)paren
-suffix:semicolon
-r_do
-(brace
-)brace
-r_while
-c_loop
-(paren
-l_int|1
 )paren
 suffix:semicolon
 )brace
@@ -293,6 +299,10 @@ c_func
 r_void
 )paren
 (brace
+r_extern
+r_int
+id|panic_timeout
+suffix:semicolon
 id|irq_setup
 op_assign
 id|ddb_irq_setup
@@ -375,6 +385,11 @@ id|rtc_ops
 op_assign
 op_amp
 id|ddb_rtc_ops
+suffix:semicolon
+multiline_comment|/* Reboot on panic */
+id|panic_timeout
+op_assign
+l_int|180
 suffix:semicolon
 )brace
 DECL|function|page_is_ram

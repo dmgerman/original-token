@@ -24,6 +24,7 @@ macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
+macro_line|#include &lt;asm/wbflush.h&gt;
 macro_line|#include &lt;asm/dec/interrupts.h&gt;
 macro_line|#include &lt;asm/dec/machtype.h&gt;
 macro_line|#include &lt;asm/dec/tc.h&gt;
@@ -342,13 +343,12 @@ l_int|4096
 )braket
 suffix:semicolon
 multiline_comment|/* This is cheating */
-DECL|variable|tmp_buf_sem
 r_static
-r_struct
-id|semaphore
+id|DECLARE_MUTEX
+c_func
+(paren
 id|tmp_buf_sem
-op_assign
-id|MUTEX
+)paren
 suffix:semicolon
 DECL|function|serial_paranoia_check
 r_static
@@ -542,6 +542,11 @@ id|reg
 op_amp
 l_int|0xf
 suffix:semicolon
+id|wbflush
+c_func
+(paren
+)paren
+suffix:semicolon
 id|RECOVERY_DELAY
 suffix:semicolon
 )brace
@@ -592,6 +597,11 @@ id|reg
 op_amp
 l_int|0xf
 suffix:semicolon
+id|wbflush
+c_func
+(paren
+)paren
+suffix:semicolon
 id|RECOVERY_DELAY
 suffix:semicolon
 )brace
@@ -599,6 +609,11 @@ op_star
 id|channel-&gt;control
 op_assign
 id|value
+suffix:semicolon
+id|wbflush
+c_func
+(paren
+)paren
 suffix:semicolon
 id|RECOVERY_DELAY
 suffix:semicolon
@@ -655,6 +670,11 @@ op_star
 id|channel-&gt;data
 op_assign
 id|value
+suffix:semicolon
+id|wbflush
+c_func
+(paren
+)paren
 suffix:semicolon
 id|RECOVERY_DELAY
 suffix:semicolon
@@ -5677,7 +5697,7 @@ comma
 l_int|1
 )paren
 op_amp
-id|ALL_SNT
+id|Tx_BUF_EMP
 )paren
 op_eq
 l_int|0
@@ -5830,15 +5850,13 @@ op_star
 id|info
 )paren
 (brace
-r_struct
-id|wait_queue
+id|DECLARE_WAITQUEUE
+c_func
+(paren
 id|wait
-op_assign
-(brace
-id|current
 comma
-l_int|NULL
-)brace
+id|current
+)paren
 suffix:semicolon
 r_int
 id|retval
@@ -7447,13 +7465,19 @@ id|info-&gt;normal_termios
 op_assign
 id|serial_driver.init_termios
 suffix:semicolon
+id|init_waitqueue_head
+c_func
+(paren
+op_amp
 id|info-&gt;open_wait
-op_assign
-l_int|0
+)paren
 suffix:semicolon
+id|init_waitqueue_head
+c_func
+(paren
+op_amp
 id|info-&gt;close_wait
-op_assign
-l_int|0
+)paren
 suffix:semicolon
 id|printk
 c_func
@@ -7587,6 +7611,11 @@ id|info-&gt;zs_channel-&gt;data
 )paren
 op_assign
 id|ch
+suffix:semicolon
+id|wbflush
+c_func
+(paren
+)paren
 suffix:semicolon
 id|RECOVERY_DELAY
 suffix:semicolon
@@ -8264,16 +8293,12 @@ l_int|NULL
 suffix:semicolon
 multiline_comment|/*&n; *&t;Register console.&n; */
 DECL|function|zs_serial_console_init
-r_int
+r_void
 id|__init
 id|zs_serial_console_init
 c_func
 (paren
-r_int
-id|kmem_start
-comma
-r_int
-id|kmem_end
+r_void
 )paren
 (brace
 id|register_console
@@ -8282,9 +8307,6 @@ c_func
 op_amp
 id|sercons
 )paren
-suffix:semicolon
-r_return
-id|kmem_start
 suffix:semicolon
 )brace
 macro_line|#endif /* ifdef CONFIG_SERIAL_CONSOLE */

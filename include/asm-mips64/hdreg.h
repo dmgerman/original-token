@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: hdreg.h,v 1.1 1999/08/21 22:19:17 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; *  This file contains the MIPS architecture specific IDE code.&n; *&n; *  Copyright (C) 1994-1996  Linus Torvalds &amp; authors&n; */
+multiline_comment|/* $Id$&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; *  This file contains the MIPS architecture specific IDE code.&n; *&n; *  Copyright (C) 1994-1996  Linus Torvalds &amp; authors&n; */
 macro_line|#ifndef _ASM_HDREG_H
 DECL|macro|_ASM_HDREG_H
 mdefine_line|#define _ASM_HDREG_H

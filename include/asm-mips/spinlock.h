@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: spinlock.h,v 1.9 2000/01/25 00:41:46 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1999, 2000 by Ralf Baechle&n; * Copyright (C) 1999, 2000 Silicon Graphics, Inc.&n; */
+multiline_comment|/* $Id: spinlock.h,v 1.8 2000/01/23 21:15:52 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1999, 2000 by Ralf Baechle&n; * Copyright (C) 1999, 2000 Silicon Graphics, Inc.&n; */
 macro_line|#ifndef _ASM_SPINLOCK_H
 DECL|macro|_ASM_SPINLOCK_H
 mdefine_line|#define _ASM_SPINLOCK_H

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * $Id: elf.h,v 1.7 1999/08/20 21:59:08 ralf Exp $&n; */
+multiline_comment|/*&n; * $Id: elf.h,v 1.6 1999/02/15 02:22:10 ralf Exp $&n; */
 macro_line|#ifndef __ASM_MIPS_ELF_H
 DECL|macro|__ASM_MIPS_ELF_H
 mdefine_line|#define __ASM_MIPS_ELF_H

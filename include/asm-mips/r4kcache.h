@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * r4kcache.h: Inline assembly cache operations.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; *&n; * $Id: r4kcache.h,v 1.5 1998/03/04 05:36:23 ralf Exp $&n; *&n; * FIXME: Handle split L2 caches.&n; */
+multiline_comment|/*&n; * r4kcache.h: Inline assembly cache operations.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; *&n; * $Id: r4kcache.h,v 1.7 1997/12/18 13:00:45 ralf Exp $&n; *&n; * FIXME: Handle split L2 caches.&n; */
 macro_line|#ifndef _MIPS_R4KCACHE_H
 DECL|macro|_MIPS_R4KCACHE_H
 mdefine_line|#define _MIPS_R4KCACHE_H

@@ -638,14 +638,14 @@ id|reset
 )paren
 suffix:semicolon
 multiline_comment|/****************************************************************&n; *&n; * Various data the driver needs&n; *&n; *&n; */
-DECL|variable|__initdata
+DECL|variable|__devinitdata
 r_static
 r_struct
 id|pci_device_id
 id|via_pci_tbl
 (braket
 )braket
-id|__initdata
+id|__devinitdata
 op_assign
 (brace
 (brace
@@ -668,7 +668,6 @@ comma
 l_int|0
 comma
 )brace
-comma
 )brace
 suffix:semicolon
 id|MODULE_DEVICE_TABLE

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: time.c,v 1.3 1999/10/09 00:00:59 ralf Exp $&n; * time.c: Generic SGI time_init() code, this will dispatch to the&n; *         appropriate per-architecture time/counter init code.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; */
+multiline_comment|/* $Id: time.c,v 1.2 1998/04/05 11:24:00 ralf Exp $&n; * time.c: Generic SGI time_init() code, this will dispatch to the&n; *         appropriate per-architecture time/counter init code.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; */
 macro_line|#include &lt;linux/init.h&gt;
 r_extern
 r_void

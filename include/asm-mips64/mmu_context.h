@@ -2,18 +2,19 @@ multiline_comment|/* $Id: mmu_context.h,v 1.4 2000/02/23 00:41:38 ralf Exp $&n; 
 macro_line|#ifndef _ASM_MMU_CONTEXT_H
 DECL|macro|_ASM_MMU_CONTEXT_H
 mdefine_line|#define _ASM_MMU_CONTEXT_H
+macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;linux/slab.h&gt;
 macro_line|#include &lt;asm/pgalloc.h&gt;
-multiline_comment|/* Fuck.  The f-word is here so you can grep for it :-)  */
-r_extern
-r_int
-r_int
-id|asid_cache
-suffix:semicolon
-r_extern
-id|pgd_t
-op_star
-id|current_pgd
-suffix:semicolon
+macro_line|#include &lt;asm/processor.h&gt;
+macro_line|#ifndef CONFIG_SMP
+DECL|macro|CPU_CONTEXT
+mdefine_line|#define CPU_CONTEXT(cpu, mm)&t;(mm)-&gt;context
+macro_line|#else
+DECL|macro|CPU_CONTEXT
+mdefine_line|#define CPU_CONTEXT(cpu, mm)&t;(*((unsigned long *)((mm)-&gt;context) + cpu))
+macro_line|#endif
+DECL|macro|ASID_CACHE
+mdefine_line|#define ASID_CACHE(cpu)&t;&t;cpu_data[cpu].asid_cache
 DECL|macro|ASID_INC
 mdefine_line|#define ASID_INC&t;0x1
 DECL|macro|ASID_MASK
@@ -48,8 +49,8 @@ mdefine_line|#define ASID_FIRST_VERSION ((unsigned long)(~ASID_VERSION_MASK) + 1
 r_extern
 r_inline
 r_void
-DECL|function|get_new_mmu_context
-id|get_new_mmu_context
+DECL|function|get_new_cpu_mmu_context
+id|get_new_cpu_mmu_context
 c_func
 (paren
 r_struct
@@ -59,9 +60,19 @@ id|mm
 comma
 r_int
 r_int
-id|asid
+id|cpu
 )paren
 (brace
+r_int
+r_int
+id|asid
+op_assign
+id|ASID_CACHE
+c_func
+(paren
+id|cpu
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -77,7 +88,7 @@ id|ASID_MASK
 )paren
 )paren
 (brace
-id|flush_tlb_all
+id|_flush_tlb_all
 c_func
 (paren
 )paren
@@ -95,9 +106,19 @@ op_assign
 id|ASID_FIRST_VERSION
 suffix:semicolon
 )brace
-id|mm-&gt;context
+id|CPU_CONTEXT
+c_func
+(paren
+id|cpu
+comma
+id|mm
+)paren
 op_assign
-id|asid_cache
+id|ASID_CACHE
+c_func
+(paren
+id|cpu
+)paren
 op_assign
 id|asid
 suffix:semicolon
@@ -121,10 +142,84 @@ op_star
 id|mm
 )paren
 (brace
+macro_line|#ifndef CONFIG_SMP
 id|mm-&gt;context
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#else
+multiline_comment|/* Make sure not to do anything during a clone-vm operation */
+r_if
+c_cond
+(paren
+(paren
+id|current
+op_eq
+id|tsk
+)paren
+op_logical_or
+(paren
+id|current-&gt;mm
+op_ne
+id|mm
+)paren
+)paren
+(brace
+id|mm-&gt;context
+op_assign
+(paren
+r_int
+r_int
+)paren
+id|kmalloc
+c_func
+(paren
+id|smp_num_cpus
+op_star
+r_sizeof
+(paren
+r_int
+r_int
+)paren
+comma
+id|GFP_KERNEL
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t; &t; * Init the &quot;context&quot; values so that a tlbpid allocation &n;&t; &t; * happens on the first switch.&n;&t; &t; */
+r_if
+c_cond
+(paren
+id|mm-&gt;context
+)paren
+id|memset
+c_func
+(paren
+(paren
+r_void
+op_star
+)paren
+id|mm-&gt;context
+comma
+l_int|0
+comma
+id|smp_num_cpus
+op_star
+r_sizeof
+(paren
+r_int
+r_int
+)paren
+)paren
+suffix:semicolon
+r_else
+id|printk
+c_func
+(paren
+l_string|&quot;Warning: init_new_context failed&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
 )brace
 DECL|function|switch_mm
 r_extern
@@ -152,40 +247,46 @@ r_int
 id|cpu
 )paren
 (brace
-r_int
-r_int
-id|asid
-op_assign
-id|asid_cache
-suffix:semicolon
 multiline_comment|/* Check if our ASID is of an older version and thus invalid */
 r_if
 c_cond
 (paren
 (paren
-id|next-&gt;context
+id|CPU_CONTEXT
+c_func
+(paren
+id|cpu
+comma
+id|next
+)paren
 op_xor
-id|asid
+id|ASID_CACHE
+c_func
+(paren
+id|cpu
+)paren
 )paren
 op_amp
 id|ASID_VERSION_MASK
 )paren
-id|get_new_mmu_context
+id|get_new_cpu_mmu_context
 c_func
 (paren
 id|next
 comma
-id|asid
+id|cpu
 )paren
-suffix:semicolon
-id|current_pgd
-op_assign
-id|next-&gt;pgd
 suffix:semicolon
 id|set_entryhi
 c_func
 (paren
-id|next-&gt;context
+id|CPU_CONTEXT
+c_func
+(paren
+id|cpu
+comma
+id|next
+)paren
 )paren
 suffix:semicolon
 )brace
@@ -203,7 +304,23 @@ op_star
 id|mm
 )paren
 (brace
-multiline_comment|/* Nothing to do.  */
+macro_line|#ifdef CONFIG_SMP
+r_if
+c_cond
+(paren
+id|mm-&gt;context
+)paren
+id|kfree
+c_func
+(paren
+(paren
+r_void
+op_star
+)paren
+id|mm-&gt;context
+)paren
+suffix:semicolon
+macro_line|#endif
 )brace
 multiline_comment|/*&n; * After we have set current-&gt;mm to a new value, this activates&n; * the context for the new mm so we see the new mappings.&n; */
 r_extern
@@ -225,22 +342,30 @@ id|next
 )paren
 (brace
 multiline_comment|/* Unconditionally get a new ASID.  */
-id|get_new_mmu_context
+id|get_new_cpu_mmu_context
 c_func
 (paren
 id|next
 comma
-id|asid_cache
+id|smp_processor_id
+c_func
+(paren
 )paren
-suffix:semicolon
-id|current_pgd
-op_assign
-id|next-&gt;pgd
+)paren
 suffix:semicolon
 id|set_entryhi
 c_func
 (paren
-id|next-&gt;context
+id|CPU_CONTEXT
+c_func
+(paren
+id|smp_processor_id
+c_func
+(paren
+)paren
+comma
+id|next
+)paren
 )paren
 suffix:semicolon
 )brace

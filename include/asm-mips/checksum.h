@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: checksum.h,v 1.9 2000/02/18 22:06:19 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1995, 1996, 1997, 1998 by Ralf Baechle&n; */
+multiline_comment|/* $Id: checksum.h,v 1.8 2000/02/18 00:24:48 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1995, 1996, 1997, 1998 by Ralf Baechle&n; */
 macro_line|#ifndef _ASM_CHECKSUM_H
 DECL|macro|_ASM_CHECKSUM_H
 mdefine_line|#define _ASM_CHECKSUM_H

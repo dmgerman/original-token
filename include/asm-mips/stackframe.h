@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  include/asm-mips/stackframe.h&n; *&n; *  Copyright (C) 1994, 1995, 1996 by Ralf Baechle and Paul M. Antoine.&n; *&n; * $Id: stackframe.h,v 1.11 1999/12/04 03:59:12 ralf Exp $&n; */
+multiline_comment|/*&n; *  include/asm-mips/stackframe.h&n; *&n; *  Copyright (C) 1994, 1995, 1996 by Ralf Baechle and Paul M. Antoine.&n; *&n; * $Id: stackframe.h,v 1.10 1999/08/13 17:07:27 harald Exp $&n; */
 macro_line|#ifndef __ASM_MIPS_STACKFRAME_H
 DECL|macro|__ASM_MIPS_STACKFRAME_H
 mdefine_line|#define __ASM_MIPS_STACKFRAME_H

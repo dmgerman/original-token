@@ -177,6 +177,10 @@ r_int
 id|tx_pi
 suffix:semicolon
 multiline_comment|/* TX producer index */
+DECL|member|ioc3_lock
+id|spinlock_t
+id|ioc3_lock
+suffix:semicolon
 )brace
 suffix:semicolon
 multiline_comment|/* We use this to acquire receive skb&squot;s that we can DMA directly into. */
@@ -1401,6 +1405,13 @@ suffix:semicolon
 id|u32
 id|etcir
 suffix:semicolon
+id|spin_lock
+c_func
+(paren
+op_amp
+id|ip-&gt;ioc3_lock
+)paren
+suffix:semicolon
 id|etcir
 op_assign
 id|ioc3-&gt;etcir
@@ -1449,7 +1460,7 @@ id|ip-&gt;stats.tx_bytes
 op_add_assign
 id|skb-&gt;len
 suffix:semicolon
-id|dev_kfree_skb
+id|dev_kfree_skb_irq
 c_func
 (paren
 id|skb
@@ -1492,6 +1503,13 @@ suffix:semicolon
 id|ip-&gt;tx_ci
 op_assign
 id|o_entry
+suffix:semicolon
+id|spin_unlock
+c_func
+(paren
+op_amp
+id|ip-&gt;ioc3_lock
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Deal with fatal IOC3 errors.  For now let&squot;s panic.  This condition might&n; * be caused by a hard or software problems, so we should try to recover&n; * more gracefully if this ever happens.&n; */
@@ -2484,7 +2502,7 @@ id|ioc3
 r_struct
 id|ioc3_private
 op_star
-id|p
+id|ip
 suffix:semicolon
 id|dev
 op_assign
@@ -2496,7 +2514,14 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-id|p
+multiline_comment|/*&n;&t; * This probably needs to be register_netdevice, or call&n;&t; * init_etherdev so that it calls register_netdevice. Quick&n;&t; * hack for now.&n;&t; */
+id|netif_device_attach
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
+id|ip
 op_assign
 (paren
 r_struct
@@ -2509,7 +2534,7 @@ c_func
 r_sizeof
 (paren
 op_star
-id|p
+id|ip
 )paren
 comma
 id|GFP_KERNEL
@@ -2518,26 +2543,26 @@ suffix:semicolon
 id|memset
 c_func
 (paren
-id|p
+id|ip
 comma
 l_int|0
 comma
 r_sizeof
 (paren
 op_star
-id|p
+id|ip
 )paren
 )paren
 suffix:semicolon
 id|dev-&gt;priv
 op_assign
-id|p
+id|ip
 suffix:semicolon
 id|dev-&gt;irq
 op_assign
 id|IOC3_ETH_INT
 suffix:semicolon
-id|p-&gt;regs
+id|ip-&gt;regs
 op_assign
 id|ioc3
 suffix:semicolon
@@ -2546,7 +2571,7 @@ c_func
 (paren
 id|dev
 comma
-id|p
+id|ip
 comma
 id|ioc3
 )paren
@@ -2554,7 +2579,7 @@ suffix:semicolon
 id|ioc3_ssram_disc
 c_func
 (paren
-id|p
+id|ip
 )paren
 suffix:semicolon
 id|ioc3_get_eaddr
@@ -2570,9 +2595,16 @@ c_func
 (paren
 id|dev
 comma
-id|p
+id|ip
 comma
 id|ioc3
+)paren
+suffix:semicolon
+id|spin_lock_init
+c_func
+(paren
+op_amp
+id|ip-&gt;ioc3_lock
 )paren
 suffix:semicolon
 multiline_comment|/* Misc registers  */
@@ -2973,6 +3005,13 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
+id|spin_lock_irq
+c_func
+(paren
+op_amp
+id|ip-&gt;ioc3_lock
+)paren
+suffix:semicolon
 id|data
 op_assign
 (paren
@@ -3057,6 +3096,7 @@ op_assign
 id|len
 suffix:semicolon
 )brace
+r_else
 r_if
 c_cond
 (paren
@@ -3241,6 +3281,13 @@ id|netif_wake_queue
 c_func
 (paren
 id|dev
+)paren
+suffix:semicolon
+id|spin_unlock_irq
+c_func
+(paren
+op_amp
+id|ip-&gt;ioc3_lock
 )paren
 suffix:semicolon
 r_return

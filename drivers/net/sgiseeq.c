@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sgiseeq.c,v 1.9 1998/10/14 23:40:46 ralf Exp $&n; *&n; * sgiseeq.c: Seeq8003 ethernet driver for SGI machines.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; */
+multiline_comment|/* $Id: sgiseeq.c,v 1.17 2000/03/27 23:02:57 ralf Exp $&n; *&n; * sgiseeq.c: Seeq8003 ethernet driver for SGI machines.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -3188,17 +3188,15 @@ id|initialized
 )paren
 multiline_comment|/* Already initialized? */
 r_return
-l_int|0
+l_int|1
 suffix:semicolon
 id|initialized
 op_increment
 suffix:semicolon
-multiline_comment|/* First get the ethernet address of the onboard&n;&t; * interface from ARCS.&n;&t; * This is fragile; PROM doesn&squot;t like running from cache.&n;&t; * On MIPS64 it crashes for some other, yet unknown reason.&n;&t; */
+multiline_comment|/* First get the ethernet address of the onboard interface from ARCS.&n;&t; * This is fragile; PROM doesn&squot;t like running from cache.&n;&t; * On MIPS64 it crashes for some other, yet unknown reason ...&n;&t; */
 id|ep
 op_assign
-id|romvec
-op_member_access_from_pointer
-id|get_evar
+id|ArcGetEnvironmentVariable
 c_func
 (paren
 l_string|&quot;eaddr&quot;

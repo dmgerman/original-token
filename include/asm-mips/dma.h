@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: dma.h,v 1.7 2000/01/29 01:42:28 ralf Exp $&n; * linux/include/asm/dma.h: Defines for using and allocating dma channels.&n; * Written by Hennus Bergman, 1992.&n; * High DMA channel support &amp; info by Hannu Savolainen&n; * and John Boyd, Nov. 1992.&n; *&n; * NOTE: all this is true *only* for ISA/EISA expansions on Mips boards&n; * and can only be used for expansion cards. Onboard DMA controllers, such&n; * as the R4030 on Jazz boards behave totally different!&n; */
+multiline_comment|/* $Id: dma.h,v 1.6 1999/12/30 14:22:47 raiko Exp $&n; * linux/include/asm/dma.h: Defines for using and allocating dma channels.&n; * Written by Hennus Bergman, 1992.&n; * High DMA channel support &amp; info by Hannu Savolainen&n; * and John Boyd, Nov. 1992.&n; *&n; * NOTE: all this is true *only* for ISA/EISA expansions on Mips boards&n; * and can only be used for expansion cards. Onboard DMA controllers, such&n; * as the R4030 on Jazz boards behave totally different!&n; */
 macro_line|#ifndef __ASM_MIPS_DMA_H
 DECL|macro|__ASM_MIPS_DMA_H
 mdefine_line|#define __ASM_MIPS_DMA_H

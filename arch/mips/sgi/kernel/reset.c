@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: reset.c,v 1.8 1999/10/21 00:23:05 ralf Exp $&n; *&n; * Reset a SGI.&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1997, 1998 by Ralf Baechle&n; */
+multiline_comment|/* $Id: reset.c,v 1.7 1999/08/11 20:26:51 andrewb Exp $&n; *&n; * Reset a SGI.&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1997, 1998 by Ralf Baechle&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/notifier.h&gt;

@@ -1,4 +1,5 @@
-multiline_comment|/* $Id: process.c,v 1.5 2000/01/29 01:41:59 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1994 - 1999 by Ralf Baechle and others.&n; * Copyright (C) 1999 Silicon Graphics, Inc.&n; */
+multiline_comment|/* $Id: process.c,v 1.4 2000/01/16 01:34:01 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1994 - 1999 by Ralf Baechle and others.&n; * Copyright (C) 1999 Silicon Graphics, Inc.&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -30,6 +31,11 @@ r_void
 )paren
 (brace
 multiline_comment|/* endless idle loop with no priority at all */
+id|init_idle
+c_func
+(paren
+)paren
+suffix:semicolon
 id|current-&gt;priority
 op_assign
 l_int|0
@@ -102,9 +108,10 @@ multiline_comment|/* Forget lazy fpu state */
 r_if
 c_cond
 (paren
-id|last_task_used_math
-op_eq
-id|current
+id|IS_FPU_OWNER
+c_func
+(paren
+)paren
 )paren
 (brace
 id|set_cp0_status
@@ -122,9 +129,10 @@ c_func
 l_string|&quot;cfc1&bslash;t$0,$31&quot;
 )paren
 suffix:semicolon
-id|last_task_used_math
-op_assign
-l_int|NULL
+id|CLEAR_FPU_OWNER
+c_func
+(paren
+)paren
 suffix:semicolon
 )brace
 )brace
@@ -140,9 +148,10 @@ multiline_comment|/* Forget lazy fpu state */
 r_if
 c_cond
 (paren
-id|last_task_used_math
-op_eq
-id|current
+id|IS_FPU_OWNER
+c_func
+(paren
+)paren
 )paren
 (brace
 id|set_cp0_status
@@ -160,9 +169,10 @@ c_func
 l_string|&quot;cfc1&bslash;t$0,$31&quot;
 )paren
 suffix:semicolon
-id|last_task_used_math
-op_assign
-l_int|NULL
+id|CLEAR_FPU_OWNER
+c_func
+(paren
+)paren
 suffix:semicolon
 )brace
 )brace
@@ -216,19 +226,12 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|last_task_used_math
-op_eq
-id|current
-)paren
-(brace
-id|set_cp0_status
+id|IS_FPU_OWNER
 c_func
 (paren
-id|ST0_CU1
-comma
-id|ST0_CU1
 )paren
-suffix:semicolon
+)paren
+(brace
 id|save_fp
 c_func
 (paren

@@ -2725,7 +2725,7 @@ c_cond
 (paren
 op_logical_neg
 (paren
-id|current-&gt;flags
+id|p-&gt;flags
 op_amp
 id|PF_PTRACED
 )paren

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: ip22-berr.c,v 1.2 2000/02/24 00:12:41 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1994, 1995, 1996, 1999, 2000 by Ralf Baechle&n; * Copyright (C) 1999, 2000 by Silicon Graphics&n; */
+multiline_comment|/* $Id: ip22-berr.c,v 1.1 2000/01/21 22:34:03 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1994, 1995, 1996, 1999, 2000 by Ralf Baechle&n; * Copyright (C) 1999, 2000 by Silicon Graphics&n; */
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;

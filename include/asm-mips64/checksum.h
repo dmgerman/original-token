@@ -2,7 +2,6 @@ multiline_comment|/* $Id: checksum.h,v 1.6 2000/02/18 22:06:19 ralf Exp $&n; *&n
 macro_line|#ifndef _ASM_CHECKSUM_H
 DECL|macro|_ASM_CHECKSUM_H
 mdefine_line|#define _ASM_CHECKSUM_H
-macro_line|#include &lt;asm/checksum.h&gt;
 multiline_comment|/*&n; * computes the checksum of a memory block at buff, length len,&n; * and adds in &quot;sum&quot; (32-bit)&n; *&n; * returns a 32-bit number suitable for feeding into itself&n; * or csum_tcpudp_magic&n; *&n; * this function must be called with even lengths, except&n; * for the last fragment, which may be odd&n; *&n; * it&squot;s best to have buff aligned on a 32-bit boundary&n; */
 r_int
 r_int

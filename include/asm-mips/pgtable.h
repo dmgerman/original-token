@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: pgtable.h,v 1.30 2000/02/24 00:13:19 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1994 - 1999 by Ralf Baechle at alii&n; * Copyright (C) 1999 Silicon Graphics, Inc.&n; */
+multiline_comment|/* $Id: pgtable.h,v 1.31 2000/03/02 02:37:13 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1994 - 1999 by Ralf Baechle at alii&n; * Copyright (C) 1999 Silicon Graphics, Inc.&n; */
 macro_line|#ifndef _ASM_PGTABLE_H
 DECL|macro|_ASM_PGTABLE_H
 mdefine_line|#define _ASM_PGTABLE_H
@@ -1309,6 +1309,14 @@ id|swapper_pg_dir
 (braket
 l_int|1024
 )braket
+suffix:semicolon
+r_extern
+r_void
+id|paging_init
+c_func
+(paren
+r_void
+)paren
 suffix:semicolon
 r_extern
 r_void

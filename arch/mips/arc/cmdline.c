@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * cmdline.c: Kernel command line creation using ARCS argc/argv.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; *&n; * $Id: cmdline.c,v 1.2 1999/10/09 00:00:57 ralf Exp $&n; */
+multiline_comment|/*&n; * cmdline.c: Kernel command line creation using ARCS argc/argv.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; *&n; * $Id: cmdline.c,v 1.1 1998/10/18 13:32:08 tsbogend Exp $&n; */
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/string.h&gt;

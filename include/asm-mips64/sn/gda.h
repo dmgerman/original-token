@@ -1,8 +1,7 @@
-multiline_comment|/**************************************************************************&n; *                                                                        *&n; *               Copyright (C) 1992-1997, Silicon Graphics, Inc.          *&n; *                                                                        *&n; *  These coded instructions, statements, and computer programs  contain  *&n; *  unpublished  proprietary  information of Silicon Graphics, Inc., and  *&n; *  are protected by Federal copyright law.  They  may  not be disclosed  *&n; *  to  third  parties  or copied or duplicated in any form, in whole or  *&n; *  in part, without the prior written consent of Silicon Graphics, Inc.  *&n; *                                                                        *&n; **************************************************************************/
-multiline_comment|/*&n; * gda.h -- Contains the data structure for the global data area,&n; * &t;The GDA contains information communicated between the&n; *&t;PROM, SYMMON, and the kernel. &n; */
-macro_line|#ifndef __SYS_SN_GDA_H__
-DECL|macro|__SYS_SN_GDA_H__
-mdefine_line|#define __SYS_SN_GDA_H__
+multiline_comment|/* $Id$&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Derived from IRIX &lt;sys/SN/gda.h&gt;.&n; *&n; * Copyright (C) 1992 - 1997, 2000 Silicon Graphics, Inc.&n; *&n; * gda.h -- Contains the data structure for the global data area,&n; * &t;The GDA contains information communicated between the&n; *&t;PROM, SYMMON, and the kernel. &n; */
+macro_line|#ifndef _ASM_SN_GDA_H
+DECL|macro|_ASM_SN_GDA_H
+mdefine_line|#define _ASM_SN_GDA_H
 macro_line|#include &lt;asm/sn/addrs.h&gt;
 DECL|macro|GDA_MAGIC
 mdefine_line|#define GDA_MAGIC&t;0x58464552
@@ -172,5 +171,5 @@ DECL|macro|PROMOP_BIST1
 mdefine_line|#define PROMOP_BIST1&t;&t;0x0800&t;&t;/* keep track of which BIST ran */
 DECL|macro|PROMOP_BIST2
 mdefine_line|#define PROMOP_BIST2&t;&t;0x1000&t;&t;/* keep track of which BIST ran */
-macro_line|#endif /* __SYS_SN_GDA_H__ */
+macro_line|#endif /* _ASM_SN_GDA_H */
 eof

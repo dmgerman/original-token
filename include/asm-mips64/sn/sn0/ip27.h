@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: ip27.h,v 1.2 2000/01/26 06:11:50 kanoj Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Derived from IRIX &lt;sys/SN/SN0/IP27.h&gt;.&n; *&n; * Copyright (C) 1992 - 1997, 1999 Silicon Graphics, Inc.&n; * Copyright (C) 1999 by Ralf Baechle&n; */
+multiline_comment|/* $Id$&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Derived from IRIX &lt;sys/SN/SN0/IP27.h&gt;.&n; *&n; * Copyright (C) 1992 - 1997, 1999 Silicon Graphics, Inc.&n; * Copyright (C) 1999 by Ralf Baechle&n; */
 macro_line|#ifndef _ASM_SN_SN0_IP27_H
 DECL|macro|_ASM_SN_SN0_IP27_H
 mdefine_line|#define _ASM_SN_SN0_IP27_H
@@ -78,13 +78,32 @@ mdefine_line|#define LED_CYCLE_SHFT  4
 DECL|macro|SEND_NMI
 mdefine_line|#define SEND_NMI(_nasid, _slice)&t;&bslash;&n;          REMOTE_HUB_S((_nasid),  (PI_NMI_A + ((_slice) * PI_NMI_OFFSET)), 1)
 multiline_comment|/* Sanity hazzard ...  Below all the Origin hacks are following.  */
-DECL|macro|IOC3_SERIAL_INT
-mdefine_line|#define IOC3_SERIAL_INT&t;&t;8
-DECL|macro|IOC3_ETH_INT
-mdefine_line|#define IOC3_ETH_INT&t;&t;9
-DECL|macro|SCSI1_INT
-mdefine_line|#define SCSI1_INT&t;&t;1
 DECL|macro|SCSI0_INT
 mdefine_line|#define SCSI0_INT&t;&t;0
+DECL|macro|SCSI1_INT
+mdefine_line|#define SCSI1_INT&t;&t;1
+DECL|macro|CPU_RESCHED_A_IRQ
+mdefine_line|#define CPU_RESCHED_A_IRQ&t;3
+DECL|macro|CPU_RESCHED_B_IRQ
+mdefine_line|#define CPU_RESCHED_B_IRQ&t;4
+DECL|macro|QLOGICFC_SLOT5
+mdefine_line|#define QLOGICFC_SLOT5          5
+DECL|macro|CPU_CALL_A_IRQ
+mdefine_line|#define CPU_CALL_A_IRQ&t;&t;6
+DECL|macro|CPU_CALL_B_IRQ
+mdefine_line|#define CPU_CALL_B_IRQ&t;&t;7
+DECL|macro|IOC3_SERIAL_INT
+mdefine_line|#define IOC3_SERIAL_INT&t;&t;8
+multiline_comment|/*#define IOC3_ETH_INT&t;&t;9*/
+DECL|macro|IOC3_ETH_INT
+mdefine_line|#define IOC3_ETH_INT&t;&t;0x0809&t;/* nasid 0, wid 0x8 */
+DECL|macro|SN00_BRIDGE
+mdefine_line|#define SN00_BRIDGE&t;&t;0x9200000008000000
+DECL|macro|SN00I_BRIDGE0
+mdefine_line|#define SN00I_BRIDGE0&t;&t;0x920000000b000000
+DECL|macro|SN00I_BRIDGE1
+mdefine_line|#define SN00I_BRIDGE1&t;&t;0x920000000e000000
+DECL|macro|SN00I_BRIDGE2
+mdefine_line|#define SN00I_BRIDGE2&t;&t;0x920000000f000000
 macro_line|#endif /* _ASM_SN_SN0_IP27_H */
 eof

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * $Id: inventory.h,v 1.2 1997/12/06 23:55:49 ralf Exp $&n; */
+multiline_comment|/*&n; * $Id:$&n; */
 macro_line|#ifndef __ASM_MIPS_INVENTORY_H
 DECL|macro|__ASM_MIPS_INVENTORY_H
 mdefine_line|#define __ASM_MIPS_INVENTORY_H

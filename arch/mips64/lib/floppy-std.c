@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: floppy-std.c,v 1.2 1999/12/04 03:59:00 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Access the floppy hardware on PC style hardware&n; *&n; * Copyright (C) 1996, 1997, 1998 by Ralf Baechle&n; */
+multiline_comment|/* $Id: floppy-std.c,v 1.1 1999/08/21 21:43:00 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Access the floppy hardware on PC style hardware&n; *&n; * Copyright (C) 1996, 1997, 1998 by Ralf Baechle&n; */
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: string.h,v 1.4 2000/01/16 01:37:19 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (c) 1994, 1995, 1996, 1997, 1998 by Ralf Baechle&n; *&n; * XXX For now I&squot;m too lazy to fix the string functions, let&squot;s rely on the&n; * generic stuff.&n; */
+multiline_comment|/* $Id: string.h,v 1.3 1999/12/04 03:59:12 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (c) 1994, 1995, 1996, 1997, 1998 by Ralf Baechle&n; *&n; * XXX For now I&squot;m too lazy to fix the string functions, let&squot;s rely on the&n; * generic stuff.&n; */
 macro_line|#ifndef _ASM_STRING_H
 DECL|macro|_ASM_STRING_H
 mdefine_line|#define _ASM_STRING_H

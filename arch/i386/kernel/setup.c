@@ -1301,67 +1301,20 @@ op_increment
 suffix:semicolon
 )brace
 multiline_comment|/* add_memory_region */
-multiline_comment|/*&n; * Do NOT EVER look at the BIOS memory size location.&n; * It does not work on many machines.&n; */
-DECL|macro|LOWMEMSIZE
-mdefine_line|#define LOWMEMSIZE()&t;(0x9f000)
-DECL|function|setup_memory_region
-r_void
+DECL|macro|E820_DEBUG
+mdefine_line|#define E820_DEBUG&t;1
+DECL|function|print_e820_map
+r_static
 id|__init
-id|setup_memory_region
-c_func
+r_void
+id|print_e820_map
 (paren
 r_void
 )paren
 (brace
-DECL|macro|E820_DEBUG
-mdefine_line|#define E820_DEBUG&t;1
-macro_line|#ifdef E820_DEBUG
 r_int
 id|i
 suffix:semicolon
-macro_line|#endif
-multiline_comment|/*&n;&t; * If we&squot;re lucky and live on a modern system, the setup code&n;&t; * will have given us a memory map that we can use to properly&n;&t; * set up memory.  If we aren&squot;t, we&squot;ll fake a memory map.&n;&t; *&n;&t; * We check to see that the memory map contains at least 2 elements&n;&t; * before we&squot;ll use it, because the detection code in setup.S may&n;&t; * not be perfect and most every PC known to man has two memory&n;&t; * regions: one from 0 to 640k, and one from 1mb up.  (The IBM&n;&t; * thinkpad 560x, for example, does not cooperate with the memory&n;&t; * detection code.)&n;&t; */
-r_if
-c_cond
-(paren
-id|E820_MAP_NR
-OG
-l_int|1
-)paren
-(brace
-multiline_comment|/* got a memory map; copy it into a safe place.&n;&t;&t; */
-id|e820.nr_map
-op_assign
-id|E820_MAP_NR
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|e820.nr_map
-OG
-id|E820MAX
-)paren
-id|e820.nr_map
-op_assign
-id|E820MAX
-suffix:semicolon
-id|memcpy
-c_func
-(paren
-id|e820.map
-comma
-id|E820_MAP
-comma
-id|e820.nr_map
-op_star
-r_sizeof
-id|e820.map
-(braket
-l_int|0
-)braket
-)paren
-suffix:semicolon
-macro_line|#ifdef E820_DEBUG
 r_for
 c_loop
 (paren
@@ -1380,11 +1333,8 @@ op_increment
 id|printk
 c_func
 (paren
-l_string|&quot;e820: %08x @ %08x &quot;
+l_string|&quot; e820: %016Lx @ %016Lx &quot;
 comma
-(paren
-r_int
-)paren
 id|e820.map
 (braket
 id|i
@@ -1392,9 +1342,6 @@ id|i
 dot
 id|size
 comma
-(paren
-r_int
-)paren
 id|e820.map
 (braket
 id|i
@@ -1477,7 +1424,60 @@ r_break
 suffix:semicolon
 )brace
 )brace
-macro_line|#endif
+)brace
+multiline_comment|/*&n; * Do NOT EVER look at the BIOS memory size location.&n; * It does not work on many machines.&n; */
+DECL|macro|LOWMEMSIZE
+mdefine_line|#define LOWMEMSIZE()&t;(0x9f000)
+DECL|function|setup_memory_region
+r_void
+id|__init
+id|setup_memory_region
+c_func
+(paren
+r_void
+)paren
+(brace
+multiline_comment|/*&n;&t; * If we&squot;re lucky and live on a modern system, the setup code&n;&t; * will have given us a memory map that we can use to properly&n;&t; * set up memory.  If we aren&squot;t, we&squot;ll fake a memory map.&n;&t; *&n;&t; * We check to see that the memory map contains at least 2 elements&n;&t; * before we&squot;ll use it, because the detection code in setup.S may&n;&t; * not be perfect and most every PC known to man has two memory&n;&t; * regions: one from 0 to 640k, and one from 1mb up.  (The IBM&n;&t; * thinkpad 560x, for example, does not cooperate with the memory&n;&t; * detection code.)&n;&t; */
+r_if
+c_cond
+(paren
+id|E820_MAP_NR
+OG
+l_int|1
+)paren
+(brace
+multiline_comment|/* got a memory map; copy it into a safe place.&n;&t;&t; */
+id|e820.nr_map
+op_assign
+id|E820_MAP_NR
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|e820.nr_map
+OG
+id|E820MAX
+)paren
+id|e820.nr_map
+op_assign
+id|E820MAX
+suffix:semicolon
+id|memcpy
+c_func
+(paren
+id|e820.map
+comma
+id|E820_MAP
+comma
+id|e820.nr_map
+op_star
+r_sizeof
+id|e820.map
+(braket
+l_int|0
+)braket
+)paren
+suffix:semicolon
 )brace
 r_else
 (brace
@@ -1525,6 +1525,17 @@ id|E820_RAM
 )paren
 suffix:semicolon
 )brace
+id|printk
+c_func
+(paren
+l_string|&quot;BIOS-provided physical RAM map:&bslash;n&quot;
+)paren
+suffix:semicolon
+id|print_e820_map
+c_func
+(paren
+)paren
+suffix:semicolon
 )brace
 multiline_comment|/* setup_memory_region */
 DECL|function|parse_mem_cmdline
@@ -1825,6 +1836,24 @@ id|cmdline_p
 op_assign
 id|command_line
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|usermem
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;user-defined physical RAM map:&bslash;n&quot;
+)paren
+suffix:semicolon
+id|print_e820_map
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
 )brace
 DECL|function|setup_arch
 r_void

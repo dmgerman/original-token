@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: dma.c,v 1.2 2000/02/24 00:12:41 ralf Exp $&n; *&n; * Dynamic DMA mapping support.&n; *&n; * On RM200 there is no hardware dynamic DMA address translation,&n; * so consistent alloc/free are merely page allocation/freeing.&n; * The rest of the dynamic DMA mapping interface is implemented&n; * in &lt;asm/pci.h&gt;.&n; *&n; * These routines assume that the RM has all it&squot;s memory at physical&n; * addresses of &lt; 512mb.&n; */
+multiline_comment|/* $Id: dma.c,v 1.1 2000/02/18 00:24:30 ralf Exp $&n; *&n; * Dynamic DMA mapping support.&n; *&n; * On RM200 there is no hardware dynamic DMA address translation,&n; * so consistent alloc/free are merely page allocation/freeing.&n; * The rest of the dynamic DMA mapping interface is implemented&n; * in &lt;asm/pci.h&gt;.&n; *&n; * These routines assume that the RM has all it&squot;s memory at physical&n; * addresses of &lt; 512mb.&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/string.h&gt;

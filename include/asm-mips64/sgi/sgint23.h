@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sgint23.h,v 1.2 1999/12/04 03:59:13 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * sgint23.h: Defines for the SGI INT2 and INT3 chipsets.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; * Copyright (C) 1999 Andrew R. Baker (andrewb@uab.edu) - INT2 corrections&n; */
+multiline_comment|/* $Id: sgint23.h,v 1.3 1999/10/20 18:10:32 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * sgint23.h: Defines for the SGI INT2 and INT3 chipsets.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; * Copyright (C) 1999 Andrew R. Baker (andrewb@uab.edu) - INT2 corrections&n; */
 macro_line|#ifndef _ASM_SGI_SGINT23_H
 DECL|macro|_ASM_SGI_SGINT23_H
 mdefine_line|#define _ASM_SGI_SGINT23_H

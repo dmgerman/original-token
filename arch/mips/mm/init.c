@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: init.c,v 1.27 2000/02/23 01:33:56 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1994 - 2000 by Ralf Baechle&n; * Copyright (C) 2000 Silicon Graphics, Inc.&n; */
+multiline_comment|/* $Id: init.c,v 1.26 2000/02/23 00:41:00 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1994 - 2000 by Ralf Baechle&n; * Copyright (C) 2000 Silicon Graphics, Inc.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;

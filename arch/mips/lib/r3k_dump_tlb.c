@@ -65,6 +65,8 @@ c_func
 id|CP0_INDEX
 comma
 id|i
+op_lshift
+l_int|8
 )paren
 suffix:semicolon
 id|__asm__

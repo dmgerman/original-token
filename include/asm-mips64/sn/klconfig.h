@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: klconfig.h,v 1.2 2000/01/16 01:39:08 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Derived from IRIX &lt;sys/SN/klconfig.h&gt;.&n; *&n; * Copyright (C) 1992 - 1997, 1999 Silicon Graphics, Inc.&n; * Copyright (C) 1999 by Ralf Baechle&n; */
+multiline_comment|/* $Id$&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Derived from IRIX &lt;sys/SN/klconfig.h&gt;.&n; *&n; * Copyright (C) 1992 - 1997, 1999 Silicon Graphics, Inc.&n; * Copyright (C) 1999 by Ralf Baechle&n; */
 macro_line|#ifndef&t;_ASM_SN_KLCONFIG_H
 DECL|macro|_ASM_SN_KLCONFIG_H
 mdefine_line|#define&t;_ASM_SN_KLCONFIG_H
@@ -7,17 +7,36 @@ multiline_comment|/*&n; * The KLCONFIG structures store info about the various B
 multiline_comment|/*&n; * WARNING:&n; *&t;Certain assembly language routines (notably xxxxx.s) in the IP27PROM &n; *&t;will depend on the format of the data structures in this file.  In &n; *      most cases, rearranging the fields can seriously break things.   &n; *      Adding fields in the beginning or middle can also break things.&n; *      Add fields if necessary, to the end of a struct in such a way&n; *      that offsets of existing fields do not change.&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;asm/sn/types.h&gt;
+macro_line|#if defined(CONFIG_SGI_IP27)
 macro_line|#include &lt;asm/sn/sn0/addrs.h&gt;
 singleline_comment|//#include &lt;sys/SN/router.h&gt;
 singleline_comment|// XXX Stolen from &lt;sys/SN/router.h&gt;:
 DECL|macro|MAX_ROUTER_PORTS
-mdefine_line|#define MAX_ROUTER_PORTS (6)&t;/* Max. number of ports on a router */
+mdefine_line|#define MAX_ROUTER_PORTS (6)    /* Max. number of ports on a router */
+macro_line|#include &lt;asm/sn/sn0/sn0_fru.h&gt;
 macro_line|#include &lt;asm/sn/agent.h&gt;
 singleline_comment|//#include &lt;sys/graph.h&gt;
 macro_line|#include &lt;asm/arc/types.h&gt;
 macro_line|#include &lt;asm/arc/hinv.h&gt;
 singleline_comment|//#include &lt;sys/xtalk/xbow.h&gt;
-macro_line|#include &lt;asm/sn/sn0/sn0_fru.h&gt;
+macro_line|#if defined(CONFIG_SGI_IO)
+singleline_comment|// The hack file has to be before vector and after sn0_fru....
+macro_line|#include &lt;asm/hack.h&gt;
+macro_line|#include &lt;asm/sn/vector.h&gt;
+macro_line|#include &lt;asm/xtalk/xtalk.h&gt;
+macro_line|#endif  /* CONFIG_SGI_IO */
+macro_line|#elif defined(CONFIG_SGI_IP35)
+macro_line|#include &lt;asm/hack.h&gt;
+macro_line|#include &lt;asm/sn/sn1/addrs.h&gt;
+macro_line|#include &lt;asm/sn/vector.h&gt;
+macro_line|#include &lt;sys/sn/router.h&gt;
+macro_line|#include &lt;asm/sn/agent.h&gt;
+macro_line|#include &lt;sys/graph.h&gt;
+macro_line|#include &lt;asm/arc/types.h&gt;
+macro_line|#include &lt;asm/arc/hinv.h&gt;
+macro_line|#include &lt;asm/xtalk/xbow.h&gt;
+macro_line|#include &lt;asm/xtalk/xtalk.h&gt;
+macro_line|#endif  /* !CONFIG_SGI_IP27 &amp;&amp; !CONFIG_SGI_IP35 */
 DECL|macro|KLCFGINFO_MAGIC
 mdefine_line|#define KLCFGINFO_MAGIC&t;0xbeedbabe
 macro_line|#ifdef FRUTEST
@@ -105,21 +124,33 @@ r_typedef
 r_struct
 id|console_s
 (brace
+macro_line|#if defined(CONFIG_SGI_IO)&t;/* FIXME */
 DECL|member|uart_base
+id|__psunsigned_t
+id|uart_base
+suffix:semicolon
+DECL|member|config_base
+id|__psunsigned_t
+id|config_base
+suffix:semicolon
+DECL|member|memory_base
+id|__psunsigned_t
+id|memory_base
+suffix:semicolon
+macro_line|#else
 r_int
 r_int
 id|uart_base
 suffix:semicolon
-DECL|member|config_base
 r_int
 r_int
 id|config_base
 suffix:semicolon
-DECL|member|memory_base
 r_int
 r_int
 id|memory_base
 suffix:semicolon
+macro_line|#endif
 DECL|member|baud
 r_int
 id|baud
@@ -248,12 +279,22 @@ mdefine_line|#define KL_CONFIG_CHECK_MAGIC(_nasid)&t;&t;&t;&t;&t;&bslash;&n;    
 DECL|macro|KL_CONFIG_HDR_INIT_MAGIC
 mdefine_line|#define KL_CONFIG_HDR_INIT_MAGIC(_nasid)&t;&bslash;&n;                  (KL_CONFIG_HDR(_nasid)-&gt;ch_magic = KLCFGINFO_MAGIC)
 multiline_comment|/* --- New Macros for the changed kl_config_hdr_t structure --- */
+macro_line|#if defined(CONFIG_SGI_IO)
 DECL|macro|PTR_CH_MALLOC_HDR
-mdefine_line|#define PTR_CH_MALLOC_HDR(_k)   ((klc_malloc_hdr_t *)&bslash;&n;&t;&t;&t;((unsigned long)_k + (_k-&gt;ch_malloc_hdr_off)))
+mdefine_line|#define PTR_CH_MALLOC_HDR(_k)   ((klc_malloc_hdr_t *)&bslash;&n;&t;&t;&t;((__psunsigned_t)_k + (_k-&gt;ch_malloc_hdr_off)))
+macro_line|#else
+DECL|macro|PTR_CH_MALLOC_HDR
+mdefine_line|#define PTR_CH_MALLOC_HDR(_k)   ((klc_malloc_hdr_t *)&bslash;&n;&t;&t;&t;(unsigned long)_k + (_k-&gt;ch_malloc_hdr_off)))
+macro_line|#endif
 DECL|macro|KL_CONFIG_CH_MALLOC_HDR
 mdefine_line|#define KL_CONFIG_CH_MALLOC_HDR(_n)   PTR_CH_MALLOC_HDR(KL_CONFIG_HDR(_n))
+macro_line|#if defined(CONFIG_SGI_IO)
+DECL|macro|PTR_CH_CONS_INFO
+mdefine_line|#define PTR_CH_CONS_INFO(_k)&t;((console_t *)&bslash;&n;&t;&t;&t;((__psunsigned_t)_k + (_k-&gt;ch_cons_off)))
+macro_line|#else
 DECL|macro|PTR_CH_CONS_INFO
 mdefine_line|#define PTR_CH_CONS_INFO(_k)&t;((console_t *)&bslash;&n;&t;&t;&t;((unsigned long)_k + (_k-&gt;ch_cons_off)))
+macro_line|#endif
 DECL|macro|KL_CONFIG_CH_CONS_INFO
 mdefine_line|#define KL_CONFIG_CH_CONS_INFO(_n)   PTR_CH_CONS_INFO(KL_CONFIG_HDR(_n))
 multiline_comment|/* ------------------------------------------------------------- */
@@ -293,7 +334,7 @@ DECL|macro|KL_CPU_R10000
 mdefine_line|#define&t;KL_CPU_R10000&t;&t;0x3&t;/* R10000 (T5) */
 DECL|macro|KL_CPU_NONE
 mdefine_line|#define KL_CPU_NONE&t;&t;(-1)&t;/* no cpu present in slot */
-multiline_comment|/*&n; * SN0 BOARD classes&n; */
+multiline_comment|/*&n; * IP27 BOARD classes&n; */
 DECL|macro|KLCLASS_MASK
 mdefine_line|#define KLCLASS_MASK&t;0xf0   
 DECL|macro|KLCLASS_NONE
@@ -313,14 +354,14 @@ mdefine_line|#define KLCLASS_GFX&t;0x50&t;&t;/* graphics boards */
 DECL|macro|KLCLASS_PSEUDO_GFX
 mdefine_line|#define KLCLASS_PSEUDO_GFX&t;0x60&t;/* HDTV type cards that use a gfx&n;&t;&t;&t;&t;&t; * hw ifc to xtalk and are not gfx&n;&t;&t;&t;&t;&t; * class for sw purposes */
 DECL|macro|KLCLASS_MAX
-mdefine_line|#define KLCLASS_MAX&t;6&t;&t;/* Bump this if a new CLASS is added */
+mdefine_line|#define KLCLASS_MAX&t;7&t;&t;/* Bump this if a new CLASS is added */
 DECL|macro|KLTYPE_MAX
-mdefine_line|#define KLTYPE_MAX&t;8&t;&t;/* Bump this if a new CLASS is added */
+mdefine_line|#define KLTYPE_MAX&t;10&t;&t;/* Bump this if a new CLASS is added */
 DECL|macro|KLCLASS_UNKNOWN
 mdefine_line|#define KLCLASS_UNKNOWN&t;0xf0
 DECL|macro|KLCLASS
 mdefine_line|#define KLCLASS(_x) ((_x) &amp; KLCLASS_MASK)
-multiline_comment|/*&n; * SN0 board types&n; */
+multiline_comment|/*&n; * IP27 board types&n; */
 DECL|macro|KLTYPE_MASK
 mdefine_line|#define KLTYPE_MASK&t;0x0f
 DECL|macro|KLTYPE_NONE
@@ -370,9 +411,9 @@ mdefine_line|#define KLTYPE_GSN_B   &t;(KLCLASS_IO  | 0xD) /* Auxiliary GSN boar
 DECL|macro|KLTYPE_GFX
 mdefine_line|#define KLTYPE_GFX&t;(KLCLASS_GFX | 0x0) /* unknown graphics type */
 DECL|macro|KLTYPE_GFX_KONA
-mdefine_line|#define KLTYPE_GFX_KONA (KLCLASS_GFX | 0x1) /* KONA graphics on SN0 */
+mdefine_line|#define KLTYPE_GFX_KONA (KLCLASS_GFX | 0x1) /* KONA graphics on IP27 */
 DECL|macro|KLTYPE_GFX_MGRA
-mdefine_line|#define KLTYPE_GFX_MGRA (KLCLASS_GFX | 0x3) /* MGRAS graphics on SN0 */
+mdefine_line|#define KLTYPE_GFX_MGRA (KLCLASS_GFX | 0x3) /* MGRAS graphics on IP27 */
 DECL|macro|KLTYPE_WEIRDROUTER
 mdefine_line|#define KLTYPE_WEIRDROUTER (KLCLASS_ROUTER | 0x0)
 DECL|macro|KLTYPE_ROUTER
@@ -389,6 +430,18 @@ DECL|macro|KLTYPE_MIDPLANE8
 mdefine_line|#define KLTYPE_MIDPLANE8  (KLCLASS_MIDPLANE | 0x1) /* 8 slot backplane */
 DECL|macro|KLTYPE_MIDPLANE
 mdefine_line|#define KLTYPE_MIDPLANE    KLTYPE_MIDPLANE8
+DECL|macro|KLTYPE_PBRICK_XBOW
+mdefine_line|#define KLTYPE_PBRICK_XBOW&t;(KLCLASS_MIDPLANE | 0x2)
+DECL|macro|KLTYPE_IOBRICK
+mdefine_line|#define KLTYPE_IOBRICK&t;&t;(KLCLASS_IOBRICK | 0x0)
+DECL|macro|KLTYPE_IBRICK
+mdefine_line|#define KLTYPE_IBRICK&t;&t;(KLCLASS_IOBRICK | 0x1)
+DECL|macro|KLTYPE_PBRICK
+mdefine_line|#define KLTYPE_PBRICK&t;&t;(KLCLASS_IOBRICK | 0x2)
+DECL|macro|KLTYPE_XBRICK
+mdefine_line|#define KLTYPE_XBRICK&t;&t;(KLCLASS_IOBRICK | 0x3)
+DECL|macro|KLTYPE_PBRICK_BRIDGE
+mdefine_line|#define KLTYPE_PBRICK_BRIDGE&t;KLTYPE_PBRICK
 multiline_comment|/* The value of type should be more than 8 so that hinv prints&n; * out the board name from the NIC string. For values less than&n; * 8 the name of the board needs to be hard coded in a few places.&n; * When bringup started nic names had not standardized and so we&n; * had to hard code. (For people interested in history.) &n; */
 DECL|macro|KLTYPE_XTHD
 mdefine_line|#define KLTYPE_XTHD   &t;(KLCLASS_PSEUDO_GFX | 0x9)
@@ -1764,10 +1817,421 @@ op_star
 id|find_lboard
 c_func
 (paren
+id|lboard_t
+op_star
+id|start
+comma
 r_int
-r_int
+r_char
 id|type
 )paren
 suffix:semicolon
+r_extern
+id|klinfo_t
+op_star
+id|find_component
+c_func
+(paren
+id|lboard_t
+op_star
+id|brd
+comma
+id|klinfo_t
+op_star
+id|kli
+comma
+r_int
+r_char
+id|type
+)paren
+suffix:semicolon
+r_extern
+id|klinfo_t
+op_star
+id|find_first_component
+c_func
+(paren
+id|lboard_t
+op_star
+id|brd
+comma
+r_int
+r_char
+id|type
+)paren
+suffix:semicolon
+r_extern
+id|klcpu_t
+op_star
+id|nasid_slice_to_cpuinfo
+c_func
+(paren
+id|nasid_t
+comma
+r_int
+)paren
+suffix:semicolon
+macro_line|#if defined(CONFIG_SGI_IO)
+r_extern
+id|xwidgetnum_t
+id|nodevertex_widgetnum_get
+c_func
+(paren
+id|vertex_hdl_t
+id|node_vtx
+)paren
+suffix:semicolon
+r_extern
+id|vertex_hdl_t
+id|nodevertex_xbow_peer_get
+c_func
+(paren
+id|vertex_hdl_t
+id|node_vtx
+)paren
+suffix:semicolon
+r_extern
+id|lboard_t
+op_star
+id|find_gfxpipe
+c_func
+(paren
+r_int
+id|pipenum
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|setup_gfxpipe_link
+c_func
+(paren
+id|vertex_hdl_t
+id|vhdl
+comma
+r_int
+id|pipenum
+)paren
+suffix:semicolon
+r_extern
+id|lboard_t
+op_star
+id|find_lboard_class
+c_func
+(paren
+id|lboard_t
+op_star
+id|start
+comma
+r_int
+r_char
+id|brd_class
+)paren
+suffix:semicolon
+r_extern
+id|lboard_t
+op_star
+id|find_lboard_module_class
+c_func
+(paren
+id|lboard_t
+op_star
+id|start
+comma
+id|moduleid_t
+id|mod
+comma
+r_int
+r_char
+id|brd_class
+)paren
+suffix:semicolon
+r_extern
+id|lboard_t
+op_star
+id|find_nic_lboard
+c_func
+(paren
+id|lboard_t
+op_star
+comma
+id|nic_t
+)paren
+suffix:semicolon
+r_extern
+id|lboard_t
+op_star
+id|find_nic_type_lboard
+c_func
+(paren
+id|nasid_t
+comma
+r_int
+r_char
+comma
+id|nic_t
+)paren
+suffix:semicolon
+r_extern
+id|lboard_t
+op_star
+id|find_lboard_modslot
+c_func
+(paren
+id|lboard_t
+op_star
+id|start
+comma
+id|moduleid_t
+id|mod
+comma
+id|slotid_t
+id|slot
+)paren
+suffix:semicolon
+r_extern
+id|lboard_t
+op_star
+id|find_lboard_module
+c_func
+(paren
+id|lboard_t
+op_star
+id|start
+comma
+id|moduleid_t
+id|mod
+)paren
+suffix:semicolon
+r_extern
+id|lboard_t
+op_star
+id|get_board_name
+c_func
+(paren
+id|nasid_t
+id|nasid
+comma
+id|moduleid_t
+id|mod
+comma
+id|slotid_t
+id|slot
+comma
+r_char
+op_star
+id|name
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|config_find_nic_router
+c_func
+(paren
+id|nasid_t
+comma
+id|nic_t
+comma
+id|lboard_t
+op_star
+op_star
+comma
+id|klrou_t
+op_star
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|config_find_nic_hub
+c_func
+(paren
+id|nasid_t
+comma
+id|nic_t
+comma
+id|lboard_t
+op_star
+op_star
+comma
+id|klhub_t
+op_star
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|config_find_xbow
+c_func
+(paren
+id|nasid_t
+comma
+id|lboard_t
+op_star
+op_star
+comma
+id|klxbow_t
+op_star
+op_star
+)paren
+suffix:semicolon
+r_extern
+id|klcpu_t
+op_star
+id|get_cpuinfo
+c_func
+(paren
+id|cpuid_t
+id|cpu
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|update_klcfg_cpuinfo
+c_func
+(paren
+id|nasid_t
+comma
+r_int
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|board_to_path
+c_func
+(paren
+id|lboard_t
+op_star
+id|brd
+comma
+r_char
+op_star
+id|path
+)paren
+suffix:semicolon
+r_extern
+id|moduleid_t
+id|get_module_id
+c_func
+(paren
+id|nasid_t
+id|nasid
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|nic_name_convert
+c_func
+(paren
+r_char
+op_star
+id|old_name
+comma
+r_char
+op_star
+id|new_name
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|module_brds
+c_func
+(paren
+id|nasid_t
+id|nasid
+comma
+id|lboard_t
+op_star
+op_star
+id|module_brds
+comma
+r_int
+id|n
+)paren
+suffix:semicolon
+r_extern
+id|lboard_t
+op_star
+id|brd_from_key
+c_func
+(paren
+id|ulong_t
+id|key
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|device_component_canonical_name_get
+c_func
+(paren
+id|lboard_t
+op_star
+comma
+id|klinfo_t
+op_star
+comma
+r_char
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|board_serial_number_get
+c_func
+(paren
+id|lboard_t
+op_star
+comma
+r_char
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|is_master_baseio
+c_func
+(paren
+id|nasid_t
+comma
+id|moduleid_t
+comma
+id|slotid_t
+)paren
+suffix:semicolon
+r_extern
+id|nasid_t
+id|get_actual_nasid
+c_func
+(paren
+id|lboard_t
+op_star
+id|brd
+)paren
+suffix:semicolon
+r_extern
+id|net_vec_t
+id|klcfg_discover_route
+c_func
+(paren
+id|lboard_t
+op_star
+comma
+id|lboard_t
+op_star
+comma
+r_int
+)paren
+suffix:semicolon
+macro_line|#else&t;/* CONFIG_SGI_IO */
+r_extern
+id|klcpu_t
+op_star
+id|sn_get_cpuinfo
+c_func
+(paren
+id|cpuid_t
+id|cpu
+)paren
+suffix:semicolon
+macro_line|#endif&t;/* CONFIG_SGI_IO */
 macro_line|#endif /* _ASM_SN_KLCONFIG_H */
 eof

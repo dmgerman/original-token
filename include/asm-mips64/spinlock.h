@@ -20,6 +20,10 @@ DECL|macro|SPIN_LOCK_UNLOCKED
 mdefine_line|#define SPIN_LOCK_UNLOCKED (spinlock_t) { 0 }
 DECL|macro|spin_lock_init
 mdefine_line|#define spin_lock_init(x)&t;do { (x)-&gt;lock = 0; } while(0);
+DECL|macro|spin_is_locked
+mdefine_line|#define spin_is_locked(x)&t;((x)-&gt;lock != 0)
+DECL|macro|spin_unlock_wait
+mdefine_line|#define spin_unlock_wait(x)&t;({ do { barrier(); } while ((x)-&gt;lock); })
 multiline_comment|/*&n; * Simple spin lock operations.  There are two variants, one clears IRQ&squot;s&n; * on the local processor, one does not.&n; *&n; * We make no fairness assumptions.  They have a cost.&n; */
 DECL|member|a
 DECL|typedef|__dummy_lock_t
@@ -137,8 +141,73 @@ l_string|&quot;memory&quot;
 )paren
 suffix:semicolon
 )brace
-DECL|macro|spin_trylock
-mdefine_line|#define spin_trylock(lock) (!test_and_set_bit(0,(lock)))
+DECL|function|spin_trylock
+r_static
+r_inline
+r_int
+r_int
+id|spin_trylock
+c_func
+(paren
+id|spinlock_t
+op_star
+id|lock
+)paren
+(brace
+r_int
+r_int
+id|temp
+comma
+id|res
+suffix:semicolon
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;.set&bslash;tnoreorder&bslash;t&bslash;t&bslash;t# spin_trylock&bslash;n&bslash;t&quot;
+l_string|&quot;1:&bslash;tll&bslash;t%0, %1&bslash;n&bslash;t&quot;
+l_string|&quot;or&bslash;t%2, %0, %3&bslash;n&bslash;t&quot;
+l_string|&quot;sc&bslash;t%2, %1&bslash;n&bslash;t&quot;
+l_string|&quot;beqz&bslash;t%2, 1b&bslash;n&bslash;t&quot;
+l_string|&quot; and&bslash;t%2, %0, %3&bslash;n&bslash;t&quot;
+l_string|&quot;.set&bslash;treorder&quot;
+suffix:colon
+l_string|&quot;=&amp;r&quot;
+(paren
+id|temp
+)paren
+comma
+l_string|&quot;=m&quot;
+(paren
+op_star
+id|lock
+)paren
+comma
+l_string|&quot;=&amp;r&quot;
+(paren
+id|res
+)paren
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+l_int|1
+)paren
+comma
+l_string|&quot;m&quot;
+(paren
+op_star
+id|lock
+)paren
+suffix:colon
+l_string|&quot;memory&quot;
+)paren
+suffix:semicolon
+r_return
+id|res
+op_eq
+l_int|0
+suffix:semicolon
+)brace
 multiline_comment|/*&n; * Read-write spinlocks, allowing multiple readers but only one writer.&n; *&n; * NOTE! it is quite common to have readers in interrupts but no interrupt&n; * writers. For those circumstances we can &quot;mix&quot; irq-safe locks - any writer&n; * needs to get a irq-safe write-lock, but readers can get non-irqsafe&n; * read-locks.&n; */
 r_typedef
 r_struct
@@ -237,6 +306,7 @@ l_string|&quot;1:&bslash;tll&bslash;t%1, %2&bslash;n&bslash;t&quot;
 l_string|&quot;sub&bslash;t%1, 1&bslash;n&bslash;t&quot;
 l_string|&quot;sc&bslash;t%1, %0&bslash;n&bslash;t&quot;
 l_string|&quot;beqz&bslash;t%1, 1b&bslash;n&bslash;t&quot;
+l_string|&quot;sync&bslash;n&bslash;t&quot;
 l_string|&quot;.set&bslash;treorder&quot;
 suffix:colon
 l_string|&quot;=o&quot;

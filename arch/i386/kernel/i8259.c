@@ -1374,7 +1374,7 @@ multiline_comment|/*&n;&t; * IRQ0 must be given a fixed assignment and initializ
 id|set_intr_gate
 c_func
 (paren
-id|IRQ0_TRAP_VECTOR
+id|FIRST_DEVICE_VECTOR
 comma
 id|interrupt
 (braket

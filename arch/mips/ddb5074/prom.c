@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  arch/mips/ddb5074/prom.c -- NEC DDB Vrc-5074 PROM routines&n; *&n; *  Copyright (C) 2000 Geert Uytterhoeven &lt;geert@sonycom.com&gt;&n; *                     Sony Suprastructure Center Europe (SUPC-E), Brussels&n; *&n; *  $Id: prom.c,v 1.2 2000/02/14 17:07:36 ralf Exp $&n; */
+multiline_comment|/*&n; *  arch/mips/ddb5074/prom.c -- NEC DDB Vrc-5074 PROM routines&n; *&n; *  Copyright (C) 2000 Geert Uytterhoeven &lt;geert@sonycom.com&gt;&n; *                     Sony Software Development Center Europe (SDCE), Brussels&n; *&n; *  $Id: prom.c,v 1.1 2000/01/26 00:07:44 ralf Exp $&n; */
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;

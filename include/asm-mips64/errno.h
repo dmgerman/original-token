@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: errno.h,v 1.2 1999/09/28 22:27:19 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1995 by Ralf Baechle&n; */
+multiline_comment|/* $Id: errno.h,v 1.1 1999/08/18 23:37:51 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1995 by Ralf Baechle&n; */
 macro_line|#ifndef _ASM_ERRNO_H
 DECL|macro|_ASM_ERRNO_H
 mdefine_line|#define _ASM_ERRNO_H

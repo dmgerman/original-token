@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: offset.c,v 1.12 1999/10/09 00:00:59 ralf Exp $&n; *&n; * offset.c: Calculate pt_regs and task_struct offsets.&n; *&n; * Copyright (C) 1996 David S. Miller&n; * Copyright (C) 1997, 1998, 1999 Ralf Baechle&n; * Copyright (C) 1999 Silicon Graphics, Inc.&n; */
+multiline_comment|/* $Id: offset.c,v 1.11 1999/09/28 22:25:50 ralf Exp $&n; *&n; * offset.c: Calculate pt_regs and task_struct offsets.&n; *&n; * Copyright (C) 1996 David S. Miller&n; * Copyright (C) 1997, 1998, 1999 Ralf Baechle&n; * Copyright (C) 1999 Silicon Graphics, Inc.&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;asm/ptrace.h&gt;

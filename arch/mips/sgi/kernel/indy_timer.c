@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: indy_timer.c,v 1.18 2000/02/04 07:40:23 ralf Exp $&n; *&n; * indy_timer.c: Setting up the clock on the INDY 8254 controller.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; * Copytight (C) 1997, 1998 Ralf Baechle (ralf@gnu.org)&n; */
+multiline_comment|/* $Id: indy_timer.c,v 1.17 2000/01/21 22:34:03 ralf Exp $&n; *&n; * indy_timer.c: Setting up the clock on the INDY 8254 controller.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; * Copytight (C) 1997, 1998 Ralf Baechle (ralf@gnu.org)&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;

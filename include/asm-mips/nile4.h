@@ -1,5 +1,4 @@
-multiline_comment|/*&n; *  asm-mips/nile4.h -- NEC Vrc-5074 Nile 4 definitions&n; *&n; *  Copyright (C) 2000 Geert Uytterhoeven &lt;geert@sonycom.com&gt;&n; *                     Sony Suprastructure Center Europe (SUPC-E), Brussels&n; *&n; *  This file is based on the following documentation:&n; *&n; *&t;NEC Vrc 5074 System Controller Data Sheet, June 1998&n; *&n; *  $Id: nile4.h,v 1.1 2000/01/26 00:07:45 ralf Exp $&n; */
-macro_line|#include &lt;asm/addrspace.h&gt;
+multiline_comment|/*&n; *  asm-mips/nile4.h -- NEC Vrc-5074 Nile 4 definitions&n; *&n; *  Copyright (C) 2000 Geert Uytterhoeven &lt;geert@sonycom.com&gt;&n; *                     Sony Software Development Center Europe (SDCE), Brussels&n; *&n; *  This file is based on the following documentation:&n; *&n; *&t;NEC Vrc 5074 System Controller Data Sheet, June 1998&n; *&n; *  $Id: nile4.h,v 1.1 2000/01/26 00:07:45 ralf Exp $&n; */
 DECL|macro|NILE4_BASE
 mdefine_line|#define NILE4_BASE&t;&t;0xbfa00000
 DECL|macro|NILE4_SIZE

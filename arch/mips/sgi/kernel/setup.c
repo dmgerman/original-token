@@ -36,8 +36,15 @@ c_func
 r_void
 )paren
 suffix:semicolon
+DECL|variable|remote_debug
+r_static
+r_int
+id|remote_debug
+op_assign
+l_int|0
+suffix:semicolon
 macro_line|#endif
-macro_line|#if defined(CONFIG_SERIAL_CONSOLE) || defined(CONFIG_PROM_CONSOLE)
+macro_line|#if defined(CONFIG_SERIAL_CONSOLE) || defined(CONFIG_SGI_PROM_CONSOLE)
 r_extern
 r_void
 id|console_setup
@@ -67,13 +74,6 @@ c_func
 r_int
 r_char
 )paren
-suffix:semicolon
-DECL|variable|remote_debug
-r_static
-r_int
-id|remote_debug
-op_assign
-l_int|0
 suffix:semicolon
 DECL|macro|sgi_kh
 mdefine_line|#define sgi_kh ((struct hpc_keyb *) (KSEG1 + 0x1fbd9800 + 64))
@@ -421,7 +421,7 @@ macro_line|#ifdef CONFIG_SERIAL_CONSOLE
 multiline_comment|/* ARCS console environment variable is set to &quot;g?&quot; for&n;&t; * graphics console, it is set to &quot;d&quot; for the first serial&n;&t; * line and &quot;d2&quot; for the second serial line.&n;&t; */
 id|ctype
 op_assign
-id|prom_getenv
+id|ArcGetEnvironmentVariable
 c_func
 (paren
 l_string|&quot;console&quot;
@@ -580,8 +580,6 @@ id|console_setup
 c_func
 (paren
 l_string|&quot;ttyS0&quot;
-comma
-l_int|NULL
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -591,7 +589,7 @@ c_func
 id|simple_strtoul
 c_func
 (paren
-id|prom_getenv
+id|ArcGetEnvironmentVariable
 c_func
 (paren
 l_string|&quot;volume&quot;
@@ -683,4 +681,11 @@ c_func
 suffix:semicolon
 macro_line|#endif
 )brace
+DECL|variable|rs_init
+id|__initcall
+c_func
+(paren
+id|rs_init
+)paren
+suffix:semicolon
 eof

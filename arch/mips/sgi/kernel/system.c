@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * system.c: Probe the system type using ARCS prom interface library.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; *&n; * $Id: system.c,v 1.9 1999/10/21 00:23:05 ralf Exp $&n; */
+multiline_comment|/*&n; * system.c: Probe the system type using ARCS prom interface library.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; *&n; * $Id: system.c,v 1.8 1999/10/09 00:00:59 ralf Exp $&n; */
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/types.h&gt;

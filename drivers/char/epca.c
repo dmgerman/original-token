@@ -13320,14 +13320,14 @@ op_minus
 id|ENODEV
 suffix:semicolon
 )brace
-DECL|variable|__initdata
+DECL|variable|__devinitdata
 r_static
 r_struct
 id|pci_device_id
 id|epca_pci_tbl
 (braket
 )braket
-id|__initdata
+id|__devinitdata
 op_assign
 (brace
 (brace
@@ -13398,9 +13398,15 @@ comma
 l_int|0
 comma
 )brace
-comma
-multiline_comment|/* terminate list */
 )brace
+suffix:semicolon
+id|MODULE_DEVICE_TABLE
+c_func
+(paren
+id|pci
+comma
+id|epca_pci_tbl
+)paren
 suffix:semicolon
 DECL|function|init_PCI
 r_int

@@ -47,13 +47,14 @@ l_string|&quot;EMU10K1&quot;
 comma
 )brace
 suffix:semicolon
-DECL|variable|emu10k1_pci_tbl
+DECL|variable|__devinitdata
 r_static
 r_struct
 id|pci_device_id
 id|emu10k1_pci_tbl
 (braket
 )braket
+id|__devinitdata
 op_assign
 (brace
 (brace

@@ -1,7 +1,7 @@
-multiline_comment|/*&n; * include/asm-mips/sigcontext.h&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1996, 1997 by Ralf Baechle&n; *&n; * $Id: sigcontext.h,v 1.5 1997/12/16 05:36:43 ralf Exp $&n; */
-macro_line|#ifndef __ASM_MIPS_SIGCONTEXT_H
-DECL|macro|__ASM_MIPS_SIGCONTEXT_H
-mdefine_line|#define __ASM_MIPS_SIGCONTEXT_H
+multiline_comment|/* $Id: sigcontext.h,v 1.5 1997/12/16 05:36:43 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1996, 1997, 2000 by Ralf Baechle&n; */
+macro_line|#ifndef _ASM_SIGCONTEXT_H
+DECL|macro|_ASM_SIGCONTEXT_H
+mdefine_line|#define _ASM_SIGCONTEXT_H
 multiline_comment|/*&n; * Keep this struct definition in sync with the sigcontext fragment&n; * in arch/mips/tools/offset.c&n; */
 DECL|struct|sigcontext
 r_struct
@@ -101,5 +101,5 @@ suffix:semicolon
 multiline_comment|/* kernel&squot;s sigset_t */
 )brace
 suffix:semicolon
-macro_line|#endif /* __ASM_MIPS_SIGCONTEXT_H */
+macro_line|#endif /* _ASM_SIGCONTEXT_H */
 eof

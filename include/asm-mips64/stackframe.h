@@ -1,9 +1,12 @@
-multiline_comment|/* $Id: stackframe.h,v 1.4 2000/02/24 03:24:38 ulfc Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1994, 1995, 1996, 1999 Ralf Baechle&n; * Copyright (C) 1994, 1995, 1996 Paul M. Antoine.&n; * Copyright (C) 1999 Silicon Graphics, Inc.&n; */
+multiline_comment|/* $Id: stackframe.h,v 1.3 1999/12/04 03:59:12 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1994, 1995, 1996, 1999 Ralf Baechle&n; * Copyright (C) 1994, 1995, 1996 Paul M. Antoine.&n; * Copyright (C) 1999 Silicon Graphics, Inc.&n; */
 macro_line|#ifndef _ASM_STACKFRAME_H
 DECL|macro|_ASM_STACKFRAME_H
 mdefine_line|#define _ASM_STACKFRAME_H
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/asm.h&gt;
 macro_line|#include &lt;asm/offset.h&gt;
+macro_line|#include &lt;asm/processor.h&gt;
+macro_line|#include &lt;asm/addrspace.h&gt;
 macro_line|#ifdef _LANGUAGE_C
 DECL|macro|__str2
 mdefine_line|#define __str2(x) #x
@@ -261,6 +264,7 @@ dot
 id|set
 id|reorder
 multiline_comment|/* Called from user mode, new stack. */
+macro_line|#ifndef CONFIG_SMP
 id|lui
 id|k1
 comma
@@ -282,6 +286,60 @@ id|kernelsp
 (paren
 id|k1
 )paren
+macro_line|#else
+id|mfc0
+id|k0
+comma
+id|CP0_WATCHLO
+id|mfc0
+id|k1
+comma
+id|CP0_WATCHHI
+id|dsll32
+id|k0
+comma
+id|k0
+comma
+l_int|0
+multiline_comment|/* Get rid of sign extension */
+id|dsrl32
+id|k0
+comma
+id|k0
+comma
+l_int|0
+multiline_comment|/* Get rid of sign extension */
+id|dsll32
+id|k1
+comma
+id|k1
+comma
+l_int|0
+op_logical_or
+id|k1
+comma
+id|k1
+comma
+id|k0
+id|li
+id|k0
+comma
+id|K0BASE
+op_logical_or
+id|k1
+comma
+id|k1
+comma
+id|k0
+id|daddiu
+id|k1
+comma
+id|k1
+comma
+id|KERNEL_STACK_SIZE
+op_minus
+l_int|32
+macro_line|#endif
 l_int|8
 suffix:colon
 id|move

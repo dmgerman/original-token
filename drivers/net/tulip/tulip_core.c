@@ -783,8 +783,8 @@ id|MX98715
 comma
 (brace
 l_int|0
-)brace
 comma
+)brace
 )brace
 suffix:semicolon
 id|MODULE_DEVICE_TABLE

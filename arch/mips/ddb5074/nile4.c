@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  arch/mips/ddb5074/nile4.c -- NEC Vrc-5074 Nile 4 support routines&n; *&n; *  Copyright (C) 2000 Geert Uytterhoeven &lt;geert@sonycom.com&gt;&n; *                     Sony Suprastructure Center Europe (SUPC-E), Brussels&n; *&n; *  $Id: nile4.c,v 1.1 2000/01/26 00:07:44 ralf Exp $&n; */
+multiline_comment|/*&n; *  arch/mips/ddb5074/nile4.c -- NEC Vrc-5074 Nile 4 support routines&n; *&n; *  Copyright (C) 2000 Geert Uytterhoeven &lt;geert@sonycom.com&gt;&n; *                     Sony Software Development Center Europe (SDCE), Brussels&n; *&n; *  $Id$&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;asm/nile4.h&gt;

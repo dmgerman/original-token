@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * The real floating point exception handler.  While it doesn&squot;t really&n; * make sense to have this in a module, it makes debugging of this code&n; * in the kernel space a lot easier.  So far this handler in the released&n; * kernel source is just a dummy.&n; *&n; * Copyright (C) 1997 Ralf Baechle&n; *&n; * $Id: fpe.c,v 1.4 1999/05/01 22:40:35 ralf Exp $&n; */
+multiline_comment|/*&n; * The real floating point exception handler.  While it doesn&squot;t really&n; * make sense to have this in a module, it makes debugging of this code&n; * in the kernel space a lot easier.  So far this handler in the released&n; * kernel source is just a dummy.&n; *&n; * Copyright (C) 1997 Ralf Baechle&n; *&n; * $Id: fpe.c,v 1.3 1998/04/05 11:23:50 ralf Exp $&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;

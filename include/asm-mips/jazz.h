@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: jazz.h,v 1.10 1998/10/18 13:16:02 tsbogend Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1995 - 1998 by Andreas Busse and Ralf Baechle&n; */
+multiline_comment|/* $Id: jazz.h,v 1.9 1998/09/19 19:19:37 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1995 - 1998 by Andreas Busse and Ralf Baechle&n; */
 macro_line|#ifndef __ASM_MIPS_JAZZ_H 
 DECL|macro|__ASM_MIPS_JAZZ_H
 mdefine_line|#define __ASM_MIPS_JAZZ_H 

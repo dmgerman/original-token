@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: pci.c,v 1.10 2000/02/05 06:47:09 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * SNI specific PCI support for RM200/RM300.&n; *&n; * Copyright (C) 1997, 1998, 1999 Ralf Baechle&n; */
+multiline_comment|/* $Id: pci.c,v 1.9 1999/12/04 03:59:00 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * SNI specific PCI support for RM200/RM300.&n; *&n; * Copyright (C) 1997, 1998, 1999 Ralf Baechle&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;

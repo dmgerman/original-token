@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: socket.h,v 1.1 1999/08/18 23:37:52 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1997, 1999 Ralf Baechle&n; */
+multiline_comment|/* $Id: socket.h,v 1.2 2000/02/25 21:52:09 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1997, 1999 Ralf Baechle&n; */
 macro_line|#ifndef _ASM_SOCKET_H
 DECL|macro|_ASM_SOCKET_H
 mdefine_line|#define _ASM_SOCKET_H
@@ -69,6 +69,7 @@ DECL|macro|SO_ATTACH_FILTER
 mdefine_line|#define SO_ATTACH_FILTER        26
 DECL|macro|SO_DETACH_FILTER
 mdefine_line|#define SO_DETACH_FILTER        27
+macro_line|#ifdef __KERNEL__
 DECL|macro|SO_PEERNAME
 mdefine_line|#define SO_PEERNAME             28
 multiline_comment|/* Types of sockets.  */
@@ -84,5 +85,6 @@ DECL|macro|SOCK_SEQPACKET
 mdefine_line|#define SOCK_SEQPACKET 5&t;/* Sequenced, reliable, connection-based,&n;&t;&t;&t;&t;   datagrams of fixed maximum length.  */
 DECL|macro|SOCK_PACKET
 mdefine_line|#define SOCK_PACKET 10&t;&t;/* Linux specific way of getting packets at&n;&t;&t;&t;&t;   the dev level.  For writing rarp and&n;&t;&t;&t;&t;   other similar things on the user level.  */
+macro_line|#endif /* __KERNEL__ */
 macro_line|#endif /* _ASM_SOCKET_H */
 eof

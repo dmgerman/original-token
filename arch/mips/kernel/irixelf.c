@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: irixelf.c,v 1.24 2000/02/04 07:40:23 ralf Exp $&n; *&n; * irixelf.c: Code to load IRIX ELF executables which conform to&n; *            the MIPS ABI.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; *&n; * Based upon work which is:&n; * Copyright 1993, 1994: Eric Youngdale (ericy@cais.com).&n; */
+multiline_comment|/* $Id: irixelf.c,v 1.28 2000/03/23 02:25:42 ralf Exp $&n; *&n; * irixelf.c: Code to load IRIX ELF executables which conform to&n; *            the MIPS ABI.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; *&n; * Based upon work which is:&n; * Copyright 1993, 1994: Eric Youngdale (ericy@cais.com).&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
@@ -18,6 +18,7 @@ macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/shm.h&gt;
 macro_line|#include &lt;linux/personality.h&gt;
 macro_line|#include &lt;linux/elfcore.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/pgalloc.h&gt;
 macro_line|#include &lt;asm/mipsregs.h&gt;
@@ -1907,9 +1908,6 @@ r_int
 id|pnum
 )paren
 (brace
-id|mm_segment_t
-id|old_fs
-suffix:semicolon
 r_int
 id|i
 suffix:semicolon
@@ -1956,10 +1954,8 @@ id|epp-&gt;p_type
 op_ne
 id|PT_INTERP
 )paren
-(brace
 r_continue
 suffix:semicolon
-)brace
 multiline_comment|/* It is illegal to have two interpreters for one executable. */
 r_if
 c_cond
@@ -1969,11 +1965,9 @@ id|name
 op_ne
 l_int|NULL
 )paren
-(brace
 r_goto
 id|out
 suffix:semicolon
-)brace
 op_star
 id|name
 op_assign
@@ -2004,12 +1998,10 @@ op_logical_neg
 op_star
 id|name
 )paren
-(brace
 r_return
 op_minus
 id|ENOMEM
 suffix:semicolon
-)brace
 id|strcpy
 c_func
 (paren
@@ -2045,11 +2037,9 @@ id|retval
 OL
 l_int|0
 )paren
-(brace
 r_goto
 id|out
 suffix:semicolon
-)brace
 id|file
 op_assign
 id|open_exec
@@ -2102,23 +2092,19 @@ id|retval
 OL
 l_int|0
 )paren
-(brace
 r_goto
 id|dput_and_out
 suffix:semicolon
-)brace
 op_star
 id|interp_elf_ex
 op_assign
 op_star
-(paren
 (paren
 r_struct
 id|elfhdr
 op_star
 )paren
 id|bprm-&gt;buf
-)paren
 suffix:semicolon
 )brace
 op_star
@@ -2632,12 +2618,10 @@ id|eentry
 op_eq
 l_int|0xffffffff
 )paren
-(brace
 r_return
 op_minus
 l_int|1
 suffix:semicolon
-)brace
 )brace
 r_return
 l_int|0
@@ -3058,11 +3042,9 @@ c_cond
 (paren
 id|retval
 )paren
-(brace
 r_goto
 id|out_free_file
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -3906,12 +3888,10 @@ id|k
 OG
 id|elf_bss
 )paren
-(brace
 id|elf_bss
 op_assign
 id|k
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren

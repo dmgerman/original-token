@@ -2,6 +2,7 @@ multiline_comment|/* $Id: proc.c,v 1.1 1999/09/28 22:25:51 ralf Exp $&n; *&n; * 
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
+macro_line|#include &lt;linux/smp.h&gt;
 macro_line|#include &lt;asm/bootinfo.h&gt;
 macro_line|#include &lt;asm/mipsregs.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;
@@ -142,6 +143,20 @@ l_int|5000
 )paren
 op_mod
 l_int|100
+)paren
+suffix:semicolon
+id|len
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|buffer
+op_plus
+id|len
+comma
+l_string|&quot;Number of cpus&bslash;t&bslash;t: %d&bslash;n&quot;
+comma
+id|smp_num_cpus
 )paren
 suffix:semicolon
 macro_line|#if defined (__MIPSEB__)
@@ -312,5 +327,15 @@ suffix:semicolon
 r_return
 id|len
 suffix:semicolon
+)brace
+DECL|function|init_irq_proc
+r_void
+id|init_irq_proc
+c_func
+(paren
+r_void
+)paren
+(brace
+multiline_comment|/* Nothing, for now.  */
 )brace
 eof

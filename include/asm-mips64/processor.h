@@ -1,7 +1,8 @@
-multiline_comment|/* $Id: processor.h,v 1.10 2000/02/24 00:13:20 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1994 Waldorf GMBH&n; * Copyright (C) 1995, 1996, 1997, 1998, 1999 Ralf Baechle&n; * Modified further for R[236]000 compatibility by Paul M. Antoine&n; * Copyright (C) 1999 Silicon Graphics, Inc.&n; */
+multiline_comment|/* $Id: processor.h,v 1.11 2000/03/14 01:39:27 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1994 Waldorf GMBH&n; * Copyright (C) 1995, 1996, 1997, 1998, 1999 Ralf Baechle&n; * Modified further for R[236]000 compatibility by Paul M. Antoine&n; * Copyright (C) 1999 Silicon Graphics, Inc.&n; */
 macro_line|#ifndef _ASM_PROCESSOR_H
 DECL|macro|_ASM_PROCESSOR_H
 mdefine_line|#define _ASM_PROCESSOR_H
+macro_line|#include &lt;linux/config.h&gt;
 multiline_comment|/*&n; * Default implementation of macro that returns current&n; * instruction pointer (&quot;program counter&quot;).&n; */
 DECL|macro|current_text_addr
 mdefine_line|#define current_text_addr() ({ __label__ _l; _l: &amp;&amp;_l;})
@@ -11,9 +12,13 @@ macro_line|#include &lt;asm/cachectl.h&gt;
 macro_line|#include &lt;asm/mipsregs.h&gt;
 macro_line|#include &lt;asm/reg.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
-DECL|struct|mips_cpuinfo
+macro_line|#if (defined(CONFIG_SGI_IP27))
+macro_line|#include &lt;asm/sn/types.h&gt;
+macro_line|#include &lt;asm/sn/intr_public.h&gt;
+macro_line|#endif
+DECL|struct|cpuinfo_mips
 r_struct
-id|mips_cpuinfo
+id|cpuinfo_mips
 (brace
 DECL|member|udelay_val
 r_int
@@ -43,7 +48,59 @@ r_int
 r_int
 id|pgtable_cache_sz
 suffix:semicolon
+DECL|member|last_asn
+r_int
+r_int
+id|last_asn
+suffix:semicolon
+DECL|member|irq_count
+DECL|member|bh_count
+r_int
+r_int
+id|irq_count
+comma
+id|bh_count
+suffix:semicolon
+DECL|member|asid_cache
+r_int
+r_int
+id|asid_cache
+suffix:semicolon
+macro_line|#if defined(CONFIG_SGI_IP27)
+DECL|member|p_nodeid
+id|cnodeid_t
+id|p_nodeid
+suffix:semicolon
+multiline_comment|/* my node ID in compact-id-space */
+DECL|member|p_nasid
+id|nasid_t
+id|p_nasid
+suffix:semicolon
+multiline_comment|/* my node ID in numa-as-id-space */
+DECL|member|p_slice
+r_int
+r_char
+id|p_slice
+suffix:semicolon
+multiline_comment|/* Physical position on node board */
+DECL|member|p_intmasks
+id|hub_intmasks_t
+id|p_intmasks
+suffix:semicolon
+multiline_comment|/* SN0 per-CPU interrupt masks */
+macro_line|#endif
 )brace
+id|__attribute__
+c_func
+(paren
+(paren
+id|aligned
+c_func
+(paren
+l_int|128
+)paren
+)paren
+)paren
 suffix:semicolon
 multiline_comment|/*&n; * System setup and hardware flags..&n; * XXX: Should go into mips_cpuinfo.&n; */
 r_extern
@@ -72,32 +129,25 @@ id|mips4_available
 suffix:semicolon
 multiline_comment|/* CPU has MIPS IV ISA or better */
 r_extern
-r_struct
-id|mips_cpuinfo
-id|boot_cpu_data
-suffix:semicolon
-r_extern
 r_int
 r_int
 id|vced_count
 comma
 id|vcei_count
 suffix:semicolon
-macro_line|#ifdef CONFIG_SMP
 r_extern
 r_struct
-id|mips_cpuinfo
+id|cpuinfo_mips
 id|cpu_data
 (braket
 )braket
 suffix:semicolon
+macro_line|#ifdef CONFIG_SMP
 DECL|macro|current_cpu_data
 mdefine_line|#define current_cpu_data cpu_data[smp_processor_id()]
 macro_line|#else
-DECL|macro|cpu_data
-mdefine_line|#define cpu_data &amp;boot_cpu_data
 DECL|macro|current_cpu_data
-mdefine_line|#define current_cpu_data boot_cpu_data
+mdefine_line|#define current_cpu_data cpu_data[0]
 macro_line|#endif
 multiline_comment|/*&n; * Bus types (default is ISA, but people can check others with these..)&n; * MCA_bus hardcoded to 0 for now.&n; *&n; * This needs to be extended since MIPS systems are being delivered with&n; * numerous different types of bus systems.&n; */
 r_extern
@@ -120,6 +170,17 @@ id|task_struct
 op_star
 id|last_task_used_math
 suffix:semicolon
+macro_line|#ifndef CONFIG_SMP
+DECL|macro|IS_FPU_OWNER
+mdefine_line|#define IS_FPU_OWNER()&t;&t;(last_task_used_math == current)
+DECL|macro|CLEAR_FPU_OWNER
+mdefine_line|#define CLEAR_FPU_OWNER()&t;last_task_used_math = NULL;
+macro_line|#else
+DECL|macro|IS_FPU_OWNER
+mdefine_line|#define IS_FPU_OWNER()&t;&t;(current-&gt;flags &amp; PF_USEDFPU)
+DECL|macro|CLEAR_FPU_OWNER
+mdefine_line|#define CLEAR_FPU_OWNER()&t;current-&gt;flags &amp;= ~PF_USEDFPU;
+macro_line|#endif
 multiline_comment|/*&n; * User space process size: 1TB. This is hardcoded into a few places,&n; * so don&squot;t change it unless you know what you are doing.  TASK_SIZE&n; * is limited to 1TB by the R4000 architecture; R10000 and better can&n; * support 16TB.&n; */
 DECL|macro|TASK_SIZE32
 mdefine_line|#define TASK_SIZE32&t;   0x80000000UL
@@ -413,7 +474,7 @@ DECL|macro|user_mode
 mdefine_line|#define user_mode(regs)&t;_user_mode(regs)
 multiline_comment|/*&n; * Do necessary setup to start up a newly executed thread.&n; */
 DECL|macro|start_thread
-mdefine_line|#define start_thread(regs, new_pc, new_sp) do {&t;&t;&t;&t;&bslash;&n;&t;/* New thread looses kernel privileges. */&t;&t;&t;&bslash;&n;&t;regs-&gt;cp0_status = (regs-&gt;cp0_status &amp; ~(ST0_CU0|ST0_KSU)) | KSU_USER;&bslash;&n;&t;regs-&gt;cp0_epc = new_pc;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;regs-&gt;regs[29] = new_sp;&t;&t;&t;&t;&t;&bslash;&n;&t;current-&gt;thread.current_ds = USER_DS;&t;&t;&t;&t;&bslash;&n;} while (0)
+mdefine_line|#define start_thread(regs, pc, sp) &t;&t;&t;&t;&t;&bslash;&n;do {&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;unsigned long __status;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;/* New thread looses kernel privileges. */&t;&t;&t;&bslash;&n;&t;__status = regs-&gt;cp0_status &amp; ~(ST0_CU0|ST0_FR|ST0_KSU);&t;&bslash;&n;&t;__status |= KSU_USER;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;__status |= (current-&gt;thread.mflags &amp; MF_32BIT) ? 0 : ST0_FR;&t;&bslash;&n;&t;regs-&gt;cp0_status = __status;&t;&t;&t;&t;&t;&bslash;&n;&t;regs-&gt;cp0_epc = pc;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;regs-&gt;regs[29] = sp;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;current-&gt;thread.current_ds = USER_DS;&t;&t;&t;&t;&bslash;&n;} while(0)
 r_int
 r_int
 id|get_wchan

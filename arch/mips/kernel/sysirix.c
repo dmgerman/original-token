@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sysirix.c,v 1.24 2000/02/05 06:47:08 ralf Exp $&n; *&n; * sysirix.c: IRIX system call emulation.&n; *&n; * Copyright (C) 1996 David S. Miller&n; * Copyright (C) 1997 Miguel de Icaza&n; * Copyright (C) 1997, 1998 Ralf Baechle&n; */
+multiline_comment|/* $Id: sysirix.c,v 1.26 2000/03/12 23:15:33 ralf Exp $&n; *&n; * sysirix.c: IRIX system call emulation.&n; *&n; * Copyright (C) 1996 David S. Miller&n; * Copyright (C) 1997 Miguel de Icaza&n; * Copyright (C) 1997, 1998 Ralf Baechle&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/pagemap.h&gt;
@@ -3621,11 +3621,6 @@ r_char
 op_star
 id|filename
 suffix:semicolon
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -3722,11 +3717,6 @@ id|filename
 suffix:semicolon
 id|out
 suffix:colon
-id|unlock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 r_return
 id|error
 suffix:semicolon
@@ -6929,11 +6919,9 @@ c_cond
 (paren
 id|error
 )paren
-(brace
 r_goto
 id|out
 suffix:semicolon
-)brace
 id|error
 op_assign
 id|user_path_walk
@@ -6948,7 +6936,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|err
+id|error
 )paren
 r_goto
 id|out

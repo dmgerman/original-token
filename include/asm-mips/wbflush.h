@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * Header file for using the wbflush routine&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (c) 1998 Harald Koerfgen&n; *&n; * $Id: wbflush.h,v 1.3 1999/10/07 07:27:43 raiko Exp $&n; */
+multiline_comment|/*&n; * Header file for using the wbflush routine&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (c) 1998 Harald Koerfgen&n; *&n; * $Id: wbflush.h,v 1.2 1999/08/13 17:07:28 harald Exp $&n; */
 macro_line|#ifndef __ASM_MIPS_WBFLUSH_H
 DECL|macro|__ASM_MIPS_WBFLUSH_H
 mdefine_line|#define __ASM_MIPS_WBFLUSH_H

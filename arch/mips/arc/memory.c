@@ -12,10 +12,6 @@ macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/bootinfo.h&gt;
 DECL|macro|DEBUG
 macro_line|#undef DEBUG
-r_extern
-r_char
-id|_end
-suffix:semicolon
 r_struct
 id|linux_mdesc
 op_star
@@ -439,6 +435,10 @@ suffix:semicolon
 r_int
 r_int
 id|bootmap_size
+comma
+id|kbegin
+comma
+id|kend
 suffix:semicolon
 r_struct
 id|linux_mdesc
@@ -761,6 +761,7 @@ c_func
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* Reserve the memory bootmap itself */
 id|reserve_bootmem
 c_func
 (paren

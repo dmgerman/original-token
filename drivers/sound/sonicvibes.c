@@ -15133,15 +15133,6 @@ comma
 (brace
 l_int|0
 comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
 )brace
 )brace
 suffix:semicolon

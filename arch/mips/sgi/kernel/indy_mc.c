@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * indy_mc.c: Routines for manipulating the INDY memory controller.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; * Copyright (C) 1999 Andrew R. Baker (andrewb@uab.edu) - Indigo2 changes&n; *&n; * $Id: indy_mc.c,v 1.8 1999/12/06 23:13:20 ralf Exp $&n; */
+multiline_comment|/*&n; * indy_mc.c: Routines for manipulating the INDY memory controller.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; * Copyright (C) 1999 Andrew R. Baker (andrewb@uab.edu) - Indigo2 changes&n; *&n; * $Id: indy_mc.c,v 1.7 1999/12/04 03:59:00 ralf Exp $&n; */
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;asm/addrspace.h&gt;

@@ -40,6 +40,13 @@ id|dec_interrupt
 id|NR_INTS
 )braket
 suffix:semicolon
+DECL|variable|irq_stat
+id|irq_cpustat_t
+id|irq_stat
+(braket
+id|NR_CPUS
+)braket
+suffix:semicolon
 DECL|variable|local_bh_count
 r_int
 r_int

@@ -13,6 +13,7 @@ macro_line|#include &lt;asm/floppy.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;asm/pgalloc.h&gt;
+macro_line|#include &lt;asm/semaphore.h&gt;
 macro_line|#include &lt;asm/softirq.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 r_extern
@@ -208,20 +209,6 @@ c_func
 id|_clear_page
 )paren
 suffix:semicolon
-DECL|variable|local_bh_count
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|local_bh_count
-)paren
-suffix:semicolon
-DECL|variable|local_irq_count
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|local_irq_count
-)paren
-suffix:semicolon
 DECL|variable|enable_irq
 id|EXPORT_SYMBOL
 c_func
@@ -323,6 +310,7 @@ c_func
 id|_flush_cache_all
 )paren
 suffix:semicolon
+macro_line|#ifndef CONFIG_COHERENT_IO
 DECL|variable|_dma_cache_wback_inv
 id|EXPORT_SYMBOL
 c_func
@@ -337,11 +325,34 @@ c_func
 id|_dma_cache_inv
 )paren
 suffix:semicolon
+macro_line|#endif
 DECL|variable|invalid_pte_table
 id|EXPORT_SYMBOL
 c_func
 (paren
 id|invalid_pte_table
+)paren
+suffix:semicolon
+multiline_comment|/*&n; * Semaphore stuff&n; */
+DECL|variable|__down_read
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|__down_read
+)paren
+suffix:semicolon
+DECL|variable|__down_write
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|__down_write
+)paren
+suffix:semicolon
+DECL|variable|__rwsem_wake
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|__rwsem_wake
 )paren
 suffix:semicolon
 multiline_comment|/*&n; * Base address of ports for Intel style I/O.&n; */

@@ -97,7 +97,7 @@ mdefine_line|#define TASK_PRIORITY      36
 DECL|macro|TASK_MM
 mdefine_line|#define TASK_MM            44
 DECL|macro|TASK_STRUCT_SIZE
-mdefine_line|#define TASK_STRUCT_SIZE   904
+mdefine_line|#define TASK_STRUCT_SIZE   880
 multiline_comment|/* MIPS specific thread_struct offsets. */
 DECL|macro|THREAD_REG16
 mdefine_line|#define THREAD_REG16   584
@@ -147,7 +147,7 @@ mdefine_line|#define MM_USERS      16
 DECL|macro|MM_PGD
 mdefine_line|#define MM_PGD        12
 DECL|macro|MM_CONTEXT
-mdefine_line|#define MM_CONTEXT    64
+mdefine_line|#define MM_CONTEXT    68
 multiline_comment|/* Linux sigcontext offsets. */
 DECL|macro|SC_REGS
 mdefine_line|#define SC_REGS       16

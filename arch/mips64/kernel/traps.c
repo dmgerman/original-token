@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: traps.c,v 1.5 2000/02/24 00:12:41 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1994 - 1999 by Ralf Baechle&n; * Copyright (C) 1995, 1996 Paul M. Antoine&n; * Copyright (C) 1998 Ulf Carlsson&n; * Copyright (C) 1999 Silicon Graphics, Inc.&n; */
+multiline_comment|/* $Id: traps.c,v 1.4 2000/01/20 23:50:27 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1994 - 1999 by Ralf Baechle&n; * Copyright (C) 1995, 1996 Paul M. Antoine&n; * Copyright (C) 1998 Ulf Carlsson&n; * Copyright (C) 1999 Silicon Graphics, Inc.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -1353,7 +1353,12 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;[%s:%ld] Illegal instruction at %08lx ra=%08lx&bslash;n&quot;
+l_string|&quot;Cpu%d[%s:%ld] Illegal instruction at %08lx ra=%08lx&bslash;n&quot;
+comma
+id|smp_processor_id
+c_func
+(paren
+)paren
 comma
 id|current-&gt;comm
 comma
@@ -1430,6 +1435,7 @@ id|regs-&gt;cp0_status
 op_or_assign
 id|ST0_CU1
 suffix:semicolon
+macro_line|#ifndef CONFIG_SMP
 r_if
 c_cond
 (paren
@@ -1450,12 +1456,22 @@ id|lazy_fpu_switch
 c_func
 (paren
 id|last_task_used_math
+comma
+id|current
 )paren
 suffix:semicolon
 )brace
 r_else
 (brace
 multiline_comment|/* First time FPU user.  */
+id|lazy_fpu_switch
+c_func
+(paren
+id|last_task_used_math
+comma
+l_int|0
+)paren
+suffix:semicolon
 id|init_fpu
 c_func
 (paren
@@ -1470,6 +1486,39 @@ id|last_task_used_math
 op_assign
 id|current
 suffix:semicolon
+macro_line|#else
+r_if
+c_cond
+(paren
+id|current-&gt;used_math
+)paren
+(brace
+id|lazy_fpu_switch
+c_func
+(paren
+l_int|0
+comma
+id|current
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
+id|init_fpu
+c_func
+(paren
+)paren
+suffix:semicolon
+id|current-&gt;used_math
+op_assign
+l_int|1
+suffix:semicolon
+)brace
+id|current-&gt;flags
+op_or_assign
+id|PF_USEDFPU
+suffix:semicolon
+macro_line|#endif
 r_return
 suffix:semicolon
 id|bad_cid
@@ -1787,10 +1836,6 @@ id|ST0_XX
 )paren
 suffix:semicolon
 )brace
-id|mips4_available
-op_assign
-l_int|0
-suffix:semicolon
 )brace
 DECL|function|go_64
 r_static
@@ -2292,10 +2337,6 @@ id|current-&gt;active_mm
 op_assign
 op_amp
 id|init_mm
-suffix:semicolon
-id|current_pgd
-op_assign
-id|init_mm.pgd
 suffix:semicolon
 )brace
 eof

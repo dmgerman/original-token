@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: addrs.h,v 1.1 2000/01/13 00:17:02 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Derived from IRIX &lt;sys/SN/addrs.h&gt;.&n; *&n; * Copyright (C) 1992 - 1997, 1999 Silicon Graphics, Inc.&n; * Copyright (C) 1999 by Ralf Baechle&n; */
+multiline_comment|/* $Id$&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1992 - 1997, 1999 Silicon Graphics, Inc.&n; * Copyright (C) 1999 by Ralf Baechle&n; */
 macro_line|#ifndef _ASM_SN_ADDRS_H
 DECL|macro|_ASM_SN_ADDRS_H
 mdefine_line|#define _ASM_SN_ADDRS_H
@@ -8,11 +8,23 @@ macro_line|#endif /* _LANGUAGE_C */
 macro_line|#include &lt;asm/addrspace.h&gt;
 macro_line|#include &lt;asm/reg.h&gt;
 macro_line|#include &lt;asm/sn/kldir.h&gt;
+macro_line|#if defined(CONFIG_SGI_IP27)
+macro_line|#include &lt;asm/sn/sn0/addrs.h&gt;
+macro_line|#elif defined(CONFIG_SGI_IP35)
+macro_line|#include &lt;asm/sn/sn1/addrs.h&gt;
+macro_line|#endif
 macro_line|#if _LANGUAGE_C
+macro_line|#if defined(CONFIG_SGI_IO)&t;/* FIXME */
+DECL|macro|PS_UINT_CAST
+mdefine_line|#define PS_UINT_CAST&t;&t;(__psunsigned_t)
+DECL|macro|UINT64_CAST
+mdefine_line|#define UINT64_CAST&t;&t;(__uint64_t)
+macro_line|#else&t;/* CONFIG_SGI_IO */
 DECL|macro|PS_UINT_CAST
 mdefine_line|#define PS_UINT_CAST&t;&t;(unsigned long)
 DECL|macro|UINT64_CAST
 mdefine_line|#define UINT64_CAST&t;&t;(unsigned long)
+macro_line|#endif&t;/* CONFIG_SGI_IO */
 DECL|macro|HUBREG_CAST
 mdefine_line|#define HUBREG_CAST&t;&t;(volatile hubreg_t *)
 macro_line|#elif _LANGUAGE_ASSEMBLY
@@ -25,8 +37,10 @@ mdefine_line|#define HUBREG_CAST
 macro_line|#endif
 DECL|macro|NASID_GET_META
 mdefine_line|#define NASID_GET_META(_n)&t;((_n) &gt;&gt; NASID_LOCAL_BITS)
+macro_line|#ifdef CONFIG_SGI_IP27
 DECL|macro|NASID_GET_LOCAL
 mdefine_line|#define NASID_GET_LOCAL(_n)&t;((_n) &amp; 0xf)
+macro_line|#endif
 DECL|macro|NASID_MAKE
 mdefine_line|#define NASID_MAKE(_m, _l)&t;(((_m) &lt;&lt; NASID_LOCAL_BITS) | (_l))
 DECL|macro|NODE_ADDRSPACE_MASK
@@ -87,6 +101,7 @@ mdefine_line|#define UALIAS_SIZE&t;&t;0x10000000&t;/* 256 Megabytes */
 DECL|macro|UALIAS_LIMIT
 mdefine_line|#define UALIAS_LIMIT&t;&t;(UALIAS_BASE + UALIAS_SIZE)
 multiline_comment|/*&n; * The bottom of ualias space is flipped depending on whether you&squot;re&n; * processor 0 or 1 within a node.&n; */
+macro_line|#ifdef CONFIG_SGI_IP27
 DECL|macro|UALIAS_FLIP_BASE
 mdefine_line|#define UALIAS_FLIP_BASE&t;UALIAS_BASE
 DECL|macro|UALIAS_FLIP_SIZE
@@ -101,6 +116,9 @@ DECL|macro|LBOOT_SIZE
 mdefine_line|#define LBOOT_SIZE&t;&t;0x10000000
 DECL|macro|LBOOT_LIMIT
 mdefine_line|#define LBOOT_LIMIT&t;&t;(LBOOT_BASE + LBOOT_SIZE)
+DECL|macro|LBOOT_STRIDE
+mdefine_line|#define LBOOT_STRIDE&t;&t;0&t;&t;/* IP27 has only one CPU PROM */
+macro_line|#endif
 DECL|macro|HUB_REGISTER_WIDGET
 mdefine_line|#define&t;HUB_REGISTER_WIDGET&t;1
 DECL|macro|IALIAS_BASE
@@ -110,25 +128,34 @@ mdefine_line|#define IALIAS_SIZE&t;&t;0x800000&t;/* 8 Megabytes */
 DECL|macro|IS_IALIAS
 mdefine_line|#define IS_IALIAS(_a)&t;&t;(((_a) &gt;= IALIAS_BASE) &amp;&amp;&t;&t;&bslash;&n;&t;&t;&t;&t; ((_a) &lt; (IALIAS_BASE + IALIAS_SIZE)))
 multiline_comment|/*&n; * Macro for referring to Hub&squot;s RBOOT space&n; */
+macro_line|#ifdef CONFIG_SGI_IP27
 DECL|macro|RBOOT_SIZE
 mdefine_line|#define RBOOT_SIZE&t;&t;0x10000000&t;/* 256 Megabytes */
 DECL|macro|NODE_RBOOT_BASE
 mdefine_line|#define NODE_RBOOT_BASE(_n)&t;(NODE_HSPEC_BASE(_n) + 0x30000000)
 DECL|macro|NODE_RBOOT_LIMIT
 mdefine_line|#define NODE_RBOOT_LIMIT(_n)&t;(NODE_RBOOT_BASE(_n) + RBOOT_SIZE)
-multiline_comment|/*&n; * Macros for referring the Hub&squot;s back door space&n; *&n; *   These macros correctly process addresses in any node&squot;s space.&n; *   WARNING: They won&squot;t work in assembler.&n; *&n; *   BDDIR_ENTRY_LO returns the address of the low double-word of the dir&n; *                  entry corresponding to a physical (Cac or Uncac) address.&n; *   BDDIR_ENTRY_HI returns the address of the high double-word of the entry.&n; *   BDPRT_ENTRY    returns the address of the double-word protection entry&n; *                  corresponding to the page containing the physical address.&n; *   BDECC_ENTRY    returns the address of the ECC byte corresponding to a&n; *                  double-word at a specified physical address.&n; */
+macro_line|#endif
+multiline_comment|/*&n; * Macros for referring the Hub&squot;s back door space&n; *&n; *   These macros correctly process addresses in any node&squot;s space.&n; *   WARNING: They won&squot;t work in assembler.&n; *&n; *   BDDIR_ENTRY_LO returns the address of the low double-word of the dir&n; *                  entry corresponding to a physical (Cac or Uncac) address.&n; *   BDDIR_ENTRY_HI returns the address of the high double-word of the entry.&n; *   BDPRT_ENTRY    returns the address of the double-word protection entry&n; *                  corresponding to the page containing the physical address.&n; *   BDPRT_ENTRY_S  Stores the value into the protection entry.&n; *   BDPRT_ENTRY_L  Load the value from the protection entry.&n; *   BDECC_ENTRY    returns the address of the ECC byte corresponding to a&n; *                  double-word at a specified physical address.&n; *   BDECC_ENTRY_H  returns the address of the two ECC bytes corresponding to a&n; *                  quad-word at a specified physical address.&n; */
 DECL|macro|NODE_BDOOR_BASE
 mdefine_line|#define NODE_BDOOR_BASE(_n)&t;(NODE_HSPEC_BASE(_n) + (NODE_ADDRSPACE_SIZE/2))
 DECL|macro|NODE_BDECC_BASE
 mdefine_line|#define NODE_BDECC_BASE(_n)&t;(NODE_BDOOR_BASE(_n))
 DECL|macro|NODE_BDDIR_BASE
 mdefine_line|#define NODE_BDDIR_BASE(_n)&t;(NODE_BDOOR_BASE(_n) + (NODE_ADDRSPACE_SIZE/4))
+macro_line|#ifdef CONFIG_SGI_IP27
 DECL|macro|BDDIR_ENTRY_LO
 mdefine_line|#define BDDIR_ENTRY_LO(_pa)&t;((HSPEC_BASE +&t;&t;&t;&t;      &bslash;&n;&t;&t;&t;&t;  NODE_ADDRSPACE_SIZE * 3 / 4 +&t;&t;      &bslash;&n;&t;&t;&t;&t;  0x200)&t;&t;&t;&t;    | &bslash;&n;&t;&t;&t;&t; UINT64_CAST (_pa)&t; &amp; NASID_MASK&t;    | &bslash;&n;&t;&t;&t;&t; UINT64_CAST (_pa) &gt;&gt; 2 &amp; BDDIR_UPPER_MASK  | &bslash;&n;&t;&t;&t;&t; UINT64_CAST (_pa) &gt;&gt; 3 &amp; 0x1f &lt;&lt; 4)
 DECL|macro|BDDIR_ENTRY_HI
 mdefine_line|#define BDDIR_ENTRY_HI(_pa)&t;((HSPEC_BASE +&t;&t;&t;&t;      &bslash;&n;&t;&t;&t;&t;  NODE_ADDRSPACE_SIZE * 3 / 4 +&t;&t;      &bslash;&n;&t;&t;&t;&t;  0x208)&t;&t;&t;&t;    | &bslash;&n;&t;&t;&t;&t; UINT64_CAST (_pa)&t; &amp; NASID_MASK&t;    | &bslash;&n;&t;&t;&t;&t; UINT64_CAST (_pa) &gt;&gt; 2 &amp; BDDIR_UPPER_MASK  | &bslash;&n;&t;&t;&t;&t; UINT64_CAST (_pa) &gt;&gt; 3 &amp; 0x1f &lt;&lt; 4)
 DECL|macro|BDPRT_ENTRY
 mdefine_line|#define BDPRT_ENTRY(_pa, _rgn)&t;((HSPEC_BASE +&t;&t;&t;&t;      &bslash;&n;&t;&t;&t;&t;  NODE_ADDRSPACE_SIZE * 3 / 4)&t;&t;    | &bslash;&n;&t;&t;&t;&t; UINT64_CAST (_pa)&t; &amp; NASID_MASK&t;    | &bslash;&n;&t;&t;&t;&t; UINT64_CAST (_pa) &gt;&gt; 2 &amp; BDDIR_UPPER_MASK  | &bslash;&n;&t;&t;&t;&t; (_rgn) &lt;&lt; 3)
+DECL|macro|BDPRT_ENTRY_ADDR
+mdefine_line|#define BDPRT_ENTRY_ADDR(_pa,_rgn) (BDPRT_ENTRY((_pa),(_rgn)))
+DECL|macro|BDPRT_ENTRY_S
+mdefine_line|#define BDPRT_ENTRY_S(_pa,_rgn,_val) (*(__psunsigned_t *)BDPRT_ENTRY((_pa),(_rgn))=(_val))
+DECL|macro|BDPRT_ENTRY_L
+mdefine_line|#define BDPRT_ENTRY_L(_pa,_rgn)&t;(*(__psunsigned_t *)BDPRT_ENTRY((_pa),(_rgn)))
 DECL|macro|BDECC_ENTRY
 mdefine_line|#define BDECC_ENTRY(_pa)&t;((HSPEC_BASE +&t;&t;&t;&t;      &bslash;&n;&t;&t;&t;&t;  NODE_ADDRSPACE_SIZE / 2)&t;&t;    | &bslash;&n;&t;&t;&t;&t; UINT64_CAST (_pa)&t; &amp; NASID_MASK&t;    | &bslash;&n;&t;&t;&t;&t; UINT64_CAST (_pa) &gt;&gt; 2 &amp; BDECC_UPPER_MASK  | &bslash;&n;&t;&t;&t;&t; UINT64_CAST (_pa) &gt;&gt; 3 &amp; 3)
 multiline_comment|/*&n; * Macro to convert a back door directory or protection address into the&n; *   raw physical address of the associated cache line or protection page.&n; */
@@ -142,6 +169,7 @@ DECL|macro|BDPRT_TO_MEM
 mdefine_line|#define BDPRT_TO_MEM(_ba) &t;(UINT64_CAST  (_ba) &amp; NASID_MASK&t;    | &bslash;&n;&t;&t;&t;&t; (UINT64_CAST (_ba) &amp; BDDIR_UPPER_MASK)&lt;&lt;2)
 DECL|macro|BDECC_TO_MEM
 mdefine_line|#define BDECC_TO_MEM(_ba)&t;(UINT64_CAST  (_ba) &amp; NASID_MASK&t;    | &bslash;&n;&t;&t;&t;&t; (UINT64_CAST (_ba) &amp; BDECC_UPPER_MASK)&lt;&lt;2  | &bslash;&n;&t;&t;&t;&t; (UINT64_CAST (_ba) &amp; 3) &lt;&lt; 3)
+macro_line|#endif /* CONFIG_SGI_IP27 */
 multiline_comment|/*&n; * The following macros produce the correct base virtual address for&n; * the hub registers.  The LOCAL_HUB_* macros produce the appropriate&n; * address for the local registers.  The REMOTE_HUB_* macro produce&n; * the address for the specified hub&squot;s registers.  The intent is&n; * that the appropriate PI, MD, NI, or II register would be substituted&n; * for _x.&n; */
 macro_line|#ifdef _STANDALONE
 multiline_comment|/* DO NOT USE THESE DIRECTLY IN THE KERNEL. SEE BELOW. */
@@ -155,6 +183,10 @@ DECL|macro|LOCAL_HUB_ADDR
 mdefine_line|#define LOCAL_HUB_ADDR(_x)&t;(HUBREG_CAST (IALIAS_BASE + (_x)))
 DECL|macro|REMOTE_HUB_ADDR
 mdefine_line|#define REMOTE_HUB_ADDR(_n, _x)&t;(HUBREG_CAST (NODE_SWIN_BASE(_n, 1) +&t;&bslash;&n;&t;&t;&t;&t;&t;      0x800000 + (_x)))
+macro_line|#ifdef CONFIG_SGI_IP27
+DECL|macro|REMOTE_HUB_PI_ADDR
+mdefine_line|#define REMOTE_HUB_PI_ADDR(_n, _sn, _x)&t;(HUBREG_CAST (NODE_SWIN_BASE(_n, 1) +&t;&bslash;&n;&t;&t;&t;&t;&t;      0x800000 + (_x)))
+macro_line|#endif /* CONFIG_SGI_IP27 */
 macro_line|#if _LANGUAGE_C
 DECL|macro|HUB_L
 mdefine_line|#define HUB_L(_a)&t;&t;&t;*(_a)
@@ -168,6 +200,10 @@ DECL|macro|REMOTE_HUB_L
 mdefine_line|#define REMOTE_HUB_L(_n, _r)&t;&t;HUB_L(REMOTE_HUB_ADDR((_n), (_r)))
 DECL|macro|REMOTE_HUB_S
 mdefine_line|#define REMOTE_HUB_S(_n, _r, _d)&t;HUB_S(REMOTE_HUB_ADDR((_n), (_r)), (_d))
+DECL|macro|REMOTE_HUB_PI_L
+mdefine_line|#define REMOTE_HUB_PI_L(_n, _sn, _r)&t;HUB_L(REMOTE_HUB_PI_ADDR((_n), (_sn), (_r)))
+DECL|macro|REMOTE_HUB_PI_S
+mdefine_line|#define REMOTE_HUB_PI_S(_n, _sn, _r, _d) HUB_S(REMOTE_HUB_PI_ADDR((_n), (_sn), (_r)), (_d))
 macro_line|#endif /* _LANGUAGE_C */
 multiline_comment|/*&n; * The following macros are used to get to a hub/bridge register, given&n; * the base of the register space.&n; */
 DECL|macro|HUB_REG_PTR
@@ -293,13 +329,8 @@ mdefine_line|#define SYMMON_STK_SIZE(nasid)&t;KLD_SYMMON_STK(nasid)-&gt;stride
 DECL|macro|SYMMON_STK_END
 mdefine_line|#define SYMMON_STK_END(nasid)&t;(SYMMON_STK_ADDR(nasid, 0) + KLD_SYMMON_STK(nasid)-&gt;size)
 multiline_comment|/* loading symmon 4k below UNIX. the arcs loader needs the topaddr for a&n; * relocatable program&n; */
-macro_line|#ifdef SN0XXL
-DECL|macro|UNIX_DEBUG_LOADADDR
-mdefine_line|#define UNIX_DEBUG_LOADADDR     0x360000
-macro_line|#else
 DECL|macro|UNIX_DEBUG_LOADADDR
 mdefine_line|#define&t;UNIX_DEBUG_LOADADDR&t;0x300000
-macro_line|#endif
 DECL|macro|SYMMON_LOADADDR
 mdefine_line|#define&t;SYMMON_LOADADDR(nasid)&t;&t;&t;&t;&t;&t;&bslash;&n;&t;TO_NODE(nasid, PHYS_TO_K0(UNIX_DEBUG_LOADADDR - 0x1000))
 DECL|macro|FREEMEM_OFFSET
@@ -329,8 +360,8 @@ DECL|macro|KERN_XP_ADDR
 mdefine_line|#define&t;KERN_XP_ADDR(nasid)&t;KLD_KERN_XP(nasid)-&gt;pointer
 DECL|macro|KERN_XP_SIZE
 mdefine_line|#define&t;KERN_XP_SIZE(nasid)&t;KLD_KERN_XP(nasid)-&gt;size
+DECL|macro|GPDA_ADDR
+mdefine_line|#define GPDA_ADDR(nasid)&t;TO_NODE_CAC(nasid, GPDA_OFFSET)
 macro_line|#endif /* _LANGUAGE_C */
-multiline_comment|/* Fixme for SN1 */
-macro_line|#include &lt;asm/sn/sn0/addrs.h&gt;
 macro_line|#endif /* _ASM_SN_ADDRS_H */
 eof

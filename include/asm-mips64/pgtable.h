@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: pgtable.h,v 1.12 2000/02/24 00:13:20 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1994 - 1999 by Ralf Baechle at alii&n; * Copyright (C) 1999 Silicon Graphics, Inc.&n; */
+multiline_comment|/* $Id: pgtable.h,v 1.14 2000/03/02 02:37:13 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1994 - 1999 by Ralf Baechle at alii&n; * Copyright (C) 1999 Silicon Graphics, Inc.&n; */
 macro_line|#ifndef _ASM_PGTABLE_H
 DECL|macro|_ASM_PGTABLE_H
 mdefine_line|#define _ASM_PGTABLE_H
@@ -137,6 +137,8 @@ DECL|macro|PTRS_PER_PTE
 mdefine_line|#define PTRS_PER_PTE&t;512
 DECL|macro|USER_PTRS_PER_PGD
 mdefine_line|#define USER_PTRS_PER_PGD&t;(TASK_SIZE/PGDIR_SIZE)
+DECL|macro|FIRST_USER_PGD_NR
+mdefine_line|#define FIRST_USER_PGD_NR&t;0
 DECL|macro|VMALLOC_START
 mdefine_line|#define VMALLOC_START     XKSEG
 DECL|macro|VMALLOC_VMADDR
@@ -191,15 +193,15 @@ mdefine_line|#define __WRITEABLE&t;(_PAGE_WRITE | _PAGE_SILENT_WRITE | _PAGE_MOD
 DECL|macro|_PAGE_CHG_MASK
 mdefine_line|#define _PAGE_CHG_MASK  (PAGE_MASK | _PAGE_ACCESSED | _PAGE_MODIFIED | _CACHE_MASK)
 DECL|macro|PAGE_NONE
-mdefine_line|#define PAGE_NONE&t;__pgprot(_PAGE_PRESENT | _CACHE_CACHABLE_NONCOHERENT)
+mdefine_line|#define PAGE_NONE&t;__pgprot(_PAGE_PRESENT | _CACHE_CACHABLE_COW)
 DECL|macro|PAGE_SHARED
-mdefine_line|#define PAGE_SHARED     __pgprot(_PAGE_PRESENT | _PAGE_READ | _PAGE_WRITE | &bslash;&n;&t;&t;&t;_CACHE_CACHABLE_NONCOHERENT)
+mdefine_line|#define PAGE_SHARED     __pgprot(_PAGE_PRESENT | _PAGE_READ | _PAGE_WRITE | &bslash;&n;&t;&t;&t;_CACHE_CACHABLE_COW)
 DECL|macro|PAGE_COPY
-mdefine_line|#define PAGE_COPY       __pgprot(_PAGE_PRESENT | _PAGE_READ | &bslash;&n;&t;&t;&t;_CACHE_CACHABLE_NONCOHERENT)
+mdefine_line|#define PAGE_COPY       __pgprot(_PAGE_PRESENT | _PAGE_READ | &bslash;&n;&t;&t;&t;_CACHE_CACHABLE_COW)
 DECL|macro|PAGE_READONLY
-mdefine_line|#define PAGE_READONLY   __pgprot(_PAGE_PRESENT | _PAGE_READ | &bslash;&n;&t;&t;&t;_CACHE_CACHABLE_NONCOHERENT)
+mdefine_line|#define PAGE_READONLY   __pgprot(_PAGE_PRESENT | _PAGE_READ | &bslash;&n;&t;&t;&t;_CACHE_CACHABLE_COW)
 DECL|macro|PAGE_KERNEL
-mdefine_line|#define PAGE_KERNEL&t;__pgprot(_PAGE_PRESENT | __READABLE | __WRITEABLE | &bslash;&n;&t;&t;&t;_CACHE_CACHABLE_NONCOHERENT)
+mdefine_line|#define PAGE_KERNEL&t;__pgprot(_PAGE_PRESENT | __READABLE | __WRITEABLE | &bslash;&n;&t;&t;&t;_CACHE_CACHABLE_COW)
 DECL|macro|PAGE_USERIO
 mdefine_line|#define PAGE_USERIO     __pgprot(_PAGE_PRESENT | _PAGE_READ | _PAGE_WRITE | &bslash;&n;&t;&t;&t;_CACHE_UNCACHED)
 DECL|macro|PAGE_KERNEL_UNCACHED
@@ -305,6 +307,8 @@ r_extern
 id|pte_t
 id|invalid_pte_table
 (braket
+l_int|2
+op_star
 id|PAGE_SIZE
 op_div
 r_sizeof
@@ -1173,7 +1177,7 @@ DECL|macro|PAGE_TO_PA
 mdefine_line|#define PAGE_TO_PA(page)&t;((page - mem_map) &lt;&lt; PAGE_SHIFT)
 macro_line|#else
 DECL|macro|PAGE_TO_PA
-mdefine_line|#define PAGE_TO_PA(page) &bslash;&n;&t;&t;((((page)-(page)-&gt;zone-&gt;zone_pgdat-&gt;node_mem_map) &lt;&lt; PAGE_SHIFT) &bslash;&n;&t;&t;+ ((PAGE_TO_PLAT_NODE(page))-&gt;physstart))
+mdefine_line|#define PAGE_TO_PA(page) &bslash;&n;&t;&t;((((page)-(page)-&gt;zone-&gt;zone_mem_map) &lt;&lt; PAGE_SHIFT) &bslash;&n;&t;&t;+ ((page)-&gt;zone-&gt;zone_start_paddr))
 macro_line|#endif
 DECL|macro|mk_pte
 mdefine_line|#define mk_pte(page, pgprot)&t;&t;&t;&t;&t;&t;&bslash;&n;({&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;pte_t&t;__pte;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;pte_val(__pte) = ((unsigned long)(PAGE_TO_PA(page))) |&t;&t;&bslash;&n;&t;&t;&t;&t;&t;&t;pgprot_val(pgprot);&t;&bslash;&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;__pte;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;})
@@ -1407,6 +1411,14 @@ id|swapper_pg_dir
 (braket
 l_int|1024
 )braket
+suffix:semicolon
+r_extern
+r_void
+id|paging_init
+c_func
+(paren
+r_void
+)paren
 suffix:semicolon
 r_extern
 r_void

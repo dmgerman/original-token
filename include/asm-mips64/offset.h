@@ -96,8 +96,10 @@ DECL|macro|TASK_PRIORITY
 mdefine_line|#define TASK_PRIORITY      64
 DECL|macro|TASK_MM
 mdefine_line|#define TASK_MM            80
+DECL|macro|TASK_PROCESSOR
+mdefine_line|#define TASK_PROCESSOR     100
 DECL|macro|TASK_STRUCT_SIZE
-mdefine_line|#define TASK_STRUCT_SIZE   1480
+mdefine_line|#define TASK_STRUCT_SIZE   1432
 multiline_comment|/* MIPS specific thread_struct offsets. */
 DECL|macro|THREAD_REG16
 mdefine_line|#define THREAD_REG16   896

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: ioc3.h,v 1.2 2000/02/18 09:54:39 ulfc Exp $&n; *&n; * Copyright (C) 1999 Ralf Baechle&n; * This file is part of the Linux driver for the SGI IOC3.&n; */
+multiline_comment|/* $Id: ioc3.h,v 1.1 2000/01/13 00:17:02 ralf Exp $&n; *&n; * Copyright (C) 1999 Ralf Baechle&n; * This file is part of the Linux driver for the SGI IOC3.&n; */
 macro_line|#ifndef IOC3_H
 DECL|macro|IOC3_H
 mdefine_line|#define IOC3_H

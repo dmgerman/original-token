@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  arch.mips/ddb5074/time.c -- Timer routines&n; *&n; *  Copyright (C) 2000 Geert Uytterhoeven &lt;geert@sonycom.com&gt;&n; *                     Sony Suprastructure Center Europe (SUPC-E), Brussels&n; *&n; *  $Id*&n; */
+multiline_comment|/*&n; *  arch/mips/ddb5074/time.c -- Timer routines&n; *&n; *  Copyright (C) 2000 Geert Uytterhoeven &lt;geert@sonycom.com&gt;&n; *                     Sony Software Development Center Europe (SDCE), Brussels&n; *&n; *  $Id*&n; */
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/mc146818rtc.h&gt;
 DECL|function|ddb_rtc_read_data

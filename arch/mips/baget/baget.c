@@ -6,23 +6,8 @@ macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/bootinfo.h&gt;
 macro_line|#include &lt;asm/mipsregs.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
+macro_line|#include &lt;asm/pgalloc.h&gt;
 macro_line|#include &lt;asm/baget/baget.h&gt;
-multiline_comment|/* &n; * Following values are set by BALO into RAM disk buffer parameters&n; */
-DECL|variable|balo_ramdisk_base
-r_int
-r_int
-id|balo_ramdisk_base
-op_assign
-l_int|0xBA
-suffix:semicolon
-multiline_comment|/* Signature for BALO ! */
-DECL|variable|balo_ramdisk_size
-r_int
-r_int
-id|balo_ramdisk_size
-op_assign
-l_int|0
-suffix:semicolon
 multiline_comment|/*&n; *  Following code is based on routines from &squot;mm/vmalloc.c&squot;&n; *  Additional parameters  ioaddr  is needed to iterate across real I/O address.&n; */
 DECL|function|alloc_area_pte
 r_static

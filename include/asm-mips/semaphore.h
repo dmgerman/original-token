@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: semaphore.h,v 1.13 2000/02/18 00:24:48 ralf Exp $&n; *&n; * SMP- and interrupt-safe semaphores..&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * (C) Copyright 1996  Linus Torvalds&n; * (C) Copyright 1998, 1999, 2000  Ralf Baechle&n; * (C) Copyright 1999, 2000  Silicon Graphics, Inc.&n; */
+multiline_comment|/* $Id: semaphore.h,v 1.12 1999/12/08 22:05:10 harald Exp $&n; *&n; * SMP- and interrupt-safe semaphores..&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * (C) Copyright 1996  Linus Torvalds&n; * (C) Copyright 1998, 1999, 2000  Ralf Baechle&n; * (C) Copyright 1999, 2000  Silicon Graphics, Inc.&n; */
 macro_line|#ifndef _ASM_SEMAPHORE_H
 DECL|macro|_ASM_SEMAPHORE_H
 mdefine_line|#define _ASM_SEMAPHORE_H
@@ -39,6 +39,17 @@ id|__magic
 suffix:semicolon
 macro_line|#endif
 )brace
+id|__attribute__
+c_func
+(paren
+(paren
+id|aligned
+c_func
+(paren
+l_int|8
+)paren
+)paren
+)paren
 suffix:semicolon
 macro_line|#if WAITQUEUE_DEBUG
 DECL|macro|__SEM_DEBUG_INIT

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: bootinfo.h,v 1.10 2000/01/26 00:07:45 ralf Exp $&n; *&n; * bootinfo.h -- Definition of the Linux/MIPS boot information structure&n; *&n; * Copyright (C) 1995, 1996 by Ralf Baechle, Andreas Busse,&n; *                             Stoned Elipot and Paul M. Antoine.&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file COPYING in the main directory of this archive&n; * for more details.&n; */
+multiline_comment|/* $Id: bootinfo.h,v 1.11 2000/03/06 11:14:32 raiko Exp $&n; *&n; * bootinfo.h -- Definition of the Linux/MIPS boot information structure&n; *&n; * Copyright (C) 1995, 1996 by Ralf Baechle, Andreas Busse,&n; *                             Stoned Elipot and Paul M. Antoine.&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file COPYING in the main directory of this archive&n; * for more details.&n; */
 macro_line|#ifndef __ASM_MIPS_BOOTINFO_H
 DECL|macro|__ASM_MIPS_BOOTINFO_H
 mdefine_line|#define __ASM_MIPS_BOOTINFO_H
@@ -21,8 +21,10 @@ DECL|macro|MACH_GROUP_COBALT
 mdefine_line|#define MACH_GROUP_COBALT       7 /* Cobalt servers&t;&t; &t;      */
 DECL|macro|MACH_GROUP_NEC_DDB
 mdefine_line|#define MACH_GROUP_NEC_DDB&t;8 /* NEC DDB */
+DECL|macro|MACH_GROUP_BAGET
+mdefine_line|#define MACH_GROUP_BAGET&t;9 /* Baget */
 DECL|macro|GROUP_NAMES
-mdefine_line|#define GROUP_NAMES { &quot;unknown&quot;, &quot;Jazz&quot;, &quot;Digital&quot;, &quot;ARC&quot;, &bslash;&n;                      &quot;SNI&quot;, &quot;ACN&quot;, &quot;SGI&quot;, &quot;Cobalt&quot;, &quot;NEC DDB&quot; }
+mdefine_line|#define GROUP_NAMES { &quot;unknown&quot;, &quot;Jazz&quot;, &quot;Digital&quot;, &quot;ARC&quot;, &bslash;&n;                      &quot;SNI&quot;, &quot;ACN&quot;, &quot;SGI&quot;, &quot;Cobalt&quot;, &quot;NEC DDB&quot;, &quot;Baget&quot; }
 multiline_comment|/*&n; * Valid machtype values for group unknown (low order halfword of mips_machtype)&n; */
 DECL|macro|MACH_UNKNOWN
 mdefine_line|#define MACH_UNKNOWN&t;&t;0&t;/* whatever...&t;&t;&t;*/
@@ -92,6 +94,13 @@ DECL|macro|MACH_NEC_DDB5074
 mdefine_line|#define MACH_NEC_DDB5074&t; 0&t;/* NEC DDB Vrc-5074 */
 DECL|macro|GROUP_NEC_DDB_NAMES
 mdefine_line|#define GROUP_NEC_DDB_NAMES { &quot;Vrc-5074&quot; }
+multiline_comment|/*&n; * Valid machtype for group BAGET&n; */
+DECL|macro|MACH_BAGET201
+mdefine_line|#define MACH_BAGET201&t;&t;0&t;/* BT23-201 */
+DECL|macro|MACH_BAGET202
+mdefine_line|#define MACH_BAGET202&t;&t;1&t;/* BT23-202 */
+DECL|macro|GROUP_BAGET_NAMES
+mdefine_line|#define GROUP_BAGET_NAMES { &quot;BT23-201&quot;, &quot;BT23-202&quot; }
 multiline_comment|/*&n; * Valid cputype values&n; */
 DECL|macro|CPU_UNKNOWN
 mdefine_line|#define CPU_UNKNOWN&t;&t;0

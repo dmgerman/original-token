@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: mipsregs.h,v 1.2 2000/01/17 23:32:47 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1994, 1995, 1996, 1997, 1999 by Ralf Baechle&n; * Modified for further R[236]000 support by Paul M. Antoine, 1996.&n; * Copyright (C) 1999 Silicon Graphics, Inc.&n; */
+multiline_comment|/* $Id: mipsregs.h,v 1.1 1999/08/18 23:37:51 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1994, 1995, 1996, 1997, 1999 by Ralf Baechle&n; * Modified for further R[236]000 support by Paul M. Antoine, 1996.&n; * Copyright (C) 1999 Silicon Graphics, Inc.&n; */
 macro_line|#ifndef _ASM_MIPSREGS_H
 DECL|macro|_ASM_MIPSREGS_H
 mdefine_line|#define _ASM_MIPSREGS_H
@@ -242,6 +242,8 @@ DECL|macro|ST0_CH
 mdefine_line|#define ST0_CH&t;&t;&t;0x00040000
 DECL|macro|ST0_SR
 mdefine_line|#define ST0_SR&t;&t;&t;0x00100000
+DECL|macro|ST0_TS
+mdefine_line|#define ST0_TS&t;&t;&t;0x00200000
 DECL|macro|ST0_BEV
 mdefine_line|#define ST0_BEV&t;&t;&t;0x00400000
 DECL|macro|ST0_RE

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: bitops.h,v 1.4 1999/12/04 03:59:12 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (c) 1994 - 1999  Ralf Baechle (ralf@gnu.org)&n; * Copyright (c) 1999  Silicon Graphics, Inc.&n; */
+multiline_comment|/* $Id: bitops.h,v 1.3 1999/08/20 21:59:08 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (c) 1994 - 1999  Ralf Baechle (ralf@gnu.org)&n; * Copyright (c) 1999  Silicon Graphics, Inc.&n; */
 macro_line|#ifndef _ASM_BITOPS_H
 DECL|macro|_ASM_BITOPS_H
 mdefine_line|#define _ASM_BITOPS_H

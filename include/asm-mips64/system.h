@@ -2,6 +2,7 @@ multiline_comment|/* $Id: system.h,v 1.5 2000/01/27 07:48:08 kanoj Exp $&n; *&n;
 macro_line|#ifndef _ASM_SYSTEM_H
 DECL|macro|_ASM_SYSTEM_H
 mdefine_line|#define _ASM_SYSTEM_H
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/sgidefs.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 r_extern
@@ -121,17 +122,63 @@ l_string|&quot;memory&quot;
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Non-SMP versions ...&n; */
+macro_line|#ifdef CONFIG_SMP
+r_extern
+r_void
+id|__global_cli
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|__global_sti
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_int
+r_int
+id|__global_save_flags
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|__global_restore_flags
+c_func
+(paren
+r_int
+r_int
+)paren
+suffix:semicolon
+DECL|macro|cli
+mdefine_line|#define cli() __global_cli()
 DECL|macro|sti
-mdefine_line|#define sti() __sti()
+mdefine_line|#define sti() __global_sti()
+DECL|macro|save_flags
+mdefine_line|#define save_flags(x) ((x)=__global_save_flags())
+DECL|macro|restore_flags
+mdefine_line|#define restore_flags(x) __global_restore_flags(x)
+DECL|macro|save_and_cli
+mdefine_line|#define save_and_cli(x) do { save_flags(flags); cli(); } while(0)
+macro_line|#else
 DECL|macro|cli
 mdefine_line|#define cli() __cli()
+DECL|macro|sti
+mdefine_line|#define sti() __sti()
 DECL|macro|save_flags
 mdefine_line|#define save_flags(x) __save_flags(x)
-DECL|macro|save_and_cli
-mdefine_line|#define save_and_cli(x) __save_and_cli(x)
 DECL|macro|restore_flags
 mdefine_line|#define restore_flags(x) __restore_flags(x)
+DECL|macro|save_and_cli
+mdefine_line|#define save_and_cli(x) __save_and_cli(x)
+macro_line|#endif /* CONFIG_SMP */
 multiline_comment|/* For spinlocks etc */
 DECL|macro|local_irq_save
 mdefine_line|#define local_irq_save(x)&t;__save_and_cli(x);
@@ -175,8 +222,47 @@ suffix:semicolon
 macro_line|#endif /* !defined (_LANGUAGE_ASSEMBLY) */
 DECL|macro|prepare_to_switch
 mdefine_line|#define prepare_to_switch()&t;do { } while(0)
+r_extern
+id|asmlinkage
+r_void
+id|lazy_fpu_switch
+c_func
+(paren
+r_void
+op_star
+comma
+r_void
+op_star
+)paren
+suffix:semicolon
+r_extern
+id|asmlinkage
+r_void
+id|init_fpu
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+id|asmlinkage
+r_void
+id|save_fp
+c_func
+(paren
+r_void
+op_star
+)paren
+suffix:semicolon
+macro_line|#ifdef CONFIG_SMP
+DECL|macro|SWITCH_DO_LAZY_FPU
+mdefine_line|#define SWITCH_DO_LAZY_FPU &bslash;&n;&t;if (prev-&gt;flags &amp; PF_USEDFPU) { &bslash;&n;&t;&t;lazy_fpu_switch(prev, 0); &bslash;&n;&t;&t;set_cp0_status(ST0_CU1, ~ST0_CU1); &bslash;&n;&t;&t;prev-&gt;flags &amp;= ~PF_USEDFPU; &bslash;&n;&t;}
+macro_line|#else /* CONFIG_SMP */
+DECL|macro|SWITCH_DO_LAZY_FPU
+mdefine_line|#define SWITCH_DO_LAZY_FPU&t;do { } while(0)
+macro_line|#endif /* CONFIG_SMP */
 DECL|macro|switch_to
-mdefine_line|#define switch_to(prev,next,last) &bslash;&n;do { &bslash;&n;&t;(last) = resume(prev, next); &bslash;&n;} while(0)
+mdefine_line|#define switch_to(prev,next,last) &bslash;&n;do { &bslash;&n;&t;SWITCH_DO_LAZY_FPU; &bslash;&n;&t;(last) = resume(prev, next); &bslash;&n;} while(0)
 DECL|function|xchg_u32
 r_extern
 id|__inline__

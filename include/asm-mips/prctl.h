@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * IRIX prctl interface&n; *&n; * The IRIX kernel maps a page at PRDA_ADDRESS with the&n; * contents of prda and fills it the bits on prda_sys.&n; * $Id: prctl.h,v 1.1 1997/09/21 22:27:19 miguel Exp $&n; */
+multiline_comment|/*&n; * IRIX prctl interface&n; *&n; * The IRIX kernel maps a page at PRDA_ADDRESS with the&n; * contents of prda and fills it the bits on prda_sys.&n; * $Id$&n; */
 macro_line|#ifndef __PRCTL_H__
 DECL|macro|__PRCTL_H__
 mdefine_line|#define __PRCTL_H__

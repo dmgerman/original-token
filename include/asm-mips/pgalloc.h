@@ -1,7 +1,8 @@
-multiline_comment|/* $Id: pgalloc.h,v 1.4 2000/02/24 00:13:19 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1994 - 2000 by Ralf Baechle at alii&n; * Copyright (C) 1999, 2000 Silicon Graphics, Inc.&n; */
+multiline_comment|/* $Id: pgalloc.h,v 1.3 2000/02/23 00:41:38 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1994 - 2000 by Ralf Baechle at alii&n; * Copyright (C) 1999, 2000 Silicon Graphics, Inc.&n; */
 macro_line|#ifndef _ASM_PGALLOC_H
 DECL|macro|_ASM_PGALLOC_H
 mdefine_line|#define _ASM_PGALLOC_H
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 multiline_comment|/* TLB flushing:&n; *&n; *  - flush_tlb_all() flushes all processes TLB entries&n; *  - flush_tlb_mm(mm) flushes the specified mm context TLB entries&n; *  - flush_tlb_page(mm, vmaddr) flushes a single page&n; *  - flush_tlb_range(mm, start, end) flushes a range of pages&n; */
 r_extern

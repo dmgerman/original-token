@@ -1,7 +1,7 @@
-multiline_comment|/* $Id: sgint23.h,v 1.1 1999/10/21 00:23:05 ralf Exp $&n; *&n; * sgint23.h: Defines for the SGI INT2 and INT3 chipsets.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; * Copyright (C) 1999 Andrew R. Baker (andrewb@uab.edu) - INT2 corrections&n; */
-macro_line|#ifndef _ASM_SGINT23_H
-DECL|macro|_ASM_SGINT23_H
-mdefine_line|#define _ASM_SGINT23_H
+multiline_comment|/* $Id: sgint23.h,v 1.4 1999/09/28 21:02:12 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * sgint23.h: Defines for the SGI INT2 and INT3 chipsets.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; * Copyright (C) 1999 Andrew R. Baker (andrewb@uab.edu) - INT2 corrections&n; */
+macro_line|#ifndef _ASM_SGI_SGINT23_H
+DECL|macro|_ASM_SGI_SGINT23_H
+mdefine_line|#define _ASM_SGI_SGINT23_H
 multiline_comment|/* These are the virtual IRQ numbers, we divide all IRQ&squot;s into&n; * &squot;spaces&squot;, the &squot;space&squot; determines where and how to enable/disable&n; * that particular IRQ on an SGI machine.  Add new &squot;spaces&squot; as new&n; * IRQ hardware is supported.&n; */
 DECL|macro|SGINT_LOCAL0
 mdefine_line|#define SGINT_LOCAL0   0   /* INDY has 8 local0 irq levels */
@@ -507,8 +507,7 @@ id|ints
 suffix:semicolon
 DECL|member|ledbits
 r_volatile
-r_int
-r_int
+id|u32
 id|ledbits
 suffix:semicolon
 multiline_comment|/* LED control bits */
@@ -560,10 +559,9 @@ mdefine_line|#define INT2_TCLEAR_T0CLR      0x1        /* Clear timer0 IRQ */
 DECL|macro|INT2_TCLEAR_T1CLR
 mdefine_line|#define INT2_TCLEAR_T1CLR      0x2        /* Clear timer1 IRQ */
 multiline_comment|/* I am guesing there are only two unused registers here &n; * but I could be wrong...&t;&t;&t;- andrewb&n; */
-multiline_comment|/*&t;unsigned long _unused[3]; */
+multiline_comment|/*&t;u32 _unused[3]; */
 DECL|member|_unused
-r_int
-r_int
+id|u32
 id|_unused
 (braket
 l_int|2
@@ -620,14 +618,12 @@ suffix:semicolon
 macro_line|#endif
 DECL|member|estatus
 r_volatile
-r_int
-r_int
+id|u32
 id|estatus
 suffix:semicolon
 multiline_comment|/* Error status reg */
 DECL|member|_unused1
-r_int
-r_int
+id|u32
 id|_unused1
 (braket
 l_int|2

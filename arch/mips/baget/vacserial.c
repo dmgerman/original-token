@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: vacserial.c,v 1.4 1999/10/09 00:00:57 ralf Exp $&n; * vacserial.c: VAC UART serial driver&n; *              This code stealed and adopted from linux/drivers/char/serial.c&n; *              See that for author info&n; *&n; * Copyright (C) 1998 Gleb Raiko &amp; Vladimir Roganov&n; */
+multiline_comment|/* $Id: vacserial.c,v 1.3 1999/08/17 22:18:37 ralf Exp $&n; * vacserial.c: VAC UART serial driver&n; *              This code stealed and adopted from linux/drivers/char/serial.c&n; *              See that for author info&n; *&n; * Copyright (C) 1998 Gleb Raiko &amp; Vladimir Roganov&n; */
 DECL|macro|SERIAL_PARANOIA_CHECK
 macro_line|#undef  SERIAL_PARANOIA_CHECK
 DECL|macro|CONFIG_SERIAL_NOPAUSE_IO

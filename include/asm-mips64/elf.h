@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: elf.h,v 1.4 2000/02/24 00:13:20 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; */
+multiline_comment|/* $Id: elf.h,v 1.3 2000/01/17 23:32:47 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; */
 macro_line|#ifndef _ASM_ELF_H
 DECL|macro|_ASM_ELF_H
 mdefine_line|#define _ASM_ELF_H

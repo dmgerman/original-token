@@ -2941,7 +2941,7 @@ c_func
 (paren
 id|FIX_APIC_BASE
 comma
-id|APIC_PHYS_BASE
+id|APIC_DEFAULT_PHYS_BASE
 )paren
 suffix:semicolon
 id|printk

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: current.h,v 1.4 2000/01/17 23:32:47 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1998, 1999 Ralf Baechle&n; */
+multiline_comment|/* $Id: current.h,v 1.3 1999/12/04 03:59:12 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1998, 1999 Ralf Baechle&n; */
 macro_line|#ifndef _ASM_CURRENT_H
 DECL|macro|_ASM_CURRENT_H
 mdefine_line|#define _ASM_CURRENT_H
@@ -16,10 +16,5 @@ l_string|&quot;$28&quot;
 )paren
 suffix:semicolon
 macro_line|#endif /* _LANGUAGE_C */
-macro_line|#ifdef _LANGUAGE_ASSEMBLY
-multiline_comment|/*&n; * Special variant for use by exception handlers when the stack pointer&n; * is not loaded.&n; */
-DECL|macro|_GET_CURRENT
-mdefine_line|#define _GET_CURRENT(reg)&t;&t;&t;&bslash;&n;&t;lui&t;reg, %hi(kernelsp);&t;&t;&bslash;&n;&t;.set&t;push;&t;&t;&t;&t;&bslash;&n;&t;.set&t;noreorder;&t;&t;&t;&bslash;&n;&t;ld&t;reg, %lo(kernelsp)(reg);&t;&bslash;&n;&t;.set&t;pop;&t;&t;&t;&t;&bslash;&n;&t;ori&t;reg, 0x3fff;&t;&t;&t;&bslash;&n;&t;xori&t;reg, 0x3fff
-macro_line|#endif
 macro_line|#endif /* _ASM_CURRENT_H */
 eof

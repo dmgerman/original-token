@@ -24,6 +24,24 @@ id|mips_cputype
 )paren
 (brace
 r_case
+id|CPU_R3081
+suffix:colon
+r_case
+id|CPU_R3081E
+suffix:colon
+id|cpu_wait
+op_assign
+id|r3081_wait
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot; available.&bslash;n&quot;
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
 id|CPU_R4200
 suffix:colon
 r_case
@@ -47,9 +65,9 @@ suffix:colon
 r_case
 id|CPU_NEVADA
 suffix:colon
-id|wait_available
+id|cpu_wait
 op_assign
-l_int|1
+id|r4k_wait
 suffix:semicolon
 id|printk
 c_func

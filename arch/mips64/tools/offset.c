@@ -666,6 +666,17 @@ comma
 id|mm
 )paren
 suffix:semicolon
+id|offset
+c_func
+(paren
+l_string|&quot;#define TASK_PROCESSOR     &quot;
+comma
+r_struct
+id|task_struct
+comma
+id|processor
+)paren
+suffix:semicolon
 id|size
 c_func
 (paren

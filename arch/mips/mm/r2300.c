@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * r2300.c: R2000 and R3000 specific mmu/cache code.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; *&n; * with a lot of changes to make this thing work for R3000s&n; * Copyright (C) 1998, 2000 Harald Koerfgen&n; * Copyright (C) 1998 Gleb Raiko &amp; Vladimir Roganov&n; *&n; * $Id: r2300.c,v 1.15 2000/02/24 00:12:40 ralf Exp $&n; */
+multiline_comment|/*&n; * r2300.c: R2000 and R3000 specific mmu/cache code.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; *&n; * with a lot of changes to make this thing work for R3000s&n; * Copyright (C) 1998, 2000 Harald Koerfgen&n; * Copyright (C) 1998 Gleb Raiko &amp; Vladimir Roganov&n; *&n; * $Id: r2300.c,v 1.16 2000/03/13 10:33:05 raiko Exp $&n; */
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -7,7 +7,6 @@ macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/mmu_context.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
-macro_line|#include &lt;asm/sgialib.h&gt;
 macro_line|#include &lt;asm/isadep.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/wbflush.h&gt;
@@ -204,12 +203,11 @@ id|PAGE_SIZE
 )paren
 suffix:semicolon
 )brace
-DECL|function|size_cache
-r_static
+DECL|function|r3k_cache_size
 r_int
 r_int
 id|__init
-id|size_cache
+id|r3k_cache_size
 c_func
 (paren
 r_int
@@ -407,7 +405,7 @@ r_void
 (brace
 id|dcache_size
 op_assign
-id|size_cache
+id|r3k_cache_size
 c_func
 (paren
 id|ST0_DE
@@ -436,7 +434,7 @@ r_void
 (brace
 id|icache_size
 op_assign
-id|size_cache
+id|r3k_cache_size
 c_func
 (paren
 id|ST0_DE

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: time.c,v 1.4 1999/10/09 00:00:57 ralf Exp $&n; * time.c: Baget/MIPS specific time handling details&n; *&n; * Copyright (C) 1998 Gleb Raiko &amp; Vladimir Roganov&n; */
+multiline_comment|/* $Id: time.c,v 1.3 1999/08/17 22:18:37 ralf Exp $&n; * time.c: Baget/MIPS specific time handling details&n; *&n; * Copyright (C) 1998 Gleb Raiko &amp; Vladimir Roganov&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;

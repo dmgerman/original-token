@@ -96,9 +96,6 @@ id|phys_cpu_present_map
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/*&n; * IA s/w dev Vol 3, Section 7.4&n; */
-DECL|macro|APIC_DEFAULT_PHYS_BASE
-mdefine_line|#define APIC_DEFAULT_PHYS_BASE 0xfee00000
 multiline_comment|/*&n; * Intel MP BIOS table parsing routines:&n; */
 macro_line|#ifndef CONFIG_X86_VISWS_APIC
 multiline_comment|/*&n; * Checksum an MP configuration block.&n; */
@@ -129,14 +126,12 @@ c_loop
 id|len
 op_decrement
 )paren
-(brace
 id|sum
 op_add_assign
 op_star
 id|mp
 op_increment
 suffix:semicolon
-)brace
 r_return
 id|sum
 op_amp

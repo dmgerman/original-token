@@ -21,6 +21,8 @@ DECL|macro|CP0_ENTRYLO0
 mdefine_line|#define CP0_ENTRYLO0 $2
 DECL|macro|CP0_ENTRYLO1
 mdefine_line|#define CP0_ENTRYLO1 $3
+DECL|macro|CP0_CONF
+mdefine_line|#define CP0_CONF $3
 DECL|macro|CP0_CONTEXT
 mdefine_line|#define CP0_CONTEXT $4
 DECL|macro|CP0_PAGEMASK
@@ -375,6 +377,10 @@ DECL|macro|CONF_IB
 mdefine_line|#define CONF_IB&t;&t;&t;&t;(1 &lt;&lt;  5)
 DECL|macro|CONF_SC
 mdefine_line|#define CONF_SC&t;&t;&t;&t;(1 &lt;&lt; 17)
+DECL|macro|CONF_AC
+mdefine_line|#define CONF_AC                         (1 &lt;&lt; 23)
+DECL|macro|CONF_HALT
+mdefine_line|#define CONF_HALT                       (1 &lt;&lt; 25)
 multiline_comment|/*&n; * R10000 performance counter definitions.&n; *&n; * FIXME: The R10000 performance counter opens a nice way to implement CPU&n; *        time accounting with a precission of one cycle.  I don&squot;t have&n; *        R10000 silicon but just a manual, so ...&n; */
 multiline_comment|/*&n; * Events counted by counter #0&n; */
 DECL|macro|CE0_CYCLES

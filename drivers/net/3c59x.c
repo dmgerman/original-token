@@ -1349,7 +1349,6 @@ comma
 l_int|0
 comma
 )brace
-comma
 multiline_comment|/* 0 terminated list. */
 )brace
 suffix:semicolon

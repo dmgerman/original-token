@@ -1,8 +1,26 @@
-multiline_comment|/* $Id: types.h,v 1.1 2000/01/13 00:17:02 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1999 Silicon Graphics, Inc.&n; * Copyright (C) 1999 by Ralf Baechle&n; */
+multiline_comment|/* $Id$&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1999 Silicon Graphics, Inc.&n; * Copyright (C) 1999 by Ralf Baechle&n; */
 macro_line|#ifndef _ASM_SN_TYPES_H
 DECL|macro|_ASM_SN_TYPES_H
 mdefine_line|#define _ASM_SN_TYPES_H
 macro_line|#include &lt;linux/types.h&gt;
+DECL|typedef|cpuid_t
+r_typedef
+r_int
+r_int
+id|cpuid_t
+suffix:semicolon
+DECL|typedef|cpumask_t
+r_typedef
+r_int
+r_int
+id|cpumask_t
+suffix:semicolon
+DECL|typedef|cnodemask_t
+r_typedef
+r_int
+r_int
+id|cnodemask_t
+suffix:semicolon
 DECL|typedef|nasid_t
 r_typedef
 r_int

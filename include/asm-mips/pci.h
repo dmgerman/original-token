@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: pci.h,v 1.9 2000/02/24 00:13:19 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; */
+multiline_comment|/* $Id: pci.h,v 1.10 2000/03/23 02:26:00 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; */
 macro_line|#ifndef _ASM_PCI_H
 DECL|macro|_ASM_PCI_H
 mdefine_line|#define _ASM_PCI_H
@@ -32,6 +32,16 @@ macro_line|#include &lt;linux/slab.h&gt;
 macro_line|#include &lt;asm/scatterlist.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
+macro_line|#ifdef CONFIG_DDB5074
+DECL|macro|PCIBIOS_MIN_IO
+macro_line|#undef PCIBIOS_MIN_IO
+DECL|macro|PCIBIOS_MIN_MEM
+macro_line|#undef PCIBIOS_MIN_MEM
+DECL|macro|PCIBIOS_MIN_IO
+mdefine_line|#define PCIBIOS_MIN_IO&t;&t;0x0100000
+DECL|macro|PCIBIOS_MIN_MEM
+mdefine_line|#define PCIBIOS_MIN_MEM&t;&t;0x1000000
+macro_line|#endif
 r_struct
 id|pci_dev
 suffix:semicolon

@@ -2,6 +2,7 @@ multiline_comment|/* $Id: processor.h,v 1.25 2000/02/05 06:47:37 ralf Exp $&n; *
 macro_line|#ifndef _ASM_PROCESSOR_H
 DECL|macro|_ASM_PROCESSOR_H
 mdefine_line|#define _ASM_PROCESSOR_H
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/isadep.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 multiline_comment|/*&n; * Default implementation of macro that returns current&n; * instruction pointer (&quot;program counter&quot;).&n; */
@@ -38,10 +39,32 @@ suffix:semicolon
 suffix:semicolon
 multiline_comment|/*&n; * System setup and hardware flags..&n; * XXX: Should go into mips_cpuinfo.&n; */
 r_extern
-r_char
-id|wait_available
+r_void
+(paren
+op_star
+id|cpu_wait
+)paren
+(paren
+r_void
+)paren
 suffix:semicolon
-multiline_comment|/* only available on R4[26]00 */
+multiline_comment|/* only available on R4[26]00 and R3081 */
+r_extern
+r_void
+id|r3081_wait
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|r4k_wait
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
 r_extern
 r_char
 id|cyclecounter_available

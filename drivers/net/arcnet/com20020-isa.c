@@ -722,8 +722,6 @@ r_sizeof
 r_struct
 id|arcnet_local
 )paren
-op_plus
-l_int|10
 )paren
 suffix:semicolon
 id|memset
@@ -744,8 +742,6 @@ r_sizeof
 r_struct
 id|arcnet_local
 )paren
-op_plus
-l_int|10
 )paren
 suffix:semicolon
 id|lp
@@ -759,18 +755,6 @@ op_star
 )paren
 (paren
 id|dev
-op_plus
-l_int|1
-)paren
-suffix:semicolon
-id|dev-&gt;name
-op_assign
-(paren
-r_char
-op_star
-)paren
-(paren
-id|lp
 op_plus
 l_int|1
 )paren

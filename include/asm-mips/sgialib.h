@@ -1,7 +1,7 @@
-multiline_comment|/* $Id: sgialib.h,v 1.4 1999/02/25 20:55:07 tsbogend Exp $&n; * sgialib.h: SGI ARCS firmware interface library for the Linux kernel.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; */
-macro_line|#ifndef _MIPS_SGIALIB_H
-DECL|macro|_MIPS_SGIALIB_H
-mdefine_line|#define _MIPS_SGIALIB_H
+multiline_comment|/* $Id: sgialib.h,v 1.5 2000/03/19 01:28:58 ralf Exp $&n; * sgialib.h: SGI ARCS firmware interface library for the Linux kernel.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; */
+macro_line|#ifndef _ASM_SGIALIB_H
+DECL|macro|_ASM_SGIALIB_H
+mdefine_line|#define _ASM_SGIALIB_H
 macro_line|#include &lt;asm/sgiarcs.h&gt;
 r_extern
 r_struct
@@ -35,7 +35,7 @@ id|prom_flags
 suffix:semicolon
 DECL|macro|PROM_FLAG_ARCS
 mdefine_line|#define PROM_FLAG_ARCS  1
-multiline_comment|/* Init the PROM library and it&squot;s internal data structures.  Called&n; * at boot time from head.S before start_kernel is invoked.&n; */
+multiline_comment|/*&n; * Init the PROM library and it&squot;s internal data structures.  Called&n; * at boot time from head.S before start_kernel is invoked.&n; */
 r_extern
 r_int
 id|prom_init
@@ -53,6 +53,10 @@ r_char
 op_star
 op_star
 id|envp
+comma
+r_int
+op_star
+id|prom_vec
 )paren
 suffix:semicolon
 multiline_comment|/* Simple char-by-char console I/O. */
@@ -271,27 +275,24 @@ r_void
 suffix:semicolon
 multiline_comment|/* Environemt variable routines. */
 r_extern
-r_char
-op_star
-id|prom_getenv
+id|PCHAR
+id|ArcGetEnvironmentVariable
 c_func
 (paren
-r_char
+id|CHAR
 op_star
 id|name
 )paren
 suffix:semicolon
 r_extern
-r_int
-id|prom_setenv
+id|LONG
+id|SetEnvironmentVariable
 c_func
 (paren
-r_char
-op_star
+id|PCHAR
 id|name
 comma
-r_char
-op_star
+id|PCHAR
 id|value
 )paren
 suffix:semicolon
@@ -686,5 +687,5 @@ c_func
 r_void
 )paren
 suffix:semicolon
-macro_line|#endif /* !(_MIPS_SGIALIB_H) */
+macro_line|#endif /* _ASM_SGIALIB_H */
 eof

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: semaphore.h,v 1.6 2000/02/24 03:09:52 ulfc Exp $&n; *&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1996  Linus Torvalds&n; * Copyright (C) 1998, 1999, 2000  Ralf Baechle&n; * Copyright (C) 1999, 2000  Silicon Graphics, Inc.&n; */
+multiline_comment|/* $Id: semaphore.h,v 1.5 2000/02/18 00:24:49 ralf Exp $&n; *&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1996  Linus Torvalds&n; * Copyright (C) 1998, 1999, 2000  Ralf Baechle&n; * Copyright (C) 1999, 2000  Silicon Graphics, Inc.&n; */
 macro_line|#ifndef _ASM_SEMAPHORE_H
 DECL|macro|_ASM_SEMAPHORE_H
 mdefine_line|#define _ASM_SEMAPHORE_H

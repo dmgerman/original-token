@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * init.c: PROM library initialisation code.&n; *&n; * Copyright (C) 1998 Harald Koerfgen&n; *&n; * $Id: init.c,v 1.4 1999/10/09 00:00:58 ralf Exp $&n; */
+multiline_comment|/*&n; * init.c: PROM library initialisation code.&n; *&n; * Copyright (C) 1998 Harald Koerfgen&n; *&n; * $Id: init.c,v 1.3 1999/08/09 19:43:13 harald Exp $&n; */
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/bootinfo.h&gt;

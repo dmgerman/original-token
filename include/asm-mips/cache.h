@@ -5,10 +5,12 @@ mdefine_line|#define _ASM_CACHE_H
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#if defined(CONFIG_CPU_R3000) || defined(CONFIG_CPU_R6000)
 DECL|macro|L1_CACHE_BYTES
-mdefine_line|#define L1_CACHE_BYTES&t;16
+mdefine_line|#define L1_CACHE_BYTES&t;&t;16
 macro_line|#else
 DECL|macro|L1_CACHE_BYTES
-mdefine_line|#define L1_CACHE_BYTES  32&t;/* A guess */
+mdefine_line|#define L1_CACHE_BYTES &t;&t;32&t;/* A guess */
 macro_line|#endif
+DECL|macro|SMP_CACHE_BYTES
+mdefine_line|#define SMP_CACHE_BYTES&t;&t;L1_CACHE_BYTES
 macro_line|#endif /* _ASM_CACHE_H */
 eof

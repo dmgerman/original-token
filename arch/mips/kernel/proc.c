@@ -138,6 +138,15 @@ suffix:semicolon
 r_const
 r_char
 op_star
+id|mach_baget_names
+(braket
+)braket
+op_assign
+id|GROUP_BAGET_NAMES
+suffix:semicolon
+r_const
+r_char
+op_star
 op_star
 id|mach_group_to_name
 (braket
@@ -161,6 +170,8 @@ comma
 id|mach_cobalt_names
 comma
 id|mach_nec_ddb_names
+comma
+id|mach_baget_names
 )brace
 suffix:semicolon
 r_int
@@ -332,7 +343,7 @@ id|len
 comma
 l_string|&quot;wait instruction&bslash;t: %s&bslash;n&quot;
 comma
-id|wait_available
+id|cpu_wait
 ques
 c_cond
 l_string|&quot;yes&quot;
@@ -447,5 +458,15 @@ suffix:semicolon
 r_return
 id|len
 suffix:semicolon
+)brace
+DECL|function|init_irq_proc
+r_void
+id|init_irq_proc
+c_func
+(paren
+r_void
+)paren
+(brace
+multiline_comment|/* Nothing, for now.  */
 )brace
 eof

@@ -1,6 +1,7 @@
-multiline_comment|/* $Id: $&n; * tc-init: We assume the TURBOchannel to be up and running so&n; * just probe for Modules and fill in the global data structure&n; * tc_bus.&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (c) Harald Koerfgen, 1998&n; *&n; */
+multiline_comment|/* $Id: tc.c,v 1.3 1999/10/09 00:01:32 ralf Exp $&n; * tc-init: We assume the TURBOchannel to be up and running so&n; * just probe for Modules and fill in the global data structure&n; * tc_bus.&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (c) Harald Koerfgen, 1998&n; *&n; */
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;asm/addrspace.h&gt;
 macro_line|#include &lt;asm/errno.h&gt;
 macro_line|#include &lt;asm/dec/machtype.h&gt;
@@ -1076,6 +1077,12 @@ id|firmware
 suffix:semicolon
 )brace
 macro_line|#endif
+id|ioport_resource.end
+op_assign
+id|KSEG2
+op_minus
+l_int|1
+suffix:semicolon
 )brace
 )brace
 eof

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: newport_con.c,v 1.13 1999/04/11 10:37:08 ulfc Exp $&n; *&n; * newport_con.c: Abscon for newport hardware&n; * &n; * (C) 1998 Thomas Bogendoerfer (tsbogend@alpha.franken.de)&n; * (C) 1999 Ulf Carlsson (ulfc@bun.falkenberg.se)&n; * &n; * This driver is based on sgicons.c and cons_newport.&n; * &n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; * Copyright (C) 1997 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; */
+multiline_comment|/* $Id: newport_con.c,v 1.14 1999/06/24 01:10:24 ulfc Exp $&n; *&n; * newport_con.c: Abscon for newport hardware&n; * &n; * (C) 1998 Thomas Bogendoerfer (tsbogend@alpha.franken.de)&n; * (C) 1999 Ulf Carlsson (ulfc@thepuffingruop.com)&n; * &n; * This driver is based on sgicons.c and cons_newport.&n; * &n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; * Copyright (C) 1997 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; */
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -14,21 +14,22 @@ macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
-macro_line|#include &lt;asm/newport.h&gt;
+macro_line|#include &lt;video/newport.h&gt;
 DECL|macro|INCLUDE_LINUX_LOGO_DATA
 mdefine_line|#define INCLUDE_LINUX_LOGO_DATA
 macro_line|#include &lt;asm/linux_logo.h&gt;
+macro_line|#include &lt;video/font.h&gt;
 DECL|macro|LOGO_W
 mdefine_line|#define LOGO_W&t;&t;80
 DECL|macro|LOGO_H
 mdefine_line|#define LOGO_H&t;&t;80
 r_extern
-r_int
-r_char
-id|vga_font
-(braket
-)braket
+r_struct
+id|fbcon_font_desc
+id|font_vga_8x16
 suffix:semicolon
+DECL|macro|FONT_DATA
+mdefine_line|#define FONT_DATA ((unsigned char *)font_vga_8x16.data)
 r_extern
 r_struct
 id|newport_regs
@@ -618,12 +619,12 @@ id|i
 op_eq
 l_int|94
 )paren
-id|npregs-&gt;set.dcbdata0.hwords.s1
+id|npregs-&gt;set.dcbdata0.byshort.s1
 op_assign
 l_int|0xff00
 suffix:semicolon
 r_else
-id|npregs-&gt;set.dcbdata0.hwords.s1
+id|npregs-&gt;set.dcbdata0.byshort.s1
 op_assign
 l_int|0x0000
 suffix:semicolon
@@ -646,7 +647,7 @@ op_or
 id|NPORT_DMODE_W1
 )paren
 suffix:semicolon
-id|npregs-&gt;set.dcbdata0.bytes.b3
+id|npregs-&gt;set.dcbdata0.bybytes.b3
 op_and_assign
 op_complement
 id|XM9_PUPMODE
@@ -663,7 +664,7 @@ op_or
 id|NPORT_DMODE_W1
 )paren
 suffix:semicolon
-id|npregs-&gt;set.dcbdata0.bytes.b3
+id|npregs-&gt;set.dcbdata0.bybytes.b3
 op_and_assign
 op_complement
 id|XM9_PUPMODE
@@ -788,7 +789,7 @@ id|linetable
 id|i
 )braket
 op_assign
-id|npregs-&gt;set.dcbdata0.hwords.s1
+id|npregs-&gt;set.dcbdata0.byshort.s1
 suffix:semicolon
 )brace
 id|newport_xsize
@@ -863,7 +864,7 @@ c_func
 suffix:semicolon
 id|treg
 op_assign
-id|npregs-&gt;set.dcbdata0.hwords.s1
+id|npregs-&gt;set.dcbdata0.byshort.s1
 suffix:semicolon
 r_if
 c_cond
@@ -905,7 +906,7 @@ c_func
 suffix:semicolon
 id|treg
 op_assign
-id|npregs-&gt;set.dcbdata0.hwords.s1
+id|npregs-&gt;set.dcbdata0.byshort.s1
 suffix:semicolon
 )brace
 )brace
@@ -1002,7 +1003,7 @@ id|bitplanes
 suffix:semicolon
 id|rex3_rev
 op_assign
-id|npregs-&gt;cset.stat
+id|npregs-&gt;cset.status
 op_amp
 id|NPORT_STAT_VERS
 suffix:semicolon
@@ -1020,7 +1021,7 @@ id|NPORT_DMODE_W1
 suffix:semicolon
 id|tmp
 op_assign
-id|npregs-&gt;set.dcbdata0.bytes.b3
+id|npregs-&gt;set.dcbdata0.bybytes.b3
 suffix:semicolon
 id|cmap_rev
 op_assign
@@ -1073,7 +1074,7 @@ id|NPORT_DMODE_W1
 suffix:semicolon
 id|tmp
 op_assign
-id|npregs-&gt;set.dcbdata0.bytes.b3
+id|npregs-&gt;set.dcbdata0.bybytes.b3
 suffix:semicolon
 r_if
 c_cond
@@ -1124,7 +1125,7 @@ id|NPORT_DMODE_W1
 suffix:semicolon
 id|xmap9_rev
 op_assign
-id|npregs-&gt;set.dcbdata0.bytes.b3
+id|npregs-&gt;set.dcbdata0.bybytes.b3
 op_amp
 l_int|7
 suffix:semicolon
@@ -1140,7 +1141,7 @@ op_or
 id|NPORT_DMODE_W1
 )paren
 suffix:semicolon
-id|npregs-&gt;set.dcbdata0.bytes.b3
+id|npregs-&gt;set.dcbdata0.bybytes.b3
 op_assign
 id|BT445_REVISION_REG
 suffix:semicolon
@@ -1159,7 +1160,7 @@ suffix:semicolon
 id|bt445_rev
 op_assign
 (paren
-id|npregs-&gt;set.dcbdata0.bytes.b3
+id|npregs-&gt;set.dcbdata0.bybytes.b3
 op_rshift
 l_int|4
 )paren
@@ -1301,7 +1302,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|p-&gt;set._xstart.i
+id|p-&gt;set._xstart.word
 op_ne
 id|XSTI_TO_FXSTART
 c_func
@@ -1555,7 +1556,7 @@ suffix:semicolon
 id|p
 op_assign
 op_amp
-id|vga_font
+id|FONT_DATA
 (braket
 (paren
 id|charattr
@@ -1818,7 +1819,7 @@ l_int|8
 id|p
 op_assign
 op_amp
-id|vga_font
+id|FONT_DATA
 (braket
 (paren
 id|s

@@ -849,6 +849,7 @@ comma
 )brace
 suffix:semicolon
 multiline_comment|/*  Support functions follow  */
+multiline_comment|/**&n; *&t;search_for_entry_in_dir - Search for a devfs entry inside another devfs entry.&n; *&t;@parent:  The parent devfs entry.&n; *&t;@name:  The name of the entry.&n; *&t;@namelen:  The number of characters in @name.&n; *&t;@traverse_symlink:  If %TRUE then the entry is traversed if it is a symlink.&n; *&n; *&t;Returns a pointer to the entry on success, else %NULL.&n; */
 DECL|function|search_for_entry_in_dir
 r_static
 r_struct
@@ -873,7 +874,6 @@ comma
 r_int
 id|traverse_symlink
 )paren
-multiline_comment|/*  [SUMMARY] Search for a devfs entry inside another devfs entry.&n;    &lt;parent&gt; The parent devfs entry.&n;    &lt;name&gt; The name of the entry.&n;    &lt;namelen&gt; The number of characters in &lt;&lt;name&gt;&gt;.&n;    &lt;traverse_symlink&gt; If TRUE then the entry is traversed if it is a symlink.&n;    [RETURNS] A pointer to the entry on success, else NULL.&n;*/
 (brace
 r_struct
 id|devfs_entry
@@ -1141,6 +1141,7 @@ r_new
 suffix:semicolon
 )brace
 multiline_comment|/*  End Function create_entry  */
+multiline_comment|/**&n; *&t;get_root_entry - Get the root devfs entry.&n; *&n; *&t;Returns the root devfs entry on success, else %NULL.&n; */
 DECL|function|get_root_entry
 r_static
 r_struct
@@ -1150,7 +1151,6 @@ id|get_root_entry
 (paren
 r_void
 )paren
-multiline_comment|/*  [SUMMARY] Get the root devfs entry.&n;    [RETURNS] The root devfs entry on success, else NULL.&n;*/
 (brace
 r_struct
 id|devfs_entry
@@ -1278,6 +1278,7 @@ id|root_entry
 suffix:semicolon
 )brace
 multiline_comment|/*  End Function get_root_entry  */
+multiline_comment|/**&n; *&t;search_for_entry - Search for an entry in the devfs tree.&n; *&t;@dir: The parent directory to search from. If this is %NULL the root is used&n; *&t;@name: The name of the entry.&n; *&t;@namelen: The number of characters in @name.&n; *&t;@mkdir: If %TRUE intermediate directories are created as needed.&n; *&t;@mkfile: If %TRUE the file entry is created if it doesn&squot;t exist.&n; *&t;@is_new: If the returned entry was newly made, %TRUE is written here. If&n; * &t;&t;this is %NULL nothing is written here.&n; *&t;@traverse_symlink: If %TRUE then symbolic links are traversed.&n; *&n; *&t;If the entry is created, then it will be in the unregistered state.&n; *&t;Returns a pointer to the entry on success, else %NULL.&n; */
 DECL|function|search_for_entry
 r_static
 r_struct
@@ -1312,7 +1313,6 @@ comma
 r_int
 id|traverse_symlink
 )paren
-multiline_comment|/*  [SUMMARY] Search for an entry in the devfs tree.&n;    &lt;dir&gt; The parent directory to search from. If this is NULL the root is used&n;    &lt;name&gt; The name of the entry.&n;    &lt;namelen&gt; The number of characters in &lt;&lt;name&gt;&gt;.&n;    &lt;mkdir&gt; If TRUE intermediate directories are created as needed.&n;    &lt;mkfile&gt; If TRUE the file entry is created if it doesn&squot;t exist.&n;    &lt;is_new&gt; If the returned entry was newly made, TRUE is written here. If&n;    this is NULL nothing is written here.&n;    &lt;traverse_symlink&gt; If TRUE then symbolic links are traversed.&n;    [NOTE] If the entry is created, then it will be in the unregistered state.&n;    [RETURNS] A pointer to the entry on success, else NULL.&n;*/
 (brace
 r_int
 id|len
@@ -1651,6 +1651,7 @@ l_int|NULL
 suffix:semicolon
 )brace
 multiline_comment|/*  End Function search_for_entry  */
+multiline_comment|/**&n; *&t;find_by_dev - Find a devfs entry in a directory.&n; *&t;@major: The major number to search for.&n; *&t;@minor: The minor number to search for.&n; *&t;@type: The type of special file to search for. This may be either&n; *&t;&t;%DEVFS_SPECIAL_CHR or %DEVFS_SPECIAL_BLK.&n; *&n; *&t;Returns the devfs_entry pointer on success, else %NULL.&n; */
 DECL|function|find_by_dev
 r_static
 r_struct
@@ -1674,7 +1675,6 @@ comma
 r_char
 id|type
 )paren
-multiline_comment|/*  [SUMMARY] Find a devfs entry in a directory.&n;    &lt;major&gt; The major number to search for.&n;    &lt;minor&gt; The minor number to search for.&n;    &lt;type&gt; The type of special file to search for. This may be either&n;    DEVFS_SPECIAL_CHR or DEVFS_SPECIAL_BLK.&n;    [RETURNS] The devfs_entry pointer on success, else NULL.&n;*/
 (brace
 r_struct
 id|devfs_entry
@@ -1856,6 +1856,7 @@ l_int|NULL
 suffix:semicolon
 )brace
 multiline_comment|/*  End Function find_by_dev  */
+multiline_comment|/**&n; *&t;find_entry - Find a devfs entry.&n; *&t;@dir: The handle to the parent devfs directory entry. If this is %NULL the&n; *&t;&t;name is relative to the root of the devfs.&n; *&t;@name: The name of the entry. This is ignored if @handle is not %NULL.&n; *&t;@namelen: The number of characters in @name, not including a %NULL&n; *&t;&t;terminator. If this is 0, then @name must be %NULL-terminated and the&n; *&t;&t;length is computed internally.&n; *&t;@major: The major number. This is used if @handle and @name are %NULL.&n; *&t;@minor: The minor number. This is used if @handle and @name are %NULL.&n; *&t;&t;NOTE: If @major and @minor are both 0, searching by major and minor&n; *&t;&t;numbers is disabled.&n; *&t;@type: The type of special file to search for. This may be either&n; *&t;&t;%DEVFS_SPECIAL_CHR or %DEVFS_SPECIAL_BLK.&n; *&t;@traverse_symlink: If %TRUE then symbolic links are traversed.&n; *&n; *&t;FIXME: What the hell is @handle? - ch&n; *&t;Returns the devfs_entry pointer on success, else %NULL.&n; */
 DECL|function|find_entry
 r_static
 r_struct
@@ -1889,7 +1890,6 @@ comma
 r_int
 id|traverse_symlink
 )paren
-multiline_comment|/*  [SUMMARY] Find a devfs entry.&n;    &lt;dir&gt; The handle to the parent devfs directory entry. If this is NULL the&n;    name is relative to the root of the devfs.&n;    &lt;name&gt; The name of the entry. This is ignored if &lt;&lt;handle&gt;&gt; is not NULL.&n;    &lt;namelen&gt; The number of characters in &lt;&lt;name&gt;&gt;, not including a NULL&n;    terminator. If this is 0, then &lt;&lt;name&gt;&gt; must be NULL-terminated and the&n;    length is computed internally.&n;    &lt;major&gt; The major number. This is used if &lt;&lt;handle&gt;&gt; and &lt;&lt;name&gt;&gt; are NULL.&n;    &lt;minor&gt; The minor number. This is used if &lt;&lt;handle&gt;&gt; and &lt;&lt;name&gt;&gt; are NULL.&n;    [NOTE] If &lt;&lt;major&gt;&gt; and &lt;&lt;minor&gt;&gt; are both 0, searching by major and minor&n;    numbers is disabled.&n;    &lt;type&gt; The type of special file to search for. This may be either&n;    DEVFS_SPECIAL_CHR or DEVFS_SPECIAL_BLK.&n;    &lt;traverse_symlink&gt; If TRUE then symbolic links are traversed.&n;    [RETURNS] The devfs_entry pointer on success, else NULL.&n;*/
 (brace
 r_struct
 id|devfs_entry
@@ -2145,6 +2145,7 @@ id|FIRST_INODE
 suffix:semicolon
 )brace
 multiline_comment|/*  End Function get_devfs_inode_from_vfs_inode  */
+multiline_comment|/**&n; *&t;free_dentries - Free the dentries for a device entry and invalidate inodes.&n; *&t;@de: The entry.&n; */
 DECL|function|free_dentries
 r_static
 r_void
@@ -2155,7 +2156,6 @@ id|devfs_entry
 op_star
 id|de
 )paren
-multiline_comment|/*  [SUMMARY] Free the dentries for a device entry and invalidate inodes.&n;    &lt;de&gt; The entry.&n;    [RETURNS] Nothing.&n;*/
 (brace
 r_struct
 id|devfs_inode
@@ -2230,6 +2230,7 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/*  End Function free_dentries  */
+multiline_comment|/**&n; *&t;is_devfsd_or_child - Test if the current process is devfsd or one of its children.&n; *&t;fs_info: The filesystem information.&n; *&n; *&t;Returns %TRUE if devfsd or child, else %FALSE.&n; */
 DECL|function|is_devfsd_or_child
 r_static
 r_int
@@ -2240,7 +2241,6 @@ id|fs_info
 op_star
 id|fs_info
 )paren
-multiline_comment|/*  [SUMMARY] Test if the current process is devfsd or one of its children.&n;    &lt;fs_info&gt; The filesystem information.&n;    [RETURNS] TRUE if devfsd or child, else FALSE.&n;*/
 (brace
 r_struct
 id|task_struct
@@ -2284,6 +2284,7 @@ id|FALSE
 suffix:semicolon
 )brace
 multiline_comment|/*  End Function is_devfsd_or_child  */
+multiline_comment|/**&n; *&t;devfsd_queue_empty - Test if devfsd has work pending in its event queue.&n; *&t;@fs_info: The filesystem information.&n; *&n; *&t;Returns %TRUE if the queue is empty, else %FALSE.&n; */
 DECL|function|devfsd_queue_empty
 r_static
 r_inline
@@ -2295,7 +2296,6 @@ id|fs_info
 op_star
 id|fs_info
 )paren
-multiline_comment|/*  [SUMMARY] Test if devfsd has work pending in its event queue.&n;    &lt;fs_info&gt; The filesystem information.&n;    [RETURNS] TRUE if the queue is empty, else FALSE.&n;*/
 (brace
 r_return
 (paren
@@ -2311,6 +2311,7 @@ id|FALSE
 suffix:semicolon
 )brace
 multiline_comment|/*  End Function devfsd_queue_empty  */
+multiline_comment|/**&n; *&t;wait_for_devfsd_finished - Wait for devfsd to finish processing its event queue.&n; *&t;@fs_info: The filesystem information.&n; *&n; *&t;Returns %TRUE if no more waiting will be required, else %FALSE.&n; */
 DECL|function|wait_for_devfsd_finished
 r_static
 r_int
@@ -2321,7 +2322,6 @@ id|fs_info
 op_star
 id|fs_info
 )paren
-multiline_comment|/*  [SUMMARY] Wait for devfsd to finish processing its event queue.&n;    &lt;fs_info&gt; The filesystem information.&n;    [RETURNS] TRUE if no more waiting will be required, else FALSE.&n;*/
 (brace
 id|DECLARE_WAITQUEUE
 (paren
@@ -2423,6 +2423,7 @@ id|TRUE
 suffix:semicolon
 )brace
 multiline_comment|/*  End Function wait_for_devfsd_finished  */
+multiline_comment|/**&n; *&t;devfsd_notify_one - Notify a single devfsd daemon of a change.&n; *&t;@data: Data to be passed.&n; *&t;@type: The type of change.&n; *&t;@mode: The mode of the entry.&n; *&t;@uid: The user ID.&n; *&t;@gid: The group ID.&n; *&t;@fs_info: The filesystem info.&n; *&n; *&t;Returns %TRUE if an event was queued and devfsd woken up, else %FALSE.&n; */
 DECL|function|devfsd_notify_one
 r_static
 r_int
@@ -2450,7 +2451,6 @@ id|fs_info
 op_star
 id|fs_info
 )paren
-multiline_comment|/*  [SUMMARY] Notify a single devfsd daemon of a change.&n;    &lt;data&gt; Data to be passed.&n;    &lt;type&gt; The type of change.&n;    &lt;mode&gt; The mode of the entry.&n;    &lt;uid&gt; The user ID.&n;    &lt;gid&gt; The group ID.&n;    &lt;fs_info&gt; The filesystem info.&n;    [RETURNS] TRUE if an event was queued and devfsd woken up, else FALSE.&n;*/
 (brace
 r_int
 r_int
@@ -2617,6 +2617,7 @@ id|TRUE
 suffix:semicolon
 )brace
 multiline_comment|/*  End Function devfsd_notify_one  */
+multiline_comment|/**&n; *&t;devfsd_notify - Notify all devfsd daemons of a change.&n; *&t;@de: The devfs entry that has changed.&n; *&t;@type: The type of change event.&n; *&t;@wait: If TRUE, the functions waits for all daemons to finish processing&n; *&t;&t;the event.&n; */
 DECL|function|devfsd_notify
 r_static
 r_void
@@ -2634,7 +2635,6 @@ comma
 r_int
 id|wait
 )paren
-multiline_comment|/*  [SUMMARY] Notify all devfsd daemons of a change.&n;    &lt;de&gt; The devfs entry that has changed.&n;    &lt;type&gt; The type of change event.&n;    &lt;wait&gt; If TRUE, the functions waits for all daemons to finish processing&n;    the event.&n;    [RETURNS] Nothing.&n;*/
 (brace
 r_struct
 id|fs_info
@@ -2685,7 +2685,7 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/*  End Function devfsd_notify  */
-multiline_comment|/*PUBLIC_FUNCTION*/
+multiline_comment|/**&n; *&t;devfs_register - Register a device entry.&n; *&t;@dir: The handle to the parent devfs directory entry. If this is %NULL the&n; *&t;&t;new name is relative to the root of the devfs.&n; *&t;@name: The name of the entry.&n; *&t;@namelen: The number of characters in @name, not including a %NULL&n; *&t;&t;terminator. If this is 0, then @name must be %NULL-terminated and the&n; *&t;&t;length is computed internally.&n; *&t;@flags: A set of bitwise-ORed flags (DEVFS_FL_*).&n; *&t;@major: The major number. Not needed for regular files.&n; *&t;@minor: The minor number. Not needed for regular files.&n; *&t;@mode: The default file mode.&n; *&t;@uid: The default UID of the file.&n; *&t;@guid: The default GID of the file.&n; *&t;@ops: The &amp;file_operations or &amp;block_device_operations structure.&n; *&t;&t;This must not be externally deallocated.&n; *&t;@info: An arbitrary pointer which will be written to the @private_data&n; *&t;&t;field of the &amp;file structure passed to the device driver. You can set&n; *&t;&t;this to whatever you like, and change it once the file is opened (the next&n; *&t;&t;file opened will not see this change).&n; *&n; *&t;Returns a handle which may later be used in a call to devfs_unregister().&n; *&t;On failure %NULL is returned.&n; */
 DECL|function|devfs_register
 id|devfs_handle_t
 id|devfs_register
@@ -2731,7 +2731,6 @@ r_void
 op_star
 id|info
 )paren
-multiline_comment|/*  [SUMMARY] Register a device entry.&n;    &lt;dir&gt; The handle to the parent devfs directory entry. If this is NULL the&n;    new name is relative to the root of the devfs.&n;    &lt;name&gt; The name of the entry.&n;    &lt;namelen&gt; The number of characters in &lt;&lt;name&gt;&gt;, not including a NULL&n;    terminator. If this is 0, then &lt;&lt;name&gt;&gt; must be NULL-terminated and the&n;    length is computed internally.&n;    &lt;flags&gt; A set of bitwise-ORed flags (DEVFS_FL_*).&n;    &lt;major&gt; The major number. Not needed for regular files.&n;    &lt;minor&gt; The minor number. Not needed for regular files.&n;    &lt;mode&gt; The default file mode.&n;    &lt;uid&gt; The default UID of the file.&n;    &lt;guid&gt; The default GID of the file.&n;    &lt;ops&gt; The &lt;&lt;file_operations&gt;&gt; or &lt;&lt;block_device_operations&gt;&gt; structure.&n;    This must not be externally deallocated.&n;    &lt;info&gt; An arbitrary pointer which will be written to the &lt;&lt;private_data&gt;&gt;&n;    field of the &lt;&lt;file&gt;&gt; structure passed to the device driver. You can set&n;    this to whatever you like, and change it once the file is opened (the next&n;    file opened will not see this change).&n;    [RETURNS] A handle which may later be used in a call to&n;    [&lt;devfs_unregister&gt;]. On failure NULL is returned.&n;*/
 (brace
 r_int
 id|is_new
@@ -3334,6 +3333,7 @@ id|de
 suffix:semicolon
 )brace
 multiline_comment|/*  End Function devfs_register  */
+multiline_comment|/**&n; *&t;unregister - Unregister a device entry.&n; *&t;@de: The entry to unregister.&n; */
 DECL|function|unregister
 r_static
 r_void
@@ -3344,7 +3344,6 @@ id|devfs_entry
 op_star
 id|de
 )paren
-multiline_comment|/*  [SUMMARY] Unregister a device entry.&n;    &lt;de&gt; The entry to unregister.&n;    [RETURNS] Nothing.&n;*/
 (brace
 r_struct
 id|devfs_entry
@@ -3554,7 +3553,7 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/*  End Function unregister  */
-multiline_comment|/*PUBLIC_FUNCTION*/
+multiline_comment|/**&n; *&t;devfs_unregister - Unregister a device entry.&n; *&t;de: A handle previously created by devfs_register() or returned from&n; *&t;&t;devfs_find_handle(). If this is %NULL the routine does nothing.&n; */
 DECL|function|devfs_unregister
 r_void
 id|devfs_unregister
@@ -3562,7 +3561,6 @@ id|devfs_unregister
 id|devfs_handle_t
 id|de
 )paren
-multiline_comment|/*  [SUMMARY] Unregister a device entry.&n;    &lt;de&gt; A handle previously created by [&lt;devfs_register&gt;] or returned from&n;    [&lt;devfs_find_handle&gt;]. If this is NULL the routine does nothing.&n;    [RETURNS] Nothing.&n;*/
 (brace
 r_if
 c_cond
@@ -3600,7 +3598,7 @@ id|de
 suffix:semicolon
 )brace
 multiline_comment|/*  End Function devfs_unregister  */
-multiline_comment|/*PUBLIC_FUNCTION*/
+multiline_comment|/**&n; *&t;devfs_mk_symlink Create a symbolic link in the devfs namespace.&n; *&t;@dir: The handle to the parent devfs directory entry. If this is %NULL the&n; *&t;&t;new name is relative to the root of the devfs.&n; *&t;@name: The name of the entry.&n; *&t;@namelen: The number of characters in @name, not including a %NULL&n; *&t;&t;terminator. If this is 0, then @name must be %NULL-terminated and the&n; *&t;&t;length is computed internally.&n; *&t;@flags: A set of bitwise-ORed flags (DEVFS_FL_*).&n; *&t;@link: The destination name.&n; *&t;@linklength: The number of characters in @link, not including a %NULL&n; *&t;&t;terminator. If this is 0, then @link must be %NULL-terminated and the&n; *&t;&t;length is computed internally.&n; *&t;@handle: The handle to the symlink entry is written here. This may be %NULL.&n; *&t;@info: An arbitrary pointer which will be associated with the entry.&n; *&n; *&t;Returns 0 on success, else a negative error code is returned.&n; */
 DECL|function|devfs_mk_symlink
 r_int
 id|devfs_mk_symlink
@@ -3638,7 +3636,6 @@ r_void
 op_star
 id|info
 )paren
-multiline_comment|/*  [SUMMARY] Create a symbolic link in the devfs namespace.&n;    &lt;dir&gt; The handle to the parent devfs directory entry. If this is NULL the&n;    new name is relative to the root of the devfs.&n;    &lt;name&gt; The name of the entry.&n;    &lt;namelen&gt; The number of characters in &lt;&lt;name&gt;&gt;, not including a NULL&n;    terminator. If this is 0, then &lt;&lt;name&gt;&gt; must be NULL-terminated and the&n;    length is computed internally.&n;    &lt;flags&gt; A set of bitwise-ORed flags (DEVFS_FL_*).&n;    &lt;link&gt; The destination name.&n;    &lt;linklength&gt; The number of characters in &lt;&lt;link&gt;&gt;, not including a NULL&n;    terminator. If this is 0, then &lt;&lt;link&gt;&gt; must be NULL-terminated and the&n;    length is computed internally.&n;    &lt;handle&gt; The handle to the symlink entry is written here. This may be NULL.&n;    &lt;info&gt; An arbitrary pointer which will be associated with the entry.&n;    [RETURNS] 0 on success, else a negative error code is returned.&n;*/
 (brace
 r_int
 id|is_new
@@ -4034,7 +4031,7 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*  End Function devfs_mk_symlink  */
-multiline_comment|/*PUBLIC_FUNCTION*/
+multiline_comment|/**&n; *&t;devfs_mk_dir - Create a directory in the devfs namespace.&n; *&t;@dir: The handle to the parent devfs directory entry. If this is %NULL the&n; *&t;&t;new name is relative to the root of the devfs.&n; *&t;@name: The name of the entry.&n; *&t;@namelen: The number of characters in @name, not including a %NULL&n; *&t;&t;terminator. If this is 0, then @name must be %NULL-terminated and the&n; *&t;&t;length is computed internally.&n; *&t;@info: An arbitrary pointer which will be associated with the entry.&n; *&n; *&t;Use of this function is optional. The devfs_register() function&n; *&t;will automatically create intermediate directories as needed. This function&n; *&t;is provided for efficiency reasons, as it provides a handle to a directory.&n; *&t;Returns a handle which may later be used in a call to devfs_unregister().&n; *&t;On failure %NULL is returned.&n; */
 DECL|function|devfs_mk_dir
 id|devfs_handle_t
 id|devfs_mk_dir
@@ -4055,7 +4052,6 @@ r_void
 op_star
 id|info
 )paren
-multiline_comment|/*  [SUMMARY] Create a directory in the devfs namespace.&n;    &lt;dir&gt; The handle to the parent devfs directory entry. If this is NULL the&n;    new name is relative to the root of the devfs.&n;    &lt;name&gt; The name of the entry.&n;    &lt;namelen&gt; The number of characters in &lt;&lt;name&gt;&gt;, not including a NULL&n;    terminator. If this is 0, then &lt;&lt;name&gt;&gt; must be NULL-terminated and the&n;    length is computed internally.&n;    &lt;info&gt; An arbitrary pointer which will be associated with the entry.&n;    [NOTE] Use of this function is optional. The [&lt;devfs_register&gt;] function&n;    will automatically create intermediate directories as needed. This function&n;    is provided for efficiency reasons, as it provides a handle to a directory.&n;    [RETURNS] A handle which may later be used in a call to&n;    [&lt;devfs_unregister&gt;]. On failure NULL is returned.&n;*/
 (brace
 r_int
 id|is_new
@@ -4262,7 +4258,7 @@ id|de
 suffix:semicolon
 )brace
 multiline_comment|/*  End Function devfs_mk_dir  */
-multiline_comment|/*PUBLIC_FUNCTION*/
+multiline_comment|/**&n; *&t;devfs_find_handle - Find the handle of a devfs entry.&n; *&t;@dir: The handle to the parent devfs directory entry. If this is %NULL the&n; *&t;&t;name is relative to the root of the devfs.&n; *&t;@name: The name of the entry.&n; *&t;@namelen: The number of characters in @name, not including a %NULL&n; *&t;&t;terminator. If this is 0, then @name must be %NULL-terminated and the&n; *&t;&t;length is computed internally.&n; *&t;@major: The major number. This is used if @name is %NULL.&n; *&t;@minor: The minor number. This is used if @name is %NULL.&n; *&t;@type: The type of special file to search for. This may be either&n; *&t;&t;%DEVFS_SPECIAL_CHR or %DEVFS_SPECIAL_BLK.&n; *&t;@traverse_symlinks: If %TRUE then symlink entries in the devfs namespace are&n; *&t;&t;traversed. Symlinks pointing out of the devfs namespace will cause a&n; *&t;&t;failure. Symlink traversal consumes stack space.&n; *&n; *&t;Returns a handle which may later be used in a call to devfs_unregister(),&n; *&t;devfs_get_flags(), or devfs_set_flags(). On failure %NULL is returned.&n; */
 DECL|function|devfs_find_handle
 id|devfs_handle_t
 id|devfs_find_handle
@@ -4293,7 +4289,6 @@ comma
 r_int
 id|traverse_symlinks
 )paren
-multiline_comment|/*  [SUMMARY] Find the handle of a devfs entry.&n;    &lt;dir&gt; The handle to the parent devfs directory entry. If this is NULL the&n;    name is relative to the root of the devfs.&n;    &lt;name&gt; The name of the entry.&n;    &lt;namelen&gt; The number of characters in &lt;&lt;name&gt;&gt;, not including a NULL&n;    terminator. If this is 0, then &lt;&lt;name&gt;&gt; must be NULL-terminated and the&n;    length is computed internally.&n;    &lt;major&gt; The major number. This is used if &lt;&lt;name&gt;&gt; is NULL.&n;    &lt;minor&gt; The minor number. This is used if &lt;&lt;name&gt;&gt; is NULL.&n;    &lt;type&gt; The type of special file to search for. This may be either&n;    DEVFS_SPECIAL_CHR or DEVFS_SPECIAL_BLK.&n;    &lt;traverse_symlinks&gt; If TRUE then symlink entries in the devfs namespace are&n;    traversed. Symlinks pointing out of the devfs namespace will cause a&n;    failure. Symlink traversal consumes stack space.&n;    [RETURNS] A handle which may later be used in a call to&n;    [&lt;devfs_unregister&gt;], [&lt;devfs_get_flags&gt;], or [&lt;devfs_set_flags&gt;].&n;    On failure NULL is returned.&n;*/
 (brace
 id|devfs_handle_t
 id|de
@@ -4363,7 +4358,7 @@ id|de
 suffix:semicolon
 )brace
 multiline_comment|/*  End Function devfs_find_handle  */
-multiline_comment|/*PUBLIC_FUNCTION*/
+multiline_comment|/**&n; *&t;devfs_get_flags - Get the flags for a devfs entry.&n; *&t;@de: The handle to the device entry.&n; *&t;@flags: The flags are written here.&n; *&n; *&t;Returns 0 on success, else a negative error code.&n; */
 DECL|function|devfs_get_flags
 r_int
 id|devfs_get_flags
@@ -4376,7 +4371,6 @@ r_int
 op_star
 id|flags
 )paren
-multiline_comment|/*  [SUMMARY] Get the flags for a devfs entry.&n;    &lt;de&gt; The handle to the device entry.&n;    &lt;flags&gt; The flags are written here.&n;    [RETURNS] 0 on success, else a negative error code.&n;*/
 (brace
 r_int
 r_int
@@ -4480,7 +4474,7 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*  End Function devfs_get_flags  */
-multiline_comment|/*PUBLIC_FUNCTION*/
+multiline_comment|/*&n; *&t;devfs_set_flags - Set the flags for a devfs entry.&n; *&t;@de: The handle to the device entry.&n; *&t;@flags: The flags to set. Unset flags are cleared.&n; *&n; *&t;Returns 0 on success, else a negative error code.&n; */
 DECL|function|devfs_set_flags
 r_int
 id|devfs_set_flags
@@ -4492,7 +4486,6 @@ r_int
 r_int
 id|flags
 )paren
-multiline_comment|/*  [SUMMARY] Set the flags for a devfs entry.&n;    &lt;de&gt; The handle to the device entry.&n;    &lt;flags&gt; The flags to set. Unset flags are cleared.&n;    [RETURNS] 0 on success, else a negative error code.&n;*/
 (brace
 r_if
 c_cond
@@ -4653,7 +4646,7 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*  End Function devfs_set_flags  */
-multiline_comment|/*PUBLIC_FUNCTION*/
+multiline_comment|/**&n; *&t;devfs_get_maj_min - Get the major and minor numbers for a devfs entry.&n; *&t;@de: The handle to the device entry.&n; *&t;@major: The major number is written here. This may be %NULL.&n; *&t;@minor: The minor number is written here. This may be %NULL.&n; *&n; *&t;Returns 0 on success, else a negative error code.&n; */
 DECL|function|devfs_get_maj_min
 r_int
 id|devfs_get_maj_min
@@ -4671,7 +4664,6 @@ r_int
 op_star
 id|minor
 )paren
-multiline_comment|/*  [SUMMARY] Get the major and minor numbers for a devfs entry.&n;    &lt;de&gt; The handle to the device entry.&n;    &lt;major&gt; The major number is written here. This may be NULL.&n;    &lt;minor&gt; The minor number is written here. This may be NULL.&n;    [RETURNS] 0 on success, else a negative error code.&n;*/
 (brace
 r_if
 c_cond
@@ -4754,7 +4746,7 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*  End Function devfs_get_maj_min  */
-multiline_comment|/*PUBLIC_FUNCTION*/
+multiline_comment|/**&n; *&t;devfs_get_handle_from_inode - Get the devfs handle for a VFS inode.&n; *&t;@inode: The VFS inode.&n; *&n; *&t;Returns the devfs handle on success, else %NULL.&n; */
 DECL|function|devfs_get_handle_from_inode
 id|devfs_handle_t
 id|devfs_get_handle_from_inode
@@ -4764,7 +4756,6 @@ id|inode
 op_star
 id|inode
 )paren
-multiline_comment|/*  [SUMMARY] Get the devfs handle for a VFS inode.&n;    &lt;inode&gt; The VFS inode.&n;    [RETURNS] The devfs handle on success, else NULL.&n;*/
 (brace
 r_struct
 id|devfs_inode
@@ -4814,7 +4805,7 @@ id|di-&gt;de
 suffix:semicolon
 )brace
 multiline_comment|/*  End Function devfs_get_handle_from_inode  */
-multiline_comment|/*PUBLIC_FUNCTION*/
+multiline_comment|/**&n; *&t;devfs_generate_path - Generate a pathname for an entry, relative to the devfs root.&n; *&t;@de: The devfs entry.&n; *&t;@path: The buffer to write the pathname to. The pathname and &squot;&bslash;0&squot;&n; *&t;&t;terminator will be written at the end of the buffer.&n; *&t;@buflen: The length of the buffer.&n; *&n; *&t;Returns the offset in the buffer where the pathname starts on success,&n; *&t;else a negative error code.&n; */
 DECL|function|devfs_generate_path
 r_int
 id|devfs_generate_path
@@ -4829,7 +4820,6 @@ comma
 r_int
 id|buflen
 )paren
-multiline_comment|/*  [SUMMARY] Generate a pathname for an entry, relative to the devfs root.&n;    &lt;de&gt; The devfs entry.&n;    &lt;path&gt; The buffer to write the pathname to. The pathname and &squot;&bslash;0&squot;&n;    terminator will be written at the end of the buffer.&n;    &lt;buflen&gt; The length of the buffer.&n;    [RETURNS] The offset in the buffer where the pathname starts on success,&n;    else a negative error code.&n;*/
 (brace
 r_int
 id|pos
@@ -4956,7 +4946,7 @@ id|pos
 suffix:semicolon
 )brace
 multiline_comment|/*  End Function devfs_generate_path  */
-multiline_comment|/*PUBLIC_FUNCTION*/
+multiline_comment|/**&n; *&t;devfs_get_ops - Get the device operations for a devfs entry.&n; *&t;@de: The handle to the device entry.&n; *&n; *&t;Returns a pointer to the device operations on success, else NULL.&n; */
 DECL|function|devfs_get_ops
 r_void
 op_star
@@ -4965,7 +4955,6 @@ id|devfs_get_ops
 id|devfs_handle_t
 id|de
 )paren
-multiline_comment|/*  [SUMMARY] Get the device operations for a devfs entry.&n;    &lt;de&gt; The handle to the device entry.&n;    [RETURNS] A pointer to the device operations on success, else NULL.&n;*/
 (brace
 r_if
 c_cond
@@ -5012,7 +5001,7 @@ l_int|NULL
 suffix:semicolon
 )brace
 multiline_comment|/*  End Function devfs_get_ops  */
-multiline_comment|/*PUBLIC_FUNCTION*/
+multiline_comment|/**&n; *&t;devfs_set_file_size - Set the file size for a devfs regular file.&n; *&t;de: The handle to the device entry.&n; *&t;size: The new file size.&n; *&n; *&t;Returns 0 on success, else a negative error code.&n; */
 DECL|function|devfs_set_file_size
 r_int
 id|devfs_set_file_size
@@ -5024,7 +5013,6 @@ r_int
 r_int
 id|size
 )paren
-multiline_comment|/*  [SUMMARY] Set the file size for a devfs regular file.&n;    &lt;de&gt; The handle to the device entry.&n;    &lt;size&gt; The new file size.&n;    [RETURNS] 0 on success, else a negative error code.&n;*/
 (brace
 r_struct
 id|devfs_inode
@@ -5123,7 +5111,7 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*  End Function devfs_set_file_size  */
-multiline_comment|/*PUBLIC_FUNCTION*/
+multiline_comment|/**&n; *&t;devfs_get_info - Get the info pointer written to private_data of @de upon open.&n; *&t;@de: The handle to the device entry.&n; *&n; *&t;Returns the info pointer.&n; */
 DECL|function|devfs_get_info
 r_void
 op_star
@@ -5132,7 +5120,6 @@ id|devfs_get_info
 id|devfs_handle_t
 id|de
 )paren
-multiline_comment|/*  [SUMMARY] Get the info pointer written to &lt;&lt;private_data&gt;&gt; upon open.&n;    &lt;de&gt; The handle to the device entry.&n;    [RETURNS] The info pointer.&n;*/
 (brace
 r_if
 c_cond
@@ -5158,7 +5145,7 @@ id|de-&gt;info
 suffix:semicolon
 )brace
 multiline_comment|/*  End Function devfs_get_info  */
-multiline_comment|/*PUBLIC_FUNCTION*/
+multiline_comment|/**&n; *&t;devfs_set_info - Set the info pointer written to private_data upon open.&n; *&t;@de: The handle to the device entry.&n; *&n; *&t;Returns 0 on success, else a negative error code.&n; */
 DECL|function|devfs_set_info
 r_int
 id|devfs_set_info
@@ -5170,7 +5157,6 @@ r_void
 op_star
 id|info
 )paren
-multiline_comment|/*  [SUMMARY] Set the info pointer written to &lt;&lt;private_data&gt;&gt; upon open.&n;    &lt;de&gt; The handle to the device entry.&n;    [RETURNS] 0 on success, else a negative error code.&n;*/
 (brace
 r_if
 c_cond
@@ -5202,7 +5188,7 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*  End Function devfs_set_info  */
-multiline_comment|/*PUBLIC_FUNCTION*/
+multiline_comment|/**&n; *&t;devfs_get_parent - Get the parent device entry.&n; *&t;@de: The handle to the device entry.&n; *&n; *&t;Returns the parent device entry if it exists, else %NULL.&n; */
 DECL|function|devfs_get_parent
 id|devfs_handle_t
 id|devfs_get_parent
@@ -5210,7 +5196,6 @@ id|devfs_get_parent
 id|devfs_handle_t
 id|de
 )paren
-multiline_comment|/*  [SUMMARY] Get the parent device entry.&n;    &lt;de&gt; The handle to the device entry.&n;    [RETURNS] The parent device entry if it exists, else NULL.&n;*/
 (brace
 r_if
 c_cond
@@ -5236,7 +5221,7 @@ id|de-&gt;parent
 suffix:semicolon
 )brace
 multiline_comment|/*  End Function devfs_get_parent  */
-multiline_comment|/*PUBLIC_FUNCTION*/
+multiline_comment|/**&n; *&t;devfs_get_first_child - Get the first leaf node in a directory.&n; *&t;@de: The handle to the device entry.&n; *&n; *&t;Returns the leaf node device entry if it exists, else %NULL.&n; */
 DECL|function|devfs_get_first_child
 id|devfs_handle_t
 id|devfs_get_first_child
@@ -5244,7 +5229,6 @@ id|devfs_get_first_child
 id|devfs_handle_t
 id|de
 )paren
-multiline_comment|/*  [SUMMARY] Get the first leaf node in a directory.&n;    &lt;de&gt; The handle to the device entry.&n;    [RETURNS] The leaf node device entry if it exists, else NULL.&n;*/
 (brace
 r_if
 c_cond
@@ -5282,7 +5266,7 @@ id|de-&gt;u.dir.first
 suffix:semicolon
 )brace
 multiline_comment|/*  End Function devfs_get_first_child  */
-multiline_comment|/*PUBLIC_FUNCTION*/
+multiline_comment|/**&n; *&t;devfs_get_next_sibling - Get the next sibling leaf node. for a device entry.&n; *&t;@de: The handle to the device entry.&n; *&n; *&t;Returns the leaf node device entry if it exists, else %NULL.&n; */
 DECL|function|devfs_get_next_sibling
 id|devfs_handle_t
 id|devfs_get_next_sibling
@@ -5290,7 +5274,6 @@ id|devfs_get_next_sibling
 id|devfs_handle_t
 id|de
 )paren
-multiline_comment|/*  [SUMMARY] Get the next sibling leaf node. for a device entry.&n;    &lt;de&gt; The handle to the device entry.&n;    [RETURNS] The leaf node device entry if it exists, else NULL.&n;*/
 (brace
 r_if
 c_cond
@@ -5316,7 +5299,7 @@ id|de-&gt;next
 suffix:semicolon
 )brace
 multiline_comment|/*  End Function devfs_get_next_sibling  */
-multiline_comment|/*PUBLIC_FUNCTION*/
+multiline_comment|/**&n; *&t;devfs_auto_unregister - Configure a devfs entry to be automatically unregistered.&n; *&t;@master: The master devfs entry. Only one slave may be registered.&n; *&t;@slave: The devfs entry which will be automatically unregistered when the&n; *&t;&t;master entry is unregistered. It is illegal to call devfs_unregister()&n; *&t;&t;on this entry.&n; */
 DECL|function|devfs_auto_unregister
 r_void
 id|devfs_auto_unregister
@@ -5327,7 +5310,6 @@ comma
 id|devfs_handle_t
 id|slave
 )paren
-multiline_comment|/*  [SUMMARY] Configure a devfs entry to be automatically unregistered.&n;    &lt;master&gt; The master devfs entry. Only one slave may be registered.&n;    &lt;slave&gt; The devfs entry which will be automatically unregistered when the&n;    master entry is unregistered. It is illegal to call [&lt;devfs_unregister&gt;] on&n;    this entry.&n;    [RETURNS] Nothing.&n;*/
 (brace
 r_if
 c_cond
@@ -5381,7 +5363,7 @@ id|slave
 suffix:semicolon
 )brace
 multiline_comment|/*  End Function devfs_auto_unregister  */
-multiline_comment|/*PUBLIC_FUNCTION*/
+multiline_comment|/**&n; *&t;devfs_get_unregister_slave - Get the slave entry which will be automatically unregistered.&n; *&t;@master: The master devfs entry.&n; *&n; *&t;Returns the slave which will be unregistered when @master is unregistered.&n; */
 DECL|function|devfs_get_unregister_slave
 id|devfs_handle_t
 id|devfs_get_unregister_slave
@@ -5389,7 +5371,6 @@ id|devfs_get_unregister_slave
 id|devfs_handle_t
 id|master
 )paren
-multiline_comment|/*  [SUMMARY] Get the slave entry which will be automatically unregistered.&n;    &lt;master&gt; The master devfs entry.&n;    [RETURNS] The slave which will be unregistered when &lt;&lt;master&gt;&gt; is&n;    unregistered.&n;*/
 (brace
 r_if
 c_cond
@@ -5406,7 +5387,7 @@ id|master-&gt;slave
 suffix:semicolon
 )brace
 multiline_comment|/*  End Function devfs_get_unregister_slave  */
-multiline_comment|/*PUBLIC_FUNCTION*/
+multiline_comment|/**&n; *&t;devfs_get_name - Get the name for a device entry in its parent directory.&n; *&t;@de: The handle to the device entry.&n; *&t;@namelen: The length of the name is written here. This may be %NULL.&n; *&n; *&t;Returns the name on success, else %NULL.&n; */
 DECL|function|devfs_get_name
 r_const
 r_char
@@ -5421,7 +5402,6 @@ r_int
 op_star
 id|namelen
 )paren
-multiline_comment|/*  [SUMMARY] Get the name for a device entry in its parent directory.&n;    &lt;de&gt; The handle to the device entry.&n;    &lt;namelen&gt; The length of the name is written here. This may be NULL.&n;    [RETURNS] The name on success, else NULL.&n;*/
 (brace
 r_if
 c_cond
@@ -5459,7 +5439,7 @@ id|de-&gt;name
 suffix:semicolon
 )brace
 multiline_comment|/*  End Function devfs_get_name  */
-multiline_comment|/*PUBLIC_FUNCTION*/
+multiline_comment|/**&n; *&t;devfs_register_chrdev - Optionally register a conventional character driver.&n; *&t;@major: The major number for the driver.&n; *&t;@name: The name of the driver (as seen in /proc/devices).&n; *&t;@fops: The &amp;file_operations structure pointer.&n; *&n; *&t;This function will register a character driver provided the &quot;devfs=only&quot;&n; *&t;option was not provided at boot time.&n; *&t;Returns 0 on success, else a negative error code on failure.&n; */
 DECL|function|devfs_register_chrdev
 r_int
 id|devfs_register_chrdev
@@ -5478,7 +5458,6 @@ id|file_operations
 op_star
 id|fops
 )paren
-multiline_comment|/*  [SUMMARY] Optionally register a conventional character driver.&n;    [PURPOSE] This function will register a character driver provided the&n;    &quot;devfs=only&quot; option was not provided at boot time.&n;    &lt;major&gt; The major number for the driver.&n;    &lt;name&gt; The name of the driver (as seen in /proc/devices).&n;    &lt;fops&gt; The file_operations structure pointer.&n;    [RETURNS] 0 on success, else a negative error code on failure.&n;*/
 (brace
 r_if
 c_cond
@@ -5502,7 +5481,7 @@ id|fops
 suffix:semicolon
 )brace
 multiline_comment|/*  End Function devfs_register_chrdev  */
-multiline_comment|/*PUBLIC_FUNCTION*/
+multiline_comment|/**&n; *&t;devfs_register_blkdev - Optionally register a conventional block driver.&n; *&t;@major: The major number for the driver.&n; *&t;@name: The name of the driver (as seen in /proc/devices).&n; *&t;@bdops: The &amp;block_device_operations structure pointer.&n; *&n; *&t;This function will register a block driver provided the &quot;devfs=only&quot;&n; *&t;option was not provided at boot time.&n; *&t;Returns 0 on success, else a negative error code on failure.&n; */
 DECL|function|devfs_register_blkdev
 r_int
 id|devfs_register_blkdev
@@ -5521,7 +5500,6 @@ id|block_device_operations
 op_star
 id|bdops
 )paren
-multiline_comment|/*  [SUMMARY] Optionally register a conventional block driver.&n;    [PURPOSE] This function will register a block driver provided the&n;    &quot;devfs=only&quot; option was not provided at boot time.&n;    &lt;major&gt; The major number for the driver.&n;    &lt;name&gt; The name of the driver (as seen in /proc/devices).&n;    &lt;bdops&gt; The block_device_operations structure pointer.&n;    [RETURNS] 0 on success, else a negative error code on failure.&n;*/
 (brace
 r_if
 c_cond
@@ -5545,7 +5523,7 @@ id|bdops
 suffix:semicolon
 )brace
 multiline_comment|/*  End Function devfs_register_blkdev  */
-multiline_comment|/*PUBLIC_FUNCTION*/
+multiline_comment|/**&n; *&t;devfs_unregister_chrdev - Optionally unregister a conventional character driver.&n; *&t;major: The major number for the driver.&n; *&t;name: The name of the driver (as seen in /proc/devices).&n; *&n; *&t;This function will unregister a character driver provided the &quot;devfs=only&quot;&n; *&t;option was not provided at boot time.&n; *&t;Returns 0 on success, else a negative error code on failure.&n; */
 DECL|function|devfs_unregister_chrdev
 r_int
 id|devfs_unregister_chrdev
@@ -5559,7 +5537,6 @@ r_char
 op_star
 id|name
 )paren
-multiline_comment|/*  [SUMMARY] Optionally unregister a conventional character driver.&n;    [PURPOSE] This function will unregister a character driver provided the&n;    &quot;devfs=only&quot; option was not provided at boot time.&n;    &lt;major&gt; The major number for the driver.&n;    &lt;name&gt; The name of the driver (as seen in /proc/devices).&n;    [RETURNS] 0 on success, else a negative error code on failure.&n;*/
 (brace
 r_if
 c_cond
@@ -5581,7 +5558,7 @@ id|name
 suffix:semicolon
 )brace
 multiline_comment|/*  End Function devfs_unregister_chrdev  */
-multiline_comment|/*PUBLIC_FUNCTION*/
+multiline_comment|/**&n; *&t;devfs_unregister_blkdev - Optionally unregister a conventional block driver.&n; *&t;@major: The major number for the driver.&n; *&t;@name: The name of the driver (as seen in /proc/devices).&n; *&n; *&t;This function will unregister a block driver provided the &quot;devfs=only&quot;&n; *&t;option was not provided at boot time.&n; *&t;Returns 0 on success, else a negative error code on failure.&n; */
 DECL|function|devfs_unregister_blkdev
 r_int
 id|devfs_unregister_blkdev
@@ -5595,7 +5572,6 @@ r_char
 op_star
 id|name
 )paren
-multiline_comment|/*  [SUMMARY] Optionally unregister a conventional block driver.&n;    [PURPOSE] This function will unregister a block driver provided the&n;    &quot;devfs=only&quot; option was not provided at boot time.&n;    &lt;major&gt; The major number for the driver.&n;    &lt;name&gt; The name of the driver (as seen in /proc/devices).&n;    [RETURNS] 0 on success, else a negative error code on failure.&n;*/
 (brace
 r_if
 c_cond
@@ -5618,7 +5594,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*  End Function devfs_unregister_blkdev  */
 macro_line|#ifndef MODULE
-multiline_comment|/*UNPUBLISHED_FUNCTION*/
+multiline_comment|/**&n; *&t;devfs_setup - Process kernel boot options.&n; *&t;@str: The boot options after the &quot;devfs=&quot;.&n; *&t;@unused: Unused.&n; */
 DECL|function|devfs_setup
 id|SETUP_STATIC
 r_int
@@ -5629,7 +5605,6 @@ r_char
 op_star
 id|str
 )paren
-multiline_comment|/*  [SUMMARY] Process kernel boot options.&n;    &lt;str&gt; The boot options after the &quot;devfs=&quot;.&n;    &lt;unused&gt; Unused.&n;    [RETURNS] Nothing.&n;*/
 (brace
 r_while
 c_loop
@@ -6357,6 +6332,7 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/*  End Function update_devfs_inode_from_entry  */
+multiline_comment|/**&n; *&t;create_devfs_inode - Create a devfs inode entry.&n; *&t;@de: The devfs entry to associate the new inode with.&n; *&t;@fs_info: The FS info.&n; *&n; *&t;Returns a pointer to the devfs inode on success, else %NULL.&n; */
 DECL|function|create_devfs_inode
 r_static
 r_struct
@@ -6374,7 +6350,6 @@ id|fs_info
 op_star
 id|fs_info
 )paren
-multiline_comment|/*  [SUMMARY] Create a devfs inode entry.&n;    &lt;de&gt; The devfs entry to associate the new inode with.&n;    &lt;fs_info&gt; The FS info.&n;    [RETURNS] A pointer to the devfs inode on success, else NULL.&n;*/
 (brace
 r_struct
 id|devfs_inode
@@ -6587,6 +6562,7 @@ id|di
 suffix:semicolon
 )brace
 multiline_comment|/*  End Function create_devfs_inode  */
+multiline_comment|/**&n; *&t;try_modload - Notify devfsd of an inode lookup.&n; *&t;@parent: The parent devfs entry.&n; *&t;@fs_info: The filesystem info.&n; *&t;@name: The device name.&n; *&t;@namelen: The number of characters in @name.&n; *&t;@buf: A working area that will be used. This must not go out of scope until&n; *&t;&t;devfsd is idle again.&n; *&n; *&t;Returns 0 on success, else a negative error code.&n; */
 DECL|function|try_modload
 r_static
 r_int
@@ -6616,7 +6592,6 @@ id|buf
 id|STRING_LENGTH
 )braket
 )paren
-multiline_comment|/*  [SUMMARY] Notify devfsd of an inode lookup.&n;    &lt;parent&gt; The parent devfs entry.&n;    &lt;fs_info&gt; The filesystem info.&n;    &lt;name&gt; The device name.&n;    &lt;namelen&gt; The number of characters in &lt;&lt;name&gt;&gt;.&n;    &lt;buf&gt; A working area that will be used. This must not go out of scope until&n;    devfsd is idle again.&n;    [RETURNS] 0 on success, else a negative error code.&n;*/
 (brace
 r_int
 id|pos
@@ -6923,6 +6898,7 @@ id|fs_info
 suffix:semicolon
 )brace
 multiline_comment|/*  End Function delete_fs  */
+multiline_comment|/**&n; *&t;check_disc_changed - Check if a removable disc was changed.&n; *&t;@de: The device.&n; *&n; *&t;Returns 1 if the media was changed, else 0.&n; */
 DECL|function|check_disc_changed
 r_static
 r_int
@@ -6933,7 +6909,6 @@ id|devfs_entry
 op_star
 id|de
 )paren
-multiline_comment|/*  [SUMMARY] Check if a removable disc was changed.&n;    &lt;de&gt; The device.&n;    [RETURNS] 1 if the media was changed, else 0.&n;*/
 (brace
 r_int
 id|tmp
@@ -7075,6 +7050,7 @@ l_int|1
 suffix:semicolon
 )brace
 multiline_comment|/*  End Function check_disc_changed  */
+multiline_comment|/**&n; *&t;scan_dir_for_removable - Scan a directory for removable media devices and check media.&n; *&t;@dir: The directory.&n; */
 DECL|function|scan_dir_for_removable
 r_static
 r_void
@@ -7085,7 +7061,6 @@ id|devfs_entry
 op_star
 id|dir
 )paren
-multiline_comment|/*  [SUMMARY] Scan a directory for removable media devices and check media.&n;    &lt;dir&gt; The directory.&n;    [RETURNS] Nothing.&n;*/
 (brace
 r_struct
 id|devfs_entry
@@ -7152,6 +7127,7 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/*  End Function scan_dir_for_removable  */
+multiline_comment|/**&n; *&t;get_removable_partition - Get removable media partition.&n; *&t;@dir: The parent directory.&n; *&t;@name: The name of the entry.&n; *&t;@namelen: The number of characters in &lt;&lt;name&gt;&gt;.&n; *&n; *&t;Returns 1 if the media was changed, else 0.&n; */
 DECL|function|get_removable_partition
 r_static
 r_int
@@ -7171,7 +7147,6 @@ r_int
 r_int
 id|namelen
 )paren
-multiline_comment|/*  [SUMMARY] Get removable media partition.&n;    &lt;dir&gt; The parent directory.&n;    &lt;name&gt; The name of the entry.&n;    &lt;namelen&gt; The number of characters in &lt;&lt;name&gt;&gt;.&n;    [RETURNS] 1 if the media was changed, else 0.&n;*/
 (brace
 r_struct
 id|devfs_entry
@@ -7989,6 +7964,7 @@ id|devfs_statfs
 comma
 )brace
 suffix:semicolon
+multiline_comment|/**&n; *&t;get_vfs_inode - Get a VFS inode.&n; *&t;@sb: The super block.&n; *&t;@di: The devfs inode.&n; *&t;@dentry The dentry to register with the devfs inode.&n; *&n; *&t;Returns the inode on success, else %NULL.&n; */
 DECL|function|get_vfs_inode
 r_static
 r_struct
@@ -8011,7 +7987,6 @@ id|dentry
 op_star
 id|dentry
 )paren
-multiline_comment|/*  [SUMMARY] Get a VFS inode.&n;    &lt;sb&gt; The super block.&n;    &lt;di&gt; The devfs inode.&n;    &lt;dentry&gt; The dentry to register with the devfs inode.&n;    [RETURNS] The inode on success, else NULL.&n;*/
 (brace
 r_struct
 id|inode
@@ -8901,6 +8876,7 @@ comma
 )brace
 suffix:semicolon
 multiline_comment|/*  Dentry operations for device entries follow  */
+multiline_comment|/**&n; *&t;devfs_d_release - Callback for when a dentry is freed.&n; *&t;@dentry: The dentry.&n; */
 DECL|function|devfs_d_release
 r_static
 r_void
@@ -8911,7 +8887,6 @@ id|dentry
 op_star
 id|dentry
 )paren
-multiline_comment|/*  [SUMMARY] Callback for when a dentry is freed.&n;*/
 (brace
 macro_line|#ifdef CONFIG_DEVFS_DEBUG
 r_struct
@@ -8942,6 +8917,7 @@ suffix:semicolon
 macro_line|#endif
 )brace
 multiline_comment|/*  End Function devfs_d_release  */
+multiline_comment|/**&n; *&t;devfs_d_iput - Callback for when a dentry loses its inode.&n; *&t;@dentry: The dentry.&n; *&t;@inode:&t;The inode.&n; */
 DECL|function|devfs_d_iput
 r_static
 r_void
@@ -8957,7 +8933,6 @@ id|inode
 op_star
 id|inode
 )paren
-multiline_comment|/*  [SUMMARY] Callback for when a dentry loses its inode.&n;*/
 (brace
 r_struct
 id|devfs_inode
@@ -9095,6 +9070,7 @@ id|devfs_d_revalidate_wait
 comma
 )brace
 suffix:semicolon
+multiline_comment|/**&n; *&t;devfs_d_delete - Callback for when all files for a dentry are closed.&n; *&t;@detry: The dentry.&n; */
 DECL|function|devfs_d_delete
 r_static
 r_void
@@ -9105,7 +9081,6 @@ id|dentry
 op_star
 id|dentry
 )paren
-multiline_comment|/*  [SUMMARY] Callback for when all files for a dentry are closed.&n;*/
 (brace
 r_struct
 id|inode

@@ -3,14 +3,13 @@ macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;asm/sgialib.h&gt;
-DECL|function|prom_getenv
-r_char
-op_star
+id|PCHAR
 id|__init
-id|prom_getenv
+DECL|function|ArcGetEnvironmentVariable
+id|ArcGetEnvironmentVariable
 c_func
 (paren
-r_char
+id|CHAR
 op_star
 id|name
 )paren
@@ -25,18 +24,16 @@ id|name
 )paren
 suffix:semicolon
 )brace
-DECL|function|prom_setenv
-r_int
+id|LONG
 id|__init
-id|prom_setenv
+DECL|function|ArcSetEnvironmentVariable
+id|ArcSetEnvironmentVariable
 c_func
 (paren
-r_char
-op_star
+id|PCHAR
 id|name
 comma
-r_char
-op_star
+id|PCHAR
 id|value
 )paren
 (brace

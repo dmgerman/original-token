@@ -1,7 +1,7 @@
-multiline_comment|/*&n; * $Id: socket.h,v 1.5 1998/03/17 22:16:17 ralf Exp $&n; */
-macro_line|#ifndef __ASM_MIPS_SOCKET_H
-DECL|macro|__ASM_MIPS_SOCKET_H
-mdefine_line|#define __ASM_MIPS_SOCKET_H
+multiline_comment|/*&n; * $Id: socket.h,v 1.6 2000/02/25 21:52:09 ralf Exp $&n; */
+macro_line|#ifndef _ASM_SOCKET_H
+DECL|macro|_ASM_SOCKET_H
+mdefine_line|#define _ASM_SOCKET_H
 macro_line|#include &lt;asm/sockios.h&gt;
 multiline_comment|/*&n; * For setsockoptions(2)&n; *&n; * This defines are ABI conformant as far as Linux supports these ...&n; */
 DECL|macro|SOL_SOCKET
@@ -69,6 +69,7 @@ DECL|macro|SO_ATTACH_FILTER
 mdefine_line|#define SO_ATTACH_FILTER        26
 DECL|macro|SO_DETACH_FILTER
 mdefine_line|#define SO_DETACH_FILTER        27
+macro_line|#ifdef __KERNEL__
 DECL|macro|SO_PEERNAME
 mdefine_line|#define SO_PEERNAME             28
 multiline_comment|/* Types of sockets.  */
@@ -84,5 +85,6 @@ DECL|macro|SOCK_SEQPACKET
 mdefine_line|#define SOCK_SEQPACKET 5&t;/* Sequenced, reliable, connection-based,&n;&t;&t;&t;&t;   datagrams of fixed maximum length.  */
 DECL|macro|SOCK_PACKET
 mdefine_line|#define SOCK_PACKET 10&t;&t;/* Linux specific way of getting packets at&n;&t;&t;&t;&t;   the dev level.  For writing rarp and&n;&t;&t;&t;&t;   other similar things on the user level.  */
-macro_line|#endif /* __ASM_MIPS_SOCKET_H */
+macro_line|#endif /* __KERNEL__ */
+macro_line|#endif /* _ASM_SOCKET_H */
 eof

@@ -5,6 +5,7 @@ macro_line|#include &lt;linux/locks.h&gt;
 macro_line|#include &lt;linux/kdev_t.h&gt;
 macro_line|#include &lt;linux/devfs_fs_kernel.h&gt;
 multiline_comment|/*  Private functions follow  */
+multiline_comment|/**&n; *&t;_devfs_convert_name - Convert from an old style location-based name to new style.&n; *&t;@new: The new name will be written here.&n; *&t;@old: The old name.&n; *&t;@disc: If true, disc partitioning information should be processed.&n; */
 DECL|function|_devfs_convert_name
 r_static
 r_void
@@ -23,7 +24,6 @@ comma
 r_int
 id|disc
 )paren
-multiline_comment|/*  [SUMMARY] Convert from an old style location-based name to new style.&n;    &lt;new&gt; The new name will be written here.&n;    &lt;old&gt; The old name.&n;    &lt;disc&gt; If true, disc partitioning information should be processed.&n;    [RETURNS] Nothing.&n;*/
 (brace
 r_int
 id|host
@@ -214,7 +214,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*  End Function _devfs_convert_name  */
 multiline_comment|/*  Public functions follow  */
-multiline_comment|/*PUBLIC_FUNCTION*/
+multiline_comment|/**&n; *&t;devfs_make_root - Create the root FS device entry if required.&n; *&t;@name: The name of the root FS device, as passed by &quot;root=&quot;.&n; */
 DECL|function|devfs_make_root
 r_void
 id|__init
@@ -225,7 +225,6 @@ r_char
 op_star
 id|name
 )paren
-multiline_comment|/*  [SUMMARY] Create the root FS device entry if required.&n;    &lt;name&gt; The name of the root FS device, as passed by &quot;root=&quot;.&n;    [RETURNS] Nothing.&n;*/
 (brace
 r_char
 id|dest
@@ -384,7 +383,7 @@ l_int|NULL
 suffix:semicolon
 )brace
 multiline_comment|/*  End Function devfs_make_root  */
-multiline_comment|/*PUBLIC_FUNCTION*/
+multiline_comment|/**&n; *&t;devfs_register_tape - Register a tape device in the &quot;/dev/tapes&quot; hierarchy.&n; *&t;@de: Any tape device entry in the device directory.&n; */
 DECL|function|devfs_register_tape
 r_void
 id|devfs_register_tape
@@ -392,7 +391,6 @@ id|devfs_register_tape
 id|devfs_handle_t
 id|de
 )paren
-multiline_comment|/*  [SUMMARY] Register a tape device in the &quot;/dev/tapes&quot; hierarchy.&n;    &lt;de&gt; Any tape device entry in the device directory.&n;    [RETURNS] Nothing.&n;*/
 (brace
 r_int
 id|pos
@@ -537,7 +535,7 @@ c_func
 id|devfs_register_tape
 )paren
 suffix:semicolon
-multiline_comment|/*PUBLIC_FUNCTION*/
+multiline_comment|/**&n; *&t;devfs_register_series - Register a sequence of device entries.&n; *&t;@dir: The handle to the parent devfs directory entry. If this is %NULL the&n; *&t;&t;new names are relative to the root of the devfs.&n; *&t;@format: The printf-style format string. A single &quot;&bslash;%u&quot; is allowed.&n; *&t;@flags: A set of bitwise-ORed flags (DEVFS_FL_*).&n; *&t;@major: The major number. Not needed for regular files.&n; *&t;@minor_start: The starting minor number. Not needed for regular files.&n; *&t;@mode: The default file mode.&n; *&t;@uid: The default UID of the file.&n; *&t;@guid: The default GID of the file.&n; *&t;@ops: The &amp;file_operations or &amp;block_device_operations structure.&n; *&t;&t;This must not be externally deallocated.&n; *&t;@info: An arbitrary pointer which will be written to the private_data&n; *&t;&t;field of the &amp;file structure passed to the device driver. You can set&n; *&t;&t;this to whatever you like, and change it once the file is opened (the next&n; *&t;&t;file opened will not see this change).&n; */
 DECL|function|devfs_register_series
 r_void
 id|devfs_register_series
@@ -583,7 +581,6 @@ r_void
 op_star
 id|info
 )paren
-multiline_comment|/*  [SUMMARY] Register a sequence of device entries.&n;    &lt;dir&gt; The handle to the parent devfs directory entry. If this is NULL the&n;    new names are relative to the root of the devfs.&n;    &lt;format&gt; The printf-style format string. A single &quot;%u&quot; is allowed.&n;    &lt;flags&gt; A set of bitwise-ORed flags (DEVFS_FL_*).&n;    &lt;major&gt; The major number. Not needed for regular files.&n;    &lt;minor_start&gt; The starting minor number. Not needed for regular files.&n;    &lt;mode&gt; The default file mode.&n;    &lt;uid&gt; The default UID of the file.&n;    &lt;guid&gt; The default GID of the file.&n;    &lt;ops&gt; The &lt;&lt;file_operations&gt;&gt; or &lt;&lt;block_device_operations&gt;&gt; structure.&n;    This must not be externally deallocated.&n;    &lt;info&gt; An arbitrary pointer which will be written to the &lt;&lt;private_data&gt;&gt;&n;    field of the &lt;&lt;file&gt;&gt; structure passed to the device driver. You can set&n;    this to whatever you like, and change it once the file is opened (the next&n;    file opened will not see this change).&n;    [RETURNS] Nothing.&n;*/
 (brace
 r_int
 r_int

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: indy_int.c,v 1.17 2000/02/04 07:40:23 ralf Exp $&n; *&n; * indy_int.c: Routines for generic manipulation of the INT[23] ASIC&n; *             found on INDY workstations..&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; * Copyright (C) 1997, 1998 Ralf Baechle (ralf@gnu.org)&n; * Copyright (C) 1999 Andrew R. Baker (andrewb@uab.edu) &n; *                    - Indigo2 changes&n; *                    - Interrupt handling fixes&n; */
+multiline_comment|/* $Id: indy_int.c,v 1.18 2000/03/02 02:36:50 ralf Exp $&n; *&n; * indy_int.c: Routines for generic manipulation of the INT[23] ASIC&n; *             found on INDY workstations..&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; * Copyright (C) 1997, 1998 Ralf Baechle (ralf@gnu.org)&n; * Copyright (C) 1999 Andrew R. Baker (andrewb@uab.edu) &n; *                    - Indigo2 changes&n; *                    - Interrupt handling fixes&n; */
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/kernel_stat.h&gt;
@@ -25,6 +25,14 @@ macro_line|#include &lt;asm/sgi/sgihpc.h&gt;
 macro_line|#include &lt;asm/sgi/sgint23.h&gt;
 macro_line|#include &lt;asm/sgialib.h&gt;
 macro_line|#include &lt;asm/gdb-stub.h&gt;
+multiline_comment|/*&n; * Linux has a controller-independent x86 interrupt architecture.&n; * every controller has a &squot;controller-template&squot;, that is used&n; * by the main code to do the right thing. Each driver-visible&n; * interrupt source is transparently wired to the apropriate&n; * controller. Thus drivers need not be aware of the&n; * interrupt-controller.&n; *&n; * Various interrupt controllers we handle: 8259 PIC, SMP IO-APIC,&n; * PIIX4&squot;s internal 8259 PIC and SGI&squot;s Visual Workstation Cobalt (IO-)APIC.&n; * (IO-APICs assumed to be messaging to Pentium local-APICs)&n; *&n; * the code is designed to be easily extended with new/different&n; * interrupt controllers, without having to do assembly magic.&n; */
+DECL|variable|irq_stat
+id|irq_cpustat_t
+id|irq_stat
+(braket
+id|NR_CPUS
+)braket
+suffix:semicolon
 multiline_comment|/* #define DEBUG_SGINT */
 DECL|variable|sgi_i2regs
 r_struct

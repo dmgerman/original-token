@@ -257,7 +257,7 @@ id|res
 suffix:semicolon
 )brace
 DECL|macro|clear_user
-mdefine_line|#define clear_user(addr,n) ({ &bslash;&n;void * __cl_addr = (addr); &bslash;&n;unsigned long __cl_size = (n); &bslash;&n;if (__cl_size &amp;&amp; __access_ok(VERIFY_WRITE, ((unsigned long)(__cl_addr)), __cl_size)) &bslash;&n;__cl_size = __clear_user(__cl_addr, __cl_size); &bslash;&n;__cl_size; })
+mdefine_line|#define clear_user(addr,n) ({ &bslash;&n;void * __cl_addr = (addr); &bslash;&n;unsigned long __cl_size = (n); &bslash;&n;if (__cl_size &amp;&amp; access_ok(VERIFY_WRITE, ((unsigned long)(__cl_addr)), __cl_size)) &bslash;&n;__cl_size = __clear_user(__cl_addr, __cl_size); &bslash;&n;__cl_size; })
 multiline_comment|/*&n; * Returns: -EFAULT if exception before terminator, N if the entire&n; * buffer filled, else strlen.&n; */
 r_extern
 r_inline

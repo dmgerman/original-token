@@ -18,18 +18,9 @@ macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/mipsregs.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/baget/baget.h&gt;
-DECL|variable|local_bh_count
-r_int
-r_int
-id|local_bh_count
-(braket
-id|NR_CPUS
-)braket
-suffix:semicolon
-DECL|variable|local_irq_count
-r_int
-r_int
-id|local_irq_count
+DECL|variable|irq_stat
+id|irq_cpustat_t
+id|irq_stat
 (braket
 id|NR_CPUS
 )braket

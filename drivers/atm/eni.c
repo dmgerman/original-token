@@ -13161,6 +13161,7 @@ multiline_comment|/* ASIC */
 comma
 (brace
 l_int|0
+comma
 )brace
 )brace
 suffix:semicolon

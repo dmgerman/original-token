@@ -276,20 +276,18 @@ c_func
 l_string|&quot;.set&bslash;tnoreorder&bslash;n&bslash;t&quot;
 l_string|&quot;.set&bslash;tnoat&bslash;n&quot;
 l_string|&quot;1:&bslash;tlbu&bslash;t%3,(%0)&bslash;n&bslash;t&quot;
-macro_line|#if defined(CONFIG_CPU_R3000)
-l_string|&quot;lbu&bslash;t$1,(%1)&bslash;n&bslash;t&quot;
-l_string|&quot;nop&bslash;n&bslash;t&quot;
-l_string|&quot;beqz&bslash;t%2,2f&bslash;n&bslash;t&quot;
-macro_line|#else
 l_string|&quot;beqz&bslash;t%2,2f&bslash;n&bslash;t&quot;
 l_string|&quot;lbu&bslash;t$1,(%1)&bslash;n&bslash;t&quot;
-macro_line|#endif
 l_string|&quot;subu&bslash;t%2,1&bslash;n&bslash;t&quot;
 l_string|&quot;bne&bslash;t$1,%3,3f&bslash;n&bslash;t&quot;
 l_string|&quot;addiu&bslash;t%0,1&bslash;n&bslash;t&quot;
 l_string|&quot;bnez&bslash;t%3,1b&bslash;n&bslash;t&quot;
 l_string|&quot;addiu&bslash;t%1,1&bslash;n&quot;
-l_string|&quot;2:&bslash;tmove&bslash;t%3,$1&bslash;n&quot;
+l_string|&quot;2:&bslash;n&bslash;t&quot;
+macro_line|#if defined(CONFIG_CPU_R3000)
+l_string|&quot;nop&bslash;n&bslash;t&quot;
+macro_line|#endif&t;
+l_string|&quot;move&bslash;t%3,$1&bslash;n&quot;
 l_string|&quot;3:&bslash;tsubu&bslash;t%3,$1&bslash;n&bslash;t&quot;
 l_string|&quot;.set&bslash;tat&bslash;n&bslash;t&quot;
 l_string|&quot;.set&bslash;treorder&quot;

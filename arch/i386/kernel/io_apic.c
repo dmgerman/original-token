@@ -56,6 +56,13 @@ id|mp_irq_entries
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#if CONFIG_SMP
+DECL|macro|TARGET_CPUS
+macro_line|# define TARGET_CPUS cpu_online_map
+macro_line|#else
+DECL|macro|TARGET_CPUS
+macro_line|# define TARGET_CPUS 0x01
+macro_line|#endif
 multiline_comment|/*&n; * Rough estimation of how many shared IRQs there are, can&n; * be changed anytime.&n; */
 DECL|macro|MAX_PLUS_SHARED_IRQS
 mdefine_line|#define MAX_PLUS_SHARED_IRQS NR_IRQS
@@ -172,9 +179,9 @@ id|pin
 suffix:semicolon
 )brace
 DECL|macro|__DO_ACTION
-mdefine_line|#define __DO_ACTION(name,R,ACTION, FINAL)&t;&t;&t;&t;&bslash;&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;{&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;int pin;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;struct irq_pin_list *entry = irq_2_pin + irq;&t;&t;&t;&bslash;&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;for (;;) {&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;unsigned int reg;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;pin = entry-&gt;pin;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;if (pin == -1)&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;break;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;reg = io_apic_read(entry-&gt;apic, 0x10 + R + pin*2);&t;&bslash;&n;&t;&t;reg ACTION;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;io_apic_modify(entry-&gt;apic, reg);&t;&t;&t;&bslash;&n;&t;&t;if (!entry-&gt;next)&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;break;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;entry = irq_2_pin + entry-&gt;next;&t;&t;&t;&bslash;&n;&t;}&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;FINAL;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;}
+mdefine_line|#define __DO_ACTION(R, ACTION, FINAL)&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;{&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;int pin;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;struct irq_pin_list *entry = irq_2_pin + irq;&t;&t;&t;&bslash;&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;for (;;) {&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;unsigned int reg;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;pin = entry-&gt;pin;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;if (pin == -1)&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;break;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;reg = io_apic_read(entry-&gt;apic, 0x10 + R + pin*2);&t;&bslash;&n;&t;&t;reg ACTION;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;io_apic_modify(entry-&gt;apic, reg);&t;&t;&t;&bslash;&n;&t;&t;if (!entry-&gt;next)&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;break;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;entry = irq_2_pin + entry-&gt;next;&t;&t;&t;&bslash;&n;&t;}&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;FINAL;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;}
 DECL|macro|DO_ACTION
-mdefine_line|#define DO_ACTION(name,R,ACTION, FINAL)&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;static void name##_IO_APIC_irq(unsigned int irq)&t;&t;&t;&bslash;&n;__DO_ACTION(name,R,ACTION, FINAL)
+mdefine_line|#define DO_ACTION(name,R,ACTION, FINAL)&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;static void name##_IO_APIC_irq (unsigned int irq)&t;&t;&bslash;&n;&t;__DO_ACTION(R, ACTION, FINAL)
 id|DO_ACTION
 c_func
 (paren
@@ -1920,7 +1927,7 @@ id|NR_IRQS
 )braket
 op_assign
 (brace
-id|IRQ0_TRAP_VECTOR
+id|FIRST_DEVICE_VECTOR
 comma
 l_int|0
 )brace
@@ -1940,7 +1947,7 @@ r_static
 r_int
 id|current_vector
 op_assign
-id|IRQ0_TRAP_VECTOR
+id|FIRST_DEVICE_VECTOR
 comma
 id|offset
 op_assign
@@ -1964,19 +1971,6 @@ c_func
 id|irq
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|current_vector
-op_eq
-l_int|0xFF
-)paren
-id|panic
-c_func
-(paren
-l_string|&quot;ran out of interrupt sources!&quot;
-)paren
-suffix:semicolon
 id|next
 suffix:colon
 id|current_vector
@@ -1998,7 +1992,7 @@ c_cond
 (paren
 id|current_vector
 OG
-l_int|0xFF
+id|FIRST_SYSTEM_VECTOR
 )paren
 (brace
 id|offset
@@ -2006,11 +2000,24 @@ op_increment
 suffix:semicolon
 id|current_vector
 op_assign
-id|IRQ0_TRAP_VECTOR
+id|FIRST_DEVICE_VECTOR
 op_plus
 id|offset
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|current_vector
+op_eq
+id|FIRST_SYSTEM_VECTOR
+)paren
+id|panic
+c_func
+(paren
+l_string|&quot;ran out of interrupt sources!&quot;
+)paren
+suffix:semicolon
 id|IO_APIC_VECTOR
 c_func
 (paren
@@ -2147,7 +2154,7 @@ suffix:semicolon
 multiline_comment|/* enable IRQ */
 id|entry.dest.logical.logical_dest
 op_assign
-id|APIC_ALL_CPUS
+id|TARGET_CPUS
 suffix:semicolon
 id|idx
 op_assign
@@ -2252,7 +2259,7 @@ l_int|1
 suffix:semicolon
 id|entry.dest.logical.logical_dest
 op_assign
-id|APIC_ALL_CPUS
+id|TARGET_CPUS
 suffix:semicolon
 )brace
 id|irq
@@ -2510,7 +2517,7 @@ suffix:semicolon
 multiline_comment|/* unmask IRQ now */
 id|entry.dest.logical.logical_dest
 op_assign
-id|APIC_ALL_CPUS
+id|TARGET_CPUS
 suffix:semicolon
 id|entry.delivery_mode
 op_assign
@@ -4774,8 +4781,6 @@ suffix:semicolon
 id|__DO_ACTION
 c_func
 (paren
-id|target
-comma
 l_int|1
 comma
 op_assign

@@ -528,11 +528,6 @@ r_char
 op_star
 id|filename
 suffix:semicolon
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 id|filename
 op_assign
 id|getname
@@ -616,11 +611,6 @@ id|filename
 suffix:semicolon
 id|out
 suffix:colon
-id|unlock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 r_return
 id|error
 suffix:semicolon

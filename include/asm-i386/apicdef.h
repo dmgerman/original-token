@@ -2,8 +2,8 @@ macro_line|#ifndef __ASM_APICDEF_H
 DECL|macro|__ASM_APICDEF_H
 mdefine_line|#define __ASM_APICDEF_H
 multiline_comment|/*&n; * Constants for various Intel APICs. (local APIC, IOAPIC, etc.)&n; *&n; * Alan Cox &lt;Alan.Cox@linux.org&gt;, 1995.&n; * Ingo Molnar &lt;mingo@redhat.com&gt;, 1999, 2000&n; */
-DECL|macro|APIC_PHYS_BASE
-mdefine_line|#define&t;&t;APIC_PHYS_BASE&t;0xfee00000 /* IA s/w dev Vol 3, Section 7.4 */
+DECL|macro|APIC_DEFAULT_PHYS_BASE
+mdefine_line|#define&t;&t;APIC_DEFAULT_PHYS_BASE&t;0xfee00000
 DECL|macro|APIC_ID
 mdefine_line|#define&t;&t;APIC_ID&t;&t;0x20
 DECL|macro|GET_APIC_ID

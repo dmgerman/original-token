@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * memory.c: memory initialisation code.&n; *&n; * Copyright (C) 1998 Harald Koerfgen, Frieder Streffer and Paul M. Antoine&n; *&n; * $Id: memory.c,v 1.4 2000/02/13 20:52:05 harald Exp $&n; */
+multiline_comment|/*&n; * memory.c: memory initialisation code.&n; *&n; * Copyright (C) 1998 Harald Koerfgen, Frieder Streffer and Paul M. Antoine&n; *&n; * $Id: memory.c,v 1.3 1999/10/09 00:00:58 ralf Exp $&n; */
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;

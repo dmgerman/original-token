@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  $Id: reset.c,v 1.4 1999/04/11 17:06:16 harald Exp $&n; *&n; *  Reset a DECstation machine.&n; *&n; */
+multiline_comment|/*&n; *  $Id: $&n; *&n; *  Reset a DECstation machine.&n; *&n; */
 DECL|variable|back_to_prom
 r_void
 (paren

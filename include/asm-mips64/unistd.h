@@ -1960,8 +1960,8 @@ DECL|macro|__NR_Linux32_alarm
 mdefine_line|#define __NR_Linux32_alarm&t;&t;(__NR_Linux32 +  27)
 DECL|macro|__NR_Linux32_oldfstat
 mdefine_line|#define __NR_Linux32_oldfstat&t;&t;(__NR_Linux32 +  28)
-DECL|macro|__NR_Linux32_unused29
-mdefine_line|#define __NR_Linux32_unused29&t;&t;(__NR_Linux32 +  29)
+DECL|macro|__NR_Linux32_pause
+mdefine_line|#define __NR_Linux32_pause&t;&t;(__NR_Linux32 +  29)
 DECL|macro|__NR_Linux32_utime
 mdefine_line|#define __NR_Linux32_utime&t;&t;(__NR_Linux32 +  30)
 DECL|macro|__NR_Linux32_stty
@@ -2336,9 +2336,13 @@ DECL|macro|__NR_Linux32_fstat64
 mdefine_line|#define __NR_Linux32_fstat64&t;&t;(__NR_Linux32 + 215)
 DECL|macro|__NR_Linux32_root_pivot
 mdefine_line|#define __NR_Linux32_root_pivot&t;&t;(__NR_Linux32 + 216)
+DECL|macro|__NR_Linux32_mincore
+mdefine_line|#define __NR_Linux32_mincore&t;&t;(__NR_Linux32 + 217)
+DECL|macro|__NR_Linux32_madvise
+mdefine_line|#define __NR_Linux32_madvise&t;&t;(__NR_Linux32 + 218)
 multiline_comment|/*&n; * Offset of the last Linux o32 flavoured syscall&n; */
 DECL|macro|__NR_Linux32_syscalls
-mdefine_line|#define __NR_Linux32_syscalls&t;&t;216
+mdefine_line|#define __NR_Linux32_syscalls&t;&t;218
 multiline_comment|/*&n; * Linux 64-bit syscalls are in the range from 5000 to 5999.&n; */
 DECL|macro|__NR_Linux
 mdefine_line|#define __NR_Linux&t;&t;&t;5000
@@ -2400,8 +2404,8 @@ DECL|macro|__NR_alarm
 mdefine_line|#define __NR_alarm&t;&t;&t;(__NR_Linux +  27)
 DECL|macro|__NR_oldfstat
 mdefine_line|#define __NR_oldfstat&t;&t;&t;(__NR_Linux +  28)
-DECL|macro|__NR_unused29
-mdefine_line|#define __NR_unused29&t;&t;&t;(__NR_Linux +  29)
+DECL|macro|__NR_pause
+mdefine_line|#define __NR_pause&t;&t;&t;(__NR_Linux +  29)
 DECL|macro|__NR_utime
 mdefine_line|#define __NR_utime&t;&t;&t;(__NR_Linux +  30)
 DECL|macro|__NR_stty
@@ -2764,9 +2768,13 @@ DECL|macro|__NR_putpmsg
 mdefine_line|#define __NR_putpmsg&t;&t;&t;(__NR_Linux + 209)
 DECL|macro|__NR_root_pivot
 mdefine_line|#define __NR_root_pivot&t;&t;&t;(__NR_Linux + 210)
+DECL|macro|__NR_mincore
+mdefine_line|#define __NR_mincore&t;&t;&t;(__NR_Linux + 211)
+DECL|macro|__NR_madvise
+mdefine_line|#define __NR_madvise&t;&t;&t;(__NR_Linux + 212)
 multiline_comment|/*&n; * Offset of the last Linux flavoured syscall&n; */
 DECL|macro|__NR_Linux_syscalls
-mdefine_line|#define __NR_Linux_syscalls&t;&t;210
+mdefine_line|#define __NR_Linux_syscalls&t;&t;212
 macro_line|#ifndef _LANGUAGE_ASSEMBLY
 multiline_comment|/* XXX - _foo needs to be __foo, while __NR_bar could be _NR_bar. */
 DECL|macro|_syscall0

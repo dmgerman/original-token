@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: watch.h,v 1.1 1999/09/28 22:27:20 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1996, 1997, 1998, 1999 by Ralf Baechle&n; */
+multiline_comment|/* $Id: watch.h,v 1.1 1999/09/27 16:01:41 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1996, 1997, 1998, 1999 by Ralf Baechle&n; */
 macro_line|#ifndef _ASM_WATCH_H
 DECL|macro|_ASM_WATCH_H
 mdefine_line|#define _ASM_WATCH_H

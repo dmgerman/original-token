@@ -15,21 +15,6 @@ DECL|member|gendata
 id|pg_data_t
 id|gendata
 suffix:semicolon
-DECL|member|physstart
-r_int
-r_int
-id|physstart
-suffix:semicolon
-DECL|member|size
-r_int
-r_int
-id|size
-suffix:semicolon
-DECL|member|start_mapnr
-r_int
-r_int
-id|start_mapnr
-suffix:semicolon
 DECL|typedef|plat_pg_data_t
 )brace
 id|plat_pg_data_t
@@ -55,14 +40,14 @@ mdefine_line|#define PHYSADDR_TO_NID(pa)&t;&t;NASID_TO_COMPACT_NODEID(NASID_GET(
 DECL|macro|PLAT_NODE_DATA
 mdefine_line|#define PLAT_NODE_DATA(n)&t;&t;(plat_node_data[n])
 DECL|macro|PLAT_NODE_DATA_STARTNR
-mdefine_line|#define PLAT_NODE_DATA_STARTNR(n)&t;(PLAT_NODE_DATA(n)-&gt;start_mapnr)
+mdefine_line|#define PLAT_NODE_DATA_STARTNR(n)    (PLAT_NODE_DATA(n)-&gt;gendata.node_start_mapnr)
+DECL|macro|PLAT_NODE_DATA_SIZE
+mdefine_line|#define PLAT_NODE_DATA_SIZE(n)&t;     (PLAT_NODE_DATA(n)-&gt;gendata.node_size)
 DECL|macro|PLAT_NODE_DATA_LOCALNR
-mdefine_line|#define PLAT_NODE_DATA_LOCALNR(p, n) &bslash;&n;&t;&t;&t;(((p) - PLAT_NODE_DATA(n)-&gt;physstart) &gt;&gt; PAGE_SHIFT)
-DECL|macro|PAGE_TO_PLAT_NODE
-mdefine_line|#define PAGE_TO_PLAT_NODE(p)&t;&t;(plat_pg_data_t *)((p)-&gt;zone-&gt;zone_pgdat)
+mdefine_line|#define PLAT_NODE_DATA_LOCALNR(p, n) &bslash;&n;&t;&t;(((p) - PLAT_NODE_DATA(n)-&gt;gendata.node_start_paddr) &gt;&gt; PAGE_SHIFT)
 macro_line|#ifdef CONFIG_DISCONTIGMEM
 multiline_comment|/*&n; * Following are macros that each numa implmentation must define.&n; */
-multiline_comment|/*&n; * Given a kernel address, find the home node of the underlying memory.&n; * For production kern_addr_valid, change to return &quot;numnodes&quot; instead&n; * of panicing.&n; */
+multiline_comment|/*&n; * Given a kernel address, find the home node of the underlying memory.&n; */
 DECL|macro|KVADDR_TO_NID
 mdefine_line|#define KVADDR_TO_NID(kaddr) &bslash;&n;&t;((NASID_TO_COMPACT_NODEID(NASID_GET(__pa(kaddr))) != -1) ? &bslash;&n;&t;(NASID_TO_COMPACT_NODEID(NASID_GET(__pa(kaddr)))) : &bslash;&n;&t;(printk(&quot;NUMABUG: %s line %d addr 0x%lx&quot;, __FILE__, __LINE__, kaddr), &bslash;&n;&t;numa_debug(), -1))
 multiline_comment|/*&n; * Return a pointer to the node data for node n.&n; */
@@ -71,15 +56,18 @@ mdefine_line|#define NODE_DATA(n)&t;(&amp;((PLAT_NODE_DATA(n))-&gt;gendata))
 multiline_comment|/*&n; * NODE_MEM_MAP gives the kaddr for the mem_map of the node.&n; */
 DECL|macro|NODE_MEM_MAP
 mdefine_line|#define NODE_MEM_MAP(nid)&t;(NODE_DATA(nid)-&gt;node_mem_map)
-multiline_comment|/*&n; * Given a mem_map_t, LOCAL_MAP_BASE finds the owning node for the&n; * physical page and returns the kaddr for the mem_map of that node.&n; */
-DECL|macro|LOCAL_MAP_BASE
-mdefine_line|#define LOCAL_MAP_BASE(page) &bslash;&n;&t;&t;&t;NODE_MEM_MAP(KVADDR_TO_NID((unsigned long)(page)))
 multiline_comment|/*&n; * Given a kaddr, ADDR_TO_MAPBASE finds the owning node of the memory&n; * and returns the the mem_map of that node.&n; */
 DECL|macro|ADDR_TO_MAPBASE
 mdefine_line|#define ADDR_TO_MAPBASE(kaddr) &bslash;&n;&t;&t;&t;NODE_MEM_MAP(KVADDR_TO_NID((unsigned long)(kaddr)))
 multiline_comment|/*&n; * Given a kaddr, LOCAL_BASE_ADDR finds the owning node of the memory&n; * and returns the kaddr corresponding to first physical page in the&n; * node&squot;s mem_map.&n; */
 DECL|macro|LOCAL_BASE_ADDR
 mdefine_line|#define LOCAL_BASE_ADDR(kaddr)&t;((unsigned long)(kaddr) &amp; ~(NODE_MAX_MEM_SIZE-1))
+DECL|macro|LOCAL_MAP_NR
+mdefine_line|#define LOCAL_MAP_NR(kvaddr) &bslash;&n;&t;(((unsigned long)(kvaddr)-LOCAL_BASE_ADDR((kvaddr))) &gt;&gt; PAGE_SHIFT)
+DECL|macro|MAP_NR
+mdefine_line|#define MAP_NR(kaddr)&t;(((unsigned long)(kaddr) &gt; (unsigned long)high_memory)&bslash;&n;&t;&t;? (max_mapnr + 1) : (LOCAL_MAP_NR((kaddr)) + &bslash;&n;&t;&t;(((unsigned long)ADDR_TO_MAPBASE((kaddr)) - PAGE_OFFSET) / &bslash;&n;&t;&t;sizeof(mem_map_t))))
+DECL|macro|kern_addr_valid
+mdefine_line|#define kern_addr_valid(addr)&t;((KVADDR_TO_NID((unsigned long)addr) &gt; &bslash;&n;&t;-1) ? 0 : (test_bit(LOCAL_MAP_NR((addr)), &bslash;&n;&t;NODE_DATA(KVADDR_TO_NID((unsigned long)addr))-&gt;valid_addr_bitmap)))
 macro_line|#endif /* CONFIG_DISCONTIGMEM */
 macro_line|#endif /* _ASM_MMZONE_H_ */
 eof

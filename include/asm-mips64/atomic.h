@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: atomic.h,v 1.1 1999/08/18 23:37:50 ralf Exp $&n; *&n; * Atomic operations that C can&squot;t guarantee us.  Useful for&n; * resource counting etc..&n; *&n; * But use these as seldom as possible since they are much more slower&n; * than regular operations.&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1996, 1997, 1999 by Ralf Baechle&n; */
+multiline_comment|/* $Id$&n; *&n; * Atomic operations that C can&squot;t guarantee us.  Useful for&n; * resource counting etc..&n; *&n; * But use these as seldom as possible since they are much more slower&n; * than regular operations.&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1996, 1997, 1999 by Ralf Baechle&n; */
 macro_line|#ifndef _ASM_ATOMIC_H
 DECL|macro|_ASM_ATOMIC_H
 mdefine_line|#define _ASM_ATOMIC_H

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: highmem.h,v 1.2 2000/01/29 01:42:28 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 2000 by Ralf Baechle&n; * Copyright (C) 2000 Silicon Graphics, Inc.&n; */
+multiline_comment|/* $Id: highmem.h,v 1.1 2000/01/27 01:05:37 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 2000 by Ralf Baechle&n; * Copyright (C) 2000 Silicon Graphics, Inc.&n; */
 macro_line|#ifndef _ASM_HIGHMEM_H
 DECL|macro|_ASM_HIGHMEM_H
 mdefine_line|#define _ASM_HIGHMEM_H

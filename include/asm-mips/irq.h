@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: irq.h,v 1.7 2000/02/23 00:41:38 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1994 by Waldorf GMBH, written by Ralf Baechle&n; * Copyright (C) 1995, 1996, 1997, 1998 by Ralf Baechle&n; */
+multiline_comment|/* $Id: irq.h,v 1.6 2000/01/26 00:07:45 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1994 by Waldorf GMBH, written by Ralf Baechle&n; * Copyright (C) 1995, 1996, 1997, 1998 by Ralf Baechle&n; */
 macro_line|#ifndef _ASM_IRQ_H
 DECL|macro|_ASM_IRQ_H
 mdefine_line|#define _ASM_IRQ_H

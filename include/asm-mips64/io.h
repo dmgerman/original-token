@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: io.h,v 1.10 2000/02/24 00:13:20 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1994, 1995 Waldorf GmbH&n; * Copyright (C) 1994 - 2000 Ralf Baechle&n; * Copyright (C) 1999, 2000 Silicon Graphics, Inc.&n; */
+multiline_comment|/* $Id: io.h,v 1.9 2000/02/04 07:40:53 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1994, 1995 Waldorf GmbH&n; * Copyright (C) 1994 - 2000 Ralf Baechle&n; * Copyright (C) 1999, 2000 Silicon Graphics, Inc.&n; */
 macro_line|#ifndef _ASM_IO_H
 DECL|macro|_ASM_IO_H
 mdefine_line|#define _ASM_IO_H
@@ -177,7 +177,7 @@ id|PAGE_OFFSET
 suffix:semicolon
 )brace
 DECL|macro|BRIDGE_DIRECT_MAPPED_BASE
-mdefine_line|#define&t;BRIDGE_DIRECT_MAPPED_BASE&t;0xa200000000000000ull
+mdefine_line|#define&t;BRIDGE_DIRECT_MAPPED_BASE&t;0xa180000000000000ull
 multiline_comment|/*&n; * IO bus memory addresses are also 1:1 with the physical address&n; * This simplistic model doesn&squot;t hold for the Origin.&n; */
 DECL|function|virt_to_bus
 r_extern
@@ -450,21 +450,21 @@ l_int|4
 )paren
 multiline_comment|/*&n; * Note that due to the way __builtin_constant_p() works, you&n; *  - can&squot;t use it inside an inline function (it will never be true)&n; *  - you don&squot;t have to worry about side effects within the __builtin..&n; */
 DECL|macro|outb
-mdefine_line|#define outb(val,port) &bslash;&n;((__builtin_constant_p((port)) &amp;&amp; (port) &lt; 32768) ? &bslash;&n;&t;__outbc((val),(port)) : &bslash;&n;&t;__outb((val),(port)))
+mdefine_line|#define outb(val,port) &bslash;&n;((__builtin_constant_p((port)^(3)) &amp;&amp; ((port)^(3)) &lt; 32768) ? &bslash;&n;&t;__outbc((val),(port)^(3)) : &bslash;&n;&t;__outb((val),(port)^(3)))
 DECL|macro|inb
-mdefine_line|#define inb(port) &bslash;&n;((__builtin_constant_p((port)) &amp;&amp; (port) &lt; 32768) ? &bslash;&n;&t;__inbc(port) : &bslash;&n;&t;__inb(port))
+mdefine_line|#define inb(port) &bslash;&n;((__builtin_constant_p((port)^(3)) &amp;&amp; ((port)^(3)) &lt; 32768) ? &bslash;&n;&t;__inbc((port)^(3)) : &bslash;&n;&t;__inb((port)^(3)))
 DECL|macro|outb_p
-mdefine_line|#define outb_p(val,port) &bslash;&n;((__builtin_constant_p((port)) &amp;&amp; (port) &lt; 32768) ? &bslash;&n;&t;__outbc_p((val),(port)) : &bslash;&n;&t;__outb_p((val),(port)))
+mdefine_line|#define outb_p(val,port) &bslash;&n;((__builtin_constant_p((port)^(3)) &amp;&amp; ((port)^(3)) &lt; 32768) ? &bslash;&n;&t;__outbc_p((val),(port)^(3)) : &bslash;&n;&t;__outb_p((val),(port)^(3)))
 DECL|macro|inb_p
-mdefine_line|#define inb_p(port) &bslash;&n;((__builtin_constant_p((port)) &amp;&amp; (port) &lt; 32768) ? &bslash;&n;&t;__inbc_p(port) : &bslash;&n;&t;__inb_p(port))
+mdefine_line|#define inb_p(port) &bslash;&n;((__builtin_constant_p((port)^(3)) &amp;&amp; ((port)^(3)) &lt; 32768) ? &bslash;&n;&t;__inbc_p((port)^(3)) : &bslash;&n;&t;__inb_p((port)^(3)))
 DECL|macro|outw
-mdefine_line|#define outw(val,port) &bslash;&n;((__builtin_constant_p((port^2)) &amp;&amp; (port^2) &lt; 32768) ? &bslash;&n;&t;__outwc((val),(port^2)) : &bslash;&n;&t;__outw((val),(port^2)))
+mdefine_line|#define outw(val,port) &bslash;&n;((__builtin_constant_p(((port)^(2))) &amp;&amp; ((port)^(2)) &lt; 32768) ? &bslash;&n;&t;__outwc((val),((port)^(2))) : &bslash;&n;&t;__outw((val),((port)^(2))))
 DECL|macro|inw
-mdefine_line|#define inw(port) &bslash;&n;((__builtin_constant_p((port^2)) &amp;&amp; (port^2) &lt; 32768) ? &bslash;&n;&t;__inwc(port^2) : &bslash;&n;&t;__inw(port^2))
+mdefine_line|#define inw(port) &bslash;&n;((__builtin_constant_p(((port)^(2))) &amp;&amp; ((port)^(2)) &lt; 32768) ? &bslash;&n;&t;__inwc((port)^(2)) : &bslash;&n;&t;__inw((port)^(2)))
 DECL|macro|outw_p
-mdefine_line|#define outw_p(val,port) &bslash;&n;((__builtin_constant_p((port)) &amp;&amp; (port) &lt; 32768) ? &bslash;&n;&t;__outwc_p((val),(port)) : &bslash;&n;&t;__outw_p((val),(port)))
+mdefine_line|#define outw_p(val,port) &bslash;&n;((__builtin_constant_p((port)^(2)) &amp;&amp; ((port)^(2)) &lt; 32768) ? &bslash;&n;&t;__outwc_p((val),(port)^(2)) : &bslash;&n;&t;__outw_p((val),(port)^(2)))
 DECL|macro|inw_p
-mdefine_line|#define inw_p(port) &bslash;&n;((__builtin_constant_p((port)) &amp;&amp; (port) &lt; 32768) ? &bslash;&n;&t;__inwc_p(port) : &bslash;&n;&t;__inw_p(port))
+mdefine_line|#define inw_p(port) &bslash;&n;((__builtin_constant_p((port)^(2)) &amp;&amp; ((port)^(2)) &lt; 32768) ? &bslash;&n;&t;__inwc_p((port)^(2)) : &bslash;&n;&t;__inw_p((port)^(2)))
 DECL|macro|outl
 mdefine_line|#define outl(val,port) &bslash;&n;((__builtin_constant_p((port)) &amp;&amp; (port) &lt; 32768) ? &bslash;&n;&t;__outlc((val),(port)) : &bslash;&n;&t;__outl((val),(port)))
 DECL|macro|inl

@@ -25,25 +25,21 @@ macro_line|#endif
 macro_line|#ifdef CONFIG_SERIAL_CONSOLE
 macro_line|#ifdef CONFIG_ZS
 r_extern
-r_int
+r_void
 id|zs_serial_console_init
 c_func
 (paren
-r_int
-comma
-r_int
+r_void
 )paren
 suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef CONFIG_DZ
 r_extern
-r_int
+r_void
 id|dz_serial_console_init
 c_func
 (paren
-r_int
-comma
-r_int
+r_void
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -97,20 +93,23 @@ suffix:semicolon
 macro_line|#endif
 macro_line|#endif
 )brace
+DECL|variable|rs_init
+id|__initcall
+c_func
+(paren
+id|rs_init
+)paren
+suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef CONFIG_SERIAL_CONSOLE
 multiline_comment|/* serial_console_init handles the special case of starting&n; *   up the console on the serial port&n; */
 DECL|function|serial_console_init
-r_int
+r_void
 id|__init
 id|serial_console_init
 c_func
 (paren
-r_int
-id|kmem_start
-comma
-r_int
-id|kmem_end
+r_void
 )paren
 (brace
 macro_line|#if defined(CONFIG_ZS) &amp;&amp; defined(CONFIG_DZ)
@@ -119,56 +118,33 @@ c_cond
 (paren
 id|IOASIC
 )paren
-id|kmem_start
-op_assign
 id|zs_serial_console_init
 c_func
 (paren
-id|kmem_start
-comma
-id|kmem_end
 )paren
 suffix:semicolon
 r_else
-id|kmem_start
-op_assign
 id|dz_serial_console_init
 c_func
 (paren
-id|kmem_start
-comma
-id|kmem_end
 )paren
 suffix:semicolon
 macro_line|#else
 macro_line|#ifdef CONFIG_ZS
-id|kmem_start
-op_assign
 id|zs_serial_console_init
 c_func
 (paren
-id|kmem_start
-comma
-id|kmem_end
 )paren
 suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef CONFIG_DZ
-id|kmem_start
-op_assign
 id|dz_serial_console_init
 c_func
 (paren
-id|kmem_start
-comma
-id|kmem_end
 )paren
 suffix:semicolon
 macro_line|#endif
 macro_line|#endif
-r_return
-id|kmem_start
-suffix:semicolon
 )brace
 macro_line|#endif
 eof

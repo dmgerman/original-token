@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: binfmt_elf32.c,v 1.2 2000/01/17 23:32:46 ralf Exp $&n; *&n; * Support for 32-bit Linux/MIPS ELF binaries.&n; *&n; * Copyright (C) 1999 Ralf Baechle&n; * Copyright (C) 1999 Silicon Graphics, Inc.&n; *&n; * Heavily inspired by the 32-bit Sparc compat code which is&n; * Copyright (C) 1995, 1996, 1997, 1998 David S. Miller (davem@redhat.com)&n; * Copyright (C) 1995, 1996, 1997, 1998 Jakub Jelinek   (jj@ultra.linux.cz)&n; */
+multiline_comment|/* $Id: binfmt_elf32.c,v 1.1 1999/11/24 06:56:13 ralf Exp $&n; *&n; * Support for 32-bit Linux/MIPS ELF binaries.&n; *&n; * Copyright (C) 1999 Ralf Baechle&n; * Copyright (C) 1999 Silicon Graphics, Inc.&n; *&n; * Heavily inspired by the 32-bit Sparc compat code which is&n; * Copyright (C) 1995, 1996, 1997, 1998 David S. Miller (davem@redhat.com)&n; * Copyright (C) 1995, 1996, 1997, 1998 Jakub Jelinek   (jj@ultra.linux.cz)&n; */
 DECL|macro|ELF_ARCH
 mdefine_line|#define ELF_ARCH&t;&t;EM_MIPS
 DECL|macro|ELF_CLASS

@@ -402,7 +402,6 @@ comma
 l_int|0
 comma
 )brace
-comma
 )brace
 suffix:semicolon
 id|MODULE_DEVICE_TABLE

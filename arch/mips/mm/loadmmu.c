@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * loadmmu.c: Setup cpu/cache specific function ptrs at boot time.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; *&n; * $Id: loadmmu.c,v 1.15 2000/02/24 00:12:40 ralf Exp $&n; */
+multiline_comment|/*&n; * loadmmu.c: Setup cpu/cache specific function ptrs at boot time.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; *&n; * $Id: loadmmu.c,v 1.17 2000/03/13 10:33:05 raiko Exp $&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -8,7 +8,6 @@ macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/bootinfo.h&gt;
-macro_line|#include &lt;asm/sgialib.h&gt;
 multiline_comment|/* memory functions */
 DECL|variable|_clear_page
 r_void
@@ -248,6 +247,9 @@ id|CPU_R3000
 suffix:colon
 r_case
 id|CPU_R3000A
+suffix:colon
+r_case
+id|CPU_R3081E
 suffix:colon
 id|printk
 c_func

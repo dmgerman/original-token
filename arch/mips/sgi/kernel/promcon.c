@@ -170,16 +170,12 @@ l_int|NULL
 suffix:semicolon
 multiline_comment|/*&n; *    Register console.&n; */
 DECL|function|sgi_prom_console_init
-r_int
+r_void
 id|__init
 id|sgi_prom_console_init
 c_func
 (paren
-r_int
-id|kmem_start
-comma
-r_int
-id|kmem_end
+r_void
 )paren
 (brace
 id|register_console
@@ -188,9 +184,6 @@ c_func
 op_amp
 id|sercons
 )paren
-suffix:semicolon
-r_return
-id|kmem_start
 suffix:semicolon
 )brace
 eof

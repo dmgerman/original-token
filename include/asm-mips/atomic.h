@@ -1,7 +1,7 @@
-multiline_comment|/*&n; * Atomic operations that C can&squot;t guarantee us.  Useful for&n; * resource counting etc..&n; *&n; * But use these as seldom as possible since they are much more slower&n; * than regular operations.&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1996, 1997 by Ralf Baechle&n; *&n; * $Id: atomic.h,v 1.7 1999/08/13 17:07:27 harald Exp $&n; */
-macro_line|#ifndef __ASM_MIPS_ATOMIC_H
-DECL|macro|__ASM_MIPS_ATOMIC_H
-mdefine_line|#define __ASM_MIPS_ATOMIC_H
+multiline_comment|/*&n; * Atomic operations that C can&squot;t guarantee us.  Useful for&n; * resource counting etc..&n; *&n; * But use these as seldom as possible since they are much more slower&n; * than regular operations.&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1996, 1997 by Ralf Baechle&n; *&n; * $Id: atomic.h,v 1.6 1999/07/26 19:42:42 harald Exp $&n; */
+macro_line|#ifndef __ASM_ATOMIC_H
+DECL|macro|__ASM_ATOMIC_H
+mdefine_line|#define __ASM_ATOMIC_H
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#ifdef CONFIG_SMP
 DECL|member|counter

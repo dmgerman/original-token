@@ -49,9 +49,6 @@ l_int|1
 comma
 )brace
 suffix:semicolon
-multiline_comment|/*&n; * IA s/w dev Vol 3, Section 7.4&n; */
-DECL|macro|APIC_DEFAULT_PHYS_BASE
-mdefine_line|#define APIC_DEFAULT_PHYS_BASE 0xfee00000
 DECL|function|get_maxlvt
 r_int
 id|get_maxlvt

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: hinv.h,v 1.1 2000/01/17 23:32:47 ralf Exp $&n; *&n; * ARCS hardware/memory inventory/configuration and system ID definitions.&n; */
+multiline_comment|/* $Id$&n; *&n; * ARCS hardware/memory inventory/configuration and system ID definitions.&n; */
 macro_line|#ifndef _ASM_ARC_HINV_H
 DECL|macro|_ASM_ARC_HINV_H
 mdefine_line|#define _ASM_ARC_HINV_H

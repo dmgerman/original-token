@@ -26,8 +26,6 @@ DECL|macro|SC_LINE
 mdefine_line|#define SC_LINE 32
 DECL|macro|CI_MASK
 mdefine_line|#define CI_MASK (SC_SIZE - SC_LINE)
-DECL|macro|SC_ROUND
-mdefine_line|#define SC_ROUND(n) ((n) + SC_LINE - 1)
 DECL|macro|SC_INDEX
 mdefine_line|#define SC_INDEX(n) ((n) &amp; CI_MASK)
 DECL|function|indy_sc_wipe
@@ -164,6 +162,14 @@ id|size
 )paren
 suffix:semicolon
 macro_line|#endif
+r_if
+c_cond
+(paren
+op_logical_neg
+id|size
+)paren
+r_return
+suffix:semicolon
 multiline_comment|/* Which lines to flush?  */
 id|first_line
 op_assign
@@ -178,13 +184,11 @@ op_assign
 id|SC_INDEX
 c_func
 (paren
-id|SC_ROUND
-c_func
-(paren
 id|addr
 op_plus
 id|size
-)paren
+op_minus
+l_int|1
 )paren
 suffix:semicolon
 id|__save_and_cli
@@ -213,13 +217,14 @@ r_goto
 id|out
 suffix:semicolon
 )brace
-multiline_comment|/* Cache index wrap around.  Due to the way the buddy system works&n;&t;   this case should not happen.  We&squot;re prepared to handle it,&n;&t;   though. */
 id|indy_sc_wipe
 c_func
 (paren
-id|last_line
+id|first_line
 comma
 id|SC_SIZE
+op_minus
+id|SC_LINE
 )paren
 suffix:semicolon
 id|indy_sc_wipe
@@ -227,7 +232,7 @@ c_func
 (paren
 l_int|0
 comma
-id|first_line
+id|last_line
 )paren
 suffix:semicolon
 id|out
@@ -616,9 +621,6 @@ c_func
 r_void
 )paren
 (brace
-r_return
-suffix:semicolon
-multiline_comment|/* Not for now, debugging ... */
 r_if
 c_cond
 (paren

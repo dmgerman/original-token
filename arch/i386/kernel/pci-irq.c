@@ -1378,6 +1378,18 @@ id|pirq_piix_set
 )brace
 comma
 (brace
+l_string|&quot;PIIX&quot;
+comma
+id|PCI_VENDOR_ID_INTEL
+comma
+id|PCI_DEVICE_ID_INTEL_82440MX_1
+comma
+id|pirq_piix_get
+comma
+id|pirq_piix_set
+)brace
+comma
+(brace
 l_string|&quot;ALI&quot;
 comma
 id|PCI_VENDOR_ID_AL
@@ -2093,6 +2105,8 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|assign
+op_logical_and
 id|newirq
 op_logical_and
 id|mask

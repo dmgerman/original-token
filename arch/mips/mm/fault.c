@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: fault.c,v 1.16 2000/02/18 00:24:30 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1995, 1996, 1997, 1998 by Ralf Baechle&n; */
+multiline_comment|/* $Id: fault.c,v 1.15 2000/02/04 07:40:23 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1995, 1996, 1997, 1998 by Ralf Baechle&n; */
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
@@ -223,10 +223,9 @@ id|bad_area
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; * If for any reason at all we couldn&squot;t handle the fault,&n;&t; * make sure we exit gracefully rather than endlessly redo&n;&t; * the fault.&n;&t; */
-(brace
-r_int
-id|fault
-op_assign
+r_switch
+c_cond
+(paren
 id|handle_mm_fault
 c_func
 (paren
@@ -238,25 +237,34 @@ id|address
 comma
 id|write
 )paren
+)paren
+(brace
+r_case
+l_int|1
+suffix:colon
+id|tsk-&gt;min_flt
+op_increment
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|fault
-OL
+r_break
+suffix:semicolon
+r_case
+l_int|2
+suffix:colon
+id|tsk-&gt;maj_flt
+op_increment
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
 l_int|0
-)paren
-r_goto
-id|out_of_memory
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|fault
-)paren
+suffix:colon
 r_goto
 id|do_sigbus
+suffix:semicolon
+r_default
+suffix:colon
+r_goto
+id|out_of_memory
 suffix:semicolon
 )brace
 id|up

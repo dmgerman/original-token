@@ -3,7 +3,8 @@ macro_line|#ifndef _ASM_PGALLOC_H
 DECL|macro|_ASM_PGALLOC_H
 mdefine_line|#define _ASM_PGALLOC_H
 macro_line|#include &lt;linux/config.h&gt;
-multiline_comment|/* TLB flushing:&n; *&n; *  - flush_tlb_all() flushes all processes TLB entries&n; *  - flush_tlb_mm(mm) flushes the specified mm context TLB entries&n; *  - flush_tlb_page(mm, vmaddr) flushes a single page&n; *  - flush_tlb_range(mm, start, end) flushes a range of pages&n; */
+macro_line|#include &lt;linux/config.h&gt;
+multiline_comment|/* TLB flushing:&n; *&n; *  - flush_tlb_all() flushes all processes TLB entries&n; *  - flush_tlb_mm(mm) flushes the specified mm context TLB entries&n; *  - flush_tlb_page(mm, vmaddr) flushes a single page&n; *  - flush_tlb_range(mm, start, end) flushes a range of pages&n; *  - flush_tlb_pgtables(mm, start, end) flushes a range of page tables&n; */
 r_extern
 r_void
 (paren
@@ -65,6 +66,7 @@ r_int
 id|page
 )paren
 suffix:semicolon
+macro_line|#ifndef CONFIG_SMP
 DECL|macro|flush_tlb_all
 mdefine_line|#define flush_tlb_all()&t;&t;&t;_flush_tlb_all()
 DECL|macro|flush_tlb_mm
@@ -73,6 +75,55 @@ DECL|macro|flush_tlb_range
 mdefine_line|#define flush_tlb_range(mm,vmaddr,end)&t;_flush_tlb_range(mm, vmaddr, end)
 DECL|macro|flush_tlb_page
 mdefine_line|#define flush_tlb_page(vma,page)&t;_flush_tlb_page(vma, page)
+macro_line|#else /* CONFIG_SMP */
+r_extern
+r_void
+id|flush_tlb_all
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|flush_tlb_mm
+c_func
+(paren
+r_struct
+id|mm_struct
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|flush_tlb_range
+c_func
+(paren
+r_struct
+id|mm_struct
+op_star
+comma
+r_int
+r_int
+comma
+r_int
+r_int
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|flush_tlb_page
+c_func
+(paren
+r_struct
+id|vm_area_struct
+op_star
+comma
+r_int
+r_int
+)paren
+suffix:semicolon
+macro_line|#endif /* CONFIG_SMP */
 DECL|function|flush_tlb_pgtables
 r_extern
 r_inline
@@ -477,13 +528,13 @@ r_int
 r_int
 op_star
 )paren
-id|pte_quicklist
+id|pmd_quicklist
 )paren
 op_ne
 l_int|NULL
 )paren
 (brace
-id|pte_quicklist
+id|pmd_quicklist
 op_assign
 (paren
 r_int
@@ -548,9 +599,9 @@ op_assign
 r_int
 r_int
 )paren
-id|pte_quicklist
+id|pmd_quicklist
 suffix:semicolon
-id|pte_quicklist
+id|pmd_quicklist
 op_assign
 (paren
 r_int

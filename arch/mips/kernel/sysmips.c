@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * MIPS specific syscalls&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1995, 1996, 1997 by Ralf Baechle&n; *&n; * $Id: sysmips.c,v 1.9 2000/02/18 00:24:30 ralf Exp $&n; */
+multiline_comment|/*&n; * MIPS specific syscalls&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1995, 1996, 1997 by Ralf Baechle&n; *&n; * $Id: sysmips.c,v 1.8 2000/02/05 06:47:08 ralf Exp $&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/linkage.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -397,6 +397,29 @@ id|op
 r_return
 op_minus
 id|ENOSYS
+suffix:semicolon
+)brace
+DECL|function|sys_pause
+id|asmlinkage
+r_int
+id|sys_pause
+c_func
+(paren
+r_void
+)paren
+(brace
+id|current-&gt;state
+op_assign
+id|TASK_INTERRUPTIBLE
+suffix:semicolon
+id|schedule
+c_func
+(paren
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|ERESTARTNOHAND
 suffix:semicolon
 )brace
 eof

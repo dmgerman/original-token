@@ -28,12 +28,25 @@ id|get_cycles
 r_void
 )paren
 (brace
-r_return
-id|read_32bit_cp0_register
+id|cycles_t
+id|val
+suffix:semicolon
+id|__asm__
+id|__volatile__
 c_func
 (paren
-id|CP0_COUNT
+l_string|&quot;.set noreorder&bslash;n&bslash;t&quot;
+l_string|&quot;mfc0 %0, $9&bslash;n&bslash;t&quot;
+l_string|&quot;.set reorder&quot;
+suffix:colon
+l_string|&quot;=r&quot;
+(paren
+id|val
 )paren
+)paren
+suffix:semicolon
+r_return
+id|val
 suffix:semicolon
 )brace
 macro_line|#endif /*  _ASM_TIMEX_H */

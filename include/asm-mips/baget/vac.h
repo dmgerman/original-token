@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: vac.h,v 1.2 1999/04/11 17:03:40 harald Exp $&n; *&n; * vac.h: Various VIC controller defines.  The VIC is a VME controller&n; *        used in Baget/MIPS series.&n; *&n; * Copyright (C) 1998 Gleb Raiko &amp; Vladimir Roganov&n; */
+multiline_comment|/* $Id$&n; *&n; * vac.h: Various VIC controller defines.  The VIC is a VME controller&n; *        used in Baget/MIPS series.&n; *&n; * Copyright (C) 1998 Gleb Raiko &amp; Vladimir Roganov&n; */
 macro_line|#ifndef _MIPS_VAC_H
 DECL|macro|_MIPS_VAC_H
 mdefine_line|#define _MIPS_VAC_H

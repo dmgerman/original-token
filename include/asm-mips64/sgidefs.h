@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sgidefs.h,v 1.2 1999/08/20 21:59:08 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1996, 1999 by Ralf Baechle&n; * Copyright (C) 1999 Silicon Graphics, Inc.&n; *&n; * Definitions commonly used in SGI style code.&n; */
+multiline_comment|/* $Id: sgidefs.h,v 1.1 1999/08/18 23:37:52 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1996, 1999 by Ralf Baechle&n; * Copyright (C) 1999 Silicon Graphics, Inc.&n; *&n; * Definitions commonly used in SGI style code.&n; */
 macro_line|#ifndef _ASM_SGIDEFS_H
 DECL|macro|_ASM_SGIDEFS_H
 mdefine_line|#define _ASM_SGIDEFS_H

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: addrspace.h,v 1.6 2000/02/10 20:20:15 kanoj Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1996, 1999 by Ralf Baechle&n; * Copyright (C) 1990, 1999 by Silicon Graphics, Inc.&n; */
+multiline_comment|/* $Id: addrspace.h,v 1.5 2000/02/01 00:32:01 kanoj Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1996, 1999 by Ralf Baechle&n; * Copyright (C) 1990, 1999 by Silicon Graphics, Inc.&n; */
 macro_line|#ifndef _ASM_ADDRSPACE_H
 DECL|macro|_ASM_ADDRSPACE_H
 mdefine_line|#define _ASM_ADDRSPACE_H
@@ -119,5 +119,11 @@ mdefine_line|#define K1BASE&t;&t;0x9000000000000000
 macro_line|#endif
 DECL|macro|K2BASE
 mdefine_line|#define K2BASE&t;&t;0xc000000000000000
+macro_line|#if !defined (CONFIG_CPU_R8000)
+DECL|macro|COMPAT_K1BASE32
+mdefine_line|#define COMPAT_K1BASE32&t;&t;0xffffffffa0000000
+DECL|macro|PHYS_TO_COMPATK1
+mdefine_line|#define PHYS_TO_COMPATK1(x)&t;((x) | COMPAT_K1BASE32) /* 32-bit compat k1 */
+macro_line|#endif
 macro_line|#endif /* _ASM_ADDRSPACE_H */
 eof

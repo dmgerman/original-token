@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: vic.h,v 1.1 1999/01/27 23:59:07 ralf Exp $&n; *&n; * vic.h: Various VIC controller defines.  The VIC is an interrupt controller&n; *        used in Baget/MIPS series.&n; *&n; * Copyright (C) 1998 Gleb Raiko &amp; Vladimir Roganov&n; */
+multiline_comment|/* $Id$&n; *&n; * vic.h: Various VIC controller defines.  The VIC is an interrupt controller&n; *        used in Baget/MIPS series.&n; *&n; * Copyright (C) 1998 Gleb Raiko &amp; Vladimir Roganov&n; */
 macro_line|#ifndef _MIPS_VIC_H
 DECL|macro|_MIPS_VIC_H
 mdefine_line|#define _MIPS_VIC_H

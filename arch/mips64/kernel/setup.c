@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: setup.c,v 1.7 2000/02/04 07:40:24 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1995 Linus Torvalds&n; * Copyright (C) 1994, 1995, 1996, 1997, 1998, 1999 Ralf Baechle&n; * Copyright (C) 1996 Stoned Elipot&n; * Copyright (C) 1999 Silicon Graphics, Inc.&n; */
+multiline_comment|/* $Id: setup.c,v 1.9 2000/03/14 01:39:27 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1995 Linus Torvalds&n; * Copyright (C) 1994, 1995, 1996, 1997, 1998, 1999 Ralf Baechle&n; * Copyright (C) 1996 Stoned Elipot&n; * Copyright (C) 1999 Silicon Graphics, Inc.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
@@ -25,13 +25,19 @@ macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/stackframe.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#ifdef CONFIG_SGI_IP27
+multiline_comment|/* XXX Origin garbage has no business in this file  */
 macro_line|#include &lt;asm/sn/sn0/addrs.h&gt;
 macro_line|#endif
-DECL|variable|boot_cpu_data
+macro_line|#ifndef CONFIG_SMP
+DECL|variable|cpu_data
 r_struct
-id|mips_cpuinfo
-id|boot_cpu_data
+id|cpuinfo_mips
+id|cpu_data
+(braket
+l_int|1
+)braket
 suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef CONFIG_VT
 DECL|variable|screen_info
 r_struct
@@ -178,6 +184,8 @@ id|CL_SIZE
 )braket
 suffix:semicolon
 multiline_comment|/*&n; * mips_io_port_base is the begin of the address space to which x86 style&n; * I/O ports are mapped.&n; */
+macro_line|#ifdef CONFIG_SGI_IP27
+multiline_comment|/* XXX Origin garbage has no business in this file  */
 DECL|variable|mips_io_port_base
 r_int
 r_int
@@ -185,6 +193,7 @@ id|mips_io_port_base
 op_assign
 id|IO_BASE
 suffix:semicolon
+macro_line|#endif
 r_extern
 r_void
 id|ip22_setup
@@ -514,5 +523,10 @@ id|initrd_end
 suffix:semicolon
 )brace
 macro_line|#endif
+id|paging_init
+c_func
+(paren
+)paren
+suffix:semicolon
 )brace
 eof

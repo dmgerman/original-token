@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: umap.c,v 1.5 2000/02/04 07:40:24 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1994 Linus Torvalds&n; * Copyright (C) 1997 Miguel de Icaza&n; */
+multiline_comment|/* $Id: umap.c,v 1.4 2000/01/29 01:41:59 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1994 Linus Torvalds&n; * Copyright (C) 1997 Miguel de Icaza&n; */
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;

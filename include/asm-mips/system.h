@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: system.h,v 1.21 1999/12/30 14:21:21 raiko Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1994 - 1999 by Ralf Baechle&n; * Copyright (C) 1996 by Paul M. Antoine&n; * Copyright (C) 1994 - 1999 by Ralf Baechle&n; */
+multiline_comment|/* $Id: system.h,v 1.20 1999/12/06 23:13:21 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1994 - 1999 by Ralf Baechle&n; * Copyright (C) 1996 by Paul M. Antoine&n; * Copyright (C) 1994 - 1999 by Ralf Baechle&n; */
 macro_line|#ifndef _ASM_SYSTEM_H
 DECL|macro|_ASM_SYSTEM_H
 mdefine_line|#define _ASM_SYSTEM_H

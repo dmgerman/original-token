@@ -10,24 +10,25 @@ mdefine_line|#define FIRST_EXTERNAL_VECTOR&t;0x20
 DECL|macro|SYSCALL_VECTOR
 mdefine_line|#define SYSCALL_VECTOR&t;&t;0x80
 multiline_comment|/*&n; * Vectors 0x20-0x2f are used for ISA interrupts.&n; */
-multiline_comment|/*&n; * Special IRQ vectors used by the SMP architecture, 0x30-0x4f&n; *&n; *  some of the following vectors are &squot;rare&squot;, they are merged&n; *  into a single vector (CALL_FUNCTION_VECTOR) to save vector space.&n; *  TLB, reschedule and local APIC vectors are performance-critical.&n; */
-DECL|macro|INVALIDATE_TLB_VECTOR
-mdefine_line|#define INVALIDATE_TLB_VECTOR&t;0x30
-DECL|macro|LOCAL_TIMER_VECTOR
-mdefine_line|#define LOCAL_TIMER_VECTOR&t;0x31
-DECL|macro|RESCHEDULE_VECTOR
-mdefine_line|#define RESCHEDULE_VECTOR&t;0x40
-multiline_comment|/* &squot;rare&squot; vectors: */
-DECL|macro|CALL_FUNCTION_VECTOR
-mdefine_line|#define CALL_FUNCTION_VECTOR&t;0x41
-multiline_comment|/*&n; * These IRQs should never really happen on perfect hardware running&n; * a perfect kernel, but we nevertheless print a message to catch the&n; * rest ;) Subtle, the APIC architecture mandates the spurious vector&n; * to have bits 0-3 set to 1. Note that these vectors do not occur&n; * normally, so we violate the &squot;only 2 vectors per priority level&squot;&n; * rule here.&n; */
+multiline_comment|/*&n; * Special IRQ vectors used by the SMP architecture, 0xf0-0xff&n; *&n; *  some of the following vectors are &squot;rare&squot;, they are merged&n; *  into a single vector (CALL_FUNCTION_VECTOR) to save vector space.&n; *  TLB, reschedule and local APIC vectors are performance-critical.&n; *&n; *  Vectors 0xf0-0xfa are free (reserved for future Linux use).&n; */
 DECL|macro|SPURIOUS_APIC_VECTOR
-mdefine_line|#define SPURIOUS_APIC_VECTOR&t;0x3f
+mdefine_line|#define SPURIOUS_APIC_VECTOR&t;0xff
 DECL|macro|ERROR_APIC_VECTOR
-mdefine_line|#define ERROR_APIC_VECTOR&t;0x43
-multiline_comment|/*&n; * First APIC vector available to drivers: (vectors 0x51-0xfe)&n; * we start at 0x51 to spread out vectors between priority levels&n; * evenly. (note that 0x80 is the syscall vector)&n; */
-DECL|macro|IRQ0_TRAP_VECTOR
-mdefine_line|#define IRQ0_TRAP_VECTOR&t;0x51
+mdefine_line|#define ERROR_APIC_VECTOR&t;0xfe
+DECL|macro|INVALIDATE_TLB_VECTOR
+mdefine_line|#define INVALIDATE_TLB_VECTOR&t;0xfd
+DECL|macro|RESCHEDULE_VECTOR
+mdefine_line|#define RESCHEDULE_VECTOR&t;0xfc
+DECL|macro|CALL_FUNCTION_VECTOR
+mdefine_line|#define CALL_FUNCTION_VECTOR&t;0xfb
+multiline_comment|/*&n; * Local APIC timer IRQ vector is on a different priority level,&n; * to work around the &squot;lost local interrupt if more than 2 IRQ&n; * sources per level&squot; errata.&n; */
+DECL|macro|LOCAL_TIMER_VECTOR
+mdefine_line|#define LOCAL_TIMER_VECTOR&t;0xef
+multiline_comment|/*&n; * First APIC vector available to drivers: (vectors 0x30-0xee)&n; * we start at 0x31 to spread out vectors evenly between priority&n; * levels. (0x80 is the syscall vector)&n; */
+DECL|macro|FIRST_DEVICE_VECTOR
+mdefine_line|#define FIRST_DEVICE_VECTOR&t;0x31
+DECL|macro|FIRST_SYSTEM_VECTOR
+mdefine_line|#define FIRST_SYSTEM_VECTOR&t;0xef
 r_extern
 r_int
 id|irq_vector

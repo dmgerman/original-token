@@ -1,7 +1,8 @@
 multiline_comment|/* $Id: sgiarcs.h,v 1.3 1999/02/25 20:55:08 tsbogend Exp $&n; *&n; * SGI ARCS firmware interface defines.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; */
-macro_line|#ifndef _MIPS_SGIARCS_H
-DECL|macro|_MIPS_SGIARCS_H
-mdefine_line|#define _MIPS_SGIARCS_H
+macro_line|#ifndef _ASM_SGIARCS_H
+DECL|macro|_ASM_SGIARCS_H
+mdefine_line|#define _ASM_SGIARCS_H
+macro_line|#include &lt;asm/arc/types.h&gt;
 multiline_comment|/* Various ARCS error codes. */
 DECL|macro|PROM_ESUCCESS
 mdefine_line|#define PROM_ESUCCESS                   0x00
@@ -1145,31 +1146,28 @@ id|op
 suffix:semicolon
 multiline_comment|/* Dealing with firmware environment variables. */
 DECL|member|get_evar
-r_char
-op_star
+id|PCHAR
 (paren
 op_star
 id|get_evar
 )paren
 (paren
-r_char
+id|CHAR
 op_star
 id|name
 )paren
 suffix:semicolon
 DECL|member|set_evar
-r_int
+id|LONG
 (paren
 op_star
 id|set_evar
 )paren
 (paren
-r_char
-op_star
+id|PCHAR
 id|name
 comma
-r_char
-op_star
+id|PCHAR
 id|value
 )paren
 suffix:semicolon
@@ -1717,5 +1715,5 @@ suffix:semicolon
 multiline_comment|/* Max # of symbols. */
 )brace
 suffix:semicolon
-macro_line|#endif /* !(_MIPS_SGIARCS_H) */
+macro_line|#endif /* _ASM_SGIARCS_H */
 eof

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  include/asm-mips/ddb5074.h -- NEC DDB Vrc-5074 definitions&n; *&n; *  Copyright (C) 2000 Geert Uytterhoeven &lt;geert@sonycom.com&gt;&n; *                     Sony Suprastructure Center Europe (SUPC-E), Brussels&n; */
+multiline_comment|/*&n; *  include/asm-mips/ddb5074.h -- NEC DDB Vrc-5074 definitions&n; *&n; *  Copyright (C) 2000 Geert Uytterhoeven &lt;geert@sonycom.com&gt;&n; *                     Sony Software Development Center Europe (SDCE), Brussels&n; */
 r_extern
 r_void
 id|ddb5074_led_hex

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: fault.c,v 1.6 2000/02/18 00:24:31 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1995, 1996, 1997, 1998, 1999 by Ralf Baechle&n; * Copyright (C) 1999 by Silicon Graphics&n; */
+multiline_comment|/* $Id: fault.c,v 1.7 2000/03/13 22:43:25 kanoj Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1995, 1996, 1997, 1998, 1999 by Ralf Baechle&n; * Copyright (C) 1999 by Silicon Graphics&n; */
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
@@ -18,6 +18,7 @@ macro_line|#include &lt;asm/mmu_context.h&gt;
 macro_line|#include &lt;asm/softirq.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
+macro_line|#include &lt;asm/ptrace.h&gt;
 DECL|macro|development_version
 mdefine_line|#define development_version (LINUX_VERSION_CODE &amp; 0x100)
 r_extern
@@ -37,14 +38,87 @@ r_int
 id|write
 )paren
 suffix:semicolon
-DECL|variable|asid_cache
-r_int
-r_int
-id|asid_cache
-suffix:semicolon
 multiline_comment|/*&n; * Macro for exception fixup code to access integer registers.&n; */
 DECL|macro|dpf_reg
 mdefine_line|#define dpf_reg(r) (regs-&gt;regs[r])
+id|asmlinkage
+r_void
+DECL|function|dodebug
+id|dodebug
+c_func
+(paren
+id|abi64_no_regargs
+comma
+r_struct
+id|pt_regs
+id|regs
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;Got syscall %d, cpu %d proc %s:%d epc 0x%lx&bslash;n&quot;
+comma
+id|regs.regs
+(braket
+l_int|2
+)braket
+comma
+id|smp_processor_id
+c_func
+(paren
+)paren
+comma
+id|current-&gt;comm
+comma
+id|current-&gt;pid
+comma
+id|regs.cp0_epc
+)paren
+suffix:semicolon
+)brace
+id|asmlinkage
+r_void
+DECL|function|dodebug2
+id|dodebug2
+c_func
+(paren
+id|abi64_no_regargs
+comma
+r_struct
+id|pt_regs
+id|regs
+)paren
+(brace
+r_int
+r_int
+id|retaddr
+suffix:semicolon
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;.set noreorder&bslash;n&bslash;t&quot;
+l_string|&quot;add %0,$0,$31&bslash;n&bslash;t&quot;
+l_string|&quot;.set reorder&quot;
+suffix:colon
+l_string|&quot;=r&quot;
+(paren
+id|retaddr
+)paren
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;Got exception 0x%lx at 0x%lx&bslash;n&quot;
+comma
+id|retaddr
+comma
+id|regs.cp0_epc
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/*&n; * This routine handles page faults.  It determines the address,&n; * and the problem, and then passes it off to one of the appropriate&n; * routines.&n; */
 id|asmlinkage
 r_void
@@ -111,11 +185,16 @@ id|init_mm
 r_goto
 id|no_context
 suffix:semicolon
-macro_line|#if 0
+macro_line|#if DEBUG_MIPS64
 id|printk
 c_func
 (paren
-l_string|&quot;[%s:%d:%08lx:%ld:%08lx]&bslash;n&quot;
+l_string|&quot;Cpu%d[%s:%d:%08lx:%ld:%08lx]&bslash;n&quot;
+comma
+id|smp_processor_id
+c_func
+(paren
+)paren
 comma
 id|current-&gt;comm
 comma
@@ -240,10 +319,9 @@ id|bad_area
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; * If for any reason at all we couldn&squot;t handle the fault,&n;&t; * make sure we exit gracefully rather than endlessly redo&n;&t; * the fault.&n;&t; */
-(brace
-r_int
-id|fault
-op_assign
+r_switch
+c_cond
+(paren
 id|handle_mm_fault
 c_func
 (paren
@@ -255,25 +333,34 @@ id|address
 comma
 id|write
 )paren
+)paren
+(brace
+r_case
+l_int|1
+suffix:colon
+id|tsk-&gt;min_flt
+op_increment
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|fault
-OL
+r_break
+suffix:semicolon
+r_case
+l_int|2
+suffix:colon
+id|tsk-&gt;maj_flt
+op_increment
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
 l_int|0
-)paren
-r_goto
-id|out_of_memory
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|fault
-)paren
+suffix:colon
 r_goto
 id|do_sigbus
+suffix:semicolon
+r_default
+suffix:colon
+r_goto
+id|out_of_memory
 suffix:semicolon
 )brace
 id|up
@@ -448,8 +535,13 @@ id|printk
 c_func
 (paren
 id|KERN_ALERT
-l_string|&quot;Unable to handle kernel paging request at virtual &quot;
+l_string|&quot;Cpu %d Unable to handle kernel paging request at &quot;
 l_string|&quot;address %08lx, epc == %08lx, ra == %08lx&bslash;n&quot;
+comma
+id|smp_processor_id
+c_func
+(paren
+)paren
 comma
 id|address
 comma
@@ -461,14 +553,6 @@ l_int|31
 )braket
 )paren
 suffix:semicolon
-r_while
-c_loop
-(paren
-l_int|1
-)paren
-(brace
-suffix:semicolon
-)brace
 id|die
 c_func
 (paren
