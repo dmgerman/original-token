@@ -59,6 +59,18 @@ c_func
 id|our_fs-&gt;pwd
 )paren
 suffix:semicolon
+id|mntput
+c_func
+(paren
+id|our_fs-&gt;rootmnt
+)paren
+suffix:semicolon
+id|mntput
+c_func
+(paren
+id|our_fs-&gt;pwdmnt
+)paren
+suffix:semicolon
 id|init_fs
 op_assign
 id|init_task.fs
@@ -81,6 +93,22 @@ id|dget
 c_func
 (paren
 id|init_fs-&gt;pwd
+)paren
+suffix:semicolon
+id|our_fs-&gt;rootmnt
+op_assign
+id|mntget
+c_func
+(paren
+id|init_fs-&gt;rootmnt
+)paren
+suffix:semicolon
+id|our_fs-&gt;pwdmnt
+op_assign
+id|mntget
+c_func
+(paren
+id|init_fs-&gt;pwdmnt
 )paren
 suffix:semicolon
 id|unlock_kernel
@@ -336,7 +364,7 @@ r_return
 id|ret
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t;request_module: the function that everyone calls when they need&n;&t;a module.&n;*/
+multiline_comment|/**&n; *&t;request_module - try to load a kernel module&n; *&t;@module_name: Name of module&n; *&n; * &t;Load a module using the user mode module loader. The function returns&n; *&t;zero on success or a negative errno code on failure. Note that a&n; * &t;successful module load does not mean the module did not then unload&n; *&t;and exit on an error of its own. Callers must check that the service&n; *&t;they requested is now available not blindly invoke it.&n; *&n; *&t;If module auto-loading support is disabled then this function&n; *&t;becomes a no-operation.&n; */
 DECL|function|request_module
 r_int
 id|request_module

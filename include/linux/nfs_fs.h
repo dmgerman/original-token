@@ -9,6 +9,7 @@ macro_line|#include &lt;linux/pagemap.h&gt;
 macro_line|#include &lt;linux/sunrpc/debug.h&gt;
 macro_line|#include &lt;linux/nfs.h&gt;
 macro_line|#include &lt;linux/nfs2.h&gt;
+macro_line|#include &lt;linux/nfs3.h&gt;
 macro_line|#include &lt;linux/nfs_xdr.h&gt;
 multiline_comment|/*&n; * Enable debugging support for nfs client.&n; * Requires RPC_DEBUG.&n; */
 macro_line|#ifdef RPC_DEBUG
@@ -45,6 +46,8 @@ DECL|macro|NFS_SERVER
 mdefine_line|#define NFS_SERVER(inode)&t;&t;(&amp;(inode)-&gt;i_sb-&gt;u.nfs_sb.s_server)
 DECL|macro|NFS_CLIENT
 mdefine_line|#define NFS_CLIENT(inode)&t;&t;(NFS_SERVER(inode)-&gt;client)
+DECL|macro|NFS_PROTO
+mdefine_line|#define NFS_PROTO(inode)&t;&t;(NFS_SERVER(inode)-&gt;rpc_ops)
 DECL|macro|NFS_REQUESTLIST
 mdefine_line|#define NFS_REQUESTLIST(inode)&t;&t;(NFS_SERVER(inode)-&gt;rw_requests)
 DECL|macro|NFS_ADDR
@@ -711,6 +714,23 @@ multiline_comment|/*&n; * linux/fs/mount_clnt.c&n; * (Used only by nfsroot modul
 r_extern
 r_int
 id|nfs_mount
+c_func
+(paren
+r_struct
+id|sockaddr_in
+op_star
+comma
+r_char
+op_star
+comma
+r_struct
+id|nfs_fh
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|nfs3_mount
 c_func
 (paren
 r_struct

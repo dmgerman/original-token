@@ -215,6 +215,7 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/*&n; * Put the inode on the super block&squot;s dirty list.&n; *&n; * CAREFUL! We mark it dirty unconditionally, but&n; * move it onto the dirty list only if it is hashed.&n; * If it was not hashed, it will never be added to&n; * the dirty list even if it is later hashed, as it&n; * will have been marked dirty already.&n; *&n; * In short, make sure you hash any inodes _before_&n; * you start marking them dirty..&n; */
+multiline_comment|/**&n; *&t;__mark_inode_dirty -&t;internal function&n; *&t;@inode: inode to mark&n; *&n; *&t;Mark an inode as dirty. Callers should use mark_inode_dirty&n; */
 DECL|function|__mark_inode_dirty
 r_void
 id|__mark_inode_dirty
@@ -650,7 +651,7 @@ id|i_list
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * &quot;sync_inodes()&quot; goes through the super block&squot;s dirty list, &n; * writes them out, and puts them back on the normal list.&n; */
+multiline_comment|/**&n; *&t;sync_inodes&n; *&t;@dev: device to sync the inodes from.&n; *&n; *&t;sync_inodes goes through the super block&squot;s dirty list, &n; *&t;writes them out, and puts them back on the normal list.&n; */
 DECL|function|sync_inodes
 r_void
 id|sync_inodes
@@ -803,7 +804,7 @@ id|sb-&gt;s_dirty
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n; * Needed by knfsd&n; */
+multiline_comment|/**&n; *&t;write_inode_now&t;-&t;write an inode to disk&n; *&t;@inode: inode to write to disk&n; *&n; *&t;This function commits an inode to disk immediately if it is&n; *&t;dirty. This is primarily needed by knfsd.&n; */
 DECL|function|write_inode_now
 r_void
 id|write_inode_now
@@ -864,7 +865,7 @@ l_string|&quot;write_inode_now: no super block&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * This is called by the filesystem to tell us&n; * that the inode is no longer useful. We just&n; * terminate it with extreme prejudice.&n; */
+multiline_comment|/**&n; * clear_inode - clear an inode&n; * @inode: inode to clear&n; *&n; * This is called by the filesystem to tell us&n; * that the inode is no longer useful. We just&n; * terminate it with extreme prejudice.&n; */
 DECL|function|clear_inode
 r_void
 id|clear_inode
@@ -1212,6 +1213,7 @@ id|busy
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * This is a two-stage process. First we collect all&n; * offending inodes onto the throw-away list, and in&n; * the second stage we actually dispose of them. This&n; * is because we don&squot;t want to sleep while messing&n; * with the global lists..&n; */
+multiline_comment|/**&n; *&t;invalidate_inodes&t;- discard the inodes on a device&n; *&t;@sb: superblock&n; *&n; *&t;Discard all of the inodes for a given superblock. If the discard&n; *&t;fails because there are busy inodes then a non zero value is returned.&n; *&t;If the discard is successful all the inodes are dicarded.&n; */
 DECL|function|invalidate_inodes
 r_int
 id|invalidate_inodes
@@ -1787,7 +1789,7 @@ op_amp
 id|inode-&gt;i_data
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * This is called by things like the networking layer&n; * etc that want to get an inode without any inode&n; * number, or filesystems that allocate new inodes with&n; * no pre-existing information.&n; */
+multiline_comment|/**&n; * get_empty_inode &t;- obtain an inode&n; *&n; * This is called by things like the networking layer&n; * etc that want to get an inode without any inode&n; * number, or filesystems that allocate new inodes with&n; * no pre-existing information.&n; *&n; * On a successful return the inode pointer is returned. On a failure&n; * a NULL pointer is returned. The returned inode is not on any superblock&n; * lists.&n; */
 DECL|function|get_empty_inode
 r_struct
 id|inode
@@ -2139,6 +2141,7 @@ id|HASH_MASK
 suffix:semicolon
 )brace
 multiline_comment|/* Yeah, I know about quadratic hash. Maybe, later. */
+multiline_comment|/**&n; *&t;iunique - get a unique inode number&n; *&t;@sb: superblock&n; *&t;@max_reserved: highest reserved inode number&n; *&n; *&t;Obtain an inode number that is unique on the system for a given&n; *&t;superblock. This is used by file systems that have no natural&n; *&t;permanent inode numbering system. An inode number is returned that&n; *&t;is higher than the reserved limit but unique.&n; *&n; *&t;BUGS:&n; *&t;With a large number of inodes live on the file system this function&n; *&t;currently becomes quite slow.&n; */
 DECL|function|iunique
 id|ino_t
 id|iunique
@@ -2436,6 +2439,7 @@ id|opaque
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/**&n; *&t;insert_inode_hash - hash an inode&n; *&t;@inode: unhashed inode&n; *&n; *&t;Add an inode to the inode hash for this superblock. If the inode&n; *&t;has no superblock it is added to a seperate anonymous chain&n; */
 DECL|function|insert_inode_hash
 r_void
 id|insert_inode_hash
@@ -2496,6 +2500,7 @@ id|inode_lock
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/**&n; *&t;remove_inode_hash - remove an inode from the hash&n; *&t;@inode: inode to unhash&n; *&n; *&t;Remove an inode from the superblock or anonymous hash&n; */
 DECL|function|remove_inode_hash
 r_void
 id|remove_inode_hash
@@ -2536,6 +2541,7 @@ id|inode_lock
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/**&n; *&t;iput&t;- put an inode &n; *&t;@inode: inode to put&n; *&n; *&t;Puts an inode, dropping its usage count. If the inode use count hits&n; *&t;zero the inode is also then freed and may be destroyed.&n; */
 DECL|function|iput
 r_void
 id|iput
@@ -2972,6 +2978,7 @@ id|inode
 suffix:semicolon
 )brace
 )brace
+multiline_comment|/**&n; *&t;bmap&t;- find a block number in a file&n; *&t;@inode: inode of file&n; *&t;@block: block to find&n; *&n; *&t;Returns the block number on the device holding the inode that&n; *&t;is the disk block number for the block of the file requested.&n; *&t;That is asked for block 4 of inode 1 the function will return the&n; *&t;disk block relative to the disk start that holds that block of the &n; *&t;file&n; */
 DECL|function|bmap
 r_int
 id|bmap
@@ -3093,6 +3100,7 @@ l_string|&quot;cannot create inode slab cache&quot;
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/**&n; *&t;update_atime&t;-&t;update the access time&n; *&t;@inode: inode accessed&n; *&n; *&t;Update the accessed time on an inode and mark it for  writeback.&n; *&t;This function automatically handles read only file systems and media,&n; *&t;as well as the noatime flag and inode specific noatime markers&n; */
 DECL|function|update_atime
 r_void
 id|update_atime

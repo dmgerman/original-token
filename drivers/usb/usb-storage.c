@@ -17,9 +17,6 @@ macro_line|#include &quot;../scsi/hosts.h&quot;
 macro_line|#include &quot;../scsi/sd.h&quot;
 macro_line|#include &quot;usb-storage.h&quot;
 macro_line|#include &quot;usb-storage-debug.h&quot;
-multiline_comment|/*&n; * This is the size of the structure Scsi_Host_Template.  We create&n; * an instance of this structure in this file and this is a check&n; * to see if this structure may have changed within the SCSI module.&n; * This is by no means foolproof, but it does help us some.&n; */
-DECL|macro|SCSI_HOST_TEMPLATE_SIZE
-mdefine_line|#define SCSI_HOST_TEMPLATE_SIZE&t;&t;&t;(104)
 multiline_comment|/* direction table -- this indicates the direction of the data&n; * transfer for each command code -- a 1 indicates input&n; */
 multiline_comment|/* FIXME: we need to use the new direction indicators in the Scsi_Cmnd&n; * structure, not this table.  First we need to evaluate if it&squot;s being set&n; * correctly for us, though&n; */
 DECL|variable|us_direction
@@ -164,6 +161,12 @@ op_star
 id|next
 suffix:semicolon
 multiline_comment|/* next device */
+multiline_comment|/* the device we&squot;re working with */
+DECL|member|dev_spinlock
+id|spinlock_t
+id|dev_spinlock
+suffix:semicolon
+multiline_comment|/* to protect the dev ptr */
 DECL|member|pusb_dev
 r_struct
 id|usb_device
@@ -1154,6 +1157,14 @@ comma
 id|us
 )paren
 suffix:semicolon
+id|US_DEBUGP
+c_func
+(paren
+l_string|&quot;return code from transport is 0x%x&bslash;n&quot;
+comma
+id|result
+)paren
+suffix:semicolon
 multiline_comment|/* If we got a short transfer, but it was for a command that&n;&t; * can have short transfers, we&squot;re actually okay&n;&t; */
 r_if
 c_cond
@@ -1834,6 +1845,14 @@ c_func
 id|srb
 comma
 id|us
+)paren
+suffix:semicolon
+id|US_DEBUGP
+c_func
+(paren
+l_string|&quot;return code from transport is 0x%x&bslash;n&quot;
+comma
+id|result
 )paren
 suffix:semicolon
 multiline_comment|/* If we got a short transfer, but it was for a command that&n;&t; * can have short transfers, we&squot;re actually okay&n;&t; */
@@ -3099,7 +3118,7 @@ c_func
 (paren
 l_string|&quot;CBI data stage result is 0x%x&bslash;n&quot;
 comma
-id|result
+id|srb-&gt;result
 )paren
 suffix:semicolon
 )brace
@@ -3143,7 +3162,7 @@ comma
 id|us-&gt;ip_data
 )paren
 suffix:semicolon
-multiline_comment|/* UFI gives us ASC and ASCQ, like a request sense&n;&t; *&n;&t; * REQUEST_SENSE and INQUIRY don&squot;t affect the sense data, so we&n;&t; * ignore the information for those commands&n;&t; */
+multiline_comment|/* UFI gives us ASC and ASCQ, like a request sense&n;&t; *&n;&t; * REQUEST_SENSE and INQUIRY don&squot;t affect the sense data on UFI&n;&t; * devices, so we ignore the information for those commands.  Note&n;&t; * that this means we could be ignoring a real error on these&n;&t; * commands, but that can&squot;t be helped.&n;&t; */
 r_if
 c_cond
 (paren
@@ -3186,21 +3205,25 @@ r_return
 id|USB_STOR_TRANSPORT_GOOD
 suffix:semicolon
 )brace
-multiline_comment|/* otherwise, we interpret the data normally */
+multiline_comment|/* If not UFI, we interpret the data as a result code &n;&t; * The first byte should always be a 0x0&n;&t; * The second byte &amp; 0x0F should be 0x0 for good, otherwise error &n;&t; */
 r_switch
 c_cond
 (paren
+(paren
 id|us-&gt;ip_data
+op_amp
+l_int|0xFF0F
+)paren
 )paren
 (brace
 r_case
-l_int|0x0001
+l_int|0x0000
 suffix:colon
 r_return
 id|USB_STOR_TRANSPORT_GOOD
 suffix:semicolon
 r_case
-l_int|0x0002
+l_int|0x0001
 suffix:colon
 r_return
 id|USB_STOR_TRANSPORT_FAILED
@@ -3250,7 +3273,7 @@ suffix:semicolon
 id|US_DEBUGP
 c_func
 (paren
-l_string|&quot;CBC gets a command:&bslash;n&quot;
+l_string|&quot;CB gets a command:&bslash;n&quot;
 )paren
 suffix:semicolon
 id|US_DEBUG
@@ -3391,9 +3414,9 @@ suffix:semicolon
 id|US_DEBUGP
 c_func
 (paren
-l_string|&quot;CBC data stage result is 0x%x&bslash;n&quot;
+l_string|&quot;CB data stage result is 0x%x&bslash;n&quot;
 comma
-id|result
+id|srb-&gt;result
 )paren
 suffix:semicolon
 )brace
@@ -4056,6 +4079,24 @@ id|USB_STOR_TRANSPORT_ERROR
 suffix:semicolon
 )brace
 multiline_comment|/***********************************************************************&n; * Host functions &n; ***********************************************************************/
+DECL|function|us_info
+r_static
+r_const
+r_char
+op_star
+id|us_info
+c_func
+(paren
+r_struct
+id|Scsi_Host
+op_star
+id|host
+)paren
+(brace
+r_return
+l_string|&quot;SCSI emulation for USB Mass Storage devices&bslash;n&quot;
+suffix:semicolon
+)brace
 multiline_comment|/* detect adapter (always true ) */
 DECL|function|us_detect
 r_static
@@ -4083,33 +4124,30 @@ op_star
 id|sht-&gt;proc_dir
 suffix:semicolon
 r_char
-id|name
+id|local_name
 (braket
 l_int|32
 )braket
 suffix:semicolon
-multiline_comment|/* set up our name */
+multiline_comment|/* set up the name of our subdirectory under /proc/scsi/ */
 id|sprintf
 c_func
 (paren
-id|name
+id|local_name
 comma
-l_string|&quot;usbscsi%d&quot;
+l_string|&quot;usb-storage-%d&quot;
 comma
 id|us-&gt;host_number
 )paren
 suffix:semicolon
-id|sht-&gt;name
-op_assign
 id|sht-&gt;proc_name
 op_assign
 id|kmalloc
-c_func
 (paren
 id|strlen
 c_func
 (paren
-id|name
+id|local_name
 )paren
 op_plus
 l_int|1
@@ -4131,7 +4169,7 @@ c_func
 (paren
 id|sht-&gt;proc_name
 comma
-id|name
+id|local_name
 )paren
 suffix:semicolon
 multiline_comment|/* we start with no /proc directory entry */
@@ -4189,15 +4227,11 @@ id|sht-&gt;proc_name
 op_assign
 l_int|NULL
 suffix:semicolon
-id|sht-&gt;name
-op_assign
-l_int|NULL
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* release - must be here to stop scsi&n; *&t;from trying to release IRQ etc.&n; *&t;Kill off our data&n; */
+multiline_comment|/* Release all resources used by the virtual host&n; *&n; * NOTE: There is no contention here, because we&squot;re allready deregistered&n; * the driver and we&squot;re doing each virtual host in turn, not in parallel&n; */
 DECL|function|us_release
 r_static
 r_int
@@ -4226,21 +4260,7 @@ l_int|0
 )braket
 suffix:semicolon
 r_int
-r_int
-id|flags
-suffix:semicolon
-r_int
 id|result
-suffix:semicolon
-multiline_comment|/* lock the data structures */
-id|spin_lock_irqsave
-c_func
-(paren
-op_amp
-id|us_list_spinlock
-comma
-id|flags
-)paren
 suffix:semicolon
 id|US_DEBUGP
 c_func
@@ -4250,6 +4270,7 @@ comma
 id|us-&gt;htmplt.name
 )paren
 suffix:semicolon
+multiline_comment|/* FIXME: I don&squot;t think this is necessary, becuase we&squot;ve allready&n;&t; * deregistered, which causes us to disconnect() */
 multiline_comment|/* release the interrupt handler, if necessary */
 r_if
 c_cond
@@ -4288,16 +4309,6 @@ op_assign
 l_int|NULL
 suffix:semicolon
 )brace
-multiline_comment|/* lock the data structures */
-id|spin_unlock_irqrestore
-c_func
-(paren
-op_amp
-id|us_list_spinlock
-comma
-id|flags
-)paren
-suffix:semicolon
 multiline_comment|/* we always have a successful release */
 r_return
 l_int|0
@@ -4425,34 +4436,12 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* FIXME: This doesn&squot;t actually abort anything */
+multiline_comment|/***********************************************************************&n; * Error handling functions&n; ***********************************************************************/
+multiline_comment|/* Command abort&n; * Note that this is really only meaningful right now for CBI transport&n; * devices which have failed to give us the command completion interrupt&n; */
 DECL|function|us_abort
 r_static
 r_int
 id|us_abort
-c_func
-(paren
-id|Scsi_Cmnd
-op_star
-id|srb
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_CRIT
-l_string|&quot;usb-storage: abort() requested but not implemented&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
-multiline_comment|/* FIXME: this doesn&squot;t do anything right now */
-DECL|function|us_bus_reset
-r_static
-r_int
-id|us_bus_reset
 c_func
 (paren
 id|Scsi_Cmnd
@@ -4475,6 +4464,55 @@ id|srb-&gt;host-&gt;hostdata
 l_int|0
 )braket
 suffix:semicolon
+id|US_DEBUGP
+c_func
+(paren
+l_string|&quot;us_abort() called&bslash;n&quot;
+)paren
+suffix:semicolon
+multiline_comment|/* if we&squot;re stuck waiting for an IRQ, simulate it */
+r_if
+c_cond
+(paren
+id|us-&gt;ip_wanted
+)paren
+(brace
+id|US_DEBUGP
+c_func
+(paren
+l_string|&quot;-- simulating missing IRQ&bslash;n&quot;
+)paren
+suffix:semicolon
+id|up
+c_func
+(paren
+op_amp
+(paren
+id|us-&gt;ip_waitq
+)paren
+)paren
+suffix:semicolon
+r_return
+id|SUCCESS
+suffix:semicolon
+)brace
+r_return
+l_int|0
+suffix:semicolon
+)brace
+multiline_comment|/* FIXME: this doesn&squot;t do anything right now */
+DECL|function|us_bus_reset
+r_static
+r_int
+id|us_bus_reset
+c_func
+(paren
+id|Scsi_Cmnd
+op_star
+id|srb
+)paren
+(brace
+singleline_comment|// struct us_data *us = (struct us_data *)srb-&gt;host-&gt;hostdata[0];
 id|printk
 c_func
 (paren
@@ -4486,20 +4524,6 @@ id|US_DEBUGP
 c_func
 (paren
 l_string|&quot;Bus reset requested&bslash;n&quot;
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|us-&gt;ip_wanted
-)paren
-id|up
-c_func
-(paren
-op_amp
-(paren
-id|us-&gt;ip_waitq
-)paren
 )paren
 suffix:semicolon
 singleline_comment|//  us-&gt;transport_reset(us);
@@ -4916,9 +4940,17 @@ id|Scsi_Host_Template
 id|my_host_template
 op_assign
 (brace
+id|name
+suffix:colon
+l_string|&quot;usb-storage&quot;
+comma
 id|proc_info
 suffix:colon
 id|usb_stor_proc_info
+comma
+id|info
+suffix:colon
+id|us_info
 comma
 id|detect
 suffix:colon
@@ -5064,6 +5096,10 @@ suffix:semicolon
 r_int
 id|action
 suffix:semicolon
+r_int
+r_int
+id|flags
+suffix:semicolon
 id|lock_kernel
 c_func
 (paren
@@ -5080,7 +5116,7 @@ c_func
 (paren
 id|current-&gt;comm
 comma
-l_string|&quot;usbscsi%d&quot;
+l_string|&quot;usb-storage-%d&quot;
 comma
 id|us-&gt;host_number
 )paren
@@ -5090,6 +5126,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
+multiline_comment|/* signal that we&squot;ve started the thread */
 id|up
 c_func
 (paren
@@ -5216,6 +5253,18 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
+multiline_comment|/* lock the device pointers */
+id|spin_lock_irqsave
+c_func
+(paren
+op_amp
+(paren
+id|us-&gt;dev_spinlock
+)paren
+comma
+id|flags
+)paren
+suffix:semicolon
 multiline_comment|/* our device has gone - pretend not ready */
 multiline_comment|/* FIXME: we also need to handle INQUIRY here, &n;&t;&t;&t; * probably */
 multiline_comment|/* FIXME: fix return codes and sense buffer handling */
@@ -5276,6 +5325,19 @@ op_or
 l_int|2
 suffix:semicolon
 )brace
+multiline_comment|/* unlock the device pointers */
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+(paren
+id|us-&gt;dev_spinlock
+)paren
+comma
+id|flags
+)paren
+suffix:semicolon
+multiline_comment|/* indicate that the command is done */
 id|us-&gt;srb
 op_member_access_from_pointer
 id|scsi_done
@@ -5348,6 +5410,19 @@ comma
 id|us-&gt;srb-&gt;result
 )paren
 suffix:semicolon
+multiline_comment|/* unlock the device pointers */
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+(paren
+id|us-&gt;dev_spinlock
+)paren
+comma
+id|flags
+)paren
+suffix:semicolon
+multiline_comment|/* indicate that the command is done */
 id|us-&gt;srb
 op_member_access_from_pointer
 id|scsi_done
@@ -5392,14 +5467,26 @@ id|action
 op_eq
 id|US_ACT_EXIT
 )paren
+(brace
+id|US_DEBUGP
+c_func
+(paren
+l_string|&quot;-- US_ACT_EXIT command recieved&bslash;n&quot;
+)paren
+suffix:semicolon
 r_break
 suffix:semicolon
 )brace
+)brace
 multiline_comment|/* for (;;) */
-id|printk
+multiline_comment|/* notify the exit routine that we&squot;re actually exiting now */
+id|up
 c_func
 (paren
-l_string|&quot;usb_stor_control_thread exiting&bslash;n&quot;
+op_amp
+(paren
+id|us-&gt;notify
+)paren
 )paren
 suffix:semicolon
 r_return
@@ -6346,6 +6433,10 @@ id|ss-&gt;queue_exclusion
 )paren
 )paren
 suffix:semicolon
+id|ss-&gt;dev_spinlock
+op_assign
+id|SPIN_LOCK_UNLOCKED
+suffix:semicolon
 multiline_comment|/* copy over the subclass and protocol data */
 id|ss-&gt;subclass
 op_assign
@@ -6832,6 +6923,10 @@ suffix:semicolon
 r_int
 id|result
 suffix:semicolon
+r_int
+r_int
+id|flags
+suffix:semicolon
 id|US_DEBUGP
 c_func
 (paren
@@ -6855,6 +6950,18 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+multiline_comment|/* lock access to the device data structure */
+id|spin_lock_irqsave
+c_func
+(paren
+op_amp
+(paren
+id|ss-&gt;dev_spinlock
+)paren
+comma
+id|flags
+)paren
+suffix:semicolon
 multiline_comment|/* release the IRQ, if we have one */
 r_if
 c_cond
@@ -6897,6 +7004,18 @@ multiline_comment|/* mark the device as gone */
 id|ss-&gt;pusb_dev
 op_assign
 l_int|NULL
+suffix:semicolon
+multiline_comment|/* lock access to the device data structure */
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+(paren
+id|ss-&gt;dev_spinlock
+)paren
+comma
+id|flags
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/***********************************************************************&n; * Initialization and registration&n; ***********************************************************************/
@@ -6963,7 +7082,19 @@ r_int
 r_int
 id|flags
 suffix:semicolon
+id|US_DEBUGP
+c_func
+(paren
+l_string|&quot;usb_stor_exit() called&bslash;n&quot;
+)paren
+suffix:semicolon
 multiline_comment|/*&n;&t; * deregister the driver -- this eliminates races with probes and&n;&t; * disconnects &n;&t; */
+id|US_DEBUGP
+c_func
+(paren
+l_string|&quot;-- calling usb_deregister()&bslash;n&quot;
+)paren
+suffix:semicolon
 id|usb_deregister
 c_func
 (paren
@@ -6997,6 +7128,13 @@ id|ptr
 op_assign
 id|ptr-&gt;next
 )paren
+(brace
+id|US_DEBUGP
+c_func
+(paren
+l_string|&quot;-- calling scsi_unregister_module()&bslash;n&quot;
+)paren
+suffix:semicolon
 id|scsi_unregister_module
 c_func
 (paren
@@ -7008,16 +7146,78 @@ id|ptr-&gt;htmplt
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/* kill the threads */
-multiline_comment|/* FIXME: we can do this by sending them a signal to die */
+)brace
+multiline_comment|/* Kill the control threads&n;&t; *&n;&t; * NOTE: there is no contention at this point, so full mutual &n;&t; * exclusion is not necessary&n;&t; */
+r_for
+c_loop
+(paren
+id|ptr
+op_assign
+id|us_list
+suffix:semicolon
+id|ptr
+op_ne
+l_int|NULL
+suffix:semicolon
+id|ptr
+op_assign
+id|ptr-&gt;next
+)paren
+(brace
+id|US_DEBUGP
+c_func
+(paren
+l_string|&quot;-- sending US_ACT_EXIT command to thread&bslash;n&quot;
+)paren
+suffix:semicolon
+multiline_comment|/* enqueue the command */
+id|ptr-&gt;action
+op_assign
+id|US_ACT_EXIT
+suffix:semicolon
+multiline_comment|/* wake up the process task */
+id|up
+c_func
+(paren
+op_amp
+(paren
+id|ptr-&gt;sleeper
+)paren
+)paren
+suffix:semicolon
+multiline_comment|/* wait for the task to confirm that it&squot;s exited */
+id|down
+c_func
+(paren
+op_amp
+(paren
+id|ptr-&gt;notify
+)paren
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/* free up the data structures */
 multiline_comment|/* FIXME: we need to eliminate the host structure also */
+id|US_DEBUGP
+c_func
+(paren
+l_string|&quot;-- freeing data structures&bslash;n&quot;
+)paren
+suffix:semicolon
 r_while
 c_loop
 (paren
 id|ptr
 )paren
 (brace
+multiline_comment|/* free the directory name */
+id|kfree
+c_func
+(paren
+id|ptr-&gt;htmplt.proc_dir
+)paren
+suffix:semicolon
+multiline_comment|/* free the us_data structure */
 id|next
 op_assign
 id|ptr-&gt;next

@@ -616,21 +616,6 @@ l_int|0
 suffix:semicolon
 )brace
 r_else
-r_if
-c_cond
-(paren
-(paren
-id|Request-&gt;filp-&gt;f_dentry
-op_ne
-l_int|NULL
-)paren
-op_logical_and
-(paren
-id|Request-&gt;filp-&gt;f_dentry-&gt;d_inode
-op_ne
-l_int|NULL
-)paren
-)paren
 (brace
 id|Request-&gt;FileLength
 op_assign
@@ -719,21 +704,6 @@ id|Request
 )paren
 suffix:semicolon
 )brace
-)brace
-r_else
-(brace
-multiline_comment|/* Ehhh... */
-id|printk
-c_func
-(paren
-id|KERN_CRIT
-l_string|&quot;kHTTPd: Unexpected filesystem response&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-op_minus
-l_int|1
-suffix:semicolon
 )brace
 id|LeaveFunction
 c_func

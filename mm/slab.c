@@ -13,7 +13,7 @@ multiline_comment|/* SLAB_MGMT_CHECKS&t;- 1 to enable extra checks in kmem_cache
 DECL|macro|SLAB_MGMT_CHECKS
 mdefine_line|#define&t;&t;SLAB_MGMT_CHECKS&t;1
 DECL|macro|SLAB_DEBUG_SUPPORT
-mdefine_line|#define&t;&t;SLAB_DEBUG_SUPPORT&t;0
+mdefine_line|#define&t;&t;SLAB_DEBUG_SUPPORT&t;1
 DECL|macro|SLAB_STATS
 mdefine_line|#define&t;&t;SLAB_STATS&t;&t;0
 DECL|macro|SLAB_SELFTEST

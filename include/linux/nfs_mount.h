@@ -6,7 +6,7 @@ macro_line|#include &lt;linux/in.h&gt;
 macro_line|#include &lt;linux/nfs.h&gt;
 multiline_comment|/*&n; * WARNING!  Do not delete or change the order of these fields.  If&n; * a new field is required then add it to the end.  The version field&n; * tracks which fields are present.  This will ensure some measure of&n; * mount-to-kernel version compatibility.  Some of these aren&squot;t used yet&n; * but here they are anyway.&n; */
 DECL|macro|NFS_MOUNT_VERSION
-mdefine_line|#define NFS_MOUNT_VERSION&t;3
+mdefine_line|#define NFS_MOUNT_VERSION&t;4
 DECL|struct|nfs_mount_data
 r_struct
 id|nfs_mount_data
@@ -21,10 +21,10 @@ r_int
 id|fd
 suffix:semicolon
 multiline_comment|/* 1 */
-DECL|member|root
+DECL|member|old_root
 r_struct
-id|nfs_fh
-id|root
+id|nfs2_fh
+id|old_root
 suffix:semicolon
 multiline_comment|/* 1 */
 DECL|member|flags
@@ -97,6 +97,12 @@ r_int
 id|bsize
 suffix:semicolon
 multiline_comment|/* 3 */
+DECL|member|root
+r_struct
+id|nfs_fh
+id|root
+suffix:semicolon
+multiline_comment|/* 4 */
 )brace
 suffix:semicolon
 multiline_comment|/* bits in the flags field */

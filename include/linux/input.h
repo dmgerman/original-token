@@ -35,6 +35,39 @@ id|value
 suffix:semicolon
 )brace
 suffix:semicolon
+multiline_comment|/*&n; * The device ID structure;&n; */
+DECL|struct|input_id
+r_struct
+id|input_id
+(brace
+DECL|member|bus
+id|__u16
+id|bus
+suffix:semicolon
+DECL|member|vendor
+id|__u16
+id|vendor
+suffix:semicolon
+DECL|member|product
+id|__u16
+id|product
+suffix:semicolon
+)brace
+suffix:semicolon
+multiline_comment|/*&n; * Protocol version.&n; */
+DECL|macro|EV_VERSION
+mdefine_line|#define EV_VERSION&t;&t;0x010000
+multiline_comment|/*&n; * IOCTLs (0x00 - 0x7f)&n; */
+DECL|macro|EVIOCGVERSION
+mdefine_line|#define EVIOCGVERSION&t;&t;_IOR(&squot;E&squot;, 0x01, __u32)                  /* get driver version */
+DECL|macro|EVIOCGID
+mdefine_line|#define EVIOCGID&t;&t;_IOR(&squot;E&squot;, 0x02, struct input_id)&t;/* get device ID */
+DECL|macro|EVIOCGNAME
+mdefine_line|#define EVIOCGNAME(len)&t;&t;_IOC(_IOC_READ, &squot;E&squot;, 0x03, len)&t;&t;/* get device name */
+DECL|macro|EVIOCGBIT
+mdefine_line|#define EVIOCGBIT(ev,len)&t;_IOC(_IOC_READ, &squot;E&squot;, 0x20 + ev, len)&t;/* get event bits */
+DECL|macro|EVIOCGABSLIM
+mdefine_line|#define EVIOCGABSLIM(num)&t;_IOR(&squot;E&squot;, 0x40 + num, 4 * sizeof(int))&t;/* get abs event limits */ 
 multiline_comment|/*&n; * Event types&n; */
 DECL|macro|EV_RST
 mdefine_line|#define EV_RST&t;&t;&t;0x00
@@ -636,6 +669,16 @@ suffix:semicolon
 DECL|member|number
 r_int
 id|number
+suffix:semicolon
+DECL|member|name
+r_char
+op_star
+id|name
+suffix:semicolon
+DECL|member|id
+r_struct
+id|input_id
+id|id
 suffix:semicolon
 DECL|member|evbit
 r_int

@@ -61,6 +61,13 @@ c_func
 r_void
 )paren
 suffix:semicolon
+r_int
+id|dsbr100_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
 multiline_comment|/*&n; * HCI drivers&n; */
 r_int
 id|uhci_init

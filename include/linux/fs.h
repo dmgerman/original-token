@@ -1159,6 +1159,12 @@ id|dentry
 op_star
 id|f_dentry
 suffix:semicolon
+DECL|member|f_vfsmnt
+r_struct
+id|vfsmount
+op_star
+id|f_vfsmnt
+suffix:semicolon
 DECL|member|f_op
 r_struct
 id|file_operations
@@ -1343,11 +1349,11 @@ r_char
 id|fl_type
 suffix:semicolon
 DECL|member|fl_start
-id|off_t
+id|loff_t
 id|fl_start
 suffix:semicolon
 DECL|member|fl_end
-id|off_t
+id|loff_t
 id|fl_end
 suffix:semicolon
 DECL|member|fl_notify
@@ -1363,6 +1369,32 @@ op_star
 )paren
 suffix:semicolon
 multiline_comment|/* unblock callback */
+DECL|member|fl_insert
+r_void
+(paren
+op_star
+id|fl_insert
+)paren
+(paren
+r_struct
+id|file_lock
+op_star
+)paren
+suffix:semicolon
+multiline_comment|/* lock insertion callback */
+DECL|member|fl_remove
+r_void
+(paren
+op_star
+id|fl_remove
+)paren
+(paren
+r_struct
+id|file_lock
+op_star
+)paren
+suffix:semicolon
+multiline_comment|/* lock removal callback */
 r_union
 (brace
 DECL|member|nfs_fl
@@ -1376,6 +1408,13 @@ id|fl_u
 suffix:semicolon
 )brace
 suffix:semicolon
+multiline_comment|/* The following constant reflects the upper bound of the file/locking space */
+macro_line|#ifndef OFFSET_MAX
+DECL|macro|INT_LIMIT
+mdefine_line|#define INT_LIMIT(x)&t;(~((x)1 &lt;&lt; (sizeof(x)*8 - 1)))
+DECL|macro|OFFSET_MAX
+mdefine_line|#define OFFSET_MAX&t;INT_LIMIT(loff_t)
+macro_line|#endif
 r_extern
 r_struct
 id|file_lock
@@ -1540,6 +1579,71 @@ op_star
 op_star
 )paren
 suffix:semicolon
+DECL|macro|DQUOT_USR_ENABLED
+mdefine_line|#define DQUOT_USR_ENABLED&t;0x01&t;&t;/* User diskquotas enabled */
+DECL|macro|DQUOT_GRP_ENABLED
+mdefine_line|#define DQUOT_GRP_ENABLED&t;0x02&t;&t;/* Group diskquotas enabled */
+DECL|struct|quota_mount_options
+r_struct
+id|quota_mount_options
+(brace
+DECL|member|flags
+r_int
+r_int
+id|flags
+suffix:semicolon
+multiline_comment|/* Flags for diskquotas on this device */
+DECL|member|dqio_sem
+r_struct
+id|semaphore
+id|dqio_sem
+suffix:semicolon
+multiline_comment|/* lock device while I/O in progress */
+DECL|member|dqoff_sem
+r_struct
+id|semaphore
+id|dqoff_sem
+suffix:semicolon
+multiline_comment|/* serialize quota_off() and quota_on() on device */
+DECL|member|files
+r_struct
+id|file
+op_star
+id|files
+(braket
+id|MAXQUOTAS
+)braket
+suffix:semicolon
+multiline_comment|/* fp&squot;s to quotafiles */
+DECL|member|inode_expire
+id|time_t
+id|inode_expire
+(braket
+id|MAXQUOTAS
+)braket
+suffix:semicolon
+multiline_comment|/* expiretime for inode-quota */
+DECL|member|block_expire
+id|time_t
+id|block_expire
+(braket
+id|MAXQUOTAS
+)braket
+suffix:semicolon
+multiline_comment|/* expiretime for block-quota */
+DECL|member|rsquash
+r_char
+id|rsquash
+(braket
+id|MAXQUOTAS
+)braket
+suffix:semicolon
+multiline_comment|/* for quotas threat root as any other user */
+)brace
+suffix:semicolon
+multiline_comment|/*&n; *&t;Umount options&n; */
+DECL|macro|MNT_FORCE
+mdefine_line|#define MNT_FORCE&t;0x00000001&t;/* Attempt to forcibily umount */
 macro_line|#include &lt;linux/minix_fs_sb.h&gt;
 macro_line|#include &lt;linux/ext2_fs_sb.h&gt;
 macro_line|#include &lt;linux/hpfs_fs_sb.h&gt;
@@ -2510,6 +2614,11 @@ r_struct
 id|dentry
 op_star
 comma
+r_struct
+id|vfsmount
+op_star
+op_star
+comma
 r_int
 r_int
 )paren
@@ -3240,7 +3349,7 @@ r_extern
 r_struct
 id|file
 op_star
-id|filp_open
+id|__filp_open
 c_func
 (paren
 r_const
@@ -3253,6 +3362,10 @@ r_int
 comma
 r_struct
 id|dentry
+op_star
+comma
+r_struct
+id|vfsmount
 op_star
 )paren
 suffix:semicolon
@@ -3267,9 +3380,50 @@ r_struct
 id|dentry
 op_star
 comma
+r_struct
+id|vfsmount
+op_star
+comma
 r_int
 )paren
 suffix:semicolon
+DECL|function|filp_open
+r_static
+r_inline
+r_struct
+id|file
+op_star
+id|filp_open
+c_func
+(paren
+r_const
+r_char
+op_star
+id|name
+comma
+r_int
+id|flags
+comma
+r_int
+id|mode
+)paren
+(brace
+r_return
+id|__filp_open
+c_func
+(paren
+id|name
+comma
+id|flags
+comma
+id|mode
+comma
+l_int|NULL
+comma
+l_int|NULL
+)paren
+suffix:semicolon
+)brace
 r_extern
 r_int
 id|filp_close
@@ -4032,43 +4186,6 @@ op_star
 )paren
 suffix:semicolon
 r_extern
-r_int
-id|do_unlink
-c_func
-(paren
-r_const
-r_char
-op_star
-id|name
-comma
-r_struct
-id|dentry
-op_star
-)paren
-suffix:semicolon
-r_extern
-r_struct
-id|dentry
-op_star
-id|__open_namei
-c_func
-(paren
-r_const
-r_char
-op_star
-comma
-r_int
-comma
-r_int
-comma
-r_struct
-id|dentry
-op_star
-)paren
-suffix:semicolon
-DECL|function|open_namei
-r_static
-r_inline
 r_struct
 id|dentry
 op_star
@@ -4078,23 +4195,21 @@ c_func
 r_const
 r_char
 op_star
-id|pathname
-)paren
-(brace
-r_return
-id|__open_namei
-c_func
-(paren
-id|pathname
 comma
-l_int|0
+r_int
 comma
-l_int|0
+r_int
 comma
-l_int|NULL
+r_struct
+id|dentry
+op_star
+comma
+r_struct
+id|vfsmount
+op_star
+op_star
 )paren
 suffix:semicolon
-)brace
 r_extern
 r_int
 id|kernel_read
@@ -4963,6 +5078,11 @@ r_struct
 id|dentry
 op_star
 comma
+r_struct
+id|vfsmount
+op_star
+op_star
+comma
 r_int
 comma
 r_const
@@ -4998,6 +5118,11 @@ op_star
 comma
 r_struct
 id|dentry
+op_star
+comma
+r_struct
+id|vfsmount
+op_star
 op_star
 comma
 r_int

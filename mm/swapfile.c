@@ -2435,6 +2435,8 @@ c_func
 (paren
 id|ptr-&gt;swap_file
 comma
+l_int|NULL
+comma
 id|page
 comma
 id|PAGE_SIZE

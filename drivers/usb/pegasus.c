@@ -2016,7 +2016,9 @@ suffix:semicolon
 id|info
 c_func
 (paren
-l_string|&quot;%s set allmulti&quot;
+l_string|&quot;%s: set allmulti&quot;
+comma
+id|net-&gt;name
 )paren
 suffix:semicolon
 )brace

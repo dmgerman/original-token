@@ -2125,17 +2125,18 @@ r_char
 op_star
 id|path
 suffix:semicolon
-multiline_comment|/* N.B. not safe -- fix this soon! */
-id|current-&gt;fs-&gt;root
-op_assign
-id|dentry-&gt;d_sb-&gt;s_root
-suffix:semicolon
 id|path
 op_assign
-id|d_path
+id|__d_path
 c_func
 (paren
 id|dentry
+comma
+l_int|NULL
+comma
+id|dentry-&gt;d_sb-&gt;s_root
+comma
+l_int|NULL
 comma
 id|buffer
 comma
@@ -2190,10 +2191,6 @@ id|UMSDOS_PSDROOT_LEN
 )paren
 suffix:semicolon
 )brace
-id|current-&gt;fs-&gt;root
-op_assign
-id|old_root
-suffix:semicolon
 r_return
 id|path
 suffix:semicolon

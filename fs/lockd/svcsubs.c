@@ -67,7 +67,7 @@ l_int|0
 suffix:semicolon
 id|i
 OL
-id|NFS_FHSIZE
+id|NFS2_FHSIZE
 suffix:semicolon
 id|i
 op_increment
@@ -696,7 +696,7 @@ l_int|0
 suffix:semicolon
 id|lock.fl_end
 op_assign
-id|NLM_OFFSET_MAX
+id|OFFSET_MAX
 suffix:semicolon
 r_if
 c_cond

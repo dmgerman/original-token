@@ -399,8 +399,11 @@ suffix:semicolon
 id|host-&gt;h_state
 op_increment
 suffix:semicolon
-id|host-&gt;h_count
-op_increment
+id|nlm_get_host
+c_func
+(paren
+id|host
+)paren
 suffix:semicolon
 id|kernel_thread
 c_func

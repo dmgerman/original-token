@@ -966,6 +966,8 @@ op_assign
 op_amp
 id|iniinfo
 suffix:semicolon
+id|MOD_INC_USE_COUNT
+suffix:semicolon
 id|info-&gt;tty
 op_assign
 id|tty
@@ -1035,8 +1037,6 @@ c_func
 (paren
 id|js_orb_port-&gt;corr
 )paren
-suffix:semicolon
-id|MOD_INC_USE_COUNT
 suffix:semicolon
 r_return
 l_int|0
@@ -1231,12 +1231,10 @@ id|magic
 suffix:colon
 id|TTY_LDISC_MAGIC
 comma
-macro_line|#if LINUX_VERSION_CODE &gt;= KERNEL_VERSION(2,1,0)
 id|name
 suffix:colon
 l_string|&quot;spaceorb&quot;
 comma
-macro_line|#endif
 id|open
 suffix:colon
 id|js_orb_ldisc_open

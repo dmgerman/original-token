@@ -548,6 +548,17 @@ id|nlm_host
 op_star
 )paren
 suffix:semicolon
+r_struct
+id|nlm_host
+op_star
+id|nlm_get_host
+c_func
+(paren
+r_struct
+id|nlm_host
+op_star
+)paren
+suffix:semicolon
 r_void
 id|nlm_release_host
 c_func
@@ -565,6 +576,19 @@ r_void
 )paren
 suffix:semicolon
 multiline_comment|/*&n; * Server-side lock handling&n; */
+r_int
+id|nlmsvc_async_call
+c_func
+(paren
+r_struct
+id|nlm_rqst
+op_star
+comma
+id|u32
+comma
+id|rpc_action
+)paren
+suffix:semicolon
 id|u32
 id|nlmsvc_lock
 c_func

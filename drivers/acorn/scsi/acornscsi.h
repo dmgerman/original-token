@@ -1,3 +1,4 @@
+multiline_comment|/*&n; * Acorn SCSI driver&n; *&n; * Copyright (C) 1997 Russell King&n; */
 macro_line|#ifndef ACORNSCSI_H
 DECL|macro|ACORNSCSI_H
 mdefine_line|#define ACORNSCSI_H

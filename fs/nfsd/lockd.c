@@ -46,6 +46,10 @@ comma
 l_int|0
 )paren
 suffix:semicolon
+id|fh.fh_handle.fh_size
+op_assign
+id|f-&gt;size
+suffix:semicolon
 id|memcpy
 c_func
 (paren
@@ -56,11 +60,7 @@ op_star
 op_amp
 id|fh.fh_handle.fh_base
 comma
-(paren
-r_char
-op_star
-)paren
-id|f
+id|f-&gt;data
 comma
 id|NFS_FHSIZE
 )paren

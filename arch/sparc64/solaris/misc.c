@@ -426,13 +426,7 @@ id|file
 r_goto
 id|out
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|file-&gt;f_dentry
-op_logical_and
-id|file-&gt;f_dentry-&gt;d_inode
-)paren
+r_else
 (brace
 r_struct
 id|inode

@@ -757,10 +757,7 @@ r_int
 id|dfx_probe
 c_func
 (paren
-r_struct
-id|net_device
-op_star
-id|dev
+r_void
 )paren
 suffix:semicolon
 r_extern
@@ -989,6 +986,14 @@ comma
 l_int|0
 )brace
 comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_DEFXX
+(brace
+id|dfx_probe
+comma
+l_int|0
+)brace
+dot
 macro_line|#endif
 (brace
 l_int|NULL
@@ -1838,14 +1843,6 @@ r_if
 c_cond
 (paren
 l_int|1
-macro_line|#ifdef CONFIG_DEFXX
-op_logical_and
-id|dfx_probe
-c_func
-(paren
-id|dev
-)paren
-macro_line|#endif
 macro_line|#ifdef CONFIG_APFDDI
 op_logical_and
 id|apfddi_init

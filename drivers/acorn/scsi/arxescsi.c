@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/arch/arm/drivers/scsi/cumana_2.c&n; *&n; * Copyright (C) 1997,1998 Russell King&n; *&n; * This driver is based on experimentation.  Hence, it may have made&n; * assumptions about the particular card that I have available, and&n; * may not be reliable!&n; *&n; * Changelog:&n; *  30-08-1997&t;RMK&t;0.0.0&t;Created, READONLY version as cumana_2.c&n; *  22-01-1998&t;RMK&t;0.0.1&t;Updated to 2.1.80&n; *  15-04-1998&t;RMK&t;0.0.1&t;Only do PIO if FAS216 will allow it.&n; *  11-06-1998 &t;&t;0.0.2   Changed to support ARXE 16-bit SCSI card, enabled writing&n; *  &t;&t;&t;&t;by Stefan Hanske&n; */
+multiline_comment|/*&n; * linux/arch/arm/drivers/scsi/arxescsi.c&n; *&n; * Copyright (C) 1997-2000 Russell King&n; *&n; * This driver is based on experimentation.  Hence, it may have made&n; * assumptions about the particular card that I have available, and&n; * may not be reliable!&n; *&n; * Changelog:&n; *  30-08-1997&t;RMK&t;0.0.0&t;Created, READONLY version as cumana_2.c&n; *  22-01-1998&t;RMK&t;0.0.1&t;Updated to 2.1.80&n; *  15-04-1998&t;RMK&t;0.0.1&t;Only do PIO if FAS216 will allow it.&n; *  11-06-1998 &t;&t;0.0.2   Changed to support ARXE 16-bit SCSI card, enabled writing&n; *  &t;&t;&t;&t;by Stefan Hanske&n; *  02-04-2000&t;RMK&t;0.0.3&t;Updated for new error handling code.&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/blk.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -36,7 +36,7 @@ mdefine_line|#define VER_MAJOR&t;0
 DECL|macro|VER_MINOR
 mdefine_line|#define VER_MINOR&t;0
 DECL|macro|VER_PATCH
-mdefine_line|#define VER_PATCH&t;2
+mdefine_line|#define VER_PATCH&t;3
 DECL|variable|ecs
 r_static
 r_struct
@@ -1028,23 +1028,38 @@ op_add_assign
 id|sprintf
 c_func
 (paren
-id|string
+id|p
 comma
-l_string|&quot;%s at port %lX irq %d v%d.%d.%d scsi %s&quot;
+l_string|&quot;%s &quot;
 comma
 id|host-&gt;hostt-&gt;name
+)paren
+suffix:semicolon
+id|p
+op_add_assign
+id|fas216_info
+c_func
+(paren
+op_amp
+id|info-&gt;info
 comma
-id|host-&gt;io_port
+id|p
+)paren
+suffix:semicolon
+id|p
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|p
 comma
-id|host-&gt;irq
+l_string|&quot;v%d.%d.%d&quot;
 comma
 id|VER_MAJOR
 comma
 id|VER_MINOR
 comma
 id|VER_PATCH
-comma
-id|info-&gt;info.scsi.type
 )paren
 suffix:semicolon
 r_return
@@ -1169,22 +1184,15 @@ id|VER_PATCH
 suffix:semicolon
 id|pos
 op_add_assign
-id|sprintf
+id|fas216_print_host
 c_func
 (paren
+op_amp
+id|info-&gt;info
+comma
 id|buffer
 op_plus
 id|pos
-comma
-l_string|&quot;Address: %08lX          IRQ : %d&bslash;n&quot;
-l_string|&quot;FAS    : %s&bslash;n&bslash;n&quot;
-l_string|&quot;Statistics:&bslash;n&quot;
-comma
-id|host-&gt;io_port
-comma
-id|host-&gt;irq
-comma
-id|info-&gt;info.scsi.type
 )paren
 suffix:semicolon
 id|pos

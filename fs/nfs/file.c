@@ -818,7 +818,7 @@ suffix:semicolon
 id|dprintk
 c_func
 (paren
-l_string|&quot;NFS: nfs_lock(f=%4x/%ld, t=%x, fl=%x, r=%ld:%ld)&bslash;n&quot;
+l_string|&quot;NFS: nfs_lock(f=%4x/%ld, t=%x, fl=%x, r=%Ld:%Ld)&bslash;n&quot;
 comma
 id|inode-&gt;i_dev
 comma
@@ -828,8 +828,16 @@ id|fl-&gt;fl_type
 comma
 id|fl-&gt;fl_flags
 comma
+(paren
+r_int
+r_int
+)paren
 id|fl-&gt;fl_start
 comma
+(paren
+r_int
+r_int
+)paren
 id|fl-&gt;fl_end
 )paren
 suffix:semicolon

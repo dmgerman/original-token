@@ -386,6 +386,13 @@ id|svc_proc_read
 suffix:semicolon
 macro_line|#endif
 multiline_comment|/* Generic XDR */
+DECL|variable|xdr_encode_array
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|xdr_encode_array
+)paren
+suffix:semicolon
 DECL|variable|xdr_encode_string
 id|EXPORT_SYMBOL
 c_func
@@ -426,6 +433,20 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|xdr_one
+)paren
+suffix:semicolon
+DECL|variable|xdr_shift_iovec
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|xdr_shift_iovec
+)paren
+suffix:semicolon
+DECL|variable|xdr_zero_iovec
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|xdr_zero_iovec
 )paren
 suffix:semicolon
 multiline_comment|/* RPC errors */

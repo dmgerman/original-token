@@ -3,7 +3,7 @@ macro_line|#ifndef _BTTV_H_
 DECL|macro|_BTTV_H_
 mdefine_line|#define _BTTV_H_
 DECL|macro|BTTV_VERSION_CODE
-mdefine_line|#define BTTV_VERSION_CODE KERNEL_VERSION(0,7,24) 
+mdefine_line|#define BTTV_VERSION_CODE KERNEL_VERSION(0,7,25) 
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/wait.h&gt;
 macro_line|#include &lt;linux/videodev.h&gt;
@@ -307,8 +307,11 @@ id|i2c_client
 id|i2c_client
 suffix:semicolon
 DECL|member|i2c_state
+DECL|member|i2c_ok
 r_int
 id|i2c_state
+comma
+id|i2c_ok
 suffix:semicolon
 DECL|member|i2c_clients
 r_struct
@@ -724,6 +727,8 @@ DECL|macro|BTTV_TYPHOON_TVIEW
 mdefine_line|#define BTTV_TYPHOON_TVIEW 0x24
 DECL|macro|BTTV_PXELVWPLTVPRO
 mdefine_line|#define BTTV_PXELVWPLTVPRO 0x25
+DECL|macro|BTTV_MAGICTVIEW063
+mdefine_line|#define BTTV_MAGICTVIEW063 0x26
 DECL|macro|AUDIO_TUNER
 mdefine_line|#define AUDIO_TUNER        0x00
 DECL|macro|AUDIO_RADIO

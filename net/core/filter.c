@@ -92,7 +92,7 @@ r_return
 l_int|NULL
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Decode and apply filter instructions to the skb-&gt;data.&n; * Return length to keep, 0 for none. skb is the data we are&n; * filtering, filter is the array of filter instructions, and&n; * len is the number of filter blocks in the array.&n; */
+multiline_comment|/**&n; *&t;sk_run_filter&t;- &t;run a filter on a socket&n; *&t;@skb: buffer to run the filter on&n; *&t;@filter: filter to apply&n; *&t;@flen: length of filter&n; *&n; * Decode and apply filter instructions to the skb-&gt;data.&n; * Return length to keep, 0 for none. skb is the data we are&n; * filtering, filter is the array of filter instructions, and&n; * len is the number of filter blocks in the array.&n; */
 DECL|function|sk_run_filter
 r_int
 id|sk_run_filter
@@ -1214,7 +1214,7 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Check the user&squot;s filter code. If we let some ugly&n; * filter code slip through kaboom!&n; */
+multiline_comment|/**&n; *&t;sk_chk_filter - verify socket filter code&n; *&t;@filter: filter to verify&n; *&t;@flen: length of filter&n; *&n; * Check the user&squot;s filter code. If we let some ugly&n; * filter code slip through kaboom! The filter must contain&n; * no references or jumps that are out of range, no illegal instructions&n; * and no backward jumps. It must end with a RET instruction&n; *&n; * Returns 0 if the rule set is legal or a negative errno code if not.&n; */
 DECL|function|sk_chk_filter
 r_int
 id|sk_chk_filter
@@ -1408,7 +1408,7 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Attach the user&squot;s filter code. We first run some sanity checks on&n; * it to make sure it does not explode on us later.&n; */
+multiline_comment|/**&n; *&t;sk_attach_filter - attach a socket filter&n; *&t;@fprog: the filter program&n; *&t;@sk: the socket to use&n; *&n; * Attach the user&squot;s filter code. We first run some sanity checks on&n; * it to make sure it does not explode on us later. If an error&n; * occurs or there is insufficient memory for the filter a negative&n; * errno code is returned. On success the return is zero.&n; */
 DECL|function|sk_attach_filter
 r_int
 id|sk_attach_filter

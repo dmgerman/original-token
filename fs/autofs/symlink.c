@@ -66,6 +66,12 @@ id|dentry
 op_star
 id|base
 comma
+r_struct
+id|vfsmount
+op_star
+op_star
+id|mnt
+comma
 r_int
 id|flags
 )paren
@@ -92,6 +98,8 @@ c_func
 id|dentry
 comma
 id|base
+comma
+id|mnt
 comma
 id|flags
 comma

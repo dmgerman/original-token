@@ -3888,6 +3888,12 @@ op_star
 id|dev
 suffix:semicolon
 multiline_comment|/* pointer to device structure */
+DECL|member|next
+r_struct
+id|net_device
+op_star
+id|next
+suffix:semicolon
 DECL|member|bus_type
 id|u32
 id|bus_type

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * msgqueue.h: message queue handling&n; *&n; * (c) 1997 Russell King&n; */
+multiline_comment|/*&n; * msgqueue.h: message queue handling&n; *&n; * Copyright (C) 1997 Russell King&n; */
 macro_line|#ifndef MSGQUEUE_H
 DECL|macro|MSGQUEUE_H
 mdefine_line|#define MSGQUEUE_H

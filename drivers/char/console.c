@@ -51,24 +51,6 @@ mdefine_line|#define DEFAULT_BELL_PITCH&t;750
 DECL|macro|DEFAULT_BELL_DURATION
 mdefine_line|#define DEFAULT_BELL_DURATION&t;(HZ/8)
 r_extern
-r_int
-id|tty_register_devfs
-(paren
-r_struct
-id|tty_driver
-op_star
-id|driver
-comma
-r_int
-r_int
-id|flags
-comma
-r_int
-r_int
-id|minor
-)paren
-suffix:semicolon
-r_extern
 r_void
 id|vcs_make_devfs
 (paren

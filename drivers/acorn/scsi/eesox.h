@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * EESOX SCSI driver&n; *&n; * Copyright (C) 1997-1998 Russell King&n; */
+multiline_comment|/*&n; * EESOX SCSI driver&n; *&n; * Copyright (C) 1997-2000 Russell King&n; */
 macro_line|#ifndef EESOXSCSI_H
 DECL|macro|EESOXSCSI_H
 mdefine_line|#define EESOXSCSI_H
@@ -77,7 +77,7 @@ macro_line|#endif
 macro_line|#include &lt;scsi/scsicam.h&gt;
 macro_line|#include &quot;fas216.h&quot;
 DECL|macro|EESOXSCSI
-mdefine_line|#define EESOXSCSI {&t;&t;&t;&t;&t;&t;&t;&bslash;&n;proc_info:&t;eesoxscsi_proc_info,&t;&t;&t;&t;&t;&bslash;&n;name:&t;&t;&quot;EESOX SCSI&quot;,&t;&t;&t;&t;&t;&t;&bslash;&n;detect:&t;&t;eesoxscsi_detect,&t;/* detect&t;&t;*/&t;&bslash;&n;release:&t;eesoxscsi_release,&t;/* release&t;&t;*/&t;&bslash;&n;info:&t;&t;eesoxscsi_info,&t;&t;/* info&t;&t;&t;*/&t;&bslash;&n;command:&t;fas216_command,&t;&t;/* command&t;&t;*/&t;&bslash;&n;queuecommand:&t;fas216_queue_command,&t;/* queuecommand&t;&t;*/&t;&bslash;&n;abort:&t;&t;fas216_abort,&t;&t;/* abort&t;&t;*/&t;&bslash;&n;reset:&t;&t;fas216_reset,&t;&t;/* reset&t;&t;*/&t;&bslash;&n;bios_param:&t;scsicam_bios_param,&t;/* biosparam&t;&t;*/&t;&bslash;&n;can_queue:&t;CAN_QUEUE,&t;&t;/* can queue&t;&t;*/&t;&bslash;&n;this_id:&t;SCSI_ID,&t;&t;/* scsi host id&t;&t;*/&t;&bslash;&n;sg_tablesize:&t;SG_ALL,&t;&t;&t;/* sg_tablesize&t;&t;*/&t;&bslash;&n;cmd_per_lun:&t;CAN_QUEUE,&t;&t;/* cmd per lun&t;&t;*/&t;&bslash;&n;use_clustering:&t;DISABLE_CLUSTERING&t;&t;&t;&t;&t;&bslash;&n;&t;}
+mdefine_line|#define EESOXSCSI {&t;&t;&t;&t;&t;&bslash;&n;proc_info:&t;&t;&t;eesoxscsi_proc_info,&t;&bslash;&n;name:&t;&t;&t;&t;&quot;EESOX SCSI&quot;,&t;&t;&bslash;&n;detect:&t;&t;&t;&t;eesoxscsi_detect,&t;&bslash;&n;release:&t;&t;&t;eesoxscsi_release,&t;&bslash;&n;info:&t;&t;&t;&t;eesoxscsi_info,&t;&t;&bslash;&n;bios_param:&t;&t;&t;scsicam_bios_param,&t;&bslash;&n;can_queue:&t;&t;&t;CAN_QUEUE,&t;&t;&bslash;&n;this_id:&t;&t;&t;SCSI_ID,&t;&t;&bslash;&n;sg_tablesize:&t;&t;&t;SG_ALL,&t;&t;&t;&bslash;&n;cmd_per_lun:&t;&t;&t;CAN_QUEUE,&t;&t;&bslash;&n;use_clustering:&t;&t;&t;DISABLE_CLUSTERING,&t;&bslash;&n;command:&t;&t;&t;fas216_command,&t;&t;&bslash;&n;queuecommand:&t;&t;&t;fas216_queue_command,&t;&bslash;&n;eh_host_reset_handler:&t;&t;fas216_eh_host_reset,&t;&bslash;&n;eh_bus_reset_handler:&t;&t;fas216_eh_bus_reset,&t;&bslash;&n;eh_device_reset_handler:&t;fas216_eh_device_reset,&t;&bslash;&n;eh_abort_handler:&t;&t;fas216_eh_abort,&t;&bslash;&n;use_new_eh_code:&t;&t;1&t;&t;&t;&bslash;&n;&t;}
 macro_line|#ifndef HOSTS_C
 macro_line|#include &lt;asm/dma.h&gt;
 DECL|macro|NR_SG

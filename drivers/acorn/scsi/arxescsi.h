@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * ARXE SCSI card driver&n; *&n; * Copyright (C) 1997 Russell King&n; * Changes to support ARXE 16-bit SCSI card by Stefan Hanske&n; */
+multiline_comment|/*&n; * ARXE SCSI card driver&n; *&n; * Copyright (C) 1997-2000 Russell King&n; *&n; * Changes to support ARXE 16-bit SCSI card by Stefan Hanske&n; */
 macro_line|#ifndef ARXE_SCSI_H
 DECL|macro|ARXE_SCSI_H
 mdefine_line|#define ARXE_SCSI_H
@@ -83,7 +83,7 @@ macro_line|#ifndef HOSTS_C
 macro_line|#include &quot;fas216.h&quot;
 macro_line|#endif
 DECL|macro|ARXEScsi
-mdefine_line|#define ARXEScsi {&t;&t;&t;&t;&t;&t;&t;&bslash;&n;proc_info:&t;arxescsi_proc_info,&t;&t;&t;&t;&t;&t;&bslash;&n;name:&t;&t;&quot;ARXE SCSI card&quot;,&t;&t;&t;&t;&t;&t;&bslash;&n;detect:&t;&t;arxescsi_detect,&t;&t;/* detect&t;&t;*/&t;&bslash;&n;release:&t;arxescsi_release,&t;&t;/* release&t;&t;*/&t;&bslash;&n;info:&t;&t;arxescsi_info,&t;&t;&t;/* info&t;&t;&t;*/&t;&bslash;&n;command:&t;fas216_command,&t;&t;&t;/* command&t;&t;*/&t;&bslash;&n;queuecommand:&t;fas216_queue_command,&t;&t;/* queuecommand&t;&t;*/&t;&bslash;&n;abort:&t;&t;fas216_abort,&t;&t;&t;/* abort&t;&t;*/&t;&bslash;&n;reset:&t;&t;fas216_reset,&t;&t;&t;/* reset&t;&t;*/&t;&bslash;&n;bios_param:&t;scsicam_bios_param,&t;&t;/* biosparam&t;&t;*/&t;&bslash;&n;can_queue:&t;CAN_QUEUE,&t;&t;&t;/* can queue&t;&t;*/&t;&bslash;&n;this_id:&t;SCSI_ID,&t;&t;&t;/* scsi host id&t;&t;*/&t;&bslash;&n;sg_tablesize:&t;SG_ALL,&t;&t;&t;&t;/* sg_tablesize&t;&t;*/&t;&bslash;&n;cmd_per_lun:&t;CMD_PER_LUN,&t;&t;&t;/* cmd per lun&t;&t;*/&t;&bslash;&n;use_clustering:&t;DISABLE_CLUSTERING&t;&t;&t;&t;&t;&t;&bslash;&n;&t;}
+mdefine_line|#define ARXEScsi {&t;&t;&t;&t;&t;&bslash;&n;proc_info:&t;&t;&t;arxescsi_proc_info,&t;&bslash;&n;name:&t;&t;&t;&t;&quot;ARXE SCSI card&quot;,&t;&bslash;&n;detect:&t;&t;&t;&t;arxescsi_detect,&t;&bslash;&n;release:&t;&t;&t;arxescsi_release,&t;&bslash;&n;info:&t;&t;&t;&t;arxescsi_info,&t;&t;&bslash;&n;bios_param:&t;&t;&t;scsicam_bios_param,&t;&bslash;&n;can_queue:&t;&t;&t;CAN_QUEUE,&t;&t;&bslash;&n;this_id:&t;&t;&t;SCSI_ID,&t;&t;&bslash;&n;sg_tablesize:&t;&t;&t;SG_ALL,&t;&t;&t;&bslash;&n;cmd_per_lun:&t;&t;&t;CMD_PER_LUN,&t;&t;&bslash;&n;use_clustering:&t;&t;&t;DISABLE_CLUSTERING,&t;&bslash;&n;command:&t;&t;&t;fas216_command,&t;&t;&bslash;&n;queuecommand:&t;&t;&t;fas216_queue_command,&t;&bslash;&n;eh_host_reset_handler:&t;&t;fas216_eh_host_reset,&t;&bslash;&n;eh_bus_reset_handler:&t;&t;fas216_eh_bus_reset,&t;&bslash;&n;eh_device_reset_handler:&t;fas216_eh_device_reset,&t;&bslash;&n;eh_abort_handler:&t;&t;fas216_eh_abort,&t;&bslash;&n;use_new_eh_code:&t;&t;1&t;&t;&t;&bslash;&n;&t;}
 macro_line|#ifndef HOSTS_C
 r_typedef
 r_struct

@@ -59,6 +59,10 @@ DECL|macro|FLAGS_OVERLAY_STATS
 mdefine_line|#define FLAGS_OVERLAY_STATS&t;&t;(1 &lt;&lt; 3)
 DECL|macro|FLAGS_FORCE_TESTPATTERN
 mdefine_line|#define FLAGS_FORCE_TESTPATTERN&t;&t;(1 &lt;&lt; 4)
+DECL|macro|FLAGS_SEPARATE_FRAMES
+mdefine_line|#define FLAGS_SEPARATE_FRAMES&t;&t;(1 &lt;&lt; 5)
+DECL|macro|FLAGS_CLEAN_FRAMES
+mdefine_line|#define FLAGS_CLEAN_FRAMES&t;&t;(1 &lt;&lt; 6)
 DECL|variable|flags
 r_static
 r_int
@@ -10564,6 +10568,7 @@ suffix:semicolon
 )brace
 )brace
 )brace
+multiline_comment|/*&n; * ibmcam_new_frame()&n; *&n; * History:&n; * 29-Mar-00 Added copying of previous frame into the current one.&n; */
 DECL|function|ibmcam_new_frame
 r_static
 r_int
@@ -10657,7 +10662,47 @@ id|ibmcam-&gt;curframe
 op_assign
 id|framenum
 suffix:semicolon
-macro_line|#if 0
+multiline_comment|/*&n;&t; * Normally we would want to copy previous frame into the current one&n;&t; * before we even start filling it with data; this allows us to stop&n;&t; * filling at any moment; top portion of the frame will be new and&n;&t; * bottom portion will stay as it was in previous frame. If we don&squot;t&n;&t; * do that then missing chunks of video stream will result in flickering&n;&t; * portions of old data whatever it was before.&n;&t; *&n;&t; * If we choose not to copy previous frame (to, for example, save few&n;&t; * bus cycles - the frame can be pretty large!) then we have an option&n;&t; * to clear the frame before using. If we experience losses in this&n;&t; * mode then missing picture will be black (no flickering).&n;&t; *&n;&t; * Finally, if user chooses not to clean the current frame before&n;&t; * filling it with data then the old data will be visible if we fail&n;&t; * to refill entire frame with new data.&n;&t; */
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|flags
+op_amp
+id|FLAGS_SEPARATE_FRAMES
+)paren
+)paren
+(brace
+multiline_comment|/* This copies previous frame into this one to mask losses */
+id|memmove
+c_func
+(paren
+id|frame-&gt;data
+comma
+id|ibmcam-&gt;frame
+(braket
+l_int|1
+op_minus
+id|framenum
+)braket
+dot
+id|data
+comma
+id|MAX_FRAME_SIZE
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
+r_if
+c_cond
+(paren
+id|flags
+op_amp
+id|FLAGS_CLEAN_FRAMES
+)paren
+(brace
 multiline_comment|/* This provides a &quot;clean&quot; frame but slows things down */
 id|memset
 c_func
@@ -10669,7 +10714,8 @@ comma
 id|MAX_FRAME_SIZE
 )paren
 suffix:semicolon
-macro_line|#endif
+)brace
+)brace
 r_switch
 c_cond
 (paren

@@ -18,37 +18,6 @@ macro_line|#include &lt;asm/bitops.h&gt;
 DECL|macro|BUILDING_PTY_C
 mdefine_line|#define BUILDING_PTY_C 1
 macro_line|#include &lt;linux/devpts_fs.h&gt;
-r_extern
-r_void
-id|tty_register_devfs
-(paren
-r_struct
-id|tty_driver
-op_star
-id|driver
-comma
-r_int
-r_int
-id|flags
-comma
-r_int
-r_int
-id|minor
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|tty_unregister_devfs
-(paren
-r_struct
-id|tty_driver
-op_star
-id|driver
-comma
-r_int
-id|minor
-)paren
-suffix:semicolon
 DECL|struct|pty_struct
 r_struct
 id|pty_struct

@@ -83,7 +83,7 @@ id|super_block
 op_star
 id|s
 op_assign
-id|filp-&gt;f_dentry-&gt;d_sb
+id|i-&gt;i_sb
 suffix:semicolon
 multiline_comment|/*printk(&quot;dir lseek&bslash;n&quot;);*/
 r_if

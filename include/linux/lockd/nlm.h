@@ -4,13 +4,10 @@ DECL|macro|LINUX_LOCKD_NLM_H
 mdefine_line|#define LINUX_LOCKD_NLM_H
 macro_line|#include &lt;linux/config.h&gt;
 multiline_comment|/* Maximum file offset in file_lock.fl_end */
-macro_line|#ifdef OFFSET_MAX
 DECL|macro|NLM_OFFSET_MAX
-macro_line|# define NLM_OFFSET_MAX&t;&t;OFFSET_MAX
-macro_line|#else
-DECL|macro|NLM_OFFSET_MAX
-macro_line|# define NLM_OFFSET_MAX&t;&t;((off_t) 0x7fffffff)
-macro_line|#endif
+macro_line|# define NLM_OFFSET_MAX&t;&t;((s32) 0x7fffffff)
+DECL|macro|NLM4_OFFSET_MAX
+macro_line|# define NLM4_OFFSET_MAX&t;((s64) ((~(u64)0) &gt;&gt; 1))
 multiline_comment|/* Return states for NLM */
 r_enum
 (brace

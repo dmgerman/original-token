@@ -650,6 +650,10 @@ id|page
 )paren
 op_minus
 l_int|2
+op_minus
+op_logical_neg
+op_logical_neg
+id|page-&gt;buffers
 suffix:semicolon
 r_return
 id|count

@@ -49,7 +49,7 @@ id|super_block
 op_star
 id|sb
 op_assign
-id|filp-&gt;f_dentry-&gt;d_sb
+id|inode-&gt;i_sb
 suffix:semicolon
 r_struct
 id|adfs_dir_ops

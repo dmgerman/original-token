@@ -1,6 +1,4 @@
-multiline_comment|/* r3964 linediscipline for linux&n; *&n; * -----------------------------------------------------------&n; * Copyright by &n; * Philips Automation Projects&n; * Kassel (Germany)&n; * http://www.pap-philips.de&n; * -----------------------------------------------------------&n; * This software may be used and distributed according to the terms of&n; * the GNU Public License, incorporated herein by reference.&n; *&n; * Author:&n; * L. Haag&n; *&n; * $Log: r3964.c,v $&n; * Revision 1.7  1999/28/08 11:41:50  dwmw2&n; * Port to 2.3 kernel&n; *&n; * Revision 1.6  1998/09/30 00:40:40  dwmw2&n; * Fixed compilation on 2.0.x kernels&n; * Updated to newly registered tty-ldisc number 9&n; *&n; * Revision 1.5  1998/09/04 21:57:36  dwmw2&n; * Signal handling bug fixes, port to 2.1.x.&n; *&n; * Revision 1.4  1998/04/02 20:26:59  lhaag&n; * select, blocking, ...&n; *&n; * Revision 1.3  1998/02/12 18:58:43  root&n; * fixed some memory leaks&n; * calculation of checksum characters&n; *&n; * Revision 1.2  1998/02/07 13:03:34  root&n; * ioctl read_telegram&n; *&n; * Revision 1.1  1998/02/06 19:21:03  root&n; * Initial revision&n; *&n; *&n; */
-DECL|macro|R3964_VERSION
-mdefine_line|#define R3964_VERSION &quot;1.7&quot;
+multiline_comment|/* r3964 linediscipline for linux&n; *&n; * -----------------------------------------------------------&n; * Copyright by &n; * Philips Automation Projects&n; * Kassel (Germany)&n; * http://www.pap-philips.de&n; * -----------------------------------------------------------&n; * This software may be used and distributed according to the terms of&n; * the GNU Public License, incorporated herein by reference.&n; *&n; * Author:&n; * L. Haag&n; *&n; * $Log: n_r3964.c,v $&n; * Revision 1.8  2000/03/23 14:14:54  dwmw2&n; * Fix race in sleeping in r3964_read()&n; *&n; * Revision 1.7  1999/28/08 11:41:50  dwmw2&n; * Port to 2.3 kernel&n; *&n; * Revision 1.6  1998/09/30 00:40:40  dwmw2&n; * Fixed compilation on 2.0.x kernels&n; * Updated to newly registered tty-ldisc number 9&n; *&n; * Revision 1.5  1998/09/04 21:57:36  dwmw2&n; * Signal handling bug fixes, port to 2.1.x.&n; *&n; * Revision 1.4  1998/04/02 20:26:59  lhaag&n; * select, blocking, ...&n; *&n; * Revision 1.3  1998/02/12 18:58:43  root&n; * fixed some memory leaks&n; * calculation of checksum characters&n; *&n; * Revision 1.2  1998/02/07 13:03:34  root&n; * ioctl read_telegram&n; *&n; * Revision 1.1  1998/02/06 19:21:03  root&n; * Initial revision&n; *&n; *&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -719,9 +717,7 @@ id|status
 suffix:semicolon
 id|printk
 (paren
-l_string|&quot;r3964: Philips r3964 Driver V%s&bslash;n&quot;
-comma
-id|R3964_VERSION
+l_string|&quot;r3964: Philips r3964 Driver $Revision: 1.8 $&bslash;n&quot;
 )paren
 suffix:semicolon
 multiline_comment|/*&n;    * Register the tty line discipline&n;    */
@@ -4706,6 +4702,10 @@ id|wait
 suffix:semicolon
 id|repeat
 suffix:colon
+id|current-&gt;state
+op_assign
+id|TASK_INTERRUPTIBLE
+suffix:semicolon
 id|pMsg
 op_assign
 id|remove_msg
@@ -4715,10 +4715,6 @@ id|pInfo
 comma
 id|pClient
 )paren
-suffix:semicolon
-id|current-&gt;state
-op_assign
-id|TASK_INTERRUPTIBLE
 suffix:semicolon
 r_if
 c_cond

@@ -6,6 +6,7 @@ macro_line|#include &lt;linux/in.h&gt;
 macro_line|#include &lt;linux/sunrpc/clnt.h&gt;
 macro_line|#include &lt;linux/sunrpc/svc.h&gt;
 macro_line|#include &lt;linux/lockd/lockd.h&gt;
+macro_line|#include &lt;linux/lockd/sm_inter.h&gt;
 DECL|macro|NLMDBG_FACILITY
 mdefine_line|#define NLMDBG_FACILITY&t;&t;NLMDBG_HOSTCACHE
 DECL|macro|NLM_HOST_MAX
@@ -386,14 +387,11 @@ op_assign
 id|host
 suffix:semicolon
 )brace
-id|host-&gt;h_expires
-op_assign
-id|jiffies
-op_plus
-id|NLM_HOST_EXPIRE
-suffix:semicolon
-id|host-&gt;h_count
-op_increment
+id|nlm_get_host
+c_func
+(paren
+id|host
+)paren
 suffix:semicolon
 id|up
 c_func
@@ -691,7 +689,7 @@ op_amp
 id|host-&gt;h_sema
 )paren
 suffix:semicolon
-multiline_comment|/* If we&squot;ve already created an RPC client, check whether&n;&t; * RPC rebind is required */
+multiline_comment|/* If we&squot;ve already created an RPC client, check whether&n;&t; * RPC rebind is required&n;&t; * Note: why keep rebinding if we&squot;re on a tcp connection?&n;&t; */
 r_if
 c_cond
 (paren
@@ -704,9 +702,16 @@ op_ne
 l_int|NULL
 )paren
 (brace
+id|xprt
+op_assign
+id|clnt-&gt;cl_xprt
+suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
+id|xprt-&gt;stream
+op_logical_and
 id|time_after_eq
 c_func
 (paren
@@ -931,9 +936,51 @@ id|NLM_HOST_REBIND
 suffix:semicolon
 )brace
 )brace
+multiline_comment|/*&n; * Increment NLM host count&n; */
+DECL|function|nlm_get_host
+r_struct
+id|nlm_host
+op_star
+id|nlm_get_host
+c_func
+(paren
+r_struct
+id|nlm_host
+op_star
+id|host
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|host
+)paren
+(brace
+id|dprintk
+c_func
+(paren
+l_string|&quot;lockd: get host %s&bslash;n&quot;
+comma
+id|host-&gt;h_name
+)paren
+suffix:semicolon
+id|host-&gt;h_count
+op_increment
+suffix:semicolon
+id|host-&gt;h_expires
+op_assign
+id|jiffies
+op_plus
+id|NLM_HOST_EXPIRE
+suffix:semicolon
+)brace
+r_return
+id|host
+suffix:semicolon
+)brace
 multiline_comment|/*&n; * Release NLM host after use&n; */
-r_void
 DECL|function|nlm_release_host
+r_void
 id|nlm_release_host
 c_func
 (paren
@@ -941,6 +988,14 @@ r_struct
 id|nlm_host
 op_star
 id|host
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|host
+op_logical_and
+id|host-&gt;h_count
 )paren
 (brace
 id|dprintk
@@ -952,9 +1007,9 @@ id|host-&gt;h_name
 )paren
 suffix:semicolon
 id|host-&gt;h_count
-op_sub_assign
-l_int|1
+op_decrement
 suffix:semicolon
+)brace
 )brace
 multiline_comment|/*&n; * Shut down the hosts module.&n; * Note that this routine is called only at server shutdown time.&n; */
 r_void
@@ -1261,6 +1316,17 @@ op_star
 id|q
 op_assign
 id|host-&gt;h_next
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|host-&gt;h_monitored
+)paren
+id|nsm_unmonitor
+c_func
+(paren
+id|host
+)paren
 suffix:semicolon
 r_if
 c_cond

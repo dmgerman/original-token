@@ -130,6 +130,12 @@ DECL|member|flags
 id|u32
 id|flags
 suffix:semicolon
+DECL|member|host
+r_struct
+id|nlm_host
+op_star
+id|host
+suffix:semicolon
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * Lock flag values&n; */

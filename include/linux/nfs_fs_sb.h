@@ -13,6 +13,13 @@ op_star
 id|client
 suffix:semicolon
 multiline_comment|/* RPC client handle */
+DECL|member|rpc_ops
+r_struct
+id|nfs_rpc_ops
+op_star
+id|rpc_ops
+suffix:semicolon
+multiline_comment|/* NFS protocol vector */
 DECL|member|flags
 r_int
 id|flags
@@ -62,6 +69,11 @@ DECL|member|acdirmax
 r_int
 r_int
 id|acdirmax
+suffix:semicolon
+DECL|member|namelen
+r_int
+r_int
+id|namelen
 suffix:semicolon
 DECL|member|hostname
 r_char

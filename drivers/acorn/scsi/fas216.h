@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * FAS216 generic driver&n; *&n; * Copyright (C) 1997-1998 Russell King&n; *&n; * NOTE! This file should be viewed using a console with&n; * &gt;100 character width (since it uses 8-space tabs)&n; * (it used to fit in 80-columns with 4 space)&n; */
+multiline_comment|/*&n; * FAS216 generic driver&n; *&n; * Copyright (C) 1997-2000 Russell King&n; */
 macro_line|#ifndef FAS216_H
 DECL|macro|FAS216_H
 mdefine_line|#define FAS216_H
@@ -400,6 +400,12 @@ op_star
 id|origSCpnt
 suffix:semicolon
 multiline_comment|/* original connecting command&t;&t;*/
+DECL|member|reqSCpnt
+id|Scsi_Cmnd
+op_star
+id|reqSCpnt
+suffix:semicolon
+multiline_comment|/* request sense command&t;&t;*/
 multiline_comment|/* driver information */
 r_struct
 (brace
@@ -566,10 +572,15 @@ r_int
 r_int
 id|aborts
 suffix:semicolon
-DECL|member|resets
+DECL|member|bus_resets
 r_int
 r_int
-id|resets
+id|bus_resets
+suffix:semicolon
+DECL|member|host_resets
+r_int
+r_int
+id|host_resets
 suffix:semicolon
 DECL|member|stats
 )brace
@@ -876,6 +887,34 @@ r_struct
 id|Scsi_Host
 op_star
 id|instance
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|fas216_info
+c_func
+(paren
+id|FAS216_Info
+op_star
+id|info
+comma
+r_char
+op_star
+id|buffer
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|fas216_print_host
+c_func
+(paren
+id|FAS216_Info
+op_star
+id|info
+comma
+r_char
+op_star
+id|buffer
 )paren
 suffix:semicolon
 r_extern

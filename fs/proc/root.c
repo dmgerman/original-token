@@ -101,6 +101,12 @@ id|dentry
 op_star
 id|base
 comma
+r_struct
+id|vfsmount
+op_star
+op_star
+id|mnt
+comma
 r_int
 r_int
 id|follow
@@ -129,6 +135,8 @@ c_func
 id|dentry
 comma
 id|base
+comma
+id|mnt
 comma
 id|follow
 comma

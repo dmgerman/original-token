@@ -3936,7 +3936,7 @@ c_func
 id|z8530_shutdown
 )paren
 suffix:semicolon
-multiline_comment|/**&n; *&t;z8530_channel_load - Load channel data&n; *&t;@c: Z8530 channel to configure&n; *&t;@rtable: Table of register, value pairs&n; *&t;FIXME: ioctl to allow user uploaded tables&n; *&n; *&t;Load a Z8530 channel up from the system data&gt; We use +16 to &n; *&t;indicate the &squot;prime&squot; registers. The value 255 terminates the&n; *&t;table&n; */
+multiline_comment|/**&n; *&t;z8530_channel_load - Load channel data&n; *&t;@c: Z8530 channel to configure&n; *&t;@rtable: Table of register, value pairs&n; *&t;FIXME: ioctl to allow user uploaded tables&n; *&n; *&t;Load a Z8530 channel up from the system data. We use +16 to &n; *&t;indicate the &squot;prime&squot; registers. The value 255 terminates the&n; *&t;table&n; */
 DECL|function|z8530_channel_load
 r_int
 id|z8530_channel_load

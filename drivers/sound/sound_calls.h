@@ -771,37 +771,4 @@ r_int
 id|mlen
 )paren
 suffix:semicolon
-macro_line|#ifdef FIXED_LOWLEVEL_SOUND
-multiline_comment|/*&t;From aedsp16.c */
-r_int
-id|InitAEDSP16_SBPRO
-c_func
-(paren
-r_struct
-id|address_info
-op_star
-id|hw_config
-)paren
-suffix:semicolon
-r_int
-id|InitAEDSP16_MSS
-c_func
-(paren
-r_struct
-id|address_info
-op_star
-id|hw_config
-)paren
-suffix:semicolon
-r_int
-id|InitAEDSP16_MPU401
-c_func
-(paren
-r_struct
-id|address_info
-op_star
-id|hw_config
-)paren
-suffix:semicolon
-macro_line|#endif
 eof

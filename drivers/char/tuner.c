@@ -504,7 +504,6 @@ id|TEMIC
 comma
 id|PAL_I
 comma
-singleline_comment|// 16*170.00,16*450.00,0xa0,0x90,0x30,0x8e,623}, 
 l_int|16
 op_star
 l_float|170.00
@@ -681,6 +680,32 @@ comma
 l_int|0x8e
 comma
 l_int|608
+)brace
+comma
+(brace
+l_string|&quot;Temic 4006FH5&quot;
+comma
+id|TEMIC
+comma
+id|PAL_I
+comma
+l_int|16
+op_star
+l_float|170.00
+comma
+l_int|16
+op_star
+l_float|450.00
+comma
+l_int|0xa0
+comma
+l_int|0x90
+comma
+l_int|0x30
+comma
+l_int|0x8e
+comma
+l_int|623
 )brace
 comma
 )brace

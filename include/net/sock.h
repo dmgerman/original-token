@@ -2684,7 +2684,7 @@ id|sk
 )paren
 suffix:semicolon
 macro_line|#ifdef CONFIG_FILTER
-multiline_comment|/*&n; * Run the filter code and then cut skb-&gt;data to correct size returned by&n; * sk_run_filter. If pkt_len is 0 we toss packet. If skb-&gt;len is smaller&n; * than pkt_len we keep whole skb-&gt;data.&n; */
+multiline_comment|/**&n; *&t;sk_filter - run a packet through a socket filter&n; *&t;@skb: buffer to filter&n; *&t;@filter: filter to apply&n; *&n; * Run the filter code and then cut skb-&gt;data to correct size returned by&n; * sk_run_filter. If pkt_len is 0 we toss packet. If skb-&gt;len is smaller&n; * than pkt_len we keep whole skb-&gt;data. This is the socket level&n; * wrapper to sk_run_filter. It returns 0 if the packet should&n; * be accepted or 1 if the packet should be tossed.&n; */
 DECL|function|sk_filter
 r_extern
 id|__inline__
@@ -2743,6 +2743,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+multiline_comment|/**&n; *&t;sk_filter_release: Release a socket filter&n; *&t;@sk: socket&n; *&t;@fp: filter to remove&n; *&n; *&t;Remove a filter from a socket and release its resources.&n; */
 DECL|function|sk_filter_release
 r_extern
 id|__inline__

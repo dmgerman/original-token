@@ -279,9 +279,6 @@ r_int
 id|dma
 suffix:semicolon
 multiline_comment|/* DMA channel */
-macro_line|#ifdef OS_DMA_PARMS
-id|OS_DMA_PARMS
-macro_line|#endif
 DECL|member|applic_profile
 r_int
 id|applic_profile
@@ -1758,7 +1755,6 @@ id|num_midis
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#ifndef EXCLUDE_TIMERS
 r_extern
 r_struct
 id|sound_timer_operations
@@ -1786,27 +1782,6 @@ id|num_sound_timers
 op_assign
 l_int|1
 suffix:semicolon
-macro_line|#else
-DECL|variable|sound_timer_devs
-r_struct
-id|sound_timer_operations
-op_star
-id|sound_timer_devs
-(braket
-id|MAX_TIMER_DEV
-)braket
-op_assign
-(brace
-l_int|NULL
-)brace
-suffix:semicolon
-DECL|variable|num_sound_timers
-r_int
-id|num_sound_timers
-op_assign
-l_int|0
-suffix:semicolon
-macro_line|#endif
 macro_line|#else
 r_extern
 r_struct
@@ -1891,30 +1866,6 @@ comma
 id|buffmem_desc
 op_star
 id|info
-)paren
-suffix:semicolon
-r_int
-id|sndtable_probe
-(paren
-r_int
-id|unit
-comma
-r_struct
-id|address_info
-op_star
-id|hw_config
-)paren
-suffix:semicolon
-r_int
-id|sndtable_start_card
-(paren
-r_int
-id|unit
-comma
-r_struct
-id|address_info
-op_star
-id|hw_config
 )paren
 suffix:semicolon
 r_void

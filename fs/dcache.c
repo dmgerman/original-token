@@ -207,7 +207,8 @@ id|inode
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n; * dput()&n; *&n; * This is complicated by the fact that we do not want to put&n; * dentries that are no longer on any hash chain on the unused&n; * list: we&squot;d much rather just get rid of them immediately.&n; *&n; * However, that implies that we have to traverse the dentry&n; * tree upwards to the parents which might _also_ now be&n; * scheduled for deletion (it may have been only waiting for&n; * its last child to go away).&n; *&n; * This tail recursion is done by hand as we don&squot;t want to depend&n; * on the compiler to always get this right (gcc generally doesn&squot;t).&n; * Real recursion would eat up our stack space.&n; */
+multiline_comment|/* &n; * dput&n; *&n; * This is complicated by the fact that we do not want to put&n; * dentries that are no longer on any hash chain on the unused&n; * list: we&squot;d much rather just get rid of them immediately.&n; *&n; * However, that implies that we have to traverse the dentry&n; * tree upwards to the parents which might _also_ now be&n; * scheduled for deletion (it may have been only waiting for&n; * its last child to go away).&n; *&n; * This tail recursion is done by hand as we don&squot;t want to depend&n; * on the compiler to always get this right (gcc generally doesn&squot;t).&n; * Real recursion would eat up our stack space.&n; */
+multiline_comment|/*&n; * dput - release a dentry&n; * @dentry: dentry to release &n; *&n; * Release a dentry. This will drop the usage count and if appropriate&n; * call the dentry unlink method as well as removing it from the queues and&n; * releasing its resources. If the parent dentries were scheduled for release&n; * they too may now get deleted.&n; */
 DECL|function|dput
 r_void
 id|dput
@@ -420,7 +421,7 @@ c_func
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Try to invalidate the dentry if it turns out to be&n; * possible. If there are other dentries that can be&n; * reached through this one we can&squot;t delete it.&n; */
+multiline_comment|/**&n; * d_invalidate - invalidate a dentry&n; * @dentry: dentry to invalidate&n; *&n; * Try to invalidate the dentry if it turns out to be&n; * possible. If there are other dentries that can be&n; * reached through this one we can&squot;t delete it and we&n; * return -EBUSY. On success we return 0.&n; */
 DECL|function|d_invalidate
 r_int
 id|d_invalidate
@@ -569,7 +570,7 @@ id|parent
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Shrink the dcache. This is done when we need&n; * more memory, or simply when we need to unmount&n; * something (at which point we need to unuse&n; * all dentries).&n; */
+multiline_comment|/**&n; * prune_dcache - shrink the dcache&n; * @count: number of entries to try and free&n; *&n; * Shrink the dcache. This is done when we need&n; * more memory, or simply when we need to unmount&n; * something (at which point we need to unuse&n; * all dentries).&n; *&n; * This function may fail to free any resources if&n; * all the dentries are in use.&n; */
 DECL|function|prune_dcache
 r_void
 id|prune_dcache
@@ -667,6 +668,7 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/*&n; * Shrink the dcache for the specified super block.&n; * This allows us to unmount a device without disturbing&n; * the dcache for the other devices.&n; *&n; * This implementation makes just two traversals of the&n; * unused list.  On the first pass we move the selected&n; * dentries to the most recent end, and on the second&n; * pass we free them.  The second pass must restart after&n; * each dput(), but since the target dentries are all at&n; * the end, it&squot;s really just a single traversal.&n; */
+multiline_comment|/**&n; * shrink_dcache_sb - shrink dcache for a superblock&n; * @sb: superblock&n; *&n; * Shrink the dcache for the specified super block. This&n; * is used to free the dcache before unmounting a file&n; * system&n; */
 DECL|function|shrink_dcache_sb
 r_void
 id|shrink_dcache_sb
@@ -835,7 +837,7 @@ id|repeat
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n; * Check whether a root dentry would be in use if all of its&n; * child dentries were freed. This allows a non-destructive&n; * test for unmounting a device.&n; */
+multiline_comment|/**&n; * is_root_busy - check if a root dentry could be freed&n; * @root: Dentry to work down from&n; *&n; * Check whether a root dentry would be in use if all of its&n; * child dentries were freed. This allows a non-destructive&n; * test for unmounting a device.&n; *&n; * Return non zero if the root is still busy.&n; */
 DECL|function|is_root_busy
 r_int
 id|is_root_busy
@@ -983,6 +985,7 @@ suffix:semicolon
 multiline_comment|/* remaining users? */
 )brace
 multiline_comment|/*&n; * Search for at least 1 mount point in the dentry&squot;s subdirs.&n; * We descend to the next level whenever the d_subdirs&n; * list is non-empty and continue searching.&n; */
+multiline_comment|/**&n; * have_submounts - check for mounts over a dentry&n; * @parent: dentry to check.&n; *&n; * Return true if the parent or its subdirectories contain&n; * a mount point&n; */
 DECL|function|have_submounts
 r_int
 id|have_submounts
@@ -1009,9 +1012,11 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|parent-&gt;d_mounts
-op_ne
+id|d_mountpoint
+c_func
+(paren
 id|parent
+)paren
 )paren
 r_return
 l_int|1
@@ -1064,9 +1069,11 @@ multiline_comment|/* Have we found a mount point ? */
 r_if
 c_cond
 (paren
-id|dentry-&gt;d_mounts
-op_ne
+id|d_mountpoint
+c_func
+(paren
 id|dentry
+)paren
 )paren
 r_return
 l_int|1
@@ -1301,7 +1308,7 @@ r_return
 id|found
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Prune the dcache to remove unused children of the parent dentry.&n; */
+multiline_comment|/**&n; * shrink_dcache_parent - prune dcache&n; * @parent: parent of entries to prune&n; *&n; * Prune the dcache to remove unused children of the parent dentry.&n; */
 DECL|function|shrink_dcache_parent
 r_void
 id|shrink_dcache_parent
@@ -1401,6 +1408,7 @@ suffix:semicolon
 )brace
 DECL|macro|NAME_ALLOC_LEN
 mdefine_line|#define NAME_ALLOC_LEN(len)&t;((len+16) &amp; ~15)
+multiline_comment|/**&n; * d_alloc&t;-&t;allocate a dcache entry&n; * @parent: parent of entry to allocate&n; * @name: qstr of the name&n; *&n; * Allocates a dentry. It returns NULL if there is insufficient memory&n; * available. On a success the dentry is returned. The name passed in is&n; * copied and the copy passed in may be reused after this call.&n; */
 DECL|function|d_alloc
 r_struct
 id|dentry
@@ -1631,7 +1639,7 @@ r_return
 id|dentry
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Fill in inode information in the entry.&n; *&n; * This turns negative dentries into productive full members&n; * of society.&n; *&n; * NOTE! This assumes that the inode count has been incremented&n; * (or otherwise set) by the caller to indicate that it is now&n; * in use by the dcache..&n; */
+multiline_comment|/**&n; * d_instantiate - fill in inode information for a dentry&n; * @entry: dentry to complete&n; * @inode: inode to attacheto this dentry&n; *&n; * Fill in inode information in the entry.&n; *&n; * This turns negative dentries into productive full members&n; * of society.&n; *&n; * NOTE! This assumes that the inode count has been incremented&n; * (or otherwise set) by the caller to indicate that it is now&n; * in use by the dcache..&n; */
 DECL|function|d_instantiate
 r_void
 id|d_instantiate
@@ -1668,6 +1676,7 @@ op_assign
 id|inode
 suffix:semicolon
 )brace
+multiline_comment|/**&n; * d_alloc_root - allocate root dentry&n; * @root_inode: inode to allocate the root for&n; *&n; * Allocate a root (&squot;/&squot;) dentry for the inode given. The inode is&n; * instantiated and returned. NULL is returned if there is insufficient&n; * memory or the inode passed is NULL.&n; */
 DECL|function|d_alloc_root
 r_struct
 id|dentry
@@ -1799,6 +1808,7 @@ id|D_HASHMASK
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/**&n; * d_lookup - search for a dentry&n; * @parent: parent dentry&n; * @name: qstr of name we wish to find&n; *&n; * Searches the children of the parent dentry for the name in question. If&n; * the dentry is found its reference count is incremented and the dentry&n; * is returned. The caller must use d_put to free the entry when it has&n; * finished using it. NULL is returned on failure.&n; */
 DECL|function|d_lookup
 r_struct
 id|dentry
@@ -1982,7 +1992,7 @@ r_return
 l_int|NULL
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * An insecure source has sent us a dentry, here we verify it.&n; *&n; * This is used by ncpfs in its readdir implementation.&n; *&n; * NOTE! Do _not_ dereference the pointers before we have&n; * validated them. We can test the pointer values, but we&n; * must not actually use them until we have found a valid&n; * copy of the pointer in kernel space..&n; */
+multiline_comment|/**&n; * d_validate - verify dentry provided from insecure source&n; * @dentry: The dentry alleged to be valid&n; * @dparent: The parent dentry&n; * @hash: Hash of the dentry&n; * @len: Length of the name&n; *&n; * An insecure source has sent us a dentry, here we verify it.&n; * This is used by ncpfs in its readdir implementation.&n; * Zero is returned in the dentry is invalid.&n; *&n; * NOTE: This function does _not_ dereference the pointers before we have&n; * validated them. We can test the pointer values, but we&n; * must not actually use them until we have found a valid&n; * copy of the pointer in kernel space..&n; */
 DECL|function|d_validate
 r_int
 id|d_validate
@@ -2147,6 +2157,7 @@ id|valid
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * When a file is deleted, we have two options:&n; * - turn this dentry into a negative dentry&n; * - unhash this dentry and free it.&n; *&n; * Usually, we want to just turn this into&n; * a negative dentry, but if anybody else is&n; * currently using the dentry or the inode&n; * we can&squot;t do that and we fall back on removing&n; * it from the hash queues and waiting for&n; * it to be deleted later when it has no users&n; */
+multiline_comment|/**&n; * d_delete - delete a dentry&n; * @dentry: The dentry to delete&n; *&n; * Turn the dentry into a negative dentry if possible, otherwise&n; * remove it from the hash queues so it can be deleted later&n; */
 DECL|function|d_delete
 r_void
 id|d_delete
@@ -2189,6 +2200,7 @@ id|dentry
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/**&n; * d_rehash&t;- add an entry back to the hash&n; * @entry: dentry to add to the hash&n; *&n; * Adds a dentry to the hash according to its name&n; */
 DECL|function|d_rehash
 r_void
 id|d_rehash
@@ -2308,6 +2320,7 @@ id|old_name
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * We cannibalize &quot;target&quot; when moving dentry on top of it,&n; * because it&squot;s going to be thrown away anyway. We could be more&n; * polite about it, though.&n; *&n; * This forceful removal will result in ugly /proc output if&n; * somebody holds a file open that got deleted due to a rename.&n; * We could be nicer about the deleted file, and let it show&n; * up under the name it got deleted rather than the name that&n; * deleted it.&n; *&n; * Careful with the hash switch. The hash switch depends on&n; * the fact that any list-entry can be a head of the list.&n; * Think about it.&n; */
+multiline_comment|/**&n; * d_move - move a dentry&n; * @dentry: entry to move&n; * @target: new dentry&n; *&n; * Update the dcache to reflect the move of a file name. Negative&n; * dcache entries should not be moved in this way.&n; */
 DECL|function|d_move
 r_void
 id|d_move
@@ -2444,17 +2457,32 @@ id|dentry-&gt;d_parent-&gt;d_subdirs
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * &quot;buflen&quot; should be PAGE_SIZE or more.&n; */
-DECL|function|d_path
+multiline_comment|/**&n; * d_path - return the path of a dentry&n; * @dentry: dentry to report&n; * @buffer: buffer to return value in&n; * @buflen: buffer length&n; *&n; * Convert a dentry into an ascii path name. If the entry has been deleted&n; * the string &squot; (deleted)&squot; is appended. Note that this is ambiguous. Returns&n; * the buffer.&n; *&n; * &quot;buflen&quot; should be PAGE_SIZE or more.&n; */
+DECL|function|__d_path
 r_char
 op_star
-id|d_path
+id|__d_path
 c_func
 (paren
 r_struct
 id|dentry
 op_star
 id|dentry
+comma
+r_struct
+id|vfsmount
+op_star
+id|vfsmnt
+comma
+r_struct
+id|dentry
+op_star
+id|root
+comma
+r_struct
+id|vfsmount
+op_star
+id|rootmnt
 comma
 r_char
 op_star
@@ -2475,13 +2503,6 @@ suffix:semicolon
 r_char
 op_star
 id|retval
-suffix:semicolon
-r_struct
-id|dentry
-op_star
-id|root
-op_assign
-id|current-&gt;fs-&gt;root
 suffix:semicolon
 op_star
 op_decrement
@@ -2727,6 +2748,8 @@ c_func
 (paren
 id|pwd
 comma
+id|current-&gt;fs-&gt;pwdmnt
+comma
 id|page
 comma
 id|PAGE_SIZE
@@ -2798,6 +2821,7 @@ id|error
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Test whether new_dentry is a subdirectory of old_dentry.&n; *&n; * Trivially implemented using the dcache structure&n; */
+multiline_comment|/**&n; * is_subdir - is new dentry a subdirectory of old_dentry&n; * @new_dentry: new dentry&n; * @old_dentry: old dentry&n; *&n; * Returns 1 if new_dentry is a subdirectory of the parent (at any depth).&n; * Returns 0 otherwise.&n; */
 DECL|function|is_subdir
 r_int
 id|is_subdir
@@ -2870,7 +2894,7 @@ r_return
 id|result
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Check whether a dentry already exists for the given name,&n; * and return the inode number if it has an inode.&n; *&n; * This routine is used to post-process directory listings for&n; * filesystems using synthetic inode numbers, and is necessary&n; * to keep getcwd() working.&n; */
+multiline_comment|/**&n; * find_inode_number - check for dentry with name&n; * @dir: directory to check&n; * @name: Name to find.&n; *&n; * Check whether a dentry already exists for the given name,&n; * and return the inode number if it has an inode. Otherwise&n; * 0 is returned.&n; *&n; * This routine is used to post-process directory listings for&n; * filesystems using synthetic inode numbers, and is necessary&n; * to keep getcwd() working.&n; */
 DECL|function|find_inode_number
 id|ino_t
 id|find_inode_number

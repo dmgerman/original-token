@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * Cumana SCSI II driver&n; *&n; * Copyright (C) 1997-1998 Russell King&n; */
+multiline_comment|/*&n; * Cumana SCSI II driver&n; *&n; * Copyright (C) 1997-2000 Russell King&n; */
 macro_line|#ifndef CUMANA_2_H
 DECL|macro|CUMANA_2_H
 mdefine_line|#define CUMANA_2_H
@@ -65,6 +65,11 @@ multiline_comment|/*&n; * Default queue size&n; */
 DECL|macro|CAN_QUEUE
 mdefine_line|#define CAN_QUEUE&t;1
 macro_line|#endif
+macro_line|#ifndef CMD_PER_LUN
+multiline_comment|/*&n; * Default queue size&n; */
+DECL|macro|CMD_PER_LUN
+mdefine_line|#define CMD_PER_LUN&t;1
+macro_line|#endif
 macro_line|#ifndef SCSI_ID
 multiline_comment|/*&n; * Default SCSI host ID&n; */
 DECL|macro|SCSI_ID
@@ -75,7 +80,7 @@ macro_line|#ifndef HOSTS_C
 macro_line|#include &quot;fas216.h&quot;
 macro_line|#endif
 DECL|macro|CUMANASCSI_2
-mdefine_line|#define CUMANASCSI_2 {&t;&t;&t;&t;&t;&t;&t;&bslash;&n;proc_info:&t;&t;cumanascsi_2_proc_info,&t;&t;&t;&t;&bslash;&n;name:&t;&t;&t;&quot;Cumana SCSI II&quot;,&t;&t;&t;&t;&bslash;&n;detect:&t;&t;&t;cumanascsi_2_detect,&t;/* detect&t;&t;*/&t;&bslash;&n;release:&t;&t;cumanascsi_2_release,&t;/* release&t;&t;*/&t;&bslash;&n;info:&t;&t;&t;cumanascsi_2_info,&t;/* info&t;&t;&t;*/&t;&bslash;&n;command:&t;&t;fas216_command,&t;&t;/* command&t;&t;*/&t;&bslash;&n;queuecommand:&t;&t;fas216_queue_command,&t;/* queuecommand&t;&t;*/&t;&bslash;&n;abort:&t;&t;&t;fas216_abort,&t;&t;/* abort&t;&t;*/&t;&bslash;&n;reset:&t;&t;&t;fas216_reset,&t;&t;/* reset&t;&t;*/&t;&bslash;&n;bios_param:&t;&t;scsicam_bios_param,&t;/* biosparam&t;&t;*/&t;&bslash;&n;can_queue:&t;&t;CAN_QUEUE,&t;&t;/* can queue&t;&t;*/&t;&bslash;&n;this_id:&t;&t;SCSI_ID,&t;&t;/* scsi host id&t;&t;*/&t;&bslash;&n;sg_tablesize:&t;&t;SG_ALL,&t;&t;&t;/* sg_tablesize&t;&t;*/&t;&bslash;&n;cmd_per_lun:&t;&t;CAN_QUEUE,&t;&t;/* cmd per lun&t;&t;*/&t;&bslash;&n;unchecked_isa_dma:&t;0,&t;&t;&t;/* unchecked isa dma&t;*/&t;&bslash;&n;use_clustering:&t;&t;DISABLE_CLUSTERING&t;&t;&t;&t;&t;&bslash;&n;&t;}
+mdefine_line|#define CUMANASCSI_2 {&t;&t;&t;&t;&t;&bslash;&n;proc_info:&t;&t;&t;cumanascsi_2_proc_info,&t;&bslash;&n;name:&t;&t;&t;&t;&quot;Cumana SCSI II&quot;,&t;&bslash;&n;detect:&t;&t;&t;&t;cumanascsi_2_detect,&t;&bslash;&n;release:&t;&t;&t;cumanascsi_2_release,&t;&bslash;&n;info:&t;&t;&t;&t;cumanascsi_2_info,&t;&bslash;&n;bios_param:&t;&t;&t;scsicam_bios_param,&t;&bslash;&n;can_queue:&t;&t;&t;CAN_QUEUE,&t;&t;&bslash;&n;this_id:&t;&t;&t;SCSI_ID,&t;&t;&bslash;&n;sg_tablesize:&t;&t;&t;SG_ALL,&t;&t;&t;&bslash;&n;cmd_per_lun:&t;&t;&t;CMD_PER_LUN,&t;&t;&bslash;&n;use_clustering:&t;&t;&t;DISABLE_CLUSTERING,&t;&bslash;&n;command:&t;&t;&t;fas216_command,&t;&t;&bslash;&n;queuecommand:&t;&t;&t;fas216_queue_command,&t;&bslash;&n;eh_host_reset_handler:&t;&t;fas216_eh_host_reset,&t;&bslash;&n;eh_bus_reset_handler:&t;&t;fas216_eh_bus_reset,&t;&bslash;&n;eh_device_reset_handler:&t;fas216_eh_device_reset,&t;&bslash;&n;eh_abort_handler:&t;&t;fas216_eh_abort,&t;&bslash;&n;use_new_eh_code:&t;&t;1&t;&t;&t;&bslash;&n;&t;}
 macro_line|#ifndef HOSTS_C
 macro_line|#include &lt;asm/dma.h&gt;
 DECL|macro|NR_SG

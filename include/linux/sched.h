@@ -325,10 +325,20 @@ comma
 op_star
 id|pwd
 suffix:semicolon
+DECL|member|rootmnt
+DECL|member|pwdmnt
+r_struct
+id|vfsmount
+op_star
+id|rootmnt
+comma
+op_star
+id|pwdmnt
+suffix:semicolon
 )brace
 suffix:semicolon
 DECL|macro|INIT_FS
-mdefine_line|#define INIT_FS { &bslash;&n;&t;ATOMIC_INIT(1), &bslash;&n;&t;0022, &bslash;&n;&t;NULL, NULL &bslash;&n;}
+mdefine_line|#define INIT_FS { &bslash;&n;&t;ATOMIC_INIT(1), &bslash;&n;&t;0022, &bslash;&n;&t;NULL, NULL, NULL, NULL &bslash;&n;}
 multiline_comment|/* Maximum number of active map areas.. This is a random (large) number */
 DECL|macro|MAX_MAP_COUNT
 mdefine_line|#define MAX_MAP_COUNT&t;(65536)

@@ -2,7 +2,7 @@ multiline_comment|/*************************************************************
 multiline_comment|/*&n;**&t;March 6 2000, sym53c8xx 1.5k&n;**&n;**&t;Supported SCSI features:&n;**&t;    Synchronous data transfers&n;**&t;    Wide16 SCSI BUS&n;**&t;    Disconnection/Reselection&n;**&t;    Tagged command queuing&n;**&t;    SCSI Parity checking&n;**&n;**&t;Supported NCR/SYMBIOS chips:&n;**&t;&t;53C810A&t;  (8 bits, Fast 10,&t; no rom BIOS) &n;**&t;&t;53C825A&t;  (Wide,   Fast 10,&t; on-board rom BIOS)&n;**&t;&t;53C860&t;  (8 bits, Fast 20,&t; no rom BIOS)&n;**&t;&t;53C875&t;  (Wide,   Fast 20,&t; on-board rom BIOS)&n;**&t;&t;53C876&t;  (Wide,   Fast 20 Dual, on-board rom BIOS)&n;**&t;&t;53C895&t;  (Wide,   Fast 40,&t; on-board rom BIOS)&n;**&t;&t;53C895A&t;  (Wide,   Fast 40,&t; on-board rom BIOS)&n;**&t;&t;53C896&t;  (Wide,   Fast 40 Dual, on-board rom BIOS)&n;**&t;&t;53C1510D  (Wide,   Fast 40 Dual, on-board rom BIOS)&n;**&n;**&t;Other features:&n;**&t;&t;Memory mapped IO&n;**&t;&t;Module&n;**&t;&t;Shared IRQ&n;*/
 multiline_comment|/*&n;**&t;Name and version of the driver&n;*/
 DECL|macro|SCSI_NCR_DRIVER_NAME
-mdefine_line|#define SCSI_NCR_DRIVER_NAME&t;&quot;sym53c8xx - version 1.5k&quot;
+mdefine_line|#define SCSI_NCR_DRIVER_NAME&t;&quot;sym53c8xx - version 1.5l&quot;
 multiline_comment|/* #define DEBUG_896R1 */
 DECL|macro|SCSI_NCR_OPTIMIZE_896
 mdefine_line|#define SCSI_NCR_OPTIMIZE_896
@@ -17801,9 +17801,6 @@ suffix:semicolon
 id|ccb_p
 id|cp
 suffix:semicolon
-r_int
-id|segments
-suffix:semicolon
 id|u_char
 id|idmsg
 comma
@@ -18228,9 +18225,23 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/*----------------------------------------------------&n;&t;**&n;&t;**&t;Build the data descriptors&n;&t;**&n;&t;**----------------------------------------------------&n;&t;*/
-id|cp-&gt;segments
+id|direction
 op_assign
-id|segments
+id|scsi_data_direction
+c_func
+(paren
+id|cmd
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|direction
+op_ne
+id|SCSI_DATA_NONE
+)paren
+(brace
+id|cp-&gt;segments
 op_assign
 id|np-&gt;scatter
 (paren
@@ -18244,7 +18255,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|segments
+id|cp-&gt;segments
 OL
 l_int|0
 )paren
@@ -18261,6 +18272,18 @@ r_return
 id|DID_ERROR
 suffix:semicolon
 )brace
+)brace
+r_else
+(brace
+id|cp-&gt;data_len
+op_assign
+l_int|0
+suffix:semicolon
+id|cp-&gt;segments
+op_assign
+l_int|0
+suffix:semicolon
+)brace
 multiline_comment|/*----------------------------------------------------&n;&t;**&n;&t;**&t;Determine xfer direction.&n;&t;**&n;&t;**----------------------------------------------------&n;&t;*/
 r_if
 c_cond
@@ -18271,15 +18294,6 @@ id|cp-&gt;data_len
 id|direction
 op_assign
 id|SCSI_DATA_NONE
-suffix:semicolon
-r_else
-id|direction
-op_assign
-id|scsi_data_direction
-c_func
-(paren
-id|cmd
-)paren
 suffix:semicolon
 multiline_comment|/*&n;&t;**&t;If data direction is UNKNOWN, speculate DATA_READ &n;&t;**&t;but prepare alternate pointers for WRITE in case &n;&t;**&t;of our speculation will be just wrong.&n;&t;**&t;SCRIPTS will swap values if needed.&n;&t;*/
 r_switch
@@ -18312,7 +18326,7 @@ op_minus
 l_int|8
 op_minus
 (paren
-id|segments
+id|cp-&gt;segments
 op_star
 (paren
 id|SCR_SG_SIZE
@@ -18372,7 +18386,7 @@ op_minus
 l_int|8
 op_minus
 (paren
-id|segments
+id|cp-&gt;segments
 op_star
 (paren
 id|SCR_SG_SIZE

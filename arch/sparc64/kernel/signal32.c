@@ -7729,6 +7729,8 @@ c_func
 (paren
 id|map-&gt;vm_file-&gt;f_dentry
 comma
+id|map-&gt;vm_file-&gt;f_vfsmnt
+comma
 id|buffer
 comma
 id|PAGE_SIZE

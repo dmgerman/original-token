@@ -26,6 +26,11 @@ id|proc_get_link
 r_struct
 id|inode
 op_star
+comma
+r_struct
+id|vfsmount
+op_star
+op_star
 )paren
 suffix:semicolon
 DECL|member|proc_read

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * queue.h: queue handling&n; *&n; * (c) 1997 Russell King&n; */
+multiline_comment|/*&n; * queue.h: queue handling&n; *&n; * Copyright (C) 1997 Russell King&n; */
 macro_line|#ifndef QUEUE_H
 DECL|macro|QUEUE_H
 mdefine_line|#define QUEUE_H

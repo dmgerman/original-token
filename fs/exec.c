@@ -331,8 +331,6 @@ c_cond
 (paren
 id|file
 op_logical_and
-id|file-&gt;f_dentry
-op_logical_and
 id|file-&gt;f_op
 op_logical_and
 id|file-&gt;f_op-&gt;read
@@ -1294,6 +1292,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+multiline_comment|/* MOUNT_REWRITE: &amp;mnt should be passed to lookup_dentry */
 DECL|function|open_exec
 r_struct
 id|file
@@ -1311,6 +1310,13 @@ r_struct
 id|dentry
 op_star
 id|dentry
+suffix:semicolon
+r_struct
+id|vfsmount
+op_star
+id|mnt
+op_assign
+l_int|NULL
 suffix:semicolon
 r_struct
 id|file
@@ -1408,6 +1414,8 @@ c_func
 (paren
 id|dentry
 comma
+id|mnt
+comma
 id|O_RDONLY
 )paren
 suffix:semicolon
@@ -1427,6 +1435,12 @@ id|dput
 c_func
 (paren
 id|dentry
+)paren
+suffix:semicolon
+id|mntput
+c_func
+(paren
+id|mnt
 )paren
 suffix:semicolon
 )brace
@@ -3681,11 +3695,6 @@ op_star
 id|file
 suffix:semicolon
 r_struct
-id|dentry
-op_star
-id|dentry
-suffix:semicolon
-r_struct
 id|inode
 op_star
 id|inode
@@ -3799,8 +3808,6 @@ op_or
 id|O_NOFOLLOW
 comma
 l_int|0600
-comma
-l_int|NULL
 )paren
 suffix:semicolon
 r_if
@@ -3815,13 +3822,9 @@ id|file
 r_goto
 id|fail
 suffix:semicolon
-id|dentry
-op_assign
-id|file-&gt;f_dentry
-suffix:semicolon
 id|inode
 op_assign
-id|dentry-&gt;d_inode
+id|file-&gt;f_dentry-&gt;d_inode
 suffix:semicolon
 r_if
 c_cond
@@ -3851,7 +3854,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|inode-&gt;i_fop
+id|file-&gt;f_op
 )paren
 r_goto
 id|close_fail

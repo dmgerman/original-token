@@ -7083,6 +7083,8 @@ id|retval
 )paren
 suffix:semicolon
 macro_line|#endif
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
 r_return
 id|retval
 suffix:semicolon

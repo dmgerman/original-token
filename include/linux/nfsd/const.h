@@ -4,24 +4,13 @@ DECL|macro|_LINUX_NFSD_CONST_H
 mdefine_line|#define _LINUX_NFSD_CONST_H
 macro_line|#include &lt;linux/nfs.h&gt;
 macro_line|#include &lt;linux/nfs2.h&gt;
+macro_line|#include &lt;linux/nfs3.h&gt;
 multiline_comment|/*&n; * Maximum protocol version supported by knfsd&n; */
 DECL|macro|NFSSVC_MAXVERS
 mdefine_line|#define NFSSVC_MAXVERS&t;&t;3
 multiline_comment|/*&n; * Maximum blocksize supported by daemon currently at 8K&n; */
 DECL|macro|NFSSVC_MAXBLKSIZE
 mdefine_line|#define NFSSVC_MAXBLKSIZE&t;8192
-DECL|macro|NFS3_MAXPATHLEN
-mdefine_line|#define NFS3_MAXPATHLEN&t;&t;PATH_MAX
-DECL|macro|NFS3_MAXNAMLEN
-mdefine_line|#define NFS3_MAXNAMLEN&t;&t;NAME_MAX
-DECL|macro|NFS3_FHSIZE
-mdefine_line|#define NFS3_FHSIZE&t;&t;64
-DECL|macro|NFS3_COOKIEVERFSIZE
-mdefine_line|#define NFS3_COOKIEVERFSIZE&t;8
-DECL|macro|NFS3_CREATEVERFSIZE
-mdefine_line|#define NFS3_CREATEVERFSIZE&t;8
-DECL|macro|NFS3_WRITEVERFSIZE
-mdefine_line|#define NFS3_WRITEVERFSIZE&t;8
 macro_line|#ifdef __KERNEL__
 macro_line|#ifndef NFS_SUPER_MAGIC
 DECL|macro|NFS_SUPER_MAGIC

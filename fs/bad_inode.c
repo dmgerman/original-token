@@ -21,6 +21,12 @@ id|dentry
 op_star
 id|base
 comma
+r_struct
+id|vfsmount
+op_star
+op_star
+id|mnt
+comma
 r_int
 r_int
 id|follow
@@ -181,7 +187,8 @@ id|EIO_ERROR
 comma
 )brace
 suffix:semicolon
-multiline_comment|/* &n; * When a filesystem is unable to read an inode due to an I/O error in&n; * its read_inode() function, it can call make_bad_inode() to return a&n; * set of stubs which will return EIO errors as required. &n; *&n; * We only need to do limited initialisation: all other fields are&n; * preinitialised to zero automatically.&n; */
+multiline_comment|/*&n; * When a filesystem is unable to read an inode due to an I/O error in&n; * its read_inode() function, it can call make_bad_inode() to return a&n; * set of stubs which will return EIO errors as required. &n; *&n; * We only need to do limited initialisation: all other fields are&n; * preinitialised to zero automatically.&n; */
+multiline_comment|/**&n; *&t;make_bad_inode - mark an inode bad due to an I/O error&n; *&t;@inode: Inode to mark bad&n; *&n; *&t;When an inode cannot be read due to a media or remote network&n; *&t;failure this function makes the inode &squot;bad&squot; and causes I/O operations&n; *&t;on it to fail from this point on&n; */
 DECL|function|make_bad_inode
 r_void
 id|make_bad_inode
@@ -217,6 +224,7 @@ id|bad_file_ops
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * This tests whether an inode has been flagged as bad. The test uses&n; * &amp;bad_inode_ops to cover the case of invalidated inodes as well as&n; * those created by make_bad_inode() above.&n; */
+multiline_comment|/**&n; *&t;is_bad_inode - is an inode errored&n; *&t;@inode: inode to test&n; *&n; *&t;Returns true if the inode in question has been marked as bad&n; */
 DECL|function|is_bad_inode
 r_int
 id|is_bad_inode

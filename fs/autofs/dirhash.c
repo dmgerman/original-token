@@ -258,9 +258,12 @@ c_func
 id|dentry-&gt;d_inode-&gt;i_mode
 )paren
 op_logical_or
-id|dentry-&gt;d_mounts
-op_eq
+op_logical_neg
+id|d_mountpoint
+c_func
+(paren
 id|dentry
+)paren
 )paren
 (brace
 id|DPRINTK

@@ -2,68 +2,6 @@ multiline_comment|/*&n; *&n; * Definitions for mount interface. This describes t
 macro_line|#ifndef _LINUX_MOUNT_H
 DECL|macro|_LINUX_MOUNT_H
 mdefine_line|#define _LINUX_MOUNT_H
-DECL|macro|DQUOT_USR_ENABLED
-mdefine_line|#define DQUOT_USR_ENABLED&t;0x01&t;&t;/* User diskquotas enabled */
-DECL|macro|DQUOT_GRP_ENABLED
-mdefine_line|#define DQUOT_GRP_ENABLED&t;0x02&t;&t;/* Group diskquotas enabled */
-DECL|struct|quota_mount_options
-r_struct
-id|quota_mount_options
-(brace
-DECL|member|flags
-r_int
-r_int
-id|flags
-suffix:semicolon
-multiline_comment|/* Flags for diskquotas on this device */
-DECL|member|dqio_sem
-r_struct
-id|semaphore
-id|dqio_sem
-suffix:semicolon
-multiline_comment|/* lock device while I/O in progress */
-DECL|member|dqoff_sem
-r_struct
-id|semaphore
-id|dqoff_sem
-suffix:semicolon
-multiline_comment|/* serialize quota_off() and quota_on() on device */
-DECL|member|files
-r_struct
-id|file
-op_star
-id|files
-(braket
-id|MAXQUOTAS
-)braket
-suffix:semicolon
-multiline_comment|/* fp&squot;s to quotafiles */
-DECL|member|inode_expire
-id|time_t
-id|inode_expire
-(braket
-id|MAXQUOTAS
-)braket
-suffix:semicolon
-multiline_comment|/* expiretime for inode-quota */
-DECL|member|block_expire
-id|time_t
-id|block_expire
-(braket
-id|MAXQUOTAS
-)braket
-suffix:semicolon
-multiline_comment|/* expiretime for block-quota */
-DECL|member|rsquash
-r_char
-id|rsquash
-(braket
-id|MAXQUOTAS
-)braket
-suffix:semicolon
-multiline_comment|/* for quotas threat root as any other user */
-)brace
-suffix:semicolon
 DECL|struct|vfsmount
 r_struct
 id|vfsmount
@@ -101,8 +39,39 @@ suffix:semicolon
 multiline_comment|/* pointer to next in linkedlist */
 )brace
 suffix:semicolon
-multiline_comment|/*&n; *&t;Umount options&n; */
-DECL|macro|MNT_FORCE
-mdefine_line|#define MNT_FORCE&t;0x00000001&t;/* Attempt to forcibily umount */
+multiline_comment|/* MOUNT_REWRITE: fill these */
+DECL|function|mntget
+r_static
+r_inline
+r_struct
+id|vfsmount
+op_star
+id|mntget
+c_func
+(paren
+r_struct
+id|vfsmount
+op_star
+id|mnt
+)paren
+(brace
+r_return
+id|mnt
+suffix:semicolon
+)brace
+DECL|function|mntput
+r_static
+r_inline
+r_void
+id|mntput
+c_func
+(paren
+r_struct
+id|vfsmount
+op_star
+id|mnt
+)paren
+(brace
+)brace
 macro_line|#endif /* _LINUX_MOUNT_H */
 eof

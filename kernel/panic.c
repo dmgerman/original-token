@@ -78,6 +78,7 @@ comma
 id|panic_setup
 )paren
 suffix:semicolon
+multiline_comment|/**&n; *&t;panic - halt the system&n; *&t;@fmt: The text string to print&n; *&n; *&t;Display a message, then unblank the console and perform&n; *&t;cleanups. Functions in the panic notifier list are called&n; *&t;after the filesystem cache is flushed (when possible).&n; *&n; *&t;This function never returns.&n; */
 DECL|function|panic
 id|NORET_TYPE
 r_void
@@ -104,6 +105,22 @@ suffix:semicolon
 id|va_list
 id|args
 suffix:semicolon
+macro_line|#if defined(CONFIG_ARCH_S390)
+r_int
+r_int
+id|caller
+op_assign
+(paren
+r_int
+r_int
+)paren
+id|__builtin_return_address
+c_func
+(paren
+l_int|0
+)paren
+suffix:semicolon
+macro_line|#endif
 id|va_start
 c_func
 (paren
@@ -247,6 +264,14 @@ l_string|&quot;Press L1-A to return to the boot prom&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
+macro_line|#if defined(CONFIG_ARCH_S390)
+id|disabled_wait
+c_func
+(paren
+id|caller
+)paren
+suffix:semicolon
 macro_line|#endif
 id|sti
 c_func

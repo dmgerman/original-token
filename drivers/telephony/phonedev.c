@@ -12,6 +12,7 @@ macro_line|#include &lt;linux/phonedev.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/kmod.h&gt;
+macro_line|#include &lt;linux/sem.h&gt;
 DECL|macro|PHONE_NUM_DEVICES
 mdefine_line|#define PHONE_NUM_DEVICES&t;256
 multiline_comment|/*&n; *    Active devices &n; */
@@ -24,6 +25,13 @@ id|phone_device
 (braket
 id|PHONE_NUM_DEVICES
 )braket
+suffix:semicolon
+r_static
+id|DECLARE_MUTEX
+c_func
+(paren
+id|phone_lock
+)paren
 suffix:semicolon
 multiline_comment|/*&n; *    Open a phone device.&n; */
 DECL|function|phone_open
@@ -55,6 +63,8 @@ id|inode-&gt;i_rdev
 suffix:semicolon
 r_int
 id|err
+op_assign
+l_int|0
 suffix:semicolon
 r_struct
 id|phone_device
@@ -71,6 +81,13 @@ id|PHONE_NUM_DEVICES
 r_return
 op_minus
 id|ENODEV
+suffix:semicolon
+id|down
+c_func
+(paren
+op_amp
+id|phone_lock
+)paren
 suffix:semicolon
 id|p
 op_assign
@@ -93,6 +110,13 @@ id|modname
 l_int|32
 )braket
 suffix:semicolon
+id|up
+c_func
+(paren
+op_amp
+id|phone_lock
+)paren
+suffix:semicolon
 id|sprintf
 c_func
 (paren
@@ -111,6 +135,13 @@ c_func
 id|modname
 )paren
 suffix:semicolon
+id|down
+c_func
+(paren
+op_amp
+id|phone_lock
+)paren
+suffix:semicolon
 id|p
 op_assign
 id|phone_device
@@ -125,10 +156,16 @@ id|p
 op_eq
 l_int|NULL
 )paren
-r_return
+(brace
+id|err
+op_assign
 op_minus
 id|ENODEV
 suffix:semicolon
+r_goto
+id|end
+suffix:semicolon
+)brace
 )brace
 r_if
 c_cond
@@ -154,16 +191,25 @@ c_cond
 (paren
 id|err
 )paren
-r_return
-id|err
+r_goto
+id|end
 suffix:semicolon
 )brace
 id|file-&gt;f_op
 op_assign
 id|p-&gt;f_op
 suffix:semicolon
+id|end
+suffix:colon
+id|up
+c_func
+(paren
+op_amp
+id|phone_lock
+)paren
+suffix:semicolon
 r_return
-l_int|0
+id|err
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *    Telephony For Linux device drivers request registration here.&n; */
@@ -220,6 +266,13 @@ l_int|1
 suffix:semicolon
 multiline_comment|/* enter the loop at least one time */
 )brace
+id|down
+c_func
+(paren
+op_amp
+id|phone_lock
+)paren
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -259,11 +312,25 @@ id|i
 suffix:semicolon
 id|MOD_INC_USE_COUNT
 suffix:semicolon
+id|up
+c_func
+(paren
+op_amp
+id|phone_lock
+)paren
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
 )brace
 )brace
+id|up
+c_func
+(paren
+op_amp
+id|phone_lock
+)paren
+suffix:semicolon
 r_return
 op_minus
 id|ENFILE
@@ -281,6 +348,13 @@ op_star
 id|pfd
 )paren
 (brace
+id|down
+c_func
+(paren
+op_amp
+id|phone_lock
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -303,6 +377,13 @@ id|pfd-&gt;minor
 )braket
 op_assign
 l_int|NULL
+suffix:semicolon
+id|up
+c_func
+(paren
+op_amp
+id|phone_lock
+)paren
 suffix:semicolon
 id|MOD_DEC_USE_COUNT
 suffix:semicolon

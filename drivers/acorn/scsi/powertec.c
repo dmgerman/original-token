@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/arch/arm/drivers/scsi/powertec.c&n; *&n; * Copyright (C) 1997-1998 Russell King&n; *&n; * This driver is based on experimentation.  Hence, it may have made&n; * assumptions about the particular card that I have available, and&n; * may not be reliable!&n; *&n; * Changelog:&n; *  01-10-1997&t;RMK&t;Created, READONLY version.&n; *  15-02-1998&t;RMK&t;Added DMA support and hardware definitions.&n; *  15-04-1998&t;RMK&t;Only do PIO if FAS216 will allow it.&n; *  02-05-1998&t;RMK&t;Moved DMA sg list into per-interface structure.&n; *  27-06-1998&t;RMK&t;Changed asm/delay.h to linux/delay.h&n; */
+multiline_comment|/*&n; * linux/arch/arm/drivers/scsi/powertec.c&n; *&n; * Copyright (C) 1997-2000 Russell King&n; *&n; * This driver is based on experimentation.  Hence, it may have made&n; * assumptions about the particular card that I have available, and&n; * may not be reliable!&n; *&n; * Changelog:&n; *  01-10-1997&t;RMK&t;Created, READONLY version.&n; *  15-02-1998&t;RMK&t;Added DMA support and hardware definitions.&n; *  15-04-1998&t;RMK&t;Only do PIO if FAS216 will allow it.&n; *  02-05-1998&t;RMK&t;Moved DMA sg list into per-interface structure.&n; *  27-06-1998&t;RMK&t;Changed asm/delay.h to linux/delay.h&n; *  02-04-2000&t;RMK&t;Updated for new error handling code.&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/blk.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -55,7 +55,7 @@ mdefine_line|#define VER_MAJOR&t;0
 DECL|macro|VER_MINOR
 mdefine_line|#define VER_MINOR&t;0
 DECL|macro|VER_PATCH
-mdefine_line|#define VER_PATCH&t;2
+mdefine_line|#define VER_PATCH&t;5
 id|MODULE_AUTHOR
 c_func
 (paren
@@ -1193,73 +1193,22 @@ op_add_assign
 id|sprintf
 c_func
 (paren
-id|string
+id|p
 comma
-l_string|&quot;%s at port %lX &quot;
+l_string|&quot;%s &quot;
 comma
 id|host-&gt;hostt-&gt;name
-comma
-id|host-&gt;io_port
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|host-&gt;irq
-op_ne
-id|NO_IRQ
-)paren
 id|p
 op_add_assign
-id|sprintf
+id|fas216_info
 c_func
 (paren
-id|p
+op_amp
+id|info-&gt;info
 comma
-l_string|&quot;irq %d &quot;
-comma
-id|host-&gt;irq
-)paren
-suffix:semicolon
-r_else
 id|p
-op_add_assign
-id|sprintf
-c_func
-(paren
-id|p
-comma
-l_string|&quot;NO IRQ &quot;
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|host-&gt;dma_channel
-op_ne
-id|NO_DMA
-)paren
-id|p
-op_add_assign
-id|sprintf
-c_func
-(paren
-id|p
-comma
-l_string|&quot;dma %d &quot;
-comma
-id|host-&gt;dma_channel
-)paren
-suffix:semicolon
-r_else
-id|p
-op_add_assign
-id|sprintf
-c_func
-(paren
-id|p
-comma
-l_string|&quot;NO DMA &quot;
 )paren
 suffix:semicolon
 id|p
@@ -1269,7 +1218,7 @@ c_func
 (paren
 id|p
 comma
-l_string|&quot;v%d.%d.%d scsi %s&quot;
+l_string|&quot;v%d.%d.%d terminators o%s&quot;
 comma
 id|VER_MAJOR
 comma
@@ -1277,24 +1226,12 @@ id|VER_MINOR
 comma
 id|VER_PATCH
 comma
-id|info-&gt;info.scsi.type
-)paren
-suffix:semicolon
-id|p
-op_add_assign
-id|sprintf
-c_func
-(paren
-id|p
-comma
-l_string|&quot; terminators %s&quot;
-comma
 id|info-&gt;control.terms
 ques
 c_cond
-l_string|&quot;on&quot;
+l_string|&quot;n&quot;
 suffix:colon
-l_string|&quot;off&quot;
+l_string|&quot;ff&quot;
 )paren
 suffix:semicolon
 r_return
@@ -1435,7 +1372,7 @@ r_return
 id|ret
 suffix:semicolon
 )brace
-multiline_comment|/* Prototype: int powertecscsi_proc_info(char *buffer, char **start, off_t offset,&n; *&t;&t;&t;&t;&t;int length, int host_no, int inout)&n; * Purpose  : Return information about the driver to a user process accessing&n; *&t;      the /proc filesystem.&n; * Params   : buffer - a buffer to write information to&n; *&t;      start  - a pointer into this buffer set by this routine to the start&n; *&t;&t;       of the required information.&n; *&t;      offset - offset into information that we have read upto.&n; *&t;      length - length of buffer&n; *&t;      host_no - host number to return information for&n; *&t;      inout  - 0 for reading, 1 for writing.&n; * Returns  : length of data written to buffer.&n; */
+multiline_comment|/* Prototype: int powertecscsi_proc_info(char *buffer, char **start, off_t offset,&n; *&t;&t;&t;&t;&t;int length, int host_no, int inout)&n; * Purpose  : Return information about the driver to a user process accessing&n; *&t;      the /proc filesystem.&n; * Params   : buffer  - a buffer to write information to&n; *&t;      start   - a pointer into this buffer set by this routine to the start&n; *&t;&t;        of the required information.&n; *&t;      offset  - offset into information that we have read upto.&n; *&t;      length  - length of buffer&n; *&t;      host_no - host number to return information for&n; *&t;      inout   - 0 for reading, 1 for writing.&n; * Returns  : length of data written to buffer.&n; */
 DECL|function|powertecscsi_proc_info
 r_int
 id|powertecscsi_proc_info
@@ -1560,6 +1497,19 @@ id|VER_PATCH
 suffix:semicolon
 id|pos
 op_add_assign
+id|fas216_print_host
+c_func
+(paren
+op_amp
+id|info-&gt;info
+comma
+id|buffer
+op_plus
+id|pos
+)paren
+suffix:semicolon
+id|pos
+op_add_assign
 id|sprintf
 c_func
 (paren
@@ -1567,24 +1517,14 @@ id|buffer
 op_plus
 id|pos
 comma
-l_string|&quot;Address: %08lX    IRQ : %d     DMA : %d&bslash;n&quot;
-l_string|&quot;FAS    : %-10s  TERM: %-3s&bslash;n&bslash;n&quot;
-l_string|&quot;Statistics:&bslash;n&quot;
-comma
-id|host-&gt;io_port
-comma
-id|host-&gt;irq
-comma
-id|host-&gt;dma_channel
-comma
-id|info-&gt;info.scsi.type
+l_string|&quot;Term    : o%s&bslash;n&quot;
 comma
 id|info-&gt;control.terms
 ques
 c_cond
-l_string|&quot;on&quot;
+l_string|&quot;n&quot;
 suffix:colon
-l_string|&quot;off&quot;
+l_string|&quot;ff&quot;
 )paren
 suffix:semicolon
 id|pos
@@ -1603,6 +1543,7 @@ suffix:semicolon
 id|pos
 op_add_assign
 id|sprintf
+c_func
 (paren
 id|buffer
 op_plus

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * File Name:&n; *   defxx.c&n; *&n; * Copyright Information:&n; *   Copyright Digital Equipment Corporation 1996.&n; *&n; *   This software may be used and distributed according to the terms of&n; *   the GNU Public License, incorporated herein by reference.&n; *&n; * Abstract:&n; *   A Linux device driver supporting the Digital Equipment Corporation&n; *   FDDI EISA and PCI controller families.  Supported adapters include:&n; *&n; *&t;&t;DEC FDDIcontroller/EISA (DEFEA)&n; *&t;&t;DEC FDDIcontroller/PCI  (DEFPA)&n; *&n; * Maintainers:&n; *   LVS&t;Lawrence V. Stefani&n; *&n; * Contact:&n; *&t; The author may be reached at:&n; *&n; *&t;&t;Inet: stefani@lkg.dec.com&n; *&t;&t;Mail: Digital Equipment Corporation&n; *&t;&t;&t;  550 King Street&n; *&t;&t;&t;  M/S: LKG1-3/M07&n; *&t;&t;&t;  Littleton, MA  01460&n; *&n; * Credits:&n; *   I&squot;d like to thank Patricia Cross for helping me get started with&n; *   Linux, David Davies for a lot of help upgrading and configuring&n; *   my development system and for answering many OS and driver&n; *   development questions, and Alan Cox for recommendations and&n; *   integration help on getting FDDI support into Linux.  LVS&n; *&n; * Driver Architecture:&n; *   The driver architecture is largely based on previous driver work&n; *   for other operating systems.  The upper edge interface and&n; *   functions were largely taken from existing Linux device drivers&n; *   such as David Davies&squot; DE4X5.C driver and Donald Becker&squot;s TULIP.C&n; *   driver.&n; *&n; *   Adapter Probe -&n; *&t;&t;The driver scans for supported EISA adapters by reading the&n; *&t;&t;SLOT ID register for each EISA slot and making a match&n; *&t;&t;against the expected value.  The supported PCI adapters are&n; *&t;&t;discovered using successive calls to pcibios_find_device.&n; *&t;&t;The first time the probe routine is called, all supported&n; *&t;&t;devices are discovered and initialized.  The adapters aren&squot;t&n; *&t;&t;brought up to an operational state until the open routine is&n; *&t;&t;called.&n; *&n; *   Bus-Specific Initialization -&n; *&t;&t;This driver currently supports both EISA and PCI controller&n; *&t;&t;families.  While the custom DMA chip and FDDI logic is similar&n; *&t;&t;or identical, the bus logic is very different.  After&n; *&t;&t;initialization, the&t;only bus-specific differences is in how the&n; *&t;&t;driver enables and disables interrupts.  Other than that, the&n; *&t;&t;run-time critical code behaves the same on both families.&n; *&t;&t;It&squot;s important to note that both adapter families are configured&n; *&t;&t;to I/O map, rather than memory map, the adapter registers.&n; *&n; *   Driver Open/Close -&n; *&t;&t;In the driver open routine, the driver ISR (interrupt service&n; *&t;&t;routine) is registered and the adapter is brought to an&n; *&t;&t;operational state.  In the driver close routine, the opposite&n; *&t;&t;occurs; the driver ISR is deregistered and the adapter is&n; *&t;&t;brought to a safe, but closed state.  Users may use consecutive&n; *&t;&t;commands to bring the adapter up and down as in the following&n; *&t;&t;example:&n; *&t;&t;&t;&t;&t;ifconfig fddi0 up&n; *&t;&t;&t;&t;&t;ifconfig fddi0 down&n; *&t;&t;&t;&t;&t;ifconfig fddi0 up&n; *&n; *   Driver Shutdown -&n; *&t;&t;Apparently, there is no shutdown or halt routine support under&n; *&t;&t;Linux.  This routine would be called during &quot;reboot&quot; or&n; *&t;&t;&quot;shutdown&quot; to allow the driver to place the adapter in a safe&n; *&t;&t;state before a warm reboot occurs.  To be really safe, the user&n; *&t;&t;should close the adapter before shutdown (eg. ifconfig fddi0 down)&n; *&t;&t;to ensure that the adapter DMA engine is taken off-line.  However,&n; *&t;&t;the current driver code anticipates this problem and always issues&n; *&t;&t;a soft reset of the adapter&t;at the beginning of driver initialization.&n; *&t;&t;A future driver enhancement in this area may occur in 2.1.X where&n; *&t;&t;Alan indicated that a shutdown handler may be implemented.&n; *&n; *   Interrupt Service Routine -&n; *&t;&t;The driver supports shared interrupts, so the ISR is registered for&n; *&t;&t;each board with the appropriate flag and the pointer to that board&squot;s&n; *&t;&t;device structure.  This provides the context during interrupt&n; *&t;&t;processing to support shared interrupts and multiple boards.&n; *&n; *&t;&t;Interrupt enabling/disabling can occur at many levels.  At the host&n; *&t;&t;end, you can disable system interrupts, or disable interrupts at the&n; *&t;&t;PIC (on Intel systems).  Across the bus, both EISA and PCI adapters&n; *&t;&t;have a bus-logic chip interrupt enable/disable as well as a DMA&n; *&t;&t;controller interrupt enable/disable.&n; *&n; *&t;&t;The driver currently enables and disables adapter interrupts at the&n; *&t;&t;bus-logic chip and assumes that Linux will take care of clearing or&n; *&t;&t;acknowledging any host-based interrupt chips.&n; *&n; *   Control Functions -&n; *&t;&t;Control functions are those used to support functions such as adding&n; *&t;&t;or deleting multicast addresses, enabling or disabling packet&n; *&t;&t;reception filters, or other custom/proprietary commands.  Presently,&n; *&t;&t;the driver supports the &quot;get statistics&quot;, &quot;set multicast list&quot;, and&n; *&t;&t;&quot;set mac address&quot; functions defined by Linux.  A list of possible&n; *&t;&t;enhancements include:&n; *&n; *&t;&t;&t;&t;- Custom ioctl interface for executing port interface commands&n; *&t;&t;&t;&t;- Custom ioctl interface for adding unicast addresses to&n; *&t;&t;&t;&t;  adapter CAM (to support bridge functions).&n; *&t;&t;&t;&t;- Custom ioctl interface for supporting firmware upgrades.&n; *&n; *   Hardware (port interface) Support Routines -&n; *&t;&t;The driver function names that start with &quot;dfx_hw_&quot; represent&n; *&t;&t;low-level port interface routines that are called frequently.  They&n; *&t;&t;include issuing a DMA or port control command to the adapter,&n; *&t;&t;resetting the adapter, or reading the adapter state.  Since the&n; *&t;&t;driver initialization and run-time code must make calls into the&n; *&t;&t;port interface, these routines were written to be as generic and&n; *&t;&t;usable as possible.&n; *&n; *   Receive Path -&n; *&t;&t;The adapter DMA engine supports a 256 entry receive descriptor block&n; *&t;&t;of which up to 255 entries can be used at any given time.  The&n; *&t;&t;architecture is a standard producer, consumer, completion model in&n; *&t;&t;which the driver &quot;produces&quot; receive buffers to the adapter, the&n; *&t;&t;adapter &quot;consumes&quot; the receive buffers by DMAing incoming packet data,&n; *&t;&t;and the driver &quot;completes&quot; the receive buffers by servicing the&n; *&t;&t;incoming packet, then &quot;produces&quot; a new buffer and starts the cycle&n; *&t;&t;again.  Receive buffers can be fragmented in up to 16 fragments&n; *&t;&t;(descriptor&t;entries).  For simplicity, this driver posts&n; *&t;&t;single-fragment receive buffers of 4608 bytes, then allocates a&n; *&t;&t;sk_buff, copies the data, then reposts the buffer.  To reduce CPU&n; *&t;&t;utilization, a better approach would be to pass up the receive&n; *&t;&t;buffer (no extra copy) then allocate and post a replacement buffer.&n; *&t;&t;This is a performance enhancement that should be looked into at&n; *&t;&t;some point.&n; *&n; *   Transmit Path -&n; *&t;&t;Like the receive path, the adapter DMA engine supports a 256 entry&n; *&t;&t;transmit descriptor block of which up to 255 entries can be used at&n; *&t;&t;any&t;given time.  Transmit buffers can be fragmented&t;in up to 255&n; *&t;&t;fragments (descriptor entries).  This driver always posts one&n; *&t;&t;fragment per transmit packet request.&n; *&n; *&t;&t;The fragment contains the entire packet from FC to end of data.&n; *&t;&t;Before posting the buffer to the adapter, the driver sets a three-byte&n; *&t;&t;packet request header (PRH) which is required by the Motorola MAC chip&n; *&t;&t;used on the adapters.  The PRH tells the MAC the type of token to&n; *&t;&t;receive/send, whether or not to generate and append the CRC, whether&n; *&t;&t;synchronous or asynchronous framing is used, etc.  Since the PRH&n; *&t;&t;definition is not necessarily consistent across all FDDI chipsets,&n; *&t;&t;the driver, rather than the common FDDI packet handler routines,&n; *&t;&t;sets these bytes.&n; *&n; *&t;&t;To reduce the amount of descriptor fetches needed per transmit request,&n; *&t;&t;the driver takes advantage of the fact that there are at least three&n; *&t;&t;bytes available before the skb-&gt;data field on the outgoing transmit&n; *&t;&t;request.  This is guaranteed by having fddi_setup() in net_init.c set&n; *&t;&t;dev-&gt;hard_header_len to 24 bytes.  21 bytes accounts for the largest&n; *&t;&t;header in an 802.2 SNAP frame.  The other 3 bytes are the extra &quot;pad&quot;&n; *&t;&t;bytes which we&squot;ll use to store the PRH.&n; *&n; *&t;&t;There&squot;s a subtle advantage to adding these pad bytes to the&n; *&t;&t;hard_header_len, it ensures that the data portion of the packet for&n; *&t;&t;an 802.2 SNAP frame is longword aligned.  Other FDDI driver&n; *&t;&t;implementations may not need the extra padding and can start copying&n; *&t;&t;or DMAing directly from the FC byte which starts at skb-&gt;data.  Should&n; *&t;&t;another driver implementation need ADDITIONAL padding, the net_init.c&n; *&t;&t;module should be updated and dev-&gt;hard_header_len should be increased.&n; *&t;&t;NOTE: To maintain the alignment on the data portion of the packet,&n; *&t;&t;dev-&gt;hard_header_len should always be evenly divisible by 4 and at&n; *&t;&t;least 24 bytes in size.&n; *&n; * Modification History:&n; *&t;&t;Date&t;&t;Name&t;Description&n; *&t;&t;16-Aug-96&t;LVS&t;&t;Created.&n; *&t;&t;20-Aug-96&t;LVS&t;&t;Updated dfx_probe so that version information&n; *&t;&t;&t;&t;&t;&t;&t;string is only displayed if 1 or more cards are&n; *&t;&t;&t;&t;&t;&t;&t;found.  Changed dfx_rcv_queue_process to copy&n; *&t;&t;&t;&t;&t;&t;&t;3 NULL bytes before FC to ensure that data is&n; *&t;&t;&t;&t;&t;&t;&t;longword aligned in receive buffer.&n; *&t;&t;09-Sep-96&t;LVS&t;&t;Updated dfx_ctl_set_multicast_list to enable&n; *&t;&t;&t;&t;&t;&t;&t;LLC group promiscuous mode if multicast list&n; *&t;&t;&t;&t;&t;&t;&t;is too large.  LLC individual/group promiscuous&n; *&t;&t;&t;&t;&t;&t;&t;mode is now disabled if IFF_PROMISC flag not set.&n; *&t;&t;&t;&t;&t;&t;&t;dfx_xmt_queue_pkt no longer checks for NULL skb&n; *&t;&t;&t;&t;&t;&t;&t;on Alan Cox recommendation.  Added node address&n; *&t;&t;&t;&t;&t;&t;&t;override support.&n; *&t;&t;12-Sep-96&t;LVS&t;&t;Reset current address to factory address during&n; *&t;&t;&t;&t;&t;&t;&t;device open.  Updated transmit path to post a&n; *&t;&t;&t;&t;&t;&t;&t;single fragment which includes PRH-&gt;end of data.&n; */
+multiline_comment|/*&n; * File Name:&n; *   defxx.c&n; *&n; * Copyright Information:&n; *   Copyright Digital Equipment Corporation 1996.&n; *&n; *   This software may be used and distributed according to the terms of&n; *   the GNU Public License, incorporated herein by reference.&n; *&n; * Abstract:&n; *   A Linux device driver supporting the Digital Equipment Corporation&n; *   FDDI EISA and PCI controller families.  Supported adapters include:&n; *&n; *&t;&t;DEC FDDIcontroller/EISA (DEFEA)&n; *&t;&t;DEC FDDIcontroller/PCI  (DEFPA)&n; *&n; * Maintainers:&n; *   LVS&t;Lawrence V. Stefani&n; *&n; * Contact:&n; *&t; The author may be reached at:&n; *&n; *&t;&t;Inet: stefani@lkg.dec.com&n; *&t;&t;Mail: Digital Equipment Corporation&n; *&t;&t;&t;  550 King Street&n; *&t;&t;&t;  M/S: LKG1-3/M07&n; *&t;&t;&t;  Littleton, MA  01460&n; *&n; * Credits:&n; *   I&squot;d like to thank Patricia Cross for helping me get started with&n; *   Linux, David Davies for a lot of help upgrading and configuring&n; *   my development system and for answering many OS and driver&n; *   development questions, and Alan Cox for recommendations and&n; *   integration help on getting FDDI support into Linux.  LVS&n; *&n; * Driver Architecture:&n; *   The driver architecture is largely based on previous driver work&n; *   for other operating systems.  The upper edge interface and&n; *   functions were largely taken from existing Linux device drivers&n; *   such as David Davies&squot; DE4X5.C driver and Donald Becker&squot;s TULIP.C&n; *   driver.&n; *&n; *   Adapter Probe -&n; *&t;&t;The driver scans for supported EISA adapters by reading the&n; *&t;&t;SLOT ID register for each EISA slot and making a match&n; *&t;&t;against the expected value.  The supported PCI adapters are&n; *&t;&t;discovered using successive calls to pcibios_find_device.&n; *&t;&t;The first time the probe routine is called, all supported&n; *&t;&t;devices are discovered and initialized.  The adapters aren&squot;t&n; *&t;&t;brought up to an operational state until the open routine is&n; *&t;&t;called.&n; *&n; *   Bus-Specific Initialization -&n; *&t;&t;This driver currently supports both EISA and PCI controller&n; *&t;&t;families.  While the custom DMA chip and FDDI logic is similar&n; *&t;&t;or identical, the bus logic is very different.  After&n; *&t;&t;initialization, the&t;only bus-specific differences is in how the&n; *&t;&t;driver enables and disables interrupts.  Other than that, the&n; *&t;&t;run-time critical code behaves the same on both families.&n; *&t;&t;It&squot;s important to note that both adapter families are configured&n; *&t;&t;to I/O map, rather than memory map, the adapter registers.&n; *&n; *   Driver Open/Close -&n; *&t;&t;In the driver open routine, the driver ISR (interrupt service&n; *&t;&t;routine) is registered and the adapter is brought to an&n; *&t;&t;operational state.  In the driver close routine, the opposite&n; *&t;&t;occurs; the driver ISR is deregistered and the adapter is&n; *&t;&t;brought to a safe, but closed state.  Users may use consecutive&n; *&t;&t;commands to bring the adapter up and down as in the following&n; *&t;&t;example:&n; *&t;&t;&t;&t;&t;ifconfig fddi0 up&n; *&t;&t;&t;&t;&t;ifconfig fddi0 down&n; *&t;&t;&t;&t;&t;ifconfig fddi0 up&n; *&n; *   Driver Shutdown -&n; *&t;&t;Apparently, there is no shutdown or halt routine support under&n; *&t;&t;Linux.  This routine would be called during &quot;reboot&quot; or&n; *&t;&t;&quot;shutdown&quot; to allow the driver to place the adapter in a safe&n; *&t;&t;state before a warm reboot occurs.  To be really safe, the user&n; *&t;&t;should close the adapter before shutdown (eg. ifconfig fddi0 down)&n; *&t;&t;to ensure that the adapter DMA engine is taken off-line.  However,&n; *&t;&t;the current driver code anticipates this problem and always issues&n; *&t;&t;a soft reset of the adapter&t;at the beginning of driver initialization.&n; *&t;&t;A future driver enhancement in this area may occur in 2.1.X where&n; *&t;&t;Alan indicated that a shutdown handler may be implemented.&n; *&n; *   Interrupt Service Routine -&n; *&t;&t;The driver supports shared interrupts, so the ISR is registered for&n; *&t;&t;each board with the appropriate flag and the pointer to that board&squot;s&n; *&t;&t;device structure.  This provides the context during interrupt&n; *&t;&t;processing to support shared interrupts and multiple boards.&n; *&n; *&t;&t;Interrupt enabling/disabling can occur at many levels.  At the host&n; *&t;&t;end, you can disable system interrupts, or disable interrupts at the&n; *&t;&t;PIC (on Intel systems).  Across the bus, both EISA and PCI adapters&n; *&t;&t;have a bus-logic chip interrupt enable/disable as well as a DMA&n; *&t;&t;controller interrupt enable/disable.&n; *&n; *&t;&t;The driver currently enables and disables adapter interrupts at the&n; *&t;&t;bus-logic chip and assumes that Linux will take care of clearing or&n; *&t;&t;acknowledging any host-based interrupt chips.&n; *&n; *   Control Functions -&n; *&t;&t;Control functions are those used to support functions such as adding&n; *&t;&t;or deleting multicast addresses, enabling or disabling packet&n; *&t;&t;reception filters, or other custom/proprietary commands.  Presently,&n; *&t;&t;the driver supports the &quot;get statistics&quot;, &quot;set multicast list&quot;, and&n; *&t;&t;&quot;set mac address&quot; functions defined by Linux.  A list of possible&n; *&t;&t;enhancements include:&n; *&n; *&t;&t;&t;&t;- Custom ioctl interface for executing port interface commands&n; *&t;&t;&t;&t;- Custom ioctl interface for adding unicast addresses to&n; *&t;&t;&t;&t;  adapter CAM (to support bridge functions).&n; *&t;&t;&t;&t;- Custom ioctl interface for supporting firmware upgrades.&n; *&n; *   Hardware (port interface) Support Routines -&n; *&t;&t;The driver function names that start with &quot;dfx_hw_&quot; represent&n; *&t;&t;low-level port interface routines that are called frequently.  They&n; *&t;&t;include issuing a DMA or port control command to the adapter,&n; *&t;&t;resetting the adapter, or reading the adapter state.  Since the&n; *&t;&t;driver initialization and run-time code must make calls into the&n; *&t;&t;port interface, these routines were written to be as generic and&n; *&t;&t;usable as possible.&n; *&n; *   Receive Path -&n; *&t;&t;The adapter DMA engine supports a 256 entry receive descriptor block&n; *&t;&t;of which up to 255 entries can be used at any given time.  The&n; *&t;&t;architecture is a standard producer, consumer, completion model in&n; *&t;&t;which the driver &quot;produces&quot; receive buffers to the adapter, the&n; *&t;&t;adapter &quot;consumes&quot; the receive buffers by DMAing incoming packet data,&n; *&t;&t;and the driver &quot;completes&quot; the receive buffers by servicing the&n; *&t;&t;incoming packet, then &quot;produces&quot; a new buffer and starts the cycle&n; *&t;&t;again.  Receive buffers can be fragmented in up to 16 fragments&n; *&t;&t;(descriptor&t;entries).  For simplicity, this driver posts&n; *&t;&t;single-fragment receive buffers of 4608 bytes, then allocates a&n; *&t;&t;sk_buff, copies the data, then reposts the buffer.  To reduce CPU&n; *&t;&t;utilization, a better approach would be to pass up the receive&n; *&t;&t;buffer (no extra copy) then allocate and post a replacement buffer.&n; *&t;&t;This is a performance enhancement that should be looked into at&n; *&t;&t;some point.&n; *&n; *   Transmit Path -&n; *&t;&t;Like the receive path, the adapter DMA engine supports a 256 entry&n; *&t;&t;transmit descriptor block of which up to 255 entries can be used at&n; *&t;&t;any&t;given time.  Transmit buffers can be fragmented&t;in up to 255&n; *&t;&t;fragments (descriptor entries).  This driver always posts one&n; *&t;&t;fragment per transmit packet request.&n; *&n; *&t;&t;The fragment contains the entire packet from FC to end of data.&n; *&t;&t;Before posting the buffer to the adapter, the driver sets a three-byte&n; *&t;&t;packet request header (PRH) which is required by the Motorola MAC chip&n; *&t;&t;used on the adapters.  The PRH tells the MAC the type of token to&n; *&t;&t;receive/send, whether or not to generate and append the CRC, whether&n; *&t;&t;synchronous or asynchronous framing is used, etc.  Since the PRH&n; *&t;&t;definition is not necessarily consistent across all FDDI chipsets,&n; *&t;&t;the driver, rather than the common FDDI packet handler routines,&n; *&t;&t;sets these bytes.&n; *&n; *&t;&t;To reduce the amount of descriptor fetches needed per transmit request,&n; *&t;&t;the driver takes advantage of the fact that there are at least three&n; *&t;&t;bytes available before the skb-&gt;data field on the outgoing transmit&n; *&t;&t;request.  This is guaranteed by having fddi_setup() in net_init.c set&n; *&t;&t;dev-&gt;hard_header_len to 24 bytes.  21 bytes accounts for the largest&n; *&t;&t;header in an 802.2 SNAP frame.  The other 3 bytes are the extra &quot;pad&quot;&n; *&t;&t;bytes which we&squot;ll use to store the PRH.&n; *&n; *&t;&t;There&squot;s a subtle advantage to adding these pad bytes to the&n; *&t;&t;hard_header_len, it ensures that the data portion of the packet for&n; *&t;&t;an 802.2 SNAP frame is longword aligned.  Other FDDI driver&n; *&t;&t;implementations may not need the extra padding and can start copying&n; *&t;&t;or DMAing directly from the FC byte which starts at skb-&gt;data.  Should&n; *&t;&t;another driver implementation need ADDITIONAL padding, the net_init.c&n; *&t;&t;module should be updated and dev-&gt;hard_header_len should be increased.&n; *&t;&t;NOTE: To maintain the alignment on the data portion of the packet,&n; *&t;&t;dev-&gt;hard_header_len should always be evenly divisible by 4 and at&n; *&t;&t;least 24 bytes in size.&n; *&n; * Modification History:&n; *&t;&t;Date&t;&t;Name&t;Description&n; *&t;&t;16-Aug-96&t;LVS&t;&t;Created.&n; *&t;&t;20-Aug-96&t;LVS&t;&t;Updated dfx_probe so that version information&n; *&t;&t;&t;&t;&t;&t;&t;string is only displayed if 1 or more cards are&n; *&t;&t;&t;&t;&t;&t;&t;found.  Changed dfx_rcv_queue_process to copy&n; *&t;&t;&t;&t;&t;&t;&t;3 NULL bytes before FC to ensure that data is&n; *&t;&t;&t;&t;&t;&t;&t;longword aligned in receive buffer.&n; *&t;&t;09-Sep-96&t;LVS&t;&t;Updated dfx_ctl_set_multicast_list to enable&n; *&t;&t;&t;&t;&t;&t;&t;LLC group promiscuous mode if multicast list&n; *&t;&t;&t;&t;&t;&t;&t;is too large.  LLC individual/group promiscuous&n; *&t;&t;&t;&t;&t;&t;&t;mode is now disabled if IFF_PROMISC flag not set.&n; *&t;&t;&t;&t;&t;&t;&t;dfx_xmt_queue_pkt no longer checks for NULL skb&n; *&t;&t;&t;&t;&t;&t;&t;on Alan Cox recommendation.  Added node address&n; *&t;&t;&t;&t;&t;&t;&t;override support.&n; *&t;&t;12-Sep-96&t;LVS&t;&t;Reset current address to factory address during&n; *&t;&t;&t;&t;&t;&t;&t;device open.  Updated transmit path to post a&n; *&t;&t;&t;&t;&t;&t;&t;single fragment which includes PRH-&gt;end of data.&n; *&t;&t;Mar 2000&t;AC&t;&t;Did various cleanups for 2.3.x&n; */
 multiline_comment|/* Version information string - should be updated prior to each new release!!! */
 DECL|variable|version
 r_static
@@ -7,7 +7,7 @@ r_char
 op_star
 id|version
 op_assign
-l_string|&quot;defxx.c:v1.04 09/16/96  Lawrence V. Stefani (stefani@lkg.dec.com)&bslash;n&quot;
+l_string|&quot;defxx.c:v1.05 2000/03/26  Lawrence V. Stefani (stefani@lkg.dec.com) and others&bslash;n&quot;
 suffix:semicolon
 multiline_comment|/* Include files */
 macro_line|#include &lt;linux/module.h&gt;
@@ -22,6 +22,7 @@ macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;asm/byteorder.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
@@ -41,10 +42,7 @@ r_int
 id|dfx_probe
 c_func
 (paren
-r_struct
-id|net_device
-op_star
-id|dev
+r_void
 )paren
 suffix:semicolon
 multiline_comment|/* Define module-wide (static) routines */
@@ -55,11 +53,6 @@ op_star
 id|dfx_alloc_device
 c_func
 (paren
-r_struct
-id|net_device
-op_star
-id|dev
-comma
 id|u16
 id|iobase
 )paren
@@ -529,17 +522,21 @@ r_return
 suffix:semicolon
 )brace
 "&f;"
-multiline_comment|/*&n; * =============&n; * = dfx_probe =&n; * =============&n; *   &n; * Overview:&n; *   Probes for supported FDDI EISA and PCI controllers&n; *  &n; * Returns:&n; *   Condition code&n; *       &n; * Arguments:&n; *   dev - pointer to device information&n; *&n; * Functional Description:&n; *   This routine is called by the OS for each FDDI device name (fddi0,&n; *   fddi1,...,fddi6, fddi7) specified in drivers/net/Space.c.  Since&n; *   the DEFXX.C driver currently does not support being loaded as a&n; *   module, dfx_probe() will initialize all devices the first time&n; *   it is called.&n; *&n; *   Let&squot;s say that dfx_probe() is getting called to initialize fddi0.&n; *   Furthermore, let&squot;s say there are three supported controllers in the&n; *   system.  Before dfx_probe() leaves, devices fddi0, fddi1, and fddi2&n; *   will be initialized and a global flag will be set to indicate that&n; *   dfx_probe() has already been called.&n; *&n; *   However...the OS doesn&squot;t know that we&squot;ve already initialized&n; *   devices fddi1 and fddi2 so dfx_probe() gets called again and again&n; *   until it reaches the end of the device list for FDDI (presently,&n; *   fddi7).  It&squot;s important that the driver &quot;pretend&quot; to probe for&n; *   devices fddi1 and fddi2 and return success.  Devices fddi3&n; *   through fddi7 will return failure since they weren&squot;t initialized.&n; *&n; *   This algorithm seems to work for the time being.  As other FDDI&n; *   drivers are written for Linux, a more generic approach (perhaps&n; *   similar to the Ethernet card approach) may need to be implemented.&n; *   &n; * Return Codes:&n; *   0&t;&t; - This device (fddi0, fddi1, etc) configured successfully&n; *   -ENODEV - No devices present, or no Digital FDDI EISA or PCI device&n; *&t;&t;&t;   present for this device name&n; *&n; * Assumptions:&n; *   For the time being, DEFXX.C is the only FDDI driver under Linux.&n; *   As this assumption changes, this routine will likely be impacted.&n; *   Also, it is assumed that no more than eight (8) FDDI controllers&n; *   will be configured in the system (fddi0 through fddi7).  This&n; *   routine will not allocate new device structures.  If more than&n; *   eight FDDI controllers need to be configured, drivers/net/Space.c&n; *   should be updated as well as the DFX_MAX_NUM_BOARDS constant in&n; *   DEFXX.H.&n; *&n; * Side Effects:&n; *   Device structures for FDDI adapters (fddi0, fddi1, etc) are&n; *   initialized and the board resources are read and stored in&n; *   the device structure.&n; */
+multiline_comment|/*&n; * =============&n; * = dfx_probe =&n; * =============&n; *   &n; * Overview:&n; *   Probes for supported FDDI EISA and PCI controllers&n; *  &n; * Returns:&n; *   Condition code&n; *       &n; * Arguments:&n; *   dev - pointer to device information&n; *&n; * Functional Description:&n; *   This routine is called by the OS once at startup to scan for&n; *   DEFXX cards.&n; *&n; * Return Codes:&n; *   0&t;&t; - This device (fddi0, fddi1, etc) configured successfully&n; *   -ENODEV - No devices present, or no Digital FDDI EISA or PCI device&n; *&t;&t;&t;   present for this device name&n; *&n; * Assumptions:&n; *   For the time being, DEFXX.C is the only FDDI driver under Linux.&n; *   As this assumption changes, this routine will likely be impacted.&n; *   Also, it is assumed that no more than eight (8) FDDI controllers&n; *   will be configured in the system (fddi0 through fddi7).  This&n; *   routine will not allocate new device structures.  If more than&n; *   eight FDDI controllers need to be configured, drivers/net/Space.c&n; *   should be updated as well as the DFX_MAX_NUM_BOARDS constant in&n; *   DEFXX.H.&n; *&n; * Side Effects:&n; *   Device structures for FDDI adapters (fddi0, fddi1, etc) are&n; *   initialized and the board resources are read and stored in&n; *   the device structure.&n; */
+DECL|variable|bp_root
+r_static
+r_struct
+id|net_device
+op_star
+id|bp_root
+suffix:semicolon
 DECL|function|dfx_probe
 r_int
 id|__init
 id|dfx_probe
 c_func
 (paren
-r_struct
-id|net_device
-op_star
-id|dev
+r_void
 )paren
 (brace
 r_int
@@ -579,78 +576,22 @@ op_star
 id|bp
 suffix:semicolon
 multiline_comment|/* board pointer */
+r_struct
+id|net_device
+op_star
+id|dev
+suffix:semicolon
 id|DBG_printk
 c_func
 (paren
 l_string|&quot;In dfx_probe...&bslash;n&quot;
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * Verify whether we&squot;re going through dfx_probe() again&n;&t; *&n;&t; * If so, see if we&squot;re going through for a subsequent fddi device that&n;&t; * we&squot;ve already initialized.  If we are, return success (0).  If not,&n;&t; * return failure (-ENODEV).&n;&t; */
 id|version_disp
 op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* default to version string not displayed */
-r_if
-c_cond
-(paren
-id|already_probed
-)paren
-(brace
-id|DBG_printk
-c_func
-(paren
-l_string|&quot;Already entered dfx_probe&bslash;n&quot;
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|dev
-op_ne
-l_int|NULL
-)paren
-r_if
-c_cond
-(paren
-(paren
-id|strncmp
-c_func
-(paren
-id|dev-&gt;name
-comma
-l_string|&quot;fddi&quot;
-comma
-l_int|4
-)paren
-op_eq
-l_int|0
-)paren
-op_logical_and
-(paren
-id|dev-&gt;base_addr
-op_ne
-l_int|0
-)paren
-)paren
-(brace
-id|DBG_printk
-c_func
-(paren
-l_string|&quot;In dfx_probe for fddi adapter (%s) we&squot;ve already initialized it, so return success&bslash;n&quot;
-comma
-id|dev-&gt;name
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
-r_return
-op_minus
-id|ENODEV
-suffix:semicolon
-)brace
 id|already_probed
 op_assign
 l_int|1
@@ -760,8 +701,6 @@ op_assign
 id|dfx_alloc_device
 c_func
 (paren
-id|dev
-comma
 id|port
 )paren
 suffix:semicolon
@@ -781,6 +720,14 @@ id|DFX_board_t
 op_star
 )paren
 id|dev-&gt;priv
+suffix:semicolon
+id|bp-&gt;next
+op_assign
+id|bp_root
+suffix:semicolon
+id|bp_root
+op_assign
+id|dev
 suffix:semicolon
 id|bp-&gt;dev
 op_assign
@@ -907,7 +854,8 @@ l_int|0
 id|printk
 c_func
 (paren
-l_string|&quot;I/O enable bit not set!  Verify that slot is enabled&bslash;n&quot;
+id|KERN_ERR
+l_string|&quot;defxx: I/O enable bit not set!  Verify that slot is enabled&bslash;n&quot;
 )paren
 suffix:semicolon
 r_else
@@ -967,8 +915,6 @@ op_assign
 id|dfx_alloc_device
 c_func
 (paren
-id|dev
-comma
 id|port
 )paren
 suffix:semicolon
@@ -990,6 +936,14 @@ op_star
 id|dev-&gt;priv
 suffix:semicolon
 id|bp-&gt;dev
+op_assign
+id|dev
+suffix:semicolon
+id|bp-&gt;next
+op_assign
+id|bp_root
+suffix:semicolon
+id|bp_root
 op_assign
 id|dev
 suffix:semicolon
@@ -1028,7 +982,8 @@ r_else
 id|printk
 c_func
 (paren
-l_string|&quot;I/O range allocated to adapter (0x%X-0x%X) is already being used!&bslash;n&quot;
+id|KERN_ERR
+l_string|&quot;defxx: I/O range allocated to adapter (0x%X-0x%X) is already being used!&bslash;n&quot;
 comma
 id|port
 comma
@@ -1070,11 +1025,6 @@ op_star
 id|dfx_alloc_device
 c_func
 (paren
-r_struct
-id|net_device
-op_star
-id|dev
-comma
 id|u16
 id|iobase
 )paren
@@ -1085,6 +1035,9 @@ op_star
 id|tmp_dev
 suffix:semicolon
 multiline_comment|/* pointer to a device structure */
+r_int
+id|err
+suffix:semicolon
 id|DBG_printk
 c_func
 (paren
@@ -1092,45 +1045,16 @@ l_string|&quot;In dfx_alloc_device...&bslash;n&quot;
 )paren
 suffix:semicolon
 multiline_comment|/* Find next free fddi entry */
-r_for
-c_loop
-(paren
 id|tmp_dev
 op_assign
-id|dev
-suffix:semicolon
-id|tmp_dev
-op_ne
-l_int|NULL
-suffix:semicolon
-id|tmp_dev
-op_assign
-id|tmp_dev-&gt;next
-)paren
-r_if
-c_cond
-(paren
-(paren
-id|strncmp
+id|dev_alloc
 c_func
 (paren
-id|tmp_dev-&gt;name
+l_string|&quot;fddi%d&quot;
 comma
-l_string|&quot;fddi&quot;
-comma
-l_int|4
+op_amp
+id|err
 )paren
-op_eq
-l_int|0
-)paren
-op_logical_and
-(paren
-id|tmp_dev-&gt;base_addr
-op_eq
-l_int|0
-)paren
-)paren
-r_break
 suffix:semicolon
 r_if
 c_cond
@@ -1143,6 +1067,7 @@ l_int|NULL
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;Could not find free FDDI device structure for this adapter!&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -1187,7 +1112,14 @@ l_int|NULL
 id|printk
 c_func
 (paren
-l_string|&quot;Could not allocate memory for private board structure!&bslash;n&quot;
+id|KERN_ERR
+l_string|&quot;defxx: Could not allocate memory for private board structure!&bslash;n&quot;
+)paren
+suffix:semicolon
+id|kfree
+c_func
+(paren
+id|tmp_dev
 )paren
 suffix:semicolon
 r_return
@@ -2845,6 +2777,8 @@ c_func
 l_string|&quot;In dfx_open...&bslash;n&quot;
 )paren
 suffix:semicolon
+id|MOD_INC_USE_COUNT
+suffix:semicolon
 multiline_comment|/* Register IRQ - support shared interrupts by passing device ptr */
 r_if
 c_cond
@@ -2871,12 +2805,15 @@ id|dev
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;%s: Requested IRQ %d is busy&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma
 id|dev-&gt;irq
 )paren
+suffix:semicolon
+id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return
 op_minus
@@ -2959,10 +2896,21 @@ id|DFX_K_SUCCESS
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;%s: Adapter open failed!&bslash;n&quot;
 comma
 id|dev-&gt;name
 )paren
+suffix:semicolon
+id|free_irq
+c_func
+(paren
+id|dev-&gt;irq
+comma
+id|dev
+)paren
+suffix:semicolon
+id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return
 op_minus
@@ -3081,6 +3029,8 @@ id|dev-&gt;irq
 comma
 id|dev
 )paren
+suffix:semicolon
+id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return
 l_int|0
@@ -7333,6 +7283,83 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+macro_line|#ifdef MODULE
+DECL|function|init_module
+r_int
+id|init_module
+c_func
+(paren
+r_void
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|dfx_probe
+c_func
+(paren
+)paren
+OL
+l_int|0
+)paren
+(brace
+r_return
+op_minus
+id|ENODEV
+suffix:semicolon
+)brace
+r_return
+l_int|0
+suffix:semicolon
+)brace
+DECL|function|cleanup_module
+r_void
+id|cleanup_module
+c_func
+(paren
+r_void
+)paren
+(brace
+r_while
+c_loop
+(paren
+id|bp_root
+op_ne
+l_int|NULL
+)paren
+(brace
+r_struct
+id|net_device
+op_star
+id|tmp
+op_assign
+id|bp_root
+suffix:semicolon
+id|DFX_board_t
+op_star
+id|priv
+op_assign
+id|tmp-&gt;priv
+suffix:semicolon
+id|bp_root
+op_assign
+id|priv-&gt;next
+suffix:semicolon
+id|kfree
+c_func
+(paren
+id|tmp-&gt;priv
+)paren
+suffix:semicolon
+id|kfree
+c_func
+(paren
+id|tmp
+)paren
+suffix:semicolon
+)brace
+)brace
+macro_line|#endif
 "&f;"
 multiline_comment|/*&n; * Local variables:&n; * kernel-compile-command: &quot;gcc -D__KERNEL__ -I/root/linux/include -Wall -Wstrict-prototypes -O2 -pipe -fomit-frame-pointer -fno-strength-reduce -m486 -malign-loops=2 -malign-jumps=2 -malign-functions=2 -c defxx.c&quot;&n; * End:&n; */
 eof

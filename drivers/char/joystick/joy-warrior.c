@@ -201,51 +201,6 @@ suffix:semicolon
 r_return
 suffix:semicolon
 r_case
-l_int|2
-suffix:colon
-multiline_comment|/* Static status (Send !S to get one) */
-macro_line|#if 0
-id|printk
-c_func
-(paren
-l_string|&quot;joy-warrior: Static status:&quot;
-)paren
-suffix:semicolon
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-l_int|12
-suffix:semicolon
-id|i
-op_increment
-)paren
-id|printk
-c_func
-(paren
-l_string|&quot; %02x&quot;
-comma
-id|info-&gt;data
-(braket
-id|i
-)braket
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;&bslash;n&quot;
-)paren
-suffix:semicolon
-macro_line|#endif
-r_return
-suffix:semicolon
-r_case
 l_int|3
 suffix:colon
 multiline_comment|/* XY-axis info-&gt;data */
@@ -345,51 +300,6 @@ suffix:semicolon
 r_return
 suffix:semicolon
 r_break
-suffix:semicolon
-r_case
-l_int|4
-suffix:colon
-multiline_comment|/* Dynamic status */
-macro_line|#if 0
-id|printk
-c_func
-(paren
-l_string|&quot;joy-warrior: Dynamic status:&quot;
-)paren
-suffix:semicolon
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-l_int|4
-suffix:semicolon
-id|i
-op_increment
-)paren
-id|printk
-c_func
-(paren
-l_string|&quot; %02x&quot;
-comma
-id|info-&gt;data
-(braket
-id|i
-)braket
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;&bslash;n&quot;
-)paren
-suffix:semicolon
-macro_line|#endif
-r_return
 suffix:semicolon
 r_case
 l_int|5
@@ -560,6 +470,16 @@ op_lshift
 l_int|5
 )paren
 suffix:semicolon
+r_return
+suffix:semicolon
+r_case
+l_int|2
+suffix:colon
+multiline_comment|/* Static status (Send !S to get one) */
+r_case
+l_int|4
+suffix:colon
+multiline_comment|/* Dynamic status */
 r_return
 suffix:semicolon
 r_default
@@ -1083,6 +1003,8 @@ op_assign
 op_amp
 id|iniinfo
 suffix:semicolon
+id|MOD_INC_USE_COUNT
+suffix:semicolon
 id|info-&gt;tty
 op_assign
 id|tty
@@ -1171,8 +1093,6 @@ c_func
 (paren
 id|js_war_port-&gt;corr
 )paren
-suffix:semicolon
-id|MOD_INC_USE_COUNT
 suffix:semicolon
 r_return
 l_int|0
@@ -1408,12 +1328,10 @@ id|magic
 suffix:colon
 id|TTY_LDISC_MAGIC
 comma
-macro_line|#if LINUX_VERSION_CODE &gt;= KERNEL_VERSION(2,1,0)
 id|name
 suffix:colon
 l_string|&quot;warrior&quot;
 comma
-macro_line|#endif
 id|open
 suffix:colon
 id|js_war_ldisc_open

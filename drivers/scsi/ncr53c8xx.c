@@ -2,7 +2,7 @@ multiline_comment|/*************************************************************
 multiline_comment|/*&n;**&t;March 6 2000, version 3.2g&n;**&n;**&t;Supported SCSI-II features:&n;**&t;    Synchronous negotiation&n;**&t;    Wide negotiation        (depends on the NCR Chip)&n;**&t;    Enable disconnection&n;**&t;    Tagged command queuing&n;**&t;    Parity checking&n;**&t;    Etc...&n;**&n;**&t;Supported NCR/SYMBIOS chips:&n;**&t;&t;53C810&t;&t;(8 bits, Fast SCSI-2, no rom BIOS) &n;**&t;&t;53C815&t;&t;(8 bits, Fast SCSI-2, on board rom BIOS)&n;**&t;&t;53C820&t;&t;(Wide,   Fast SCSI-2, no rom BIOS)&n;**&t;&t;53C825&t;&t;(Wide,   Fast SCSI-2, on board rom BIOS)&n;**&t;&t;53C860&t;&t;(8 bits, Fast 20,     no rom BIOS)&n;**&t;&t;53C875&t;&t;(Wide,   Fast 20,     on board rom BIOS)&n;**&t;&t;53C895&t;&t;(Wide,   Fast 40,     on board rom BIOS)&n;**&t;&t;53C895A&t;&t;(Wide,   Fast 40,     on board rom BIOS)&n;**&t;&t;53C896&t;&t;(Wide,   Fast 40,     on board rom BIOS)&n;**&t;&t;53C1510D&t;(Wide,   Fast 40,     on board rom BIOS)&n;**&n;**&t;Other features:&n;**&t;&t;Memory mapped IO (linux-1.3.X and above only)&n;**&t;&t;Module&n;**&t;&t;Shared IRQ (since linux-1.3.72)&n;*/
 multiline_comment|/*&n;**&t;Name and version of the driver&n;*/
 DECL|macro|SCSI_NCR_DRIVER_NAME
-mdefine_line|#define SCSI_NCR_DRIVER_NAME&t;&quot;ncr53c8xx - version 3.2g&quot;
+mdefine_line|#define SCSI_NCR_DRIVER_NAME&t;&quot;ncr53c8xx - version 3.2h&quot;
 DECL|macro|SCSI_NCR_DEBUG_FLAGS
 mdefine_line|#define SCSI_NCR_DEBUG_FLAGS&t;(0)
 multiline_comment|/*==========================================================&n;**&n;**      Include files&n;**&n;**==========================================================&n;*/
@@ -1395,9 +1395,9 @@ id|u_char
 id|device_fn
 suffix:semicolon
 multiline_comment|/* PCI BUS device and function&t;*/
-DECL|member|port
+DECL|member|base_io
 id|u_long
-id|port
+id|base_io
 suffix:semicolon
 multiline_comment|/* IO space base address&t;*/
 DECL|member|irq
@@ -9595,7 +9595,7 @@ comma
 l_string|&quot;ncr53c8xx&quot;
 )paren
 suffix:semicolon
-id|np-&gt;port
+id|np-&gt;base_io
 op_assign
 id|device-&gt;slot.io_port
 suffix:semicolon
@@ -10372,7 +10372,7 @@ macro_line|#endif /* !NCR_IOMAPPED */
 r_if
 c_cond
 (paren
-id|np-&gt;port
+id|np-&gt;base_io
 )paren
 (brace
 macro_line|#ifdef DEBUG_NCR53C8XX
@@ -10388,7 +10388,7 @@ c_func
 id|np
 )paren
 comma
-id|np-&gt;port
+id|np-&gt;base_io
 comma
 l_int|128
 )paren
@@ -10397,7 +10397,7 @@ macro_line|#endif
 id|release_region
 c_func
 (paren
-id|np-&gt;port
+id|np-&gt;base_io
 comma
 l_int|128
 )paren
@@ -11362,6 +11362,22 @@ suffix:semicolon
 )brace
 suffix:semicolon
 multiline_comment|/*----------------------------------------------------&n;&t;**&n;&t;**&t;Build the data descriptors&n;&t;**&n;&t;**----------------------------------------------------&n;&t;*/
+id|direction
+op_assign
+id|scsi_data_direction
+c_func
+(paren
+id|cmd
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|direction
+op_ne
+id|SCSI_DATA_NONE
+)paren
+(brace
 id|segments
 op_assign
 id|ncr_scatter
@@ -11393,6 +11409,18 @@ r_return
 id|DID_ERROR
 suffix:semicolon
 )brace
+)brace
+r_else
+(brace
+id|cp-&gt;data_len
+op_assign
+l_int|0
+suffix:semicolon
+id|segments
+op_assign
+l_int|0
+suffix:semicolon
+)brace
 multiline_comment|/*----------------------------------------------------&n;&t;**&n;&t;**&t;Determine xfer direction.&n;&t;**&n;&t;**----------------------------------------------------&n;&t;*/
 r_if
 c_cond
@@ -11403,15 +11431,6 @@ id|cp-&gt;data_len
 id|direction
 op_assign
 id|SCSI_DATA_NONE
-suffix:semicolon
-r_else
-id|direction
-op_assign
-id|scsi_data_direction
-c_func
-(paren
-id|cmd
-)paren
 suffix:semicolon
 multiline_comment|/*&n;&t;**&t;If data direction is UNKNOWN, speculate DATA_READ &n;&t;**&t;but prepare alternate pointers for WRITE in case &n;&t;**&t;of our speculation will be just wrong.&n;&t;**&t;SCRIPTS will swap values if needed.&n;&t;*/
 r_switch
@@ -13121,7 +13140,7 @@ c_func
 id|np
 )paren
 comma
-id|np-&gt;port
+id|np-&gt;base_io
 comma
 l_int|128
 )paren
@@ -13130,7 +13149,7 @@ macro_line|#endif
 id|release_region
 c_func
 (paren
-id|np-&gt;port
+id|np-&gt;base_io
 comma
 l_int|128
 )paren

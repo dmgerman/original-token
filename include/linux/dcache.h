@@ -1,6 +1,8 @@
 macro_line|#ifndef __LINUX_DCACHE_H
 DECL|macro|__LINUX_DCACHE_H
 mdefine_line|#define __LINUX_DCACHE_H
+macro_line|#include &lt;asm/atomic.h&gt;
+macro_line|#include &lt;linux/mount.h&gt;
 macro_line|#ifdef __KERNEL__
 multiline_comment|/*&n; * linux/include/linux/dcache.h&n; *&n; * Dirent cache data structures&n; *&n; * (C) Copyright 1997 Thomas Schoebel-Theuer,&n; * with heavy changes by Linus Torvalds&n; */
 DECL|macro|IS_ROOT
@@ -405,7 +407,7 @@ DECL|macro|DCACHE_NFSFS_RENAMED
 mdefine_line|#define DCACHE_NFSFS_RENAMED  0x0002    /* this dentry has been &quot;silly&n;&t;&t;&t;&t;&t; * renamed&quot; and has to be&n;&t;&t;&t;&t;&t; * deleted on the last dput()&n;&t;&t;&t;&t;&t; */
 DECL|macro|DCACHE_NFSD_DISCONNECTED
 mdefine_line|#define&t;DCACHE_NFSD_DISCONNECTED 0x0004&t;/* This dentry is not currently connected to the&n;&t;&t;&t;&t;&t; * dcache tree. Its parent will either be itself,&n;&t;&t;&t;&t;&t; * or will have this flag as well.&n;&t;&t;&t;&t;&t; * If this dentry points to a directory, then&n;&t;&t;&t;&t;&t; * s_nfsd_free_path semaphore will be down&n;&t;&t;&t;&t;&t; */
-multiline_comment|/*&n; * d_drop() unhashes the entry from the parent&n; * dentry hashes, so that it won&squot;t be found through&n; * a VFS lookup any more. Note that this is different&n; * from deleting the dentry - d_delete will try to&n; * mark the dentry negative if possible, giving a&n; * successful _negative_ lookup, while d_drop will&n; * just make the cache lookup fail.&n; *&n; * d_drop() is used mainly for stuff that wants&n; * to invalidate a dentry for some reason (NFS&n; * timeouts or autofs deletes).&n; */
+multiline_comment|/**&n; * d_drop - drop a dentry&n; * @dentry: dentry to drop&n; *&n; * d_drop() unhashes the entry from the parent&n; * dentry hashes, so that it won&squot;t be found through&n; * a VFS lookup any more. Note that this is different&n; * from deleting the dentry - d_delete will try to&n; * mark the dentry negative if possible, giving a&n; * successful _negative_ lookup, while d_drop will&n; * just make the cache lookup fail.&n; *&n; * d_drop() is used mainly for stuff that wants&n; * to invalidate a dentry for some reason (NFS&n; * timeouts or autofs deletes).&n; */
 DECL|function|d_drop
 r_static
 id|__inline__
@@ -624,7 +626,7 @@ id|dentry
 op_star
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * This adds the entry to the hash queues and initializes &quot;d_inode&quot;.&n; * The entry was actually filled in earlier during &quot;d_alloc()&quot;&n; */
+multiline_comment|/**&n; * d_add - add dentry to hash queues&n; * @entry: dentry to add&n; * @inode: The inode to attach to this dentry&n; *&n; * This adds the entry to the hash queues and initializes &quot;d_inode&quot;.&n; * The entry was actually filled in earlier during &quot;d_alloc()&quot;&n; */
 DECL|function|d_add
 r_static
 id|__inline__
@@ -711,15 +713,26 @@ r_int
 r_int
 )paren
 suffix:semicolon
-multiline_comment|/* write full pathname into buffer and return start of pathname */
 r_extern
 r_char
 op_star
-id|d_path
+id|__d_path
 c_func
 (paren
 r_struct
 id|dentry
+op_star
+comma
+r_struct
+id|vfsmount
+op_star
+comma
+r_struct
+id|dentry
+op_star
+comma
+r_struct
+id|vfsmount
 op_star
 comma
 r_char
@@ -728,7 +741,11 @@ comma
 r_int
 )paren
 suffix:semicolon
+multiline_comment|/* write full pathname into buffer and return start of pathname */
+DECL|macro|d_path
+mdefine_line|#define d_path(dentry, vfsmnt, buffer, buflen) &bslash;&n;&t;__d_path(dentry, vfsmnt, current-&gt;fs-&gt;root, current-&gt;fs-&gt;rootmnt, &bslash;&n;&t;buffer, buflen)
 multiline_comment|/* Allocation counts.. */
+multiline_comment|/**&n; *&t;dget&t;-&t;get a reference to a dentry&n; *&t;@dentry: dentry to get a reference too&n; *&n; *&t;Given a dentry or NULL pointer increment the reference count&n; *&t;if appropriate and return the dentry. A dentry will not be &n; *&t;destroyed when it has references.&n; */
 DECL|function|dget
 r_static
 id|__inline__
@@ -756,6 +773,7 @@ r_return
 id|dentry
 suffix:semicolon
 )brace
+multiline_comment|/**&n; *&t;d_unhashed -&t;is dentry hashed&n; *&t;@dentry: entry to check&n; *&n; *&t;Returns true if the dentry passed is not currently hashed&n; */
 DECL|function|d_unhashed
 r_static
 id|__inline__
@@ -788,6 +806,26 @@ id|dentry
 op_star
 )paren
 suffix:semicolon
+multiline_comment|/* MOUNT_REWRITE: replace with the check for d_vfsmnt */
+DECL|function|d_mountpoint
+r_static
+id|__inline__
+r_int
+id|d_mountpoint
+c_func
+(paren
+r_struct
+id|dentry
+op_star
+id|dentry
+)paren
+(brace
+r_return
+id|dentry
+op_ne
+id|dentry-&gt;d_mounts
+suffix:semicolon
+)brace
 macro_line|#endif /* __KERNEL__ */
 macro_line|#endif&t;/* __LINUX_DCACHE_H */
 eof

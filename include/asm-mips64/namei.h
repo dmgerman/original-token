@@ -3,7 +3,7 @@ macro_line|#ifndef _ASM_NAMEI_H
 DECL|macro|_ASM_NAMEI_H
 mdefine_line|#define _ASM_NAMEI_H
 multiline_comment|/*&n; * This dummy routine maybe changed to something useful&n; * for /usr/gnemul/ emulation stuff.&n; * Look at asm-sparc/namei.h for details.&n; */
-DECL|macro|__prefix_lookup_dentry
-mdefine_line|#define __prefix_lookup_dentry(name, lookup_flags) &bslash;&n;&t;do {} while (0)
+DECL|macro|__emul_prefix
+mdefine_line|#define __emul_prefix() NULL
 macro_line|#endif /* _ASM_NAMEI_H */
 eof

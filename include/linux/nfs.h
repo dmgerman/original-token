@@ -3,6 +3,8 @@ macro_line|#ifndef _LINUX_NFS_H
 DECL|macro|_LINUX_NFS_H
 mdefine_line|#define _LINUX_NFS_H
 macro_line|#include &lt;linux/sunrpc/msg_prot.h&gt;
+DECL|macro|NFS_PROGRAM
+mdefine_line|#define NFS_PROGRAM&t;100003
 DECL|macro|NFS_PORT
 mdefine_line|#define NFS_PORT&t;2049
 DECL|macro|NFS_MAXDATA
@@ -35,6 +37,10 @@ DECL|macro|NFSMODE_SOCK
 mdefine_line|#define NFSMODE_SOCK&t;0140000
 DECL|macro|NFSMODE_FIFO
 mdefine_line|#define NFSMODE_FIFO&t;0010000
+DECL|macro|NFS_MNT_PROGRAM
+mdefine_line|#define NFS_MNT_PROGRAM&t;100005
+DECL|macro|NFS_MNT_PORT
+mdefine_line|#define NFS_MNT_PORT&t;627
 multiline_comment|/*&n; * NFS stats. The good thing with these values is that NFSv3 errors are&n; * a superset of NFSv2 errors (with the exception of NFSERR_WFLUSH which&n; * no-one uses anyway), so we can happily mix code as long as we make sure&n; * no NFSv3 errors are returned to NFSv2 clients.&n; * Error codes that have a `--&squot; in the v2 column are not part of the&n; * standard, but seem to be widely used nevertheless.&n; */
 DECL|enum|nfs_stat
 r_enum
@@ -284,86 +290,32 @@ op_assign
 l_int|8
 )brace
 suffix:semicolon
+macro_line|#if defined(__KERNEL__)
+multiline_comment|/*&n; * This is the kernel NFS client file handle representation&n; */
+DECL|macro|NFS_MAXFHSIZE
+mdefine_line|#define NFS_MAXFHSIZE&t;&t;64
 DECL|struct|nfs_fh
 r_struct
 id|nfs_fh
 (brace
+DECL|member|size
+r_int
+r_int
+id|size
+suffix:semicolon
 DECL|member|data
+r_int
 r_char
 id|data
 (braket
-id|NFS_FHSIZE
+id|NFS_MAXFHSIZE
 )braket
 suffix:semicolon
 )brace
 suffix:semicolon
-DECL|macro|NFS_PROGRAM
-mdefine_line|#define NFS_PROGRAM&t;&t;100003
-DECL|macro|NFS_VERSION
-mdefine_line|#define NFS_VERSION&t;&t;2
-DECL|macro|NFSPROC_NULL
-mdefine_line|#define NFSPROC_NULL&t;&t;0
-DECL|macro|NFSPROC_GETATTR
-mdefine_line|#define NFSPROC_GETATTR&t;&t;1
-DECL|macro|NFSPROC_SETATTR
-mdefine_line|#define NFSPROC_SETATTR&t;&t;2
-DECL|macro|NFSPROC_ROOT
-mdefine_line|#define NFSPROC_ROOT&t;&t;3
-DECL|macro|NFSPROC_LOOKUP
-mdefine_line|#define NFSPROC_LOOKUP&t;&t;4
-DECL|macro|NFSPROC_READLINK
-mdefine_line|#define NFSPROC_READLINK&t;5
-DECL|macro|NFSPROC_READ
-mdefine_line|#define NFSPROC_READ&t;&t;6
-DECL|macro|NFSPROC_WRITECACHE
-mdefine_line|#define NFSPROC_WRITECACHE&t;7
-DECL|macro|NFSPROC_WRITE
-mdefine_line|#define NFSPROC_WRITE&t;&t;8
-DECL|macro|NFSPROC_CREATE
-mdefine_line|#define NFSPROC_CREATE&t;&t;9
-DECL|macro|NFSPROC_REMOVE
-mdefine_line|#define NFSPROC_REMOVE&t;&t;10
-DECL|macro|NFSPROC_RENAME
-mdefine_line|#define NFSPROC_RENAME&t;&t;11
-DECL|macro|NFSPROC_LINK
-mdefine_line|#define NFSPROC_LINK&t;&t;12
-DECL|macro|NFSPROC_SYMLINK
-mdefine_line|#define NFSPROC_SYMLINK&t;&t;13
-DECL|macro|NFSPROC_MKDIR
-mdefine_line|#define NFSPROC_MKDIR&t;&t;14
-DECL|macro|NFSPROC_RMDIR
-mdefine_line|#define NFSPROC_RMDIR&t;&t;15
-DECL|macro|NFSPROC_READDIR
-mdefine_line|#define NFSPROC_READDIR&t;&t;16
-DECL|macro|NFSPROC_STATFS
-mdefine_line|#define NFSPROC_STATFS&t;&t;17
-multiline_comment|/* Mount support for NFSroot */
-macro_line|#ifdef __KERNEL__
-DECL|macro|NFS_MNT_PROGRAM
-mdefine_line|#define NFS_MNT_PROGRAM&t;&t;100005
-DECL|macro|NFS_MNT_VERSION
-mdefine_line|#define NFS_MNT_VERSION&t;&t;1
-DECL|macro|NFS_MNT_PORT
-mdefine_line|#define NFS_MNT_PORT&t;&t;627
-DECL|macro|NFS_MNTPROC_MNT
-mdefine_line|#define NFS_MNTPROC_MNT&t;&t;1
-DECL|macro|NFS_MNTPROC_UMNT
-mdefine_line|#define NFS_MNTPROC_UMNT&t;3
 multiline_comment|/*&n; * This is really a general kernel constant, but since nothing like&n; * this is defined in the kernel headers, I have to do it here.&n; */
 DECL|macro|NFS_OFFSET_MAX
 mdefine_line|#define NFS_OFFSET_MAX&t;&t;((__s64)((~(__u64)0) &gt;&gt; 1))
-macro_line|#endif /* __KERNEL__ */
-macro_line|#if defined(__KERNEL__)
-r_extern
-r_struct
-id|rpc_program
-id|nfs_program
-suffix:semicolon
-r_extern
-r_struct
-id|rpc_stat
-id|nfs_rpcstat
-suffix:semicolon
 DECL|enum|nfs3_stable_how
 r_enum
 id|nfs3_stable_how
@@ -385,5 +337,5 @@ l_int|2
 )brace
 suffix:semicolon
 macro_line|#endif /* __KERNEL__ */
-macro_line|#endif
+macro_line|#endif /* _LINUX_NFS_H */
 eof
