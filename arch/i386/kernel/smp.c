@@ -11,11 +11,13 @@ macro_line|#include &lt;asm/i82489.h&gt;
 macro_line|#include &lt;linux/smp.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/smp.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
+macro_line|#include &quot;irq.h&quot;
 r_extern
 r_int
 r_int
@@ -453,7 +455,10 @@ DECL|macro|SMP_PRINTK
 mdefine_line|#define SMP_PRINTK(x)
 macro_line|#endif
 multiline_comment|/*&n; *&t;Setup routine for controlling SMP activation&n; *&n; *&t;Command-line option of &quot;nosmp&quot; or &quot;maxcpus=0&quot; will disable SMP&n; *      activation entirely (the MPS table probe still happens, though).&n; *&n; *&t;Command-line option of &quot;maxcpus=&lt;NUM&gt;&quot;, where &lt;NUM&gt; is an integer&n; *&t;greater than 0, limits the maximum number of CPUs activated in&n; *&t;SMP mode to &lt;NUM&gt;.&n; */
-DECL|function|smp_setup
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|smp_setup
 c_func
@@ -465,6 +470,7 @@ comma
 r_int
 op_star
 id|ints
+)paren
 )paren
 (brace
 r_if
@@ -685,7 +691,10 @@ id|n
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;Read the MPC&n; */
-DECL|function|smp_read_mpc
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_int
 id|smp_read_mpc
@@ -695,6 +704,7 @@ r_struct
 id|mp_config_table
 op_star
 id|mpc
+)paren
 )paren
 (brace
 r_char
@@ -1361,7 +1371,10 @@ id|num_processors
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;Scan the memory blocks for an SMP configuration block.&n; */
-DECL|function|smp_scan_config
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|smp_scan_config
 c_func
@@ -1373,6 +1386,7 @@ comma
 r_int
 r_int
 id|length
+)paren
 )paren
 (brace
 r_int
@@ -1798,7 +1812,10 @@ id|trampoline_end
 )braket
 suffix:semicolon
 multiline_comment|/*&n; *&t;Currently trivial. Write the real-&gt;protected mode&n; *&t;bootstrap into the page concerned. The caller&n; *&t;has made sure it&squot;s suitably aligned.&n; */
-DECL|function|install_trampoline
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_void
 id|install_trampoline
@@ -1808,6 +1825,7 @@ r_int
 r_char
 op_star
 id|mp
+)paren
 )paren
 (brace
 id|memcpy
@@ -1824,7 +1842,10 @@ id|trampoline_data
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;We are called very early to get the low memory for the trampoline/kernel stacks&n; *&t;This has to be done by mm/init.c to parcel us out nice low memory. We allocate&n; *&t;the kernel stacks at 4K, 8K, 12K... currently (0-03FF is preserved for SMM and&n; *&t;other things).&n; */
-DECL|function|smp_alloc_memory
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 r_int
 id|smp_alloc_memory
@@ -1833,6 +1854,7 @@ c_func
 r_int
 r_int
 id|mem_base
+)paren
 )paren
 (brace
 r_int
@@ -1902,7 +1924,10 @@ id|mem_base
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;Hand out stacks one at a time.&n; */
-DECL|function|get_kernel_stack
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_void
 op_star
@@ -1910,6 +1935,7 @@ id|get_kernel_stack
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_void
@@ -1939,13 +1965,17 @@ id|stack
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;The bootstrap kernel entry code has set these up. Save them for&n; *&t;a given CPU&n; */
-DECL|function|smp_store_cpu_info
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|smp_store_cpu_info
 c_func
 (paren
 r_int
 id|id
+)paren
 )paren
 (brace
 r_struct
@@ -2044,12 +2074,16 @@ id|x86_vendor_id
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;Architecture specific routine called by the kernel just before init is&n; *&t;fired off. This allows the BP to have everything in order [we hope].&n; *&t;At the end of this all the AP&squot;s will hit the system scheduling and off&n; *&t;we go. Each AP will load the system gdt&squot;s and jump through the kernel&n; *&t;init into idle(). At this point the scheduler will one day take over &n; * &t;and give them jobs to do. smp_callin is a standard routine&n; *&t;we use to track CPU&squot;s as they power up.&n; */
-DECL|function|smp_commence
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|smp_commence
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 multiline_comment|/*&n;&t; *&t;Lets the callin&squot;s below out of their loop.&n;&t; */
@@ -2066,12 +2100,16 @@ op_assign
 l_int|1
 suffix:semicolon
 )brace
-DECL|function|smp_callin
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|smp_callin
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_extern
@@ -2299,12 +2337,16 @@ c_func
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;Cycle through the processors sending APIC IPI&squot;s to boot each.&n; */
-DECL|function|smp_boot_cpus
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|smp_boot_cpus
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_int
@@ -3727,6 +3769,10 @@ id|wait
 (brace
 r_int
 r_int
+id|flags
+suffix:semicolon
+r_int
+r_int
 id|cfg
 suffix:semicolon
 r_int
@@ -3792,6 +3838,7 @@ suffix:semicolon
 r_case
 id|MSG_INVALIDATE_TLB
 suffix:colon
+multiline_comment|/* make this a NMI some day */
 id|irq
 op_assign
 l_int|0x31
@@ -3803,7 +3850,7 @@ id|MSG_STOP_CPU
 suffix:colon
 id|irq
 op_assign
-l_int|0x32
+l_int|0x40
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -3886,17 +3933,24 @@ l_int|1000
 id|printk
 c_func
 (paren
-l_string|&quot;CPU #%d: previous IPI still not cleared after 10mS&quot;
+l_string|&quot;CPU #%d: previous IPI still not cleared after 10mS&bslash;n&quot;
 comma
 id|p
 )paren
 suffix:semicolon
-id|ack_APIC_irq
+)brace
+multiline_comment|/*&n;&t; *&t;Program the APIC to deliver the IPI&n;&t; */
+id|__save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|__cli
+c_func
 (paren
 )paren
 suffix:semicolon
-)brace
-multiline_comment|/*&n;&t; *&t;Program the APIC to deliver the IPI&n;&t; */
 id|cfg
 op_assign
 id|apic_read
@@ -4026,6 +4080,12 @@ c_func
 id|APIC_ICR
 comma
 id|cfg
+)paren
+suffix:semicolon
+id|__restore_flags
+c_func
+(paren
+id|flags
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Spin waiting for completion&n;&t; */
@@ -4239,108 +4299,9 @@ suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Completed.&n;&t; */
 multiline_comment|/*&t;printk(&quot;SMID&bslash;n&quot;);*/
 )brace
-multiline_comment|/*&t;&n; *&t;Reschedule call back&n; */
-DECL|function|smp_reschedule_interrupt
-id|asmlinkage
-r_void
-id|smp_reschedule_interrupt
-c_func
-(paren
-r_void
-)paren
-(brace
-id|need_resched
-op_assign
-l_int|1
-suffix:semicolon
-id|ack_APIC_irq
-c_func
-(paren
-)paren
-suffix:semicolon
-)brace
-multiline_comment|/*&n; * Invalidate call-back&n; */
-DECL|function|smp_invalidate_interrupt
-id|asmlinkage
-r_void
-id|smp_invalidate_interrupt
-c_func
-(paren
-r_void
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|clear_bit
-c_func
-(paren
-id|smp_processor_id
-c_func
-(paren
-)paren
-comma
-op_amp
-id|smp_invalidate_needed
-)paren
-)paren
-id|local_flush_tlb
-c_func
-(paren
-)paren
-suffix:semicolon
-id|ack_APIC_irq
-(paren
-)paren
-suffix:semicolon
-)brace
-multiline_comment|/*&n; *&t;CPU halt call-back&n; */
-DECL|function|smp_stop_cpu_interrupt
-id|asmlinkage
-r_void
-id|smp_stop_cpu_interrupt
-c_func
-(paren
-r_void
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|cpu_data
-(braket
-id|smp_processor_id
-c_func
-(paren
-)paren
-)braket
-dot
-id|hlt_works_ok
-)paren
-r_for
-c_loop
-(paren
-suffix:semicolon
-suffix:semicolon
-)paren
-(brace
-id|__asm__
-c_func
-(paren
-l_string|&quot;hlt&quot;
-)paren
-suffix:semicolon
-)brace
-r_for
-c_loop
-(paren
-suffix:semicolon
-suffix:semicolon
-)paren
-suffix:semicolon
-)brace
 multiline_comment|/*&n; * Platform specific profiling function.&n; * it builds a &squot;prof_shift&squot; resolution EIP distribution histogram&n; *&n; * it&squot;s SMP safe.&n; */
 DECL|function|x86_do_profile
+r_static
 r_inline
 r_void
 id|x86_do_profile
@@ -4512,7 +4473,7 @@ id|p
 op_assign
 id|current
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; * We mess around with thread statistics, but&n;&t;&t; * since we are the CPU running it, we dont&n;&t;&t; * have to lock it. We assume that switch_to()&n;&t;&t; * protects &squot;current&squot; against local irqs via __cli.&n;&t;&t; *&n;&t;&t; * kernel statistics counters are updated via atomic&n;&t;&t; * operations.&n;&t;&t; *&n;&t;&t; * update_one_process() might send signals, thus&n;&t;&t; * we have to get the irq lock for that one.&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; * We mess around with thread statistics, but&n;&t;&t; * since we are the CPU running it, we dont&n;&t;&t; * have to lock it. We assume that switch_to()&n;&t;&t; * protects &squot;current&squot; against local irqs via __cli.&n;&t;&t; *&n;&t;&t; * kernel statistics counters are updated via atomic&n;&t;&t; * operations.&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -4537,37 +4498,16 @@ c_cond
 id|p-&gt;pid
 )paren
 (brace
-r_int
-r_int
-id|flags
-suffix:semicolon
-id|save_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
 id|update_one_process
 c_func
 (paren
-id|current
+id|p
 comma
 l_int|1
 comma
 id|user
 comma
 id|system
-)paren
-suffix:semicolon
-id|restore_flags
-c_func
-(paren
-id|flags
 )paren
 suffix:semicolon
 id|p-&gt;counter
@@ -4695,14 +4635,165 @@ op_star
 id|regs
 )paren
 (brace
+r_int
+id|cpu
+op_assign
+id|smp_processor_id
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t; * NOTE! We&squot;d better ACK the irq immediately,&n;&t; * because timer handling can be slow, and we&n;&t; * want to be able to accept NMI tlb invalidates&n;&t; * during this time.&n;&t; */
+id|ack_APIC_irq
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t; * After doing the above, we need to make like&n;&t; * a normal interrupt - otherwise timer interrupts&n;&t; * ignore the global interrupt lock, which is the&n;&t; * WrongThing (tm) to do.&n;&t; */
+id|irq_enter
+c_func
+(paren
+id|cpu
+comma
+l_int|0
+)paren
+suffix:semicolon
 id|smp_local_timer_interrupt
 c_func
 (paren
 id|regs
 )paren
 suffix:semicolon
+id|irq_exit
+c_func
+(paren
+id|cpu
+comma
+l_int|0
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/*&t;&n; *&t;Reschedule call back&n; */
+DECL|function|smp_reschedule_interrupt
+id|asmlinkage
+r_void
+id|smp_reschedule_interrupt
+c_func
+(paren
+r_void
+)paren
+(brace
+r_int
+id|cpu
+op_assign
+id|smp_processor_id
+c_func
+(paren
+)paren
+suffix:semicolon
+id|ack_APIC_irq
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t; * This looks silly, but we actually do need to wait&n;&t; * for the global interrupt lock.&n;&t; */
+id|irq_enter
+c_func
+(paren
+id|cpu
+comma
+l_int|0
+)paren
+suffix:semicolon
+id|need_resched
+op_assign
+l_int|1
+suffix:semicolon
+id|irq_exit
+c_func
+(paren
+id|cpu
+comma
+l_int|0
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/*&n; * Invalidate call-back&n; */
+DECL|function|smp_invalidate_interrupt
+id|asmlinkage
+r_void
+id|smp_invalidate_interrupt
+c_func
+(paren
+r_void
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|clear_bit
+c_func
+(paren
+id|smp_processor_id
+c_func
+(paren
+)paren
+comma
+op_amp
+id|smp_invalidate_needed
+)paren
+)paren
+id|local_flush_tlb
+c_func
+(paren
+)paren
+suffix:semicolon
 id|ack_APIC_irq
 (paren
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/*&n; *&t;CPU halt call-back&n; */
+DECL|function|smp_stop_cpu_interrupt
+id|asmlinkage
+r_void
+id|smp_stop_cpu_interrupt
+c_func
+(paren
+r_void
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|cpu_data
+(braket
+id|smp_processor_id
+c_func
+(paren
+)paren
+)braket
+dot
+id|hlt_works_ok
+)paren
+r_for
+c_loop
+(paren
+suffix:semicolon
+suffix:semicolon
+)paren
+(brace
+id|__asm__
+c_func
+(paren
+l_string|&quot;hlt&quot;
+)paren
+suffix:semicolon
+)brace
+r_for
+c_loop
+(paren
+suffix:semicolon
+suffix:semicolon
 )paren
 suffix:semicolon
 )brace
@@ -4711,6 +4802,7 @@ DECL|macro|RTDSC
 mdefine_line|#define RTDSC(x)&t;__asm__ __volatile__ (  &quot;.byte 0x0f,0x31&quot; &bslash;&n;&t;&t;&t;&t;:&quot;=a&quot; (((unsigned long*)&amp;x)[0]),  &bslash;&n;&t;&t;&t;&t; &quot;=d&quot; (((unsigned long*)&amp;x)[1]))
 multiline_comment|/*&n; * The timer chip is already set up at HZ interrupts per second here,&n; * but we do not accept timer interrupts yet. We only allow the BP&n; * to calibrate.&n; */
 DECL|function|get_8254_timer_count
+r_static
 r_int
 r_int
 id|get_8254_timer_count
@@ -4772,7 +4864,7 @@ r_int
 r_int
 id|tmp_value
 suffix:semicolon
-multiline_comment|/*&n;&t; * Unfortunately the local APIC timer cannot be set up into NMI&n;&t; * mode. With the IO APIC we can re-route the external timer&n;&t; * interrupt and broadcast it as an NMI to all CPUs, so no pain.&n;&t; *&n;&t; * NOTE: this irq vector 19 and the gate in BUILD_SMP_TIMER_INTERRUPT&n;&t; * should be the same ;)&n;&t; */
+multiline_comment|/*&n;&t; * Unfortunately the local APIC timer cannot be set up into NMI&n;&t; * mode. With the IO APIC we can re-route the external timer&n;&t; * interrupt and broadcast it as an NMI to all CPUs, so no pain.&n;&t; *&n;&t; * NOTE: this trap vector (0x41) and the gate in BUILD_SMP_TIMER_INTERRUPT&n;&t; * should be the same ;)&n;&t; */
 id|tmp_value
 op_assign
 id|apic_read
@@ -4785,11 +4877,7 @@ id|lvtt1_value
 op_assign
 id|APIC_LVT_TIMER_PERIODIC
 op_or
-(paren
-l_int|0x20
-op_plus
-l_int|19
-)paren
+l_int|0x41
 suffix:semicolon
 id|apic_write
 c_func

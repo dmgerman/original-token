@@ -12,6 +12,7 @@ macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/smp.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
@@ -1572,12 +1573,16 @@ c_func
 suffix:semicolon
 )brace
 macro_line|#endif /* CONFIG_MATH_EMULATION */
-DECL|function|trap_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|trap_init
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_int

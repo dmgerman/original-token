@@ -33,7 +33,7 @@ mdefine_line|#define ATOMIC_INIT&t;{ 0 }
 DECL|macro|atomic_read
 mdefine_line|#define atomic_read(v)&t;&t;((v)-&gt;counter)
 DECL|macro|atomic_set
-mdefine_line|#define atomic_set(v)&t;&t;(((v)-&gt;counter) = i)
+mdefine_line|#define atomic_set(v,i)&t;&t;((v)-&gt;counter = (i))
 multiline_comment|/*&n; * Make sure gcc doesn&squot;t try to be clever and move things around&n; * on us. We need to use _exactly_ the address the user gave us,&n; * not some alias that contains the same information.&n; */
 DECL|macro|__atomic_fool_gcc
 mdefine_line|#define __atomic_fool_gcc(x) (*(struct { int a[100]; } *)x)

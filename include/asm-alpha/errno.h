@@ -246,5 +246,9 @@ DECL|macro|ERESTART
 mdefine_line|#define&t;ERESTART&t;127&t;/* Interrupted system call should be restarted */
 DECL|macro|ESTRPIPE
 mdefine_line|#define&t;ESTRPIPE&t;128&t;/* Streams pipe error */
+DECL|macro|ENOMEDIUM
+mdefine_line|#define ENOMEDIUM&t;129&t;/* No medium found */
+DECL|macro|EMEDIUMTYPE
+mdefine_line|#define EMEDIUMTYPE&t;130&t;/* Wrong medium type */
 macro_line|#endif
 eof

@@ -17,6 +17,14 @@ macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/poll.h&gt;
+multiline_comment|/* Adjust starting epoch if ARC console time is being used */
+macro_line|#ifdef CONFIG_RTC_ARC
+DECL|macro|ARCFUDGE
+mdefine_line|#define ARCFUDGE 20 
+macro_line|#else
+DECL|macro|ARCFUDGE
+mdefine_line|#define ARCFUDGE 0
+macro_line|#endif
 multiline_comment|/*&n; *&t;We sponge a minor off of the misc major. No need slurping&n; *&t;up another valuable major dev number for this. If you add&n; *&t;an ioctl, make sure you don&squot;t conflict with SPARC&squot;s RTC&n; *&t;ioctls.&n; */
 DECL|variable|rtc_wait
 r_static
@@ -1234,6 +1242,8 @@ op_assign
 id|rtc_tm.tm_year
 op_plus
 l_int|1900
+op_plus
+id|ARCFUDGE
 suffix:semicolon
 id|mon
 op_assign
@@ -2818,6 +2828,11 @@ l_int|69
 id|rtc_tm-&gt;tm_year
 op_add_assign
 l_int|100
+suffix:semicolon
+multiline_comment|/* if ARCFUDGE == 0, the optimizer should do away with this */
+id|rtc_tm-&gt;tm_year
+op_sub_assign
+id|ARCFUDGE
 suffix:semicolon
 id|rtc_tm-&gt;tm_mon
 op_decrement

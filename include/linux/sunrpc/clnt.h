@@ -508,7 +508,6 @@ id|incr
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Helper function for NFSroot support&n; */
-macro_line|#ifdef CONFIG_ROOT_NFS
 r_int
 id|rpc_getport_external
 c_func
@@ -524,7 +523,6 @@ comma
 r_int
 )paren
 suffix:semicolon
-macro_line|#endif
 macro_line|#endif /* __KERNEL__ */
 macro_line|#endif /* _LINUX_SUNRPC_CLNT_H */
 eof

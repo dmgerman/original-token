@@ -4,6 +4,7 @@ macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/bios32.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -486,8 +487,11 @@ comma
 id|KERNEL_CS
 )brace
 suffix:semicolon
-DECL|function|check_pcibios
-r_extern
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
+r_static
 r_int
 r_int
 id|check_pcibios
@@ -500,6 +504,7 @@ comma
 r_int
 r_int
 id|memory_end
+)paren
 )paren
 (brace
 r_int
@@ -2958,7 +2963,10 @@ comma
 id|pci_conf2_write_config_dword
 )brace
 suffix:semicolon
-DECL|function|check_direct_pci
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_struct
 id|pci_access
@@ -2967,6 +2975,7 @@ id|check_direct_pci
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_int
@@ -3608,7 +3617,10 @@ id|buf
 suffix:semicolon
 )brace
 )brace
-DECL|function|pcibios_fixup
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 r_int
 id|pcibios_fixup
@@ -3622,13 +3634,17 @@ r_int
 r_int
 id|mem_end
 )paren
+)paren
 (brace
 r_return
 id|mem_start
 suffix:semicolon
 )brace
 macro_line|#endif
-DECL|function|pcibios_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 r_int
 id|pcibios_init
@@ -3641,6 +3657,7 @@ comma
 r_int
 r_int
 id|memory_end
+)paren
 )paren
 (brace
 macro_line|#ifdef CONFIG_PCI

@@ -14,6 +14,7 @@ macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#ifdef CONFIG_APM
 macro_line|#include &lt;linux/apm_bios.h&gt;
 macro_line|#endif
@@ -288,7 +289,10 @@ id|saved_command_line
 id|COMMAND_LINE_SIZE
 )braket
 suffix:semicolon
-DECL|function|setup_arch
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|setup_arch
 c_func
@@ -307,6 +311,7 @@ r_int
 r_int
 op_star
 id|memory_end_p
+)paren
 )paren
 (brace
 r_int

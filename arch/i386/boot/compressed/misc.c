@@ -167,16 +167,8 @@ suffix:semicolon
 multiline_comment|/*&n; * This is set up by the setup-routine at boot-time&n; */
 DECL|macro|EXT_MEM_K
 mdefine_line|#define EXT_MEM_K (*(unsigned short *)0x90002)
-DECL|macro|DRIVE_INFO
-mdefine_line|#define DRIVE_INFO (*(struct drive_info *)0x90080)
 DECL|macro|SCREEN_INFO
 mdefine_line|#define SCREEN_INFO (*(struct screen_info *)0x90000)
-DECL|macro|RAMDISK_SIZE
-mdefine_line|#define RAMDISK_SIZE (*(unsigned short *)0x901F8)
-DECL|macro|ORIG_ROOT_DEV
-mdefine_line|#define ORIG_ROOT_DEV (*(unsigned short *)0x901FC)
-DECL|macro|AUX_DEVICE_INFO
-mdefine_line|#define AUX_DEVICE_INFO (*(unsigned char *)0x901FF)
 r_extern
 r_char
 id|input_data

@@ -20,6 +20,9 @@ macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/mman.h&gt;
 macro_line|#include &lt;linux/elfcore.h&gt;
 macro_line|#include &lt;linux/reboot.h&gt;
+macro_line|#ifdef CONFIG_RTC
+macro_line|#include &lt;linux/mc146818rtc.h&gt;
+macro_line|#endif
 macro_line|#include &lt;asm/reg.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -147,6 +150,70 @@ op_star
 id|__unused
 )paren
 (brace
+macro_line|#ifdef CONFIG_RTC  /* reset rtc to defaults */
+r_int
+r_char
+id|control
+suffix:semicolon
+r_int
+r_int
+id|flags
+suffix:semicolon
+multiline_comment|/* i&squot;m not sure if i really need to disable interrupts here */
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/* reset periodic interrupt frequency */
+id|CMOS_WRITE
+c_func
+(paren
+l_int|0x26
+comma
+id|RTC_FREQ_SELECT
+)paren
+suffix:semicolon
+multiline_comment|/* turn on periodic interrupts */
+id|control
+op_assign
+id|CMOS_READ
+c_func
+(paren
+id|RTC_CONTROL
+)paren
+suffix:semicolon
+id|control
+op_or_assign
+id|RTC_PIE
+suffix:semicolon
+id|CMOS_WRITE
+c_func
+(paren
+id|control
+comma
+id|RTC_CONTROL
+)paren
+suffix:semicolon
+id|CMOS_READ
+c_func
+(paren
+id|RTC_INTR_FLAGS
+)paren
+suffix:semicolon
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#if defined(CONFIG_ALPHA_SRM) &amp;&amp; defined(CONFIG_ALPHA_ALCOR)
 multiline_comment|/* who said DEC engineer&squot;s have no sense of humor? ;-)) */
 op_star

@@ -1,6 +1,5 @@
 multiline_comment|/*&n; *  linux/kernel/sched.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *&n; *  1996-04-21&t;Modified by Ulrich Windl to make NTP work&n; *  1996-12-23  Modified by Dave Grothe to fix bugs in semaphores and&n; *              make semaphores SMP safe&n; *  1997-01-28  Modified by Finn Arne Gangstad to make timers scale better.&n; */
 multiline_comment|/*&n; * &squot;sched.c&squot; is the main kernel file. It contains scheduling primitives&n; * (sleep_on, wakeup, schedule etc) as well as a number of simple system&n; * call functions (type getpid()), which just extract a field from&n; * current-task&n; */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
@@ -702,7 +701,13 @@ op_assign
 id|p
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * The scheduler lock is protecting against multiple entry&n; * into the scheduling code, and doesn&squot;t need to worry&n; * about interrupts (because interrupts cannot call the&n; * scheduler).&n; *&n; * The run-queue lock locks the parts that actually access&n; * and change the run-queues, and have to be interrupt-safe.&n; */
+multiline_comment|/*&n; * The tasklist_lock protects the linked list of processes&n; * and doesn&squot;t need to be interrupt-safe as interrupts never&n; * use the task-list.&n; *&n; * The scheduler lock is protecting against multiple entry&n; * into the scheduling code, and doesn&squot;t need to worry&n; * about interrupts (because interrupts cannot call the&n; * scheduler).&n; *&n; * The run-queue lock locks the parts that actually access&n; * and change the run-queues, and have to be interrupt-safe.&n; */
+DECL|variable|tasklist_lock
+id|spinlock_t
+id|tasklist_lock
+op_assign
+id|SPIN_LOCK_UNLOCKED
+suffix:semicolon
 DECL|variable|scheduler_lock
 id|spinlock_t
 id|scheduler_lock
@@ -904,12 +909,6 @@ c_func
 r_void
 )paren
 (brace
-r_static
-r_int
-id|need_recalculate
-op_assign
-l_int|0
-suffix:semicolon
 r_int
 id|lock_depth
 suffix:semicolon
@@ -1216,11 +1215,49 @@ op_assign
 id|p-&gt;next_run
 suffix:semicolon
 )brace
-id|need_recalculate
-op_assign
+multiline_comment|/* Do we need to re-calculate counters? */
+r_if
+c_cond
+(paren
 op_logical_neg
 id|c
+)paren
+(brace
+r_struct
+id|task_struct
+op_star
+id|p
 suffix:semicolon
+id|spin_lock
+c_func
+(paren
+op_amp
+id|tasklist_lock
+)paren
+suffix:semicolon
+id|for_each_task
+c_func
+(paren
+id|p
+)paren
+id|p-&gt;counter
+op_assign
+(paren
+id|p-&gt;counter
+op_rshift
+l_int|1
+)paren
+op_plus
+id|p-&gt;priority
+suffix:semicolon
+id|spin_unlock
+c_func
+(paren
+op_amp
+id|tasklist_lock
+)paren
+suffix:semicolon
+)brace
 )brace
 )brace
 id|next-&gt;processor
@@ -1317,12 +1354,6 @@ op_amp
 id|scheduler_lock
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|lock_depth
-)paren
-(brace
 id|reaquire_kernel_lock
 c_func
 (paren
@@ -1336,35 +1367,6 @@ comma
 id|lock_depth
 )paren
 suffix:semicolon
-multiline_comment|/* Do we need to re-calculate counters? */
-r_if
-c_cond
-(paren
-id|need_recalculate
-)paren
-(brace
-r_struct
-id|task_struct
-op_star
-id|p
-suffix:semicolon
-id|for_each_task
-c_func
-(paren
-id|p
-)paren
-id|p-&gt;counter
-op_assign
-(paren
-id|p-&gt;counter
-op_rshift
-l_int|1
-)paren
-op_plus
-id|p-&gt;priority
-suffix:semicolon
-)brace
-)brace
 )brace
 macro_line|#ifndef __alpha__
 multiline_comment|/*&n; * For backwards compatibility?  This can be done in libc so Alpha&n; * and all newer ports shouldn&squot;t need it.&n; */

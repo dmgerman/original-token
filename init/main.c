@@ -22,6 +22,7 @@ macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/slab.h&gt;
 macro_line|#include &lt;linux/major.h&gt;
 macro_line|#include &lt;linux/blk.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#ifdef CONFIG_ROOT_NFS
 macro_line|#include &lt;linux/nfs_fs.h&gt;
 macro_line|#endif
@@ -1404,7 +1405,10 @@ l_int|NULL
 comma
 )brace
 suffix:semicolon
-DECL|function|get_options
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_char
 op_star
 id|get_options
@@ -1417,6 +1421,7 @@ comma
 r_int
 op_star
 id|ints
+)paren
 )paren
 (brace
 r_char
@@ -1497,7 +1502,10 @@ r_return
 id|cur
 suffix:semicolon
 )brace
-DECL|function|profile_setup
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_void
 id|profile_setup
@@ -1510,6 +1518,7 @@ comma
 r_int
 op_star
 id|ints
+)paren
 )paren
 (brace
 r_if
@@ -1568,11 +1577,12 @@ r_int
 op_star
 )paren
 suffix:semicolon
-DECL|variable|bootsetups
+DECL|variable|__initdata
 )brace
 id|bootsetups
 (braket
 )braket
+id|__initdata
 op_assign
 (brace
 (brace
@@ -2199,7 +2209,10 @@ l_int|0
 )brace
 suffix:semicolon
 macro_line|#ifdef CONFIG_BLK_DEV_RAM
-DECL|function|ramdisk_start_setup
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_void
 id|ramdisk_start_setup
@@ -2212,6 +2225,7 @@ comma
 r_int
 op_star
 id|ints
+)paren
 )paren
 (brace
 r_if
@@ -2239,7 +2253,10 @@ l_int|1
 )braket
 suffix:semicolon
 )brace
-DECL|function|load_ramdisk
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_void
 id|load_ramdisk
@@ -2252,6 +2269,7 @@ comma
 r_int
 op_star
 id|ints
+)paren
 )paren
 (brace
 r_if
@@ -2281,7 +2299,10 @@ op_amp
 l_int|1
 suffix:semicolon
 )brace
-DECL|function|prompt_ramdisk
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_void
 id|prompt_ramdisk
@@ -2294,6 +2315,7 @@ comma
 r_int
 op_star
 id|ints
+)paren
 )paren
 (brace
 r_if
@@ -2323,7 +2345,10 @@ op_amp
 l_int|1
 suffix:semicolon
 )brace
-DECL|function|ramdisk_size
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_void
 id|ramdisk_size
@@ -2336,6 +2361,7 @@ comma
 r_int
 op_star
 id|ints
+)paren
 )paren
 (brace
 r_if
@@ -2364,7 +2390,10 @@ l_int|1
 suffix:semicolon
 )brace
 macro_line|#endif
-DECL|function|checksetup
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_int
 id|checksetup
@@ -2373,6 +2402,7 @@ c_func
 r_char
 op_star
 id|line
+)paren
 )paren
 (brace
 r_int
@@ -2527,12 +2557,16 @@ suffix:semicolon
 multiline_comment|/* This is the number of bits of precision for the loops_per_second.  Each&n;   bit takes on average 1.5/HZ seconds.  This (like the original) is a little&n;   better than 1% */
 DECL|macro|LPS_PREC
 mdefine_line|#define LPS_PREC 8
-DECL|function|calibrate_delay
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|calibrate_delay
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_int
@@ -2702,7 +2736,10 @@ l_int|100
 )paren
 suffix:semicolon
 )brace
-DECL|function|parse_root_dev
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_void
 id|parse_root_dev
@@ -2711,6 +2748,7 @@ c_func
 r_char
 op_star
 id|line
+)paren
 )paren
 (brace
 r_int
@@ -3039,7 +3077,10 @@ l_int|16
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * This is a simple kernel command line parsing function: it parses&n; * the command line, and fills in the arguments/environment to init&n; * as appropriate. Any cmd-line option is taken to be an environment&n; * variable if it contains the character &squot;=&squot;.&n; *&n; *&n; * This routine also checks for options meant for the kernel.&n; * These options are not given to init - they are for internal kernel use only.&n; */
-DECL|function|parse_options
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_void
 id|parse_options
@@ -3048,6 +3089,7 @@ c_func
 r_char
 op_star
 id|line
+)paren
 )paren
 (brace
 r_char
@@ -3567,13 +3609,17 @@ id|unused
 )paren
 suffix:semicolon
 multiline_comment|/*&n; *&t;Activate a secondary processor.&n; */
-DECL|function|start_secondary
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 id|asmlinkage
 r_void
 id|start_secondary
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 id|trap_init
@@ -3599,13 +3645,17 @@ l_int|NULL
 suffix:semicolon
 )brace
 multiline_comment|/* Called by boot processor to activate the rest. */
-DECL|function|smp_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_void
 id|smp_init
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_int
@@ -3676,13 +3726,17 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/*&n; *&t;The autoprobe routines assume CPU#0 on the i386&n; *&t;so we don&squot;t actually set the game in motion until&n; *&t;they are finished.&n; */
-DECL|function|smp_begin
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_void
 id|smp_begin
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 id|smp_threads_ready
@@ -3697,13 +3751,17 @@ suffix:semicolon
 )brace
 macro_line|#endif
 multiline_comment|/*&n; *&t;Activate the first processor.&n; */
-DECL|function|start_kernel
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 id|asmlinkage
 r_void
 id|start_kernel
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_char
@@ -4116,7 +4174,10 @@ l_int|NULL
 suffix:semicolon
 )brace
 macro_line|#ifdef CONFIG_BLK_DEV_INITRD
-DECL|function|do_linuxrc
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_int
 id|do_linuxrc
@@ -4125,6 +4186,7 @@ c_func
 r_void
 op_star
 id|shell
+)paren
 )paren
 (brace
 r_static
@@ -4207,7 +4269,10 @@ id|envp_init
 )paren
 suffix:semicolon
 )brace
-DECL|function|no_initrd
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_void
 id|no_initrd
@@ -4220,6 +4285,7 @@ comma
 r_int
 op_star
 id|ints
+)paren
 )paren
 (brace
 id|mount_initrd

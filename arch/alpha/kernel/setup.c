@@ -13,6 +13,10 @@ macro_line|#include &lt;linux/a.out.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/config.h&gt;&t;/* CONFIG_ALPHA_LCA etc */
+macro_line|#ifdef CONFIG_RTC
+macro_line|#include &lt;linux/ioport.h&gt;
+macro_line|#include &lt;linux/timex.h&gt;
+macro_line|#endif
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -149,6 +153,50 @@ l_int|0x41
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef CONFIG_RTC /* setup interval timer if /dev/rtc is being used */
+id|outb
+c_func
+(paren
+l_int|0x34
+comma
+l_int|0x43
+)paren
+suffix:semicolon
+multiline_comment|/* binary, mode 2, LSB/MSB, ch 0 */
+id|outb
+c_func
+(paren
+id|LATCH
+op_amp
+l_int|0xff
+comma
+l_int|0x40
+)paren
+suffix:semicolon
+multiline_comment|/* LSB */
+id|outb
+c_func
+(paren
+id|LATCH
+op_rshift
+l_int|8
+comma
+l_int|0x40
+)paren
+suffix:semicolon
+multiline_comment|/* MSB */
+id|request_region
+c_func
+(paren
+l_int|0x40
+comma
+l_int|0x20
+comma
+l_string|&quot;timer&quot;
+)paren
+suffix:semicolon
+multiline_comment|/* reserve pit */
+macro_line|#else
 id|outb
 c_func
 (paren
@@ -174,6 +222,18 @@ comma
 l_int|0x40
 )paren
 suffix:semicolon
+id|request_region
+c_func
+(paren
+l_int|0x70
+comma
+l_int|0x10
+comma
+l_string|&quot;timer&quot;
+)paren
+suffix:semicolon
+multiline_comment|/* reserve rtc */
+macro_line|#endif
 id|outb
 c_func
 (paren

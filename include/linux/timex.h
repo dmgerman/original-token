@@ -1,5 +1,5 @@
 multiline_comment|/*****************************************************************************&n; *                                                                           *&n; * Copyright (c) David L. Mills 1993                                         *&n; *                                                                           *&n; * Permission to use, copy, modify, and distribute this software and its     *&n; * documentation for any purpose and without fee is hereby granted, provided *&n; * that the above copyright notice appears in all copies and that both the   *&n; * copyright notice and this permission notice appear in supporting          *&n; * documentation, and that the name University of Delaware not be used in    *&n; * advertising or publicity pertaining to distribution of the software       *&n; * without specific, written prior permission.  The University of Delaware   *&n; * makes no representations about the suitability this software for any      *&n; * purpose.  It is provided &quot;as is&quot; without express or implied warranty.     *&n; *                                                                           *&n; *****************************************************************************/
-multiline_comment|/*&n; * Modification history timex.h&n; *&n; * 26 Sep 94&t;David L. Mills&n; *&t;Added defines for hybrid phase/frequency-lock loop.&n; *&n; * 19 Mar 94&t;David L. Mills&n; *&t;Moved defines from kernel routines to header file and added new&n; *&t;defines for PPS phase-lock loop.&n; *&n; * 20 Feb 94&t;David L. Mills&n; *&t;Revised status codes and structures for external clock and PPS&n; *&t;signal discipline.&n; *&n; * 28 Nov 93&t;David L. Mills&n; *&t;Adjusted parameters to improve stability and increase poll&n; *&t;interval.&n; *&n; * 17 Sep 93    David L. Mills&n; *      Created file $NTP/include/sys/timex.h&n; * 07 Oct 93    Torsten Duwe&n; *      Derived linux/timex.h&n; * 1995-08-13    Torsten Duwe&n; *      kernel PLL updated to 1994-12-13 specs (rfc-1589)&n; */
+multiline_comment|/*&n; * Modification history timex.h&n; *&n; *  9 Jan 97    Adrian Sun&n; *      Shifted LATCH define to allow access to alpha machines.&n; *&n; * 26 Sep 94&t;David L. Mills&n; *&t;Added defines for hybrid phase/frequency-lock loop.&n; *&n; * 19 Mar 94&t;David L. Mills&n; *&t;Moved defines from kernel routines to header file and added new&n; *&t;defines for PPS phase-lock loop.&n; *&n; * 20 Feb 94&t;David L. Mills&n; *&t;Revised status codes and structures for external clock and PPS&n; *&t;signal discipline.&n; *&n; * 28 Nov 93&t;David L. Mills&n; *&t;Adjusted parameters to improve stability and increase poll&n; *&t;interval.&n; *&n; * 17 Sep 93    David L. Mills&n; *      Created file $NTP/include/sys/timex.h&n; * 07 Oct 93    Torsten Duwe&n; *      Derived linux/timex.h&n; * 1995-08-13    Torsten Duwe&n; *      kernel PLL updated to 1994-12-13 specs (rfc-1589)&n; */
 macro_line|#ifndef _LINUX_TIMEX_H
 DECL|macro|_LINUX_TIMEX_H
 mdefine_line|#define _LINUX_TIMEX_H
@@ -50,14 +50,15 @@ DECL|macro|PPS_VALID
 mdefine_line|#define PPS_VALID 120&t;&t;/* pps signal watchdog max (s) */
 DECL|macro|MAXGLITCH
 mdefine_line|#define MAXGLITCH 30&t;&t;/* pps signal glitch max (s) */
-macro_line|#ifndef __alpha__
-multiline_comment|/*&n; * This definitively is wrong for the Alpha and none of the&n; * kernel code seems to reference this anymore.&n; */
+multiline_comment|/* LATCH is used in the interval timer and ftape setup. */
 DECL|macro|CLOCK_TICK_RATE
 mdefine_line|#define CLOCK_TICK_RATE&t;1193180 /* Underlying HZ */
-DECL|macro|CLOCK_TICK_FACTOR
-mdefine_line|#define CLOCK_TICK_FACTOR&t;20&t;/* Factor of both 1000000 and CLOCK_TICK_RATE */
 DECL|macro|LATCH
 mdefine_line|#define LATCH  ((CLOCK_TICK_RATE + HZ/2) / HZ)&t;/* For divider */
+macro_line|#ifndef __alpha__
+multiline_comment|/*&n; * This definitively is wrong for the Alpha and none of the&n; * kernel code seems to reference this anymore.&n; */
+DECL|macro|CLOCK_TICK_FACTOR
+mdefine_line|#define CLOCK_TICK_FACTOR&t;20&t;/* Factor of both 1000000 and CLOCK_TICK_RATE */
 DECL|macro|FINETUNE
 mdefine_line|#define FINETUNE ((((((long)LATCH * HZ - CLOCK_TICK_RATE) &lt;&lt; SHIFT_HZ) * &bslash;&n;&t;(1000000/CLOCK_TICK_FACTOR) / (CLOCK_TICK_RATE/CLOCK_TICK_FACTOR)) &bslash;&n;&t;&t;&lt;&lt; (SHIFT_SCALE-SHIFT_HZ)) / HZ)
 macro_line|#endif /* !__alpha__ */

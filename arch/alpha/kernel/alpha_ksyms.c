@@ -12,6 +12,7 @@ macro_line|#include &lt;asm/hwrpb.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;
 macro_line|#include &lt;asm/checksum.h&gt;
+macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;asm/softirq.h&gt;
 r_extern
 r_void
@@ -146,6 +147,13 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|__alpha_bh_counter
+)paren
+suffix:semicolon
+DECL|variable|local_irq_count
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|local_irq_count
 )paren
 suffix:semicolon
 multiline_comment|/* platform dependent support */

@@ -12,12 +12,14 @@ macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/random.h&gt;
 macro_line|#include &lt;linux/smp.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/smp.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
+macro_line|#include &quot;irq.h&quot;
 macro_line|#ifdef __SMP_PROF__
 r_extern
 r_volatile
@@ -455,13 +457,11 @@ c_func
 (paren
 id|stop_cpu_interrupt
 )paren
-macro_line|#ifdef __SMP_PROF__
 id|BUILD_SMP_TIMER_INTERRUPT
 c_func
 (paren
 id|apic_timer_interrupt
 )paren
-macro_line|#endif
 macro_line|#endif
 multiline_comment|/*&n; * Pointers to the low-level handlers: first the general ones, then the&n; * fast ones, then the bad ones.&n; */
 DECL|variable|interrupt
@@ -2228,114 +2228,6 @@ l_int|1
 suffix:semicolon
 )brace
 )brace
-DECL|macro|INIT_STUCK
-macro_line|#undef INIT_STUCK
-DECL|macro|INIT_STUCK
-mdefine_line|#define INIT_STUCK 200000000
-DECL|macro|STUCK
-macro_line|#undef STUCK
-DECL|macro|STUCK
-mdefine_line|#define STUCK &bslash;&n;if (!--stuck) {printk(&quot;irq_enter stuck (irq=%d, cpu=%d, global=%d)&bslash;n&quot;,irq,cpu,global_irq_holder); stuck = INIT_STUCK;}
-DECL|function|irq_enter
-r_inline
-r_void
-id|irq_enter
-c_func
-(paren
-r_int
-id|cpu
-comma
-r_int
-id|irq
-)paren
-(brace
-r_int
-id|stuck
-op_assign
-id|INIT_STUCK
-suffix:semicolon
-id|hardirq_enter
-c_func
-(paren
-id|cpu
-)paren
-suffix:semicolon
-r_while
-c_loop
-(paren
-id|test_bit
-c_func
-(paren
-l_int|0
-comma
-op_amp
-id|global_irq_lock
-)paren
-)paren
-(brace
-r_if
-c_cond
-(paren
-(paren
-r_int
-r_char
-)paren
-id|cpu
-op_eq
-id|global_irq_holder
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;BAD! Local interrupts enabled, global disabled&bslash;n&quot;
-)paren
-suffix:semicolon
-r_break
-suffix:semicolon
-)brace
-id|STUCK
-suffix:semicolon
-multiline_comment|/* nothing */
-suffix:semicolon
-)brace
-)brace
-DECL|function|irq_exit
-r_inline
-r_void
-id|irq_exit
-c_func
-(paren
-r_int
-id|cpu
-comma
-r_int
-id|irq
-)paren
-(brace
-id|__cli
-c_func
-(paren
-)paren
-suffix:semicolon
-id|hardirq_exit
-c_func
-(paren
-id|cpu
-)paren
-suffix:semicolon
-id|release_irqlock
-c_func
-(paren
-id|cpu
-)paren
-suffix:semicolon
-)brace
-macro_line|#else
-DECL|macro|irq_enter
-mdefine_line|#define irq_enter(cpu, irq)&t;(++local_irq_count[cpu])
-DECL|macro|irq_exit
-mdefine_line|#define irq_exit(cpu, irq)&t;(--local_irq_count[cpu])
 macro_line|#endif
 multiline_comment|/*&n; * do_IRQ handles IRQ&squot;s that have been installed without the&n; * SA_INTERRUPT flag: it uses the full signal-handling return&n; * and runs with other interrupts enabled. All relatively slow&n; * IRQ&squot;s should use this format: notably the keyboard/timer&n; * routines.&n; */
 DECL|function|do_IRQ
@@ -3256,12 +3148,16 @@ r_return
 id|i
 suffix:semicolon
 )brace
-DECL|function|init_IRQ
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|init_IRQ
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 r_int
@@ -3348,7 +3244,8 @@ id|i
 suffix:semicolon
 multiline_comment|/*&n;&t; * This bit is a hack because we don&squot;t send timer messages to all&n;&t; * processors yet. It has to be here .. it doesn&squot;t work if you put&n;&t; * it down the bottom - assembler explodes 8)&n;&t; */
 macro_line|#ifdef __SMP__&t;
-multiline_comment|/* IRQ &squot;16&squot; - IPI for rescheduling */
+multiline_comment|/*&n;&t; * NOTE! The local APIC isn&squot;t very good at handling&n;&t; * multiple interrupts at the same interrupt level.&n;&t; * As the interrupt level is determined by taking the&n;&t; * vector number and shifting that right by 4, we&n;&t; * want to spread these out a bit so that they don&squot;t&n;&t; * all fall in the same interrupt level&n;&t; */
+multiline_comment|/* IRQ &squot;16&squot; (trap 0x30) - IPI for rescheduling */
 id|set_intr_gate
 c_func
 (paren
@@ -3359,7 +3256,7 @@ comma
 id|reschedule_interrupt
 )paren
 suffix:semicolon
-multiline_comment|/* IRQ &squot;17&squot; - IPI for invalidation */
+multiline_comment|/* IRQ &squot;17&squot; (trap 0x31) - IPI for invalidation */
 id|set_intr_gate
 c_func
 (paren
@@ -3370,30 +3267,28 @@ comma
 id|invalidate_interrupt
 )paren
 suffix:semicolon
-multiline_comment|/* IRQ &squot;18&squot; - IPI for CPU halt */
+multiline_comment|/* IRQ &squot;18&squot; (trap 0x40) - IPI for CPU halt */
 id|set_intr_gate
 c_func
 (paren
-l_int|0x22
+l_int|0x30
 op_plus
 id|i
 comma
 id|stop_cpu_interrupt
 )paren
 suffix:semicolon
-macro_line|#ifdef __SMP_PROF__
-multiline_comment|/* IRQ &squot;19&squot; - self generated IPI for local APIC timer */
+multiline_comment|/* IRQ &squot;19&squot; (trap 0x41) - self generated IPI for local APIC timer */
 id|set_intr_gate
 c_func
 (paren
-l_int|0x23
+l_int|0x31
 op_plus
 id|i
 comma
 id|apic_timer_interrupt
 )paren
 suffix:semicolon
-macro_line|#endif
 macro_line|#endif&t;
 id|request_region
 c_func

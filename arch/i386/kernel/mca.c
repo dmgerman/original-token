@@ -12,6 +12,7 @@ macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/pagemap.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 multiline_comment|/* This structure holds MCA information. Each (plug-in) adapter has &n; * eight POS registers. Then the machine may have integrated video and&n; * SCSI subsystems, which also have eight POS registers.&n; * Other miscellaneous information follows.&n;*/
 DECL|struct|MCA_adapter
 r_struct
@@ -211,7 +212,10 @@ l_int|NULL
 suffix:semicolon
 macro_line|#endif
 multiline_comment|/*--------------------------------------------------------------------*/
-DECL|function|mca_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|mca_init
 c_func
@@ -221,6 +225,7 @@ id|memory_start
 comma
 r_int
 id|memory_end
+)paren
 )paren
 (brace
 r_int
@@ -1737,7 +1742,10 @@ id|len
 suffix:semicolon
 )brace
 multiline_comment|/*--------------------------------------------------------------------*/
-DECL|function|mca_do_proc_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|mca_do_proc_init
 c_func
@@ -1747,6 +1755,7 @@ id|memory_start
 comma
 r_int
 id|memory_end
+)paren
 )paren
 (brace
 r_int

@@ -8,6 +8,7 @@ macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/time.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
@@ -924,6 +925,7 @@ l_int|0
 suffix:semicolon
 multiline_comment|/*&n; * Move this to a header file - right now it shows&n; * up both here and in smp.c&n; */
 DECL|function|x86_do_profile
+r_static
 r_inline
 r_void
 id|x86_do_profile
@@ -1094,6 +1096,7 @@ op_minus
 l_int|600
 suffix:semicolon
 multiline_comment|/* do it again in 60 s */
+macro_line|#if 0
 multiline_comment|/* As we return to user mode fire off the other CPU schedulers.. this is &n;&t;   basically because we don&squot;t yet share IRQ&squot;s around. This message is&n;&t;   rigged to be safe on the 386 - basically it&squot;s a hack, so don&squot;t look&n;&t;   closely for now.. */
 id|smp_message_pass
 c_func
@@ -1107,6 +1110,7 @@ comma
 l_int|0
 )paren
 suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef CONFIG_MCA
 r_if
 c_cond
@@ -1562,12 +1566,16 @@ comma
 l_int|NULL
 )brace
 suffix:semicolon
-DECL|function|time_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|time_init
 c_func
 (paren
 r_void
+)paren
 )paren
 (brace
 id|xtime.tv_sec

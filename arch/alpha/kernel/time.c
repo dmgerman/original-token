@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/arch/alpha/kernel/time.c&n; *&n; *  Copyright (C) 1991, 1992, 1995  Linus Torvalds&n; *&n; * This file contains the PC-specific time handling details:&n; * reading the RTC at bootup, etc..&n; * 1994-07-02    Alan Modra&n; *&t;fixed set_rtc_mmss, fixed time.year for &gt;= 2000, new mktime&n; * 1995-03-26    Markus Kuhn&n; *      fixed 500 ms bug at call to set_rtc_mmss, fixed DS12887&n; *      precision CMOS clock update&n; */
+multiline_comment|/*&n; *  linux/arch/alpha/kernel/time.c&n; *&n; *  Copyright (C) 1991, 1992, 1995  Linus Torvalds&n; *&n; * This file contains the PC-specific time handling details:&n; * reading the RTC at bootup, etc..&n; * 1994-07-02    Alan Modra&n; *&t;fixed set_rtc_mmss, fixed time.year for &gt;= 2000, new mktime&n; * 1995-03-26    Markus Kuhn&n; *      fixed 500 ms bug at call to set_rtc_mmss, fixed DS12887&n; *      precision CMOS clock update&n; * 1997-01-09    Adrian Sun&n; *      use interval timer if CONFIG_RTC=y&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -10,8 +10,13 @@ macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/hwrpb.h&gt;
 macro_line|#include &lt;linux/mc146818rtc.h&gt;
 macro_line|#include &lt;linux/timex.h&gt;
+macro_line|#ifdef CONFIG_RTC 
 DECL|macro|TIMER_IRQ
-mdefine_line|#define TIMER_IRQ 0
+mdefine_line|#define TIMER_IRQ 0  /* using pit for timer */
+macro_line|#else 
+DECL|macro|TIMER_IRQ
+mdefine_line|#define TIMER_IRQ 8  /* using rtc for timer */
+macro_line|#endif
 r_extern
 r_struct
 id|hwrpb_struct
@@ -93,6 +98,13 @@ r_void
 id|timer_interrupt
 c_func
 (paren
+r_int
+id|irq
+comma
+r_void
+op_star
+id|dev
+comma
 r_struct
 id|pt_regs
 op_star
@@ -358,6 +370,28 @@ c_func
 r_void
 )paren
 (brace
+macro_line|#ifdef CONFIG_RTC
+r_int
+r_char
+id|save_control
+suffix:semicolon
+macro_line|#endif
+r_void
+(paren
+op_star
+id|irq_handler
+)paren
+(paren
+r_int
+comma
+r_void
+op_star
+comma
+r_struct
+id|pt_regs
+op_star
+)paren
+suffix:semicolon
 r_int
 r_int
 id|year
@@ -657,6 +691,74 @@ suffix:semicolon
 id|state.last_rtc_update
 op_assign
 l_int|0
+suffix:semicolon
+macro_line|#ifdef CONFIG_RTC 
+multiline_comment|/* turn off RTC interrupts before /dev/rtc is initialized */
+id|save_control
+op_assign
+id|CMOS_READ
+c_func
+(paren
+id|RTC_CONTROL
+)paren
+suffix:semicolon
+id|save_control
+op_and_assign
+op_complement
+id|RTC_PIE
+suffix:semicolon
+id|save_control
+op_and_assign
+op_complement
+id|RTC_AIE
+suffix:semicolon
+id|save_control
+op_and_assign
+op_complement
+id|RTC_UIE
+suffix:semicolon
+id|CMOS_WRITE
+c_func
+(paren
+id|save_control
+comma
+id|RTC_CONTROL
+)paren
+suffix:semicolon
+id|CMOS_READ
+c_func
+(paren
+id|RTC_INTR_FLAGS
+)paren
+suffix:semicolon
+macro_line|#endif
+multiline_comment|/* setup timer */
+id|irq_handler
+op_assign
+id|timer_interrupt
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|request_irq
+c_func
+(paren
+id|TIMER_IRQ
+comma
+id|irq_handler
+comma
+l_int|0
+comma
+l_string|&quot;timer&quot;
+comma
+l_int|NULL
+)paren
+)paren
+id|panic
+c_func
+(paren
+l_string|&quot;Could not allocate timer IRQ!&quot;
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * We could get better timer accuracy by using the alpha&n; * time counters or something.  Now this is limited to&n; * the HZ clock frequency.&n; */

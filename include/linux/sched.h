@@ -115,6 +115,16 @@ DECL|macro|NULL
 mdefine_line|#define NULL ((void *) 0)
 macro_line|#endif
 macro_line|#ifdef __KERNEL__
+macro_line|#include &lt;asm/spinlock.h&gt;
+multiline_comment|/*&n; * This serializes &quot;schedule()&quot; and also protects&n; * the run-queue from deletions/modifications (but&n; * _adding_ to the beginning of the run-queue has&n; * a separate lock).&n; */
+r_extern
+id|spinlock_t
+id|scheduler_lock
+suffix:semicolon
+r_extern
+id|spinlock_t
+id|tasklist_lock
+suffix:semicolon
 r_extern
 r_void
 id|sched_init
@@ -1500,9 +1510,9 @@ op_increment
 suffix:semicolon
 )brace
 DECL|macro|REMOVE_LINKS
-mdefine_line|#define REMOVE_LINKS(p) do { unsigned long flags; &bslash;&n;&t;save_flags(flags) ; cli(); &bslash;&n;&t;(p)-&gt;next_task-&gt;prev_task = (p)-&gt;prev_task; &bslash;&n;&t;(p)-&gt;prev_task-&gt;next_task = (p)-&gt;next_task; &bslash;&n;&t;restore_flags(flags); &bslash;&n;&t;if ((p)-&gt;p_osptr) &bslash;&n;&t;&t;(p)-&gt;p_osptr-&gt;p_ysptr = (p)-&gt;p_ysptr; &bslash;&n;&t;if ((p)-&gt;p_ysptr) &bslash;&n;&t;&t;(p)-&gt;p_ysptr-&gt;p_osptr = (p)-&gt;p_osptr; &bslash;&n;&t;else &bslash;&n;&t;&t;(p)-&gt;p_pptr-&gt;p_cptr = (p)-&gt;p_osptr; &bslash;&n;&t;} while (0)
+mdefine_line|#define REMOVE_LINKS(p) do { &bslash;&n;&t;spin_lock(&amp;tasklist_lock); &bslash;&n;&t;(p)-&gt;next_task-&gt;prev_task = (p)-&gt;prev_task; &bslash;&n;&t;(p)-&gt;prev_task-&gt;next_task = (p)-&gt;next_task; &bslash;&n;&t;spin_unlock(&amp;tasklist_lock); &bslash;&n;&t;if ((p)-&gt;p_osptr) &bslash;&n;&t;&t;(p)-&gt;p_osptr-&gt;p_ysptr = (p)-&gt;p_ysptr; &bslash;&n;&t;if ((p)-&gt;p_ysptr) &bslash;&n;&t;&t;(p)-&gt;p_ysptr-&gt;p_osptr = (p)-&gt;p_osptr; &bslash;&n;&t;else &bslash;&n;&t;&t;(p)-&gt;p_pptr-&gt;p_cptr = (p)-&gt;p_osptr; &bslash;&n;&t;} while (0)
 DECL|macro|SET_LINKS
-mdefine_line|#define SET_LINKS(p) do { unsigned long flags; &bslash;&n;&t;save_flags(flags); cli(); &bslash;&n;&t;(p)-&gt;next_task = &amp;init_task; &bslash;&n;&t;(p)-&gt;prev_task = init_task.prev_task; &bslash;&n;&t;init_task.prev_task-&gt;next_task = (p); &bslash;&n;&t;init_task.prev_task = (p); &bslash;&n;&t;restore_flags(flags); &bslash;&n;&t;(p)-&gt;p_ysptr = NULL; &bslash;&n;&t;if (((p)-&gt;p_osptr = (p)-&gt;p_pptr-&gt;p_cptr) != NULL) &bslash;&n;&t;&t;(p)-&gt;p_osptr-&gt;p_ysptr = p; &bslash;&n;&t;(p)-&gt;p_pptr-&gt;p_cptr = p; &bslash;&n;&t;} while (0)
+mdefine_line|#define SET_LINKS(p) do { &bslash;&n;&t;spin_lock(&amp;tasklist_lock); &bslash;&n;&t;(p)-&gt;next_task = &amp;init_task; &bslash;&n;&t;(p)-&gt;prev_task = init_task.prev_task; &bslash;&n;&t;init_task.prev_task-&gt;next_task = (p); &bslash;&n;&t;init_task.prev_task = (p); &bslash;&n;&t;spin_unlock(&amp;tasklist_lock); &bslash;&n;&t;(p)-&gt;p_ysptr = NULL; &bslash;&n;&t;if (((p)-&gt;p_osptr = (p)-&gt;p_pptr-&gt;p_cptr) != NULL) &bslash;&n;&t;&t;(p)-&gt;p_osptr-&gt;p_ysptr = p; &bslash;&n;&t;(p)-&gt;p_pptr-&gt;p_cptr = p; &bslash;&n;&t;} while (0)
 DECL|macro|for_each_task
 mdefine_line|#define for_each_task(p) &bslash;&n;&t;for (p = &amp;init_task ; (p = p-&gt;next_task) != &amp;init_task ; )
 macro_line|#endif /* __KERNEL__ */

@@ -66,8 +66,35 @@ id|__dummy_lock_t
 suffix:semicolon
 DECL|macro|__dummy_lock
 mdefine_line|#define __dummy_lock(lock) (*(__dummy_lock_t *)(lock))
-DECL|macro|spin_unlock
-mdefine_line|#define spin_unlock(lock)&t;&t;&t;&t;&bslash;&n;&t;__asm__ __volatile__(&t;&t;&t;&t;&bslash;&n;&t;&quot;mb; stq $31,%0&quot;&t;&t;&t;&t;&bslash;&n;&t;:&quot;=m&quot; (__dummy_lock(lock)))
+DECL|function|spin_unlock
+r_static
+r_inline
+r_void
+id|spin_unlock
+c_func
+(paren
+id|spinlock_t
+op_star
+id|lock
+)paren
+(brace
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;mb; stq $31,%0&quot;
+suffix:colon
+l_string|&quot;=m&quot;
+(paren
+id|__dummy_lock
+c_func
+(paren
+id|lock
+)paren
+)paren
+)paren
+suffix:semicolon
+)brace
 DECL|function|spin_lock
 r_static
 r_inline

@@ -13,17 +13,15 @@ macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
-r_extern
-r_void
-id|timer_interrupt
-c_func
-(paren
-r_struct
-id|pt_regs
-op_star
-id|regs
-)paren
-suffix:semicolon
+DECL|macro|RTC_IRQ
+mdefine_line|#define RTC_IRQ    8
+macro_line|#ifdef CONFIG_RTC
+DECL|macro|TIMER_IRQ
+mdefine_line|#define TIMER_IRQ  0        /* timer is the pit */
+macro_line|#else
+DECL|macro|TIMER_IRQ
+mdefine_line|#define TIMER_IRQ  RTC_IRQ  /* the timer is, in fact, the rtc */
+macro_line|#endif
 macro_line|#if NR_IRQS &gt; 64
 macro_line|#  error Unable to handle more than 64 irq levels.
 macro_line|#endif
@@ -334,6 +332,26 @@ id|flags
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Initial irq handlers.&n; */
+DECL|variable|timer_irq
+r_static
+r_struct
+id|irqaction
+id|timer_irq
+op_assign
+(brace
+l_int|NULL
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|NULL
+comma
+l_int|NULL
+comma
+l_int|NULL
+)brace
+suffix:semicolon
 DECL|variable|irq_action
 r_static
 r_struct
@@ -405,7 +423,7 @@ id|buf
 op_plus
 id|len
 comma
-l_string|&quot;%2d: %8d %c %s&quot;
+l_string|&quot;%2d: %10u %c %s&quot;
 comma
 id|i
 comma
@@ -743,6 +761,19 @@ op_assign
 l_int|1
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|irq
+op_eq
+id|TIMER_IRQ
+)paren
+id|action
+op_assign
+op_amp
+id|timer_irq
+suffix:semicolon
+r_else
 id|action
 op_assign
 (paren
@@ -1350,6 +1381,14 @@ r_struct
 id|irqaction
 op_star
 id|action
+suffix:semicolon
+r_int
+id|cpu
+op_assign
+id|smp_processor_id
+c_func
+(paren
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -2519,6 +2558,7 @@ id|irqs
 r_int
 id|i
 suffix:semicolon
+multiline_comment|/* as irq 0 &amp; 8 handling don&squot;t use this function, i didn&squot;t&n;&t; * bother changing the following: */
 id|irqs
 op_and_assign
 id|irq_mask
@@ -2750,9 +2790,11 @@ suffix:semicolon
 r_case
 l_int|1
 suffix:colon
-id|timer_interrupt
+id|handle_irq
 c_func
 (paren
+id|RTC_IRQ
+comma
 op_amp
 id|regs
 )paren
