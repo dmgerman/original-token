@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * -- &lt;linux/cdrom.h&gt;&n; * General header file for linux CD-ROM drivers &n; * Copyright (C) 1992         David Giller, rafetmad@oxy.edu&n; *               1994, 1995   Eberhard Moenkeberg, emoenke@gwdg.de&n; *               1996         David van Leeuwen, david@tm.tno.nl&n; *               1997, 1998   Erik Andersen, andersee@debian.org&n; *               1998         Jens Axboe, axboe@image.dk and&n; *                            Chris Zwilling, chris@cloudnet.com&n; */
+multiline_comment|/*&n; * -- &lt;linux/cdrom.h&gt;&n; * General header file for linux CD-ROM drivers &n; * Copyright (C) 1992         David Giller, rafetmad@oxy.edu&n; *               1994, 1995   Eberhard Moenkeberg, emoenke@gwdg.de&n; *               1996         David van Leeuwen, david@tm.tno.nl&n; *               1997, 1998   Erik Andersen, andersee@debian.org&n; *               1998, 1999   Jens Axboe, axboe@image.dk&n; */
 macro_line|#ifndef&t;_LINUX_CDROM_H
 DECL|macro|_LINUX_CDROM_H
 mdefine_line|#define&t;_LINUX_CDROM_H

@@ -1007,6 +1007,11 @@ comma
 id|swapper_pg_dir
 )paren
 suffix:semicolon
+id|mm_release
+c_func
+(paren
+)paren
+suffix:semicolon
 id|mmput
 c_func
 (paren

@@ -1433,16 +1433,21 @@ c_func
 id|current-&gt;mm
 )paren
 suffix:semicolon
-id|exit_mmap
+id|mm_release
+c_func
+(paren
+)paren
+suffix:semicolon
+id|release_segments
 c_func
 (paren
 id|current-&gt;mm
 )paren
 suffix:semicolon
-id|clear_page_tables
+id|exit_mmap
 c_func
 (paren
-id|current
+id|current-&gt;mm
 )paren
 suffix:semicolon
 id|flush_tlb_mm
@@ -1455,7 +1460,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; * The clear_page_tables done later on exec does the right thing&n;&t; * to the page directory when shared, except for graceful abort&n;&t; * (the oom is wrong there, too, IMHO)&n;&t; */
 id|retval
 op_assign
 op_minus
@@ -1552,6 +1556,11 @@ c_func
 (paren
 op_amp
 id|mm-&gt;mmap_sem
+)paren
+suffix:semicolon
+id|mm_release
+c_func
+(paren
 )paren
 suffix:semicolon
 id|mmput

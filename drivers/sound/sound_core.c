@@ -8,6 +8,7 @@ macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/sound.h&gt;
 macro_line|#include &lt;linux/major.h&gt;
+macro_line|#include &lt;linux/kmod.h&gt;
 DECL|struct|sound_unit
 r_struct
 id|sound_unit
@@ -1032,7 +1033,6 @@ comma
 id|unit
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_KMOD
 r_if
 c_cond
 (paren
@@ -1111,7 +1111,6 @@ id|unit
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
 r_if
 c_cond
 (paren

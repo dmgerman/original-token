@@ -5023,6 +5023,16 @@ id|sp-&gt;stats.tx_packets
 op_increment
 suffix:semicolon
 multiline_comment|/* Count only user packets. */
+id|sp-&gt;stats.tx_bytes
+op_add_assign
+id|sp-&gt;tx_skbuff
+(braket
+id|entry
+)braket
+op_member_access_from_pointer
+id|len
+suffix:semicolon
+multiline_comment|/* Count transmitted bytes */
 id|dev_free_skb
 c_func
 (paren
@@ -5640,6 +5650,11 @@ suffix:semicolon
 id|sp-&gt;stats.rx_packets
 op_increment
 suffix:semicolon
+id|sp-&gt;stats.rx_bytes
+op_add_assign
+id|pkt_len
+suffix:semicolon
+multiline_comment|/* Count received bytes */
 )brace
 id|entry
 op_assign

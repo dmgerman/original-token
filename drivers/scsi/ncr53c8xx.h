@@ -4,7 +4,7 @@ DECL|macro|NCR53C8XX_H
 mdefine_line|#define NCR53C8XX_H
 multiline_comment|/*&n;**&t;Name and revision of the driver&n;*/
 DECL|macro|SCSI_NCR_DRIVER_NAME
-mdefine_line|#define SCSI_NCR_DRIVER_NAME&t;&t;&quot;ncr53c8xx - revision 3.1d&quot;
+mdefine_line|#define SCSI_NCR_DRIVER_NAME&t;&t;&quot;ncr53c8xx - revision 3.1f&quot;
 multiline_comment|/*&n;**&t;Check supported Linux versions&n;*/
 macro_line|#if !defined(LINUX_VERSION_CODE)
 macro_line|#include &lt;linux/version.h&gt;
@@ -309,7 +309,7 @@ DECL|macro|writel_raw
 mdefine_line|#define&t;writel_raw&t;writel
 macro_line|#endif
 macro_line|#ifdef&t;SCSI_NCR_BIG_ENDIAN
-macro_line|#error&t;&quot;The NCR in BIG ENDIAN adressing mode is not (yet) supported&quot;
+macro_line|#error&t;&quot;The NCR in BIG ENDIAN addressing mode is not (yet) supported&quot;
 macro_line|#endif
 multiline_comment|/*&n;**&t;NCR53C8XX Device Ids&n;*/
 macro_line|#ifndef PCI_DEVICE_ID_NCR_53C810
@@ -975,11 +975,40 @@ id|u_short
 id|nc_sodl
 suffix:semicolon
 multiline_comment|/* Lowlevel: data out to scsi data  */
-DECL|member|nc_56_
+DECL|member|nc_ccntl0
 multiline_comment|/*56*/
-id|u_short
-id|nc_56_
+id|u_char
+id|nc_ccntl0
 suffix:semicolon
+multiline_comment|/* Chip Control 0 (896)             */
+DECL|macro|ENPMJ
+mdefine_line|#define   ENPMJ  0x80&t;/* Enable Phase Mismatch Jump       */
+DECL|macro|PMJCTL
+mdefine_line|#define   PMJCTL 0x40&t;/* Phase Mismatch Jump Control      */
+DECL|macro|ENNDJ
+mdefine_line|#define   ENNDJ  0x20&t;/* Enable Non Data PM Jump          */
+DECL|macro|DISFC
+mdefine_line|#define   DISFC  0x10&t;/* Disable Auto FIFO Clear          */
+DECL|macro|DILS
+mdefine_line|#define   DILS   0x02&t;/* Disable Internal Load/Store      */
+DECL|macro|DPR
+mdefine_line|#define   DPR    0x01&t;/* Disable Pipe Req                 */
+DECL|member|nc_ccntl1
+multiline_comment|/*57*/
+id|u_char
+id|nc_ccntl1
+suffix:semicolon
+multiline_comment|/* Chip Control 1 (896)             */
+DECL|macro|ZMOD
+mdefine_line|#define   ZMOD   0x80&t;/* High Impedance Mode              */
+DECL|macro|DDAC
+mdefine_line|#define   DDAC   0x08&t;/* Disable Dual Address Cycle       */
+DECL|macro|XTIMOD
+mdefine_line|#define   XTIMOD 0x04&t;/* 64-bit Table Ind. Indexing Mode  */
+DECL|macro|EXTIBMV
+mdefine_line|#define   EXTIBMV 0x02&t;/* Enable 64-bit Table Ind. BMOV    */
+DECL|macro|EXDBMV
+mdefine_line|#define   EXDBMV 0x01&t;/* Enable 64-bit Direct BMOV        */
 DECL|member|nc_sbdl
 multiline_comment|/*58*/
 id|u_short

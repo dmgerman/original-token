@@ -1868,7 +1868,11 @@ op_logical_neg
 id|SCSI_BLK_MAJOR
 c_func
 (paren
+id|MAJOR
+c_func
+(paren
 id|SCpnt-&gt;request.rq_dev
+)paren
 )paren
 )paren
 (brace

@@ -3822,11 +3822,11 @@ c_cond
 id|capacity
 op_ge
 (paren
-id|id-&gt;cyls
+id|drive-&gt;bios_cyl
 op_star
-id|id-&gt;heads
+id|drive-&gt;bios_sect
 op_star
-id|id-&gt;sectors
+id|drive-&gt;bios_head
 )paren
 )paren
 op_logical_and
@@ -3834,6 +3834,10 @@ op_logical_and
 op_logical_neg
 id|drive-&gt;forced_geom
 )paren
+op_logical_and
+id|drive-&gt;bios_sect
+op_logical_and
+id|drive-&gt;bios_head
 )paren
 (brace
 id|drive-&gt;bios_cyl

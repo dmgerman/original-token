@@ -167,7 +167,7 @@ c_func
 r_void
 )paren
 suffix:semicolon
-multiline_comment|/*&n; *&t;Bits in rtc_status. (7 bits of room for future expansion)&n; */
+multiline_comment|/*&n; *&t;Bits in rtc_status. (6 bits of room for future expansion)&n; */
 DECL|macro|RTC_IS_OPEN
 mdefine_line|#define RTC_IS_OPEN&t;&t;0x01&t;/* means /dev/rtc is in use&t;*/
 DECL|macro|RTC_TIMER_ON

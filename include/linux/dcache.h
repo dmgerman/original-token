@@ -605,8 +605,22 @@ id|dentry
 op_star
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * This adds the entry to the hash queues and initializes &quot;d_inode&quot;.&n; * The entry was actually filled in earlier during &quot;d_alloc()&quot;&n; */
+multiline_comment|/*&n; * This adds the entry to the hash queues.&n; */
 r_extern
+r_void
+id|d_rehash
+c_func
+(paren
+r_struct
+id|dentry
+op_star
+id|entry
+)paren
+suffix:semicolon
+multiline_comment|/*&n; * This adds the entry to the hash queues and initializes &quot;d_inode&quot;.&n; * The entry was actually filled in earlier during &quot;d_alloc()&quot;&n; */
+DECL|function|d_add
+r_static
+id|__inline__
 r_void
 id|d_add
 c_func
@@ -621,7 +635,22 @@ id|inode
 op_star
 id|inode
 )paren
+(brace
+id|d_rehash
+c_func
+(paren
+id|entry
+)paren
 suffix:semicolon
+id|d_instantiate
+c_func
+(paren
+id|entry
+comma
+id|inode
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/* used for rename() and baskets */
 r_extern
 r_void

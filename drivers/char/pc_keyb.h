@@ -55,6 +55,8 @@ DECL|macro|KBD_CCMD_KBD_DISABLE
 mdefine_line|#define KBD_CCMD_KBD_DISABLE&t;0xAD&t;/* Keyboard interface disable */
 DECL|macro|KBD_CCMD_KBD_ENABLE
 mdefine_line|#define KBD_CCMD_KBD_ENABLE&t;0xAE&t;/* Keyboard interface enable */
+DECL|macro|KBD_CCMD_WRITE_AUX_OBUF
+mdefine_line|#define KBD_CCMD_WRITE_AUX_OBUF&t;0xD3    /* Write to output buffer as if&n;&t;&t;&t;&t;&t;   initiated by the auxiliary device */
 DECL|macro|KBD_CCMD_WRITE_MOUSE
 mdefine_line|#define KBD_CCMD_WRITE_MOUSE&t;0xD4&t;/* Write the following byte to the mouse */
 multiline_comment|/*&n; *&t;Keyboard Commands&n; */

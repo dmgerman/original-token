@@ -83,11 +83,16 @@ DECL|macro|SUBMDL_ES1869
 mdefine_line|#define SUBMDL_ES1869&t;0x12&t;/* Subtype ES1869 for specific handling */
 DECL|macro|SUBMDL_ES1878
 mdefine_line|#define SUBMDL_ES1878&t;0x13&t;/* Subtype ES1878 for specific handling */
-DECL|macro|SUBMDL_ES188X
-mdefine_line|#define SUBMDL_ES188X&t;0x14&t;/* Subtype ES1887 for specific handling */
+DECL|macro|SUBMDL_ES1887
+mdefine_line|#define SUBMDL_ES1887&t;0x14&t;/* Subtype ES1887 for specific handling */
+DECL|macro|SUBMDL_ES1888
+mdefine_line|#define SUBMDL_ES1888&t;0x14&t;/* Subtype ES1888 for specific handling */
 DECL|macro|SUBMDL_ALS007
 mdefine_line|#define SUBMDL_ALS007&t;42&t;/* ALS-007 differs from SB16 only in mixer */
 multiline_comment|/* register assignment */
+DECL|macro|SUBMDL_ALS100
+mdefine_line|#define SUBMDL_ALS100&t;43&t;/* ALS-100 allows sampling rates of up */
+multiline_comment|/* to 48kHz */
 multiline_comment|/*&n; * Config flags&n; */
 DECL|macro|SB_NO_MIDI
 mdefine_line|#define SB_NO_MIDI&t;0x00000001
@@ -335,10 +340,6 @@ r_int
 r_char
 id|tconst
 suffix:semicolon
-DECL|member|my_dev
-r_int
-id|my_dev
-suffix:semicolon
 multiline_comment|/* MIDI fields */
 DECL|member|my_mididev
 r_int
@@ -387,6 +388,15 @@ comma
 r_int
 r_char
 id|val
+)paren
+suffix:semicolon
+r_int
+id|sb_dsp_get_byte
+c_func
+(paren
+id|sb_devc
+op_star
+id|devc
 )paren
 suffix:semicolon
 r_int
@@ -514,41 +524,59 @@ op_star
 id|devc
 )paren
 suffix:semicolon
-r_int
-id|ess_write
+r_void
+id|sb_chgmixer
 (paren
 id|sb_devc
 op_star
 id|devc
 comma
 r_int
-r_char
+r_int
 id|reg
 comma
 r_int
-r_char
-id|data
+r_int
+id|mask
+comma
+r_int
+r_int
+id|val
 )paren
 suffix:semicolon
 r_int
-id|ess_read
+id|sb_common_mixer_set
+c_func
 (paren
 id|sb_devc
 op_star
 id|devc
 comma
 r_int
-r_char
-id|reg
+id|dev
+comma
+r_int
+id|left
+comma
+r_int
+id|right
+)paren
+suffix:semicolon
+r_int
+id|sb_audio_open
+c_func
+(paren
+r_int
+id|dev
+comma
+r_int
+id|mode
 )paren
 suffix:semicolon
 r_void
-id|ess_mixer_reload
+id|sb_audio_close
+c_func
 (paren
-id|sb_devc
-op_star
-id|devc
-comma
 r_int
 id|dev
 )paren

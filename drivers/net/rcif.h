@@ -1,4 +1,4 @@
-multiline_comment|/*&n;** *************************************************************************&n;**&n;**&n;**     R C I F . H&n;**&n;**&n;**  RedCreek InterFace include file.&n;**&n;**  ---------------------------------------------------------------------&n;**  ---     Copyright (c) 1998, RedCreek Communications Inc.          ---&n;**  ---                   All rights reserved.                        ---&n;**  ---------------------------------------------------------------------&n;**&n;** File Description:&n;**&n;** Header file private ioctl commands.&n;**&n;**&n;**  This program is free software; you can redistribute it and/or modify&n;**  it under the terms of the GNU General Public License as published by&n;**  the Free Software Foundation; either version 2 of the License, or&n;**  (at your option) any later version.&n;&n;**  This program is distributed in the hope that it will be useful,&n;**  but WITHOUT ANY WARRANTY; without even the implied warranty of&n;**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n;**  GNU General Public License for more details.&n;&n;**  You should have received a copy of the GNU General Public License&n;**  along with this program; if not, write to the Free Software&n;**  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n;** *************************************************************************&n;*/
+multiline_comment|/*&n;** *************************************************************************&n;**&n;**&n;**     R C I F . H&n;**&n;**&n;**  RedCreek InterFace include file.&n;**&n;**  ---------------------------------------------------------------------&n;**  ---     Copyright (c) 1998-1999, RedCreek Communications Inc.     ---&n;**  ---                   All rights reserved.                        ---&n;**  ---------------------------------------------------------------------&n;**&n;** File Description:&n;**&n;** Header file private ioctl commands.&n;**&n;**&n;**  This program is free software; you can redistribute it and/or modify&n;**  it under the terms of the GNU General Public License as published by&n;**  the Free Software Foundation; either version 2 of the License, or&n;**  (at your option) any later version.&n;&n;**  This program is distributed in the hope that it will be useful,&n;**  but WITHOUT ANY WARRANTY; without even the implied warranty of&n;**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n;**  GNU General Public License for more details.&n;&n;**  You should have received a copy of the GNU General Public License&n;**  along with this program; if not, write to the Free Software&n;**  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n;** *************************************************************************&n;*/
 macro_line|#ifndef RCIF_H
 DECL|macro|RCIF_H
 mdefine_line|#define RCIF_H
@@ -7,7 +7,7 @@ DECL|variable|USER_PROTOCOL_REV
 r_int
 id|USER_PROTOCOL_REV
 op_assign
-l_int|1
+l_int|2
 suffix:semicolon
 multiline_comment|/* used to track different protocol revisions */
 multiline_comment|/* define a single TCB &amp; buffer */
@@ -155,6 +155,76 @@ DECL|member|RCgetspeed
 id|RCgetspeed
 suffix:semicolon
 multiline_comment|/* &lt;---- RCgetspeed */
+multiline_comment|/* SETSPEED structure */
+DECL|struct|RCsetspeed_tag
+r_struct
+id|RCsetspeed_tag
+(brace
+DECL|member|LinkSpeedCode
+id|U16
+id|LinkSpeedCode
+suffix:semicolon
+DECL|member|RCsetspeed
+)brace
+id|RCsetspeed
+suffix:semicolon
+multiline_comment|/* &lt;---- RCsetspeed */
+multiline_comment|/* GETPROM structure */
+DECL|struct|RCgetprom_tag
+r_struct
+id|RCgetprom_tag
+(brace
+DECL|member|PromMode
+id|U32
+id|PromMode
+suffix:semicolon
+DECL|member|RCgetprom
+)brace
+id|RCgetprom
+suffix:semicolon
+multiline_comment|/* &lt;---- RCgetprom */
+multiline_comment|/* SETPROM structure */
+DECL|struct|RCsetprom_tag
+r_struct
+id|RCsetprom_tag
+(brace
+DECL|member|PromMode
+id|U16
+id|PromMode
+suffix:semicolon
+DECL|member|RCsetprom
+)brace
+id|RCsetprom
+suffix:semicolon
+multiline_comment|/* &lt;---- RCsetprom */
+multiline_comment|/* GETBROADCAST structure */
+DECL|struct|RCgetbroadcast_tag
+r_struct
+id|RCgetbroadcast_tag
+(brace
+DECL|member|BroadcastMode
+id|U32
+id|BroadcastMode
+suffix:semicolon
+DECL|member|RCgetbroadcast
+)brace
+id|RCgetbroadcast
+suffix:semicolon
+multiline_comment|/* &lt;---- RCgetbroadcast */
+multiline_comment|/* SETBROADCAST structure */
+DECL|struct|RCsetbroadcast_tag
+r_struct
+id|RCsetbroadcast_tag
+(brace
+DECL|member|BroadcastMode
+id|U16
+id|BroadcastMode
+suffix:semicolon
+DECL|member|RCsetbroadcast
+)brace
+id|RCsetbroadcast
+suffix:semicolon
+multiline_comment|/* &lt;---- RCsetbroadcast */
 multiline_comment|/* GETFIRMWAREVER structure */
 DECL|macro|FirmStringLen
 mdefine_line|#define FirmStringLen 80
@@ -192,6 +262,24 @@ DECL|member|RCgetipandmask
 id|RCgetipandmask
 suffix:semicolon
 multiline_comment|/* &lt;---- RCgetipandmask */
+multiline_comment|/* SETIPANDMASK structure */
+DECL|struct|RCsetipnmask_tag
+r_struct
+id|RCsetipnmask_tag
+(brace
+DECL|member|IpAddr
+id|U32
+id|IpAddr
+suffix:semicolon
+DECL|member|NetMask
+id|U32
+id|NetMask
+suffix:semicolon
+DECL|member|RCsetipandmask
+)brace
+id|RCsetipandmask
+suffix:semicolon
+multiline_comment|/* &lt;---- RCsetipandmask */
 multiline_comment|/* GETMAC structure */
 DECL|macro|MAC_SIZE
 mdefine_line|#define MAC_SIZE 10
@@ -211,6 +299,23 @@ DECL|member|RCgetmac
 id|RCgetmac
 suffix:semicolon
 multiline_comment|/* &lt;---- RCgetmac */
+multiline_comment|/* SETMAC structure */
+DECL|struct|RCsetmac_tag
+r_struct
+id|RCsetmac_tag
+(brace
+DECL|member|mac
+id|U8
+id|mac
+(braket
+id|MAC_SIZE
+)braket
+suffix:semicolon
+DECL|member|RCsetmac
+)brace
+id|RCsetmac
+suffix:semicolon
+multiline_comment|/* &lt;---- RCsetmac */
 multiline_comment|/* GETLINKSTATUS structure */
 DECL|struct|RCgetlnkstatus_tag
 r_struct
@@ -279,6 +384,18 @@ id|RCgetspeed_tag
 op_star
 id|getspeed
 suffix:semicolon
+DECL|member|getprom
+r_struct
+id|RCgetprom_tag
+op_star
+id|getprom
+suffix:semicolon
+DECL|member|getbroadcast
+r_struct
+id|RCgetbroadcast_tag
+op_star
+id|getbroadcast
+suffix:semicolon
 DECL|member|getfwver
 r_struct
 id|RCgetfwver_tag
@@ -315,6 +432,36 @@ id|RCdefault_tag
 op_star
 id|rcdefault
 suffix:semicolon
+DECL|member|setspeed
+r_struct
+id|RCsetspeed_tag
+op_star
+id|setspeed
+suffix:semicolon
+DECL|member|setprom
+r_struct
+id|RCsetprom_tag
+op_star
+id|setprom
+suffix:semicolon
+DECL|member|setbroadcast
+r_struct
+id|RCsetbroadcast_tag
+op_star
+id|setbroadcast
+suffix:semicolon
+DECL|member|setipandmask
+r_struct
+id|RCsetipnmask_tag
+op_star
+id|setipandmask
+suffix:semicolon
+DECL|member|setmac
+r_struct
+id|RCsetmac_tag
+op_star
+id|setmac
+suffix:semicolon
 DECL|variable|_RC_user_data
 )brace
 id|_RC_user_data
@@ -327,6 +474,10 @@ DECL|macro|RCUS_GETINFO
 mdefine_line|#define RCUS_GETINFO           data.RCgetinfo;
 DECL|macro|RCUS_GETSPEED
 mdefine_line|#define RCUS_GETSPEED          data.RCgetspeed;
+DECL|macro|RCUS_GETPROM
+mdefine_line|#define RCUS_GETPROM           data.RCgetprom;
+DECL|macro|RCUS_GETBROADCAST
+mdefine_line|#define RCUS_GETBROADCAST      data.RCgetbroadcast;
 DECL|macro|RCUS_GETFWVER
 mdefine_line|#define RCUS_GETFWVER          data.RCgetfwver;
 DECL|macro|RCUS_GETIPANDMASK
@@ -339,6 +490,16 @@ DECL|macro|RCUS_GETLINKSTATISTICS
 mdefine_line|#define RCUS_GETLINKSTATISTICS data.RCgetlinkstats;
 DECL|macro|RCUS_DEFAULT
 mdefine_line|#define RCUS_DEFAULT           data.RCdefault;
+DECL|macro|RCUS_SETSPEED
+mdefine_line|#define RCUS_SETSPEED          data.RCsetspeed;
+DECL|macro|RCUS_SETPROM
+mdefine_line|#define RCUS_SETPROM           data.RCsetprom;
+DECL|macro|RCUS_SETBROADCAST
+mdefine_line|#define RCUS_SETBROADCAST      data.RCsetbroadcast;
+DECL|macro|RCUS_SETIPANDMASK
+mdefine_line|#define RCUS_SETIPANDMASK      data.RCsetipandmask;
+DECL|macro|RCUS_SETMAC
+mdefine_line|#define RCUS_SETMAC            data.RCsetmac;
 multiline_comment|/* 4) Data short-cut entry */
 multiline_comment|/* define data short-cuts */
 multiline_comment|/* pointer names are from RC_user_data_tag union (just below RC_user_tag) */
@@ -346,6 +507,10 @@ DECL|macro|RCUD_GETINFO
 mdefine_line|#define RCUD_GETINFO           _RC_user_data.getinfo
 DECL|macro|RCUD_GETSPEED
 mdefine_line|#define RCUD_GETSPEED          _RC_user_data.getspeed
+DECL|macro|RCUD_GETPROM
+mdefine_line|#define RCUD_GETPROM           _RC_user_data.getprom
+DECL|macro|RCUD_GETBROADCAST
+mdefine_line|#define RCUD_GETBROADCAST      _RC_user_data.getbroadcast
 DECL|macro|RCUD_GETFWVER
 mdefine_line|#define RCUD_GETFWVER          _RC_user_data.getfwver
 DECL|macro|RCUD_GETIPANDMASK
@@ -358,6 +523,16 @@ DECL|macro|RCUD_GETLINKSTATISTICS
 mdefine_line|#define RCUD_GETLINKSTATISTICS _RC_user_data.getlinkstatistics
 DECL|macro|RCUD_DEFAULT
 mdefine_line|#define RCUD_DEFAULT           _RC_user_data.rcdefault
+DECL|macro|RCUD_SETSPEED
+mdefine_line|#define RCUD_SETSPEED          _RC_user_data.setspeed
+DECL|macro|RCUD_SETPROM
+mdefine_line|#define RCUD_SETPROM           _RC_user_data.setprom
+DECL|macro|RCUD_SETBROADCAST
+mdefine_line|#define RCUD_SETBROADCAST      _RC_user_data.setbroadcast
+DECL|macro|RCUD_SETIPANDMASK
+mdefine_line|#define RCUD_SETIPANDMASK      _RC_user_data.setipandmask
+DECL|macro|RCUD_SETMAC
+mdefine_line|#define RCUD_SETMAC            _RC_user_data.setmac
 multiline_comment|/* 5) Command identifier entry */
 multiline_comment|/* define command identifiers */
 DECL|macro|RCUC_GETINFO
@@ -374,8 +549,22 @@ DECL|macro|RCUC_GETLINKSTATUS
 mdefine_line|#define RCUC_GETLINKSTATUS      0x06
 DECL|macro|RCUC_GETLINKSTATISTICS
 mdefine_line|#define RCUC_GETLINKSTATISTICS  0x07
+DECL|macro|RCUC_GETPROM
+mdefine_line|#define RCUC_GETPROM            0x14
+DECL|macro|RCUC_GETBROADCAST
+mdefine_line|#define RCUC_GETBROADCAST       0x15
 DECL|macro|RCUC_DEFAULT
 mdefine_line|#define RCUC_DEFAULT            0xff
+DECL|macro|RCUC_SETSPEED
+mdefine_line|#define RCUC_SETSPEED           0x08
+DECL|macro|RCUC_SETIPANDMASK
+mdefine_line|#define RCUC_SETIPANDMASK       0x09
+DECL|macro|RCUC_SETMAC
+mdefine_line|#define RCUC_SETMAC             0x0a
+DECL|macro|RCUC_SETPROM
+mdefine_line|#define RCUC_SETPROM            0x16
+DECL|macro|RCUC_SETBROADCAST
+mdefine_line|#define RCUC_SETBROADCAST       0x17
 multiline_comment|/* define ioctl commands to use, when talking to RC 45/PCI driver */
 DECL|macro|RCU_PROTOCOL_REV
 mdefine_line|#define RCU_PROTOCOL_REV         SIOCDEVPRIVATE

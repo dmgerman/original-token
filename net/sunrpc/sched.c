@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/net/sunrpc/sched.c&n; *&n; * Scheduling for synchronous and asynchronous RPC requests.&n; *&n; * Copyright (C) 1996 Olaf Kirch, &lt;okir@monad.swb.de&gt;&n; */
+multiline_comment|/*&n; * linux/net/sunrpc/sched.c&n; *&n; * Scheduling for synchronous and asynchronous RPC requests.&n; *&n; * Copyright (C) 1996 Olaf Kirch, &lt;okir@monad.swb.de&gt;&n; * &n; * TCP NFS related read + write fixes&n; * (C) 1999 Dave Airlie, University of Limerick, Ireland &lt;airlied@linux.ie&gt;&n; */
 macro_line|#include &lt;linux/module.h&gt;
 DECL|macro|__KERNEL_SYSCALLS__
 mdefine_line|#define __KERNEL_SYSCALLS__
@@ -849,15 +849,15 @@ id|task
 )paren
 )paren
 (brace
+id|task-&gt;tk_flags
+op_or_assign
+id|RPC_TASK_CALLBACK
+suffix:semicolon
 id|rpc_make_runnable
 c_func
 (paren
 id|task
 )paren
-suffix:semicolon
-id|task-&gt;tk_flags
-op_or_assign
-id|RPC_TASK_CALLBACK
 suffix:semicolon
 )brace
 id|dprintk
@@ -1265,28 +1265,43 @@ op_amp
 id|RPC_TASK_CALLBACK
 )paren
 (brace
+multiline_comment|/* Define a callback save pointer */
+r_void
+(paren
+op_star
+id|save_callback
+)paren
+(paren
+r_struct
+id|rpc_task
+op_star
+)paren
+suffix:semicolon
 id|task-&gt;tk_flags
 op_and_assign
 op_complement
 id|RPC_TASK_CALLBACK
 suffix:semicolon
+multiline_comment|/* &n;&t;&t;&t; * If a callback exists, save it, reset it,&n;&t;&t;&t; * call it.&n;&t;&t;&t; * The save is needed to stop from resetting&n;&t;&t;&t; * another callback set within the callback handler&n;&t;&t;&t; * - Dave&n;&t;&t;&t; */
 r_if
 c_cond
 (paren
 id|task-&gt;tk_callback
 )paren
 (brace
-id|task
-op_member_access_from_pointer
-id|tk_callback
-c_func
-(paren
-id|task
-)paren
+id|save_callback
+op_assign
+id|task-&gt;tk_callback
 suffix:semicolon
 id|task-&gt;tk_callback
 op_assign
 l_int|NULL
+suffix:semicolon
+id|save_callback
+c_func
+(paren
+id|task
+)paren
 suffix:semicolon
 )brace
 )brace
@@ -2841,14 +2856,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|schedq.task
-)paren
-(brace
-multiline_comment|/* following two lines added by airlied@linux.ie&n;&t;&t;&t;&t;to make NFS over TCP work 5/1/99 */
 id|dprintk
 c_func
 (paren
@@ -2860,6 +2867,13 @@ c_func
 (paren
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|schedq.task
+)paren
+(brace
 id|dprintk
 c_func
 (paren

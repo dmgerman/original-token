@@ -695,6 +695,8 @@ comma
 id|d2
 comma
 id|d3
+comma
+id|d4
 suffix:semicolon
 r_register
 r_char
@@ -752,6 +754,11 @@ l_string|&quot;=&amp;D&quot;
 (paren
 id|d3
 )paren
+comma
+l_string|&quot;=&amp;g&quot;
+(paren
+id|d4
+)paren
 suffix:colon
 l_string|&quot;0&quot;
 (paren
@@ -768,7 +775,7 @@ l_string|&quot;2&quot;
 id|cs
 )paren
 comma
-l_string|&quot;g&quot;
+l_string|&quot;4&quot;
 (paren
 id|ct
 )paren

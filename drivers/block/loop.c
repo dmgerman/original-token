@@ -833,6 +833,16 @@ r_goto
 id|error_out_lock
 suffix:semicolon
 )brace
+id|real_block
+op_assign
+id|bmap
+c_func
+(paren
+id|lo-&gt;lo_dentry-&gt;d_inode
+comma
+id|block
+)paren
+suffix:semicolon
 )brace
 )brace
 )brace

@@ -647,6 +647,10 @@ id|dir-&gt;i_sb-&gt;u.isofs_sb.s_joliet_level
 op_logical_or
 id|dir-&gt;i_sb-&gt;u.isofs_sb.s_mapping
 op_eq
+l_char|&squot;n&squot;
+op_logical_or
+id|dir-&gt;i_sb-&gt;u.isofs_sb.s_mapping
+op_eq
 l_char|&squot;a&squot;
 )paren
 (brace
@@ -851,7 +855,7 @@ id|c
 op_assign
 l_char|&squot;.&squot;
 suffix:semicolon
-id|dpnt
+id|page
 (braket
 id|i
 )braket
@@ -863,7 +867,7 @@ multiline_comment|/* This allows us to match with and without&n;&t;&t;&t; * a tr
 r_if
 c_cond
 (paren
-id|dpnt
+id|page
 (braket
 id|dlen
 op_minus
@@ -883,6 +887,10 @@ id|dlen
 op_decrement
 suffix:semicolon
 )brace
+id|dpnt
+op_assign
+id|page
+suffix:semicolon
 )brace
 multiline_comment|/*&n;&t;&t; * Skip hidden or associated files unless unhide is set &n;&t;&t; */
 id|match

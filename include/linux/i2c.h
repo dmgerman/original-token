@@ -1,7 +1,7 @@
 macro_line|#ifndef I2C_H
 DECL|macro|I2C_H
 mdefine_line|#define I2C_H
-multiline_comment|/*&n; * linux i2c interface.  Works a little bit like the scsi subsystem.&n; * There are:&n; *&n; *     i2c          the basic control module        (like scsi_mod)&n; *     bus driver   a driver with a i2c bus         (host adapter driver)&n; *     chip driver  a driver for a chip connected&n; *                  to a i2c bus                    (cdrom/hd driver)&n; *&n; * A device will be attached to one bus and one chip driver.  Every chip&n; * driver gets a unique ID.&n; *&n; * A chip driver can provide a ioctl-like callback for the&n; * communication with other parts of the kernel (not every i2c chip is&n; * useful without other devices, a TV card tuner for example). &n; *&n; * &quot;i2c internal&quot; parts of the structs: only the i2c module is allowed to&n; * write to them, for others they are read-only.&n; *&n; */
+multiline_comment|/*&n; * linux i2c interface.  Works a little bit like the scsi subsystem.&n; * There are:&n; *&n; *     i2c          the basic control module        (like scsi_mod)&n; *     bus driver   a driver with a i2c bus         (hostadapter driver)&n; *     chip driver  a driver for a chip connected&n; *                  to a i2c bus                    (cdrom/hd driver)&n; *&n; * A device will be attached to one bus and one chip driver.  Every chip&n; * driver gets a unique ID.&n; *&n; * A chip driver can provide a ioctl-like callback for the&n; * communication with other parts of the kernel (not every i2c chip is&n; * useful without other devices, a TV card tuner for example). &n; *&n; * &quot;i2c internal&quot; parts of the structs: only the i2c module is allowed to&n; * write to them, for others they are read-only.&n; *&n; */
 DECL|macro|I2C_BUS_MAX
 mdefine_line|#define I2C_BUS_MAX       4    /* max # of bus drivers  */
 DECL|macro|I2C_DRIVER_MAX
@@ -117,10 +117,27 @@ suffix:semicolon
 suffix:semicolon
 multiline_comment|/*&n; * this holds the informations about a i2c bus available in the system.&n; * &n; * a chip with a i2c bus interface (like bt848) registers the bus within&n; * the i2c module. This struct provides functions to access the i2c bus.&n; * &n; * One must hold the spinlock to access the i2c bus (XXX: is the irqsave&n; * required? Maybe better use a semaphore?). &n; * [-AC-] having a spinlock_irqsave is only needed if we have drivers wishing&n; *&t;  to bang their i2c bus from an interrupt.&n; * &n; * attach/detach_inform is a callback to inform the bus driver about&n; * attached chip drivers.&n; *&n; */
 multiline_comment|/* needed: unsigned long flags */
+macro_line|#if LINUX_VERSION_CODE &gt;= 0x020100
+macro_line|# if 0
+macro_line|#  define LOCK_FLAGS unsigned long flags;
+macro_line|#  define LOCK_I2C_BUS(bus)    spin_lock_irqsave(&amp;(bus-&gt;bus_lock),flags);
+macro_line|#  define UNLOCK_I2C_BUS(bus)  spin_unlock_irqrestore(&amp;(bus-&gt;bus_lock),flags);
+macro_line|# else
+DECL|macro|LOCK_FLAGS
+macro_line|#  define LOCK_FLAGS
 DECL|macro|LOCK_I2C_BUS
-mdefine_line|#define LOCK_I2C_BUS(bus)    spin_lock_irqsave(&amp;(bus-&gt;bus_lock),flags);
+macro_line|#  define LOCK_I2C_BUS(bus)    spin_lock(&amp;(bus-&gt;bus_lock));
 DECL|macro|UNLOCK_I2C_BUS
-mdefine_line|#define UNLOCK_I2C_BUS(bus)  spin_unlock_irqrestore(&amp;(bus-&gt;bus_lock),flags);
+macro_line|#  define UNLOCK_I2C_BUS(bus)  spin_unlock(&amp;(bus-&gt;bus_lock));
+macro_line|# endif
+macro_line|#else
+DECL|macro|LOCK_FLAGS
+macro_line|# define LOCK_FLAGS unsigned long flags;
+DECL|macro|LOCK_I2C_BUS
+macro_line|# define LOCK_I2C_BUS(bus)    { save_flags(flags); cli(); }
+DECL|macro|UNLOCK_I2C_BUS
+macro_line|# define UNLOCK_I2C_BUS(bus)  { restore_flags(flags);     }
+macro_line|#endif
 DECL|struct|i2c_bus
 r_struct
 id|i2c_bus
@@ -143,10 +160,12 @@ op_star
 id|data
 suffix:semicolon
 multiline_comment|/* free for use by the bus driver */
+macro_line|#if LINUX_VERSION_CODE &gt;= 0x020100
 DECL|member|bus_lock
 id|spinlock_t
 id|bus_lock
 suffix:semicolon
+macro_line|#endif
 multiline_comment|/* attach/detach inform callbacks */
 DECL|member|attach_inform
 r_void

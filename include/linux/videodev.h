@@ -1,8 +1,11 @@
 macro_line|#ifndef __LINUX_VIDEODEV_H
 DECL|macro|__LINUX_VIDEODEV_H
 mdefine_line|#define __LINUX_VIDEODEV_H
+macro_line|#include &lt;linux/types.h&gt;
 macro_line|#ifdef __KERNEL__
+macro_line|#if LINUX_VERSION_CODE &gt;= 0x020100
 macro_line|#include &lt;linux/poll.h&gt;
+macro_line|#endif
 DECL|struct|video_device
 r_struct
 id|video_device
@@ -93,6 +96,7 @@ r_int
 id|noblock
 )paren
 suffix:semicolon
+macro_line|#if LINUX_VERSION_CODE &gt;= 0x020100
 DECL|member|poll
 r_int
 r_int
@@ -113,6 +117,7 @@ id|poll_table
 op_star
 )paren
 suffix:semicolon
+macro_line|#endif
 DECL|member|ioctl
 r_int
 (paren
@@ -240,8 +245,6 @@ DECL|macro|VID_TYPE_MONOCHROME
 mdefine_line|#define VID_TYPE_MONOCHROME&t;256&t;/* Monochrome only */
 DECL|macro|VID_TYPE_SUBCAPTURE
 mdefine_line|#define VID_TYPE_SUBCAPTURE&t;512&t;/* Can capture subareas of the image */
-DECL|macro|VID_TYPE_OUTPUT
-mdefine_line|#define VID_TYPE_OUTPUT&t;&t;1024&t;/* Can output video data */
 DECL|struct|video_capability
 r_struct
 id|video_capability
@@ -453,6 +456,14 @@ DECL|macro|VIDEO_PALETTE_YUV422P
 mdefine_line|#define VIDEO_PALETTE_YUV422P&t;13&t;/* YUV 4:2:2 Planar */
 DECL|macro|VIDEO_PALETTE_YUV411P
 mdefine_line|#define VIDEO_PALETTE_YUV411P&t;14&t;/* YUV 4:1:1 Planar */
+DECL|macro|VIDEO_PALETTE_YUV420P
+mdefine_line|#define VIDEO_PALETTE_YUV420P&t;15&t;/* YUV 4:2:0 Planar */
+DECL|macro|VIDEO_PALETTE_YUV410P
+mdefine_line|#define VIDEO_PALETTE_YUV410P&t;16&t;/* YUV 4:1:0 Planar */
+DECL|macro|VIDEO_PALETTE_PLANAR
+mdefine_line|#define VIDEO_PALETTE_PLANAR&t;13&t;/* start of planar entries */
+DECL|macro|VIDEO_PALETTE_COMPONENT
+mdefine_line|#define VIDEO_PALETTE_COMPONENT 7&t;/* start of component entries */
 )brace
 suffix:semicolon
 DECL|struct|video_audio
@@ -509,7 +520,6 @@ DECL|member|mode
 id|__u16
 id|mode
 suffix:semicolon
-multiline_comment|/* detected audio carriers or one to set */
 DECL|member|balance
 id|__u16
 id|balance

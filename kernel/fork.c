@@ -5,6 +5,7 @@ macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/unistd.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
+macro_line|#include &lt;linux/vmalloc.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/mmu_context.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
@@ -981,38 +982,15 @@ id|tmp
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t;&t; * Link in the new vma even if an error occurred,&n;&t;&t; * so that exit_mmap() can clean up the mess.&n;&t;&t; */
-r_if
-c_cond
-(paren
-(paren
 id|tmp-&gt;vm_next
 op_assign
 op_star
 id|pprev
-)paren
-op_ne
-l_int|NULL
-)paren
-(brace
-(paren
-op_star
-id|pprev
-)paren
-op_member_access_from_pointer
-id|vm_pprev
-op_assign
-op_amp
-id|tmp-&gt;vm_next
 suffix:semicolon
-)brace
 op_star
 id|pprev
 op_assign
 id|tmp
-suffix:semicolon
-id|tmp-&gt;vm_pprev
-op_assign
-id|pprev
 suffix:semicolon
 id|pprev
 op_assign
@@ -1031,6 +1009,19 @@ suffix:semicolon
 id|retval
 op_assign
 l_int|0
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|mm-&gt;map_count
+op_ge
+id|AVL_MIN_MAP_COUNT
+)paren
+id|build_mmap_avl
+c_func
+(paren
+id|mm
+)paren
 suffix:semicolon
 id|fail_nomem
 suffix:colon
@@ -1112,6 +1103,8 @@ suffix:semicolon
 multiline_comment|/*&n;&t;&t; * Leave mm-&gt;pgd set to the parent&squot;s pgd&n;&t;&t; * so that pgd_offset() is always valid.&n;&t;&t; */
 id|mm-&gt;mmap
 op_assign
+id|mm-&gt;mmap_avl
+op_assign
 id|mm-&gt;mmap_cache
 op_assign
 l_int|NULL
@@ -1126,6 +1119,49 @@ r_return
 id|mm
 suffix:semicolon
 )brace
+multiline_comment|/* Please note the differences between mmput and mm_release.&n; * mmput is called whenever we stop holding onto a mm_struct,&n; * error success whatever.&n; *&n; * mm_release is called after a mm_struct has been removed&n; * from the current process.&n; *&n; * This difference is important for error handling, when we&n; * only half set up a mm_struct for a new process and need to restore&n; * the old one.  Because we mmput the new mm_struct before&n; * restoring the old one. . .&n; * Eric Biederman 10 January 1998&n; */
+DECL|function|mm_release
+r_void
+id|mm_release
+c_func
+(paren
+r_void
+)paren
+(brace
+r_struct
+id|task_struct
+op_star
+id|tsk
+op_assign
+id|current
+suffix:semicolon
+id|forget_segments
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/* notify parent sleeping on vfork() */
+r_if
+c_cond
+(paren
+id|tsk-&gt;flags
+op_amp
+id|PF_VFORK
+)paren
+(brace
+id|tsk-&gt;flags
+op_and_assign
+op_complement
+id|PF_VFORK
+suffix:semicolon
+id|up
+c_func
+(paren
+id|tsk-&gt;p_opptr-&gt;vfork_sem
+)paren
+suffix:semicolon
+)brace
+)brace
 multiline_comment|/*&n; * Decrement the use count and release all resources for an mm.&n; */
 DECL|function|mmput
 r_void
@@ -1138,27 +1174,6 @@ op_star
 id|mm
 )paren
 (brace
-multiline_comment|/* notify parent sleeping on vfork() */
-r_if
-c_cond
-(paren
-id|current-&gt;flags
-op_amp
-id|PF_VFORK
-)paren
-(brace
-id|current-&gt;flags
-op_and_assign
-op_complement
-id|PF_VFORK
-suffix:semicolon
-id|up
-c_func
-(paren
-id|current-&gt;p_opptr-&gt;vfork_sem
-)paren
-suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -2073,6 +2088,17 @@ id|task_struct
 op_star
 id|p
 suffix:semicolon
+r_struct
+id|semaphore
+id|sem
+op_assign
+id|MUTEX_LOCKED
+suffix:semicolon
+id|current-&gt;vfork_sem
+op_assign
+op_amp
+id|sem
+suffix:semicolon
 id|p
 op_assign
 id|alloc_task_struct
@@ -2592,6 +2618,11 @@ id|total_forks
 suffix:semicolon
 id|bad_fork
 suffix:colon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|up
 c_func
 (paren
@@ -2599,13 +2630,30 @@ op_amp
 id|current-&gt;mm-&gt;mmap_sem
 )paren
 suffix:semicolon
-id|unlock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 id|fork_out
 suffix:colon
+r_if
+c_cond
+(paren
+(paren
+id|clone_flags
+op_amp
+id|CLONE_VFORK
+)paren
+op_logical_and
+(paren
+id|retval
+OG
+l_int|0
+)paren
+)paren
+id|down
+c_func
+(paren
+op_amp
+id|sem
+)paren
+suffix:semicolon
 r_return
 id|retval
 suffix:semicolon

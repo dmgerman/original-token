@@ -2654,9 +2654,11 @@ suffix:semicolon
 )brace
 multiline_comment|/* This tells the input processing path that an ACK should go out&n; * right now.&n; */
 DECL|macro|tcp_enter_quickack_mode
-mdefine_line|#define tcp_enter_quickack_mode(__tp)&t;((__tp)-&gt;ato = (HZ/100))
+mdefine_line|#define tcp_enter_quickack_mode(__tp)&t;((__tp)-&gt;ato |= (1&lt;&lt;31))
+DECL|macro|tcp_exit_quickack_mode
+mdefine_line|#define tcp_exit_quickack_mode(__tp)&t;((__tp)-&gt;ato &amp;= ~(1&lt;&lt;31))
 DECL|macro|tcp_in_quickack_mode
-mdefine_line|#define tcp_in_quickack_mode(__tp)&t;((__tp)-&gt;ato == (HZ/100))
+mdefine_line|#define tcp_in_quickack_mode(__tp)&t;(((__tp)-&gt;ato &amp; (1 &lt;&lt; 31)) != 0)
 multiline_comment|/*&n; * List all states of a TCP socket that can be viewed as a &quot;connected&quot;&n; * state.  This now includes TCP_SYN_RECV, although I am not yet fully&n; * convinced that this is the solution for the &squot;getpeername(2)&squot;&n; * problem. Thanks to Stephen A. Wood &lt;saw@cebaf.gov&gt;  -FvK&n; */
 DECL|function|tcp_connected
 r_extern

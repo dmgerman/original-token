@@ -1,5 +1,5 @@
 multiline_comment|/******************************************************************************&n;**  Device driver for the PCI-SCSI NCR538XX controller family.&n;**&n;**  Copyright (C) 1994  Wolfgang Stanglmeier&n;**&n;**  This program is free software; you can redistribute it and/or modify&n;**  it under the terms of the GNU General Public License as published by&n;**  the Free Software Foundation; either version 2 of the License, or&n;**  (at your option) any later version.&n;**&n;**  This program is distributed in the hope that it will be useful,&n;**  but WITHOUT ANY WARRANTY; without even the implied warranty of&n;**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n;**  GNU General Public License for more details.&n;**&n;**  You should have received a copy of the GNU General Public License&n;**  along with this program; if not, write to the Free Software&n;**  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n;**&n;**-----------------------------------------------------------------------------&n;**&n;**  This driver has been ported to Linux from the FreeBSD NCR53C8XX driver&n;**  and is currently maintained by&n;**&n;**          Gerard Roudier              &lt;groudier@club-internet.fr&gt;&n;**&n;**  Being given that this driver originates from the FreeBSD version, and&n;**  in order to keep synergy on both, any suggested enhancements and corrections&n;**  received on Linux are automatically a potential candidate for the FreeBSD &n;**  version.&n;**&n;**  The original driver has been written for 386bsd and FreeBSD by&n;**          Wolfgang Stanglmeier        &lt;wolf@cologne.de&gt;&n;**          Stefan Esser                &lt;se@mi.Uni-Koeln.de&gt;&n;**&n;**  And has been ported to NetBSD by&n;**          Charles M. Hannum           &lt;mycroft@gnu.ai.mit.edu&gt;&n;**&n;**-----------------------------------------------------------------------------&n;**&n;**                     Brief history&n;**&n;**  December 10 1995 by Gerard Roudier:&n;**     Initial port to Linux.&n;**&n;**  June 23 1996 by Gerard Roudier:&n;**     Support for 64 bits architectures (Alpha).&n;**&n;**  November 30 1996 by Gerard Roudier:&n;**     Support for Fast-20 scsi.&n;**     Support for large DMA fifo and 128 dwords bursting.&n;**&n;**  February 27 1997 by Gerard Roudier:&n;**     Support for Fast-40 scsi.&n;**     Support for on-Board RAM.&n;**&n;**  May 3 1997 by Gerard Roudier:&n;**     Full support for scsi scripts instructions pre-fetching.&n;**&n;**  May 19 1997 by Richard Waltham &lt;dormouse@farsrobt.demon.co.uk&gt;:&n;**     Support for NvRAM detection and reading.&n;**&n;**  August 18 1997 by Cort &lt;cort@cs.nmt.edu&gt;:&n;**     Support for Power/PC (Big Endian).&n;**&n;**  June 20 1998 by Gerard Roudier &lt;groudier@club-internet.fr&gt;:&n;**     Support for up to 64 tags per lun.&n;**     O(1) everywhere (C and SCRIPTS) for normal cases.&n;**     Low PCI traffic for command handling when on-chip RAM is present.&n;**     Aggressive SCSI SCRIPTS optimizations.&n;**&n;*******************************************************************************&n;*/
-multiline_comment|/*&n;**&t;November 26 1998, version 3.1d&n;**&n;**&t;Supported SCSI-II features:&n;**&t;    Synchronous negotiation&n;**&t;    Wide negotiation        (depends on the NCR Chip)&n;**&t;    Enable disconnection&n;**&t;    Tagged command queuing&n;**&t;    Parity checking&n;**&t;    Etc...&n;**&n;**&t;Supported NCR chips:&n;**&t;&t;53C810&t;&t;(8 bits, Fast SCSI-2, no rom BIOS) &n;**&t;&t;53C815&t;&t;(8 bits, Fast SCSI-2, on board rom BIOS)&n;**&t;&t;53C820&t;&t;(Wide,   Fast SCSI-2, no rom BIOS)&n;**&t;&t;53C825&t;&t;(Wide,   Fast SCSI-2, on board rom BIOS)&n;**&t;&t;53C860&t;&t;(8 bits, Fast 20,     no rom BIOS)&n;**&t;&t;53C875&t;&t;(Wide,   Fast 20,     on board rom BIOS)&n;**&t;&t;53C895&t;&t;(Wide,   Fast 40,     on board rom BIOS)&n;**&n;**&t;Other features:&n;**&t;&t;Memory mapped IO (linux-1.3.X and above only)&n;**&t;&t;Module&n;**&t;&t;Shared IRQ (since linux-1.3.72)&n;*/
+multiline_comment|/*&n;**&t;January 16 1998, version 3.1f&n;**&n;**&t;Supported SCSI-II features:&n;**&t;    Synchronous negotiation&n;**&t;    Wide negotiation        (depends on the NCR Chip)&n;**&t;    Enable disconnection&n;**&t;    Tagged command queuing&n;**&t;    Parity checking&n;**&t;    Etc...&n;**&n;**&t;Supported NCR chips:&n;**&t;&t;53C810&t;&t;(8 bits, Fast SCSI-2, no rom BIOS) &n;**&t;&t;53C815&t;&t;(8 bits, Fast SCSI-2, on board rom BIOS)&n;**&t;&t;53C820&t;&t;(Wide,   Fast SCSI-2, no rom BIOS)&n;**&t;&t;53C825&t;&t;(Wide,   Fast SCSI-2, on board rom BIOS)&n;**&t;&t;53C860&t;&t;(8 bits, Fast 20,     no rom BIOS)&n;**&t;&t;53C875&t;&t;(Wide,   Fast 20,     on board rom BIOS)&n;**&t;&t;53C895&t;&t;(Wide,   Fast 40,     on board rom BIOS)&n;**&n;**&t;Other features:&n;**&t;&t;Memory mapped IO (linux-1.3.X and above only)&n;**&t;&t;Module&n;**&t;&t;Shared IRQ (since linux-1.3.72)&n;*/
 DECL|macro|SCSI_NCR_DEBUG_FLAGS
 mdefine_line|#define SCSI_NCR_DEBUG_FLAGS&t;(0)
 multiline_comment|/*==========================================================&n;**&n;**      Include files&n;**&n;**==========================================================&n;*/
@@ -1693,7 +1693,7 @@ mdefine_line|#define ncr_offb(o)&t;(o)
 DECL|macro|ncr_offw
 mdefine_line|#define ncr_offw(o)&t;(o)
 macro_line|#endif
-multiline_comment|/*&n;**&t;If the CPU and the NCR use same endian-ness adressing,&n;**&t;no byte reordering is needed for script patching.&n;**&t;Macro cpu_to_scr() is to be used for script patching.&n;**&t;Macro scr_to_cpu() is to be used for getting a DWORD &n;**&t;from the script.&n;*/
+multiline_comment|/*&n;**&t;If the CPU and the NCR use same endian-ness addressing,&n;**&t;no byte reordering is needed for script patching.&n;**&t;Macro cpu_to_scr() is to be used for script patching.&n;**&t;Macro scr_to_cpu() is to be used for getting a DWORD &n;**&t;from the script.&n;*/
 macro_line|#if&t;defined(__BIG_ENDIAN) &amp;&amp; !defined(SCSI_NCR_BIG_ENDIAN)
 DECL|macro|cpu_to_scr
 mdefine_line|#define cpu_to_scr(dw)&t;cpu_to_le32(dw)
@@ -1711,7 +1711,7 @@ DECL|macro|scr_to_cpu
 mdefine_line|#define scr_to_cpu(dw)&t;(dw)
 macro_line|#endif
 multiline_comment|/*==========================================================&n;**&n;**&t;Access to the controller chip.&n;**&n;**&t;If NCR_IOMAPPED is defined, the driver will use &n;**&t;normal IOs instead of the MEMORY MAPPED IO method  &n;**&t;recommended by PCI specifications.&n;**&t;If all PCI bridges, host brigdes and architectures &n;**&t;would have been correctly designed for PCI, this &n;**&t;option would be useless.&n;**&n;**==========================================================&n;*/
-multiline_comment|/*&n;**&t;If the CPU and the NCR use same endian-ness adressing,&n;**&t;no byte reordering is needed for accessing chip io &n;**&t;registers. Functions suffixed by &squot;_raw&squot; are assumed &n;**&t;to access the chip over the PCI without doing byte &n;**&t;reordering. Functions suffixed by &squot;_l2b&squot; are &n;**&t;assumed to perform little-endian to big-endian byte &n;**&t;reordering, those suffixed by &squot;_b2l&squot; blah, blah,&n;**&t;blah, ...&n;*/
+multiline_comment|/*&n;**&t;If the CPU and the NCR use same endian-ness addressing,&n;**&t;no byte reordering is needed for accessing chip io &n;**&t;registers. Functions suffixed by &squot;_raw&squot; are assumed &n;**&t;to access the chip over the PCI without doing byte &n;**&t;reordering. Functions suffixed by &squot;_l2b&squot; are &n;**&t;assumed to perform little-endian to big-endian byte &n;**&t;reordering, those suffixed by &squot;_b2l&squot; blah, blah,&n;**&t;blah, ...&n;*/
 macro_line|#if defined(NCR_IOMAPPED)
 multiline_comment|/*&n;**&t;IO mapped only input / ouput&n;*/
 DECL|macro|INB_OFF
@@ -16949,7 +16949,7 @@ op_amp
 id|SMODE
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t;**&t;DEL 441 - 53C876 Rev 5 - Part Number 609-0392787/2788 - ITEM 2.&n;&t;**&t;Disable overlapped arbitration.&n;&t;*/
+multiline_comment|/*&n;&t;**&t;DEL 441 - 53C876 Rev 5 - Part Number 609-0392787/2788 - ITEM 2.&n;&t;**&t;Disable overlapped arbitration.&n;&t;**&t;The 896 Rev 1 is also affected by this errata.&n;&t;*/
 r_if
 c_cond
 (paren
@@ -16974,6 +16974,25 @@ l_int|1
 op_lshift
 l_int|5
 )paren
+)paren
+suffix:semicolon
+r_else
+r_if
+c_cond
+(paren
+id|np-&gt;device_id
+op_eq
+id|PCI_DEVICE_ID_NCR_53C896
+op_logical_and
+id|np-&gt;revision_id
+op_le
+l_int|0x1
+)paren
+id|OUTB
+(paren
+id|nc_ccntl0
+comma
+id|DPR
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t;**&t;Fill in target structure.&n;&t;**&t;Reinitialize usrsync.&n;&t;**&t;Reinitialize usrwide.&n;&t;**&t;Prepare sync negotiation according to actual SCSI bus mode.&n;&t;*/
@@ -19010,7 +19029,7 @@ suffix:semicolon
 )brace
 macro_line|#endif /* SCSI_NCR_BROKEN_INTR */
 )brace
-multiline_comment|/*==========================================================&n;**&n;**&t;log message for real hard errors&n;**&n;**&t;&quot;ncr0 targ 0?: ERROR (ds:si) (so-si-sd) (sxfer/scntl3) @ name (dsp:dbc).&quot;&n;**&t;&quot;&t;      reg: r0 r1 r2 r3 r4 r5 r6 ..... rf.&quot;&n;**&n;**&t;exception register:&n;**&t;&t;ds:&t;dstat&n;**&t;&t;si:&t;sist&n;**&n;**&t;SCSI bus lines:&n;**&t;&t;so:&t;control lines as driver by NCR.&n;**&t;&t;si:&t;control lines as seen by NCR.&n;**&t;&t;sd:&t;scsi data lines as seen by NCR.&n;**&n;**&t;wide/fastmode:&n;**&t;&t;sxfer:&t;(see the manual)&n;**&t;&t;scntl3:&t;(see the manual)&n;**&n;**&t;current script command:&n;**&t;&t;dsp:&t;script adress (relative to start of script).&n;**&t;&t;dbc:&t;first word of script command.&n;**&n;**&t;First 16 register of the chip:&n;**&t;&t;r0..rf&n;**&n;**==========================================================&n;*/
+multiline_comment|/*==========================================================&n;**&n;**&t;log message for real hard errors&n;**&n;**&t;&quot;ncr0 targ 0?: ERROR (ds:si) (so-si-sd) (sxfer/scntl3) @ name (dsp:dbc).&quot;&n;**&t;&quot;&t;      reg: r0 r1 r2 r3 r4 r5 r6 ..... rf.&quot;&n;**&n;**&t;exception register:&n;**&t;&t;ds:&t;dstat&n;**&t;&t;si:&t;sist&n;**&n;**&t;SCSI bus lines:&n;**&t;&t;so:&t;control lines as driver by NCR.&n;**&t;&t;si:&t;control lines as seen by NCR.&n;**&t;&t;sd:&t;scsi data lines as seen by NCR.&n;**&n;**&t;wide/fastmode:&n;**&t;&t;sxfer:&t;(see the manual)&n;**&t;&t;scntl3:&t;(see the manual)&n;**&n;**&t;current script command:&n;**&t;&t;dsp:&t;script address (relative to start of script).&n;**&t;&t;dbc:&t;first word of script command.&n;**&n;**&t;First 16 register of the chip:&n;**&t;&t;r0..rf&n;**&n;**==========================================================&n;*/
 DECL|function|ncr_log_hard_error
 r_static
 r_void
@@ -29230,7 +29249,7 @@ op_amp
 id|base_2
 )paren
 suffix:semicolon
-multiline_comment|/* Handle 64bit base adresses for 53C896. */
+multiline_comment|/* Handle 64bit base addresses for 53C896. */
 r_if
 c_cond
 (paren
@@ -29772,6 +29791,7 @@ l_string|&quot;succeeded.&bslash;n&quot;
 suffix:semicolon
 )brace
 )brace
+macro_line|#if LINUX_VERSION_CODE &lt; LinuxVersionCode(2,1,140)
 r_if
 c_cond
 (paren
@@ -29890,6 +29910,7 @@ id|base_2
 suffix:semicolon
 )brace
 )brace
+macro_line|#endif
 macro_line|#endif&t;/* __powerpc__ */
 macro_line|#ifdef __sparc__
 multiline_comment|/*&n;&t; *&t;Severall fix-ups for sparc.&n;&t; *&n;&t; *&t;Should not be performed by the driver, but how can OBP know&n;&t; *&t;each and every PCI card, if they don&squot;t use Fcode?&n;&t; */
@@ -30036,9 +30057,15 @@ op_logical_neg
 id|cache_line_size
 )paren
 (brace
+multiline_comment|/* PCI_CACHE_LINE_SIZE value is in 32-bit words. */
 id|cache_line_size
 op_assign
-id|CACHE_LINE_SIZE
+l_int|64
+op_div
+r_sizeof
+(paren
+id|u_int32
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -30090,7 +30117,7 @@ id|latency_timer
 (brace
 id|latency_timer
 op_assign
-l_int|248
+l_int|128
 suffix:semicolon
 r_if
 c_cond
@@ -31398,14 +31425,6 @@ id|cmd-&gt;host_scribble
 op_assign
 l_int|NULL
 suffix:semicolon
-id|cmd-&gt;SCp.ptr
-op_assign
-l_int|NULL
-suffix:semicolon
-id|cmd-&gt;SCp.buffer
-op_assign
-l_int|NULL
-suffix:semicolon
 id|NCR_LOCK_NCB
 c_func
 (paren
@@ -32160,25 +32179,17 @@ id|cmd
 (brace
 id|Scsi_Cmnd
 op_star
-id|wcmd
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-(paren
-id|wcmd
+op_star
+id|pcmd
 op_assign
+op_amp
 id|np-&gt;waiting_list
-)paren
-)paren
-r_return
-l_int|0
 suffix:semicolon
 r_while
 c_loop
 (paren
-id|wcmd-&gt;next_wcmd
+op_star
+id|pcmd
 )paren
 (brace
 r_if
@@ -32186,11 +32197,8 @@ c_cond
 (paren
 id|cmd
 op_eq
-(paren
-id|Scsi_Cmnd
 op_star
-)paren
-id|wcmd-&gt;next_wcmd
+id|pcmd
 )paren
 (brace
 r_if
@@ -32199,8 +32207,13 @@ c_cond
 id|to_remove
 )paren
 (brace
-id|wcmd-&gt;next_wcmd
+op_star
+id|pcmd
 op_assign
+(paren
+id|Scsi_Cmnd
+op_star
+)paren
 id|cmd-&gt;next_wcmd
 suffix:semicolon
 id|cmd-&gt;next_wcmd
@@ -32231,6 +32244,21 @@ r_return
 id|cmd
 suffix:semicolon
 )brace
+id|pcmd
+op_assign
+(paren
+id|Scsi_Cmnd
+op_star
+op_star
+)paren
+op_amp
+(paren
+op_star
+id|pcmd
+)paren
+op_member_access_from_pointer
+id|next_wcmd
+suffix:semicolon
 )brace
 r_return
 l_int|0

@@ -462,7 +462,7 @@ l_string|&quot;EXIT&bslash;n&quot;
 )paren
 )paren
 )brace
-multiline_comment|/*&n; * There are two policies for allocating an inode.  If the new inode is&n; * a directory, then a forward search is made for a block group with both&n; * free space and a low directory-to-inode ratio; if that fails, then of&n; * the groups with above-average free space, that group with the fewest&n; * directories already is chosen.&n; *&n; * For other inodes, search forward from the parent directory&bslash;&squot;s block&n; * group to find a free inode.&n; */
+multiline_comment|/*&n; * There are two policies for allocating an inode.  If the new inode is&n; * a directory, then a forward search is made for a block group with both&n; * free space and a low directory-to-inode ratio; if that fails, then of&n; * the groups with above-average free space, that group with the fewest&n; * directories already is chosen.&n; *&n; * For other inodes, search forward from the parent directory&squot;s block&n; * group to find a free inode.&n; */
 DECL|function|ufs_new_inode
 r_struct
 id|inode

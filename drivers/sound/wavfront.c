@@ -26,6 +26,8 @@ macro_line|#if defined(__i386__)
 DECL|macro|LOOPS_PER_SEC
 mdefine_line|#define LOOPS_PER_SEC current_cpu_data.loops_per_sec
 macro_line|#endif
+DECL|macro|_MIDI_SYNTH_C_
+mdefine_line|#define _MIDI_SYNTH_C_
 DECL|macro|MIDI_SYNTH_NAME
 mdefine_line|#define MIDI_SYNTH_NAME&t;&quot;WaveFront MIDI&quot;
 DECL|macro|MIDI_SYNTH_CAPS

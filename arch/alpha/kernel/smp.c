@@ -2692,8 +2692,6 @@ suffix:semicolon
 r_int
 r_int
 id|ops
-comma
-id|which
 suffix:semicolon
 id|DBGS
 c_func
@@ -2908,7 +2906,7 @@ id|printk
 c_func
 (paren
 id|KERN_CRIT
-l_string|&quot;unknown_ipi() on CPU %ld: %d&bslash;n&quot;
+l_string|&quot;unknown_ipi() on CPU %d: %lu&bslash;n&quot;
 comma
 id|this_cpu
 comma
@@ -3652,7 +3650,7 @@ suffix:semicolon
 )brace
 macro_line|#else
 DECL|macro|spinlock_raise_ipl
-mdefine_line|#define spinlock_raise_ipl(LOCK)&t;((LOCK), 0)
+mdefine_line|#define spinlock_raise_ipl(LOCK)&t;((void)(LOCK), 0)
 DECL|macro|spinlock_restore_ipl
 mdefine_line|#define spinlock_restore_ipl(PREV)&t;((void)(PREV))
 macro_line|#endif /* MANAGE_SPINLOCK_IPL */

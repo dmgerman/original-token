@@ -829,9 +829,6 @@ r_struct
 id|autofs_dir_ent
 op_star
 id|ent
-comma
-op_star
-id|nent
 suffix:semicolon
 r_for
 c_loop

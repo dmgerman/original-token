@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&n; * &t;Masquerading functionality&n; *&n; * &t;Copyright (c) 1994 Pauline Middelink&n; *&n; *&t;$Id: ip_masq.c,v 1.32 1999/01/04 20:37:05 davem Exp $&n; *&n; *&n; *&t;See ip_fw.c for original log&n; *&n; * Fixes:&n; *&t;Juan Jose Ciarlante&t;:&t;Modularized application masquerading (see ip_masq_app.c)&n; *&t;Juan Jose Ciarlante&t;:&t;New struct ip_masq_seq that holds output/input delta seq.&n; *&t;Juan Jose Ciarlante&t;:&t;Added hashed lookup by proto,maddr,mport and proto,saddr,sport&n; *&t;Juan Jose Ciarlante&t;:&t;Fixed deadlock if free ports get exhausted&n; *&t;Juan Jose Ciarlante&t;:&t;Added NO_ADDR status flag.&n; *&t;Richard Lynch&t;&t;:&t;Added IP Autoforward&n; *&t;Nigel Metheringham&t;:&t;Added ICMP handling for demasquerade&n; *&t;Nigel Metheringham&t;:&t;Checksum checking of masqueraded data&n; *&t;Nigel Metheringham&t;:&t;Better handling of timeouts of TCP conns&n; *&t;Delian Delchev&t;&t;:&t;Added support for ICMP requests and replys&n; *&t;Nigel Metheringham&t;:&t;ICMP in ICMP handling, tidy ups, bug fixes, made ICMP optional&n; *&t;Juan Jose Ciarlante&t;:&t;re-assign maddr if no packet received from outside&n; *&t;Juan Jose Ciarlante&t;:&t;ported to 2.1 tree&n; *&t;Juan Jose Ciarlante&t;:&t;reworked control connections&n; *&t;Steven Clarke&t;&t;:&t;Added Port Forwarding&n; *&t;Juan Jose Ciarlante&t;:&t;Just ONE ip_masq_new (!)&n; *&t;Juan Jose Ciarlante&t;:&t;IP masq modules support&n; *&t;Juan Jose Ciarlante&t;:&t;don&squot;t go into search loop if mport specified&n; *&t;Juan Jose Ciarlante&t;:&t;locking&n; *&t;Steven Clarke&t;&t;:&t;IP_MASQ_S_xx state design&n; *&t;Juan Jose Ciarlante&t;:&t;IP_MASQ_S state implementation &n; *&t;Juan Jose Ciarlante&t;: &t;xx_get() clears timer, _put() inserts it&n; *&t;Juan Jose Ciarlante&t;: &t;create /proc/net/ip_masq/ &n; *&t;Juan Jose Ciarlante&t;: &t;reworked checksums (save payload csum if possible)&n; *&t;Juan Jose Ciarlante&t;: &t;added missing ip_fw_masquerade checksum&n; *&t;Juan Jose Ciarlante&t;: &t;csum savings&n; *&t;Juan Jose Ciarlante&t;: &t;added user-space tunnel creation/del, etc&n; *&t;Juan Jose Ciarlante&t;: &t;(last) moved to ip_masq_user runtime module&n; *&t;Juan Jose Ciarlante&t;: &t;user timeout handling again&n; *&t;Juan Jose Ciarlante&t;: &t;make new modules support optional&n; *&t;Juan Jose Ciarlante&t;: &t;u-space context =&gt; locks reworked&n; *&t;Juan Jose Ciarlante&t;: &t;fixed stupid SMP locking bug&n; *&t;Juan Jose Ciarlante&t;: &t;fixed &quot;tap&quot;ing in demasq path by copy-on-w&n; *&t;Juan Jose Ciarlante&t;: &t;make masq_proto_doff() robust against fake sized/corrupted packets&n; *&t;Kai Bankett&t;&t;:&t;do not toss other IP protos in proto_doff()&n; *&t;Dan Kegel&t;&t;:&t;pointed correct NAT behavior for UDP streams&n; *&t;&n; */
+multiline_comment|/*&n; *&n; * &t;Masquerading functionality&n; *&n; * &t;Copyright (c) 1994 Pauline Middelink&n; *&n; *&t;$Id: ip_masq.c,v 1.33 1999/01/15 06:45:17 davem Exp $&n; *&n; *&n; *&t;See ip_fw.c for original log&n; *&n; * Fixes:&n; *&t;Juan Jose Ciarlante&t;:&t;Modularized application masquerading (see ip_masq_app.c)&n; *&t;Juan Jose Ciarlante&t;:&t;New struct ip_masq_seq that holds output/input delta seq.&n; *&t;Juan Jose Ciarlante&t;:&t;Added hashed lookup by proto,maddr,mport and proto,saddr,sport&n; *&t;Juan Jose Ciarlante&t;:&t;Fixed deadlock if free ports get exhausted&n; *&t;Juan Jose Ciarlante&t;:&t;Added NO_ADDR status flag.&n; *&t;Richard Lynch&t;&t;:&t;Added IP Autoforward&n; *&t;Nigel Metheringham&t;:&t;Added ICMP handling for demasquerade&n; *&t;Nigel Metheringham&t;:&t;Checksum checking of masqueraded data&n; *&t;Nigel Metheringham&t;:&t;Better handling of timeouts of TCP conns&n; *&t;Delian Delchev&t;&t;:&t;Added support for ICMP requests and replys&n; *&t;Nigel Metheringham&t;:&t;ICMP in ICMP handling, tidy ups, bug fixes, made ICMP optional&n; *&t;Juan Jose Ciarlante&t;:&t;re-assign maddr if no packet received from outside&n; *&t;Juan Jose Ciarlante&t;:&t;ported to 2.1 tree&n; *&t;Juan Jose Ciarlante&t;:&t;reworked control connections&n; *&t;Steven Clarke&t;&t;:&t;Added Port Forwarding&n; *&t;Juan Jose Ciarlante&t;:&t;Just ONE ip_masq_new (!)&n; *&t;Juan Jose Ciarlante&t;:&t;IP masq modules support&n; *&t;Juan Jose Ciarlante&t;:&t;don&squot;t go into search loop if mport specified&n; *&t;Juan Jose Ciarlante&t;:&t;locking&n; *&t;Steven Clarke&t;&t;:&t;IP_MASQ_S_xx state design&n; *&t;Juan Jose Ciarlante&t;:&t;IP_MASQ_S state implementation &n; *&t;Juan Jose Ciarlante&t;: &t;xx_get() clears timer, _put() inserts it&n; *&t;Juan Jose Ciarlante&t;: &t;create /proc/net/ip_masq/ &n; *&t;Juan Jose Ciarlante&t;: &t;reworked checksums (save payload csum if possible)&n; *&t;Juan Jose Ciarlante&t;: &t;added missing ip_fw_masquerade checksum&n; *&t;Juan Jose Ciarlante&t;: &t;csum savings&n; *&t;Juan Jose Ciarlante&t;: &t;added user-space tunnel creation/del, etc&n; *&t;Juan Jose Ciarlante&t;: &t;(last) moved to ip_masq_user runtime module&n; *&t;Juan Jose Ciarlante&t;: &t;user timeout handling again&n; *&t;Juan Jose Ciarlante&t;: &t;make new modules support optional&n; *&t;Juan Jose Ciarlante&t;: &t;u-space context =&gt; locks reworked&n; *&t;Juan Jose Ciarlante&t;: &t;fixed stupid SMP locking bug&n; *&t;Juan Jose Ciarlante&t;: &t;fixed &quot;tap&quot;ing in demasq path by copy-on-w&n; *&t;Juan Jose Ciarlante&t;: &t;make masq_proto_doff() robust against fake sized/corrupted packets&n; *&t;Kai Bankett&t;&t;:&t;do not toss other IP protos in proto_doff()&n; *&t;Dan Kegel&t;&t;:&t;pointed correct NAT behavior for UDP streams&n; *&t;&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#ifdef CONFIG_KMOD
@@ -6235,6 +6235,27 @@ op_plus
 l_int|1
 )paren
 suffix:semicolon
+id|cicmph
+op_assign
+(paren
+r_struct
+id|icmphdr
+op_star
+)paren
+(paren
+(paren
+r_char
+op_star
+)paren
+id|ciph
+op_plus
+(paren
+id|ciph-&gt;ihl
+op_lshift
+l_int|2
+)paren
+)paren
+suffix:semicolon
 multiline_comment|/* Now we do real damage to this packet...! */
 multiline_comment|/* First change the dest IP address, and recalc checksum */
 id|iph-&gt;daddr
@@ -6560,6 +6581,28 @@ op_star
 id|icmph
 op_plus
 l_int|1
+)paren
+suffix:semicolon
+id|pptr
+op_assign
+(paren
+id|__u16
+op_star
+)paren
+op_amp
+(paren
+(paren
+(paren
+r_char
+op_star
+)paren
+id|ciph
+)paren
+(braket
+id|ciph-&gt;ihl
+op_star
+l_int|4
+)braket
 )paren
 suffix:semicolon
 multiline_comment|/* Now we do real damage to this packet...! */

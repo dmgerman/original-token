@@ -8375,6 +8375,10 @@ suffix:semicolon
 multiline_comment|/* Pop the status stack. */
 )brace
 )brace
+id|vp-&gt;stats.tx_bytes
+op_add_assign
+id|skb-&gt;len
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -8762,6 +8766,10 @@ suffix:semicolon
 id|dev-&gt;trans_start
 op_assign
 id|jiffies
+suffix:semicolon
+id|vp-&gt;stats.tx_bytes
+op_add_assign
+id|skb-&gt;len
 suffix:semicolon
 r_return
 l_int|0
@@ -9900,6 +9908,10 @@ suffix:semicolon
 id|vp-&gt;stats.rx_packets
 op_increment
 suffix:semicolon
+id|vp-&gt;stats.rx_bytes
+op_add_assign
+id|skb-&gt;len
+suffix:semicolon
 multiline_comment|/* Wait a limited time to go to next packet. */
 r_for
 c_loop
@@ -10217,6 +10229,10 @@ r_struct
 id|sk_buff
 op_star
 id|skb
+suffix:semicolon
+id|vp-&gt;stats.rx_bytes
+op_add_assign
+id|pkt_len
 suffix:semicolon
 r_if
 c_cond

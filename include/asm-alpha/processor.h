@@ -113,7 +113,7 @@ suffix:semicolon
 )brace
 suffix:semicolon
 DECL|macro|INIT_MMAP
-mdefine_line|#define INIT_MMAP { &amp;init_mm, PAGE_OFFSET,  PAGE_OFFSET+0x10000000, &bslash;&n;&t;PAGE_SHARED, VM_READ | VM_WRITE | VM_EXEC, NULL, &amp;init_mm.mmap }
+mdefine_line|#define INIT_MMAP { &amp;init_mm, PAGE_OFFSET,  PAGE_OFFSET+0x10000000, &bslash;&n;&t;NULL, PAGE_SHARED, VM_READ | VM_WRITE | VM_EXEC, 1, NULL, NULL }
 DECL|macro|INIT_TSS
 mdefine_line|#define INIT_TSS  { &bslash;&n;&t;0, 0, 0, &bslash;&n;&t;0, 0, 0, &bslash;&n;&t;0, 0, 0, &bslash;&n;&t;0, &bslash;&n;&t;KERNEL_DS &bslash;&n;}
 macro_line|#include &lt;asm/ptrace.h&gt;
@@ -243,6 +243,8 @@ DECL|macro|copy_segments
 mdefine_line|#define copy_segments(nr, tsk, mm)&t;do { } while (0)
 DECL|macro|release_segments
 mdefine_line|#define release_segments(mm)&t;&t;do { } while (0)
+DECL|macro|forget_segments
+mdefine_line|#define forget_segments()&t;&t;do { } while (0)
 multiline_comment|/* NOTE: The task struct and the stack go together!  */
 DECL|macro|alloc_task_struct
 mdefine_line|#define alloc_task_struct() &bslash;&n;        ((struct task_struct *) __get_free_pages(GFP_KERNEL,1))

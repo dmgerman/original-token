@@ -83,40 +83,12 @@ op_star
 )paren
 suffix:semicolon
 multiline_comment|/* Copy and release all segment info associated with a VM */
-r_extern
-r_void
-id|copy_segments
-c_func
-(paren
-r_int
-id|nr
-comma
-r_struct
-id|task_struct
-op_star
-id|p
-comma
-r_struct
-id|mm_struct
-op_star
-id|mm
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|release_segments
-c_func
-(paren
-r_struct
-id|mm_struct
-op_star
-id|mm
-)paren
-suffix:semicolon
 DECL|macro|copy_segments
 mdefine_line|#define copy_segments(nr, tsk, mm)&t;do { } while (0)
 DECL|macro|release_segments
 mdefine_line|#define release_segments(mm)&t;&t;do { } while (0)
+DECL|macro|forget_segments
+mdefine_line|#define forget_segments()&t;&t;do { } while (0)
 DECL|macro|init_task
 mdefine_line|#define init_task&t;(init_task_union.task)
 DECL|macro|init_stack

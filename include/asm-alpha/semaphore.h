@@ -2,7 +2,10 @@ macro_line|#ifndef _ALPHA_SEMAPHORE_H
 DECL|macro|_ALPHA_SEMAPHORE_H
 mdefine_line|#define _ALPHA_SEMAPHORE_H
 multiline_comment|/*&n; * SMP- and interrupt-safe semaphores..&n; *&n; * (C) Copyright 1996 Linus Torvalds&n; */
+macro_line|#include &lt;asm/current.h&gt;
+macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/atomic.h&gt;
+multiline_comment|/*&n; * Semaphores are recursive: we allow the holder process to recursively do&n; * down() operations on a semaphore that the process already owns. In order&n; * to do that, we need to keep a semaphore-local copy of the owner and the&n; * &quot;depth of ownership&quot;.&n; *&n; * NOTE! Nasty memory ordering rules:&n; *  - &quot;owner&quot; and &quot;owner_count&quot; may only be modified once you hold the lock.&n; *  - &quot;owner_count&quot; must be written _after_ modifying owner, and must be&n; *  read _before_ reading owner. There must be appropriate write and read&n; *  barriers to enforce this.&n; */
 DECL|struct|semaphore
 r_struct
 id|semaphore
@@ -15,6 +18,16 @@ DECL|member|waking
 id|atomic_t
 id|waking
 suffix:semicolon
+DECL|member|owner
+r_struct
+id|task_struct
+op_star
+id|owner
+suffix:semicolon
+DECL|member|owner_depth
+r_int
+id|owner_depth
+suffix:semicolon
 DECL|member|wait
 r_struct
 id|wait_queue
@@ -24,9 +37,13 @@ suffix:semicolon
 )brace
 suffix:semicolon
 DECL|macro|MUTEX
-mdefine_line|#define MUTEX ((struct semaphore) { ATOMIC_INIT(1), ATOMIC_INIT(0), NULL })
+mdefine_line|#define MUTEX ((struct semaphore) &bslash;&n; { ATOMIC_INIT(1), ATOMIC_INIT(0), NULL, 0, NULL })
 DECL|macro|MUTEX_LOCKED
-mdefine_line|#define MUTEX_LOCKED ((struct semaphore) { ATOMIC_INIT(0), ATOMIC_INIT(0), NULL })
+mdefine_line|#define MUTEX_LOCKED ((struct semaphore) &bslash;&n; { ATOMIC_INIT(0), ATOMIC_INIT(0), NULL, 1, NULL })
+DECL|macro|semaphore_owner
+mdefine_line|#define semaphore_owner(sem)&t;((sem)-&gt;owner)
+DECL|macro|sema_init
+mdefine_line|#define sema_init(sem, val)&t;atomic_set(&amp;((sem)-&gt;count), val)
 r_extern
 r_void
 id|__down
@@ -60,9 +77,41 @@ op_star
 id|sem
 )paren
 suffix:semicolon
-DECL|macro|sema_init
-mdefine_line|#define sema_init(sem, val)&t;atomic_set(&amp;((sem)-&gt;count), val)
-multiline_comment|/*&n; * These two _must_ execute atomically wrt each other.&n; *&n; * This is trivially done with load_locked/store_cond,&n; * which we have.  Let the rest of the losers suck eggs.&n; */
+multiline_comment|/* All three have custom assembly linkages.  */
+r_extern
+r_void
+id|__down_failed
+c_func
+(paren
+r_struct
+id|semaphore
+op_star
+id|sem
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|__down_failed_interruptible
+c_func
+(paren
+r_struct
+id|semaphore
+op_star
+id|sem
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|__up_wakeup
+c_func
+(paren
+r_struct
+id|semaphore
+op_star
+id|sem
+)paren
+suffix:semicolon
+multiline_comment|/*&n; * These two _must_ execute atomically wrt each other.&n; *&n; * This is trivially done with load_locked/store_cond,&n; * which we have.  Let the rest of the losers suck eggs.&n; *&n; * Tricky bits --&n; *&n; * (1) One task does two downs, no other contention&n; *&t;initial state:&n; *&t;&t;count = 1, waking = 0, depth = undef;&n; *&t;down(&amp;sem)&n; *&t;&t;count = 0, waking = 0, depth = 1;&n; *&t;down(&amp;sem)&n; *&t;&t;atomic dec and test sends us to waking_non_zero via __down&n; *&t;&t;&t;count = -1, waking = 0;&n; *&t;&t;conditional atomic dec on waking discovers no free slots&n; *&t;&t;&t;count = -1, waking = 0;&n; *&t;&t;test for owner succeeeds and we return ok.&n; *&t;&t;&t;count = -1, waking = 0, depth = 2;&n; *&t;up(&amp;sem)&n; *&t;&t;dec depth&n; *&t;&t;&t;count = -1, waking = 0, depth = 0;&n; *&t;&t;atomic inc and test sends us to slow path&n; *&t;&t;&t;count = 0, waking = 0, depth = 0;&n; *&t;&t;notice !(depth &lt; 0) and don&squot;t call __up.&n; *&t;up(&amp;sem)&n; *&t;&t;dec depth&n; *&t;&t;&t;count = 0, waking = 0, depth = -1;&n; *&t;&t;atomic inc and test succeeds.&n; *&t;&t;&t;count = 1, waking = 0, depth = 0;&n; */
 DECL|function|wake_one_more
 r_static
 r_inline
@@ -95,13 +144,26 @@ r_struct
 id|semaphore
 op_star
 id|sem
+comma
+r_struct
+id|task_struct
+op_star
+id|tsk
 )paren
 (brace
+r_int
+id|owner_depth
+suffix:semicolon
 r_int
 id|ret
 comma
 id|tmp
 suffix:semicolon
+id|owner_depth
+op_assign
+id|sem-&gt;owner_depth
+suffix:semicolon
+multiline_comment|/* Atomic decrement, iff the value is &gt; 0.  */
 id|__asm__
 id|__volatile__
 c_func
@@ -111,7 +173,7 @@ l_string|&quot;&t;ble&t;%1,2f&bslash;n&quot;
 l_string|&quot;&t;subl&t;%1,1,%0&bslash;n&quot;
 l_string|&quot;&t;stl_c&t;%0,%2&bslash;n&quot;
 l_string|&quot;&t;beq&t;%0,3f&bslash;n&quot;
-l_string|&quot;2:&bslash;n&quot;
+l_string|&quot;2:&t;mb&bslash;n&quot;
 l_string|&quot;.section .text2,&bslash;&quot;ax&bslash;&quot;&bslash;n&quot;
 l_string|&quot;3:&t;br&t;1b&bslash;n&quot;
 l_string|&quot;.previous&quot;
@@ -142,11 +204,47 @@ l_int|0
 )paren
 )paren
 suffix:semicolon
+id|ret
+op_or_assign
+(paren
+(paren
+id|owner_depth
+op_ne
+l_int|0
+)paren
+op_amp
+(paren
+id|sem-&gt;owner
+op_eq
+id|tsk
+)paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ret
+)paren
+(brace
+id|sem-&gt;owner
+op_assign
+id|tsk
+suffix:semicolon
+id|wmb
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/* Don&squot;t use the old value, which is stale in the&n;&t;&t;   !owner case.  */
+id|sem-&gt;owner_depth
+op_increment
+suffix:semicolon
+)brace
 r_return
 id|ret
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * This isn&squot;t quite as clever as the x86 side, but the gp register&n; * makes things a bit more complicated on the alpha..&n; */
+multiline_comment|/*&n; * Whee.  Hidden out of line code is fun.  The contention cases are&n; * handled out of line in kernel/sched.c; arch/alpha/lib/semaphore.S&n; * takes care of making sure we can call it without clobbering regs.&n; */
 DECL|function|down
 r_extern
 r_inline
@@ -160,22 +258,58 @@ op_star
 id|sem
 )paren
 (brace
-r_if
-c_cond
+multiline_comment|/* Given that we have to use particular hard registers to &n;&t;   communicate with __down_failed anyway, reuse them in &n;&t;   the atomic operation as well. &n;&n;&t;   __down_failed takes the semaphore address in $24, and&n;&t;   it&squot;s return address in $28.  The pv is loaded as usual.&n;&t;   The gp is clobbered (in the module case) as usual.  */
+id|__asm__
+id|__volatile__
 (paren
-id|atomic_dec_return
-c_func
+l_string|&quot;/* semaphore down operation */&bslash;n&quot;
+l_string|&quot;1:&t;ldl_l&t;$27,%3&bslash;n&quot;
+l_string|&quot;&t;subl&t;$27,1,$27&bslash;n&quot;
+l_string|&quot;&t;mov&t;$27,$28&bslash;n&quot;
+l_string|&quot;&t;stl_c&t;$28,%0&bslash;n&quot;
+l_string|&quot;&t;beq&t;$28,2f&bslash;n&quot;
+l_string|&quot;&t;blt&t;$27,3f&bslash;n&quot;
+multiline_comment|/* Got the semaphore no contention.  Set owner and depth.  */
+l_string|&quot;&t;stq&t;$8,%1&bslash;n&quot;
+l_string|&quot;&t;lda&t;$28,1&bslash;n&quot;
+l_string|&quot;&t;wmb&bslash;n&quot;
+l_string|&quot;&t;stq&t;$28,%2&bslash;n&quot;
+l_string|&quot;4:&t;mb&bslash;n&quot;
+l_string|&quot;.section .text2,&bslash;&quot;ax&bslash;&quot;&bslash;n&quot;
+l_string|&quot;2:&t;br&t;1b&bslash;n&quot;
+l_string|&quot;3:&t;lda&t;$24,%3&bslash;n&quot;
+l_string|&quot;&t;jsr&t;$28,__down_failed&bslash;n&quot;
+l_string|&quot;&t;ldgp&t;$29,0($28)&bslash;n&quot;
+l_string|&quot;&t;br&t;4b&bslash;n&quot;
+l_string|&quot;.previous&quot;
+suffix:colon
+l_string|&quot;=m&quot;
 (paren
-op_amp
 id|sem-&gt;count
 )paren
-OL
-l_int|0
-)paren
-id|__down
-c_func
+comma
+l_string|&quot;=m&quot;
 (paren
-id|sem
+id|sem-&gt;owner
+)paren
+comma
+l_string|&quot;=m&quot;
+(paren
+id|sem-&gt;owner_depth
+)paren
+suffix:colon
+l_string|&quot;m&quot;
+(paren
+id|sem-&gt;count
+)paren
+suffix:colon
+l_string|&quot;$24&quot;
+comma
+l_string|&quot;$27&quot;
+comma
+l_string|&quot;$28&quot;
+comma
+l_string|&quot;memory&quot;
 )paren
 suffix:semicolon
 )brace
@@ -192,29 +326,71 @@ op_star
 id|sem
 )paren
 (brace
+multiline_comment|/* __down_failed_interruptible takes the semaphore address in $24,&n;&t;   and it&squot;s return address in $28.  The pv is loaded as usual.&n;&t;   The gp is clobbered (in the module case) as usual.  The return&n;&t;   value is in $24.  */
+r_register
 r_int
 id|ret
-op_assign
-l_int|0
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|atomic_dec_return
+id|__asm__
 c_func
 (paren
-op_amp
+l_string|&quot;$24&quot;
+)paren
+suffix:semicolon
+id|__asm__
+id|__volatile__
+(paren
+l_string|&quot;/* semaphore down interruptible operation */&bslash;n&quot;
+l_string|&quot;1:&t;ldl_l&t;$27,%4&bslash;n&quot;
+l_string|&quot;&t;subl&t;$27,1,$27&bslash;n&quot;
+l_string|&quot;&t;mov&t;$27,$28&bslash;n&quot;
+l_string|&quot;&t;stl_c&t;$28,%1&bslash;n&quot;
+l_string|&quot;&t;beq&t;$28,2f&bslash;n&quot;
+l_string|&quot;&t;blt&t;$27,3f&bslash;n&quot;
+multiline_comment|/* Got the semaphore no contention.  Set owner and depth.  */
+l_string|&quot;&t;stq&t;$8,%2&bslash;n&quot;
+l_string|&quot;&t;lda&t;$28,1&bslash;n&quot;
+l_string|&quot;&t;wmb&bslash;n&quot;
+l_string|&quot;&t;stq&t;$28,%3&bslash;n&quot;
+l_string|&quot;&t;mov&t;$31,$24&bslash;n&quot;
+l_string|&quot;4:&t;mb&bslash;n&quot;
+l_string|&quot;.section .text2,&bslash;&quot;ax&bslash;&quot;&bslash;n&quot;
+l_string|&quot;2:&t;br&t;1b&bslash;n&quot;
+l_string|&quot;3:&t;lda&t;$24,%4&bslash;n&quot;
+l_string|&quot;&t;jsr&t;$28,__down_failed_interruptible&bslash;n&quot;
+l_string|&quot;&t;ldgp&t;$29,0($28)&bslash;n&quot;
+l_string|&quot;&t;br&t;4b&bslash;n&quot;
+l_string|&quot;.previous&quot;
+suffix:colon
+l_string|&quot;=r&quot;
+(paren
+id|ret
+)paren
+comma
+l_string|&quot;=m&quot;
+(paren
 id|sem-&gt;count
 )paren
-OL
-l_int|0
-)paren
-id|ret
-op_assign
-id|__down_interruptible
-c_func
+comma
+l_string|&quot;=m&quot;
 (paren
-id|sem
+id|sem-&gt;owner
+)paren
+comma
+l_string|&quot;=m&quot;
+(paren
+id|sem-&gt;owner_depth
+)paren
+suffix:colon
+l_string|&quot;m&quot;
+(paren
+id|sem-&gt;count
+)paren
+suffix:colon
+l_string|&quot;$27&quot;
+comma
+l_string|&quot;$28&quot;
+comma
+l_string|&quot;memory&quot;
 )paren
 suffix:semicolon
 r_return
@@ -234,22 +410,52 @@ op_star
 id|sem
 )paren
 (brace
-r_if
-c_cond
+multiline_comment|/* Given that we have to use particular hard registers to &n;&t;   communicate with __up_wakeup anyway, reuse them in &n;&t;   the atomic operation as well. &n;&n;&t;   __up_wakeup takes the semaphore address in $24, and&n;&t;   it&squot;s return address in $28.  The pv is loaded as usual.&n;&t;   The gp is clobbered (in the module case) as usual.  */
+id|__asm__
+id|__volatile__
 (paren
-id|atomic_inc_return
-c_func
+l_string|&quot;/* semaphore up operation */&bslash;n&quot;
+l_string|&quot;&t;mb&bslash;n&quot;
+l_string|&quot;1:&t;ldl_l&t;$27,%1&bslash;n&quot;
+l_string|&quot;&t;addl&t;$27,1,$27&bslash;n&quot;
+l_string|&quot;&t;mov&t;$27,$28&bslash;n&quot;
+l_string|&quot;&t;stl_c&t;$28,%0&bslash;n&quot;
+l_string|&quot;&t;beq&t;$28,2f&bslash;n&quot;
+l_string|&quot;&t;mb&bslash;n&quot;
+l_string|&quot;&t;ble&t;$27,3f&bslash;n&quot;
+l_string|&quot;4:&bslash;n&quot;
+l_string|&quot;.section .text2,&bslash;&quot;ax&bslash;&quot;&bslash;n&quot;
+l_string|&quot;2:&t;br&t;1b&bslash;n&quot;
+l_string|&quot;3:&t;lda&t;$24,%1&bslash;n&quot;
+l_string|&quot;&t;bge&t;%2,4b&bslash;n&quot;
+l_string|&quot;&t;jsr&t;$28,__up_wakeup&bslash;n&quot;
+l_string|&quot;&t;ldgp&t;$29,0($28)&bslash;n&quot;
+l_string|&quot;&t;br&t;4b&bslash;n&quot;
+l_string|&quot;.previous&quot;
+suffix:colon
+l_string|&quot;=m&quot;
 (paren
-op_amp
 id|sem-&gt;count
 )paren
-op_le
-l_int|0
-)paren
-id|__up
-c_func
+suffix:colon
+l_string|&quot;m&quot;
 (paren
-id|sem
+id|sem-&gt;count
+)paren
+comma
+l_string|&quot;r&quot;
+(paren
+op_decrement
+id|sem-&gt;owner_depth
+)paren
+suffix:colon
+l_string|&quot;$24&quot;
+comma
+l_string|&quot;$27&quot;
+comma
+l_string|&quot;$28&quot;
+comma
+l_string|&quot;memory&quot;
 )paren
 suffix:semicolon
 )brace

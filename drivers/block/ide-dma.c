@@ -1219,10 +1219,8 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
+multiline_comment|/*&n; *&t;This can be called for a dynamically installed interface. Don&squot;t initfunc it&n; */
+DECL|function|ide_setup_dma
 r_void
 id|ide_setup_dma
 (paren
@@ -1237,7 +1235,6 @@ comma
 r_int
 r_int
 id|num_ports
-)paren
 )paren
 (brace
 r_static

@@ -381,6 +381,10 @@ id|data_len
 op_add_assign
 l_int|2
 suffix:semicolon
+id|opt
+op_add_assign
+id|data_len
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -396,8 +400,6 @@ id|memset
 c_func
 (paren
 id|opt
-op_plus
-id|data_len
 comma
 l_int|0
 comma

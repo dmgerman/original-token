@@ -2554,9 +2554,13 @@ suffix:semicolon
 r_while
 c_loop
 (paren
+id|time_after
+c_func
+(paren
 id|i
-OG
+comma
 id|jiffies
+)paren
 op_logical_and
 op_logical_neg
 (paren
@@ -2580,9 +2584,13 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|time_before_eq
+c_func
+(paren
 id|i
-op_le
+comma
 id|jiffies
+)paren
 )paren
 (brace
 multiline_comment|/* Timed out */
@@ -4117,9 +4125,13 @@ suffix:semicolon
 r_while
 c_loop
 (paren
+id|time_after
+c_func
+(paren
 id|i
-OG
+comma
 id|jiffies
+)paren
 op_logical_and
 op_logical_neg
 (paren
@@ -4142,9 +4154,13 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|time_before_eq
+c_func
+(paren
 id|i
-op_le
+comma
 id|jiffies
+)paren
 )paren
 (brace
 multiline_comment|/* Timed out, must be hardware trouble */

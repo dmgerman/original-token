@@ -237,6 +237,8 @@ DECL|macro|HDIO_SCAN_HWIF
 mdefine_line|#define HDIO_SCAN_HWIF&t;&t;0x0328&t;/* register and (re)scan interface */
 DECL|macro|HDIO_SET_NICE
 mdefine_line|#define HDIO_SET_NICE&t;&t;0x0329&t;/* set nice flags */
+DECL|macro|HDIO_UNREGISTER_HWIF
+mdefine_line|#define HDIO_UNREGISTER_HWIF&t;0x032a  /* unregister interface */
 multiline_comment|/* structure returned by HDIO_GET_IDENTITY, as per ANSI ATA2 rev.2f spec */
 DECL|struct|hd_driveid
 r_struct

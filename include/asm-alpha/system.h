@@ -308,6 +308,8 @@ id|pctxp
 suffix:semicolon
 DECL|macro|mb
 mdefine_line|#define mb() &bslash;&n;__asm__ __volatile__(&quot;mb&quot;: : :&quot;memory&quot;)
+DECL|macro|rmb
+mdefine_line|#define rmb() &bslash;&n;__asm__ __volatile__(&quot;mb&quot;: : :&quot;memory&quot;)
 DECL|macro|wmb
 mdefine_line|#define wmb() &bslash;&n;__asm__ __volatile__(&quot;wmb&quot;: : :&quot;memory&quot;)
 DECL|macro|imb

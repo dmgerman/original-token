@@ -49,6 +49,13 @@ r_int
 r_int
 id|vm_end
 suffix:semicolon
+multiline_comment|/* linked list of VM areas per task, sorted by address */
+DECL|member|vm_next
+r_struct
+id|vm_area_struct
+op_star
+id|vm_next
+suffix:semicolon
 DECL|member|vm_page_prot
 id|pgprot_t
 id|vm_page_prot
@@ -58,18 +65,22 @@ r_int
 r_int
 id|vm_flags
 suffix:semicolon
-DECL|member|vm_next
-r_struct
-id|vm_area_struct
-op_star
-id|vm_next
+multiline_comment|/* AVL tree of VM areas per task, sorted by address */
+DECL|member|vm_avl_height
+r_int
+id|vm_avl_height
 suffix:semicolon
-DECL|member|vm_pprev
+DECL|member|vm_avl_left
 r_struct
 id|vm_area_struct
 op_star
+id|vm_avl_left
+suffix:semicolon
+DECL|member|vm_avl_right
+r_struct
+id|vm_area_struct
 op_star
-id|vm_pprev
+id|vm_avl_right
 suffix:semicolon
 multiline_comment|/* For areas with inode, the list inode-&gt;i_mmap, for shm areas,&n;&t; * the list of attaches, otherwise unused.&n;&t; */
 DECL|member|vm_next_share
@@ -320,10 +331,8 @@ r_struct
 id|vm_area_struct
 op_star
 comma
-r_int
-r_int
-comma
-id|pte_t
+r_struct
+id|page
 op_star
 )paren
 suffix:semicolon
@@ -643,9 +652,13 @@ id|clear_page_tables
 c_func
 (paren
 r_struct
-id|task_struct
+id|mm_struct
 op_star
-id|tsk
+comma
+r_int
+r_int
+comma
+r_int
 )paren
 suffix:semicolon
 r_extern
@@ -904,6 +917,16 @@ op_star
 suffix:semicolon
 r_extern
 r_void
+id|build_mmap_avl
+c_func
+(paren
+r_struct
+id|mm_struct
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_void
 id|exit_mmap
 c_func
 (paren
@@ -1043,6 +1066,8 @@ DECL|macro|__GFP_HIGH
 mdefine_line|#define __GFP_HIGH&t;0x08
 DECL|macro|__GFP_IO
 mdefine_line|#define __GFP_IO&t;0x10
+DECL|macro|__GFP_SWAP
+mdefine_line|#define __GFP_SWAP&t;0x20
 DECL|macro|__GFP_DMA
 mdefine_line|#define __GFP_DMA&t;0x80
 DECL|macro|GFP_BUFFER
@@ -1056,7 +1081,7 @@ mdefine_line|#define GFP_KERNEL&t;(__GFP_MED | __GFP_WAIT | __GFP_IO)
 DECL|macro|GFP_NFS
 mdefine_line|#define GFP_NFS&t;&t;(__GFP_HIGH | __GFP_WAIT | __GFP_IO)
 DECL|macro|GFP_KSWAPD
-mdefine_line|#define GFP_KSWAPD&t;(__GFP_IO)
+mdefine_line|#define GFP_KSWAPD&t;(__GFP_IO | __GFP_SWAP)
 multiline_comment|/* Flag - indicates that the buffer will be suitable for DMA.  Ignored on some&n;   platforms, used as appropriate on others */
 DECL|macro|GFP_DMA
 mdefine_line|#define GFP_DMA&t;&t;__GFP_DMA
@@ -1174,9 +1199,7 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* Look up the first VMA which satisfies  addr &lt; vm_end,  NULL if none. */
-DECL|function|find_vma
-r_static
-r_inline
+r_extern
 r_struct
 id|vm_area_struct
 op_star
@@ -1192,73 +1215,7 @@ r_int
 r_int
 id|addr
 )paren
-(brace
-r_struct
-id|vm_area_struct
-op_star
-id|vma
-op_assign
-l_int|NULL
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|mm
-)paren
-(brace
-multiline_comment|/* Check the cache first. */
-id|vma
-op_assign
-id|mm-&gt;mmap_cache
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|vma
-op_logical_or
-(paren
-id|vma-&gt;vm_end
-op_le
-id|addr
-)paren
-op_logical_or
-(paren
-id|vma-&gt;vm_start
-OG
-id|addr
-)paren
-)paren
-(brace
-id|vma
-op_assign
-id|mm-&gt;mmap
-suffix:semicolon
-r_while
-c_loop
-(paren
-id|vma
-op_logical_and
-id|vma-&gt;vm_end
-op_le
-id|addr
-)paren
-(brace
-id|vma
-op_assign
-id|vma-&gt;vm_next
-suffix:semicolon
-)brace
-id|mm-&gt;mmap_cache
-op_assign
-id|vma
-suffix:semicolon
-)brace
-)brace
-r_return
-id|vma
-suffix:semicolon
-)brace
 multiline_comment|/* Look up the first VMA which intersects the interval start_addr..end_addr-1,&n;   NULL if none.  Assume start_addr &lt; end_addr. */
 DECL|function|find_vma_intersection
 r_static

@@ -21,6 +21,7 @@ macro_line|#include &lt;asm/fpu.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/machvec.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
+macro_line|#include &lt;asm/semaphore.h&gt;
 DECL|macro|__KERNEL_SYSCALLS__
 mdefine_line|#define __KERNEL_SYSCALLS__
 macro_line|#include &lt;asm/unistd.h&gt;
@@ -684,6 +685,28 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|__strlen_user
+)paren
+suffix:semicolon
+multiline_comment|/*&n; * The following are specially called from the semaphore assembly stubs.&n; */
+DECL|variable|__down_failed
+id|EXPORT_SYMBOL_NOVERS
+c_func
+(paren
+id|__down_failed
+)paren
+suffix:semicolon
+DECL|variable|__down_failed_interruptible
+id|EXPORT_SYMBOL_NOVERS
+c_func
+(paren
+id|__down_failed_interruptible
+)paren
+suffix:semicolon
+DECL|variable|__up_wakeup
+id|EXPORT_SYMBOL_NOVERS
+c_func
+(paren
+id|__up_wakeup
 )paren
 suffix:semicolon
 multiline_comment|/* &n; * SMP-specific symbols.&n; */

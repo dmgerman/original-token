@@ -7939,6 +7939,12 @@ op_assign
 l_int|0
 suffix:semicolon
 macro_line|#ifdef CONFIG_IPX_INTERN
+r_if
+c_cond
+(paren
+id|sk-&gt;protinfo.af_ipx.intrfc
+)paren
+(brace
 id|memcpy
 c_func
 (paren
@@ -7949,6 +7955,13 @@ comma
 id|IPX_NODE_LEN
 )paren
 suffix:semicolon
+)brace
+r_else
+r_return
+op_minus
+id|ENETDOWN
+suffix:semicolon
+multiline_comment|/* Someone zonked the iface */
 macro_line|#endif&t;/* CONFIG_IPX_INTERN */
 id|ret
 op_assign
@@ -8835,6 +8848,12 @@ op_assign
 l_int|0
 suffix:semicolon
 macro_line|#ifdef CONFIG_IPX_INTERN
+r_if
+c_cond
+(paren
+id|sk-&gt;protinfo.af_ipx.intrfc
+)paren
+(brace
 id|memcpy
 c_func
 (paren
@@ -8845,6 +8864,13 @@ comma
 id|IPX_NODE_LEN
 )paren
 suffix:semicolon
+)brace
+r_else
+r_return
+op_minus
+id|ENETDOWN
+suffix:semicolon
+multiline_comment|/* Someone zonked the iface */
 macro_line|#endif&t;/* CONFIG_IPX_INTERN */
 id|ret
 op_assign

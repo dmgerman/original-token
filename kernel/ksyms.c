@@ -470,13 +470,21 @@ c_func
 id|d_validate
 )paren
 suffix:semicolon
-DECL|variable|d_add
+DECL|variable|d_rehash
 id|EXPORT_SYMBOL
 c_func
 (paren
-id|d_add
+id|d_rehash
 )paren
 suffix:semicolon
+DECL|variable|d_invalidate
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|d_invalidate
+)paren
+suffix:semicolon
+multiline_comment|/* May be it will be better in dcache.h? */
 DECL|variable|d_move
 id|EXPORT_SYMBOL
 c_func

@@ -284,7 +284,7 @@ suffix:semicolon
 suffix:semicolon
 macro_line|#endif /* !defined (_LANGUAGE_ASSEMBLY) */
 DECL|macro|INIT_MMAP
-mdefine_line|#define INIT_MMAP { &amp;init_mm, KSEG0, KSEG1, PAGE_SHARED, &bslash;&n;                    VM_READ | VM_WRITE | VM_EXEC, NULL, &amp;init_mm.mmap }
+mdefine_line|#define INIT_MMAP { &amp;init_mm, KSEG0, KSEG1, NULL, PAGE_SHARED, &bslash;&n;                    VM_READ | VM_WRITE | VM_EXEC, 1, NULL, NULL }
 DECL|macro|INIT_TSS
 mdefine_line|#define INIT_TSS  { &bslash;&n;        /* &bslash;&n;         * saved main processor registers &bslash;&n;         */ &bslash;&n;&t;0, 0, 0, 0, 0, 0, 0, 0, &bslash;&n;&t;               0, 0, 0, &bslash;&n;&t;/* &bslash;&n;&t; * saved cp0 stuff &bslash;&n;&t; */ &bslash;&n;&t;0, &bslash;&n;&t;/* &bslash;&n;&t; * saved fpu/fpu emulator stuff &bslash;&n;&t; */ &bslash;&n;&t;INIT_FPU, &bslash;&n;&t;/* &bslash;&n;&t; * Other stuff associated with the process &bslash;&n;&t; */ &bslash;&n;&t;0, 0, 0, 0, (unsigned long) swapper_pg_dir, &bslash;&n;&t;/* &bslash;&n;&t; * For now the default is to fix address errors &bslash;&n;&t; */ &bslash;&n;&t;MF_FIXADE, { 0 }, 0, 0 &bslash;&n;}
 macro_line|#ifdef __KERNEL__
@@ -307,6 +307,8 @@ DECL|macro|copy_segments
 mdefine_line|#define copy_segments(nr, p, mm) do { } while(0)
 DECL|macro|release_segments
 mdefine_line|#define release_segments(mm) do { } while(0)
+DECL|macro|forget_segments
+mdefine_line|#define forget_segments()&t;&t;do { } while (0)
 multiline_comment|/*&n; * Return saved PC of a blocked thread.&n; */
 DECL|function|thread_saved_pc
 r_extern

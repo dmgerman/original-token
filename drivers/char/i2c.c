@@ -35,6 +35,7 @@ id|i2c_debug
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#if LINUX_VERSION_CODE &gt;= 0x020117
 id|MODULE_PARM
 c_func
 (paren
@@ -59,6 +60,7 @@ comma
 l_string|&quot;i&quot;
 )paren
 suffix:semicolon
+macro_line|#endif
 multiline_comment|/* ----------------------------------------------------------------------- */
 DECL|variable|busses
 r_static
@@ -92,6 +94,7 @@ id|driver_count
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#ifdef CONFIG_VIDEO_BT848
 r_extern
 r_int
 id|i2c_tuner_init
@@ -108,6 +111,7 @@ c_func
 r_void
 )paren
 suffix:semicolon
+macro_line|#endif
 DECL|function|i2c_init
 r_int
 id|i2c_init
@@ -165,10 +169,6 @@ op_star
 id|driver
 )paren
 (brace
-r_int
-r_int
-id|flags
-suffix:semicolon
 r_struct
 id|i2c_device
 op_star
@@ -186,6 +186,8 @@ suffix:semicolon
 r_int
 r_char
 id|addr
+suffix:semicolon
+id|LOCK_FLAGS
 suffix:semicolon
 multiline_comment|/* probe for device */
 id|LOCK_I2C_BUS
@@ -628,13 +630,11 @@ id|bus
 )paren
 (brace
 r_int
-r_int
-id|flags
-suffix:semicolon
-r_int
 id|i
 comma
 id|ack
+suffix:semicolon
+id|LOCK_FLAGS
 suffix:semicolon
 id|memset
 c_func
@@ -2004,6 +2004,7 @@ suffix:semicolon
 )brace
 multiline_comment|/* ----------------------------------------------------------------------- */
 macro_line|#ifdef MODULE
+macro_line|#if LINUX_VERSION_CODE &gt;= 0x020100
 DECL|variable|i2c_register_bus
 id|EXPORT_SYMBOL
 c_func
@@ -2102,6 +2103,7 @@ c_func
 id|i2c_write
 )paren
 suffix:semicolon
+macro_line|#endif
 DECL|function|init_module
 r_int
 id|init_module

@@ -362,6 +362,10 @@ macro_line|#ifdef CONFIG_SCSI_AIC7XXX
 id|AIC7XXX
 comma
 macro_line|#endif
+macro_line|#ifdef CONFIG_FD_MCS
+id|FD_MCS
+comma
+macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_FUTURE_DOMAIN
 id|FDOMAIN_16X0
 comma

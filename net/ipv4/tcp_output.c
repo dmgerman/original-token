@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Implementation of the Transmission Control Protocol(TCP).&n; *&n; * Version:&t;$Id: tcp_output.c,v 1.98 1998/12/12 06:43:35 davem Exp $&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&t;&t;Corey Minyard &lt;wf-rch!minyard@relay.EU.net&gt;&n; *&t;&t;Florian La Roche, &lt;flla@stud.uni-sb.de&gt;&n; *&t;&t;Charles Hedrick, &lt;hedrick@klinzhai.rutgers.edu&gt;&n; *&t;&t;Linus Torvalds, &lt;torvalds@cs.helsinki.fi&gt;&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;Matthew Dillon, &lt;dillon@apollo.west.oic.com&gt;&n; *&t;&t;Arnt Gulbrandsen, &lt;agulbra@nvg.unit.no&gt;&n; *&t;&t;Jorge Cwik, &lt;jorge@laser.satlink.net&gt;&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Implementation of the Transmission Control Protocol(TCP).&n; *&n; * Version:&t;$Id: tcp_output.c,v 1.100 1999/01/16 08:31:06 davem Exp $&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&t;&t;Corey Minyard &lt;wf-rch!minyard@relay.EU.net&gt;&n; *&t;&t;Florian La Roche, &lt;flla@stud.uni-sb.de&gt;&n; *&t;&t;Charles Hedrick, &lt;hedrick@klinzhai.rutgers.edu&gt;&n; *&t;&t;Linus Torvalds, &lt;torvalds@cs.helsinki.fi&gt;&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;Matthew Dillon, &lt;dillon@apollo.west.oic.com&gt;&n; *&t;&t;Arnt Gulbrandsen, &lt;agulbra@nvg.unit.no&gt;&n; *&t;&t;Jorge Cwik, &lt;jorge@laser.satlink.net&gt;&n; */
 multiline_comment|/*&n; * Changes:&t;Pedro Roque&t;:&t;Retransmit queue handled by TCP.&n; *&t;&t;&t;&t;:&t;Fragmentation on mtu decrease&n; *&t;&t;&t;&t;:&t;Segment collapse on retransmit&n; *&t;&t;&t;&t;:&t;AF independence&n; *&n; *&t;&t;Linus Torvalds&t;:&t;send_delayed_ack&n; *&t;&t;David S. Miller&t;:&t;Charge memory using the right skb&n; *&t;&t;&t;&t;&t;during syn/ack processing.&n; *&t;&t;David S. Miller :&t;Output engine completely rewritten.&n; *&n; */
 macro_line|#include &lt;net/tcp.h&gt;
 r_extern
@@ -58,16 +58,10 @@ id|tp
 )paren
 )paren
 (brace
-id|tp-&gt;ato
-op_assign
+id|tcp_exit_quickack_mode
+c_func
 (paren
-(paren
-id|HZ
-op_div
-l_int|100
-)paren
-op_star
-l_int|2
+id|tp
 )paren
 suffix:semicolon
 )brace
@@ -254,7 +248,11 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|sysctl_tcp_timestamps
+(paren
+id|sysctl_flags
+op_amp
+id|SYSCTL_FLAG_TSTAMPS
+)paren
 )paren
 (brace
 id|tcp_header_size
@@ -3938,7 +3936,24 @@ op_eq
 l_int|NULL
 )paren
 (brace
-multiline_comment|/* Force it to send an ack. We don&squot;t have to do this&n;&t;&t;&t; * (ACK is unreliable) but it&squot;s much better use of&n;&t;&t;&t; * bandwidth on slow links to send a spare ack than&n;&t;&t;&t; * resend packets.&n;&t;&t;&t; */
+multiline_comment|/* Force it to send an ack. We don&squot;t have to do this&n;&t;&t;&t; * (ACK is unreliable) but it&squot;s much better use of&n;&t;&t;&t; * bandwidth on slow links to send a spare ack than&n;&t;&t;&t; * resend packets.&n;&t;&t;&t; *&n;&t;&t;&t; * This is the one possible way that we can delay an&n;&t;&t;&t; * ACK and have tp-&gt;ato indicate that we are in&n;&t;&t;&t; * quick ack mode, so clear it.&n;&t;&t;&t; */
+r_if
+c_cond
+(paren
+id|tcp_in_quickack_mode
+c_func
+(paren
+id|tp
+)paren
+)paren
+(brace
+id|tcp_exit_quickack_mode
+c_func
+(paren
+id|tp
+)paren
+suffix:semicolon
+)brace
 id|tcp_send_delayed_ack
 c_func
 (paren

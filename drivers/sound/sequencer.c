@@ -2,9 +2,7 @@ multiline_comment|/*&n; * sound/sequencer.c&n; *&n; * The sequencer personality 
 multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
 multiline_comment|/*&n; * Thomas Sailer   : ioctl code reworked (vmalloc/vfree removed)&n; * Alan Cox&t;   : reformatted and fixed a pair of null pointer bugs&n; */
 macro_line|#include &lt;linux/config.h&gt;
-macro_line|#ifdef CONFIG_KMOD
 macro_line|#include &lt;linux/kmod.h&gt;
-macro_line|#endif
 DECL|macro|SEQUENCER_C
 mdefine_line|#define SEQUENCER_C
 macro_line|#include &quot;sound_config.h&quot;
@@ -4640,7 +4638,6 @@ r_return
 op_minus
 id|ENXIO
 suffix:semicolon
-macro_line|#ifdef CONFIG_KMOD
 r_if
 c_cond
 (paren
@@ -4659,7 +4656,6 @@ l_string|&quot;synth0&quot;
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
 r_if
 c_cond
 (paren

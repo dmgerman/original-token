@@ -747,6 +747,8 @@ suffix:semicolon
 id|inode-&gt;i_mode
 op_assign
 id|S_IFSOCK
+op_or
+id|S_IRWXUGO
 suffix:semicolon
 id|inode-&gt;i_sock
 op_assign

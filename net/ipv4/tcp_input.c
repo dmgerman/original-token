@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Implementation of the Transmission Control Protocol(TCP).&n; *&n; * Version:&t;$Id: tcp_input.c,v 1.145 1999/01/04 20:49:11 davem Exp $&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&t;&t;Corey Minyard &lt;wf-rch!minyard@relay.EU.net&gt;&n; *&t;&t;Florian La Roche, &lt;flla@stud.uni-sb.de&gt;&n; *&t;&t;Charles Hedrick, &lt;hedrick@klinzhai.rutgers.edu&gt;&n; *&t;&t;Linus Torvalds, &lt;torvalds@cs.helsinki.fi&gt;&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;Matthew Dillon, &lt;dillon@apollo.west.oic.com&gt;&n; *&t;&t;Arnt Gulbrandsen, &lt;agulbra@nvg.unit.no&gt;&n; *&t;&t;Jorge Cwik, &lt;jorge@laser.satlink.net&gt;&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Implementation of the Transmission Control Protocol(TCP).&n; *&n; * Version:&t;$Id: tcp_input.c,v 1.150 1999/01/16 08:31:08 davem Exp $&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&t;&t;Corey Minyard &lt;wf-rch!minyard@relay.EU.net&gt;&n; *&t;&t;Florian La Roche, &lt;flla@stud.uni-sb.de&gt;&n; *&t;&t;Charles Hedrick, &lt;hedrick@klinzhai.rutgers.edu&gt;&n; *&t;&t;Linus Torvalds, &lt;torvalds@cs.helsinki.fi&gt;&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;Matthew Dillon, &lt;dillon@apollo.west.oic.com&gt;&n; *&t;&t;Arnt Gulbrandsen, &lt;agulbra@nvg.unit.no&gt;&n; *&t;&t;Jorge Cwik, &lt;jorge@laser.satlink.net&gt;&n; */
 multiline_comment|/*&n; * Changes:&n; *&t;&t;Pedro Roque&t;:&t;Fast Retransmit/Recovery.&n; *&t;&t;&t;&t;&t;Two receive queues.&n; *&t;&t;&t;&t;&t;Retransmit queue handled by TCP.&n; *&t;&t;&t;&t;&t;Better retransmit timer handling.&n; *&t;&t;&t;&t;&t;New congestion avoidance.&n; *&t;&t;&t;&t;&t;Header prediction.&n; *&t;&t;&t;&t;&t;Variable renaming.&n; *&n; *&t;&t;Eric&t;&t;:&t;Fast Retransmit.&n; *&t;&t;Randy Scott&t;:&t;MSS option defines.&n; *&t;&t;Eric Schenk&t;:&t;Fixes to slow start algorithm.&n; *&t;&t;Eric Schenk&t;:&t;Yet another double ACK bug.&n; *&t;&t;Eric Schenk&t;:&t;Delayed ACK bug fixes.&n; *&t;&t;Eric Schenk&t;:&t;Floyd style fast retrans war avoidance.&n; *&t;&t;David S. Miller&t;:&t;Don&squot;t allow zero congestion window.&n; *&t;&t;Eric Schenk&t;:&t;Fix retransmitter so that it sends&n; *&t;&t;&t;&t;&t;next packet on ack of previous packet.&n; *&t;&t;Andi Kleen&t;:&t;Moved open_request checking here&n; *&t;&t;&t;&t;&t;and process RSTs for open_requests.&n; *&t;&t;Andi Kleen&t;:&t;Better prune_queue, and other fixes.&n; *&t;&t;Andrey Savochkin:&t;Fix RTT measurements in the presnce of&n; *&t;&t;&t;&t;&t;timestamps.&n; *&t;&t;Andrey Savochkin:&t;Check sequence numbers correctly when&n; *&t;&t;&t;&t;&t;removing SACKs due to in sequence incoming&n; *&t;&t;&t;&t;&t;data segments.&n; *&t;&t;Andi Kleen:&t;&t;Make sure we never ack data there is not&n; *&t;&t;&t;&t;&t;enough room for. Also make this condition&n; *&t;&t;&t;&t;&t;a fatal error if it might still happen.&n; *&t;&t;Andi Kleen:&t;&t;Add tcp_measure_rcv_mss to make &n; *&t;&t;&t;&t;&t;connections with MSS&lt;min(MTU,ann. MSS)&n; *&t;&t;&t;&t;&t;work without delayed acks. &n; *&t;&t;Andi Kleen:&t;&t;Process packets with PSH set in the&n; *&t;&t;&t;&t;&t;fast path.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -133,40 +133,21 @@ id|tp-&gt;rto
 suffix:semicolon
 )brace
 r_else
+(brace
+multiline_comment|/* This funny shift makes sure we&n;&t;&t;&t; * clear the &quot;quick ack mode&quot; bit.&n;&t;&t;&t; */
 id|tp-&gt;ato
 op_assign
 (paren
+(paren
 id|tp-&gt;ato
-op_rshift
+op_lshift
 l_int|1
+)paren
+op_rshift
+l_int|2
 )paren
 op_plus
 id|m
-suffix:semicolon
-multiline_comment|/* We are not in &quot;quick ack&quot; mode. */
-r_if
-c_cond
-(paren
-id|tp-&gt;ato
-op_le
-(paren
-id|HZ
-op_div
-l_int|100
-)paren
-)paren
-(brace
-id|tp-&gt;ato
-op_assign
-(paren
-(paren
-id|HZ
-op_div
-l_int|100
-)paren
-op_star
-l_int|2
-)paren
 suffix:semicolon
 )brace
 )brace
@@ -198,7 +179,7 @@ id|skb
 id|tp-&gt;delayed_acks
 op_increment
 suffix:semicolon
-multiline_comment|/* Tiny-grams with PSH set make us ACK quickly. */
+multiline_comment|/* Tiny-grams with PSH set make us ACK quickly.&n;&t; * Note: This also clears the &quot;quick ack mode&quot; bit.&n;&t; */
 r_if
 c_cond
 (paren
@@ -2519,24 +2500,6 @@ id|tp
 )paren
 suffix:semicolon
 )brace
-r_if
-c_cond
-(paren
-id|should_advance_cwnd
-c_func
-(paren
-id|tp
-comma
-id|flag
-)paren
-)paren
-id|tcp_cong_avoid
-c_func
-(paren
-id|tp
-)paren
-suffix:semicolon
-multiline_comment|/* NOTE: safe here so long as cong_ctl doesn&squot;t use rto */
 id|tcp_bound_rto
 c_func
 (paren
@@ -2881,6 +2844,24 @@ op_amp
 id|seq_rtt
 )paren
 suffix:semicolon
+multiline_comment|/* We must do this here, before code below clears out important&n;&t; * state contained in tp-&gt;fackets_out and tp-&gt;retransmits.  -DaveM&n;&t; */
+r_if
+c_cond
+(paren
+id|should_advance_cwnd
+c_func
+(paren
+id|tp
+comma
+id|flag
+)paren
+)paren
+id|tcp_cong_avoid
+c_func
+(paren
+id|tp
+)paren
+suffix:semicolon
 multiline_comment|/* If we have a timestamp, we always do rtt estimates. */
 r_if
 c_cond
@@ -2983,23 +2964,6 @@ suffix:semicolon
 )brace
 )brace
 )brace
-r_if
-c_cond
-(paren
-id|should_advance_cwnd
-c_func
-(paren
-id|tp
-comma
-id|flag
-)paren
-)paren
-id|tcp_cong_avoid
-c_func
-(paren
-id|tp
-)paren
-suffix:semicolon
 )brace
 r_if
 c_cond
@@ -4786,7 +4750,7 @@ suffix:semicolon
 id|this_sack
 op_increment
 comma
-id|tp
+id|sp
 op_increment
 )paren
 (brace
@@ -5055,7 +5019,7 @@ op_amp
 id|sk-&gt;tp_pinfo.af_tcp
 )paren
 suffix:semicolon
-multiline_comment|/*  Queue data for delivery to the user.&n;&t; *  Packets in sequence go to the receive queue.&n;&t; *  Out of sequence packets to out_of_order_queue.&n;&t; */
+multiline_comment|/*  Queue data for delivery to the user.&n;&t; *  Packets in sequence go to the receive queue.&n;&t; *  Out of sequence packets to the out_of_order_queue.&n;&t; */
 r_if
 c_cond
 (paren
@@ -5303,7 +5267,7 @@ c_func
 id|tp
 )paren
 suffix:semicolon
-multiline_comment|/* Disable header predition. */
+multiline_comment|/* Disable header prediction. */
 id|tp-&gt;pred_flags
 op_assign
 l_int|0
@@ -6371,7 +6335,7 @@ suffix:semicolon
 )brace
 )brace
 )brace
-multiline_comment|/* Clean the out_of_order queue if we can, trying to get&n; * the socket within its memory limits again.&n; *&n; * Return less than zero if we should stop dropping frames&n; * until the socket owning process reads some of the data&n; * to stabilize the situation.&n; */
+multiline_comment|/* Clean the out_of_order queue if we can, trying to get&n; * the socket within its memory limits again.&n; *&n; * Return less than zero if we should start dropping frames&n; * until the socket owning process reads some of the data&n; * to stabilize the situation.&n; */
 DECL|function|prune_queue
 r_static
 r_int
@@ -6410,7 +6374,47 @@ suffix:semicolon
 id|net_statistics.PruneCalled
 op_increment
 suffix:semicolon
-multiline_comment|/* Clean the out_of_order queue.&n;&t; * Start with the end because there are probably the least&n;&t; * useful packets (crossing fingers).&n;&t; */
+multiline_comment|/* First, purge the out_of_order queue. */
+id|skb
+op_assign
+id|__skb_dequeue_tail
+c_func
+(paren
+op_amp
+id|tp-&gt;out_of_order_queue
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|skb
+op_ne
+l_int|NULL
+)paren
+(brace
+multiline_comment|/* Free it all. */
+r_do
+(brace
+id|net_statistics.OfoPruned
+op_add_assign
+id|skb-&gt;len
+suffix:semicolon
+id|kfree_skb
+c_func
+(paren
+id|skb
+)paren
+suffix:semicolon
+id|skb
+op_assign
+id|__skb_dequeue_tail
+c_func
+(paren
+op_amp
+id|tp-&gt;out_of_order_queue
+)paren
+suffix:semicolon
+)brace
 r_while
 c_loop
 (paren
@@ -6424,33 +6428,24 @@ op_amp
 id|tp-&gt;out_of_order_queue
 )paren
 )paren
+op_ne
+l_int|NULL
 )paren
 (brace
-id|net_statistics.OfoPruned
-op_add_assign
-id|skb-&gt;len
 suffix:semicolon
-id|kfree_skb
-c_func
-(paren
-id|skb
-)paren
-suffix:semicolon
+)brace
+multiline_comment|/* Reset SACK state.  A conforming SACK implementation will&n;&t;&t; * do the same at a timeout based retransmit.  When a connection&n;&t;&t; * is in a sad state like this, we care only about integrity&n;&t;&t; * of the connection not performance.&n;&t;&t; */
 r_if
 c_cond
 (paren
-id|atomic_read
-c_func
-(paren
-op_amp
-id|sk-&gt;rmem_alloc
+id|tp-&gt;sack_ok
 )paren
-op_le
-id|sk-&gt;rcvbuf
-)paren
-r_return
+(brace
+id|tp-&gt;num_sacks
+op_assign
 l_int|0
 suffix:semicolon
+)brace
 )brace
 multiline_comment|/* If we are really being abused, tell the caller to silently&n;&t; * drop receive data on the floor.  It will get retransmitted&n;&t; * and hopefully then we&squot;ll have sufficient space.&n;&t; *&n;&t; * We used to try to purge the in-order packets too, but that&n;&t; * turns out to be deadly and fraught with races.  Consider:&n;&t; *&n;&t; * 1) If we acked the data, we absolutely cannot drop the&n;&t; *    packet.  This data would then never be retransmitted.&n;&t; * 2) It is possible, with a proper sequence of events involving&n;&t; *    delayed acks and backlog queue handling, to have the user&n;&t; *    read the data before it gets acked.  The previous code&n;&t; *    here got this wrong, and it lead to data corruption.&n;&t; * 3) Too much state changes happen when the FIN arrives, so once&n;&t; *    we&squot;ve seen that we can&squot;t remove any in-order data safely.&n;&t; *&n;&t; * The net result is that removing in-order receive data is too&n;&t; * complex for anyones sanity.  So we don&squot;t do it anymore.  But&n;&t; * if we are really having our buffer space abused we stop accepting&n;&t; * new receive data.&n;&t; */
 r_if
@@ -6557,6 +6552,9 @@ id|len
 )paren
 )paren
 (brace
+id|tcp_statistics.TcpInErrs
+op_increment
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -7868,6 +7866,9 @@ id|len
 )paren
 )paren
 (brace
+id|tcp_statistics.TcpInErrs
+op_increment
+suffix:semicolon
 r_if
 c_cond
 (paren

@@ -3933,7 +3933,7 @@ suffix:semicolon
 multiline_comment|/*&n;&t; * Look up the dentry using the NFS file handle.&n;&t; */
 id|error
 op_assign
-id|nfserr_stale
+id|nfserr_noent
 suffix:semicolon
 id|dentry
 op_assign

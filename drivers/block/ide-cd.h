@@ -1,7 +1,7 @@
 macro_line|#ifndef _IDE_CD_H
 DECL|macro|_IDE_CD_H
 mdefine_line|#define _IDE_CD_H
-multiline_comment|/*&n; *  linux/drivers/block/ide_modes.h&n; *&n; *  Copyright (C) 1996  Erik Andersen&n; *  Copyright (C) 1998  Jens Axboe and Chris Zwilling&n; */
+multiline_comment|/*&n; *  linux/drivers/block/ide_modes.h&n; *&n; *  Copyright (C) 1996  Erik Andersen&n; *  Copyright (C) 1998, 1999 Jens Axboe&n; */
 macro_line|#include &lt;asm/byteorder.h&gt;
 multiline_comment|/* Turn this on to have the driver print out the meanings of the&n;   ATAPI error codes.  This will use up additional kernel-space&n;   memory, though. */
 macro_line|#ifndef VERBOSE_IDE_CD_ERRORS
@@ -813,13 +813,6 @@ l_int|1
 suffix:semicolon
 multiline_comment|/* reserved in 1.2 */
 multiline_comment|/* Drive supports reading CD-R discs with addressing method 2 */
-DECL|member|method2
-id|__u8
-id|method2
-suffix:colon
-l_int|1
-suffix:semicolon
-multiline_comment|/* reserved in 1.2 */
 DECL|member|reserved2
 id|__u8
 id|reserved2
@@ -883,7 +876,7 @@ DECL|member|reserved4
 id|__u8
 id|reserved4
 suffix:colon
-l_int|1
+l_int|4
 suffix:semicolon
 multiline_comment|/* Drive can read multisession discs. */
 DECL|member|multisession
@@ -2214,7 +2207,7 @@ comma
 (brace
 l_int|0x6400
 comma
-l_string|&quot;Illegal mode for this track&quot;
+l_string|&quot;Illegal mode for this track or incompatible medium&quot;
 )brace
 comma
 (brace

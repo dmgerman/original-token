@@ -743,7 +743,7 @@ suffix:semicolon
 )brace
 suffix:semicolon
 DECL|macro|INIT_MMAP
-mdefine_line|#define INIT_MMAP &bslash;&n;{ &amp;init_mm, 0, 0, PAGE_SHARED, VM_READ | VM_WRITE | VM_EXEC, NULL, &amp;init_mm.mmap }
+mdefine_line|#define INIT_MMAP &bslash;&n;{ &amp;init_mm, 0, 0, NULL, PAGE_SHARED, VM_READ | VM_WRITE | VM_EXEC, 1, NULL, NULL }
 DECL|macro|INIT_TSS
 mdefine_line|#define INIT_TSS  {&t;&t;&t;&t;&t;&t;&bslash;&n;&t;0,0, /* back_link, __blh */&t;&t;&t;&t;&bslash;&n;&t;sizeof(init_stack) + (long) &amp;init_stack, /* esp0 */&t;&bslash;&n;&t;__KERNEL_DS, 0, /* ss0 */&t;&t;&t;&t;&bslash;&n;&t;0,0,0,0,0,0, /* stack1, stack2 */&t;&t;&t;&bslash;&n;&t;(long) &amp;swapper_pg_dir - PAGE_OFFSET, /* cr3 */&t;&t;&bslash;&n;&t;0,0, /* eip,eflags */&t;&t;&t;&t;&t;&bslash;&n;&t;0,0,0,0, /* eax,ecx,edx,ebx */&t;&t;&t;&t;&bslash;&n;&t;0,0,0,0, /* esp,ebp,esi,edi */&t;&t;&t;&t;&bslash;&n;&t;0,0,0,0,0,0, /* es,cs,ss */&t;&t;&t;&t;&bslash;&n;&t;0,0,0,0,0,0, /* ds,fs,gs */&t;&t;&t;&t;&bslash;&n;&t;_LDT(0),0, /* ldt */&t;&t;&t;&t;&t;&bslash;&n;&t;0, 0x8000, /* tace, bitmap */&t;&t;&t;&t;&bslash;&n;&t;{~0, }, /* ioperm */&t;&t;&t;&t;&t;&bslash;&n;&t;_TSS(0), 0, 0, 0, (mm_segment_t) { 0 }, /* obsolete */&t;&bslash;&n;&t;{ 0, },&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;{ { 0, }, },  /* 387 state */&t;&t;&t;&t;&bslash;&n;&t;NULL, 0, 0, 0, 0, 0, /* vm86_info */&t;&t;&t;&bslash;&n;}
 DECL|macro|start_thread
@@ -816,6 +816,14 @@ r_struct
 id|mm_struct
 op_star
 id|mm
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|forget_segments
+c_func
+(paren
+r_void
 )paren
 suffix:semicolon
 multiline_comment|/*&n; * FPU lazy state save handling..&n; */

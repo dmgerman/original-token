@@ -2070,6 +2070,8 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
+DECL|macro|_MIDI_SYNTH_C_
+mdefine_line|#define _MIDI_SYNTH_C_
 DECL|macro|MIDI_SYNTH_NAME
 mdefine_line|#define MIDI_SYNTH_NAME&t;&quot;WaveFront (MIDI)&quot;
 DECL|macro|MIDI_SYNTH_CAPS

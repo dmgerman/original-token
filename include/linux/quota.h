@@ -46,7 +46,7 @@ suffix:semicolon
 DECL|macro|NR_DQHASH
 mdefine_line|#define NR_DQHASH 43            /* Just an arbitrary number */
 DECL|macro|NR_DQUOTS
-mdefine_line|#define NR_DQUOTS 256           /* Maximum number of quotas active at one time (Configurable from /proc/sys/fs) */
+mdefine_line|#define NR_DQUOTS 1024          /* Maximum number of quotas active at one time (Configurable from /proc/sys/fs) */
 multiline_comment|/*&n; * Command definitions for the &squot;quotactl&squot; system call.&n; * The commands are broken into a main command defined below&n; * and a subcommand that is used to convey the type of&n; * quota that is being manipulated (see above).&n; */
 DECL|macro|SUBCMDMASK
 mdefine_line|#define SUBCMDMASK  0x00ff

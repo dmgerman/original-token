@@ -415,6 +415,8 @@ DECL|macro|copy_segments
 mdefine_line|#define copy_segments(nr, tsk, mm)&t;do { } while (0)
 DECL|macro|release_segments
 mdefine_line|#define release_segments(mm)&t;&t;do { } while (0)
+DECL|macro|forget_segments
+mdefine_line|#define forget_segments()&t;&t;do { } while (0)
 macro_line|#ifdef __KERNEL__
 r_extern
 r_struct

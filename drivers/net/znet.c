@@ -520,6 +520,10 @@ c_loop
 (paren
 id|p
 op_assign
+(paren
+r_char
+op_star
+)paren
 id|phys_to_virt
 c_func
 (paren
@@ -528,6 +532,10 @@ l_int|0xf0000
 suffix:semicolon
 id|p
 OL
+(paren
+r_char
+op_star
+)paren
 id|phys_to_virt
 c_func
 (paren
@@ -564,7 +572,11 @@ c_cond
 (paren
 id|p
 op_ge
-id|pyhs_to_virt
+(paren
+r_char
+op_star
+)paren
+id|phys_to_virt
 c_func
 (paren
 l_int|0x100000

@@ -1136,6 +1136,10 @@ id|i
 )paren
 suffix:semicolon
 macro_line|#else
+(brace
+r_int
+id|j
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -1172,6 +1176,7 @@ id|i
 )braket
 )paren
 suffix:semicolon
+)brace
 macro_line|#endif
 id|p
 op_add_assign

@@ -496,7 +496,7 @@ DECL|macro|INIT_TSS
 mdefine_line|#define INIT_TSS  { &bslash;&n;&t;INIT_SP, /* ksp */ &bslash;&n;&t;(unsigned long *) swapper_pg_dir, /* pg_tables */ &bslash;&n;&t;0, /* wchan */ &bslash;&n;&t;(struct pt_regs *)INIT_SP - 1, /* regs */ &bslash;&n;&t;KERNEL_DS, /*fs*/ &bslash;&n;&t;0, /* last_syscall */ &bslash;&n;&t;{0}, 0, 0, 0 &bslash;&n;}
 multiline_comment|/*&n; * Note: the vm_start and vm_end fields here should *not*&n; * be in kernel space.  (Could vm_end == vm_start perhaps?)&n; */
 DECL|macro|INIT_MMAP
-mdefine_line|#define INIT_MMAP { &amp;init_mm, 0, 0x1000, &bslash;&n;&t;&t;      PAGE_SHARED, VM_READ | VM_WRITE | VM_EXEC }
+mdefine_line|#define INIT_MMAP { &amp;init_mm, 0, 0x1000, NULL, &bslash;&n;&t;&t;    PAGE_SHARED, VM_READ | VM_WRITE | VM_EXEC, &bslash;&n;&t;&t;    1, NULL, NULL }
 multiline_comment|/*&n; * Return saved PC of a blocked thread. For now, this is the &quot;user&quot; PC&n; */
 DECL|function|thread_saved_pc
 r_static
@@ -527,6 +527,8 @@ DECL|macro|copy_segments
 mdefine_line|#define copy_segments(nr, tsk, mm)&t;do { } while (0)
 DECL|macro|release_segments
 mdefine_line|#define release_segments(mm)&t;&t;do { } while (0)
+DECL|macro|forget_segments
+mdefine_line|#define forget_segments()&t;&t;do { } while (0)
 multiline_comment|/*&n; * NOTE! The task struct and the stack go together&n; */
 DECL|macro|alloc_task_struct
 mdefine_line|#define alloc_task_struct() &bslash;&n;&t;((struct task_struct *) __get_free_pages(GFP_KERNEL,1))

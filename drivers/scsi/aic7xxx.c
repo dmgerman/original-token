@@ -224,7 +224,7 @@ id|adapter_tag_info_t
 suffix:semicolon
 multiline_comment|/*&n; * Make a define that will tell the driver not to use tagged queueing&n; * by default.&n; */
 DECL|macro|DEFAULT_TAG_COMMANDS
-mdefine_line|#define DEFAULT_TAG_COMMANDS {0, 0, 0, 0, 0, 0, 0, 0,&bslash;&n;                              0, 0, 0, 0, 0, 0, 0, 0}
+mdefine_line|#define DEFAULT_TAG_COMMANDS {255, 255, 255, 255, 255, 255, 255, 255,&bslash;&n;                              255, 255, 255, 255, 255, 255, 255, 255}
 multiline_comment|/*&n; * Modify this as you see fit for your system.  By setting tag_commands&n; * to 0, the driver will use it&squot;s own algorithm for determining the&n; * number of commands to use (see above).  When 255, the driver will&n; * not enable tagged queueing for that particular device.  When positive&n; * (&gt; 0) and (&lt; 255) the values in the array are used for the queue_depth.&n; * Note that the maximum value for an entry is 254, but you&squot;re insane if&n; * you try to use that many commands on one device.&n; *&n; * In this example, the first line will disable tagged queueing for all&n; * the devices on the first probed aic7xxx adapter.&n; *&n; * The second line enables tagged queueing with 4 commands/LUN for IDs&n; * (1, 2-11, 13-15), disables tagged queueing for ID 12, and tells the&n; * driver to use its own algorithm for ID 1.&n; *&n; * The third line is the same as the first line.&n; *&n; * The fourth line disables tagged queueing for devices 0 and 3.  It&n; * enables tagged queueing for the other IDs, with 16 commands/LUN&n; * for IDs 1 and 4, 127 commands/LUN for ID 8, and 4 commands/LUN for&n; * IDs 2, 5-7, and 9-15.&n; */
 multiline_comment|/*&n; * NOTE: The below structure is for reference only, the actual structure&n; *       to modify in order to change things is located around line&n; *       number 1305&n;adapter_tag_info_t aic7xxx_tag_info[] =&n;{&n;  {DEFAULT_TAG_COMMANDS},&n;  {{4, 0, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 255, 4, 4, 4}},&n;  {DEFAULT_TAG_COMMANDS},&n;  {{255, 16, 4, 255, 16, 4, 4, 4, 127, 4, 4, 4, 4, 4, 4, 4}}&n;};&n;*/
 multiline_comment|/*&n; * Define an array of board names that can be indexed by aha_type.&n; * Don&squot;t forget to change this when changing the types!&n; */
@@ -33044,13 +33044,13 @@ comma
 id|PCI_SLOT
 c_func
 (paren
-id|temp_p-&gt;pdev-&gt;devfn
+id|temp_p-&gt;pci_device_fn
 )paren
 comma
 id|PCI_FUNC
 c_func
 (paren
-id|temp_p-&gt;pdev-&gt;devfn
+id|temp_p-&gt;pci_device_fn
 )paren
 )paren
 suffix:semicolon
@@ -33165,13 +33165,13 @@ comma
 id|PCI_SLOT
 c_func
 (paren
-id|temp_p-&gt;pdev-&gt;devfn
+id|temp_p-&gt;pci_device_fn
 )paren
 comma
 id|PCI_FUNC
 c_func
 (paren
-id|temp_p-&gt;pdev-&gt;devfn
+id|temp_p-&gt;pci_device_fn
 )paren
 )paren
 suffix:semicolon

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/net/sunrpc/xprt.c&n; *&n; *  This is a generic RPC call interface supporting congestion avoidance,&n; *  and asynchronous calls.&n; *&n; *  The interface works like this:&n; *&n; *  -&t;When a process places a call, it allocates a request slot if&n; *&t;one is available. Otherwise, it sleeps on the backlog queue&n; *&t;(xprt_reserve).&n; *  -&t;Next, the caller puts together the RPC message, stuffs it into&n; *&t;the request struct, and calls xprt_call().&n; *  -&t;xprt_call transmits the message and installs the caller on the&n; *&t;socket&squot;s wait list. At the same time, it installs a timer that&n; *&t;is run after the packet&squot;s timeout has expired.&n; *  -&t;When a packet arrives, the data_ready handler walks the list of&n; *&t;pending requests for that socket. If a matching XID is found, the&n; *&t;caller is woken up, and the timer removed.&n; *  -&t;When no reply arrives within the timeout interval, the timer is&n; *&t;fired by the kernel and runs xprt_timer(). It either adjusts the&n; *&t;timeout values (minor timeout) or wakes up the caller with a status&n; *&t;of -ETIMEDOUT.&n; *  -&t;When the caller receives a notification from RPC that a reply arrived,&n; *&t;it should release the RPC slot, and process the reply.&n; *&t;If the call timed out, it may choose to retry the operation by&n; *&t;adjusting the initial timeout value, and simply calling rpc_call&n; *&t;again.&n; *&n; *  Support for async RPC is done through a set of RPC-specific scheduling&n; *  primitives that `transparently&squot; work for processes as well as async&n; *  tasks that rely on callbacks.&n; *&n; *  Copyright (C) 1995, 1996, Olaf Kirch &lt;okir@monad.swb.de&gt;&n; *&n; *  TCP callback races fixes (C) 1998 Red Hat Software &lt;alan@redhat.com&gt;&n; *  TCP send fixes (C) 1998 Red Hat Software &lt;alan@redhat.com&gt;&n; */
+multiline_comment|/*&n; *  linux/net/sunrpc/xprt.c&n; *&n; *  This is a generic RPC call interface supporting congestion avoidance,&n; *  and asynchronous calls.&n; *&n; *  The interface works like this:&n; *&n; *  -&t;When a process places a call, it allocates a request slot if&n; *&t;one is available. Otherwise, it sleeps on the backlog queue&n; *&t;(xprt_reserve).&n; *  -&t;Next, the caller puts together the RPC message, stuffs it into&n; *&t;the request struct, and calls xprt_call().&n; *  -&t;xprt_call transmits the message and installs the caller on the&n; *&t;socket&squot;s wait list. At the same time, it installs a timer that&n; *&t;is run after the packet&squot;s timeout has expired.&n; *  -&t;When a packet arrives, the data_ready handler walks the list of&n; *&t;pending requests for that socket. If a matching XID is found, the&n; *&t;caller is woken up, and the timer removed.&n; *  -&t;When no reply arrives within the timeout interval, the timer is&n; *&t;fired by the kernel and runs xprt_timer(). It either adjusts the&n; *&t;timeout values (minor timeout) or wakes up the caller with a status&n; *&t;of -ETIMEDOUT.&n; *  -&t;When the caller receives a notification from RPC that a reply arrived,&n; *&t;it should release the RPC slot, and process the reply.&n; *&t;If the call timed out, it may choose to retry the operation by&n; *&t;adjusting the initial timeout value, and simply calling rpc_call&n; *&t;again.&n; *&n; *  Support for async RPC is done through a set of RPC-specific scheduling&n; *  primitives that `transparently&squot; work for processes as well as async&n; *  tasks that rely on callbacks.&n; *&n; *  Copyright (C) 1995, 1996, Olaf Kirch &lt;okir@monad.swb.de&gt;&n; *&n; *  TCP callback races fixes (C) 1998 Red Hat Software &lt;alan@redhat.com&gt;&n; *  TCP send fixes (C) 1998 Red Hat Software &lt;alan@redhat.com&gt;&n; *  TCP NFS related read + write fixes&n; *   (C) 1999 Dave Airlie, University of Limerick, Ireland &lt;airlied@linux.ie&gt;&n; */
 DECL|macro|__KERNEL_SYSCALLS__
 mdefine_line|#define __KERNEL_SYSCALLS__
 macro_line|#include &lt;linux/version.h&gt;
@@ -865,19 +865,6 @@ id|oldfs
 )paren
 suffix:semicolon
 macro_line|#endif
-r_if
-c_cond
-(paren
-op_logical_neg
-id|result
-op_logical_and
-id|len
-)paren
-id|result
-op_assign
-op_minus
-id|EAGAIN
-suffix:semicolon
 id|dprintk
 c_func
 (paren
@@ -1256,6 +1243,9 @@ r_if
 c_cond
 (paren
 id|xprt-&gt;stream
+op_logical_and
+op_logical_neg
+id|xprt-&gt;connecting
 )paren
 (brace
 id|rpciod_down
@@ -2422,6 +2412,24 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
+id|result
+)paren
+(brace
+id|dprintk
+c_func
+(paren
+l_string|&quot;RPC: empty TCP record.&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|ENOTCONN
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
 id|result
 OL
 l_int|0
@@ -2669,6 +2677,19 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
+id|result
+op_logical_and
+id|want
+)paren
+id|result
+op_assign
+op_minus
+id|EAGAIN
+suffix:semicolon
+r_if
+c_cond
+(paren
 id|result
 OL
 l_int|0
@@ -2816,6 +2837,19 @@ l_int|1
 comma
 id|want
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|result
+op_logical_and
+id|want
+)paren
+id|result
+op_assign
+op_minus
+id|EAGAIN
 suffix:semicolon
 r_if
 c_cond
@@ -3354,10 +3388,10 @@ op_logical_and
 id|xprt-&gt;snd_task
 )paren
 (brace
-id|printk
+id|dprintk
 c_func
 (paren
-l_string|&quot;write space&bslash;n&quot;
+l_string|&quot;RPC: write space&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
@@ -3392,10 +3426,10 @@ c_cond
 id|xprt-&gt;snd_sent
 )paren
 (brace
-id|printk
+id|dprintk
 c_func
 (paren
-l_string|&quot;Write wakeup snd_sent =%d&bslash;n&quot;
+l_string|&quot;RPC: Write wakeup snd_sent =%d&bslash;n&quot;
 comma
 id|xprt-&gt;snd_sent
 )paren
@@ -3627,12 +3661,6 @@ suffix:semicolon
 r_int
 id|status
 suffix:semicolon
-multiline_comment|/*DEBUG*/
-r_int
-id|ac_debug
-op_assign
-id|xprt-&gt;snd_sent
-suffix:semicolon
 id|dprintk
 c_func
 (paren
@@ -3819,11 +3847,6 @@ id|xprt-&gt;snd_sent
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/*DEBUG*/
-id|ac_debug
-op_assign
-l_int|0
-suffix:semicolon
 )brace
 multiline_comment|/* For fast networks/servers we have to put the request on&n;&t; * the pending list now:&n;&t; */
 id|start_bh_atomic
@@ -3917,24 +3940,11 @@ id|xprt-&gt;snd_task
 op_assign
 l_int|NULL
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|ac_debug
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;Partial xmit finished&bslash;n&quot;
-)paren
-suffix:semicolon
-)brace
 r_return
 suffix:semicolon
 )brace
 multiline_comment|/*d*/
-id|printk
+id|dprintk
 c_func
 (paren
 l_string|&quot;RPC: %4d xmit incomplete (%d left of %d)&bslash;n&quot;

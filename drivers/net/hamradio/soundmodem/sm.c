@@ -17,6 +17,7 @@ macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
+macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &quot;sm.h&quot;
 multiline_comment|/* --------------------------------------------------------------------- */
 DECL|variable|sm_drvname

@@ -473,7 +473,7 @@ comma
 l_int|1
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * Trying to reasembly free fragments into block&n;&t; */
+multiline_comment|/*&n;&t; * Trying to reassemble free fragments into block&n;&t; */
 id|blkno
 op_assign
 id|ufs_fragstoblks
@@ -2272,7 +2272,7 @@ id|sb
 comma
 l_string|&quot;ufs_add_fragments&quot;
 comma
-l_string|&quot;internal error or corruted bitmap on cg %u&quot;
+l_string|&quot;internal error or corrupted bitmap on cg %u&quot;
 comma
 id|cgno
 )paren

@@ -51,6 +51,8 @@ DECL|macro|DEVID_AEC6210
 mdefine_line|#define DEVID_AEC6210&t;((ide_pci_devid_t){PCI_VENDOR_ID_ARTOP,   PCI_DEVICE_ID_ARTOP_ATP850UF})
 DECL|macro|DEVID_W82C105
 mdefine_line|#define DEVID_W82C105&t;((ide_pci_devid_t){PCI_VENDOR_ID_WINBOND, PCI_DEVICE_ID_WINBOND_82C105})
+DECL|macro|DEVID_UM8886A
+mdefine_line|#define DEVID_UM8886A&t;((ide_pci_devid_t){PCI_VENDOR_ID_UMC,     PCI_DEVICE_ID_UMC_UM8886A})
 DECL|macro|DEVID_UM8886BF
 mdefine_line|#define DEVID_UM8886BF&t;((ide_pci_devid_t){PCI_VENDOR_ID_UMC,     PCI_DEVICE_ID_UMC_UM8886BF})
 DECL|macro|DEVID_HPT343
@@ -816,6 +818,36 @@ comma
 l_int|0x10
 comma
 l_int|0x10
+)brace
+)brace
+comma
+id|ON_BOARD
+comma
+l_int|0
+)brace
+comma
+(brace
+id|DEVID_UM8886A
+comma
+l_string|&quot;UM8886A&quot;
+comma
+l_int|NULL
+comma
+(brace
+(brace
+l_int|0x00
+comma
+l_int|0x00
+comma
+l_int|0x00
+)brace
+comma
+(brace
+l_int|0x00
+comma
+l_int|0x00
+comma
+l_int|0x00
 )brace
 )brace
 comma
@@ -2166,6 +2198,34 @@ l_int|1
 suffix:semicolon
 )brace
 )brace
+r_if
+c_cond
+(paren
+id|IDE_PCI_DEVID_EQ
+c_func
+(paren
+id|d-&gt;devid
+comma
+id|DEVID_UM8886A
+)paren
+op_logical_or
+id|IDE_PCI_DEVID_EQ
+c_func
+(paren
+id|d-&gt;devid
+comma
+id|DEVID_UM8886BF
+)paren
+)paren
+id|hwif-&gt;irq
+op_assign
+id|hwif-&gt;channel
+ques
+c_cond
+l_int|15
+suffix:colon
+l_int|14
+suffix:semicolon
 macro_line|#ifdef CONFIG_BLK_DEV_IDEDMA
 r_if
 c_cond

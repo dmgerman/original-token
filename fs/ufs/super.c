@@ -1,6 +1,6 @@
 multiline_comment|/*&n; *  linux/fs/ufs/super.c&n; *&n; * Copyright (C) 1998&n; * Daniel Pirkl &lt;daniel.pirkl@email.cz&gt;&n; * Charles University, Faculty of Mathematics and Physics&n; */
-multiline_comment|/* Derivated from&n; *&n; *  linux/fs/ext2/super.c&n; *&n; * Copyright (C) 1992, 1993, 1994, 1995&n; * Remy Card (card@masi.ibp.fr)&n; * Laboratoire MASI - Institut Blaise Pascal&n; * Universite Pierre et Marie Curie (Paris VI)&n; *&n; *  from&n; *&n; *  linux/fs/minix/inode.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *&n; *  Big-endian to little-endian byte-swapping/bitmaps by&n; *        David S. Miller (davem@caip.rutgers.edu), 1995&n; */
-multiline_comment|/*&n; * Inspirated by&n; *&n; *  linux/fs/ufs/super.c&n; *&n; * Copyright (C) 1996&n; * Adrian Rodriguez (adrian@franklins-tower.rutgers.edu)&n; * Laboratory for Computer Science Research Computing Facility&n; * Rutgers, The State University of New Jersey&n; *&n; * Copyright (C) 1996  Eddie C. Dost  (ecd@skynet.be)&n; *&n; * Kernel module support added on 96/04/26 by&n; * Stefan Reinauer &lt;stepan@home.culture.mipt.ru&gt;&n; *&n; * Module usage counts added on 96/04/29 by&n; * Gertjan van Wingerde &lt;gertjan@cs.vu.nl&gt;&n; *&n; * Clean swab support on 19970406 by&n; * Francois-Rene Rideau &lt;fare@tunes.org&gt;&n; *&n; * 4.4BSD (FreeBSD) support added on February 1st 1998 by&n; * Niels Kristian Bech Jensen &lt;nkbj@image.dk&gt; partially based&n; * on code by Martin von Loewis &lt;martin@mira.isdn.cs.tu-berlin.de&gt;.&n; *&n; * NeXTstep support added on February 5th 1998 by&n; * Niels Kristian Bech Jensen &lt;nkbj@image.dk&gt;.&n; *&n; * write support Daniel Pirkl &lt;daniel.pirkl@email.cz&gt; 1998&n; * &n; */
+multiline_comment|/* Derived from&n; *&n; *  linux/fs/ext2/super.c&n; *&n; * Copyright (C) 1992, 1993, 1994, 1995&n; * Remy Card (card@masi.ibp.fr)&n; * Laboratoire MASI - Institut Blaise Pascal&n; * Universite Pierre et Marie Curie (Paris VI)&n; *&n; *  from&n; *&n; *  linux/fs/minix/inode.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *&n; *  Big-endian to little-endian byte-swapping/bitmaps by&n; *        David S. Miller (davem@caip.rutgers.edu), 1995&n; */
+multiline_comment|/*&n; * Inspired by&n; *&n; *  linux/fs/ufs/super.c&n; *&n; * Copyright (C) 1996&n; * Adrian Rodriguez (adrian@franklins-tower.rutgers.edu)&n; * Laboratory for Computer Science Research Computing Facility&n; * Rutgers, The State University of New Jersey&n; *&n; * Copyright (C) 1996  Eddie C. Dost  (ecd@skynet.be)&n; *&n; * Kernel module support added on 96/04/26 by&n; * Stefan Reinauer &lt;stepan@home.culture.mipt.ru&gt;&n; *&n; * Module usage counts added on 96/04/29 by&n; * Gertjan van Wingerde &lt;gertjan@cs.vu.nl&gt;&n; *&n; * Clean swab support on 19970406 by&n; * Francois-Rene Rideau &lt;fare@tunes.org&gt;&n; *&n; * 4.4BSD (FreeBSD) support added on February 1st 1998 by&n; * Niels Kristian Bech Jensen &lt;nkbj@image.dk&gt; partially based&n; * on code by Martin von Loewis &lt;martin@mira.isdn.cs.tu-berlin.de&gt;.&n; *&n; * NeXTstep support added on February 5th 1998 by&n; * Niels Kristian Bech Jensen &lt;nkbj@image.dk&gt;.&n; *&n; * write support Daniel Pirkl &lt;daniel.pirkl@email.cz&gt; 1998&n; * &n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;stdarg.h&gt;
@@ -31,7 +31,7 @@ DECL|macro|UFSD
 mdefine_line|#define UFSD(x)
 macro_line|#endif
 macro_line|#ifdef UFS_SUPER_DEBUG_MORE
-multiline_comment|/*&n; * Print contents of ufs_super_block, useful for debuging&n; */
+multiline_comment|/*&n; * Print contents of ufs_super_block, useful for debugging&n; */
 DECL|function|ufs_print_super_stuff
 r_void
 id|ufs_print_super_stuff
@@ -467,7 +467,7 @@ l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Print contents of ufs_cylinder_group, useful for debuging&n; */
+multiline_comment|/*&n; * Print contents of ufs_cylinder_group, useful for debugging&n; */
 DECL|function|ufs_print_cylinder_stuff
 r_void
 id|ufs_print_cylinder_stuff
@@ -1129,7 +1129,6 @@ comma
 id|error_buf
 )paren
 suffix:semicolon
-multiline_comment|/*** &n;&t;panic (&quot;UFS-fs panic (device %s): %s: %s&bslash;n&quot;, &n;&t;&t;kdevname(sb-&gt;s_dev), function, error_buf);&n;***/
 )brace
 DECL|function|ufs_warning
 r_void
@@ -1557,7 +1556,7 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Read on-disk structures asscoiated with cylinder groups&n; */
+multiline_comment|/*&n; * Read on-disk structures associated with cylinder groups&n; */
 DECL|function|ufs_read_cylinder_structures
 r_int
 id|ufs_read_cylinder_structures
@@ -2076,7 +2075,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Put on-disk structures associated with cylidner groups and &n; * write them back to disk&n; */
+multiline_comment|/*&n; * Put on-disk structures associated with cylinder groups and &n; * write them back to disk&n; */
 DECL|function|ufs_put_cylinder_structures
 r_void
 id|ufs_put_cylinder_structures
@@ -2468,10 +2467,10 @@ id|UFS_MOUNT_UFSTYPE
 id|printk
 c_func
 (paren
-l_string|&quot;You didn&squot;t specify type of your ufs file system&bslash;n&bslash;n&quot;
+l_string|&quot;You didn&squot;t specify the type of your ufs filesystem&bslash;n&bslash;n&quot;
 l_string|&quot;       mount -t ufs -o ufstype=sun|44bsd|old|next|openstep ....&bslash;n&bslash;n&quot;
-l_string|&quot;!!! WARNING !!! wrong value may corrupt you file system&bslash;n&quot;
-l_string|&quot;default value is ufstype=old&bslash;n&quot;
+l_string|&quot;&gt;&gt;&gt;WARNING&lt;&lt;&lt; Wrong ufstype may corrupt your filesystem, &quot;
+l_string|&quot;default is ufstype=old&bslash;n&quot;
 )paren
 suffix:semicolon
 id|ufs_set_opt
@@ -2521,7 +2520,7 @@ id|UFSD
 c_func
 (paren
 (paren
-l_string|&quot;44bsd ufstype&bslash;n&quot;
+l_string|&quot;ufstype=44bsd&bslash;n&quot;
 )paren
 )paren
 id|uspi-&gt;s_fsize
@@ -2572,7 +2571,7 @@ id|UFSD
 c_func
 (paren
 (paren
-l_string|&quot;sun  ufstype&bslash;n&quot;
+l_string|&quot;ufstype=sun&bslash;n&quot;
 )paren
 )paren
 id|uspi-&gt;s_fsize
@@ -2623,7 +2622,7 @@ id|UFSD
 c_func
 (paren
 (paren
-l_string|&quot;old ufstype&bslash;n&quot;
+l_string|&quot;ufstype=old&bslash;n&quot;
 )paren
 )paren
 id|uspi-&gt;s_fsize
@@ -2679,7 +2678,8 @@ id|MS_RDONLY
 id|printk
 c_func
 (paren
-l_string|&quot;old type of ufs is supported read-only&bslash;n&quot;
+id|KERN_INFO
+l_string|&quot;ufstype=old is supported read-only&bslash;n&quot;
 )paren
 suffix:semicolon
 id|sb-&gt;s_flags
@@ -2696,7 +2696,7 @@ id|UFSD
 c_func
 (paren
 (paren
-l_string|&quot;next ufstype&bslash;n&quot;
+l_string|&quot;ufstype=next&bslash;n&quot;
 )paren
 )paren
 id|uspi-&gt;s_fsize
@@ -2752,7 +2752,8 @@ id|MS_RDONLY
 id|printk
 c_func
 (paren
-l_string|&quot;nextstep type of ufs is supported read-only&bslash;n&quot;
+id|KERN_INFO
+l_string|&quot;ufstype=next is supported read-only&bslash;n&quot;
 )paren
 suffix:semicolon
 id|sb-&gt;s_flags
@@ -2769,7 +2770,7 @@ id|UFSD
 c_func
 (paren
 (paren
-l_string|&quot;openstep ufstype&bslash;n&quot;
+l_string|&quot;ufstype=openstep&bslash;n&quot;
 )paren
 )paren
 id|uspi-&gt;s_fsize
@@ -2825,7 +2826,8 @@ id|MS_RDONLY
 id|printk
 c_func
 (paren
-l_string|&quot;openstep type of ufs is supported read-only&bslash;n&quot;
+id|KERN_INFO
+l_string|&quot;ufstype=openstep is supported read-only&bslash;n&quot;
 )paren
 suffix:semicolon
 id|sb-&gt;s_flags
@@ -2840,7 +2842,7 @@ suffix:colon
 id|printk
 c_func
 (paren
-l_string|&quot;this fs type of ufs is not supported&bslash;n&quot;
+l_string|&quot;unknown ufstype&bslash;n&quot;
 )paren
 suffix:semicolon
 r_goto

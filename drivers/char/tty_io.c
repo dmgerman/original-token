@@ -30,9 +30,7 @@ macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;linux/kbd_kern.h&gt;
 macro_line|#include &lt;linux/vt_kern.h&gt;
 macro_line|#include &lt;linux/selection.h&gt;
-macro_line|#ifdef CONFIG_KMOD
 macro_line|#include &lt;linux/kmod.h&gt;
-macro_line|#endif
 DECL|macro|CONSOLE_DEV
 mdefine_line|#define CONSOLE_DEV MKDEV(TTY_MAJOR,0)
 DECL|macro|TTY_DEV
@@ -633,7 +631,6 @@ r_return
 op_minus
 id|EINVAL
 suffix:semicolon
-macro_line|#ifdef CONFIG_KMOD
 multiline_comment|/* Eduardo Blanco &lt;ejbs@cs.cs.com.uy&gt; */
 multiline_comment|/* Cyrus Durgin &lt;cider@speakeasy.org&gt; */
 r_if
@@ -674,7 +671,6 @@ id|modname
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
 r_if
 c_cond
 (paren

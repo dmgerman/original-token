@@ -848,16 +848,6 @@ suffix:semicolon
 multiline_comment|/* HIPPI boards */
 r_extern
 r_int
-id|cern_hippi_probe
-c_func
-(paren
-r_struct
-id|device
-op_star
-)paren
-suffix:semicolon
-r_extern
-r_int
 id|rr_hippi_probe
 c_func
 (paren
@@ -1027,14 +1017,6 @@ l_int|0
 )brace
 comma
 macro_line|#endif
-macro_line|#ifdef CONFIG_DEC_ELCP 
-(brace
-id|tulip_probe
-comma
-l_int|0
-)brace
-comma
-macro_line|#endif
 macro_line|#ifdef CONFIG_NE2K_PCI
 (brace
 id|ne2k_pci_probe
@@ -1054,6 +1036,14 @@ macro_line|#endif&t;
 macro_line|#ifdef CONFIG_EEXPRESS_PRO100&t;/* Intel EtherExpress Pro/100 */
 (brace
 id|eepro100_probe
+comma
+l_int|0
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_DEC_ELCP 
+(brace
+id|tulip_probe
 comma
 l_int|0
 )brace
@@ -2128,14 +2118,6 @@ r_if
 c_cond
 (paren
 l_int|1
-macro_line|#ifdef CONFIG_CERN_HIPPI
-op_logical_and
-id|cern_hippi_probe
-c_func
-(paren
-id|dev
-)paren
-macro_line|#endif
 macro_line|#ifdef CONFIG_ROADRUNNER
 op_logical_and
 id|rr_hippi_probe

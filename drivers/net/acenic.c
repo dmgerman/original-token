@@ -28,7 +28,7 @@ mdefine_line|#define MAX_RODATA_LEN&t;8*1024
 DECL|macro|MAX_DATA_LEN
 mdefine_line|#define MAX_DATA_LEN&t;2*1024
 macro_line|#include &quot;acenic_firmware.h&quot;
-multiline_comment|/*&n; * This driver currently supports Tigon I and Tigon II based cards&n; * including the Alteon AceNIC and the 3Com 3C985.&n; *&n; * This card is really neat, it supports receive hardware checksumming&n; * and jumbo frames (up to 9000 bytes) and does a lot of work in the&n; * firmware. Also the programming interface is quite neat, except for&n; * the parts dealing with the i2c eeprom on the card ;-)&n; *&n; * Using jumbo frames:&n; *&n; * To enable jumbo frames, simply specify an mtu between 1500 and 9000&n; * bytes to ifconfig. Jumbo frames can be enabled or disabled at any time&n; * by running `ifconfig eth&lt;X&gt; mtu &lt;MTU&gt;&squot; with &lt;X&gt; being the Ethernet&n; * interface number and &lt;MTU&gt; being the MTU value.&n; *&n; * Module parameters:&n; *&n; * When compiled as a loadable module, the driver allows for a number&n; * of module parameters to be specified. The driver supports the&n; * following module parameters:&n; *&n; *  trace=&lt;val&gt; - Firmware trace level. This requires special traced&n; *                firmware to replace the firmware supplied with&n; *                the driver - for debugging purposes only.&n; *&n; *  link=&lt;val&gt;  - Link state. Normally you want to use the default link&n; *                parameters set by the driver. This can be used to&n; *                override these in case your switch doesn&squot;t negotiate&n; *                the link properly. Valid values are:&n; *         0x0001 - Force half duplex link.&n; *         0x0002 - Do not negotiate line speed with the other end.&n; *         0x0010 - 10Mbit/sec link.&n; *         0x0020 - 100Mbit/sec link.&n; *         0x0040 - 1000Mbit/sec link.&n; *         0x0100 - Do not negotiate flow control.&n; *         0x0200 - Enable RX flow control Y&n; *         0x0400 - Enable TX flow control Y (Tigon II NICs only).&n; *                Default value is 0x0270, ie. enable link+flow&n; *                control negotiation. Negotiating the highest&n; *                possible link speed with RX flow control enabled.&n; *&n; *                When disabling link speed negotiation, only one link&n; *                speed is allowed to be specified!&n; *&n; *  tx_coal_tick=&lt;val&gt; - number of coalescing clock ticks (us) allowed&n; *                to wait for more packets to arive before&n; *                interrupting the host, from the time the first&n; *                packet arrives.&n; *&n; *  rx_coal_tick=&lt;val&gt; - number of coalescing clock ticks (us) allowed&n; *                to wait for more packets to arive in the transmit ring,&n; *                before interrupting the host, after transmitting the&n; *                first packet in the ring.&n; *&n; *  max_tx_desc=&lt;val&gt; - maximum number of transmit descriptors&n; *                (packets) transmitted before interrupting the host.&n; *&n; *  max_rx_desc=&lt;val&gt; - maximum number of receive descriptors&n; *                (packets) received before interrupting the host.&n; *&n; * If you use more than one NIC, specify the parameters for the&n; * individual NICs with a comma, ie. trace=0,0x00001fff,0 you want to&n; * run tracing on NIC #2 but not on NIC #1 and #3.&n; *&n; * TODO:&n; *&n; * - Add multicast support.&n; * - The Tigon II firmware fails to run in some PCs.&n; * - NIC dump support.&n; * - More tuning parameters.&n; */
+multiline_comment|/*&n; * This driver currently supports Tigon I and Tigon II based cards&n; * including the Alteon AceNIC and the 3Com 3C985.&n; *&n; * This card is really neat, it supports receive hardware checksumming&n; * and jumbo frames (up to 9000 bytes) and does a lot of work in the&n; * firmware. Also the programming interface is quite neat, except for&n; * the parts dealing with the i2c eeprom on the card ;-)&n; *&n; * Using jumbo frames:&n; *&n; * To enable jumbo frames, simply specify an mtu between 1500 and 9000&n; * bytes to ifconfig. Jumbo frames can be enabled or disabled at any time&n; * by running `ifconfig eth&lt;X&gt; mtu &lt;MTU&gt;&squot; with &lt;X&gt; being the Ethernet&n; * interface number and &lt;MTU&gt; being the MTU value.&n; *&n; * Module parameters:&n; *&n; * When compiled as a loadable module, the driver allows for a number&n; * of module parameters to be specified. The driver supports the&n; * following module parameters:&n; *&n; *  trace=&lt;val&gt; - Firmware trace level. This requires special traced&n; *                firmware to replace the firmware supplied with&n; *                the driver - for debugging purposes only.&n; *&n; *  link=&lt;val&gt;  - Link state. Normally you want to use the default link&n; *                parameters set by the driver. This can be used to&n; *                override these in case your switch doesn&squot;t negotiate&n; *                the link properly. Valid values are:&n; *         0x0001 - Force half duplex link.&n; *         0x0002 - Do not negotiate line speed with the other end.&n; *         0x0010 - 10Mbit/sec link.&n; *         0x0020 - 100Mbit/sec link.&n; *         0x0040 - 1000Mbit/sec link.&n; *         0x0100 - Do not negotiate flow control.&n; *         0x0200 - Enable RX flow control Y&n; *         0x0400 - Enable TX flow control Y (Tigon II NICs only).&n; *                Default value is 0x0270, ie. enable link+flow&n; *                control negotiation. Negotiating the highest&n; *                possible link speed with RX flow control enabled.&n; *&n; *                When disabling link speed negotiation, only one link&n; *                speed is allowed to be specified!&n; *&n; *  tx_coal_tick=&lt;val&gt; - number of coalescing clock ticks (us) allowed&n; *                to wait for more packets to arive before&n; *                interrupting the host, from the time the first&n; *                packet arrives.&n; *&n; *  rx_coal_tick=&lt;val&gt; - number of coalescing clock ticks (us) allowed&n; *                to wait for more packets to arive in the transmit ring,&n; *                before interrupting the host, after transmitting the&n; *                first packet in the ring.&n; *&n; *  max_tx_desc=&lt;val&gt; - maximum number of transmit descriptors&n; *                (packets) transmitted before interrupting the host.&n; *&n; *  max_rx_desc=&lt;val&gt; - maximum number of receive descriptors&n; *                (packets) received before interrupting the host.&n; *&n; * If you use more than one NIC, specify the parameters for the&n; * individual NICs with a comma, ie. trace=0,0x00001fff,0 you want to&n; * run tracing on NIC #2 but not on NIC #1 and #3.&n; *&n; * TODO:&n; *&n; * - Add multicast support.&n; * - NIC dump support.&n; * - More tuning parameters.&n; */
 DECL|variable|link
 r_static
 r_int
@@ -114,7 +114,7 @@ r_char
 op_star
 id|version
 op_assign
-l_string|&quot;acenic.c: v0.22 01/07/99  Jes Sorensen (Jes.Sorensen@cern.ch)&bslash;n&quot;
+l_string|&quot;acenic.c: v0.24 01/13/99  Jes Sorensen (Jes.Sorensen@cern.ch)&bslash;n&quot;
 suffix:semicolon
 DECL|variable|root_dev
 r_static
@@ -136,6 +136,14 @@ op_star
 id|dev
 )paren
 suffix:semicolon
+DECL|variable|__initdata
+r_static
+r_int
+id|probed
+id|__initdata
+op_assign
+l_int|0
+suffix:semicolon
 DECL|function|__initfunc
 id|__initfunc
 c_func
@@ -150,12 +158,6 @@ id|dev
 )paren
 )paren
 (brace
-r_static
-r_int
-id|i
-op_assign
-l_int|0
-suffix:semicolon
 r_int
 id|boards_found
 op_assign
@@ -194,6 +196,18 @@ op_star
 id|pdev
 op_assign
 l_int|NULL
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|probed
+)paren
+r_return
+op_minus
+id|ENODEV
+suffix:semicolon
+id|probed
+op_increment
 suffix:semicolon
 r_if
 c_cond
@@ -326,12 +340,6 @@ id|ap-&gt;vendor
 op_assign
 id|pdev-&gt;vendor
 suffix:semicolon
-id|pci_set_master
-c_func
-(paren
-id|pdev
-)paren
-suffix:semicolon
 id|dev-&gt;irq
 op_assign
 id|pdev-&gt;irq
@@ -451,6 +459,12 @@ id|pci_latency
 )paren
 suffix:semicolon
 )brace
+id|pci_set_master
+c_func
+(paren
+id|pdev
+)paren
+suffix:semicolon
 r_switch
 c_cond
 (paren
@@ -574,7 +588,7 @@ l_string|&quot;AceNIC %i will be disabled.&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma
-id|i
+id|boards_found
 )paren
 suffix:semicolon
 r_break
@@ -1165,20 +1179,6 @@ l_int|24
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef __LITTLE_ENDIAN
-id|regs-&gt;ModeStat
-op_assign
-id|ACE_BYTE_SWAP_DATA
-op_or
-id|ACE_WARN
-op_or
-id|ACE_FATAL
-op_or
-id|ACE_WORD_SWAP
-suffix:semicolon
-macro_line|#else
-macro_line|#error &quot;this driver doesn&squot;t run on big-endian machines yet!&quot;
-macro_line|#endif
 multiline_comment|/*&n;&t; * Stop the NIC CPU and clear pending interrupts&n;&t; */
 id|regs-&gt;CpuCtrl
 op_or_assign
@@ -1278,6 +1278,21 @@ op_minus
 id|ENODEV
 suffix:semicolon
 )brace
+multiline_comment|/*&n;&t; * ModeStat _must_ be set after the SRAM settings as this change&n;&t; * seems to corrupt the ModeStat and possible other registers.&n;&t; * The SRAM settings survive resets and setting it to the same&n;&t; * value a second time works as well. This is what caused the&n;&t; * `Firmware not running&squot; problem on the Tigon II.&n;&t; */
+macro_line|#ifdef __LITTLE_ENDIAN
+id|regs-&gt;ModeStat
+op_assign
+id|ACE_BYTE_SWAP_DATA
+op_or
+id|ACE_WARN
+op_or
+id|ACE_FATAL
+op_or
+id|ACE_WORD_SWAP
+suffix:semicolon
+macro_line|#else
+macro_line|#error &quot;this driver doesn&squot;t run on big-endian machines yet!&quot;
+macro_line|#endif
 id|mac1
 op_assign
 l_int|0

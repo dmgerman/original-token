@@ -9,9 +9,7 @@ macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
-macro_line|#ifdef CONFIG_KMOD
 macro_line|#include &lt;linux/kmod.h&gt;
-macro_line|#endif
 macro_line|#ifdef CONFIG_AMIGA
 macro_line|#ifdef CONFIG_MULTIFACE_III_LP
 macro_line|#include &lt;linux/lp_mfc.h&gt;
@@ -1492,7 +1490,6 @@ id|MAX_LP
 r_goto
 id|out_err
 suffix:semicolon
-macro_line|#ifdef CONFIG_KMOD
 r_if
 c_cond
 (paren
@@ -1528,7 +1525,6 @@ id|modname
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
 r_if
 c_cond
 (paren

@@ -38,7 +38,7 @@ mdefine_line|#define CLONE_PID&t;0x00001000&t;/* set if pid shared */
 DECL|macro|CLONE_PTRACE
 mdefine_line|#define CLONE_PTRACE&t;0x00002000&t;/* set if we want to let tracing continue on the child too */
 DECL|macro|CLONE_VFORK
-mdefine_line|#define CLONE_VFORK&t;0x00004000&t;/* set if the parent wants the child to wake it up on mmput */
+mdefine_line|#define CLONE_VFORK&t;0x00004000&t;/* set if the parent wants the child to wake it up on mm_release */
 multiline_comment|/*&n; * These are the constant used to fake the fixed-point load-average&n; * counting. Some notes:&n; *  - 11 bit fractions expand to 22 bits by the multiplies: this gives&n; *    a load-average precision of 10 bits integer + 11 bits fractional&n; *  - if you want to count load-averages more often, you need more&n; *    precision, or rounding will get you. With 2-second counting freq,&n; *    the EXP_n values would be 1981, 2034 and 2043 if still using only&n; *    11 bit fractions.&n; */
 r_extern
 r_int
@@ -240,20 +240,34 @@ mdefine_line|#define INIT_FS { &bslash;&n;&t;ATOMIC_INIT(1), &bslash;&n;&t;0022,
 multiline_comment|/* Maximum number of active map areas.. This is a random (large) number */
 DECL|macro|MAX_MAP_COUNT
 mdefine_line|#define MAX_MAP_COUNT&t;(65536)
+multiline_comment|/* Number of map areas at which the AVL tree is activated. This is arbitrary. */
+DECL|macro|AVL_MIN_MAP_COUNT
+mdefine_line|#define AVL_MIN_MAP_COUNT&t;32
 DECL|struct|mm_struct
 r_struct
 id|mm_struct
 (brace
 DECL|member|mmap
-DECL|member|mmap_cache
 r_struct
 id|vm_area_struct
 op_star
 id|mmap
-comma
+suffix:semicolon
+multiline_comment|/* list of VMAs */
+DECL|member|mmap_avl
+r_struct
+id|vm_area_struct
+op_star
+id|mmap_avl
+suffix:semicolon
+multiline_comment|/* tree of VMAs */
+DECL|member|mmap_cache
+r_struct
+id|vm_area_struct
 op_star
 id|mmap_cache
 suffix:semicolon
+multiline_comment|/* last find_vma result */
 DECL|member|pgd
 id|pgd_t
 op_star
@@ -267,6 +281,7 @@ DECL|member|map_count
 r_int
 id|map_count
 suffix:semicolon
+multiline_comment|/* number of VMAs */
 DECL|member|mmap_sem
 r_struct
 id|semaphore
@@ -346,7 +361,7 @@ suffix:semicolon
 )brace
 suffix:semicolon
 DECL|macro|INIT_MM
-mdefine_line|#define INIT_MM {&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&amp;init_mmap, NULL, swapper_pg_dir, &t;&bslash;&n;&t;&t;ATOMIC_INIT(1), 1,&t;&t;&t;&bslash;&n;&t;&t;MUTEX,&t;&t;&t;&t;&t;&bslash;&n;&t;&t;0,&t;&t;&t;&t;&t;&bslash;&n;&t;&t;0, 0, 0, 0,&t;&t;&t;&t;&bslash;&n;&t;&t;0, 0, 0, &t;&t;&t;&t;&bslash;&n;&t;&t;0, 0, 0, 0,&t;&t;&t;&t;&bslash;&n;&t;&t;0, 0, 0,&t;&t;&t;&t;&bslash;&n;&t;&t;0, 0, NULL }
+mdefine_line|#define INIT_MM {&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&amp;init_mmap, NULL, NULL,&t;&t;&t;&bslash;&n;&t;&t;swapper_pg_dir, &t;&t;&t;&bslash;&n;&t;&t;ATOMIC_INIT(1), 1,&t;&t;&t;&bslash;&n;&t;&t;MUTEX,&t;&t;&t;&t;&t;&bslash;&n;&t;&t;0,&t;&t;&t;&t;&t;&bslash;&n;&t;&t;0, 0, 0, 0,&t;&t;&t;&t;&bslash;&n;&t;&t;0, 0, 0, &t;&t;&t;&t;&bslash;&n;&t;&t;0, 0, 0, 0,&t;&t;&t;&t;&bslash;&n;&t;&t;0, 0, 0,&t;&t;&t;&t;&bslash;&n;&t;&t;0, 0, NULL }
 DECL|struct|signal_struct
 r_struct
 id|signal_struct
@@ -866,7 +881,7 @@ mdefine_line|#define PF_SIGNALED&t;0x00000400&t;/* killed by a signal */
 DECL|macro|PF_MEMALLOC
 mdefine_line|#define PF_MEMALLOC&t;0x00000800&t;/* Allocating memory */
 DECL|macro|PF_VFORK
-mdefine_line|#define PF_VFORK&t;0x00001000&t;/* Wake up parent in mmput */
+mdefine_line|#define PF_VFORK&t;0x00001000&t;/* Wake up parent in mm_release */
 DECL|macro|PF_USEDFPU
 mdefine_line|#define PF_USEDFPU&t;0x00100000&t;/* task used FPU this quantum (SMP) */
 DECL|macro|PF_DTRACE
@@ -875,7 +890,7 @@ multiline_comment|/*&n; * Limit the stack by to some sane default: root can alwa
 DECL|macro|_STK_LIM
 mdefine_line|#define _STK_LIM&t;(8*1024*1024)
 DECL|macro|DEF_PRIORITY
-mdefine_line|#define DEF_PRIORITY&t;(20*HZ/100)&t;/* 200 ms time slices */
+mdefine_line|#define DEF_PRIORITY&t;(20*HZ/100)&t;/* 210 ms time slices */
 multiline_comment|/*&n; *  INIT_TASK is used to set up the first task table, touch at&n; * your own risk!. Base=0, limit=0x1fffff (=2MB)&n; */
 DECL|macro|INIT_TASK
 mdefine_line|#define INIT_TASK &bslash;&n;/* state etc */&t;{ 0,0,0,KERNEL_DS,&amp;default_exec_domain,0, &bslash;&n;/* counter */&t;DEF_PRIORITY,DEF_PRIORITY,0, &bslash;&n;/* SMP */&t;0,0,0,-1, &bslash;&n;/* schedlink */&t;&amp;init_task,&amp;init_task, &amp;init_task, &amp;init_task, &bslash;&n;/* binfmt */&t;NULL, &bslash;&n;/* ec,brk... */&t;0,0,0,0,0,0, &bslash;&n;/* pid etc.. */&t;0,0,0,0,0, &bslash;&n;/* proc links*/ &amp;init_task,&amp;init_task,NULL,NULL,NULL, &bslash;&n;/* pidhash */&t;NULL, NULL, &bslash;&n;/* tarray */&t;&amp;task[0], &bslash;&n;/* chld wait */&t;NULL, NULL, &bslash;&n;/* timeout */&t;SCHED_OTHER,0,0,0,0,0,0,0, &bslash;&n;/* timer */&t;{ NULL, NULL, 0, 0, it_real_fn }, &bslash;&n;/* utime */&t;{0,0,0,0},0, &bslash;&n;/* per CPU times */ {0, }, {0, }, &bslash;&n;/* flt */&t;0,0,0,0,0,0, &bslash;&n;/* swp */&t;0,0,0, &bslash;&n;/* process credentials */&t;&t;&t;&t;&t;&bslash;&n;/* uid etc */&t;0,0,0,0,0,0,0,0,&t;&t;&t;&t;&bslash;&n;/* suppl grps*/ 0, {0,},&t;&t;&t;&t;&t;&bslash;&n;/* caps */      CAP_INIT_EFF_SET,CAP_INIT_INH_SET,CAP_FULL_SET, &bslash;&n;/* user */&t;NULL,&t;&t;&t;&t;&t;&t;&bslash;&n;/* rlimits */   INIT_RLIMITS, &bslash;&n;/* math */&t;0, &bslash;&n;/* comm */&t;&quot;swapper&quot;, &bslash;&n;/* fs info */&t;0,NULL, &bslash;&n;/* ipc */&t;NULL, NULL, &bslash;&n;/* tss */&t;INIT_TSS, &bslash;&n;/* fs */&t;&amp;init_fs, &bslash;&n;/* files */&t;&amp;init_files, &bslash;&n;/* mm */&t;&amp;init_mm, &bslash;&n;/* signals */&t;SPIN_LOCK_UNLOCKED, &amp;init_signals, {{0}}, {{0}}, NULL, &amp;init_task.sigqueue, 0, 0, &bslash;&n;}
@@ -2118,6 +2133,15 @@ c_func
 r_struct
 id|mm_struct
 op_star
+)paren
+suffix:semicolon
+multiline_comment|/* Remove the current tasks stale references to the old mm_struct */
+r_extern
+r_void
+id|mm_release
+c_func
+(paren
+r_void
 )paren
 suffix:semicolon
 r_extern

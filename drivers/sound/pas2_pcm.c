@@ -88,7 +88,8 @@ DECL|variable|pas_audiodev
 r_int
 id|pas_audiodev
 op_assign
-l_int|0
+op_minus
+l_int|1
 suffix:semicolon
 DECL|variable|open_mode
 r_static

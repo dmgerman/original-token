@@ -1,11 +1,11 @@
-multiline_comment|/* &n;**  RCpci45.c  &n;**&n;**&n;**&n;**  ---------------------------------------------------------------------&n;**  ---     Copyright (c) 1998, RedCreek Communications Inc.          ---&n;**  ---                   All rights reserved.                        ---&n;**  ---------------------------------------------------------------------&n;**&n;** Written by Pete Popov and Brian Moyle.&n;**&n;** Known Problems&n;** &n;** Billions and Billions...  &n;**&n;** ... apparently added by Brian.  Pete knows of no bugs.&n;**&n;**  TODO:&n;**      -Get rid of the wait loops in the API and replace them&n;**       with system independent delays ...something like&n;**       &quot;delayms(2)&quot;.&n;**&n;**  This program is free software; you can redistribute it and/or modify&n;**  it under the terms of the GNU General Public License as published by&n;**  the Free Software Foundation; either version 2 of the License, or&n;**  (at your option) any later version.&n;&n;**  This program is distributed in the hope that it will be useful,&n;**  but WITHOUT ANY WARRANTY; without even the implied warranty of&n;**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n;**  GNU General Public License for more details.&n;&n;**  You should have received a copy of the GNU General Public License&n;**  along with this program; if not, write to the Free Software&n;**  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n;**&n;**&n;**  Ported to 2.1.x by Alan Cox 1998/12/9. If this doesnt work try 2.0.x&n;**  and let me know.&n;**&n;***************************************************************************/
+multiline_comment|/* &n;**  RCpci45.c  &n;**&n;**&n;**&n;**  ---------------------------------------------------------------------&n;**  ---     Copyright (c) 1998, 1999, RedCreek Communications Inc.    ---&n;**  ---                   All rights reserved.                        ---&n;**  ---------------------------------------------------------------------&n;**&n;** Written by Pete Popov and Brian Moyle.&n;**&n;** Known Problems&n;** &n;** None known at this time.&n;**&n;**  TODO:&n;**      -Get rid of the wait loops in the API and replace them&n;**       with system independent delays ...something like&n;**       &quot;delayms(2)&quot;.  However, under normal circumstances, the &n;**       delays are very short so they&squot;re not a problem.&n;**&n;**  This program is free software; you can redistribute it and/or modify&n;**  it under the terms of the GNU General Public License as published by&n;**  the Free Software Foundation; either version 2 of the License, or&n;**  (at your option) any later version.&n;&n;**  This program is distributed in the hope that it will be useful,&n;**  but WITHOUT ANY WARRANTY; without even the implied warranty of&n;**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n;**  GNU General Public License for more details.&n;&n;**  You should have received a copy of the GNU General Public License&n;**  along with this program; if not, write to the Free Software&n;**  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n;**&n;**   &n;**  Pete Popov, January 11,99: Fixed a couple of 2.1.x problems &n;**  (virt_to_bus() not called), tested it under 2.2pre5, and added a &n;**  #define to enable the use of the same file for both, the 2.0.x kernels &n;**  as well as the 2.1.x.&n;**&n;**  Ported to 2.1.x by Alan Cox 1998/12/9. &n;**&n;***************************************************************************/
 DECL|variable|version
 r_static
 r_char
 op_star
 id|version
 op_assign
-l_string|&quot;RedCreek Communications PCI linux driver version 1.32 Beta&bslash;n&quot;
+l_string|&quot;RedCreek Communications PCI linux driver version 2.00&bslash;n&quot;
 suffix:semicolon
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
@@ -24,28 +24,32 @@ macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;            /* For NR_IRQS only. */
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
+macro_line|#if LINUX_VERSION_CODE &gt;= 0x020100
+DECL|macro|LINUX_2_1
+mdefine_line|#define LINUX_2_1
+macro_line|#endif
+macro_line|#ifdef LINUX_2_1
 macro_line|#include &lt;asm/uaccess.h&gt;
+macro_line|#endif
 macro_line|#include &lt;linux/if_ether.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 DECL|macro|RC_LINUX_MODULE
 mdefine_line|#define RC_LINUX_MODULE
-macro_line|#include &quot;rcmtl.h&quot;
+macro_line|#include &quot;rclanmtl.h&quot;
 macro_line|#include &quot;rcif.h&quot;
 DECL|macro|RUN_AT
 mdefine_line|#define RUN_AT(x) (jiffies + (x))
-DECL|macro|DEV_ALLOC_SKB
-mdefine_line|#define DEV_ALLOC_SKB(len) dev_alloc_skb(len + 2)
-DECL|macro|FREE_IRQ
-mdefine_line|#define FREE_IRQ(irqnum, dev) free_irq(irqnum)
-DECL|macro|REQUEST_IRQ
-mdefine_line|#define REQUEST_IRQ(i,h,f,n, instance) request_irq(i,h,f,n)
-DECL|macro|IRQ
-mdefine_line|#define IRQ(irq, dev_id, pt_regs) (irq, pt_regs)
 DECL|macro|NEW_MULTICAST
 mdefine_line|#define NEW_MULTICAST
 macro_line|#include &lt;linux/delay.h&gt;
+macro_line|#ifndef LINUX_2_1
+DECL|macro|ioremap
+mdefine_line|#define ioremap vremap
+DECL|macro|iounmap
+mdefine_line|#define iounmap vfree
+macro_line|#endif
 multiline_comment|/* PCI/45 Configuration space values */
 DECL|macro|RC_PCI45_VENDOR_ID
 mdefine_line|#define RC_PCI45_VENDOR_ID  0x4916
@@ -87,7 +91,7 @@ multiline_comment|/*&n; * Driver Private Area, DPA.&n; */
 r_typedef
 r_struct
 (brace
-multiline_comment|/* &n;      *    pointer to the device structure which is part&n;      * of the interface to the Linux kernel.&n;      */
+multiline_comment|/* &n;     *    pointer to the device structure which is part&n;     * of the interface to the Linux kernel.&n;     */
 DECL|member|dev
 r_struct
 id|device
@@ -503,7 +507,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#ifdef MODULE     
+macro_line|#ifdef MODULE
 r_return
 id|cards_found
 ques
@@ -518,7 +522,7 @@ r_return
 op_minus
 l_int|1
 suffix:semicolon
-macro_line|#endif          
+macro_line|#endif
 )brace
 DECL|function|RCscan
 r_static
@@ -526,7 +530,6 @@ r_int
 id|RCscan
 c_func
 (paren
-r_void
 )paren
 (brace
 r_int
@@ -754,7 +757,7 @@ id|pci_ioaddr
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#if 0
+macro_line|#if 1
 r_if
 c_cond
 (paren
@@ -763,6 +766,8 @@ c_func
 (paren
 id|pci_ioaddr
 comma
+l_int|2
+op_star
 l_int|32768
 )paren
 )paren
@@ -786,7 +791,7 @@ l_string|&quot;rc: check_region passed&bslash;n&quot;
 suffix:semicolon
 )brace
 macro_line|#endif
-multiline_comment|/*&n;                 * Get and check the bus-master and latency values.&n;                 * Some PCI BIOSes fail to set the master-enable bit.&n;                 */
+multiline_comment|/*&n;             * Get and check the bus-master and latency values.&n;             * Some PCI BIOSes fail to set the master-enable bit.&n;             */
 id|pcibios_read_config_word
 c_func
 (paren
@@ -962,7 +967,7 @@ suffix:semicolon
 r_int
 id|init_status
 suffix:semicolon
-multiline_comment|/* &n;      * Allocate and fill new device structure. &n;      * We need enough for struct device plus DPA plus the LAN API private&n;      * area, which requires a minimum of 16KB.  The top of the allocated&n;      * area will be assigned to struct device; the next chunk will be&n;      * assigned to DPA; and finally, the rest will be assigned to the&n;      * the LAN API layer.&n;      */
+multiline_comment|/* &n;     * Allocate and fill new device structure. &n;     * We need enough for struct device plus DPA plus the LAN API private&n;     * area, which requires a minimum of 16KB.  The top of the allocated&n;     * area will be assigned to struct device; the next chunk will be&n;     * assigned to DPA; and finally, the rest will be assigned to the&n;     * the LAN API layer.&n;     */
 id|dev
 op_assign
 (paren
@@ -1005,7 +1010,7 @@ id|dev
 )paren
 suffix:semicolon
 macro_line|#endif 
-multiline_comment|/*&n;      * dev-&gt;priv will point to the start of DPA.&n;      */
+multiline_comment|/*&n;     * dev-&gt;priv will point to the start of DPA.&n;     */
 id|dev-&gt;priv
 op_assign
 (paren
@@ -1087,7 +1092,7 @@ id|pDpa-&gt;id
 )paren
 suffix:semicolon
 macro_line|#endif
-multiline_comment|/*&n;      * Save the starting address of the LAN API private area.  We&squot;ll&n;      * pass that to InitRCApiMsgLayer().&n;      */
+multiline_comment|/*&n;     * Save the starting address of the LAN API private area.  We&squot;ll&n;     * pass that to RCInitI2OMsgLayer().&n;     */
 id|pDpa-&gt;PLanApiPA
 op_assign
 (paren
@@ -1126,7 +1131,7 @@ id|pDpa-&gt;PLanApiPA
 )paren
 suffix:semicolon
 macro_line|#endif
-multiline_comment|/* The adapter is accessable through memory-access read/write, not&n;      * I/O read/write.  Thus, we need to map it to some virtual address&n;      * area in order to access the registers are normal memory.&n;      */
+multiline_comment|/* The adapter is accessable through memory-access read/write, not&n;     * I/O read/write.  Thus, we need to map it to some virtual address&n;     * area in order to access the registers are normal memory.&n;     */
 id|vaddr
 op_assign
 (paren
@@ -1134,10 +1139,11 @@ id|ulong
 op_star
 )paren
 id|ioremap
-c_func
 (paren
 id|memaddr
 comma
+l_int|2
+op_star
 l_int|32768
 )paren
 suffix:semicolon
@@ -1180,7 +1186,7 @@ id|dev-&gt;interrupt
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/*&n;      * Request a shared interrupt line.&n;      */
+multiline_comment|/*&n;     * Request a shared interrupt line.&n;     */
 r_if
 c_cond
 (paren
@@ -1239,7 +1245,7 @@ suffix:semicolon
 )brace
 id|init_status
 op_assign
-id|InitRCApiMsgLayer
+id|RCInitI2OMsgLayer
 c_func
 (paren
 id|pDpa-&gt;id
@@ -1248,7 +1254,18 @@ id|dev-&gt;base_addr
 comma
 id|pDpa-&gt;PLanApiPA
 comma
+(paren
+id|PU8
+)paren
+id|virt_to_bus
+c_func
+(paren
+(paren
+r_void
+op_star
+)paren
 id|pDpa-&gt;PLanApiPA
+)paren
 comma
 (paren
 id|PFNTXCALLBACK
@@ -1270,7 +1287,7 @@ macro_line|#ifdef RCDEBUG
 id|printk
 c_func
 (paren
-l_string|&quot;rc: msg initted: status = 0x%x&bslash;n&quot;
+l_string|&quot;rc: I2O msg initted: status = 0x%x&bslash;n&quot;
 comma
 id|init_status
 )paren
@@ -1296,7 +1313,7 @@ comma
 id|dev
 )paren
 suffix:semicolon
-id|vfree
+id|iounmap
 c_func
 (paren
 id|vaddr
@@ -1340,7 +1357,7 @@ comma
 id|dev
 )paren
 suffix:semicolon
-id|vfree
+id|iounmap
 c_func
 (paren
 id|vaddr
@@ -1414,7 +1431,7 @@ comma
 id|dev
 )paren
 suffix:semicolon
-id|vfree
+id|iounmap
 c_func
 (paren
 id|vaddr
@@ -1517,7 +1534,7 @@ l_string|&quot;rc: RCopen&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
-id|RCEnableAdapterInterrupts
+id|RCEnableI2OInterrupts
 c_func
 (paren
 id|pDpa-&gt;id
@@ -1529,7 +1546,7 @@ c_cond
 id|pDpa-&gt;nexus
 )paren
 (brace
-multiline_comment|/* This is not the first time RCopen is called.  Thus,&n;        * the interface was previously opened and later closed&n;        * by RCclose().  RCclose() does a Shutdown; to wake up&n;        * the adapter, a reset is mandatory before we can post&n;        * receive buffers.  However, if the adapter initiated &n;        * a reboot while the interface was closed -- and interrupts&n;        * were turned off -- we need will need to reinitialize&n;        * the adapter, rather than simply waking it up.  &n;        */
+multiline_comment|/* This is not the first time RCopen is called.  Thus,&n;         * the interface was previously opened and later closed&n;         * by RCclose().  RCclose() does a Shutdown; to wake up&n;         * the adapter, a reset is mandatory before we can post&n;         * receive buffers.  However, if the adapter initiated &n;         * a reboot while the interface was closed -- and interrupts&n;         * were turned off -- we need will need to reinitialize&n;         * the adapter, rather than simply waking it up.  &n;         */
 id|printk
 c_func
 (paren
@@ -1596,7 +1613,7 @@ OL
 id|requested
 )paren
 (brace
-multiline_comment|/*&n;              * Check to see if we were able to post any buffers at all.&n;              */
+multiline_comment|/*&n;             * Check to see if we were able to post any buffers at all.&n;             */
 r_if
 c_cond
 (paren
@@ -1741,12 +1758,12 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n;      * The user is free to reuse the TCB after RCSendPacket() returns, since&n;      * the function copies the necessary info into its own private space.  Thus,&n;      * our TCB can be a local structure.  The skb, on the other hand, will be&n;      * freed up in our interrupt handler.&n;      */
+multiline_comment|/*&n;     * The user is free to reuse the TCB after RCI2OSendPacket() returns, since&n;     * the function copies the necessary info into its own private space.  Thus,&n;     * our TCB can be a local structure.  The skb, on the other hand, will be&n;     * freed up in our interrupt handler.&n;     */
 id|ptcb-&gt;bcount
 op_assign
 l_int|1
 suffix:semicolon
-multiline_comment|/* &n;      * we&squot;ll get the context when the adapter interrupts us to tell us that&n;      * the transmision is done. At that time, we can free skb.&n;      */
+multiline_comment|/* &n;     * we&squot;ll get the context when the adapter interrupts us to tell us that&n;     * the transmision is done. At that time, we can free skb.&n;     */
 id|ptcb-&gt;b.context
 op_assign
 (paren
@@ -1764,10 +1781,15 @@ id|skb-&gt;len
 suffix:semicolon
 id|ptcb-&gt;b.addr
 op_assign
+id|virt_to_bus
+c_func
 (paren
-id|U32
+(paren
+r_void
+op_star
 )paren
 id|skb-&gt;data
+)paren
 suffix:semicolon
 macro_line|#ifdef RCDEBUG
 id|printk
@@ -1803,7 +1825,7 @@ c_cond
 (paren
 id|status
 op_assign
-id|RCSendPacket
+id|RCI2OSendPacket
 c_func
 (paren
 id|pDpa-&gt;id
@@ -1840,6 +1862,9 @@ id|dev-&gt;tbusy
 op_assign
 l_int|1
 suffix:semicolon
+r_return
+l_int|1
+suffix:semicolon
 )brace
 r_else
 (brace
@@ -1849,12 +1874,12 @@ id|jiffies
 suffix:semicolon
 singleline_comment|//       dev-&gt;tbusy = 0;
 )brace
-multiline_comment|/*&n;      * That&squot;s it!&n;      */
+multiline_comment|/*&n;     * That&squot;s it!&n;     */
 r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * RCxmit_callback()&n; *&n; * The transmit callback routine. It&squot;s called by RCProcMsgQ()&n; * because the adapter is done with one or more transmit buffers and&n; * it&squot;s returning them to us, or we asked the adapter to return the&n; * outstanding transmit buffers by calling RCResetLANCard() with &n; * RC_RESOURCE_RETURN_PEND_TX_BUFFERS flag. &n; * All we need to do is free the buffers.&n; */
+multiline_comment|/*&n; * RCxmit_callback()&n; *&n; * The transmit callback routine. It&squot;s called by RCProcI2OMsgQ()&n; * because the adapter is done with one or more transmit buffers and&n; * it&squot;s returning them to us, or we asked the adapter to return the&n; * outstanding transmit buffers by calling RCResetLANCard() with &n; * RC_RESOURCE_RETURN_PEND_TX_BUFFERS flag. &n; * All we need to do is free the buffers.&n; */
 r_static
 r_void
 DECL|function|RCxmit_callback
@@ -1920,7 +1945,7 @@ c_cond
 (paren
 id|Status
 op_ne
-id|RC_REPLY_STATUS_SUCCESS
+id|I2O_REPLY_STATUS_SUCCESS
 )paren
 (brace
 id|printk
@@ -2005,12 +2030,21 @@ macro_line|#endif
 id|BufferContext
 op_increment
 suffix:semicolon
+macro_line|#ifdef LINUX_2_1
 id|dev_kfree_skb
-c_func
 (paren
 id|skb
 )paren
 suffix:semicolon
+macro_line|#else
+id|dev_kfree_skb
+(paren
+id|skb
+comma
+id|FREE_WRITE
+)paren
+suffix:semicolon
+macro_line|#endif
 )brace
 id|dev-&gt;tbusy
 op_assign
@@ -2068,7 +2102,7 @@ id|Status
 )paren
 suffix:semicolon
 macro_line|#endif
-multiline_comment|/*&n;       * Check to see why we were called.&n;       */
+multiline_comment|/*&n;     * Check to see why we were called.&n;     */
 r_if
 c_cond
 (paren
@@ -2105,8 +2139,8 @@ c_func
 l_string|&quot;rc: reboot, shutdown adapter&bslash;n&quot;
 )paren
 suffix:semicolon
-multiline_comment|/*&n;            * We don&squot;t set any of the flags in RCShutdownLANCard()&n;            * and we don&squot;t pass a callback routine to it.&n;            * The adapter will have already initiated the reboot by&n;            * the time the function returns.&n;            */
-id|RCDisableAdapterInterrupts
+multiline_comment|/*&n;         * We don&squot;t set any of the flags in RCShutdownLANCard()&n;         * and we don&squot;t pass a callback routine to it.&n;         * The adapter will have already initiated the reboot by&n;         * the time the function returns.&n;         */
+id|RCDisableI2OInterrupts
 c_func
 (paren
 id|pDpa-&gt;id
@@ -2236,7 +2270,7 @@ id|pDpa-&gt;reboot
 op_assign
 l_int|1
 suffix:semicolon
-multiline_comment|/*&n;      * OK, we reset the adapter and ask it to return all&n;      * outstanding transmit buffers as well as the posted&n;      * receive buffers.  When the adapter is done returning&n;      * those buffers, it will call our RCreset_callback() &n;      * routine.  In that routine, we&squot;ll call RCShutdownLANCard()&n;      * to tell the adapter that it&squot;s OK to start the reboot and&n;      * schedule a timer callback routine to execute 3 seconds &n;      * later; this routine will reinitialize the adapter at that time.&n;      */
+multiline_comment|/*&n;     * OK, we reset the adapter and ask it to return all&n;     * outstanding transmit buffers as well as the posted&n;     * receive buffers.  When the adapter is done returning&n;     * those buffers, it will call our RCreset_callback() &n;     * routine.  In that routine, we&squot;ll call RCShutdownLANCard()&n;     * to tell the adapter that it&squot;s OK to start the reboot and&n;     * schedule a timer callback routine to execute 3 seconds &n;     * later; this routine will reinitialize the adapter at that time.&n;     */
 id|RCResetLANCard
 c_func
 (paren
@@ -2300,7 +2334,7 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * RCrecv_callback()&n; * &n; * The receive packet callback routine.  This is called by&n; * RCProcMsgQ() after the adapter posts buffers which have been&n; * filled (one ethernet packet per buffer).&n; */
+multiline_comment|/*&n; * RCrecv_callback()&n; * &n; * The receive packet callback routine.  This is called by&n; * RCProcI2OMsgQ() after the adapter posts buffers which have been&n; * filled (one ethernet packet per buffer).&n; */
 r_static
 r_void
 DECL|function|RCrecv_callback
@@ -2416,13 +2450,13 @@ c_cond
 (paren
 id|Status
 op_ne
-id|RC_REPLY_STATUS_SUCCESS
+id|I2O_REPLY_STATUS_SUCCESS
 )paren
 op_logical_or
 id|pDpa-&gt;shutdown
 )paren
 (brace
-multiline_comment|/*&n;                * Free whatever buffers the adapter returned, but don&squot;t&n;                * pass them to the kernel.&n;                */
+multiline_comment|/*&n;             * Free whatever buffers the adapter returned, but don&squot;t&n;             * pass them to the kernel.&n;             */
 r_if
 c_cond
 (paren
@@ -2457,13 +2491,13 @@ id|uint
 id|Status
 )paren
 suffix:semicolon
-multiline_comment|/*&n;                * TO DO: check the nature of the failure and put the adapter in&n;                * failed mode if it&squot;s a hard failure.  Send a reset to the adapter&n;                * and free all outstanding memory.&n;                */
+multiline_comment|/*&n;             * TO DO: check the nature of the failure and put the adapter in&n;             * failed mode if it&squot;s a hard failure.  Send a reset to the adapter&n;             * and free all outstanding memory.&n;             */
 r_if
 c_cond
 (paren
 id|Status
 op_eq
-id|RC_REPLY_STATUS_ABORT_NO_DATA_TRANSFER
+id|I2O_REPLY_STATUS_ABORT_NO_DATA_TRANSFER
 )paren
 (brace
 macro_line|#ifdef RCDEBUG
@@ -2475,7 +2509,7 @@ l_string|&quot;RCrecv status ABORT NO DATA TRANSFER&bslash;n&quot;
 suffix:semicolon
 macro_line|#endif
 )brace
-multiline_comment|/* check for reset status: RC_REPLY_STATUS_ABORT_NO_DATA_TRANSFER */
+multiline_comment|/* check for reset status: I2O_REPLY_STATUS_ABORT_NO_DATA_TRANSFER */
 r_if
 c_cond
 (paren
@@ -2501,6 +2535,16 @@ id|PacketDescBlock
 l_int|0
 )braket
 suffix:semicolon
+macro_line|#ifndef LINUX_2_1
+id|skb-&gt;free
+op_assign
+l_int|1
+suffix:semicolon
+id|skb-&gt;lock
+op_assign
+l_int|0
+suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef RCDEBUG
 id|printk
 c_func
@@ -2511,12 +2555,22 @@ id|skb
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef LINUX_2_1
 id|dev_kfree_skb
-c_func
 (paren
 id|skb
 )paren
 suffix:semicolon
+macro_line|#else
+id|dev_kfree_skb
+c_func
+(paren
+id|skb
+comma
+id|FREE_READ
+)paren
+suffix:semicolon
+macro_line|#endif
 id|pDpa-&gt;numOutRcvBuffers
 op_decrement
 suffix:semicolon
@@ -2653,7 +2707,7 @@ id|skb-&gt;data
 )paren
 )paren
 (brace
-multiline_comment|/*&n;                          * Re-post the buffer to the adapter.  Since the adapter usually&n;                          * return 1 to 2 receive buffers at a time, it&squot;s not too inefficient&n;                          * post one buffer at a time but ... may be that should be &n;                          * optimized at some point.&n;                          */
+multiline_comment|/*&n;                     * Re-post the buffer to the adapter.  Since the adapter usually&n;                     * return 1 to 2 receive buffers at a time, it&squot;s not too inefficient&n;                     * post one buffer at a time but ... may be that should be &n;                     * optimized at some point.&n;                     */
 id|ptcb-&gt;b.context
 op_assign
 (paren
@@ -2671,10 +2725,15 @@ id|MAX_ETHER_SIZE
 suffix:semicolon
 id|ptcb-&gt;b.addr
 op_assign
+id|virt_to_bus
+c_func
 (paren
-id|U32
+(paren
+r_void
+op_star
 )paren
 id|skb-&gt;data
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -2699,12 +2758,26 @@ c_func
 l_string|&quot;rc: RCrecv_callback: post buffer failed!&bslash;n&quot;
 )paren
 suffix:semicolon
+macro_line|#ifdef LINUX_2_1
 id|dev_kfree_skb
-c_func
 (paren
 id|skb
 )paren
 suffix:semicolon
+macro_line|#else
+id|skb-&gt;free
+op_assign
+l_int|1
+suffix:semicolon
+id|dev_kfree_skb
+c_func
+(paren
+id|skb
+comma
+id|FREE_READ
+)paren
+suffix:semicolon
+macro_line|#endif
 )brace
 r_else
 (brace
@@ -2767,7 +2840,7 @@ suffix:semicolon
 multiline_comment|/* point to next context field */
 )brace
 )brace
-multiline_comment|/*&n;           * Replenish the posted receive buffers. &n;           * DO NOT replenish buffers if the driver has already&n;           * initiated a reboot or shutdown!&n;           */
+multiline_comment|/*&n;         * Replenish the posted receive buffers. &n;         * DO NOT replenish buffers if the driver has already&n;         * initiated a reboot or shutdown!&n;         */
 r_if
 c_cond
 (paren
@@ -2796,7 +2869,7 @@ id|count
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n; * RCinterrupt()&n; * &n; * Interrupt handler. &n; * This routine sets up a couple of pointers and calls&n; * RCProcMsgQ(), which in turn process the message and&n; * calls one of our callback functions.&n; */
+multiline_comment|/*&n; * RCinterrupt()&n; * &n; * Interrupt handler. &n; * This routine sets up a couple of pointers and calls&n; * RCProcI2OMsgQ(), which in turn process the message and&n; * calls one of our callback functions.&n; */
 r_static
 r_void
 DECL|function|RCinterrupt
@@ -2904,7 +2977,7 @@ id|dev-&gt;interrupt
 op_assign
 l_int|1
 suffix:semicolon
-id|RCProcMsgQ
+id|RCProcI2OMsgQ
 c_func
 (paren
 id|pDpa-&gt;id
@@ -2984,7 +3057,7 @@ id|pDpa-&gt;reboot
 (brace
 id|init_status
 op_assign
-id|InitRCApiMsgLayer
+id|RCInitI2OMsgLayer
 c_func
 (paren
 id|pDpa-&gt;id
@@ -3037,7 +3110,7 @@ comma
 id|DriverControlWord
 )paren
 suffix:semicolon
-id|RCEnableAdapterInterrupts
+id|RCEnableI2OInterrupts
 c_func
 (paren
 id|pDpa-&gt;id
@@ -3171,7 +3244,7 @@ c_func
 l_string|&quot;rc: decrementing driver and closing interface&bslash;n&quot;
 )paren
 suffix:semicolon
-id|RCDisableAdapterInterrupts
+id|RCDisableI2OInterrupts
 c_func
 (paren
 id|pDpa-&gt;id
@@ -3318,7 +3391,7 @@ id|pDpa-&gt;shutdown
 op_assign
 l_int|1
 suffix:semicolon
-multiline_comment|/*&n;      * We can&squot;t allow the driver to be unloaded until the adapter returns&n;      * all posted receive buffers.  It doesn&squot;t hurt to tell the adapter&n;      * to return all posted receive buffers and outstanding xmit buffers,&n;      * even if there are none.&n;      */
+multiline_comment|/*&n;     * We can&squot;t allow the driver to be unloaded until the adapter returns&n;     * all posted receive buffers.  It doesn&squot;t hurt to tell the adapter&n;     * to return all posted receive buffers and outstanding xmit buffers,&n;     * even if there are none.&n;     */
 id|RCShutdownLANCard
 c_func
 (paren
@@ -3795,7 +3868,7 @@ id|cmd
 r_case
 id|RCU_PROTOCOL_REV
 suffix:colon
-multiline_comment|/*&n;              * Assign user protocol revision, to tell user-level&n;              * controller program whether or not it&squot;s in sync.&n;              */
+multiline_comment|/*&n;         * Assign user protocol revision, to tell user-level&n;         * controller program whether or not it&squot;s in sync.&n;         */
 id|rq-&gt;ifr_ifru.ifru_data
 op_assign
 (paren
@@ -3809,6 +3882,7 @@ r_case
 id|RCU_COMMAND
 suffix:colon
 (brace
+macro_line|#ifdef LINUX_2_1
 r_if
 c_cond
 (paren
@@ -3832,6 +3906,50 @@ op_minus
 id|EFAULT
 suffix:semicolon
 )brace
+macro_line|#else
+r_int
+id|error
+suffix:semicolon
+id|error
+op_assign
+id|verify_area
+c_func
+(paren
+id|VERIFY_WRITE
+comma
+id|rq-&gt;ifr_data
+comma
+r_sizeof
+(paren
+id|RCuser
+)paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|error
+)paren
+(brace
+r_return
+id|error
+suffix:semicolon
+)brace
+id|memcpy_fromfs
+c_func
+(paren
+op_amp
+id|RCuser
+comma
+id|rq-&gt;ifr_data
+comma
+r_sizeof
+(paren
+id|RCuser
+)paren
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef RCDEBUG
 id|printk
 c_func
@@ -3904,6 +4022,8 @@ id|mem_end
 op_assign
 id|dev-&gt;base_addr
 op_plus
+l_int|2
+op_star
 l_int|32768
 suffix:semicolon
 id|RCUD_GETINFO
@@ -4047,6 +4167,66 @@ suffix:semicolon
 r_break
 suffix:semicolon
 r_case
+id|RCUC_GETPROM
+suffix:colon
+id|printk
+c_func
+(paren
+l_string|&quot;RC GETPROM&bslash;n&quot;
+)paren
+suffix:semicolon
+id|RCUD_GETPROM
+op_assign
+op_amp
+id|RCuser.RCUS_GETPROM
+suffix:semicolon
+id|RCGetPromiscuousMode
+c_func
+(paren
+id|pDpa-&gt;id
+comma
+(paren
+id|PU32
+)paren
+op_amp
+id|RCUD_GETPROM-&gt;PromMode
+comma
+l_int|NULL
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|RCUC_GETBROADCAST
+suffix:colon
+id|printk
+c_func
+(paren
+l_string|&quot;RC GETBROADCAST&bslash;n&quot;
+)paren
+suffix:semicolon
+id|RCUD_GETBROADCAST
+op_assign
+op_amp
+id|RCuser.RCUS_GETBROADCAST
+suffix:semicolon
+id|RCGetBroadcastMode
+c_func
+(paren
+id|pDpa-&gt;id
+comma
+(paren
+id|PU32
+)paren
+op_amp
+id|RCUD_GETBROADCAST-&gt;BroadcastMode
+comma
+l_int|NULL
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
 id|RCUC_GETSPEED
 suffix:colon
 id|printk
@@ -4106,6 +4286,346 @@ id|RCUD_GETSPEED-&gt;LinkSpeedCode
 suffix:semicolon
 r_break
 suffix:semicolon
+r_case
+id|RCUC_SETIPANDMASK
+suffix:colon
+id|printk
+c_func
+(paren
+l_string|&quot;RC SETIPANDMASK&bslash;n&quot;
+)paren
+suffix:semicolon
+id|RCUD_SETIPANDMASK
+op_assign
+op_amp
+id|RCuser.RCUS_SETIPANDMASK
+suffix:semicolon
+id|printk
+(paren
+l_string|&quot;RC New IP Addr = %d.%d.%d.%d, &quot;
+comma
+(paren
+id|U8
+)paren
+(paren
+(paren
+id|RCUD_SETIPANDMASK-&gt;IpAddr
+)paren
+op_amp
+l_int|0xff
+)paren
+comma
+(paren
+id|U8
+)paren
+(paren
+(paren
+id|RCUD_SETIPANDMASK-&gt;IpAddr
+op_rshift
+l_int|8
+)paren
+op_amp
+l_int|0xff
+)paren
+comma
+(paren
+id|U8
+)paren
+(paren
+(paren
+id|RCUD_SETIPANDMASK-&gt;IpAddr
+op_rshift
+l_int|16
+)paren
+op_amp
+l_int|0xff
+)paren
+comma
+(paren
+id|U8
+)paren
+(paren
+(paren
+id|RCUD_SETIPANDMASK-&gt;IpAddr
+op_rshift
+l_int|24
+)paren
+op_amp
+l_int|0xff
+)paren
+)paren
+suffix:semicolon
+id|printk
+(paren
+l_string|&quot;RC New Mask = %d.%d.%d.%d&bslash;n&quot;
+comma
+(paren
+id|U8
+)paren
+(paren
+(paren
+id|RCUD_SETIPANDMASK-&gt;NetMask
+)paren
+op_amp
+l_int|0xff
+)paren
+comma
+(paren
+id|U8
+)paren
+(paren
+(paren
+id|RCUD_SETIPANDMASK-&gt;NetMask
+op_rshift
+l_int|8
+)paren
+op_amp
+l_int|0xff
+)paren
+comma
+(paren
+id|U8
+)paren
+(paren
+(paren
+id|RCUD_SETIPANDMASK-&gt;NetMask
+op_rshift
+l_int|16
+)paren
+op_amp
+l_int|0xff
+)paren
+comma
+(paren
+id|U8
+)paren
+(paren
+(paren
+id|RCUD_SETIPANDMASK-&gt;NetMask
+op_rshift
+l_int|24
+)paren
+op_amp
+l_int|0xff
+)paren
+)paren
+suffix:semicolon
+id|RCSetRavlinIPandMask
+c_func
+(paren
+id|pDpa-&gt;id
+comma
+(paren
+id|U32
+)paren
+id|RCUD_SETIPANDMASK-&gt;IpAddr
+comma
+(paren
+id|U32
+)paren
+id|RCUD_SETIPANDMASK-&gt;NetMask
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|RCUC_SETMAC
+suffix:colon
+id|printk
+c_func
+(paren
+l_string|&quot;RC SETMAC&bslash;n&quot;
+)paren
+suffix:semicolon
+id|RCUD_SETMAC
+op_assign
+op_amp
+id|RCuser.RCUS_SETMAC
+suffix:semicolon
+id|printk
+(paren
+l_string|&quot;RC New MAC addr = %02X:%02X:%02X:%02X:%02X:%02X&bslash;n&quot;
+comma
+(paren
+id|U8
+)paren
+(paren
+id|RCUD_SETMAC-&gt;mac
+(braket
+l_int|0
+)braket
+)paren
+comma
+(paren
+id|U8
+)paren
+(paren
+id|RCUD_SETMAC-&gt;mac
+(braket
+l_int|1
+)braket
+)paren
+comma
+(paren
+id|U8
+)paren
+(paren
+id|RCUD_SETMAC-&gt;mac
+(braket
+l_int|2
+)braket
+)paren
+comma
+(paren
+id|U8
+)paren
+(paren
+id|RCUD_SETMAC-&gt;mac
+(braket
+l_int|3
+)braket
+)paren
+comma
+(paren
+id|U8
+)paren
+(paren
+id|RCUD_SETMAC-&gt;mac
+(braket
+l_int|4
+)braket
+)paren
+comma
+(paren
+id|U8
+)paren
+(paren
+id|RCUD_SETMAC-&gt;mac
+(braket
+l_int|5
+)braket
+)paren
+)paren
+suffix:semicolon
+id|RCSetMAC
+c_func
+(paren
+id|pDpa-&gt;id
+comma
+(paren
+id|PU8
+)paren
+op_amp
+id|RCUD_SETMAC-&gt;mac
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|RCUC_SETSPEED
+suffix:colon
+id|printk
+c_func
+(paren
+l_string|&quot;RC SETSPEED&bslash;n&quot;
+)paren
+suffix:semicolon
+id|RCUD_SETSPEED
+op_assign
+op_amp
+id|RCuser.RCUS_SETSPEED
+suffix:semicolon
+id|RCSetLinkSpeed
+c_func
+(paren
+id|pDpa-&gt;id
+comma
+(paren
+id|U16
+)paren
+id|RCUD_SETSPEED-&gt;LinkSpeedCode
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;RC New speed = 0x%d&bslash;n&quot;
+comma
+id|RCUD_SETSPEED-&gt;LinkSpeedCode
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|RCUC_SETPROM
+suffix:colon
+id|printk
+c_func
+(paren
+l_string|&quot;RC SETPROM&bslash;n&quot;
+)paren
+suffix:semicolon
+id|RCUD_SETPROM
+op_assign
+op_amp
+id|RCuser.RCUS_SETPROM
+suffix:semicolon
+id|RCSetPromiscuousMode
+c_func
+(paren
+id|pDpa-&gt;id
+comma
+(paren
+id|U16
+)paren
+id|RCUD_SETPROM-&gt;PromMode
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;RC New prom mode = 0x%d&bslash;n&quot;
+comma
+id|RCUD_SETPROM-&gt;PromMode
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|RCUC_SETBROADCAST
+suffix:colon
+id|printk
+c_func
+(paren
+l_string|&quot;RC SETBROADCAST&bslash;n&quot;
+)paren
+suffix:semicolon
+id|RCUD_SETBROADCAST
+op_assign
+op_amp
+id|RCuser.RCUS_SETBROADCAST
+suffix:semicolon
+id|RCSetBroadcastMode
+c_func
+(paren
+id|pDpa-&gt;id
+comma
+(paren
+id|U16
+)paren
+id|RCUD_SETBROADCAST-&gt;BroadcastMode
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;RC New broadcast mode = 0x%d&bslash;n&quot;
+comma
+id|RCUD_SETBROADCAST-&gt;BroadcastMode
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
 r_default
 suffix:colon
 id|printk
@@ -4128,6 +4648,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
+macro_line|#ifdef LINUX_2_1
 id|copy_to_user
 c_func
 (paren
@@ -4142,6 +4663,22 @@ id|RCuser
 )paren
 )paren
 suffix:semicolon
+macro_line|#else
+id|memcpy_tofs
+c_func
+(paren
+id|rq-&gt;ifr_data
+comma
+op_amp
+id|RCuser
+comma
+r_sizeof
+(paren
+id|RCuser
+)paren
+)paren
+suffix:semicolon
+macro_line|#endif
 r_break
 suffix:semicolon
 )brace
@@ -4185,7 +4722,7 @@ op_star
 id|map
 )paren
 (brace
-multiline_comment|/*&n;      * To be completed ...&n;      */
+multiline_comment|/*&n;     * To be completed ...&n;      */
 id|printk
 c_func
 (paren
@@ -4232,9 +4769,8 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#ifdef MODULE
-DECL|function|cleanup_module
 r_void
+DECL|function|cleanup_module
 id|cleanup_module
 c_func
 (paren
@@ -4297,9 +4833,9 @@ macro_line|#endif
 id|printk
 c_func
 (paren
-l_string|&quot;Adapter reset: 0x%x&bslash;n&quot;
+l_string|&quot;IOP reset: 0x%x&bslash;n&quot;
 comma
-id|RCResetAdapter
+id|RCResetIOP
 c_func
 (paren
 id|pDpa-&gt;id
@@ -4316,7 +4852,7 @@ id|next
 op_assign
 id|pDpa-&gt;next
 suffix:semicolon
-id|vfree
+id|iounmap
 c_func
 (paren
 (paren
@@ -4347,7 +4883,6 @@ id|next
 suffix:semicolon
 )brace
 )brace
-macro_line|#endif
 r_static
 r_int
 DECL|function|RC_allocate_and_post_buffers
@@ -4662,10 +5197,15 @@ id|MAX_ETHER_SIZE
 suffix:semicolon
 id|pB-&gt;addr
 op_assign
+id|virt_to_bus
+c_func
 (paren
-id|U32
+(paren
+r_void
+op_star
 )paren
 id|skb-&gt;data
+)paren
 suffix:semicolon
 id|p
 (braket
@@ -4742,6 +5282,12 @@ op_star
 )paren
 id|pB-&gt;context
 suffix:semicolon
+macro_line|#ifndef LINUX_2_1
+id|skb-&gt;free
+op_assign
+l_int|1
+suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef RCDEBUG
 id|printk
 c_func
@@ -4755,12 +5301,22 @@ id|skb
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef LINUX_2_1
 id|dev_kfree_skb
-c_func
 (paren
 id|skb
 )paren
 suffix:semicolon
+macro_line|#else
+id|dev_kfree_skb
+c_func
+(paren
+id|skb
+comma
+id|FREE_READ
+)paren
+suffix:semicolon
+macro_line|#endif
 id|p
 (braket
 l_int|0

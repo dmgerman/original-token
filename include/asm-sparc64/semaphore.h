@@ -77,6 +77,11 @@ r_struct
 id|semaphore
 op_star
 id|sem
+comma
+r_struct
+id|task_struct
+op_star
+id|tsk
 )paren
 (brace
 r_int

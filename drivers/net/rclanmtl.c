@@ -1,9 +1,9 @@
-multiline_comment|/*&n;** *************************************************************************&n;**&n;**&n;**     R C M T L . C             $Revision: 1.1 $&n;**&n;**&n;**  RedCreek Message Transport Layer program module.&n;**&n;**  ---------------------------------------------------------------------&n;**  ---     Copyright (c) 1997-1998, RedCreek Communications Inc.     ---&n;**  ---                   All rights reserved.                        ---&n;**  ---------------------------------------------------------------------&n;**&n;** File Description:&n;**&n;** Host side message transport layer.&n;**&n;**  This program is free software; you can redistribute it and/or modify&n;**  it under the terms of the GNU General Public License as published by&n;**  the Free Software Foundation; either version 2 of the License, or&n;**  (at your option) any later version.&n;&n;**  This program is distributed in the hope that it will be useful,&n;**  but WITHOUT ANY WARRANTY; without even the implied warranty of&n;**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n;**  GNU General Public License for more details.&n;&n;**  You should have received a copy of the GNU General Public License&n;**  along with this program; if not, write to the Free Software&n;**  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n;**&n;***************************************************************************/
+multiline_comment|/*&n;** *************************************************************************&n;**&n;**&n;**     R C L A N M T L . C             $Revision: 5 $&n;**&n;**&n;**  RedCreek I2O LAN Message Transport Layer program module.&n;**&n;**  ---------------------------------------------------------------------&n;**  ---     Copyright (c) 1997-1999, RedCreek Communications Inc.     ---&n;**  ---                   All rights reserved.                        ---&n;**  ---------------------------------------------------------------------&n;**&n;**  File Description:&n;**&n;**  Host side I2O (Intelligent I/O) LAN message transport layer.&n;**&n;**  This program is free software; you can redistribute it and/or modify&n;**  it under the terms of the GNU General Public License as published by&n;**  the Free Software Foundation; either version 2 of the License, or&n;**  (at your option) any later version.&n;&n;**  This program is distributed in the hope that it will be useful,&n;**  but WITHOUT ANY WARRANTY; without even the implied warranty of&n;**  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n;**  GNU General Public License for more details.&n;&n;**  You should have received a copy of the GNU General Public License&n;**  along with this program; if not, write to the Free Software&n;**  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n;** *************************************************************************&n;*/
 DECL|macro|DEBUG
 macro_line|#undef DEBUG
 DECL|macro|RC_LINUX_MODULE
 mdefine_line|#define RC_LINUX_MODULE
-macro_line|#include &quot;rcmtl.h&quot;
+macro_line|#include &quot;rclanmtl.h&quot;
 DECL|macro|dprintf
 mdefine_line|#define dprintf kprintf
 r_extern
@@ -22,212 +22,212 @@ dot
 )paren
 suffix:semicolon
 multiline_comment|/* RedCreek LAN device Target ID */
-DECL|macro|LAN_TARGET_ID
-mdefine_line|#define LAN_TARGET_ID  0x10 
+DECL|macro|RC_LAN_TARGET_ID
+mdefine_line|#define RC_LAN_TARGET_ID  0x10 
 multiline_comment|/* RedCreek&squot;s OSM default LAN receive Initiator */
 DECL|macro|DEFAULT_RECV_INIT_CONTEXT
 mdefine_line|#define DEFAULT_RECV_INIT_CONTEXT  0xA17  
-multiline_comment|/*&n;** message structures&n;*/
-DECL|macro|TID_SZ
-mdefine_line|#define    TID_SZ                                  12
-DECL|macro|FUNCTION_SZ
-mdefine_line|#define    FUNCTION_SZ                             8
+multiline_comment|/*&n;** I2O message structures&n;*/
+DECL|macro|I2O_TID_SZ
+mdefine_line|#define    I2O_TID_SZ                                  12
+DECL|macro|I2O_FUNCTION_SZ
+mdefine_line|#define    I2O_FUNCTION_SZ                             8
 multiline_comment|/* Transaction Reply Lists (TRL) Control Word structure */
-DECL|macro|TRL_SINGLE_FIXED_LENGTH
-mdefine_line|#define    TRL_SINGLE_FIXED_LENGTH           0x00
-DECL|macro|TRL_SINGLE_VARIABLE_LENGTH
-mdefine_line|#define    TRL_SINGLE_VARIABLE_LENGTH        0x40
-DECL|macro|TRL_MULTIPLE_FIXED_LENGTH
-mdefine_line|#define    TRL_MULTIPLE_FIXED_LENGTH         0x80
+DECL|macro|I2O_TRL_FLAGS_SINGLE_FIXED_LENGTH
+mdefine_line|#define    I2O_TRL_FLAGS_SINGLE_FIXED_LENGTH           0x00
+DECL|macro|I2O_TRL_FLAGS_SINGLE_VARIABLE_LENGTH
+mdefine_line|#define    I2O_TRL_FLAGS_SINGLE_VARIABLE_LENGTH        0x40
+DECL|macro|I2O_TRL_FLAGS_MULTIPLE_FIXED_LENGTH
+mdefine_line|#define    I2O_TRL_FLAGS_MULTIPLE_FIXED_LENGTH         0x80
 multiline_comment|/* LAN Class specific functions */
-DECL|macro|LAN_PACKET_SEND
-mdefine_line|#define    LAN_PACKET_SEND                         0x3B
-DECL|macro|LAN_SDU_SEND
-mdefine_line|#define    LAN_SDU_SEND                            0x3D
-DECL|macro|LAN_RECEIVE_POST
-mdefine_line|#define    LAN_RECEIVE_POST                        0x3E
-DECL|macro|LAN_RESET
-mdefine_line|#define    LAN_RESET                               0x35
-DECL|macro|LAN_SHUTDOWN
-mdefine_line|#define    LAN_SHUTDOWN                            0x37
+DECL|macro|I2O_LAN_PACKET_SEND
+mdefine_line|#define    I2O_LAN_PACKET_SEND                         0x3B
+DECL|macro|I2O_LAN_SDU_SEND
+mdefine_line|#define    I2O_LAN_SDU_SEND                            0x3D
+DECL|macro|I2O_LAN_RECEIVE_POST
+mdefine_line|#define    I2O_LAN_RECEIVE_POST                        0x3E
+DECL|macro|I2O_LAN_RESET
+mdefine_line|#define    I2O_LAN_RESET                               0x35
+DECL|macro|I2O_LAN_SHUTDOWN
+mdefine_line|#define    I2O_LAN_SHUTDOWN                            0x37
 multiline_comment|/* Private Class specfic function */
-DECL|macro|RC_PRIVATE
-mdefine_line|#define    RC_PRIVATE                                 0xFF
-multiline_comment|/*  RC Executive Function Codes.  */
-DECL|macro|RC_CMD_ADAPTER_ASSIGN
-mdefine_line|#define    RC_CMD_ADAPTER_ASSIGN                     0xB3
-DECL|macro|RC_CMD_ADAPTER_READ
-mdefine_line|#define    RC_CMD_ADAPTER_READ                       0xB2
-DECL|macro|RC_CMD_ADAPTER_RELEASE
-mdefine_line|#define    RC_CMD_ADAPTER_RELEASE                    0xB5
-DECL|macro|RC_CMD_BIOS_INFO_SET
-mdefine_line|#define    RC_CMD_BIOS_INFO_SET                      0xA5
-DECL|macro|RC_CMD_BOOT_DEVICE_SET
-mdefine_line|#define    RC_CMD_BOOT_DEVICE_SET                    0xA7
-DECL|macro|RC_CMD_CONFIG_VALIDATE
-mdefine_line|#define    RC_CMD_CONFIG_VALIDATE                    0xBB
-DECL|macro|RC_CMD_CONN_SETUP
-mdefine_line|#define    RC_CMD_CONN_SETUP                         0xCA
-DECL|macro|RC_CMD_DEVICE_ASSIGN
-mdefine_line|#define    RC_CMD_DEVICE_ASSIGN                      0xB7
-DECL|macro|RC_CMD_DEVICE_RELEASE
-mdefine_line|#define    RC_CMD_DEVICE_RELEASE                     0xB9
-DECL|macro|RC_CMD_HRT_GET
-mdefine_line|#define    RC_CMD_HRT_GET                            0xA8
-DECL|macro|RC_CMD_ADAPTER_CLEAR
-mdefine_line|#define    RC_CMD_ADAPTER_CLEAR                          0xBE
-DECL|macro|RC_CMD_ADAPTER_CONNECT
-mdefine_line|#define    RC_CMD_ADAPTER_CONNECT                        0xC9
-DECL|macro|RC_CMD_ADAPTER_RESET
-mdefine_line|#define    RC_CMD_ADAPTER_RESET                          0xBD
-DECL|macro|RC_CMD_LCT_NOTIFY
-mdefine_line|#define    RC_CMD_LCT_NOTIFY                         0xA2
-DECL|macro|RC_CMD_OUTBOUND_INIT
-mdefine_line|#define    RC_CMD_OUTBOUND_INIT                      0xA1
-DECL|macro|RC_CMD_PATH_ENABLE
-mdefine_line|#define    RC_CMD_PATH_ENABLE                        0xD3
-DECL|macro|RC_CMD_PATH_QUIESCE
-mdefine_line|#define    RC_CMD_PATH_QUIESCE                       0xC5
-DECL|macro|RC_CMD_PATH_RESET
-mdefine_line|#define    RC_CMD_PATH_RESET                         0xD7
-DECL|macro|RC_CMD_STATIC_MF_CREATE
-mdefine_line|#define    RC_CMD_STATIC_MF_CREATE                   0xDD
-DECL|macro|RC_CMD_STATIC_MF_RELEASE
-mdefine_line|#define    RC_CMD_STATIC_MF_RELEASE                  0xDF
-DECL|macro|RC_CMD_STATUS_GET
-mdefine_line|#define    RC_CMD_STATUS_GET                         0xA0
-DECL|macro|RC_CMD_SW_DOWNLOAD
-mdefine_line|#define    RC_CMD_SW_DOWNLOAD                        0xA9
-DECL|macro|RC_CMD_SW_UPLOAD
-mdefine_line|#define    RC_CMD_SW_UPLOAD                          0xAB
-DECL|macro|RC_CMD_SW_REMOVE
-mdefine_line|#define    RC_CMD_SW_REMOVE                          0xAD
-DECL|macro|RC_CMD_SYS_ENABLE
-mdefine_line|#define    RC_CMD_SYS_ENABLE                         0xD1
-DECL|macro|RC_CMD_SYS_MODIFY
-mdefine_line|#define    RC_CMD_SYS_MODIFY                         0xC1
-DECL|macro|RC_CMD_SYS_QUIESCE
-mdefine_line|#define    RC_CMD_SYS_QUIESCE                        0xC3
-DECL|macro|RC_CMD_SYS_TAB_SET
-mdefine_line|#define    RC_CMD_SYS_TAB_SET                        0xA3
+DECL|macro|I2O_PRIVATE
+mdefine_line|#define    I2O_PRIVATE                                 0xFF
+multiline_comment|/*  I2O Executive Function Codes.  */
+DECL|macro|I2O_EXEC_ADAPTER_ASSIGN
+mdefine_line|#define    I2O_EXEC_ADAPTER_ASSIGN                     0xB3
+DECL|macro|I2O_EXEC_ADAPTER_READ
+mdefine_line|#define    I2O_EXEC_ADAPTER_READ                       0xB2
+DECL|macro|I2O_EXEC_ADAPTER_RELEASE
+mdefine_line|#define    I2O_EXEC_ADAPTER_RELEASE                    0xB5
+DECL|macro|I2O_EXEC_BIOS_INFO_SET
+mdefine_line|#define    I2O_EXEC_BIOS_INFO_SET                      0xA5
+DECL|macro|I2O_EXEC_BOOT_DEVICE_SET
+mdefine_line|#define    I2O_EXEC_BOOT_DEVICE_SET                    0xA7
+DECL|macro|I2O_EXEC_CONFIG_VALIDATE
+mdefine_line|#define    I2O_EXEC_CONFIG_VALIDATE                    0xBB
+DECL|macro|I2O_EXEC_CONN_SETUP
+mdefine_line|#define    I2O_EXEC_CONN_SETUP                         0xCA
+DECL|macro|I2O_EXEC_DEVICE_ASSIGN
+mdefine_line|#define    I2O_EXEC_DEVICE_ASSIGN                      0xB7
+DECL|macro|I2O_EXEC_DEVICE_RELEASE
+mdefine_line|#define    I2O_EXEC_DEVICE_RELEASE                     0xB9
+DECL|macro|I2O_EXEC_HRT_GET
+mdefine_line|#define    I2O_EXEC_HRT_GET                            0xA8
+DECL|macro|I2O_EXEC_IOP_CLEAR
+mdefine_line|#define    I2O_EXEC_IOP_CLEAR                          0xBE
+DECL|macro|I2O_EXEC_IOP_CONNECT
+mdefine_line|#define    I2O_EXEC_IOP_CONNECT                        0xC9
+DECL|macro|I2O_EXEC_IOP_RESET
+mdefine_line|#define    I2O_EXEC_IOP_RESET                          0xBD
+DECL|macro|I2O_EXEC_LCT_NOTIFY
+mdefine_line|#define    I2O_EXEC_LCT_NOTIFY                         0xA2
+DECL|macro|I2O_EXEC_OUTBOUND_INIT
+mdefine_line|#define    I2O_EXEC_OUTBOUND_INIT                      0xA1
+DECL|macro|I2O_EXEC_PATH_ENABLE
+mdefine_line|#define    I2O_EXEC_PATH_ENABLE                        0xD3
+DECL|macro|I2O_EXEC_PATH_QUIESCE
+mdefine_line|#define    I2O_EXEC_PATH_QUIESCE                       0xC5
+DECL|macro|I2O_EXEC_PATH_RESET
+mdefine_line|#define    I2O_EXEC_PATH_RESET                         0xD7
+DECL|macro|I2O_EXEC_STATIC_MF_CREATE
+mdefine_line|#define    I2O_EXEC_STATIC_MF_CREATE                   0xDD
+DECL|macro|I2O_EXEC_STATIC_MF_RELEASE
+mdefine_line|#define    I2O_EXEC_STATIC_MF_RELEASE                  0xDF
+DECL|macro|I2O_EXEC_STATUS_GET
+mdefine_line|#define    I2O_EXEC_STATUS_GET                         0xA0
+DECL|macro|I2O_EXEC_SW_DOWNLOAD
+mdefine_line|#define    I2O_EXEC_SW_DOWNLOAD                        0xA9
+DECL|macro|I2O_EXEC_SW_UPLOAD
+mdefine_line|#define    I2O_EXEC_SW_UPLOAD                          0xAB
+DECL|macro|I2O_EXEC_SW_REMOVE
+mdefine_line|#define    I2O_EXEC_SW_REMOVE                          0xAD
+DECL|macro|I2O_EXEC_SYS_ENABLE
+mdefine_line|#define    I2O_EXEC_SYS_ENABLE                         0xD1
+DECL|macro|I2O_EXEC_SYS_MODIFY
+mdefine_line|#define    I2O_EXEC_SYS_MODIFY                         0xC1
+DECL|macro|I2O_EXEC_SYS_QUIESCE
+mdefine_line|#define    I2O_EXEC_SYS_QUIESCE                        0xC3
+DECL|macro|I2O_EXEC_SYS_TAB_SET
+mdefine_line|#define    I2O_EXEC_SYS_TAB_SET                        0xA3
 multiline_comment|/* Init Outbound Q status */
-DECL|macro|RC_CMD_OUTBOUND_INIT_IN_PROGRESS
-mdefine_line|#define    RC_CMD_OUTBOUND_INIT_IN_PROGRESS          0x01
-DECL|macro|RC_CMD_OUTBOUND_INIT_REJECTED
-mdefine_line|#define    RC_CMD_OUTBOUND_INIT_REJECTED             0x02
-DECL|macro|RC_CMD_OUTBOUND_INIT_FAILED
-mdefine_line|#define    RC_CMD_OUTBOUND_INIT_FAILED               0x03
-DECL|macro|RC_CMD_OUTBOUND_INIT_COMPLETE
-mdefine_line|#define    RC_CMD_OUTBOUND_INIT_COMPLETE             0x04
-DECL|macro|UTIL_NOP
-mdefine_line|#define    UTIL_NOP                                0x00
-multiline_comment|/* RC Get Status State values */
-DECL|macro|ADAPTER_STATE_INITIALIZING
-mdefine_line|#define    ADAPTER_STATE_INITIALIZING                  0x01
-DECL|macro|ADAPTER_STATE_RESET
-mdefine_line|#define    ADAPTER_STATE_RESET                         0x02
-DECL|macro|ADAPTER_STATE_HOLD
-mdefine_line|#define    ADAPTER_STATE_HOLD                          0x04
-DECL|macro|ADAPTER_STATE_READY
-mdefine_line|#define    ADAPTER_STATE_READY                         0x05
-DECL|macro|ADAPTER_STATE_OPERATIONAL
-mdefine_line|#define    ADAPTER_STATE_OPERATIONAL                   0x08
-DECL|macro|ADAPTER_STATE_FAILED
-mdefine_line|#define    ADAPTER_STATE_FAILED                        0x10
-DECL|macro|ADAPTER_STATE_FAULTED
-mdefine_line|#define    ADAPTER_STATE_FAULTED                       0x11
+DECL|macro|I2O_EXEC_OUTBOUND_INIT_IN_PROGRESS
+mdefine_line|#define    I2O_EXEC_OUTBOUND_INIT_IN_PROGRESS          0x01
+DECL|macro|I2O_EXEC_OUTBOUND_INIT_REJECTED
+mdefine_line|#define    I2O_EXEC_OUTBOUND_INIT_REJECTED             0x02
+DECL|macro|I2O_EXEC_OUTBOUND_INIT_FAILED
+mdefine_line|#define    I2O_EXEC_OUTBOUND_INIT_FAILED               0x03
+DECL|macro|I2O_EXEC_OUTBOUND_INIT_COMPLETE
+mdefine_line|#define    I2O_EXEC_OUTBOUND_INIT_COMPLETE             0x04
+DECL|macro|I2O_UTIL_NOP
+mdefine_line|#define    I2O_UTIL_NOP                                0x00
+multiline_comment|/* I2O Get Status State values */
+DECL|macro|I2O_IOP_STATE_INITIALIZING
+mdefine_line|#define    I2O_IOP_STATE_INITIALIZING                  0x01
+DECL|macro|I2O_IOP_STATE_RESET
+mdefine_line|#define    I2O_IOP_STATE_RESET                         0x02
+DECL|macro|I2O_IOP_STATE_HOLD
+mdefine_line|#define    I2O_IOP_STATE_HOLD                          0x04
+DECL|macro|I2O_IOP_STATE_READY
+mdefine_line|#define    I2O_IOP_STATE_READY                         0x05
+DECL|macro|I2O_IOP_STATE_OPERATIONAL
+mdefine_line|#define    I2O_IOP_STATE_OPERATIONAL                   0x08
+DECL|macro|I2O_IOP_STATE_FAILED
+mdefine_line|#define    I2O_IOP_STATE_FAILED                        0x10
+DECL|macro|I2O_IOP_STATE_FAULTED
+mdefine_line|#define    I2O_IOP_STATE_FAULTED                       0x11
 multiline_comment|/* Defines for Request Status Codes:  Table 3-1 Reply Status Codes.  */
-DECL|macro|RC_REPLY_STATUS_SUCCESS
-mdefine_line|#define    RC_REPLY_STATUS_SUCCESS                    0x00
-DECL|macro|RC_REPLY_STATUS_ABORT_DIRTY
-mdefine_line|#define    RC_REPLY_STATUS_ABORT_DIRTY                0x01
-DECL|macro|RC_REPLY_STATUS_ABORT_NO_DATA_TRANSFER
-mdefine_line|#define    RC_REPLY_STATUS_ABORT_NO_DATA_TRANSFER     0x02
-DECL|macro|RC_REPLY_STATUS_ABORT_PARTIAL_TRANSFER
-mdefine_line|#define    RC_REPLY_STATUS_ABORT_PARTIAL_TRANSFER     0x03
-DECL|macro|RC_REPLY_STATUS_ERROR_DIRTY
-mdefine_line|#define    RC_REPLY_STATUS_ERROR_DIRTY                0x04
-DECL|macro|RC_REPLY_STATUS_ERROR_NO_DATA_TRANSFER
-mdefine_line|#define    RC_REPLY_STATUS_ERROR_NO_DATA_TRANSFER     0x05
-DECL|macro|RC_REPLY_STATUS_ERROR_PARTIAL_TRANSFER
-mdefine_line|#define    RC_REPLY_STATUS_ERROR_PARTIAL_TRANSFER     0x06
-DECL|macro|RC_REPLY_STATUS_PROCESS_ABORT_DIRTY
-mdefine_line|#define    RC_REPLY_STATUS_PROCESS_ABORT_DIRTY        0x07
-DECL|macro|RC_REPLY_STATUS_PROCESS_ABORT_NO_DATA_TRANSFER
-mdefine_line|#define    RC_REPLY_STATUS_PROCESS_ABORT_NO_DATA_TRANSFER   0x08
-DECL|macro|RC_REPLY_STATUS_PROCESS_ABORT_PARTIAL_TRANSFER
-mdefine_line|#define    RC_REPLY_STATUS_PROCESS_ABORT_PARTIAL_TRANSFER   0x09
-DECL|macro|RC_REPLY_STATUS_TRANSACTION_ERROR
-mdefine_line|#define    RC_REPLY_STATUS_TRANSACTION_ERROR          0x0A
-DECL|macro|RC_REPLY_STATUS_PROGRESS_REPORT
-mdefine_line|#define    RC_REPLY_STATUS_PROGRESS_REPORT            0x80
+DECL|macro|I2O_REPLY_STATUS_SUCCESS
+mdefine_line|#define    I2O_REPLY_STATUS_SUCCESS                    0x00
+DECL|macro|I2O_REPLY_STATUS_ABORT_DIRTY
+mdefine_line|#define    I2O_REPLY_STATUS_ABORT_DIRTY                0x01
+DECL|macro|I2O_REPLY_STATUS_ABORT_NO_DATA_TRANSFER
+mdefine_line|#define    I2O_REPLY_STATUS_ABORT_NO_DATA_TRANSFER     0x02
+DECL|macro|I2O_REPLY_STATUS_ABORT_PARTIAL_TRANSFER
+mdefine_line|#define    I2O_REPLY_STATUS_ABORT_PARTIAL_TRANSFER     0x03
+DECL|macro|I2O_REPLY_STATUS_ERROR_DIRTY
+mdefine_line|#define    I2O_REPLY_STATUS_ERROR_DIRTY                0x04
+DECL|macro|I2O_REPLY_STATUS_ERROR_NO_DATA_TRANSFER
+mdefine_line|#define    I2O_REPLY_STATUS_ERROR_NO_DATA_TRANSFER     0x05
+DECL|macro|I2O_REPLY_STATUS_ERROR_PARTIAL_TRANSFER
+mdefine_line|#define    I2O_REPLY_STATUS_ERROR_PARTIAL_TRANSFER     0x06
+DECL|macro|I2O_REPLY_STATUS_PROCESS_ABORT_DIRTY
+mdefine_line|#define    I2O_REPLY_STATUS_PROCESS_ABORT_DIRTY        0x07
+DECL|macro|I2O_REPLY_STATUS_PROCESS_ABORT_NO_DATA_TRANSFER
+mdefine_line|#define    I2O_REPLY_STATUS_PROCESS_ABORT_NO_DATA_TRANSFER   0x08
+DECL|macro|I2O_REPLY_STATUS_PROCESS_ABORT_PARTIAL_TRANSFER
+mdefine_line|#define    I2O_REPLY_STATUS_PROCESS_ABORT_PARTIAL_TRANSFER   0x09
+DECL|macro|I2O_REPLY_STATUS_TRANSACTION_ERROR
+mdefine_line|#define    I2O_REPLY_STATUS_TRANSACTION_ERROR          0x0A
+DECL|macro|I2O_REPLY_STATUS_PROGRESS_REPORT
+mdefine_line|#define    I2O_REPLY_STATUS_PROGRESS_REPORT            0x80
 multiline_comment|/* DetailedStatusCode defines for ALL messages: Table 3-2 Detailed Status Codes.*/
-DECL|macro|RC_DS_SUCCESS
-mdefine_line|#define    RC_DS_SUCCESS                        0x0000
-DECL|macro|RC_DS_BAD_KEY
-mdefine_line|#define    RC_DS_BAD_KEY                        0x0001
-DECL|macro|RC_DS_CHAIN_BUFFER_TOO_LARGE
-mdefine_line|#define    RC_DS_CHAIN_BUFFER_TOO_LARGE         0x0002
-DECL|macro|RC_DS_DEVICE_BUSY
-mdefine_line|#define    RC_DS_DEVICE_BUSY                    0x0003
-DECL|macro|RC_DS_DEVICE_LOCKED
-mdefine_line|#define    RC_DS_DEVICE_LOCKED                  0x0004
-DECL|macro|RC_DS_DEVICE_NOT_AVAILABLE
-mdefine_line|#define    RC_DS_DEVICE_NOT_AVAILABLE           0x0005
-DECL|macro|RC_DS_DEVICE_RESET
-mdefine_line|#define    RC_DS_DEVICE_RESET                   0x0006
-DECL|macro|RC_DS_INAPPROPRIATE_FUNCTION
-mdefine_line|#define    RC_DS_INAPPROPRIATE_FUNCTION         0x0007
-DECL|macro|RC_DS_INSUFFICIENT_RESOURCE_HARD
-mdefine_line|#define    RC_DS_INSUFFICIENT_RESOURCE_HARD     0x0008
-DECL|macro|RC_DS_INSUFFICIENT_RESOURCE_SOFT
-mdefine_line|#define    RC_DS_INSUFFICIENT_RESOURCE_SOFT     0x0009
-DECL|macro|RC_DS_INVALID_INITIATOR_ADDRESS
-mdefine_line|#define    RC_DS_INVALID_INITIATOR_ADDRESS      0x000A
-DECL|macro|RC_DS_INVALID_MESSAGE_FLAGS
-mdefine_line|#define    RC_DS_INVALID_MESSAGE_FLAGS          0x000B
-DECL|macro|RC_DS_INVALID_OFFSET
-mdefine_line|#define    RC_DS_INVALID_OFFSET                 0x000C
-DECL|macro|RC_DS_INVALID_PARAMETER
-mdefine_line|#define    RC_DS_INVALID_PARAMETER              0x000D
-DECL|macro|RC_DS_INVALID_REQUEST
-mdefine_line|#define    RC_DS_INVALID_REQUEST                0x000E
-DECL|macro|RC_DS_INVALID_TARGET_ADDRESS
-mdefine_line|#define    RC_DS_INVALID_TARGET_ADDRESS         0x000F
-DECL|macro|RC_DS_MESSAGE_TOO_LARGE
-mdefine_line|#define    RC_DS_MESSAGE_TOO_LARGE              0x0010
-DECL|macro|RC_DS_MESSAGE_TOO_SMALL
-mdefine_line|#define    RC_DS_MESSAGE_TOO_SMALL              0x0011
-DECL|macro|RC_DS_MISSING_PARAMETER
-mdefine_line|#define    RC_DS_MISSING_PARAMETER              0x0012
-DECL|macro|RC_DS_NO_SUCH_PAGE
-mdefine_line|#define    RC_DS_NO_SUCH_PAGE                   0x0013
-DECL|macro|RC_DS_REPLY_BUFFER_FULL
-mdefine_line|#define    RC_DS_REPLY_BUFFER_FULL              0x0014
-DECL|macro|RC_DS_TCL_ERROR
-mdefine_line|#define    RC_DS_TCL_ERROR                      0x0015
-DECL|macro|RC_DS_TIMEOUT
-mdefine_line|#define    RC_DS_TIMEOUT                        0x0016
-DECL|macro|RC_DS_UNKNOWN_ERROR
-mdefine_line|#define    RC_DS_UNKNOWN_ERROR                  0x0017
-DECL|macro|RC_DS_UNKNOWN_FUNCTION
-mdefine_line|#define    RC_DS_UNKNOWN_FUNCTION               0x0018
-DECL|macro|RC_DS_UNSUPPORTED_FUNCTION
-mdefine_line|#define    RC_DS_UNSUPPORTED_FUNCTION           0x0019
-DECL|macro|RC_DS_UNSUPPORTED_VERSION
-mdefine_line|#define    RC_DS_UNSUPPORTED_VERSION            0x001A
-multiline_comment|/* msg header defines for VersionOffset */
-DECL|macro|RCMSGVER_1
-mdefine_line|#define RCMSGVER_1   0x0001
+DECL|macro|I2O_DETAIL_STATUS_SUCCESS
+mdefine_line|#define    I2O_DETAIL_STATUS_SUCCESS                        0x0000
+DECL|macro|I2O_DETAIL_STATUS_BAD_KEY
+mdefine_line|#define    I2O_DETAIL_STATUS_BAD_KEY                        0x0001
+DECL|macro|I2O_DETAIL_STATUS_CHAIN_BUFFER_TOO_LARGE
+mdefine_line|#define    I2O_DETAIL_STATUS_CHAIN_BUFFER_TOO_LARGE         0x0002
+DECL|macro|I2O_DETAIL_STATUS_DEVICE_BUSY
+mdefine_line|#define    I2O_DETAIL_STATUS_DEVICE_BUSY                    0x0003
+DECL|macro|I2O_DETAIL_STATUS_DEVICE_LOCKED
+mdefine_line|#define    I2O_DETAIL_STATUS_DEVICE_LOCKED                  0x0004
+DECL|macro|I2O_DETAIL_STATUS_DEVICE_NOT_AVAILABLE
+mdefine_line|#define    I2O_DETAIL_STATUS_DEVICE_NOT_AVAILABLE           0x0005
+DECL|macro|I2O_DETAIL_STATUS_DEVICE_RESET
+mdefine_line|#define    I2O_DETAIL_STATUS_DEVICE_RESET                   0x0006
+DECL|macro|I2O_DETAIL_STATUS_INAPPROPRIATE_FUNCTION
+mdefine_line|#define    I2O_DETAIL_STATUS_INAPPROPRIATE_FUNCTION         0x0007
+DECL|macro|I2O_DETAIL_STATUS_INSUFFICIENT_RESOURCE_HARD
+mdefine_line|#define    I2O_DETAIL_STATUS_INSUFFICIENT_RESOURCE_HARD     0x0008
+DECL|macro|I2O_DETAIL_STATUS_INSUFFICIENT_RESOURCE_SOFT
+mdefine_line|#define    I2O_DETAIL_STATUS_INSUFFICIENT_RESOURCE_SOFT     0x0009
+DECL|macro|I2O_DETAIL_STATUS_INVALID_INITIATOR_ADDRESS
+mdefine_line|#define    I2O_DETAIL_STATUS_INVALID_INITIATOR_ADDRESS      0x000A
+DECL|macro|I2O_DETAIL_STATUS_INVALID_MESSAGE_FLAGS
+mdefine_line|#define    I2O_DETAIL_STATUS_INVALID_MESSAGE_FLAGS          0x000B
+DECL|macro|I2O_DETAIL_STATUS_INVALID_OFFSET
+mdefine_line|#define    I2O_DETAIL_STATUS_INVALID_OFFSET                 0x000C
+DECL|macro|I2O_DETAIL_STATUS_INVALID_PARAMETER
+mdefine_line|#define    I2O_DETAIL_STATUS_INVALID_PARAMETER              0x000D
+DECL|macro|I2O_DETAIL_STATUS_INVALID_REQUEST
+mdefine_line|#define    I2O_DETAIL_STATUS_INVALID_REQUEST                0x000E
+DECL|macro|I2O_DETAIL_STATUS_INVALID_TARGET_ADDRESS
+mdefine_line|#define    I2O_DETAIL_STATUS_INVALID_TARGET_ADDRESS         0x000F
+DECL|macro|I2O_DETAIL_STATUS_MESSAGE_TOO_LARGE
+mdefine_line|#define    I2O_DETAIL_STATUS_MESSAGE_TOO_LARGE              0x0010
+DECL|macro|I2O_DETAIL_STATUS_MESSAGE_TOO_SMALL
+mdefine_line|#define    I2O_DETAIL_STATUS_MESSAGE_TOO_SMALL              0x0011
+DECL|macro|I2O_DETAIL_STATUS_MISSING_PARAMETER
+mdefine_line|#define    I2O_DETAIL_STATUS_MISSING_PARAMETER              0x0012
+DECL|macro|I2O_DETAIL_STATUS_NO_SUCH_PAGE
+mdefine_line|#define    I2O_DETAIL_STATUS_NO_SUCH_PAGE                   0x0013
+DECL|macro|I2O_DETAIL_STATUS_REPLY_BUFFER_FULL
+mdefine_line|#define    I2O_DETAIL_STATUS_REPLY_BUFFER_FULL              0x0014
+DECL|macro|I2O_DETAIL_STATUS_TCL_ERROR
+mdefine_line|#define    I2O_DETAIL_STATUS_TCL_ERROR                      0x0015
+DECL|macro|I2O_DETAIL_STATUS_TIMEOUT
+mdefine_line|#define    I2O_DETAIL_STATUS_TIMEOUT                        0x0016
+DECL|macro|I2O_DETAIL_STATUS_UNKNOWN_ERROR
+mdefine_line|#define    I2O_DETAIL_STATUS_UNKNOWN_ERROR                  0x0017
+DECL|macro|I2O_DETAIL_STATUS_UNKNOWN_FUNCTION
+mdefine_line|#define    I2O_DETAIL_STATUS_UNKNOWN_FUNCTION               0x0018
+DECL|macro|I2O_DETAIL_STATUS_UNSUPPORTED_FUNCTION
+mdefine_line|#define    I2O_DETAIL_STATUS_UNSUPPORTED_FUNCTION           0x0019
+DECL|macro|I2O_DETAIL_STATUS_UNSUPPORTED_VERSION
+mdefine_line|#define    I2O_DETAIL_STATUS_UNSUPPORTED_VERSION            0x001A
+multiline_comment|/* I2O msg header defines for VersionOffset */
+DECL|macro|I2OMSGVER_1_5
+mdefine_line|#define I2OMSGVER_1_5   0x0001
 DECL|macro|SGL_OFFSET_0
-mdefine_line|#define SGL_OFFSET_0    RCMSGVER_1
+mdefine_line|#define SGL_OFFSET_0    I2OMSGVER_1_5
 DECL|macro|SGL_OFFSET_4
-mdefine_line|#define SGL_OFFSET_4    (0x0040 | RCMSGVER_1)
+mdefine_line|#define SGL_OFFSET_4    (0x0040 | I2OMSGVER_1_5)
 DECL|macro|TRL_OFFSET_5
-mdefine_line|#define TRL_OFFSET_5    (0x0050 | RCMSGVER_1)
+mdefine_line|#define TRL_OFFSET_5    (0x0050 | I2OMSGVER_1_5)
 DECL|macro|TRL_OFFSET_6
-mdefine_line|#define TRL_OFFSET_6    (0x0060 | RCMSGVER_1)
-multiline_comment|/* msg header defines for MsgFlags */
+mdefine_line|#define TRL_OFFSET_6    (0x0060 | I2OMSGVER_1_5)
+multiline_comment|/* I2O msg header defines for MsgFlags */
 DECL|macro|MSG_STATIC
 mdefine_line|#define MSG_STATIC      0x0100
 DECL|macro|MSG_64BIT_CNTXT
@@ -259,17 +259,17 @@ mdefine_line|#define EIGHT_WORD_MSG_SIZE 0x00080000
 DECL|macro|NINE_WORD_MSG_SIZE
 mdefine_line|#define NINE_WORD_MSG_SIZE  0x00090000
 multiline_comment|/* Special TID Assignments */
-DECL|macro|ADAPTER_TID
-mdefine_line|#define ADAPTER_TID   0
-DECL|macro|HOST_TID
-mdefine_line|#define HOST_TID  1
-multiline_comment|/* RedCreek private message codes */
+DECL|macro|I2O_IOP_TID
+mdefine_line|#define I2O_IOP_TID   0
+DECL|macro|I2O_HOST_TID
+mdefine_line|#define I2O_HOST_TID  1
+multiline_comment|/* RedCreek I2O private message codes */
 DECL|macro|RC_PRIVATE_GET_MAC_ADDR
 mdefine_line|#define RC_PRIVATE_GET_MAC_ADDR     0x0001/**/ /* OBSOLETE */
 DECL|macro|RC_PRIVATE_SET_MAC_ADDR
 mdefine_line|#define RC_PRIVATE_SET_MAC_ADDR     0x0002
-DECL|macro|RC_PRIVATE_GET_LAN_STATS
-mdefine_line|#define RC_PRIVATE_GET_LAN_STATS    0x0003
+DECL|macro|RC_PRIVATE_GET_NIC_STATS
+mdefine_line|#define RC_PRIVATE_GET_NIC_STATS    0x0003
 DECL|macro|RC_PRIVATE_GET_LINK_STATUS
 mdefine_line|#define RC_PRIVATE_GET_LINK_STATUS  0x0004
 DECL|macro|RC_PRIVATE_SET_LINK_SPEED
@@ -290,13 +290,21 @@ DECL|macro|RC_PRIVATE_DEBUG_MSG
 mdefine_line|#define RC_PRIVATE_DEBUG_MSG        0x000C
 DECL|macro|RC_PRIVATE_REPORT_DRIVER_CAPABILITY
 mdefine_line|#define RC_PRIVATE_REPORT_DRIVER_CAPABILITY  0x000D
+DECL|macro|RC_PRIVATE_SET_PROMISCUOUS_MODE
+mdefine_line|#define RC_PRIVATE_SET_PROMISCUOUS_MODE  0x000e
+DECL|macro|RC_PRIVATE_GET_PROMISCUOUS_MODE
+mdefine_line|#define RC_PRIVATE_GET_PROMISCUOUS_MODE  0x000f
+DECL|macro|RC_PRIVATE_SET_BROADCAST_MODE
+mdefine_line|#define RC_PRIVATE_SET_BROADCAST_MODE    0x0010
+DECL|macro|RC_PRIVATE_GET_BROADCAST_MODE
+mdefine_line|#define RC_PRIVATE_GET_BROADCAST_MODE    0x0011
 DECL|macro|RC_PRIVATE_REBOOT
 mdefine_line|#define RC_PRIVATE_REBOOT           0x00FF
-multiline_comment|/* RC message header */
-DECL|struct|_RC_MSG_FRAME
+multiline_comment|/* I2O message header */
+DECL|struct|_I2O_MESSAGE_FRAME
 r_typedef
 r_struct
-id|_RC_MSG_FRAME
+id|_I2O_MESSAGE_FRAME
 (brace
 DECL|member|VersionOffset
 id|U8
@@ -314,19 +322,19 @@ DECL|member|TargetAddress
 id|BF
 id|TargetAddress
 suffix:colon
-id|TID_SZ
+id|I2O_TID_SZ
 suffix:semicolon
 DECL|member|InitiatorAddress
 id|BF
 id|InitiatorAddress
 suffix:colon
-id|TID_SZ
+id|I2O_TID_SZ
 suffix:semicolon
 DECL|member|Function
 id|BF
 id|Function
 suffix:colon
-id|FUNCTION_SZ
+id|I2O_FUNCTION_SZ
 suffix:semicolon
 DECL|member|InitiatorContext
 id|U32
@@ -334,12 +342,12 @@ id|InitiatorContext
 suffix:semicolon
 multiline_comment|/* SGL[] */
 )brace
-DECL|typedef|RC_MSG_FRAME
-DECL|typedef|PRC_MSG_FRAME
-id|RC_MSG_FRAME
+DECL|typedef|I2O_MESSAGE_FRAME
+DECL|typedef|PI2O_MESSAGE_FRAME
+id|I2O_MESSAGE_FRAME
 comma
 op_star
-id|PRC_MSG_FRAME
+id|PI2O_MESSAGE_FRAME
 suffix:semicolon
 multiline_comment|/* assumed a 16K minus 256 byte space for outbound queue message frames */
 DECL|macro|MSG_FRAME_SIZE
@@ -556,9 +564,9 @@ DECL|member|pCallbackFunc
 id|PFNCALLBACK
 id|pCallbackFunc
 suffix:semicolon
-DECL|member|ADAPTERState
+DECL|member|IOPState
 id|U16
-id|ADAPTERState
+id|IOPState
 suffix:semicolon
 DECL|member|InboundMFrameSize
 id|U16
@@ -767,7 +775,7 @@ suffix:semicolon
 multiline_comment|/* local function prototypes */
 r_static
 r_void
-id|ProcessOutboundAdapterMsg
+id|ProcessOutboundI2OMsg
 c_func
 (paren
 id|PPAB
@@ -779,7 +787,7 @@ id|phyMsgAddr
 suffix:semicolon
 r_static
 r_int
-id|FillAdapterMsgSGLFromTCB
+id|FillI2OMsgSGLFromTCB
 c_func
 (paren
 id|PU32
@@ -791,7 +799,7 @@ id|pXmitCntrlBlock
 suffix:semicolon
 r_static
 r_int
-id|GetAdapterStatus
+id|GetI2OStatus
 c_func
 (paren
 id|PPAB
@@ -800,7 +808,7 @@ id|pPab
 suffix:semicolon
 r_static
 r_int
-id|SendAdapterOutboundQInitMsg
+id|SendI2OOutboundQInitMsg
 c_func
 (paren
 id|PPAB
@@ -819,10 +827,10 @@ suffix:semicolon
 multiline_comment|/* 1st 100h bytes of message block is reserved for messenger instance */
 DECL|macro|ADAPTER_BLOCK_RESERVED_SPACE
 mdefine_line|#define ADAPTER_BLOCK_RESERVED_SPACE 0x100
-multiline_comment|/*&n;** =========================================================================&n;** InitRCApiMsgLayer()&n;**&n;** Initialize the RedCreek API Module and adapter.&n;**&n;** Inputs:  AdapterID - interface number from 0 to 15&n;**          pciBaseAddr - virual base address of PCI (set by BIOS)&n;**          p_msgbuf - virual address to private message block (min. 16K)&n;**          p_phymsgbuf - physical address of private message block&n;**          TransmitCallbackFunction - address of transmit callback function&n;**          ReceiveCallbackFunction  - address of receive  callback function&n;**&n;** private message block is allocated by user.  It must be in locked pages.&n;** p_msgbuf and p_phymsgbuf point to the same location.  Must be contigous&n;** memory block of a minimum of 16K byte and long word aligned.&n;** =========================================================================&n;*/
+multiline_comment|/*&n;** =========================================================================&n;** RCInitI2OMsgLayer()&n;**&n;** Initialize the RedCreek I2O Module and adapter.&n;**&n;** Inputs:  AdapterID - interface number from 0 to 15&n;**          pciBaseAddr - virual base address of PCI (set by BIOS)&n;**          p_msgbuf - virual address to private message block (min. 16K)&n;**          p_phymsgbuf - physical address of private message block&n;**          TransmitCallbackFunction - address of transmit callback function&n;**          ReceiveCallbackFunction  - address of receive  callback function&n;**&n;** private message block is allocated by user.  It must be in locked pages.&n;** p_msgbuf and p_phymsgbuf point to the same location.  Must be contigous&n;** memory block of a minimum of 16K byte and long word aligned.&n;** =========================================================================&n;*/
 id|RC_RETURN
-DECL|function|InitRCApiMsgLayer
-id|InitRCApiMsgLayer
+DECL|function|RCInitI2OMsgLayer
+id|RCInitI2OMsgLayer
 c_func
 (paren
 id|U16
@@ -857,7 +865,7 @@ macro_line|#ifdef DEBUG
 id|kprintf
 c_func
 (paren
-l_string|&quot;InitAPI: Adapter:0x%04.4ux ATU:0x%08.8ulx msgbuf:0x%08.8ulx phymsgbuf:0x%08.8ulx&bslash;n&quot;
+l_string|&quot;InitI2O: Adapter:0x%04.4ux ATU:0x%08.8ulx msgbuf:0x%08.8ulx phymsgbuf:0x%08.8ulx&bslash;n&quot;
 l_string|&quot;TransmitCallbackFunction:0x%08.8ulx  ReceiveCallbackFunction:0x%08.8ulx&bslash;n&quot;
 comma
 id|AdapterID
@@ -968,10 +976,10 @@ id|PFNCALLBACK
 )paren
 l_int|NULL
 suffix:semicolon
-multiline_comment|/*&n;    ** Initialize API &n;    */
+multiline_comment|/*&n;    ** Initialize I2O IOP&n;    */
 id|result
 op_assign
-id|GetAdapterStatus
+id|GetI2OStatus
 c_func
 (paren
 id|pPab
@@ -990,15 +998,15 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|pPab-&gt;ADAPTERState
+id|pPab-&gt;IOPState
 op_eq
-id|ADAPTER_STATE_OPERATIONAL
+id|I2O_IOP_STATE_OPERATIONAL
 )paren
 (brace
 id|printk
 c_func
 (paren
-l_string|&quot;pPab-&gt;ADAPTERState == op: resetting adapter&bslash;n&quot;
+l_string|&quot;pPab-&gt;IOPState == op: resetting adapter&bslash;n&quot;
 )paren
 suffix:semicolon
 id|RCResetLANCard
@@ -1022,7 +1030,7 @@ suffix:semicolon
 )brace
 id|result
 op_assign
-id|SendAdapterOutboundQInitMsg
+id|SendI2OOutboundQInitMsg
 c_func
 (paren
 id|pPab
@@ -1067,12 +1075,12 @@ r_return
 id|RC_RTN_NO_ERROR
 suffix:semicolon
 )brace
-multiline_comment|/*&n;** =========================================================================&n;** Disable and Enable Adapter interrupts.  Adapter interrupts are enabled at Init time&n;** but can be disabled and re-enabled through these two function calls.&n;** Packets will still be put into any posted received buffers and packets will&n;** be sent through RCSendPacket() functions.  Disabling Adapter interrupts&n;** will prevent hardware interrupt to host even though the outbound Adapter msg&n;** queue is not emtpy.&n;** =========================================================================&n;*/
+multiline_comment|/*&n;** =========================================================================&n;** Disable and Enable I2O interrupts.  I2O interrupts are enabled at Init time&n;** but can be disabled and re-enabled through these two function calls.&n;** Packets will still be put into any posted received buffers and packets will&n;** be sent through RCI2OSendPacket() functions.  Disabling I2O interrupts&n;** will prevent hardware interrupt to host even though the outbound I2O msg&n;** queue is not emtpy.&n;** =========================================================================&n;*/
 DECL|macro|i960_OUT_POST_Q_INT_BIT
 mdefine_line|#define i960_OUT_POST_Q_INT_BIT        0x0008 /* bit set masks interrupts */
-DECL|function|RCDisableAdapterInterrupts
+DECL|function|RCDisableI2OInterrupts
 id|RC_RETURN
-id|RCDisableAdapterInterrupts
+id|RCDisableI2OInterrupts
 c_func
 (paren
 id|U16
@@ -1107,9 +1115,9 @@ r_return
 id|RC_RTN_NO_ERROR
 suffix:semicolon
 )brace
-DECL|function|RCEnableAdapterInterrupts
+DECL|function|RCEnableI2OInterrupts
 id|RC_RETURN
-id|RCEnableAdapterInterrupts
+id|RCEnableI2OInterrupts
 c_func
 (paren
 id|U16
@@ -1145,10 +1153,10 @@ r_return
 id|RC_RTN_NO_ERROR
 suffix:semicolon
 )brace
-multiline_comment|/*&n;** =========================================================================&n;** RCSendPacket()&n;** =========================================================================&n;*/
+multiline_comment|/*&n;** =========================================================================&n;** RCI2OSendPacket()&n;** =========================================================================&n;*/
 id|RC_RETURN
-DECL|function|RCSendPacket
-id|RCSendPacket
+DECL|function|RCI2OSendPacket
+id|RCI2OSendPacket
 c_func
 (paren
 id|U16
@@ -1177,7 +1185,7 @@ macro_line|#ifdef DEBUG
 id|kprintf
 c_func
 (paren
-l_string|&quot;RCSendPacket()...&bslash;n&quot;
+l_string|&quot;RCI2OSendPacket()...&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif /* DEBUG */
@@ -1216,7 +1224,7 @@ macro_line|#ifdef DEBUG
 id|kprintf
 c_func
 (paren
-l_string|&quot;RCSendPacket(): Inbound Free Q empty!&bslash;n&quot;
+l_string|&quot;RCI2OSendPacket(): Inbound Free Q empty!&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif /* DEBUG */
@@ -1238,7 +1246,7 @@ id|msgOffset
 suffix:semicolon
 id|size
 op_assign
-id|FillAdapterMsgSGLFromTCB
+id|FillI2OMsgSGLFromTCB
 c_func
 (paren
 id|pMsg
@@ -1262,7 +1270,7 @@ macro_line|#ifdef DEBUG
 id|kprintf
 c_func
 (paren
-l_string|&quot;RCSendPacket(): Error Rrocess TCB!&bslash;n&quot;
+l_string|&quot;RCI2OSendPacket(): Error Rrocess TCB!&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif /* DEBUG */
@@ -1280,15 +1288,15 @@ id|pMsg
 l_int|1
 )braket
 op_assign
-id|UTIL_NOP
+id|I2O_UTIL_NOP
 op_lshift
 l_int|24
 op_or
-id|HOST_TID
+id|I2O_HOST_TID
 op_lshift
 l_int|12
 op_or
-id|LAN_TARGET_ID
+id|RC_LAN_TARGET_ID
 suffix:semicolon
 r_return
 id|RC_RTN_TCB_ERROR
@@ -1318,15 +1326,15 @@ id|pMsg
 l_int|1
 )braket
 op_assign
-id|LAN_PACKET_SEND
+id|I2O_LAN_PACKET_SEND
 op_lshift
 l_int|24
 op_or
-id|HOST_TID
+id|I2O_HOST_TID
 op_lshift
 l_int|12
 op_or
-id|LAN_TARGET_ID
+id|RC_LAN_TARGET_ID
 suffix:semicolon
 id|pMsg
 (braket
@@ -1353,7 +1361,7 @@ id|RC_RTN_NO_ERROR
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n;** =========================================================================&n;** RCPostRecvBuffer()&n;**&n;** inputs:  pBufrCntrlBlock - pointer to buffer control block&n;**&n;** returns TRUE if successful in sending message, else FALSE.&n;** =========================================================================&n;*/
+multiline_comment|/*&n;** =========================================================================&n;** RCI2OPostRecvBuffer()&n;**&n;** inputs:  pBufrCntrlBlock - pointer to buffer control block&n;**&n;** returns TRUE if successful in sending message, else FALSE.&n;** =========================================================================&n;*/
 id|RC_RETURN
 DECL|function|RCPostRecvBuffers
 id|RCPostRecvBuffers
@@ -1444,7 +1452,7 @@ id|msgOffset
 suffix:semicolon
 id|size
 op_assign
-id|FillAdapterMsgSGLFromTCB
+id|FillI2OMsgSGLFromTCB
 c_func
 (paren
 id|pMsg
@@ -1488,15 +1496,15 @@ id|pMsg
 l_int|1
 )braket
 op_assign
-id|UTIL_NOP
+id|I2O_UTIL_NOP
 op_lshift
 l_int|24
 op_or
-id|HOST_TID
+id|I2O_HOST_TID
 op_lshift
 l_int|12
 op_or
-id|LAN_TARGET_ID
+id|RC_LAN_TARGET_ID
 suffix:semicolon
 multiline_comment|/* post to Post Q */
 id|pPab-&gt;p_atu-&gt;InQueue
@@ -1531,15 +1539,15 @@ id|pMsg
 l_int|1
 )braket
 op_assign
-id|LAN_RECEIVE_POST
+id|I2O_LAN_RECEIVE_POST
 op_lshift
 l_int|24
 op_or
-id|HOST_TID
+id|I2O_HOST_TID
 op_lshift
 l_int|12
 op_or
-id|LAN_TARGET_ID
+id|RC_LAN_TARGET_ID
 suffix:semicolon
 id|pMsg
 (braket
@@ -1570,10 +1578,10 @@ id|RC_RTN_NO_ERROR
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n;** =========================================================================&n;** RCProcMsgQ()&n;**&n;** Process outbound message queue until empty.&n;** =========================================================================&n;*/
+multiline_comment|/*&n;** =========================================================================&n;** RCProcI2OMsgQ()&n;**&n;** Process I2O outbound message queue until empty.&n;** =========================================================================&n;*/
 r_void
-DECL|function|RCProcMsgQ
-id|RCProcMsgQ
+DECL|function|RCProcI2OMsgQ
+id|RCProcI2OMsgQ
 c_func
 (paren
 id|U16
@@ -1648,11 +1656,11 @@ id|PU32
 id|p8Msg
 suffix:semicolon
 singleline_comment|//printk(&quot; msg: 0x%x  0x%x &bslash;n&quot;, p8Msg[7], p32[5]);
-multiline_comment|/* &n;     ** Send Packet Reply Msg&n;     */
+multiline_comment|/* &n;        ** Send Packet Reply Msg&n;        */
 r_if
 c_cond
 (paren
-id|LAN_PACKET_SEND
+id|I2O_LAN_PACKET_SEND
 op_eq
 id|p8Msg
 (braket
@@ -1703,12 +1711,12 @@ id|AdapterID
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* &n;     ** Receive Packet Reply Msg */
+multiline_comment|/* &n;        ** Receive Packet Reply Msg */
 r_else
 r_if
 c_cond
 (paren
-id|LAN_RECEIVE_POST
+id|I2O_LAN_RECEIVE_POST
 op_eq
 id|p8Msg
 (braket
@@ -1720,7 +1728,7 @@ macro_line|#ifdef DEBUG
 id|kprintf
 c_func
 (paren
-l_string|&quot;RECV_REPLY pPab:0x%08.8ulx p8Msg:0x%08.8ulx p32:0x%08.8ulx&bslash;n&quot;
+l_string|&quot;I2O_RECV_REPLY pPab:0x%08.8ulx p8Msg:0x%08.8ulx p32:0x%08.8ulx&bslash;n&quot;
 comma
 id|pPab
 comma
@@ -1841,14 +1849,14 @@ r_else
 r_if
 c_cond
 (paren
-id|LAN_RESET
+id|I2O_LAN_RESET
 op_eq
 id|p8Msg
 (braket
 l_int|7
 )braket
 op_logical_or
-id|LAN_SHUTDOWN
+id|I2O_LAN_SHUTDOWN
 op_eq
 id|p8Msg
 (braket
@@ -1896,7 +1904,7 @@ r_else
 r_if
 c_cond
 (paren
-id|RC_PRIVATE
+id|I2O_PRIVATE
 op_eq
 id|p8Msg
 (braket
@@ -1921,7 +1929,7 @@ id|msgFlag
 op_assign
 l_int|1
 suffix:semicolon
-multiline_comment|/*printk(&quot;Received RC_PRIVATE msg&bslash;n&quot;);*/
+multiline_comment|/*printk(&quot;Received I2O_PRIVATE msg&bslash;n&quot;);*/
 id|debug_msg
 (braket
 l_int|15
@@ -2221,7 +2229,7 @@ suffix:colon
 id|printk
 c_func
 (paren
-l_string|&quot;Unknown private msg received: 0x%x&bslash;n&quot;
+l_string|&quot;Unknown private I2O msg received: 0x%x&bslash;n&quot;
 comma
 id|p32
 (braket
@@ -2233,10 +2241,10 @@ r_break
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/* &n;     ** Process other Msg&squot;s&n;     */
+multiline_comment|/* &n;        ** Process other Msg&squot;s&n;        */
 r_else
 (brace
-id|ProcessOutboundAdapterMsg
+id|ProcessOutboundI2OMsg
 c_func
 (paren
 id|pPab
@@ -2369,15 +2377,15 @@ id|pMsg
 l_int|1
 )braket
 op_assign
-id|RC_PRIVATE
+id|I2O_PRIVATE
 op_lshift
 l_int|24
 op_or
-id|HOST_TID
+id|I2O_HOST_TID
 op_lshift
 l_int|12
 op_or
-id|LAN_TARGET_ID
+id|RC_LAN_TARGET_ID
 suffix:semicolon
 id|pMsg
 (braket
@@ -2403,7 +2411,7 @@ id|RC_PCI45_VENDOR_ID
 op_lshift
 l_int|16
 op_or
-id|RC_PRIVATE_GET_LAN_STATS
+id|RC_PRIVATE_GET_NIC_STATS
 suffix:semicolon
 id|pMsg
 (braket
@@ -2666,15 +2674,15 @@ id|pMsg
 l_int|1
 )braket
 op_assign
-id|RC_PRIVATE
+id|I2O_PRIVATE
 op_lshift
 l_int|24
 op_or
-id|HOST_TID
+id|I2O_HOST_TID
 op_lshift
 l_int|12
 op_or
-id|LAN_TARGET_ID
+id|RC_LAN_TARGET_ID
 suffix:semicolon
 id|pMsg
 (braket
@@ -2957,15 +2965,15 @@ id|p
 l_int|1
 )braket
 op_assign
-id|RC_PRIVATE
+id|I2O_PRIVATE
 op_lshift
 l_int|24
 op_or
-id|HOST_TID
+id|I2O_HOST_TID
 op_lshift
 l_int|12
 op_or
-id|LAN_TARGET_ID
+id|RC_LAN_TARGET_ID
 suffix:semicolon
 id|p
 (braket
@@ -2998,7 +3006,7 @@ id|p_atu-&gt;InQueue
 op_assign
 id|off
 suffix:semicolon
-multiline_comment|/* send it to the device */
+multiline_comment|/* send it to the I2O device */
 macro_line|#ifdef RCDEBUG
 id|printk
 c_func
@@ -3201,15 +3209,15 @@ id|pMsg
 l_int|1
 )braket
 op_assign
-id|RC_PRIVATE
+id|I2O_PRIVATE
 op_lshift
 l_int|24
 op_or
-id|HOST_TID
+id|I2O_HOST_TID
 op_lshift
 l_int|12
 op_or
-id|LAN_TARGET_ID
+id|RC_LAN_TARGET_ID
 suffix:semicolon
 id|pMsg
 (braket
@@ -3272,7 +3280,7 @@ id|pPab-&gt;p_atu-&gt;InQueue
 op_assign
 id|off
 suffix:semicolon
-multiline_comment|/* send it to the device */
+multiline_comment|/* send it to the I2O device */
 r_return
 id|RC_RTN_NO_ERROR
 suffix:semicolon
@@ -3357,15 +3365,15 @@ id|pMsg
 l_int|1
 )braket
 op_assign
-id|RC_PRIVATE
+id|I2O_PRIVATE
 op_lshift
 l_int|24
 op_or
-id|HOST_TID
+id|I2O_HOST_TID
 op_lshift
 l_int|12
 op_or
-id|LAN_TARGET_ID
+id|RC_LAN_TARGET_ID
 suffix:semicolon
 id|pMsg
 (braket
@@ -3406,22 +3414,156 @@ id|pPab-&gt;p_atu-&gt;InQueue
 op_assign
 id|off
 suffix:semicolon
+multiline_comment|/* send it to the I2O device */
+r_return
+id|RC_RTN_NO_ERROR
+suffix:semicolon
+)brace
+multiline_comment|/*&n;** =========================================================================&n;** RCSetPromiscuousMode()&n;**&n;** Defined values for Mode:&n;**  0 - turn off promiscuous mode&n;**  1 - turn on  promiscuous mode&n;**&n;** =========================================================================&n;*/
+id|RC_RETURN
+DECL|function|RCSetPromiscuousMode
+id|RCSetPromiscuousMode
+c_func
+(paren
+id|U16
+id|AdapterID
+comma
+id|U16
+id|Mode
+)paren
+(brace
+id|U32
+id|off
+suffix:semicolon
+id|PU32
+id|pMsg
+suffix:semicolon
+id|PPAB
+id|pPab
+suffix:semicolon
+id|pPab
+op_assign
+id|PCIAdapterBlock
+(braket
+id|AdapterID
+)braket
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|pPab
+op_eq
+l_int|NULL
+)paren
+r_return
+id|RC_RTN_ADPTR_NOT_REGISTERED
+suffix:semicolon
+id|off
+op_assign
+id|pPab-&gt;p_atu-&gt;InQueue
+suffix:semicolon
+multiline_comment|/* get addresss of message */
+r_if
+c_cond
+(paren
+l_int|0xFFFFFFFF
+op_eq
+id|off
+)paren
+r_return
+id|RC_RTN_FREE_Q_EMPTY
+suffix:semicolon
+id|pMsg
+op_assign
+(paren
+id|PU32
+)paren
+(paren
+id|pPab-&gt;pPci45LinBaseAddr
+op_plus
+id|off
+)paren
+suffix:semicolon
+multiline_comment|/* setup private message */
+id|pMsg
+(braket
+l_int|0
+)braket
+op_assign
+id|SIX_WORD_MSG_SIZE
+op_or
+id|SGL_OFFSET_0
+suffix:semicolon
+id|pMsg
+(braket
+l_int|1
+)braket
+op_assign
+id|I2O_PRIVATE
+op_lshift
+l_int|24
+op_or
+id|I2O_HOST_TID
+op_lshift
+l_int|12
+op_or
+id|RC_LAN_TARGET_ID
+suffix:semicolon
+id|pMsg
+(braket
+l_int|2
+)braket
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* initiator context */
+id|pMsg
+(braket
+l_int|3
+)braket
+op_assign
+l_int|0x219
+suffix:semicolon
+multiline_comment|/* transaction context */
+id|pMsg
+(braket
+l_int|4
+)braket
+op_assign
+id|RC_PCI45_VENDOR_ID
+op_lshift
+l_int|16
+op_or
+id|RC_PRIVATE_SET_PROMISCUOUS_MODE
+suffix:semicolon
+id|pMsg
+(braket
+l_int|5
+)braket
+op_assign
+id|Mode
+suffix:semicolon
+multiline_comment|/* promiscuous mode setting */
+id|pPab-&gt;p_atu-&gt;InQueue
+op_assign
+id|off
+suffix:semicolon
 multiline_comment|/* send it to the device */
 r_return
 id|RC_RTN_NO_ERROR
 suffix:semicolon
 )brace
-multiline_comment|/*&n;** =========================================================================&n;** RCGetLinkSpeed()&n;**&n;** get ethernet link speed. &n;**&n;** 0 = Unknown&n;** 1 = Full Duplex 100BaseT&n;** 2 = Half duplex 100BaseT&n;** 3 = Full Duplex  10BaseT&n;** 4 = Half duplex  10BaseT&n;**&n;** =========================================================================&n;*/
+multiline_comment|/*&n;** =========================================================================&n;** RCGetPromiscuousMode()&n;**&n;** get promiscuous mode setting&n;**&n;** Possible return values placed in pMode:&n;**  0 = promisuous mode not set&n;**  1 = promisuous mode is set&n;**&n;** =========================================================================&n;*/
 id|RC_RETURN
-DECL|function|RCGetLinkSpeed
-id|RCGetLinkSpeed
+DECL|function|RCGetPromiscuousMode
+id|RCGetPromiscuousMode
 c_func
 (paren
 id|U16
 id|AdapterID
 comma
 id|PU32
-id|pLinkSpeedCode
+id|pMode
 comma
 id|PFNWAITCALLBACK
 id|WaitCallback
@@ -3438,9 +3580,6 @@ suffix:semicolon
 r_volatile
 id|PU32
 id|p32
-suffix:semicolon
-id|U8
-id|AdapterLinkSpeed
 suffix:semicolon
 id|PPAB
 id|pPab
@@ -3526,15 +3665,706 @@ id|pMsg
 l_int|1
 )braket
 op_assign
-id|RC_PRIVATE
+id|I2O_PRIVATE
 op_lshift
 l_int|24
 op_or
-id|HOST_TID
+id|I2O_HOST_TID
 op_lshift
 l_int|12
 op_or
-id|LAN_TARGET_ID
+id|RC_LAN_TARGET_ID
+suffix:semicolon
+id|pMsg
+(braket
+l_int|2
+)braket
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* initiator context */
+id|pMsg
+(braket
+l_int|3
+)braket
+op_assign
+l_int|0x219
+suffix:semicolon
+multiline_comment|/* transaction context */
+id|pMsg
+(braket
+l_int|4
+)braket
+op_assign
+id|RC_PCI45_VENDOR_ID
+op_lshift
+l_int|16
+op_or
+id|RC_PRIVATE_GET_PROMISCUOUS_MODE
+suffix:semicolon
+multiline_comment|/* phys address to return status - area right after PAB */
+id|pMsg
+(braket
+l_int|5
+)braket
+op_assign
+id|pPab-&gt;outMsgBlockPhyAddr
+op_minus
+id|ADAPTER_BLOCK_RESERVED_SPACE
+op_plus
+r_sizeof
+(paren
+id|PAB
+)paren
+suffix:semicolon
+multiline_comment|/* post to Inbound Post Q */
+id|pPab-&gt;p_atu-&gt;InQueue
+op_assign
+id|msgOffset
+suffix:semicolon
+multiline_comment|/* wait for response */
+id|timeout
+op_assign
+l_int|1000000
+suffix:semicolon
+r_while
+c_loop
+(paren
+l_int|1
+)paren
+(brace
+r_int
+id|i
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|WaitCallback
+)paren
+(paren
+op_star
+id|WaitCallback
+)paren
+(paren
+)paren
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+l_int|1000
+suffix:semicolon
+id|i
+op_increment
+)paren
+multiline_comment|/* please don&squot;t hog the bus!!! */
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|p32
+(braket
+l_int|0
+)braket
+op_ne
+l_int|0xff
+)paren
+r_break
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|timeout
+op_decrement
+)paren
+(brace
+id|kprintf
+c_func
+(paren
+l_string|&quot;Timeout waiting for promiscuous mode from adapter&bslash;n&quot;
+)paren
+suffix:semicolon
+id|kprintf
+c_func
+(paren
+l_string|&quot;0x%08.8ulx&bslash;n&quot;
+comma
+id|p32
+(braket
+l_int|0
+)braket
+)paren
+suffix:semicolon
+r_return
+id|RC_RTN_NO_LINK_SPEED
+suffix:semicolon
+)brace
+)brace
+multiline_comment|/* get mode */
+op_star
+id|pMode
+op_assign
+(paren
+id|U8
+)paren
+(paren
+(paren
+r_volatile
+id|PU8
+)paren
+id|p32
+)paren
+(braket
+l_int|0
+)braket
+op_amp
+l_int|0x0f
+suffix:semicolon
+r_return
+id|RC_RTN_NO_ERROR
+suffix:semicolon
+)brace
+multiline_comment|/*&n;** =========================================================================&n;** RCSetBroadcastMode()&n;**&n;** Defined values for Mode:&n;**  0 - turn off promiscuous mode&n;**  1 - turn on  promiscuous mode&n;**&n;** =========================================================================&n;*/
+id|RC_RETURN
+DECL|function|RCSetBroadcastMode
+id|RCSetBroadcastMode
+c_func
+(paren
+id|U16
+id|AdapterID
+comma
+id|U16
+id|Mode
+)paren
+(brace
+id|U32
+id|off
+suffix:semicolon
+id|PU32
+id|pMsg
+suffix:semicolon
+id|PPAB
+id|pPab
+suffix:semicolon
+id|pPab
+op_assign
+id|PCIAdapterBlock
+(braket
+id|AdapterID
+)braket
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|pPab
+op_eq
+l_int|NULL
+)paren
+r_return
+id|RC_RTN_ADPTR_NOT_REGISTERED
+suffix:semicolon
+id|off
+op_assign
+id|pPab-&gt;p_atu-&gt;InQueue
+suffix:semicolon
+multiline_comment|/* get addresss of message */
+r_if
+c_cond
+(paren
+l_int|0xFFFFFFFF
+op_eq
+id|off
+)paren
+r_return
+id|RC_RTN_FREE_Q_EMPTY
+suffix:semicolon
+id|pMsg
+op_assign
+(paren
+id|PU32
+)paren
+(paren
+id|pPab-&gt;pPci45LinBaseAddr
+op_plus
+id|off
+)paren
+suffix:semicolon
+multiline_comment|/* setup private message */
+id|pMsg
+(braket
+l_int|0
+)braket
+op_assign
+id|SIX_WORD_MSG_SIZE
+op_or
+id|SGL_OFFSET_0
+suffix:semicolon
+id|pMsg
+(braket
+l_int|1
+)braket
+op_assign
+id|I2O_PRIVATE
+op_lshift
+l_int|24
+op_or
+id|I2O_HOST_TID
+op_lshift
+l_int|12
+op_or
+id|RC_LAN_TARGET_ID
+suffix:semicolon
+id|pMsg
+(braket
+l_int|2
+)braket
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* initiator context */
+id|pMsg
+(braket
+l_int|3
+)braket
+op_assign
+l_int|0x219
+suffix:semicolon
+multiline_comment|/* transaction context */
+id|pMsg
+(braket
+l_int|4
+)braket
+op_assign
+id|RC_PCI45_VENDOR_ID
+op_lshift
+l_int|16
+op_or
+id|RC_PRIVATE_SET_BROADCAST_MODE
+suffix:semicolon
+id|pMsg
+(braket
+l_int|5
+)braket
+op_assign
+id|Mode
+suffix:semicolon
+multiline_comment|/* promiscuous mode setting */
+id|pPab-&gt;p_atu-&gt;InQueue
+op_assign
+id|off
+suffix:semicolon
+multiline_comment|/* send it to the device */
+r_return
+id|RC_RTN_NO_ERROR
+suffix:semicolon
+)brace
+multiline_comment|/*&n;** =========================================================================&n;** RCGetBroadcastMode()&n;**&n;** get promiscuous mode setting&n;**&n;** Possible return values placed in pMode:&n;**  0 = promisuous mode not set&n;**  1 = promisuous mode is set&n;**&n;** =========================================================================&n;*/
+id|RC_RETURN
+DECL|function|RCGetBroadcastMode
+id|RCGetBroadcastMode
+c_func
+(paren
+id|U16
+id|AdapterID
+comma
+id|PU32
+id|pMode
+comma
+id|PFNWAITCALLBACK
+id|WaitCallback
+)paren
+(brace
+id|U32
+id|msgOffset
+comma
+id|timeout
+suffix:semicolon
+id|PU32
+id|pMsg
+suffix:semicolon
+r_volatile
+id|PU32
+id|p32
+suffix:semicolon
+id|PPAB
+id|pPab
+suffix:semicolon
+id|pPab
+op_assign
+id|PCIAdapterBlock
+(braket
+id|AdapterID
+)braket
+suffix:semicolon
+id|msgOffset
+op_assign
+id|pPab-&gt;p_atu-&gt;InQueue
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|msgOffset
+op_eq
+l_int|0xFFFFFFFF
+)paren
+(brace
+id|kprintf
+c_func
+(paren
+l_string|&quot;RCGetLinkSpeed(): Inbound Free Q empty!&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+id|RC_RTN_FREE_Q_EMPTY
+suffix:semicolon
+)brace
+multiline_comment|/* calc virtual address of msg - virtual already mapped to physical */
+id|pMsg
+op_assign
+(paren
+id|PU32
+)paren
+(paren
+id|pPab-&gt;pPci45LinBaseAddr
+op_plus
+id|msgOffset
+)paren
+suffix:semicolon
+multiline_comment|/* virtual pointer to return buffer - clear first two dwords */
+id|p32
+op_assign
+(paren
+r_volatile
+id|PU32
+)paren
+(paren
+id|pPab-&gt;pLinOutMsgBlock
+op_minus
+id|ADAPTER_BLOCK_RESERVED_SPACE
+op_plus
+r_sizeof
+(paren
+id|PAB
+)paren
+)paren
+suffix:semicolon
+id|p32
+(braket
+l_int|0
+)braket
+op_assign
+l_int|0xff
+suffix:semicolon
+multiline_comment|/* setup private message */
+id|pMsg
+(braket
+l_int|0
+)braket
+op_assign
+id|SIX_WORD_MSG_SIZE
+op_or
+id|SGL_OFFSET_0
+suffix:semicolon
+id|pMsg
+(braket
+l_int|1
+)braket
+op_assign
+id|I2O_PRIVATE
+op_lshift
+l_int|24
+op_or
+id|I2O_HOST_TID
+op_lshift
+l_int|12
+op_or
+id|RC_LAN_TARGET_ID
+suffix:semicolon
+id|pMsg
+(braket
+l_int|2
+)braket
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* initiator context */
+id|pMsg
+(braket
+l_int|3
+)braket
+op_assign
+l_int|0x219
+suffix:semicolon
+multiline_comment|/* transaction context */
+id|pMsg
+(braket
+l_int|4
+)braket
+op_assign
+id|RC_PCI45_VENDOR_ID
+op_lshift
+l_int|16
+op_or
+id|RC_PRIVATE_GET_BROADCAST_MODE
+suffix:semicolon
+multiline_comment|/* phys address to return status - area right after PAB */
+id|pMsg
+(braket
+l_int|5
+)braket
+op_assign
+id|pPab-&gt;outMsgBlockPhyAddr
+op_minus
+id|ADAPTER_BLOCK_RESERVED_SPACE
+op_plus
+r_sizeof
+(paren
+id|PAB
+)paren
+suffix:semicolon
+multiline_comment|/* post to Inbound Post Q */
+id|pPab-&gt;p_atu-&gt;InQueue
+op_assign
+id|msgOffset
+suffix:semicolon
+multiline_comment|/* wait for response */
+id|timeout
+op_assign
+l_int|1000000
+suffix:semicolon
+r_while
+c_loop
+(paren
+l_int|1
+)paren
+(brace
+r_int
+id|i
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|WaitCallback
+)paren
+(paren
+op_star
+id|WaitCallback
+)paren
+(paren
+)paren
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+l_int|1000
+suffix:semicolon
+id|i
+op_increment
+)paren
+multiline_comment|/* please don&squot;t hog the bus!!! */
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|p32
+(braket
+l_int|0
+)braket
+op_ne
+l_int|0xff
+)paren
+r_break
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|timeout
+op_decrement
+)paren
+(brace
+id|kprintf
+c_func
+(paren
+l_string|&quot;Timeout waiting for promiscuous mode from adapter&bslash;n&quot;
+)paren
+suffix:semicolon
+id|kprintf
+c_func
+(paren
+l_string|&quot;0x%08.8ulx&bslash;n&quot;
+comma
+id|p32
+(braket
+l_int|0
+)braket
+)paren
+suffix:semicolon
+r_return
+id|RC_RTN_NO_LINK_SPEED
+suffix:semicolon
+)brace
+)brace
+multiline_comment|/* get mode */
+op_star
+id|pMode
+op_assign
+(paren
+id|U8
+)paren
+(paren
+(paren
+r_volatile
+id|PU8
+)paren
+id|p32
+)paren
+(braket
+l_int|0
+)braket
+op_amp
+l_int|0x0f
+suffix:semicolon
+r_return
+id|RC_RTN_NO_ERROR
+suffix:semicolon
+)brace
+multiline_comment|/*&n;** =========================================================================&n;** RCGetLinkSpeed()&n;**&n;** get ethernet link speed. &n;**&n;** 0 = Unknown&n;** 1 = Full Duplex 100BaseT&n;** 2 = Half duplex 100BaseT&n;** 3 = Full Duplex  10BaseT&n;** 4 = Half duplex  10BaseT&n;**&n;** =========================================================================&n;*/
+id|RC_RETURN
+DECL|function|RCGetLinkSpeed
+id|RCGetLinkSpeed
+c_func
+(paren
+id|U16
+id|AdapterID
+comma
+id|PU32
+id|pLinkSpeedCode
+comma
+id|PFNWAITCALLBACK
+id|WaitCallback
+)paren
+(brace
+id|U32
+id|msgOffset
+comma
+id|timeout
+suffix:semicolon
+id|PU32
+id|pMsg
+suffix:semicolon
+r_volatile
+id|PU32
+id|p32
+suffix:semicolon
+id|U8
+id|IOPLinkSpeed
+suffix:semicolon
+id|PPAB
+id|pPab
+suffix:semicolon
+id|pPab
+op_assign
+id|PCIAdapterBlock
+(braket
+id|AdapterID
+)braket
+suffix:semicolon
+id|msgOffset
+op_assign
+id|pPab-&gt;p_atu-&gt;InQueue
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|msgOffset
+op_eq
+l_int|0xFFFFFFFF
+)paren
+(brace
+id|kprintf
+c_func
+(paren
+l_string|&quot;RCGetLinkSpeed(): Inbound Free Q empty!&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+id|RC_RTN_FREE_Q_EMPTY
+suffix:semicolon
+)brace
+multiline_comment|/* calc virtual address of msg - virtual already mapped to physical */
+id|pMsg
+op_assign
+(paren
+id|PU32
+)paren
+(paren
+id|pPab-&gt;pPci45LinBaseAddr
+op_plus
+id|msgOffset
+)paren
+suffix:semicolon
+multiline_comment|/* virtual pointer to return buffer - clear first two dwords */
+id|p32
+op_assign
+(paren
+r_volatile
+id|PU32
+)paren
+(paren
+id|pPab-&gt;pLinOutMsgBlock
+op_minus
+id|ADAPTER_BLOCK_RESERVED_SPACE
+op_plus
+r_sizeof
+(paren
+id|PAB
+)paren
+)paren
+suffix:semicolon
+id|p32
+(braket
+l_int|0
+)braket
+op_assign
+l_int|0xff
+suffix:semicolon
+multiline_comment|/* setup private message */
+id|pMsg
+(braket
+l_int|0
+)braket
+op_assign
+id|SIX_WORD_MSG_SIZE
+op_or
+id|SGL_OFFSET_0
+suffix:semicolon
+id|pMsg
+(braket
+l_int|1
+)braket
+op_assign
+id|I2O_PRIVATE
+op_lshift
+l_int|24
+op_or
+id|I2O_HOST_TID
+op_lshift
+l_int|12
+op_or
+id|RC_LAN_TARGET_ID
 suffix:semicolon
 id|pMsg
 (braket
@@ -3648,7 +4478,7 @@ op_decrement
 id|kprintf
 c_func
 (paren
-l_string|&quot;Timeout waiting for link speed from adapter&bslash;n&quot;
+l_string|&quot;Timeout waiting for link speed from IOP&bslash;n&quot;
 )paren
 suffix:semicolon
 id|kprintf
@@ -3668,7 +4498,7 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/* get Link speed */
-id|AdapterLinkSpeed
+id|IOPLinkSpeed
 op_assign
 (paren
 id|U8
@@ -3689,7 +4519,7 @@ suffix:semicolon
 op_star
 id|pLinkSpeedCode
 op_assign
-id|AdapterLinkSpeed
+id|IOPLinkSpeed
 suffix:semicolon
 r_return
 id|RC_RTN_NO_ERROR
@@ -3775,15 +4605,15 @@ id|pMsg
 l_int|1
 )braket
 op_assign
-id|RC_PRIVATE
+id|I2O_PRIVATE
 op_lshift
 l_int|24
 op_or
-id|HOST_TID
+id|I2O_HOST_TID
 op_lshift
 l_int|12
 op_or
-id|LAN_TARGET_ID
+id|RC_LAN_TARGET_ID
 suffix:semicolon
 id|pMsg
 (braket
@@ -3823,7 +4653,7 @@ id|pPab-&gt;p_atu-&gt;InQueue
 op_assign
 id|off
 suffix:semicolon
-multiline_comment|/* send it to the device */
+multiline_comment|/* send it to the I2O device */
 r_return
 id|RC_RTN_NO_ERROR
 suffix:semicolon
@@ -3940,15 +4770,15 @@ id|pMsg
 l_int|1
 )braket
 op_assign
-id|RC_PRIVATE
+id|I2O_PRIVATE
 op_lshift
 l_int|24
 op_or
-id|HOST_TID
+id|I2O_HOST_TID
 op_lshift
 l_int|12
 op_or
-id|LAN_TARGET_ID
+id|RC_LAN_TARGET_ID
 suffix:semicolon
 id|pMsg
 (braket
@@ -4062,7 +4892,7 @@ op_decrement
 id|kprintf
 c_func
 (paren
-l_string|&quot;Timeout waiting for link speed from adapter&bslash;n&quot;
+l_string|&quot;Timeout waiting for link speed from IOP&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -4186,15 +5016,15 @@ id|pMsg
 l_int|1
 )braket
 op_assign
-id|LAN_RESET
+id|I2O_LAN_RESET
 op_lshift
 l_int|24
 op_or
-id|HOST_TID
+id|I2O_HOST_TID
 op_lshift
 l_int|12
 op_or
-id|LAN_TARGET_ID
+id|RC_LAN_TARGET_ID
 suffix:semicolon
 id|pMsg
 (braket
@@ -4217,7 +5047,7 @@ id|pPab-&gt;p_atu-&gt;InQueue
 op_assign
 id|off
 suffix:semicolon
-multiline_comment|/* send it to the device */
+multiline_comment|/* send it to the I2O device */
 r_if
 c_cond
 (paren
@@ -4229,7 +5059,7 @@ id|PFNCALLBACK
 l_int|NULL
 )paren
 (brace
-multiline_comment|/* call RCProcMsgQ() until something in pPab-&gt;pCallbackFunc&n;           or until timer goes off */
+multiline_comment|/* call RCProcI2OMsgQ() until something in pPab-&gt;pCallbackFunc&n;           or until timer goes off */
 r_while
 c_loop
 (paren
@@ -4241,7 +5071,7 @@ id|PFNCALLBACK
 l_int|NULL
 )paren
 (brace
-id|RCProcMsgQ
+id|RCProcI2OMsgQ
 c_func
 (paren
 id|AdapterID
@@ -4301,10 +5131,10 @@ r_return
 id|RC_RTN_NO_ERROR
 suffix:semicolon
 )brace
-multiline_comment|/*&n;** =========================================================================&n;** RCResetAdapter()&n;**&n;** Send StatusGet Msg, wait for results return directly to buffer.&n;**&n;** =========================================================================&n;*/
+multiline_comment|/*&n;** =========================================================================&n;** RCResetIOP()&n;**&n;** Send StatusGet Msg, wait for results return directly to buffer.&n;**&n;** =========================================================================&n;*/
 id|RC_RETURN
-DECL|function|RCResetAdapter
-id|RCResetAdapter
+DECL|function|RCResetIOP
+id|RCResetIOP
 c_func
 (paren
 id|U16
@@ -4375,15 +5205,15 @@ id|pMsg
 l_int|1
 )braket
 op_assign
-id|RC_CMD_ADAPTER_RESET
+id|I2O_EXEC_IOP_RESET
 op_lshift
 l_int|24
 op_or
-id|HOST_TID
+id|I2O_HOST_TID
 op_lshift
 l_int|12
 op_or
-id|ADAPTER_TID
+id|I2O_IOP_TID
 suffix:semicolon
 id|pMsg
 (braket
@@ -4540,7 +5370,7 @@ op_decrement
 id|printk
 c_func
 (paren
-l_string|&quot;RCResetAdapter timeout&bslash;n&quot;
+l_string|&quot;RCResetIOP timeout&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -4651,15 +5481,15 @@ id|pMsg
 l_int|1
 )braket
 op_assign
-id|LAN_SHUTDOWN
+id|I2O_LAN_SHUTDOWN
 op_lshift
 l_int|24
 op_or
-id|HOST_TID
+id|I2O_HOST_TID
 op_lshift
 l_int|12
 op_or
-id|LAN_TARGET_ID
+id|RC_LAN_TARGET_ID
 suffix:semicolon
 id|pMsg
 (braket
@@ -4682,7 +5512,7 @@ id|pPab-&gt;p_atu-&gt;InQueue
 op_assign
 id|off
 suffix:semicolon
-multiline_comment|/* send it to the device */
+multiline_comment|/* send it to the I2O device */
 r_if
 c_cond
 (paren
@@ -4694,7 +5524,7 @@ id|PFNCALLBACK
 l_int|NULL
 )paren
 (brace
-multiline_comment|/* call RCProcMsgQ() until something in pPab-&gt;pCallbackFunc&n;           or until timer goes off */
+multiline_comment|/* call RCProcI2OMsgQ() until something in pPab-&gt;pCallbackFunc&n;           or until timer goes off */
 r_while
 c_loop
 (paren
@@ -4706,7 +5536,7 @@ id|PFNCALLBACK
 l_int|NULL
 )paren
 (brace
-id|RCProcMsgQ
+id|RCProcI2OMsgQ
 c_func
 (paren
 id|AdapterID
@@ -4739,6 +5569,12 @@ OG
 l_int|10000
 )paren
 (brace
+id|printk
+c_func
+(paren
+l_string|&quot;RCShutdownLANCard(): timeout&bslash;n&quot;
+)paren
+suffix:semicolon
 r_break
 suffix:semicolon
 )brace
@@ -4850,15 +5686,15 @@ id|pMsg
 l_int|1
 )braket
 op_assign
-id|RC_PRIVATE
+id|I2O_PRIVATE
 op_lshift
 l_int|24
 op_or
-id|HOST_TID
+id|I2O_HOST_TID
 op_lshift
 l_int|12
 op_or
-id|LAN_TARGET_ID
+id|RC_LAN_TARGET_ID
 suffix:semicolon
 id|pMsg
 (braket
@@ -4905,7 +5741,7 @@ id|pPab-&gt;p_atu-&gt;InQueue
 op_assign
 id|off
 suffix:semicolon
-multiline_comment|/* send it to the device */
+multiline_comment|/* send it to the I2O device */
 r_return
 id|RC_RTN_NO_ERROR
 suffix:semicolon
@@ -5059,15 +5895,15 @@ id|pMsg
 l_int|1
 )braket
 op_assign
-id|RC_PRIVATE
+id|I2O_PRIVATE
 op_lshift
 l_int|24
 op_or
-id|HOST_TID
+id|I2O_HOST_TID
 op_lshift
 l_int|12
 op_or
-id|LAN_TARGET_ID
+id|RC_LAN_TARGET_ID
 suffix:semicolon
 id|pMsg
 (braket
@@ -5114,7 +5950,7 @@ id|p_atu-&gt;InQueue
 op_assign
 id|off
 suffix:semicolon
-multiline_comment|/* send it to the device */
+multiline_comment|/* send it to the I2O device */
 macro_line|#ifdef DEBUG
 id|kprintf
 c_func
@@ -5247,11 +6083,11 @@ id|RC_RTN_NO_ERROR
 suffix:semicolon
 )brace
 multiline_comment|/* &n;** /////////////////////////////////////////////////////////////////////////&n;** /////////////////////////////////////////////////////////////////////////&n;**&n;**                        local functions&n;**&n;** /////////////////////////////////////////////////////////////////////////&n;** /////////////////////////////////////////////////////////////////////////&n;*/
-multiline_comment|/*&n;** =========================================================================&n;** SendAdapterOutboundQInitMsg()&n;**&n;** =========================================================================&n;*/
+multiline_comment|/*&n;** =========================================================================&n;** SendI2OOutboundQInitMsg()&n;**&n;** =========================================================================&n;*/
 r_static
 r_int
-DECL|function|SendAdapterOutboundQInitMsg
-id|SendAdapterOutboundQInitMsg
+DECL|function|SendI2OOutboundQInitMsg
+id|SendI2OOutboundQInitMsg
 c_func
 (paren
 id|PPAB
@@ -5291,7 +6127,7 @@ macro_line|#ifdef DEBUG
 id|kprintf
 c_func
 (paren
-l_string|&quot;SendAdapterOutboundQInitMsg(): Inbound Free Q empty!&bslash;n&quot;
+l_string|&quot;SendI2OOutboundQInitMsg(): Inbound Free Q empty!&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif /* DEBUG */
@@ -5315,7 +6151,7 @@ macro_line|#ifdef DEBUG
 id|kprintf
 c_func
 (paren
-l_string|&quot;SendAdapterOutboundQInitMsg - pMsg = 0x%08.8ulx, InQ msgOffset = 0x%08.8ulx&bslash;n&quot;
+l_string|&quot;SendI2OOutboundQInitMsg - pMsg = 0x%08.8ulx, InQ msgOffset = 0x%08.8ulx&bslash;n&quot;
 comma
 id|pMsg
 comma
@@ -5337,15 +6173,15 @@ id|pMsg
 l_int|1
 )braket
 op_assign
-id|RC_CMD_OUTBOUND_INIT
+id|I2O_EXEC_OUTBOUND_INIT
 op_lshift
 l_int|24
 op_or
-id|HOST_TID
+id|I2O_HOST_TID
 op_lshift
 l_int|12
 op_or
-id|ADAPTER_TID
+id|I2O_IOP_TID
 suffix:semicolon
 id|pMsg
 (braket
@@ -5483,12 +6319,12 @@ macro_line|#ifdef DEBUG
 id|kprintf
 c_func
 (paren
-l_string|&quot;Timeout wait for InitOutQ InPrgress status from adapter&bslash;n&quot;
+l_string|&quot;Timeout wait for InitOutQ InPrgress status from IOP&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif /* DEBUG */
 r_return
-id|RC_RTN_NO_STATUS
+id|RC_RTN_NO_I2O_STATUS
 suffix:semicolon
 )brace
 )brace
@@ -5526,7 +6362,7 @@ id|p32
 l_int|0
 )braket
 op_eq
-id|RC_CMD_OUTBOUND_INIT_COMPLETE
+id|I2O_EXEC_OUTBOUND_INIT_COMPLETE
 )paren
 r_break
 suffix:semicolon
@@ -5542,12 +6378,12 @@ macro_line|#ifdef DEBUG
 id|kprintf
 c_func
 (paren
-l_string|&quot;Timeout wait for InitOutQ Complete status from adapter&bslash;n&quot;
+l_string|&quot;Timeout wait for InitOutQ Complete status from IOP&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif /* DEBUG */
 r_return
-id|RC_RTN_NO_STATUS
+id|RC_RTN_NO_I2O_STATUS
 suffix:semicolon
 )brace
 )brace
@@ -5584,11 +6420,11 @@ r_return
 id|RC_RTN_NO_ERROR
 suffix:semicolon
 )brace
-multiline_comment|/*&n;** =========================================================================&n;** GetAdapterStatus()&n;**&n;** Send StatusGet Msg, wait for results return directly to buffer.&n;**&n;** =========================================================================&n;*/
+multiline_comment|/*&n;** =========================================================================&n;** GetI2OStatus()&n;**&n;** Send StatusGet Msg, wait for results return directly to buffer.&n;**&n;** =========================================================================&n;*/
 r_static
 r_int
-DECL|function|GetAdapterStatus
-id|GetAdapterStatus
+DECL|function|GetI2OStatus
+id|GetI2OStatus
 c_func
 (paren
 id|PPAB
@@ -5611,14 +6447,16 @@ id|msgOffset
 op_assign
 id|pPab-&gt;p_atu-&gt;InQueue
 suffix:semicolon
+macro_line|#ifdef DEBUG
 id|printk
 c_func
 (paren
-l_string|&quot;GetAdapterStatus: msg offset = 0x%x&bslash;n&quot;
+l_string|&quot;GetI2OStatus: msg offset = 0x%x&bslash;n&quot;
 comma
 id|msgOffset
 )paren
 suffix:semicolon
+macro_line|#endif /* DEBUG */
 r_if
 c_cond
 (paren
@@ -5631,7 +6469,7 @@ macro_line|#ifdef DEBUG
 id|kprintf
 c_func
 (paren
-l_string|&quot;GetAdapterStatus(): Inbound Free Q empty!&bslash;n&quot;
+l_string|&quot;GetI2OStatus(): Inbound Free Q empty!&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif /* DEBUG */
@@ -5665,15 +6503,15 @@ id|pMsg
 l_int|1
 )braket
 op_assign
-id|RC_CMD_STATUS_GET
+id|I2O_EXEC_STATUS_GET
 op_lshift
 l_int|24
 op_or
-id|HOST_TID
+id|I2O_HOST_TID
 op_lshift
 l_int|12
 op_or
-id|ADAPTER_TID
+id|I2O_IOP_TID
 suffix:semicolon
 id|pMsg
 (braket
@@ -5773,7 +6611,7 @@ macro_line|#ifdef DEBUG
 id|kprintf
 c_func
 (paren
-l_string|&quot;GetAdapterStatus - pMsg:0x%08.8ulx, msgOffset:0x%08.8ulx, [1]:0x%08.8ulx, [6]:0x%08.8ulx&bslash;n&quot;
+l_string|&quot;GetI2OStatus - pMsg:0x%08.8ulx, msgOffset:0x%08.8ulx, [1]:0x%08.8ulx, [6]:0x%08.8ulx&bslash;n&quot;
 comma
 id|pMsg
 comma
@@ -5863,7 +6701,7 @@ macro_line|#ifdef DEBUG
 id|kprintf
 c_func
 (paren
-l_string|&quot;Timeout waiting for status from adapter&bslash;n&quot;
+l_string|&quot;Timeout waiting for status from IOP&bslash;n&quot;
 )paren
 suffix:semicolon
 id|kprintf
@@ -5946,7 +6784,7 @@ l_int|11
 suffix:semicolon
 macro_line|#endif /* DEBUG */
 r_return
-id|RC_RTN_NO_STATUS
+id|RC_RTN_NO_I2O_STATUS
 suffix:semicolon
 )brace
 )brace
@@ -6030,8 +6868,8 @@ l_int|11
 )paren
 suffix:semicolon
 macro_line|#endif /* DEBUG */
-multiline_comment|/* get adapter state */
-id|pPab-&gt;ADAPTERState
+multiline_comment|/* get IOP state */
+id|pPab-&gt;IOPState
 op_assign
 (paren
 (paren
@@ -6061,9 +6899,9 @@ macro_line|#ifdef DEBUG
 id|kprintf
 c_func
 (paren
-l_string|&quot;adapter state 0x%02.2x InFrameSize = 0x%04.4x&bslash;n&quot;
+l_string|&quot;IOP state 0x%02.2x InFrameSize = 0x%04.4x&bslash;n&quot;
 comma
-id|pPab-&gt;ADAPTERState
+id|pPab-&gt;IOPState
 comma
 id|pPab-&gt;InboundMFrameSize
 )paren
@@ -6154,15 +6992,15 @@ id|pMsg
 l_int|1
 )braket
 op_assign
-id|RC_CMD_SYS_ENABLE
+id|I2O_EXEC_SYS_ENABLE
 op_lshift
 l_int|24
 op_or
-id|HOST_TID
+id|I2O_HOST_TID
 op_lshift
 l_int|12
 op_or
-id|ADAPTER_TID
+id|I2O_IOP_TID
 suffix:semicolon
 id|pMsg
 (braket
@@ -6196,11 +7034,11 @@ r_return
 id|RC_RTN_NO_ERROR
 suffix:semicolon
 )brace
-multiline_comment|/*&n;** =========================================================================&n;** FillI12OMsgFromTCB()&n;**&n;** inputs   pMsgU32 - virual pointer (mapped to physical) of message frame&n;**          pXmitCntrlBlock - pointer to caller buffer control block.&n;**&n;** fills in LAN SGL after Transaction Control Word or Bucket Count.&n;** =========================================================================&n;*/
+multiline_comment|/*&n;** =========================================================================&n;** FillI2OMsgFromTCB()&n;**&n;** inputs   pMsgU32 - virual pointer (mapped to physical) of message frame&n;**          pXmitCntrlBlock - pointer to caller buffer control block.&n;**&n;** fills in LAN SGL after Transaction Control Word or Bucket Count.&n;** =========================================================================&n;*/
 r_static
 r_int
-DECL|function|FillAdapterMsgSGLFromTCB
-id|FillAdapterMsgSGLFromTCB
+DECL|function|FillI2OMsgSGLFromTCB
+id|FillI2OMsgSGLFromTCB
 c_func
 (paren
 id|PU32
@@ -6255,7 +7093,7 @@ macro_line|#ifdef DEBUG
 id|kprintf
 c_func
 (paren
-l_string|&quot;FillAdapterMsgSGLFromTCBX&bslash;n&quot;
+l_string|&quot;FillI2OMsgSGLFromTCBX&bslash;n&quot;
 )paren
 suffix:semicolon
 id|kprintf
@@ -6514,11 +7352,11 @@ r_return
 id|nmbrDwords
 suffix:semicolon
 )brace
-multiline_comment|/*&n;** =========================================================================&n;** ProcessOutboundAdapterMsg()&n;**&n;** process reply message&n;** * change to msg structure *&n;** =========================================================================&n;*/
+multiline_comment|/*&n;** =========================================================================&n;** ProcessOutboundI2OMsg()&n;**&n;** process I2O reply message&n;** * change to msg structure *&n;** =========================================================================&n;*/
 r_static
 r_void
-DECL|function|ProcessOutboundAdapterMsg
-id|ProcessOutboundAdapterMsg
+DECL|function|ProcessOutboundI2OMsg
+id|ProcessOutboundI2OMsg
 c_func
 (paren
 id|PPAB
@@ -6556,7 +7394,7 @@ macro_line|#ifdef DEBUG
 id|kprintf
 c_func
 (paren
-l_string|&quot;VXD: ProcessOutboundAdapterMsg - pPab 0x%08.8ulx, phyAdr 0x%08.8ulx, linAdr 0x%08.8ulx&bslash;n&quot;
+l_string|&quot;VXD: ProcessOutboundI2OMsg - pPab 0x%08.8ulx, phyAdr 0x%08.8ulx, linAdr 0x%08.8ulx&bslash;n&quot;
 comma
 id|pPab
 comma
@@ -6628,7 +7466,7 @@ l_int|4
 op_rshift
 l_int|24
 op_ne
-id|RC_REPLY_STATUS_SUCCESS
+id|I2O_REPLY_STATUS_SUCCESS
 )paren
 (brace
 macro_line|#ifdef DEBUG
@@ -6653,7 +7491,7 @@ l_int|7
 multiline_comment|/* function code byte */
 (brace
 r_case
-id|RC_CMD_SYS_TAB_SET
+id|I2O_EXEC_SYS_TAB_SET
 suffix:colon
 id|msgFlag
 op_assign
@@ -6663,14 +7501,14 @@ macro_line|#ifdef DEBUG
 id|kprintf
 c_func
 (paren
-l_string|&quot;Received RC_CMD_SYS_TAB_SET reply&bslash;n&quot;
+l_string|&quot;Received I2O_EXEC_SYS_TAB_SET reply&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif /* DEBUG */
 r_break
 suffix:semicolon
 r_case
-id|RC_CMD_HRT_GET
+id|I2O_EXEC_HRT_GET
 suffix:colon
 id|msgFlag
 op_assign
@@ -6680,14 +7518,14 @@ macro_line|#ifdef DEBUG
 id|kprintf
 c_func
 (paren
-l_string|&quot;Received RC_CMD_HRT_GET reply&bslash;n&quot;
+l_string|&quot;Received I2O_EXEC_HRT_GET reply&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif /* DEBUG */
 r_break
 suffix:semicolon
 r_case
-id|RC_CMD_LCT_NOTIFY
+id|I2O_EXEC_LCT_NOTIFY
 suffix:colon
 id|msgFlag
 op_assign
@@ -6697,14 +7535,14 @@ macro_line|#ifdef DEBUG
 id|kprintf
 c_func
 (paren
-l_string|&quot;Received RC_CMD_LCT_NOTIFY reply&bslash;n&quot;
+l_string|&quot;Received I2O_EXEC_LCT_NOTIFY reply&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif /* DEBUG */
 r_break
 suffix:semicolon
 r_case
-id|RC_CMD_SYS_ENABLE
+id|I2O_EXEC_SYS_ENABLE
 suffix:colon
 id|msgFlag
 op_assign
@@ -6714,7 +7552,7 @@ macro_line|#ifdef DEBUG
 id|kprintf
 c_func
 (paren
-l_string|&quot;Received RC_CMD_SYS_ENABLE reply&bslash;n&quot;
+l_string|&quot;Received I2O_EXEC_SYS_ENABLE reply&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif /* DEBUG */

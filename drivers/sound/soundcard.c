@@ -2265,7 +2265,6 @@ id|dev
 op_rshift_assign
 l_int|4
 suffix:semicolon
-macro_line|#ifdef CONFIG_KMOD
 r_if
 c_cond
 (paren
@@ -2308,7 +2307,6 @@ id|modname
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -2824,7 +2822,6 @@ r_return
 op_minus
 id|ENXIO
 suffix:semicolon
-macro_line|#ifdef CONFIG_KMOD
 multiline_comment|/* Try to load the mixer... */
 r_if
 c_cond
@@ -2860,7 +2857,6 @@ id|modname
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif&t;/* CONFIG_KMOD */
 r_if
 c_cond
 (paren

@@ -124,6 +124,11 @@ r_struct
 id|semaphore
 op_star
 id|sem
+comma
+r_struct
+id|task_struct
+op_star
+id|tsk
 )paren
 (brace
 macro_line|#ifndef CONFIG_RMW_INSNS

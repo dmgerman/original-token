@@ -5307,9 +5307,11 @@ op_amp
 id|ltpc_timer
 )paren
 op_logical_and
+id|time_after
+c_func
 (paren
 id|timeout
-OG
+comma
 id|jiffies
 )paren
 )paren

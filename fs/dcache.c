@@ -463,11 +463,13 @@ id|dentry
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; * Somebody still using it?&n;&t; *&n;&t; * If it&squot;s a directory, we can&squot;t drop it&n;&t; * for fear of somebody re-populating it&n;&t; * with children (even though dropping it&n;&t; * would make it unreachable from the root,&n;&t; * we might still populate it if it was a&n;&t; * working directory or similar).&n;&t; */
+multiline_comment|/*&n;&t; * Somebody else still using it?&n;&t; *&n;&t; * If it&squot;s a directory, we can&squot;t drop it&n;&t; * for fear of somebody re-populating it&n;&t; * with children (even though dropping it&n;&t; * would make it unreachable from the root,&n;&t; * we might still populate it if it was a&n;&t; * working directory or similar).&n;&t; */
 r_if
 c_cond
 (paren
 id|dentry-&gt;d_count
+OG
+l_int|1
 )paren
 (brace
 r_if
@@ -2231,20 +2233,15 @@ id|dentry
 )paren
 suffix:semicolon
 )brace
-DECL|function|d_add
+DECL|function|d_rehash
 r_void
-id|d_add
+id|d_rehash
 c_func
 (paren
 r_struct
 id|dentry
 op_star
 id|entry
-comma
-r_struct
-id|inode
-op_star
-id|inode
 )paren
 (brace
 r_struct
@@ -2267,14 +2264,6 @@ id|parent
 comma
 id|entry-&gt;d_name.hash
 )paren
-)paren
-suffix:semicolon
-id|d_instantiate
-c_func
-(paren
-id|entry
-comma
-id|inode
 )paren
 suffix:semicolon
 )brace

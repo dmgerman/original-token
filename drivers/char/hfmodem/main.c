@@ -2735,7 +2735,7 @@ c_func
 (paren
 id|pario
 comma
-l_string|&quot;address of parial port to output PTT&quot;
+l_string|&quot;address of parallel port to output PTT&quot;
 )paren
 suffix:semicolon
 id|MODULE_PARM

@@ -342,7 +342,7 @@ id|cgno
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Remove cylinder group from cache, does&squot;n release memory&n; * allocated for cylinder group (this is done at ufs_put_super only).&n; */
+multiline_comment|/*&n; * Remove cylinder group from cache, doesn&squot;t release memory&n; * allocated for cylinder group (this is done at ufs_put_super only).&n; */
 DECL|function|ufs_put_cylinder
 r_void
 id|ufs_put_cylinder
@@ -525,7 +525,7 @@ l_string|&quot;EXIT&bslash;n&quot;
 )paren
 )paren
 )brace
-multiline_comment|/*&n; * Find cylinder group in cache and return it as pointer.&n; * If cylinder group is not in cache, we will load it from disk.&n; *&n; * The cache is managed by LRU alghoritm. &n; */
+multiline_comment|/*&n; * Find cylinder group in cache and return it as pointer.&n; * If cylinder group is not in cache, we will load it from disk.&n; *&n; * The cache is managed by LRU algorithm. &n; */
 DECL|function|ufs_load_cylinder
 r_struct
 id|ufs_cg_private_info
@@ -655,7 +655,7 @@ id|sb
 comma
 l_string|&quot;ufs_load_cylinder&quot;
 comma
-l_string|&quot;internal error, wrog number of cg in cache&quot;
+l_string|&quot;internal error, wrong number of cg in cache&quot;
 )paren
 suffix:semicolon
 id|UFSD
@@ -818,7 +818,7 @@ l_int|0
 op_assign
 id|ucpi
 suffix:semicolon
-multiline_comment|/*&n;&t; * Cylinder group number cg is not in cache, we will read it from disk&n;&t; * and put it to the first possition&n;&t; */
+multiline_comment|/*&n;&t; * Cylinder group number cg is not in cache, we will read it from disk&n;&t; * and put it to the first position&n;&t; */
 )brace
 r_else
 (brace

@@ -10626,6 +10626,12 @@ c_cond
 (paren
 id|hw_config-&gt;irq
 op_ne
+l_int|5
+)paren
+op_logical_and
+(paren
+id|hw_config-&gt;irq
+op_ne
 l_int|7
 )paren
 op_logical_and
@@ -10803,8 +10809,7 @@ comma
 op_minus
 l_int|1
 comma
-op_minus
-l_int|1
+l_int|0x00
 comma
 op_minus
 l_int|1

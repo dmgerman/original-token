@@ -6768,8 +6768,8 @@ l_int|0xffff
 op_logical_or
 (paren
 id|new_serial.baud_base
-op_eq
-l_int|0
+OL
+l_int|9600
 )paren
 op_logical_or
 (paren

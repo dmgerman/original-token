@@ -66,7 +66,7 @@ mdefine_line|#define sema_init(sem, val)&t;atomic_set(&amp;((sem)-&gt;count), va
 DECL|macro|wake_one_more
 mdefine_line|#define wake_one_more(sem)&t;&bslash;&n;do {&t;&t;&t;&t;&bslash;&n;&t;unsigned long flags;&t;&bslash;&n;&t;save_and_cli(flags);&t;&bslash;&n;&t;sem-&gt;waking++;&t;&t;&bslash;&n;&t;restore_flags(flags);&t;&bslash;&n;} while(0)
 DECL|macro|waking_non_zero
-mdefine_line|#define waking_non_zero(sem)&t;&bslash;&n;({&t;unsigned long flags;&t;&bslash;&n;&t;int ret = 0;&t;&t;&bslash;&n;&t;save_and_cli(flags);&t;&bslash;&n;&t;if (sem-&gt;waking &gt; 0) {&t;&bslash;&n;&t;&t;sem-&gt;waking--;&t;&bslash;&n;&t;&t;ret = 1;&t;&bslash;&n;&t;}&t;&t;&t;&bslash;&n;&t;restore_flags(flags);&t;&bslash;&n;&t;ret;&t;&t;&t;&bslash;&n;})
+mdefine_line|#define waking_non_zero(sem,tsk)&bslash;&n;({&t;unsigned long flags;&t;&bslash;&n;&t;int ret = 0;&t;&t;&bslash;&n;&t;save_and_cli(flags);&t;&bslash;&n;&t;if (sem-&gt;waking &gt; 0) {&t;&bslash;&n;&t;&t;sem-&gt;waking--;&t;&bslash;&n;&t;&t;ret = 1;&t;&bslash;&n;&t;}&t;&t;&t;&bslash;&n;&t;restore_flags(flags);&t;&bslash;&n;&t;ret;&t;&t;&t;&bslash;&n;})
 multiline_comment|/* This isn&squot;t quite as clever as the x86 side, I&squot;ll be fixing this&n; * soon enough.&n; */
 DECL|function|down
 r_extern

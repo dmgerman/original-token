@@ -2,18 +2,26 @@ multiline_comment|/* &n;    bttv - Bt848 frame grabber driver&n;&n;    Copyright
 macro_line|#ifndef _BTTV_H_
 DECL|macro|_BTTV_H_
 mdefine_line|#define _BTTV_H_
-DECL|macro|TEST_VBI
-mdefine_line|#define TEST_VBI
+DECL|macro|BTTV_VERSION_CODE
+mdefine_line|#define BTTV_VERSION_CODE 0x000520
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/wait.h&gt;
 macro_line|#include &lt;linux/i2c.h&gt;
 macro_line|#include &quot;msp3400.h&quot;
 macro_line|#include &quot;bt848.h&quot;
 macro_line|#include &lt;linux/videodev.h&gt;
+macro_line|#ifndef O_NONCAP  
+DECL|macro|O_NONCAP
+mdefine_line|#define O_NONCAP&t;O_TRUNC
+macro_line|#endif
 DECL|macro|MAX_GBUFFERS
 mdefine_line|#define MAX_GBUFFERS&t;2
 DECL|macro|RISCMEM_LEN
 mdefine_line|#define RISCMEM_LEN&t;(32744*2)
+DECL|macro|VBI_MAXLINES
+mdefine_line|#define VBI_MAXLINES    19
+DECL|macro|VBIBUF_SIZE
+mdefine_line|#define VBIBUF_SIZE     (2048*VBI_MAXLINES*2)
 multiline_comment|/* maximum needed buffer size for extended VBI frame mode capturing */
 DECL|macro|BTTV_MAX_FBUF
 mdefine_line|#define BTTV_MAX_FBUF&t;0x190000
@@ -100,27 +108,50 @@ r_int
 r_int
 id|pll_ifreq
 suffix:semicolon
-multiline_comment|/* PLL input frequency    */
+multiline_comment|/* PLL input frequency &t; */
 DECL|member|pll_ofreq
 r_int
 r_int
 id|pll_ofreq
 suffix:semicolon
-multiline_comment|/* PLL output frequency   */
+multiline_comment|/* PLL output frequency       */
 DECL|member|pll_crystal
 r_int
 r_int
 id|pll_crystal
 suffix:semicolon
-multiline_comment|/* Crystal used for input */
+multiline_comment|/* Crystal used for input     */
 DECL|member|pll_current
 r_int
 r_int
 id|pll_current
 suffix:semicolon
-multiline_comment|/* Current programmed ofrq*/
+multiline_comment|/* Currently programmed ofreq */
 )brace
 suffix:semicolon
+multiline_comment|/*  Per-open data for handling multiple opens on one device */
+DECL|struct|device_open
+r_struct
+id|device_open
+(brace
+DECL|member|isopen
+r_int
+id|isopen
+suffix:semicolon
+DECL|member|noncapturing
+r_int
+id|noncapturing
+suffix:semicolon
+DECL|member|dev
+r_struct
+id|bttv
+op_star
+id|dev
+suffix:semicolon
+)brace
+suffix:semicolon
+DECL|macro|MAX_OPENS
+mdefine_line|#define MAX_OPENS 3
 DECL|struct|bttv
 r_struct
 id|bttv
@@ -152,6 +183,22 @@ id|video_audio
 id|audio_dev
 suffix:semicolon
 multiline_comment|/* Current audio params */
+DECL|member|user
+r_int
+id|user
+suffix:semicolon
+DECL|member|capuser
+r_int
+id|capuser
+suffix:semicolon
+DECL|member|open_data
+r_struct
+id|device_open
+id|open_data
+(braket
+id|MAX_OPENS
+)braket
+suffix:semicolon
 DECL|member|i2c
 r_struct
 id|i2c_bus
@@ -183,6 +230,7 @@ r_int
 r_int
 id|id
 suffix:semicolon
+macro_line|#if LINUX_VERSION_CODE &lt; 0x020100
 DECL|member|bus
 r_int
 r_char
@@ -194,12 +242,14 @@ r_int
 r_char
 id|devfn
 suffix:semicolon
+macro_line|#else
 DECL|member|dev
 r_struct
 id|pci_dev
 op_star
 id|dev
 suffix:semicolon
+macro_line|#endif
 DECL|member|irq
 r_int
 r_char
@@ -255,10 +305,6 @@ r_int
 id|audio
 suffix:semicolon
 multiline_comment|/* audio mode */
-DECL|member|user
-r_int
-id|user
-suffix:semicolon
 DECL|member|audio_chip
 r_int
 id|audio_chip
@@ -496,18 +542,16 @@ DECL|macro|BTTV_READEE
 mdefine_line|#define BTTV_READEE&t;&t;_IOW(&squot;v&squot;,  BASE_VIDIOCPRIVATE+0, char [256])
 DECL|macro|BTTV_WRITEE
 mdefine_line|#define BTTV_WRITEE&t;&t;_IOR(&squot;v&squot;,  BASE_VIDIOCPRIVATE+1, char [256])
-DECL|macro|BTTV_GRAB
-mdefine_line|#define BTTV_GRAB&t;&t;_IOR(&squot;v&squot; , BASE_VIDIOCPRIVATE+2, struct gbuf)
 DECL|macro|BTTV_FIELDNR
 mdefine_line|#define BTTV_FIELDNR&t;&t;_IOR(&squot;v&squot; , BASE_VIDIOCPRIVATE+2, unsigned int)
 DECL|macro|BTTV_PLLSET
 mdefine_line|#define BTTV_PLLSET&t;&t;_IOW(&squot;v&squot; , BASE_VIDIOCPRIVATE+3, struct bttv_pll_info)
 DECL|macro|BTTV_BURST_ON
-mdefine_line|#define BTTV_BURST_ON&t;&t;_IOR(&squot;v&squot; , BASE_VIDIOCPRIVATE+4, int)
+mdefine_line|#define BTTV_BURST_ON      &t;_IOR(&squot;v&squot; , BASE_VIDIOCPRIVATE+4, int)
 DECL|macro|BTTV_BURST_OFF
-mdefine_line|#define BTTV_BURST_OFF&t;&t;_IOR(&squot;v&squot; , BASE_VIDIOCPRIVATE+5, int)
-DECL|macro|BTTV_NAGRAVERSION
-mdefine_line|#define BTTV_NAGRAVERSION&t;_IOR(&squot;v&squot; , BASE_VIDIOCPRIVATE+6, int)
+mdefine_line|#define BTTV_BURST_OFF     &t;_IOR(&squot;v&squot; , BASE_VIDIOCPRIVATE+5, int)
+DECL|macro|BTTV_VERSION
+mdefine_line|#define BTTV_VERSION  &t;        _IOR(&squot;v&squot; , BASE_VIDIOCPRIVATE+6, int)
 DECL|macro|BTTV_PICNR
 mdefine_line|#define BTTV_PICNR&t;&t;_IOR(&squot;v&squot; , BASE_VIDIOCPRIVATE+7, int)
 DECL|macro|BTTV_UNKNOWN
@@ -536,6 +580,8 @@ DECL|macro|BTTV_MIROPRO
 mdefine_line|#define BTTV_MIROPRO       0x0b
 DECL|macro|BTTV_ADSTECH_TV
 mdefine_line|#define BTTV_ADSTECH_TV    0x0c
+DECL|macro|BTTV_AVERMEDIA98
+mdefine_line|#define BTTV_AVERMEDIA98   0x0d
 DECL|macro|AUDIO_TUNER
 mdefine_line|#define AUDIO_TUNER        0x00
 DECL|macro|AUDIO_RADIO
@@ -556,8 +602,12 @@ DECL|macro|TDA9850
 mdefine_line|#define TDA9850            0x01
 DECL|macro|TDA8425
 mdefine_line|#define TDA8425            0x02
+DECL|macro|TDA9840
+mdefine_line|#define TDA9840            0x03
 DECL|macro|I2C_TSA5522
 mdefine_line|#define I2C_TSA5522        0xc2
+DECL|macro|I2C_TDA9840
+mdefine_line|#define I2C_TDA9840&t;   0x84
 DECL|macro|I2C_TDA9850
 mdefine_line|#define I2C_TDA9850        0xb6
 DECL|macro|I2C_TDA8425
@@ -566,6 +616,14 @@ DECL|macro|I2C_HAUPEE
 mdefine_line|#define I2C_HAUPEE         0xa0
 DECL|macro|I2C_STBEE
 mdefine_line|#define I2C_STBEE          0xae
+DECL|macro|TDA9840_SW
+mdefine_line|#define TDA9840_SW&t;   0x00
+DECL|macro|TDA9840_LVADJ
+mdefine_line|#define TDA9840_LVADJ&t;   0x02
+DECL|macro|TDA9840_STADJ
+mdefine_line|#define TDA9840_STADJ&t;   0x03
+DECL|macro|TDA9840_TEST
+mdefine_line|#define TDA9840_TEST&t;   0x04
 DECL|macro|TDA9850_CON1
 mdefine_line|#define TDA9850_CON1       0x04
 DECL|macro|TDA9850_CON2

@@ -885,9 +885,17 @@ id|VMALLOC_END
 op_minus
 id|size
 )paren
+(brace
+id|kfree
+c_func
+(paren
+id|area
+)paren
+suffix:semicolon
 r_return
 l_int|NULL
 suffix:semicolon
+)brace
 id|addr
 op_assign
 id|tmp-&gt;size

@@ -333,12 +333,6 @@ r_int
 id|b_flushtime
 suffix:semicolon
 multiline_comment|/* Time when this (dirty) buffer&n;&t;&t;&t;&t;&t; * should be written */
-DECL|member|b_lru_time
-r_int
-r_int
-id|b_lru_time
-suffix:semicolon
-multiline_comment|/* Time when this buffer was &n;&t;&t;&t;&t;&t; * last used. */
 DECL|member|b_wait
 r_struct
 id|wait_queue

@@ -15,9 +15,7 @@ macro_line|#include &lt;linux/apm_bios.h&gt;
 macro_line|#endif
 macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/selection.h&gt;
-macro_line|#ifdef CONFIG_KMOD
 macro_line|#include &lt;linux/kmod.h&gt;
-macro_line|#endif
 multiline_comment|/*&n; * Head entry for the doubly linked miscdevice list&n; */
 DECL|variable|misc_list
 r_static
@@ -386,7 +384,6 @@ op_amp
 id|misc_list
 )paren
 (brace
-macro_line|#ifdef CONFIG_KMOD
 r_char
 id|modname
 (braket
@@ -443,7 +440,6 @@ op_eq
 op_amp
 id|misc_list
 )paren
-macro_line|#endif
 r_return
 op_minus
 id|ENODEV

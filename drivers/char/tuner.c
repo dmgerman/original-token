@@ -6,6 +6,7 @@ macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
+macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/i2c.h&gt;
 macro_line|#include &lt;linux/videodev.h&gt;
 macro_line|#include &quot;tuner.h&quot;
@@ -22,11 +23,13 @@ r_static
 r_int
 id|type
 op_assign
-l_int|0
+op_minus
+l_int|1
 suffix:semicolon
 multiline_comment|/* tuner type */
 DECL|macro|dprintk
 mdefine_line|#define dprintk     if (debug) printk
+macro_line|#if LINUX_VERSION_CODE &gt; 0x020100
 id|MODULE_PARM
 c_func
 (paren
@@ -43,6 +46,34 @@ comma
 l_string|&quot;i&quot;
 )paren
 suffix:semicolon
+macro_line|#endif
+macro_line|#if LINUX_VERSION_CODE &lt; 0x02017f
+DECL|function|schedule_timeout
+r_void
+id|schedule_timeout
+c_func
+(paren
+r_int
+id|j
+)paren
+(brace
+id|current-&gt;state
+op_assign
+id|TASK_INTERRUPTIBLE
+suffix:semicolon
+id|current-&gt;timeout
+op_assign
+id|jiffies
+op_plus
+id|j
+suffix:semicolon
+id|schedule
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
 DECL|struct|tuner
 r_struct
 id|tuner
@@ -346,6 +377,7 @@ id|TEMIC
 comma
 id|PAL_I
 comma
+singleline_comment|//  16*170.00,16*450.00,0xa0,0x90,0x30,0x8e,0xc2,623},
 l_int|16
 op_star
 l_float|170.00
@@ -354,11 +386,11 @@ l_int|16
 op_star
 l_float|450.00
 comma
-l_int|0xa0
+l_int|0x02
 comma
-l_int|0x90
+l_int|0x04
 comma
-l_int|0x30
+l_int|0x01
 comma
 l_int|0x8e
 comma
@@ -488,10 +520,6 @@ r_int
 id|freq
 )paren
 (brace
-r_int
-r_int
-id|flags
-suffix:semicolon
 id|u8
 id|config
 suffix:semicolon
@@ -501,6 +529,28 @@ suffix:semicolon
 r_struct
 id|tunertype
 op_star
+id|tun
+suffix:semicolon
+id|LOCK_FLAGS
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|t-&gt;type
+op_eq
+op_minus
+l_int|1
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;tuner: tuner type not set&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
 id|tun
 op_assign
 op_amp
@@ -636,10 +686,6 @@ r_int
 id|freq
 )paren
 (brace
-r_int
-r_int
-id|flags
-suffix:semicolon
 id|u8
 id|config
 suffix:semicolon
@@ -650,11 +696,33 @@ r_struct
 id|tunertype
 op_star
 id|tun
+suffix:semicolon
+id|LOCK_FLAGS
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|t-&gt;type
+op_eq
+op_minus
+l_int|1
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;tuner: tuner type not set&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+id|tun
 op_assign
 op_amp
 id|tuners
 (braket
-id|type
+id|t-&gt;type
 )braket
 suffix:semicolon
 id|config
@@ -912,6 +980,16 @@ l_string|&quot;tuner: type is %d (%s)&bslash;n&quot;
 comma
 id|t-&gt;type
 comma
+(paren
+id|t-&gt;type
+op_eq
+op_minus
+l_int|1
+)paren
+ques
+c_cond
+l_string|&quot;autodetect&quot;
+suffix:colon
 id|tuners
 (braket
 id|t-&gt;type
@@ -1013,6 +1091,17 @@ id|cmd
 r_case
 id|TUNER_SET_TYPE
 suffix:colon
+r_if
+c_cond
+(paren
+id|t-&gt;type
+op_ne
+op_minus
+l_int|1
+)paren
+r_return
+l_int|0
+suffix:semicolon
 id|t-&gt;type
 op_assign
 op_star

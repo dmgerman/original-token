@@ -8,11 +8,11 @@ macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/videodev.h&gt;
+macro_line|#if LINUX_VERSION_CODE &gt;= 0x020100
 macro_line|#include &lt;asm/uaccess.h&gt;
-macro_line|#include &lt;asm/system.h&gt;
-macro_line|#ifdef CONFIG_KMOD
-macro_line|#include &lt;linux/kmod.h&gt;
 macro_line|#endif
+macro_line|#include &lt;asm/system.h&gt;
+macro_line|#include &lt;linux/kmod.h&gt;
 DECL|macro|VIDEO_NUM_DEVICES
 mdefine_line|#define VIDEO_NUM_DEVICES&t;256 
 multiline_comment|/*&n; *&t;Active devices &n; */
@@ -178,6 +178,7 @@ id|video_init_list
 op_assign
 initialization_block
 suffix:semicolon
+macro_line|#if LINUX_VERSION_CODE &gt;= 0x020100
 multiline_comment|/*&n; *&t;Read will do some smarts later on. Buffer pin etc.&n; */
 DECL|function|video_read
 r_static
@@ -371,6 +372,146 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#else
+DECL|function|video_read
+r_static
+r_int
+id|video_read
+c_func
+(paren
+r_struct
+id|inode
+op_star
+id|ino
+comma
+r_struct
+id|file
+op_star
+id|file
+comma
+r_char
+op_star
+id|buf
+comma
+r_int
+id|count
+)paren
+(brace
+r_int
+id|err
+suffix:semicolon
+r_struct
+id|video_device
+op_star
+id|vfl
+op_assign
+id|video_device
+(braket
+id|MINOR
+c_func
+(paren
+id|ino-&gt;i_rdev
+)paren
+)braket
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|vfl-&gt;read
+)paren
+r_return
+id|vfl
+op_member_access_from_pointer
+id|read
+c_func
+(paren
+id|vfl
+comma
+id|buf
+comma
+id|count
+comma
+id|file-&gt;f_flags
+op_amp
+id|O_NONBLOCK
+)paren
+suffix:semicolon
+r_else
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
+)brace
+DECL|function|video_write
+r_static
+r_int
+id|video_write
+c_func
+(paren
+r_struct
+id|inode
+op_star
+id|ino
+comma
+r_struct
+id|file
+op_star
+id|file
+comma
+r_const
+r_char
+op_star
+id|buf
+comma
+r_int
+id|count
+)paren
+(brace
+r_int
+id|err
+suffix:semicolon
+r_struct
+id|video_device
+op_star
+id|vfl
+op_assign
+id|video_device
+(braket
+id|MINOR
+c_func
+(paren
+id|ino-&gt;i_rdev
+)paren
+)braket
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|vfl-&gt;write
+)paren
+r_return
+id|vfl
+op_member_access_from_pointer
+id|write
+c_func
+(paren
+id|vfl
+comma
+id|buf
+comma
+id|count
+comma
+id|file-&gt;f_flags
+op_amp
+id|O_NONBLOCK
+)paren
+suffix:semicolon
+r_else
+r_return
+l_int|0
+suffix:semicolon
+)brace
+macro_line|#endif
 multiline_comment|/*&n; *&t;Open a video device.&n; */
 DECL|function|video_open
 r_static
@@ -435,7 +576,6 @@ op_eq
 l_int|NULL
 )paren
 (brace
-macro_line|#ifdef CONFIG_KMOD
 r_char
 id|modname
 (braket
@@ -473,7 +613,6 @@ id|vfl
 op_eq
 l_int|NULL
 )paren
-macro_line|#endif
 r_return
 op_minus
 id|ENODEV
@@ -589,6 +728,7 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;Question: Should we be able to capture and then seek around the&n; *&t;image ?&n; */
+macro_line|#if LINUX_VERSION_CODE &gt;= 0x020100
 DECL|function|video_lseek
 r_static
 r_int
@@ -614,6 +754,38 @@ op_minus
 id|ESPIPE
 suffix:semicolon
 )brace
+macro_line|#else
+DECL|function|video_lseek
+r_static
+r_int
+r_int
+id|video_lseek
+c_func
+(paren
+r_struct
+id|inode
+op_star
+id|inode
+comma
+r_struct
+id|file
+op_star
+id|file
+comma
+r_int
+r_int
+id|offset
+comma
+r_int
+id|origin
+)paren
+(brace
+r_return
+op_minus
+id|ESPIPE
+suffix:semicolon
+)brace
+macro_line|#endif
 DECL|function|video_ioctl
 r_static
 r_int
@@ -700,6 +872,7 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/*&n; *&t;We need to do MMAP support&n; */
+macro_line|#if LINUX_VERSION_CODE &gt;= 0x020100
 DECL|function|video_mmap
 r_int
 id|video_mmap
@@ -730,6 +903,43 @@ id|file-&gt;f_dentry-&gt;d_inode-&gt;i_rdev
 )paren
 )braket
 suffix:semicolon
+macro_line|#else
+r_static
+r_int
+id|video_mmap
+c_func
+(paren
+r_struct
+id|inode
+op_star
+id|ino
+comma
+r_struct
+id|file
+op_star
+id|file
+comma
+r_struct
+id|vm_area_struct
+op_star
+id|vma
+)paren
+(brace
+r_struct
+id|video_device
+op_star
+id|vfl
+op_assign
+id|video_device
+(braket
+id|MINOR
+c_func
+(paren
+id|ino-&gt;i_rdev
+)paren
+)braket
+suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -1005,18 +1215,25 @@ comma
 l_int|NULL
 comma
 multiline_comment|/* readdir */
+macro_line|#if LINUX_VERSION_CODE &gt;= 0x020100
 id|video_poll
 comma
 multiline_comment|/* poll */
+macro_line|#else
+l_int|NULL
+comma
+macro_line|#endif
 id|video_ioctl
 comma
 id|video_mmap
 comma
 id|video_open
 comma
+macro_line|#if LINUX_VERSION_CODE &gt;= 0x020100
 l_int|NULL
 comma
 multiline_comment|/* flush */
+macro_line|#endif
 id|video_release
 )brace
 suffix:semicolon
@@ -1130,6 +1347,7 @@ l_string|&quot;video_capture&quot;
 suffix:semicolon
 )brace
 macro_line|#endif
+macro_line|#if LINUX_VERSION_CODE &gt;= 0x020100
 DECL|variable|video_register_device
 id|EXPORT_SYMBOL
 c_func
@@ -1144,4 +1362,5 @@ c_func
 id|video_unregister_device
 )paren
 suffix:semicolon
+macro_line|#endif
 eof

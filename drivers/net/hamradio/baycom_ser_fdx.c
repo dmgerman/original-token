@@ -20,6 +20,7 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/hdlcdrv.h&gt;
 macro_line|#include &lt;linux/baycom.h&gt;
+macro_line|#include &lt;linux/version.h&gt;
 multiline_comment|/* --------------------------------------------------------------------- */
 DECL|macro|BAYCOM_DEBUG
 mdefine_line|#define BAYCOM_DEBUG

@@ -24,6 +24,9 @@ suffix:semicolon
 DECL|variable|pas2_mididev
 r_int
 id|pas2_mididev
+op_assign
+op_minus
+l_int|1
 suffix:semicolon
 DECL|variable|tmp_queue
 r_static

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  $Id: ipconfig.c,v 1.18 1999/01/04 20:14:10 davem Exp $&n; *&n; *  Automatic Configuration of IP -- use BOOTP or RARP or user-supplied&n; *  information to configure own IP address and routes.&n; *&n; *  Copyright (C) 1996--1998 Martin Mares &lt;mj@atrey.karlin.mff.cuni.cz&gt;&n; *&n; *  Derived from network configuration code in fs/nfs/nfsroot.c,&n; *  originally Copyright (C) 1995, 1996 Gero Kuhlmann and me.&n; *&n; *  BOOTP rewritten to construct and analyse packets itself instead&n; *  of misusing the IP layer. num_bugs_causing_wrong_arp_replies--;&n; *&t;&t;&t;&t;&t;     -- MJ, December 1998&n; */
+multiline_comment|/*&n; *  $Id: ipconfig.c,v 1.19 1999/01/15 06:54:00 davem Exp $&n; *&n; *  Automatic Configuration of IP -- use BOOTP or RARP or user-supplied&n; *  information to configure own IP address and routes.&n; *&n; *  Copyright (C) 1996--1998 Martin Mares &lt;mj@atrey.karlin.mff.cuni.cz&gt;&n; *&n; *  Derived from network configuration code in fs/nfs/nfsroot.c,&n; *  originally Copyright (C) 1995, 1996 Gero Kuhlmann and me.&n; *&n; *  BOOTP rewritten to construct and analyse packets itself instead&n; *  of misusing the IP layer. num_bugs_causing_wrong_arp_replies--;&n; *&t;&t;&t;&t;&t;     -- MJ, December 1998&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
@@ -147,11 +147,17 @@ r_int
 id|ic_proto_enabled
 id|__initdata
 op_assign
+l_int|0
+multiline_comment|/* Protocols enabled */
+macro_line|#ifdef CONFIG_IP_PNP_BOOTP
+op_or
 id|IC_BOOTP
+macro_line|#endif
+macro_line|#ifdef CONFIG_IP_PNP_RARP
 op_or
 id|IC_RARP
+macro_line|#endif
 suffix:semicolon
-multiline_comment|/* Protocols enabled */
 DECL|variable|__initdata
 r_static
 r_int
@@ -2148,7 +2154,7 @@ id|IP_DF
 suffix:semicolon
 id|h-&gt;ttl
 op_assign
-l_int|1
+l_int|64
 suffix:semicolon
 id|h-&gt;protocol
 op_assign
@@ -2157,10 +2163,6 @@ suffix:semicolon
 id|h-&gt;daddr
 op_assign
 id|INADDR_BROADCAST
-suffix:semicolon
-id|h-&gt;check
-op_assign
-l_int|0
 suffix:semicolon
 id|h-&gt;check
 op_assign
