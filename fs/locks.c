@@ -1747,6 +1747,15 @@ op_star
 suffix:semicolon
 id|lock
 op_assign
+l_int|NULL
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|filp-&gt;f_op
+)paren
+id|lock
+op_assign
 id|filp-&gt;f_op-&gt;lock
 suffix:semicolon
 r_if

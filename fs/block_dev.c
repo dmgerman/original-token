@@ -773,10 +773,8 @@ c_cond
 (paren
 id|write_error
 )paren
-(brace
 r_break
 suffix:semicolon
-)brace
 )brace
 r_if
 c_cond
