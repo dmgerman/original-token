@@ -1158,6 +1158,8 @@ c_func
 id|STp-&gt;device
 comma
 l_int|1
+comma
+id|FALSE
 )paren
 suffix:semicolon
 r_if

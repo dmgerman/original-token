@@ -241,22 +241,6 @@ id|apm_event_t
 )paren
 )paren
 suffix:semicolon
-r_extern
-r_int
-id|apm_display_blank
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|apm_display_unblank
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
 macro_line|#endif&t;/* __KERNEL__ */
 multiline_comment|/*&n; * Power states&n; */
 DECL|macro|APM_STATE_READY

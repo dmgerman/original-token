@@ -21,8 +21,7 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
-DECL|macro|DEBUG
-mdefine_line|#define DEBUG 1
+singleline_comment|//#define ARLAN_DEBUGING 1
 DECL|macro|ARLAN_PROC_INTERFACE
 mdefine_line|#define ARLAN_PROC_INTERFACE
 DECL|macro|MAX_ARLANS
@@ -56,43 +55,50 @@ id|arlan_device
 id|MAX_ARLANS
 )braket
 suffix:semicolon
-DECL|variable|arlan_debug
-r_static
+r_extern
 r_int
 id|arlan_debug
 suffix:semicolon
-DECL|variable|siteName
-r_static
+r_extern
 r_char
 op_star
 id|siteName
 suffix:semicolon
-DECL|variable|arlan_entry_debug
-r_static
+r_extern
 r_int
 id|arlan_entry_debug
 suffix:semicolon
-DECL|variable|arlan_exit_debug
-r_static
+r_extern
 r_int
 id|arlan_exit_debug
 suffix:semicolon
-DECL|variable|arlan_entry_and_exit_debug
-r_static
+r_extern
 r_int
 id|arlan_entry_and_exit_debug
 suffix:semicolon
-DECL|variable|testMemory
-r_static
+r_extern
 r_int
 id|testMemory
 suffix:semicolon
-DECL|variable|arlan_version
-r_static
+r_extern
 r_const
 r_char
 op_star
 id|arlan_version
+suffix:semicolon
+r_extern
+r_int
+id|arlan_command
+c_func
+(paren
+r_struct
+id|net_device
+op_star
+id|dev
+comma
+r_int
+id|command
+)paren
 suffix:semicolon
 DECL|macro|SIDUNKNOWN
 mdefine_line|#define SIDUNKNOWN -1
@@ -128,7 +134,9 @@ DECL|macro|IFDEBUG
 mdefine_line|#define IFDEBUG( L ) if ( (L) &amp; arlan_debug ) 
 DECL|macro|ARLAN_FAKE_HDR_LEN
 mdefine_line|#define ARLAN_FAKE_HDR_LEN 12 
-macro_line|#ifdef DEBUG
+macro_line|#ifdef ARLAN_DEBUGING
+DECL|macro|DEBUG
+mdefine_line|#define DEBUG 1
 DECL|macro|ARLAN_ENTRY_EXIT_DEBUGING
 mdefine_line|#define ARLAN_ENTRY_EXIT_DEBUGING 1
 DECL|macro|ARLAN_DEBUG
@@ -1839,45 +1847,47 @@ mdefine_line|#define arlan_lock_card_access(dev){&bslash;&n;   writeControlRegis
 DECL|macro|arlan_unlock_card_access
 mdefine_line|#define arlan_unlock_card_access(dev){&bslash;&n;   writeControlRegister(dev,readControlRegister(dev) | ARLAN_ACCESS ); }  
 DECL|macro|ARLAN_COMMAND_RX
-mdefine_line|#define ARLAN_COMMAND_RX&t;&t;0x00001
+mdefine_line|#define ARLAN_COMMAND_RX&t;&t;0x000001
 DECL|macro|ARLAN_COMMAND_NOOP
-mdefine_line|#define ARLAN_COMMAND_NOOP&t;&t;0x00002
+mdefine_line|#define ARLAN_COMMAND_NOOP&t;&t;0x000002
 DECL|macro|ARLAN_COMMAND_NOOPINT
-mdefine_line|#define ARLAN_COMMAND_NOOPINT&t;&t;0x00004
+mdefine_line|#define ARLAN_COMMAND_NOOPINT&t;&t;0x000004
 DECL|macro|ARLAN_COMMAND_TX
-mdefine_line|#define ARLAN_COMMAND_TX&t;&t;0x00008
+mdefine_line|#define ARLAN_COMMAND_TX&t;&t;0x000008
 DECL|macro|ARLAN_COMMAND_CONF
-mdefine_line|#define ARLAN_COMMAND_CONF&t;&t;0x00010
+mdefine_line|#define ARLAN_COMMAND_CONF&t;&t;0x000010
 DECL|macro|ARLAN_COMMAND_RESET
-mdefine_line|#define ARLAN_COMMAND_RESET&t;&t;0x00020
+mdefine_line|#define ARLAN_COMMAND_RESET&t;&t;0x000020
 DECL|macro|ARLAN_COMMAND_TX_ABORT
-mdefine_line|#define ARLAN_COMMAND_TX_ABORT&t;&t;0x00040
+mdefine_line|#define ARLAN_COMMAND_TX_ABORT&t;&t;0x000040
 DECL|macro|ARLAN_COMMAND_RX_ABORT
-mdefine_line|#define ARLAN_COMMAND_RX_ABORT&t;&t;0x00080
+mdefine_line|#define ARLAN_COMMAND_RX_ABORT&t;&t;0x000080
 DECL|macro|ARLAN_COMMAND_POWERDOWN
-mdefine_line|#define ARLAN_COMMAND_POWERDOWN&t;&t;0x00100
+mdefine_line|#define ARLAN_COMMAND_POWERDOWN&t;&t;0x000100
 DECL|macro|ARLAN_COMMAND_POWERUP
-mdefine_line|#define ARLAN_COMMAND_POWERUP&t;&t;0x00200
+mdefine_line|#define ARLAN_COMMAND_POWERUP&t;&t;0x000200
 DECL|macro|ARLAN_COMMAND_SLOW_POLL
-mdefine_line|#define ARLAN_COMMAND_SLOW_POLL &t;0x00400
+mdefine_line|#define ARLAN_COMMAND_SLOW_POLL &t;0x000400
 DECL|macro|ARLAN_COMMAND_ACTIVATE
-mdefine_line|#define ARLAN_COMMAND_ACTIVATE &t;&t;0x00800
+mdefine_line|#define ARLAN_COMMAND_ACTIVATE &t;&t;0x000800
 DECL|macro|ARLAN_COMMAND_INT_ACK
-mdefine_line|#define ARLAN_COMMAND_INT_ACK&t;&t;0x01000
+mdefine_line|#define ARLAN_COMMAND_INT_ACK&t;&t;0x001000
 DECL|macro|ARLAN_COMMAND_INT_ENABLE
-mdefine_line|#define ARLAN_COMMAND_INT_ENABLE&t;0x02000
+mdefine_line|#define ARLAN_COMMAND_INT_ENABLE&t;0x002000
 DECL|macro|ARLAN_COMMAND_WAIT_NOW
-mdefine_line|#define ARLAN_COMMAND_WAIT_NOW&t;&t;0x04000
+mdefine_line|#define ARLAN_COMMAND_WAIT_NOW&t;&t;0x004000
 DECL|macro|ARLAN_COMMAND_LONG_WAIT_NOW
-mdefine_line|#define ARLAN_COMMAND_LONG_WAIT_NOW&t;0x08000
+mdefine_line|#define ARLAN_COMMAND_LONG_WAIT_NOW&t;0x008000
 DECL|macro|ARLAN_COMMAND_STANDBY
-mdefine_line|#define ARLAN_COMMAND_STANDBY&t;&t;0x10000
+mdefine_line|#define ARLAN_COMMAND_STANDBY&t;&t;0x010000
 DECL|macro|ARLAN_COMMAND_INT_RACK
-mdefine_line|#define ARLAN_COMMAND_INT_RACK&t;&t;0x20000
+mdefine_line|#define ARLAN_COMMAND_INT_RACK&t;&t;0x020000
 DECL|macro|ARLAN_COMMAND_INT_RENABLE
-mdefine_line|#define ARLAN_COMMAND_INT_RENABLE&t;0x40000
+mdefine_line|#define ARLAN_COMMAND_INT_RENABLE&t;0x040000
 DECL|macro|ARLAN_COMMAND_CONF_WAIT
-mdefine_line|#define ARLAN_COMMAND_CONF_WAIT&t;&t;0x80000
+mdefine_line|#define ARLAN_COMMAND_CONF_WAIT&t;&t;0x080000
+DECL|macro|ARLAN_COMMAND_TBUSY_CLEAR
+mdefine_line|#define ARLAN_COMMAND_TBUSY_CLEAR&t;0x100000
 DECL|macro|ARLAN_COMMAND_CLEAN_AND_CONF
 mdefine_line|#define ARLAN_COMMAND_CLEAN_AND_CONF&t;(ARLAN_COMMAND_TX_ABORT&bslash;&n;&t;&t;&t;&t;&t;| ARLAN_COMMAND_RX_ABORT&bslash;&n;&t;&t;&t;&t;&t;| ARLAN_COMMAND_CONF)
 DECL|macro|ARLAN_COMMAND_CLEAN_AND_RESET

@@ -183,169 +183,169 @@ mdefine_line|#define UDELAY udelay
 DECL|macro|MDELAY
 mdefine_line|#define MDELAY mdelay
 DECL|macro|verify_area_20
-mdefine_line|#define verify_area_20(t,a,sz)               (0) /* success */
+mdefine_line|#define verify_area_20(t,a,sz)       (0) /* success */
 DECL|macro|PUT_USER
-mdefine_line|#define PUT_USER                             put_user
+mdefine_line|#define PUT_USER                     put_user
 DECL|macro|__PUT_USER
-mdefine_line|#define __PUT_USER                           __put_user
+mdefine_line|#define __PUT_USER                   __put_user
 DECL|macro|PUT_USER_RET
-mdefine_line|#define PUT_USER_RET                         put_user_ret
+mdefine_line|#define PUT_USER_RET                 put_user_ret
 DECL|macro|GET_USER
-mdefine_line|#define GET_USER                             get_user
+mdefine_line|#define GET_USER                     get_user
 DECL|macro|__GET_USER
-mdefine_line|#define __GET_USER                           __get_user
+mdefine_line|#define __GET_USER                   __get_user
 DECL|macro|GET_USER_RET
-mdefine_line|#define GET_USER_RET                         get_user_ret
+mdefine_line|#define GET_USER_RET                 get_user_ret
 multiline_comment|/*&n; * Adapter address map equates&n; */
 DECL|macro|HISR
-mdefine_line|#define HISR                 0x08    /* Host Interrupt Status Reg   */
+mdefine_line|#define HISR                         0x08    /* Host Interrupt Status Reg   */
 DECL|macro|CCSAR
-mdefine_line|#define CCSAR                0x10    /* Cmd Channel System Addr Reg */
+mdefine_line|#define CCSAR                        0x10    /* Cmd Channel System Addr Reg */
 DECL|macro|CCCR
-mdefine_line|#define CCCR                 0x14    /* Cmd Channel Control Reg     */
+mdefine_line|#define CCCR                         0x14    /* Cmd Channel Control Reg     */
 DECL|macro|SQHR
-mdefine_line|#define SQHR                 0x20    /* Status Q Head Reg           */
+mdefine_line|#define SQHR                         0x20    /* Status Q Head Reg           */
 DECL|macro|SQTR
-mdefine_line|#define SQTR                 0x24    /* Status Q Tail Reg           */
+mdefine_line|#define SQTR                         0x24    /* Status Q Tail Reg           */
 DECL|macro|SQER
-mdefine_line|#define SQER                 0x28    /* Status Q End Reg            */
+mdefine_line|#define SQER                         0x28    /* Status Q End Reg            */
 DECL|macro|SQSR
-mdefine_line|#define SQSR                 0x2C    /* Status Q Start Reg          */
+mdefine_line|#define SQSR                         0x2C    /* Status Q Start Reg          */
 DECL|macro|SCPR
-mdefine_line|#define SCPR                 0x05    /* Subsystem control port reg  */
+mdefine_line|#define SCPR                         0x05    /* Subsystem control port reg  */
 DECL|macro|ISPR
-mdefine_line|#define ISPR                 0x06    /* interrupt status port reg   */
+mdefine_line|#define ISPR                         0x06    /* interrupt status port reg   */
 DECL|macro|CBSP
-mdefine_line|#define CBSP                 0x07    /* CBSP register               */
+mdefine_line|#define CBSP                         0x07    /* CBSP register               */
 multiline_comment|/*&n; * Adapter register bit equates&n; */
 DECL|macro|GHI
-mdefine_line|#define GHI                  0x04    /* HISR General Host Interrupt */
+mdefine_line|#define GHI                          0x04    /* HISR General Host Interrupt */
 DECL|macro|SQO
-mdefine_line|#define SQO                  0x02    /* HISR Status Q Overflow      */
+mdefine_line|#define SQO                          0x02    /* HISR Status Q Overflow      */
 DECL|macro|SCE
-mdefine_line|#define SCE                  0x01    /* HISR Status Channel Enqueue */
+mdefine_line|#define SCE                          0x01    /* HISR Status Channel Enqueue */
 DECL|macro|SEMAPHORE
-mdefine_line|#define SEMAPHORE            0x08    /* CCCR Semaphore Bit          */
+mdefine_line|#define SEMAPHORE                    0x08    /* CCCR Semaphore Bit          */
 DECL|macro|ILE
-mdefine_line|#define ILE                  0x10    /* CCCR ILE Bit                */
+mdefine_line|#define ILE                          0x10    /* CCCR ILE Bit                */
 DECL|macro|START_COMMAND
-mdefine_line|#define START_COMMAND        0x101A  /* CCCR Start Command Channel  */
+mdefine_line|#define START_COMMAND                0x101A  /* CCCR Start Command Channel  */
 DECL|macro|START_STOP_BIT
-mdefine_line|#define START_STOP_BIT       0x0002  /* CCCR Start/Stop Bit         */
+mdefine_line|#define START_STOP_BIT               0x0002  /* CCCR Start/Stop Bit         */
 DECL|macro|RST
-mdefine_line|#define RST                  0x80    /* SCPR Reset Bit              */
+mdefine_line|#define RST                          0x80    /* SCPR Reset Bit              */
 DECL|macro|EBM
-mdefine_line|#define EBM                  0x02    /* SCPR Enable Bus Master      */
+mdefine_line|#define EBM                          0x02    /* SCPR Enable Bus Master      */
 DECL|macro|EI
-mdefine_line|#define EI                   0x80    /* HISR Enable Interrupts      */
+mdefine_line|#define EI                           0x80    /* HISR Enable Interrupts      */
 DECL|macro|OP
-mdefine_line|#define OP                   0x01    /* OP bit in CBSP              */
+mdefine_line|#define OP                           0x01    /* OP bit in CBSP              */
 multiline_comment|/*&n; * Adapter Command ID Equates&n; */
 DECL|macro|GET_LOGICAL_DRIVE_INFO
-mdefine_line|#define GET_LOGICAL_DRIVE_INFO               0x19
+mdefine_line|#define GET_LOGICAL_DRIVE_INFO       0x19
 DECL|macro|GET_SUBSYS_PARAM
-mdefine_line|#define GET_SUBSYS_PARAM                     0x40
+mdefine_line|#define GET_SUBSYS_PARAM             0x40
 DECL|macro|READ_NVRAM_CONFIGURATION
-mdefine_line|#define READ_NVRAM_CONFIGURATION             0x38
+mdefine_line|#define READ_NVRAM_CONFIGURATION     0x38
 DECL|macro|RW_NVRAM_PAGE
-mdefine_line|#define RW_NVRAM_PAGE                        0xBC
+mdefine_line|#define RW_NVRAM_PAGE                0xBC
 DECL|macro|IPS_READ
-mdefine_line|#define IPS_READ                             0x02
+mdefine_line|#define IPS_READ                     0x02
 DECL|macro|IPS_WRITE
-mdefine_line|#define IPS_WRITE                            0x03
+mdefine_line|#define IPS_WRITE                    0x03
 DECL|macro|ENQUIRY
-mdefine_line|#define ENQUIRY                              0x05
+mdefine_line|#define ENQUIRY                      0x05
 DECL|macro|FLUSH_CACHE
-mdefine_line|#define FLUSH_CACHE                          0x0A
+mdefine_line|#define FLUSH_CACHE                  0x0A
 DECL|macro|NORM_STATE
-mdefine_line|#define NORM_STATE                           0x00
+mdefine_line|#define NORM_STATE                   0x00
 DECL|macro|READ_SCATTER_GATHER
-mdefine_line|#define READ_SCATTER_GATHER                  0x82
+mdefine_line|#define READ_SCATTER_GATHER          0x82
 DECL|macro|WRITE_SCATTER_GATHER
-mdefine_line|#define WRITE_SCATTER_GATHER                 0x83
+mdefine_line|#define WRITE_SCATTER_GATHER         0x83
 DECL|macro|DIRECT_CDB
-mdefine_line|#define DIRECT_CDB                           0x04
+mdefine_line|#define DIRECT_CDB                   0x04
 DECL|macro|DIRECT_CDB_SCATTER_GATHER
-mdefine_line|#define DIRECT_CDB_SCATTER_GATHER            0x84
+mdefine_line|#define DIRECT_CDB_SCATTER_GATHER    0x84
 DECL|macro|CONFIG_SYNC
-mdefine_line|#define CONFIG_SYNC                          0x58
+mdefine_line|#define CONFIG_SYNC                  0x58
 DECL|macro|POCL
-mdefine_line|#define POCL                                 0x30
+mdefine_line|#define POCL                         0x30
 DECL|macro|GET_ERASE_ERROR_TABLE
-mdefine_line|#define GET_ERASE_ERROR_TABLE                0x17
+mdefine_line|#define GET_ERASE_ERROR_TABLE        0x17
 DECL|macro|RESET_CHANNEL
-mdefine_line|#define RESET_CHANNEL                        0x1A
+mdefine_line|#define RESET_CHANNEL                0x1A
 DECL|macro|CSL
-mdefine_line|#define CSL                                  0xFF
+mdefine_line|#define CSL                          0xFF
 DECL|macro|ADAPT_RESET
-mdefine_line|#define ADAPT_RESET                          0xFF
+mdefine_line|#define ADAPT_RESET                  0xFF
 multiline_comment|/*&n; * Adapter Equates&n; */
 DECL|macro|IPS_MAX_ADAPTERS
-mdefine_line|#define IPS_MAX_ADAPTERS                     16
+mdefine_line|#define IPS_MAX_ADAPTERS             16
 DECL|macro|IPS_MAX_IOCTL
-mdefine_line|#define IPS_MAX_IOCTL                        1
+mdefine_line|#define IPS_MAX_IOCTL                1
 DECL|macro|IPS_MAX_IOCTL_QUEUE
-mdefine_line|#define IPS_MAX_IOCTL_QUEUE                  8
+mdefine_line|#define IPS_MAX_IOCTL_QUEUE          8
 DECL|macro|IPS_MAX_QUEUE
-mdefine_line|#define IPS_MAX_QUEUE                        128
+mdefine_line|#define IPS_MAX_QUEUE                128
 DECL|macro|IPS_BLKSIZE
-mdefine_line|#define IPS_BLKSIZE                          512
+mdefine_line|#define IPS_BLKSIZE                  512
 DECL|macro|MAX_SG_ELEMENTS
-mdefine_line|#define MAX_SG_ELEMENTS                      17
+mdefine_line|#define MAX_SG_ELEMENTS              17
 DECL|macro|MAX_LOGICAL_DRIVES
-mdefine_line|#define MAX_LOGICAL_DRIVES                   8
+mdefine_line|#define MAX_LOGICAL_DRIVES           8
 DECL|macro|MAX_CHANNELS
-mdefine_line|#define MAX_CHANNELS                         3
+mdefine_line|#define MAX_CHANNELS                 3
 DECL|macro|MAX_TARGETS
-mdefine_line|#define MAX_TARGETS                          15
+mdefine_line|#define MAX_TARGETS                  15
 DECL|macro|MAX_CHUNKS
-mdefine_line|#define MAX_CHUNKS                           16
+mdefine_line|#define MAX_CHUNKS                   16
 DECL|macro|MAX_CMDS
-mdefine_line|#define MAX_CMDS                             64
+mdefine_line|#define MAX_CMDS                     128
 DECL|macro|IPS_MAX_XFER
-mdefine_line|#define IPS_MAX_XFER                         0x10000
+mdefine_line|#define IPS_MAX_XFER                 0x10000
 DECL|macro|COMP_MODE_HEADS
-mdefine_line|#define COMP_MODE_HEADS                      128
+mdefine_line|#define COMP_MODE_HEADS              128
 DECL|macro|COMP_MODE_SECTORS
-mdefine_line|#define COMP_MODE_SECTORS                    32
+mdefine_line|#define COMP_MODE_SECTORS            32
 DECL|macro|NORM_MODE_HEADS
-mdefine_line|#define NORM_MODE_HEADS                      254
+mdefine_line|#define NORM_MODE_HEADS              254
 DECL|macro|NORM_MODE_SECTORS
-mdefine_line|#define NORM_MODE_SECTORS                    63
+mdefine_line|#define NORM_MODE_SECTORS            63
 DECL|macro|NVRAM_PAGE5_SIGNATURE
-mdefine_line|#define NVRAM_PAGE5_SIGNATURE                0xFFDDBB99
+mdefine_line|#define NVRAM_PAGE5_SIGNATURE        0xFFDDBB99
 DECL|macro|MAX_POST_BYTES
-mdefine_line|#define MAX_POST_BYTES                       0x02
+mdefine_line|#define MAX_POST_BYTES               0x02
 DECL|macro|MAX_CONFIG_BYTES
-mdefine_line|#define MAX_CONFIG_BYTES                     0x02
+mdefine_line|#define MAX_CONFIG_BYTES             0x02
 DECL|macro|GOOD_POST_BASIC_STATUS
-mdefine_line|#define GOOD_POST_BASIC_STATUS               0x80
+mdefine_line|#define GOOD_POST_BASIC_STATUS       0x80
 DECL|macro|SEMAPHORE_TIMEOUT
-mdefine_line|#define SEMAPHORE_TIMEOUT                    2000
+mdefine_line|#define SEMAPHORE_TIMEOUT            2000
 DECL|macro|IPS_INTR_OFF
-mdefine_line|#define IPS_INTR_OFF                         0
+mdefine_line|#define IPS_INTR_OFF                 0
 DECL|macro|IPS_INTR_ON
-mdefine_line|#define IPS_INTR_ON                          1
+mdefine_line|#define IPS_INTR_ON                  1
 DECL|macro|IPS_ADAPTER_ID
-mdefine_line|#define IPS_ADAPTER_ID                       0xF
+mdefine_line|#define IPS_ADAPTER_ID               0xF
 DECL|macro|IPS_VENDORID
-mdefine_line|#define IPS_VENDORID                         0x1014
+mdefine_line|#define IPS_VENDORID                 0x1014
 DECL|macro|IPS_DEVICEID
-mdefine_line|#define IPS_DEVICEID                         0x002E
+mdefine_line|#define IPS_DEVICEID                 0x002E
 DECL|macro|TIMEOUT_10
-mdefine_line|#define TIMEOUT_10                           0x10
+mdefine_line|#define TIMEOUT_10                   0x10
 DECL|macro|TIMEOUT_60
-mdefine_line|#define TIMEOUT_60                           0x20
+mdefine_line|#define TIMEOUT_60                   0x20
 DECL|macro|TIMEOUT_20M
-mdefine_line|#define TIMEOUT_20M                          0x30
+mdefine_line|#define TIMEOUT_20M                  0x30
 DECL|macro|STATUS_SIZE
-mdefine_line|#define STATUS_SIZE                          4
+mdefine_line|#define STATUS_SIZE                  4
 DECL|macro|STATUS_Q_SIZE
-mdefine_line|#define STATUS_Q_SIZE                        (MAX_CMDS+1) * STATUS_SIZE
+mdefine_line|#define STATUS_Q_SIZE                (MAX_CMDS+1) * STATUS_SIZE
 DECL|macro|ONE_MSEC
-mdefine_line|#define ONE_MSEC                             1
+mdefine_line|#define ONE_MSEC                     1
 DECL|macro|ONE_SEC
-mdefine_line|#define ONE_SEC                              1000
+mdefine_line|#define ONE_SEC                      1000
 multiline_comment|/*&n; * Adapter Basic Status Codes&n; */
 DECL|macro|BASIC_STATUS_MASK
 mdefine_line|#define BASIC_STATUS_MASK            0xFF
@@ -379,34 +379,34 @@ DECL|macro|PHYS_DRV_ERROR
 mdefine_line|#define PHYS_DRV_ERROR               0x0F
 multiline_comment|/*&n; * Adapter Extended Status Equates&n; */
 DECL|macro|SELECTION_TIMEOUT
-mdefine_line|#define SELECTION_TIMEOUT                    0xF0
+mdefine_line|#define SELECTION_TIMEOUT            0xF0
 DECL|macro|DATA_OVER_UNDER_RUN
-mdefine_line|#define DATA_OVER_UNDER_RUN                  0xF2
+mdefine_line|#define DATA_OVER_UNDER_RUN          0xF2
 DECL|macro|EXT_HOST_RESET
-mdefine_line|#define EXT_HOST_RESET                       0xF7
+mdefine_line|#define EXT_HOST_RESET               0xF7
 DECL|macro|EXT_DEVICE_RESET
-mdefine_line|#define EXT_DEVICE_RESET                     0xF8
+mdefine_line|#define EXT_DEVICE_RESET             0xF8
 DECL|macro|EXT_RECOVERY
-mdefine_line|#define EXT_RECOVERY                         0xFC
+mdefine_line|#define EXT_RECOVERY                 0xFC
 DECL|macro|EXT_CHECK_CONDITION
-mdefine_line|#define EXT_CHECK_CONDITION                  0xFF
+mdefine_line|#define EXT_CHECK_CONDITION          0xFF
 multiline_comment|/*&n; * Operating System Defines&n; */
 DECL|macro|OS_WINDOWS_NT
-mdefine_line|#define OS_WINDOWS_NT                        0x01
+mdefine_line|#define OS_WINDOWS_NT                0x01
 DECL|macro|OS_NETWARE
-mdefine_line|#define OS_NETWARE                           0x02
+mdefine_line|#define OS_NETWARE                   0x02
 DECL|macro|OS_OPENSERVER
-mdefine_line|#define OS_OPENSERVER                        0x03
+mdefine_line|#define OS_OPENSERVER                0x03
 DECL|macro|OS_UNIXWARE
-mdefine_line|#define OS_UNIXWARE                          0x04
+mdefine_line|#define OS_UNIXWARE                  0x04
 DECL|macro|OS_SOLARIS
-mdefine_line|#define OS_SOLARIS                           0x05
+mdefine_line|#define OS_SOLARIS                   0x05
 DECL|macro|OS_OS2
-mdefine_line|#define OS_OS2                               0x06
+mdefine_line|#define OS_OS2                       0x06
 DECL|macro|OS_LINUX
-mdefine_line|#define OS_LINUX                             0x07
+mdefine_line|#define OS_LINUX                     0x07
 DECL|macro|OS_FREEBSD
-mdefine_line|#define OS_FREEBSD                           0x08
+mdefine_line|#define OS_FREEBSD                   0x08
 multiline_comment|/*&n; * Adapter Command/Status Packet Definitions&n; */
 DECL|macro|IPS_SUCCESS
 mdefine_line|#define IPS_SUCCESS                  0x01 /* Successfully completed       */
@@ -416,15 +416,15 @@ DECL|macro|IPS_FAILURE
 mdefine_line|#define IPS_FAILURE                  0x04 /* Completed with Error         */
 multiline_comment|/*&n; * Logical Drive Equates&n; */
 DECL|macro|OFF_LINE
-mdefine_line|#define OFF_LINE             0x02
+mdefine_line|#define OFF_LINE                     0x02
 DECL|macro|OKAY
-mdefine_line|#define OKAY                 0x03
+mdefine_line|#define OKAY                         0x03
 DECL|macro|FREE
-mdefine_line|#define FREE                 0x00
+mdefine_line|#define FREE                         0x00
 DECL|macro|SYS
-mdefine_line|#define SYS                  0x06
+mdefine_line|#define SYS                          0x06
 DECL|macro|CRS
-mdefine_line|#define CRS                  0x24
+mdefine_line|#define CRS                          0x24
 multiline_comment|/*&n; * DCDB Table Equates&n; */
 DECL|macro|NO_DISCONNECT
 mdefine_line|#define NO_DISCONNECT                0x00
@@ -432,6 +432,10 @@ DECL|macro|DISCONNECT_ALLOWED
 mdefine_line|#define DISCONNECT_ALLOWED           0x80
 DECL|macro|NO_AUTO_REQUEST_SENSE
 mdefine_line|#define NO_AUTO_REQUEST_SENSE        0x40
+DECL|macro|IPS_DATA_NONE
+mdefine_line|#define IPS_DATA_NONE&t;&t;0x00
+DECL|macro|IPS_DATA_UNK
+mdefine_line|#define IPS_DATA_UNK&t;&t;&t;0x00
 DECL|macro|IPS_DATA_IN
 mdefine_line|#define IPS_DATA_IN                  0x01
 DECL|macro|IPS_DATA_OUT
@@ -2281,6 +2285,13 @@ id|ha_id
 id|MAX_CHANNELS
 op_plus
 l_int|1
+)braket
+suffix:semicolon
+DECL|member|dcdb_active
+id|u32
+id|dcdb_active
+(braket
+id|MAX_CHANNELS
 )braket
 suffix:semicolon
 DECL|member|io_addr

@@ -2454,15 +2454,12 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
 id|shp
-op_eq
-l_int|NULL
 )paren
-(brace
 r_goto
-id|out_unlock_up
+id|out_up
 suffix:semicolon
-)brace
 id|err
 op_assign
 op_minus

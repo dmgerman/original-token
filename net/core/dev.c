@@ -28,9 +28,9 @@ macro_line|#include &lt;net/pkt_sched.h&gt;
 macro_line|#include &lt;net/profile.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/kmod.h&gt;
-macro_line|#ifdef CONFIG_NET_RADIO
-macro_line|#include &lt;linux/wireless.h&gt;
-macro_line|#endif&t;/* CONFIG_NET_RADIO */
+macro_line|#if defined(CONFIG_NET_RADIO) || defined(CONFIG_NET_PCMCIA_RADIO)
+macro_line|#include &lt;linux/wireless.h&gt;&t;&t;/* Note : will define WIRELESS_EXT */
+macro_line|#endif&t;/* CONFIG_NET_RADIO || CONFIG_NET_PCMCIA_RADIO */
 macro_line|#ifdef CONFIG_PLIP
 r_extern
 r_int
@@ -4008,7 +4008,7 @@ id|len
 suffix:semicolon
 )brace
 macro_line|#endif&t;/* CONFIG_PROC_FS */
-macro_line|#ifdef CONFIG_NET_RADIO
+macro_line|#ifdef WIRELESS_EXT
 macro_line|#ifdef CONFIG_PROC_FS
 multiline_comment|/*&n; * Print one entry of /proc/net/wireless&n; * This is a clone of /proc/net/dev (just above)&n; */
 DECL|function|sprintf_wireless_stats
@@ -4335,7 +4335,7 @@ id|len
 suffix:semicolon
 )brace
 macro_line|#endif&t;/* CONFIG_PROC_FS */
-macro_line|#endif&t;/* CONFIG_NET_RADIO */
+macro_line|#endif&t;/* WIRELESS_EXT */
 DECL|function|dev_set_promiscuity
 r_void
 id|dev_set_promiscuity
@@ -5330,7 +5330,7 @@ op_minus
 id|EOPNOTSUPP
 suffix:semicolon
 )brace
-macro_line|#ifdef CONFIG_NET_RADIO
+macro_line|#ifdef WIRELESS_EXT
 r_if
 c_cond
 (paren
@@ -5366,7 +5366,7 @@ op_minus
 id|EOPNOTSUPP
 suffix:semicolon
 )brace
-macro_line|#endif&t;/* CONFIG_NET_RADIO */
+macro_line|#endif&t;/* WIRELESS_EXT */
 )brace
 r_return
 op_minus
@@ -5780,7 +5780,7 @@ r_return
 id|ret
 suffix:semicolon
 )brace
-macro_line|#ifdef CONFIG_NET_RADIO
+macro_line|#ifdef WIRELESS_EXT
 r_if
 c_cond
 (paren
@@ -5879,7 +5879,7 @@ r_return
 id|ret
 suffix:semicolon
 )brace
-macro_line|#endif&t;/* CONFIG_NET_RADIO */
+macro_line|#endif&t;/* WIRELESS_EXT */
 r_return
 op_minus
 id|EINVAL
@@ -7002,7 +7002,7 @@ comma
 l_int|NULL
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_NET_RADIO
+macro_line|#ifdef WIRELESS_EXT
 id|proc_net_create
 c_func
 (paren
@@ -7013,7 +7013,7 @@ comma
 id|dev_get_wireless_info
 )paren
 suffix:semicolon
-macro_line|#endif&t;/* CONFIG_NET_RADIO */
+macro_line|#endif&t;/* WIRELESS_EXT */
 macro_line|#endif&t;/* CONFIG_PROC_FS */
 id|init_bh
 c_func

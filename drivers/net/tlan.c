@@ -1,4 +1,4 @@
-multiline_comment|/********************************************************************&n; *&n; *  Linux ThunderLAN Driver&n; *&n; *  tlan.c&n; *  by James Banks&n; *&n; *  (C) 1997-1998 Caldera, Inc.&n; *  (C) 1998 James Banks&n; *&n; *  This software may be used and distributed according to the terms&n; *  of the GNU Public License, incorporated herein by reference.&n; *&n; ** This file is best viewed/edited with columns&gt;=132.&n; *&n; ** Useful (if not required) reading:&n; *&n; *&t;&t;Texas Instruments, ThunderLAN Programmer&squot;s Guide,&n; *&t;&t;&t;TI Literature Number SPWU013A&n; *&t;&t;&t;available in PDF format from www.ti.com&n; *&t;&t;Level One, LXT901 and LXT970 Data Sheets&n; *&t;&t;&t;available in PDF format from www.level1.com&n; *&t;&t;National Semiconductor, DP83840A Data Sheet&n; *&t;&t;&t;available in PDF format from www.national.com&n; *&t;&t;Microchip Technology, 24C01A/02A/04A Data Sheet&n; *&t;&t;&t;available in PDF format from www.microchip.com&n; *&n; * Change History&n; *&n; *&t;Tigran Aivazian &lt;tigran@sco.com&gt;:&t;TLan_PciProbe() now uses&n; *&t;&t;&t;&t;&t;&t;new PCI BIOS interface.&n; *&t;Alan Cox&t;&lt;alan@redhat.com&gt;:&t;Fixed the out of memory&n; *&t;&t;&t;&t;&t;&t;handling.&n; *      &n; *&t;Torben Mathiasen &lt;torben.mathiasen@compaq.com&gt; New Maintainer!&n; *&n; ********************************************************************/
+multiline_comment|/********************************************************************&n; *&n; *  Linux ThunderLAN Driver&n; *&n; *  tlan.c&n; *  by James Banks&n; *&n; *  (C) 1997-1998 Caldera, Inc.&n; *  (C) 1998 James Banks&n; *&n; *  This software may be used and distributed according to the terms&n; *  of the GNU Public License, incorporated herein by reference.&n; *&n; ** This file is best viewed/edited with columns&gt;=132.&n; *&n; ** Useful (if not required) reading:&n; *&n; *&t;&t;Texas Instruments, ThunderLAN Programmer&squot;s Guide,&n; *&t;&t;&t;TI Literature Number SPWU013A&n; *&t;&t;&t;available in PDF format from www.ti.com&n; *&t;&t;Level One, LXT901 and LXT970 Data Sheets&n; *&t;&t;&t;available in PDF format from www.level1.com&n; *&t;&t;National Semiconductor, DP83840A Data Sheet&n; *&t;&t;&t;available in PDF format from www.national.com&n; *&t;&t;Microchip Technology, 24C01A/02A/04A Data Sheet&n; *&t;&t;&t;available in PDF format from www.microchip.com&n; *&n; * Change History&n; *&n; *&t;Tigran Aivazian &lt;tigran@sco.com&gt;:&t;TLan_PciProbe() now uses&n; *&t;&t;&t;&t;&t;&t;new PCI BIOS interface.&n; *&t;Alan Cox&t;&lt;alan@redhat.com&gt;:&t;Fixed the out of memory&n; *&t;&t;&t;&t;&t;&t;handling.&n; *      &n; *&t;Torben Mathiasen &lt;torben.mathiasen@compaq.com&gt; New Maintainer!&n; *&n; *&t;v1.1 Dec 20 --&t;Removed linux version checking(patch from &n; *&t;&t;&t;Tigran Aivazian). v1.1 includes Alan&squot;s SMP&n; *&t;&t;&t;opdates. We still have problems on SMP though,&n; *&t;&t;&t;but I&squot;m looking into that. &n; *&n; ********************************************************************/
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &quot;tlan.h&quot;
 macro_line|#include &lt;linux/ioport.h&gt;
@@ -149,7 +149,7 @@ r_static
 r_int
 id|TLanVersionMinor
 op_assign
-l_int|0
+l_int|1
 suffix:semicolon
 DECL|variable|TLanAdapterList
 r_static
@@ -3834,12 +3834,10 @@ l_string|&quot;TLAN:  Received interrupt for uncompleted TX frame.&bslash;n&quot
 )paren
 suffix:semicolon
 )brace
-macro_line|#if LINUX_VERSION_CODE &gt; KERNEL_VERSION(2,1,0)
 id|priv-&gt;stats.tx_bytes
 op_add_assign
 id|head_list-&gt;frameSize
 suffix:semicolon
-macro_line|#endif
 id|head_list-&gt;cStat
 op_assign
 id|TLAN_CSTAT_UNUSED
@@ -4193,12 +4191,10 @@ comma
 id|head_list-&gt;frameSize
 )paren
 suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &gt; KERNEL_VERSION(2,1,0)
 id|priv-&gt;stats.rx_bytes
 op_add_assign
 id|head_list-&gt;frameSize
 suffix:semicolon
-macro_line|#endif
 id|memcpy
 c_func
 (paren
@@ -4286,12 +4282,10 @@ comma
 id|head_list-&gt;frameSize
 )paren
 suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &gt; KERNEL_VERSION(2,1,0)
 id|priv-&gt;stats.rx_bytes
 op_add_assign
 id|head_list-&gt;frameSize
 suffix:semicolon
-macro_line|#endif
 id|skb-&gt;protocol
 op_assign
 id|eth_type_trans
@@ -8736,9 +8730,6 @@ id|TLanPrivateInfo
 op_star
 )paren
 id|dev-&gt;priv
-suffix:semicolon
-r_int
-id|irq
 suffix:semicolon
 r_int
 r_int

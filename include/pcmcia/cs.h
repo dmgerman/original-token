@@ -1566,6 +1566,10 @@ comma
 id|win_req_t
 op_star
 id|req
+comma
+id|window_handle_t
+op_star
+id|wh
 )paren
 suffix:semicolon
 r_int

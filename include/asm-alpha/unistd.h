@@ -583,6 +583,8 @@ DECL|macro|__NR_setresgid
 mdefine_line|#define __NR_setresgid&t;&t;&t;371
 DECL|macro|__NR_getresgid
 mdefine_line|#define __NR_getresgid&t;&t;&t;372
+DECL|macro|__NR_dipc
+mdefine_line|#define __NR_dipc&t;&t;&t;373
 macro_line|#if defined(__LIBRARY__) &amp;&amp; defined(__GNUC__)
 DECL|macro|_syscall_return
 mdefine_line|#define _syscall_return(type)&t;&t;&t;&t;&t;&t;&bslash;&n;&t;return (_sc_err ? errno = _sc_ret, _sc_ret = -1L : 0), (type) _sc_ret

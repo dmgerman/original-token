@@ -26,8 +26,8 @@ r_char
 op_star
 id|format_topo
 op_assign
-multiline_comment|/* T:  Lev=dd Prnt=dd Port=dd Cnt=dd Dev#=ddd Spd=ddd MxCh=dd */
-l_string|&quot;T:  Lev=%2.2d Prnt=%2.2d Port=%2.2d Cnt=%2.2d Dev#=%3d Spd=%3s MxCh=%2d&bslash;n&quot;
+multiline_comment|/* T:  Bus=dd Lev=dd Prnt=dd Port=dd Cnt=dd Dev#=ddd Spd=ddd MxCh=dd */
+l_string|&quot;T:  Bus=%2.2d Lev=%2.2d Prnt=%2.2d Port=%2.2d Cnt=%2.2d Dev#=%3d Spd=%3s MxCh=%2d&bslash;n&quot;
 suffix:semicolon
 DECL|variable|format_string_manufacturer
 r_static
@@ -1498,6 +1498,9 @@ op_star
 id|usbdev
 comma
 r_int
+id|bus
+comma
+r_int
 id|level
 comma
 r_int
@@ -1553,6 +1556,8 @@ c_func
 id|start
 comma
 id|format_topo
+comma
+id|bus
 comma
 id|level
 comma
@@ -1661,6 +1666,8 @@ id|usbdev-&gt;children
 id|chix
 )braket
 comma
+id|bus
+comma
 id|level
 op_plus
 l_int|1
@@ -1729,6 +1736,11 @@ r_int
 id|pos
 comma
 id|len
+suffix:semicolon
+r_int
+id|busnum
+op_assign
+l_int|0
 suffix:semicolon
 r_if
 c_cond
@@ -1819,6 +1831,9 @@ suffix:semicolon
 id|buslist
 op_assign
 id|buslist-&gt;next
+comma
+op_increment
+id|busnum
 )paren
 (brace
 multiline_comment|/* print bandwidth allocation */
@@ -1883,6 +1898,8 @@ l_int|100
 )paren
 comma
 id|bus-&gt;root_hub
+comma
+id|busnum
 comma
 l_int|0
 comma

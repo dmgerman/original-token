@@ -686,7 +686,7 @@ id|regs
 )paren
 suffix:semicolon
 macro_line|#endif
-id|smp_message_recv
+id|pmac_smp_message_recv
 c_func
 (paren
 )paren

@@ -898,6 +898,12 @@ op_star
 )paren
 id|dev_id
 suffix:semicolon
+id|US_DEBUGP
+c_func
+(paren
+l_string|&quot;pop_CBI_irq() called!!&bslash;n&quot;
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -918,7 +924,14 @@ op_star
 id|buffer
 )paren
 suffix:semicolon
-multiline_comment|/* US_DEBUGP(&quot;Interrupt Status %x&bslash;n&quot;, us-&gt;ip_data); */
+id|US_DEBUGP
+c_func
+(paren
+l_string|&quot;Interrupt Status %x&bslash;n&quot;
+comma
+id|us-&gt;ip_data
+)paren
+suffix:semicolon
 )brace
 r_if
 c_cond
@@ -1124,6 +1137,7 @@ id|done_start
 op_assign
 l_int|0
 suffix:semicolon
+multiline_comment|/* we&squot;ll try this up to 5 times? */
 r_while
 c_loop
 (paren
@@ -1320,6 +1334,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
+multiline_comment|/* switch */
 id|result
 op_assign
 id|usb_control_msg
@@ -1354,6 +1369,15 @@ op_star
 l_int|5
 )paren
 suffix:semicolon
+id|US_DEBUGP
+c_func
+(paren
+l_string|&quot;First usb_control_msg returns %d&bslash;n&quot;
+comma
+id|result
+)paren
+suffix:semicolon
+multiline_comment|/* For UFI, if this is the first time we&squot;ve sent this TEST_UNIT_READY &n;&t;&t;&t; * command, we can try again&n;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -1364,20 +1388,31 @@ op_logical_and
 id|us-&gt;subclass
 op_eq
 id|US_SC_UFI
-multiline_comment|/*|| us-&gt;subclass == US_SC_8070*/
 )paren
 op_logical_and
+(paren
 id|cmd
 (braket
 l_int|0
 )braket
 op_eq
 id|TEST_UNIT_READY
+)paren
 op_logical_and
+(paren
 id|result
+OL
+l_int|0
+)paren
 )paren
 (brace
 multiline_comment|/* as per spec try a start command, wait and retry */
+id|wait_ms
+c_func
+(paren
+l_int|100
+)paren
+suffix:semicolon
 id|done_start
 op_increment
 suffix:semicolon
@@ -1443,12 +1478,15 @@ op_star
 l_int|5
 )paren
 suffix:semicolon
-id|wait_ms
+id|US_DEBUGP
 c_func
 (paren
-l_int|100
+l_string|&quot;Next usb_control_msg returns %d&bslash;n&quot;
+comma
+id|result
 )paren
 suffix:semicolon
+multiline_comment|/* allow another retry */
 id|retry
 op_increment
 suffix:semicolon
@@ -1458,6 +1496,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
+multiline_comment|/* !US_FL_FIXED_COMMAND */
 id|result
 op_assign
 id|usb_control_msg
@@ -1493,6 +1532,7 @@ l_int|5
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* return an answer if we&squot;ve got one */
 r_if
 c_cond
 (paren
@@ -1505,6 +1545,7 @@ r_return
 id|result
 suffix:semicolon
 )brace
+multiline_comment|/* all done -- return our status */
 r_return
 id|result
 suffix:semicolon
@@ -1717,59 +1758,7 @@ id|us-&gt;ip_wanted
 op_assign
 l_int|1
 suffix:semicolon
-id|us-&gt;irqpipe
-op_assign
-id|usb_rcvintpipe
-c_func
-(paren
-id|us-&gt;pusb_dev
-comma
-id|us-&gt;ep_int
-)paren
-suffix:semicolon
-id|result
-op_assign
-id|usb_request_irq
-c_func
-(paren
-id|us-&gt;pusb_dev
-comma
-id|us-&gt;irqpipe
-comma
-id|pop_CBI_irq
-comma
-id|IRQ_PERIOD
-comma
-(paren
-r_void
-op_star
-)paren
-id|us
-comma
-op_amp
-id|us-&gt;irq_handle
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|result
-)paren
-(brace
-id|US_DEBUGP
-c_func
-(paren
-l_string|&quot;usb_request_irq failed (0x%x), No interrupt for CBI&bslash;n&quot;
-comma
-id|result
-)paren
-suffix:semicolon
-r_return
-id|DID_ABORT
-op_lshift
-l_int|16
-suffix:semicolon
-)brace
+multiline_comment|/* go to sleep until we get this interrup */
 id|sleep_on
 c_func
 (paren
@@ -1777,22 +1766,7 @@ op_amp
 id|us-&gt;ip_waitq
 )paren
 suffix:semicolon
-macro_line|#ifdef REWRITE_PROJECT
-id|usb_release_irq
-c_func
-(paren
-id|us-&gt;pusb_dev
-comma
-id|us-&gt;irq_handle
-comma
-id|us-&gt;irqpipe
-)paren
-suffix:semicolon
-id|us-&gt;irq_handle
-op_assign
-l_int|NULL
-suffix:semicolon
-macro_line|#endif
+multiline_comment|/* NO! We don&squot;t release this IRQ.  We just re-use the handler &n;&t;&t;   usb_release_irq(us-&gt;pusb_dev, us-&gt;irq_handle, us-&gt;irqpipe);&n;&t;&t;   us-&gt;irq_handle = NULL;&n;&t;&t;*/
 r_if
 c_cond
 (paren
@@ -1941,6 +1915,18 @@ id|srb
 r_int
 id|result
 suffix:semicolon
+id|US_DEBUGP
+c_func
+(paren
+l_string|&quot;CBI gets a command:&bslash;n&quot;
+)paren
+suffix:semicolon
+id|us_show_command
+c_func
+(paren
+id|srb
+)paren
+suffix:semicolon
 multiline_comment|/* run the command */
 r_if
 c_cond
@@ -1954,12 +1940,14 @@ c_func
 id|srb
 )paren
 )paren
+OL
+l_int|0
 )paren
 (brace
 id|US_DEBUGP
 c_func
 (paren
-l_string|&quot;CBI command %x&bslash;n&quot;
+l_string|&quot;Call to pop_CB_command returned %d&bslash;n&quot;
 comma
 id|result
 )paren
@@ -2023,21 +2011,29 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+(paren
 id|result
+OL
+l_int|0
+)paren
 op_logical_and
+(paren
 id|result
 op_ne
 id|USB_ST_DATAUNDERRUN
+)paren
 op_logical_and
+(paren
 id|result
 op_ne
 id|USB_ST_STALL
+)paren
 )paren
 (brace
 id|US_DEBUGP
 c_func
 (paren
-l_string|&quot;CBI transfer %x&bslash;n&quot;
+l_string|&quot;CBI attempted to transfer data, result is %x&bslash;n&quot;
 comma
 id|result
 )paren
@@ -2730,6 +2726,8 @@ id|sht-&gt;proc_name
 suffix:semicolon
 id|sht-&gt;proc_name
 op_assign
+l_int|NULL
+suffix:semicolon
 id|sht-&gt;name
 op_assign
 l_int|NULL
@@ -3022,10 +3020,12 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+multiline_comment|/***********************************************************************&n; * /proc/scsi/ functions&n; ***********************************************************************/
+multiline_comment|/* we use this macro to help us write into the buffer */
 DECL|macro|SPRINTF
 macro_line|#undef SPRINTF
 DECL|macro|SPRINTF
-mdefine_line|#define SPRINTF(args...) { if (pos &lt; (buffer + length)) pos += sprintf (pos, ## args); }
+mdefine_line|#define SPRINTF(args...) do { if (pos &lt; (buffer + length)) pos += sprintf (pos, ## args); } while (0)
 DECL|function|usb_scsi_proc_info
 r_int
 id|usb_scsi_proc_info
@@ -3067,17 +3067,7 @@ id|buffer
 suffix:semicolon
 r_char
 op_star
-id|vendor
-suffix:semicolon
-r_char
-op_star
-id|product
-suffix:semicolon
-r_char
-op_star
-id|style
-op_assign
-l_string|&quot;&quot;
+id|tmp_ptr
 suffix:semicolon
 multiline_comment|/* find our data from hostno */
 r_while
@@ -3100,6 +3090,7 @@ op_assign
 id|us-&gt;next
 suffix:semicolon
 )brace
+multiline_comment|/* if we couldn&squot;t find it, we return an error */
 r_if
 c_cond
 (paren
@@ -3110,7 +3101,7 @@ r_return
 op_minus
 id|ESRCH
 suffix:semicolon
-multiline_comment|/* null on outward */
+multiline_comment|/* if someone is sending us data, just throw it away */
 r_if
 c_cond
 (paren
@@ -3119,15 +3110,44 @@ id|inout
 r_return
 id|length
 suffix:semicolon
+multiline_comment|/* print the controler name */
+id|SPRINTF
+(paren
+l_string|&quot;Host scsi%d: usb-scsi&bslash;n&quot;
+comma
+id|hostno
+)paren
+suffix:semicolon
+multiline_comment|/* print product and vendor strings */
 r_if
 c_cond
 (paren
 op_logical_neg
 id|us-&gt;pusb_dev
-op_logical_or
-op_logical_neg
+)paren
+(brace
+id|SPRINTF
+c_func
 (paren
-id|vendor
+l_string|&quot;Vendor: Unknown Vendor&bslash;n&quot;
+)paren
+suffix:semicolon
+id|SPRINTF
+c_func
+(paren
+l_string|&quot;Product: Unknown Product&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
+id|SPRINTF
+c_func
+(paren
+l_string|&quot;Vendor: &quot;
+)paren
+suffix:semicolon
+id|tmp_ptr
 op_assign
 id|usb_string
 c_func
@@ -3136,21 +3156,35 @@ id|us-&gt;pusb_dev
 comma
 id|us-&gt;pusb_dev-&gt;descriptor.iManufacturer
 )paren
-)paren
-)paren
-id|vendor
-op_assign
-l_string|&quot;?&quot;
 suffix:semicolon
 r_if
 c_cond
 (paren
 op_logical_neg
-id|us-&gt;pusb_dev
-op_logical_or
-op_logical_neg
+id|tmp_ptr
+)paren
+id|SPRINTF
+c_func
 (paren
-id|product
+l_string|&quot;Unknown Vendor&bslash;n&quot;
+)paren
+suffix:semicolon
+r_else
+id|SPRINTF
+c_func
+(paren
+l_string|&quot;%s&bslash;n&quot;
+comma
+id|tmp_ptr
+)paren
+suffix:semicolon
+id|SPRINTF
+c_func
+(paren
+l_string|&quot;Product: &quot;
+)paren
+suffix:semicolon
+id|tmp_ptr
 op_assign
 id|usb_string
 c_func
@@ -3159,11 +3193,34 @@ id|us-&gt;pusb_dev
 comma
 id|us-&gt;pusb_dev-&gt;descriptor.iProduct
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|tmp_ptr
 )paren
+id|SPRINTF
+c_func
+(paren
+l_string|&quot;Unknown Vendor&bslash;n&quot;
 )paren
-id|product
-op_assign
-l_string|&quot;?&quot;
+suffix:semicolon
+r_else
+id|SPRINTF
+c_func
+(paren
+l_string|&quot;%s&bslash;n&quot;
+comma
+id|tmp_ptr
+)paren
+suffix:semicolon
+)brace
+id|SPRINTF
+c_func
+(paren
+l_string|&quot;Protocol: &quot;
+)paren
 suffix:semicolon
 r_switch
 c_cond
@@ -3174,60 +3231,60 @@ id|us-&gt;protocol
 r_case
 id|US_PR_CB
 suffix:colon
-id|style
-op_assign
-l_string|&quot;Control/Bulk&quot;
+id|SPRINTF
+c_func
+(paren
+l_string|&quot;Control/Bulk&bslash;n&quot;
+)paren
 suffix:semicolon
 r_break
 suffix:semicolon
 r_case
 id|US_PR_CBI
 suffix:colon
-id|style
-op_assign
-l_string|&quot;Control/Bulk/Interrupt&quot;
+id|SPRINTF
+c_func
+(paren
+l_string|&quot;Control/Bulk/Interrupt&bslash;n&quot;
+)paren
 suffix:semicolon
 r_break
 suffix:semicolon
 r_case
-id|US_PR_ZIP
+id|US_PR_BULK
 suffix:colon
-id|style
-op_assign
-l_string|&quot;Bulk only&quot;
+id|SPRINTF
+c_func
+(paren
+l_string|&quot;Bulk only&bslash;n&quot;
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_default
+suffix:colon
+id|SPRINTF
+c_func
+(paren
+l_string|&quot;Unknown Protocol&bslash;n&quot;
+)paren
 suffix:semicolon
 r_break
 suffix:semicolon
 )brace
+multiline_comment|/* show the GUID of the device */
 id|SPRINTF
+c_func
 (paren
-l_string|&quot;Host scsi%d: usb-scsi&bslash;n&quot;
-comma
-id|hostno
-)paren
-suffix:semicolon
-id|SPRINTF
-(paren
-l_string|&quot;Device: %s %s - GUID &quot;
+l_string|&quot;GUID: &quot;
 id|GUID_FORMAT
 l_string|&quot;&bslash;n&quot;
-comma
-id|vendor
-comma
-id|product
 comma
 id|GUID_ARGS
 c_func
 (paren
 id|us-&gt;guid
 )paren
-)paren
-suffix:semicolon
-id|SPRINTF
-(paren
-l_string|&quot;Style: %s&bslash;n&quot;
-comma
-id|style
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * Calculate start of next buffer, and return value.&n;&t; */
@@ -3443,9 +3500,6 @@ id|__us
 suffix:semicolon
 r_int
 id|action
-suffix:semicolon
-r_int
-id|i
 suffix:semicolon
 id|lock_kernel
 c_func
@@ -4428,6 +4482,49 @@ l_int|0
 r_case
 id|INQUIRY
 suffix:colon
+r_if
+c_cond
+(paren
+(paren
+(paren
+(paren
+r_int
+r_char
+op_star
+)paren
+id|us-&gt;srb-&gt;request_buffer
+)paren
+(braket
+l_int|2
+)braket
+op_amp
+l_int|0x7
+)paren
+op_eq
+l_int|0
+)paren
+(brace
+id|US_DEBUGP
+c_func
+(paren
+l_string|&quot;Fixing INQUIRY data, setting SCSI rev to 2&bslash;n&quot;
+)paren
+suffix:semicolon
+(paren
+(paren
+r_int
+r_char
+op_star
+)paren
+id|us-&gt;srb-&gt;request_buffer
+)paren
+(braket
+l_int|2
+)braket
+op_or_assign
+l_int|2
+suffix:semicolon
+)brace
 multiline_comment|/* FALL THROUGH */
 r_case
 id|REQUEST_SENSE
@@ -4874,8 +4971,7 @@ multiline_comment|/* exit the loop on any other signal */
 )brace
 )brace
 )brace
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
+singleline_comment|//  MOD_DEC_USE_COUNT;
 id|printk
 c_func
 (paren
@@ -5400,7 +5496,7 @@ multiline_comment|/* set the handler pointers based on the protocol */
 id|US_DEBUGP
 c_func
 (paren
-l_string|&quot;Protocol &quot;
+l_string|&quot;Protocol: &quot;
 )paren
 suffix:semicolon
 r_switch
@@ -5448,7 +5544,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 r_case
-id|US_PR_ZIP
+id|US_PR_BULK
 suffix:colon
 id|US_DEBUGPX
 c_func
@@ -5471,7 +5567,7 @@ suffix:colon
 id|US_DEBUGPX
 c_func
 (paren
-l_string|&quot;Oh Crap! I don&squot;t understand this protocol!&quot;
+l_string|&quot;Unknown&bslash;n&quot;
 )paren
 suffix:semicolon
 id|kfree
@@ -5686,61 +5782,6 @@ r_return
 l_int|NULL
 suffix:semicolon
 )brace
-multiline_comment|/* If there are configuration or interface strings, let&squot;s show them */
-r_if
-c_cond
-(paren
-id|dev-&gt;actconfig-&gt;iConfiguration
-op_logical_and
-id|usb_string
-c_func
-(paren
-id|dev
-comma
-id|dev-&gt;actconfig-&gt;iConfiguration
-)paren
-)paren
-id|US_DEBUGP
-c_func
-(paren
-l_string|&quot;Configuration %s&bslash;n&quot;
-comma
-id|usb_string
-c_func
-(paren
-id|dev
-comma
-id|dev-&gt;actconfig-&gt;iConfiguration
-)paren
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|interface-&gt;iInterface
-op_logical_and
-id|usb_string
-c_func
-(paren
-id|dev
-comma
-id|interface-&gt;iInterface
-)paren
-)paren
-id|US_DEBUGP
-c_func
-(paren
-l_string|&quot;Interface %s&bslash;n&quot;
-comma
-id|usb_string
-c_func
-(paren
-id|dev
-comma
-id|interface-&gt;iInterface
-)paren
-)paren
-suffix:semicolon
 multiline_comment|/* If this is a new device (i.e. we haven&squot;t seen it before), we need to&n;&t; * generate a scsi host definition, and register with scsi above us &n;&t; */
 r_if
 c_cond
@@ -5781,7 +5822,7 @@ multiline_comment|/* set class specific stuff */
 id|US_DEBUGP
 c_func
 (paren
-l_string|&quot;SubClass &quot;
+l_string|&quot;SubClass: &quot;
 )paren
 suffix:semicolon
 r_switch
@@ -5859,7 +5900,7 @@ suffix:colon
 id|US_DEBUGPX
 c_func
 (paren
-l_string|&quot; UFF&bslash;n&quot;
+l_string|&quot;UFI&bslash;n&quot;
 )paren
 suffix:semicolon
 id|ss-&gt;flags
@@ -5877,7 +5918,7 @@ suffix:colon
 id|US_DEBUGPX
 c_func
 (paren
-l_string|&quot; Unknown&bslash;n&quot;
+l_string|&quot;Unknown&bslash;n&quot;
 )paren
 suffix:semicolon
 r_break
@@ -6127,6 +6168,10 @@ id|ss-&gt;protocol
 op_eq
 id|US_PR_CBI
 )paren
+(brace
+r_int
+id|result
+suffix:semicolon
 id|init_waitqueue_head
 c_func
 (paren
@@ -6134,6 +6179,57 @@ op_amp
 id|ss-&gt;ip_waitq
 )paren
 suffix:semicolon
+multiline_comment|/* set up the IRQ pipe and handler */
+multiline_comment|/* FIXME: This needs to get the period from the device */
+id|ss-&gt;irqpipe
+op_assign
+id|usb_rcvintpipe
+c_func
+(paren
+id|ss-&gt;pusb_dev
+comma
+id|ss-&gt;ep_int
+)paren
+suffix:semicolon
+id|result
+op_assign
+id|usb_request_irq
+c_func
+(paren
+id|ss-&gt;pusb_dev
+comma
+id|ss-&gt;irqpipe
+comma
+id|pop_CBI_irq
+comma
+l_int|255
+comma
+(paren
+r_void
+op_star
+)paren
+id|ss
+comma
+op_amp
+id|ss-&gt;irq_handle
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|result
+)paren
+(brace
+id|US_DEBUGP
+c_func
+(paren
+l_string|&quot;usb_request_irq failed (0x%x), No interrupt for CBI&bslash;n&quot;
+comma
+id|result
+)paren
+suffix:semicolon
+)brace
+)brace
 multiline_comment|/* start up our thread */
 (brace
 id|DECLARE_MUTEX_LOCKED
@@ -6327,8 +6423,7 @@ id|ss-&gt;pusb_dev
 op_assign
 l_int|NULL
 suffix:semicolon
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
+singleline_comment|//  MOD_DEC_USE_COUNT;
 )brace
 multiline_comment|/***********************************************************************&n; * Initialization and registration&n; ***********************************************************************/
 DECL|function|usb_scsi_init
@@ -6339,8 +6434,7 @@ c_func
 r_void
 )paren
 (brace
-id|MOD_INC_USE_COUNT
-suffix:semicolon
+singleline_comment|//  MOD_INC_USE_COUNT;
 r_if
 c_cond
 (paren

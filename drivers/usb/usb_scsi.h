@@ -65,9 +65,8 @@ DECL|macro|US_PR_CB
 mdefine_line|#define US_PR_CB&t;1&t;&t;/* Control/Bulk w/o interrupt */
 DECL|macro|US_PR_CBI
 mdefine_line|#define US_PR_CBI&t;0&t;&t;/* Control/Bulk/Interrupt */
-DECL|macro|US_PR_ZIP
-mdefine_line|#define US_PR_ZIP&t;0x50&t;&t;/* bulk only */
-multiline_comment|/* #define US_PR_BULK&t;?? */
+DECL|macro|US_PR_BULK
+mdefine_line|#define US_PR_BULK&t;0x50&t;&t;/* bulk only */
 multiline_comment|/*&n; * Bulk only data structures (Zip 100, for example)&n; */
 DECL|struct|bulk_cb_wrap
 r_struct

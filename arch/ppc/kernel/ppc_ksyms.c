@@ -9,6 +9,7 @@ macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/vt_kern.h&gt;
 macro_line|#include &lt;linux/nvram.h&gt;
 macro_line|#include &lt;linux/spinlock.h&gt;
+macro_line|#include &lt;linux/console.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;asm/semaphore.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;
@@ -1257,6 +1258,13 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|get_wchan
+)paren
+suffix:semicolon
+DECL|variable|console_drivers
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|console_drivers
 )paren
 suffix:semicolon
 eof

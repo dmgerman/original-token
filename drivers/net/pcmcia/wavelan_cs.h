@@ -41,9 +41,9 @@ macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;linux/if_arp.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
-macro_line|#ifdef CONFIG_NET_RADIO
+macro_line|#ifdef CONFIG_NET_PCMCIA_RADIO
 macro_line|#include &lt;linux/wireless.h&gt;&t;&t;/* Wireless extensions */
-macro_line|#endif
+macro_line|#endif&t;/* CONFIG_NET_PCMCIA_RADIO */
 multiline_comment|/* Pcmcia headers that we need */
 macro_line|#include &lt;pcmcia/cs_types.h&gt;
 macro_line|#include &lt;pcmcia/cs.h&gt;

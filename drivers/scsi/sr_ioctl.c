@@ -191,6 +191,8 @@ dot
 id|device
 comma
 l_int|1
+comma
+id|FALSE
 )paren
 suffix:semicolon
 multiline_comment|/* use ISA DMA buffer if necessary */
@@ -603,13 +605,6 @@ op_assign
 id|SCpnt-&gt;result
 suffix:semicolon
 multiline_comment|/* Wake up a process waiting for device */
-id|wake_up
-c_func
-(paren
-op_amp
-id|SCpnt-&gt;device-&gt;device_wait
-)paren
-suffix:semicolon
 id|scsi_release_command
 c_func
 (paren

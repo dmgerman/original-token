@@ -2533,7 +2533,7 @@ id|console
 id|lpcons
 op_assign
 (brace
-l_string|&quot;lp&quot;
+l_string|&quot;lp0&quot;
 comma
 id|lp_console_write
 comma

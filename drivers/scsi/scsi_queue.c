@@ -116,10 +116,6 @@ id|host-&gt;host_blocked
 op_assign
 id|TRUE
 suffix:semicolon
-id|cmd-&gt;host_wait
-op_assign
-id|TRUE
-suffix:semicolon
 )brace
 r_else
 (brace
@@ -150,10 +146,6 @@ suffix:semicolon
 )brace
 )brace
 id|cmd-&gt;device-&gt;device_blocked
-op_assign
-id|TRUE
-suffix:semicolon
-id|cmd-&gt;device_wait
 op_assign
 id|TRUE
 suffix:semicolon

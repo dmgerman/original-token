@@ -561,6 +561,20 @@ id|q
 )paren
 suffix:semicolon
 r_extern
+r_void
+id|scsi_queue_next_request
+c_func
+(paren
+id|request_queue_t
+op_star
+id|q
+comma
+id|Scsi_Cmnd
+op_star
+id|SCpnt
+)paren
+suffix:semicolon
+r_extern
 r_int
 id|scsi_insert_special_cmd
 c_func
@@ -667,6 +681,8 @@ c_func
 (paren
 id|Scsi_Device
 op_star
+comma
+r_int
 comma
 r_int
 )paren
@@ -783,9 +799,9 @@ op_star
 id|prev
 suffix:semicolon
 multiline_comment|/* Used for linked list */
-DECL|member|device_wait
+DECL|member|scpnt_wait
 id|wait_queue_head_t
-id|device_wait
+id|scpnt_wait
 suffix:semicolon
 multiline_comment|/* Used to wait if&n;&t;&t;&t;&t;&t;   device is busy */
 DECL|member|host
@@ -1358,19 +1374,6 @@ multiline_comment|/*&n;&t; * Used to indicate that a command which has timed out
 DECL|member|done_late
 r_int
 id|done_late
-suffix:colon
-l_int|1
-suffix:semicolon
-multiline_comment|/*&n;&t; * These two flags are used to track commands that are in the&n;&t; * mid-level queue.  The idea is that a command can be there for&n;&t; * one of two reasons - either the host is busy or the device is&n;&t; * busy.  Thus when a command on the host finishes, we only try&n;&t; * and requeue commands that we might expect to be queueable.&n;&t; */
-DECL|member|host_wait
-r_int
-id|host_wait
-suffix:colon
-l_int|1
-suffix:semicolon
-DECL|member|device_wait
-r_int
-id|device_wait
 suffix:colon
 l_int|1
 suffix:semicolon

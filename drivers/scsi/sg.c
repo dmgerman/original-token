@@ -35,6 +35,13 @@ macro_line|#include &quot;scsi.h&quot;
 macro_line|#include &quot;hosts.h&quot;
 macro_line|#include &lt;scsi/scsi_ioctl.h&gt;
 macro_line|#include &lt;scsi/sg.h&gt;
+DECL|variable|sg_request_lock
+r_static
+id|spinlock_t
+id|sg_request_lock
+op_assign
+id|SPIN_LOCK_UNLOCKED
+suffix:semicolon
 DECL|variable|sg_big_buff
 r_int
 id|sg_big_buff
@@ -2230,6 +2237,8 @@ id|filp-&gt;f_flags
 op_amp
 id|O_NONBLOCK
 )paren
+comma
+id|TRUE
 )paren
 )paren
 )paren
@@ -2244,6 +2253,21 @@ comma
 l_int|0
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|signal_pending
+c_func
+(paren
+id|current
+)paren
+)paren
+(brace
+r_return
+op_minus
+id|EINTR
+suffix:semicolon
+)brace
 r_return
 op_minus
 id|EAGAIN
@@ -5538,7 +5562,7 @@ id|spin_lock_irqsave
 c_func
 (paren
 op_amp
-id|io_request_lock
+id|sg_request_lock
 comma
 id|flags
 )paren
@@ -5588,7 +5612,7 @@ id|spin_unlock_irqrestore
 c_func
 (paren
 op_amp
-id|io_request_lock
+id|sg_request_lock
 comma
 id|flags
 )paren
@@ -5816,7 +5840,7 @@ id|spin_unlock_irq
 c_func
 (paren
 op_amp
-id|io_request_lock
+id|sg_request_lock
 )paren
 suffix:semicolon
 id|scsi_sleep
@@ -5830,7 +5854,7 @@ id|spin_lock_irq
 c_func
 (paren
 op_amp
-id|io_request_lock
+id|sg_request_lock
 )paren
 suffix:semicolon
 macro_line|#endif

@@ -87,7 +87,14 @@ r_void
 id|smp_message_recv
 c_func
 (paren
+r_int
+)paren
+suffix:semicolon
 r_void
+id|smp_send_tlb_invalidate
+c_func
+(paren
+r_int
 )paren
 suffix:semicolon
 DECL|macro|NO_PROC_ID

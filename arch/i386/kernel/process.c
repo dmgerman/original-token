@@ -515,8 +515,18 @@ comma
 l_int|0x22
 comma
 l_int|0xc0
-comma
 multiline_comment|/*    movl  %eax,%cr0        */
+)brace
+suffix:semicolon
+DECL|variable|jump_to_bios
+r_static
+r_int
+r_char
+id|jump_to_bios
+(braket
+)braket
+op_assign
+(brace
 l_int|0xea
 comma
 l_int|0x00
@@ -572,6 +582,213 @@ op_eq
 l_int|0
 )paren
 r_break
+suffix:semicolon
+)brace
+multiline_comment|/*&n; * Switch to real mode and then execute the code&n; * specified by the code and length parameters.&n; * We assume that length will aways be less that 100!&n; */
+DECL|function|machine_real_restart
+r_void
+id|machine_real_restart
+c_func
+(paren
+r_int
+r_char
+op_star
+id|code
+comma
+r_int
+id|length
+)paren
+(brace
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/* Write zero to CMOS register number 0x0f, which the BIOS POST&n;&t;   routine will recognize as telling it to do a proper reboot.  (Well&n;&t;   that&squot;s what this book in front of me says -- it may only apply to&n;&t;   the Phoenix BIOS though, it&squot;s not clear).  At the same time,&n;&t;   disable NMIs by setting the top bit in the CMOS address register,&n;&t;   as we&squot;re about to do peculiar things to the CPU.  I&squot;m not sure if&n;&t;   `outb_p&squot; is needed instead of just `outb&squot;.  Use it to be on the&n;&t;   safe side. */
+id|outb_p
+(paren
+l_int|0x8f
+comma
+l_int|0x70
+)paren
+suffix:semicolon
+id|outb_p
+(paren
+l_int|0x00
+comma
+l_int|0x71
+)paren
+suffix:semicolon
+multiline_comment|/* Remap the kernel at virtual address zero, as well as offset zero&n;&t;   from the kernel segment.  This assumes the kernel segment starts at&n;&t;   virtual address PAGE_OFFSET. */
+id|memcpy
+(paren
+id|swapper_pg_dir
+comma
+id|swapper_pg_dir
+op_plus
+id|USER_PGD_PTRS
+comma
+r_sizeof
+(paren
+id|swapper_pg_dir
+(braket
+l_int|0
+)braket
+)paren
+op_star
+id|KERNEL_PGD_PTRS
+)paren
+suffix:semicolon
+multiline_comment|/* Make sure the first page is mapped to the start of physical memory.&n;&t;   It is normally not mapped, to trap kernel NULL pointer dereferences. */
+id|pg0
+(braket
+l_int|0
+)braket
+op_assign
+id|_PAGE_RW
+op_or
+id|_PAGE_PRESENT
+suffix:semicolon
+multiline_comment|/*&n;&t; * Use `swapper_pg_dir&squot; as our page directory.&n;&t; */
+id|asm
+r_volatile
+(paren
+l_string|&quot;movl %0,%%cr3&quot;
+suffix:colon
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+id|__pa
+c_func
+(paren
+id|swapper_pg_dir
+)paren
+)paren
+)paren
+suffix:semicolon
+multiline_comment|/* Write 0x1234 to absolute memory location 0x472.  The BIOS reads&n;&t;   this on booting to tell it to &quot;Bypass memory test (also warm&n;&t;   boot)&quot;.  This seems like a fairly standard thing that gets set by&n;&t;   REBOOT.COM programs, and the previous reset routine did this&n;&t;   too. */
+op_star
+(paren
+(paren
+r_int
+r_int
+op_star
+)paren
+l_int|0x472
+)paren
+op_assign
+id|reboot_mode
+suffix:semicolon
+multiline_comment|/* For the switch to real mode, copy some code to low memory.  It has&n;&t;   to be in the first 64k because it is running in 16-bit mode, and it&n;&t;   has to have the same physical and virtual address, because it turns&n;&t;   off paging.  Copy it near the end of the first page, out of the way&n;&t;   of BIOS variables. */
+id|memcpy
+(paren
+(paren
+r_void
+op_star
+)paren
+(paren
+l_int|0x1000
+op_minus
+r_sizeof
+(paren
+id|real_mode_switch
+)paren
+op_minus
+l_int|100
+)paren
+comma
+id|real_mode_switch
+comma
+r_sizeof
+(paren
+id|real_mode_switch
+)paren
+)paren
+suffix:semicolon
+id|memcpy
+(paren
+(paren
+r_void
+op_star
+)paren
+(paren
+l_int|0x1000
+op_minus
+l_int|100
+)paren
+comma
+id|code
+comma
+id|length
+)paren
+suffix:semicolon
+multiline_comment|/* Set up the IDT for real mode. */
+id|__asm__
+id|__volatile__
+(paren
+l_string|&quot;lidt %0&quot;
+suffix:colon
+suffix:colon
+l_string|&quot;m&quot;
+(paren
+id|real_mode_idt
+)paren
+)paren
+suffix:semicolon
+multiline_comment|/* Set up a GDT from which we can load segment descriptors for real&n;&t;   mode.  The GDT is not used in real mode; it is just needed here to&n;&t;   prepare the descriptors. */
+id|__asm__
+id|__volatile__
+(paren
+l_string|&quot;lgdt %0&quot;
+suffix:colon
+suffix:colon
+l_string|&quot;m&quot;
+(paren
+id|real_mode_gdt
+)paren
+)paren
+suffix:semicolon
+multiline_comment|/* Load the data segment registers, and thus the descriptors ready for&n;&t;   real mode.  The base address of each segment is 0x100, 16 times the&n;&t;   selector value being loaded here.  This is so that the segment&n;&t;   registers don&squot;t have to be reloaded after switching to real mode:&n;&t;   the values are consistent for real mode operation already. */
+id|__asm__
+id|__volatile__
+(paren
+l_string|&quot;movl $0x0010,%%eax&bslash;n&quot;
+l_string|&quot;&bslash;tmovl %%eax,%%ds&bslash;n&quot;
+l_string|&quot;&bslash;tmovl %%eax,%%es&bslash;n&quot;
+l_string|&quot;&bslash;tmovl %%eax,%%fs&bslash;n&quot;
+l_string|&quot;&bslash;tmovl %%eax,%%gs&bslash;n&quot;
+l_string|&quot;&bslash;tmovl %%eax,%%ss&quot;
+suffix:colon
+suffix:colon
+suffix:colon
+l_string|&quot;eax&quot;
+)paren
+suffix:semicolon
+multiline_comment|/* Jump to the 16-bit code that we copied earlier.  It disables paging&n;&t;   and the cache, switches to real mode, and jumps to the BIOS reset&n;&t;   entry point. */
+id|__asm__
+id|__volatile__
+(paren
+l_string|&quot;ljmp $0x0008,%0&quot;
+suffix:colon
+suffix:colon
+l_string|&quot;i&quot;
+(paren
+(paren
+r_void
+op_star
+)paren
+(paren
+l_int|0x1000
+op_minus
+r_sizeof
+(paren
+id|real_mode_switch
+)paren
+op_minus
+l_int|100
+)paren
+)paren
+)paren
 suffix:semicolon
 )brace
 DECL|function|machine_restart
@@ -696,173 +913,14 @@ l_string|&quot;int3&quot;
 suffix:semicolon
 )brace
 )brace
-id|cli
+id|machine_real_restart
 c_func
 (paren
-)paren
-suffix:semicolon
-multiline_comment|/* Write zero to CMOS register number 0x0f, which the BIOS POST&n;&t;   routine will recognize as telling it to do a proper reboot.  (Well&n;&t;   that&squot;s what this book in front of me says -- it may only apply to&n;&t;   the Phoenix BIOS though, it&squot;s not clear).  At the same time,&n;&t;   disable NMIs by setting the top bit in the CMOS address register,&n;&t;   as we&squot;re about to do peculiar things to the CPU.  I&squot;m not sure if&n;&t;   `outb_p&squot; is needed instead of just `outb&squot;.  Use it to be on the&n;&t;   safe side. */
-id|outb_p
-(paren
-l_int|0x8f
-comma
-l_int|0x70
-)paren
-suffix:semicolon
-id|outb_p
-(paren
-l_int|0x00
-comma
-l_int|0x71
-)paren
-suffix:semicolon
-multiline_comment|/* Remap the kernel at virtual address zero, as well as offset zero&n;&t;   from the kernel segment.  This assumes the kernel segment starts at&n;&t;   virtual address PAGE_OFFSET. */
-id|memcpy
-(paren
-id|swapper_pg_dir
-comma
-id|swapper_pg_dir
-op_plus
-id|USER_PGD_PTRS
+id|jump_to_bios
 comma
 r_sizeof
 (paren
-id|swapper_pg_dir
-(braket
-l_int|0
-)braket
-)paren
-op_star
-id|KERNEL_PGD_PTRS
-)paren
-suffix:semicolon
-multiline_comment|/* Make sure the first page is mapped to the start of physical memory.&n;&t;   It is normally not mapped, to trap kernel NULL pointer dereferences. */
-id|pg0
-(braket
-l_int|0
-)braket
-op_assign
-id|_PAGE_RW
-op_or
-id|_PAGE_PRESENT
-suffix:semicolon
-multiline_comment|/*&n;&t; * Use `swapper_pg_dir&squot; as our page directory.&n;&t; */
-id|asm
-r_volatile
-(paren
-l_string|&quot;movl %0,%%cr3&quot;
-suffix:colon
-suffix:colon
-l_string|&quot;r&quot;
-(paren
-id|__pa
-c_func
-(paren
-id|swapper_pg_dir
-)paren
-)paren
-)paren
-suffix:semicolon
-multiline_comment|/* Write 0x1234 to absolute memory location 0x472.  The BIOS reads&n;&t;   this on booting to tell it to &quot;Bypass memory test (also warm&n;&t;   boot)&quot;.  This seems like a fairly standard thing that gets set by&n;&t;   REBOOT.COM programs, and the previous reset routine did this&n;&t;   too. */
-op_star
-(paren
-(paren
-r_int
-r_int
-op_star
-)paren
-l_int|0x472
-)paren
-op_assign
-id|reboot_mode
-suffix:semicolon
-multiline_comment|/* For the switch to real mode, copy some code to low memory.  It has&n;&t;   to be in the first 64k because it is running in 16-bit mode, and it&n;&t;   has to have the same physical and virtual address, because it turns&n;&t;   off paging.  Copy it near the end of the first page, out of the way&n;&t;   of BIOS variables. */
-id|memcpy
-(paren
-(paren
-r_void
-op_star
-)paren
-(paren
-l_int|0x1000
-op_minus
-r_sizeof
-(paren
-id|real_mode_switch
-)paren
-)paren
-comma
-id|real_mode_switch
-comma
-r_sizeof
-(paren
-id|real_mode_switch
-)paren
-)paren
-suffix:semicolon
-multiline_comment|/* Set up the IDT for real mode. */
-id|__asm__
-id|__volatile__
-(paren
-l_string|&quot;lidt %0&quot;
-suffix:colon
-suffix:colon
-l_string|&quot;m&quot;
-(paren
-id|real_mode_idt
-)paren
-)paren
-suffix:semicolon
-multiline_comment|/* Set up a GDT from which we can load segment descriptors for real&n;&t;   mode.  The GDT is not used in real mode; it is just needed here to&n;&t;   prepare the descriptors. */
-id|__asm__
-id|__volatile__
-(paren
-l_string|&quot;lgdt %0&quot;
-suffix:colon
-suffix:colon
-l_string|&quot;m&quot;
-(paren
-id|real_mode_gdt
-)paren
-)paren
-suffix:semicolon
-multiline_comment|/* Load the data segment registers, and thus the descriptors ready for&n;&t;   real mode.  The base address of each segment is 0x100, 16 times the&n;&t;   selector value being loaded here.  This is so that the segment&n;&t;   registers don&squot;t have to be reloaded after switching to real mode:&n;&t;   the values are consistent for real mode operation already. */
-id|__asm__
-id|__volatile__
-(paren
-l_string|&quot;movl $0x0010,%%eax&bslash;n&quot;
-l_string|&quot;&bslash;tmovl %%ax,%%ds&bslash;n&quot;
-l_string|&quot;&bslash;tmovl %%ax,%%es&bslash;n&quot;
-l_string|&quot;&bslash;tmovl %%ax,%%fs&bslash;n&quot;
-l_string|&quot;&bslash;tmovl %%ax,%%gs&bslash;n&quot;
-l_string|&quot;&bslash;tmovl %%ax,%%ss&quot;
-suffix:colon
-suffix:colon
-suffix:colon
-l_string|&quot;eax&quot;
-)paren
-suffix:semicolon
-multiline_comment|/* Jump to the 16-bit code that we copied earlier.  It disables paging&n;&t;   and the cache, switches to real mode, and jumps to the BIOS reset&n;&t;   entry point. */
-id|__asm__
-id|__volatile__
-(paren
-l_string|&quot;ljmp $0x0008,%0&quot;
-suffix:colon
-suffix:colon
-l_string|&quot;i&quot;
-(paren
-(paren
-r_void
-op_star
-)paren
-(paren
-l_int|0x1000
-op_minus
-r_sizeof
-(paren
-id|real_mode_switch
-)paren
-)paren
+id|jump_to_bios
 )paren
 )paren
 suffix:semicolon

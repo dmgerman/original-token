@@ -1372,8 +1372,6 @@ id|val
 (brace
 r_int
 id|i
-comma
-id|c
 suffix:semicolon
 id|i
 op_assign
@@ -1381,7 +1379,11 @@ id|max_mapnr
 suffix:semicolon
 id|val-&gt;totalram
 op_assign
-id|totalram_pages
+l_int|0
+suffix:semicolon
+id|val-&gt;sharedram
+op_assign
+l_int|0
 suffix:semicolon
 id|val-&gt;freeram
 op_assign
@@ -1398,10 +1400,6 @@ c_func
 op_amp
 id|buffermem_pages
 )paren
-suffix:semicolon
-id|val-&gt;sharedram
-op_assign
-l_int|0
 suffix:semicolon
 r_while
 c_loop
@@ -1425,8 +1423,13 @@ id|i
 )paren
 r_continue
 suffix:semicolon
-id|c
-op_assign
+id|val-&gt;totalram
+op_increment
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
 id|atomic_read
 c_func
 (paren
@@ -1438,32 +1441,35 @@ id|i
 dot
 id|count
 )paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|c
-OG
-l_int|1
 )paren
+r_continue
+suffix:semicolon
 id|val-&gt;sharedram
 op_add_assign
-id|c
+id|atomic_read
+c_func
+(paren
+op_amp
+id|mem_map
+(braket
+id|i
+)braket
+dot
+id|count
+)paren
 op_minus
 l_int|1
 suffix:semicolon
 )brace
-id|val-&gt;totalhigh
-op_assign
-l_int|0
+id|val-&gt;totalram
+op_lshift_assign
+id|PAGE_SHIFT
 suffix:semicolon
-id|val-&gt;freehigh
-op_assign
-l_int|0
+id|val-&gt;sharedram
+op_lshift_assign
+id|PAGE_SHIFT
 suffix:semicolon
-id|val-&gt;mem_unit
-op_assign
-id|PAGE_SIZE
+r_return
 suffix:semicolon
 )brace
 r_void
@@ -2023,6 +2029,14 @@ c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#ifdef __SMP__
+id|smp_send_tlb_invalidate
+c_func
+(paren
+l_int|0
+)paren
+suffix:semicolon
+macro_line|#endif&t;
 )brace
 multiline_comment|/*&n; * Flush all the (user) entries for the address space described&n; * by mm.  We can&squot;t rely on mm-&gt;mmap describing all the entries&n; * that might be in the hash table.&n; */
 r_void
@@ -2055,6 +2069,14 @@ comma
 id|mm
 )paren
 suffix:semicolon
+macro_line|#ifdef __SMP__
+id|smp_send_tlb_invalidate
+c_func
+(paren
+l_int|0
+)paren
+suffix:semicolon
+macro_line|#endif&t;
 )brace
 r_void
 DECL|function|local_flush_tlb_page
@@ -2095,6 +2117,14 @@ comma
 id|vmaddr
 )paren
 suffix:semicolon
+macro_line|#ifdef __SMP__
+id|smp_send_tlb_invalidate
+c_func
+(paren
+l_int|0
+)paren
+suffix:semicolon
+macro_line|#endif&t;
 )brace
 multiline_comment|/*&n; * for each page addr in the range, call MMU_invalidate_page()&n; * if the range is very large and the hash table is small it might be&n; * faster to do a search of the hash table and just invalidate pages&n; * that are in the range but that&squot;s for study later.&n; * -- Cort&n; */
 r_void
@@ -2167,6 +2197,14 @@ id|start
 )paren
 suffix:semicolon
 )brace
+macro_line|#ifdef __SMP__
+id|smp_send_tlb_invalidate
+c_func
+(paren
+l_int|0
+)paren
+suffix:semicolon
+macro_line|#endif&t;
 )brace
 multiline_comment|/*&n; * The context counter has overflowed.&n; * We set mm-&gt;context to NO_CONTEXT for all mm&squot;s in the system.&n; * We assume we can get to all mm&squot;s by looking as tsk-&gt;mm for&n; * all tasks in the system.&n; */
 r_void
@@ -2227,6 +2265,14 @@ comma
 l_int|0xffffff
 )paren
 suffix:semicolon
+macro_line|#ifdef __SMP__
+id|smp_send_tlb_invalidate
+c_func
+(paren
+l_int|0
+)paren
+suffix:semicolon
+macro_line|#endif&t;
 id|atomic_set
 c_func
 (paren
@@ -3032,7 +3078,7 @@ id|_PAGE_HWWRITE
 suffix:semicolon
 macro_line|#ifndef CONFIG_8xx
 r_else
-multiline_comment|/* On the powerpc, denying user access&n;&t;&t;&t;&t;   forces R/W kernel access */
+multiline_comment|/* On the powerpc (not 8xx), no user access&n;&t;&t;&t;&t;   forces R/W kernel access */
 id|f
 op_or_assign
 id|_PAGE_USER
@@ -3812,7 +3858,7 @@ suffix:semicolon
 r_case
 id|_MACH_Pmac
 suffix:colon
-macro_line|#if 1
+macro_line|#if 0
 (brace
 r_int
 r_int
@@ -4581,7 +4627,7 @@ id|initpages
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#if defined(CONFIG_CHRP) || defined(CONFIG_PMAC) || defined(CONFIG_ALL_PPC)
+macro_line|#if defined(CONFIG_CHRP) || defined(CONFIG_ALL_PPC)&t;
 r_extern
 r_int
 r_int
@@ -4589,7 +4635,7 @@ id|rtas_data
 comma
 id|rtas_size
 suffix:semicolon
-macro_line|#endif /* CONFIG_CHRP || CONFIG_PMAC || CONFIG_ALL_PPC */
+macro_line|#endif /* defined(CONFIG_CHRP) || defined(CONFIG_ALL_PPC) */
 id|max_mapnr
 op_assign
 id|max_low_pfn
@@ -4663,7 +4709,7 @@ id|flags
 suffix:semicolon
 )brace
 macro_line|#endif /* CONFIG_BLK_DEV_INITRD */
-macro_line|#if defined(CONFIG_CHRP) || defined(CONFIG_PMAC) || defined(CONFIG_ALL_PPC)
+macro_line|#if defined(CONFIG_CHRP) || defined(CONFIG_ALL_PPC)&t;
 multiline_comment|/* mark the RTAS pages as reserved */
 r_if
 c_cond
@@ -4703,7 +4749,7 @@ id|addr
 )paren
 )paren
 suffix:semicolon
-macro_line|#endif /* CONFIG_CHRP || CONFIG_PMAC || CONFIG_ALL_PPC */
+macro_line|#endif /* defined(CONFIG_CHRP) || defined(CONFIG_ALL_PPC) */
 r_for
 c_loop
 (paren
@@ -4781,6 +4827,16 @@ id|initpages
 op_increment
 suffix:semicolon
 r_else
+r_if
+c_cond
+(paren
+id|addr
+OL
+(paren
+id|ulong
+)paren
+id|klimit
+)paren
 id|datapages
 op_increment
 suffix:semicolon
@@ -4795,9 +4851,6 @@ r_int
 r_int
 )paren
 id|nr_free_pages
-c_func
-(paren
-)paren
 op_lshift
 (paren
 id|PAGE_SHIFT

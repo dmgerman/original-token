@@ -2508,6 +2508,13 @@ c_func
 id|qdisc_tree_lock
 )paren
 suffix:semicolon
+DECL|variable|qdisc_runqueue_lock
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|qdisc_runqueue_lock
+)paren
+suffix:semicolon
 macro_line|#ifdef CONFIG_NET_SCHED
 id|PSCHED_EXPORTLIST
 suffix:semicolon

@@ -21,13 +21,13 @@ DECL|macro|OPENPIC_NUM_VECTORS
 mdefine_line|#define OPENPIC_NUM_VECTORS&t;256
 multiline_comment|/*&n;     *  Vector numbers&n;     */
 DECL|macro|OPENPIC_VEC_SOURCE
-mdefine_line|#define OPENPIC_VEC_SOURCE      0x10    /* and up */
+mdefine_line|#define OPENPIC_VEC_SOURCE      16    /* and up */
 DECL|macro|OPENPIC_VEC_TIMER
-mdefine_line|#define OPENPIC_VEC_TIMER       0x40    /* and up */
+mdefine_line|#define OPENPIC_VEC_TIMER       64    /* and up */
 DECL|macro|OPENPIC_VEC_IPI
-mdefine_line|#define OPENPIC_VEC_IPI         0x50    /* and up */
+mdefine_line|#define OPENPIC_VEC_IPI         72    /* and up */
 DECL|macro|OPENPIC_VEC_SPURIOUS
-mdefine_line|#define OPENPIC_VEC_SPURIOUS    99
+mdefine_line|#define OPENPIC_VEC_SPURIOUS    127
 multiline_comment|/*&n;     *  OpenPIC Registers are 32 bits and aligned on 128 bit boundaries&n;     */
 DECL|struct|_OpenPIC_Reg
 r_typedef

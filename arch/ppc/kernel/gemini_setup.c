@@ -1307,6 +1307,54 @@ comma
 l_int|0
 )paren
 suffix:semicolon
+id|request_irq
+c_func
+(paren
+id|OPENPIC_VEC_IPI
+op_plus
+l_int|1
+comma
+id|openpic_ipi_action
+comma
+l_int|0
+comma
+l_string|&quot;IPI1 (invalidate TLB)&quot;
+comma
+l_int|0
+)paren
+suffix:semicolon
+id|request_irq
+c_func
+(paren
+id|OPENPIC_VEC_IPI
+op_plus
+l_int|2
+comma
+id|openpic_ipi_action
+comma
+l_int|0
+comma
+l_string|&quot;IPI2 (stop CPU)&quot;
+comma
+l_int|0
+)paren
+suffix:semicolon
+id|request_irq
+c_func
+(paren
+id|OPENPIC_VEC_IPI
+op_plus
+l_int|3
+comma
+id|openpic_ipi_action
+comma
+l_int|0
+comma
+l_string|&quot;IPI3 (reschedule)&quot;
+comma
+l_int|0
+)paren
+suffix:semicolon
 macro_line|#endif&t;/* __SMP__ */
 )brace
 DECL|macro|gemini_rtc_read

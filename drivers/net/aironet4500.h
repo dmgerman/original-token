@@ -1,14 +1,14 @@
-multiline_comment|/*&n; *&t; Aironet 4500 Pcmcia driver&n; *&n; *&t;&t;Elmer Joandi, Januar 1999&n; *&t;Copyright Elmer Joandi, all rights restricted&n; *&t;&n; *&n; *&t;Revision 0.1 ,started  30.12.1998&n; *&n; *&n; */
+multiline_comment|/*&n; *&t; Aironet 4500 Pcmcia driver&n; *&n; *&t;&t;Elmer Joandi, Januar 1999&n; *&t;Copyright:&t;GPL&n; *&t;&n; *&n; *&t;Revision 0.1 ,started  30.12.1998&n; *&n; *&n; */
 macro_line|#ifndef AIRONET4500_H
 DECL|macro|AIRONET4500_H
 mdefine_line|#define&t;AIRONET4500_H
 singleline_comment|// redefined to avoid PCMCIA includes
 macro_line|#include &lt;linux/version.h&gt;
-macro_line|#include &lt;linux/module.h&gt;
-macro_line|#include &lt;linux/kernel.h&gt;
-macro_line|#if (LINUX_VERSION_CODE &lt; 0x2030e)
+multiline_comment|/*#include &lt;linux/module.h&gt;&n; #include &lt;linux/kernel.h&gt;&n;*/
+macro_line|#if LINUX_VERSION_CODE &lt; 0x2030E
 DECL|macro|NET_DEVICE
 mdefine_line|#define NET_DEVICE device 
+macro_line|#error bad kernel version code
 macro_line|#else 
 DECL|macro|NET_DEVICE
 mdefine_line|#define NET_DEVICE net_device
@@ -17,11 +17,7 @@ macro_line|#if LINUX_VERSION_CODE &lt; 0x20300
 DECL|macro|init_MUTEX
 mdefine_line|#define init_MUTEX(a)  *(a) = MUTEX;
 macro_line|#endif
-macro_line|#include &lt;linux/types.h&gt;
-macro_line|#include &lt;linux/netdevice.h&gt;
-macro_line|#include &lt;linux/etherdevice.h&gt;
-macro_line|#include &lt;linux/delay.h&gt;
-macro_line|#include &lt;linux/time.h&gt;
+multiline_comment|/*&n;#include &lt;linux/types.h&gt;&n;#include &lt;linux/netdevice.h&gt;&n;#include &lt;linux/etherdevice.h&gt;&n;#include &lt;linux/delay.h&gt;&n;#include &lt;linux/time.h&gt;&n;*/
 macro_line|#include &lt;linux/802_11.h&gt;
 singleline_comment|//damn idiot PCMCIA stuff
 macro_line|#ifndef DEV_NAME_LEN
@@ -62,43 +58,18 @@ id|pcmcia_junkdev_node_t
 id|dev_node_t
 suffix:semicolon
 macro_line|#endif
-macro_line|#if LINUX_VERSION_CODE &lt;= 0x20100
-DECL|member|lock
-DECL|typedef|my_spinlock_t
-r_typedef
-r_struct
-(brace
-r_volatile
-r_int
-id|lock
-suffix:semicolon
-)brace
-id|my_spinlock_t
-suffix:semicolon
-DECL|macro|my_spin_lock_irqsave
-mdefine_line|#define my_spin_lock_irqsave(a,b) {&bslash;&n;&t;save_flags(b);&bslash;&n;&t;cli();&bslash;&n;&t;(a)-&gt;lock++;while(0);&bslash;&n;&t;if ((a)-&gt;lock != 1 )&bslash;&n;&t;&t;printk(&quot;awc_spinlock high at locking &bslash;n&quot;);&bslash;&n;}
-DECL|macro|my_spin_unlock_irqrestore
-mdefine_line|#define my_spin_unlock_irqrestore(a,b) {&bslash;&n;&t;cli(); (a)-&gt;lock--;while(0);&bslash;&n;&t;if ((a)-&gt;lock != 0 )&bslash;&n;&t;&t;printk(&quot;awc_spinlock !=0  at unlocking &bslash;n&quot;);&bslash;&n;&t;restore_flags(b);&bslash;&n;}
-macro_line|#else
-macro_line|#if LINUX_VERSION_CODE &lt; 0x20300
-macro_line|#include &lt;asm/spinlock.h&gt;
-macro_line|#else
 macro_line|#include &lt;linux/spinlock.h&gt;
-macro_line|#endif
-macro_line|#ifndef __SMP__ 
-singleline_comment|// #warning non-SMP 2.2 kernel
-macro_line|#endif
 DECL|typedef|my_spinlock_t
 r_typedef
 id|spinlock_t
 id|my_spinlock_t
 suffix:semicolon
+DECL|macro|my_spin_lock_init
+mdefine_line|#define my_spin_lock_init(a)&t;&t;spin_lock_init(a)
 DECL|macro|my_spin_lock_irqsave
 mdefine_line|#define my_spin_lock_irqsave(a,b) &t;spin_lock_irqsave(a,b)
 DECL|macro|my_spin_unlock_irqrestore
 mdefine_line|#define my_spin_unlock_irqrestore(a,b) &t;spin_unlock_irqrestore(a,b)
-macro_line|#endif 
-singleline_comment|//kernel version
 macro_line|#if LINUX_VERSION_CODE &lt;= 0x20100
 DECL|macro|in_interrupt
 mdefine_line|#define in_interrupt() intr_count
@@ -349,12 +320,16 @@ DECL|macro|UP
 mdefine_line|#define UP(a)   up( a ) ;
 singleline_comment|//&t;if (in_interrupt()) {up( a ) ; } else printk(&quot;semaphore UP in interrupt tried &bslash;n&quot;);
 multiline_comment|/*&t;if (!in_interrupt())&bslash;&n;&t;printk(&quot;bap lock under cli but not in int&bslash;n&quot;);&bslash;&n;*/
+DECL|macro|AWC_LOCK_COMMAND_ISSUING
+mdefine_line|#define AWC_LOCK_COMMAND_ISSUING(a) my_spin_lock_irqsave(&amp;a-&gt;command_issuing_spinlock,a-&gt;command_issuing_spinlock_flags);
+DECL|macro|AWC_UNLOCK_COMMAND_ISSUING
+mdefine_line|#define AWC_UNLOCK_COMMAND_ISSUING(a) my_spin_unlock_irqrestore(&amp;a-&gt;command_issuing_spinlock,a-&gt;command_issuing_spinlock_flags);
 DECL|macro|AWC_BAP_LOCK_UNDER_CLI_REAL
-mdefine_line|#define AWC_BAP_LOCK_UNDER_CLI_REAL(cmd) &bslash;&n; &t;if (!cmd.priv) {&bslash;&n;&t;&t;printk(KERN_CRIT &quot;awc4500: no priv present in command !&quot;);&bslash;&n;&t;}&bslash;&n;&t;cmd.bap = &amp;(cmd.priv-&gt;bap1);&bslash;&n;&t;if (cmd.bap){&bslash;&n;&t;&t;my_spin_lock_irqsave(&amp;(cmd.bap-&gt;spinlock),cmd.bap-&gt;flags);&bslash;&n;&t;&t;cmd.bap-&gt;lock++;&bslash;&n;&t;&t;if (cmd.bap-&gt;lock &gt; 1)&bslash;&n;&t;&t;&t;printk(&quot;Bap 1 lock high&bslash;n&quot;);&bslash;&n;&t;&t;cmd.lock_state |= AWC_BAP_LOCKED;&bslash;&n;&t;}
+mdefine_line|#define AWC_BAP_LOCK_UNDER_CLI_REAL(cmd) &bslash;&n; &t;if (!cmd.priv) {&bslash;&n;&t;&t;printk(KERN_CRIT &quot;awc4500: no priv present in command !&quot;);&bslash;&n;&t;}&bslash;&n;&t;cmd.bap = &amp;(cmd.priv-&gt;bap1);&bslash;&n;&t;if (both_bap_lock)&bslash;&n;&t;my_spin_lock_irqsave(&amp;cmd.priv-&gt;both_bap_spinlock,cmd.priv-&gt;both_bap_spinlock_flags);&bslash;&n;&t;if (cmd.bap){&bslash;&n;&t;&t;my_spin_lock_irqsave(&amp;(cmd.bap-&gt;spinlock),cmd.bap-&gt;flags);&bslash;&n;&t;&t;cmd.bap-&gt;lock++;&bslash;&n;&t;&t;if (cmd.bap-&gt;lock &gt; 1)&bslash;&n;&t;&t;&t;printk(&quot;Bap 1 lock high&bslash;n&quot;);&bslash;&n;&t;&t;cmd.lock_state |= AWC_BAP_LOCKED;&bslash;&n;&t;}
 DECL|macro|AWC_BAP_LOCK_NOT_CLI_REAL
-mdefine_line|#define AWC_BAP_LOCK_NOT_CLI_REAL(cmd) {&bslash;&n;&t;if (in_interrupt())&bslash;&n;&t;printk(&quot;bap lock not cli in int&bslash;n&quot;);&bslash;&n; &t;if (!cmd.priv) {&bslash;&n;&t;&t;printk(KERN_CRIT &quot;awc4500: no priv present in command,lockup follows !&quot;);&bslash;&n;&t;}&bslash;&n;&t;cmd.bap = &amp;(cmd.priv-&gt;bap0);&bslash;&n;&t;my_spin_lock_irqsave(&amp;(cmd.bap-&gt;spinlock),cmd.bap-&gt;flags);&bslash;&n;&t;DOWN(&amp;(cmd.priv-&gt;bap0.sem));&bslash;&n;&t;cmd.bap-&gt;lock++;&bslash;&n;&t;if (cmd.bap-&gt;lock &gt; 1)&bslash;&n;&t;&t;printk(&quot;Bap 0 lock high&bslash;n&quot;);&bslash;&n;&t;cmd.lock_state |= AWC_BAP_SEMALOCKED;&bslash;&n;}
+mdefine_line|#define AWC_BAP_LOCK_NOT_CLI_REAL(cmd) {&bslash;&n;&t;if (in_interrupt())&bslash;&n;&t;printk(&quot;bap lock not cli in int&bslash;n&quot;);&bslash;&n; &t;if (!cmd.priv) {&bslash;&n;&t;&t;printk(KERN_CRIT &quot;awc4500: no priv present in command,lockup follows !&quot;);&bslash;&n;&t;}&bslash;&n;&t;cmd.bap = &amp;(cmd.priv-&gt;bap0);&bslash;&n;&t;if (both_bap_lock)&bslash;&n;&t;&t;my_spin_lock_irqsave(&amp;cmd.priv-&gt;both_bap_spinlock,cmd.priv-&gt;both_bap_spinlock_flags);&bslash;&n;&t;my_spin_lock_irqsave(&amp;(cmd.bap-&gt;spinlock),cmd.bap-&gt;flags);&bslash;&n;&t;DOWN(&amp;(cmd.priv-&gt;bap0.sem));&bslash;&n;&t;cmd.bap-&gt;lock++;&bslash;&n;&t;if (cmd.bap-&gt;lock &gt; 1)&bslash;&n;&t;&t;printk(&quot;Bap 0 lock high&bslash;n&quot;);&bslash;&n;&t;cmd.lock_state |= AWC_BAP_SEMALOCKED;&bslash;&n;}
 DECL|macro|AWC_BAP_LOCK_NOT_CLI_CLI_REAL
-mdefine_line|#define AWC_BAP_LOCK_NOT_CLI_CLI_REAL(cmd) {&bslash;&n;&t;cmd.bap = &amp;(cmd.priv-&gt;bap0);&bslash;&n;&t;my_spin_lock_irqsave(&amp;(cmd.bap-&gt;spinlock),cmd.bap-&gt;flags);&bslash;&n;&t;cmd.bap-&gt;lock++;&bslash;&n;&t;if (cmd.bap-&gt;lock &gt; 1)&bslash;&n;&t;&t;printk(&quot;Bap 0 lock high&bslash;n&quot;);&bslash;&n;&t;cmd.lock_state |= AWC_BAP_LOCKED;&bslash;&n;}
+mdefine_line|#define AWC_BAP_LOCK_NOT_CLI_CLI_REAL(cmd) {&bslash;&n;&t;cmd.bap = &amp;(cmd.priv-&gt;bap0);&bslash;&n;&t;if (both_bap_lock)&bslash;&n;&t;&t;my_spin_lock_irqsave(&amp;cmd.priv-&gt;both_bap_spinlock,cmd.priv-&gt;both_bap_spinlock_flags);&bslash;&n;&t;my_spin_lock_irqsave(&amp;(cmd.bap-&gt;spinlock),cmd.bap-&gt;flags);&bslash;&n;&t;cmd.bap-&gt;lock++;&bslash;&n;&t;if (cmd.bap-&gt;lock &gt; 1)&bslash;&n;&t;&t;printk(&quot;Bap 0 lock high&bslash;n&quot;);&bslash;&n;&t;cmd.lock_state |= AWC_BAP_LOCKED;&bslash;&n;}
 DECL|macro|BAP_LOCK_ANY
 mdefine_line|#define BAP_LOCK_ANY(cmd)&bslash;&n;&t;if (in_interrupt())&t;AWC_BAP_LOCK_NOT_CLI_CLI_REAL(cmd)&bslash;&n;&t;else AWC_BAP_LOCK_NOT_CLI_REAL(cmd)
 DECL|macro|AWC_BAP_LOCK_NOT_CLI
@@ -383,7 +358,7 @@ DECL|macro|AWC_INIT_COMMAND
 mdefine_line|#define AWC_INIT_COMMAND(context, a_com, a_dev,a_cmmand,a_pr0, a_rid, a_offset, a_len, a_buff) {&bslash;&n;&t;memset(&amp;a_com,0,sizeof(a_com) );&bslash;&n;&t;a_com.dev = a_dev;&bslash;&n;&t;a_com.priv = a_dev-&gt;priv;&bslash;&n;&t;a_com.port = a_dev-&gt;base_addr;&bslash;&n;&t;a_com.bap = NULL;&bslash;&n;&t;a_com.command = a_cmmand;&bslash;&n;&t;a_com.par0 = a_pr0;&bslash;&n;&t;a_com.rid = a_rid;&bslash;&n;&t;a_com.offset = a_offset;&bslash;&n;&t;a_com.len = a_len;&bslash;&n;&t;a_com.buff = a_buff;&bslash;&n;&t;a_com.lock_state = 0;&bslash;&n;};
 multiline_comment|/* v&#xfffd;ga veider asi j&#xfffd;rgnevast &n; makrost v&#xfffd;lja j&#xfffd;etud&t;if (cmd.bap) AWC_IN((cmd.bap)-&gt;data);&bslash;&n;*/
 DECL|macro|AWC_BAP_UNLOCK
-mdefine_line|#define AWC_BAP_UNLOCK(com) { &bslash;&n;&t;if (com.bap){ &bslash;&n;&t;&t;if ( (com.lock_state &amp; AWC_BAP_SEMALOCKED) &amp;&amp;&bslash;&n;&t;&t;     (com.lock_state &amp; AWC_BAP_LOCKED) ){&bslash;&n;&t;&t;     &t;printk(&quot;Both Sema and simple lock &bslash;n&quot;);&bslash;&n;&t;&t;}&bslash;&n;&t;&t;if ( com.lock_state &amp; AWC_BAP_SEMALOCKED ){&bslash;&n;&t;&t;&t; com.bap-&gt;lock--; &bslash;&n;&t;&t;&t; com.lock_state &amp;= ~AWC_BAP_SEMALOCKED;&bslash;&n;&t;&t;&t; UP(&amp;(com.bap-&gt;sem)); &bslash;&n;&t;&t;&t; my_spin_unlock_irqrestore(&amp;(cmd.bap-&gt;spinlock),cmd.bap-&gt;flags);&bslash;&n;&t;&t;} else if (com.lock_state &amp; AWC_BAP_LOCKED){&bslash;&n;&t;&t;&t; com.bap-&gt;lock--; &bslash;&n;&t;&t;&t; com.lock_state &amp;= ~AWC_BAP_LOCKED;&bslash;&n;&t;&t;&t; my_spin_unlock_irqrestore(&amp;(cmd.bap-&gt;spinlock),cmd.bap-&gt;flags);&bslash;&n;&t;&t;}&bslash;&n;&t;}&bslash;&n;}
+mdefine_line|#define AWC_BAP_UNLOCK(com) { &bslash;&n;&t;if (com.bap){ &bslash;&n;&t;&t;if ( (com.lock_state &amp; AWC_BAP_SEMALOCKED) &amp;&amp;&bslash;&n;&t;&t;     (com.lock_state &amp; AWC_BAP_LOCKED) ){&bslash;&n;&t;&t;     &t;printk(&quot;Both Sema and simple lock &bslash;n&quot;);&bslash;&n;&t;&t;}&bslash;&n;&t;&t;if ( com.lock_state &amp; AWC_BAP_SEMALOCKED ){&bslash;&n;&t;&t;&t; com.bap-&gt;lock--; &bslash;&n;&t;&t;&t; com.lock_state &amp;= ~AWC_BAP_SEMALOCKED;&bslash;&n;&t;&t;&t; UP(&amp;(com.bap-&gt;sem)); &bslash;&n;&t;&t;&t; my_spin_unlock_irqrestore(&amp;(cmd.bap-&gt;spinlock),cmd.bap-&gt;flags);&bslash;&n;&t;&t;} else if (com.lock_state &amp; AWC_BAP_LOCKED){&bslash;&n;&t;&t;&t; com.bap-&gt;lock--; &bslash;&n;&t;&t;&t; com.lock_state &amp;= ~AWC_BAP_LOCKED;&bslash;&n;&t;&t;&t; my_spin_unlock_irqrestore(&amp;(cmd.bap-&gt;spinlock),cmd.bap-&gt;flags);&bslash;&n;&t;&t;}&bslash;&n;&t;}&bslash;&n;&t;if (both_bap_lock)&bslash;&n;&t;&t;my_spin_unlock_irqrestore(&amp;cmd.priv-&gt;both_bap_spinlock,cmd.priv-&gt;both_bap_spinlock_flags);&bslash;&n;}
 DECL|macro|AWC_RELEASE_COMMAND
 mdefine_line|#define AWC_RELEASE_COMMAND(com) {&bslash;&n;&t;&t;AWC_BAP_UNLOCK(cmd);&bslash;&n;&t;}
 DECL|macro|awc_manufacturer_code
@@ -803,9 +778,9 @@ DECL|member|size
 r_int
 id|size
 suffix:semicolon
-DECL|member|lock
+DECL|member|spinlock
 id|my_spinlock_t
-id|lock
+id|spinlock
 suffix:semicolon
 )brace
 suffix:semicolon
@@ -827,12 +802,6 @@ r_int
 r_int
 id|flags
 suffix:semicolon
-macro_line|#ifdef __SMP__
-id|queue-&gt;lock.lock
-op_assign
-l_int|0
-suffix:semicolon
-macro_line|#endif
 id|memset
 c_func
 (paren
@@ -847,11 +816,18 @@ id|awc_fid_queue
 )paren
 )paren
 suffix:semicolon
+id|my_spin_lock_init
+c_func
+(paren
+op_amp
+id|queue-&gt;spinlock
+)paren
+suffix:semicolon
 id|my_spin_lock_irqsave
 c_func
 (paren
 op_amp
-id|queue-&gt;lock
+id|queue-&gt;spinlock
 comma
 id|flags
 )paren
@@ -872,7 +848,7 @@ id|my_spin_unlock_irqrestore
 c_func
 (paren
 op_amp
-id|queue-&gt;lock
+id|queue-&gt;spinlock
 comma
 id|flags
 )paren
@@ -907,7 +883,7 @@ id|my_spin_lock_irqsave
 c_func
 (paren
 op_amp
-id|queue-&gt;lock
+id|queue-&gt;spinlock
 comma
 id|flags
 )paren
@@ -952,7 +928,7 @@ id|my_spin_unlock_irqrestore
 c_func
 (paren
 op_amp
-id|queue-&gt;lock
+id|queue-&gt;spinlock
 comma
 id|flags
 )paren
@@ -987,7 +963,7 @@ id|my_spin_lock_irqsave
 c_func
 (paren
 op_amp
-id|queue-&gt;lock
+id|queue-&gt;spinlock
 comma
 id|flags
 )paren
@@ -1032,7 +1008,7 @@ id|my_spin_unlock_irqrestore
 c_func
 (paren
 op_amp
-id|queue-&gt;lock
+id|queue-&gt;spinlock
 comma
 id|flags
 )paren
@@ -1169,7 +1145,7 @@ id|my_spin_lock_irqsave
 c_func
 (paren
 op_amp
-id|queue-&gt;lock
+id|queue-&gt;spinlock
 comma
 id|flags
 )paren
@@ -1186,7 +1162,7 @@ id|my_spin_unlock_irqrestore
 c_func
 (paren
 op_amp
-id|queue-&gt;lock
+id|queue-&gt;spinlock
 comma
 id|flags
 )paren
@@ -1223,7 +1199,7 @@ id|my_spin_lock_irqsave
 c_func
 (paren
 op_amp
-id|queue-&gt;lock
+id|queue-&gt;spinlock
 comma
 id|flags
 )paren
@@ -1249,7 +1225,7 @@ id|my_spin_unlock_irqrestore
 c_func
 (paren
 op_amp
-id|queue-&gt;lock
+id|queue-&gt;spinlock
 comma
 id|flags
 )paren
@@ -1289,7 +1265,7 @@ id|my_spin_lock_irqsave
 c_func
 (paren
 op_amp
-id|queue-&gt;lock
+id|queue-&gt;spinlock
 comma
 id|flags
 )paren
@@ -1315,7 +1291,7 @@ id|my_spin_unlock_irqrestore
 c_func
 (paren
 op_amp
-id|queue-&gt;lock
+id|queue-&gt;spinlock
 comma
 id|flags
 )paren
@@ -1329,7 +1305,7 @@ suffix:semicolon
 DECL|macro|AWC_TX_HEAD_SIZE
 mdefine_line|#define AWC_TX_HEAD_SIZE&t;&t;0x44
 DECL|macro|AWC_TX_ALLOC_SMALL_SIZE
-mdefine_line|#define AWC_TX_ALLOC_SMALL_SIZE &t;150
+mdefine_line|#define AWC_TX_ALLOC_SMALL_SIZE &t;200
 DECL|macro|AWC_RX_BUFFS
 mdefine_line|#define AWC_RX_BUFFS&t;&t;&t;50
 multiline_comment|/*****************************     &t;RID &amp; CONFIG &t;***********************/
@@ -3825,10 +3801,33 @@ r_int
 id|interrupt_count
 suffix:semicolon
 singleline_comment|// Command serialize stuff
-DECL|member|command_semaphore
-r_struct
-id|semaphore
-id|command_semaphore
+singleline_comment|//changed to spinlock        struct semaphore &t;command_semaphore;
+DECL|member|both_bap_spinlock
+id|my_spinlock_t
+id|both_bap_spinlock
+suffix:semicolon
+DECL|member|both_bap_spinlock_flags
+r_int
+r_int
+id|both_bap_spinlock_flags
+suffix:semicolon
+DECL|member|bap_setup_spinlock
+id|my_spinlock_t
+id|bap_setup_spinlock
+suffix:semicolon
+DECL|member|bap_setup_spinlock_flags
+r_int
+r_int
+id|bap_setup_spinlock_flags
+suffix:semicolon
+DECL|member|command_issuing_spinlock
+id|my_spinlock_t
+id|command_issuing_spinlock
+suffix:semicolon
+DECL|member|command_issuing_spinlock_flags
+r_int
+r_int
+id|command_issuing_spinlock_flags
 suffix:semicolon
 DECL|member|unlock_command_postponed
 r_volatile
@@ -4629,6 +4628,14 @@ id|sleep_in_command
 suffix:semicolon
 r_extern
 r_int
+id|both_bap_lock
+suffix:semicolon
+r_extern
+r_int
+id|bap_setup_spinlock
+suffix:semicolon
+r_extern
+r_int
 id|tx_queue_len
 suffix:semicolon
 r_extern
@@ -4650,6 +4657,8 @@ id|aironet4500_devices
 id|MAX_AWCS
 )braket
 suffix:semicolon
+DECL|macro|AWC_DEBUG
+mdefine_line|#define AWC_DEBUG 1
 macro_line|#ifdef AWC_DEBUG
 DECL|macro|DEBUG
 mdefine_line|#define DEBUG(a,args...) if (awc_debug &amp; a) printk( args)

@@ -1960,6 +1960,8 @@ dot
 id|device
 comma
 l_int|1
+comma
+id|FALSE
 )paren
 suffix:semicolon
 id|retries
@@ -2071,13 +2073,6 @@ c_loop
 id|the_result
 op_logical_and
 id|retries
-)paren
-suffix:semicolon
-id|wake_up
-c_func
-(paren
-op_amp
-id|SCpnt-&gt;device-&gt;device_wait
 )paren
 suffix:semicolon
 id|scsi_release_command
@@ -3010,6 +3005,8 @@ c_func
 id|device
 comma
 l_int|1
+comma
+id|FALSE
 )paren
 suffix:semicolon
 r_if
@@ -4062,7 +4059,7 @@ id|hardsect_size
 id|MAJOR_NR
 )braket
 op_assign
-id|sr_hardsizes
+l_int|NULL
 suffix:semicolon
 id|blk_cleanup_queue
 c_func

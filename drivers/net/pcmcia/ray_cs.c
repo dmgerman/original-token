@@ -24,11 +24,8 @@ macro_line|#include &lt;pcmcia/cistpl.h&gt;
 macro_line|#include &lt;pcmcia/cisreg.h&gt;
 macro_line|#include &lt;pcmcia/ds.h&gt;
 macro_line|#include &lt;pcmcia/mem_op.h&gt;
-macro_line|#ifdef HAS_WIRELESS_EXTENSIONS
+macro_line|#ifdef CONFIG_NET_PCMCIA_RADIO
 macro_line|#include &lt;linux/wireless.h&gt;
-macro_line|#if WIRELESS_EXT &lt; 8
-macro_line|#warning &quot;Wireless extension v8 or newer required&quot;
-macro_line|#endif&t;/* WIRELESS_EXT &lt; 8 */
 multiline_comment|/* Warning : these stuff will slow down the driver... */
 DECL|macro|WIRELESS_SPY
 mdefine_line|#define WIRELESS_SPY&t;&t;/* Enable spying addresses */
@@ -54,7 +51,7 @@ id|ETH_ALEN
 )braket
 suffix:semicolon
 multiline_comment|/* Hardware address */
-macro_line|#endif&t;/* HAS_WIRELESS_EXTENSIONS */
+macro_line|#endif&t;/* CONFIG_NET_PCMCIA_RADIO */
 macro_line|#include &quot;rayctl.h&quot;
 macro_line|#include &quot;ray_cs.h&quot;
 multiline_comment|/* All the PCMCIA modules use PCMCIA_DEBUG to control debugging.  If&n;   you do not define PCMCIA_DEBUG at all, all the debug code will be&n;   left out.  If you compile with PCMCIA_DEBUG=0, the debug code will&n;   be present but disabled -- but it can then be enabled for specific&n;   modules at load time with a &squot;pc_debug=#&squot; option to insmod.&n;*/
@@ -341,7 +338,7 @@ id|ray_get_wireless_stats
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -842,7 +839,7 @@ r_int
 r_int
 id|ray_mem_speed
 op_assign
-l_int|0x2A
+l_int|500
 suffix:semicolon
 id|MODULE_AUTHOR
 c_func
@@ -2443,23 +2440,19 @@ id|req.AccessSpeed
 op_assign
 id|ray_mem_speed
 suffix:semicolon
-id|link-&gt;win
-op_assign
-(paren
-id|window_handle_t
-)paren
-id|link-&gt;handle
-suffix:semicolon
 id|CS_CHECK
 c_func
 (paren
 id|pcmcia_request_window
 comma
 op_amp
-id|link-&gt;win
+id|link-&gt;handle
 comma
 op_amp
 id|req
+comma
+op_amp
+id|link-&gt;win
 )paren
 suffix:semicolon
 id|mem.CardOffset
@@ -2520,23 +2513,19 @@ id|req.AccessSpeed
 op_assign
 id|ray_mem_speed
 suffix:semicolon
-id|local-&gt;rmem_handle
-op_assign
-(paren
-id|window_handle_t
-)paren
-id|link-&gt;handle
-suffix:semicolon
 id|CS_CHECK
 c_func
 (paren
 id|pcmcia_request_window
 comma
 op_amp
-id|local-&gt;rmem_handle
+id|link-&gt;handle
 comma
 op_amp
 id|req
+comma
+op_amp
+id|local-&gt;rmem_handle
 )paren
 suffix:semicolon
 id|mem.CardOffset
@@ -2597,23 +2586,19 @@ id|req.AccessSpeed
 op_assign
 id|ray_mem_speed
 suffix:semicolon
-id|local-&gt;amem_handle
-op_assign
-(paren
-id|window_handle_t
-)paren
-id|link-&gt;handle
-suffix:semicolon
 id|CS_CHECK
 c_func
 (paren
 id|pcmcia_request_window
 comma
 op_amp
-id|local-&gt;amem_handle
+id|link-&gt;handle
 comma
 op_amp
 id|req
+comma
+op_amp
+id|local-&gt;amem_handle
 )paren
 suffix:semicolon
 id|mem.CardOffset
@@ -7119,7 +7104,7 @@ id|ray_get_wireless_stats
 c_func
 (paren
 r_struct
-id|device
+id|net_device
 op_star
 id|dev
 )paren
@@ -9319,15 +9304,11 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-(paren
 id|dev
 op_eq
 l_int|NULL
 )paren
-op_logical_or
-op_logical_neg
-id|dev-&gt;start
-)paren
+multiline_comment|/* Note that we want interrupts with dev-&gt;start == 0 */
 r_return
 suffix:semicolon
 id|DEBUG
@@ -10651,7 +10632,7 @@ macro_line|#ifdef WIRELESS_SPY
 r_int
 id|siglev
 op_assign
-id|prcs-&gt;var.rx_packet.rx_sig_lev
+id|local-&gt;last_rsl
 suffix:semicolon
 id|u_char
 id|linksrcaddr

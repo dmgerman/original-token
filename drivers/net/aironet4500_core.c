@@ -1,4 +1,5 @@
-multiline_comment|/*&n; *&t; Aironet 4500 Pcmcia driver&n; *&n; *&t;&t;Elmer Joandi, Januar 1999&n; *&t;Copyright Elmer Joandi, all rights restricted&n; *&t;&n; *&n; *&t;Revision 0.1 ,started  30.12.1998&n; *&n; *&n; */
+multiline_comment|/*&n; *&t; Aironet 4500/4800 driver core&n; *&n; *&t;&t;Elmer Joandi, Januar 1999&n; *&t;&t;Copyright: &t;GPL&n; *&t;&n; *&n; *&t;Revision 0.1 ,started  30.12.1998&n; *&n; *&n; */
+multiline_comment|/* CHANGELOG:&n; &t;march 99, stable version 2.0&n; &t;august 99, stable version 2.2&n; &t;november 99, integration with 2.3&n;&t;17.12.99: finally, got SMP near-correct. &n;&t;&t;timing issues remain- on SMP box its 15% slower on tcp&t;&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
@@ -45,6 +46,20 @@ id|sleep_in_command
 op_assign
 l_int|1
 suffix:semicolon
+DECL|variable|both_bap_lock
+r_int
+id|both_bap_lock
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* activated at awc_init in this */
+DECL|variable|bap_setup_spinlock
+r_int
+id|bap_setup_spinlock
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* file if numcpu &gt;1 */
 DECL|variable|bap_sleep
 id|EXPORT_SYMBOL
 c_func
@@ -78,6 +93,20 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|sleep_in_command
+)paren
+suffix:semicolon
+DECL|variable|both_bap_lock
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|both_bap_lock
+)paren
+suffix:semicolon
+DECL|variable|bap_setup_spinlock
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|bap_setup_spinlock
 )paren
 suffix:semicolon
 DECL|variable|awc_status_error_codes
@@ -655,15 +684,12 @@ c_func
 l_string|&quot; entry awc_issue_command_and_block &quot;
 )paren
 suffix:semicolon
-id|DOWN
+id|AWC_LOCK_COMMAND_ISSUING
 c_func
 (paren
-op_amp
-id|cmd-&gt;priv-&gt;command_semaphore
+id|cmd-&gt;priv
 )paren
 suffix:semicolon
-singleline_comment|//     save_flags(flags);
-singleline_comment|//    cli();
 r_if
 c_cond
 (paren
@@ -993,12 +1019,10 @@ r_goto
 id|final
 suffix:semicolon
 )brace
-singleline_comment|//    restore_flags(flags);   
-id|UP
+id|AWC_UNLOCK_COMMAND_ISSUING
 c_func
 (paren
-op_amp
-id|cmd-&gt;priv-&gt;command_semaphore
+id|cmd-&gt;priv
 )paren
 suffix:semicolon
 id|AWC_ENTRY_EXIT_DEBUG
@@ -1018,12 +1042,10 @@ l_int|0
 suffix:semicolon
 id|final
 suffix:colon
-singleline_comment|//     restore_flags(flags);
-id|UP
+id|AWC_UNLOCK_COMMAND_ISSUING
 c_func
 (paren
-op_amp
-id|cmd-&gt;priv-&gt;command_semaphore
+id|cmd-&gt;priv
 )paren
 suffix:semicolon
 id|AWC_ENTRY_EXIT_DEBUG
@@ -1106,11 +1128,10 @@ op_minus
 l_int|1
 suffix:semicolon
 )brace
-id|DOWN
+id|AWC_LOCK_COMMAND_ISSUING
 c_func
 (paren
-op_amp
-id|cmd-&gt;priv-&gt;command_semaphore
+id|cmd-&gt;priv
 )paren
 suffix:semicolon
 r_if
@@ -1251,11 +1272,10 @@ l_int|0
 suffix:semicolon
 id|final
 suffix:colon
-id|UP
+id|AWC_UNLOCK_COMMAND_ISSUING
 c_func
 (paren
-op_amp
-id|cmd-&gt;priv-&gt;command_semaphore
+id|cmd-&gt;priv
 )paren
 suffix:semicolon
 id|AWC_ENTRY_EXIT_DEBUG
@@ -1329,11 +1349,10 @@ c_func
 l_string|&quot; entry awc_issue_command_no_ack &quot;
 )paren
 suffix:semicolon
-id|DOWN
+id|AWC_LOCK_COMMAND_ISSUING
 c_func
 (paren
-op_amp
-id|priv-&gt;command_semaphore
+id|priv
 )paren
 suffix:semicolon
 r_if
@@ -1473,11 +1492,10 @@ c_func
 id|dev-&gt;base_addr
 )paren
 suffix:semicolon
-id|UP
+id|AWC_UNLOCK_COMMAND_ISSUING
 c_func
 (paren
-op_amp
-id|priv-&gt;command_semaphore
+id|priv
 )paren
 suffix:semicolon
 id|AWC_ENTRY_EXIT_DEBUG
@@ -1491,11 +1509,10 @@ l_int|0
 suffix:semicolon
 id|final
 suffix:colon
-id|UP
+id|AWC_UNLOCK_COMMAND_ISSUING
 c_func
 (paren
-op_amp
-id|priv-&gt;command_semaphore
+id|priv
 )paren
 suffix:semicolon
 id|AWC_ENTRY_EXIT_DEBUG
@@ -1597,6 +1614,20 @@ comma
 l_string|&quot;no bap or bap not locked cmd %d !!&quot;
 comma
 id|cmd-&gt;command
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|bap_setup_spinlock
+)paren
+id|my_spin_lock_irqsave
+c_func
+(paren
+op_amp
+id|cmd-&gt;priv-&gt;bap_setup_spinlock
+comma
+id|cmd-&gt;priv-&gt;bap_setup_spinlock_flags
 )paren
 suffix:semicolon
 id|status
@@ -1722,8 +1753,17 @@ id|cmd-&gt;dev
 suffix:semicolon
 singleline_comment|//&t;AWC_OUT(cmd-&gt;bap-&gt;offset, 0x800);
 )brace
-singleline_comment|//&t;  save_flags(flags);
-singleline_comment|//&t;  cli();
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
 id|AWC_OUT
 c_func
 (paren
@@ -1742,7 +1782,12 @@ comma
 id|cmd-&gt;offset
 )paren
 suffix:semicolon
-singleline_comment|//          restore_flags(flags);
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 id|WAIT61x3
 suffix:semicolon
 id|jiff
@@ -1782,9 +1827,8 @@ c_cond
 (paren
 id|cmd-&gt;priv-&gt;ejected
 )paren
-r_return
-op_minus
-l_int|1
+r_goto
+id|ejected_unlock
 suffix:semicolon
 id|udelay
 c_func
@@ -1807,8 +1851,8 @@ id|KERN_CRIT
 l_string|&quot;deadlock in bap&bslash;n&quot;
 )paren
 suffix:semicolon
-r_return
-id|AWC_ERROR
+r_goto
+id|return_AWC_ERROR
 suffix:semicolon
 )brace
 suffix:semicolon
@@ -1955,8 +1999,8 @@ c_func
 id|cmd-&gt;dev
 )paren
 suffix:semicolon
-r_return
-id|AWC_ERROR
+r_goto
+id|return_AWC_ERROR
 suffix:semicolon
 )brace
 r_continue
@@ -1996,8 +2040,8 @@ id|bap_sleep_after_setup
 )paren
 suffix:semicolon
 singleline_comment|// success
-r_return
-id|AWC_SUCCESS
+r_goto
+id|return_AWC_SUCCESS
 suffix:semicolon
 )brace
 r_if
@@ -2032,8 +2076,8 @@ c_func
 id|cmd-&gt;dev
 )paren
 suffix:semicolon
-r_return
-id|AWC_ERROR
+r_goto
+id|return_AWC_ERROR
 suffix:semicolon
 )brace
 r_if
@@ -2130,8 +2174,8 @@ c_func
 id|cmd-&gt;dev
 )paren
 suffix:semicolon
-r_return
-id|AWC_ERROR
+r_goto
+id|return_AWC_ERROR
 suffix:semicolon
 )brace
 suffix:semicolon
@@ -2141,6 +2185,82 @@ c_func
 (paren
 l_string|&quot; WE MUST NOT BE HERE exit &bslash;n&quot;
 )paren
+suffix:semicolon
+id|ejected_unlock
+suffix:colon
+r_if
+c_cond
+(paren
+id|bap_setup_spinlock
+)paren
+id|my_spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|cmd-&gt;priv-&gt;bap_setup_spinlock
+comma
+id|cmd-&gt;priv-&gt;bap_setup_spinlock_flags
+)paren
+suffix:semicolon
+id|AWC_ENTRY_EXIT_DEBUG
+c_func
+(paren
+l_string|&quot; ejected_unlock_exit &bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+op_minus
+l_int|1
+suffix:semicolon
+id|return_AWC_ERROR
+suffix:colon
+r_if
+c_cond
+(paren
+id|bap_setup_spinlock
+)paren
+id|my_spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|cmd-&gt;priv-&gt;bap_setup_spinlock
+comma
+id|cmd-&gt;priv-&gt;bap_setup_spinlock_flags
+)paren
+suffix:semicolon
+id|AWC_ENTRY_EXIT_DEBUG
+c_func
+(paren
+l_string|&quot; AWC_ERROR_exit &bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+id|AWC_ERROR
+suffix:semicolon
+id|return_AWC_SUCCESS
+suffix:colon
+r_if
+c_cond
+(paren
+id|bap_setup_spinlock
+)paren
+id|my_spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|cmd-&gt;priv-&gt;bap_setup_spinlock
+comma
+id|cmd-&gt;priv-&gt;bap_setup_spinlock_flags
+)paren
+suffix:semicolon
+id|AWC_ENTRY_EXIT_DEBUG
+c_func
+(paren
+l_string|&quot; exit &bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+id|AWC_SUCCESS
 suffix:semicolon
 )brace
 singleline_comment|// requires call to awc_bap_setup() first
@@ -3180,6 +3300,12 @@ c_func
 l_int|500
 )paren
 suffix:semicolon
+id|AWC_BAP_LOCK_NOT_CLI
+c_func
+(paren
+id|cmd
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -3192,12 +3318,6 @@ id|cmd
 )paren
 r_goto
 id|final
-suffix:semicolon
-id|AWC_BAP_LOCK_NOT_CLI
-c_func
-(paren
-id|cmd
-)paren
 suffix:semicolon
 id|udelay
 c_func
@@ -3240,12 +3360,6 @@ suffix:semicolon
 id|cmd.priv-&gt;sleeping_bap
 op_assign
 id|sleep_state
-suffix:semicolon
-id|AWC_BAP_UNLOCK
-c_func
-(paren
-id|cmd
-)paren
 suffix:semicolon
 id|AWC_RELEASE_COMMAND
 c_func
@@ -3439,12 +3553,6 @@ id|cmd
 r_goto
 id|final
 suffix:semicolon
-id|AWC_BAP_UNLOCK
-c_func
-(paren
-id|cmd
-)paren
-suffix:semicolon
 id|cmd.priv-&gt;sleeping_bap
 op_assign
 id|sleep_state
@@ -3555,6 +3663,12 @@ c_func
 l_int|500
 )paren
 suffix:semicolon
+id|AWC_BAP_LOCK_NOT_CLI
+c_func
+(paren
+id|cmd
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -3567,12 +3681,6 @@ id|cmd
 )paren
 r_goto
 id|final
-suffix:semicolon
-id|AWC_BAP_LOCK_NOT_CLI
-c_func
-(paren
-id|cmd
-)paren
 suffix:semicolon
 r_if
 c_cond
@@ -3603,12 +3711,6 @@ suffix:semicolon
 id|cmd.priv-&gt;sleeping_bap
 op_assign
 id|sleep_state
-suffix:semicolon
-id|AWC_BAP_UNLOCK
-c_func
-(paren
-id|cmd
-)paren
 suffix:semicolon
 id|AWC_RELEASE_COMMAND
 c_func
@@ -3722,6 +3824,12 @@ c_func
 l_int|500
 )paren
 suffix:semicolon
+id|AWC_BAP_LOCK_NOT_CLI
+c_func
+(paren
+id|cmd
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -3734,12 +3842,6 @@ id|cmd
 )paren
 r_goto
 id|final
-suffix:semicolon
-id|AWC_BAP_LOCK_NOT_CLI
-c_func
-(paren
-id|cmd
-)paren
 suffix:semicolon
 r_if
 c_cond
@@ -3770,12 +3872,6 @@ suffix:semicolon
 id|cmd.priv-&gt;sleeping_bap
 op_assign
 id|sleep_state
-suffix:semicolon
-id|AWC_BAP_UNLOCK
-c_func
-(paren
-id|cmd
-)paren
 suffix:semicolon
 id|cmd.command
 op_assign
@@ -3916,6 +4012,12 @@ comma
 l_int|0
 comma
 l_int|0
+)paren
+suffix:semicolon
+id|AWC_BAP_LOCK_NOT_CLI
+c_func
+(paren
+id|cmd
 )paren
 suffix:semicolon
 r_if
@@ -4592,6 +4694,12 @@ id|tot
 op_assign
 l_int|0
 suffix:semicolon
+id|AWC_BAP_LOCK_NOT_CLI
+c_func
+(paren
+id|cmd
+)paren
+suffix:semicolon
 r_while
 c_loop
 (paren
@@ -5050,6 +5158,12 @@ comma
 l_int|0
 comma
 l_int|NULL
+)paren
+suffix:semicolon
+id|AWC_BAP_LOCK_NOT_CLI
+c_func
+(paren
+id|cmd
 )paren
 suffix:semicolon
 r_if
@@ -8968,7 +9082,7 @@ id|rx_buff-&gt;u.rx.ieee_802_3.payload_length
 suffix:semicolon
 )brace
 suffix:semicolon
-id|AWC_BAP_UNLOCK
+id|AWC_RELEASE_COMMAND
 c_func
 (paren
 id|cmd
@@ -9042,13 +9156,6 @@ comma
 id|rx_buff
 )paren
 suffix:semicolon
-id|AWC_RELEASE_COMMAND
-c_func
-(paren
-id|cmd
-)paren
-suffix:semicolon
-singleline_comment|//&t;awc_event_ack_Rx(dev-&gt;base_addr);
 id|AWC_ENTRY_EXIT_DEBUG
 c_func
 (paren
@@ -9075,7 +9182,6 @@ c_func
 id|cmd
 )paren
 suffix:semicolon
-singleline_comment|//&t;awc_event_ack_Rx(dev-&gt;base_addr);
 id|AWC_ENTRY_EXIT_DEBUG
 c_func
 (paren
@@ -9658,12 +9764,13 @@ id|cmd
 r_goto
 id|final
 suffix:semicolon
-id|AWC_BAP_UNLOCK
+id|AWC_RELEASE_COMMAND
 c_func
 (paren
 id|cmd
 )paren
 suffix:semicolon
+singleline_comment|// locking probs,  these two lines below and above, swithc order 
 r_if
 c_cond
 (paren
@@ -9675,9 +9782,8 @@ id|cmd
 )paren
 )paren
 r_goto
-id|final
+id|final_unlocked
 suffix:semicolon
-singleline_comment|//&t;if (awc_issue_command(&amp;cmd))&t;&t;goto final;
 id|tx_buff-&gt;transmit_start_time
 op_assign
 id|jiffies
@@ -9691,12 +9797,6 @@ id|tx_buff
 )paren
 suffix:semicolon
 singleline_comment|// issue the transmit command
-id|AWC_RELEASE_COMMAND
-c_func
-(paren
-id|cmd
-)paren
-suffix:semicolon
 id|AWC_ENTRY_EXIT_DEBUG
 c_func
 (paren
@@ -9729,6 +9829,36 @@ id|AWC_RELEASE_COMMAND
 c_func
 (paren
 id|cmd
+)paren
+suffix:semicolon
+id|AWC_ENTRY_EXIT_DEBUG
+c_func
+(paren
+l_string|&quot;  BAD exit &bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+op_minus
+l_int|1
+suffix:semicolon
+suffix:semicolon
+id|final_unlocked
+suffix:colon
+id|awc_802_11_after_failed_tx_packet_to_card_write
+c_func
+(paren
+id|dev
+comma
+id|tx_buff
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_CRIT
+l_string|&quot;%s awc tx command failed &bslash;n&quot;
+comma
+id|dev-&gt;name
 )paren
 suffix:semicolon
 id|AWC_ENTRY_EXIT_DEBUG
@@ -9878,7 +10008,7 @@ id|cmd
 r_goto
 id|final
 suffix:semicolon
-id|AWC_BAP_UNLOCK
+id|AWC_RELEASE_COMMAND
 c_func
 (paren
 id|cmd
@@ -9890,12 +10020,6 @@ c_func
 id|dev
 comma
 id|fid
-)paren
-suffix:semicolon
-id|AWC_RELEASE_COMMAND
-c_func
-(paren
-id|cmd
 )paren
 suffix:semicolon
 id|AWC_ENTRY_EXIT_DEBUG
@@ -10084,11 +10208,10 @@ id|priv-&gt;command_semaphore_on
 id|priv-&gt;command_semaphore_on
 op_decrement
 suffix:semicolon
-id|UP
+id|AWC_UNLOCK_COMMAND_ISSUING
 c_func
 (paren
-op_amp
-id|priv-&gt;command_semaphore
+id|priv
 )paren
 suffix:semicolon
 )brace
@@ -10137,11 +10260,10 @@ id|priv-&gt;command_semaphore_on
 id|priv-&gt;command_semaphore_on
 op_decrement
 suffix:semicolon
-id|UP
+id|AWC_UNLOCK_COMMAND_ISSUING
 c_func
 (paren
-op_amp
-id|priv-&gt;command_semaphore
+id|priv
 )paren
 suffix:semicolon
 )brace
@@ -10271,21 +10393,9 @@ op_assign
 l_int|NULL
 suffix:semicolon
 singleline_comment|//&t;int interrupt_reenter = 0;
-r_int
-r_int
-id|flags
-suffix:semicolon
-id|save_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
+singleline_comment|//&t;unsigned long flags;&t;
+singleline_comment|//&t;save_flags(flags);
+singleline_comment|//&t;cli();
 singleline_comment|//&t;disable_irq(dev-&gt;irq);
 id|DEBUG
 c_func
@@ -11120,12 +11230,7 @@ id|priv-&gt;enabled_interrupts
 suffix:semicolon
 singleline_comment|//end_here:
 singleline_comment|//&t;enable_irq(dev-&gt;irq);
-id|restore_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
+singleline_comment|//  &t;restore_flags(flags);
 r_return
 l_int|0
 suffix:semicolon
@@ -11138,12 +11243,7 @@ l_string|&quot; reenter-bad end exit &bslash;n&quot;
 )paren
 suffix:semicolon
 singleline_comment|//&t;enable_irq(dev-&gt;irq);
-id|restore_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
+singleline_comment|//  &t;restore_flags(flags);
 r_return
 l_int|0
 suffix:semicolon
@@ -11160,12 +11260,7 @@ l_string|&quot; bad_end exit &bslash;n&quot;
 )paren
 suffix:semicolon
 singleline_comment|//&t;enable_irq(dev-&gt;irq);
-id|restore_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
+singleline_comment|//&t;restore_flags(flags);
 r_return
 op_minus
 l_int|1
@@ -11208,7 +11303,7 @@ id|awc_debug
 op_assign
 l_int|0
 suffix:semicolon
-singleline_comment|// 0xffffff;
+singleline_comment|//  0xffffff;
 DECL|variable|p802_11_send
 r_static
 r_int
@@ -11782,6 +11877,26 @@ comma
 id|dev-&gt;name
 )paren
 suffix:semicolon
+multiline_comment|/* both_bap_lock decreases performance about 15% &n;&t; * but without it card gets screwed up &n;&t; */
+macro_line|#ifdef CONFIG_SMP
+r_if
+c_cond
+(paren
+id|smp_num_cpus
+OG
+l_int|1
+)paren
+(brace
+id|both_bap_lock
+op_assign
+l_int|1
+suffix:semicolon
+id|bap_setup_spinlock
+op_assign
+l_int|1
+suffix:semicolon
+)brace
+macro_line|#endif
 singleline_comment|//awc_dump_registers(dev);
 r_if
 c_cond
@@ -12532,18 +12647,11 @@ id|priv-&gt;SSIDs
 )paren
 )paren
 suffix:semicolon
-id|memset
+id|my_spin_lock_init
 c_func
 (paren
 op_amp
 id|priv-&gt;queues_lock
-comma
-l_int|0
-comma
-r_sizeof
-(paren
-id|priv-&gt;queues_lock
-)paren
 )paren
 suffix:semicolon
 id|priv-&gt;SSIDs.ridLen
@@ -12867,6 +12975,13 @@ id|awc_private
 )paren
 )paren
 suffix:semicolon
+id|my_spin_lock_init
+c_func
+(paren
+op_amp
+id|priv-&gt;queues_lock
+)paren
+suffix:semicolon
 id|priv-&gt;bap0.select
 op_assign
 id|dev-&gt;base_addr
@@ -12892,6 +13007,13 @@ suffix:semicolon
 id|priv-&gt;bap0.status
 op_assign
 l_int|0
+suffix:semicolon
+id|my_spin_lock_init
+c_func
+(paren
+op_amp
+id|priv-&gt;bap0.spinlock
+)paren
 suffix:semicolon
 id|init_MUTEX
 c_func
@@ -12926,6 +13048,13 @@ id|priv-&gt;bap1.status
 op_assign
 l_int|0
 suffix:semicolon
+id|my_spin_lock_init
+c_func
+(paren
+op_amp
+id|priv-&gt;bap1.spinlock
+)paren
+suffix:semicolon
 id|init_MUTEX
 c_func
 (paren
@@ -12937,11 +13066,26 @@ id|priv-&gt;sleeping_bap
 op_assign
 l_int|1
 suffix:semicolon
-id|init_MUTEX
+singleline_comment|//spinlock now&t;init_MUTEX(&amp;priv-&gt;command_semaphore);
+id|my_spin_lock_init
 c_func
 (paren
 op_amp
-id|priv-&gt;command_semaphore
+id|priv-&gt;command_issuing_spinlock
+)paren
+suffix:semicolon
+id|my_spin_lock_init
+c_func
+(paren
+op_amp
+id|priv-&gt;both_bap_spinlock
+)paren
+suffix:semicolon
+id|my_spin_lock_init
+c_func
+(paren
+op_amp
+id|priv-&gt;bap_setup_spinlock
 )paren
 suffix:semicolon
 id|priv-&gt;command_semaphore_on
@@ -13333,20 +13477,18 @@ c_func
 l_int|10000
 )paren
 suffix:semicolon
-id|DOWN
+id|AWC_LOCK_COMMAND_ISSUING
 c_func
 (paren
-op_amp
-id|priv-&gt;command_semaphore
+id|priv
 )paren
 suffix:semicolon
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
-id|UP
+id|AWC_UNLOCK_COMMAND_ISSUING
 c_func
 (paren
-op_amp
-id|priv-&gt;command_semaphore
+id|priv
 )paren
 suffix:semicolon
 r_return
@@ -13466,10 +13608,7 @@ id|retval
 op_assign
 l_int|0
 suffix:semicolon
-r_int
-r_int
-id|flags
-suffix:semicolon
+singleline_comment|//&t;unsigned long flags;
 r_struct
 id|awc_fid
 op_star
@@ -13545,17 +13684,8 @@ op_star
 id|HZ
 )paren
 (brace
-id|save_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
+singleline_comment|// save_flags(flags);
+singleline_comment|// cli();
 id|fid
 op_assign
 id|priv-&gt;tx_in_transmit.head
@@ -13643,12 +13773,7 @@ c_func
 l_string|&quot;bbb in awc_fid_queue&bslash;n&quot;
 )paren
 suffix:semicolon
-id|restore_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
+singleline_comment|//&t;&t;restore_flags(flags);
 r_return
 op_minus
 l_int|1
@@ -13656,12 +13781,7 @@ suffix:semicolon
 )brace
 suffix:semicolon
 )brace
-id|restore_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
+singleline_comment|//restore_flags(flags);
 singleline_comment|//debug =0x8;
 )brace
 suffix:semicolon
@@ -13963,10 +14083,7 @@ op_star
 )paren
 id|dev-&gt;priv
 suffix:semicolon
-r_int
-r_int
-id|flags
-suffix:semicolon
+singleline_comment|//        unsigned long flags;
 singleline_comment|//&t;int cnt = 0;
 singleline_comment|//&t;int unlocked_stats_in_interrupt=0;
 id|DEBUG
@@ -13990,17 +14107,8 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-id|save_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
+singleline_comment|//&t;save_flags(flags);
+singleline_comment|//&t;cli();
 r_if
 c_cond
 (paren
@@ -14018,12 +14126,7 @@ l_int|9
 )braket
 )paren
 suffix:semicolon
-id|restore_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
+singleline_comment|//&t;restore_flags(flags);
 singleline_comment|// the very following is the very wrong very probably
 r_if
 c_cond
@@ -14114,10 +14217,7 @@ id|new_mtu
 )paren
 (brace
 singleline_comment|//&t;struct awc_private *priv = (struct awc_private *)dev-&gt;priv;
-r_int
-r_int
-id|flags
-suffix:semicolon
+singleline_comment|//        unsigned long flags;
 r_if
 c_cond
 (paren
@@ -14169,17 +14269,8 @@ op_ne
 id|new_mtu
 )paren
 (brace
-id|save_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
+singleline_comment|//&t;&t;save_flags(flags);
+singleline_comment|//&t;&t;cli();
 id|awc_disable_MAC
 c_func
 (paren
@@ -14208,12 +14299,7 @@ c_func
 id|dev
 )paren
 suffix:semicolon
-id|restore_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
+singleline_comment|//&t;&t;restore_flags(flags);
 id|printk
 c_func
 (paren
@@ -14365,7 +14451,6 @@ r_void
 )paren
 (brace
 singleline_comment|//&t;unsigned long flags;
-singleline_comment|//&t;debug =  awc_debug;
 id|printk
 c_func
 (paren

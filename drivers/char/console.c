@@ -23,9 +23,6 @@ macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/tqueue.h&gt;
-macro_line|#ifdef CONFIG_APM
-macro_line|#include &lt;linux/apm_bios.h&gt;
-macro_line|#endif
 macro_line|#include &lt;linux/bootmem.h&gt;
 macro_line|#include &lt;linux/acpi.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
@@ -321,6 +318,19 @@ r_int
 id|scrollback_delta
 op_assign
 l_int|0
+suffix:semicolon
+multiline_comment|/*&n; * Hook so that the power management routines can (un)blank&n; * the console on our behalf.&n; */
+DECL|variable|console_blank_hook
+r_int
+(paren
+op_star
+id|console_blank_hook
+)paren
+(paren
+r_int
+)paren
+op_assign
+l_int|NULL
 suffix:semicolon
 multiline_comment|/*&n; *&t;Low-Level Functions&n; */
 DECL|macro|IS_FG
@@ -12505,18 +12515,19 @@ c_func
 id|currcons
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_APM
 r_if
 c_cond
 (paren
-id|apm_display_blank
+id|console_blank_hook
+op_logical_and
+id|console_blank_hook
 c_func
 (paren
+l_int|1
 )paren
 )paren
 r_return
 suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -12625,13 +12636,17 @@ id|console_blanked
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#ifdef CONFIG_APM
-id|apm_display_unblank
+r_if
+c_cond
+(paren
+id|console_blank_hook
+)paren
+id|console_blank_hook
 c_func
 (paren
+l_int|0
 )paren
 suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren

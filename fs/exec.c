@@ -18,7 +18,6 @@ macro_line|#include &lt;asm/mmu_context.h&gt;
 macro_line|#ifdef CONFIG_KMOD
 macro_line|#include &lt;linux/kmod.h&gt;
 macro_line|#endif
-multiline_comment|/*&n; * Here are the actual binaries that will be accepted:&n; * add more with &quot;register_binfmt()&quot; if using modules...&n; *&n; * These are defined again for the &squot;real&squot; modules if you are using a&n; * module definition for these routines.&n; */
 DECL|variable|formats
 r_static
 r_struct

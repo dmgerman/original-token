@@ -5,10 +5,6 @@ multiline_comment|/*************************************************************
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/types.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
-macro_line|#if LINUX_VERSION_CODE &lt;= 0x20100
-DECL|macro|net_device_stats
-mdefine_line|#define net_device_stats&t;enet_statistics
-macro_line|#endif
 multiline_comment|/*****************************************************************&n;&t; * TLan Definitions&n;&t; *&n;&t; ****************************************************************/
 DECL|macro|FALSE
 mdefine_line|#define FALSE&t;&t;&t;0

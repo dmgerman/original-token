@@ -2784,6 +2784,8 @@ dot
 id|device
 comma
 l_int|1
+comma
+id|FALSE
 )paren
 suffix:semicolon
 id|buffer
@@ -4019,13 +4021,6 @@ op_assign
 id|sector_size
 suffix:semicolon
 multiline_comment|/* Wake up a process waiting for device */
-id|wake_up
-c_func
-(paren
-op_amp
-id|SCpnt-&gt;device-&gt;device_wait
-)paren
-suffix:semicolon
 id|scsi_release_command
 c_func
 (paren

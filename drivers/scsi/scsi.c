@@ -1867,11 +1867,12 @@ c_func
 id|SDpnt
 )paren
 suffix:semicolon
+multiline_comment|/*&n;         * Initialize the object that we will use to wait for command blocks.&n;         */
 id|init_waitqueue_head
 c_func
 (paren
 op_amp
-id|SDpnt-&gt;device_wait
+id|SDpnt-&gt;scpnt_wait
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * Next, hook the device to the host in question.&n;&t; */
@@ -3740,11 +3741,12 @@ id|SDpnt-&gt;online
 op_assign
 id|TRUE
 suffix:semicolon
+multiline_comment|/*&n;         * Initialize the object that we will use to wait for command blocks.&n;         */
 id|init_waitqueue_head
 c_func
 (paren
 op_amp
-id|SDpnt-&gt;device_wait
+id|SDpnt-&gt;scpnt_wait
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * Since we just found one device, there had damn well better be one in the list&n;&t; * already.&n;&t; */
@@ -3937,8 +3939,6 @@ DECL|macro|IN_RESET2
 mdefine_line|#define IN_RESET2 4
 DECL|macro|IN_RESET3
 mdefine_line|#define IN_RESET3 8
-multiline_comment|/* This function takes a quick look at a request, and decides if it&n; * can be queued now, or if there would be a stall while waiting for&n; * something else to finish.  This routine assumes that interrupts are&n; * turned off when entering the routine.  It is the responsibility&n; * of the calling code to ensure that this is the case.&n; */
-multiline_comment|/* This function returns a structure pointer that will be valid for&n; * the device.  The wait parameter tells us whether we should wait for&n; * the unit to become free or not.  We are also able to tell this routine&n; * not to return a descriptor if the host is unable to accept any more&n; * commands for the time being.  We need to keep in mind that there is no&n; * guarantee that the host remain not busy.  Keep in mind the&n; * scsi_request_queueable function also knows the internal allocation scheme&n; * of the packets for each device&n; */
 multiline_comment|/*&n; * This lock protects the freelist for all devices on the system.&n; * We could make this finer grained by having a single lock per&n; * device if it is ever found that there is excessive contention&n; * on this lock.&n; */
 DECL|variable|device_request_lock
 r_static
@@ -3963,7 +3963,7 @@ id|scsi_bhqueue_lock
 op_assign
 id|SPIN_LOCK_UNLOCKED
 suffix:semicolon
-multiline_comment|/*&n; * Function:    scsi_allocate_device&n; *&n; * Purpose:     Allocate a command descriptor.&n; *&n; * Arguments:   device    - device for which we want a command descriptor&n; *              wait      - 1 if we should wait in the event that none&n; *                          are available.&n; *&n; * Lock status: No locks assumed to be held.  This function is SMP-safe.&n; *&n; * Returns:     Pointer to command descriptor.&n; *&n; * Notes:       Prior to the new queue code, this function was not SMP-safe.&n; */
+multiline_comment|/*&n; * Function:    scsi_allocate_device&n; *&n; * Purpose:     Allocate a command descriptor.&n; *&n; * Arguments:   device    - device for which we want a command descriptor&n; *              wait      - 1 if we should wait in the event that none&n; *                          are available.&n; *              interruptible - 1 if we should unblock and return NULL&n; *                          in the event that we must wait, and a signal&n; *                          arrives.&n; *&n; * Lock status: No locks assumed to be held.  This function is SMP-safe.&n; *&n; * Returns:     Pointer to command descriptor.&n; *&n; * Notes:       Prior to the new queue code, this function was not SMP-safe.&n; *&n; *              If the wait flag is true, and we are waiting for a free&n; *              command block, this function will interrupt and return&n; *              NULL in the event that a signal arrives that needs to&n; *              be handled.&n; */
 DECL|function|scsi_allocate_device
 id|Scsi_Cmnd
 op_star
@@ -3976,6 +3976,9 @@ id|device
 comma
 r_int
 id|wait
+comma
+r_int
+id|interruptable
 )paren
 (brace
 r_struct
@@ -4170,6 +4173,53 @@ r_break
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t;&t; * If we have been asked to wait for a free block, then&n;&t;&t; * wait here.&n;&t;&t; */
+r_if
+c_cond
+(paren
+id|wait
+)paren
+(brace
+id|DECLARE_WAITQUEUE
+c_func
+(paren
+id|wait
+comma
+id|current
+)paren
+suffix:semicolon
+multiline_comment|/*&n;                         * We need to wait for a free commandblock.  We need to&n;                         * insert ourselves into the list before we release the&n;                         * lock.  This way if a block were released the same&n;                         * microsecond that we released the lock, the call&n;                         * to schedule() wouldn&squot;t block (well, it might switch,&n;                         * but the current task will still be schedulable.&n;                         */
+id|add_wait_queue
+c_func
+(paren
+op_amp
+id|device-&gt;scpnt_wait
+comma
+op_amp
+id|wait
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|interruptable
+)paren
+(brace
+id|set_current_state
+c_func
+(paren
+id|TASK_INTERRUPTIBLE
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
+id|set_current_state
+c_func
+(paren
+id|TASK_UNINTERRUPTIBLE
+)paren
+suffix:semicolon
+)brace
 id|spin_unlock_irqrestore
 c_func
 (paren
@@ -4179,18 +4229,10 @@ comma
 id|flags
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|wait
-)paren
-(brace
 multiline_comment|/*&n;&t;&t;&t; * This should block until a device command block&n;&t;&t;&t; * becomes available.&n;&t;&t;&t; */
-id|sleep_on
+id|schedule
 c_func
 (paren
-op_amp
-id|device-&gt;device_wait
 )paren
 suffix:semicolon
 id|spin_lock_irqsave
@@ -4202,9 +4244,55 @@ comma
 id|flags
 )paren
 suffix:semicolon
+id|remove_wait_queue
+c_func
+(paren
+op_amp
+id|device-&gt;scpnt_wait
+comma
+op_amp
+id|wait
+)paren
+suffix:semicolon
+multiline_comment|/*&n;                         * FIXME - Isn&squot;t this redundant??  Someone&n;                         * else will have forced the state back to running.&n;                         */
+id|set_current_state
+c_func
+(paren
+id|TASK_RUNNING
+)paren
+suffix:semicolon
+multiline_comment|/*&n;                         * In the event that a signal has arrived that we need&n;                         * to consider, then simply return NULL.  Everyone&n;                         * that calls us should be prepared for this&n;                         * possibility, and pass the appropriate code back&n;                         * to the user.&n;                         */
+r_if
+c_cond
+(paren
+id|interruptable
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|signal_pending
+c_func
+(paren
+id|current
+)paren
+)paren
+r_return
+l_int|NULL
+suffix:semicolon
+)brace
 )brace
 r_else
 (brace
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|device_request_lock
+comma
+id|flags
+)paren
+suffix:semicolon
 r_return
 l_int|NULL
 suffix:semicolon
@@ -4311,7 +4399,7 @@ r_return
 id|SCpnt
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function:    scsi_release_command&n; *&n; * Purpose:     Release a command block.&n; *&n; * Arguments:   SCpnt - command block we are releasing.&n; *&n; * Notes:       The command block can no longer be used by the caller once&n; *              this funciton is called.  This is in effect the inverse&n; *              of scsi_allocate_device/scsi_request_queueable.&n; */
+multiline_comment|/*&n; * Function:    scsi_release_command&n; *&n; * Purpose:     Release a command block.&n; *&n; * Arguments:   SCpnt - command block we are releasing.&n; *&n; * Notes:       The command block can no longer be used by the caller once&n; *              this funciton is called.  This is in effect the inverse&n; *              of scsi_allocate_device.  Note that we also must perform&n; *              a couple of additional tasks.  We must first wake up any&n; *              processes that might have blocked waiting for a command&n; *              block, and secondly we must hit the queue handler function&n; *              to make sure that the device is busy.&n; *&n; *              The idea is that a lot of the mid-level internals gunk&n; *              gets hidden in this function.  Upper level drivers don&squot;t&n; *              have any chickens to wave in the air to get things to&n; *              work reliably.&n; */
 DECL|function|scsi_release_command
 r_void
 id|scsi_release_command
@@ -4325,6 +4413,10 @@ id|SCpnt
 r_int
 r_int
 id|flags
+suffix:semicolon
+id|Scsi_Device
+op_star
+id|SDpnt
 suffix:semicolon
 id|spin_lock_irqsave
 c_func
@@ -4442,6 +4534,10 @@ id|SCpnt-&gt;host-&gt;eh_wait
 )paren
 suffix:semicolon
 )brace
+id|SDpnt
+op_assign
+id|SCpnt-&gt;device
+suffix:semicolon
 id|spin_unlock_irqrestore
 c_func
 (paren
@@ -4451,8 +4547,36 @@ comma
 id|flags
 )paren
 suffix:semicolon
+multiline_comment|/*&n;         * Wake up anyone waiting for this device.  Do this after we&n;         * have released the lock, as they will need it as soon as&n;         * they wake up.  &n;         */
+id|wake_up
+c_func
+(paren
+op_amp
+id|SDpnt-&gt;scpnt_wait
+)paren
+suffix:semicolon
+multiline_comment|/*&n;         * Finally, hit the queue request function to make sure that&n;         * the device is actually busy if there are requests present.&n;         * This won&squot;t block - if the device cannot take any more, life&n;         * will go on.  &n;         */
+(brace
+id|request_queue_t
+op_star
+id|q
+suffix:semicolon
+id|q
+op_assign
+op_amp
+id|SDpnt-&gt;request_queue
+suffix:semicolon
+id|scsi_queue_next_request
+c_func
+(paren
+id|q
+comma
+l_int|NULL
+)paren
+suffix:semicolon
 )brace
-multiline_comment|/*&n; * This is inline because we have stack problemes if we recurse to deeply.&n; */
+)brace
+multiline_comment|/*&n; * Function:    scsi_dispatch_command&n; *&n; * Purpose:     Dispatch a command to the low-level driver.&n; *&n; * Arguments:   SCpnt - command block we are dispatching.&n; *&n; * Notes:&n; */
 DECL|function|scsi_dispatch_cmd
 r_int
 id|scsi_dispatch_cmd
@@ -6720,14 +6844,6 @@ suffix:semicolon
 id|SCpnt-&gt;request.rq_status
 op_assign
 id|RQ_INACTIVE
-suffix:semicolon
-id|SCpnt-&gt;host_wait
-op_assign
-id|FALSE
-suffix:semicolon
-id|SCpnt-&gt;device_wait
-op_assign
-id|FALSE
 suffix:semicolon
 id|SCpnt-&gt;use_sg
 op_assign
@@ -10934,7 +11050,7 @@ suffix:semicolon
 id|send_sig
 c_func
 (paren
-id|SIGKILL
+id|SIGHUP
 comma
 id|shpnt-&gt;ehandler
 comma

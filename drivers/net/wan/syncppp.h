@@ -129,9 +129,10 @@ id|ppp_device
 DECL|member|dev
 r_struct
 id|net_device
+op_star
 id|dev
 suffix:semicolon
-multiline_comment|/* Network device */
+multiline_comment|/* Network device pointer */
 DECL|member|sppp
 r_struct
 id|sppp
@@ -140,6 +141,8 @@ suffix:semicolon
 multiline_comment|/* Synchronous PPP */
 )brace
 suffix:semicolon
+DECL|macro|sppp_of
+mdefine_line|#define sppp_of(dev)&t;&bslash;&n;&t;    (&amp;((struct ppp_device *)(*(unsigned long *)((dev)-&gt;priv)))-&gt;sppp)
 DECL|macro|PP_KEEPALIVE
 mdefine_line|#define PP_KEEPALIVE    0x01    /* use keepalive protocol */
 DECL|macro|PP_CISCO
@@ -269,6 +272,12 @@ r_struct
 id|net_device
 op_star
 id|dev
+)paren
+suffix:semicolon
+r_void
+id|sync_ppp_init
+(paren
+r_void
 )paren
 suffix:semicolon
 macro_line|#endif

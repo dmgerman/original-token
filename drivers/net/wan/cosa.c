@@ -48,6 +48,12 @@ DECL|struct|channel_data
 r_struct
 id|channel_data
 (brace
+DECL|member|if_ptr
+r_void
+op_star
+id|if_ptr
+suffix:semicolon
+multiline_comment|/* General purpose pointer (used by SPPP) */
 DECL|member|usage
 r_int
 id|usage
@@ -2447,6 +2453,25 @@ id|net_device
 op_star
 id|d
 suffix:semicolon
+id|chan-&gt;if_ptr
+op_assign
+op_amp
+id|chan-&gt;pppdev
+suffix:semicolon
+id|chan-&gt;pppdev.dev
+op_assign
+id|kmalloc
+c_func
+(paren
+r_sizeof
+(paren
+r_struct
+id|net_device
+)paren
+comma
+id|GFP_KERNEL
+)paren
+suffix:semicolon
 id|sppp_attach
 c_func
 (paren
@@ -2456,7 +2481,6 @@ id|chan-&gt;pppdev
 suffix:semicolon
 id|d
 op_assign
-op_amp
 id|chan-&gt;pppdev.dev
 suffix:semicolon
 id|d-&gt;name
@@ -2534,7 +2558,6 @@ suffix:semicolon
 id|sppp_detach
 c_func
 (paren
-op_amp
 id|chan-&gt;pppdev.dev
 )paren
 suffix:semicolon
@@ -2557,14 +2580,12 @@ id|chan
 id|sppp_detach
 c_func
 (paren
-op_amp
 id|chan-&gt;pppdev.dev
 )paren
 suffix:semicolon
 id|unregister_netdev
 c_func
 (paren
-op_amp
 id|chan-&gt;pppdev.dev
 )paren
 suffix:semicolon
@@ -3075,7 +3096,7 @@ r_return
 l_int|NULL
 suffix:semicolon
 )brace
-id|chan-&gt;pppdev.dev.trans_start
+id|chan-&gt;pppdev.dev-&gt;trans_start
 op_assign
 id|jiffies
 suffix:semicolon
@@ -3137,7 +3158,6 @@ id|ETH_P_WAN_PPP
 suffix:semicolon
 id|chan-&gt;rx_skb-&gt;dev
 op_assign
-op_amp
 id|chan-&gt;pppdev.dev
 suffix:semicolon
 id|chan-&gt;rx_skb-&gt;mac.raw
@@ -3161,7 +3181,7 @@ id|chan-&gt;rx_skb
 op_assign
 l_int|0
 suffix:semicolon
-id|chan-&gt;pppdev.dev.trans_start
+id|chan-&gt;pppdev.dev-&gt;trans_start
 op_assign
 id|jiffies
 suffix:semicolon
@@ -3228,7 +3248,7 @@ id|chan-&gt;stats.tx_bytes
 op_add_assign
 id|size
 suffix:semicolon
-id|chan-&gt;pppdev.dev.tbusy
+id|chan-&gt;pppdev.dev-&gt;tbusy
 op_assign
 l_int|0
 suffix:semicolon

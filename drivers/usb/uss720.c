@@ -1791,9 +1791,7 @@ l_int|0
 suffix:semicolon
 id|i
 op_assign
-id|usbdev-&gt;bus-&gt;op
-op_member_access_from_pointer
-id|bulk_msg
+id|usb_bulk_msg
 c_func
 (paren
 id|usbdev
@@ -2177,9 +2175,7 @@ l_int|0
 suffix:semicolon
 id|i
 op_assign
-id|usbdev-&gt;bus-&gt;op
-op_member_access_from_pointer
-id|bulk_msg
+id|usb_bulk_msg
 c_func
 (paren
 id|usbdev
@@ -2302,9 +2298,7 @@ l_int|0
 suffix:semicolon
 id|i
 op_assign
-id|usbdev-&gt;bus-&gt;op
-op_member_access_from_pointer
-id|bulk_msg
+id|usb_bulk_msg
 c_func
 (paren
 id|usbdev
@@ -2524,9 +2518,7 @@ l_int|0
 suffix:semicolon
 id|i
 op_assign
-id|usbdev-&gt;bus-&gt;op
-op_member_access_from_pointer
-id|bulk_msg
+id|usb_bulk_msg
 c_func
 (paren
 id|usbdev

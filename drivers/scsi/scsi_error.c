@@ -22,9 +22,9 @@ macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &quot;scsi.h&quot;
 macro_line|#include &quot;hosts.h&quot;
 macro_line|#include &quot;constants.h&quot;
-multiline_comment|/*&n; * We must always allow SHUTDOWN_SIGS.  Even if we are not a module,&n; * the host drivers that we are using may be loaded as modules, and&n; * when we unload these,  we need to ensure that the error handler thread&n; * can be shut down.&n; */
+multiline_comment|/*&n; * We must always allow SHUTDOWN_SIGS.  Even if we are not a module,&n; * the host drivers that we are using may be loaded as modules, and&n; * when we unload these,  we need to ensure that the error handler thread&n; * can be shut down.&n; *&n; * Note - when we unload a module, we send a SIGHUP.  We mustn&squot;t&n; * enable SIGTERM, as this is how the init shuts things down when you&n; * go to single-user mode.  For that matter, init also sends SIGKILL,&n; * so we mustn&squot;t enable that one either.  We use SIGHUP instead.  Other&n; * options would be SIGPWR, I suppose.&n; */
 DECL|macro|SHUTDOWN_SIGS
-mdefine_line|#define SHUTDOWN_SIGS&t;(sigmask(SIGKILL)|sigmask(SIGINT)|sigmask(SIGTERM))
+mdefine_line|#define SHUTDOWN_SIGS&t;(sigmask(SIGHUP))
 macro_line|#ifdef DEBUG
 DECL|macro|SENSE_TIMEOUT
 mdefine_line|#define SENSE_TIMEOUT SCSI_TIMEOUT

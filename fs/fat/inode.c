@@ -3520,7 +3520,6 @@ c_cond
 op_logical_neg
 id|sbi-&gt;nls_io
 )paren
-(brace
 multiline_comment|/* Fail only if explicit charset specified */
 r_if
 c_cond
@@ -3530,6 +3529,13 @@ id|opts.iocharset
 r_goto
 id|out_unload_nls
 suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|sbi-&gt;nls_io
+)paren
 id|sbi-&gt;nls_io
 op_assign
 id|load_nls_default
@@ -3537,8 +3543,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-)brace
-)brace
 id|root_inode
 op_assign
 id|get_empty_inode
@@ -3635,11 +3639,6 @@ c_func
 id|root_inode
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|sbi-&gt;nls_io
-)paren
 id|unload_nls
 c_func
 (paren

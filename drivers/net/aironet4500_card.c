@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t; Aironet 4500 PCI-ISA-i365 driver&n; *&n; *&t;&t;Elmer Joandi, Januar 1999&n; *&t;Copyright Elmer Joandi, all rights restricted&n; *&t;&n; *&n; *&t;Revision 0.1 ,started  30.12.1998&n; *&n; *&n; */
+multiline_comment|/*&n; *&t; Aironet 4500 PCI-ISA-i365 driver&n; *&n; *&t;&t;Elmer Joandi, Januar 1999&n; *&t;Copyright GPL&n; *&t;&n; *&n; *&t;Revision 0.1 ,started  30.12.1998&n; *&n; *&n; */
 macro_line|#ifdef MODULE
 DECL|variable|awc_version
 r_static
@@ -29,6 +29,7 @@ macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;linux/if_arp.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
+macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#if LINUX_VERSION_CODE &lt; 0x20100
 macro_line|#include &lt;linux/bios32.h&gt;
 macro_line|#endif

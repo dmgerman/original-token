@@ -74,7 +74,7 @@ op_star
 )paren
 id|SCpnt
 suffix:semicolon
-multiline_comment|/*&n;&t; * For the moment, we insert at the head of the queue.   This may turn&n;&t; * out to be a bad idea, but we will see about that when we get there.&n;&t; */
+multiline_comment|/*&n;&t; * We have the option of inserting the head or the tail of the queue.&n;&t; * Typically we use the tail for new ioctls and so forth.  We use the&n;&t; * head of the queue for things like a QUEUE_FULL message from a&n;&t; * device, or a host that is unable to accept a particular command.&n;&t; */
 id|spin_lock_irqsave
 c_func
 (paren
@@ -102,7 +102,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-multiline_comment|/*&n;&t;&t; * FIXME(eric) - we always insert at the tail of the list.  Otherwise&n;&t;&t; * ioctl commands would always take precedence over normal I/O.&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; * FIXME(eric) - we always insert at the tail of the&n;&t;&t; * list.  Otherwise ioctl commands would always take&n;&t;&t; * precedence over normal I/O.  An ioctl on a busy&n;&t;&t; * disk might be delayed indefinitely because the&n;&t;&t; * request might not float high enough in the queue&n;&t;&t; * to be scheduled.&n;&t;&t; */
 id|SCpnt-&gt;request.next
 op_assign
 l_int|NULL
@@ -161,7 +161,7 @@ suffix:semicolon
 )brace
 )brace
 )brace
-multiline_comment|/*&n;&t; * Now hit the requeue function for the queue.   If the host is already&n;&t; * busy, so be it - we have nothing special to do.   If the host can queue&n;&t; * it, then send it off.&n;&t; */
+multiline_comment|/*&n;&t; * Now hit the requeue function for the queue.  If the host is&n;&t; * already busy, so be it - we have nothing special to do.  If&n;&t; * the host can queue it, then send it off.  &n;&t; */
 id|q
 op_member_access_from_pointer
 id|request_fn
@@ -395,7 +395,7 @@ op_star
 id|SCpnt
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; * Just hit the requeue function for the queue.&n;&t; * FIXME - if this queue is empty, check to see if we might need to&n;&t; * start requests for other devices attached to the same host.&n;&t; */
+multiline_comment|/*&n;&t; * Just hit the requeue function for the queue.&n;&t; */
 id|q
 op_member_access_from_pointer
 id|request_fn
@@ -404,7 +404,6 @@ c_func
 id|q
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * Now see whether there are other devices on the bus which&n;&t; * might be starved.  If so, hit the request function.  If we&n;&t; * don&squot;t find any, then it is safe to reset the flag.  If we&n;&t; * find any device that it is starved, it isn&squot;t safe to reset the&n;&t; * flag as the queue function releases the lock and thus some&n;&t; * other device might have become starved along the way.&n;&t; */
 id|SDpnt
 op_assign
 (paren
@@ -417,6 +416,84 @@ id|SHpnt
 op_assign
 id|SDpnt-&gt;host
 suffix:semicolon
+multiline_comment|/*&n;&t; * If this is a single-lun device, and we are currently finished&n;&t; * with this device, then see if we need to get another device&n;&t; * started.  FIXME(eric) - if this function gets too cluttered&n;&t; * with special case code, then spin off separate versions and&n;&t; * use function pointers to pick the right one.&n;&t; */
+r_if
+c_cond
+(paren
+id|SDpnt-&gt;single_lun
+op_logical_and
+id|q-&gt;current_request
+op_eq
+l_int|NULL
+op_logical_and
+id|SDpnt-&gt;device_busy
+op_eq
+l_int|0
+)paren
+(brace
+id|request_queue_t
+op_star
+id|q
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|SDpnt
+op_assign
+id|SHpnt-&gt;host_queue
+suffix:semicolon
+id|SDpnt
+suffix:semicolon
+id|SDpnt
+op_assign
+id|SDpnt-&gt;next
+)paren
+(brace
+r_if
+c_cond
+(paren
+(paren
+(paren
+id|SHpnt-&gt;can_queue
+OG
+l_int|0
+)paren
+op_logical_and
+(paren
+id|SHpnt-&gt;host_busy
+op_ge
+id|SHpnt-&gt;can_queue
+)paren
+)paren
+op_logical_or
+(paren
+id|SHpnt-&gt;host_blocked
+)paren
+op_logical_or
+(paren
+id|SDpnt-&gt;device_blocked
+)paren
+)paren
+(brace
+r_break
+suffix:semicolon
+)brace
+id|q
+op_assign
+op_amp
+id|SDpnt-&gt;request_queue
+suffix:semicolon
+id|q
+op_member_access_from_pointer
+id|request_fn
+c_func
+(paren
+id|q
+)paren
+suffix:semicolon
+)brace
+)brace
+multiline_comment|/*&n;&t; * Now see whether there are other devices on the bus which&n;&t; * might be starved.  If so, hit the request function.  If we&n;&t; * don&squot;t find any, then it is safe to reset the flag.  If we&n;&t; * find any device that it is starved, it isn&squot;t safe to reset the&n;&t; * flag as the queue function releases the lock and thus some&n;&t; * other device might have become starved along the way.&n;&t; */
 id|all_clear
 op_assign
 l_int|1
@@ -524,7 +601,7 @@ id|flags
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function:    scsi_end_request()&n; *&n; * Purpose:     Post-processing of completed commands called from interrupt&n; *              handler.&n; *&n; * Arguments:   SCpnt    - command that is complete.&n; *              uptodate - 1 if I/O indicates success, 0 for I/O error.&n; *              sectors  - number of sectors we want to mark.&n; *&n; * Lock status: Assumed that lock is not held upon entry.&n; *&n; * Returns:     Nothing&n; *&n; * Notes:       This is called for block device requests in order to&n; *              mark some number of sectors as complete.&n; */
+multiline_comment|/*&n; * Function:    scsi_end_request()&n; *&n; * Purpose:     Post-processing of completed commands called from interrupt&n; *              handler.&n; *&n; * Arguments:   SCpnt    - command that is complete.&n; *              uptodate - 1 if I/O indicates success, 0 for I/O error.&n; *              sectors  - number of sectors we want to mark.&n; *&n; * Lock status: Assumed that lock is not held upon entry.&n; *&n; * Returns:     Nothing&n; *&n; * Notes:       This is called for block device requests in order to&n; *              mark some number of sectors as complete.&n; * &n; *&t;&t;We are guaranteeing that the request queue will be goosed&n; *&t;&t;at some point during this call.&n; */
 DECL|function|scsi_end_request
 id|Scsi_Cmnd
 op_star
@@ -697,9 +774,27 @@ c_cond
 id|req-&gt;bh
 )paren
 (brace
+id|request_queue_t
+op_star
+id|q
+suffix:semicolon
+id|q
+op_assign
+op_amp
+id|SCpnt-&gt;device-&gt;request_queue
+suffix:semicolon
 id|req-&gt;buffer
 op_assign
 id|bh-&gt;b_data
+suffix:semicolon
+multiline_comment|/*&n;&t;&t; * Bleah.  Leftovers again.  Stick the leftovers in&n;&t;&t; * the front of the queue, and goose the queue again.&n;&t;&t; */
+id|scsi_queue_next_request
+c_func
+(paren
+id|q
+comma
+id|SCpnt
+)paren
 suffix:semicolon
 r_return
 id|SCpnt
@@ -731,6 +826,7 @@ id|req-&gt;rq_dev
 )paren
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t; * This will goose the queue request function at the end, so we don&squot;t&n;&t; * need to worry about launching another command.&n;&t; */
 id|scsi_release_command
 c_func
 (paren
@@ -777,6 +873,7 @@ op_assign
 op_amp
 id|SCpnt-&gt;device-&gt;request_queue
 suffix:semicolon
+multiline_comment|/*&n;&t; * We must do one of several things here:&n;&t; *&n;&t; *&t;Call scsi_end_request.  This will finish off the specified&n;&t; *&t;number of sectors.  If we are done, the command block will&n;&t; *&t;be released, and the queue function will be goosed.  If we&n;&t; *&t;are not done, then scsi_end_request will directly goose&n;&t; *&t;the the queue.&n;&t; *&n;&t; *&t;We can just use scsi_queue_next_request() here.  This&n;&t; *&t;would be used if we just wanted to retry, for example.&n;&t; *&n;&t; */
 id|ASSERT_LOCK
 c_func
 (paren
@@ -1020,14 +1117,6 @@ op_eq
 l_int|0
 )paren
 (brace
-id|scsi_queue_next_request
-c_func
-(paren
-id|q
-comma
-id|SCpnt
-)paren
-suffix:semicolon
 r_return
 suffix:semicolon
 )brace
@@ -1121,20 +1210,12 @@ comma
 id|this_count
 )paren
 suffix:semicolon
-id|scsi_queue_next_request
-c_func
-(paren
-id|q
-comma
-id|SCpnt
-)paren
-suffix:semicolon
 r_return
 suffix:semicolon
 )brace
 r_else
 (brace
-multiline_comment|/*&n;&t;&t;&t;&t; * Must have been a power glitch, or a bus reset.&n;&t;&t;&t;&t; * Could not have been a media change, so we just retry&n;&t;&t;&t;&t; * the request and see what happens.&n;&t;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t; * Must have been a power glitch, or a&n;&t;&t;&t;&t; * bus reset.  Could not have been a&n;&t;&t;&t;&t; * media change, so we just retry the&n;&t;&t;&t;&t; * request and see what happens.  &n;&t;&t;&t;&t; */
 id|scsi_queue_next_request
 c_func
 (paren
@@ -1170,6 +1251,7 @@ id|SCpnt-&gt;device-&gt;ten
 op_assign
 l_int|0
 suffix:semicolon
+multiline_comment|/*&n;&t;&t;&t;&t; * This will cause a retry with a 6-byte&n;&t;&t;&t;&t; * command.&n;&t;&t;&t;&t; */
 id|scsi_queue_next_request
 c_func
 (paren
@@ -1195,14 +1277,6 @@ comma
 l_int|0
 comma
 id|this_count
-)paren
-suffix:semicolon
-id|scsi_queue_next_request
-c_func
-(paren
-id|q
-comma
-id|SCpnt
 )paren
 suffix:semicolon
 r_return
@@ -1232,14 +1306,6 @@ comma
 l_int|0
 comma
 id|this_count
-)paren
-suffix:semicolon
-id|scsi_queue_next_request
-c_func
-(paren
-id|q
-comma
-id|SCpnt
 )paren
 suffix:semicolon
 r_return
@@ -1299,14 +1365,6 @@ comma
 l_int|0
 comma
 id|block_sectors
-)paren
-suffix:semicolon
-id|scsi_queue_next_request
-c_func
-(paren
-id|q
-comma
-id|SCpnt
 )paren
 suffix:semicolon
 r_return
@@ -1369,14 +1427,6 @@ comma
 l_int|0
 comma
 id|SCpnt-&gt;request.current_nr_sectors
-)paren
-suffix:semicolon
-id|scsi_queue_next_request
-c_func
-(paren
-id|q
-comma
-id|SCpnt
 )paren
 suffix:semicolon
 r_return
@@ -1549,7 +1599,7 @@ op_eq
 l_int|1
 )paren
 (brace
-multiline_comment|/*&n;&t;&t; * If the host cannot accept another request, then quit.&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; * If the device cannot accept another request, then quit.&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -1702,6 +1752,8 @@ id|scsi_allocate_device
 c_func
 (paren
 id|SDpnt
+comma
+id|FALSE
 comma
 id|FALSE
 )paren
@@ -1926,83 +1978,6 @@ op_amp
 id|io_request_lock
 )paren
 suffix:semicolon
-)brace
-multiline_comment|/*&n;&t; * If this is a single-lun device, and we are currently finished&n;&t; * with this device, then see if we need to get another device&n;&t; * started.&n;&t; */
-r_if
-c_cond
-(paren
-id|SDpnt-&gt;single_lun
-op_logical_and
-id|q-&gt;current_request
-op_eq
-l_int|NULL
-op_logical_and
-id|SDpnt-&gt;device_busy
-op_eq
-l_int|0
-)paren
-(brace
-id|request_queue_t
-op_star
-id|q
-suffix:semicolon
-r_for
-c_loop
-(paren
-id|SDpnt
-op_assign
-id|SHpnt-&gt;host_queue
-suffix:semicolon
-id|SDpnt
-suffix:semicolon
-id|SDpnt
-op_assign
-id|SDpnt-&gt;next
-)paren
-(brace
-r_if
-c_cond
-(paren
-(paren
-(paren
-id|SHpnt-&gt;can_queue
-OG
-l_int|0
-)paren
-op_logical_and
-(paren
-id|SHpnt-&gt;host_busy
-op_ge
-id|SHpnt-&gt;can_queue
-)paren
-)paren
-op_logical_or
-(paren
-id|SHpnt-&gt;host_blocked
-)paren
-op_logical_or
-(paren
-id|SDpnt-&gt;device_blocked
-)paren
-)paren
-(brace
-r_break
-suffix:semicolon
-)brace
-id|q
-op_assign
-op_amp
-id|SDpnt-&gt;request_queue
-suffix:semicolon
-id|q
-op_member_access_from_pointer
-id|request_fn
-c_func
-(paren
-id|q
-)paren
-suffix:semicolon
-)brace
 )brace
 )brace
 eof

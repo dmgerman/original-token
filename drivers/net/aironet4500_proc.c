@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t; Aironet 4500 Pcmcia driver&n; *&n; *&t;&t;Elmer Joandi, Januar 1999&n; *&t;Copyright Elmer Joandi, all rights restricted&n; *&t;&n; *&n; *&t;Revision 0.1 ,started  30.12.1998&n; *&n; *&n; */
+multiline_comment|/*&n; *&t; Aironet 4500 Pcmcia driver&n; *&n; *&t;&t;Elmer Joandi, Januar 1999&n; *&t;Copyright GPL&n; *&t;&n; *&n; *&t;Revision 0.1 ,started  30.12.1998&n; *&n; *&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -2236,6 +2236,46 @@ comma
 r_sizeof
 (paren
 id|sleep_in_command
+)paren
+comma
+l_int|0600
+comma
+l_int|NULL
+comma
+id|proc_dointvec
+)brace
+comma
+(brace
+l_int|7
+comma
+l_string|&quot;both_bap_lock&quot;
+comma
+op_amp
+id|both_bap_lock
+comma
+r_sizeof
+(paren
+id|both_bap_lock
+)paren
+comma
+l_int|0600
+comma
+l_int|NULL
+comma
+id|proc_dointvec
+)brace
+comma
+(brace
+l_int|8
+comma
+l_string|&quot;bap_setup_spinlock&quot;
+comma
+op_amp
+id|bap_setup_spinlock
+comma
+r_sizeof
+(paren
+id|bap_setup_spinlock
 )paren
 comma
 l_int|0600

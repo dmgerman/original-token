@@ -478,6 +478,10 @@ comma
 id|eraseq_hdr_t
 op_star
 id|header
+comma
+id|eraseq_handle_t
+op_star
+id|e
 )paren
 suffix:semicolon
 r_int
@@ -507,6 +511,10 @@ comma
 id|open_mem_t
 op_star
 id|open
+comma
+id|memory_handle_t
+op_star
+id|m
 )paren
 suffix:semicolon
 r_int

@@ -16,32 +16,15 @@ macro_line|#include &lt;linux/interrupt.h&gt;  /* for in_interrupt() */
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
-DECL|macro|DEBUG
-mdefine_line|#define DEBUG
+singleline_comment|// #define DEBUG
 macro_line|#include &quot;usb.h&quot;
 macro_line|#include &quot;ohci-hcd.h&quot;
 macro_line|#ifdef DEBUG
 DECL|macro|dbg
-mdefine_line|#define dbg printk
+mdefine_line|#define dbg(format, arg...) printk(format, ## arg)
 macro_line|#else
 DECL|macro|dbg
-mdefine_line|#define dbg __xxx
-DECL|function|__xxx
-r_static
-r_void
-id|__xxx
-(paren
-r_const
-r_char
-op_star
-id|format
-comma
-dot
-dot
-dot
-)paren
-(brace
-)brace
+mdefine_line|#define dbg(format, arg...)
 macro_line|#endif
 macro_line|#ifdef CONFIG_APM
 macro_line|#include &lt;linux/apm_bios.h&gt;
@@ -2375,6 +2358,10 @@ id|ed-&gt;hwNextED
 op_assign
 l_int|0
 suffix:semicolon
+id|ed-&gt;int_interval
+op_assign
+l_int|1
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -3552,7 +3539,6 @@ id|urb_priv-&gt;length
 )paren
 (brace
 id|printk
-c_func
 (paren
 id|KERN_ERR
 id|MODSTR
@@ -4380,8 +4366,10 @@ l_int|0x2
 )paren
 suffix:semicolon
 id|urb_priv-&gt;td_cnt
-op_assign
+op_add_assign
 id|urb_priv-&gt;length
+op_minus
+id|td_list-&gt;index
 op_minus
 l_int|1
 suffix:semicolon
@@ -5164,6 +5152,17 @@ c_cond
 id|urb_priv-&gt;state
 op_ne
 id|URB_DEL
+op_logical_and
+op_logical_neg
+(paren
+id|ed-&gt;state
+op_amp
+id|ED_DEL
+)paren
+op_logical_and
+id|ed-&gt;state
+op_ne
+id|ED_NEW
 )paren
 (brace
 id|urb-&gt;status
@@ -5351,7 +5350,7 @@ comma
 multiline_comment|/*  __u8  iConfiguration; */
 l_int|0x40
 comma
-multiline_comment|/*  __u8  bmAttributes; &n;&t;&t; Bit 7: Bus-powered, 6: Self-powered, 5 Remote-wakwup, 4..0: resvd */
+multiline_comment|/*  __u8  bmAttributes; &n;                 Bit 7: Bus-powered, 6: Self-powered, 5 Remote-wakwup, 4..0: resvd */
 l_int|0x00
 comma
 multiline_comment|/*  __u8  MaxPower; */

@@ -45,9 +45,9 @@ macro_line|#endif
 macro_line|#ifdef CONFIG_KMOD
 macro_line|#include &lt;linux/kmod.h&gt;
 macro_line|#endif
-macro_line|#ifdef CONFIG_NET_RADIO
-macro_line|#include &lt;linux/wireless.h&gt;
-macro_line|#endif&t;/* CONFIG_NET_RADIO */
+macro_line|#if defined(CONFIG_NET_RADIO) || defined(CONFIG_NET_PCMCIA_RADIO)
+macro_line|#include &lt;linux/wireless.h&gt;&t;&t;/* Note : will define WIRELESS_EXT */
+macro_line|#endif&t;/* CONFIG_NET_RADIO || CONFIG_NET_PCMCIA_RADIO */
 DECL|macro|min
 mdefine_line|#define min(a,b)&t;((a)&lt;(b)?(a):(b))
 DECL|variable|net_statistics
@@ -3216,7 +3216,7 @@ op_star
 id|arg
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_NET_RADIO
+macro_line|#ifdef WIRELESS_EXT
 r_if
 c_cond
 (paren
@@ -3247,7 +3247,7 @@ id|arg
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
+macro_line|#endif&t;/* WIRELESS_EXT */
 r_if
 c_cond
 (paren

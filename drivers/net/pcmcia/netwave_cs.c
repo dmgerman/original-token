@@ -24,9 +24,9 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
-macro_line|#ifdef CONFIG_NET_RADIO
+macro_line|#ifdef CONFIG_NET_PCMCIA_RADIO
 macro_line|#include &lt;linux/wireless.h&gt;
-macro_line|#endif
+macro_line|#endif&t;/* CONFIG_NET_PCMCIA_RADIO */
 macro_line|#include &lt;pcmcia/version.h&gt;
 macro_line|#include &lt;pcmcia/cs_types.h&gt;
 macro_line|#include &lt;pcmcia/cs.h&gt;
