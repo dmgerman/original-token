@@ -42,7 +42,7 @@ id|resource_lock
 op_assign
 id|RW_LOCK_UNLOCKED
 suffix:semicolon
-multiline_comment|/*&n; * This generates reports for /proc/ioports and /proc/memory&n; */
+multiline_comment|/*&n; * This generates reports for /proc/ioports and /proc/iomem&n; */
 DECL|function|do_resource_list
 r_static
 r_char

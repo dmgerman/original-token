@@ -306,7 +306,19 @@ DECL|enumerator|KERN_SHMALL
 id|KERN_SHMALL
 op_assign
 l_int|41
+comma
 multiline_comment|/* int: Maximum size of shared memory */
+DECL|enumerator|KERN_MSGMNI
+id|KERN_MSGMNI
+op_assign
+l_int|42
+comma
+multiline_comment|/* int: msg queue identifiers */
+DECL|enumerator|KERN_SEM
+id|KERN_SEM
+op_assign
+l_int|43
+multiline_comment|/* int: sysv semaphore limits */
 )brace
 suffix:semicolon
 multiline_comment|/* CTL_VM names: */

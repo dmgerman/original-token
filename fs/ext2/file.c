@@ -149,6 +149,17 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|offset
+OL
+l_int|0
+)paren
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
+r_if
+c_cond
+(paren
 (paren
 (paren
 r_int

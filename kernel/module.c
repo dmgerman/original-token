@@ -199,6 +199,7 @@ r_return
 (paren
 (paren
 r_int
+r_int
 )paren
 id|high_memory
 op_minus
@@ -4573,6 +4574,7 @@ r_void
 r_return
 (paren
 (paren
+r_int
 r_int
 )paren
 id|high_memory

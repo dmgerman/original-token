@@ -191,13 +191,13 @@ suffix:semicolon
 )brace
 suffix:semicolon
 DECL|macro|SEMMNI
-mdefine_line|#define SEMMNI  128             /* &lt;= 32767  max # of semaphore identifiers */
+mdefine_line|#define SEMMNI  128             /* &lt;= IPCMNI  max # of semaphore identifiers */
 DECL|macro|SEMMSL
-mdefine_line|#define SEMMSL  250             /* &lt;= 512 max num of semaphores per id */
+mdefine_line|#define SEMMSL  250             /* &lt;= 8 000 max num of semaphores per id */
 DECL|macro|SEMMNS
-mdefine_line|#define SEMMNS  (SEMMNI*SEMMSL) /* &lt;= MAX_INT max # of semaphores in system */
+mdefine_line|#define SEMMNS  (SEMMNI*SEMMSL) /* &lt;= INT_MAX max # of semaphores in system */
 DECL|macro|SEMOPM
-mdefine_line|#define SEMOPM  32&t;        /* &lt;= 160 max num of ops per semop call */
+mdefine_line|#define SEMOPM  32&t;        /* &lt;= 1 000 max num of ops per semop call */
 DECL|macro|SEMVMX
 mdefine_line|#define SEMVMX  32767           /* &lt;= 32767 semaphore maximum value */
 multiline_comment|/* unused */

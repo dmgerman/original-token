@@ -6736,6 +6736,14 @@ suffix:semicolon
 multiline_comment|/*&n; *&t;Initialize the DEV module. At boot time this walks the device list and&n; *&t;unhooks any devices that fail to initialise (normally hardware not &n; *&t;present) and leaves us with a valid list of present and active devices.&n; *&n; */
 r_extern
 r_void
+id|net_device_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_void
 id|ip_auto_config
 c_func
 (paren
