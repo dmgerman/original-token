@@ -3863,7 +3863,7 @@ l_int|1024
 suffix:semicolon
 id|size
 op_assign
-l_int|256
+l_int|1024
 suffix:semicolon
 id|min
 op_assign

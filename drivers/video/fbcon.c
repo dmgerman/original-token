@@ -13534,14 +13534,6 @@ id|con_set_origin
 suffix:colon
 id|fbcon_set_origin
 comma
-id|con_save_screen
-suffix:colon
-l_int|NULL
-comma
-id|con_build_attr
-suffix:colon
-l_int|NULL
-comma
 id|con_invert_region
 suffix:colon
 id|fbcon_invert_region
@@ -13567,57 +13559,38 @@ r_void
 )paren
 (brace
 )brace
+DECL|macro|DUMMY
+mdefine_line|#define DUMMY&t;(void *)fbcon_dummy_op
 DECL|variable|fbcon_dummy
 r_struct
 id|display_switch
 id|fbcon_dummy
 op_assign
 (brace
-(paren
-r_void
-op_star
-)paren
-id|fbcon_dummy_op
+id|setup
+suffix:colon
+id|DUMMY
 comma
-multiline_comment|/* fbcon_dummy_setup */
-(paren
-r_void
-op_star
-)paren
-id|fbcon_dummy_op
+id|bmove
+suffix:colon
+id|DUMMY
 comma
-multiline_comment|/* fbcon_dummy_bmove */
-(paren
-r_void
-op_star
-)paren
-id|fbcon_dummy_op
+id|clear
+suffix:colon
+id|DUMMY
 comma
-multiline_comment|/* fbcon_dummy_clear */
-(paren
-r_void
-op_star
-)paren
-id|fbcon_dummy_op
+id|putc
+suffix:colon
+id|DUMMY
 comma
-multiline_comment|/* fbcon_dummy_putc */
-(paren
-r_void
-op_star
-)paren
-id|fbcon_dummy_op
+id|putcs
+suffix:colon
+id|DUMMY
 comma
-multiline_comment|/* fbcon_dummy_putcs */
-(paren
-r_void
-op_star
-)paren
-id|fbcon_dummy_op
+id|revc
+suffix:colon
+id|DUMMY
 comma
-multiline_comment|/* fbcon_dummy_revc */
-l_int|NULL
-comma
-multiline_comment|/* fbcon_dummy_cursor */
 )brace
 suffix:semicolon
 multiline_comment|/*&n; *  Visible symbols for modules&n; */

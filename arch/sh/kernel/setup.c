@@ -28,7 +28,6 @@ macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/smp.h&gt;
 macro_line|#ifdef CONFIG_SH_EARLY_PRINTK
-macro_line|#include &lt;linux/console.h&gt;
 macro_line|#include &lt;asm/sh_bios.h&gt;
 macro_line|#endif
 multiline_comment|/*&n; * Machine setup..&n; */

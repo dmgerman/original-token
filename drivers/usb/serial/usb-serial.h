@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * USB Serial Converter driver&n; *&n; *&t;Copyright (C) 1999, 2000&n; *&t;    Greg Kroah-Hartman (greg@kroah.com)&n; *&n; *&t;This program is free software; you can redistribute it and/or modify&n; *&t;it under the terms of the GNU General Public License as published by&n; *&t;the Free Software Foundation; either version 2 of the License, or&n; *&t;(at your option) any later version.&n; *&n; * See Documentation/usb/usb-serial.txt for more information on using this driver&n; *&n; * (07/19/2000) gkh, pberger, and borchers&n; *&t;Modifications to allow usb-serial drivers to be modules.&n; *&n; * &n; */
+multiline_comment|/*&n; * USB Serial Converter driver&n; *&n; *&t;Copyright (C) 1999, 2000&n; *&t;    Greg Kroah-Hartman (greg@kroah.com)&n; *&n; *&t;This program is free software; you can redistribute it and/or modify&n; *&t;it under the terms of the GNU General Public License as published by&n; *&t;the Free Software Foundation; either version 2 of the License, or&n; *&t;(at your option) any later version.&n; *&n; * See Documentation/usb/usb-serial.txt for more information on using this driver&n; *&n; * (07/23/2000) gkh&n; *&t;Added bulk_out_endpointAddress to port structure.&n; *&n; * (07/19/2000) gkh, pberger, and borchers&n; *&t;Modifications to allow usb-serial drivers to be modules.&n; *&n; * &n; */
 macro_line|#ifndef __LINUX_USB_SERIAL_H
 DECL|macro|__LINUX_USB_SERIAL_H
 mdefine_line|#define __LINUX_USB_SERIAL_H
@@ -87,6 +87,10 @@ r_struct
 id|urb
 op_star
 id|write_urb
+suffix:semicolon
+DECL|member|bulk_out_endpointAddress
+id|__u8
+id|bulk_out_endpointAddress
 suffix:semicolon
 DECL|member|write_wait
 id|wait_queue_head_t

@@ -2118,6 +2118,22 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|dev-&gt;devnum
+OL
+l_int|0
+)paren
+(brace
+id|dbg
+(paren
+l_string|&quot;device already deleted ??&quot;
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
 op_logical_neg
 (paren
 id|envp
@@ -8294,7 +8310,13 @@ r_struct
 id|file_operations
 op_star
 id|old_fops
+comma
+op_star
+id|new_fops
+op_assign
+l_int|NULL
 suffix:semicolon
+multiline_comment|/*&n;&t; * No load-on-demand? Randy, could you ACK that it&squot;s really not&n;&t; * supposed to be done?&t;&t;&t;&t;&t;-- AV&n;&t; */
 r_if
 c_cond
 (paren
@@ -8302,7 +8324,15 @@ op_logical_neg
 id|c
 op_logical_or
 op_logical_neg
+(paren
+id|new_fops
+op_assign
+id|fops_get
+c_func
+(paren
 id|c-&gt;fops
+)paren
+)paren
 )paren
 r_return
 id|err
@@ -8313,12 +8343,9 @@ id|file-&gt;f_op
 suffix:semicolon
 id|file-&gt;f_op
 op_assign
-id|fops_get
-c_func
-(paren
-id|c-&gt;fops
-)paren
+id|new_fops
 suffix:semicolon
+multiline_comment|/* Curiouser and curiouser... NULL -&gt;open() as &quot;no device&quot; ? */
 r_if
 c_cond
 (paren

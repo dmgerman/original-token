@@ -175,13 +175,6 @@ r_int
 id|size
 )paren
 (brace
-r_struct
-id|pci_dev
-op_star
-id|dev
-op_assign
-id|data
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -196,31 +189,6 @@ id|start
 op_assign
 id|res-&gt;start
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|size
-OG
-l_int|0x100
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_ERR
-l_string|&quot;PCI: I/O Region %s/%d too large&quot;
-l_string|&quot; (%ld bytes)&bslash;n&quot;
-comma
-id|dev-&gt;slot_name
-comma
-id|dev-&gt;resource
-op_minus
-id|res
-comma
-id|size
-)paren
-suffix:semicolon
-)brace
 r_if
 c_cond
 (paren

@@ -1,6 +1,7 @@
 multiline_comment|/*&n;&t;kmod, the new module loader (replaces kerneld)&n;&t;Kirk Petersen&n;&n;&t;Reorganized not to be a daemon by Adam Richter, with guidance&n;&t;from Greg Zornetzer.&n;&n;&t;Modified to avoid chroot and file sharing problems.&n;&t;Mikael Pettersson&n;&n;&t;Limit the concurrent number of kmod modprobes to catch loops from&n;&t;&quot;modprobe needs a service that is in a module&quot;.&n;&t;Keith Owens &lt;kaos@ocs.com.au&gt; December 1999&n;*/
 DECL|macro|__KERNEL_SYSCALLS__
 mdefine_line|#define __KERNEL_SYSCALLS__
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/unistd.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;

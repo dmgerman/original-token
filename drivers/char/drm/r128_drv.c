@@ -6,6 +6,8 @@ mdefine_line|#define EXPORT_SYMTAB
 macro_line|#endif
 macro_line|#include &quot;drmP.h&quot;
 macro_line|#include &quot;r128_drv.h&quot;
+macro_line|#include &lt;linux/sched.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 DECL|variable|r128_init
 id|EXPORT_SYMBOL
 c_func
@@ -2259,13 +2261,20 @@ suffix:semicolon
 id|drm_device_t
 op_star
 id|dev
-op_assign
-id|priv-&gt;dev
 suffix:semicolon
 r_int
 id|retcode
 op_assign
 l_int|0
+suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+id|dev
+op_assign
+id|priv-&gt;dev
 suffix:semicolon
 id|DRM_DEBUG
 c_func
@@ -2351,6 +2360,11 @@ op_amp
 id|dev-&gt;count_lock
 )paren
 suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
 op_minus
 id|EBUSY
@@ -2363,7 +2377,8 @@ op_amp
 id|dev-&gt;count_lock
 )paren
 suffix:semicolon
-r_return
+id|retcode
+op_assign
 id|r128_takedown
 c_func
 (paren
@@ -2371,6 +2386,7 @@ id|dev
 )paren
 suffix:semicolon
 )brace
+r_else
 id|spin_unlock
 c_func
 (paren
@@ -2379,6 +2395,11 @@ id|dev-&gt;count_lock
 )paren
 suffix:semicolon
 )brace
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
 id|retcode
 suffix:semicolon

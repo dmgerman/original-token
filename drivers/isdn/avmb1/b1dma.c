@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * $Id: b1dma.c,v 1.5 2000/06/19 16:51:53 keil Exp $&n; * &n; * Common module for AVM B1 cards that support dma with AMCC&n; * &n; * (c) Copyright 2000 by Carsten Paeth (calle@calle.in-berlin.de)&n; * &n; * $Log: b1dma.c,v $&n; * Revision 1.5  2000/06/19 16:51:53  keil&n; * don&squot;t free skb in irq context&n; *&n; * Revision 1.4  2000/04/03 16:38:05  calle&n; * made suppress_pollack static.&n; *&n; * Revision 1.3  2000/02/26 01:00:53  keil&n; * changes from 2.3.47&n; *&n; * Revision 1.2  2000/01/25 14:44:47  calle&n; * typo in b1pciv4_detect().&n; *&n; * Revision 1.1  2000/01/25 14:36:43  calle&n; * common function for  T1 PCI and B1 PCI V4.&n; *&n; *&n; */
+multiline_comment|/*&n; * $Id: b1dma.c,v 1.6 2000/06/29 13:59:06 calle Exp $&n; * &n; * Common module for AVM B1 cards that support dma with AMCC&n; * &n; * (c) Copyright 2000 by Carsten Paeth (calle@calle.in-berlin.de)&n; * &n; * $Log: b1dma.c,v $&n; * Revision 1.6  2000/06/29 13:59:06  calle&n; * Bugfix: reinit txdma without interrupt will confuse some AMCC chips.&n; *&n; * Revision 1.5  2000/06/19 16:51:53  keil&n; * don&squot;t free skb in irq context&n; *&n; * Revision 1.4  2000/04/03 16:38:05  calle&n; * made suppress_pollack static.&n; *&n; * Revision 1.3  2000/02/26 01:00:53  keil&n; * changes from 2.3.47&n; *&n; * Revision 1.2  2000/01/25 14:44:47  calle&n; * typo in b1pciv4_detect().&n; *&n; * Revision 1.1  2000/01/25 14:36:43  calle&n; * common function for  T1 PCI and B1 PCI V4.&n; *&n; *&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -21,7 +21,7 @@ r_char
 op_star
 id|revision
 op_assign
-l_string|&quot;$Revision: 1.5 $&quot;
+l_string|&quot;$Revision: 1.6 $&quot;
 suffix:semicolon
 multiline_comment|/* ------------------------------------------------------------- */
 id|MODULE_AUTHOR

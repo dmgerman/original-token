@@ -2883,24 +2883,6 @@ l_int|NULL
 r_if
 c_cond
 (paren
-id|S_ISCHR
-(paren
-id|mode
-)paren
-)paren
-id|ops
-op_assign
-id|get_chrfops
-(paren
-id|major
-comma
-l_int|0
-)paren
-suffix:semicolon
-r_else
-r_if
-c_cond
-(paren
 id|S_ISBLK
 (paren
 id|mode
@@ -8058,6 +8040,7 @@ suffix:semicolon
 r_else
 (brace
 multiline_comment|/*  Fallback to legacy scheme  */
+multiline_comment|/*&n;&t; * Do we need it? Richard, could you verify it?&n;&t; * It can legitimately happen if&n;&t; *&t;it is a character device and &n;&t; *&t;df-&gt;ops == NULL and&n;&t; *&t;de-&gt;registered is true,&n;&t; * but AFAICS it can&squot;t happen - in devfs_register() we never set&n;&t; * -&gt;ops to NULL, in unregister() we set -&gt;registered to false,&n;&t; * in devfs_mknod() we set it to NULL only if -&gt;register is false.&n;&t; *&n;&t; * Looks like this fallback is not needed at all.&n;&t; *&t;&t;&t;&t;&t;&t;&t;AV&n;&t; */
 r_if
 c_cond
 (paren

@@ -6,11 +6,14 @@ multiline_comment|/* -----------------------------------------------------------
 multiline_comment|/*   Copyright (C) 1995-2000 Simon G. Vogl&n;&n;    This program is free software; you can redistribute it and/or modify&n;    it under the terms of the GNU General Public License as published by&n;    the Free Software Foundation; either version 2 of the License, or&n;    (at your option) any later version.&n;&n;    This program is distributed in the hope that it will be useful,&n;    but WITHOUT ANY WARRANTY; without even the implied warranty of&n;    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n;    GNU General Public License for more details.&n;&n;    You should have received a copy of the GNU General Public License&n;    along with this program; if not, write to the Free Software&n;    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&t;&t;     */
 multiline_comment|/* ------------------------------------------------------------------------- */
 multiline_comment|/* With some changes from Ky&#xfffd;sti M&#xfffd;lkki &lt;kmalkki@cc.hut.fi&gt; and&n;   Frodo Looijaard &lt;frodol@dds.nl&gt; */
-multiline_comment|/* $Id: i2c.h,v 1.37 2000/02/15 17:57:27 frodo Exp $ */
+multiline_comment|/* $Id: i2c.h,v 1.40 2000/07/19 19:55:45 frodo Exp $ */
 macro_line|#ifndef I2C_H
 DECL|macro|I2C_H
 mdefine_line|#define I2C_H
 macro_line|#include &lt;linux/i2c-id.h&gt;&t;/* id values of adapters et. al. &t;*/
+r_struct
+id|i2c_msg
+suffix:semicolon
 macro_line|#ifdef __KERNEL__
 multiline_comment|/* --- Includes and compatibility declarations ------------------------ */
 macro_line|#include &lt;linux/version.h&gt;
@@ -37,9 +40,6 @@ DECL|macro|I2C_CLIENT_MAX
 mdefine_line|#define I2C_CLIENT_MAX&t;32
 DECL|macro|I2C_DUMMY_MAX
 mdefine_line|#define I2C_DUMMY_MAX 4
-r_struct
-id|i2c_msg
-suffix:semicolon
 r_struct
 id|i2c_algorithm
 suffix:semicolon
@@ -141,45 +141,6 @@ op_star
 comma
 r_int
 )paren
-suffix:semicolon
-multiline_comment|/*&n; * I2C Message - could be used in the current interface to &n; */
-DECL|struct|i2c_msg
-r_struct
-id|i2c_msg
-(brace
-DECL|member|addr
-id|u16
-id|addr
-suffix:semicolon
-multiline_comment|/* slave address&t;&t;&t;*/
-DECL|member|flags
-r_int
-r_int
-id|flags
-suffix:semicolon
-DECL|macro|I2C_M_TEN
-mdefine_line|#define I2C_M_TEN&t;0x10&t;/* we have a ten bit chip address&t;*/
-DECL|macro|I2C_M_RD
-mdefine_line|#define I2C_M_RD&t;0x01
-DECL|macro|I2C_M_NOSTART
-mdefine_line|#define I2C_M_NOSTART&t;0x4000
-DECL|macro|I2C_M_REV_DIR_ADDR
-mdefine_line|#define I2C_M_REV_DIR_ADDR&t;0x2000
-macro_line|#if 0
-mdefine_line|#define I2C_M_PROBE&t;0x20
-macro_line|#endif
-DECL|member|len
-r_int
-id|len
-suffix:semicolon
-multiline_comment|/* msg length&t;&t;&t;&t;*/
-DECL|member|buf
-r_char
-op_star
-id|buf
-suffix:semicolon
-multiline_comment|/* pointer to msg data&t;&t;&t;*/
-)brace
 suffix:semicolon
 multiline_comment|/* This is the very generalized SMBus access routine. You probably do not&n;   want to use this, though; one of the functions below may be much easier,&n;   and probably just as fast. &n;   Note that we use i2c_adapter here, because you do not need a specific&n;   smbus adapter to call this function. */
 r_extern
@@ -522,6 +483,12 @@ op_star
 id|data
 suffix:semicolon
 multiline_comment|/* for the clients&t;&t;*/
+DECL|member|usage_count
+r_int
+id|usage_count
+suffix:semicolon
+multiline_comment|/* How many accesses currently  */
+multiline_comment|/* to the client&t;&t;*/
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * The following structs are for those who like to implement new bus drivers:&n; * i2c_algorithm is the interface to a class of hardware solutions which can&n; * be addressed using the same bus algorithms - i.e. bit-banging or the PCF8584&n; * to name two of the most common.&n; */
@@ -819,6 +786,12 @@ DECL|macro|I2C_DF_NOTIFY
 mdefine_line|#define I2C_DF_NOTIFY&t;0x01&t;&t;/* notify on bus (de/a)ttaches &t;*/
 DECL|macro|I2C_DF_DUMMY
 mdefine_line|#define I2C_DF_DUMMY&t;0x02&t;&t;/* do not connect any clients */
+multiline_comment|/*flags for the client struct: */
+DECL|macro|I2C_CLIENT_ALLOW_USE
+mdefine_line|#define I2C_CLIENT_ALLOW_USE&t;&t;0x01&t;/* Client allows access */
+DECL|macro|I2C_CLIENT_ALLOW_MULTIPLE_USE
+mdefine_line|#define I2C_CLIENT_ALLOW_MULTIPLE_USE &t;0x02  &t;/* Allow multiple access-locks */
+multiline_comment|/* on an i2c_client */
 multiline_comment|/* i2c_client_address_data is the struct for holding default client&n; * addresses for a driver and for the parameters supplied on the&n; * command line&n; */
 DECL|struct|i2c_client_address_data
 r_struct
@@ -960,6 +933,47 @@ id|i2c_client
 op_star
 )paren
 suffix:semicolon
+multiline_comment|/* New function: This is to get an i2c_client-struct for controlling the &n;   client either by using i2c_control-function or having the &n;   client-module export functions that can be used with the i2c_client&n;   -struct. */
+r_extern
+r_struct
+id|i2c_client
+op_star
+id|i2c_get_client
+c_func
+(paren
+r_int
+id|driver_id
+comma
+r_int
+id|adapter_id
+comma
+r_struct
+id|i2c_client
+op_star
+id|prev
+)paren
+suffix:semicolon
+multiline_comment|/* Should be used with new function&n;   extern struct i2c_client *i2c_get_client(int,int,struct i2c_client *);&n;   to make sure that client-struct is valid and that it is okay to access&n;   the i2c-client. &n;   returns -EACCES if client doesn&squot;t allow use (default)&n;   returns -EBUSY if client doesn&squot;t allow multiple use (default) and &n;   usage_count &gt;0 */
+r_extern
+r_int
+id|i2c_use_client
+c_func
+(paren
+r_struct
+id|i2c_client
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|i2c_release_client
+c_func
+(paren
+r_struct
+id|i2c_client
+op_star
+)paren
+suffix:semicolon
 multiline_comment|/* returns -EBUSY if address has been taken, 0 if not. Note that the only&n;   other place at which this is called is within i2c_attach_client; so&n;   you can cheat by simply not registering. Not recommended, of course! */
 r_extern
 r_int
@@ -1071,6 +1085,43 @@ id|func
 )paren
 suffix:semicolon
 macro_line|#endif /* __KERNEL__ */
+macro_line|#include &lt;linux/types.h&gt;
+multiline_comment|/*&n; * I2C Message - used for pure i2c transaction, also from /dev interface&n; */
+DECL|struct|i2c_msg
+r_struct
+id|i2c_msg
+(brace
+DECL|member|addr
+id|__u16
+id|addr
+suffix:semicolon
+multiline_comment|/* slave address&t;&t;&t;*/
+DECL|member|flags
+r_int
+r_int
+id|flags
+suffix:semicolon
+DECL|macro|I2C_M_TEN
+mdefine_line|#define I2C_M_TEN&t;0x10&t;/* we have a ten bit chip address&t;*/
+DECL|macro|I2C_M_RD
+mdefine_line|#define I2C_M_RD&t;0x01
+DECL|macro|I2C_M_NOSTART
+mdefine_line|#define I2C_M_NOSTART&t;0x4000
+DECL|macro|I2C_M_REV_DIR_ADDR
+mdefine_line|#define I2C_M_REV_DIR_ADDR&t;0x2000
+DECL|member|len
+r_int
+id|len
+suffix:semicolon
+multiline_comment|/* msg length&t;&t;&t;&t;*/
+DECL|member|buf
+r_char
+op_star
+id|buf
+suffix:semicolon
+multiline_comment|/* pointer to msg data&t;&t;&t;*/
+)brace
+suffix:semicolon
 multiline_comment|/* To determine what functionality is present */
 DECL|macro|I2C_FUNC_I2C
 mdefine_line|#define I2C_FUNC_I2C&t;&t;&t;0x00000001
@@ -1113,7 +1164,7 @@ mdefine_line|#define I2C_FUNC_SMBUS_BLOCK_DATA I2C_FUNC_SMBUS_READ_BLOCK_DATA | 
 DECL|macro|I2C_FUNC_SMBUS_I2C_BLOCK
 mdefine_line|#define I2C_FUNC_SMBUS_I2C_BLOCK I2C_FUNC_SMBUS_READ_I2C_BLOCK | &bslash;&n;                                  I2C_FUNC_SMBUS_WRITE_I2C_BLOCK
 DECL|macro|I2C_FUNC_SMBUS_EMUL
-mdefine_line|#define I2C_FUNC_SMBUS_EMUL I2C_FUNC_SMBUS_QUICK | &bslash;&n;                            I2C_FUNC_SMBUS_BYTE | &bslash;&n;                            I2C_FUNC_SMBUS_BYTE_DATA | &bslash;&n;                            I2C_FUNC_SMBUS_WORD_DATA | &bslash;&n;                            I2C_FUNC_SMBUS_PROC_CALL | &bslash;&n;                            I2C_FUNC_SMBUS_READ_BLOCK_DATA
+mdefine_line|#define I2C_FUNC_SMBUS_EMUL I2C_FUNC_SMBUS_QUICK | &bslash;&n;                            I2C_FUNC_SMBUS_BYTE | &bslash;&n;                            I2C_FUNC_SMBUS_BYTE_DATA | &bslash;&n;                            I2C_FUNC_SMBUS_WORD_DATA | &bslash;&n;                            I2C_FUNC_SMBUS_PROC_CALL | &bslash;&n;                            I2C_FUNC_SMBUS_WRITE_BLOCK_DATA
 multiline_comment|/* &n; * Data for SMBus Messages &n; */
 DECL|union|i2c_smbus_data
 r_union

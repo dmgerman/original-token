@@ -51,6 +51,11 @@ r_int
 id|base
 suffix:semicolon
 multiline_comment|/* Actual port address          */
+DECL|member|base_hi
+r_int
+id|base_hi
+suffix:semicolon
+multiline_comment|/* Hi Base address for ECP-ISA chipset */
 DECL|member|mode
 r_int
 id|mode
@@ -112,7 +117,7 @@ DECL|typedef|imm_struct
 id|imm_struct
 suffix:semicolon
 DECL|macro|IMM_EMPTY
-mdefine_line|#define IMM_EMPTY &bslash;&n;{&t;dev:&t;&t;NULL,&t;&t;&bslash;&n;&t;base:&t;&t;-1,&t;&t;&bslash;&n;&t;mode:&t;&t;IMM_AUTODETECT,&t;&bslash;&n;&t;host:&t;&t;-1,&t;&t;&bslash;&n;&t;cur_cmd:&t;NULL,&t;&t;&bslash;&n;&t;imm_tq:&t;&t;{0, 0, imm_interrupt, NULL},    &bslash;&n;&t;jstart:&t;&t;0,&t;&t;&bslash;&n;&t;failed:&t;&t;0,&t;&t;&bslash;&n;&t;dp:&t;&t;0,&t;&t;&bslash;&n;&t;rd:&t;&t;0,&t;&t;&bslash;&n;&t;p_busy:&t;&t;0&t;&t;&bslash;&n;}
+mdefine_line|#define IMM_EMPTY &bslash;&n;{&t;dev:&t;&t;NULL,&t;&t;&bslash;&n;&t;base:&t;&t;-1,&t;&t;&bslash;&n;&t;base_hi:&t;0,&t;&t;&bslash;&n;&t;mode:&t;&t;IMM_AUTODETECT,&t;&bslash;&n;&t;host:&t;&t;-1,&t;&t;&bslash;&n;&t;cur_cmd:&t;NULL,&t;&t;&bslash;&n;&t;imm_tq:&t;&t;{0, 0, imm_interrupt, NULL},    &bslash;&n;&t;jstart:&t;&t;0,&t;&t;&bslash;&n;&t;failed:&t;&t;0,&t;&t;&bslash;&n;&t;dp:&t;&t;0,&t;&t;&bslash;&n;&t;rd:&t;&t;0,&t;&t;&bslash;&n;&t;p_busy:&t;&t;0&t;&t;&bslash;&n;}
 macro_line|#include &quot;imm.h&quot;
 DECL|macro|NO_HOSTS
 mdefine_line|#define NO_HOSTS 4
@@ -136,6 +141,8 @@ id|IMM_EMPTY
 suffix:semicolon
 DECL|macro|IMM_BASE
 mdefine_line|#define IMM_BASE(x)&t;imm_hosts[(x)].base
+DECL|macro|IMM_BASE_HI
+mdefine_line|#define IMM_BASE_HI(x)     imm_hosts[(x)].base_hi
 DECL|variable|parbus_base
 r_int
 id|parbus_base
@@ -548,6 +555,19 @@ id|i
 )braket
 dot
 id|dev-&gt;port-&gt;base
+suffix:semicolon
+id|IMM_BASE_HI
+c_func
+(paren
+id|i
+)paren
+op_assign
+id|imm_hosts
+(braket
+id|i
+)braket
+dot
+id|dev-&gt;port-&gt;base_hi
 suffix:semicolon
 id|w_ctr
 c_func
@@ -1360,6 +1380,7 @@ r_return
 id|a
 suffix:semicolon
 )brace
+multiline_comment|/* &n; * Clear EPP timeout bit. &n; */
 DECL|function|epp_reset
 r_static
 r_inline
@@ -1402,6 +1423,7 @@ l_int|0xfe
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* &n; * Wait for empty ECP fifo (if we are in ECP fifo mode only)&n; */
 DECL|function|ecp_sync
 r_static
 r_inline
@@ -1411,11 +1433,28 @@ c_func
 (paren
 r_int
 r_int
-id|ppb
+id|hostno
 )paren
 (brace
 r_int
 id|i
+comma
+id|ppb_hi
+op_assign
+id|IMM_BASE_HI
+c_func
+(paren
+id|hostno
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ppb_hi
+op_eq
+l_int|0
+)paren
+r_return
 suffix:semicolon
 r_if
 c_cond
@@ -1424,16 +1463,16 @@ c_cond
 id|r_ecr
 c_func
 (paren
-id|ppb
+id|ppb_hi
 )paren
 op_amp
 l_int|0xe0
 )paren
-op_ne
-l_int|0x80
+op_eq
+l_int|0x60
 )paren
-r_return
-suffix:semicolon
+(brace
+multiline_comment|/* mode 011 == ECP fifo mode */
 r_for
 c_loop
 (paren
@@ -1455,7 +1494,7 @@ c_cond
 id|r_ecr
 c_func
 (paren
-id|ppb
+id|ppb_hi
 )paren
 op_amp
 l_int|0x01
@@ -1475,6 +1514,7 @@ c_func
 l_string|&quot;imm: ECP sync failed as data still present in FIFO.&bslash;n&quot;
 )paren
 suffix:semicolon
+)brace
 )brace
 DECL|function|imm_byte_out
 r_static
@@ -1972,7 +2012,7 @@ suffix:semicolon
 id|ecp_sync
 c_func
 (paren
-id|ppb
+id|host_no
 )paren
 suffix:semicolon
 r_break
@@ -2274,7 +2314,7 @@ suffix:semicolon
 id|ecp_sync
 c_func
 (paren
-id|ppb
+id|host_no
 )paren
 suffix:semicolon
 r_break
@@ -5398,7 +5438,9 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;imm: Communication established with ID %i using %s&bslash;n&quot;
+l_string|&quot;imm: Communication established at 0x%x with ID %i using %s&bslash;n&quot;
+comma
+id|ppb
 comma
 id|loop
 comma

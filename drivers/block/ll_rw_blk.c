@@ -3949,6 +3949,13 @@ c_func
 id|generic_make_request
 )paren
 suffix:semicolon
+DECL|variable|generic_unplug_device
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|generic_unplug_device
+)paren
+suffix:semicolon
 DECL|variable|blkdev_release_request
 id|EXPORT_SYMBOL
 c_func

@@ -14026,6 +14026,10 @@ id|ibmcam-&gt;ibmcam_used
 op_assign
 l_int|0
 suffix:semicolon
+id|ibmcam-&gt;initialized
+op_assign
+l_int|0
+suffix:semicolon
 )brace
 multiline_comment|/*&n; * usb_ibmcam_disconnect()&n; *&n; * This procedure stops all driver activity, deallocates interface-private&n; * structure (pointed by &squot;ptr&squot;) and after that driver should be removable&n; * with no ill consequences.&n; *&n; * This code handles surprise removal. The ibmcam-&gt;user is a counter which&n; * increments on open() and decrements on close(). If we see here that&n; * this counter is not 0 then we have a client who still has us opened.&n; * We set ibmcam-&gt;remove_pending flag as early as possible, and after that&n; * all access to the camera will gracefully fail. These failures should&n; * prompt client to (eventually) close the video device, and then - in&n; * ibmcam_close() - we decrement ibmcam-&gt;ibmcam_used and usage counter.&n; *&n; * History:&n; * 1/22/00  Added polling of MOD_IN_USE to delay removal until all users gone.&n; * 1/27/00  Reworked to allow pending disconnects; see ibmcam_close()&n; * 5/24/00  Corrected to prevent race condition (MOD_xxx_USE_COUNT).&n; */
 DECL|function|usb_ibmcam_disconnect

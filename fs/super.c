@@ -980,7 +980,7 @@ c_func
 id|vfsmntlist
 )paren
 suffix:semicolon
-multiline_comment|/**&n; *&t;add_vfsmnt - add a new mount node&n; *&t;@nd: location of mountpoint or %NULL if we want a root node&n; *&t;@root: root of (sub)tree to be mounted&n; *&t;@dev_name: device name to show in /proc/mounts&n; *&n; *&t;This is VFS idea of mount. New node is allocated, bound to a tree&n; *&t;we are mounting and optionally (OK, usually) registered as mounted&n; *&t;on a given mountpoint. Returns a pointer to new node or %NULL in&n; *&t;case of failure.&n; *&n; *&t;Potential reason for failure (aside of trivial lack of memory) is a&n; *&t;deleted mountpoint. Caller must hold -&gt;i_zombie on mountpoint&n; *&t;dentry (if any).&n; */
+multiline_comment|/**&n; *&t;add_vfsmnt - add a new mount node&n; *&t;@nd: location of mountpoint or %NULL if we want a root node&n; *&t;@root: root of (sub)tree to be mounted&n; *&t;@dev_name: device name to show in /proc/mounts or %NULL (for &quot;none&quot;).&n; *&n; *&t;This is VFS idea of mount. New node is allocated, bound to a tree&n; *&t;we are mounting and optionally (OK, usually) registered as mounted&n; *&t;on a given mountpoint. Returns a pointer to new node or %NULL in&n; *&t;case of failure.&n; *&n; *&t;Potential reason for failure (aside of trivial lack of memory) is a&n; *&t;deleted mountpoint. Caller must hold -&gt;i_zombie on mountpoint&n; *&t;dentry (if any).&n; *&n; *&t;Node is marked as MNT_VISIBLE (visible in /proc/mounts) unless both&n; *&t;@nd and @devname are %NULL. It works since we pass non-%NULL @devname&n; *&t;when we are mounting root and kern_mount() filesystems are deviceless.&n; *&t;If we will get a kern_mount() filesystem with nontrivial @devname we&n; *&t;will have to pass the visibility flag explicitly, so if we will add&n; *&t;support for such beasts we&squot;ll have to change prototype.&n; */
 DECL|function|add_vfsmnt
 r_static
 r_struct
@@ -1057,6 +1057,17 @@ r_struct
 id|vfsmount
 )paren
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|nd
+op_logical_or
+id|dev_name
+)paren
+id|mnt-&gt;mnt_flags
+op_assign
+id|MNT_VISIBLE
 suffix:semicolon
 multiline_comment|/* It may be NULL, but who cares? */
 r_if
@@ -1275,6 +1286,11 @@ op_amp
 id|dcache_lock
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|mnt-&gt;mnt_devname
+)paren
 id|kfree
 c_func
 (paren
@@ -1392,6 +1408,11 @@ c_cond
 id|new_devname
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|mnt-&gt;mnt_devname
+)paren
 id|kfree
 c_func
 (paren
@@ -1586,6 +1607,11 @@ c_func
 id|mnt-&gt;mnt_root
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|mnt-&gt;mnt_devname
+)paren
 id|kfree
 c_func
 (paren
@@ -1868,6 +1894,18 @@ comma
 id|mnt_list
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|tmp-&gt;mnt_flags
+op_amp
+id|MNT_VISIBLE
+)paren
+)paren
+r_continue
+suffix:semicolon
 id|path
 op_assign
 id|d_path
@@ -1902,6 +1940,11 @@ comma
 l_string|&quot;%s %s %s %s&quot;
 comma
 id|tmp-&gt;mnt_devname
+ques
+c_cond
+id|tmp-&gt;mnt_devname
+suffix:colon
+l_string|&quot;none&quot;
 comma
 id|path
 comma
@@ -4172,7 +4215,7 @@ l_int|NULL
 comma
 id|sb-&gt;s_root
 comma
-l_string|&quot;none&quot;
+l_int|NULL
 )paren
 suffix:semicolon
 r_if

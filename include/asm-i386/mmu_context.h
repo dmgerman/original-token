@@ -106,15 +106,6 @@ r_int
 id|cpu
 )paren
 (brace
-id|set_bit
-c_func
-(paren
-id|cpu
-comma
-op_amp
-id|next-&gt;cpu_vm_mask
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -123,6 +114,16 @@ op_ne
 id|next
 )paren
 (brace
+multiline_comment|/* stop flush ipis for the previous mm */
+id|clear_bit
+c_func
+(paren
+id|cpu
+comma
+op_amp
+id|prev-&gt;cpu_vm_mask
+)paren
+suffix:semicolon
 multiline_comment|/*&n;&t;&t; * Re-load LDT if necessary&n;&t;&t; */
 r_if
 c_cond
@@ -157,6 +158,15 @@ op_assign
 id|next
 suffix:semicolon
 macro_line|#endif
+id|set_bit
+c_func
+(paren
+id|cpu
+comma
+op_amp
+id|next-&gt;cpu_vm_mask
+)paren
+suffix:semicolon
 multiline_comment|/* Re-load page tables */
 id|asm
 r_volatile
@@ -174,29 +184,10 @@ id|next-&gt;pgd
 )paren
 )paren
 suffix:semicolon
-id|clear_bit
-c_func
-(paren
-id|cpu
-comma
-op_amp
-id|prev-&gt;cpu_vm_mask
-)paren
-suffix:semicolon
 )brace
 macro_line|#ifdef CONFIG_SMP
 r_else
 (brace
-r_int
-id|old_state
-op_assign
-id|cpu_tlbstate
-(braket
-id|cpu
-)braket
-dot
-id|state
-suffix:semicolon
 id|cpu_tlbstate
 (braket
 id|cpu
@@ -228,11 +219,18 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|old_state
-op_eq
-id|TLBSTATE_OLD
+op_logical_neg
+id|test_and_set_bit
+c_func
+(paren
+id|cpu
+comma
+op_amp
+id|next-&gt;cpu_vm_mask
+)paren
 )paren
 (brace
+multiline_comment|/* We were in lazy tlb mode and leave_mm disabled &n;&t;&t;&t; * tlb flush IPI delivery. We must flush our tlb.&n;&t;&t;&t; */
 id|local_flush_tlb
 c_func
 (paren

@@ -102,9 +102,10 @@ mdefine_line|#define r_ctr(x)        (unsigned char)inb((x)+2)
 DECL|macro|r_epp
 mdefine_line|#define r_epp(x)        (unsigned char)inb((x)+4)
 DECL|macro|r_fifo
-mdefine_line|#define r_fifo(x)       (unsigned char)inb((x)+0x400)
+mdefine_line|#define r_fifo(x)       (unsigned char)inb((x)) /* x must be base_hi */
+multiline_comment|/* On PCI is base+0x400 != base_hi */
 DECL|macro|r_ecr
-mdefine_line|#define r_ecr(x)        (unsigned char)inb((x)+0x402)
+mdefine_line|#define r_ecr(x)        (unsigned char)inb((x)+0x2) /* x must be base_hi */
 DECL|macro|w_dtr
 mdefine_line|#define w_dtr(x,y)      outb(y, (x))
 DECL|macro|w_str
@@ -112,9 +113,9 @@ mdefine_line|#define w_str(x,y)      outb(y, (x)+1)
 DECL|macro|w_epp
 mdefine_line|#define w_epp(x,y)      outb(y, (x)+4)
 DECL|macro|w_fifo
-mdefine_line|#define w_fifo(x,y)     outb(y, (x)+0x400)
+mdefine_line|#define w_fifo(x,y)     outb(y, (x))&t;/* x must be base_hi */
 DECL|macro|w_ecr
-mdefine_line|#define w_ecr(x,y)      outb(y, (x)+0x402)
+mdefine_line|#define w_ecr(x,y)      outb(y, (x)+0x2)/* x must be base_hi */
 macro_line|#ifdef CONFIG_SCSI_IZIP_SLOW_CTR
 DECL|macro|w_ctr
 mdefine_line|#define w_ctr(x,y)      outb_p(y, (x)+2)

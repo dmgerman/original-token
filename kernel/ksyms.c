@@ -501,6 +501,13 @@ c_func
 id|fput
 )paren
 suffix:semicolon
+DECL|variable|fget
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|fget
+)paren
+suffix:semicolon
 DECL|variable|igrab
 id|EXPORT_SYMBOL
 c_func
@@ -1843,6 +1850,28 @@ c_func
 id|free_irq
 )paren
 suffix:semicolon
+multiline_comment|/* waitqueue handling */
+DECL|variable|add_wait_queue
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|add_wait_queue
+)paren
+suffix:semicolon
+DECL|variable|add_wait_queue_exclusive
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|add_wait_queue_exclusive
+)paren
+suffix:semicolon
+DECL|variable|remove_wait_queue
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|remove_wait_queue
+)paren
+suffix:semicolon
 multiline_comment|/* The notion of irq probe/assignment is foreign to S/390 */
 macro_line|#if !defined(CONFIG_ARCH_S390)
 DECL|variable|probe_irq_on
@@ -2608,7 +2637,6 @@ c_func
 id|kill_fasync
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_BLK_DEV_MD
 DECL|variable|disk_name
 id|EXPORT_SYMBOL
 c_func
@@ -2617,7 +2645,6 @@ id|disk_name
 )paren
 suffix:semicolon
 multiline_comment|/* for md.c */
-macro_line|#endif
 multiline_comment|/* binfmt_aout */
 DECL|variable|get_write_access
 id|EXPORT_SYMBOL

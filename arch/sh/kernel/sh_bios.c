@@ -1,5 +1,5 @@
 multiline_comment|/* $Id$&n; *&n; *  linux/arch/sh/kernel/sh_bios.c&n; *  C interface for trapping into the standard LinuxSH BIOS.&n; *&n; *  Copyright (C) 2000 Greg Banks, Mitch Davis&n; *&n; */
-macro_line|#include &lt;config/sh/standard/bios.h&gt;
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/sh_bios.h&gt;
 macro_line|#ifdef CONFIG_SH_STANDARD_BIOS
 DECL|macro|BIOS_CALL_CONSOLE_WRITE

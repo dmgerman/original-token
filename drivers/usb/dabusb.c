@@ -1,5 +1,5 @@
 multiline_comment|/*****************************************************************************/
-multiline_comment|/*&n; *      dabusb.c  --  dab usb driver.&n; *&n; *      Copyright (C) 1999  Deti Fliegl (deti@fliegl.de)&n; *&n; *      This program is free software; you can redistribute it and/or modify&n; *      it under the terms of the GNU General Public License as published by&n; *      the Free Software Foundation; either version 2 of the License, or&n; *      (at your option) any later version.&n; *&n; *      This program is distributed in the hope that it will be useful,&n; *      but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *      GNU General Public License for more details.&n; *&n; *      You should have received a copy of the GNU General Public License&n; *      along with this program; if not, write to the Free Software&n; *      Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; *&n; *&n; *  $Id: dabusb.c,v 1.45 2000/01/31 10:23:44 fliegl Exp $&n; *&n; */
+multiline_comment|/*&n; *      dabusb.c  --  dab usb driver.&n; *&n; *      Copyright (C) 1999  Deti Fliegl (deti@fliegl.de)&n; *&n; *      This program is free software; you can redistribute it and/or modify&n; *      it under the terms of the GNU General Public License as published by&n; *      the Free Software Foundation; either version 2 of the License, or&n; *      (at your option) any later version.&n; *&n; *      This program is distributed in the hope that it will be useful,&n; *      but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *      GNU General Public License for more details.&n; *&n; *      You should have received a copy of the GNU General Public License&n; *      along with this program; if not, write to the Free Software&n; *      Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; *&n; *&n; *  $Id: dabusb.c,v 1.54 2000/07/24 21:39:39 deti Exp $&n; *&n; */
 multiline_comment|/*****************************************************************************/
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/socket.h&gt;
@@ -1111,7 +1111,7 @@ comma
 op_amp
 id|actual_length
 comma
-l_int|1000
+l_int|100
 )paren
 suffix:semicolon
 r_if
@@ -1130,6 +1130,32 @@ comma
 id|ret
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|usb_set_interface
+(paren
+id|s-&gt;usbdev
+comma
+id|_DABUSB_IF
+comma
+l_int|1
+)paren
+OL
+l_int|0
+)paren
+(brace
+id|err
+c_func
+(paren
+l_string|&quot;set_interface failed&quot;
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
+)brace
 )brace
 r_if
 c_cond
@@ -2883,6 +2909,8 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
+id|ret
+op_assign
 id|dabusb_bulk
 (paren
 id|s
@@ -2890,6 +2918,14 @@ comma
 id|pbulk
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|ret
+op_eq
+l_int|0
+)paren
+(brace
 id|ret
 op_assign
 id|copy_to_user
@@ -2908,6 +2944,7 @@ id|bulk_transfer_t
 )paren
 )paren
 suffix:semicolon
+)brace
 id|kfree
 (paren
 id|pbulk
@@ -3399,21 +3436,6 @@ r_void
 r_int
 id|u
 suffix:semicolon
-multiline_comment|/* register misc device */
-r_if
-c_cond
-(paren
-id|usb_register
-c_func
-(paren
-op_amp
-id|dabusb_driver
-)paren
-)paren
-r_return
-op_minus
-l_int|1
-suffix:semicolon
 multiline_comment|/* initialize struct */
 r_for
 c_loop
@@ -3496,6 +3518,21 @@ id|s-&gt;rec_buff_list
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* register misc device */
+r_if
+c_cond
+(paren
+id|usb_register
+c_func
+(paren
+op_amp
+id|dabusb_driver
+)paren
+)paren
+r_return
+op_minus
+l_int|1
+suffix:semicolon
 id|dbg
 c_func
 (paren

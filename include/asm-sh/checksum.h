@@ -2,6 +2,7 @@ macro_line|#ifndef __ASM_SH_CHECKSUM_H
 DECL|macro|__ASM_SH_CHECKSUM_H
 mdefine_line|#define __ASM_SH_CHECKSUM_H
 multiline_comment|/*&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1999 by Kaz Kojima &amp; Niibe Yutaka&n; */
+macro_line|#include &lt;linux/config.h&gt;
 multiline_comment|/*&n; * computes the checksum of a memory block at buff, length len,&n; * and adds in &quot;sum&quot; (32-bit)&n; *&n; * returns a 32-bit number suitable for feeding into itself&n; * or csum_tcpudp_magic&n; *&n; * this function must be called with even lengths, except&n; * for the last fragment, which may be odd&n; *&n; * it&squot;s best to have buff aligned on a 32-bit boundary&n; */
 id|asmlinkage
 r_int

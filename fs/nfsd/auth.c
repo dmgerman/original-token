@@ -4,6 +4,8 @@ macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/sunrpc/svc.h&gt;
 macro_line|#include &lt;linux/sunrpc/svcauth.h&gt;
 macro_line|#include &lt;linux/nfsd/nfsd.h&gt;
+DECL|macro|CAP_NFSD_MASK
+mdefine_line|#define&t;CAP_NFSD_MASK (CAP_FS_MASK|CAP_TO_MASK(CAP_SYS_RESOURCE))
 r_void
 DECL|function|nfsd_setuser
 id|nfsd_setuser
@@ -224,7 +226,7 @@ id|current-&gt;cap_effective
 )paren
 op_and_assign
 op_complement
-id|CAP_FS_MASK
+id|CAP_NFSD_MASK
 suffix:semicolon
 )brace
 r_else
@@ -236,7 +238,7 @@ id|current-&gt;cap_effective
 )paren
 op_or_assign
 (paren
-id|CAP_FS_MASK
+id|CAP_NFSD_MASK
 op_amp
 id|current-&gt;cap_permitted
 )paren

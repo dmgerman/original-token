@@ -2505,60 +2505,70 @@ id|consw
 id|mda_con
 op_assign
 (brace
+id|con_startup
+suffix:colon
 id|mdacon_startup
 comma
-multiline_comment|/* con_startup */
+id|con_init
+suffix:colon
 id|mdacon_init
 comma
-multiline_comment|/* con_init */
+id|con_deinit
+suffix:colon
 id|mdacon_deinit
 comma
-multiline_comment|/* con_deinit */
+id|con_clear
+suffix:colon
 id|mdacon_clear
 comma
-multiline_comment|/* con_clear */
+id|con_putc
+suffix:colon
 id|mdacon_putc
 comma
-multiline_comment|/* con_putc */
+id|con_putcs
+suffix:colon
 id|mdacon_putcs
 comma
-multiline_comment|/* con_putcs */
+id|con_cursor
+suffix:colon
 id|mdacon_cursor
 comma
-multiline_comment|/* con_cursor */
+id|con_scroll
+suffix:colon
 id|mdacon_scroll
 comma
-multiline_comment|/* con_scroll */
+id|con_bmove
+suffix:colon
 id|mdacon_bmove
 comma
-multiline_comment|/* con_bmove */
+id|con_switch
+suffix:colon
 id|mdacon_switch
 comma
-multiline_comment|/* con_switch */
+id|con_blank
+suffix:colon
 id|mdacon_blank
 comma
-multiline_comment|/* con_blank */
+id|con_font_op
+suffix:colon
 id|mdacon_font_op
 comma
-multiline_comment|/* con_font_op */
+id|con_set_palette
+suffix:colon
 id|mdacon_set_palette
 comma
-multiline_comment|/* con_set_palette */
+id|con_scrolldelta
+suffix:colon
 id|mdacon_scrolldelta
 comma
-multiline_comment|/* con_scrolldelta */
-l_int|NULL
-comma
-multiline_comment|/* con_set_origin */
-l_int|NULL
-comma
-multiline_comment|/* con_save_screen */
+id|con_build_attr
+suffix:colon
 id|mdacon_build_attr
 comma
-multiline_comment|/* con_build_attr */
+id|con_invert_region
+suffix:colon
 id|mdacon_invert_region
 comma
-multiline_comment|/* con_invert_region */
 )brace
 suffix:semicolon
 macro_line|#ifdef MODULE

@@ -1063,8 +1063,6 @@ DECL|macro|TLBSTATE_OK
 mdefine_line|#define TLBSTATE_OK&t;1
 DECL|macro|TLBSTATE_LAZY
 mdefine_line|#define TLBSTATE_LAZY&t;2
-DECL|macro|TLBSTATE_OLD
-mdefine_line|#define TLBSTATE_OLD&t;3
 DECL|struct|tlb_state
 r_struct
 id|tlb_state

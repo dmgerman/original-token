@@ -401,11 +401,12 @@ id|uptodate
 )paren
 suffix:semicolon
 multiline_comment|/* I/O completion */
-DECL|member|b_dev_id
+DECL|member|b_private
 r_void
 op_star
-id|b_dev_id
+id|b_private
 suffix:semicolon
+multiline_comment|/* reserved for b_end_io */
 DECL|member|b_rsector
 r_int
 r_int
@@ -416,13 +417,6 @@ DECL|member|b_wait
 id|wait_queue_head_t
 id|b_wait
 suffix:semicolon
-DECL|member|b_kiobuf
-r_struct
-id|kiobuf
-op_star
-id|b_kiobuf
-suffix:semicolon
-multiline_comment|/* kiobuf which owns this IO */
 )brace
 suffix:semicolon
 DECL|typedef|bh_end_io_t
@@ -3101,7 +3095,7 @@ DECL|macro|DECLARE_FSTYPE_DEV
 mdefine_line|#define DECLARE_FSTYPE_DEV(var,type,read) &bslash;&n;&t;DECLARE_FSTYPE(var,type,read,FS_REQUIRES_DEV)
 multiline_comment|/* Alas, no aliases. Too much hassle with bringing module.h everywhere */
 DECL|macro|fops_get
-mdefine_line|#define fops_get(fops) &bslash;&n;&t;(((fops) &amp;&amp; (fops)-&gt;owner)&t;&bslash;&n;&t;&t;? __MOD_INC_USE_COUNT((fops)-&gt;owner), (fops) &bslash;&n;&t;&t;: (fops))
+mdefine_line|#define fops_get(fops) &bslash;&n;&t;(((fops) &amp;&amp; (fops)-&gt;owner)&t;&bslash;&n;&t;&t;? ( try_inc_mod_count((fops)-&gt;owner) ? (fops) : NULL ) &bslash;&n;&t;&t;: (fops))
 DECL|macro|fops_put
 mdefine_line|#define fops_put(fops) &bslash;&n;do {&t;&bslash;&n;&t;if ((fops) &amp;&amp; (fops)-&gt;owner) &bslash;&n;&t;&t;__MOD_DEC_USE_COUNT((fops)-&gt;owner);&t;&bslash;&n;} while(0)
 r_extern
@@ -3645,20 +3639,6 @@ op_star
 id|get_blkfops
 c_func
 (paren
-r_int
-r_int
-)paren
-suffix:semicolon
-r_extern
-r_struct
-id|file_operations
-op_star
-id|get_chrfops
-c_func
-(paren
-r_int
-r_int
-comma
 r_int
 r_int
 )paren

@@ -191,7 +191,7 @@ comma
 (brace
 id|USB_CLASS_PHYSICAL
 comma
-l_string|&quot;phys.&quot;
+l_string|&quot;PID&quot;
 )brace
 comma
 (brace

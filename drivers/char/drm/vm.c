@@ -2,6 +2,8 @@ multiline_comment|/* vm.c -- Memory mapping for DRM -*- linux-c -*-&n; * Created
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &quot;drmP.h&quot;
+macro_line|#include &lt;linux/sched.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 DECL|variable|drm_vm_ops
 r_struct
 id|vm_operations_struct
@@ -712,14 +714,10 @@ suffix:semicolon
 id|drm_device_t
 op_star
 id|dev
-op_assign
-id|priv-&gt;dev
 suffix:semicolon
 id|drm_device_dma_t
 op_star
 id|dma
-op_assign
-id|dev-&gt;dma
 suffix:semicolon
 r_int
 r_int
@@ -728,6 +726,19 @@ op_assign
 id|vma-&gt;vm_end
 op_minus
 id|vma-&gt;vm_start
+suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+id|dev
+op_assign
+id|priv-&gt;dev
+suffix:semicolon
+id|dma
+op_assign
+id|dev-&gt;dma
 suffix:semicolon
 id|DRM_DEBUG
 c_func
@@ -757,9 +768,21 @@ id|PAGE_SHIFT
 op_ne
 id|dma-&gt;page_count
 )paren
+(brace
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
 op_minus
 id|EINVAL
+suffix:semicolon
+)brace
+id|unlock_kernel
+c_func
+(paren
+)paren
 suffix:semicolon
 id|vma-&gt;vm_ops
 op_assign

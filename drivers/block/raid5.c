@@ -3026,7 +3026,7 @@ id|stripe_head
 op_star
 id|sh
 op_assign
-id|bh-&gt;b_dev_id
+id|bh-&gt;b_private
 suffix:semicolon
 id|raid5_conf_t
 op_star
@@ -12759,6 +12759,12 @@ id|err
 )paren
 r_return
 id|err
+suffix:semicolon
+multiline_comment|/*&n;&t; * pick a XOR routine, runtime.&n;&t; */
+id|calibrate_xor_block
+c_func
+(paren
+)paren
 suffix:semicolon
 r_return
 l_int|0

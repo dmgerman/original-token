@@ -3137,29 +3137,12 @@ id|con_scrolldelta
 suffix:colon
 id|DUMMY
 comma
-id|con_set_origin
-suffix:colon
-l_int|NULL
-comma
-id|con_save_screen
-suffix:colon
-l_int|NULL
-comma
-macro_line|#if PROMCON_COLOR
-id|con_build_attr
-suffix:colon
-l_int|NULL
-comma
-macro_line|#else
+macro_line|#if !(PROMCON_COLOR)
 id|con_build_attr
 suffix:colon
 id|promcon_build_attr
 comma
 macro_line|#endif
-id|con_invert_region
-suffix:colon
-l_int|NULL
-comma
 )brace
 suffix:semicolon
 DECL|function|prom_con_init

@@ -1068,6 +1068,7 @@ id|rsect
 op_assign
 (paren
 (paren
+(paren
 id|chunk
 op_lshift
 id|chunksize_bits
@@ -1077,6 +1078,7 @@ id|zone-&gt;dev_offset
 )paren
 op_lshift
 l_int|1
+)paren
 op_plus
 id|sect_in_chunk
 suffix:semicolon

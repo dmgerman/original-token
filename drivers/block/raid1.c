@@ -1612,7 +1612,7 @@ id|raid1_bh
 op_star
 )paren
 (paren
-id|bh-&gt;b_dev_id
+id|bh-&gt;b_private
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * this branch is our &squot;one mirror IO has finished&squot; event handler:&n;&t; */
@@ -2350,7 +2350,7 @@ id|bh_req-&gt;b_end_io
 op_assign
 id|raid1_end_request
 suffix:semicolon
-id|bh_req-&gt;b_dev_id
+id|bh_req-&gt;b_private
 op_assign
 id|r1_bh
 suffix:semicolon
@@ -2541,7 +2541,7 @@ id|mbh-&gt;b_end_io
 op_assign
 id|raid1_end_request
 suffix:semicolon
-id|mbh-&gt;b_dev_id
+id|mbh-&gt;b_private
 op_assign
 id|r1_bh
 suffix:semicolon
@@ -4504,7 +4504,7 @@ id|mbh-&gt;b_end_io
 op_assign
 id|end_sync_write
 suffix:semicolon
-id|mbh-&gt;b_dev_id
+id|mbh-&gt;b_private
 op_assign
 id|r1_bh
 suffix:semicolon
@@ -5405,12 +5405,8 @@ id|bh-&gt;b_end_io
 op_assign
 id|end_sync_read
 suffix:semicolon
-id|bh-&gt;b_dev_id
+id|bh-&gt;b_private
 op_assign
-(paren
-r_void
-op_star
-)paren
 id|r1_bh
 suffix:semicolon
 id|bh-&gt;b_rsector
@@ -5507,7 +5503,7 @@ id|raid1_bh
 op_star
 )paren
 (paren
-id|bh-&gt;b_dev_id
+id|bh-&gt;b_private
 )paren
 suffix:semicolon
 multiline_comment|/* we have read a block, now it needs to be re-written,&n;&t; * or re-read if the read failed.&n;&t; * We don&squot;t do much here, just schedule handling by raid1d&n;&t; */
@@ -5571,7 +5567,7 @@ id|raid1_bh
 op_star
 )paren
 (paren
-id|bh-&gt;b_dev_id
+id|bh-&gt;b_private
 )paren
 suffix:semicolon
 r_if

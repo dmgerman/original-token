@@ -468,7 +468,7 @@ op_increment
 op_star
 id|attach
 (braket
-id|i
+id|count
 )braket
 )paren
 (paren

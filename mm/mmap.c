@@ -3454,6 +3454,16 @@ c_func
 id|mpnt
 )paren
 suffix:semicolon
+id|flush_cache_range
+c_func
+(paren
+id|mm
+comma
+id|start
+comma
+id|end
+)paren
+suffix:semicolon
 id|zap_page_range
 c_func
 (paren

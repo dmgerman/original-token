@@ -2264,7 +2264,8 @@ id|c
 op_eq
 l_char|&squot;.&squot;
 )paren
-r_break
+r_goto
+id|dot
 suffix:semicolon
 id|space
 op_assign
@@ -2274,6 +2275,9 @@ l_char|&squot; &squot;
 suffix:semicolon
 )brace
 )brace
+id|dot
+suffix:colon
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2335,6 +2339,10 @@ r_else
 r_return
 op_minus
 id|EINVAL
+suffix:semicolon
+id|c
+op_assign
+l_char|&squot;.&squot;
 suffix:semicolon
 )brace
 r_if
@@ -2729,7 +2737,8 @@ id|chi
 op_eq
 l_char|&squot;.&squot;
 )paren
-r_break
+r_goto
+id|dot
 suffix:semicolon
 r_if
 c_cond
@@ -2818,6 +2827,9 @@ op_increment
 suffix:semicolon
 )brace
 )brace
+id|dot
+suffix:colon
+suffix:semicolon
 r_if
 c_cond
 (paren

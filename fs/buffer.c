@@ -3001,7 +3001,7 @@ id|handler
 comma
 r_void
 op_star
-id|dev_id
+r_private
 )paren
 (brace
 id|bh-&gt;b_list
@@ -3012,9 +3012,9 @@ id|bh-&gt;b_end_io
 op_assign
 id|handler
 suffix:semicolon
-id|bh-&gt;b_dev_id
+id|bh-&gt;b_private
 op_assign
-id|dev_id
+r_private
 suffix:semicolon
 )brace
 DECL|function|end_buffer_io_sync
@@ -7427,7 +7427,7 @@ id|uptodate
 suffix:semicolon
 id|kiobuf
 op_assign
-id|bh-&gt;b_kiobuf
+id|bh-&gt;b_private
 suffix:semicolon
 id|unlock_buffer
 c_func
@@ -7909,7 +7909,7 @@ id|tmp
 comma
 id|end_buffer_io_kiobuf
 comma
-l_int|NULL
+id|iobuf
 )paren
 suffix:semicolon
 id|tmp-&gt;b_dev
@@ -7925,10 +7925,6 @@ op_assign
 l_int|1
 op_lshift
 id|BH_Mapped
-suffix:semicolon
-id|tmp-&gt;b_kiobuf
-op_assign
-id|iobuf
 suffix:semicolon
 r_if
 c_cond

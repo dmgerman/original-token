@@ -384,6 +384,8 @@ r_int
 id|modes
 comma
 id|ppb
+comma
+id|ppb_hi
 suffix:semicolon
 id|ppa_hosts
 (braket
@@ -512,6 +514,15 @@ id|i
 dot
 id|dev-&gt;port-&gt;base
 suffix:semicolon
+id|ppb_hi
+op_assign
+id|ppa_hosts
+(braket
+id|i
+)braket
+dot
+id|dev-&gt;port-&gt;base_hi
+suffix:semicolon
 id|w_ctr
 c_func
 (paren
@@ -566,7 +577,7 @@ id|PARPORT_MODE_ECP
 id|w_ecr
 c_func
 (paren
-id|ppb
+id|ppb_hi
 comma
 l_int|0x20
 )paren
@@ -599,7 +610,7 @@ id|PARPORT_MODE_ECP
 id|w_ecr
 c_func
 (paren
-id|ppb
+id|ppb_hi
 comma
 l_int|0x80
 )paren
@@ -1244,7 +1255,7 @@ l_int|0
 suffix:semicolon
 multiline_comment|/* command timed out */
 )brace
-multiline_comment|/*&n; * output a string, in whatever mode is available, according to the&n; * PPA protocol. &n; */
+multiline_comment|/*&n; * Clear EPP Timeout Bit &n; */
 DECL|function|epp_reset
 r_static
 r_inline
@@ -1287,6 +1298,7 @@ l_int|0xfe
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* &n; * Wait for empty ECP fifo (if we are in ECP fifo mode only)&n; */
 DECL|function|ecp_sync
 r_static
 r_inline
@@ -1296,11 +1308,29 @@ c_func
 (paren
 r_int
 r_int
-id|ppb
+id|hostno
 )paren
 (brace
 r_int
 id|i
+comma
+id|ppb_hi
+op_assign
+id|ppa_hosts
+(braket
+id|hostno
+)braket
+dot
+id|dev-&gt;port-&gt;base_hi
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|ppb_hi
+op_eq
+l_int|0
+)paren
+r_return
 suffix:semicolon
 r_if
 c_cond
@@ -1309,16 +1339,16 @@ c_cond
 id|r_ecr
 c_func
 (paren
-id|ppb
+id|ppb_hi
 )paren
 op_amp
 l_int|0xe0
 )paren
-op_ne
-l_int|0x80
+op_eq
+l_int|0x60
 )paren
-r_return
-suffix:semicolon
+(brace
+multiline_comment|/* mode 011 == ECP fifo mode */
 r_for
 c_loop
 (paren
@@ -1340,7 +1370,7 @@ c_cond
 id|r_ecr
 c_func
 (paren
-id|ppb
+id|ppb_hi
 )paren
 op_amp
 l_int|0x01
@@ -1360,6 +1390,7 @@ c_func
 l_string|&quot;ppa: ECP sync failed as data still present in FIFO.&bslash;n&quot;
 )paren
 suffix:semicolon
+)brace
 )brace
 DECL|function|ppa_byte_out
 r_static
@@ -1805,7 +1836,7 @@ suffix:semicolon
 id|ecp_sync
 c_func
 (paren
-id|ppb
+id|host_no
 )paren
 suffix:semicolon
 r_break
@@ -2101,7 +2132,7 @@ suffix:semicolon
 id|ecp_sync
 c_func
 (paren
-id|ppb
+id|host_no
 )paren
 suffix:semicolon
 r_break

@@ -982,7 +982,7 @@ id|buffer_head
 op_star
 )paren
 (paren
-id|bh-&gt;b_dev_id
+id|bh-&gt;b_private
 )paren
 suffix:semicolon
 id|bh_orig
@@ -1058,7 +1058,7 @@ id|buffer_head
 op_star
 )paren
 (paren
-id|bh-&gt;b_dev_id
+id|bh-&gt;b_private
 )paren
 suffix:semicolon
 r_if
@@ -1288,7 +1288,7 @@ id|bh-&gt;b_end_io
 op_assign
 id|bounce_end_io_read
 suffix:semicolon
-id|bh-&gt;b_dev_id
+id|bh-&gt;b_private
 op_assign
 (paren
 r_void
@@ -1314,10 +1314,6 @@ r_sizeof
 id|bh-&gt;b_wait
 )paren
 )paren
-suffix:semicolon
-id|bh-&gt;b_kiobuf
-op_assign
-l_int|NULL
 suffix:semicolon
 r_return
 id|bh

@@ -11509,6 +11509,11 @@ r_void
 )paren
 (brace
 macro_line|#ifdef ISAPNP_REGION_OK
+r_if
+c_cond
+(paren
+id|pidxr_res
+)paren
 id|release_resource
 c_func
 (paren
@@ -11516,6 +11521,11 @@ id|pidxr_res
 )paren
 suffix:semicolon
 macro_line|#endif
+r_if
+c_cond
+(paren
+id|pnpwrp_res
+)paren
 id|release_resource
 c_func
 (paren
@@ -11532,6 +11542,8 @@ op_logical_and
 id|isapnp_rdp
 op_le
 l_int|0x3ff
+op_logical_and
+id|isapnp_rdp_res
 )paren
 id|release_resource
 c_func

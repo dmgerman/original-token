@@ -1119,17 +1119,9 @@ c_cond
 op_logical_neg
 id|tmp
 )paren
-(brace
-op_star
-id|err
-op_assign
-op_minus
-id|ENOSPC
-suffix:semicolon
 r_return
 l_int|NULL
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren

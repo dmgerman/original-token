@@ -269,6 +269,14 @@ id|rdev
 suffix:semicolon
 r_extern
 r_void
+id|md_run_setup
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_void
 id|md_print_devices
 (paren
 r_void

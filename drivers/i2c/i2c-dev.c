@@ -1,7 +1,7 @@
 multiline_comment|/*&n;    i2c-dev.c - i2c-bus driver, char device interface  &n;&n;    Copyright (C) 1995-97 Simon G. Vogl&n;    Copyright (C) 1998-99 Frodo Looijaard &lt;frodol@dds.nl&gt;&n;&n;    This program is free software; you can redistribute it and/or modify&n;    it under the terms of the GNU General Public License as published by&n;    the Free Software Foundation; either version 2 of the License, or&n;    (at your option) any later version.&n;&n;    This program is distributed in the hope that it will be useful,&n;    but WITHOUT ANY WARRANTY; without even the implied warranty of&n;    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n;    GNU General Public License for more details.&n;&n;    You should have received a copy of the GNU General Public License&n;    along with this program; if not, write to the Free Software&n;    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n;*/
 multiline_comment|/* Note that this is a complete rewrite of Simon Vogl&squot;s i2c-dev module.&n;   But I have used so much of his original code and ideas that it seems&n;   only fair to recognize him as co-author -- Frodo */
 multiline_comment|/* The I2C_RDWR ioctl code is written by Kolja Waschk &lt;waschk@telos.de&gt; */
-multiline_comment|/* $Id: i2c-dev.c,v 1.30 2000/02/28 21:35:05 frodo Exp $ */
+multiline_comment|/* $Id: i2c-dev.c,v 1.32 2000/07/25 23:52:17 frodo Exp $ */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
@@ -1833,6 +1833,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
+multiline_comment|/* This is actually a detach_adapter call! */
 id|i2cdev_adaps
 (braket
 id|i

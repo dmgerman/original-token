@@ -92,6 +92,8 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|macro|DUMMY
+mdefine_line|#define DUMMY&t;(void *)dummycon_dummy
 multiline_comment|/*&n; *  The console `switch&squot; structure for the dummy console&n; *&n; *  Most of the operations are dummies.&n; */
 DECL|variable|dummy_con
 r_struct
@@ -99,100 +101,62 @@ id|consw
 id|dummy_con
 op_assign
 (brace
+id|con_startup
+suffix:colon
 id|dummycon_startup
 comma
+id|con_init
+suffix:colon
 id|dummycon_init
 comma
-(paren
-r_void
-op_star
-)paren
-id|dummycon_dummy
+id|con_deinit
+suffix:colon
+id|DUMMY
 comma
-multiline_comment|/* con_deinit */
-(paren
-r_void
-op_star
-)paren
-id|dummycon_dummy
+id|con_clear
+suffix:colon
+id|DUMMY
 comma
-multiline_comment|/* con_clear */
-(paren
-r_void
-op_star
-)paren
-id|dummycon_dummy
+id|con_putc
+suffix:colon
+id|DUMMY
 comma
-multiline_comment|/* con_putc */
-(paren
-r_void
-op_star
-)paren
-id|dummycon_dummy
+id|con_putcs
+suffix:colon
+id|DUMMY
 comma
-multiline_comment|/* con_putcs */
-(paren
-r_void
-op_star
-)paren
-id|dummycon_dummy
+id|con_cursor
+suffix:colon
+id|DUMMY
 comma
-multiline_comment|/* con_cursor */
-(paren
-r_void
-op_star
-)paren
-id|dummycon_dummy
+id|con_scroll
+suffix:colon
+id|DUMMY
 comma
-multiline_comment|/* con_scroll */
-(paren
-r_void
-op_star
-)paren
-id|dummycon_dummy
+id|con_bmove
+suffix:colon
+id|DUMMY
 comma
-multiline_comment|/* con_bmove */
-(paren
-r_void
-op_star
-)paren
-id|dummycon_dummy
+id|con_switch
+suffix:colon
+id|DUMMY
 comma
-multiline_comment|/* con_switch */
-(paren
-r_void
-op_star
-)paren
-id|dummycon_dummy
+id|con_blank
+suffix:colon
+id|DUMMY
 comma
-multiline_comment|/* con_blank */
-(paren
-r_void
-op_star
-)paren
-id|dummycon_dummy
+id|con_font_op
+suffix:colon
+id|DUMMY
 comma
-multiline_comment|/* con_font_op */
-(paren
-r_void
-op_star
-)paren
-id|dummycon_dummy
+id|con_set_palette
+suffix:colon
+id|DUMMY
 comma
-multiline_comment|/* con_set_palette */
-(paren
-r_void
-op_star
-)paren
-id|dummycon_dummy
+id|con_scrolldelta
+suffix:colon
+id|DUMMY
 comma
-multiline_comment|/* con_scrolldelta */
-l_int|NULL
-comma
-multiline_comment|/* con_set_origin */
-l_int|NULL
-comma
-multiline_comment|/* con_save_screen */
 )brace
 suffix:semicolon
 eof

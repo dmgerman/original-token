@@ -3,6 +3,8 @@ macro_line|#ifndef _LINUX_MOUNT_H
 DECL|macro|_LINUX_MOUNT_H
 mdefine_line|#define _LINUX_MOUNT_H
 macro_line|#ifdef __KERNEL__
+DECL|macro|MNT_VISIBLE
+mdefine_line|#define MNT_VISIBLE&t;1
 DECL|struct|vfsmount
 r_struct
 id|vfsmount
@@ -63,6 +65,10 @@ multiline_comment|/* and going through their mnt_child */
 DECL|member|mnt_count
 id|atomic_t
 id|mnt_count
+suffix:semicolon
+DECL|member|mnt_flags
+r_int
+id|mnt_flags
 suffix:semicolon
 DECL|member|mnt_devname
 r_char

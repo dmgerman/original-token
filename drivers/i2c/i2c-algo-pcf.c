@@ -4,7 +4,7 @@ multiline_comment|/* -----------------------------------------------------------
 multiline_comment|/*   Copyright (C) 1995-1997 Simon G. Vogl&n;                   1998-2000 Hans Berglund&n;&n;    This program is free software; you can redistribute it and/or modify&n;    it under the terms of the GNU General Public License as published by&n;    the Free Software Foundation; either version 2 of the License, or&n;    (at your option) any later version.&n;&n;    This program is distributed in the hope that it will be useful,&n;    but WITHOUT ANY WARRANTY; without even the implied warranty of&n;    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n;    GNU General Public License for more details.&n;&n;    You should have received a copy of the GNU General Public License&n;    along with this program; if not, write to the Free Software&n;    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&t;&t;     */
 multiline_comment|/* ------------------------------------------------------------------------- */
 multiline_comment|/* With some changes from Ky&#xfffd;sti M&#xfffd;lkki &lt;kmalkki@cc.hut.fi&gt; and &n;   Frodo Looijaard &lt;frodol@dds.nl&gt; ,and also from Martin Bailey&n;   &lt;mbailey@littlefeet-inc.com&gt; */
-multiline_comment|/* $Id: i2c-algo-pcf.c,v 1.21 2000/03/16 13:07:34 frodo Exp $ */
+multiline_comment|/* $Id: i2c-algo-pcf.c,v 1.24 2000/07/09 15:16:16 frodo Exp $ */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
@@ -2359,11 +2359,26 @@ op_star
 id|adap
 )paren
 (brace
+r_int
+id|res
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|res
+op_assign
 id|i2c_del_adapter
 c_func
 (paren
 id|adap
 )paren
+)paren
+OL
+l_int|0
+)paren
+r_return
+id|res
 suffix:semicolon
 id|DEB2
 c_func

@@ -3004,7 +3004,7 @@ id|list_head
 op_star
 id|act_head
 op_assign
-id|tofree_head
+id|tofree_head.next
 suffix:semicolon
 r_struct
 id|dquot

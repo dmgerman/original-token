@@ -163,10 +163,6 @@ DECL|variable|kstat
 r_struct
 id|kernel_stat
 id|kstat
-op_assign
-(brace
-l_int|0
-)brace
 suffix:semicolon
 macro_line|#ifdef CONFIG_SMP
 DECL|macro|idle_task

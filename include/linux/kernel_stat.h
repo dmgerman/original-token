@@ -14,17 +14,6 @@ DECL|struct|kernel_stat
 r_struct
 id|kernel_stat
 (brace
-DECL|member|cpu_user
-DECL|member|cpu_nice
-DECL|member|cpu_system
-r_int
-r_int
-id|cpu_user
-comma
-id|cpu_nice
-comma
-id|cpu_system
-suffix:semicolon
 DECL|member|per_cpu_user
 r_int
 r_int

@@ -4,6 +4,8 @@ mdefine_line|#define __NO_VERSION__
 macro_line|#include &quot;drmP.h&quot;
 macro_line|#include &quot;i810_drv.h&quot;
 macro_line|#include &lt;linux/interrupt.h&gt;&t;/* For task queue support */
+macro_line|#include &lt;linux/sched.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 multiline_comment|/* in case we don&squot;t have a 2.3.99-pre6 kernel or later: */
 macro_line|#ifndef VM_DONTCOPY
 DECL|macro|VM_DONTCOPY
@@ -385,23 +387,36 @@ suffix:semicolon
 id|drm_device_t
 op_star
 id|dev
-op_assign
-id|priv-&gt;dev
 suffix:semicolon
 id|drm_i810_private_t
 op_star
 id|dev_priv
-op_assign
-id|dev-&gt;dev_private
 suffix:semicolon
 id|drm_buf_t
 op_star
 id|buf
-op_assign
-id|dev_priv-&gt;mmap_buffer
 suffix:semicolon
 id|drm_i810_buf_priv_t
 op_star
+id|buf_priv
+suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+id|dev
+op_assign
+id|priv-&gt;dev
+suffix:semicolon
+id|dev_priv
+op_assign
+id|dev-&gt;dev_private
+suffix:semicolon
+id|buf
+op_assign
+id|dev_priv-&gt;mmap_buffer
+suffix:semicolon
 id|buf_priv
 op_assign
 id|buf-&gt;dev_private
@@ -421,6 +436,11 @@ suffix:semicolon
 id|buf_priv-&gt;currently_mapped
 op_assign
 id|I810_BUF_MAPPED
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
+)paren
 suffix:semicolon
 r_if
 c_cond

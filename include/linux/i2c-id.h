@@ -5,7 +5,7 @@ multiline_comment|/* &t;&t;&t;&t;&t;&t;&t;&t;&t;     */
 multiline_comment|/* ------------------------------------------------------------------------- */
 multiline_comment|/*   Copyright (C) 1995-1999 Simon G. Vogl&n;&n;    This program is free software; you can redistribute it and/or modify&n;    it under the terms of the GNU General Public License as published by&n;    the Free Software Foundation; either version 2 of the License, or&n;    (at your option) any later version.&n;&n;    This program is distributed in the hope that it will be useful,&n;    but WITHOUT ANY WARRANTY; without even the implied warranty of&n;    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n;    GNU General Public License for more details.&n;&n;    You should have received a copy of the GNU General Public License&n;    along with this program; if not, write to the Free Software&n;    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&t;&t;     */
 multiline_comment|/* ------------------------------------------------------------------------- */
-multiline_comment|/* $Id: i2c-id.h,v 1.15 2000/03/16 14:01:57 frodo Exp $ */
+multiline_comment|/* $Id: i2c-id.h,v 1.16 2000/04/03 18:57:42 frodo Exp $ */
 macro_line|#ifndef I2C_ID_H
 DECL|macro|I2C_ID_H
 mdefine_line|#define I2C_ID_H
@@ -63,6 +63,8 @@ DECL|macro|I2C_DRIVERID_PCF8583
 mdefine_line|#define I2C_DRIVERID_PCF8583&t;25&t;/* real time clock&t;&t;*/
 DECL|macro|I2C_DRIVERID_SAB3036
 mdefine_line|#define I2C_DRIVERID_SAB3036&t;26&t;/* SAB3036 tuner&t;&t;*/
+DECL|macro|I2C_DRIVERID_TDA7432
+mdefine_line|#define I2C_DRIVERID_TDA7432&t;27&t;/* Stereo sound processor&t;*/
 DECL|macro|I2C_DRIVERID_EXP0
 mdefine_line|#define I2C_DRIVERID_EXP0&t;0xF0&t;/* experimental use id&squot;s&t;*/
 DECL|macro|I2C_DRIVERID_EXP1
