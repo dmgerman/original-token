@@ -9,6 +9,7 @@ macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
+macro_line|#include &lt;linux/file.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 DECL|variable|nbd_blksizes
@@ -1729,7 +1730,7 @@ id|MAJOR_NR
 dot
 id|request_fn
 op_assign
-id|DEVICE_REQUEST
+id|do_nbd_request
 suffix:semicolon
 r_for
 c_loop

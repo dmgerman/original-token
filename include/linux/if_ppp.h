@@ -39,8 +39,6 @@ DECL|macro|SC_CCP_OPEN
 mdefine_line|#define SC_CCP_OPEN&t;0x00000040&t;/* Look at CCP packets */
 DECL|macro|SC_CCP_UP
 mdefine_line|#define SC_CCP_UP&t;0x00000080&t;/* May send/recv compressed packets */
-DECL|macro|SC_ENABLE_IP
-mdefine_line|#define SC_ENABLE_IP&t;0x00000100&t;/* IP packets may be exchanged */
 DECL|macro|SC_COMP_RUN
 mdefine_line|#define SC_COMP_RUN&t;0x00001000&t;/* compressor has been inited */
 DECL|macro|SC_DECOMP_RUN
@@ -56,14 +54,8 @@ mdefine_line|#define SC_LOG_RAWIN&t;0x00080000&t;/* log all chars received */
 DECL|macro|SC_LOG_FLUSH
 mdefine_line|#define SC_LOG_FLUSH&t;0x00100000&t;/* log all chars flushed */
 DECL|macro|SC_MASK
-mdefine_line|#define&t;SC_MASK&t;&t;0x0fE0ffff&t;/* bits that user can change */
+mdefine_line|#define&t;SC_MASK&t;&t;0x0f0000ff&t;/* bits that user can change */
 multiline_comment|/* state bits */
-DECL|macro|SC_ESCAPED
-mdefine_line|#define&t;SC_ESCAPED&t;0x80000000&t;/* saw a PPP_ESCAPE */
-DECL|macro|SC_FLUSH
-mdefine_line|#define&t;SC_FLUSH&t;0x40000000&t;/* flush input until next PPP_FLAG */
-DECL|macro|SC_VJ_RESET
-mdefine_line|#define SC_VJ_RESET&t;0x20000000&t;/* Need to reset the VJ decompressor */
 DECL|macro|SC_XMIT_BUSY
 mdefine_line|#define SC_XMIT_BUSY&t;0x10000000&t;/* ppp_write_wakeup is active */
 DECL|macro|SC_RCV_ODDP

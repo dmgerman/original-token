@@ -5145,6 +5145,7 @@ id|SERIAL_TYPE_CALLOUT
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;Warning, %s opened, is a deprecated tty &quot;
 l_string|&quot;callout device&bslash;n&quot;
 comma

@@ -1914,24 +1914,6 @@ id|skb-&gt;end
 id|__label__
 id|here
 suffix:semicolon
-macro_line|#if 1
-id|printk
-c_func
-(paren
-id|KERN_DEBUG
-l_string|&quot;skbput: over: %p:tail=%p:end=%p:len=%u&bslash;n&quot;
-comma
-op_logical_and
-id|here
-comma
-id|skb-&gt;tail
-comma
-id|skb-&gt;end
-comma
-id|len
-)paren
-suffix:semicolon
-macro_line|#else
 id|panic
 c_func
 (paren
@@ -1943,7 +1925,6 @@ comma
 id|len
 )paren
 suffix:semicolon
-macro_line|#endif
 id|here
 suffix:colon
 suffix:semicolon

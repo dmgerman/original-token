@@ -221,8 +221,21 @@ r_struct
 id|free_area_struct
 op_star
 id|list
-op_assign
-l_int|NULL
+suffix:semicolon
+multiline_comment|/*&n;&t; * If we have more than 25% of all memory free,&n;&t; * consider it to be good enough for anything.&n;&t; */
+r_if
+c_cond
+(paren
+id|nr_free_pages
+OG
+id|num_physpages
+op_rshift
+l_int|2
+)paren
+r_return
+id|nr
+op_plus
+l_int|1
 suffix:semicolon
 id|list
 op_assign

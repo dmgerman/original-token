@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  ==FILEVERSION 971001==&n; *&n; * ppp_deflate.c - interface the zlib procedures for Deflate compression&n; * and decompression (as used by gzip) to the PPP code.&n; * This version is for use with Linux kernel 1.3.X.&n; *&n; * Copyright (c) 1994 The Australian National University.&n; * All rights reserved.&n; *&n; * Permission to use, copy, modify, and distribute this software and its&n; * documentation is hereby granted, provided that the above copyright&n; * notice appears in all copies.  This software is provided without any&n; * warranty, express or implied. The Australian National University&n; * makes no representations about the suitability of this software for&n; * any purpose.&n; *&n; * IN NO EVENT SHALL THE AUSTRALIAN NATIONAL UNIVERSITY BE LIABLE TO ANY&n; * PARTY FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES&n; * ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF&n; * THE AUSTRALIAN NATIONAL UNIVERSITY HAS BEEN ADVISED OF THE POSSIBILITY&n; * OF SUCH DAMAGE.&n; *&n; * THE AUSTRALIAN NATIONAL UNIVERSITY SPECIFICALLY DISCLAIMS ANY WARRANTIES,&n; * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY&n; * AND FITNESS FOR A PARTICULAR PURPOSE.  THE SOFTWARE PROVIDED HEREUNDER IS&n; * ON AN &quot;AS IS&quot; BASIS, AND THE AUSTRALIAN NATIONAL UNIVERSITY HAS NO&n; * OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS,&n; * OR MODIFICATIONS.&n; *&n; * From: deflate.c,v 1.1 1996/01/18 03:17:48 paulus Exp&n; */
+multiline_comment|/*&n; *  ==FILEVERSION 980319==&n; *&n; * ppp_deflate.c - interface the zlib procedures for Deflate compression&n; * and decompression (as used by gzip) to the PPP code.&n; * This version is for use with Linux kernel 1.3.X.&n; *&n; * Copyright (c) 1994 The Australian National University.&n; * All rights reserved.&n; *&n; * Permission to use, copy, modify, and distribute this software and its&n; * documentation is hereby granted, provided that the above copyright&n; * notice appears in all copies.  This software is provided without any&n; * warranty, express or implied. The Australian National University&n; * makes no representations about the suitability of this software for&n; * any purpose.&n; *&n; * IN NO EVENT SHALL THE AUSTRALIAN NATIONAL UNIVERSITY BE LIABLE TO ANY&n; * PARTY FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES&n; * ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF&n; * THE AUSTRALIAN NATIONAL UNIVERSITY HAS BEEN ADVISED OF THE POSSIBILITY&n; * OF SUCH DAMAGE.&n; *&n; * THE AUSTRALIAN NATIONAL UNIVERSITY SPECIFICALLY DISCLAIMS ANY WARRANTIES,&n; * INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY&n; * AND FITNESS FOR A PARTICULAR PURPOSE.  THE SOFTWARE PROVIDED HEREUNDER IS&n; * ON AN &quot;AS IS&quot; BASIS, AND THE AUSTRALIAN NATIONAL UNIVERSITY HAS NO&n; * OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS,&n; * OR MODIFICATIONS.&n; *&n; * From: deflate.c,v 1.1 1996/01/18 03:17:48 paulus Exp&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -725,8 +725,6 @@ suffix:semicolon
 r_int
 id|w_size
 suffix:semicolon
-id|MOD_INC_USE_COUNT
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -734,12 +732,21 @@ id|opt_len
 op_ne
 id|CILEN_DEFLATE
 op_logical_or
+(paren
 id|options
 (braket
 l_int|0
 )braket
 op_ne
 id|CI_DEFLATE
+op_logical_and
+id|options
+(braket
+l_int|0
+)braket
+op_ne
+id|CI_DEFLATE_DRAFT
+)paren
 op_logical_or
 id|options
 (braket
@@ -766,8 +773,8 @@ l_int|3
 op_ne
 id|DEFLATE_CHK_SEQUENCE
 )paren
-r_goto
-id|out_fail
+r_return
+l_int|NULL
 suffix:semicolon
 id|w_size
 op_assign
@@ -787,8 +794,8 @@ id|w_size
 template_param
 id|DEFLATE_MAX_SIZE
 )paren
-r_goto
-id|out_fail
+r_return
+l_int|NULL
 suffix:semicolon
 id|state
 op_assign
@@ -816,8 +823,10 @@ id|state
 op_eq
 l_int|NULL
 )paren
-r_goto
-id|out_fail
+r_return
+l_int|NULL
+suffix:semicolon
+id|MOD_INC_USE_COUNT
 suffix:semicolon
 id|memset
 (paren
@@ -893,8 +902,6 @@ c_func
 id|state
 )paren
 suffix:semicolon
-id|out_fail
-suffix:colon
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return
@@ -957,12 +964,21 @@ id|opt_len
 OL
 id|CILEN_DEFLATE
 op_logical_or
+(paren
 id|options
 (braket
 l_int|0
 )braket
 op_ne
 id|CI_DEFLATE
+op_logical_and
+id|options
+(braket
+l_int|0
+)braket
+op_ne
+id|CI_DEFLATE_DRAFT
+)paren
 op_logical_or
 id|options
 (braket
@@ -1120,6 +1136,8 @@ comma
 id|off
 comma
 id|olen
+comma
+id|oavail
 suffix:semicolon
 r_int
 r_char
@@ -1230,7 +1248,13 @@ id|state-&gt;seqno
 suffix:semicolon
 id|wptr
 op_add_assign
-l_int|2
+id|DEFLATE_OVHD
+suffix:semicolon
+id|olen
+op_assign
+id|PPP_HDRLEN
+op_plus
+id|DEFLATE_OVHD
 suffix:semicolon
 id|state-&gt;strm.next_out
 op_assign
@@ -1238,13 +1262,11 @@ id|wptr
 suffix:semicolon
 id|state-&gt;strm.avail_out
 op_assign
+id|oavail
+op_assign
 id|osize
 op_minus
-(paren
-id|PPP_HDRLEN
-op_plus
-l_int|2
-)paren
+id|olen
 suffix:semicolon
 op_increment
 id|state-&gt;seqno
@@ -1278,10 +1300,6 @@ id|isize
 op_minus
 id|off
 )paren
-suffix:semicolon
-id|olen
-op_assign
-l_int|0
 suffix:semicolon
 r_for
 c_loop
@@ -1317,19 +1335,10 @@ id|state-&gt;debug
 id|printk
 c_func
 (paren
-id|KERN_DEBUG
-l_string|&quot;z_compress: deflate returned %d (%s)&bslash;n&quot;
+id|KERN_ERR
+l_string|&quot;z_compress: deflate returned %d&bslash;n&quot;
 comma
 id|r
-comma
-(paren
-id|state-&gt;strm.msg
-ques
-c_cond
-id|state-&gt;strm.msg
-suffix:colon
-l_string|&quot;&quot;
-)paren
 )paren
 suffix:semicolon
 r_break
@@ -1345,13 +1354,15 @@ l_int|0
 (brace
 id|olen
 op_add_assign
-id|osize
+id|oavail
 suffix:semicolon
 id|state-&gt;strm.next_out
 op_assign
 l_int|NULL
 suffix:semicolon
 id|state-&gt;strm.avail_out
+op_assign
+id|oavail
 op_assign
 l_int|1000000
 suffix:semicolon
@@ -1363,16 +1374,9 @@ suffix:semicolon
 multiline_comment|/* all done */
 )brace
 )brace
-r_if
-c_cond
-(paren
-id|olen
-OL
-id|osize
-)paren
 id|olen
 op_add_assign
-id|osize
+id|oavail
 op_minus
 id|state-&gt;strm.avail_out
 suffix:semicolon
@@ -1533,8 +1537,6 @@ suffix:semicolon
 r_int
 id|w_size
 suffix:semicolon
-id|MOD_INC_USE_COUNT
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1542,12 +1544,21 @@ id|opt_len
 op_ne
 id|CILEN_DEFLATE
 op_logical_or
+(paren
 id|options
 (braket
 l_int|0
 )braket
 op_ne
 id|CI_DEFLATE
+op_logical_and
+id|options
+(braket
+l_int|0
+)braket
+op_ne
+id|CI_DEFLATE_DRAFT
+)paren
 op_logical_or
 id|options
 (braket
@@ -1574,8 +1585,8 @@ l_int|3
 op_ne
 id|DEFLATE_CHK_SEQUENCE
 )paren
-r_goto
-id|out_fail
+r_return
+l_int|NULL
 suffix:semicolon
 id|w_size
 op_assign
@@ -1595,8 +1606,8 @@ id|w_size
 template_param
 id|DEFLATE_MAX_SIZE
 )paren
-r_goto
-id|out_fail
+r_return
+l_int|NULL
 suffix:semicolon
 id|state
 op_assign
@@ -1624,8 +1635,10 @@ id|state
 op_eq
 l_int|NULL
 )paren
-r_goto
-id|out_fail
+r_return
+l_int|NULL
+suffix:semicolon
+id|MOD_INC_USE_COUNT
 suffix:semicolon
 id|memset
 (paren
@@ -1693,8 +1706,6 @@ c_func
 id|state
 )paren
 suffix:semicolon
-id|out_fail
-suffix:colon
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return
@@ -1761,12 +1772,21 @@ id|opt_len
 OL
 id|CILEN_DEFLATE
 op_logical_or
+(paren
 id|options
 (braket
 l_int|0
 )braket
 op_ne
 id|CI_DEFLATE
+op_logical_and
+id|options
+(braket
+l_int|0
+)braket
+op_ne
+id|CI_DEFLATE_DRAFT
+)paren
 op_logical_or
 id|options
 (braket
@@ -2252,9 +2272,25 @@ c_cond
 (paren
 id|decode_proto
 )paren
+(brace
+r_if
+c_cond
+(paren
+id|state-&gt;debug
+)paren
+id|printk
+c_func
+(paren
+id|KERN_DEBUG
+l_string|&quot;z_decompress%d: didn&squot;t get proto&bslash;n&quot;
+comma
+id|state-&gt;unit
+)paren
+suffix:semicolon
 r_return
 id|DECOMP_ERROR
 suffix:semicolon
+)brace
 id|olen
 op_assign
 id|osize
@@ -2518,6 +2554,56 @@ comma
 multiline_comment|/* decomp_stat */
 )brace
 suffix:semicolon
+DECL|variable|ppp_deflate_draft
+r_struct
+id|compressor
+id|ppp_deflate_draft
+op_assign
+(brace
+id|CI_DEFLATE_DRAFT
+comma
+multiline_comment|/* compress_proto */
+id|z_comp_alloc
+comma
+multiline_comment|/* comp_alloc */
+id|z_comp_free
+comma
+multiline_comment|/* comp_free */
+id|z_comp_init
+comma
+multiline_comment|/* comp_init */
+id|z_comp_reset
+comma
+multiline_comment|/* comp_reset */
+id|z_compress
+comma
+multiline_comment|/* compress */
+id|z_comp_stats
+comma
+multiline_comment|/* comp_stat */
+id|z_decomp_alloc
+comma
+multiline_comment|/* decomp_alloc */
+id|z_decomp_free
+comma
+multiline_comment|/* decomp_free */
+id|z_decomp_init
+comma
+multiline_comment|/* decomp_init */
+id|z_decomp_reset
+comma
+multiline_comment|/* decomp_reset */
+id|z_decompress
+comma
+multiline_comment|/* decompress */
+id|z_incomp
+comma
+multiline_comment|/* incomp */
+id|z_comp_stats
+comma
+multiline_comment|/* decomp_stat */
+)brace
+suffix:semicolon
 macro_line|#ifdef MODULE
 multiline_comment|/*************************************************************&n; * Module support routines&n; *************************************************************/
 r_int
@@ -2550,6 +2636,13 @@ id|KERN_INFO
 l_string|&quot;PPP Deflate Compression module registered&bslash;n&quot;
 )paren
 suffix:semicolon
+id|ppp_register_compressor
+c_func
+(paren
+op_amp
+id|ppp_deflate_draft
+)paren
+suffix:semicolon
 r_return
 id|answer
 suffix:semicolon
@@ -2574,12 +2667,20 @@ l_string|&quot;Deflate Compression module busy, remove delayed&bslash;n&quot;
 )paren
 suffix:semicolon
 r_else
+(brace
 id|ppp_unregister_compressor
 (paren
 op_amp
 id|ppp_deflate
 )paren
 suffix:semicolon
+id|ppp_unregister_compressor
+(paren
+op_amp
+id|ppp_deflate_draft
+)paren
+suffix:semicolon
+)brace
 )brace
 macro_line|#endif
 eof

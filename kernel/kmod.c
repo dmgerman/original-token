@@ -20,6 +20,13 @@ l_int|256
 op_assign
 l_string|&quot;/sbin/modprobe&quot;
 suffix:semicolon
+DECL|variable|kmod_running
+r_static
+r_int
+id|kmod_running
+op_assign
+l_int|0
+suffix:semicolon
 DECL|variable|module_name
 r_static
 r_char
@@ -119,6 +126,10 @@ c_func
 op_amp
 id|current-&gt;blocked
 )paren
+suffix:semicolon
+id|kmod_running
+op_assign
+l_int|1
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;This is the main kmod_thread loop.  It first sleeps, then&n;&t;&t;handles requests from request_module or kmod_unload.&n;&t;*/
 r_while
@@ -361,6 +372,17 @@ multiline_comment|/* first, copy the name of the module into module_name */
 multiline_comment|/* then wake_up() the kmod daemon */
 multiline_comment|/* wait for the kmod daemon to finish (it will wake us up) */
 multiline_comment|/*&n;&t;&t;kmod_thread is sleeping, so start by copying the name of&n;&t;&t;the module into module_name.  Once that is done, wake up&n;&t;&t;kmod_thread.&n;&t;*/
+r_if
+c_cond
+(paren
+op_logical_neg
+id|kmod_running
+)paren
+(brace
+r_return
+l_int|0
+suffix:semicolon
+)brace
 id|strncpy
 c_func
 (paren
