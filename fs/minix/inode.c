@@ -7,6 +7,7 @@ macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/locks.h&gt;
+macro_line|#include &lt;linux/dalloc.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
@@ -439,13 +440,13 @@ r_struct
 id|super_block
 op_star
 id|s
-)paren
-(brace
+comma
 r_struct
 id|inode
 op_star
 id|dir
-suffix:semicolon
+)paren
+(brace
 r_struct
 id|buffer_head
 op_star
@@ -463,10 +464,6 @@ id|errmsg
 suffix:semicolon
 r_int
 id|dirsize
-suffix:semicolon
-id|dir
-op_assign
-id|s-&gt;s_mounted
 suffix:semicolon
 r_if
 c_cond
@@ -664,6 +661,11 @@ r_const
 r_char
 op_star
 id|errmsg
+suffix:semicolon
+r_struct
+id|inode
+op_star
+id|root_inode
 suffix:semicolon
 r_if
 c_cond
@@ -1260,7 +1262,7 @@ op_assign
 op_amp
 id|minix_sops
 suffix:semicolon
-id|s-&gt;s_mounted
+id|root_inode
 op_assign
 id|iget
 c_func
@@ -1270,11 +1272,21 @@ comma
 id|MINIX_ROOT_INO
 )paren
 suffix:semicolon
+id|s-&gt;s_root
+op_assign
+id|d_alloc_root
+c_func
+(paren
+id|root_inode
+comma
+l_int|NULL
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
 op_logical_neg
-id|s-&gt;s_mounted
+id|s-&gt;s_root
 )paren
 (brace
 id|s-&gt;s_dev
@@ -1311,6 +1323,8 @@ id|minix_checkroot
 c_func
 (paren
 id|s
+comma
+id|root_inode
 )paren
 suffix:semicolon
 r_if
@@ -1333,11 +1347,13 @@ comma
 id|errmsg
 )paren
 suffix:semicolon
-id|iput
+id|d_delete
+c_func
 (paren
-id|s-&gt;s_mounted
+id|s-&gt;s_root
 )paren
 suffix:semicolon
+multiline_comment|/* XXX Is this enough? */
 id|s-&gt;s_dev
 op_assign
 l_int|0

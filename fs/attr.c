@@ -354,9 +354,11 @@ op_complement
 id|S_ISGID
 suffix:semicolon
 )brace
-id|inode-&gt;i_dirt
-op_assign
-l_int|1
+id|mark_inode_dirty
+c_func
+(paren
+id|inode
+)paren
 suffix:semicolon
 )brace
 )brace

@@ -857,10 +857,6 @@ id|current
 )paren
 )paren
 suffix:semicolon
-id|inode-&gt;i_status
-op_or_assign
-id|ST_MODIFIED
-suffix:semicolon
 id|close_coredump
 suffix:colon
 r_if

@@ -380,10 +380,6 @@ c_func
 id|inode
 )paren
 suffix:semicolon
-id|inode-&gt;i_status
-op_or_assign
-id|ST_MODIFIED
-suffix:semicolon
 )brace
 id|up
 c_func
@@ -1973,10 +1969,6 @@ id|ATTR_MODE
 op_or
 id|ATTR_CTIME
 suffix:semicolon
-id|inode-&gt;i_dirt
-op_assign
-l_int|1
-suffix:semicolon
 id|err
 op_assign
 id|notify_change
@@ -1988,28 +1980,6 @@ op_amp
 id|newattrs
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_OMIRR
-r_if
-c_cond
-(paren
-op_logical_neg
-id|err
-)paren
-(brace
-id|omirr_printall
-c_func
-(paren
-id|inode
-comma
-l_string|&quot; M %ld %ld &quot;
-comma
-id|CURRENT_TIME
-comma
-id|newattrs.ia_mode
-)paren
-suffix:semicolon
-)brace
-macro_line|#endif
 id|out
 suffix:colon
 id|unlock_kernel
@@ -2149,10 +2119,6 @@ id|ATTR_MODE
 op_or
 id|ATTR_CTIME
 suffix:semicolon
-id|inode-&gt;i_dirt
-op_assign
-l_int|1
-suffix:semicolon
 id|error
 op_assign
 id|notify_change
@@ -2164,28 +2130,6 @@ op_amp
 id|newattrs
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_OMIRR
-r_if
-c_cond
-(paren
-op_logical_neg
-id|error
-)paren
-(brace
-id|omirr_printall
-c_func
-(paren
-id|inode
-comma
-l_string|&quot; M %ld %ld &quot;
-comma
-id|CURRENT_TIME
-comma
-id|newattrs.ia_mode
-)paren
-suffix:semicolon
-)brace
-macro_line|#endif
 id|iput_and_out
 suffix:colon
 id|iput
@@ -2427,10 +2371,6 @@ op_or_assign
 id|ATTR_MODE
 suffix:semicolon
 )brace
-id|inode-&gt;i_dirt
-op_assign
-l_int|1
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2516,30 +2456,6 @@ op_amp
 id|newattrs
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_OMIRR
-r_if
-c_cond
-(paren
-op_logical_neg
-id|error
-)paren
-(brace
-id|omirr_printall
-c_func
-(paren
-id|inode
-comma
-l_string|&quot; O %d %d &quot;
-comma
-id|CURRENT_TIME
-comma
-id|newattrs.ia_uid
-comma
-id|newattrs.ia_gid
-)paren
-suffix:semicolon
-)brace
-macro_line|#endif
 id|out
 suffix:colon
 id|unlock_kernel
@@ -2747,10 +2663,6 @@ op_or_assign
 id|ATTR_MODE
 suffix:semicolon
 )brace
-id|inode-&gt;i_dirt
-op_assign
-l_int|1
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2834,30 +2746,6 @@ op_amp
 id|newattrs
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_OMIRR
-r_if
-c_cond
-(paren
-op_logical_neg
-id|error
-)paren
-(brace
-id|omirr_printall
-c_func
-(paren
-id|inode
-comma
-l_string|&quot; O %d %d &quot;
-comma
-id|CURRENT_TIME
-comma
-id|newattrs.ia_uid
-comma
-id|newattrs.ia_gid
-)paren
-suffix:semicolon
-)brace
-macro_line|#endif
 id|iput_and_out
 suffix:colon
 id|iput

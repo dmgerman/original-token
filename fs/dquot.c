@@ -1010,7 +1010,6 @@ op_and_assign
 op_complement
 id|DQ_MOD
 suffix:semicolon
-multiline_comment|/* inode-&gt;i_status |= ST_MODIFIED is willingly *not* done here */
 id|up
 c_func
 (paren

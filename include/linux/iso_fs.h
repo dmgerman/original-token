@@ -1190,13 +1190,10 @@ id|inode
 op_star
 id|dir
 comma
-r_const
-r_char
+r_struct
+id|qstr
 op_star
-id|name
-comma
-r_int
-id|len
+id|dentry
 comma
 r_struct
 id|inode

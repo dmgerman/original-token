@@ -923,9 +923,5 @@ op_star
 id|inode
 )paren
 (brace
-id|inode-&gt;i_dirt
-op_assign
-l_int|0
-suffix:semicolon
 )brace
 eof

@@ -685,9 +685,9 @@ c_func
 id|res-&gt;i_mode
 )paren
 op_logical_and
-id|res-&gt;i_sb
+id|res-&gt;i_dentry-&gt;d_covers
 op_eq
-id|dir-&gt;i_sb
+id|res-&gt;i_dentry
 )paren
 (brace
 multiline_comment|/* Not a mount point yet, call 1-800-DAEMON */
@@ -703,6 +703,12 @@ id|current-&gt;pid
 comma
 id|current-&gt;pgrp
 )paren
+)paren
+suffix:semicolon
+id|iput
+c_func
+(paren
+id|res
 )paren
 suffix:semicolon
 id|res

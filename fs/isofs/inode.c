@@ -1950,8 +1950,11 @@ id|s-&gt;s_blocksize_bits
 op_assign
 id|blocksize_bits
 suffix:semicolon
-id|s-&gt;s_mounted
+id|s-&gt;s_root
 op_assign
+id|d_alloc_root
+c_func
+(paren
 id|iget
 c_func
 (paren
@@ -1975,6 +1978,9 @@ id|s
 op_member_access_from_pointer
 id|u.isofs_sb.s_log_zone_size
 )paren
+comma
+l_int|NULL
+)paren
 suffix:semicolon
 id|unlock_super
 c_func
@@ -1987,7 +1993,7 @@ c_cond
 (paren
 op_logical_neg
 (paren
-id|s-&gt;s_mounted
+id|s-&gt;s_root
 )paren
 )paren
 (brace

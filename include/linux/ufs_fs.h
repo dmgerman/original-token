@@ -696,11 +696,9 @@ r_struct
 id|inode
 op_star
 comma
-r_const
-r_char
+r_struct
+id|qstr
 op_star
-comma
-r_int
 comma
 r_struct
 id|inode

@@ -1003,14 +1003,20 @@ id|usb-&gt;fs_frag
 )paren
 suffix:semicolon
 multiline_comment|/* XXX - rename this later */
-id|sb-&gt;s_mounted
+id|sb-&gt;s_root
 op_assign
+id|d_alloc_root
+c_func
+(paren
 id|iget
 c_func
 (paren
 id|sb
 comma
 id|UFS_ROOTINO
+)paren
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 macro_line|#ifdef DEBUG_UFS_SUPER

@@ -1461,10 +1461,6 @@ id|fattr
 )paren
 suffix:semicolon
 )brace
-id|inode-&gt;i_dirt
-op_assign
-l_int|0
-suffix:semicolon
 r_return
 id|error
 suffix:semicolon

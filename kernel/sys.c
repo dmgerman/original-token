@@ -1424,7 +1424,6 @@ id|acct
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/* inode-&gt;i_status |= ST_MODIFIED is willingly *not* done here */
 id|set_fs
 c_func
 (paren
