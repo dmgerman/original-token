@@ -1564,6 +1564,19 @@ c_func
 l_string|&quot;Attempted to kill the idle task!&quot;
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|tsk-&gt;pid
+op_eq
+l_int|1
+)paren
+id|panic
+c_func
+(paren
+l_string|&quot;Attempted to kill init!&quot;
+)paren
+suffix:semicolon
 id|tsk-&gt;flags
 op_or_assign
 id|PF_EXITING

@@ -1343,7 +1343,12 @@ l_int|NULL
 r_if
 c_cond
 (paren
+id|atomic_read
+c_func
+(paren
+op_amp
 id|clnt-&gt;cl_users
+)paren
 )paren
 (brace
 id|printk

@@ -115,11 +115,6 @@ DECL|member|nr_sects
 r_int
 id|nr_sects
 suffix:semicolon
-DECL|member|type
-r_int
-id|type
-suffix:semicolon
-multiline_comment|/* currently RAID or normal */
 DECL|member|de
 id|devfs_handle_t
 id|de

@@ -8,6 +8,10 @@ macro_line|#include &lt;linux/termios.h&gt;
 macro_line|#include &lt;linux/tqueue.h&gt;
 macro_line|#include &lt;linux/circ_buf.h&gt;
 macro_line|#include &lt;linux/wait.h&gt;
+macro_line|#if (LINUX_VERSION_CODE &lt; 0x020300)
+multiline_comment|/* Unfortunate, but Linux 2.2 needs async_icount defined here and&n; * it got moved in 2.3 */
+macro_line|#include &lt;linux/serial.h&gt;
+macro_line|#endif
 DECL|struct|serial_state
 r_struct
 id|serial_state
@@ -520,7 +524,10 @@ mdefine_line|#define SPCI_FL_REGION_SZ_CAP&t;0x0800
 multiline_comment|/* Do not use irq sharing for this device */
 DECL|macro|SPCI_FL_NO_SHIRQ
 mdefine_line|#define SPCI_FL_NO_SHIRQ&t;0x1000
+multiline_comment|/* This is a PNP device */
+DECL|macro|SPCI_FL_ISPNP
+mdefine_line|#define SPCI_FL_ISPNP&t;&t;0x2000
 DECL|macro|SPCI_FL_PNPDEFAULT
-mdefine_line|#define SPCI_FL_PNPDEFAULT&t;(SPCI_FL_IRQRESOURCE)
+mdefine_line|#define SPCI_FL_PNPDEFAULT&t;(SPCI_FL_IRQRESOURCE|SPCI_FL_ISPNP)
 macro_line|#endif /* _LINUX_SERIAL_H */
 eof

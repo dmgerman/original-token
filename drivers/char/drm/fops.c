@@ -275,6 +275,10 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|dev-&gt;lock.hw_lock
+op_ne
+l_int|NULL
+op_logical_and
 id|_DRM_LOCK_IS_HELD
 c_func
 (paren
@@ -887,14 +891,10 @@ id|SIGIO
 suffix:semicolon
 macro_line|#else
 multiline_comment|/* Parameter added in 2.3.21 */
-r_if
-c_cond
-(paren
-id|dev-&gt;buf_async
-)paren
 id|kill_fasync
 c_func
 (paren
+op_amp
 id|dev-&gt;buf_async
 comma
 id|SIGIO

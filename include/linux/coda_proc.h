@@ -38,18 +38,6 @@ r_struct
 id|coda_vfs_stats
 (brace
 multiline_comment|/* file operations */
-DECL|member|file_read
-r_int
-id|file_read
-suffix:semicolon
-DECL|member|file_write
-r_int
-id|file_write
-suffix:semicolon
-DECL|member|file_mmap
-r_int
-id|file_mmap
-suffix:semicolon
 DECL|member|open
 r_int
 id|open
@@ -103,10 +91,6 @@ suffix:semicolon
 DECL|member|permission
 r_int
 id|permission
-suffix:semicolon
-DECL|member|readpage
-r_int
-id|readpage
 suffix:semicolon
 multiline_comment|/* symlink operatoins*/
 DECL|member|follow_link

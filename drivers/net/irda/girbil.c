@@ -590,7 +590,7 @@ op_assign
 id|MSECS_TO_JIFFIES
 c_func
 (paren
-l_int|10
+l_int|20
 )paren
 suffix:semicolon
 r_break
@@ -624,7 +624,7 @@ op_assign
 id|MSECS_TO_JIFFIES
 c_func
 (paren
-l_int|10
+l_int|20
 )paren
 suffix:semicolon
 r_break

@@ -7,7 +7,6 @@ macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &quot;adfs.h&quot;
-multiline_comment|/*&n; * We have mostly NULLs here: the current defaults are OK for&n; * the adfs filesystem.&n; */
 DECL|variable|adfs_file_operations
 r_struct
 id|file_operations
@@ -26,12 +25,10 @@ id|fsync
 suffix:colon
 id|file_fsync
 comma
-macro_line|#if LINUX_VERSION_CODE &gt;= KERNEL_VERSION(2,3,0)
 id|write
 suffix:colon
 id|generic_file_write
 comma
-macro_line|#endif
 )brace
 suffix:semicolon
 DECL|variable|adfs_file_inode_operations
@@ -44,20 +41,6 @@ id|setattr
 suffix:colon
 id|adfs_notify_change
 comma
-macro_line|#if LINUX_VERSION_CODE &lt; KERNEL_VERSION(2,3,0)
-op_amp
-id|adfs_file_operations
-comma
-multiline_comment|/* default file operations */
-id|readpage
-suffix:colon
-id|generic_readpage
-comma
-id|bmap
-suffix:colon
-id|adfs_bmap
-comma
-macro_line|#endif
 )brace
 suffix:semicolon
 eof

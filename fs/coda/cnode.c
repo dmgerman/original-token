@@ -197,6 +197,11 @@ op_assign
 op_amp
 id|coda_symlink_aops
 suffix:semicolon
+id|inode-&gt;i_mapping
+op_assign
+op_amp
+id|inode-&gt;i_data
+suffix:semicolon
 )brace
 r_else
 id|init_special_inode
@@ -284,7 +289,12 @@ l_string|&quot;coda_iget: no inode&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
-l_int|NULL
+id|ERR_PTR
+c_func
+(paren
+op_minus
+id|ENOMEM
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/* check if the inode is already initialized */
@@ -303,9 +313,70 @@ id|cii-&gt;c_magic
 op_eq
 id|CODA_CNODE_MAGIC
 )paren
+(brace
+multiline_comment|/* see if it is the right one (might have an inode collision) */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|coda_fideq
+c_func
+(paren
+id|fid
+comma
+op_amp
+id|cii-&gt;c_fid
+)paren
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;coda_iget: initialized inode old %s new %s!&bslash;n&quot;
+comma
+id|coda_f2s
+c_func
+(paren
+op_amp
+id|cii-&gt;c_fid
+)paren
+comma
+id|coda_f2s2
+c_func
+(paren
+id|fid
+)paren
+)paren
+suffix:semicolon
+id|iput
+c_func
+(paren
+id|inode
+)paren
+suffix:semicolon
+r_return
+id|ERR_PTR
+c_func
+(paren
+op_minus
+id|ENOENT
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/* replace the attributes, type might have changed */
+id|coda_fill_inode
+c_func
+(paren
+id|inode
+comma
+id|attr
+)paren
+suffix:semicolon
 r_goto
 id|out
 suffix:semicolon
+)brace
+multiline_comment|/* new, empty inode found... initializing */
 multiline_comment|/* Initialize the Coda inode info structure */
 id|memset
 c_func
@@ -382,7 +453,7 @@ id|ino
 r_goto
 id|out
 suffix:semicolon
-multiline_comment|/* check if we expect this weird fid */
+multiline_comment|/* check if we expected this weird fid */
 r_if
 c_cond
 (paren
@@ -393,6 +464,7 @@ c_func
 id|fid
 )paren
 )paren
+(brace
 id|printk
 c_func
 (paren
@@ -412,6 +484,10 @@ id|cii-&gt;c_fid
 )paren
 )paren
 suffix:semicolon
+r_goto
+id|out
+suffix:semicolon
+)brace
 multiline_comment|/* add the inode to a global list so we can find it back later */
 id|list_add
 c_func
@@ -472,11 +548,6 @@ id|sb
 )paren
 (brace
 r_struct
-id|coda_inode_info
-op_star
-id|cnp
-suffix:semicolon
-r_struct
 id|coda_vattr
 id|attr
 suffix:semicolon
@@ -526,6 +597,8 @@ id|inode
 op_assign
 l_int|NULL
 suffix:semicolon
+id|EXIT
+suffix:semicolon
 r_return
 id|error
 suffix:semicolon
@@ -547,7 +620,8 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
+id|IS_ERR
+c_func
 (paren
 op_star
 id|inode
@@ -560,34 +634,17 @@ c_func
 l_string|&quot;coda_cnode_make: coda_iget failed&bslash;n&quot;
 )paren
 suffix:semicolon
-r_return
-op_minus
-id|ENOMEM
+id|EXIT
 suffix:semicolon
-)brace
-id|cnp
-op_assign
-id|ITOC
+r_return
+id|PTR_ERR
 c_func
 (paren
 op_star
 id|inode
 )paren
 suffix:semicolon
-multiline_comment|/* see if it is the right one (we might have an inode collision) */
-r_if
-c_cond
-(paren
-id|coda_fideq
-c_func
-(paren
-id|fid
-comma
-op_amp
-id|cnp-&gt;c_fid
-)paren
-)paren
-(brace
+)brace
 id|CDEBUG
 c_func
 (paren
@@ -618,7 +675,12 @@ id|coda_f2s
 c_func
 (paren
 op_amp
-id|cnp-&gt;c_fid
+(paren
+op_star
+id|inode
+)paren
+op_member_access_from_pointer
+id|u.coda_i.c_fid
 )paren
 )paren
 suffix:semicolon
@@ -626,47 +688,6 @@ id|EXIT
 suffix:semicolon
 r_return
 l_int|0
-suffix:semicolon
-)brace
-multiline_comment|/* collision */
-id|printk
-c_func
-(paren
-l_string|&quot;coda_cnode_make on initialized inode %ld, old %s new %s!&bslash;n&quot;
-comma
-(paren
-op_star
-id|inode
-)paren
-op_member_access_from_pointer
-id|i_ino
-comma
-id|coda_f2s
-c_func
-(paren
-op_amp
-id|cnp-&gt;c_fid
-)paren
-comma
-id|coda_f2s2
-c_func
-(paren
-id|fid
-)paren
-)paren
-suffix:semicolon
-id|iput
-c_func
-(paren
-op_star
-id|inode
-)paren
-suffix:semicolon
-id|EXIT
-suffix:semicolon
-r_return
-op_minus
-id|ENOENT
 suffix:semicolon
 )brace
 DECL|function|coda_replace_fid
@@ -745,10 +766,16 @@ op_amp
 id|cnp-&gt;c_volrootlist
 )paren
 suffix:semicolon
+id|INIT_LIST_HEAD
+c_func
+(paren
+op_amp
+id|cnp-&gt;c_volrootlist
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
 id|coda_fid_is_weird
 c_func
 (paren
@@ -797,7 +824,7 @@ suffix:semicolon
 r_struct
 id|coda_inode_info
 op_star
-id|cnp
+id|cii
 suffix:semicolon
 id|ENTRY
 suffix:semicolon
@@ -860,11 +887,6 @@ id|fid
 )paren
 (brace
 r_struct
-id|coda_inode_info
-op_star
-id|cii
-suffix:semicolon
-r_struct
 id|list_head
 op_star
 id|lh
@@ -915,6 +937,22 @@ comma
 id|c_volrootlist
 )paren
 suffix:semicolon
+multiline_comment|/* paranoia check, should never trigger */
+r_if
+c_cond
+(paren
+id|cii-&gt;c_magic
+op_ne
+id|CODA_CNODE_MAGIC
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;coda_fid_to_inode: Bad magic in inode %x.&bslash;n&quot;
+comma
+id|cii-&gt;c_magic
+)paren
+suffix:semicolon
 id|CDEBUG
 c_func
 (paren
@@ -957,21 +995,6 @@ comma
 l_string|&quot;volume root, found %ld&bslash;n&quot;
 comma
 id|inode-&gt;i_ino
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|cii-&gt;c_magic
-op_ne
-id|CODA_CNODE_MAGIC
-)paren
-id|printk
-c_func
-(paren
-l_string|&quot;%s: Bad magic in inode, tell Peter.&bslash;n&quot;
-comma
-id|__FUNCTION__
 )paren
 suffix:semicolon
 id|iget
@@ -1035,7 +1058,7 @@ l_int|NULL
 suffix:semicolon
 )brace
 multiline_comment|/* check if this inode is linked to a cnode */
-id|cnp
+id|cii
 op_assign
 id|ITOC
 c_func
@@ -1046,7 +1069,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|cnp-&gt;c_magic
+id|cii-&gt;c_magic
 op_ne
 id|CODA_CNODE_MAGIC
 )paren
@@ -1059,17 +1082,11 @@ comma
 l_string|&quot;uninitialized inode. Return.&bslash;n&quot;
 )paren
 suffix:semicolon
-id|iput
-c_func
-(paren
-id|inode
-)paren
-suffix:semicolon
-r_return
-l_int|NULL
+r_goto
+id|bad_inode
 suffix:semicolon
 )brace
-multiline_comment|/* make sure fid is the one we want; &n;&t;   unfortunately Venus will shamelessly send us mount-symlinks.&n;&t;   These have the same inode as the root of the volume they&n;&t;   mount, but the fid will be wrong. &n;&t;*/
+multiline_comment|/* make sure fid is the one we want */
 r_if
 c_cond
 (paren
@@ -1081,20 +1098,29 @@ id|fid
 comma
 op_amp
 (paren
-id|cnp-&gt;c_fid
+id|cii-&gt;c_fid
 )paren
 )paren
 )paren
 (brace
-multiline_comment|/* printk(&quot;coda_fid2inode: bad cnode (ino %ld, fid %s)&quot;&n;&t;&t;   &quot;Tell Peter.&bslash;n&quot;, nr, coda_f2s(fid)); */
-id|iput
+macro_line|#if 0
+id|printk
 c_func
 (paren
-id|inode
+l_string|&quot;coda_fid2inode: bad cnode (ino %ld, fid %s)&quot;
+comma
+id|nr
+comma
+id|coda_f2s
+c_func
+(paren
+id|fid
+)paren
 )paren
 suffix:semicolon
-r_return
-l_int|NULL
+macro_line|#endif
+r_goto
+id|bad_inode
 suffix:semicolon
 )brace
 id|CDEBUG
@@ -1109,6 +1135,17 @@ id|inode-&gt;i_ino
 suffix:semicolon
 r_return
 id|inode
+suffix:semicolon
+id|bad_inode
+suffix:colon
+id|iput
+c_func
+(paren
+id|inode
+)paren
+suffix:semicolon
+r_return
+l_int|NULL
 suffix:semicolon
 )brace
 multiline_comment|/* the CONTROL inode is made without asking attributes from Venus */

@@ -258,14 +258,10 @@ op_amp
 id|mse-&gt;wait
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|mse-&gt;fasyncptr
-)paren
 id|kill_fasync
 c_func
 (paren
+op_amp
 id|mse-&gt;fasyncptr
 comma
 id|SIGIO

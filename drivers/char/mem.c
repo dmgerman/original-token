@@ -9,7 +9,6 @@ macro_line|#include &lt;linux/vmalloc.h&gt;
 macro_line|#include &lt;linux/mman.h&gt;
 macro_line|#include &lt;linux/random.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
-macro_line|#include &lt;linux/joystick.h&gt;
 macro_line|#include &lt;linux/raw.h&gt;
 macro_line|#include &lt;linux/capability.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
@@ -2751,14 +2750,6 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef CONFIG_JOYSTICK
-multiline_comment|/*&n;&t; *&t;Some joysticks only appear when the sound card they are&n;&t; *&t;connected to is configured. Keep the sound/joystick ordering.&n;&t; */
-id|js_init
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif&t;
 macro_line|#if CONFIG_QIC02_TAPE
 id|qic02_tape_init
 c_func

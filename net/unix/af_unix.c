@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * NET3:&t;Implementation of BSD Unix domain sockets.&n; *&n; * Authors:&t;Alan Cox, &lt;alan.cox@linux.org&gt;&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; * Version:&t;$Id: af_unix.c,v 1.96 2000/05/12 23:51:26 davem Exp $&n; *&n; * Fixes:&n; *&t;&t;Linus Torvalds&t;:&t;Assorted bug cures.&n; *&t;&t;Niibe Yutaka&t;:&t;async I/O support.&n; *&t;&t;Carsten Paeth&t;:&t;PF_UNIX check, address fixes.&n; *&t;&t;Alan Cox&t;:&t;Limit size of allocated blocks.&n; *&t;&t;Alan Cox&t;:&t;Fixed the stupid socketpair bug.&n; *&t;&t;Alan Cox&t;:&t;BSD compatibility fine tuning.&n; *&t;&t;Alan Cox&t;:&t;Fixed a bug in connect when interrupted.&n; *&t;&t;Alan Cox&t;:&t;Sorted out a proper draft version of&n; *&t;&t;&t;&t;&t;file descriptor passing hacked up from&n; *&t;&t;&t;&t;&t;Mike Shaver&squot;s work.&n; *&t;&t;Marty Leisner&t;:&t;Fixes to fd passing&n; *&t;&t;Nick Nevin&t;:&t;recvmsg bugfix.&n; *&t;&t;Alan Cox&t;:&t;Started proper garbage collector&n; *&t;&t;Heiko EiBfeldt&t;:&t;Missing verify_area check&n; *&t;&t;Alan Cox&t;:&t;Started POSIXisms&n; *&t;&t;Andreas Schwab&t;:&t;Replace inode by dentry for proper&n; *&t;&t;&t;&t;&t;reference counting&n; *&t;&t;Kirk Petersen&t;:&t;Made this a module&n; *&t;    Christoph Rohland&t;:&t;Elegant non-blocking accept/connect algorithm.&n; *&t;&t;&t;&t;&t;Lots of bug fixes.&n; *&t;     Alexey Kuznetosv&t;:&t;Repaired (I hope) bugs introduces&n; *&t;&t;&t;&t;&t;by above two patches.&n; *&t;     Andrea Arcangeli&t;:&t;If possible we block in connect(2)&n; *&t;&t;&t;&t;&t;if the max backlog of the listen socket&n; *&t;&t;&t;&t;&t;is been reached. This won&squot;t break&n; *&t;&t;&t;&t;&t;old apps and it will avoid huge amount&n; *&t;&t;&t;&t;&t;of socks hashed (this for unix_gc()&n; *&t;&t;&t;&t;&t;performances reasons).&n; *&t;&t;&t;&t;&t;Security fix that limits the max&n; *&t;&t;&t;&t;&t;number of socks to 2*max_files and&n; *&t;&t;&t;&t;&t;the number of skb queueable in the&n; *&t;&t;&t;&t;&t;dgram receiver.&n; *&t;&t;Artur Skawina   :&t;Hash function optimizations&n; *&t;     Alexey Kuznetsov   :&t;Full scale SMP. Lot of bugs are introduced 8)&n; *&t;      Malcolm Beattie   :&t;Set peercred for socketpair&n; *&n; *&n; * Known differences from reference BSD that was tested:&n; *&n; *&t;[TO FIX]&n; *&t;ECONNREFUSED is not returned from one end of a connected() socket to the&n; *&t;&t;other the moment one end closes.&n; *&t;fstat() doesn&squot;t return st_dev=NODEV, and give the blksize as high water mark&n; *&t;&t;and a fake inode identifier (nor the BSD first socket fstat twice bug).&n; *&t;[NOT TO FIX]&n; *&t;accept() returns a path name even if the connecting socket has closed&n; *&t;&t;in the meantime (BSD loses the path and gives up).&n; *&t;accept() returns 0 length path for an unbound connector. BSD returns 16&n; *&t;&t;and a null first byte in the path (but not for gethost/peername - BSD bug ??)&n; *&t;socketpair(...SOCK_RAW..) doesn&squot;t panic the kernel.&n; *&t;BSD af_unix apparently has connect forgetting to block properly.&n; *&t;&t;(need to check this with the POSIX spec in detail)&n; *&n; * Differences from 2.0.0-11-... (ANK)&n; *&t;Bug fixes and improvements.&n; *&t;&t;- client shutdown killed server socket.&n; *&t;&t;- removed all useless cli/sti pairs.&n; *&n; *&t;Semantic changes/extensions.&n; *&t;&t;- generic control message passing.&n; *&t;&t;- SCM_CREDENTIALS control message.&n; *&t;&t;- &quot;Abstract&quot; (not FS based) socket bindings.&n; *&t;&t;  Abstract names are sequences of bytes (not zero terminated)&n; *&t;&t;  started by 0, so that this name space does not intersect&n; *&t;&t;  with BSD names.&n; */
+multiline_comment|/*&n; * NET3:&t;Implementation of BSD Unix domain sockets.&n; *&n; * Authors:&t;Alan Cox, &lt;alan.cox@linux.org&gt;&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; * Version:&t;$Id: af_unix.c,v 1.98 2000/06/19 06:24:59 davem Exp $&n; *&n; * Fixes:&n; *&t;&t;Linus Torvalds&t;:&t;Assorted bug cures.&n; *&t;&t;Niibe Yutaka&t;:&t;async I/O support.&n; *&t;&t;Carsten Paeth&t;:&t;PF_UNIX check, address fixes.&n; *&t;&t;Alan Cox&t;:&t;Limit size of allocated blocks.&n; *&t;&t;Alan Cox&t;:&t;Fixed the stupid socketpair bug.&n; *&t;&t;Alan Cox&t;:&t;BSD compatibility fine tuning.&n; *&t;&t;Alan Cox&t;:&t;Fixed a bug in connect when interrupted.&n; *&t;&t;Alan Cox&t;:&t;Sorted out a proper draft version of&n; *&t;&t;&t;&t;&t;file descriptor passing hacked up from&n; *&t;&t;&t;&t;&t;Mike Shaver&squot;s work.&n; *&t;&t;Marty Leisner&t;:&t;Fixes to fd passing&n; *&t;&t;Nick Nevin&t;:&t;recvmsg bugfix.&n; *&t;&t;Alan Cox&t;:&t;Started proper garbage collector&n; *&t;&t;Heiko EiBfeldt&t;:&t;Missing verify_area check&n; *&t;&t;Alan Cox&t;:&t;Started POSIXisms&n; *&t;&t;Andreas Schwab&t;:&t;Replace inode by dentry for proper&n; *&t;&t;&t;&t;&t;reference counting&n; *&t;&t;Kirk Petersen&t;:&t;Made this a module&n; *&t;    Christoph Rohland&t;:&t;Elegant non-blocking accept/connect algorithm.&n; *&t;&t;&t;&t;&t;Lots of bug fixes.&n; *&t;     Alexey Kuznetosv&t;:&t;Repaired (I hope) bugs introduces&n; *&t;&t;&t;&t;&t;by above two patches.&n; *&t;     Andrea Arcangeli&t;:&t;If possible we block in connect(2)&n; *&t;&t;&t;&t;&t;if the max backlog of the listen socket&n; *&t;&t;&t;&t;&t;is been reached. This won&squot;t break&n; *&t;&t;&t;&t;&t;old apps and it will avoid huge amount&n; *&t;&t;&t;&t;&t;of socks hashed (this for unix_gc()&n; *&t;&t;&t;&t;&t;performances reasons).&n; *&t;&t;&t;&t;&t;Security fix that limits the max&n; *&t;&t;&t;&t;&t;number of socks to 2*max_files and&n; *&t;&t;&t;&t;&t;the number of skb queueable in the&n; *&t;&t;&t;&t;&t;dgram receiver.&n; *&t;&t;Artur Skawina   :&t;Hash function optimizations&n; *&t;     Alexey Kuznetsov   :&t;Full scale SMP. Lot of bugs are introduced 8)&n; *&t;      Malcolm Beattie   :&t;Set peercred for socketpair&n; *&n; *&n; * Known differences from reference BSD that was tested:&n; *&n; *&t;[TO FIX]&n; *&t;ECONNREFUSED is not returned from one end of a connected() socket to the&n; *&t;&t;other the moment one end closes.&n; *&t;fstat() doesn&squot;t return st_dev=NODEV, and give the blksize as high water mark&n; *&t;&t;and a fake inode identifier (nor the BSD first socket fstat twice bug).&n; *&t;[NOT TO FIX]&n; *&t;accept() returns a path name even if the connecting socket has closed&n; *&t;&t;in the meantime (BSD loses the path and gives up).&n; *&t;accept() returns 0 length path for an unbound connector. BSD returns 16&n; *&t;&t;and a null first byte in the path (but not for gethost/peername - BSD bug ??)&n; *&t;socketpair(...SOCK_RAW..) doesn&squot;t panic the kernel.&n; *&t;BSD af_unix apparently has connect forgetting to block properly.&n; *&t;&t;(need to check this with the POSIX spec in detail)&n; *&n; * Differences from 2.0.0-11-... (ANK)&n; *&t;Bug fixes and improvements.&n; *&t;&t;- client shutdown killed server socket.&n; *&t;&t;- removed all useless cli/sti pairs.&n; *&n; *&t;Semantic changes/extensions.&n; *&t;&t;- generic control message passing.&n; *&t;&t;- SCM_CREDENTIALS control message.&n; *&t;&t;- &quot;Abstract&quot; (not FS based) socket bindings.&n; *&t;&t;  Abstract names are sequences of bytes (not zero terminated)&n; *&t;&t;  started by 0, so that this name space does not intersect&n; *&t;&t;  with BSD names.&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -2491,6 +2491,7 @@ id|err
 op_assign
 l_int|0
 suffix:semicolon
+multiline_comment|/*&n;&t;&t; * Get the parent directory, calculate the hash for last&n;&t;&t; * component.&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -2524,6 +2525,7 @@ id|err
 r_goto
 id|out_mknod_parent
 suffix:semicolon
+multiline_comment|/*&n;&t;&t; * Yucky last component or no last component at all?&n;&t;&t; * (foo/., foo/.., /////)&n;&t;&t; */
 id|err
 op_assign
 op_minus
@@ -2539,6 +2541,7 @@ id|LAST_NORM
 r_goto
 id|out_mknod
 suffix:semicolon
+multiline_comment|/*&n;&t;&t; * Lock the directory.&n;&t;&t; */
 id|down
 c_func
 (paren
@@ -2546,6 +2549,7 @@ op_amp
 id|nd.dentry-&gt;d_inode-&gt;i_sem
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t;&t; * Do the final lookup.&n;&t;&t; */
 id|dentry
 op_assign
 id|lookup_hash
@@ -2582,6 +2586,7 @@ op_assign
 op_minus
 id|ENOENT
 suffix:semicolon
+multiline_comment|/*&n;&t;&t; * Special case - lookup gave negative, but... we had foo/bar/&n;&t;&t; * From the vfs_mknod() POV we just have a negative dentry -&n;&t;&t; * all is fine. Let&squot;s be bastards - you had / on the end, you&squot;ve&n;&t;&t; * been asking for (non-existent) directory. -ENOENT for you.&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -2596,6 +2601,7 @@ id|dentry-&gt;d_inode
 r_goto
 id|out_mknod_dput
 suffix:semicolon
+multiline_comment|/*&n;&t;&t; * All right, let&squot;s create it.&n;&t;&t; */
 id|err
 op_assign
 id|vfs_mknod
@@ -3019,25 +3025,17 @@ id|sk
 )paren
 )paren
 (brace
-id|sock_put
-c_func
-(paren
-id|unix_peer
-c_func
-(paren
-id|sk
-)paren
-)paren
-suffix:semicolon
-id|unix_peer
-c_func
-(paren
-id|sk
-)paren
+r_struct
+id|sock
+op_star
+id|old_peer
 op_assign
-l_int|NULL
+id|unix_peer
+c_func
+(paren
+id|sk
+)paren
 suffix:semicolon
-)brace
 id|unix_peer
 c_func
 (paren
@@ -3052,6 +3050,30 @@ c_func
 id|sk
 )paren
 suffix:semicolon
+id|sock_put
+c_func
+(paren
+id|old_peer
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
+id|unix_peer
+c_func
+(paren
+id|sk
+)paren
+op_assign
+id|other
+suffix:semicolon
+id|unix_state_wunlock
+c_func
+(paren
+id|sk
+)paren
+suffix:semicolon
+)brace
 r_return
 l_int|0
 suffix:semicolon
@@ -4328,21 +4350,12 @@ id|skb
 )paren
 suffix:semicolon
 multiline_comment|/* Alas, it calls VFS */
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
+multiline_comment|/* So fscking what? fput() had been SMP-safe since the last Summer */
 id|scm_destroy
 c_func
 (paren
 op_amp
 id|scm
-)paren
-suffix:semicolon
-id|unlock_kernel
-c_func
-(paren
 )paren
 suffix:semicolon
 id|sock_wfree
@@ -4825,12 +4838,6 @@ op_eq
 id|other
 )paren
 (brace
-id|sock_put
-c_func
-(paren
-id|other
-)paren
-suffix:semicolon
 id|unix_peer
 c_func
 (paren
@@ -4839,18 +4846,33 @@ id|sk
 op_assign
 l_int|NULL
 suffix:semicolon
-id|err
-op_assign
-op_minus
-id|ECONNREFUSED
-suffix:semicolon
-)brace
 id|unix_state_wunlock
 c_func
 (paren
 id|sk
 )paren
 suffix:semicolon
+id|sock_put
+c_func
+(paren
+id|other
+)paren
+suffix:semicolon
+id|err
+op_assign
+op_minus
+id|ECONNREFUSED
+suffix:semicolon
+)brace
+r_else
+(brace
+id|unix_state_wunlock
+c_func
+(paren
+id|sk
+)paren
+suffix:semicolon
+)brace
 id|other
 op_assign
 l_int|NULL
@@ -5388,16 +5410,16 @@ id|sent
 suffix:semicolon
 id|pipe_err_free
 suffix:colon
-id|kfree_skb
-c_func
-(paren
-id|skb
-)paren
-suffix:semicolon
 id|unix_state_runlock
 c_func
 (paren
 id|other
+)paren
+suffix:semicolon
+id|kfree_skb
+c_func
+(paren
+id|skb
 )paren
 suffix:semicolon
 id|pipe_err

@@ -664,11 +664,19 @@ r_int
 r_int
 id|curr_resync
 suffix:semicolon
-DECL|member|resync_start
+multiline_comment|/* blocks scheduled */
+DECL|member|resync_mark
 r_int
 r_int
-id|resync_start
+id|resync_mark
 suffix:semicolon
+multiline_comment|/* a recent timestamp */
+DECL|member|resync_mark_cnt
+r_int
+r_int
+id|resync_mark_cnt
+suffix:semicolon
+multiline_comment|/* blocks written at resync_mark */
 DECL|member|name
 r_char
 op_star
@@ -697,6 +705,7 @@ DECL|member|recovery_active
 id|atomic_t
 id|recovery_active
 suffix:semicolon
+multiline_comment|/* blocks scheduled, but not written */
 DECL|member|recovery_wait
 id|md_wait_queue_head_t
 id|recovery_wait
@@ -745,22 +754,6 @@ op_star
 id|bh
 )paren
 suffix:semicolon
-DECL|member|end_request
-r_void
-(paren
-op_star
-id|end_request
-)paren
-(paren
-r_struct
-id|buffer_head
-op_star
-id|bh
-comma
-r_int
-id|uptodate
-)paren
-suffix:semicolon
 DECL|member|run
 r_int
 (paren
@@ -800,10 +793,6 @@ id|mddev_t
 op_star
 id|mddev
 )paren
-suffix:semicolon
-DECL|member|max_invalid_dev
-r_int
-id|max_invalid_dev
 suffix:semicolon
 DECL|member|error_handler
 r_int
@@ -1083,12 +1072,17 @@ DECL|member|dev
 id|kdev_t
 id|dev
 suffix:semicolon
-DECL|member|name
+DECL|member|namebuf
 r_char
-id|name
+id|namebuf
 (braket
 id|MAX_DISKNAME_LEN
 )braket
+suffix:semicolon
+DECL|member|name
+r_char
+op_star
+id|name
 suffix:semicolon
 DECL|typedef|dev_name_t
 )brace

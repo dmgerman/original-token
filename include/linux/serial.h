@@ -2,6 +2,7 @@ multiline_comment|/*&n; * include/linux/serial.h&n; *&n; * Copyright (C) 1992 by
 macro_line|#ifndef _LINUX_SERIAL_H
 DECL|macro|_LINUX_SERIAL_H
 mdefine_line|#define _LINUX_SERIAL_H
+macro_line|#ifdef __KERNEL__
 macro_line|#include &lt;asm/page.h&gt;
 multiline_comment|/*&n; * Counters of the input lines (CTS, DSR, RI, CD) interrupts&n; */
 DECL|struct|async_icount
@@ -49,6 +50,7 @@ suffix:semicolon
 multiline_comment|/*&n; * The size of the serial xmit buffer is 1 page, or 4096 bytes&n; */
 DECL|macro|SERIAL_XMIT_SIZE
 mdefine_line|#define SERIAL_XMIT_SIZE PAGE_SIZE
+macro_line|#endif
 DECL|struct|serial_struct
 r_struct
 id|serial_struct
@@ -129,11 +131,16 @@ r_int
 r_int
 id|iomem_reg_shift
 suffix:semicolon
+DECL|member|port_high
+r_int
+r_int
+id|port_high
+suffix:semicolon
 DECL|member|reserved
 r_int
 id|reserved
 (braket
-l_int|2
+l_int|1
 )braket
 suffix:semicolon
 )brace
@@ -170,8 +177,10 @@ DECL|macro|PORT_16654
 mdefine_line|#define PORT_16654&t;11
 DECL|macro|PORT_16850
 mdefine_line|#define PORT_16850&t;12
+DECL|macro|PORT_RSA
+mdefine_line|#define PORT_RSA&t;13&t;/* RSA-DV II/S card */
 DECL|macro|PORT_MAX
-mdefine_line|#define PORT_MAX&t;12
+mdefine_line|#define PORT_MAX&t;13
 DECL|macro|SERIAL_IO_PORT
 mdefine_line|#define SERIAL_IO_PORT&t;0
 DECL|macro|SERIAL_IO_HUB6
@@ -240,8 +249,10 @@ DECL|macro|ASYNC_SPD_WARP
 mdefine_line|#define ASYNC_SPD_WARP&t;0x1010&t;/* Use 460800 instead of 38400 bps */
 DECL|macro|ASYNC_LOW_LATENCY
 mdefine_line|#define ASYNC_LOW_LATENCY 0x2000 /* Request low latency behaviour */
+DECL|macro|ASYNC_BUGGY_UART
+mdefine_line|#define ASYNC_BUGGY_UART  0x4000 /* This is a buggy UART, skip some safety&n;&t;&t;&t;&t;  * checks.  Note: can be dangerous! */
 DECL|macro|ASYNC_FLAGS
-mdefine_line|#define ASYNC_FLAGS&t;0x3FFF&t;/* Possible legal async flags */
+mdefine_line|#define ASYNC_FLAGS&t;0x7FFF&t;/* Possible legal async flags */
 DECL|macro|ASYNC_USR_MASK
 mdefine_line|#define ASYNC_USR_MASK&t;0x3430&t;/* Legal flags that non-privileged&n;&t;&t;&t;&t; * users can set or reset */
 multiline_comment|/* Internal flags used only by kernel/chr_drv/serial.c */
@@ -260,7 +271,9 @@ mdefine_line|#define ASYNC_CTS_FLOW&t;&t;0x04000000 /* Do CTS flow control */
 DECL|macro|ASYNC_CHECK_CD
 mdefine_line|#define ASYNC_CHECK_CD&t;&t;0x02000000 /* i.e., CLOCAL */
 DECL|macro|ASYNC_SHARE_IRQ
-mdefine_line|#define ASYNC_SHARE_IRQ&t;&t;0x01000000 /* for multifunction cards */
+mdefine_line|#define ASYNC_SHARE_IRQ&t;&t;0x01000000 /* for multifunction cards&n;&t;&t;&t;&t;&t;     --- no longer used */
+DECL|macro|ASYNC_AUTOPROBE
+mdefine_line|#define ASYNC_AUTOPROBE&t;&t;0x00800000 /* Port was autoprobed */
 DECL|macro|ASYNC_INTERNAL_FLAGS
 mdefine_line|#define ASYNC_INTERNAL_FLAGS&t;0xFF000000 /* Internal flags */
 multiline_comment|/*&n; * Multiport serial configuration structure --- external structure&n; */

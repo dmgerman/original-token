@@ -2,7 +2,7 @@ macro_line|#ifndef _LINUX_SHM_H_
 DECL|macro|_LINUX_SHM_H_
 mdefine_line|#define _LINUX_SHM_H_
 macro_line|#include &lt;linux/ipc.h&gt;
-macro_line|#include &lt;linux/mm.h&gt;
+macro_line|#include &lt;asm/page.h&gt;
 multiline_comment|/*&n; * SHMMAX, SHMMNI and SHMALL are upper limits are defaults which can&n; * be increased by sysctl&n; */
 DECL|macro|SHMMAX
 mdefine_line|#define SHMMAX 0x2000000&t;&t; /* max shared seg size (bytes) */

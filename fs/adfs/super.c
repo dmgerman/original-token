@@ -1577,7 +1577,7 @@ l_string|&quot;unable to read superblock&quot;
 )paren
 suffix:semicolon
 r_goto
-id|error_unlock
+id|error
 suffix:semicolon
 )brace
 id|b_data
@@ -1751,7 +1751,7 @@ l_string|&quot;2nd try.&quot;
 )paren
 suffix:semicolon
 r_goto
-id|error_unlock
+id|error
 suffix:semicolon
 )brace
 id|b_data
@@ -1993,7 +1993,6 @@ op_assign
 id|ADFS_F_NAME_LEN
 suffix:semicolon
 )brace
-macro_line|#if LINUX_VERSION_CODE &gt;= KERNEL_VERSION(2,3,0)
 id|sb-&gt;s_root
 op_assign
 id|d_alloc_root
@@ -2009,25 +2008,6 @@ id|root_obj
 )paren
 )paren
 suffix:semicolon
-macro_line|#else
-id|sb-&gt;s_root
-op_assign
-id|d_alloc_root
-c_func
-(paren
-id|adfs_iget
-c_func
-(paren
-id|sb
-comma
-op_amp
-id|root_obj
-)paren
-comma
-l_int|NULL
-)paren
-suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -2078,7 +2058,7 @@ l_string|&quot;get root inode failed&bslash;n&quot;
 )paren
 suffix:semicolon
 r_goto
-id|error_dec_use
+id|error
 suffix:semicolon
 )brace
 r_return
@@ -2092,10 +2072,6 @@ c_func
 id|bh
 )paren
 suffix:semicolon
-id|error_unlock
-suffix:colon
-id|error_dec_use
-suffix:colon
 id|error
 suffix:colon
 r_return

@@ -216,14 +216,6 @@ id|mddev
 )paren
 suffix:semicolon
 r_extern
-r_void
-id|autodetect_raid
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_extern
 r_struct
 id|gendisk
 op_star

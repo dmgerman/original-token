@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  inode.c&n; *&n; *  Copyright (C) 1995-1999 Martin von L&#xfffd;wis&n; *  Copyright (C) 1996 Albert D. Cahalan&n; *  Copyright (C) 1996-1997 R&#xfffd;gis Duchesne&n; *  Copyright (C) 1998 Joseph Malicki&n; *  Copyright (C) 1999 Steve Dodd&n; */
+multiline_comment|/*&n; *  inode.c&n; *&n; *  Copyright (C) 1995-1999 Martin von L&#xfffd;wis&n; *  Copyright (C) 1996 Albert D. Cahalan&n; *  Copyright (C) 1996-1997 R&#xfffd;gis Duchesne&n; *  Copyright (C) 1998 Joseph Malicki&n; *  Copyright (C) 1999 Steve Dodd&n; *  Copyright (C) 2000 Anton Altaparmakov&n; */
 macro_line|#include &quot;ntfstypes.h&quot;
 macro_line|#include &quot;ntfsendian.h&quot;
 macro_line|#include &quot;struct.h&quot;
@@ -3005,7 +3005,6 @@ c_cond
 (paren
 id|error
 )paren
-multiline_comment|/* FIXME: maybe return failure */
 (brace
 id|ntfs_error
 c_func
@@ -3018,7 +3017,7 @@ op_assign
 id|copied
 suffix:semicolon
 r_return
-l_int|0
+id|error
 suffix:semicolon
 )brace
 id|l

@@ -24,28 +24,6 @@ id|u_short
 id|c_flags
 suffix:semicolon
 multiline_comment|/* flags (see below) */
-DECL|member|c_ocount
-id|u_short
-id|c_ocount
-suffix:semicolon
-multiline_comment|/* count of openers */
-DECL|member|c_owrite
-id|u_short
-id|c_owrite
-suffix:semicolon
-multiline_comment|/* count of open for write */
-DECL|member|c_mmcount
-id|u_short
-id|c_mmcount
-suffix:semicolon
-multiline_comment|/* count of mmappers */
-DECL|member|c_ovp
-r_struct
-id|inode
-op_star
-id|c_ovp
-suffix:semicolon
-multiline_comment|/* open inode  pointer */
 DECL|member|c_cnhead
 r_struct
 id|list_head
@@ -75,37 +53,12 @@ suffix:semicolon
 multiline_comment|/* flags */
 DECL|macro|C_VATTR
 mdefine_line|#define C_VATTR       0x1   /* Validity of vattr in inode */
-DECL|macro|C_PURGE
-mdefine_line|#define C_PURGE       0x8
-DECL|macro|C_ZAPDIR
-mdefine_line|#define C_ZAPDIR      0x10
-DECL|macro|C_DYING
-mdefine_line|#define C_DYING       0x4   /* from venus (which died) */
-DECL|macro|C_INITED
-mdefine_line|#define C_INITED      0x20
 DECL|macro|C_FLUSH
 mdefine_line|#define C_FLUSH       0x2   /* used after a flush */
-r_struct
-id|inode
-op_star
-id|coda_iget
-c_func
-(paren
-r_struct
-id|super_block
-op_star
-id|sb
-comma
-id|ViceFid
-op_star
-id|fid
-comma
-r_struct
-id|coda_vattr
-op_star
-id|attr
-)paren
-suffix:semicolon
+DECL|macro|C_DYING
+mdefine_line|#define C_DYING       0x4   /* from venus (which died) */
+DECL|macro|C_PURGE
+mdefine_line|#define C_PURGE       0x8
 r_int
 id|coda_cnode_make
 c_func

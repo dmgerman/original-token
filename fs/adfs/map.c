@@ -3,11 +3,7 @@ macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/adfs_fs.h&gt;
-macro_line|#if LINUX_VERSION_CODE &gt;= KERNEL_VERSION(2,3,0)
 macro_line|#include &lt;linux/spinlock.h&gt;
-macro_line|#else
-macro_line|#include &lt;asm/spinlock.h&gt;
-macro_line|#endif
 macro_line|#include &quot;adfs.h&quot;
 multiline_comment|/*&n; * For the future...&n; */
 DECL|variable|adfs_map_lock

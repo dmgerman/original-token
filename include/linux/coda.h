@@ -688,10 +688,9 @@ mdefine_line|#define CIOC_KERNEL_VERSION _IOWR(&squot;c&squot;, 10, sizeof (int)
 macro_line|#if&t;0
 mdefine_line|#define CODA_KERNEL_VERSION 0 /* don&squot;t care about kernel version number */
 mdefine_line|#define CODA_KERNEL_VERSION 1 /* The old venus 4.6 compatible interface */
-mdefine_line|#define CODA_KERNEL_VERSION 2 /* venus_lookup gets an extra parameter */
 macro_line|#endif
 DECL|macro|CODA_KERNEL_VERSION
-mdefine_line|#define CODA_KERNEL_VERSION 3 /* added CODA_MAKE_CINODE downcall */
+mdefine_line|#define CODA_KERNEL_VERSION 2 /* venus_lookup gets an extra parameter */
 multiline_comment|/*&n; *        Venus &lt;-&gt; Coda  RPC arguments&n; */
 DECL|struct|coda_in_hdr
 r_struct

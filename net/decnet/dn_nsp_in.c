@@ -1653,7 +1653,7 @@ op_amp
 id|sock-&gt;flags
 )paren
 )paren
-id|kill_fasync
+id|__kill_fasync
 c_func
 (paren
 id|sock-&gt;fasync_list

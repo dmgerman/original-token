@@ -1313,14 +1313,10 @@ id|queue-&gt;head
 op_assign
 id|head
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|queue-&gt;fasync
-)paren
 id|kill_fasync
 c_func
 (paren
+op_amp
 id|queue-&gt;fasync
 comma
 id|SIGIO

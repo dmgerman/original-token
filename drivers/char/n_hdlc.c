@@ -1745,7 +1745,9 @@ id|SIGIO
 suffix:semicolon
 macro_line|#else
 id|kill_fasync
+c_func
 (paren
+op_amp
 id|n_hdlc-&gt;tty-&gt;fasync
 comma
 id|SIGIO

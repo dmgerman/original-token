@@ -292,6 +292,17 @@ l_int|0
 suffix:semicolon
 multiline_comment|/* No cmpxchg on a 386 */
 macro_line|#endif
+macro_line|#if defined(__sparc__) &amp;&amp; !defined(__sparc_v9__)
+r_if
+c_cond
+(paren
+l_int|1
+)paren
+r_return
+l_int|0
+suffix:semicolon
+multiline_comment|/* No cmpxchg before v9 sparc. */
+macro_line|#endif
 r_return
 l_int|1
 suffix:semicolon

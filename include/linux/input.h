@@ -1,7 +1,7 @@
 macro_line|#ifndef _INPUT_H
 DECL|macro|_INPUT_H
 mdefine_line|#define _INPUT_H
-multiline_comment|/*&n; * $Id: input.h,v 1.13 2000/05/29 10:54:53 vojtech Exp $&n; *&n; *  Copyright (c) 1999-2000 Vojtech Pavlik&n; *&n; *  Sponsored by SuSE&n; */
+multiline_comment|/*&n; * $Id: input.h,v 1.14 2000/06/03 20:18:52 vojtech Exp $&n; *&n; *  Copyright (c) 1999-2000 Vojtech Pavlik&n; *&n; *  Sponsored by SuSE&n; */
 multiline_comment|/*&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2 of the License, or &n; * (at your option) any later version.&n; * &n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; * &n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA&n; * &n; * Should you need to contact me, the author, you can do so either by&n; * e-mail - mail your message to &lt;vojtech@suse.cz&gt;, or by paper mail:&n; * Vojtech Pavlik, Ucitelska 1576, Prague 8, 182 00 Czech Republic&n; */
 macro_line|#ifdef __KERNEL__
 macro_line|#include &lt;linux/time.h&gt;
@@ -588,10 +588,12 @@ DECL|macro|ABS_THROTTLE
 mdefine_line|#define ABS_THROTTLE&t;&t;0x06
 DECL|macro|ABS_RUDDER
 mdefine_line|#define ABS_RUDDER&t;&t;0x07
-DECL|macro|ABS_TL
-mdefine_line|#define ABS_TL&t;&t;&t;0x08
-DECL|macro|ABS_TR
-mdefine_line|#define ABS_TR&t;&t;&t;0x09
+DECL|macro|ABS_WHEEL
+mdefine_line|#define ABS_WHEEL&t;&t;0x08
+DECL|macro|ABS_GAS
+mdefine_line|#define ABS_GAS&t;&t;&t;0x09
+DECL|macro|ABS_BRAKE
+mdefine_line|#define ABS_BRAKE&t;&t;0x0a
 DECL|macro|ABS_HAT0X
 mdefine_line|#define ABS_HAT0X&t;&t;0x10
 DECL|macro|ABS_HAT0Y

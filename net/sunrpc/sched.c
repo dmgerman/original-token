@@ -2206,6 +2206,7 @@ id|KERN_ERR
 l_string|&quot;RPC: Locked task was scheduled !!!!&bslash;n&quot;
 )paren
 suffix:semicolon
+macro_line|#ifdef RPC_DEBUG&t;&t;&t;
 id|rpc_debug
 op_assign
 op_complement
@@ -2216,6 +2217,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#endif&t;&t;&t;
 r_break
 suffix:semicolon
 )brace
@@ -2591,8 +2593,12 @@ c_cond
 (paren
 id|clnt
 )paren
+id|atomic_inc
+c_func
+(paren
+op_amp
 id|clnt-&gt;cl_users
-op_increment
+)paren
 suffix:semicolon
 macro_line|#ifdef RPC_DEBUG
 id|task-&gt;tk_magic
@@ -2744,13 +2750,22 @@ c_func
 (paren
 l_string|&quot;rpc_new_task: failed, users=%d, oneshot=%d&bslash;n&quot;
 comma
+id|atomic_read
+c_func
+(paren
+op_amp
 id|clnt-&gt;cl_users
+)paren
 comma
 id|clnt-&gt;cl_oneshot
 )paren
 suffix:semicolon
+id|atomic_inc
+c_func
+(paren
+op_amp
 id|clnt-&gt;cl_users
-op_increment
+)paren
 suffix:semicolon
 multiline_comment|/* pretend we were used ... */
 id|rpc_release_client

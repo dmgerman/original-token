@@ -66,6 +66,7 @@ comma
 suffix:semicolon
 multiline_comment|/*&n; * The tasklist_lock protects the linked list of processes.&n; *&n; * The scheduler lock is protecting against multiple entry&n; * into the scheduling code, and doesn&squot;t need to worry&n; * about interrupts (because interrupts cannot call the&n; * scheduler).&n; *&n; * The run-queue lock locks the parts that actually access&n; * and change the run-queues, and have to be interrupt-safe.&n; */
 DECL|variable|runqueue_lock
+id|__cacheline_aligned
 id|spinlock_t
 id|runqueue_lock
 op_assign
@@ -73,6 +74,7 @@ id|SPIN_LOCK_UNLOCKED
 suffix:semicolon
 multiline_comment|/* second */
 DECL|variable|tasklist_lock
+id|__cacheline_aligned
 id|rwlock_t
 id|tasklist_lock
 op_assign
@@ -2747,17 +2749,17 @@ l_int|0
 r_goto
 id|out_nounlock
 suffix:semicolon
+id|retval
+op_assign
+op_minus
+id|ESRCH
+suffix:semicolon
 id|read_lock
 c_func
 (paren
 op_amp
 id|tasklist_lock
 )paren
-suffix:semicolon
-id|retval
-op_assign
-op_minus
-id|ESRCH
 suffix:semicolon
 id|p
 op_assign
@@ -2770,18 +2772,15 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
 id|p
 )paren
-r_goto
-id|out_unlock
-suffix:semicolon
 id|retval
 op_assign
 id|p-&gt;policy
+op_amp
+op_complement
+id|SCHED_YIELD
 suffix:semicolon
-id|out_unlock
-suffix:colon
 id|read_unlock
 c_func
 (paren

@@ -8,7 +8,7 @@ macro_line|#include &lt;linux/utsname.h&gt;
 macro_line|#include &lt;linux/sunrpc/clnt.h&gt;
 macro_line|#include &lt;linux/nfs.h&gt;
 DECL|macro|RPC_SLACK_SPACE
-mdefine_line|#define RPC_SLACK_SPACE&t;&t;1024&t;/* total overkill */
+mdefine_line|#define RPC_SLACK_SPACE&t;&t;512&t;/* total overkill */
 macro_line|#ifdef RPC_DEBUG
 DECL|macro|RPCDBG_FACILITY
 macro_line|# define RPCDBG_FACILITY&t;RPCDBG_CALL
@@ -312,6 +312,15 @@ id|clnt
 )paren
 )paren
 suffix:semicolon
+id|atomic_set
+c_func
+(paren
+op_amp
+id|clnt-&gt;cl_users
+comma
+l_int|0
+)paren
+suffix:semicolon
 id|clnt-&gt;cl_xprt
 op_assign
 id|xprt
@@ -482,7 +491,12 @@ suffix:semicolon
 r_while
 c_loop
 (paren
+id|atomic_read
+c_func
+(paren
+op_amp
 id|clnt-&gt;cl_users
+)paren
 )paren
 (brace
 macro_line|#ifdef RPC_DEBUG
@@ -493,7 +507,12 @@ l_string|&quot;RPC: rpc_shutdown_client: client %s, tasks=%d&bslash;n&quot;
 comma
 id|clnt-&gt;cl_protname
 comma
+id|atomic_read
+c_func
+(paren
+op_amp
 id|clnt-&gt;cl_users
+)paren
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -512,11 +531,15 @@ c_func
 id|clnt
 )paren
 suffix:semicolon
-id|sleep_on
+id|sleep_on_timeout
 c_func
 (paren
 op_amp
 id|destroy_wait
+comma
+l_int|1
+op_star
+id|HZ
 )paren
 suffix:semicolon
 )brace
@@ -613,36 +636,26 @@ l_string|&quot;RPC:      rpc_release_client(%p, %d)&bslash;n&quot;
 comma
 id|clnt
 comma
-id|clnt-&gt;cl_users
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|clnt-&gt;cl_users
-)paren
-(brace
-r_if
-c_cond
-(paren
-op_decrement
-(paren
-id|clnt-&gt;cl_users
-)paren
-OG
-l_int|0
-)paren
-r_return
-suffix:semicolon
-)brace
-r_else
-id|printk
+id|atomic_read
 c_func
 (paren
-l_string|&quot;rpc_release_client: %s client already free??&bslash;n&quot;
-comma
-id|clnt-&gt;cl_protname
+op_amp
+id|clnt-&gt;cl_users
 )paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|atomic_dec_and_test
+c_func
+(paren
+op_amp
+id|clnt-&gt;cl_users
+)paren
+)paren
+r_return
 suffix:semicolon
 id|wake_up
 c_func
@@ -1609,6 +1622,8 @@ c_func
 id|task
 comma
 id|bufsiz
+op_lshift
+l_int|1
 )paren
 )paren
 op_ne
@@ -1753,6 +1768,10 @@ l_int|0
 dot
 id|iov_base
 op_assign
+(paren
+r_void
+op_star
+)paren
 id|task-&gt;tk_buffer
 suffix:semicolon
 id|req-&gt;rq_svec
@@ -1779,7 +1798,19 @@ l_int|0
 dot
 id|iov_base
 op_assign
+(paren
+r_void
+op_star
+)paren
+(paren
+(paren
+r_char
+op_star
+)paren
 id|task-&gt;tk_buffer
+op_plus
+id|bufsiz
+)paren
 suffix:semicolon
 id|req-&gt;rq_rvec
 (braket
@@ -2448,6 +2479,7 @@ comma
 id|clnt-&gt;cl_server
 )paren
 suffix:semicolon
+macro_line|#ifdef RPC_DEBUG&t;&t;&t;&t;
 r_else
 id|printk
 c_func
@@ -2460,6 +2492,7 @@ comma
 id|task-&gt;tk_pid
 )paren
 suffix:semicolon
+macro_line|#endif&t;&t;&t;&t;
 )brace
 r_if
 c_cond
@@ -2890,11 +2923,23 @@ id|xprt
 op_assign
 id|clnt-&gt;cl_xprt
 suffix:semicolon
+r_struct
+id|rpc_rqst
+op_star
+id|req
+op_assign
+id|task-&gt;tk_rqstp
+suffix:semicolon
 id|u32
 op_star
 id|p
 op_assign
-id|task-&gt;tk_buffer
+id|req-&gt;rq_svec
+(braket
+l_int|0
+)braket
+dot
+id|iov_base
 suffix:semicolon
 multiline_comment|/* FIXME: check buffer size? */
 r_if
@@ -2913,7 +2958,7 @@ op_star
 id|p
 op_increment
 op_assign
-id|task-&gt;tk_rqstp-&gt;rq_xid
+id|req-&gt;rq_xid
 suffix:semicolon
 multiline_comment|/* XID */
 op_star
@@ -2999,7 +3044,12 @@ id|u32
 op_star
 id|p
 op_assign
-id|task-&gt;tk_buffer
+id|task-&gt;tk_rqstp-&gt;rq_rvec
+(braket
+l_int|0
+)braket
+dot
+id|iov_base
 comma
 id|n
 suffix:semicolon
@@ -3321,7 +3371,7 @@ id|task-&gt;tk_garb_retry
 id|task-&gt;tk_garb_retry
 op_decrement
 suffix:semicolon
-id|printk
+id|dprintk
 c_func
 (paren
 id|KERN_WARNING

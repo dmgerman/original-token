@@ -26,6 +26,10 @@ DECL|member|sect_limit
 r_int
 id|sect_limit
 suffix:semicolon
+DECL|member|head_position
+r_int
+id|head_position
+suffix:semicolon
 multiline_comment|/*&n;&t; * State bits:&n;&t; */
 DECL|member|operational
 r_int
@@ -109,6 +113,36 @@ suffix:semicolon
 DECL|member|device_lock
 id|md_spinlock_t
 id|device_lock
+suffix:semicolon
+multiline_comment|/* buffer pool */
+multiline_comment|/* buffer_heads that we have pre-allocated have b_pprev -&gt; &amp;freebh&n;&t; * and are linked into a stack using b_next&n;&t; * raid1_bh that are pre-allocated have R1BH_PreAlloc set.&n;&t; * All these variable are protected by device_lock&n;&t; */
+DECL|member|freebh
+r_struct
+id|buffer_head
+op_star
+id|freebh
+suffix:semicolon
+DECL|member|freebh_cnt
+r_int
+id|freebh_cnt
+suffix:semicolon
+multiline_comment|/* how many are on the list */
+DECL|member|freer1
+r_struct
+id|raid1_bh
+op_star
+id|freer1
+suffix:semicolon
+DECL|member|freebuf
+r_struct
+id|raid1_bh
+op_star
+id|freebuf
+suffix:semicolon
+multiline_comment|/* each bh_req has a page allocated */
+DECL|member|wait_buffer
+id|md_wait_queue_head_t
+id|wait_buffer
 suffix:semicolon
 multiline_comment|/* for use when syncing mirrors: */
 DECL|member|start_active
@@ -201,26 +235,24 @@ id|buffer_head
 op_star
 id|master_bh
 suffix:semicolon
-DECL|member|mirror_bh
+DECL|member|mirror_bh_list
 r_struct
 id|buffer_head
 op_star
-id|mirror_bh
-(braket
-id|MD_SB_DISKS
-)braket
+id|mirror_bh_list
 suffix:semicolon
 DECL|member|bh_req
 r_struct
 id|buffer_head
 id|bh_req
 suffix:semicolon
-DECL|member|next_retry
+DECL|member|next_r1
 r_struct
-id|buffer_head
+id|raid1_bh
 op_star
-id|next_retry
+id|next_r1
 suffix:semicolon
+multiline_comment|/* next for retry or in free list */
 )brace
 suffix:semicolon
 multiline_comment|/* bits for raid1_bh.state */
@@ -228,5 +260,7 @@ DECL|macro|R1BH_Uptodate
 mdefine_line|#define&t;R1BH_Uptodate&t;1
 DECL|macro|R1BH_SyncPhase
 mdefine_line|#define&t;R1BH_SyncPhase&t;2
+DECL|macro|R1BH_PreAlloc
+mdefine_line|#define&t;R1BH_PreAlloc&t;3&t;/* this was pre-allocated, add to free list */
 macro_line|#endif
 eof

@@ -2079,6 +2079,12 @@ comma
 id|saved_command_line
 )paren
 suffix:semicolon
+id|parse_options
+c_func
+(paren
+id|command_line
+)paren
+suffix:semicolon
 id|trap_init
 c_func
 (paren
@@ -2102,12 +2108,6 @@ suffix:semicolon
 id|softirq_init
 c_func
 (paren
-)paren
-suffix:semicolon
-id|parse_options
-c_func
-(paren
-id|command_line
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * HACK ALERT! This is early. We&squot;re enabling the console before&n;&t; * we&squot;ve done PCI setups etc, and console_init() must be aware of&n;&t; * this. But we do want output early, in case something goes wrong.&n;&t; */
@@ -2713,6 +2713,10 @@ c_cond
 (paren
 id|mount_initrd
 op_logical_and
+id|ROOT_DEV
+op_ne
+id|real_root_dev
+op_logical_and
 id|MAJOR
 c_func
 (paren
@@ -2791,7 +2795,7 @@ l_int|0
 )paren
 (brace
 macro_line|#ifdef CONFIG_BLK_DEV_MD
-id|autodetect_raid
+id|md_run_setup
 c_func
 (paren
 )paren

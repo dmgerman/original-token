@@ -2508,7 +2508,7 @@ l_int|0
 suffix:colon
 id|call_kill
 suffix:colon
-id|kill_fasync
+id|__kill_fasync
 c_func
 (paren
 id|sock-&gt;fasync_list
@@ -2523,7 +2523,7 @@ suffix:semicolon
 r_case
 l_int|3
 suffix:colon
-id|kill_fasync
+id|__kill_fasync
 c_func
 (paren
 id|sock-&gt;fasync_list

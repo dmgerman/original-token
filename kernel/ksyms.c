@@ -34,6 +34,7 @@ macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/capability.h&gt;
 macro_line|#include &lt;linux/highuid.h&gt;
 macro_line|#include &lt;linux/brlock.h&gt;
+macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#if defined(CONFIG_PROC_FS)
 macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#endif
@@ -159,6 +160,13 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|get_module_symbol
+)paren
+suffix:semicolon
+DECL|variable|put_module_symbol
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|put_module_symbol
 )paren
 suffix:semicolon
 DECL|variable|try_inc_mod_count
@@ -2559,6 +2567,13 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|fasync_helper
+)paren
+suffix:semicolon
+DECL|variable|kill_fasync
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|kill_fasync
 )paren
 suffix:semicolon
 macro_line|#ifdef CONFIG_BLK_DEV_MD

@@ -279,5 +279,61 @@ DECL|macro|UART_TRG_120
 mdefine_line|#define UART_TRG_120&t;0x78
 DECL|macro|UART_TRG_128
 mdefine_line|#define UART_TRG_128&t;0x80
+multiline_comment|/*&n; * These definitions are for the RSA-DV II/S card, from&n; *&n; * Kiyokazu SUTO &lt;suto@ks-and-ks.ne.jp&gt;&n; */
+DECL|macro|UART_RSA_BASE
+mdefine_line|#define UART_RSA_BASE (-8)
+DECL|macro|UART_RSA_MSR
+mdefine_line|#define UART_RSA_MSR ((UART_RSA_BASE) + 0) /* I/O: Mode Select Register */
+DECL|macro|UART_RSA_MSR_SWAP
+mdefine_line|#define UART_RSA_MSR_SWAP (1 &lt;&lt; 0) /* Swap low/high 8 bytes in I/O port addr */
+DECL|macro|UART_RSA_MSR_FIFO
+mdefine_line|#define UART_RSA_MSR_FIFO (1 &lt;&lt; 2) /* Enable the external FIFO */
+DECL|macro|UART_RSA_MSR_FLOW
+mdefine_line|#define UART_RSA_MSR_FLOW (1 &lt;&lt; 3) /* Enable the auto RTS/CTS flow control */
+DECL|macro|UART_RSA_MSR_ITYP
+mdefine_line|#define UART_RSA_MSR_ITYP (1 &lt;&lt; 4) /* Level (1) / Edge triger (0) */
+DECL|macro|UART_RSA_IER
+mdefine_line|#define UART_RSA_IER ((UART_RSA_BASE) + 1) /* I/O: Interrupt Enable Register */
+DECL|macro|UART_RSA_IER_Rx_FIFO_H
+mdefine_line|#define UART_RSA_IER_Rx_FIFO_H (1 &lt;&lt; 0) /* Enable Rx FIFO half full int. */
+DECL|macro|UART_RSA_IER_Tx_FIFO_H
+mdefine_line|#define UART_RSA_IER_Tx_FIFO_H (1 &lt;&lt; 1) /* Enable Tx FIFO half full int. */
+DECL|macro|UART_RSA_IER_Tx_FIFO_E
+mdefine_line|#define UART_RSA_IER_Tx_FIFO_E (1 &lt;&lt; 2) /* Enable Tx FIFO empty int. */
+DECL|macro|UART_RSA_IER_Rx_TOUT
+mdefine_line|#define UART_RSA_IER_Rx_TOUT (1 &lt;&lt; 3) /* Enable char receive timeout int */
+DECL|macro|UART_RSA_IER_TIMER
+mdefine_line|#define UART_RSA_IER_TIMER (1 &lt;&lt; 4) /* Enable timer interrupt */
+DECL|macro|UART_RSA_SRR
+mdefine_line|#define UART_RSA_SRR ((UART_RSA_BASE) + 2) /* IN: Status Read Register */
+DECL|macro|UART_RSA_SRR_Tx_FIFO_NEMP
+mdefine_line|#define UART_RSA_SRR_Tx_FIFO_NEMP (1 &lt;&lt; 0) /* Tx FIFO is not empty (1) */
+DECL|macro|UART_RSA_SRR_Tx_FIFO_NHFL
+mdefine_line|#define UART_RSA_SRR_Tx_FIFO_NHFL (1 &lt;&lt; 1) /* Tx FIFO is not half full (1) */
+DECL|macro|UART_RSA_SRR_Tx_FIFO_NFUL
+mdefine_line|#define UART_RSA_SRR_Tx_FIFO_NFUL (1 &lt;&lt; 2) /* Tx FIFO is not full (1) */
+DECL|macro|UART_RSA_SRR_Rx_FIFO_NEMP
+mdefine_line|#define UART_RSA_SRR_Rx_FIFO_NEMP (1 &lt;&lt; 3) /* Rx FIFO is not empty (1) */
+DECL|macro|UART_RSA_SRR_Rx_FIFO_NHFL
+mdefine_line|#define UART_RSA_SRR_Rx_FIFO_NHFL (1 &lt;&lt; 4) /* Rx FIFO is not half full (1) */
+DECL|macro|UART_RSA_SRR_Rx_FIFO_NFUL
+mdefine_line|#define UART_RSA_SRR_Rx_FIFO_NFUL (1 &lt;&lt; 5) /* Rx FIFO is not full (1) */
+DECL|macro|UART_RSA_SRR_Rx_TOUT
+mdefine_line|#define UART_RSA_SRR_Rx_TOUT (1 &lt;&lt; 6) /* Character reception timeout occured (1) */
+DECL|macro|UART_RSA_SRR_TIMER
+mdefine_line|#define UART_RSA_SRR_TIMER (1 &lt;&lt; 7) /* Timer interrupt occured */
+DECL|macro|UART_RSA_FRR
+mdefine_line|#define UART_RSA_FRR ((UART_RSA_BASE) + 2) /* OUT: FIFO Reset Register */
+DECL|macro|UART_RSA_TIVSR
+mdefine_line|#define UART_RSA_TIVSR ((UART_RSA_BASE) + 3) /* I/O: Timer Interval Value Set Register */
+DECL|macro|UART_RSA_TCR
+mdefine_line|#define UART_RSA_TCR ((UART_RSA_BASE) + 4) /* OUT: Timer Control Register */
+DECL|macro|UART_RSA_TCR_SWITCH
+mdefine_line|#define UART_RSA_TCR_SWITCH (1 &lt;&lt; 0) /* Timer on */
+multiline_comment|/*&n; * The RSA DSV/II board has two fixed clock frequencies.  One is the&n; * standard rate, and the other is 8 times faster.&n; */
+DECL|macro|SERIAL_RSA_BAUD_BASE
+mdefine_line|#define SERIAL_RSA_BAUD_BASE (921600)
+DECL|macro|SERIAL_RSA_BAUD_BASE_LO
+mdefine_line|#define SERIAL_RSA_BAUD_BASE_LO (SERIAL_RSA_BAUD_BASE / 8)
 macro_line|#endif /* _LINUX_SERIAL_REG_H */
 eof

@@ -254,6 +254,7 @@ suffix:colon
 r_case
 id|_DRM_FRAME_BUFFER
 suffix:colon
+macro_line|#ifndef __sparc__
 r_if
 c_cond
 (paren
@@ -291,6 +292,7 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
+macro_line|#endif
 macro_line|#ifdef CONFIG_MTRR
 r_if
 c_cond
@@ -2384,6 +2386,13 @@ op_ge
 id|dma-&gt;buf_count
 )paren
 (brace
+id|down
+c_func
+(paren
+op_amp
+id|current-&gt;mm-&gt;mmap_sem
+)paren
+suffix:semicolon
 r_virtual
 op_assign
 id|do_mmap
@@ -2402,6 +2411,13 @@ comma
 id|MAP_SHARED
 comma
 l_int|0
+)paren
+suffix:semicolon
+id|up
+c_func
+(paren
+op_amp
+id|current-&gt;mm-&gt;mmap_sem
 )paren
 suffix:semicolon
 r_if

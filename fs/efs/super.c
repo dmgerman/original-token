@@ -878,10 +878,6 @@ op_assign
 op_amp
 id|efs_superblock_operations
 suffix:semicolon
-id|s-&gt;s_dev
-op_assign
-id|dev
-suffix:semicolon
 id|s-&gt;s_root
 op_assign
 id|d_alloc_root
@@ -910,27 +906,6 @@ c_func
 (paren
 id|KERN_ERR
 l_string|&quot;EFS: get root inode failed&bslash;n&quot;
-)paren
-suffix:semicolon
-r_goto
-id|out_no_fs
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|check_disk_change
-c_func
-(paren
-id|s-&gt;s_dev
-)paren
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_ERR
-l_string|&quot;EFS: device changed&bslash;n&quot;
 )paren
 suffix:semicolon
 r_goto

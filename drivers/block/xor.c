@@ -10276,9 +10276,7 @@ macro_line|#ifdef CONFIG_X86_XMM
 r_if
 c_cond
 (paren
-id|boot_cpu_data.mmu_cr4_features
-op_amp
-id|X86_CR4_OSXMMEXCPT
+id|cpu_has_xmm
 )paren
 (brace
 id|fastest
@@ -10426,9 +10424,7 @@ macro_line|#ifdef CONFIG_X86_XMM
 r_if
 c_cond
 (paren
-id|boot_cpu_data.mmu_cr4_features
-op_amp
-id|X86_CR4_OSXMMEXCPT
+id|cpu_has_xmm
 )paren
 (brace
 id|printk

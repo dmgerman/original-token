@@ -10,7 +10,6 @@ macro_line|#include &lt;linux/locks.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &quot;adfs.h&quot;
 multiline_comment|/*&n; * Lookup/Create a block at offset &squot;block&squot; into &squot;inode&squot;.  We currently do&n; * not support creation of new blocks, so we return -EIO for this case.&n; */
-macro_line|#if LINUX_VERSION_CODE &gt;= KERNEL_VERSION(2,3,0)
 r_int
 DECL|function|adfs_get_block
 id|adfs_get_block
@@ -290,44 +289,6 @@ suffix:colon
 id|_adfs_bmap
 )brace
 suffix:semicolon
-macro_line|#else
-DECL|function|adfs_bmap
-r_int
-id|adfs_bmap
-c_func
-(paren
-r_struct
-id|inode
-op_star
-id|inode
-comma
-r_int
-id|block
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|block
-op_ge
-id|inode-&gt;i_blocks
-)paren
-r_return
-l_int|0
-suffix:semicolon
-r_return
-id|__adfs_block_map
-c_func
-(paren
-id|inode-&gt;i_sb
-comma
-id|inode-&gt;i_ino
-comma
-id|block
-)paren
-suffix:semicolon
-)brace
-macro_line|#endif
 r_static
 r_inline
 r_int

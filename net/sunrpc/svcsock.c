@@ -981,6 +981,8 @@ id|sock
 suffix:semicolon
 r_int
 id|len
+comma
+id|alen
 suffix:semicolon
 id|rqstp-&gt;rq_addrlen
 op_assign
@@ -1057,6 +1059,35 @@ id|set_fs
 c_func
 (paren
 id|oldfs
+)paren
+suffix:semicolon
+multiline_comment|/* sock_recvmsg doesn&squot;t fill in the name/namelen, so we must..&n;&t; * possibly we should cache this in the svc_sock structure&n;&t; * at accept time. FIXME&n;&t; */
+id|alen
+op_assign
+r_sizeof
+(paren
+id|rqstp-&gt;rq_addr
+)paren
+suffix:semicolon
+id|sock-&gt;ops
+op_member_access_from_pointer
+id|getname
+c_func
+(paren
+id|sock
+comma
+(paren
+r_struct
+id|sockaddr
+op_star
+)paren
+op_amp
+id|rqstp-&gt;rq_addr
+comma
+op_amp
+id|alen
+comma
+l_int|1
 )paren
 suffix:semicolon
 id|dprintk
@@ -1967,7 +1998,7 @@ id|failed
 suffix:semicolon
 multiline_comment|/* aborted connection or whatever */
 )brace
-multiline_comment|/* Ideally, we would want to reject connections from unauthorized&n;&t; * hosts here, but we have no generic client tables. For now,&n;&t; * we just punt connects from unprivileged ports. */
+multiline_comment|/* Ideally, we would want to reject connections from unauthorized&n;&t; * hosts here, but when we get encription, the IP of the host won&squot;t&n;&t; * tell us anything. For now just warn about unpriv connections.&n;&t; */
 r_if
 c_cond
 (paren
@@ -1992,7 +2023,7 @@ id|printk
 c_func
 (paren
 id|KERN_WARNING
-l_string|&quot;%s: connect from unprivileged port: %u.%u.%u.%u:%d&quot;
+l_string|&quot;%s: connect from unprivileged port: %u.%u.%u.%u:%d&bslash;n&quot;
 comma
 id|serv-&gt;sv_name
 comma
@@ -2008,9 +2039,6 @@ c_func
 id|sin.sin_port
 )paren
 )paren
-suffix:semicolon
-r_goto
-id|failed
 suffix:semicolon
 )brace
 id|dprintk
@@ -2146,6 +2174,8 @@ r_int
 id|len
 comma
 id|ready
+comma
+id|used
 suffix:semicolon
 id|dprintk
 c_func
@@ -2289,6 +2319,7 @@ l_int|0x80000000
 )paren
 )paren
 (brace
+multiline_comment|/* FIXME: technically, a record can be fragmented,&n;&t;&t;&t; *  and non-terminal fragments will not have the top&n;&t;&t;&t; *  bit set in the fragment length header.&n;&t;&t;&t; *  But apparently no known nfs clients send fragmented&n;&t;&t;&t; *  records. */
 multiline_comment|/* FIXME: shutdown socket */
 id|printk
 c_func
@@ -2348,6 +2379,7 @@ OL
 id|svsk-&gt;sk_reclen
 )paren
 (brace
+multiline_comment|/* FIXME: if sk_reclen &gt; window-size, then we will&n;&t;&t; * never be able to receive the record, so should&n;&t;&t; * shutdown the connection&n;&t;&t; */
 id|dprintk
 c_func
 (paren
@@ -2372,6 +2404,27 @@ id|EAGAIN
 suffix:semicolon
 multiline_comment|/* record not complete */
 )brace
+multiline_comment|/* if we think there is only one more record to read, but&n;&t; * it is bigger than we expect, then two records must have arrived&n;&t; * together, so pretend we aren&squot;t using the record.. */
+r_if
+c_cond
+(paren
+id|len
+OG
+id|svsk-&gt;sk_reclen
+op_logical_and
+id|ready
+op_eq
+l_int|1
+)paren
+id|used
+op_assign
+l_int|0
+suffix:semicolon
+r_else
+id|used
+op_assign
+l_int|1
+suffix:semicolon
 multiline_comment|/* Frob argbuf */
 id|bufp-&gt;iov
 (braket
@@ -2467,7 +2520,7 @@ c_func
 (paren
 id|svsk
 comma
-l_int|1
+id|used
 )paren
 suffix:semicolon
 r_if
@@ -2556,6 +2609,9 @@ op_assign
 op_amp
 id|rqstp-&gt;rq_resbuf
 suffix:semicolon
+r_int
+id|sent
+suffix:semicolon
 multiline_comment|/* Set up the first element of the reply iovec.&n;&t; * Any other iovecs that may be in use have been taken&n;&t; * care of by the server implementation itself.&n;&t; */
 id|bufp-&gt;iov
 (braket
@@ -2598,7 +2654,8 @@ l_int|4
 )paren
 )paren
 suffix:semicolon
-r_return
+id|sent
+op_assign
 id|svc_sendto
 c_func
 (paren
@@ -2608,6 +2665,36 @@ id|bufp-&gt;iov
 comma
 id|bufp-&gt;nriov
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|sent
+op_ne
+id|bufp-&gt;len
+op_lshift
+l_int|2
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_NOTICE
+l_string|&quot;rpc-srv/tcp: %s: sent only %d bytes of %d - should shutdown socket&bslash;n&quot;
+comma
+id|rqstp-&gt;rq_sock-&gt;sk_server-&gt;sv_name
+comma
+id|sent
+comma
+id|bufp-&gt;len
+op_lshift
+l_int|2
+)paren
+suffix:semicolon
+multiline_comment|/* FIXME: should shutdown the socket, or allocate more memort&n;&t;&t; * or wait and try again or something.  Otherwise&n;&t;&t; * client will get confused&n;&t;&t; */
+)brace
+r_return
+id|sent
 suffix:semicolon
 )brace
 r_static

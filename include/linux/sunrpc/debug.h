@@ -2,11 +2,14 @@ multiline_comment|/*&n; * linux/include/linux/sunrpc/debug.h&n; *&n; * Debugging
 macro_line|#ifndef _LINUX_SUNRPC_DEBUG_H_
 DECL|macro|_LINUX_SUNRPC_DEBUG_H_
 mdefine_line|#define _LINUX_SUNRPC_DEBUG_H_
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;linux/tqueue.h&gt;
 multiline_comment|/*&n; * Enable RPC debugging/profiling.&n; */
+macro_line|#ifdef CONFIG_SYSCTL
 DECL|macro|RPC_DEBUG
 mdefine_line|#define  RPC_DEBUG
+macro_line|#endif
 multiline_comment|/* #define  RPC_PROFILE */
 multiline_comment|/*&n; * RPC debug facilities&n; */
 DECL|macro|RPCDBG_XPRT

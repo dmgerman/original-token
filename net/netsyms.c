@@ -995,6 +995,20 @@ c_func
 id|devinet_ioctl
 )paren
 suffix:semicolon
+DECL|variable|register_inetaddr_notifier
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|register_inetaddr_notifier
+)paren
+suffix:semicolon
+DECL|variable|unregister_inetaddr_notifier
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|unregister_inetaddr_notifier
+)paren
+suffix:semicolon
 multiline_comment|/* needed for ip_gre -cw */
 DECL|variable|ip_statistics
 id|EXPORT_SYMBOL
@@ -2399,11 +2413,11 @@ c_func
 id|tty_register_ldisc
 )paren
 suffix:semicolon
-DECL|variable|kill_fasync
+DECL|variable|__kill_fasync
 id|EXPORT_SYMBOL
 c_func
 (paren
-id|kill_fasync
+id|__kill_fasync
 )paren
 suffix:semicolon
 DECL|variable|if_port_text

@@ -94,15 +94,10 @@ op_amp
 id|queue
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|asyncptr
-)paren
-(brace
 id|kill_fasync
 c_func
 (paren
+op_amp
 id|asyncptr
 comma
 id|SIGIO
@@ -110,7 +105,6 @@ comma
 id|POLL_IN
 )paren
 suffix:semicolon
-)brace
 )brace
 multiline_comment|/*****************************************************************************/
 multiline_comment|/*&n; * Deal with the messy business of synthesizing button tap and drag&n; * events.&n; *&n; * Exports:&n; *&t;notify_pad_up_down()&n; *&t;&t;Must be called whenever debounced pad up/down state changes.&n; *&t;button_pending&n; *&t;&t;Flag is set whenever read_button() has new values&n; *&t;&t;to return.&n; *&t;read_button()&n; *&t;&t;Obtains the current synthetic mouse button state.&n; */

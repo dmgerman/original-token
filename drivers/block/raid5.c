@@ -1,4 +1,5 @@
 multiline_comment|/*&n; * raid5.c : Multiple Devices driver for Linux&n; *&t;   Copyright (C) 1996, 1997 Ingo Molnar, Miguel de Icaza, Gadi Oxman&n; *&t;   Copyright (C) 1999, 2000 Ingo Molnar&n; *&n; * RAID-5 management functions.&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * You should have received a copy of the GNU General Public License&n; * (for example /usr/src/linux/COPYING); if not, write to the Free&n; * Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/locks.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
@@ -27,25 +28,28 @@ multiline_comment|/*&n; * The following can be used to debug the driver&n; */
 DECL|macro|RAID5_DEBUG
 mdefine_line|#define RAID5_DEBUG&t;0
 DECL|macro|RAID5_PARANOIA
-mdefine_line|#define RAID5_PARANOIA  1
+mdefine_line|#define RAID5_PARANOIA&t;1
+macro_line|#if RAID5_PARANOIA &amp;&amp; CONFIG_SMP
 DECL|macro|CHECK_DEVLOCK
-mdefine_line|#define&t;CHECK_DEVLOCK() if (!spin_is_locked(&amp;conf-&gt;device_lock)) BUG()
+macro_line|# define CHECK_DEVLOCK() if (!spin_is_locked(&amp;conf-&gt;device_lock)) BUG()
 DECL|macro|CHECK_SHLOCK
-mdefine_line|#define&t;CHECK_SHLOCK(sh) if (!stripe_locked(sh)) BUG()
+macro_line|# define CHECK_SHLOCK(sh) if (!stripe_locked(sh)) BUG()
+macro_line|#else
+DECL|macro|CHECK_DEVLOCK
+macro_line|# define CHECK_DEVLOCK()
+DECL|macro|CHECK_SHLOCK
+macro_line|# define CHECK_SHLOCK(unused)
+macro_line|#endif
 macro_line|#if RAID5_DEBUG
 DECL|macro|PRINTK
-mdefine_line|#define PRINTK(x...)   printk(x)
+mdefine_line|#define PRINTK(x...) printk(x)
 DECL|macro|inline
 mdefine_line|#define inline
 DECL|macro|__inline__
 mdefine_line|#define __inline__
 macro_line|#else
-DECL|macro|inline
-mdefine_line|#define inline
-DECL|macro|__inline__
-mdefine_line|#define __inline__
 DECL|macro|PRINTK
-mdefine_line|#define PRINTK(x...)  do { } while (0)
+mdefine_line|#define PRINTK(x...) do { } while (0)
 macro_line|#endif
 r_static
 r_void
@@ -2101,7 +2105,7 @@ suffix:semicolon
 id|PRINTK
 c_func
 (paren
-l_string|&quot;waiting for some stripes to complete  - %d %d&bslash;n&quot;
+l_string|&quot;waiting for some stripes to complete - %d %d&bslash;n&quot;
 comma
 id|cnt
 comma
@@ -2892,7 +2896,7 @@ c_func
 (paren
 l_string|&quot;raid5_end_buffer_io %lu, uptodate: %d.&bslash;n&quot;
 comma
-id|bh-&gt;b_rsector
+id|bh-&gt;b_blocknr
 comma
 id|uptodate
 )paren
@@ -2958,7 +2962,11 @@ comma
 id|partition_name
 c_func
 (paren
-id|bh-&gt;b_dev
+id|mddev_to_kdev
+c_func
+(paren
+id|sh-&gt;raid_conf-&gt;mddev
+)paren
 )paren
 comma
 id|bh-&gt;b_blocknr
@@ -3110,9 +3118,13 @@ id|uptodate
 id|md_error
 c_func
 (paren
-id|bh-&gt;b_dev
+id|mddev_to_kdev
+c_func
+(paren
+id|conf-&gt;mddev
+)paren
 comma
-id|bh-&gt;b_rdev
+id|bh-&gt;b_dev
 )paren
 suffix:semicolon
 r_if
@@ -3177,7 +3189,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|bh-&gt;b_rdev
+id|bh-&gt;b_dev
 op_ne
 id|conf-&gt;disks
 (braket
@@ -3259,12 +3271,6 @@ id|conf
 op_assign
 id|sh-&gt;raid_conf
 suffix:semicolon
-id|mddev_t
-op_star
-id|mddev
-op_assign
-id|conf-&gt;mddev
-suffix:semicolon
 r_char
 op_star
 id|b_data
@@ -3273,15 +3279,6 @@ r_struct
 id|page
 op_star
 id|b_page
-suffix:semicolon
-id|kdev_t
-id|dev
-op_assign
-id|mddev_to_kdev
-c_func
-(paren
-id|mddev
-)paren
 suffix:semicolon
 r_int
 id|block
@@ -3334,6 +3331,11 @@ id|sh
 suffix:semicolon
 id|bh-&gt;b_dev
 op_assign
+id|conf-&gt;disks
+(braket
+id|i
+)braket
+dot
 id|dev
 suffix:semicolon
 id|bh-&gt;b_blocknr
@@ -3644,7 +3646,7 @@ op_minus
 id|EIO
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Input: a &squot;big&squot; sector number, &n; * Output: index of the data and parity disk, and the sector # in them.&n; */
+multiline_comment|/*&n; * Input: a &squot;big&squot; sector number,&n; * Output: index of the data and parity disk, and the sector # in them.&n; */
 DECL|function|raid5_compute_sector
 r_static
 r_int
@@ -3878,42 +3880,6 @@ id|sectors_per_chunk
 op_plus
 id|chunk_offset
 suffix:semicolon
-macro_line|#if 0
-r_if
-c_cond
-(paren
-op_star
-id|dd_idx
-OG
-id|data_disks
-op_logical_or
-op_star
-id|pd_idx
-OG
-id|data_disks
-op_logical_or
-id|chunk_offset
-op_plus
-id|bh-&gt;b_size
-op_div
-l_int|512
-OG
-id|sectors_per_chunk
-)paren
-id|printk
-(paren
-l_string|&quot;raid5: bug: dd_idx == %d, pd_idx == %d, chunk_offset == %d&bslash;n&quot;
-comma
-op_star
-id|dd_idx
-comma
-op_star
-id|pd_idx
-comma
-id|chunk_offset
-)paren
-suffix:semicolon
-macro_line|#endif
 r_return
 id|new_sector
 suffix:semicolon
@@ -4340,7 +4306,6 @@ id|count
 op_ne
 l_int|1
 )paren
-(brace
 id|xor_block
 c_func
 (paren
@@ -4353,7 +4318,6 @@ l_int|0
 )braket
 )paren
 suffix:semicolon
-)brace
 id|raid5_mark_buffer_uptodate
 c_func
 (paren
@@ -6054,6 +6018,8 @@ op_amp
 id|sh-&gt;nr_pending
 )paren
 suffix:semicolon
+id|bh-&gt;b_dev
+op_assign
 id|bh-&gt;b_rdev
 op_assign
 id|conf-&gt;spare-&gt;dev
@@ -6087,6 +6053,8 @@ op_amp
 id|sh-&gt;nr_pending
 )paren
 suffix:semicolon
+id|bh-&gt;b_dev
+op_assign
 id|bh-&gt;b_rdev
 op_assign
 id|conf-&gt;disks
@@ -6143,6 +6111,8 @@ op_amp
 id|sh-&gt;nr_pending
 )paren
 suffix:semicolon
+id|bh-&gt;b_dev
+op_assign
 id|bh-&gt;b_rdev
 op_assign
 id|conf-&gt;disks
@@ -6446,6 +6416,13 @@ op_amp
 id|sh-&gt;nr_pending
 )paren
 suffix:semicolon
+id|sh-&gt;bh_old
+(braket
+id|i
+)braket
+op_member_access_from_pointer
+id|b_dev
+op_assign
 id|sh-&gt;bh_old
 (braket
 id|i
@@ -6791,6 +6768,13 @@ id|sh-&gt;bh_old
 id|i
 )braket
 op_member_access_from_pointer
+id|b_dev
+op_assign
+id|sh-&gt;bh_old
+(braket
+id|i
+)braket
+op_member_access_from_pointer
 id|b_rdev
 op_assign
 id|conf-&gt;disks
@@ -7030,6 +7014,13 @@ id|sh-&gt;bh_req
 id|i
 )braket
 op_member_access_from_pointer
+id|b_dev
+op_assign
+id|sh-&gt;bh_req
+(braket
+id|i
+)braket
+op_member_access_from_pointer
 id|b_rdev
 op_assign
 id|conf-&gt;disks
@@ -7172,18 +7163,22 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+(paren
 id|nr_cache
 OL
 id|disks
 op_minus
 l_int|1
+)paren
 op_logical_or
+(paren
 (paren
 id|nr_cache
 op_eq
 id|disks
 op_minus
 l_int|1
+)paren
 op_logical_and
 op_logical_neg
 (paren
@@ -7278,6 +7273,8 @@ op_amp
 id|sh-&gt;nr_pending
 )paren
 suffix:semicolon
+id|bh-&gt;b_dev
+op_assign
 id|bh-&gt;b_rdev
 op_assign
 id|conf-&gt;disks
@@ -7481,6 +7478,8 @@ c_func
 id|bh
 )paren
 suffix:semicolon
+id|bh-&gt;b_dev
+op_assign
 id|bh-&gt;b_rdev
 op_assign
 id|conf-&gt;spare-&gt;dev
@@ -7547,7 +7546,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/* nr_cache == disks:&n;&t; *  check parity and compute/write if needed&n;&t; */
+multiline_comment|/* nr_cache == disks:&n;&t; * check parity and compute/write if needed&n;&t; */
 id|compute_parity
 c_func
 (paren
@@ -7625,6 +7624,8 @@ op_amp
 id|sh-&gt;nr_pending
 )paren
 suffix:semicolon
+id|bh-&gt;b_dev
+op_assign
 id|bh-&gt;b_rdev
 op_assign
 id|conf-&gt;disks
@@ -8559,13 +8560,7 @@ op_assign
 id|raid5_compute_sector
 c_func
 (paren
-id|bh-&gt;b_blocknr
-op_star
-(paren
-id|bh-&gt;b_size
-op_rshift
-l_int|9
-)paren
+id|bh-&gt;b_rsector
 comma
 id|raid_disks
 comma
@@ -11964,7 +11959,7 @@ r_break
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n;&t;&t; * When we activate a spare disk we _must_ have a disk in&n;&t;&t; * the lower (active) part of the array to replace. &n;&t;&t; */
+multiline_comment|/*&n;&t;&t; * When we activate a spare disk we _must_ have a disk in&n;&t;&t; * the lower (active) part of the array to replace.&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -12721,28 +12716,44 @@ id|mdk_personality_t
 id|raid5_personality
 op_assign
 (brace
+id|name
+suffix:colon
 l_string|&quot;raid5&quot;
 comma
+id|make_request
+suffix:colon
 id|raid5_make_request
 comma
-id|raid5_end_request
-comma
+id|run
+suffix:colon
 id|raid5_run
 comma
+id|stop
+suffix:colon
 id|raid5_stop
 comma
+id|status
+suffix:colon
 id|raid5_status
 comma
-l_int|0
-comma
+id|error_handler
+suffix:colon
 id|raid5_error
 comma
+id|diskop
+suffix:colon
 id|raid5_diskop
 comma
+id|stop_resync
+suffix:colon
 id|raid5_stop_resync
 comma
+id|restart_resync
+suffix:colon
 id|raid5_restart_resync
 comma
+id|sync_request
+suffix:colon
 id|raid5_sync_request
 )brace
 suffix:semicolon

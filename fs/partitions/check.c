@@ -27,7 +27,7 @@ r_void
 suffix:semicolon
 r_extern
 r_void
-id|md_setup_drive
+id|md_run_setup
 c_func
 (paren
 r_void
@@ -2059,7 +2059,7 @@ c_func
 suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef CONFIG_BLK_DEV_MD
-id|autodetect_raid
+id|md_run_setup
 c_func
 (paren
 )paren

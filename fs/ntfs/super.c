@@ -1088,9 +1088,6 @@ id|ntfs_attribute
 op_star
 id|volinfo
 suffix:semicolon
-r_int
-id|i
-suffix:semicolon
 id|volinfo
 op_assign
 id|ntfs_find_attr

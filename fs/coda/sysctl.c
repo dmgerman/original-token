@@ -1170,9 +1170,6 @@ comma
 l_string|&quot;Coda VFS statistics&bslash;n&quot;
 l_string|&quot;===================&bslash;n&bslash;n&quot;
 l_string|&quot;File Operations:&bslash;n&quot;
-l_string|&quot;&bslash;tfile_read&bslash;t%9d&bslash;n&quot;
-l_string|&quot;&bslash;tfile_write&bslash;t%9d&bslash;n&quot;
-l_string|&quot;&bslash;tfile_mmap&bslash;t%9d&bslash;n&quot;
 l_string|&quot;&bslash;topen&bslash;t&bslash;t%9d&bslash;n&quot;
 l_string|&quot;&bslash;trelase&bslash;t&bslash;t%9d&bslash;n&quot;
 l_string|&quot;&bslash;tfsync&bslash;t&bslash;t%9d&bslash;n&bslash;n&quot;
@@ -1188,15 +1185,8 @@ l_string|&quot;&bslash;tmkdir&bslash;t&bslash;t%9d&bslash;n&quot;
 l_string|&quot;&bslash;trmdir&bslash;t&bslash;t%9d&bslash;n&quot;
 l_string|&quot;&bslash;trename&bslash;t&bslash;t%9d&bslash;n&quot;
 l_string|&quot;&bslash;tpermission&bslash;t%9d&bslash;n&quot;
-l_string|&quot;&bslash;treadpage&bslash;t%9d&bslash;n&quot;
 comma
 multiline_comment|/* file operations */
-id|ps-&gt;file_read
-comma
-id|ps-&gt;file_write
-comma
-id|ps-&gt;file_mmap
-comma
 id|ps-&gt;open
 comma
 id|ps-&gt;release
@@ -1224,8 +1214,6 @@ comma
 id|ps-&gt;rename
 comma
 id|ps-&gt;permission
-comma
-id|ps-&gt;readpage
 )paren
 suffix:semicolon
 id|begin

@@ -1424,32 +1424,26 @@ id|mdk_personality_t
 id|raid0_personality
 op_assign
 (brace
+id|name
+suffix:colon
 l_string|&quot;raid0&quot;
 comma
+id|make_request
+suffix:colon
 id|raid0_make_request
 comma
-l_int|NULL
-comma
-multiline_comment|/* no special end_request */
+id|run
+suffix:colon
 id|raid0_run
 comma
+id|stop
+suffix:colon
 id|raid0_stop
 comma
+id|status
+suffix:colon
 id|raid0_status
 comma
-l_int|0
-comma
-l_int|NULL
-comma
-multiline_comment|/* no error_handler */
-l_int|NULL
-comma
-multiline_comment|/* no diskop */
-l_int|NULL
-comma
-multiline_comment|/* no stop resync */
-l_int|NULL
-multiline_comment|/* no restart resync */
 )brace
 suffix:semicolon
 macro_line|#ifndef MODULE

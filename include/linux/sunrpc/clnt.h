@@ -37,8 +37,7 @@ r_struct
 id|rpc_clnt
 (brace
 DECL|member|cl_users
-r_int
-r_int
+id|atomic_t
 id|cl_users
 suffix:semicolon
 multiline_comment|/* number of references */

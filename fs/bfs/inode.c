@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;fs/bfs/inode.c&n; *&t;BFS superblock and inode operations.&n; *&t;Copyright (C) 1999 Tigran Aivazian &lt;tigran@ocston.org&gt;&n; *&t;From fs/minix, Copyright (C) 1991, 1992 Linus Torvalds.&n; */
+multiline_comment|/*&n; *&t;fs/bfs/inode.c&n; *&t;BFS superblock and inode operations.&n; *&t;Copyright (C) 1999 Tigran Aivazian &lt;tigran@veritas.com&gt;&n; *&t;From fs/minix, Copyright (C) 1991, 1992 Linus Torvalds.&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/slab.h&gt;
@@ -10,7 +10,7 @@ macro_line|#include &quot;bfs_defs.h&quot;
 id|MODULE_AUTHOR
 c_func
 (paren
-l_string|&quot;Tigran A. Aivazian&quot;
+l_string|&quot;Tigran A. Aivazian &lt;tigran@veritas.com&gt;&quot;
 )paren
 suffix:semicolon
 id|MODULE_DESCRIPTION
