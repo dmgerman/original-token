@@ -1,66 +1,81 @@
 macro_line|#ifndef _LINUX_FD_H
 DECL|macro|_LINUX_FD_H
 mdefine_line|#define _LINUX_FD_H
+multiline_comment|/* new interface flag */
+DECL|macro|FDHAVEBATCHEDRAWCMD
+mdefine_line|#define FDHAVEBATCHEDRAWCMD
+multiline_comment|/* commands needing write access have 0x40 set */
+multiline_comment|/* commands needing super user access have 0x80 set */
 DECL|macro|FDCLRPRM
-mdefine_line|#define FDCLRPRM 0 /* clear user-defined parameters */
+mdefine_line|#define FDCLRPRM 0x0241 /* clear user-defined parameters */
 DECL|macro|FDSETPRM
-mdefine_line|#define FDSETPRM 1 /* set user-defined parameters for current media */
+mdefine_line|#define FDSETPRM 0x0242 /* set user-defined parameters for current media */
 DECL|macro|FDSETMEDIAPRM
-mdefine_line|#define FDSETMEDIAPRM 1
+mdefine_line|#define FDSETMEDIAPRM 0x0242
 DECL|macro|FDDEFPRM
-mdefine_line|#define FDDEFPRM 2 /* set user-defined parameters until explicitly cleared */
+mdefine_line|#define FDDEFPRM 0x0243 /* set user-defined parameters until explicitly &n;&t;&t;&t;* cleared */
 DECL|macro|FDDEFMEDIAPRM
-mdefine_line|#define FDDEFMEDIAPRM 2
+mdefine_line|#define FDDEFMEDIAPRM 0x0243
 DECL|macro|FDGETPRM
-mdefine_line|#define FDGETPRM 3 /* get disk parameters */
+mdefine_line|#define FDGETPRM 0x0204 /* get disk parameters */
 DECL|macro|FDGETMEDIAPRM
-mdefine_line|#define FDGETMEDIAPRM 3
+mdefine_line|#define FDGETMEDIAPRM 0x0204
 DECL|macro|FDMSGON
-mdefine_line|#define&t;FDMSGON  4 /* issue kernel messages on media type change */
+mdefine_line|#define&t;FDMSGON  0x0205 /* issue kernel messages on media type change */
 DECL|macro|FDMSGOFF
-mdefine_line|#define&t;FDMSGOFF 5 /* don&squot;t issue kernel messages on media type change */
+mdefine_line|#define&t;FDMSGOFF 0x0206 /* don&squot;t issue kernel messages on media type change */
 DECL|macro|FDFMTBEG
-mdefine_line|#define FDFMTBEG 6 /* begin formatting a disk */
+mdefine_line|#define FDFMTBEG 0x0247 /* begin formatting a disk */
 DECL|macro|FDFMTTRK
-mdefine_line|#define&t;FDFMTTRK 7 /* format the specified track */
+mdefine_line|#define&t;FDFMTTRK 0x0248 /* format the specified track */
 DECL|macro|FDFMTEND
-mdefine_line|#define FDFMTEND 8 /* end formatting a disk */
+mdefine_line|#define FDFMTEND 0x0249 /* end formatting a disk */
 DECL|macro|FDSETEMSGTRESH
-mdefine_line|#define FDSETEMSGTRESH&t;10&t;/* set fdc error reporting threshold */
+mdefine_line|#define FDSETEMSGTRESH&t;0x024a&t;/* set fdc error reporting threshold */
 DECL|macro|FDFLUSH
-mdefine_line|#define FDFLUSH  11 /* flush buffers for media; either for verifying media, or for&n;                       handling a media change without closing the file&n;&t;&t;       descriptor */
+mdefine_line|#define FDFLUSH  0x024b /* flush buffers for media; either for verifying media, or for&n;                       handling a media change without closing the file&n;&t;&t;       descriptor */
 DECL|macro|FDSETMAXERRS
-mdefine_line|#define FDSETMAXERRS 12 /* set abortion and read_track threshold */
+mdefine_line|#define FDSETMAXERRS 0x024c /* set abortion and read_track threshold */
 DECL|macro|FDGETMAXERRS
-mdefine_line|#define FDGETMAXERRS 14 /* get abortion and read_track threshold */
+mdefine_line|#define FDGETMAXERRS 0x020e /* get abortion and read_track threshold */
 DECL|macro|FDGETDRVTYP
-mdefine_line|#define FDGETDRVTYP 16          /* get drive type: 5 1/4 or 3 1/2 */
+mdefine_line|#define FDGETDRVTYP 0x020f          /* get drive type: 5 1/4 or 3 1/2 */
 DECL|macro|FDSETDRVPRM
-mdefine_line|#define FDSETDRVPRM 20 /* set drive parameters */
+mdefine_line|#define FDSETDRVPRM 0x0250 /* set drive parameters */
 DECL|macro|FDGETDRVPRM
-mdefine_line|#define FDGETDRVPRM 21 /* get drive parameters */
+mdefine_line|#define FDGETDRVPRM 0x0211 /* get drive parameters */
 DECL|macro|FDGETDRVSTAT
-mdefine_line|#define FDGETDRVSTAT 22 /* get drive state */
+mdefine_line|#define FDGETDRVSTAT 0x0212 /* get drive state */
 DECL|macro|FDPOLLDRVSTAT
-mdefine_line|#define FDPOLLDRVSTAT 23 /* get drive state */
+mdefine_line|#define FDPOLLDRVSTAT 0x0213 /* get drive state */
 DECL|macro|FDRESET
-mdefine_line|#define FDRESET 24 /* reset FDC */
-DECL|macro|FD_RESET_IF_NEEDED
-mdefine_line|#define FD_RESET_IF_NEEDED 0
-DECL|macro|FD_RESET_IF_RAWCMD
-mdefine_line|#define FD_RESET_IF_RAWCMD 1
-DECL|macro|FD_RESET_ALWAYS
-mdefine_line|#define FD_RESET_ALWAYS 2
+mdefine_line|#define FDRESET 0x0254 /* reset FDC */
+macro_line|#ifndef __ASSEMBLY__
+DECL|enum|reset_mode
+r_enum
+id|reset_mode
+(brace
+DECL|enumerator|FD_RESET_IF_NEEDED
+id|FD_RESET_IF_NEEDED
+comma
+DECL|enumerator|FD_RESET_IF_RAWCMD
+id|FD_RESET_IF_RAWCMD
+comma
+DECL|enumerator|FD_RESET_ALWAYS
+id|FD_RESET_ALWAYS
+)brace
+suffix:semicolon
+macro_line|#endif
 DECL|macro|FDGETFDCSTAT
-mdefine_line|#define FDGETFDCSTAT 25 /* get fdc state */
+mdefine_line|#define FDGETFDCSTAT 0x0215 /* get fdc state */
 DECL|macro|FDWERRORCLR
-mdefine_line|#define FDWERRORCLR  27 /* clear write error and badness information */
+mdefine_line|#define FDWERRORCLR  0x0256 /* clear write error and badness information */
 DECL|macro|FDWERRORGET
-mdefine_line|#define FDWERRORGET  28 /* get write error and badness information */
+mdefine_line|#define FDWERRORGET  0x0217 /* get write error and badness information */
 DECL|macro|FDRAWCMD
-mdefine_line|#define FDRAWCMD 30 /* send a raw command to the fdc */
+mdefine_line|#define FDRAWCMD 0x0258 /* send a raw command to the fdc */
 DECL|macro|FDTWADDLE
-mdefine_line|#define FDTWADDLE 40 /* flicker motor-on bit before reading a sector */
+mdefine_line|#define FDTWADDLE 0x0259 /* flicker motor-on bit before reading a sector */
 multiline_comment|/*&n; * Maximum number of sectors in a track buffer. Track buffering is disabled&n; * if tracks are bigger.&n; */
 DECL|macro|MAX_BUFFER_SECTORS
 mdefine_line|#define MAX_BUFFER_SECTORS 24 /* was 18 -bb */
@@ -190,7 +205,7 @@ r_char
 id|cmos
 suffix:semicolon
 multiline_comment|/* cmos type */
-multiline_comment|/* Spec2 is (HLD&lt;&lt;1 | ND), where HLD is head load time (1=2ms, 2=4 ms etc)&n;   * and ND is set means no DMA. Hardcoded to 6 (HLD=6ms, use DMA).&n;   */
+multiline_comment|/* Spec2 is (HLD&lt;&lt;1 | ND), where HLD is head load time (1=2ms, 2=4 ms &n;&t; * etc) and ND is set means no DMA. Hardcoded to 6 (HLD=6ms, use DMA).&n;&t; */
 DECL|member|max_dtr
 r_int
 r_int
@@ -208,7 +223,7 @@ r_int
 r_int
 id|hut
 suffix:semicolon
-multiline_comment|/* Head unload time (remnant of 8&quot; drives) */
+multiline_comment|/* Head unload time (remnant of &n;&t;&t;&t;&t;&t; * 8&quot; drives) */
 DECL|member|srt
 r_int
 r_int
@@ -220,7 +235,7 @@ r_int
 r_int
 id|spinup
 suffix:semicolon
-multiline_comment|/* time needed for spinup ( in jiffies) */
+multiline_comment|/* time needed for spinup (expressed&n;&t;&t;&t;&t;&t; * in jiffies) */
 DECL|member|spindown
 r_int
 r_int
@@ -232,7 +247,7 @@ r_int
 r_char
 id|spindown_offset
 suffix:semicolon
-multiline_comment|/* decides in which position the disk&n;&t;&t;&t;&t; * will stop */
+multiline_comment|/* decides in which position the disk&n;&t;&t;&t;&t;&t; * will stop */
 DECL|member|select_delay
 r_int
 r_char
@@ -262,7 +277,7 @@ r_int
 r_char
 id|interleave_sect
 suffix:semicolon
-multiline_comment|/* if there are more sectors, use interleave */
+multiline_comment|/* if there are more sectors, use &n;&t;&t;&t;&t;&t; * interleave */
 DECL|member|max_errors
 r_struct
 id|floppy_max_errors
@@ -302,7 +317,7 @@ DECL|member|checkfreq
 r_int
 id|checkfreq
 suffix:semicolon
-multiline_comment|/* how often should the drive be checked for disk changes */
+multiline_comment|/* how often should the drive be checked for disk &n;&t;&t;&t;* changes */
 DECL|member|native_format
 r_int
 id|native_format
@@ -323,7 +338,7 @@ multiline_comment|/* inquire for write protection */
 DECL|enumerator|FD_DISK_NEWCHANGE_BIT
 id|FD_DISK_NEWCHANGE_BIT
 comma
-multiline_comment|/* change detected, and no action undertaken yet to&n;&t;&t;&t;  clear media change status */
+multiline_comment|/* change detected, and no action undertaken yet&n;&t;&t;&t;&t;* to clear media change status */
 DECL|enumerator|FD_UNUSED_BIT
 id|FD_UNUSED_BIT
 comma
@@ -411,12 +426,11 @@ DECL|member|fd_device
 r_int
 id|fd_device
 suffix:semicolon
-multiline_comment|/* should be a kdev_t but is externally visible */
 DECL|member|last_checked
 r_int
 id|last_checked
 suffix:semicolon
-multiline_comment|/* when was the drive last checked for a disk change? */
+multiline_comment|/* when was the drive last checked for a disk &n;&t;&t;&t;   * change? */
 DECL|member|dmabuf
 r_char
 op_star
@@ -432,13 +446,13 @@ DECL|struct|floppy_write_errors
 r_struct
 id|floppy_write_errors
 (brace
-multiline_comment|/* Write error logging.&n;   *&n;   * These fields can be cleared with the FDWERRORCLR ioctl.&n;   * Only writes that were attempted but failed due to a physical media&n;   * error are logged.  write(2) calls that fail and return an error code&n;   * to the user process are not counted.&n;   */
+multiline_comment|/* Write error logging.&n;&t; *&n;&t; * These fields can be cleared with the FDWERRORCLR ioctl.&n;&t; * Only writes that were attempted but failed due to a physical media&n;&t; * error are logged.  write(2) calls that fail and return an error code&n;&t; * to the user process are not counted.&n;&t; */
 DECL|member|write_errors
 r_int
 r_int
 id|write_errors
 suffix:semicolon
-multiline_comment|/* number of physical write errors encountered */
+multiline_comment|/* number of physical write errors &n;&t;&t;&t;&t;     * encountered */
 multiline_comment|/* position of first and last write errors */
 DECL|member|first_error_sector
 r_int
@@ -463,7 +477,7 @@ r_int
 r_int
 id|badness
 suffix:semicolon
-multiline_comment|/* highest retry count for a read or write operation */
+multiline_comment|/* highest retry count for a read or write &n;&t;&t;&t;       * operation */
 )brace
 suffix:semicolon
 DECL|struct|floppy_fdc_state
@@ -535,30 +549,82 @@ id|has_fifo
 suffix:colon
 l_int|1
 suffix:semicolon
+DECL|member|driver_version
+r_int
+r_int
+id|driver_version
+suffix:semicolon
+multiline_comment|/* version code for floppy driver */
+DECL|member|track
+r_int
+r_char
+id|track
+(braket
+l_int|4
+)braket
+suffix:semicolon
+multiline_comment|/* Position of the heads of the 4&n;&t;&t;&t;&t; * units attached to this FDC, as&n;&t;&t;&t;&t; * stored on the FDC. In the future,&n;&t;&t;&t;&t; * the position as stored on the FDC&n;&t;&t;&t;&t; * might not agree with the actual&n;&t;&t;&t;&t; * physical position of these drive&n;&t;&t;&t;&t; * heads. By allowing such&n;&t;&t;&t;&t; * disagreement, it will be possible&n;&t;&t;&t;&t; * to reset the FDC without incurring&n;&t;&t;&t;&t; * the expensive cost of repositioning&n;&t;&t;&t;&t; * all heads. &n;&t;&t;&t;&t; * Right now, these positions are&n;&t;&t;&t;&t; * hard wired to 0. */
+DECL|member|reserved1
+r_int
+r_int
+id|reserved1
+suffix:semicolon
+DECL|member|reserved2
+r_int
+r_int
+id|reserved2
+suffix:semicolon
 )brace
 suffix:semicolon
+DECL|macro|FD_DRIVER_VERSION
+mdefine_line|#define FD_DRIVER_VERSION 0x100
+multiline_comment|/* user programs using the floppy API should use floppy_fdc_state to&n; * get the version number of the floppy driver that they are running&n; * on. If this version number is bigger than the one compiled into the&n; * user program (the FD_DRIVER_VERSION define), it should be prepared&n; * to bigger structures&n; */
 DECL|struct|floppy_raw_cmd
 r_struct
 id|floppy_raw_cmd
 (brace
+DECL|member|flags
+r_int
+r_int
+id|flags
+suffix:semicolon
 DECL|member|data
 r_void
 op_star
 id|data
 suffix:semicolon
+DECL|member|kernel_data
+r_char
+op_star
+id|kernel_data
+suffix:semicolon
+multiline_comment|/* location of data buffer in the kernel */
+DECL|member|next
+r_struct
+id|floppy_raw_cmd
+op_star
+id|next
+suffix:semicolon
+multiline_comment|/* used for chaining of raw cmd&squot;s &n;&t;&t;&t;&t;      * withing the kernel */
 DECL|member|length
 r_int
 id|length
 suffix:semicolon
+multiline_comment|/* in: length of dma transfer. out: remaining bytes */
+DECL|member|phys_length
+r_int
+id|phys_length
+suffix:semicolon
+multiline_comment|/* physical length, if different from dma length */
+DECL|member|buffer_length
+r_int
+id|buffer_length
+suffix:semicolon
+multiline_comment|/* length of allocated buffer */
 DECL|member|rate
 r_int
 r_char
 id|rate
-suffix:semicolon
-DECL|member|flags
-r_int
-r_char
-id|flags
 suffix:semicolon
 DECL|member|cmd_count
 r_int
@@ -570,7 +636,7 @@ r_int
 r_char
 id|cmd
 (braket
-l_int|9
+l_int|16
 )braket
 suffix:semicolon
 DECL|member|reply_count
@@ -583,12 +649,24 @@ r_int
 r_char
 id|reply
 (braket
-l_int|7
+l_int|16
 )braket
 suffix:semicolon
 DECL|member|track
 r_int
 id|track
+suffix:semicolon
+DECL|member|resultcode
+r_int
+id|resultcode
+suffix:semicolon
+DECL|member|reserved1
+r_int
+id|reserved1
+suffix:semicolon
+DECL|member|reserved2
+r_int
+id|reserved2
 suffix:semicolon
 )brace
 suffix:semicolon
@@ -602,16 +680,30 @@ mdefine_line|#define FD_RAW_WRITE 2
 DECL|macro|FD_RAW_NO_MOTOR
 mdefine_line|#define FD_RAW_NO_MOTOR 4
 DECL|macro|FD_RAW_DISK_CHANGE
-mdefine_line|#define FD_RAW_DISK_CHANGE 4
+mdefine_line|#define FD_RAW_DISK_CHANGE 4 /* out: disk change flag was set */
 DECL|macro|FD_RAW_INTR
-mdefine_line|#define FD_RAW_INTR 8
+mdefine_line|#define FD_RAW_INTR 8    /* wait for an interrupt */
 DECL|macro|FD_RAW_SPIN
-mdefine_line|#define FD_RAW_SPIN 16
+mdefine_line|#define FD_RAW_SPIN 0x10 /* spin up the disk for this command */
 DECL|macro|FD_RAW_NO_MOTOR_AFTER
-mdefine_line|#define FD_RAW_NO_MOTOR_AFTER 32
+mdefine_line|#define FD_RAW_NO_MOTOR_AFTER 0x20 /* switch the motor off after command &n;&t;&t;&t;&t;    * completion */
 DECL|macro|FD_RAW_NEED_DISK
-mdefine_line|#define FD_RAW_NEED_DISK 64
+mdefine_line|#define FD_RAW_NEED_DISK 0x40  /* this command needs a disk to be present */
 DECL|macro|FD_RAW_NEED_SEEK
-mdefine_line|#define FD_RAW_NEED_SEEK 128
+mdefine_line|#define FD_RAW_NEED_SEEK 0x80  /* this command uses an implied seek (soft) */
+multiline_comment|/* more &quot;in&quot; flags */
+DECL|macro|FD_RAW_MORE
+mdefine_line|#define FD_RAW_MORE 0x100  /* more records follow */
+DECL|macro|FD_RAW_STOP_IF_FAILURE
+mdefine_line|#define FD_RAW_STOP_IF_FAILURE 0x200 /* stop if we encounter a failure */
+DECL|macro|FD_RAW_STOP_IF_SUCCESS
+mdefine_line|#define FD_RAW_STOP_IF_SUCCESS 0x400 /* stop if command successful */
+DECL|macro|FD_RAW_SOFTFAILURE
+mdefine_line|#define FD_RAW_SOFTFAILURE 0x800 /* consider the return value for failure&n;&t;&t;&t;&t;  * detection too */
+multiline_comment|/* more &quot;out&quot; flags */
+DECL|macro|FD_RAW_FAILURE
+mdefine_line|#define FD_RAW_FAILURE 0x10000 /* command sent to fdc, fdc returned error */
+DECL|macro|FD_RAW_HARDFAILURE
+mdefine_line|#define FD_RAW_HARDFAILURE 0x20000 /* fdc had to be reset, or timed out */
 macro_line|#endif
 eof

@@ -639,17 +639,6 @@ id|bh-&gt;b_uptodate
 op_assign
 id|uptodate
 suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|uptodate
-)paren
-id|bh-&gt;b_req
-op_assign
-l_int|0
-suffix:semicolon
-multiline_comment|/* So no &quot;Weird&quot; errors */
 id|unlock_buffer
 c_func
 (paren

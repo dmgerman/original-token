@@ -1119,6 +1119,11 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+id|sti
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
 op_minus
 id|ENOENT
@@ -1175,17 +1180,12 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; *&t;Unsolicited update - thats ok add anyway.&n;&t; */
-id|sti
-c_func
-(paren
-)paren
-suffix:semicolon
 id|cache
 op_assign
 id|ipmr_cache_alloc
 c_func
 (paren
-id|GFP_KERNEL
+id|GFP_ATOMIC
 )paren
 suffix:semicolon
 r_if
@@ -1196,6 +1196,11 @@ op_eq
 l_int|NULL
 )paren
 (brace
+id|sti
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
 op_minus
 id|ENOMEM
@@ -1234,6 +1239,11 @@ id|ipmr_cache_insert
 c_func
 (paren
 id|cache
+)paren
+suffix:semicolon
+id|sti
+c_func
+(paren
 )paren
 suffix:semicolon
 r_return

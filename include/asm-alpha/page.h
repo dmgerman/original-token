@@ -137,7 +137,12 @@ DECL|member|count
 r_int
 id|count
 suffix:colon
-l_int|30
+l_int|24
+comma
+DECL|member|age
+id|age
+suffix:colon
+l_int|6
 comma
 DECL|member|dirty
 id|dirty

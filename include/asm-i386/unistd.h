@@ -579,11 +579,12 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
+l_string|&quot;movl %%esp,%%esi&bslash;n&bslash;t&quot;
 l_string|&quot;int $0x80&bslash;n&bslash;t&quot;
 multiline_comment|/* Linux/i386 system call */
-l_string|&quot;testl %0,%0&bslash;n&bslash;t&quot;
+l_string|&quot;cmpl %%esp,%%esi&bslash;n&bslash;t&quot;
 multiline_comment|/* child or parent? */
-l_string|&quot;jne 1f&bslash;n&bslash;t&quot;
+l_string|&quot;je 1f&bslash;n&bslash;t&quot;
 multiline_comment|/* parent - jump */
 l_string|&quot;pushl %3&bslash;n&bslash;t&quot;
 multiline_comment|/* push argument */
@@ -625,6 +626,8 @@ id|flags
 op_or
 id|CLONE_VM
 )paren
+suffix:colon
+l_string|&quot;si&quot;
 )paren
 suffix:semicolon
 r_return

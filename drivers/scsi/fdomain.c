@@ -1,4 +1,4 @@
-multiline_comment|/* fdomain.c -- Future Domain TMC-16x0 SCSI driver&n; * Created: Sun May  3 18:53:19 1992 by faith@cs.unc.edu&n; * Revised: Sun Sep 17 00:23:26 1995 by r.faith@ieee.org&n; * Author: Rickard E. Faith, faith@cs.unc.edu&n; * Copyright 1992, 1993, 1994, 1995 Rickard E. Faith&n; *&n; * $Id: fdomain.c,v 5.36 1995/09/17 04:23:42 root Exp $&n;&n; * This program is free software; you can redistribute it and/or modify it&n; * under the terms of the GNU General Public License as published by the&n; * Free Software Foundation; either version 2, or (at your option) any&n; * later version.&n;&n; * This program is distributed in the hope that it will be useful, but&n; * WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU&n; * General Public License for more details.&n;&n; * You should have received a copy of the GNU General Public License along&n; * with this program; if not, write to the Free Software Foundation, Inc.,&n; * 675 Mass Ave, Cambridge, MA 02139, USA.&n;&n; **************************************************************************&n; &n; DESCRIPTION:&n;&n; This is the Linux low-level SCSI driver for Future Domain TMC-1660/1680&n; TMC-1650/1670, and TMC-3260 SCSI host adapters.  The 1650 and 1670 have a&n; 25-pin external connector, whereas the 1660 and 1680 have a SCSI-2 50-pin&n; high-density external connector.  The 1670 and 1680 have floppy disk&n; controllers built in.  The TMC-3260 is a PCI bus card.&n;&n; Future Domain&squot;s older boards are based on the TMC-1800 chip, and this&n; driver was originally written for a TMC-1680 board with the TMC-1800 chip.&n; More recently, boards are being produced with the TMC-18C50 and TMC-18C30&n; chips.  The latest and greatest board may not work with this driver.  If&n; you have to patch this driver so that it will recognize your board&squot;s BIOS&n; signature, then the driver may fail to function after the board is&n; detected.&n;&n; The following BIOS versions are supported: 2.0, 3.0, 3.2, 3.4, and 3.5.&n; The following chips are supported: TMC-1800, TMC-18C50, TMC-18C30.&n; Reports suggest that the driver will also work with the 36C70 chip and&n; with the Quantum ISA-200S and ISA-250MG SCSI adapters.&n;&n; Please note that the drive ordering that Future Domain implemented in BIOS&n; versions 3.4 and 3.5 is the opposite of the order (currently) used by the&n; rest of the SCSI industry.  If you have BIOS version 3.4 or 3.5, and have&n; more then one drive, then the drive ordering will be the reverse of that&n; which you see under DOS.  For example, under DOS SCSI ID 0 will be D: and&n; SCSI ID 1 will be C: (the boot device).  Under Linux, SCSI ID 0 will be&n; /dev/sda and SCSI ID 1 will be /dev/sdb.  The Linux ordering is consistent&n; with that provided by all the other SCSI drivers for Linux.  If you want&n; this changed, send me patches that are protected by #ifdefs.&n;&n; If you have a TMC-8xx or TMC-9xx board, then this is not the driver for&n; your board.  Please refer to the Seagate driver for more information and&n; possible support.&n;&n; &n;&n; REFERENCES USED:&n;&n; &quot;TMC-1800 SCSI Chip Specification (FDC-1800T)&quot;, Future Domain Corporation,&n; 1990.&n;&n; &quot;Technical Reference Manual: 18C50 SCSI Host Adapter Chip&quot;, Future Domain&n; Corporation, January 1992.&n;&n; &quot;LXT SCSI Products: Specifications and OEM Technical Manual (Revision&n; B/September 1991)&quot;, Maxtor Corporation, 1991.&n;&n; &quot;7213S product Manual (Revision P3)&quot;, Maxtor Corporation, 1992.&n;&n; &quot;Draft Proposed American National Standard: Small Computer System&n; Interface - 2 (SCSI-2)&quot;, Global Engineering Documents. (X3T9.2/86-109,&n; revision 10h, October 17, 1991)&n;&n; Private communications, Drew Eckhardt (drew@cs.colorado.edu) and Eric&n; Youngdale (ericy@cais.com), 1992.&n;&n; Private communication, Tuong Le (Future Domain Engineering department),&n; 1994. (Disk geometry computations for Future Domain BIOS version 3.4, and&n; TMC-18C30 detection.)&n;&n; Hogan, Thom. The Programmer&squot;s PC Sourcebook. Microsoft Press, 1988. Page&n; 60 (2.39: Disk Partition Table Layout).&n;&n; &quot;18C30 Technical Reference Manual&quot;, Future Domain Corporation, 1993, page&n; 6-1.&n;&n;&n; &n; NOTES ON REFERENCES:&n;&n; The Maxtor manuals were free.  Maxtor telephone technical support is&n; great!&n;&n; The Future Domain manuals were $25 and $35.  They document the chip, not&n; the TMC-16x0 boards, so some information I had to guess at.  In 1992,&n; Future Domain sold DOS BIOS source for $250 and the UN*X driver source was&n; $750, but these required a non-disclosure agreement, so even if I could&n; have afforded them, they would *not* have been useful for writing this&n; publically distributable driver.  Future Domain technical support has&n; provided some information on the phone and have sent a few useful FAXs.&n; They have been much more helpful since they started to recognize that the&n; word &quot;Linux&quot; refers to an operating system :-).&n;&n; &n;&n; ALPHA TESTERS:&n;&n; There are many other alpha testers that come and go as the driver&n; develops.  The people listed here were most helpful in times of greatest&n; need (mostly early on -- I&squot;ve probably left out a few worthy people in&n; more recent times):&n;&n; Todd Carrico (todd@wutc.wustl.edu), Dan Poirier (poirier@cs.unc.edu ), Ken&n; Corey (kenc@sol.acs.unt.edu), C. de Bruin (bruin@bruin@sterbbs.nl), Sakari&n; Aaltonen (sakaria@vipunen.hit.fi), John Rice (rice@xanth.cs.odu.edu), Brad&n; Yearwood (brad@optilink.com), and Ray Toy (toy@soho.crd.ge.com).&n;&n; Special thanks to Tien-Wan Yang (twyang@cs.uh.edu), who graciously lent me&n; his 18C50-based card for debugging.  He is the sole reason that this&n; driver works with the 18C50 chip.&n;&n; Thanks to Dave Newman (dnewman@crl.com) for providing initial patches for&n; the version 3.4 BIOS.&n;&n; Thanks to James T. McKinley (mckinley@msupa.pa.msu.edu) for providing&n; patches that support the TMC-3260, a PCI bus card with the 36C70 chip.&n; The 36C70 chip appears to be &quot;completely compatible&quot; with the 18C30 chip.&n;&n; Thanks to Eric Kasten (tigger@petroglyph.cl.msu.edu) for providing the&n; patch for the version 3.5 BIOS.&n;&n; Thanks for Stephen Henson (shenson@nyx10.cs.du.edu) for providing the&n; patch for the Quantum ISA-200S SCSI adapter.&n; &n; Thanks to Adam Bowen for the signature to the 1610M/MER/MEX scsi cards, to&n; Martin Andrews (andrewm@ccfadm.eeg.ccf.org) for the signature to some&n; random TMC-1680 repackaged by IBM; and to Mintak Ng (mintak@panix.com) for&n; the version 3.61 BIOS siganture.&n;&n; Thanks for Mark Singer (elf@netcom.com) and Richard Simpson&n; (rsimpson@ewrcsdra.demon.co.uk) for more Quantum signatures and detective&n; work on the Quantum RAM layout.&n;&n; Special thanks to James T. McKinley (mckinley@msupa.pa.msu.edu) for&n; providing patches for proper PCI BIOS32-mediated detection of the TMC-3260&n; card (a PCI bus card with the 36C70 chip).  Please send James PCI-related&n; bug reports.&n;&n; Thanks to Tom Cavin (tec@usa1.com) for preliminary command-line option&n; patches.&n; &n; All of the alpha testers deserve much thanks.&n;&n;&n;&n; NOTES ON USER DEFINABLE OPTIONS:&n;&n; DEBUG: This turns on the printing of various debug information.&n;&n; ENABLE_PARITY: This turns on SCSI parity checking.  With the current&n; driver, all attached devices must support SCSI parity.  If none of your&n; devices support parity, then you can probably get the driver to work by&n; turning this option off.  I have no way of testing this, however.&n;&n; FIFO_COUNT: The host adapter has an 8K cache (host adapters based on the&n; 18C30 chip have a 2k cache).  When this many 512 byte blocks are filled by&n; the SCSI device, an interrupt will be raised.  Therefore, this could be as&n; low as 0, or as high as 16.  Note, however, that values which are too high&n; or too low seem to prevent any interrupts from occurring, and thereby lock&n; up the machine.  I have found that 2 is a good number, but throughput may&n; be increased by changing this value to values which are close to 2.&n; Please let me know if you try any different values.&n;&n; DO_DETECT: This activates some old scan code which was needed before the&n; high level drivers got fixed.  If you are having trouble with the driver,&n; turning this on should not hurt, and might help.  Please let me know if&n; this is the case, since this code will be removed from future drivers.&n;&n; RESELECTION: This is no longer an option, since I gave up trying to&n; implement it in version 4.x of this driver.  It did not improve&n; performance at all and made the driver unstable (because I never found one&n; of the two race conditions which were introduced by the multiple&n; outstanding command code).  The instability seems a very high price to pay&n; just so that you don&squot;t have to wait for the tape to rewind.  If you want&n; this feature implemented, send me patches.  I&squot;ll be happy to send a copy&n; of my (broken) driver to anyone who would like to see a copy.&n;&n; **************************************************************************/
+multiline_comment|/* fdomain.c -- Future Domain TMC-16x0 SCSI driver&n; * Created: Sun May  3 18:53:19 1992 by faith@cs.unc.edu&n; * Revised: Thu Oct 12 15:59:37 1995 by r.faith@ieee.org&n; * Author: Rickard E. Faith, faith@cs.unc.edu&n; * Copyright 1992, 1993, 1994, 1995 Rickard E. Faith&n; *&n; * $Id: fdomain.c,v 5.39 1995/10/12 20:31:47 root Exp $&n;&n; * This program is free software; you can redistribute it and/or modify it&n; * under the terms of the GNU General Public License as published by the&n; * Free Software Foundation; either version 2, or (at your option) any&n; * later version.&n;&n; * This program is distributed in the hope that it will be useful, but&n; * WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU&n; * General Public License for more details.&n;&n; * You should have received a copy of the GNU General Public License along&n; * with this program; if not, write to the Free Software Foundation, Inc.,&n; * 675 Mass Ave, Cambridge, MA 02139, USA.&n;&n; **************************************************************************&n; &n; DESCRIPTION:&n;&n; This is the Linux low-level SCSI driver for Future Domain TMC-1660/1680&n; TMC-1650/1670, and TMC-3260 SCSI host adapters.  The 1650 and 1670 have a&n; 25-pin external connector, whereas the 1660 and 1680 have a SCSI-2 50-pin&n; high-density external connector.  The 1670 and 1680 have floppy disk&n; controllers built in.  The TMC-3260 is a PCI bus card.&n;&n; Future Domain&squot;s older boards are based on the TMC-1800 chip, and this&n; driver was originally written for a TMC-1680 board with the TMC-1800 chip.&n; More recently, boards are being produced with the TMC-18C50 and TMC-18C30&n; chips.  The latest and greatest board may not work with this driver.  If&n; you have to patch this driver so that it will recognize your board&squot;s BIOS&n; signature, then the driver may fail to function after the board is&n; detected.&n;&n; The following BIOS versions are supported: 2.0, 3.0, 3.2, 3.4, and 3.5.&n; The following chips are supported: TMC-1800, TMC-18C50, TMC-18C30.&n; Reports suggest that the driver will also work with the 36C70 chip and&n; with the Quantum ISA-200S and ISA-250MG SCSI adapters.&n;&n; Please note that the drive ordering that Future Domain implemented in BIOS&n; versions 3.4 and 3.5 is the opposite of the order (currently) used by the&n; rest of the SCSI industry.  If you have BIOS version 3.4 or 3.5, and have&n; more then one drive, then the drive ordering will be the reverse of that&n; which you see under DOS.  For example, under DOS SCSI ID 0 will be D: and&n; SCSI ID 1 will be C: (the boot device).  Under Linux, SCSI ID 0 will be&n; /dev/sda and SCSI ID 1 will be /dev/sdb.  The Linux ordering is consistent&n; with that provided by all the other SCSI drivers for Linux.  If you want&n; this changed, send me patches that are protected by #ifdefs.&n;&n; If you have a TMC-8xx or TMC-9xx board, then this is not the driver for&n; your board.  Please refer to the Seagate driver for more information and&n; possible support.&n;&n; &n;&n; REFERENCES USED:&n;&n; &quot;TMC-1800 SCSI Chip Specification (FDC-1800T)&quot;, Future Domain Corporation,&n; 1990.&n;&n; &quot;Technical Reference Manual: 18C50 SCSI Host Adapter Chip&quot;, Future Domain&n; Corporation, January 1992.&n;&n; &quot;LXT SCSI Products: Specifications and OEM Technical Manual (Revision&n; B/September 1991)&quot;, Maxtor Corporation, 1991.&n;&n; &quot;7213S product Manual (Revision P3)&quot;, Maxtor Corporation, 1992.&n;&n; &quot;Draft Proposed American National Standard: Small Computer System&n; Interface - 2 (SCSI-2)&quot;, Global Engineering Documents. (X3T9.2/86-109,&n; revision 10h, October 17, 1991)&n;&n; Private communications, Drew Eckhardt (drew@cs.colorado.edu) and Eric&n; Youngdale (ericy@cais.com), 1992.&n;&n; Private communication, Tuong Le (Future Domain Engineering department),&n; 1994. (Disk geometry computations for Future Domain BIOS version 3.4, and&n; TMC-18C30 detection.)&n;&n; Hogan, Thom. The Programmer&squot;s PC Sourcebook. Microsoft Press, 1988. Page&n; 60 (2.39: Disk Partition Table Layout).&n;&n; &quot;18C30 Technical Reference Manual&quot;, Future Domain Corporation, 1993, page&n; 6-1.&n;&n;&n; &n; NOTES ON REFERENCES:&n;&n; The Maxtor manuals were free.  Maxtor telephone technical support is&n; great!&n;&n; The Future Domain manuals were $25 and $35.  They document the chip, not&n; the TMC-16x0 boards, so some information I had to guess at.  In 1992,&n; Future Domain sold DOS BIOS source for $250 and the UN*X driver source was&n; $750, but these required a non-disclosure agreement, so even if I could&n; have afforded them, they would *not* have been useful for writing this&n; publically distributable driver.  Future Domain technical support has&n; provided some information on the phone and have sent a few useful FAXs.&n; They have been much more helpful since they started to recognize that the&n; word &quot;Linux&quot; refers to an operating system :-).&n;&n; &n;&n; ALPHA TESTERS:&n;&n; There are many other alpha testers that come and go as the driver&n; develops.  The people listed here were most helpful in times of greatest&n; need (mostly early on -- I&squot;ve probably left out a few worthy people in&n; more recent times):&n;&n; Todd Carrico (todd@wutc.wustl.edu), Dan Poirier (poirier@cs.unc.edu ), Ken&n; Corey (kenc@sol.acs.unt.edu), C. de Bruin (bruin@bruin@sterbbs.nl), Sakari&n; Aaltonen (sakaria@vipunen.hit.fi), John Rice (rice@xanth.cs.odu.edu), Brad&n; Yearwood (brad@optilink.com), and Ray Toy (toy@soho.crd.ge.com).&n;&n; Special thanks to Tien-Wan Yang (twyang@cs.uh.edu), who graciously lent me&n; his 18C50-based card for debugging.  He is the sole reason that this&n; driver works with the 18C50 chip.&n;&n; Thanks to Dave Newman (dnewman@crl.com) for providing initial patches for&n; the version 3.4 BIOS.&n;&n; Thanks to James T. McKinley (mckinley@msupa.pa.msu.edu) for providing&n; patches that support the TMC-3260, a PCI bus card with the 36C70 chip.&n; The 36C70 chip appears to be &quot;completely compatible&quot; with the 18C30 chip.&n;&n; Thanks to Eric Kasten (tigger@petroglyph.cl.msu.edu) for providing the&n; patch for the version 3.5 BIOS.&n;&n; Thanks for Stephen Henson (shenson@nyx10.cs.du.edu) for providing the&n; patch for the Quantum ISA-200S SCSI adapter.&n; &n; Thanks to Adam Bowen for the signature to the 1610M/MER/MEX scsi cards, to&n; Martin Andrews (andrewm@ccfadm.eeg.ccf.org) for the signature to some&n; random TMC-1680 repackaged by IBM; and to Mintak Ng (mintak@panix.com) for&n; the version 3.61 BIOS siganture.&n;&n; Thanks for Mark Singer (elf@netcom.com) and Richard Simpson&n; (rsimpson@ewrcsdra.demon.co.uk) for more Quantum signatures and detective&n; work on the Quantum RAM layout.&n;&n; Special thanks to James T. McKinley (mckinley@msupa.pa.msu.edu) for&n; providing patches for proper PCI BIOS32-mediated detection of the TMC-3260&n; card (a PCI bus card with the 36C70 chip).  Please send James PCI-related&n; bug reports.&n;&n; Thanks to Tom Cavin (tec@usa1.com) for preliminary command-line option&n; patches.&n; &n; All of the alpha testers deserve much thanks.&n;&n;&n;&n; NOTES ON USER DEFINABLE OPTIONS:&n;&n; DEBUG: This turns on the printing of various debug information.&n;&n; ENABLE_PARITY: This turns on SCSI parity checking.  With the current&n; driver, all attached devices must support SCSI parity.  If none of your&n; devices support parity, then you can probably get the driver to work by&n; turning this option off.  I have no way of testing this, however.&n;&n; FIFO_COUNT: The host adapter has an 8K cache (host adapters based on the&n; 18C30 chip have a 2k cache).  When this many 512 byte blocks are filled by&n; the SCSI device, an interrupt will be raised.  Therefore, this could be as&n; low as 0, or as high as 16.  Note, however, that values which are too high&n; or too low seem to prevent any interrupts from occurring, and thereby lock&n; up the machine.  I have found that 2 is a good number, but throughput may&n; be increased by changing this value to values which are close to 2.&n; Please let me know if you try any different values.&n;&n; DO_DETECT: This activates some old scan code which was needed before the&n; high level drivers got fixed.  If you are having trouble with the driver,&n; turning this on should not hurt, and might help.  Please let me know if&n; this is the case, since this code will be removed from future drivers.&n;&n; RESELECTION: This is no longer an option, since I gave up trying to&n; implement it in version 4.x of this driver.  It did not improve&n; performance at all and made the driver unstable (because I never found one&n; of the two race conditions which were introduced by the multiple&n; outstanding command code).  The instability seems a very high price to pay&n; just so that you don&squot;t have to wait for the tape to rewind.  If you want&n; this feature implemented, send me patches.  I&squot;ll be happy to send a copy&n; of my (broken) driver to anyone who would like to see a copy.&n;&n; **************************************************************************/
 macro_line|#ifdef MODULE
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#endif
@@ -15,7 +15,7 @@ macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;linux/bios32.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
-macro_line|#include&lt;linux/stat.h&gt;
+macro_line|#include &lt;linux/stat.h&gt;
 DECL|variable|proc_scsi_fdomain
 r_struct
 id|proc_dir_entry
@@ -38,7 +38,7 @@ l_int|2
 )brace
 suffix:semicolon
 DECL|macro|VERSION
-mdefine_line|#define VERSION          &quot;$Revision: 5.36 $&quot;
+mdefine_line|#define VERSION          &quot;$Revision: 5.39 $&quot;
 multiline_comment|/* START OF USER DEFINABLE OPTIONS */
 DECL|macro|DEBUG
 mdefine_line|#define DEBUG            1&t;/* Enable debugging output */
@@ -799,6 +799,20 @@ l_int|0
 )brace
 comma
 (brace
+l_string|&quot;FUTURE DOMAIN CORP.  V3.6008/18/93&quot;
+comma
+l_int|5
+comma
+l_int|34
+comma
+l_int|3
+comma
+l_int|6
+comma
+l_int|0
+)brace
+comma
+(brace
 l_string|&quot;FUTURE DOMAIN CORP.  V3.6108/18/93&quot;
 comma
 l_int|5
@@ -1092,7 +1106,7 @@ l_int|2
 suffix:colon
 l_int|0
 suffix:semicolon
-id|adapter_mask
+id|this_id
 op_assign
 id|ints
 (braket
@@ -1102,14 +1116,10 @@ op_ge
 l_int|3
 ques
 c_cond
-(paren
-l_int|1
-op_lshift
 id|ints
 (braket
 l_int|3
 )braket
-)paren
 suffix:colon
 l_int|0
 suffix:semicolon
@@ -2886,7 +2896,7 @@ op_assign
 (paren
 id|this_id
 op_amp
-l_int|0x7
+l_int|0x07
 )paren
 suffix:semicolon
 id|adapter_mask
@@ -3606,9 +3616,9 @@ r_return
 id|buffer
 suffix:semicolon
 )brace
-macro_line|#if 0
 multiline_comment|/* First pass at /proc information routine. */
 multiline_comment|/*&n; * inout : decides on the direction of the dataflow and the meaning of the &n; *         variables&n; * buffer: If inout==FALSE data is beeing written to it else read from it&n; * *start: If inout==FALSE start of the valid data in the buffer&n; * offset: If inout==FALSE offset from the beginning of the imaginary file &n; *         from which we start writing into the buffer&n; * length: If inout==FALSE max number of bytes to be written into the buffer &n; *         else number of bytes in the buffer&n; */
+DECL|function|fdomain_16x0_proc_info
 r_int
 id|fdomain_16x0_proc_info
 c_func
@@ -3635,11 +3645,6 @@ r_int
 id|inout
 )paren
 (brace
-r_int
-id|len
-op_assign
-l_int|0
-suffix:semicolon
 r_const
 r_char
 op_star
@@ -3651,6 +3656,15 @@ c_func
 l_int|NULL
 )paren
 suffix:semicolon
+r_int
+id|len
+suffix:semicolon
+r_int
+id|pos
+suffix:semicolon
+r_int
+id|begin
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -3660,6 +3674,10 @@ r_return
 op_minus
 id|ENOSYS
 suffix:semicolon
+id|begin
+op_assign
+l_int|0
+suffix:semicolon
 id|strcpy
 c_func
 (paren
@@ -3668,19 +3686,78 @@ comma
 id|info
 )paren
 suffix:semicolon
+id|strcat
+c_func
+(paren
+id|buffer
+comma
+l_string|&quot;&bslash;n&quot;
+)paren
+suffix:semicolon
+id|pos
+op_assign
 id|len
-op_add_assign
+op_assign
 id|strlen
 c_func
 (paren
-id|info
+id|buffer
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|pos
+OL
+id|offset
+)paren
+(brace
+id|len
+op_assign
+l_int|0
+suffix:semicolon
+id|begin
+op_assign
+id|pos
+suffix:semicolon
+)brace
+op_star
+id|start
+op_assign
+id|buffer
+op_plus
+(paren
+id|offset
+op_minus
+id|begin
+)paren
+suffix:semicolon
+multiline_comment|/* Start of wanted data */
+id|len
+op_sub_assign
+(paren
+id|offset
+op_minus
+id|begin
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|len
+OG
+id|length
+)paren
+(brace
+id|len
+op_assign
+id|length
+suffix:semicolon
+)brace
 r_return
 id|len
 suffix:semicolon
 )brace
-macro_line|#endif
 macro_line|#if 0
 r_static
 r_int

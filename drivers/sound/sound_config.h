@@ -1,8 +1,20 @@
-multiline_comment|/* sound_config.h&n; *&n; * A driver for Soundcards, misc configuration parameters.&n; *&n; * &n; * Copyright by Hannu Savolainen 1993&n; *&n; * Redistribution and use in source and binary forms, with or without&n; * modification, are permitted provided that the following conditions&n; * are met:&n; * 1. Redistributions of source code must retain the above copyright&n; *    notice, this list of conditions and the following disclaimer.&n; * 2. Redistributions in binary form must reproduce the above copyright&n; *    notice, this list of conditions and the following disclaimer in the&n; *    documentation and/or other materials provided with the distribution.&n; *&n; * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS&squot;&squot; AND&n; * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE&n; * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE&n; * ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE&n; * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL&n; * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS&n; * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)&n; * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT&n; * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY&n; * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF&n; * SUCH DAMAGE.&n; *&n; */
+multiline_comment|/* sound_config.h&n; *&n; * A driver for Soundcards, misc configuration parameters.&n; *&n; * &n; * Copyright by Hannu Savolainen 1995&n; *&n; * Redistribution and use in source and binary forms, with or without&n; * modification, are permitted provided that the following conditions&n; * are met:&n; * 1. Redistributions of source code must retain the above copyright&n; *    notice, this list of conditions and the following disclaimer.&n; * 2. Redistributions in binary form must reproduce the above copyright&n; *    notice, this list of conditions and the following disclaimer in the&n; *    documentation and/or other materials provided with the distribution.&n; *&n; * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS&squot;&squot; AND&n; * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE&n; * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE&n; * ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE&n; * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL&n; * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS&n; * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)&n; * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT&n; * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY&n; * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF&n; * SUCH DAMAGE.&n; *&n; */
+DECL|macro|CONFIGURE_SOUNDCARD
+macro_line|#undef CONFIGURE_SOUNDCARD
+DECL|macro|DYNAMIC_BUFFER
+macro_line|#undef DYNAMIC_BUFFER
 macro_line|#include &quot;local.h&quot;
+macro_line|#ifdef KERNEL_SOUNDCARD
+DECL|macro|CONFIGURE_SOUNDCARD
+mdefine_line|#define CONFIGURE_SOUNDCARD
+DECL|macro|DYNAMIC_BUFFER
+mdefine_line|#define DYNAMIC_BUFFER
+DECL|macro|LOADABLE_SOUNDCARD
+macro_line|#undef LOADABLE_SOUNDCARD
+macro_line|#endif
 macro_line|#include &quot;os.h&quot;
 macro_line|#include &quot;soundvers.h&quot;
-macro_line|#if !defined(PSS_MPU_BASE) &amp;&amp; defined(EXCLUDE_SSCAPE) &amp;&amp; &bslash;&n;      defined(EXCLUDE_TRIX) &amp;&amp; !defined(MAD16_MPU_BASE)
+macro_line|#if !defined(PSS_MPU_BASE) &amp;&amp; defined(EXCLUDE_SSCAPE) &amp;&amp; &bslash;&n;      defined(EXCLUDE_TRIX) &amp;&amp; !defined(MAD16_MPU_BASE) &amp;&amp; &bslash;&n;      defined(EXCLUDE_CS4232) &amp;&amp; defined(EXCLUDE_MAUI)
 DECL|macro|EXCLUDE_MPU_EMU
 mdefine_line|#define EXCLUDE_MPU_EMU
 macro_line|#endif
@@ -11,25 +23,13 @@ DECL|macro|GENERIC_SYSV
 mdefine_line|#define GENERIC_SYSV
 macro_line|#endif
 multiline_comment|/*&n; * Disable the AD1848 driver if there are no other drivers requiring it.&n; */
-macro_line|#if defined(EXCLUDE_GUS16) &amp;&amp; defined(EXCLUDE_MSS) &amp;&amp; &bslash;&n;    defined(EXCLUDE_PSS) &amp;&amp; defined(EXCLUDE_GUSMAX) &amp;&amp; &bslash;&n;    defined(EXCLUDE_SSCAPE) &amp;&amp; defined(EXCLUDE_TRIX) &amp;&amp; defined(EXCLUDE_MAD16)
+macro_line|#if defined(EXCLUDE_GUS16) &amp;&amp; defined(EXCLUDE_MSS) &amp;&amp; &bslash;&n;    defined(EXCLUDE_PSS) &amp;&amp; defined(EXCLUDE_GUSMAX) &amp;&amp; &bslash;&n;    defined(EXCLUDE_SSCAPE) &amp;&amp; defined(EXCLUDE_TRIX) &amp;&amp; defined(EXCLUDE_MAD16) &amp;&amp; &bslash;&n;    defined(EXCLUDE_CS4232) &amp;&amp; defined(EXCLUDE_PNP)
 DECL|macro|EXCLUDE_AD1848
 mdefine_line|#define EXCLUDE_AD1848
 macro_line|#endif
 macro_line|#ifdef PSS_MSS_BASE
 DECL|macro|EXCLUDE_AD1848
 macro_line|#undef EXCLUDE_AD1848
-macro_line|#endif
-DECL|macro|CONFIGURE_SOUNDCARD
-macro_line|#undef CONFIGURE_SOUNDCARD
-DECL|macro|DYNAMIC_BUFFER
-macro_line|#undef DYNAMIC_BUFFER
-macro_line|#ifdef KERNEL_SOUNDCARD
-DECL|macro|CONFIGURE_SOUNDCARD
-mdefine_line|#define CONFIGURE_SOUNDCARD
-DECL|macro|DYNAMIC_BUFFER
-mdefine_line|#define DYNAMIC_BUFFER
-DECL|macro|LOADABLE_SOUNDCARD
-macro_line|#undef LOADABLE_SOUNDCARD
 macro_line|#endif
 macro_line|#ifdef EXCLUDE_SEQUENCER
 DECL|macro|EXCLUDE_MIDI
@@ -56,7 +56,7 @@ mdefine_line|#define DSP_BUFFSIZE&t;&t;(4096)
 macro_line|#endif
 macro_line|#ifndef DSP_BUFFCOUNT
 DECL|macro|DSP_BUFFCOUNT
-mdefine_line|#define DSP_BUFFCOUNT&t;&t;2&t;/* 2 is recommended. */
+mdefine_line|#define DSP_BUFFCOUNT&t;&t;1&t;/* 1 is recommended. */
 macro_line|#endif
 DECL|macro|DMA_AUTOINIT
 mdefine_line|#define DMA_AUTOINIT&t;&t;0x10
@@ -65,6 +65,12 @@ mdefine_line|#define FM_MONO&t;&t;0x388&t;/* This is the I/O address used by AdL
 macro_line|#ifndef PAS_BASE
 DECL|macro|PAS_BASE
 mdefine_line|#define PAS_BASE&t;0x388
+macro_line|#endif
+macro_line|#ifdef JAZZ16
+macro_line|#ifndef JAZZ_DMA16
+DECL|macro|JAZZ_DMA16
+mdefine_line|#define JAZZ_DMA16&t;5
+macro_line|#endif
 macro_line|#endif
 multiline_comment|/* SEQ_MAX_QUEUE is the maximum number of sequencer events buffered by the&n;   driver. (There is no need to alter this) */
 DECL|macro|SEQ_MAX_QUEUE
@@ -121,10 +127,11 @@ r_int
 id|mode
 suffix:semicolon
 multiline_comment|/* Open mode */
-id|DECLARE_FILE
-c_func
-(paren
-)paren
+DECL|member|filp
+r_struct
+id|file
+op_star
+id|filp
 suffix:semicolon
 multiline_comment|/* Reference to file-flags. OS-dependent. */
 )brace
@@ -145,11 +152,36 @@ DECL|member|dma
 r_int
 id|dma
 suffix:semicolon
+DECL|member|dma2
+r_int
+id|dma2
+suffix:semicolon
 DECL|member|always_detect
 r_int
 id|always_detect
 suffix:semicolon
 multiline_comment|/* 1=Trust me, it&squot;s there */
+DECL|member|name
+r_char
+op_star
+id|name
+suffix:semicolon
+DECL|member|driver_use_1
+r_int
+id|driver_use_1
+suffix:semicolon
+multiline_comment|/* Driver defined field 1 */
+DECL|member|driver_use_2
+r_int
+id|driver_use_2
+suffix:semicolon
+multiline_comment|/* Driver defined field 2 */
+DECL|member|osp
+id|sound_os_info
+op_star
+id|osp
+suffix:semicolon
+multiline_comment|/* OS spesific info */
 )brace
 suffix:semicolon
 DECL|macro|SYNTH_MAX_VOICES
@@ -227,11 +259,11 @@ mdefine_line|#define WK_SIGNAL&t;0x04
 DECL|macro|WK_SLEEP
 mdefine_line|#define WK_SLEEP&t;0x08
 DECL|macro|OPEN_READ
-mdefine_line|#define OPEN_READ&t;1
+mdefine_line|#define OPEN_READ&t;PCM_ENABLE_INPUT
 DECL|macro|OPEN_WRITE
-mdefine_line|#define OPEN_WRITE&t;2
+mdefine_line|#define OPEN_WRITE&t;PCM_ENABLE_OUTPUT
 DECL|macro|OPEN_READWRITE
-mdefine_line|#define OPEN_READWRITE&t;3
+mdefine_line|#define OPEN_READWRITE&t;(OPEN_READ|OPEN_WRITE)
 macro_line|#include &quot;sound_calls.h&quot;
 macro_line|#include &quot;dev_table.h&quot;
 macro_line|#ifndef DEB

@@ -8,8 +8,7 @@ r_int
 r_int
 id|cmd
 comma
-r_int
-r_int
+id|ioctl_arg
 id|arg
 )paren
 suffix:semicolon
@@ -103,6 +102,7 @@ comma
 r_int
 id|format
 comma
+r_const
 id|snd_rw_buf
 op_star
 id|addr
@@ -212,6 +212,22 @@ r_int
 id|mlen
 )paren
 suffix:semicolon
+r_int
+id|midi_synth_send_sysex
+c_func
+(paren
+r_int
+id|dev
+comma
+r_int
+r_char
+op_star
+id|bytes
+comma
+r_int
+id|len
+)paren
+suffix:semicolon
 macro_line|#ifndef _MIDI_SYNTH_C_
 DECL|variable|std_synth_info
 r_static
@@ -289,6 +305,8 @@ l_int|NULL
 comma
 multiline_comment|/* alloc_voice */
 id|midi_synth_setup_voice
+comma
+id|midi_synth_send_sysex
 )brace
 suffix:semicolon
 macro_line|#endif

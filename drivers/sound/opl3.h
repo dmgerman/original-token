@@ -166,11 +166,11 @@ DECL|macro|USE_LEFT
 mdefine_line|#define USE_LEFT&t;0
 DECL|macro|USE_RIGHT
 mdefine_line|#define USE_RIGHT&t;1
-DECL|variable|physical_voices
+DECL|variable|pv_map
 r_static
 r_struct
 id|physical_voice_info
-id|physical_voices
+id|pv_map
 (braket
 l_int|18
 )braket

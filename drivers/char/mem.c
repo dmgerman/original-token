@@ -16,7 +16,7 @@ macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#ifdef CONFIG_SOUND
-r_int
+r_void
 id|soundcard_init
 c_func
 (paren

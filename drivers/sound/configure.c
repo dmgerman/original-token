@@ -1,7 +1,9 @@
 DECL|macro|DISABLED_OPTIONS
 mdefine_line|#define DISABLED_OPTIONS &t;0
-multiline_comment|/*&n; * sound/configure.c  - Configuration program for the Linux Sound Driver&n; *&n; * Copyright by Hannu Savolainen 1993&n; *&n; * Redistribution and use in source and binary forms, with or without&n; * modification, are permitted provided that the following conditions are&n; * met: 1. Redistributions of source code must retain the above copyright&n; * notice, this list of conditions and the following disclaimer. 2.&n; * Redistributions in binary form must reproduce the above copyright notice,&n; * this list of conditions and the following disclaimer in the documentation&n; * and/or other materials provided with the distribution.&n; *&n; * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS&squot;&squot; AND ANY&n; * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED&n; * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE&n; * DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR&n; * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL&n; * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR&n; * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER&n; * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT&n; * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY&n; * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF&n; * SUCH DAMAGE.&n; *&n; */
+multiline_comment|/*&n; * sound/configure.c  - Configuration program for the Linux Sound Driver&n; *&n; * Copyright by Hannu Savolainen 1993-1995&n; *&n; * Redistribution and use in source and binary forms, with or without&n; * modification, are permitted provided that the following conditions are&n; * met: 1. Redistributions of source code must retain the above copyright&n; * notice, this list of conditions and the following disclaimer. 2.&n; * Redistributions in binary form must reproduce the above copyright notice,&n; * this list of conditions and the following disclaimer in the documentation&n; * and/or other materials provided with the distribution.&n; *&n; * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS&squot;&squot; AND ANY&n; * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED&n; * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE&n; * DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR&n; * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL&n; * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR&n; * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER&n; * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT&n; * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY&n; * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF&n; * SUCH DAMAGE.&n; *&n; */
 macro_line|#include &lt;stdio.h&gt;
+macro_line|#include &lt;unistd.h&gt;
+macro_line|#include &lt;stdlib.h&gt;
 DECL|macro|B
 mdefine_line|#define B(x)&t;(1 &lt;&lt; (x))
 multiline_comment|/*&n; * Option numbers&n; */
@@ -33,34 +35,38 @@ DECL|macro|OPT_TRIX
 mdefine_line|#define OPT_TRIX&t;11
 DECL|macro|OPT_MAD16
 mdefine_line|#define OPT_MAD16&t;12
+DECL|macro|OPT_CS4232
+mdefine_line|#define OPT_CS4232&t;13
+DECL|macro|OPT_MAUI
+mdefine_line|#define OPT_MAUI&t;14
 DECL|macro|OPT_HIGHLEVEL
-mdefine_line|#define OPT_HIGHLEVEL   13&t;/* This must be same than the next one */
+mdefine_line|#define OPT_HIGHLEVEL   15&t;/* This must be same than the next one */
 DECL|macro|OPT_SBPRO
-mdefine_line|#define OPT_SBPRO&t;13
+mdefine_line|#define OPT_SBPRO&t;15
 DECL|macro|OPT_SB16
-mdefine_line|#define OPT_SB16&t;14
+mdefine_line|#define OPT_SB16&t;16
 DECL|macro|OPT_AEDSP16
-mdefine_line|#define OPT_AEDSP16     15
+mdefine_line|#define OPT_AEDSP16     17
 DECL|macro|OPT_AUDIO
-mdefine_line|#define OPT_AUDIO&t;16
+mdefine_line|#define OPT_AUDIO&t;18
 DECL|macro|OPT_MIDI_AUTO
-mdefine_line|#define OPT_MIDI_AUTO&t;17
+mdefine_line|#define OPT_MIDI_AUTO&t;19
 DECL|macro|OPT_MIDI
-mdefine_line|#define OPT_MIDI&t;18
+mdefine_line|#define OPT_MIDI&t;20
 DECL|macro|OPT_YM3812_AUTO
-mdefine_line|#define OPT_YM3812_AUTO&t;19
+mdefine_line|#define OPT_YM3812_AUTO&t;21
 DECL|macro|OPT_YM3812
-mdefine_line|#define OPT_YM3812&t;20
+mdefine_line|#define OPT_YM3812&t;22
 DECL|macro|OPT_SEQUENCER
-mdefine_line|#define OPT_SEQUENCER&t;21
+mdefine_line|#define OPT_SEQUENCER&t;23
 DECL|macro|OPT_LAST
-mdefine_line|#define OPT_LAST&t;21&t;/* Last defined OPT number */
+mdefine_line|#define OPT_LAST&t;23&t;/* Last defined OPT number */
 DECL|macro|ANY_DEVS
-mdefine_line|#define ANY_DEVS (B(OPT_AUDIO)|B(OPT_MIDI)|B(OPT_SEQUENCER)|B(OPT_GUS)| &bslash;&n;&t;&t;  B(OPT_MPU401)|B(OPT_PSS)|B(OPT_GUS16)|B(OPT_GUSMAX)| &bslash;&n;&t;&t;  B(OPT_MSS)|B(OPT_SSCAPE)|B(OPT_UART6850)|B(OPT_TRIX)| &bslash;&n;&t;&t;  B(OPT_MAD16))
+mdefine_line|#define ANY_DEVS (B(OPT_AUDIO)|B(OPT_MIDI)|B(OPT_SEQUENCER)|B(OPT_GUS)| &bslash;&n;&t;&t;  B(OPT_MPU401)|B(OPT_PSS)|B(OPT_GUS16)|B(OPT_GUSMAX)| &bslash;&n;&t;&t;  B(OPT_MSS)|B(OPT_SSCAPE)|B(OPT_UART6850)|B(OPT_TRIX)| &bslash;&n;&t;&t;  B(OPT_MAD16)|B(OPT_CS4232)|B(OPT_MAUI))
 DECL|macro|AUDIO_CARDS
-mdefine_line|#define AUDIO_CARDS (B (OPT_PSS) | B (OPT_SB) | B (OPT_PAS) | B (OPT_GUS) | &bslash;&n;&t;&t;B (OPT_MSS) | B (OPT_GUS16) | B (OPT_GUSMAX) | B (OPT_TRIX) | &bslash;&n;&t;&t;B (OPT_SSCAPE)| B(OPT_MAD16))
+mdefine_line|#define AUDIO_CARDS (B (OPT_PSS) | B (OPT_SB) | B (OPT_PAS) | B (OPT_GUS) | &bslash;&n;&t;&t;B (OPT_MSS) | B (OPT_GUS16) | B (OPT_GUSMAX) | B (OPT_TRIX) | &bslash;&n;&t;&t;B (OPT_SSCAPE)| B(OPT_MAD16) | B(OPT_CS4232))
 DECL|macro|MIDI_CARDS
-mdefine_line|#define MIDI_CARDS (B (OPT_PSS) | B (OPT_SB) | B (OPT_PAS) | B (OPT_MPU401) | &bslash;&n;&t;&t;    B (OPT_GUS) | B (OPT_TRIX) | B (OPT_SSCAPE)|B(OPT_MAD16))
+mdefine_line|#define MIDI_CARDS (B (OPT_PSS) | B (OPT_SB) | B (OPT_PAS) | B (OPT_MPU401) | &bslash;&n;&t;&t;    B (OPT_GUS) | B (OPT_TRIX) | B (OPT_SSCAPE)|B(OPT_MAD16) | &bslash;&n;&t;&t;    B (OPT_CS4232)|B(OPT_MAUI))
 multiline_comment|/*&n; * Options that have been disabled for some reason (incompletely implemented&n; * and/or tested). Don&squot;t remove from this list before looking at file&n; * experimental.txt for further info.&n; */
 r_typedef
 r_struct
@@ -298,6 +304,34 @@ comma
 l_int|0
 comma
 l_string|&quot;MAD16&quot;
+comma
+l_int|1
+comma
+l_int|0
+comma
+l_int|0
+)brace
+comma
+(brace
+l_int|0
+comma
+l_int|0
+comma
+l_string|&quot;CS4232&quot;
+comma
+l_int|1
+comma
+l_int|0
+comma
+l_int|0
+)brace
+comma
+(brace
+l_int|0
+comma
+l_int|0
+comma
+l_string|&quot;MAUI&quot;
 comma
 l_int|1
 comma
@@ -552,6 +586,10 @@ l_string|&quot;MediaTriX AudioTriX Pro support&quot;
 comma
 l_string|&quot;Support for MAD16 and/or Mozart based cards&quot;
 comma
+l_string|&quot;Support for Crystal CS4232 based (PnP) cards&quot;
+comma
+l_string|&quot;Support for Turtle Beach Wave Front (Maui, Tropez) synthesizers&quot;
+comma
 l_string|&quot;SoundBlaster Pro support&quot;
 comma
 l_string|&quot;SoundBlaster 16 support&quot;
@@ -611,92 +649,6 @@ r_int
 id|nr
 )paren
 (brace
-macro_line|#if 0
-r_switch
-c_cond
-(paren
-id|nr
-)paren
-(brace
-r_case
-l_int|0
-suffix:colon
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;The SoundBlaster, AdLib and ProAudioSpectrum&bslash;n&quot;
-l_string|&quot;CARDS cannot be installed at the same time.&bslash;n&bslash;n&quot;
-l_string|&quot;However the PAS16 has a SB emulator so you could select&quot;
-l_string|&quot;the SoundBlaster DRIVER with it.&bslash;n&quot;
-)paren
-suffix:semicolon
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;&t;- ProAudioSpectrum 16&bslash;n&quot;
-)paren
-suffix:semicolon
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;&t;- SoundBlaster / SB Pro&bslash;n&quot;
-)paren
-suffix:semicolon
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;          (Could be selected with a PAS16 also)&bslash;n&quot;
-)paren
-suffix:semicolon
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;&t;- AdLib&bslash;n&quot;
-)paren
-suffix:semicolon
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;&bslash;nDon&squot;t enable SoundBlaster if you have GUS at 0x220!&bslash;n&bslash;n&quot;
-)paren
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-id|OPT_LAST_MUTUAL
-op_plus
-l_int|1
-suffix:colon
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;&bslash;nThe following cards should work with any other cards.&bslash;n&quot;
-l_string|&quot;CAUTION! Don&squot;t enable MPU-401 if you don&squot;t have it.&bslash;n&quot;
-)paren
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-id|OPT_HIGHLEVEL
-suffix:colon
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;&bslash;nSelect one or more of the following options&bslash;n&quot;
-)paren
-suffix:semicolon
-r_break
-suffix:semicolon
-)brace
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -794,7 +746,6 @@ id|read
 (paren
 l_int|0
 comma
-op_amp
 id|answ
 comma
 r_sizeof
@@ -917,7 +868,6 @@ id|read
 (paren
 l_int|0
 comma
-op_amp
 id|answ
 comma
 r_sizeof
@@ -1041,6 +991,11 @@ id|answ
 l_int|10
 )braket
 suffix:semicolon
+r_int
+id|sb_base
+op_assign
+l_int|0
+suffix:semicolon
 id|printf
 (paren
 l_string|&quot;/*&bslash;tGenerated by configure. Don&squot;t edit!!!!&bslash;t*/&bslash;n&bslash;n&quot;
@@ -1053,100 +1008,8 @@ comma
 l_string|&quot;&bslash;nConfiguring the sound support&bslash;n&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#if 0
-multiline_comment|/*&n;     * The full driver appeared to be impossible to compile and boot.&n;     * There are too much supported cards now.&n;   */
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;Do you want to include full version of the sound driver (n/y) ? &quot;
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|think_positively
-(paren
-l_int|0
-)paren
-)paren
 (brace
-multiline_comment|/*&n;         * Select all but some most dangerous cards. These cards are difficult to&n;         * detect reliably or conflict with some other cards (SCSI, Mitsumi)&n;       */
-id|selected_options
-op_assign
-l_int|0xffffffff
-op_amp
-op_complement
-(paren
-id|B
-(paren
-id|OPT_MPU401
-)paren
-op_or
-id|B
-(paren
-id|OPT_UART6850
-)paren
-op_or
-id|B
-(paren
-id|OPT_PSS
-)paren
-)paren
-op_amp
-op_complement
-id|DISABLED_OPTIONS
-suffix:semicolon
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;Note! MPU-401, PSS and 6850 UART drivers not enabled&bslash;n&quot;
-)paren
-suffix:semicolon
-id|full_driver
-op_assign
-l_int|1
-suffix:semicolon
-)brace
-r_else
-macro_line|#endif
-(brace
-macro_line|#if 0
-id|fprintf
-(paren
-id|stderr
-comma
-l_string|&quot;Do you want to DISABLE the Sound Driver (n/y) ?&quot;
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|think_positively
-(paren
-l_int|0
-)paren
-)paren
-(brace
-id|printf
-(paren
-l_string|&quot;#undef CONFIGURE_SOUNDCARD&bslash;n&quot;
-)paren
-suffix:semicolon
-id|printf
-(paren
-l_string|&quot;#undef KERNEL_SOUNDCARD&bslash;n&quot;
-)paren
-suffix:semicolon
-m_exit
-(paren
-l_int|0
-)paren
-suffix:semicolon
-)brace
-macro_line|#endif
-multiline_comment|/*&n;       * Partial driver&n;       */
+multiline_comment|/*&n;     * Partial driver&n;     */
 id|full_driver
 op_assign
 l_int|0
@@ -1871,6 +1734,12 @@ r_goto
 id|genld_again
 suffix:semicolon
 )brace
+r_else
+id|printf
+(paren
+l_string|&quot;#define PSS_HAVE_LD&bslash;n&quot;
+)paren
+suffix:semicolon
 )brace
 r_else
 (brace
@@ -2036,6 +1905,11 @@ id|printf
 l_string|&quot;#define KERNEL_SOUNDCARD&bslash;n&quot;
 )paren
 suffix:semicolon
+id|printf
+(paren
+l_string|&quot;#define EXCLUDE_PNP&bslash;n&quot;
+)paren
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -2102,7 +1976,6 @@ id|printf
 l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#if defined(linux)
 r_if
 c_cond
 (paren
@@ -2188,6 +2061,8 @@ l_string|&quot;The factory default is 220&bslash;n&quot;
 l_string|&quot;Enter the SB I/O base: &quot;
 )paren
 suffix:semicolon
+id|sb_base
+op_assign
 id|num
 op_assign
 id|ask_value
@@ -2771,7 +2646,7 @@ op_logical_and
 (paren
 id|num
 op_eq
-l_int|0x220
+id|sb_base
 )paren
 )paren
 (brace
@@ -2942,23 +2817,12 @@ comma
 id|num
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|selected_options
-op_amp
-id|B
-(paren
-id|OPT_GUSMAX
-)paren
-)paren
-(brace
 id|fprintf
 (paren
 id|stderr
 comma
-l_string|&quot;&bslash;nSecond DMA channel for GUS MAX (optional)?&bslash;n&quot;
-l_string|&quot;The default value is 7 (0 disables)&bslash;n&quot;
+l_string|&quot;&bslash;nSecond DMA channel for GUS (optional)?&bslash;n&quot;
+l_string|&quot;The default value is 7 (-1 disables)&bslash;n&quot;
 l_string|&quot;Enter the value: &quot;
 )paren
 suffix:semicolon
@@ -2971,14 +2835,6 @@ comma
 l_int|7
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|num
-OG
-l_int|0
-)paren
-(brace
 r_if
 c_cond
 (paren
@@ -3003,20 +2859,18 @@ id|fprintf
 (paren
 id|stderr
 comma
-l_string|&quot;&bslash;nGUSMAX DMA set to %d&bslash;n&quot;
+l_string|&quot;&bslash;nGUS DMA2 set to %d&bslash;n&quot;
 comma
 id|num
 )paren
 suffix:semicolon
 id|printf
 (paren
-l_string|&quot;#define GUSMAX_DMA %d&bslash;n&quot;
+l_string|&quot;#define GUS_DMA2 %d&bslash;n&quot;
 comma
 id|num
 )paren
 suffix:semicolon
-)brace
-)brace
 r_if
 c_cond
 (paren
@@ -3451,6 +3305,7 @@ comma
 id|num
 )paren
 suffix:semicolon
+macro_line|#if YOU_WANT_TO_WASTE_RESOURCES
 id|fprintf
 (paren
 id|stderr
@@ -3565,6 +3420,7 @@ comma
 id|num
 )paren
 suffix:semicolon
+macro_line|#endif
 id|fprintf
 (paren
 id|stderr
@@ -4556,6 +4412,75 @@ id|fprintf
 (paren
 id|stderr
 comma
+l_string|&quot;&bslash;nSecond (capture) DMA number for AudioTriX?&bslash;n&quot;
+l_string|&quot;Valid values are 0, 1 and 3.&bslash;n&quot;
+l_string|&quot;The default value is 0&bslash;n&quot;
+l_string|&quot;(-1 disables the second DMA)&bslash;n&quot;
+l_string|&quot;Enter the value: &quot;
+)paren
+suffix:semicolon
+id|num
+op_assign
+id|ask_value
+(paren
+l_string|&quot;%d&quot;
+comma
+l_int|0
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|num
+op_ne
+l_int|0
+op_logical_and
+id|num
+op_ne
+l_int|1
+op_logical_and
+id|num
+op_ne
+l_int|3
+op_logical_or
+id|num
+op_ne
+op_minus
+l_int|1
+)paren
+(brace
+id|fprintf
+(paren
+id|stderr
+comma
+l_string|&quot;*** Illegal input! ***&bslash;n&quot;
+)paren
+suffix:semicolon
+id|num
+op_assign
+l_int|0
+suffix:semicolon
+)brace
+id|fprintf
+(paren
+id|stderr
+comma
+l_string|&quot;&bslash;nAudioTriX/WSS DMA2 set to %d&bslash;n&quot;
+comma
+id|num
+)paren
+suffix:semicolon
+id|printf
+(paren
+l_string|&quot;#define TRIX_DMA2 %d&bslash;n&quot;
+comma
+id|num
+)paren
+suffix:semicolon
+id|fprintf
+(paren
+id|stderr
+comma
 l_string|&quot;&bslash;nSoundBlaster I/O address for the AudioTriX card?&bslash;n&quot;
 l_string|&quot;The factory default is 220&bslash;n&quot;
 l_string|&quot;Other possible values are 200, 210, 230, 240, 250, 260 and 270&bslash;n&quot;
@@ -4827,6 +4752,384 @@ id|selected_options
 op_amp
 id|B
 (paren
+id|OPT_CS4232
+)paren
+)paren
+(brace
+r_int
+id|dma1
+suffix:semicolon
+id|fprintf
+(paren
+id|stderr
+comma
+l_string|&quot;&bslash;nWindows Sound System I/O base for CS4232?&bslash;n&quot;
+l_string|&quot;The factory default is 534&bslash;n&quot;
+l_string|&quot;Other possible values are  608, E84 or F44&bslash;n&quot;
+l_string|&quot;Enter the MSS I/O base: &quot;
+)paren
+suffix:semicolon
+id|num
+op_assign
+id|ask_value
+(paren
+l_string|&quot;%x&quot;
+comma
+l_int|0x534
+)paren
+suffix:semicolon
+id|fprintf
+(paren
+id|stderr
+comma
+l_string|&quot;CS4232 MSS I/O base set to %03x&bslash;n&quot;
+comma
+id|num
+)paren
+suffix:semicolon
+id|printf
+(paren
+l_string|&quot;#define CS4232_BASE 0x%03x&bslash;n&quot;
+comma
+id|num
+)paren
+suffix:semicolon
+id|fprintf
+(paren
+id|stderr
+comma
+l_string|&quot;&bslash;nIRQ number for the WSS mode of CS4232 ?&bslash;n&quot;
+l_string|&quot;Valid numbers are: 5, 7, 9(=2), 11, 12 or 15.&bslash;n&quot;
+l_string|&quot;The default value is 11.&bslash;n&quot;
+l_string|&quot;Enter the value: &quot;
+)paren
+suffix:semicolon
+id|num
+op_assign
+id|ask_value
+(paren
+l_string|&quot;%d&quot;
+comma
+l_int|11
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|num
+op_ne
+l_int|5
+op_logical_and
+id|num
+op_ne
+l_int|7
+op_logical_and
+id|num
+op_ne
+l_int|9
+op_logical_and
+id|num
+op_ne
+l_int|11
+op_logical_and
+id|num
+op_ne
+l_int|12
+op_logical_or
+id|num
+op_ne
+l_int|15
+)paren
+(brace
+id|fprintf
+(paren
+id|stderr
+comma
+l_string|&quot;*** Illegal input! ***&bslash;n&quot;
+)paren
+suffix:semicolon
+id|num
+op_assign
+l_int|11
+suffix:semicolon
+)brace
+id|fprintf
+(paren
+id|stderr
+comma
+l_string|&quot; CS4232 WSS IRQ set to %d&bslash;n&quot;
+comma
+id|num
+)paren
+suffix:semicolon
+id|printf
+(paren
+l_string|&quot;#define CS4232_IRQ %d&bslash;n&quot;
+comma
+id|num
+)paren
+suffix:semicolon
+id|fprintf
+(paren
+id|stderr
+comma
+l_string|&quot;&bslash;nWSS DMA number for CS4232?&bslash;n&quot;
+l_string|&quot;Valid values are 0, 1 and 3.&bslash;n&quot;
+l_string|&quot;The default value is 0&bslash;n&quot;
+l_string|&quot;(select the lowes possible one if you want to&bslash;n&quot;
+l_string|&quot;use full duplex mode)&bslash;n&quot;
+l_string|&quot;Enter the value: &quot;
+)paren
+suffix:semicolon
+id|num
+op_assign
+id|ask_value
+(paren
+l_string|&quot;%d&quot;
+comma
+l_int|0
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|num
+op_ne
+l_int|0
+op_logical_and
+id|num
+op_ne
+l_int|1
+op_logical_and
+id|num
+op_ne
+l_int|3
+)paren
+(brace
+id|fprintf
+(paren
+id|stderr
+comma
+l_string|&quot;*** Illegal input! ***&bslash;n&quot;
+)paren
+suffix:semicolon
+id|num
+op_assign
+l_int|0
+suffix:semicolon
+)brace
+id|fprintf
+(paren
+id|stderr
+comma
+l_string|&quot;&bslash;nCS4232/WSS DMA set to %d&bslash;n&quot;
+comma
+id|num
+)paren
+suffix:semicolon
+id|printf
+(paren
+l_string|&quot;#define CS4232_DMA %d&bslash;n&quot;
+comma
+id|num
+)paren
+suffix:semicolon
+id|dma1
+op_assign
+id|num
+suffix:semicolon
+id|fprintf
+(paren
+id|stderr
+comma
+l_string|&quot;&bslash;n Second WSS DMA number for CS4232?&bslash;n&quot;
+l_string|&quot;Valid values are 0, 1 and 3.&bslash;n&quot;
+l_string|&quot;The default value is 3&bslash;n&quot;
+l_string|&quot;Enter the value (-1 disables duplex mode): &quot;
+)paren
+suffix:semicolon
+id|num
+op_assign
+id|ask_value
+(paren
+l_string|&quot;%d&quot;
+comma
+l_int|3
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|num
+op_eq
+id|dma1
+op_logical_or
+(paren
+id|num
+op_ne
+op_minus
+l_int|1
+op_logical_and
+id|num
+op_ne
+l_int|0
+op_logical_and
+id|num
+op_ne
+l_int|1
+op_logical_and
+id|num
+op_ne
+l_int|3
+)paren
+)paren
+(brace
+id|fprintf
+(paren
+id|stderr
+comma
+l_string|&quot;*** Illegal input! ***&bslash;n&quot;
+)paren
+suffix:semicolon
+id|num
+op_assign
+l_int|3
+suffix:semicolon
+)brace
+id|fprintf
+(paren
+id|stderr
+comma
+l_string|&quot;&bslash;nCS4232/WSS DMA2 set to %d&bslash;n&quot;
+comma
+id|num
+)paren
+suffix:semicolon
+id|printf
+(paren
+l_string|&quot;#define CS4232_DMA2 %d&bslash;n&quot;
+comma
+id|num
+)paren
+suffix:semicolon
+id|fprintf
+(paren
+id|stderr
+comma
+l_string|&quot;&bslash;nMIDI (MPU-401) I/O address for the CS4232 card?&bslash;n&quot;
+l_string|&quot;The factory default is 330&bslash;n&quot;
+l_string|&quot;Other possible values are 330, 370, 3B0 and 3F0&bslash;n&quot;
+l_string|&quot;Enter the MPU I/O base: &quot;
+)paren
+suffix:semicolon
+id|num
+op_assign
+id|ask_value
+(paren
+l_string|&quot;%x&quot;
+comma
+l_int|0x330
+)paren
+suffix:semicolon
+id|fprintf
+(paren
+id|stderr
+comma
+l_string|&quot;CS4232 MIDI I/O base set to %03x&bslash;n&quot;
+comma
+id|num
+)paren
+suffix:semicolon
+id|printf
+(paren
+l_string|&quot;#define CS4232_MPU_BASE 0x%03x&bslash;n&quot;
+comma
+id|num
+)paren
+suffix:semicolon
+id|fprintf
+(paren
+id|stderr
+comma
+l_string|&quot;&bslash;nMIDI IRQ number for CS4232?&bslash;n&quot;
+l_string|&quot;Valid numbers are: 5, 7, 9(=2), 11, 12 or 15.&bslash;n&quot;
+l_string|&quot;The default value is 5.&bslash;n&quot;
+l_string|&quot;Enter the value: &quot;
+)paren
+suffix:semicolon
+id|num
+op_assign
+id|ask_value
+(paren
+l_string|&quot;%d&quot;
+comma
+l_int|5
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|num
+op_ne
+l_int|5
+op_logical_and
+id|num
+op_ne
+l_int|7
+op_logical_and
+id|num
+op_ne
+l_int|9
+op_logical_and
+id|num
+op_ne
+l_int|11
+op_logical_and
+id|num
+op_ne
+l_int|12
+op_logical_or
+id|num
+op_ne
+l_int|15
+)paren
+(brace
+id|fprintf
+(paren
+id|stderr
+comma
+l_string|&quot;*** Illegal input! ***&bslash;n&quot;
+)paren
+suffix:semicolon
+id|num
+op_assign
+l_int|5
+suffix:semicolon
+)brace
+id|fprintf
+(paren
+id|stderr
+comma
+l_string|&quot; CS4232 MIDI IRQ set to %d&bslash;n&quot;
+comma
+id|num
+)paren
+suffix:semicolon
+id|printf
+(paren
+l_string|&quot;#define CS4232_MPU_IRQ %d&bslash;n&quot;
+comma
+id|num
+)paren
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|selected_options
+op_amp
+id|B
+(paren
 id|OPT_MAD16
 )paren
 )paren
@@ -4874,6 +5177,72 @@ comma
 id|num
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|sb_base
+op_eq
+l_int|0x220
+op_logical_and
+(paren
+id|num
+op_eq
+l_int|0x530
+op_logical_or
+id|num
+op_eq
+l_int|0x480
+)paren
+)paren
+op_logical_or
+(paren
+id|sb_base
+op_eq
+l_int|0x240
+op_logical_and
+(paren
+id|num
+op_eq
+l_int|0xf40
+op_logical_or
+id|num
+op_eq
+l_int|0x604
+)paren
+)paren
+)paren
+(brace
+id|fprintf
+(paren
+id|stderr
+comma
+l_string|&quot;FATAL ERROR!!!!!!!!!!!!!!&bslash;n&quot;
+l_string|&quot;&bslash;tThis I/O port selection makes MAD16/Mozart&bslash;n&quot;
+l_string|&quot;&bslash;tto use 0x%03x as the SB port.&bslash;n&quot;
+l_string|&quot;&bslash;tThis conflicts with the true SB card.&bslash;n&quot;
+l_string|&quot;&bslash;tRun the config again and select another I/O base.&bslash;n&quot;
+comma
+id|sb_base
+)paren
+suffix:semicolon
+id|printf
+(paren
+l_string|&quot;#undef CONFIGURE_SOUNDCARD&bslash;n&quot;
+)paren
+suffix:semicolon
+id|printf
+(paren
+l_string|&quot;#undef KERNEL_SOUNDCARD&bslash;n&quot;
+)paren
+suffix:semicolon
+m_exit
+(paren
+op_minus
+l_int|1
+)paren
+suffix:semicolon
+)brace
 id|fprintf
 (paren
 id|stderr
@@ -4945,7 +5314,7 @@ id|fprintf
 (paren
 id|stderr
 comma
-l_string|&quot;&bslash;nWSS DMA number for MAD16/Mozart?&bslash;n&quot;
+l_string|&quot;&bslash;nWSS DMA (playback) number for MAD16/Mozart?&bslash;n&quot;
 l_string|&quot;Valid values are 0, 1 and 3.&bslash;n&quot;
 l_string|&quot;The default value is 3&bslash;n&quot;
 l_string|&quot;Enter the value: &quot;
@@ -5004,16 +5373,74 @@ comma
 id|num
 )paren
 suffix:semicolon
+id|num
+op_assign
+(paren
+id|num
+op_eq
+l_int|0
+)paren
+ques
+c_cond
+l_int|1
+suffix:colon
+l_int|0
+suffix:semicolon
 id|fprintf
 (paren
 id|stderr
 comma
-l_string|&quot;&bslash;nMIDI (MPU-401) I/O address for the MAD16 card?&bslash;n&quot;
-l_string|&quot;(MPU401 is not supported by Mozart and 82C928)&bslash;n&quot;
+l_string|&quot;&bslash;nMAD16/Mozart supports full duplex mode if the&bslash;n&quot;
+l_string|&quot;card has a suitable codec chip (CS423x or AD1845).&bslash;n&quot;
+l_string|&quot;This mode requires another DMA channel (DMA%d)&bslash;n&quot;
+l_string|&quot;Do you want to enable this mode? (n/y)&quot;
+comma
+id|num
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|think_positively
+(paren
+l_int|0
+)paren
+)paren
+(brace
+id|fprintf
+(paren
+id|stderr
+comma
+l_string|&quot;&bslash;nMAD16/WSS capture DMA set to %d&bslash;n&quot;
+comma
+id|num
+)paren
+suffix:semicolon
+id|printf
+(paren
+l_string|&quot;#define MAD16_DMA2 %d&bslash;n&quot;
+comma
+id|num
+)paren
+suffix:semicolon
+)brace
+r_else
+id|printf
+(paren
+l_string|&quot;#define MAD16_DMA2 -1&bslash;n&quot;
+)paren
+suffix:semicolon
+id|fprintf
+(paren
+id|stderr
+comma
+l_string|&quot;&bslash;nMIDI (MPU-401/SB) I/O address for the MAD16 card?&bslash;n&quot;
 l_string|&quot;(This is the second MIDI port in TB Tropez)&bslash;n&quot;
-l_string|&quot;The factory default is 330 (use 0 to disable)&bslash;n&quot;
 l_string|&quot;Other possible values are 330, 320, 310 and 300&bslash;n&quot;
-l_string|&quot;Enter the MPU I/O base: &quot;
+l_string|&quot;For 82C928 and Mozart you may use any nonzero value&bslash;n&quot;
+l_string|&quot;since the driver ignores this setting.&bslash;n&quot;
+l_string|&quot;The factory default is 330 (use 0 to disable)&bslash;n&quot;
+l_string|&quot;Enter the MIDI I/O base: &quot;
 )paren
 suffix:semicolon
 id|num
@@ -5130,7 +5557,6 @@ id|num
 suffix:semicolon
 )brace
 )brace
-macro_line|#endif
 r_if
 c_cond
 (paren

@@ -49,6 +49,12 @@ DECL|macro|SNDCARD_MAD16
 mdefine_line|#define SNDCARD_MAD16&t;&t;19
 DECL|macro|SNDCARD_MAD16_MPU
 mdefine_line|#define SNDCARD_MAD16_MPU&t;20
+DECL|macro|SNDCARD_CS4232
+mdefine_line|#define SNDCARD_CS4232&t;&t;21
+DECL|macro|SNDCARD_CS4232_MPU
+mdefine_line|#define SNDCARD_CS4232_MPU&t;22
+DECL|macro|SNDCARD_MAUI
+mdefine_line|#define SNDCARD_MAUI&t;&t;23
 multiline_comment|/***********************************&n; * IOCTL Commands for /dev/sequencer&n; */
 macro_line|#ifndef _IOWR
 multiline_comment|/*&t;@(#)ioctlp.h */
@@ -767,7 +773,7 @@ DECL|member|name
 r_char
 id|name
 (braket
-l_int|30
+l_int|32
 )braket
 suffix:semicolon
 DECL|member|caps
@@ -909,6 +915,11 @@ r_int
 id|fragments
 suffix:semicolon
 multiline_comment|/* # of available fragments (partially usend ones not counted) */
+DECL|member|fragstotal
+r_int
+id|fragstotal
+suffix:semicolon
+multiline_comment|/* Total # of fragments allocated */
 DECL|member|fragsize
 r_int
 id|fragsize
@@ -930,6 +941,82 @@ DECL|macro|SNDCTL_DSP_GETISPACE
 mdefine_line|#define SNDCTL_DSP_GETISPACE&t;&t;_IOR (&squot;P&squot;,13, audio_buf_info)
 DECL|macro|SNDCTL_DSP_NONBLOCK
 mdefine_line|#define SNDCTL_DSP_NONBLOCK&t;&t;_IO  (&squot;P&squot;,14)
+DECL|macro|SNDCTL_DSP_GETCAPS
+mdefine_line|#define SNDCTL_DSP_GETCAPS&t;&t;_IOR (&squot;P&squot;,15, int)
+DECL|macro|DSP_CAP_REVISION
+macro_line|#&t;define DSP_CAP_REVISION&t;&t;0x000000ff&t;/* Bits for revision level (0 to 255) */
+DECL|macro|DSP_CAP_DUPLEX
+macro_line|#&t;define DSP_CAP_DUPLEX&t;&t;0x00000100&t;/* Full duplex record/playback */
+DECL|macro|DSP_CAP_REALTIME
+macro_line|#&t;define DSP_CAP_REALTIME&t;&t;0x00000200&t;/* Real time capability */
+DECL|macro|DSP_CAP_BATCH
+macro_line|#&t;define DSP_CAP_BATCH&t;&t;0x00000400&t;/* Device has some kind of */
+multiline_comment|/* internal buffers which may */
+multiline_comment|/* cause some delays and */
+multiline_comment|/* decrease precision of timing */
+DECL|macro|DSP_CAP_COPROC
+macro_line|#&t;define DSP_CAP_COPROC&t;&t;0x00000800&t;/* Has a coprocessor */
+multiline_comment|/* Sometimes it&squot;s a DSP */
+multiline_comment|/* but usually not */
+DECL|macro|DSP_CAP_TRIGGER
+macro_line|#&t;define DSP_CAP_TRIGGER&t;&t;0x00001000&t;/* Supports SETTRIGGER */
+DECL|macro|SNDCTL_DSP_GETTRIGGER
+mdefine_line|#define SNDCTL_DSP_GETTRIGGER&t;&t;_IOR (&squot;P&squot;,16, int)
+DECL|macro|SNDCTL_DSP_SETTRIGGER
+mdefine_line|#define SNDCTL_DSP_SETTRIGGER&t;&t;_IOW (&squot;P&squot;,16, int)
+DECL|macro|PCM_ENABLE_INPUT
+macro_line|#&t;define PCM_ENABLE_INPUT&t;&t;0x00000001
+DECL|macro|PCM_ENABLE_OUTPUT
+macro_line|#&t;define PCM_ENABLE_OUTPUT&t;0x00000002
+DECL|struct|count_info
+r_typedef
+r_struct
+id|count_info
+(brace
+DECL|member|bytes
+r_int
+id|bytes
+suffix:semicolon
+multiline_comment|/* Total # of bytes processed */
+DECL|member|blocks
+r_int
+id|blocks
+suffix:semicolon
+multiline_comment|/* # of fragment transitions since last time */
+DECL|member|ptr
+r_int
+id|ptr
+suffix:semicolon
+multiline_comment|/* Current DMA pointer value */
+DECL|typedef|count_info
+)brace
+id|count_info
+suffix:semicolon
+DECL|macro|SNDCTL_DSP_GETIPTR
+mdefine_line|#define SNDCTL_DSP_GETIPTR&t;&t;_IOR (&squot;P&squot;,17, count_info)
+DECL|macro|SNDCTL_DSP_GETOPTR
+mdefine_line|#define SNDCTL_DSP_GETOPTR&t;&t;_IOR (&squot;P&squot;,18, count_info)
+DECL|struct|buffmem_desc
+r_typedef
+r_struct
+id|buffmem_desc
+(brace
+DECL|member|buffer
+id|caddr_t
+id|buffer
+suffix:semicolon
+DECL|member|size
+r_int
+id|size
+suffix:semicolon
+DECL|typedef|buffmem_desc
+)brace
+id|buffmem_desc
+suffix:semicolon
+DECL|macro|SNDCTL_DSP_MAPINBUF
+mdefine_line|#define SNDCTL_DSP_MAPINBUF&t;&t;_IOR (&squot;P&squot;, 19, buffmem_desc)
+DECL|macro|SNDCTL_DSP_MAPOUTBUF
+mdefine_line|#define SNDCTL_DSP_MAPOUTBUF&t;&t;_IOR (&squot;P&squot;, 20, buffmem_desc)
 DECL|macro|SOUND_PCM_READ_RATE
 mdefine_line|#define SOUND_PCM_READ_RATE&t;&t;_IOR (&squot;P&squot;, 2, int)
 DECL|macro|SOUND_PCM_READ_CHANNELS
@@ -963,6 +1050,20 @@ DECL|macro|SOUND_PCM_GETISPACE
 mdefine_line|#define SOUND_PCM_GETISPACE&t;&t;SNDCTL_DSP_GETISPACE
 DECL|macro|SOUND_PCM_NONBLOCK
 mdefine_line|#define SOUND_PCM_NONBLOCK&t;&t;SNDCTL_DSP_NONBLOCK
+DECL|macro|SOUND_PCM_GETCAPS
+mdefine_line|#define SOUND_PCM_GETCAPS&t;&t;SNDCTL_DSP_GETCAPS
+DECL|macro|SOUND_PCM_GETTRIGGER
+mdefine_line|#define SOUND_PCM_GETTRIGGER&t;&t;SNDCTL_DSP_GETTRIGGER
+DECL|macro|SOUND_PCM_SETTRIGGER
+mdefine_line|#define SOUND_PCM_SETTRIGGER&t;&t;SNDCTL_DSP_SETTRIGGER
+DECL|macro|SOUND_PCM_GETIPTR
+mdefine_line|#define SOUND_PCM_GETIPTR&t;&t;SNDCTL_DSP_GETIPTR
+DECL|macro|SOUND_PCM_GETOPTR
+mdefine_line|#define SOUND_PCM_GETOPTR&t;&t;SNDCTL_DSP_GETOPTR
+DECL|macro|SOUND_PCM_MAPINBUF
+mdefine_line|#define SOUND_PCM_MAPINBUF&t;&t;SNDCTL_DSP_MAPINBUF
+DECL|macro|SOUND_PCM_MAPOUTBUF
+mdefine_line|#define SOUND_PCM_MAPOUTBUF&t;&t;SNDCTL_DSP_MAPOUTBUF
 multiline_comment|/*&n; * ioctl calls to be used in communication with coprocessors and&n; * DSP chips.&n; */
 DECL|struct|copr_buffer
 r_typedef
@@ -1144,7 +1245,7 @@ mdefine_line|#define SOUND_MIXER_RECMASK&t;0xfd&t;/* Arg contains a bit for each
 DECL|macro|SOUND_MIXER_CAPS
 mdefine_line|#define SOUND_MIXER_CAPS&t;0xfc
 DECL|macro|SOUND_CAP_EXCL_INPUT
-mdefine_line|#define SOUND_CAP_EXCL_INPUT&t;0x00000001&t;/* Only one recording source at a time */
+macro_line|#&t;define SOUND_CAP_EXCL_INPUT&t;0x00000001&t;/* Only one recording source at a time */
 DECL|macro|SOUND_MIXER_STEREODEVS
 mdefine_line|#define SOUND_MIXER_STEREODEVS&t;0xfb&t;/* Mixer channels supporting stereo */
 multiline_comment|/*&t;Device mask bits&t;*/
@@ -1294,6 +1395,8 @@ DECL|macro|EV_CHN_COMMON
 mdefine_line|#define EV_CHN_COMMON&t;&t;0x92
 DECL|macro|EV_CHN_VOICE
 mdefine_line|#define EV_CHN_VOICE&t;&t;0x93
+DECL|macro|EV_SYSEX
+mdefine_line|#define EV_SYSEX&t;&t;0x94
 multiline_comment|/*&n; * Event types 200 to 220 are reserved for application use.&n; * These numbers will not be used by the driver.&n; */
 multiline_comment|/*&n; * Events for event type EV_CHN_VOICE&n; */
 DECL|macro|MIDI_NOTEOFF
@@ -1334,6 +1437,9 @@ DECL|macro|TMR_SPP
 mdefine_line|#define TMR_SPP&t;&t;&t;10&t;/* Song position pointer */
 DECL|macro|TMR_TIMESIG
 mdefine_line|#define TMR_TIMESIG&t;&t;11&t;/* Time signature */
+multiline_comment|/*&n; *&t;Local event types&n; */
+DECL|macro|LOCL_STARTAUDIO
+mdefine_line|#define LOCL_STARTAUDIO&t;&t;1
 macro_line|#if (!defined(__KERNEL__) &amp;&amp; !defined(KERNEL) &amp;&amp; !defined(INKERNEL) &amp;&amp; !defined(_KERNEL)) || defined(USE_SEQ_MACROS) 
 multiline_comment|/*&n; *&t;Some convenience macros to simplify programming of the&n; *&t;/dev/sequencer interface&n; *&n; *&t;These macros define the API which should be used when possible.&n; */
 macro_line|#ifndef USE_SIMPLE_MACROS
@@ -1383,6 +1489,9 @@ mdefine_line|#define SEQ_KEY_PRESSURE(dev, chn, note, pressure) &bslash;&n;&t;&t
 multiline_comment|/*&n; * Midi channel messages&n; */
 DECL|macro|_CHN_COMMON
 mdefine_line|#define _CHN_COMMON(dev, event, chn, p1, p2, w14) &bslash;&n;&t;&t;&t;&t;&t;{_SEQ_NEEDBUF(8);&bslash;&n;&t;&t;&t;&t;&t;_seqbuf[_seqbufptr] = EV_CHN_COMMON;&bslash;&n;&t;&t;&t;&t;&t;_seqbuf[_seqbufptr+1] = (dev);&bslash;&n;&t;&t;&t;&t;&t;_seqbuf[_seqbufptr+2] = (event);&bslash;&n;&t;&t;&t;&t;&t;_seqbuf[_seqbufptr+3] = (chn);&bslash;&n;&t;&t;&t;&t;&t;_seqbuf[_seqbufptr+4] = (p1);&bslash;&n;&t;&t;&t;&t;&t;_seqbuf[_seqbufptr+5] = (p2);&bslash;&n;&t;&t;&t;&t;&t;*(short *)&amp;_seqbuf[_seqbufptr+6] = (w14);&bslash;&n;&t;&t;&t;&t;&t;_SEQ_ADVBUF(8);}
+multiline_comment|/*&n; * SEQ_SYSEX permits sending of sysex messages. (It may look that it permits&n; * sending any MIDI bytes but it&squot;s absolutely not possible. Trying to do&n; * so _will_ cause problems with MPU401 intelligent mode).&n; *&n; * Sysex messages are sent in blocks of 1 to 6 bytes. Longer messages must be &n; * sent by calling SEQ_SYSEX() several times (there must be no other events&n; * between them). First sysex fragment must have 0xf0 in the first byte&n; * and the last byte (buf[len-1] of the last fragment must be 0xf7. No byte&n; * between these sysex start and end markers cannot be larger than 0x7f. Also&n; * lengths of each fragments (except the last one) must be 6.&n; *&n; * Breaking the above rules may work with some MIDI ports but is likely to&n; * cause fatal problems with some other devices (such as MPU401).&n; */
+DECL|macro|SEQ_SYSEX
+mdefine_line|#define SEQ_SYSEX(dev, buf, len) &bslash;&n;&t;&t;&t;&t;&t;{int i, l=(len); if (l&gt;6)l=6;&bslash;&n;&t;&t;&t;&t;&t;_SEQ_NEEDBUF(8);&bslash;&n;&t;&t;&t;&t;&t;_seqbuf[_seqbufptr] = EV_SYSEX;&bslash;&n;&t;&t;&t;&t;&t;for(i=0;i&lt;l;i++)_seqbuf[_seqbufptr+i+1] = (buf)[i];&bslash;&n;&t;&t;&t;&t;&t;for(i=l;i&lt;6;i++)_seqbuf[_seqbufptr+i+1] = 0xff;&bslash;&n;&t;&t;&t;&t;&t;_SEQ_ADVBUF(8);}
 DECL|macro|SEQ_CHN_PRESSURE
 mdefine_line|#define SEQ_CHN_PRESSURE(dev, chn, pressure) &bslash;&n;&t;&t;_CHN_COMMON(dev, MIDI_CHN_PRESSURE, chn, pressure, 0, 0)
 DECL|macro|SEQ_SET_PATCH
@@ -1404,9 +1513,6 @@ DECL|macro|SEQ_MAIN_VOLUME
 mdefine_line|#define SEQ_MAIN_VOLUME(dev, voice, value) SEQ_CONTROL(dev, voice, CTL_MAIN_VOLUME, (value*16383)/100)
 DECL|macro|SEQ_PANNING
 mdefine_line|#define SEQ_PANNING(dev, voice, pos) SEQ_CONTROL(dev, voice, CTL_PAN, (pos+128) / 2)
-macro_line|#if 0
-mdefine_line|#define SEQ_PANNING(dev, voice, pos)&t;{_SEQ_NEEDBUF(8);&bslash;&n;&t;&t;&t;&t;&t;_seqbuf[_seqbufptr] = SEQ_EXTENDED;&bslash;&n;&t;&t;&t;&t;&t;_seqbuf[_seqbufptr+1] = SEQ_BALANCE;&bslash;&n;&t;&t;&t;&t;&t;_seqbuf[_seqbufptr+2] = (dev);&bslash;&n;&t;&t;&t;&t;&t;_seqbuf[_seqbufptr+3] = (voice);&bslash;&n;&t;&t;&t;&t;&t;(char)_seqbuf[_seqbufptr+4] = (pos);&bslash;&n;&t;&t;&t;&t;&t;_seqbuf[_seqbufptr+5] = 0;&bslash;&n;&t;&t;&t;&t;&t;_seqbuf[_seqbufptr+6] = 0;&bslash;&n;&t;&t;&t;&t;&t;_seqbuf[_seqbufptr+7] = 1;&bslash;&n;&t;&t;&t;&t;&t;_SEQ_ADVBUF(8);}
-macro_line|#endif
 multiline_comment|/*&n; * Timing and syncronization macros&n; */
 DECL|macro|_TIMER_EVENT
 mdefine_line|#define _TIMER_EVENT(ev, parm)&t;&t;{_SEQ_NEEDBUF(8);&bslash;&n;&t;&t;&t;&t; &t;_seqbuf[_seqbufptr+0] = EV_TIMING; &bslash;&n;&t;&t;&t;&t; &t;_seqbuf[_seqbufptr+1] = (ev); &bslash;&n;&t;&t;&t;&t;&t;_seqbuf[_seqbufptr+2] = 0;&bslash;&n;&t;&t;&t;&t;&t;_seqbuf[_seqbufptr+3] = 0;&bslash;&n;&t;&t;&t;&t; &t;*(unsigned int *)&amp;_seqbuf[_seqbufptr+4] = (parm); &bslash;&n;&t;&t;&t;&t;&t;_SEQ_ADVBUF(8);}
@@ -1428,6 +1534,11 @@ DECL|macro|SEQ_SONGPOS
 mdefine_line|#define SEQ_SONGPOS(pos)&t;&t;_TIMER_EVENT(TMR_SPP, pos)
 DECL|macro|SEQ_TIME_SIGNATURE
 mdefine_line|#define SEQ_TIME_SIGNATURE(sig)&t;&t;_TIMER_EVENT(TMR_TIMESIG, sig)
+multiline_comment|/*&n; * Local control events&n; */
+DECL|macro|_LOCAL_EVENT
+mdefine_line|#define _LOCAL_EVENT(ev, parm)&t;&t;{_SEQ_NEEDBUF(8);&bslash;&n;&t;&t;&t;&t; &t;_seqbuf[_seqbufptr+0] = EV_SEQ_LOCAL; &bslash;&n;&t;&t;&t;&t; &t;_seqbuf[_seqbufptr+1] = (ev); &bslash;&n;&t;&t;&t;&t;&t;_seqbuf[_seqbufptr+2] = 0;&bslash;&n;&t;&t;&t;&t;&t;_seqbuf[_seqbufptr+3] = 0;&bslash;&n;&t;&t;&t;&t; &t;*(unsigned int *)&amp;_seqbuf[_seqbufptr+4] = (parm); &bslash;&n;&t;&t;&t;&t;&t;_SEQ_ADVBUF(8);}
+DECL|macro|SEQ_PLAYAUDIO
+mdefine_line|#define SEQ_PLAYAUDIO(devmask)&t;&t;_LOCAL_EVENT(LOCL_STARTAUDIO, devmask)
 multiline_comment|/*&n; * Events for the level 1 interface only &n; */
 DECL|macro|SEQ_MIDIOUT
 mdefine_line|#define SEQ_MIDIOUT(device, byte)&t;{_SEQ_NEEDBUF(4);&bslash;&n;&t;&t;&t;&t;&t;_seqbuf[_seqbufptr] = SEQ_MIDIPUTC;&bslash;&n;&t;&t;&t;&t;&t;_seqbuf[_seqbufptr+1] = (byte);&bslash;&n;&t;&t;&t;&t;&t;_seqbuf[_seqbufptr+2] = (device);&bslash;&n;&t;&t;&t;&t;&t;_seqbuf[_seqbufptr+3] = 0;&bslash;&n;&t;&t;&t;&t;&t;_SEQ_ADVBUF(4);}
@@ -1437,13 +1548,5 @@ mdefine_line|#define SEQ_WRPATCH(patchx, len)&t;&t;{if (_seqbufptr) seqbuf_dump(
 DECL|macro|SEQ_WRPATCH2
 mdefine_line|#define SEQ_WRPATCH2(patchx, len)&t;(seqbuf_dump(), write(seqfd, (char*)(patchx), len))
 macro_line|#endif
-r_int
-id|soundcard_init
-c_func
-(paren
-r_int
-id|mem_start
-)paren
-suffix:semicolon
 macro_line|#endif
 eof

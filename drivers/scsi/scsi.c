@@ -8125,6 +8125,11 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|variable|scsi_loadable_module_flag
+r_int
+id|scsi_loadable_module_flag
+suffix:semicolon
+multiline_comment|/* Set after we scan builtin drivers */
 DECL|function|scsi_init_malloc
 r_void
 op_star
@@ -8489,6 +8494,11 @@ multiline_comment|/* Yes we&squot;re here... */
 id|dispatch_scsi_info_ptr
 op_assign
 id|dispatch_scsi_info
+suffix:semicolon
+multiline_comment|/* Init a few things so we can &quot;malloc&quot; memory. */
+id|scsi_loadable_module_flag
+op_assign
+l_int|0
 suffix:semicolon
 id|timer_table
 (braket
@@ -8961,6 +8971,10 @@ id|sdtpnt-&gt;finish
 )paren
 suffix:semicolon
 )brace
+id|scsi_loadable_module_flag
+op_assign
+l_int|1
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon

@@ -1,5 +1,5 @@
 multiline_comment|/*&n; *  linux/mm/swap.c&n; *&n; *  Copyright (C) 1991, 1992, 1993, 1994  Linus Torvalds&n; */
-multiline_comment|/*&n; * This file should contain most things doing the swapping from/to disk.&n; * Started 18.12.91&n; */
+multiline_comment|/*&n; * This file should contain most things doing the swapping from/to disk.&n; * Started 18.12.91&n; *&n; * Swap aging added 23.2.95, Stephen Tweedie.&n; */
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/head.h&gt;
@@ -10,8 +10,10 @@ macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/swap.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
+macro_line|#include &lt;linux/swapctl.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;asm/system.h&gt; /* for cli()/sti() */
+macro_line|#include &lt;asm/segment.h&gt; /* for memcpy_to/fromfs */
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 DECL|macro|MAX_SWAPFILES
@@ -25,6 +27,53 @@ r_int
 id|min_free_pages
 op_assign
 l_int|20
+suffix:semicolon
+multiline_comment|/*&n; * Constants for the page aging mechanism: the maximum age (actually,&n; * the maximum &quot;youthfulness&quot;); the quanta by which pages rejuvinate&n; * and age; and the initial age for new pages. &n; */
+DECL|variable|swap_control
+id|swap_control_t
+id|swap_control
+op_assign
+(brace
+l_int|20
+comma
+l_int|3
+comma
+l_int|1
+comma
+l_int|3
+comma
+multiline_comment|/* Page aging */
+l_int|10
+comma
+l_int|2
+comma
+l_int|2
+comma
+l_int|0
+comma
+multiline_comment|/* Buffer aging */
+l_int|32
+comma
+l_int|4
+comma
+multiline_comment|/* Aging cluster */
+l_int|8192
+comma
+l_int|4096
+comma
+multiline_comment|/* Pageout and bufferout weights */
+op_minus
+l_int|200
+comma
+multiline_comment|/* Buffer grace */
+l_int|1
+comma
+l_int|1
+comma
+multiline_comment|/* Buffs/pages to free */
+id|RCL_ROUND_ROBIN
+multiline_comment|/* Balancing policy */
+)brace
 suffix:semicolon
 DECL|variable|nr_swapfiles
 r_static
@@ -388,6 +437,202 @@ id|swap_cache_size
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* General swap control */
+multiline_comment|/* Parse the kernel command line &quot;swap=&quot; option at load time: */
+DECL|function|swap_setup
+r_void
+id|swap_setup
+c_func
+(paren
+r_char
+op_star
+id|str
+comma
+r_int
+op_star
+id|ints
+)paren
+(brace
+r_int
+op_star
+id|swap_vars
+(braket
+l_int|8
+)braket
+op_assign
+(brace
+op_amp
+id|MAX_PAGE_AGE
+comma
+op_amp
+id|PAGE_ADVANCE
+comma
+op_amp
+id|PAGE_DECLINE
+comma
+op_amp
+id|PAGE_INITIAL_AGE
+comma
+op_amp
+id|AGE_CLUSTER_FRACT
+comma
+op_amp
+id|AGE_CLUSTER_MIN
+comma
+op_amp
+id|PAGEOUT_WEIGHT
+comma
+op_amp
+id|BUFFEROUT_WEIGHT
+)brace
+suffix:semicolon
+r_int
+id|i
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|ints
+(braket
+l_int|0
+)braket
+op_logical_and
+id|i
+OL
+l_int|8
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|ints
+(braket
+id|i
+op_plus
+l_int|1
+)braket
+)paren
+op_star
+(paren
+id|swap_vars
+(braket
+id|i
+)braket
+)paren
+op_assign
+id|ints
+(braket
+id|i
+op_plus
+l_int|1
+)braket
+suffix:semicolon
+)brace
+)brace
+multiline_comment|/* Parse the kernel command line &quot;buff=&quot; option at load time: */
+DECL|function|buff_setup
+r_void
+id|buff_setup
+c_func
+(paren
+r_char
+op_star
+id|str
+comma
+r_int
+op_star
+id|ints
+)paren
+(brace
+r_int
+op_star
+id|buff_vars
+(braket
+l_int|6
+)braket
+op_assign
+(brace
+op_amp
+id|MAX_BUFF_AGE
+comma
+op_amp
+id|BUFF_ADVANCE
+comma
+op_amp
+id|BUFF_DECLINE
+comma
+op_amp
+id|BUFF_INITIAL_AGE
+comma
+op_amp
+id|BUFFEROUT_WEIGHT
+comma
+op_amp
+id|BUFFERMEM_GRACE
+)brace
+suffix:semicolon
+r_int
+id|i
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|ints
+(braket
+l_int|0
+)braket
+op_logical_and
+id|i
+OL
+l_int|6
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|ints
+(braket
+id|i
+op_plus
+l_int|1
+)braket
+)paren
+op_star
+(paren
+id|buff_vars
+(braket
+id|i
+)braket
+)paren
+op_assign
+id|ints
+(braket
+id|i
+op_plus
+l_int|1
+)braket
+suffix:semicolon
+)brace
+)brace
+multiline_comment|/* Page aging */
 DECL|function|rw_swap_page
 r_void
 id|rw_swap_page
@@ -1639,6 +1884,7 @@ id|reserved
 r_return
 l_int|0
 suffix:semicolon
+multiline_comment|/* Deal with page aging.  Pages age from being unused; they&n;&t; * rejuvinate on being accessed.  Only swap old pages (age==0&n;&t; * is oldest). */
 r_if
 c_cond
 (paren
@@ -1675,10 +1921,34 @@ id|pte
 )paren
 )paren
 suffix:semicolon
+id|touch_page
+c_func
+(paren
+id|page
+)paren
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
 )brace
+id|age_page
+c_func
+(paren
+id|page
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|age_of
+c_func
+(paren
+id|page
+)paren
+)paren
+r_return
+l_int|0
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1791,6 +2061,9 @@ id|invalidate
 c_func
 (paren
 )paren
+suffix:semicolon
+id|tsk-&gt;nswap
+op_increment
 suffix:semicolon
 id|write_swap_page
 c_func
@@ -1937,14 +2210,6 @@ id|entry
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * A new implementation of swap_out().  We do not swap complete processes,&n; * but only a small number of blocks, before we continue with the next&n; * process.  The number of blocks actually swapped is determined on the&n; * number of page faults, that this process actually had in the last time,&n; * so we won&squot;t swap heavily used processes all the time ...&n; *&n; * Note: the priority argument is a hint on much CPU to waste with the&n; *       swap block search, not a hint, of how much blocks to swap with&n; *       each process.&n; *&n; * (C) 1993 Kai Petzke, wpp@marie.physik.tu-berlin.de&n; */
-multiline_comment|/*&n; * These are the minimum and maximum number of pages to swap from one process,&n; * before proceeding to the next:&n; */
-DECL|macro|SWAP_MIN
-mdefine_line|#define SWAP_MIN&t;4
-DECL|macro|SWAP_MAX
-mdefine_line|#define SWAP_MAX&t;32
-multiline_comment|/*&n; * The actual number of pages to swap is determined as:&n; * SWAP_RATIO / (number of recent major page faults)&n; */
-DECL|macro|SWAP_RATIO
-mdefine_line|#define SWAP_RATIO&t;128
 DECL|function|swap_out_pmd
 r_static
 r_inline
@@ -2339,6 +2604,17 @@ id|VM_SHM
 r_return
 l_int|0
 suffix:semicolon
+multiline_comment|/* Don&squot;t swap out areas like shared memory which have their&n;           own separate swapping mechanism. */
+r_if
+c_cond
+(paren
+id|vma-&gt;vm_flags
+op_amp
+id|VM_DONTSWAP
+)paren
+r_return
+l_int|0
+suffix:semicolon
 id|end
 op_assign
 id|vma-&gt;vm_end
@@ -2555,9 +2831,15 @@ id|p
 suffix:semicolon
 id|counter
 op_assign
-l_int|6
+(paren
+(paren
+id|PAGEOUT_WEIGHT
 op_star
 id|nr_tasks
+)paren
+op_rshift
+l_int|10
+)paren
 op_rshift
 id|priority
 suffix:semicolon
@@ -2640,65 +2922,14 @@ op_logical_neg
 id|p-&gt;swap_cnt
 )paren
 (brace
-id|p-&gt;dec_flt
-op_assign
-(paren
-id|p-&gt;dec_flt
-op_star
-l_int|3
-)paren
-op_div
-l_int|4
-op_plus
-id|p-&gt;maj_flt
-op_minus
-id|p-&gt;old_maj_flt
-suffix:semicolon
-id|p-&gt;old_maj_flt
-op_assign
-id|p-&gt;maj_flt
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|p-&gt;dec_flt
-op_ge
-id|SWAP_RATIO
-op_div
-id|SWAP_MIN
-)paren
-(brace
-id|p-&gt;dec_flt
-op_assign
-id|SWAP_RATIO
-op_div
-id|SWAP_MIN
-suffix:semicolon
+multiline_comment|/* Normalise the number of pages swapped by&n;&t;&t;&t;   multiplying by (RSS / 1MB) */
 id|p-&gt;swap_cnt
 op_assign
-id|SWAP_MIN
-suffix:semicolon
-)brace
-r_else
-r_if
-c_cond
+id|AGE_CLUSTER_SIZE
+c_func
 (paren
-id|p-&gt;dec_flt
-op_le
-id|SWAP_RATIO
-op_div
-id|SWAP_MAX
+id|p-&gt;mm-&gt;rss
 )paren
-id|p-&gt;swap_cnt
-op_assign
-id|SWAP_MAX
-suffix:semicolon
-r_else
-id|p-&gt;swap_cnt
-op_assign
-id|SWAP_RATIO
-op_div
-id|p-&gt;dec_flt
 suffix:semicolon
 )brace
 r_if
@@ -2752,7 +2983,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * we keep on shrinking one resource until it&squot;s considered &quot;too hard&quot;,&n; * and then switch to the next one (priority being an indication on how&n; * hard we should try with the resource).&n; *&n; * This should automatically find the resource that can most easily be&n; * free&squot;d, so hopefully we&squot;ll get reasonable behaviour even under very&n; * different circumstances.&n; */
+multiline_comment|/*&n; * We are much more aggressive about trying to swap out than we used&n; * to be.  This works out OK, because we now do proper aging on page&n; * contents. &n; */
 DECL|function|try_to_free_page
 r_static
 r_int
@@ -3325,7 +3556,7 @@ id|order
 suffix:semicolon
 )brace
 DECL|macro|EXPAND
-mdefine_line|#define EXPAND(addr,low,high) &bslash;&n;do { unsigned long size = PAGE_SIZE &lt;&lt; high; &bslash;&n;&t;while (high &gt; low) { &bslash;&n;&t;&t;high--; size &gt;&gt;= 1; cli(); &bslash;&n;&t;&t;add_mem_queue(free_area_list+high, addr); &bslash;&n;&t;&t;mark_used((unsigned long) addr, high); &bslash;&n;&t;&t;restore_flags(flags); &bslash;&n;&t;&t;addr = (struct mem_list *) (size + (unsigned long) addr); &bslash;&n;&t;} mem_map[MAP_NR((unsigned long) addr)].count = 1; &bslash;&n;} while (0)
+mdefine_line|#define EXPAND(addr,low,high) &bslash;&n;do { unsigned long size = PAGE_SIZE &lt;&lt; high; &bslash;&n;&t;while (high &gt; low) { &bslash;&n;&t;&t;high--; size &gt;&gt;= 1; cli(); &bslash;&n;&t;&t;add_mem_queue(free_area_list+high, addr); &bslash;&n;&t;&t;mark_used((unsigned long) addr, high); &bslash;&n;&t;&t;restore_flags(flags); &bslash;&n;&t;&t;addr = (struct mem_list *) (size + (unsigned long) addr); &bslash;&n;&t;} mem_map[MAP_NR((unsigned long) addr)].count = 1; &bslash;&n;&t;mem_map[MAP_NR((unsigned long) addr)].age = PAGE_INITIAL_AGE; &bslash;&n;} while (0)
 DECL|function|__get_free_pages
 r_int
 r_int

@@ -155,6 +155,8 @@ DECL|macro|VM_DENYWRITE
 mdefine_line|#define VM_DENYWRITE&t;0x0800&t;/* ETXTBSY on write attempts.. */
 DECL|macro|VM_EXECUTABLE
 mdefine_line|#define VM_EXECUTABLE&t;0x1000
+DECL|macro|VM_DONTSWAP
+mdefine_line|#define VM_DONTSWAP&t;0x2000  /* Some vm types have their own&n;&t;&t;&t;&t; * hard-coded swap mechanism */
 DECL|macro|VM_STACK_FLAGS
 mdefine_line|#define VM_STACK_FLAGS&t;0x0177
 multiline_comment|/*&n; * mapping from the currently active vm_flags protection bits (the&n; * low four bits) to a page protection mask..&n; */
@@ -369,6 +371,12 @@ r_extern
 id|mem_map_t
 op_star
 id|mem_map
+suffix:semicolon
+r_extern
+r_int
+r_char
+op_star
+id|age_map
 suffix:semicolon
 multiline_comment|/* planning stage.. */
 DECL|macro|P_DIRTY

@@ -230,7 +230,7 @@ r_int
 r_char
 id|b_req
 suffix:semicolon
-multiline_comment|/* 0 if the buffer has been invalidated */
+multiline_comment|/* 0 if the buffer has been &n;&t;&t;&t;&t;&t; * invalidated */
 DECL|member|b_list
 r_int
 r_char
@@ -242,19 +242,35 @@ r_int
 r_char
 id|b_reuse
 suffix:semicolon
-multiline_comment|/* 0 - normal, 1 - better reused for something else */
+multiline_comment|/* 0 - normal, &n;&t;&t;&t;&t;&t; * 1 - better reused for something &n;&t;&t;&t;&t;&t; *     else */
+DECL|member|b_touched
+r_int
+r_char
+id|b_touched
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* True if the buffer has been&n;&t;&t;&t;&t;&t; * accessed since it was last aged */
+DECL|member|b_has_aged
+r_int
+r_char
+id|b_has_aged
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* True if the buffer has aged&n;&t;&t;&t;&t;&t; * (by alias to another buffer&n;&t;&t;&t;&t;&t; * on the same page) since it&n;&t;&t;&t;&t;&t; * was last scanned for aging */
 DECL|member|b_flushtime
 r_int
 r_int
 id|b_flushtime
 suffix:semicolon
-multiline_comment|/* Time when this (dirty) buffer should be written */
+multiline_comment|/* Time when this (dirty) buffer&n;&t;&t;&t;&t;&t; * should be written */
 DECL|member|b_lru_time
 r_int
 r_int
 id|b_lru_time
 suffix:semicolon
-multiline_comment|/* Time when this buffer was last used. */
+multiline_comment|/* Time when this buffer was &n;&t;&t;&t;&t;&t; * last used. */
 DECL|member|b_wait
 r_struct
 id|wait_queue

@@ -2759,6 +2759,10 @@ c_func
 id|ETH_P_AX25
 )paren
 suffix:semicolon
+id|skb-&gt;mac.raw
+op_assign
+id|skb-&gt;data
+suffix:semicolon
 id|IS_SKB
 c_func
 (paren

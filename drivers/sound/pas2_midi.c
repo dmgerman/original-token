@@ -128,10 +128,8 @@ l_string|&quot;PAS2: Midi busy&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
-id|RET_ERROR
-(paren
+op_minus
 id|EBUSY
-)paren
 suffix:semicolon
 )brace
 multiline_comment|/*&n;   * Reset input and output FIFO pointers&n;   */
@@ -144,9 +142,13 @@ comma
 id|MIDI_CONTROL
 )paren
 suffix:semicolon
-id|DISABLE_INTR
+id|save_flags
 (paren
 id|flags
+)paren
+suffix:semicolon
+id|cli
+(paren
 )paren
 suffix:semicolon
 r_if
@@ -240,7 +242,7 @@ id|ofifo_bytes
 op_assign
 l_int|0
 suffix:semicolon
-id|RESTORE_INTR
+id|restore_flags
 (paren
 id|flags
 )paren
@@ -374,9 +376,13 @@ r_int
 id|flags
 suffix:semicolon
 multiline_comment|/*&n;   * Drain the local queue first&n;   */
-id|DISABLE_INTR
+id|save_flags
 (paren
 id|flags
+)paren
+suffix:semicolon
+id|cli
+(paren
 )paren
 suffix:semicolon
 r_while
@@ -400,7 +406,7 @@ id|qhead
 op_increment
 suffix:semicolon
 )brace
-id|RESTORE_INTR
+id|restore_flags
 (paren
 id|flags
 )paren
@@ -436,9 +442,13 @@ r_return
 l_int|0
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t;&t; * Local queue full&n;&t;&t;&t;&t; */
-id|DISABLE_INTR
+id|save_flags
 (paren
 id|flags
+)paren
+suffix:semicolon
+id|cli
+(paren
 )paren
 suffix:semicolon
 id|tmp_queue
@@ -454,7 +464,7 @@ suffix:semicolon
 id|qtail
 op_increment
 suffix:semicolon
-id|RESTORE_INTR
+id|restore_flags
 (paren
 id|flags
 )paren
@@ -500,15 +510,13 @@ comma
 r_int
 id|cmd
 comma
-r_int
+id|ioctl_arg
 id|arg
 )paren
 (brace
 r_return
-id|RET_ERROR
-(paren
+op_minus
 id|EINVAL
-)paren
 suffix:semicolon
 )brace
 r_static
@@ -535,7 +543,6 @@ id|dev
 )paren
 (brace
 r_return
-op_logical_neg
 id|qlen
 suffix:semicolon
 )brace
@@ -764,9 +771,13 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
-id|DISABLE_INTR
+id|save_flags
 (paren
 id|flags
+)paren
+suffix:semicolon
+id|cli
+(paren
 )paren
 suffix:semicolon
 r_while
@@ -790,26 +801,12 @@ id|qhead
 op_increment
 suffix:semicolon
 )brace
-id|RESTORE_INTR
+id|restore_flags
 (paren
 id|flags
 )paren
 suffix:semicolon
 )brace
-macro_line|#if 0
-r_if
-c_cond
-(paren
-id|stat
-op_amp
-id|M_S_FRAMING_ERROR
-)paren
-id|printk
-(paren
-l_string|&quot;MIDI framing error&bslash;n&quot;
-)paren
-suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren

@@ -9,17 +9,17 @@ mdefine_line|#define&t;COMDPORT   (uart6850_base+1)&t;/*&n;&t;&t;&t;&t;&t;   * *
 DECL|macro|STATPORT
 mdefine_line|#define&t;STATPORT   (uart6850_base+1)&t;/*&n;&t;&t;&t;&t;&t;   * * * Midi6850 Status Port on IBM   */
 DECL|macro|uart6850_status
-mdefine_line|#define uart6850_status()&t;&t;INB(STATPORT)
+mdefine_line|#define uart6850_status()&t;&t;inb( STATPORT)
 DECL|macro|input_avail
-mdefine_line|#define input_avail()&t;&t;((uart6850_status()&amp;INPUT_AVAIL))
+mdefine_line|#define input_avail()&t;&t;(uart6850_status()&amp;INPUT_AVAIL)
 DECL|macro|output_ready
-mdefine_line|#define output_ready()&t;&t;((uart6850_status()&amp;OUTPUT_READY))
+mdefine_line|#define output_ready()&t;&t;(uart6850_status()&amp;OUTPUT_READY)
 DECL|macro|uart6850_cmd
-mdefine_line|#define uart6850_cmd(cmd)&t;OUTB(cmd, COMDPORT)
+mdefine_line|#define uart6850_cmd(cmd)&t;outb( cmd,  COMDPORT)
 DECL|macro|uart6850_read
-mdefine_line|#define uart6850_read()&t;&t;INB(DATAPORT)
+mdefine_line|#define uart6850_read()&t;&t;inb( DATAPORT)
 DECL|macro|uart6850_write
-mdefine_line|#define uart6850_write(byte)&t;OUTB(byte, DATAPORT)
+mdefine_line|#define uart6850_write(byte)&t;outb( byte,  DATAPORT)
 DECL|macro|OUTPUT_READY
 mdefine_line|#define&t;OUTPUT_READY&t;0x02&t;/*&n;&t;&t;&t;&t;   * * * Mask for Data Read Ready Bit   */
 DECL|macro|INPUT_AVAIL
@@ -81,6 +81,39 @@ r_int
 r_char
 id|data
 )paren
+suffix:semicolon
+r_static
+r_void
+id|poll_uart6850
+(paren
+r_int
+r_int
+id|dummy
+)paren
+suffix:semicolon
+DECL|variable|uart6850_osp
+r_static
+id|sound_os_info
+op_star
+id|uart6850_osp
+suffix:semicolon
+DECL|variable|uart6850_timer
+r_static
+r_struct
+id|timer_list
+id|uart6850_timer
+op_assign
+(brace
+l_int|NULL
+comma
+l_int|NULL
+comma
+l_int|0
+comma
+l_int|0
+comma
+id|poll_uart6850
+)brace
 suffix:semicolon
 r_static
 r_void
@@ -154,15 +187,16 @@ op_decrement
 suffix:semicolon
 )brace
 r_void
-DECL|function|INTR_HANDLER_PARMS
+DECL|function|m6850intr
 id|m6850intr
 (paren
-id|INTR_HANDLER_PARMS
-(paren
+r_int
 id|irq
 comma
+r_struct
+id|pt_regs
+op_star
 id|dummy
-)paren
 )paren
 (brace
 r_if
@@ -192,13 +226,6 @@ r_int
 r_int
 id|flags
 suffix:semicolon
-id|DEFINE_TIMER
-(paren
-id|uart6850_timer
-comma
-id|poll_uart6850
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -212,9 +239,13 @@ id|OPEN_READ
 r_return
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t;&t; * No longer required&n;&t;&t;&t;&t; */
-id|DISABLE_INTR
+id|save_flags
 (paren
 id|flags
+)paren
+suffix:semicolon
+id|cli
+(paren
 )paren
 suffix:semicolon
 r_if
@@ -228,17 +259,25 @@ id|uart6850_input_loop
 (paren
 )paren
 suffix:semicolon
-id|ACTIVATE_TIMER
+(brace
+id|uart6850_timer.expires
+op_assign
 (paren
-id|uart6850_timer
-comma
-id|poll_uart6850
-comma
 l_int|1
 )paren
+op_plus
+id|jiffies
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;&t; * Come back later&n;&t;&t;&t;&t;&t;&t;&t; */
-id|RESTORE_INTR
+id|add_timer
+(paren
+op_amp
+id|uart6850_timer
+)paren
+suffix:semicolon
+)brace
+suffix:semicolon
+multiline_comment|/*&n;&t;&t;&t;&t;   * Come back later&n;&t;&t;&t;&t; */
+id|restore_flags
 (paren
 id|flags
 )paren
@@ -292,10 +331,8 @@ l_string|&quot;Midi6850: Midi busy&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
-id|RET_ERROR
-(paren
+op_minus
 id|EBUSY
-)paren
 suffix:semicolon
 )brace
 id|uart6850_cmd
@@ -339,6 +376,13 @@ id|uart6850_cmd
 id|UART_MODE_ON
 )paren
 suffix:semicolon
+id|del_timer
+(paren
+op_amp
+id|uart6850_timer
+)paren
+suffix:semicolon
+suffix:semicolon
 id|uart6850_opened
 op_assign
 l_int|0
@@ -365,9 +409,13 @@ r_int
 id|flags
 suffix:semicolon
 multiline_comment|/*&n;   * Test for input since pending input seems to block the output.&n;   */
-id|DISABLE_INTR
+id|save_flags
 (paren
 id|flags
+)paren
+suffix:semicolon
+id|cli
+(paren
 )paren
 suffix:semicolon
 r_if
@@ -381,7 +429,7 @@ id|uart6850_input_loop
 (paren
 )paren
 suffix:semicolon
-id|RESTORE_INTR
+id|restore_flags
 (paren
 id|flags
 )paren
@@ -490,15 +538,13 @@ comma
 r_int
 id|cmd
 comma
-r_int
+id|ioctl_arg
 id|arg
 )paren
 (brace
 r_return
-id|RET_ERROR
-(paren
+op_minus
 id|EINVAL
-)paren
 suffix:semicolon
 )brace
 r_static
@@ -616,6 +662,10 @@ id|uart6850_base
 op_assign
 id|hw_config-&gt;io_base
 suffix:semicolon
+id|uart6850_osp
+op_assign
+id|hw_config-&gt;osp
+suffix:semicolon
 id|uart6850_irq
 op_assign
 id|hw_config-&gt;irq
@@ -627,14 +677,16 @@ op_logical_neg
 id|uart6850_detected
 )paren
 r_return
-id|RET_ERROR
-(paren
+op_minus
 id|EIO
-)paren
 suffix:semicolon
-id|DISABLE_INTR
+id|save_flags
 (paren
 id|flags
+)paren
+suffix:semicolon
+id|cli
+(paren
 )paren
 suffix:semicolon
 r_for
@@ -667,7 +719,7 @@ id|ok
 op_assign
 l_int|1
 suffix:semicolon
-id|RESTORE_INTR
+id|restore_flags
 (paren
 id|flags
 )paren
@@ -728,6 +780,10 @@ id|ok
 op_assign
 l_int|0
 suffix:semicolon
+id|uart6850_osp
+op_assign
+id|hw_config-&gt;osp
+suffix:semicolon
 id|uart6850_base
 op_assign
 id|hw_config-&gt;io_base
@@ -746,6 +802,8 @@ comma
 id|m6850intr
 comma
 l_string|&quot;MIDI6850&quot;
+comma
+id|uart6850_osp
 )paren
 OL
 l_int|0
@@ -765,6 +823,22 @@ id|ok
 suffix:semicolon
 r_return
 id|ok
+suffix:semicolon
+)brace
+r_void
+DECL|function|unload_uart6850
+id|unload_uart6850
+(paren
+r_struct
+id|address_info
+op_star
+id|hw_config
+)paren
+(brace
+id|snd_release_irq
+(paren
+id|hw_config-&gt;irq
+)paren
 suffix:semicolon
 )brace
 macro_line|#endif

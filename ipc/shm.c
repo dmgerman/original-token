@@ -2619,6 +2619,8 @@ id|VM_MAYSHARE
 op_or
 id|VM_SHARED
 op_or
+id|VM_DONTSWAP
+op_or
 id|VM_MAYREAD
 op_or
 id|VM_MAYEXEC

@@ -34,9 +34,9 @@ mdefine_line|#define DSP_CMD_DMAOFF&t;&t;0xD4
 DECL|macro|IMODE_NONE
 mdefine_line|#define IMODE_NONE&t;&t;0
 DECL|macro|IMODE_OUTPUT
-mdefine_line|#define IMODE_OUTPUT&t;&t;1
+mdefine_line|#define IMODE_OUTPUT&t;&t;PCM_ENABLE_OUTPUT
 DECL|macro|IMODE_INPUT
-mdefine_line|#define IMODE_INPUT&t;&t;2
+mdefine_line|#define IMODE_INPUT&t;&t;PCM_ENABLE_INPUT
 DECL|macro|IMODE_INIT
 mdefine_line|#define IMODE_INIT&t;&t;3
 DECL|macro|IMODE_MIDI

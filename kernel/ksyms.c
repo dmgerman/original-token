@@ -98,13 +98,6 @@ r_void
 op_star
 id|sys_call_table
 suffix:semicolon
-macro_line|#ifdef CONFIG_FTAPE
-r_extern
-r_char
-op_star
-id|ftape_big_buffer
-suffix:semicolon
-macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI
 macro_line|#include &quot;../drivers/scsi/scsi.h&quot;
 macro_line|#include &quot;../drivers/scsi/scsi_ioctl.h&quot;
@@ -443,6 +436,12 @@ id|X
 c_func
 (paren
 id|mem_map
+)paren
+comma
+id|X
+c_func
+(paren
+id|remap_page_range
 )paren
 comma
 multiline_comment|/* filesystem internal functions */
@@ -1280,15 +1279,6 @@ id|X
 c_func
 (paren
 id|unregister_netdevice_notifier
-)paren
-comma
-macro_line|#endif
-macro_line|#ifdef CONFIG_FTAPE
-multiline_comment|/* The next labels are needed for ftape driver.  */
-id|X
-c_func
-(paren
-id|ftape_big_buffer
 )paren
 comma
 macro_line|#endif

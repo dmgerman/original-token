@@ -83,8 +83,13 @@ id|gus_irq
 comma
 id|gus_dma
 suffix:semicolon
+r_extern
+id|sound_os_info
+op_star
+id|gus_osp
+suffix:semicolon
 DECL|macro|GUS_MIDI_STATUS
-mdefine_line|#define GUS_MIDI_STATUS()&t;INB(u_MidiStatus)
+mdefine_line|#define GUS_MIDI_STATUS()&t;inb( u_MidiStatus)
 r_static
 r_int
 DECL|function|gus_midi_open
@@ -133,13 +138,11 @@ l_string|&quot;GUS: Midi busy&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
-id|RET_ERROR
-(paren
+op_minus
 id|EBUSY
-)paren
 suffix:semicolon
 )brace
-id|OUTB
+id|outb
 (paren
 id|MIDI_RESET
 comma
@@ -196,7 +199,7 @@ op_or_assign
 id|MIDI_ENABLE_XMIT
 suffix:semicolon
 )brace
-id|OUTB
+id|outb
 (paren
 id|gus_midi_control
 comma
@@ -249,9 +252,13 @@ id|output_used
 op_assign
 l_int|1
 suffix:semicolon
-id|DISABLE_INTR
+id|save_flags
 (paren
 id|flags
+)paren
+suffix:semicolon
+id|cli
+(paren
 )paren
 suffix:semicolon
 r_if
@@ -268,7 +275,7 @@ id|ok
 op_assign
 l_int|1
 suffix:semicolon
-id|OUTB
+id|outb
 (paren
 id|midi_byte
 comma
@@ -283,7 +290,7 @@ id|gus_midi_control
 op_or_assign
 id|MIDI_ENABLE_XMIT
 suffix:semicolon
-id|OUTB
+id|outb
 (paren
 id|gus_midi_control
 comma
@@ -291,7 +298,7 @@ id|u_MidiControl
 )paren
 suffix:semicolon
 )brace
-id|RESTORE_INTR
+id|restore_flags
 (paren
 id|flags
 )paren
@@ -310,7 +317,7 @@ id|dev
 )paren
 (brace
 multiline_comment|/*&n;   * Reset FIFO pointers, disable intrs&n;   */
-id|OUTB
+id|outb
 (paren
 id|MIDI_RESET
 comma
@@ -340,9 +347,13 @@ r_int
 id|flags
 suffix:semicolon
 multiline_comment|/*&n;   * Drain the local queue first&n;   */
-id|DISABLE_INTR
+id|save_flags
 (paren
 id|flags
+)paren
+suffix:semicolon
+id|cli
+(paren
 )paren
 suffix:semicolon
 r_while
@@ -366,7 +377,7 @@ id|qhead
 op_increment
 suffix:semicolon
 )brace
-id|RESTORE_INTR
+id|restore_flags
 (paren
 id|flags
 )paren
@@ -402,9 +413,13 @@ r_return
 l_int|0
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t;&t; * Local queue full&n;&t;&t;&t;&t; */
-id|DISABLE_INTR
+id|save_flags
 (paren
 id|flags
+)paren
+suffix:semicolon
+id|cli
+(paren
 )paren
 suffix:semicolon
 id|tmp_queue
@@ -420,7 +435,7 @@ suffix:semicolon
 id|qtail
 op_increment
 suffix:semicolon
-id|RESTORE_INTR
+id|restore_flags
 (paren
 id|flags
 )paren
@@ -466,15 +481,13 @@ comma
 r_int
 id|cmd
 comma
-r_int
+id|ioctl_arg
 id|arg
 )paren
 (brace
 r_return
-id|RET_ERROR
-(paren
+op_minus
 id|EINVAL
-)paren
 suffix:semicolon
 )brace
 r_static
@@ -509,9 +522,13 @@ id|output_used
 r_return
 l_int|0
 suffix:semicolon
-id|DISABLE_INTR
+id|save_flags
 (paren
 id|flags
+)paren
+suffix:semicolon
+id|cli
+(paren
 )paren
 suffix:semicolon
 r_if
@@ -535,7 +552,7 @@ id|qhead
 op_increment
 suffix:semicolon
 )brace
-id|RESTORE_INTR
+id|restore_flags
 (paren
 id|flags
 )paren
@@ -633,7 +650,7 @@ r_return
 id|mem_start
 suffix:semicolon
 )brace
-id|OUTB
+id|outb
 (paren
 id|MIDI_RESET
 comma
@@ -677,9 +694,13 @@ r_int
 r_int
 id|flags
 suffix:semicolon
-id|DISABLE_INTR
+id|save_flags
 (paren
 id|flags
+)paren
+suffix:semicolon
+id|cli
+(paren
 )paren
 suffix:semicolon
 id|stat
@@ -698,7 +719,7 @@ id|MIDI_RCV_FULL
 (brace
 id|data
 op_assign
-id|INB
+id|inb
 (paren
 id|u_MidiData
 )paren
@@ -758,7 +779,7 @@ op_and_assign
 op_complement
 id|MIDI_ENABLE_XMIT
 suffix:semicolon
-id|OUTB
+id|outb
 (paren
 id|gus_midi_control
 comma
@@ -767,35 +788,7 @@ id|u_MidiControl
 suffix:semicolon
 )brace
 )brace
-macro_line|#if 0
-r_if
-c_cond
-(paren
-id|stat
-op_amp
-id|MIDI_FRAME_ERR
-)paren
-id|printk
-(paren
-l_string|&quot;GUS: Midi framing error&bslash;n&quot;
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|stat
-op_amp
-id|MIDI_OVERRUN
-op_logical_and
-id|input_opened
-)paren
-id|printk
-(paren
-l_string|&quot;GUS: Midi input overrun&bslash;n&quot;
-)paren
-suffix:semicolon
-macro_line|#endif
-id|RESTORE_INTR
+id|restore_flags
 (paren
 id|flags
 )paren

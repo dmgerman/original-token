@@ -543,6 +543,12 @@ id|p-&gt;maj_flt
 op_plus
 id|p-&gt;cmaj_flt
 suffix:semicolon
+id|current-&gt;cnswap
+op_add_assign
+id|p-&gt;nswap
+op_plus
+id|p-&gt;cnswap
+suffix:semicolon
 id|kfree
 c_func
 (paren

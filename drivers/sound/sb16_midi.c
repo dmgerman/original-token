@@ -9,18 +9,23 @@ DECL|macro|COMDPORT
 mdefine_line|#define&t;COMDPORT   (sb16midi_base+1)
 DECL|macro|STATPORT
 mdefine_line|#define&t;STATPORT   (sb16midi_base+1)
+r_extern
+id|sound_os_info
+op_star
+id|sb_osp
+suffix:semicolon
 DECL|macro|sb16midi_status
-mdefine_line|#define sb16midi_status()&t;&t;INB(STATPORT)
+mdefine_line|#define sb16midi_status()&t;&t;inb( STATPORT)
 DECL|macro|input_avail
 mdefine_line|#define input_avail()&t;&t;(!(sb16midi_status()&amp;INPUT_AVAIL))
 DECL|macro|output_ready
 mdefine_line|#define output_ready()&t;&t;(!(sb16midi_status()&amp;OUTPUT_READY))
 DECL|macro|sb16midi_cmd
-mdefine_line|#define sb16midi_cmd(cmd)&t;&t;OUTB(cmd, COMDPORT)
+mdefine_line|#define sb16midi_cmd(cmd)&t;&t;outb( cmd,  COMDPORT)
 DECL|macro|sb16midi_read
-mdefine_line|#define sb16midi_read()&t;&t;INB(DATAPORT)
+mdefine_line|#define sb16midi_read()&t;&t;inb( DATAPORT)
 DECL|macro|sb16midi_write
-mdefine_line|#define sb16midi_write(byte)&t;OUTB(byte, DATAPORT)
+mdefine_line|#define sb16midi_write(byte)&t;outb( byte,  DATAPORT)
 DECL|macro|OUTPUT_READY
 mdefine_line|#define&t;OUTPUT_READY&t;0x40
 DECL|macro|INPUT_AVAIL
@@ -187,10 +192,8 @@ id|sb16midi_opened
 )paren
 (brace
 r_return
-id|RET_ERROR
-(paren
+op_minus
 id|EBUSY
-)paren
 suffix:semicolon
 )brace
 id|sb16midi_input_loop
@@ -244,9 +247,13 @@ r_int
 id|flags
 suffix:semicolon
 multiline_comment|/*&n;   * Test for input since pending input seems to block the output.&n;   */
-id|DISABLE_INTR
+id|save_flags
 (paren
 id|flags
+)paren
+suffix:semicolon
+id|cli
+(paren
 )paren
 suffix:semicolon
 r_if
@@ -260,7 +267,7 @@ id|sb16midi_input_loop
 (paren
 )paren
 suffix:semicolon
-id|RESTORE_INTR
+id|restore_flags
 (paren
 id|flags
 )paren
@@ -351,15 +358,13 @@ comma
 r_int
 id|cmd
 comma
-r_int
+id|ioctl_arg
 id|arg
 )paren
 (brace
 r_return
-id|RET_ERROR
-(paren
+op_minus
 id|EINVAL
-)paren
 suffix:semicolon
 )brace
 r_static
@@ -469,14 +474,16 @@ op_logical_neg
 id|sb16midi_detected
 )paren
 r_return
-id|RET_ERROR
-(paren
+op_minus
 id|EIO
-)paren
 suffix:semicolon
-id|DISABLE_INTR
+id|save_flags
 (paren
 id|flags
+)paren
+suffix:semicolon
+id|cli
+(paren
 )paren
 suffix:semicolon
 r_for
@@ -546,7 +553,7 @@ id|ok
 op_assign
 l_int|1
 suffix:semicolon
-id|RESTORE_INTR
+id|restore_flags
 (paren
 id|flags
 )paren
@@ -616,9 +623,13 @@ id|ok
 op_assign
 l_int|0
 suffix:semicolon
-id|DISABLE_INTR
+id|save_flags
 (paren
 id|flags
+)paren
+suffix:semicolon
+id|cli
+(paren
 )paren
 suffix:semicolon
 r_for
@@ -719,7 +730,7 @@ id|sb16midi_input_loop
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t;&t; * Flush input before enabling interrupts&n;&t;&t;&t;&t; */
-id|RESTORE_INTR
+id|restore_flags
 (paren
 id|flags
 )paren
@@ -787,6 +798,17 @@ suffix:semicolon
 r_return
 id|ok
 suffix:semicolon
+)brace
+r_void
+DECL|function|unload_sb16midi
+id|unload_sb16midi
+(paren
+r_struct
+id|address_info
+op_star
+id|hw_config
+)paren
+(brace
 )brace
 macro_line|#endif
 macro_line|#endif

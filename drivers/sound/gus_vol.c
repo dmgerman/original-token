@@ -352,7 +352,7 @@ suffix:semicolon
 macro_line|#else
 id|mainvol
 op_assign
-l_int|128
+l_int|127
 suffix:semicolon
 macro_line|#endif
 r_return
@@ -366,7 +366,7 @@ op_star
 id|mainvol
 )paren
 op_div
-l_int|128
+l_int|127
 )paren
 op_star
 id|mixer_mainvol
