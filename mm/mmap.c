@@ -744,6 +744,18 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|prot
+op_amp
+id|PAGE_RW
+)paren
+multiline_comment|/* only PAGE_COW or read-only supported right now */
+r_return
+op_minus
+id|EINVAL
+suffix:semicolon
+r_if
+c_cond
+(paren
 id|off
 op_amp
 (paren

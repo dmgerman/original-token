@@ -153,10 +153,10 @@ r_struct
 id|file
 op_star
 )paren
-id|__get_free_page
+id|get_free_page
 c_func
 (paren
-id|GFP_BUFFER
+id|GFP_KERNEL
 )paren
 suffix:semicolon
 r_if
