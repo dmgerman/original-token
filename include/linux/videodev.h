@@ -864,6 +864,8 @@ DECL|macro|VID_HARDWARE_VINO
 mdefine_line|#define VID_HARDWARE_VINO&t;20&t;/* Reserved for SGI Indy Vino */
 DECL|macro|VID_HARDWARE_CADET
 mdefine_line|#define VID_HARDWARE_CADET&t;21&t;/* Cadet radio */
+DECL|macro|VID_HARDWARE_CPIA
+mdefine_line|#define VID_HARDWARE_CPIA&t;22
 multiline_comment|/*&n; *&t;Initialiser list&n; */
 DECL|struct|video_init
 r_struct

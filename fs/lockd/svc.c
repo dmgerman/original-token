@@ -979,13 +979,6 @@ id|nlmsvc_pid
 op_assign
 l_int|0
 suffix:semicolon
-id|init_waitqueue_head
-c_func
-(paren
-op_amp
-id|lockd_exit
-)paren
-suffix:semicolon
 id|nlmxdr_init
 c_func
 (paren

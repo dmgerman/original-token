@@ -689,15 +689,13 @@ op_star
 id|dquot
 )paren
 (brace
-r_struct
-id|wait_queue
+id|DECLARE_WAITQUEUE
+c_func
+(paren
 id|wait
-op_assign
-(brace
-id|current
 comma
-l_int|NULL
-)brace
+id|current
+)paren
 suffix:semicolon
 id|add_wait_queue
 c_func
@@ -1658,6 +1656,13 @@ r_sizeof
 r_struct
 id|dquot
 )paren
+)paren
+suffix:semicolon
+id|init_waitqueue_head
+c_func
+(paren
+op_amp
+id|dquot-&gt;dq_wait
 )paren
 suffix:semicolon
 multiline_comment|/* all dquots go on the inuse_list */

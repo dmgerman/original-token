@@ -11,8 +11,8 @@ macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/blkdev.h&gt;
 macro_line|#include &lt;linux/hdreg.h&gt;
+macro_line|#include &lt;linux/ide.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
-macro_line|#include &quot;ide.h&quot;
 macro_line|#include &quot;ide_modes.h&quot;
 multiline_comment|/*&n; * Default speeds.  These can be changed with &quot;auto-tune&quot; and/or hdparm.&n; */
 DECL|macro|UMC_DRIVE0

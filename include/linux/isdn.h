@@ -1317,15 +1317,10 @@ id|termios
 id|callout_termios
 suffix:semicolon
 DECL|member|open_wait
-r_struct
-id|wait_queue
-op_star
-id|open_wait
-suffix:semicolon
 DECL|member|close_wait
-r_struct
-id|wait_queue
-op_star
+id|wait_queue_head_t
+id|open_wait
+comma
 id|close_wait
 suffix:semicolon
 DECL|typedef|modem_info
@@ -1535,16 +1530,12 @@ id|last
 suffix:semicolon
 multiline_comment|/* pointer to (current) last used packet in queue */
 DECL|member|wq
-r_struct
-id|wait_queue
-op_star
+id|wait_queue_head_t
 id|wq
 suffix:semicolon
-DECL|member|wq1
-r_struct
-id|wait_queue
-op_star
-id|wq1
+DECL|member|wql
+id|wait_queue_head_t
+id|wql
 suffix:semicolon
 DECL|member|tk
 r_struct
@@ -1801,9 +1792,7 @@ id|reject_bus
 suffix:semicolon
 multiline_comment|/* Flag: Reject rejected call on bus*/
 DECL|member|st_waitq
-r_struct
-id|wait_queue
-op_star
+id|wait_queue_head_t
 id|st_waitq
 suffix:semicolon
 multiline_comment|/* Wait-Queue for status-read&squot;s     */
@@ -1867,21 +1856,17 @@ id|rpqueue
 suffix:semicolon
 multiline_comment|/* Pointers to start of Rcv-Queue   */
 DECL|member|rcv_waitq
-r_struct
-id|wait_queue
-op_star
+id|wait_queue_head_t
 op_star
 id|rcv_waitq
 suffix:semicolon
-multiline_comment|/* Wait-Queues for B-Channel-Reads  */
+multiline_comment|/* array of Wait-Queues for B-Channel-Reads  */
 DECL|member|snd_waitq
-r_struct
-id|wait_queue
-op_star
+id|wait_queue_head_t
 op_star
 id|snd_waitq
 suffix:semicolon
-multiline_comment|/* Wait-Queue for B-Channel-Send&squot;s  */
+multiline_comment|/* array of Wait-Queue for B-Channel-Sends  */
 DECL|member|msn2eaz
 r_char
 id|msn2eaz
@@ -1947,9 +1932,7 @@ id|infochain
 suffix:semicolon
 multiline_comment|/* List of open info-devs.    */
 DECL|member|info_waitq
-r_struct
-id|wait_queue
-op_star
+id|wait_queue_head_t
 id|info_waitq
 suffix:semicolon
 multiline_comment|/* Wait-Queue for isdninfo    */

@@ -4122,6 +4122,10 @@ c_cond
 op_logical_neg
 id|new_inode
 op_logical_and
+id|new_dir
+op_ne
+id|old_dir
+op_logical_and
 id|new_dir-&gt;i_nlink
 op_ge
 id|EXT2_LINK_MAX

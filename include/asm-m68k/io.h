@@ -204,6 +204,13 @@ op_star
 id|addr
 )paren
 suffix:semicolon
+multiline_comment|/* Nothing to do */
+DECL|macro|dma_cache_inv
+mdefine_line|#define dma_cache_inv(_start,_size)&t;&t;do { } while (0)
+DECL|macro|dma_cache_wback
+mdefine_line|#define dma_cache_wback(_start,_size)&t;&t;do { } while (0)
+DECL|macro|dma_cache_wback_inv
+mdefine_line|#define dma_cache_wback_inv(_start,_size)&t;do { } while (0)
 macro_line|#endif /* __KERNEL__ */
 macro_line|#endif /* _M68K_IO_H */
 eof

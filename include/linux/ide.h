@@ -6,9 +6,10 @@ macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/hdreg.h&gt;
+macro_line|#include &lt;linux/hdsmart.h&gt;
 macro_line|#include &lt;linux/blkdev.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
-macro_line|#include &lt;asm/ide.h&gt;
+macro_line|#include &lt;asm/hdreg.h&gt;
 multiline_comment|/*&n; * This is the multiple IDE interface driver, as evolved from hd.c.&n; * It supports up to four IDE interfaces, on one or more IRQs (usually 14 &amp; 15).&n; * There can be up to two drives per interface, as per the ATA-2 spec.&n; *&n; * Primary i/f:    ide0: major=3;  (hda)         minor=0; (hdb)         minor=64&n; * Secondary i/f:  ide1: major=22; (hdc or hd1a) minor=0; (hdd or hd1b) minor=64&n; * Tertiary i/f:   ide2: major=33; (hde)         minor=0; (hdf)         minor=64&n; * Quaternary i/f: ide3: major=34; (hdg)         minor=0; (hdh)         minor=64&n; */
 multiline_comment|/******************************************************************************&n; * IDE driver configuration options (play with these as desired):&n; *&n; * REALLY_SLOW_IO can be defined in ide.c and ide-cd.c, if necessary&n; */
 DECL|macro|REALLY_FAST_IO
@@ -202,6 +203,104 @@ DECL|macro|WAIT_MIN_SLEEP
 mdefine_line|#define WAIT_MIN_SLEEP&t;(2*HZ/100)&t;/* 20msec - minimum sleep time */
 DECL|macro|SELECT_DRIVE
 mdefine_line|#define SELECT_DRIVE(hwif,drive)&t;&t;&t;&t;&bslash;&n;{&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;if (hwif-&gt;selectproc)&t;&t;&t;&t;&t;&bslash;&n;&t;&t;hwif-&gt;selectproc(drive);&t;&t;&t;&bslash;&n;&t;OUT_BYTE((drive)-&gt;select.all, hwif-&gt;io_ports[IDE_SELECT_OFFSET]); &bslash;&n;}
+multiline_comment|/*&n; * Check for an interrupt and acknowledge the interrupt status&n; */
+r_struct
+id|hwif_s
+suffix:semicolon
+DECL|typedef|ide_ack_intr_t
+r_typedef
+r_int
+(paren
+id|ide_ack_intr_t
+)paren
+(paren
+r_struct
+id|hwif_s
+op_star
+)paren
+suffix:semicolon
+multiline_comment|/*&n; * Structure to hold all information about the location of this port&n; */
+DECL|struct|hw_regs_s
+r_typedef
+r_struct
+id|hw_regs_s
+(brace
+DECL|member|io_ports
+id|ide_ioreg_t
+id|io_ports
+(braket
+id|IDE_NR_PORTS
+)braket
+suffix:semicolon
+multiline_comment|/* task file registers */
+DECL|member|irq
+r_int
+id|irq
+suffix:semicolon
+multiline_comment|/* our irq number */
+DECL|member|ack_intr
+id|ide_ack_intr_t
+op_star
+id|ack_intr
+suffix:semicolon
+multiline_comment|/* acknowledge interrupt */
+DECL|member|priv
+r_void
+op_star
+id|priv
+suffix:semicolon
+multiline_comment|/* interface specific data */
+DECL|typedef|hw_regs_t
+)brace
+id|hw_regs_t
+suffix:semicolon
+multiline_comment|/*&n; * Register new hardware with ide&n; */
+r_int
+id|ide_register_hw
+c_func
+(paren
+id|hw_regs_t
+op_star
+id|hw
+comma
+r_struct
+id|hwif_s
+op_star
+op_star
+id|hwifp
+)paren
+suffix:semicolon
+multiline_comment|/*&n; * Set up hw_regs_t structure before calling ide_register_hw (optional)&n; */
+r_void
+id|ide_setup_ports
+c_func
+(paren
+id|hw_regs_t
+op_star
+id|hw
+comma
+id|ide_ioreg_t
+id|base
+comma
+r_int
+op_star
+id|offsets
+comma
+id|ide_ioreg_t
+id|ctrl
+comma
+id|ide_ioreg_t
+id|intr
+comma
+id|ide_ack_intr_t
+op_star
+id|ack_intr
+comma
+r_int
+id|irq
+)paren
+suffix:semicolon
+macro_line|#include &lt;asm/ide.h&gt;
 multiline_comment|/*&n; * Now for the data we need to maintain per-drive:  ide_drive_t&n; */
 DECL|macro|ide_scsi
 mdefine_line|#define ide_scsi&t;0x21
@@ -622,6 +721,29 @@ l_int|10
 )braket
 suffix:semicolon
 multiline_comment|/* requests specific driver */
+macro_line|#if 1
+DECL|member|smart_thresholds
+r_struct
+id|thresholds_s
+op_star
+id|smart_thresholds
+suffix:semicolon
+DECL|member|smart_values
+r_struct
+id|values_s
+op_star
+id|smart_values
+suffix:semicolon
+macro_line|#else
+DECL|member|smart_thresholds
+id|thresholds_t
+id|smart_thresholds
+suffix:semicolon
+DECL|member|smart_values
+id|values_t
+id|smart_values
+suffix:semicolon
+macro_line|#endif
 DECL|typedef|ide_drive_t
 )brace
 id|ide_drive_t
@@ -630,7 +752,6 @@ multiline_comment|/*&n; * An ide_dmaproc_t() initiates/aborts DMA read/write ope
 DECL|enumerator|ide_dma_read
 DECL|enumerator|ide_dma_write
 DECL|enumerator|ide_dma_begin
-DECL|enumerator|ide_dma_end
 r_typedef
 r_enum
 (brace
@@ -640,22 +761,29 @@ id|ide_dma_write
 comma
 id|ide_dma_begin
 comma
-id|ide_dma_end
-comma
+DECL|enumerator|ide_dma_end
 DECL|enumerator|ide_dma_check
 DECL|enumerator|ide_dma_on
-DECL|enumerator|ide_dma_off
-DECL|enumerator|ide_dma_off_quietly
+id|ide_dma_end
+comma
 id|ide_dma_check
 comma
 id|ide_dma_on
 comma
+DECL|enumerator|ide_dma_off
+DECL|enumerator|ide_dma_off_quietly
+DECL|enumerator|ide_dma_test_irq
 id|ide_dma_off
 comma
 id|ide_dma_off_quietly
 comma
-DECL|enumerator|ide_dma_test_irq
 id|ide_dma_test_irq
+comma
+DECL|enumerator|ide_dma_bad_drive
+DECL|enumerator|ide_dma_good_drive
+id|ide_dma_bad_drive
+comma
+id|ide_dma_good_drive
 DECL|typedef|ide_dma_action_t
 )brace
 id|ide_dma_action_t
@@ -740,8 +868,11 @@ comma
 id|ide_trm290
 comma
 DECL|enumerator|ide_cmd646
+DECL|enumerator|ide_cy82c693
 DECL|enumerator|ide_4drives
 id|ide_cmd646
+comma
+id|ide_cy82c693
 comma
 id|ide_4drives
 DECL|typedef|hwif_chipset_t
@@ -797,6 +928,11 @@ id|IDE_NR_PORTS
 )braket
 suffix:semicolon
 multiline_comment|/* task file registers */
+DECL|member|hw
+id|hw_regs_t
+id|hw
+suffix:semicolon
+multiline_comment|/* Hardware info */
 DECL|member|drives
 id|ide_drive_t
 id|drives
@@ -1969,6 +2105,12 @@ op_star
 id|buf
 )paren
 suffix:semicolon
+r_void
+id|ide_delay_50ms
+(paren
+r_void
+)paren
+suffix:semicolon
 multiline_comment|/*&n; * ide_system_bus_speed() returns what we think is the system VESA/PCI&n; * bus speed (in MHz).  This is used for calculating interface PIO timings.&n; * The default is 40 for known PCI systems, 50 otherwise.&n; * The &quot;idebus=xx&quot; parameter can be used to override this value.&n; */
 r_int
 id|ide_system_bus_speed
@@ -2110,6 +2252,22 @@ macro_line|#endif
 macro_line|#if MAX_HWIFS &gt; 5
 r_void
 id|do_ide5_request
+(paren
+r_void
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#if MAX_HWIFS &gt; 6
+r_void
+id|do_ide6_request
+(paren
+r_void
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#if MAX_HWIFS &gt; 7
+r_void
+id|do_ide7_request
 (paren
 r_void
 )paren
@@ -2294,6 +2452,9 @@ id|ide_build_dmatable
 id|ide_drive_t
 op_star
 id|drive
+comma
+id|ide_dma_action_t
+id|func
 )paren
 suffix:semicolon
 r_void
@@ -2370,6 +2531,7 @@ id|name
 id|__init
 suffix:semicolon
 macro_line|#endif
+multiline_comment|/* This is too ugly to live! */
 macro_line|#ifdef CONFIG_BLK_DEV_PDC4030
 macro_line|#include &quot;pdc4030.h&quot;
 DECL|macro|IS_PDC4030_DRIVE

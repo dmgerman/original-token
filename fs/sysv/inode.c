@@ -4916,12 +4916,6 @@ id|block
 )braket
 )paren
 suffix:semicolon
-id|brelse
-c_func
-(paren
-id|bh
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -4975,6 +4969,12 @@ comma
 id|inode-&gt;i_mode
 comma
 id|raw_inode-&gt;i_a.i_rdev
+)paren
+suffix:semicolon
+id|brelse
+c_func
+(paren
+id|bh
 )paren
 suffix:semicolon
 )brace

@@ -12,6 +12,7 @@ macro_line|#include &lt;asm/cuda.h&gt;
 macro_line|#include &lt;asm/pmu.h&gt;
 macro_line|#include &lt;asm/residual.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
+macro_line|#include &lt;linux/ide.h&gt;
 macro_line|#include &lt;asm/ide.h&gt;
 macro_line|#include &lt;asm/prom.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;
@@ -459,12 +460,15 @@ DECL|function|ide_init_hwif_ports
 r_void
 id|ide_init_hwif_ports
 (paren
-id|ide_ioreg_t
+id|hw_regs_t
 op_star
-id|p
+id|hw
 comma
 id|ide_ioreg_t
-id|base
+id|data_port
+comma
+id|ide_ioreg_t
+id|ctrl_port
 comma
 r_int
 op_star
@@ -484,9 +488,11 @@ dot
 id|ide_init_hwif
 c_func
 (paren
-id|p
+id|hw
 comma
-id|base
+id|data_port
+comma
+id|ctrl_port
 comma
 id|irq
 )paren

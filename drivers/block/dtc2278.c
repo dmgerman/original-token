@@ -9,8 +9,8 @@ macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/blkdev.h&gt;
 macro_line|#include &lt;linux/hdreg.h&gt;
+macro_line|#include &lt;linux/ide.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
-macro_line|#include &quot;ide.h&quot;
 macro_line|#include &quot;ide_modes.h&quot;
 multiline_comment|/*&n; * Changing this #undef to #define may solve start up problems in some systems.&n; */
 DECL|macro|ALWAYS_SET_DTC2278_PIO_MODE

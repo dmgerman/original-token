@@ -10,12 +10,12 @@ macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/cdrom.h&gt;
+macro_line|#include &lt;linux/ide.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/byteorder.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/unaligned.h&gt;
-macro_line|#include &quot;ide.h&quot;
 macro_line|#include &quot;ide-cd.h&quot;
 multiline_comment|/****************************************************************************&n; * Generic packet command support and error handling routines.&n; */
 multiline_comment|/* Mark that we&squot;ve seen a media change, and invalidate our internal&n;   buffers. */
@@ -1590,6 +1590,11 @@ comma
 id|IDE_HCYL_REG
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|IDE_CONTROL_REG
+)paren
 id|OUT_BYTE
 (paren
 id|drive-&gt;ctl
@@ -11392,13 +11397,82 @@ l_string|&quot; drive&quot;
 suffix:semicolon
 id|printk
 (paren
-l_string|&quot;, %dkB Cache&bslash;n&quot;
+l_string|&quot;, %dkB Cache&quot;
 comma
 id|ntohs
 c_func
 (paren
 id|buf.cap.buffer_size
 )paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|drive-&gt;using_dma
+)paren
+(brace
+r_if
+c_cond
+(paren
+(paren
+id|drive-&gt;id-&gt;field_valid
+op_amp
+l_int|4
+)paren
+op_logical_and
+(paren
+id|drive-&gt;id-&gt;dma_ultra
+op_amp
+(paren
+id|drive-&gt;id-&gt;dma_ultra
+op_rshift
+l_int|8
+)paren
+op_amp
+l_int|7
+)paren
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;, UDMA&quot;
+)paren
+suffix:semicolon
+multiline_comment|/* UDMA BIOS-enabled! */
+)brace
+r_else
+r_if
+c_cond
+(paren
+id|drive-&gt;id-&gt;field_valid
+op_amp
+l_int|4
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;, (U)DMA&quot;
+)paren
+suffix:semicolon
+multiline_comment|/* Can be BIOS-enabled! */
+)brace
+r_else
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;, DMA&quot;
+)paren
+suffix:semicolon
+)brace
+)brace
+id|printk
+c_func
+(paren
+l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -11568,6 +11642,229 @@ l_int|NULL
 )paren
 suffix:semicolon
 )brace
+macro_line|#ifdef CONFIG_IDECD_SLOTS
+DECL|function|ide_cdrom_slot_check
+r_static
+r_void
+id|ide_cdrom_slot_check
+(paren
+id|ide_drive_t
+op_star
+id|drive
+comma
+r_int
+id|nslots
+)paren
+(brace
+id|tracktype
+id|tracks
+suffix:semicolon
+r_struct
+id|cdrom_info
+op_star
+id|info
+op_assign
+id|drive-&gt;driver_data
+suffix:semicolon
+r_struct
+id|cdrom_device_info
+op_star
+id|devinfo
+op_assign
+op_amp
+id|info-&gt;devinfo
+suffix:semicolon
+r_int
+id|slot_count
+op_assign
+l_int|0
+comma
+id|drive_stat
+op_assign
+l_int|0
+comma
+id|tmp
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|slot_count
+op_assign
+l_int|0
+suffix:semicolon
+id|slot_count
+OL
+id|nslots
+suffix:semicolon
+id|slot_count
+op_increment
+)paren
+(brace
+(paren
+r_void
+)paren
+id|ide_cdrom_select_disc
+c_func
+(paren
+id|devinfo
+comma
+id|slot_count
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;     CD Slot %d &quot;
+comma
+id|slot_count
+op_plus
+l_int|1
+)paren
+suffix:semicolon
+id|drive_stat
+op_assign
+id|ide_cdrom_drive_status
+c_func
+(paren
+id|devinfo
+comma
+id|slot_count
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|drive_stat
+OL
+l_int|0
+)paren
+(brace
+r_continue
+suffix:semicolon
+)brace
+r_else
+r_switch
+c_cond
+(paren
+id|drive_stat
+)paren
+(brace
+r_case
+id|CDS_DISC_OK
+suffix:colon
+multiline_comment|/* use routine in Uniform CD-ROM driver */
+id|cdrom_count_tracks
+c_func
+(paren
+id|devinfo
+comma
+op_amp
+id|tracks
+)paren
+suffix:semicolon
+id|tmp
+op_assign
+id|tracks.audio
+op_plus
+id|tracks.data
+op_plus
+id|tracks.cdi
+op_plus
+id|tracks.xa
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;: Disc has %d track%s: &quot;
+comma
+id|tmp
+comma
+(paren
+id|tmp
+op_eq
+l_int|1
+)paren
+ques
+c_cond
+l_string|&quot;&quot;
+suffix:colon
+l_string|&quot;s&quot;
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;%d=data %d=audio %d=Cd-I %d=XA&bslash;n&quot;
+comma
+id|tracks.data
+comma
+id|tracks.audio
+comma
+id|tracks.cdi
+comma
+id|tracks.xa
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|CDS_NO_DISC
+suffix:colon
+id|printk
+c_func
+(paren
+l_string|&quot;Empty slot.&bslash;n&quot;
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|CDS_TRAY_OPEN
+suffix:colon
+id|printk
+c_func
+(paren
+l_string|&quot;CD-ROM tray open.&bslash;n&quot;
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|CDS_DRIVE_NOT_READY
+suffix:colon
+id|printk
+c_func
+(paren
+l_string|&quot;CD-ROM drive not ready.&bslash;n&quot;
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|CDS_NO_INFO
+suffix:colon
+id|printk
+c_func
+(paren
+l_string|&quot;No Information available.&bslash;n&quot;
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_default
+suffix:colon
+id|printk
+c_func
+(paren
+l_string|&quot;This Should not happen!&bslash;n&quot;
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
+)brace
+)brace
+macro_line|#endif /* CONFIG_IDECD_SLOTS */
 r_static
 DECL|function|ide_cdrom_setup
 r_int
@@ -12255,6 +12552,28 @@ c_func
 id|drive
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_IDECD_SLOTS
+r_if
+c_cond
+(paren
+id|CDROM_CONFIG_FLAGS
+(paren
+id|drive
+)paren
+op_member_access_from_pointer
+id|is_changer
+)paren
+(brace
+id|ide_cdrom_slot_check
+c_func
+(paren
+id|drive
+comma
+id|nslots
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif /* CONFIG_IDECD_SLOTS */
 r_return
 l_int|0
 suffix:semicolon

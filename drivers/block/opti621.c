@@ -12,8 +12,8 @@ macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/blkdev.h&gt;
 macro_line|#include &lt;linux/hdreg.h&gt;
+macro_line|#include &lt;linux/ide.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
-macro_line|#include &quot;ide.h&quot;
 macro_line|#include &quot;ide_modes.h&quot;
 DECL|macro|OPTI621_MAX_PIO
 mdefine_line|#define OPTI621_MAX_PIO 3

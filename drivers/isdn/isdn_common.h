@@ -159,9 +159,7 @@ op_star
 comma
 r_int
 comma
-r_struct
-id|wait_queue
-op_star
+id|wait_queue_head_t
 op_star
 )paren
 suffix:semicolon

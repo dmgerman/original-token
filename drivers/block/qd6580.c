@@ -10,8 +10,8 @@ macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/blkdev.h&gt;
 macro_line|#include &lt;linux/hdreg.h&gt;
+macro_line|#include &lt;linux/ide.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
-macro_line|#include &quot;ide.h&quot;
 macro_line|#include &quot;ide_modes.h&quot;
 multiline_comment|/*&n; * Register 0xb3 looks like:&n; *&t;0x4f is fast&t;&t;mode3 ?&n; *&t;0x3f is medium&t;&t;mode2 ?&n; *&t;0x2f is slower&t;&t;mode1 ?&n; *&t;0x1f is slower yet&t;mode0 ?&n; *&t;0x0f ???&t;&t;???&n; *&n; * Don&squot;t know whether this sets BOTH drives, or just the first drive.&n; * Don&squot;t know if there is a separate setting for the second drive.&n; *&n; * Feel free to patch this if you have one of these beasts&n; * and can work out the answers!&n; *&n; * I/O ports are 0xb0 0xb2 and 0xb3&n; *&n; * More research on qd6580 being done by willmore@cig.mot.com (David)&n; *&t;-- this is apparently a *dual* IDE interface&n; */
 DECL|function|tune_qd6580

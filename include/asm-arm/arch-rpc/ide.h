@@ -1,10 +1,10 @@
 multiline_comment|/*&n; * linux/include/asm-arm/arch-rpc/ide.h&n; *&n; * Copyright (c) 1997 Russell King&n; *&n; * Modifications:&n; *  29-07-1998&t;RMK&t;Major re-work of IDE architecture specific code&n; */
 macro_line|#include &lt;asm/irq.h&gt;
 multiline_comment|/*&n; * Set up a hw structure for a specified data port, control port and IRQ.&n; * This should follow whatever the default interface uses.&n; */
+DECL|function|ide_init_hwif_ports
 r_static
 id|__inline__
 r_void
-DECL|function|ide_init_hwif_ports
 id|ide_init_hwif_ports
 c_func
 (paren
@@ -19,6 +19,7 @@ r_int
 id|ctrl_port
 comma
 r_int
+op_star
 id|irq
 )paren
 (brace
@@ -32,20 +33,6 @@ id|data_port
 suffix:semicolon
 r_int
 id|i
-suffix:semicolon
-id|memset
-c_func
-(paren
-id|hw
-comma
-l_int|0
-comma
-r_sizeof
-(paren
-op_star
-id|hw
-)paren
-)paren
 suffix:semicolon
 r_for
 c_loop
@@ -86,14 +73,15 @@ id|ctrl_port
 suffix:semicolon
 id|hw-&gt;irq
 op_assign
+op_star
 id|irq
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * This registers the standard ports for this architecture with the IDE&n; * driver.&n; */
+DECL|function|ide_init_default_hwifs
 r_static
 id|__inline__
 r_void
-DECL|function|ide_init_default_hwifs
 id|ide_init_default_hwifs
 c_func
 (paren
@@ -102,6 +90,20 @@ r_void
 (brace
 id|hw_regs_t
 id|hw
+suffix:semicolon
+id|memset
+c_func
+(paren
+id|hw
+comma
+l_int|0
+comma
+r_sizeof
+(paren
+op_star
+id|hw
+)paren
+)paren
 suffix:semicolon
 id|ide_init_hwif_ports
 c_func
@@ -113,8 +115,12 @@ l_int|0x1f0
 comma
 l_int|0x3f6
 comma
-id|IRQ_HARDDISK
+l_int|NULL
 )paren
+suffix:semicolon
+id|hw.irq
+op_assign
+id|IRQ_HARDDISK
 suffix:semicolon
 id|ide_register_hw
 c_func

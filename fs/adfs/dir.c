@@ -490,15 +490,6 @@ id|i
 comma
 id|size
 suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|inode
-)paren
-r_return
-l_int|0
-suffix:semicolon
 id|sb
 op_assign
 id|inode-&gt;i_sb

@@ -795,5 +795,12 @@ DECL|macro|virt_to_phys
 mdefine_line|#define virt_to_phys(x) __pa((unsigned long)(x))
 DECL|macro|phys_to_virt
 mdefine_line|#define phys_to_virt(x) __va((unsigned long)(x))
+multiline_comment|/* Nothing to do */
+DECL|macro|dma_cache_inv
+mdefine_line|#define dma_cache_inv(_start,_size)&t;&t;do { } while (0)
+DECL|macro|dma_cache_wback
+mdefine_line|#define dma_cache_wback(_start,_size)&t;&t;do { } while (0)
+DECL|macro|dma_cache_wback_inv
+mdefine_line|#define dma_cache_wback_inv(_start,_size)&t;do { } while (0)
 macro_line|#endif /* !(__SPARC_IO_H) */
 eof

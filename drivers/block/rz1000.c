@@ -11,9 +11,9 @@ macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/blkdev.h&gt;
 macro_line|#include &lt;linux/hdreg.h&gt;
-macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
-macro_line|#include &quot;ide.h&quot;
+macro_line|#include &lt;linux/ide.h&gt;
+macro_line|#include &lt;asm/io.h&gt;
 macro_line|#ifdef CONFIG_BLK_DEV_IDEPCI
 DECL|function|__initfunc
 id|__initfunc

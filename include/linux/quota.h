@@ -232,9 +232,7 @@ id|dq_hash_pprev
 suffix:semicolon
 multiline_comment|/* Pointer to previous in dquot_hash */
 DECL|member|dq_wait
-r_struct
-id|wait_queue
-op_star
+id|wait_queue_head_t
 id|dq_wait
 suffix:semicolon
 multiline_comment|/* Pointer to waitqueue */

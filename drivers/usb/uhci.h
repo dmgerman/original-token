@@ -201,6 +201,12 @@ id|uhci_qh
 op_star
 id|qh
 suffix:semicolon
+DECL|member|first
+r_struct
+id|uhci_td
+op_star
+id|first
+suffix:semicolon
 )brace
 id|__attribute__
 c_func
@@ -214,12 +220,45 @@ l_int|32
 )paren
 )paren
 suffix:semicolon
+DECL|struct|uhci_iso_td
+r_struct
+id|uhci_iso_td
+(brace
+DECL|member|num
+r_int
+id|num
+suffix:semicolon
+DECL|member|data
+r_char
+op_star
+id|data
+suffix:semicolon
+DECL|member|maxsze
+r_int
+id|maxsze
+suffix:semicolon
+DECL|member|td
+r_struct
+id|uhci_td
+op_star
+id|td
+suffix:semicolon
+DECL|member|frame
+r_int
+id|frame
+suffix:semicolon
+DECL|member|endframe
+r_int
+id|endframe
+suffix:semicolon
+)brace
+suffix:semicolon
 multiline_comment|/*&n; * Note the alignment requirements of the entries&n; *&n; * Each UHCI device has pre-allocated QH and TD entries.&n; * You can use more than the pre-allocated ones, but I&n; * don&squot;t see you usually needing to.&n; */
 r_struct
 id|uhci
 suffix:semicolon
 DECL|macro|UHCI_MAXTD
-mdefine_line|#define UHCI_MAXTD 64
+mdefine_line|#define UHCI_MAXTD&t;64
 DECL|macro|UHCI_MAXQH
 mdefine_line|#define UHCI_MAXQH&t;16
 multiline_comment|/* The usb device part must be first! */
@@ -271,11 +310,11 @@ mdefine_line|#define uhci_to_usb(uhci)&t;((uhci)-&gt;usb)
 DECL|macro|usb_to_uhci
 mdefine_line|#define usb_to_uhci(usb)&t;((struct uhci_device *)(usb)-&gt;hcpriv)
 multiline_comment|/*&n; * The root hub pre-allocated QH&squot;s and TD&squot;s have&n; * some special global uses..&n; */
-DECL|macro|control_td
+macro_line|#if 0
 mdefine_line|#define control_td&t;td&t;&t;/* Td&squot;s 0-30 */
 multiline_comment|/* This is only for the root hub&squot;s TD list */
-DECL|macro|tick_td
 mdefine_line|#define tick_td&t;&t;td[31]
+macro_line|#endif
 multiline_comment|/*&n; * There are various standard queues. We set up several different&n; * queues for each of the three basic queue types: interrupt,&n; * control, and bulk.&n; *&n; *  - There are various different interrupt latencies: ranging from&n; *    every other USB frame (2 ms apart) to every 256 USB frames (ie&n; *    256 ms apart). Make your choice according to how obnoxious you&n; *    want to be on the wire, vs how critical latency is for you.&n; *  - The control list is done every frame.&n; *  - There are 4 bulk lists, so that up to four devices can have a&n; *    bulk list of their own and when run concurrently all four lists&n; *    will be be serviced.&n; *&n; * This is a bit misleading, there are various interrupt latencies, but they&n; * vary a bit, interrupt2 isn&squot;t exactly 2ms, it can vary up to 4ms since the&n; * other queues can &quot;override&quot; it. interrupt4 can vary up to 8ms, etc. Minor&n; * problem&n; *&n; * In the case of the root hub, these QH&squot;s are just head&squot;s of qh&squot;s. Don&squot;t&n; * be scared, it kinda makes sense. Look at this wonderful picture care of&n; * Linus:&n; *&n; *  generic-iso-QH  -&gt;  dev1-iso-QH  -&gt;  generic-irq-QH  -&gt;  dev1-irq-QH  -&gt; ...&n; *       |                       |                  |                   |&n; *      End          dev1-iso-TD1          End            dev1-irq-TD1&n; *                       |&n; *                   dev1-iso-TD2&n; *                       |&n; *                      ....&n; *&n; * This may vary a bit (the UHCI docs don&squot;t explicitly say you can put iso&n; * transfers in QH&squot;s and all of their pictures don&squot;t have that either) but&n; * other than that, that is what we&squot;re doing now&n; *&n; * To keep with Linus&squot; nomenclature, this is called the qh skeleton. These&n; * labels (below) are only signficant to the root hub&squot;s qh&squot;s&n; */
 DECL|macro|skel_iso_qh
 mdefine_line|#define skel_iso_qh&t;&t;qh[0]
@@ -406,6 +445,98 @@ r_struct
 id|uhci
 op_star
 id|uhci
+)paren
+suffix:semicolon
+r_int
+id|uhci_compress_isochronous
+c_func
+(paren
+r_struct
+id|usb_device
+op_star
+id|usb_dev
+comma
+r_void
+op_star
+id|_isodesc
+)paren
+suffix:semicolon
+r_int
+id|uhci_unsched_isochronous
+c_func
+(paren
+r_struct
+id|usb_device
+op_star
+id|usb_dev
+comma
+r_void
+op_star
+id|_isodesc
+)paren
+suffix:semicolon
+r_int
+id|uhci_sched_isochronous
+c_func
+(paren
+r_struct
+id|usb_device
+op_star
+id|usb_dev
+comma
+r_void
+op_star
+id|_isodesc
+comma
+r_void
+op_star
+id|_pisodesc
+)paren
+suffix:semicolon
+r_void
+op_star
+id|uhci_alloc_isochronous
+c_func
+(paren
+r_struct
+id|usb_device
+op_star
+id|usb_dev
+comma
+r_int
+r_int
+id|pipe
+comma
+r_void
+op_star
+id|data
+comma
+r_int
+id|len
+comma
+r_int
+id|maxsze
+comma
+id|usb_device_irq
+id|completed
+comma
+r_void
+op_star
+id|dev_id
+)paren
+suffix:semicolon
+r_void
+id|uhci_delete_isochronous
+c_func
+(paren
+r_struct
+id|usb_device
+op_star
+id|dev
+comma
+r_void
+op_star
+id|_isodesc
 )paren
 suffix:semicolon
 macro_line|#endif

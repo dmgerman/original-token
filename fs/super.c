@@ -4052,6 +4052,17 @@ suffix:semicolon
 id|retval
 op_assign
 op_minus
+id|ENODEV
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|sb
+)paren
+(brace
+id|retval
+op_assign
+op_minus
 id|EINVAL
 suffix:semicolon
 r_if
@@ -4062,7 +4073,7 @@ op_eq
 id|sb-&gt;s_root
 )paren
 (brace
-multiline_comment|/*&n;&t;&t;&t; * Shrink the dcache and sync the device.&n;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t; * Shrink the dcache and sync the device.&n;&t;&t;&t;&t; */
 id|shrink_dcache_sb
 c_func
 (paren
@@ -4100,6 +4111,7 @@ comma
 id|data
 )paren
 suffix:semicolon
+)brace
 )brace
 id|dput
 c_func

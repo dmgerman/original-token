@@ -17,14 +17,14 @@ macro_line|#include &lt;linux/major.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/genhd.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
+macro_line|#include &lt;linux/pci.h&gt;
+macro_line|#include &lt;linux/ide.h&gt;
 macro_line|#include &lt;asm/byteorder.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/unaligned.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
-multiline_comment|/*&n; *&t;Main Linux ide driver include file&n; */
-macro_line|#include &quot;ide.h&quot;
 multiline_comment|/*&n; *&t;For general magnetic tape device compatibility.&n; */
 macro_line|#include &lt;linux/mtio.h&gt;
 multiline_comment|/**************************** Tunable parameters *****************************/
@@ -38,11 +38,19 @@ mdefine_line|#define IDETAPE_INCREASE_STAGES_RATE&t; 20
 multiline_comment|/*&n; *&t;Assuming the tape shares an interface with another device, the default&n; *&t;behavior is to service our pending pipeline requests as soon as&n; *&t;possible, but to gracefully postpone them in favor of the other device&n; *&t;when the tape is busy. This has the potential to maximize our&n; *&t;throughput and in the same time, to make efficient use of the IDE bus.&n; *&n; *&t;Note that when we transfer data to / from the tape, we co-operate with&n; *&t;the relatively fast tape buffers and the tape will perform the&n; *&t;actual media access in the background, without blocking the IDE&n; *&t;bus. This means that as long as the maximum IDE bus throughput is much&n; *&t;higher than the sum of our maximum throughput and the maximum&n; *&t;throughput of the other device, we should probably leave the default&n; *&t;behavior.&n; *&n; *&t;However, if it is still desired to give the other device a share even&n; *&t;in our own (small) bus bandwidth, you can set IDETAPE_LOW_TAPE_PRIORITY&n; *&t;to 1. This will let the other device finish *all* its pending requests&n; *&t;before we even check if we can service our next pending request.&n; */
 DECL|macro|IDETAPE_LOW_TAPE_PRIORITY
 mdefine_line|#define IDETAPE_LOW_TAPE_PRIORITY&t;0
-multiline_comment|/*&n; *&t;The following are used to debug the driver:&n; *&n; *&t;Setting IDETAPE_DEBUG_LOG to 1 will log driver flow control.&n; *&t;Setting IDETAPE_DEBUG_BUGS to 1 will enable self-sanity checks in&n; *&t;some places.&n; *&n; *&t;Setting them to 0 will restore normal operation mode:&n; *&n; *&t;&t;1.&t;Disable logging normal successful operations.&n; *&t;&t;2.&t;Disable self-sanity checks.&n; *&t;&t;3.&t;Errors will still be logged, of course.&n; *&n; *&t;All the #if DEBUG code will be removed some day, when the driver&n; *&t;is verified to be stable enough. This will make it much more&n; *&t;esthetic.&n; */
+multiline_comment|/*&n; *&t;The following are used to debug the driver:&n; *&n; *&t;Setting IDETAPE_INFO_LOG to 1 will log driver vender information.&n; *&t;Setting IDETAPE_DEBUG_LOG to 1 will log driver flow control.&n; *&t;Setting IDETAPE_DEBUG_BUGS to 1 will enable self-sanity checks in&n; *&t;some places.&n; *&n; *&t;Setting them to 0 will restore normal operation mode:&n; *&n; *&t;&t;1.&t;Disable logging normal successful operations.&n; *&t;&t;2.&t;Disable self-sanity checks.&n; *&t;&t;3.&t;Errors will still be logged, of course.&n; *&n; *&t;All the #if DEBUG code will be removed some day, when the driver&n; *&t;is verified to be stable enough. This will make it much more&n; *&t;esthetic.&n; */
+DECL|macro|IDETAPE_INFO_LOG
+mdefine_line|#define IDETAPE_INFO_LOG&t;&t;0
 DECL|macro|IDETAPE_DEBUG_LOG
 mdefine_line|#define IDETAPE_DEBUG_LOG&t;&t;0
 DECL|macro|IDETAPE_DEBUG_BUGS
 mdefine_line|#define IDETAPE_DEBUG_BUGS&t;&t;1
+macro_line|#if IDETAPE_DEBUG_LOG
+DECL|macro|IDETAPE_INFO_LOG
+macro_line|#undef IDETAPE_INFO_LOG
+DECL|macro|IDETAPE_INFO_LOG
+mdefine_line|#define IDETAPE_INFO_LOG&t;&t;IDETAPE_DEBUG_LOG
+macro_line|#endif
 multiline_comment|/*&n; *&t;After each failed packet command we issue a request sense command&n; *&t;and retry the packet command IDETAPE_MAX_PC_RETRIES times.&n; *&n; *&t;Setting IDETAPE_MAX_PC_RETRIES to 0 will disable retries.&n; */
 DECL|macro|IDETAPE_MAX_PC_RETRIES
 mdefine_line|#define IDETAPE_MAX_PC_RETRIES&t;&t;3
@@ -5367,6 +5375,11 @@ id|drive
 )paren
 suffix:semicolon
 macro_line|#endif /* CONFIG_BLK_DEV_IDEDMA */
+r_if
+c_cond
+(paren
+id|IDE_CONTROL_REG
+)paren
 id|OUT_BYTE
 (paren
 id|drive-&gt;ctl
@@ -11115,14 +11128,14 @@ r_struct
 id|idetape_id_gcw
 id|gcw
 suffix:semicolon
-macro_line|#if IDETAPE_DEBUG_LOG
+macro_line|#if IDETAPE_INFO_LOG
 r_int
 r_int
 id|mask
 comma
 id|i
 suffix:semicolon
-macro_line|#endif /* IDETAPE_DEBUG_LOG */
+macro_line|#endif /* IDETAPE_INFO_LOG */
 r_if
 c_cond
 (paren
@@ -11145,7 +11158,7 @@ id|gcw
 op_assign
 id|id-&gt;config
 suffix:semicolon
-macro_line|#if IDETAPE_DEBUG_LOG
+macro_line|#if IDETAPE_INFO_LOG
 id|printk
 (paren
 id|KERN_INFO
@@ -11828,7 +11841,7 @@ id|KERN_INFO
 l_string|&quot;According to the device, fields 64-70 are not valid.&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#endif /* IDETAPE_DEBUG_LOG */
+macro_line|#endif /* IDETAPE_INFO_LOG */
 multiline_comment|/* Check that we can support this device */
 r_if
 c_cond
@@ -12090,7 +12103,7 @@ l_int|512
 suffix:colon
 l_int|1024
 suffix:semicolon
-macro_line|#if IDETAPE_DEBUG_LOG
+macro_line|#if IDETAPE_INFO_LOG
 id|printk
 (paren
 id|KERN_INFO
@@ -12360,7 +12373,7 @@ op_star
 l_int|512
 )paren
 suffix:semicolon
-macro_line|#endif /* IDETAPE_DEBUG_LOG */
+macro_line|#endif /* IDETAPE_INFO_LOG */
 )brace
 DECL|function|idetape_add_settings
 r_static
@@ -12722,10 +12735,37 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* An ATAPI device ignores DRDY */
+macro_line|#ifdef CONFIG_BLK_DEV_IDEPCI
+multiline_comment|/*&n;&t; *  These two ide-pci host adapters appear to need this disabled.&n;&t; */
+r_if
+c_cond
+(paren
+(paren
+id|hwif-&gt;pci_dev-&gt;device
+op_eq
+id|PCI_DEVICE_ID_ARTOP_ATP850UF
+)paren
+op_logical_or
+(paren
+id|hwif-&gt;pci_dev-&gt;device
+op_eq
+id|PCI_DEVICE_ID_TTI_HPT343
+)paren
+)paren
+(brace
+id|drive-&gt;dsc_overlap
+op_assign
+l_int|0
+suffix:semicolon
+)brace
+r_else
+macro_line|#endif  /* CONFIG_BLK_DEV_IDEPCI */
+(brace
 id|drive-&gt;dsc_overlap
 op_assign
 l_int|1
 suffix:semicolon
+)brace
 id|memset
 (paren
 id|tape

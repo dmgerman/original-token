@@ -2341,6 +2341,30 @@ comma
 l_int|0x3940
 )brace
 comma
+(brace
+l_string|&quot;hdm&quot;
+comma
+l_int|0x5800
+)brace
+comma
+(brace
+l_string|&quot;hdn&quot;
+comma
+l_int|0x5840
+)brace
+comma
+(brace
+l_string|&quot;hdo&quot;
+comma
+l_int|0x5900
+)brace
+comma
+(brace
+l_string|&quot;hdp&quot;
+comma
+l_int|0x5940
+)brace
+comma
 macro_line|#endif
 macro_line|#ifdef CONFIG_BLK_DEV_SD
 (brace
@@ -4084,6 +4108,19 @@ comma
 l_int|3
 )paren
 op_logical_or
+macro_line|#ifdef CONFIG_BLK_DEV_VIA82C586
+op_logical_neg
+id|strncmp
+c_func
+(paren
+id|line
+comma
+l_string|&quot;splitfifo&quot;
+comma
+l_int|9
+)paren
+op_logical_or
+macro_line|#endif /* CONFIG_BLK_DEV_VIA82C586 */
 (paren
 op_logical_neg
 id|strncmp

@@ -139,6 +139,71 @@ DECL|macro|SMART_STATUS
 mdefine_line|#define SMART_STATUS&t;&t;0xda
 DECL|macro|SMART_AUTO_OFFLINE
 mdefine_line|#define SMART_AUTO_OFFLINE&t;0xdb
+multiline_comment|/* WIN_SETFEATURES sub-commands */
+DECL|macro|SETFEATURES_EN_WCACHE
+mdefine_line|#define SETFEATURES_EN_WCACHE&t;0x02&t;/* Enable write cache */
+DECL|macro|SETFEATURES_XFER
+mdefine_line|#define SETFEATURES_XFER&t;0x03&t;/* Set transfer mode */
+DECL|macro|XFER_UDMA_4
+macro_line|#&t;define XFER_UDMA_4&t;0x44&t;/* 0100|0100 */
+DECL|macro|XFER_UDMA_3
+macro_line|#&t;define XFER_UDMA_3&t;0x43&t;/* 0100|0011 */
+DECL|macro|XFER_UDMA_2
+macro_line|#&t;define XFER_UDMA_2&t;0x42&t;/* 0100|0010 */
+DECL|macro|XFER_UDMA_1
+macro_line|#&t;define XFER_UDMA_1&t;0x41&t;/* 0100|0001 */
+DECL|macro|XFER_UDMA_0
+macro_line|#&t;define XFER_UDMA_0&t;0x40&t;/* 0100|0000 */
+DECL|macro|XFER_MW_DMA_2
+macro_line|#&t;define XFER_MW_DMA_2&t;0x22&t;/* 0010|0010 */
+DECL|macro|XFER_MW_DMA_1
+macro_line|#&t;define XFER_MW_DMA_1&t;0x21&t;/* 0010|0001 */
+DECL|macro|XFER_MW_DMA_0
+macro_line|#&t;define XFER_MW_DMA_0&t;0x20&t;/* 0010|0000 */
+DECL|macro|XFER_SW_DMA_2
+macro_line|#&t;define XFER_SW_DMA_2&t;0x12&t;/* 0001|0010 */
+DECL|macro|XFER_SW_DMA_1
+macro_line|#&t;define XFER_SW_DMA_1&t;0x11&t;/* 0001|0001 */
+DECL|macro|XFER_SW_DMA_0
+macro_line|#&t;define XFER_SW_DMA_0&t;0x10&t;/* 0001|0000 */
+DECL|macro|XFER_PIO_4
+macro_line|#&t;define XFER_PIO_4&t;0x0C&t;/* 0000|1100 */
+DECL|macro|XFER_PIO_3
+macro_line|#&t;define XFER_PIO_3&t;0x0B&t;/* 0000|1011 */
+DECL|macro|XFER_PIO_2
+macro_line|#&t;define XFER_PIO_2&t;0x0A&t;/* 0000|1010 */
+DECL|macro|XFER_PIO_1
+macro_line|#&t;define XFER_PIO_1&t;0x09&t;/* 0000|1001 */
+DECL|macro|XFER_PIO_0
+macro_line|#&t;define XFER_PIO_0&t;0x08&t;/* 0000|1000 */
+DECL|macro|XFER_PIO_SLOW
+macro_line|#&t;define XFER_PIO_SLOW&t;0x00&t;/* 0000|0000 */
+DECL|macro|SETFEATURES_EN_APM
+mdefine_line|#define SETFEATURES_EN_APM&t;0x05&t;/* Enable advanced power management */
+DECL|macro|SETFEATURES_DIS_MSN
+mdefine_line|#define SETFEATURES_DIS_MSN&t;0x31&t;/* Disable Media Status Notification */
+DECL|macro|SETFEATURES_DIS_RLA
+mdefine_line|#define SETFEATURES_DIS_RLA&t;0x55&t;/* Disable read look-ahead feature */
+DECL|macro|SETFEATURES_EN_RI
+mdefine_line|#define SETFEATURES_EN_RI&t;0x5D&t;/* Enable release interrupt */
+DECL|macro|SETFEATURES_EN_SI
+mdefine_line|#define SETFEATURES_EN_SI&t;0x5E&t;/* Enable SERVICE interrupt */
+DECL|macro|SETFEATURES_DIS_RPOD
+mdefine_line|#define SETFEATURES_DIS_RPOD&t;0x66&t;/* Disable reverting to power on defaults */
+DECL|macro|SETFEATURES_DIS_WCACHE
+mdefine_line|#define SETFEATURES_DIS_WCACHE&t;0x82&t;/* Disable write cache */
+DECL|macro|SETFEATURES_DIS_APM
+mdefine_line|#define SETFEATURES_DIS_APM&t;0x85&t;/* Disable advanced power management */
+DECL|macro|SETFEATURES_EN_MSN
+mdefine_line|#define SETFEATURES_EN_MSN&t;0x95&t;/* Enable Media Status Notification */
+DECL|macro|SETFEATURES_EN_RLA
+mdefine_line|#define SETFEATURES_EN_RLA&t;0xAA&t;/* Enable read look-ahead feature */
+DECL|macro|SETFEATURES_EN_RPOD
+mdefine_line|#define SETFEATURES_EN_RPOD&t;0xCC&t;/* Enable reverting to power on defaults */
+DECL|macro|SETFEATURES_DIS_RI
+mdefine_line|#define SETFEATURES_DIS_RI&t;0xDD&t;/* Disable release interrupt */
+DECL|macro|SETFEATURES_DIS_SI
+mdefine_line|#define SETFEATURES_DIS_SI&t;0xDE&t;/* Disable SERVICE interrupt */
 multiline_comment|/* WIN_SECURITY sub-commands */
 DECL|macro|SECURITY_SET_PASSWORD
 mdefine_line|#define SECURITY_SET_PASSWORD&t;&t;0xBA&t;/* 0xF1 */

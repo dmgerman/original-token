@@ -5,6 +5,7 @@ macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
+macro_line|#include &lt;linux/ide.h&gt;
 macro_line|#include &lt;asm/prom.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/dbdma.h&gt;
@@ -15,8 +16,11 @@ macro_line|#ifdef CONFIG_PMAC_PBOOK
 macro_line|#include &lt;asm/adb.h&gt;
 macro_line|#include &lt;asm/pmu.h&gt;
 macro_line|#endif
-macro_line|#include &quot;ide.h&quot;
 macro_line|#include &quot;ide_modes.h&quot;
+DECL|variable|pmac_ide_ports_known
+r_int
+id|pmac_ide_ports_known
+suffix:semicolon
 DECL|variable|pmac_ide_regbase
 id|ide_ioreg_t
 id|pmac_ide_regbase
@@ -117,37 +121,40 @@ id|idepmac_notify
 suffix:semicolon
 macro_line|#endif /* CONFIG_PMAC_PBOOK */
 multiline_comment|/*&n; * N.B. this can&squot;t be an initfunc, because the media-bay task can&n; * call ide_[un]register at any time.&n; */
-r_void
 DECL|function|pmac_ide_init_hwif_ports
+r_void
 id|pmac_ide_init_hwif_ports
-c_func
 (paren
-id|ide_ioreg_t
+id|hw_regs_t
 op_star
-id|p
+id|hw
 comma
 id|ide_ioreg_t
-id|base
+id|data_port
+comma
+id|ide_ioreg_t
+id|ctrl_port
 comma
 r_int
 op_star
 id|irq
 )paren
 (brace
+id|ide_ioreg_t
+id|reg
+op_assign
+id|ide_ioreg_t
+id|data_port
+suffix:semicolon
 r_int
 id|i
 comma
 id|r
 suffix:semicolon
-op_star
-id|p
-op_assign
-l_int|0
-suffix:semicolon
 r_if
 c_cond
 (paren
-id|base
+id|data_port
 op_eq
 l_int|0
 )paren
@@ -159,7 +166,7 @@ op_assign
 id|check_media_bay_by_base
 c_func
 (paren
-id|base
+id|data_port
 comma
 id|MB_CD
 )paren
@@ -179,32 +186,59 @@ c_loop
 (paren
 id|i
 op_assign
-l_int|0
+id|IDE_DATA_OFFSET
 suffix:semicolon
 id|i
-OL
-l_int|8
+op_le
+id|IDE_STATUS_OFFSET
 suffix:semicolon
+id|i
 op_increment
-id|i
 )paren
-op_star
-id|p
-op_increment
-op_assign
-id|base
-op_plus
+(brace
+id|hw-&gt;io_ports
+(braket
 id|i
+)braket
+op_assign
+id|reg
 op_star
 l_int|0x10
 suffix:semicolon
-op_star
-id|p
+id|reg
+op_add_assign
+l_int|1
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|ctrl_port
+)paren
+(brace
+id|hw-&gt;io_ports
+(braket
+id|IDE_CONTROL_OFFSET
+)braket
 op_assign
-id|base
+id|ctrl_port
+suffix:semicolon
+)brace
+r_else
+(brace
+id|hw-&gt;io_ports
+(braket
+id|IDE_CONTROL_OFFSET
+)braket
+op_assign
+id|hw-&gt;io_ports
+(braket
+id|IDE_DATA_OFFSET
+)braket
 op_plus
 l_int|0x160
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -707,12 +741,28 @@ suffix:semicolon
 id|pmac_ide_init_hwif_ports
 c_func
 (paren
-id|hwif-&gt;io_ports
+op_amp
+id|hwif-&gt;hw
 comma
 id|base
 comma
+l_int|0
+comma
 op_amp
 id|hwif-&gt;irq
+)paren
+suffix:semicolon
+id|memcpy
+c_func
+(paren
+id|hwif-&gt;io_ports
+comma
+id|hwif-&gt;hw.io_ports
+comma
+r_sizeof
+(paren
+id|hwif-&gt;io_ports
+)paren
 )paren
 suffix:semicolon
 id|hwif-&gt;chipset

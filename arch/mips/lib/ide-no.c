@@ -1,6 +1,7 @@
 multiline_comment|/* $Id: ide-no.c,v 1.2 1998/05/28 03:17:57 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Stub IDE routines to keep Linux from crashing on machine which don&squot;t&n; * have IDE like the Indy.&n; *&n; * Copyright (C) 1998 by Ralf Baechle&n; */
 macro_line|#include &lt;linux/hdreg.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
+macro_line|#include &lt;asm/hdreg.h&gt;
 macro_line|#include &lt;asm/ptrace.h&gt;
 macro_line|#include &lt;asm/ide.h&gt;
 DECL|function|no_ide_default_irq
@@ -35,14 +36,16 @@ DECL|function|no_ide_init_hwif_ports
 r_static
 r_void
 id|no_ide_init_hwif_ports
-c_func
 (paren
-id|ide_ioreg_t
+id|hw_regs_t
 op_star
-id|p
+id|hw
 comma
 id|ide_ioreg_t
-id|base
+id|data_port
+comma
+id|ide_ioreg_t
+id|ctrl_port
 comma
 r_int
 op_star

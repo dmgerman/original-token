@@ -9,8 +9,8 @@ macro_line|#include &lt;linux/blkdev.h&gt;
 macro_line|#include &lt;linux/hdreg.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
+macro_line|#include &lt;linux/ide.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
-macro_line|#include &quot;ide.h&quot;
 DECL|variable|ns87415_count
 DECL|variable|ns87415_control
 r_static

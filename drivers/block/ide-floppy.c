@@ -16,14 +16,13 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/genhd.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/cdrom.h&gt;
+macro_line|#include &lt;linux/ide.h&gt;
 macro_line|#include &lt;asm/byteorder.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/unaligned.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
-multiline_comment|/*&n; *&t;Main Linux ide driver include file&n; */
-macro_line|#include &quot;ide.h&quot;
 multiline_comment|/*&n; *&t;The following are used to debug the driver.&n; */
 DECL|macro|IDEFLOPPY_DEBUG_LOG
 mdefine_line|#define IDEFLOPPY_DEBUG_LOG&t;&t;0
@@ -3677,6 +3676,11 @@ id|drive
 )paren
 suffix:semicolon
 macro_line|#endif /* CONFIG_BLK_DEV_IDEDMA */
+r_if
+c_cond
+(paren
+id|IDE_CONTROL_REG
+)paren
 id|OUT_BYTE
 (paren
 id|drive-&gt;ctl

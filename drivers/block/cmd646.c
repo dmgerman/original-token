@@ -2,8 +2,9 @@ multiline_comment|/* $Id: cmd646.c,v 1.11 1998/12/13 08:36:54 davem Exp $&n; * c
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
+macro_line|#include &lt;linux/hdreg.h&gt;
+macro_line|#include &lt;linux/ide.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
-macro_line|#include &quot;ide.h&quot;
 DECL|function|cmd646_config_drive_for_dma
 r_static
 r_int
@@ -140,21 +141,21 @@ suffix:semicolon
 )brace
 multiline_comment|/* This is fun.  -DaveM */
 DECL|macro|IDE_SETXFER
-mdefine_line|#define IDE_SETXFER&t;&t;0x03
+mdefine_line|#define IDE_SETXFER&t;&t;SETFEATURES_XFER
 DECL|macro|IDE_SETFEATURE
-mdefine_line|#define IDE_SETFEATURE&t;&t;0xef
+mdefine_line|#define IDE_SETFEATURE&t;&t;WIN_SETFEATURES
 DECL|macro|IDE_DMA2_ENABLE
-mdefine_line|#define IDE_DMA2_ENABLE&t;&t;0x22
+mdefine_line|#define IDE_DMA2_ENABLE&t;&t;XFER_MW_DMA_2
 DECL|macro|IDE_DMA1_ENABLE
-mdefine_line|#define IDE_DMA1_ENABLE&t;&t;0x21
+mdefine_line|#define IDE_DMA1_ENABLE&t;&t;XFER_MW_DMA_1
 DECL|macro|IDE_DMA0_ENABLE
-mdefine_line|#define IDE_DMA0_ENABLE&t;&t;0x20
+mdefine_line|#define IDE_DMA0_ENABLE&t;&t;XFER_MW_DMA_0
 DECL|macro|IDE_UDMA2_ENABLE
-mdefine_line|#define IDE_UDMA2_ENABLE&t;0x42
+mdefine_line|#define IDE_UDMA2_ENABLE&t;XFER_UDMA_2
 DECL|macro|IDE_UDMA1_ENABLE
-mdefine_line|#define IDE_UDMA1_ENABLE&t;0x41
+mdefine_line|#define IDE_UDMA1_ENABLE&t;XFER_UDMA_1
 DECL|macro|IDE_UDMA0_ENABLE
-mdefine_line|#define IDE_UDMA0_ENABLE&t;0x40
+mdefine_line|#define IDE_UDMA0_ENABLE&t;XFER_UDMA_0
 DECL|function|dma2_bits_to_command
 r_static
 id|__inline__
@@ -998,6 +999,114 @@ id|drive
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * ASUS P55T2P4D with CMD646 chipset revision 0x01 requires the old&n; * event order for DMA transfers.&n; */
+DECL|function|cmd646_1_dmaproc
+r_static
+r_int
+id|cmd646_1_dmaproc
+c_func
+(paren
+id|ide_dma_action_t
+id|func
+comma
+id|ide_drive_t
+op_star
+id|drive
+)paren
+(brace
+id|ide_hwif_t
+op_star
+id|hwif
+op_assign
+id|HWIF
+c_func
+(paren
+id|drive
+)paren
+suffix:semicolon
+r_int
+r_int
+id|dma_base
+op_assign
+id|hwif-&gt;dma_base
+suffix:semicolon
+id|byte
+id|dma_stat
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|func
+op_eq
+id|ide_dma_end
+)paren
+(brace
+id|drive-&gt;waiting_for_dma
+op_assign
+l_int|0
+suffix:semicolon
+id|dma_stat
+op_assign
+id|inb
+c_func
+(paren
+id|dma_base
+op_plus
+l_int|2
+)paren
+suffix:semicolon
+multiline_comment|/* get DMA status */
+id|outb
+c_func
+(paren
+id|inb
+c_func
+(paren
+id|dma_base
+)paren
+op_amp
+op_complement
+l_int|1
+comma
+id|dma_base
+)paren
+suffix:semicolon
+multiline_comment|/* stop DMA */
+id|outb
+c_func
+(paren
+id|dma_stat
+op_or
+l_int|6
+comma
+id|dma_base
+op_plus
+l_int|2
+)paren
+suffix:semicolon
+multiline_comment|/* clear the INTR &amp; ERROR bits */
+r_return
+(paren
+id|dma_stat
+op_amp
+l_int|7
+)paren
+op_ne
+l_int|4
+suffix:semicolon
+multiline_comment|/* verify good DMA status */
+)brace
+multiline_comment|/* Other cases are done by generic IDE-DMA code. */
+r_return
+id|cmd646_dmaproc
+c_func
+(paren
+id|func
+comma
+id|drive
+)paren
+suffix:semicolon
+)brace
 DECL|function|__initfunc
 id|__initfunc
 c_func
@@ -1021,6 +1130,25 @@ suffix:semicolon
 r_int
 r_char
 id|mrdmode
+suffix:semicolon
+r_int
+r_int
+id|class_rev
+suffix:semicolon
+id|pci_read_config_dword
+c_func
+(paren
+id|hwif-&gt;pci_dev
+comma
+id|PCI_CLASS_REVISION
+comma
+op_amp
+id|class_rev
+)paren
+suffix:semicolon
+id|class_rev
+op_and_assign
+l_int|0xff
 suffix:semicolon
 id|hwif-&gt;chipset
 op_assign
@@ -1198,10 +1326,27 @@ comma
 l_int|0x3f
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|class_rev
+op_eq
+l_int|0x01
+)paren
+(brace
+id|hwif-&gt;dmaproc
+op_assign
+op_amp
+id|cmd646_1_dmaproc
+suffix:semicolon
+)brace
+r_else
+(brace
 id|hwif-&gt;dmaproc
 op_assign
 op_amp
 id|cmd646_dmaproc
 suffix:semicolon
+)brace
 )brace
 eof

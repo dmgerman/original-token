@@ -2450,7 +2450,13 @@ id|snd_wnd_packets
 op_assign
 id|tp-&gt;snd_wnd
 op_div
+id|max
+c_func
+(paren
 id|tp-&gt;mss_cache
+comma
+l_int|1
+)paren
 suffix:semicolon
 r_return
 id|max

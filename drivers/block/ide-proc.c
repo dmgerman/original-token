@@ -9,12 +9,62 @@ macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/ctype.h&gt;
+macro_line|#include &lt;linux/ide.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
-macro_line|#include &quot;ide.h&quot;
 macro_line|#ifndef MIN
 DECL|macro|MIN
 mdefine_line|#define MIN(a,b) (((a) &lt; (b)) ? (a) : (b))
 macro_line|#endif
+macro_line|#ifdef CONFIG_BLK_DEV_VIA82C586
+DECL|variable|via_display_info
+r_int
+(paren
+op_star
+id|via_display_info
+)paren
+(paren
+r_char
+op_star
+comma
+r_char
+op_star
+op_star
+comma
+id|off_t
+comma
+r_int
+comma
+r_int
+)paren
+op_assign
+l_int|NULL
+suffix:semicolon
+macro_line|#endif /* CONFIG_BLK_DEV_VIA82C586 */
+macro_line|#ifdef CONFIG_BLK_DEV_ALI15X3
+DECL|variable|ali_display_info
+r_int
+(paren
+op_star
+id|ali_display_info
+)paren
+(paren
+r_char
+op_star
+comma
+r_char
+op_star
+op_star
+comma
+id|off_t
+comma
+r_int
+comma
+r_int
+)paren
+op_assign
+l_int|NULL
+suffix:semicolon
+macro_line|#endif /* CONFIG_BLK_DEV_ALI15X3 */
 DECL|function|ide_getxdigit
 r_static
 r_int
@@ -3858,6 +3908,56 @@ id|ent-&gt;read_proc
 op_assign
 id|proc_ide_read_drivers
 suffix:semicolon
+macro_line|#ifdef CONFIG_BLK_DEV_VIA82C586
+r_if
+c_cond
+(paren
+id|via_display_info
+)paren
+(brace
+id|ent
+op_assign
+id|create_proc_entry
+c_func
+(paren
+l_string|&quot;via&quot;
+comma
+l_int|0
+comma
+id|root
+)paren
+suffix:semicolon
+id|ent-&gt;get_info
+op_assign
+id|via_display_info
+suffix:semicolon
+)brace
+macro_line|#endif /* CONFIG_BLK_DEV_VIA82C586 */
+macro_line|#ifdef CONFIG_BLK_DEV_ALI15X3
+r_if
+c_cond
+(paren
+id|ali_display_info
+)paren
+(brace
+id|ent
+op_assign
+id|create_proc_entry
+c_func
+(paren
+l_string|&quot;ali&quot;
+comma
+l_int|0
+comma
+id|root
+)paren
+suffix:semicolon
+id|ent-&gt;get_info
+op_assign
+id|ali_display_info
+suffix:semicolon
+)brace
+macro_line|#endif /* CONFIG_BLK_DEV_ALI15X3 */
 )brace
 DECL|function|proc_ide_destroy
 r_void
@@ -3868,6 +3968,36 @@ r_void
 )paren
 (brace
 multiline_comment|/*&n;&t; * Mmmm.. does this free up all resources,&n;&t; * or do we need to do a more proper cleanup here ??&n;&t; */
+macro_line|#ifdef CONFIG_BLK_DEV_VIA82C586
+r_if
+c_cond
+(paren
+id|via_display_info
+)paren
+id|remove_proc_entry
+c_func
+(paren
+l_string|&quot;ide/via&quot;
+comma
+l_int|0
+)paren
+suffix:semicolon
+macro_line|#endif /* CONFIG_BLK_DEV_VIA82C586 */
+macro_line|#ifdef CONFIG_BLK_DEV_ALI15X3
+r_if
+c_cond
+(paren
+id|ali_display_info
+)paren
+id|remove_proc_entry
+c_func
+(paren
+l_string|&quot;ide/ali&quot;
+comma
+l_int|0
+)paren
+suffix:semicolon
+macro_line|#endif /* CONFIG_BLK_DEV_ALI15X3 */
 id|remove_proc_entry
 c_func
 (paren

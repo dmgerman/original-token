@@ -1,5 +1,6 @@
-multiline_comment|/*&n; *  linux/drivers/block/ide-dma.c&t;Version 4.08  December 31, 1997&n; *&n; *  Copyright (c) 1995-1998  Mark Lord&n; *  May be copied or modified under the terms of the GNU General Public License&n; */
-multiline_comment|/*&n; * This module provides support for the bus-master IDE DMA functions&n; * of various PCI chipsets, including the Intel PIIX (i82371FB for&n; * the 430 FX chipset), the PIIX3 (i82371SB for the 430 HX/VX and &n; * 440 chipsets), and the PIIX4 (i82371AB for the 430 TX chipset)&n; * (&quot;PIIX&quot; stands for &quot;PCI ISA IDE Xcellerator&quot;).&n; *&n; * Pretty much the same code works for other IDE PCI bus-mastering chipsets.&n; *&n; * DMA is supported for all IDE devices (disk drives, cdroms, tapes, floppies).&n; *&n; * By default, DMA support is prepared for use, but is currently enabled only&n; * for drives which already have DMA enabled (UltraDMA or mode 2 multi/single),&n; * or which are recognized as &quot;good&quot; (see table below).  Drives with only mode0&n; * or mode1 (multi/single) DMA should also work with this chipset/driver&n; * (eg. MC2112A) but are not enabled by default.&n; *&n; * Use &quot;hdparm -i&quot; to view modes supported by a given drive.&n; *&n; * The hdparm-2.4 (or later) utility can be used for manually enabling/disabling&n; * DMA support, but must be (re-)compiled against this kernel version or later.&n; *&n; * To enable DMA, use &quot;hdparm -d1 /dev/hd?&quot; on a per-drive basis after booting.&n; * If problems arise, ide.c will disable DMA operation after a few retries.&n; * This error recovery mechanism works and has been extremely well exercised.&n; *&n; * IDE drives, depending on their vintage, may support several different modes&n; * of DMA operation.  The boot-time modes are indicated with a &quot;*&quot; in&n; * the &quot;hdparm -i&quot; listing, and can be changed with *knowledgeable* use of&n; * the &quot;hdparm -X&quot; feature.  There is seldom a need to do this, as drives&n; * normally power-up with their &quot;best&quot; PIO/DMA modes enabled.&n; *&n; * Testing has been done with a rather extensive number of drives,&n; * with Quantum &amp; Western Digital models generally outperforming the pack,&n; * and Fujitsu &amp; Conner (and some Seagate which are really Conner) drives&n; * showing more lackluster throughput.&n; *&n; * Keep an eye on /var/adm/messages for &quot;DMA disabled&quot; messages.&n; *&n; * Some people have reported trouble with Intel Zappa motherboards.&n; * This can be fixed by upgrading the AMI BIOS to version 1.00.04.BS0,&n; * available from ftp://ftp.intel.com/pub/bios/10004bs0.exe&n; * (thanks to Glen Morrell &lt;glen@spin.Stanford.edu&gt; for researching this).&n; *&n; * Thanks to &quot;Christopher J. Reimer&quot; &lt;reimer@doe.carleton.ca&gt; for&n; * fixing the problem with the BIOS on some Acer motherboards.&n; *&n; * Thanks to &quot;Benoit Poulot-Cazajous&quot; &lt;poulot@chorus.fr&gt; for testing&n; * &quot;TX&quot; chipset compatibility and for providing patches for the &quot;TX&quot; chipset.&n; *&n; * Thanks to Christian Brunner &lt;chb@muc.de&gt; for taking a good first crack&n; * at generic DMA -- his patches were referred to when preparing this code.&n; *&n; * Most importantly, thanks to Robert Bringman &lt;rob@mars.trion.com&gt;&n; * for supplying a Promise UDMA board &amp; WD UDMA drive for this work!&n; *&n; * And, yes, Intel Zappa boards really *do* use both PIIX IDE ports.&n; *&n; * ACARD ATP850UF Chipset &quot;Modified SCSI Class&quot; with other names&n; *       AEC6210 U/UF&n; *       SIIG&squot;s UltraIDE Pro CN-2449&n; * TTI   HPT343 Chipset &quot;Modified SCSI Class&quot; but reports as an&n; *       unknown storage device.&n; * NEW&t; check_drive_lists(ide_drive_t *drive, int good_bad)&n; */
+multiline_comment|/*&n; *  linux/drivers/block/ide-dma.c&t;Version 4.09  April 23, 1999&n; *&n; *  Copyright (c) 1999  Andre Hedrick&n; *  May be copied or modified under the terms of the GNU General Public License&n; */
+multiline_comment|/*&n; *  Special Thanks to Mark for his Six years of work.&n; *&n; *  Copyright (c) 1995-1998  Mark Lord&n; *  May be copied or modified under the terms of the GNU General Public License&n; */
+multiline_comment|/*&n; * This module provides support for the bus-master IDE DMA functions&n; * of various PCI chipsets, including the Intel PIIX (i82371FB for&n; * the 430 FX chipset), the PIIX3 (i82371SB for the 430 HX/VX and &n; * 440 chipsets), and the PIIX4 (i82371AB for the 430 TX chipset)&n; * (&quot;PIIX&quot; stands for &quot;PCI ISA IDE Xcellerator&quot;).&n; *&n; * Pretty much the same code works for other IDE PCI bus-mastering chipsets.&n; *&n; * DMA is supported for all IDE devices (disk drives, cdroms, tapes, floppies).&n; *&n; * By default, DMA support is prepared for use, but is currently enabled only&n; * for drives which already have DMA enabled (UltraDMA or mode 2 multi/single),&n; * or which are recognized as &quot;good&quot; (see table below).  Drives with only mode0&n; * or mode1 (multi/single) DMA should also work with this chipset/driver&n; * (eg. MC2112A) but are not enabled by default.&n; *&n; * Use &quot;hdparm -i&quot; to view modes supported by a given drive.&n; *&n; * The hdparm-3.5 (or later) utility can be used for manually enabling/disabling&n; * DMA support, but must be (re-)compiled against this kernel version or later.&n; *&n; * To enable DMA, use &quot;hdparm -d1 /dev/hd?&quot; on a per-drive basis after booting.&n; * If problems arise, ide.c will disable DMA operation after a few retries.&n; * This error recovery mechanism works and has been extremely well exercised.&n; *&n; * IDE drives, depending on their vintage, may support several different modes&n; * of DMA operation.  The boot-time modes are indicated with a &quot;*&quot; in&n; * the &quot;hdparm -i&quot; listing, and can be changed with *knowledgeable* use of&n; * the &quot;hdparm -X&quot; feature.  There is seldom a need to do this, as drives&n; * normally power-up with their &quot;best&quot; PIO/DMA modes enabled.&n; *&n; * Testing has been done with a rather extensive number of drives,&n; * with Quantum &amp; Western Digital models generally outperforming the pack,&n; * and Fujitsu &amp; Conner (and some Seagate which are really Conner) drives&n; * showing more lackluster throughput.&n; *&n; * Keep an eye on /var/adm/messages for &quot;DMA disabled&quot; messages.&n; *&n; * Some people have reported trouble with Intel Zappa motherboards.&n; * This can be fixed by upgrading the AMI BIOS to version 1.00.04.BS0,&n; * available from ftp://ftp.intel.com/pub/bios/10004bs0.exe&n; * (thanks to Glen Morrell &lt;glen@spin.Stanford.edu&gt; for researching this).&n; *&n; * Thanks to &quot;Christopher J. Reimer&quot; &lt;reimer@doe.carleton.ca&gt; for&n; * fixing the problem with the BIOS on some Acer motherboards.&n; *&n; * Thanks to &quot;Benoit Poulot-Cazajous&quot; &lt;poulot@chorus.fr&gt; for testing&n; * &quot;TX&quot; chipset compatibility and for providing patches for the &quot;TX&quot; chipset.&n; *&n; * Thanks to Christian Brunner &lt;chb@muc.de&gt; for taking a good first crack&n; * at generic DMA -- his patches were referred to when preparing this code.&n; *&n; * Most importantly, thanks to Robert Bringman &lt;rob@mars.trion.com&gt;&n; * for supplying a Promise UDMA board &amp; WD UDMA drive for this work!&n; *&n; * And, yes, Intel Zappa boards really *do* use both PIIX IDE ports.&n; *&n; * ACARD ATP850UF Chipset &quot;Modified SCSI Class&quot; with other names&n; *       AEC6210 U/UF&n; *       SIIG&squot;s UltraIDE Pro CN-2449&n; * TTI   HPT343 Chipset &quot;Modified SCSI Class&quot; but reports as an&n; *       unknown storage device.&n; * NEW&t; check_drive_lists(ide_drive_t *drive, int good_bad)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -8,9 +9,195 @@ macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/ide.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
-macro_line|#include &quot;ide.h&quot;
+DECL|macro|IDE_DMA_NEW_LISTINGS
+mdefine_line|#define IDE_DMA_NEW_LISTINGS&t;&t;0
+macro_line|#if IDE_DMA_NEW_LISTINGS
+DECL|struct|drive_list_entry
+r_struct
+id|drive_list_entry
+(brace
+DECL|member|id_model
+r_char
+op_star
+id|id_model
+suffix:semicolon
+DECL|member|id_firmware
+r_char
+op_star
+id|id_firmware
+suffix:semicolon
+)brace
+suffix:semicolon
+DECL|variable|drive_whitelist
+r_struct
+id|drive_list_entry
+id|drive_whitelist
+(braket
+)braket
+op_assign
+(brace
+(brace
+l_string|&quot;Micropolis 2112A&quot;
+comma
+l_string|&quot;ALL&quot;
+)brace
+comma
+(brace
+l_string|&quot;CONNER CTMA 4000&quot;
+comma
+l_string|&quot;ALL&quot;
+)brace
+comma
+(brace
+l_string|&quot;CONNER CTT8000-A&quot;
+comma
+l_string|&quot;ALL&quot;
+)brace
+comma
+(brace
+l_string|&quot;ST34342A&quot;
+comma
+l_string|&quot;ALL&quot;
+)brace
+comma
+(brace
+l_int|0
+comma
+l_int|0
+)brace
+)brace
+suffix:semicolon
+DECL|variable|drive_blacklist
+r_struct
+id|drive_list_entry
+id|drive_blacklist
+(braket
+)braket
+op_assign
+(brace
+(brace
+l_string|&quot;WDC AC11000H&quot;
+comma
+l_string|&quot;ALL&quot;
+)brace
+comma
+(brace
+l_string|&quot;WDC AC22100H&quot;
+comma
+l_string|&quot;ALL&quot;
+)brace
+comma
+(brace
+l_string|&quot;WDC AC32500H&quot;
+comma
+l_string|&quot;ALL&quot;
+)brace
+comma
+(brace
+l_string|&quot;WDC AC33100H&quot;
+comma
+l_string|&quot;ALL&quot;
+)brace
+comma
+(brace
+l_string|&quot;WDC AC31600H&quot;
+comma
+l_string|&quot;ALL&quot;
+)brace
+comma
+(brace
+l_string|&quot;WDC AC32100H&quot;
+comma
+l_string|&quot;24.09P07&quot;
+)brace
+comma
+(brace
+l_string|&quot;WDC AC23200L&quot;
+comma
+l_string|&quot;21.10N21&quot;
+)brace
+comma
+(brace
+l_int|0
+comma
+l_int|0
+)brace
+)brace
+suffix:semicolon
+DECL|function|in_drive_list
+r_int
+id|in_drive_list
+c_func
+(paren
+r_struct
+id|hd_driveid
+op_star
+id|id
+comma
+r_struct
+id|drive_list_entry
+op_star
+id|drive_table
+)paren
+(brace
+r_for
+c_loop
+(paren
+suffix:semicolon
+id|drive_table-&gt;id_model
+suffix:semicolon
+id|drive_table
+op_increment
+)paren
+r_if
+c_cond
+(paren
+(paren
+op_logical_neg
+id|strcmp
+c_func
+(paren
+id|drive_table-&gt;id_model
+comma
+id|id-&gt;model
+)paren
+)paren
+op_logical_and
+(paren
+(paren
+op_logical_neg
+id|strstr
+c_func
+(paren
+id|drive_table-&gt;id_firmware
+comma
+id|id-&gt;fw_rev
+)paren
+)paren
+op_logical_or
+(paren
+op_logical_neg
+id|strcmp
+c_func
+(paren
+id|drive_table-&gt;id_firmware
+comma
+l_string|&quot;ALL&quot;
+)paren
+)paren
+)paren
+)paren
+r_return
+l_int|1
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+macro_line|#else /* !IDE_DMA_NEW_LISTINGS */
 multiline_comment|/*&n; * good_dma_drives() lists the model names (from &quot;hdparm -i&quot;)&n; * of drives which do not support mode2 DMA but which are&n; * known to work fine with this interface under Linux.&n; */
 DECL|variable|good_dma_drives
 r_const
@@ -47,6 +234,8 @@ l_string|&quot;WDC AC11000H&quot;
 comma
 l_string|&quot;WDC AC22100H&quot;
 comma
+l_string|&quot;WDC AC32100H&quot;
+comma
 l_string|&quot;WDC AC32500H&quot;
 comma
 l_string|&quot;WDC AC33100H&quot;
@@ -56,6 +245,7 @@ comma
 l_int|NULL
 )brace
 suffix:semicolon
+macro_line|#endif /* IDE_DMA_NEW_LISTINGS */
 multiline_comment|/*&n; * Our Physical Region Descriptor (PRD) table should be large enough&n; * to handle the biggest I/O request we are likely to see.  Since requests&n; * can have no more than 256 sectors, and since the typical blocksize is&n; * two or more sectors, we could get by with a limit of 128 entries here for&n; * the usual worst case.  Most requests seem to include some contiguous blocks,&n; * further reducing the number of table entries required.&n; *&n; * The driver reverts to PIO mode for individual requests that exceed&n; * this limit (possible with 512 byte blocksizes, eg. MSDOS f/s), so handling&n; * 100% of all crazy scenarios here is not necessary.&n; *&n; * As it turns out though, we must allocate a full 4KB page for this,&n; * so the two PRD tables (ide0 &amp; ide1) will each get half of that,&n; * allowing each to have about 256 entries (8 bytes each) from this.&n; */
 DECL|macro|PRD_BYTES
 mdefine_line|#define PRD_BYTES&t;8
@@ -216,6 +406,9 @@ id|ide_build_dmatable
 id|ide_drive_t
 op_star
 id|drive
+comma
+id|ide_dma_action_t
+id|func
 )paren
 (brace
 r_struct
@@ -260,6 +453,11 @@ id|drive
 op_member_access_from_pointer
 id|dmatable
 suffix:semicolon
+r_int
+r_char
+op_star
+id|virt_addr
+suffix:semicolon
 macro_line|#ifdef CONFIG_BLK_DEV_TRM290
 r_int
 r_int
@@ -303,11 +501,15 @@ l_int|NULL
 )paren
 (brace
 multiline_comment|/* paging requests have (rq-&gt;bh == NULL) */
+id|virt_addr
+op_assign
+id|rq-&gt;buffer
+suffix:semicolon
 id|addr
 op_assign
 id|virt_to_bus
 (paren
-id|rq-&gt;buffer
+id|virt_addr
 )paren
 suffix:semicolon
 id|size
@@ -320,11 +522,15 @@ suffix:semicolon
 r_else
 (brace
 multiline_comment|/* group sequential buffers into one large buffer */
+id|virt_addr
+op_assign
+id|bh-&gt;b_data
+suffix:semicolon
 id|addr
 op_assign
 id|virt_to_bus
 (paren
-id|bh-&gt;b_data
+id|virt_addr
 )paren
 suffix:semicolon
 id|size
@@ -387,6 +593,50 @@ suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
+)brace
+multiline_comment|/*&n;&t;&t; * Some CPUs without cache snooping need to invalidate/write&n;&t;&t; * back their caches before DMA transfers to guarantee correct&n;&t;&t; * data.        -- rmk&n;&t;&t; */
+r_if
+c_cond
+(paren
+id|size
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|func
+op_eq
+id|ide_dma_read
+)paren
+(brace
+id|dma_cache_inv
+c_func
+(paren
+(paren
+r_int
+r_int
+)paren
+id|virt_addr
+comma
+id|size
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
+id|dma_cache_wback
+c_func
+(paren
+(paren
+r_int
+r_int
+)paren
+id|virt_addr
+comma
+id|size
+)paren
+suffix:semicolon
+)brace
 )brace
 r_while
 c_loop
@@ -513,6 +763,7 @@ c_cond
 op_logical_neg
 id|count
 )paren
+(brace
 id|printk
 c_func
 (paren
@@ -521,7 +772,9 @@ comma
 id|drive-&gt;name
 )paren
 suffix:semicolon
+)brace
 r_else
+(brace
 r_if
 c_cond
 (paren
@@ -539,6 +792,34 @@ l_int|0x80000000
 )paren
 suffix:semicolon
 multiline_comment|/* set End-Of-Table (EOT) bit */
+multiline_comment|/*&n;&t;&t; * Some CPUs need to flush the DMA table to physical RAM&n;&t;&t; * before DMA can start.        -- rmk&n;&t;&t; */
+id|dma_cache_wback
+c_func
+(paren
+(paren
+r_int
+r_int
+)paren
+id|HWIF
+c_func
+(paren
+id|drive
+)paren
+op_member_access_from_pointer
+id|dmatable
+comma
+id|count
+op_star
+r_sizeof
+(paren
+r_int
+r_int
+)paren
+op_star
+l_int|2
+)paren
+suffix:semicolon
+)brace
 r_return
 id|count
 suffix:semicolon
@@ -556,18 +837,68 @@ r_int
 id|good_bad
 )paren
 (brace
-r_const
-r_char
-op_star
-op_star
-id|list
-suffix:semicolon
 r_struct
 id|hd_driveid
 op_star
 id|id
 op_assign
 id|drive-&gt;id
+suffix:semicolon
+macro_line|#if IDE_DMA_NEW_LISTINGS
+r_if
+c_cond
+(paren
+id|good_bad
+)paren
+(brace
+r_return
+id|in_drive_list
+c_func
+(paren
+id|id
+comma
+id|drive_whitelist
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
+r_int
+id|blacklist
+op_assign
+id|in_drive_list
+c_func
+(paren
+id|id
+comma
+id|drive_blacklist
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|blacklist
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;%s: Disabling (U)DMA for %s&bslash;n&quot;
+comma
+id|drive-&gt;name
+comma
+id|id-&gt;model
+)paren
+suffix:semicolon
+r_return
+id|blacklist
+suffix:semicolon
+)brace
+macro_line|#else /* !IDE_DMA_NEW_LISTINGS */
+r_const
+r_char
+op_star
+op_star
+id|list
 suffix:semicolon
 r_if
 c_cond
@@ -651,6 +982,7 @@ suffix:semicolon
 )brace
 )brace
 )brace
+macro_line|#endif /* IDE_DMA_NEW_LISTINGS */
 r_return
 l_int|0
 suffix:semicolon
@@ -700,12 +1032,12 @@ multiline_comment|/* Consult the list of known &quot;bad&quot; drives */
 r_if
 c_cond
 (paren
-id|check_drive_lists
+id|ide_dmaproc
 c_func
 (paren
-id|drive
+id|ide_dma_bad_drive
 comma
-id|BAD_DMA_DRIVE
+id|drive
 )paren
 )paren
 r_return
@@ -719,6 +1051,50 @@ comma
 id|drive
 )paren
 suffix:semicolon
+macro_line|#if 0
+multiline_comment|/* Enable DMA on any drive that has UltraDMA (mode 3/4) enabled */
+r_if
+c_cond
+(paren
+(paren
+id|id-&gt;field_valid
+op_amp
+l_int|4
+)paren
+op_logical_and
+(paren
+id|id-&gt;word93
+op_amp
+l_int|0x2000
+)paren
+)paren
+r_if
+c_cond
+(paren
+(paren
+id|id-&gt;dma_ultra
+op_amp
+(paren
+id|id-&gt;dma_ultra
+op_rshift
+l_int|11
+)paren
+op_amp
+l_int|3
+)paren
+)paren
+r_return
+id|hwif
+op_member_access_from_pointer
+id|dmaproc
+c_func
+(paren
+id|ide_dma_on
+comma
+id|drive
+)paren
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/* Enable DMA on any drive that has UltraDMA (mode 0/1/2) enabled */
 r_if
 c_cond
@@ -797,12 +1173,12 @@ multiline_comment|/* Consult the list of known &quot;good&quot; drives */
 r_if
 c_cond
 (paren
-id|check_drive_lists
+id|ide_dmaproc
 c_func
 (paren
-id|drive
+id|ide_dma_good_drive
 comma
-id|GOOD_DMA_DRIVE
+id|drive
 )paren
 )paren
 r_return
@@ -935,6 +1311,8 @@ id|ide_build_dmatable
 c_func
 (paren
 id|drive
+comma
+id|func
 )paren
 )paren
 )paren
@@ -1128,6 +1506,25 @@ op_eq
 l_int|4
 suffix:semicolon
 multiline_comment|/* return 1 if INTR asserted */
+r_case
+id|ide_dma_bad_drive
+suffix:colon
+r_case
+id|ide_dma_good_drive
+suffix:colon
+r_return
+id|check_drive_lists
+c_func
+(paren
+id|drive
+comma
+(paren
+id|func
+op_eq
+id|ide_dma_good_drive
+)paren
+)paren
+suffix:semicolon
 r_default
 suffix:colon
 id|printk
@@ -1583,6 +1980,70 @@ id|hwif-&gt;dma_extra
 op_assign
 id|extra
 suffix:semicolon
+r_switch
+c_cond
+(paren
+id|dev-&gt;device
+)paren
+(brace
+r_case
+id|PCI_DEVICE_ID_CMD_643
+suffix:colon
+multiline_comment|/*&n;&t;&t;&t;&t; * Lets attempt to use the same Ali tricks&n;&t;&t;&t;&t; * to fix CMD643.....&n;&t;&t;&t;&t; */
+r_case
+id|PCI_DEVICE_ID_AL_M5219
+suffix:colon
+r_case
+id|PCI_DEVICE_ID_AL_M5229
+suffix:colon
+id|outb
+c_func
+(paren
+id|inb
+c_func
+(paren
+id|dma_base
+op_plus
+l_int|2
+)paren
+op_amp
+l_int|0x60
+comma
+id|dma_base
+op_plus
+l_int|2
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t;&t;&t;&t; * Ali 15x3 chipsets know as ALI IV and V report&n;&t;&t;&t;&t; * this as simplex, skip this test for them.&n;&t;&t;&t;&t; */
+r_if
+c_cond
+(paren
+id|inb
+c_func
+(paren
+id|dma_base
+op_plus
+l_int|2
+)paren
+op_amp
+l_int|0x80
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;%s: simplex device: DMA forced&bslash;n&quot;
+comma
+id|name
+)paren
+suffix:semicolon
+)brace
+r_break
+suffix:semicolon
+r_default
+suffix:colon
+(brace
+)brace
 r_if
 c_cond
 (paren
@@ -1609,6 +2070,7 @@ id|dma_base
 op_assign
 l_int|0
 suffix:semicolon
+)brace
 )brace
 )brace
 r_return

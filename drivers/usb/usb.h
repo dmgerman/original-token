@@ -882,6 +882,10 @@ DECL|macro|usb_sndctrlpipe
 mdefine_line|#define usb_sndctrlpipe(dev,endpoint)&t;((2 &lt;&lt; 30) | __create_pipe(dev,endpoint))
 DECL|macro|usb_rcvctrlpipe
 mdefine_line|#define usb_rcvctrlpipe(dev,endpoint)&t;((2 &lt;&lt; 30) | __create_pipe(dev,endpoint) | 0x80)
+DECL|macro|usb_sndisocpipe
+mdefine_line|#define usb_sndisocpipe(dev,endpoint)&t;((0 &lt;&lt; 30) | __create_pipe(dev,endpoint))
+DECL|macro|usb_rcvisocpipe
+mdefine_line|#define usb_rcvisocpipe(dev,endpoint)&t;((0 &lt;&lt; 30) | __create_pipe(dev,endpoint) | 0x80)
 DECL|macro|usb_snddefctrl
 mdefine_line|#define usb_snddefctrl(dev)&t;&t;((2 &lt;&lt; 30) | __default_pipe(dev))
 DECL|macro|usb_rcvdefctrl

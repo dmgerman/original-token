@@ -16,19 +16,6 @@ macro_line|#endif
 macro_line|#ifdef CONFIG_MAC
 macro_line|#include &lt;asm/macints.h&gt;
 macro_line|#endif
-DECL|typedef|q40ide_ioreg_t
-r_typedef
-r_int
-r_int
-id|q40ide_ioreg_t
-suffix:semicolon
-DECL|typedef|ide_ioreg_t
-r_typedef
-r_int
-r_char
-op_star
-id|ide_ioreg_t
-suffix:semicolon
 macro_line|#ifndef MAX_HWIFS
 DECL|macro|MAX_HWIFS
 mdefine_line|#define MAX_HWIFS&t;4&t;/* same as the other archs */
@@ -71,34 +58,77 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+r_int
+id|q40ide_default_io_base
+c_func
+(paren
+r_int
+)paren
+suffix:semicolon
+DECL|function|ide_default_io_base
+r_static
+id|__inline__
+id|ide_ioreg_t
+id|ide_default_io_base
+c_func
+(paren
+r_int
+id|index
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|MACH_IS_Q40
+)paren
+r_return
+id|q40ide_default_io_base
+c_func
+(paren
+id|index
+)paren
+suffix:semicolon
+r_else
+r_return
+l_int|0
+suffix:semicolon
+)brace
 multiline_comment|/*&n; *  Can we do this in a generic manner??&n; */
 r_void
 id|q40_ide_init_hwif_ports
 (paren
-id|q40ide_ioreg_t
+id|hw_regs_t
 op_star
-id|p
+id|hw
 comma
 id|q40ide_ioreg_t
-id|base
+id|data_port
+comma
+id|q40ide_ioreg_t
+id|ctrl_port
 comma
 r_int
 op_star
 id|irq
 )paren
 suffix:semicolon
+multiline_comment|/*&n; * Set up a hw structure for a specified data port, control port and IRQ.&n; * This should follow whatever the default interface uses.&n; */
 DECL|function|ide_init_hwif_ports
 r_static
 id|__inline__
 r_void
 id|ide_init_hwif_ports
+c_func
 (paren
-id|ide_ioreg_t
+id|hw_regs_t
 op_star
-id|p
+id|hw
 comma
 id|ide_ioreg_t
-id|base
+id|data_port
+comma
+id|ide_ioreg_t
+id|ctrl_port
 comma
 r_int
 op_star
@@ -115,16 +145,17 @@ r_return
 id|q40_ide_init_hwif_ports
 c_func
 (paren
-(paren
-id|q40ide_ioreg_t
-op_star
-)paren
-id|p
+id|hw
 comma
 (paren
 id|q40ide_ioreg_t
 )paren
-id|base
+id|data_port
+comma
+(paren
+id|q40ide_ioreg_t
+)paren
+id|ctrl_port
 comma
 id|irq
 )paren
@@ -136,6 +167,18 @@ c_func
 l_string|&quot;ide_init_hwif_ports: must not be called&bslash;n&quot;
 )paren
 suffix:semicolon
+)brace
+multiline_comment|/*&n; * This registers the standard ports for this architecture with the IDE&n; * driver.&n; */
+DECL|function|ide_init_default_hwifs
+r_static
+id|__inline__
+r_void
+id|ide_init_default_hwifs
+c_func
+(paren
+r_void
+)paren
+(brace
 )brace
 r_typedef
 r_union
@@ -1066,7 +1109,7 @@ suffix:semicolon
 macro_line|#endif /* CONFIG_ATARI */
 )brace
 DECL|macro|ide_ack_intr
-mdefine_line|#define ide_ack_intr(hwif)&t;((hwif)-&gt;ack_intr ? (hwif)-&gt;ack_intr(hwif) : 1)
+mdefine_line|#define ide_ack_intr(hwif)&t;((hwif)-&gt;hw.ack_intr ? (hwif)-&gt;hw.ack_intr(hwif) : 1)
 multiline_comment|/*&n; * On the Atari, we sometimes can&squot;t enable interrupts:&n; */
 multiline_comment|/* MSch: changed sti() to STI() wherever possible in ide.c; moved STI() def. &n; * to asm/ide.h &n; */
 multiline_comment|/* The Atari interrupt structure strictly requires that the IPL isn&squot;t lowered&n; * uncontrolled in an interrupt handler. In the concrete case, the IDE&n; * interrupt is already a slow int, so the irq is already disabled at the time&n; * the handler is called, and the IPL has been lowered to the minimum value&n; * possible. To avoid going below that, STI() checks for being called inside&n; * an interrupt, and in that case it does nothing. Hope that is reasonable and&n; * works. (Roman)&n; */

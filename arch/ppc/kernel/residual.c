@@ -25,6 +25,7 @@ macro_line|#include &lt;asm/mmu.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
+macro_line|#include &lt;linux/ide.h&gt;
 macro_line|#include &lt;asm/ide.h&gt;
 DECL|variable|__initdata
 r_const

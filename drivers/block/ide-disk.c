@@ -1,9 +1,11 @@
-multiline_comment|/*&n; *  linux/drivers/block/ide-disk.c&t;Version 1.08  Dec   10, 1998&n; *&n; *  Copyright (C) 1994-1998  Linus Torvalds &amp; authors (see below)&n; */
-multiline_comment|/*&n; *  Mostly written by Mark Lord &lt;mlord@pobox.com&gt;&n; *                and  Gadi Oxman &lt;gadio@netvision.net.il&gt;&n; *&n; *  See linux/MAINTAINERS for address of current maintainer.&n; *&n; * This is the IDE/ATA disk driver, as evolved from hd.c and ide.c.&n; *&n; * Version 1.00&t;&t;move disk only code from ide.c to ide-disk.c&n; *&t;&t;&t;support optional byte-swapping of all data&n; * Version 1.01&t;&t;fix previous byte-swapping code&n; * Version 1.02&t;&t;remove &quot;, LBA&quot; from drive identification msgs&n; * Version 1.03&t;&t;fix display of id-&gt;buf_size for big-endian&n; * Version 1.04&t;&t;add /proc configurable settings and S.M.A.R.T support&n; * Version 1.05&t;&t;add capacity support for ATA3 &gt;= 8GB&n; * Version 1.06&t;&t;get boot-up messages to show full cyl count&n; * Version 1.07&t;&t;disable door-locking if it fails&n; * Version 1.08&t;&t;fixed CHS/LBA translations for ATA4 &gt; 8GB,&n; *&t;&t;&t;process of adding new ATA4 compliance.&n; *&t;&t;&t;fixed problems in allowing fdisk to see&n; *&t;&t;&t;the entire disk.&n; */
+multiline_comment|/*&n; *  linux/drivers/block/ide-disk.c&t;Version 1.09  April 23, 1999&n; *&n; *  Copyright (C) 1994-1998  Linus Torvalds &amp; authors (see below)&n; */
+multiline_comment|/*&n; *  Mostly written by Mark Lord &lt;mlord@pobox.com&gt;&n; *                and  Gadi Oxman &lt;gadio@netvision.net.il&gt;&n; *&n; *  See linux/MAINTAINERS for address of current maintainer.&n; *&n; * This is the IDE/ATA disk driver, as evolved from hd.c and ide.c.&n; *&n; * Version 1.00&t;&t;move disk only code from ide.c to ide-disk.c&n; *&t;&t;&t;support optional byte-swapping of all data&n; * Version 1.01&t;&t;fix previous byte-swapping code&n; * Version 1.02&t;&t;remove &quot;, LBA&quot; from drive identification msgs&n; * Version 1.03&t;&t;fix display of id-&gt;buf_size for big-endian&n; * Version 1.04&t;&t;add /proc configurable settings and S.M.A.R.T support&n; * Version 1.05&t;&t;add capacity support for ATA3 &gt;= 8GB&n; * Version 1.06&t;&t;get boot-up messages to show full cyl count&n; * Version 1.07&t;&t;disable door-locking if it fails&n; * Version 1.08&t;&t;fixed CHS/LBA translations for ATA4 &gt; 8GB,&n; *&t;&t;&t;process of adding new ATA4 compliance.&n; *&t;&t;&t;fixed problems in allowing fdisk to see&n; *&t;&t;&t;the entire disk.&n; * Version 1.09&t;&t;added increment of rq-&gt;sector in ide_multwrite&n; *&t;&t;&t;added UDMA 3/4 reporting&n; */
 DECL|macro|IDEDISK_VERSION
-mdefine_line|#define IDEDISK_VERSION&t;&quot;1.08&quot;
+mdefine_line|#define IDEDISK_VERSION&t;&quot;1.09&quot;
 DECL|macro|REALLY_SLOW_IO
 macro_line|#undef REALLY_SLOW_IO&t;&t;/* most systems can safely undef this */
+DECL|macro|_IDE_DISK_C
+mdefine_line|#define _IDE_DISK_C&t;&t;/* Tell linux/hdsmart.h it&squot;s really us */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -17,11 +19,11 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/genhd.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
+macro_line|#include &lt;linux/ide.h&gt;
 macro_line|#include &lt;asm/byteorder.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
-macro_line|#include &quot;ide.h&quot;
 DECL|function|idedisk_bswap_data
 r_static
 r_void
@@ -256,6 +258,51 @@ id|lba_sects
 op_div
 (paren
 l_int|16
+op_star
+l_int|63
+)paren
+suffix:semicolon
+multiline_comment|/* correct cyls */
+r_return
+l_int|1
+suffix:semicolon
+multiline_comment|/* lba_capacity is our only option */
+)brace
+multiline_comment|/*&n;&t; * ... and at least one TLA VBC has POS instead of brain and can&squot;t&n;&t; * tell 16 from 15.&n;&t; */
+r_if
+c_cond
+(paren
+(paren
+id|id-&gt;lba_capacity
+op_ge
+l_int|15481935
+)paren
+op_logical_and
+(paren
+id|id-&gt;cyls
+op_eq
+l_int|0x3fff
+)paren
+op_logical_and
+(paren
+id|id-&gt;heads
+op_eq
+l_int|15
+)paren
+op_logical_and
+(paren
+id|id-&gt;sectors
+op_eq
+l_int|63
+)paren
+)paren
+(brace
+id|id-&gt;cyls
+op_assign
+id|lba_sects
+op_div
+(paren
+l_int|15
 op_star
 l_int|63
 )paren
@@ -831,6 +878,12 @@ id|nsect
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef CONFIG_BLK_DEV_PDC4030
+id|rq-&gt;sector
+op_add_assign
+id|nsect
+suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -1094,6 +1147,26 @@ c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#if 0
+r_if
+c_cond
+(paren
+id|OK_STAT
+c_func
+(paren
+id|stat
+comma
+id|READY_STAT
+comma
+id|BAD_STAT
+)paren
+op_logical_or
+id|drive-&gt;mult_req
+op_eq
+l_int|0
+)paren
+(brace
+macro_line|#else
 r_if
 c_cond
 (paren
@@ -1108,6 +1181,7 @@ id|BAD_STAT
 )paren
 )paren
 (brace
+macro_line|#endif
 id|drive-&gt;mult_count
 op_assign
 id|drive-&gt;mult_req
@@ -1265,6 +1339,11 @@ op_assign
 l_int|0
 suffix:semicolon
 macro_line|#endif /* CONFIG_BLK_DEV_PDC4030 */
+r_if
+c_cond
+(paren
+id|IDE_CONTROL_REG
+)paren
 id|OUT_BYTE
 c_func
 (paren
@@ -1282,6 +1361,19 @@ id|IDE_NSECTOR_REG
 )paren
 suffix:semicolon
 macro_line|#ifdef CONFIG_BLK_DEV_PDC4030
+macro_line|#ifdef CONFIG_BLK_DEV_PDC4030_TESTING
+r_if
+c_cond
+(paren
+id|IS_PDC4030_DRIVE
+)paren
+(brace
+id|use_pdc4030_io
+op_assign
+l_int|1
+suffix:semicolon
+)brace
+macro_line|#else
 r_if
 c_cond
 (paren
@@ -1306,6 +1398,7 @@ l_int|1
 suffix:semicolon
 )brace
 )brace
+macro_line|#endif /* CONFIG_BLK_DEV_PDC4030_TESTING */
 r_if
 c_cond
 (paren
@@ -3853,6 +3946,43 @@ l_int|4
 )paren
 op_logical_and
 (paren
+id|id-&gt;word93
+op_amp
+l_int|0x2000
+)paren
+op_logical_and
+(paren
+id|id-&gt;dma_ultra
+op_amp
+(paren
+id|id-&gt;dma_ultra
+op_rshift
+l_int|11
+)paren
+op_amp
+l_int|3
+)paren
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;, UDMA(66)&quot;
+)paren
+suffix:semicolon
+multiline_comment|/* UDMA BIOS-enabled! */
+)brace
+r_else
+r_if
+c_cond
+(paren
+(paren
+id|id-&gt;field_valid
+op_amp
+l_int|4
+)paren
+op_logical_and
+(paren
 id|id-&gt;dma_ultra
 op_amp
 (paren
@@ -3868,7 +3998,7 @@ l_int|7
 id|printk
 c_func
 (paren
-l_string|&quot;, UDMA&quot;
+l_string|&quot;, UDMA(33)&quot;
 )paren
 suffix:semicolon
 multiline_comment|/* UDMA BIOS-enabled! */
@@ -3982,42 +4112,7 @@ c_cond
 id|id-&gt;max_multsect
 )paren
 (brace
-macro_line|#if 1&t;/* original, pre IDE-NFG, per request of AC */
-id|drive-&gt;mult_req
-op_assign
-id|INITIAL_MULT_COUNT
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|drive-&gt;mult_req
-OG
-id|id-&gt;max_multsect
-)paren
-id|drive-&gt;mult_req
-op_assign
-id|id-&gt;max_multsect
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|drive-&gt;mult_req
-op_logical_or
-(paren
-(paren
-id|id-&gt;multsect_valid
-op_amp
-l_int|1
-)paren
-op_logical_and
-id|id-&gt;multsect
-)paren
-)paren
-id|drive-&gt;special.b.set_multmode
-op_assign
-l_int|1
-suffix:semicolon
-macro_line|#else
+macro_line|#ifdef CONFIG_IDEDISK_MULTI_MODE
 id|id-&gt;multsect
 op_assign
 (paren
@@ -4061,6 +4156,41 @@ c_cond
 l_int|1
 suffix:colon
 l_int|0
+suffix:semicolon
+macro_line|#else&t;/* original, pre IDE-NFG, per request of AC */
+id|drive-&gt;mult_req
+op_assign
+id|INITIAL_MULT_COUNT
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|drive-&gt;mult_req
+OG
+id|id-&gt;max_multsect
+)paren
+id|drive-&gt;mult_req
+op_assign
+id|id-&gt;max_multsect
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|drive-&gt;mult_req
+op_logical_or
+(paren
+(paren
+id|id-&gt;multsect_valid
+op_amp
+l_int|1
+)paren
+op_logical_and
+id|id-&gt;multsect
+)paren
+)paren
+id|drive-&gt;special.b.set_multmode
+op_assign
+l_int|1
 suffix:semicolon
 macro_line|#endif
 )brace

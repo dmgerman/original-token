@@ -10,8 +10,8 @@ macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/blkdev.h&gt;
 macro_line|#include &lt;linux/hdreg.h&gt;
+macro_line|#include &lt;linux/ide.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
-macro_line|#include &quot;ide.h&quot;
 macro_line|#include &quot;ide_modes.h&quot;
 multiline_comment|/*&n; * This routine handles interface switching for the peculiar hardware design&n; * on the F.G.I./Holtek HT-6560B VLB IDE interface.&n; * The HT-6560B can only enable one IDE port at a time, and requires a&n; * silly sequence (below) whenever we switch between primary and secondary.&n; *&n; * This stuff is courtesy of malafoss@snakemail.hut.fi&n; *                          (or maf@nemesis.tky.hut.fi)&n; *&n; * At least one user has reported that this code can confuse the floppy&n; * controller and/or driver -- perhaps this should be changed to use&n; * a read-modify-write sequence, so as not to disturb other bits in the reg?&n; */
 multiline_comment|/*&n; * The special i/o-port that HT-6560B uses to select interfaces:&n; */

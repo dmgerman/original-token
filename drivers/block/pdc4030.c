@@ -1,6 +1,10 @@
-multiline_comment|/*  -*- linux-c -*-&n; *  linux/drivers/block/pdc4030.c&t;Version 0.08  Nov 30, 1997&n; *&n; *  Copyright (C) 1995-1998  Linus Torvalds &amp; authors (see below)&n; */
-multiline_comment|/*&n; *  Principal Author/Maintainer:  peterd@pnd-pc.demon.co.uk&n; *&n; *  This file provides support for the second port and cache of Promise&n; *  IDE interfaces, e.g. DC4030, DC5030.&n; *&n; *  Thanks are due to Mark Lord for advice and patiently answering stupid&n; *  questions, and all those mugs^H^H^H^Hbrave souls who&squot;ve tested this.&n; *&n; *  Version 0.01&t;Initial version, #include&squot;d in ide.c rather than&n; *                      compiled separately.&n; *                      Reads use Promise commands, writes as before. Drives&n; *                      on second channel are read-only.&n; *  Version 0.02        Writes working on second channel, reads on both&n; *                      channels. Writes fail under high load. Suspect&n; *&t;&t;&t;transfers of &gt;127 sectors don&squot;t work.&n; *  Version 0.03        Brought into line with ide.c version 5.27.&n; *                      Other minor changes.&n; *  Version 0.04        Updated for ide.c version 5.30&n; *                      Changed initialization strategy&n; *  Version 0.05&t;Kernel integration.  -ml&n; *  Version 0.06&t;Ooops. Add hwgroup to direct call of ide_intr() -ml&n; *  Version 0.07&t;Added support for DC4030 variants&n; *&t;&t;&t;Secondary interface autodetection&n; *  Version 0.08&t;Renamed to pdc4030.c&n; */
-multiline_comment|/*&n; * Once you&squot;ve compiled it in, you&squot;ll have to also enable the interface&n; * setup routine from the kernel command line, as in &n; *&n; *&t;&squot;linux ide0=dc4030&squot;&n; *&n; * As before, it seems that somewhere around 3Megs when writing, bad things&n; * start to happen [timeouts/retries -ml]. If anyone can give me more feedback,&n; * I&squot;d really appreciate it.  [email: peterd@pnd-pc.demon.co.uk]&n; *&n; */
+multiline_comment|/*  -*- linux-c -*-&n; *  linux/drivers/block/pdc4030.c&t;Version 0.10  Jan 25, 1999&n; *&n; *  Copyright (C) 1995-1999  Linus Torvalds &amp; authors (see below)&n; */
+multiline_comment|/*&n; *  Principal Author/Maintainer:  peterd@pnd-pc.demon.co.uk&n; *&n; *  This file provides support for the second port and cache of Promise&n; *  IDE interfaces, e.g. DC4030VL, DC4030VL-1 and DC4030VL-2.&n; *&n; *  Thanks are due to Mark Lord for advice and patiently answering stupid&n; *  questions, and all those mugs^H^H^H^Hbrave souls who&squot;ve tested this,&n; *  especially Andre Hedrick.&n; *&n; *  Version 0.01&t;Initial version, #include&squot;d in ide.c rather than&n; *                      compiled separately.&n; *                      Reads use Promise commands, writes as before. Drives&n; *                      on second channel are read-only.&n; *  Version 0.02        Writes working on second channel, reads on both&n; *                      channels. Writes fail under high load. Suspect&n; *&t;&t;&t;transfers of &gt;127 sectors don&squot;t work.&n; *  Version 0.03        Brought into line with ide.c version 5.27.&n; *                      Other minor changes.&n; *  Version 0.04        Updated for ide.c version 5.30&n; *                      Changed initialization strategy&n; *  Version 0.05&t;Kernel integration.  -ml&n; *  Version 0.06&t;Ooops. Add hwgroup to direct call of ide_intr() -ml&n; *  Version 0.07&t;Added support for DC4030 variants&n; *&t;&t;&t;Secondary interface autodetection&n; *  Version 0.08&t;Renamed to pdc4030.c&n; *  Version 0.09&t;Obsolete - never released - did manual write request&n; *&t;&t;&t;splitting before max_sectors[major][minor] available.&n; *  Version 0.10&t;Updated for 2.1 series of kernels&n; */
+multiline_comment|/*&n; * Once you&squot;ve compiled it in, you&squot;ll have to also enable the interface&n; * setup routine from the kernel command line, as in &n; *&n; *&t;&squot;linux ide0=dc4030&squot;&n; *&n; * It should now work as a second controller also (&squot;ide1=dc4030&squot;) but only&n; * if you DON&squot;T have BIOS V4.44, which has a bug. If you have this and EPROM&n; * programming facilities, I can tell you what to fix...&n; *&n; * As of January 1999, Promise Technology Inc. have finally supplied me with&n; * some technical information which has shed a glimmer of light on some of the&n; * problems I was having, especially with writes. &n; */
+DECL|macro|DEBUG_READ
+mdefine_line|#define DEBUG_READ
+DECL|macro|DEBUG_WRITE
+mdefine_line|#define DEBUG_WRITE
 DECL|macro|REALLY_SLOW_IO
 macro_line|#undef REALLY_SLOW_IO&t;&t;/* most systems can safely undef this */
 macro_line|#include &lt;linux/types.h&gt;
@@ -11,9 +15,9 @@ macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/blkdev.h&gt;
 macro_line|#include &lt;linux/hdreg.h&gt;
+macro_line|#include &lt;linux/ide.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
-macro_line|#include &quot;ide.h&quot;
 macro_line|#include &quot;pdc4030.h&quot;
 multiline_comment|/* This is needed as the controller may not interrupt if the required data is&n;available in the cache. We have to simulate an interrupt. Ugh! */
 r_extern
@@ -264,7 +268,7 @@ id|drive
 suffix:semicolon
 id|ide_hwif_t
 op_star
-id|second_hwif
+id|hwif2
 suffix:semicolon
 r_struct
 id|dc_ident
@@ -290,7 +294,7 @@ id|hwif-&gt;drives
 l_int|0
 )braket
 suffix:semicolon
-id|second_hwif
+id|hwif2
 op_assign
 op_amp
 id|ide_hwifs
@@ -307,12 +311,10 @@ id|hwif-&gt;chipset
 op_eq
 id|ide_pdc4030
 )paren
-(brace
 multiline_comment|/* we&squot;ve already been found ! */
 r_return
 l_int|1
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -380,6 +382,7 @@ id|WAIT_DRQ
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;%s: Failed Promise read config!&bslash;n&quot;
 comma
 id|hwif-&gt;name
@@ -425,6 +428,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;%s: Promise caching controller, &quot;
 comma
 id|hwif-&gt;name
@@ -479,6 +483,66 @@ comma
 id|ident.type
 )paren
 suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;Please e-mail the following data to &quot;
+l_string|&quot;promise@pnd-pc.demon.co.uk along with&bslash;n&quot;
+l_string|&quot;a description of your card and drives:&bslash;n&quot;
+)paren
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+l_int|0x90
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;%02x &quot;
+comma
+(paren
+(paren
+r_int
+r_char
+op_star
+)paren
+op_amp
+id|ident
+)paren
+(braket
+id|i
+)braket
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|i
+op_amp
+l_int|0x0f
+)paren
+op_eq
+l_int|0x0f
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
 r_return
 l_int|0
 suffix:semicolon
@@ -537,25 +601,25 @@ id|hwif-&gt;irq
 suffix:semicolon
 id|hwif-&gt;chipset
 op_assign
-id|second_hwif-&gt;chipset
+id|hwif2-&gt;chipset
 op_assign
 id|ide_pdc4030
 suffix:semicolon
 id|hwif-&gt;mate
 op_assign
-id|second_hwif
+id|hwif2
 suffix:semicolon
-id|second_hwif-&gt;mate
+id|hwif2-&gt;mate
 op_assign
 id|hwif
 suffix:semicolon
-id|second_hwif-&gt;channel
+id|hwif2-&gt;channel
 op_assign
 l_int|1
 suffix:semicolon
 id|hwif-&gt;selectproc
 op_assign
-id|second_hwif-&gt;selectproc
+id|hwif2-&gt;selectproc
 op_assign
 op_amp
 id|promise_selectproc
@@ -590,9 +654,11 @@ id|ide_hwifs
 id|i
 )braket
 suffix:semicolon
+macro_line|#ifdef DEBUG
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;Shifting i/f %d values to i/f %d&bslash;n&quot;
 comma
 id|i
@@ -602,10 +668,12 @@ comma
 id|i
 )paren
 suffix:semicolon
+macro_line|#endif
 id|ide_init_hwif_ports
 c_func
 (paren
-id|h-&gt;io_ports
+op_amp
+id|h-&gt;hw
 comma
 (paren
 id|h
@@ -618,24 +686,23 @@ id|io_ports
 id|IDE_DATA_OFFSET
 )braket
 comma
+l_int|0
+comma
 l_int|NULL
 )paren
 suffix:semicolon
-id|h-&gt;io_ports
-(braket
-id|IDE_CONTROL_OFFSET
-)braket
-op_assign
+id|memcpy
+c_func
 (paren
-id|h
-op_minus
-l_int|1
+id|h-&gt;io_ports
+comma
+id|h-&gt;hw.io_ports
+comma
+r_sizeof
+(paren
+id|h-&gt;io_ports
 )paren
-op_member_access_from_pointer
-id|io_ports
-(braket
-id|IDE_CONTROL_OFFSET
-)braket
+)paren
 suffix:semicolon
 id|h-&gt;noprobe
 op_assign
@@ -651,27 +718,39 @@ suffix:semicolon
 id|ide_init_hwif_ports
 c_func
 (paren
-id|second_hwif-&gt;io_ports
+op_amp
+id|hwif2-&gt;hw
 comma
 id|hwif-&gt;io_ports
 (braket
 id|IDE_DATA_OFFSET
 )braket
 comma
+l_int|0
+comma
 l_int|NULL
 )paren
 suffix:semicolon
-id|second_hwif-&gt;io_ports
-(braket
-id|IDE_CONTROL_OFFSET
-)braket
-op_assign
-id|hwif-&gt;io_ports
-(braket
-id|IDE_CONTROL_OFFSET
-)braket
+id|memcpy
+c_func
+(paren
+id|hwif2-&gt;io_ports
+comma
+id|hwif-&gt;hw.io_ports
+comma
+r_sizeof
+(paren
+id|hwif2-&gt;io_ports
+)paren
+)paren
 suffix:semicolon
-id|second_hwif-&gt;irq
+id|hwif2-&gt;irq
+op_assign
+id|hwif-&gt;irq
+suffix:semicolon
+id|hwif2-&gt;hw.irq
+op_assign
+id|hwif-&gt;hw.irq
 op_assign
 id|hwif-&gt;irq
 suffix:semicolon
@@ -699,7 +778,7 @@ id|io_32bit
 op_assign
 l_int|3
 suffix:semicolon
-id|second_hwif-&gt;drives
+id|hwif2-&gt;drives
 (braket
 id|i
 )braket
@@ -707,6 +786,44 @@ dot
 id|io_32bit
 op_assign
 l_int|3
+suffix:semicolon
+id|hwif-&gt;drives
+(braket
+id|i
+)braket
+dot
+id|keep_settings
+op_assign
+l_int|1
+suffix:semicolon
+id|hwif2-&gt;drives
+(braket
+id|i
+)braket
+dot
+id|keep_settings
+op_assign
+l_int|1
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|ident.current_tm
+(braket
+id|i
+)braket
+dot
+id|cyl
+)paren
+id|hwif-&gt;drives
+(braket
+id|i
+)braket
+dot
+id|noprobe
+op_assign
+l_int|1
 suffix:semicolon
 r_if
 c_cond
@@ -721,8 +838,7 @@ l_int|2
 dot
 id|cyl
 )paren
-(brace
-id|second_hwif-&gt;drives
+id|hwif2-&gt;drives
 (braket
 id|i
 )braket
@@ -731,7 +847,6 @@ id|noprobe
 op_assign
 l_int|1
 suffix:semicolon
-)brace
 )brace
 r_return
 l_int|1
@@ -752,7 +867,7 @@ id|byte
 id|stat
 suffix:semicolon
 r_int
-id|i
+id|total_remaining
 suffix:semicolon
 r_int
 r_int
@@ -847,6 +962,15 @@ id|rq-&gt;nr_sectors
 op_minus
 id|sectors_left
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|sectors_avail
+)paren
+r_goto
+id|read_again
+suffix:semicolon
 id|read_next
 suffix:colon
 id|rq
@@ -859,14 +983,14 @@ id|drive
 op_member_access_from_pointer
 id|rq
 suffix:semicolon
-r_if
-c_cond
-(paren
-(paren
 id|nsect
 op_assign
 id|rq-&gt;current_nr_sectors
-)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|nsect
 OG
 id|sectors_avail
 )paren
@@ -890,12 +1014,13 @@ op_star
 id|SECTOR_WORDS
 )paren
 suffix:semicolon
-macro_line|#ifdef DEBUG
+macro_line|#ifdef DEBUG_READ
 id|printk
 c_func
 (paren
-l_string|&quot;%s:  promise_read: sectors(%ld-%ld), buffer=0x%08lx, &quot;
-l_string|&quot;remaining=%ld&bslash;n&quot;
+id|KERN_DEBUG
+l_string|&quot;%s:  promise_read: sectors(%ld-%ld), &quot;
+l_string|&quot;buf=0x%08lx, rem=%ld&bslash;n&quot;
 comma
 id|drive-&gt;name
 comma
@@ -912,12 +1037,6 @@ r_int
 r_int
 )paren
 id|rq-&gt;buffer
-op_plus
-(paren
-id|nsect
-op_lshift
-l_int|9
-)paren
 comma
 id|rq-&gt;nr_sectors
 op_minus
@@ -939,13 +1058,13 @@ id|rq-&gt;errors
 op_assign
 l_int|0
 suffix:semicolon
-id|i
-op_assign
-(paren
 id|rq-&gt;nr_sectors
 op_sub_assign
 id|nsect
-)paren
+suffix:semicolon
+id|total_remaining
+op_assign
+id|rq-&gt;nr_sectors
 suffix:semicolon
 r_if
 c_cond
@@ -958,6 +1077,7 @@ id|nsect
 op_le
 l_int|0
 )paren
+(brace
 id|ide_end_request
 c_func
 (paren
@@ -970,10 +1090,12 @@ id|drive
 )paren
 )paren
 suffix:semicolon
+)brace
+multiline_comment|/*&n; * Now the data has been read in, do the following:&n; * &n; * if there are still sectors left in the request, &n; *   if we know there are still sectors available from the interface,&n; *     go back and read the next bit of the request.&n; *   else if DRQ is asserted, there are more sectors available, so&n; *     go back and find out how many, then read them in.&n; *   else if BUSY is asserted, we are going to get an interrupt, so&n; *     set the handler for the interrupt and just return&n; */
 r_if
 c_cond
 (paren
-id|i
+id|total_remaining
 OG
 l_int|0
 )paren
@@ -1000,11 +1122,9 @@ id|stat
 op_amp
 id|DRQ_STAT
 )paren
-(brace
 r_goto
 id|read_again
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -1013,6 +1133,18 @@ op_amp
 id|BUSY_STAT
 )paren
 (brace
+macro_line|#ifdef DEBUG_READ
+id|printk
+c_func
+(paren
+id|KERN_DEBUG
+l_string|&quot;%s: promise_read: waiting for&quot;
+l_string|&quot;interrupt&bslash;n&quot;
+comma
+id|drive-&gt;name
+)paren
+suffix:semicolon
+macro_line|#endif 
 id|ide_set_handler
 (paren
 id|drive
@@ -1029,7 +1161,11 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;Ah! promise read intr: sectors left !DRQ !BUSY&bslash;n&quot;
+id|KERN_ERR
+l_string|&quot;%s: Eeek! promise_read_intr: sectors left &quot;
+l_string|&quot;!DRQ !BUSY&bslash;n&quot;
+comma
+id|drive-&gt;name
 )paren
 suffix:semicolon
 id|ide_error
@@ -1044,29 +1180,23 @@ id|stat
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n; * promise_write_pollfunc() is the handler for disk write completion polling.&n; */
-DECL|function|promise_write_pollfunc
+multiline_comment|/*&n; * promise_write_intr()&n; * This interrupt is called after the particularly odd polling for completion&n; * of the write request, once all the data has been sent.&n; */
+DECL|function|promise_write_intr
 r_static
 r_void
-id|promise_write_pollfunc
+id|promise_write_intr
+c_func
 (paren
 id|ide_drive_t
 op_star
 id|drive
 )paren
 (brace
+id|byte
+id|stat
+suffix:semicolon
 r_int
 id|i
-suffix:semicolon
-id|ide_hwgroup_t
-op_star
-id|hwgroup
-op_assign
-id|HWGROUP
-c_func
-(paren
-id|drive
-)paren
 suffix:semicolon
 r_struct
 id|request
@@ -1076,75 +1206,54 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|IN_BYTE
+op_logical_neg
+id|OK_STAT
 c_func
 (paren
-id|IDE_NSECTOR_REG
-)paren
-op_ne
-l_int|0
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|time_before
-c_func
-(paren
-id|jiffies
-comma
-id|hwgroup-&gt;poll_timeout
-)paren
-)paren
-(brace
-id|ide_set_handler
-(paren
-id|drive
-comma
-op_amp
-id|promise_write_pollfunc
-comma
-l_int|1
-)paren
-suffix:semicolon
-r_return
-suffix:semicolon
-multiline_comment|/* continue polling... */
-)brace
-id|printk
-c_func
-(paren
-l_string|&quot;%s: write timed-out!&bslash;n&quot;
-comma
-id|drive-&gt;name
-)paren
-suffix:semicolon
-id|ide_error
-(paren
-id|drive
-comma
-l_string|&quot;write timeout&quot;
-comma
+id|stat
+op_assign
 id|GET_STAT
 c_func
 (paren
 )paren
+comma
+id|DRIVE_READY
+comma
+id|drive-&gt;bad_wstat
 )paren
-suffix:semicolon
-r_return
-suffix:semicolon
-)brace
-id|ide_multwrite
+)paren
+(brace
+id|ide_error
 c_func
 (paren
 id|drive
 comma
-l_int|4
+l_string|&quot;promise_write_intr&quot;
+comma
+id|stat
 )paren
 suffix:semicolon
+)brace
+macro_line|#ifdef DEBUG_WRITE
+id|printk
+c_func
+(paren
+id|KERN_DEBUG
+l_string|&quot;%s: Write complete - end_request&bslash;n&quot;
+comma
+id|drive-&gt;name
+)paren
+suffix:semicolon
+macro_line|#endif
 id|rq
 op_assign
-id|hwgroup-&gt;rq
+id|HWGROUP
+c_func
+(paren
+id|drive
+)paren
+op_member_access_from_pointer
+id|rq
 suffix:semicolon
 r_for
 c_loop
@@ -1168,14 +1277,128 @@ c_func
 (paren
 l_int|1
 comma
-id|hwgroup
+id|HWGROUP
+c_func
+(paren
+id|drive
+)paren
 )paren
 suffix:semicolon
 )brace
+)brace
+multiline_comment|/*&n; * promise_write_pollfunc() is the handler for disk write completion polling.&n; */
+DECL|function|promise_write_pollfunc
+r_static
+r_void
+id|promise_write_pollfunc
+(paren
+id|ide_drive_t
+op_star
+id|drive
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|IN_BYTE
+c_func
+(paren
+id|IDE_NSECTOR_REG
+)paren
+op_ne
+l_int|0
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|time_before
+c_func
+(paren
+id|jiffies
+comma
+id|HWGROUP
+c_func
+(paren
+id|drive
+)paren
+op_member_access_from_pointer
+id|poll_timeout
+)paren
+)paren
+(brace
+id|ide_set_handler
+(paren
+id|drive
+comma
+op_amp
+id|promise_write_pollfunc
+comma
+l_int|1
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+multiline_comment|/* continue polling... */
+)brace
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;%s: write timed-out!&bslash;n&quot;
+comma
+id|drive-&gt;name
+)paren
+suffix:semicolon
+id|ide_error
+(paren
+id|drive
+comma
+l_string|&quot;write timeout&quot;
+comma
+id|GET_STAT
+c_func
+(paren
+)paren
+)paren
+suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * promise_write() transfers a block of one or more sectors of data to a&n; * drive as part of a disk write operation. All but 4 sectors are transfered&n; * in the first attempt, then the interface is polled (nicely!) for completion&n; * before the final 4 sectors are transfered. Don&squot;t ask me why, but this is&n; * how it&squot;s done in the drivers for other O/Ses. There is no interrupt&n; * generated on writes, which is why we have to do it like this.&n; */
+macro_line|#ifdef DEBUG_WRITE
+id|printk
+c_func
+(paren
+id|KERN_DEBUG
+l_string|&quot;%s: Doing last 4 sectors&bslash;n&quot;
+comma
+id|drive-&gt;name
+)paren
+suffix:semicolon
+macro_line|#endif
+id|ide_multwrite
+c_func
+(paren
+id|drive
+comma
+l_int|4
+)paren
+suffix:semicolon
+id|ide_set_handler
+c_func
+(paren
+id|drive
+comma
+op_amp
+id|promise_write_intr
+comma
+id|WAIT_CMD
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+multiline_comment|/*&n; * promise_write() transfers a block of one or more sectors of data to a&n; * drive as part of a disk write operation. All but 4 sectors are transfered&n; * in the first attempt, then the interface is polled (nicely!) for completion&n; * before the final 4 sectors are transfered. The interrupt generated on &n; * writes occurs after this process, which is why I got it wrong for so long!&n; */
 DECL|function|promise_write
 r_static
 r_void
@@ -1204,9 +1427,28 @@ op_assign
 op_amp
 id|hwgroup-&gt;wrq
 suffix:semicolon
-r_int
-id|i
+macro_line|#ifdef DEBUG_WRITE
+id|printk
+c_func
+(paren
+id|KERN_DEBUG
+l_string|&quot;%s: promise_write: sectors(%ld-%ld), &quot;
+l_string|&quot;buffer=0x%08lx&bslash;n&quot;
+comma
+id|drive-&gt;name
+comma
+id|rq-&gt;sector
+comma
+id|rq-&gt;sector
+op_plus
+id|rq-&gt;nr_sectors
+op_minus
+l_int|1
+comma
+id|rq-&gt;buffer
+)paren
 suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -1254,36 +1496,17 @@ comma
 id|rq-&gt;nr_sectors
 )paren
 suffix:semicolon
-id|rq
-op_assign
-id|hwgroup-&gt;rq
-suffix:semicolon
-r_for
-c_loop
-(paren
-id|i
-op_assign
-id|rq-&gt;nr_sectors
-suffix:semicolon
-id|i
-OG
-l_int|0
-suffix:semicolon
-)paren
-(brace
-id|i
-op_sub_assign
-id|rq-&gt;current_nr_sectors
-suffix:semicolon
-id|ide_end_request
+id|ide_set_handler
 c_func
 (paren
-l_int|1
+id|drive
 comma
-id|hwgroup
+op_amp
+id|promise_write_intr
+comma
+id|WAIT_CMD
 )paren
 suffix:semicolon
-)brace
 )brace
 )brace
 multiline_comment|/*&n; * do_pdc4030_io() is called from do_rw_disk, having had the block number&n; * already set up. It issues a READ or WRITE command to the Promise&n; * controller, assuming LBA has been used to set up the block number.&n; */
@@ -1316,17 +1539,6 @@ op_eq
 id|READ
 )paren
 (brace
-id|ide_set_handler
-c_func
-(paren
-id|drive
-comma
-op_amp
-id|promise_read_intr
-comma
-id|WAIT_CMD
-)paren
-suffix:semicolon
 id|OUT_BYTE
 c_func
 (paren
@@ -1335,7 +1547,7 @@ comma
 id|IDE_COMMAND_REG
 )paren
 suffix:semicolon
-multiline_comment|/* The card&squot;s behaviour is odd at this point. If the data is&n;   available, DRQ will be true, and no interrupt will be&n;   generated by the card. If this is the case, we need to simulate&n;   an interrupt. Ugh! Otherwise, if an interrupt will occur, bit0&n;   of the SELECT register will be high, so we can just return and&n;   be interrupted.*/
+multiline_comment|/*&n; * The card&squot;s behaviour is odd at this point. If the data is&n; * available, DRQ will be true, and no interrupt will be&n; * generated by the card. If this is the case, we need to call the &n; * &quot;interrupt&quot; handler (promise_read_intr) directly. Otherwise, if&n; * an interrupt is going to occur, bit0 of the SELECT register will&n; * be high, so we can set the handler the just return and be interrupted.&n; * If neither of these is the case, we wait for up to 50ms (badly I&squot;m&n; * afraid!) until one of them is.&n; */
 id|timeout
 op_assign
 id|jiffies
@@ -1362,48 +1574,16 @@ op_amp
 id|DRQ_STAT
 )paren
 (brace
-id|disable_irq
+id|udelay
 c_func
 (paren
-id|HWIF
-c_func
-(paren
-id|drive
-)paren
-op_member_access_from_pointer
-id|irq
+l_int|1
 )paren
 suffix:semicolon
-id|ide_intr
-c_func
-(paren
-id|HWIF
+id|promise_read_intr
 c_func
 (paren
 id|drive
-)paren
-op_member_access_from_pointer
-id|irq
-comma
-id|HWGROUP
-c_func
-(paren
-id|drive
-)paren
-comma
-l_int|NULL
-)paren
-suffix:semicolon
-id|enable_irq
-c_func
-(paren
-id|HWIF
-c_func
-(paren
-id|drive
-)paren
-op_member_access_from_pointer
-id|irq
 )paren
 suffix:semicolon
 r_return
@@ -1421,6 +1601,29 @@ op_amp
 l_int|0x01
 )paren
 (brace
+macro_line|#ifdef DEBUG_READ
+id|printk
+c_func
+(paren
+id|KERN_DEBUG
+l_string|&quot;%s: read: waiting for &quot;
+l_string|&quot;interrupt&bslash;n&quot;
+comma
+id|drive-&gt;name
+)paren
+suffix:semicolon
+macro_line|#endif
+id|ide_set_handler
+c_func
+(paren
+id|drive
+comma
+op_amp
+id|promise_read_intr
+comma
+id|WAIT_CMD
+)paren
+suffix:semicolon
 r_return
 suffix:semicolon
 )brace
@@ -1446,14 +1649,14 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;%s: reading: No DRQ and not waiting - Odd!&bslash;n&quot;
 comma
 id|drive-&gt;name
 )paren
 suffix:semicolon
-r_return
-suffix:semicolon
 )brace
+r_else
 r_if
 c_cond
 (paren
@@ -1489,7 +1692,9 @@ id|WAIT_DRQ
 id|printk
 c_func
 (paren
-l_string|&quot;%s: no DRQ after issuing PROMISE_WRITE&bslash;n&quot;
+id|KERN_ERR
+l_string|&quot;%s: no DRQ after issuing &quot;
+l_string|&quot;PROMISE_WRITE&bslash;n&quot;
 comma
 id|drive-&gt;name
 )paren
@@ -1527,13 +1732,13 @@ c_func
 id|drive
 )paren
 suffix:semicolon
-r_return
-suffix:semicolon
 )brace
+r_else
+(brace
 id|printk
 c_func
 (paren
-l_string|&quot;%s: bad command: %d&bslash;n&quot;
+l_string|&quot;KERN_WARNING %s: bad command: %d&bslash;n&quot;
 comma
 id|drive-&gt;name
 comma
@@ -1552,5 +1757,6 @@ id|drive
 )paren
 )paren
 suffix:semicolon
+)brace
 )brace
 eof

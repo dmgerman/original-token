@@ -1,5 +1,5 @@
 multiline_comment|/*&n; *  linux/drivers/block/ide-probe.c&t;Version 1.04  March 10, 1999&n; *&n; *  Copyright (C) 1994-1998  Linus Torvalds &amp; authors (see below)&n; */
-multiline_comment|/*&n; *  Mostly written by Mark Lord &lt;mlord@pobox.com&gt;&n; *                and Gadi Oxman &lt;gadio@netvision.net.il&gt;&n; *&n; *  See linux/MAINTAINERS for address of current maintainer.&n; *&n; * This is the IDE probe module, as evolved from hd.c and ide.c.&n; *&n; * Version 1.00&t;&t;move drive probing code from ide.c to ide-probe.c&n; * Version 1.01&t;&t;fix compilation problem for m68k&n; * Version 1.02&t;&t;increase WAIT_PIDENTIFY to avoid CD-ROM locking at boot&n; *&t;&t;&t; by Andrea Arcangeli&n; * Version 1.03&t;&t;fix for (hwif-&gt;chipset == ide_4drives)&n; * Version 1.04&t;&t;fixed buggy treatments of known flash memory cards&n; */
+multiline_comment|/*&n; *  Mostly written by Mark Lord &lt;mlord@pobox.com&gt;&n; *                and Gadi Oxman &lt;gadio@netvision.net.il&gt;&n; *&n; *  See linux/MAINTAINERS for address of current maintainer.&n; *&n; * This is the IDE probe module, as evolved from hd.c and ide.c.&n; *&n; * Version 1.00&t;&t;move drive probing code from ide.c to ide-probe.c&n; * Version 1.01&t;&t;fix compilation problem for m68k&n; * Version 1.02&t;&t;increase WAIT_PIDENTIFY to avoid CD-ROM locking at boot&n; *&t;&t;&t; by Andrea Arcangeli&n; * Version 1.03&t;&t;fix for (hwif-&gt;chipset == ide_4drives)&n; * Version 1.04&t;&t;fixed buggy treatments of known flash memory cards&n; *&t;&t;&t;fix for (hwif-&gt;chipset == ide_pdc4030)&n; *&t;&t;&t;added ide6/7&n; */
 DECL|macro|REALLY_SLOW_IO
 macro_line|#undef REALLY_SLOW_IO&t;&t;/* most systems can safely undef this */
 macro_line|#include &lt;linux/config.h&gt;
@@ -15,11 +15,11 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/genhd.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
+macro_line|#include &lt;linux/ide.h&gt;
 macro_line|#include &lt;asm/byteorder.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
-macro_line|#include &quot;ide.h&quot;
 DECL|function|do_identify
 r_static
 r_inline
@@ -544,50 +544,6 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Delay for *at least* 50ms.  As we don&squot;t know how much time is left&n; * until the next tick occurs, we wait an extra tick to be safe.&n; * This is used only during the probing/polling for drives at boot time.&n; */
-DECL|function|delay_50ms
-r_static
-r_void
-id|delay_50ms
-(paren
-r_void
-)paren
-(brace
-r_int
-r_int
-id|timeout
-op_assign
-id|jiffies
-op_plus
-(paren
-(paren
-id|HZ
-op_plus
-l_int|19
-)paren
-op_div
-l_int|20
-)paren
-op_plus
-l_int|1
-suffix:semicolon
-r_while
-c_loop
-(paren
-l_int|0
-OL
-(paren
-r_int
-r_int
-)paren
-(paren
-id|timeout
-op_minus
-id|jiffies
-)paren
-)paren
-suffix:semicolon
-)brace
 multiline_comment|/*&n; * try_to_identify() sends an ATA(PI) IDENTIFY request to a drive&n; * and waits for a response.  It also monitors irqs while this is&n; * happening, in hope of automatically determining which one is&n; * being used by the interface.&n; *&n; * Returns:&t;0  device was identified&n; *&t;&t;1  device timed-out (no response to identify request)&n; *&t;&t;2  device aborted the command (refused to identify itself)&n; */
 DECL|function|try_to_identify
 r_static
@@ -623,6 +579,12 @@ id|s
 comma
 id|a
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|IDE_CONTROL_REG
+)paren
+(brace
 r_if
 c_cond
 (paren
@@ -665,7 +627,7 @@ id|IDE_CONTROL_REG
 suffix:semicolon
 multiline_comment|/* enable device irq */
 )brace
-id|delay_50ms
+id|ide_delay_50ms
 c_func
 (paren
 )paren
@@ -719,11 +681,26 @@ suffix:semicolon
 multiline_comment|/* ancient Seagate drives, broken interfaces */
 )brace
 r_else
+(brace
 id|hd_status
 op_assign
 id|IDE_ALTSTATUS_REG
 suffix:semicolon
 multiline_comment|/* use non-intrusive polling */
+)brace
+)brace
+r_else
+(brace
+id|ide_delay_50ms
+c_func
+(paren
+)paren
+suffix:semicolon
+id|hd_status
+op_assign
+id|IDE_STATUS_REG
+suffix:semicolon
+)brace
 macro_line|#if CONFIG_BLK_DEV_PDC4030
 r_if
 c_cond
@@ -842,7 +819,7 @@ l_int|1
 suffix:semicolon
 multiline_comment|/* drive timed-out */
 )brace
-id|delay_50ms
+id|ide_delay_50ms
 c_func
 (paren
 )paren
@@ -861,7 +838,7 @@ op_amp
 id|BUSY_STAT
 )paren
 suffix:semicolon
-id|delay_50ms
+id|ide_delay_50ms
 c_func
 (paren
 )paren
@@ -941,6 +918,8 @@ multiline_comment|/* drive refused ID */
 r_if
 c_cond
 (paren
+id|IDE_CONTROL_REG
+op_logical_and
 op_logical_neg
 id|HWIF
 c_func
@@ -1169,7 +1148,7 @@ comma
 id|drive
 )paren
 suffix:semicolon
-id|delay_50ms
+id|ide_delay_50ms
 c_func
 (paren
 )paren
@@ -1210,7 +1189,7 @@ l_int|0
 )paren
 suffix:semicolon
 multiline_comment|/* exit with drive0 selected */
-id|delay_50ms
+id|ide_delay_50ms
 c_func
 (paren
 )paren
@@ -1305,7 +1284,7 @@ c_func
 )paren
 )paren
 suffix:semicolon
-id|delay_50ms
+id|ide_delay_50ms
 c_func
 (paren
 )paren
@@ -1317,7 +1296,7 @@ comma
 id|IDE_SELECT_REG
 )paren
 suffix:semicolon
-id|delay_50ms
+id|ide_delay_50ms
 c_func
 (paren
 )paren
@@ -1356,7 +1335,7 @@ op_plus
 id|WAIT_WORSTCASE
 )paren
 )paren
-id|delay_50ms
+id|ide_delay_50ms
 c_func
 (paren
 )paren
@@ -1431,7 +1410,7 @@ l_int|0
 )paren
 suffix:semicolon
 multiline_comment|/* exit with drive0 selected */
-id|delay_50ms
+id|ide_delay_50ms
 c_func
 (paren
 )paren
@@ -1762,6 +1741,35 @@ r_int
 r_int
 id|flags
 suffix:semicolon
+id|ide_ioreg_t
+id|ide_control_reg
+op_assign
+id|hwif-&gt;io_ports
+(braket
+id|IDE_CONTROL_OFFSET
+)braket
+suffix:semicolon
+id|ide_ioreg_t
+id|region_low
+op_assign
+id|hwif-&gt;io_ports
+(braket
+id|IDE_DATA_OFFSET
+)braket
+suffix:semicolon
+id|ide_ioreg_t
+id|region_high
+op_assign
+id|region_low
+suffix:semicolon
+id|ide_ioreg_t
+id|region_request
+op_assign
+l_int|8
+suffix:semicolon
+r_int
+id|i
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1784,6 +1792,85 @@ id|probe_cmos_for_drives
 id|hwif
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t; * Calculate the region that this interface occupies,&n;&t; * handling interfaces where the registers may not be&n;&t; * ordered sanely.  We deal with the CONTROL register&n;&t; * separately.&n;&t; */
+r_for
+c_loop
+(paren
+id|i
+op_assign
+id|IDE_DATA_OFFSET
+suffix:semicolon
+id|i
+op_le
+id|IDE_STATUS_OFFSET
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|hwif-&gt;io_ports
+(braket
+id|i
+)braket
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|hwif-&gt;io_ports
+(braket
+id|i
+)braket
+OL
+id|region_low
+)paren
+id|region_low
+op_assign
+id|hwif-&gt;io_ports
+(braket
+id|i
+)braket
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|hwif-&gt;io_ports
+(braket
+id|i
+)braket
+OG
+id|region_high
+)paren
+id|region_high
+op_assign
+id|hwif-&gt;io_ports
+(braket
+id|i
+)braket
+suffix:semicolon
+)brace
+)brace
+id|region_request
+op_assign
+(paren
+id|region_high
+op_minus
+id|region_low
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|region_request
+op_eq
+l_int|0x0007
+)paren
+id|region_request
+op_increment
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1795,8 +1882,8 @@ op_logical_or
 op_logical_neg
 id|hwif-&gt;mate-&gt;present
 )paren
-macro_line|#if CONFIG_BLK_DEV_PDC4030
 op_logical_and
+macro_line|#if CONFIG_BLK_DEV_PDC4030
 (paren
 id|hwif-&gt;chipset
 op_ne
@@ -1806,29 +1893,27 @@ id|hwif-&gt;channel
 op_eq
 l_int|0
 )paren
-macro_line|#endif /* CONFIG_BLK_DEV_PDC4030 */
 op_logical_and
+macro_line|#endif /* CONFIG_BLK_DEV_PDC4030 */
 (paren
 id|ide_check_region
 c_func
 (paren
-id|hwif-&gt;io_ports
-(braket
-id|IDE_DATA_OFFSET
-)braket
+id|region_low
 comma
-l_int|8
+id|region_request
 )paren
 op_logical_or
+(paren
+id|ide_control_reg
+op_logical_and
 id|ide_check_region
 c_func
 (paren
-id|hwif-&gt;io_ports
-(braket
-id|IDE_CONTROL_OFFSET
-)braket
+id|ide_control_reg
 comma
 l_int|1
+)paren
 )paren
 )paren
 )paren
@@ -1978,23 +2063,22 @@ id|hwif-&gt;mate-&gt;present
 id|ide_request_region
 c_func
 (paren
-id|hwif-&gt;io_ports
-(braket
-id|IDE_DATA_OFFSET
-)braket
+id|region_low
 comma
-l_int|8
+id|region_request
 comma
 id|hwif-&gt;name
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|ide_control_reg
+)paren
 id|ide_request_region
 c_func
 (paren
-id|hwif-&gt;io_ports
-(braket
-id|IDE_CONTROL_OFFSET
-)braket
+id|ide_control_reg
 comma
 l_int|1
 comma
@@ -2007,6 +2091,8 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|ide_control_reg
+op_logical_and
 id|hwif-&gt;reset
 )paren
 (brace
@@ -2034,10 +2120,7 @@ c_func
 (paren
 l_int|12
 comma
-id|hwif-&gt;io_ports
-(braket
-id|IDE_CONTROL_OFFSET
-)braket
+id|ide_control_reg
 )paren
 suffix:semicolon
 id|udelay
@@ -2051,15 +2134,12 @@ c_func
 (paren
 l_int|8
 comma
-id|hwif-&gt;io_ports
-(braket
-id|IDE_CONTROL_OFFSET
-)braket
+id|ide_control_reg
 )paren
 suffix:semicolon
 r_do
 (brace
-id|delay_50ms
+id|ide_delay_50ms
 c_func
 (paren
 )paren
@@ -3035,12 +3115,32 @@ op_increment
 op_assign
 id|BLOCK_SIZE
 suffix:semicolon
+macro_line|#ifdef CONFIG_BLK_DEV_PDC4030
+op_star
+id|max_sect
+op_increment
+op_assign
+(paren
+(paren
+id|hwif-&gt;chipset
+op_eq
+id|ide_pdc4030
+)paren
+ques
+c_cond
+l_int|127
+suffix:colon
+id|MAX_SECTORS
+)paren
+suffix:semicolon
+macro_line|#else
 op_star
 id|max_sect
 op_increment
 op_assign
 id|MAX_SECTORS
 suffix:semicolon
+macro_line|#endif
 op_star
 id|max_ra
 op_increment
@@ -3372,6 +3472,30 @@ id|rfn
 op_assign
 op_amp
 id|do_ide5_request
+suffix:semicolon
+r_break
+suffix:semicolon
+macro_line|#endif
+macro_line|#if MAX_HWIFS &gt; 6
+r_case
+id|IDE6_MAJOR
+suffix:colon
+id|rfn
+op_assign
+op_amp
+id|do_ide6_request
+suffix:semicolon
+r_break
+suffix:semicolon
+macro_line|#endif
+macro_line|#if MAX_HWIFS &gt; 7
+r_case
+id|IDE7_MAJOR
+suffix:colon
+id|rfn
+op_assign
+op_amp
+id|do_ide7_request
 suffix:semicolon
 r_break
 suffix:semicolon

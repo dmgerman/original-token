@@ -1730,6 +1730,16 @@ c_func
 (paren
 id|PROMISE
 comma
+id|PROMISE_20262
+comma
+l_string|&quot;IDE UltraDMA/66&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|PROMISE
+comma
 id|PROMISE_5300
 comma
 l_string|&quot;DC5030&quot;
@@ -2620,6 +2630,26 @@ c_func
 (paren
 id|AL
 comma
+id|AL_M1541
+comma
+l_string|&quot;M1541 Aladdin V&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|AL
+comma
+id|AL_M1543
+comma
+l_string|&quot;M1543 Aladdin V&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|AL
+comma
 id|AL_M3307
 comma
 l_string|&quot;M3307 MPEG-1 decoder&quot;
@@ -2663,6 +2693,26 @@ comma
 id|AL_M5237
 comma
 l_string|&quot;M5237 USB&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|AL
+comma
+id|AL_M5243
+comma
+l_string|&quot;M5243 AGP&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|AL
+comma
+id|AL_M7101
+comma
+l_string|&quot;M7101 PMU&quot;
 )paren
 comma
 id|DEVICE
