@@ -366,6 +366,11 @@ r_struct
 id|tq_struct
 id|tqueue
 suffix:semicolon
+DECL|member|tqueue_hangup
+r_struct
+id|tq_struct
+id|tqueue_hangup
+suffix:semicolon
 DECL|member|normal_termios
 r_struct
 id|termios
@@ -411,8 +416,6 @@ mdefine_line|#define SERIAL_XMIT_SIZE 4096
 multiline_comment|/*&n; * Events are used to schedule things to happen at timer-interrupt&n; * time, instead of at rs interrupt time.&n; */
 DECL|macro|RS_EVENT_WRITE_WAKEUP
 mdefine_line|#define RS_EVENT_WRITE_WAKEUP&t;0
-DECL|macro|RS_EVENT_HANGUP
-mdefine_line|#define RS_EVENT_HANGUP&t;&t;1
 multiline_comment|/*&n; * Multiport serial configuration structure --- internal structure&n; */
 DECL|struct|rs_multiport_struct
 r_struct

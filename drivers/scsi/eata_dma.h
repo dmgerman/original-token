@@ -1,4 +1,4 @@
-multiline_comment|/********************************************************&n;* Header file for eata_dma.c Linux EATA-DMA SCSI driver *&n;* (c) 1993,94,95 Michael Neuffer                        *&n;*********************************************************&n;* last change: 95/02/13                                 *&n;********************************************************/
+multiline_comment|/********************************************************&n;* Header file for eata_dma.c Linux EATA-DMA SCSI driver *&n;* (c) 1993,94,95 Michael Neuffer                        *&n;*********************************************************&n;* last change: 95/04/10                                 *&n;********************************************************/
 macro_line|#ifndef _EATA_DMA_H
 DECL|macro|_EATA_DMA_H
 mdefine_line|#define _EATA_DMA_H
@@ -7,7 +7,7 @@ mdefine_line|#define VER_MAJOR 2
 DECL|macro|VER_MINOR
 mdefine_line|#define VER_MINOR 3
 DECL|macro|VER_SUB
-mdefine_line|#define VER_SUB   &quot;1a&quot;
+mdefine_line|#define VER_SUB   &quot;5r&quot;
 multiline_comment|/************************************************************************&n; * Here you can configure your drives that are using a non-standard     *&n; * geometry.                                                            *&n; * To enable this set HARDCODED to 1                                    *&n; * If you have only one drive that need reconfiguration, set ID1 to -1  *&n; ************************************************************************/
 DECL|macro|HARDCODED
 mdefine_line|#define HARDCODED     0          /* Here are drives running in emu. mode   */
@@ -59,6 +59,8 @@ DECL|macro|DBG_INTR
 mdefine_line|#define DBG_INTR&t;0       /* Trace interrupt service routine. &t;*/
 DECL|macro|DBG_INTR2
 mdefine_line|#define DBG_INTR2&t;0       /* Trace interrupt service routine. &t;*/
+DECL|macro|DBG_INTR3
+mdefine_line|#define DBG_INTR3       0       /* Trace interrupt service routine.     */
 DECL|macro|DBG_PROC
 mdefine_line|#define DBG_PROC        0       /* Debug proc-fs related statistics     */
 DECL|macro|DBG_REGISTER
@@ -174,9 +176,9 @@ mdefine_line|#define MAX_PCI_BUS       16             /* Maximum # Of Busses All
 DECL|macro|SG_SIZE
 mdefine_line|#define SG_SIZE           64 
 DECL|macro|C_P_L_CURRENT_MAX
-mdefine_line|#define C_P_L_CURRENT_MAX 10  /* Until this limit in the mm is removed    &n;&t;&t;&t;       * Kernels &lt; 1.1.86 died horrible deaths&n;&t;&t;&t;       * if you used values &gt;2. The memory management&n;&t;&t;&t;       * since pl1.1.86 seems to cope with up to 10&n;&t;&t;&t;       * queued commands per device. &n;&t;&t;&t;       */
+mdefine_line|#define C_P_L_CURRENT_MAX 16  /* Until this limit in the mm is removed    &n;&t;&t;&t;       * Kernels &lt; 1.1.86 died horrible deaths&n;&t;&t;&t;       * if you used values &gt;2. The memory management&n;&t;&t;&t;       * since pl1.1.86 seems to cope with up to 10&n;&t;&t;&t;       * queued commands per device. &n;                               * Since 1.2.0 the memory management seems to &n;                               * have no more problems......&n;&t;&t;&t;       */
 DECL|macro|C_P_L_DIV
-mdefine_line|#define C_P_L_DIV          4  /* 1 &lt;= C_P_L_DIV &lt;= 8            &n;&t;&t;&t;       * You can use this parameter to fine-tune&n;&t;&t;&t;       * the driver. Depending on the number of &n;&t;&t;&t;       * devices and their speed and ability to queue &n;&t;&t;&t;       * commands, you will get the best results with a&n;&t;&t;&t;       * value&n;&t;&t;&t;       * ~= numdevices-(devices_unable_to_queue_commands/2)&n;&t;&t;&t;       * The reason for this is that the disk driver &n;&t;&t;&t;       * tends to flood the queue, so that other &n;&t;&t;&t;       * drivers have problems to queue commands &n;&t;&t;&t;       * themselves. This can for example result in &n;&t;&t;&t;       * the effect that the tape stops during disk &n;&t;&t;&t;       * accesses. &n;&t;&t;&t;       */
+mdefine_line|#define C_P_L_DIV          3  /* 1 &lt;= C_P_L_DIV &lt;= 8            &n;&t;&t;&t;       * You can use this parameter to fine-tune&n;&t;&t;&t;       * the driver. Depending on the number of &n;&t;&t;&t;       * devices and their speed and ability to queue &n;&t;&t;&t;       * commands, you will get the best results with a&n;&t;&t;&t;       * value&n;&t;&t;&t;       * ~= numdevices-(devices_unable_to_queue_commands/2)&n;&t;&t;&t;       * The reason for this is that the disk driver &n;&t;&t;&t;       * tends to flood the queue, so that other &n;&t;&t;&t;       * drivers have problems to queue commands &n;&t;&t;&t;       * themselves. This can for example result in &n;&t;&t;&t;       * the effect that the tape stops during disk &n;&t;&t;&t;       * accesses. &n;&t;&t;&t;       */
 DECL|macro|FREE
 mdefine_line|#define FREE       0
 DECL|macro|USED
@@ -260,6 +262,40 @@ DECL|macro|HA_SBUSY
 mdefine_line|#define HA_SBUSY    0x80        /* drive busy                */
 DECL|macro|HA_SDRDY
 mdefine_line|#define HA_SDRDY    HA_SSC+HA_SREADY+HA_SDRQ 
+DECL|macro|HA_NO_ERROR
+mdefine_line|#define HA_NO_ERROR      0x00
+DECL|macro|HA_ERR_SEL_TO
+mdefine_line|#define HA_ERR_SEL_TO    0x01
+DECL|macro|HA_ERR_CMD_TO
+mdefine_line|#define HA_ERR_CMD_TO    0x02
+DECL|macro|HA_ERR_RESET
+mdefine_line|#define HA_ERR_RESET     0x03
+DECL|macro|HA_INIT_POWERUP
+mdefine_line|#define HA_INIT_POWERUP  0x04
+DECL|macro|HA_UNX_BUSPHASE
+mdefine_line|#define HA_UNX_BUSPHASE  0x05
+DECL|macro|HA_UNX_BUS_FREE
+mdefine_line|#define HA_UNX_BUS_FREE  0x06
+DECL|macro|HA_BUS_PARITY
+mdefine_line|#define HA_BUS_PARITY    0x07
+DECL|macro|HA_SCSI_HUNG
+mdefine_line|#define HA_SCSI_HUNG     0x08
+DECL|macro|HA_UNX_MSGRJCT
+mdefine_line|#define HA_UNX_MSGRJCT   0x09
+DECL|macro|HA_RESET_STUCK
+mdefine_line|#define HA_RESET_STUCK   0x0a
+DECL|macro|HA_RSENSE_FAIL
+mdefine_line|#define HA_RSENSE_FAIL   0x0b
+DECL|macro|HA_PARITY_ERR
+mdefine_line|#define HA_PARITY_ERR    0x0c
+DECL|macro|HA_CP_ABORT_NA
+mdefine_line|#define HA_CP_ABORT_NA   0x0d
+DECL|macro|HA_CP_ABORTED
+mdefine_line|#define HA_CP_ABORTED    0x0e
+DECL|macro|HA_CP_RESET_NA
+mdefine_line|#define HA_CP_RESET_NA   0x0f
+DECL|macro|HA_CP_RESET
+mdefine_line|#define HA_CP_RESET      0x10
 multiline_comment|/**********************************************&n; * Message definitions                        *&n; **********************************************/
 DECL|struct|reg_bit
 r_struct

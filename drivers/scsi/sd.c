@@ -1405,6 +1405,12 @@ id|flag
 op_assign
 l_int|0
 suffix:semicolon
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 r_while
 c_loop
 (paren
@@ -1413,12 +1419,6 @@ op_eq
 l_int|1
 )paren
 (brace
-id|save_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
 id|cli
 c_func
 (paren
@@ -1489,21 +1489,13 @@ id|SCpnt
 op_assign
 l_int|NULL
 suffix:semicolon
-multiline_comment|/*&n;     * The following restore_flags leads to latency problems.  FIXME.&n;     */
-macro_line|#if 0
+multiline_comment|/*&n;     * The following restore_flags leads to latency problems.  FIXME.&n;     * Using a &quot;sti()&quot; gets rid of the latency problems but causes&n;     * race conditions and crashes.&n;     */
 id|restore_flags
 c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
-macro_line|#else
-id|sti
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
 multiline_comment|/* This is a performance enhancement.  We dig down into the request list and&n;   try and find a queueable request (i.e. device not busy, and host able to&n;   accept another command.  If we find one, then we queue it. This can&n;   make a big difference on systems with more than one disk drive.  We want&n;   to have the interrupts off when monkeying with the request list, because&n;   otherwise the kernel might try and slip in a request in between somewhere. */
 r_if
 c_cond
@@ -1524,12 +1516,6 @@ suffix:semicolon
 id|req1
 op_assign
 l_int|NULL
-suffix:semicolon
-id|save_flags
-c_func
-(paren
-id|flags
-)paren
 suffix:semicolon
 id|cli
 c_func

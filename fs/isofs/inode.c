@@ -194,8 +194,9 @@ l_char|&squot;n&squot;
 suffix:semicolon
 id|popt-&gt;conversion
 op_assign
-l_char|&squot;a&squot;
+l_char|&squot;b&squot;
 suffix:semicolon
+multiline_comment|/* default: no conversion */
 id|popt-&gt;blocksize
 op_assign
 l_int|1024

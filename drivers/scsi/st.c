@@ -5433,11 +5433,7 @@ id|STp-&gt;buffer
 op_member_access_from_pointer
 id|b_data
 comma
-(paren
-id|STp-&gt;buffer
-)paren
-op_member_access_from_pointer
-id|buffer_size
+id|bytes
 comma
 id|st_sleep_done
 comma

@@ -1413,6 +1413,7 @@ r_if
 c_cond
 (paren
 (paren
+(paren
 id|driver_byte
 c_func
 (paren
@@ -1420,6 +1421,17 @@ id|SCpnt-&gt;result
 )paren
 op_amp
 id|DRIVER_SENSE
+)paren
+op_logical_or
+(paren
+id|status_byte
+c_func
+(paren
+id|SCpnt-&gt;result
+)paren
+op_amp
+id|CHECK_CONDITION
+)paren
 )paren
 op_logical_and
 (paren

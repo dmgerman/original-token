@@ -30,7 +30,9 @@ macro_line|#include &lt;linux/ip.h&gt;
 macro_line|#include &lt;linux/tcp.h&gt;
 macro_line|#include &quot;../net/inet/protocol.h&quot;
 macro_line|#include &quot;../net/inet/arp.h&quot;
+macro_line|#if defined(CONFIG_PPP) || defined(CONFIG_SLIP)
 macro_line|#include &quot;../drivers/net/slhc.h&quot;
+macro_line|#endif
 macro_line|#endif
 macro_line|#ifdef CONFIG_PCI
 macro_line|#include &lt;linux/pci.h&gt;
@@ -747,6 +749,12 @@ comma
 id|X
 c_func
 (paren
+id|tq_scheduler
+)paren
+comma
+id|X
+c_func
+(paren
 id|tq_last
 )paren
 comma
@@ -1021,6 +1029,7 @@ c_func
 id|inet_del_protocol
 )paren
 comma
+macro_line|#if defined(CONFIG_PPP) || defined(CONFIG_SLIP)
 id|X
 c_func
 (paren
@@ -1051,6 +1060,7 @@ c_func
 id|slhc_uncompress
 )paren
 comma
+macro_line|#endif
 macro_line|#endif
 multiline_comment|/* Device callback registration */
 id|X
@@ -1258,6 +1268,18 @@ id|X
 c_func
 (paren
 id|scsicam_bios_param
+)paren
+comma
+id|X
+c_func
+(paren
+id|scsi_init_malloc
+)paren
+comma
+id|X
+c_func
+(paren
+id|scsi_init_free
 )paren
 comma
 id|X

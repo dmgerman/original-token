@@ -62,6 +62,13 @@ c_func
 id|tq_immediate
 )paren
 suffix:semicolon
+DECL|variable|tq_scheduler
+id|DECLARE_TASK_QUEUE
+c_func
+(paren
+id|tq_scheduler
+)paren
+suffix:semicolon
 multiline_comment|/*&n; * phase-lock loop variables&n; */
 DECL|variable|time_status
 r_int
@@ -365,6 +372,13 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
+id|run_task_queue
+c_func
+(paren
+op_amp
+id|tq_scheduler
+)paren
+suffix:semicolon
 id|cli
 c_func
 (paren

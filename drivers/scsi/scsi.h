@@ -52,6 +52,8 @@ DECL|macro|SEND_DIAGNOSTIC
 mdefine_line|#define SEND_DIAGNOSTIC&t;&t;0x1d
 DECL|macro|ALLOW_MEDIUM_REMOVAL
 mdefine_line|#define ALLOW_MEDIUM_REMOVAL&t;0x1e
+DECL|macro|SET_WINDOW
+mdefine_line|#define SET_WINDOW              0x24
 DECL|macro|READ_CAPACITY
 mdefine_line|#define READ_CAPACITY&t;&t;0x25
 DECL|macro|READ_10
@@ -82,6 +84,8 @@ DECL|macro|LOCK_UNLOCK_CACHE
 mdefine_line|#define LOCK_UNLOCK_CACHE&t;0x36
 DECL|macro|READ_DEFECT_DATA
 mdefine_line|#define READ_DEFECT_DATA&t;0x37
+DECL|macro|MEDIUM_SCAN
+mdefine_line|#define MEDIUM_SCAN             0x38
 DECL|macro|COMPARE
 mdefine_line|#define COMPARE&t;&t;&t;0x39
 DECL|macro|COPY_VERIFY
@@ -90,10 +94,16 @@ DECL|macro|WRITE_BUFFER
 mdefine_line|#define WRITE_BUFFER&t;&t;0x3b
 DECL|macro|READ_BUFFER
 mdefine_line|#define READ_BUFFER&t;&t;0x3c
+DECL|macro|UPDATE_BLOCK
+mdefine_line|#define UPDATE_BLOCK            0x3d
 DECL|macro|READ_LONG
 mdefine_line|#define READ_LONG&t;&t;0x3e
+DECL|macro|WRITE_LONG
+mdefine_line|#define WRITE_LONG              0x3f
 DECL|macro|CHANGE_DEFINITION
 mdefine_line|#define CHANGE_DEFINITION&t;0x40
+DECL|macro|WRITE_SAME
+mdefine_line|#define WRITE_SAME             0x41
 DECL|macro|LOG_SELECT
 mdefine_line|#define LOG_SELECT&t;&t;0x4c
 DECL|macro|LOG_SENSE
@@ -102,6 +112,18 @@ DECL|macro|MODE_SELECT_10
 mdefine_line|#define MODE_SELECT_10&t;&t;0x55
 DECL|macro|MODE_SENSE_10
 mdefine_line|#define MODE_SENSE_10&t;&t;0x5a
+DECL|macro|WRITE_12
+mdefine_line|#define WRITE_12                0xaa
+DECL|macro|WRITE_VERIFY_12
+mdefine_line|#define WRITE_VERIFY_12         0xae
+DECL|macro|SEARCH_HIGH_12
+mdefine_line|#define SEARCH_HIGH_12          0xb0
+DECL|macro|SEARCH_EQUAL_12
+mdefine_line|#define SEARCH_EQUAL_12         0xb1
+DECL|macro|SEARCH_LOW_12
+mdefine_line|#define SEARCH_LOW_12           0xb2
+DECL|macro|SEND_VOLUME_TAG
+mdefine_line|#define SEND_VOLUME_TAG         0xb6
 r_extern
 r_void
 id|scsi_make_blocked_list
