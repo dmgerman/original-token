@@ -88,7 +88,7 @@ c_func
 id|a1
 )paren
 comma
-id|SW_REG
+id|PT_REG
 c_func
 (paren
 id|a2
@@ -374,7 +374,7 @@ id|pgdir
 )paren
 )paren
 (brace
-id|do_no_page
+id|handle_mm_fault
 c_func
 (paren
 id|tsk
@@ -445,7 +445,7 @@ id|pgmiddle
 )paren
 )paren
 (brace
-id|do_no_page
+id|handle_mm_fault
 c_func
 (paren
 id|tsk
@@ -517,7 +517,7 @@ id|pgtable
 )paren
 )paren
 (brace
-id|do_no_page
+id|handle_mm_fault
 c_func
 (paren
 id|tsk
@@ -640,7 +640,7 @@ id|pgdir
 )paren
 )paren
 (brace
-id|do_no_page
+id|handle_mm_fault
 c_func
 (paren
 id|tsk
@@ -710,7 +710,7 @@ id|pgmiddle
 )paren
 )paren
 (brace
-id|do_no_page
+id|handle_mm_fault
 c_func
 (paren
 id|tsk
@@ -781,7 +781,7 @@ id|pgtable
 )paren
 )paren
 (brace
-id|do_no_page
+id|handle_mm_fault
 c_func
 (paren
 id|tsk
@@ -818,7 +818,7 @@ id|pgtable
 )paren
 )paren
 (brace
-id|do_wp_page
+id|handle_mm_fault
 c_func
 (paren
 id|tsk
@@ -827,7 +827,7 @@ id|vma
 comma
 id|addr
 comma
-l_int|2
+l_int|1
 )paren
 suffix:semicolon
 r_goto

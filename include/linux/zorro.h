@@ -444,10 +444,6 @@ DECL|macro|PROD_MASTER_CARD_SCSI
 mdefine_line|#define PROD_MASTER_CARD_SCSI  (0x04)&t;/* Master Card SCSI Controller */
 DECL|macro|PROD_MVD_819
 mdefine_line|#define PROD_MVD_819           (0x07)&t;/* MVD 819 */
-DECL|macro|MANUF_DELACOMP
-mdefine_line|#define MANUF_DELACOMP         (0x0873)&t;/* DelaComp */
-DECL|macro|PROD_DELACOMP_RAM_2000
-mdefine_line|#define PROD_DELACOMP_RAM_2000 (0x01)&t;/* RAM Expansion 2000 */
 DECL|macro|MANUF_VILLAGE_TRONIC
 mdefine_line|#define MANUF_VILLAGE_TRONIC   (0x0877)&t;/* Village Tronic */
 DECL|macro|PROD_DOMINO_RAM

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: spitfire.h,v 1.7 1997/04/04 00:50:29 davem Exp $&n; * spitfire.h: SpitFire/BlackBird/Cheetah inline MMU operations.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: spitfire.h,v 1.8 1997/05/18 04:16:56 davem Exp $&n; * spitfire.h: SpitFire/BlackBird/Cheetah inline MMU operations.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _SPARC64_SPITFIRE_H
 DECL|macro|_SPARC64_SPITFIRE_H
 mdefine_line|#define _SPARC64_SPITFIRE_H
@@ -817,7 +817,7 @@ multiline_comment|/* No outputs */
 suffix:colon
 l_string|&quot;r&quot;
 (paren
-l_int|0x41
+l_int|0x50
 )paren
 comma
 l_string|&quot;i&quot;
@@ -847,7 +847,7 @@ multiline_comment|/* No outputs */
 suffix:colon
 l_string|&quot;r&quot;
 (paren
-l_int|0x41
+l_int|0x50
 )paren
 comma
 l_string|&quot;i&quot;
@@ -877,7 +877,7 @@ multiline_comment|/* No outputs */
 suffix:colon
 l_string|&quot;r&quot;
 (paren
-l_int|0x42
+l_int|0x60
 )paren
 comma
 l_string|&quot;i&quot;
@@ -907,7 +907,7 @@ multiline_comment|/* No outputs */
 suffix:colon
 l_string|&quot;r&quot;
 (paren
-l_int|0x42
+l_int|0x60
 )paren
 comma
 l_string|&quot;i&quot;

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: string.h,v 1.4 1997/04/01 09:34:41 davem Exp $&n; * string.h: External definitions for optimized assembly string&n; *           routines for the Linux Kernel.&n; *&n; * Copyright (C) 1995,1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996,1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: string.h,v 1.5 1997/05/18 04:16:57 davem Exp $&n; * string.h: External definitions for optimized assembly string&n; *           routines for the Linux Kernel.&n; *&n; * Copyright (C) 1995,1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996,1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#ifndef __SPARC64_STRING_H__
 DECL|macro|__SPARC64_STRING_H__
 mdefine_line|#define __SPARC64_STRING_H__
@@ -120,6 +120,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
+macro_line|#if 0
 r_switch
 c_cond
 (paren
@@ -141,6 +142,7 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
+macro_line|#endif
 id|__memcpy
 c_func
 (paren
@@ -151,9 +153,11 @@ comma
 id|n
 )paren
 suffix:semicolon
+macro_line|#if 0
 r_break
 suffix:semicolon
 )brace
+macro_line|#endif
 )brace
 )brace
 r_return
@@ -248,6 +252,7 @@ op_logical_neg
 id|c
 )paren
 (brace
+macro_line|#if 0
 r_if
 c_cond
 (paren
@@ -264,6 +269,7 @@ id|s
 suffix:semicolon
 )brace
 r_else
+macro_line|#endif
 id|__bzero
 c_func
 (paren

@@ -2374,6 +2374,16 @@ id|ifc.ifc_buf
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;We now walk the device list filling each active device&n;&t; *&t;into the array.&n;&t; */
 multiline_comment|/*&n;&t; *&t;Loop over the interfaces, and write an info block for each. &n;&t; */
+id|dev_lock_wait
+c_func
+(paren
+)paren
+suffix:semicolon
+id|dev_lock_list
+c_func
+(paren
+)paren
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -2491,6 +2501,11 @@ id|ifreq
 )paren
 suffix:semicolon
 )brace
+id|dev_unlock_list
+c_func
+(paren
+)paren
+suffix:semicolon
 multiline_comment|/*&n;&t; *&t;All done.  Write the updated control block back to the caller. &n;&t; */
 id|ifc.ifc_len
 op_assign

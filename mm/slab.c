@@ -6,9 +6,9 @@ macro_line|#include&t;&lt;linux/slab.h&gt;
 macro_line|#include&t;&lt;linux/interrupt.h&gt;
 macro_line|#include&t;&lt;linux/config.h&gt;
 macro_line|#include&t;&lt;linux/init.h&gt;
+macro_line|#include&t;&lt;linux/smp.h&gt;
 macro_line|#include&t;&lt;asm/system.h&gt;
 macro_line|#include&t;&lt;asm/atomic.h&gt;
-macro_line|#include&t;&lt;asm/smp.h&gt;
 macro_line|#include&t;&lt;asm/smp_lock.h&gt;
 macro_line|#include&t;&lt;asm/spinlock.h&gt;
 multiline_comment|/* If there is a different PAGE_SIZE around, and it works with this allocator,&n; * then change the following.&n; */

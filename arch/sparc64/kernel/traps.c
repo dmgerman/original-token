@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: traps.c,v 1.5 1997/04/14 06:56:55 davem Exp $&n; * arch/sparc/kernel/traps.c&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: traps.c,v 1.10 1997/05/18 08:42:16 davem Exp $&n; * arch/sparc/kernel/traps.c&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 multiline_comment|/*&n; * I hate traps on the sparc, grrr...&n; */
 macro_line|#include &lt;linux/sched.h&gt;  /* for jiffies */
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -12,6 +12,7 @@ macro_line|#include &lt;asm/oplib.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/unistd.h&gt;
+macro_line|#include &lt;asm/uaccess.h&gt;
 multiline_comment|/* #define TRAP_DEBUG */
 DECL|struct|trap_trace_entry
 r_struct
@@ -98,6 +99,18 @@ op_star
 id|regs
 )paren
 (brace
+id|printk
+c_func
+(paren
+l_string|&quot;Syscall return check, reg dump.&bslash;n&quot;
+)paren
+suffix:semicolon
+id|show_regs
+c_func
+(paren
+id|regs
+)paren
+suffix:semicolon
 )brace
 DECL|function|sparc64_dtlb_fault_handler
 r_void
@@ -435,6 +448,18 @@ op_star
 id|regs-&gt;tpc
 )paren
 suffix:semicolon
+r_while
+c_loop
+(paren
+l_int|1
+)paren
+(brace
+id|barrier
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -466,20 +491,20 @@ r_struct
 id|pt_regs
 op_star
 id|regs
-comma
+)paren
+(brace
 r_int
 r_int
 id|pc
-comma
-r_int
-r_int
-id|npc
-comma
+op_assign
+id|regs-&gt;tpc
+suffix:semicolon
 r_int
 r_int
 id|tstate
-)paren
-(brace
+op_assign
+id|regs-&gt;tstate
+suffix:semicolon
 id|lock_kernel
 c_func
 (paren
@@ -502,23 +527,44 @@ id|regs
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifdef TRAP_DEBUG
+macro_line|#if 1
+(brace
+r_int
+r_int
+id|insn
+suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;Ill instr. at pc=%016lx instruction is %08x&bslash;n&quot;
+l_string|&quot;Ill instr. at pc=%016lx &quot;
 comma
-id|regs-&gt;tpc
+id|pc
+)paren
+suffix:semicolon
+id|get_user
+c_func
+(paren
+id|insn
 comma
-op_star
+(paren
 (paren
 r_int
 r_int
 op_star
 )paren
-id|regs-&gt;tpc
+id|pc
+)paren
 )paren
 suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;insn=[%08x]&bslash;n&quot;
+comma
+id|insn
+)paren
+suffix:semicolon
+)brace
 macro_line|#endif
 id|current-&gt;tss.sig_address
 op_assign
@@ -543,6 +589,56 @@ c_func
 (paren
 )paren
 suffix:semicolon
+r_while
+c_loop
+(paren
+l_int|1
+)paren
+(brace
+id|barrier
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+)brace
+DECL|function|do_mna
+r_void
+id|do_mna
+c_func
+(paren
+r_struct
+id|pt_regs
+op_star
+id|regs
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;AIEEE: do_mna at %016lx&bslash;n&quot;
+comma
+id|regs-&gt;tpc
+)paren
+suffix:semicolon
+id|show_regs
+c_func
+(paren
+id|regs
+)paren
+suffix:semicolon
+r_while
+c_loop
+(paren
+l_int|1
+)paren
+(brace
+id|barrier
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
 )brace
 DECL|function|do_priv_instruction
 r_void

@@ -1900,6 +1900,19 @@ op_assign
 op_minus
 id|EINVAL
 suffix:semicolon
+multiline_comment|/* Check for overflow.  */
+r_if
+c_cond
+(paren
+id|addr
+op_plus
+id|len
+OL
+id|addr
+)paren
+r_goto
+id|out
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1927,6 +1940,10 @@ c_cond
 id|scope
 op_eq
 id|FLUSH_SCOPE_LINE
+op_logical_and
+id|len
+OL
+l_int|256
 )paren
 (brace
 r_int

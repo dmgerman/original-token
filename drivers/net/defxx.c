@@ -30,6 +30,12 @@ macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/fddidevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &quot;defxx.h&quot;
+DECL|macro|DYNAMIC_BUFFERS
+mdefine_line|#define DYNAMIC_BUFFERS 1
+DECL|macro|SKBUFF_RX_COPYBREAK
+mdefine_line|#define SKBUFF_RX_COPYBREAK 200
+DECL|macro|NEW_SKB_SIZE
+mdefine_line|#define NEW_SKB_SIZE (PI_RCV_DATA_K_SIZE_MAX)
 multiline_comment|/* Define global routines */
 r_int
 id|dfx_probe
@@ -2124,12 +2130,14 @@ id|PI_CMD_REQ_K_SIZE_MAX
 op_plus
 id|PI_CMD_RSP_K_SIZE_MAX
 op_plus
+macro_line|#ifndef DYNAMIC_BUFFERS
 (paren
 id|bp-&gt;rcv_bufs_to_post
 op_star
 id|PI_RCV_DATA_K_SIZE_MAX
 )paren
 op_plus
+macro_line|#endif
 r_sizeof
 (paren
 id|PI_CONSUMER_BLOCK
@@ -2299,6 +2307,7 @@ id|bp-&gt;rcv_block_phys
 op_assign
 id|curr_p
 suffix:semicolon
+macro_line|#ifndef DYNAMIC_BUFFERS
 id|curr_v
 op_add_assign
 (paren
@@ -2315,6 +2324,7 @@ op_star
 id|PI_RCV_DATA_K_SIZE_MAX
 )paren
 suffix:semicolon
+macro_line|#endif
 multiline_comment|/* Reserve space for the consumer block */
 id|bp-&gt;cons_block_virt
 op_assign
@@ -6167,6 +6177,119 @@ id|j
 suffix:semicolon
 multiline_comment|/* used in for loop */
 multiline_comment|/*&n;&t; *  Since each receive buffer is a single fragment of same length, initialize&n;&t; *  first longword in each receive descriptor for entire LLC Host descriptor&n;&t; *  block.  Also initialize second longword in each receive descriptor with&n;&t; *  physical address of receive buffer.  We&squot;ll always allocate receive&n;&t; *  buffers in powers of 2 so that we can easily fill the 256 entry descriptor&n;&t; *  block and produce new receive buffers by simply updating the receive&n;&t; *  producer index.&n;&t; *&n;&t; * &t;Assumptions:&n;&t; *&t;&t;To support all shipping versions of PDQ, the receive buffer size&n;&t; *&t;&t;must be mod 128 in length and the physical address must be 128 byte&n;&t; *&t;&t;aligned.  In other words, bits 0-6 of the length and address must&n;&t; *&t;&t;be zero for the following descriptor field entries to be correct on&n;&t; *&t;&t;all PDQ-based boards.  We guaranteed both requirements during&n;&t; *&t;&t;driver initialization when we allocated memory for the receive buffers.&n;&t; */
+macro_line|#ifdef DYNAMIC_BUFFERS
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+(paren
+r_int
+)paren
+(paren
+id|bp-&gt;rcv_bufs_to_post
+)paren
+suffix:semicolon
+id|i
+op_increment
+)paren
+r_for
+c_loop
+(paren
+id|j
+op_assign
+l_int|0
+suffix:semicolon
+(paren
+id|i
+op_plus
+id|j
+)paren
+OL
+(paren
+r_int
+)paren
+id|PI_RCV_DATA_K_NUM_ENTRIES
+suffix:semicolon
+id|j
+op_add_assign
+id|bp-&gt;rcv_bufs_to_post
+)paren
+(brace
+r_struct
+id|sk_buff
+op_star
+id|newskb
+suffix:semicolon
+id|bp-&gt;descr_block_virt-&gt;rcv_data
+(braket
+id|i
+op_plus
+id|j
+)braket
+dot
+id|long_0
+op_assign
+(paren
+id|u32
+)paren
+(paren
+id|PI_RCV_DESCR_M_SOP
+op_or
+(paren
+(paren
+id|PI_RCV_DATA_K_SIZE_MAX
+op_div
+id|PI_ALIGN_K_RCV_DATA_BUFF
+)paren
+op_lshift
+id|PI_RCV_DESCR_V_SEG_LEN
+)paren
+)paren
+suffix:semicolon
+id|newskb
+op_assign
+id|dev_alloc_skb
+c_func
+(paren
+id|NEW_SKB_SIZE
+)paren
+suffix:semicolon
+id|bp-&gt;descr_block_virt-&gt;rcv_data
+(braket
+id|i
+op_plus
+id|j
+)braket
+dot
+id|long_1
+op_assign
+id|virt_to_bus
+c_func
+(paren
+id|newskb-&gt;data
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t;&t;&t; * p_rcv_buff_va is only used inside the&n;&t;&t;&t; * kernel so we put the skb pointer here.&n;&t;&t;&t; */
+id|bp-&gt;p_rcv_buff_va
+(braket
+id|i
+op_plus
+id|j
+)braket
+op_assign
+(paren
+r_char
+op_star
+)paren
+id|newskb
+suffix:semicolon
+)brace
+macro_line|#else
 r_for
 c_loop
 (paren
@@ -6279,6 +6402,7 @@ id|PI_RCV_DATA_K_SIZE_MAX
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
 multiline_comment|/* Update receive producer and Type 2 register */
 id|bp-&gt;rcv_xmt_reg.index.rcv_prod
 op_assign
@@ -6331,6 +6455,10 @@ op_star
 id|skb
 suffix:semicolon
 multiline_comment|/* pointer to a sk_buff to hold incoming packet data */
+r_static
+r_int
+id|testing_dyn
+suffix:semicolon
 multiline_comment|/* Service all consumed LLC receive frames */
 id|p_type_2_cons
 op_assign
@@ -6352,6 +6480,37 @@ id|p_type_2_cons-&gt;index.rcv_cons
 )paren
 (brace
 multiline_comment|/* Process any errors */
+r_int
+id|entry
+suffix:semicolon
+id|entry
+op_assign
+id|bp-&gt;rcv_xmt_reg.index.rcv_comp
+suffix:semicolon
+macro_line|#ifdef DYNAMIC_BUFFERS
+id|p_buff
+op_assign
+(paren
+r_char
+op_star
+)paren
+(paren
+(paren
+(paren
+r_struct
+id|sk_buff
+op_star
+)paren
+id|bp-&gt;p_rcv_buff_va
+(braket
+id|entry
+)braket
+)paren
+op_member_access_from_pointer
+id|data
+)paren
+suffix:semicolon
+macro_line|#else
 id|p_buff
 op_assign
 (paren
@@ -6360,9 +6519,10 @@ op_star
 )paren
 id|bp-&gt;p_rcv_buff_va
 (braket
-id|bp-&gt;rcv_xmt_reg.index.rcv_comp
+id|entry
 )braket
 suffix:semicolon
+macro_line|#endif
 id|memcpy
 c_func
 (paren
@@ -6404,6 +6564,11 @@ suffix:semicolon
 )brace
 r_else
 (brace
+r_int
+id|rx_in_place
+op_assign
+l_int|0
+suffix:semicolon
 multiline_comment|/* The frame was received without errors - verify packet length */
 id|pkt_len
 op_assign
@@ -6444,6 +6609,126 @@ op_increment
 suffix:semicolon
 r_else
 (brace
+macro_line|#ifdef DYNAMIC_BUFFERS
+r_if
+c_cond
+(paren
+id|pkt_len
+OG
+id|SKBUFF_RX_COPYBREAK
+)paren
+(brace
+r_struct
+id|sk_buff
+op_star
+id|newskb
+suffix:semicolon
+id|newskb
+op_assign
+id|dev_alloc_skb
+c_func
+(paren
+id|NEW_SKB_SIZE
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|newskb
+)paren
+(brace
+id|rx_in_place
+op_assign
+l_int|1
+suffix:semicolon
+DECL|macro|JES_TESTING
+mdefine_line|#define JES_TESTING
+macro_line|#ifdef JES_TESTING
+r_if
+c_cond
+(paren
+id|testing_dyn
+op_increment
+OL
+l_int|5
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;Skipping a memcpy&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
+id|skb
+op_assign
+(paren
+r_struct
+id|sk_buff
+op_star
+)paren
+id|bp-&gt;p_rcv_buff_va
+(braket
+id|entry
+)braket
+suffix:semicolon
+id|skb-&gt;data
+op_add_assign
+id|RCV_BUFF_K_PADDING
+suffix:semicolon
+id|bp-&gt;p_rcv_buff_va
+(braket
+id|entry
+)braket
+op_assign
+(paren
+r_char
+op_star
+)paren
+id|newskb
+suffix:semicolon
+id|bp-&gt;descr_block_virt-&gt;rcv_data
+(braket
+id|entry
+)braket
+dot
+id|long_1
+op_assign
+id|virt_to_bus
+c_func
+(paren
+id|newskb-&gt;data
+)paren
+suffix:semicolon
+macro_line|#else
+id|memcpy
+c_func
+(paren
+id|newskb-&gt;data
+comma
+id|p_buff
+op_plus
+id|RCV_BUFF_K_PADDING
+comma
+id|pkt_len
+op_plus
+l_int|3
+)paren
+suffix:semicolon
+id|skb
+op_assign
+id|newskb
+suffix:semicolon
+macro_line|#endif
+)brace
+r_else
+id|skb
+op_assign
+l_int|0
+suffix:semicolon
+)brace
+r_else
+macro_line|#endif
 id|skb
 op_assign
 id|dev_alloc_skb
@@ -6474,8 +6759,19 @@ suffix:semicolon
 id|bp-&gt;rcv_discards
 op_increment
 suffix:semicolon
+r_break
+suffix:semicolon
 )brace
 r_else
+(brace
+macro_line|#ifndef DYNAMIC_BUFFERS
+r_if
+c_cond
+(paren
+op_logical_neg
+id|rx_in_place
+)paren
+macro_line|#endif
 (brace
 multiline_comment|/* Receive buffer allocated, pass receive packet up */
 id|memcpy
@@ -6492,6 +6788,7 @@ op_plus
 l_int|3
 )paren
 suffix:semicolon
+)brace
 id|skb-&gt;data
 op_add_assign
 l_int|3
@@ -6637,6 +6934,14 @@ id|dev
 )paren
 suffix:semicolon
 multiline_comment|/* dequeue packets from xmt queue and send them */
+id|dev_kfree_skb
+c_func
+(paren
+id|skb
+comma
+id|FREE_WRITE
+)paren
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon

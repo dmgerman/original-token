@@ -92,7 +92,7 @@ suffix:semicolon
 DECL|macro|INIT_MMAP
 mdefine_line|#define INIT_MMAP { &amp;init_mm, 0, 0x40000000, __pgprot(_PAGE_PRESENT|_PAGE_ACCESSED), VM_READ | VM_WRITE | VM_EXEC, NULL, &amp;init_mm.mmap }
 DECL|macro|INIT_TSS
-mdefine_line|#define INIT_TSS  { &bslash;&n;&t;sizeof(init_kernel_stack) + (long) init_kernel_stack, 0, &bslash;&n;&t;PS_S, KERNEL_DS, &bslash;&n;&t;{0, 0}, 0, {0,}, {0, 0, 0}, {0,}, &bslash;&n;}
+mdefine_line|#define INIT_TSS  { &bslash;&n;&t;sizeof(init_stack) + (unsigned long) init_stack, 0, &bslash;&n;&t;PS_S, KERNEL_DS, &bslash;&n;&t;{0, 0}, 0, {0,}, {0, 0, 0}, {0,}, &bslash;&n;}
 multiline_comment|/*&n; * Do necessary setup to start up a newly executed thread.&n; */
 DECL|function|start_thread
 r_static
@@ -254,12 +254,12 @@ suffix:semicolon
 )brace
 multiline_comment|/* Allocation and freeing of basic task resources. */
 DECL|macro|alloc_task_struct
-mdefine_line|#define alloc_task_struct()&t;kmalloc(sizeof(struct task_struct), GFP_KERNEL)
-DECL|macro|alloc_kernel_stack
-mdefine_line|#define alloc_kernel_stack(p)&t;__get_free_page(GFP_KERNEL)
+mdefine_line|#define alloc_task_struct() &bslash;&n;&t;((struct task_struct *) __get_free_pages(GFP_KERNEL,1,0))
 DECL|macro|free_task_struct
-mdefine_line|#define free_task_struct(p)&t;kfree(p)
-DECL|macro|free_kernel_stack
-mdefine_line|#define free_kernel_stack(page) free_page((page))
+mdefine_line|#define free_task_struct(p)&t;free_pages((unsigned long)(p),1)
+DECL|macro|init_task
+mdefine_line|#define init_task&t;(init_task_union.task)
+DECL|macro|init_stack
+mdefine_line|#define init_stack&t;(init_task_union.stack)
 macro_line|#endif
 eof

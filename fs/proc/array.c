@@ -1050,14 +1050,14 @@ id|task
 l_int|0
 )braket
 op_member_access_from_pointer
-id|utime
+id|times.tms_utime
 op_plus
 id|task
 (braket
 l_int|0
 )braket
 op_member_access_from_pointer
-id|stime
+id|times.tms_stime
 suffix:semicolon
 multiline_comment|/* The formula for the fraction parts really is ((t * 100) / HZ) % 100, but&n;&t;   that would overflow about every five days at HZ == 100.&n;&t;   Therefore the identity a = (a / b) * b + a % b is used so that it is&n;&t;   calculated as (((t / HZ) * 100) + ((t % HZ) * 100) / HZ) % 100.&n;&t;   The part in front of the &squot;+&squot; always evaluates as 0 (mod 100). All divisions&n;&t;   in the above formulas are truncating. For HZ being a power of 10, the&n;&t;   calculations simplify to the version in the #else part (if the printf&n;&t;   format is adapted to the same number of digits as zeroes in HZ.&n;&t; */
 macro_line|#if HZ!=100
@@ -3174,13 +3174,13 @@ id|tsk-&gt;maj_flt
 comma
 id|tsk-&gt;cmaj_flt
 comma
-id|tsk-&gt;utime
+id|tsk-&gt;times.tms_utime
 comma
-id|tsk-&gt;stime
+id|tsk-&gt;times.tms_stime
 comma
-id|tsk-&gt;cutime
+id|tsk-&gt;times.tms_cutime
 comma
-id|tsk-&gt;cstime
+id|tsk-&gt;times.tms_cstime
 comma
 id|priority
 comma

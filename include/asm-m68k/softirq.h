@@ -2,6 +2,7 @@ macro_line|#ifndef __M68K_SOFTIRQ_H
 DECL|macro|__M68K_SOFTIRQ_H
 mdefine_line|#define __M68K_SOFTIRQ_H
 multiline_comment|/*&n; * Software interrupts.. no SMP here either.&n; */
+macro_line|#include &lt;asm/atomic.h&gt;
 DECL|macro|get_active_bhs
 mdefine_line|#define get_active_bhs()&t;(bh_mask &amp; bh_active)
 DECL|macro|clear_active_bhs
@@ -45,34 +46,6 @@ op_or_assign
 l_int|1
 op_lshift
 id|nr
-suffix:semicolon
-)brace
-DECL|function|remove_bh
-r_extern
-r_inline
-r_void
-id|remove_bh
-c_func
-(paren
-r_int
-id|nr
-)paren
-(brace
-id|bh_base
-(braket
-id|nr
-)braket
-op_assign
-l_int|NULL
-suffix:semicolon
-id|bh_mask
-op_and_assign
-op_complement
-(paren
-l_int|1
-op_lshift
-id|nr
-)paren
 suffix:semicolon
 )brace
 DECL|function|mark_bh
@@ -150,6 +123,34 @@ op_or_assign
 l_int|1
 op_lshift
 id|nr
+suffix:semicolon
+)brace
+DECL|function|remove_bh
+r_extern
+r_inline
+r_void
+id|remove_bh
+c_func
+(paren
+r_int
+id|nr
+)paren
+(brace
+id|bh_base
+(braket
+id|nr
+)braket
+op_assign
+l_int|NULL
+suffix:semicolon
+id|bh_mask
+op_and_assign
+op_complement
+(paren
+l_int|1
+op_lshift
+id|nr
+)paren
 suffix:semicolon
 )brace
 r_extern

@@ -2487,7 +2487,9 @@ r_int
 r_int
 id|st_sector
 suffix:semicolon
-multiline_comment|/* We register all partitions, even if zero size, so that&n;&t;&t; * the minor numbers end up ok as per SunOS interpretation.&n;&t;&t; */
+r_int
+id|num_sectors
+suffix:semicolon
 id|st_sector
 op_assign
 id|first_sector
@@ -2500,6 +2502,19 @@ id|p-&gt;start_cylinder
 op_star
 id|spc
 suffix:semicolon
+id|num_sectors
+op_assign
+id|be32_to_cpu
+c_func
+(paren
+id|p-&gt;num_sectors
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|num_sectors
+)paren
 id|add_partition
 c_func
 (paren
@@ -2509,11 +2524,7 @@ id|current_minor
 comma
 id|st_sector
 comma
-id|be32_to_cpu
-c_func
-(paren
-id|p-&gt;num_sectors
-)paren
+id|num_sectors
 )paren
 suffix:semicolon
 id|current_minor
@@ -2542,12 +2553,12 @@ macro_line|#include &lt;asm/byteorder.h&gt;
 macro_line|#include &lt;linux/affs_hardblocks.h&gt;
 r_static
 id|__inline__
-id|__u32
+id|u32
 DECL|function|checksum_block
 id|checksum_block
 c_func
 (paren
-id|__u32
+id|u32
 op_star
 id|m
 comma
@@ -2555,7 +2566,7 @@ r_int
 id|size
 )paren
 (brace
-id|__u32
+id|u32
 id|sum
 op_assign
 l_int|0

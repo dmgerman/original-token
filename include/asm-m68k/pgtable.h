@@ -385,7 +385,7 @@ id|FLUSH_I
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n; * flush all atc entries (user-space entries only for the 680[46]0).&n; */
+multiline_comment|/*&n; * flush all user-space atc entries.&n; */
 DECL|function|__flush_tlb
 r_static
 r_inline
@@ -415,7 +415,7 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;pflusha&quot;
+l_string|&quot;pflush #0,#4&quot;
 )paren
 suffix:semicolon
 )brace

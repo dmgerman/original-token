@@ -52,26 +52,6 @@ r_int
 id|error_code
 )paren
 (brace
-r_void
-(paren
-op_star
-id|handler
-)paren
-(paren
-r_struct
-id|task_struct
-op_star
-comma
-r_struct
-id|vm_area_struct
-op_star
-comma
-r_int
-r_int
-comma
-r_int
-)paren
-suffix:semicolon
 r_struct
 id|task_struct
 op_star
@@ -94,8 +74,6 @@ suffix:semicolon
 r_int
 r_int
 id|fixup
-comma
-id|fault_pc
 suffix:semicolon
 r_int
 id|write
@@ -214,10 +192,6 @@ id|write
 op_assign
 l_int|0
 suffix:semicolon
-id|handler
-op_assign
-id|do_no_page
-suffix:semicolon
 r_switch
 c_cond
 (paren
@@ -228,11 +202,9 @@ l_int|3
 (brace
 r_default
 suffix:colon
+(brace
+)brace
 multiline_comment|/* 3: write, present */
-id|handler
-op_assign
-id|do_wp_page
-suffix:semicolon
 multiline_comment|/* fall through */
 r_case
 l_int|2
@@ -285,10 +257,10 @@ r_goto
 id|bad_area
 suffix:semicolon
 )brace
-id|handler
+id|handle_mm_fault
 c_func
 (paren
-id|tsk
+id|current
 comma
 id|vma
 comma
@@ -332,10 +304,6 @@ id|mm-&gt;mmap_sem
 )paren
 suffix:semicolon
 multiline_comment|/* Are we prepared to handle this fault?  */
-id|fault_pc
-op_assign
-id|regs-&gt;pc
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -345,7 +313,7 @@ op_assign
 id|search_exception_table
 c_func
 (paren
-id|fault_pc
+id|regs-&gt;pc
 )paren
 )paren
 op_ne
@@ -361,9 +329,11 @@ id|printk
 c_func
 (paren
 id|KERN_DEBUG
-l_string|&quot;Exception at [&lt;%lx&gt;] (%lx)&bslash;n&quot;
+l_string|&quot;%s: Exception at [&lt;%lx&gt;] (%lx)&bslash;n&quot;
 comma
-id|fault_pc
+id|current-&gt;comm
+comma
+id|regs-&gt;pc
 comma
 id|fixup
 )paren

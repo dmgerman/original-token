@@ -826,7 +826,7 @@ id|pgdir
 )paren
 )paren
 (brace
-id|do_no_page
+id|handle_mm_fault
 c_func
 (paren
 id|tsk
@@ -897,7 +897,7 @@ id|pgmiddle
 )paren
 )paren
 (brace
-id|do_no_page
+id|handle_mm_fault
 c_func
 (paren
 id|tsk
@@ -969,7 +969,7 @@ id|pgtable
 )paren
 )paren
 (brace
-id|do_no_page
+id|handle_mm_fault
 c_func
 (paren
 id|tsk
@@ -1092,7 +1092,7 @@ id|pgdir
 )paren
 )paren
 (brace
-id|do_no_page
+id|handle_mm_fault
 c_func
 (paren
 id|tsk
@@ -1162,7 +1162,7 @@ id|pgmiddle
 )paren
 )paren
 (brace
-id|do_no_page
+id|handle_mm_fault
 c_func
 (paren
 id|tsk
@@ -1233,7 +1233,7 @@ id|pgtable
 )paren
 )paren
 (brace
-id|do_no_page
+id|handle_mm_fault
 c_func
 (paren
 id|tsk
@@ -1270,7 +1270,7 @@ id|pgtable
 )paren
 )paren
 (brace
-id|do_wp_page
+id|handle_mm_fault
 c_func
 (paren
 id|tsk

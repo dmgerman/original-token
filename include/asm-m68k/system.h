@@ -119,6 +119,8 @@ DECL|macro|save_flags
 mdefine_line|#define save_flags(x) __save_flags(x)
 DECL|macro|restore_flags
 mdefine_line|#define restore_flags(x) __restore_flags(x)
+DECL|macro|save_and_cli
+mdefine_line|#define save_and_cli(flags)   do { save_flags(flags); cli(); } while(0)
 macro_line|#ifndef CONFIG_RMW_INSNS
 DECL|function|__xchg
 r_static

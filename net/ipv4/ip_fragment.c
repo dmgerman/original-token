@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;The IP fragmentation functionality.&n; *&t;&t;&n; * Version:&t;$Id: ip_fragment.c,v 1.21 1997/05/13 07:45:08 davem Exp $&n; *&n; * Authors:&t;Fred N. van Kempen &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Alan Cox &lt;Alan.Cox@linux.org&gt;&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;:&t;Split from ip.c , see ip_input.c for history.&n; *&t;&t;David S. Miller :&t;Begin massive cleanup...&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;The IP fragmentation functionality.&n; *&t;&t;&n; * Version:&t;$Id: ip_fragment.c,v 1.22 1997/05/17 05:21:56 freitag Exp $&n; *&n; * Authors:&t;Fred N. van Kempen &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Alan Cox &lt;Alan.Cox@linux.org&gt;&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;:&t;Split from ip.c , see ip_input.c for history.&n; *&t;&t;David S. Miller :&t;Begin massive cleanup...&n; *&t;&t;Andi Kleen&t;:&t;Add sysctls.&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -16,10 +16,22 @@ macro_line|#include &lt;linux/firewall.h&gt;
 macro_line|#include &lt;linux/ip_fw.h&gt;
 macro_line|#include &lt;net/checksum.h&gt;
 multiline_comment|/* Fragment cache limits. We will commit 256K at one time. Should we&n; * cross that limit we will prune down to 192K. This should cope with&n; * even the most extreme cases without allowing an attacker to measurably&n; * harm machine performance.&n; */
-DECL|macro|IPFRAG_HIGH_THRESH
-mdefine_line|#define IPFRAG_HIGH_THRESH&t;&t;(256*1024)
-DECL|macro|IPFRAG_LOW_THRESH
-mdefine_line|#define IPFRAG_LOW_THRESH&t;&t;(192*1024)
+DECL|variable|sysctl_ipfrag_high_thresh
+r_int
+id|sysctl_ipfrag_high_thresh
+op_assign
+l_int|256
+op_star
+l_int|1024
+suffix:semicolon
+DECL|variable|sysctl_ipfrag_low_thresh
+r_int
+id|sysctl_ipfrag_low_thresh
+op_assign
+l_int|192
+op_star
+l_int|1024
+suffix:semicolon
 multiline_comment|/* Describe an IP fragment. */
 DECL|struct|ipfrag
 r_struct
@@ -706,7 +718,7 @@ op_amp
 id|ip_frag_mem
 )paren
 OG
-id|IPFRAG_LOW_THRESH
+id|sysctl_ipfrag_low_thresh
 )paren
 (brace
 r_int
@@ -1471,7 +1483,7 @@ op_amp
 id|ip_frag_mem
 )paren
 OG
-id|IPFRAG_HIGH_THRESH
+id|sysctl_ipfrag_high_thresh
 )paren
 (brace
 id|ip_evictor

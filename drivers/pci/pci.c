@@ -1124,6 +1124,16 @@ comma
 id|DEVICE
 c_func
 (paren
+id|BROOKTREE
+comma
+id|BT848
+comma
+l_string|&quot;Brooktree 848&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
 id|SIERRA
 comma
 id|SIERRA_STB
@@ -2277,6 +2287,16 @@ comma
 id|INTEL_P6
 comma
 l_string|&quot;Orion P6&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|INTEL
+comma
+id|INTEL_P6_2
+comma
+l_string|&quot;82450GX Orion P6&quot;
 )paren
 comma
 id|DEVICE
@@ -3472,6 +3492,12 @@ id|PCI_VENDOR_ID_VISION
 suffix:colon
 r_return
 l_string|&quot;Vision&quot;
+suffix:semicolon
+r_case
+id|PCI_VENDOR_ID_BROOKTREE
+suffix:colon
+r_return
+l_string|&quot;Brooktree&quot;
 suffix:semicolon
 r_case
 id|PCI_VENDOR_ID_SIERRA

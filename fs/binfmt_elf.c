@@ -91,6 +91,12 @@ id|len
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifndef elf_addr_t
+DECL|macro|elf_addr_t
+mdefine_line|#define elf_addr_t unsigned long
+DECL|macro|elf_caddr_t
+mdefine_line|#define elf_caddr_t char *
+macro_line|#endif
 multiline_comment|/*&n; * If we don&squot;t support core dumping, then supply a NULL so we&n; * don&squot;t even try.&n; */
 macro_line|#ifdef USE_ELF_CORE_DUMP
 r_static
@@ -115,6 +121,8 @@ DECL|macro|ELF_PAGESTART
 mdefine_line|#define ELF_PAGESTART(_v) ((_v) &amp; ~(unsigned long)(ELF_EXEC_PAGESIZE-1))
 DECL|macro|ELF_PAGEOFFSET
 mdefine_line|#define ELF_PAGEOFFSET(_v) ((_v) &amp; (ELF_EXEC_PAGESIZE-1))
+DECL|macro|ELF_PAGEALIGN
+mdefine_line|#define ELF_PAGEALIGN(_v) (((_v) + ELF_EXEC_PAGESIZE - 1) &amp; ~(ELF_EXEC_PAGESIZE - 1))
 DECL|variable|elf_format
 r_static
 r_struct
@@ -163,7 +171,7 @@ id|end
 (brace
 id|start
 op_assign
-id|PAGE_ALIGN
+id|ELF_PAGEALIGN
 c_func
 (paren
 id|start
@@ -171,7 +179,7 @@ id|start
 suffix:semicolon
 id|end
 op_assign
-id|PAGE_ALIGN
+id|ELF_PAGEALIGN
 c_func
 (paren
 id|end
@@ -229,12 +237,10 @@ id|nbyte
 suffix:semicolon
 id|nbyte
 op_assign
-id|elf_bss
-op_amp
+id|ELF_PAGEOFFSET
+c_func
 (paren
-id|PAGE_SIZE
-op_minus
-l_int|1
+id|elf_bss
 )paren
 suffix:semicolon
 r_if
@@ -245,7 +251,7 @@ id|nbyte
 (brace
 id|nbyte
 op_assign
-id|PAGE_SIZE
+id|ELF_EXEC_PAGESIZE
 op_minus
 id|nbyte
 suffix:semicolon
@@ -263,10 +269,10 @@ id|nbyte
 suffix:semicolon
 )brace
 )brace
-DECL|function|create_elf_tables
-r_int
-r_int
+r_static
+id|elf_addr_t
 op_star
+DECL|function|create_elf_tables
 id|create_elf_tables
 c_func
 (paren
@@ -297,17 +303,15 @@ r_int
 id|ibcs
 )paren
 (brace
-r_char
-op_star
+id|elf_caddr_t
 op_star
 id|argv
-comma
-op_star
+suffix:semicolon
+id|elf_caddr_t
 op_star
 id|envp
 suffix:semicolon
-r_int
-r_int
+id|elf_addr_t
 op_star
 id|sp
 suffix:semicolon
@@ -315,8 +319,7 @@ multiline_comment|/*&n;&t; * Force 16 byte alignment here for generality.&n;&t; 
 id|sp
 op_assign
 (paren
-r_int
-r_int
+id|elf_addr_t
 op_star
 )paren
 (paren
@@ -332,8 +335,7 @@ id|p
 suffix:semicolon
 macro_line|#ifdef __sparc__
 (brace
-r_int
-r_int
+id|elf_addr_t
 op_star
 id|csp
 suffix:semicolon
@@ -453,7 +455,7 @@ l_int|3
 comma
 id|AT_PAGESZ
 comma
-id|PAGE_SIZE
+id|ELF_EXEC_PAGESIZE
 )paren
 suffix:semicolon
 id|NEW_AUX_ENT
@@ -481,8 +483,7 @@ comma
 id|AT_ENTRY
 comma
 (paren
-r_int
-r_int
+id|elf_addr_t
 )paren
 id|exec-&gt;e_entry
 )paren
@@ -494,8 +495,7 @@ comma
 id|AT_UID
 comma
 (paren
-r_int
-r_int
+id|elf_addr_t
 )paren
 id|current-&gt;uid
 )paren
@@ -507,8 +507,7 @@ comma
 id|AT_EUID
 comma
 (paren
-r_int
-r_int
+id|elf_addr_t
 )paren
 id|current-&gt;euid
 )paren
@@ -520,8 +519,7 @@ comma
 id|AT_GID
 comma
 (paren
-r_int
-r_int
+id|elf_addr_t
 )paren
 id|current-&gt;gid
 )paren
@@ -533,8 +531,7 @@ comma
 id|AT_EGID
 comma
 (paren
-r_int
-r_int
+id|elf_addr_t
 )paren
 id|current-&gt;egid
 )paren
@@ -551,8 +548,7 @@ suffix:semicolon
 id|envp
 op_assign
 (paren
-r_char
-op_star
+id|elf_caddr_t
 op_star
 )paren
 id|sp
@@ -566,8 +562,7 @@ suffix:semicolon
 id|argv
 op_assign
 (paren
-r_char
-op_star
+id|elf_caddr_t
 op_star
 )paren
 id|sp
@@ -583,6 +578,9 @@ id|__put_user
 c_func
 (paren
 (paren
+id|elf_addr_t
+)paren
+(paren
 r_int
 r_int
 )paren
@@ -595,6 +593,9 @@ suffix:semicolon
 id|__put_user
 c_func
 (paren
+(paren
+id|elf_addr_t
+)paren
 (paren
 r_int
 r_int
@@ -610,8 +611,7 @@ id|__put_user
 c_func
 (paren
 (paren
-r_int
-r_int
+id|elf_addr_t
 )paren
 id|argc
 comma
@@ -639,6 +639,13 @@ l_int|0
 id|__put_user
 c_func
 (paren
+(paren
+id|elf_caddr_t
+)paren
+(paren
+r_int
+r_int
+)paren
 id|p
 comma
 id|argv
@@ -684,6 +691,13 @@ l_int|0
 id|__put_user
 c_func
 (paren
+(paren
+id|elf_caddr_t
+)paren
+(paren
+r_int
+r_int
+)paren
 id|p
 comma
 id|envp
@@ -849,7 +863,7 @@ id|elf_phdr
 op_star
 id|interp_elf_ex-&gt;e_phnum
 OG
-id|PAGE_SIZE
+id|ELF_EXEC_PAGESIZE
 )paren
 (brace
 r_return
@@ -2470,13 +2484,8 @@ id|current-&gt;mm-&gt;rss
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#ifdef __sparc_v9__
-id|current-&gt;tss.flags
-op_and_assign
-op_complement
-(paren
-id|SPARC_FLAG_32BIT
-)paren
+macro_line|#ifdef ELF_FLAGS_INIT
+id|ELF_FLAGS_INIT
 suffix:semicolon
 macro_line|#endif
 id|bprm-&gt;p
@@ -3508,7 +3517,7 @@ id|elf_phdr
 op_star
 id|elf_ex.e_phnum
 OG
-id|PAGE_SIZE
+id|ELF_EXEC_PAGESIZE
 )paren
 r_return
 op_minus
@@ -3948,6 +3957,19 @@ id|VM_EXEC
 r_return
 l_int|0
 suffix:semicolon
+multiline_comment|/* Do not dump I/O mapped devices! -DaveM */
+r_if
+c_cond
+(paren
+id|vma-&gt;vm_flags
+op_amp
+id|VM_IO
+)paren
+(brace
+r_return
+l_int|0
+suffix:semicolon
+)brace
 macro_line|#if 1
 r_if
 c_cond
@@ -4415,7 +4437,7 @@ id|current-&gt;dumpable
 op_logical_or
 id|limit
 OL
-id|PAGE_SIZE
+id|ELF_EXEC_PAGESIZE
 op_logical_or
 id|current-&gt;mm-&gt;count
 op_ne
@@ -4936,7 +4958,7 @@ op_assign
 id|CT_TO_SECS
 c_func
 (paren
-id|current-&gt;utime
+id|current-&gt;times.tms_utime
 )paren
 suffix:semicolon
 id|prstatus.pr_utime.tv_usec
@@ -4944,7 +4966,7 @@ op_assign
 id|CT_TO_USECS
 c_func
 (paren
-id|current-&gt;utime
+id|current-&gt;times.tms_utime
 )paren
 suffix:semicolon
 id|prstatus.pr_stime.tv_sec
@@ -4952,7 +4974,7 @@ op_assign
 id|CT_TO_SECS
 c_func
 (paren
-id|current-&gt;stime
+id|current-&gt;times.tms_stime
 )paren
 suffix:semicolon
 id|prstatus.pr_stime.tv_usec
@@ -4960,7 +4982,7 @@ op_assign
 id|CT_TO_USECS
 c_func
 (paren
-id|current-&gt;stime
+id|current-&gt;times.tms_stime
 )paren
 suffix:semicolon
 id|prstatus.pr_cutime.tv_sec
@@ -4968,7 +4990,7 @@ op_assign
 id|CT_TO_SECS
 c_func
 (paren
-id|current-&gt;cutime
+id|current-&gt;times.tms_cutime
 )paren
 suffix:semicolon
 id|prstatus.pr_cutime.tv_usec
@@ -4976,7 +4998,7 @@ op_assign
 id|CT_TO_USECS
 c_func
 (paren
-id|current-&gt;cutime
+id|current-&gt;times.tms_cutime
 )paren
 suffix:semicolon
 id|prstatus.pr_cstime.tv_sec
@@ -4984,7 +5006,7 @@ op_assign
 id|CT_TO_SECS
 c_func
 (paren
-id|current-&gt;cstime
+id|current-&gt;times.tms_cstime
 )paren
 suffix:semicolon
 id|prstatus.pr_cstime.tv_usec
@@ -4992,7 +5014,7 @@ op_assign
 id|CT_TO_USECS
 c_func
 (paren
-id|current-&gt;cstime
+id|current-&gt;times.tms_cstime
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * This transfers the registers from regs into the standard&n;&t; * coredump arrangement, whatever that is.&n;&t; */
@@ -5025,11 +5047,17 @@ c_func
 (paren
 l_string|&quot;sizeof(elf_gregset_t) (%ld) != sizeof(struct pt_regs) (%ld)&bslash;n&quot;
 comma
+(paren
+r_int
+)paren
 r_sizeof
 (paren
 id|elf_gregset_t
 )paren
 comma
+(paren
+r_int
+)paren
 r_sizeof
 (paren
 r_struct
@@ -5471,7 +5499,7 @@ c_func
 (paren
 id|offset
 comma
-id|PAGE_SIZE
+id|ELF_EXEC_PAGESIZE
 )paren
 suffix:semicolon
 multiline_comment|/* Write program headers for segments dump */
@@ -5587,7 +5615,7 @@ id|PF_X
 suffix:semicolon
 id|phdr.p_align
 op_assign
-id|PAGE_SIZE
+id|ELF_EXEC_PAGESIZE
 suffix:semicolon
 id|DUMP_WRITE
 c_func

@@ -634,12 +634,15 @@ suffix:semicolon
 id|__asm__
 id|__volatile__
 (paren
+l_string|&quot;clrl %%d2&bslash;n&bslash;t&quot;
 l_string|&quot;trap #0&bslash;n&bslash;t&quot;
 multiline_comment|/* Linux/m68k system call */
 l_string|&quot;tstl %0&bslash;n&bslash;t&quot;
 multiline_comment|/* child or parent */
 l_string|&quot;jne 1f&bslash;n&bslash;t&quot;
 multiline_comment|/* parent - jump */
+l_string|&quot;lea %%sp@(-8192),%6&bslash;n&bslash;t&quot;
+multiline_comment|/* reload current */
 l_string|&quot;movel %3,%%sp@-&bslash;n&bslash;t&quot;
 multiline_comment|/* push argument */
 l_string|&quot;jsr %4@&bslash;n&bslash;t&quot;
@@ -680,8 +683,15 @@ l_string|&quot;d&quot;
 (paren
 id|clone_arg
 )paren
+comma
+l_string|&quot;r&quot;
+(paren
+id|current
+)paren
 suffix:colon
 l_string|&quot;d0&quot;
+comma
+l_string|&quot;d2&quot;
 )paren
 suffix:semicolon
 id|set_fs

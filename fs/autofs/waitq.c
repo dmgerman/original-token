@@ -291,6 +291,19 @@ comma
 id|wq-&gt;len
 )paren
 suffix:semicolon
+id|memset
+c_func
+(paren
+op_amp
+id|pkt
+comma
+l_int|0
+comma
+r_sizeof
+id|pkt
+)paren
+suffix:semicolon
+multiline_comment|/* For security reasons */
 id|pkt.hdr.proto_version
 op_assign
 id|AUTOFS_PROTO_VERSION
@@ -404,6 +417,8 @@ id|wq-&gt;len
 op_eq
 id|len
 op_logical_and
+id|wq-&gt;name
+op_logical_and
 op_logical_neg
 id|memcmp
 c_func
@@ -498,6 +513,12 @@ id|wq-&gt;len
 op_assign
 id|len
 suffix:semicolon
+id|wq-&gt;status
+op_assign
+op_minus
+id|EINTR
+suffix:semicolon
+multiline_comment|/* Status return if interrupted */
 id|memcpy
 c_func
 (paren
@@ -518,7 +539,8 @@ id|wq
 suffix:semicolon
 multiline_comment|/* autofs_notify_daemon() may block */
 id|wq-&gt;wait_ctr
-op_increment
+op_assign
+l_int|1
 suffix:semicolon
 id|autofs_notify_daemon
 c_func
@@ -561,17 +583,6 @@ suffix:semicolon
 )brace
 id|status
 op_assign
-(paren
-id|current-&gt;signal
-op_amp
-op_complement
-id|current-&gt;blocked
-)paren
-ques
-c_cond
-op_minus
-id|EINTR
-suffix:colon
 id|wq-&gt;status
 suffix:semicolon
 r_if

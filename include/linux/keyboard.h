@@ -609,8 +609,8 @@ DECL|macro|K_F244
 mdefine_line|#define K_F244&t;&t;K(KT_FN,253)
 DECL|macro|K_F245
 mdefine_line|#define K_F245&t;&t;K(KT_FN,254)
-DECL|macro|K_F246
-mdefine_line|#define K_F246&t;&t;K(KT_FN,255)
+DECL|macro|K_UNDO
+mdefine_line|#define K_UNDO&t;&t;K(KT_FN,255)
 DECL|macro|K_HOLE
 mdefine_line|#define K_HOLE&t;&t;K(KT_SPEC,0)
 DECL|macro|K_ENTER
@@ -691,8 +691,12 @@ DECL|macro|K_PDOT
 mdefine_line|#define K_PDOT&t;&t;K(KT_PAD,16)&t;/* key-pad dot (period): kludge... */
 DECL|macro|K_PPLUSMINUS
 mdefine_line|#define K_PPLUSMINUS&t;K(KT_PAD,17)&t;/* key-pad plus/minus */
+DECL|macro|K_PPARENL
+mdefine_line|#define K_PPARENL&t;K(KT_PAD,18)&t;/* key-pad left parenthesis */
+DECL|macro|K_PPARENR
+mdefine_line|#define K_PPARENR&t;K(KT_PAD,19)&t;/* key-pad right parenthesis */
 DECL|macro|NR_PAD
-mdefine_line|#define NR_PAD&t;&t;18
+mdefine_line|#define NR_PAD&t;&t;20
 DECL|macro|K_DGRAVE
 mdefine_line|#define K_DGRAVE&t;K(KT_DEAD,0)
 DECL|macro|K_DACUTE

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sun4c.c,v 1.147 1997/05/01 08:53:42 davem Exp $&n; * sun4c.c: Doing in software what should be done in hardware.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; * Copyright (C) 1996 Andrew Tridgell (Andrew.Tridgell@anu.edu.au)&n; */
+multiline_comment|/* $Id: sun4c.c,v 1.148 1997/05/18 21:11:19 davem Exp $&n; * sun4c.c: Doing in software what should be done in hardware.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; * Copyright (C) 1996 Andrew Tridgell (Andrew.Tridgell@anu.edu.au)&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
@@ -11910,7 +11910,7 @@ op_assign
 id|vmaring-&gt;vm_next_share
 )paren
 op_ne
-id|inode-&gt;i_mmap
+l_int|NULL
 )paren
 suffix:semicolon
 r_if

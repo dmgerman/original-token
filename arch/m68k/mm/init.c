@@ -1913,21 +1913,6 @@ id|addr
 )paren
 suffix:semicolon
 )brace
-id|printk
-(paren
-l_string|&quot;Freeing unused kernel memory: %dk freed&bslash;n&quot;
-comma
-(paren
-op_amp
-id|__init_end
-op_minus
-op_amp
-id|__init_begin
-)paren
-op_rshift
-l_int|10
-)paren
-suffix:semicolon
 )brace
 DECL|function|si_meminfo
 r_void

@@ -405,8 +405,14 @@ r_void
 )paren
 suffix:semicolon
 macro_line|#include &lt;asm/scatterlist.h&gt;
+macro_line|#ifdef __mc68000__
+macro_line|#include &lt;asm/pgtable.h&gt;
+DECL|macro|CONTIGUOUS_BUFFERS
+mdefine_line|#define CONTIGUOUS_BUFFERS(X,Y) &bslash;&n;&t;(VTOP((X)-&gt;b_data+(X)-&gt;b_size-1)+1 == VTOP((Y)-&gt;b_data))
+macro_line|#else
 DECL|macro|CONTIGUOUS_BUFFERS
 mdefine_line|#define CONTIGUOUS_BUFFERS(X,Y) ((X-&gt;b_data+X-&gt;b_size) == Y-&gt;b_data)
+macro_line|#endif
 multiline_comment|/*&n; * These are the return codes for the abort and reset functions.  The mid-level&n; * code uses these to decide what to do next.  Each of the low level abort&n; * and reset functions must correctly indicate what it has done.&n; * The descriptions are written from the point of view of the mid-level code,&n; * so that the return code is telling the mid-level drivers exactly what&n; * the low level driver has already done, and what remains to be done.&n; */
 multiline_comment|/* We did not do anything.  &n; * Wait some more for this command to complete, and if this does not work, &n; * try something more serious. */
 DECL|macro|SCSI_ABORT_SNOOZE

@@ -367,6 +367,12 @@ comma
 DECL|enumerator|NET_TCP_SYN_RETRIES
 id|NET_TCP_SYN_RETRIES
 comma
+DECL|enumerator|NET_IPFRAG_HIGH_THRESH
+id|NET_IPFRAG_HIGH_THRESH
+comma
+DECL|enumerator|NET_IPFRAG_LOW_THRESH
+id|NET_IPFRAG_LOW_THRESH
+comma
 )brace
 suffix:semicolon
 multiline_comment|/* /proc/sys/net/ipv6 */

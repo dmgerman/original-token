@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: signal32.c,v 1.6 1997/04/16 10:27:17 jj Exp $&n; *  arch/sparc64/kernel/signal32.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *  Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1996 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; *  Copyright (C) 1997 Eddie C. Dost   (ecd@skynet.be)&n; *  Copyright (C) 1997 Jakub Jelinek   (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/*  $Id: signal32.c,v 1.8 1997/05/18 08:42:15 davem Exp $&n; *  arch/sparc64/kernel/signal32.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *  Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1996 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; *  Copyright (C) 1997 Eddie C. Dost   (ecd@skynet.be)&n; *  Copyright (C) 1997 Jakub Jelinek   (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
@@ -19,8 +19,6 @@ DECL|macro|_S
 mdefine_line|#define _S(nr) (1&lt;&lt;((nr)-1))
 DECL|macro|_BLOCKABLE
 mdefine_line|#define _BLOCKABLE (~(_S(SIGKILL) | _S(SIGSTOP)))
-DECL|macro|synchronize_user_stack
-mdefine_line|#define synchronize_user_stack() do { } while (0)
 id|asmlinkage
 r_int
 id|sys_wait4
@@ -238,55 +236,6 @@ l_int|0
 r_return
 suffix:semicolon
 )brace
-)brace
-DECL|function|do_sigpause32
-id|asmlinkage
-r_void
-id|do_sigpause32
-c_func
-(paren
-r_int
-r_int
-id|set
-comma
-r_struct
-id|pt_regs
-op_star
-id|regs
-)paren
-(brace
-id|_sigpause32_common
-c_func
-(paren
-id|set
-comma
-id|regs
-)paren
-suffix:semicolon
-)brace
-DECL|function|do_sigsuspend32
-id|asmlinkage
-r_void
-id|do_sigsuspend32
-c_func
-(paren
-r_struct
-id|pt_regs
-op_star
-id|regs
-)paren
-(brace
-id|_sigpause32_common
-c_func
-(paren
-id|regs-&gt;u_regs
-(braket
-id|UREG_I0
-)braket
-comma
-id|regs
-)paren
-suffix:semicolon
 )brace
 r_static
 r_inline
@@ -974,11 +923,13 @@ id|sigcontext32
 op_star
 id|sc
 suffix:semicolon
+macro_line|#if 0&t;
 r_int
 id|window
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#endif&t;
 r_int
 id|old_status
 op_assign
@@ -2039,11 +1990,13 @@ id|svr4_ucontext_t
 op_star
 id|uc
 suffix:semicolon
+macro_line|#if 0&t;
 r_int
 id|window
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#endif&t;
 r_int
 id|psr
 suffix:semicolon

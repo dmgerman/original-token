@@ -4173,13 +4173,15 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;PC: [&lt;%08lx&gt;]&bslash;nSR: %04x  SP: %p&bslash;n&quot;
+l_string|&quot;PC: [&lt;%08lx&gt;]&bslash;nSR: %04x  SP: %p  a2: %08lx&bslash;n&quot;
 comma
 id|fp-&gt;pc
 comma
 id|fp-&gt;sr
 comma
 id|fp
+comma
+id|fp-&gt;a2
 )paren
 suffix:semicolon
 id|printk
@@ -4210,25 +4212,6 @@ comma
 id|fp-&gt;a1
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|STACK_MAGIC
-op_ne
-op_star
-(paren
-r_int
-r_int
-op_star
-)paren
-id|current-&gt;kernel_stack_page
-)paren
-id|printk
-c_func
-(paren
-l_string|&quot;Corrupted stack page&bslash;n&quot;
-)paren
-suffix:semicolon
 id|printk
 c_func
 (paren
@@ -4238,7 +4221,13 @@ id|current-&gt;comm
 comma
 id|current-&gt;pid
 comma
-id|current-&gt;kernel_stack_page
+id|PAGE_SIZE
+op_plus
+(paren
+r_int
+r_int
+)paren
+id|current
 )paren
 suffix:semicolon
 macro_line|#ifdef CONFIG_KGDB

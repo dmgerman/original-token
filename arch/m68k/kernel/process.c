@@ -19,34 +19,8 @@ macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/traps.h&gt;
 macro_line|#include &lt;asm/machdep.h&gt;
 macro_line|#include &lt;asm/setup.h&gt;
+macro_line|#include &lt;asm/pgtable.h&gt;
 multiline_comment|/*&n; * Initial task structure. Make this a per-architecture thing,&n; * because different architectures tend to have different&n; * alignment requirements and potentially different initial&n; * setup.&n; */
-DECL|variable|init_kernel_stack
-r_static
-r_int
-r_int
-id|init_kernel_stack
-(braket
-l_int|1024
-)braket
-op_assign
-(brace
-id|STACK_MAGIC
-comma
-)brace
-suffix:semicolon
-DECL|variable|init_user_stack
-r_int
-r_int
-id|init_user_stack
-(braket
-l_int|1024
-)braket
-op_assign
-(brace
-id|STACK_MAGIC
-comma
-)brace
-suffix:semicolon
 DECL|variable|init_mmap
 r_static
 r_struct
@@ -86,12 +60,35 @@ id|init_mm
 op_assign
 id|INIT_MM
 suffix:semicolon
-DECL|variable|init_task
-r_struct
-id|task_struct
-id|init_task
+DECL|variable|init_task_union
+r_union
+id|task_union
+id|init_task_union
+id|__attribute__
+c_func
+(paren
+(paren
+id|section
+c_func
+(paren
+l_string|&quot;init_task&quot;
+)paren
+comma
+id|aligned
+c_func
+(paren
+l_int|2
+op_star
+id|PAGE_SIZE
+)paren
+)paren
+)paren
 op_assign
+(brace
+id|task
+suffix:colon
 id|INIT_TASK
+)brace
 suffix:semicolon
 id|asmlinkage
 r_void
@@ -180,6 +177,13 @@ l_string|&quot;cc&quot;
 )paren
 suffix:semicolon
 macro_line|#endif /* machine compilation types */ 
+id|run_task_queue
+c_func
+(paren
+op_amp
+id|tq_scheduler
+)paren
+suffix:semicolon
 id|schedule
 c_func
 (paren
@@ -282,11 +286,13 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;ORIG_D0: %08lx  D0: %08lx  A1: %08lx&bslash;n&quot;
+l_string|&quot;ORIG_D0: %08lx  D0: %08lx  A2: %08lx  A1: %08lx&bslash;n&quot;
 comma
 id|regs-&gt;orig_d0
 comma
 id|regs-&gt;d0
+comma
+id|regs-&gt;a2
 comma
 id|regs-&gt;a1
 )paren
@@ -543,6 +549,8 @@ id|retp
 suffix:semicolon
 id|stack_offset
 op_assign
+l_int|2
+op_star
 id|PAGE_SIZE
 op_minus
 r_sizeof
@@ -559,7 +567,11 @@ id|pt_regs
 op_star
 )paren
 (paren
-id|p-&gt;kernel_stack_page
+(paren
+r_int
+r_int
+)paren
+id|p
 op_plus
 id|stack_offset
 )paren
@@ -1016,7 +1028,7 @@ id|regs-&gt;a1
 suffix:semicolon
 id|dump-&gt;regs.a2
 op_assign
-id|sw-&gt;a2
+id|regs-&gt;a2
 suffix:semicolon
 id|dump-&gt;regs.a3
 op_assign

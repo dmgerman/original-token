@@ -3078,6 +3078,15 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|is_hades
+)paren
+multiline_comment|/* Hades has no SCSI DMA at all :-( Always force use of PIO */
+r_return
+l_int|0
+suffix:semicolon
+r_if
+c_cond
+(paren
 id|IS_A_TT
 c_func
 (paren

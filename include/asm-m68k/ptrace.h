@@ -73,6 +73,10 @@ DECL|member|a1
 r_int
 id|a1
 suffix:semicolon
+DECL|member|a2
+r_int
+id|a2
+suffix:semicolon
 DECL|member|d0
 r_int
 id|d0
@@ -125,11 +129,6 @@ DECL|member|d7
 r_int
 r_int
 id|d7
-suffix:semicolon
-DECL|member|a2
-r_int
-r_int
-id|a2
 suffix:semicolon
 DECL|member|a3
 r_int

@@ -44,6 +44,20 @@ c_func
 r_void
 )paren
 suffix:semicolon
+macro_line|#if defined(CONFIG_BLK_DEV_IDE) || defined(CONFIG_BLK_DEV_HD) || defined(CONFIG_BLK_DEV_IDE_MODULE) || defined(CONFIG_BLK_DEV_HD_MODULE)
+r_extern
+r_struct
+id|drive_info_struct
+id|drive_info
+suffix:semicolon
+DECL|variable|drive_info
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|drive_info
+)paren
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/* platform dependent support */
 DECL|variable|EISA_bus
 id|EXPORT_SYMBOL

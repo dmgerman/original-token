@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: init.c,v 1.25 1997/04/28 14:57:11 davem Exp $&n; *  arch/sparc64/mm/init.c&n; *&n; *  Copyright (C) 1996,1997 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/*  $Id: init.c,v 1.28 1997/05/18 04:16:53 davem Exp $&n; *  arch/sparc64/mm/init.c&n; *&n; *  Copyright (C) 1996,1997 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/blk.h&gt;
@@ -2232,7 +2232,6 @@ id|ptep
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifdef DEBUG_MMU
 DECL|function|sparc_ultra_dump_itlb
 r_void
 id|sparc_ultra_dump_itlb
@@ -2244,9 +2243,9 @@ r_void
 r_int
 id|slot
 suffix:semicolon
-id|prom_printf
+id|printk
 (paren
-l_string|&quot;Contents of itlb:&bslash;n&quot;
+l_string|&quot;Contents of itlb: &quot;
 )paren
 suffix:semicolon
 r_for
@@ -2258,16 +2257,54 @@ l_int|0
 suffix:semicolon
 id|slot
 OL
+l_int|14
+suffix:semicolon
+id|slot
+op_increment
+)paren
+id|printk
+(paren
+l_string|&quot;    &quot;
+)paren
+suffix:semicolon
+id|printk
+(paren
+l_string|&quot;%2x:%016lx,%016lx&bslash;n&quot;
+comma
+l_int|0
+comma
+id|spitfire_get_itlb_tag
+c_func
+(paren
+l_int|0
+)paren
+comma
+id|spitfire_get_itlb_data
+c_func
+(paren
+l_int|0
+)paren
+)paren
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|slot
+op_assign
+l_int|1
+suffix:semicolon
+id|slot
+OL
 l_int|64
 suffix:semicolon
 id|slot
 op_add_assign
-l_int|2
+l_int|3
 )paren
 (brace
-id|prom_printf
+id|printk
 (paren
-l_string|&quot;%2x:%016lx,%016lx    %2x:%016lx,%016lx&bslash;n&quot;
+l_string|&quot;%2x:%016lx,%016lx %2x:%016lx,%016lx %2x:%016lx,%016lx&bslash;n&quot;
 comma
 id|slot
 comma
@@ -2301,6 +2338,26 @@ c_func
 id|slot
 op_plus
 l_int|1
+)paren
+comma
+id|slot
+op_plus
+l_int|2
+comma
+id|spitfire_get_itlb_tag
+c_func
+(paren
+id|slot
+op_plus
+l_int|2
+)paren
+comma
+id|spitfire_get_itlb_data
+c_func
+(paren
+id|slot
+op_plus
+l_int|2
 )paren
 )paren
 suffix:semicolon
@@ -2317,9 +2374,9 @@ r_void
 r_int
 id|slot
 suffix:semicolon
-id|prom_printf
+id|printk
 (paren
-l_string|&quot;Contents of dtlb:&bslash;n&quot;
+l_string|&quot;Contents of dtlb: &quot;
 )paren
 suffix:semicolon
 r_for
@@ -2331,16 +2388,54 @@ l_int|0
 suffix:semicolon
 id|slot
 OL
+l_int|14
+suffix:semicolon
+id|slot
+op_increment
+)paren
+id|printk
+(paren
+l_string|&quot;    &quot;
+)paren
+suffix:semicolon
+id|printk
+(paren
+l_string|&quot;%2x:%016lx,%016lx&bslash;n&quot;
+comma
+l_int|0
+comma
+id|spitfire_get_dtlb_tag
+c_func
+(paren
+l_int|0
+)paren
+comma
+id|spitfire_get_dtlb_data
+c_func
+(paren
+l_int|0
+)paren
+)paren
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|slot
+op_assign
+l_int|1
+suffix:semicolon
+id|slot
+OL
 l_int|64
 suffix:semicolon
 id|slot
 op_add_assign
-l_int|2
+l_int|3
 )paren
 (brace
-id|prom_printf
+id|printk
 (paren
-l_string|&quot;%2x:%016lx,%016lx    %2x:%016lx,%016lx&bslash;n&quot;
+l_string|&quot;%2x:%016lx,%016lx %2x:%016lx,%016lx %2x:%016lx,%016lx&bslash;n&quot;
 comma
 id|slot
 comma
@@ -2374,12 +2469,31 @@ c_func
 id|slot
 op_plus
 l_int|1
+)paren
+comma
+id|slot
+op_plus
+l_int|2
+comma
+id|spitfire_get_dtlb_tag
+c_func
+(paren
+id|slot
+op_plus
+l_int|2
+)paren
+comma
+id|spitfire_get_dtlb_data
+c_func
+(paren
+id|slot
+op_plus
+l_int|2
 )paren
 )paren
 suffix:semicolon
 )brace
 )brace
-macro_line|#endif
 multiline_comment|/* paging_init() sets up the page tables */
 r_extern
 r_int
@@ -3213,8 +3327,6 @@ op_assign
 (paren
 id|start_mem
 op_minus
-id|phys_base
-op_minus
 id|PAGE_OFFSET
 )paren
 op_rshift
@@ -3632,12 +3744,41 @@ op_add_assign
 id|PAGE_SIZE
 )paren
 (brace
+r_int
+r_int
+id|page
+op_assign
+id|addr
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|page
+OL
+(paren
+(paren
+r_int
+r_int
+)paren
+id|__va
+c_func
+(paren
+id|phys_base
+)paren
+)paren
+)paren
+(brace
+id|page
+op_add_assign
+id|phys_base
+suffix:semicolon
+)brace
 id|mem_map
 (braket
 id|MAP_NR
 c_func
 (paren
-id|addr
+id|page
 )paren
 )braket
 dot
@@ -3659,7 +3800,7 @@ id|mem_map
 id|MAP_NR
 c_func
 (paren
-id|addr
+id|page
 )paren
 )braket
 dot
@@ -3671,7 +3812,7 @@ suffix:semicolon
 id|free_page
 c_func
 (paren
-id|addr
+id|page
 )paren
 suffix:semicolon
 )brace

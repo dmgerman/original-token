@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * bootinfo.h -- Definition of the Linux/MIPS boot information structure&n; *&n; * Copyright (C) 1994 by Waldorf Electronics&n; * Written by Ralf Baechle and Andreas Busse&n; *&n; * Based on Linux/68k linux/include/linux/bootstrap.h&n; * Copyright (C) 1992 by Greg Harp&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file README.legal in the main directory of this archive&n; * for more details.&n; */
+multiline_comment|/*&n; * bootinfo.h -- Definition of the Linux/MIPS boot information structure&n; *&n; * Copyright (C) 1994 by Waldorf Electronics&n; * Written by Ralf Baechle and Andreas Busse&n; *&n; * Based on Linux/68k linux/include/linux/bootstrap.h&n; * Copyright (C) 1992 by Greg Harp&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file COPYING in the main directory of this archive&n; * for more details.&n; */
 macro_line|#ifndef __ASM_MIPS_BOOTINFO_H
 DECL|macro|__ASM_MIPS_BOOTINFO_H
 mdefine_line|#define __ASM_MIPS_BOOTINFO_H

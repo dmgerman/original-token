@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: fault.c,v 1.5 1997/05/15 21:14:31 davem Exp $&n; * arch/sparc64/mm/fault.c: Page fault handlers for the 64-bit Sparc.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: fault.c,v 1.8 1997/05/18 04:16:52 davem Exp $&n; * arch/sparc64/mm/fault.c: Page fault handlers for the 64-bit Sparc.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;asm/head.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -525,6 +525,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+multiline_comment|/* #define FAULT_TRACER */
 DECL|function|do_sparc64_fault
 id|asmlinkage
 r_void
@@ -545,6 +546,14 @@ comma
 r_int
 r_int
 id|address
+comma
+r_int
+r_int
+id|tag
+comma
+r_int
+r_int
+id|sfsr
 )paren
 (brace
 r_struct
@@ -584,6 +593,76 @@ op_amp
 id|TSTATE_PRIV
 )paren
 suffix:semicolon
+macro_line|#ifdef FAULT_TRACER
+r_static
+r_int
+r_int
+id|last_addr
+op_assign
+l_int|0
+suffix:semicolon
+r_static
+r_int
+id|rcnt
+op_assign
+l_int|0
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;do_sparc64_fault(PC[%016lx],t[%d],w[%d],addr[%016lx]tag[%016lx]&quot;
+l_string|&quot;sfar[%016lx])&bslash;n&quot;
+comma
+id|regs-&gt;tpc
+comma
+id|text_fault
+comma
+id|write
+comma
+id|address
+comma
+id|tag
+comma
+id|sfsr
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|address
+op_eq
+id|last_addr
+op_logical_and
+id|rcnt
+op_increment
+OG
+l_int|5
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;Wheee lotsa bogus faults, something wrong, spinning&bslash;n&quot;
+)paren
+suffix:semicolon
+r_while
+c_loop
+(paren
+l_int|1
+)paren
+(brace
+id|barrier
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+)brace
+id|last_addr
+op_assign
+id|address
+suffix:semicolon
+macro_line|#endif
 id|lock_kernel
 (paren
 )paren

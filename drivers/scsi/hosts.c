@@ -21,6 +21,9 @@ macro_line|#endif
 DECL|macro|HOSTS_C
 mdefine_line|#define HOSTS_C
 macro_line|#include &quot;hosts.h&quot;
+macro_line|#if defined(CONFIG_A4000T_SCSI) || defined(CONFIG_WARPENGINE_SCSI) || defined(CONFIG_A4091_SCSI)
+macro_line|#include &quot;amiga7xx.h&quot;
+macro_line|#endif
 macro_line|#ifdef CONFIG_A3000_SCSI
 macro_line|#include &quot;a3000.h&quot;
 macro_line|#endif
@@ -151,6 +154,10 @@ id|builtin_scsi_hosts
 op_assign
 (brace
 macro_line|#ifdef CONFIG_AMIGA
+macro_line|#if defined(CONFIG_WARPENGINE_SCSI) || defined(CONFIG_A4000T_SCSI) || defined(CONFIG_A4091_SCSI)
+id|AMIGA7XX_SCSI
+comma
+macro_line|#endif
 macro_line|#ifdef CONFIG_A3000_SCSI
 id|A3000_SCSI
 comma

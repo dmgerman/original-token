@@ -1209,6 +1209,15 @@ id|mask
 )paren
 suffix:semicolon
 )brace
+r_static
+r_int
+r_int
+id|mm_vtop_fallback
+(paren
+r_int
+r_int
+)paren
+suffix:semicolon
 multiline_comment|/*&n; * The following two routines map from a physical address to a kernel&n; * virtual address and vice versa.&n; */
 DECL|function|mm_vtop
 r_int
@@ -1309,6 +1318,26 @@ OL
 id|m68k_num_memory
 )paren
 suffix:semicolon
+r_return
+id|mm_vtop_fallback
+c_func
+(paren
+id|vaddr
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/* Separate function to make the common case faster (needs to save less&n;   registers) */
+DECL|function|mm_vtop_fallback
+r_static
+r_int
+r_int
+id|mm_vtop_fallback
+(paren
+r_int
+r_int
+id|vaddr
+)paren
+(brace
 multiline_comment|/* not in one of the memory chunks; test for applying transparent&n;&t; * translation */
 r_if
 c_cond

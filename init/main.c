@@ -1144,6 +1144,19 @@ op_star
 id|ints
 )paren
 suffix:semicolon
+r_extern
+r_void
+id|ncr53c7xx_setup
+(paren
+r_char
+op_star
+id|str
+comma
+r_int
+op_star
+id|ints
+)paren
+suffix:semicolon
 macro_line|#ifdef CONFIG_CYCLADES
 r_extern
 r_void
@@ -2152,6 +2165,14 @@ macro_line|#ifdef CONFIG_ATARI_SCSI
 l_string|&quot;atascsi=&quot;
 comma
 id|atari_scsi_setup
+)brace
+comma
+macro_line|#endif
+macro_line|#if defined(CONFIG_A4000T_SCSI) || defined(CONFIG_WARPENGINE_SCSI) || defined(CONFIG_A4091_SCSI)
+(brace
+l_string|&quot;53c7xx=&quot;
+comma
+id|ncr53c7xx_setup
 )brace
 comma
 macro_line|#endif

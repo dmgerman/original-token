@@ -2,34 +2,62 @@ macro_line|#ifndef _LINUX_ELF_H
 DECL|macro|_LINUX_ELF_H
 mdefine_line|#define _LINUX_ELF_H
 macro_line|#include &lt;asm/elf.h&gt;
+multiline_comment|/* 32-bit ELF base types. */
 DECL|typedef|Elf32_Addr
 r_typedef
-r_int
-r_int
+id|__u32
 id|Elf32_Addr
 suffix:semicolon
 DECL|typedef|Elf32_Half
 r_typedef
-r_int
-r_int
+id|__u16
 id|Elf32_Half
 suffix:semicolon
 DECL|typedef|Elf32_Off
 r_typedef
-r_int
-r_int
+id|__u32
 id|Elf32_Off
 suffix:semicolon
 DECL|typedef|Elf32_Sword
 r_typedef
-r_int
+id|__s32
 id|Elf32_Sword
 suffix:semicolon
 DECL|typedef|Elf32_Word
 r_typedef
-r_int
-r_int
+id|__u32
 id|Elf32_Word
+suffix:semicolon
+multiline_comment|/* 64-bit ELF base types. */
+DECL|typedef|Elf64_Addr
+r_typedef
+id|__u64
+id|Elf64_Addr
+suffix:semicolon
+DECL|typedef|Elf64_Half
+r_typedef
+id|__u16
+id|Elf64_Half
+suffix:semicolon
+DECL|typedef|Elf64_SHalf
+r_typedef
+id|__s16
+id|Elf64_SHalf
+suffix:semicolon
+DECL|typedef|Elf64_Off
+r_typedef
+id|__u64
+id|Elf64_Off
+suffix:semicolon
+DECL|typedef|Elf64_Sword
+r_typedef
+id|__s64
+id|Elf64_Sword
+suffix:semicolon
+DECL|typedef|Elf64_Word
+r_typedef
+id|__u64
+id|Elf64_Word
 suffix:semicolon
 multiline_comment|/* These constants are for the segment types stored in the image headers */
 DECL|macro|PT_NULL
@@ -235,24 +263,18 @@ r_typedef
 r_struct
 (brace
 DECL|member|d_tag
-r_int
-r_int
-r_int
+id|Elf64_Word
 id|d_tag
 suffix:semicolon
 multiline_comment|/* entry tag value */
 r_union
 (brace
 DECL|member|d_val
-r_int
-r_int
-r_int
+id|Elf64_Word
 id|d_val
 suffix:semicolon
 DECL|member|d_ptr
-r_int
-r_int
-r_int
+id|Elf64_Word
 id|d_ptr
 suffix:semicolon
 DECL|member|d_un
@@ -437,16 +459,12 @@ r_struct
 id|elf64_rel
 (brace
 DECL|member|r_offset
-r_int
-r_int
-r_int
+id|Elf64_Addr
 id|r_offset
 suffix:semicolon
 multiline_comment|/* Location at which to apply the action */
 DECL|member|r_info
-r_int
-r_int
-r_int
+id|Elf64_Word
 id|r_info
 suffix:semicolon
 multiline_comment|/* index and type of relocation */
@@ -481,23 +499,17 @@ r_struct
 id|elf64_rela
 (brace
 DECL|member|r_offset
-r_int
-r_int
-r_int
+id|Elf64_Addr
 id|r_offset
 suffix:semicolon
 multiline_comment|/* Location at which to apply the action */
 DECL|member|r_info
-r_int
-r_int
-r_int
+id|Elf64_Word
 id|r_info
 suffix:semicolon
 multiline_comment|/* index and type of relocation */
 DECL|member|r_addend
-r_int
-r_int
-r_int
+id|Elf64_Word
 id|r_addend
 suffix:semicolon
 multiline_comment|/* Constant addend used to compute value */
@@ -546,11 +558,10 @@ r_struct
 id|elf64_sym
 (brace
 DECL|member|st_name
-r_int
-r_int
+id|Elf32_Word
 id|st_name
 suffix:semicolon
-multiline_comment|/* Symbol name, index in string tbl */
+multiline_comment|/* Symbol name, index in string tbl (yes, Elf32) */
 DECL|member|st_info
 r_int
 r_char
@@ -564,22 +575,17 @@ id|st_other
 suffix:semicolon
 multiline_comment|/* No defined meaning, 0 */
 DECL|member|st_shndx
-r_int
-r_int
+id|Elf64_Half
 id|st_shndx
 suffix:semicolon
 multiline_comment|/* Associated section index */
 DECL|member|st_value
-r_int
-r_int
-r_int
+id|Elf64_Addr
 id|st_value
 suffix:semicolon
 multiline_comment|/* Value of the symbol */
 DECL|member|st_size
-r_int
-r_int
-r_int
+id|Elf64_Word
 id|st_size
 suffix:semicolon
 multiline_comment|/* Associated symbol size */
@@ -674,73 +680,58 @@ l_int|16
 suffix:semicolon
 multiline_comment|/* ELF &quot;magic number&quot; */
 DECL|member|e_type
-r_int
-r_int
+id|Elf64_SHalf
 id|e_type
 suffix:semicolon
 DECL|member|e_machine
-r_int
-r_int
-r_int
+id|Elf64_Half
 id|e_machine
 suffix:semicolon
 DECL|member|e_version
-r_int
+id|__s32
 id|e_version
 suffix:semicolon
 DECL|member|e_entry
-r_int
-r_int
-r_int
+id|Elf64_Addr
 id|e_entry
 suffix:semicolon
 multiline_comment|/* Entry point virtual address */
 DECL|member|e_phoff
-r_int
-r_int
-r_int
+id|Elf64_Off
 id|e_phoff
 suffix:semicolon
 multiline_comment|/* Program header table file offset */
 DECL|member|e_shoff
-r_int
-r_int
-r_int
+id|Elf64_Off
 id|e_shoff
 suffix:semicolon
 multiline_comment|/* Section header table file offset */
 DECL|member|e_flags
-r_int
+id|__s32
 id|e_flags
 suffix:semicolon
 DECL|member|e_ehsize
-r_int
-r_int
+id|Elf64_SHalf
 id|e_ehsize
 suffix:semicolon
 DECL|member|e_phentsize
-r_int
-r_int
+id|Elf64_SHalf
 id|e_phentsize
 suffix:semicolon
 DECL|member|e_phnum
-r_int
-r_int
+id|Elf64_SHalf
 id|e_phnum
 suffix:semicolon
 DECL|member|e_shentsize
-r_int
-r_int
+id|Elf64_SHalf
 id|e_shentsize
 suffix:semicolon
 DECL|member|e_shnum
-r_int
-r_int
+id|Elf64_SHalf
 id|e_shnum
 suffix:semicolon
 DECL|member|e_shstrndx
-r_int
-r_int
+id|Elf64_SHalf
 id|e_shstrndx
 suffix:semicolon
 DECL|typedef|Elf64_Ehdr
@@ -801,52 +792,40 @@ r_struct
 id|elf64_phdr
 (brace
 DECL|member|p_type
-r_int
+id|__s32
 id|p_type
 suffix:semicolon
 DECL|member|p_flags
-r_int
+id|__s32
 id|p_flags
 suffix:semicolon
 DECL|member|p_offset
-r_int
-r_int
-r_int
+id|Elf64_Off
 id|p_offset
 suffix:semicolon
 multiline_comment|/* Segment file offset */
 DECL|member|p_vaddr
-r_int
-r_int
-r_int
+id|Elf64_Addr
 id|p_vaddr
 suffix:semicolon
 multiline_comment|/* Segment virtual address */
 DECL|member|p_paddr
-r_int
-r_int
-r_int
+id|Elf64_Addr
 id|p_paddr
 suffix:semicolon
 multiline_comment|/* Segment physical address */
 DECL|member|p_filesz
-r_int
-r_int
-r_int
+id|Elf64_Word
 id|p_filesz
 suffix:semicolon
 multiline_comment|/* Segment size in file */
 DECL|member|p_memsz
-r_int
-r_int
-r_int
+id|Elf64_Word
 id|p_memsz
 suffix:semicolon
 multiline_comment|/* Segment size in memory */
 DECL|member|p_align
-r_int
-r_int
-r_int
+id|Elf64_Word
 id|p_align
 suffix:semicolon
 multiline_comment|/* Segment alignment, file &amp; memory */
@@ -966,68 +945,52 @@ r_struct
 id|elf64_shdr
 (brace
 DECL|member|sh_name
-r_int
-r_int
+id|Elf32_Word
 id|sh_name
 suffix:semicolon
-multiline_comment|/* Section name, index in string tbl */
+multiline_comment|/* Section name, index in string tbl (yes Elf32) */
 DECL|member|sh_type
-r_int
-r_int
+id|Elf32_Word
 id|sh_type
 suffix:semicolon
-multiline_comment|/* Type of section */
+multiline_comment|/* Type of section (yes Elf32) */
 DECL|member|sh_flags
-r_int
-r_int
-r_int
+id|Elf64_Word
 id|sh_flags
 suffix:semicolon
 multiline_comment|/* Miscellaneous section attributes */
 DECL|member|sh_addr
-r_int
-r_int
-r_int
+id|Elf64_Addr
 id|sh_addr
 suffix:semicolon
 multiline_comment|/* Section virtual addr at execution */
 DECL|member|sh_offset
-r_int
-r_int
-r_int
+id|Elf64_Off
 id|sh_offset
 suffix:semicolon
 multiline_comment|/* Section file offset */
 DECL|member|sh_size
-r_int
-r_int
-r_int
+id|Elf64_Word
 id|sh_size
 suffix:semicolon
 multiline_comment|/* Size of section in bytes */
 DECL|member|sh_link
-r_int
-r_int
+id|Elf32_Word
 id|sh_link
 suffix:semicolon
-multiline_comment|/* Index of another section */
+multiline_comment|/* Index of another section (yes Elf32) */
 DECL|member|sh_info
-r_int
-r_int
+id|Elf32_Word
 id|sh_info
 suffix:semicolon
-multiline_comment|/* Additional section information */
+multiline_comment|/* Additional section information (yes Elf32) */
 DECL|member|sh_addralign
-r_int
-r_int
-r_int
+id|Elf64_Word
 id|sh_addralign
 suffix:semicolon
 multiline_comment|/* Section alignment */
 DECL|member|sh_entsize
-r_int
-r_int
-r_int
+id|Elf64_Word
 id|sh_entsize
 suffix:semicolon
 multiline_comment|/* Entry size if section holds table */
@@ -1125,20 +1088,17 @@ r_struct
 id|elf64_note
 (brace
 DECL|member|n_namesz
-r_int
-r_int
+id|Elf32_Word
 id|n_namesz
 suffix:semicolon
 multiline_comment|/* Name size */
 DECL|member|n_descsz
-r_int
-r_int
+id|Elf32_Word
 id|n_descsz
 suffix:semicolon
 multiline_comment|/* Content size */
 DECL|member|n_type
-r_int
-r_int
+id|Elf32_Word
 id|n_type
 suffix:semicolon
 multiline_comment|/* Content type */

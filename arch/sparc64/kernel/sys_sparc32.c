@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sys_sparc32.c,v 1.12 1997/05/14 14:50:58 jj Exp $&n; * sys_sparc32.c: Conversion between 32bit and 64bit native syscalls.&n; *&n; * Copyright (C) 1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; *&n; * These routines maintain argument size conversion between 32bit and 64bit&n; * environment.&n; */
+multiline_comment|/* $Id: sys_sparc32.c,v 1.13 1997/05/18 04:16:44 davem Exp $&n; * sys_sparc32.c: Conversion between 32bit and 64bit native syscalls.&n; *&n; * Copyright (C) 1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; *&n; * These routines maintain argument size conversion between 32bit and 64bit&n; * environment.&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/fs.h&gt; 
 macro_line|#include &lt;linux/signal.h&gt;
@@ -24,7 +24,7 @@ macro_line|#include &lt;asm/types.h&gt;
 macro_line|#include &lt;asm/poll.h&gt;
 macro_line|#include &lt;asm/ipc.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
-multiline_comment|/* As gcc will warn about casting u32 to some ptr, we have to cast it to unsigned long first, and that&squot;s what is A() for.&n; * You just do (void *)A(x), instead of having to type (void *)((unsigned long)x) or instead of just (void *)x, which will&n; * produce warnings */
+multiline_comment|/* As gcc will warn about casting u32 to some ptr, we have to cast it to&n; * unsigned long first, and that&squot;s what is A() for.&n; * You just do (void *)A(x), instead of having to&n; * type (void *)((unsigned long)x) or instead of just (void *)x, which will&n; * produce warnings.&n; */
 DECL|macro|A
 mdefine_line|#define A(x) ((unsigned long)x)
 r_extern

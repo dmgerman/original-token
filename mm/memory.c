@@ -4136,7 +4136,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * The above separate functions for the no-page and wp-page&n; * cases will go away (they mostly do the same thing anyway),&n; * and we&squot;ll instead use only a general &quot;handle_mm_fault()&quot;.&n; *&n; * These routines also need to handle stuff like marking pages dirty&n; * and/or accessed for architectures that don&squot;t do it in hardware (most&n; * RISC architectures).  The early dirtying is also good on the i386.&n; *&n; * There is also a hook called &quot;update_mmu_cache()&quot; that architectures&n; * with external mmu caches can use to update those (ie the Sparc or&n; * PowerPC hashed page tables that act as extended TLBs).&n; */
+multiline_comment|/*&n; * These routines also need to handle stuff like marking pages dirty&n; * and/or accessed for architectures that don&squot;t do it in hardware (most&n; * RISC architectures).  The early dirtying is also good on the i386.&n; *&n; * There is also a hook called &quot;update_mmu_cache()&quot; that architectures&n; * with external mmu caches can use to update those (ie the Sparc or&n; * PowerPC hashed page tables that act as extended TLBs).&n; */
 DECL|function|handle_pte_fault
 r_static
 r_inline
