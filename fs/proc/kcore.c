@@ -34,6 +34,7 @@ id|ppos
 (brace
 r_int
 r_int
+r_int
 id|p
 op_assign
 op_star

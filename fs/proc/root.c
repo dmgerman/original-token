@@ -13,9 +13,6 @@ macro_line|#endif
 macro_line|#ifdef CONFIG_ZORRO
 macro_line|#include &lt;linux/zorro.h&gt;
 macro_line|#endif
-multiline_comment|/*&n; * Offset of the first process in the /proc root directory..&n; */
-DECL|macro|FIRST_PROCESS_ENTRY
-mdefine_line|#define FIRST_PROCESS_ENTRY 256
 r_static
 r_int
 id|proc_root_readdir
@@ -96,26 +93,6 @@ multiline_comment|/* write - bad */
 id|proc_readdir
 comma
 multiline_comment|/* readdir */
-l_int|NULL
-comma
-multiline_comment|/* poll - default */
-l_int|NULL
-comma
-multiline_comment|/* ioctl - default */
-l_int|NULL
-comma
-multiline_comment|/* mmap */
-l_int|NULL
-comma
-multiline_comment|/* no special open code */
-l_int|NULL
-comma
-multiline_comment|/* flush */
-l_int|NULL
-comma
-multiline_comment|/* no special release code */
-l_int|NULL
-multiline_comment|/* can&squot;t fsync */
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * proc directories can do almost nothing..&n; */
@@ -135,56 +112,6 @@ multiline_comment|/* create */
 id|proc_lookup
 comma
 multiline_comment|/* lookup */
-l_int|NULL
-comma
-multiline_comment|/* link */
-l_int|NULL
-comma
-multiline_comment|/* unlink */
-l_int|NULL
-comma
-multiline_comment|/* symlink */
-l_int|NULL
-comma
-multiline_comment|/* mkdir */
-l_int|NULL
-comma
-multiline_comment|/* rmdir */
-l_int|NULL
-comma
-multiline_comment|/* mknod */
-l_int|NULL
-comma
-multiline_comment|/* rename */
-l_int|NULL
-comma
-multiline_comment|/* readlink */
-l_int|NULL
-comma
-multiline_comment|/* follow_link */
-l_int|NULL
-comma
-multiline_comment|/* get_block */
-l_int|NULL
-comma
-multiline_comment|/* readpage */
-l_int|NULL
-comma
-multiline_comment|/* writepage */
-l_int|NULL
-comma
-multiline_comment|/* flushpage */
-l_int|NULL
-comma
-multiline_comment|/* truncate */
-l_int|NULL
-comma
-multiline_comment|/* permission */
-l_int|NULL
-comma
-multiline_comment|/* smap */
-l_int|NULL
-multiline_comment|/* revalidate */
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * /proc dynamic directories now support unlinking&n; */
@@ -210,50 +137,6 @@ multiline_comment|/* link&t;*/
 id|proc_unlink
 comma
 multiline_comment|/* unlink(struct inode *, struct dentry *) */
-l_int|NULL
-comma
-multiline_comment|/* symlink&t;*/
-l_int|NULL
-comma
-multiline_comment|/* mkdir */
-l_int|NULL
-comma
-multiline_comment|/* rmdir */
-l_int|NULL
-comma
-multiline_comment|/* mknod */
-l_int|NULL
-comma
-multiline_comment|/* rename */
-l_int|NULL
-comma
-multiline_comment|/* readlink */
-l_int|NULL
-comma
-multiline_comment|/* follow_link */
-l_int|NULL
-comma
-multiline_comment|/* get_block */
-l_int|NULL
-comma
-multiline_comment|/* readpage */
-l_int|NULL
-comma
-multiline_comment|/* writepage */
-l_int|NULL
-comma
-multiline_comment|/* flushpage */
-l_int|NULL
-comma
-multiline_comment|/* truncate */
-l_int|NULL
-comma
-multiline_comment|/* permission */
-l_int|NULL
-comma
-multiline_comment|/* smap */
-l_int|NULL
-multiline_comment|/* revalidate */
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * The root /proc directory is special, as it has the&n; * &lt;pid&gt; directories. Thus we don&squot;t use the generic&n; * directory handling functions for that..&n; */
@@ -276,26 +159,6 @@ multiline_comment|/* write - bad */
 id|proc_root_readdir
 comma
 multiline_comment|/* readdir */
-l_int|NULL
-comma
-multiline_comment|/* poll - default */
-l_int|NULL
-comma
-multiline_comment|/* ioctl - default */
-l_int|NULL
-comma
-multiline_comment|/* mmap */
-l_int|NULL
-comma
-multiline_comment|/* no special open code */
-l_int|NULL
-comma
-multiline_comment|/* flush */
-l_int|NULL
-comma
-multiline_comment|/* no special release code */
-l_int|NULL
-multiline_comment|/* no fsync */
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * proc root can do almost nothing..&n; */
@@ -316,56 +179,6 @@ multiline_comment|/* create */
 id|proc_root_lookup
 comma
 multiline_comment|/* lookup */
-l_int|NULL
-comma
-multiline_comment|/* link */
-l_int|NULL
-comma
-multiline_comment|/* unlink */
-l_int|NULL
-comma
-multiline_comment|/* symlink */
-l_int|NULL
-comma
-multiline_comment|/* mkdir */
-l_int|NULL
-comma
-multiline_comment|/* rmdir */
-l_int|NULL
-comma
-multiline_comment|/* mknod */
-l_int|NULL
-comma
-multiline_comment|/* rename */
-l_int|NULL
-comma
-multiline_comment|/* readlink */
-l_int|NULL
-comma
-multiline_comment|/* follow_link */
-l_int|NULL
-comma
-multiline_comment|/* get_block */
-l_int|NULL
-comma
-multiline_comment|/* readpage */
-l_int|NULL
-comma
-multiline_comment|/* writepage */
-l_int|NULL
-comma
-multiline_comment|/* flushpage */
-l_int|NULL
-comma
-multiline_comment|/* truncate */
-l_int|NULL
-comma
-multiline_comment|/* permission */
-l_int|NULL
-comma
-multiline_comment|/* smap */
-l_int|NULL
-multiline_comment|/* revalidate */
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * This is the root &quot;inode&quot; in the /proc tree..&n; */
@@ -903,26 +716,6 @@ multiline_comment|/* write - bad */
 id|OPENPROM_DEFREADDIR
 comma
 multiline_comment|/* readdir */
-l_int|NULL
-comma
-multiline_comment|/* poll - default */
-l_int|NULL
-comma
-multiline_comment|/* ioctl - default */
-l_int|NULL
-comma
-multiline_comment|/* mmap */
-l_int|NULL
-comma
-multiline_comment|/* no special open code */
-l_int|NULL
-comma
-multiline_comment|/* flush */
-l_int|NULL
-comma
-multiline_comment|/* no special release code */
-l_int|NULL
-multiline_comment|/* can&squot;t fsync */
 )brace
 suffix:semicolon
 DECL|variable|proc_openprom_inode_operations
@@ -941,56 +734,6 @@ multiline_comment|/* create */
 id|OPENPROM_DEFLOOKUP
 comma
 multiline_comment|/* lookup */
-l_int|NULL
-comma
-multiline_comment|/* link */
-l_int|NULL
-comma
-multiline_comment|/* unlink */
-l_int|NULL
-comma
-multiline_comment|/* symlink */
-l_int|NULL
-comma
-multiline_comment|/* mkdir */
-l_int|NULL
-comma
-multiline_comment|/* rmdir */
-l_int|NULL
-comma
-multiline_comment|/* mknod */
-l_int|NULL
-comma
-multiline_comment|/* rename */
-l_int|NULL
-comma
-multiline_comment|/* readlink */
-l_int|NULL
-comma
-multiline_comment|/* follow_link */
-l_int|NULL
-comma
-multiline_comment|/* get_block */
-l_int|NULL
-comma
-multiline_comment|/* readpage */
-l_int|NULL
-comma
-multiline_comment|/* writepage */
-l_int|NULL
-comma
-multiline_comment|/* flushpage */
-l_int|NULL
-comma
-multiline_comment|/* truncate */
-l_int|NULL
-comma
-multiline_comment|/* permission */
-l_int|NULL
-comma
-multiline_comment|/* smap */
-l_int|NULL
-multiline_comment|/* revalidate */
 )brace
 suffix:semicolon
 DECL|variable|proc_openprom
@@ -2397,15 +2140,6 @@ r_int
 id|ino
 op_assign
 id|de-&gt;low_ino
-op_or
-(paren
-id|dir-&gt;i_ino
-op_amp
-op_complement
-(paren
-l_int|0xffff
-)paren
-)paren
 suffix:semicolon
 id|error
 op_assign
@@ -2715,11 +2449,6 @@ suffix:semicolon
 multiline_comment|/* fall through */
 r_default
 suffix:colon
-id|ino
-op_and_assign
-op_complement
-l_int|0xffff
-suffix:semicolon
 id|de
 op_assign
 id|de-&gt;subdir
@@ -2776,8 +2505,6 @@ id|de-&gt;namelen
 comma
 id|filp-&gt;f_pos
 comma
-id|ino
-op_or
 id|de-&gt;low_ino
 )paren
 OL
@@ -2805,107 +2532,6 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
-DECL|macro|PROC_NUMBUF
-mdefine_line|#define PROC_NUMBUF 10
-DECL|macro|PROC_MAXPIDS
-mdefine_line|#define PROC_MAXPIDS 20
-multiline_comment|/*&n; * Get a few pid&squot;s to return for filldir - we need to hold the&n; * tasklist lock while doing this, and we must release it before&n; * we actually do the filldir itself, so we use a temp buffer..&n; */
-DECL|function|get_pid_list
-r_static
-r_int
-id|get_pid_list
-c_func
-(paren
-r_int
-id|index
-comma
-r_int
-r_int
-op_star
-id|pids
-)paren
-(brace
-r_struct
-id|task_struct
-op_star
-id|p
-suffix:semicolon
-r_int
-id|nr_pids
-op_assign
-l_int|0
-suffix:semicolon
-id|index
-op_sub_assign
-id|FIRST_PROCESS_ENTRY
-suffix:semicolon
-id|read_lock
-c_func
-(paren
-op_amp
-id|tasklist_lock
-)paren
-suffix:semicolon
-id|for_each_task
-c_func
-(paren
-id|p
-)paren
-(brace
-r_int
-id|pid
-op_assign
-id|p-&gt;pid
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|pid
-)paren
-r_continue
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_decrement
-id|index
-op_ge
-l_int|0
-)paren
-r_continue
-suffix:semicolon
-id|pids
-(braket
-id|nr_pids
-)braket
-op_assign
-id|pid
-suffix:semicolon
-id|nr_pids
-op_increment
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|nr_pids
-op_ge
-id|PROC_MAXPIDS
-)paren
-r_break
-suffix:semicolon
-)brace
-id|read_unlock
-c_func
-(paren
-op_amp
-id|tasklist_lock
-)paren
-suffix:semicolon
-r_return
-id|nr_pids
-suffix:semicolon
-)brace
 DECL|function|proc_root_readdir
 r_static
 r_int
@@ -2927,28 +2553,9 @@ id|filldir
 (brace
 r_int
 r_int
-id|pid_array
-(braket
-id|PROC_MAXPIDS
-)braket
-suffix:semicolon
-r_char
-id|buf
-(braket
-id|PROC_NUMBUF
-)braket
-suffix:semicolon
-r_int
-r_int
 id|nr
 op_assign
 id|filp-&gt;f_pos
-suffix:semicolon
-r_int
-r_int
-id|nr_pids
-comma
-id|i
 suffix:semicolon
 r_if
 c_cond
@@ -2983,121 +2590,19 @@ id|error
 suffix:semicolon
 id|filp-&gt;f_pos
 op_assign
-id|nr
-op_assign
 id|FIRST_PROCESS_ENTRY
 suffix:semicolon
 )brace
-id|nr_pids
-op_assign
-id|get_pid_list
+r_return
+id|proc_pid_readdir
 c_func
 (paren
-id|nr
+id|filp
 comma
-id|pid_array
-)paren
-suffix:semicolon
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-id|nr_pids
-suffix:semicolon
-id|i
-op_increment
-)paren
-(brace
-r_int
-id|pid
-op_assign
-id|pid_array
-(braket
-id|i
-)braket
-suffix:semicolon
-id|ino_t
-id|ino
-op_assign
-(paren
-id|pid
-op_lshift
-l_int|16
-)paren
-op_plus
-id|PROC_PID_INO
-suffix:semicolon
-r_int
-r_int
-id|j
-op_assign
-id|PROC_NUMBUF
-suffix:semicolon
-r_do
-(brace
-id|j
-op_decrement
-suffix:semicolon
-id|buf
-(braket
-id|j
-)braket
-op_assign
-l_char|&squot;0&squot;
-op_plus
-(paren
-id|pid
-op_mod
-l_int|10
-)paren
-suffix:semicolon
-id|pid
-op_div_assign
-l_int|10
-suffix:semicolon
-)brace
-r_while
-c_loop
-(paren
-id|pid
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|filldir
-c_func
-(paren
 id|dirent
 comma
-id|buf
-op_plus
-id|j
-comma
-id|PROC_NUMBUF
-op_minus
-id|j
-comma
-id|filp-&gt;f_pos
-comma
-id|ino
+id|filldir
 )paren
-OL
-l_int|0
-)paren
-r_break
-suffix:semicolon
-id|filp-&gt;f_pos
-op_increment
-suffix:semicolon
-)brace
-r_return
-l_int|0
 suffix:semicolon
 )brace
 DECL|function|proc_unlink

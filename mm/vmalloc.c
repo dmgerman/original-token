@@ -1118,12 +1118,13 @@ c_cond
 op_logical_neg
 id|size
 op_logical_or
-id|size
-OG
 (paren
-id|max_mapnr
-op_lshift
+id|size
+op_rshift
 id|PAGE_SHIFT
+)paren
+OG
+id|max_mapnr
 )paren
 )paren
 (brace

@@ -1319,4 +1319,11 @@ c_func
 id|udiv
 )paren
 suffix:semicolon
+DECL|variable|get_wchan
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|get_wchan
+)paren
+suffix:semicolon
 eof

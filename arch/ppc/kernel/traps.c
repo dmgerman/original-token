@@ -584,14 +584,6 @@ l_string|&quot;Kernel Used Altivec with MSR_VEC off!&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifdef __SMP__
-id|printk
-c_func
-(paren
-l_string|&quot;User Mode altivec trap should not happen in SMP!&bslash;n&quot;
-)paren
-suffix:semicolon
-macro_line|#else
 r_if
 c_cond
 (paren
@@ -617,17 +609,19 @@ c_func
 id|current
 )paren
 suffix:semicolon
+multiline_comment|/* on SMP we always save/restore on switch */
+macro_line|#ifndef __SMP__&t;&t;
 id|last_task_used_altivec
 op_assign
 id|current
 suffix:semicolon
+macro_line|#endif&t;&t;
 )brace
 multiline_comment|/* enable altivec for the task on return */
 id|regs-&gt;msr
 op_or_assign
 id|MSR_VEC
 suffix:semicolon
-macro_line|#endif&t;&t;
 )brace
 r_void
 DECL|function|UnknownException

@@ -4,6 +4,426 @@ DECL|macro|_LINUX_ACPI_H
 mdefine_line|#define _LINUX_ACPI_H
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/ioctl.h&gt;
+macro_line|#ifdef __KERNEL__
+macro_line|#include &lt;linux/sched.h&gt;
+macro_line|#include &lt;linux/wait.h&gt;
+multiline_comment|/*&n; * Device types&n; */
+r_enum
+(brace
+DECL|enumerator|ACPI_SYS_DEV
+id|ACPI_SYS_DEV
+comma
+multiline_comment|/* system device (fan, KB controller, ...) */
+DECL|enumerator|ACPI_PCI_DEV
+id|ACPI_PCI_DEV
+comma
+multiline_comment|/* generic PCI device */
+DECL|enumerator|ACPI_PCI_BUS
+id|ACPI_PCI_BUS
+comma
+multiline_comment|/* PCI bus */
+DECL|enumerator|ACPI_ISA_DEV
+id|ACPI_ISA_DEV
+comma
+multiline_comment|/* generic ISA device */
+DECL|enumerator|ACPI_ISA_BUS
+id|ACPI_ISA_BUS
+comma
+multiline_comment|/* ISA bus */
+DECL|enumerator|ACPI_USB_DEV
+id|ACPI_USB_DEV
+comma
+multiline_comment|/* generic USB device */
+DECL|enumerator|ACPI_USB_HUB
+id|ACPI_USB_HUB
+comma
+multiline_comment|/* USB hub device */
+DECL|enumerator|ACPI_USB_CTRL
+id|ACPI_USB_CTRL
+comma
+multiline_comment|/* USB controller */
+DECL|enumerator|ACPI_SCSI_DEV
+id|ACPI_SCSI_DEV
+comma
+multiline_comment|/* generic SCSI device */
+DECL|enumerator|ACPI_SCSI_CTRL
+id|ACPI_SCSI_CTRL
+comma
+multiline_comment|/* SCSI controller */
+)brace
+suffix:semicolon
+DECL|typedef|acpi_dev_t
+r_typedef
+r_int
+id|acpi_dev_t
+suffix:semicolon
+multiline_comment|/*&n; * Device addresses&n; */
+DECL|macro|ACPI_PCI_ADR
+mdefine_line|#define ACPI_PCI_ADR(dev) ((dev)-&gt;bus-&gt;number &lt;&lt; 16 | (dev)-&gt;devfn)
+multiline_comment|/*&n; * HID (PnP) values&n; */
+r_enum
+(brace
+DECL|enumerator|ACPI_UNKNOWN_HID
+id|ACPI_UNKNOWN_HID
+op_assign
+l_int|0x00000000
+comma
+multiline_comment|/* generic */
+DECL|enumerator|ACPI_KBC_HID
+id|ACPI_KBC_HID
+op_assign
+l_int|0x41d00303
+comma
+multiline_comment|/* keyboard controller */
+DECL|enumerator|ACPI_COM_HID
+id|ACPI_COM_HID
+op_assign
+l_int|0x41d00500
+comma
+multiline_comment|/* serial port */
+DECL|enumerator|ACPI_FDC_HID
+id|ACPI_FDC_HID
+op_assign
+l_int|0x41d00700
+comma
+multiline_comment|/* floppy controller */
+DECL|enumerator|ACPI_VGA_HID
+id|ACPI_VGA_HID
+op_assign
+l_int|0x41d00900
+comma
+multiline_comment|/* VGA controller */
+DECL|enumerator|ACPI_ISA_HID
+id|ACPI_ISA_HID
+op_assign
+l_int|0x41d00a00
+comma
+multiline_comment|/* ISA bus */
+DECL|enumerator|ACPI_EISA_HID
+id|ACPI_EISA_HID
+op_assign
+l_int|0x41d00a01
+comma
+multiline_comment|/* EISA bus */
+DECL|enumerator|ACPI_PCI_HID
+id|ACPI_PCI_HID
+op_assign
+l_int|0x41d00a03
+comma
+multiline_comment|/* PCI bus */
+)brace
+suffix:semicolon
+DECL|typedef|acpi_hid_t
+r_typedef
+r_int
+id|acpi_hid_t
+suffix:semicolon
+multiline_comment|/*&n; * Device states&n; */
+r_enum
+(brace
+DECL|enumerator|ACPI_D0
+id|ACPI_D0
+comma
+multiline_comment|/* fully-on */
+DECL|enumerator|ACPI_D1
+id|ACPI_D1
+comma
+multiline_comment|/* partial-on */
+DECL|enumerator|ACPI_D2
+id|ACPI_D2
+comma
+multiline_comment|/* partial-on */
+DECL|enumerator|ACPI_D3
+id|ACPI_D3
+comma
+multiline_comment|/* fully-off */
+)brace
+suffix:semicolon
+DECL|typedef|acpi_dstate_t
+r_typedef
+r_int
+id|acpi_dstate_t
+suffix:semicolon
+r_struct
+id|acpi_dev
+suffix:semicolon
+multiline_comment|/*&n; * Device state transition function&n; */
+DECL|typedef|acpi_transition
+r_typedef
+r_int
+(paren
+op_star
+id|acpi_transition
+)paren
+(paren
+r_struct
+id|acpi_dev
+op_star
+id|dev
+comma
+id|acpi_dstate_t
+id|state
+)paren
+suffix:semicolon
+multiline_comment|/*&n; * ACPI device information&n; */
+DECL|struct|acpi_dev
+r_struct
+id|acpi_dev
+(brace
+DECL|member|type
+id|acpi_dev_t
+id|type
+suffix:semicolon
+multiline_comment|/* device type */
+DECL|member|adr
+r_int
+r_int
+id|adr
+suffix:semicolon
+multiline_comment|/* bus address or unique id */
+DECL|member|hid
+id|acpi_hid_t
+id|hid
+suffix:semicolon
+multiline_comment|/* P&amp;P identifier */
+DECL|member|transition
+id|acpi_transition
+id|transition
+suffix:semicolon
+multiline_comment|/* state transition callback */
+DECL|member|state
+id|acpi_dstate_t
+id|state
+suffix:semicolon
+multiline_comment|/* current D-state */
+DECL|member|accessed
+r_int
+r_int
+id|accessed
+suffix:semicolon
+multiline_comment|/* last access time */
+DECL|member|idle
+r_int
+r_int
+id|idle
+suffix:semicolon
+multiline_comment|/* last idle time */
+DECL|member|entry
+r_struct
+id|list_head
+id|entry
+suffix:semicolon
+multiline_comment|/* linked list entry */
+)brace
+suffix:semicolon
+macro_line|#ifdef CONFIG_ACPI
+r_extern
+id|wait_queue_head_t
+id|acpi_idle_wait
+suffix:semicolon
+multiline_comment|/*&n; * Register a device with the ACPI subsystem&n; */
+r_struct
+id|acpi_dev
+op_star
+id|acpi_register
+c_func
+(paren
+id|acpi_dev_t
+id|type
+comma
+r_int
+r_int
+id|adr
+comma
+id|acpi_hid_t
+id|hid
+comma
+id|acpi_transition
+id|trans
+)paren
+suffix:semicolon
+multiline_comment|/*&n; * Unregister a device with ACPI&n; */
+r_void
+id|acpi_unregister
+c_func
+(paren
+r_struct
+id|acpi_dev
+op_star
+id|dev
+)paren
+suffix:semicolon
+multiline_comment|/*&n; * Update device access time and wake up device, if necessary&n; */
+DECL|function|acpi_access
+r_extern
+r_inline
+r_void
+id|acpi_access
+c_func
+(paren
+r_struct
+id|acpi_dev
+op_star
+id|dev
+)paren
+(brace
+r_extern
+r_void
+id|acpi_wakeup
+c_func
+(paren
+r_struct
+id|acpi_dev
+op_star
+id|dev
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|dev-&gt;state
+op_ne
+id|ACPI_D0
+)paren
+id|acpi_wakeup
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
+id|dev-&gt;accessed
+op_assign
+id|jiffies
+suffix:semicolon
+)brace
+multiline_comment|/*&n; * Identify device as currently being idle&n; */
+DECL|function|acpi_dev_idle
+r_extern
+r_inline
+r_void
+id|acpi_dev_idle
+c_func
+(paren
+r_struct
+id|acpi_dev
+op_star
+id|dev
+)paren
+(brace
+id|dev-&gt;idle
+op_assign
+id|jiffies
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|waitqueue_active
+c_func
+(paren
+op_amp
+id|acpi_idle_wait
+)paren
+)paren
+id|wake_up
+c_func
+(paren
+op_amp
+id|acpi_idle_wait
+)paren
+suffix:semicolon
+)brace
+macro_line|#else /* CONFIG_ACPI */
+r_extern
+r_inline
+r_struct
+id|acpi_dev
+op_star
+DECL|function|acpi_register
+id|acpi_register
+c_func
+(paren
+id|acpi_dev_t
+id|type
+comma
+r_int
+r_int
+id|adr
+comma
+id|acpi_hid_t
+id|hid
+comma
+id|acpi_transition
+id|trans
+)paren
+(brace
+r_return
+l_int|0
+suffix:semicolon
+)brace
+DECL|function|acpi_unregister
+r_extern
+r_inline
+r_void
+id|acpi_unregister
+c_func
+(paren
+r_struct
+id|acpi_dev
+op_star
+id|dev
+)paren
+(brace
+)brace
+DECL|function|acpi_access
+r_extern
+r_inline
+r_void
+id|acpi_access
+c_func
+(paren
+r_struct
+id|acpi_dev
+op_star
+id|dev
+)paren
+(brace
+)brace
+DECL|function|acpi_dev_idle
+r_extern
+r_inline
+r_void
+id|acpi_dev_idle
+c_func
+(paren
+r_struct
+id|acpi_dev
+op_star
+id|dev
+)paren
+(brace
+)brace
+macro_line|#endif /* CONFIG_ACPI */
+r_extern
+r_void
+(paren
+op_star
+id|acpi_idle
+)paren
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_void
+(paren
+op_star
+id|acpi_power_off
+)paren
+(paren
+r_void
+)paren
+suffix:semicolon
+macro_line|#endif /* __KERNEL__ */
 multiline_comment|/* RSDP location */
 DECL|macro|ACPI_BIOS_ROM_BASE
 mdefine_line|#define ACPI_BIOS_ROM_BASE (0x0e0000)
@@ -414,6 +834,10 @@ id|ACPI_P_LVL3_LAT
 comma
 DECL|enumerator|ACPI_S5_SLP_TYP
 id|ACPI_S5_SLP_TYP
+comma
+DECL|enumerator|ACPI_KBD
+id|ACPI_KBD
+comma
 )brace
 suffix:semicolon
 DECL|macro|ACPI_P_LVL_DISABLED
@@ -475,27 +899,5 @@ DECL|macro|ACPI_PIIX4_PMREGMISC
 mdefine_line|#define ACPI_PIIX4_PMREGMISC&t;0x80
 DECL|macro|ACPI_PIIX4_PMIOSE
 mdefine_line|#define&t;  ACPI_PIIX4_PMIOSE&t;0x01
-macro_line|#ifdef __KERNEL__
-r_extern
-r_void
-(paren
-op_star
-id|acpi_idle
-)paren
-(paren
-r_void
-)paren
-suffix:semicolon
-r_extern
-r_void
-(paren
-op_star
-id|acpi_power_off
-)paren
-(paren
-r_void
-)paren
-suffix:semicolon
-macro_line|#endif
 macro_line|#endif /* _LINUX_ACPI_H */
 eof

@@ -14611,6 +14611,10 @@ id|PORT_16550A
 )paren
 (brace
 multiline_comment|/* Check for Oxford Semiconductor 16C950 */
+r_int
+r_char
+id|scratch4
+suffix:semicolon
 id|scratch
 op_assign
 id|serial_icr_read
@@ -14621,7 +14625,7 @@ comma
 id|UART_ID1
 )paren
 suffix:semicolon
-id|scratch2
+id|scratch4
 op_assign
 id|serial_icr_read
 c_func
@@ -14648,7 +14652,7 @@ id|scratch
 op_eq
 l_int|0x16
 op_logical_and
-id|scratch2
+id|scratch4
 op_eq
 l_int|0xC9
 op_logical_and

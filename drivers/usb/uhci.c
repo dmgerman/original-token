@@ -415,6 +415,10 @@ c_cond
 id|explength
 op_ne
 id|actlength
+op_logical_and
+id|tmp-&gt;pipetype
+op_eq
+id|PIPE_BULK
 )paren
 (brace
 multiline_comment|/* If the packet is short, none of the */

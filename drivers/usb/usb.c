@@ -2666,7 +2666,7 @@ op_star
 r_sizeof
 (paren
 r_struct
-id|usb_interface_descriptor
+id|usb_interface
 )paren
 )paren
 suffix:semicolon

@@ -16,6 +16,7 @@ macro_line|#include &lt;linux/kbd_diacr.h&gt;
 macro_line|#include &lt;linux/vt_kern.h&gt;
 macro_line|#include &lt;linux/kbd_ll.h&gt;
 macro_line|#include &lt;linux/sysrq.h&gt;
+macro_line|#include &lt;linux/acpi.h&gt;
 DECL|macro|SIZE
 mdefine_line|#define SIZE(x) (sizeof(x)/sizeof((x)[0]))
 macro_line|#ifndef KBD_DEFMODE
@@ -553,6 +554,15 @@ op_assign
 l_int|1
 suffix:semicolon
 macro_line|#endif
+DECL|variable|acpi_kbd
+r_static
+r_struct
+id|acpi_dev
+op_star
+id|acpi_kbd
+op_assign
+l_int|NULL
+suffix:semicolon
 multiline_comment|/*&n; * Many other routines do put_queue, but I think either&n; * they produce ASCII, or they produce some user-assigned&n; * string, and in both cases we might assume that it is&n; * in utf-8 already.&n; */
 DECL|function|to_utf8
 r_void
@@ -730,6 +740,12 @@ l_int|0200
 suffix:semicolon
 r_char
 id|raw_mode
+suffix:semicolon
+id|acpi_access
+c_func
+(paren
+id|acpi_kbd
+)paren
 suffix:semicolon
 id|do_poke_blanked_console
 op_assign
@@ -3844,6 +3860,20 @@ id|mark_bh
 c_func
 (paren
 id|KEYBOARD_BH
+)paren
+suffix:semicolon
+id|acpi_kbd
+op_assign
+id|acpi_register
+c_func
+(paren
+id|ACPI_SYS_DEV
+comma
+l_int|0
+comma
+id|ACPI_KBC_HID
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 r_return

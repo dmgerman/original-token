@@ -1199,4 +1199,11 @@ c_func
 id|__up_wakeup
 )paren
 suffix:semicolon
+DECL|variable|get_wchan
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|get_wchan
+)paren
+suffix:semicolon
 eof

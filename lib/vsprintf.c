@@ -5,6 +5,7 @@ macro_line|#include &lt;stdarg.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/ctype.h&gt;
+macro_line|#include &lt;asm/div64.h&gt;
 DECL|function|simple_strtoul
 r_int
 r_int
@@ -298,8 +299,6 @@ DECL|macro|SPECIAL
 mdefine_line|#define SPECIAL&t;32&t;&t;/* 0x */
 DECL|macro|LARGE
 mdefine_line|#define LARGE&t;64&t;&t;/* use &squot;ABCDEF&squot; instead of &squot;abcdef&squot; */
-DECL|macro|do_div
-mdefine_line|#define do_div(n,base) ({ &bslash;&n;int __res; &bslash;&n;__res = ((unsigned long) n) % (unsigned) base; &bslash;&n;n = ((unsigned long) n) / (unsigned) base; &bslash;&n;__res; })
 DECL|function|number
 r_static
 r_char
@@ -311,6 +310,7 @@ r_char
 op_star
 id|str
 comma
+r_int
 r_int
 id|num
 comma
@@ -752,6 +752,7 @@ id|args
 r_int
 id|len
 suffix:semicolon
+r_int
 r_int
 r_int
 id|num
@@ -1473,7 +1474,7 @@ c_cond
 (paren
 id|qualifier
 op_eq
-l_char|&squot;l&squot;
+l_char|&squot;L&squot;
 )paren
 id|num
 op_assign
@@ -1492,8 +1493,45 @@ c_cond
 (paren
 id|qualifier
 op_eq
+l_char|&squot;l&squot;
+)paren
+(brace
+id|num
+op_assign
+id|va_arg
+c_func
+(paren
+id|args
+comma
+r_int
+r_int
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|flags
+op_amp
+id|SIGN
+)paren
+id|num
+op_assign
+(paren
+r_int
+r_int
+)paren
+id|num
+suffix:semicolon
+)brace
+r_else
+r_if
+c_cond
+(paren
+id|qualifier
+op_eq
 l_char|&squot;z&squot;
 )paren
+(brace
 id|num
 op_assign
 id|va_arg
@@ -1504,6 +1542,7 @@ comma
 r_int
 )paren
 suffix:semicolon
+)brace
 r_else
 r_if
 c_cond
@@ -1538,11 +1577,24 @@ id|num
 op_assign
 (paren
 r_int
+r_int
 )paren
 id|num
 suffix:semicolon
 )brace
 r_else
+(brace
+id|num
+op_assign
+id|va_arg
+c_func
+(paren
+id|args
+comma
+r_int
+r_int
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1552,26 +1604,13 @@ id|SIGN
 )paren
 id|num
 op_assign
-id|va_arg
-c_func
 (paren
-id|args
-comma
+r_int
 r_int
 )paren
-suffix:semicolon
-r_else
 id|num
-op_assign
-id|va_arg
-c_func
-(paren
-id|args
-comma
-r_int
-r_int
-)paren
 suffix:semicolon
+)brace
 id|str
 op_assign
 id|number
