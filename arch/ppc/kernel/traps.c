@@ -140,6 +140,14 @@ c_func
 id|regs
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_XMON
+id|xmon
+c_func
+(paren
+id|regs
+)paren
+suffix:semicolon
+macro_line|#endif
 id|print_backtrace
 c_func
 (paren
@@ -154,14 +162,6 @@ l_int|1
 )braket
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_XMON
-id|xmon
-c_func
-(paren
-id|regs
-)paren
-suffix:semicolon
-macro_line|#endif
 id|panic
 c_func
 (paren
@@ -325,6 +325,14 @@ c_func
 id|regs
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_XMON
+id|xmon
+c_func
+(paren
+id|regs
+)paren
+suffix:semicolon
+macro_line|#endif
 id|print_backtrace
 c_func
 (paren
@@ -339,14 +347,6 @@ l_int|1
 )braket
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_XMON
-id|xmon
-c_func
-(paren
-id|regs
-)paren
-suffix:semicolon
-macro_line|#endif
 id|panic
 c_func
 (paren
@@ -641,22 +641,29 @@ id|regs
 suffix:semicolon
 )brace
 r_void
-DECL|function|PromException
-id|PromException
+DECL|function|StackOverflow
+id|StackOverflow
 c_func
 (paren
 r_struct
 id|pt_regs
 op_star
 id|regs
-comma
-r_int
-id|trap
 )paren
 (brace
-id|regs-&gt;trap
-op_assign
-id|trap
+id|printk
+c_func
+(paren
+id|KERN_CRIT
+l_string|&quot;Kernel stack overflow in process %p, r1=%lx&bslash;n&quot;
+comma
+id|current
+comma
+id|regs-&gt;gpr
+(braket
+l_int|1
+)braket
+)paren
 suffix:semicolon
 macro_line|#ifdef CONFIG_XMON
 id|xmon
@@ -666,19 +673,32 @@ id|regs
 )paren
 suffix:semicolon
 macro_line|#endif
-id|printk
+id|show_regs
 c_func
 (paren
-l_string|&quot;Exception %lx in prom at PC: %lx, SR: %lx&bslash;n&quot;
-comma
-id|regs-&gt;trap
-comma
-id|regs-&gt;nip
-comma
-id|regs-&gt;msr
+id|regs
 )paren
 suffix:semicolon
-multiline_comment|/* probably should turn up the toes here */
+id|print_backtrace
+c_func
+(paren
+(paren
+r_int
+r_int
+op_star
+)paren
+id|regs-&gt;gpr
+(braket
+l_int|1
+)braket
+)paren
+suffix:semicolon
+id|panic
+c_func
+(paren
+l_string|&quot;kernel stack overflow&quot;
+)paren
+suffix:semicolon
 )brace
 r_void
 DECL|function|trace_syscall

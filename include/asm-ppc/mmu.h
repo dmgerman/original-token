@@ -191,6 +191,7 @@ r_typedef
 r_struct
 id|_P601_BATU
 (brace
+multiline_comment|/* Upper part of BAT for 601 processor */
 DECL|member|bepi
 r_int
 r_int
@@ -228,22 +229,22 @@ suffix:colon
 l_int|1
 suffix:semicolon
 multiline_comment|/* Memory coherence */
-DECL|member|vs
+DECL|member|ks
 r_int
 r_int
-id|vs
+id|ks
 suffix:colon
 l_int|1
 suffix:semicolon
-multiline_comment|/* Supervisor valid */
-DECL|member|vp
+multiline_comment|/* Supervisor key (normally 0) */
+DECL|member|kp
 r_int
 r_int
-id|vp
+id|kp
 suffix:colon
 l_int|1
 suffix:semicolon
-multiline_comment|/* User valid */
+multiline_comment|/* User key (normally 1) */
 DECL|member|pp
 r_int
 r_int
@@ -260,8 +261,8 @@ DECL|struct|_BATU
 r_typedef
 r_struct
 id|_BATU
-multiline_comment|/* Upper part of BAT */
 (brace
+multiline_comment|/* Upper part of BAT (all except 601) */
 DECL|member|bepi
 r_int
 r_int
@@ -309,6 +310,7 @@ r_typedef
 r_struct
 id|_P601_BATL
 (brace
+multiline_comment|/* Lower part of BAT for 601 processor */
 DECL|member|brpn
 r_int
 r_int
@@ -330,7 +332,7 @@ id|v
 suffix:colon
 l_int|1
 suffix:semicolon
-multiline_comment|/* valid/invalid */
+multiline_comment|/* Valid bit */
 DECL|member|bl
 r_int
 r_int
@@ -347,8 +349,8 @@ DECL|struct|_BATL
 r_typedef
 r_struct
 id|_BATL
-multiline_comment|/* Lower part of BAT */
 (brace
+multiline_comment|/* Lower part of BAT (all except 601) */
 DECL|member|brpn
 r_int
 r_int
@@ -394,7 +396,7 @@ id|g
 suffix:colon
 l_int|1
 suffix:semicolon
-multiline_comment|/* Guarded (MBZ) */
+multiline_comment|/* Guarded (MBZ in IBAT) */
 r_int
 r_int
 suffix:colon
@@ -503,7 +505,7 @@ id|flags
 suffix:colon
 l_int|12
 suffix:semicolon
-multiline_comment|/* Page flags (with some unused bits) */
+multiline_comment|/* Page flags (some unused bits) */
 DECL|typedef|pte
 )brace
 id|pte

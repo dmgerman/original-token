@@ -1,8 +1,9 @@
-multiline_comment|/* $Id: bitops.h,v 1.47 1997/05/14 20:47:56 davem Exp $&n; * bitops.h: Bit string operations on the Sparc.&n; *&n; * Copyright 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright 1996 Eddie C. Dost   (ecd@skynet.be)&n; */
+multiline_comment|/* $Id: bitops.h,v 1.48 1997/12/18 02:44:06 ecd Exp $&n; * bitops.h: Bit string operations on the Sparc.&n; *&n; * Copyright 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright 1996 Eddie C. Dost   (ecd@skynet.be)&n; */
 macro_line|#ifndef _SPARC_BITOPS_H
 DECL|macro|_SPARC_BITOPS_H
 mdefine_line|#define _SPARC_BITOPS_H
 macro_line|#include &lt;linux/kernel.h&gt;
+macro_line|#include &lt;asm/byteorder.h&gt;
 macro_line|#ifndef __KERNEL__
 multiline_comment|/* User mode bitops, defined here for convenience. Note: these are not&n; * atomic, so packages like nthreads should do some locking around these&n; * themself.&n; */
 DECL|macro|__SMPVOL
@@ -1689,53 +1690,6 @@ mdefine_line|#define ext2_test_bit  test_le_bit
 macro_line|#endif /* __KERNEL__ */
 DECL|macro|find_first_zero_le_bit
 mdefine_line|#define find_first_zero_le_bit(addr, size) &bslash;&n;        find_next_zero_le_bit((addr), (size), 0)
-DECL|function|__swab32
-r_extern
-id|__inline__
-r_int
-r_int
-id|__swab32
-c_func
-(paren
-r_int
-r_int
-id|value
-)paren
-(brace
-r_return
-(paren
-id|value
-op_rshift
-l_int|24
-)paren
-op_or
-(paren
-(paren
-id|value
-op_rshift
-l_int|8
-)paren
-op_amp
-l_int|0xff00
-)paren
-op_or
-(paren
-(paren
-id|value
-op_lshift
-l_int|8
-)paren
-op_amp
-l_int|0xff0000
-)paren
-op_or
-(paren
-id|value
-op_lshift
-l_int|24
-)paren
-suffix:semicolon
-)brace
 DECL|function|find_next_zero_le_bit
 r_extern
 id|__inline__

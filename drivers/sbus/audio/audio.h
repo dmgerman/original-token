@@ -184,17 +184,19 @@ id|audio_info_t
 suffix:semicolon
 multiline_comment|/*&n; * Audio encoding types&n; */
 DECL|macro|AUDIO_ENCODING_NONE
-mdefine_line|#define&t;AUDIO_ENCODING_NONE&t;(0)&t;/* no encoding assigned&t;*/
+mdefine_line|#define&t;AUDIO_ENCODING_NONE&t;(0)&t;/* no encoding assigned&t;  */
 DECL|macro|AUDIO_ENCODING_ULAW
-mdefine_line|#define&t;AUDIO_ENCODING_ULAW&t;(1)&t;/* u-law encoding&t;*/
+mdefine_line|#define&t;AUDIO_ENCODING_ULAW&t;(1)&t;/* u-law encoding&t;  */
 DECL|macro|AUDIO_ENCODING_ALAW
-mdefine_line|#define&t;AUDIO_ENCODING_ALAW&t;(2)&t;/* A-law encoding&t;*/
+mdefine_line|#define&t;AUDIO_ENCODING_ALAW&t;(2)&t;/* A-law encoding&t;  */
 DECL|macro|AUDIO_ENCODING_LINEAR
-mdefine_line|#define&t;AUDIO_ENCODING_LINEAR&t;(3)&t;/* Linear PCM encoding&t;*/
+mdefine_line|#define&t;AUDIO_ENCODING_LINEAR&t;(3)&t;/* Linear PCM encoding&t;  */
 DECL|macro|AUDIO_ENCODING_DVI
-mdefine_line|#define&t;AUDIO_ENCODING_DVI&t;(104)&t;/* DVI ADPCM&t;&t;*/
+mdefine_line|#define&t;AUDIO_ENCODING_DVI&t;(104)&t;/* DVI ADPCM&t;&t;  */
 DECL|macro|AUDIO_ENCODING_LINEAR8
-mdefine_line|#define&t;AUDIO_ENCODING_LINEAR8&t;(105)&t;/* 8 bit UNSIGNED&t;*/
+mdefine_line|#define&t;AUDIO_ENCODING_LINEAR8&t;(105)&t;/* 8 bit UNSIGNED&t;  */
+DECL|macro|AUDIO_ENCODING_LINEARLE
+mdefine_line|#define&t;AUDIO_ENCODING_LINEARLE&t;(106)&t;/* Linear PCM LE encoding */
 multiline_comment|/*&n; * These ranges apply to record, play, and monitor gain values&n; */
 DECL|macro|AUDIO_MIN_GAIN
 mdefine_line|#define&t;AUDIO_MIN_GAIN&t;(0)&t;/* minimum gain value */
@@ -244,9 +246,21 @@ DECL|macro|AUDIO_CD
 mdefine_line|#define&t;AUDIO_CD&t;&t;0x04&t;/* input from on-board CD inputs */
 DECL|macro|AUDIO_INTERNAL_CD_IN
 mdefine_line|#define&t;AUDIO_INTERNAL_CD_IN&t;AUDIO_CD&t;/* input from internal CDROM */
+multiline_comment|/* Supposedly an undocumented feature of the 4231 */
+DECL|macro|AUDIO_ANALOG_LOOPBACK
+mdefine_line|#define AUDIO_ANALOG_LOOPBACK   0x40
 multiline_comment|/*&n; * This macro initializes an audio_info structure to &squot;harmless&squot; values.&n; * Note that (~0) might not be a harmless value for a flag that was&n; * a signed int.&n; */
 DECL|macro|AUDIO_INITINFO
 mdefine_line|#define&t;AUDIO_INITINFO(i)&t;{&t;&t;&t;&t;&t;&bslash;&n;&t;unsigned int&t;*__x__;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;for (__x__ = (unsigned int *)(i);&t;&t;&t;&t;&bslash;&n;&t;    (char *) __x__ &lt; (((char *)(i)) + sizeof (audio_info_t));&t;&bslash;&n;&t;    *__x__++ = ~0);&t;&t;&t;&t;&t;&t;&bslash;&n;}
+multiline_comment|/*&n; * These allow testing for what the user wants to set &n; */
+DECL|macro|AUD_INITVALUE
+mdefine_line|#define AUD_INITVALUE   (~0)
+DECL|macro|Modify
+mdefine_line|#define Modify(X)       ((unsigned int)(X) != AUD_INITVALUE)
+DECL|macro|Modifys
+mdefine_line|#define Modifys(X)      ((X) != (unsigned short)AUD_INITVALUE)
+DECL|macro|Modifyc
+mdefine_line|#define Modifyc(X)      ((X) != (unsigned char)AUD_INITVALUE)
 multiline_comment|/*&n; * Parameter for the AUDIO_GETDEV ioctl to determine current&n; * audio devices.&n; */
 DECL|macro|MAX_AUDIO_DEV_LEN
 mdefine_line|#define&t;MAX_AUDIO_DEV_LEN&t;(16)
@@ -290,6 +304,19 @@ DECL|macro|AUDIO_DRAIN
 mdefine_line|#define&t;AUDIO_DRAIN&t;_IO(&squot;A&squot;, 3)
 DECL|macro|AUDIO_GETDEV
 mdefine_line|#define&t;AUDIO_GETDEV&t;_IOR(&squot;A&squot;, 4, audio_device_t)
+DECL|macro|AUDIO_GETDEV_SUNOS
+mdefine_line|#define&t;AUDIO_GETDEV_SUNOS&t;_IOR(&squot;A&squot;, 4, int)
+multiline_comment|/* Define possible audio hardware configurations for &n; * old SunOS-style AUDIO_GETDEV ioctl */
+DECL|macro|AUDIO_DEV_UNKNOWN
+mdefine_line|#define AUDIO_DEV_UNKNOWN       (0)     /* not defined */
+DECL|macro|AUDIO_DEV_AMD
+mdefine_line|#define AUDIO_DEV_AMD           (1)     /* audioamd device */
+DECL|macro|AUDIO_DEV_SPEAKERBOX
+mdefine_line|#define AUDIO_DEV_SPEAKERBOX    (2)     /* dbri device with speakerbox */
+DECL|macro|AUDIO_DEV_CODEC
+mdefine_line|#define AUDIO_DEV_CODEC         (3)     /* dbri device (internal speaker) */
+DECL|macro|AUDIO_DEV_CS4231
+mdefine_line|#define AUDIO_DEV_CS4231        (5)     /* cs4231 device */
 multiline_comment|/*&n; * The following ioctl sets the audio device into an internal loopback mode,&n; * if the hardware supports this.  The argument is TRUE to set loopback,&n; * FALSE to reset to normal operation.  If the hardware does not support&n; * internal loopback, the ioctl should fail with EINVAL.&n; */
 DECL|macro|AUDIO_DIAG_LOOPBACK
 mdefine_line|#define&t;AUDIO_DIAG_LOOPBACK&t;_IOW(&squot;A&squot;, 101, int)
@@ -389,9 +416,12 @@ op_star
 id|output_buffers
 suffix:semicolon
 DECL|member|output_sizes
+DECL|member|output_size
 r_int
 op_star
 id|output_sizes
+comma
+id|output_size
 suffix:semicolon
 DECL|member|num_output_buffers
 DECL|member|output_front
@@ -419,6 +449,40 @@ id|output_write_wait
 comma
 op_star
 id|output_drain_wait
+suffix:semicolon
+multiline_comment|/* Support for a circular queue of input buffers. */
+DECL|member|input_buffers
+id|__u8
+op_star
+op_star
+id|input_buffers
+suffix:semicolon
+DECL|member|input_offset
+r_int
+id|input_offset
+suffix:semicolon
+DECL|member|num_input_buffers
+DECL|member|input_front
+DECL|member|input_rear
+r_int
+id|num_input_buffers
+comma
+id|input_front
+comma
+id|input_rear
+suffix:semicolon
+DECL|member|input_count
+DECL|member|input_active
+r_int
+id|input_count
+comma
+id|input_active
+suffix:semicolon
+DECL|member|input_read_wait
+r_struct
+id|wait_queue
+op_star
+id|input_read_wait
 suffix:semicolon
 )brace
 suffix:semicolon
@@ -572,6 +636,476 @@ id|audio_device_t
 op_star
 )paren
 suffix:semicolon
+multiline_comment|/* Get and set the output volume. (0-255) */
+DECL|member|set_output_volume
+r_int
+(paren
+op_star
+id|set_output_volume
+)paren
+(paren
+r_struct
+id|sparcaudio_driver
+op_star
+comma
+r_int
+)paren
+suffix:semicolon
+DECL|member|get_output_volume
+r_int
+(paren
+op_star
+id|get_output_volume
+)paren
+(paren
+r_struct
+id|sparcaudio_driver
+op_star
+)paren
+suffix:semicolon
+multiline_comment|/* Get and set the input volume. (0-255) */
+DECL|member|set_input_volume
+r_int
+(paren
+op_star
+id|set_input_volume
+)paren
+(paren
+r_struct
+id|sparcaudio_driver
+op_star
+comma
+r_int
+)paren
+suffix:semicolon
+DECL|member|get_input_volume
+r_int
+(paren
+op_star
+id|get_input_volume
+)paren
+(paren
+r_struct
+id|sparcaudio_driver
+op_star
+)paren
+suffix:semicolon
+multiline_comment|/* Get and set the monitor volume. (0-255) */
+DECL|member|set_monitor_volume
+r_int
+(paren
+op_star
+id|set_monitor_volume
+)paren
+(paren
+r_struct
+id|sparcaudio_driver
+op_star
+comma
+r_int
+)paren
+suffix:semicolon
+DECL|member|get_monitor_volume
+r_int
+(paren
+op_star
+id|get_monitor_volume
+)paren
+(paren
+r_struct
+id|sparcaudio_driver
+op_star
+)paren
+suffix:semicolon
+multiline_comment|/* Get and set the output balance. (0-64) */
+DECL|member|set_output_balance
+r_int
+(paren
+op_star
+id|set_output_balance
+)paren
+(paren
+r_struct
+id|sparcaudio_driver
+op_star
+comma
+r_int
+)paren
+suffix:semicolon
+DECL|member|get_output_balance
+r_int
+(paren
+op_star
+id|get_output_balance
+)paren
+(paren
+r_struct
+id|sparcaudio_driver
+op_star
+)paren
+suffix:semicolon
+multiline_comment|/* Get and set the input balance. (0-64) */
+DECL|member|set_input_balance
+r_int
+(paren
+op_star
+id|set_input_balance
+)paren
+(paren
+r_struct
+id|sparcaudio_driver
+op_star
+comma
+r_int
+)paren
+suffix:semicolon
+DECL|member|get_input_balance
+r_int
+(paren
+op_star
+id|get_input_balance
+)paren
+(paren
+r_struct
+id|sparcaudio_driver
+op_star
+)paren
+suffix:semicolon
+multiline_comment|/* Get and set the output channels. (1-4) */
+DECL|member|set_output_channels
+r_int
+(paren
+op_star
+id|set_output_channels
+)paren
+(paren
+r_struct
+id|sparcaudio_driver
+op_star
+comma
+r_int
+)paren
+suffix:semicolon
+DECL|member|get_output_channels
+r_int
+(paren
+op_star
+id|get_output_channels
+)paren
+(paren
+r_struct
+id|sparcaudio_driver
+op_star
+)paren
+suffix:semicolon
+multiline_comment|/* Get and set the input channels. (1-4) */
+DECL|member|set_input_channels
+r_int
+(paren
+op_star
+id|set_input_channels
+)paren
+(paren
+r_struct
+id|sparcaudio_driver
+op_star
+comma
+r_int
+)paren
+suffix:semicolon
+DECL|member|get_input_channels
+r_int
+(paren
+op_star
+id|get_input_channels
+)paren
+(paren
+r_struct
+id|sparcaudio_driver
+op_star
+)paren
+suffix:semicolon
+multiline_comment|/* Get and set the output precision. (8-32) */
+DECL|member|set_output_precision
+r_int
+(paren
+op_star
+id|set_output_precision
+)paren
+(paren
+r_struct
+id|sparcaudio_driver
+op_star
+comma
+r_int
+)paren
+suffix:semicolon
+DECL|member|get_output_precision
+r_int
+(paren
+op_star
+id|get_output_precision
+)paren
+(paren
+r_struct
+id|sparcaudio_driver
+op_star
+)paren
+suffix:semicolon
+multiline_comment|/* Get and set the input precision. (8-32) */
+DECL|member|set_input_precision
+r_int
+(paren
+op_star
+id|set_input_precision
+)paren
+(paren
+r_struct
+id|sparcaudio_driver
+op_star
+comma
+r_int
+)paren
+suffix:semicolon
+DECL|member|get_input_precision
+r_int
+(paren
+op_star
+id|get_input_precision
+)paren
+(paren
+r_struct
+id|sparcaudio_driver
+op_star
+)paren
+suffix:semicolon
+multiline_comment|/* Get and set the output port. () */
+DECL|member|set_output_port
+r_int
+(paren
+op_star
+id|set_output_port
+)paren
+(paren
+r_struct
+id|sparcaudio_driver
+op_star
+comma
+r_int
+)paren
+suffix:semicolon
+DECL|member|get_output_port
+r_int
+(paren
+op_star
+id|get_output_port
+)paren
+(paren
+r_struct
+id|sparcaudio_driver
+op_star
+)paren
+suffix:semicolon
+multiline_comment|/* Get and set the input port. () */
+DECL|member|set_input_port
+r_int
+(paren
+op_star
+id|set_input_port
+)paren
+(paren
+r_struct
+id|sparcaudio_driver
+op_star
+comma
+r_int
+)paren
+suffix:semicolon
+DECL|member|get_input_port
+r_int
+(paren
+op_star
+id|get_input_port
+)paren
+(paren
+r_struct
+id|sparcaudio_driver
+op_star
+)paren
+suffix:semicolon
+multiline_comment|/* Get and set the output encoding. () */
+DECL|member|set_output_encoding
+r_int
+(paren
+op_star
+id|set_output_encoding
+)paren
+(paren
+r_struct
+id|sparcaudio_driver
+op_star
+comma
+r_int
+)paren
+suffix:semicolon
+DECL|member|get_output_encoding
+r_int
+(paren
+op_star
+id|get_output_encoding
+)paren
+(paren
+r_struct
+id|sparcaudio_driver
+op_star
+)paren
+suffix:semicolon
+multiline_comment|/* Get and set the input encoding. () */
+DECL|member|set_input_encoding
+r_int
+(paren
+op_star
+id|set_input_encoding
+)paren
+(paren
+r_struct
+id|sparcaudio_driver
+op_star
+comma
+r_int
+)paren
+suffix:semicolon
+DECL|member|get_input_encoding
+r_int
+(paren
+op_star
+id|get_input_encoding
+)paren
+(paren
+r_struct
+id|sparcaudio_driver
+op_star
+)paren
+suffix:semicolon
+multiline_comment|/* Get and set the output rate. () */
+DECL|member|set_output_rate
+r_int
+(paren
+op_star
+id|set_output_rate
+)paren
+(paren
+r_struct
+id|sparcaudio_driver
+op_star
+comma
+r_int
+)paren
+suffix:semicolon
+DECL|member|get_output_rate
+r_int
+(paren
+op_star
+id|get_output_rate
+)paren
+(paren
+r_struct
+id|sparcaudio_driver
+op_star
+)paren
+suffix:semicolon
+multiline_comment|/* Get and set the input rate. () */
+DECL|member|set_input_rate
+r_int
+(paren
+op_star
+id|set_input_rate
+)paren
+(paren
+r_struct
+id|sparcaudio_driver
+op_star
+comma
+r_int
+)paren
+suffix:semicolon
+DECL|member|get_input_rate
+r_int
+(paren
+op_star
+id|get_input_rate
+)paren
+(paren
+r_struct
+id|sparcaudio_driver
+op_star
+)paren
+suffix:semicolon
+multiline_comment|/* Return driver number to caller. (SunOS /dev/audio specific) */
+DECL|member|sunaudio_getdev_sunos
+r_int
+(paren
+op_star
+id|sunaudio_getdev_sunos
+)paren
+(paren
+r_struct
+id|sparcaudio_driver
+op_star
+)paren
+suffix:semicolon
+multiline_comment|/* Get available ports */
+DECL|member|get_output_ports
+r_int
+(paren
+op_star
+id|get_output_ports
+)paren
+(paren
+r_struct
+id|sparcaudio_driver
+op_star
+)paren
+suffix:semicolon
+DECL|member|get_input_ports
+r_int
+(paren
+op_star
+id|get_input_ports
+)paren
+(paren
+r_struct
+id|sparcaudio_driver
+op_star
+)paren
+suffix:semicolon
+multiline_comment|/* Get and set output mute */
+DECL|member|set_output_muted
+r_int
+(paren
+op_star
+id|set_output_muted
+)paren
+(paren
+r_struct
+id|sparcaudio_driver
+op_star
+comma
+r_int
+)paren
+suffix:semicolon
+DECL|member|get_output_muted
+r_int
+(paren
+op_star
+id|get_output_muted
+)paren
+(paren
+r_struct
+id|sparcaudio_driver
+op_star
+)paren
+suffix:semicolon
 )brace
 suffix:semicolon
 r_extern
@@ -638,6 +1172,6 @@ c_func
 r_void
 )paren
 suffix:semicolon
-macro_line|#endif
-macro_line|#endif
+macro_line|#endif  /* __KERNEL__ */
+macro_line|#endif  /* _AUDIO_H */
 eof

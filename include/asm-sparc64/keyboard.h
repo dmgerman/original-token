@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: keyboard.h,v 1.1 1997/09/04 05:50:39 ecd Exp $&n; * linux/include/asm-sparc64/keyboard.h&n; *&n; * Created Aug 29 1997 by Eddie C. Dost (ecd@skynet.be)&n; */
+multiline_comment|/* $Id: keyboard.h,v 1.2 1997/09/07 15:40:49 ecd Exp $&n; * linux/include/asm-sparc64/keyboard.h&n; *&n; * Created Aug 29 1997 by Eddie C. Dost (ecd@skynet.be)&n; */
 multiline_comment|/*&n; *  This file contains the Ultra/PCI architecture specific keyboard definitions&n; */
 macro_line|#ifndef _SPARC64_KEYBOARD_H
 DECL|macro|_SPARC64_KEYBOARD_H
@@ -100,23 +100,37 @@ l_int|128
 )braket
 suffix:semicolon
 DECL|macro|kbd_setkeycode
-mdefine_line|#define kbd_setkeycode&t;&t;pcikbd_setkeycode
+mdefine_line|#define kbd_setkeycode&t;&t;&t;pcikbd_setkeycode
 DECL|macro|kbd_getkeycode
-mdefine_line|#define kbd_getkeycode&t;&t;pcikbd_getkeycode
+mdefine_line|#define kbd_getkeycode&t;&t;&t;pcikbd_getkeycode
 DECL|macro|kbd_pretranslate
-mdefine_line|#define kbd_pretranslate&t;pcikbd_pretranslate
+mdefine_line|#define kbd_pretranslate&t;&t;pcikbd_pretranslate
 DECL|macro|kbd_translate
-mdefine_line|#define kbd_translate&t;&t;pcikbd_translate
+mdefine_line|#define kbd_translate&t;&t;&t;pcikbd_translate
 DECL|macro|kbd_unexpected_up
-mdefine_line|#define kbd_unexpected_up&t;pcikbd_unexpected_up
+mdefine_line|#define kbd_unexpected_up&t;&t;pcikbd_unexpected_up
 DECL|macro|kbd_leds
-mdefine_line|#define kbd_leds&t;&t;pcikbd_leds
+mdefine_line|#define kbd_leds&t;&t;&t;pcikbd_leds
 DECL|macro|kbd_init_hw
-mdefine_line|#define kbd_init_hw&t;&t;pcikbd_init_hw
+mdefine_line|#define kbd_init_hw&t;&t;&t;pcikbd_init_hw
 DECL|macro|kbd_sysrq_xlate
-mdefine_line|#define kbd_sysrq_xlate&t;&t;pcikbd_sysrq_xlate
+mdefine_line|#define kbd_sysrq_xlate&t;&t;&t;pcikbd_sysrq_xlate
 DECL|macro|kbd_init
-mdefine_line|#define kbd_init&t;&t;pcikbd_init
+mdefine_line|#define kbd_init&t;&t;&t;pcikbd_init
+DECL|macro|compute_shiftstate
+mdefine_line|#define compute_shiftstate&t;&t;pci_compute_shiftstate
+DECL|macro|keyboard_wait_for_keypress
+mdefine_line|#define keyboard_wait_for_keypress&t;pci_wait_for_keypress
+DECL|macro|getkeycode
+mdefine_line|#define getkeycode&t;&t;&t;pci_getkeycode
+DECL|macro|setkeycode
+mdefine_line|#define setkeycode&t;&t;&t;pci_setkeycode
+DECL|macro|getledstate
+mdefine_line|#define getledstate&t;&t;&t;pci_getledstate
+DECL|macro|setledstate
+mdefine_line|#define setledstate&t;&t;&t;pci_setledstate
+DECL|macro|register_leds
+mdefine_line|#define register_leds&t;&t;&t;pci_register_leds
 DECL|macro|SYSRQ_KEY
 mdefine_line|#define SYSRQ_KEY 0x54
 macro_line|#endif /* __KERNEL__ */

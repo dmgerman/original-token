@@ -12,6 +12,8 @@ macro_line|#include &lt;asm/uaccess.h&gt;
 multiline_comment|/*&n; * NOTE! We must NOT default to soft-mounting: that breaks too many&n; * programs that depend on POSIX behaviour of uninterruptible reads&n; * and writes.&n; *&n; * Until we have a per-mount soft/hard mount policy that we can honour&n; * we must default to hard mounting!&n; */
 DECL|macro|IS_SOFT
 mdefine_line|#define IS_SOFT 0
+DECL|macro|NFS_PARANOIA
+mdefine_line|#define NFS_PARANOIA 1
 DECL|macro|NFSDBG_FACILITY
 mdefine_line|#define NFSDBG_FACILITY&t;&t;NFSDBG_PAGECACHE
 r_static
@@ -36,112 +38,6 @@ op_star
 id|task
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * This struct describes a file region to be written.&n; * It&squot;s kind of a pity we have to keep all these lists ourselves, rather&n; * than sticking an extra pointer into struct page.&n; */
-DECL|struct|nfs_wreq
-r_struct
-id|nfs_wreq
-(brace
-DECL|member|wb_list
-r_struct
-id|rpc_listitem
-id|wb_list
-suffix:semicolon
-multiline_comment|/* linked list of req&squot;s */
-DECL|member|wb_task
-r_struct
-id|rpc_task
-id|wb_task
-suffix:semicolon
-multiline_comment|/* RPC task */
-DECL|member|wb_dentry
-r_struct
-id|dentry
-op_star
-id|wb_dentry
-suffix:semicolon
-multiline_comment|/* dentry referenced */
-DECL|member|wb_inode
-r_struct
-id|inode
-op_star
-id|wb_inode
-suffix:semicolon
-multiline_comment|/* inode referenced */
-DECL|member|wb_page
-r_struct
-id|page
-op_star
-id|wb_page
-suffix:semicolon
-multiline_comment|/* page to be written */
-DECL|member|wb_offset
-r_int
-r_int
-id|wb_offset
-suffix:semicolon
-multiline_comment|/* offset within page */
-DECL|member|wb_bytes
-r_int
-r_int
-id|wb_bytes
-suffix:semicolon
-multiline_comment|/* dirty range */
-DECL|member|wb_pid
-id|pid_t
-id|wb_pid
-suffix:semicolon
-multiline_comment|/* owner process */
-DECL|member|wb_flags
-r_int
-r_int
-id|wb_flags
-suffix:semicolon
-multiline_comment|/* status flags */
-DECL|member|wb_args
-r_struct
-id|nfs_writeargs
-op_star
-id|wb_args
-suffix:semicolon
-multiline_comment|/* NFS RPC stuff */
-DECL|member|wb_fattr
-r_struct
-id|nfs_fattr
-op_star
-id|wb_fattr
-suffix:semicolon
-multiline_comment|/* file attributes */
-)brace
-suffix:semicolon
-DECL|macro|wb_status
-mdefine_line|#define wb_status&t;&t;wb_task.tk_status
-DECL|macro|WB_NEXT
-mdefine_line|#define WB_NEXT(req)&t;&t;((struct nfs_wreq *) ((req)-&gt;wb_list.next))
-multiline_comment|/*&n; * Various flags for wb_flags&n; */
-DECL|macro|NFS_WRITE_WANTLOCK
-mdefine_line|#define NFS_WRITE_WANTLOCK&t;0x0001&t;/* needs to lock page */
-DECL|macro|NFS_WRITE_LOCKED
-mdefine_line|#define NFS_WRITE_LOCKED&t;0x0002&t;/* holds lock on page */
-DECL|macro|NFS_WRITE_CANCELLED
-mdefine_line|#define NFS_WRITE_CANCELLED&t;0x0004&t;/* has been cancelled */
-DECL|macro|NFS_WRITE_UNCOMMITTED
-mdefine_line|#define NFS_WRITE_UNCOMMITTED&t;0x0008&t;/* written but uncommitted (NFSv3) */
-DECL|macro|NFS_WRITE_INVALIDATE
-mdefine_line|#define NFS_WRITE_INVALIDATE&t;0x0010&t;/* invalidate after write */
-DECL|macro|NFS_WRITE_INPROGRESS
-mdefine_line|#define NFS_WRITE_INPROGRESS&t;0x0020&t;/* RPC call in progress */
-DECL|macro|WB_INPROGRESS
-mdefine_line|#define WB_INPROGRESS(req)&t;((req)-&gt;wb_flags &amp; NFS_WRITE_INPROGRESS)
-DECL|macro|WB_WANTLOCK
-mdefine_line|#define WB_WANTLOCK(req)&t;((req)-&gt;wb_flags &amp; NFS_WRITE_WANTLOCK)
-DECL|macro|WB_HAVELOCK
-mdefine_line|#define WB_HAVELOCK(req)&t;((req)-&gt;wb_flags &amp; NFS_WRITE_LOCKED)
-DECL|macro|WB_CANCELLED
-mdefine_line|#define WB_CANCELLED(req)&t;((req)-&gt;wb_flags &amp; NFS_WRITE_CANCELLED)
-DECL|macro|WB_UNCOMMITTED
-mdefine_line|#define WB_UNCOMMITTED(req)&t;((req)-&gt;wb_flags &amp; NFS_WRITE_UNCOMMITTED)
-DECL|macro|WB_INVALIDATE
-mdefine_line|#define WB_INVALIDATE(req)&t;((req)-&gt;wb_flags &amp; NFS_WRITE_INVALIDATE)
 multiline_comment|/*&n; * Cache parameters&n; */
 DECL|macro|NFS_WRITEBACK_DELAY
 mdefine_line|#define NFS_WRITEBACK_DELAY&t;(10 * HZ)
@@ -258,12 +154,15 @@ op_amp
 id|page-&gt;flags
 )paren
 )paren
+(brace
+multiline_comment|/*&n;&t;&t; * We&squot;re doing a swap, so check that this page is&n;&t;&t; * swap-cached and do the necessary cleanup. &n;&t;&t; */
 id|swap_after_unlock_page
 c_func
 (paren
-id|page-&gt;pg_swap_entry
+id|page-&gt;offset
 )paren
 suffix:semicolon
+)brace
 macro_line|#endif
 )brace
 multiline_comment|/*&n; * Transfer a page lock to a write request waiting for it.&n; */
@@ -797,6 +696,91 @@ r_return
 l_int|NULL
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * Find any requests for the specified dentry.&n; */
+r_int
+DECL|function|nfs_find_dentry_request
+id|nfs_find_dentry_request
+c_func
+(paren
+r_struct
+id|inode
+op_star
+id|inode
+comma
+r_struct
+id|dentry
+op_star
+id|dentry
+)paren
+(brace
+r_struct
+id|nfs_wreq
+op_star
+id|head
+comma
+op_star
+id|req
+suffix:semicolon
+r_int
+id|found
+op_assign
+l_int|0
+suffix:semicolon
+id|req
+op_assign
+id|head
+op_assign
+id|NFS_WRITEBACK
+c_func
+(paren
+id|inode
+)paren
+suffix:semicolon
+r_while
+c_loop
+(paren
+id|req
+op_ne
+l_int|NULL
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|req-&gt;wb_dentry
+op_eq
+id|dentry
+)paren
+(brace
+id|found
+op_assign
+l_int|1
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+(paren
+id|req
+op_assign
+id|WB_NEXT
+c_func
+(paren
+id|req
+)paren
+)paren
+op_eq
+id|head
+)paren
+r_break
+suffix:semicolon
+)brace
+r_return
+id|found
+suffix:semicolon
+)brace
 multiline_comment|/*&n; * Find a failed write request by pid&n; */
 r_static
 r_struct
@@ -1257,7 +1241,7 @@ id|clnt
 comma
 id|nfs_wback_result
 comma
-l_int|0
+id|RPC_TASK_NFSWRITE
 )paren
 suffix:semicolon
 id|task-&gt;tk_calldata
@@ -2044,7 +2028,6 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * Flush out a dirty page.&n; */
 r_static
-r_inline
 r_void
 DECL|function|nfs_flush_request
 id|nfs_flush_request
@@ -2063,14 +2046,33 @@ id|page
 op_assign
 id|req-&gt;wb_page
 suffix:semicolon
+macro_line|#ifdef NFS_DEBUG_VERBOSE
+r_if
+c_cond
+(paren
+id|req-&gt;wb_inode
+op_ne
+id|page-&gt;inode
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;NFS: inode %ld no longer has page %p&bslash;n&quot;
+comma
+id|req-&gt;wb_inode-&gt;i_ino
+comma
+id|page
+)paren
+suffix:semicolon
+macro_line|#endif
 id|dprintk
 c_func
 (paren
-l_string|&quot;NFS:      nfs_flush_request(%x/%ld, @%ld)&bslash;n&quot;
+l_string|&quot;NFS:      nfs_flush_request(%s/%s, @%ld)&bslash;n&quot;
 comma
-id|page-&gt;inode-&gt;i_dev
+id|req-&gt;wb_dentry-&gt;d_parent-&gt;d_name.name
 comma
-id|page-&gt;inode-&gt;i_ino
+id|req-&gt;wb_dentry-&gt;d_name.name
 comma
 id|page-&gt;offset
 )paren
@@ -2268,7 +2270,7 @@ id|req
 )paren
 )paren
 (brace
-macro_line|#ifdef NFS_PARANOIA
+macro_line|#ifdef NFS_DEBUG_VERBOSE
 id|printk
 c_func
 (paren
@@ -2294,23 +2296,6 @@ op_assign
 id|req
 suffix:semicolon
 )brace
-)brace
-r_else
-(brace
-macro_line|#ifdef NFS_PARANOIA
-id|printk
-c_func
-(paren
-l_string|&quot;nfs_flush_pages: in progress inode=%ld, %d @ %lu&bslash;n&quot;
-comma
-id|req-&gt;wb_inode-&gt;i_ino
-comma
-id|req-&gt;wb_bytes
-comma
-id|rqoffset
-)paren
-suffix:semicolon
-macro_line|#endif
 )brace
 r_if
 c_cond

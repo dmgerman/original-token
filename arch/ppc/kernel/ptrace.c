@@ -12,6 +12,9 @@ macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
+multiline_comment|/*&n; * Set of msr bits that gdb can change on behalf of a process.&n; */
+DECL|macro|MSR_DEBUGCHANGE
+mdefine_line|#define MSR_DEBUGCHANGE&t;(MSR_FE0 | MSR_SE | MSR_BE | MSR_FE1)
 multiline_comment|/*&n; * does not yet catch signals sent when the child dies.&n; * in exit.c or in signal.c.&n; */
 multiline_comment|/*&n; * Get contents of register REGNO in task TASK.&n; */
 DECL|function|get_reg
@@ -35,7 +38,7 @@ c_cond
 (paren
 id|regno
 op_le
-id|PT_CCR
+id|PT_MQ
 )paren
 r_return
 (paren
@@ -82,9 +85,31 @@ c_cond
 (paren
 id|regno
 op_le
-id|PT_CCR
+id|PT_MQ
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|regno
+op_eq
+id|PT_MSR
+)paren
+id|data
+op_assign
+(paren
+id|data
+op_amp
+id|MSR_DEBUGCHANGE
+)paren
+op_or
+(paren
+id|task-&gt;tss.regs-&gt;msr
+op_amp
+op_complement
+id|MSR_DEBUGCHANGE
+)paren
+suffix:semicolon
 (paren
 (paren
 r_int
@@ -2023,42 +2048,6 @@ id|PT_ORIG_R3
 r_goto
 id|out
 suffix:semicolon
-macro_line|#if 0 /* Let this check be in &squot;put_reg&squot; */&t;&t;&t;&t;
-r_if
-c_cond
-(paren
-id|addr
-op_eq
-id|PT_SR
-)paren
-(brace
-id|data
-op_and_assign
-id|SR_MASK
-suffix:semicolon
-id|data
-op_lshift_assign
-l_int|16
-suffix:semicolon
-id|data
-op_or_assign
-id|get_reg
-c_func
-(paren
-id|child
-comma
-id|PT_SR
-)paren
-op_amp
-op_complement
-(paren
-id|SR_MASK
-op_lshift
-l_int|16
-)paren
-suffix:semicolon
-)brace
-macro_line|#endif&t;&t;&t;
 r_if
 c_cond
 (paren
@@ -2166,7 +2155,7 @@ r_int
 )paren
 id|data
 op_ge
-id|NSIG
+id|_NSIG
 )paren
 r_goto
 id|out
@@ -2273,7 +2262,7 @@ r_int
 )paren
 id|data
 op_ge
-id|NSIG
+id|_NSIG
 )paren
 r_goto
 id|out
@@ -2327,7 +2316,7 @@ r_int
 )paren
 id|data
 op_ge
-id|NSIG
+id|_NSIG
 )paren
 r_goto
 id|out
@@ -2467,22 +2456,22 @@ c_cond
 (paren
 id|current-&gt;exit_code
 )paren
-id|current-&gt;signal
-op_or_assign
-(paren
-l_int|1
-op_lshift
+(brace
+id|send_sig
+c_func
 (paren
 id|current-&gt;exit_code
-op_minus
+comma
+id|current
+comma
 l_int|1
-)paren
 )paren
 suffix:semicolon
 id|current-&gt;exit_code
 op_assign
 l_int|0
 suffix:semicolon
+)brace
 id|out
 suffix:colon
 id|unlock_kernel

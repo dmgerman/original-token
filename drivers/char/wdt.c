@@ -1210,7 +1210,7 @@ op_assign
 (brace
 id|WATCHDOG_MINOR
 comma
-l_string|&quot;wdt&quot;
+l_string|&quot;watchdog&quot;
 comma
 op_amp
 id|wdt_fops

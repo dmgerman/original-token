@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: kdebug.h,v 1.9 1996/05/10 19:52:35 davem Exp $&n; * kdebug.h:  Defines and definitions for debugging the Linux kernel&n; *            under various kernel debuggers.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: kdebug.h,v 1.10 1997/12/14 23:24:40 ecd Exp $&n; * kdebug.h:  Defines and definitions for debugging the Linux kernel&n; *            under various kernel debuggers.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _SPARC_KDEBUG_H
 DECL|macro|_SPARC_KDEBUG_H
 mdefine_line|#define _SPARC_KDEBUG_H
@@ -104,8 +104,5 @@ DECL|macro|KDEBUG_DUNNO2_OFF
 mdefine_line|#define KDEBUG_DUNNO2_OFF   0x8
 DECL|macro|KDEBUG_TEACH_OFF
 mdefine_line|#define KDEBUG_TEACH_OFF    0xc
-multiline_comment|/* ugh... */
-DECL|macro|TRAP_TRACE
-mdefine_line|#define TRAP_TRACE(reg1, reg2) &bslash;&n;     
 macro_line|#endif /* !(_SPARC_KDEBUG_H) */
 eof

@@ -1,10 +1,11 @@
-multiline_comment|/* $Id: fs.c,v 1.4 1997/09/04 15:46:26 jj Exp $&n; * fs.c: fs related syscall emulation for Solaris&n; *&n; * Copyright (C) 1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: fs.c,v 1.6 1997/10/13 03:54:05 davem Exp $&n; * fs.c: fs related syscall emulation for Solaris&n; *&n; * Copyright (C) 1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/limits.h&gt;
 macro_line|#include &lt;linux/resource.h&gt;
+macro_line|#include &lt;linux/quotaops.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/string.h&gt;
 macro_line|#include &lt;asm/ptrace.h&gt;
@@ -341,8 +342,7 @@ r_char
 op_star
 id|filenam
 suffix:semicolon
-r_int
-r_int
+id|mm_segment_t
 id|old_fs
 op_assign
 id|get_fs
@@ -516,8 +516,7 @@ r_char
 op_star
 id|filenam
 suffix:semicolon
-r_int
-r_int
+id|mm_segment_t
 id|old_fs
 op_assign
 id|get_fs
@@ -687,8 +686,7 @@ r_struct
 id|stat
 id|s
 suffix:semicolon
-r_int
-r_int
+id|mm_segment_t
 id|old_fs
 op_assign
 id|get_fs
@@ -1024,8 +1022,7 @@ r_struct
 id|statfs
 id|s
 suffix:semicolon
-r_int
-r_int
+id|mm_segment_t
 id|old_fs
 op_assign
 id|get_fs
@@ -1326,8 +1323,7 @@ r_struct
 id|statfs
 id|s
 suffix:semicolon
-r_int
-r_int
+id|mm_segment_t
 id|old_fs
 op_assign
 id|get_fs
@@ -1614,8 +1610,7 @@ r_struct
 id|statfs
 id|s
 suffix:semicolon
-r_int
-r_int
+id|mm_segment_t
 id|old_fs
 op_assign
 id|get_fs
@@ -2508,8 +2503,7 @@ r_struct
 id|flock
 id|f
 suffix:semicolon
-r_int
-r_int
+id|mm_segment_t
 id|old_fs
 op_assign
 id|get_fs
@@ -3202,88 +3196,11 @@ op_or_assign
 id|ATTR_MODE
 suffix:semicolon
 )brace
-r_if
-c_cond
-(paren
-id|inode-&gt;i_sb
-op_logical_and
-id|inode-&gt;i_sb-&gt;dq_op
-)paren
-(brace
-id|inode-&gt;i_sb-&gt;dq_op
-op_member_access_from_pointer
-id|initialize
+id|DQUOT_TRANSFER
 c_func
 (paren
 id|inode
 comma
-op_minus
-l_int|1
-)paren
-suffix:semicolon
-id|error
-op_assign
-op_minus
-id|EDQUOT
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|inode-&gt;i_sb-&gt;dq_op
-op_member_access_from_pointer
-id|transfer
-c_func
-(paren
-id|inode
-comma
-op_amp
-id|newattrs
-comma
-l_int|0
-)paren
-)paren
-r_goto
-id|out
-suffix:semicolon
-id|error
-op_assign
-id|notify_change
-c_func
-(paren
-id|inode
-comma
-op_amp
-id|newattrs
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|error
-)paren
-id|inode-&gt;i_sb-&gt;dq_op
-op_member_access_from_pointer
-id|transfer
-c_func
-(paren
-id|inode
-comma
-op_amp
-id|newattrs
-comma
-l_int|1
-)paren
-suffix:semicolon
-)brace
-r_else
-id|error
-op_assign
-id|notify_change
-c_func
-(paren
-id|inode
-comma
-op_amp
 id|newattrs
 )paren
 suffix:semicolon
@@ -4151,8 +4068,7 @@ suffix:semicolon
 r_int
 id|ret
 suffix:semicolon
-r_int
-r_int
+id|mm_segment_t
 id|old_fs
 op_assign
 id|get_fs

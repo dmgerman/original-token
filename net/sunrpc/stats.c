@@ -1,4 +1,5 @@
 multiline_comment|/*&n; * linux/net/sunrpc/stats.c&n; *&n; * procfs-based user access to generic RPC statistics. The stats files&n; * reside in /proc/net/rpc.&n; *&n; * The read routines assume that the buffer passed in is just big enough.&n; * If you implement an RPC service that has its own stats routine which&n; * appends the generic RPC stats, make sure you don&squot;t exceed the PAGE_SIZE&n; * limit.&n; *&n; * Copyright (C) 1995, 1996, 1997 Olaf Kirch &lt;okir@monad.swb.de&gt;&n; */
+macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
@@ -13,7 +14,7 @@ id|proc_dir_entry
 op_star
 id|proc_net_rpc
 op_assign
-l_int|0
+l_int|NULL
 suffix:semicolon
 multiline_comment|/*&n; * Get RPC client stats&n; */
 r_int
@@ -682,7 +683,13 @@ c_cond
 op_logical_neg
 id|proc_net_rpc
 )paren
-id|proc_net_rpc
+(brace
+r_struct
+id|proc_dir_entry
+op_star
+id|ent
+suffix:semicolon
+id|ent
 op_assign
 id|create_proc_entry
 c_func
@@ -694,6 +701,24 @@ comma
 l_int|0
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|ent
+)paren
+(brace
+macro_line|#ifdef MODULE
+id|ent-&gt;fill_inode
+op_assign
+id|rpc_modcount
+suffix:semicolon
+macro_line|#endif
+id|proc_net_rpc
+op_assign
+id|ent
+suffix:semicolon
+)brace
+)brace
 )brace
 r_void
 DECL|function|rpc_proc_exit
@@ -714,6 +739,11 @@ c_cond
 (paren
 id|proc_net_rpc
 )paren
+(brace
+id|proc_net_rpc
+op_assign
+l_int|NULL
+suffix:semicolon
 id|remove_proc_entry
 c_func
 (paren
@@ -722,9 +752,79 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-id|proc_net_rpc
-op_assign
+)brace
+)brace
+macro_line|#ifdef MODULE
+multiline_comment|/*&n; * This is called as the proc_dir_entry fill_inode function&n; * when an inode is going into or out of service (fill == 1&n; * or 0 respectively).&n; *&n; * We use it here to keep the module from being unloaded&n; * while /proc inodes are in use.&n; */
+DECL|function|rpc_modcount
+r_void
+id|rpc_modcount
+c_func
+(paren
+r_struct
+id|inode
+op_star
+id|inode
+comma
+r_int
+id|fill
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|fill
+)paren
+id|MOD_INC_USE_COUNT
+suffix:semicolon
+r_else
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
+)brace
+r_int
+DECL|function|init_module
+id|init_module
+c_func
+(paren
+r_void
+)paren
+(brace
+macro_line|#ifdef RPC_DEBUG
+id|rpc_register_sysctl
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+id|rpc_proc_init
+c_func
+(paren
+)paren
+suffix:semicolon
+r_return
 l_int|0
 suffix:semicolon
 )brace
+r_void
+DECL|function|cleanup_module
+id|cleanup_module
+c_func
+(paren
+r_void
+)paren
+(brace
+macro_line|#ifdef RPC_DEBUG
+id|rpc_unregister_sysctl
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+id|rpc_proc_exit
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
 eof

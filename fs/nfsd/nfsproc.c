@@ -127,9 +127,16 @@ id|resp
 id|dprintk
 c_func
 (paren
-l_string|&quot;nfsd: GETATTR  %p&bslash;n&quot;
+l_string|&quot;nfsd: GETATTR  %d/%ld&bslash;n&quot;
 comma
-id|SVCFH_DENTRY
+id|SVCFH_DEV
+c_func
+(paren
+op_amp
+id|argp-&gt;fh
+)paren
+comma
+id|SVCFH_INO
 c_func
 (paren
 op_amp
@@ -191,14 +198,28 @@ id|resp
 id|dprintk
 c_func
 (paren
-l_string|&quot;nfsd: SETATTR  %p&bslash;n&quot;
+l_string|&quot;nfsd: SETATTR  %d/%ld, valid=%x, size=%ld&bslash;n&quot;
 comma
-id|SVCFH_DENTRY
+id|SVCFH_DEV
 c_func
 (paren
 op_amp
 id|argp-&gt;fh
 )paren
+comma
+id|SVCFH_INO
+c_func
+(paren
+op_amp
+id|argp-&gt;fh
+)paren
+comma
+id|argp-&gt;attrs.ia_valid
+comma
+(paren
+r_int
+)paren
+id|argp-&gt;attrs.ia_size
 )paren
 suffix:semicolon
 id|fh_copy
@@ -257,9 +278,16 @@ suffix:semicolon
 id|dprintk
 c_func
 (paren
-l_string|&quot;nfsd: LOOKUP   %p %s&bslash;n&quot;
+l_string|&quot;nfsd: LOOKUP   %d/%ld %s&bslash;n&quot;
 comma
-id|SVCFH_DENTRY
+id|SVCFH_DEV
+c_func
+(paren
+op_amp
+id|argp-&gt;fh
+)paren
+comma
+id|SVCFH_INO
 c_func
 (paren
 op_amp
@@ -436,9 +464,16 @@ suffix:semicolon
 id|dprintk
 c_func
 (paren
-l_string|&quot;nfsd: READ %p %d bytes at %d&bslash;n&quot;
+l_string|&quot;nfsd: READ    %d/%ld %d bytes at %d&bslash;n&quot;
 comma
-id|SVCFH_DENTRY
+id|SVCFH_DEV
+c_func
+(paren
+op_amp
+id|argp-&gt;fh
+)paren
+comma
+id|SVCFH_INO
 c_func
 (paren
 op_amp
@@ -573,9 +608,16 @@ suffix:semicolon
 id|dprintk
 c_func
 (paren
-l_string|&quot;nfsd: WRITE    %p %d bytes at %d&bslash;n&quot;
+l_string|&quot;nfsd: WRITE    %d/%ld %d bytes at %d&bslash;n&quot;
 comma
-id|SVCFH_DENTRY
+id|SVCFH_DEV
+c_func
+(paren
+op_amp
+id|argp-&gt;fh
+)paren
+comma
+id|SVCFH_INO
 c_func
 (paren
 op_amp
@@ -643,27 +685,34 @@ op_star
 id|resp
 )paren
 (brace
-r_struct
-id|inode
+id|svc_fh
 op_star
-id|dirp
-comma
-op_star
-id|inode
+id|dirfhp
 op_assign
-l_int|NULL
+op_amp
+id|argp-&gt;fh
+suffix:semicolon
+id|svc_fh
+op_star
+id|newfhp
+op_assign
+op_amp
+id|resp-&gt;fh
 suffix:semicolon
 r_struct
 id|iattr
 op_star
 id|attr
+op_assign
+op_amp
+id|argp-&gt;attrs
 suffix:semicolon
-id|svc_fh
+r_struct
+id|inode
 op_star
-id|dirfhp
-comma
-op_star
-id|newfhp
+id|inode
+op_assign
+l_int|NULL
 suffix:semicolon
 r_int
 id|nfserr
@@ -687,32 +736,22 @@ suffix:semicolon
 id|dprintk
 c_func
 (paren
-l_string|&quot;nfsd: CREATE   %p %s&bslash;n&quot;
+l_string|&quot;nfsd: CREATE   %d/%ld %s&bslash;n&quot;
 comma
-id|SVCFH_DENTRY
+id|SVCFH_DEV
 c_func
 (paren
-op_amp
-id|argp-&gt;fh
+id|dirfhp
+)paren
+comma
+id|SVCFH_INO
+c_func
+(paren
+id|dirfhp
 )paren
 comma
 id|argp-&gt;name
 )paren
-suffix:semicolon
-id|dirfhp
-op_assign
-op_amp
-id|argp-&gt;fh
-suffix:semicolon
-id|newfhp
-op_assign
-op_amp
-id|resp-&gt;fh
-suffix:semicolon
-id|attr
-op_assign
-op_amp
-id|argp-&gt;attrs
 suffix:semicolon
 multiline_comment|/* Get the directory inode */
 id|nfserr
@@ -738,10 +777,6 @@ r_goto
 id|done
 suffix:semicolon
 multiline_comment|/* must fh_put dirfhp even on error */
-id|dirp
-op_assign
-id|dirfhp-&gt;fh_dentry-&gt;d_inode
-suffix:semicolon
 multiline_comment|/* Check for MAY_WRITE separately. */
 id|nfserr
 op_assign
@@ -897,6 +932,10 @@ suffix:semicolon
 multiline_comment|/* ??? */
 )brace
 multiline_comment|/* This is for &quot;echo &gt; /dev/null&quot; a la SunOS. Argh. */
+id|nfserr
+op_assign
+id|nfserr_rofs
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -911,15 +950,9 @@ op_eq
 id|S_IFREG
 )paren
 )paren
-(brace
-id|nfserr
-op_assign
-id|nfserr_rofs
-suffix:semicolon
 r_goto
 id|done
 suffix:semicolon
-)brace
 id|attr-&gt;ia_valid
 op_or_assign
 id|ATTR_MODE
@@ -1107,7 +1140,24 @@ op_eq
 id|S_IFREG
 )paren
 (brace
+id|dprintk
+c_func
+(paren
+l_string|&quot;nfsd:   existing %s, valid=%x, size=%ld&bslash;n&quot;
+comma
+id|argp-&gt;name
+comma
+id|attr-&gt;ia_valid
+comma
+(paren
+r_int
+)paren
+id|attr-&gt;ia_size
+)paren
+suffix:semicolon
 multiline_comment|/* File already exists. We ignore all attributes except&n;&t;&t; * size, so that creat() behaves exactly like&n;&t;&t; * open(..., O_CREAT|O_TRUNC|O_WRONLY).&n;&t;&t; */
+macro_line|#if 0
+multiline_comment|/* N.B. What is this doing? ignores size?? */
 r_if
 c_cond
 (paren
@@ -1121,6 +1171,28 @@ id|ATTR_SIZE
 )paren
 op_ne
 l_int|0
+)paren
+id|nfserr
+op_assign
+id|nfsd_setattr
+c_func
+(paren
+id|rqstp
+comma
+id|newfhp
+comma
+id|attr
+)paren
+suffix:semicolon
+macro_line|#endif
+id|attr-&gt;ia_valid
+op_and_assign
+id|ATTR_SIZE
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|attr-&gt;ia_valid
 )paren
 id|nfserr
 op_assign

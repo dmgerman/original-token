@@ -1,8 +1,9 @@
-multiline_comment|/* $Id: ross.h,v 1.12 1997/03/10 09:16:57 davem Exp $&n; * ross.h: Ross module specific definitions and defines.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: ross.h,v 1.13 1998/01/07 06:49:11 baccala Exp $&n; * ross.h: Ross module specific definitions and defines.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _SPARC_ROSS_H
 DECL|macro|_SPARC_ROSS_H
 mdefine_line|#define _SPARC_ROSS_H
 macro_line|#include &lt;asm/asi.h&gt;
+macro_line|#include &lt;asm/page.h&gt;
 multiline_comment|/* Ross made Hypersparcs have a %psr &squot;impl&squot; field of &squot;0001&squot;.  The &squot;vers&squot;&n; * field has &squot;1111&squot;.&n; */
 multiline_comment|/* The MMU control register fields on the HyperSparc.&n; *&n; * -----------------------------------------------------------------&n; * |implvers| RSV |CWR|SE|WBE| MID |BM| C|CS|MR|CM|RSV|CE|RSV|NF|ME|&n; * -----------------------------------------------------------------&n; *  31    24 23-22 21  20  19 18-15 14 13 12 11 10  9   8 7-2  1  0&n; *&n; * Phew, lots of fields there ;-)&n; *&n; * CWR: Cache Wrapping Enabled, if one cache wrapping is on.&n; * SE: Snoop Enable, turns on bus snooping for cache activity if one.&n; * WBE: Write Buffer Enable, one turns it on.&n; * MID: The ModuleID of the chip for MBus transactions.&n; * BM: Boot-Mode. One indicates the MMU is in boot mode.&n; * C: Indicates whether accesses are cachable while the MMU is&n; *    disabled.&n; * CS: Cache Size -- 0 = 128k, 1 = 256k&n; * MR: Memory Reflection, one indicates that the memory bus connected&n; *     to the MBus supports memory reflection.&n; * CM: Cache Mode -- 0 = write-through, 1 = copy-back&n; * CE: Cache Enable -- 0 = no caching, 1 = cache is on&n; * NF: No Fault -- 0 = faults trap the CPU from supervisor mode&n; *                 1 = faults from supervisor mode do not generate traps&n; * ME: MMU Enable -- 0 = MMU is off, 1 = MMU is on&n; */
 DECL|macro|HYPERSPARC_CWENABLE

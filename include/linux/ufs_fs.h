@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/include/linux/ufs_fs.h&n; *&n; * Copyright (C) 1996&n; * Adrian Rodriguez (adrian@franklins-tower.rutgers.edu)&n; * Laboratory for Computer Science Research Computing Facility&n; * Rutgers, The State University of New Jersey&n; *&n; * Clean swab support by Fare &lt;rideau@ens.fr&gt;&n; * just hope no one is using NNUUXXI on __?64 structure elements&n; */
+multiline_comment|/*&n; *  linux/include/linux/ufs_fs.h&n; *&n; * Copyright (C) 1996&n; * Adrian Rodriguez (adrian@franklins-tower.rutgers.edu)&n; * Laboratory for Computer Science Research Computing Facility&n; * Rutgers, The State University of New Jersey&n; *&n; * Clean swab support by Fare &lt;rideau@ens.fr&gt;&n; * just hope no one is using NNUUXXI on __?64 structure elements&n; * 64-bit clean thanks to Maciej W. Rozycki &lt;macro@ds2.pg.gda.pl&gt;&n; */
 macro_line|#ifndef __LINUX_UFS_FS_H
 DECL|macro|__LINUX_UFS_FS_H
 mdefine_line|#define __LINUX_UFS_FS_H
@@ -100,6 +100,20 @@ DECL|macro|ufs_boff
 mdefine_line|#define ufs_boff(sb, block)&t;&t;((block) &amp; ~((sb)-&gt;u.ufs_sb.s_lmask))
 DECL|macro|ufs_dbn
 mdefine_line|#define ufs_dbn(sb, block, boff)&t;((block) + ufs_boff((sb), (boff)))
+DECL|struct|ufs_timeval
+r_struct
+id|ufs_timeval
+(brace
+DECL|member|tv_sec
+id|__s32
+id|tv_sec
+suffix:semicolon
+DECL|member|tv_usec
+id|__s32
+id|tv_usec
+suffix:semicolon
+)brace
+suffix:semicolon
 DECL|struct|ufs_direct
 r_struct
 id|ufs_direct
@@ -461,9 +475,7 @@ id|fs_cgrotor
 suffix:semicolon
 multiline_comment|/* last cg searched */
 DECL|member|fs_csp
-r_struct
-id|ufs_csum
-op_star
+id|__u32
 id|fs_csp
 (braket
 id|MAXCSBUFS
@@ -500,13 +512,19 @@ id|fs_state
 suffix:semicolon
 multiline_comment|/* file system state time stamp */
 DECL|member|fs_qbmask
-id|__s64
+id|__u32
 id|fs_qbmask
+(braket
+l_int|2
+)braket
 suffix:semicolon
 multiline_comment|/* ~usb_bmask */
 DECL|member|fs_qfmask
-id|__s64
+id|__u32
 id|fs_qfmask
+(braket
+l_int|2
+)braket
 suffix:semicolon
 multiline_comment|/* ~usb_fmask */
 DECL|member|fs_postblformat
@@ -576,19 +594,19 @@ suffix:semicolon
 multiline_comment|/*  0x8 */
 DECL|member|ui_atime
 r_struct
-id|timeval
+id|ufs_timeval
 id|ui_atime
 suffix:semicolon
 multiline_comment|/* 0x10 access */
 DECL|member|ui_mtime
 r_struct
-id|timeval
+id|ufs_timeval
 id|ui_mtime
 suffix:semicolon
 multiline_comment|/* 0x18 modification */
 DECL|member|ui_ctime
 r_struct
-id|timeval
+id|ufs_timeval
 id|ui_ctime
 suffix:semicolon
 multiline_comment|/* 0x20 creation */

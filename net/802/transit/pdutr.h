@@ -1,4 +1,4 @@
-multiline_comment|/* this file was generated on Thu Dec  5 13:58:11 GMT 1996  */
+multiline_comment|/* this file was generated on Thu Jan  8 00:21:19 GMT 1998  */
 multiline_comment|/* index name #defines: */
 DECL|macro|ADM
 mdefine_line|#define ADM            0

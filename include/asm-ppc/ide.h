@@ -4,11 +4,20 @@ macro_line|#ifndef __ASMPPC_IDE_H
 DECL|macro|__ASMPPC_IDE_H
 mdefine_line|#define __ASMPPC_IDE_H
 macro_line|#ifdef __KERNEL__
-macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;linux/ioport.h&gt;
+macro_line|#include &lt;asm/io.h&gt;&t;&t;/* so we can redefine insw/outsw */
 macro_line|#ifndef MAX_HWIFS
 DECL|macro|MAX_HWIFS
 mdefine_line|#define MAX_HWIFS&t;4
 macro_line|#endif
+DECL|macro|SUPPORT_SLOW_DATA_PORTS
+macro_line|#undef&t;SUPPORT_SLOW_DATA_PORTS
+DECL|macro|SUPPORT_SLOW_DATA_PORTS
+mdefine_line|#define&t;SUPPORT_SLOW_DATA_PORTS&t;0
+DECL|macro|SUPPORT_VLB_SYNC
+macro_line|#undef&t;SUPPORT_VLB_SYNC
+DECL|macro|SUPPORT_VLB_SYNC
+mdefine_line|#define SUPPORT_VLB_SYNC&t;0
 DECL|macro|ide_sti
 mdefine_line|#define ide_sti()&t;sti()
 DECL|typedef|ide_ioreg_t
@@ -65,7 +74,36 @@ op_star
 id|irq
 )paren
 suffix:semicolon
-macro_line|#if defined(CONFIG_PREP) || defined(CONFIG_CHRP)
+r_void
+id|ide_insw
+c_func
+(paren
+id|ide_ioreg_t
+id|port
+comma
+r_void
+op_star
+id|buf
+comma
+r_int
+id|ns
+)paren
+suffix:semicolon
+r_void
+id|ide_outsw
+c_func
+(paren
+id|ide_ioreg_t
+id|port
+comma
+r_void
+op_star
+id|buf
+comma
+r_int
+id|ns
+)paren
+suffix:semicolon
 DECL|function|ide_default_irq
 r_static
 id|__inline__
@@ -77,6 +115,16 @@ id|ide_ioreg_t
 id|base
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|_machine
+op_eq
+id|_MACH_Pmac
+)paren
+r_return
+l_int|0
+suffix:semicolon
 r_switch
 c_cond
 (paren
@@ -125,6 +173,16 @@ r_int
 id|index
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|_machine
+op_eq
+id|_MACH_Pmac
+)paren
+r_return
+id|index
+suffix:semicolon
 r_switch
 c_cond
 (paren
@@ -162,60 +220,6 @@ l_int|0
 suffix:semicolon
 )brace
 )brace
-r_typedef
-r_union
-(brace
-r_int
-id|all
-suffix:colon
-l_int|8
-suffix:semicolon
-multiline_comment|/* all of the bits together */
-r_struct
-(brace
-DECL|member|head
-r_int
-id|head
-suffix:colon
-l_int|4
-suffix:semicolon
-multiline_comment|/* always zeros here */
-DECL|member|unit
-r_int
-id|unit
-suffix:colon
-l_int|1
-suffix:semicolon
-multiline_comment|/* drive select number, 0 or 1 */
-DECL|member|bit5
-r_int
-id|bit5
-suffix:colon
-l_int|1
-suffix:semicolon
-multiline_comment|/* always 1 */
-DECL|member|lba
-r_int
-id|lba
-suffix:colon
-l_int|1
-suffix:semicolon
-multiline_comment|/* using LBA instead of CHS */
-DECL|member|bit7
-r_int
-id|bit7
-suffix:colon
-l_int|1
-suffix:semicolon
-multiline_comment|/* always 1 */
-DECL|member|b
-)brace
-id|b
-suffix:semicolon
-DECL|typedef|select_t
-)brace
-id|select_t
-suffix:semicolon
 DECL|function|ide_check_region
 r_static
 id|__inline__
@@ -230,6 +234,16 @@ r_int
 id|extent
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|_machine
+op_eq
+id|_MACH_Pmac
+)paren
+r_return
+l_int|0
+suffix:semicolon
 r_return
 id|check_region
 c_func
@@ -259,6 +273,15 @@ op_star
 id|name
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|_machine
+op_eq
+id|_MACH_Pmac
+)paren
+r_return
+suffix:semicolon
 id|request_region
 c_func
 (paren
@@ -284,6 +307,15 @@ r_int
 id|extent
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|_machine
+op_eq
+id|_MACH_Pmac
+)paren
+r_return
+suffix:semicolon
 id|release_region
 c_func
 (paren
@@ -294,46 +326,15 @@ id|extent
 suffix:semicolon
 )brace
 DECL|macro|ide_fix_driveid
-mdefine_line|#define ide_fix_driveid(id)&t;&t;do {} while (0)
-macro_line|#endif /* CONFIG_CHRP || CONFIG_PREP */
-macro_line|#ifdef CONFIG_PMAC
-macro_line|#include &lt;asm/io.h&gt;&t;&t;/* so we can redefine insw/outsw */
-DECL|typedef|ide_ioreg_t
-r_typedef
-r_int
-r_int
-id|ide_ioreg_t
-suffix:semicolon
-DECL|function|ide_default_irq
-r_static
-id|__inline__
-r_int
-id|ide_default_irq
-c_func
-(paren
-id|ide_ioreg_t
-id|base
-)paren
-(brace
-r_return
-l_int|0
-suffix:semicolon
-)brace
-DECL|function|ide_default_io_base
-r_extern
-id|__inline__
-id|ide_ioreg_t
-id|ide_default_io_base
-c_func
-(paren
-r_int
-id|index
-)paren
-(brace
-r_return
-id|index
-suffix:semicolon
-)brace
+mdefine_line|#define ide_fix_driveid(id)&t;do {&t;&t;&t;&bslash;&n;&t;int nh;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;unsigned short *p = (unsigned short *) id;&t;&bslash;&n;&t;if ( _machine == _MACH_Pmac )&t;&t;&t;&bslash;&n;&t;&t;for (nh = SECTOR_WORDS * 2; nh != 0; --nh, ++p)&t;&bslash;&n;&t;&t;&t;*p = (*p &lt;&lt; 8) + (*p &gt;&gt; 8);&t;&bslash;&n;} while (0)
+DECL|macro|insw
+macro_line|#undef insw
+DECL|macro|insw
+mdefine_line|#define insw(port, buf, ns) &t;do {&t;&t;&t;&bslash;&n;&t;if ( _machine != _MACH_Pmac )&t;&t;&t;&bslash;&n;&t;&t;/* this must be the same as insw in io.h!! */&t;&bslash;&n;&t;&t;_insw((unsigned short *)((port)+_IO_BASE), (buf), (ns)); &bslash;&n;&t;else&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;ide_insw((port), (buf), (ns));&t;&t;&bslash;&n;} while (0)
+DECL|macro|outsw
+macro_line|#undef outsw
+DECL|macro|outsw
+mdefine_line|#define outsw(port, buf, ns) &t;do {&t;&t;&t;&bslash;&n;&t;if ( _machine != _MACH_Pmac )&t;&t;&t;&bslash;&n;&t;&t;/* this must be the same as outsw in io.h!! */&t;&bslash;&n;&t;&t;_outsw((unsigned short *)((port)+_IO_BASE), (buf), (ns)); &bslash;&n;&t;else&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;ide_outsw((port), (buf), (ns));&t;&t;&bslash;&n;} while (0)
 r_typedef
 r_union
 (brace
@@ -388,108 +389,6 @@ DECL|typedef|select_t
 )brace
 id|select_t
 suffix:semicolon
-DECL|macro|SUPPORT_SLOW_DATA_PORTS
-macro_line|#undef&t;SUPPORT_SLOW_DATA_PORTS
-DECL|macro|SUPPORT_SLOW_DATA_PORTS
-mdefine_line|#define&t;SUPPORT_SLOW_DATA_PORTS&t;0
-DECL|macro|SUPPORT_VLB_SYNC
-macro_line|#undef&t;SUPPORT_VLB_SYNC
-DECL|macro|SUPPORT_VLB_SYNC
-mdefine_line|#define SUPPORT_VLB_SYNC&t;0
-DECL|function|ide_check_region
-r_static
-id|__inline__
-r_int
-id|ide_check_region
-(paren
-id|ide_ioreg_t
-id|from
-comma
-r_int
-r_int
-id|extent
-)paren
-(brace
-r_return
-l_int|0
-suffix:semicolon
-)brace
-DECL|function|ide_request_region
-r_static
-id|__inline__
-r_void
-id|ide_request_region
-(paren
-id|ide_ioreg_t
-id|from
-comma
-r_int
-r_int
-id|extent
-comma
-r_const
-r_char
-op_star
-id|name
-)paren
-(brace
-)brace
-DECL|function|ide_release_region
-r_static
-id|__inline__
-r_void
-id|ide_release_region
-(paren
-id|ide_ioreg_t
-id|from
-comma
-r_int
-r_int
-id|extent
-)paren
-(brace
-)brace
-DECL|macro|insw
-macro_line|#undef insw
-DECL|macro|outsw
-macro_line|#undef outsw
-DECL|macro|insw
-mdefine_line|#define insw(port, buf, ns)&t;ide_insw((port), (buf), (ns))
-DECL|macro|outsw
-mdefine_line|#define outsw(port, buf, ns)&t;ide_outsw((port), (buf), (ns))
-r_void
-id|ide_insw
-c_func
-(paren
-id|ide_ioreg_t
-id|port
-comma
-r_void
-op_star
-id|buf
-comma
-r_int
-id|ns
-)paren
-suffix:semicolon
-r_void
-id|ide_outsw
-c_func
-(paren
-id|ide_ioreg_t
-id|port
-comma
-r_void
-op_star
-id|buf
-comma
-r_int
-id|ns
-)paren
-suffix:semicolon
-DECL|macro|ide_fix_driveid
-mdefine_line|#define ide_fix_driveid(id)&t;do {&t;&t;&t;&bslash;&n;&t;int nh;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;unsigned short *p = (unsigned short *) id;&t;&bslash;&n;&t;for (nh = SECTOR_WORDS * 2; nh != 0; --nh, ++p)&t;&bslash;&n;&t;&t;*p = (*p &lt;&lt; 8) + (*p &gt;&gt; 8);&t;&t;&bslash;&n;} while (0)
-macro_line|#endif
 DECL|function|ide_request_irq
 r_static
 id|__inline__

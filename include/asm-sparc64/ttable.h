@@ -1,8 +1,10 @@
-multiline_comment|/* $Id: ttable.h,v 1.3 1997/08/29 15:52:35 jj Exp $ */
+multiline_comment|/* $Id: ttable.h,v 1.5 1997/10/14 16:21:34 jj Exp $ */
 macro_line|#ifndef _SPARC64_TTABLE_H
 DECL|macro|_SPARC64_TTABLE_H
 mdefine_line|#define _SPARC64_TTABLE_H
 macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;asm/asm_offsets.h&gt;
+macro_line|#include &lt;asm/utrap.h&gt;
 DECL|macro|BOOT_KERNEL
 mdefine_line|#define BOOT_KERNEL b sparc64_boot; nop; nop; nop; nop; nop; nop; nop;
 multiline_comment|/* We need a &quot;cleaned&quot; instruction... */
@@ -26,10 +28,12 @@ DECL|macro|ACCESS_EXCEPTION_TRAPTL1
 mdefine_line|#define ACCESS_EXCEPTION_TRAPTL1(routine)&t;&t;&bslash;&n;&t;rdpr&t;%pstate, %g1;&t;&t;&t;&t;&bslash;&n;&t;wrpr&t;%g1, PSTATE_MG|PSTATE_AG, %pstate;&t;&bslash;&n;&t;ba,pt&t;%xcc, etraptl1;&t;&t;&t;&t;&bslash;&n;&t; rd&t;%pc, %g7;&t;&t;&t;&t;&bslash;&n;&t;call&t;routine;&t;&t;&t;&t;&bslash;&n;&t; add&t;%sp, STACK_BIAS + REGWIN_SZ, %o0;&t;&bslash;&n;&t;ba,pt&t;%xcc, rtrap;&t;&t;&t;&t;&bslash;&n;&t; clr&t;%l6;
 DECL|macro|INDIRECT_SOLARIS_SYSCALL
 mdefine_line|#define INDIRECT_SOLARIS_SYSCALL(num)&t;&t;&t;&bslash;&n;&t;sethi&t;%hi(109f), %g7;&t;&t;&t;&t;&bslash;&n;&t;ba,pt&t;%xcc, etrap;&t;&t;&t;&t;&bslash;&n;109:&t; or&t;%g7, %lo(109b), %g7;&t;&t;&t;&bslash;&n;&t;ba,pt&t;%xcc, tl0_solaris + 0xc;&t;&t;&bslash;&n;&t; mov&t;num, %g1;&t;&t;&t;&t;&bslash;&n;&t;nop;nop;nop;
+DECL|macro|TRAP_UTRAP
+mdefine_line|#define TRAP_UTRAP(handler,lvl)&t;&t;&t;&t;&t;&t;&bslash;&n;&t;ldx&t;[%g6 + AOFF_task_tss + AOFF_thread_utraps], %g1;&t;&bslash;&n;&t;sethi&t;%hi(109f), %g7;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;brz,pn&t;%g1, utrap;&t;&t;&t;&t;&t;&t;&bslash;&n;&t; or&t;%g7, %lo(109f), %g7;&t;&t;&t;&t;&t;&bslash;&n;&t;ba,pt&t;%xcc, utrap;&t;&t;&t;&t;&t;&t;&bslash;&n;109:&t; ldx&t;[%g1 + handler*8], %g1;&t;&t;&t;&t;&t;&bslash;&n;&t;ba,pt&t;%xcc, utrap_ill;&t;&t;&t;&t;&t;&bslash;&n;&t; mov&t;lvl, %o1;
 DECL|macro|SUNOS_SYSCALL_TRAP
-mdefine_line|#define SUNOS_SYSCALL_TRAP SYSCALL_TRAP(linux_sparc_syscall, sunos_sys_table)
+mdefine_line|#define SUNOS_SYSCALL_TRAP SYSCALL_TRAP(linux_sparc_syscall32, sunos_sys_table)
 DECL|macro|LINUX_32BIT_SYSCALL_TRAP
-mdefine_line|#define&t;LINUX_32BIT_SYSCALL_TRAP SYSCALL_TRAP(linux_sparc_syscall, sys_call_table32)
+mdefine_line|#define&t;LINUX_32BIT_SYSCALL_TRAP SYSCALL_TRAP(linux_sparc_syscall32, sys_call_table32)
 DECL|macro|LINUX_64BIT_SYSCALL_TRAP
 mdefine_line|#define LINUX_64BIT_SYSCALL_TRAP SYSCALL_TRAP(linux_sparc_syscall, sys_call_table64)
 DECL|macro|GETCC_TRAP

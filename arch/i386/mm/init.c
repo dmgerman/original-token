@@ -205,6 +205,10 @@ r_int
 id|shared
 op_assign
 l_int|0
+comma
+id|cached
+op_assign
+l_int|0
 suffix:semicolon
 id|printk
 c_func
@@ -259,6 +263,20 @@ id|i
 )paren
 )paren
 id|reserved
+op_increment
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|PageSwapCache
+c_func
+(paren
+id|mem_map
+op_plus
+id|i
+)paren
+)paren
+id|cached
 op_increment
 suffix:semicolon
 r_else
@@ -329,6 +347,14 @@ c_func
 l_string|&quot;%d pages shared&bslash;n&quot;
 comma
 id|shared
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;%d pages swap cached&bslash;n&quot;
+comma
+id|cached
 )paren
 suffix:semicolon
 id|show_buffers

@@ -5,18 +5,10 @@ macro_line|#include &lt;linux/linkage.h&gt;
 macro_line|#include &lt;linux/ctype.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/sysctl.h&gt;
-macro_line|#if LINUX_VERSION_CODE &gt;= 0x020100
 macro_line|#include &lt;asm/uaccess.h&gt;
-macro_line|#else
-macro_line|# include &lt;linux/mm.h&gt;
-DECL|macro|copy_from_user
-macro_line|# define copy_from_user&t;&t;memcpy_fromfs
-DECL|macro|copy_to_user
-macro_line|# define copy_to_user&t;&t;memcpy_tofs
-DECL|macro|access_ok
-macro_line|# define access_ok&t;&t;!verify_area
-macro_line|#endif
 macro_line|#include &lt;linux/sunrpc/types.h&gt;
+macro_line|#include &lt;linux/sunrpc/sched.h&gt;
+macro_line|#include &lt;linux/sunrpc/stats.h&gt;
 multiline_comment|/*&n; * Declare the debug flags here&n; */
 DECL|variable|rpc_debug
 r_int
@@ -74,10 +66,10 @@ r_void
 r_if
 c_cond
 (paren
+op_logical_neg
 id|sunrpc_table_header
 )paren
-r_return
-suffix:semicolon
+(brace
 id|sunrpc_table_header
 op_assign
 id|register_sysctl_table
@@ -88,6 +80,28 @@ comma
 l_int|1
 )paren
 suffix:semicolon
+macro_line|#ifdef MODULE
+r_if
+c_cond
+(paren
+id|sunrpc_table
+(braket
+l_int|0
+)braket
+dot
+id|de
+)paren
+id|sunrpc_table
+(braket
+l_int|0
+)braket
+dot
+id|de-&gt;fill_inode
+op_assign
+id|rpc_modcount
+suffix:semicolon
+macro_line|#endif
+)brace
 )brace
 r_void
 DECL|function|rpc_unregister_sysctl
@@ -100,17 +114,20 @@ r_void
 r_if
 c_cond
 (paren
-op_logical_neg
 id|sunrpc_table_header
 )paren
-r_return
-suffix:semicolon
+(brace
 id|unregister_sysctl_table
 c_func
 (paren
 id|sunrpc_table_header
 )paren
 suffix:semicolon
+id|sunrpc_table_header
+op_assign
+l_int|NULL
+suffix:semicolon
+)brace
 )brace
 r_int
 DECL|function|proc_dodebug
@@ -406,6 +423,21 @@ id|table-&gt;data
 op_assign
 id|value
 suffix:semicolon
+multiline_comment|/* Display the RPC tasks on writing to rpc_debug */
+r_if
+c_cond
+(paren
+id|table-&gt;ctl_name
+op_eq
+id|CTL_RPCDEBUG
+)paren
+(brace
+id|rpc_show_tasks
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
 )brace
 r_else
 (brace

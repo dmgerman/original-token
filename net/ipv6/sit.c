@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;IPv6 over IPv4 tunnel device - Simple Internet Transition (SIT)&n; *&t;Linux INET6 implementation&n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&t;Alexey Kuznetsov&t;&lt;kuznet@ms2.inr.ac.ru&gt;&n; *&n; *&t;$Id: sit.c,v 1.23 1997/11/08 18:15:49 kuznet Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; *&t;IPv6 over IPv4 tunnel device - Simple Internet Transition (SIT)&n; *&t;Linux INET6 implementation&n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&t;Alexey Kuznetsov&t;&lt;kuznet@ms2.inr.ac.ru&gt;&n; *&n; *&t;$Id: sit.c,v 1.24 1997/12/13 21:53:17 kuznet Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
@@ -1715,7 +1715,7 @@ id|dst
 )paren
 (brace
 r_struct
-id|nd_neigh
+id|neighbour
 op_star
 id|neigh
 op_assign
@@ -1728,11 +1728,6 @@ id|skb-&gt;dst
 )paren
 id|neigh
 op_assign
-(paren
-r_struct
-id|nd_neigh
-op_star
-)paren
 id|skb-&gt;dst-&gt;neighbour
 suffix:semicolon
 r_if
@@ -1756,16 +1751,17 @@ suffix:semicolon
 )brace
 id|addr6
 op_assign
+(paren
+r_struct
+id|in6_addr
+op_star
+)paren
 op_amp
-id|neigh-&gt;ndn_addr
+id|neigh-&gt;primary_key
 suffix:semicolon
 id|addr_type
 op_assign
-id|ipv6_addr_type
-c_func
-(paren
-id|addr6
-)paren
+id|neigh-&gt;type
 suffix:semicolon
 r_if
 c_cond

@@ -1694,10 +1694,9 @@ op_lshift
 id|MSC_INTR_QBMFUL_SH
 )paren
 suffix:semicolon
-id|resched_force
-c_func
-(paren
-)paren
+id|need_resched
+op_assign
+l_int|1
 suffix:semicolon
 id|block_parallel_tasks
 op_assign

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;NET3&t;IP device support routines.&n; *&n; *&t;Version: $Id: devinet.c,v 1.14 1997/10/10 22:40:44 davem Exp $&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;Derived from the IP parts of dev.c 1.0.19&n; * &t;&t;Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&n; *&t;Additional Authors:&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;Alexey Kuznetsov, &lt;kuznet@ms2.inr.ac.ru&gt;&n; *&n; *&t;Changes:&n; *&t;        Alexey Kuznetsov:&t;pa_* fields are replaced with ifaddr lists.&n; */
+multiline_comment|/*&n; *&t;NET3&t;IP device support routines.&n; *&n; *&t;Version: $Id: devinet.c,v 1.15 1997/12/13 21:52:47 kuznet Exp $&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;Derived from the IP parts of dev.c 1.0.19&n; * &t;&t;Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&n; *&t;Additional Authors:&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;Alexey Kuznetsov, &lt;kuznet@ms2.inr.ac.ru&gt;&n; *&n; *&t;Changes:&n; *&t;        Alexey Kuznetsov:&t;pa_* fields are replaced with ifaddr lists.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -23,6 +23,9 @@ macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/notifier.h&gt;
 macro_line|#include &lt;linux/inetdevice.h&gt;
 macro_line|#include &lt;linux/igmp.h&gt;
+macro_line|#ifdef CONFIG_SYSCTL
+macro_line|#include &lt;linux/sysctl.h&gt;
+macro_line|#endif
 macro_line|#ifdef CONFIG_KERNELD
 macro_line|#include &lt;linux/kerneld.h&gt;
 macro_line|#endif
@@ -231,11 +234,58 @@ id|in_dev-&gt;dev
 op_assign
 id|dev
 suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|in_dev-&gt;arp_parms
+op_assign
+id|neigh_parms_alloc
+c_func
+(paren
+op_amp
+id|arp_tbl
+)paren
+)paren
+op_eq
+l_int|NULL
+)paren
+id|in_dev-&gt;arp_parms
+op_assign
+op_amp
+id|arp_tbl.parms
+suffix:semicolon
+macro_line|#ifdef CONFIG_SYSCTL
+r_else
+id|in_dev-&gt;arp_parms-&gt;sysctl_table
+op_assign
+id|neigh_sysctl_register
+c_func
+(paren
+id|dev
+comma
+id|in_dev-&gt;arp_parms
+comma
+id|NET_IPV4
+comma
+id|NET_IPV4_NEIGH
+comma
+l_string|&quot;ipv4&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
 id|dev-&gt;ip_ptr
 op_assign
 id|in_dev
 suffix:semicolon
-id|ip_mc_init_dev
+r_if
+c_cond
+(paren
+id|dev-&gt;flags
+op_amp
+id|IFF_UP
+)paren
+id|ip_mc_up
 c_func
 (paren
 id|in_dev
@@ -301,6 +351,15 @@ suffix:semicolon
 id|in_dev-&gt;dev-&gt;ip_ptr
 op_assign
 l_int|NULL
+suffix:semicolon
+id|neigh_parms_release
+c_func
+(paren
+op_amp
+id|arp_tbl
+comma
+id|in_dev-&gt;arp_parms
+)paren
 suffix:semicolon
 id|kfree
 c_func
@@ -715,10 +774,18 @@ op_amp
 id|IFA_F_SECONDARY
 )paren
 )paren
+(brace
+id|net_srandom
+c_func
+(paren
+id|ifa-&gt;ifa_local
+)paren
+suffix:semicolon
 id|ifap
 op_assign
 id|last_primary
 suffix:semicolon
+)brace
 id|cli
 c_func
 (paren
@@ -2965,6 +3032,8 @@ suffix:semicolon
 id|ifm-&gt;ifa_flags
 op_assign
 id|ifa-&gt;ifa_flags
+op_or
+id|IFA_F_PERMANENT
 suffix:semicolon
 id|ifm-&gt;ifa_scope
 op_assign
@@ -3521,7 +3590,14 @@ comma
 )brace
 comma
 (brace
+id|neigh_add
+comma
 l_int|NULL
+comma
+)brace
+comma
+(brace
+id|neigh_delete
 comma
 l_int|NULL
 comma
@@ -3530,14 +3606,7 @@ comma
 (brace
 l_int|NULL
 comma
-l_int|NULL
-comma
-)brace
-comma
-(brace
-l_int|NULL
-comma
-l_int|NULL
+id|neigh_dump_info
 comma
 )brace
 comma

@@ -1,9 +1,37 @@
-multiline_comment|/* $Id: irq.h,v 1.20 1997/05/28 05:25:07 davem Exp $&n; * irq.h: IRQ registers on the Sparc.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: irq.h,v 1.21 1997/11/19 15:12:20 jj Exp $&n; * irq.h: IRQ registers on the Sparc.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _SPARC_IRQ_H
 DECL|macro|_SPARC_IRQ_H
 mdefine_line|#define _SPARC_IRQ_H
 macro_line|#include &lt;linux/linkage.h&gt;
 macro_line|#include &lt;asm/system.h&gt;     /* For NCPUS */
+multiline_comment|/* This is used for sun4d */
+DECL|struct|devid_cookie
+r_struct
+id|devid_cookie
+(brace
+multiline_comment|/* Caller specifies these. */
+DECL|member|real_dev_id
+r_void
+op_star
+id|real_dev_id
+suffix:semicolon
+multiline_comment|/* What dev_id would usually contain. */
+DECL|member|bus_cookie
+r_void
+op_star
+id|bus_cookie
+suffix:semicolon
+multiline_comment|/* linux_sbus_device *, etc. */
+multiline_comment|/* Return values. */
+DECL|member|ret_ino
+r_int
+r_int
+id|ret_ino
+suffix:semicolon
+)brace
+suffix:semicolon
+DECL|macro|SA_DCOOKIE
+mdefine_line|#define SA_DCOOKIE      0x10000
 DECL|macro|NR_IRQS
 mdefine_line|#define NR_IRQS    15
 multiline_comment|/* Get rid of this when lockups have gone away. -DaveM */

@@ -1,6 +1,5 @@
 multiline_comment|/*&n; *  linux/net/sunrpc/rpcclnt.c&n; *&n; *  This file contains the high-level RPC interface.&n; *  It is modeled as a finite state machine to support both synchronous&n; *  and asynchronous requests.&n; *&n; *  -&t;RPC header generation and argument serialization.&n; *  -&t;Credential refresh.&n; *  -&t;TCP reconnect handling (when finished).&n; *  -&t;Retry of operation when it is suspected the operation failed because&n; *&t;of uid squashing on the server, or when the credentials were stale&n; *&t;and need to be refreshed, or when a packet was damaged in transit.&n; *&t;This may be have to be moved to the VFS layer.&n; *&n; *  NB: BSD uses a more intelligent approach to guessing when a request&n; *  or reply has been lost by keeping the RTO estimate for each procedure.&n; *  We currently make do with a constant timeout value.&n; *&n; *  Copyright (C) 1992,1993 Rick Sladkey &lt;jrs@world.std.com&gt;&n; *  Copyright (C) 1995,1996 Olaf Kirch &lt;okir@monad.swb.de&gt;&n; */
 macro_line|#include &lt;linux/config.h&gt;
-macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -228,6 +227,8 @@ r_struct
 id|rpc_clnt
 op_star
 id|clnt
+op_assign
+l_int|NULL
 suffix:semicolon
 id|dprintk
 c_func
@@ -247,8 +248,8 @@ c_cond
 op_logical_neg
 id|xprt
 )paren
-r_return
-l_int|NULL
+r_goto
+id|out
 suffix:semicolon
 r_if
 c_cond
@@ -267,14 +268,9 @@ id|vers
 )braket
 )paren
 )paren
-r_return
-l_int|NULL
+r_goto
+id|out
 suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-(paren
 id|clnt
 op_assign
 (paren
@@ -293,19 +289,16 @@ op_star
 id|clnt
 )paren
 )paren
-)paren
-)paren
-(brace
-id|printk
-c_func
+suffix:semicolon
+r_if
+c_cond
 (paren
-l_string|&quot;RPC: out of memory in rpc_create_client&bslash;n&quot;
+op_logical_neg
+id|clnt
 )paren
+r_goto
+id|out_no_clnt
 suffix:semicolon
-r_return
-l_int|NULL
-suffix:semicolon
-)brace
 id|memset
 c_func
 (paren
@@ -390,7 +383,27 @@ comma
 id|clnt
 )paren
 )paren
-(brace
+r_goto
+id|out_no_auth
+suffix:semicolon
+id|out
+suffix:colon
+r_return
+id|clnt
+suffix:semicolon
+id|out_no_clnt
+suffix:colon
+id|printk
+c_func
+(paren
+l_string|&quot;RPC: out of memory in rpc_create_client&bslash;n&quot;
+)paren
+suffix:semicolon
+r_goto
+id|out
+suffix:semicolon
+id|out_no_auth
+suffix:colon
 id|printk
 c_func
 (paren
@@ -405,12 +418,12 @@ c_func
 id|clnt
 )paren
 suffix:semicolon
-r_return
+id|clnt
+op_assign
 l_int|NULL
 suffix:semicolon
-)brace
-r_return
-id|clnt
+r_goto
+id|out
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Properly shut down an RPC client, terminating all outstanding&n; * requests. Note that we must be certain that cl_oneshot and&n; * cl_dead are cleared, or else the client would be destroyed&n; * when the last task releases it.&n; */
@@ -3115,51 +3128,4 @@ r_return
 l_int|NULL
 suffix:semicolon
 )brace
-macro_line|#ifdef MODULE
-r_int
-DECL|function|init_module
-id|init_module
-c_func
-(paren
-r_void
-)paren
-(brace
-macro_line|#ifdef RPC_DEBUG
-id|rpc_register_sysctl
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-id|rpc_proc_init
-c_func
-(paren
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
-r_void
-DECL|function|cleanup_module
-id|cleanup_module
-c_func
-(paren
-r_void
-)paren
-(brace
-macro_line|#ifdef RPC_DEBUG
-id|rpc_unregister_sysctl
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-id|rpc_proc_exit
-c_func
-(paren
-)paren
-suffix:semicolon
-)brace
-macro_line|#endif
 eof

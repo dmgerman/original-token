@@ -2694,10 +2694,9 @@ c_func
 r_void
 )paren
 (brace
-id|resched_force
-c_func
-(paren
-)paren
+id|need_resched
+op_assign
+l_int|1
 suffix:semicolon
 )brace
 multiline_comment|/* Running cross calls. */
@@ -2782,6 +2781,7 @@ id|ticker_lock
 op_assign
 id|SPIN_LOCK_UNLOCKED
 suffix:semicolon
+macro_line|#ifdef CONFIG_PROFILE
 multiline_comment|/* 32-bit Sparc specific profiling function. */
 DECL|function|sparc_do_profile
 r_static
@@ -2860,6 +2860,7 @@ id|ticker_lock
 suffix:semicolon
 )brace
 )brace
+macro_line|#endif
 DECL|variable|smp_local_timer_ticks
 r_volatile
 r_int
@@ -2940,6 +2941,7 @@ id|cpu
 )braket
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_PROFILE
 r_if
 c_cond
 (paren
@@ -2958,6 +2960,7 @@ id|regs-&gt;pc
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -3010,10 +3013,9 @@ id|current-&gt;counter
 op_assign
 l_int|0
 suffix:semicolon
-id|resched_force
-c_func
-(paren
-)paren
+id|need_resched
+op_assign
+l_int|1
 suffix:semicolon
 )brace
 id|spin_lock

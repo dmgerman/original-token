@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;The IP forwarding functionality.&n; *&t;&t;&n; * Version:&t;$Id: ip_forward.c,v 1.33 1997/11/28 15:32:03 alan Exp $&n; *&n; * Authors:&t;see ip.c&n; *&n; * Fixes:&n; *&t;&t;Many&t;&t;:&t;Split from ip.c , see ip_input.c for &n; *&t;&t;&t;&t;&t;history.&n; *&t;&t;Dave Gregorich&t;:&t;NULL ip_rt_put fix for multicast &n; *&t;&t;&t;&t;&t;routing.&n; *&t;&t;Jos Vos&t;&t;:&t;Add call_out_firewall before sending,&n; *&t;&t;&t;&t;&t;use output device for accounting.&n; *&t;&t;Jos Vos&t;&t;:&t;Call forward firewall after routing&n; *&t;&t;&t;&t;&t;(always use output device).&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;The IP forwarding functionality.&n; *&t;&t;&n; * Version:&t;$Id: ip_forward.c,v 1.37 1997/12/18 17:01:11 kuznet Exp $&n; *&n; * Authors:&t;see ip.c&n; *&n; * Fixes:&n; *&t;&t;Many&t;&t;:&t;Split from ip.c , see ip_input.c for &n; *&t;&t;&t;&t;&t;history.&n; *&t;&t;Dave Gregorich&t;:&t;NULL ip_rt_put fix for multicast &n; *&t;&t;&t;&t;&t;routing.&n; *&t;&t;Jos Vos&t;&t;:&t;Add call_out_firewall before sending,&n; *&t;&t;&t;&t;&t;use output device for accounting.&n; *&t;&t;Jos Vos&t;&t;:&t;Call forward firewall after routing&n; *&t;&t;&t;&t;&t;(always use output device).&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -261,11 +261,9 @@ c_cond
 (paren
 id|opt-&gt;is_strictroute
 op_logical_and
-(paren
-id|rt-&gt;rt_flags
-op_amp
-id|RTF_GATEWAY
-)paren
+id|rt-&gt;rt_dst
+op_ne
+id|rt-&gt;rt_gateway
 )paren
 r_goto
 id|sr_failed
@@ -318,14 +316,6 @@ id|skb
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * We now may allocate a new buffer, and copy the datagram into it.&n;&t; * If the indicated interface is up and running, kick it.&n;&t; */
-r_if
-c_cond
-(paren
-id|dev2-&gt;flags
-op_amp
-id|IFF_UP
-)paren
-(brace
 r_if
 c_cond
 (paren
@@ -403,6 +393,17 @@ comma
 id|FREE_WRITE
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|skb2
+op_eq
+l_int|NULL
+)paren
+r_return
+op_minus
+l_int|1
+suffix:semicolon
 id|skb
 op_assign
 id|skb2
@@ -451,40 +452,7 @@ id|IPSKB_MASQUERADED
 )paren
 )paren
 (brace
-r_if
-c_cond
-(paren
-id|rt-&gt;rt_flags
-op_amp
-id|RTCF_VALVE
-)paren
-(brace
-id|icmp_send
-c_func
-(paren
-id|skb
-comma
-id|ICMP_DEST_UNREACH
-comma
-id|ICMP_PKT_FILTERED
-comma
-l_int|0
-)paren
-suffix:semicolon
-id|kfree_skb
-c_func
-(paren
-id|skb
-comma
-id|FREE_READ
-)paren
-suffix:semicolon
-r_return
-op_minus
-l_int|1
-suffix:semicolon
-)brace
-multiline_comment|/* &n;&t;&t;&t; *&t;Check that any ICMP packets are not for a &n;&t;&t;&t; *&t;masqueraded connection.  If so rewrite them&n;&t;&t;&t; *&t;and skip the firewall checks&n;&t;&t;&t; */
+multiline_comment|/* &n;&t;&t; *&t;Check that any ICMP packets are not for a &n;&t;&t; *&t;masqueraded connection.  If so rewrite them&n;&t;&t; *&t;and skip the firewall checks&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -497,8 +465,30 @@ id|__u32
 id|maddr
 suffix:semicolon
 macro_line|#ifdef CONFIG_IP_MASQUERADE_ICMP
-DECL|macro|icmph
-mdefine_line|#define icmph ((struct icmphdr *)((char *)iph + (iph-&gt;ihl&lt;&lt;2)))
+r_struct
+id|icmphdr
+op_star
+id|icmph
+op_assign
+(paren
+r_struct
+id|icmphdr
+op_star
+)paren
+(paren
+(paren
+r_char
+op_star
+)paren
+id|iph
+op_plus
+(paren
+id|iph-&gt;ihl
+op_lshift
+l_int|2
+)paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -534,6 +524,9 @@ comma
 id|RT_SCOPE_UNIVERSE
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
 id|fw_res
 op_assign
 id|ip_fw_masq_icmp
@@ -544,11 +537,6 @@ id|skb
 comma
 id|maddr
 )paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|fw_res
 OL
 l_int|0
 )paren
@@ -658,7 +646,7 @@ macro_line|#ifdef CONFIG_IP_MASQUERADE
 )brace
 id|skip_call_fw_firewall
 suffix:colon
-multiline_comment|/*&n;&t;&t; * If this fragment needs masquerading, make it so...&n;&t;&t; * (Don&squot;t masquerade de-masqueraded fragments)&n;&t;&t; */
+multiline_comment|/*&n;&t; * If this fragment needs masquerading, make it so...&n;&t; * (Don&squot;t masquerade de-masqueraded fragments)&n;&t; */
 r_if
 c_cond
 (paren
@@ -881,7 +869,7 @@ OL
 id|FW_ACCEPT
 )paren
 (brace
-multiline_comment|/* FW_ACCEPT and FW_MASQUERADE are treated equal:&n;&t;&t;&t;   masquerading is only supported via forward rules */
+multiline_comment|/* FW_ACCEPT and FW_MASQUERADE are treated equal:&n;&t;&t;   masquerading is only supported via forward rules */
 r_if
 c_cond
 (paren
@@ -926,6 +914,69 @@ op_eq
 l_int|0
 )paren
 (brace
+macro_line|#ifdef CONFIG_NET_FASTROUTE
+r_if
+c_cond
+(paren
+id|rt-&gt;rt_flags
+op_amp
+id|RTCF_FAST
+op_logical_and
+op_logical_neg
+id|netdev_fastroute_obstacles
+)paren
+(brace
+r_int
+id|h
+op_assign
+(paren
+(paren
+op_star
+(paren
+id|u8
+op_star
+)paren
+op_amp
+id|rt-&gt;key.dst
+)paren
+op_xor
+(paren
+op_star
+(paren
+id|u8
+op_star
+)paren
+op_amp
+id|rt-&gt;key.src
+)paren
+)paren
+op_amp
+id|NETDEV_FASTROUTE_HMASK
+suffix:semicolon
+multiline_comment|/* Time to switch to functional programming :-) */
+id|dst_release
+c_func
+(paren
+id|xchg
+c_func
+(paren
+op_amp
+id|skb-&gt;dev-&gt;fastpath
+(braket
+id|h
+)braket
+comma
+id|dst_clone
+c_func
+(paren
+op_amp
+id|rt-&gt;u.dst
+)paren
+)paren
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
 id|ip_send
 c_func
 (paren
@@ -948,14 +999,12 @@ c_func
 id|skb
 )paren
 suffix:semicolon
-)brace
 r_return
 l_int|0
 suffix:semicolon
 macro_line|#ifdef CONFIG_TRANSPARENT_PROXY
 id|local_pkt
 suffix:colon
-macro_line|#endif
 r_return
 id|ip_local_deliver
 c_func
@@ -963,6 +1012,7 @@ c_func
 id|skb
 )paren
 suffix:semicolon
+macro_line|#endif
 id|frag_needed
 suffix:colon
 id|ip_statistics.IpFragFails

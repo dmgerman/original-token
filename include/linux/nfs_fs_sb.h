@@ -3,7 +3,7 @@ DECL|macro|_NFS_FS_SB
 mdefine_line|#define _NFS_FS_SB
 macro_line|#include &lt;linux/nfs.h&gt;
 macro_line|#include &lt;linux/in.h&gt;
-multiline_comment|/*&n; * NFS client parameters&n; * Part of this is duplicated in rpc_clnt and is therefore obsolete.&n; */
+multiline_comment|/*&n; * NFS client parameters stored in the superblock.&n; */
 DECL|struct|nfs_server
 r_struct
 id|nfs_server
@@ -59,10 +59,8 @@ id|acdirmax
 suffix:semicolon
 DECL|member|hostname
 r_char
+op_star
 id|hostname
-(braket
-l_int|256
-)braket
 suffix:semicolon
 multiline_comment|/* remote hostname */
 )brace

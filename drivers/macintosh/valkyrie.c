@@ -7,6 +7,7 @@ macro_line|#include &lt;linux/vc_ioctl.h&gt;
 macro_line|#include &lt;linux/nvram.h&gt;
 macro_line|#include &lt;asm/prom.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
+macro_line|#include &lt;asm/adb.h&gt;
 macro_line|#include &lt;asm/cuda.h&gt;
 macro_line|#include &lt;linux/selection.h&gt;
 macro_line|#include &quot;pmac-cons.h&quot;
@@ -837,7 +838,7 @@ id|params
 )paren
 (brace
 r_struct
-id|cuda_request
+id|adb_request
 id|req
 suffix:semicolon
 r_int
@@ -888,7 +889,7 @@ r_while
 c_loop
 (paren
 op_logical_neg
-id|req.got_reply
+id|req.complete
 )paren
 id|cuda_poll
 c_func

@@ -112,6 +112,8 @@ r_int
 r_int
 id|u64
 suffix:semicolon
+DECL|macro|BITS_PER_LONG
+mdefine_line|#define BITS_PER_LONG 32
 macro_line|#endif /* __KERNEL__ */
 macro_line|#endif
 eof

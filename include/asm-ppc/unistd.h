@@ -340,8 +340,12 @@ DECL|macro|__NR_poll
 mdefine_line|#define __NR_poll&t;&t;167
 DECL|macro|__NR_nfsservctl
 mdefine_line|#define __NR_nfsservctl&t;&t;168
+DECL|macro|__NR_setresgid
+mdefine_line|#define __NR_setresgid&t;&t;169
+DECL|macro|__NR_getresgid
+mdefine_line|#define __NR_getresgid&t;&t;170
 DECL|macro|__NR_prctl
-mdefine_line|#define __NR_prctl&t;&t;169
+mdefine_line|#define __NR_prctl&t;&t;171
 DECL|macro|__NR
 mdefine_line|#define __NR(n)&t;#n
 DECL|macro|__do_syscall

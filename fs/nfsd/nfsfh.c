@@ -3989,13 +3989,24 @@ suffix:semicolon
 id|dprintk
 c_func
 (paren
-l_string|&quot;nfsd: fh_compose(exp %x/%ld dentry %p)&bslash;n&quot;
+l_string|&quot;nfsd: fh_compose(exp %x/%ld %s/%s, ino=%ld)&bslash;n&quot;
 comma
 id|exp-&gt;ex_dev
 comma
 id|exp-&gt;ex_ino
 comma
-id|dentry
+id|dentry-&gt;d_parent-&gt;d_name.name
+comma
+id|dentry-&gt;d_name.name
+comma
+(paren
+id|inode
+ques
+c_cond
+id|inode-&gt;i_ino
+suffix:colon
+l_int|0
+)paren
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * N.B. We shouldn&squot;t need to init the fh -- the call to fh_compose&n;&t; * may not be done on error paths, but the cleanup must call fh_put.&n;&t; * Fix this soon!&n;&t; */

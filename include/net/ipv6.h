@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;Linux INET6 implementation&n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&n; *&n; *&t;$Id: ipv6.h,v 1.6 1997/04/01 02:22:58 davem Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; *&t;Linux INET6 implementation&n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&n; *&n; *&t;$Id: ipv6.h,v 1.8 1997/12/29 19:52:09 kuznet Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
 macro_line|#ifndef _NET_IPV6_H
 DECL|macro|_NET_IPV6_H
 mdefine_line|#define _NET_IPV6_H
@@ -110,26 +110,6 @@ suffix:semicolon
 DECL|member|accept_redirects
 r_int
 id|accept_redirects
-suffix:semicolon
-DECL|member|nd_max_mcast_solicit
-r_int
-id|nd_max_mcast_solicit
-suffix:semicolon
-DECL|member|nd_max_ucast_solicit
-r_int
-id|nd_max_ucast_solicit
-suffix:semicolon
-DECL|member|nd_retrans_time
-r_int
-id|nd_retrans_time
-suffix:semicolon
-DECL|member|nd_base_reachable_time
-r_int
-id|nd_base_reachable_time
-suffix:semicolon
-DECL|member|nd_delay_probe_time
-r_int
-id|nd_delay_probe_time
 suffix:semicolon
 DECL|member|autoconf
 r_int
@@ -693,7 +673,6 @@ op_star
 id|fl
 comma
 r_int
-r_int
 id|length
 comma
 r_struct
@@ -709,6 +688,17 @@ id|flags
 )paren
 suffix:semicolon
 multiline_comment|/*&n; *&t;skb processing functions&n; */
+r_extern
+r_int
+id|ip6_output
+c_func
+(paren
+r_struct
+id|sk_buff
+op_star
+id|skb
+)paren
+suffix:semicolon
 r_extern
 r_int
 id|ip6_forward

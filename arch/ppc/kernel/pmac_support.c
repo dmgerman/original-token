@@ -5,10 +5,9 @@ macro_line|#include &lt;linux/reboot.h&gt;
 macro_line|#include &lt;linux/nvram.h&gt;
 macro_line|#include &lt;asm/ptrace.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
-macro_line|#include &lt;asm/cuda.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/prom.h&gt;
-multiline_comment|/*&n; * Read and write the non-volatile RAM on PowerMacs.&n; */
+multiline_comment|/*&n; * Read and write the non-volatile RAM on PowerMacs and CHRP machines.&n; */
 DECL|variable|nvram_naddrs
 r_static
 r_int
@@ -30,6 +29,13 @@ r_char
 op_star
 id|nvram_data
 suffix:semicolon
+DECL|variable|nvram_mult
+r_static
+r_int
+id|nvram_mult
+suffix:semicolon
+DECL|macro|NVRAM_SIZE
+mdefine_line|#define NVRAM_SIZE&t;0x2000&t;/* 8kB of non-volatile RAM */
 DECL|function|pmac_nvram_init
 r_void
 id|pmac_nvram_init
@@ -80,6 +86,35 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|_machine
+op_eq
+id|_MACH_chrp
+op_logical_and
+id|nvram_naddrs
+op_eq
+l_int|1
+)paren
+(brace
+multiline_comment|/* XXX for now */
+id|nvram_data
+op_assign
+id|ioremap
+c_func
+(paren
+l_int|0xf70e0000
+comma
+id|NVRAM_SIZE
+)paren
+suffix:semicolon
+id|nvram_mult
+op_assign
+l_int|1
+suffix:semicolon
+)brace
+r_else
+r_if
+c_cond
+(paren
 id|nvram_naddrs
 op_eq
 l_int|1
@@ -104,6 +139,23 @@ l_int|0
 dot
 id|size
 )paren
+suffix:semicolon
+id|nvram_mult
+op_assign
+(paren
+id|dp-&gt;addrs
+(braket
+l_int|0
+)braket
+dot
+id|size
+op_plus
+id|NVRAM_SIZE
+op_minus
+l_int|1
+)paren
+op_div
+id|NVRAM_SIZE
 suffix:semicolon
 )brace
 r_else
@@ -194,10 +246,14 @@ id|nvram_data
 (paren
 id|addr
 op_amp
-l_int|0x1fff
+(paren
+id|NVRAM_SIZE
+op_minus
+l_int|1
 )paren
-op_lshift
-l_int|4
+)paren
+op_star
+id|nvram_mult
 )braket
 suffix:semicolon
 r_case
@@ -259,10 +315,14 @@ id|nvram_data
 (paren
 id|addr
 op_amp
-l_int|0x1fff
+(paren
+id|NVRAM_SIZE
+op_minus
+l_int|1
 )paren
-op_lshift
-l_int|4
+)paren
+op_star
+id|nvram_mult
 )braket
 op_assign
 id|val

@@ -1,4 +1,4 @@
-multiline_comment|/*****************************************************************************&n;* wanpipe.h&t;WANPIPE(tm) Multiprotocol WAN Link Driver.&n;*&t;&t;User-level API definitions.&n;*&n;* Author:&t;Gene Kozin&t;&lt;genek@compuserve.com&gt;&n;*&n;* Copyright:&t;(c) 1995-1997 Sangoma Technologies Inc.&n;*&n;*&t;&t;This program is free software; you can redistribute it and/or&n;*&t;&t;modify it under the terms of the GNU General Public License&n;*&t;&t;as published by the Free Software Foundation; either version&n;*&t;&t;2 of the License, or (at your option) any later version.&n;* ============================================================================&n;* Jan 15, 1997&t;Gene Kozin&t;Version 3.1.0&n;*&t;&t;&t;&t; o added UDP management stuff&n;* Jan 02, 1997&t;Gene Kozin&t;Version 3.0.0&n;*****************************************************************************/
+multiline_comment|/*****************************************************************************&n;* wanpipe.h&t;WANPIPE(tm) Multiprotocol WAN Link Driver.&n;*&t;&t;User-level API definitions.&n;*&n;* Author:&t;Gene Kozin&t;&lt;genek@compuserve.com&gt;&n;*&t;&t;Jaspreet Singh&t;&lt;jaspreet@sangoma.com&gt;&n;*&n;* Copyright:&t;(c) 1995-1997 Sangoma Technologies Inc.&n;*&n;*&t;&t;This program is free software; you can redistribute it and/or&n;*&t;&t;modify it under the terms of the GNU General Public License&n;*&t;&t;as published by the Free Software Foundation; either version&n;*&t;&t;2 of the License, or (at your option) any later version.&n;* ============================================================================&n;* Nov 26, 1997&t;Jaspreet Singh&t;Added &squot;load_sharing&squot; structure.  Also added &n;*&t;&t;&t;&t;&squot;devs_struct&squot;,&squot;dev_to_devtint_next&squot; to &squot;sdla_t&squot;&t;&n;* Nov 24, 1997&t;Jaspreet Singh&t;Added &squot;irq_dis_if_send_count&squot;, &n;*&t;&t;&t;&t;&squot;irq_dis_poll_count&squot; to &squot;sdla_t&squot;.&n;* Nov 06, 1997&t;Jaspreet Singh&t;Added a define called &squot;INTR_TEST_MODE&squot;&n;* Oct 20, 1997&t;Jaspreet Singh&t;Added &squot;buff_intr_mode_unbusy&squot; and &n;*&t;&t;&t;&t;&squot;dlci_intr_mode_unbusy&squot; to &squot;sdla_t&squot;&n;* Oct 18, 1997&t;Jaspreet Singh&t;Added structure to maintain global driver&n;*&t;&t;&t;&t;statistics.&n;* Jan 15, 1997&t;Gene Kozin&t;Version 3.1.0&n;*&t;&t;&t;&t; o added UDP management stuff&n;* Jan 02, 1997&t;Gene Kozin&t;Version 3.0.0&n;*****************************************************************************/
 macro_line|#ifndef&t;_WANPIPE_H
 DECL|macro|_WANPIPE_H
 mdefine_line|#define&t;_WANPIPE_H
@@ -118,6 +118,126 @@ DECL|typedef|wum_header_t
 )brace
 id|wum_header_t
 suffix:semicolon
+multiline_comment|/*************************************************************************&n; Data Structure for global statistics&n;*************************************************************************/
+DECL|struct|global_stats
+r_typedef
+r_struct
+id|global_stats
+(brace
+DECL|member|isr_entry
+r_int
+r_int
+id|isr_entry
+suffix:semicolon
+DECL|member|isr_already_critical
+r_int
+r_int
+id|isr_already_critical
+suffix:semicolon
+DECL|member|isr_rx
+r_int
+r_int
+id|isr_rx
+suffix:semicolon
+DECL|member|isr_tx
+r_int
+r_int
+id|isr_tx
+suffix:semicolon
+DECL|member|isr_intr_test
+r_int
+r_int
+id|isr_intr_test
+suffix:semicolon
+DECL|member|isr_spurious
+r_int
+r_int
+id|isr_spurious
+suffix:semicolon
+DECL|member|isr_enable_tx_int
+r_int
+r_int
+id|isr_enable_tx_int
+suffix:semicolon
+DECL|member|rx_intr_corrupt_rx_bfr
+r_int
+r_int
+id|rx_intr_corrupt_rx_bfr
+suffix:semicolon
+DECL|member|rx_intr_on_orphaned_DLCI
+r_int
+r_int
+id|rx_intr_on_orphaned_DLCI
+suffix:semicolon
+DECL|member|rx_intr_dev_not_started
+r_int
+r_int
+id|rx_intr_dev_not_started
+suffix:semicolon
+DECL|member|tx_intr_dev_not_started
+r_int
+r_int
+id|tx_intr_dev_not_started
+suffix:semicolon
+DECL|member|poll_entry
+r_int
+r_int
+id|poll_entry
+suffix:semicolon
+DECL|member|poll_already_critical
+r_int
+r_int
+id|poll_already_critical
+suffix:semicolon
+DECL|member|poll_processed
+r_int
+r_int
+id|poll_processed
+suffix:semicolon
+DECL|member|poll_tbusy_bad_status
+r_int
+r_int
+id|poll_tbusy_bad_status
+suffix:semicolon
+DECL|member|poll_host_disable_irq
+r_int
+r_int
+id|poll_host_disable_irq
+suffix:semicolon
+DECL|member|poll_host_enable_irq
+r_int
+r_int
+id|poll_host_enable_irq
+suffix:semicolon
+DECL|typedef|global_stats_t
+)brace
+id|global_stats_t
+suffix:semicolon
+multiline_comment|/* This structure is used for maitaining a circular linked list of all&n; * interfaces(devices) per card. It is used in the Interrupt Service routine&n; * for a transmit interrupt where the start of the loop to dev_tint all&n; * interfaces changes.&n; */
+DECL|struct|load_sharing
+r_typedef
+r_struct
+id|load_sharing
+(brace
+DECL|member|dev_ptr
+r_struct
+id|device
+op_star
+id|dev_ptr
+suffix:semicolon
+DECL|member|next
+r_struct
+id|load_sharing
+op_star
+id|next
+suffix:semicolon
+DECL|typedef|load_sharing_t
+)brace
+id|load_sharing_t
+suffix:semicolon
+multiline_comment|/* This is used for interrupt testing */
+DECL|macro|INTR_TEST_MODE
+mdefine_line|#define INTR_TEST_MODE&t;0x02
 DECL|macro|WUM_SIGNATURE_L
 mdefine_line|#define&t;WUM_SIGNATURE_L&t;0x50495046
 DECL|macro|WUM_SIGNATURE_H
@@ -182,13 +302,54 @@ r_int
 id|state_tick
 suffix:semicolon
 multiline_comment|/* link state timestamp */
-multiline_comment|/*&t;unsigned tx_int_enabled; */
-multiline_comment|/* tranmit interrupt enabled or not */
+DECL|member|intr_mode
+r_int
+id|intr_mode
+suffix:semicolon
+multiline_comment|/* Type of Interrupt Mode */
 DECL|member|in_isr
 r_char
 id|in_isr
 suffix:semicolon
 multiline_comment|/* interrupt-in-service flag */
+DECL|member|buff_int_mode_unbusy
+r_char
+id|buff_int_mode_unbusy
+suffix:semicolon
+multiline_comment|/* flag for carrying out dev_tint */
+DECL|member|dlci_int_mode_unbusy
+r_char
+id|dlci_int_mode_unbusy
+suffix:semicolon
+multiline_comment|/* flag for carrying out dev_tint */
+DECL|member|irq_dis_if_send_count
+r_int
+r_int
+id|irq_dis_if_send_count
+suffix:semicolon
+multiline_comment|/* Disabling irqs in if_send*/
+DECL|member|irq_dis_poll_count
+r_int
+r_int
+id|irq_dis_poll_count
+suffix:semicolon
+multiline_comment|/* Disabling irqs in poll routine*/
+DECL|member|statistics
+id|global_stats_t
+id|statistics
+suffix:semicolon
+multiline_comment|/* global statistics */
+multiline_comment|/* The following is used as  a pointer to the structure in our &n;&t;   circular linked list which changes the start of the loop for &n;&t;   dev_tint of all interfaces */
+DECL|member|dev_to_devtint_next
+id|load_sharing_t
+op_star
+id|dev_to_devtint_next
+suffix:semicolon
+DECL|member|devs_struct
+id|load_sharing_t
+op_star
+id|devs_struct
+suffix:semicolon
 DECL|member|mbox
 r_void
 op_star
@@ -310,6 +471,9 @@ DECL|member|node_dlci
 r_int
 r_int
 id|node_dlci
+(braket
+l_int|100
+)braket
 suffix:semicolon
 DECL|member|dlci_num
 r_int

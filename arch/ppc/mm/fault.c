@@ -35,7 +35,9 @@ op_star
 id|xmon_fault_handler
 )paren
 (paren
-r_void
+r_struct
+id|pt_regs
+op_star
 )paren
 suffix:semicolon
 r_extern
@@ -51,8 +53,49 @@ suffix:semicolon
 DECL|variable|xmon_kernel_faults
 r_int
 id|xmon_kernel_faults
+op_assign
+l_int|0
 suffix:semicolon
 macro_line|#endif
+DECL|variable|htab_reloads
+r_int
+r_int
+id|htab_reloads
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* updated by head.S:hash_page() */
+DECL|variable|htab_evicts
+r_int
+r_int
+id|htab_evicts
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* updated by head.S:hash_page() */
+DECL|variable|pte_misses
+r_int
+r_int
+id|pte_misses
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* updated by do_page_fault() */
+DECL|variable|pte_errors
+r_int
+r_int
+id|pte_errors
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* updated by do_page_fault() */
+DECL|variable|probingmem
+r_int
+r_int
+id|probingmem
+op_assign
+l_int|0
+suffix:semicolon
 r_extern
 r_void
 id|die_if_kernel
@@ -127,6 +170,7 @@ id|mm
 op_assign
 id|current-&gt;mm
 suffix:semicolon
+multiline_comment|/*printk(&quot;address: %08lx code: %08lx %s%s%s%s%s%s&bslash;n&quot;,&n;&t;       address,error_code,&n;&t;       (error_code&amp;0x40000000)?&quot;604 tlb&amp;htab miss &quot;:&quot;&quot;,&n;&t;       (error_code&amp;0x20000000)?&quot;603 tlbmiss &quot;:&quot;&quot;,&n;&t;       (error_code&amp;0x02000000)?&quot;write &quot;:&quot;&quot;,&n;&t;       (error_code&amp;0x08000000)?&quot;prot &quot;:&quot;&quot;,&n;&t;       (error_code&amp;0x95700000)?&quot;I/O &quot;:&quot;&quot;,&n;&t;       (regs-&gt;trap == 0x400)?&quot;instr&quot;:&quot;data&quot;&n;&t;       );*/
 macro_line|#ifdef CONFIG_XMON
 r_if
 c_cond
@@ -141,6 +185,7 @@ l_int|0x300
 id|xmon_fault_handler
 c_func
 (paren
+id|regs
 )paren
 suffix:semicolon
 r_return
@@ -310,7 +355,7 @@ c_cond
 (paren
 id|error_code
 op_amp
-l_int|0xb5700000
+l_int|0x95700000
 )paren
 multiline_comment|/* an error such as lwarx to I/O controller space,&n;&t;&t;   address matching DABR, eciwx, etc. */
 r_goto
@@ -392,6 +437,10 @@ op_amp
 id|mm-&gt;mmap_sem
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t; * keep track of tlb+htab misses that are good addrs but&n;&t; * just need pte&squot;s created via handle_mm_fault()&n;&t; * -- Cort&n;&t; */
+id|pte_misses
+op_increment
+suffix:semicolon
 r_return
 suffix:semicolon
 id|bad_area
@@ -402,6 +451,9 @@ c_func
 op_amp
 id|mm-&gt;mmap_sem
 )paren
+suffix:semicolon
+id|pte_errors
+op_increment
 suffix:semicolon
 id|bad_page_fault
 c_func
@@ -431,6 +483,88 @@ r_int
 r_int
 id|fixup
 suffix:semicolon
+macro_line|#if 0&t;
+r_extern
+r_int
+r_int
+id|video_mem_base
+suffix:semicolon
+r_extern
+r_int
+r_int
+id|video_mem_term
+suffix:semicolon
+multiline_comment|/*&n;&t; * Remap video IO areas for buggy X servers.&n;&t; * The S3 server wants direct access to video memory&n;&t; * at 0x8000 0000 and 0xc000 0000 on prep systems, but&n;&t; * we don&squot;t allow that AND we remap the io areas so it&squot;s not&n;&t; * even there!&n;&t; * So, for this task only give a virtual=physical mapping of the&n;&t; * video mem.&n;&t; * -- Cort&n;&t; */
+r_if
+c_cond
+(paren
+id|is_prep
+op_logical_and
+id|user_mode
+c_func
+(paren
+id|regs
+)paren
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;%s/%d: fault on %x&bslash;n&quot;
+comma
+id|current-&gt;comm
+comma
+id|current-&gt;pid
+comma
+id|address
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;mapping: %x -&gt; %x&bslash;n&quot;
+comma
+id|address
+op_amp
+id|PAGE_MASK
+comma
+id|address
+op_amp
+id|PAGE_MASK
+)paren
+suffix:semicolon
+id|map_page
+c_func
+(paren
+id|current
+comma
+id|address
+op_amp
+id|PAGE_MASK
+comma
+id|address
+op_amp
+id|PAGE_MASK
+comma
+id|_PAGE_PRESENT
+op_or
+id|_PAGE_ACCESSED
+op_or
+id|_PAGE_RW
+op_or
+id|_PAGE_DIRTY
+op_or
+id|_PAGE_HWWRITE
+op_or
+id|_PAGE_NO_CACHE
+op_or
+id|_PAGE_WRITETHRU
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+macro_line|#endif&t;
 r_if
 c_cond
 (paren

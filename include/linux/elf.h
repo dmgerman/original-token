@@ -231,6 +231,10 @@ DECL|macro|AT_GID
 mdefine_line|#define AT_GID    13&t;/* real gid */
 DECL|macro|AT_EGID
 mdefine_line|#define AT_EGID   14&t;/* effective gid */
+DECL|macro|AT_PLATFORM
+mdefine_line|#define AT_PLATFORM 15  /* string identifying cpu for optimizations */
+DECL|macro|AT_HWCAP
+mdefine_line|#define AT_HWCAP  16    /* arch dependant hints at cpu capabilities */
 DECL|struct|dynamic
 r_typedef
 r_struct
@@ -390,6 +394,15 @@ DECL|macro|R_SPARC_5
 mdefine_line|#define R_SPARC_5&t;&t;44
 DECL|macro|R_SPARC_6
 mdefine_line|#define R_SPARC_6&t;&t;45
+multiline_comment|/* Bits present in AT_HWCAP, primarily for Sparc32.  */
+DECL|macro|HWCAP_SPARC_FLUSH
+mdefine_line|#define HWCAP_SPARC_FLUSH       1       /* The cpu supports flush insn.  */
+DECL|macro|HWCAP_SPARC_STBAR
+mdefine_line|#define HWCAP_SPARC_STBAR       2
+DECL|macro|HWCAP_SPARC_SWAP
+mdefine_line|#define HWCAP_SPARC_SWAP        4
+DECL|macro|HWCAP_SPARC_MULDIV
+mdefine_line|#define HWCAP_SPARC_MULDIV      8
 multiline_comment|/*&n; * 68k ELF relocation types&n; */
 DECL|macro|R_68K_NONE
 mdefine_line|#define R_68K_NONE&t;0
@@ -1107,8 +1120,6 @@ DECL|typedef|Elf64_Nhdr
 )brace
 id|Elf64_Nhdr
 suffix:semicolon
-DECL|macro|ELF_START_MMAP
-mdefine_line|#define ELF_START_MMAP 0x80000000
 macro_line|#if ELF_CLASS == ELFCLASS32
 r_extern
 id|Elf32_Dyn

@@ -1,7 +1,6 @@
 macro_line|#ifndef _ASM_IRQ_H
 DECL|macro|_ASM_IRQ_H
 mdefine_line|#define _ASM_IRQ_H
-macro_line|#include &lt;linux/config.h&gt;
 multiline_comment|/*&n; * this is the # irq&squot;s for all ppc arch&squot;s (pmac/chrp/prep)&n; * so it is the max of them all - which happens to be chrp&n; * -- Cort&n; */
 DECL|macro|NR_IRQS
 mdefine_line|#define NR_IRQS&t;&t;&t;(NUM_8259_INTERRUPTS+NUM_OPENPIC_INTERRUPTS)

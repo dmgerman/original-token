@@ -608,7 +608,9 @@ id|pil
 )braket
 suffix:semicolon
 )brace
+macro_line|#ifdef __SMP__
 DECL|function|sun4m_send_ipi
+r_static
 r_void
 id|sun4m_send_ipi
 c_func
@@ -643,6 +645,7 @@ id|mask
 suffix:semicolon
 )brace
 DECL|function|sun4m_clear_ipi
+r_static
 r_void
 id|sun4m_clear_ipi
 c_func
@@ -677,6 +680,7 @@ id|mask
 suffix:semicolon
 )brace
 DECL|function|sun4m_set_udt
+r_static
 r_void
 id|sun4m_set_udt
 c_func
@@ -690,6 +694,7 @@ op_assign
 id|cpu
 suffix:semicolon
 )brace
+macro_line|#endif
 DECL|macro|OBIO_INTR
 mdefine_line|#define OBIO_INTR&t;0x20
 DECL|macro|TIMER_IRQ

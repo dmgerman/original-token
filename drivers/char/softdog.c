@@ -10,8 +10,6 @@ macro_line|#include &lt;linux/watchdog.h&gt;
 macro_line|#include &lt;linux/reboot.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
-DECL|macro|WATCHDOG_MINOR
-mdefine_line|#define WATCHDOG_MINOR&t;130
 DECL|macro|TIMER_MARGIN
 mdefine_line|#define TIMER_MARGIN&t;60&t;&t;/* (secs) Default is 1 minute */
 DECL|variable|soft_margin
@@ -466,7 +464,7 @@ op_assign
 (brace
 id|WATCHDOG_MINOR
 comma
-l_string|&quot;softdog&quot;
+l_string|&quot;watchdog&quot;
 comma
 op_amp
 id|softdog_fops

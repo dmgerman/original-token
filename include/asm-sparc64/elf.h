@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: elf.h,v 1.8 1997/08/21 18:09:07 richard Exp $ */
+multiline_comment|/* $Id: elf.h,v 1.13 1997/10/03 18:44:14 davem Exp $ */
 macro_line|#ifndef __ASM_SPARC64_ELF_H
 DECL|macro|__ASM_SPARC64_ELF_H
 mdefine_line|#define __ASM_SPARC64_ELF_H
@@ -52,7 +52,18 @@ mdefine_line|#define ELF_EXEC_PAGESIZE&t;8192
 multiline_comment|/* This is the location that an ET_DYN program is loaded if exec&squot;ed.  Typical&n;   use of this is to invoke &quot;./ld.so someprog&quot; to test out a new version of&n;   the loader.  We need to make sure that it is out of the way of the program&n;   that it will &quot;exec&quot;, and that there is sufficient room for the brk.  */
 macro_line|#ifndef ELF_ET_DYN_BASE
 DECL|macro|ELF_ET_DYN_BASE
-mdefine_line|#define ELF_ET_DYN_BASE         (2 * TASK_SIZE / 3)
+mdefine_line|#define ELF_ET_DYN_BASE         0x50000000000
+macro_line|#endif
+multiline_comment|/* This yields a mask that user programs can use to figure out what&n;   instruction set this cpu supports.  */
+multiline_comment|/* On Ultra, we support all of the v8 capabilities. */
+DECL|macro|ELF_HWCAP
+mdefine_line|#define ELF_HWCAP&t;(HWCAP_SPARC_FLUSH | HWCAP_SPARC_STBAR | &bslash;&n;&t;&t;&t; HWCAP_SPARC_SWAP | HWCAP_SPARC_MULDIV)
+multiline_comment|/* This yields a string that ld.so will use to load implementation&n;   specific libraries for optimization.  This is more specific in&n;   intent than poking at uname or /proc/cpuinfo.  */
+DECL|macro|ELF_PLATFORM
+mdefine_line|#define ELF_PLATFORM&t;(NULL)
+macro_line|#ifdef __KERNEL__
+DECL|macro|SET_PERSONALITY
+mdefine_line|#define SET_PERSONALITY(ibcs2)&t;&t;&t;&t;&t;&bslash;&n;do {&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;if (ibcs2)&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;current-&gt;personality = PER_SVR4;&t;&t;&bslash;&n;&t;else if (current-&gt;personality != PER_LINUX32)&t;&t;&bslash;&n;&t;&t;current-&gt;personality = PER_LINUX;&t;&t;&bslash;&n;} while (0)
 macro_line|#endif
 macro_line|#endif /* !(__ASM_SPARC64_ELF_H) */
 eof

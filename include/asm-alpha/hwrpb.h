@@ -57,6 +57,8 @@ DECL|macro|ST_DEC_EBPC64
 mdefine_line|#define ST_DEC_EBPC64&t;&t;-20&t;/* Cabriolet (AlphaPC64) systype */
 DECL|macro|ST_DEC_EB164
 mdefine_line|#define ST_DEC_EB164&t;&t; 26&t;/* EB164 systype&t;*/
+DECL|macro|ST_DEC_MIATA
+mdefine_line|#define ST_DEC_MIATA&t;&t; 30&t;/* MIATA systype        */
 DECL|struct|pcb_struct
 r_struct
 id|pcb_struct

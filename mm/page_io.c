@@ -61,6 +61,29 @@ r_struct
 id|page
 op_star
 id|page
+op_assign
+id|mem_map
+op_plus
+id|MAP_NR
+c_func
+(paren
+id|buf
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|page-&gt;inode
+op_logical_and
+id|page-&gt;inode
+op_ne
+op_amp
+id|swapper_inode
+)paren
+id|panic
+(paren
+l_string|&quot;Tried to swap a non-swapper page&quot;
+)paren
 suffix:semicolon
 id|type
 op_assign
@@ -163,6 +186,21 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+multiline_comment|/*&n;&t; * For now, this is not legal!&n;&t; */
+r_if
+c_cond
+(paren
+id|PageSwapCache
+c_func
+(paren
+id|page
+)paren
+)paren
+id|panic
+(paren
+l_string|&quot;Trying to swap a swap-cache page!&quot;
+)paren
+suffix:semicolon
 multiline_comment|/* Make sure we are the only process doing I/O with this swap page. */
 r_while
 c_loop
@@ -205,16 +243,6 @@ r_else
 id|kstat.pswpout
 op_increment
 suffix:semicolon
-id|page
-op_assign
-id|mem_map
-op_plus
-id|MAP_NR
-c_func
-(paren
-id|buf
-)paren
-suffix:semicolon
 id|atomic_inc
 c_func
 (paren
@@ -227,6 +255,35 @@ c_func
 (paren
 id|page
 )paren
+suffix:semicolon
+multiline_comment|/* &n;&t; * Make sure that we have a swap cache association for this&n;&t; * page.  We need this to find which swap page to unlock once&n;&t; * the swap IO has completed to the physical page.  If the page&n;&t; * is not already in the cache, just overload the offset entry&n;&t; * as if it were: we are not allowed to manipulate the inode&n;&t; * hashing for locked pages.&n;&t; */
+r_if
+c_cond
+(paren
+id|PageSwapCache
+c_func
+(paren
+id|page
+)paren
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|page-&gt;offset
+op_ne
+id|entry
+)paren
+id|panic
+(paren
+l_string|&quot;swap entry mismatch&quot;
+)paren
+suffix:semicolon
+)brace
+r_else
+id|page-&gt;offset
+op_assign
+id|entry
 suffix:semicolon
 r_if
 c_cond
@@ -267,17 +324,6 @@ comma
 op_amp
 id|page-&gt;flags
 )paren
-suffix:semicolon
-multiline_comment|/* swap-cache  shouldn&squot;t be set, but play safe */
-id|PageClearSwapCache
-c_func
-(paren
-id|page
-)paren
-suffix:semicolon
-id|page-&gt;pg_swap_entry
-op_assign
-id|entry
 suffix:semicolon
 id|atomic_inc
 c_func
@@ -487,6 +533,8 @@ c_func
 (paren
 l_string|&quot;rw_swap_page: bad swap file&bslash;n&quot;
 )paren
+suffix:semicolon
+r_return
 suffix:semicolon
 )brace
 )brace

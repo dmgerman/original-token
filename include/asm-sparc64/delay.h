@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: delay.h,v 1.6 1997/07/29 21:11:22 davem Exp $&n; * delay.h: Linux delay routines on the V9.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu).&n; */
+multiline_comment|/* $Id: delay.h,v 1.7 1997/11/07 18:24:31 mj Exp $&n; * delay.h: Linux delay routines on the V9.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu).&n; */
 macro_line|#ifndef __SPARC64_DELAY_H
 DECL|macro|__SPARC64_DELAY_H
 mdefine_line|#define __SPARC64_DELAY_H
@@ -153,36 +153,5 @@ mdefine_line|#define __udelay_val loops_per_sec
 macro_line|#endif
 DECL|macro|udelay
 mdefine_line|#define udelay(usecs) __udelay((usecs),__udelay_val)
-DECL|function|muldiv
-r_extern
-id|__inline__
-r_int
-r_int
-id|muldiv
-c_func
-(paren
-r_int
-r_int
-id|a
-comma
-r_int
-r_int
-id|b
-comma
-r_int
-r_int
-id|c
-)paren
-(brace
-r_return
-(paren
-id|a
-op_star
-id|b
-)paren
-op_div
-id|c
-suffix:semicolon
-)brace
 macro_line|#endif /* defined(__SPARC64_DELAY_H) */
 eof

@@ -1,4 +1,5 @@
 multiline_comment|/* smp.c: Sparc64 SMP support.&n; *&n; * Copyright (C) 1997 David S. Miller (davem@caip.rutgers.edu)&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/tasks.h&gt;
@@ -17,6 +18,7 @@ macro_line|#include &lt;asm/oplib.h&gt;
 macro_line|#include &lt;asm/spinlock.h&gt;
 macro_line|#include &lt;asm/hardirq.h&gt;
 macro_line|#include &lt;asm/softirq.h&gt;
+macro_line|#include &lt;asm/uaccess.h&gt;
 DECL|macro|__KERNEL_SYSCALLS__
 mdefine_line|#define __KERNEL_SYSCALLS__
 macro_line|#include &lt;linux/unistd.h&gt;
@@ -1754,7 +1756,13 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|segment_eq
+c_func
+(paren
 id|current-&gt;tss.current_ds
+comma
+id|USER_DS
+)paren
 )paren
 (brace
 id|u32
@@ -2358,6 +2366,7 @@ r_int
 id|pc
 )paren
 (brace
+macro_line|#ifdef CONFIG_PROFILE
 r_if
 c_cond
 (paren
@@ -2413,6 +2422,7 @@ id|pc
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
 )brace
 DECL|variable|real_tick_offset
 DECL|variable|current_tick_offset
@@ -2559,10 +2569,9 @@ id|current-&gt;counter
 op_assign
 l_int|0
 suffix:semicolon
-id|resched_force
-c_func
-(paren
-)paren
+id|need_resched
+op_assign
+l_int|1
 suffix:semicolon
 )brace
 r_if

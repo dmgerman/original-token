@@ -5177,11 +5177,6 @@ c_cond
 id|skb
 )paren
 (brace
-id|skb-&gt;arp
-op_assign
-l_int|1
-suffix:semicolon
-multiline_comment|/* Resolved */
 r_if
 c_cond
 (paren
@@ -6015,10 +6010,6 @@ suffix:semicolon
 id|skb-&gt;sk
 op_assign
 id|sk
-suffix:semicolon
-id|skb-&gt;arp
-op_assign
-l_int|1
 suffix:semicolon
 id|skb_reserve
 c_func

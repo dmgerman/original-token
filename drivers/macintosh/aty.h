@@ -70,6 +70,24 @@ r_int
 id|blank_mode
 )paren
 suffix:semicolon
+r_extern
+r_void
+id|ati_set_origin
+c_func
+(paren
+r_int
+r_int
+id|offset
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|ati_vram
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
 multiline_comment|/*&n; * most of the rest of this file comes from ATI sample code&n; */
 macro_line|#ifndef REGMACH64_H
 DECL|macro|REGMACH64_H
@@ -115,6 +133,10 @@ DECL|macro|CRTC_FIFO
 mdefine_line|#define CRTC_FIFO               0x001e
 DECL|macro|CRTC_EXT_DISP
 mdefine_line|#define CRTC_EXT_DISP           0x001f
+DECL|macro|DSP_CONFIG
+mdefine_line|#define DSP_CONFIG              0x0020  /* Dword offset 08 */
+DECL|macro|DSP_ON_OFF
+mdefine_line|#define DSP_ON_OFF              0x0024  /* Dword offset 09 */
 DECL|macro|OVR_CLR
 mdefine_line|#define OVR_CLR                 0x0040  /* Dword offset 10 */
 DECL|macro|OVR_WID_LEFT_RIGHT
@@ -131,6 +153,8 @@ DECL|macro|CUR_HORZ_VERT_POSN
 mdefine_line|#define CUR_HORZ_VERT_POSN      0x006C  /* Dword offset 1B */
 DECL|macro|CUR_HORZ_VERT_OFF
 mdefine_line|#define CUR_HORZ_VERT_OFF       0x0070  /* Dword offset 1C */
+DECL|macro|MON_SENSE
+mdefine_line|#define MON_SENSE&t;&t;0x0078
 DECL|macro|SCRATCH_REG0
 mdefine_line|#define SCRATCH_REG0            0x0080  /* Dword offset 20 */
 DECL|macro|SCRATCH_REG1
@@ -142,6 +166,8 @@ mdefine_line|#define CLOCK_SEL_CNTL          0x0090
 singleline_comment|// Dword offset 24
 DECL|macro|BUS_CNTL
 mdefine_line|#define BUS_CNTL                0x00A0  /* Dword offset 28 */
+DECL|macro|EXT_MEM_CNTL
+mdefine_line|#define EXT_MEM_CNTL&t;&t;&t;0x00AC&t;/* Dword offset 2B */
 DECL|macro|MEM_CNTL
 mdefine_line|#define MEM_CNTL                0x00B0  /* Dword offset 2C */
 DECL|macro|MEM_VGA_WP_SEL
@@ -327,11 +353,11 @@ mdefine_line|#define CRTC_PIX_BY_2_EN&t;0x00000020
 DECL|macro|CRTC_BLANK
 mdefine_line|#define CRTC_BLANK&t;&t;0x00000040
 DECL|macro|CRTC_PIX_WIDTH_MASK
-mdefine_line|#define CRTC_PIX_WIDTH_MASK&t;&t;0x00000700
+mdefine_line|#define CRTC_PIX_WIDTH_MASK&t;0x00000700
 DECL|macro|CRTC_PIX_WIDTH_4BPP
-mdefine_line|#define CRTC_PIX_WIDTH_4BPP&t;&t;0x00000100
+mdefine_line|#define CRTC_PIX_WIDTH_4BPP&t;0x00000100
 DECL|macro|CRTC_PIX_WIDTH_8BPP
-mdefine_line|#define CRTC_PIX_WIDTH_8BPP&t;&t;0x00000200
+mdefine_line|#define CRTC_PIX_WIDTH_8BPP&t;0x00000200
 DECL|macro|CRTC_PIX_WIDTH_15BPP
 mdefine_line|#define CRTC_PIX_WIDTH_15BPP&t;0x00000300
 DECL|macro|CRTC_PIX_WIDTH_16BPP
@@ -436,6 +462,18 @@ DECL|macro|GUI_ENGINE_ENABLE
 mdefine_line|#define GUI_ENGINE_ENABLE       0x100
 DECL|macro|BLOCK_WRITE_ENABLE
 mdefine_line|#define BLOCK_WRITE_ENABLE      0x200
+multiline_comment|/* DSP_CONFIG register constants */
+DECL|macro|DSP_XCLKS_PER_QW
+mdefine_line|#define DSP_XCLKS_PER_QW        0x00003fff
+DECL|macro|DSP_LOOP_LATENCY
+mdefine_line|#define DSP_LOOP_LATENCY        0x000f0000
+DECL|macro|DSP_PRECISION
+mdefine_line|#define DSP_PRECISION           0x00700000
+multiline_comment|/* DSP_ON_OFF register constants */
+DECL|macro|DSP_OFF
+mdefine_line|#define DSP_OFF                 0x000007ff
+DECL|macro|DSP_ON
+mdefine_line|#define DSP_ON                  0x07ff0000
 multiline_comment|/* CLOCK_CNTL register constants */
 DECL|macro|CLOCK_SEL
 mdefine_line|#define CLOCK_SEL&t;&t;0x0f
@@ -1014,13 +1052,13 @@ DECL|macro|MACH64_NUM_FREQS
 mdefine_line|#define MACH64_NUM_FREQS&t;50
 multiline_comment|/* Wait until &quot;v&quot; queue entries are free */
 DECL|macro|aty_WaitQueue
-mdefine_line|#define aty_WaitQueue(v)    { while ((aty_ld_rev(FIFO_STAT) &amp; 0xffff) &gt; &bslash;&n;&t;&t;&t; ((unsigned short)(0x8000 &gt;&gt; (v)))); }
+mdefine_line|#define aty_WaitQueue(v)    { while ((aty_ld_le32(FIFO_STAT) &amp; 0xffff) &gt; &bslash;&n;&t;&t;&t; ((unsigned short)(0x8000 &gt;&gt; (v)))); }
 multiline_comment|/* Wait until GP is idle and queue is empty */
 DECL|macro|aty_WaitIdleEmpty
-mdefine_line|#define aty_WaitIdleEmpty() { aty_WaitQueue(16); &bslash;&n;&t;&t;&t;  while ((aty_ld_rev(GUI_STAT) &amp; 1) != 0); }
+mdefine_line|#define aty_WaitIdleEmpty() { aty_WaitQueue(16); &bslash;&n;&t;&t;&t;  while ((aty_ld_le32(GUI_STAT) &amp; 1) != 0); }
 DECL|macro|SKIP_2
 mdefine_line|#define SKIP_2(_v) ((((_v)&lt;&lt;1)&amp;0xfff8)|((_v)&amp;0x3)|(((_v)&amp;0x80)&gt;&gt;5))
 DECL|macro|MACH64_BIT_BLT
-mdefine_line|#define MACH64_BIT_BLT(_srcx, _srcy, _dstx, _dsty, _w, _h, _dir) &bslash;&n;{ &bslash;&n;    aty_WaitQueue(5); &bslash;&n;    aty_st_rev(SRC_Y_X, (((_srcx) &lt;&lt; 16) | ((_srcy) &amp; 0x0000ffff))); &bslash;&n;    aty_st_rev(SRC_WIDTH1, (_w)); &bslash;&n;    aty_st_rev(DST_CNTL, (_dir)); &bslash;&n;    aty_st_rev(DST_Y_X, (((_dstx) &lt;&lt; 16) | ((_dsty) &amp; 0x0000ffff))); &bslash;&n;    aty_st_rev(DST_HEIGHT_WIDTH, (((_w) &lt;&lt; 16) | ((_h) &amp; 0x0000ffff))); &bslash;&n;}
+mdefine_line|#define MACH64_BIT_BLT(_srcx, _srcy, _dstx, _dsty, _w, _h, _dir) &bslash;&n;{ &bslash;&n;    aty_WaitQueue(5); &bslash;&n;    aty_st_le32(SRC_Y_X, (((_srcx) &lt;&lt; 16) | ((_srcy) &amp; 0x0000ffff))); &bslash;&n;    aty_st_le32(SRC_WIDTH1, (_w)); &bslash;&n;    aty_st_le32(DST_CNTL, (_dir)); &bslash;&n;    aty_st_le32(DST_Y_X, (((_dstx) &lt;&lt; 16) | ((_dsty) &amp; 0x0000ffff))); &bslash;&n;    aty_st_le32(DST_HEIGHT_WIDTH, (((_w) &lt;&lt; 16) | ((_h) &amp; 0x0000ffff))); &bslash;&n;}
 macro_line|#endif /* REGMACH64_H */
 eof

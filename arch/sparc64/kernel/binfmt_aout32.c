@@ -157,9 +157,9 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * These are the only things you should do on a core-file: use only these&n; * macros to write out all the necessary info.&n; */
 DECL|macro|DUMP_WRITE
-mdefine_line|#define DUMP_WRITE(addr,nr) &bslash;&n;while (file.f_op-&gt;write(inode,&amp;file,(char *)(addr),(nr)) != (nr)) goto close_coredump
+mdefine_line|#define DUMP_WRITE(addr,nr) &bslash;&n;while (file.f_op-&gt;write(&amp;file,(char *)(addr),(nr),&amp;file.f_pos) != (nr)) &bslash;&n;&t;goto close_coredump
 DECL|macro|DUMP_SEEK
-mdefine_line|#define DUMP_SEEK(offset) &bslash;&n;if (file.f_op-&gt;llseek) { &bslash;&n;&t;if (file.f_op-&gt;llseek(inode,&amp;file,(offset),0) != (offset)) &bslash;&n; &t;&t;goto close_coredump; &bslash;&n;} else file.f_pos = (offset)
+mdefine_line|#define DUMP_SEEK(offset) &bslash;&n;if (file.f_op-&gt;llseek) { &bslash;&n;&t;if (file.f_op-&gt;llseek(&amp;file,(offset),0) != (offset)) &bslash;&n; &t;&t;goto close_coredump; &bslash;&n;} else file.f_pos = (offset)
 multiline_comment|/*&n; * Routine writes a core dump image in the current directory.&n; * Currently only a stub-function.&n; *&n; * Note that setuid/setgid files won&squot;t make a core-dump if the uid/gid&n; * changed due to the set[u|g]id. It&squot;s enforced by the &quot;current-&gt;dumpable&quot;&n; * field, which also makes sure the core-dumps won&squot;t be recursive if the&n; * dumping of the process results in another error..&n; */
 r_static
 r_inline
@@ -195,8 +195,7 @@ r_struct
 id|file
 id|file
 suffix:semicolon
-r_int
-r_int
+id|mm_segment_t
 id|fs
 suffix:semicolon
 r_int
@@ -1248,22 +1247,6 @@ r_return
 id|retval
 suffix:semicolon
 multiline_comment|/* OK, This is the point of no return */
-id|memcpy
-c_func
-(paren
-op_amp
-id|current-&gt;tss.core_exec
-comma
-op_amp
-id|ex
-comma
-r_sizeof
-(paren
-r_struct
-id|exec
-)paren
-)paren
-suffix:semicolon
 id|current-&gt;mm-&gt;end_code
 op_assign
 id|ex.a_text
@@ -2049,8 +2032,6 @@ op_member_access_from_pointer
 id|llseek
 c_func
 (paren
-id|inode
-comma
 id|file
 comma
 l_int|0
@@ -2084,8 +2065,6 @@ op_member_access_from_pointer
 id|read
 c_func
 (paren
-id|inode
-comma
 id|file
 comma
 (paren
@@ -2099,6 +2078,9 @@ r_sizeof
 (paren
 id|ex
 )paren
+comma
+op_amp
+id|file-&gt;f_pos
 )paren
 suffix:semicolon
 id|set_fs

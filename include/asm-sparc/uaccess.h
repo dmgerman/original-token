@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: uaccess.h,v 1.13 1997/04/11 00:42:22 davem Exp $&n; * uaccess.h: User space memore access functions.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996,1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: uaccess.h,v 1.14 1997/09/18 10:42:02 rth Exp $&n; * uaccess.h: User space memore access functions.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996,1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#ifndef _ASM_UACCESS_H
 DECL|macro|_ASM_UACCESS_H
 mdefine_line|#define _ASM_UACCESS_H
@@ -11,26 +11,28 @@ macro_line|#endif
 macro_line|#ifndef __ASSEMBLY__
 multiline_comment|/* Sparc is not segmented, however we need to be able to fool verify_area()&n; * when doing system calls from kernel mode legitimately.&n; *&n; * &quot;For historical reasons, these macros are grossly misnamed.&quot; -Linus&n; */
 DECL|macro|KERNEL_DS
-mdefine_line|#define KERNEL_DS   0
+mdefine_line|#define KERNEL_DS   ((mm_segment_t) { 0 })
 DECL|macro|USER_DS
-mdefine_line|#define USER_DS     -1
+mdefine_line|#define USER_DS     ((mm_segment_t) { -1 })
 DECL|macro|VERIFY_READ
 mdefine_line|#define VERIFY_READ&t;0
 DECL|macro|VERIFY_WRITE
 mdefine_line|#define VERIFY_WRITE&t;1
-DECL|macro|get_fs
-mdefine_line|#define get_fs() (current-&gt;tss.current_ds)
 DECL|macro|get_ds
-mdefine_line|#define get_ds() (KERNEL_DS)
+mdefine_line|#define get_ds()&t;(KERNEL_DS)
+DECL|macro|get_fs
+mdefine_line|#define get_fs()&t;(current-&gt;tss.current_ds)
 DECL|macro|set_fs
-mdefine_line|#define set_fs(val) ((current-&gt;tss.current_ds) = (val))
+mdefine_line|#define set_fs(val)&t;((current-&gt;tss.current_ds) = (val))
+DECL|macro|segment_eq
+mdefine_line|#define segment_eq(a,b)&t;((a).seg == (b).seg)
 multiline_comment|/* We have there a nice not-mapped page at page_offset - PAGE_SIZE, so that this test&n; * can be fairly lightweight.&n; * No one can read/write anything from userland in the kernel space by setting&n; * large size and address near to page_offset - a fault will break his intentions.&n; */
 DECL|macro|__user_ok
 mdefine_line|#define __user_ok(addr,size) ((addr) &lt; stack_top)
 DECL|macro|__kernel_ok
-mdefine_line|#define __kernel_ok (get_fs() == KERNEL_DS)
+mdefine_line|#define __kernel_ok (segment_eq(get_fs(), KERNEL_DS))
 DECL|macro|__access_ok
-mdefine_line|#define __access_ok(addr,size) (__user_ok((addr) &amp; get_fs(),(size)))
+mdefine_line|#define __access_ok(addr,size) (__user_ok((addr) &amp; get_fs().seg,(size)))
 DECL|macro|access_ok
 mdefine_line|#define access_ok(type,addr,size) __access_ok((unsigned long)(addr),(size))
 DECL|function|verify_area

@@ -1,4 +1,4 @@
-multiline_comment|/*****************************************************************************&n;* sdlamain.c&t;WANPIPE(tm) Multiprotocol WAN Link Driver.  Main module.&n;*&n;* Author:&t;Gene Kozin&t;&lt;genek@compuserve.com&gt;&n;*&n;* Copyright:&t;(c) 1995-1997 Sangoma Technologies Inc.&n;*&n;*&t;&t;This program is free software; you can redistribute it and/or&n;*&t;&t;modify it under the terms of the GNU General Public License&n;*&t;&t;as published by the Free Software Foundation; either version&n;*&t;&t;2 of the License, or (at your option) any later version.&n;* ============================================================================&n;* Jan 02, 1997&t;Gene Kozin&t;Initial version.&n;*****************************************************************************/
+multiline_comment|/*****************************************************************************&n;* sdlamain.c&t;WANPIPE(tm) Multiprotocol WAN Link Driver.  Main module.&n;*&n;* Author:&t;Gene Kozin&t;&lt;genek@compuserve.com&gt;&n;*&t;&t;Jaspreet Singh&t;&lt;jaspreet@sangoma.com&gt;&n;*&n;* Copyright:&t;(c) 1995-1997 Sangoma Technologies Inc.&n;*&n;*&t;&t;This program is free software; you can redistribute it and/or&n;*&t;&t;modify it under the terms of the GNU General Public License&n;*&t;&t;as published by the Free Software Foundation; either version&n;*&t;&t;2 of the License, or (at your option) any later version.&n;* ============================================================================&n;* Nov 28, 1997&t;Jaspreet Singh&t;Changed DRV_RELEASE to 1&n;* Nov 10, 1997&t;Jaspreet Singh&t;Changed sti() to restore_flags();&n;* Nov 06, 1997 &t;Jaspreet Singh&t;Changed DRV_VERSION to 4 and DRV_RELEASE to 0&n;* Oct 20, 1997 &t;Jaspreet Singh&t;Modified sdla_isr routine so that card-&gt;in_isr&n;*&t;&t;&t;&t;assignments are taken out and placed in the&n;*&t;&t;&t;&t;sdla_ppp.c, sdla_fr.c and sdla_x25.c isr&n;*&t;&t;&t;&t;routines. Took out &squot;wandev-&gt;tx_int_enabled&squot; and&n;*&t;&t;&t;&t;replaced it with &squot;wandev-&gt;enable_tx_int&squot;. &n;* May 29, 1997&t;Jaspreet Singh&t;Flow Control Problem&n;*&t;&t;&t;&t;added &quot;wandev-&gt;tx_int_enabled=1&quot; line in the&n;*&t;&t;&t;&t;init module. This line intializes the flag for &n;*&t;&t;&t;&t;preventing Interrupt disabled with device set to&n;*&t;&t;&t;&t;busy&n;* Jan 15, 1997&t;Gene Kozin&t;Version 3.1.0&n;*&t;&t;&t;&t; o added UDP management stuff&n;* Jan 02, 1997&t;Gene Kozin&t;Initial version.&n;*****************************************************************************/
 macro_line|#if&t;!defined(__KERNEL__) || !defined(MODULE)
 macro_line|#error&t;This code MUST be compiled as a kernel module!
 macro_line|#endif
@@ -23,9 +23,9 @@ DECL|macro|STATIC
 mdefine_line|#define&t;STATIC&t;&t;static
 macro_line|#endif
 DECL|macro|DRV_VERSION
-mdefine_line|#define&t;DRV_VERSION&t;3&t;&t;/* version number */
+mdefine_line|#define&t;DRV_VERSION&t;4&t;&t;/* version number */
 DECL|macro|DRV_RELEASE
-mdefine_line|#define&t;DRV_RELEASE&t;0&t;&t;/* release (minor version) number */
+mdefine_line|#define&t;DRV_RELEASE&t;1&t;&t;/* release (minor version) number */
 DECL|macro|MAX_CARDS
 mdefine_line|#define&t;MAX_CARDS&t;8&t;&t;/* max number of adapters */
 macro_line|#ifndef&t;CONFIG_WANPIPE_CARDS&t;&t;/* configurable option */
@@ -373,6 +373,10 @@ op_member_access_from_pointer
 r_private
 op_assign
 id|card
+suffix:semicolon
+id|wandev-&gt;enable_tx_int
+op_assign
+l_int|0
 suffix:semicolon
 id|wandev-&gt;setup
 op_assign
@@ -1259,7 +1263,7 @@ id|err
 suffix:semicolon
 )brace
 multiline_comment|/****** Driver IOCTL Hanlers ************************************************/
-multiline_comment|/*============================================================================&n; * Dump adpater memory to user buffer.&n; * o verify request structure&n; * o copy request structure to kernel data space&n; * o verify length/offset&n; * o verify user buffer&n; * o copy adapter memory image to user buffer&n; *&n; * Note: when dumping memory, this routine switches curent dual-port memory&n; *&t; vector, so care must be taken to avoid racing conditions.&n; */
+multiline_comment|/*============================================================================&n; * Dump adapter memory to user buffer.&n; * o verify request structure&n; * o copy request structure to kernel data space&n; * o verify length/offset&n; * o verify user buffer&n; * o copy adapter memory image to user buffer&n; *&n; * Note: when dumping memory, this routine switches curent dual-port memory&n; *&t; vector, so care must be taken to avoid racing conditions.&n; */
 DECL|function|ioctl_dump
 r_static
 r_int
@@ -1285,6 +1289,10 @@ r_int
 id|oldvec
 suffix:semicolon
 multiline_comment|/* DPM window vector */
+r_int
+r_int
+id|flags
+suffix:semicolon
 r_int
 id|err
 op_assign
@@ -1345,6 +1353,12 @@ suffix:semicolon
 id|winsize
 op_assign
 id|card-&gt;hw.dpmsize
+suffix:semicolon
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
 suffix:semicolon
 id|cli
 c_func
@@ -1497,9 +1511,10 @@ id|oldvec
 )paren
 suffix:semicolon
 multiline_comment|/* restore DPM window position */
-id|sti
+id|restore_flags
 c_func
 (paren
+id|flags
 )paren
 suffix:semicolon
 multiline_comment|/* &gt;&gt;&gt; critical section end &lt;&lt;&lt; */
@@ -1656,10 +1671,6 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-id|card-&gt;in_isr
-op_assign
-l_int|1
-suffix:semicolon
 id|sdla_intack
 c_func
 (paren
@@ -1679,10 +1690,6 @@ c_func
 (paren
 id|card
 )paren
-suffix:semicolon
-id|card-&gt;in_isr
-op_assign
-l_int|0
 suffix:semicolon
 DECL|macro|card
 macro_line|#undef&t;card
@@ -1738,18 +1745,7 @@ op_logical_and
 id|card-&gt;poll
 op_logical_and
 op_logical_neg
-id|test_and_set_bit
-c_func
-(paren
-l_int|0
-comma
-(paren
-r_void
-op_star
-)paren
-op_amp
 id|card-&gt;wandev.critical
-)paren
 )paren
 (brace
 id|card
@@ -1759,10 +1755,6 @@ c_func
 (paren
 id|card
 )paren
-suffix:semicolon
-id|card-&gt;wandev.critical
-op_assign
-l_int|0
 suffix:semicolon
 )brace
 )brace

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: console.c,v 1.8 1997/08/16 08:00:16 davem Exp $&n; * console.c: Routines that deal with sending and receiving IO&n; *            to/from the current console device using the PROM.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996,1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: console.c,v 1.9 1997/10/29 07:41:43 ecd Exp $&n; * console.c: Routines that deal with sending and receiving IO&n; *            to/from the current console device using the PROM.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996,1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -350,6 +350,24 @@ id|propb
 )paren
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t; * If we get here with propb == &squot;keyboard&squot;, we are on ttya, as&n;&t; * the PROM defaulted to this due to &squot;no input device&squot;.&n;&t; */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|strncmp
+c_func
+(paren
+id|propb
+comma
+l_string|&quot;keyboard&quot;
+comma
+l_int|8
+)paren
+)paren
+r_return
+id|PROMDEV_ITTYA
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -530,6 +548,24 @@ r_sizeof
 id|propb
 )paren
 )paren
+suffix:semicolon
+multiline_comment|/*&n;&t; * If we get here with propb == &squot;screen&squot;, we are on ttya, as&n;&t; * the PROM defaulted to this due to &squot;no input device&squot;.&n;&t; */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|strncmp
+c_func
+(paren
+id|propb
+comma
+l_string|&quot;screen&quot;
+comma
+l_int|6
+)paren
+)paren
+r_return
+id|PROMDEV_OTTYA
 suffix:semicolon
 r_if
 c_cond

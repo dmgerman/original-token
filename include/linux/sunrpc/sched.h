@@ -233,6 +233,8 @@ DECL|macro|RPC_TASK_DYNAMIC
 mdefine_line|#define RPC_TASK_DYNAMIC&t;0x0200&t;&t;/* task was kmalloc&squot;ed */
 DECL|macro|RPC_TASK_KILLED
 mdefine_line|#define RPC_TASK_KILLED&t;&t;0x0400&t;&t;/* task was killed */
+DECL|macro|RPC_TASK_NFSWRITE
+mdefine_line|#define RPC_TASK_NFSWRITE&t;0x1000&t;&t;/* an NFS writeback */
 DECL|macro|RPC_IS_RUNNING
 mdefine_line|#define RPC_IS_RUNNING(t)&t;((t)-&gt;tk_flags &amp; RPC_TASK_RUNNING)
 DECL|macro|RPC_IS_ASYNC
@@ -544,6 +546,15 @@ c_func
 r_void
 )paren
 suffix:semicolon
+macro_line|#ifdef RPC_DEBUG
+r_void
+id|rpc_show_tasks
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+macro_line|#endif
 r_extern
 id|__inline__
 r_void

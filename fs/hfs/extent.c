@@ -2789,10 +2789,6 @@ op_rshift
 id|HFS_SECTOR_SIZE_BITS
 suffix:semicolon
 )brace
-id|fork-&gt;entry-&gt;dirt
-op_assign
-l_int|1
-suffix:semicolon
 )brace
 r_else
 r_if
@@ -2810,10 +2806,6 @@ id|fork
 comma
 id|ablocks
 )paren
-suffix:semicolon
-id|fork-&gt;entry-&gt;dirt
-op_assign
-l_int|1
 suffix:semicolon
 )brace
 )brace
@@ -2971,10 +2963,6 @@ id|ablock
 op_plus
 l_int|1
 )paren
-suffix:semicolon
-id|fork-&gt;entry-&gt;dirt
-op_assign
-l_int|1
 suffix:semicolon
 )brace
 r_else

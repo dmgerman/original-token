@@ -559,10 +559,6 @@ id|skb-&gt;dev
 op_assign
 id|neigh-&gt;dev
 suffix:semicolon
-id|skb-&gt;arp
-op_assign
-l_int|1
-suffix:semicolon
 id|dev_queue_xmit
 c_func
 (paren
@@ -669,10 +665,6 @@ id|skb-&gt;dev
 op_assign
 id|neigh-&gt;dev
 suffix:semicolon
-id|skb-&gt;arp
-op_assign
-l_int|1
-suffix:semicolon
 id|dev_queue_xmit
 c_func
 (paren
@@ -766,10 +758,6 @@ suffix:semicolon
 id|skb-&gt;dev
 op_assign
 id|neigh-&gt;dev
-suffix:semicolon
-id|skb-&gt;arp
-op_assign
-l_int|1
 suffix:semicolon
 id|dev_queue_xmit
 c_func

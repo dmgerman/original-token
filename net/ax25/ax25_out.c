@@ -1434,10 +1434,6 @@ c_func
 id|skb-&gt;dev
 )paren
 suffix:semicolon
-id|skb-&gt;arp
-op_assign
-l_int|1
-suffix:semicolon
 id|ptr
 op_assign
 id|skb_push

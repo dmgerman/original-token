@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;UDP over IPv6&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;Based on linux/ipv4/udp.c&n; *&n; *&t;$Id: udp.c,v 1.18 1997/09/14 08:32:24 davem Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; *&t;UDP over IPv6&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;Based on linux/ipv4/udp.c&n; *&n; *&t;$Id: udp.c,v 1.21 1997/12/29 19:52:52 kuznet Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/socket.h&gt;
@@ -11,6 +11,7 @@ macro_line|#include &lt;linux/if_arp.h&gt;
 macro_line|#include &lt;linux/ipv6.h&gt;
 macro_line|#include &lt;linux/icmpv6.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;net/sock.h&gt;
 macro_line|#include &lt;net/snmp.h&gt;
 macro_line|#include &lt;net/ipv6.h&gt;
@@ -1134,14 +1135,6 @@ r_int
 id|timeout
 )paren
 (brace
-r_struct
-id|ipv6_pinfo
-op_star
-id|np
-op_assign
-op_amp
-id|sk-&gt;net_pinfo.af_inet6
-suffix:semicolon
 id|lock_sock
 c_func
 (paren
@@ -1151,17 +1144,6 @@ suffix:semicolon
 id|sk-&gt;state
 op_assign
 id|TCP_CLOSE
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|np-&gt;dst
-)paren
-id|dst_release
-c_func
-(paren
-id|np-&gt;dst
-)paren
 suffix:semicolon
 id|ipv6_sock_mc_close
 c_func
@@ -1174,6 +1156,10 @@ c_func
 (paren
 id|sk
 )paren
+suffix:semicolon
+id|sk-&gt;dead
+op_assign
+l_int|1
 suffix:semicolon
 id|release_sock
 c_func
@@ -2764,6 +2750,24 @@ suffix:semicolon
 r_int
 id|err
 suffix:semicolon
+multiline_comment|/* Rough check on arithmetic overflow,&n;&t;   better check is made in ip6_build_xmit&n;&n;&t;   When jumbo header will be implemeted we will change it&n;&t;   to something sort of (len will be size_t)&n;&t;   ulen &gt; SIZE_T_MAX - sizeof(struct udphdr)&n;&t; */
+r_if
+c_cond
+(paren
+id|ulen
+template_param
+l_int|0xFFFF
+op_minus
+r_sizeof
+(paren
+r_struct
+id|udphdr
+)paren
+)paren
+r_return
+op_minus
+id|EMSGSIZE
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2834,10 +2838,11 @@ op_assign
 op_amp
 id|sin6-&gt;sin6_addr
 suffix:semicolon
+multiline_comment|/* BUGGGG! If route is not cloned, this check always&n;&t;&t;   fails, hence dst_cache only slows down transmission --ANK&n;&t;&t; */
 r_if
 c_cond
 (paren
-id|np-&gt;dst
+id|sk-&gt;dst_cache
 op_logical_and
 id|ipv6_addr_cmp
 c_func
@@ -2852,10 +2857,10 @@ id|np-&gt;daddr
 id|dst_release
 c_func
 (paren
-id|np-&gt;dst
+id|sk-&gt;dst_cache
 )paren
 suffix:semicolon
-id|np-&gt;dst
+id|sk-&gt;dst_cache
 op_assign
 l_int|NULL
 suffix:semicolon

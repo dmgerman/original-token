@@ -21,7 +21,7 @@ macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 DECL|macro|DLINFO_ITEMS
-mdefine_line|#define DLINFO_ITEMS 12
+mdefine_line|#define DLINFO_ITEMS 13
 macro_line|#include &lt;linux/elf.h&gt;
 r_static
 r_int
@@ -318,6 +318,68 @@ comma
 op_star
 id|csp
 suffix:semicolon
+r_char
+op_star
+id|k_platform
+comma
+op_star
+id|u_platform
+suffix:semicolon
+r_int
+id|hwcap
+suffix:semicolon
+r_int
+id|platform_len
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/*&n;&t; * Get hold of platform and hardware capabilities masks for&n;&t; * the machine we are running on.  In some cases (Sparc), &n;&t; * this info is impossible to get, in others (i386) it is&n;&t; * merely difficult.&n;&t; */
+id|hwcap
+op_assign
+id|ELF_HWCAP
+suffix:semicolon
+id|k_platform
+op_assign
+id|ELF_PLATFORM
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|k_platform
+)paren
+(brace
+id|platform_len
+op_assign
+id|strlen
+c_func
+(paren
+id|k_platform
+)paren
+op_plus
+l_int|1
+suffix:semicolon
+id|u_platform
+op_assign
+id|p
+op_minus
+id|platform_len
+suffix:semicolon
+id|__copy_to_user
+c_func
+(paren
+id|u_platform
+comma
+id|k_platform
+comma
+id|platform_len
+)paren
+suffix:semicolon
+)brace
+r_else
+id|u_platform
+op_assign
+id|p
+suffix:semicolon
 multiline_comment|/*&n;&t; * Force 16 byte _final_ alignment here for generality.&n;&t; * Leave an extra 16 bytes free so that on the PowerPC we&n;&t; * can move the aux table up to start on a 16-byte boundary.&n;&t; */
 id|sp
 op_assign
@@ -334,7 +396,9 @@ op_amp
 r_int
 r_int
 )paren
-id|p
+(paren
+id|u_platform
+)paren
 )paren
 op_minus
 l_int|16UL
@@ -346,6 +410,8 @@ id|sp
 suffix:semicolon
 id|csp
 op_sub_assign
+(paren
+(paren
 id|exec
 ques
 c_cond
@@ -353,7 +419,18 @@ id|DLINFO_ITEMS
 op_star
 l_int|2
 suffix:colon
+l_int|4
+)paren
+op_plus
+(paren
+id|k_platform
+ques
+c_cond
 l_int|2
+suffix:colon
+l_int|0
+)paren
+)paren
 suffix:semicolon
 id|csp
 op_sub_assign
@@ -391,7 +468,6 @@ id|csp
 op_amp
 l_int|15UL
 )paren
-(brace
 id|sp
 op_sub_assign
 (paren
@@ -410,7 +486,6 @@ op_star
 id|sp
 )paren
 suffix:semicolon
-)brace
 multiline_comment|/*&n;&t; * Put the ELF interpreter info on the stack&n;&t; */
 DECL|macro|NEW_AUX_ENT
 mdefine_line|#define NEW_AUX_ENT(nr, id, val) &bslash;&n;&t;  __put_user ((id), sp+(nr*2)); &bslash;&n;&t;  __put_user ((val), sp+(nr*2+1)); &bslash;&n;
@@ -431,6 +506,48 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|k_platform
+)paren
+(brace
+id|sp
+op_sub_assign
+l_int|2
+suffix:semicolon
+id|NEW_AUX_ENT
+c_func
+(paren
+l_int|0
+comma
+id|AT_PLATFORM
+comma
+(paren
+id|elf_addr_t
+)paren
+(paren
+r_int
+r_int
+)paren
+id|u_platform
+)paren
+suffix:semicolon
+)brace
+id|sp
+op_sub_assign
+l_int|2
+suffix:semicolon
+id|NEW_AUX_ENT
+c_func
+(paren
+l_int|0
+comma
+id|AT_HWCAP
+comma
+id|hwcap
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
 id|exec
 )paren
 (brace
@@ -441,6 +558,7 @@ op_star
 l_int|2
 suffix:semicolon
 id|NEW_AUX_ENT
+c_func
 (paren
 l_int|0
 comma
@@ -452,6 +570,7 @@ id|exec-&gt;e_phoff
 )paren
 suffix:semicolon
 id|NEW_AUX_ENT
+c_func
 (paren
 l_int|1
 comma
@@ -465,6 +584,7 @@ id|elf_phdr
 )paren
 suffix:semicolon
 id|NEW_AUX_ENT
+c_func
 (paren
 l_int|2
 comma
@@ -474,6 +594,7 @@ id|exec-&gt;e_phnum
 )paren
 suffix:semicolon
 id|NEW_AUX_ENT
+c_func
 (paren
 l_int|3
 comma
@@ -483,6 +604,7 @@ id|ELF_EXEC_PAGESIZE
 )paren
 suffix:semicolon
 id|NEW_AUX_ENT
+c_func
 (paren
 l_int|4
 comma
@@ -492,6 +614,7 @@ id|interp_load_addr
 )paren
 suffix:semicolon
 id|NEW_AUX_ENT
+c_func
 (paren
 l_int|5
 comma
@@ -501,6 +624,7 @@ l_int|0
 )paren
 suffix:semicolon
 id|NEW_AUX_ENT
+c_func
 (paren
 l_int|6
 comma
@@ -513,6 +637,7 @@ id|exec-&gt;e_entry
 )paren
 suffix:semicolon
 id|NEW_AUX_ENT
+c_func
 (paren
 l_int|7
 comma
@@ -525,6 +650,7 @@ id|current-&gt;uid
 )paren
 suffix:semicolon
 id|NEW_AUX_ENT
+c_func
 (paren
 l_int|8
 comma
@@ -537,6 +663,7 @@ id|current-&gt;euid
 )paren
 suffix:semicolon
 id|NEW_AUX_ENT
+c_func
 (paren
 l_int|9
 comma
@@ -549,6 +676,7 @@ id|current-&gt;gid
 )paren
 suffix:semicolon
 id|NEW_AUX_ENT
+c_func
 (paren
 l_int|10
 comma
@@ -2552,10 +2680,6 @@ id|current-&gt;mm-&gt;end_code
 op_assign
 l_int|0
 suffix:semicolon
-id|current-&gt;mm-&gt;start_mmap
-op_assign
-id|ELF_START_MMAP
-suffix:semicolon
 id|current-&gt;mm-&gt;mmap
 op_assign
 l_int|NULL
@@ -3039,15 +3163,10 @@ c_func
 id|elf_exec_fileno
 )paren
 suffix:semicolon
-id|current-&gt;personality
-op_assign
+id|SET_PERSONALITY
+c_func
 (paren
 id|ibcs2_interpreter
-ques
-c_cond
-id|PER_SVR4
-suffix:colon
-id|PER_LINUX
 )paren
 suffix:semicolon
 r_if

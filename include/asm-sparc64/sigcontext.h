@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sigcontext.h,v 1.9 1997/08/19 14:18:38 jj Exp $ */
+multiline_comment|/* $Id: sigcontext.h,v 1.10 1997/12/11 15:16:11 jj Exp $ */
 macro_line|#ifndef __SPARC64_SIGCONTEXT_H
 DECL|macro|__SPARC64_SIGCONTEXT_H
 mdefine_line|#define __SPARC64_SIGCONTEXT_H

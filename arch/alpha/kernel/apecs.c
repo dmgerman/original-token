@@ -30,7 +30,6 @@ r_int
 id|alpha_sys_type
 suffix:semicolon
 multiline_comment|/*&n; * BIOS32-style PCI interface:&n; */
-macro_line|#ifdef CONFIG_ALPHA_APECS
 macro_line|#ifdef DEBUG
 DECL|macro|DBG
 macro_line|# define DBG(args)&t;printk args
@@ -110,7 +109,8 @@ id|DBG
 c_func
 (paren
 (paren
-l_string|&quot;mk_conf_addr(bus=%d ,device_fn=0x%x, where=0x%x, pci_addr=0x%p, type1=0x%p)&bslash;n&quot;
+l_string|&quot;mk_conf_addr(bus=%d ,device_fn=0x%x, where=0x%x,&quot;
+l_string|&quot; pci_addr=0x%p, type1=0x%p)&bslash;n&quot;
 comma
 id|bus
 comma
@@ -406,25 +406,15 @@ id|stat0
 op_assign
 op_star
 (paren
-(paren
-r_volatile
-r_int
-r_int
-op_star
+id|vuip
 )paren
 id|APECS_IOC_DCSR
-)paren
 suffix:semicolon
 op_star
 (paren
-(paren
-r_volatile
-r_int
-r_int
-op_star
+id|vuip
 )paren
 id|APECS_IOC_DCSR
-)paren
 op_assign
 id|stat0
 suffix:semicolon
@@ -454,13 +444,9 @@ id|haxr2
 op_assign
 op_star
 (paren
-(paren
-r_int
-r_int
-op_star
+id|vuip
 )paren
 id|APECS_IOC_HAXR2
-)paren
 suffix:semicolon
 id|mb
 c_func
@@ -469,13 +455,9 @@ c_func
 suffix:semicolon
 op_star
 (paren
-(paren
-r_int
-r_int
-op_star
+id|vuip
 )paren
 id|APECS_IOC_HAXR2
-)paren
 op_assign
 id|haxr2
 op_or
@@ -513,19 +495,9 @@ id|value
 op_assign
 op_star
 (paren
-(paren
-r_volatile
-r_int
-r_int
-op_star
+id|vuip
 )paren
 id|addr
-)paren
-suffix:semicolon
-id|mb
-c_func
-(paren
-)paren
 suffix:semicolon
 id|mb
 c_func
@@ -561,8 +533,8 @@ c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * david.rusling@reo.mts.dec.com.  This code is needed for the&n;&t; * EB64+ as it does not generate a machine check (why I don&squot;t&n;&t; * know).  When we build kernels for one particular platform&n;&t; * then we can make this conditional on the type.&n;&t; */
 macro_line|#if 1
+multiline_comment|/*&n;&t; * david.rusling@reo.mts.dec.com.  This code is needed for the&n;&t; * EB64+ as it does not generate a machine check (why I don&squot;t&n;&t; * know).  When we build kernels for one particular platform&n;&t; * then we can make this conditional on the type.&n;&t; */
 id|draina
 c_func
 (paren
@@ -573,13 +545,9 @@ id|stat0
 op_assign
 op_star
 (paren
-(paren
-r_int
-r_int
-op_star
+id|vuip
 )paren
 id|APECS_IOC_DCSR
-)paren
 suffix:semicolon
 id|DBG
 c_func
@@ -624,14 +592,9 @@ suffix:semicolon
 multiline_comment|/* reset error status: */
 op_star
 (paren
-(paren
-r_volatile
-r_int
-r_int
-op_star
+id|vulp
 )paren
 id|APECS_IOC_DCSR
-)paren
 op_assign
 id|stat0
 suffix:semicolon
@@ -662,13 +625,9 @@ id|type1
 (brace
 op_star
 (paren
-(paren
-r_int
-r_int
-op_star
+id|vuip
 )paren
 id|APECS_IOC_HAXR2
-)paren
 op_assign
 id|haxr2
 op_amp
@@ -811,25 +770,15 @@ id|stat0
 op_assign
 op_star
 (paren
-(paren
-r_volatile
-r_int
-r_int
-op_star
+id|vuip
 )paren
 id|APECS_IOC_DCSR
-)paren
 suffix:semicolon
 op_star
 (paren
-(paren
-r_volatile
-r_int
-r_int
-op_star
+id|vuip
 )paren
 id|APECS_IOC_DCSR
-)paren
 op_assign
 id|stat0
 suffix:semicolon
@@ -849,13 +798,9 @@ id|haxr2
 op_assign
 op_star
 (paren
-(paren
-r_int
-r_int
-op_star
+id|vuip
 )paren
 id|APECS_IOC_HAXR2
-)paren
 suffix:semicolon
 id|mb
 c_func
@@ -864,13 +809,9 @@ c_func
 suffix:semicolon
 op_star
 (paren
-(paren
-r_int
-r_int
-op_star
+id|vuip
 )paren
 id|APECS_IOC_HAXR2
-)paren
 op_assign
 id|haxr2
 op_or
@@ -894,21 +835,11 @@ suffix:semicolon
 multiline_comment|/* access configuration space: */
 op_star
 (paren
-(paren
-r_volatile
-r_int
-r_int
-op_star
+id|vuip
 )paren
 id|addr
-)paren
 op_assign
 id|value
-suffix:semicolon
-id|mb
-c_func
-(paren
-)paren
 suffix:semicolon
 id|mb
 c_func
@@ -924,8 +855,8 @@ c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * david.rusling@reo.mts.dec.com.  This code is needed for the&n;&t; * EB64+ as it does not generate a machine check (why I don&squot;t&n;&t; * know).  When we build kernels for one particular platform&n;&t; * then we can make this conditional on the type.&n;&t; */
 macro_line|#if 1
+multiline_comment|/*&n;&t; * david.rusling@reo.mts.dec.com.  This code is needed for the&n;&t; * EB64+ as it does not generate a machine check (why I don&squot;t&n;&t; * know).  When we build kernels for one particular platform&n;&t; * then we can make this conditional on the type.&n;&t; */
 id|draina
 c_func
 (paren
@@ -936,13 +867,9 @@ id|stat0
 op_assign
 op_star
 (paren
-(paren
-r_int
-r_int
-op_star
+id|vuip
 )paren
 id|APECS_IOC_DCSR
-)paren
 suffix:semicolon
 r_if
 c_cond
@@ -977,14 +904,9 @@ suffix:semicolon
 multiline_comment|/* reset error status: */
 op_star
 (paren
-(paren
-r_volatile
-r_int
-r_int
-op_star
+id|vulp
 )paren
 id|APECS_IOC_DCSR
-)paren
 op_assign
 id|stat0
 suffix:semicolon
@@ -1011,13 +933,9 @@ id|type1
 (brace
 op_star
 (paren
-(paren
-r_int
-r_int
-op_star
+id|vuip
 )paren
 id|APECS_IOC_HAXR2
-)paren
 op_assign
 id|haxr2
 op_amp
@@ -1782,7 +1700,7 @@ l_int|0
 suffix:semicolon
 macro_line|#endif /* CONFIG_ALPHA_XL */
 macro_line|#ifdef CONFIG_ALPHA_CABRIOLET
-multiline_comment|/*&n;&t; * JAE: HACK!!! for now, hardwire if configured...&n;&t; * davidm: Older miniloader versions don&squot;t set the clockfrequency&n;&t; * right, so hardcode it for now.&n;&t; */
+multiline_comment|/*&n;&t; * JAE: HACK!!! for now, hardwire if configured...&n;&t; * davidm: Older miniloader versions don&squot;t set the clock frequency&n;&t; * right, so hardcode it for now.&n;&t; */
 r_if
 c_cond
 (paren
@@ -1867,13 +1785,9 @@ id|haxr2
 op_assign
 op_star
 (paren
-(paren
-r_int
-r_int
-op_star
+id|vuip
 )paren
 id|APECS_IOC_HAXR2
-)paren
 suffix:semicolon
 id|mb
 c_func
@@ -1896,13 +1810,9 @@ suffix:semicolon
 macro_line|#endif
 op_star
 (paren
-(paren
-r_int
-r_int
-op_star
+id|vuip
 )paren
 id|APECS_IOC_HAXR2
-)paren
 op_assign
 l_int|0
 suffix:semicolon
@@ -1928,13 +1838,9 @@ id|apecs_jd
 op_assign
 op_star
 (paren
-(paren
-r_int
-r_int
-op_star
+id|vulp
 )paren
 id|APECS_IOC_DCSR
-)paren
 suffix:semicolon
 r_if
 c_cond
@@ -1948,23 +1854,15 @@ id|apecs_jd1
 op_assign
 op_star
 (paren
-(paren
-r_int
-r_int
-op_star
+id|vulp
 )paren
 id|APECS_IOC_SEAR
-)paren
 suffix:semicolon
 op_star
 (paren
-(paren
-r_int
-r_int
-op_star
+id|vulp
 )paren
 id|APECS_IOC_DCSR
-)paren
 op_assign
 id|apecs_jd
 op_or
@@ -1974,13 +1872,9 @@ id|apecs_jd
 op_assign
 op_star
 (paren
-(paren
-r_int
-r_int
-op_star
+id|vulp
 )paren
 id|APECS_IOC_DCSR
-)paren
 suffix:semicolon
 id|mb
 c_func
@@ -1990,13 +1884,9 @@ suffix:semicolon
 )brace
 op_star
 (paren
-(paren
-r_int
-r_int
-op_star
+id|vulp
 )paren
 id|APECS_IOC_TBIA
-)paren
 op_assign
 id|APECS_IOC_TBIA
 suffix:semicolon
@@ -2004,13 +1894,9 @@ id|apecs_jd2
 op_assign
 op_star
 (paren
-(paren
-r_int
-r_int
-op_star
+id|vulp
 )paren
 id|APECS_IOC_TBIA
-)paren
 suffix:semicolon
 id|mb
 c_func
@@ -2448,5 +2334,4 @@ suffix:semicolon
 macro_line|#endif
 )brace
 )brace
-macro_line|#endif /* CONFIG_ALPHA_APECS */
 eof

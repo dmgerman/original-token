@@ -113,6 +113,23 @@ r_void
 op_star
 )paren
 suffix:semicolon
+DECL|member|requeue
+r_int
+(paren
+op_star
+id|requeue
+)paren
+(paren
+r_struct
+id|sk_buff
+op_star
+id|skb
+comma
+r_struct
+id|Qdisc
+op_star
+)paren
+suffix:semicolon
 )brace
 suffix:semicolon
 DECL|struct|Qdisc_head
@@ -201,11 +218,6 @@ id|device
 op_star
 id|dev
 suffix:semicolon
-DECL|member|failure_q
-r_struct
-id|sk_buff_head
-id|failure_q
-suffix:semicolon
 DECL|member|dropped
 r_int
 r_int
@@ -252,9 +264,9 @@ mdefine_line|#define PSCHED_TDIFF_SAFE(tv1, tv2, bound, guard) &bslash;&n;({ &bs
 DECL|macro|PSCHED_US2JIFFIE
 mdefine_line|#define PSCHED_US2JIFFIE(usecs) (((usecs)+(1000000/HZ-1))/(1000000/HZ))
 DECL|macro|PSCHED_TLESS
-mdefine_line|#define PSCHED_TLESS(tv1, tv2) (((tv1).tv_usec &lt; (tv2).tv_usec &amp;&amp; &bslash;&n;&t;&t;&t;&t;(tv1).tv_sec &lt; (tv2).tv_sec) || &bslash;&n;&t;&t;&t;&t; (tv1).tv_sec &lt; (tv2).tv_sec)
+mdefine_line|#define PSCHED_TLESS(tv1, tv2) (((tv1).tv_usec &lt; (tv2).tv_usec &amp;&amp; &bslash;&n;&t;&t;&t;&t;(tv1).tv_sec &lt;= (tv2).tv_sec) || &bslash;&n;&t;&t;&t;&t; (tv1).tv_sec &lt; (tv2).tv_sec)
 DECL|macro|PSCHED_TADD2
-mdefine_line|#define PSCHED_TADD2(tv, delta, tv_res) &bslash;&n;({ &bslash;&n;&t;   int __delta = (tv).tv_usec + (delta); &bslash;&n;&t;   (tv_res).tv_sec = (tv).tv_sec; &bslash;&n;&t;   if (__delta &gt; 1000000) { (tv_res).tv_sec++; __delta -= 1000000; } &bslash;&n;&t;   (tv_res).tv_sec = __delta; &bslash;&n;})
+mdefine_line|#define PSCHED_TADD2(tv, delta, tv_res) &bslash;&n;({ &bslash;&n;&t;   int __delta = (tv).tv_usec + (delta); &bslash;&n;&t;   (tv_res).tv_sec = (tv).tv_sec; &bslash;&n;&t;   if (__delta &gt; 1000000) { (tv_res).tv_sec++; __delta -= 1000000; } &bslash;&n;&t;   (tv_res).tv_usec = __delta; &bslash;&n;})
 DECL|macro|PSCHED_TADD
 mdefine_line|#define PSCHED_TADD(tv, delta) &bslash;&n;({ &bslash;&n;&t;   (tv).tv_usec += (delta); &bslash;&n;&t;   if ((tv).tv_usec &gt; 1000000) { (tv).tv_sec++; &bslash;&n;&t;&t; (tv).tv_usec -= 1000000; } &bslash;&n;})
 multiline_comment|/* Set/check that undertime is in the &quot;past perfect&quot;;&n;   it depends on concrete representation of system time&n; */

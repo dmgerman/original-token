@@ -1212,8 +1212,6 @@ suffix:semicolon
 )paren
 (brace
 r_int
-id|len
-comma
 id|err
 suffix:semicolon
 r_int
@@ -1304,10 +1302,6 @@ id|this.name
 op_assign
 id|name
 suffix:semicolon
-id|len
-op_assign
-l_int|0
-suffix:semicolon
 id|c
 op_assign
 op_star
@@ -1322,12 +1316,6 @@ c_func
 suffix:semicolon
 r_do
 (brace
-id|len
-op_increment
-suffix:semicolon
-id|name
-op_increment
-suffix:semicolon
 id|hash
 op_assign
 id|partial_name_hash
@@ -1341,6 +1329,7 @@ suffix:semicolon
 id|c
 op_assign
 op_star
+op_increment
 id|name
 suffix:semicolon
 )brace
@@ -1358,7 +1347,14 @@ l_char|&squot;/&squot;
 suffix:semicolon
 id|this.len
 op_assign
-id|len
+id|name
+op_minus
+(paren
+r_const
+r_char
+op_star
+)paren
+id|this.name
 suffix:semicolon
 id|this.hash
 op_assign

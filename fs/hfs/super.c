@@ -289,7 +289,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * hfs_statfs()&n; *&n; * This is the statfs() entry in the super_operations structure for&n; * HFS filesystems.  The purpose is to return various data about the&n; * filesystem.&n; */
+multiline_comment|/*&n; * hfs_statfs()&n; *&n; * This is the statfs() entry in the super_operations structure for&n; * HFS filesystems.  The purpose is to return various data about the&n; * filesystem.&n; *&n; * XXX: changed f_files/f_ffree to reflect the fs_ablock/free_ablocks.&n; */
 DECL|function|hfs_statfs
 r_static
 r_int
@@ -353,16 +353,14 @@ id|tmp.f_bfree
 suffix:semicolon
 id|tmp.f_files
 op_assign
-op_minus
-l_int|1
+id|mdb-&gt;fs_ablocks
 suffix:semicolon
 multiline_comment|/* According to the statfs manual page, -1 is the  */
 id|tmp.f_ffree
 op_assign
-op_minus
-l_int|1
+id|mdb-&gt;free_ablocks
 suffix:semicolon
-multiline_comment|/* correct value when the meaning is undefined.    */
+multiline_comment|/* correct value when the meaning is undefined. */
 id|tmp.f_namelen
 op_assign
 id|HFS_NAMELEN
@@ -1698,6 +1696,13 @@ id|s_mdb
 op_assign
 id|mdb
 suffix:semicolon
+id|INIT_LIST_HEAD
+c_func
+(paren
+op_amp
+id|mdb-&gt;entry_dirty
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1823,6 +1828,22 @@ id|s-&gt;s_root
 r_goto
 id|bail_no_root
 suffix:semicolon
+multiline_comment|/* HFS_SUPERBLK prevents the root inode from being flushed &n;&t; * inadvertantly. */
+id|HFS_I
+c_func
+(paren
+id|root_inode
+)paren
+op_member_access_from_pointer
+id|entry-&gt;state
+op_assign
+id|HFS_SUPERBLK
+suffix:semicolon
+id|s-&gt;s_root-&gt;d_op
+op_assign
+op_amp
+id|hfs_dentry_operations
+suffix:semicolon
 multiline_comment|/* everything&squot;s okay */
 id|unlock_super
 c_func
@@ -1899,6 +1920,11 @@ r_void
 )paren
 )paren
 (brace
+id|hfs_cat_init
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
 id|register_filesystem
 c_func

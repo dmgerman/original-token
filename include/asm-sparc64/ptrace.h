@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: ptrace.h,v 1.12 1997/06/24 16:30:35 davem Exp $ */
+multiline_comment|/* $Id: ptrace.h,v 1.13 1997/09/17 17:27:51 davem Exp $ */
 macro_line|#ifndef _SPARC64_PTRACE_H
 DECL|macro|_SPARC64_PTRACE_H
 mdefine_line|#define _SPARC64_PTRACE_H
@@ -348,8 +348,10 @@ DECL|macro|REGWIN32_SZ
 mdefine_line|#define REGWIN32_SZ&t;&t;0x40
 macro_line|#include &lt;asm/asm_offsets.h&gt;
 macro_line|#endif
+macro_line|#ifdef __KERNEL__
 DECL|macro|STACK_BIAS
 mdefine_line|#define STACK_BIAS&t;&t;2047
+macro_line|#endif
 multiline_comment|/* These are for pt_regs. */
 DECL|macro|PT_V9_G0
 mdefine_line|#define PT_V9_G0     0x00

@@ -1,7 +1,8 @@
-multiline_comment|/* $Id: sunkbd.h,v 1.1 1997/08/28 02:23:34 ecd Exp $&n; * sunkbd.h: Defines needed by SUN Keyboard drivers&n; *&n; * Copyright (C) 1997  Eddie C. Dost  (ecd@skynet.be)&n; */
+multiline_comment|/* $Id: sunkbd.h,v 1.3 1997/09/08 03:05:10 tdyas Exp $&n; * sunkbd.h: Defines needed by SUN Keyboard drivers&n; *&n; * Copyright (C) 1997  Eddie C. Dost  (ecd@skynet.be)&n; */
 macro_line|#ifndef _SPARC_SUNKBD_H
 DECL|macro|_SPARC_SUNKBD_H
 mdefine_line|#define _SPARC_SUNKBD_H 1
+macro_line|#include &lt;linux/config.h&gt;
 multiline_comment|/* Keyboard defines for L1-A processing... */
 DECL|macro|SUNKBD_RESET
 mdefine_line|#define SUNKBD_RESET&t;&t;0xff
@@ -67,5 +68,114 @@ c_func
 r_void
 )paren
 suffix:semicolon
+r_extern
+r_int
+id|sun_kbd_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|sun_compute_shiftstate
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|sun_setledstate
+c_func
+(paren
+r_struct
+id|kbd_struct
+op_star
+comma
+r_int
+r_int
+)paren
+suffix:semicolon
+r_extern
+r_int
+r_char
+id|sun_getledstate
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|sun_setkeycode
+c_func
+(paren
+r_int
+r_int
+comma
+r_int
+r_int
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|sun_getkeycode
+c_func
+(paren
+r_int
+r_int
+)paren
+suffix:semicolon
+macro_line|#ifdef CONFIG_PCI
+r_extern
+id|ushort
+op_star
+id|sun_key_maps
+(braket
+id|MAX_NR_KEYMAPS
+)braket
+suffix:semicolon
+r_extern
+r_int
+r_int
+id|sun_keymap_count
+suffix:semicolon
+r_extern
+r_char
+id|sun_func_buf
+(braket
+)braket
+suffix:semicolon
+r_extern
+r_char
+op_star
+id|sun_func_table
+(braket
+id|MAX_NR_FUNC
+)braket
+suffix:semicolon
+r_extern
+r_int
+id|sun_funcbufsize
+suffix:semicolon
+r_extern
+r_int
+id|sun_funcbufleft
+suffix:semicolon
+r_extern
+r_struct
+id|kbdiacr
+id|sun_accent_table
+(braket
+id|MAX_DIACR
+)braket
+suffix:semicolon
+r_extern
+r_int
+r_int
+id|sun_accent_table_size
+suffix:semicolon
+macro_line|#endif /* CONFIG_PCI */
 macro_line|#endif /* !(_SPARC_SUNKBD_H) */
 eof

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: signal.h,v 1.3 1997/04/18 14:34:47 jj Exp $ */
+multiline_comment|/* $Id: signal.h,v 1.4 1997/12/11 15:16:06 jj Exp $ */
 macro_line|#ifndef _ASMSPARC64_SIGNAL_H
 DECL|macro|_ASMSPARC64_SIGNAL_H
 mdefine_line|#define _ASMSPARC64_SIGNAL_H
@@ -6,13 +6,10 @@ macro_line|#include &lt;asm/sigcontext.h&gt;
 macro_line|#ifdef __KERNEL__
 macro_line|#ifndef __ASSEMBLY__
 macro_line|#include &lt;linux/personality.h&gt;
+macro_line|#include &lt;linux/types.h&gt;
 macro_line|#endif
 macro_line|#endif
 multiline_comment|/* On the Sparc the signal handlers get passed a &squot;sub-signal&squot; code&n; * for certain signal types, which we document here.&n; */
-DECL|macro|_NSIG
-mdefine_line|#define _NSIG             32
-DECL|macro|NSIG
-mdefine_line|#define NSIG&t;&t;_NSIG
 DECL|macro|SIGHUP
 mdefine_line|#define SIGHUP&t;&t; 1
 DECL|macro|SIGINT
@@ -122,22 +119,100 @@ DECL|macro|SIGUSR1
 mdefine_line|#define SIGUSR1&t;&t;30
 DECL|macro|SIGUSR2
 mdefine_line|#define SIGUSR2&t;&t;31
-macro_line|#ifndef __ASSEMBLY__
-DECL|typedef|sigset_t
-r_typedef
-r_int
-r_int
-id|sigset_t
-suffix:semicolon
-DECL|typedef|sigset_t32
-r_typedef
-r_int
-r_int
-id|sigset_t32
-suffix:semicolon
-macro_line|#ifdef __KERNEL__
-macro_line|#include &lt;asm/sigcontext.h&gt;
+multiline_comment|/* Most things should be clean enough to redefine this at will, if care&n;   is taken to make libc match.  */
+DECL|macro|__OLD_NSIG
+mdefine_line|#define __OLD_NSIG&t;32
+DECL|macro|__NEW_NSIG
+mdefine_line|#define __NEW_NSIG      64
+DECL|macro|_NSIG_BPW
+mdefine_line|#define _NSIG_BPW     &t;64
+DECL|macro|_NSIG_WORDS
+mdefine_line|#define _NSIG_WORDS   &t;(__NEW_NSIG / _NSIG_BPW)
+DECL|macro|_NSIG_BPW32
+mdefine_line|#define _NSIG_BPW32   &t;32
+DECL|macro|_NSIG_WORDS32
+mdefine_line|#define _NSIG_WORDS32 &t;(__NEW_NSIG / _NSIG_BPW32)
+DECL|macro|SIGRTMIN
+mdefine_line|#define SIGRTMIN       32
+DECL|macro|SIGRTMAX
+mdefine_line|#define SIGRTMAX       (__NEW_NSIG - 1)
+macro_line|#if defined(__KERNEL__) || defined(__WANT_POSIX1B_SIGNALS__)
+DECL|macro|_NSIG
+mdefine_line|#define _NSIG&t;&t;&t;__NEW_NSIG
+DECL|macro|__new_sigset_t
+mdefine_line|#define __new_sigset_t&t;&t;sigset_t
+DECL|macro|__new_sigset_t32
+mdefine_line|#define __new_sigset_t32&t;sigset_t32
+DECL|macro|__new_sigaction
+mdefine_line|#define __new_sigaction&t;&t;sigaction
+DECL|macro|__new_sigaction32
+mdefine_line|#define __new_sigaction32&t;sigaction32
+DECL|macro|__old_sigset_t
+mdefine_line|#define __old_sigset_t&t;&t;old_sigset_t
+DECL|macro|__old_sigset_t32
+mdefine_line|#define __old_sigset_t32&t;old_sigset_t32
+DECL|macro|__old_sigaction
+mdefine_line|#define __old_sigaction&t;&t;old_sigaction
+DECL|macro|__old_sigaction32
+mdefine_line|#define __old_sigaction32&t;old_sigaction32
+macro_line|#else
+DECL|macro|_NSIG
+mdefine_line|#define _NSIG&t;&t;&t;__OLD_NSIG
+DECL|macro|NSIG
+mdefine_line|#define NSIG&t;&t;&t;_NSIG
+DECL|macro|__old_sigset_t
+mdefine_line|#define __old_sigset_t&t;&t;sigset_t
+DECL|macro|__old_sigset_t32
+mdefine_line|#define __old_sigset_t32&t;sigset_t32
+DECL|macro|__old_sigaction
+mdefine_line|#define __old_sigaction&t;&t;sigaction
+DECL|macro|__old_sigaction32
+mdefine_line|#define __old_sigaction32&t;sigaction32
 macro_line|#endif
+macro_line|#ifndef __ASSEMBLY__
+DECL|typedef|__old_sigset_t
+r_typedef
+r_int
+r_int
+id|__old_sigset_t
+suffix:semicolon
+multiline_comment|/* at least 32 bits */
+DECL|typedef|__old_sigset_t32
+r_typedef
+r_int
+r_int
+id|__old_sigset_t32
+suffix:semicolon
+r_typedef
+r_struct
+(brace
+DECL|member|sig
+r_int
+r_int
+id|sig
+(braket
+id|_NSIG_WORDS
+)braket
+suffix:semicolon
+DECL|typedef|__new_sigset_t
+)brace
+id|__new_sigset_t
+suffix:semicolon
+r_typedef
+r_struct
+(brace
+DECL|member|sig
+r_int
+r_int
+id|sig
+(braket
+id|_NSIG_WORDS32
+)braket
+suffix:semicolon
+DECL|typedef|__new_sigset_t32
+)brace
+id|__new_sigset_t32
+suffix:semicolon
 multiline_comment|/* A SunOS sigstack */
 DECL|struct|sigstack
 r_struct
@@ -179,6 +254,10 @@ DECL|macro|SA_NOMASK
 mdefine_line|#define SA_NOMASK&t;0x20
 DECL|macro|SA_SHIRQ
 mdefine_line|#define SA_SHIRQ&t;0x40
+DECL|macro|SA_NOCLDWAIT
+mdefine_line|#define SA_NOCLDWAIT    0x100 /* not supported yet */
+DECL|macro|SA_SIGINFO
+mdefine_line|#define SA_SIGINFO      0x200
 DECL|macro|SIG_BLOCK
 mdefine_line|#define SIG_BLOCK          0x01&t;/* for blocking signals */
 DECL|macro|SIG_UNBLOCK
@@ -235,16 +314,86 @@ DECL|macro|SIG_IGN
 mdefine_line|#define SIG_IGN&t;((__sighandler_t)1)&t;/* ignore signal */
 DECL|macro|SIG_ERR
 mdefine_line|#define SIG_ERR&t;((__sighandler_t)-1)&t;/* error return from signal */
-DECL|struct|sigaction
+DECL|struct|__new_sigaction
 r_struct
-id|sigaction
+id|__new_sigaction
+(brace
+DECL|member|sa_handler
+id|__sighandler_t
+id|sa_handler
+suffix:semicolon
+DECL|member|sa_flags
+r_int
+r_int
+id|sa_flags
+suffix:semicolon
+DECL|member|sa_restorer
+r_void
+(paren
+op_star
+id|sa_restorer
+)paren
+(paren
+r_void
+)paren
+suffix:semicolon
+multiline_comment|/* not used by Linux/SPARC yet */
+DECL|member|sa_mask
+id|__new_sigset_t
+id|sa_mask
+suffix:semicolon
+)brace
+suffix:semicolon
+DECL|struct|__new_sigaction32
+r_struct
+id|__new_sigaction32
+(brace
+DECL|member|sa_handler
+r_int
+id|sa_handler
+suffix:semicolon
+DECL|member|sa_flags
+r_int
+r_int
+id|sa_flags
+suffix:semicolon
+DECL|member|sa_restorer
+r_int
+id|sa_restorer
+suffix:semicolon
+multiline_comment|/* not used by Linux/SPARC yet */
+DECL|member|sa_mask
+id|__new_sigset_t32
+id|sa_mask
+suffix:semicolon
+)brace
+suffix:semicolon
+DECL|struct|k_sigaction
+r_struct
+id|k_sigaction
+(brace
+DECL|member|sa
+r_struct
+id|__new_sigaction
+id|sa
+suffix:semicolon
+DECL|member|ka_restorer
+r_void
+op_star
+id|ka_restorer
+suffix:semicolon
+)brace
+suffix:semicolon
+DECL|struct|__old_sigaction
+r_struct
+id|__old_sigaction
 (brace
 DECL|member|sa_handler
 id|__sighandler_t
 id|sa_handler
 suffix:semicolon
 DECL|member|sa_mask
-id|sigset_t
+id|__old_sigset_t
 id|sa_mask
 suffix:semicolon
 DECL|member|sa_flags
@@ -265,16 +414,16 @@ suffix:semicolon
 multiline_comment|/* not used by Linux/SPARC yet */
 )brace
 suffix:semicolon
-DECL|struct|sigaction32
+DECL|struct|__old_sigaction32
 r_struct
-id|sigaction32
+id|__old_sigaction32
 (brace
 DECL|member|sa_handler
 r_int
 id|sa_handler
 suffix:semicolon
 DECL|member|sa_mask
-id|sigset_t32
+id|__old_sigset_t32
 id|sa_mask
 suffix:semicolon
 DECL|member|sa_flags
@@ -288,6 +437,28 @@ id|sa_restorer
 suffix:semicolon
 multiline_comment|/* not used by Linux/SPARC yet */
 )brace
+suffix:semicolon
+DECL|struct|sigaltstack
+r_typedef
+r_struct
+id|sigaltstack
+(brace
+DECL|member|ss_sp
+r_void
+op_star
+id|ss_sp
+suffix:semicolon
+DECL|member|ss_flags
+r_int
+id|ss_flags
+suffix:semicolon
+DECL|member|ss_size
+id|__kernel_size_t
+id|ss_size
+suffix:semicolon
+DECL|typedef|stack_t
+)brace
+id|stack_t
 suffix:semicolon
 macro_line|#endif /* !(__ASSEMBLY__) */
 macro_line|#endif /* !(_ASMSPARC64_SIGNAL_H) */

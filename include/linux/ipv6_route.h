@@ -78,7 +78,5 @@ DECL|macro|RTMSG_NEWROUTE
 mdefine_line|#define RTMSG_NEWROUTE&t;&t;0x21
 DECL|macro|RTMSG_DELROUTE
 mdefine_line|#define RTMSG_DELROUTE&t;&t;0x22
-DECL|macro|RTMSG_AR_FAILED
-mdefine_line|#define RTMSG_AR_FAILED&t;&t;0x51&t;/* Address Resolution failed&t;*/
 macro_line|#endif
 eof

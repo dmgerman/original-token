@@ -29,8 +29,6 @@ DECL|macro|WDT_STOP
 mdefine_line|#define WDT_STOP 0x43
 DECL|macro|WDT_START
 mdefine_line|#define WDT_START 0x443
-DECL|macro|WATCHDOG_MINOR
-mdefine_line|#define WATCHDOG_MINOR 130
 DECL|macro|WD_TIMO
 mdefine_line|#define WD_TIMO (100*60)&t;&t;/* 1 minute */
 multiline_comment|/*&n; *&t;Kernel methods.&n; */
@@ -458,7 +456,7 @@ op_assign
 (brace
 id|WATCHDOG_MINOR
 comma
-l_string|&quot;Acquire WDT&quot;
+l_string|&quot;watchdog&quot;
 comma
 op_amp
 id|acq_fops

@@ -165,8 +165,6 @@ DECL|macro|ATF_NETMASK
 mdefine_line|#define ATF_NETMASK     0x20            /* want to use a netmask (only&n;&t;&t;&t;&t;&t;   for proxy entries) */
 DECL|macro|ATF_DONTPUB
 mdefine_line|#define ATF_DONTPUB&t;0x40&t;&t;/* don&squot;t answer this addresses&t;*/
-DECL|macro|ATF_MAGIC
-mdefine_line|#define ATF_MAGIC&t;0x80&t;&t;/* automatically added entry&t;*/
 multiline_comment|/*&n; *&t;This structure defines an ethernet arp header.&n; */
 DECL|struct|arphdr
 r_struct
@@ -237,55 +235,6 @@ l_int|4
 suffix:semicolon
 multiline_comment|/* target IP address&t;&t;*/
 macro_line|#endif
-)brace
-suffix:semicolon
-multiline_comment|/* Support for the user space arp daemon, arpd */
-DECL|macro|ARPD_UPDATE
-mdefine_line|#define ARPD_UPDATE&t;0x01
-DECL|macro|ARPD_LOOKUP
-mdefine_line|#define ARPD_LOOKUP&t;0x02
-DECL|macro|ARPD_FLUSH
-mdefine_line|#define ARPD_FLUSH&t;0x03
-DECL|struct|arpd_request
-r_struct
-id|arpd_request
-(brace
-DECL|member|req
-r_int
-r_int
-id|req
-suffix:semicolon
-multiline_comment|/* request type */
-DECL|member|ip
-id|__u32
-id|ip
-suffix:semicolon
-multiline_comment|/* ip address of entry */
-DECL|member|dev
-r_int
-r_int
-id|dev
-suffix:semicolon
-multiline_comment|/* Device entry is tied to */
-DECL|member|stamp
-r_int
-r_int
-id|stamp
-suffix:semicolon
-DECL|member|updated
-r_int
-r_int
-id|updated
-suffix:semicolon
-DECL|member|ha
-r_int
-r_char
-id|ha
-(braket
-id|MAX_ADDR_LEN
-)braket
-suffix:semicolon
-multiline_comment|/* Hardware address */
 )brace
 suffix:semicolon
 macro_line|#endif&t;/* _LINUX_IF_ARP_H */

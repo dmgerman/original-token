@@ -28,6 +28,7 @@ macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
+macro_line|#include &lt;asm/hwrpb.h&gt;
 multiline_comment|/*&n; * Initial task structure. Make this a per-architecture thing,&n; * because different architectures tend to have different&n; * alignment requirements and potentially different initial&n; * setup.&n; */
 DECL|variable|init_user_stack
 r_int
@@ -216,14 +217,13 @@ r_return
 id|ret
 suffix:semicolon
 )brace
-DECL|function|machine_restart
+DECL|function|finish_shutdown
+r_static
 r_void
-id|machine_restart
+id|finish_shutdown
 c_func
 (paren
-r_char
-op_star
-id|__unused
+r_void
 )paren
 (brace
 macro_line|#ifdef CONFIG_RTC  /* reset rtc to defaults */
@@ -313,6 +313,82 @@ c_func
 )paren
 suffix:semicolon
 )brace
+DECL|function|machine_restart
+r_void
+id|machine_restart
+c_func
+(paren
+r_char
+op_star
+id|__unused
+)paren
+(brace
+macro_line|#if defined(CONFIG_ALPHA_SRM)
+r_extern
+r_struct
+id|hwrpb_struct
+op_star
+id|hwrpb
+suffix:semicolon
+r_struct
+id|percpu_struct
+op_star
+id|cpup
+suffix:semicolon
+r_int
+r_int
+id|flags
+suffix:semicolon
+id|cpup
+op_assign
+(paren
+r_struct
+id|percpu_struct
+op_star
+)paren
+(paren
+(paren
+r_int
+r_int
+)paren
+id|hwrpb
+op_plus
+id|hwrpb-&gt;processor_offset
+)paren
+suffix:semicolon
+id|flags
+op_assign
+id|cpup-&gt;flags
+suffix:semicolon
+id|flags
+op_and_assign
+op_complement
+l_int|0x0000000000ff0001UL
+suffix:semicolon
+multiline_comment|/* clear reason to &quot;default&quot; */
+id|flags
+op_or_assign
+l_int|0x0000000000020000UL
+suffix:semicolon
+multiline_comment|/* this is &quot;cold bootstrap&quot; */
+multiline_comment|/*&t;flags |=  0x0000000000030000UL; */
+multiline_comment|/* this is &quot;warm bootstrap&quot; */
+id|cpup-&gt;flags
+op_assign
+id|flags
+suffix:semicolon
+id|mb
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif /* SRM */                                        
+id|finish_shutdown
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
 DECL|function|machine_halt
 r_void
 id|machine_halt
@@ -321,6 +397,69 @@ c_func
 r_void
 )paren
 (brace
+macro_line|#if defined(CONFIG_ALPHA_SRM)
+r_extern
+r_struct
+id|hwrpb_struct
+op_star
+id|hwrpb
+suffix:semicolon
+r_struct
+id|percpu_struct
+op_star
+id|cpup
+suffix:semicolon
+r_int
+r_int
+id|flags
+suffix:semicolon
+id|cpup
+op_assign
+(paren
+r_struct
+id|percpu_struct
+op_star
+)paren
+(paren
+(paren
+r_int
+r_int
+)paren
+id|hwrpb
+op_plus
+id|hwrpb-&gt;processor_offset
+)paren
+suffix:semicolon
+id|flags
+op_assign
+id|cpup-&gt;flags
+suffix:semicolon
+id|flags
+op_and_assign
+op_complement
+l_int|0x0000000000ff0001UL
+suffix:semicolon
+multiline_comment|/* clear reason to &quot;default&quot; */
+id|flags
+op_or_assign
+l_int|0x0000000000040000UL
+suffix:semicolon
+multiline_comment|/* this is &quot;remain halted&quot; */
+id|cpup-&gt;flags
+op_assign
+id|flags
+suffix:semicolon
+id|mb
+c_func
+(paren
+)paren
+suffix:semicolon
+id|finish_shutdown
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif /* SRM */                                        
 )brace
 DECL|function|machine_power_off
 r_void
@@ -330,6 +469,12 @@ c_func
 r_void
 )paren
 (brace
+multiline_comment|/* None of the machines we support, at least, has switchable &n;&t;   power supplies.  */
+id|machine_halt
+c_func
+(paren
+)paren
+suffix:semicolon
 )brace
 DECL|function|show_regs
 r_void

@@ -86,6 +86,45 @@ id|screen_info
 id|screen_info
 op_assign
 (brace
+macro_line|#if defined(CONFIG_ALPHA_BOOK1)
+multiline_comment|/* the AlphaBook1 has LCD video fixed at 800x600, 37 rows and 100 cols */
+l_int|0
+comma
+l_int|37
+comma
+multiline_comment|/* orig-x, orig-y */
+(brace
+l_int|0
+comma
+l_int|0
+)brace
+comma
+multiline_comment|/* unused */
+l_int|0
+comma
+multiline_comment|/* orig-video-page */
+l_int|0
+comma
+multiline_comment|/* orig-video-mode */
+l_int|100
+comma
+multiline_comment|/* orig-video-cols */
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+multiline_comment|/* ega_ax, ega_bx, ega_cx */
+l_int|37
+comma
+multiline_comment|/* orig-video-lines */
+l_int|1
+comma
+multiline_comment|/* orig-video-isVGA */
+l_int|16
+multiline_comment|/* orig-video-points */
+macro_line|#else
 l_int|0
 comma
 l_int|25
@@ -122,6 +161,7 @@ comma
 multiline_comment|/* orig-video-isVGA */
 l_int|16
 multiline_comment|/* orig-video-points */
+macro_line|#endif
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * Initialize Programmable Interval Timers with standard values.  Some&n; * drivers depend on them being initialized (e.g., joystick driver).&n; */
@@ -574,6 +614,34 @@ op_star
 id|memory_end_p
 )paren
 suffix:semicolon
+macro_line|#elif defined(CONFIG_ALPHA_PYXIS)
+op_star
+id|memory_start_p
+op_assign
+id|pyxis_init
+c_func
+(paren
+op_star
+id|memory_start_p
+comma
+op_star
+id|memory_end_p
+)paren
+suffix:semicolon
+macro_line|#elif defined(CONFIG_ALPHA_T2)
+op_star
+id|memory_start_p
+op_assign
+id|t2_init
+c_func
+(paren
+op_star
+id|memory_start_p
+comma
+op_star
+id|memory_end_p
+)paren
+suffix:semicolon
 macro_line|#endif
 )brace
 multiline_comment|/*&n; * BUFFER is PAGE_SIZE bytes long.&n; */
@@ -606,6 +674,12 @@ comma
 l_string|&quot;EV5&quot;
 comma
 l_string|&quot;EV45&quot;
+comma
+l_string|&quot;EV56&quot;
+comma
+l_string|&quot;EV6&quot;
+comma
+l_string|&quot;PCA56&quot;
 )brace
 suffix:semicolon
 DECL|macro|SYSTYPE_NAME_BIAS
@@ -700,17 +774,31 @@ l_string|&quot;EB66&quot;
 comma
 l_string|&quot;EB64+&quot;
 comma
-l_string|&quot;21&quot;
+l_string|&quot;AlphaBook1&quot;
 comma
-l_string|&quot;22&quot;
+l_string|&quot;Rawhide&quot;
 comma
-l_string|&quot;23&quot;
+l_string|&quot;Lego&quot;
 comma
-l_string|&quot;24&quot;
+l_string|&quot;Lynx&quot;
 comma
 l_string|&quot;25&quot;
 comma
 l_string|&quot;EB164&quot;
+comma
+l_string|&quot;Noritake&quot;
+comma
+l_string|&quot;Cortex&quot;
+comma
+l_string|&quot;29&quot;
+comma
+l_string|&quot;Miata&quot;
+comma
+l_string|&quot;31&quot;
+comma
+l_string|&quot;Takara&quot;
+comma
+l_string|&quot;Yukon&quot;
 )brace
 suffix:semicolon
 r_struct

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: uaccess.h,v 1.22 1997/08/19 15:25:35 jj Exp $ */
+multiline_comment|/* $Id: uaccess.h,v 1.24 1997/12/15 15:05:14 jj Exp $ */
 macro_line|#ifndef _ASM_UACCESS_H
 DECL|macro|_ASM_UACCESS_H
 mdefine_line|#define _ASM_UACCESS_H
@@ -12,11 +12,11 @@ macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/spitfire.h&gt;
 macro_line|#endif
 macro_line|#ifndef __ASSEMBLY__
-multiline_comment|/* Sparc is not segmented, however we need to be able to fool verify_area()&n; * when doing system calls from kernel mode legitimately.&n; *&n; * &quot;For historical reasons, these macros are grossly misnamed.&quot; -Linus&n; */
+multiline_comment|/*&n; * Sparc64 is segmented, though more like the M68K than the I386. &n; * We use the secondary ASI to address user memory, which references a&n; * completely different VM map, thus there is zero chance of the user&n; * doing something queer and tricking us into poking kernel memory.&n; *&n; * What is left here is basically what is needed for the other parts of&n; * the kernel that expect to be able to manipulate, erum, &quot;segments&quot;.&n; * Or perhaps more properly, permissions.&n; *&n; * &quot;For historical reasons, these macros are grossly misnamed.&quot; -Linus&n; */
 DECL|macro|KERNEL_DS
-mdefine_line|#define KERNEL_DS   0x00
+mdefine_line|#define KERNEL_DS   ((mm_segment_t) { 0x00 })
 DECL|macro|USER_DS
-mdefine_line|#define USER_DS     0x2B /* har har har */
+mdefine_line|#define USER_DS     ((mm_segment_t) { 0x2B })&t;/* har har har */
 DECL|macro|VERIFY_READ
 mdefine_line|#define VERIFY_READ&t;0
 DECL|macro|VERIFY_WRITE
@@ -25,16 +25,18 @@ DECL|macro|get_fs
 mdefine_line|#define get_fs() (current-&gt;tss.current_ds)
 DECL|macro|get_ds
 mdefine_line|#define get_ds() (KERNEL_DS)
+DECL|macro|segment_eq
+mdefine_line|#define segment_eq(a,b)  ((a).seg == (b).seg)
 r_extern
 id|spinlock_t
 id|scheduler_lock
 suffix:semicolon
 DECL|macro|set_fs
-mdefine_line|#define set_fs(val)&t;&t;&t;&t;&bslash;&n;do {&t;spin_lock(&amp;scheduler_lock);&t;&t;&bslash;&n;&t;current-&gt;tss.current_ds = (val);&t;&bslash;&n;&t;if ((val) == KERNEL_DS) {&t;&t;&bslash;&n;&t;&t;flushw_user ();&t;&t;&t;&bslash;&n;&t;&t;current-&gt;tss.ctx = 0;&t;&t;&bslash;&n;&t;} else {&t;&t;&t;&t;&bslash;&n;&t;&t;current-&gt;tss.ctx = (current-&gt;mm-&gt;context &amp; 0x1fff); &bslash;&n;&t;}&t;&t;&t;&t;&t;&bslash;&n;&t;spitfire_set_secondary_context(current-&gt;tss.ctx); &bslash;&n;&t;__asm__ __volatile__(&quot;flush %g6&quot;);&t;&bslash;&n;&t;spin_unlock(&amp;scheduler_lock);&t;&t;&bslash;&n;} while(0)
+mdefine_line|#define set_fs(val)&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;do {&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;if (current-&gt;tss.current_ds.seg != val.seg) {&t;&t;&t;&t;&bslash;&n;&t;&t;spin_lock(&amp;scheduler_lock);&t;&t;&t;&t;&t;&bslash;&n;&t;&t;current-&gt;tss.current_ds = (val);&t;&t;&t;&t;&bslash;&n;&t;&t;if (segment_eq((val), KERNEL_DS)) {&t;&t;&t;&t;&bslash;&n;&t;&t;&t;flushw_user ();&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;current-&gt;tss.ctx = 0;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;} else {&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;current-&gt;tss.ctx = (current-&gt;mm-&gt;context &amp; 0x1fff);&t;&bslash;&n;&t;&t;}&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;spitfire_set_secondary_context(current-&gt;tss.ctx); &t;&t;&bslash;&n;&t;&t;__asm__ __volatile__(&quot;flush %g6&quot;);&t;&t;&t;&t;&bslash;&n;&t;&t;spin_unlock(&amp;scheduler_lock);&t;&t;&t;&t;&t;&bslash;&n;&t;}&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;} while(0)
 DECL|macro|__user_ok
 mdefine_line|#define __user_ok(addr,size) 1
 DECL|macro|__kernel_ok
-mdefine_line|#define __kernel_ok (get_fs() == KERNEL_DS)
+mdefine_line|#define __kernel_ok (segment_eq(get_fs(), KERNEL_DS))
 DECL|macro|__access_ok
 mdefine_line|#define __access_ok(addr,size) 1
 DECL|macro|access_ok

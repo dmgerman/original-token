@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: suncons.c,v 1.73 1997/08/25 07:50:33 jj Exp $&n; * suncons.c: Sparc platform console generic layer.&n; *&n; * Copyright (C) 1997 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: suncons.c,v 1.77 1997/12/19 07:32:59 ecd Exp $&n; * suncons.c: Sparc platform console generic layer.&n; *&n; * Copyright (C) 1997 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -286,12 +286,6 @@ op_star
 id|display_desc
 )paren
 (brace
-id|prom_printf
-c_func
-(paren
-l_string|&quot;YIEEE: nop_con_type_init called!&bslash;n&quot;
-)paren
-suffix:semicolon
 r_return
 id|mem_start
 suffix:semicolon
@@ -305,12 +299,6 @@ c_func
 r_void
 )paren
 (brace
-id|prom_printf
-c_func
-(paren
-l_string|&quot;YIEEE: nop_con_type_init_finish called!&bslash;n&quot;
-)paren
-suffix:semicolon
 )brace
 DECL|function|nop_vesa_blank
 r_static
@@ -1168,6 +1156,27 @@ id|__initfunc
 c_func
 (paren
 r_int
+id|con_is_present
+c_func
+(paren
+r_void
+)paren
+)paren
+(brace
+r_return
+id|serial_console
+ques
+c_cond
+l_int|0
+suffix:colon
+l_int|1
+suffix:semicolon
+)brace
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
+r_int
 r_int
 id|sun_console_init
 c_func
@@ -1185,13 +1194,15 @@ multiline_comment|/* Nothing to do in this case. */
 r_if
 c_cond
 (paren
-id|serial_console
+op_logical_neg
+id|con_is_present
+c_func
+(paren
 )paren
-(brace
+)paren
 r_return
 id|memory_start
 suffix:semicolon
-)brace
 id|fbinfo
 op_assign
 (paren
@@ -1322,13 +1333,15 @@ multiline_comment|/* Nothing to do in this case. */
 r_if
 c_cond
 (paren
-id|serial_console
+op_logical_neg
+id|con_is_present
+c_func
+(paren
 )paren
-(brace
+)paren
 r_return
 id|memory_start
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -1361,13 +1374,6 @@ suffix:semicolon
 id|con_type_init_finish
 c_func
 (paren
-)paren
-suffix:semicolon
-id|register_console
-c_func
-(paren
-op_amp
-id|vt_console_driver
 )paren
 suffix:semicolon
 r_return

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: pbm.h,v 1.7 1997/08/25 06:01:14 davem Exp $&n; * pbm.h: U2P PCI bus module pseudo driver software state.&n; *&n; * Copyright (C) 1997 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: pbm.h,v 1.8 1998/01/10 18:26:10 ecd Exp $&n; * pbm.h: U2P PCI bus module pseudo driver software state.&n; *&n; * Copyright (C) 1997 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef __SPARC64_PBM_H
 DECL|macro|__SPARC64_PBM_H
 mdefine_line|#define __SPARC64_PBM_H
@@ -152,6 +152,10 @@ DECL|member|upa_portid
 id|u32
 id|upa_portid
 suffix:semicolon
+DECL|member|index
+r_int
+id|index
+suffix:semicolon
 DECL|member|pbm_A
 r_struct
 id|linux_pbm_info
@@ -187,6 +191,47 @@ id|linux_psycho
 op_star
 id|psycho_root
 suffix:semicolon
+r_extern
+r_struct
+id|linux_psycho
+op_star
+op_star
+id|psycho_index_map
+suffix:semicolon
+r_extern
+r_int
+id|linux_num_psycho
+suffix:semicolon
+r_static
+id|__inline__
+r_struct
+id|linux_psycho
+op_star
+DECL|function|psycho_by_index
+id|psycho_by_index
+c_func
+(paren
+r_int
+id|index
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|index
+op_ge
+id|linux_num_psycho
+)paren
+r_return
+l_int|NULL
+suffix:semicolon
+r_return
+id|psycho_index_map
+(braket
+id|index
+)braket
+suffix:semicolon
+)brace
 multiline_comment|/* Special PCI IRQ encoding, this just makes life easier for the generic&n; * irq registry layer, there is already enough crap in there due to sbus,&n; * fhc, and dcookies.&n; */
 DECL|macro|PCI_IRQ_IDENT
 mdefine_line|#define PCI_IRQ_IDENT&t;&t;0x80000000&t;/* This tells irq.c what we are        */
@@ -195,9 +240,9 @@ mdefine_line|#define PCI_IRQ_IMAP_OFF&t;0x7ff00000&t;/* Offset from first PSYCHO
 DECL|macro|PCI_IRQ_IMAP_OFF_SHFT
 mdefine_line|#define PCI_IRQ_IMAP_OFF_SHFT&t;20
 DECL|macro|PCI_IRQ_BUSNO
-mdefine_line|#define PCI_IRQ_BUSNO&t;&t;0x000f8000&t;/* PSYCHO instance, currently unused   */
+mdefine_line|#define PCI_IRQ_BUSNO&t;&t;0x000fc000&t;/* PSYCHO instance, currently unused   */
 DECL|macro|PCI_IRQ_BUSNO_SHFT
-mdefine_line|#define PCI_IRQ_BUSNO_SHFT&t;15
+mdefine_line|#define PCI_IRQ_BUSNO_SHFT&t;14
 DECL|macro|PCI_IRQ_IGN
 mdefine_line|#define PCI_IRQ_IGN&t;&t;0x000007c0&t;/* PSYCHO &quot;Int Group Number&quot;           */
 DECL|macro|PCI_IRQ_INO

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: mach64.h,v 1.3 1997/08/24 12:13:07 ecd Exp $&n; * mach64.h: Ultra/PCI mach64 driver constants etc.&n; *&n; * Copyright 1997 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: mach64.h,v 1.4 1997/10/04 08:51:30 ecd Exp $&n; * mach64.h: Ultra/PCI mach64 driver constants etc.&n; *&n; * Copyright 1997 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _MACH64_H
 DECL|macro|_MACH64_H
 mdefine_line|#define _MACH64_H 1
@@ -67,6 +67,10 @@ DECL|macro|CRTC_FIFO
 mdefine_line|#define CRTC_FIFO               0x001e
 DECL|macro|CRTC_EXT_DISP
 mdefine_line|#define CRTC_EXT_DISP           0x001f
+DECL|macro|SHARED_CNTL
+mdefine_line|#define SHARED_CNTL&t;&t;0x0030  /* Dword offset 0C */
+DECL|macro|SHARED_MEM_CONFIG
+mdefine_line|#define SHARED_MEM_CONFIG&t;0x0034  /* Dword offset 0D */
 DECL|macro|OVR_CLR
 mdefine_line|#define OVR_CLR                 0x0040  /* Dword offset 10 */
 DECL|macro|OVR_WID_LEFT_RIGHT
@@ -94,6 +98,8 @@ mdefine_line|#define CLOCK_SEL_CNTL          0x0090
 singleline_comment|// Dword offset 24
 DECL|macro|BUS_CNTL
 mdefine_line|#define BUS_CNTL                0x00A0  /* Dword offset 28 */
+DECL|macro|EXT_MEM_CNTL
+mdefine_line|#define EXT_MEM_CNTL&t;&t;0x00AC&t;/* Dword offset 2B */
 DECL|macro|MEM_CNTL
 mdefine_line|#define MEM_CNTL                0x00B0  /* Dword offset 2C */
 DECL|macro|MEM_VGA_WP_SEL
@@ -585,6 +591,10 @@ DECL|macro|MEM_SIZE_8M
 mdefine_line|#define MEM_SIZE_8M&t;&t;0x00000005
 DECL|macro|MEM_SIZE_ALIAS_GTB
 mdefine_line|#define MEM_SIZE_ALIAS_GTB&t;0x0000000F
+DECL|macro|MEM_SIZE_512K_GTB
+mdefine_line|#define MEM_SIZE_512K_GTB&t;0x00000000
+DECL|macro|MEM_SIZE_1M_GTB
+mdefine_line|#define MEM_SIZE_1M_GTB&t;&t;0x00000001
 DECL|macro|MEM_SIZE_2M_GTB
 mdefine_line|#define MEM_SIZE_2M_GTB&t;&t;0x00000003
 DECL|macro|MEM_SIZE_4M_GTB

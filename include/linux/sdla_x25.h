@@ -470,10 +470,14 @@ multiline_comment|/* 0Dh: interrupt flags */
 DECL|member|PACKED
 r_int
 r_char
+id|imask
+id|PACKED
+suffix:semicolon
+multiline_comment|/* 0Eh: interrupt mask  */
+DECL|member|PACKED
+r_int
+r_char
 id|resrv
-(braket
-l_int|2
-)braket
 id|PACKED
 suffix:semicolon
 multiline_comment|/* 0Eh: */

@@ -598,6 +598,7 @@ id|at_addr
 op_star
 id|our_addr
 suffix:semicolon
+multiline_comment|/* Wow! I&squot;ll eat my hat if this routine is really called. --ANK */
 multiline_comment|/*&n;         * Find appropriate route to use, based only on IP number.&n;         */
 r_for
 c_loop

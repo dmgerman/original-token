@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;RAW sockets for IPv6&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;Adapted from linux/net/ipv4/raw.c&n; *&n; *&t;$Id: raw.c,v 1.13 1997/09/14 08:32:14 davem Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; *&t;RAW sockets for IPv6&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;Adapted from linux/net/ipv4/raw.c&n; *&n; *&t;$Id: raw.c,v 1.16 1997/12/29 19:52:48 kuznet Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/socket.h&gt;
@@ -9,6 +9,7 @@ macro_line|#include &lt;linux/in6.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/if_arp.h&gt;
 macro_line|#include &lt;linux/icmpv6.h&gt;
+macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;net/sock.h&gt;
 macro_line|#include &lt;net/snmp.h&gt;
 macro_line|#include &lt;net/ipv6.h&gt;
@@ -662,6 +663,10 @@ c_func
 (paren
 op_amp
 id|addr-&gt;sin6_addr
+comma
+l_int|NULL
+comma
+l_int|0
 )paren
 op_eq
 l_int|NULL
@@ -1487,6 +1492,18 @@ suffix:semicolon
 r_int
 id|err
 suffix:semicolon
+multiline_comment|/* Rough check on arithmetic overflow,&n;&t;   better check is made in ip6_build_xmit&n;&n;&t;   When jumbo header will be implemeted we will remove it&n;&t;   at all (len will be size_t)&n;&t; */
+r_if
+c_cond
+(paren
+id|len
+template_param
+l_int|0xFFFF
+)paren
+r_return
+op_minus
+id|EMSGSIZE
+suffix:semicolon
 multiline_comment|/* Mirror BSD error message compatibility */
 r_if
 c_cond
@@ -1585,10 +1602,11 @@ op_assign
 op_amp
 id|sin6-&gt;sin6_addr
 suffix:semicolon
+multiline_comment|/* BUGGGG If route is not cloned, this check always&n;&t;&t;   fails, hence dst_cache only slows down tramsmission --ANK&n;&t;&t; */
 r_if
 c_cond
 (paren
-id|np-&gt;dst
+id|sk-&gt;dst_cache
 op_logical_and
 id|ipv6_addr_cmp
 c_func
@@ -1603,10 +1621,10 @@ id|np-&gt;daddr
 id|dst_release
 c_func
 (paren
-id|np-&gt;dst
+id|sk-&gt;dst_cache
 )paren
 suffix:semicolon
-id|np-&gt;dst
+id|sk-&gt;dst_cache
 op_assign
 l_int|NULL
 suffix:semicolon
@@ -1653,31 +1671,6 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; *&t;We don&squot;t allow &gt; 64K sends yet.&t;&t; &n;&t; */
-r_if
-c_cond
-(paren
-id|len
-op_plus
-(paren
-id|sk-&gt;ip_hdrincl
-ques
-c_cond
-l_int|0
-suffix:colon
-r_sizeof
-(paren
-r_struct
-id|ipv6hdr
-)paren
-)paren
-OG
-l_int|65535
-)paren
-r_return
-op_minus
-id|EMSGSIZE
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2481,34 +2474,19 @@ r_int
 id|timeout
 )paren
 (brace
-r_struct
-id|ipv6_pinfo
-op_star
-id|np
-op_assign
-op_amp
-id|sk-&gt;net_pinfo.af_inet6
-suffix:semicolon
 id|sk-&gt;state
 op_assign
 id|TCP_CLOSE
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|np-&gt;dst
-)paren
-id|dst_release
-c_func
-(paren
-id|np-&gt;dst
-)paren
 suffix:semicolon
 id|ipv6_sock_mc_close
 c_func
 (paren
 id|sk
 )paren
+suffix:semicolon
+id|sk-&gt;dead
+op_assign
+l_int|1
 suffix:semicolon
 id|destroy_sock
 c_func

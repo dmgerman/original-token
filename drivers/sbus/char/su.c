@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: su.c,v 1.3 1997/09/03 11:54:56 ecd Exp $&n; * su.c: Small serial driver for keyboard/mouse interface on Ultra/AX&n; *&n; * Copyright (C) 1997  Eddie C. Dost  (ecd@skynet.be)&n; *&n; * This is mainly a very stripped down version of drivers/char/serial.c,&n; * credits go to authors mentioned therein.&n; */
+multiline_comment|/* $Id: su.c,v 1.4 1997/09/07 15:40:19 ecd Exp $&n; * su.c: Small serial driver for keyboard/mouse interface on Ultra/AX&n; *&n; * Copyright (C) 1997  Eddie C. Dost  (ecd@skynet.be)&n; *&n; * This is mainly a very stripped down version of drivers/char/serial.c,&n; * credits go to authors mentioned therein.&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
@@ -588,19 +588,6 @@ suffix:semicolon
 r_int
 r_char
 id|status
-suffix:semicolon
-multiline_comment|/*&n;&t; * We might share interrupts with ps2kbd/ms driver,&n;&t; * in case we want to use the 16550A as general serial&n;&t; * driver in the presence of ps2 devices, so do a&n;&t; * sanity check here, needs to be done in ps2kbd/ms&n;&t; * driver, too.&n;&t; */
-r_if
-c_cond
-(paren
-op_logical_neg
-id|info
-op_logical_or
-id|info-&gt;magic
-op_ne
-id|SERIAL_MAGIC
-)paren
-r_return
 suffix:semicolon
 macro_line|#ifdef SERIAL_DEBUG_INTR
 id|printk
@@ -2691,7 +2678,7 @@ id|kbnode
 (brace
 id|info-&gt;kbd_node
 op_assign
-id|kbnode
+id|sunode
 suffix:semicolon
 op_increment
 id|info
@@ -2710,7 +2697,7 @@ id|msnode
 (brace
 id|info-&gt;ms_node
 op_assign
-id|msnode
+id|sunode
 suffix:semicolon
 op_increment
 id|info
@@ -2804,6 +2791,56 @@ suffix:semicolon
 id|rs_ops.rs_change_mouse_baud
 op_assign
 id|su_change_mouse_baud
+suffix:semicolon
+id|sunkbd_setinitfunc
+c_func
+(paren
+id|memory_start
+comma
+id|sun_kbd_init
+)paren
+suffix:semicolon
+id|kbd_ops.compute_shiftstate
+op_assign
+id|sun_compute_shiftstate
+suffix:semicolon
+id|kbd_ops.setledstate
+op_assign
+id|sun_setledstate
+suffix:semicolon
+id|kbd_ops.getledstate
+op_assign
+id|sun_getledstate
+suffix:semicolon
+id|kbd_ops.setkeycode
+op_assign
+id|sun_setkeycode
+suffix:semicolon
+id|kbd_ops.getkeycode
+op_assign
+id|sun_getkeycode
+suffix:semicolon
+id|sunkbd_install_keymaps
+c_func
+(paren
+id|memory_start
+comma
+id|sun_key_maps
+comma
+id|sun_keymap_count
+comma
+id|sun_func_buf
+comma
+id|sun_func_table
+comma
+id|sun_funcbufsize
+comma
+id|sun_funcbufleft
+comma
+id|sun_accent_table
+comma
+id|sun_accent_table_size
+)paren
 suffix:semicolon
 r_return
 l_int|0

@@ -223,10 +223,18 @@ id|nfsd_svcstats
 op_ne
 l_int|0
 )paren
+(brace
 id|ent-&gt;read_proc
 op_assign
 id|nfsd_proc_read
 suffix:semicolon
+macro_line|#ifdef MODULE
+id|ent-&gt;fill_inode
+op_assign
+id|nfsd_modcount
+suffix:semicolon
+macro_line|#endif
+)brace
 )brace
 r_void
 DECL|function|nfsd_stat_shutdown

@@ -5072,12 +5072,15 @@ op_amp
 id|page-&gt;flags
 )paren
 )paren
+(brace
+multiline_comment|/*&n;&t;&t; * We&squot;re doing a swap, so check that this page is&n;&t;&t; * swap-cached and do the necessary cleanup. &n;&t;&t; */
 id|swap_after_unlock_page
 c_func
 (paren
-id|page-&gt;pg_swap_entry
+id|page-&gt;offset
 )paren
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren

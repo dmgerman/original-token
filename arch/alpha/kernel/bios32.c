@@ -31,7 +31,8 @@ c_func
 )paren
 (brace
 r_return
-l_int|0
+op_minus
+id|ENOSYS
 suffix:semicolon
 )brace
 DECL|function|sys_pciconfig_write
@@ -43,7 +44,8 @@ c_func
 )paren
 (brace
 r_return
-l_int|0
+op_minus
+id|ENOSYS
 suffix:semicolon
 )brace
 macro_line|#else /* CONFIG_PCI */
@@ -76,19 +78,39 @@ id|hwrpb_struct
 op_star
 id|hwrpb
 suffix:semicolon
+multiline_comment|/* Forward declarations for some extra fixup routines for specific hardware. */
+macro_line|#ifdef CONFIG_ALPHA_PC164
+r_static
+r_int
+id|SMCInit
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_ALPHA_MIATA
+r_static
+r_int
+id|es1888_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#if PCI_MODIFY
-multiline_comment|/* NOTE: we can&squot;t just blindly use 64K for machines with EISA busses; they&n;   may also have PCI-PCI bridges present, and then we&squot;d configure the bridge&n;   incorrectly */
-macro_line|#if 0
+multiline_comment|/*&n; * NOTE: we can&squot;t just blindly use 64K for machines with EISA busses; they&n; * may also have PCI-PCI bridges present, and then we&squot;d configure the bridge&n; * incorrectly&n; *&n; * Also, we start at 0x8000 or 0x9000, in hopes to get all devices&squot;&n; * IO space areas allocated *before* 0xC000; this is because certain&n; * BIOSes (Millennium for one) use PCI Config space &quot;mechanism #2&quot;&n; * accesses to probe the bus. If a device&squot;s registers appear at 0xC000,&n; * it may see an INx/OUTx at that address during BIOS emulation of the&n; * VGA BIOS, and some cards, notably Adaptec 2940UW, take mortal offense.&n; */
+macro_line|#if defined(CONFIG_ALPHA_EISA)
+DECL|variable|io_base
 r_static
 r_int
 r_int
 id|io_base
 op_assign
-l_int|64
-op_star
-id|KB
+l_int|0x9000
 suffix:semicolon
-multiline_comment|/* &lt;64KB are (E)ISA ports */
+multiline_comment|/* start above 8th slot */
 macro_line|#else
 DECL|variable|io_base
 r_static
@@ -96,22 +118,11 @@ r_int
 r_int
 id|io_base
 op_assign
-l_int|0xb000
+l_int|0x8000
 suffix:semicolon
 macro_line|#endif
 macro_line|#if defined(CONFIG_ALPHA_XL)
-multiline_comment|/*&n;   an AVANTI *might* be an XL, and an XL has only 27 bits of ISA address&n;   that get passed through the PCI&lt;-&gt;ISA bridge chip. Because this causes&n;   us to set the PCI-&gt;Mem window bases lower than normal, we&squot;ve gotta allocate&n;   PCI bus devices&squot; memory addresses *above* the PCI&lt;-&gt;memory mapping windows,&n;   so that CPU memory DMA addresses issued by a bus device don&squot;t conflict&n;   with bus memory addresses, like frame buffer memory for graphics cards.&n;*/
-DECL|variable|mem_base
-r_static
-r_int
-r_int
-id|mem_base
-op_assign
-l_int|1024
-op_star
-id|MB
-suffix:semicolon
-macro_line|#else /* CONFIG_ALPHA_XL */
+multiline_comment|/*&n; * An XL is AVANTI (APECS) family, *but* it has only 27 bits of ISA address&n; * that get passed through the PCI&lt;-&gt;ISA bridge chip. Although this causes&n; * us to set the PCI-&gt;Mem window bases lower than normal, we still allocate&n; * PCI bus devices&squot; memory addresses *below* the low DMA mapping window,&n; * and hope they fit below 64Mb (to avoid conflicts), and so that they can&n; * be accessed via SPARSE space.&n; *&n; * We accept the risk that a broken Myrinet card will be put into a true XL&n; * and thus can more easily run into the problem described below.&n; */
 DECL|variable|mem_base
 r_static
 r_int
@@ -121,9 +132,45 @@ op_assign
 l_int|16
 op_star
 id|MB
+op_plus
+l_int|2
+op_star
+id|MB
 suffix:semicolon
-multiline_comment|/* &lt;16MB is ISA memory */
-macro_line|#endif /* CONFIG_ALPHA_XL */
+multiline_comment|/* 16M to 64M-1 is avail */
+macro_line|#elif defined(CONFIG_ALPHA_LCA) || defined(CONFIG_ALPHA_APECS)
+multiline_comment|/*&n; * We try to make this address *always* have more than 1 bit set.&n; * this is so that devices like the broken Myrinet card will always have&n; * a PCI memory address that will never match a IDSEL address in&n; * PCI Config space, which can cause problems with early rev cards.&n; *&n; * However, APECS and LCA have only 34 bits for physical addresses, thus&n; * limiting PCI bus memory addresses for SPARSE access to be less than 128Mb.&n; */
+DECL|variable|mem_base
+r_static
+r_int
+r_int
+id|mem_base
+op_assign
+l_int|64
+op_star
+id|MB
+op_plus
+l_int|2
+op_star
+id|MB
+suffix:semicolon
+macro_line|#else
+multiline_comment|/*&n; * We try to make this address *always* have more than 1 bit set.&n; * this is so that devices like the broken Myrinet card will always have&n; * a PCI memory address that will never match a IDSEL address in&n; * PCI Config space, which can cause problems with early rev cards.&n; *&n; * Because CIA and PYXIS and T2 have more bits for physical addresses,&n; * they support an expanded range of SPARSE memory addresses.&n; */
+DECL|variable|mem_base
+r_static
+r_int
+r_int
+id|mem_base
+op_assign
+l_int|128
+op_star
+id|MB
+op_plus
+l_int|16
+op_star
+id|MB
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/*&n; * Disable PCI device DEV so that it does not respond to I/O or memory&n; * accesses.&n; */
 DECL|function|disable_dev
 r_static
@@ -146,7 +193,7 @@ r_int
 r_int
 id|cmd
 suffix:semicolon
-macro_line|#if defined(CONFIG_ALPHA_MIKASA) || defined(CONFIG_ALPHA_ALCOR)
+macro_line|#if defined(CONFIG_ALPHA_EISA)
 multiline_comment|/*&n;&t; * HACK: the PCI-to-EISA bridge does not seem to identify&n;&t; *       itself as a bridge... :-(&n;&t; */
 r_if
 c_cond
@@ -218,7 +265,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * Layout memory and I/O for a device:&n; */
 DECL|macro|MAX
-mdefine_line|#define MAX(val1, val2) ( ((val1) &gt; (val2)) ? val1 : val2)
+mdefine_line|#define MAX(val1, val2) ((val1) &gt; (val2) ? val1 : val2)
 DECL|function|layout_dev
 r_static
 r_void
@@ -254,18 +301,17 @@ r_int
 r_int
 id|alignto
 suffix:semicolon
-macro_line|#if defined(CONFIG_ALPHA_MIKASA) || defined(CONFIG_ALPHA_ALCOR)
 multiline_comment|/*&n;&t; * HACK: the PCI-to-EISA bridge does not seem to identify&n;&t; *       itself as a bridge... :-(&n;&t; */
 r_if
 c_cond
 (paren
 id|dev-&gt;vendor
 op_eq
-l_int|0x8086
+id|PCI_VENDOR_ID_INTEL
 op_logical_and
 id|dev-&gt;device
 op_eq
-l_int|0x0482
+id|PCI_DEVICE_ID_INTEL_82375
 )paren
 (brace
 id|DBG_DEVS
@@ -279,7 +325,6 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-macro_line|#endif
 id|bus
 op_assign
 id|dev-&gt;bus
@@ -402,13 +447,13 @@ id|base
 op_amp
 l_int|0xffffffff
 suffix:semicolon
-multiline_comment|/* align to multiple of size of minimum base */
+multiline_comment|/*&n;&t;&t;&t; * Aligning to 0x800 rather than the minimum base of&n;&t;&t;&t; * 0x400 is an attempt to avoid having devices in &n;&t;&t;&t; * any 0x?C?? range, which is where the de4x5 driver&n;&t;&t;&t; * probes for EISA cards.&n;&t;&t;&t; *&n;&t;&t;&t; * Adaptecs, especially, resent such intrusions.&n;&t;&t;&t; */
 id|alignto
 op_assign
 id|MAX
 c_func
 (paren
-l_int|0x400
+l_int|0x800
 comma
 id|size
 )paren
@@ -441,6 +486,35 @@ comma
 id|base
 op_or
 l_int|0x1
+)paren
+suffix:semicolon
+id|dev-&gt;base_address
+(braket
+(paren
+id|reg
+op_minus
+id|PCI_BASE_ADDRESS_0
+)paren
+op_rshift
+l_int|2
+)braket
+op_assign
+id|base
+op_or
+l_int|0x1
+suffix:semicolon
+id|DBG_DEVS
+c_func
+(paren
+(paren
+l_string|&quot;layout_dev: dev 0x%x IO @ 0x%x (0x%x)&bslash;n&quot;
+comma
+id|dev-&gt;device
+comma
+id|base
+comma
+id|size
+)paren
 )paren
 suffix:semicolon
 )brace
@@ -534,9 +608,9 @@ multiline_comment|/*&n;&t;&t;&t;&t; * Allocating memory below 1MB is *very*&n;&t
 id|printk
 c_func
 (paren
-l_string|&quot;bios32 WARNING: slot %d, function %d &quot;
-l_string|&quot;requests memory below 1MB---don&squot;t &quot;
-l_string|&quot;know how to do that.&bslash;n&quot;
+l_string|&quot;bios32 WARNING: slot %d, function %d&quot;
+l_string|&quot; requests memory below 1MB---don&squot;t&quot;
+l_string|&quot; know how to do that.&bslash;n&quot;
 comma
 id|PCI_SLOT
 c_func
@@ -591,10 +665,10 @@ id|MB
 id|printk
 c_func
 (paren
-l_string|&quot;bios32 WARNING: slot %d, function %d &quot;
-l_string|&quot;requests  %dB of contiguous address &quot;
-l_string|&quot; space---don&squot;t use sparse memory &quot;
-l_string|&quot; accesses on this device!!&bslash;n&quot;
+l_string|&quot;bios32 WARNING: slot %d, function %d&quot;
+l_string|&quot; requests 0x%x bytes of contiguous&quot;
+l_string|&quot; address space---don&squot;t use sparse&quot;
+l_string|&quot; memory accesses on this device!!&bslash;n&quot;
 comma
 id|PCI_SLOT
 c_func
@@ -737,9 +811,36 @@ comma
 id|base
 )paren
 suffix:semicolon
+id|dev-&gt;base_address
+(braket
+(paren
+id|reg
+op_minus
+id|PCI_BASE_ADDRESS_0
+)paren
+op_rshift
+l_int|2
+)braket
+op_assign
+id|base
+suffix:semicolon
+id|DBG_DEVS
+c_func
+(paren
+(paren
+l_string|&quot;layout_dev: dev 0x%x MEM @ 0x%x (0x%x)&bslash;n&quot;
+comma
+id|dev-&gt;device
+comma
+id|base
+comma
+id|size
+)paren
+)paren
+suffix:semicolon
 )brace
 )brace
-multiline_comment|/* enable device: */
+multiline_comment|/* Enable device: */
 r_if
 c_cond
 (paren
@@ -765,15 +866,15 @@ r_class
 op_rshift
 l_int|8
 op_eq
-id|PCI_CLASS_DISPLAY_VGA
+id|PCI_CLASS_STORAGE_IDE
 op_logical_or
 id|dev
 op_member_access_from_pointer
 r_class
 op_rshift
-l_int|8
+l_int|16
 op_eq
-id|PCI_CLASS_DISPLAY_XGA
+id|PCI_BASE_CLASS_DISPLAY
 )paren
 (brace
 multiline_comment|/*&n;&t;&t; * All of these (may) have I/O scattered all around&n;&t;&t; * and may not use i/o-base address registers at all.&n;&t;&t; * So we just have to always enable I/O to these&n;&t;&t; * devices.&n;&t;&t; */
@@ -800,7 +901,8 @@ id|DBG_DEVS
 c_func
 (paren
 (paren
-l_string|&quot;layout_dev: bus %d  slot 0x%x  VID 0x%x  DID 0x%x  class 0x%x&bslash;n&quot;
+l_string|&quot;layout_dev: bus %d slot %d VID 0x%x DID 0x%x&quot;
+l_string|&quot; class 0x%x cmd 0 x%x&bslash;n&quot;
 comma
 id|bus-&gt;number
 comma
@@ -817,6 +919,10 @@ comma
 id|dev
 op_member_access_from_pointer
 r_class
+comma
+id|cmd
+op_or
+id|PCI_COMMAND_MASTER
 )paren
 )paren
 suffix:semicolon
@@ -923,6 +1029,7 @@ id|dev-&gt;sibling
 r_if
 c_cond
 (paren
+(paren
 id|dev
 op_member_access_from_pointer
 r_class
@@ -930,6 +1037,17 @@ op_rshift
 l_int|16
 op_ne
 id|PCI_BASE_CLASS_BRIDGE
+)paren
+op_logical_or
+(paren
+id|dev
+op_member_access_from_pointer
+r_class
+op_rshift
+l_int|8
+op_eq
+id|PCI_CLASS_BRIDGE_PCMCIA
+)paren
 )paren
 (brace
 id|disable_dev
@@ -968,6 +1086,7 @@ id|dev-&gt;sibling
 r_if
 c_cond
 (paren
+(paren
 id|dev
 op_member_access_from_pointer
 r_class
@@ -975,6 +1094,17 @@ op_rshift
 l_int|16
 op_ne
 id|PCI_BASE_CLASS_BRIDGE
+)paren
+op_logical_or
+(paren
+id|dev
+op_member_access_from_pointer
+r_class
+op_rshift
+l_int|8
+op_eq
+id|PCI_CLASS_BRIDGE_PCMCIA
+)paren
 )paren
 (brace
 id|layout_dev
@@ -1074,13 +1204,11 @@ id|l
 )paren
 suffix:semicolon
 id|l
-op_assign
-(paren
-id|l
-op_amp
+op_and_assign
 l_int|0xffff0000
-)paren
-op_or
+suffix:semicolon
+id|l
+op_or_assign
 (paren
 (paren
 id|bio
@@ -1496,12 +1624,12 @@ l_int|1
 suffix:semicolon
 multiline_comment|/* turn on IDE, really! */
 )brace
-multiline_comment|/* &n; * A small note about bridges and interrupts.    The DECchip 21050 (and later chips)&n; * adheres to the PCI-PCI bridge specification.   This says that the interrupts on&n; * the other side of a bridge are swizzled in the following manner:&n; *&n; * Dev    Interrupt   Interrupt &n; *        Pin on      Pin on &n; *        Device      Connector&n; *&n; *   4    A           A&n; *        B           B&n; *        C           C&n; *        D           D&n; * &n; *   5    A           B&n; *        B           C&n; *        C           D&n; *        D           A&n; *&n; *   6    A           C&n; *        B           D&n; *        C           A&n; *        D           B&n; *&n; *   7    A           D&n; *        B           A&n; *        C           B&n; *        D           C&n; *&n; *   Where A = pin 1, B = pin 2 and so on and pin=0 = default = A.&n; *   Thus, each swizzle is ((pin-1) + (device#-4)) % 4&n; *&n; *   The following code is somewhat simplistic as it assumes only one bridge.&n; *   I will fix it later (david.rusling@reo.mts.dec.com).&n; */
-DECL|function|bridge_swizzle
+multiline_comment|/* &n; * A small note about bridges and interrupts.    The DECchip 21050 (and later)&n; * adheres to the PCI-PCI bridge specification.   This says that the&n; * interrupts on the other side of a bridge are swizzled in the following&n; * manner:&n; *&n; * Dev    Interrupt   Interrupt &n; *        Pin on      Pin on &n; *        Device      Connector&n; *&n; *   4    A           A&n; *        B           B&n; *        C           C&n; *        D           D&n; * &n; *   5    A           B&n; *        B           C&n; *        C           D&n; *        D           A&n; *&n; *   6    A           C&n; *        B           D&n; *        C           A&n; *        D           B&n; *&n; *   7    A           D&n; *        B           A&n; *        C           B&n; *        D           C&n; *&n; *   Where A = pin 1, B = pin 2 and so on and pin=0 = default = A.&n; *   Thus, each swizzle is ((pin-1) + (device#-4)) % 4&n; *&n; *   The following code is somewhat simplistic as it assumes only one bridge.&n; *   I will fix it later (david.rusling@reo.mts.dec.com).&n; */
 r_static
 r_inline
 r_int
 r_char
+DECL|function|bridge_swizzle
 id|bridge_swizzle
 c_func
 (paren
@@ -1533,11 +1661,11 @@ op_plus
 l_int|1
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Most evaluation boards share most of the fixup code, which is isolated here.&n; * This function is declared &quot;inline&quot; as only one platform will ever be selected&n; * in any given kernel.  If that platform doesn&squot;t need this code, we don&squot;t want&n; * it around as dead code.&n; */
-DECL|function|common_fixup
+multiline_comment|/*&n; * Most evaluation boards share most of the fixup code, which is isolated&n; * here.  This function is declared &quot;inline&quot; as only one platform will ever&n; * be selected in any given kernel.  If that platform doesn&squot;t need this code,&n; * we don&squot;t want it around as dead code.&n; */
 r_static
 r_inline
 r_void
+DECL|function|common_fixup
 id|common_fixup
 c_func
 (paren
@@ -1598,6 +1726,7 @@ id|dev-&gt;next
 r_if
 c_cond
 (paren
+(paren
 id|dev
 op_member_access_from_pointer
 r_class
@@ -1605,31 +1734,34 @@ op_rshift
 l_int|16
 op_ne
 id|PCI_BASE_CLASS_BRIDGE
-macro_line|#if defined(CONFIG_ALPHA_MIKASA) || defined(CONFIG_ALPHA_ALCOR)
-multiline_comment|/* PCEB (PCI to EISA bridge) does not identify&n;&t;&t;       itself as a bridge... :-( */
+multiline_comment|/* PCEB (PCI to EISA bridge) does not identify&n;&t;&t;        itself as a bridge... :-P */
 op_logical_and
 op_logical_neg
 (paren
-(paren
 id|dev-&gt;vendor
 op_eq
-l_int|0x8086
-)paren
+id|PCI_VENDOR_ID_INTEL
 op_logical_and
-(paren
 id|dev-&gt;device
 op_eq
-l_int|0x482
+id|PCI_DEVICE_ID_INTEL_82375
 )paren
 )paren
-macro_line|#endif
+op_logical_or
+id|dev
+op_member_access_from_pointer
+r_class
+op_rshift
+l_int|8
+op_eq
+id|PCI_CLASS_BRIDGE_PCMCIA
 )paren
 (brace
+multiline_comment|/*&n;&t;&t;&t; * This device is not on the primary bus, we need&n;&t;&t;&t; * to figure out which interrupt pin it will come&n;&t;&t;&t; * in on.   We know which slot it will come in on&n;&t;&t;&t; * &squot;cos that slot is where the bridge is.   Each&n;&t;&t;&t; * time the interrupt line passes through a PCI-PCI&n;&t;&t;&t; * bridge we must apply the swizzle function (see&n;&t;&t;&t; * the inline static routine above).&n;&t;&t;&t; */
 id|dev-&gt;irq
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t; * This device is not on the primary bus, we need to figure out which&n;&t;&t;&t; * interrupt pin it will come in on.   We know which slot it will come&n;&t;&t;&t; * in on &squot;cos that slot is where the bridge is.   Each time the interrupt&n;&t;&t;&t; * line passes through a PCI-PCI bridge we must apply the swizzle function&n;&t;&t;&t; * (see the inline static routine above).&n;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -1645,7 +1777,7 @@ id|curr
 op_assign
 id|dev
 suffix:semicolon
-multiline_comment|/* read the pin and do the PCI-PCI bridge interrupt pin swizzle */
+multiline_comment|/* read the pin and do the PCI-PCI bridge&n;&t;&t;&t;&t;   interrupt pin swizzle */
 id|pcibios_read_config_byte
 c_func
 (paren
@@ -1671,7 +1803,89 @@ id|pin
 op_assign
 l_int|1
 suffix:semicolon
-multiline_comment|/* follow the chain of bridges, swizzling as we go */
+multiline_comment|/* follow the chain of bridges, swizzling&n;&t;&t;&t;&t;   as we go */
+macro_line|#if defined(CONFIG_ALPHA_MIATA)
+id|slot
+op_assign
+id|PCI_SLOT
+c_func
+(paren
+id|dev-&gt;devfn
+)paren
+op_plus
+l_int|5
+suffix:semicolon
+id|DBG_DEVS
+c_func
+(paren
+(paren
+l_string|&quot;MIATA: bus 1 slot %d pin %d&quot;
+l_string|&quot; irq %d min_idsel %d&bslash;n&quot;
+comma
+id|PCI_SLOT
+c_func
+(paren
+id|dev-&gt;devfn
+)paren
+comma
+id|pin
+comma
+id|irq_tab
+(braket
+id|slot
+op_minus
+id|min_idsel
+)braket
+(braket
+id|pin
+)braket
+comma
+id|min_idsel
+)paren
+)paren
+suffix:semicolon
+macro_line|#elif defined(CONFIG_ALPHA_NORITAKE)
+multiline_comment|/* WAG Alert! */
+id|slot
+op_assign
+id|PCI_SLOT
+c_func
+(paren
+id|dev-&gt;devfn
+)paren
+op_plus
+l_int|14
+suffix:semicolon
+id|DBG_DEVS
+c_func
+(paren
+(paren
+l_string|&quot;NORITAKE: bus 1 slot %d pin %d&quot;
+l_string|&quot; irq %d min_idsel %d&bslash;n&quot;
+comma
+id|PCI_SLOT
+c_func
+(paren
+id|dev-&gt;devfn
+)paren
+comma
+id|pin
+comma
+id|irq_tab
+(braket
+id|slot
+op_minus
+id|min_idsel
+)braket
+(braket
+id|pin
+)braket
+comma
+id|min_idsel
+)paren
+)paren
+suffix:semicolon
+macro_line|#else
 r_do
 (brace
 multiline_comment|/* swizzle */
@@ -1710,6 +1924,7 @@ c_func
 id|curr-&gt;devfn
 )paren
 suffix:semicolon
+macro_line|#endif /* MIATA */
 )brace
 r_else
 (brace
@@ -1780,6 +1995,35 @@ id|dev-&gt;irq
 )paren
 suffix:semicolon
 macro_line|#endif
+id|DBG_DEVS
+c_func
+(paren
+(paren
+l_string|&quot;common_fixup: bus %d slot 0x%x&quot;
+l_string|&quot; VID 0x%x DID 0x%x&bslash;n&quot;
+l_string|&quot;              int_slot 0x%x pin 0x%x&quot;
+l_string|&quot; pirq 0x%x&bslash;n&quot;
+comma
+id|dev-&gt;bus-&gt;number
+comma
+id|PCI_SLOT
+c_func
+(paren
+id|dev-&gt;devfn
+)paren
+comma
+id|dev-&gt;vendor
+comma
+id|dev-&gt;device
+comma
+id|slot
+comma
+id|pin
+comma
+id|dev-&gt;irq
+)paren
+)paren
+suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t; * if it&squot;s a VGA, enable its BIOS ROM at C0000&n;&t;&t;&t; */
 r_if
 c_cond
@@ -1810,6 +2054,34 @@ id|PCI_ROM_ADDRESS_ENABLE
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/*&n;&t;&t;&t; * if it&squot;s a SCSI, disable its BIOS ROM&n;&t;&t;&t; */
+r_if
+c_cond
+(paren
+(paren
+id|dev
+op_member_access_from_pointer
+r_class
+op_rshift
+l_int|8
+)paren
+op_eq
+id|PCI_CLASS_STORAGE_SCSI
+)paren
+(brace
+id|pcibios_write_config_dword
+c_func
+(paren
+id|dev-&gt;bus-&gt;number
+comma
+id|dev-&gt;devfn
+comma
+id|PCI_ROM_ADDRESS
+comma
+l_int|0x0000000
+)paren
+suffix:semicolon
+)brace
 )brace
 )brace
 r_if
@@ -1837,6 +2109,7 @@ c_func
 r_void
 )paren
 (brace
+r_static
 r_char
 id|irq_tab
 (braket
@@ -1974,6 +2247,7 @@ l_int|0x398
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * The PC164 has 19 PCI interrupts, four from each of the four PCI&n; * slots, the SIO, PCI/IDE, and USB.&n; * &n; * Each of the interrupts can be individually masked. This is&n; * accomplished by setting the appropriate bit in the mask register.&n; * A bit is set by writing a &quot;1&quot; to the desired position in the mask&n; * register and cleared by writing a &quot;0&quot;. There are 3 mask registers&n; * located at ISA address 804h, 805h and 806h.&n; * &n; * An I/O read at ISA address 804h, 805h, 806h will return the&n; * state of the 11 PCI interrupts and not the state of the MASKED&n; * interrupts.&n; * &n; * Note: A write to I/O 804h, 805h, and 806h the mask register will be&n; * updated.&n; * &n; * &n; * &t;&t;&t;&t;ISA DATA&lt;7:0&gt;&n; * ISA     +--------------------------------------------------------------+&n; * ADDRESS |   7   |   6   |   5   |   4   |   3   |   2  |   1   |   0   |&n; *         +==============================================================+&n; * 0x804   | INTB0 |  USB  |  IDE  |  SIO  | INTA3 |INTA2 | INTA1 | INTA0 |&n; *         +--------------------------------------------------------------+&n; * 0x805   | INTD0 | INTC3 | INTC2 | INTC1 | INTC0 |INTB3 | INTB2 | INTB1 |&n; *         +--------------------------------------------------------------+&n; * 0x806   | Rsrv  | Rsrv  | Rsrv  | Rsrv  | Rsrv  |INTD3 | INTD2 | INTD1 |&n; *         +--------------------------------------------------------------+&n; *         * Rsrv = reserved bits&n; *         Note: The mask register is write-only.&n; * &n; * IdSel&t;&n; *   5&t; 32 bit PCI option slot 2&n; *   6&t; 64 bit PCI option slot 0&n; *   7&t; 64 bit PCI option slot 1&n; *   8&t; Saturn I/O&n; *   9&t; 32 bit PCI option slot 3&n; *  10&t; USB&n; *  11&t; IDE&n; * &n; */
+macro_line|#ifdef CONFIG_ALPHA_PC164
 DECL|function|alphapc164_fixup
 r_static
 r_inline
@@ -1984,14 +2258,7 @@ c_func
 r_void
 )paren
 (brace
-r_extern
-r_int
-id|SMCInit
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
+r_static
 r_char
 id|irq_tab
 (braket
@@ -2002,7 +2269,7 @@ l_int|5
 )braket
 op_assign
 (brace
-multiline_comment|/*&n;&t;   *      int   intA  intB   intC   intD&n;&t;   *      ----  ----  ----   ----   ----&n;&t;   */
+multiline_comment|/*INT   INTA  INTB   INTC   INTD */
 (brace
 l_int|16
 op_plus
@@ -2025,7 +2292,7 @@ op_plus
 l_int|17
 )brace
 comma
-multiline_comment|/* IdSel  5,  slot 2, J20 */
+multiline_comment|/* IdSel  5, slot 2, J20 */
 (brace
 l_int|16
 op_plus
@@ -2048,7 +2315,7 @@ op_plus
 l_int|15
 )brace
 comma
-multiline_comment|/* IdSel  6,  slot 0, J29 */
+multiline_comment|/* IdSel  6, slot 0, J29 */
 (brace
 l_int|16
 op_plus
@@ -2071,7 +2338,7 @@ op_plus
 l_int|16
 )brace
 comma
-multiline_comment|/* IdSel  7,  slot 1, J26 */
+multiline_comment|/* IdSel  7, slot 1, J26 */
 (brace
 op_minus
 l_int|1
@@ -2089,7 +2356,7 @@ op_minus
 l_int|1
 )brace
 comma
-multiline_comment|/* IdSel  8,  SIO         */
+multiline_comment|/* IdSel  8, SIO */
 (brace
 l_int|16
 op_plus
@@ -2112,7 +2379,7 @@ op_plus
 l_int|18
 )brace
 comma
-multiline_comment|/* IdSel  9,  slot 3, J19 */
+multiline_comment|/* IdSel  9, slot 3, J19 */
 (brace
 l_int|16
 op_plus
@@ -2135,7 +2402,7 @@ op_plus
 l_int|6
 )brace
 comma
-multiline_comment|/* IdSel 10,  USB */
+multiline_comment|/* IdSel 10, USB */
 (brace
 l_int|16
 op_plus
@@ -2157,7 +2424,7 @@ l_int|16
 op_plus
 l_int|5
 )brace
-multiline_comment|/* IdSel 11,  IDE */
+multiline_comment|/* IdSel 11, IDE */
 )brace
 suffix:semicolon
 id|common_fixup
@@ -2180,6 +2447,7 @@ c_func
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
 multiline_comment|/*&n; * The AlphaPC64 is very similar to the EB66+ except that its slots&n; * are numbered differently.  In the code below, I have used slot&n; * number to refer to the id select line and *not* the slot number&n; * used in the AlphaPC64 documentation.  However, in the table, I&squot;ve&n; * given the slot number, the id select line and the Jxx number that&squot;s&n; * printed on the board.  The interrupt pins from the PCI slots are&n; * wired into 3 interrupt summary registers at 0x804, 0x805 and 0x806&n; * ISA.&n; *&n; * In the table, -1 means don&squot;t assign an IRQ number.  This is usually&n; * because it is the Saturn IO (SIO) PCI/ISA Bridge Chip.&n; */
 DECL|function|cabriolet_fixup
 r_static
@@ -2191,6 +2459,7 @@ c_func
 r_void
 )paren
 (brace
+r_static
 r_char
 id|irq_tab
 (braket
@@ -2338,6 +2607,7 @@ c_func
 r_void
 )paren
 (brace
+r_static
 r_char
 id|irq_tab
 (braket
@@ -2486,6 +2756,7 @@ c_func
 r_void
 )paren
 (brace
+r_static
 r_char
 id|irq_tab
 (braket
@@ -2678,6 +2949,303 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * Fixup configuration for NORITAKE (MIKASA is different)&n; *&n; * Summary @ 0x542, summary register #1:&n; * Bit      Meaning&n; * 0        All valid ints from summary regs 2 &amp; 3&n; * 1        QLOGIC ISP1020A SCSI&n; * 2        Interrupt Line A from slot 0&n; * 3        Interrupt Line B from slot 0&n; * 4        Interrupt Line A from slot 1&n; * 5        Interrupt line B from slot 1&n; * 6        Interrupt Line A from slot 2&n; * 7        Interrupt Line B from slot 2&n; * 8        Interrupt Line A from slot 3&n; * 9        Interrupt Line B from slot 3&n; *10        Interrupt Line A from slot 4&n; *11        Interrupt Line B from slot 4&n; *12        Interrupt Line A from slot 5&n; *13        Interrupt Line B from slot 5&n; *14        Interrupt Line A from slot 6&n; *15        Interrupt Line B from slot 6&n; *&n; * Summary @ 0x544, summary register #2:&n; * Bit      Meaning&n; * 0        OR of all unmasked ints in SR #2&n; * 1        OR of secondary bus ints&n; * 2        Interrupt Line C from slot 0&n; * 3        Interrupt Line D from slot 0&n; * 4        Interrupt Line C from slot 1&n; * 5        Interrupt line D from slot 1&n; * 6        Interrupt Line C from slot 2&n; * 7        Interrupt Line D from slot 2&n; * 8        Interrupt Line C from slot 3&n; * 9        Interrupt Line D from slot 3&n; *10        Interrupt Line C from slot 4&n; *11        Interrupt Line D from slot 4&n; *12        Interrupt Line C from slot 5&n; *13        Interrupt Line D from slot 5&n; *14        Interrupt Line C from slot 6&n; *15        Interrupt Line D from slot 6&n; *&n; * The device to slot mapping looks like:&n; *&n; * Slot     Device&n; *  7       Intel PCI-EISA bridge chip&n; *  8       DEC PCI-PCI bridge chip&n; * 11       PCI on board slot 0&n; * 12       PCI on board slot 1&n; * 13       PCI on board slot 2&n; *   &n; *&n; * This two layered interrupt approach means that we allocate IRQ 16 and &n; * above for PCI interrupts.  The IRQ relates to which bit the interrupt&n; * comes in on.  This makes interrupt processing much easier.&n; */
+DECL|function|noritake_fixup
+r_static
+r_inline
+r_void
+id|noritake_fixup
+c_func
+(paren
+r_void
+)paren
+(brace
+r_static
+r_char
+id|irq_tab
+(braket
+l_int|13
+)braket
+(braket
+l_int|5
+)braket
+op_assign
+(brace
+multiline_comment|/*INT    INTA   INTB   INTC   INTD */
+(brace
+op_minus
+l_int|1
+comma
+op_minus
+l_int|1
+comma
+op_minus
+l_int|1
+comma
+op_minus
+l_int|1
+comma
+op_minus
+l_int|1
+)brace
+comma
+multiline_comment|/* IdSel 18,  PCEB */
+(brace
+op_minus
+l_int|1
+comma
+op_minus
+l_int|1
+comma
+op_minus
+l_int|1
+comma
+op_minus
+l_int|1
+comma
+op_minus
+l_int|1
+)brace
+comma
+multiline_comment|/* IdSel 19,  PPB  */
+(brace
+op_minus
+l_int|1
+comma
+op_minus
+l_int|1
+comma
+op_minus
+l_int|1
+comma
+op_minus
+l_int|1
+comma
+op_minus
+l_int|1
+)brace
+comma
+multiline_comment|/* IdSel 20,  ???? */
+(brace
+op_minus
+l_int|1
+comma
+op_minus
+l_int|1
+comma
+op_minus
+l_int|1
+comma
+op_minus
+l_int|1
+comma
+op_minus
+l_int|1
+)brace
+comma
+multiline_comment|/* IdSel 21,  ???? */
+(brace
+l_int|16
+op_plus
+l_int|2
+comma
+l_int|16
+op_plus
+l_int|2
+comma
+l_int|16
+op_plus
+l_int|3
+comma
+l_int|32
+op_plus
+l_int|2
+comma
+l_int|32
+op_plus
+l_int|3
+)brace
+comma
+multiline_comment|/* IdSel 22,  slot 0 */
+(brace
+l_int|16
+op_plus
+l_int|4
+comma
+l_int|16
+op_plus
+l_int|4
+comma
+l_int|16
+op_plus
+l_int|5
+comma
+l_int|32
+op_plus
+l_int|4
+comma
+l_int|32
+op_plus
+l_int|5
+)brace
+comma
+multiline_comment|/* IdSel 23,  slot 1 */
+(brace
+l_int|16
+op_plus
+l_int|6
+comma
+l_int|16
+op_plus
+l_int|6
+comma
+l_int|16
+op_plus
+l_int|7
+comma
+l_int|32
+op_plus
+l_int|6
+comma
+l_int|32
+op_plus
+l_int|7
+)brace
+comma
+multiline_comment|/* IdSel 24,  slot 2 */
+multiline_comment|/* The following are actually on bus 1, across the bridge */
+(brace
+l_int|16
+op_plus
+l_int|1
+comma
+l_int|16
+op_plus
+l_int|1
+comma
+l_int|16
+op_plus
+l_int|1
+comma
+l_int|16
+op_plus
+l_int|1
+comma
+l_int|16
+op_plus
+l_int|1
+)brace
+comma
+multiline_comment|/* IdSel 16,  QLOGIC */
+(brace
+l_int|16
+op_plus
+l_int|8
+comma
+l_int|16
+op_plus
+l_int|8
+comma
+l_int|16
+op_plus
+l_int|9
+comma
+l_int|32
+op_plus
+l_int|8
+comma
+l_int|32
+op_plus
+l_int|9
+)brace
+comma
+multiline_comment|/* IdSel 17,  slot 3 */
+(brace
+l_int|16
+op_plus
+l_int|10
+comma
+l_int|16
+op_plus
+l_int|10
+comma
+l_int|16
+op_plus
+l_int|11
+comma
+l_int|32
+op_plus
+l_int|10
+comma
+l_int|32
+op_plus
+l_int|11
+)brace
+comma
+multiline_comment|/* IdSel 18,  slot 4 */
+(brace
+l_int|16
+op_plus
+l_int|12
+comma
+l_int|16
+op_plus
+l_int|12
+comma
+l_int|16
+op_plus
+l_int|13
+comma
+l_int|32
+op_plus
+l_int|12
+comma
+l_int|32
+op_plus
+l_int|13
+)brace
+comma
+multiline_comment|/* IdSel 19,  slot 5 */
+(brace
+l_int|16
+op_plus
+l_int|14
+comma
+l_int|16
+op_plus
+l_int|14
+comma
+l_int|16
+op_plus
+l_int|15
+comma
+l_int|32
+op_plus
+l_int|14
+comma
+l_int|32
+op_plus
+l_int|15
+)brace
+comma
+multiline_comment|/* IdSel 20,  slot 6 */
+)brace
+suffix:semicolon
+id|common_fixup
+c_func
+(paren
+l_int|7
+comma
+l_int|18
+comma
+l_int|5
+comma
+id|irq_tab
+comma
+l_int|0
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/*&n; * Fixup configuration for ALCOR&n; *&n; * Summary @ GRU_INT_REQ:&n; * Bit      Meaning&n; * 0        Interrupt Line A from slot 2&n; * 1        Interrupt Line B from slot 2&n; * 2        Interrupt Line C from slot 2&n; * 3        Interrupt Line D from slot 2&n; * 4        Interrupt Line A from slot 1&n; * 5        Interrupt line B from slot 1&n; * 6        Interrupt Line C from slot 1&n; * 7        Interrupt Line D from slot 1&n; * 8        Interrupt Line A from slot 0&n; * 9        Interrupt Line B from slot 0&n; *10        Interrupt Line C from slot 0&n; *11        Interrupt Line D from slot 0&n; *12        Interrupt Line A from slot 4&n; *13        Interrupt Line B from slot 4&n; *14        Interrupt Line C from slot 4&n; *15        Interrupt Line D from slot 4&n; *16        Interrupt Line D from slot 3&n; *17        Interrupt Line D from slot 3&n; *18        Interrupt Line D from slot 3&n; *19        Interrupt Line D from slot 3&n; *20-30     Reserved&n; *31        EISA interrupt&n; *&n; * The device to slot mapping looks like:&n; *&n; * Slot     Device&n; *  7       PCI on board slot 0&n; *  8       PCI on board slot 3&n; *  9       PCI on board slot 4&n; * 10       PCEB (PCI-EISA bridge)&n; * 11       PCI on board slot 2&n; * 12       PCI on board slot 1&n; *   &n; *&n; * This two layered interrupt approach means that we allocate IRQ 16 and &n; * above for PCI interrupts.  The IRQ relates to which bit the interrupt&n; * comes in on.  This makes interrupt processing much easier.&n; */
 DECL|function|alcor_fixup
 r_static
@@ -2689,6 +3257,7 @@ c_func
 r_void
 )paren
 (brace
+r_static
 r_char
 id|irq_tab
 (braket
@@ -2861,6 +3430,7 @@ c_func
 r_void
 )paren
 (brace
+r_static
 r_char
 id|irq_tab
 (braket
@@ -3040,6 +3610,638 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * Fixup configuration for ALPHA SABLE (2100) - 2100A is different ??&n; *&n; * Summary Registers (536/53a/53c):&n; * Bit      Meaning&n; *-----------------&n; * 0        PCI slot 0&n; * 1        NCR810 (builtin)&n; * 2        TULIP (builtin)&n; * 3        mouse&n; * 4        PCI slot 1&n; * 5        PCI slot 2&n; * 6        keyboard&n; * 7        floppy&n; * 8        COM2&n; * 9        parallel port&n; *10        EISA irq 3&n; *11        EISA irq 4&n; *12        EISA irq 5&n; *13        EISA irq 6&n; *14        EISA irq 7&n; *15        COM1&n; *16        EISA irq 9&n; *17        EISA irq 10&n; *18        EISA irq 11&n; *19        EISA irq 12&n; *20        EISA irq 13&n; *21        EISA irq 14&n; *22        NC&n; *23        IIC&n; *&n; * The device to slot mapping looks like:&n; *&n; * Slot     Device&n; *  0       TULIP&n; *  1       SCSI&n; *  2       PCI-EISA bridge&n; *  3       none&n; *  4       none&n; *  5       none&n; *  6       PCI on board slot 0&n; *  7       PCI on board slot 1&n; *  8       PCI on board slot 2&n; *   &n; *&n; * This two layered interrupt approach means that we allocate IRQ 16 and &n; * above for PCI interrupts.  The IRQ relates to which bit the interrupt&n; * comes in on.  This makes interrupt processing much easier.&n; */
+multiline_comment|/* NOTE: the IRQ assignments below are arbitrary, but need to be consistent&n;   with the values in the sable_irq_to_mask[] and sable_mask_to_irq[] tables&n;   in irq.c&n; */
+DECL|function|sable_fixup
+r_static
+r_inline
+r_void
+id|sable_fixup
+c_func
+(paren
+r_void
+)paren
+(brace
+r_static
+r_char
+id|irq_tab
+(braket
+l_int|9
+)braket
+(braket
+l_int|5
+)braket
+op_assign
+(brace
+multiline_comment|/*INT    INTA   INTB   INTC   INTD */
+(brace
+l_int|32
+op_plus
+l_int|0
+comma
+l_int|32
+op_plus
+l_int|0
+comma
+l_int|32
+op_plus
+l_int|0
+comma
+l_int|32
+op_plus
+l_int|0
+comma
+l_int|32
+op_plus
+l_int|0
+)brace
+comma
+multiline_comment|/* IdSel 0,  TULIP  */
+(brace
+l_int|32
+op_plus
+l_int|1
+comma
+l_int|32
+op_plus
+l_int|1
+comma
+l_int|32
+op_plus
+l_int|1
+comma
+l_int|32
+op_plus
+l_int|1
+comma
+l_int|32
+op_plus
+l_int|1
+)brace
+comma
+multiline_comment|/* IdSel 1,  SCSI   */
+(brace
+op_minus
+l_int|1
+comma
+op_minus
+l_int|1
+comma
+op_minus
+l_int|1
+comma
+op_minus
+l_int|1
+comma
+op_minus
+l_int|1
+)brace
+comma
+multiline_comment|/* IdSel 2,  SIO   */
+(brace
+op_minus
+l_int|1
+comma
+op_minus
+l_int|1
+comma
+op_minus
+l_int|1
+comma
+op_minus
+l_int|1
+comma
+op_minus
+l_int|1
+)brace
+comma
+multiline_comment|/* IdSel 3,  none   */
+(brace
+op_minus
+l_int|1
+comma
+op_minus
+l_int|1
+comma
+op_minus
+l_int|1
+comma
+op_minus
+l_int|1
+comma
+op_minus
+l_int|1
+)brace
+comma
+multiline_comment|/* IdSel 4,  none   */
+(brace
+op_minus
+l_int|1
+comma
+op_minus
+l_int|1
+comma
+op_minus
+l_int|1
+comma
+op_minus
+l_int|1
+comma
+op_minus
+l_int|1
+)brace
+comma
+multiline_comment|/* IdSel 5,  none   */
+(brace
+l_int|32
+op_plus
+l_int|2
+comma
+l_int|32
+op_plus
+l_int|2
+comma
+l_int|32
+op_plus
+l_int|2
+comma
+l_int|32
+op_plus
+l_int|2
+comma
+l_int|32
+op_plus
+l_int|2
+)brace
+comma
+multiline_comment|/* IdSel 6,  slot 0 */
+(brace
+l_int|32
+op_plus
+l_int|3
+comma
+l_int|32
+op_plus
+l_int|3
+comma
+l_int|32
+op_plus
+l_int|3
+comma
+l_int|32
+op_plus
+l_int|3
+comma
+l_int|32
+op_plus
+l_int|3
+)brace
+comma
+multiline_comment|/* IdSel 7,  slot 1 */
+(brace
+l_int|32
+op_plus
+l_int|4
+comma
+l_int|32
+op_plus
+l_int|4
+comma
+l_int|32
+op_plus
+l_int|4
+comma
+l_int|32
+op_plus
+l_int|4
+comma
+l_int|32
+op_plus
+l_int|4
+)brace
+comma
+multiline_comment|/* IdSel 8,  slot 2 */
+)brace
+suffix:semicolon
+id|common_fixup
+c_func
+(paren
+l_int|0
+comma
+l_int|8
+comma
+l_int|5
+comma
+id|irq_tab
+comma
+l_int|0
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/*&n; * Fixup configuration for MIATA (EV56+PYXIS)&n; *&n; * Summary @ PYXIS_INT_REQ:&n; * Bit      Meaning&n; * 0        Fan Fault&n; * 1        NMI&n; * 2        Halt/Reset switch&n; * 3        none&n; * 4        CID0 (Riser ID)&n; * 5        CID1 (Riser ID)&n; * 6        Interval timer&n; * 7        PCI-ISA Bridge&n; * 8        Ethernet&n; * 9        EIDE (deprecated, ISA 14/15 used)&n; *10        none&n; *11        USB&n; *12        Interrupt Line A from slot 4&n; *13        Interrupt Line B from slot 4&n; *14        Interrupt Line C from slot 4&n; *15        Interrupt Line D from slot 4&n; *16        Interrupt Line A from slot 5&n; *17        Interrupt line B from slot 5&n; *18        Interrupt Line C from slot 5&n; *19        Interrupt Line D from slot 5&n; *20        Interrupt Line A from slot 1&n; *21        Interrupt Line B from slot 1&n; *22        Interrupt Line C from slot 1&n; *23        Interrupt Line D from slot 1&n; *24        Interrupt Line A from slot 2&n; *25        Interrupt Line B from slot 2&n; *26        Interrupt Line C from slot 2&n; *27        Interrupt Line D from slot 2&n; *27        Interrupt Line A from slot 3&n; *29        Interrupt Line B from slot 3&n; *30        Interrupt Line C from slot 3&n; *31        Interrupt Line D from slot 3&n; *&n; * The device to slot mapping looks like:&n; *&n; * Slot     Device&n; *  3       DC21142 Ethernet&n; *  4       EIDE CMD646&n; *  5       none&n; *  6       USB&n; *  7       PCI-ISA bridge&n; *  8       PCI-PCI Bridge      (SBU Riser)&n; *  9       none&n; * 10       none&n; * 11       PCI on board slot 4 (SBU Riser)&n; * 12       PCI on board slot 5 (SBU Riser)&n; *&n; *  These are behind the bridge, so I&squot;m not sure what to do...&n; *&n; * 13       PCI on board slot 1 (SBU Riser)&n; * 14       PCI on board slot 2 (SBU Riser)&n; * 15       PCI on board slot 3 (SBU Riser)&n; *   &n; *&n; * This two layered interrupt approach means that we allocate IRQ 16 and &n; * above for PCI interrupts.  The IRQ relates to which bit the interrupt&n; * comes in on.  This makes interrupt processing much easier.&n; */
+macro_line|#ifdef CONFIG_ALPHA_MIATA
+DECL|function|miata_fixup
+r_static
+r_inline
+r_void
+id|miata_fixup
+c_func
+(paren
+r_void
+)paren
+(brace
+r_static
+r_char
+id|irq_tab
+(braket
+l_int|18
+)braket
+(braket
+l_int|5
+)braket
+op_assign
+(brace
+multiline_comment|/*INT    INTA   INTB   INTC   INTD */
+(brace
+l_int|16
+op_plus
+l_int|8
+comma
+l_int|16
+op_plus
+l_int|8
+comma
+l_int|16
+op_plus
+l_int|8
+comma
+l_int|16
+op_plus
+l_int|8
+comma
+l_int|16
+op_plus
+l_int|8
+)brace
+comma
+multiline_comment|/* IdSel 14,  DC21142  */
+(brace
+op_minus
+l_int|1
+comma
+op_minus
+l_int|1
+comma
+op_minus
+l_int|1
+comma
+op_minus
+l_int|1
+comma
+op_minus
+l_int|1
+)brace
+comma
+multiline_comment|/* IdSel 15,  EIDE   */
+(brace
+op_minus
+l_int|1
+comma
+op_minus
+l_int|1
+comma
+op_minus
+l_int|1
+comma
+op_minus
+l_int|1
+comma
+op_minus
+l_int|1
+)brace
+comma
+multiline_comment|/* IdSel 16,  none   */
+(brace
+op_minus
+l_int|1
+comma
+op_minus
+l_int|1
+comma
+op_minus
+l_int|1
+comma
+op_minus
+l_int|1
+comma
+op_minus
+l_int|1
+)brace
+comma
+multiline_comment|/* IdSel 17,  none   */
+multiline_comment|/*&t;&t;{16+11, 16+11, 16+11, 16+11, 16+11},*/
+multiline_comment|/* IdSel 17,  USB ??  */
+(brace
+op_minus
+l_int|1
+comma
+op_minus
+l_int|1
+comma
+op_minus
+l_int|1
+comma
+op_minus
+l_int|1
+comma
+op_minus
+l_int|1
+)brace
+comma
+multiline_comment|/* IdSel 18,  PCI-ISA */
+(brace
+op_minus
+l_int|1
+comma
+op_minus
+l_int|1
+comma
+op_minus
+l_int|1
+comma
+op_minus
+l_int|1
+comma
+op_minus
+l_int|1
+)brace
+comma
+multiline_comment|/* IdSel 19,  PCI-PCI */
+(brace
+op_minus
+l_int|1
+comma
+op_minus
+l_int|1
+comma
+op_minus
+l_int|1
+comma
+op_minus
+l_int|1
+comma
+op_minus
+l_int|1
+)brace
+comma
+multiline_comment|/* IdSel 20,  none    */
+(brace
+op_minus
+l_int|1
+comma
+op_minus
+l_int|1
+comma
+op_minus
+l_int|1
+comma
+op_minus
+l_int|1
+comma
+op_minus
+l_int|1
+)brace
+comma
+multiline_comment|/* IdSel 21,  none    */
+(brace
+l_int|16
+op_plus
+l_int|12
+comma
+l_int|16
+op_plus
+l_int|12
+comma
+l_int|16
+op_plus
+l_int|13
+comma
+l_int|16
+op_plus
+l_int|14
+comma
+l_int|16
+op_plus
+l_int|15
+)brace
+comma
+multiline_comment|/* IdSel 22,  slot 4 */
+(brace
+l_int|16
+op_plus
+l_int|16
+comma
+l_int|16
+op_plus
+l_int|16
+comma
+l_int|16
+op_plus
+l_int|17
+comma
+l_int|16
+op_plus
+l_int|18
+comma
+l_int|16
+op_plus
+l_int|19
+)brace
+comma
+multiline_comment|/* IdSel 23,  slot 5 */
+multiline_comment|/* The following are actually on bus 1, across the bridge */
+(brace
+l_int|16
+op_plus
+l_int|20
+comma
+l_int|16
+op_plus
+l_int|20
+comma
+l_int|16
+op_plus
+l_int|21
+comma
+l_int|16
+op_plus
+l_int|22
+comma
+l_int|16
+op_plus
+l_int|23
+)brace
+comma
+multiline_comment|/* IdSel 24,  slot 1 */
+(brace
+l_int|16
+op_plus
+l_int|24
+comma
+l_int|16
+op_plus
+l_int|24
+comma
+l_int|16
+op_plus
+l_int|25
+comma
+l_int|16
+op_plus
+l_int|26
+comma
+l_int|16
+op_plus
+l_int|27
+)brace
+comma
+multiline_comment|/* IdSel 25,  slot 2 */
+(brace
+l_int|16
+op_plus
+l_int|28
+comma
+l_int|16
+op_plus
+l_int|28
+comma
+l_int|16
+op_plus
+l_int|29
+comma
+l_int|16
+op_plus
+l_int|30
+comma
+l_int|16
+op_plus
+l_int|31
+)brace
+comma
+multiline_comment|/* IdSel 26,  slot 3 */
+(brace
+op_minus
+l_int|1
+comma
+op_minus
+l_int|1
+comma
+op_minus
+l_int|1
+comma
+op_minus
+l_int|1
+comma
+op_minus
+l_int|1
+)brace
+comma
+multiline_comment|/* IdSel 27,  none    */
+(brace
+op_minus
+l_int|1
+comma
+op_minus
+l_int|1
+comma
+op_minus
+l_int|1
+comma
+op_minus
+l_int|1
+comma
+op_minus
+l_int|1
+)brace
+comma
+multiline_comment|/* IdSel 28,  none    */
+(brace
+op_minus
+l_int|1
+comma
+op_minus
+l_int|1
+comma
+op_minus
+l_int|1
+comma
+op_minus
+l_int|1
+comma
+op_minus
+l_int|1
+)brace
+comma
+multiline_comment|/* IdSel 29,  none    */
+(brace
+op_minus
+l_int|1
+comma
+op_minus
+l_int|1
+comma
+op_minus
+l_int|1
+comma
+op_minus
+l_int|1
+comma
+op_minus
+l_int|1
+)brace
+comma
+multiline_comment|/* IdSel 30,  none    */
+(brace
+op_minus
+l_int|1
+comma
+op_minus
+l_int|1
+comma
+op_minus
+l_int|1
+comma
+op_minus
+l_int|1
+comma
+op_minus
+l_int|1
+)brace
+comma
+multiline_comment|/* IdSel 31,  PCI-PCI */
+)brace
+suffix:semicolon
+id|common_fixup
+c_func
+(paren
+l_int|3
+comma
+l_int|20
+comma
+l_int|5
+comma
+id|irq_tab
+comma
+l_int|0
+)paren
+suffix:semicolon
+id|es1888_init
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
 multiline_comment|/*&n; * Fixup configuration for all boards that route the PCI interrupts&n; * through the SIO PCI/ISA bridge.  This includes Noname (AXPpci33),&n; * Avanti (AlphaStation) and Kenetics&squot;s Platform 2000.&n; */
 DECL|function|sio_fixup
 r_static
@@ -3320,8 +4522,34 @@ multiline_comment|/* idsel 14 AS255 TULIP */
 macro_line|#endif
 )brace
 suffix:semicolon
+r_const
+r_int
+id|pirq_tab_len
+op_assign
+r_sizeof
+(paren
+id|pirq_tab
+)paren
+op_div
+r_sizeof
+(paren
+id|pirq_tab
+(braket
+l_int|0
+)braket
+)paren
+suffix:semicolon
 multiline_comment|/*&n;&t; * route_tab selects irq routing in PCI/ISA bridge so that:&n;&t; *&t;&t;PIRQ0 -&gt; irq 15&n;&t; *&t;&t;PIRQ1 -&gt; irq  9&n;&t; *&t;&t;PIRQ2 -&gt; irq 10&n;&t; *&t;&t;PIRQ3 -&gt; irq 11&n;&t; *&n;&t; * This probably ought to be configurable via MILO.  For&n;&t; * example, sound boards seem to like using IRQ 9.&n;&t; */
-macro_line|#ifdef CONFIG_ALPHA_NONAME
+macro_line|#if defined(CONFIG_ALPHA_BOOK1)
+multiline_comment|/* for the AlphaBook1, NCR810 SCSI is 14, PCMCIA controller is 15 */
+r_const
+r_int
+r_int
+id|route_tab
+op_assign
+l_int|0x0e0f0a0a
+suffix:semicolon
+macro_line|#elif defined(CONFIG_ALPHA_NONAME)
 multiline_comment|/*&n;&t; * For UDB, the only available PCI slot must not map to IRQ 9,&n;&t; *  since that&squot;s the builtin MSS sound chip. That PCI slot&n;&t; *  will map to PIRQ1 (for INTA at least), so we give it IRQ 15&n;&t; *  instead.&n;&t; *&n;&t; * Unfortunately we have to do this for NONAME as well, since&n;&t; *  they are co-indicated when the platform type &quot;Noname&quot; is&n;&t; *  selected... :-(&n;&t; */
 r_const
 r_int
@@ -3330,7 +4558,7 @@ id|route_tab
 op_assign
 l_int|0x0b0a0f09
 suffix:semicolon
-macro_line|#else /* CONFIG_ALPHA_NONAME */
+macro_line|#else
 r_const
 r_int
 r_int
@@ -3338,7 +4566,7 @@ id|route_tab
 op_assign
 l_int|0x0b0a090f
 suffix:semicolon
-macro_line|#endif /* CONFIG_ALPHA_NONAME */
+macro_line|#endif
 r_int
 r_int
 id|level_bits
@@ -3392,6 +4620,7 @@ id|dev-&gt;next
 r_if
 c_cond
 (paren
+(paren
 id|dev
 op_member_access_from_pointer
 r_class
@@ -3399,6 +4628,17 @@ op_rshift
 l_int|16
 op_eq
 id|PCI_BASE_CLASS_BRIDGE
+)paren
+op_logical_and
+(paren
+id|dev
+op_member_access_from_pointer
+r_class
+op_rshift
+l_int|8
+op_ne
+id|PCI_CLASS_BRIDGE_PCMCIA
+)paren
 )paren
 r_continue
 suffix:semicolon
@@ -3524,25 +4764,15 @@ id|slot
 op_ge
 l_int|6
 op_plus
-r_sizeof
-(paren
-id|pirq_tab
-)paren
-op_div
-r_sizeof
-(paren
-id|pirq_tab
-(braket
-l_int|0
-)braket
-)paren
+id|pirq_tab_len
 )paren
 (brace
 id|printk
 c_func
 (paren
 l_string|&quot;bios32.sio_fixup: &quot;
-l_string|&quot;weird, found device %04x:%04x in non-existent slot %d!!&bslash;n&quot;
+l_string|&quot;weird, found device %04x:%04x in&quot;
+l_string|&quot; non-existent slot %d!!&bslash;n&quot;
 comma
 id|dev-&gt;vendor
 comma
@@ -3571,7 +4801,7 @@ c_func
 (paren
 (paren
 l_string|&quot;sio_fixup: bus %d  slot 0x%x  VID 0x%x  DID 0x%x&bslash;n&quot;
-l_string|&quot;           int_slot 0x%x  int_pin 0x%x,  pirq 0x%x&bslash;n&quot;
+l_string|&quot;           int_slot 0x%x  pin 0x%x  pirq 0x%x&bslash;n&quot;
 comma
 id|dev-&gt;bus-&gt;number
 comma
@@ -3653,7 +4883,8 @@ id|printk
 c_func
 (paren
 l_string|&quot;bios32.sio_fixup: &quot;
-l_string|&quot;weird, device %04x:%04x coming in on slot %d has no irq line!!&bslash;n&quot;
+l_string|&quot;weird, device %04x:%04x coming in on&quot;
+l_string|&quot; slot %d has no irq line!!&bslash;n&quot;
 comma
 id|dev-&gt;vendor
 comma
@@ -3679,6 +4910,8 @@ id|pirq
 op_amp
 l_int|0xff
 suffix:semicolon
+macro_line|#ifndef CONFIG_ALPHA_BOOK1
+multiline_comment|/* do not set *ANY* level triggers for AlphaBook1 */
 multiline_comment|/* must set the PCI IRQs to level triggered */
 id|level_bits
 op_or_assign
@@ -3688,6 +4921,7 @@ op_lshift
 id|dev-&gt;irq
 )paren
 suffix:semicolon
+macro_line|#endif /* !CONFIG_ALPHA_BOOK1 */
 macro_line|#if PCI_MODIFY
 multiline_comment|/* tell the device: */
 id|pcibios_write_config_byte
@@ -3703,8 +4937,105 @@ id|dev-&gt;irq
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef CONFIG_ALPHA_BOOK1
+multiline_comment|/*&n;                 * On the AlphaBook1, the PCMCIA chip (Cirrus 6729)&n;                 * is sensitive to PCI bus bursts, so we must DISABLE&n;                 * burst mode for the NCR 8xx SCSI... :-(&n;&t;&t; *&n;&t;&t; * Note that the NCR810 SCSI driver must preserve the&n;&t;&t; * setting of the bit in order for this to work.  At the&n;&t;&t; * moment (2.0.29), ncr53c8xx.c does NOT do this, but&n;&t;&t; * 53c7,8xx.c DOES.&n;                 */
+r_if
+c_cond
+(paren
+id|dev-&gt;vendor
+op_eq
+id|PCI_VENDOR_ID_NCR
+op_logical_and
+(paren
+id|dev-&gt;device
+op_eq
+id|PCI_DEVICE_ID_NCR_53C810
+op_logical_or
+id|dev-&gt;device
+op_eq
+id|PCI_DEVICE_ID_NCR_53C815
+op_logical_or
+id|dev-&gt;device
+op_eq
+id|PCI_DEVICE_ID_NCR_53C820
+op_logical_or
+id|dev-&gt;device
+op_eq
+id|PCI_DEVICE_ID_NCR_53C825
+)paren
+)paren
+(brace
+r_int
+r_int
+id|io_port
+suffix:semicolon
+r_int
+r_char
+id|ctest4
+suffix:semicolon
+id|pcibios_read_config_dword
+c_func
+(paren
+id|dev-&gt;bus-&gt;number
+comma
+id|dev-&gt;devfn
+comma
+id|PCI_BASE_ADDRESS_0
+comma
+op_amp
+id|io_port
+)paren
+suffix:semicolon
+id|io_port
+op_and_assign
+id|PCI_BASE_ADDRESS_IO_MASK
+suffix:semicolon
+id|ctest4
+op_assign
+id|inb
+c_func
+(paren
+id|io_port
+op_plus
+l_int|0x21
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|ctest4
+op_amp
+l_int|0x80
+)paren
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;AlphaBook1 NCR init: setting&quot;
+l_string|&quot; burst disable&bslash;n&quot;
+)paren
+suffix:semicolon
+id|outb
+c_func
+(paren
+id|ctest4
+op_or
+l_int|0x80
+comma
+id|io_port
+op_plus
+l_int|0x21
+)paren
+suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; * Now, make all PCI interrupts level sensitive.  Notice:&n;&t; * these registers must be accessed byte-wise.  inw()/outw()&n;&t; * don&squot;t work.&n;&t; *&n;&t; * Make sure to turn off any level bits set for IRQs 9,10,11,15,&n;&t; *  so that the only bits getting set are for devices actually found.&n;&t; * Note that we do preserve the remainder of the bits, which we hope&n;&t; *  will be set correctly by ARC/SRM.&n;&t; */
+)brace
+macro_line|#endif /* CONFIG_ALPHA_BOOK1 */
+)brace
+multiline_comment|/* end for-devs */
+multiline_comment|/*&n;&t; * Now, make all PCI interrupts level sensitive.  Notice:&n;&t; * these registers must be accessed byte-wise.  inw()/outw()&n;&t; * don&squot;t work.&n;&t; *&n;&t; * Make sure to turn off any level bits set for IRQs 9,10,11,15,&n;&t; *  so that the only bits getting set are for devices actually found.&n;&t; * Note that we do preserve the remainder of the bits, which we hope&n;&t; *  will be set correctly by ARC/SRM.&n;&t; *&n;&t; * Note: we at least preserve any level-set bits on AlphaBook1&n;&t; */
 id|level_bits
 op_or_assign
 (paren
@@ -3757,12 +5088,134 @@ comma
 l_int|0x4d1
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_ALPHA_BOOK1
+(brace
+r_int
+r_char
+id|orig
+comma
+id|config
+suffix:semicolon
+multiline_comment|/* On the AlphaBook1, make sure that register PR1&n;&t;&t;   indicates 1Mb mem */
+id|outb
+c_func
+(paren
+l_int|0x0f
+comma
+l_int|0x3ce
+)paren
+suffix:semicolon
+id|orig
+op_assign
+id|inb
+c_func
+(paren
+l_int|0x3cf
+)paren
+suffix:semicolon
+multiline_comment|/* read PR5  */
+id|outb
+c_func
+(paren
+l_int|0x0f
+comma
+l_int|0x3ce
+)paren
+suffix:semicolon
+id|outb
+c_func
+(paren
+l_int|0x05
+comma
+l_int|0x3cf
+)paren
+suffix:semicolon
+multiline_comment|/* unlock PR0-4 */
+id|outb
+c_func
+(paren
+l_int|0x0b
+comma
+l_int|0x3ce
+)paren
+suffix:semicolon
+id|config
+op_assign
+id|inb
+c_func
+(paren
+l_int|0x3cf
+)paren
+suffix:semicolon
+multiline_comment|/* read PR1 */
+r_if
+c_cond
+(paren
+(paren
+id|config
+op_amp
+l_int|0xc0
+)paren
+op_ne
+l_int|0xc0
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;AlphaBook1 VGA init: setting 1Mb memory&bslash;n&quot;
+)paren
+suffix:semicolon
+id|config
+op_or_assign
+l_int|0xc0
+suffix:semicolon
+id|outb
+c_func
+(paren
+l_int|0x0b
+comma
+l_int|0x3ce
+)paren
+suffix:semicolon
+id|outb
+c_func
+(paren
+id|config
+comma
+l_int|0x3cf
+)paren
+suffix:semicolon
+multiline_comment|/* write PR1 */
+)brace
+id|outb
+c_func
+(paren
+l_int|0x0f
+comma
+l_int|0x3ce
+)paren
+suffix:semicolon
+id|outb
+c_func
+(paren
+id|orig
+comma
+l_int|0x3cf
+)paren
+suffix:semicolon
+multiline_comment|/* (re)lock PR0-4 */
+)brace
+macro_line|#endif /* CONFIG_ALPHA_BOOK1 */
+macro_line|#ifndef CONFIG_ALPHA_BOOK1
+multiline_comment|/* Do not do IDE init for AlphaBook1 */
 id|enable_ide
 c_func
 (paren
 l_int|0x26e
 )paren
 suffix:semicolon
+macro_line|#endif
 )brace
 macro_line|#ifdef CONFIG_TGA_CONSOLE
 r_extern
@@ -3800,7 +5253,7 @@ id|pci_root
 suffix:semicolon
 macro_line|#endif
 multiline_comment|/*&n;&t; * Now is the time to do all those dirty little deeds...&n;&t; */
-macro_line|#if defined(CONFIG_ALPHA_NONAME) || defined(CONFIG_ALPHA_AVANTI) || defined(CONFIG_ALPHA_P2K)
+macro_line|#if defined(CONFIG_ALPHA_NONAME) || defined(CONFIG_ALPHA_AVANTI) || &bslash;&n;    defined(CONFIG_ALPHA_P2K)
 id|sio_fixup
 c_func
 (paren
@@ -3854,16 +5307,36 @@ c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#elif defined(CONFIG_ALPHA_SABLE)
+id|sable_fixup
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#elif defined(CONFIG_ALPHA_MIATA)
+id|miata_fixup
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#elif defined(CONFIG_ALPHA_NORITAKE)
+id|noritake_fixup
+c_func
+(paren
+)paren
+suffix:semicolon
 macro_line|#else
-macro_line|#&t;error You must tell me what kind of platform you want.
+macro_line|# error &quot;You must tell me what kind of platform you want.&quot;
 macro_line|#endif
+macro_line|#ifndef CONFIG_ABSTRACT_CONSOLE
 macro_line|#ifdef CONFIG_TGA_CONSOLE
 id|tga_console_init
 c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#endif /* CONFIG_TGA_CONSOLE */
+macro_line|#endif
+macro_line|#endif
 r_return
 id|mem_start
 suffix:semicolon
@@ -3912,6 +5385,19 @@ r_int
 id|err
 op_assign
 l_int|0
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|suser
+c_func
+(paren
+)paren
+)paren
+r_return
+op_minus
+id|EPERM
 suffix:semicolon
 id|lock_kernel
 c_func
@@ -4114,6 +5600,19 @@ r_int
 id|err
 op_assign
 l_int|0
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|suser
+c_func
+(paren
+)paren
+)paren
+r_return
+op_minus
+id|EPERM
 suffix:semicolon
 id|lock_kernel
 c_func
@@ -4391,6 +5890,7 @@ mdefine_line|#define PARP_INTERRUPT&t;&t;7
 DECL|macro|SMC_DEBUG
 mdefine_line|#define SMC_DEBUG 0
 DECL|function|SMCConfigState
+r_static
 r_int
 r_int
 id|SMCConfigState
@@ -4429,19 +5929,9 @@ id|baseAddr
 suffix:semicolon
 id|dataPort
 op_assign
-(paren
-r_int
-r_int
-)paren
-(paren
-(paren
-r_char
-op_star
-)paren
 id|configPort
 op_plus
 l_int|1
-)paren
 suffix:semicolon
 id|outb
 c_func
@@ -4512,6 +6002,7 @@ id|baseAddr
 suffix:semicolon
 )brace
 DECL|function|SMCRunState
+r_static
 r_void
 id|SMCRunState
 c_func
@@ -4531,6 +6022,7 @@ id|baseAddr
 suffix:semicolon
 )brace
 DECL|function|SMCDetectUltraIO
+r_static
 r_int
 r_int
 id|SMCDetectUltraIO
@@ -4600,6 +6092,7 @@ l_int|0
 suffix:semicolon
 )brace
 DECL|function|SMCEnableDevice
+r_static
 r_void
 id|SMCEnableDevice
 c_func
@@ -4635,19 +6128,9 @@ id|baseAddr
 suffix:semicolon
 id|dataPort
 op_assign
-(paren
-r_int
-r_int
-)paren
-(paren
-(paren
-r_char
-op_star
-)paren
 id|baseAddr
 op_plus
 l_int|1
-)paren
 suffix:semicolon
 id|outb
 c_func
@@ -4697,14 +6180,12 @@ id|outb
 c_func
 (paren
 (paren
-(paren
 id|portaddr
 op_rshift
 l_int|8
 )paren
 op_amp
 l_int|0xFF
-)paren
 comma
 id|dataPort
 )paren
@@ -4743,6 +6224,7 @@ id|dataPort
 suffix:semicolon
 )brace
 DECL|function|SMCEnableKYBD
+r_static
 r_void
 id|SMCEnableKYBD
 c_func
@@ -4766,19 +6248,9 @@ id|baseAddr
 suffix:semicolon
 id|dataPort
 op_assign
-(paren
-r_int
-r_int
-)paren
-(paren
-(paren
-r_char
-op_star
-)paren
 id|baseAddr
 op_plus
 l_int|1
-)paren
 suffix:semicolon
 id|outb
 c_func
@@ -4848,6 +6320,7 @@ id|dataPort
 suffix:semicolon
 )brace
 DECL|function|SMCEnableFDC
+r_static
 r_void
 id|SMCEnableFDC
 c_func
@@ -4875,19 +6348,9 @@ id|baseAddr
 suffix:semicolon
 id|dataPort
 op_assign
-(paren
-r_int
-r_int
-)paren
-(paren
-(paren
-r_char
-op_star
-)paren
 id|baseAddr
 op_plus
 l_int|1
-)paren
 suffix:semicolon
 id|outb
 c_func
@@ -4987,6 +6450,7 @@ suffix:semicolon
 )brace
 macro_line|#if SMC_DEBUG
 DECL|function|SMCReportDeviceStatus
+r_static
 r_void
 id|SMCReportDeviceStatus
 c_func
@@ -5014,19 +6478,9 @@ id|baseAddr
 suffix:semicolon
 id|dataPort
 op_assign
-(paren
-r_int
-r_int
-)paren
-(paren
-(paren
-r_char
-op_star
-)paren
 id|baseAddr
 op_plus
 l_int|1
-)paren
 suffix:semicolon
 id|outb
 c_func
@@ -5044,8 +6498,8 @@ c_func
 id|dataPort
 )paren
 suffix:semicolon
-r_if
-c_cond
+id|printk
+c_func
 (paren
 id|currentControl
 op_amp
@@ -5054,22 +6508,15 @@ l_int|1
 op_lshift
 id|FDC
 )paren
-)paren
-id|printk
-c_func
-(paren
+ques
+c_cond
 l_string|&quot;&bslash;t+FDC Enabled&bslash;n&quot;
-)paren
-suffix:semicolon
-r_else
-id|printk
-c_func
-(paren
+suffix:colon
 l_string|&quot;&bslash;t-FDC Disabled&bslash;n&quot;
 )paren
 suffix:semicolon
-r_if
-c_cond
+id|printk
+c_func
 (paren
 id|currentControl
 op_amp
@@ -5078,22 +6525,15 @@ l_int|1
 op_lshift
 id|IDE1
 )paren
-)paren
-id|printk
-c_func
-(paren
+ques
+c_cond
 l_string|&quot;&bslash;t+IDE1 Enabled&bslash;n&quot;
-)paren
-suffix:semicolon
-r_else
-id|printk
-c_func
-(paren
+suffix:colon
 l_string|&quot;&bslash;t-IDE1 Disabled&bslash;n&quot;
 )paren
 suffix:semicolon
-r_if
-c_cond
+id|printk
+c_func
 (paren
 id|currentControl
 op_amp
@@ -5102,22 +6542,15 @@ l_int|1
 op_lshift
 id|IDE2
 )paren
-)paren
-id|printk
-c_func
-(paren
+ques
+c_cond
 l_string|&quot;&bslash;t+IDE2 Enabled&bslash;n&quot;
-)paren
-suffix:semicolon
-r_else
-id|printk
-c_func
-(paren
+suffix:colon
 l_string|&quot;&bslash;t-IDE2 Disabled&bslash;n&quot;
 )paren
 suffix:semicolon
-r_if
-c_cond
+id|printk
+c_func
 (paren
 id|currentControl
 op_amp
@@ -5126,22 +6559,15 @@ l_int|1
 op_lshift
 id|PARP
 )paren
-)paren
-id|printk
-c_func
-(paren
+ques
+c_cond
 l_string|&quot;&bslash;t+PARP Enabled&bslash;n&quot;
-)paren
-suffix:semicolon
-r_else
-id|printk
-c_func
-(paren
+suffix:colon
 l_string|&quot;&bslash;t-PARP Disabled&bslash;n&quot;
 )paren
 suffix:semicolon
-r_if
-c_cond
+id|printk
+c_func
 (paren
 id|currentControl
 op_amp
@@ -5150,22 +6576,15 @@ l_int|1
 op_lshift
 id|SER1
 )paren
-)paren
-id|printk
-c_func
-(paren
+ques
+c_cond
 l_string|&quot;&bslash;t+SER1 Enabled&bslash;n&quot;
-)paren
-suffix:semicolon
-r_else
-id|printk
-c_func
-(paren
+suffix:colon
 l_string|&quot;&bslash;t-SER1 Disabled&bslash;n&quot;
 )paren
 suffix:semicolon
-r_if
-c_cond
+id|printk
+c_func
 (paren
 id|currentControl
 op_amp
@@ -5174,17 +6593,10 @@ l_int|1
 op_lshift
 id|SER2
 )paren
-)paren
-id|printk
-c_func
-(paren
+ques
+c_cond
 l_string|&quot;&bslash;t+SER2 Enabled&bslash;n&quot;
-)paren
-suffix:semicolon
-r_else
-id|printk
-c_func
-(paren
+suffix:colon
 l_string|&quot;&bslash;t-SER2 Disabled&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -5197,6 +6609,7 @@ suffix:semicolon
 )brace
 macro_line|#endif
 DECL|function|SMCInit
+r_static
 r_int
 id|SMCInit
 c_func
@@ -5220,11 +6633,7 @@ c_func
 )paren
 )paren
 op_ne
-(paren
-r_int
-r_int
-)paren
-l_int|0
+l_int|0UL
 )paren
 (brace
 id|printk
@@ -5279,7 +6688,7 @@ comma
 id|PARP_INTERRUPT
 )paren
 suffix:semicolon
-multiline_comment|/* on PC164, IDE on the SMC is not enabled; CMD646 (PCI) on MB */
+multiline_comment|/* On PC164, IDE on the SMC is not enabled;&n;&t;&t;   CMD646 (PCI) on MB */
 id|SMCEnableKYBD
 c_func
 (paren
@@ -5326,5 +6735,240 @@ suffix:semicolon
 )brace
 )brace
 macro_line|#endif /* CONFIG_ALPHA_PC164 */
+macro_line|#ifdef CONFIG_ALPHA_MIATA
+multiline_comment|/*&n; * Init the built-in ES1888 sound chip (SB16 compatible)&n; */
+DECL|function|es1888_init
+r_static
+r_int
+id|es1888_init
+c_func
+(paren
+r_void
+)paren
+(brace
+multiline_comment|/* Sequence of IO reads to init the audio controller */
+id|inb
+c_func
+(paren
+l_int|0x0229
+)paren
+suffix:semicolon
+id|inb
+c_func
+(paren
+l_int|0x0229
+)paren
+suffix:semicolon
+id|inb
+c_func
+(paren
+l_int|0x0229
+)paren
+suffix:semicolon
+id|inb
+c_func
+(paren
+l_int|0x022b
+)paren
+suffix:semicolon
+id|inb
+c_func
+(paren
+l_int|0x0229
+)paren
+suffix:semicolon
+id|inb
+c_func
+(paren
+l_int|0x022b
+)paren
+suffix:semicolon
+id|inb
+c_func
+(paren
+l_int|0x0229
+)paren
+suffix:semicolon
+id|inb
+c_func
+(paren
+l_int|0x0229
+)paren
+suffix:semicolon
+id|inb
+c_func
+(paren
+l_int|0x022b
+)paren
+suffix:semicolon
+id|inb
+c_func
+(paren
+l_int|0x0229
+)paren
+suffix:semicolon
+id|inb
+c_func
+(paren
+l_int|0x0220
+)paren
+suffix:semicolon
+multiline_comment|/* This sets the base address to 0x220 */
+multiline_comment|/* Sequence to set DMA channels */
+id|outb
+c_func
+(paren
+l_int|0x01
+comma
+l_int|0x0226
+)paren
+suffix:semicolon
+multiline_comment|/* reset */
+id|inb
+c_func
+(paren
+l_int|0x0226
+)paren
+suffix:semicolon
+multiline_comment|/* pause */
+id|outb
+c_func
+(paren
+l_int|0x00
+comma
+l_int|0x0226
+)paren
+suffix:semicolon
+multiline_comment|/* release reset */
+r_while
+c_loop
+(paren
+op_logical_neg
+(paren
+id|inb
+c_func
+(paren
+l_int|0x022e
+)paren
+op_amp
+l_int|0x80
+)paren
+)paren
+multiline_comment|/* wait for bit 7 to assert*/
+r_continue
+suffix:semicolon
+id|inb
+c_func
+(paren
+l_int|0x022a
+)paren
+suffix:semicolon
+multiline_comment|/* pause */
+id|outb
+c_func
+(paren
+l_int|0xc6
+comma
+l_int|0x022c
+)paren
+suffix:semicolon
+multiline_comment|/* enable extended mode */
+r_while
+c_loop
+(paren
+id|inb
+c_func
+(paren
+l_int|0x022c
+)paren
+op_amp
+l_int|0x80
+)paren
+multiline_comment|/* wait for bit 7 to deassert */
+r_continue
+suffix:semicolon
+id|outb
+c_func
+(paren
+l_int|0xb1
+comma
+l_int|0x022c
+)paren
+suffix:semicolon
+multiline_comment|/* setup for write to Interrupt CR */
+r_while
+c_loop
+(paren
+id|inb
+c_func
+(paren
+l_int|0x022c
+)paren
+op_amp
+l_int|0x80
+)paren
+multiline_comment|/* wait for bit 7 to deassert */
+r_continue
+suffix:semicolon
+id|outb
+c_func
+(paren
+l_int|0x14
+comma
+l_int|0x022c
+)paren
+suffix:semicolon
+multiline_comment|/* set IRQ 5 */
+r_while
+c_loop
+(paren
+id|inb
+c_func
+(paren
+l_int|0x022c
+)paren
+op_amp
+l_int|0x80
+)paren
+multiline_comment|/* wait for bit 7 to deassert */
+r_continue
+suffix:semicolon
+id|outb
+c_func
+(paren
+l_int|0xb2
+comma
+l_int|0x022c
+)paren
+suffix:semicolon
+multiline_comment|/* setup for write to DMA CR */
+r_while
+c_loop
+(paren
+id|inb
+c_func
+(paren
+l_int|0x022c
+)paren
+op_amp
+l_int|0x80
+)paren
+multiline_comment|/* wait for bit 7 to deassert */
+r_continue
+suffix:semicolon
+id|outb
+c_func
+(paren
+l_int|0x18
+comma
+l_int|0x022c
+)paren
+suffix:semicolon
+multiline_comment|/* set DMA channel 1 */
+r_return
+l_int|0
+suffix:semicolon
+)brace
+macro_line|#endif /* CONFIG_ALPHA_MIATA */
 macro_line|#endif /* CONFIG_PCI */
 eof

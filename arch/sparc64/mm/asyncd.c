@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: asyncd.c,v 1.2 1997/05/15 21:14:32 davem Exp $&n; *  The asyncd kernel daemon. This handles paging on behalf of &n; *  processes that receive page faults due to remote (async) memory&n; *  accesses. &n; *&n; *  Idea and skeleton code courtesy of David Miller (bless his cotton socks)&n; *&n; *  Implemented by tridge&n; */
+multiline_comment|/*  $Id: asyncd.c,v 1.3 1997/12/11 15:15:58 jj Exp $&n; *  The asyncd kernel daemon. This handles paging on behalf of &n; *  processes that receive page faults due to remote (async) memory&n; *  accesses. &n; *&n; *  Idea and skeleton code courtesy of David Miller (bless his cotton socks)&n; *&n; *  Implemented by tridge&n; */
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -962,12 +962,20 @@ comma
 l_string|&quot;asyncd&quot;
 )paren
 suffix:semicolon
+id|sigfillset
+c_func
+(paren
+op_amp
 id|current-&gt;blocked
-op_assign
-op_complement
-l_int|0UL
+)paren
 suffix:semicolon
 multiline_comment|/* block all signals */
+id|recalc_sigpending
+c_func
+(paren
+id|current
+)paren
+suffix:semicolon
 multiline_comment|/* Give asyncd a realtime priority. */
 id|current-&gt;policy
 op_assign
@@ -1023,9 +1031,25 @@ op_logical_neg
 id|async_queue
 )paren
 (brace
-id|current-&gt;signal
-op_assign
-l_int|0
+id|spin_lock_irq
+c_func
+(paren
+op_amp
+id|current-&gt;sigmask_lock
+)paren
+suffix:semicolon
+id|flush_signals
+c_func
+(paren
+id|current
+)paren
+suffix:semicolon
+id|spin_unlock_irq
+c_func
+(paren
+op_amp
+id|current-&gt;sigmask_lock
+)paren
 suffix:semicolon
 id|interruptible_sleep_on
 c_func

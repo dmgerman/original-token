@@ -67,9 +67,9 @@ id|addr
 r_if
 c_cond
 (paren
-id|_machine
+id|_prep_type
 op_eq
-id|_MACH_IBM
+id|_PREP_IBM
 )paren
 r_return
 id|CMOS_READ
@@ -82,9 +82,9 @@ r_else
 r_if
 c_cond
 (paren
-id|_machine
+id|_prep_type
 op_eq
-id|_MACH_Motorola
+id|_PREP_Motorola
 )paren
 (brace
 id|outb
@@ -148,9 +148,9 @@ id|addr
 r_if
 c_cond
 (paren
-id|_machine
+id|_prep_type
 op_eq
-id|_MACH_IBM
+id|_PREP_IBM
 )paren
 (brace
 id|CMOS_WRITE
@@ -168,9 +168,9 @@ r_else
 r_if
 c_cond
 (paren
-id|_machine
+id|_prep_type
 op_eq
-id|_MACH_Motorola
+id|_PREP_Motorola
 )paren
 (brace
 id|outb

@@ -556,6 +556,19 @@ c_cond
 id|page-&gt;inode
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|page-&gt;inode
+op_eq
+op_amp
+id|swapper_inode
+)paren
+id|panic
+(paren
+l_string|&quot;Shrinking a swap cache page&quot;
+)paren
+suffix:semicolon
 id|remove_page_from_hash_queue
 c_func
 (paren
@@ -713,6 +726,20 @@ id|p-&gt;inode
 )paren
 r_return
 id|count
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|PageSwapCache
+c_func
+(paren
+id|p
+)paren
+)paren
+id|panic
+(paren
+l_string|&quot;Doing a normal page_unuse of a swap cache page&quot;
+)paren
 suffix:semicolon
 id|remove_page_from_hash_queue
 c_func

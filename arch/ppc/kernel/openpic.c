@@ -3,6 +3,7 @@ multiline_comment|/*&n; *  Note: Interprocessor Interrupt (IPI) and Timer suppor
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/openpic.h&gt;
 macro_line|#include &lt;asm/ptrace.h&gt;
 macro_line|#include &lt;asm/signal.h&gt;
@@ -12,25 +13,29 @@ DECL|macro|REGISTER_DEBUG
 mdefine_line|#define REGISTER_DEBUG
 DECL|macro|REGISTER_DEBUG
 macro_line|#undef REGISTER_DEBUG
-DECL|macro|VEC_TIMER
-mdefine_line|#define VEC_TIMER&t;0x40&t;/* and up */
-DECL|macro|VEC_IPI
-mdefine_line|#define VEC_IPI&t;&t;0x50&t;/* and up */
-DECL|macro|VEC_SOURCE
-mdefine_line|#define VEC_SOURCE&t;0x10&t;/* and up */
-DECL|macro|VEC_SPURIOUS
-mdefine_line|#define VEC_SPURIOUS&t;99
 DECL|variable|OpenPIC
 r_volatile
 r_struct
 id|OpenPIC
 op_star
 id|OpenPIC
+op_assign
+l_int|NULL
 suffix:semicolon
-DECL|variable|Version
-r_static
+DECL|variable|__initdata
 id|u_int
-id|Version
+id|OpenPIC_NumInitSenses
+id|__initdata
+op_assign
+l_int|0
+suffix:semicolon
+DECL|variable|__initdata
+id|u_char
+op_star
+id|OpenPIC_InitSenses
+id|__initdata
+op_assign
+l_int|NULL
 suffix:semicolon
 DECL|variable|NumProcessors
 r_static
@@ -41,26 +46,6 @@ DECL|variable|NumSources
 r_static
 id|u_int
 id|NumSources
-suffix:semicolon
-DECL|variable|VendorID
-r_static
-id|u_int
-id|VendorID
-suffix:semicolon
-DECL|variable|DeviceID
-r_static
-id|u_int
-id|DeviceID
-suffix:semicolon
-DECL|variable|Stepping
-r_static
-id|u_int
-id|Stepping
-suffix:semicolon
-DECL|variable|TimerFrequency
-r_static
-id|u_int
-id|TimerFrequency
 suffix:semicolon
 multiline_comment|/*&n;     *  Accesses to the current processor&squot;s registers&n;     */
 macro_line|#ifndef __powerpc__
@@ -439,18 +424,31 @@ suffix:semicolon
 )brace
 multiline_comment|/* -------- Global Operations ---------------------------------------------- */
 multiline_comment|/*&n;     *  Initialize the OpenPIC&n;     */
-DECL|function|openpic_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|openpic_init
 c_func
 (paren
 r_void
 )paren
+)paren
 (brace
 id|u_int
 id|t
 comma
 id|i
+suffix:semicolon
+id|u_int
+id|vendorid
+comma
+id|devid
+comma
+id|stepping
+comma
+id|timerfreq
 suffix:semicolon
 r_const
 r_char
@@ -469,16 +467,12 @@ c_cond
 op_logical_neg
 id|OpenPIC
 )paren
-(brace
-id|printk
+id|panic
 c_func
 (paren
-l_string|&quot;No OpenPIC present&bslash;n&quot;
+l_string|&quot;No OpenPIC found&quot;
 )paren
 suffix:semicolon
-r_return
-suffix:semicolon
-)brace
 id|t
 op_assign
 id|openpic_read
@@ -488,12 +482,41 @@ op_amp
 id|OpenPIC-&gt;Global.Feature_Reporting0
 )paren
 suffix:semicolon
-id|Version
-op_assign
+r_switch
+c_cond
+(paren
 id|t
 op_amp
 id|OPENPIC_FEATURE_VERSION_MASK
+)paren
+(brace
+r_case
+l_int|1
+suffix:colon
+id|version
+op_assign
+l_string|&quot;1.0&quot;
 suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|2
+suffix:colon
+id|version
+op_assign
+l_string|&quot;1.2&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_default
+suffix:colon
+id|version
+op_assign
+l_string|&quot;?&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
 id|NumProcessors
 op_assign
 (paren
@@ -522,39 +545,6 @@ id|OPENPIC_FEATURE_LAST_SOURCE_SHIFT
 op_plus
 l_int|1
 suffix:semicolon
-r_switch
-c_cond
-(paren
-id|Version
-)paren
-(brace
-r_case
-l_int|1
-suffix:colon
-id|version
-op_assign
-l_string|&quot;1.0&quot;
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-l_int|2
-suffix:colon
-id|version
-op_assign
-l_string|&quot;1.2&quot;
-suffix:semicolon
-r_break
-suffix:semicolon
-r_default
-suffix:colon
-id|version
-op_assign
-l_string|&quot;?.?&quot;
-suffix:semicolon
-r_break
-suffix:semicolon
-)brace
 id|printk
 c_func
 (paren
@@ -578,13 +568,13 @@ op_amp
 id|OpenPIC-&gt;Global.Vendor_Identification
 )paren
 suffix:semicolon
-id|VendorID
+id|vendorid
 op_assign
 id|t
 op_amp
 id|OPENPIC_VENDOR_ID_VENDOR_ID_MASK
 suffix:semicolon
-id|DeviceID
+id|devid
 op_assign
 (paren
 id|t
@@ -594,7 +584,7 @@ id|OPENPIC_VENDOR_ID_DEVICE_ID_MASK
 op_rshift
 id|OPENPIC_VENDOR_ID_DEVICE_ID_SHIFT
 suffix:semicolon
-id|Stepping
+id|stepping
 op_assign
 (paren
 id|t
@@ -607,7 +597,7 @@ suffix:semicolon
 r_switch
 c_cond
 (paren
-id|VendorID
+id|vendorid
 )paren
 (brace
 r_case
@@ -631,7 +621,7 @@ suffix:semicolon
 r_switch
 c_cond
 (paren
-id|DeviceID
+id|devid
 )paren
 (brace
 r_case
@@ -657,18 +647,18 @@ c_func
 (paren
 l_string|&quot;OpenPIC Vendor %d (%s), Device %d (%s), Stepping %d&bslash;n&quot;
 comma
-id|VendorID
+id|vendorid
 comma
 id|vendor
 comma
-id|DeviceID
+id|devid
 comma
 id|device
 comma
-id|Stepping
+id|stepping
 )paren
 suffix:semicolon
-id|TimerFrequency
+id|timerfreq
 op_assign
 id|openpic_read
 c_func
@@ -686,14 +676,14 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|TimerFrequency
+id|timerfreq
 )paren
 id|printk
 c_func
 (paren
 l_string|&quot;%d Hz&bslash;n&quot;
 comma
-id|TimerFrequency
+id|timerfreq
 )paren
 suffix:semicolon
 r_else
@@ -727,7 +717,7 @@ id|i
 comma
 l_int|0
 comma
-id|VEC_TIMER
+id|OPENPIC_VEC_TIMER
 op_plus
 id|i
 )paren
@@ -766,7 +756,7 @@ id|i
 comma
 l_int|0
 comma
-id|VEC_IPI
+id|OPENPIC_VEC_IPI
 op_plus
 id|i
 )paren
@@ -781,14 +771,13 @@ l_int|0
 comma
 l_int|8
 comma
-id|VEC_SOURCE
+id|OPENPIC_VEC_SOURCE
 comma
 l_int|1
 comma
 l_int|1
 )paren
 suffix:semicolon
-multiline_comment|/* 0,1 gives interrupt storm */
 multiline_comment|/* Processor 0 */
 id|openpic_mapirq
 c_func
@@ -823,12 +812,22 @@ id|i
 comma
 l_int|8
 comma
-id|VEC_SOURCE
+id|OPENPIC_VEC_SOURCE
 op_plus
 id|i
 comma
 l_int|0
 comma
+id|i
+OL
+id|OpenPIC_NumInitSenses
+ques
+c_cond
+id|OpenPIC_InitSenses
+(braket
+id|i
+)braket
+suffix:colon
 l_int|1
 )paren
 suffix:semicolon
@@ -848,7 +847,7 @@ multiline_comment|/* Initialize the spurious interrupt */
 id|openpic_set_spurious
 c_func
 (paren
-id|VEC_SPURIOUS
+id|OPENPIC_VEC_SPURIOUS
 )paren
 suffix:semicolon
 r_if
@@ -1017,14 +1016,6 @@ id|cpu
 )paren
 macro_line|#endif
 (brace
-macro_line|#if 0
-id|printk
-c_func
-(paren
-l_string|&quot;++openpic_eoi:&bslash;n&quot;
-)paren
-suffix:semicolon
-macro_line|#endif
 id|check_arg_cpu
 c_func
 (paren

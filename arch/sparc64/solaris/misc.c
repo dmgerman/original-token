@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: misc.c,v 1.4 1997/09/04 14:57:31 jj Exp $&n; * misc.c: Miscelaneous syscall emulation for Solaris&n; *&n; * Copyright (C) 1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: misc.c,v 1.6 1997/12/14 23:40:15 ecd Exp $&n; * misc.c: Miscelaneous syscall emulation for Solaris&n; *&n; * Copyright (C) 1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/module.h&gt; 
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
@@ -1683,7 +1683,7 @@ r_case
 id|SOLARIS_CONFIG_NPROC_CONF
 suffix:colon
 r_return
-id|NCPUS
+id|NR_CPUS
 suffix:semicolon
 r_case
 id|SOLARIS_CONFIG_NPROC_ONLN
@@ -2405,85 +2405,6 @@ suffix:semicolon
 id|init_socksys
 c_func
 (paren
-)paren
-suffix:semicolon
-)brace
-macro_line|#endif
-macro_line|#ifdef DEBUG_SOLARIS
-DECL|function|entry_printk
-r_void
-id|entry_printk
-c_func
-(paren
-r_int
-id|sysno
-comma
-r_struct
-id|pt_regs
-op_star
-id|regs
-)paren
-(brace
-id|printk
-(paren
-l_string|&quot;Entering %d&bslash;n&quot;
-comma
-id|sysno
-)paren
-suffix:semicolon
-id|printk
-(paren
-l_string|&quot;%08x %08x %08x %08x&bslash;n&quot;
-comma
-(paren
-r_int
-)paren
-id|regs-&gt;u_regs
-(braket
-id|UREG_I0
-)braket
-comma
-(paren
-r_int
-)paren
-id|regs-&gt;u_regs
-(braket
-id|UREG_I1
-)braket
-comma
-(paren
-r_int
-)paren
-id|regs-&gt;u_regs
-(braket
-id|UREG_I2
-)braket
-comma
-(paren
-r_int
-)paren
-id|regs-&gt;u_regs
-(braket
-id|UREG_I3
-)braket
-)paren
-suffix:semicolon
-)brace
-DECL|function|exit_printk
-r_void
-id|exit_printk
-c_func
-(paren
-r_int
-r_int
-id|ret
-)paren
-(brace
-id|printk
-(paren
-l_string|&quot;Returning %016lx&bslash;n&quot;
-comma
-id|ret
 )paren
 suffix:semicolon
 )brace

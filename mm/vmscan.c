@@ -184,7 +184,7 @@ id|page_map
 r_return
 l_int|0
 suffix:semicolon
-multiline_comment|/* Deal with page aging.  Pages age from being unused; they&n;&t; * rejuvenate on being accessed.  Only swap old pages (age==0&n;&t; * is oldest). */
+multiline_comment|/* Deal with page aging.  Pages age from being unused; they&n;&t; * rejuvenate on being accessed.  Only swap old pages (age==0&n;&t; * is oldest).&n;&t; *&n;&t; * This test will no longer work once swap cached pages can be&n;&t; * shared!  &n;&t; */
 r_if
 c_cond
 (paren
@@ -255,6 +255,20 @@ id|pte
 )paren
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|PageSwapCache
+c_func
+(paren
+id|page_map
+)paren
+)paren
+id|panic
+(paren
+l_string|&quot;Can&squot;t still be swap cached!!!&quot;
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -370,6 +384,21 @@ id|wait
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* &n;&t;&t; * For now, this is safe, because the test above makes&n;&t;&t; * sure that this page is currently not swap-cached.  &n;&t;&t; */
+r_if
+c_cond
+(paren
+id|PageSwapCache
+c_func
+(paren
+id|page_map
+)paren
+)paren
+id|panic
+(paren
+l_string|&quot;Page became cached after IO&quot;
+)paren
+suffix:semicolon
 id|free_page
 c_func
 (paren
@@ -381,6 +410,7 @@ l_int|1
 suffix:semicolon
 multiline_comment|/* we slept: the process may not exist any more */
 )brace
+multiline_comment|/* &n;&t; * Eventually, find_in_swap_cache will be able to return true&n;&t; * even for pages shared with other processes.  &n;&t; */
 r_if
 c_cond
 (paren
@@ -502,6 +532,20 @@ id|page_unuse
 c_func
 (paren
 id|page
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|PageSwapCache
+c_func
+(paren
+id|page_map
+)paren
+)paren
+id|panic
+(paren
+l_string|&quot;How can this page _still_ be cached?&quot;
 )paren
 suffix:semicolon
 id|free_page

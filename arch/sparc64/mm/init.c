@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: init.c,v 1.55 1997/08/24 01:22:29 davem Exp $&n; *  arch/sparc64/mm/init.c&n; *&n; *  Copyright (C) 1996,1997 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/*  $Id: init.c,v 1.60 1998/01/10 18:19:51 ecd Exp $&n; *  arch/sparc64/mm/init.c&n; *&n; *  Copyright (C) 1996,1997 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
@@ -456,6 +456,7 @@ macro_line|#endif
 )brace
 multiline_comment|/* IOMMU support, the ideas are right, the code should be cleaned a bit still... */
 multiline_comment|/* This keeps track of pages used in sparc_alloc_dvma() invocations. */
+multiline_comment|/* NOTE: All of these are inited to 0 in bss, don&squot;t need to make data segment bigger */
 DECL|variable|dvma_map_pages
 r_static
 r_int
@@ -466,26 +467,17 @@ l_int|0x10000000
 op_rshift
 l_int|16
 )braket
-op_assign
-(brace
-l_int|0
-comma
-)brace
 suffix:semicolon
 DECL|variable|dvma_pages_current_offset
 r_static
 r_int
 r_int
 id|dvma_pages_current_offset
-op_assign
-l_int|0
 suffix:semicolon
 DECL|variable|dvma_pages_current_index
 r_static
 r_int
 id|dvma_pages_current_index
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* #define E3000_DEBUG */
 DECL|function|__initfunc
@@ -3252,7 +3244,7 @@ op_assign
 id|pte_t
 op_star
 )paren
-id|get_free_page
+id|__get_free_page
 c_func
 (paren
 id|GFP_KERNEL
@@ -3264,6 +3256,16 @@ c_cond
 id|pte
 )paren
 (brace
+id|clear_page
+c_func
+(paren
+(paren
+r_int
+r_int
+)paren
+id|pte
+)paren
+suffix:semicolon
 id|pmd_set
 c_func
 (paren
@@ -4496,6 +4498,31 @@ id|PG_reserved
 )paren
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|phys_addr
+op_ge
+l_int|0xf0000000
+)paren
+id|mem_map
+(braket
+id|MAP_NR
+c_func
+(paren
+id|addr
+)paren
+)braket
+dot
+id|flags
+op_and_assign
+op_complement
+(paren
+l_int|1
+op_lshift
+id|PG_DMA
+)paren
+suffix:semicolon
 )brace
 )brace
 )brace
@@ -4618,6 +4645,7 @@ id|addr
 OL
 id|initrd_end
 )paren
+(brace
 id|mem_map
 (braket
 id|MAP_NR
@@ -4636,6 +4664,10 @@ op_lshift
 id|PG_reserved
 )paren
 suffix:semicolon
+id|num_physpages
+op_decrement
+suffix:semicolon
+)brace
 r_else
 macro_line|#endif&t;
 id|mem_map

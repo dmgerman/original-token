@@ -5,6 +5,7 @@ macro_line|#include &lt;linux/elfcore.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/bios32.h&gt;
+macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;asm/semaphore.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
@@ -13,68 +14,99 @@ macro_line|#include &lt;asm/atomic.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/checksum.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
+macro_line|#include &lt;asm/adb.h&gt;
 macro_line|#include &lt;asm/cuda.h&gt;
 macro_line|#include &lt;asm/prom.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/pci-bridge.h&gt;
+r_extern
 r_void
 id|transfer_to_handler
 c_func
 (paren
+r_void
 )paren
 suffix:semicolon
+r_extern
 r_void
 id|int_return
 c_func
 (paren
+r_void
 )paren
 suffix:semicolon
+r_extern
 r_void
 id|syscall_trace
 c_func
 (paren
+r_void
 )paren
 suffix:semicolon
+r_extern
 r_void
 id|do_IRQ
 c_func
 (paren
+r_struct
+id|pt_regs
+op_star
+id|regs
 )paren
 suffix:semicolon
+r_extern
 r_void
 id|MachineCheckException
 c_func
 (paren
+r_struct
+id|pt_regs
+op_star
+id|regs
 )paren
 suffix:semicolon
+r_extern
 r_void
 id|AlignmentException
 c_func
 (paren
+r_struct
+id|pt_regs
+op_star
+id|regs
 )paren
 suffix:semicolon
+r_extern
 r_void
 id|ProgramCheckException
 c_func
 (paren
+r_struct
+id|pt_regs
+op_star
+id|regs
 )paren
 suffix:semicolon
+r_extern
 r_void
 id|SingleStepException
 c_func
 (paren
+r_struct
+id|pt_regs
+op_star
+id|regs
 )paren
 suffix:semicolon
-r_void
-id|FloatingPointCheckException
-c_func
-(paren
-)paren
-suffix:semicolon
-r_void
+r_extern
+r_int
 id|sys_sigreturn
 c_func
 (paren
+r_struct
+id|pt_regs
+op_star
+id|regs
 )paren
 suffix:semicolon
 r_extern
@@ -88,6 +120,19 @@ c_func
 (paren
 r_int
 r_int
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|do_signal
+c_func
+(paren
+id|sigset_t
+op_star
+comma
+r_struct
+id|pt_regs
+op_star
 )paren
 suffix:semicolon
 DECL|variable|do_signal
@@ -181,6 +226,29 @@ c_func
 id|do_lost_interrupts
 )paren
 suffix:semicolon
+DECL|variable|__ppc_bh_counter
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|__ppc_bh_counter
+)paren
+suffix:semicolon
+macro_line|#if !defined(CONFIG_MACH_SPECIFIC)
+DECL|variable|isa_io_base
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|isa_io_base
+)paren
+suffix:semicolon
+DECL|variable|pci_dram_offset
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|pci_dram_offset
+)paren
+suffix:semicolon
+macro_line|#endif
 DECL|variable|atomic_add
 id|EXPORT_SYMBOL
 c_func
@@ -589,6 +657,27 @@ c_func
 id|xchg_u32
 )paren
 suffix:semicolon
+DECL|variable|adb_request
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|adb_request
+)paren
+suffix:semicolon
+DECL|variable|adb_autopoll
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|adb_autopoll
+)paren
+suffix:semicolon
+DECL|variable|adb_register
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|adb_register
+)paren
+suffix:semicolon
 DECL|variable|cuda_request
 id|EXPORT_SYMBOL
 c_func
@@ -603,25 +692,11 @@ c_func
 id|cuda_send_request
 )paren
 suffix:semicolon
-DECL|variable|adb_register
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|adb_register
-)paren
-suffix:semicolon
 DECL|variable|abort
 id|EXPORT_SYMBOL
 c_func
 (paren
 m_abort
-)paren
-suffix:semicolon
-DECL|variable|call_prom
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|call_prom
 )paren
 suffix:semicolon
 DECL|variable|find_devices

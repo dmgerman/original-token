@@ -9,6 +9,68 @@ DECL|macro|__save_flags
 mdefine_line|#define __save_flags(flags)&t;({&bslash;&n;&t;__asm__ __volatile__ (&quot;mfmsr %0&quot; : &quot;=r&quot; ((flags)) : : &quot;memory&quot;); })
 DECL|macro|__save_and_cli
 mdefine_line|#define __save_and_cli(flags)&t;({__save_flags(flags);__cli();})
+DECL|function|dcbf
+r_extern
+id|__inline__
+r_void
+id|dcbf
+c_func
+(paren
+r_void
+op_star
+id|line
+)paren
+(brace
+id|asm
+c_func
+(paren
+l_string|&quot;dcbf %0,%1&bslash;n&bslash;t&quot;
+l_string|&quot;sync &bslash;n&bslash;t&quot;
+l_string|&quot;isync &bslash;n&bslash;t&quot;
+op_scope_resolution
+l_string|&quot;r&quot;
+(paren
+id|line
+)paren
+comma
+l_string|&quot;r&quot;
+(paren
+l_int|0
+)paren
+)paren
+suffix:semicolon
+)brace
+DECL|function|dcbi
+r_extern
+id|__inline__
+r_void
+id|dcbi
+c_func
+(paren
+r_void
+op_star
+id|line
+)paren
+(brace
+id|asm
+c_func
+(paren
+l_string|&quot;dcbi %0,%1&bslash;n&bslash;t&quot;
+l_string|&quot;sync &bslash;n&bslash;t&quot;
+l_string|&quot;isync &bslash;n&bslash;t&quot;
+op_scope_resolution
+l_string|&quot;r&quot;
+(paren
+id|line
+)paren
+comma
+l_string|&quot;r&quot;
+(paren
+l_int|0
+)paren
+)paren
+suffix:semicolon
+)brace
 DECL|function|__restore_flags
 r_extern
 id|__inline__
@@ -351,21 +413,6 @@ id|context
 suffix:semicolon
 r_struct
 id|pt_regs
-suffix:semicolon
-r_extern
-r_int
-id|do_signal
-c_func
-(paren
-r_int
-r_int
-id|oldmask
-comma
-r_struct
-id|pt_regs
-op_star
-id|regs
-)paren
 suffix:semicolon
 r_extern
 r_void

@@ -444,8 +444,7 @@ id|key
 comma
 id|res
 )paren
-)paren
-r_return
+op_logical_and
 id|main_table
 op_member_access_from_pointer
 id|tb_lookup
@@ -457,6 +456,10 @@ id|key
 comma
 id|res
 )paren
+)paren
+r_return
+op_minus
+id|ENETUNREACH
 suffix:semicolon
 r_return
 l_int|0
@@ -870,6 +873,9 @@ r_struct
 id|device
 op_star
 id|dev
+comma
+r_int
+id|force
 )paren
 suffix:semicolon
 r_extern

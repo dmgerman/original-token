@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: timer.h,v 1.13 1996/08/29 09:48:59 davem Exp $&n; * timer.h:  Definitions for the timer chips on the Sparc.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: timer.h,v 1.15 1997/12/18 14:21:43 jj Exp $&n; * timer.h:  Definitions for the timer chips on the Sparc.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _SPARC_TIMER_H
 DECL|macro|_SPARC_TIMER_H
 mdefine_line|#define _SPARC_TIMER_H
@@ -140,6 +140,52 @@ r_struct
 id|sun4m_timer_regs
 op_star
 id|sun4m_timers
+suffix:semicolon
+DECL|macro|SUN4D_PRM_CNT_L
+mdefine_line|#define SUN4D_PRM_CNT_L       0x80000000
+DECL|macro|SUN4D_PRM_CNT_LVALUE
+mdefine_line|#define SUN4D_PRM_CNT_LVALUE  0x7FFFFC00
+DECL|struct|sun4d_timer_regs
+r_struct
+id|sun4d_timer_regs
+(brace
+DECL|member|l10_timer_limit
+r_volatile
+r_int
+r_int
+id|l10_timer_limit
+suffix:semicolon
+DECL|member|l10_cur_countx
+r_volatile
+r_int
+r_int
+id|l10_cur_countx
+suffix:semicolon
+DECL|member|l10_limit_noclear
+r_volatile
+r_int
+r_int
+id|l10_limit_noclear
+suffix:semicolon
+DECL|member|ctrl
+r_volatile
+r_int
+r_int
+id|ctrl
+suffix:semicolon
+DECL|member|l10_cur_count
+r_volatile
+r_int
+r_int
+id|l10_cur_count
+suffix:semicolon
+)brace
+suffix:semicolon
+r_extern
+r_struct
+id|sun4d_timer_regs
+op_star
+id|sun4d_timers
 suffix:semicolon
 r_extern
 id|__volatile__

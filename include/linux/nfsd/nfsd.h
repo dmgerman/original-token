@@ -515,6 +515,18 @@ comma
 r_int
 )paren
 suffix:semicolon
+multiline_comment|/* nfsd/nfsctl.c */
+r_void
+id|nfsd_modcount
+c_func
+(paren
+r_struct
+id|inode
+op_star
+comma
+r_int
+)paren
+suffix:semicolon
 multiline_comment|/*&n; * lockd binding&n; */
 r_void
 id|nfsd_lockd_init

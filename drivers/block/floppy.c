@@ -80,6 +80,14 @@ macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
+DECL|variable|can_use_virtual_dma
+r_static
+r_int
+id|can_use_virtual_dma
+op_assign
+l_int|2
+suffix:semicolon
+multiline_comment|/* =======&n; * can use virtual DMA:&n; * 0 = use of virtual DMA disallowed by config&n; * 1 = use of virtual DMA prescribed by config&n; * 2 = no virtual DMA preference configured.  By default try hard DMA,&n; * but fall back on virtual DMA when not enough memory available&n; */
 DECL|variable|use_virtual_dma
 r_static
 r_int
@@ -87,7 +95,7 @@ id|use_virtual_dma
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* virtual DMA for Intel */
+multiline_comment|/* =======&n; * use virtual DMA&n; * 0 using hard DMA&n; * 1 using virtual DMA&n; * This variable is set to virtual when a DMA mem problem arises, and&n; * reset back in floppy_grab_irq_and_dma.&n; * It is not safe to reset it in other circumstances, because the floppy&n; * driver may have several buffers in use at once, and we do currently not&n; * record each buffers capabilities&n; */
 DECL|variable|virtual_dma_port
 r_static
 r_int
@@ -139,6 +147,8 @@ r_int
 id|size
 )paren
 suffix:semicolon
+DECL|macro|K_64
+mdefine_line|#define K_64&t;0x10000&t;&t;/* 64KB */
 macro_line|#include &lt;asm/floppy.h&gt;
 DECL|macro|MAJOR_NR
 mdefine_line|#define MAJOR_NR FLOPPY_MAJOR
@@ -212,6 +222,70 @@ macro_line|#ifndef fd_dma_mem_alloc
 DECL|macro|fd_dma_mem_alloc
 mdefine_line|#define fd_dma_mem_alloc(size) __get_dma_pages(GFP_KERNEL,__get_order(size))
 macro_line|#endif
+DECL|function|fallback_on_nodma_alloc
+r_static
+r_inline
+r_void
+id|fallback_on_nodma_alloc
+c_func
+(paren
+r_char
+op_star
+op_star
+id|addr
+comma
+r_int
+id|l
+)paren
+(brace
+macro_line|#ifdef FLOPPY_CAN_FALLBACK_ON_NODMA
+r_if
+c_cond
+(paren
+op_star
+id|addr
+)paren
+(brace
+r_return
+suffix:semicolon
+)brace
+multiline_comment|/* we have the memory */
+r_if
+c_cond
+(paren
+id|can_use_virtual_dma
+op_ne
+l_int|2
+)paren
+(brace
+r_return
+suffix:semicolon
+)brace
+multiline_comment|/* no fallback allowed */
+id|printk
+c_func
+(paren
+l_string|&quot;DMA memory shortage. Temporarily falling back on virtual DMA&bslash;n&quot;
+)paren
+suffix:semicolon
+op_star
+id|addr
+op_assign
+(paren
+r_char
+op_star
+)paren
+id|nodma_mem_alloc
+c_func
+(paren
+id|l
+)paren
+suffix:semicolon
+macro_line|#else
+r_return
+suffix:semicolon
+macro_line|#endif
+)brace
 multiline_comment|/* End dma memory related stuff */
 DECL|variable|fake_change
 r_static
@@ -376,8 +450,6 @@ mdefine_line|#define NR_F 6
 multiline_comment|/*&n; * Maximum disk size (in kilobytes). This default is used whenever the&n; * current disk size is unknown.&n; * [Now it is rather a minimum]&n; */
 DECL|macro|MAX_DISK_SIZE
 mdefine_line|#define MAX_DISK_SIZE 4 /* 3984*/
-DECL|macro|K_64
-mdefine_line|#define K_64&t;0x10000&t;&t;/* 64KB */
 multiline_comment|/*&n; * globals used by &squot;result()&squot;&n; */
 DECL|macro|MAX_REPLIES
 mdefine_line|#define MAX_REPLIES 16
@@ -4382,29 +4454,43 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+macro_line|#endif
+id|INT_OFF
+suffix:semicolon
+id|fd_disable_dma
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#ifdef fd_dma_setup
 r_if
 c_cond
 (paren
-id|CROSS_64KB
+id|fd_dma_setup
 c_func
 (paren
 id|raw_cmd-&gt;kernel_data
 comma
 id|raw_cmd-&gt;length
+comma
+(paren
+id|raw_cmd-&gt;flags
+op_amp
+id|FD_RAW_READ
 )paren
+ques
+c_cond
+id|DMA_MODE_READ
+suffix:colon
+id|DMA_MODE_WRITE
+comma
+id|FDCS-&gt;address
+)paren
+OL
+l_int|0
 )paren
 (brace
-id|printk
-c_func
-(paren
-l_string|&quot;DMA crossing 64-K boundary %p-%p&bslash;n&quot;
-comma
-id|raw_cmd-&gt;kernel_data
-comma
-id|raw_cmd-&gt;kernel_data
-op_plus
-id|raw_cmd-&gt;length
-)paren
+id|INT_ON
 suffix:semicolon
 id|cont
 op_member_access_from_pointer
@@ -4421,14 +4507,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-macro_line|#endif
-id|INT_OFF
-suffix:semicolon
-id|fd_disable_dma
-c_func
-(paren
-)paren
-suffix:semicolon
+macro_line|#else&t;
 id|fd_clear_dma_ff
 c_func
 (paren
@@ -4478,6 +4557,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#endif
 id|INT_ON
 suffix:semicolon
 id|floppy_disable_hlt
@@ -7977,6 +8057,31 @@ c_func
 )paren
 suffix:semicolon
 multiline_comment|/* this clears the dcl on certain drive/controller&n;&t;&t;&t;    * combinations */
+macro_line|#ifdef fd_chose_dma_mode
+r_if
+c_cond
+(paren
+(paren
+id|raw_cmd-&gt;flags
+op_amp
+id|FD_RAW_READ
+)paren
+op_logical_or
+(paren
+id|raw_cmd-&gt;flags
+op_amp
+id|FD_RAW_WRITE
+)paren
+)paren
+id|fd_chose_dma_mode
+c_func
+(paren
+id|raw_cmd-&gt;kernel_data
+comma
+id|raw_cmd-&gt;length
+)paren
+suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -8007,11 +8112,33 @@ c_func
 suffix:semicolon
 )brace
 r_else
+(brace
+r_if
+c_cond
+(paren
+(paren
+id|raw_cmd-&gt;flags
+op_amp
+id|FD_RAW_READ
+)paren
+op_logical_or
+(paren
+id|raw_cmd-&gt;flags
+op_amp
+id|FD_RAW_WRITE
+)paren
+)paren
+id|fdc_specify
+c_func
+(paren
+)paren
+suffix:semicolon
 id|setup_rw_floppy
 c_func
 (paren
 )paren
 suffix:semicolon
+)brace
 )brace
 DECL|function|floppy_start
 r_static
@@ -10274,7 +10401,7 @@ suffix:semicolon
 )brace
 macro_line|#endif
 )brace
-DECL|function|check_dma_crossing
+macro_line|#if 0
 r_static
 r_inline
 r_int
@@ -10329,6 +10456,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#endif
 multiline_comment|/*&n; * Formulate a read/write request.&n; * this routine decides where to load the data (directly to buffer, or to&n; * tmp floppy area), how much data to load (the size of the buffer, the whole&n; * track, or a single sector)&n; * All floppy_track_buffer handling goes in here. If we ever add track buffer&n; * allocation on the fly, it should be done here. No other part should need&n; * modification.&n; */
 DECL|function|make_raw_rw_request
 r_static
@@ -11146,16 +11274,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-id|check_dma_crossing
-c_func
-(paren
-id|raw_cmd-&gt;kernel_data
-comma
-id|raw_cmd-&gt;length
-comma
-l_string|&quot;end of make_raw_request [1]&quot;
-)paren
-suffix:semicolon
+multiline_comment|/*&t;&t;&t;check_dma_crossing(raw_cmd-&gt;kernel_data, &n;&t;&t;&t;&t;&t;   raw_cmd-&gt;length, &n;&t;&t;&t;&t;&t;   &quot;end of make_raw_request [1]&quot;);*/
 r_return
 l_int|2
 suffix:semicolon
@@ -11376,16 +11495,7 @@ op_lshift_assign
 l_int|9
 suffix:semicolon
 macro_line|#ifdef FLOPPY_SANITY_CHECK
-id|check_dma_crossing
-c_func
-(paren
-id|raw_cmd-&gt;kernel_data
-comma
-id|raw_cmd-&gt;length
-comma
-l_string|&quot;end of make_raw_request&quot;
-)paren
-suffix:semicolon
+multiline_comment|/*check_dma_crossing(raw_cmd-&gt;kernel_data, raw_cmd-&gt;length, &n;&t;  &quot;end of make_raw_request&quot;);*/
 r_if
 c_cond
 (paren
@@ -13058,6 +13168,15 @@ op_star
 id|fd_dma_mem_alloc
 c_func
 (paren
+id|ptr-&gt;length
+)paren
+suffix:semicolon
+id|fallback_on_nodma_alloc
+c_func
+(paren
+op_amp
+id|ptr-&gt;kernel_data
+comma
 id|ptr-&gt;length
 )paren
 suffix:semicolon
@@ -15854,6 +15973,9 @@ c_cond
 (paren
 op_logical_neg
 id|tmp
+op_logical_and
+op_logical_neg
+id|floppy_track_buffer
 )paren
 (brace
 r_try
@@ -15889,6 +16011,31 @@ c_cond
 (paren
 op_logical_neg
 id|tmp
+op_logical_and
+op_logical_neg
+id|floppy_track_buffer
+)paren
+(brace
+id|fallback_on_nodma_alloc
+c_func
+(paren
+op_amp
+id|tmp
+comma
+l_int|2048
+op_star
+r_try
+)paren
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|tmp
+op_logical_and
+op_logical_neg
+id|floppy_track_buffer
 )paren
 (brace
 id|DPRINT
@@ -15909,6 +16056,13 @@ c_cond
 (paren
 id|floppy_track_buffer
 )paren
+(brace
+r_if
+c_cond
+(paren
+id|tmp
+)paren
+(brace
 id|fd_dma_mem_free
 c_func
 (paren
@@ -15923,6 +16077,8 @@ op_star
 l_int|1024
 )paren
 suffix:semicolon
+)brace
+)brace
 r_else
 (brace
 id|buffer_min
@@ -17805,6 +17961,12 @@ id|FDC_82072A
 suffix:semicolon
 macro_line|#endif
 )brace
+id|use_virtual_dma
+op_assign
+id|can_use_virtual_dma
+op_amp
+l_int|1
+suffix:semicolon
 id|fdc_state
 (braket
 l_int|0
@@ -18045,6 +18207,23 @@ op_minus
 l_int|1
 suffix:semicolon
 r_continue
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|can_use_virtual_dma
+op_eq
+l_int|2
+op_logical_and
+id|FDCS-&gt;version
+OL
+id|FDC_82072A
+)paren
+(brace
+id|can_use_virtual_dma
+op_assign
+l_int|0
 suffix:semicolon
 )brace
 id|have_no_fdc

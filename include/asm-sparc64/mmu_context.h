@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: mmu_context.h,v 1.19 1997/08/07 02:54:08 davem Exp $ */
+multiline_comment|/* $Id: mmu_context.h,v 1.20 1997/09/18 10:42:08 rth Exp $ */
 macro_line|#ifndef __SPARC64_MMU_CONTEXT_H
 DECL|macro|__SPARC64_MMU_CONTEXT_H
 mdefine_line|#define __SPARC64_MMU_CONTEXT_H
@@ -158,10 +158,11 @@ id|tlb_context_cache
 suffix:semicolon
 )brace
 multiline_comment|/* Don&squot;t worry, set_fs() will restore it... */
+multiline_comment|/* Sigh, damned include loops... just poke seg directly.  */
 id|tsk-&gt;tss.ctx
 op_assign
 (paren
-id|tsk-&gt;tss.current_ds
+id|tsk-&gt;tss.current_ds.seg
 ques
 c_cond
 (paren

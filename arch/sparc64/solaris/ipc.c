@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: ipc.c,v 1.1 1997/09/03 12:29:29 jj Exp $&n; * ipc.c: Solaris IPC emulation&n; *&n; * Copyright (C) 1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: ipc.c,v 1.2 1997/09/18 10:38:27 rth Exp $&n; * ipc.c: Solaris IPC emulation&n; *&n; * Copyright (C) 1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/shm.h&gt;
@@ -210,8 +210,7 @@ c_func
 id|ipc
 )paren
 suffix:semicolon
-r_int
-r_int
+id|mm_segment_t
 id|old_fs
 suffix:semicolon
 r_int

@@ -1,10 +1,9 @@
-multiline_comment|/* $Id: page.h,v 1.15 1997/08/09 04:56:54 davem Exp $ */
+multiline_comment|/* $Id: page.h,v 1.16 1997/11/28 15:59:34 jj Exp $ */
 macro_line|#ifndef _SPARC64_PAGE_H
 DECL|macro|_SPARC64_PAGE_H
 mdefine_line|#define _SPARC64_PAGE_H
 DECL|macro|PAGE_SHIFT
 mdefine_line|#define PAGE_SHIFT   13
-macro_line|#ifdef __KERNEL__
 macro_line|#ifndef __ASSEMBLY__
 multiline_comment|/* I have my suspicions... -DaveM */
 DECL|macro|PAGE_SIZE
@@ -15,6 +14,7 @@ mdefine_line|#define PAGE_SIZE    (1 &lt;&lt; PAGE_SHIFT)
 macro_line|#endif
 DECL|macro|PAGE_MASK
 mdefine_line|#define PAGE_MASK    (~(PAGE_SIZE-1))
+macro_line|#ifdef __KERNEL__
 macro_line|#ifndef __ASSEMBLY__
 DECL|macro|clear_page
 mdefine_line|#define clear_page(page) memset((void *)(page), 0, PAGE_SIZE)

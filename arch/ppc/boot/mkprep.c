@@ -466,12 +466,7 @@ id|argptr
 op_increment
 suffix:semicolon
 multiline_comment|/* skip elf header in input file */
-r_if
-c_cond
-(paren
-op_logical_neg
-id|prep
-)paren
+multiline_comment|/*if ( !prep )*/
 id|lseek
 c_func
 (paren
@@ -638,8 +633,7 @@ id|cpu_to_le32
 c_func
 (paren
 l_int|0x400
-op_plus
-l_int|65536
+multiline_comment|/*+65536*/
 )paren
 suffix:semicolon
 op_star

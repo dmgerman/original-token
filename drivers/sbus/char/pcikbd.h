@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: pcikbd.h,v 1.1 1997/08/24 02:53:25 davem Exp $&n; * pcikbd.h: PCI/PC 8042 keyboard/mouse driver stuff.  Mostly snarfed&n; *           from the existing driver by Martin Mares.&n; *&n; * Copyright (C) 1997 Martin Mares &lt;mj@atrey.karlin.mff.cuni.cz&gt;&n; *&n; * Ultra/AX specific hacks are:&n; *&n; * Copyright (C) 1997 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: pcikbd.h,v 1.2 1997/12/25 21:13:14 geert Exp $&n; * pcikbd.h: PCI/PC 8042 keyboard/mouse driver stuff.  Mostly snarfed&n; *           from the existing driver by Martin Mares.&n; *&n; * Copyright (C) 1997 Martin Mares &lt;mj@atrey.karlin.mff.cuni.cz&gt;&n; *&n; * Ultra/AX specific hacks are:&n; *&n; * Copyright (C) 1997 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef __PCIKBD_H
 DECL|macro|__PCIKBD_H
 mdefine_line|#define __PCIKBD_H
@@ -19,7 +19,7 @@ multiline_comment|/*&n; *&t;Internal variables of the driver&n; */
 r_extern
 r_int
 r_char
-id|kbd_read_mask
+id|pckbd_read_mask
 suffix:semicolon
 r_extern
 r_int

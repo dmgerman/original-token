@@ -179,6 +179,9 @@ DECL|enumerator|PROC_PID_RINGBUF
 id|PROC_PID_RINGBUF
 comma
 macro_line|#endif
+DECL|enumerator|PROC_PID_CPU
+id|PROC_PID_CPU
+comma
 )brace
 suffix:semicolon
 DECL|enum|pid_subdirectory_inos

@@ -1,7 +1,8 @@
 multiline_comment|/* dummy.c: a dummy net driver&n;&n;&t;The purpose of this driver is to provide a device to point a&n;&t;route through, but not to actually transmit packets.&n;&n;&t;Why?  If you have a machine whose only connection is an occasional&n;&t;PPP/SLIP/PLIP link, you can only connect to your own hostname&n;&t;when the link is up.  Otherwise you have to use localhost.&n;&t;This isn&squot;t very consistent.&n;&n;&t;One solution is to set up a dummy link using PPP/SLIP/PLIP,&n;&t;but this seems (to me) too much overhead for too little gain.&n;&t;This driver provides a small alternative. Thus you can do&n;&t;&n;&t;[when not running slip]&n;&t;&t;ifconfig dummy slip.addr.ess.here up&n;&t;[to go to slip]&n;&t;&t;ifconfig dummy down&n;&t;&t;dip whatever&n;&n;&t;This was written by looking at Donald Becker&squot;s skeleton driver&n;&t;and the loopback driver.  I then threw away anything that didn&squot;t&n;&t;apply!&t;Thanks to Alan Cox for the key clue on what to do with&n;&t;misguided packets.&n;&n;&t;&t;&t;Nick Holloway, 27th May 1994&n;&t;[I tweaked this explanation a little but that&squot;s all]&n;&t;&t;&t;Alan Cox, 30th May 1994&n;*/
 multiline_comment|/* To have statistics (just packets sent) define this */
-macro_line|#include &lt;linux/module.h&gt;
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
+macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
@@ -99,6 +100,30 @@ id|dev
 )paren
 (brace
 )brace
+macro_line|#ifdef CONFIG_NET_FASTROUTE
+DECL|function|dummy_accept_fastpath
+r_static
+r_int
+id|dummy_accept_fastpath
+c_func
+(paren
+r_struct
+id|device
+op_star
+id|dev
+comma
+r_struct
+id|dst_entry
+op_star
+id|dst
+)paren
+(brace
+r_return
+op_minus
+l_int|1
+suffix:semicolon
+)brace
+macro_line|#endif
 DECL|function|__initfunc
 id|__initfunc
 c_func
@@ -192,8 +217,18 @@ suffix:semicolon
 id|dev-&gt;flags
 op_and_assign
 op_complement
+(paren
 id|IFF_BROADCAST
+op_or
+id|IFF_MULTICAST
+)paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_NET_FASTROUTE
+id|dev-&gt;accept_fastpath
+op_assign
+id|dummy_accept_fastpath
+suffix:semicolon
+macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon

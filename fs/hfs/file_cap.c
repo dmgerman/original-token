@@ -845,9 +845,11 @@ comma
 l_int|32
 )paren
 suffix:semicolon
-id|entry-&gt;dirt
-op_assign
-l_int|1
+id|hfs_cat_mark_dirty
+c_func
+(paren
+id|entry
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/* Update file flags if changed */
@@ -928,9 +930,11 @@ id|entry-&gt;u.file.flags
 op_assign
 id|new_flags
 suffix:semicolon
-id|entry-&gt;dirt
-op_assign
-l_int|1
+id|hfs_cat_mark_dirty
+c_func
+(paren
+id|entry
+)paren
 suffix:semicolon
 id|hfs_file_fix_mode
 c_func
@@ -970,9 +974,11 @@ id|meta.fi_ctime
 )paren
 )paren
 suffix:semicolon
-id|entry-&gt;dirt
-op_assign
-l_int|1
+id|hfs_cat_mark_dirty
+c_func
+(paren
+id|entry
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/* Update MdDat if changed */
@@ -1005,9 +1011,11 @@ id|meta.fi_mtime
 )paren
 )paren
 suffix:semicolon
-id|entry-&gt;dirt
-op_assign
-l_int|1
+id|hfs_cat_mark_dirty
+c_func
+(paren
+id|entry
+)paren
 suffix:semicolon
 )brace
 )brace

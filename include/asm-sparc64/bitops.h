@@ -1,7 +1,8 @@
-multiline_comment|/* $Id: bitops.h,v 1.22 1997/08/07 02:54:04 davem Exp $&n; * bitops.h: Bit string operations on the V9.&n; *&n; * Copyright 1996, 1997 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: bitops.h,v 1.23 1997/12/18 02:44:12 ecd Exp $&n; * bitops.h: Bit string operations on the V9.&n; *&n; * Copyright 1996, 1997 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _SPARC64_BITOPS_H
 DECL|macro|_SPARC64_BITOPS_H
 mdefine_line|#define _SPARC64_BITOPS_H
+macro_line|#include &lt;asm/byteorder.h&gt;
 macro_line|#include &lt;asm/asi.h&gt;         /* For the little endian spaces. */
 multiline_comment|/* These can all be exported to userland, because the atomic&n; * primitives used are not privileged.&n; */
 multiline_comment|/* Set bit &squot;nr&squot; in 32-bit quantity at address &squot;addr&squot; where bit &squot;0&squot;&n; * is in the highest of the four bytes and bit &squot;31&squot; is the high bit&n; * within the first byte. Sparc is BIG-Endian. Unless noted otherwise&n; * all bit-ops return 0 if bit was previously clear and != 0 otherwise.&n; */
@@ -1738,49 +1739,6 @@ suffix:semicolon
 )brace
 DECL|macro|find_first_zero_le_bit
 mdefine_line|#define find_first_zero_le_bit(addr, size) &bslash;&n;        find_next_zero_le_bit((addr), (size), 0)
-DECL|function|__swab64p
-r_extern
-id|__inline__
-r_int
-r_int
-id|__swab64p
-c_func
-(paren
-r_int
-r_int
-op_star
-id|addr
-)paren
-(brace
-r_int
-r_int
-id|ret
-suffix:semicolon
-id|__asm__
-id|__volatile__
-(paren
-l_string|&quot;ldxa [%1] %2, %0&quot;
-suffix:colon
-l_string|&quot;=r&quot;
-(paren
-id|ret
-)paren
-suffix:colon
-l_string|&quot;r&quot;
-(paren
-id|addr
-)paren
-comma
-l_string|&quot;i&quot;
-(paren
-id|ASI_PL
-)paren
-)paren
-suffix:semicolon
-r_return
-id|ret
-suffix:semicolon
-)brace
 DECL|function|find_next_zero_le_bit
 r_extern
 id|__inline__

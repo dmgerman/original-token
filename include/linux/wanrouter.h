@@ -1,4 +1,4 @@
-multiline_comment|/*****************************************************************************&n;* router.h&t;Definitions for the WAN Multiprotocol Router Module.&n;*&t;&t;This module provides API and common services for WAN Link&n;*&t;&t;Drivers and is completely hardware-independent.&n;*&n;* Author:&t;Gene Kozin&t;&lt;genek@compuserve.com&gt;&n;*&n;* Copyright:&t;(c) 1995-1997 Sangoma Technologies Inc.&n;*&n;*&t;&t;This program is free software; you can redistribute it and/or&n;*&t;&t;modify it under the terms of the GNU General Public License&n;*&t;&t;as published by the Free Software Foundation; either version&n;*&t;&t;2 of the License, or (at your option) any later version.&n;* ============================================================================&n;* May 29, 1997 &t;Jaspreet Singh&t;Added &squot;tx_int_enabled&squot; tp &squot;wan_device_t&squot;&n;* May 21, 1997&t;Jaspreet Singh&t;Added &squot;udp_port&squot; to &squot;wan_device_t&squot;&n;* Apr 25, 1997  Farhan Thawar   Added &squot;udp_port&squot; to &squot;wandev_conf_t&squot;&n;* Jan 16, 1997&t;Gene Kozin&t;router_devlist made public&n;* Jan 02, 1997&t;Gene Kozin&t;Initial version (based on wanpipe.h).&n;*****************************************************************************/
+multiline_comment|/*****************************************************************************&n;* router.h&t;Definitions for the WAN Multiprotocol Router Module.&n;*&t;&t;This module provides API and common services for WAN Link&n;*&t;&t;Drivers and is completely hardware-independent.&n;*&n;* Author:&t;Gene Kozin&t;&lt;genek@compuserve.com&gt;&n;*&t;&t;Jaspreet Singh&t;&lt;jaspreet@sangoma.com&gt;&n;*&n;* Copyright:&t;(c) 1995-1997 Sangoma Technologies Inc.&n;*&n;*&t;&t;This program is free software; you can redistribute it and/or&n;*&t;&t;modify it under the terms of the GNU General Public License&n;*&t;&t;as published by the Free Software Foundation; either version&n;*&t;&t;2 of the License, or (at your option) any later version.&n;* ============================================================================&n;* Nov 06, 1997&t;Jaspreet Singh&t;Changed Router Driver version to 1.1 from 1.0&n;* Oct 20, 1997&t;Jaspreet Singh&t;Added &squot;cir&squot;,&squot;bc&squot;,&squot;be&squot; and &squot;mc&squot; to &squot;wanif_conf_t&squot;&n;*&t;&t;&t;&t;Added &squot;enable_IPX&squot; and &squot;network_number&squot; to &n;*&t;&t;&t;&t;&squot;wan_device_t&squot;.  Also added defines for&n;*&t;&t;&t;&t;UDP PACKET TYPE, Interrupt test, critical values*&t;&t;&t;&t;for RACE conditions.&n;* Oct 05, 1997&t;Jaspreet Singh&t;Added &squot;dlci_num&squot; and &squot;dlci[100]&squot; to &n;*&t;&t;&t;&t;&squot;wan_fr_conf_t&squot; to configure a list of dlci(s)&n;*&t;&t;&t;&t;for a NODE &n;* Jul 07, 1997&t;Jaspreet Singh&t;Added &squot;ttl&squot; to &squot;wandev_conf_t&squot; &amp; &squot;wan_device_t&squot;&n;* May 29, 1997 &t;Jaspreet Singh&t;Added &squot;tx_int_enabled&squot; to &squot;wan_device_t&squot;&n;* May 21, 1997&t;Jaspreet Singh&t;Added &squot;udp_port&squot; to &squot;wan_device_t&squot;&n;* Apr 25, 1997  Farhan Thawar   Added &squot;udp_port&squot; to &squot;wandev_conf_t&squot;&n;* Jan 16, 1997&t;Gene Kozin&t;router_devlist made public&n;* Jan 02, 1997&t;Gene Kozin&t;Initial version (based on wanpipe.h).&n;*****************************************************************************/
 macro_line|#ifndef&t;_ROUTER_H
 DECL|macro|_ROUTER_H
 mdefine_line|#define&t;_ROUTER_H
@@ -7,7 +7,7 @@ mdefine_line|#define&t;ROUTER_NAME&t;&quot;wanrouter&quot;&t;/* in case we ever 
 DECL|macro|ROUTER_VERSION
 mdefine_line|#define&t;ROUTER_VERSION&t;1&t;&t;/* version number */
 DECL|macro|ROUTER_RELEASE
-mdefine_line|#define&t;ROUTER_RELEASE&t;0&t;&t;/* release (minor version) number */
+mdefine_line|#define&t;ROUTER_RELEASE&t;1&t;&t;/* release (minor version) number */
 DECL|macro|ROUTER_IOCTL
 mdefine_line|#define&t;ROUTER_IOCTL&t;&squot;W&squot;&t;&t;/* for IOCTL calls */
 DECL|macro|ROUTER_MAGIC
@@ -89,6 +89,33 @@ DECL|macro|WAN_DRVNAME_SZ
 mdefine_line|#define&t;WAN_DRVNAME_SZ&t;15&t;/* max length of the link driver name */
 DECL|macro|WAN_ADDRESS_SZ
 mdefine_line|#define&t;WAN_ADDRESS_SZ&t;31&t;/* max length of the WAN media address */
+multiline_comment|/* Defines for UDP PACKET TYPE */
+DECL|macro|UDP_PTPIPE_TYPE
+mdefine_line|#define UDP_PTPIPE_TYPE &t;0x01
+DECL|macro|UDP_FPIPE_TYPE
+mdefine_line|#define UDP_FPIPE_TYPE&t;&t;0x02
+DECL|macro|UDP_DRVSTATS_TYPE
+mdefine_line|#define UDP_DRVSTATS_TYPE &t;0x03
+DECL|macro|UDP_INVALID_TYPE
+mdefine_line|#define UDP_INVALID_TYPE  &t;0x04
+multiline_comment|/* Command return code */
+DECL|macro|CMD_OK
+mdefine_line|#define CMD_OK&t;&t;0&t;&t;/* normal firmware return code */
+DECL|macro|CMD_TIMEOUT
+mdefine_line|#define CMD_TIMEOUT&t;0xFF&t;&t;/* firmware command timed out */
+multiline_comment|/* UDP Packet Management */
+DECL|macro|UDP_PKT_FRM_STACK
+mdefine_line|#define UDP_PKT_FRM_STACK&t;0x00
+DECL|macro|UDP_PKT_FRM_NETWORK
+mdefine_line|#define UDP_PKT_FRM_NETWORK&t;0x01
+multiline_comment|/* Maximum interrupt test counter */
+DECL|macro|MAX_INTR_TEST_COUNTER
+mdefine_line|#define MAX_INTR_TEST_COUNTER&t;100
+multiline_comment|/* Critical Values for RACE conditions*/
+DECL|macro|CRITICAL_IN_ISR
+mdefine_line|#define CRITICAL_IN_ISR&t;&t;0xA1
+DECL|macro|CRITICAL_INTR_HANDLED
+mdefine_line|#define CRITICAL_INTR_HANDLED&t;0xB1
 multiline_comment|/****** Data Types **********************************************************/
 multiline_comment|/*----------------------------------------------------------------------------&n; * X.25-specific link-level configuration.&n; */
 DECL|struct|wan_x25_conf
@@ -206,11 +233,6 @@ r_typedef
 r_struct
 id|wan_fr_conf
 (brace
-DECL|member|cir
-r_int
-id|cir
-suffix:semicolon
-multiline_comment|/* committed information rate */
 DECL|member|signalling
 r_int
 id|signalling
@@ -241,16 +263,19 @@ r_int
 id|n393
 suffix:semicolon
 multiline_comment|/* monitored events counter */
-DECL|member|dlci
-r_int
-id|dlci
-suffix:semicolon
-multiline_comment|/* first DLC number (access node) */
 DECL|member|dlci_num
 r_int
 id|dlci_num
 suffix:semicolon
 multiline_comment|/* number of DLCs (access node) */
+DECL|member|dlci
+r_int
+id|dlci
+(braket
+l_int|100
+)braket
+suffix:semicolon
+multiline_comment|/* List of all DLCIs */
 DECL|typedef|wan_fr_conf_t
 )brace
 id|wan_fr_conf_t
@@ -383,6 +408,12 @@ r_int
 id|udp_port
 suffix:semicolon
 multiline_comment|/* UDP port for management */
+DECL|member|ttl
+r_int
+r_char
+id|ttl
+suffix:semicolon
+multiline_comment|/* Time To Live for UDP security */
 DECL|member|interface
 r_char
 id|interface
@@ -416,6 +447,18 @@ l_int|4
 )braket
 suffix:semicolon
 multiline_comment|/* other hardware options */
+DECL|member|enable_IPX
+r_int
+r_char
+id|enable_IPX
+suffix:semicolon
+multiline_comment|/* Enable or Disable IPX */
+DECL|member|network_number
+r_int
+r_int
+id|network_number
+suffix:semicolon
+multiline_comment|/* Network Number for IPX */
 DECL|member|reserved
 r_int
 id|reserved
@@ -726,6 +769,26 @@ r_int
 id|hold_timeout
 suffix:semicolon
 multiline_comment|/* sec, before re-connecting */
+DECL|member|cir
+r_int
+id|cir
+suffix:semicolon
+multiline_comment|/* Committed Information Rate fwd,bwd*/
+DECL|member|bc
+r_int
+id|bc
+suffix:semicolon
+multiline_comment|/* Committed Burst Size fwd, bwd */
+DECL|member|be
+r_int
+id|be
+suffix:semicolon
+multiline_comment|/* Excess Burst Size fwd, bwd */
+DECL|member|mc
+r_char
+id|mc
+suffix:semicolon
+multiline_comment|/* Multicast on or off */
 DECL|member|reserved
 r_int
 id|reserved
@@ -809,9 +872,15 @@ r_int
 id|udp_port
 suffix:semicolon
 multiline_comment|/* UDP port for management */
-DECL|member|tx_int_enabled
+DECL|member|ttl
 r_int
-id|tx_int_enabled
+r_char
+id|ttl
+suffix:semicolon
+multiline_comment|/* Time To Live for UDP security */
+DECL|member|enable_tx_int
+r_int
+id|enable_tx_int
 suffix:semicolon
 multiline_comment|/* Transmit Interrupt enabled or not */
 DECL|member|interface
@@ -847,6 +916,18 @@ l_int|4
 )braket
 suffix:semicolon
 multiline_comment|/* other hardware options */
+DECL|member|enable_IPX
+r_int
+r_char
+id|enable_IPX
+suffix:semicolon
+multiline_comment|/* Enable or Disable IPX */
+DECL|member|network_number
+r_int
+r_int
+id|network_number
+suffix:semicolon
+multiline_comment|/* Network Number for IPX */
 multiline_comment|/****** status and statistics *******/
 DECL|member|state
 r_char

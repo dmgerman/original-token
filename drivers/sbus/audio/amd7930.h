@@ -3,6 +3,220 @@ macro_line|#ifndef _AMD7930_H_
 DECL|macro|_AMD7930_H_
 mdefine_line|#define _AMD7930_H_
 macro_line|#include &lt;linux/types.h&gt;
+multiline_comment|/* Exported ISDN functions */
+r_int
+id|amd7930_get_irqnum
+c_func
+(paren
+r_int
+id|dev
+)paren
+suffix:semicolon
+r_int
+id|amd7930_get_liu_state
+c_func
+(paren
+r_int
+id|dev
+)paren
+suffix:semicolon
+r_void
+id|amd7930_liu_init
+c_func
+(paren
+r_int
+id|dev
+comma
+r_void
+(paren
+op_star
+id|callback
+)paren
+(paren
+)paren
+comma
+r_void
+op_star
+id|callback_arg
+)paren
+suffix:semicolon
+r_void
+id|amd7930_liu_activate
+c_func
+(paren
+r_int
+id|dev
+comma
+r_int
+id|priority
+)paren
+suffix:semicolon
+r_void
+id|amd7930_liu_deactivate
+c_func
+(paren
+r_int
+id|dev
+)paren
+suffix:semicolon
+r_void
+id|amd7930_dxmit
+c_func
+(paren
+r_int
+id|dev
+comma
+id|__u8
+op_star
+id|buffer
+comma
+r_int
+r_int
+id|count
+comma
+r_void
+(paren
+op_star
+id|callback
+)paren
+(paren
+r_void
+op_star
+comma
+r_int
+)paren
+comma
+r_void
+op_star
+id|callback_arg
+)paren
+suffix:semicolon
+r_void
+id|amd7930_drecv
+c_func
+(paren
+r_int
+id|dev
+comma
+id|__u8
+op_star
+id|buffer
+comma
+r_int
+r_int
+id|size
+comma
+r_void
+(paren
+op_star
+id|callback
+)paren
+(paren
+r_void
+op_star
+comma
+r_int
+comma
+r_int
+r_int
+)paren
+comma
+r_void
+op_star
+id|callback_arg
+)paren
+suffix:semicolon
+r_int
+id|amd7930_bopen
+c_func
+(paren
+r_int
+id|dev
+comma
+r_int
+id|chan
+comma
+id|u_char
+id|xmit_idle_char
+)paren
+suffix:semicolon
+r_void
+id|amd7930_bclose
+c_func
+(paren
+r_int
+id|dev
+comma
+r_int
+id|chan
+)paren
+suffix:semicolon
+r_void
+id|amd7930_bxmit
+c_func
+(paren
+r_int
+id|dev
+comma
+r_int
+id|chan
+comma
+id|__u8
+op_star
+id|buffer
+comma
+r_int
+r_int
+id|count
+comma
+r_void
+(paren
+op_star
+id|callback
+)paren
+(paren
+r_void
+op_star
+)paren
+comma
+r_void
+op_star
+id|callback_arg
+)paren
+suffix:semicolon
+r_void
+id|amd7930_brecv
+c_func
+(paren
+r_int
+id|dev
+comma
+r_int
+id|chan
+comma
+id|__u8
+op_star
+id|buffer
+comma
+r_int
+r_int
+id|size
+comma
+r_void
+(paren
+op_star
+id|callback
+)paren
+(paren
+r_void
+op_star
+)paren
+comma
+r_void
+op_star
+id|callback_arg
+)paren
+suffix:semicolon
 multiline_comment|/* Register interface presented to the CPU by the amd7930. */
 DECL|struct|amd7930
 r_struct
@@ -119,6 +333,23 @@ id|mmr2
 suffix:semicolon
 )brace
 suffix:semicolon
+multiline_comment|/* After an amd7930 interrupt, reading the Interrupt Register (ir)&n; * clears the interrupt and returns a bitmask indicated which&n; * interrupt source(s) require service&n; */
+DECL|macro|AMR_IR_DTTHRSH
+mdefine_line|#define AMR_IR_DTTHRSH&t;&t;&t;0x01 /* D-channel xmit threshold */
+DECL|macro|AMR_IR_DRTHRSH
+mdefine_line|#define AMR_IR_DRTHRSH&t;&t;&t;0x02 /* D-channel recv threshold */
+DECL|macro|AMR_IR_DSRI
+mdefine_line|#define AMR_IR_DSRI&t;&t;&t;0x04 /* D-channel packet status */
+DECL|macro|AMR_IR_DERI
+mdefine_line|#define AMR_IR_DERI&t;&t;&t;0x08 /* D-channel error */
+DECL|macro|AMR_IR_BBUF
+mdefine_line|#define AMR_IR_BBUF&t;&t;&t;0x10 /* B-channel data xfer */
+DECL|macro|AMR_IR_LSRI
+mdefine_line|#define AMR_IR_LSRI&t;&t;&t;0x20 /* LIU status */
+DECL|macro|AMR_IR_DSR2I
+mdefine_line|#define AMR_IR_DSR2I&t;&t;&t;0x40 /* D-channel buffer status */
+DECL|macro|AMR_IR_MLTFRMI
+mdefine_line|#define AMR_IR_MLTFRMI&t;&t;&t;0x80 /* multiframe or PP */
 multiline_comment|/* The amd7930 has &quot;indirect registers&quot; which are accessed by writing&n; * the register number into the Command Register and then reading or&n; * writing values from the Data Register as appropriate. We define the&n; * AMR_* macros to be the indirect register numbers and AM_* macros to&n; * be bits in whatever register is referred to.&n; */
 multiline_comment|/* Initialization */
 DECL|macro|AMR_INIT
@@ -140,12 +371,52 @@ mdefine_line|#define&t;&t;AM_INIT2_ENABLE_MULTIFRAME&t;0x10
 multiline_comment|/* Line Interface Unit */
 DECL|macro|AMR_LIU_LSR
 mdefine_line|#define&t;AMR_LIU_LSR&t;&t;&t;0xA1
+DECL|macro|AM_LIU_LSR_STATE
+mdefine_line|#define&t;&t;AM_LIU_LSR_STATE&t;&t;0x07
+DECL|macro|AM_LIU_LSR_F3
+mdefine_line|#define&t;&t;AM_LIU_LSR_F3&t;&t;&t;0x08
+DECL|macro|AM_LIU_LSR_F7
+mdefine_line|#define&t;&t;AM_LIU_LSR_F7&t;&t;&t;0x10
+DECL|macro|AM_LIU_LSR_F8
+mdefine_line|#define&t;&t;AM_LIU_LSR_F8&t;&t;&t;0x20
+DECL|macro|AM_LIU_LSR_HSW
+mdefine_line|#define&t;&t;AM_LIU_LSR_HSW&t;&t;&t;0x40
+DECL|macro|AM_LIU_LSR_HSW_CHG
+mdefine_line|#define&t;&t;AM_LIU_LSR_HSW_CHG&t;&t;0x80
 DECL|macro|AMR_LIU_LPR
 mdefine_line|#define&t;AMR_LIU_LPR&t;&t;&t;0xA2
 DECL|macro|AMR_LIU_LMR1
 mdefine_line|#define&t;AMR_LIU_LMR1&t;&t;&t;0xA3
+DECL|macro|AM_LIU_LMR1_B1_ENABL
+mdefine_line|#define&t;&t;AM_LIU_LMR1_B1_ENABL&t;&t;0x01
+DECL|macro|AM_LIU_LMR1_B2_ENABL
+mdefine_line|#define&t;&t;AM_LIU_LMR1_B2_ENABL&t;&t;0x02
+DECL|macro|AM_LIU_LMR1_F_DISABL
+mdefine_line|#define&t;&t;AM_LIU_LMR1_F_DISABL&t;&t;0x04
+DECL|macro|AM_LIU_LMR1_FA_DISABL
+mdefine_line|#define&t;&t;AM_LIU_LMR1_FA_DISABL&t;&t;0x08
+DECL|macro|AM_LIU_LMR1_REQ_ACTIV
+mdefine_line|#define&t;&t;AM_LIU_LMR1_REQ_ACTIV&t;&t;0x10
+DECL|macro|AM_LIU_LMR1_F8_F3
+mdefine_line|#define&t;&t;AM_LIU_LMR1_F8_F3&t;&t;0x20
+DECL|macro|AM_LIU_LMR1_LIU_ENABL
+mdefine_line|#define&t;&t;AM_LIU_LMR1_LIU_ENABL&t;&t;0x40
 DECL|macro|AMR_LIU_LMR2
 mdefine_line|#define&t;AMR_LIU_LMR2&t;&t;&t;0xA4
+DECL|macro|AM_LIU_LMR2_DECHO
+mdefine_line|#define&t;&t;AM_LIU_LMR2_DECHO&t;&t;0x01
+DECL|macro|AM_LIU_LMR2_DLOOP
+mdefine_line|#define&t;&t;AM_LIU_LMR2_DLOOP&t;&t;0x02
+DECL|macro|AM_LIU_LMR2_DBACKOFF
+mdefine_line|#define&t;&t;AM_LIU_LMR2_DBACKOFF&t;&t;0x04
+DECL|macro|AM_LIU_LMR2_EN_F3_INT
+mdefine_line|#define&t;&t;AM_LIU_LMR2_EN_F3_INT&t;&t;0x08
+DECL|macro|AM_LIU_LMR2_EN_F8_INT
+mdefine_line|#define&t;&t;AM_LIU_LMR2_EN_F8_INT&t;&t;0x10
+DECL|macro|AM_LIU_LMR2_EN_HSW_INT
+mdefine_line|#define&t;&t;AM_LIU_LMR2_EN_HSW_INT&t;&t;0x20
+DECL|macro|AM_LIU_LMR2_EN_F7_INT
+mdefine_line|#define&t;&t;AM_LIU_LMR2_EN_F7_INT&t;&t;0x40
 DECL|macro|AMR_LIU_2_4
 mdefine_line|#define&t;AMR_LIU_2_4&t;&t;&t;0xA5
 DECL|macro|AMR_LIU_MF
@@ -265,8 +536,42 @@ DECL|macro|AMR_DLC_DTCR
 mdefine_line|#define&t;AMR_DLC_DTCR&t;&t;&t;0x85
 DECL|macro|AMR_DLC_DMR1
 mdefine_line|#define&t;AMR_DLC_DMR1&t;&t;&t;0x86
+DECL|macro|AMR_DLC_DMR1_DTTHRSH_INT
+mdefine_line|#define&t;&t;AMR_DLC_DMR1_DTTHRSH_INT&t;0x01
+DECL|macro|AMR_DLC_DMR1_DRTHRSH_INT
+mdefine_line|#define&t;&t;AMR_DLC_DMR1_DRTHRSH_INT&t;0x02
+DECL|macro|AMR_DLC_DMR1_TAR_ENABL
+mdefine_line|#define&t;&t;AMR_DLC_DMR1_TAR_ENABL&t;&t;0x04
+DECL|macro|AMR_DLC_DMR1_EORP_INT
+mdefine_line|#define&t;&t;AMR_DLC_DMR1_EORP_INT&t;&t;0x08
+DECL|macro|AMR_DLC_DMR1_EN_ADDR1
+mdefine_line|#define&t;&t;AMR_DLC_DMR1_EN_ADDR1&t;&t;0x10
+DECL|macro|AMR_DLC_DMR1_EN_ADDR2
+mdefine_line|#define&t;&t;AMR_DLC_DMR1_EN_ADDR2&t;&t;0x20
+DECL|macro|AMR_DLC_DMR1_EN_ADDR3
+mdefine_line|#define&t;&t;AMR_DLC_DMR1_EN_ADDR3&t;&t;0x40
+DECL|macro|AMR_DLC_DMR1_EN_ADDR4
+mdefine_line|#define&t;&t;AMR_DLC_DMR1_EN_ADDR4&t;&t;0x80
+DECL|macro|AMR_DLC_DMR1_EN_ADDRS
+mdefine_line|#define&t;&t;AMR_DLC_DMR1_EN_ADDRS&t;&t;0xf0
 DECL|macro|AMR_DLC_DMR2
 mdefine_line|#define&t;AMR_DLC_DMR2&t;&t;&t;0x87
+DECL|macro|AMR_DLC_DMR2_RABRT_INT
+mdefine_line|#define&t;&t;AMR_DLC_DMR2_RABRT_INT&t;&t;0x01
+DECL|macro|AMR_DLC_DMR2_RESID_INT
+mdefine_line|#define&t;&t;AMR_DLC_DMR2_RESID_INT&t;&t;0x02
+DECL|macro|AMR_DLC_DMR2_COLL_INT
+mdefine_line|#define&t;&t;AMR_DLC_DMR2_COLL_INT&t;&t;0x04
+DECL|macro|AMR_DLC_DMR2_FCS_INT
+mdefine_line|#define&t;&t;AMR_DLC_DMR2_FCS_INT&t;&t;0x08
+DECL|macro|AMR_DLC_DMR2_OVFL_INT
+mdefine_line|#define&t;&t;AMR_DLC_DMR2_OVFL_INT&t;&t;0x10
+DECL|macro|AMR_DLC_DMR2_UNFL_INT
+mdefine_line|#define&t;&t;AMR_DLC_DMR2_UNFL_INT&t;&t;0x20
+DECL|macro|AMR_DLC_DMR2_OVRN_INT
+mdefine_line|#define&t;&t;AMR_DLC_DMR2_OVRN_INT&t;&t;0x40
+DECL|macro|AMR_DLC_DMR2_UNRN_INT
+mdefine_line|#define&t;&t;AMR_DLC_DMR2_UNRN_INT&t;&t;0x80
 DECL|macro|AMR_DLC_1_7
 mdefine_line|#define&t;AMR_DLC_1_7&t;&t;&t;0x88
 DECL|macro|AMR_DLC_DRCR
@@ -281,14 +586,120 @@ DECL|macro|AMR_DLC_SRAR4
 mdefine_line|#define&t;AMR_DLC_SRAR4&t;&t;&t;0x8D
 DECL|macro|AMR_DLC_DMR3
 mdefine_line|#define&t;AMR_DLC_DMR3&t;&t;&t;0x8E
+DECL|macro|AMR_DLC_DMR3_VA_INT
+mdefine_line|#define&t;&t;AMR_DLC_DMR3_VA_INT&t;&t;0x01
+DECL|macro|AMR_DLC_DMR3_EOTP_INT
+mdefine_line|#define&t;&t;AMR_DLC_DMR3_EOTP_INT&t;&t;0x02
+DECL|macro|AMR_DLC_DMR3_LBRP_INT
+mdefine_line|#define&t;&t;AMR_DLC_DMR3_LBRP_INT&t;&t;0x04
+DECL|macro|AMR_DLC_DMR3_RBA_INT
+mdefine_line|#define&t;&t;AMR_DLC_DMR3_RBA_INT&t;&t;0x08
+DECL|macro|AMR_DLC_DMR3_LBT_INT
+mdefine_line|#define&t;&t;AMR_DLC_DMR3_LBT_INT&t;&t;0x10
+DECL|macro|AMR_DLC_DMR3_TBE_INT
+mdefine_line|#define&t;&t;AMR_DLC_DMR3_TBE_INT&t;&t;0x20
+DECL|macro|AMR_DLC_DMR3_RPLOST_INT
+mdefine_line|#define&t;&t;AMR_DLC_DMR3_RPLOST_INT&t;&t;0x40
+DECL|macro|AMR_DLC_DMR3_KEEP_FCS
+mdefine_line|#define&t;&t;AMR_DLC_DMR3_KEEP_FCS&t;&t;0x80
 DECL|macro|AMR_DLC_DMR4
 mdefine_line|#define&t;AMR_DLC_DMR4&t;&t;&t;0x8F
+DECL|macro|AMR_DLC_DMR4_RCV_1
+mdefine_line|#define&t;&t;AMR_DLC_DMR4_RCV_1&t;&t;0x00
+DECL|macro|AMR_DLC_DMR4_RCV_2
+mdefine_line|#define&t;&t;AMR_DLC_DMR4_RCV_2&t;&t;0x01
+DECL|macro|AMR_DLC_DMR4_RCV_4
+mdefine_line|#define&t;&t;AMR_DLC_DMR4_RCV_4&t;&t;0x02
+DECL|macro|AMR_DLC_DMR4_RCV_8
+mdefine_line|#define&t;&t;AMR_DLC_DMR4_RCV_8&t;&t;0x03
+DECL|macro|AMR_DLC_DMR4_RCV_16
+mdefine_line|#define&t;&t;AMR_DLC_DMR4_RCV_16&t;&t;0x01
+DECL|macro|AMR_DLC_DMR4_RCV_24
+mdefine_line|#define&t;&t;AMR_DLC_DMR4_RCV_24&t;&t;0x02
+DECL|macro|AMR_DLC_DMR4_RCV_30
+mdefine_line|#define&t;&t;AMR_DLC_DMR4_RCV_30&t;&t;0x03
+DECL|macro|AMR_DLC_DMR4_XMT_1
+mdefine_line|#define&t;&t;AMR_DLC_DMR4_XMT_1&t;&t;0x00
+DECL|macro|AMR_DLC_DMR4_XMT_2
+mdefine_line|#define&t;&t;AMR_DLC_DMR4_XMT_2&t;&t;0x04
+DECL|macro|AMR_DLC_DMR4_XMT_4
+mdefine_line|#define&t;&t;AMR_DLC_DMR4_XMT_4&t;&t;0x08
+DECL|macro|AMR_DLC_DMR4_XMT_8
+mdefine_line|#define&t;&t;AMR_DLC_DMR4_XMT_8&t;&t;0x0c
+DECL|macro|AMR_DLC_DMR4_XMT_10
+mdefine_line|#define&t;&t;AMR_DLC_DMR4_XMT_10&t;&t;0x08
+DECL|macro|AMR_DLC_DMR4_XMT_14
+mdefine_line|#define&t;&t;AMR_DLC_DMR4_XMT_14&t;&t;0x0c
+DECL|macro|AMR_DLC_DMR4_IDLE_MARK
+mdefine_line|#define&t;&t;AMR_DLC_DMR4_IDLE_MARK&t;&t;0x00
+DECL|macro|AMR_DLC_DMR4_IDLE_FLAG
+mdefine_line|#define&t;&t;AMR_DLC_DMR4_IDLE_FLAG&t;&t;0x10
+DECL|macro|AMR_DLC_DMR4_ADDR_BOTH
+mdefine_line|#define&t;&t;AMR_DLC_DMR4_ADDR_BOTH&t;&t;0x00
+DECL|macro|AMR_DLC_DMR4_ADDR_1ST
+mdefine_line|#define&t;&t;AMR_DLC_DMR4_ADDR_1ST&t;&t;0x20
+DECL|macro|AMR_DLC_DMR4_ADDR_2ND
+mdefine_line|#define&t;&t;AMR_DLC_DMR4_ADDR_2ND&t;&t;0xa0
+DECL|macro|AMR_DLC_DMR4_CR_ENABLE
+mdefine_line|#define&t;&t;AMR_DLC_DMR4_CR_ENABLE&t;&t;0x40
 DECL|macro|AMR_DLC_12_15
 mdefine_line|#define&t;AMR_DLC_12_15&t;&t;&t;0x90
 DECL|macro|AMR_DLC_ASR
 mdefine_line|#define&t;AMR_DLC_ASR&t;&t;&t;0x91
 DECL|macro|AMR_DLC_EFCR
 mdefine_line|#define&t;AMR_DLC_EFCR&t;&t;&t;0x92
+DECL|macro|AMR_DLC_EFCR_EXTEND_FIFO
+mdefine_line|#define&t;&t;AMR_DLC_EFCR_EXTEND_FIFO&t;0x01
+DECL|macro|AMR_DLC_EFCR_SEC_PKT_INT
+mdefine_line|#define&t;&t;AMR_DLC_EFCR_SEC_PKT_INT&t;0x02
+DECL|macro|AMR_DSR1_VADDR
+mdefine_line|#define AMR_DSR1_VADDR&t;&t;&t;0x01
+DECL|macro|AMR_DSR1_EORP
+mdefine_line|#define AMR_DSR1_EORP&t;&t;&t;0x02
+DECL|macro|AMR_DSR1_PKT_IP
+mdefine_line|#define AMR_DSR1_PKT_IP&t;&t;&t;0x04
+DECL|macro|AMR_DSR1_DECHO_ON
+mdefine_line|#define AMR_DSR1_DECHO_ON&t;&t;0x08
+DECL|macro|AMR_DSR1_DLOOP_ON
+mdefine_line|#define AMR_DSR1_DLOOP_ON&t;&t;0x10
+DECL|macro|AMR_DSR1_DBACK_OFF
+mdefine_line|#define AMR_DSR1_DBACK_OFF&t;&t;0x20
+DECL|macro|AMR_DSR1_EOTP
+mdefine_line|#define AMR_DSR1_EOTP&t;&t;&t;0x40
+DECL|macro|AMR_DSR1_CXMT_ABRT
+mdefine_line|#define AMR_DSR1_CXMT_ABRT&t;&t;0x80
+DECL|macro|AMR_DSR2_LBRP
+mdefine_line|#define AMR_DSR2_LBRP&t;&t;&t;0x01
+DECL|macro|AMR_DSR2_RBA
+mdefine_line|#define AMR_DSR2_RBA&t;&t;&t;0x02
+DECL|macro|AMR_DSR2_RPLOST
+mdefine_line|#define AMR_DSR2_RPLOST&t;&t;&t;0x04
+DECL|macro|AMR_DSR2_LAST_BYTE
+mdefine_line|#define AMR_DSR2_LAST_BYTE&t;&t;0x08
+DECL|macro|AMR_DSR2_TBE
+mdefine_line|#define AMR_DSR2_TBE&t;&t;&t;0x10
+DECL|macro|AMR_DSR2_MARK_IDLE
+mdefine_line|#define AMR_DSR2_MARK_IDLE&t;&t;0x20
+DECL|macro|AMR_DSR2_FLAG_IDLE
+mdefine_line|#define AMR_DSR2_FLAG_IDLE&t;&t;0x40
+DECL|macro|AMR_DSR2_SECOND_PKT
+mdefine_line|#define AMR_DSR2_SECOND_PKT&t;&t;0x80
+DECL|macro|AMR_DER_RABRT
+mdefine_line|#define AMR_DER_RABRT&t;&t;&t;0x01
+DECL|macro|AMR_DER_RFRAME
+mdefine_line|#define AMR_DER_RFRAME&t;&t;&t;0x02
+DECL|macro|AMR_DER_COLLISION
+mdefine_line|#define AMR_DER_COLLISION&t;&t;0x04
+DECL|macro|AMR_DER_FCS
+mdefine_line|#define AMR_DER_FCS&t;&t;&t;0x08
+DECL|macro|AMR_DER_OVFL
+mdefine_line|#define AMR_DER_OVFL&t;&t;&t;0x10
+DECL|macro|AMR_DER_UNFL
+mdefine_line|#define AMR_DER_UNFL&t;&t;&t;0x20
+DECL|macro|AMR_DER_OVRN
+mdefine_line|#define AMR_DER_OVRN&t;&t;&t;0x40
+DECL|macro|AMR_DER_UNRN
+mdefine_line|#define AMR_DER_UNRN&t;&t;&t;0x80
 multiline_comment|/* Peripheral Port */
 DECL|macro|AMR_PP_PPCR1
 mdefine_line|#define&t;AMR_PP_PPCR1&t;&t;&t;0xC0
@@ -312,5 +723,8 @@ DECL|macro|AMR_PP_PPCR2
 mdefine_line|#define&t;AMR_PP_PPCR2&t;&t;&t;0xC8
 DECL|macro|AMR_PP_PPCR3
 mdefine_line|#define&t;AMR_PP_PPCR3&t;&t;&t;0xC9
+multiline_comment|/* Give this chip a &quot;default&quot; sample rate */
+DECL|macro|AMD7930_RATE
+mdefine_line|#define AMD7930_RATE                    (8000)
 macro_line|#endif
 eof

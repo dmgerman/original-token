@@ -142,6 +142,10 @@ DECL|member|unsolicit_count
 r_char
 id|unsolicit_count
 suffix:semicolon
+DECL|member|loaded
+r_char
+id|loaded
+suffix:semicolon
 )brace
 suffix:semicolon
 DECL|function|ip_check_mc

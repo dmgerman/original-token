@@ -50,6 +50,12 @@ DECL|member|flags
 r_int
 id|flags
 suffix:semicolon
+DECL|member|arp_parms
+r_struct
+id|neigh_parms
+op_star
+id|arp_parms
+suffix:semicolon
 )brace
 suffix:semicolon
 DECL|macro|IN_DEV_RPFILTER
@@ -57,26 +63,15 @@ mdefine_line|#define IN_DEV_RPFILTER(in_dev)&t;(ipv4_config.rfc1812_filter &amp;
 DECL|macro|IN_DEV_MFORWARD
 mdefine_line|#define IN_DEV_MFORWARD(in_dev)&t;(ipv4_config.multicast_route &amp;&amp; ((in_dev)-&gt;flags&amp;IFF_IP_MFORWARD))
 DECL|macro|IN_DEV_PROXY_ARP
-mdefine_line|#define IN_DEV_PROXY_ARP(in_dev)&t;((in_dev)-&gt;flags&amp;IFF_IP_PROXYARP)
-macro_line|#if 1
+mdefine_line|#define IN_DEV_PROXY_ARP(in_dev)&t;(ipv4_config.proxy_arp || (in_dev)-&gt;flags&amp;IFF_IP_PROXYARP)
 DECL|macro|IN_DEV_FORWARD
-mdefine_line|#define IN_DEV_FORWARD(in_dev)&t;&t;(IS_ROUTER)
-DECL|macro|IN_DEV_RX_REDIRECTS
-mdefine_line|#define IN_DEV_RX_REDIRECTS(in_dev)&t;(ipv4_config.accept_redirects)
-DECL|macro|IN_DEV_TX_REDIRECTS
-mdefine_line|#define IN_DEV_TX_REDIRECTS(in_dev)&t;(1)
+mdefine_line|#define IN_DEV_FORWARD(in_dev)&t;&t;(IS_ROUTER || ((in_dev)-&gt;flags&amp;IFF_IP_FORWARD))
 DECL|macro|IN_DEV_SHARED_MEDIA
-mdefine_line|#define IN_DEV_SHARED_MEDIA(in_dev)&t;(ipv4_config.rfc1620_redirects)
-macro_line|#else
-DECL|macro|IN_DEV_FORWARD
-mdefine_line|#define IN_DEV_FORWARD(in_dev)&t;(ipv4_config.ip_forwarding==1 &amp;&amp; ((in_dev)-&gt;flags&amp;IFF_IP_FORWARD))
+mdefine_line|#define IN_DEV_SHARED_MEDIA(in_dev)&t;(ipv4_config.rfc1620_redirects || (in_dev)-&gt;flags&amp;IFF_IP_SHAREDMEDIA)
 DECL|macro|IN_DEV_RX_REDIRECTS
-mdefine_line|#define IN_DEV_RX_REDIRECTS(in_dev)&t;((in_dev)-&gt;flags&amp;IFF_IP_RXREDIRECTS)
+mdefine_line|#define IN_DEV_RX_REDIRECTS(in_dev)&t;(ipv4_config.accept_redirects || (in_dev)-&gt;flags&amp;IFF_IP_RXREDIRECTS)
 DECL|macro|IN_DEV_TX_REDIRECTS
-mdefine_line|#define IN_DEV_TX_REDIRECTS(in_dev)&t;((in_dev)-&gt;flags&amp;IFF_IP_TXREDIRECTS)
-DECL|macro|IN_DEV_SHARED_MEDIA
-mdefine_line|#define IN_DEV_SHARED_MEDIA(in_dev)&t;((in_dev)-&gt;flags&amp;IFF_IP_SHAREDMEDIA)
-macro_line|#endif
+mdefine_line|#define IN_DEV_TX_REDIRECTS(in_dev)&t;(/*ipv4_config.send_redirects ||*/ (in_dev)-&gt;flags&amp;IFF_IP_TXREDIRECTS)
 DECL|struct|in_ifaddr
 r_struct
 id|in_ifaddr

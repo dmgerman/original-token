@@ -1,0 +1,46 @@
+macro_line|#include &quot;soft-fp.h&quot;
+macro_line|#include &quot;quad.h&quot;
+DECL|function|FNEGQ
+r_int
+id|FNEGQ
+c_func
+(paren
+r_int
+r_int
+op_star
+id|rd
+comma
+r_int
+r_int
+op_star
+id|rs2
+)paren
+(brace
+multiline_comment|/*&n;&t;FP_DECL_Q(A); FP_DECL_Q(R);&n;&n;&t;__FP_UNPACK_Q(A, rs2);&n;&t;FP_NEG_Q(R, A);&n;&t;__FP_PACK_Q(rd, R);&n; */
+id|rd
+(braket
+l_int|0
+)braket
+op_assign
+id|rs2
+(braket
+l_int|0
+)braket
+op_xor
+l_int|0x8000000000000000UL
+suffix:semicolon
+id|rd
+(braket
+l_int|1
+)braket
+op_assign
+id|rs2
+(braket
+l_int|1
+)braket
+suffix:semicolon
+r_return
+l_int|1
+suffix:semicolon
+)brace
+eof

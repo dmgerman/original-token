@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: delay.h,v 1.9 1997/04/11 00:42:19 davem Exp $&n; * delay.h: Linux delay routines on the Sparc.&n; *&n; * Copyright (C) 1994 David S. Miller (davem@caip.rutgers.edu).&n; */
+multiline_comment|/* $Id: delay.h,v 1.10 1997/11/07 18:24:30 mj Exp $&n; * delay.h: Linux delay routines on the Sparc.&n; *&n; * Copyright (C) 1994 David S. Miller (davem@caip.rutgers.edu).&n; */
 macro_line|#ifndef __SPARC_DELAY_H
 DECL|macro|__SPARC_DELAY_H
 mdefine_line|#define __SPARC_DELAY_H
@@ -52,8 +52,5 @@ r_int
 id|usecs
 )paren
 suffix:semicolon
-multiline_comment|/* calibrate_delay() wants this... */
-DECL|macro|muldiv
-mdefine_line|#define muldiv(a, b, c)    (((a)*(b))/(c))
 macro_line|#endif /* defined(__SPARC_DELAY_H) */
 eof

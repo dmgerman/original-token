@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/arch/ppc/kernel/process.c&n; *&n; *  PowerPC version &n; *    Copyright (C) 1995-1996 Gary Thomas (gdt@linuxppc.org)&n; *&n; *  Derived from &quot;arch/i386/kernel/process.c&quot;&n; *    Copyright (C) 1995  Linus Torvalds&n; *&n; *  Updated and modified by Cort Dougan (cort@cs.nmt.edu) and&n; *  Paul Mackerras (paulus@cs.anu.edu.au)&n; *&n; *  This program is free software; you can redistribute it and/or&n; *  modify it under the terms of the GNU General Public License&n; *  as published by the Free Software Foundation; either version&n; *  2 of the License, or (at your option) any later version.&n; *&n; */
+multiline_comment|/*&n; *  linux/arch/ppc/kernel/process.c&n; *&n; *  Derived from &quot;arch/i386/kernel/process.c&quot;&n; *    Copyright (C) 1995  Linus Torvalds&n; *&n; *  Updated and modified by Cort Dougan (cort@cs.nmt.edu) and&n; *  Paul Mackerras (paulus@cs.anu.edu.au)&n; *&n; *  PowerPC version &n; *    Copyright (C) 1995-1996 Gary Thomas (gdt@linuxppc.org)&n; *&n; *  This program is free software; you can redistribute it and/or&n; *  modify it under the terms of the GNU General Public License&n; *  as published by the Free Software Foundation; either version&n; *  2 of the License, or (at your option) any later version.&n; *&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -19,6 +19,8 @@ macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/smp_lock.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;
+macro_line|#include &lt;asm/mmu.h&gt;
+macro_line|#include &lt;asm/prom.h&gt;
 r_int
 id|dump_fpu
 c_func
@@ -55,12 +57,14 @@ c_func
 r_void
 )paren
 suffix:semicolon
+r_extern
+id|spinlock_t
+id|scheduler_lock
+suffix:semicolon
 DECL|macro|SHOW_TASK_SWITCHES
 macro_line|#undef SHOW_TASK_SWITCHES 1
 DECL|macro|CHECK_STACK
 macro_line|#undef CHECK_STACK 1
-DECL|macro|IDLE_ZERO
-macro_line|#undef IDLE_ZERO 1
 r_int
 r_int
 DECL|function|kernel_stack_top
@@ -163,6 +167,22 @@ id|init_task_union
 op_assign
 (brace
 id|INIT_TASK
+)brace
+suffix:semicolon
+multiline_comment|/* only used to get secondary processor up */
+DECL|variable|current_set
+r_struct
+id|task_struct
+op_star
+id|current_set
+(braket
+id|NR_CPUS
+)braket
+op_assign
+(brace
+op_amp
+id|init_task
+comma
 )brace
 suffix:semicolon
 r_int
@@ -544,13 +564,11 @@ macro_line|#ifdef SHOW_TASK_SWITCHES
 id|printk
 c_func
 (paren
-l_string|&quot;%s/%d (%x) -&gt; %s/%d (%x) ctx %x&bslash;n&quot;
+l_string|&quot;%s/%d -&gt; %s/%d cpu %d&bslash;n&quot;
 comma
 id|prev-&gt;comm
 comma
 id|prev-&gt;pid
-comma
-id|prev-&gt;tss.regs-&gt;nip
 comma
 r_new
 op_member_access_from_pointer
@@ -562,14 +580,86 @@ id|pid
 comma
 r_new
 op_member_access_from_pointer
-id|tss.regs-&gt;nip
-comma
-r_new
-op_member_access_from_pointer
-id|mm-&gt;context
+id|processor
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef __SMP__
+multiline_comment|/* bad news if last_task_used_math changes processors right now -- Cort */
+r_if
+c_cond
+(paren
+(paren
+id|last_task_used_math
+op_eq
+r_new
+)paren
+op_logical_and
+(paren
+r_new
+op_member_access_from_pointer
+id|processor
+op_ne
+r_new
+op_member_access_from_pointer
+id|last_processor
+)paren
+)paren
+id|panic
+c_func
+(paren
+l_string|&quot;last_task_used_math switched processors&quot;
+)paren
+suffix:semicolon
+multiline_comment|/* be noisy about processor changes for debugging -- Cort */
+r_if
+c_cond
+(paren
+r_new
+op_member_access_from_pointer
+id|last_processor
+op_ne
+r_new
+op_member_access_from_pointer
+id|processor
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;switch_to(): changing cpu&squot;s %d -&gt; %d %s/%d&bslash;n&quot;
+comma
+r_new
+op_member_access_from_pointer
+id|last_processor
+comma
+r_new
+op_member_access_from_pointer
+id|processor
+comma
+r_new
+op_member_access_from_pointer
+id|comm
+comma
+r_new
+op_member_access_from_pointer
+id|pid
+)paren
+suffix:semicolon
+id|prev-&gt;last_processor
+op_assign
+id|prev-&gt;processor
+suffix:semicolon
+id|current_set
+(braket
+id|smp_processor_id
+c_func
+(paren
+)paren
+)braket
+op_assign
+r_new
+suffix:semicolon
+macro_line|#endif /* __SMP__ */
 id|new_tss
 op_assign
 op_amp
@@ -752,9 +842,27 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;&bslash;nlast math %p&bslash;n&quot;
+l_string|&quot;&bslash;nlast math %p&quot;
 comma
 id|last_task_used_math
+)paren
+suffix:semicolon
+macro_line|#ifdef __SMP__&t;
+id|printk
+c_func
+(paren
+l_string|&quot; CPU: %d last CPU: %d&quot;
+comma
+id|current-&gt;processor
+comma
+id|current-&gt;last_processor
+)paren
+suffix:semicolon
+macro_line|#endif /* __SMP__ */
+id|printk
+c_func
+(paren
+l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
 r_for
@@ -1425,6 +1533,18 @@ comma
 id|regs
 )paren
 suffix:semicolon
+macro_line|#if 0/*def __SMP__*/
+r_if
+c_cond
+(paren
+id|ret
+)paren
+multiline_comment|/* drop scheduler lock in child */
+id|scheduler_lock.lock
+op_assign
+l_int|0L
+suffix:semicolon
+macro_line|#endif /* __SMP__ */&t;
 id|unlock_kernel
 c_func
 (paren
@@ -1476,6 +1596,11 @@ suffix:semicolon
 r_char
 op_star
 id|filename
+suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
 suffix:semicolon
 id|filename
 op_assign
@@ -1620,6 +1745,40 @@ comma
 id|regs
 )paren
 suffix:semicolon
+macro_line|#ifdef __SMP__
+multiline_comment|/* When we clone the idle task we keep the same pid but&n;&t; * the return value of 0 for both causes problems.&n;&t; * -- Cort&n;&t; */
+r_if
+c_cond
+(paren
+(paren
+id|current-&gt;pid
+op_eq
+l_int|0
+)paren
+op_logical_and
+(paren
+id|current
+op_eq
+op_amp
+id|init_task
+)paren
+)paren
+id|res
+op_assign
+l_int|1
+suffix:semicolon
+r_if
+c_cond
+(paren
+l_int|0
+multiline_comment|/*res*/
+)paren
+multiline_comment|/* drop scheduler lock in child */
+id|scheduler_lock.lock
+op_assign
+l_int|0L
+suffix:semicolon
+macro_line|#endif /* __SMP__ */&t;
 id|unlock_kernel
 c_func
 (paren
@@ -1738,8 +1897,8 @@ l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
-macro_line|#if 0
 multiline_comment|/*&n; * Low level print for debugging - Cort&n; */
+DECL|function|ll_printk
 r_int
 id|ll_printk
 c_func
@@ -1802,16 +1961,8 @@ r_return
 id|i
 suffix:semicolon
 )brace
-r_char
-op_star
-id|vidmem
-op_assign
-(paren
-r_char
-op_star
-)paren
-l_int|0xC00B8000
-suffix:semicolon
+DECL|variable|lines
+DECL|variable|cols
 r_int
 id|lines
 op_assign
@@ -1821,6 +1972,8 @@ id|cols
 op_assign
 l_int|80
 suffix:semicolon
+DECL|variable|orig_x
+DECL|variable|orig_y
 r_int
 id|orig_x
 op_assign
@@ -1830,6 +1983,7 @@ id|orig_y
 op_assign
 l_int|0
 suffix:semicolon
+DECL|function|ll_puts
 r_void
 id|ll_puts
 c_func
@@ -1846,7 +2000,68 @@ comma
 id|y
 suffix:semicolon
 r_char
+op_star
+id|vidmem
+op_assign
+(paren
+r_char
+op_star
+)paren
+(paren
+id|_ISA_MEM_BASE
+op_plus
+l_int|0xB8000
+)paren
+multiline_comment|/*0xC00B8000*/
+suffix:semicolon
+r_char
 id|c
+suffix:semicolon
+r_extern
+r_int
+id|mem_init_done
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|mem_init_done
+)paren
+multiline_comment|/* assume this means we can printk */
+(brace
+id|printk
+c_func
+(paren
+id|s
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+macro_line|#if 0&t;
+r_if
+c_cond
+(paren
+id|have_of
+)paren
+(brace
+id|prom_print
+c_func
+(paren
+id|s
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+macro_line|#endif
+multiline_comment|/*&n;&t; * can&squot;t ll_puts on chrp without openfirmware yet.&n;&t; * vidmem just needs to be setup for it.&n;&t; * -- Cort&n;&t; */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|is_prep
+)paren
+r_return
 suffix:semicolon
 id|x
 op_assign
@@ -1957,5 +2172,4 @@ op_assign
 id|y
 suffix:semicolon
 )brace
-macro_line|#endif /* CONFIG_PREP */
 eof

@@ -4,25 +4,28 @@ mdefine_line|#define _PPC_UACCESS_H
 macro_line|#ifndef __ASSEMBLY__
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
+macro_line|#include &lt;asm/processor.h&gt;
 DECL|macro|VERIFY_READ
 mdefine_line|#define VERIFY_READ&t;0
 DECL|macro|VERIFY_WRITE
 mdefine_line|#define VERIFY_WRITE&t;1
 multiline_comment|/*&n; * The fs value determines whether argument validity checking should be&n; * performed or not.  If get_fs() == USER_DS, checking is performed, with&n; * get_fs() == KERNEL_DS, checking is bypassed.&n; *&n; * For historical reasons, these macros are grossly misnamed.&n; */
 DECL|macro|KERNEL_DS
-mdefine_line|#define KERNEL_DS&t;(0)
+mdefine_line|#define KERNEL_DS&t;((mm_segment_t) { 0 })
 DECL|macro|USER_DS
-mdefine_line|#define USER_DS&t;&t;(1)
-DECL|macro|get_fs
-mdefine_line|#define get_fs()&t;(current-&gt;tss.fs)
+mdefine_line|#define USER_DS&t;&t;((mm_segment_t) { 1 })
 DECL|macro|get_ds
 mdefine_line|#define get_ds()&t;(KERNEL_DS)
+DECL|macro|get_fs
+mdefine_line|#define get_fs()&t;(current-&gt;tss.fs)
 DECL|macro|set_fs
 mdefine_line|#define set_fs(val)&t;(current-&gt;tss.fs = (val))
+DECL|macro|segment_eq
+mdefine_line|#define segment_eq(a,b)&t;((a).seg == (b).seg)
+DECL|macro|__kernel_ok
+mdefine_line|#define __kernel_ok (segment_eq(get_fs(), KERNEL_DS))
 DECL|macro|__user_ok
 mdefine_line|#define __user_ok(addr,size) (((size) &lt;= 0x80000000)&amp;&amp;((addr) &lt;= 0x80000000-(size)))
-DECL|macro|__kernel_ok
-mdefine_line|#define __kernel_ok&t;(get_fs() == KERNEL_DS)
 DECL|macro|__access_ok
 mdefine_line|#define __access_ok(addr,size) (__kernel_ok || __user_ok((addr),(size)))
 DECL|macro|access_ok

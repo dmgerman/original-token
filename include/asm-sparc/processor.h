@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: processor.h,v 1.59 1997/05/01 01:42:03 davem Exp $&n; * include/asm-sparc/processor.h&n; *&n; * Copyright (C) 1994 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: processor.h,v 1.61 1997/10/22 09:25:42 jj Exp $&n; * include/asm-sparc/processor.h&n; *&n; * Copyright (C) 1994 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef __ASM_SPARC_PROCESSOR_H
 DECL|macro|__ASM_SPARC_PROCESSOR_H
 mdefine_line|#define __ASM_SPARC_PROCESSOR_H
@@ -25,6 +25,8 @@ mdefine_line|#define wp_works_ok__is_a_macro /* for versions in ksyms.c */
 multiline_comment|/* Whee, this is STACK_TOP + PAGE_SIZE and the lowest kernel address too... &n; * That one page is used to protect kernel from intruders, so that&n; * we can make our access_ok test faster&n; */
 DECL|macro|TASK_SIZE
 mdefine_line|#define TASK_SIZE&t;(page_offset)
+DECL|macro|COPY_TASK_STRUCT
+mdefine_line|#define COPY_TASK_STRUCT(dst, src) &t;&bslash;&n;do {&t;&t;&t;&t;&t;&bslash;&n;&t;*dst = *src;&t;&t;&t;&bslash;&n;} while (0)
 DECL|struct|fpq
 r_struct
 id|fpq
@@ -41,6 +43,17 @@ r_int
 id|insn
 suffix:semicolon
 )brace
+suffix:semicolon
+r_typedef
+r_struct
+(brace
+DECL|member|seg
+r_int
+id|seg
+suffix:semicolon
+DECL|typedef|mm_segment_t
+)brace
+id|mm_segment_t
 suffix:semicolon
 multiline_comment|/* The Sparc processor specific thread struct. */
 DECL|struct|thread_struct
@@ -226,7 +239,7 @@ r_int
 id|flags
 suffix:semicolon
 DECL|member|current_ds
-r_int
+id|mm_segment_t
 id|current_ds
 suffix:semicolon
 DECL|member|core_exec
@@ -248,7 +261,7 @@ mdefine_line|#define SPARC_FLAG_UNALIGNED    0x2    /* is allowed to do unaligne
 DECL|macro|INIT_MMAP
 mdefine_line|#define INIT_MMAP { &amp;init_mm, (0), (0), &bslash;&n;&t;&t;    __pgprot(0x0) , VM_READ | VM_WRITE | VM_EXEC, NULL, &amp;init_mm.mmap }
 DECL|macro|INIT_TSS
-mdefine_line|#define INIT_TSS  { &bslash;&n;/* uwinmask, kregs, sig_address, sig_desc, ksp, kpc, kpsr, kwim */ &bslash;&n;   0,        0,     0,           0,        0,   0,   0,    0, &bslash;&n;/* fork_kpsr, fork_kwim */ &bslash;&n;   0,         0, &bslash;&n;/* reg_window */  &bslash;&n;{ { { 0, }, { 0, } }, }, &bslash;&n;/* rwbuf_stkptrs */  &bslash;&n;{ 0, 0, 0, 0, 0, 0, 0, 0, }, &bslash;&n;/* w_saved */ &bslash;&n;   0, &bslash;&n;/* FPU regs */   { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, &bslash;&n;                   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, }, &bslash;&n;/* FPU status, FPU qdepth, FPU queue */ &bslash;&n;   0,          0,  { { 0, 0, }, }, &bslash;&n;/* sstk_info */ &bslash;&n;{ 0, 0, }, &bslash;&n;/* flags,              current_ds, */ &bslash;&n;   SPARC_FLAG_KTHREAD, USER_DS, &bslash;&n;/* core_exec */ &bslash;&n;{ 0, }, &bslash;&n;/* new_signal */ &bslash;&n;  0, &bslash;&n;}
+mdefine_line|#define INIT_TSS  { &bslash;&n;/* uwinmask, kregs, sig_address, sig_desc, ksp, kpc, kpsr, kwim */ &bslash;&n;   0,        0,     0,           0,        0,   0,   0,    0, &bslash;&n;/* fork_kpsr, fork_kwim */ &bslash;&n;   0,         0, &bslash;&n;/* reg_window */  &bslash;&n;{ { { 0, }, { 0, } }, }, &bslash;&n;/* rwbuf_stkptrs */  &bslash;&n;{ 0, 0, 0, 0, 0, 0, 0, 0, }, &bslash;&n;/* w_saved */ &bslash;&n;   0, &bslash;&n;/* FPU regs */   { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, &bslash;&n;                   0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, }, &bslash;&n;/* FPU status, FPU qdepth, FPU queue */ &bslash;&n;   0,          0,  { { 0, 0, }, }, &bslash;&n;/* sstk_info */ &bslash;&n;{ 0, 0, }, &bslash;&n;/* flags,              current_ds, */ &bslash;&n;   SPARC_FLAG_KTHREAD, KERNEL_DS, &bslash;&n;/* core_exec */ &bslash;&n;{ 0, }, &bslash;&n;/* new_signal */ &bslash;&n;  0, &bslash;&n;}
 multiline_comment|/* Return saved PC of a blocked thread. */
 DECL|function|thread_saved_pc
 r_extern

@@ -21,24 +21,77 @@ DECL|macro|IBM_L2_INVALIDATE
 mdefine_line|#define IBM_L2_INVALIDATE 0x814
 DECL|macro|IBM_SYS_CTL
 mdefine_line|#define IBM_SYS_CTL       0x81c
+DECL|macro|SLOW_DOWN_IO
+mdefine_line|#define SLOW_DOWN_IO
+DECL|macro|PMAC_ISA_IO_BASE
+mdefine_line|#define PMAC_ISA_IO_BASE &t;0
+DECL|macro|PMAC_ISA_MEM_BASE
+mdefine_line|#define PMAC_ISA_MEM_BASE &t;0
+DECL|macro|PMAC_PCI_DRAM_OFFSET
+mdefine_line|#define PMAC_PCI_DRAM_OFFSET &t;0
+DECL|macro|CHRP_ISA_IO_BASE
+mdefine_line|#define CHRP_ISA_IO_BASE &t;0xf8000000
+DECL|macro|CHRP_ISA_MEM_BASE
+mdefine_line|#define CHRP_ISA_MEM_BASE &t;0xf7000000
+DECL|macro|CHRP_PCI_DRAM_OFFSET
+mdefine_line|#define CHRP_PCI_DRAM_OFFSET &t;0
+DECL|macro|PREP_ISA_IO_BASE
+mdefine_line|#define PREP_ISA_IO_BASE &t;0x80000000
+DECL|macro|PREP_ISA_MEM_BASE
+mdefine_line|#define PREP_ISA_MEM_BASE &t;0xd0000000
+multiline_comment|/*#define PREP_ISA_MEM_BASE &t;0xc0000000*/
+DECL|macro|PREP_PCI_DRAM_OFFSET
+mdefine_line|#define PREP_PCI_DRAM_OFFSET &t;0x80000000
+macro_line|#if defined(CONFIG_MACH_SPECIFIC)
+macro_line|#ifdef CONFIG_PREP
+DECL|macro|_IO_BASE
+mdefine_line|#define _IO_BASE&t;PREP_ISA_IO_BASE
+DECL|macro|_ISA_MEM_BASE
+mdefine_line|#define _ISA_MEM_BASE&t;PREP_ISA_MEM_BASE
+DECL|macro|PCI_DRAM_OFFSET
+mdefine_line|#define PCI_DRAM_OFFSET PREP_PCI_DRAM_OFFSET
+macro_line|#endif /* CONFIG_PREP */
+macro_line|#ifdef CONFIG_CHRP
+DECL|macro|_IO_BASE
+mdefine_line|#define _IO_BASE&t;CHRP_ISA_IO_BASE
+DECL|macro|_ISA_MEM_BASE
+mdefine_line|#define _ISA_MEM_BASE&t;CHRP_ISA_MEM_BASE
+DECL|macro|PCI_DRAM_OFFSET
+mdefine_line|#define PCI_DRAM_OFFSET CHRP_PCI_DRAM_OFFSET
+macro_line|#endif /* CONFIG_CHRP */
+macro_line|#ifdef CONFIG_PMAC
+DECL|macro|_IO_BASE
+mdefine_line|#define _IO_BASE&t;PMAC_ISA_IO_BASE
+DECL|macro|_ISA_MEM_BASE
+mdefine_line|#define _ISA_MEM_BASE&t;PMAC_ISA_MEM_BASE
+DECL|macro|PCI_DRAM_OFFSET
+mdefine_line|#define PCI_DRAM_OFFSET PMAC_PCI_DRAM_OFFSET
+macro_line|#endif /* CONFIG_PMAC */
+macro_line|#else /* CONFIG_MACH_SPECIFIC */
 r_extern
 r_int
 r_int
-id|io_base
+id|isa_io_base
 suffix:semicolon
-DECL|macro|SLOW_DOWN_IO
-mdefine_line|#define SLOW_DOWN_IO
 DECL|macro|_IO_BASE
-mdefine_line|#define _IO_BASE io_base
+mdefine_line|#define _IO_BASE isa_io_base
+r_extern
+r_int
+r_int
+id|isa_mem_base
+suffix:semicolon
+DECL|macro|_ISA_MEM_BASE
+mdefine_line|#define _ISA_MEM_BASE isa_mem_base
+DECL|macro|PCI_DRAM_OFFSET
+macro_line|#undef PCI_DRAM_OFFSET
+DECL|macro|PCI_DRAM_OFFSET
+mdefine_line|#define PCI_DRAM_OFFSET  pci_dram_offset
 r_extern
 r_int
 r_int
 id|pci_dram_offset
 suffix:semicolon
-DECL|macro|PCI_DRAM_OFFSET
-macro_line|#undef PCI_DRAM_OFFSET
-DECL|macro|PCI_DRAM_OFFSET
-mdefine_line|#define PCI_DRAM_OFFSET  pci_dram_offset
+macro_line|#endif /* CONFIG_MACH_SPECIFIC */
 DECL|macro|readb
 mdefine_line|#define readb(addr) (*(volatile unsigned char *) (addr))
 DECL|macro|readw
@@ -204,6 +257,12 @@ r_int
 id|nl
 )paren
 suffix:semicolon
+DECL|macro|memset_io
+mdefine_line|#define memset_io(a,b,c)&t;memset((a),(b),(c))
+DECL|macro|memcpy_fromio
+mdefine_line|#define memcpy_fromio(a,b,c)&t;memcpy((a),(b),(c))
+DECL|macro|memcpy_toio
+mdefine_line|#define memcpy_toio(a,b,c)&t;memcpy((a),(b),(c))
 macro_line|#ifdef __KERNEL__
 multiline_comment|/*&n; * The PCI bus is inherently Little-Endian.  The PowerPC is being&n; * run Big-Endian.  Thus all values which cross the [PCI] barrier&n; * must be endian-adjusted.  Also, the local DRAM has a different&n; * address from the PCI point of view, thus buffer addresses also&n; * have to be modified [mapped] appropriately.&n; */
 DECL|function|virt_to_bus

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: string.h,v 1.32 1997/05/20 07:58:59 jj Exp $&n; * string.h: External definitions for optimized assembly string&n; *           routines for the Linux Kernel.&n; *&n; * Copyright (C) 1995,1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996,1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: string.h,v 1.33 1997/11/19 07:57:48 jj Exp $&n; * string.h: External definitions for optimized assembly string&n; *           routines for the Linux Kernel.&n; *&n; * Copyright (C) 1995,1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996,1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#ifndef __SPARC_STRING_H__
 DECL|macro|__SPARC_STRING_H__
 mdefine_line|#define __SPARC_STRING_H__
@@ -47,7 +47,7 @@ comma
 id|__kernel_size_t
 )paren
 suffix:semicolon
-macro_line|#ifndef EXPORT_SYMTAB
+macro_line|#ifndef EXPORT_SYMTAB_STROPS
 multiline_comment|/* First the mem*() things. */
 DECL|macro|__HAVE_ARCH_BCOPY
 mdefine_line|#define __HAVE_ARCH_BCOPY
@@ -918,7 +918,7 @@ DECL|macro|strncmp
 macro_line|#undef strncmp
 DECL|macro|strncmp
 mdefine_line|#define strncmp(__arg0, __arg1, __arg2)&t;&bslash;&n;(__builtin_constant_p(__arg2) ?&t;&bslash;&n; __constant_strncmp(__arg0, __arg1, __arg2) : &bslash;&n; __strncmp(__arg0, __arg1, __arg2))
-macro_line|#endif /* EXPORT_SYMTAB */
+macro_line|#endif /* !EXPORT_SYMTAB_STROPS */
 macro_line|#endif /* __KERNEL__ */
 macro_line|#endif /* !(__SPARC_STRING_H__) */
 eof

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;IPv4 Forwarding Information Base: FIB frontend.&n; *&n; * Version:&t;$Id: fib_frontend.c,v 1.4 1997/11/09 20:05:23 kuznet Exp $&n; *&n; * Authors:&t;Alexey Kuznetsov, &lt;kuznet@ms2.inr.ac.ru&gt;&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;IPv4 Forwarding Information Base: FIB frontend.&n; *&n; * Version:&t;$Id: fib_frontend.c,v 1.6 1997/12/13 21:52:48 kuznet Exp $&n; *&n; * Authors:&t;Alexey Kuznetsov, &lt;kuznet@ms2.inr.ac.ru&gt;&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -2091,6 +2091,8 @@ c_func
 id|ifa-&gt;ifa_local
 comma
 l_int|NULL
+comma
+l_int|0
 )paren
 )paren
 id|fib_flush
@@ -2291,6 +2293,8 @@ c_func
 l_int|0
 comma
 id|dev
+comma
+l_int|0
 )paren
 )paren
 id|fib_flush
@@ -2302,6 +2306,12 @@ id|rt_cache_flush
 c_func
 (paren
 l_int|0
+)paren
+suffix:semicolon
+id|arp_ifdown
+c_func
+(paren
+id|dev
 )paren
 suffix:semicolon
 r_break
@@ -2320,10 +2330,34 @@ c_func
 l_string|&quot;About to crash!&bslash;n&quot;
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|fib_sync_down
+c_func
+(paren
+l_int|0
+comma
+id|dev
+comma
+l_int|1
+)paren
+)paren
+id|fib_flush
+c_func
+(paren
+)paren
+suffix:semicolon
 id|rt_cache_flush
 c_func
 (paren
 l_int|0
+)paren
+suffix:semicolon
+id|arp_ifdown
+c_func
+(paren
+id|dev
 )paren
 suffix:semicolon
 r_break

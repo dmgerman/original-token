@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: irq.h,v 1.6 1997/08/07 08:06:40 davem Exp $&n; * irq.h: IRQ registers on the 64-bit Sparc.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: irq.h,v 1.7 1997/09/07 02:56:44 davem Exp $&n; * irq.h: IRQ registers on the 64-bit Sparc.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _SPARC64_IRQ_H
 DECL|macro|_SPARC64_IRQ_H
 mdefine_line|#define _SPARC64_IRQ_H
@@ -172,6 +172,10 @@ id|__const__
 r_char
 op_star
 id|devname
+comma
+r_void
+op_star
+id|dev_id
 )paren
 suffix:semicolon
 DECL|function|set_softint

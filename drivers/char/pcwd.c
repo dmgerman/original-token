@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * PC Watchdog Driver&n; * by Ken Hollis (khollis@bitgate.com)&n; *&n; * Permission granted from Simon Machell (73244.1270@compuserve.com)&n; * Written for the Linux Kernel, and GPLed by Ken Hollis&n; *&n; * 960107&t;Added request_region routines, modulized the whole thing.&n; * 960108&t;Fixed end-of-file pointer (Thanks to Dan Hollis), added&n; *&t;&t;WD_TIMEOUT define.&n; * 960216&t;Added eof marker on the file, and changed verbose messages.&n; * 960716&t;Made functional and cosmetic changes to the source for&n; *&t;&t;inclusion in Linux 2.0.x kernels, thanks to Alan Cox.&n; * 960717&t;Removed read/seek routines, replaced with ioctl.  Also, added&n; *&t;&t;check_region command due to Alan&squot;s suggestion.&n; * 960821&t;Made changes to compile in newer 2.0.x kernels.  Added&n; *&t;&t;&quot;cold reboot sense&quot; entry.&n; * 960825&t;Made a few changes to code, deleted some defines and made&n; *&t;&t;typedefs to replace them.  Made heartbeat reset only available&n; *&t;&t;via ioctl, and removed the write routine.&n; * 960828&t;Added new items for PC Watchdog Rev.C card.&n; * 960829&t;Changed around all of the IOCTLs, added new features,&n; *&t;&t;added watchdog disable/re-enable routines.  Added firmware&n; *&t;&t;version reporting.  Added read routine for temperature.&n; *&t;&t;Removed some extra defines, added an autodetect Revision&n; *&t;&t;routine.&n; * 961006       Revised some documentation, fixed some cosmetic bugs.  Made&n; *              drivers to panic the system if it&squot;s overheating at bootup.&n; * 961118&t;Changed some verbiage on some of the output, tidied up&n; *&t;&t;code bits, and added compatibility to 2.1.x.&n; * 970912       Enabled board on open and disable on close.&n; * 971107&t;Took account of recent VFS changes (broke read).&n; * 971210       Disable board on initialisation in case board already ticking.&n; * 971222       Changed open/close for temperature handling&n; *              Michael Meskes &lt;meskes@debian.org&gt;.&n; */
+multiline_comment|/*&n; * PC Watchdog Driver&n; * by Ken Hollis (khollis@bitgate.com)&n; *&n; * Permission granted from Simon Machell (73244.1270@compuserve.com)&n; * Written for the Linux Kernel, and GPLed by Ken Hollis&n; *&n; * 960107&t;Added request_region routines, modulized the whole thing.&n; * 960108&t;Fixed end-of-file pointer (Thanks to Dan Hollis), added&n; *&t;&t;WD_TIMEOUT define.&n; * 960216&t;Added eof marker on the file, and changed verbose messages.&n; * 960716&t;Made functional and cosmetic changes to the source for&n; *&t;&t;inclusion in Linux 2.0.x kernels, thanks to Alan Cox.&n; * 960717&t;Removed read/seek routines, replaced with ioctl.  Also, added&n; *&t;&t;check_region command due to Alan&squot;s suggestion.&n; * 960821&t;Made changes to compile in newer 2.0.x kernels.  Added&n; *&t;&t;&quot;cold reboot sense&quot; entry.&n; * 960825&t;Made a few changes to code, deleted some defines and made&n; *&t;&t;typedefs to replace them.  Made heartbeat reset only available&n; *&t;&t;via ioctl, and removed the write routine.&n; * 960828&t;Added new items for PC Watchdog Rev.C card.&n; * 960829&t;Changed around all of the IOCTLs, added new features,&n; *&t;&t;added watchdog disable/re-enable routines.  Added firmware&n; *&t;&t;version reporting.  Added read routine for temperature.&n; *&t;&t;Removed some extra defines, added an autodetect Revision&n; *&t;&t;routine.&n; * 961006       Revised some documentation, fixed some cosmetic bugs.  Made&n; *              drivers to panic the system if it&squot;s overheating at bootup.&n; * 961118&t;Changed some verbiage on some of the output, tidied up&n; *&t;&t;code bits, and added compatibility to 2.1.x.&n; * 970912       Enabled board on open and disable on close.&n; * 971107&t;Took account of recent VFS changes (broke read).&n; * 971210       Disable board on initialisation in case board already ticking.&n; * 971222       Changed open/close for temperature handling&n; *              Michael Meskes &lt;meskes@debian.org&gt;.&n; * 980112       Used minor numbers from include/linux/miscdevice.h&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -39,12 +39,6 @@ l_int|0x000
 suffix:semicolon
 DECL|macro|WD_VER
 mdefine_line|#define WD_VER                  &quot;1.0 (11/18/96)&quot;
-DECL|macro|WD_MINOR
-mdefine_line|#define&t;WD_MINOR&t;&t;130&t;/* Minor device number */
-macro_line|#ifndef&t;TEMP_MINOR
-DECL|macro|TEMP_MINOR
-mdefine_line|#define&t;TEMP_MINOR&t;&t;131&t;/* Uses the same as WDT */
-macro_line|#endif
 multiline_comment|/*&n; * It should be noted that PCWD_REVISION_B was removed because A and B&n; * are essentially the same types of card, with the exception that B&n; * has temperature reporting.  Since I didn&squot;t receive a Rev.B card,&n; * the Rev.B card is not supported.  (It&squot;s a good thing too, as they&n; * are no longer in production.)&n; */
 DECL|macro|PCWD_REVISION_A
 mdefine_line|#define&t;PCWD_REVISION_A&t;&t;1
@@ -1189,7 +1183,7 @@ id|ino-&gt;i_rdev
 )paren
 (brace
 r_case
-id|WD_MINOR
+id|WATCHDOG_MINOR
 suffix:colon
 r_if
 c_cond
@@ -1380,7 +1374,7 @@ c_func
 id|ino-&gt;i_rdev
 )paren
 op_eq
-id|WD_MINOR
+id|WATCHDOG_MINOR
 )paren
 (brace
 id|is_open
@@ -1822,9 +1816,9 @@ id|miscdevice
 id|pcwd_miscdev
 op_assign
 (brace
-id|WD_MINOR
+id|WATCHDOG_MINOR
 comma
-l_string|&quot;pcwatchdog&quot;
+l_string|&quot;watchdog&quot;
 comma
 op_amp
 id|pcwd_fops

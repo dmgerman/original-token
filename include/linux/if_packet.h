@@ -78,9 +78,11 @@ mdefine_line|#define PACKET_MULTICAST&t;2&t;&t;/* To group&t;&t;*/
 DECL|macro|PACKET_OTHERHOST
 mdefine_line|#define PACKET_OTHERHOST&t;3&t;&t;/* To someone else &t;*/
 DECL|macro|PACKET_OUTGOING
-mdefine_line|#define PACKET_OUTGOING&t;&t;4&t;&t;/* Originated by us&t;*/&t;
-DECL|macro|PACKET_NDISC
-mdefine_line|#define PACKET_NDISC&t;&t;17&t;&t;/* Outgoing NDISC packet*/
+mdefine_line|#define PACKET_OUTGOING&t;&t;4&t;&t;/* Originated by us&t;*/
+DECL|macro|PACKET_LOOPBACK
+mdefine_line|#define PACKET_LOOPBACK&t;&t;5
+DECL|macro|PACKET_FASTROUTE
+mdefine_line|#define PACKET_FASTROUTE&t;6
 multiline_comment|/* Packet socket options */
 DECL|macro|PACKET_ADD_MEMBERSHIP
 mdefine_line|#define PACKET_ADD_MEMBERSHIP&t;&t;1

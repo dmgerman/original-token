@@ -282,14 +282,18 @@ r_return
 suffix:semicolon
 )brace
 multiline_comment|/* Build a name defence packet */
+id|nskb-&gt;dev
+op_assign
+id|dev
+suffix:semicolon
+id|nskb-&gt;priority
+op_assign
+id|TC_PRIO_CONTROL
+suffix:semicolon
 id|dev_queue_xmit
 c_func
 (paren
 id|nskb
-comma
-id|dev
-comma
-id|SOPRI_INTERACTIVE
 )paren
 suffix:semicolon
 )brace
@@ -589,14 +593,18 @@ l_int|NULL
 )paren
 (brace
 multiline_comment|/* Build a name reply packet */
+id|nskb-&gt;dev
+op_assign
+id|dev
+suffix:semicolon
+id|nskb-&gt;priority
+op_assign
+id|TC_PRIO_CONTROL
+suffix:semicolon
 id|dev_queue_xmit
 c_func
 (paren
 id|nskb
-comma
-id|dev
-comma
-id|SOPRI_INTERACTIVE
 )paren
 suffix:semicolon
 )brace

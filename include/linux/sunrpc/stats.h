@@ -100,6 +100,19 @@ c_func
 r_void
 )paren
 suffix:semicolon
+macro_line|#ifdef MODULE
+r_void
+id|rpc_modcount
+c_func
+(paren
+r_struct
+id|inode
+op_star
+comma
+r_int
+)paren
+suffix:semicolon
+macro_line|#endif
 r_struct
 id|proc_dir_entry
 op_star

@@ -1,6 +1,5 @@
 multiline_comment|/*&n; * Code common to all LCA chips.&n; *&n; * Written by David Mosberger (davidm@cs.arizona.edu) with some code&n; * taken from Dave Rusling&squot;s (david.rusling@reo.mts.dec.com) 32-bit&n; * bios code.&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/bios32.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
@@ -8,9 +7,10 @@ macro_line|#include &lt;asm/ptrace.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 multiline_comment|/*&n; * BIOS32-style PCI interface:&n; */
-macro_line|#ifdef CONFIG_ALPHA_LCA
 DECL|macro|vulp
 mdefine_line|#define vulp&t;volatile unsigned long *
+DECL|macro|vuip
+mdefine_line|#define vuip&t;volatile unsigned int *
 multiline_comment|/*&n; * Machine check reasons.  Defined according to PALcode sources&n; * (osf.h and platform.h).&n; */
 DECL|macro|MCHK_K_TPERR
 mdefine_line|#define MCHK_K_TPERR&t;&t;0x0080
@@ -109,10 +109,7 @@ suffix:semicolon
 op_star
 (paren
 (paren
-r_volatile
-r_int
-r_int
-op_star
+id|vulp
 )paren
 id|LCA_IOC_CONF
 )paren
@@ -146,10 +143,7 @@ multiline_comment|/* type 1 configuration cycle: */
 op_star
 (paren
 (paren
-r_volatile
-r_int
-r_int
-op_star
+id|vulp
 )paren
 id|LCA_IOC_CONF
 )paren
@@ -222,25 +216,15 @@ id|stat0
 op_assign
 op_star
 (paren
-(paren
-r_volatile
-r_int
-r_int
-op_star
+id|vulp
 )paren
 id|LCA_IOC_STAT0
-)paren
 suffix:semicolon
 op_star
 (paren
-(paren
-r_volatile
-r_int
-r_int
-op_star
+id|vulp
 )paren
 id|LCA_IOC_STAT0
-)paren
 op_assign
 id|stat0
 suffix:semicolon
@@ -254,14 +238,9 @@ id|value
 op_assign
 op_star
 (paren
-(paren
-r_volatile
-r_int
-r_int
-op_star
+id|vuip
 )paren
 id|addr
-)paren
 suffix:semicolon
 id|draina
 c_func
@@ -320,14 +299,9 @@ suffix:semicolon
 multiline_comment|/* reset error status: */
 op_star
 (paren
-(paren
-r_volatile
-r_int
-r_int
-op_star
+id|vulp
 )paren
 id|LCA_IOC_STAT0
-)paren
 op_assign
 id|stat0
 suffix:semicolon
@@ -398,25 +372,15 @@ id|stat0
 op_assign
 op_star
 (paren
-(paren
-r_volatile
-r_int
-r_int
-op_star
+id|vulp
 )paren
 id|LCA_IOC_STAT0
-)paren
 suffix:semicolon
 op_star
 (paren
-(paren
-r_volatile
-r_int
-r_int
-op_star
+id|vulp
 )paren
 id|LCA_IOC_STAT0
-)paren
 op_assign
 id|stat0
 suffix:semicolon
@@ -428,14 +392,9 @@ suffix:semicolon
 multiline_comment|/* access configuration space: */
 op_star
 (paren
-(paren
-r_volatile
-r_int
-r_int
-op_star
+id|vuip
 )paren
 id|addr
-)paren
 op_assign
 id|value
 suffix:semicolon
@@ -496,14 +455,9 @@ suffix:semicolon
 multiline_comment|/* reset error status: */
 op_star
 (paren
-(paren
-r_volatile
-r_int
-r_int
-op_star
+id|vulp
 )paren
 id|LCA_IOC_STAT0
-)paren
 op_assign
 id|stat0
 suffix:semicolon
@@ -1196,6 +1150,8 @@ c_func
 (paren
 l_string|&quot;    %s %s error to %s occurred at address %x&bslash;n&quot;
 comma
+op_star
+(paren
 (paren
 id|esr
 op_amp
@@ -1205,7 +1161,6 @@ ques
 c_cond
 l_string|&quot;Correctable&quot;
 suffix:colon
-(paren
 (paren
 id|esr
 op_amp
@@ -1322,9 +1277,11 @@ id|__u32
 id|stat1
 )paren
 (brace
+r_static
 r_const
 r_char
 op_star
+r_const
 id|pci_cmd
 (braket
 )braket
@@ -1363,9 +1320,11 @@ comma
 l_string|&quot;Memory Write and Invalidate&quot;
 )brace
 suffix:semicolon
+r_static
 r_const
 r_char
 op_star
+r_const
 id|err_name
 (braket
 )braket
@@ -1413,7 +1372,8 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;    %s initiated PCI %s cycle to address %x failed due to %s.&bslash;n&quot;
+l_string|&quot;    %s initiated PCI %s cycle to address %x&quot;
+l_string|&quot; failed due to %s.&bslash;n&quot;
 comma
 id|code
 OG
@@ -1923,5 +1883,145 @@ l_int|1
 suffix:semicolon
 )brace
 )brace
-macro_line|#endif /* CONFIG_ALPHA_LCA */
+multiline_comment|/*&n; * The following routines are needed to support the SPEED changing&n; * necessary to successfully manage the thermal problem on the AlphaBook1.&n; */
+r_void
+DECL|function|lca_clock_print
+id|lca_clock_print
+c_func
+(paren
+r_void
+)paren
+(brace
+r_int
+id|pmr_reg
+suffix:semicolon
+id|pmr_reg
+op_assign
+id|READ_PMR
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;Status of clock control:&bslash;n&quot;
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;&bslash;tPrimary clock divisor&bslash;t0x%x&bslash;n&quot;
+comma
+id|GET_PRIMARY
+c_func
+(paren
+id|pmr_reg
+)paren
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;&bslash;tOverride clock divisor&bslash;t0x%x&bslash;n&quot;
+comma
+id|GET_OVERRIDE
+c_func
+(paren
+id|pmr_reg
+)paren
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;&bslash;tInterrupt override is %s&bslash;n&quot;
+comma
+(paren
+id|pmr_reg
+op_amp
+id|LCA_PMR_INTO
+)paren
+ques
+c_cond
+l_string|&quot;on&quot;
+suffix:colon
+l_string|&quot;off&quot;
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;&bslash;tDMA override is %s&bslash;n&quot;
+comma
+(paren
+id|pmr_reg
+op_amp
+id|LCA_PMR_DMAO
+)paren
+ques
+c_cond
+l_string|&quot;on&quot;
+suffix:colon
+l_string|&quot;off&quot;
+)paren
+suffix:semicolon
+)brace
+r_int
+DECL|function|lca_get_clock
+id|lca_get_clock
+c_func
+(paren
+r_void
+)paren
+(brace
+r_int
+id|pmr_reg
+suffix:semicolon
+id|pmr_reg
+op_assign
+id|READ_PMR
+suffix:semicolon
+r_return
+id|GET_PRIMARY
+c_func
+(paren
+id|pmr_reg
+)paren
+suffix:semicolon
+)brace
+r_void
+DECL|function|lca_clock_fiddle
+id|lca_clock_fiddle
+c_func
+(paren
+r_int
+id|divisor
+)paren
+(brace
+r_int
+id|pmr_reg
+suffix:semicolon
+id|pmr_reg
+op_assign
+id|READ_PMR
+suffix:semicolon
+id|SET_PRIMARY_CLOCK
+c_func
+(paren
+id|pmr_reg
+comma
+id|divisor
+)paren
+suffix:semicolon
+multiline_comment|/* lca_norm_clock = divisor; */
+id|WRITE_PMR
+c_func
+(paren
+id|pmr_reg
+)paren
+suffix:semicolon
+id|mb
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
 eof

@@ -7,6 +7,11 @@ macro_line|#include &lt;linux/if.h&gt;
 macro_line|#include &lt;linux/if_ether.h&gt;
 macro_line|#include &lt;linux/if_packet.h&gt;
 macro_line|#include &lt;asm/atomic.h&gt;
+macro_line|#ifdef __KERNEL__
+macro_line|#ifdef CONFIG_NET_PROFILE
+macro_line|#include &lt;net/profile.h&gt;
+macro_line|#endif
+macro_line|#endif
 multiline_comment|/*&n; *&t;For future expansion when we will have different priorities. &n; */
 DECL|macro|MAX_ADDR_LEN
 mdefine_line|#define MAX_ADDR_LEN&t;7&t;&t;/* Largest hardware address length */
@@ -33,6 +38,9 @@ macro_line|#endif
 r_struct
 id|neighbour
 suffix:semicolon
+r_struct
+id|sk_buff
+suffix:semicolon
 multiline_comment|/*&n; *&t;We tag multicasts with these structures.&n; */
 DECL|struct|dev_mc_list
 r_struct
@@ -45,7 +53,7 @@ op_star
 id|next
 suffix:semicolon
 DECL|member|dmi_addr
-r_char
+id|__u8
 id|dmi_addr
 (braket
 id|MAX_ADDR_LEN
@@ -53,13 +61,16 @@ id|MAX_ADDR_LEN
 suffix:semicolon
 DECL|member|dmi_addrlen
 r_int
-r_int
+r_char
 id|dmi_addrlen
 suffix:semicolon
 DECL|member|dmi_users
 r_int
-r_int
 id|dmi_users
+suffix:semicolon
+DECL|member|dmi_gusers
+r_int
+id|dmi_gusers
 suffix:semicolon
 )brace
 suffix:semicolon
@@ -85,11 +96,19 @@ r_int
 id|hh_type
 suffix:semicolon
 multiline_comment|/* protocol identifier, f.e ETH_P_IP */
-DECL|member|hh_uptodate
-r_char
-id|hh_uptodate
+DECL|member|hh_output
+r_int
+(paren
+op_star
+id|hh_output
+)paren
+(paren
+r_struct
+id|sk_buff
+op_star
+id|skb
+)paren
 suffix:semicolon
-multiline_comment|/* hh_data is valid                  */
 multiline_comment|/* cached hardware header; allow for machine alignment needs.        */
 DECL|member|hh_data
 r_int
@@ -235,6 +254,30 @@ id|tx_window_errors
 suffix:semicolon
 )brace
 suffix:semicolon
+macro_line|#ifdef CONFIG_NET_FASTROUTE
+DECL|struct|net_fastroute_stats
+r_struct
+id|net_fastroute_stats
+(brace
+DECL|member|hits
+r_int
+id|hits
+suffix:semicolon
+DECL|member|succeed
+r_int
+id|succeed
+suffix:semicolon
+DECL|member|deferred
+r_int
+id|deferred
+suffix:semicolon
+DECL|member|latency_reduction
+r_int
+id|latency_reduction
+suffix:semicolon
+)brace
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/* Media selection options. */
 r_enum
 (brace
@@ -752,11 +795,6 @@ id|hard_header_cache
 )paren
 (paren
 r_struct
-id|dst_entry
-op_star
-id|dst
-comma
-r_struct
 id|neighbour
 op_star
 id|neigh
@@ -826,6 +864,56 @@ op_star
 id|haddr
 )paren
 suffix:semicolon
+DECL|member|neigh_setup
+r_int
+(paren
+op_star
+id|neigh_setup
+)paren
+(paren
+r_struct
+id|neighbour
+op_star
+id|n
+)paren
+suffix:semicolon
+DECL|member|accept_fastpath
+r_int
+(paren
+op_star
+id|accept_fastpath
+)paren
+(paren
+r_struct
+id|device
+op_star
+comma
+r_struct
+id|dst_entry
+op_star
+)paren
+suffix:semicolon
+macro_line|#ifdef CONFIG_NET_FASTROUTE
+multiline_comment|/* Really, this semaphore may be necessary and for not fastroute code;&n;&t;   f.e. SMP??&n;&t; */
+DECL|member|tx_semaphore
+r_int
+id|tx_semaphore
+suffix:semicolon
+DECL|macro|NETDEV_FASTROUTE_HMASK
+mdefine_line|#define NETDEV_FASTROUTE_HMASK 0xF
+multiline_comment|/* Semi-private data. Keep it at the end of device struct. */
+DECL|member|fastpath
+r_struct
+id|dst_entry
+op_star
+id|fastpath
+(braket
+id|NETDEV_FASTROUTE_HMASK
+op_plus
+l_int|1
+)braket
+suffix:semicolon
+macro_line|#endif
 )brace
 suffix:semicolon
 DECL|struct|packet_type
@@ -1164,17 +1252,6 @@ r_void
 )paren
 suffix:semicolon
 r_extern
-r_void
-id|dev_tint
-c_func
-(paren
-r_struct
-id|device
-op_star
-id|dev
-)paren
-suffix:semicolon
-r_extern
 r_int
 id|dev_get_info
 c_func
@@ -1460,7 +1537,7 @@ id|dev
 )paren
 suffix:semicolon
 r_extern
-r_void
+r_int
 id|dev_mc_delete
 c_func
 (paren
@@ -1481,7 +1558,7 @@ id|all
 )paren
 suffix:semicolon
 r_extern
-r_void
+r_int
 id|dev_mc_add
 c_func
 (paren
@@ -1552,6 +1629,89 @@ op_star
 id|name
 )paren
 suffix:semicolon
+r_extern
+r_void
+id|dev_mcast_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|netdev_register_fc
+c_func
+(paren
+r_struct
+id|device
+op_star
+id|dev
+comma
+r_void
+(paren
+op_star
+id|stimul
+)paren
+(paren
+r_struct
+id|device
+op_star
+id|dev
+)paren
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|netdev_unregister_fc
+c_func
+(paren
+r_int
+id|bit
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|netdev_dropping
+suffix:semicolon
+r_extern
+r_int
+id|netdev_max_backlog
+suffix:semicolon
+r_extern
+id|atomic_t
+id|netdev_rx_dropped
+suffix:semicolon
+r_extern
+r_int
+r_int
+id|netdev_fc_xoff
+suffix:semicolon
+macro_line|#ifdef CONFIG_NET_FASTROUTE
+r_extern
+r_int
+id|netdev_fastroute
+suffix:semicolon
+r_extern
+r_int
+id|netdev_fastroute_obstacles
+suffix:semicolon
+r_extern
+r_void
+id|dev_clear_fastroute
+c_func
+(paren
+r_struct
+id|device
+op_star
+id|dev
+)paren
+suffix:semicolon
+r_extern
+r_struct
+id|net_fastroute_stats
+id|dev_fastroute_stat
+suffix:semicolon
+macro_line|#endif
 macro_line|#endif /* __KERNEL__ */
 macro_line|#endif&t;/* _LINUX_DEV_H */
 eof

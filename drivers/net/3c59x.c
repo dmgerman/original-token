@@ -6,7 +6,7 @@ r_char
 op_star
 id|version
 op_assign
-l_string|&quot;3c59x.c:v0.46B 9/25/97 Donald Becker http://cesdis.gsfc.nasa.gov/linux/drivers/vortex.html&bslash;n&quot;
+l_string|&quot;3c59x.c:v0.47H 12/4/97 Donald Becker http://cesdis.gsfc.nasa.gov/linux/drivers/vortex.html&bslash;n&quot;
 suffix:semicolon
 multiline_comment|/* &quot;Knobs&quot; that adjust features and parameters. */
 multiline_comment|/* Set the copy breakpoint for the copy-only-tiny-frames scheme.&n;   Setting to &gt; 1512 effectively disables this feature. */
@@ -99,11 +99,13 @@ DECL|macro|virt_to_bus
 mdefine_line|#define virt_to_bus(addr)  ((unsigned long)addr)
 DECL|macro|bus_to_virt
 mdefine_line|#define bus_to_virt(addr) ((void*)addr)
+DECL|macro|NR_IRQS
+mdefine_line|#define NR_IRQS 16
 macro_line|#else  /* 1.3.0 and later */
 DECL|macro|RUN_AT
 mdefine_line|#define RUN_AT(x) (jiffies + (x))
 DECL|macro|DEV_ALLOC_SKB
-mdefine_line|#define DEV_ALLOC_SKB(len) dev_alloc_skb(len + 2)
+mdefine_line|#define DEV_ALLOC_SKB(len) dev_alloc_skb(len)
 macro_line|#endif
 macro_line|#ifdef SA_SHIRQ
 DECL|macro|FREE_IRQ
@@ -128,9 +130,98 @@ macro_line|#else
 DECL|macro|udelay
 mdefine_line|#define udelay(microsec)&t;do { int _i = 4*microsec; while (--_i &gt; 0) { __SLOW_DOWN_IO; }} while (0)
 macro_line|#endif
-macro_line|#if (LINUX_VERSION_CODE &lt; 0x20123)
+macro_line|#if LINUX_VERSION_CODE &lt; 0x20115
 DECL|macro|test_and_set_bit
 mdefine_line|#define test_and_set_bit(val, addr) set_bit(val, addr)
+macro_line|#elif defined(MODULE)
+id|MODULE_AUTHOR
+c_func
+(paren
+l_string|&quot;Donald Becker &lt;becker@cesdis.gsfc.nasa.gov&gt;&quot;
+)paren
+suffix:semicolon
+id|MODULE_DESCRIPTION
+c_func
+(paren
+l_string|&quot;3Com 3c590/3c900 series Vortex/Boomerang driver&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|debug
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|options
+comma
+l_string|&quot;1-&quot;
+id|__MODULE_STRING
+c_func
+(paren
+l_int|8
+)paren
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|full_duplex
+comma
+l_string|&quot;1-&quot;
+id|__MODULE_STRING
+c_func
+(paren
+l_int|8
+)paren
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|rx_copybreak
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|max_interrupt_work
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|compaq_ioaddr
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|compaq_irq
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|compaq_prod_id
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
 macro_line|#endif
 multiline_comment|/* &quot;Knobs&quot; for adjusting internal parameters. */
 multiline_comment|/* Put out somewhat more debugging messages. (0 - no msg, 1 minimal msgs). */
@@ -228,6 +319,8 @@ l_int|0x9050
 comma
 l_int|0x9051
 comma
+l_int|0x9055
+comma
 l_int|0
 comma
 l_int|0
@@ -259,6 +352,8 @@ l_string|&quot;3c905 Boomerang 100baseTx&quot;
 comma
 l_string|&quot;3c905 Boomerang 100baseT4&quot;
 comma
+l_string|&quot;3c905B Cyclone 100baseTx&quot;
+comma
 l_string|&quot;3c592 EISA 10mbps Demon/Vortex&quot;
 comma
 l_string|&quot;3c597 EISA Fast Demon/Vortex&quot;
@@ -266,9 +361,9 @@ comma
 )brace
 suffix:semicolon
 DECL|macro|DEMON10_INDEX
-mdefine_line|#define DEMON10_INDEX 8
+mdefine_line|#define DEMON10_INDEX 9
 DECL|macro|DEMON100_INDEX
-mdefine_line|#define DEMON100_INDEX 9
+mdefine_line|#define DEMON100_INDEX 10
 multiline_comment|/*&n;&t;&t;&t;&t;Theory of Operation&n;&n;I. Board Compatibility&n;&n;This device driver is designed for the 3Com FastEtherLink and FastEtherLink&n;XL, 3Com&squot;s PCI to 10/100baseT adapters.  It also works with the 10Mbs&n;versions of the FastEtherLink cards.  The supported product IDs are&n;  3c590, 3c592, 3c595, 3c597, 3c900, 3c905&n;&n;The ISA 3c515 is supported with a seperate driver, 3c515.c, included with&n;the kernel source or available from&n;    cesdis.gsfc.nasa.gov:/pub/linux/drivers/3c515.html&n;&n;II. Board-specific settings&n;&n;PCI bus devices are configured by the system at boot time, so no jumpers&n;need to be set on the board.  The system BIOS should be set to assign the&n;PCI INTA signal to an otherwise unused system IRQ line.  While it&squot;s&n;physically possible to shared PCI interrupt lines, the 1.2.0 kernel doesn&squot;t&n;support it.&n;&n;III. Driver operation&n;&n;The 3c59x series use an interface that&squot;s very similar to the previous 3c5x9&n;series.  The primary interface is two programmed-I/O FIFOs, with an&n;alternate single-contiguous-region bus-master transfer (see next).&n;&n;The 3c900 &quot;Boomerang&quot; series uses a full-bus-master interface with seperate&n;lists of transmit and receive descriptors, similar to the AMD LANCE/PCnet,&n;DEC Tulip and Intel Speedo3.  The first chip version retains a compatible&n;programmed-I/O interface that will be removed in the &squot;B&squot; and subsequent&n;revisions.&n;&n;One extension that is advertised in a very large font is that the adapters&n;are capable of being bus masters.  On the Vortex chip this capability was&n;only for a single contiguous region making it far less useful than the full&n;bus master capability.  There is a significant performance impact of taking&n;an extra interrupt or polling for the completion of each transfer, as well&n;as difficulty sharing the single transfer engine between the transmit and&n;receive threads.  Using DMA transfers is a win only with large blocks or&n;with the flawed versions of the Intel Orion motherboard PCI controller.&n;&n;The Boomerang chip&squot;s full-bus-master interface is useful, and has the&n;currently-unused advantages over other similar chips that queued transmit&n;packets may be reordered and receive buffer groups are associated with a&n;single frame.&n;&n;With full-bus-master support, this driver uses a &quot;RX_COPYBREAK&quot; scheme.&n;Tather than a fixed intermediate receive buffer, this scheme allocates&n;full-sized skbuffs as receive buffers.  The value RX_COPYBREAK is used as&n;the copying breakpoint: it is chosen to trade-off the memory wasted by&n;passing the full-sized skbuff to the queue layer for all frames vs. the&n;copying cost of copying a frame to a correctly-sized skbuff.&n;&n;&n;IIIC. Synchronization&n;The driver runs as two independent, single-threaded flows of control.  One&n;is the send-packet routine, which enforces single-threaded use by the&n;dev-&gt;tbusy flag.  The other thread is the interrupt handler, which is single&n;threaded by the hardware and other software.&n;&n;IV. Notes&n;&n;Thanks to Cameron Spitzer and Terry Murphy of 3Com for providing development&n;3c590, 3c595, and 3c900 boards.&n;The name &quot;Vortex&quot; is the internal 3Com project name for the PCI ASIC, and&n;the EISA version is called &quot;Demon&quot;.  According to Terry these names come&n;from rides at the local amusement park.&n;&n;The new chips support both ethernet (1.5K) and FDDI (4.5K) packet sizes!&n;This driver only supports ethernet packets because of the skbuff allocation&n;limit of 4K.&n;*/
 DECL|macro|TCOM_VENDOR_ID
 mdefine_line|#define TCOM_VENDOR_ID&t;0x10B7&t;&t;/* 3Com&squot;s manufacturer&squot;s ID. */
@@ -1513,8 +1608,10 @@ comma
 r_int
 id|irq
 comma
-r_int
-id|product_index
+r_const
+r_char
+op_star
+id|product_name
 comma
 r_int
 id|options
@@ -1848,10 +1945,10 @@ id|root_vortex_dev
 op_assign
 l_int|NULL
 suffix:semicolon
+macro_line|#ifdef MODULE
 multiline_comment|/* Variables to work-around the Compaq PCI BIOS32 problem. */
 DECL|variable|compaq_ioaddr
 DECL|variable|compaq_irq
-DECL|variable|compaq_prod_id
 r_static
 r_int
 id|compaq_ioaddr
@@ -1861,12 +1958,7 @@ comma
 id|compaq_irq
 op_assign
 l_int|0
-comma
-id|compaq_prod_id
-op_assign
-l_int|0
 suffix:semicolon
-macro_line|#ifdef MODULE
 DECL|variable|debug
 r_static
 r_int
@@ -1998,6 +2090,11 @@ id|cards_found
 op_assign
 l_int|0
 suffix:semicolon
+r_const
+r_char
+op_star
+id|product_name
+suffix:semicolon
 macro_line|#ifndef NO_PCI&t;&t;&t;&t;&t;/* Allow an EISA-only driver. */
 multiline_comment|/* Ideally we would detect all cards in slot order.  That would&n;&t;   be best done a central PCI probe dispatch, which wouldn&squot;t work&n;&t;   well with the current structure.  So instead we detect 3Com cards&n;&t;   in slot order. */
 r_if
@@ -2042,6 +2139,8 @@ suffix:semicolon
 r_int
 r_int
 id|pci_command
+comma
+id|new_command
 comma
 id|vendor
 comma
@@ -2130,6 +2229,19 @@ op_amp
 id|pci_ioaddr
 )paren
 suffix:semicolon
+id|pcibios_read_config_word
+c_func
+(paren
+id|pci_bus
+comma
+id|pci_device_fn
+comma
+id|PCI_COMMAND
+comma
+op_amp
+id|pci_command
+)paren
+suffix:semicolon
 multiline_comment|/* Remove I/O space marker in bit 0. */
 id|pci_ioaddr
 op_and_assign
@@ -2181,9 +2293,47 @@ id|product_ids
 (braket
 id|board_index
 )braket
-op_eq
-l_int|0
 )paren
+id|product_name
+op_assign
+id|product_names
+(braket
+id|board_index
+)braket
+suffix:semicolon
+r_else
+r_if
+c_cond
+(paren
+(paren
+id|device
+op_amp
+l_int|0xfff0
+)paren
+op_eq
+l_int|0x9000
+)paren
+id|product_name
+op_assign
+l_string|&quot;3c900&quot;
+suffix:semicolon
+r_else
+r_if
+c_cond
+(paren
+(paren
+id|device
+op_amp
+l_int|0xfff0
+)paren
+op_eq
+l_int|0x9050
+)paren
+id|product_name
+op_assign
+l_string|&quot;3c905&quot;
+suffix:semicolon
+r_else
 (brace
 id|printk
 c_func
@@ -2210,6 +2360,47 @@ id|VORTEX_TOTAL_SIZE
 )paren
 r_continue
 suffix:semicolon
+id|new_command
+op_assign
+id|pci_command
+op_or
+id|PCI_COMMAND_MASTER
+op_or
+id|PCI_COMMAND_IO
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|pci_command
+op_ne
+id|new_command
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_INFO
+l_string|&quot;  The PCI BIOS has not enabled this&quot;
+l_string|&quot; device!  Updating PCI command %4.4x-&gt;%4.4x.&bslash;n&quot;
+comma
+id|pci_command
+comma
+id|new_command
+)paren
+suffix:semicolon
+id|pcibios_write_config_word
+c_func
+(paren
+id|pci_bus
+comma
+id|pci_device_fn
+comma
+id|PCI_COMMAND
+comma
+id|new_command
+)paren
+suffix:semicolon
+)brace
 id|dev
 op_assign
 id|vortex_found_device
@@ -2221,7 +2412,7 @@ id|pci_ioaddr
 comma
 id|pci_irq_line
 comma
-id|board_index
+id|product_name
 comma
 id|dev
 op_logical_and
@@ -2244,57 +2435,24 @@ c_cond
 id|dev
 )paren
 (brace
-multiline_comment|/* Get and check the bus-master and latency values.&n;&t;&t;&t;&t;   Some PCI BIOSes fail to set the master-enable bit, and&n;&t;&t;&t;&t;   the latency timer must be set to the maximum value to avoid&n;&t;&t;&t;&t;   data corruption that occurs when the timer expires during&n;&t;&t;&t;&t;   a transfer -- a bug in the Vortex chip. */
-id|pcibios_read_config_word
-c_func
+multiline_comment|/* Get and check the latency values.  On the 3c590 series&n;&t;&t;&t;&t;   the latency timer must be set to the maximum value to avoid&n;&t;&t;&t;&t;   data corruption that occurs when the timer expires during&n;&t;&t;&t;&t;   a transfer -- a bug in the Vortex chip only. */
+r_int
+r_char
+id|new_latency
+op_assign
 (paren
-id|pci_bus
-comma
-id|pci_device_fn
-comma
-id|PCI_COMMAND
-comma
+id|device
 op_amp
-id|pci_command
+l_int|0xff00
 )paren
-suffix:semicolon
-r_if
+op_eq
+l_int|0x5900
+ques
 c_cond
-(paren
-op_logical_neg
-(paren
-id|pci_command
-op_amp
-id|PCI_COMMAND_MASTER
-)paren
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;%s:  PCI Master Bit has not been set! &quot;
-l_string|&quot; Setting...&bslash;n&quot;
-comma
-id|dev-&gt;name
-)paren
+l_int|248
+suffix:colon
+l_int|32
 suffix:semicolon
-id|pci_command
-op_or_assign
-id|PCI_COMMAND_MASTER
-suffix:semicolon
-id|pcibios_write_config_word
-c_func
-(paren
-id|pci_bus
-comma
-id|pci_device_fn
-comma
-id|PCI_COMMAND
-comma
-id|pci_command
-)paren
-suffix:semicolon
-)brace
 id|pcibios_read_config_byte
 c_func
 (paren
@@ -2312,19 +2470,21 @@ r_if
 c_cond
 (paren
 id|pci_latency
-op_ne
-l_int|248
+OL
+id|new_latency
 )paren
 (brace
 id|printk
 c_func
 (paren
 l_string|&quot;%s: Overriding PCI latency&quot;
-l_string|&quot; timer (CFLT) setting of %d, new value is 248.&bslash;n&quot;
+l_string|&quot; timer (CFLT) setting of %d, new value is %d.&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma
 id|pci_latency
+comma
+id|new_latency
 )paren
 suffix:semicolon
 id|pcibios_write_config_byte
@@ -2336,7 +2496,7 @@ id|pci_device_fn
 comma
 id|PCI_LATENCY_TIMER
 comma
-l_int|248
+id|new_latency
 )paren
 suffix:semicolon
 )brace
@@ -2382,8 +2542,10 @@ l_int|0x1000
 (brace
 r_int
 id|product_id
-comma
-id|product_index
+suffix:semicolon
+r_char
+op_star
+id|product_name
 suffix:semicolon
 r_if
 c_cond
@@ -2435,9 +2597,9 @@ op_eq
 l_int|0x7059
 )paren
 multiline_comment|/* 597 */
-id|product_index
+id|product_name
 op_assign
-id|DEMON100_INDEX
+l_string|&quot;3c597 EISA Fast Demon/Vortex&quot;
 suffix:semicolon
 r_else
 r_if
@@ -2448,9 +2610,9 @@ op_eq
 l_int|0x2059
 )paren
 multiline_comment|/* 592 */
-id|product_index
+id|product_name
 op_assign
-id|DEMON10_INDEX
+l_string|&quot;3c592 EISA 10mbps Demon/Vortex&quot;
 suffix:semicolon
 r_else
 r_continue
@@ -2472,7 +2634,7 @@ l_int|0xC88
 op_rshift
 l_int|12
 comma
-id|product_index
+id|product_name
 comma
 id|dev
 op_logical_and
@@ -2498,6 +2660,7 @@ op_increment
 suffix:semicolon
 )brace
 )brace
+macro_line|#ifdef MODULE
 multiline_comment|/* Special code to work-around the Compaq PCI BIOS32 problem. */
 r_if
 c_cond
@@ -2514,7 +2677,7 @@ id|compaq_ioaddr
 comma
 id|compaq_irq
 comma
-id|compaq_prod_id
+l_string|&quot;3Com Vortex&quot;
 comma
 id|dev
 op_logical_and
@@ -2539,8 +2702,8 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* Finally check for a 3c515 on the ISA bus. */
-multiline_comment|/* (3c515 support omitted on this version.) */
+macro_line|#endif
+multiline_comment|/* 3c515 cards are now supported by the 3c515.c driver. */
 r_return
 id|cards_found
 suffix:semicolon
@@ -2564,8 +2727,10 @@ comma
 r_int
 id|irq
 comma
-r_int
-id|product_index
+r_const
+r_char
+op_star
+id|product_name
 comma
 r_int
 id|options
@@ -2679,10 +2844,7 @@ id|vortex_probe1
 suffix:semicolon
 id|vp-&gt;product_name
 op_assign
-id|product_names
-(braket
-id|product_index
-)braket
+id|product_name
 suffix:semicolon
 id|vp-&gt;options
 op_assign
@@ -2888,10 +3050,7 @@ id|dev-&gt;priv
 suffix:semicolon
 id|vp-&gt;product_name
 op_assign
-id|product_names
-(braket
-id|product_index
-)braket
+id|product_name
 suffix:semicolon
 id|vp-&gt;options
 op_assign
@@ -3055,12 +3214,12 @@ id|i
 op_increment
 )paren
 (brace
-r_int
+id|u16
 op_star
 id|phys_addr
 op_assign
 (paren
-r_int
+id|u16
 op_star
 )paren
 id|dev-&gt;dev_addr
@@ -3585,13 +3744,9 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-(paren
 id|vp-&gt;capabilities
 op_amp
 l_int|0x20
-)paren
-op_logical_and
-id|vp-&gt;bus_master
 )paren
 (brace
 id|vp-&gt;full_bus_master_tx
@@ -5058,7 +5213,7 @@ id|LAST_FRAG
 suffix:semicolon
 id|skb
 op_assign
-id|dev_alloc_skb
+id|DEV_ALLOC_SKB
 c_func
 (paren
 id|PKT_BUF_SZ
@@ -5086,6 +5241,7 @@ op_assign
 id|dev
 suffix:semicolon
 multiline_comment|/* Mark as being used by this device. */
+macro_line|#if LINUX_VERSION_CODE &gt;= 0x10300
 id|skb_reserve
 c_func
 (paren
@@ -5108,6 +5264,21 @@ c_func
 id|skb-&gt;tail
 )paren
 suffix:semicolon
+macro_line|#else
+id|vp-&gt;rx_ring
+(braket
+id|i
+)braket
+dot
+id|addr
+op_assign
+id|virt_to_bus
+c_func
+(paren
+id|skb-&gt;data
+)paren
+suffix:semicolon
+macro_line|#endif
 )brace
 id|vp-&gt;rx_ring
 (braket
@@ -6705,7 +6876,7 @@ suffix:semicolon
 r_int
 id|i
 op_assign
-l_int|4
+l_int|32
 suffix:semicolon
 r_while
 c_loop
@@ -7286,20 +7457,32 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|test_and_set_bit
+c_func
+(paren
+l_int|0
+comma
+(paren
+r_void
+op_star
+)paren
+op_amp
 id|dev-&gt;interrupt
 )paren
+)paren
+(brace
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;%s: Re-entering the interrupt handler.&bslash;n&quot;
 comma
 id|dev-&gt;name
 )paren
 suffix:semicolon
-id|dev-&gt;interrupt
-op_assign
-l_int|1
+r_return
 suffix:semicolon
+)brace
 id|ioaddr
 op_assign
 id|dev-&gt;base_addr
@@ -8030,6 +8213,82 @@ multiline_comment|/* Adapter failure requires Tx/Rx reset and reinit. */
 r_if
 c_cond
 (paren
+id|lp-&gt;full_bus_master_tx
+)paren
+(brace
+r_int
+id|j
+suffix:semicolon
+id|outw
+c_func
+(paren
+id|TotalReset
+op_or
+l_int|0xff
+comma
+id|ioaddr
+op_plus
+id|EL3_CMD
+)paren
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|j
+op_assign
+l_int|200
+suffix:semicolon
+id|j
+op_ge
+l_int|0
+suffix:semicolon
+id|j
+op_decrement
+)paren
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|inw
+c_func
+(paren
+id|ioaddr
+op_plus
+id|EL3_STATUS
+)paren
+op_amp
+id|CmdInProgress
+)paren
+)paren
+r_break
+suffix:semicolon
+multiline_comment|/* Re-enable the receiver. */
+id|outw
+c_func
+(paren
+id|RxEnable
+comma
+id|ioaddr
+op_plus
+id|EL3_CMD
+)paren
+suffix:semicolon
+id|outw
+c_func
+(paren
+id|TxEnable
+comma
+id|ioaddr
+op_plus
+id|EL3_CMD
+)paren
+suffix:semicolon
+)brace
+r_else
+r_if
+c_cond
+(paren
 id|fifo_diag
 op_amp
 l_int|0x0400
@@ -8744,6 +9003,15 @@ suffix:semicolon
 r_int
 id|rx_status
 suffix:semicolon
+r_int
+id|rx_work_limit
+op_assign
+id|vp-&gt;dirty_rx
+op_plus
+id|RX_RING_SIZE
+op_minus
+id|vp-&gt;cur_rx
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -8935,6 +9203,7 @@ id|skb-&gt;dev
 op_assign
 id|dev
 suffix:semicolon
+macro_line|#if LINUX_VERSION_CODE &gt;= 0x10300
 id|skb_reserve
 c_func
 (paren
@@ -8970,6 +9239,31 @@ comma
 id|pkt_len
 )paren
 suffix:semicolon
+macro_line|#else
+id|memcpy
+c_func
+(paren
+id|skb-&gt;data
+comma
+id|bus_to_virt
+c_func
+(paren
+id|vp-&gt;rx_ring
+(braket
+id|entry
+)braket
+dot
+id|addr
+)paren
+comma
+id|pkt_len
+)paren
+suffix:semicolon
+id|skb-&gt;len
+op_assign
+id|pkt_len
+suffix:semicolon
+macro_line|#endif
 id|rx_copy
 op_increment
 suffix:semicolon
@@ -9090,6 +9384,16 @@ id|vp-&gt;cur_rx
 op_mod
 id|RX_RING_SIZE
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_decrement
+id|rx_work_limit
+OL
+l_int|0
+)paren
+r_break
+suffix:semicolon
 )brace
 multiline_comment|/* Refill the Rx ring buffers. */
 r_for
@@ -9128,7 +9432,7 @@ l_int|NULL
 (brace
 id|skb
 op_assign
-id|dev_alloc_skb
+id|DEV_ALLOC_SKB
 c_func
 (paren
 id|PKT_BUF_SZ

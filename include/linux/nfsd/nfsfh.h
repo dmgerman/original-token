@@ -143,6 +143,10 @@ suffix:semicolon
 multiline_comment|/*&n; * Shorthand for dprintk()&squot;s&n; */
 DECL|macro|SVCFH_DENTRY
 mdefine_line|#define SVCFH_DENTRY(f)&t;&t;((f)-&gt;fh_dentry)
+DECL|macro|SVCFH_INO
+mdefine_line|#define SVCFH_INO(f)&t;&t;((f)-&gt;fh_handle.fh_ino)
+DECL|macro|SVCFH_DEV
+mdefine_line|#define SVCFH_DEV(f)&t;&t;((f)-&gt;fh_handle.fh_dev)
 multiline_comment|/*&n; * Function prototypes&n; */
 id|u32
 id|fh_verify

@@ -1,4 +1,7 @@
-multiline_comment|/* $Id: sparc_ksyms.c,v 1.60 1997/06/17 13:25:13 jj Exp $&n; * arch/sparc/kernel/ksyms.c: Sparc specific ksyms support.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; */
+multiline_comment|/* $Id: sparc_ksyms.c,v 1.61 1997/11/19 07:57:44 jj Exp $&n; * arch/sparc/kernel/ksyms.c: Sparc specific ksyms support.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; */
+multiline_comment|/* Tell string.h we don&squot;t want memcpy etc. as cpp defines */
+DECL|macro|EXPORT_SYMTAB_STROPS
+mdefine_line|#define EXPORT_SYMTAB_STROPS
 DECL|macro|PROMLIB_INTERNAL
 mdefine_line|#define PROMLIB_INTERNAL
 macro_line|#include &lt;linux/config.h&gt;

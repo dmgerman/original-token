@@ -59,10 +59,9 @@ id|req-&gt;data
 l_int|0
 )braket
 suffix:semicolon
-id|resched_force
-c_func
-(paren
-)paren
+id|need_resched
+op_assign
+l_int|1
 suffix:semicolon
 id|mark_bh
 c_func

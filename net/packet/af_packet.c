@@ -182,6 +182,26 @@ op_star
 id|pt-&gt;data
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Yank back the headers [hope the device set this&n;&t; *&t;right or kerboom...]&n;&t; *&n;&t; *&t;Incoming packets have ll header pulled,&n;&t; *&t;push it back.&n;&t; *&n;&t; *&t;For outgoing ones skb-&gt;data == skb-&gt;mac.raw&n;&t; *&t;so that this procedure is noop.&n;&t; */
+r_if
+c_cond
+(paren
+id|skb-&gt;pkt_type
+op_eq
+id|PACKET_LOOPBACK
+)paren
+(brace
+id|kfree_skb
+c_func
+(paren
+id|skb
+comma
+id|FREE_READ
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
 id|skb_push
 c_func
 (paren
@@ -468,8 +488,6 @@ op_complement
 l_int|15
 )paren
 suffix:semicolon
-id|skb-&gt;mac.raw
-op_assign
 id|skb-&gt;nh.raw
 op_assign
 id|skb-&gt;data
@@ -488,10 +506,6 @@ suffix:semicolon
 id|skb-&gt;tail
 op_sub_assign
 id|dev-&gt;hard_header_len
-suffix:semicolon
-id|skb-&gt;mac.raw
-op_assign
-id|skb-&gt;data
 suffix:semicolon
 )brace
 id|err
@@ -512,11 +526,6 @@ comma
 id|len
 )paren
 suffix:semicolon
-id|skb-&gt;arp
-op_assign
-l_int|1
-suffix:semicolon
-multiline_comment|/* No ARP needs doing on this (complete) frame */
 id|skb-&gt;protocol
 op_assign
 id|proto
@@ -645,7 +654,26 @@ op_star
 )paren
 id|pt-&gt;data
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;The SOCK_PACKET socket receives _all_ frames.&n;&t; */
+r_if
+c_cond
+(paren
+id|skb-&gt;pkt_type
+op_eq
+id|PACKET_LOOPBACK
+)paren
+(brace
+id|kfree_skb
+c_func
+(paren
+id|skb
+comma
+id|FREE_READ
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
 id|skb-&gt;dev
 op_assign
 id|dev
@@ -997,8 +1025,6 @@ op_complement
 l_int|15
 )paren
 suffix:semicolon
-id|skb-&gt;mac.raw
-op_assign
 id|skb-&gt;nh.raw
 op_assign
 id|skb-&gt;data
@@ -1064,10 +1090,6 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
-id|skb-&gt;mac.raw
-op_assign
-id|skb-&gt;data
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1104,11 +1126,6 @@ comma
 id|len
 )paren
 suffix:semicolon
-id|skb-&gt;arp
-op_assign
-l_int|1
-suffix:semicolon
-multiline_comment|/* No ARP needs doing on this (complete) frame */
 id|skb-&gt;protocol
 op_assign
 id|proto

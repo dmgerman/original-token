@@ -239,6 +239,7 @@ op_assign
 id|new_freerun
 suffix:semicolon
 )brace
+macro_line|#ifdef CONFIG_PROFILE
 DECL|function|profile_interrupt
 r_static
 r_void
@@ -365,6 +366,7 @@ id|MC_INTR_ITIM0_SH
 suffix:semicolon
 )brace
 )brace
+macro_line|#endif
 DECL|function|ap_init_timers
 r_void
 id|ap_init_timers
@@ -429,6 +431,7 @@ comma
 l_int|NULL
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_PROFILE&t;
 id|request_irq
 c_func
 (paren
@@ -447,6 +450,7 @@ comma
 l_int|NULL
 )paren
 suffix:semicolon
+macro_line|#endif
 id|ap_clear_clock_irq
 c_func
 (paren

@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: setup.c,v 1.12 1997/08/28 02:23:19 ecd Exp $&n; *  linux/arch/sparc64/kernel/setup.c&n; *&n; *  Copyright (C) 1995,1996  David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1997       Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/*  $Id: setup.c,v 1.18 1997/12/18 02:43:00 ecd Exp $&n; *  linux/arch/sparc64/kernel/setup.c&n; *&n; *  Copyright (C) 1995,1996  David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1997       Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -29,6 +29,9 @@ macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/idprom.h&gt;
 macro_line|#include &lt;asm/head.h&gt;
+macro_line|#ifdef CONFIG_IP_PNP
+macro_line|#include &lt;net/ipconfig.h&gt;
+macro_line|#endif
 DECL|variable|screen_info
 r_struct
 id|screen_info
@@ -841,14 +844,6 @@ id|reboot_command
 l_int|256
 )braket
 suffix:semicolon
-macro_line|#ifdef CONFIG_ROOT_NFS
-r_extern
-r_char
-id|nfs_root_addrs
-(braket
-)braket
-suffix:semicolon
-macro_line|#endif
 DECL|variable|phys_base
 r_int
 r_int
@@ -875,6 +870,74 @@ comma
 l_int|0
 )brace
 suffix:semicolon
+macro_line|#if 0
+macro_line|#include &lt;linux/console.h&gt;
+r_static
+r_void
+id|prom_cons_write
+c_func
+(paren
+r_struct
+id|console
+op_star
+id|con
+comma
+r_const
+r_char
+op_star
+id|str
+comma
+r_int
+id|count
+)paren
+(brace
+r_while
+c_loop
+(paren
+id|count
+op_decrement
+)paren
+id|prom_printf
+c_func
+(paren
+l_string|&quot;%c&quot;
+comma
+op_star
+id|str
+op_increment
+)paren
+suffix:semicolon
+)brace
+r_static
+r_struct
+id|console
+id|prom_console
+op_assign
+(brace
+l_string|&quot;PROM&quot;
+comma
+id|prom_cons_write
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+id|CON_PRINTBUFFER
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+)brace
+suffix:semicolon
+macro_line|#endif
 DECL|function|__initfunc
 id|__initfunc
 c_func
@@ -900,6 +963,11 @@ id|memory_end_p
 )paren
 )paren
 (brace
+r_extern
+r_int
+id|serial_console
+suffix:semicolon
+multiline_comment|/* in console.c, of course */
 r_int
 r_int
 id|lowest_paddr
@@ -909,6 +977,15 @@ id|total
 comma
 id|i
 suffix:semicolon
+macro_line|#if 0
+id|register_console
+c_func
+(paren
+op_amp
+id|prom_console
+)paren
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/* Initialize PROM console and command line. */
 op_star
 id|cmdline_p
@@ -1318,13 +1395,12 @@ op_assign
 op_amp
 id|fake_swapper_regs
 suffix:semicolon
-macro_line|#ifdef CONFIG_ROOT_NFS&t;
+macro_line|#ifdef CONFIG_IP_PNP
 r_if
 c_cond
 (paren
 op_logical_neg
-op_star
-id|nfs_root_addrs
+id|ic_set_manually
 )paren
 (brace
 r_int
@@ -1341,12 +1417,6 @@ comma
 id|sv
 comma
 id|gw
-suffix:semicolon
-r_char
-op_star
-id|p
-op_assign
-id|nfs_root_addrs
 suffix:semicolon
 id|cl
 op_assign
@@ -1389,111 +1459,33 @@ op_logical_and
 id|sv
 )paren
 (brace
-id|strcpy
-(paren
-id|p
-comma
-id|in_ntoa
-(paren
+id|ic_myaddr
+op_assign
 id|cl
-)paren
-)paren
 suffix:semicolon
-id|p
-op_add_assign
-id|strlen
-(paren
-id|p
-)paren
-suffix:semicolon
-op_star
-id|p
-op_increment
+id|ic_servaddr
 op_assign
-l_char|&squot;:&squot;
-suffix:semicolon
-id|strcpy
-(paren
-id|p
-comma
-id|in_ntoa
-(paren
 id|sv
-)paren
-)paren
-suffix:semicolon
-id|p
-op_add_assign
-id|strlen
-(paren
-id|p
-)paren
-suffix:semicolon
-op_star
-id|p
-op_increment
-op_assign
-l_char|&squot;:&squot;
 suffix:semicolon
 r_if
 c_cond
 (paren
 id|gw
 )paren
-(brace
-id|strcpy
-(paren
-id|p
-comma
-id|in_ntoa
-(paren
+id|ic_gateway
+op_assign
 id|gw
-)paren
-)paren
 suffix:semicolon
-id|p
-op_add_assign
-id|strlen
-(paren
-id|p
-)paren
-suffix:semicolon
-)brace
-id|strcpy
-(paren
-id|p
-comma
-l_string|&quot;::::none&quot;
-)paren
+id|ic_bootp_flag
+op_assign
+id|ic_rarp_flag
+op_assign
+l_int|0
 suffix:semicolon
 )brace
 )brace
 macro_line|#endif
 macro_line|#ifdef CONFIG_SUN_SERIAL
-op_star
-id|memory_start_p
-op_assign
-id|sun_serial_setup
-c_func
-(paren
-op_star
-id|memory_start_p
-)paren
-suffix:semicolon
-multiline_comment|/* set this up ASAP */
-macro_line|#endif
-(brace
-r_extern
-r_int
-id|serial_console
-suffix:semicolon
-multiline_comment|/* in console.c, of course */
-macro_line|#if !CONFIG_SUN_SERIAL
-id|serial_console
-op_assign
-l_int|0
-suffix:semicolon
-macro_line|#else
 r_switch
 c_cond
 (paren
@@ -1579,7 +1571,12 @@ r_else
 id|prom_printf
 c_func
 (paren
-l_string|&quot;Inconsistent console&bslash;n&quot;
+l_string|&quot;Inconsistent console: &quot;
+l_string|&quot;input %d, output %d&bslash;n&quot;
+comma
+id|idev
+comma
+id|odev
 )paren
 suffix:semicolon
 id|prom_halt
@@ -1594,36 +1591,51 @@ suffix:semicolon
 r_case
 l_int|1
 suffix:colon
+multiline_comment|/* Force one of the framebuffers as console */
 id|serial_console
 op_assign
 l_int|0
 suffix:semicolon
 r_break
 suffix:semicolon
-multiline_comment|/* Force one of the framebuffers as console */
 r_case
 l_int|2
 suffix:colon
+multiline_comment|/* Force ttya as console */
 id|serial_console
 op_assign
 l_int|1
 suffix:semicolon
 r_break
 suffix:semicolon
-multiline_comment|/* Force ttya as console */
 r_case
 l_int|3
 suffix:colon
+multiline_comment|/* Force ttyb as console */
 id|serial_console
 op_assign
 l_int|2
 suffix:semicolon
 r_break
 suffix:semicolon
-multiline_comment|/* Force ttyb as console */
 )brace
+op_star
+id|memory_start_p
+op_assign
+id|sun_serial_setup
+c_func
+(paren
+op_star
+id|memory_start_p
+)paren
+suffix:semicolon
+multiline_comment|/* set this up ASAP */
+macro_line|#else
+id|serial_console
+op_assign
+l_int|0
+suffix:semicolon
 macro_line|#endif
-)brace
 )brace
 DECL|function|sys_ioperm
 id|asmlinkage

@@ -1,4 +1,4 @@
-multiline_comment|/*****************************************************************************&n;* sdla_fr.h&t;Sangoma frame relay firmware API definitions.&n;*&n;* Author:&t;Gene Kozin&t;&lt;74604.152@compuserve.com&gt;&n;*&n;* Copyright:&t;(c) 1995-1996 Sangoma Technologies Inc.&n;*&n;*&t;&t;This program is free software; you can redistribute it and/or&n;*&t;&t;modify it under the terms of the GNU General Public License&n;*&t;&t;as published by the Free Software Foundation; either version&n;*&t;&t;2 of the License, or (at your option) any later version.&n;* ============================================================================&n;* Dec 23, 1996&t;Gene Kozin&t;v2.0&n;* Apr 29, 1996&t;Gene Kozin&t;v1.0 (merged version S502 &amp; S508 definitions).&n;* Sep 26, 1995&t;Gene Kozin&t;Initial version.&n;*****************************************************************************/
+multiline_comment|/*****************************************************************************&n;* sdla_fr.h&t;Sangoma frame relay firmware API definitions.&n;*&n;* Author:&t;Jaspreet Singh  &lt;jaspreet@sangoma.com&gt;&n;*&t;&t;Gene Kozin&t;&lt;74604.152@compuserve.com&gt;&n;*&n;* Copyright:&t;(c) 1995-1996 Sangoma Technologies Inc.&n;*&n;*&t;&t;This program is free software; you can redistribute it and/or&n;*&t;&t;modify it under the terms of the GNU General Public License&n;*&t;&t;as published by the Free Software Foundation; either version&n;*&t;&t;2 of the License, or (at your option) any later version.&n;* ============================================================================&n;* Oct 12, 1997&t;Jaspreet Singh&t;Added FR_READ_DLCI_IB_MAPPING&n;* Jul 21, 1997 &t;Jaspreet Singh&t;Changed FRRES_TOO_LONG and FRRES_TOO_MANY to &n;*&t;&t;&t;&t;0x05 and 0x06 respectively.&n;* Dec 23, 1996&t;Gene Kozin&t;v2.0&n;* Apr 29, 1996&t;Gene Kozin&t;v1.0 (merged version S502 &amp; S508 definitions).&n;* Sep 26, 1995&t;Gene Kozin&t;Initial version.&n;*****************************************************************************/
 macro_line|#ifndef&t;_SDLA_FR_H
 DECL|macro|_SDLA_FR_H
 mdefine_line|#define&t;_SDLA_FR_H
@@ -150,6 +150,8 @@ DECL|macro|FR_READ_ERROR_STATS
 mdefine_line|#define FR_READ_ERROR_STATS&t;0x32
 DECL|macro|FR_FLUSH_ERROR_STATS
 mdefine_line|#define FR_FLUSH_ERROR_STATS&t;0x33
+DECL|macro|FR_READ_DLCI_IB_MAPPING
+mdefine_line|#define FR_READ_DLCI_IB_MAPPING 0x34
 DECL|macro|FR_READ_CODE_VERSION
 mdefine_line|#define FR_READ_CODE_VERSION&t;0x40
 DECL|macro|FR_SET_INTR_MODE
@@ -168,9 +170,9 @@ mdefine_line|#define&t;FRRES_DLCI_INACTIVE&t;0x03&t;/* DLCI is inactive */
 DECL|macro|FRRES_DLCI_INVALID
 mdefine_line|#define&t;FRRES_DLCI_INVALID&t;0x04&t;/* DLCI is not configured */
 DECL|macro|FRRES_TOO_LONG
-mdefine_line|#define&t;FRRES_TOO_LONG&t;&t;0x04
+mdefine_line|#define&t;FRRES_TOO_LONG&t;&t;0x05
 DECL|macro|FRRES_TOO_MANY
-mdefine_line|#define&t;FRRES_TOO_MANY&t;&t;0x05
+mdefine_line|#define&t;FRRES_TOO_MANY&t;&t;0x06
 DECL|macro|FRRES_CIR_OVERFLOW
 mdefine_line|#define&t;FRRES_CIR_OVERFLOW&t;0x07&t;/* Tx throughput has exceeded CIR */
 DECL|macro|FRRES_BUFFER_OVERFLOW
@@ -356,6 +358,13 @@ id|tse_offs
 id|PACKED
 suffix:semicolon
 multiline_comment|/* 12h: Tx status element */
+DECL|member|PACKED
+r_int
+r_int
+id|dlci
+id|PACKED
+suffix:semicolon
+multiline_comment|/* 16h: DLCI NUMBER */
 DECL|typedef|fr508_flags_t
 )brace
 id|fr508_flags_t

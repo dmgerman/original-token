@@ -138,8 +138,9 @@ r_void
 suffix:semicolon
 DECL|macro|__get_user_x
 mdefine_line|#define __get_user_x(size,ret,x,ptr) &bslash;&n;&t;__asm__ __volatile__(&quot;call __get_user_&quot; #size &bslash;&n;&t;&t;:&quot;=a&quot; (ret),&quot;=d&quot; (x) &bslash;&n;&t;&t;:&quot;0&quot; (ptr))
+multiline_comment|/* Careful: we have to cast the result to the type of the pointer for sign reasons */
 DECL|macro|get_user
-mdefine_line|#define get_user(x,ptr) &bslash;&n;({&t;int __ret_gu;    &bslash;&n;&t;switch(sizeof (*(ptr))) {     &bslash;&n;&t;case 1:  __get_user_x(1,__ret_gu,x,ptr); break; &bslash;&n;&t;case 2:  __get_user_x(2,__ret_gu,x,ptr); break; &bslash;&n;&t;case 4:  __get_user_x(4,__ret_gu,x,ptr); break; &bslash;&n;&t;default: __get_user_x(X,__ret_gu,x,ptr); break; &bslash;&n;&t;} &bslash;&n;&t;__ret_gu; &bslash;&n;})
+mdefine_line|#define get_user(x,ptr)&t;&t;&t;&t;&t;&t;&t;&bslash;&n;({&t;int __ret_gu,__val_gu;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;switch(sizeof (*(ptr))) {&t;&t;&t;&t;&t;&bslash;&n;&t;case 1:  __get_user_x(1,__ret_gu,__val_gu,ptr); break;&t;&t;&bslash;&n;&t;case 2:  __get_user_x(2,__ret_gu,__val_gu,ptr); break;&t;&t;&bslash;&n;&t;case 4:  __get_user_x(4,__ret_gu,__val_gu,ptr); break;&t;&t;&bslash;&n;&t;default: __get_user_x(X,__ret_gu,__val_gu,ptr); break;&t;&t;&bslash;&n;&t;}&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;(x) = (__typeof__(*(ptr)))__val_gu;&t;&t;&t;&t;&bslash;&n;&t;__ret_gu;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;})
 r_extern
 r_void
 id|__put_user_1
@@ -165,9 +166,9 @@ r_void
 )paren
 suffix:semicolon
 DECL|macro|__put_user_x
-mdefine_line|#define __put_user_x(size,ret,x,ptr) &bslash;&n;&t;__asm__ __volatile__(&quot;call __put_user_&quot; #size &bslash;&n;&t;&t;:&quot;=a&quot; (ret) &bslash;&n;&t;&t;:&quot;0&quot; (ptr),&quot;d&quot; (x) &bslash;&n;&t;&t;:&quot;cx&quot;)
+mdefine_line|#define __put_user_x(size,ret,x,ptr)&t;&t;&t;&t;&t;&bslash;&n;&t;__asm__ __volatile__(&quot;call __put_user_&quot; #size&t;&t;&t;&bslash;&n;&t;&t;:&quot;=a&quot; (ret)&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;:&quot;0&quot; (ptr),&quot;d&quot; (x)&t;&t;&t;&t;&t;&bslash;&n;&t;&t;:&quot;cx&quot;)
 DECL|macro|put_user
-mdefine_line|#define put_user(x,ptr) &bslash;&n;({&t;int __ret_pu;    &bslash;&n;&t;switch(sizeof (*(ptr))) {     &bslash;&n;&t;case 1:  __put_user_x(1,__ret_pu,(char)(x),ptr); break; &bslash;&n;&t;case 2:  __put_user_x(2,__ret_pu,(short)(x),ptr); break; &bslash;&n;&t;case 4:  __put_user_x(4,__ret_pu,(int)(x),ptr); break; &bslash;&n;&t;default: __put_user_x(X,__ret_pu,x,ptr); break; &bslash;&n;&t;} &bslash;&n;&t;__ret_pu; &bslash;&n;})
+mdefine_line|#define put_user(x,ptr)&t;&t;&t;&t;&t;&t;&t;&bslash;&n;({&t;int __ret_pu;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;switch(sizeof (*(ptr))) {&t;&t;&t;&t;&t;&bslash;&n;&t;case 1:  __put_user_x(1,__ret_pu,(char)(x),ptr); break;&t;&t;&bslash;&n;&t;case 2:  __put_user_x(2,__ret_pu,(short)(x),ptr); break;&t;&bslash;&n;&t;case 4:  __put_user_x(4,__ret_pu,(int)(x),ptr); break;&t;&t;&bslash;&n;&t;default: __put_user_x(X,__ret_pu,x,ptr); break;&t;&t;&t;&bslash;&n;&t;}&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;__ret_pu;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;})
 DECL|macro|__get_user
 mdefine_line|#define __get_user(x,ptr) get_user(x,ptr)
 DECL|macro|__put_user

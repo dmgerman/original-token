@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sbuscons.c,v 1.7 1997/08/28 09:30:07 davem Exp $&n; * sbuscons.c: Routines specific to SBUS frame buffer consoles.&n; *&n; * Copyright (C) 1995 Peter Zaitcev (zaitcev@lab.ipmce.su)&n; * Copyright (C) 1995,1996,1997 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1995, 1996 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; * Copyright (C) 1996 Dave Redman (djhr@tadpole.co.uk)&n; * Copyright (C) 1996 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; *&n; * Added font loading Nov/21, Miguel de Icaza (miguel@nuclecu.unam.mx)&n; * Added render_screen and faster scrolling Nov/27, miguel&n; * Added console palette code for cg6 Dec/13/95, miguel&n; * Added generic frame buffer support Dec/14/95, miguel&n; * Added cgsix and bwtwo drivers Jan/96, miguel&n; * Added 4m, and cg3 driver Feb/96, miguel&n; * Fixed the cursor on color displays Feb/96, miguel.&n; * Cleaned up the detection code, generic 8bit depth display &n; *   code, Mar/96 miguel&n; * Hacked support for cg14 video cards -- Apr/96, miguel.&n; * Color support for cg14 video cards -- May/96, miguel.&n; * Code split, Dave Redman, May/96&n; * Be more VT change friendly, May/96, miguel.&n; * Support for hw cursor and graphics acceleration, Jun/96, jj.&n; * Added TurboGX+ detection (cgthree+), Aug/96, Iain Lea (iain@sbs.de)&n; * Added TCX support (8/24bit), Aug/96, jj.&n; * Support for multiple framebuffers, Sep/96, jj.&n; * Fix bwtwo inversion and handle inverse monochrome cells in&n; *   sun_blitc, Nov/96, ecd.&n; * Fix sun_blitc and screen size on displays other than 1152x900, &n; *   128x54 chars, Nov/96, jj.&n; * Fix cursor spots left on some non-accelerated fbs, changed&n; *   software cursor to be like the hw one, Nov/96, jj.&n; * &n; * Much of this driver is derived from the DEC TGA driver by&n; * Jay Estabrook who has done a nice job with the console&n; * driver abstraction btw.&n; *&n; * We try to make everything a power of two if possible to&n; * speed up the bit blit.  Doing multiplies, divides, and&n; * remainder routines end up calling software library routines&n; * since not all Sparcs have the hardware to do it.&n; *&n; * TODO:&n; * do not blank the screen when frame buffer is mapped.&n; *&n; */
+multiline_comment|/* $Id: sbuscons.c,v 1.10 1998/01/07 06:37:22 baccala Exp $&n; * sbuscons.c: Routines specific to SBUS frame buffer consoles.&n; *&n; * Copyright (C) 1995 Peter Zaitcev (zaitcev@lab.ipmce.su)&n; * Copyright (C) 1995,1996,1997 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1995, 1996 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; * Copyright (C) 1996 Dave Redman (djhr@tadpole.co.uk)&n; * Copyright (C) 1996 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; *&n; * Added font loading Nov/21, Miguel de Icaza (miguel@nuclecu.unam.mx)&n; * Added render_screen and faster scrolling Nov/27, miguel&n; * Added console palette code for cg6 Dec/13/95, miguel&n; * Added generic frame buffer support Dec/14/95, miguel&n; * Added cgsix and bwtwo drivers Jan/96, miguel&n; * Added 4m, and cg3 driver Feb/96, miguel&n; * Fixed the cursor on color displays Feb/96, miguel.&n; * Cleaned up the detection code, generic 8bit depth display &n; *   code, Mar/96 miguel&n; * Hacked support for cg14 video cards -- Apr/96, miguel.&n; * Color support for cg14 video cards -- May/96, miguel.&n; * Code split, Dave Redman, May/96&n; * Be more VT change friendly, May/96, miguel.&n; * Support for hw cursor and graphics acceleration, Jun/96, jj.&n; * Added TurboGX+ detection (cgthree+), Aug/96, Iain Lea (iain@sbs.de)&n; * Added TCX support (8/24bit), Aug/96, jj.&n; * Support for multiple framebuffers, Sep/96, jj.&n; * Fix bwtwo inversion and handle inverse monochrome cells in&n; *   sun_blitc, Nov/96, ecd.&n; * Fix sun_blitc and screen size on displays other than 1152x900, &n; *   128x54 chars, Nov/96, jj.&n; * Fix cursor spots left on some non-accelerated fbs, changed&n; *   software cursor to be like the hw one, Nov/96, jj.&n; * &n; * Much of this driver is derived from the DEC TGA driver by&n; * Jay Estabrook who has done a nice job with the console&n; * driver abstraction btw.&n; *&n; * We try to make everything a power of two if possible to&n; * speed up the bit blit.  Doing multiplies, divides, and&n; * remainder routines end up calling software library routines&n; * since not all Sparcs have the hardware to do it.&n; *&n; * TODO:&n; * do not blank the screen when frame buffer is mapped.&n; *&n; */
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
@@ -6359,11 +6359,6 @@ r_int
 r_int
 op_star
 id|dst
-id|__asm__
-c_func
-(paren
-l_string|&quot;g1&quot;
-)paren
 suffix:semicolon
 macro_line|#else&t;&t;
 r_const
@@ -6438,7 +6433,7 @@ multiline_comment|/* space is quite common, so we optimize a bit */
 (brace
 macro_line|#ifdef ASM_BLITC
 DECL|macro|BLITC_SPACE
-mdefine_line|#define BLITC_SPACE &bslash;&n;&t;&t;&quot;&bslash;n&bslash;t std&t;%%g4, [%%g1]&quot; &bslash;&n;&t;&t;&quot;&bslash;n&bslash;t std&t;%%g4, [%%g1 + %0]&quot; &bslash;&n;&t;&t;&quot;&bslash;n&bslash;t add&t;%%g1, %1, %%g1&quot;
+mdefine_line|#define BLITC_SPACE &bslash;&n;&t;&t;&quot;&bslash;n&bslash;t std&t;%3, [%0]&quot; &bslash;&n;&t;&t;&quot;&bslash;n&bslash;t std&t;%3, [%0 + %1]&quot; &bslash;&n;&t;&t;&quot;&bslash;n&bslash;t add&t;%0, %2, %0&quot;
 DECL|macro|BLITC_SPC
 mdefine_line|#define BLITC_SPC &bslash;&n;&t;&t;&quot;&bslash;n&bslash;t std&t;%0, [%1]&quot; &bslash;&n;&t;&t;&quot;&bslash;n&bslash;t std&t;%0, [%1 + %2]&quot;
 id|x1
@@ -6468,7 +6463,7 @@ suffix:semicolon
 id|__asm__
 id|__volatile__
 (paren
-l_string|&quot;&bslash;n&bslash;t mov&t;%2, %3&quot;
+l_string|&quot;&bslash;n&bslash;t mov&t;%3, %4&quot;
 id|BLITC_SPACE
 id|BLITC_SPACE
 id|BLITC_SPACE
@@ -6477,6 +6472,10 @@ id|BLITC_SPACE
 id|BLITC_SPACE
 id|BLITC_SPACE
 suffix:colon
+l_string|&quot;=r&quot;
+(paren
+id|dst
+)paren
 suffix:colon
 l_string|&quot;r&quot;
 (paren
@@ -6516,6 +6515,7 @@ id|__volatile__
 (paren
 id|BLITC_SPC
 suffix:colon
+multiline_comment|/* no outputs */
 suffix:colon
 l_string|&quot;r&quot;
 (paren
@@ -6539,6 +6539,7 @@ id|__volatile__
 (paren
 id|BLITC_SPC
 suffix:colon
+multiline_comment|/* no outputs */
 suffix:colon
 l_string|&quot;r&quot;
 (paren

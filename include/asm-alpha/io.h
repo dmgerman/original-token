@@ -158,6 +158,10 @@ macro_line|#elif defined(CONFIG_ALPHA_APECS)
 macro_line|# include &lt;asm/apecs.h&gt;&t;&t;/* get chip-specific definitions */
 macro_line|#elif defined(CONFIG_ALPHA_CIA)
 macro_line|# include &lt;asm/cia.h&gt;&t;&t;/* get chip-specific definitions */
+macro_line|#elif defined(CONFIG_ALPHA_T2)
+macro_line|# include &lt;asm/t2.h&gt;&t;&t;/* get chip-specific definitions */
+macro_line|#elif defined(CONFIG_ALPHA_PYXIS)
+macro_line|# include &lt;asm/pyxis.h&gt;&t;&t;/* get chip-specific definitions */
 macro_line|#else
 macro_line|# include &lt;asm/jensen.h&gt;
 macro_line|#endif

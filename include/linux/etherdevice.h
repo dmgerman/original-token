@@ -91,11 +91,6 @@ id|eth_header_cache
 c_func
 (paren
 r_struct
-id|dst_entry
-op_star
-id|dst
-comma
-r_struct
 id|neighbour
 op_star
 id|neigh

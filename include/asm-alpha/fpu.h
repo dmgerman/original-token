@@ -149,5 +149,23 @@ r_return
 id|fp
 suffix:semicolon
 )brace
+r_extern
+r_int
+r_int
+id|rdfpcr
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|wrfpcr
+c_func
+(paren
+r_int
+r_int
+)paren
+suffix:semicolon
 macro_line|#endif /* __ASM_ALPHA_FPU_H */
 eof

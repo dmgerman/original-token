@@ -37,7 +37,7 @@ id|atomic_t
 id|global_irq_count
 suffix:semicolon
 DECL|macro|release_irqlock
-mdefine_line|#define release_irqlock(cpu)&t;&t;&t;&t;&bslash;&n;do {&t;if(global_irq_holder == (unsigned char) cpu) {&t;&bslash;&n;&t;&t;global_irq_holder = NO_PROC_ID;&t;&t;&bslash;&n;&t;&t;spin_unlock(&amp;global_irq_lock);&t;&t;&bslash;&n;&t;}&t;&t;&t;&t;&t;&t;&bslash;&n;} while(0)
+mdefine_line|#define release_irqlock(cpu)&t;&t;&t;&t;&bslash;&n;do {&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;if(global_irq_holder == (unsigned char) cpu) {&t;&bslash;&n;&t;&t;global_irq_holder = NO_PROC_ID;&t;&t;&bslash;&n;&t;&t;spin_unlock(&amp;global_irq_lock);&t;&t;&bslash;&n;&t;}&t;&t;&t;&t;&t;&t;&bslash;&n;} while(0)
 multiline_comment|/* Ordering of the counter bumps is _deadly_ important. */
 DECL|macro|hardirq_enter
 mdefine_line|#define hardirq_enter(cpu) &bslash;&n;&t;do { ++local_irq_count[cpu]; atomic_inc(&amp;global_irq_count); } while(0)

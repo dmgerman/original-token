@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;The Internet Protocol (IP) output module.&n; *&n; * Version:&t;$Id: ip_output.c,v 1.41 1997/11/28 15:32:37 alan Exp $&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Donald Becker, &lt;becker@super.org&gt;&n; *&t;&t;Alan Cox, &lt;Alan.Cox@linux.org&gt;&n; *&t;&t;Richard Underwood&n; *&t;&t;Stefan Becker, &lt;stefanb@yello.ping.de&gt;&n; *&t;&t;Jorge Cwik, &lt;jorge@laser.satlink.net&gt;&n; *&t;&t;Arnt Gulbrandsen, &lt;agulbra@nvg.unit.no&gt;&n; *&n; *&t;See ip_input.c for original log&n; *&n; *&t;Fixes:&n; *&t;&t;Alan Cox&t;:&t;Missing nonblock feature in ip_build_xmit.&n; *&t;&t;Mike Kilburn&t;:&t;htons() missing in ip_build_xmit.&n; *&t;&t;Bradford Johnson:&t;Fix faulty handling of some frames when &n; *&t;&t;&t;&t;&t;no route is found.&n; *&t;&t;Alexander Demenshin:&t;Missing sk/skb free in ip_queue_xmit&n; *&t;&t;&t;&t;&t;(in case if packet not accepted by&n; *&t;&t;&t;&t;&t;output firewall rules)&n; *&t;&t;Alexey Kuznetsov:&t;use new route cache&n; *&t;&t;Andi Kleen:&t;&t;Fix broken PMTU recovery and remove&n; *&t;&t;&t;&t;&t;some redundant tests.&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;The Internet Protocol (IP) output module.&n; *&n; * Version:&t;$Id: ip_output.c,v 1.44 1997/12/27 20:41:14 kuznet Exp $&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Donald Becker, &lt;becker@super.org&gt;&n; *&t;&t;Alan Cox, &lt;Alan.Cox@linux.org&gt;&n; *&t;&t;Richard Underwood&n; *&t;&t;Stefan Becker, &lt;stefanb@yello.ping.de&gt;&n; *&t;&t;Jorge Cwik, &lt;jorge@laser.satlink.net&gt;&n; *&t;&t;Arnt Gulbrandsen, &lt;agulbra@nvg.unit.no&gt;&n; *&n; *&t;See ip_input.c for original log&n; *&n; *&t;Fixes:&n; *&t;&t;Alan Cox&t;:&t;Missing nonblock feature in ip_build_xmit.&n; *&t;&t;Mike Kilburn&t;:&t;htons() missing in ip_build_xmit.&n; *&t;&t;Bradford Johnson:&t;Fix faulty handling of some frames when &n; *&t;&t;&t;&t;&t;no route is found.&n; *&t;&t;Alexander Demenshin:&t;Missing sk/skb free in ip_queue_xmit&n; *&t;&t;&t;&t;&t;(in case if packet not accepted by&n; *&t;&t;&t;&t;&t;output firewall rules)&n; *&t;&t;Alexey Kuznetsov:&t;use new route cache&n; *&t;&t;Andi Kleen:&t;&t;Fix broken PMTU recovery and remove&n; *&t;&t;&t;&t;&t;some redundant tests.&n; */
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -42,53 +42,6 @@ id|sysctl_ip_dynaddr
 op_assign
 l_int|0
 suffix:semicolon
-DECL|function|ip_ll_header_reserve
-r_static
-r_void
-id|__inline__
-id|ip_ll_header_reserve
-c_func
-(paren
-r_struct
-id|sk_buff
-op_star
-id|skb
-)paren
-(brace
-r_struct
-id|rtable
-op_star
-id|rt
-op_assign
-(paren
-r_struct
-id|rtable
-op_star
-)paren
-id|skb-&gt;dst
-suffix:semicolon
-id|skb_reserve
-c_func
-(paren
-id|skb
-comma
-(paren
-id|rt-&gt;u.dst.dev-&gt;hard_header_len
-op_plus
-l_int|15
-)paren
-op_amp
-op_complement
-l_int|15
-)paren
-suffix:semicolon
-id|ip_ll_header
-c_func
-(paren
-id|skb
-)paren
-suffix:semicolon
-)brace
 DECL|variable|ip_id_count
 r_int
 id|ip_id_count
@@ -198,9 +151,9 @@ id|opt
 op_logical_and
 id|opt-&gt;is_strictroute
 op_logical_and
-id|rt-&gt;rt_flags
-op_amp
-id|RTF_GATEWAY
+id|rt-&gt;rt_dst
+op_ne
+id|rt-&gt;rt_gateway
 )paren
 (brace
 id|ip_rt_put
@@ -226,18 +179,19 @@ op_amp
 id|rt-&gt;u.dst
 )paren
 suffix:semicolon
-id|skb-&gt;dev
-op_assign
-id|rt-&gt;u.dst.dev
-suffix:semicolon
-id|skb-&gt;arp
-op_assign
-l_int|0
-suffix:semicolon
-id|ip_ll_header_reserve
+id|skb_reserve
 c_func
 (paren
 id|skb
+comma
+(paren
+id|rt-&gt;u.dst.dev-&gt;hard_header_len
+op_plus
+l_int|15
+)paren
+op_amp
+op_complement
+l_int|15
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Now build the IP header.&n;&t; */
@@ -536,9 +490,9 @@ id|opt
 op_logical_and
 id|opt-&gt;is_strictroute
 op_logical_and
-id|rt-&gt;rt_flags
-op_amp
-id|RTF_GATEWAY
+id|rt-&gt;rt_dst
+op_ne
+id|rt-&gt;rt_gateway
 )paren
 (brace
 id|sk-&gt;dst_cache
@@ -567,14 +521,6 @@ c_func
 id|sk-&gt;dst_cache
 )paren
 suffix:semicolon
-id|skb-&gt;dev
-op_assign
-id|rt-&gt;u.dst.dev
-suffix:semicolon
-id|skb-&gt;arp
-op_assign
-l_int|0
-suffix:semicolon
 id|skb_reserve
 c_func
 (paren
@@ -582,10 +528,6 @@ id|skb
 comma
 id|MAX_HEADER
 )paren
-suffix:semicolon
-id|skb-&gt;mac.raw
-op_assign
-id|skb-&gt;data
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Now build the IP header.&n;&t; */
 multiline_comment|/*&n;&t; *&t;Build the IP addresses&n;&t; */
@@ -746,6 +688,25 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|__ip_finish_output
+r_int
+id|__ip_finish_output
+c_func
+(paren
+r_struct
+id|sk_buff
+op_star
+id|skb
+)paren
+(brace
+r_return
+id|ip_finish_output
+c_func
+(paren
+id|skb
+)paren
+suffix:semicolon
+)brace
 DECL|function|ip_mc_output
 r_int
 id|ip_mc_output
@@ -787,24 +748,6 @@ multiline_comment|/*&n;&t; *&t;If the indicated interface is up and running, sen
 id|ip_statistics.IpOutRequests
 op_increment
 suffix:semicolon
-macro_line|#ifdef CONFIG_IP_ACCT
-id|ip_fw_chk
-c_func
-(paren
-id|skb-&gt;nh.iph
-comma
-id|skb-&gt;dev
-comma
-l_int|NULL
-comma
-id|ip_acct_chain
-comma
-l_int|0
-comma
-id|IP_FW_MODE_ACCT_OUT
-)paren
-suffix:semicolon
-macro_line|#endif
 macro_line|#ifdef CONFIG_IP_ROUTE_NAT
 r_if
 c_cond
@@ -820,6 +763,10 @@ id|skb
 )paren
 suffix:semicolon
 macro_line|#endif
+id|skb-&gt;dev
+op_assign
+id|dev
+suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Multicasts are looped back for other local users&n;&t; */
 r_if
 c_cond
@@ -959,38 +906,12 @@ id|skb
 )paren
 suffix:semicolon
 )brace
-r_if
-c_cond
-(paren
-id|dev-&gt;flags
-op_amp
-id|IFF_UP
-)paren
-(brace
-id|dev_queue_xmit
+r_return
+id|ip_finish_output
 c_func
 (paren
 id|skb
 )paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
-id|ip_statistics.IpOutDiscards
-op_increment
-suffix:semicolon
-id|kfree_skb
-c_func
-(paren
-id|skb
-comma
-id|FREE_WRITE
-)paren
-suffix:semicolon
-r_return
-op_minus
-id|ENETDOWN
 suffix:semicolon
 )brace
 DECL|function|ip_output
@@ -1004,6 +925,7 @@ op_star
 id|skb
 )paren
 (brace
+macro_line|#ifdef CONFIG_IP_ROUTE_NAT
 r_struct
 id|rtable
 op_star
@@ -1016,35 +938,10 @@ op_star
 )paren
 id|skb-&gt;dst
 suffix:semicolon
-r_struct
-id|device
-op_star
-id|dev
-op_assign
-id|rt-&gt;u.dst.dev
-suffix:semicolon
-multiline_comment|/*&n;&t; *&t;If the indicated interface is up and running, send the packet.&n;&t; */
+macro_line|#endif
 id|ip_statistics.IpOutRequests
 op_increment
 suffix:semicolon
-macro_line|#ifdef CONFIG_IP_ACCT
-id|ip_fw_chk
-c_func
-(paren
-id|skb-&gt;nh.iph
-comma
-id|skb-&gt;dev
-comma
-l_int|NULL
-comma
-id|ip_acct_chain
-comma
-l_int|0
-comma
-id|IP_FW_MODE_ACCT_OUT
-)paren
-suffix:semicolon
-macro_line|#endif
 macro_line|#ifdef CONFIG_IP_ROUTE_NAT
 r_if
 c_cond
@@ -1060,38 +957,12 @@ id|skb
 )paren
 suffix:semicolon
 macro_line|#endif
-r_if
-c_cond
-(paren
-id|dev-&gt;flags
-op_amp
-id|IFF_UP
-)paren
-(brace
-id|dev_queue_xmit
+r_return
+id|ip_finish_output
 c_func
 (paren
 id|skb
 )paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
-id|ip_statistics.IpOutDiscards
-op_increment
-suffix:semicolon
-id|kfree_skb
-c_func
-(paren
-id|skb
-comma
-id|FREE_WRITE
-)paren
-suffix:semicolon
-r_return
-op_minus
-id|ENETDOWN
 suffix:semicolon
 )brace
 macro_line|#ifdef CONFIG_IP_ACCT
@@ -1133,7 +1004,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#endif&t;&t;&t;
+macro_line|#endif
 multiline_comment|/*&n; *&t;Generate a checksum for an outgoing IP datagram.&n; */
 DECL|function|ip_send_check
 r_void
@@ -1212,17 +1083,6 @@ op_star
 id|iph
 op_assign
 id|skb-&gt;nh.iph
-suffix:semicolon
-multiline_comment|/*&n;&t; *&t;Discard the surplus MAC header&n;&t; */
-id|skb_pull
-c_func
-(paren
-id|skb
-comma
-id|skb-&gt;nh.raw
-op_minus
-id|skb-&gt;data
-)paren
 suffix:semicolon
 id|tot_len
 op_assign
@@ -1404,12 +1264,6 @@ op_assign
 id|skb-&gt;nh.iph
 suffix:semicolon
 )brace
-id|ip_ll_header
-c_func
-(paren
-id|skb
-)paren
-suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Do we need to fragment. Again this is inefficient.&n;&t; *&t;We need to somehow lock the original buffer and use&n;&t; *&t;bits of it.&n;&t; */
 r_if
 c_cond
@@ -1565,13 +1419,11 @@ c_func
 (paren
 id|skb
 comma
-l_int|1
-comma
 id|skb-&gt;dst-&gt;output
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;Build and send a packet, with as little as one copy&n; *&n; *&t;Doesn&squot;t care much about ip options... option length can be&n; *&t;different for fragment at 0 and other fragments.&n; *&n; *&t;Note that the fragment at the highest offset is sent first,&n; *&t;so the getfrag routine can fill in the TCP/UDP checksum header&n; *&t;field in the last fragment it sends... actually it also helps&n; * &t;the reassemblers, they can put most packets in at the head of&n; *&t;the fragment queue, and they know the total size in advance. This&n; *&t;last feature will measurably improve the Linux fragment handler one&n; *&t;day.&n; *&n; *&t;The callback has five args, an arbitrary pointer (copy of frag),&n; *&t;the source IP address (may depend on the routing table), the &n; *&t;destination address (char *), the offset to copy from, and the&n; *&t;length to be copied.&n; * &n; */
+multiline_comment|/*&n; *&t;Build and send a packet, with as little as one copy&n; *&n; *&t;Doesn&squot;t care much about ip options... option length can be&n; *&t;different for fragment at 0 and other fragments.&n; *&n; *&t;Note that the fragment at the highest offset is sent first,&n; *&t;so the getfrag routine can fill in the TCP/UDP checksum header&n; *&t;field in the last fragment it sends... actually it also helps&n; * &t;the reassemblers, they can put most packets in at the head of&n; *&t;the fragment queue, and they know the total size in advance. This&n; *&t;last feature will measurably improve the Linux fragment handler one&n; *&t;day.&n; *&n; *&t;The callback has five args, an arbitrary pointer (copy of frag),&n; *&t;the source IP address (may depend on the routing table), the &n; *&t;destination address (char *), the offset to copy from, and the&n; *&t;length to be copied.&n; */
 DECL|function|ip_build_xmit
 r_int
 id|ip_build_xmit
@@ -1604,7 +1456,6 @@ r_void
 op_star
 id|frag
 comma
-r_int
 r_int
 id|length
 comma
@@ -1650,7 +1501,14 @@ suffix:semicolon
 r_int
 id|hh_len
 op_assign
+(paren
 id|rt-&gt;u.dst.dev-&gt;hard_header_len
+op_plus
+l_int|15
+)paren
+op_amp
+op_complement
+l_int|15
 suffix:semicolon
 r_int
 id|nfrags
@@ -1735,9 +1593,9 @@ id|sk
 comma
 id|length
 op_plus
-l_int|15
-op_plus
 id|hh_len
+op_plus
+l_int|15
 comma
 l_int|0
 comma
@@ -1781,10 +1639,12 @@ op_amp
 id|rt-&gt;u.dst
 )paren
 suffix:semicolon
-id|ip_ll_header_reserve
+id|skb_reserve
 c_func
 (paren
 id|skb
+comma
+id|hh_len
 )paren
 suffix:semicolon
 id|skb-&gt;nh.iph
@@ -1969,7 +1829,7 @@ c_func
 (paren
 id|PF_INET
 comma
-id|skb-&gt;dev
+id|rt-&gt;u.dst.dev
 comma
 id|iph
 comma
@@ -2093,8 +1953,6 @@ id|opt
 (brace
 id|fragheaderlen
 op_assign
-id|hh_len
-op_plus
 r_sizeof
 (paren
 r_struct
@@ -2129,24 +1987,17 @@ r_else
 (brace
 id|fragheaderlen
 op_assign
-id|hh_len
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
 id|sk-&gt;ip_hdrincl
-)paren
-(brace
-id|fragheaderlen
-op_add_assign
+ques
+c_cond
+l_int|0
+suffix:colon
 r_sizeof
 (paren
 r_struct
 id|iphdr
 )paren
 suffix:semicolon
-)brace
 multiline_comment|/*&n;&t;&t; *&t;Fragheaderlen is the size of &squot;overhead&squot; on each buffer. Now work&n;&t;&t; *&t;out the size of the frames to send.&n;&t;&t; */
 id|maxfraglen
 op_assign
@@ -2168,6 +2019,19 @@ op_plus
 id|fragheaderlen
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|length
+op_plus
+id|fragheaderlen
+OG
+l_int|0xFFFF
+)paren
+r_return
+op_minus
+id|EMSGSIZE
+suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Start at the end of the frame by handling the remainder.&n;&t; */
 id|offset
 op_assign
@@ -2273,6 +2137,8 @@ id|sk
 comma
 id|fraglen
 op_plus
+id|hh_len
+op_plus
 l_int|15
 comma
 l_int|0
@@ -2335,10 +2201,12 @@ op_amp
 id|rt-&gt;u.dst
 )paren
 suffix:semicolon
-id|ip_ll_header_reserve
+id|skb_reserve
 c_func
 (paren
 id|skb
+comma
+id|hh_len
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t;&t; *&t;Find where to start putting bytes.&n;&t;&t; */
@@ -2350,8 +2218,6 @@ c_func
 id|skb
 comma
 id|fraglen
-op_minus
-id|hh_len
 )paren
 suffix:semicolon
 id|skb-&gt;nh.iph
@@ -2551,7 +2417,7 @@ c_func
 (paren
 id|PF_INET
 comma
-id|skb-&gt;dev
+id|rt-&gt;u.dst.dev
 comma
 id|iph
 comma
@@ -2714,7 +2580,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;This IP datagram is too large to be sent in one piece.  Break it up into&n; *&t;smaller pieces (each of size equal to the MAC header plus IP header plus&n; *&t;a block of the data of the original IP data part) that will yet fit in a&n; *&t;single device frame, and queue such a frame for sending.&n; *&n; *&t;Assumption: packet was ready for transmission, link layer header&n; *&t;is already in.&n; *&n; *&t;Yes this is inefficient, feel free to submit a quicker one.&n; */
+multiline_comment|/*&n; *&t;This IP datagram is too large to be sent in one piece.  Break it up into&n; *&t;smaller pieces (each of size equal to IP header plus&n; *&t;a block of the data of the original IP data part) that will yet fit in a&n; *&t;single device frame, and queue such a frame for sending.&n; *&n; *&t;Yes this is inefficient, feel free to submit a quicker one.&n; */
 DECL|function|ip_fragment
 r_void
 id|ip_fragment
@@ -2724,9 +2590,6 @@ r_struct
 id|sk_buff
 op_star
 id|skb
-comma
-r_int
-id|local
 comma
 r_int
 (paren
@@ -2797,16 +2660,21 @@ id|skb-&gt;dst
 suffix:semicolon
 id|dev
 op_assign
-id|skb-&gt;dev
+id|rt-&gt;u.dst.dev
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Point into the IP datagram header.&n;&t; */
 id|raw
 op_assign
-id|skb-&gt;data
+id|skb-&gt;nh.raw
 suffix:semicolon
 id|iph
 op_assign
-id|skb-&gt;nh.iph
+(paren
+r_struct
+id|iphdr
+op_star
+)paren
+id|raw
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Setup starting values.&n;&t; */
 id|hlen
@@ -2826,17 +2694,6 @@ op_minus
 id|hlen
 suffix:semicolon
 multiline_comment|/* Space per frame */
-id|hlen
-op_add_assign
-id|skb-&gt;nh.raw
-op_minus
-id|raw
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|local
-)paren
 id|mtu
 op_assign
 id|rt-&gt;u.dst.pmtu
@@ -2844,13 +2701,6 @@ op_minus
 id|hlen
 suffix:semicolon
 multiline_comment|/* Size of data space */
-r_else
-id|mtu
-op_assign
-id|dev-&gt;mtu
-op_minus
-id|hlen
-suffix:semicolon
 id|ptr
 op_assign
 id|raw
@@ -2974,6 +2824,8 @@ id|len
 op_plus
 id|hlen
 op_plus
+id|dev-&gt;hard_header_len
+op_plus
 l_int|15
 comma
 id|GFP_ATOMIC
@@ -3009,14 +2861,6 @@ r_return
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t;&t; *&t;Set up data on packet&n;&t;&t; */
-id|skb2-&gt;arp
-op_assign
-id|skb-&gt;arp
-suffix:semicolon
-id|skb2-&gt;dev
-op_assign
-id|skb-&gt;dev
-suffix:semicolon
 id|skb2-&gt;when
 op_assign
 id|skb-&gt;when
@@ -3029,6 +2873,21 @@ id|skb2-&gt;priority
 op_assign
 id|skb-&gt;priority
 suffix:semicolon
+id|skb_reserve
+c_func
+(paren
+id|skb2
+comma
+(paren
+id|dev-&gt;hard_header_len
+op_plus
+l_int|15
+)paren
+op_amp
+op_complement
+l_int|15
+)paren
+suffix:semicolon
 id|skb_put
 c_func
 (paren
@@ -3039,23 +2898,13 @@ op_plus
 id|hlen
 )paren
 suffix:semicolon
-id|skb2-&gt;mac.raw
-op_assign
-(paren
-r_char
-op_star
-)paren
-id|skb2-&gt;data
-suffix:semicolon
 id|skb2-&gt;nh.raw
 op_assign
-id|skb2-&gt;mac.raw
-op_plus
-id|dev-&gt;hard_header_len
+id|skb2-&gt;data
 suffix:semicolon
 id|skb2-&gt;h.raw
 op_assign
-id|skb2-&gt;mac.raw
+id|skb2-&gt;data
 op_plus
 id|hlen
 suffix:semicolon
@@ -3085,7 +2934,7 @@ multiline_comment|/*&n;&t;&t; *&t;Copy the packet header into the new buffer.&n;
 id|memcpy
 c_func
 (paren
-id|skb2-&gt;mac.raw
+id|skb2-&gt;nh.raw
 comma
 id|raw
 comma
@@ -3178,8 +3027,6 @@ c_func
 id|len
 op_plus
 id|hlen
-op_minus
-id|dev-&gt;hard_header_len
 )paren
 suffix:semicolon
 id|ip_send_check
@@ -3383,10 +3230,19 @@ op_assign
 op_amp
 id|rt-&gt;u.dst
 suffix:semicolon
-id|ip_ll_header_reserve
+id|skb_reserve
 c_func
 (paren
 id|reply
+comma
+(paren
+id|rt-&gt;u.dst.dev-&gt;hard_header_len
+op_plus
+l_int|15
+)paren
+op_amp
+op_complement
+l_int|15
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Now build the IP header.&n;&t; */

@@ -414,11 +414,6 @@ id|buffer_head
 op_star
 id|buffers
 suffix:semicolon
-DECL|member|pg_swap_entry
-r_int
-r_int
-id|pg_swap_entry
-suffix:semicolon
 DECL|member|map_nr
 r_int
 r_int

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: auxio.h,v 1.17 1997/05/01 01:42:02 davem Exp $&n; * auxio.h:  Definitions and code for the Auxiliary I/O register.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: auxio.h,v 1.18 1997/11/07 15:01:45 jj Exp $&n; * auxio.h:  Definitions and code for the Auxiliary I/O register.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _SPARC_AUXIO_H
 DECL|macro|_SPARC_AUXIO_H
 mdefine_line|#define _SPARC_AUXIO_H
@@ -52,7 +52,7 @@ DECL|macro|FLPY_TCNTOFF
 mdefine_line|#define FLPY_TCNTOFF  if (AUXREG) *AUXREG = ((*AUXREG | AUXIO_ORMEIN) &amp; (~AUXIO_FLPY_TCNT))
 macro_line|#ifndef __ASSEMBLY__
 DECL|macro|set_auxio
-mdefine_line|#define set_auxio(bits_on, bits_off) &bslash;&n;do { &bslash;&n;&t;unsigned char regval; &bslash;&n;&t;unsigned long flags; &bslash;&n;&t;save_flags(flags); cli(); &bslash;&n;&t;switch(sparc_cpu_model) { &bslash;&n;&t;case sun4c: &bslash;&n;&t;&t;regval = *AUXREG; &bslash;&n;&t;&t;*AUXREG = ((regval | bits_on) &amp; ~bits_off) | AUXIO_ORMEIN; &bslash;&n;&t;&t;break; &bslash;&n;&t;case sun4m: &bslash;&n;&t;&t;if(!AUXREG) &bslash;&n;&t;&t;&t;break;     /* VME chassic sun4m, no auxio. */ &bslash;&n;&t;&t;regval = *AUXREG; &bslash;&n;&t;&t;*AUXREG = ((regval | bits_on) &amp; ~bits_off) | AUXIO_ORMEIN4M; &bslash;&n;&t;&t;break; &bslash;&n;&t;default: &bslash;&n;&t;&t;panic(&quot;Can&squot;t set AUXIO register on this machine.&quot;); &bslash;&n;&t;}; &bslash;&n;&t;restore_flags(flags); &bslash;&n;} while(0)
+mdefine_line|#define set_auxio(bits_on, bits_off) &bslash;&n;do { &bslash;&n;&t;unsigned char regval; &bslash;&n;&t;unsigned long flags; &bslash;&n;&t;save_flags(flags); cli(); &bslash;&n;&t;switch(sparc_cpu_model) { &bslash;&n;&t;case sun4c: &bslash;&n;&t;&t;regval = *AUXREG; &bslash;&n;&t;&t;*AUXREG = ((regval | bits_on) &amp; ~bits_off) | AUXIO_ORMEIN; &bslash;&n;&t;&t;break; &bslash;&n;&t;case sun4m: &bslash;&n;&t;&t;if(!AUXREG) &bslash;&n;&t;&t;&t;break;     /* VME chassic sun4m, no auxio. */ &bslash;&n;&t;&t;regval = *AUXREG; &bslash;&n;&t;&t;*AUXREG = ((regval | bits_on) &amp; ~bits_off) | AUXIO_ORMEIN4M; &bslash;&n;&t;&t;break; &bslash;&n;&t;case sun4d: &bslash;&n;&t;&t;break; &bslash;&n;&t;default: &bslash;&n;&t;&t;panic(&quot;Can&squot;t set AUXIO register on this machine.&quot;); &bslash;&n;&t;}; &bslash;&n;&t;restore_flags(flags); &bslash;&n;} while(0)
 macro_line|#endif /* !(__ASSEMBLY__) */
 multiline_comment|/* AUXIO2 (Power Off Control) */
 r_extern

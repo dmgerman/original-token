@@ -6,6 +6,7 @@ macro_line|#ifdef __KERNEL__
 macro_line|#include &lt;linux/ipv6_route.h&gt;
 macro_line|#include &lt;net/dst.h&gt;
 macro_line|#include &lt;net/flow.h&gt;
+macro_line|#include &lt;linux/rtnetlink.h&gt;
 r_struct
 id|rt6_info
 suffix:semicolon
@@ -121,13 +122,11 @@ r_int
 id|rt6i_keylen
 suffix:semicolon
 DECL|member|rt6i_flags
-r_int
-r_int
+id|u32
 id|rt6i_flags
 suffix:semicolon
 DECL|member|rt6i_metric
-r_int
-r_int
+id|u32
 id|rt6i_metric
 suffix:semicolon
 DECL|member|rt6i_expires
@@ -317,54 +316,14 @@ op_star
 id|rt
 )paren
 suffix:semicolon
-multiline_comment|/*&n; *&t;auxiliary functions&n; */
-DECL|function|rt6_release
-r_extern
-id|__inline__
-r_void
-id|rt6_release
-c_func
-(paren
-r_struct
-id|rt6_info
-op_star
-id|rt
-)paren
-(brace
-r_struct
-id|dst_entry
-op_star
-id|dst
-op_assign
-(paren
-r_struct
-id|dst_entry
-op_star
-)paren
-id|rt
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|atomic_dec_and_test
-c_func
-(paren
-op_amp
-id|dst-&gt;refcnt
-)paren
-)paren
-id|dst_destroy
-c_func
-(paren
-id|dst
-)paren
-suffix:semicolon
-)brace
 r_extern
 r_void
-id|rt6_ins
+id|inet6_rt_notify
 c_func
 (paren
+r_int
+id|event
+comma
 r_struct
 id|rt6_info
 op_star

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Various kernel-resident INET utility functions; mainly&n; *&t;&t;for format conversion and debugging output.&n; *&n; * Version:&t;$Id: utils.c,v 1.5 1997/09/17 18:50:31 freitag Exp $&n; *&n; * Author:&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;:&t;verify_area check.&n; *&t;&t;Alan Cox&t;:&t;removed old debugging.&n; *&t;&t;Andi Kleen&t;:&t;add net_ratelimit()  &n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Various kernel-resident INET utility functions; mainly&n; *&t;&t;for format conversion and debugging output.&n; *&n; * Version:&t;$Id: utils.c,v 1.6 1997/12/13 21:53:03 kuznet Exp $&n; *&n; * Author:&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;:&t;verify_area check.&n; *&t;&t;Alan Cox&t;:&t;removed old debugging.&n; *&t;&t;Andi Kleen&t;:&t;add net_ratelimit()  &n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -208,71 +208,6 @@ c_func
 (paren
 id|l
 )paren
-suffix:semicolon
-)brace
-multiline_comment|/* &n; * This enforces a rate limit: not more than one kernel message&n; * every 5secs to make a denial-of-service attack impossible.&n; *&n; * All warning printk()s should be guarded by this function. &n; */
-DECL|function|net_ratelimit
-r_int
-id|net_ratelimit
-c_func
-(paren
-r_void
-)paren
-(brace
-r_static
-r_int
-r_int
-id|last_msg
-suffix:semicolon
-r_static
-r_int
-id|missed
-suffix:semicolon
-r_if
-c_cond
-(paren
-(paren
-id|jiffies
-op_minus
-id|last_msg
-)paren
-op_ge
-l_int|5
-op_star
-id|HZ
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|missed
-)paren
-id|printk
-c_func
-(paren
-id|KERN_WARNING
-l_string|&quot;ipv4: (%d messages suppressed. Flood?)&bslash;n&quot;
-comma
-id|missed
-)paren
-suffix:semicolon
-id|missed
-op_assign
-l_int|0
-suffix:semicolon
-id|last_msg
-op_assign
-id|jiffies
-suffix:semicolon
-r_return
-l_int|1
-suffix:semicolon
-)brace
-id|missed
-op_increment
-suffix:semicolon
-r_return
-l_int|0
 suffix:semicolon
 )brace
 eof

@@ -568,7 +568,7 @@ mdefine_line|#define VIDIOCSFBUF&t;&t;_IOW(&squot;v&squot;,12, struct video_buff
 DECL|macro|VIDIOCKEY
 mdefine_line|#define VIDIOCKEY&t;&t;_IOR(&squot;v&squot;,13, struct video_key)&t;&t;/* Video key event - to dev 255 is to all - cuts capture on all DMA windows with this key (0xFFFFFFFF == all) */
 DECL|macro|VIDIOCGFREQ
-mdefine_line|#define VIDIOCGFREQ&t;&t;_IOR(&squot;v&squot;,15, unsigned long)&t;&t;/* Set tuner */
+mdefine_line|#define VIDIOCGFREQ&t;&t;_IOR(&squot;v&squot;,14, unsigned long)&t;&t;/* Set tuner */
 DECL|macro|VIDIOCSFREQ
 mdefine_line|#define VIDIOCSFREQ&t;&t;_IOW(&squot;v&squot;,15, unsigned long)&t;&t;/* Set tuner */
 DECL|macro|VIDIOCGAUDIO
@@ -583,5 +583,7 @@ DECL|macro|VID_HARDWARE_QCAM_BW
 mdefine_line|#define VID_HARDWARE_QCAM_BW&t;2
 DECL|macro|VID_HARDWARE_PMS
 mdefine_line|#define VID_HARDWARE_PMS&t;3
+DECL|macro|VID_HARDWARE_QCAM_C
+mdefine_line|#define VID_HARDWARE_QCAM_C&t;4
 macro_line|#endif
 eof

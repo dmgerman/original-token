@@ -8,8 +8,6 @@ DECL|macro|PAL_cflush
 mdefine_line|#define PAL_cflush&t;  1
 DECL|macro|PAL_draina
 mdefine_line|#define PAL_draina&t;  2
-DECL|macro|PAL_cobratt
-mdefine_line|#define PAL_cobratt&t;  9
 DECL|macro|PAL_bpt
 mdefine_line|#define PAL_bpt&t;&t;128
 DECL|macro|PAL_bugchk
@@ -34,6 +32,10 @@ mdefine_line|#define PAL_swppal&t;10
 DECL|macro|PAL_mfpr_vptb
 mdefine_line|#define PAL_mfpr_vptb&t;41
 multiline_comment|/*&n; * OSF specific PAL-code&n; */
+DECL|macro|PAL_cserve
+mdefine_line|#define PAL_cserve&t; 9
+DECL|macro|PAL_wripir
+mdefine_line|#define PAL_wripir&t;13
 DECL|macro|PAL_rdmces
 mdefine_line|#define PAL_rdmces&t;16
 DECL|macro|PAL_wrmces

@@ -2,20 +2,21 @@ multiline_comment|/*&n; *&t;inet6 interface/address list definitions&n; *&t;Linu
 macro_line|#ifndef _NET_IF_INET6_H
 DECL|macro|_NET_IF_INET6_H
 mdefine_line|#define _NET_IF_INET6_H
+multiline_comment|/* These flags match corresponding IFA_F_* flags but ADDR_INVALID,&n;   which is invisible externally.&n; */
+DECL|macro|ADDR_PERMANENT
+mdefine_line|#define ADDR_PERMANENT&t;0x80
 DECL|macro|DAD_COMPLETE
 mdefine_line|#define DAD_COMPLETE&t;0x00
 DECL|macro|DAD_INCOMPLETE
-mdefine_line|#define DAD_INCOMPLETE&t;0x01
+mdefine_line|#define DAD_INCOMPLETE&t;0x40
 DECL|macro|DAD_STATUS
-mdefine_line|#define DAD_STATUS&t;0x01
+mdefine_line|#define DAD_STATUS&t;0x40
 DECL|macro|ADDR_STATUS
-mdefine_line|#define ADDR_STATUS&t;0x06
+mdefine_line|#define ADDR_STATUS&t;0x21
 DECL|macro|ADDR_DEPRECATED
-mdefine_line|#define ADDR_DEPRECATED 0x02
+mdefine_line|#define ADDR_DEPRECATED 0x20
 DECL|macro|ADDR_INVALID
-mdefine_line|#define ADDR_INVALID&t;0x04
-DECL|macro|ADDR_PERMANENT
-mdefine_line|#define ADDR_PERMANENT&t;0x80
+mdefine_line|#define ADDR_INVALID&t;0x01
 DECL|macro|IF_RA_RCVD
 mdefine_line|#define IF_RA_RCVD&t;0x20
 DECL|macro|IF_RS_SENT
@@ -95,11 +96,9 @@ r_struct
 id|in6_addr
 id|addr
 suffix:semicolon
-DECL|member|dev
-r_struct
-id|device
-op_star
-id|dev
+DECL|member|ifindex
+r_int
+id|ifindex
 suffix:semicolon
 DECL|member|next
 r_struct
@@ -113,6 +112,8 @@ DECL|macro|MAF_TIMER_RUNNING
 mdefine_line|#define MAF_TIMER_RUNNING&t;0x01
 DECL|macro|MAF_LAST_REPORTER
 mdefine_line|#define MAF_LAST_REPORTER&t;0x02
+DECL|macro|MAF_LOADED
+mdefine_line|#define MAF_LOADED&t;&t;0x04
 DECL|struct|ifmcaddr6
 r_struct
 id|ifmcaddr6
@@ -147,7 +148,6 @@ id|mca_timer
 suffix:semicolon
 DECL|member|mca_flags
 r_int
-r_int
 id|mca_flags
 suffix:semicolon
 DECL|member|mca_users
@@ -164,10 +164,6 @@ DECL|macro|IFA_SITE
 mdefine_line|#define&t;IFA_SITE&t;IPV6_ADDR_SITELOCAL
 DECL|macro|IFA_GLOBAL
 mdefine_line|#define&t;IFA_GLOBAL&t;0x0000U
-r_extern
-r_int
-id|in6_ifnum
-suffix:semicolon
 DECL|struct|inet6_dev
 r_struct
 id|inet6_dev
@@ -205,6 +201,12 @@ id|unused
 suffix:colon
 l_int|31
 suffix:semicolon
+DECL|member|nd_parms
+r_struct
+id|neigh_parms
+op_star
+id|nd_parms
+suffix:semicolon
 DECL|member|next
 r_struct
 id|inet6_dev
@@ -213,11 +215,11 @@ id|next
 suffix:semicolon
 )brace
 suffix:semicolon
-DECL|function|ipv6_mc_map
+DECL|function|ipv6_eth_mc_map
 r_extern
 id|__inline__
 r_void
-id|ipv6_mc_map
+id|ipv6_eth_mc_map
 c_func
 (paren
 r_struct

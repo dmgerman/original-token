@@ -315,10 +315,6 @@ id|elapaarp
 )paren
 )paren
 suffix:semicolon
-id|skb-&gt;arp
-op_assign
-l_int|1
-suffix:semicolon
 id|skb-&gt;dev
 op_assign
 id|dev
@@ -523,10 +519,6 @@ r_struct
 id|elapaarp
 )paren
 )paren
-suffix:semicolon
-id|skb-&gt;arp
-op_assign
-l_int|1
 suffix:semicolon
 id|skb-&gt;dev
 op_assign
@@ -747,10 +739,6 @@ r_struct
 id|elapaarp
 )paren
 )paren
-suffix:semicolon
-id|skb-&gt;arp
-op_assign
-l_int|1
 suffix:semicolon
 id|skb-&gt;dev
 op_assign

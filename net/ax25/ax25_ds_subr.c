@@ -375,10 +375,6 @@ op_increment
 op_assign
 id|param
 suffix:semicolon
-id|skb-&gt;arp
-op_assign
-l_int|1
-suffix:semicolon
 id|skb-&gt;dev
 op_assign
 id|ax25_dev-&gt;dev

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: namei.h,v 1.8 1997/09/06 02:25:27 davem Exp $&n; * linux/include/asm-sparc64/namei.h&n; *&n; * Routines to handle famous /usr/gnemul/s*.&n; * Included from linux/fs/namei.c&n; */
+multiline_comment|/* $Id: namei.h,v 1.10 1997/09/24 16:20:41 jj Exp $&n; * linux/include/asm-sparc64/namei.h&n; *&n; * Routines to handle famous /usr/gnemul/s*.&n; * Included from linux/fs/namei.c&n; */
 macro_line|#ifndef __SPARC64_NAMEI_H
 DECL|macro|__SPARC64_NAMEI_H
 mdefine_line|#define __SPARC64_NAMEI_H
@@ -6,6 +6,8 @@ DECL|macro|SPARC_BSD_EMUL
 mdefine_line|#define SPARC_BSD_EMUL &quot;usr/gnemul/sunos/&quot;
 DECL|macro|SPARC_SOL_EMUL
 mdefine_line|#define SPARC_SOL_EMUL &quot;usr/gnemul/solaris/&quot;
+DECL|macro|SPARC_LIN_EMUL
+mdefine_line|#define SPARC_LIN_EMUL &quot;usr/gnemul/linux32/&quot;
 r_static
 r_inline
 r_struct
@@ -29,6 +31,10 @@ id|dentry
 op_star
 id|base
 suffix:semicolon
+r_char
+op_star
+id|emul
+suffix:semicolon
 r_switch
 c_cond
 (paren
@@ -38,36 +44,41 @@ id|current-&gt;personality
 r_case
 id|PER_BSD
 suffix:colon
+id|emul
+op_assign
+id|SPARC_BSD_EMUL
+suffix:semicolon
+r_break
+suffix:semicolon
 r_case
 id|PER_SVR4
 suffix:colon
+id|emul
+op_assign
+id|SPARC_SOL_EMUL
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|PER_LINUX32
+suffix:colon
+id|emul
+op_assign
+id|SPARC_LIN_EMUL
+suffix:semicolon
 r_break
 suffix:semicolon
 r_default
 suffix:colon
 r_return
-id|ERR_PTR
-c_func
-(paren
-op_minus
-id|ENOENT
-)paren
+l_int|NULL
 suffix:semicolon
 )brace
 id|base
 op_assign
 id|lookup_dentry
 (paren
-(paren
-id|current-&gt;personality
-op_eq
-id|PER_BSD
-)paren
-ques
-c_cond
-id|SPARC_BSD_EMUL
-suffix:colon
-id|SPARC_SOL_EMUL
+id|emul
 comma
 id|dget
 (paren
@@ -86,7 +97,7 @@ id|base
 )paren
 )paren
 r_return
-id|base
+l_int|NULL
 suffix:semicolon
 id|base
 op_assign
@@ -108,13 +119,49 @@ id|base
 )paren
 )paren
 r_return
-id|base
+l_int|NULL
 suffix:semicolon
 r_if
 c_cond
 (paren
 op_logical_neg
 id|base-&gt;d_inode
+)paren
+(brace
+r_struct
+id|dentry
+op_star
+id|fromroot
+suffix:semicolon
+id|fromroot
+op_assign
+id|lookup_dentry
+(paren
+id|name
+comma
+id|dget
+(paren
+id|current-&gt;fs-&gt;root
+)paren
+comma
+id|follow_link
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|IS_ERR
+(paren
+id|fromroot
+)paren
+)paren
+r_return
+id|base
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|fromroot-&gt;d_inode
 )paren
 (brace
 id|dput
@@ -124,11 +171,13 @@ id|base
 )paren
 suffix:semicolon
 r_return
-id|ERR_PTR
+id|fromroot
+suffix:semicolon
+)brace
+id|dput
 c_func
 (paren
-op_minus
-id|ENOENT
+id|fromroot
 )paren
 suffix:semicolon
 )brace
@@ -137,6 +186,6 @@ id|base
 suffix:semicolon
 )brace
 DECL|macro|__prefix_lookup_dentry
-mdefine_line|#define __prefix_lookup_dentry(name, follow_link)&t;&t;&t;&t;&bslash;&n;&t;dentry = __sparc64_lookup_dentry (name, follow_link);&t;&t;&t;&bslash;&n;&t;if (!IS_ERR (dentry)) return dentry;
+mdefine_line|#define __prefix_lookup_dentry(name, follow_link)&t;&t;&t;&t;&bslash;&n;&t;if (current-&gt;personality) {&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;dentry = __sparc64_lookup_dentry (name, follow_link);&t;&t;&bslash;&n;&t;&t;if (dentry) return dentry;&t;&t;&t;&t;&t;&bslash;&n;&t;}
 macro_line|#endif /* __SPARC64_NAMEI_H */
 eof

@@ -362,6 +362,8 @@ id|skb
 )paren
 )paren
 (brace
+macro_line|#if 0
+multiline_comment|/* BUGGGG! If arp_find returned 1, skb does not exist. --ANK*/
 id|kfree_skb
 c_func
 (paren
@@ -370,6 +372,7 @@ comma
 id|FREE_WRITE
 )paren
 suffix:semicolon
+macro_line|#endif
 r_return
 l_int|1
 suffix:semicolon

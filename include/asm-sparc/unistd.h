@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: unistd.h,v 1.33 1997/05/21 10:21:55 jj Exp $ */
+multiline_comment|/* $Id: unistd.h,v 1.36 1997/12/14 23:24:43 ecd Exp $ */
 macro_line|#ifndef _SPARC_UNISTD_H
 DECL|macro|_SPARC_UNISTD_H
 mdefine_line|#define _SPARC_UNISTD_H
@@ -125,8 +125,10 @@ mdefine_line|#define __NR_getpagesize         64 /* Common                      
 DECL|macro|__NR_msync
 mdefine_line|#define __NR_msync               65 /* Common in newer 1.3.x revs...               */
 multiline_comment|/* #define __NR_ni_syscall       66    ENOSYS under SunOS                          */
-multiline_comment|/* #define __NR_ni_syscall       67    ENOSYS under SunOS                          */
-multiline_comment|/* #define __NR_ni_syscall       68    ENOSYS under SunOS                          */
+DECL|macro|__NR_pread
+mdefine_line|#define __NR_pread               67 /* Linux Specific                              */
+DECL|macro|__NR_pwrite
+mdefine_line|#define __NR_pwrite              68 /* Linux Specific                              */
 DECL|macro|__NR_sbrk
 mdefine_line|#define __NR_sbrk                69 /* SunOS Specific                              */
 DECL|macro|__NR_sstk
@@ -189,18 +191,20 @@ DECL|macro|__NR_accept
 mdefine_line|#define __NR_accept              99 /* Common                                      */
 DECL|macro|__NR_getpriority
 mdefine_line|#define __NR_getpriority        100 /* Common                                      */
-DECL|macro|__NR_send
-mdefine_line|#define __NR_send               101 /* Common                                      */
-DECL|macro|__NR_recv
-mdefine_line|#define __NR_recv               102 /* Common                                      */
-multiline_comment|/* #define __NR_ni_syscall      103    ENOSYS under SunOS                          */
-DECL|macro|__NR_bind
-mdefine_line|#define __NR_bind               104 /* Common                                      */
-DECL|macro|__NR_setsockopt
-mdefine_line|#define __NR_setsockopt         105 /* Common                                      */
-DECL|macro|__NR_listen
-mdefine_line|#define __NR_listen             106 /* Common                                      */
-multiline_comment|/* #define __NR_ni_syscall      107    ENOSYS under SunOS                          */
+DECL|macro|__NR_rt_sigreturn
+mdefine_line|#define __NR_rt_sigreturn&t;101 /* Linux Specific                              */
+DECL|macro|__NR_rt_sigaction
+mdefine_line|#define __NR_rt_sigaction&t;102 /* Linux Specific                              */
+DECL|macro|__NR_rt_sigprocmask
+mdefine_line|#define __NR_rt_sigprocmask&t;103 /* Linux Specific                              */
+DECL|macro|__NR_rt_sigpending
+mdefine_line|#define __NR_rt_sigpending&t;104 /* Linux Specific                              */
+DECL|macro|__NR_rt_sigtimedwait
+mdefine_line|#define __NR_rt_sigtimedwait&t;105 /* Linux Specific                              */
+DECL|macro|__NR_rt_sigqueueinfo
+mdefine_line|#define __NR_rt_sigqueueinfo&t;106 /* Linux Specific                              */
+DECL|macro|__NR_rt_sigsuspend
+mdefine_line|#define __NR_rt_sigsuspend&t;107 /* Linux Specific                              */
 DECL|macro|__NR_sigvec
 mdefine_line|#define __NR_sigvec             108 /* SunOS Specific                              */
 DECL|macro|__NR_sigblock
@@ -275,7 +279,8 @@ DECL|macro|__NR_setrlimit
 mdefine_line|#define __NR_setrlimit          145 /* Common                                      */
 DECL|macro|__NR_killpg
 mdefine_line|#define __NR_killpg             146 /* SunOS Specific                              */
-multiline_comment|/* #define __NR_ni_syscall      147    ENOSYS under SunOS                          */
+DECL|macro|__NR_prctl
+mdefine_line|#define __NR_prctl&t;&t;147 /* ENOSYS under SunOS                          */
 multiline_comment|/* #define __NR_ni_syscall      148    ENOSYS under SunOS                          */
 multiline_comment|/* #define __NR_ni_syscall      149    ENOSYS under SunOS                          */
 DECL|macro|__NR_getsockname
@@ -488,8 +493,6 @@ DECL|macro|__NR_nfsservctl
 mdefine_line|#define __NR_nfsservctl         254
 DECL|macro|__NR_aplib
 mdefine_line|#define __NR_aplib              255
-DECL|macro|__NR_prctl
-mdefine_line|#define __NR_prctl              256
 DECL|macro|_syscall0
 mdefine_line|#define _syscall0(type,name) &bslash;&n;type name(void) &bslash;&n;{ &bslash;&n;long __res; &bslash;&n;__asm__ __volatile__ (&quot;or %%g0, %0, %%g1&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;      &quot;t 0x10&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;      &quot;bcc 1f&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;      &quot;or %%g0, %%o0, %0&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;      &quot;sub %%g0, %%o0, %0&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;      &quot;1:&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;      : &quot;=r&quot; (__res)&bslash;&n;&t;&t;      : &quot;0&quot; (__NR_##name) &bslash;&n;&t;&t;      : &quot;g1&quot;, &quot;o0&quot;, &quot;cc&quot;); &bslash;&n;if (__res &lt; -255 || __res &gt;= 0) &bslash;&n;    return (type) __res; &bslash;&n;errno = -__res; &bslash;&n;return -1; &bslash;&n;}
 DECL|macro|_syscall1

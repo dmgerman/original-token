@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sbus.h,v 1.12 1997/02/04 07:29:21 davem Exp $&n; * sbus.h:  Defines for the Sun SBus.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: sbus.h,v 1.13 1997/11/19 15:12:18 jj Exp $&n; * sbus.h:  Defines for the Sun SBus.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _SPARC_SBUS_H
 DECL|macro|_SPARC_SBUS_H
 mdefine_line|#define _SPARC_SBUS_H
@@ -252,7 +252,7 @@ DECL|member|prom_name
 r_char
 id|prom_name
 (braket
-l_int|64
+l_int|16
 )braket
 suffix:semicolon
 multiline_comment|/* Usually &quot;sbus&quot; or &quot;sbi&quot; */
@@ -271,6 +271,14 @@ suffix:semicolon
 DECL|member|num_sbus_ranges
 r_int
 id|num_sbus_ranges
+suffix:semicolon
+DECL|member|devid
+r_int
+id|devid
+suffix:semicolon
+DECL|member|board
+r_int
+id|board
 suffix:semicolon
 )brace
 suffix:semicolon

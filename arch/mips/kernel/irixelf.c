@@ -3283,10 +3283,6 @@ id|current-&gt;mm-&gt;end_code
 op_assign
 l_int|0
 suffix:semicolon
-id|current-&gt;mm-&gt;start_mmap
-op_assign
-id|ELF_START_MMAP
-suffix:semicolon
 id|current-&gt;mm-&gt;mmap
 op_assign
 l_int|NULL

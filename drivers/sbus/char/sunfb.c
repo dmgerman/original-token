@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sunfb.c,v 1.28 1997/08/22 15:55:23 jj Exp $&n; * sunfb.c: Sun generic frame buffer support.&n; *&n; * Copyright (C) 1995, 1996 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * &n; * Added getcmap ioctl, may, 96&n; * Support for multiple fbs, sep, 96&n; */
+multiline_comment|/* $Id: sunfb.c,v 1.29 1997/09/20 20:47:26 davem Exp $&n; * sunfb.c: Sun generic frame buffer support.&n; *&n; * Copyright (C) 1995, 1996 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * &n; * Added getcmap ioctl, may, 96&n; * Support for multiple fbs, sep, 96&n; */
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
@@ -43,7 +43,7 @@ r_int
 )paren
 suffix:semicolon
 DECL|macro|FB_SETUP
-mdefine_line|#define FB_SETUP(err) &bslash;&n;&t;int minor = FB_DEV (inode-&gt;i_rdev); &bslash;&n;&bslash;&n;&t;if (minor &gt;= fbinfos || &bslash;&n;&t;    fbinfo [minor].type.fb_type == FBTYPE_NOTYPE) &bslash;&n;&t;&t;return -(err);
+mdefine_line|#define FB_SETUP(err) &bslash;&n;&t;int minor = FB_DEV (file-&gt;f_dentry-&gt;d_inode-&gt;i_rdev); &bslash;&n;&bslash;&n;&t;if (minor &gt;= fbinfos || &bslash;&n;&t;    fbinfo [minor].type.fb_type == FBTYPE_NOTYPE) &bslash;&n;&t;&t;return -(err);
 r_static
 r_int
 DECL|function|fb_open
@@ -1448,7 +1448,7 @@ comma
 r_struct
 id|file
 op_star
-id|filp
+id|file
 )paren
 (brace
 id|fbinfo_t
@@ -1550,7 +1550,7 @@ id|fb_ioctl
 (paren
 id|inode
 comma
-id|filp
+id|file
 comma
 id|FBIOSCURPOS
 comma
@@ -1608,11 +1608,6 @@ DECL|function|fb_mmap
 id|fb_mmap
 (paren
 r_struct
-id|inode
-op_star
-id|inode
-comma
-r_struct
 id|file
 op_star
 id|file
@@ -1656,7 +1651,7 @@ op_star
 id|fb-&gt;mmap
 )paren
 (paren
-id|inode
+id|file-&gt;f_dentry-&gt;d_inode
 comma
 id|file
 comma

@@ -1,6 +1,5 @@
 multiline_comment|/*&n; * Code common to all CIA chips.&n; *&n; * Written by David A Rusling (david.rusling@reo.mts.dec.com).&n; * December 1995.&n; *&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/bios32.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
@@ -47,13 +46,22 @@ mdefine_line|#define MCHK_K_OS_BUGCHECK&t;0x008A
 DECL|macro|MCHK_K_PAL_BUGCHECK
 mdefine_line|#define MCHK_K_PAL_BUGCHECK&t;0x0090
 multiline_comment|/*&n; * BIOS32-style PCI interface:&n; */
-macro_line|#ifdef CONFIG_ALPHA_CIA
-macro_line|#ifdef DEBUG 
-DECL|macro|DBG
-macro_line|# define DBG(args)&t;printk args
+multiline_comment|/* #define DEBUG_MCHECK */
+multiline_comment|/* #define DEBUG_CONFIG */
+multiline_comment|/* #define DEBUG_DUMP_REGS */
+macro_line|#ifdef DEBUG_MCHECK
+DECL|macro|DBGM
+macro_line|# define DBGM(args)&t;printk args
 macro_line|#else
-DECL|macro|DBG
-macro_line|# define DBG(args)
+DECL|macro|DBGM
+macro_line|# define DBGM(args)
+macro_line|#endif
+macro_line|#ifdef DEBUG_CONFIG
+DECL|macro|DBGC
+macro_line|# define DBGC(args)&t;printk args
+macro_line|#else
+DECL|macro|DBGC
+macro_line|# define DBGC(args)
 macro_line|#endif
 DECL|macro|vulp
 mdefine_line|#define vulp&t;volatile unsigned long *
@@ -117,11 +125,12 @@ r_int
 r_int
 id|addr
 suffix:semicolon
-id|DBG
+id|DBGC
 c_func
 (paren
 (paren
-l_string|&quot;mk_conf_addr(bus=%d ,device_fn=0x%x, where=0x%x, pci_addr=0x%p, type1=0x%p)&bslash;n&quot;
+l_string|&quot;mk_conf_addr(bus=%d, device_fn=0x%x, where=0x%x, &quot;
+l_string|&quot;pci_addr=0x%p, type1=0x%p)&bslash;n&quot;
 comma
 id|bus
 comma
@@ -159,7 +168,7 @@ OG
 l_int|20
 )paren
 (brace
-id|DBG
+id|DBGC
 c_func
 (paren
 (paren
@@ -224,7 +233,7 @@ id|pci_addr
 op_assign
 id|addr
 suffix:semicolon
-id|DBG
+id|DBGC
 c_func
 (paren
 (paren
@@ -271,6 +280,15 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* to keep gcc quiet */
+id|value
+op_assign
+l_int|0xffffffffU
+suffix:semicolon
+id|mb
+c_func
+(paren
+)paren
+suffix:semicolon
 id|save_flags
 c_func
 (paren
@@ -283,7 +301,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|DBG
+id|DBGC
 c_func
 (paren
 (paren
@@ -300,25 +318,15 @@ id|stat0
 op_assign
 op_star
 (paren
-(paren
-r_volatile
-r_int
-r_int
-op_star
+id|vuip
 )paren
 id|CIA_IOC_CIA_ERR
-)paren
 suffix:semicolon
 op_star
 (paren
-(paren
-r_volatile
-r_int
-r_int
-op_star
+id|vuip
 )paren
 id|CIA_IOC_CIA_ERR
-)paren
 op_assign
 id|stat0
 suffix:semicolon
@@ -327,7 +335,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|DBG
+id|DBGC
 c_func
 (paren
 (paren
@@ -348,34 +356,26 @@ id|cia_cfg
 op_assign
 op_star
 (paren
-(paren
-r_int
-r_int
-op_star
+id|vuip
 )paren
 id|CIA_IOC_CFG
+suffix:semicolon
+op_star
+(paren
+id|vuip
 )paren
+id|CIA_IOC_CFG
+op_assign
+id|cia_cfg
+op_or
+l_int|1
 suffix:semicolon
 id|mb
 c_func
 (paren
 )paren
 suffix:semicolon
-op_star
-(paren
-(paren
-r_int
-r_int
-op_star
-)paren
-id|CIA_IOC_CFG
-)paren
-op_assign
-id|cia_cfg
-op_or
-l_int|1
-suffix:semicolon
-id|DBG
+id|DBGC
 c_func
 (paren
 (paren
@@ -412,19 +412,9 @@ id|value
 op_assign
 op_star
 (paren
-(paren
-r_volatile
-r_int
-r_int
-op_star
+id|vuip
 )paren
 id|addr
-)paren
-suffix:semicolon
-id|mb
-c_func
-(paren
-)paren
 suffix:semicolon
 id|mb
 c_func
@@ -460,8 +450,8 @@ c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * david.rusling@reo.mts.dec.com.  This code is needed for the&n;&t; * EB64+ as it does not generate a machine check (why I don&squot;t&n;&t; * know).  When we build kernels for one particular platform&n;&t; * then we can make this conditional on the type.&n;&t; */
 macro_line|#if 0
+multiline_comment|/*&n;&t;  this code might be necessary if machine checks aren&squot;t taken,&n;&t;  but I can&squot;t get it to work on CIA-2, so its disabled.&n;&t;  */
 id|draina
 c_func
 (paren
@@ -472,15 +462,11 @@ id|stat0
 op_assign
 op_star
 (paren
-(paren
-r_int
-r_int
-op_star
+id|vuip
 )paren
 id|CIA_IOC_CIA_ERR
-)paren
 suffix:semicolon
-id|DBG
+id|DBGC
 c_func
 (paren
 (paren
@@ -495,11 +481,11 @@ c_cond
 (paren
 id|stat0
 op_amp
-l_int|0x8280U
+l_int|0x8FEF0FFFU
 )paren
 (brace
 multiline_comment|/* is any error bit set? */
-multiline_comment|/* if not NDEV, print status */
+multiline_comment|/* if not MAS_ABT, print status */
 r_if
 c_cond
 (paren
@@ -523,14 +509,9 @@ suffix:semicolon
 multiline_comment|/* reset error status: */
 op_star
 (paren
-(paren
-r_volatile
-r_int
-r_int
-op_star
+id|vuip
 )paren
 id|CIA_IOC_CIA_ERR
-)paren
 op_assign
 id|stat0
 suffix:semicolon
@@ -561,13 +542,9 @@ id|type1
 (brace
 op_star
 (paren
-(paren
-r_int
-r_int
-op_star
+id|vuip
 )paren
 id|CIA_IOC_CFG
-)paren
 op_assign
 id|cia_cfg
 op_amp
@@ -580,7 +557,7 @@ c_func
 )paren
 suffix:semicolon
 )brace
-id|DBG
+id|DBGC
 c_func
 (paren
 (paren
@@ -649,25 +626,15 @@ id|stat0
 op_assign
 op_star
 (paren
-(paren
-r_volatile
-r_int
-r_int
-op_star
+id|vuip
 )paren
 id|CIA_IOC_CIA_ERR
-)paren
 suffix:semicolon
 op_star
 (paren
-(paren
-r_volatile
-r_int
-r_int
-op_star
+id|vuip
 )paren
 id|CIA_IOC_CIA_ERR
-)paren
 op_assign
 id|stat0
 suffix:semicolon
@@ -676,7 +643,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|DBG
+id|DBGC
 c_func
 (paren
 (paren
@@ -697,38 +664,30 @@ id|cia_cfg
 op_assign
 op_star
 (paren
-(paren
-r_int
-r_int
-op_star
+id|vuip
 )paren
 id|CIA_IOC_CFG
+suffix:semicolon
+op_star
+(paren
+id|vuip
 )paren
+id|CIA_IOC_CFG
+op_assign
+id|cia_cfg
+op_or
+l_int|1
 suffix:semicolon
 id|mb
 c_func
 (paren
 )paren
 suffix:semicolon
-op_star
-(paren
-(paren
-r_int
-r_int
-op_star
-)paren
-id|CIA_IOC_CFG
-)paren
-op_assign
-id|cia_cfg
-op_or
-l_int|1
-suffix:semicolon
-id|DBG
+id|DBGC
 c_func
 (paren
 (paren
-l_string|&quot;conf_read: TYPE1 access&bslash;n&quot;
+l_string|&quot;conf_write: TYPE1 access&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
@@ -750,21 +709,11 @@ suffix:semicolon
 multiline_comment|/* access configuration space: */
 op_star
 (paren
-(paren
-r_volatile
-r_int
-r_int
-op_star
+id|vuip
 )paren
 id|addr
-)paren
 op_assign
 id|value
-suffix:semicolon
-id|mb
-c_func
-(paren
-)paren
 suffix:semicolon
 id|mb
 c_func
@@ -780,27 +729,23 @@ c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * david.rusling@reo.mts.dec.com.  This code is needed for the&n;&t; * EB64+ as it does not generate a machine check (why I don&squot;t&n;&t; * know).  When we build kernels for one particular platform&n;&t; * then we can make this conditional on the type.&n;&t; */
 macro_line|#if 0
+multiline_comment|/*&n;&t; * This code might be necessary if machine checks aren&squot;t taken,&n;&t; * but I can&squot;t get it to work on CIA-2, so its disabled.&n;&t; */
 id|draina
 c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/* now look for any errors */
+multiline_comment|/* Now look for any errors */
 id|stat0
 op_assign
 op_star
 (paren
-(paren
-r_int
-r_int
-op_star
+id|vuip
 )paren
 id|CIA_IOC_CIA_ERR
-)paren
 suffix:semicolon
-id|DBG
+id|DBGC
 c_func
 (paren
 (paren
@@ -815,11 +760,11 @@ c_cond
 (paren
 id|stat0
 op_amp
-l_int|0x8280U
+l_int|0x8FEF0FFFU
 )paren
 (brace
 multiline_comment|/* is any error bit set? */
-multiline_comment|/* if not NDEV, print status */
+multiline_comment|/* If not MAS_ABT, print status */
 r_if
 c_cond
 (paren
@@ -843,14 +788,9 @@ suffix:semicolon
 multiline_comment|/* reset error status: */
 op_star
 (paren
-(paren
-r_volatile
-r_int
-r_int
-op_star
+id|vulp
 )paren
 id|CIA_IOC_CIA_ERR
-)paren
 op_assign
 id|stat0
 suffix:semicolon
@@ -881,13 +821,9 @@ id|type1
 (brace
 op_star
 (paren
-(paren
-r_int
-r_int
-op_star
+id|vuip
 )paren
 id|CIA_IOC_CFG
-)paren
 op_assign
 id|cia_cfg
 op_amp
@@ -900,7 +836,7 @@ c_func
 )paren
 suffix:semicolon
 )brace
-id|DBG
+id|DBGC
 c_func
 (paren
 (paren
@@ -1533,10 +1469,354 @@ id|mem_end
 (brace
 r_int
 r_int
-id|cia_err
+id|cia_tmp
 suffix:semicolon
+macro_line|#ifdef DEBUG_DUMP_REGS
+(brace
+r_int
+r_int
+id|temp
+suffix:semicolon
+id|temp
+op_assign
+op_star
+(paren
+id|vuip
+)paren
+id|CIA_IOC_CIA_REV
+suffix:semicolon
+id|mb
+c_func
+(paren
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;CIA_init: CIA_REV was 0x%x&bslash;n&quot;
+comma
+id|temp
+)paren
+suffix:semicolon
+id|temp
+op_assign
+op_star
+(paren
+id|vuip
+)paren
+id|CIA_IOC_PCI_LAT
+suffix:semicolon
+id|mb
+c_func
+(paren
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;CIA_init: CIA_PCI_LAT was 0x%x&bslash;n&quot;
+comma
+id|temp
+)paren
+suffix:semicolon
+id|temp
+op_assign
+op_star
+(paren
+id|vuip
+)paren
+id|CIA_IOC_CIA_CTRL
+suffix:semicolon
+id|mb
+c_func
+(paren
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;CIA_init: CIA_CTRL was 0x%x&bslash;n&quot;
+comma
+id|temp
+)paren
+suffix:semicolon
+id|temp
+op_assign
+op_star
+(paren
+id|vuip
+)paren
+l_int|0xfffffc8740000140UL
+suffix:semicolon
+id|mb
+c_func
+(paren
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;CIA_init: CIA_CTRL1 was 0x%x&bslash;n&quot;
+comma
+id|temp
+)paren
+suffix:semicolon
+id|temp
+op_assign
+op_star
+(paren
+id|vuip
+)paren
+id|CIA_IOC_HAE_MEM
+suffix:semicolon
+id|mb
+c_func
+(paren
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;CIA_init: CIA_HAE_MEM was 0x%x&bslash;n&quot;
+comma
+id|temp
+)paren
+suffix:semicolon
+id|temp
+op_assign
+op_star
+(paren
+id|vuip
+)paren
+id|CIA_IOC_HAE_IO
+suffix:semicolon
+id|mb
+c_func
+(paren
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;CIA_init: CIA_HAE_IO was 0x%x&bslash;n&quot;
+comma
+id|temp
+)paren
+suffix:semicolon
+id|temp
+op_assign
+op_star
+(paren
+id|vuip
+)paren
+id|CIA_IOC_CFG
+suffix:semicolon
+id|mb
+c_func
+(paren
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;CIA_init: CIA_CFG was 0x%x&bslash;n&quot;
+comma
+id|temp
+)paren
+suffix:semicolon
+id|temp
+op_assign
+op_star
+(paren
+id|vuip
+)paren
+id|CIA_IOC_CACK_EN
+suffix:semicolon
+id|mb
+c_func
+(paren
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;CIA_init: CIA_CACK_EN was 0x%x&bslash;n&quot;
+comma
+id|temp
+)paren
+suffix:semicolon
+id|temp
+op_assign
+op_star
+(paren
+id|vuip
+)paren
+id|CIA_IOC_CFG
+suffix:semicolon
+id|mb
+c_func
+(paren
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;CIA_init: CIA_CFG was 0x%x&bslash;n&quot;
+comma
+id|temp
+)paren
+suffix:semicolon
+id|temp
+op_assign
+op_star
+(paren
+id|vuip
+)paren
+id|CIA_IOC_CIA_DIAG
+suffix:semicolon
+id|mb
+c_func
+(paren
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;CIA_init: CIA_DIAG was 0x%x&bslash;n&quot;
+comma
+id|temp
+)paren
+suffix:semicolon
+id|temp
+op_assign
+op_star
+(paren
+id|vuip
+)paren
+id|CIA_IOC_DIAG_CHECK
+suffix:semicolon
+id|mb
+c_func
+(paren
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;CIA_init: CIA_DIAG_CHECK was 0x%x&bslash;n&quot;
+comma
+id|temp
+)paren
+suffix:semicolon
+id|temp
+op_assign
+op_star
+(paren
+id|vuip
+)paren
+id|CIA_IOC_PERF_MONITOR
+suffix:semicolon
+id|mb
+c_func
+(paren
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;CIA_init: CIA_PERF_MONITOR was 0x%x&bslash;n&quot;
+comma
+id|temp
+)paren
+suffix:semicolon
+id|temp
+op_assign
+op_star
+(paren
+id|vuip
+)paren
+id|CIA_IOC_PERF_CONTROL
+suffix:semicolon
+id|mb
+c_func
+(paren
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;CIA_init: CIA_PERF_CONTROL was 0x%x&bslash;n&quot;
+comma
+id|temp
+)paren
+suffix:semicolon
+id|temp
+op_assign
+op_star
+(paren
+id|vuip
+)paren
+id|CIA_IOC_CIA_ERR
+suffix:semicolon
+id|mb
+c_func
+(paren
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;CIA_init: CIA_ERR was 0x%x&bslash;n&quot;
+comma
+id|temp
+)paren
+suffix:semicolon
+id|temp
+op_assign
+op_star
+(paren
+id|vuip
+)paren
+id|CIA_IOC_CIA_STAT
+suffix:semicolon
+id|mb
+c_func
+(paren
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;CIA_init: CIA_STAT was 0x%x&bslash;n&quot;
+comma
+id|temp
+)paren
+suffix:semicolon
+id|temp
+op_assign
+op_star
+(paren
+id|vuip
+)paren
+id|CIA_IOC_MCR
+suffix:semicolon
+id|mb
+c_func
+(paren
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;CIA_init: CIA_MCR was 0x%x&bslash;n&quot;
+comma
+id|temp
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif /* DEBUG_DUMP_REGS */
 multiline_comment|/* &n;&t; * Set up error reporting.&n;&t; */
-id|cia_err
+id|cia_tmp
 op_assign
 op_star
 (paren
@@ -1544,22 +1824,44 @@ id|vuip
 )paren
 id|CIA_IOC_CIA_ERR
 suffix:semicolon
-id|cia_err
+id|cia_tmp
 op_or_assign
-(paren
-l_int|0x1
-op_lshift
-l_int|7
-)paren
+l_int|0x180
 suffix:semicolon
-multiline_comment|/* master abort */
+multiline_comment|/* master, target abort */
 op_star
 (paren
 id|vuip
 )paren
 id|CIA_IOC_CIA_ERR
 op_assign
-id|cia_err
+id|cia_tmp
+suffix:semicolon
+id|mb
+c_func
+(paren
+)paren
+suffix:semicolon
+id|cia_tmp
+op_assign
+op_star
+(paren
+id|vuip
+)paren
+id|CIA_IOC_CIA_CTRL
+suffix:semicolon
+id|cia_tmp
+op_or_assign
+l_int|0x400
+suffix:semicolon
+multiline_comment|/* turn on FILL_ERR to get mchecks */
+op_star
+(paren
+id|vuip
+)paren
+id|CIA_IOC_CIA_CTRL
+op_assign
+id|cia_tmp
 suffix:semicolon
 id|mb
 c_func
@@ -1658,13 +1960,9 @@ id|cia_cfg
 op_assign
 op_star
 (paren
-(paren
-r_int
-r_int
-op_star
+id|vuip
 )paren
 id|CIA_IOC_CFG
-)paren
 suffix:semicolon
 id|mb
 c_func
@@ -1687,13 +1985,9 @@ suffix:semicolon
 macro_line|#endif
 op_star
 (paren
-(paren
-r_int
-r_int
-op_star
+id|vuip
 )paren
 id|CIA_IOC_CFG
-)paren
 op_assign
 l_int|0
 suffix:semicolon
@@ -1703,6 +1997,56 @@ c_func
 )paren
 suffix:semicolon
 )brace
+macro_line|#if 0
+(brace
+r_int
+r_int
+id|temp
+suffix:semicolon
+id|temp
+op_assign
+op_star
+(paren
+id|vuip
+)paren
+id|CIA_IOC_CIA_CTRL
+suffix:semicolon
+id|mb
+c_func
+(paren
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;CIA_init: CIA_CTRL was 0x%x&bslash;n&quot;
+comma
+id|temp
+)paren
+suffix:semicolon
+id|temp
+op_assign
+op_star
+(paren
+id|vuip
+)paren
+id|CIA_IOC_ERR_MASK
+suffix:semicolon
+id|mb
+c_func
+(paren
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;CIA_init: CIA_ERR_MASK was 0x%x&bslash;n&quot;
+comma
+id|temp
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
 r_return
 id|mem_start
 suffix:semicolon
@@ -1719,15 +2063,11 @@ id|CIA_jd
 op_assign
 op_star
 (paren
-(paren
-r_int
-r_int
-op_star
+id|vuip
 )paren
 id|CIA_IOC_CIA_ERR
-)paren
 suffix:semicolon
-id|DBG
+id|DBGM
 c_func
 (paren
 (paren
@@ -1739,15 +2079,11 @@ id|CIA_jd
 suffix:semicolon
 op_star
 (paren
-(paren
-r_int
-r_int
-op_star
+id|vulp
 )paren
 id|CIA_IOC_CIA_ERR
-)paren
 op_assign
-l_int|0x0080
+l_int|0x0180
 suffix:semicolon
 id|mb
 c_func
@@ -1846,7 +2182,7 @@ op_plus
 id|mchk_header-&gt;sys_offset
 )paren
 suffix:semicolon
-id|DBG
+id|DBGM
 c_func
 (paren
 (paren
@@ -1858,11 +2194,12 @@ id|la_ptr
 )paren
 )paren
 suffix:semicolon
-id|DBG
+id|DBGM
 c_func
 (paren
 (paren
-l_string|&quot;                     pc=0x%lx size=0x%x procoffset=0x%x sysoffset 0x%x&bslash;n&quot;
+l_string|&quot;                     pc=0x%lx size=0x%x procoffset=0x%x &quot;
+l_string|&quot;sysoffset 0x%x&bslash;n&quot;
 comma
 id|regs-&gt;pc
 comma
@@ -1874,7 +2211,7 @@ id|mchk_header-&gt;sys_offset
 )paren
 )paren
 suffix:semicolon
-id|DBG
+id|DBGM
 c_func
 (paren
 (paren
@@ -1888,7 +2225,7 @@ id|mchk_sysdata-&gt;epic_pear
 )paren
 )paren
 suffix:semicolon
-macro_line|#ifdef DEBUG
+macro_line|#ifdef DEBUG_MCHECK
 (brace
 r_int
 r_int
@@ -1955,13 +2292,8 @@ l_int|1
 suffix:semicolon
 )brace
 )brace
-macro_line|#endif /* DEBUG */
+macro_line|#endif
 multiline_comment|/*&n;&t; * Check if machine check is due to a badaddr() and if so,&n;&t; * ignore the machine check.&n;&t; */
-id|mb
-c_func
-(paren
-)paren
-suffix:semicolon
 id|mb
 c_func
 (paren
@@ -1971,10 +2303,9 @@ r_if
 c_cond
 (paren
 id|CIA_mcheck_expected
-multiline_comment|/* &amp;&amp; (mchk_sysdata-&gt;epic_dcsr &amp;&amp; 0x0c00UL)*/
 )paren
 (brace
-id|DBG
+id|DBGM
 c_func
 (paren
 (paren
@@ -2314,6 +2645,19 @@ suffix:colon
 l_string|&quot;&quot;
 )paren
 suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_CRIT
+l_string|&quot;   vector=0x%lx la_ptr=0x%lx pc=0x%lx&bslash;n&quot;
+comma
+id|vector
+comma
+id|la_ptr
+comma
+id|regs-&gt;pc
+)paren
+suffix:semicolon
 multiline_comment|/* dump the the logout area to give all info: */
 id|ptr
 op_assign
@@ -2373,5 +2717,4 @@ l_int|1
 suffix:semicolon
 )brace
 )brace
-macro_line|#endif /* CONFIG_ALPHA_CIA */
 eof

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: ebus.c,v 1.8 1997/09/05 22:59:39 ecd Exp $&n; * ebus.c: PCI to EBus bridge device.&n; *&n; * Copyright (C) 1997  Eddie C. Dost  (ecd@skynet.be)&n; */
+multiline_comment|/* $Id: ebus.c,v 1.17 1998/01/10 18:26:13 ecd Exp $&n; * ebus.c: PCI to EBus bridge device.&n; *&n; * Copyright (C) 1997  Eddie C. Dost  (ecd@skynet.be)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -10,8 +10,17 @@ macro_line|#include &lt;asm/pbm.h&gt;
 macro_line|#include &lt;asm/ebus.h&gt;
 macro_line|#include &lt;asm/oplib.h&gt;
 macro_line|#include &lt;asm/bpp.h&gt;
+DECL|macro|PROM_DEBUG
+macro_line|#undef PROM_DEBUG
 DECL|macro|DEBUG_FILL_EBUS_DEV
 macro_line|#undef DEBUG_FILL_EBUS_DEV
+macro_line|#ifdef PROM_DEBUG
+DECL|macro|dprintf
+mdefine_line|#define dprintf&t;prom_printf
+macro_line|#else
+DECL|macro|dprintf
+mdefine_line|#define dprintf&t;printk
+macro_line|#endif
 DECL|variable|ebus_chain
 r_struct
 id|linux_ebus
@@ -81,12 +90,27 @@ r_void
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef CONFIG_OBP_FLASH
+r_extern
+r_int
+id|flash_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+macro_line|#endif
 r_extern
 r_int
 r_int
 id|psycho_irq_build
 c_func
 (paren
+r_struct
+id|linux_pbm_info
+op_star
+id|pbm
+comma
 r_int
 r_int
 id|full_ino
@@ -137,6 +161,20 @@ op_star
 id|memory_start
 op_add_assign
 id|size
+suffix:semicolon
+id|memset
+c_func
+(paren
+(paren
+r_void
+op_star
+)paren
+id|mem
+comma
+l_int|0
+comma
+id|size
+)paren
 suffix:semicolon
 r_return
 id|mem
@@ -382,6 +420,8 @@ op_assign
 id|psycho_irq_build
 c_func
 (paren
+id|dev-&gt;bus-&gt;parent
+comma
 id|irqs
 (braket
 id|i
@@ -390,7 +430,7 @@ id|i
 suffix:semicolon
 )brace
 macro_line|#ifdef DEBUG_FILL_EBUS_DEV
-id|printk
+id|dprintf
 c_func
 (paren
 l_string|&quot;child &squot;%s&squot;: address%s&bslash;n&quot;
@@ -421,7 +461,7 @@ suffix:semicolon
 id|i
 op_increment
 )paren
-id|printk
+id|dprintf
 c_func
 (paren
 l_string|&quot;        %016lx&bslash;n&quot;
@@ -438,7 +478,7 @@ c_cond
 id|dev-&gt;num_irqs
 )paren
 (brace
-id|printk
+id|dprintf
 c_func
 (paren
 l_string|&quot;        IRQ%s&quot;
@@ -467,7 +507,7 @@ suffix:semicolon
 id|i
 op_increment
 )paren
-id|printk
+id|dprintf
 c_func
 (paren
 l_string|&quot; %08x&quot;
@@ -478,7 +518,7 @@ id|i
 )braket
 )paren
 suffix:semicolon
-id|printk
+id|dprintf
 c_func
 (paren
 l_string|&quot;&bslash;n&quot;
@@ -672,7 +712,7 @@ id|dev-&gt;base_address
 id|i
 )braket
 op_assign
-id|dev-&gt;parent-&gt;self-&gt;base_address
+id|dev-&gt;bus-&gt;self-&gt;base_address
 (braket
 id|n
 )braket
@@ -774,6 +814,8 @@ op_assign
 id|psycho_irq_build
 c_func
 (paren
+id|dev-&gt;bus-&gt;parent
+comma
 id|irqs
 (braket
 id|i
@@ -782,7 +824,7 @@ id|i
 suffix:semicolon
 )brace
 macro_line|#ifdef DEBUG_FILL_EBUS_DEV
-id|printk
+id|dprintf
 c_func
 (paren
 l_string|&quot;&squot;%s&squot;: address%s&bslash;n&quot;
@@ -813,7 +855,7 @@ suffix:semicolon
 id|i
 op_increment
 )paren
-id|printk
+id|dprintf
 c_func
 (paren
 l_string|&quot;  %016lx&bslash;n&quot;
@@ -830,7 +872,7 @@ c_cond
 id|dev-&gt;num_irqs
 )paren
 (brace
-id|printk
+id|dprintf
 c_func
 (paren
 l_string|&quot;  IRQ%s&quot;
@@ -859,7 +901,7 @@ suffix:semicolon
 id|i
 op_increment
 )paren
-id|printk
+id|dprintf
 c_func
 (paren
 l_string|&quot; %08x&quot;
@@ -870,7 +912,7 @@ id|i
 )braket
 )paren
 suffix:semicolon
-id|printk
+id|dprintf
 c_func
 (paren
 l_string|&quot;&bslash;n&quot;
@@ -923,6 +965,10 @@ suffix:semicolon
 id|child-&gt;parent
 op_assign
 id|dev
+suffix:semicolon
+id|child-&gt;bus
+op_assign
+id|dev-&gt;bus
 suffix:semicolon
 id|fill_ebus_child
 c_func
@@ -977,6 +1023,10 @@ suffix:semicolon
 id|child-&gt;parent
 op_assign
 id|dev
+suffix:semicolon
+id|child-&gt;bus
+op_assign
+id|dev-&gt;bus
 suffix:semicolon
 id|fill_ebus_child
 c_func
@@ -1136,6 +1186,14 @@ c_func
 l_string|&quot;ebus: No EBus&squot;s found.&bslash;n&quot;
 )paren
 suffix:semicolon
+macro_line|#ifdef PROM_DEBUG
+id|dprintf
+c_func
+(paren
+l_string|&quot;ebus: No EBus&squot;s found.&bslash;n&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
 r_return
 id|memory_start
 suffix:semicolon
@@ -1183,11 +1241,21 @@ id|ebusnd
 id|printk
 c_func
 (paren
-l_string|&quot;ebus%d:&bslash;n&quot;
+l_string|&quot;ebus%d:&quot;
 comma
 id|num_ebus
 )paren
 suffix:semicolon
+macro_line|#ifdef PROM_DEBUG
+id|dprintf
+c_func
+(paren
+l_string|&quot;ebus%d:&quot;
+comma
+id|num_ebus
+)paren
+suffix:semicolon
+macro_line|#endif
 id|prom_getstring
 c_func
 (paren
@@ -1453,10 +1521,72 @@ c_func
 id|addr
 )paren
 suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot; %lx[%x]&quot;
+comma
+(paren
+r_int
+r_int
+)paren
+id|__va
+c_func
+(paren
+id|addr
+)paren
+comma
+id|regs
+(braket
+id|reg
+)braket
+dot
+id|size_lo
+)paren
+suffix:semicolon
+macro_line|#ifdef PROM_DEBUG
+id|dprintf
+c_func
+(paren
+l_string|&quot; %lx[%x]&quot;
+comma
+(paren
+r_int
+r_int
+)paren
+id|__va
+c_func
+(paren
+id|addr
+)paren
+comma
+id|regs
+(braket
+id|reg
+)braket
+dot
+id|size_lo
+)paren
+suffix:semicolon
+macro_line|#endif
 r_break
 suffix:semicolon
 )brace
 )brace
+id|printk
+c_func
+(paren
+l_string|&quot;&bslash;n&quot;
+)paren
+suffix:semicolon
+macro_line|#ifdef PROM_DEBUG
+id|dprintf
+c_func
+(paren
+l_string|&quot;&bslash;n&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
 id|prom_ebus_ranges_init
 c_func
 (paren
@@ -1470,6 +1600,15 @@ c_func
 (paren
 id|ebusnd
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|nd
+)paren
+r_goto
+id|next_ebus
 suffix:semicolon
 id|ebus-&gt;devices
 op_assign
@@ -1503,7 +1642,7 @@ id|dev-&gt;children
 op_assign
 l_int|0
 suffix:semicolon
-id|dev-&gt;parent
+id|dev-&gt;bus
 op_assign
 id|ebus
 suffix:semicolon
@@ -1565,7 +1704,7 @@ id|dev-&gt;children
 op_assign
 l_int|0
 suffix:semicolon
-id|dev-&gt;parent
+id|dev-&gt;bus
 op_assign
 id|ebus
 suffix:semicolon
@@ -1582,6 +1721,8 @@ id|memory_start
 )paren
 suffix:semicolon
 )brace
+id|next_ebus
+suffix:colon
 r_for
 c_loop
 (paren
@@ -1707,6 +1848,13 @@ op_eq
 id|sun4u
 )paren
 id|auxio_probe
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_OBP_FLASH
+id|flash_init
 c_func
 (paren
 )paren

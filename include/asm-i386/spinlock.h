@@ -75,19 +75,14 @@ r_int
 r_int
 id|lock
 suffix:semicolon
-DECL|member|previous
-r_int
-r_int
-id|previous
-suffix:semicolon
 DECL|typedef|spinlock_t
 )brace
 id|spinlock_t
 suffix:semicolon
 DECL|macro|SPIN_LOCK_UNLOCKED
-mdefine_line|#define SPIN_LOCK_UNLOCKED { 0, 0 }
+mdefine_line|#define SPIN_LOCK_UNLOCKED { 0 }
 DECL|macro|spin_lock_init
-mdefine_line|#define spin_lock_init(x)&t;do { (x)-&gt;lock = 0; (x)-&gt;previous = 0; } while(0)
+mdefine_line|#define spin_lock_init(x)&t;do { (x)-&gt;lock = 0; } while(0)
 DECL|macro|spin_unlock_wait
 mdefine_line|#define spin_unlock_wait(x)&t;do { barrier(); } while(((volatile spinlock_t *)(x))-&gt;lock)
 DECL|member|a

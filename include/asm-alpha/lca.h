@@ -125,6 +125,51 @@ DECL|macro|LCA_IOC_STAT0_P_NBR_MASK
 mdefine_line|#define LCA_IOC_STAT0_P_NBR_MASK&t;0x7ffff
 DECL|macro|HAE_ADDRESS
 mdefine_line|#define HAE_ADDRESS&t;LCA_IOC_HAE
+multiline_comment|/* LCA PMR Power Management register defines */
+DECL|macro|LCA_PMR_ADDR
+mdefine_line|#define LCA_PMR_ADDR&t;(IDENT_ADDR + 0x120000098UL)
+DECL|macro|LCA_PMR_PDIV
+mdefine_line|#define LCA_PMR_PDIV    0x7                     /* Primary clock divisor */
+DECL|macro|LCA_PMR_ODIV
+mdefine_line|#define LCA_PMR_ODIV    0x38                    /* Override clock divisor */
+DECL|macro|LCA_PMR_INTO
+mdefine_line|#define LCA_PMR_INTO    0x40                    /* Interrupt override */
+DECL|macro|LCA_PMR_DMAO
+mdefine_line|#define LCA_PMR_DMAO    0x80                    /* DMA override */
+DECL|macro|LCA_PMR_OCCEB
+mdefine_line|#define LCA_PMR_OCCEB   0xffff0000L             /* Override cycle counter - even&n; bits */
+DECL|macro|LCA_PMR_OCCOB
+mdefine_line|#define LCA_PMR_OCCOB   0xffff000000000000L     /* Override cycle counter - even&n; bits */
+DECL|macro|LCA_PMR_PRIMARY_MASK
+mdefine_line|#define LCA_PMR_PRIMARY_MASK    0xfffffffffffffff8
+multiline_comment|/* LCA PMR Macros */
+DECL|macro|READ_PMR
+mdefine_line|#define READ_PMR        (*(volatile unsigned long *)LCA_PMR_ADDR)
+DECL|macro|WRITE_PMR
+mdefine_line|#define WRITE_PMR(d)    (*((volatile unsigned long *)LCA_PMR_ADDR) = (d))
+DECL|macro|GET_PRIMARY
+mdefine_line|#define GET_PRIMARY(r)  ((r) &amp; LCA_PMR_PDIV)
+DECL|macro|GET_OVERRIDE
+mdefine_line|#define GET_OVERRIDE(r) (((r) &gt;&gt; 3) &amp; LCA_PMR_PDIV)
+DECL|macro|SET_PRIMARY_CLOCK
+mdefine_line|#define SET_PRIMARY_CLOCK(r, c) ((r) = (((r) &amp; LCA_PMR_PRIMARY_MASK) | (c)))
+multiline_comment|/* LCA PMR Divisor values */
+DECL|macro|DIV_1
+mdefine_line|#define DIV_1   0x0
+DECL|macro|DIV_1_5
+mdefine_line|#define DIV_1_5 0x1
+DECL|macro|DIV_2
+mdefine_line|#define DIV_2   0x2
+DECL|macro|DIV_4
+mdefine_line|#define DIV_4   0x3
+DECL|macro|DIV_8
+mdefine_line|#define DIV_8   0x4
+DECL|macro|DIV_16
+mdefine_line|#define DIV_16  0x5
+DECL|macro|DIV_MIN
+mdefine_line|#define DIV_MIN DIV_1
+DECL|macro|DIV_MAX
+mdefine_line|#define DIV_MAX DIV_16
 macro_line|#ifdef __KERNEL__
 multiline_comment|/*&n; * Translate physical memory address as seen on (PCI) bus into&n; * a kernel virtual address and vv.&n; */
 DECL|function|virt_to_bus

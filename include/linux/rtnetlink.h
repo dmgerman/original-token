@@ -56,7 +56,6 @@ r_int
 r_int
 id|rta_type
 suffix:semicolon
-multiline_comment|/*&n;&t;unsigned char&t;rta_data[0];&n; */
 )brace
 suffix:semicolon
 DECL|enum|rtattr_type_t
@@ -98,10 +97,13 @@ id|RTA_MTU
 comma
 DECL|enumerator|RTA_IFNAME
 id|RTA_IFNAME
+comma
+DECL|enumerator|RTA_CACHEINFO
+id|RTA_CACHEINFO
 )brace
 suffix:semicolon
 DECL|macro|RTA_MAX
-mdefine_line|#define RTA_MAX RTA_IFNAME
+mdefine_line|#define RTA_MAX RTA_CACHEINFO
 multiline_comment|/* Macros to handle rtattributes */
 DECL|macro|RTA_ALIGNTO
 mdefine_line|#define RTA_ALIGNTO&t;4
@@ -117,6 +119,32 @@ DECL|macro|RTA_SPACE
 mdefine_line|#define RTA_SPACE(len)&t;RTA_ALIGN(RTA_LENGTH(len))
 DECL|macro|RTA_DATA
 mdefine_line|#define RTA_DATA(rta)   ((void*)(((char*)(rta)) + RTA_LENGTH(0)))
+DECL|struct|rta_cacheinfo
+r_struct
+id|rta_cacheinfo
+(brace
+DECL|member|rta_clntref
+id|__u32
+id|rta_clntref
+suffix:semicolon
+DECL|member|rta_lastuse
+id|__u32
+id|rta_lastuse
+suffix:semicolon
+DECL|member|rta_expires
+id|__s32
+id|rta_expires
+suffix:semicolon
+DECL|member|rta_error
+id|__u32
+id|rta_error
+suffix:semicolon
+DECL|member|rta_used
+id|__u32
+id|rta_used
+suffix:semicolon
+)brace
+suffix:semicolon
 multiline_comment|/*&n; * &quot;struct rtnexthop&quot; describres all necessary nexthop information,&n; * i.e. parameters of path to a destination via this nextop.&n; *&n; * At the moment it is impossible to set different prefsrc, mtu, window&n; * and rtt for different paths from multipath.&n; */
 DECL|struct|rtnexthop
 r_struct
@@ -141,7 +169,6 @@ DECL|member|rtnh_ifindex
 r_int
 id|rtnh_ifindex
 suffix:semicolon
-multiline_comment|/*&n;&t;struct rtattr&t;&t;rtnh_data[0];&n; */
 )brace
 suffix:semicolon
 multiline_comment|/* rtnh_flags */
@@ -236,7 +263,6 @@ DECL|member|rtm_flags
 r_int
 id|rtm_flags
 suffix:semicolon
-multiline_comment|/*&n;&t;struct rtattr&t;&t;rtm_opt[0];&n;&t;struct rtnexthop&t;rtm_nh[0];&n; */
 )brace
 suffix:semicolon
 DECL|macro|RTM_RTA
@@ -314,7 +340,11 @@ multiline_comment|/* Values of protocol &gt;= RTPROT_STATIC are not interpreted 
 DECL|macro|RTPROT_GATED
 mdefine_line|#define RTPROT_GATED&t;8&t;/* Apparently, GateD */
 DECL|macro|RTPROT_RA
-mdefine_line|#define RTPROT_RA&t;9&t;/* RDISC router advertisment */
+mdefine_line|#define RTPROT_RA&t;9&t;/* RDISC/ND router advertisments */
+DECL|macro|RTPROT_MRT
+mdefine_line|#define RTPROT_MRT&t;10&t;/* Merit MRT */
+DECL|macro|RTPROT_ZEBRA
+mdefine_line|#define RTPROT_ZEBRA&t;11&t;/* Zebra */
 multiline_comment|/* rtm_scope&n;&n;   Really it is not scope, but sort of distance to the destination.&n;   NOWHERE are reserved for not existing destinations, HOST is our&n;   local addresses, LINK are destinations, locate on directly attached&n;   link and UNIVERSE is everywhere in the Universe :-)&n;&n;   Intermediate values are also possible f.e. interior routes&n;   could be assigned a value between UNIVERSE and LINK.&n;*/
 DECL|enum|rt_scope_t
 r_enum
@@ -326,6 +356,11 @@ op_assign
 l_int|0
 comma
 multiline_comment|/* User defined values f.e. &quot;site&quot; */
+DECL|enumerator|RT_SCOPE_SITE
+id|RT_SCOPE_SITE
+op_assign
+l_int|200
+comma
 DECL|enumerator|RT_SCOPE_LINK
 id|RT_SCOPE_LINK
 op_assign
@@ -413,7 +448,6 @@ r_int
 id|ifa_index
 suffix:semicolon
 multiline_comment|/* Link index&t;&t;&t;*/
-multiline_comment|/*&n;&t;struct rtattr&t;ifa_data[0];&n; */
 )brace
 suffix:semicolon
 r_enum
@@ -435,13 +469,36 @@ id|IFA_BROADCAST
 comma
 DECL|enumerator|IFA_ANYCAST
 id|IFA_ANYCAST
+comma
+DECL|enumerator|IFA_CACHEINFO
+id|IFA_CACHEINFO
 )brace
 suffix:semicolon
 DECL|macro|IFA_MAX
-mdefine_line|#define IFA_MAX IFA_ANYCAST
+mdefine_line|#define IFA_MAX IFA_CACHEINFO
 multiline_comment|/* ifa_flags */
 DECL|macro|IFA_F_SECONDARY
-mdefine_line|#define IFA_F_SECONDARY&t;1
+mdefine_line|#define IFA_F_SECONDARY&t;&t;0x01
+DECL|macro|IFA_F_DEPRECATED
+mdefine_line|#define IFA_F_DEPRECATED&t;0x20
+DECL|macro|IFA_F_TENTATIVE
+mdefine_line|#define IFA_F_TENTATIVE&t;&t;0x40
+DECL|macro|IFA_F_PERMANENT
+mdefine_line|#define IFA_F_PERMANENT&t;&t;0x80
+DECL|struct|ifa_cacheinfo
+r_struct
+id|ifa_cacheinfo
+(brace
+DECL|member|ifa_prefered
+id|__s32
+id|ifa_prefered
+suffix:semicolon
+DECL|member|ifa_valid
+id|__s32
+id|ifa_valid
+suffix:semicolon
+)brace
+suffix:semicolon
 DECL|macro|IFA_RTA
 mdefine_line|#define IFA_RTA(r)  ((struct rtattr*)(((char*)(r)) + NLMSG_ALIGN(sizeof(struct ifaddrmsg))))
 multiline_comment|/*&n;   Important comment:&n;   IFA_ADDRESS is prefix address, rather than local interface address.&n;   It makes no difference for normally configured broadcast interfaces,&n;   but for point-to-point IFA_ADDRESS is DESTINATION address,&n;   local address is supplied in IFA_LOCAL attribute.&n; */
@@ -450,21 +507,28 @@ DECL|struct|ndmsg
 r_struct
 id|ndmsg
 (brace
-DECL|member|nd_family
+DECL|member|ndm_family
 r_int
 r_char
-id|nd_family
+id|ndm_family
 suffix:semicolon
-DECL|member|nd_ifindex
+DECL|member|ndm_ifindex
 r_int
-id|nd_ifindex
+id|ndm_ifindex
 suffix:semicolon
 multiline_comment|/* Link index&t;&t;&t;*/
-DECL|member|nd_flags
-r_int
-id|nd_flags
+DECL|member|ndm_state
+id|__u16
+id|ndm_state
 suffix:semicolon
-multiline_comment|/*&n;&t;struct rtattr&t;nd_data[0];&n; */
+DECL|member|ndm_flags
+id|__u8
+id|ndm_flags
+suffix:semicolon
+DECL|member|ndm_type
+id|__u8
+id|ndm_type
+suffix:semicolon
 )brace
 suffix:semicolon
 r_enum
@@ -478,12 +542,36 @@ comma
 DECL|enumerator|NDA_LLADDR
 id|NDA_LLADDR
 comma
+DECL|enumerator|NDA_CACHEINFO
+id|NDA_CACHEINFO
 )brace
 suffix:semicolon
 DECL|macro|NDA_MAX
-mdefine_line|#define NDA_MAX NDA_LLADDR
+mdefine_line|#define NDA_MAX NDA_CACHEINFO
 DECL|macro|NDA_RTA
 mdefine_line|#define NDA_RTA(r)  ((struct rtattr*)(((char*)(r)) + NLMSG_ALIGN(sizeof(struct ndmsg))))
+DECL|struct|nda_cacheinfo
+r_struct
+id|nda_cacheinfo
+(brace
+DECL|member|ndm_confirmed
+id|__u32
+id|ndm_confirmed
+suffix:semicolon
+DECL|member|ndm_used
+id|__u32
+id|ndm_used
+suffix:semicolon
+DECL|member|ndm_updated
+id|__u32
+id|ndm_updated
+suffix:semicolon
+DECL|member|ndm_refcnt
+id|__u32
+id|ndm_refcnt
+suffix:semicolon
+)brace
+suffix:semicolon
 multiline_comment|/****&n; *&t;&t;General form of address family dependent message.&n; ****/
 DECL|struct|rtgenmsg
 r_struct
@@ -573,28 +661,51 @@ suffix:semicolon
 multiline_comment|/* Packet scheduler handle */
 )brace
 suffix:semicolon
+r_enum
+(brace
+DECL|enumerator|IFLA_UNSPEC
+id|IFLA_UNSPEC
+comma
+DECL|enumerator|IFLA_ADDRESS
+id|IFLA_ADDRESS
+comma
+DECL|enumerator|IFLA_BROADCAST
+id|IFLA_BROADCAST
+comma
+DECL|enumerator|IFLA_IFNAME
+id|IFLA_IFNAME
+comma
+DECL|enumerator|IFLA_QDISC
+id|IFLA_QDISC
+comma
+DECL|enumerator|IFLA_STATS
+id|IFLA_STATS
+)brace
+suffix:semicolon
+DECL|macro|IFLA_MAX
+mdefine_line|#define IFLA_MAX IFLA_STATS
+DECL|macro|IFLA_RTA
+mdefine_line|#define IFLA_RTA(r)  ((struct rtattr*)(((char*)(r)) + NLMSG_ALIGN(sizeof(struct ifinfomsg))))
 multiline_comment|/* ifi_flags.&n;&n;   IFF_* flags.&n;&n;   The only change is:&n;   IFF_LOOPBACK, IFF_BROADCAST and IFF_POINTOPOINT are&n;   more not changeable by user. They describe link media&n;   characteristics and set by device driver.&n;&n;   Comments:&n;   - Combination IFF_BROADCAST|IFF_POINTOPOINT is invalid&n;   - If neiher of these three flags are set;&n;     the interface is NBMA.&n;&n;   - IFF_MULTICAST does not mean anything special:&n;   multicasts can be used on all not-NBMA links.&n;   IFF_MULTICAST means that this media uses special encapsulation&n;   for multicast frames. Apparently, all IFF_POINTOPOINT and&n;   IFF_BROADCAST devices are able to use multicasts too.&n; */
 multiline_comment|/* ifi_link.&n;   For usual devices it is equal ifi_index.&n;   If it is a &quot;virtual interface&quot; (f.e. tunnel), ifi_link&n;   can point to real physical interface (f.e. for bandwidth calculations),&n;   or maybe 0, what means, that real media is unknown (usual&n;   for IPIP tunnels, when route to endpoint is allowed to change)&n; */
 DECL|macro|RTMGRP_LINK
 mdefine_line|#define RTMGRP_LINK&t;&t;1
 DECL|macro|RTMGRP_NOTIFY
 mdefine_line|#define RTMGRP_NOTIFY&t;&t;2
+DECL|macro|RTMGRP_NEIGH
+mdefine_line|#define RTMGRP_NEIGH&t;&t;4
 DECL|macro|RTMGRP_IPV4_IFADDR
 mdefine_line|#define RTMGRP_IPV4_IFADDR&t;0x10
-DECL|macro|RTMGRP_IPV4_NDISC
-mdefine_line|#define RTMGRP_IPV4_NDISC&t;0x20
+DECL|macro|RTMGRP_IPV4_MROUTE
+mdefine_line|#define RTMGRP_IPV4_MROUTE&t;0x20
 DECL|macro|RTMGRP_IPV4_ROUTE
 mdefine_line|#define RTMGRP_IPV4_ROUTE&t;0x40
-DECL|macro|RTMGRP_IPV4_MROUTE
-mdefine_line|#define RTMGRP_IPV4_MROUTE&t;0x80
 DECL|macro|RTMGRP_IPV6_IFADDR
 mdefine_line|#define RTMGRP_IPV6_IFADDR&t;0x100
-DECL|macro|RTMGRP_IPV6_NDISC
-mdefine_line|#define RTMGRP_IPV6_NDISC&t;0x200
+DECL|macro|RTMGRP_IPV6_MROUTE
+mdefine_line|#define RTMGRP_IPV6_MROUTE&t;0x200
 DECL|macro|RTMGRP_IPV6_ROUTE
 mdefine_line|#define RTMGRP_IPV6_ROUTE&t;0x400
-DECL|macro|RTMGRP_IPV6_MROUTE
-mdefine_line|#define RTMGRP_IPV6_MROUTE&t;0x800
 macro_line|#ifdef __KERNEL__
 DECL|struct|kern_rta
 r_struct
@@ -655,6 +766,12 @@ r_int
 r_char
 op_star
 id|rta_ifname
+suffix:semicolon
+DECL|member|rta_ci
+r_struct
+id|rta_cacheinfo
+op_star
+id|rta_ci
 suffix:semicolon
 )brace
 suffix:semicolon

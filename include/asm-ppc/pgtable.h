@@ -4,7 +4,7 @@ mdefine_line|#define _PPC_PGTABLE_H
 macro_line|#include &lt;linux/mm.h&gt;
 r_extern
 r_void
-id|flush_tlb_all
+id|local_flush_tlb_all
 c_func
 (paren
 r_void
@@ -12,7 +12,7 @@ r_void
 suffix:semicolon
 r_extern
 r_void
-id|flush_tlb_mm
+id|local_flush_tlb_mm
 c_func
 (paren
 r_struct
@@ -23,7 +23,7 @@ id|mm
 suffix:semicolon
 r_extern
 r_void
-id|flush_tlb_page
+id|local_flush_tlb_page
 c_func
 (paren
 r_struct
@@ -38,7 +38,7 @@ id|vmaddr
 suffix:semicolon
 r_extern
 r_void
-id|flush_tlb_range
+id|local_flush_tlb_range
 c_func
 (paren
 r_struct
@@ -55,7 +55,26 @@ r_int
 id|end
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * No cache flushing is required when address mappings are&n; * changed, because the caches on PowerPCs are physically&n; * addressed.&n; */
+macro_line|#ifndef __SMP__
+DECL|macro|flush_tlb_all
+mdefine_line|#define flush_tlb_all local_flush_tlb_all
+DECL|macro|flush_tlb_mm
+mdefine_line|#define flush_tlb_mm local_flush_tlb_mm
+DECL|macro|flush_tlb_page
+mdefine_line|#define flush_tlb_page local_flush_tlb_page
+DECL|macro|flush_tlb_range
+mdefine_line|#define flush_tlb_range local_flush_tlb_range
+macro_line|#else /* __SMP__ */
+DECL|macro|flush_tlb_all
+mdefine_line|#define flush_tlb_all local_flush_tlb_all
+DECL|macro|flush_tlb_mm
+mdefine_line|#define flush_tlb_mm local_flush_tlb_mm
+DECL|macro|flush_tlb_page
+mdefine_line|#define flush_tlb_page local_flush_tlb_page
+DECL|macro|flush_tlb_range
+mdefine_line|#define flush_tlb_range local_flush_tlb_range
+macro_line|#endif /* __SMP__ */
+multiline_comment|/*&n; * No cache flushing is required when address mappings are&n; * changed, because the caches on PowerPCs are physically&n; * addressed.&n; * Also, when SMP we use the coherency (M) bit of the&n; * BATs and PTEs.  -- Cort&n; */
 DECL|macro|flush_cache_all
 mdefine_line|#define flush_cache_all()&t;&t;do { } while (0)
 DECL|macro|flush_cache_mm
@@ -76,7 +95,6 @@ r_int
 r_int
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * For the page specified, write modified lines in the data cache&n; * out to memory, and invalidate lines in the instruction cache.&n; */
 r_extern
 r_void
 id|flush_page_to_ram
@@ -84,17 +102,6 @@ c_func
 (paren
 r_int
 r_int
-)paren
-suffix:semicolon
-r_extern
-r_int
-r_int
-id|va_to_phys
-c_func
-(paren
-r_int
-r_int
-id|address
 )paren
 suffix:semicolon
 multiline_comment|/*&n; * The PowerPC MMU uses a hash table containing PTEs, together with&n; * a set of 16 segment registers (on 32-bit implementations), to define&n; * the virtual to physical address mapping.&n; *&n; * We use the hash table as an extended TLB, i.e. a cache of currently&n; * active mappings.  We maintain a two-level page table tree, much like&n; * that used by the i386, for the sake of the Linux memory management code.&n; * Low-level assembler code in head.S (procedure hash_page) is responsible&n; * for extracting ptes from the tree and putting them into the hash table&n; * when necessary, and updating the accessed and modified bits in the&n; * page table tree.&n; */
@@ -119,9 +126,9 @@ DECL|macro|PTRS_PER_PMD
 mdefine_line|#define PTRS_PER_PMD&t;1
 DECL|macro|PTRS_PER_PGD
 mdefine_line|#define PTRS_PER_PGD&t;1024
-multiline_comment|/* Just any arbitrary offset to the start of the vmalloc VM area: the&n; * current 8MB value just means that there will be a 8MB &quot;hole&quot; after the&n; * physical memory until the kernel virtual memory starts.  That means that&n; * any out-of-bounds memory accesses will hopefully be caught.&n; * The vmalloc() routines leaves a hole of 4kB between each vmalloced&n; * area for the same reason. ;)&n; */
+multiline_comment|/* Just any arbitrary offset to the start of the vmalloc VM area: the&n; * current 64MB value just means that there will be a 64MB &quot;hole&quot; after the&n; * physical memory until the kernel virtual memory starts.  That means that&n; * any out-of-bounds memory accesses will hopefully be caught.&n; * The vmalloc() routines leaves a hole of 4kB between each vmalloced&n; * area for the same reason. ;)&n; *&n; * The vmalloc_offset MUST be larger than the gap between the bat2 mapping&n; * and the size of physical ram.  Since the bat2 mapping can be larger than&n; * the amount of ram we have vmalloc_offset must ensure that we don&squot;t try&n; * to allocate areas that don&squot;t exist! This value of 64M will only cause&n; * problems when we have &gt;128M -- Cort&n; */
 DECL|macro|VMALLOC_OFFSET
-mdefine_line|#define VMALLOC_OFFSET&t;(0x2000000) /* 32M */
+mdefine_line|#define VMALLOC_OFFSET&t;(0x4000000) /* 64M */
 DECL|macro|VMALLOC_START
 mdefine_line|#define VMALLOC_START ((((long)high_memory + VMALLOC_OFFSET) &amp; ~(VMALLOC_OFFSET-1)))
 DECL|macro|VMALLOC_VMADDR
@@ -239,7 +246,7 @@ mdefine_line|#define SIZEOF_PTR_LOG2&t;2
 multiline_comment|/* to set the page-dir */
 multiline_comment|/* tsk is a task_struct and pgdir is a pte_t */
 DECL|macro|SET_PAGE_DIR
-mdefine_line|#define SET_PAGE_DIR(tsk,pgdir) 
+mdefine_line|#define SET_PAGE_DIR(tsk,pgdir)  &bslash;&n;&t;((tsk)-&gt;tss.pg_tables = (unsigned long *)(pgdir))
 DECL|function|pte_none
 r_extern
 r_inline
@@ -1122,6 +1129,12 @@ id|pte
 (brace
 r_return
 (paren
+r_int
+r_int
+)paren
+id|__va
+c_func
+(paren
 id|pte_val
 c_func
 (paren
@@ -1130,8 +1143,6 @@ id|pte
 op_amp
 id|PAGE_MASK
 )paren
-op_plus
-id|KERNELBASE
 suffix:semicolon
 )brace
 DECL|function|pmd_page
@@ -1816,39 +1827,6 @@ r_int
 id|va
 )paren
 suffix:semicolon
-r_extern
-r_inline
-r_void
-DECL|function|flush_tlb_page
-id|flush_tlb_page
-c_func
-(paren
-r_struct
-id|vm_area_struct
-op_star
-id|vma
-comma
-r_int
-r_int
-id|vmaddr
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|vmaddr
-OL
-id|TASK_SIZE
-)paren
-id|flush_hash_page
-c_func
-(paren
-id|vma-&gt;vm_mm-&gt;context
-comma
-id|vmaddr
-)paren
-suffix:semicolon
-)brace
 DECL|macro|SWP_TYPE
 mdefine_line|#define SWP_TYPE(entry) (((entry) &gt;&gt; 1) &amp; 0x7f)
 DECL|macro|SWP_OFFSET

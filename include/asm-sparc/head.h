@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: head.h,v 1.32 1996/12/04 00:12:48 ecd Exp $ */
+multiline_comment|/* $Id: head.h,v 1.33 1997/10/04 08:54:22 ecd Exp $ */
 macro_line|#ifndef __SPARC_HEAD_H
 DECL|macro|__SPARC_HEAD_H
 mdefine_line|#define __SPARC_HEAD_H
@@ -72,5 +72,5 @@ DECL|macro|WINDOW_SPILL
 mdefine_line|#define WINDOW_SPILL &bslash;&n;        rd %psr, %l0; rd %wim, %l3; b spill_window_entry; andcc %l0, PSR_PS, %g0;
 DECL|macro|WINDOW_FILL
 mdefine_line|#define WINDOW_FILL &bslash;&n;        rd %psr, %l0; rd %wim, %l3; b fill_window_entry; andcc %l0, PSR_PS, %g0;
-macro_line|#endif __SPARC_HEAD_H
+macro_line|#endif /* __SPARC_HEAD_H */
 eof

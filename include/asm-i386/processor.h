@@ -11,21 +11,21 @@ r_struct
 id|cpuinfo_x86
 (brace
 DECL|member|x86
-id|u8
+id|__u8
 id|x86
 suffix:semicolon
 multiline_comment|/* CPU family */
 DECL|member|x86_vendor
-id|u8
+id|__u8
 id|x86_vendor
 suffix:semicolon
 multiline_comment|/* CPU vendor */
 DECL|member|x86_model
-id|u8
+id|__u8
 id|x86_model
 suffix:semicolon
 DECL|member|x86_mask
-id|u8
+id|__u8
 id|x86_mask
 suffix:semicolon
 DECL|member|wp_works_ok
@@ -52,7 +52,7 @@ id|cpuid_level
 suffix:semicolon
 multiline_comment|/* Maximum supported CPUID level, -1=no CPUID */
 DECL|member|x86_capability
-id|u32
+id|__u32
 id|x86_capability
 suffix:semicolon
 DECL|member|x86_vendor_id

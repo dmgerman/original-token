@@ -6,6 +6,7 @@ mdefine_line|#define _CHECKSUM_H
 macro_line|#include &lt;asm/types.h&gt;
 macro_line|#include &lt;asm/byteorder.h&gt;
 macro_line|#include &lt;net/ip.h&gt;
+macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/checksum.h&gt;
 macro_line|#ifndef _HAVE_ARCH_IPV6_CSUM
 DECL|function|csum_ipv6_magic
@@ -281,6 +282,80 @@ c_func
 (paren
 id|csum
 )paren
+suffix:semicolon
+)brace
+macro_line|#endif
+macro_line|#ifndef _HAVE_ARCH_COPY_AND_CSUM_FROM_USER
+r_extern
+id|__inline__
+DECL|function|csum_and_copy_from_user
+r_int
+r_int
+id|csum_and_copy_from_user
+(paren
+r_const
+r_char
+op_star
+id|src
+comma
+r_char
+op_star
+id|dst
+comma
+r_int
+id|len
+comma
+r_int
+id|sum
+comma
+r_int
+op_star
+id|err_ptr
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|verify_area
+c_func
+(paren
+id|VERIFY_READ
+comma
+id|src
+comma
+id|len
+)paren
+op_eq
+l_int|0
+)paren
+r_return
+id|csum_partial_copy_from_user
+c_func
+(paren
+id|src
+comma
+id|dst
+comma
+id|len
+comma
+id|sum
+comma
+id|err_ptr
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|len
+)paren
+op_star
+id|err_ptr
+op_assign
+op_minus
+id|EFAULT
+suffix:semicolon
+r_return
+id|sum
 suffix:semicolon
 )brace
 macro_line|#endif

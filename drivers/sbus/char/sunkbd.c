@@ -1,4 +1,4 @@
-multiline_comment|/* keyboard.c: Sun keyboard driver.&n; *&n; * Copyright (C) 1995, 1996, 1997 David S. Miller (davem@caip.rutgers.edu)&n; *&n; * Added vuid event generation and /dev/kbd device for SunOS&n; * compatibility - Miguel (miguel@nuclecu.unam.mx)&n; *&n; * Added PCI 8042 controller support -DaveM&n; */
+multiline_comment|/* keyboard.c: Sun keyboard driver.&n; *&n; * Copyright (C) 1995, 1996, 1997 David S. Miller (davem@caip.rutgers.edu)&n; *&n; * Added vuid event generation and /dev/kbd device for SunOS&n; * compatibility - Miguel (miguel@nuclecu.unam.mx)&n; *&n; * Added PCI 8042 controller support -DaveM&n; * Added Magic SysRq support -MJ&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -13,6 +13,7 @@ macro_line|#include &lt;linux/poll.h&gt;
 macro_line|#include &lt;linux/random.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/sysrq.h&gt;
 macro_line|#include &lt;asm/kbio.h&gt;
 macro_line|#include &lt;asm/vuid_event.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
@@ -106,22 +107,7 @@ comma
 l_int|0
 )brace
 suffix:semicolon
-DECL|variable|kbd_read_mask
-r_int
-r_char
-id|kbd_read_mask
-op_assign
-l_int|0x01
-suffix:semicolon
-multiline_comment|/* modified by psaux.c */
-DECL|variable|aux_device_present
-r_int
-r_char
-id|aux_device_present
-op_assign
-l_int|0x00
-suffix:semicolon
-multiline_comment|/* To make kernel/ksyms.c happy */
+macro_line|#ifndef CONFIG_PCI
 DECL|variable|keypress_wait
 r_struct
 id|wait_queue
@@ -130,6 +116,7 @@ id|keypress_wait
 op_assign
 l_int|NULL
 suffix:semicolon
+macro_line|#endif
 DECL|function|keyboard_wait_for_keypress
 r_void
 id|keyboard_wait_for_keypress
@@ -163,8 +150,6 @@ comma
 )brace
 suffix:semicolon
 multiline_comment|/* keyboard key bitmap */
-DECL|macro|BITS_PER_LONG
-mdefine_line|#define BITS_PER_LONG (8*sizeof(unsigned long))
 DECL|variable|key_down
 r_static
 r_int
@@ -202,6 +187,7 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* &n; * In order to retrieve the shift_state (for the mouse server), either&n; * the variable must be global, or a new procedure must be created to &n; * return the value. I chose the former way.&n; */
+macro_line|#ifndef CONFIG_PCI
 DECL|variable|shift_state
 multiline_comment|/*static*/
 r_int
@@ -209,6 +195,7 @@ id|shift_state
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#endif
 DECL|variable|npadch
 r_static
 r_int
@@ -293,9 +280,8 @@ id|HZ
 op_div
 l_int|20
 suffix:semicolon
-r_extern
 r_void
-id|compute_shiftstate
+id|sun_compute_shiftstate
 c_func
 (paren
 r_void
@@ -542,6 +528,7 @@ id|bare_num
 )brace
 suffix:semicolon
 multiline_comment|/* maximum values each key_handler can handle */
+macro_line|#ifndef CONFIG_PCI
 DECL|variable|max_vals
 r_const
 r_int
@@ -595,6 +582,10 @@ op_minus
 l_int|1
 comma
 l_int|255
+comma
+id|NR_LOCK
+op_minus
+l_int|1
 )brace
 suffix:semicolon
 DECL|variable|NR_TYPES
@@ -608,6 +599,7 @@ c_func
 id|max_vals
 )paren
 suffix:semicolon
+macro_line|#endif
 r_static
 r_void
 id|put_queue
@@ -634,6 +626,33 @@ id|pt_regs
 op_star
 id|pt_regs
 suffix:semicolon
+macro_line|#ifdef CONFIG_MAGIC_SYSRQ
+DECL|variable|sun_sysrq_xlate
+r_int
+r_char
+id|sun_sysrq_xlate
+(braket
+l_int|128
+)braket
+op_assign
+l_string|&quot;&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;201&bslash;202&bslash;212&bslash;203&bslash;213&bslash;204&bslash;214&bslash;205&bslash;0&bslash;206&bslash;0&quot;
+multiline_comment|/* 0x00 - 0x0f */
+l_string|&quot;&bslash;207&bslash;210&bslash;211&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;03312&quot;
+multiline_comment|/* 0x10 - 0x1f */
+l_string|&quot;34567890-=`&bslash;177&bslash;0=/*&quot;
+multiline_comment|/* 0x20 - 0x2f */
+l_string|&quot;&bslash;0&bslash;0.&bslash;0&bslash;0&bslash;011qwertyuiop&quot;
+multiline_comment|/* 0x30 - 0x3f */
+l_string|&quot;[]&bslash;177&bslash;000789-&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0asd&quot;
+multiline_comment|/* 0x40 - 0x4f */
+l_string|&quot;fghjkl;&squot;&bslash;&bslash;&bslash;015&bslash;0154560&bslash;0&quot;
+multiline_comment|/* 0x50 - 0x5f */
+l_string|&quot;&bslash;0&bslash;0&bslash;0&bslash;0zxcvbnm,./&bslash;0&bslash;012&quot;
+multiline_comment|/* 0x60 - 0x6f */
+l_string|&quot;123&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0 &bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&quot;
+suffix:semicolon
+multiline_comment|/* 0x70 - 0x7f */
+macro_line|#endif
 DECL|variable|sunkbd_layout
 r_volatile
 r_int
@@ -722,7 +741,7 @@ DECL|macro|KEY_ALT
 mdefine_line|#define KEY_ALT         0x86
 DECL|macro|KEY_L1
 mdefine_line|#define KEY_L1          0x87
-multiline_comment|/* Do to kbd_init() being called before rs_init(), and kbd_init() doing:&n; *&n; *&t;init_bh(KEYBOARD_BH, kbd_bh);&n; *&t;mark_bh(KEYBOARD_BH);&n; *&n; * this might well be called before some driver has claimed interest in&n; * handling the keyboard input/output. So we need to assign an initial nop.&n; *&n; * Otherwise this would lead to the following (DaveM might want to look at):&n; *&n; *&t;sparc64_dtlb_refbit_catch(),&n; *&t;do_sparc64_fault(),&n; *&t;kernel NULL pointer dereference at do_sparc64_fault + 0x2c0 ;-(&n; */
+multiline_comment|/* Do to sun_kbd_init() being called before rs_init(), and sun_kbd_init() doing:&n; *&n; *&t;init_bh(KEYBOARD_BH, kbd_bh);&n; *&t;mark_bh(KEYBOARD_BH);&n; *&n; * this might well be called before some driver has claimed interest in&n; * handling the keyboard input/output. So we need to assign an initial nop.&n; *&n; * Otherwise this would lead to the following (DaveM might want to look at):&n; *&n; *&t;sparc64_dtlb_refbit_catch(),&n; *&t;do_sparc64_fault(),&n; *&t;kernel NULL pointer dereference at do_sparc64_fault + 0x2c0 ;-(&n; */
 DECL|function|nop_kbd_put_char
 r_static
 r_void
@@ -1610,9 +1629,9 @@ comma
 multiline_comment|/* 0x70-0x7f */
 )brace
 suffix:semicolon
-DECL|function|setkeycode
+DECL|function|sun_setkeycode
 r_int
-id|setkeycode
+id|sun_setkeycode
 c_func
 (paren
 r_int
@@ -1669,9 +1688,9 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|getkeycode
+DECL|function|sun_getkeycode
 r_int
-id|getkeycode
+id|sun_getkeycode
 c_func
 (paren
 r_int
@@ -1965,7 +1984,7 @@ id|key_down
 )paren
 )paren
 suffix:semicolon
-id|compute_shiftstate
+id|sun_compute_shiftstate
 c_func
 (paren
 )paren
@@ -2186,6 +2205,39 @@ id|key_down
 )paren
 suffix:semicolon
 )brace
+macro_line|#ifdef CONFIG_MAGIC_SYSRQ&t;&t;&t;/* Handle the SysRq hack */
+r_if
+c_cond
+(paren
+id|l1a_state.l1_down
+)paren
+(brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|up_flag
+)paren
+id|handle_sysrq
+c_func
+(paren
+id|sun_sysrq_xlate
+(braket
+id|keycode
+)braket
+comma
+id|pt_regs
+comma
+id|kbd
+comma
+id|tty
+)paren
+suffix:semicolon
+r_goto
+id|out
+suffix:semicolon
+)brace
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -2270,6 +2322,8 @@ op_assign
 id|shift_state
 op_xor
 id|kbd-&gt;lockstate
+op_xor
+id|kbd-&gt;slockstate
 suffix:semicolon
 id|ushort
 op_star
@@ -2398,7 +2452,7 @@ r_else
 (brace
 multiline_comment|/* maybe beep? */
 multiline_comment|/* we have at least to update shift_state */
-id|compute_shiftstate
+id|sun_compute_shiftstate
 c_func
 (paren
 )paren
@@ -3133,7 +3187,7 @@ c_func
 (paren
 )paren
 (brace
-id|compute_shiftstate
+id|sun_compute_shiftstate
 c_func
 (paren
 )paren
@@ -4105,9 +4159,9 @@ suffix:semicolon
 )brace
 multiline_comment|/* called after returning from RAW mode or when changing consoles -&n;   recompute k_down[] and shift_state from key_down[] */
 multiline_comment|/* maybe called when keymap is undefined, so that shiftkey release is seen */
-DECL|function|compute_shiftstate
+DECL|function|sun_compute_shiftstate
 r_void
-id|compute_shiftstate
+id|sun_compute_shiftstate
 c_func
 (paren
 r_void
@@ -4469,10 +4523,10 @@ r_int
 r_char
 id|ledioctl
 suffix:semicolon
-DECL|function|getledstate
+DECL|function|sun_getledstate
 r_int
 r_char
-id|getledstate
+id|sun_getledstate
 c_func
 (paren
 r_void
@@ -4482,9 +4536,9 @@ r_return
 id|ledstate
 suffix:semicolon
 )brace
-DECL|function|setledstate
+DECL|function|sun_setledstate
 r_void
-id|setledstate
+id|sun_setledstate
 c_func
 (paren
 r_struct
@@ -5011,7 +5065,7 @@ id|__initfunc
 c_func
 (paren
 r_int
-id|kbd_init
+id|sun_kbd_init
 c_func
 (paren
 r_void
@@ -5045,6 +5099,10 @@ suffix:semicolon
 id|kbd0.lockstate
 op_assign
 id|KBD_DEFLOCK
+suffix:semicolon
+id|kbd0.slockstate
+op_assign
+l_int|0
 suffix:semicolon
 id|kbd0.modeflags
 op_assign
@@ -5309,15 +5367,10 @@ id|kbd_wait
 suffix:semicolon
 )brace
 r_static
-r_int
+id|ssize_t
 DECL|function|kbd_read
 id|kbd_read
 (paren
-r_struct
-id|inode
-op_star
-id|inode
-comma
 r_struct
 id|file
 op_star
@@ -5328,8 +5381,11 @@ op_star
 id|buffer
 comma
 r_int
-r_int
 id|count
+comma
+id|loff_t
+op_star
+id|ppos
 )paren
 (brace
 r_struct
@@ -5507,16 +5563,11 @@ id|buffer
 suffix:semicolon
 )brace
 multiline_comment|/* Needed by X */
+DECL|function|kbd_fasync
 r_static
 r_int
-DECL|function|kbd_fasync
 id|kbd_fasync
 (paren
-r_struct
-id|inode
-op_star
-id|inode
-comma
 r_struct
 id|file
 op_star
@@ -5533,8 +5584,6 @@ id|retval
 op_assign
 id|fasync_helper
 (paren
-id|inode
-comma
 id|filp
 comma
 id|on
@@ -5943,7 +5992,7 @@ op_amp
 id|LED_CMPOSE
 )paren
 suffix:semicolon
-id|setledstate
+id|sun_setledstate
 c_func
 (paren
 id|kbd_table
@@ -6284,8 +6333,6 @@ l_int|0
 suffix:semicolon
 id|kbd_fasync
 (paren
-id|i
-comma
 id|f
 comma
 l_int|0

@@ -1,10 +1,10 @@
-multiline_comment|/* $Id: devops.c,v 1.2 1997/02/25 12:40:20 jj Exp $&n; * devops.c:  Device operations using the PROM.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996,1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: devops.c,v 1.3 1997/10/29 07:43:28 ecd Exp $&n; * devops.c:  Device operations using the PROM.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996,1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;asm/openprom.h&gt;
 macro_line|#include &lt;asm/oplib.h&gt;
-multiline_comment|/* Open the device described by the string &squot;dstr&squot;.  Returns the handle&n; * to that device used for subsequent operations on that device.&n; * Returns -1 on failure.&n; */
+multiline_comment|/* Open the device described by the string &squot;dstr&squot;.  Returns the handle&n; * to that device used for subsequent operations on that device.&n; * Returns 0 on failure.&n; */
 r_int
 DECL|function|prom_devopen
 id|prom_devopen

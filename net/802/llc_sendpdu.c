@@ -459,10 +459,6 @@ comma
 id|fl
 )paren
 suffix:semicolon
-id|skb-&gt;arp
-op_assign
-l_int|1
-suffix:semicolon
 id|skb-&gt;dev
 op_assign
 id|lp-&gt;dev
@@ -692,10 +688,6 @@ comma
 id|skb-&gt;len
 )paren
 suffix:semicolon
-id|skb-&gt;arp
-op_assign
-l_int|1
-suffix:semicolon
 id|ADD_TO_RTQ
 c_func
 (paren
@@ -921,10 +913,6 @@ op_ne
 l_int|NULL
 )paren
 (brace
-id|tmp-&gt;arp
-op_assign
-l_int|1
-suffix:semicolon
 id|tmp-&gt;dev
 op_assign
 id|lp-&gt;dev

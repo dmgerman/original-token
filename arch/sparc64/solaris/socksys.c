@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: socksys.c,v 1.1 1997/09/03 12:29:27 jj Exp $&n; * socksys.c: /dev/inet/ stuff for Solaris emulation.&n; *&n; * Copyright (C) 1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; * Copyright (C) 1995, 1996 Mike Jagdis (jaggy@purplet.demon.co.uk)&n; */
+multiline_comment|/* $Id: socksys.c,v 1.2 1997/09/08 11:29:38 jj Exp $&n; * socksys.c: /dev/inet/ stuff for Solaris emulation.&n; *&n; * Copyright (C) 1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; * Copyright (C) 1995, 1996 Mike Jagdis (jaggy@purplet.demon.co.uk)&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -8,6 +8,7 @@ macro_line|#include &lt;linux/ioctl.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/poll.h&gt;
+macro_line|#include &lt;linux/file.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/termios.h&gt;
 macro_line|#include &quot;conv.h&quot;
@@ -133,6 +134,11 @@ comma
 id|protocol
 comma
 id|fd
+suffix:semicolon
+r_struct
+id|dentry
+op_star
+id|dentry
 suffix:semicolon
 r_int
 (paren
@@ -286,6 +292,76 @@ l_int|0
 )paren
 r_return
 id|fd
+suffix:semicolon
+id|dentry
+op_assign
+id|filp-&gt;f_dentry
+suffix:semicolon
+id|filp-&gt;f_dentry
+op_assign
+id|current-&gt;files-&gt;fd
+(braket
+id|fd
+)braket
+op_member_access_from_pointer
+id|f_dentry
+suffix:semicolon
+id|filp-&gt;f_dentry-&gt;d_inode-&gt;i_rdev
+op_assign
+id|inode-&gt;i_rdev
+suffix:semicolon
+id|filp-&gt;f_dentry-&gt;d_inode-&gt;i_flock
+op_assign
+id|inode-&gt;i_flock
+suffix:semicolon
+id|filp-&gt;f_dentry-&gt;d_inode-&gt;u.socket_i.file
+op_assign
+id|filp
+suffix:semicolon
+id|filp-&gt;f_op
+op_assign
+op_amp
+id|socksys_file_ops
+suffix:semicolon
+id|dput
+c_func
+(paren
+id|dentry
+)paren
+suffix:semicolon
+id|FD_CLR
+c_func
+(paren
+id|fd
+comma
+op_amp
+id|current-&gt;files-&gt;close_on_exec
+)paren
+suffix:semicolon
+id|FD_CLR
+c_func
+(paren
+id|fd
+comma
+op_amp
+id|current-&gt;files-&gt;open_fds
+)paren
+suffix:semicolon
+id|put_filp
+c_func
+(paren
+id|current-&gt;files-&gt;fd
+(braket
+id|fd
+)braket
+)paren
+suffix:semicolon
+id|current-&gt;files-&gt;fd
+(braket
+id|fd
+)braket
+op_assign
+l_int|NULL
 suffix:semicolon
 r_return
 l_int|0

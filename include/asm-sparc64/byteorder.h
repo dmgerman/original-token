@@ -1,3 +1,4 @@
+multiline_comment|/* $Id: byteorder.h,v 1.8 1997/12/18 02:44:14 ecd Exp $ */
 macro_line|#ifndef _SPARC64_BYTEORDER_H
 DECL|macro|_SPARC64_BYTEORDER_H
 mdefine_line|#define _SPARC64_BYTEORDER_H
@@ -132,6 +133,7 @@ DECL|macro|__arch__swab64p
 mdefine_line|#define __arch__swab64p(x) ___arch__swab64p(x)
 DECL|macro|__BYTEORDER_HAS_U64__
 mdefine_line|#define __BYTEORDER_HAS_U64__
+macro_line|#endif /* __GNUC__ */
 macro_line|#include &lt;linux/byteorder/big_endian.h&gt;
 macro_line|#endif /* _SPARC64_BYTEORDER_H */
 eof

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: pgtable.h,v 1.63 1997/08/13 04:44:15 paulus Exp $ */
+multiline_comment|/* $Id: pgtable.h,v 1.64 1997/11/07 15:01:44 jj Exp $ */
 macro_line|#ifndef _SPARC_PGTABLE_H
 DECL|macro|_SPARC_PGTABLE_H
 mdefine_line|#define _SPARC_PGTABLE_H
@@ -1694,6 +1694,9 @@ suffix:semicolon
 r_case
 id|sun4m
 suffix:colon
+r_case
+id|sun4d
+suffix:colon
 r_return
 (paren
 (paren
@@ -1742,6 +1745,9 @@ suffix:semicolon
 multiline_comment|/* Don&squot;t check iospace on sun4c */
 r_case
 id|sun4m
+suffix:colon
+r_case
+id|sun4d
 suffix:colon
 r_return
 (paren

@@ -1,7 +1,6 @@
 macro_line|#ifndef _PPC_PAGE_H
 DECL|macro|_PPC_PAGE_H
 mdefine_line|#define _PPC_PAGE_H
-macro_line|#include &lt;linux/config.h&gt;
 multiline_comment|/* PAGE_SHIFT determines the page size */
 DECL|macro|PAGE_SHIFT
 mdefine_line|#define PAGE_SHIFT&t;12
@@ -9,16 +8,7 @@ DECL|macro|PAGE_SIZE
 mdefine_line|#define PAGE_SIZE&t;(1UL &lt;&lt; PAGE_SHIFT)
 DECL|macro|PAGE_MASK
 mdefine_line|#define PAGE_MASK&t;(~(PAGE_SIZE-1))
-multiline_comment|/* This handles the memory map.. */
-multiline_comment|/*&n; * these virtual mappings for prep and pmac&n; * on the prep machine the io areas are at different physical locations&n; * than their virtual address.  On the pmac and chrp the io areas&n; * are mapped 1-1 virtual/physical.&n; * -- Cort&n; */
-macro_line|#if defined(CONFIG_PREP) || defined(CONFIG_CHRP)
-DECL|macro|KERNELBASE
-mdefine_line|#define KERNELBASE&t;0x90000000
-macro_line|#endif
-macro_line|#ifdef CONFIG_PMAC
-DECL|macro|KERNELBASE
-mdefine_line|#define KERNELBASE&t;0xc0000000
-macro_line|#endif
+multiline_comment|/* KERNELBASE comes from arch/ppc/Makefile */
 DECL|macro|PAGE_OFFSET
 mdefine_line|#define PAGE_OFFSET&t;KERNELBASE
 macro_line|#ifndef __ASSEMBLY__
@@ -150,7 +140,7 @@ mdefine_line|#define __pa(x)&t;&t;&t;((unsigned long)(x)-PAGE_OFFSET)
 DECL|macro|__va
 mdefine_line|#define __va(x)&t;&t;&t;((void *)((unsigned long)(x)+PAGE_OFFSET))
 DECL|macro|MAP_NR
-mdefine_line|#define MAP_NR(addr)&t;&t;(__pa(addr) &gt;&gt; PAGE_SHIFT)
+mdefine_line|#define MAP_NR(addr)&t;&t;(((unsigned long)addr-PAGE_OFFSET) &gt;&gt; PAGE_SHIFT)
 DECL|macro|MAP_PAGE_RESERVED
 mdefine_line|#define MAP_PAGE_RESERVED&t;(1&lt;&lt;15)
 r_extern

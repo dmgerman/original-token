@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: kgdb.h,v 1.7 1995/11/27 02:43:18 davem Exp $&n; * kgdb.h: Defines and declarations for serial line source level&n; *         remote debugging of the Linux kernel using gdb.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: kgdb.h,v 1.8 1998/01/07 06:33:44 baccala Exp $&n; * kgdb.h: Defines and declarations for serial line source level&n; *         remote debugging of the Linux kernel using gdb.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _SPARC_KGDB_H
 DECL|macro|_SPARC_KGDB_H
 mdefine_line|#define _SPARC_KGDB_H
@@ -151,6 +151,6 @@ mdefine_line|#define LOAD_KGDB_GLOBALS(reg) &bslash;&n;        ld      [%reg + R
 DECL|macro|LOAD_KGDB_INS
 mdefine_line|#define LOAD_KGDB_INS(reg) &bslash;&n;        ldd     [%reg + REGWIN_SZ + KGDB_I0], %i0; &bslash;&n;        ldd     [%reg + REGWIN_SZ + KGDB_I2], %i2; &bslash;&n;        ldd     [%reg + REGWIN_SZ + KGDB_I4], %i4; &bslash;&n;        ldd     [%reg + REGWIN_SZ + KGDB_I6], %i6;
 DECL|macro|LOAD_KGDB_SREGS
-mdefine_line|#define LOAD_KGDB_SREGS(reg, reg_y_and_psr, reg_pc_and_npc) &bslash;&n;        ldd     [%reg + REGWIN_SZ + KGDB_Y], %reg_y_and_psr; &bslash;&n;        ldd     [%reg + REGWIN_SZ + KGDB_PC], %reg_pc_and_npc;
+mdefine_line|#define LOAD_KGDB_SREGS(reg, reg_y, reg_psr, reg_wim, reg_tbr, reg_pc, reg_npc) &bslash;&n;&t;ld&t;[%reg + REGWIN_SZ + KGDB_Y], %reg_y; &bslash;&n;&t;ld&t;[%reg + REGWIN_SZ + KGDB_PSR], %reg_psr; &bslash;&n;&t;ld&t;[%reg + REGWIN_SZ + KGDB_WIM], %reg_wim; &bslash;&n;&t;ld&t;[%reg + REGWIN_SZ + KGDB_TBR], %reg_tbr; &bslash;&n;&t;ld&t;[%reg + REGWIN_SZ + KGDB_PC], %reg_pc; &bslash;&n;&t;ld&t;[%reg + REGWIN_SZ + KGDB_NPC], %reg_npc;
 macro_line|#endif /* !(_SPARC_KGDB_H) */
 eof

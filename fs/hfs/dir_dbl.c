@@ -728,6 +728,11 @@ suffix:semicolon
 )brace
 id|done
 suffix:colon
+id|dentry-&gt;d_op
+op_assign
+op_amp
+id|hfs_dentry_operations
+suffix:semicolon
 id|d_add
 c_func
 (paren

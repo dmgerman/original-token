@@ -1,10 +1,11 @@
-multiline_comment|/*&n; * Support for periodic interrupts (100 per second) and for getting&n; * the current time from the RTC on Power Macintoshes.&n; *&n; * At present, we use the decrementer register in the 601 CPU&n; * for our periodic interrupts.  This will probably have to be&n; * changed for other processors.&n; *&n; * Paul Mackerras&t;August 1996.&n; * Copyright (C) 1996 Paul Mackerras.&n; */
+multiline_comment|/*&n; * Support for periodic interrupts (100 per second) and for getting&n; * the current time from the RTC on Power Macintoshes.&n; *&n; * We use the decrementer register for our periodic interrupts.&n; *&n; * Paul Mackerras&t;August 1996.&n; * Copyright (C) 1996 Paul Mackerras.&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/param.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
+macro_line|#include &lt;asm/adb.h&gt;
 macro_line|#include &lt;asm/cuda.h&gt;
 macro_line|#include &lt;asm/prom.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -12,6 +13,287 @@ macro_line|#include &quot;time.h&quot;
 multiline_comment|/* Apparently the RTC stores seconds since 1 Jan 1904 */
 DECL|macro|RTC_OFFSET
 mdefine_line|#define RTC_OFFSET&t;2082844800
+multiline_comment|/*&n; * Calibrate the decrementer frequency with the VIA timer 1.&n; */
+DECL|macro|VIA_TIMER_FREQ_6
+mdefine_line|#define VIA_TIMER_FREQ_6&t;4700000&t;/* time 1 frequency * 6 */
+multiline_comment|/* VIA registers */
+DECL|macro|RS
+mdefine_line|#define RS&t;&t;0x200&t;&t;/* skip between registers */
+DECL|macro|T1CL
+mdefine_line|#define T1CL&t;&t;(4*RS)&t;&t;/* Timer 1 ctr/latch (low 8 bits) */
+DECL|macro|T1CH
+mdefine_line|#define T1CH&t;&t;(5*RS)&t;&t;/* Timer 1 counter (high 8 bits) */
+DECL|macro|T1LL
+mdefine_line|#define T1LL&t;&t;(6*RS)&t;&t;/* Timer 1 latch (low 8 bits) */
+DECL|macro|T1LH
+mdefine_line|#define T1LH&t;&t;(7*RS)&t;&t;/* Timer 1 latch (high 8 bits) */
+DECL|macro|ACR
+mdefine_line|#define ACR&t;&t;(11*RS)&t;&t;/* Auxiliary control register */
+DECL|macro|IFR
+mdefine_line|#define IFR&t;&t;(13*RS)&t;&t;/* Interrupt flag register */
+multiline_comment|/* Bits in ACR */
+DECL|macro|T1MODE
+mdefine_line|#define T1MODE&t;&t;0xc0&t;&t;/* Timer 1 mode */
+DECL|macro|T1MODE_CONT
+mdefine_line|#define T1MODE_CONT&t;0x40&t;&t;/*  continuous interrupts */
+multiline_comment|/* Bits in IFR and IER */
+DECL|macro|T1_INT
+mdefine_line|#define T1_INT&t;&t;0x40&t;&t;/* Timer 1 interrupt */
+DECL|function|via_calibrate_decr
+r_static
+r_int
+id|via_calibrate_decr
+c_func
+(paren
+r_void
+)paren
+(brace
+r_struct
+id|device_node
+op_star
+id|vias
+suffix:semicolon
+r_volatile
+r_int
+r_char
+op_star
+id|via
+suffix:semicolon
+r_int
+id|count
+op_assign
+id|VIA_TIMER_FREQ_6
+op_div
+id|HZ
+suffix:semicolon
+r_int
+r_int
+id|dstart
+comma
+id|dend
+suffix:semicolon
+id|vias
+op_assign
+id|find_devices
+c_func
+(paren
+l_string|&quot;via-cuda&quot;
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|vias
+op_eq
+l_int|0
+)paren
+id|vias
+op_assign
+id|find_devices
+c_func
+(paren
+l_string|&quot;via-pmu&quot;
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|vias
+op_eq
+l_int|0
+op_logical_or
+id|vias-&gt;n_addrs
+op_eq
+l_int|0
+)paren
+r_return
+l_int|0
+suffix:semicolon
+id|via
+op_assign
+(paren
+r_volatile
+r_int
+r_char
+op_star
+)paren
+id|vias-&gt;addrs
+(braket
+l_int|0
+)braket
+dot
+id|address
+suffix:semicolon
+multiline_comment|/* set timer 1 for continuous interrupts */
+id|out_8
+c_func
+(paren
+op_amp
+id|via
+(braket
+id|ACR
+)braket
+comma
+(paren
+id|via
+(braket
+id|ACR
+)braket
+op_amp
+op_complement
+id|T1MODE
+)paren
+op_or
+id|T1MODE_CONT
+)paren
+suffix:semicolon
+multiline_comment|/* set the counter to a small value */
+id|out_8
+c_func
+(paren
+op_amp
+id|via
+(braket
+id|T1CH
+)braket
+comma
+l_int|2
+)paren
+suffix:semicolon
+multiline_comment|/* set the latch to `count&squot; */
+id|out_8
+c_func
+(paren
+op_amp
+id|via
+(braket
+id|T1LL
+)braket
+comma
+id|count
+)paren
+suffix:semicolon
+id|out_8
+c_func
+(paren
+op_amp
+id|via
+(braket
+id|T1LH
+)braket
+comma
+id|count
+op_rshift
+l_int|8
+)paren
+suffix:semicolon
+multiline_comment|/* wait until it hits 0 */
+r_while
+c_loop
+(paren
+(paren
+id|in_8
+c_func
+(paren
+op_amp
+id|via
+(braket
+id|IFR
+)braket
+)paren
+op_amp
+id|T1_INT
+)paren
+op_eq
+l_int|0
+)paren
+suffix:semicolon
+id|dstart
+op_assign
+id|get_dec
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/* clear the interrupt &amp; wait until it hits 0 again */
+id|in_8
+c_func
+(paren
+op_amp
+id|via
+(braket
+id|T1CL
+)braket
+)paren
+suffix:semicolon
+r_while
+c_loop
+(paren
+(paren
+id|in_8
+c_func
+(paren
+op_amp
+id|via
+(braket
+id|IFR
+)braket
+)paren
+op_amp
+id|T1_INT
+)paren
+op_eq
+l_int|0
+)paren
+suffix:semicolon
+id|dend
+op_assign
+id|get_dec
+c_func
+(paren
+)paren
+suffix:semicolon
+id|decrementer_count
+op_assign
+(paren
+id|dstart
+op_minus
+id|dend
+)paren
+op_div
+l_int|6
+suffix:semicolon
+id|count_period_num
+op_assign
+l_int|60
+suffix:semicolon
+id|count_period_den
+op_assign
+id|decrementer_count
+op_star
+l_int|6
+op_star
+id|HZ
+op_div
+l_int|100000
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_INFO
+l_string|&quot;via_calibrate_decr: decrementer_count = %u (%u ticks)&bslash;n&quot;
+comma
+id|decrementer_count
+comma
+id|dstart
+op_minus
+id|dend
+)paren
+suffix:semicolon
+r_return
+l_int|1
+suffix:semicolon
+)brace
 multiline_comment|/*&n; * Query the OF and get the decr frequency.&n; * This was taken from the pmac time_init() when merging the prep/pmac&n; * time functions.&n; */
 DECL|function|pmac_calibrate_decr
 r_void
@@ -33,6 +315,16 @@ op_star
 id|fp
 comma
 id|divisor
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|via_calibrate_decr
+c_func
+(paren
+)paren
+)paren
+r_return
 suffix:semicolon
 multiline_comment|/*&n;&t; * The cpu node should have a timebase-frequency property&n;&t; * to tell us the rate at which the decrementer counts.&n;&t; */
 id|cpu
@@ -136,7 +428,7 @@ r_void
 )paren
 (brace
 r_struct
-id|cuda_request
+id|adb_request
 id|req
 suffix:semicolon
 multiline_comment|/* Get the time from the RTC */
@@ -159,7 +451,7 @@ r_while
 c_loop
 (paren
 op_logical_neg
-id|req.got_reply
+id|req.complete
 )paren
 id|cuda_poll
 c_func
@@ -251,6 +543,10 @@ suffix:semicolon
 id|xtime.tv_usec
 op_assign
 l_int|0
+suffix:semicolon
+id|last_rtc_update
+op_assign
+id|xtime.tv_sec
 suffix:semicolon
 )brace
 eof

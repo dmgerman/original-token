@@ -1,9 +1,4 @@
 multiline_comment|/*&n; * Definitions for display drivers for console use on PowerMacs.&n; *&n; * Copyright (C) 1997 Paul Mackerras.&n; *&t;&n; * This program is free software; you can redistribute it and/or&n; * modify it under the terms of the GNU General Public License&n; * as published by the Free Software Foundation; either version&n; * 2 of the License, or (at your option) any later version.&n; */
-r_extern
-r_int
-id|serial_console
-suffix:semicolon
-multiline_comment|/* set to use serial port as console */
 multiline_comment|/*&n; * Video mode values.&n; * These are supposed to be the same as the values that&n; * Apple uses in MacOS.&n; */
 DECL|macro|VMODE_NVRAM
 mdefine_line|#define VMODE_NVRAM&t;&t;0&t;/* use value stored in nvram */

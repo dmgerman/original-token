@@ -59,6 +59,7 @@ multiline_comment|/* Proc filesystem interface */
 r_static
 r_int
 id|router_proc_perms
+c_func
 (paren
 r_struct
 id|inode
@@ -269,6 +270,9 @@ multiline_comment|/* mknod */
 l_int|NULL
 comma
 multiline_comment|/* rename */
+l_int|NULL
+comma
+multiline_comment|/* follow link */
 l_int|NULL
 comma
 multiline_comment|/* readlink */
@@ -851,6 +855,8 @@ r_struct
 id|inode
 op_star
 id|inode
+op_assign
+id|file-&gt;f_dentry-&gt;d_inode
 suffix:semicolon
 r_struct
 id|proc_dir_entry

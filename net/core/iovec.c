@@ -8,32 +8,7 @@ macro_line|#include &lt;linux/net.h&gt;
 macro_line|#include &lt;linux/in6.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/byteorder.h&gt;
-macro_line|#include &lt;asm/checksum.h&gt;
-DECL|function|min
-r_extern
-r_inline
-r_int
-id|min
-c_func
-(paren
-r_int
-id|x
-comma
-r_int
-id|y
-)paren
-(brace
-r_return
-id|x
-OG
-id|y
-ques
-c_cond
-id|y
-suffix:colon
-id|x
-suffix:semicolon
-)brace
+macro_line|#include &lt;net/checksum.h&gt;
 multiline_comment|/*&n; *&t;Verify iovec&n; *&t;verify area does a simple check for completly bogus addresses&n; *&n; *&t;Save time not doing verify_area. copy_*_user will make this work&n; *&t;in any case.&n; */
 DECL|function|verify_iovec
 r_int
@@ -669,7 +644,7 @@ id|copy
 op_star
 id|csump
 op_assign
-id|csum_partial_copy_from_user
+id|csum_and_copy_from_user
 c_func
 (paren
 id|base
@@ -725,7 +700,7 @@ suffix:semicolon
 op_star
 id|csump
 op_assign
-id|csum_partial_copy_from_user
+id|csum_and_copy_from_user
 c_func
 (paren
 id|base
@@ -807,29 +782,6 @@ comma
 id|iov-&gt;iov_len
 )paren
 suffix:semicolon
-multiline_comment|/* FIXME: more sanity checking is needed here, because&n;                 * the iovs are copied from the user.&n;&t;&t; */
-r_if
-c_cond
-(paren
-id|base
-op_eq
-l_int|NULL
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_DEBUG
-l_string|&quot;%s: iov too short&bslash;n&quot;
-comma
-id|current-&gt;comm
-)paren
-suffix:semicolon
-r_return
-op_minus
-id|EINVAL
-suffix:semicolon
-)brace
 multiline_comment|/* There is a remnant from previous iov. */
 r_if
 c_cond
@@ -1012,7 +964,7 @@ r_break
 suffix:semicolon
 id|csum
 op_assign
-id|csum_partial_copy_from_user
+id|csum_and_copy_from_user
 c_func
 (paren
 id|base

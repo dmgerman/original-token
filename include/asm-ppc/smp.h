@@ -1,8 +1,9 @@
-multiline_comment|/* smp.h: PPC specific SMP stuff.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* smp.h: PPC specific SMP stuff.&n; *&n; * Taken from asm-sparc/smp.h&n; */
 macro_line|#ifndef _PPC_SMP_H
 DECL|macro|_PPC_SMP_H
 mdefine_line|#define _PPC_SMP_H
 macro_line|#include &lt;linux/kernel.h&gt; /* for panic */
+macro_line|#include &lt;linux/tasks.h&gt; /* for NR_CPUS */
 macro_line|#ifdef __SMP__
 macro_line|#ifndef __ASSEMBLY__
 r_extern
@@ -15,10 +16,15 @@ DECL|struct|cpuinfo_PPC
 r_struct
 id|cpuinfo_PPC
 (brace
-DECL|member|udelay_val
+DECL|member|loops_per_sec
 r_int
 r_int
-id|udelay_val
+id|loops_per_sec
+suffix:semicolon
+DECL|member|pvr
+r_int
+r_int
+id|pvr
 suffix:semicolon
 )brace
 suffix:semicolon
@@ -56,7 +62,7 @@ mdefine_line|#define KLOCK_HELD       0xff
 DECL|macro|KLOCK_CLEAR
 mdefine_line|#define KLOCK_CLEAR      0x00
 DECL|macro|PROC_CHANGE_PENALTY
-mdefine_line|#define PROC_CHANGE_PENALTY     20
+mdefine_line|#define PROC_CHANGE_PENALTY     1000 /* don&squot;t change cpu&squot;s for now */
 r_extern
 id|__volatile__
 r_int
@@ -93,39 +99,28 @@ r_void
 (brace
 r_int
 id|cpuid
+op_assign
+l_int|0
 suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|have_of
-c_func
-(paren
-)paren
-)paren
-multiline_comment|/* assume prep */
-id|panic
-c_func
-(paren
-l_string|&quot;hard_smp_processor_id()&bslash;n&quot;
-)paren
-suffix:semicolon
-r_else
-id|panic
-c_func
-(paren
-l_string|&quot;hard_smp_processor_id()&bslash;n&quot;
-)paren
-suffix:semicolon
+multiline_comment|/* assume cpu # 0 for now */
 r_return
 id|cpuid
 suffix:semicolon
 )brace
 DECL|macro|smp_processor_id
-mdefine_line|#define smp_processor_id() hard_smp_processor_id()
+mdefine_line|#define smp_processor_id() (current-&gt;processor)
 macro_line|#endif /* __ASSEMBLY__ */
 macro_line|#endif /* !(__SMP__) */
 DECL|macro|NO_PROC_ID
 mdefine_line|#define NO_PROC_ID               0xFF            /* No processor magic marker */
+r_extern
+r_void
+id|smp_store_cpu_info
+c_func
+(paren
+r_int
+id|id
+)paren
+suffix:semicolon
 macro_line|#endif /* !(_PPC_SMP_H) */
 eof

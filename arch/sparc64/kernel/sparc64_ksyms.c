@@ -1,4 +1,7 @@
-multiline_comment|/* $Id: sparc64_ksyms.c,v 1.21 1997/09/03 12:29:07 jj Exp $&n; * arch/sparc64/kernel/sparc64_ksyms.c: Sparc64 specific ksyms support.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; */
+multiline_comment|/* $Id: sparc64_ksyms.c,v 1.27 1997/11/19 07:57:46 jj Exp $&n; * arch/sparc64/kernel/sparc64_ksyms.c: Sparc64 specific ksyms support.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; */
+multiline_comment|/* Tell string.h we don&squot;t want memcpy etc. as cpp defines */
+DECL|macro|EXPORT_SYMTAB_STROPS
+mdefine_line|#define EXPORT_SYMTAB_STROPS
 DECL|macro|PROMLIB_INTERNAL
 mdefine_line|#define PROMLIB_INTERNAL
 macro_line|#include &lt;linux/config.h&gt;
@@ -6,6 +9,7 @@ macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/in6.h&gt;
+macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;asm/oplib.h&gt;
 macro_line|#include &lt;asm/delay.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -23,9 +27,13 @@ macro_line|#include &lt;asm/ptrace.h&gt;
 macro_line|#include &lt;asm/user.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/checksum.h&gt;
+macro_line|#include &lt;asm/fpumacro.h&gt;
 macro_line|#ifdef CONFIG_SBUS
 macro_line|#include &lt;asm/sbus.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
+macro_line|#endif
+macro_line|#ifdef CONFIG_PCI
+macro_line|#include &lt;asm/ebus.h&gt;
 macro_line|#endif
 macro_line|#include &lt;asm/a.out.h&gt;
 macro_line|#include &lt;asm/svr4.h&gt;
@@ -46,6 +54,21 @@ r_int
 id|revents
 suffix:semicolon
 )brace
+suffix:semicolon
+r_extern
+r_void
+id|die_if_kernel
+c_func
+(paren
+r_char
+op_star
+id|str
+comma
+r_struct
+id|pt_regs
+op_star
+id|regs
+)paren
 suffix:semicolon
 r_extern
 r_int
@@ -334,6 +357,22 @@ id|arg
 )paren
 suffix:semicolon
 r_extern
+r_int
+(paren
+op_star
+id|handle_mathemu
+)paren
+(paren
+r_struct
+id|pt_regs
+op_star
+comma
+r_struct
+id|fpustate
+op_star
+)paren
+suffix:semicolon
+r_extern
 r_void
 id|bcopy
 (paren
@@ -568,6 +607,22 @@ id|dma_chain
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#if CONFIG_PCI
+DECL|variable|ebus_chain
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|ebus_chain
+)paren
+suffix:semicolon
+DECL|variable|pci_devices
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|pci_devices
+)paren
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/* Solaris/SunOS binary compatibility */
 DECL|variable|_sigpause_common
 id|EXPORT_SYMBOL
@@ -589,6 +644,14 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|dump_thread
+)paren
+suffix:semicolon
+multiline_comment|/* math-emu wants this */
+DECL|variable|die_if_kernel
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|die_if_kernel
 )paren
 suffix:semicolon
 multiline_comment|/* prom symbols */
@@ -956,6 +1019,15 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|sys32_ioctl
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_MATHEMU_MODULE
+DECL|variable|handle_mathemu
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|handle_mathemu
 )paren
 suffix:semicolon
 macro_line|#endif

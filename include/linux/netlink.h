@@ -391,6 +391,10 @@ op_star
 id|cb
 )paren
 suffix:semicolon
+DECL|member|family
+r_int
+id|family
+suffix:semicolon
 DECL|member|args
 r_int
 id|args

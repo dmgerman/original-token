@@ -2,6 +2,7 @@ macro_line|#ifndef _LINUX_KERNEL_STAT_H
 DECL|macro|_LINUX_KERNEL_STAT_H
 mdefine_line|#define _LINUX_KERNEL_STAT_H
 macro_line|#include &lt;asm/irq.h&gt;
+macro_line|#include &lt;linux/tasks.h&gt;
 multiline_comment|/*&n; * &squot;kernel_stat.h&squot; contains the definitions needed for doing&n; * some kernel statistics (cpu usage, context switches ...),&n; * used by rstatd/perfmeter&n; */
 DECL|macro|DK_NDRIVE
 mdefine_line|#define DK_NDRIVE 4
@@ -19,6 +20,26 @@ comma
 id|cpu_nice
 comma
 id|cpu_system
+suffix:semicolon
+DECL|member|per_cpu_user
+r_int
+r_int
+id|per_cpu_user
+(braket
+id|NR_CPUS
+)braket
+comma
+DECL|member|per_cpu_nice
+id|per_cpu_nice
+(braket
+id|NR_CPUS
+)braket
+comma
+DECL|member|per_cpu_system
+id|per_cpu_system
+(braket
+id|NR_CPUS
+)braket
 suffix:semicolon
 DECL|member|dk_drive
 r_int

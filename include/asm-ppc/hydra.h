@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/hydra.h -- Mac I/O `Hydra&squot; definitions&n; *&n; *  Copyright (C) 1997 Geert Uytterhoeven&n; *&n; *  This file is subject to the terms and conditions of the GNU General Public&n; *  License.  See the file COPYING in the main directory of this archive&n; *  for more details.&n; *&n; *  This file is based on the following documentation:&n; *&n; *&t;Macintosh Technology in the Common Hardware Reference Platform&n; *&t;Apple Computer, Inc.&n; *&n; *&t;&#xfffd; Copyright 1995 Apple Computer, Inc. All rights reserved.&n; *&n; *  It&squot;s available online from http://chrp.apple.com/MacTech.pdf.&n; *  You can obtain paper copies of this book from computer bookstores or by&n; *  writing Morgan Kaufmann Publishers, Inc., 340 Pine Street, Sixth Floor, San&n; *  Francisco, CA 94104. Reference ISBN 1-55860-393-X.&n; *&n; *  This file is subject to the terms and conditions of the GNU General Public&n; *  License.  See the file COPYING in the main directory of this archive&n; *  for more details.&n; */
+multiline_comment|/*&n; *  asm-ppc/hydra.h -- Mac I/O `Hydra&squot; definitions&n; *&n; *  Copyright (C) 1997 Geert Uytterhoeven&n; *&n; *  This file is based on the following documentation:&n; *&n; *&t;Macintosh Technology in the Common Hardware Reference Platform&n; *&t;Apple Computer, Inc.&n; *&n; *&t;&#xfffd; Copyright 1995 Apple Computer, Inc. All rights reserved.&n; *&n; *  It&squot;s available online from http://chrp.apple.com/MacTech.pdf.&n; *  You can obtain paper copies of this book from computer bookstores or by&n; *  writing Morgan Kaufmann Publishers, Inc., 340 Pine Street, Sixth Floor, San&n; *  Francisco, CA 94104. Reference ISBN 1-55860-393-X.&n; *&n; *  This file is subject to the terms and conditions of the GNU General Public&n; *  License.  See the file COPYING in the main directory of this archive&n; *  for more details.&n; */
 macro_line|#ifndef _ASMPPC_HYDRA_H
 DECL|macro|_ASMPPC_HYDRA_H
 mdefine_line|#define _ASMPPC_HYDRA_H
@@ -210,23 +210,22 @@ DECL|macro|HYDRA_INT_EXT7
 mdefine_line|#define HYDRA_INT_EXT7&t;&t;18
 DECL|macro|HYDRA_INT_SPARE
 mdefine_line|#define HYDRA_INT_SPARE&t;&t;19
+r_extern
+r_int
+id|hydra_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|macio_adb_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
 macro_line|#endif /* __KERNEL__ */
-r_volatile
-r_struct
-id|Hydra
-op_star
-id|find_hydra
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_void
-id|hydra_post_openpic_init
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
 macro_line|#endif /* _ASMPPC_HYDRA_H */
 eof

@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: init.c,v 1.49 1997/04/17 21:49:31 jj Exp $&n; *  linux/arch/sparc/mm/init.c&n; *&n; *  Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1995 Eddie C. Dost (ecd@skynet.be)&n; */
+multiline_comment|/*  $Id: init.c,v 1.50 1998/01/10 18:19:42 ecd Exp $&n; *  linux/arch/sparc/mm/init.c&n; *&n; *  Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1995 Eddie C. Dost (ecd@skynet.be)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -1078,6 +1078,7 @@ id|addr
 OL
 id|initrd_end
 )paren
+(brace
 id|mem_map
 (braket
 id|MAP_NR
@@ -1096,6 +1097,10 @@ op_lshift
 id|PG_reserved
 )paren
 suffix:semicolon
+id|num_physpages
+op_decrement
+suffix:semicolon
+)brace
 r_else
 macro_line|#endif&t;
 id|mem_map

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sunos_ioctl.c,v 1.28 1997/02/15 01:17:05 davem Exp $&n; * sunos_ioctl.c: The Linux Operating system: SunOS ioctl compatibility.&n; * &n; * Copyright (C) 1995 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: sunos_ioctl.c,v 1.29 1997/09/18 10:37:31 rth Exp $&n; * sunos_ioctl.c: The Linux Operating system: SunOS ioctl compatibility.&n; * &n; * Copyright (C) 1995 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -122,10 +122,10 @@ comma
 id|ntty
 op_assign
 id|N_TTY
-suffix:semicolon
-r_int
-id|tmp
 comma
+id|tmp
+suffix:semicolon
+id|mm_segment_t
 id|oldfs
 suffix:semicolon
 id|p

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * $Id: prep_pci.c,v 1.7 1997/08/23 22:46:02 cort Exp $&n; * PReP pci functions.&n; * Originally by Gary Thomas&n; * rewritten and updated by Cort Dougan (cort@cs.nmt.edu)&n; *&n; * The motherboard routes/maps will disappear shortly. -- Cort&n; */
+multiline_comment|/*&n; * $Id: prep_pci.c,v 1.12 1997/10/29 03:35:08 cort Exp $&n; * PReP pci functions.&n; * Originally by Gary Thomas&n; * rewritten and updated by Cort Dougan (cort@cs.nmt.edu)&n; *&n; * The motherboard routes/maps will disappear shortly. -- Cort&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/bios32.h&gt;
@@ -33,6 +33,212 @@ op_star
 id|Motherboard_routes
 suffix:semicolon
 multiline_comment|/* Tables for known hardware */
+multiline_comment|/* Motorola PowerStackII - Utah */
+DECL|variable|Utah_pci_IRQ_map
+r_static
+r_char
+id|Utah_pci_IRQ_map
+(braket
+l_int|23
+)braket
+op_assign
+(brace
+l_int|0
+comma
+multiline_comment|/* Slot 0  - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 1  - unused */
+l_int|4
+comma
+multiline_comment|/* Slot 2  - SCSI - NCR825A  */
+l_int|0
+comma
+multiline_comment|/* Slot 3  - unused */
+l_int|1
+comma
+multiline_comment|/* Slot 4  - Ethernet - DEC2114x */
+l_int|0
+comma
+multiline_comment|/* Slot 5  - unused */
+l_int|2
+comma
+multiline_comment|/* Slot 6  - PCI Card slot #1 */
+l_int|3
+comma
+multiline_comment|/* Slot 7  - PCI Card slot #2 */
+l_int|4
+comma
+multiline_comment|/* Slot 8  - PCI Card slot #3 */
+l_int|4
+comma
+multiline_comment|/* Slot 9  - PCI Bridge */
+multiline_comment|/* added here in case we ever support PCI bridges */
+multiline_comment|/* Secondary PCI bus cards are at slot-9,6 &amp; slot-9,7 */
+l_int|0
+comma
+multiline_comment|/* Slot 10 - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 11 - unused */
+l_int|4
+comma
+multiline_comment|/* Slot 12 - SCSI - NCR825A */
+l_int|0
+comma
+multiline_comment|/* Slot 13 - unused */
+l_int|2
+comma
+multiline_comment|/* Slot 14 - enet */
+l_int|0
+comma
+multiline_comment|/* Slot 15 - unused */
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+)brace
+suffix:semicolon
+DECL|variable|Utah_pci_IRQ_routes
+r_static
+r_char
+id|Utah_pci_IRQ_routes
+(braket
+)braket
+op_assign
+(brace
+l_int|0
+comma
+multiline_comment|/* Line 0 - Unused */
+l_int|9
+comma
+multiline_comment|/* Line 1 */
+l_int|11
+comma
+multiline_comment|/* Line 2 */
+l_int|14
+comma
+multiline_comment|/* Line 3 */
+l_int|15
+comma
+multiline_comment|/* Line 4 */
+)brace
+suffix:semicolon
+multiline_comment|/* Motorola PowerStackII - Omaha */
+multiline_comment|/* no integrated SCSI or ethernet */
+DECL|variable|Omaha_pci_IRQ_map
+r_static
+r_char
+id|Omaha_pci_IRQ_map
+(braket
+l_int|23
+)braket
+op_assign
+(brace
+l_int|0
+comma
+multiline_comment|/* Slot 0  - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 1  - unused */
+l_int|3
+comma
+multiline_comment|/* Slot 2  - Winbond EIDE */
+l_int|0
+comma
+multiline_comment|/* Slot 3  - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 4  - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 5  - unused */
+l_int|1
+comma
+multiline_comment|/* Slot 6  - PCI slot 1 */
+l_int|2
+comma
+multiline_comment|/* Slot 7  - PCI slot 2  */
+l_int|3
+comma
+multiline_comment|/* Slot 8  - PCI slot 3 */
+l_int|4
+comma
+multiline_comment|/* Slot 9  - PCI slot 4 */
+multiline_comment|/* needs indirect access */
+l_int|0
+comma
+multiline_comment|/* Slot 10 - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 11 - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 12 - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 13 - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 14 - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 15 - unused */
+l_int|1
+comma
+multiline_comment|/* Slot 16  - PCI slot 1 */
+l_int|2
+comma
+multiline_comment|/* Slot 17  - PCI slot 2  */
+l_int|3
+comma
+multiline_comment|/* Slot 18  - PCI slot 3 */
+l_int|4
+comma
+multiline_comment|/* Slot 19  - PCI slot 4 */
+multiline_comment|/* needs indirect access */
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+)brace
+suffix:semicolon
+DECL|variable|Omaha_pci_IRQ_routes
+r_static
+r_char
+id|Omaha_pci_IRQ_routes
+(braket
+)braket
+op_assign
+(brace
+l_int|0
+comma
+multiline_comment|/* Line 0 - Unused */
+l_int|9
+comma
+multiline_comment|/* Line 1 */
+l_int|11
+comma
+multiline_comment|/* Line 2 */
+l_int|14
+comma
+multiline_comment|/* Line 3 */
+l_int|15
+multiline_comment|/* Line 4 */
+)brace
+suffix:semicolon
 multiline_comment|/* Motorola PowerStack */
 DECL|variable|Blackhawk_pci_IRQ_map
 r_static
@@ -1050,193 +1256,6 @@ r_return
 id|PCIBIOS_SUCCESSFUL
 suffix:semicolon
 )brace
-DECL|function|prep_pcibios_find_device
-r_int
-id|prep_pcibios_find_device
-(paren
-r_int
-r_int
-id|vendor
-comma
-r_int
-r_int
-id|device_id
-comma
-r_int
-r_int
-id|index
-comma
-r_int
-r_char
-op_star
-id|bus
-comma
-r_int
-r_char
-op_star
-id|devfn
-)paren
-(brace
-r_int
-r_int
-id|curr
-op_assign
-l_int|0
-suffix:semicolon
-r_struct
-id|pci_dev
-op_star
-id|dev
-suffix:semicolon
-multiline_comment|/*printk(&quot;pcibios_find_device(): vendor %04x devid %04x index %d&bslash;n&quot;,    &n;       vendor,device_id,index);*/
-r_for
-c_loop
-(paren
-id|dev
-op_assign
-id|pci_devices
-suffix:semicolon
-id|dev
-suffix:semicolon
-id|dev
-op_assign
-id|dev-&gt;next
-)paren
-(brace
-multiline_comment|/*printk(&quot;   dev-&gt;vendor %04x dev-&gt;device %04x&bslash;n&quot;,&n;       dev-&gt;vendor,dev-&gt;device);*/
-r_if
-c_cond
-(paren
-id|dev-&gt;vendor
-op_eq
-id|vendor
-op_logical_and
-id|dev-&gt;device
-op_eq
-id|device_id
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|curr
-op_eq
-id|index
-)paren
-(brace
-op_star
-id|devfn
-op_assign
-id|dev-&gt;devfn
-suffix:semicolon
-op_star
-id|bus
-op_assign
-id|dev-&gt;bus-&gt;number
-suffix:semicolon
-r_return
-id|PCIBIOS_SUCCESSFUL
-suffix:semicolon
-)brace
-op_increment
-id|curr
-suffix:semicolon
-)brace
-)brace
-r_return
-id|PCIBIOS_DEVICE_NOT_FOUND
-suffix:semicolon
-)brace
-multiline_comment|/*&n; * Given the class, find the n&squot;th instance of that device&n; * in the system.&n; */
-DECL|function|prep_pcibios_find_class
-r_int
-id|prep_pcibios_find_class
-(paren
-r_int
-r_int
-id|class_code
-comma
-r_int
-r_int
-id|index
-comma
-r_int
-r_char
-op_star
-id|bus
-comma
-r_int
-r_char
-op_star
-id|devfn
-)paren
-(brace
-r_int
-r_int
-id|curr
-op_assign
-l_int|0
-suffix:semicolon
-r_struct
-id|pci_dev
-op_star
-id|dev
-suffix:semicolon
-r_for
-c_loop
-(paren
-id|dev
-op_assign
-id|pci_devices
-suffix:semicolon
-id|dev
-suffix:semicolon
-id|dev
-op_assign
-id|dev-&gt;next
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|dev
-op_member_access_from_pointer
-r_class
-op_eq
-id|class_code
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|curr
-op_eq
-id|index
-)paren
-(brace
-op_star
-id|devfn
-op_assign
-id|dev-&gt;devfn
-suffix:semicolon
-op_star
-id|bus
-op_assign
-id|dev-&gt;bus-&gt;number
-suffix:semicolon
-r_return
-id|PCIBIOS_SUCCESSFUL
-suffix:semicolon
-)brace
-op_increment
-id|curr
-suffix:semicolon
-)brace
-)brace
-r_return
-id|PCIBIOS_DEVICE_NOT_FOUND
-suffix:semicolon
-)brace
 DECL|function|__initfunc
 id|__initfunc
 c_func
@@ -1280,9 +1299,9 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|_machine
+id|_prep_type
 op_eq
-id|_MACH_Motorola
+id|_PREP_Motorola
 )paren
 (brace
 r_switch
@@ -1321,7 +1340,7 @@ suffix:colon
 multiline_comment|/* Series E */
 id|Motherboard_map_name
 op_assign
-l_string|&quot;Series E&quot;
+l_string|&quot;Powerstack (Series E)&quot;
 suffix:semicolon
 id|Motherboard_map
 op_assign
@@ -1330,6 +1349,40 @@ suffix:semicolon
 id|Motherboard_routes
 op_assign
 id|Comet_pci_IRQ_routes
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x50
+suffix:colon
+multiline_comment|/* PowerStackII Pro3000 */
+id|Motherboard_map_name
+op_assign
+l_string|&quot;Omaha (PowerStack II Pro3000)&quot;
+suffix:semicolon
+id|Motherboard_map
+op_assign
+id|Omaha_pci_IRQ_map
+suffix:semicolon
+id|Motherboard_routes
+op_assign
+id|Omaha_pci_IRQ_routes
+suffix:semicolon
+r_case
+l_int|0x60
+suffix:colon
+multiline_comment|/* PowerStackII Pro4000 */
+id|Motherboard_map_name
+op_assign
+l_string|&quot;Utah (Powerstack II Pro4000)&quot;
+suffix:semicolon
+id|Motherboard_map
+op_assign
+id|Utah_pci_IRQ_map
+suffix:semicolon
+id|Motherboard_routes
+op_assign
+id|Utah_pci_IRQ_routes
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -1360,9 +1413,9 @@ r_else
 r_if
 c_cond
 (paren
-id|_machine
+id|_prep_type
 op_eq
-id|_MACH_IBM
+id|_PREP_IBM
 )paren
 (brace
 r_int

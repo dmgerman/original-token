@@ -5,7 +5,7 @@ mdefine_line|#define _LINUX_NFS_FS_H
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/in.h&gt;
-macro_line|#include &lt;linux/sunrpc/debug.h&gt;
+macro_line|#include &lt;linux/sunrpc/sched.h&gt;
 macro_line|#include &lt;linux/nfs.h&gt;
 macro_line|#include &lt;linux/nfs_mount.h&gt;
 multiline_comment|/*&n; * Enable debugging support for nfs client.&n; * Requires RPC_DEBUG.&n; */
@@ -57,14 +57,118 @@ DECL|macro|NFS_FLAGS
 mdefine_line|#define NFS_FLAGS(inode)&t;&t;((inode)-&gt;u.nfs_i.flags)
 DECL|macro|NFS_REVALIDATING
 mdefine_line|#define NFS_REVALIDATING(inode)&t;&t;(NFS_FLAGS(inode) &amp; NFS_INO_REVALIDATE)
-DECL|macro|NFS_RENAMED_DIR
-mdefine_line|#define NFS_RENAMED_DIR(inode)&t;&t;((inode)-&gt;u.nfs_i.silly_inode)
 DECL|macro|NFS_WRITEBACK
 mdefine_line|#define NFS_WRITEBACK(inode)&t;&t;((inode)-&gt;u.nfs_i.writeback)
 multiline_comment|/*&n; * These are the default flags for swap requests&n; */
 DECL|macro|NFS_RPC_SWAPFLAGS
 mdefine_line|#define NFS_RPC_SWAPFLAGS&t;&t;(RPC_TASK_SWAPPER|RPC_TASK_ROOTCREDS)
 macro_line|#ifdef __KERNEL__
+multiline_comment|/*&n; * This struct describes a file region to be written.&n; * It&squot;s kind of a pity we have to keep all these lists ourselves, rather&n; * than sticking an extra pointer into struct page.&n; */
+DECL|struct|nfs_wreq
+r_struct
+id|nfs_wreq
+(brace
+DECL|member|wb_list
+r_struct
+id|rpc_listitem
+id|wb_list
+suffix:semicolon
+multiline_comment|/* linked list of req&squot;s */
+DECL|member|wb_task
+r_struct
+id|rpc_task
+id|wb_task
+suffix:semicolon
+multiline_comment|/* RPC task */
+DECL|member|wb_dentry
+r_struct
+id|dentry
+op_star
+id|wb_dentry
+suffix:semicolon
+multiline_comment|/* dentry referenced */
+DECL|member|wb_inode
+r_struct
+id|inode
+op_star
+id|wb_inode
+suffix:semicolon
+multiline_comment|/* inode referenced */
+DECL|member|wb_page
+r_struct
+id|page
+op_star
+id|wb_page
+suffix:semicolon
+multiline_comment|/* page to be written */
+DECL|member|wb_offset
+r_int
+r_int
+id|wb_offset
+suffix:semicolon
+multiline_comment|/* offset within page */
+DECL|member|wb_bytes
+r_int
+r_int
+id|wb_bytes
+suffix:semicolon
+multiline_comment|/* dirty range */
+DECL|member|wb_pid
+id|pid_t
+id|wb_pid
+suffix:semicolon
+multiline_comment|/* owner process */
+DECL|member|wb_flags
+r_int
+r_int
+id|wb_flags
+suffix:semicolon
+multiline_comment|/* status flags */
+DECL|member|wb_args
+r_struct
+id|nfs_writeargs
+op_star
+id|wb_args
+suffix:semicolon
+multiline_comment|/* NFS RPC stuff */
+DECL|member|wb_fattr
+r_struct
+id|nfs_fattr
+op_star
+id|wb_fattr
+suffix:semicolon
+multiline_comment|/* file attributes */
+)brace
+suffix:semicolon
+DECL|macro|wb_status
+mdefine_line|#define wb_status&t;&t;wb_task.tk_status
+DECL|macro|WB_NEXT
+mdefine_line|#define WB_NEXT(req)&t;&t;((struct nfs_wreq *) ((req)-&gt;wb_list.next))
+multiline_comment|/*&n; * Various flags for wb_flags&n; */
+DECL|macro|NFS_WRITE_WANTLOCK
+mdefine_line|#define NFS_WRITE_WANTLOCK&t;0x0001&t;/* needs to lock page */
+DECL|macro|NFS_WRITE_LOCKED
+mdefine_line|#define NFS_WRITE_LOCKED&t;0x0002&t;/* holds lock on page */
+DECL|macro|NFS_WRITE_CANCELLED
+mdefine_line|#define NFS_WRITE_CANCELLED&t;0x0004&t;/* has been cancelled */
+DECL|macro|NFS_WRITE_UNCOMMITTED
+mdefine_line|#define NFS_WRITE_UNCOMMITTED&t;0x0008&t;/* written but uncommitted (NFSv3) */
+DECL|macro|NFS_WRITE_INVALIDATE
+mdefine_line|#define NFS_WRITE_INVALIDATE&t;0x0010&t;/* invalidate after write */
+DECL|macro|NFS_WRITE_INPROGRESS
+mdefine_line|#define NFS_WRITE_INPROGRESS&t;0x0020&t;/* RPC call in progress */
+DECL|macro|WB_WANTLOCK
+mdefine_line|#define WB_WANTLOCK(req)&t;((req)-&gt;wb_flags &amp; NFS_WRITE_WANTLOCK)
+DECL|macro|WB_HAVELOCK
+mdefine_line|#define WB_HAVELOCK(req)&t;((req)-&gt;wb_flags &amp; NFS_WRITE_LOCKED)
+DECL|macro|WB_CANCELLED
+mdefine_line|#define WB_CANCELLED(req)&t;((req)-&gt;wb_flags &amp; NFS_WRITE_CANCELLED)
+DECL|macro|WB_UNCOMMITTED
+mdefine_line|#define WB_UNCOMMITTED(req)&t;((req)-&gt;wb_flags &amp; NFS_WRITE_UNCOMMITTED)
+DECL|macro|WB_INVALIDATE
+mdefine_line|#define WB_INVALIDATE(req)&t;((req)-&gt;wb_flags &amp; NFS_WRITE_INVALIDATE)
+DECL|macro|WB_INPROGRESS
+mdefine_line|#define WB_INPROGRESS(req)&t;((req)-&gt;wb_flags &amp; NFS_WRITE_INPROGRESS)
 multiline_comment|/*&n; * linux/fs/nfs/proc.c&n; */
 r_extern
 r_int
@@ -666,6 +770,20 @@ op_star
 comma
 r_struct
 id|page
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|nfs_find_dentry_request
+c_func
+(paren
+r_struct
+id|inode
+op_star
+comma
+r_struct
+id|dentry
 op_star
 )paren
 suffix:semicolon

@@ -18,16 +18,39 @@ macro_line|#include &lt;linux/reboot.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/blk.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
+macro_line|#ifdef CONFIG_ABSTRACT_CONSOLE
+macro_line|#include &lt;linux/console.h&gt;
+macro_line|#endif
 macro_line|#include &lt;asm/mmu.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;
 macro_line|#include &lt;asm/residual.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/ide.h&gt;
+macro_line|#ifdef CONFIG_SOUND
+macro_line|#include &lt;../drivers/sound/sound_config.h&gt;
+macro_line|#include &lt;../drivers/sound/dev_table.h&gt;
+macro_line|#endif
 multiline_comment|/* for the mac fs */
 DECL|variable|boot_dev
 id|kdev_t
 id|boot_dev
+suffix:semicolon
+multiline_comment|/* used in nasty hack for sound - see prep_setup_arch() -- Cort */
+DECL|variable|ppc_cs4232_dma
+DECL|variable|ppc_cs4232_dma2
+r_int
+id|ppc_cs4232_dma
+comma
+id|ppc_cs4232_dma2
+suffix:semicolon
+DECL|variable|empty_zero_page
+r_int
+r_int
+id|empty_zero_page
+(braket
+l_int|1024
+)braket
 suffix:semicolon
 r_extern
 id|PTE
@@ -53,14 +76,6 @@ r_int
 r_int
 id|loops_per_sec
 suffix:semicolon
-DECL|variable|empty_zero_page
-r_int
-r_int
-id|empty_zero_page
-(braket
-l_int|1024
-)braket
-suffix:semicolon
 r_extern
 r_int
 r_char
@@ -83,13 +98,6 @@ id|rd_image_start
 suffix:semicolon
 multiline_comment|/* starting block # of image */
 macro_line|#endif
-r_extern
-r_char
-id|saved_command_line
-(braket
-l_int|256
-)braket
-suffix:semicolon
 DECL|function|prep_ide_init_hwif_ports
 r_void
 id|prep_ide_init_hwif_ports
@@ -173,88 +181,13 @@ r_int
 id|i
 suffix:semicolon
 r_int
-id|pvr
-op_assign
-id|_get_PVR
-c_func
-(paren
-)paren
-suffix:semicolon
-r_int
 id|len
 suffix:semicolon
-r_char
-op_star
-id|model
-suffix:semicolon
-r_switch
-c_cond
-(paren
-id|pvr
-op_rshift
-l_int|16
-)paren
-(brace
-r_case
-l_int|1
-suffix:colon
-id|model
-op_assign
-l_string|&quot;601&quot;
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-l_int|3
-suffix:colon
-id|model
-op_assign
-l_string|&quot;603&quot;
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-l_int|4
-suffix:colon
-id|model
-op_assign
-l_string|&quot;604&quot;
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-l_int|6
-suffix:colon
-id|model
-op_assign
-l_string|&quot;603e&quot;
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-l_int|7
-suffix:colon
-id|model
-op_assign
-l_string|&quot;603ev&quot;
-suffix:semicolon
-r_break
-suffix:semicolon
-r_default
-suffix:colon
-id|model
-op_assign
-l_string|&quot;unknown&quot;
-suffix:semicolon
-r_break
-suffix:semicolon
-)brace
 macro_line|#ifdef __SMP__
 DECL|macro|CD
 mdefine_line|#define CD(X)&t;&t;(cpu_data[n].X)  
 macro_line|#else
 mdefine_line|#define CD(X) (X)
-mdefine_line|#define CPUN 0
 macro_line|#endif
 id|len
 op_assign
@@ -263,78 +196,20 @@ c_func
 (paren
 id|buffer
 comma
-l_string|&quot;processor&bslash;t: %d&bslash;n&quot;
-l_string|&quot;cpu&bslash;t&bslash;t: %s&bslash;n&quot;
-l_string|&quot;revision&bslash;t: %d.%d&bslash;n&quot;
-l_string|&quot;upgrade&bslash;t&bslash;t: %s&bslash;n&quot;
-l_string|&quot;clock&bslash;t&bslash;t: %dMHz&bslash;n&quot;
-l_string|&quot;bus clock&bslash;t: %dMHz&bslash;n&quot;
-l_string|&quot;machine&bslash;t&bslash;t: %s (sn %s)&bslash;n&quot;
-l_string|&quot;pci map&bslash;t&bslash;t: %s&bslash;n&quot;
-comma
-id|CPUN
-comma
-id|model
-comma
-id|MAJOR
-c_func
-(paren
-id|pvr
-)paren
-comma
-id|MINOR
-c_func
-(paren
-id|pvr
-)paren
-comma
-(paren
-id|inb
-c_func
-(paren
-id|IBM_EQUIP_PRESENT
-)paren
-op_amp
-l_int|2
-)paren
-ques
-c_cond
-l_string|&quot;not upgrade&quot;
-suffix:colon
-l_string|&quot;upgrade&quot;
-comma
-(paren
-id|res.VitalProductData.ProcessorHz
-OG
-l_int|1024
-)paren
-ques
-c_cond
-id|res.VitalProductData.ProcessorHz
-op_rshift
-l_int|20
-suffix:colon
-id|res.VitalProductData.ProcessorHz
-comma
-(paren
-id|res.VitalProductData.ProcessorBusHz
-OG
-l_int|1024
-)paren
-ques
-c_cond
-id|res.VitalProductData.ProcessorBusHz
-op_rshift
-l_int|20
-suffix:colon
-id|res.VitalProductData.ProcessorBusHz
-comma
-id|res.VitalProductData.PrintableModel
-comma
-id|res.VitalProductData.Serial
+l_string|&quot;machine&bslash;t&bslash;t: PReP %s&bslash;n&quot;
 comma
 id|Motherboard_map_name
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|res.ResidualLength
+op_eq
+l_int|0
+)paren
+r_return
+id|len
 suffix:semicolon
 multiline_comment|/* print info about SIMMs */
 id|len
@@ -391,7 +266,7 @@ id|buffer
 op_plus
 id|len
 comma
-l_string|&quot;%d:%dM &quot;
+l_string|&quot;%d:%ldM &quot;
 comma
 id|i
 comma
@@ -468,7 +343,7 @@ id|buffer
 op_plus
 id|len
 comma
-l_string|&quot; %d entries&bslash;n&quot;
+l_string|&quot; %ld entries&bslash;n&quot;
 comma
 id|res.VitalProductData.TLBSize
 )paren
@@ -487,7 +362,7 @@ id|buffer
 op_plus
 id|len
 comma
-l_string|&quot; (split I/D) %d/%d entries&bslash;n&quot;
+l_string|&quot; (split I/D) %ld/%ld entries&bslash;n&quot;
 comma
 id|res.VitalProductData.I_TLBSize
 comma
@@ -545,7 +420,7 @@ id|buffer
 op_plus
 id|len
 comma
-l_string|&quot;%dkB LineSize&bslash;n&quot;
+l_string|&quot;%ldkB LineSize %ldB&bslash;n&quot;
 comma
 id|res.VitalProductData.CacheSize
 comma
@@ -566,7 +441,7 @@ id|buffer
 op_plus
 id|len
 comma
-l_string|&quot;(split I/D) %dkB/%dkB Linesize %dB/%dB&bslash;n&quot;
+l_string|&quot;(split I/D) %ldkB/%ldkB Linesize %ldB/%ldB&bslash;n&quot;
 comma
 id|res.VitalProductData.I_CacheSize
 comma
@@ -677,111 +552,6 @@ l_string|&quot;l2&bslash;t&bslash;t: not present&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
-id|len
-op_add_assign
-id|sprintf
-c_func
-(paren
-id|buffer
-op_plus
-id|len
-comma
-l_string|&quot;bogomips&bslash;t: %lu.%02lu&bslash;n&quot;
-comma
-id|CD
-c_func
-(paren
-id|loops_per_sec
-op_plus
-l_int|2500
-)paren
-op_div
-l_int|500000
-comma
-(paren
-id|CD
-c_func
-(paren
-id|loops_per_sec
-op_plus
-l_int|2500
-)paren
-op_div
-l_int|5000
-)paren
-op_mod
-l_int|100
-)paren
-suffix:semicolon
-multiline_comment|/*&n;&t; * Ooh&squot;s and aah&squot;s info about zero&squot;d pages in idle task&n;&t; */
-(brace
-r_extern
-r_int
-r_int
-id|zerocount
-comma
-id|zerototal
-comma
-id|zeropage_hits
-comma
-id|zeropage_calls
-suffix:semicolon
-id|len
-op_add_assign
-id|sprintf
-c_func
-(paren
-id|buffer
-op_plus
-id|len
-comma
-l_string|&quot;zero pages&bslash;t: total %u (%uKb) &quot;
-l_string|&quot;current: %u (%uKb) hits: %u/%u (%lu%%)&bslash;n&quot;
-comma
-id|zerototal
-comma
-(paren
-id|zerototal
-op_star
-id|PAGE_SIZE
-)paren
-op_rshift
-l_int|10
-comma
-id|zerocount
-comma
-(paren
-id|zerocount
-op_star
-id|PAGE_SIZE
-)paren
-op_rshift
-l_int|10
-comma
-id|zeropage_hits
-comma
-id|zeropage_calls
-comma
-multiline_comment|/* : 1 below is so we don&squot;t div by zero */
-(paren
-id|zeropage_hits
-op_star
-l_int|100
-)paren
-op_div
-(paren
-(paren
-id|zeropage_calls
-)paren
-ques
-c_cond
-id|zeropage_calls
-suffix:colon
-l_int|1
-)paren
-)paren
-suffix:semicolon
-)brace
 r_return
 id|len
 suffix:semicolon
@@ -794,11 +564,6 @@ r_void
 id|prep_setup_arch
 c_func
 (paren
-r_char
-op_star
-op_star
-id|cmdline_p
-comma
 r_int
 r_int
 op_star
@@ -817,109 +582,14 @@ id|cmd_line
 (braket
 )braket
 suffix:semicolon
-r_extern
-r_char
-id|_etext
-(braket
-)braket
-comma
-id|_edata
-(braket
-)braket
-comma
-id|_end
-(braket
-)braket
-suffix:semicolon
-r_extern
-r_int
-id|panic_timeout
-suffix:semicolon
 r_int
 r_char
 id|reg
-suffix:semicolon
-multiline_comment|/* Save unparsed command line copy for /proc/cmdline */
-id|strcpy
-c_func
-(paren
-id|saved_command_line
-comma
-id|cmd_line
-)paren
-suffix:semicolon
-op_star
-id|cmdline_p
-op_assign
-id|cmd_line
-suffix:semicolon
-op_star
-id|memory_start_p
-op_assign
-(paren
-r_int
-r_int
-)paren
-id|Hash
-op_plus
-id|Hash_size
-suffix:semicolon
-(paren
-r_int
-r_int
-op_star
-)paren
-op_star
-id|memory_end_p
-op_assign
-(paren
-r_int
-r_int
-op_star
-)paren
-(paren
-id|res.TotalMemory
-op_plus
-id|KERNELBASE
-)paren
 suffix:semicolon
 multiline_comment|/* init to some ~sane value until calibrate_delay() runs */
 id|loops_per_sec
 op_assign
 l_int|50000000
-suffix:semicolon
-multiline_comment|/* reboot on panic */
-id|panic_timeout
-op_assign
-l_int|180
-suffix:semicolon
-id|init_task.mm-&gt;start_code
-op_assign
-id|PAGE_OFFSET
-suffix:semicolon
-id|init_task.mm-&gt;end_code
-op_assign
-(paren
-r_int
-r_int
-)paren
-id|_etext
-suffix:semicolon
-id|init_task.mm-&gt;end_data
-op_assign
-(paren
-r_int
-r_int
-)paren
-id|_edata
-suffix:semicolon
-id|init_task.mm-&gt;brk
-op_assign
-(paren
-r_int
-r_int
-)paren
-id|_end
 suffix:semicolon
 id|aux_device_present
 op_assign
@@ -969,14 +639,15 @@ id|SIO_CONFIG_RD
 )paren
 suffix:semicolon
 multiline_comment|/* Have to write twice to change! */
+multiline_comment|/* we should determine this according to what we find! -- Cort */
 r_switch
 c_cond
 (paren
-id|_machine
+id|_prep_type
 )paren
 (brace
 r_case
-id|_MACH_IBM
+id|_PREP_IBM
 suffix:colon
 id|ROOT_DEV
 op_assign
@@ -990,7 +661,7 @@ multiline_comment|/* hda1 */
 r_break
 suffix:semicolon
 r_case
-id|_MACH_Motorola
+id|_PREP_Motorola
 suffix:colon
 id|ROOT_DEV
 op_assign
@@ -1005,29 +676,6 @@ r_break
 suffix:semicolon
 )brace
 macro_line|#ifdef CONFIG_BLK_DEV_RAM
-macro_line|#if 0
-id|ROOT_DEV
-op_assign
-id|to_kdev_t
-c_func
-(paren
-l_int|0x0200
-)paren
-suffix:semicolon
-multiline_comment|/* floppy */
-id|rd_prompt
-op_assign
-l_int|1
-suffix:semicolon
-id|rd_doload
-op_assign
-l_int|1
-suffix:semicolon
-id|rd_image_start
-op_assign
-l_int|0
-suffix:semicolon
-macro_line|#endif
 multiline_comment|/* initrd_start and size are setup by boot/head.S and kernel/head.S */
 r_if
 c_cond
@@ -1071,11 +719,117 @@ comma
 id|cmd_line
 )paren
 suffix:semicolon
-id|print_residual_device_info
-c_func
+macro_line|#ifdef CONFIG_CS4232
+multiline_comment|/*&n;&t; * setup proper values for the cs4232 driver so we don&squot;t have&n;&t; * to recompile for the motorola or ibm workstations sound systems.&n;&t; * This is a really nasty hack, but unless we change the driver&n;&t; * it&squot;s the only way to support both addrs from one binary.&n;&t; * -- Cort&n;&t; */
+r_if
+c_cond
 (paren
+id|is_prep
 )paren
+(brace
+r_extern
+r_struct
+id|card_info
+id|snd_installed_cards
+(braket
+)braket
 suffix:semicolon
+r_struct
+id|card_info
+op_star
+id|snd_ptr
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|snd_ptr
+op_assign
+id|snd_installed_cards
+suffix:semicolon
+id|snd_ptr
+OL
+op_amp
+id|snd_installed_cards
+(braket
+id|num_sound_cards
+)braket
+suffix:semicolon
+id|snd_ptr
+op_increment
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|snd_ptr-&gt;card_type
+op_eq
+id|SNDCARD_CS4232
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|_prep_type
+op_eq
+id|_PREP_Motorola
+)paren
+(brace
+id|snd_ptr-&gt;config.io_base
+op_assign
+l_int|0x830
+suffix:semicolon
+id|snd_ptr-&gt;config.irq
+op_assign
+l_int|10
+suffix:semicolon
+id|snd_ptr-&gt;config.dma
+op_assign
+id|ppc_cs4232_dma
+op_assign
+l_int|6
+suffix:semicolon
+id|snd_ptr-&gt;config.dma2
+op_assign
+id|ppc_cs4232_dma2
+op_assign
+l_int|7
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|_prep_type
+op_eq
+id|_PREP_IBM
+)paren
+(brace
+id|snd_ptr-&gt;config.io_base
+op_assign
+l_int|0x530
+suffix:semicolon
+id|snd_ptr-&gt;config.irq
+op_assign
+l_int|5
+suffix:semicolon
+id|snd_ptr-&gt;config.dma
+op_assign
+id|ppc_cs4232_dma
+op_assign
+l_int|1
+suffix:semicolon
+multiline_comment|/* this is wrong - but leave it for now */
+id|snd_ptr-&gt;config.dma2
+op_assign
+id|ppc_cs4232_dma2
+op_assign
+l_int|7
+suffix:semicolon
+)brace
+)brace
+)brace
+)brace
+macro_line|#endif /* CONFIG_CS4232 */&t;
+multiline_comment|/*print_residual_device_info();*/
 id|request_region
 c_func
 (paren
@@ -1136,5 +890,22 @@ comma
 l_string|&quot;dma2&quot;
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_ABSTRACT_CONSOLE
+macro_line|#ifdef CONFIG_VGA_CONSOLE
+id|conswitchp
+op_assign
+op_amp
+id|vga_con
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_FB
+multiline_comment|/* Frame buffer device based console */
+id|conswitchp
+op_assign
+op_amp
+id|fb_con
+suffix:semicolon
+macro_line|#endif
+macro_line|#endif
 )brace
 eof

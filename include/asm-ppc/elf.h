@@ -53,5 +53,25 @@ id|ELF_NFPREG
 suffix:semicolon
 DECL|macro|ELF_CORE_COPY_REGS
 mdefine_line|#define ELF_CORE_COPY_REGS(gregs, regs) &bslash;&n;&t;memcpy(gregs, regs, &bslash;&n;&t;       sizeof(struct pt_regs) &lt; sizeof(elf_gregset_t)? &bslash;&n;&t;       sizeof(struct pt_regs): sizeof(elf_gregset_t));
+multiline_comment|/* This yields a mask that user programs can use to figure out what&n;   instruction set this cpu supports.  This could be done in userspace,&n;   but it&squot;s not easy, and we&squot;ve already done it here.  */
+DECL|macro|ELF_HWCAP
+mdefine_line|#define ELF_HWCAP&t;(0)
+multiline_comment|/* This yields a string that ld.so will use to load implementation&n;   specific libraries for optimization.  This is more specific in&n;   intent than poking at uname or /proc/cpuinfo.&n;&n;   For the moment, we have only optimizations for the Intel generations,&n;   but that could change... */
+DECL|macro|ELF_PLATFORM
+mdefine_line|#define ELF_PLATFORM&t;(NULL)
+macro_line|#ifdef __KERNEL__
+DECL|macro|SET_PERSONALITY
+mdefine_line|#define SET_PERSONALITY(ibcs2) current-&gt;personality = (ibcs2 ? PER_SVR4 : PER_LINUX)
+macro_line|#endif
+multiline_comment|/* This yields a mask that user programs can use to figure out what&n;   instruction set this cpu supports.  */
+DECL|macro|ELF_HWCAP
+mdefine_line|#define ELF_HWCAP&t;(0)
+multiline_comment|/* This yields a string that ld.so will use to load implementation&n;   specific libraries for optimization.  This is more specific in&n;   intent than poking at uname or /proc/cpuinfo.  */
+DECL|macro|ELF_PLATFORM
+mdefine_line|#define ELF_PLATFORM&t;(NULL)
+macro_line|#ifdef __KERNEL__
+DECL|macro|SET_PERSONALITY
+mdefine_line|#define SET_PERSONALITY(ibcs2) &bslash;&n;&t;current-&gt;personality = (ibcs2 ? PER_SVR4 : PER_LINUX)
+macro_line|#endif
 macro_line|#endif
 eof

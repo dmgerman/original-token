@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: io.h,v 1.12 1997/08/19 03:11:52 davem Exp $ */
+multiline_comment|/* $Id: io.h,v 1.14 1997/11/01 10:23:58 ecd Exp $ */
 macro_line|#ifndef __SPARC64_IO_H
 DECL|macro|__SPARC64_IO_H
 mdefine_line|#define __SPARC64_IO_H
@@ -449,22 +449,165 @@ id|count
 suffix:semicolon
 multiline_comment|/* Memory functions, same as I/O accesses on Ultra. */
 DECL|macro|readb
-mdefine_line|#define readb(addr)&t;&t;inb(addr)
+mdefine_line|#define readb(addr)&t;&t;inb((unsigned long)addr)
 DECL|macro|readw
-mdefine_line|#define readw(addr)&t;&t;inw(addr)
+mdefine_line|#define readw(addr)&t;&t;inw((unsigned long)addr)
 DECL|macro|readl
-mdefine_line|#define readl(addr)&t;&t;inl(addr)
+mdefine_line|#define readl(addr)&t;&t;inl((unsigned long)addr)
 DECL|macro|writeb
-mdefine_line|#define writeb(b, addr)&t;&t;outb((b), (addr))
+mdefine_line|#define writeb(b, addr)&t;&t;outb((b), (unsigned long)(addr))
 DECL|macro|writew
-mdefine_line|#define writew(w, addr)&t;&t;outw((w), (addr))
+mdefine_line|#define writew(w, addr)&t;&t;outw((w), (unsigned long)(addr))
 DECL|macro|writel
-mdefine_line|#define writel(l, addr)&t;&t;outl((l), (addr))
+mdefine_line|#define writel(l, addr)&t;&t;outl((l), (unsigned long)(addr))
 multiline_comment|/* Memcpy to/from I/O space is just a regular memory operation on Ultra as well. */
+multiline_comment|/*&n; * FIXME: Write faster routines using ASL_*L for this.&n; */
+r_static
+r_inline
+r_void
+op_star
+DECL|function|memset_io
+id|memset_io
+c_func
+(paren
+r_void
+op_star
+id|dst
+comma
+r_int
+id|c
+comma
+id|__kernel_size_t
+id|n
+)paren
+(brace
+r_char
+op_star
+id|d
+op_assign
+id|dst
+suffix:semicolon
+r_while
+c_loop
+(paren
+id|n
+op_decrement
+)paren
+op_star
+id|d
+op_increment
+op_assign
+id|c
+suffix:semicolon
+r_return
+id|dst
+suffix:semicolon
+)brace
+r_static
+r_inline
+r_void
+op_star
+DECL|function|memcpy_fromio
+id|memcpy_fromio
+c_func
+(paren
+r_void
+op_star
+id|dst
+comma
+r_const
+r_void
+op_star
+id|src
+comma
+id|__kernel_size_t
+id|n
+)paren
+(brace
+r_const
+r_char
+op_star
+id|s
+op_assign
+id|src
+suffix:semicolon
+r_char
+op_star
+id|d
+op_assign
+id|dst
+suffix:semicolon
+r_while
+c_loop
+(paren
+id|n
+op_decrement
+)paren
+op_star
+id|d
+op_increment
+op_assign
+op_star
+id|s
+op_increment
+suffix:semicolon
+r_return
+id|dst
+suffix:semicolon
+)brace
+r_static
+r_inline
+r_void
+op_star
+DECL|function|memcpy_toio
+id|memcpy_toio
+c_func
+(paren
+r_void
+op_star
+id|dst
+comma
+r_const
+r_void
+op_star
+id|src
+comma
+id|__kernel_size_t
+id|n
+)paren
+(brace
+r_const
+r_char
+op_star
+id|s
+op_assign
+id|src
+suffix:semicolon
+r_char
+op_star
+id|d
+op_assign
+id|dst
+suffix:semicolon
+r_while
+c_loop
+(paren
+id|n
+op_decrement
+)paren
+op_star
+id|d
+op_increment
+op_assign
+op_star
+id|s
+op_increment
+suffix:semicolon
+r_return
+id|dst
+suffix:semicolon
+)brace
 macro_line|#if 0 /* XXX Not exactly, we need to use ASI_*L from/to the I/O end,&n;       * XXX so these are disabled until we code that stuff.&n;       */
-mdefine_line|#define memset_io(a,b,c)&t;&t;memset(((char *)(a)),(b),(c))
-mdefine_line|#define memcpy_fromio(a,b,c)&t;&t;memcpy((a),((char *)(b)),(c))
-mdefine_line|#define memcpy_toio(a,b,c)&t;&t;memcpy(((char *)(a)),(b),(c))
 mdefine_line|#define eth_io_copy_and_sum(a,b,c,d)&t;eth_copy_and_sum((a),((char *)(b)),(c),(d))
 macro_line|#endif
 DECL|function|check_signature

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  $Id: ipconfig.c,v 1.5 1997/10/27 16:08:02 mj Exp $&n; *&n; *  Automatic Configuration of IP -- use BOOTP or RARP or user-supplied&n; *  information to configure own IP address and routes.&n; *&n; *  Copyright (C) 1996, 1997 Martin Mares &lt;mj@atrey.karlin.mff.cuni.cz&gt;&n; *&n; *  Derived from network configuration code in fs/nfs/nfsroot.c,&n; *  originally Copyright (C) 1995, 1996 Gero Kuhlmann and me.&n; */
+multiline_comment|/*&n; *  $Id: ipconfig.c,v 1.6 1998/01/09 17:19:46 mj Exp $&n; *&n; *  Automatic Configuration of IP -- use BOOTP or RARP or user-supplied&n; *  information to configure own IP address and routes.&n; *&n; *  Copyright (C) 1996, 1997 Martin Mares &lt;mj@atrey.karlin.mff.cuni.cz&gt;&n; *&n; *  Derived from network configuration code in fs/nfs/nfsroot.c,&n; *  originally Copyright (C) 1995, 1996 Gero Kuhlmann and me.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
@@ -3748,6 +3748,19 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|ic_gateway
+op_eq
+id|INADDR_NONE
+op_logical_and
+id|b-&gt;relay_ip
+)paren
+id|ic_gateway
+op_assign
+id|b-&gt;relay_ip
+suffix:semicolon
 )brace
 multiline_comment|/*&n; *  Receive BOOTP request.&n; */
 DECL|function|__initfunc

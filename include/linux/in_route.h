@@ -14,8 +14,8 @@ DECL|macro|RTCF_DIRECTDST
 mdefine_line|#define RTCF_DIRECTDST&t;0x00020000
 DECL|macro|RTCF_REDIRECTED
 mdefine_line|#define RTCF_REDIRECTED&t;0x00040000
-DECL|macro|RTCF_VALVE
-mdefine_line|#define RTCF_VALVE&t;0x00200000
+DECL|macro|RTCF_FAST
+mdefine_line|#define RTCF_FAST&t;0x00200000
 DECL|macro|RTCF_MASQ
 mdefine_line|#define RTCF_MASQ&t;0x00400000
 DECL|macro|RTCF_SNAT
