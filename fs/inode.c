@@ -11,21 +11,21 @@ mdefine_line|#define HASH_SIZE&t;(1UL &lt;&lt; HASH_BITS)
 DECL|macro|HASH_MASK
 mdefine_line|#define HASH_MASK&t;(HASH_SIZE-1)
 multiline_comment|/*&n; * Each inode can be on two separate lists. One is&n; * the hash list of the inode, used for lookups. The&n; * other linked list is the &quot;type&quot; list:&n; *  &quot;in_use&quot; - valid inode, hashed&n; *  &quot;dirty&quot; - valid inode, hashed, dirty.&n; *  &quot;unused&quot; - ready to be re-used. Not hashed.&n; *&n; * The two first versions also have a dirty list, allowing&n; * for low-overhead inode sync() operations.&n; */
-DECL|variable|inode_in_use
+r_static
 id|LIST_HEAD
 c_func
 (paren
 id|inode_in_use
 )paren
 suffix:semicolon
-DECL|variable|inode_dirty
+r_static
 id|LIST_HEAD
 c_func
 (paren
 id|inode_dirty
 )paren
 suffix:semicolon
-DECL|variable|inode_unused
+r_static
 id|LIST_HEAD
 c_func
 (paren
@@ -33,6 +33,7 @@ id|inode_unused
 )paren
 suffix:semicolon
 DECL|variable|inode_hashtable
+r_static
 r_struct
 id|list_head
 id|inode_hashtable

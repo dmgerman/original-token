@@ -166,17 +166,24 @@ id|dentry
 op_star
 id|d_covers
 suffix:semicolon
-DECL|member|d_list
-r_struct
-id|list_head
-id|d_list
-suffix:semicolon
-multiline_comment|/* hardlink aliasname / empty list */
 DECL|member|d_hash
 r_struct
 id|list_head
 id|d_hash
 suffix:semicolon
+multiline_comment|/* lookup hash list */
+DECL|member|d_alias
+r_struct
+id|list_head
+id|d_alias
+suffix:semicolon
+multiline_comment|/* inode alias list */
+DECL|member|d_lru
+r_struct
+id|list_head
+id|d_lru
+suffix:semicolon
+multiline_comment|/* d_count = 0 LRU list */
 DECL|member|d_name
 r_struct
 id|qstr
@@ -391,8 +398,8 @@ id|dentry
 op_star
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * This is ugly. The inode:dentry relationship is a 1:n&n; * relationship, so we have to return one (random) dentry&n; * from the list. We select the first one..&n; */
+multiline_comment|/*&n; * This is ugly. The inode:dentry relationship is a 1:n&n; * relationship, so we have to return one (random) dentry&n; * from the alias list. We select the first one..&n; */
 DECL|macro|i_dentry
-mdefine_line|#define i_dentry(inode) &bslash;&n;&t;list_entry((inode)-&gt;i_dentry.next, struct dentry, d_list)
+mdefine_line|#define i_dentry(inode) &bslash;&n;&t;list_entry((inode)-&gt;i_dentry.next, struct dentry, d_alias)
 macro_line|#endif&t;/* __LINUX_DCACHE_H */
 eof
