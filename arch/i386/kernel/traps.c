@@ -1988,7 +1988,7 @@ l_int|0x71
 suffix:semicolon
 multiline_comment|/* dummy */
 )brace
-multiline_comment|/*&n; * Careful - we must not do a lock-kernel until we have checked that the&n; * debug fault happened in user mode. Getting debug exceptions while&n; * in the kernel has to be handled without locking, to avoid deadlocks..&n; *&n; * Being careful here means that we don&squot;t have to be as careful in a&n; * lot of more complicated places (task switching can be a bit lazy&n; * about restoring all the debug state, and ptrace doesn&squot;t have to&n; * find every occurrence of the TF bit that could be saved away even&n; * by user code - and we don&squot;t have to be careful about what values&n; * can be written to the debug registers because there are no really&n; * bad cases).&n; */
+multiline_comment|/*&n; * Our handling of the processor debug registers is non-trivial.&n; * We do not clear them on entry and exit from the kernel. Therefore&n; * it is possible to get a watchpoint trap here from inside the kernel.&n; * However, the code in ./ptrace.c has ensured that the user can&n; * only set watchpoints on userspace addresses. Therefore the in-kernel&n; * watchpoint trap can only occur in code which is reading/writing&n; * from user space. Such code must not hold kernel locks (since it&n; * can equally take a page fault), therefore it is safe to call&n; * force_sig_info even though that claims and releases locks.&n; * &n; * Code in ./signal.c ensures that the debug control register&n; * is restored before we deliver any signal, and therefore that&n; * user code runs with the correct debug control register even though&n; * we clear it here.&n; *&n; * Being careful here means that we don&squot;t have to be as careful in a&n; * lot of more complicated places (task switching can be a bit lazy&n; * about restoring all the debug state, and ptrace doesn&squot;t have to&n; * find every occurrence of the TF bit that could be saved away even&n; * by user code)&n; */
 DECL|function|do_debug
 id|asmlinkage
 r_void
@@ -2107,21 +2107,6 @@ r_goto
 id|clear_TF
 suffix:semicolon
 )brace
-multiline_comment|/* If this is a kernel mode trap, we need to reset db7 to allow us to continue sanely */
-r_if
-c_cond
-(paren
-(paren
-id|regs-&gt;xcs
-op_amp
-l_int|3
-)paren
-op_eq
-l_int|0
-)paren
-r_goto
-id|clear_dr7
-suffix:semicolon
 multiline_comment|/* Ok, finally something we can handle */
 id|tsk-&gt;thread.trap_no
 op_assign
@@ -2143,8 +2128,26 @@ id|info.si_code
 op_assign
 id|TRAP_BRKPT
 suffix:semicolon
+multiline_comment|/* If this is a kernel mode trap, save the user PC on entry to &n;&t; * the kernel, that&squot;s what the debugger can make sense of.&n;&t; */
 id|info.si_addr
 op_assign
+(paren
+(paren
+id|regs-&gt;xcs
+op_amp
+l_int|3
+)paren
+op_eq
+l_int|0
+)paren
+ques
+c_cond
+(paren
+r_void
+op_star
+)paren
+id|tsk-&gt;thread.eip
+suffix:colon
 (paren
 r_void
 op_star
@@ -2160,6 +2163,22 @@ op_amp
 id|info
 comma
 id|tsk
+)paren
+suffix:semicolon
+multiline_comment|/* Disable additional traps. They&squot;ll be re-enabled when&n;&t; * the signal is delivered.&n;&t; */
+id|clear_dr7
+suffix:colon
+id|__asm__
+c_func
+(paren
+l_string|&quot;movl %0,%%db7&quot;
+suffix:colon
+multiline_comment|/* no output */
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+l_int|0
+)paren
 )paren
 suffix:semicolon
 r_return
@@ -2179,23 +2198,6 @@ comma
 id|error_code
 comma
 l_int|1
-)paren
-suffix:semicolon
-r_return
-suffix:semicolon
-id|clear_dr7
-suffix:colon
-id|__asm__
-c_func
-(paren
-l_string|&quot;movl %0,%%db7&quot;
-suffix:colon
-multiline_comment|/* no output */
-suffix:colon
-l_string|&quot;r&quot;
-(paren
-l_int|0
-)paren
 )paren
 suffix:semicolon
 r_return

@@ -118,6 +118,12 @@ suffix:colon
 l_int|1
 comma
 multiline_comment|/* doing a getport() */
+DECL|member|cl_droppriv
+id|cl_droppriv
+suffix:colon
+l_int|1
+comma
+multiline_comment|/* enable NFS suid hack */
 DECL|member|cl_oneshot
 id|cl_oneshot
 suffix:colon

@@ -1351,16 +1351,6 @@ op_star
 )paren
 suffix:semicolon
 r_extern
-r_int
-id|shrink_mmap
-c_func
-(paren
-r_int
-comma
-r_int
-)paren
-suffix:semicolon
-r_extern
 r_void
 id|truncate_inode_pages
 c_func
@@ -1471,15 +1461,15 @@ mdefine_line|#define GFP_BUFFER&t;(__GFP_HIGH | __GFP_WAIT)
 DECL|macro|GFP_ATOMIC
 mdefine_line|#define GFP_ATOMIC&t;(__GFP_HIGH)
 DECL|macro|GFP_USER
-mdefine_line|#define GFP_USER&t;(__GFP_WAIT | __GFP_IO)
+mdefine_line|#define GFP_USER&t;(             __GFP_WAIT | __GFP_IO)
 DECL|macro|GFP_HIGHUSER
-mdefine_line|#define GFP_HIGHUSER&t;(GFP_USER | __GFP_HIGHMEM)
+mdefine_line|#define GFP_HIGHUSER&t;(             __GFP_WAIT | __GFP_IO | __GFP_HIGHMEM)
 DECL|macro|GFP_KERNEL
 mdefine_line|#define GFP_KERNEL&t;(__GFP_HIGH | __GFP_WAIT | __GFP_IO)
 DECL|macro|GFP_NFS
 mdefine_line|#define GFP_NFS&t;&t;(__GFP_HIGH | __GFP_WAIT | __GFP_IO)
 DECL|macro|GFP_KSWAPD
-mdefine_line|#define GFP_KSWAPD&t;(__GFP_IO)
+mdefine_line|#define GFP_KSWAPD&t;(                          __GFP_IO)
 multiline_comment|/* Flag - indicates that the buffer will be suitable for DMA.  Ignored on some&n;   platforms, used as appropriate on others */
 DECL|macro|GFP_DMA
 mdefine_line|#define GFP_DMA&t;&t;__GFP_DMA

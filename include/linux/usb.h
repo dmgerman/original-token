@@ -35,6 +35,8 @@ mdefine_line|#define USB_TYPE_VENDOR&t;&t;&t;(0x02 &lt;&lt; 5)
 DECL|macro|USB_TYPE_RESERVED
 mdefine_line|#define USB_TYPE_RESERVED&t;&t;(0x03 &lt;&lt; 5)
 multiline_comment|/*&n; * USB recipients&n; */
+DECL|macro|USB_RECIP_MASK
+mdefine_line|#define USB_RECIP_MASK&t;&t;&t;0x1f
 DECL|macro|USB_RECIP_DEVICE
 mdefine_line|#define USB_RECIP_DEVICE&t;&t;0x00
 DECL|macro|USB_RECIP_INTERFACE
@@ -1436,6 +1438,22 @@ id|dev
 comma
 r_int
 id|ifnum
+)paren
+suffix:semicolon
+r_extern
+r_struct
+id|usb_endpoint_descriptor
+op_star
+id|usb_epnum_to_ep_desc
+c_func
+(paren
+r_struct
+id|usb_device
+op_star
+id|dev
+comma
+r_int
+id|epnum
 )paren
 suffix:semicolon
 r_extern

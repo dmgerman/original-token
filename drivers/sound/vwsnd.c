@@ -7,6 +7,7 @@ multiline_comment|/*&n; * This driver is organized in nine sections.&n; * The ni
 multiline_comment|/*&n; * Locking Notes&n; *&n; *&t;INC_USE_COUNT and DEC_USE_COUNT keep track of the number of&n; *&t;open descriptors to this driver. They store it in vwsnd_use_count.&n; * &t;The global device list, vwsnd_dev_list,&t;is immutable when the IN_USE&n; *&t;is true.&n; *&n; *&t;devc-&gt;open_lock is a semaphore that is used to enforce the&n; *&t;single reader/single writer rule for /dev/audio.  The rule is&n; *&t;that each device may have at most one reader and one writer.&n; *&t;Open will block until the previous client has closed the&n; *&t;device, unless O_NONBLOCK is specified.&n; *&n; *&t;The semaphore devc-&gt;io_sema serializes PCM I/O syscalls.  This&n; *&t;is unnecessary in Linux 2.2, because the kernel lock&n; *&t;serializes read, write, and ioctl globally, but it&squot;s there,&n; *&t;ready for the brave, new post-kernel-lock world.&n; *&n; *&t;Locking between interrupt and baselevel is handled by the&n; *&t;&quot;lock&quot; spinlock in vwsnd_port (one lock each for read and&n; *&t;write).  Each half holds the lock just long enough to see what&n; *&t;area it owns and update its pointers.  See pcm_output() and&n; *&t;pcm_input() for most of the gory stuff.&n; *&n; *&t;devc-&gt;mix_sema serializes all mixer ioctls.  This is also&n; *&t;redundant because of the kernel lock.&n; *&n; *&t;The lowest level lock is lith-&gt;lithium_lock.  It is a&n; *&t;spinlock which is held during the two-register tango of&n; *&t;reading/writing an AD1843 register.  See&n; *&t;li_{read,write}_ad1843_reg().&n; */
 multiline_comment|/*&n; * Sample Format Notes&n; *&n; *&t;Lithium&squot;s DMA engine has two formats: 16-bit 2&squot;s complement&n; *&t;and 8-bit unsigned .  16-bit transfers the data unmodified, 2&n; *&t;bytes per sample.  8-bit unsigned transfers 1 byte per sample&n; *&t;and XORs each byte with 0x80.  Lithium can input or output&n; *&t;either mono or stereo in either format.&n; *&n; *&t;The AD1843 has four formats: 16-bit 2&squot;s complement, 8-bit&n; *&t;unsigned, 8-bit mu-Law and 8-bit A-Law.&n; *&n; *&t;This driver supports five formats: AFMT_S8, AFMT_U8,&n; *&t;AFMT_MU_LAW, AFMT_A_LAW, and AFMT_S16_LE.&n; *&n; *&t;For AFMT_U8 output, we keep the AD1843 in 16-bit mode, and&n; *&t;rely on Lithium&squot;s XOR to translate between U8 and S8.&n; *&n; *&t;For AFMT_S8, AFMT_MU_LAW and AFMT_A_LAW output, we have to XOR&n; *&t;the 0x80 bit in software to compensate for Lithium&squot;s XOR.&n; *&t;This happens in pcm_copy_{in,out}().&n; */
 macro_line|#include &lt;linux/module.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/stddef.h&gt;
 macro_line|#include &lt;linux/spinlock.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
@@ -14072,7 +14073,6 @@ id|CO_APIC_LI_AUDIO
 multiline_comment|/* irq */
 )brace
 suffix:semicolon
-macro_line|#ifdef MODULE
 id|MODULE_DESCRIPTION
 c_func
 (paren
@@ -14085,10 +14085,11 @@ c_func
 l_string|&quot;Bob Miller &lt;kbob@sgi.com&gt;&quot;
 )paren
 suffix:semicolon
-DECL|function|init_module
-r_extern
+DECL|function|init_vwsnd
+r_static
 r_int
-id|init_module
+id|__init
+id|init_vwsnd
 c_func
 (paren
 r_void
@@ -14149,10 +14150,11 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|cleanup_module
-r_extern
+DECL|function|cleanup_vwsnd
+r_static
 r_void
-id|cleanup_module
+id|__exit
+id|cleanup_vwsnd
 c_func
 (paren
 r_void
@@ -14172,43 +14174,19 @@ id|the_hw_config
 )paren
 suffix:semicolon
 )brace
-macro_line|#else
-DECL|function|init_vwsnd
-r_extern
-r_void
+DECL|variable|init_vwsnd
+id|module_init
+c_func
+(paren
 id|init_vwsnd
-c_func
-(paren
-r_void
-)paren
-(brace
-id|DBGX
-c_func
-(paren
-l_string|&quot;sound::vwsnd::init_vwsnd()&bslash;n&quot;
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|probe_vwsnd
+DECL|variable|cleanup_vwsnd
+id|module_exit
 c_func
 (paren
-op_amp
-id|the_hw_config
-)paren
-)paren
-(paren
-r_void
-)paren
-id|attach_vwsnd
-c_func
-(paren
-op_amp
-id|the_hw_config
+id|cleanup_vwsnd
 )paren
 suffix:semicolon
-)brace
-macro_line|#endif /* !MODULE */
 multiline_comment|/*&n; * Local variables:&n; * compile-command: &quot;cd ../..; make modules SUBDIRS=drivers/sound&quot;&n; * c-basic-offset: 8&n; * End:&n; */
 eof

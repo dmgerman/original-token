@@ -2683,9 +2683,7 @@ multiline_comment|/*&n;&t; * The following is an NFS-specific hack to cater for 
 r_if
 c_cond
 (paren
-id|task-&gt;tk_client-&gt;cl_prog
-op_eq
-id|NFS_PROGRAM
+id|task-&gt;tk_client-&gt;cl_droppriv
 op_logical_and
 (paren
 id|ntohl

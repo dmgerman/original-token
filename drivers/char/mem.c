@@ -24,24 +24,6 @@ r_void
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef CONFIG_SOUND
-r_void
-id|soundcore_init
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-macro_line|#ifdef CONFIG_SOUND_OSS
-r_void
-id|soundcard_init
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#endif
 macro_line|#ifdef CONFIG_SPARCAUDIO
 r_extern
 r_int
@@ -2722,27 +2704,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_SOUND
-id|soundcore_init
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#ifdef CONFIG_SOUND_OSS
-id|soundcard_init
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#endif
-macro_line|#ifdef CONFIG_SPARCAUDIO
-id|sparcaudio_init
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
 macro_line|#if CONFIG_QIC02_TAPE
 id|qic02_tape_init
 c_func

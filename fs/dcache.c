@@ -1643,6 +1643,20 @@ id|count
 op_assign
 l_int|0
 suffix:semicolon
+multiline_comment|/*&n;&t; * Nasty deadlock avoidance.&n;&t; *&n;&t; * ext2_new_block-&gt;getblk-&gt;GFP-&gt;shrink_dcache_memory-&gt;prune_dcache-&gt;&n;&t; * prune_one_dentry-&gt;dput-&gt;dentry_iput-&gt;iput-&gt;inode-&gt;i_sb-&gt;s_op-&gt;&n;&t; * put_inode-&gt;ext2_discard_prealloc-&gt;ext2_free_blocks-&gt;lock_super-&gt;&n;&t; * DEADLOCK.&n;&t; *&n;&t; * We should make sure we don&squot;t hold the superblock lock over&n;&t; * block allocations, but for now:&n;&t; */
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|gfp_mask
+op_amp
+id|__GFP_IO
+)paren
+)paren
+r_return
+l_int|0
+suffix:semicolon
 r_if
 c_cond
 (paren

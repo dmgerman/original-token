@@ -78,14 +78,6 @@ c_func
 id|reprogram_timer
 )paren
 suffix:semicolon
-macro_line|#include &quot;softoss.h&quot;
-DECL|variable|softsynthp
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|softsynthp
-)paren
-suffix:semicolon
 multiline_comment|/* Tuning */
 DECL|macro|_SEQUENCER_C_
 mdefine_line|#define _SEQUENCER_C_

@@ -1714,6 +1714,8 @@ id|MAY_WRITE
 id|filp-&gt;f_flags
 op_assign
 id|O_WRONLY
+op_or
+id|O_LARGEFILE
 suffix:semicolon
 id|filp-&gt;f_mode
 op_assign
@@ -1731,6 +1733,8 @@ r_else
 id|filp-&gt;f_flags
 op_assign
 id|O_RDONLY
+op_or
+id|O_LARGEFILE
 suffix:semicolon
 id|filp-&gt;f_mode
 op_assign

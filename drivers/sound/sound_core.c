@@ -1,6 +1,7 @@
 multiline_comment|/*&n; *&t;Sound core handling. Breaks out sound functions to submodules&n; *&t;&n; *&t;Author:&t;&t;Alan Cox &lt;alan.cox@linux.org&gt;&n; *&n; *&t;Fixes:&n; *&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; *&t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; *&n; *                         --------------------&n; * &n; *&t;Top level handler for the sound subsystem. Various devices can&n; *&t;plug into this. The fact they dont all go via OSS doesn&squot;t mean &n; *&t;they don&squot;t have to implement the OSS API. There is a lot of logic&n; *&t;to keeping much of the OSS weight out of the code in a compatibility&n; *&t;module, but its up to the driver to rember to load it...&n; *&n; *&t;The code provides a set of functions for registration of devices&n; *&t;by type. This is done rather than providing a single call so that&n; *&t;we can hide any future changes in the internals (eg when we go to&n; *&t;32bit dev_t) from the modules and their interface.&n; *&n; *&t;Secondly we need to allocate the dsp, dsp16 and audio devices as&n; *&t;one. Thus we misuse the chains a bit to simplify this.&n; *&n; *&t;Thirdly to make it more fun and for 2.3.x and above we do all&n; *&t;of this using fine grained locking.&n; *&n; *&t;FIXME: we have to resolve modules and fine grained load/unload&n; *&t;locking at some point in 2.3.x.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -51,16 +52,6 @@ macro_line|#ifdef CONFIG_SOUND_MSNDPIN
 r_extern
 r_int
 id|msnd_pinnacle_init
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_SOUND_CMPCI
-r_extern
-r_int
-id|init_cmpci
 c_func
 (paren
 r_void
@@ -1571,7 +1562,6 @@ c_func
 id|mod_firmware_load
 )paren
 suffix:semicolon
-macro_line|#ifdef MODULE
 id|MODULE_DESCRIPTION
 c_func
 (paren
@@ -1584,9 +1574,11 @@ c_func
 l_string|&quot;Alan Cox&quot;
 )paren
 suffix:semicolon
-DECL|function|cleanup_module
+DECL|function|cleanup_soundcore
+r_static
 r_void
-id|cleanup_module
+id|__exit
+id|cleanup_soundcore
 c_func
 (paren
 r_void
@@ -1607,21 +1599,15 @@ id|devfs_handle
 )paren
 suffix:semicolon
 )brace
-DECL|function|init_module
+DECL|function|init_soundcore
+r_static
 r_int
-id|init_module
+id|__init
+id|init_soundcore
 c_func
 (paren
 r_void
 )paren
-macro_line|#else
-r_int
-id|soundcore_init
-c_func
-(paren
-r_void
-)paren
-macro_line|#endif
 (brace
 r_if
 c_cond
@@ -1664,37 +1650,22 @@ comma
 l_int|NULL
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;Now init non OSS drivers&n;&t; */
-macro_line|#ifdef CONFIG_SOUND_CMPCI
-id|init_cmpci
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_SOUND_MSNDCLAS
-id|msnd_classic_init
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_SOUND_MSNDPIN
-id|msnd_pinnacle_init
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_SOUND_VWSND
-id|init_vwsnd
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|variable|init_soundcore
+id|module_init
+c_func
+(paren
+id|init_soundcore
+)paren
+suffix:semicolon
+DECL|variable|cleanup_soundcore
+id|module_exit
+c_func
+(paren
+id|cleanup_soundcore
+)paren
+suffix:semicolon
 eof

@@ -18,7 +18,7 @@ macro_line|#include &lt;asm/sn/sn0/addrs.h&gt;
 macro_line|#include &lt;asm/sn/sn0/hubni.h&gt;
 macro_line|#include &lt;asm/sn/sn0/hubio.h&gt;
 macro_line|#include &lt;asm/sn/klconfig.h&gt;
-macro_line|#include &lt;asm/ioc3.h&gt;
+macro_line|#include &lt;asm/sn/ioc3.h&gt;
 macro_line|#include &lt;asm/sn/sn0/ip27.h&gt;
 macro_line|#include &lt;asm/pci/bridge.h&gt;
 multiline_comment|/* 32 RX buffers.  This is tunable in the range of 16 &lt;= x &lt; 512.  */

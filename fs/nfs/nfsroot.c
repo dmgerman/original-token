@@ -360,6 +360,15 @@ id|NFS_MOUNT_TCP
 )brace
 comma
 (brace
+l_string|&quot;broken_suid&quot;
+comma
+op_complement
+id|NFS_MOUNT_BROKEN_SUID
+comma
+id|NFS_MOUNT_BROKEN_SUID
+)brace
+comma
+(brace
 l_int|NULL
 comma
 l_int|0

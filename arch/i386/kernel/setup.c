@@ -3166,6 +3166,12 @@ c_cond
 (paren
 id|boot_cpu_data.x86_model
 op_eq
+l_int|13
+)paren
+op_logical_or
+(paren
+id|boot_cpu_data.x86_model
+op_eq
 l_int|9
 )paren
 op_logical_or
@@ -3345,6 +3351,10 @@ op_logical_or
 id|c-&gt;x86_model
 op_eq
 l_int|9
+op_logical_or
+id|c-&gt;x86_model
+op_eq
+l_int|13
 )paren
 (brace
 multiline_comment|/* The more serious chips .. */

@@ -519,7 +519,7 @@ id|found
 r_return
 l_int|0
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; * Though the &quot;found&quot; page was in the swap cache an instant&n;&t;&t; * earlier, it might have been removed by shrink_mmap etc.&n;&t;&t; * Re search ... Since find_lock_page grabs a reference on&n;&t;&t; * the page, it can not be reused for anything else, namely&n;&t;&t; * it can not be associated with another swaphandle, so it&n;&t;&t; * is enough to check whether the page is still in the scache.&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; * Though the &quot;found&quot; page was in the swap cache an instant&n;&t;&t; * earlier, it might have been removed by refill_inactive etc.&n;&t;&t; * Re search ... Since find_lock_page grabs a reference on&n;&t;&t; * the page, it can not be reused for anything else, namely&n;&t;&t; * it can not be associated with another swaphandle, so it&n;&t;&t; * is enough to check whether the page is still in the scache.&n;&t;&t; */
 r_if
 c_cond
 (paren

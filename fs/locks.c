@@ -2171,6 +2171,12 @@ id|fl
 op_assign
 id|fl-&gt;fl_next
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|fl
+)paren
+(brace
 id|blocked_owner
 op_assign
 id|fl-&gt;fl_owner
@@ -2179,6 +2185,7 @@ id|blocked_pid
 op_assign
 id|fl-&gt;fl_pid
 suffix:semicolon
+)brace
 r_goto
 id|next_task
 suffix:semicolon

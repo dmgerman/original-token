@@ -1,7 +1,6 @@
 macro_line|#ifndef _ALPHA_ATOMIC_H
 DECL|macro|_ALPHA_ATOMIC_H
 mdefine_line|#define _ALPHA_ATOMIC_H
-macro_line|#include &lt;linux/config.h&gt;
 multiline_comment|/*&n; * Atomic operations that C can&squot;t guarantee us.  Useful for&n; * resource counting etc...&n; *&n; * But use these as seldom as possible since they are much slower&n; * than regular operations.&n; */
 multiline_comment|/*&n; * Counter is volatile to make sure gcc doesn&squot;t try to be clever&n; * and move things around on us. We need to use _exactly_ the address&n; * the user gave us, not some alias that contains the same information.&n; */
 DECL|member|counter

@@ -143,6 +143,13 @@ c_func
 id|hotplug_path
 )paren
 suffix:semicolon
+DECL|variable|call_usermodehelper
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|call_usermodehelper
+)paren
+suffix:semicolon
 macro_line|#endif
 macro_line|#endif
 macro_line|#ifdef CONFIG_MODULES
@@ -1021,6 +1028,20 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|file_lock_sem
+)paren
+suffix:semicolon
+DECL|variable|locks_init_lock
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|locks_init_lock
+)paren
+suffix:semicolon
+DECL|variable|locks_copy_lock
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|locks_copy_lock
 )paren
 suffix:semicolon
 DECL|variable|posix_lock_file

@@ -3339,6 +3339,22 @@ suffix:semicolon
 multiline_comment|/* NOTREACHED */
 )brace
 )brace
+multiline_comment|/* Reenable any watchpoints before delivering the&n;&t;&t; * signal to user space. The processor register will&n;&t;&t; * have been cleared if the watchpoint triggered&n;&t;&t; * inside the kernel.&n;&t;&t; */
+id|__asm__
+c_func
+(paren
+l_string|&quot;movl %0,%%db7&quot;
+suffix:colon
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+id|current-&gt;thread.debugreg
+(braket
+l_int|7
+)braket
+)paren
+)paren
+suffix:semicolon
 multiline_comment|/* Whee!  Actually deliver the signal.  */
 id|handle_signal
 c_func

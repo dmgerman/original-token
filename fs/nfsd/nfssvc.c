@@ -560,6 +560,15 @@ id|current-&gt;fs-&gt;umask
 op_assign
 l_int|0
 suffix:semicolon
+id|current-&gt;rlim
+(braket
+id|RLIMIT_FSIZE
+)braket
+dot
+id|rlim_cur
+op_assign
+id|RLIM_INFINITY
+suffix:semicolon
 id|nfsdstats.th_cnt
 op_increment
 suffix:semicolon

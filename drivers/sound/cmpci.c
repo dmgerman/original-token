@@ -13011,16 +13011,9 @@ comma
 l_string|&quot;i&quot;
 )paren
 suffix:semicolon
-DECL|function|init_module
-r_int
-id|__init
-id|init_module
-c_func
-(paren
-r_void
-)paren
 macro_line|#else
 macro_line|#ifdef CONFIG_SOUND_CMPCI_SPDIFLOOP
+DECL|variable|spdif_loop
 r_static
 r_int
 id|spdif_loop
@@ -13028,6 +13021,7 @@ op_assign
 l_int|1
 suffix:semicolon
 macro_line|#else
+DECL|variable|spdif_loop
 r_static
 r_int
 id|spdif_loop
@@ -13036,6 +13030,7 @@ l_int|0
 suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef CONFIG_SOUND_CMPCI_4CH
+DECL|variable|four_ch
 r_static
 r_int
 id|four_ch
@@ -13043,6 +13038,7 @@ op_assign
 l_int|1
 suffix:semicolon
 macro_line|#else
+DECL|variable|four_ch
 r_static
 r_int
 id|four_ch
@@ -13051,6 +13047,7 @@ l_int|0
 suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef CONFIG_SOUND_CMPCI_REAR
+DECL|variable|rear_out
 r_static
 r_int
 id|rear_out
@@ -13058,6 +13055,7 @@ op_assign
 l_int|1
 suffix:semicolon
 macro_line|#else
+DECL|variable|rear_out
 r_static
 r_int
 id|rear_out
@@ -13065,6 +13063,9 @@ op_assign
 l_int|0
 suffix:semicolon
 macro_line|#endif
+macro_line|#endif
+DECL|function|init_cmpci
+r_static
 r_int
 id|__init
 id|init_cmpci
@@ -13072,7 +13073,6 @@ c_func
 (paren
 r_void
 )paren
-macro_line|#endif
 (brace
 r_struct
 id|cm_state
@@ -14249,7 +14249,6 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* --------------------------------------------------------------------- */
-macro_line|#ifdef MODULE
 id|MODULE_AUTHOR
 c_func
 (paren
@@ -14262,9 +14261,11 @@ c_func
 l_string|&quot;CMPCI Audio Driver&quot;
 )paren
 suffix:semicolon
-DECL|function|cleanup_module
+DECL|function|cleanup_cmpci
+r_static
 r_void
-id|cleanup_module
+id|__exit
+id|cleanup_cmpci
 c_func
 (paren
 r_void
@@ -14431,5 +14432,18 @@ l_string|&quot;cmpci: unloading&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif /* MODULE */
+DECL|variable|init_cmpci
+id|module_init
+c_func
+(paren
+id|init_cmpci
+)paren
+suffix:semicolon
+DECL|variable|cleanup_cmpci
+id|module_exit
+c_func
+(paren
+id|cleanup_cmpci
+)paren
+suffix:semicolon
 eof

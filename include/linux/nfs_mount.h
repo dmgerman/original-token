@@ -126,6 +126,8 @@ DECL|macro|NFS_MOUNT_KERBEROS
 mdefine_line|#define NFS_MOUNT_KERBEROS&t;0x0100&t;/* 3 */
 DECL|macro|NFS_MOUNT_NONLM
 mdefine_line|#define NFS_MOUNT_NONLM&t;&t;0x0200&t;/* 3 */
+DECL|macro|NFS_MOUNT_BROKEN_SUID
+mdefine_line|#define NFS_MOUNT_BROKEN_SUID&t;0x0400&t;/* 4 */
 DECL|macro|NFS_MOUNT_FLAGMASK
 mdefine_line|#define NFS_MOUNT_FLAGMASK&t;0xFFFF
 macro_line|#endif

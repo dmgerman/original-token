@@ -188,10 +188,6 @@ r_int
 id|channels
 )paren
 suffix:semicolon
-r_extern
-r_int
-id|softoss_dev
-suffix:semicolon
 r_static
 r_void
 DECL|function|vidc_mksound
@@ -1761,12 +1757,6 @@ l_int|8
 )paren
 )paren
 suffix:semicolon
-macro_line|#if defined(CONFIG_SOUND_SOFTOSS) || defined(CONFIG_SOUND_SOFTOSS_MODULE)
-id|softoss_dev
-op_assign
-id|adev
-suffix:semicolon
-macro_line|#endif
 r_return
 suffix:semicolon
 id|irq_failed

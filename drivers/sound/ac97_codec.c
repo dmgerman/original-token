@@ -5,6 +5,7 @@ macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/bitops.h&gt;
+macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/ac97_codec.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 r_static
@@ -3033,18 +3034,12 @@ id|codec
 )paren
 suffix:semicolon
 r_else
-(brace
-id|current-&gt;state
-op_assign
-id|TASK_UNINTERRUPTIBLE
-suffix:semicolon
-id|schedule_timeout
+id|udelay
 c_func
 (paren
-l_int|5
+l_int|10
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -3180,15 +3175,6 @@ id|id2
 )paren
 )paren
 (brace
-id|codec-&gt;id
-op_assign
-id|ac97_codec_ids
-(braket
-id|i
-)braket
-dot
-id|id
-suffix:semicolon
 id|codec-&gt;name
 op_assign
 id|ac97_codec_ids
@@ -3380,10 +3366,6 @@ multiline_comment|/* codec specific initialization for 4-6 channel output or sec
 r_if
 c_cond
 (paren
-id|codec-&gt;id
-op_ne
-l_int|0
-op_logical_and
 id|codec-&gt;codec_init
 op_ne
 l_int|NULL
@@ -3476,6 +3458,17 @@ op_star
 id|codec
 )paren
 (brace
+multiline_comment|/* Only set up secondary codec */
+r_if
+c_cond
+(paren
+id|codec-&gt;id
+op_eq
+l_int|0
+)paren
+r_return
+l_int|1
+suffix:semicolon
 id|codec
 op_member_access_from_pointer
 id|codec_write

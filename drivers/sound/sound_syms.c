@@ -209,17 +209,6 @@ c_func
 id|conf_printf2
 )paren
 suffix:semicolon
-r_extern
-r_int
-id|softoss_dev
-suffix:semicolon
-DECL|variable|softoss_dev
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|softoss_dev
-)paren
-suffix:semicolon
 id|MODULE_DESCRIPTION
 c_func
 (paren

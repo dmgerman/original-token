@@ -1,6 +1,7 @@
 multiline_comment|/*&n; * linux/drivers/sound/soundcard.c&n; *&n; * Sound card driver for Linux&n; *&n; *&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; *&n; *&n; * Thomas Sailer     : ioctl code reworked (vmalloc/vfree removed)&n; *                   integrated sound_switch.c&n; * Stefan Reinauer   : integrated /proc/sound (equals to /dev/sndstat,&n; *                   which should disappear in the near future)&n; * Eric Dumas&t;     : devfs support (22-Jan-98) &lt;dumas@linux.eu.org&gt; with&n; *                   fixups by C. Scott Ananian &lt;cananian@alumni.princeton.edu&gt;&n; * Richard Gooch     : moved common (non OSS-specific) devices to sound_core.c&n; * Rob Riggs&t;     : Added persistent DMA buffers support (1998/10/17)&n; * Christoph Hellwig : Some cleanup work (2000/03/01)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &quot;sound_config.h&quot;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
@@ -24,13 +25,6 @@ macro_line|#ifndef valid_dma
 DECL|macro|valid_dma
 mdefine_line|#define valid_dma(n) ((n) &gt;= 0 &amp;&amp; (n) &lt; MAX_DMA_CHANNELS &amp;&amp; (n) != 4)
 macro_line|#endif
-DECL|variable|chrdev_registered
-r_static
-r_int
-id|chrdev_registered
-op_assign
-l_int|0
-suffix:semicolon
 multiline_comment|/*&n; * Table for permanently allocated memory (used when unloading the module)&n; */
 DECL|variable|sound_mem_blocks
 id|caddr_t
@@ -2824,72 +2818,6 @@ suffix:semicolon
 )brace
 )brace
 )brace
-macro_line|#ifdef MODULE
-r_static
-r_void
-macro_line|#else
-r_void
-macro_line|#endif
-DECL|function|soundcard_init
-id|soundcard_init
-c_func
-(paren
-r_void
-)paren
-(brace
-multiline_comment|/* drag in sound_syms.o */
-(brace
-r_extern
-r_char
-id|sound_syms_symbol
-suffix:semicolon
-id|sound_syms_symbol
-op_assign
-l_int|0
-suffix:semicolon
-)brace
-macro_line|#ifndef MODULE
-id|create_special_devices
-c_func
-(paren
-)paren
-suffix:semicolon
-id|chrdev_registered
-op_assign
-l_int|1
-suffix:semicolon
-macro_line|#endif
-id|soundcard_register_devfs
-c_func
-(paren
-l_int|1
-)paren
-suffix:semicolon
-multiline_comment|/* register after we know # of devices */
-)brace
-macro_line|#ifdef MODULE
-DECL|function|destroy_special_devices
-r_static
-r_void
-id|destroy_special_devices
-c_func
-(paren
-r_void
-)paren
-(brace
-id|unregister_sound_special
-c_func
-(paren
-l_int|1
-)paren
-suffix:semicolon
-id|unregister_sound_special
-c_func
-(paren
-l_int|8
-)paren
-suffix:semicolon
-)brace
 DECL|variable|dmabuf
 r_static
 r_int
@@ -2920,9 +2848,11 @@ comma
 l_string|&quot;i&quot;
 )paren
 suffix:semicolon
-DECL|function|init_module
+DECL|function|oss_init
+r_static
 r_int
-id|init_module
+id|__init
+id|oss_init
 c_func
 (paren
 r_void
@@ -2931,6 +2861,17 @@ r_void
 r_int
 id|err
 suffix:semicolon
+multiline_comment|/* drag in sound_syms.o */
+(brace
+r_extern
+r_char
+id|sound_syms_symbol
+suffix:semicolon
+id|sound_syms_symbol
+op_assign
+l_int|0
+suffix:semicolon
+)brace
 macro_line|#ifdef CONFIG_PCI
 r_if
 c_cond
@@ -2982,13 +2923,10 @@ suffix:colon
 l_int|0
 )paren
 suffix:semicolon
-id|chrdev_registered
-op_assign
-l_int|1
-suffix:semicolon
-id|soundcard_init
+id|soundcard_register_devfs
 c_func
 (paren
+l_int|1
 )paren
 suffix:semicolon
 r_if
@@ -3009,9 +2947,11 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|cleanup_module
+DECL|function|oss_cleanup
+r_static
 r_void
-id|cleanup_module
+id|__exit
+id|oss_cleanup
 c_func
 (paren
 r_void
@@ -3032,14 +2972,16 @@ id|soundcard_register_devfs
 l_int|0
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|chrdev_registered
-)paren
-id|destroy_special_devices
+id|unregister_sound_special
 c_func
 (paren
+l_int|1
+)paren
+suffix:semicolon
+id|unregister_sound_special
+c_func
+(paren
+l_int|8
 )paren
 suffix:semicolon
 id|sound_stop_timer
@@ -3117,7 +3059,20 @@ id|i
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
+DECL|variable|oss_init
+id|module_init
+c_func
+(paren
+id|oss_init
+)paren
+suffix:semicolon
+DECL|variable|oss_cleanup
+id|module_exit
+c_func
+(paren
+id|oss_cleanup
+)paren
+suffix:semicolon
 DECL|function|sound_alloc_dma
 r_int
 id|sound_alloc_dma

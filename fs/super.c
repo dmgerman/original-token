@@ -1959,6 +1959,14 @@ l_string|&quot;,lock&quot;
 )brace
 comma
 (brace
+id|NFS_MOUNT_BROKEN_SUID
+comma
+l_string|&quot;,broken_suid&quot;
+comma
+l_string|&quot;&quot;
+)brace
+comma
+(brace
 l_int|0
 comma
 l_int|NULL

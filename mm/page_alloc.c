@@ -1538,6 +1538,25 @@ op_amp
 id|__GFP_WAIT
 )paren
 (brace
+multiline_comment|/*&n;&t;&t;&t; * Give other processes a chance to run:&n;&t;&t;&t; */
+r_if
+c_cond
+(paren
+id|current-&gt;need_resched
+)paren
+(brace
+id|__set_current_state
+c_func
+(paren
+id|TASK_RUNNING
+)paren
+suffix:semicolon
+id|schedule
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
 id|try_to_free_pages
 c_func
 (paren

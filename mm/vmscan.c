@@ -284,7 +284,7 @@ r_goto
 id|out_failed
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; * Is it a clean page? Then it must be recoverable&n;&t; * by just paging it in again, and we can just drop&n;&t; * it..&n;&t; *&n;&t; * However, this won&squot;t actually free any real&n;&t; * memory, as the page will just be in the page cache&n;&t; * somewhere, and as such we should just continue&n;&t; * our scan.&n;&t; *&n;&t; * Basically, this just makes it possible for us to do&n;&t; * some real work in the future in &quot;shrink_mmap()&quot;.&n;&t; */
+multiline_comment|/*&n;&t; * Is it a clean page? Then it must be recoverable&n;&t; * by just paging it in again, and we can just drop&n;&t; * it..&n;&t; *&n;&t; * However, this won&squot;t actually free any real&n;&t; * memory, as the page will just be in the page cache&n;&t; * somewhere, and as such we should just continue&n;&t; * our scan.&n;&t; *&n;&t; * Basically, this just makes it possible for us to do&n;&t; * some real work in the future in &quot;refill_inactive()&quot;.&n;&t; */
 r_if
 c_cond
 (paren
@@ -345,7 +345,7 @@ id|inactive_target
 r_goto
 id|out_unlock
 suffix:semicolon
-multiline_comment|/*&n;&t; * Ok, it&squot;s really dirty. That means that&n;&t; * we should either create a new swap cache&n;&t; * entry for it, or we should write it back&n;&t; * to its own backing store.&n;&t; *&n;&t; * Note that in neither case do we actually&n;&t; * know that we make a page available, but&n;&t; * as we potentially sleep we can no longer&n;&t; * continue scanning, so we migth as well&n;&t; * assume we free&squot;d something.&n;&t; *&n;&t; * NOTE NOTE NOTE! This should just set a&n;&t; * dirty bit in &squot;page&squot;, and just drop the&n;&t; * pte. All the hard work would be done by&n;&t; * shrink_mmap().&n;&t; *&n;&t; * That would get rid of a lot of problems.&n;&t; */
+multiline_comment|/*&n;&t; * Ok, it&squot;s really dirty. That means that&n;&t; * we should either create a new swap cache&n;&t; * entry for it, or we should write it back&n;&t; * to its own backing store.&n;&t; *&n;&t; * Note that in neither case do we actually&n;&t; * know that we make a page available, but&n;&t; * as we potentially sleep we can no longer&n;&t; * continue scanning, so we migth as well&n;&t; * assume we free&squot;d something.&n;&t; *&n;&t; * NOTE NOTE NOTE! This should just set a&n;&t; * dirty bit in &squot;page&squot;, and just drop the&n;&t; * pte. All the hard work would be done by&n;&t; * refill_inactive().&n;&t; *&n;&t; * That would get rid of a lot of problems.&n;&t; */
 id|flush_cache_page
 c_func
 (paren
@@ -2935,12 +2935,6 @@ r_if
 c_cond
 (paren
 id|current-&gt;need_resched
-op_logical_and
-(paren
-id|gfp_mask
-op_amp
-id|__GFP_IO
-)paren
 )paren
 (brace
 id|__set_current_state
@@ -2984,24 +2978,16 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
 op_decrement
 id|count
+op_le
+l_int|0
 )paren
 r_goto
 id|done
 suffix:semicolon
 )brace
-multiline_comment|/* Try to get rid of some shared memory pages.. */
-r_if
-c_cond
-(paren
-id|gfp_mask
-op_amp
-id|__GFP_IO
-)paren
-(brace
-multiline_comment|/*&n;&t;&t;&t; * don&squot;t be too light against the d/i cache since&n;&t;&t;   &t; * shrink_mmap() almost never fail when there&squot;s&n;&t;&t;   &t; * really plenty of memory free. &n;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t; * don&squot;t be too light against the d/i cache since&n;&t;   &t; * refill_inactive() almost never fail when there&squot;s&n;&t;   &t; * really plenty of memory free. &n;&t;&t; */
 id|count
 op_sub_assign
 id|shrink_dcache_memory
@@ -3022,7 +3008,8 @@ comma
 id|gfp_mask
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t; * Not currently working, see fixme in shrink_?cache_memory&n;&t;&t;&t; * In the inner funtions there is a comment:&n;&t;&t;&t; * &quot;To help debugging, a zero exit status indicates&n;&t;&t;&t; *  all slabs were released.&quot; (-arca?)&n;&t;&t;&t; * lets handle it in a primitive but working way...&n;&t;&t;&t; *&t;if (count &lt;= 0)&n;&t;&t;&t; *&t;&t;goto done;&n;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t; * Not currently working, see fixme in shrink_?cache_memory&n;&t;&t; * In the inner funtions there is a comment:&n;&t;&t; * &quot;To help debugging, a zero exit status indicates&n;&t;&t; *  all slabs were released.&quot; (-arca?)&n;&t;&t; * lets handle it in a primitive but working way...&n;&t;&t; *&t;if (count &lt;= 0)&n;&t;&t; *&t;&t;goto done;&n;&t;&t; */
+multiline_comment|/* Try to get rid of some shared memory pages.. */
 r_while
 c_loop
 (paren
@@ -3042,14 +3029,14 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
 op_decrement
 id|count
+op_le
+l_int|0
 )paren
 r_goto
 id|done
 suffix:semicolon
-)brace
 )brace
 multiline_comment|/*&n;&t;&t; * Then, try to page stuff out..&n;&t;&t; */
 r_while
@@ -3073,9 +3060,10 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
 op_decrement
 id|count
+op_le
+l_int|0
 )paren
 r_goto
 id|done
@@ -3119,7 +3107,7 @@ op_ge
 l_int|0
 )paren
 suffix:semicolon
-multiline_comment|/* Always end on a shrink_mmap.., may sleep... */
+multiline_comment|/* Always end on a refill_inactive.., may sleep... */
 r_while
 c_loop
 (paren
@@ -3135,9 +3123,10 @@ l_int|1
 r_if
 c_cond
 (paren
-op_logical_neg
 op_decrement
 id|count
+op_le
+l_int|0
 )paren
 r_goto
 id|done
@@ -3171,13 +3160,6 @@ r_int
 id|ret
 op_assign
 l_int|0
-suffix:semicolon
-multiline_comment|/*&n;&t; * First, reclaim unused slab cache memory.&n;&t; */
-id|kmem_cache_reap
-c_func
-(paren
-id|gfp_mask
-)paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * If we&squot;re low on free pages, move pages from the&n;&t; * inactive_dirty list to the inactive_clean list.&n;&t; *&n;&t; * Usually bdflush will have pre-cleaned the pages&n;&t; * before we get around to moving them to the other&n;&t; * list, so this is a relatively cheap operation.&n;&t; */
 r_if
@@ -3225,14 +3207,6 @@ c_func
 )paren
 )paren
 (brace
-r_if
-c_cond
-(paren
-id|gfp_mask
-op_amp
-id|__GFP_IO
-)paren
-(brace
 id|ret
 op_add_assign
 id|shrink_dcache_memory
@@ -3253,7 +3227,6 @@ comma
 id|gfp_mask
 )paren
 suffix:semicolon
-)brace
 id|ret
 op_add_assign
 id|refill_inactive
@@ -3267,6 +3240,13 @@ suffix:semicolon
 )brace
 r_else
 (brace
+multiline_comment|/*&n;&t;&t; * Reclaim unused slab cache memory.&n;&t;&t; */
+id|kmem_cache_reap
+c_func
+(paren
+id|gfp_mask
+)paren
+suffix:semicolon
 id|ret
 op_assign
 l_int|1
@@ -3619,7 +3599,6 @@ id|gfp_mask
 op_amp
 id|__GFP_WAIT
 )paren
-(brace
 id|ret
 op_assign
 id|do_try_to_free_pages
@@ -3630,7 +3609,6 @@ comma
 l_int|1
 )paren
 suffix:semicolon
-)brace
 r_return
 id|ret
 suffix:semicolon

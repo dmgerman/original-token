@@ -738,10 +738,19 @@ l_int|3
 op_rshift
 l_int|2
 suffix:semicolon
+multiline_comment|/* Note: we don&squot;t use real uid if it involves raising priviledge */
 r_if
 c_cond
 (paren
 id|ruid
+op_logical_and
+id|cred-&gt;uc_uid
+op_ne
+l_int|0
+op_logical_and
+id|cred-&gt;uc_gid
+op_ne
+l_int|0
 )paren
 (brace
 op_star

@@ -2142,9 +2142,16 @@ c_cond
 op_logical_neg
 id|st
 )paren
+(brace
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
 id|POLLIN
 suffix:semicolon
+)brace
 multiline_comment|/*&n;&t;&t; * need to prevent the module from being unloaded, since&n;&t;&t; * proc_unregister does not call the release method and&n;&t;&t; * we would have a memory leak&n;&t;&t; */
 id|st-&gt;lastev
 op_assign

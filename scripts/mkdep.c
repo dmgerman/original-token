@@ -900,7 +900,7 @@ DECL|macro|MAX5
 mdefine_line|#define MAX5(a,b,c,d,e) (MAX2(a,MAX2(b,MAX2(c,MAX2(d,e)))))
 DECL|macro|MIN5
 mdefine_line|#define MIN5(a,b,c,d,e) (MIN2(a,MIN2(b,MIN2(c,MIN2(d,e)))))
-multiline_comment|/*&n; * The state machine looks for (approximately) these Perl regular expressions:&n; *&n; *    m|&bslash;/&bslash;*.*?&bslash;*&bslash;/|&n; *    m|&squot;.*?&squot;|&n; *    m|&quot;.*?&quot;|&n; *    m|#&bslash;s*include&bslash;s*&quot;(.*?)&quot;|&n; *    m|#&bslash;s*include&bslash;s*&lt;(.*?&gt;&quot;|&n; *    m|#&bslash;s*(?define|undef)&bslash;s*CONFIG_(&bslash;w*)|&n; *    m|(?!&bslash;w)CONFIG_|&n; *&n; * About 98% of the CPU time is spent here, and most of that is in&n; * the &squot;start&squot; paragraph.  Because the current characters are&n; * in a register, the start loop usually eats 4 or 8 characters&n; * per memory read.  The MAX5 and MIN5 tests dispose of most&n; * input characters with 1 or 2 comparisons.&n; */
+multiline_comment|/*&n; * The state machine looks for (approximately) these Perl regular expressions:&n; *&n; *    m|&bslash;/&bslash;*.*?&bslash;*&bslash;/|&n; *    m|&bslash;/&bslash;/.*|&n; *    m|&squot;.*?&squot;|&n; *    m|&quot;.*?&quot;|&n; *    m|#&bslash;s*include&bslash;s*&quot;(.*?)&quot;|&n; *    m|#&bslash;s*include&bslash;s*&lt;(.*?&gt;&quot;|&n; *    m|#&bslash;s*(?define|undef)&bslash;s*CONFIG_(&bslash;w*)|&n; *    m|(?!&bslash;w)CONFIG_|&n; *&n; * About 98% of the CPU time is spent here, and most of that is in&n; * the &squot;start&squot; paragraph.  Because the current characters are&n; * in a register, the start loop usually eats 4 or 8 characters&n; * per memory read.  The MAX5 and MIN5 tests dispose of most&n; * input characters with 1 or 2 comparisons.&n; */
 DECL|function|state_machine
 r_void
 id|state_machine
@@ -1034,10 +1034,42 @@ suffix:semicolon
 r_goto
 id|start
 suffix:semicolon
+multiline_comment|/* // */
+id|slash_slash
+suffix:colon
+id|GETNEXT
+id|CASE
+c_func
+(paren
+l_char|&squot;&bslash;n&squot;
+comma
+id|start
+)paren
+suffix:semicolon
+id|NOTCASE
+c_func
+(paren
+l_char|&squot;&bslash;&bslash;&squot;
+comma
+id|slash_slash
+)paren
+suffix:semicolon
+id|GETNEXT
+r_goto
+id|slash_slash
+suffix:semicolon
 multiline_comment|/* / */
 id|slash
 suffix:colon
 id|GETNEXT
+id|CASE
+c_func
+(paren
+l_char|&squot;/&squot;
+comma
+id|slash_slash
+)paren
+suffix:semicolon
 id|NOTCASE
 c_func
 (paren

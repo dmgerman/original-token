@@ -8016,15 +8016,8 @@ r_int
 id|calibrate_signal
 id|__initdata
 suffix:semicolon
-multiline_comment|/* If we&squot;re a module, this is just init_module */
-DECL|function|init_module
-r_int
-id|init_module
-c_func
-(paren
-r_void
-)paren
 macro_line|#else /* not a module */
+DECL|variable|__initdata
 r_static
 r_int
 id|write_ndelay
@@ -8034,6 +8027,7 @@ op_minus
 l_int|1
 suffix:semicolon
 macro_line|#ifdef MSND_CLASSIC
+DECL|variable|__initdata
 r_static
 r_int
 id|io
@@ -8041,6 +8035,7 @@ id|__initdata
 op_assign
 id|CONFIG_MSNDCLAS_IO
 suffix:semicolon
+DECL|variable|__initdata
 r_static
 r_int
 id|irq
@@ -8048,6 +8043,7 @@ id|__initdata
 op_assign
 id|CONFIG_MSNDCLAS_IRQ
 suffix:semicolon
+DECL|variable|__initdata
 r_static
 r_int
 id|mem
@@ -8056,6 +8052,7 @@ op_assign
 id|CONFIG_MSNDCLAS_MEM
 suffix:semicolon
 macro_line|#else /* Pinnacle/Fiji */
+DECL|variable|__initdata
 r_static
 r_int
 id|io
@@ -8063,6 +8060,7 @@ id|__initdata
 op_assign
 id|CONFIG_MSNDPIN_IO
 suffix:semicolon
+DECL|variable|__initdata
 r_static
 r_int
 id|irq
@@ -8070,6 +8068,7 @@ id|__initdata
 op_assign
 id|CONFIG_MSNDPIN_IRQ
 suffix:semicolon
+DECL|variable|__initdata
 r_static
 r_int
 id|mem
@@ -8080,14 +8079,18 @@ suffix:semicolon
 multiline_comment|/* Pinnacle/Fiji non-PnP Config Port */
 macro_line|#ifdef CONFIG_MSNDPIN_NONPNP
 macro_line|#  ifndef CONFIG_MSNDPIN_CFG
+DECL|macro|CONFIG_MSNDPIN_CFG
 macro_line|#    define CONFIG_MSNDPIN_CFG&t;&t;0x250
 macro_line|#  endif
 macro_line|#else
 macro_line|#  ifdef CONFIG_MSNDPIN_CFG
+DECL|macro|CONFIG_MSNDPIN_CFG
 macro_line|#    undef CONFIG_MSNDPIN_CFG
 macro_line|#  endif
+DECL|macro|CONFIG_MSNDPIN_CFG
 macro_line|#  define CONFIG_MSNDPIN_CFG&t;&t;-1
 macro_line|#endif
+DECL|variable|__initdata
 r_static
 r_int
 id|cfg
@@ -8096,14 +8099,17 @@ op_assign
 id|CONFIG_MSNDPIN_CFG
 suffix:semicolon
 multiline_comment|/* If not a module, we don&squot;t need to bother with reset=1 */
+DECL|variable|reset
 r_static
 r_int
 id|reset
 suffix:semicolon
 multiline_comment|/* Extra Peripheral Configuration (Default: Disable) */
 macro_line|#ifndef CONFIG_MSNDPIN_MPU_IO
+DECL|macro|CONFIG_MSNDPIN_MPU_IO
 macro_line|#  define CONFIG_MSNDPIN_MPU_IO&t;&t;0
 macro_line|#endif
+DECL|variable|__initdata
 r_static
 r_int
 id|mpu_io
@@ -8112,8 +8118,10 @@ op_assign
 id|CONFIG_MSNDPIN_MPU_IO
 suffix:semicolon
 macro_line|#ifndef CONFIG_MSNDPIN_MPU_IRQ
+DECL|macro|CONFIG_MSNDPIN_MPU_IRQ
 macro_line|#  define CONFIG_MSNDPIN_MPU_IRQ&t;0
 macro_line|#endif
+DECL|variable|__initdata
 r_static
 r_int
 id|mpu_irq
@@ -8122,8 +8130,10 @@ op_assign
 id|CONFIG_MSNDPIN_MPU_IRQ
 suffix:semicolon
 macro_line|#ifndef CONFIG_MSNDPIN_IDE_IO0
+DECL|macro|CONFIG_MSNDPIN_IDE_IO0
 macro_line|#  define CONFIG_MSNDPIN_IDE_IO0&t;0
 macro_line|#endif
+DECL|variable|__initdata
 r_static
 r_int
 id|ide_io0
@@ -8132,8 +8142,10 @@ op_assign
 id|CONFIG_MSNDPIN_IDE_IO0
 suffix:semicolon
 macro_line|#ifndef CONFIG_MSNDPIN_IDE_IO1
+DECL|macro|CONFIG_MSNDPIN_IDE_IO1
 macro_line|#  define CONFIG_MSNDPIN_IDE_IO1&t;0
 macro_line|#endif
+DECL|variable|__initdata
 r_static
 r_int
 id|ide_io1
@@ -8142,8 +8154,10 @@ op_assign
 id|CONFIG_MSNDPIN_IDE_IO1
 suffix:semicolon
 macro_line|#ifndef CONFIG_MSNDPIN_IDE_IRQ
+DECL|macro|CONFIG_MSNDPIN_IDE_IRQ
 macro_line|#  define CONFIG_MSNDPIN_IDE_IRQ&t;0
 macro_line|#endif
+DECL|variable|__initdata
 r_static
 r_int
 id|ide_irq
@@ -8152,8 +8166,10 @@ op_assign
 id|CONFIG_MSNDPIN_IDE_IRQ
 suffix:semicolon
 macro_line|#ifndef CONFIG_MSNDPIN_JOYSTICK_IO
+DECL|macro|CONFIG_MSNDPIN_JOYSTICK_IO
 macro_line|#  define CONFIG_MSNDPIN_JOYSTICK_IO&t;0
 macro_line|#endif
+DECL|variable|__initdata
 r_static
 r_int
 id|joystick_io
@@ -8163,8 +8179,10 @@ id|CONFIG_MSNDPIN_JOYSTICK_IO
 suffix:semicolon
 multiline_comment|/* Have SPDIF (Digital) Daughterboard */
 macro_line|#ifndef CONFIG_MSNDPIN_DIGITAL
+DECL|macro|CONFIG_MSNDPIN_DIGITAL
 macro_line|#  define CONFIG_MSNDPIN_DIGITAL&t;0
 macro_line|#endif
+DECL|variable|__initdata
 r_static
 r_int
 id|digital
@@ -8174,8 +8192,10 @@ id|CONFIG_MSNDPIN_DIGITAL
 suffix:semicolon
 macro_line|#endif /* MSND_CLASSIC */
 macro_line|#ifndef CONFIG_MSND_FIFOSIZE
+DECL|macro|CONFIG_MSND_FIFOSIZE
 macro_line|#  define CONFIG_MSND_FIFOSIZE&t;&t;DEFFIFOSIZE
 macro_line|#endif
+DECL|variable|__initdata
 r_static
 r_int
 id|fifosize
@@ -8184,33 +8204,27 @@ op_assign
 id|CONFIG_MSND_FIFOSIZE
 suffix:semicolon
 macro_line|#ifndef CONFIG_MSND_CALSIGNAL
+DECL|macro|CONFIG_MSND_CALSIGNAL
 macro_line|#  define CONFIG_MSND_CALSIGNAL&t;&t;0
 macro_line|#endif
 r_static
 r_int
+DECL|variable|__initdata
 id|calibrate_signal
 id|__initdata
 op_assign
 id|CONFIG_MSND_CALSIGNAL
 suffix:semicolon
-macro_line|#ifdef MSND_CLASSIC
-r_int
-id|__init
-id|msnd_classic_init
-c_func
-(paren
-r_void
-)paren
-macro_line|#else
-r_int
-id|__init
-id|msnd_pinnacle_init
-c_func
-(paren
-r_void
-)paren
-macro_line|#endif /* MSND_CLASSIC */
 macro_line|#endif /* MODULE */
+DECL|function|msnd_init
+r_static
+r_int
+id|__init
+id|msnd_init
+c_func
+(paren
+r_void
+)paren
 (brace
 r_int
 id|err
@@ -9107,10 +9121,11 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#ifdef MODULE
-DECL|function|cleanup_module
+DECL|function|msdn_cleanup
+r_static
 r_void
-id|cleanup_module
+id|__exit
+id|msdn_cleanup
 c_func
 (paren
 r_void
@@ -9136,5 +9151,18 @@ id|dev.DARF
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
+DECL|variable|msnd_init
+id|module_init
+c_func
+(paren
+id|msnd_init
+)paren
+suffix:semicolon
+DECL|variable|msdn_cleanup
+id|module_exit
+c_func
+(paren
+id|msdn_cleanup
+)paren
+suffix:semicolon
 eof

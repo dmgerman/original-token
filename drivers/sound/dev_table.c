@@ -3,12 +3,6 @@ macro_line|#include &lt;linux/init.h&gt;
 DECL|macro|_DEV_TABLE_C_
 mdefine_line|#define _DEV_TABLE_C_
 macro_line|#include &quot;sound_config.h&quot;
-DECL|variable|softoss_dev
-r_int
-id|softoss_dev
-op_assign
-l_int|0
-suffix:semicolon
 DECL|function|sound_install_audiodrv
 r_int
 id|sound_install_audiodrv

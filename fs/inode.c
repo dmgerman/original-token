@@ -1560,6 +1560,20 @@ id|count
 op_assign
 l_int|0
 suffix:semicolon
+multiline_comment|/*&n;&t; * Nasty deadlock avoidance..&n;&t; *&n;&t; * We may hold various FS locks, and we don&squot;t&n;&t; * want to recurse into the FS that called us&n;&t; * in clear_inode() and friends..&n;&t; */
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|gfp_mask
+op_amp
+id|__GFP_IO
+)paren
+)paren
+r_return
+l_int|0
+suffix:semicolon
 r_if
 c_cond
 (paren

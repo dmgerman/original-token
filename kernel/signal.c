@@ -716,6 +716,15 @@ id|q-&gt;next
 suffix:semicolon
 )brace
 multiline_comment|/* Ok, it wasn&squot;t in the queue.  We must have&n;&t;&t;   been out of queue space.  So zero out the&n;&t;&t;   info.  */
+id|sigdelset
+c_func
+(paren
+op_amp
+id|list-&gt;signal
+comma
+id|sig
+)paren
+suffix:semicolon
 id|info-&gt;si_signo
 op_assign
 id|sig
