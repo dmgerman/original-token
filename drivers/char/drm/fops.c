@@ -659,7 +659,10 @@ id|dev-&gt;buf_rp
 )paren
 suffix:semicolon
 )brace
-id|copy_to_user_ret
+r_if
+c_cond
+(paren
+id|copy_to_user
 c_func
 (paren
 id|buf
@@ -667,10 +670,11 @@ comma
 id|dev-&gt;buf_rp
 comma
 id|cur
-comma
-op_minus
-id|EINVAL
 )paren
+)paren
+r_return
+op_minus
+id|EFAULT
 suffix:semicolon
 id|dev-&gt;buf_rp
 op_add_assign

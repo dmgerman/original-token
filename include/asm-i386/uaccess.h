@@ -222,15 +222,6 @@ DECL|macro|__get_user_size
 mdefine_line|#define __get_user_size(x,ptr,size,retval)&t;&t;&t;&t;&bslash;&n;do {&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;retval = 0;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;switch (size) {&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;  case 1: __get_user_asm(x,ptr,retval,&quot;b&quot;,&quot;b&quot;,&quot;=q&quot;); break;&t;&bslash;&n;&t;  case 2: __get_user_asm(x,ptr,retval,&quot;w&quot;,&quot;w&quot;,&quot;=r&quot;); break;&t;&bslash;&n;&t;  case 4: __get_user_asm(x,ptr,retval,&quot;l&quot;,&quot;&quot;,&quot;=r&quot;); break;&t;&bslash;&n;&t;  default: (x) = __get_user_bad();&t;&t;&t;&t;&bslash;&n;&t;}&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;} while (0)
 DECL|macro|__get_user_asm
 mdefine_line|#define __get_user_asm(x, addr, err, itype, rtype, ltype)&t;&bslash;&n;&t;__asm__ __volatile__(&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&quot;1:&t;mov&quot;itype&quot; %2,%&quot;rtype&quot;1&bslash;n&quot;&t;&t;&bslash;&n;&t;&t;&quot;2:&bslash;n&quot;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&quot;.section .fixup,&bslash;&quot;ax&bslash;&quot;&bslash;n&quot;&t;&t;&t;&bslash;&n;&t;&t;&quot;3:&t;movl %3,%0&bslash;n&quot;&t;&t;&t;&t;&bslash;&n;&t;&t;&quot;&t;xor&quot;itype&quot; %&quot;rtype&quot;1,%&quot;rtype&quot;1&bslash;n&quot;&t;&bslash;&n;&t;&t;&quot;&t;jmp 2b&bslash;n&quot;&t;&t;&t;&t;&bslash;&n;&t;&t;&quot;.previous&bslash;n&quot;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&quot;.section __ex_table,&bslash;&quot;a&bslash;&quot;&bslash;n&quot;&t;&t;&t;&bslash;&n;&t;&t;&quot;&t;.align 4&bslash;n&quot;&t;&t;&t;&t;&bslash;&n;&t;&t;&quot;&t;.long 1b,3b&bslash;n&quot;&t;&t;&t;&t;&bslash;&n;&t;&t;&quot;.previous&quot;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;: &quot;=r&quot;(err), ltype (x)&t;&t;&t;&t;&bslash;&n;&t;&t;: &quot;m&quot;(__m(addr)), &quot;i&quot;(-EFAULT), &quot;0&quot;(err))
-multiline_comment|/*&n; * The &quot;xxx_ret&quot; versions return constant specified in third argument, if&n; * something bad happens. These macros can be optimized for the&n; * case of just returning from the function xxx_ret is used.&n; */
-DECL|macro|put_user_ret
-mdefine_line|#define put_user_ret(x,ptr,ret) ({ if (put_user(x,ptr)) return ret; })
-DECL|macro|get_user_ret
-mdefine_line|#define get_user_ret(x,ptr,ret) ({ if (get_user(x,ptr)) return ret; })
-DECL|macro|__put_user_ret
-mdefine_line|#define __put_user_ret(x,ptr,ret) ({ if (__put_user(x,ptr)) return ret; })
-DECL|macro|__get_user_ret
-mdefine_line|#define __get_user_ret(x,ptr,ret) ({ if (__get_user(x,ptr)) return ret; })
 multiline_comment|/*&n; * Copy To/From Userspace&n; */
 multiline_comment|/* Generic arbitrary sized copy.  */
 DECL|macro|__copy_user
@@ -522,10 +513,6 @@ DECL|macro|copy_to_user
 mdefine_line|#define copy_to_user(to,from,n)&t;&t;&t;&t;&bslash;&n;&t;(__builtin_constant_p(n) ?&t;&t;&t;&bslash;&n;&t; __constant_copy_to_user((to),(from),(n)) :&t;&bslash;&n;&t; __generic_copy_to_user((to),(from),(n)))
 DECL|macro|copy_from_user
 mdefine_line|#define copy_from_user(to,from,n)&t;&t;&t;&bslash;&n;&t;(__builtin_constant_p(n) ?&t;&t;&t;&bslash;&n;&t; __constant_copy_from_user((to),(from),(n)) :&t;&bslash;&n;&t; __generic_copy_from_user((to),(from),(n)))
-DECL|macro|copy_to_user_ret
-mdefine_line|#define copy_to_user_ret(to,from,n,retval) ({ if (copy_to_user(to,from,n)) return retval; })
-DECL|macro|copy_from_user_ret
-mdefine_line|#define copy_from_user_ret(to,from,n,retval) ({ if (copy_from_user(to,from,n)) return retval; })
 DECL|macro|__copy_to_user
 mdefine_line|#define __copy_to_user(to,from,n)&t;&t;&t;&bslash;&n;&t;(__builtin_constant_p(n) ?&t;&t;&t;&bslash;&n;&t; __constant_copy_to_user_nocheck((to),(from),(n)) :&t;&bslash;&n;&t; __generic_copy_to_user_nocheck((to),(from),(n)))
 DECL|macro|__copy_from_user

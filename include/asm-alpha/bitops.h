@@ -703,8 +703,7 @@ r_int
 id|word
 )paren
 (brace
-macro_line|#if 0 &amp;&amp; defined(__alpha_cix__)
-multiline_comment|/* Swine architects -- a year after they publish v3 of the&n;&t;   handbook, in the 21264 data sheet they quietly change CIX&n;&t;   to FIX and remove the spiffy counting instructions.  */
+macro_line|#if defined(__alpha_cix__) &amp;&amp; defined(__alpha_fix__)
 multiline_comment|/* Whee.  EV6 can calculate it directly.  */
 r_int
 r_int
@@ -713,7 +712,7 @@ suffix:semicolon
 id|__asm__
 c_func
 (paren
-l_string|&quot;ctlz %1,%0&quot;
+l_string|&quot;cttz %1,%0&quot;
 suffix:colon
 l_string|&quot;=r&quot;
 (paren
@@ -842,9 +841,9 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * hweightN: returns the hamming weight (i.e. the number&n; * of bits set) of a N-bit word&n; */
-macro_line|#if 0 &amp;&amp; defined(__alpha_cix__)
-multiline_comment|/* Swine architects -- a year after they publish v3 of the handbook, in&n;   the 21264 data sheet they quietly change CIX to FIX and remove the&n;   spiffy counting instructions.  */
+macro_line|#if defined(__alpha_cix__) &amp;&amp; defined(__alpha_fix__)
 multiline_comment|/* Whee.  EV6 can calculate it directly.  */
+DECL|function|hweight64
 r_extern
 id|__inline__
 r_int
@@ -881,8 +880,11 @@ r_return
 id|result
 suffix:semicolon
 )brace
+DECL|macro|hweight32
 mdefine_line|#define hweight32(x) hweight64((x) &amp; 0xfffffffful)
+DECL|macro|hweight16
 mdefine_line|#define hweight16(x) hweight64((x) &amp; 0xfffful)
+DECL|macro|hweight8
 mdefine_line|#define hweight8(x)  hweight64((x) &amp; 0xfful)
 macro_line|#else
 DECL|macro|hweight32

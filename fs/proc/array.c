@@ -761,7 +761,7 @@ id|render_sigset_t
 c_func
 (paren
 op_amp
-id|p-&gt;signal
+id|p-&gt;pending.signal
 comma
 id|buffer
 )paren
@@ -1444,9 +1444,7 @@ comma
 id|eip
 comma
 multiline_comment|/* The signal information here is obsolete.&n;&t;&t; * It must be decimal for Linux 2.0 compatibility.&n;&t;&t; * Use /proc/#/status for real-time signals.&n;&t;&t; */
-id|task-&gt;signal
-dot
-id|sig
+id|task-&gt;pending.signal.sig
 (braket
 l_int|0
 )braket

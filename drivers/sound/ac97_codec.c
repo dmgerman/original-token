@@ -2223,7 +2223,10 @@ id|_IOC_READ
 id|codec-&gt;modcnt
 op_increment
 suffix:semicolon
-id|get_user_ret
+r_if
+c_cond
+(paren
+id|get_user
 c_func
 (paren
 id|val
@@ -2233,10 +2236,11 @@ r_int
 op_star
 )paren
 id|arg
-comma
+)paren
+)paren
+r_return
 op_minus
 id|EFAULT
-)paren
 suffix:semicolon
 r_switch
 c_cond

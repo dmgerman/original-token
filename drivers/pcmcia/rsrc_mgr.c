@@ -1,4 +1,4 @@
-multiline_comment|/*======================================================================&n;&n;    Resource management routines&n;&n;    rsrc_mgr.c 1.77 1999/11/16 03:32:59&n;&n;    The contents of this file are subject to the Mozilla Public&n;    License Version 1.1 (the &quot;License&quot;); you may not use this file&n;    except in compliance with the License. You may obtain a copy of&n;    the License at http://www.mozilla.org/MPL/&n;&n;    Software distributed under the License is distributed on an &quot;AS&n;    IS&quot; basis, WITHOUT WARRANTY OF ANY KIND, either express or&n;    implied. See the License for the specific language governing&n;    rights and limitations under the License.&n;&n;    The initial developer of the original code is David A. Hinds&n;    &lt;dhinds@pcmcia.sourceforge.org&gt;.  Portions created by David A. Hinds&n;    are Copyright (C) 1999 David A. Hinds.  All Rights Reserved.&n;&n;    Alternatively, the contents of this file may be used under the&n;    terms of the GNU Public License version 2 (the &quot;GPL&quot;), in which&n;    case the provisions of the GPL are applicable instead of the&n;    above.  If you wish to allow the use of your version of this file&n;    only under the terms of the GPL and not to allow others to use&n;    your version of this file under the MPL, indicate your decision&n;    by deleting the provisions above and replace them with the notice&n;    and other provisions required by the GPL.  If you do not delete&n;    the provisions above, a recipient may use your version of this&n;    file under either the MPL or the GPL.&n;    &n;======================================================================*/
+multiline_comment|/*======================================================================&n;&n;    Resource management routines&n;&n;    rsrc_mgr.c 1.79 2000/08/30 20:23:58&n;&n;    The contents of this file are subject to the Mozilla Public&n;    License Version 1.1 (the &quot;License&quot;); you may not use this file&n;    except in compliance with the License. You may obtain a copy of&n;    the License at http://www.mozilla.org/MPL/&n;&n;    Software distributed under the License is distributed on an &quot;AS&n;    IS&quot; basis, WITHOUT WARRANTY OF ANY KIND, either express or&n;    implied. See the License for the specific language governing&n;    rights and limitations under the License.&n;&n;    The initial developer of the original code is David A. Hinds&n;    &lt;dahinds@users.sourceforge.net&gt;.  Portions created by David A. Hinds&n;    are Copyright (C) 1999 David A. Hinds.  All Rights Reserved.&n;&n;    Alternatively, the contents of this file may be used under the&n;    terms of the GNU Public License version 2 (the &quot;GPL&quot;), in which&n;    case the provisions of the GPL are applicable instead of the&n;    above.  If you wish to allow the use of your version of this file&n;    only under the terms of the GPL and not to allow others to use&n;    your version of this file under the MPL, indicate your decision&n;    by deleting the provisions above and replace them with the notice&n;    and other provisions required by the GPL.  If you do not delete&n;    the provisions above, a recipient may use your version of this&n;    file under either the MPL or the GPL.&n;    &n;======================================================================*/
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &lt;linux/config.h&gt;
@@ -22,51 +22,33 @@ macro_line|#include &quot;cs_internal.h&quot;
 macro_line|#include &quot;rsrc_mgr.h&quot;
 multiline_comment|/*====================================================================*/
 multiline_comment|/* Parameters that can be set with &squot;insmod&squot; */
-multiline_comment|/* Should we probe resources for conflicts? */
-DECL|variable|probe_mem
-r_static
-r_int
-id|probe_mem
-op_assign
-l_int|1
-suffix:semicolon
-id|MODULE_PARM
+DECL|macro|INT_MODULE_PARM
+mdefine_line|#define INT_MODULE_PARM(n, v) static int n = v; MODULE_PARM(n, &quot;i&quot;)
+id|INT_MODULE_PARM
 c_func
 (paren
 id|probe_mem
 comma
-l_string|&quot;i&quot;
+l_int|1
 )paren
 suffix:semicolon
+multiline_comment|/* memory probe? */
 macro_line|#ifdef CONFIG_ISA
-DECL|variable|probe_io
-r_static
-r_int
-id|probe_io
-op_assign
-l_int|1
-suffix:semicolon
-DECL|variable|mem_limit
-r_static
-r_int
-id|mem_limit
-op_assign
-l_int|0x10000
-suffix:semicolon
-id|MODULE_PARM
+id|INT_MODULE_PARM
 c_func
 (paren
 id|probe_io
 comma
-l_string|&quot;i&quot;
+l_int|1
 )paren
 suffix:semicolon
-id|MODULE_PARM
+multiline_comment|/* IO port probe? */
+id|INT_MODULE_PARM
 c_func
 (paren
 id|mem_limit
 comma
-l_string|&quot;i&quot;
+l_int|0x10000
 )paren
 suffix:semicolon
 macro_line|#endif

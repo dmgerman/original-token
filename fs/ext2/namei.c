@@ -1675,7 +1675,6 @@ suffix:semicolon
 r_int
 id|err
 suffix:semicolon
-multiline_comment|/*&n;&t; * N.B. Several error exits in ext2_new_inode don&squot;t set err.&n;&t; */
 id|inode
 op_assign
 id|ext2_new_inode
@@ -1695,8 +1694,7 @@ op_logical_neg
 id|inode
 )paren
 r_return
-op_minus
-id|EIO
+id|err
 suffix:semicolon
 id|inode-&gt;i_op
 op_assign
@@ -1821,8 +1819,7 @@ op_logical_neg
 id|inode
 )paren
 r_return
-op_minus
-id|EIO
+id|err
 suffix:semicolon
 id|inode-&gt;i_uid
 op_assign
@@ -1965,8 +1962,7 @@ op_logical_neg
 id|inode
 )paren
 r_return
-op_minus
-id|EIO
+id|err
 suffix:semicolon
 id|inode-&gt;i_op
 op_assign
@@ -3088,8 +3084,7 @@ id|err
 )paren
 )paren
 r_return
-op_minus
-id|EIO
+id|err
 suffix:semicolon
 id|inode-&gt;i_mode
 op_assign

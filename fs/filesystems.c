@@ -8,12 +8,10 @@ macro_line|#include &lt;linux/devpts_fs.h&gt;
 macro_line|#include &lt;linux/major.h&gt;
 macro_line|#include &lt;linux/smp.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
-macro_line|#ifdef CONFIG_KMOD
 macro_line|#include &lt;linux/kmod.h&gt;
-macro_line|#endif
-macro_line|#include &lt;linux/lockd/bind.h&gt;
-macro_line|#include &lt;linux/lockd/xdr.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/module.h&gt;
+macro_line|#include &lt;linux/nfsd/interface.h&gt;
 macro_line|#ifdef CONFIG_CODA_FS
 r_extern
 r_int
@@ -71,25 +69,15 @@ c_func
 suffix:semicolon
 macro_line|#endif
 )brace
-macro_line|#ifndef CONFIG_NFSD
-macro_line|#ifdef CONFIG_NFSD_MODULE
-DECL|variable|do_nfsservctl
-r_int
-(paren
+macro_line|#if defined(CONFIG_NFSD_MODULE)
+DECL|variable|nfsd_linkage
+r_struct
+id|nfsd_linkage
 op_star
-id|do_nfsservctl
-)paren
-(paren
-r_int
-comma
-r_void
-op_star
-comma
-r_void
-op_star
-)paren
+id|nfsd_linkage
+op_assign
+l_int|NULL
 suffix:semicolon
-macro_line|#endif
 r_int
 DECL|function|sys_nfsservctl
 id|asmlinkage
@@ -108,12 +96,6 @@ op_star
 id|resp
 )paren
 (brace
-macro_line|#ifndef CONFIG_NFSD_MODULE
-r_return
-op_minus
-id|ENOSYS
-suffix:semicolon
-macro_line|#else
 r_int
 id|ret
 op_assign
@@ -128,28 +110,8 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|do_nfsservctl
-)paren
-(brace
-id|ret
-op_assign
-id|do_nfsservctl
-c_func
-(paren
-id|cmd
-comma
-id|argp
-comma
-id|resp
-)paren
-suffix:semicolon
-r_goto
-id|out
-suffix:semicolon
-)brace
-macro_line|#ifdef CONFIG_KMOD
-r_if
-c_cond
+id|nfsd_linkage
+op_logical_or
 (paren
 id|request_module
 (paren
@@ -157,15 +119,14 @@ l_string|&quot;nfsd&quot;
 )paren
 op_eq
 l_int|0
+op_logical_and
+id|nfsd_linkage
 )paren
-(brace
-r_if
-c_cond
-(paren
-id|do_nfsservctl
 )paren
 id|ret
 op_assign
+id|nfsd_linkage
+op_member_access_from_pointer
 id|do_nfsservctl
 c_func
 (paren
@@ -176,10 +137,6 @@ comma
 id|resp
 )paren
 suffix:semicolon
-)brace
-macro_line|#endif /* CONFIG_KMOD */
-id|out
-suffix:colon
 id|unlock_kernel
 c_func
 (paren
@@ -188,7 +145,37 @@ suffix:semicolon
 r_return
 id|ret
 suffix:semicolon
-macro_line|#endif /* CONFIG_NFSD_MODULE */
+)brace
+DECL|variable|nfsd_linkage
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|nfsd_linkage
+)paren
+suffix:semicolon
+macro_line|#elif ! defined (CONFIG_NFSD)
+DECL|function|sys_nfsservctl
+id|asmlinkage
+r_int
+id|sys_nfsservctl
+c_func
+(paren
+r_int
+id|cmd
+comma
+r_void
+op_star
+id|argp
+comma
+r_void
+op_star
+id|resp
+)paren
+(brace
+r_return
+op_minus
+id|ENOSYS
+suffix:semicolon
 )brace
 macro_line|#endif /* CONFIG_NFSD */
 eof

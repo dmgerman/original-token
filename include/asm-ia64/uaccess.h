@@ -73,15 +73,6 @@ DECL|macro|__put_user
 mdefine_line|#define __put_user(x,ptr)&t;__put_user_nocheck((__typeof__(*(ptr)))(x),(ptr),sizeof(*(ptr)))
 DECL|macro|__get_user
 mdefine_line|#define __get_user(x,ptr)&t;__get_user_nocheck((x),(ptr),sizeof(*(ptr)))
-multiline_comment|/*&n; * The &quot;xxx_ret&quot; versions return constant specified in third argument, if&n; * something bad happens. These macros can be optimized for the&n; * case of just returning from the function xxx_ret is used.&n; */
-DECL|macro|put_user_ret
-mdefine_line|#define put_user_ret(x,ptr,ret)&t;&t;({ if (put_user(x,ptr)) return ret; })
-DECL|macro|get_user_ret
-mdefine_line|#define get_user_ret(x,ptr,ret)&t;&t;({ if (get_user(x,ptr)) return ret; })
-DECL|macro|__put_user_ret
-mdefine_line|#define __put_user_ret(x,ptr,ret)&t;({ if (__put_user(x,ptr)) return ret; })
-DECL|macro|__get_user_ret
-mdefine_line|#define __get_user_ret(x,ptr,ret)&t;({ if (__get_user(x,ptr)) return ret; })
 r_extern
 r_void
 id|__get_user_unknown
@@ -467,10 +458,6 @@ DECL|macro|copy_from_user
 mdefine_line|#define copy_from_user(to,from,n) __copy_tofrom_user((to), (from), (n), 0)
 DECL|macro|__copy_tofrom_user
 mdefine_line|#define __copy_tofrom_user(to,from,n,check_to)&t;&t;&t;&t;&t;&t;&t;&bslash;&n;({&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;void *__cu_to = (to);&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;const void *__cu_from = (from);&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;long __cu_len = (n);&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;if (__access_ok((long) ((check_to) ? __cu_to : __cu_from), __cu_len, get_fs())) {&t;&bslash;&n;&t;&t;__cu_len = __copy_user(__cu_to, __cu_from, __cu_len);&t;&t;&t;&t;&bslash;&n;&t;}&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;__cu_len;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;})
-DECL|macro|copy_to_user_ret
-mdefine_line|#define copy_to_user_ret(to,from,n,retval)&t;&bslash;&n;({&t;&t;&t;&t;&t;&t;&bslash;&n;&t;if (copy_to_user(to,from,n))&t;&t;&bslash;&n;&t;&t;return retval;&t;&t;&t;&bslash;&n;})
-DECL|macro|copy_from_user_ret
-mdefine_line|#define copy_from_user_ret(to,from,n,retval)&t;&bslash;&n;({&t;&t;&t;&t;&t;&t;&bslash;&n;&t;if (copy_from_user(to,from,n))&t;&t;&bslash;&n;&t;&t;return retval;&t;&t;&t;&bslash;&n;})
 r_extern
 r_int
 r_int

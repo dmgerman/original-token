@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: signal.c,v 1.5 1997/12/15 15:04:59 jj Exp $&n; * signal.c: Signal emulation for Solaris&n; *&n; * Copyright (C) 1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: signal.c,v 1.6 2000/08/29 07:01:54 davem Exp $&n; * signal.c: Signal emulation for Solaris&n; *&n; * Copyright (C) 1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
@@ -2557,27 +2557,28 @@ r_return
 op_minus
 id|EFAULT
 suffix:semicolon
-id|__put_user_ret
+r_if
+c_cond
+(paren
+id|__put_user
 (paren
 id|SOLARIS_SIGCLD
 comma
 op_amp
 id|s-&gt;si_signo
-comma
-op_minus
-id|EFAULT
 )paren
-suffix:semicolon
-id|__put_user_ret
+op_logical_or
+id|__put_user
 (paren
 id|ret
 comma
 op_amp
 id|s-&gt;_data._proc._pid
-comma
+)paren
+)paren
+r_return
 op_minus
 id|EFAULT
-)paren
 suffix:semicolon
 r_switch
 c_cond
@@ -2683,27 +2684,28 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
-id|__put_user_ret
+r_if
+c_cond
+(paren
+id|__put_user
 (paren
 id|ret
 comma
 op_amp
 id|s-&gt;si_code
-comma
-op_minus
-id|EFAULT
 )paren
-suffix:semicolon
-id|__put_user_ret
+op_logical_or
+id|__put_user
 (paren
 id|status
 comma
 op_amp
 id|s-&gt;_data._proc._pdata._cld._status
-comma
+)paren
+)paren
+r_return
 op_minus
 id|EFAULT
-)paren
 suffix:semicolon
 )brace
 r_return

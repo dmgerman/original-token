@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: srmmu.c,v 1.221 2000/08/14 00:46:13 anton Exp $&n; * srmmu.c:  SRMMU specific routines for memory management.&n; *&n; * Copyright (C) 1995 David S. Miller  (davem@caip.rutgers.edu)&n; * Copyright (C) 1995 Pete Zaitcev&n; * Copyright (C) 1996 Eddie C. Dost    (ecd@skynet.be)&n; * Copyright (C) 1997,1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; * Copyright (C) 1999,2000 Anton Blanchard (anton@linuxcare.com)&n; */
+multiline_comment|/* $Id: srmmu.c,v 1.222 2000/08/29 08:59:23 davem Exp $&n; * srmmu.c:  SRMMU specific routines for memory management.&n; *&n; * Copyright (C) 1995 David S. Miller  (davem@caip.rutgers.edu)&n; * Copyright (C) 1995 Pete Zaitcev&n; * Copyright (C) 1996 Eddie C. Dost    (ecd@skynet.be)&n; * Copyright (C) 1997,1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; * Copyright (C) 1999,2000 Anton Blanchard (anton@linuxcare.com)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -7275,8 +7275,15 @@ id|mapping-&gt;i_shared_lock
 suffix:semicolon
 id|vmaring
 op_assign
-id|mapping-&gt;i_mmap
+id|mapping-&gt;i_mmap_shared
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|vmaring
+op_ne
+l_int|NULL
+)paren
 r_do
 (brace
 multiline_comment|/* Do not mistake ourselves as another mapping. */

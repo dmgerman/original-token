@@ -1,7 +1,4 @@
-multiline_comment|/* [xirc2ps_cs.c wk 03.11.99] (1.40 1999/11/18 00:06:03)&n; * Xircom CreditCard Ethernet Adapter IIps driver&n; * Xircom Realport 10/100 (RE-100) driver &n; *&n; * This driver originally was made by Werner Koch. Since the driver was left&n; * unmaintained for some time, there have been some improvements and changes&n; * since. These include supporting some of the &quot;Realport&quot; cards and develop-&n; * ing enhancements to support the new ones.&n; * It is made for CE2, CEM28, CEM33, CE33 and &n; * CEM56 cards. The CEM56 cards work both with their modem and ethernet&n; * interface. The RealPort 10/100 Modem and similar cards are supported but&n; * with some bugs which are being corrected as they are detected. &n; * &n; * Code revised and maintained by Allan Baker Ortegon&n; * al527261@prodigy.net.mx&n; * Written originally by Werner Koch based on David Hinds&squot; skeleton of the&n; * PCMCIA driver. The code has been modified as to make the newer cards&n; * available.&n; *&n; * The latest code for the driver, information on the development project&n; * for the Xircom RealPort and CE cards for the PCMCIA driver, and other&n; * related material, can be found at the following URL, which is underway:&n; * &n; * &quot;http://xirc2ps.linuxbox.com/index.html&quot;&n; *&n; * Any bugs regarding this driver, please send them to:&n; * alanyuu@linuxbox.com&n; *&n; * The driver is still evolving and there are many cards which will benefit&n; * from having alpha testers. If you have a particular card and would like&n; * to be involved in this ongoing effort, please send mail to the maintainer.&n; * &n; * Special thanks to David Hinds, to Xircom for the specifications and their&n; * software development kit, and all others who may have colaborated in the&n; * development of the driver: Koen Van Herck (Koen.Van.Herck@xircom.com),&n; * 4PC GmbH Duesseldorf, David Luger, et al.&n; * &n; *&n; ************************************************************************&n; * Copyright (c) 1997,1998 Werner Koch (dd9jn)&n; * Copyright (c) 1999 Allan Baker Ortegon &n; *&n; * This driver is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2 of the License, or&n; * (at your option) any later version.&n; *&n; * It is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA&n; *&n; *&n; * ALTERNATIVELY, this driver may be distributed under the terms of&n; * the following license, in which case the provisions of this license&n; * are required INSTEAD OF the GNU General Public License.  (This clause&n; * is necessary due to a potential bad interaction between the GPL and&n; * the restrictions contained in a BSD-style copyright.)&n; *&n; * Redistribution and use in source and binary forms, with or without&n; * modification, are permitted provided that the following conditions&n; * are met:&n; * 1. Redistributions of source code must retain the above copyright&n; *    notice, and the entire permission notice in its entirety,&n; *    including the disclaimer of warranties.&n; * 2. Redistributions in binary form must reproduce the above copyright&n; *    notice, this list of conditions and the following disclaimer in the&n; *    documentation and/or other materials provided with the distribution.&n; * 3. The name of the author may not be used to endorse or promote&n; *    products derived from this software without specific prior&n; *    written permission.&n; *&n; * THIS SOFTWARE IS PROVIDED ``AS IS&squot;&squot; AND ANY EXPRESS OR IMPLIED&n; * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES&n; * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE&n; * DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT,&n; * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES&n; * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR&n; * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)&n; * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,&n; * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)&n; * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED&n; * OF THE POSSIBILITY OF SUCH DAMAGE.&n; */
-multiline_comment|/* Enable the bug fix for CEM56 to use modem and ethernet simultaneously */
-DECL|macro|CEM56_FIX
-mdefine_line|#define CEM56_FIX
+multiline_comment|/* [xirc2ps_cs.c wk 03.11.99] (1.40 1999/11/18 00:06:03)&n; * Xircom CreditCard Ethernet Adapter IIps driver&n; * Xircom Realport 10/100 (RE-100) driver &n; *&n; * This driver supports various Xircom CreditCard Ethernet adapters&n; * including the CE2, CE IIps, RE-10, CEM28, CEM33, CE33, CEM56,&n; * CE3-100, CE3B, RE-100, REM10BT, and REM56G-100.&n; * &n; * Written originally by Werner Koch based on David Hinds&squot; skeleton of the&n; * PCMCIA driver.&n; *&n; * Copyright (c) 1997,1998 Werner Koch (dd9jn)&n; *&n; * This driver is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2 of the License, or&n; * (at your option) any later version.&n; *&n; * It is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; if not, write to the Free Software&n; * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA&n; *&n; *&n; * ALTERNATIVELY, this driver may be distributed under the terms of&n; * the following license, in which case the provisions of this license&n; * are required INSTEAD OF the GNU General Public License.  (This clause&n; * is necessary due to a potential bad interaction between the GPL and&n; * the restrictions contained in a BSD-style copyright.)&n; *&n; * Redistribution and use in source and binary forms, with or without&n; * modification, are permitted provided that the following conditions&n; * are met:&n; * 1. Redistributions of source code must retain the above copyright&n; *    notice, and the entire permission notice in its entirety,&n; *    including the disclaimer of warranties.&n; * 2. Redistributions in binary form must reproduce the above copyright&n; *    notice, this list of conditions and the following disclaimer in the&n; *    documentation and/or other materials provided with the distribution.&n; * 3. The name of the author may not be used to endorse or promote&n; *    products derived from this software without specific prior&n; *    written permission.&n; *&n; * THIS SOFTWARE IS PROVIDED ``AS IS&squot;&squot; AND ANY EXPRESS OR IMPLIED&n; * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES&n; * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE&n; * DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT,&n; * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES&n; * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR&n; * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)&n; * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,&n; * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)&n; * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED&n; * OF THE POSSIBILITY OF SUCH DAMAGE.&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
@@ -27,19 +24,11 @@ macro_line|#include &lt;pcmcia/cs.h&gt;
 macro_line|#include &lt;pcmcia/cistpl.h&gt;
 macro_line|#include &lt;pcmcia/cisreg.h&gt;
 macro_line|#include &lt;pcmcia/ciscode.h&gt;
-macro_line|#ifndef MANFID_XIRCOM
-DECL|macro|MANFID_XIRCOM
-mdefine_line|#define MANFID_XIRCOM &t;   0x0105
-macro_line|#endif
 macro_line|#ifndef MANFID_COMPAQ
 DECL|macro|MANFID_COMPAQ
 mdefine_line|#define MANFID_COMPAQ &t;   0x0138
 DECL|macro|MANFID_COMPAQ2
 mdefine_line|#define MANFID_COMPAQ2&t;   0x0183  /* is this correct? */
-macro_line|#endif
-macro_line|#ifndef MANFID_INTEL
-DECL|macro|MANFID_INTEL
-mdefine_line|#define MANFID_INTEL&t;&t;   0x0089
 macro_line|#endif
 macro_line|#include &lt;pcmcia/ds.h&gt;
 multiline_comment|/* Time in jiffies before concluding Tx hung */
@@ -3244,14 +3233,6 @@ id|local-&gt;manf_str
 op_assign
 l_string|&quot;Xircom&quot;
 suffix:semicolon
-id|DEBUG
-c_func
-(paren
-l_int|0
-comma
-l_string|&quot;found xircom card&bslash;n&quot;
-)paren
-suffix:semicolon
 r_break
 suffix:semicolon
 r_case
@@ -3260,14 +3241,6 @@ suffix:colon
 id|local-&gt;manf_str
 op_assign
 l_string|&quot;Accton&quot;
-suffix:semicolon
-id|DEBUG
-c_func
-(paren
-l_int|0
-comma
-l_string|&quot;found Accton card&bslash;n&quot;
-)paren
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -3281,14 +3254,6 @@ id|local-&gt;manf_str
 op_assign
 l_string|&quot;Compaq&quot;
 suffix:semicolon
-id|DEBUG
-c_func
-(paren
-l_int|0
-comma
-l_string|&quot;found Compaq card&bslash;n&quot;
-)paren
-suffix:semicolon
 r_break
 suffix:semicolon
 r_case
@@ -3298,13 +3263,14 @@ id|local-&gt;manf_str
 op_assign
 l_string|&quot;Intel&quot;
 suffix:semicolon
-id|DEBUG
-c_func
-(paren
-l_int|0
-comma
-l_string|&quot;found Intel card&bslash;n&quot;
-)paren
+r_break
+suffix:semicolon
+r_case
+id|MANFID_TOSHIBA
+suffix:colon
+id|local-&gt;manf_str
+op_assign
+l_string|&quot;Toshiba&quot;
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -3326,6 +3292,16 @@ r_goto
 id|failure
 suffix:semicolon
 )brace
+id|DEBUG
+c_func
+(paren
+l_int|0
+comma
+l_string|&quot;found %s card&bslash;n&quot;
+comma
+id|local-&gt;manf_str
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -4249,18 +4225,15 @@ c_cond
 id|local-&gt;dingo
 )paren
 (brace
-macro_line|#ifdef CEM56_FIX
 id|conf_reg_t
 id|reg
 suffix:semicolon
-macro_line|#endif
 id|win_req_t
 id|req
 suffix:semicolon
 id|memreq_t
 id|mem
 suffix:semicolon
-macro_line|#ifdef CEM56_FIX
 multiline_comment|/* Reset the modem&squot;s BAR to the correct value&n;&t; * This is necessary because in the RequestConfiguration call,&n;&t; * the base address of the ethernet port (BasePort1) is written&n;&t; * to the BAR registers of the modem.&n;&t; */
 id|reg.Action
 op_assign
@@ -4360,7 +4333,6 @@ r_goto
 id|config_error
 suffix:semicolon
 )brace
-macro_line|#endif
 multiline_comment|/* There is no config entry for the Ethernet part which&n;&t; * is at 0x0800. So we allocate a window into the attribute&n;&t; * memory and write direct to the CIS registers&n;&t; */
 id|req.Attributes
 op_assign
@@ -4813,11 +4785,6 @@ r_goto
 id|config_error
 suffix:semicolon
 )brace
-id|link-&gt;state
-op_and_assign
-op_complement
-id|DEV_CONFIG_PENDING
-suffix:semicolon
 id|strcpy
 c_func
 (paren
@@ -4830,6 +4797,11 @@ id|link-&gt;dev
 op_assign
 op_amp
 id|local-&gt;node
+suffix:semicolon
+id|link-&gt;state
+op_and_assign
+op_complement
+id|DEV_CONFIG_PENDING
 suffix:semicolon
 r_if
 c_cond

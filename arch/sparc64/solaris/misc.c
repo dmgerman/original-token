@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: misc.c,v 1.29 2000/08/14 23:50:31 anton Exp $&n; * misc.c: Miscelaneous syscall emulation for Solaris&n; *&n; * Copyright (C) 1997,1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: misc.c,v 1.30 2000/08/29 07:01:54 davem Exp $&n; * misc.c: Miscelaneous syscall emulation for Solaris&n; *&n; * Copyright (C) 1997,1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt; 
 macro_line|#include &lt;linux/types.h&gt;
@@ -858,7 +858,7 @@ id|brk
 suffix:semicolon
 )brace
 DECL|macro|set_utsfield
-mdefine_line|#define set_utsfield(to, from, dotchop, countfrom) {&t;&t;&t;&bslash;&n;&t;char *p; &t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;int i, len = (countfrom) ? &t;&t;&t;&t;&t;&bslash;&n;&t;&t;((sizeof(to) &gt; sizeof(from) ? &t;&t;&t;&t;&bslash;&n;&t;&t;&t;sizeof(from) : sizeof(to))) : sizeof(to); &t;&bslash;&n;&t;copy_to_user_ret(to, from, len, -EFAULT); &t;&t;&t;&bslash;&n;&t;if (dotchop) &t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;for (p=from,i=0; *p &amp;&amp; *p != &squot;.&squot; &amp;&amp; --len; p++,i++); &t;&bslash;&n;&t;else &t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;i = len - 1; &t;&t;&t;&t;&t;&t;&bslash;&n;&t;__put_user_ret(&squot;&bslash;0&squot;, (char *)(to+i), -EFAULT); &t;&t;&t;&bslash;&n;}
+mdefine_line|#define set_utsfield(to, from, dotchop, countfrom) {&t;&t;&t;&bslash;&n;&t;char *p; &t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;int i, len = (countfrom) ? &t;&t;&t;&t;&t;&bslash;&n;&t;&t;((sizeof(to) &gt; sizeof(from) ? &t;&t;&t;&t;&bslash;&n;&t;&t;&t;sizeof(from) : sizeof(to))) : sizeof(to); &t;&bslash;&n;&t;if (copy_to_user(to, from, len))&t;&t;&t;&t;&bslash;&n;&t;&t;return -EFAULT;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;if (dotchop) &t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;for (p=from,i=0; *p &amp;&amp; *p != &squot;.&squot; &amp;&amp; --len; p++,i++); &t;&bslash;&n;&t;else &t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;i = len - 1; &t;&t;&t;&t;&t;&t;&bslash;&n;&t;if (__put_user(&squot;&bslash;0&squot;, (char *)(to+i)))&t;&t;&t;&t;&bslash;&n;&t;&t;return -EFAULT;&t;&t;&t;&t;&t;&t;&bslash;&n;}
 DECL|struct|sol_uname
 r_struct
 id|sol_uname
@@ -1785,7 +1785,10 @@ OL
 id|len
 )paren
 (brace
-id|copy_to_user_ret
+r_if
+c_cond
+(paren
+id|copy_to_user
 c_func
 (paren
 (paren
@@ -1803,12 +1806,9 @@ comma
 id|count
 op_minus
 l_int|1
-comma
-op_minus
-id|EFAULT
 )paren
-suffix:semicolon
-id|__put_user_ret
+op_logical_or
+id|__put_user
 c_func
 (paren
 l_int|0
@@ -1826,14 +1826,19 @@ op_plus
 id|count
 op_minus
 l_int|1
-comma
+)paren
+)paren
+r_return
 op_minus
 id|EFAULT
-)paren
 suffix:semicolon
 )brace
 r_else
-id|copy_to_user_ret
+(brace
+r_if
+c_cond
+(paren
+id|copy_to_user
 c_func
 (paren
 (paren
@@ -1849,11 +1854,13 @@ comma
 id|r
 comma
 id|len
-comma
+)paren
+)paren
+r_return
 op_minus
 id|EFAULT
-)paren
 suffix:semicolon
+)brace
 r_return
 id|len
 suffix:semicolon

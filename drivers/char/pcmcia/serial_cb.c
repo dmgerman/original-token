@@ -1,4 +1,4 @@
-multiline_comment|/*======================================================================&n;&n;    A driver for CardBus serial devices&n;&n;    serial_cb.c 1.15 1999/11/24 02:52:06&n;&n;    Copyright 1998, 1999 by Donald Becker and David Hinds&n;    &n;    This software may be used and distributed according to the terms&n;    of the GNU Public License, incorporated herein by reference.&n;    All other rights reserved.&n;    &n;    This driver is an activator for CardBus serial cards, as&n;    found on multifunction (e.g. Ethernet and Modem) CardBus cards.&n;    &n;    Donald Becker may be reached as becker@CESDIS.edu, or C/O&n;    USRA Center of Excellence in Space Data and Information Sciences&n;    Code 930.5, NASA Goddard Space Flight Center, Greenbelt MD 20771&n;    David Hinds may be reached at dhinds@pcmcia.sourceforge.org&n;    &n;======================================================================*/
+multiline_comment|/*======================================================================&n;&n;    A driver for CardBus serial devices&n;&n;    serial_cb.c 1.20 2000/08/07 19:02:03&n;&n;    Copyright 1998, 1999 by Donald Becker and David Hinds&n;    &n;    This software may be used and distributed according to the terms&n;    of the GNU Public License, incorporated herein by reference.&n;    All other rights reserved.&n;    &n;    This driver is an activator for CardBus serial cards, as&n;    found on multifunction (e.g. Ethernet and Modem) CardBus cards.&n;    &n;    Donald Becker may be reached as becker@CESDIS.edu, or C/O&n;    USRA Center of Excellence in Space Data and Information Sciences&n;    Code 930.5, NASA Goddard Space Flight Center, Greenbelt MD 20771&n;    David Hinds may be reached at dahinds@users.sourceforge.net&n;    &n;======================================================================*/
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
@@ -35,7 +35,7 @@ r_char
 op_star
 id|version
 op_assign
-l_string|&quot;serial_cb.c 1.15 1999/11/24 02:52:06 (David Hinds)&quot;
+l_string|&quot;serial_cb.c 1.20 2000/08/07 19:02:03 (David Hinds)&quot;
 suffix:semicolon
 macro_line|#else
 DECL|macro|DEBUG
@@ -516,7 +516,7 @@ c_func
 (paren
 l_int|0
 comma
-l_string|&quot;serial_detach(tty%02d)&bslash;n&quot;
+l_string|&quot;serial_detach(ttyS%02d)&bslash;n&quot;
 comma
 id|node-&gt;minor
 op_minus

@@ -10810,7 +10810,7 @@ id|sigismember
 c_func
 (paren
 op_amp
-id|tsk-&gt;signal
+id|tsk-&gt;pending.signal
 comma
 id|SIGSTOP
 )paren
@@ -10820,7 +10820,7 @@ id|sigdelset
 c_func
 (paren
 op_amp
-id|tsk-&gt;signal
+id|tsk-&gt;pending.signal
 comma
 id|SIGSTOP
 )paren
@@ -10895,7 +10895,7 @@ id|CLONE_FS
 op_or
 id|CLONE_FILES
 op_or
-id|CLONE_SIGHAND
+id|CLONE_SIGNAL
 )paren
 suffix:semicolon
 id|down
@@ -10917,7 +10917,7 @@ id|CLONE_FS
 op_or
 id|CLONE_FILES
 op_or
-id|CLONE_SIGHAND
+id|CLONE_SIGNAL
 )paren
 suffix:semicolon
 id|down

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: uaccess.h,v 1.32 1999/11/23 08:56:48 davem Exp $ */
+multiline_comment|/* $Id: uaccess.h,v 1.33 2000/08/29 07:01:58 davem Exp $ */
 macro_line|#ifndef _ASM_UACCESS_H
 DECL|macro|_ASM_UACCESS_H
 mdefine_line|#define _ASM_UACCESS_H
@@ -101,20 +101,12 @@ suffix:semicolon
 multiline_comment|/* Uh, these should become the main single-value transfer routines..&n; * They automatically use the right size if we just have the right&n; * pointer type..&n; *&n; * This gets kind of ugly. We want to return _two_ values in &quot;get_user()&quot;&n; * and yet we don&squot;t want to do any pointers, because that is too much&n; * of a performance impact. Thus we have a few rather ugly macros here,&n; * and hide all the uglyness from the user.&n; */
 DECL|macro|put_user
 mdefine_line|#define put_user(x,ptr) ({ &bslash;&n;unsigned long __pu_addr = (unsigned long)(ptr); &bslash;&n;__put_user_nocheck((__typeof__(*(ptr)))(x),__pu_addr,sizeof(*(ptr))); })
-DECL|macro|put_user_ret
-mdefine_line|#define put_user_ret(x,ptr,retval) ({ &bslash;&n;unsigned long __pu_addr = (unsigned long)(ptr); &bslash;&n;__put_user_nocheck_ret((__typeof__(*(ptr)))(x),__pu_addr,sizeof(*(ptr)),retval); })
 DECL|macro|get_user
 mdefine_line|#define get_user(x,ptr) ({ &bslash;&n;unsigned long __gu_addr = (unsigned long)(ptr); &bslash;&n;__get_user_nocheck((x),__gu_addr,sizeof(*(ptr)),__typeof__(*(ptr))); })
-DECL|macro|get_user_ret
-mdefine_line|#define get_user_ret(x,ptr,retval) ({ &bslash;&n;unsigned long __gu_addr = (unsigned long)(ptr); &bslash;&n;__get_user_nocheck_ret((x),__gu_addr,sizeof(*(ptr)),__typeof__(*(ptr)),retval); })
 DECL|macro|__put_user
 mdefine_line|#define __put_user(x,ptr) put_user(x,ptr)
-DECL|macro|__put_user_ret
-mdefine_line|#define __put_user_ret(x,ptr,retval) put_user_ret(x,ptr,retval)
 DECL|macro|__get_user
 mdefine_line|#define __get_user(x,ptr) get_user(x,ptr)
-DECL|macro|__get_user_ret
-mdefine_line|#define __get_user_ret(x,ptr,retval) get_user_ret(x,ptr,retval)
 DECL|struct|__large_struct
 DECL|member|buf
 r_struct
@@ -315,22 +307,10 @@ id|size
 suffix:semicolon
 DECL|macro|copy_from_user
 mdefine_line|#define copy_from_user(to,from,n)&t;&t;&bslash;&n;&t;__copy_from_user((void *)(to),&t;&bslash;&n;&t;&t;    (void *)(from), (__kernel_size_t)(n))
-DECL|macro|copy_from_user_ret
-mdefine_line|#define copy_from_user_ret(to,from,n,retval) ({ &bslash;&n;if (copy_from_user(to,from,n)) &bslash;&n;&t;return retval; &bslash;&n;})
-DECL|macro|__copy_from_user_ret
-mdefine_line|#define __copy_from_user_ret(to,from,n,retval) ({ &bslash;&n;if (__copy_from_user(to,from,n)) &bslash;&n;&t;return retval; &bslash;&n;})
 DECL|macro|copy_to_user
 mdefine_line|#define copy_to_user(to,from,n) &bslash;&n;&t;__copy_to_user((void *)(to), &bslash;&n;&t;(void *) (from), (__kernel_size_t)(n))
-DECL|macro|copy_to_user_ret
-mdefine_line|#define copy_to_user_ret(to,from,n,retval) ({ &bslash;&n;if (copy_to_user(to,from,n)) &bslash;&n;&t;return retval; &bslash;&n;})
-DECL|macro|__copy_to_user_ret
-mdefine_line|#define __copy_to_user_ret(to,from,n,retval) ({ &bslash;&n;if (__copy_to_user(to,from,n)) &bslash;&n;&t;return retval; &bslash;&n;})
 DECL|macro|copy_in_user
 mdefine_line|#define copy_in_user(to,from,n) &bslash;&n;&t;__copy_in_user((void *)(to), &bslash;&n;&t;(void *) (from), (__kernel_size_t)(n))
-DECL|macro|copy_in_user_ret
-mdefine_line|#define copy_in_user_ret(to,from,n,retval) ({ &bslash;&n;if (copy_in_user(to,from,n)) &bslash;&n;&t;return retval; &bslash;&n;})
-DECL|macro|__copy_in_user_ret
-mdefine_line|#define __copy_in_user_ret(to,from,n,retval) ({ &bslash;&n;if (__copy_in_user(to,from,n)) &bslash;&n;&t;return retval; &bslash;&n;})
 DECL|function|__clear_user
 r_extern
 id|__inline__
@@ -371,8 +351,6 @@ suffix:semicolon
 )brace
 DECL|macro|clear_user
 mdefine_line|#define clear_user(addr,n) &bslash;&n;&t;__clear_user((void *)(addr), (__kernel_size_t)(n))
-DECL|macro|clear_user_ret
-mdefine_line|#define clear_user_ret(addr,size,retval) ({ &bslash;&n;if (clear_user(addr,size)) &bslash;&n;&t;return retval; &bslash;&n;})
 r_extern
 r_int
 id|__strncpy_from_user

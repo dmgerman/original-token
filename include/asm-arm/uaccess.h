@@ -81,27 +81,19 @@ op_minus
 id|EFAULT
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Single-value transfer routines.  They automatically use the right&n; * size if we just have the right pointer type.  Note that the functions&n; * which read from user space (*get_*) need to take care not to leak&n; * kernel data even if the calling code is buggy and fails to check&n; * the return value.  This means zeroing out the destination variable&n; * or buffer on error.  Normally this is done out of line by the&n; * fixup code, but there are a few places where it intrudes on the&n; * main code path.  When we only write to user space, there is no&n; * problem.&n; *&n; * The &quot;__xxx&quot; versions of the user access functions do not verify the&n; * address space - it must have been done previously with a separate&n; * &quot;access_ok()&quot; call.&n; *&n; * The &quot;xxx_ret&quot; versions return constant specified in the third&n; * argument if something bad happens.&n; *&n; * The &quot;xxx_error&quot; versions set the third argument to EFAULT if an&n; * error occurs, and leave it unchanged on success.  Note that these&n; * versions are void (ie, don&squot;t return a value as such).&n; */
+multiline_comment|/*&n; * Single-value transfer routines.  They automatically use the right&n; * size if we just have the right pointer type.  Note that the functions&n; * which read from user space (*get_*) need to take care not to leak&n; * kernel data even if the calling code is buggy and fails to check&n; * the return value.  This means zeroing out the destination variable&n; * or buffer on error.  Normally this is done out of line by the&n; * fixup code, but there are a few places where it intrudes on the&n; * main code path.  When we only write to user space, there is no&n; * problem.&n; *&n; * The &quot;__xxx&quot; versions of the user access functions do not verify the&n; * address space - it must have been done previously with a separate&n; * &quot;access_ok()&quot; call.&n; *&n; * The &quot;xxx_error&quot; versions set the third argument to EFAULT if an&n; * error occurs, and leave it unchanged on success.  Note that these&n; * versions are void (ie, don&squot;t return a value as such).&n; */
 DECL|macro|get_user
 mdefine_line|#define get_user(x,p)&t;&t;__get_user_check((x),(p),sizeof(*(p)))
 DECL|macro|__get_user
 mdefine_line|#define __get_user(x,p)&t;&t;__get_user_nocheck((x),(p),sizeof(*(p)))
 DECL|macro|__get_user_error
 mdefine_line|#define __get_user_error(x,p,e)&t;__get_user_nocheck_error((x),(p),sizeof(*(p)),(e))
-DECL|macro|get_user_ret
-mdefine_line|#define get_user_ret(x,p,r)&t;({ if (get_user(x,p)) return r; })
-DECL|macro|__get_user_ret
-mdefine_line|#define __get_user_ret(x,p,r)&t;({ if (__get_user(x,p)) return r; })
 DECL|macro|put_user
 mdefine_line|#define put_user(x,p)&t;&t;__put_user_check((__typeof(*(p)))(x),(p),sizeof(*(p)))
 DECL|macro|__put_user
 mdefine_line|#define __put_user(x,p)&t;&t;__put_user_nocheck((__typeof(*(p)))(x),(p),sizeof(*(p)))
 DECL|macro|__put_user_error
 mdefine_line|#define __put_user_error(x,p,e)&t;__put_user_nocheck_error((x),(p),sizeof(*(p)),(e))
-DECL|macro|put_user_ret
-mdefine_line|#define put_user_ret(x,p,r)&t;({ if (put_user(x,p)) return r; })
-DECL|macro|__put_user_ret
-mdefine_line|#define __put_user_ret(x,p,r)&t;({ if (__put_user(x,p)) return r; })
 DECL|function|copy_from_user
 r_static
 id|__inline__
@@ -187,8 +179,6 @@ r_return
 id|n
 suffix:semicolon
 )brace
-DECL|macro|copy_from_user_ret
-mdefine_line|#define copy_from_user_ret(t,f,n,r)&t;&t;&t;&t;&t;&bslash;&n;&t;({ if (copy_from_user(t,f,n)) return r; })
 DECL|function|copy_to_user
 r_static
 id|__inline__
@@ -274,8 +264,6 @@ r_return
 id|n
 suffix:semicolon
 )brace
-DECL|macro|copy_to_user_ret
-mdefine_line|#define copy_to_user_ret(t,f,n,r)&t;&t;&t;&t;&t;&bslash;&n;&t;({ if (copy_to_user(t,f,n)) return r; })
 DECL|function|clear_user
 r_static
 id|__inline__

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: uaccess.h,v 1.21 2000/01/08 16:38:23 anton Exp $&n; * uaccess.h: User space memore access functions.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996,1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: uaccess.h,v 1.22 2000/08/29 07:01:58 davem Exp $&n; * uaccess.h: User space memore access functions.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996,1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#ifndef _ASM_UACCESS_H
 DECL|macro|_ASM_UACCESS_H
 mdefine_line|#define _ASM_UACCESS_H
@@ -114,21 +114,13 @@ suffix:semicolon
 multiline_comment|/* Uh, these should become the main single-value transfer routines..&n; * They automatically use the right size if we just have the right&n; * pointer type..&n; *&n; * This gets kind of ugly. We want to return _two_ values in &quot;get_user()&quot;&n; * and yet we don&squot;t want to do any pointers, because that is too much&n; * of a performance impact. Thus we have a few rather ugly macros here,&n; * and hide all the uglyness from the user.&n; */
 DECL|macro|put_user
 mdefine_line|#define put_user(x,ptr) ({ &bslash;&n;unsigned long __pu_addr = (unsigned long)(ptr); &bslash;&n;__put_user_check((__typeof__(*(ptr)))(x),__pu_addr,sizeof(*(ptr))); })
-DECL|macro|put_user_ret
-mdefine_line|#define put_user_ret(x,ptr,retval) ({ &bslash;&n;unsigned long __pu_addr = (unsigned long)(ptr); &bslash;&n;__put_user_check_ret((__typeof__(*(ptr)))(x),__pu_addr,sizeof(*(ptr)),retval); })
 DECL|macro|get_user
 mdefine_line|#define get_user(x,ptr) ({ &bslash;&n;unsigned long __gu_addr = (unsigned long)(ptr); &bslash;&n;__get_user_check((x),__gu_addr,sizeof(*(ptr)),__typeof__(*(ptr))); })
-DECL|macro|get_user_ret
-mdefine_line|#define get_user_ret(x,ptr,retval) ({ &bslash;&n;unsigned long __gu_addr = (unsigned long)(ptr); &bslash;&n;__get_user_check_ret((x),__gu_addr,sizeof(*(ptr)),__typeof__(*(ptr)),retval); })
 multiline_comment|/*&n; * The &quot;__xxx&quot; versions do not do address space checking, useful when&n; * doing multiple accesses to the same area (the user has to do the&n; * checks by hand with &quot;access_ok()&quot;)&n; */
 DECL|macro|__put_user
 mdefine_line|#define __put_user(x,ptr) __put_user_nocheck((x),(ptr),sizeof(*(ptr)))
-DECL|macro|__put_user_ret
-mdefine_line|#define __put_user_ret(x,ptr,retval) __put_user_nocheck_ret((x),(ptr),sizeof(*(ptr)),retval)
 DECL|macro|__get_user
 mdefine_line|#define __get_user(x,ptr) __get_user_nocheck((x),(ptr),sizeof(*(ptr)),__typeof__(*(ptr)))
-DECL|macro|__get_user_ret
-mdefine_line|#define __get_user_ret(x,ptr,retval) __get_user_nocheck_ret((x),(ptr),sizeof(*(ptr)),__typeof__(*(ptr)),retval)
 DECL|struct|__large_struct
 DECL|member|buf
 r_struct
@@ -204,20 +196,12 @@ id|size
 suffix:semicolon
 DECL|macro|copy_to_user
 mdefine_line|#define copy_to_user(to,from,n) ({ &bslash;&n;void *__copy_to = (void *) (to); &bslash;&n;__kernel_size_t __copy_size = (__kernel_size_t) (n); &bslash;&n;__kernel_size_t __copy_res; &bslash;&n;if(__copy_size &amp;&amp; __access_ok((unsigned long)__copy_to, __copy_size)) { &bslash;&n;__copy_res = __copy_user(__copy_to, (void *) (from), __copy_size); &bslash;&n;} else __copy_res = __copy_size; &bslash;&n;__copy_res; })
-DECL|macro|copy_to_user_ret
-mdefine_line|#define copy_to_user_ret(to,from,n,retval) ({ &bslash;&n;if (copy_to_user(to,from,n)) &bslash;&n;&t;return retval; &bslash;&n;})
 DECL|macro|__copy_to_user
 mdefine_line|#define __copy_to_user(to,from,n)&t;&t;&bslash;&n;&t;__copy_user((void *)(to),&t;&t;&bslash;&n;&t;&t;    (void *)(from), n)
-DECL|macro|__copy_to_user_ret
-mdefine_line|#define __copy_to_user_ret(to,from,n,retval) ({ &bslash;&n;if (__copy_to_user(to,from,n)) &bslash;&n;&t;return retval; &bslash;&n;})
 DECL|macro|copy_from_user
 mdefine_line|#define copy_from_user(to,from,n) ({ &bslash;&n;void *__copy_to = (void *) (to); &bslash;&n;void *__copy_from = (void *) (from); &bslash;&n;__kernel_size_t __copy_size = (__kernel_size_t) (n); &bslash;&n;__kernel_size_t __copy_res; &bslash;&n;if(__copy_size &amp;&amp; __access_ok((unsigned long)__copy_from, __copy_size)) { &bslash;&n;__copy_res = __copy_user(__copy_to, __copy_from, __copy_size); &bslash;&n;} else __copy_res = __copy_size; &bslash;&n;__copy_res; })
-DECL|macro|copy_from_user_ret
-mdefine_line|#define copy_from_user_ret(to,from,n,retval) ({ &bslash;&n;if (copy_from_user(to,from,n)) &bslash;&n;&t;return retval; &bslash;&n;})
 DECL|macro|__copy_from_user
 mdefine_line|#define __copy_from_user(to,from,n)&t;&t;&bslash;&n;&t;__copy_user((void *)(to),&t;&t;&bslash;&n;&t;&t;    (void *)(from), n)
-DECL|macro|__copy_from_user_ret
-mdefine_line|#define __copy_from_user_ret(to,from,n,retval) ({ &bslash;&n;if (__copy_from_user(to,from,n)) &bslash;&n;&t;return retval; &bslash;&n;})
 DECL|function|__clear_user
 r_extern
 id|__inline__
@@ -327,8 +311,6 @@ suffix:semicolon
 )brace
 DECL|macro|clear_user
 mdefine_line|#define clear_user(addr,n) ({ &bslash;&n;void *__clear_addr = (void *) (addr); &bslash;&n;__kernel_size_t __clear_size = (__kernel_size_t) (n); &bslash;&n;__kernel_size_t __clear_res; &bslash;&n;if(__clear_size &amp;&amp; __access_ok((unsigned long)__clear_addr, __clear_size)) { &bslash;&n;__clear_res = __clear_user(__clear_addr, __clear_size); &bslash;&n;} else __clear_res = __clear_size; &bslash;&n;__clear_res; })
-DECL|macro|clear_user_ret
-mdefine_line|#define clear_user_ret(addr,size,retval) ({ &bslash;&n;if (clear_user(addr,size)) &bslash;&n;&t;return retval; &bslash;&n;})
 r_extern
 r_int
 id|__strncpy_from_user

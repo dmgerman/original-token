@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * DECnet       An implementation of the DECnet protocol suite for the LINUX&n; *              operating system.  DECnet is implemented using the  BSD Socket&n; *              interface as the means of communication with the user level.&n; *&n; *              DECnet Socket Layer Interface&n; *&n; * Authors:     Eduardo Marcelo Serrat &lt;emserrat@geocities.com&gt;&n; *              Patrick Caulfield &lt;patrick@pandh.demon.co.uk&gt;&n; *&n; * Changes:&n; *        Steve Whitehouse: Copied from Eduardo Serrat and Patrick Caulfield&squot;s&n; *                          version of the code. Original copyright preserved&n; *                          below.&n; *        Steve Whitehouse: Some bug fixes, cleaning up some code to make it&n; *                          compatible with my routing layer.&n; *        Steve Whitehouse: Merging changes from Eduardo Serrat and Patrick&n; *                          Caulfield.&n; *        Steve Whitehouse: Further bug fixes, checking module code still works&n; *                          with new routing layer.&n; *        Steve Whitehouse: Additional set/get_sockopt() calls.&n; *        Steve Whitehouse: Fixed TIOCINQ ioctl to be same as Eduardo&squot;s new&n; *                          code.&n; *        Steve Whitehouse: recvmsg() changed to try and behave in a POSIX like&n; *                          way. Didn&squot;t manage it entirely, but its better.&n; *        Steve Whitehouse: ditto for sendmsg().&n; *        Steve Whitehouse: A selection of bug fixes to various things.&n; *        Steve Whitehouse: Added TIOCOUTQ ioctl.&n; *        Steve Whitehouse: Fixes to username2sockaddr &amp; sockaddr2username.&n; *        Steve Whitehouse: Fixes to connect() error returns.&n; *       Patrick Caulfield: Fixes to delayed acceptance logic.&n; *         David S. Miller: New socket locking&n; *        Steve Whitehouse: Socket list hashing/locking&n; */
+multiline_comment|/*&n; * DECnet       An implementation of the DECnet protocol suite for the LINUX&n; *              operating system.  DECnet is implemented using the  BSD Socket&n; *              interface as the means of communication with the user level.&n; *&n; *              DECnet Socket Layer Interface&n; *&n; * Authors:     Eduardo Marcelo Serrat &lt;emserrat@geocities.com&gt;&n; *              Patrick Caulfield &lt;patrick@pandh.demon.co.uk&gt;&n; *&n; * Changes:&n; *        Steve Whitehouse: Copied from Eduardo Serrat and Patrick Caulfield&squot;s&n; *                          version of the code. Original copyright preserved&n; *                          below.&n; *        Steve Whitehouse: Some bug fixes, cleaning up some code to make it&n; *                          compatible with my routing layer.&n; *        Steve Whitehouse: Merging changes from Eduardo Serrat and Patrick&n; *                          Caulfield.&n; *        Steve Whitehouse: Further bug fixes, checking module code still works&n; *                          with new routing layer.&n; *        Steve Whitehouse: Additional set/get_sockopt() calls.&n; *        Steve Whitehouse: Fixed TIOCINQ ioctl to be same as Eduardo&squot;s new&n; *                          code.&n; *        Steve Whitehouse: recvmsg() changed to try and behave in a POSIX like&n; *                          way. Didn&squot;t manage it entirely, but its better.&n; *        Steve Whitehouse: ditto for sendmsg().&n; *        Steve Whitehouse: A selection of bug fixes to various things.&n; *        Steve Whitehouse: Added TIOCOUTQ ioctl.&n; *        Steve Whitehouse: Fixes to username2sockaddr &amp; sockaddr2username.&n; *        Steve Whitehouse: Fixes to connect() error returns.&n; *       Patrick Caulfield: Fixes to delayed acceptance logic.&n; *         David S. Miller: New socket locking&n; *        Steve Whitehouse: Socket list hashing/locking&n; *         Arnaldo C. Melo: use capable, not suser&n; */
 multiline_comment|/******************************************************************************&n;    (c) 1995-1998 E.M. Serrat&t;&t;emserrat@geocities.com&n;    &n;    This program is free software; you can redistribute it and/or modify&n;    it under the terms of the GNU General Public License as published by&n;    the Free Software Foundation; either version 2 of the License, or&n;    any later version.&n;&n;    This program is distributed in the hope that it will be useful,&n;    but WITHOUT ANY WARRANTY; without even the implied warranty of&n;    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n;    GNU General Public License for more details.&n;&n;HISTORY:&n;&n;Version           Kernel     Date       Author/Comments&n;-------           ------     ----       ---------------&n;Version 0.0.1     2.0.30    01-dic-97&t;Eduardo Marcelo Serrat&n;&t;&t;&t;&t;&t;(emserrat@geocities.com)&n;&n;                                        First Development of DECnet Socket La-&n;&t;&t;&t;&t;&t;yer for Linux. Only supports outgoing&n;&t;&t;&t;&t;&t;connections.&n;&n;Version 0.0.2&t;  2.1.105   20-jun-98   Patrick J. Caulfield&n;&t;&t;&t;&t;&t;(patrick@pandh.demon.co.uk)&n;&n;&t;&t;&t;&t;&t;Port to new kernel development version.&n;&n;Version 0.0.3     2.1.106   25-jun-98   Eduardo Marcelo Serrat&n;&t;&t;&t;&t;&t;(emserrat@geocities.com)&n;&t;&t;&t;&t;&t;_&n;                                        Added support for incoming connections&n;                                        so we can start developing server apps&n;                                        on Linux.&n;&t;&t;&t;&t;&t;-&n;&t;&t;&t;&t;&t;Module Support&n;Version 0.0.4     2.1.109   21-jul-98   Eduardo Marcelo Serrat&n;                                       (emserrat@geocities.com)&n;                                       _&n;                                        Added support for X11R6.4. Now we can &n;                                        use DECnet transport for X on Linux!!!&n;                                       -&n;Version 0.0.5    2.1.110   01-aug-98   Eduardo Marcelo Serrat&n;                                       (emserrat@geocities.com)&n;                                       Removed bugs on flow control&n;                                       Removed bugs on incoming accessdata&n;                                       order&n;                                       -&n;Version 0.0.6    2.1.110   07-aug-98   Eduardo Marcelo Serrat&n;                                       dn_recvmsg fixes&n;&n;                                        Patrick J. Caulfield&n;                                       dn_bind fixes&n;*******************************************************************************/
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
@@ -2349,9 +2349,10 @@ c_cond
 id|saddr-&gt;sdn_objnum
 op_logical_and
 op_logical_neg
-id|suser
+id|capable
 c_func
 (paren
+id|CAP_NET_BIND_SERVICE
 )paren
 )paren
 r_return
@@ -2397,9 +2398,10 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|suser
+id|capable
 c_func
 (paren
+id|CAP_NET_BIND_SERVICE
 )paren
 )paren
 r_return
@@ -4169,9 +4171,10 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|suser
+id|capable
 c_func
 (paren
+id|CAP_NET_ADMIN
 )paren
 )paren
 r_return
@@ -4378,9 +4381,10 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|suser
+id|capable
 c_func
 (paren
+id|CAP_NET_ADMIN
 )paren
 )paren
 (brace
@@ -4529,9 +4533,10 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|suser
+id|capable
 c_func
 (paren
+id|CAP_NET_ADMIN
 )paren
 )paren
 (brace
@@ -4582,10 +4587,6 @@ suffix:semicolon
 r_case
 id|OSIOCGNETADDR
 suffix:colon
-r_if
-c_cond
-(paren
-(paren
 id|err
 op_assign
 id|put_user
@@ -4600,11 +4601,6 @@ op_star
 )paren
 id|arg
 )paren
-)paren
-op_ne
-l_int|0
-)paren
-r_break
 suffix:semicolon
 r_break
 suffix:semicolon

@@ -1842,7 +1842,7 @@ op_minus
 id|ENOMEM
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * This function makes sure the current process has its own signal table,&n; * so that flush_signal_handlers can later reset the handlers without&n; * disturbing other processes.  (Other processes might share the signal&n; * table via the CLONE_SIGHAND option to clone().)&n; */
+multiline_comment|/*&n; * This function makes sure the current process has its own signal table,&n; * so that flush_signal_handlers can later reset the handlers without&n; * disturbing other processes.  (Other processes might share the signal&n; * table via the CLONE_SIGNAL option to clone().)&n; */
 DECL|function|make_private_signals
 r_static
 r_inline

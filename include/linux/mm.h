@@ -91,7 +91,7 @@ id|vm_area_struct
 op_star
 id|vm_avl_right
 suffix:semicolon
-multiline_comment|/* For areas with inode, the list inode-&gt;i_mapping-&gt;i_mmap, &n;&t; * for shm areas, the list of attaches, otherwise unused.&n;&t; */
+multiline_comment|/* For areas with an address space and backing store,&n;&t; * one of the address_space-&gt;i_mmap{,shared} lists,&n;&t; * for shm areas, the list of attaches, otherwise unused.&n;&t; */
 DECL|member|vm_next_share
 r_struct
 id|vm_area_struct

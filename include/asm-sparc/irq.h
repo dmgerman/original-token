@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: irq.h,v 1.31 2000/08/05 10:48:41 davem Exp $&n; * irq.h: IRQ registers on the Sparc.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: irq.h,v 1.32 2000/08/26 02:42:28 anton Exp $&n; * irq.h: IRQ registers on the Sparc.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _SPARC_IRQ_H
 DECL|macro|_SPARC_IRQ_H
 mdefine_line|#define _SPARC_IRQ_H
@@ -26,16 +26,6 @@ DECL|macro|__irq_itoa
 mdefine_line|#define __irq_itoa(irq) BTFIXUP_CALL(__irq_itoa)(irq)
 DECL|macro|NR_IRQS
 mdefine_line|#define NR_IRQS    15
-multiline_comment|/* IRQ handler dispatch entry and exit. */
-macro_line|#ifdef CONFIG_SMP
-DECL|macro|irq_enter
-mdefine_line|#define irq_enter(cpu, irq)                     &bslash;&n;do {    hardirq_enter(cpu);                     &bslash;&n;        spin_unlock_wait(&amp;global_irq_lock);     &bslash;&n;&t;} while(0)
-DECL|macro|irq_exit
-mdefine_line|#define irq_exit(cpu, irq)      hardirq_exit(cpu)
-macro_line|#else
-mdefine_line|#define irq_enter(cpu, irq)     (++local_irq_count(cpu))
-mdefine_line|#define irq_exit(cpu, irq)      (--local_irq_count(cpu))
-macro_line|#endif
 multiline_comment|/* Dave Redman (djhr@tadpole.co.uk)&n; * changed these to function pointers.. it saves cycles and will allow&n; * the irq dependencies to be split into different files at a later date&n; * sun4c_irq.c, sun4m_irq.c etc so we could reduce the kernel size.&n; * Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; * Changed these to btfixup entities... It saves cycles :)&n; */
 id|BTFIXUPDEF_CALL
 c_func

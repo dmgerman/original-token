@@ -2028,7 +2028,10 @@ suffix:semicolon
 r_int
 id|len
 suffix:semicolon
-id|copy_from_user_ret
+r_if
+c_cond
+(paren
+id|copy_from_user
 c_func
 (paren
 op_amp
@@ -2044,13 +2047,14 @@ r_sizeof
 (paren
 id|version
 )paren
-comma
+)paren
+)paren
+r_return
 op_minus
 id|EFAULT
-)paren
 suffix:semicolon
 DECL|macro|DRM_COPY
-mdefine_line|#define DRM_COPY(name,value)&t;&t;&t;&t;     &bslash;&n;&t;len = strlen(value);&t;&t;&t;&t;     &bslash;&n;&t;if (len &gt; name##_len) len = name##_len;&t;&t;     &bslash;&n;&t;name##_len = strlen(value);&t;&t;&t;     &bslash;&n;&t;if (len &amp;&amp; name) {&t;&t;&t;&t;     &bslash;&n;&t;&t;copy_to_user_ret(name, value, len, -EFAULT); &bslash;&n;&t;}
+mdefine_line|#define DRM_COPY(name,value)&t;&t;&t;&t;     &bslash;&n;&t;len = strlen(value);&t;&t;&t;&t;     &bslash;&n;&t;if (len &gt; name##_len) len = name##_len;&t;&t;     &bslash;&n;&t;name##_len = strlen(value);&t;&t;&t;     &bslash;&n;&t;if (len &amp;&amp; name) {&t;&t;&t;&t;     &bslash;&n;&t;&t;if (copy_to_user(name, value, len))&t;     &bslash;&n;&t;&t;&t;return -EFAULT;&t;&t;&t;     &bslash;&n;&t;}
 id|version.version_major
 op_assign
 id|R128_MAJOR
@@ -2087,7 +2091,10 @@ comma
 id|R128_DESC
 )paren
 suffix:semicolon
-id|copy_to_user_ret
+r_if
+c_cond
+(paren
+id|copy_to_user
 c_func
 (paren
 (paren
@@ -2103,10 +2110,11 @@ r_sizeof
 (paren
 id|version
 )paren
-comma
+)paren
+)paren
+r_return
 op_minus
 id|EFAULT
-)paren
 suffix:semicolon
 r_return
 l_int|0
@@ -2659,7 +2667,10 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
-id|copy_from_user_ret
+r_if
+c_cond
+(paren
+id|copy_from_user
 c_func
 (paren
 op_amp
@@ -2675,10 +2686,11 @@ r_sizeof
 (paren
 id|lock
 )paren
-comma
+)paren
+)paren
+r_return
 op_minus
 id|EFAULT
-)paren
 suffix:semicolon
 r_if
 c_cond
@@ -3250,7 +3262,10 @@ suffix:semicolon
 id|drm_lock_t
 id|lock
 suffix:semicolon
-id|copy_from_user_ret
+r_if
+c_cond
+(paren
+id|copy_from_user
 c_func
 (paren
 op_amp
@@ -3266,10 +3281,11 @@ r_sizeof
 (paren
 id|lock
 )paren
-comma
+)paren
+)paren
+r_return
 op_minus
 id|EFAULT
-)paren
 suffix:semicolon
 r_if
 c_cond

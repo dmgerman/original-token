@@ -404,6 +404,12 @@ suffix:semicolon
 )brace
 r_else
 (brace
+id|fh_lock
+c_func
+(paren
+id|fhp
+)paren
+suffix:semicolon
 id|dentry
 op_assign
 id|lookup_one

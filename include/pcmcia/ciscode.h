@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * ciscode.h 1.40 2000/02/01 19:06:40&n; *&n; * The contents of this file are subject to the Mozilla Public License&n; * Version 1.1 (the &quot;License&quot;); you may not use this file except in&n; * compliance with the License. You may obtain a copy of the License&n; * at http://www.mozilla.org/MPL/&n; *&n; * Software distributed under the License is distributed on an &quot;AS IS&quot;&n; * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See&n; * the License for the specific language governing rights and&n; * limitations under the License. &n; *&n; * The initial developer of the original code is David A. Hinds&n; * &lt;dhinds@pcmcia.sourceforge.org&gt;.  Portions created by David A. Hinds&n; * are Copyright (C) 1999 David A. Hinds.  All Rights Reserved.&n; *&n; * Alternatively, the contents of this file may be used under the&n; * terms of the GNU Public License version 2 (the &quot;GPL&quot;), in which&n; * case the provisions of the GPL are applicable instead of the&n; * above.  If you wish to allow the use of your version of this file&n; * only under the terms of the GPL and not to allow others to use&n; * your version of this file under the MPL, indicate your decision by&n; * deleting the provisions above and replace them with the notice and&n; * other provisions required by the GPL.  If you do not delete the&n; * provisions above, a recipient may use your version of this file&n; * under either the MPL or the GPL.&n; */
+multiline_comment|/*&n; * ciscode.h 1.45 2000/08/12 02:08:23&n; *&n; * The contents of this file are subject to the Mozilla Public License&n; * Version 1.1 (the &quot;License&quot;); you may not use this file except in&n; * compliance with the License. You may obtain a copy of the License&n; * at http://www.mozilla.org/MPL/&n; *&n; * Software distributed under the License is distributed on an &quot;AS IS&quot;&n; * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See&n; * the License for the specific language governing rights and&n; * limitations under the License. &n; *&n; * The initial developer of the original code is David A. Hinds&n; * &lt;dahinds@users.sourceforge.net&gt;.  Portions created by David A. Hinds&n; * are Copyright (C) 1999 David A. Hinds.  All Rights Reserved.&n; *&n; * Alternatively, the contents of this file may be used under the&n; * terms of the GNU Public License version 2 (the &quot;GPL&quot;), in which&n; * case the provisions of the GPL are applicable instead of the&n; * above.  If you wish to allow the use of your version of this file&n; * only under the terms of the GPL and not to allow others to use&n; * your version of this file under the MPL, indicate your decision by&n; * deleting the provisions above and replace them with the notice and&n; * other provisions required by the GPL.  If you do not delete the&n; * provisions above, a recipient may use your version of this file&n; * under either the MPL or the GPL.&n; */
 macro_line|#ifndef _LINUX_CISCODE_H
 DECL|macro|_LINUX_CISCODE_H
 mdefine_line|#define _LINUX_CISCODE_H
@@ -67,6 +67,10 @@ DECL|macro|PRODID_NATINST_QUAD_RS232
 mdefine_line|#define PRODID_NATINST_QUAD_RS232&t;0xd180
 DECL|macro|MANFID_NEW_MEDIA
 mdefine_line|#define MANFID_NEW_MEDIA&t;&t;0x0057
+DECL|macro|MANFID_NOKIA
+mdefine_line|#define MANFID_NOKIA&t;&t;&t;0x0124
+DECL|macro|PRODID_NOKIA_CARDPHONE
+mdefine_line|#define PRODID_NOKIA_CARDPHONE&t;&t;0x0900
 DECL|macro|MANFID_OLICOM
 mdefine_line|#define MANFID_OLICOM&t;&t;&t;0x0121
 DECL|macro|PRODID_OLICOM_OC2231
@@ -91,6 +95,8 @@ DECL|macro|MANFID_PIONEER
 mdefine_line|#define MANFID_PIONEER&t;&t;&t;0x000b
 DECL|macro|MANFID_PSION
 mdefine_line|#define MANFID_PSION&t;&t;&t;0x016c
+DECL|macro|PRODID_PSION_NET100
+mdefine_line|#define PRODID_PSION_NET100&t;&t;0x0023
 DECL|macro|MANFID_QUATECH
 mdefine_line|#define MANFID_QUATECH&t;&t;&t;0x0137
 DECL|macro|PRODID_QUATECH_SPP100
@@ -109,12 +115,16 @@ DECL|macro|MANFID_SOCKET
 mdefine_line|#define MANFID_SOCKET&t;&t;&t;0x0104
 DECL|macro|PRODID_SOCKET_DUAL_RS232
 mdefine_line|#define PRODID_SOCKET_DUAL_RS232&t;0x0006
+DECL|macro|PRODID_SOCKET_EIO
+mdefine_line|#define PRODID_SOCKET_EIO&t;&t;0x000a
 DECL|macro|PRODID_SOCKET_LPE
 mdefine_line|#define PRODID_SOCKET_LPE&t;&t;0x000d
 DECL|macro|MANFID_SUNDISK
 mdefine_line|#define MANFID_SUNDISK&t;&t;&t;0x0045
 DECL|macro|MANFID_TDK
 mdefine_line|#define MANFID_TDK&t;&t;&t;0x0105
+DECL|macro|MANFID_TOSHIBA
+mdefine_line|#define MANFID_TOSHIBA&t;&t;&t;0x0098
 DECL|macro|MANFID_XIRCOM
 mdefine_line|#define MANFID_XIRCOM&t;&t;&t;0x0105
 macro_line|#endif /* _LINUX_CISCODE_H */

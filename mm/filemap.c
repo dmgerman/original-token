@@ -3644,6 +3644,20 @@ id|page
 suffix:semicolon
 id|page_ok
 suffix:colon
+multiline_comment|/* If users can be writing to this page using arbitrary&n;&t;&t; * virtual addresses, take care about potential aliasing&n;&t;&t; * before reading the page on the kernel side.&n;&t;&t; */
+r_if
+c_cond
+(paren
+id|page-&gt;mapping-&gt;i_mmap_shared
+op_ne
+l_int|NULL
+)paren
+id|flush_dcache_page
+c_func
+(paren
+id|page
+)paren
+suffix:semicolon
 multiline_comment|/*&n;&t;&t; * Ok, we have the page, and it&squot;s up-to-date, so&n;&t;&t; * now we can copy it to user space...&n;&t;&t; *&n;&t;&t; * The actor routine returns how many bytes were actually used..&n;&t;&t; * NOTE! This may not be the same as how much of a user buffer&n;&t;&t; * we filled up (we may be padding etc), so we can only update&n;&t;&t; * &quot;pos&quot; here (the actor routine has to update the user buffer&n;&t;&t; * pointers and the remaining count).&n;&t;&t; */
 id|nr
 op_assign

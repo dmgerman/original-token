@@ -42,7 +42,10 @@ comma
 id|draw.handle
 )paren
 suffix:semicolon
-id|copy_to_user_ret
+r_if
+c_cond
+(paren
+id|copy_to_user
 c_func
 (paren
 (paren
@@ -58,10 +61,11 @@ r_sizeof
 (paren
 id|draw
 )paren
-comma
+)paren
+)paren
+r_return
 op_minus
 id|EFAULT
-)paren
 suffix:semicolon
 r_return
 l_int|0

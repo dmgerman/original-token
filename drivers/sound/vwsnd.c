@@ -9737,7 +9737,10 @@ r_case
 id|SNDCTL_DSP_SPEED
 suffix:colon
 multiline_comment|/* _SIOWR(&squot;P&squot;, 2, int) */
-id|get_user_ret
+r_if
+c_cond
+(paren
+id|get_user
 c_func
 (paren
 id|ival
@@ -9747,10 +9750,11 @@ r_int
 op_star
 )paren
 id|arg
-comma
+)paren
+)paren
+r_return
 op_minus
 id|EFAULT
-)paren
 suffix:semicolon
 id|DBGX
 c_func
@@ -9850,7 +9854,10 @@ r_case
 id|SNDCTL_DSP_STEREO
 suffix:colon
 multiline_comment|/* _SIOWR(&squot;P&squot;, 3, int) */
-id|get_user_ret
+r_if
+c_cond
+(paren
+id|get_user
 c_func
 (paren
 id|ival
@@ -9860,10 +9867,11 @@ r_int
 op_star
 )paren
 id|arg
-comma
+)paren
+)paren
+r_return
 op_minus
 id|EFAULT
-)paren
 suffix:semicolon
 id|DBGX
 c_func
@@ -9938,7 +9946,10 @@ r_case
 id|SNDCTL_DSP_CHANNELS
 suffix:colon
 multiline_comment|/* _SIOWR(&squot;P&squot;, 6, int) */
-id|get_user_ret
+r_if
+c_cond
+(paren
+id|get_user
 c_func
 (paren
 id|ival
@@ -9948,10 +9959,11 @@ r_int
 op_star
 )paren
 id|arg
-comma
+)paren
+)paren
+r_return
 op_minus
 id|EFAULT
-)paren
 suffix:semicolon
 id|DBGX
 c_func
@@ -10085,7 +10097,10 @@ r_case
 id|SNDCTL_DSP_SETFRAGMENT
 suffix:colon
 multiline_comment|/* _SIOWR(&squot;P&squot;,10, int) */
-id|get_user_ret
+r_if
+c_cond
+(paren
+id|get_user
 c_func
 (paren
 id|ival
@@ -10095,10 +10110,11 @@ r_int
 op_star
 )paren
 id|arg
-comma
+)paren
+)paren
+r_return
 op_minus
 id|EFAULT
-)paren
 suffix:semicolon
 id|DBGX
 c_func
@@ -10319,7 +10335,10 @@ r_case
 id|SNDCTL_DSP_SUBDIVIDE
 suffix:colon
 multiline_comment|/* _SIOWR(&squot;P&squot;, 9, int) */
-id|get_user_ret
+r_if
+c_cond
+(paren
+id|get_user
 c_func
 (paren
 id|ival
@@ -10329,10 +10348,11 @@ r_int
 op_star
 )paren
 id|arg
-comma
+)paren
+)paren
+r_return
 op_minus
 id|EFAULT
-)paren
 suffix:semicolon
 id|DBGX
 c_func
@@ -10474,7 +10494,10 @@ r_case
 id|SNDCTL_DSP_SETFMT
 suffix:colon
 multiline_comment|/* _SIOWR(&squot;P&squot;,5, int) */
-id|get_user_ret
+r_if
+c_cond
+(paren
+id|get_user
 c_func
 (paren
 id|ival
@@ -10484,10 +10507,11 @@ r_int
 op_star
 )paren
 id|arg
-comma
+)paren
+)paren
+r_return
 op_minus
 id|EFAULT
-)paren
 suffix:semicolon
 id|DBGX
 c_func
@@ -11448,7 +11472,10 @@ r_case
 id|SNDCTL_DSP_SETTRIGGER
 suffix:colon
 multiline_comment|/* _SIOW (&squot;P&squot;,16, int) */
-id|get_user_ret
+r_if
+c_cond
+(paren
+id|get_user
 c_func
 (paren
 id|ival
@@ -11458,10 +11485,11 @@ r_int
 op_star
 )paren
 id|arg
-comma
+)paren
+)paren
+r_return
 op_minus
 id|EFAULT
-)paren
 suffix:semicolon
 id|DBGX
 c_func

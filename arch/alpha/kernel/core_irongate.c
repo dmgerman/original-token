@@ -16,7 +16,8 @@ DECL|macro|__EXTERN_INLINE
 macro_line|#undef __EXTERN_INLINE
 macro_line|#include &quot;proto.h&quot;
 macro_line|#include &quot;pci_impl.h&quot;
-multiline_comment|/*&n; * NOTE: Herein lie back-to-back mb instructions.  They are magic.&n; * One plausible explanation is that the I/O controller does not properly&n; * handle the system transaction.  Another involves timing.  Ho hum.&n; */
+DECL|macro|DEBUG_IRONGATE
+macro_line|#undef DEBUG_IRONGATE &t;&t;/* define to enable verbose Irongate debug */
 multiline_comment|/*&n; * BIOS32-style PCI interface:&n; */
 DECL|macro|DEBUG_CONFIG
 mdefine_line|#define DEBUG_CONFIG 0
@@ -577,9 +578,10 @@ id|irongate_write_config_dword
 )brace
 suffix:semicolon
 "&f;"
-macro_line|#if 0
+macro_line|#ifdef DEBUG_IRONGATE
 r_static
 r_void
+DECL|function|irongate_register_dump
 id|irongate_register_dump
 c_func
 (paren
@@ -593,6 +595,7 @@ id|printk
 c_func
 (paren
 l_string|&quot;%s: Irongate registers:&bslash;n&quot;
+l_string|&quot;&bslash;tFunction 0:&bslash;n&quot;
 l_string|&quot;&bslash;tdev_vendor&bslash;t0x%08x&bslash;n&quot;
 l_string|&quot;&bslash;tstat_cmd&bslash;t0x%08x&bslash;n&quot;
 l_string|&quot;&bslash;tclass&bslash;t&bslash;t0x%08x&bslash;n&quot;
@@ -638,6 +641,23 @@ l_string|&quot;&bslash;tagpstat&bslash;t&bslash;t0x%08x&bslash;n&quot;
 l_string|&quot;&bslash;tagpcmd&bslash;t&bslash;t0x%08x&bslash;n&quot;
 l_string|&quot;&bslash;tagpva&bslash;t&bslash;t0x%08x&bslash;n&quot;
 l_string|&quot;&bslash;tagpmode&bslash;t&bslash;t0x%08x&bslash;n&quot;
+l_string|&quot;&bslash;n&bslash;tFunction 1:&bslash;n&quot;
+l_string|&quot;&bslash;tdev_vendor:&bslash;t0x%08x&bslash;n&quot;
+l_string|&quot;&bslash;tcmd_status:&bslash;t0x%08x&bslash;n&quot;
+l_string|&quot;&bslash;trevid_etc :&bslash;t0x%08x&bslash;n&quot;
+l_string|&quot;&bslash;thtype_etc :&bslash;t0x%08x&bslash;n&quot;
+l_string|&quot;&bslash;trsrvd0[0] :&bslash;t0x%08x&bslash;n&quot;
+l_string|&quot;&bslash;trsrvd0[1] :&bslash;t0x%08x&bslash;n&quot;
+l_string|&quot;&bslash;tbus_nmbers:&bslash;t0x%08x&bslash;n&quot;
+l_string|&quot;&bslash;tio_baselim:&bslash;t0x%08x&bslash;n&quot;
+l_string|&quot;&bslash;tmem_bselim:&bslash;t0x%08x&bslash;n&quot;
+l_string|&quot;&bslash;tpf_baselib:&bslash;t0x%08x&bslash;n&quot;
+l_string|&quot;&bslash;trsrvd1[0] :&bslash;t0x%08x&bslash;n&quot;
+l_string|&quot;&bslash;trsrvd1[1] :&bslash;t0x%08x&bslash;n&quot;
+l_string|&quot;&bslash;tio_baselim:&bslash;t0x%08x&bslash;n&quot;
+l_string|&quot;&bslash;trsrvd2[0] :&bslash;t0x%08x&bslash;n&quot;
+l_string|&quot;&bslash;trsrvd2[1] :&bslash;t0x%08x&bslash;n&quot;
+l_string|&quot;&bslash;tinterrupt :&bslash;t0x%08x&bslash;n&quot;
 comma
 id|function_name
 comma
@@ -792,6 +812,58 @@ comma
 id|IRONGATE0-&gt;agpva
 comma
 id|IRONGATE0-&gt;agpmode
+comma
+id|IRONGATE1-&gt;dev_vendor
+comma
+id|IRONGATE1-&gt;stat_cmd
+comma
+id|IRONGATE1
+op_member_access_from_pointer
+r_class
+comma
+id|IRONGATE1-&gt;htype
+comma
+id|IRONGATE1-&gt;rsrvd0
+(braket
+l_int|0
+)braket
+comma
+id|IRONGATE1-&gt;rsrvd0
+(braket
+l_int|1
+)braket
+comma
+id|IRONGATE1-&gt;busnos
+comma
+id|IRONGATE1-&gt;io_baselim_regs
+comma
+id|IRONGATE1-&gt;mem_baselim
+comma
+id|IRONGATE1-&gt;pfmem_baselim
+comma
+id|IRONGATE1-&gt;rsrvd1
+(braket
+l_int|0
+)braket
+comma
+id|IRONGATE1-&gt;rsrvd1
+(braket
+l_int|1
+)braket
+comma
+id|IRONGATE1-&gt;io_baselim
+comma
+id|IRONGATE1-&gt;rsrvd2
+(braket
+l_int|0
+)braket
+comma
+id|IRONGATE1-&gt;rsrvd2
+(braket
+l_int|1
+)braket
+comma
+id|IRONGATE1-&gt;interrupt
 )paren
 suffix:semicolon
 )brace

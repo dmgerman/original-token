@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: esp.c,v 1.95 2000/08/23 22:32:37 davem Exp $&n; * esp.c:  EnhancedScsiProcessor Sun SCSI driver code.&n; *&n; * Copyright (C) 1995, 1998 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: esp.c,v 1.96 2000/08/24 03:51:26 davem Exp $&n; * esp.c:  EnhancedScsiProcessor Sun SCSI driver code.&n; *&n; * Copyright (C) 1995, 1998 David S. Miller (davem@caip.rutgers.edu)&n; */
 multiline_comment|/* TODO:&n; *&n; * 1) Maybe disable parity checking in config register one for SCSI1&n; *    targets.  (Gilmore says parity error on the SBus can lock up&n; *    old sun4c&squot;s)&n; * 2) Add support for DMA2 pipelining.&n; * 3) Add tagged queueing.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -6281,8 +6281,10 @@ id|SDptr-&gt;sync
 )paren
 (brace
 multiline_comment|/* this targets sync is known */
+macro_line|#ifndef __sparc_v9__
 id|do_sync_known
 suffix:colon
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -10571,6 +10573,31 @@ c_func
 id|esp
 comma
 id|SCptr
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|hmuch
+OG
+(paren
+l_int|64
+op_star
+l_int|1024
+)paren
+op_logical_and
+(paren
+id|esp-&gt;erev
+op_ne
+id|fashme
+)paren
+)paren
+id|hmuch
+op_assign
+(paren
+l_int|64
+op_star
+l_int|1024
 )paren
 suffix:semicolon
 id|ESPDATA

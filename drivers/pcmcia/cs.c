@@ -1,4 +1,4 @@
-multiline_comment|/*======================================================================&n;&n;    PCMCIA Card Services -- core services&n;&n;    cs.c 1.249 2000/02/10 23:26:11&n;    &n;    The contents of this file are subject to the Mozilla Public&n;    License Version 1.1 (the &quot;License&quot;); you may not use this file&n;    except in compliance with the License. You may obtain a copy of&n;    the License at http://www.mozilla.org/MPL/&n;&n;    Software distributed under the License is distributed on an &quot;AS&n;    IS&quot; basis, WITHOUT WARRANTY OF ANY KIND, either express or&n;    implied. See the License for the specific language governing&n;    rights and limitations under the License.&n;&n;    The initial developer of the original code is David A. Hinds&n;    &lt;dhinds@pcmcia.sourceforge.org&gt;.  Portions created by David A. Hinds&n;    are Copyright (C) 1999 David A. Hinds.  All Rights Reserved.&n;&n;    Alternatively, the contents of this file may be used under the&n;    terms of the GNU Public License version 2 (the &quot;GPL&quot;), in which&n;    case the provisions of the GPL are applicable instead of the&n;    above.  If you wish to allow the use of your version of this file&n;    only under the terms of the GPL and not to allow others to use&n;    your version of this file under the MPL, indicate your decision&n;    by deleting the provisions above and replace them with the notice&n;    and other provisions required by the GPL.  If you do not delete&n;    the provisions above, a recipient may use your version of this&n;    file under either the MPL or the GPL.&n;    &n;======================================================================*/
+multiline_comment|/*======================================================================&n;&n;    PCMCIA Card Services -- core services&n;&n;    cs.c 1.267 2000/08/30 22:07:31&n;    &n;    The contents of this file are subject to the Mozilla Public&n;    License Version 1.1 (the &quot;License&quot;); you may not use this file&n;    except in compliance with the License. You may obtain a copy of&n;    the License at http://www.mozilla.org/MPL/&n;&n;    Software distributed under the License is distributed on an &quot;AS&n;    IS&quot; basis, WITHOUT WARRANTY OF ANY KIND, either express or&n;    implied. See the License for the specific language governing&n;    rights and limitations under the License.&n;&n;    The initial developer of the original code is David A. Hinds&n;    &lt;dahinds@users.sourceforge.net&gt;.  Portions created by David A. Hinds&n;    are Copyright (C) 1999 David A. Hinds.  All Rights Reserved.&n;&n;    Alternatively, the contents of this file may be used under the&n;    terms of the GNU Public License version 2 (the &quot;GPL&quot;), in which&n;    case the provisions of the GPL are applicable instead of the&n;    above.  If you wish to allow the use of your version of this file&n;    only under the terms of the GPL and not to allow others to use&n;    your version of this file under the MPL, indicate your decision&n;    by deleting the provisions above and replace them with the notice&n;    and other provisions required by the GPL.  If you do not delete&n;    the provisions above, a recipient may use your version of this&n;    file under either the MPL or the GPL.&n;    &n;======================================================================*/
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -51,7 +51,7 @@ r_char
 op_star
 id|version
 op_assign
-l_string|&quot;cs.c 1.249 2000/02/10 23:26:11 (David Hinds)&quot;
+l_string|&quot;cs.c 1.267 2000/08/30 22:07:31 (David Hinds)&quot;
 suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef CONFIG_PCI
@@ -105,7 +105,7 @@ suffix:semicolon
 id|MODULE_AUTHOR
 c_func
 (paren
-l_string|&quot;David Hinds &lt;dhinds@pcmcia.sourceforge.org&gt;&quot;
+l_string|&quot;David Hinds &lt;dahinds@users.sourceforge.net&gt;&quot;
 )paren
 suffix:semicolon
 id|MODULE_DESCRIPTION
@@ -3273,6 +3273,58 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
+multiline_comment|/* Check for an already-allocated window that must conflict with&n;       what was asked for.  It is a hack because it does not catch all&n;       potential conflicts, just the most obvious ones. */
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|MAX_IO_WIN
+suffix:semicolon
+id|i
+op_increment
+)paren
+r_if
+c_cond
+(paren
+(paren
+id|s-&gt;io
+(braket
+id|i
+)braket
+dot
+id|NumPorts
+op_ne
+l_int|0
+)paren
+op_logical_and
+(paren
+(paren
+id|s-&gt;io
+(braket
+id|i
+)braket
+dot
+id|BasePort
+op_amp
+(paren
+id|align
+op_minus
+l_int|1
+)paren
+)paren
+op_eq
+op_star
+id|base
+)paren
+)paren
+r_return
+l_int|1
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -7539,12 +7591,14 @@ id|s-&gt;functions
 op_eq
 l_int|1
 )paren
+(brace
 id|c-&gt;Option
 op_assign
 id|req-&gt;ConfigIndex
 op_amp
 id|COR_CONFIG_MASK
 suffix:semicolon
+)brace
 r_else
 (brace
 id|c-&gt;Option
@@ -7557,9 +7611,18 @@ id|c-&gt;Option
 op_or_assign
 id|COR_FUNC_ENA
 op_or
-id|COR_ADDR_DECODE
-op_or
 id|COR_IREQ_ENA
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|req-&gt;Present
+op_amp
+id|PRESENT_IOBASE_0
+)paren
+id|c-&gt;Option
+op_or_assign
+id|COR_ADDR_DECODE
 suffix:semicolon
 )brace
 r_if
@@ -8304,17 +8367,12 @@ id|CONFIG_IRQ_REQ
 r_return
 id|CS_IN_USE
 suffix:semicolon
-multiline_comment|/* Short cut: if the interrupt is PCI, there are no options */
+multiline_comment|/* Short cut: if there are no ISA interrupts, then it is PCI */
 r_if
 c_cond
 (paren
+op_logical_neg
 id|s-&gt;cap.irq_mask
-op_eq
-(paren
-l_int|1
-op_lshift
-id|s-&gt;cap.pci_irq
-)paren
 )paren
 id|irq
 op_assign
@@ -8405,15 +8463,6 @@ op_assign
 id|req-&gt;IRQInfo2
 op_amp
 id|s-&gt;cap.irq_mask
-suffix:semicolon
-id|mask
-op_and_assign
-op_complement
-(paren
-l_int|1
-op_lshift
-id|s-&gt;cap.pci_irq
-)paren
 suffix:semicolon
 r_for
 c_loop
@@ -8736,12 +8785,24 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+(paren
+id|req-&gt;Base
+op_logical_and
+(paren
+id|s-&gt;cap.features
+op_amp
+id|SS_CAP_STATIC_MAP
+)paren
+)paren
+op_logical_or
+(paren
 id|req-&gt;Base
 op_amp
 (paren
 id|align
 op_minus
 l_int|1
+)paren
 )paren
 )paren
 r_return
@@ -8833,6 +8894,13 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
+(paren
+id|s-&gt;cap.features
+op_amp
+id|SS_CAP_STATIC_MAP
+)paren
+op_logical_and
 id|find_mem_region
 c_func
 (paren
@@ -8866,10 +8934,6 @@ id|dev_info
 )paren
 r_return
 id|CS_IN_USE
-suffix:semicolon
-id|req-&gt;Base
-op_assign
-id|win-&gt;base
 suffix:semicolon
 (paren
 op_star
@@ -8945,13 +9009,13 @@ id|MAP_USE_WAIT
 suffix:semicolon
 id|win-&gt;ctl.sys_start
 op_assign
-id|req-&gt;Base
+id|win-&gt;base
 suffix:semicolon
 id|win-&gt;ctl.sys_stop
 op_assign
-id|req-&gt;Base
+id|win-&gt;base
 op_plus
-id|req-&gt;Size
+id|win-&gt;size
 op_minus
 l_int|1
 suffix:semicolon
@@ -8985,6 +9049,10 @@ id|w
 )paren
 suffix:semicolon
 multiline_comment|/* Return window handle */
+id|req-&gt;Base
+op_assign
+id|win-&gt;ctl.sys_start
+suffix:semicolon
 op_star
 id|wh
 op_assign
@@ -9908,7 +9976,7 @@ c_cond
 (paren
 id|pc_debug
 OG
-l_int|1
+l_int|2
 )paren
 (brace
 r_int

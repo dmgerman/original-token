@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;X.25 Packet Layer release 002&n; *&n; *&t;This is ALPHA test software. This code may break your machine, randomly fail to work with new &n; *&t;releases, misbehave and/or generally screw up. It might even work. &n; *&n; *&t;This code REQUIRES 2.1.15 or higher&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;History&n; *&t;X.25 001&t;Jonathan Naylor&t;Started coding.&n; *&t;X.25 002&t;Jonathan Naylor&t;Centralised disconnect handling.&n; *&t;&t;&t;&t;&t;New timer architecture.&n; *&t;2000-11-03&t;Henner Eisen&t;MSG_EOR handling more POSIX compliant.&n; *&t;2000-22-03&t;Daniela Squassoni Allowed disabling/enabling of &n; *&t;&t;&t;&t;&t;  facilities negotiation and increased &n; *&t;&t;&t;&t;&t;  the throughput upper limit.&n; */
+multiline_comment|/*&n; *&t;X.25 Packet Layer release 002&n; *&n; *&t;This is ALPHA test software. This code may break your machine, randomly fail to work with new &n; *&t;releases, misbehave and/or generally screw up. It might even work. &n; *&n; *&t;This code REQUIRES 2.1.15 or higher&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;History&n; *&t;X.25 001&t;Jonathan Naylor&t;Started coding.&n; *&t;X.25 002&t;Jonathan Naylor&t;Centralised disconnect handling.&n; *&t;&t;&t;&t;&t;New timer architecture.&n; *&t;2000-11-03&t;Henner Eisen&t;MSG_EOR handling more POSIX compliant.&n; *&t;2000-22-03&t;Daniela Squassoni Allowed disabling/enabling of &n; *&t;&t;&t;&t;&t;  facilities negotiation and increased &n; *&t;&t;&t;&t;&t;  the throughput upper limit.&n; *&t;2000-27-08&t;Arnaldo C. Melo s/suser/capable/ + micro cleanups&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#if defined(CONFIG_X25) || defined(CONFIG_X25_MODULE)
 macro_line|#include &lt;linux/module.h&gt;
@@ -1502,9 +1502,7 @@ r_return
 op_minus
 id|EFAULT
 suffix:semicolon
-r_if
-c_cond
-(paren
+r_return
 id|copy_to_user
 c_func
 (paren
@@ -1515,12 +1513,11 @@ id|val
 comma
 id|len
 )paren
-)paren
-r_return
+ques
+c_cond
 op_minus
 id|EFAULT
-suffix:semicolon
-r_return
+suffix:colon
 l_int|0
 suffix:semicolon
 )brace
@@ -4232,9 +4229,7 @@ id|amount
 op_assign
 l_int|0
 suffix:semicolon
-r_if
-c_cond
-(paren
+r_return
 id|put_user
 c_func
 (paren
@@ -4247,13 +4242,6 @@ op_star
 )paren
 id|arg
 )paren
-)paren
-r_return
-op_minus
-id|EFAULT
-suffix:semicolon
-r_return
-l_int|0
 suffix:semicolon
 )brace
 r_case
@@ -4291,9 +4279,7 @@ id|amount
 op_assign
 id|skb-&gt;len
 suffix:semicolon
-r_if
-c_cond
-(paren
+r_return
 id|put_user
 c_func
 (paren
@@ -4306,13 +4292,6 @@ op_star
 )paren
 id|arg
 )paren
-)paren
-r_return
-op_minus
-id|EFAULT
-suffix:semicolon
-r_return
-l_int|0
 suffix:semicolon
 )brace
 r_case
@@ -4337,9 +4316,7 @@ r_return
 op_minus
 id|ENOENT
 suffix:semicolon
-r_if
-c_cond
-(paren
+r_return
 id|copy_to_user
 c_func
 (paren
@@ -4358,12 +4335,11 @@ r_struct
 id|timeval
 )paren
 )paren
-)paren
-r_return
+ques
+c_cond
 op_minus
 id|EFAULT
-suffix:semicolon
-r_return
+suffix:colon
 l_int|0
 suffix:semicolon
 )brace
@@ -4461,9 +4437,10 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|suser
+id|capable
 c_func
 (paren
+id|CAP_NET_ADMIN
 )paren
 )paren
 r_return
@@ -4495,9 +4472,7 @@ id|facilities
 op_assign
 id|sk-&gt;protinfo.x25-&gt;facilities
 suffix:semicolon
-r_if
-c_cond
-(paren
+r_return
 id|copy_to_user
 c_func
 (paren
@@ -4515,12 +4490,11 @@ r_sizeof
 id|facilities
 )paren
 )paren
-)paren
-r_return
+ques
+c_cond
 op_minus
 id|EFAULT
-suffix:semicolon
-r_return
+suffix:colon
 l_int|0
 suffix:semicolon
 )brace
@@ -4651,9 +4625,7 @@ id|calluserdata
 op_assign
 id|sk-&gt;protinfo.x25-&gt;calluserdata
 suffix:semicolon
-r_if
-c_cond
-(paren
+r_return
 id|copy_to_user
 c_func
 (paren
@@ -4671,12 +4643,11 @@ r_sizeof
 id|calluserdata
 )paren
 )paren
-)paren
-r_return
+ques
+c_cond
 op_minus
 id|EFAULT
-suffix:semicolon
-r_return
+suffix:colon
 l_int|0
 suffix:semicolon
 )brace
@@ -4744,9 +4715,7 @@ id|causediag
 op_assign
 id|sk-&gt;protinfo.x25-&gt;causediag
 suffix:semicolon
-r_if
-c_cond
-(paren
+r_return
 id|copy_to_user
 c_func
 (paren
@@ -4764,12 +4733,11 @@ r_sizeof
 id|causediag
 )paren
 )paren
-)paren
-r_return
+ques
+c_cond
 op_minus
 id|EFAULT
-suffix:semicolon
-r_return
+suffix:colon
 l_int|0
 suffix:semicolon
 )brace

@@ -1452,21 +1452,17 @@ c_func
 l_string|&quot;Olaf Kirch &lt;okir@monad.swb.de&gt;&quot;
 )paren
 suffix:semicolon
-r_extern
-r_int
-(paren
-op_star
+DECL|variable|nfsd_linkage_s
+r_struct
+id|nfsd_linkage
+id|nfsd_linkage_s
+op_assign
+(brace
 id|do_nfsservctl
-)paren
-(paren
-r_int
+suffix:colon
+id|handle_sys_nfsservctl
 comma
-r_void
-op_star
-comma
-r_void
-op_star
-)paren
+)brace
 suffix:semicolon
 multiline_comment|/*&n; * Initialize the module&n; */
 r_int
@@ -1484,9 +1480,10 @@ id|KERN_INFO
 l_string|&quot;Installing knfsd (copyright (C) 1996 okir@monad.swb.de).&bslash;n&quot;
 )paren
 suffix:semicolon
-id|do_nfsservctl
+id|nfsd_linkage
 op_assign
-id|handle_sys_nfsservctl
+op_amp
+id|nfsd_linkage_s
 suffix:semicolon
 r_return
 l_int|0
@@ -1501,7 +1498,7 @@ c_func
 r_void
 )paren
 (brace
-id|do_nfsservctl
+id|nfsd_linkage
 op_assign
 l_int|NULL
 suffix:semicolon

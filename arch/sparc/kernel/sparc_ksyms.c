@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sparc_ksyms.c,v 1.102 2000/08/05 10:48:40 davem Exp $&n; * arch/sparc/kernel/ksyms.c: Sparc specific ksyms support.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; */
+multiline_comment|/* $Id: sparc_ksyms.c,v 1.103 2000/08/26 02:42:28 anton Exp $&n; * arch/sparc/kernel/ksyms.c: Sparc specific ksyms support.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; */
 multiline_comment|/* Tell string.h we don&squot;t want memcpy etc. as cpp defines */
 DECL|macro|EXPORT_SYMTAB_STROPS
 mdefine_line|#define EXPORT_SYMTAB_STROPS
@@ -389,36 +389,6 @@ id|_rw_write_enter
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef CONFIG_SMP
-DECL|variable|__global_save_flags
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|__global_save_flags
-)paren
-suffix:semicolon
-DECL|variable|__global_restore_flags
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|__global_restore_flags
-)paren
-suffix:semicolon
-DECL|variable|__global_sti
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|__global_sti
-)paren
-suffix:semicolon
-DECL|variable|__global_cli
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|__global_cli
-)paren
-suffix:semicolon
-macro_line|#endif
 multiline_comment|/* rw semaphores */
 DECL|variable|___down_read
 id|EXPORT_SYMBOL_NOVERS
@@ -506,8 +476,8 @@ c_func
 id|_clear_le_bit
 )paren
 suffix:semicolon
-multiline_comment|/* IRQ implementation. */
 macro_line|#ifdef CONFIG_SMP
+multiline_comment|/* Kernel wide locking */
 DECL|variable|kernel_flag
 id|EXPORT_SYMBOL
 c_func
@@ -515,6 +485,7 @@ c_func
 id|kernel_flag
 )paren
 suffix:semicolon
+multiline_comment|/* IRQ implementation. */
 DECL|variable|global_irq_holder
 id|EXPORT_SYMBOL
 c_func
@@ -522,32 +493,39 @@ c_func
 id|global_irq_holder
 )paren
 suffix:semicolon
-DECL|variable|global_irq_lock
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|global_irq_lock
-)paren
-suffix:semicolon
-DECL|variable|global_bh_lock
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|global_bh_lock
-)paren
-suffix:semicolon
-DECL|variable|global_irq_count
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|global_irq_count
-)paren
-suffix:semicolon
 DECL|variable|synchronize_irq
 id|EXPORT_SYMBOL
 c_func
 (paren
 id|synchronize_irq
+)paren
+suffix:semicolon
+DECL|variable|__global_cli
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|__global_cli
+)paren
+suffix:semicolon
+DECL|variable|__global_sti
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|__global_sti
+)paren
+suffix:semicolon
+DECL|variable|__global_save_flags
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|__global_save_flags
+)paren
+suffix:semicolon
+DECL|variable|__global_restore_flags
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|__global_restore_flags
 )paren
 suffix:semicolon
 macro_line|#endif

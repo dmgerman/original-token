@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: console.c,v 1.22 2000/02/08 20:24:23 davem Exp $&n; * console.c: Routines that deal with sending and receiving IO&n; *            to/from the current console device using the PROM.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1998 Pete Zaitcev &lt;zaitcev@metabyte.com&gt;&n; */
+multiline_comment|/* $Id: console.c,v 1.23 2000/08/26 02:38:03 anton Exp $&n; * console.c: Routines that deal with sending and receiving IO&n; *            to/from the current console device using the PROM.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1998 Pete Zaitcev &lt;zaitcev@metabyte.com&gt;&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -50,15 +50,13 @@ r_int
 r_int
 id|flags
 suffix:semicolon
-id|save_flags
+id|spin_lock_irqsave
 c_func
 (paren
+op_amp
+id|prom_lock
+comma
 id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
 )paren
 suffix:semicolon
 r_switch
@@ -147,9 +145,12 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|restore_flags
+id|spin_unlock_irqrestore
 c_func
 (paren
+op_amp
+id|prom_lock
+comma
 id|flags
 )paren
 suffix:semicolon
@@ -182,15 +183,13 @@ op_assign
 op_minus
 l_int|1
 suffix:semicolon
-id|save_flags
+id|spin_lock_irqsave
 c_func
 (paren
+op_amp
+id|prom_lock
+comma
 id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
 )paren
 suffix:semicolon
 r_switch
@@ -282,9 +281,12 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|restore_flags
+id|spin_unlock_irqrestore
 c_func
 (paren
+op_amp
+id|prom_lock
+comma
 id|flags
 )paren
 suffix:semicolon
@@ -438,15 +440,13 @@ suffix:semicolon
 r_case
 id|PROM_V3
 suffix:colon
-id|save_flags
+id|spin_lock_irqsave
 c_func
 (paren
+op_amp
+id|prom_lock
+comma
 id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
 )paren
 suffix:semicolon
 id|st_p
@@ -465,9 +465,12 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|restore_flags
+id|spin_unlock_irqrestore
 c_func
 (paren
+op_amp
+id|prom_lock
+comma
 id|flags
 )paren
 suffix:semicolon
@@ -735,15 +738,13 @@ suffix:colon
 r_case
 id|PROM_V3
 suffix:colon
-id|save_flags
+id|spin_lock_irqsave
 c_func
 (paren
+op_amp
+id|prom_lock
+comma
 id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
 )paren
 suffix:semicolon
 id|st_p
@@ -762,9 +763,12 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|restore_flags
+id|spin_unlock_irqrestore
 c_func
 (paren
+op_amp
+id|prom_lock
+comma
 id|flags
 )paren
 suffix:semicolon

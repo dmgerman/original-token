@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: display7seg.c,v 1.2 2000/08/02 06:22:35 davem Exp $&n; *&n; * display7seg - Driver implementation for the 7-segment display&n; * present on Sun Microsystems CP1400 and CP1500&n; *&n; * Copyright (c) 2000 Eric Brower (ebrower@usa.net)&n; *&n; */
+multiline_comment|/* $Id: display7seg.c,v 1.3 2000/08/29 07:01:55 davem Exp $&n; *&n; * display7seg - Driver implementation for the 7-segment display&n; * present on Sun Microsystems CP1400 and CP1500&n; *&n; * Copyright (c) 2000 Eric Brower (ebrower@usa.net)&n; *&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
@@ -10,7 +10,7 @@ macro_line|#include &lt;linux/miscdevice.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;&t;&t;/* request_region, check_region */
 macro_line|#include &lt;asm/ebus.h&gt;&t;&t;&t;/* EBus device&t;&t;&t;&t;&t;*/
 macro_line|#include &lt;asm/oplib.h&gt;&t;&t;&t;/* OpenProm Library &t;&t;&t;*/
-macro_line|#include &lt;asm/uaccess.h&gt;&t;&t;/* put_/get_user_ret&t;&t;&t;*/
+macro_line|#include &lt;asm/uaccess.h&gt;&t;&t;/* put_/get_user&t;&t;&t;*/
 macro_line|#include &lt;asm/display7seg.h&gt;
 DECL|macro|D7S_MINOR
 mdefine_line|#define D7S_MINOR&t;193
@@ -340,7 +340,10 @@ r_case
 id|D7SIOCWR
 suffix:colon
 multiline_comment|/* assign device register values&n;&t;&t; * we mask-out D7S_FLIP if in sol_compat mode&n;&t;&t; */
-id|get_user_ret
+r_if
+c_cond
+(paren
+id|get_user
 c_func
 (paren
 id|ireg
@@ -350,10 +353,11 @@ r_int
 op_star
 )paren
 id|arg
-comma
+)paren
+)paren
+r_return
 op_minus
 id|EFAULT
-)paren
 suffix:semicolon
 r_if
 c_cond
@@ -398,7 +402,10 @@ r_case
 id|D7SIOCRD
 suffix:colon
 multiline_comment|/* retrieve device register values&n;&t;&t; * NOTE: Solaris implementation returns D7S_FLIP bit&n;&t;&t; * as toggled by user, even though it does not honor it.&n;&t;&t; * This driver will not misinform you about the state&n;&t;&t; * of your hardware while in sol_compat mode&n;&t;&t; */
-id|put_user_ret
+r_if
+c_cond
+(paren
+id|put_user
 c_func
 (paren
 id|regs
@@ -408,10 +415,11 @@ r_int
 op_star
 )paren
 id|arg
-comma
+)paren
+)paren
+r_return
 op_minus
 id|EFAULT
-)paren
 suffix:semicolon
 r_break
 suffix:semicolon

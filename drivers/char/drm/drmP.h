@@ -27,9 +27,12 @@ macro_line|#if defined(CONFIG_AGP) || defined(CONFIG_AGP_MODULE)
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/agp_backend.h&gt;
 macro_line|#endif
-macro_line|#if LINUX_VERSION_CODE &gt;= KERNEL_VERSION(2,1,0)
+macro_line|#if LINUX_VERSION_CODE &gt;= 0x020100 /* KERNEL_VERSION(2,1,0) */
 macro_line|#include &lt;linux/tqueue.h&gt;
 macro_line|#include &lt;linux/poll.h&gt;
+macro_line|#endif
+macro_line|#if LINUX_VERSION_CODE &lt; 0x020400
+macro_line|#include &quot;compat-pre24.h&quot;
 macro_line|#endif
 macro_line|#include &quot;drm.h&quot;
 DECL|macro|DRM_DEBUG_CODE
@@ -144,11 +147,6 @@ macro_line|#endif
 macro_line|#ifndef module_exit
 DECL|macro|module_exit
 mdefine_line|#define module_exit(x)  void cleanup_module(void) { x(); }
-macro_line|#endif
-multiline_comment|/* virt_to_page added in 2.4.0-test6 */
-macro_line|#if LINUX_VERSION_CODE &lt; 0x020400
-DECL|macro|virt_to_page
-mdefine_line|#define virt_to_page(kaddr) (mem_map + MAP_NR(kaddr))
 macro_line|#endif
 multiline_comment|/* Generic cmpxchg added in 2.3.x */
 macro_line|#ifndef __HAVE_ARCH_CMPXCHG

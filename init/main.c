@@ -2443,7 +2443,7 @@ id|CLONE_FS
 op_or
 id|CLONE_FILES
 op_or
-id|CLONE_SIGHAND
+id|CLONE_SIGNAL
 )paren
 suffix:semicolon
 id|unlock_kernel

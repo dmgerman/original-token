@@ -1315,7 +1315,10 @@ id|EACCES
 suffix:semicolon
 )brace
 multiline_comment|/* get only low 8 bits... */
-id|get_user_ret
+r_if
+c_cond
+(paren
+id|get_user
 c_func
 (paren
 id|newstate
@@ -1326,10 +1329,11 @@ r_char
 op_star
 )paren
 id|arg
-comma
+)paren
+)paren
+r_return
 op_minus
 id|EFAULT
-)paren
 suffix:semicolon
 r_if
 c_cond

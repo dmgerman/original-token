@@ -1544,10 +1544,6 @@ DECL|macro|__copy_from_user
 mdefine_line|#define __copy_from_user(to, from, n) copy_from_user(to, from, n)
 DECL|macro|__copy_to_user
 mdefine_line|#define __copy_to_user(to, from, n) copy_to_user(to, from, n)
-DECL|macro|copy_to_user_ret
-mdefine_line|#define copy_to_user_ret(to,from,n,retval) ({ if (copy_to_user(to,from,n)) return retval; })
-DECL|macro|copy_from_user_ret
-mdefine_line|#define copy_from_user_ret(to,from,n,retval) ({ if (copy_from_user(to,from,n)) return retval; })
 multiline_comment|/*&n; * Copy a null terminated string from userspace.&n; */
 r_static
 r_inline

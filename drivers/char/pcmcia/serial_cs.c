@@ -1,4 +1,4 @@
-multiline_comment|/*======================================================================&n;&n;    A driver for PCMCIA serial devices&n;&n;    serial_cs.c 1.118 2000/05/04 01:29:47&n;&n;    The contents of this file are subject to the Mozilla Public&n;    License Version 1.1 (the &quot;License&quot;); you may not use this file&n;    except in compliance with the License. You may obtain a copy of&n;    the License at http://www.mozilla.org/MPL/&n;&n;    Software distributed under the License is distributed on an &quot;AS&n;    IS&quot; basis, WITHOUT WARRANTY OF ANY KIND, either express or&n;    implied. See the License for the specific language governing&n;    rights and limitations under the License.&n;&n;    The initial developer of the original code is David A. Hinds&n;    &lt;dhinds@pcmcia.sourceforge.org&gt;.  Portions created by David A. Hinds&n;    are Copyright (C) 1999 David A. Hinds.  All Rights Reserved.&n;&n;    Alternatively, the contents of this file may be used under the&n;    terms of the GNU Public License version 2 (the &quot;GPL&quot;), in which&n;    case the provisions of the GPL are applicable instead of the&n;    above.  If you wish to allow the use of your version of this file&n;    only under the terms of the GPL and not to allow others to use&n;    your version of this file under the MPL, indicate your decision&n;    by deleting the provisions above and replace them with the notice&n;    and other provisions required by the GPL.  If you do not delete&n;    the provisions above, a recipient may use your version of this&n;    file under either the MPL or the GPL.&n;    &n;======================================================================*/
+multiline_comment|/*======================================================================&n;&n;    A driver for PCMCIA serial devices&n;&n;    serial_cs.c 1.123 2000/08/24 18:46:38&n;&n;    The contents of this file are subject to the Mozilla Public&n;    License Version 1.1 (the &quot;License&quot;); you may not use this file&n;    except in compliance with the License. You may obtain a copy of&n;    the License at http://www.mozilla.org/MPL/&n;&n;    Software distributed under the License is distributed on an &quot;AS&n;    IS&quot; basis, WITHOUT WARRANTY OF ANY KIND, either express or&n;    implied. See the License for the specific language governing&n;    rights and limitations under the License.&n;&n;    The initial developer of the original code is David A. Hinds&n;    &lt;dahinds@users.sourceforge.net&gt;.  Portions created by David A. Hinds&n;    are Copyright (C) 1999 David A. Hinds.  All Rights Reserved.&n;&n;    Alternatively, the contents of this file may be used under the&n;    terms of the GNU Public License version 2 (the &quot;GPL&quot;), in which&n;    case the provisions of the GPL are applicable instead of the&n;    above.  If you wish to allow the use of your version of this file&n;    only under the terms of the GPL and not to allow others to use&n;    your version of this file under the MPL, indicate your decision&n;    by deleting the provisions above and replace them with the notice&n;    and other provisions required by the GPL.  If you do not delete&n;    the provisions above, a recipient may use your version of this&n;    file under either the MPL or the GPL.&n;    &n;======================================================================*/
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
@@ -43,7 +43,7 @@ r_char
 op_star
 id|version
 op_assign
-l_string|&quot;serial_cs.c 1.118 2000/05/04 01:29:47 (David Hinds)&quot;
+l_string|&quot;serial_cs.c 1.123 2000/08/24 18:46:38 (David Hinds)&quot;
 suffix:semicolon
 macro_line|#else
 DECL|macro|DEBUG
@@ -813,19 +813,8 @@ suffix:semicolon
 id|serial.flags
 op_assign
 id|ASYNC_SKIP_TEST
-suffix:semicolon
-id|serial.flags
-op_or_assign
-(paren
-id|info-&gt;multi
-op_logical_or
-id|info-&gt;slave
-)paren
-ques
-c_cond
+op_or
 id|ASYNC_SHARE_IRQ
-suffix:colon
-l_int|0
 suffix:semicolon
 id|line
 op_assign
@@ -848,9 +837,12 @@ id|printk
 c_func
 (paren
 id|KERN_NOTICE
-l_string|&quot;serial_cs: register_serial() at 0x%04x, &quot;
-l_string|&quot;irq %d failed&bslash;n&quot;
+l_string|&quot;serial_cs: register_serial() at 0x%04lx,&quot;
+l_string|&quot; irq %d failed&bslash;n&quot;
 comma
+(paren
+id|u_long
+)paren
 id|serial.port
 comma
 id|serial.irq
@@ -1087,6 +1079,8 @@ r_int
 id|i
 comma
 id|j
+comma
+r_try
 suffix:semicolon
 multiline_comment|/* If the card is already configured, look up the port and irq */
 id|i
@@ -1222,6 +1216,22 @@ id|tuple.DesiredTuple
 op_assign
 id|CISTPL_CFTABLE_ENTRY
 suffix:semicolon
+multiline_comment|/* Two tries: without IO aliases, then with aliases */
+r_for
+c_loop
+(paren
+r_try
+op_assign
+l_int|0
+suffix:semicolon
+r_try
+OL
+l_int|2
+suffix:semicolon
+r_try
+op_increment
+)paren
+(brace
 id|i
 op_assign
 id|first_tuple
@@ -1323,6 +1333,15 @@ id|base
 suffix:semicolon
 id|link-&gt;io.IOAddrLines
 op_assign
+(paren
+r_try
+op_eq
+l_int|0
+)paren
+ques
+c_cond
+l_int|16
+suffix:colon
 id|cf-&gt;io.flags
 op_amp
 id|CISTPL_IO_LINES_MASK
@@ -1367,6 +1386,7 @@ op_amp
 id|parse
 )paren
 suffix:semicolon
+)brace
 )brace
 multiline_comment|/* Second pass: try to find an entry that isn&squot;t picky about&n;       its base address, then try to grab any standard serial port&n;       address, and finally try to get any free port. */
 id|i
@@ -2069,6 +2089,17 @@ comma
 id|link-&gt;irq.AssignedIRQ
 )paren
 suffix:semicolon
+multiline_comment|/* The Nokia cards are not really multiport cards */
+r_if
+c_cond
+(paren
+id|info-&gt;manfid
+op_eq
+id|MANFID_NOKIA
+)paren
+r_return
+l_int|0
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -2416,7 +2447,6 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-(paren
 id|first_tuple
 c_func
 (paren
@@ -2431,8 +2461,9 @@ id|parse
 op_eq
 id|CS_SUCCESS
 )paren
-op_logical_and
-(paren
+(brace
+r_if
+c_cond
 (paren
 (paren
 id|cf-&gt;io.nwin
@@ -2447,11 +2478,25 @@ l_int|0
 )braket
 dot
 id|len
+op_mod
+l_int|8
 op_eq
-l_int|16
+l_int|0
 )paren
 )paren
-op_logical_or
+id|info-&gt;multi
+op_assign
+id|cf-&gt;io.win
+(braket
+l_int|0
+)braket
+dot
+id|len
+op_rshift
+l_int|3
+suffix:semicolon
+r_if
+c_cond
 (paren
 (paren
 id|cf-&gt;io.nwin
@@ -2479,14 +2524,13 @@ dot
 id|len
 op_eq
 l_int|8
-)paren
-)paren
 )paren
 )paren
 id|info-&gt;multi
 op_assign
 l_int|2
 suffix:semicolon
+)brace
 )brace
 r_if
 c_cond

@@ -380,9 +380,10 @@ id|prev-&gt;active_mm
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * This is ugly, but reschedule_idle() is very timing-critical.&n; * We enter with the runqueue spinlock held, but we might end&n; * up unlocking it early, so the caller must not unlock the&n; * runqueue, it&squot;s always done by reschedule_idle().&n; *&n; * This function must be inline as anything that saves and restores&n; * flags has to do so within the same register window on sparc (Anton)&n; */
-DECL|function|reschedule_idle
 r_static
-r_inline
+id|FASTCALL
+c_func
+(paren
 r_void
 id|reschedule_idle
 c_func
@@ -391,10 +392,19 @@ r_struct
 id|task_struct
 op_star
 id|p
-comma
-r_int
-r_int
-id|flags
+)paren
+)paren
+suffix:semicolon
+DECL|function|reschedule_idle
+r_static
+r_void
+id|reschedule_idle
+c_func
+(paren
+r_struct
+id|task_struct
+op_star
+id|p
 )paren
 (brace
 macro_line|#ifdef CONFIG_SMP
@@ -663,15 +673,6 @@ r_goto
 id|preempt_now
 suffix:semicolon
 )brace
-id|spin_unlock_irqrestore
-c_func
-(paren
-op_amp
-id|runqueue_lock
-comma
-id|flags
-)paren
-suffix:semicolon
 r_return
 suffix:semicolon
 id|send_now_idle
@@ -699,15 +700,6 @@ id|tsk-&gt;need_resched
 op_assign
 l_int|1
 suffix:semicolon
-id|spin_unlock_irqrestore
-c_func
-(paren
-op_amp
-id|runqueue_lock
-comma
-id|flags
-)paren
-suffix:semicolon
 r_return
 suffix:semicolon
 id|preempt_now
@@ -715,15 +707,6 @@ suffix:colon
 id|tsk-&gt;need_resched
 op_assign
 l_int|1
-suffix:semicolon
-id|spin_unlock_irqrestore
-c_func
-(paren
-op_amp
-id|runqueue_lock
-comma
-id|flags
-)paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * the APIC stuff can go outside of the lock because&n;&t; * it uses no task information, only CPU#.&n;&t; */
 r_if
@@ -781,15 +764,6 @@ l_int|1
 id|tsk-&gt;need_resched
 op_assign
 l_int|1
-suffix:semicolon
-id|spin_unlock_irqrestore
-c_func
-(paren
-op_amp
-id|runqueue_lock
-comma
-id|flags
-)paren
 suffix:semicolon
 macro_line|#endif
 )brace
@@ -936,12 +910,7 @@ id|reschedule_idle
 c_func
 (paren
 id|p
-comma
-id|flags
 )paren
-suffix:semicolon
-singleline_comment|// spin_unlocks runqueue
-r_return
 suffix:semicolon
 id|out
 suffix:colon
@@ -1251,7 +1220,7 @@ r_if
 c_cond
 (paren
 id|prev
-op_eq
+op_ne
 id|idle_task
 c_func
 (paren
@@ -1261,19 +1230,14 @@ c_func
 )paren
 )paren
 )paren
-r_goto
-id|out_unlock
-suffix:semicolon
 id|reschedule_idle
 c_func
 (paren
 id|prev
-comma
-id|flags
 )paren
 suffix:semicolon
-singleline_comment|// spin_unlocks runqueue
-r_return
+r_goto
+id|out_unlock
 suffix:semicolon
 macro_line|#endif /* CONFIG_SMP */
 )brace
@@ -1772,6 +1736,14 @@ c_func
 (paren
 id|current
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|current-&gt;need_resched
+)paren
+r_goto
+id|tq_scheduler_back
 suffix:semicolon
 r_return
 suffix:semicolon
@@ -3671,7 +3643,7 @@ l_string|&quot;&bslash;n&quot;
 suffix:semicolon
 (brace
 r_struct
-id|signal_queue
+id|sigqueue
 op_star
 id|q
 suffix:semicolon
@@ -3704,7 +3676,7 @@ id|render_sigset_t
 c_func
 (paren
 op_amp
-id|p-&gt;signal
+id|p-&gt;pending.signal
 comma
 id|s
 )paren
@@ -3739,7 +3711,7 @@ c_loop
 (paren
 id|q
 op_assign
-id|p-&gt;sigqueue
+id|p-&gt;pending.head
 suffix:semicolon
 id|q
 suffix:semicolon

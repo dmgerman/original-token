@@ -1194,12 +1194,6 @@ id|tsk
 op_assign
 id|current
 suffix:semicolon
-id|unlazy_fpu
-c_func
-(paren
-id|tsk
-)paren
-suffix:semicolon
 id|tsk-&gt;thread.i387.fsave.status
 op_assign
 id|tsk-&gt;thread.i387.fsave.swd
@@ -1254,12 +1248,6 @@ r_int
 id|err
 op_assign
 l_int|0
-suffix:semicolon
-id|unlazy_fpu
-c_func
-(paren
-id|tsk
-)paren
 suffix:semicolon
 r_if
 c_cond

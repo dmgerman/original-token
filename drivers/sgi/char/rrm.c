@@ -191,7 +191,10 @@ id|i
 r_return
 id|i
 suffix:semicolon
-id|__get_user_ret
+r_if
+c_cond
+(paren
+id|__get_user
 (paren
 id|rnid
 comma
@@ -200,10 +203,11 @@ r_int
 op_star
 )paren
 id|arg
-comma
+)paren
+)paren
+r_return
 op_minus
 id|EFAULT
-)paren
 suffix:semicolon
 r_return
 (paren

@@ -19,11 +19,9 @@ id|buffer_status
 suffix:semicolon
 DECL|member|num_dwords
 r_int
-r_int
 id|num_dwords
 suffix:semicolon
 DECL|member|max_dwords
-r_int
 r_int
 id|max_dwords
 suffix:semicolon
@@ -1139,7 +1137,7 @@ mdefine_line|#define MGA_NUM_PRIM_BUFS &t;8
 DECL|macro|PRIMLOCALS
 mdefine_line|#define PRIMLOCALS&t;u8 tempIndex[4]; u32 *dma_ptr; u32 phys_head; &bslash;&n;&t;&t;&t;int outcount, num_dwords
 DECL|macro|PRIM_OVERFLOW
-mdefine_line|#define PRIM_OVERFLOW(dev, dev_priv, length) do {&t;&t;&t;&bslash;&n;&t;drm_mga_prim_buf_t *tmp_buf =&t;&t;&t;&t;&t;&bslash;&n; &t;&t;dev_priv-&gt;prim_bufs[dev_priv-&gt;current_prim_idx];&t;&bslash;&n;&t;if( test_bit(MGA_BUF_NEEDS_OVERFLOW,&t;&t;&t;&t;&bslash;&n;&t;&t;  &amp;tmp_buf-&gt;buffer_status)) {&t;&t;&t;&t;&bslash;&n; &t;&t;mga_advance_primary(dev);&t;&t;&t;&t;&bslash;&n; &t;&t;mga_dma_schedule(dev, 1);&t;&t;&t;&t;&bslash;&n; &t;} else if( tmp_buf-&gt;max_dwords - tmp_buf-&gt;num_dwords &lt; length ||&bslash;&n; &t;    tmp_buf-&gt;sec_used &gt; MGA_DMA_BUF_NR/2) {&t;&t;&t;&bslash;&n;&t;&t;set_bit(MGA_BUF_FORCE_FIRE, &amp;tmp_buf-&gt;buffer_status);&t;&bslash;&n; &t;&t;mga_advance_primary(dev);&t;&t;&t;&t;&bslash;&n; &t;&t;mga_dma_schedule(dev, 1);&t;&t;&t;&t;&bslash;&n;&t;}&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;} while(0)
+mdefine_line|#define PRIM_OVERFLOW(dev, dev_priv, length) do {&t;&t;&t;   &bslash;&n;&t;drm_mga_prim_buf_t *tmp_buf =&t;&t;&t;&t;&t;   &bslash;&n; &t;&t;dev_priv-&gt;prim_bufs[dev_priv-&gt;current_prim_idx];&t;   &bslash;&n;&t;if( test_bit(MGA_BUF_NEEDS_OVERFLOW,&t;&t;&t;&t;   &bslash;&n;&t;&t;  &amp;tmp_buf-&gt;buffer_status)) {&t;&t;&t;&t;   &bslash;&n; &t;&t;mga_advance_primary(dev);&t;&t;&t;&t;   &bslash;&n; &t;&t;mga_dma_schedule(dev, 1);&t;&t;&t;&t;   &bslash;&n;&t;&t;tmp_buf = dev_priv-&gt;prim_bufs[dev_priv-&gt;current_prim_idx]; &bslash;&n; &t;} else if( tmp_buf-&gt;max_dwords - tmp_buf-&gt;num_dwords &lt; length ||   &bslash;&n; &t;    tmp_buf-&gt;sec_used &gt; MGA_DMA_BUF_NR/2) {&t;&t;&t;   &bslash;&n;&t;&t;set_bit(MGA_BUF_FORCE_FIRE, &amp;tmp_buf-&gt;buffer_status);&t;   &bslash;&n; &t;&t;mga_advance_primary(dev);&t;&t;&t;&t;   &bslash;&n; &t;&t;mga_dma_schedule(dev, 1);&t;&t;&t;&t;   &bslash;&n;&t;&t;tmp_buf = dev_priv-&gt;prim_bufs[dev_priv-&gt;current_prim_idx]; &bslash;&n;&t;}&t;&t;&t;&t;&t;&t;&t;&t;   &bslash;&n;&t;if(MGA_VERBOSE)&t;&t;&t;&t;&t;&t;&t;   &bslash;&n;&t;&t;DRM_DEBUG(&quot;PRIMGETPTR in %s&bslash;n&quot;, __FUNCTION__);&t;&t;   &bslash;&n;&t;dma_ptr = tmp_buf-&gt;current_dma_ptr;&t;&t;&t;&t;   &bslash;&n;&t;num_dwords = tmp_buf-&gt;num_dwords;&t;&t;&t;&t;   &bslash;&n;&t;phys_head = tmp_buf-&gt;phys_head;&t;&t;&t;&t;&t;   &bslash;&n;&t;outcount = 0;&t;&t;&t;&t;&t;&t;&t;   &bslash;&n;} while(0)
 DECL|macro|PRIMGETPTR
 mdefine_line|#define PRIMGETPTR(dev_priv) do {&t;&t;&t;&t;&t;&bslash;&n;&t;drm_mga_prim_buf_t *tmp_buf =&t;&t;&t;&t;&t;&bslash;&n;&t;&t;dev_priv-&gt;prim_bufs[dev_priv-&gt;current_prim_idx];&t;&bslash;&n;&t;if(MGA_VERBOSE)&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;DRM_DEBUG(&quot;PRIMGETPTR in %s&bslash;n&quot;, __FUNCTION__);&t;&t;&bslash;&n;&t;dma_ptr = tmp_buf-&gt;current_dma_ptr;&t;&t;&t;&t;&bslash;&n;&t;num_dwords = tmp_buf-&gt;num_dwords;&t;&t;&t;&t;&bslash;&n;&t;phys_head = tmp_buf-&gt;phys_head;&t;&t;&t;&t;&t;&bslash;&n;&t;outcount = 0;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;} while(0)
 DECL|macro|PRIMPTR

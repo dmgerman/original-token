@@ -34,8 +34,8 @@ DECL|macro|CLONE_FS
 mdefine_line|#define CLONE_FS&t;0x00000200&t;/* set if fs info shared between processes */
 DECL|macro|CLONE_FILES
 mdefine_line|#define CLONE_FILES&t;0x00000400&t;/* set if open files shared between processes */
-DECL|macro|CLONE_SIGHAND
-mdefine_line|#define CLONE_SIGHAND&t;0x00000800&t;/* set if signal handlers shared */
+DECL|macro|CLONE_SIGNAL
+mdefine_line|#define CLONE_SIGNAL&t;0x00000800&t;/* set if signal handlers and blocked signals shared */
 DECL|macro|CLONE_PID
 mdefine_line|#define CLONE_PID&t;0x00001000&t;/* set if pid shared */
 DECL|macro|CLONE_PTRACE
@@ -44,8 +44,8 @@ DECL|macro|CLONE_VFORK
 mdefine_line|#define CLONE_VFORK&t;0x00004000&t;/* set if the parent wants the child to wake it up on mm_release */
 DECL|macro|CLONE_PARENT
 mdefine_line|#define CLONE_PARENT&t;0x00008000&t;/* set if we want to have the same parent as the cloner */
-DECL|macro|CLONE_THREAD
-mdefine_line|#define CLONE_THREAD&t;0x00010000&t;/* set if we want to clone the &quot;thread group&quot; */
+DECL|macro|CLONE_SIGHAND
+mdefine_line|#define CLONE_SIGHAND&t;CLONE_SIGNAL&t;/* Old name */
 multiline_comment|/*&n; * These are the constant used to fake the fixed-point load-average&n; * counting. Some notes:&n; *  - 11 bit fractions expand to 22 bits by the multiplies: this gives&n; *    a load-average precision of 10 bits integer + 11 bits fractional&n; *  - if you want to count load-averages more often, you need more&n; *    precision, or rounding will get you. With 2-second counting freq,&n; *    the EXP_n values would be 1981, 2034 and 2043 if still using only&n; *    11 bit fractions.&n; */
 r_extern
 r_int
@@ -474,6 +474,11 @@ id|action
 id|_NSIG
 )braket
 suffix:semicolon
+DECL|member|pending
+r_struct
+id|sigpending
+id|pending
+suffix:semicolon
 DECL|member|siglock
 id|spinlock_t
 id|siglock
@@ -481,7 +486,7 @@ suffix:semicolon
 )brace
 suffix:semicolon
 DECL|macro|INIT_SIGNALS
-mdefine_line|#define INIT_SIGNALS { &bslash;&n;&t;&t;ATOMIC_INIT(1), &bslash;&n;&t;&t;{ {{0,}}, }, &bslash;&n;&t;&t;SPIN_LOCK_UNLOCKED }
+mdefine_line|#define INIT_SIGNALS { &bslash;&n;&t;&t;ATOMIC_INIT(1), &bslash;&n;&t;&t;{ {{0,}}, }, &bslash;&n;&t;&t;{ NULL, &amp;init_signals.pending.head, }, &bslash;&n;&t;&t;SPIN_LOCK_UNLOCKED }
 multiline_comment|/*&n; * Some day this will be a full-fledged user tracking system..&n; */
 DECL|struct|user_struct
 r_struct
@@ -967,23 +972,14 @@ id|signal_struct
 op_star
 id|sig
 suffix:semicolon
-DECL|member|signal
 DECL|member|blocked
 id|sigset_t
-id|signal
-comma
 id|blocked
 suffix:semicolon
-DECL|member|sigqueue
-DECL|member|sigqueue_tail
+DECL|member|pending
 r_struct
-id|signal_queue
-op_star
-id|sigqueue
-comma
-op_star
-op_star
-id|sigqueue_tail
+id|sigpending
+id|pending
 suffix:semicolon
 DECL|member|sas_ss_sp
 r_int
@@ -1072,7 +1068,7 @@ DECL|macro|DEF_NICE
 mdefine_line|#define DEF_NICE&t;(0)
 multiline_comment|/*&n; *  INIT_TASK is used to set up the first task table, touch at&n; * your own risk!. Base=0, limit=0x1fffff (=2MB)&n; */
 DECL|macro|INIT_TASK
-mdefine_line|#define INIT_TASK(tsk)&t;&bslash;&n;{&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;    state:&t;&t;0,&t;&t;&t;&t;&t;&t;&bslash;&n;    flags:&t;&t;0,&t;&t;&t;&t;&t;&t;&bslash;&n;    sigpending:&t;&t;0,&t;&t;&t;&t;&t;&t;&bslash;&n;    addr_limit:&t;&t;KERNEL_DS,&t;&t;&t;&t;&t;&bslash;&n;    exec_domain:&t;&amp;default_exec_domain,&t;&t;&t;&t;&bslash;&n;    lock_depth:&t;&t;-1,&t;&t;&t;&t;&t;&t;&bslash;&n;    counter:&t;&t;DEF_COUNTER,&t;&t;&t;&t;&t;&bslash;&n;    nice:&t;&t;DEF_NICE,&t;&t;&t;&t;&t;&bslash;&n;    policy:&t;&t;SCHED_OTHER,&t;&t;&t;&t;&t;&bslash;&n;    mm:&t;&t;&t;NULL,&t;&t;&t;&t;&t;&t;&bslash;&n;    active_mm:&t;&t;&amp;init_mm,&t;&t;&t;&t;&t;&bslash;&n;    cpus_allowed:&t;-1,&t;&t;&t;&t;&t;&t;&bslash;&n;    run_list:&t;&t;LIST_HEAD_INIT(tsk.run_list),&t;&t;&t;&bslash;&n;    next_task:&t;&t;&amp;tsk,&t;&t;&t;&t;&t;&t;&bslash;&n;    prev_task:&t;&t;&amp;tsk,&t;&t;&t;&t;&t;&t;&bslash;&n;    p_opptr:&t;&t;&amp;tsk,&t;&t;&t;&t;&t;&t;&bslash;&n;    p_pptr:&t;&t;&amp;tsk,&t;&t;&t;&t;&t;&t;&bslash;&n;    thread_group:&t;LIST_HEAD_INIT(tsk.thread_group),&t;&t;&bslash;&n;    wait_chldexit:&t;__WAIT_QUEUE_HEAD_INITIALIZER(tsk.wait_chldexit),&bslash;&n;    real_timer:&t;&t;{&t;&t;&t;&t;&t;&t;&bslash;&n;&t;function:&t;&t;it_real_fn&t;&t;&t;&t;&bslash;&n;    },&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;    cap_effective:&t;CAP_INIT_EFF_SET,&t;&t;&t;&t;&bslash;&n;    cap_inheritable:&t;CAP_INIT_INH_SET,&t;&t;&t;&t;&bslash;&n;    cap_permitted:&t;CAP_FULL_SET,&t;&t;&t;&t;&t;&bslash;&n;    keep_capabilities:&t;0,&t;&t;&t;&t;&t;&t;&bslash;&n;    rlim:&t;&t;INIT_RLIMITS,&t;&t;&t;&t;&t;&bslash;&n;    user:&t;&t;INIT_USER,&t;&t;&t;&t;&t;&bslash;&n;    comm:&t;&t;&quot;swapper&quot;,&t;&t;&t;&t;&t;&bslash;&n;    thread:&t;&t;INIT_THREAD,&t;&t;&t;&t;&t;&bslash;&n;    fs:&t;&t;&t;&amp;init_fs,&t;&t;&t;&t;&t;&bslash;&n;    files:&t;&t;&amp;init_files,&t;&t;&t;&t;&t;&bslash;&n;    sigmask_lock:&t;SPIN_LOCK_UNLOCKED,&t;&t;&t;&t;&bslash;&n;    sig:&t;&t;&amp;init_signals,&t;&t;&t;&t;&t;&bslash;&n;    signal:&t;&t;{{0}},&t;&t;&t;&t;&t;&t;&bslash;&n;    blocked:&t;&t;{{0}},&t;&t;&t;&t;&t;&t;&bslash;&n;    sigqueue:&t;&t;NULL,&t;&t;&t;&t;&t;&t;&bslash;&n;    sigqueue_tail:&t;&amp;tsk.sigqueue,&t;&t;&t;&t;&t;&bslash;&n;    alloc_lock:&t;&t;SPIN_LOCK_UNLOCKED&t;&t;&t;&t;&bslash;&n;}
+mdefine_line|#define INIT_TASK(tsk)&t;&bslash;&n;{&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;    state:&t;&t;0,&t;&t;&t;&t;&t;&t;&bslash;&n;    flags:&t;&t;0,&t;&t;&t;&t;&t;&t;&bslash;&n;    sigpending:&t;&t;0,&t;&t;&t;&t;&t;&t;&bslash;&n;    addr_limit:&t;&t;KERNEL_DS,&t;&t;&t;&t;&t;&bslash;&n;    exec_domain:&t;&amp;default_exec_domain,&t;&t;&t;&t;&bslash;&n;    lock_depth:&t;&t;-1,&t;&t;&t;&t;&t;&t;&bslash;&n;    counter:&t;&t;DEF_COUNTER,&t;&t;&t;&t;&t;&bslash;&n;    nice:&t;&t;DEF_NICE,&t;&t;&t;&t;&t;&bslash;&n;    policy:&t;&t;SCHED_OTHER,&t;&t;&t;&t;&t;&bslash;&n;    mm:&t;&t;&t;NULL,&t;&t;&t;&t;&t;&t;&bslash;&n;    active_mm:&t;&t;&amp;init_mm,&t;&t;&t;&t;&t;&bslash;&n;    cpus_allowed:&t;-1,&t;&t;&t;&t;&t;&t;&bslash;&n;    run_list:&t;&t;LIST_HEAD_INIT(tsk.run_list),&t;&t;&t;&bslash;&n;    next_task:&t;&t;&amp;tsk,&t;&t;&t;&t;&t;&t;&bslash;&n;    prev_task:&t;&t;&amp;tsk,&t;&t;&t;&t;&t;&t;&bslash;&n;    p_opptr:&t;&t;&amp;tsk,&t;&t;&t;&t;&t;&t;&bslash;&n;    p_pptr:&t;&t;&amp;tsk,&t;&t;&t;&t;&t;&t;&bslash;&n;    thread_group:&t;LIST_HEAD_INIT(tsk.thread_group),&t;&t;&bslash;&n;    wait_chldexit:&t;__WAIT_QUEUE_HEAD_INITIALIZER(tsk.wait_chldexit),&bslash;&n;    real_timer:&t;&t;{&t;&t;&t;&t;&t;&t;&bslash;&n;&t;function:&t;&t;it_real_fn&t;&t;&t;&t;&bslash;&n;    },&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;    cap_effective:&t;CAP_INIT_EFF_SET,&t;&t;&t;&t;&bslash;&n;    cap_inheritable:&t;CAP_INIT_INH_SET,&t;&t;&t;&t;&bslash;&n;    cap_permitted:&t;CAP_FULL_SET,&t;&t;&t;&t;&t;&bslash;&n;    keep_capabilities:&t;0,&t;&t;&t;&t;&t;&t;&bslash;&n;    rlim:&t;&t;INIT_RLIMITS,&t;&t;&t;&t;&t;&bslash;&n;    user:&t;&t;INIT_USER,&t;&t;&t;&t;&t;&bslash;&n;    comm:&t;&t;&quot;swapper&quot;,&t;&t;&t;&t;&t;&bslash;&n;    thread:&t;&t;INIT_THREAD,&t;&t;&t;&t;&t;&bslash;&n;    fs:&t;&t;&t;&amp;init_fs,&t;&t;&t;&t;&t;&bslash;&n;    files:&t;&t;&amp;init_files,&t;&t;&t;&t;&t;&bslash;&n;    sigmask_lock:&t;SPIN_LOCK_UNLOCKED,&t;&t;&t;&t;&bslash;&n;    sig:&t;&t;&amp;init_signals,&t;&t;&t;&t;&t;&bslash;&n;    pending:&t;&t;{ NULL, &amp;tsk.pending.head, {{0}}},&t;&t;&bslash;&n;    blocked:&t;&t;{{0}},&t;&t;&t;&t;&t;&t;&bslash;&n;    alloc_lock:&t;&t;SPIN_LOCK_UNLOCKED&t;&t;&t;&t;&bslash;&n;}
 macro_line|#ifndef INIT_TASK_SIZE
 DECL|macro|INIT_TASK_SIZE
 macro_line|# define INIT_TASK_SIZE&t;2048*sizeof(long)
@@ -1785,18 +1781,25 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Reevaluate whether the task has signals pending delivery.&n;   This is required every time the blocked sigset_t changes.&n;   All callers should have t-&gt;sigmask_lock.  */
-DECL|function|recalc_sigpending
+multiline_comment|/*&n; * Re-calculate pending state from the set of locally pending&n; * signals, globally pending signals, and blocked signals.&n; */
+DECL|function|has_pending_signals
 r_static
 r_inline
-r_void
-id|recalc_sigpending
+r_int
+id|has_pending_signals
 c_func
 (paren
-r_struct
-id|task_struct
+id|sigset_t
 op_star
-id|t
+id|p1
+comma
+id|sigset_t
+op_star
+id|p2
+comma
+id|sigset_t
+op_star
+id|blocked
 )paren
 (brace
 r_int
@@ -1835,13 +1838,20 @@ suffix:semicolon
 )paren
 id|ready
 op_or_assign
-id|t-&gt;signal.sig
+(paren
+id|p1-&gt;sig
 (braket
 id|i
 )braket
+op_or
+id|p2-&gt;sig
+(braket
+id|i
+)braket
+)paren
 op_amp
 op_complement
-id|t-&gt;blocked.sig
+id|blocked-&gt;sig
 (braket
 id|i
 )braket
@@ -1853,52 +1863,80 @@ l_int|4
 suffix:colon
 id|ready
 op_assign
-id|t-&gt;signal.sig
+(paren
+id|p1-&gt;sig
 (braket
 l_int|3
 )braket
+op_or
+id|p2-&gt;sig
+(braket
+l_int|3
+)braket
+)paren
 op_amp
 op_complement
-id|t-&gt;blocked.sig
+id|blocked-&gt;sig
 (braket
 l_int|3
 )braket
 suffix:semicolon
 id|ready
 op_or_assign
-id|t-&gt;signal.sig
+(paren
+id|p1-&gt;sig
 (braket
 l_int|2
 )braket
+op_or
+id|p2-&gt;sig
+(braket
+l_int|2
+)braket
+)paren
 op_amp
 op_complement
-id|t-&gt;blocked.sig
+id|blocked-&gt;sig
 (braket
 l_int|2
 )braket
 suffix:semicolon
 id|ready
 op_or_assign
-id|t-&gt;signal.sig
+(paren
+id|p1-&gt;sig
 (braket
 l_int|1
 )braket
+op_or
+id|p2-&gt;sig
+(braket
+l_int|1
+)braket
+)paren
 op_amp
 op_complement
-id|t-&gt;blocked.sig
+id|blocked-&gt;sig
 (braket
 l_int|1
 )braket
 suffix:semicolon
 id|ready
 op_or_assign
-id|t-&gt;signal.sig
+(paren
+id|p1-&gt;sig
 (braket
 l_int|0
 )braket
+op_or
+id|p2-&gt;sig
+(braket
+l_int|0
+)braket
+)paren
 op_amp
 op_complement
-id|t-&gt;blocked.sig
+id|blocked-&gt;sig
 (braket
 l_int|0
 )braket
@@ -1910,26 +1948,40 @@ l_int|2
 suffix:colon
 id|ready
 op_assign
-id|t-&gt;signal.sig
+(paren
+id|p1-&gt;sig
 (braket
 l_int|1
 )braket
+op_or
+id|p2-&gt;sig
+(braket
+l_int|1
+)braket
+)paren
 op_amp
 op_complement
-id|t-&gt;blocked.sig
+id|blocked-&gt;sig
 (braket
 l_int|1
 )braket
 suffix:semicolon
 id|ready
 op_or_assign
-id|t-&gt;signal.sig
+(paren
+id|p1-&gt;sig
 (braket
 l_int|0
 )braket
+op_or
+id|p2-&gt;sig
+(braket
+l_int|0
+)braket
+)paren
 op_amp
 op_complement
-id|t-&gt;blocked.sig
+id|blocked-&gt;sig
 (braket
 l_int|0
 )braket
@@ -1941,24 +1993,58 @@ l_int|1
 suffix:colon
 id|ready
 op_assign
-id|t-&gt;signal.sig
+(paren
+id|p1-&gt;sig
 (braket
 l_int|0
 )braket
+op_or
+id|p2-&gt;sig
+(braket
+l_int|0
+)braket
+)paren
 op_amp
 op_complement
-id|t-&gt;blocked.sig
+id|blocked-&gt;sig
 (braket
 l_int|0
 )braket
 suffix:semicolon
 )brace
-id|t-&gt;sigpending
-op_assign
-(paren
+r_return
 id|ready
 op_ne
 l_int|0
+suffix:semicolon
+)brace
+multiline_comment|/* Reevaluate whether the task has signals pending delivery.&n;   This is required every time the blocked sigset_t changes.&n;   All callers should have t-&gt;sigmask_lock.  */
+DECL|function|recalc_sigpending
+r_static
+r_inline
+r_void
+id|recalc_sigpending
+c_func
+(paren
+r_struct
+id|task_struct
+op_star
+id|t
+)paren
+(brace
+id|t-&gt;sigpending
+op_assign
+id|has_pending_signals
+c_func
+(paren
+op_amp
+id|t-&gt;pending.signal
+comma
+op_amp
+id|t-&gt;sig-&gt;pending.signal
+comma
+op_amp
+id|t-&gt;blocked
 )paren
 suffix:semicolon
 )brace

@@ -1,8 +1,9 @@
-multiline_comment|/* $Id: oplib.h,v 1.20 1998/09/17 11:05:25 jj Exp $&n; * oplib.h:  Describes the interface and available routines in the&n; *           Linux Prom library.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: oplib.h,v 1.21 2000/08/26 02:38:04 anton Exp $&n; * oplib.h:  Describes the interface and available routines in the&n; *           Linux Prom library.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef __SPARC_OPLIB_H
 DECL|macro|__SPARC_OPLIB_H
 mdefine_line|#define __SPARC_OPLIB_H
 macro_line|#include &lt;asm/openprom.h&gt;
+macro_line|#include &lt;linux/spinlock.h&gt;
 multiline_comment|/* The master romvec pointer... */
 r_extern
 r_struct
@@ -883,6 +884,10 @@ comma
 r_int
 id|nregs
 )paren
+suffix:semicolon
+r_extern
+id|spinlock_t
+id|prom_lock
 suffix:semicolon
 macro_line|#endif /* !(__SPARC_OPLIB_H) */
 eof

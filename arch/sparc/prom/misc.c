@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: misc.c,v 1.17 1998/07/21 10:36:22 jj Exp $&n; * misc.c:  Miscellaneous prom functions that don&squot;t belong&n; *          anywhere else.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: misc.c,v 1.18 2000/08/26 02:38:03 anton Exp $&n; * misc.c:  Miscellaneous prom functions that don&squot;t belong&n; *          anywhere else.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -13,6 +13,12 @@ c_func
 (paren
 r_void
 )paren
+suffix:semicolon
+DECL|variable|prom_lock
+id|spinlock_t
+id|prom_lock
+op_assign
+id|SPIN_LOCK_UNLOCKED
 suffix:semicolon
 multiline_comment|/* Reset and reboot the machine with the command &squot;bcommand&squot;. */
 r_void
@@ -29,15 +35,13 @@ r_int
 r_int
 id|flags
 suffix:semicolon
-id|save_flags
+id|spin_lock_irqsave
 c_func
 (paren
+op_amp
+id|prom_lock
+comma
 id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
 )paren
 suffix:semicolon
 (paren
@@ -56,9 +60,12 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|restore_flags
+id|spin_unlock_irqrestore
 c_func
 (paren
+op_amp
+id|prom_lock
+comma
 id|flags
 )paren
 suffix:semicolon
@@ -95,15 +102,13 @@ l_int|0
 r_return
 suffix:semicolon
 )brace
-id|save_flags
+id|spin_lock_irqsave
 c_func
 (paren
+op_amp
+id|prom_lock
+comma
 id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
 )paren
 suffix:semicolon
 r_if
@@ -147,9 +152,12 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|restore_flags
+id|spin_unlock_irqrestore
 c_func
 (paren
+op_amp
+id|prom_lock
+comma
 id|flags
 )paren
 suffix:semicolon
@@ -235,15 +243,13 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|save_flags
+id|spin_lock_irqsave
 c_func
 (paren
+op_amp
+id|prom_lock
+comma
 id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
 )paren
 suffix:semicolon
 (paren
@@ -260,9 +266,12 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|restore_flags
+id|spin_unlock_irqrestore
 c_func
 (paren
+op_amp
+id|prom_lock
+comma
 id|flags
 )paren
 suffix:semicolon
@@ -308,15 +317,13 @@ id|flags
 suffix:semicolon
 id|again
 suffix:colon
-id|save_flags
+id|spin_lock_irqsave
 c_func
 (paren
+op_amp
+id|prom_lock
+comma
 id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
 )paren
 suffix:semicolon
 (paren
@@ -334,9 +341,12 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|restore_flags
+id|spin_unlock_irqrestore
 c_func
 (paren
+op_amp
+id|prom_lock
+comma
 id|flags
 )paren
 suffix:semicolon

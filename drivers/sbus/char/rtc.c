@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: rtc.c,v 1.22 2000/08/22 06:56:33 davem Exp $&n; *&n; * Linux/SPARC Real Time Clock Driver&n; * Copyright (C) 1996 Thomas K. Dyas (tdyas@eden.rutgers.edu)&n; *&n; * This is a little driver that lets a user-level program access&n; * the SPARC Mostek real time clock chip. It is no use unless you&n; * use the modified clock utility.&n; *&n; * Get the modified clock utility from:&n; *   ftp://vger.kernel.org/pub/linux/Sparc/userland/clock.c&n; */
+multiline_comment|/* $Id: rtc.c,v 1.23 2000/08/29 07:01:55 davem Exp $&n; *&n; * Linux/SPARC Real Time Clock Driver&n; * Copyright (C) 1996 Thomas K. Dyas (tdyas@eden.rutgers.edu)&n; *&n; * This is a little driver that lets a user-level program access&n; * the SPARC Mostek real time clock chip. It is no use unless you&n; * use the modified clock utility.&n; *&n; * Get the modified clock utility from:&n; *   ftp://vger.kernel.org/pub/linux/Sparc/userland/clock.c&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -391,7 +391,10 @@ op_amp
 id|rtc_tm
 )paren
 suffix:semicolon
-id|copy_to_user_ret
+r_if
+c_cond
+(paren
+id|copy_to_user
 c_func
 (paren
 (paren
@@ -409,10 +412,11 @@ r_sizeof
 r_struct
 id|rtc_time
 )paren
-comma
+)paren
+)paren
+r_return
 op_minus
 id|EFAULT
-)paren
 suffix:semicolon
 r_return
 l_int|0
@@ -434,7 +438,10 @@ r_return
 op_minus
 id|EPERM
 suffix:semicolon
-id|copy_from_user_ret
+r_if
+c_cond
+(paren
+id|copy_from_user
 c_func
 (paren
 op_amp
@@ -452,10 +459,11 @@ r_sizeof
 r_struct
 id|rtc_time
 )paren
-comma
+)paren
+)paren
+r_return
 op_minus
 id|EFAULT
-)paren
 suffix:semicolon
 id|set_rtc_time
 c_func

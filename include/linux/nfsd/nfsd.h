@@ -12,6 +12,7 @@ macro_line|#include &lt;linux/nfsd/nfsfh.h&gt;
 macro_line|#include &lt;linux/nfsd/export.h&gt;
 macro_line|#include &lt;linux/nfsd/auth.h&gt;
 macro_line|#include &lt;linux/nfsd/stats.h&gt;
+macro_line|#include &lt;linux/nfsd/interface.h&gt;
 multiline_comment|/*&n; * nfsd version&n; */
 DECL|macro|NFSD_VERSION
 mdefine_line|#define NFSD_VERSION&t;&t;&quot;0.5&quot;

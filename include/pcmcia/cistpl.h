@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * cistpl.h 1.32 2000/01/11 19:06:50&n; *&n; * The contents of this file are subject to the Mozilla Public License&n; * Version 1.1 (the &quot;License&quot;); you may not use this file except in&n; * compliance with the License. You may obtain a copy of the License&n; * at http://www.mozilla.org/MPL/&n; *&n; * Software distributed under the License is distributed on an &quot;AS IS&quot;&n; * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See&n; * the License for the specific language governing rights and&n; * limitations under the License. &n; *&n; * The initial developer of the original code is David A. Hinds&n; * &lt;dhinds@pcmcia.sourceforge.org&gt;.  Portions created by David A. Hinds&n; * are Copyright (C) 1999 David A. Hinds.  All Rights Reserved.&n; *&n; * Alternatively, the contents of this file may be used under the&n; * terms of the GNU Public License version 2 (the &quot;GPL&quot;), in which&n; * case the provisions of the GPL are applicable instead of the&n; * above.  If you wish to allow the use of your version of this file&n; * only under the terms of the GPL and not to allow others to use&n; * your version of this file under the MPL, indicate your decision by&n; * deleting the provisions above and replace them with the notice and&n; * other provisions required by the GPL.  If you do not delete the&n; * provisions above, a recipient may use your version of this file&n; * under either the MPL or the GPL.&n; */
+multiline_comment|/*&n; * cistpl.h 1.34 2000/06/19 23:18:12&n; *&n; * The contents of this file are subject to the Mozilla Public License&n; * Version 1.1 (the &quot;License&quot;); you may not use this file except in&n; * compliance with the License. You may obtain a copy of the License&n; * at http://www.mozilla.org/MPL/&n; *&n; * Software distributed under the License is distributed on an &quot;AS IS&quot;&n; * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See&n; * the License for the specific language governing rights and&n; * limitations under the License. &n; *&n; * The initial developer of the original code is David A. Hinds&n; * &lt;dahinds@users.sourceforge.net&gt;.  Portions created by David A. Hinds&n; * are Copyright (C) 1999 David A. Hinds.  All Rights Reserved.&n; *&n; * Alternatively, the contents of this file may be used under the&n; * terms of the GNU Public License version 2 (the &quot;GPL&quot;), in which&n; * case the provisions of the GPL are applicable instead of the&n; * above.  If you wish to allow the use of your version of this file&n; * only under the terms of the GPL and not to allow others to use&n; * your version of this file under the MPL, indicate your decision by&n; * deleting the provisions above and replace them with the notice and&n; * other provisions required by the GPL.  If you do not delete the&n; * provisions above, a recipient may use your version of this file&n; * under either the MPL or the GPL.&n; */
 macro_line|#ifndef _LINUX_CISTPL_H
 DECL|macro|_LINUX_CISTPL_H
 mdefine_line|#define _LINUX_CISTPL_H
@@ -77,6 +77,8 @@ DECL|macro|CISTPL_DATE
 mdefine_line|#define CISTPL_DATE&t;&t;0x44
 DECL|macro|CISTPL_BATTERY
 mdefine_line|#define CISTPL_BATTERY&t;&t;0x45
+DECL|macro|CISTPL_FORMAT_A
+mdefine_line|#define CISTPL_FORMAT_A&t;&t;0x47
 multiline_comment|/* Layer 3 tuples */
 DECL|macro|CISTPL_ORG
 mdefine_line|#define CISTPL_ORG&t;&t;0x46
@@ -1339,6 +1341,43 @@ DECL|macro|CISTPL_ORG_APPSPEC
 mdefine_line|#define CISTPL_ORG_APPSPEC&t;0x01
 DECL|macro|CISTPL_ORG_XIP
 mdefine_line|#define CISTPL_ORG_XIP&t;&t;0x02
+DECL|struct|cistpl_format_t
+r_typedef
+r_struct
+id|cistpl_format_t
+(brace
+DECL|member|type
+id|u_char
+id|type
+suffix:semicolon
+DECL|member|edc
+id|u_char
+id|edc
+suffix:semicolon
+DECL|member|offset
+id|u_int
+id|offset
+suffix:semicolon
+DECL|member|length
+id|u_int
+id|length
+suffix:semicolon
+DECL|typedef|cistpl_format_t
+)brace
+id|cistpl_format_t
+suffix:semicolon
+DECL|macro|CISTPL_FORMAT_DISK
+mdefine_line|#define CISTPL_FORMAT_DISK&t;0x00
+DECL|macro|CISTPL_FORMAT_MEM
+mdefine_line|#define CISTPL_FORMAT_MEM&t;0x01
+DECL|macro|CISTPL_EDC_NONE
+mdefine_line|#define CISTPL_EDC_NONE&t;&t;0x00
+DECL|macro|CISTPL_EDC_CKSUM
+mdefine_line|#define CISTPL_EDC_CKSUM&t;0x01
+DECL|macro|CISTPL_EDC_CRC
+mdefine_line|#define CISTPL_EDC_CRC&t;&t;0x02
+DECL|macro|CISTPL_EDC_PCC
+mdefine_line|#define CISTPL_EDC_PCC&t;&t;0x03
 DECL|union|cisparse_t
 r_typedef
 r_union
@@ -1411,6 +1450,10 @@ suffix:semicolon
 DECL|member|org
 id|cistpl_org_t
 id|org
+suffix:semicolon
+DECL|member|format
+id|cistpl_format_t
+id|format
 suffix:semicolon
 DECL|typedef|cisparse_t
 )brace

@@ -199,10 +199,6 @@ macro_line|#ifndef __PUT_USER
 DECL|macro|__PUT_USER
 mdefine_line|#define __PUT_USER               __put_user
 macro_line|#endif
-macro_line|#ifndef PUT_USER_RET
-DECL|macro|PUT_USER_RET
-mdefine_line|#define PUT_USER_RET             put_user_ret
-macro_line|#endif
 macro_line|#ifndef GET_USER
 DECL|macro|GET_USER
 mdefine_line|#define GET_USER                 get_user
@@ -210,10 +206,6 @@ macro_line|#endif
 macro_line|#ifndef __GET_USER
 DECL|macro|__GET_USER
 mdefine_line|#define __GET_USER               __get_user
-macro_line|#endif
-macro_line|#ifndef GET_USER_RET
-DECL|macro|GET_USER_RET
-mdefine_line|#define GET_USER_RET             get_user_ret
 macro_line|#endif
 multiline_comment|/*&n;    * Lock macros&n;    */
 DECL|macro|IPS_SCB_LOCK

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;NET/ROM release 007&n; *&n; *&t;This code REQUIRES 2.1.15 or higher/ NET3.038&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;History&n; *&t;NET/ROM 001&t;Jonathan(G4KLX)&t;Cloned from the AX25 code.&n; *&t;NET/ROM 002&t;Darryl(G7LED)&t;Fixes and address enhancement.&n; *&t;&t;&t;Jonathan(G4KLX)&t;Complete bind re-think.&n; *&t;&t;&t;Alan(GW4PTS)&t;Trivial tweaks into new format.&n; *&t;NET/ROM&t;003&t;Jonathan(G4KLX)&t;Added G8BPQ extensions.&n; *&t;&t;&t;&t;&t;Added NET/ROM routing ioctl.&n; *&t;&t;&t;Darryl(G7LED)&t;Fix autobinding (on connect).&n; *&t;&t;&t;&t;&t;Fixed nr_release(), set TCP_CLOSE, wakeup app&n; *&t;&t;&t;&t;&t;context, THEN make the sock dead.&n; *&t;&t;&t;&t;&t;Circuit ID check before allocating it on&n; *&t;&t;&t;&t;&t;a connection.&n; *&t;&t;&t;Alan(GW4PTS)&t;sendmsg/recvmsg only. Fixed connect clear bug&n; *&t;&t;&t;&t;&t;inherited from AX.25&n; *&t;NET/ROM 004&t;Jonathan(G4KLX)&t;Converted to module.&n; *&t;NET/ROM 005&t;Jonathan(G4KLX) Linux 2.1&n; *&t;&t;&t;Alan(GW4PTS)&t;Started POSIXisms&n; *&t;NET/ROM 006&t;Alan(GW4PTS)&t;Brought in line with the ANK changes&n; *&t;&t;&t;Jonathan(G4KLX)&t;Removed hdrincl.&n; *&t;NET/ROM 007&t;Jonathan(G4KLX)&t;New timer architecture.&n; *&t;&t;&t;&t;&t;Impmented Idle timer.&n; */
+multiline_comment|/*&n; *&t;NET/ROM release 007&n; *&n; *&t;This code REQUIRES 2.1.15 or higher/ NET3.038&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;History&n; *&t;NET/ROM 001&t;Jonathan(G4KLX)&t;Cloned from the AX25 code.&n; *&t;NET/ROM 002&t;Darryl(G7LED)&t;Fixes and address enhancement.&n; *&t;&t;&t;Jonathan(G4KLX)&t;Complete bind re-think.&n; *&t;&t;&t;Alan(GW4PTS)&t;Trivial tweaks into new format.&n; *&t;NET/ROM&t;003&t;Jonathan(G4KLX)&t;Added G8BPQ extensions.&n; *&t;&t;&t;&t;&t;Added NET/ROM routing ioctl.&n; *&t;&t;&t;Darryl(G7LED)&t;Fix autobinding (on connect).&n; *&t;&t;&t;&t;&t;Fixed nr_release(), set TCP_CLOSE, wakeup app&n; *&t;&t;&t;&t;&t;context, THEN make the sock dead.&n; *&t;&t;&t;&t;&t;Circuit ID check before allocating it on&n; *&t;&t;&t;&t;&t;a connection.&n; *&t;&t;&t;Alan(GW4PTS)&t;sendmsg/recvmsg only. Fixed connect clear bug&n; *&t;&t;&t;&t;&t;inherited from AX.25&n; *&t;NET/ROM 004&t;Jonathan(G4KLX)&t;Converted to module.&n; *&t;NET/ROM 005&t;Jonathan(G4KLX) Linux 2.1&n; *&t;&t;&t;Alan(GW4PTS)&t;Started POSIXisms&n; *&t;NET/ROM 006&t;Alan(GW4PTS)&t;Brought in line with the ANK changes&n; *&t;&t;&t;Jonathan(G4KLX)&t;Removed hdrincl.&n; *&t;NET/ROM 007&t;Jonathan(G4KLX)&t;New timer architecture.&n; *&t;&t;&t;&t;&t;Impmented Idle timer.&n; *&t;&t;&t;Arnaldo C. Melo s/suser/capable/, micro cleanups&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#if defined(CONFIG_NETROM) || defined(CONFIG_NETROM_MODULE)
 macro_line|#include &lt;linux/module.h&gt;
@@ -1468,9 +1468,7 @@ r_return
 op_minus
 id|EFAULT
 suffix:semicolon
-r_if
-c_cond
-(paren
+r_return
 id|copy_to_user
 c_func
 (paren
@@ -1481,12 +1479,11 @@ id|val
 comma
 id|len
 )paren
-)paren
-r_return
+ques
+c_cond
 op_minus
 id|EFAULT
-suffix:semicolon
-r_return
+suffix:colon
 l_int|0
 suffix:semicolon
 )brace
@@ -2209,9 +2206,10 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|suser
+id|capable
 c_func
 (paren
+id|CAP_NET_BIND_SERVICE
 )paren
 )paren
 r_return
@@ -2259,9 +2257,10 @@ c_cond
 id|ax25_uid_policy
 op_logical_and
 op_logical_neg
-id|suser
+id|capable
 c_func
 (paren
+id|CAP_NET_BIND_SERVICE
 )paren
 )paren
 r_return
@@ -2521,9 +2520,10 @@ c_cond
 id|ax25_uid_policy
 op_logical_and
 op_logical_neg
-id|suser
+id|capable
 c_func
 (paren
+id|CAP_NET_ADMIN
 )paren
 )paren
 r_return
@@ -4259,9 +4259,7 @@ id|amount
 op_assign
 l_int|0
 suffix:semicolon
-r_if
-c_cond
-(paren
+r_return
 id|put_user
 c_func
 (paren
@@ -4273,13 +4271,6 @@ op_star
 )paren
 id|arg
 )paren
-)paren
-r_return
-op_minus
-id|EFAULT
-suffix:semicolon
-r_return
-l_int|0
 suffix:semicolon
 )brace
 r_case
@@ -4317,9 +4308,7 @@ id|amount
 op_assign
 id|skb-&gt;len
 suffix:semicolon
-r_if
-c_cond
-(paren
+r_return
 id|put_user
 c_func
 (paren
@@ -4331,13 +4320,6 @@ op_star
 )paren
 id|arg
 )paren
-)paren
-r_return
-op_minus
-id|EFAULT
-suffix:semicolon
-r_return
-l_int|0
 suffix:semicolon
 )brace
 r_case
@@ -4362,9 +4344,7 @@ r_return
 op_minus
 id|ENOENT
 suffix:semicolon
-r_if
-c_cond
-(paren
+r_return
 id|copy_to_user
 c_func
 (paren
@@ -4383,12 +4363,11 @@ r_struct
 id|timeval
 )paren
 )paren
-)paren
-r_return
+ques
+c_cond
 op_minus
 id|EFAULT
-suffix:semicolon
-r_return
+suffix:colon
 l_int|0
 suffix:semicolon
 )brace
@@ -4443,9 +4422,10 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|suser
+id|capable
 c_func
 (paren
+id|CAP_NET_ADMIN
 )paren
 )paren
 r_return

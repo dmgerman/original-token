@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: atyfb.c,v 1.146 2000/07/26 23:02:51 davem Exp $&n; *  linux/drivers/video/atyfb.c -- Frame buffer device for ATI Mach64&n; *&n; *&t;Copyright (C) 1997-1998  Geert Uytterhoeven&n; *&t;Copyright (C) 1998  Bernd Harries&n; *&t;Copyright (C) 1998  Eddie C. Dost  (ecd@skynet.be)&n; *&n; *  This driver is partly based on the PowerMac console driver:&n; *&n; *&t;Copyright (C) 1996 Paul Mackerras&n; *&n; *  and on the PowerMac ATI/mach64 display driver:&n; *&n; *&t;Copyright (C) 1997 Michael AK Tesch&n; *&n; *&t;      with work by Jon Howell&n; *&t;&t;&t;   Harry AC Eaton&n; *&t;&t;&t;   Anthony Tong &lt;atong@uiuc.edu&gt;&n; *&n; *  This file is subject to the terms and conditions of the GNU General Public&n; *  License. See the file COPYING in the main directory of this archive for&n; *  more details.&n; */
+multiline_comment|/*  $Id: atyfb.c,v 1.147 2000/08/29 07:01:56 davem Exp $&n; *  linux/drivers/video/atyfb.c -- Frame buffer device for ATI Mach64&n; *&n; *&t;Copyright (C) 1997-1998  Geert Uytterhoeven&n; *&t;Copyright (C) 1998  Bernd Harries&n; *&t;Copyright (C) 1998  Eddie C. Dost  (ecd@skynet.be)&n; *&n; *  This driver is partly based on the PowerMac console driver:&n; *&n; *&t;Copyright (C) 1996 Paul Mackerras&n; *&n; *  and on the PowerMac ATI/mach64 display driver:&n; *&n; *&t;Copyright (C) 1997 Michael AK Tesch&n; *&n; *&t;      with work by Jon Howell&n; *&t;&t;&t;   Harry AC Eaton&n; *&t;&t;&t;   Anthony Tong &lt;atong@uiuc.edu&gt;&n; *&n; *  This file is subject to the terms and conditions of the GNU General Public&n; *  License. See the file COPYING in the main directory of this archive for&n; *  more details.&n; */
 multiline_comment|/******************************************************************************&n;&n;  TODO:&n;&n;    - cursor support on all cards and all ramdacs.&n;    - cursor parameters controlable via ioctl()s.&n;    - guess PLL and MCLK based on the original PLL register values initialized&n;      by the BIOS or Open Firmware (if they are initialized).&n;&n;&t;&t;&t;&t;&t;&t;(Anyone to help with this?)&n;&n;******************************************************************************/
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
@@ -14976,7 +14976,10 @@ id|fbtyp.fb_size
 op_assign
 id|info-&gt;total_vram
 suffix:semicolon
-id|copy_to_user_ret
+r_if
+c_cond
+(paren
+id|copy_to_user
 c_func
 (paren
 (paren
@@ -14993,10 +14996,11 @@ r_sizeof
 (paren
 id|fbtyp
 )paren
-comma
+)paren
+)paren
+r_return
 op_minus
 id|EFAULT
-)paren
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -15109,7 +15113,10 @@ l_int|16
 op_amp
 l_int|0x7ff
 suffix:semicolon
-id|copy_to_user_ret
+r_if
+c_cond
+(paren
+id|copy_to_user
 c_func
 (paren
 (paren
@@ -15126,10 +15133,11 @@ r_sizeof
 (paren
 id|clk
 )paren
-comma
+)paren
+)paren
+r_return
 op_minus
 id|EFAULT
-)paren
 suffix:semicolon
 )brace
 r_else
@@ -15170,7 +15178,10 @@ op_assign
 op_amp
 id|info-&gt;current_par.pll.ct
 suffix:semicolon
-id|copy_from_user_ret
+r_if
+c_cond
+(paren
+id|copy_from_user
 c_func
 (paren
 op_amp
@@ -15187,10 +15198,11 @@ r_sizeof
 (paren
 id|clk
 )paren
-comma
+)paren
+)paren
+r_return
 op_minus
 id|EFAULT
-)paren
 suffix:semicolon
 id|info-&gt;ref_clk_per
 op_assign

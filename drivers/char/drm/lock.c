@@ -973,7 +973,10 @@ c_func
 l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
-id|copy_from_user_ret
+r_if
+c_cond
+(paren
+id|copy_from_user
 c_func
 (paren
 op_amp
@@ -989,10 +992,11 @@ r_sizeof
 (paren
 id|lock
 )paren
-comma
+)paren
+)paren
+r_return
 op_minus
 id|EFAULT
-)paren
 suffix:semicolon
 id|ret
 op_assign

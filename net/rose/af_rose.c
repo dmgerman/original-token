@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;ROSE release 003&n; *&n; *&t;This code REQUIRES 2.1.15 or higher/ NET3.038&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;History&n; *&t;ROSE 001&t;Jonathan(G4KLX)&t;Cloned from af_netrom.c.&n; *&t;&t;&t;Alan(GW4PTS)&t;Hacked up for newer API stuff&n; *&t;&t;&t;Terry (VK2KTJ)&t;Added support for variable length&n; * &t;&t;&t;&t;&t;address masks.&n; *&t;ROSE 002&t;Jonathan(G4KLX)&t;Changed hdrincl to qbitincl.&n; *&t;&t;&t;&t;&t;Added random number facilities entry.&n; *&t;&t;&t;&t;&t;Variable number of ROSE devices.&n; *&t;ROSE 003&t;Jonathan(G4KLX)&t;New timer architecture.&n; *&t;&t;&t;&t;&t;Implemented idle timer.&n; *&t;&t;&t;&t;&t;Added use count to neighbour.&n; *                      Tomi(OH2BNS)    Fixed rose_getname().&n; */
+multiline_comment|/*&n; *&t;ROSE release 003&n; *&n; *&t;This code REQUIRES 2.1.15 or higher/ NET3.038&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;History&n; *&t;ROSE 001&t;Jonathan(G4KLX)&t;Cloned from af_netrom.c.&n; *&t;&t;&t;Alan(GW4PTS)&t;Hacked up for newer API stuff&n; *&t;&t;&t;Terry (VK2KTJ)&t;Added support for variable length&n; * &t;&t;&t;&t;&t;address masks.&n; *&t;ROSE 002&t;Jonathan(G4KLX)&t;Changed hdrincl to qbitincl.&n; *&t;&t;&t;&t;&t;Added random number facilities entry.&n; *&t;&t;&t;&t;&t;Variable number of ROSE devices.&n; *&t;ROSE 003&t;Jonathan(G4KLX)&t;New timer architecture.&n; *&t;&t;&t;&t;&t;Implemented idle timer.&n; *&t;&t;&t;&t;&t;Added use count to neighbour.&n; *                      Tomi(OH2BNS)    Fixed rose_getname().&n; *                      Arnaldo C. Melo s/suser/capable/ + micro cleanups&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#if defined(CONFIG_ROSE) || defined(CONFIG_ROSE_MODULE)
 macro_line|#include &lt;linux/module.h&gt;
@@ -1900,9 +1900,7 @@ r_return
 op_minus
 id|EFAULT
 suffix:semicolon
-r_if
-c_cond
-(paren
+r_return
 id|copy_to_user
 c_func
 (paren
@@ -1913,12 +1911,11 @@ id|val
 comma
 id|len
 )paren
-)paren
-r_return
+ques
+c_cond
 op_minus
 id|EFAULT
-suffix:semicolon
-r_return
+suffix:colon
 l_int|0
 suffix:semicolon
 )brace
@@ -2679,9 +2676,10 @@ c_cond
 id|ax25_uid_policy
 op_logical_and
 op_logical_neg
-id|suser
+id|capable
 c_func
 (paren
+id|CAP_NET_BIND_SERVICE
 )paren
 )paren
 r_return
@@ -5295,9 +5293,7 @@ id|amount
 op_assign
 l_int|0
 suffix:semicolon
-r_if
-c_cond
-(paren
+r_return
 id|put_user
 c_func
 (paren
@@ -5310,13 +5306,6 @@ op_star
 )paren
 id|arg
 )paren
-)paren
-r_return
-op_minus
-id|EFAULT
-suffix:semicolon
-r_return
-l_int|0
 suffix:semicolon
 )brace
 r_case
@@ -5354,9 +5343,7 @@ id|amount
 op_assign
 id|skb-&gt;len
 suffix:semicolon
-r_if
-c_cond
-(paren
+r_return
 id|put_user
 c_func
 (paren
@@ -5369,13 +5356,6 @@ op_star
 )paren
 id|arg
 )paren
-)paren
-r_return
-op_minus
-id|EFAULT
-suffix:semicolon
-r_return
-l_int|0
 suffix:semicolon
 )brace
 r_case
@@ -5400,9 +5380,7 @@ r_return
 op_minus
 id|ENOENT
 suffix:semicolon
-r_if
-c_cond
-(paren
+r_return
 id|copy_to_user
 c_func
 (paren
@@ -5421,12 +5399,11 @@ r_struct
 id|timeval
 )paren
 )paren
-)paren
-r_return
+ques
+c_cond
 op_minus
 id|EFAULT
-suffix:semicolon
-r_return
+suffix:colon
 l_int|0
 suffix:semicolon
 )brace
@@ -5520,9 +5497,7 @@ id|rose_cause.diagnostic
 op_assign
 id|sk-&gt;protinfo.rose-&gt;diagnostic
 suffix:semicolon
-r_if
-c_cond
-(paren
+r_return
 id|copy_to_user
 c_func
 (paren
@@ -5541,12 +5516,11 @@ r_struct
 id|rose_cause_struct
 )paren
 )paren
-)paren
-r_return
+ques
+c_cond
 op_minus
 id|EFAULT
-suffix:semicolon
-r_return
+suffix:colon
 l_int|0
 suffix:semicolon
 )brace
@@ -5603,9 +5577,10 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|suser
+id|capable
 c_func
 (paren
+id|CAP_NET_ADMIN
 )paren
 )paren
 r_return
@@ -5691,9 +5666,7 @@ suffix:semicolon
 r_case
 id|SIOCRSGL2CALL
 suffix:colon
-r_if
-c_cond
-(paren
+r_return
 id|copy_to_user
 c_func
 (paren
@@ -5711,12 +5684,11 @@ r_sizeof
 id|ax25_address
 )paren
 )paren
-)paren
-r_return
+ques
+c_cond
 op_minus
 id|EFAULT
-suffix:semicolon
-r_return
+suffix:colon
 l_int|0
 suffix:semicolon
 r_case

@@ -80,15 +80,6 @@ DECL|macro|__put_user
 mdefine_line|#define __put_user(x,ptr) &bslash;&n;&t;__put_user_nocheck((__typeof__(*(ptr)))(x),(ptr),sizeof(*(ptr)))
 DECL|macro|__get_user
 mdefine_line|#define __get_user(x,ptr) &bslash;&n;&t;__get_user_nocheck((__typeof__(*(ptr)))(x),(ptr),sizeof(*(ptr)))
-multiline_comment|/*&n; * The &quot;xxx_ret&quot; versions return constant specified in third argument, if&n; * something bad happens. These macros can be optimized for the&n; * case of just returning from the function xxx_ret is used.&n; */
-DECL|macro|put_user_ret
-mdefine_line|#define put_user_ret(x,ptr,ret) ({ if (put_user(x,ptr)) return ret; })
-DECL|macro|get_user_ret
-mdefine_line|#define get_user_ret(x,ptr,ret) ({ if (get_user(x,ptr)) return ret; })
-DECL|macro|__put_user_ret
-mdefine_line|#define __put_user_ret(x,ptr,ret) ({ if (__put_user(x,ptr)) return ret; })
-DECL|macro|__get_user_ret
-mdefine_line|#define __get_user_ret(x,ptr,ret) ({ if (__get_user(x,ptr)) return ret; })
 DECL|struct|__large_struct
 DECL|member|buf
 r_struct
@@ -141,10 +132,6 @@ macro_line|#else
 DECL|macro|__MODULE_JAL
 mdefine_line|#define __MODULE_JAL(destination) &bslash;&n;&t;&quot;jal&bslash;t&quot; #destination &quot;&bslash;n&bslash;t&quot;
 macro_line|#endif
-DECL|macro|copy_to_user_ret
-mdefine_line|#define copy_to_user_ret(to,from,n,retval) ({ &bslash;&n;if (copy_to_user(to,from,n)) &bslash;&n;        return retval; &bslash;&n;})
-DECL|macro|copy_from_user_ret
-mdefine_line|#define copy_from_user_ret(to,from,n,retval) ({ &bslash;&n;if (copy_from_user(to,from,n)) &bslash;&n;        return retval; &bslash;&n;})
 r_extern
 r_int
 id|__copy_user

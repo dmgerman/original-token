@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      netwave_cs.c&n; * Version:       0.4.1&n; * Description:   Netwave AirSurfer Wireless LAN PC Card driver&n; * Status:        Experimental.&n; * Authors:       John Markus Bj&#xfffd;rndalen &lt;johnm@cs.uit.no&gt;&n; *                Dag Brattli &lt;dagb@cs.uit.no&gt;&n; *                David Hinds &lt;dhinds@pcmcia.sourceforge.org&gt;&n; * Created at:    A long time ago!&n; * Modified at:   Mon Nov 10 11:54:37 1997&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1997 University of Troms&#xfffd;, Norway&n; *&n; * Revision History:&n; *&n; *   08-Nov-97 15:14:47   John Markus Bj&#xfffd;rndalen &lt;johnm@cs.uit.no&gt;&n; *    - Fixed some bugs in netwave_rx and cleaned it up a bit. &n; *      (One of the bugs would have destroyed packets when receiving&n; *      multiple packets per interrupt). &n; *    - Cleaned up parts of newave_hw_xmit. &n; *    - A few general cleanups. &n; *   24-Oct-97 13:17:36   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; *    - Fixed netwave_rx receive function (got updated docs)&n; *   Others:&n; *    - Changed name from xircnw to netwave, take a look at &n; *      http://www.netwave-wireless.com&n; *    - Some reorganizing of the code&n; *    - Removed possible race condition between interrupt handler and transmit&n; *      function&n; *    - Started to add wireless extensions, but still needs some coding&n; *    - Added watchdog for better handling of transmission timeouts &n; *      (hopefully this works better)&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      netwave_cs.c&n; * Version:       0.4.1&n; * Description:   Netwave AirSurfer Wireless LAN PC Card driver&n; * Status:        Experimental.&n; * Authors:       John Markus Bj&#xfffd;rndalen &lt;johnm@cs.uit.no&gt;&n; *                Dag Brattli &lt;dagb@cs.uit.no&gt;&n; *                David Hinds &lt;dahinds@users.sourceforge.net&gt;&n; * Created at:    A long time ago!&n; * Modified at:   Mon Nov 10 11:54:37 1997&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1997 University of Troms&#xfffd;, Norway&n; *&n; * Revision History:&n; *&n; *   08-Nov-97 15:14:47   John Markus Bj&#xfffd;rndalen &lt;johnm@cs.uit.no&gt;&n; *    - Fixed some bugs in netwave_rx and cleaned it up a bit. &n; *      (One of the bugs would have destroyed packets when receiving&n; *      multiple packets per interrupt). &n; *    - Cleaned up parts of newave_hw_xmit. &n; *    - A few general cleanups. &n; *   24-Oct-97 13:17:36   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; *    - Fixed netwave_rx receive function (got updated docs)&n; *   Others:&n; *    - Changed name from xircnw to netwave, take a look at &n; *      http://www.netwave-wireless.com&n; *    - Some reorganizing of the code&n; *    - Removed possible race condition between interrupt handler and transmit&n; *      function&n; *    - Started to add wireless extensions, but still needs some coding&n; *    - Added watchdog for better handling of transmission timeouts &n; *      (hopefully this works better)&n; ********************************************************************/
 multiline_comment|/* To have statistics (just packets sent) define this */
 DECL|macro|NETWAVE_STATS
 macro_line|#undef NETWAVE_STATS
@@ -26,7 +26,7 @@ macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#ifdef CONFIG_NET_PCMCIA_RADIO
 macro_line|#include &lt;linux/wireless.h&gt;
-macro_line|#endif&t;/* CONFIG_NET_PCMCIA_RADIO */
+macro_line|#endif
 macro_line|#include &lt;pcmcia/version.h&gt;
 macro_line|#include &lt;pcmcia/cs_types.h&gt;
 macro_line|#include &lt;pcmcia/cs.h&gt;
@@ -132,9 +132,7 @@ mdefine_line|#define NETWAVE_ASR_RXRDY   0x80
 DECL|macro|NETWAVE_ASR_TXBA
 mdefine_line|#define NETWAVE_ASR_TXBA    0x01
 DECL|macro|TX_TIMEOUT
-mdefine_line|#define TX_TIMEOUT  20
-DECL|macro|WATCHDOG_JIFFIES
-mdefine_line|#define WATCHDOG_JIFFIES 32
+mdefine_line|#define TX_TIMEOUT&t;&t;((32*HZ)/100)
 DECL|variable|imrConfRFU1
 r_static
 r_const
@@ -275,13 +273,6 @@ op_assign
 l_int|0x01
 suffix:semicolon
 multiline_comment|/* Loopback mode */
-DECL|variable|netwave_debug
-r_static
-r_int
-id|netwave_debug
-op_assign
-l_int|0
-suffix:semicolon
 multiline_comment|/*&n;   All the PCMCIA modules use PCMCIA_DEBUG to control debugging.  If&n;   you do not define PCMCIA_DEBUG at all, all the debug code will be&n;   left out.  If you compile with PCMCIA_DEBUG=0, the debug code will&n;   be present but disabled -- but it can then be enabled for specific&n;   modules at load time with a &squot;pc_debug=#&squot; option to insmod.&n;*/
 macro_line|#ifdef PCMCIA_DEBUG
 DECL|variable|pc_debug
@@ -542,16 +533,6 @@ op_star
 id|map
 )paren
 suffix:semicolon
-r_static
-r_void
-id|netwave_tx_timeout
-(paren
-r_struct
-id|net_device
-op_star
-id|dev
-)paren
-suffix:semicolon
 multiline_comment|/* Packet transmission and Packet reception */
 r_static
 r_int
@@ -604,10 +585,11 @@ r_void
 id|netwave_watchdog
 c_func
 (paren
-id|u_long
+r_struct
+id|net_device
+op_star
 )paren
 suffix:semicolon
-multiline_comment|/* Transmission watchdog */
 multiline_comment|/* Statistics */
 r_static
 r_void
@@ -806,10 +788,6 @@ suffix:semicolon
 DECL|member|lastExec
 r_int
 id|lastExec
-suffix:semicolon
-DECL|member|lock
-id|spinlock_t
-id|lock
 suffix:semicolon
 DECL|member|watchdog
 r_struct
@@ -1202,23 +1180,6 @@ id|priv-&gt;iw_stats
 suffix:semicolon
 )brace
 macro_line|#endif
-multiline_comment|/*&n; * Function netwave_init (dev)&n; *&n; *    We never need to do anything when a device is &quot;initialized&quot;&n; *    by the net software, because we only register already-found cards.&n; */
-DECL|function|netwave_init
-r_int
-id|netwave_init
-c_func
-(paren
-r_struct
-id|net_device
-op_star
-id|dev
-)paren
-(brace
-multiline_comment|/* We do all the initialization of this in netwave_attach instead */
-r_return
-l_int|0
-suffix:semicolon
-)brace
 multiline_comment|/*&n; * Function netwave_attach (void)&n; *&n; *     Creates an &quot;instance&quot; of the driver, allocating local data &n; *     structures for one device.  The device is registered with Card &n; *     Services.&n; *&n; *     The dev_link structure is initialized, but we don&squot;t actually&n; *     configure the card at this point -- we wait until we receive a&n; *     card insertion event.&n; */
 DECL|function|netwave_attach
 r_static
@@ -1302,10 +1263,6 @@ op_star
 id|priv
 )paren
 )paren
-suffix:semicolon
-id|priv-&gt;lock
-op_assign
-id|SPIN_LOCK_UNLOCKED
 suffix:semicolon
 id|link
 op_assign
@@ -1427,20 +1384,6 @@ id|link-&gt;conf.Present
 op_assign
 id|PRESENT_OPTION
 suffix:semicolon
-multiline_comment|/* Set the watchdog timer */
-id|priv-&gt;watchdog.function
-op_assign
-op_amp
-id|netwave_watchdog
-suffix:semicolon
-id|priv-&gt;watchdog.data
-op_assign
-(paren
-r_int
-r_int
-)paren
-id|dev
-suffix:semicolon
 multiline_comment|/* Netwave specific entries in the device structure */
 id|dev-&gt;hard_start_xmit
 op_assign
@@ -1475,24 +1418,20 @@ op_assign
 op_amp
 id|netwave_ioctl
 suffix:semicolon
+id|dev-&gt;tx_timeout
+op_assign
+op_amp
+id|netwave_watchdog
+suffix:semicolon
+id|dev-&gt;watchdog_timeo
+op_assign
+id|TX_TIMEOUT
+suffix:semicolon
 id|ether_setup
 c_func
 (paren
 id|dev
 )paren
-suffix:semicolon
-id|strcpy
-c_func
-(paren
-id|dev-&gt;name
-comma
-id|priv-&gt;node.dev_name
-)paren
-suffix:semicolon
-id|dev-&gt;init
-op_assign
-op_amp
-id|netwave_init
 suffix:semicolon
 id|dev-&gt;open
 op_assign
@@ -1503,19 +1442,6 @@ id|dev-&gt;stop
 op_assign
 op_amp
 id|netwave_close
-suffix:semicolon
-id|dev-&gt;tx_timeout
-op_assign
-id|netwave_tx_timeout
-suffix:semicolon
-id|dev-&gt;watchdog_timeo
-op_assign
-id|TX_TIMEOUT
-suffix:semicolon
-id|netif_start_queue
-(paren
-id|dev
-)paren
 suffix:semicolon
 id|link-&gt;irq.Instance
 op_assign
@@ -1638,9 +1564,6 @@ op_star
 op_star
 id|linkp
 suffix:semicolon
-r_int
-id|flags
-suffix:semicolon
 id|DEBUG
 c_func
 (paren
@@ -1651,20 +1574,7 @@ comma
 id|link
 )paren
 suffix:semicolon
-id|save_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|link-&gt;state
-op_amp
-id|DEV_RELEASE_PENDING
-)paren
-(brace
+multiline_comment|/*&n;&t;  If the device is currently configured and active, we won&squot;t&n;&t;  actually delete it yet.  Instead, it is marked so that when&n;&t;  the release() function is called, that will trigger a proper&n;&t;  detach().&n;&t;*/
 id|del_timer
 c_func
 (paren
@@ -1672,24 +1582,6 @@ op_amp
 id|link-&gt;release
 )paren
 suffix:semicolon
-id|link-&gt;state
-op_and_assign
-op_complement
-id|DEV_RELEASE_PENDING
-suffix:semicolon
-)brace
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
-id|restore_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-multiline_comment|/*&n;&t;  If the device is currently configured and active, we won&squot;t&n;&t;  actually delete it yet.  Instead, it is marked so that when&n;&t;  the release() function is called, that will trigger a proper&n;&t;  detach().&n;&t;*/
 r_if
 c_cond
 (paren
@@ -2801,8 +2693,6 @@ id|parse
 suffix:semicolon
 r_int
 id|i
-op_assign
-l_int|0
 comma
 id|j
 comma
@@ -2919,6 +2809,8 @@ multiline_comment|/*&n;     *  Try allocating IO ports.  This tries a few fixed 
 r_for
 c_loop
 (paren
+id|i
+op_assign
 id|j
 op_assign
 l_int|0x0
@@ -3107,11 +2999,6 @@ id|dev-&gt;base_addr
 op_assign
 id|link-&gt;io.BasePort1
 suffix:semicolon
-id|netif_start_queue
-(paren
-id|dev
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -3135,23 +3022,23 @@ r_goto
 id|failed
 suffix:semicolon
 )brace
-id|link-&gt;state
-op_and_assign
-op_complement
-id|DEV_CONFIG_PENDING
+id|strcpy
+c_func
+(paren
+id|priv-&gt;node.dev_name
+comma
+id|dev-&gt;name
+)paren
 suffix:semicolon
 id|link-&gt;dev
 op_assign
 op_amp
-(paren
-(paren
-id|netwave_private
-op_star
-)paren
-id|dev-&gt;priv
-)paren
-op_member_access_from_pointer
-id|node
+id|priv-&gt;node
+suffix:semicolon
+id|link-&gt;state
+op_and_assign
+op_complement
+id|DEV_CONFIG_PENDING
 suffix:semicolon
 multiline_comment|/* Reset card before reading physical address */
 id|netwave_doreset
@@ -3324,8 +3211,6 @@ id|u_long
 id|link
 )paren
 suffix:semicolon
-r_return
-suffix:semicolon
 )brace
 multiline_comment|/* netwave_pcmcia_config */
 multiline_comment|/*&n; * Function netwave_release (arg)&n; *&n; *    After a card is removed, netwave_release() will unregister the net&n; *    device, and release the PCMCIA configuration.  If the device is&n; *    still open, this will be postponed until it is closed.&n; */
@@ -3446,8 +3331,6 @@ op_complement
 (paren
 id|DEV_CONFIG
 op_or
-id|DEV_RELEASE_PENDING
-op_or
 id|DEV_STALE_CONFIG
 )paren
 suffix:semicolon
@@ -3542,17 +3425,17 @@ c_func
 id|dev
 )paren
 suffix:semicolon
-id|link-&gt;release.expires
-op_assign
-id|jiffies
-op_plus
-l_int|5
-suffix:semicolon
-id|add_timer
+id|mod_timer
 c_func
 (paren
 op_amp
 id|link-&gt;release
+comma
+id|jiffies
+op_plus
+id|HZ
+op_div
+l_int|20
 )paren
 suffix:semicolon
 )brace
@@ -3776,14 +3659,6 @@ suffix:semicolon
 id|priv-&gt;timeoutCounter
 op_assign
 l_int|0
-suffix:semicolon
-multiline_comment|/* If watchdog was activated, kill it ! */
-id|del_timer
-c_func
-(paren
-op_amp
-id|priv-&gt;watchdog
-)paren
 suffix:semicolon
 multiline_comment|/* Reset card */
 id|netwave_doreset
@@ -4273,6 +4148,12 @@ comma
 id|dev-&gt;name
 )paren
 suffix:semicolon
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 r_return
 l_int|1
 suffix:semicolon
@@ -4504,34 +4385,6 @@ op_plus
 l_int|3
 )paren
 suffix:semicolon
-multiline_comment|/* If watchdog not already active, activate it... */
-r_if
-c_cond
-(paren
-op_logical_neg
-id|timer_pending
-c_func
-(paren
-op_amp
-id|priv-&gt;watchdog
-)paren
-)paren
-(brace
-multiline_comment|/* set timer to expire in WATCHDOG_JIFFIES */
-id|priv-&gt;watchdog.expires
-op_assign
-id|jiffies
-op_plus
-id|WATCHDOG_JIFFIES
-suffix:semicolon
-id|add_timer
-c_func
-(paren
-op_amp
-id|priv-&gt;watchdog
-)paren
-suffix:semicolon
-)brace
 id|restore_flags
 c_func
 (paren
@@ -4540,47 +4393,6 @@ id|flags
 suffix:semicolon
 r_return
 l_int|0
-suffix:semicolon
-)brace
-DECL|function|netwave_tx_timeout
-r_static
-r_void
-id|netwave_tx_timeout
-(paren
-r_struct
-id|net_device
-op_star
-id|dev
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|netwave_debug
-OG
-l_int|0
-)paren
-id|printk
-(paren
-id|KERN_DEBUG
-l_string|&quot;%s timed out.&bslash;n&quot;
-comma
-id|dev-&gt;name
-)paren
-suffix:semicolon
-id|netwave_reset
-(paren
-id|dev
-)paren
-suffix:semicolon
-id|dev-&gt;trans_start
-op_assign
-id|jiffies
-suffix:semicolon
-id|netif_start_queue
-(paren
-id|dev
-)paren
 suffix:semicolon
 )brace
 DECL|function|netwave_start_xmit
@@ -4601,18 +4413,12 @@ id|dev
 )paren
 (brace
 multiline_comment|/* This flag indicate that the hardware can&squot;t perform a transmission.&n;&t; * Theoritically, NET3 check it before sending a packet to the driver,&n;&t; * but in fact it never do that and pool continuously.&n;&t; * As the watchdog will abort too long transmissions, we are quite safe...&n;&t; */
-multiline_comment|/* Sending a NULL skb means some higher layer thinks we&squot;ve missed an&n;     * tx-done interrupt. Caution: dev_tint() handles the cli()/sti()&n;     * itself. &n;     */
-multiline_comment|/* Block a timer-based transmit from overlapping. This could &n;     * better be done with atomic_swap(1, dev-&gt;tbusy, but set_bit()&n;     * works as well &n;     */
 id|netif_stop_queue
+c_func
 (paren
 id|dev
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-l_int|1
-)paren
 (brace
 r_int
 id|length
@@ -4651,6 +4457,7 @@ l_int|1
 (brace
 multiline_comment|/* Some error, let&squot;s make them call us another time? */
 id|netif_start_queue
+c_func
 (paren
 id|dev
 )paren
@@ -4731,12 +4538,6 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-(paren
-id|dev
-op_eq
-l_int|NULL
-)paren
-op_logical_or
 op_logical_neg
 id|netif_device_present
 c_func
@@ -4745,12 +4546,6 @@ id|dev
 )paren
 )paren
 r_return
-suffix:semicolon
-id|spin_lock
-(paren
-op_amp
-id|priv-&gt;lock
-)paren
 suffix:semicolon
 id|iobase
 op_assign
@@ -4818,15 +4613,11 @@ r_if
 c_cond
 (paren
 op_logical_neg
+id|DEV_OK
+c_func
 (paren
-id|link-&gt;state
-op_amp
-id|DEV_PRESENT
+id|link
 )paren
-op_logical_or
-id|link-&gt;state
-op_amp
-id|DEV_SUSPEND
 )paren
 (brace
 id|DEBUG
@@ -4834,7 +4625,7 @@ c_func
 (paren
 l_int|1
 comma
-l_string|&quot;netwave_interupt: Interrupt with status 0x%x &quot;
+l_string|&quot;netwave_interrupt: Interrupt with status 0x%x &quot;
 l_string|&quot;from removed or suspended card!&bslash;n&quot;
 comma
 id|status
@@ -5121,30 +4912,16 @@ id|NETWAVE_REG_ASR
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/* If watchdog was activated, kill it ! */
-id|del_timer
-c_func
-(paren
-op_amp
-id|priv-&gt;watchdog
-)paren
-suffix:semicolon
 id|netif_wake_queue
+c_func
 (paren
 id|dev
 )paren
 suffix:semicolon
 )brace
 multiline_comment|/* TxBA, this would trigger on all error packets received */
-multiline_comment|/* if (status &amp; 0x01) {&n;&t;   if (netwave_debug &gt; 3) &n;&t;   printk(KERN_DEBUG &quot;Transmit buffers available, %x&bslash;n&quot;, status); &n;&t;   } &n;&t;   */
+multiline_comment|/* if (status &amp; 0x01) {&n;&t;   DEBUG(4, &quot;Transmit buffers available, %x&bslash;n&quot;, status);&n;&t;   }&n;&t;   */
 )brace
-multiline_comment|/* done.. */
-id|spin_unlock
-(paren
-op_amp
-id|priv-&gt;lock
-)paren
-suffix:semicolon
 )brace
 multiline_comment|/* netwave_interrupt */
 multiline_comment|/*&n; * Function netwave_watchdog (a)&n; *&n; *    Watchdog : when we start a transmission, we set a timer in the&n; *    kernel.  If the transmission complete, this timer is disabled. If&n; *    it expire, we reset the card.&n; *&n; */
@@ -5154,31 +4931,12 @@ r_void
 id|netwave_watchdog
 c_func
 (paren
-id|u_long
-id|a
+r_struct
+id|net_device
+op_star
+id|dev
 )paren
 (brace
-r_struct
-id|net_device
-op_star
-id|dev
-suffix:semicolon
-id|ioaddr_t
-id|iobase
-suffix:semicolon
-id|dev
-op_assign
-(paren
-r_struct
-id|net_device
-op_star
-)paren
-id|a
-suffix:semicolon
-id|iobase
-op_assign
-id|dev-&gt;base_addr
-suffix:semicolon
 id|DEBUG
 c_func
 (paren
@@ -5195,8 +4953,12 @@ c_func
 id|dev
 )paren
 suffix:semicolon
-multiline_comment|/* We are not waiting anymore... */
+id|dev-&gt;trans_start
+op_assign
+id|jiffies
+suffix:semicolon
 id|netif_start_queue
+c_func
 (paren
 id|dev
 )paren
@@ -5850,6 +5612,7 @@ suffix:semicolon
 id|MOD_INC_USE_COUNT
 suffix:semicolon
 id|netif_start_queue
+c_func
 (paren
 id|dev
 )paren
@@ -5901,21 +5664,14 @@ comma
 l_string|&quot;netwave_close: finishing.&bslash;n&quot;
 )paren
 suffix:semicolon
+id|link-&gt;open
+op_decrement
+suffix:semicolon
 id|netif_stop_queue
+c_func
 (paren
 id|dev
 )paren
-suffix:semicolon
-multiline_comment|/* If watchdog was activated, kill it ! */
-id|del_timer
-c_func
-(paren
-op_amp
-id|priv-&gt;watchdog
-)paren
-suffix:semicolon
-id|link-&gt;open
-op_decrement
 suffix:semicolon
 r_if
 c_cond
@@ -5924,25 +5680,19 @@ id|link-&gt;state
 op_amp
 id|DEV_STALE_CONFIG
 )paren
-(brace
-id|link-&gt;release.expires
-op_assign
-id|jiffies
-op_plus
-l_int|5
-suffix:semicolon
-id|link-&gt;state
-op_or_assign
-id|DEV_RELEASE_PENDING
-suffix:semicolon
-id|add_timer
+id|mod_timer
 c_func
 (paren
 op_amp
 id|link-&gt;release
+comma
+id|jiffies
+op_plus
+id|HZ
+op_div
+l_int|20
 )paren
 suffix:semicolon
-)brace
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return

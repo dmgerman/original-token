@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: zs.c,v 1.58 2000/07/06 01:41:38 davem Exp $&n; * zs.c: Zilog serial port driver for the Sparc.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost   (ecd@skynet.be)&n; * Fixes by Pete A. Zaitcev &lt;zaitcev@metabyte.com&gt;.&n; */
+multiline_comment|/* $Id: zs.c,v 1.59 2000/08/29 07:01:55 davem Exp $&n; * zs.c: Zilog serial port driver for the Sparc.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost   (ecd@skynet.be)&n; * Fixes by Pete A. Zaitcev &lt;zaitcev@metabyte.com&gt;.&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -5624,7 +5624,10 @@ id|tmp.custom_divisor
 op_assign
 id|info-&gt;custom_divisor
 suffix:semicolon
-id|copy_to_user_ret
+r_if
+c_cond
+(paren
+id|copy_to_user
 c_func
 (paren
 id|retinfo
@@ -5637,10 +5640,11 @@ r_sizeof
 op_star
 id|retinfo
 )paren
-comma
+)paren
+)paren
+r_return
 op_minus
 id|EFAULT
-)paren
 suffix:semicolon
 r_return
 l_int|0
@@ -5914,16 +5918,20 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|put_user_ret
+r_if
+c_cond
+(paren
+id|put_user
 c_func
 (paren
 id|status
 comma
 id|value
-comma
+)paren
+)paren
+r_return
 op_minus
 id|EFAULT
-)paren
 suffix:semicolon
 r_return
 l_int|0
@@ -6061,16 +6069,20 @@ suffix:colon
 l_int|0
 )paren
 suffix:semicolon
-id|put_user_ret
+r_if
+c_cond
+(paren
+id|put_user
 c_func
 (paren
 id|result
 comma
 id|value
-comma
+)paren
+)paren
+r_return
 op_minus
 id|EFAULT
-)paren
 suffix:semicolon
 r_return
 l_int|0
@@ -6101,16 +6113,20 @@ r_int
 r_int
 id|arg
 suffix:semicolon
-id|get_user_ret
+r_if
+c_cond
+(paren
+id|get_user
 c_func
 (paren
 id|arg
 comma
 id|value
-comma
+)paren
+)paren
+r_return
 op_minus
 id|EFAULT
-)paren
 suffix:semicolon
 r_switch
 c_cond
@@ -6569,7 +6585,10 @@ suffix:semicolon
 r_case
 id|TIOCGSOFTCAR
 suffix:colon
-id|put_user_ret
+r_if
+c_cond
+(paren
+id|put_user
 c_func
 (paren
 id|C_CLOCAL
@@ -6589,10 +6608,11 @@ r_int
 op_star
 )paren
 id|arg
-comma
+)paren
+)paren
+r_return
 op_minus
 id|EFAULT
-)paren
 suffix:semicolon
 r_return
 l_int|0
@@ -6600,7 +6620,10 @@ suffix:semicolon
 r_case
 id|TIOCSSOFTCAR
 suffix:colon
-id|get_user_ret
+r_if
+c_cond
+(paren
+id|get_user
 c_func
 (paren
 id|arg
@@ -6611,10 +6634,11 @@ r_int
 op_star
 )paren
 id|arg
-comma
+)paren
+)paren
+r_return
 op_minus
 id|EFAULT
-)paren
 suffix:semicolon
 id|tty-&gt;termios-&gt;c_cflag
 op_assign
@@ -6736,7 +6760,10 @@ suffix:semicolon
 r_case
 id|TIOCSERGSTRUCT
 suffix:colon
-id|copy_to_user_ret
+r_if
+c_cond
+(paren
+id|copy_to_user
 c_func
 (paren
 (paren
@@ -6753,10 +6780,11 @@ r_sizeof
 r_struct
 id|sun_serial
 )paren
-comma
+)paren
+)paren
+r_return
 op_minus
 id|EFAULT
-)paren
 suffix:semicolon
 r_return
 l_int|0
@@ -8223,7 +8251,7 @@ r_char
 op_star
 id|revision
 op_assign
-l_string|&quot;$Revision: 1.58 $&quot;
+l_string|&quot;$Revision: 1.59 $&quot;
 suffix:semicolon
 r_char
 op_star

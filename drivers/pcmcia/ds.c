@@ -1,4 +1,4 @@
-multiline_comment|/*======================================================================&n;&n;    PC Card Driver Services&n;    &n;    ds.c 1.104 2000/01/11 01:18:02&n;    &n;    The contents of this file are subject to the Mozilla Public&n;    License Version 1.1 (the &quot;License&quot;); you may not use this file&n;    except in compliance with the License. You may obtain a copy of&n;    the License at http://www.mozilla.org/MPL/&n;&n;    Software distributed under the License is distributed on an &quot;AS&n;    IS&quot; basis, WITHOUT WARRANTY OF ANY KIND, either express or&n;    implied. See the License for the specific language governing&n;    rights and limitations under the License.&n;&n;    The initial developer of the original code is David A. Hinds&n;    &lt;dhinds@pcmcia.sourceforge.org&gt;.  Portions created by David A. Hinds&n;    are Copyright (C) 1999 David A. Hinds.  All Rights Reserved.&n;&n;    Alternatively, the contents of this file may be used under the&n;    terms of the GNU Public License version 2 (the &quot;GPL&quot;), in which&n;    case the provisions of the GPL are applicable instead of the&n;    above.  If you wish to allow the use of your version of this file&n;    only under the terms of the GPL and not to allow others to use&n;    your version of this file under the MPL, indicate your decision&n;    by deleting the provisions above and replace them with the notice&n;    and other provisions required by the GPL.  If you do not delete&n;    the provisions above, a recipient may use your version of this&n;    file under either the MPL or the GPL.&n;    &n;======================================================================*/
+multiline_comment|/*======================================================================&n;&n;    PC Card Driver Services&n;    &n;    ds.c 1.108 2000/08/07 19:06:15&n;    &n;    The contents of this file are subject to the Mozilla Public&n;    License Version 1.1 (the &quot;License&quot;); you may not use this file&n;    except in compliance with the License. You may obtain a copy of&n;    the License at http://www.mozilla.org/MPL/&n;&n;    Software distributed under the License is distributed on an &quot;AS&n;    IS&quot; basis, WITHOUT WARRANTY OF ANY KIND, either express or&n;    implied. See the License for the specific language governing&n;    rights and limitations under the License.&n;&n;    The initial developer of the original code is David A. Hinds&n;    &lt;dahinds@users.sourceforge.net&gt;.  Portions created by David A. Hinds&n;    are Copyright (C) 1999 David A. Hinds.  All Rights Reserved.&n;&n;    Alternatively, the contents of this file may be used under the&n;    terms of the GNU Public License version 2 (the &quot;GPL&quot;), in which&n;    case the provisions of the GPL are applicable instead of the&n;    above.  If you wish to allow the use of your version of this file&n;    only under the terms of the GPL and not to allow others to use&n;    your version of this file under the MPL, indicate your decision&n;    by deleting the provisions above and replace them with the notice&n;    and other provisions required by the GPL.  If you do not delete&n;    the provisions above, a recipient may use your version of this&n;    file under either the MPL or the GPL.&n;    &n;======================================================================*/
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
@@ -46,7 +46,7 @@ r_char
 op_star
 id|version
 op_assign
-l_string|&quot;ds.c 1.104 2000/01/11 01:18:02 (David Hinds)&quot;
+l_string|&quot;ds.c 1.108 2000/08/07 19:06:15 (David Hinds)&quot;
 suffix:semicolon
 macro_line|#else
 DECL|macro|DEBUG
@@ -55,7 +55,7 @@ macro_line|#endif
 id|MODULE_AUTHOR
 c_func
 (paren
-l_string|&quot;David Hinds &lt;dhinds@pcmcia.sourceforge.org&gt;&quot;
+l_string|&quot;David Hinds &lt;dahinds@users.sourceforge.net&gt;&quot;
 )paren
 suffix:semicolon
 id|MODULE_DESCRIPTION
@@ -123,6 +123,10 @@ DECL|member|driver
 id|driver_info_t
 op_star
 id|driver
+suffix:semicolon
+DECL|member|function
+id|u_char
+id|function
 suffix:semicolon
 DECL|member|instance
 id|dev_link_t
@@ -1495,9 +1499,17 @@ id|b-&gt;next
 r_if
 c_cond
 (paren
+(paren
 id|driver
 op_eq
 id|b-&gt;driver
+)paren
+op_logical_and
+(paren
+id|bind_info-&gt;function
+op_eq
+id|b-&gt;function
+)paren
 )paren
 r_break
 suffix:semicolon
@@ -1598,6 +1610,10 @@ suffix:semicolon
 id|b-&gt;driver
 op_assign
 id|driver
+suffix:semicolon
+id|b-&gt;function
+op_assign
+id|bind_info-&gt;function
 suffix:semicolon
 id|b-&gt;instance
 op_assign
@@ -1834,6 +1850,7 @@ id|b-&gt;next
 r_if
 c_cond
 (paren
+(paren
 id|strcmp
 c_func
 (paren
@@ -1852,6 +1869,13 @@ id|bind_info-&gt;dev_info
 op_eq
 l_int|0
 )paren
+op_logical_and
+(paren
+id|b-&gt;function
+op_eq
+id|bind_info-&gt;function
+)paren
+)paren
 r_break
 suffix:semicolon
 r_if
@@ -1868,20 +1892,17 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+(paren
 id|b-&gt;instance
 op_eq
 l_int|NULL
 )paren
-r_return
-op_minus
-id|EAGAIN
-suffix:semicolon
-r_if
-c_cond
+op_logical_or
 (paren
 id|b-&gt;instance-&gt;state
 op_amp
 id|DEV_CONFIG_PENDING
+)paren
 )paren
 r_return
 op_minus
@@ -2039,6 +2060,7 @@ id|next
 r_if
 c_cond
 (paren
+(paren
 id|strcmp
 c_func
 (paren
@@ -2061,6 +2083,18 @@ id|bind_info-&gt;dev_info
 )paren
 op_eq
 l_int|0
+)paren
+op_logical_and
+(paren
+(paren
+op_star
+id|b
+)paren
+op_member_access_from_pointer
+id|function
+op_eq
+id|bind_info-&gt;function
+)paren
 )paren
 r_break
 suffix:semicolon

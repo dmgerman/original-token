@@ -5,19 +5,40 @@ macro_line|#include &lt;asm/signal.h&gt;
 macro_line|#include &lt;asm/siginfo.h&gt;
 macro_line|#ifdef __KERNEL__
 multiline_comment|/*&n; * Real Time signals may be queued.&n; */
-DECL|struct|signal_queue
+DECL|struct|sigqueue
 r_struct
-id|signal_queue
+id|sigqueue
 (brace
 DECL|member|next
 r_struct
-id|signal_queue
+id|sigqueue
 op_star
 id|next
 suffix:semicolon
 DECL|member|info
 id|siginfo_t
 id|info
+suffix:semicolon
+)brace
+suffix:semicolon
+DECL|struct|sigpending
+r_struct
+id|sigpending
+(brace
+DECL|member|head
+DECL|member|tail
+r_struct
+id|sigqueue
+op_star
+id|head
+comma
+op_star
+op_star
+id|tail
+suffix:semicolon
+DECL|member|signal
+id|sigset_t
+id|signal
 suffix:semicolon
 )brace
 suffix:semicolon
@@ -644,6 +665,36 @@ suffix:colon
 )brace
 )brace
 macro_line|#endif /* __HAVE_ARCH_SIG_SETOPS */
+DECL|function|init_sigpending
+r_static
+r_inline
+r_void
+id|init_sigpending
+c_func
+(paren
+r_struct
+id|sigpending
+op_star
+id|sig
+)paren
+(brace
+id|sigemptyset
+c_func
+(paren
+op_amp
+id|sig-&gt;signal
+)paren
+suffix:semicolon
+id|sig-&gt;head
+op_assign
+l_int|NULL
+suffix:semicolon
+id|sig-&gt;tail
+op_assign
+op_amp
+id|sig-&gt;head
+suffix:semicolon
+)brace
 macro_line|#endif /* __KERNEL__ */
 macro_line|#endif /* _LINUX_SIGNAL_H */
 eof

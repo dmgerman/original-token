@@ -2429,7 +2429,11 @@ c_cond
 (paren
 id|irq-&gt;map
 op_amp
+(paren
+l_int|1
+op_lshift
 id|i
+)paren
 )paren
 id|pcibios_penalize_isa_irq
 c_func
