@@ -52,9 +52,9 @@ l_int|2
 op_assign
 (brace
 (brace
-l_int|23
+l_int|0
 comma
-l_string|&quot;/usr/src/linux/include/&quot;
+l_string|&quot;&quot;
 )brace
 comma
 (brace
@@ -1832,10 +1832,20 @@ c_cond
 op_logical_neg
 id|hpath
 )paren
-id|hpath
-op_assign
-l_string|&quot;/usr/src/linux/include&quot;
+(brace
+id|fputs
+c_func
+(paren
+l_string|&quot;mkdep: HPATH not set in environment.  &quot;
+l_string|&quot;Don&squot;t bypass the top level Makefile.&bslash;n&quot;
+comma
+id|stderr
+)paren
 suffix:semicolon
+r_return
+l_int|1
+suffix:semicolon
+)brace
 id|len
 op_assign
 id|strlen
