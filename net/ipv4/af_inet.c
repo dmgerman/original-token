@@ -5244,7 +5244,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;Swansea University Computer Society TCP/IP for NET3.032&bslash;n&quot;
+l_string|&quot;Swansea University Computer Society TCP/IP for NET3.033&bslash;n&quot;
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Tell SOCKET that we are alive... &n;&t; */

@@ -1,5 +1,8 @@
 multiline_comment|/*&n; *  linux/arch/i386/kernel/process.c&n; *&n; *  Copyright (C) 1995  Linus Torvalds&n; */
 multiline_comment|/*&n; * This file handles the architecture-dependent parts of process handling..&n; */
+DECL|macro|__KERNEL_SYSCALLS__
+mdefine_line|#define __KERNEL_SYSCALLS__
+macro_line|#include &lt;stdarg.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -13,6 +16,7 @@ macro_line|#include &lt;linux/user.h&gt;
 macro_line|#include &lt;linux/a.out.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;linux/unistd.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -82,6 +86,7 @@ id|hlt_counter
 op_decrement
 suffix:semicolon
 )brace
+macro_line|#ifndef __SMP__
 DECL|function|hard_idle
 r_static
 r_void
@@ -167,7 +172,7 @@ c_func
 suffix:semicolon
 macro_line|#endif
 )brace
-multiline_comment|/*&n; * The idle loop on a i386..&n; */
+multiline_comment|/*&n; * The idle loop on a uniprocessor i386..&n; */
 DECL|function|sys_idle
 id|asmlinkage
 r_int
@@ -177,14 +182,12 @@ c_func
 r_void
 )paren
 (brace
-macro_line|#ifndef __SMP__
 r_int
 r_int
 id|start_idle
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -192,108 +195,10 @@ id|current-&gt;pid
 op_ne
 l_int|0
 )paren
-(brace
-multiline_comment|/*&t;printk(&quot;Wrong process idled&bslash;n&quot;);&t;SMP bug check */
 r_return
 op_minus
 id|EPERM
 suffix:semicolon
-)brace
-macro_line|#ifdef __SMP__
-multiline_comment|/*&n;&t; *&t;SMP locking sanity checker&n;&t; */
-r_if
-c_cond
-(paren
-id|smp_processor_id
-c_func
-(paren
-)paren
-op_ne
-id|active_kernel_processor
-)paren
-(brace
-id|panic
-c_func
-(paren
-l_string|&quot;CPU is %d, kernel CPU is %d in sys_idle!&bslash;n&quot;
-comma
-id|smp_processor_id
-c_func
-(paren
-)paren
-comma
-id|active_kernel_processor
-)paren
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|syscall_count
-op_ne
-l_int|1
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;sys_idle: syscall count is not 1 (%ld)&bslash;n&quot;
-comma
-id|syscall_count
-)paren
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|kernel_counter
-op_ne
-l_int|1
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;CPU %d, sys_idle, kernel_counter is %ld&bslash;n&quot;
-comma
-id|smp_processor_id
-c_func
-(paren
-)paren
-comma
-id|kernel_counter
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|kernel_counter
-)paren
-(brace
-id|panic
-c_func
-(paren
-l_string|&quot;kernel locking botch&quot;
-)paren
-suffix:semicolon
-)brace
-)brace
-multiline_comment|/*&n;&t; *&t;Until we have C unlocking done&n;&t; */
-id|current-&gt;counter
-op_assign
-op_minus
-l_int|100
-suffix:semicolon
-id|schedule
-c_func
-(paren
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-macro_line|#endif&t;
 multiline_comment|/* endless idle loop with no priority at all */
 id|current-&gt;counter
 op_assign
@@ -307,33 +212,7 @@ suffix:semicolon
 suffix:semicolon
 )paren
 (brace
-macro_line|#ifdef __SMP__
-r_if
-c_cond
-(paren
-id|cpu_data
-(braket
-id|smp_processor_id
-c_func
-(paren
-)paren
-)braket
-dot
-id|hlt_works_ok
-op_logical_and
-op_logical_neg
-id|hlt_counter
-op_logical_and
-op_logical_neg
-id|need_resched
-)paren
-id|__asm__
-c_func
-(paren
-l_string|&quot;hlt&quot;
-)paren
-suffix:semicolon
-macro_line|#else&t;
+multiline_comment|/*&n;&t;&t; *&t;We are locked at this point. So we can safely call&n;&t;&t; *&t;the APM bios knowing only one CPU at a time will do&n;&t;&t; *&t;so.&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -389,7 +268,6 @@ id|start_idle
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#endif
 id|schedule
 c_func
 (paren
@@ -397,6 +275,96 @@ c_func
 suffix:semicolon
 )brace
 )brace
+macro_line|#else
+multiline_comment|/*&n; *&t;In the SMP world we hlt outside of kernel syscall rather than within&n; *&t;so as to get the right locking semantics.&n; */
+DECL|function|sys_idle
+id|asmlinkage
+r_int
+id|sys_idle
+c_func
+(paren
+r_void
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|current-&gt;pid
+op_ne
+l_int|0
+)paren
+(brace
+r_return
+op_minus
+id|EPERM
+suffix:semicolon
+)brace
+id|current-&gt;counter
+op_assign
+op_minus
+l_int|100
+suffix:semicolon
+id|schedule
+c_func
+(paren
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+multiline_comment|/*&n; *&t;This is being executed in task 0 &squot;user space&squot;.&n; */
+DECL|function|cpu_idle
+r_int
+id|cpu_idle
+c_func
+(paren
+r_void
+op_star
+id|unused
+)paren
+(brace
+r_while
+c_loop
+(paren
+l_int|1
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|cpu_data
+(braket
+id|smp_processor_id
+c_func
+(paren
+)paren
+)braket
+dot
+id|hlt_works_ok
+op_logical_and
+op_logical_neg
+id|hlt_counter
+op_logical_and
+op_logical_neg
+id|need_resched
+)paren
+(brace
+id|__asm
+c_func
+(paren
+l_string|&quot;hlt&quot;
+)paren
+suffix:semicolon
+)brace
+id|idle
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+)brace
+macro_line|#endif
 multiline_comment|/*&n; * This routine reboots the machine by asking the keyboard&n; * controller to pulse the reset-line low. We try that for a while,&n; * and if it doesn&squot;t work, we do some other stupid things.&n; */
 DECL|variable|no_idt
 r_static

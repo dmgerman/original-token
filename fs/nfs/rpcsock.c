@@ -13,8 +13,13 @@ macro_line|#include &lt;linux/rpcsock.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 DECL|macro|msleep
 mdefine_line|#define msleep(sec)&t;{ current-&gt;timeout = sec * HZ / 1000; &bslash;&n;&t;&t;&t;  current-&gt;state = TASK_INTERRUPTIBLE; &bslash;&n;&t;&t;&t;  schedule(); &bslash;&n;&t;&t;&t;}
+macro_line|#ifdef DEBUG_NFS&t;&t;&t;
 DECL|macro|dprintk
-mdefine_line|#define dprintk&t;&t;if (0) printk
+mdefine_line|#define dprintk(x)&t;&t;printk(x)
+macro_line|#else
+DECL|macro|dprintk
+mdefine_line|#define&t;dprintk(x)
+macro_line|#endif
 r_static
 r_inline
 r_void
@@ -77,6 +82,7 @@ suffix:semicolon
 id|dprintk
 c_func
 (paren
+(paren
 l_string|&quot;RPC: inserted %08lx into queue.&bslash;n&quot;
 comma
 (paren
@@ -84,9 +90,11 @@ r_int
 )paren
 id|slot
 )paren
+)paren
 suffix:semicolon
 id|dprintk
 c_func
+(paren
 (paren
 l_string|&quot;RPC: head = %08lx, tail = %08lx.&bslash;n&quot;
 comma
@@ -99,6 +107,7 @@ comma
 r_int
 )paren
 id|rsock-&gt;tail
+)paren
 )paren
 suffix:semicolon
 )brace
@@ -167,6 +176,7 @@ suffix:semicolon
 id|dprintk
 c_func
 (paren
+(paren
 l_string|&quot;RPC: removed %08lx from queue.&bslash;n&quot;
 comma
 (paren
@@ -174,9 +184,11 @@ r_int
 )paren
 id|slot
 )paren
+)paren
 suffix:semicolon
 id|dprintk
 c_func
+(paren
 (paren
 l_string|&quot;RPC: head = %08lx, tail = %08lx.&bslash;n&quot;
 comma
@@ -189,6 +201,7 @@ comma
 r_int
 )paren
 id|rsock-&gt;tail
+)paren
 )paren
 suffix:semicolon
 )brace
@@ -230,6 +243,7 @@ suffix:semicolon
 id|dprintk
 c_func
 (paren
+(paren
 l_string|&quot;RPC: sending %d bytes (buf %p)&bslash;n&quot;
 comma
 id|len
@@ -240,6 +254,7 @@ l_int|0
 )braket
 dot
 id|iov_base
+)paren
 )paren
 suffix:semicolon
 id|oldfs
@@ -285,9 +300,11 @@ suffix:semicolon
 id|dprintk
 c_func
 (paren
+(paren
 l_string|&quot;RPC: result = %d&bslash;n&quot;
 comma
 id|result
+)paren
 )paren
 suffix:semicolon
 r_return
@@ -325,7 +342,9 @@ suffix:semicolon
 id|dprintk
 c_func
 (paren
+(paren
 l_string|&quot;RPC: selecting on socket...&bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 id|wait_table.nr
@@ -440,7 +459,9 @@ suffix:semicolon
 id|dprintk
 c_func
 (paren
+(paren
 l_string|&quot;RPC: ...Okay, there appears to be some data.&bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 r_return
@@ -500,6 +521,7 @@ suffix:semicolon
 id|dprintk
 c_func
 (paren
+(paren
 l_string|&quot;RPC: receiving %d bytes max (buf %p)&bslash;n&quot;
 comma
 id|len
@@ -510,6 +532,7 @@ l_int|0
 )braket
 dot
 id|iov_base
+)paren
 )paren
 suffix:semicolon
 id|oldfs
@@ -558,9 +581,11 @@ suffix:semicolon
 id|dprintk
 c_func
 (paren
+(paren
 l_string|&quot;RPC: result = %d&bslash;n&quot;
 comma
 id|result
+)paren
 )paren
 suffix:semicolon
 macro_line|#if 0
@@ -586,7 +611,9 @@ id|alen
 id|dprintk
 c_func
 (paren
+(paren
 l_string|&quot;RPC: reply address mismatch... rejected.&bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 id|result
@@ -705,6 +732,7 @@ suffix:semicolon
 id|dprintk
 c_func
 (paren
+(paren
 l_string|&quot;RPC: placing one call, rsock = %08lx, slot = %08lx, &quot;
 l_string|&quot;sap = %08lx, salen = %d, &quot;
 l_string|&quot;sndbuf = %08lx, slen = %d, rcvbuf = %08lx, rlen = %d&bslash;n&quot;
@@ -739,6 +767,7 @@ r_int
 id|rcvbuf
 comma
 id|rlen
+)paren
 )paren
 suffix:semicolon
 id|result
@@ -840,9 +869,11 @@ l_int|0
 id|dprintk
 c_func
 (paren
+(paren
 l_string|&quot;RPC: select error = %d&bslash;n&quot;
 comma
 id|result
+)paren
 )paren
 suffix:semicolon
 r_break
@@ -910,9 +941,11 @@ suffix:colon
 id|dprintk
 c_func
 (paren
+(paren
 l_string|&quot;rpc_call: recv error = %d&bslash;n&quot;
 comma
 id|result
+)paren
 )paren
 suffix:semicolon
 r_case
@@ -987,7 +1020,9 @@ multiline_comment|/* bad XID or duplicate reply, discard dgram */
 id|dprintk
 c_func
 (paren
+(paren
 l_string|&quot;RPC: bad XID or duplicate reply.&bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 id|iov.iov_base
@@ -1174,7 +1209,9 @@ r_do
 id|dprintk
 c_func
 (paren
+(paren
 l_string|&quot;RPC call TP1&bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 id|current-&gt;timeout
@@ -1249,10 +1286,12 @@ c_cond
 id|rsock-&gt;shutdown
 )paren
 (brace
-id|printk
+id|dprintk
 c_func
 (paren
+(paren
 l_string|&quot;RPC: aborting call due to shutdown.&bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 id|current-&gt;timeout
@@ -1268,7 +1307,9 @@ suffix:semicolon
 id|dprintk
 c_func
 (paren
+(paren
 l_string|&quot;RPC call TP2&bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 id|slot-&gt;gotit
@@ -1308,7 +1349,9 @@ suffix:semicolon
 id|dprintk
 c_func
 (paren
+(paren
 l_string|&quot;RPC call TP3&bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 id|result
@@ -1348,13 +1391,17 @@ suffix:colon
 id|dprintk
 c_func
 (paren
+(paren
 l_string|&quot;RPC call TP4&bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 id|dprintk
 c_func
 (paren
+(paren
 l_string|&quot;RPC: rpc_call_one returned timeout.&bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 r_if
@@ -1406,7 +1453,9 @@ suffix:semicolon
 id|dprintk
 c_func
 (paren
+(paren
 l_string|&quot;RPC call TP5&bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 id|current-&gt;timeout
@@ -1424,7 +1473,9 @@ l_int|NULL
 id|dprintk
 c_func
 (paren
+(paren
 l_string|&quot;RPC call TP6&bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 id|rpc_remque
@@ -1502,7 +1553,9 @@ suffix:semicolon
 id|dprintk
 c_func
 (paren
+(paren
 l_string|&quot;RPC: make RPC socket...&bslash;n&quot;
+)paren
 )paren
 suffix:semicolon
 r_if
@@ -1594,12 +1647,14 @@ multiline_comment|/* --- taken care of by memset above ---&n;&t;rsock-&gt;backlo
 id|dprintk
 c_func
 (paren
+(paren
 l_string|&quot;RPC: made socket %08lx&quot;
 comma
 (paren
 r_int
 )paren
 id|rsock
+)paren
 )paren
 suffix:semicolon
 r_return

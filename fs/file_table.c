@@ -1,4 +1,5 @@
 multiline_comment|/*&n; *  linux/fs/file_table.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -364,6 +365,7 @@ r_return
 l_int|NULL
 suffix:semicolon
 )brace
+macro_line|#ifdef CONFIG_QUOTA
 DECL|function|add_dquot_ref
 r_void
 id|add_dquot_ref
@@ -532,4 +534,5 @@ suffix:semicolon
 )brace
 )brace
 )brace
+macro_line|#endif
 eof

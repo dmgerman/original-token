@@ -3085,7 +3085,7 @@ id|size
 )paren
 suffix:semicolon
 r_extern
-r_void
+r_int
 id|bread_page
 c_func
 (paren

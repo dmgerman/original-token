@@ -1,11 +1,10 @@
+multiline_comment|/*&n; *&t;&t;NET_ALIAS network device aliasing definitions.&n; *&n; *&n; * Version:&t;@(#)net_alias.h&t;0.43   12/20/95&n; *&n; * Author:&t;Juan Jose Ciarlante, &lt;jjciarla@raiz.uncu.edu.ar&gt;&n; *&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; *&t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; *&t;&n; */
 macro_line|#ifndef _NET_ALIAS_H
 DECL|macro|_NET_ALIAS_H
 mdefine_line|#define _NET_ALIAS_H
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/if.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
-macro_line|#include &lt;linux/inet.h&gt;
-macro_line|#include &lt;linux/in.h&gt;&t;&t;/* for default IP behavior */
 multiline_comment|/*&n; * max. alias slot number allowed &n; */
 DECL|macro|NET_ALIAS_MAX_SLOT
 mdefine_line|#define NET_ALIAS_MAX_SLOT  256
@@ -66,7 +65,7 @@ id|net_alias_type
 op_star
 id|nat
 suffix:semicolon
-multiline_comment|/* alias type bound */
+multiline_comment|/* alias type object bound */
 DECL|member|next
 r_struct
 id|net_alias
@@ -137,18 +136,28 @@ id|get_addr32
 multiline_comment|/* get __u32 addr &squot;representation&squot;*/
 (paren
 r_struct
+id|net_alias_type
+op_star
+id|this
+comma
+r_struct
 id|sockaddr
 op_star
 )paren
 suffix:semicolon
-DECL|member|addr_chk
+DECL|member|dev_addr_chk
 r_int
 (paren
 op_star
-id|addr_chk
+id|dev_addr_chk
 )paren
 multiline_comment|/* address checking func: */
 (paren
+r_struct
+id|net_alias_type
+op_star
+id|this
+comma
 r_struct
 id|device
 op_star
@@ -156,6 +165,31 @@ comma
 r_struct
 id|sockaddr
 op_star
+)paren
+suffix:semicolon
+DECL|member|dev_select
+r_struct
+id|device
+op_star
+(paren
+op_star
+id|dev_select
+)paren
+multiline_comment|/* closest alias selector*/
+(paren
+r_struct
+id|net_alias_type
+op_star
+id|this
+comma
+r_struct
+id|device
+op_star
+comma
+r_struct
+id|sockaddr
+op_star
+id|sa
 )paren
 suffix:semicolon
 DECL|member|alias_init_1
@@ -166,6 +200,11 @@ id|alias_init_1
 )paren
 multiline_comment|/* called after alias creation: */
 (paren
+r_struct
+id|net_alias_type
+op_star
+id|this
+comma
 r_struct
 id|net_alias
 op_star
@@ -186,6 +225,11 @@ id|alias_done_1
 multiline_comment|/* called before alias deletion */
 (paren
 r_struct
+id|net_alias_type
+op_star
+id|this
+comma
+r_struct
 id|net_alias
 op_star
 id|alias
@@ -198,17 +242,22 @@ op_star
 id|alias_print_1
 )paren
 (paren
+r_struct
+id|net_alias_type
+op_star
+id|this
+comma
+r_struct
+id|net_alias
+op_star
+id|alias
+comma
 r_char
 op_star
 id|buf
 comma
 r_int
 id|len
-comma
-r_struct
-id|net_alias
-op_star
-id|alias
 )paren
 suffix:semicolon
 DECL|member|next
@@ -238,7 +287,7 @@ r_return
 (paren
 id|dev-&gt;my_alias
 op_ne
-l_int|0
+l_int|NULL
 )paren
 suffix:semicolon
 )brace
@@ -260,7 +309,7 @@ r_return
 (paren
 id|dev-&gt;alias_info
 op_ne
-l_int|0
+l_int|NULL
 )paren
 suffix:semicolon
 )brace
@@ -302,13 +351,13 @@ id|data
 suffix:semicolon
 r_extern
 r_int
-id|net_alias_rehash
+id|net_alias_dev_rehash
 c_func
 (paren
 r_struct
-id|net_alias
+id|device
 op_star
-id|alias
+id|dev
 comma
 r_struct
 id|sockaddr
@@ -385,13 +434,13 @@ r_extern
 r_struct
 id|device
 op_star
-id|net_alias_chk
+id|net_alias_dev_chk
 c_func
 (paren
 r_struct
 id|device
 op_star
-id|dev
+id|main_dev
 comma
 r_struct
 id|sockaddr
@@ -399,23 +448,23 @@ op_star
 id|sa
 comma
 r_int
-id|flags_1
+id|flags_on
 comma
 r_int
-id|flags_0
+id|flags_off
 )paren
 suffix:semicolon
 r_extern
 r_struct
 id|device
 op_star
-id|net_alias_chk32
+id|net_alias_dev_chk32
 c_func
 (paren
 r_struct
 id|device
 op_star
-id|dev
+id|main_dev
 comma
 r_int
 id|family
@@ -424,10 +473,55 @@ id|__u32
 id|addr32
 comma
 r_int
-id|flags_1
+id|flags_on
 comma
 r_int
-id|flags_0
+id|flags_off
+)paren
+suffix:semicolon
+r_extern
+r_struct
+id|device
+op_star
+id|net_alias_dev_rcv_sel
+c_func
+(paren
+r_struct
+id|device
+op_star
+id|main_dev
+comma
+r_struct
+id|sockaddr
+op_star
+id|sa_src
+comma
+r_struct
+id|sockaddr
+op_star
+id|sa_dst
+)paren
+suffix:semicolon
+r_extern
+r_struct
+id|device
+op_star
+id|net_alias_dev_rcv_sel32
+c_func
+(paren
+r_struct
+id|device
+op_star
+id|main_dev
+comma
+r_int
+id|family
+comma
+id|__u32
+id|src
+comma
+id|__u32
+id|dst
 )paren
 suffix:semicolon
 multiline_comment|/*&n; * returns MY &squot;true&squot; main device&n; * intended for alias devices&n; */
@@ -538,79 +632,6 @@ id|nextdev
 suffix:semicolon
 r_return
 id|nextdev
-suffix:semicolon
-)brace
-multiline_comment|/*&n; * addr_chk wrapper: check given generic address with (UP) aliases&n; */
-r_static
-id|__inline__
-r_struct
-id|device
-op_star
-DECL|function|net_alias_addr_chk
-id|net_alias_addr_chk
-c_func
-(paren
-r_struct
-id|device
-op_star
-id|dev
-comma
-r_struct
-id|sockaddr
-op_star
-id|sa
-)paren
-(brace
-r_return
-id|net_alias_chk
-c_func
-(paren
-id|dev
-comma
-id|sa
-comma
-id|IFF_UP
-comma
-l_int|0
-)paren
-suffix:semicolon
-)brace
-multiline_comment|/*&n; * addr_chk32 wrapper: check given u32 address with (UP) aliases&n; */
-r_static
-id|__inline__
-r_struct
-id|device
-op_star
-DECL|function|net_alias_addr_chk32
-id|net_alias_addr_chk32
-c_func
-(paren
-r_struct
-id|device
-op_star
-id|dev
-comma
-r_int
-id|family
-comma
-id|__u32
-id|addr32
-)paren
-(brace
-r_return
-id|net_alias_chk32
-c_func
-(paren
-id|dev
-comma
-id|family
-comma
-id|addr32
-comma
-id|IFF_UP
-comma
-l_int|0
-)paren
 suffix:semicolon
 )brace
 macro_line|#endif  /* _NET_ALIAS_H */

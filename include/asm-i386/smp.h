@@ -4,6 +4,7 @@ mdefine_line|#define __ASM_SMP_H
 macro_line|#ifdef __SMP__
 macro_line|#ifndef ASSEMBLY
 macro_line|#include &lt;asm/i82489.h&gt;
+macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;linux/tasks.h&gt;
 macro_line|#include &lt;linux/ptrace.h&gt;
 multiline_comment|/*&n; *&t;Support definitions for SMP machines following the intel multiprocessing&n; *&t;specification&n; */
@@ -502,6 +503,18 @@ r_extern
 r_int
 r_int
 id|cpu_present_map
+suffix:semicolon
+r_extern
+r_volatile
+r_int
+r_int
+id|smp_invalidate_needed
+suffix:semicolon
+r_extern
+r_volatile
+r_int
+r_int
+id|smp_spins
 suffix:semicolon
 r_extern
 r_void

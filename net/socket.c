@@ -5845,7 +5845,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;Swansea University Computer Society NET3.033 for Linux 1.3.38&bslash;n&quot;
+l_string|&quot;Swansea University Computer Society NET3.033 for Linux 1.3.50&bslash;n&quot;
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Initialize all address (protocol) families. &n;&t; */

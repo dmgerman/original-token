@@ -290,6 +290,10 @@ c_cond
 id|result
 OL
 l_int|0
+op_logical_and
+id|result
+op_ne
+id|ERESTARTSYS
 )paren
 (brace
 id|printk

@@ -59,7 +59,7 @@ comma
 multiline_comment|/* Aging cluster */
 l_int|8192
 comma
-l_int|4096
+l_int|8192
 comma
 multiline_comment|/* Pageout and bufferout weights */
 op_minus

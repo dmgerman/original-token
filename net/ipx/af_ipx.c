@@ -1129,27 +1129,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; * This next segment of code is a little awkward, but it sets it up&n;&t; * so that the appropriate number of copies of the SKB are made and &n;&t; * that skb1 and skb2 point to it (them) so that it (they) can be &n;&t; * demuxed to sock1 and/or sock2.  If we are unable to make enough&n;&t; * copies, we do as much as is possible.&n;&t; *&n;&t; * Firstly stop charging the sender for the space. We will&n;&t; * charge the recipient or discard. If we are called from ipx_rcv&n;&t; * this is ok as no socket owns an input buffer.&n;&t; */
-r_if
-c_cond
-(paren
-id|skb-&gt;sk
-op_logical_and
-op_logical_neg
-id|copy
-)paren
-(brace
-id|skb-&gt;sk-&gt;wmem_alloc
-op_sub_assign
-id|skb-&gt;truesize
-suffix:semicolon
-multiline_comment|/* Adjust */
-id|skb-&gt;sk
-op_assign
-l_int|NULL
-suffix:semicolon
-multiline_comment|/* Disown */
-)brace
+multiline_comment|/*&n;&t; * This next segment of code is a little awkward, but it sets it up&n;&t; * so that the appropriate number of copies of the SKB are made and &n;&t; * that skb1 and skb2 point to it (them) so that it (they) can be &n;&t; * demuxed to sock1 and/or sock2.  If we are unable to make enough&n;&t; * copies, we do as much as is possible.&n;&t; */
 r_if
 c_cond
 (paren
@@ -1500,6 +1480,7 @@ id|send_to_wire
 op_assign
 l_int|0
 suffix:semicolon
+multiline_comment|/* No non looped */
 multiline_comment|/*&n;&t; *&t;See if this should be demuxed to sockets on this interface &n;&t; *&n;&t; *&t;We want to ensure the original was eaten or that we only use&n;&t; *&t;up clones.&n;&t; */
 r_if
 c_cond
@@ -1525,6 +1506,20 @@ id|IPX_NODE_LEN
 op_eq
 l_int|0
 )paren
+(brace
+multiline_comment|/*&n;&t;&t;&t; *&t;Don&squot;t charge sender&n;&t;&t;&t; */
+r_if
+c_cond
+(paren
+id|skb-&gt;sk
+)paren
+(brace
+id|skb-&gt;sk-&gt;wmem_alloc
+op_sub_assign
+id|skb-&gt;truesize
+suffix:semicolon
+)brace
+multiline_comment|/*&n;&t;&t;&t; *&t;Will charge receiver&n;&t;&t;&t; */
 r_return
 id|ipxitf_demux_socket
 c_func
@@ -1536,6 +1531,7 @@ comma
 l_int|0
 )paren
 suffix:semicolon
+)brace
 multiline_comment|/*&n;&t;&t; *&t;Broadcast, loop and possibly keep to send on.&n;&t;&t; */
 r_if
 c_cond
@@ -1553,6 +1549,18 @@ op_eq
 l_int|0
 )paren
 (brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|send_to_wire
+op_logical_and
+id|skb-&gt;sk
+)paren
+id|skb-&gt;sk-&gt;wmem_alloc
+op_sub_assign
+id|skb-&gt;truesize
+suffix:semicolon
 id|ipxitf_demux_socket
 c_func
 (paren
@@ -1574,7 +1582,7 @@ l_int|0
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n;&t; *&t;if the originating net is not equal to our net; this is routed &n;&t; */
+multiline_comment|/*&n;&t; *&t;If the originating net is not equal to our net; this is routed &n;&t; *&t;We are still charging the sender. Which is right - the driver&n;&t; *&t;free will handle this fairly.&n;&t; */
 r_if
 c_cond
 (paren

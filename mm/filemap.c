@@ -245,11 +245,7 @@ id|priority
 op_assign
 id|limit
 op_rshift
-(paren
-l_int|2
-op_star
 id|priority
-)paren
 suffix:semicolon
 id|page
 op_assign

@@ -1312,24 +1312,6 @@ id|sa-&gt;sa_handler
 op_assign
 l_int|NULL
 suffix:semicolon
-multiline_comment|/* force a supervisor-mode page-in of the signal handler to reduce races */
-id|__asm__
-c_func
-(paren
-l_string|&quot;testb $0,%%fs:%0&quot;
-suffix:colon
-suffix:colon
-l_string|&quot;m&quot;
-(paren
-op_star
-(paren
-r_char
-op_star
-)paren
-id|eip
-)paren
-)paren
-suffix:semicolon
 id|regs-&gt;cs
 op_assign
 id|USER_CS

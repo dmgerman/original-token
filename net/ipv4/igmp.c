@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;Linux NET3:&t;Internet Gateway Management Protocol  [IGMP]&n; *&n; *&t;This code implements the IGMP protocol as defined in RFC1122. There has&n; *&t;been a further revision of this protocol since, but since it is not&n; *&t;cleanly specified in any IETF standards we implement the old one properly&n; *&t;rather than play a game of guess the BSD unofficial extensions.&n; *&n; *&t;Authors:&n; *&t;&t;Alan Cox &lt;Alan.Cox@linux.org&gt;&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; *&t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;Fixes:&n; *&n; *&t;&t;Alan Cox&t;:&t;Added lots of __inline__ to optimise&n; *&t;&t;&t;&t;&t;the memory usage of all the tiny little&n; *&t;&t;&t;&t;&t;functions.&n; *&t;&t;Alan Cox&t;:&t;Dumped the header building experiment.&n; *&t;&t;Alan Cox&t;:&t;Minor tweaks ready for multicast routing&n; *&t;&t;&t;&t;&t;and extended IGMP protocol.&n; *&t;&t;Alan Cox&t;:&t;Removed a load of inline directives. Gcc 2.5.8&n; *&t;&t;&t;&t;&t;writes utterly bogus code otherwise (sigh)&n; *&t;&t;&t;&t;&t;fixed IGMP loopback to behave in the manner&n; *&t;&t;&t;&t;&t;desired by mrouted, fixed the fact it has been&n; *&t;&t;&t;&t;&t;broken since 1.3.6 and cleaned up a few minor&n; *&t;&t;&t;&t;&t;points.&n; *&n; *&t;&t;Chih-Jen Chang&t;:&t;Tried to revise IGMP to Version 2&n; *&t;&t;Tsu-Sheng Tsao&t;&t;E-mail: chihjenc@scf.usc.edu and tsusheng@scf.usc.edu&n; *&t;&t;&t;&t;&t;The enhancements are mainly based on Steve Deering&squot;s &n; * &t;&t;&t;&t;&t;ipmulti-3.5 source code.&n; *&t;&t;Chih-Jen Chang&t;:&t;Added the igmp_get_mrouter_info and&n; *&t;&t;Tsu-Sheng Tsao&t;&t;igmp_set_mrouter_info to keep track of&n; *&t;&t;&t;&t;&t;the mrouted version on that device.&n; *&t;&t;Chih-Jen Chang&t;:&t;Added the max_resp_time parameter to&n; *&t;&t;Tsu-Sheng Tsao&t;&t;igmp_heard_query(). Using this parameter&n; *&t;&t;&t;&t;&t;to identify the multicast router verion&n; *&t;&t;&t;&t;&t;and do what the IGMP version 2 specified.&n; *&t;&t;Chih-Jen Chang&t;:&t;Added a timer to revert to IGMP V2 router&n; *&t;&t;Tsu-Sheng Tsao&t;&t;if the specified time expired.&n; */
+multiline_comment|/*&n; *&t;Linux NET3:&t;Internet Gateway Management Protocol  [IGMP]&n; *&n; *&t;This code implements the IGMP protocol as defined in RFC1122. There has&n; *&t;been a further revision of this protocol since which is now supported.&n; *&n; *&t;If you have trouble with this module be careful what gcc you have used,&n; *&t;the older version didnt come out right using gcc 2.5.8, the newer one&n; *&t;seems to fall out with gcc 2.6.2.&n; *&n; *&t;Authors:&n; *&t;&t;Alan Cox &lt;Alan.Cox@linux.org&gt;&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; *&t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;Fixes:&n; *&n; *&t;&t;Alan Cox&t;:&t;Added lots of __inline__ to optimise&n; *&t;&t;&t;&t;&t;the memory usage of all the tiny little&n; *&t;&t;&t;&t;&t;functions.&n; *&t;&t;Alan Cox&t;:&t;Dumped the header building experiment.&n; *&t;&t;Alan Cox&t;:&t;Minor tweaks ready for multicast routing&n; *&t;&t;&t;&t;&t;and extended IGMP protocol.&n; *&t;&t;Alan Cox&t;:&t;Removed a load of inline directives. Gcc 2.5.8&n; *&t;&t;&t;&t;&t;writes utterly bogus code otherwise (sigh)&n; *&t;&t;&t;&t;&t;fixed IGMP loopback to behave in the manner&n; *&t;&t;&t;&t;&t;desired by mrouted, fixed the fact it has been&n; *&t;&t;&t;&t;&t;broken since 1.3.6 and cleaned up a few minor&n; *&t;&t;&t;&t;&t;points.&n; *&n; *&t;&t;Chih-Jen Chang&t;:&t;Tried to revise IGMP to Version 2&n; *&t;&t;Tsu-Sheng Tsao&t;&t;E-mail: chihjenc@scf.usc.edu and tsusheng@scf.usc.edu&n; *&t;&t;&t;&t;&t;The enhancements are mainly based on Steve Deering&squot;s &n; * &t;&t;&t;&t;&t;ipmulti-3.5 source code.&n; *&t;&t;Chih-Jen Chang&t;:&t;Added the igmp_get_mrouter_info and&n; *&t;&t;Tsu-Sheng Tsao&t;&t;igmp_set_mrouter_info to keep track of&n; *&t;&t;&t;&t;&t;the mrouted version on that device.&n; *&t;&t;Chih-Jen Chang&t;:&t;Added the max_resp_time parameter to&n; *&t;&t;Tsu-Sheng Tsao&t;&t;igmp_heard_query(). Using this parameter&n; *&t;&t;&t;&t;&t;to identify the multicast router verion&n; *&t;&t;&t;&t;&t;and do what the IGMP version 2 specified.&n; *&t;&t;Chih-Jen Chang&t;:&t;Added a timer to revert to IGMP V2 router&n; *&t;&t;Tsu-Sheng Tsao&t;&t;if the specified time expired.&n; *&t;&t;Alan Cox&t;:&t;Stop IGMP from 0.0.0.0 being accepted.&n; *&t;&t;Alan Cox&t;:&t;Use GFP_ATOMIC in the right places.&n; */
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -142,9 +142,21 @@ op_star
 id|i
 )paren
 comma
-id|GFP_KERNEL
+id|GFP_ATOMIC
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|i
+op_eq
+l_int|NULL
+)paren
+(brace
+r_return
+l_int|NULL
+suffix:semicolon
+)brace
 id|i-&gt;dev
 op_assign
 id|dev
@@ -310,9 +322,21 @@ op_star
 id|i
 )paren
 comma
-id|GFP_KERNEL
+id|GFP_ATOMIC
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|i
+op_eq
+l_int|NULL
+)paren
+(brace
+r_return
+l_int|NULL
+suffix:semicolon
+)brace
 id|i-&gt;dev
 op_assign
 id|dev
@@ -712,6 +736,17 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|r
+op_eq
+l_int|NULL
+)paren
+(brace
+r_return
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
 id|r-&gt;type
 op_eq
 id|IGMP_NEW_ROUTER
@@ -866,6 +901,9 @@ id|mrouter_type
 op_assign
 id|IGMP_NEW_ROUTER
 suffix:semicolon
+r_if
+c_cond
+(paren
 id|igmp_set_mrouter_info
 c_func
 (paren
@@ -875,7 +913,13 @@ id|mrouter_type
 comma
 l_int|0
 )paren
+op_eq
+l_int|NULL
+)paren
+(brace
+r_return
 suffix:semicolon
+)brace
 multiline_comment|/*&n;&t;&t; * - Start the timers in all of our membership records&n;&t;&t; *   that the query applies to for the interface on&n;&t;&t; *   which the query arrived excl. those that belong&n;&t;&t; *   to a &quot;local&quot; group (224.0.0.X)&n;&t;&t; * - For timers already running check if they need to&n;&t;&t; *   be reset.&n;&t;&t; * - Use the igmp-&gt;igmp_code field as the maximum&n;&t;&t; *   delay possible&n;&t;&t; */
 r_for
 c_loop
@@ -965,6 +1009,9 @@ id|IGMP_MAX_HOST_REPORT_DELAY
 op_star
 id|IGMP_TIMER_SCALE
 suffix:semicolon
+r_if
+c_cond
+(paren
 id|igmp_set_mrouter_info
 c_func
 (paren
@@ -974,7 +1021,13 @@ id|mrouter_type
 comma
 id|IGMP_AGE_THRESHOLD
 )paren
+op_eq
+l_int|NULL
+)paren
+(brace
+r_return
 suffix:semicolon
+)brace
 multiline_comment|/*&n;&t;&t; * Start the timers in all of our membership records for&n;&t;&t; * the interface on which the query arrived, except those&n;&t;&t; * that are already running and those that belong to a&n;&t;&t; * &quot;local&quot; group (224.0.0.X).&n;&t;&t; */
 r_for
 c_loop
@@ -1293,6 +1346,17 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|r
+op_eq
+l_int|NULL
+)paren
+(brace
+r_return
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
 id|r-&gt;type
 op_eq
 id|IGMP_NEW_ROUTER
@@ -1431,6 +1495,35 @@ id|igmphdr
 )paren
 )paren
 (brace
+id|kfree_skb
+c_func
+(paren
+id|skb
+comma
+id|FREE_READ
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+multiline_comment|/*&n;&t; *&t;I have a report that someone does this!&n;&t; */
+r_if
+c_cond
+(paren
+id|saddr
+op_eq
+l_int|0
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;Broken multicast host using 0.0.0.0 heard on %s&bslash;n&quot;
+comma
+id|dev-&gt;name
+)paren
+suffix:semicolon
 id|kfree_skb
 c_func
 (paren

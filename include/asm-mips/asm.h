@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * include/asm-mips/asm.h&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1995 by Ralf Baechle&n; *&n; * Some usefull macros for MIPS assembler code&n; *&n; * Some of the routines below contain useless nops that will be optimized&n; * away by gas in -O mode. These nops are however required to fill delay&n; * slots in noreorder mode.&n; */
+multiline_comment|/*&n; * include/asm-mips/asm.h&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1995 by Ralf Baechle&n; *&n; * Some useful macros for MIPS assembler code&n; *&n; * Some of the routines below contain useless nops that will be optimized&n; * away by gas in -O mode. These nops are however required to fill delay&n; * slots in noreorder mode.&n; */
 macro_line|#ifndef&t;__ASM_ASM_H
 DECL|macro|__ASM_ASM_H
 mdefine_line|#define&t;__ASM_ASM_H

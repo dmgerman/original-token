@@ -3093,7 +3093,7 @@ r_return
 id|sent
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Sleep until data has arrive. But check for races..&n; */
+multiline_comment|/*&n; *&t;Sleep until data has arrive. But check for races..&n; */
 DECL|function|unix_data_wait
 r_static
 r_void
@@ -4189,7 +4189,7 @@ id|pro
 id|printk
 c_func
 (paren
-l_string|&quot;NET3: Unix domain sockets 0.10 BETA for Linux NET3.031.&bslash;n&quot;
+l_string|&quot;NET3: Unix domain sockets 0.10 BETA for Linux NET3.033.&bslash;n&quot;
 )paren
 suffix:semicolon
 id|sock_register

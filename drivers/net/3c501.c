@@ -27,6 +27,8 @@ macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
+DECL|macro|BLOCKOUT_2
+mdefine_line|#define BLOCKOUT_2
 multiline_comment|/* A zero-terminated list of I/O addresses to be probed.&n;   The 3c501 can be at many locations, but here are the popular ones. */
 DECL|variable|netcard_portlist
 r_static
@@ -172,7 +174,7 @@ DECL|macro|EL1_IO_EXTENT
 mdefine_line|#define EL1_IO_EXTENT&t;16
 macro_line|#ifndef EL_DEBUG
 DECL|macro|EL_DEBUG
-mdefine_line|#define EL_DEBUG  2&t;/* use 0 for production, 1 for devel., &gt;2 for debug */
+mdefine_line|#define EL_DEBUG  0&t;/* use 0 for production, 1 for devel., &gt;2 for debug */
 macro_line|#endif&t;&t;&t;/* Anything above 5 is wordy death! */
 DECL|variable|el_debug
 r_static
@@ -936,6 +938,18 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|dev-&gt;interrupt
+)paren
+(brace
+multiline_comment|/* May be unloading, don&squot;t stamp on */
+r_return
+l_int|1
+suffix:semicolon
+)brace
+multiline_comment|/* the packet buffer this time      */
+r_if
+c_cond
+(paren
 id|dev-&gt;tbusy
 )paren
 (brace
@@ -1143,7 +1157,15 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/*&n;&t;&t; *&t;Command mode with status cleared should [in theory]&n;&t;&t; *&t;mean no more interrupts can be pending on the card.&n;&t;&t; */
-id|outb
+macro_line|#ifdef BLOCKOUT_1
+id|disable_irq
+c_func
+(paren
+id|dev-&gt;irq
+)paren
+suffix:semicolon
+macro_line|#endif&t;
+id|outb_p
 c_func
 (paren
 id|AX_SYS
@@ -1151,13 +1173,13 @@ comma
 id|AX_CMD
 )paren
 suffix:semicolon
-id|inb
+id|inb_p
 c_func
 (paren
 id|RX_STATUS
 )paren
 suffix:semicolon
-id|inb
+id|inb_p
 c_func
 (paren
 id|TX_STATUS
@@ -1212,6 +1234,7 @@ id|GP_LOW
 )paren
 suffix:semicolon
 multiline_comment|/* the board reuses the same register */
+macro_line|#ifndef BLOCKOUT_1&t;&t;
 r_if
 c_cond
 (paren
@@ -1243,6 +1266,7 @@ id|load_it_again_sam
 suffix:semicolon
 multiline_comment|/* Sigh... */
 )brace
+macro_line|#endif
 id|outb
 c_func
 (paren
@@ -1252,6 +1276,18 @@ id|AX_CMD
 )paren
 suffix:semicolon
 multiline_comment|/* fire ... Trigger xmit.  */
+id|lp-&gt;loading
+op_assign
+l_int|0
+suffix:semicolon
+macro_line|#ifdef BLOCKOUT_1&t;&t;
+id|enable_irq
+c_func
+(paren
+id|dev-&gt;irq
+)paren
+suffix:semicolon
+macro_line|#endif&t;&t;
 id|dev-&gt;trans_start
 op_assign
 id|jiffies
@@ -1406,18 +1442,42 @@ id|dev-&gt;interrupt
 op_assign
 l_int|1
 suffix:semicolon
+macro_line|#ifndef BLOCKOUT_1    
+r_if
+c_cond
+(paren
+id|lp-&gt;loading
+op_eq
+l_int|1
+op_logical_and
+op_logical_neg
+id|dev-&gt;tbusy
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;%s: Inconsistent state loading while not in tx&bslash;n&quot;
+comma
+id|dev-&gt;name
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif        &t;&t;
+macro_line|#ifdef BLOCKOUT_3
 id|lp-&gt;loading
 op_assign
 l_int|2
 suffix:semicolon
 multiline_comment|/* So we can spot loading interruptions */
+macro_line|#endif
 r_if
 c_cond
 (paren
 id|dev-&gt;tbusy
 )paren
 (brace
-multiline_comment|/*&n;    &t;&t; *&t;Board in transmit mode.&n;    &t;&t; */
+multiline_comment|/*&n;    &t;&t; *&t;Board in transmit mode. May be loading. If we are&n;    &t;&t; *&t;loading we shouldn&squot;t have got this.&n;    &t;&t; */
 r_int
 id|txsr
 op_assign
@@ -1427,6 +1487,65 @@ c_func
 id|TX_STATUS
 )paren
 suffix:semicolon
+macro_line|#ifdef BLOCKOUT_2&t;&t;
+r_if
+c_cond
+(paren
+id|lp-&gt;loading
+op_eq
+l_int|1
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|el_debug
+OG
+l_int|2
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;%s: Interrupt while loading [&quot;
+comma
+id|dev-&gt;name
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot; txsr=%02x gp=%04x rp=%04x]&bslash;n&quot;
+comma
+id|txsr
+comma
+id|inw
+c_func
+(paren
+id|GP_LOW
+)paren
+comma
+id|inw
+c_func
+(paren
+id|RX_LOW
+)paren
+)paren
+suffix:semicolon
+)brace
+id|lp-&gt;loading
+op_assign
+l_int|2
+suffix:semicolon
+multiline_comment|/* Force a reload */
+id|dev-&gt;interrupt
+op_assign
+l_int|0
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -1700,6 +1819,7 @@ id|RX_MISSED
 id|lp-&gt;stats.rx_missed_errors
 op_increment
 suffix:semicolon
+r_else
 r_if
 c_cond
 (paren

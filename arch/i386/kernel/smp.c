@@ -11,6 +11,7 @@ macro_line|#include &lt;asm/i82489.h&gt;
 macro_line|#include &lt;linux/smp.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
+macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/smp.h&gt;
 r_extern
 r_void
@@ -2295,6 +2296,9 @@ c_cond
 (paren
 op_logical_neg
 id|smp_activated
+op_logical_or
+op_logical_neg
+id|smp_commenced
 )paren
 (brace
 r_return

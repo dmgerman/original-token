@@ -425,10 +425,14 @@ r_int
 id|backoff
 suffix:semicolon
 DECL|member|err
+DECL|member|err_soft
 r_volatile
 r_int
 id|err
+comma
+id|err_soft
 suffix:semicolon
+multiline_comment|/* Soft holds errors that don&squot;t&n;&t;&t;&t;&t;&t;&t;   cause failure but are the cause&n;&t;&t;&t;&t;&t;&t;   of a persistent failure not just&n;&t;&t;&t;&t;&t;&t;   &squot;timed out&squot; */
 DECL|member|protocol
 r_int
 r_char

@@ -27,6 +27,13 @@ macro_line|#include &lt;linux/sem.h&gt;
 macro_line|#include &lt;linux/minix_fs.h&gt;
 macro_line|#include &lt;linux/ext2_fs.h&gt;
 macro_line|#include &lt;linux/random.h&gt;
+r_extern
+r_int
+r_char
+id|aux_device_present
+comma
+id|kbd_read_mask
+suffix:semicolon
 macro_line|#ifdef __alpha__
 macro_line|# include &lt;asm/io.h&gt;
 macro_line|# include &lt;asm/hwrpb.h&gt;
@@ -116,6 +123,7 @@ macro_line|#include &lt;linux/in.h&gt;
 macro_line|#include &lt;linux/net.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/firewall.h&gt;
+macro_line|#include &lt;linux/trdevice.h&gt;
 macro_line|#ifdef CONFIG_AX25
 macro_line|#include &lt;net/ax25.h&gt;
 macro_line|#endif
@@ -313,6 +321,18 @@ op_star
 id|regs
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_BINFMT_ELF
+macro_line|#include &lt;linux/elfcore.h&gt;
+r_extern
+r_int
+id|dump_fpu
+c_func
+(paren
+id|elf_fpregset_t
+op_star
+)paren
+suffix:semicolon
+macro_line|#endif
 DECL|variable|symbol_table
 r_struct
 id|symbol_table
@@ -2241,6 +2261,54 @@ id|X
 c_func
 (paren
 id|proc_net
+)paren
+comma
+macro_line|#endif
+multiline_comment|/* all busmice */
+id|X
+c_func
+(paren
+id|add_mouse_randomness
+)paren
+comma
+id|X
+c_func
+(paren
+id|fasync_helper
+)paren
+comma
+multiline_comment|/* psaux mouse */
+id|X
+c_func
+(paren
+id|aux_device_present
+)paren
+comma
+id|X
+c_func
+(paren
+id|kbd_read_mask
+)paren
+comma
+macro_line|#ifdef CONFIG_TR
+id|X
+c_func
+(paren
+id|tr_setup
+)paren
+comma
+id|X
+c_func
+(paren
+id|tr_type_trans
+)paren
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_BINFMT_ELF
+id|X
+c_func
+(paren
+id|dump_fpu
 )paren
 comma
 macro_line|#endif

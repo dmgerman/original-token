@@ -4229,7 +4229,7 @@ l_string|&quot;%s: set multicast list %d&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma
-id|num_addrs
+id|dev-&gt;mc_count
 )paren
 suffix:semicolon
 r_if
@@ -4329,6 +4329,7 @@ l_int|1
 )paren
 op_plus
 l_int|2
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -4350,7 +4351,7 @@ c_func
 (paren
 id|cp
 comma
-id|addr
+id|dmi
 comma
 l_int|6
 )paren

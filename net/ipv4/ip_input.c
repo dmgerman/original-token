@@ -346,6 +346,38 @@ suffix:semicolon
 )brace
 macro_line|#endif&t;&t;&t;&t;&t;
 )brace
+multiline_comment|/*&n;&t; *&t;Try to select closest &lt;src,dst&gt; alias device, if any.&n;&t; *&t;net_alias_dev_rcv_sel32 returns main device if it &n;&t; *&t;fails to found other.&n;&t; */
+macro_line|#ifdef CONFIG_NET_ALIAS
+r_if
+c_cond
+(paren
+id|iph-&gt;daddr
+op_ne
+id|skb-&gt;dev-&gt;pa_addr
+op_logical_and
+id|net_alias_has
+c_func
+(paren
+id|skb-&gt;dev
+)paren
+)paren
+id|skb-&gt;dev
+op_assign
+id|dev
+op_assign
+id|net_alias_dev_rcv_sel32
+c_func
+(paren
+id|skb-&gt;dev
+comma
+id|AF_INET
+comma
+id|iph-&gt;saddr
+comma
+id|iph-&gt;daddr
+)paren
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/*&n;&t; *&t;See if the firewall wants to dispose of the packet. &n;&t; */
 macro_line|#ifdef&t;CONFIG_FIREWALL
 r_if
@@ -444,46 +476,6 @@ l_int|2
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; *&t;Do any IP forwarding required.  chk_addr() is expensive -- avoid it someday.&n;&t; *&n;&t; *&t;This is inefficient. While finding out if it is for us we could also compute&n;&t; *&t;the routing table entry. This is where the great unified cache theory comes&n;&t; *&t;in as and when someone implements it&n;&t; *&n;&t; *&t;For most hosts over 99% of packets match the first conditional&n;&t; *&t;and don&squot;t go via ip_chk_addr. Note: brd is set to IS_MYADDR at&n;&t; *&t;function entry.&n;&t; */
-multiline_comment|/*&n;&t; *&t;also check device aliases address : will avoid&n;&t; *&t;a full lookup over device chain&n;&t; */
-macro_line|#ifdef CONFIG_NET_ALIAS
-r_if
-c_cond
-(paren
-id|iph-&gt;daddr
-op_eq
-id|skb-&gt;dev-&gt;pa_addr
-op_logical_or
-(paren
-id|net_alias_has
-c_func
-(paren
-id|skb-&gt;dev
-)paren
-op_logical_and
-id|net_alias_addr_chk32
-c_func
-(paren
-id|skb-&gt;dev
-comma
-id|AF_INET
-comma
-id|iph-&gt;daddr
-)paren
-)paren
-op_logical_or
-(paren
-id|brd
-op_assign
-id|ip_chk_addr
-c_func
-(paren
-id|iph-&gt;daddr
-)paren
-)paren
-op_ne
-l_int|0
-)paren
-macro_line|#else
 r_if
 c_cond
 (paren
@@ -503,7 +495,6 @@ id|iph-&gt;daddr
 op_ne
 l_int|0
 )paren
-macro_line|#endif
 (brace
 r_if
 c_cond

@@ -132,6 +132,24 @@ r_int
 id|x
 )paren
 (brace
+macro_line|#if defined(CONFIG_M486) &amp;&amp; defined(__KERNEL__)
+id|__asm__
+c_func
+(paren
+l_string|&quot;bswap %0&quot;
+suffix:colon
+l_string|&quot;=r&quot;
+(paren
+id|x
+)paren
+suffix:colon
+l_string|&quot;0&quot;
+(paren
+id|x
+)paren
+)paren
+suffix:semicolon
+macro_line|#else
 id|__asm__
 c_func
 (paren
@@ -153,6 +171,7 @@ id|x
 )paren
 )paren
 suffix:semicolon
+macro_line|#endif&t;
 r_return
 id|x
 suffix:semicolon

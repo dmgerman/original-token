@@ -2948,10 +2948,10 @@ c_func
 id|dev
 )paren
 )paren
-id|net_alias_rehash
+id|net_alias_dev_rehash
 c_func
 (paren
-id|dev-&gt;my_alias
+id|dev
 comma
 op_amp
 id|ifr.ifr_addr
@@ -3843,6 +3843,13 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif&t;
+macro_line|#if defined(CONFIG_PT)
+id|pt_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#if defined(CONFIG_DEC_ELCP)
 id|dec21040_init
 c_func

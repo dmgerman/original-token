@@ -334,6 +334,13 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef CONFIG_SOFT_WATCHDOG
+id|watchdog_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif&t;
 macro_line|#endif /* !MODULE */
 r_if
 c_cond

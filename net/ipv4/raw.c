@@ -627,7 +627,7 @@ id|AF_INET
 suffix:semicolon
 id|sin.sin_port
 op_assign
-id|sk-&gt;protocol
+id|sk-&gt;num
 suffix:semicolon
 id|sin.sin_addr.s_addr
 op_assign
@@ -643,7 +643,7 @@ l_int|0
 )paren
 id|sin.sin_port
 op_assign
-id|sk-&gt;protocol
+id|sk-&gt;num
 suffix:semicolon
 r_if
 c_cond
