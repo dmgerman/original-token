@@ -56,13 +56,17 @@ mdefine_line|#define NFS_MAXATTRTIMEO(inode) &bslash;&n;&t;(S_ISDIR(inode-&gt;i_
 DECL|macro|NFS_FLAGS
 mdefine_line|#define NFS_FLAGS(inode)&t;&t;((inode)-&gt;u.nfs_i.flags)
 DECL|macro|NFS_REVALIDATING
-mdefine_line|#define NFS_REVALIDATING(inode)&t;&t;(NFS_FLAGS(inode) &amp; NFS_INO_REVALIDATE)
+mdefine_line|#define NFS_REVALIDATING(inode)&t;&t;(NFS_FLAGS(inode) &amp; NFS_INO_REVALIDATING)
 DECL|macro|NFS_WRITEBACK
 mdefine_line|#define NFS_WRITEBACK(inode)&t;&t;((inode)-&gt;u.nfs_i.writeback)
 DECL|macro|NFS_COOKIES
 mdefine_line|#define NFS_COOKIES(inode)&t;&t;((inode)-&gt;u.nfs_i.cookies)
 DECL|macro|NFS_DIREOF
 mdefine_line|#define NFS_DIREOF(inode)&t;&t;((inode)-&gt;u.nfs_i.direof)
+DECL|macro|NFS_FILEID
+mdefine_line|#define NFS_FILEID(inode)&t;&t;((inode)-&gt;u.nfs_i.fileid)
+DECL|macro|NFS_FSID
+mdefine_line|#define NFS_FSID(inode)&t;&t;&t;((inode)-&gt;u.nfs_i.fsid)
 multiline_comment|/*&n; * These are the default flags for swap requests&n; */
 DECL|macro|NFS_RPC_SWAPFLAGS
 mdefine_line|#define NFS_RPC_SWAPFLAGS&t;&t;(RPC_TASK_SWAPPER|RPC_TASK_ROOTCREDS)
@@ -214,14 +218,14 @@ op_star
 id|fhandle
 comma
 r_struct
-id|nfs_sattr
-op_star
-id|sattr
-comma
-r_struct
 id|nfs_fattr
 op_star
 id|fattr
+comma
+r_struct
+id|iattr
+op_star
+id|sattr
 )paren
 suffix:semicolon
 r_extern
@@ -349,7 +353,7 @@ op_star
 id|name
 comma
 r_struct
-id|nfs_sattr
+id|iattr
 op_star
 id|sattr
 comma
@@ -468,7 +472,7 @@ op_star
 id|path
 comma
 r_struct
-id|nfs_sattr
+id|iattr
 op_star
 id|sattr
 )paren
@@ -494,7 +498,7 @@ op_star
 id|name
 comma
 r_struct
-id|nfs_sattr
+id|iattr
 op_star
 id|sattr
 comma
@@ -578,6 +582,16 @@ r_void
 )paren
 suffix:semicolon
 r_extern
+r_void
+id|nfs_zap_caches
+c_func
+(paren
+r_struct
+id|inode
+op_star
+)paren
+suffix:semicolon
+r_extern
 r_struct
 id|inode
 op_star
@@ -651,7 +665,7 @@ op_star
 suffix:semicolon
 r_extern
 r_int
-id|_nfs_revalidate_inode
+id|__nfs_revalidate_inode
 c_func
 (paren
 r_struct
@@ -880,25 +894,29 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|time_before
+c_func
+(paren
 id|jiffies
-op_minus
+comma
 id|NFS_READTIME
 c_func
 (paren
 id|inode
 )paren
-OL
+op_plus
 id|NFS_ATTRTIMEO
 c_func
 (paren
 id|inode
 )paren
 )paren
+)paren
 r_return
 l_int|0
 suffix:semicolon
 r_return
-id|_nfs_revalidate_inode
+id|__nfs_revalidate_inode
 c_func
 (paren
 id|server

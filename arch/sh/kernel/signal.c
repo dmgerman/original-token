@@ -1,5 +1,4 @@
-multiline_comment|/*&n; *  linux/arch/sh/kernel/signal.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *&n; *  1997-11-28  Modified for POSIX.1b signals by Richard Henderson&n; *&n; *  SuperH version:  Copyright (C) 1999  Niibe Yutaka&n; *&n; */
-macro_line|#include &lt;linux/config.h&gt;
+multiline_comment|/* $Id: signal.c,v 1.10 1999/09/27 23:25:44 gniibe Exp $&n; *&n; *  linux/arch/sh/kernel/signal.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *&n; *  1997-11-28  Modified for POSIX.1b signals by Richard Henderson&n; *&n; *  SuperH version:  Copyright (C) 1999  Niibe Yutaka&n; *&n; */
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/smp.h&gt;
@@ -13,6 +12,7 @@ macro_line|#include &lt;linux/unistd.h&gt;
 macro_line|#include &lt;linux/stddef.h&gt;
 macro_line|#include &lt;asm/ucontext.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
+macro_line|#include &lt;asm/pgtable.h&gt;
 DECL|macro|DEBUG_SIG
 mdefine_line|#define DEBUG_SIG 0
 DECL|macro|_BLOCKABLE
@@ -121,7 +121,7 @@ op_amp
 id|current-&gt;sigmask_lock
 )paren
 suffix:semicolon
-id|regs.u_regs
+id|regs.regs
 (braket
 l_int|0
 )braket
@@ -268,7 +268,7 @@ op_amp
 id|current-&gt;sigmask_lock
 )paren
 suffix:semicolon
-id|regs.u_regs
+id|regs.regs
 (braket
 l_int|0
 )braket
@@ -550,10 +550,7 @@ id|uss
 comma
 id|uoss
 comma
-id|regs.u_regs
-(braket
-id|UREG_SP
-)braket
+id|regs.sp
 )paren
 suffix:semicolon
 )brace
@@ -567,7 +564,7 @@ r_struct
 id|sigcontext
 id|sc
 suffix:semicolon
-multiline_comment|/* FPU should come here: SH-3 has no FPU */
+multiline_comment|/* FPU data should come here: SH-3 has no FPU */
 DECL|member|extramask
 r_int
 r_int
@@ -650,11 +647,11 @@ op_assign
 l_int|0
 suffix:semicolon
 DECL|macro|COPY
-mdefine_line|#define COPY(x)&t;&t;err |= __get_user(regs-&gt;x, &amp;sc-&gt;x)
+mdefine_line|#define COPY(x)&t;&t;err |= __get_user(regs-&gt;x, &amp;sc-&gt;sc_##x)
 id|COPY
 c_func
 (paren
-id|u_regs
+id|regs
 (braket
 l_int|1
 )braket
@@ -663,7 +660,7 @@ suffix:semicolon
 id|COPY
 c_func
 (paren
-id|u_regs
+id|regs
 (braket
 l_int|2
 )braket
@@ -672,7 +669,7 @@ suffix:semicolon
 id|COPY
 c_func
 (paren
-id|u_regs
+id|regs
 (braket
 l_int|3
 )braket
@@ -681,7 +678,7 @@ suffix:semicolon
 id|COPY
 c_func
 (paren
-id|u_regs
+id|regs
 (braket
 l_int|4
 )braket
@@ -690,7 +687,7 @@ suffix:semicolon
 id|COPY
 c_func
 (paren
-id|u_regs
+id|regs
 (braket
 l_int|5
 )braket
@@ -699,7 +696,7 @@ suffix:semicolon
 id|COPY
 c_func
 (paren
-id|u_regs
+id|regs
 (braket
 l_int|6
 )braket
@@ -708,7 +705,7 @@ suffix:semicolon
 id|COPY
 c_func
 (paren
-id|u_regs
+id|regs
 (braket
 l_int|7
 )braket
@@ -717,7 +714,7 @@ suffix:semicolon
 id|COPY
 c_func
 (paren
-id|u_regs
+id|regs
 (braket
 l_int|8
 )braket
@@ -726,7 +723,7 @@ suffix:semicolon
 id|COPY
 c_func
 (paren
-id|u_regs
+id|regs
 (braket
 l_int|9
 )braket
@@ -735,7 +732,7 @@ suffix:semicolon
 id|COPY
 c_func
 (paren
-id|u_regs
+id|regs
 (braket
 l_int|10
 )braket
@@ -744,7 +741,7 @@ suffix:semicolon
 id|COPY
 c_func
 (paren
-id|u_regs
+id|regs
 (braket
 l_int|11
 )braket
@@ -753,7 +750,7 @@ suffix:semicolon
 id|COPY
 c_func
 (paren
-id|u_regs
+id|regs
 (braket
 l_int|12
 )braket
@@ -762,7 +759,7 @@ suffix:semicolon
 id|COPY
 c_func
 (paren
-id|u_regs
+id|regs
 (braket
 l_int|13
 )braket
@@ -771,7 +768,7 @@ suffix:semicolon
 id|COPY
 c_func
 (paren
-id|u_regs
+id|regs
 (braket
 l_int|14
 )braket
@@ -780,10 +777,7 @@ suffix:semicolon
 id|COPY
 c_func
 (paren
-id|u_regs
-(braket
-l_int|15
-)braket
+id|sp
 )paren
 suffix:semicolon
 id|COPY
@@ -839,7 +833,7 @@ op_star
 id|r0_p
 comma
 op_amp
-id|sc-&gt;u_regs
+id|sc-&gt;sc_regs
 (braket
 l_int|0
 )braket
@@ -886,10 +880,7 @@ r_struct
 id|sigframe
 op_star
 )paren
-id|regs.u_regs
-(braket
-id|UREG_SP
-)braket
+id|regs.sp
 suffix:semicolon
 id|sigset_t
 id|set
@@ -1066,10 +1057,7 @@ r_struct
 id|rt_sigframe
 op_star
 )paren
-id|regs.u_regs
-(braket
-id|UREG_SP
-)braket
+id|regs.sp
 suffix:semicolon
 id|sigset_t
 id|set
@@ -1204,10 +1192,7 @@ id|st
 comma
 l_int|NULL
 comma
-id|regs.u_regs
-(braket
-id|UREG_SP
-)braket
+id|regs.sp
 )paren
 suffix:semicolon
 r_return
@@ -1255,11 +1240,11 @@ op_assign
 l_int|0
 suffix:semicolon
 DECL|macro|COPY
-mdefine_line|#define COPY(x)&t;&t;err |= __put_user(regs-&gt;x, &amp;sc-&gt;x)
+mdefine_line|#define COPY(x)&t;&t;err |= __put_user(regs-&gt;x, &amp;sc-&gt;sc_##x)
 id|COPY
 c_func
 (paren
-id|u_regs
+id|regs
 (braket
 l_int|0
 )braket
@@ -1268,7 +1253,7 @@ suffix:semicolon
 id|COPY
 c_func
 (paren
-id|u_regs
+id|regs
 (braket
 l_int|1
 )braket
@@ -1277,7 +1262,7 @@ suffix:semicolon
 id|COPY
 c_func
 (paren
-id|u_regs
+id|regs
 (braket
 l_int|2
 )braket
@@ -1286,7 +1271,7 @@ suffix:semicolon
 id|COPY
 c_func
 (paren
-id|u_regs
+id|regs
 (braket
 l_int|3
 )braket
@@ -1295,7 +1280,7 @@ suffix:semicolon
 id|COPY
 c_func
 (paren
-id|u_regs
+id|regs
 (braket
 l_int|4
 )braket
@@ -1304,7 +1289,7 @@ suffix:semicolon
 id|COPY
 c_func
 (paren
-id|u_regs
+id|regs
 (braket
 l_int|5
 )braket
@@ -1313,7 +1298,7 @@ suffix:semicolon
 id|COPY
 c_func
 (paren
-id|u_regs
+id|regs
 (braket
 l_int|6
 )braket
@@ -1322,7 +1307,7 @@ suffix:semicolon
 id|COPY
 c_func
 (paren
-id|u_regs
+id|regs
 (braket
 l_int|7
 )braket
@@ -1331,7 +1316,7 @@ suffix:semicolon
 id|COPY
 c_func
 (paren
-id|u_regs
+id|regs
 (braket
 l_int|8
 )braket
@@ -1340,7 +1325,7 @@ suffix:semicolon
 id|COPY
 c_func
 (paren
-id|u_regs
+id|regs
 (braket
 l_int|9
 )braket
@@ -1349,7 +1334,7 @@ suffix:semicolon
 id|COPY
 c_func
 (paren
-id|u_regs
+id|regs
 (braket
 l_int|10
 )braket
@@ -1358,7 +1343,7 @@ suffix:semicolon
 id|COPY
 c_func
 (paren
-id|u_regs
+id|regs
 (braket
 l_int|11
 )braket
@@ -1367,7 +1352,7 @@ suffix:semicolon
 id|COPY
 c_func
 (paren
-id|u_regs
+id|regs
 (braket
 l_int|12
 )braket
@@ -1376,7 +1361,7 @@ suffix:semicolon
 id|COPY
 c_func
 (paren
-id|u_regs
+id|regs
 (braket
 l_int|13
 )braket
@@ -1385,7 +1370,7 @@ suffix:semicolon
 id|COPY
 c_func
 (paren
-id|u_regs
+id|regs
 (braket
 l_int|14
 )braket
@@ -1394,10 +1379,7 @@ suffix:semicolon
 id|COPY
 c_func
 (paren
-id|u_regs
-(braket
-l_int|15
-)braket
+id|sp
 )paren
 suffix:semicolon
 id|COPY
@@ -1561,10 +1543,7 @@ c_func
 (paren
 id|ka
 comma
-id|regs-&gt;u_regs
-(braket
-id|UREG_SP
-)braket
+id|regs-&gt;sp
 comma
 r_sizeof
 (paren
@@ -1677,17 +1656,15 @@ suffix:semicolon
 r_else
 (brace
 multiline_comment|/* This is ; mov  #__NR_sigreturn,r0 ; trapa #0 */
-macro_line|#ifdef CONFIG_LITTLE_ENDIAN
+macro_line|#ifdef __LITTLE_ENDIAN__
 r_int
 r_int
 id|code
 op_assign
-l_int|0x00c300e0
+l_int|0xc300e000
 op_or
 (paren
 id|__NR_sigreturn
-op_lshift
-l_int|8
 )paren
 suffix:semicolon
 macro_line|#else
@@ -1740,10 +1717,7 @@ r_goto
 id|give_sigsegv
 suffix:semicolon
 multiline_comment|/* Set up registers for signal handler */
-id|regs-&gt;u_regs
-(braket
-id|UREG_SP
-)braket
+id|regs-&gt;sp
 op_assign
 (paren
 r_int
@@ -1751,7 +1725,7 @@ r_int
 )paren
 id|frame
 suffix:semicolon
-id|regs-&gt;u_regs
+id|regs-&gt;regs
 (braket
 l_int|4
 )braket
@@ -1791,6 +1765,16 @@ id|regs-&gt;pr
 )paren
 suffix:semicolon
 macro_line|#endif
+id|flush_icache_range
+c_func
+(paren
+id|regs-&gt;pr
+comma
+id|regs-&gt;pr
+op_plus
+l_int|4
+)paren
+suffix:semicolon
 r_return
 suffix:semicolon
 id|give_sigsegv
@@ -1863,10 +1847,7 @@ c_func
 (paren
 id|ka
 comma
-id|regs-&gt;u_regs
-(braket
-id|UREG_SP
-)braket
+id|regs-&gt;sp
 comma
 r_sizeof
 (paren
@@ -1983,6 +1964,10 @@ op_or_assign
 id|__put_user
 c_func
 (paren
+(paren
+r_void
+op_star
+)paren
 id|current-&gt;sas_ss_sp
 comma
 op_amp
@@ -1997,10 +1982,7 @@ c_func
 id|sas_ss_flags
 c_func
 (paren
-id|regs-&gt;u_regs
-(braket
-id|UREG_SP
-)braket
+id|regs-&gt;sp
 )paren
 comma
 op_amp
@@ -2072,17 +2054,15 @@ suffix:semicolon
 r_else
 (brace
 multiline_comment|/* This is ; mov  #__NR_sigreturn,r0 ; trapa #0 */
-macro_line|#ifdef CONFIG_LITTLE_ENDIAN
+macro_line|#ifdef __LITTLE_ENDIAN__
 r_int
 r_int
 id|code
 op_assign
-l_int|0x00c300e0
+l_int|0xc300e000
 op_or
 (paren
 id|__NR_sigreturn
-op_lshift
-l_int|8
 )paren
 suffix:semicolon
 macro_line|#else
@@ -2135,10 +2115,7 @@ r_goto
 id|give_sigsegv
 suffix:semicolon
 multiline_comment|/* Set up registers for signal handler */
-id|regs-&gt;u_regs
-(braket
-id|UREG_SP
-)braket
+id|regs-&gt;sp
 op_assign
 (paren
 r_int
@@ -2146,7 +2123,7 @@ r_int
 )paren
 id|frame
 suffix:semicolon
-id|regs-&gt;u_regs
+id|regs-&gt;regs
 (braket
 l_int|4
 )braket
@@ -2186,6 +2163,16 @@ id|regs-&gt;pr
 )paren
 suffix:semicolon
 macro_line|#endif
+id|flush_icache_range
+c_func
+(paren
+id|regs-&gt;pr
+comma
+id|regs-&gt;pr
+op_plus
+l_int|4
+)paren
+suffix:semicolon
 r_return
 suffix:semicolon
 id|give_sigsegv
@@ -2253,7 +2240,7 @@ multiline_comment|/* If so, check system call restarting.. */
 r_switch
 c_cond
 (paren
-id|regs-&gt;u_regs
+id|regs-&gt;regs
 (braket
 l_int|0
 )braket
@@ -2263,7 +2250,7 @@ r_case
 op_minus
 id|ERESTARTNOHAND
 suffix:colon
-id|regs-&gt;u_regs
+id|regs-&gt;regs
 (braket
 l_int|0
 )braket
@@ -2288,7 +2275,7 @@ id|SA_RESTART
 )paren
 )paren
 (brace
-id|regs-&gt;u_regs
+id|regs-&gt;regs
 (braket
 l_int|0
 )braket
@@ -2304,7 +2291,7 @@ r_case
 op_minus
 id|ERESTARTNOINTR
 suffix:colon
-id|regs-&gt;u_regs
+id|regs-&gt;regs
 (braket
 l_int|0
 )braket
@@ -2877,7 +2864,7 @@ multiline_comment|/* Restart the system call - no handlers present */
 r_if
 c_cond
 (paren
-id|regs-&gt;u_regs
+id|regs-&gt;regs
 (braket
 l_int|0
 )braket
@@ -2885,7 +2872,7 @@ op_eq
 op_minus
 id|ERESTARTNOHAND
 op_logical_or
-id|regs-&gt;u_regs
+id|regs-&gt;regs
 (braket
 l_int|0
 )braket
@@ -2893,7 +2880,7 @@ op_eq
 op_minus
 id|ERESTARTSYS
 op_logical_or
-id|regs-&gt;u_regs
+id|regs-&gt;regs
 (braket
 l_int|0
 )braket
@@ -2902,7 +2889,7 @@ op_minus
 id|ERESTARTNOINTR
 )paren
 (brace
-id|regs-&gt;u_regs
+id|regs-&gt;regs
 (braket
 l_int|0
 )braket

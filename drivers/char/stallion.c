@@ -3,6 +3,7 @@ multiline_comment|/*&n; *&t;stallion.c  -- stallion multiport serial driver.&n; 
 multiline_comment|/*****************************************************************************/
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
+macro_line|#include &lt;linux/version.h&gt; /* for linux/stallion.h */
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/tty_flip.h&gt;

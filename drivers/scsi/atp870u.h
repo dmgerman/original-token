@@ -1,5 +1,5 @@
 macro_line|#ifndef _ATP870U_H
-multiline_comment|/* $Id: atp870u.h,v 1.0 1997/05/07 15:09:00 root Exp root $&n; *&n; * Header file for the ACARD 870U/W driver for Linux&n; *&n; * $Log: atp870u.h,v $&n; * Revision 1.0  1997/05/07  15:09:00  root&n; * Initial revision&n; *&n; */
+multiline_comment|/* $Id: atp870u.h,v 1.0 1997/05/07 15:09:00 root Exp root $&n;&n; * Header file for the ACARD 870U/W driver for Linux&n; *&n; * $Log: atp870u.h,v $&n; * Revision 1.0  1997/05/07  15:09:00  root&n; * Initial revision&n; *&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kdev_t.h&gt;
 multiline_comment|/* I/O Port */

@@ -2,7 +2,6 @@ macro_line|#ifndef __ASM_SH_BYTEORDER_H
 DECL|macro|__ASM_SH_BYTEORDER_H
 mdefine_line|#define __ASM_SH_BYTEORDER_H
 multiline_comment|/*&n; * Copyright (C) 1999  Niibe Yutaka&n; */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/types.h&gt;
 DECL|function|___arch__swab32
 r_static
@@ -80,7 +79,7 @@ macro_line|#  define __BYTEORDER_HAS_U64__
 DECL|macro|__SWAB_64_THRU_32__
 macro_line|#  define __SWAB_64_THRU_32__
 macro_line|#endif
-macro_line|#ifdef CONFIG_LITTLE_ENDIAN
+macro_line|#ifdef __LITTLE_ENDIAN__
 macro_line|#include &lt;linux/byteorder/little_endian.h&gt;
 macro_line|#else
 macro_line|#include &lt;linux/byteorder/big_endian.h&gt;

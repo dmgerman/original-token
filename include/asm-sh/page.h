@@ -2,7 +2,7 @@ macro_line|#ifndef __ASM_SH_PAGE_H
 DECL|macro|__ASM_SH_PAGE_H
 mdefine_line|#define __ASM_SH_PAGE_H
 multiline_comment|/*&n; * Copyright (C) 1999  Niibe Yutaka&n; */
-multiline_comment|/* XXX &n;   [ P0 (virtual) ]               0x00000000     &lt;------ User space&n;   [ P1 (fixed)  write-through]   0x80000000     &lt;------ Kernel space&n;   [ P2 (fixed)  non-cachable]    0xA0000000     &lt;------ Physical access&n;   [ P3 (virtual) write-back]     0xC0000000     &lt;------ not used&n;   [ P4 control   ]               0xE0000000&n; */
+multiline_comment|/*&n;   [ P0/U0 (virtual) ]&t;&t;0x00000000     &lt;------ User space&n;   [ P1 (fixed)   cached ]&t;0x80000000     &lt;------ Kernel space&n;   [ P2 (fixed)  non-cachable]&t;0xA0000000     &lt;------ Physical access&n;   [ P3 (virtual) cached]&t;0xC0000000     &lt;------ not used&n;   [ P4 control   ]&t;&t;0xE0000000&n; */
 macro_line|#include &lt;linux/config.h&gt;
 multiline_comment|/* PAGE_SHIFT determines the page size */
 DECL|macro|PAGE_SHIFT

@@ -61,11 +61,11 @@ mdefine_line|#define TIOCSTI&t;&t;_IOW(&squot;T&squot;, 18, char) /* 0x5412 */
 DECL|macro|TIOCMGET
 mdefine_line|#define TIOCMGET&t;_IOR(&squot;T&squot;, 21, unsigned int) /* 0x5415 */
 DECL|macro|TIOCMBIS
-mdefine_line|#define TIOCMBIS&t;_IOW(&squot;T&squot;, 22, unsigne int) /* 0x5416 */
+mdefine_line|#define TIOCMBIS&t;_IOW(&squot;T&squot;, 22, unsigned int) /* 0x5416 */
 DECL|macro|TIOCMBIC
-mdefine_line|#define TIOCMBIC&t;_IOW(&squot;T&squot;, 23, unsigne int) /* 0x5417 */
+mdefine_line|#define TIOCMBIC&t;_IOW(&squot;T&squot;, 23, unsigned int) /* 0x5417 */
 DECL|macro|TIOCMSET
-mdefine_line|#define TIOCMSET&t;_IOW(&squot;T&squot;, 24, unsigne int) /* 0x5418 */
+mdefine_line|#define TIOCMSET&t;_IOW(&squot;T&squot;, 24, unsigned int) /* 0x5418 */
 DECL|macro|TIOCM_LE
 macro_line|# define TIOCM_LE&t;0x001
 DECL|macro|TIOCM_DTR

@@ -98,32 +98,6 @@ c_func
 id|page_addr
 )paren
 suffix:semicolon
-id|spin_lock
-c_func
-(paren
-op_amp
-id|vma-&gt;vm_mm-&gt;page_table_lock
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|pte_val
-c_func
-(paren
-id|pte
-)paren
-op_ne
-id|pte_val
-c_func
-(paren
-op_star
-id|page_table
-)paren
-)paren
-r_goto
-id|out_failed_unlock
-suffix:semicolon
 multiline_comment|/* Don&squot;t look at this pte if it&squot;s been accessed recently. */
 r_if
 c_cond
@@ -158,7 +132,7 @@ id|page-&gt;flags
 )paren
 suffix:semicolon
 r_goto
-id|out_failed_unlock
+id|out_failed
 suffix:semicolon
 )brace
 r_if
@@ -207,7 +181,7 @@ id|page
 )paren
 )paren
 r_goto
-id|out_failed_unlock
+id|out_failed
 suffix:semicolon
 multiline_comment|/*&n;&t; * Is the page already in the swap cache? If so, then&n;&t; * we can just drop our reference to it without doing&n;&t; * any IO - it&squot;s already up-to-date on disk.&n;&t; *&n;&t; * Return 0, as we didn&squot;t actually free any real&n;&t; * memory, and we should just continue our scan.&n;&t; */
 r_if
@@ -262,7 +236,7 @@ id|page
 )paren
 suffix:semicolon
 r_goto
-id|out_failed_unlock
+id|out_failed
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; * Is it a clean page? Then it must be recoverable&n;&t; * by just paging it in again, and we can just drop&n;&t; * it..&n;&t; *&n;&t; * However, this won&squot;t actually free any real&n;&t; * memory, as the page will just be in the page cache&n;&t; * somewhere, and as such we should just continue&n;&t; * our scan.&n;&t; *&n;&t; * Basically, this just makes it possible for us to do&n;&t; * some real work in the future in &quot;shrink_mmap()&quot;.&n;&t; */
@@ -299,7 +273,7 @@ id|__GFP_IO
 )paren
 )paren
 r_goto
-id|out_failed_unlock
+id|out_failed
 suffix:semicolon
 multiline_comment|/*&n;&t; * Ok, it&squot;s really dirty. That means that&n;&t; * we should either create a new swap cache&n;&t; * entry for it, or we should write it back&n;&t; * to its own backing store.&n;&t; *&n;&t; * Note that in neither case do we actually&n;&t; * know that we make a page available, but&n;&t; * as we potentially sleep we can no longer&n;&t; * continue scanning, so we migth as well&n;&t; * assume we free&squot;d something.&n;&t; *&n;&t; * NOTE NOTE NOTE! This should just set a&n;&t; * dirty bit in &squot;page&squot;, and just drop the&n;&t; * pte. All the hard work would be done by&n;&t; * shrink_mmap().&n;&t; *&n;&t; * That would get rid of a lot of problems.&n;&t; */
 id|flush_cache_page
@@ -327,12 +301,8 @@ c_func
 id|page_table
 )paren
 suffix:semicolon
-id|spin_unlock
-c_func
-(paren
-op_amp
-id|vma-&gt;vm_mm-&gt;page_table_lock
-)paren
+id|vma-&gt;vm_mm-&gt;rss
+op_decrement
 suffix:semicolon
 id|flush_tlb_page
 c_func
@@ -342,8 +312,11 @@ comma
 id|address
 )paren
 suffix:semicolon
-id|vma-&gt;vm_mm-&gt;rss
-op_decrement
+id|vmlist_access_unlock
+c_func
+(paren
+id|vma-&gt;vm_mm
+)paren
 suffix:semicolon
 id|error
 op_assign
@@ -392,7 +365,7 @@ op_logical_neg
 id|entry
 )paren
 r_goto
-id|out_failed_unlock
+id|out_failed
 suffix:semicolon
 multiline_comment|/* No swap space left */
 r_if
@@ -410,7 +383,7 @@ id|page
 )paren
 )paren
 r_goto
-id|out_swap_free_unlock
+id|out_swap_free
 suffix:semicolon
 id|vma-&gt;vm_mm-&gt;rss
 op_decrement
@@ -427,11 +400,10 @@ id|entry
 )paren
 )paren
 suffix:semicolon
-id|spin_unlock
+id|vmlist_access_unlock
 c_func
 (paren
-op_amp
-id|vma-&gt;vm_mm-&gt;page_table_lock
+id|vma-&gt;vm_mm
 )paren
 suffix:semicolon
 id|flush_tlb_page
@@ -480,21 +452,7 @@ suffix:semicolon
 r_return
 l_int|1
 suffix:semicolon
-id|out_failed_unlock
-suffix:colon
-id|spin_unlock
-c_func
-(paren
-op_amp
-id|vma-&gt;vm_mm-&gt;page_table_lock
-)paren
-suffix:semicolon
-id|out_failed
-suffix:colon
-r_return
-l_int|0
-suffix:semicolon
-id|out_swap_free_unlock
+id|out_swap_free
 suffix:colon
 id|swap_free
 c_func
@@ -502,13 +460,8 @@ c_func
 id|entry
 )paren
 suffix:semicolon
-id|spin_unlock
-c_func
-(paren
-op_amp
-id|vma-&gt;vm_mm-&gt;page_table_lock
-)paren
-suffix:semicolon
+id|out_failed
+suffix:colon
 r_return
 l_int|0
 suffix:semicolon
@@ -980,7 +933,13 @@ id|address
 op_assign
 id|mm-&gt;swap_address
 suffix:semicolon
-multiline_comment|/*&n;&t; * Find the proper vm-area&n;&t; */
+multiline_comment|/*&n;&t; * Find the proper vm-area after freezing the vma chain &n;&t; * and ptes.&n;&t; */
+id|vmlist_access_lock
+c_func
+(paren
+id|mm
+)paren
+suffix:semicolon
 id|vma
 op_assign
 id|find_vma
@@ -1054,6 +1013,12 @@ id|vma-&gt;vm_start
 suffix:semicolon
 )brace
 )brace
+id|vmlist_access_unlock
+c_func
+(paren
+id|mm
+)paren
+suffix:semicolon
 multiline_comment|/* We didn&squot;t find anything for the process */
 id|mm-&gt;swap_cnt
 op_assign

@@ -607,6 +607,7 @@ op_eq
 l_int|15
 )paren
 (brace
+multiline_comment|/* FIXME: 15 ??? */
 r_if
 c_cond
 (paren

@@ -1158,6 +1158,12 @@ op_assign
 id|vma-&gt;vm_start
 suffix:semicolon
 multiline_comment|/* can addr have changed?? */
+id|vmlist_modify_lock
+c_func
+(paren
+id|mm
+)paren
+suffix:semicolon
 id|insert_vm_struct
 c_func
 (paren
@@ -1174,6 +1180,12 @@ comma
 id|vma-&gt;vm_start
 comma
 id|vma-&gt;vm_end
+)paren
+suffix:semicolon
+id|vmlist_modify_unlock
+c_func
+(paren
+id|mm
 )paren
 suffix:semicolon
 id|mm-&gt;total_vm
@@ -1990,10 +2002,18 @@ id|end
 op_eq
 id|area-&gt;vm_end
 )paren
+(brace
 id|area-&gt;vm_end
 op_assign
 id|addr
 suffix:semicolon
+id|vmlist_modify_lock
+c_func
+(paren
+id|current-&gt;mm
+)paren
+suffix:semicolon
+)brace
 r_else
 r_if
 c_cond
@@ -2014,6 +2034,12 @@ suffix:semicolon
 id|area-&gt;vm_start
 op_assign
 id|end
+suffix:semicolon
+id|vmlist_modify_lock
+c_func
+(paren
+id|current-&gt;mm
+)paren
 suffix:semicolon
 )brace
 r_else
@@ -2101,6 +2127,12 @@ op_assign
 id|addr
 suffix:semicolon
 multiline_comment|/* Truncate area */
+id|vmlist_modify_lock
+c_func
+(paren
+id|current-&gt;mm
+)paren
+suffix:semicolon
 id|insert_vm_struct
 c_func
 (paren
@@ -2116,6 +2148,12 @@ c_func
 id|current-&gt;mm
 comma
 id|area
+)paren
+suffix:semicolon
+id|vmlist_modify_unlock
+c_func
+(paren
+id|current-&gt;mm
 )paren
 suffix:semicolon
 r_return
@@ -2491,6 +2529,12 @@ id|free
 op_assign
 l_int|NULL
 suffix:semicolon
+id|vmlist_modify_lock
+c_func
+(paren
+id|mm
+)paren
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -2537,6 +2581,17 @@ id|mm-&gt;mmap_avl
 )paren
 suffix:semicolon
 )brace
+id|mm-&gt;mmap_cache
+op_assign
+l_int|NULL
+suffix:semicolon
+multiline_comment|/* Kill the cache. */
+id|vmlist_modify_unlock
+c_func
+(paren
+id|mm
+)paren
+suffix:semicolon
 multiline_comment|/* Ok - we have the memory areas we should free on the &squot;free&squot; list,&n;&t; * so release them, and unmap the page range..&n;&t; * If the one of the segments is only being partially unmapped,&n;&t; * it will put new vm_area_struct(s) into the address space.&n;&t; */
 r_while
 c_loop
@@ -2596,6 +2651,7 @@ id|end
 op_minus
 id|st
 suffix:semicolon
+multiline_comment|/*&n;&t;&t; * The lock_kernel interlocks with kswapd try_to_swap_out&n;&t;&t; * invoking a driver swapout() method, and being able to&n;&t;&t; * guarantee vma existance.&n;&t;&t; */
 id|lock_kernel
 c_func
 (paren
@@ -2708,11 +2764,6 @@ op_plus
 id|len
 )paren
 suffix:semicolon
-id|mm-&gt;mmap_cache
-op_assign
-l_int|NULL
-suffix:semicolon
-multiline_comment|/* Kill the cache. */
 r_return
 l_int|0
 suffix:semicolon
@@ -3017,6 +3068,12 @@ id|addr
 op_assign
 id|vma-&gt;vm_start
 suffix:semicolon
+id|vmlist_modify_lock
+c_func
+(paren
+id|mm
+)paren
+suffix:semicolon
 id|insert_vm_struct
 c_func
 (paren
@@ -3033,6 +3090,12 @@ comma
 id|vma-&gt;vm_start
 comma
 id|vma-&gt;vm_end
+)paren
+suffix:semicolon
+id|vmlist_modify_unlock
+c_func
+(paren
+id|mm
 )paren
 suffix:semicolon
 id|mm-&gt;total_vm
@@ -3141,6 +3204,12 @@ id|mpnt
 op_assign
 id|mm-&gt;mmap
 suffix:semicolon
+id|vmlist_modify_lock
+c_func
+(paren
+id|mm
+)paren
+suffix:semicolon
 id|mm-&gt;mmap
 op_assign
 id|mm-&gt;mmap_avl
@@ -3148,6 +3217,12 @@ op_assign
 id|mm-&gt;mmap_cache
 op_assign
 l_int|NULL
+suffix:semicolon
+id|vmlist_modify_unlock
+c_func
+(paren
+id|mm
+)paren
 suffix:semicolon
 id|mm-&gt;rss
 op_assign
@@ -3598,6 +3673,11 @@ op_assign
 id|mpnt-&gt;vm_next
 suffix:semicolon
 )brace
+id|mm-&gt;mmap_cache
+op_assign
+l_int|NULL
+suffix:semicolon
+multiline_comment|/* Kill the cache. */
 multiline_comment|/* prev and mpnt cycle through the list, as long as&n;&t; * start_addr &lt; mpnt-&gt;vm_end &amp;&amp; prev-&gt;vm_start &lt; end_addr&n;&t; */
 r_for
 c_loop
@@ -3736,12 +3816,24 @@ id|mpnt-&gt;vm_start
 op_assign
 id|mpnt-&gt;vm_end
 suffix:semicolon
+id|vmlist_modify_unlock
+c_func
+(paren
+id|mm
+)paren
+suffix:semicolon
 id|mpnt-&gt;vm_ops
 op_member_access_from_pointer
 id|close
 c_func
 (paren
 id|mpnt
+)paren
+suffix:semicolon
+id|vmlist_modify_lock
+c_func
+(paren
+id|mm
 )paren
 suffix:semicolon
 )brace
@@ -3778,11 +3870,6 @@ op_assign
 id|prev
 suffix:semicolon
 )brace
-id|mm-&gt;mmap_cache
-op_assign
-l_int|NULL
-suffix:semicolon
-multiline_comment|/* Kill the cache. */
 )brace
 DECL|function|vma_init
 r_void

@@ -1,4 +1,5 @@
-multiline_comment|/*&n; *  linux/arch/sh/kernel/time.c&n; *&n; *  Copyright (C) 1999  Niibe Yutaka&n; *&n; *  Some code taken from i386 version.&n; *    Copyright (C) 1991, 1992, 1995  Linus Torvalds&n; */
+multiline_comment|/* $Id: time.c,v 1.2 1999/10/11 13:12:02 gniibe Exp $&n; *&n; *  linux/arch/sh/kernel/time.c&n; *&n; *  Copyright (C) 1999  Tetsuya Okada &amp; Niibe Yutaka&n; *&n; *  Some code taken from i386 version.&n; *    Copyright (C) 1991, 1992, 1995  Linus Torvalds&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -17,6 +18,13 @@ macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/delay.h&gt;
 macro_line|#include &lt;linux/timex.h&gt;
 macro_line|#include &lt;linux/irq.h&gt;
+DECL|macro|TMU_TOCR_INIT
+mdefine_line|#define TMU_TOCR_INIT&t;0x00
+DECL|macro|TMU0_TCR_INIT
+mdefine_line|#define TMU0_TCR_INIT&t;0x0020
+DECL|macro|TMU_TSTR_INIT
+mdefine_line|#define TMU_TSTR_INIT&t;1
+macro_line|#if defined(__sh3__)
 DECL|macro|TMU_TOCR
 mdefine_line|#define TMU_TOCR&t;0xfffffe90&t;/* Byte access */
 DECL|macro|TMU_TSTR
@@ -27,16 +35,96 @@ DECL|macro|TMU0_TCNT
 mdefine_line|#define TMU0_TCNT&t;0xfffffe98&t;/* Long access */
 DECL|macro|TMU0_TCR
 mdefine_line|#define TMU0_TCR&t;0xfffffe9c&t;/* Word access */
-DECL|macro|TMU_TOCR_INIT
-mdefine_line|#define TMU_TOCR_INIT&t;0x00
-DECL|macro|TMU0_TCR_INIT
-mdefine_line|#define TMU0_TCR_INIT&t;0x0020
-DECL|macro|TMU_TSTR_INIT
-mdefine_line|#define TMU_TSTR_INIT&t;1
-DECL|macro|CLOCK_MHZ
-mdefine_line|#define CLOCK_MHZ&t;(60/4)
 DECL|macro|INTERVAL
 mdefine_line|#define INTERVAL&t;37500 /* (1000000*CLOCK_MHZ/HZ/2) ??? */
+multiline_comment|/* SH-3 RTC */
+DECL|macro|R64CNT
+mdefine_line|#define R64CNT  &t;0xfffffec0
+DECL|macro|RSECCNT
+mdefine_line|#define RSECCNT &t;0xfffffec2
+DECL|macro|RMINCNT
+mdefine_line|#define RMINCNT &t;0xfffffec4
+DECL|macro|RHRCNT
+mdefine_line|#define RHRCNT  &t;0xfffffec6
+DECL|macro|RWKCNT
+mdefine_line|#define RWKCNT  &t;0xfffffec8
+DECL|macro|RDAYCNT
+mdefine_line|#define RDAYCNT &t;0xfffffeca
+DECL|macro|RMONCNT
+mdefine_line|#define RMONCNT &t;0xfffffecc
+DECL|macro|RYRCNT
+mdefine_line|#define RYRCNT  &t;0xfffffece
+DECL|macro|RSECAR
+mdefine_line|#define RSECAR  &t;0xfffffed0
+DECL|macro|RMINAR
+mdefine_line|#define RMINAR  &t;0xfffffed2
+DECL|macro|RHRAR
+mdefine_line|#define RHRAR   &t;0xfffffed4
+DECL|macro|RWKAR
+mdefine_line|#define RWKAR   &t;0xfffffed6
+DECL|macro|RDAYAR
+mdefine_line|#define RDAYAR  &t;0xfffffed8
+DECL|macro|RMONAR
+mdefine_line|#define RMONAR  &t;0xfffffeda
+DECL|macro|RCR1
+mdefine_line|#define RCR1    &t;0xfffffedc
+DECL|macro|RCR2
+mdefine_line|#define RCR2    &t;0xfffffede
+macro_line|#elif defined(__SH4__)
+DECL|macro|TMU_TOCR
+mdefine_line|#define TMU_TOCR&t;0xffd80000&t;/* Byte access */
+DECL|macro|TMU_TSTR
+mdefine_line|#define TMU_TSTR&t;0xffd80004&t;/* Byte access */
+DECL|macro|TMU0_TCOR
+mdefine_line|#define TMU0_TCOR&t;0xffd80008&t;/* Long access */
+DECL|macro|TMU0_TCNT
+mdefine_line|#define TMU0_TCNT&t;0xffd8000c&t;/* Long access */
+DECL|macro|TMU0_TCR
+mdefine_line|#define TMU0_TCR&t;0xffd80010&t;/* Word access */
+DECL|macro|INTERVAL
+mdefine_line|#define INTERVAL&t;83333
+multiline_comment|/* SH-4 RTC */
+DECL|macro|R64CNT
+mdefine_line|#define R64CNT  &t;0xffc80000
+DECL|macro|RSECCNT
+mdefine_line|#define RSECCNT &t;0xffc80004
+DECL|macro|RMINCNT
+mdefine_line|#define RMINCNT &t;0xffc80008
+DECL|macro|RHRCNT
+mdefine_line|#define RHRCNT  &t;0xffc8000c
+DECL|macro|RWKCNT
+mdefine_line|#define RWKCNT  &t;0xffc80010
+DECL|macro|RDAYCNT
+mdefine_line|#define RDAYCNT &t;0xffc80014
+DECL|macro|RMONCNT
+mdefine_line|#define RMONCNT &t;0xffc80018
+DECL|macro|RYRCNT
+mdefine_line|#define RYRCNT  &t;0xffc8001c  /* 16bit */
+DECL|macro|RSECAR
+mdefine_line|#define RSECAR  &t;0xffc80020
+DECL|macro|RMINAR
+mdefine_line|#define RMINAR  &t;0xffc80024
+DECL|macro|RHRAR
+mdefine_line|#define RHRAR   &t;0xffc80028
+DECL|macro|RWKAR
+mdefine_line|#define RWKAR   &t;0xffc8002c
+DECL|macro|RDAYAR
+mdefine_line|#define RDAYAR  &t;0xffc80030
+DECL|macro|RMONAR
+mdefine_line|#define RMONAR  &t;0xffc80034
+DECL|macro|RCR1
+mdefine_line|#define RCR1    &t;0xffc80038
+DECL|macro|RCR2
+mdefine_line|#define RCR2    &t;0xffc8003c
+macro_line|#endif
+macro_line|#ifndef BCD_TO_BIN
+DECL|macro|BCD_TO_BIN
+mdefine_line|#define BCD_TO_BIN(val) ((val)=((val)&amp;15) + ((val)&gt;&gt;4)*10)
+macro_line|#endif
+macro_line|#ifndef BIN_TO_BCD
+DECL|macro|BIN_TO_BCD
+mdefine_line|#define BIN_TO_BCD(val) ((val)=(((val)/10)&lt;&lt;4) + (val)%10)
+macro_line|#endif
 r_extern
 id|rwlock_t
 id|xtime_lock
@@ -196,7 +284,6 @@ id|xtime_lock
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; */
 DECL|function|set_rtc_time
 r_static
 r_int
@@ -208,16 +295,166 @@ r_int
 id|nowtime
 )paren
 (brace
-multiline_comment|/* XXX  should be implemented XXXXXXXXXX */
+macro_line|#ifdef CONFIG_SH_CPU_RTC
 r_int
+id|retval
+op_assign
+l_int|0
+suffix:semicolon
+r_int
+id|real_seconds
+comma
+id|real_minutes
+comma
+id|cmos_minutes
+suffix:semicolon
+id|ctrl_outb
+c_func
+(paren
+l_int|2
+comma
+id|RCR2
+)paren
+suffix:semicolon
+multiline_comment|/* reset pre-scaler &amp; stop RTC */
+id|cmos_minutes
+op_assign
+id|ctrl_inb
+c_func
+(paren
+id|RMINCNT
+)paren
+suffix:semicolon
+id|BCD_TO_BIN
+c_func
+(paren
+id|cmos_minutes
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t; * since we&squot;re only adjusting minutes and seconds,&n;&t; * don&squot;t interfere with hour overflow. This avoids&n;&t; * messing with unknown time zones but requires your&n;&t; * RTC not to be off by more than 15 minutes&n;&t; */
+id|real_seconds
+op_assign
+id|nowtime
+op_mod
+l_int|60
+suffix:semicolon
+id|real_minutes
+op_assign
+id|nowtime
+op_div
+l_int|60
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+(paren
+id|abs
+c_func
+(paren
+id|real_minutes
+op_minus
+id|cmos_minutes
+)paren
+op_plus
+l_int|15
+)paren
+op_div
+l_int|30
+)paren
+op_amp
+l_int|1
+)paren
+id|real_minutes
+op_add_assign
+l_int|30
+suffix:semicolon
+multiline_comment|/* correct for half hour time zone */
+id|real_minutes
+op_mod_assign
+l_int|60
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|abs
+c_func
+(paren
+id|real_minutes
+op_minus
+id|cmos_minutes
+)paren
+OL
+l_int|30
+)paren
+(brace
+id|BIN_TO_BCD
+c_func
+(paren
+id|real_seconds
+)paren
+suffix:semicolon
+id|BIN_TO_BCD
+c_func
+(paren
+id|real_minutes
+)paren
+suffix:semicolon
+id|ctrl_outb
+c_func
+(paren
+id|real_seconds
+comma
+id|RSECCNT
+)paren
+suffix:semicolon
+id|ctrl_outb
+c_func
+(paren
+id|real_minutes
+comma
+id|RMINCNT
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
+id|printk
+c_func
+(paren
+id|KERN_WARNING
+l_string|&quot;set_rtc_time: can&squot;t update from %d to %d&bslash;n&quot;
+comma
+id|cmos_minutes
+comma
+id|real_minutes
+)paren
+suffix:semicolon
 id|retval
 op_assign
 op_minus
 l_int|1
 suffix:semicolon
+)brace
+id|ctrl_outb
+c_func
+(paren
+l_int|2
+comma
+id|RCR2
+)paren
+suffix:semicolon
+multiline_comment|/* start RTC */
 r_return
 id|retval
 suffix:semicolon
+macro_line|#else
+multiline_comment|/* XXX should support other clock devices? */
+r_return
+op_minus
+l_int|1
+suffix:semicolon
+macro_line|#endif
 )brace
 multiline_comment|/* last time the RTC clock got updated */
 DECL|variable|last_rtc_update
@@ -364,35 +601,28 @@ id|regs
 (brace
 r_int
 r_int
-id|__dummy
+id|timer_status
 suffix:semicolon
 multiline_comment|/* Clear UNF bit */
-id|asm
-r_volatile
-(paren
-l_string|&quot;mov.w&t;%1,%0&bslash;n&bslash;t&quot;
-l_string|&quot;and&t;%2,%0&bslash;n&bslash;t&quot;
-l_string|&quot;mov.w&t;%0,%1&quot;
-suffix:colon
-l_string|&quot;=&amp;z&quot;
-(paren
-id|__dummy
-)paren
-suffix:colon
-l_string|&quot;m&quot;
-(paren
-id|__m
+id|timer_status
+op_assign
+id|ctrl_inw
 c_func
 (paren
 id|TMU0_TCR
 )paren
-)paren
-comma
-l_string|&quot;r&quot;
-(paren
+suffix:semicolon
+id|timer_status
+op_and_assign
 op_complement
 l_int|0x100
-)paren
+suffix:semicolon
+id|ctrl_outw
+c_func
+(paren
+id|timer_status
+comma
+id|TMU0_TCR
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * Here we are in the timer irq handler. We just have irqs locally&n;&t; * disabled but we don&squot;t know if the timer_bh is running on the other&n;&t; * CPU. We need to avoid to SMP race with it. NOTE: we don&squot; t need&n;&t; * the irq version of write_lock because as just said we have irq&n;&t; * locally disabled. -arca&n;&t; */
@@ -546,10 +776,340 @@ c_func
 r_void
 )paren
 (brace
-multiline_comment|/* XXX not implemented yet */
+macro_line|#ifdef CONFIG_SH_CPU_RTC
+r_int
+r_int
+id|sec
+comma
+id|min
+comma
+id|hr
+comma
+id|wk
+comma
+id|day
+comma
+id|mon
+comma
+id|yr
+comma
+id|yr100
+suffix:semicolon
+id|again
+suffix:colon
+id|ctrl_outb
+c_func
+(paren
+l_int|1
+comma
+id|RCR1
+)paren
+suffix:semicolon
+multiline_comment|/* clear CF bit */
+r_do
+(brace
+id|sec
+op_assign
+id|ctrl_inb
+c_func
+(paren
+id|RSECCNT
+)paren
+suffix:semicolon
+id|min
+op_assign
+id|ctrl_inb
+c_func
+(paren
+id|RMINCNT
+)paren
+suffix:semicolon
+id|hr
+op_assign
+id|ctrl_inb
+c_func
+(paren
+id|RHRCNT
+)paren
+suffix:semicolon
+id|wk
+op_assign
+id|ctrl_inb
+c_func
+(paren
+id|RWKCNT
+)paren
+suffix:semicolon
+id|day
+op_assign
+id|ctrl_inb
+c_func
+(paren
+id|RDAYCNT
+)paren
+suffix:semicolon
+id|mon
+op_assign
+id|ctrl_inb
+c_func
+(paren
+id|RMONCNT
+)paren
+suffix:semicolon
+macro_line|#if defined(__SH4__)
+id|yr
+op_assign
+id|ctrl_inw
+c_func
+(paren
+id|RYRCNT
+)paren
+suffix:semicolon
+id|yr100
+op_assign
+(paren
+id|yr
+op_rshift
+l_int|8
+)paren
+suffix:semicolon
+id|yr
+op_and_assign
+l_int|0xff
+suffix:semicolon
+macro_line|#else
+id|yr
+op_assign
+id|ctrl_inb
+c_func
+(paren
+id|RYRCNT
+)paren
+suffix:semicolon
+id|yr100
+op_assign
+(paren
+id|yr
+op_eq
+l_int|0x99
+)paren
+ques
+c_cond
+l_int|0x19
+suffix:colon
+l_int|0x20
+suffix:semicolon
+macro_line|#endif
+)brace
+r_while
+c_loop
+(paren
+(paren
+id|ctrl_inb
+c_func
+(paren
+id|RCR1
+)paren
+op_amp
+l_int|0x80
+)paren
+op_ne
+l_int|0
+)paren
+suffix:semicolon
+id|BCD_TO_BIN
+c_func
+(paren
+id|yr100
+)paren
+suffix:semicolon
+id|BCD_TO_BIN
+c_func
+(paren
+id|yr
+)paren
+suffix:semicolon
+id|BCD_TO_BIN
+c_func
+(paren
+id|mon
+)paren
+suffix:semicolon
+id|BCD_TO_BIN
+c_func
+(paren
+id|day
+)paren
+suffix:semicolon
+id|BCD_TO_BIN
+c_func
+(paren
+id|hr
+)paren
+suffix:semicolon
+id|BCD_TO_BIN
+c_func
+(paren
+id|min
+)paren
+suffix:semicolon
+id|BCD_TO_BIN
+c_func
+(paren
+id|sec
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|yr
+OG
+l_int|99
+op_logical_or
+id|mon
+template_param
+l_int|12
+op_logical_or
+id|day
+OG
+l_int|31
+op_logical_or
+id|day
+template_param
+l_int|23
+op_logical_or
+id|min
+OG
+l_int|59
+op_logical_or
+id|sec
+OG
+l_int|59
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;SH RTC: invalid value, resetting to 1 Jan 2000&bslash;n&quot;
+)paren
+suffix:semicolon
+id|ctrl_outb
+c_func
+(paren
+l_int|2
+comma
+id|RCR2
+)paren
+suffix:semicolon
+multiline_comment|/* reset, stop */
+id|ctrl_outb
+c_func
+(paren
+l_int|0
+comma
+id|RSECCNT
+)paren
+suffix:semicolon
+id|ctrl_outb
+c_func
+(paren
+l_int|0
+comma
+id|RMINCNT
+)paren
+suffix:semicolon
+id|ctrl_outb
+c_func
+(paren
+l_int|0
+comma
+id|RHRCNT
+)paren
+suffix:semicolon
+id|ctrl_outb
+c_func
+(paren
+l_int|6
+comma
+id|RWKCNT
+)paren
+suffix:semicolon
+id|ctrl_outb
+c_func
+(paren
+l_int|1
+comma
+id|RDAYCNT
+)paren
+suffix:semicolon
+id|ctrl_outb
+c_func
+(paren
+l_int|1
+comma
+id|RMONCNT
+)paren
+suffix:semicolon
+macro_line|#if defined(__SH4__)
+id|ctrl_outw
+c_func
+(paren
+l_int|0x2000
+comma
+id|RYRCNT
+)paren
+suffix:semicolon
+macro_line|#else
+id|ctrl_outb
+c_func
+(paren
+l_int|0
+comma
+id|RYRCNT
+)paren
+suffix:semicolon
+macro_line|#endif
+id|ctrl_outb
+c_func
+(paren
+l_int|1
+comma
+id|RCR2
+)paren
+suffix:semicolon
+multiline_comment|/* start */
+r_goto
+id|again
+suffix:semicolon
+)brace
+r_return
+id|mktime
+c_func
+(paren
+id|yr100
+op_star
+l_int|100
+op_plus
+id|yr
+comma
+id|mon
+comma
+id|day
+comma
+id|hr
+comma
+id|min
+comma
+id|sec
+)paren
+suffix:semicolon
+macro_line|#else
+multiline_comment|/* XXX should support other clock devices? */
 r_return
 l_int|0
 suffix:semicolon
+macro_line|#endif
 )brace
 DECL|variable|irq0
 r_static
@@ -580,10 +1140,6 @@ c_func
 r_void
 )paren
 (brace
-r_int
-r_int
-id|__dummy
-suffix:semicolon
 id|xtime.tv_sec
 op_assign
 id|get_rtc_time
@@ -615,87 +1171,44 @@ id|irq0
 )paren
 suffix:semicolon
 multiline_comment|/* Start TMU0 */
-id|asm
-r_volatile
-(paren
-l_string|&quot;mov&t;%1,%0&bslash;n&bslash;t&quot;
-l_string|&quot;mov.b&t;%0,%2&t;&t;! external clock input&bslash;n&bslash;t&quot;
-l_string|&quot;mov&t;%3,%0&bslash;n&bslash;t&quot;
-l_string|&quot;mov.w&t;%0,%4&t;&t;! enable timer0 interrupt&bslash;n&bslash;t&quot;
-l_string|&quot;mov.l&t;%5,%6&bslash;n&bslash;t&quot;
-l_string|&quot;mov.l&t;%5,%7&bslash;n&bslash;t&quot;
-l_string|&quot;mov&t;%8,%0&bslash;n&bslash;t&quot;
-l_string|&quot;mov.b&t;%0,%9&quot;
-suffix:colon
-l_string|&quot;=&amp;z&quot;
-(paren
-id|__dummy
-)paren
-suffix:colon
-l_string|&quot;i&quot;
+id|ctrl_outb
+c_func
 (paren
 id|TMU_TOCR_INIT
-)paren
 comma
-l_string|&quot;m&quot;
-(paren
-id|__m
-c_func
-(paren
 id|TMU_TOCR
 )paren
-)paren
-comma
-l_string|&quot;i&quot;
+suffix:semicolon
+id|ctrl_outw
+c_func
 (paren
 id|TMU0_TCR_INIT
-)paren
 comma
-l_string|&quot;m&quot;
-(paren
-id|__m
-c_func
-(paren
 id|TMU0_TCR
 )paren
-)paren
-comma
-l_string|&quot;r&quot;
+suffix:semicolon
+id|ctrl_outl
+c_func
 (paren
 id|INTERVAL
-)paren
 comma
-l_string|&quot;m&quot;
-(paren
-id|__m
-c_func
-(paren
 id|TMU0_TCOR
 )paren
-)paren
-comma
-l_string|&quot;m&quot;
-(paren
-id|__m
+suffix:semicolon
+id|ctrl_outl
 c_func
 (paren
+id|INTERVAL
+comma
 id|TMU0_TCNT
 )paren
-)paren
-comma
-l_string|&quot;i&quot;
-(paren
-id|TMU_TSTR_INIT
-)paren
-comma
-l_string|&quot;m&quot;
-(paren
-id|__m
+suffix:semicolon
+id|ctrl_outb
 c_func
 (paren
+id|TMU_TSTR_INIT
+comma
 id|TMU_TSTR
-)paren
-)paren
 )paren
 suffix:semicolon
 macro_line|#if 0

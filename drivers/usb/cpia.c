@@ -1761,7 +1761,7 @@ id|g
 comma
 id|b
 suffix:semicolon
-multiline_comment|/* We want atleast 2 bytes for the length */
+multiline_comment|/* We want at least 2 bytes for the length */
 r_if
 c_cond
 (paren
@@ -2685,9 +2685,24 @@ id|len
 comma
 r_void
 op_star
-id|dev_id
+id|isocdesc
 )paren
 (brace
+r_void
+op_star
+id|dev_id
+op_assign
+(paren
+(paren
+r_struct
+id|usb_isoc_desc
+op_star
+)paren
+id|isocdesc
+)paren
+op_member_access_from_pointer
+id|context
+suffix:semicolon
 r_struct
 id|usb_cpia
 op_star
@@ -2881,6 +2896,34 @@ id|cpia-&gt;scratchlen
 op_assign
 l_int|0
 suffix:semicolon
+multiline_comment|/* Alternate interface 3 is is the biggest frame size */
+r_if
+c_cond
+(paren
+id|usb_set_interface
+c_func
+(paren
+id|cpia-&gt;dev
+comma
+l_int|1
+comma
+l_int|3
+)paren
+OL
+l_int|0
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;usb_set_interface error&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|EBUSY
+suffix:semicolon
+)brace
 multiline_comment|/* We double buffer the Iso lists */
 id|err
 op_assign
@@ -3078,7 +3121,7 @@ id|frame_length
 op_assign
 id|FRAME_SIZE_PER_DESC
 suffix:semicolon
-multiline_comment|/* and the desc. [1] */
+multiline_comment|/* and for desc. [1] */
 id|id
 op_assign
 id|cpia-&gt;sbuf
@@ -3140,6 +3183,8 @@ id|frame_length
 op_assign
 id|FRAME_SIZE_PER_DESC
 suffix:semicolon
+id|err
+op_assign
 id|usb_run_isoc
 c_func
 (paren
@@ -3153,6 +3198,22 @@ comma
 l_int|NULL
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|err
+)paren
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;CPiA USB driver error (%d) on usb_run_isoc&bslash;n&quot;
+comma
+id|err
+)paren
+suffix:semicolon
+id|err
+op_assign
 id|usb_run_isoc
 c_func
 (paren
@@ -3171,6 +3232,20 @@ dot
 id|isodesc
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|err
+)paren
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;CPiA USB driver error (%d) on usb_run_isoc&bslash;n&quot;
+comma
+id|err
+)paren
+suffix:semicolon
 macro_line|#ifdef CPIA_DEBUG
 id|printk
 c_func
@@ -3179,34 +3254,6 @@ l_string|&quot;done scheduling&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
-multiline_comment|/* Alternate interface 3 is is the biggest frame size */
-r_if
-c_cond
-(paren
-id|usb_set_interface
-c_func
-(paren
-id|cpia-&gt;dev
-comma
-l_int|1
-comma
-l_int|3
-)paren
-OL
-l_int|0
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;usb_set_interface error&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-op_minus
-id|EBUSY
-suffix:semicolon
-)brace
 macro_line|#if 0
 r_if
 c_cond
@@ -4406,19 +4453,13 @@ op_lshift
 l_int|8
 suffix:semicolon
 multiline_comment|/* XXX */
-macro_line|#if 0
 id|p.depth
 op_assign
 l_int|24
 suffix:semicolon
-macro_line|#endif
-id|p.depth
-op_assign
-l_int|16
-suffix:semicolon
 id|p.palette
 op_assign
-id|VIDEO_PALETTE_YUYV
+id|VIDEO_PALETTE_RGB24
 suffix:semicolon
 r_if
 c_cond
@@ -4491,6 +4532,22 @@ comma
 id|p.palette
 comma
 id|p.depth
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;SPICT: brightness=%d, hue=%d, colour=%d, contrast=%d, whiteness=%d&bslash;n&quot;
+comma
+id|p.brightness
+comma
+id|p.hue
+comma
+id|p.colour
+comma
+id|p.contrast
+comma
+id|p.whiteness
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -5114,6 +5171,74 @@ l_int|1
 suffix:semicolon
 )brace
 r_case
+id|VIDIOCGFBUF
+suffix:colon
+(brace
+r_struct
+id|video_buffer
+id|vb
+suffix:semicolon
+macro_line|#ifdef CPIA_DEBUG
+id|printk
+c_func
+(paren
+l_string|&quot;GFBUF&bslash;n&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
+id|memset
+c_func
+(paren
+op_amp
+id|vb
+comma
+l_int|0
+comma
+r_sizeof
+(paren
+id|vb
+)paren
+)paren
+suffix:semicolon
+id|vb.base
+op_assign
+l_int|NULL
+suffix:semicolon
+multiline_comment|/* frame buffer not supported, not used */
+r_if
+c_cond
+(paren
+id|copy_to_user
+c_func
+(paren
+(paren
+r_void
+op_star
+)paren
+id|arg
+comma
+(paren
+r_void
+op_star
+)paren
+op_amp
+id|vb
+comma
+r_sizeof
+(paren
+id|vb
+)paren
+)paren
+)paren
+r_return
+op_minus
+id|EFAULT
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+r_case
 id|VIDIOCKEY
 suffix:colon
 r_return
@@ -5126,9 +5251,6 @@ r_return
 op_minus
 id|EINVAL
 suffix:semicolon
-r_case
-id|VIDIOCGFBUF
-suffix:colon
 r_case
 id|VIDIOCSFBUF
 suffix:colon

@@ -516,10 +516,10 @@ mdefine_line|#define ORC_EXECSCSI&t;0x00&t;/* SCSI initiator command with residu
 DECL|macro|ORC_BUSDEVRST
 mdefine_line|#define ORC_BUSDEVRST&t;0x01&t;/* SCSI Bus Device Reset  */
 multiline_comment|/* Status of ORCSCB_Status */
-DECL|macro|SCB_COMPLETE
-mdefine_line|#define SCB_COMPLETE&t;0x00&t;/* SCB request completed  */
-DECL|macro|SCB_POST
-mdefine_line|#define SCB_POST&t;0x01&t;/* SCB is posted by the HOST      */
+DECL|macro|ORCSCB_COMPLETE
+mdefine_line|#define ORCSCB_COMPLETE&t;0x00&t;/* SCB request completed  */
+DECL|macro|ORCSCB_POST
+mdefine_line|#define ORCSCB_POST&t;0x01&t;/* SCB is posted by the HOST      */
 multiline_comment|/* Bit Definition for ORCSCB_Flags */
 DECL|macro|SCF_DISINT
 mdefine_line|#define SCF_DISINT&t;0x01&t;/* Disable HOST interrupt */

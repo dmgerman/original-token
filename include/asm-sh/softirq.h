@@ -23,9 +23,8 @@ DECL|macro|local_bh_enable
 mdefine_line|#define local_bh_enable()&t;cpu_bh_enable(smp_processor_id())
 DECL|macro|get_active_bhs
 mdefine_line|#define get_active_bhs()&t;(bh_mask &amp; bh_active)
-multiline_comment|/* XXX */
 DECL|macro|clear_active_bhs
-mdefine_line|#define clear_active_bhs(x)&t;atomic_clear_mask((x),&amp;bh_active)
+mdefine_line|#define clear_active_bhs(x)&t;atomic_clear_mask((x),(atomic_t *)&amp;bh_active)
 DECL|function|init_bh
 r_extern
 r_inline

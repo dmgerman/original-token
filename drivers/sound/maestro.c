@@ -2843,7 +2843,7 @@ id|spin_unlock_irqrestore
 c_func
 (paren
 op_amp
-id|card-&gt;lock
+id|ess-&gt;card-&gt;lock
 comma
 id|flags
 )paren

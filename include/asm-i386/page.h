@@ -139,10 +139,9 @@ macro_line|#endif /* !__ASSEMBLY__ */
 multiline_comment|/* to align the pointer to the (next) page boundary */
 DECL|macro|PAGE_ALIGN
 mdefine_line|#define PAGE_ALIGN(addr)&t;(((addr)+PAGE_SIZE-1)&amp;PAGE_MASK)
-multiline_comment|/*&n; * This handles the memory map.. We could make this a config&n; * option, but too many people screw it up, and too few need&n; * it.&n; *&n; * A __PAGE_OFFSET of 0xC0000000 means that the kernel has&n; * a virtual address space of one gigabyte, which limits the&n; * amount of physical memory you can use to about 950MB. If&n; * you want to use more physical memory, change this define.&n; *&n; * For example, if you have 2GB worth of physical memory, you&n; * could change this define to 0x80000000, which gives the&n; * kernel 2GB of virtual memory (enough to most of your physical memory&n; * as the kernel needs a bit extra for various io-memory mappings)&n; *&n; * IF YOU CHANGE THIS, PLEASE ALSO CHANGE&n; *&n; *&t;arch/i386/vmlinux.lds&n; *&n; * which has the same constant encoded..&n; */
-macro_line|#include &lt;asm/page_offset.h&gt;
+multiline_comment|/*&n; * This handles the memory map.. We could make this a config&n; * option, but too many people screw it up, and too few need&n; * it.&n; *&n; * A __PAGE_OFFSET of 0xC0000000 means that the kernel has&n; * a virtual address space of one gigabyte, which limits the&n; * amount of physical memory you can use to about 950MB. &n; *&n; * If you want more physical memory than this then see the CONFIG_BIGMEM&n; * option in the kernel configuration.&n; */
 DECL|macro|__PAGE_OFFSET
-mdefine_line|#define __PAGE_OFFSET&t;&t;(PAGE_OFFSET_RAW)
+mdefine_line|#define __PAGE_OFFSET&t;&t;(0xC0000000)
 macro_line|#ifndef __ASSEMBLY__
 DECL|macro|BUG
 mdefine_line|#define BUG() do { &bslash;&n;&t;printk(&quot;kernel BUG at %s:%d!&bslash;n&quot;, __FILE__, __LINE__); &bslash;&n;&t;__asm__ __volatile__(&quot;.byte 0x0f,0x0b&quot;); &bslash;&n;} while (0)

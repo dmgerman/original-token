@@ -18,6 +18,7 @@ macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/major.h&gt;
 macro_line|#include &lt;linux/blk.h&gt;
+macro_line|#include &lt;linux/ide.h&gt;
 macro_line|#include &lt;linux/vt_kern.h&gt;
 macro_line|#include &lt;linux/console.h&gt;
 macro_line|#include &lt;linux/ide.h&gt;
@@ -35,7 +36,6 @@ macro_line|#include &lt;asm/pci-bridge.h&gt;
 macro_line|#include &lt;asm/ohare.h&gt;
 macro_line|#include &lt;asm/mediabay.h&gt;
 macro_line|#include &lt;asm/feature.h&gt;
-macro_line|#include &lt;asm/ide.h&gt;
 macro_line|#include &lt;asm/machdep.h&gt;
 macro_line|#include &lt;asm/keyboard.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
@@ -1804,6 +1804,10 @@ comma
 l_int|88
 comma
 l_int|89
+comma
+l_int|90
+comma
+l_int|91
 )brace
 suffix:semicolon
 DECL|function|find_ide_boot

@@ -75,8 +75,10 @@ DECL|macro|DEVID_HINT
 mdefine_line|#define DEVID_HINT&t;((ide_pci_devid_t){0x3388,                0x8013})
 DECL|macro|DEVID_CX5530
 mdefine_line|#define DEVID_CX5530&t;((ide_pci_devid_t){PCI_VENDOR_ID_CYRIX,   PCI_DEVICE_ID_CYRIX_5530_IDE})
+DECL|macro|DEVID_AMD7409
+mdefine_line|#define DEVID_AMD7409&t;((ide_pci_devid_t){PCI_VENDOR_ID_AMD,     0x7409})
 DECL|macro|IDE_IGNORE
-mdefine_line|#define IDE_IGNORE&t;((void *)-1)
+mdefine_line|#define&t;IDE_IGNORE&t;((void *)-1)
 macro_line|#ifdef CONFIG_BLK_DEV_TRM290
 r_extern
 r_void
@@ -178,11 +180,11 @@ macro_line|#else
 DECL|macro|INIT_RZ1000
 mdefine_line|#define INIT_RZ1000&t;IDE_IGNORE
 macro_line|#endif
-macro_line|#ifdef CONFIG_BLK_DEV_VIA82C586
+macro_line|#ifdef CONFIG_BLK_DEV_VIA82CXXX
 r_extern
 r_int
 r_int
-id|pci_init_via82c568
+id|pci_init_via82cxxx
 c_func
 (paren
 r_struct
@@ -195,8 +197,9 @@ op_star
 )paren
 suffix:semicolon
 r_extern
-r_void
-id|ide_init_via82c586
+r_int
+r_int
+id|ata66_via82cxxx
 c_func
 (paren
 id|ide_hwif_t
@@ -205,7 +208,16 @@ op_star
 suffix:semicolon
 r_extern
 r_void
-id|ide_dmacapable_via82c586
+id|ide_init_via82cxxx
+c_func
+(paren
+id|ide_hwif_t
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|ide_dmacapable_via82cxxx
 c_func
 (paren
 id|ide_hwif_t
@@ -213,22 +225,25 @@ op_star
 comma
 r_int
 r_int
-id|dmabase
 )paren
 suffix:semicolon
-DECL|macro|PCI_VIA82C586
-mdefine_line|#define&t;PCI_VIA82C586&t;&amp;pci_init_via82c568
-DECL|macro|INIT_VIA82C586
-mdefine_line|#define&t;INIT_VIA82C586&t;&amp;ide_init_via82c586
-DECL|macro|DMA_VIA82C586
-mdefine_line|#define&t;DMA_VIA82C586&t;&amp;ide_dmacapable_via82c586
+DECL|macro|PCI_VIA82CXXX
+mdefine_line|#define PCI_VIA82CXXX&t;&amp;pci_init_via82cxxx
+DECL|macro|ATA66_VIA82CXXX
+mdefine_line|#define ATA66_VIA82CXXX&t;&amp;ata66_via82cxxx
+DECL|macro|INIT_VIA82CXXX
+mdefine_line|#define INIT_VIA82CXXX&t;&amp;ide_init_via82cxxx
+DECL|macro|DMA_VIA82CXXX
+mdefine_line|#define DMA_VIA82CXXX&t;&amp;ide_dmacapable_via82cxxx
 macro_line|#else
-DECL|macro|PCI_VIA82C586
-mdefine_line|#define PCI_VIA82C586&t;NULL
-DECL|macro|INIT_VIA82C586
-mdefine_line|#define&t;INIT_VIA82C586&t;NULL
-DECL|macro|DMA_VIA82C586
-mdefine_line|#define&t;DMA_VIA82C586&t;NULL
+DECL|macro|PCI_VIA82CXXX
+mdefine_line|#define PCI_VIA82CXXX&t;NULL
+DECL|macro|ATA66_VIA82CXXX
+mdefine_line|#define ATA66_VIA82CXXX&t;NULL
+DECL|macro|INIT_VIA82CXXX
+mdefine_line|#define INIT_VIA82CXXX&t;NULL
+DECL|macro|DMA_VIA82CXXX
+mdefine_line|#define DMA_VIA82CXXX&t;NULL
 macro_line|#endif
 macro_line|#ifdef CONFIG_BLK_DEV_ALI15X3
 r_extern
@@ -247,6 +262,16 @@ op_star
 )paren
 suffix:semicolon
 r_extern
+r_int
+r_int
+id|ata66_ali15x3
+c_func
+(paren
+id|ide_hwif_t
+op_star
+)paren
+suffix:semicolon
+r_extern
 r_void
 id|ide_init_ali15x3
 c_func
@@ -255,15 +280,35 @@ id|ide_hwif_t
 op_star
 )paren
 suffix:semicolon
+r_extern
+r_void
+id|ide_dmacapable_ali15x3
+c_func
+(paren
+id|ide_hwif_t
+op_star
+comma
+r_int
+r_int
+)paren
+suffix:semicolon
 DECL|macro|PCI_ALI15X3
 mdefine_line|#define PCI_ALI15X3&t;&amp;pci_init_ali15x3
+DECL|macro|ATA66_ALI15X3
+mdefine_line|#define ATA66_ALI15X3&t;&amp;ata66_ali15x3
 DECL|macro|INIT_ALI15X3
-mdefine_line|#define&t;INIT_ALI15X3&t;&amp;ide_init_ali15x3
+mdefine_line|#define INIT_ALI15X3&t;&amp;ide_init_ali15x3
+DECL|macro|DMA_ALI15X3
+mdefine_line|#define DMA_ALI15X3&t;&amp;ide_dmacapable_ali15x3
 macro_line|#else
 DECL|macro|PCI_ALI15X3
 mdefine_line|#define PCI_ALI15X3&t;NULL
+DECL|macro|ATA66_ALI15X3
+mdefine_line|#define ATA66_ALI15X3&t;NULL
 DECL|macro|INIT_ALI15X3
-mdefine_line|#define&t;INIT_ALI15X3&t;NULL
+mdefine_line|#define INIT_ALI15X3&t;NULL
+DECL|macro|DMA_ALI15X3
+mdefine_line|#define DMA_ALI15X3&t;NULL
 macro_line|#endif
 macro_line|#ifdef CONFIG_BLK_DEV_CY82C693
 r_extern
@@ -293,12 +338,12 @@ suffix:semicolon
 DECL|macro|PCI_CY82C693
 mdefine_line|#define PCI_CY82C693&t;&amp;pci_init_cy82c693
 DECL|macro|INIT_CY82C693
-mdefine_line|#define&t;INIT_CY82C693&t;&amp;ide_init_cy82c693
+mdefine_line|#define INIT_CY82C693&t;&amp;ide_init_cy82c693
 macro_line|#else
 DECL|macro|PCI_CY82C693
 mdefine_line|#define PCI_CY82C693&t;NULL
 DECL|macro|INIT_CY82C693
-mdefine_line|#define&t;INIT_CY82C693&t;NULL
+mdefine_line|#define INIT_CY82C693&t;NULL
 macro_line|#endif
 macro_line|#ifdef CONFIG_BLK_DEV_PDC202XX
 r_extern
@@ -317,6 +362,16 @@ op_star
 )paren
 suffix:semicolon
 r_extern
+r_int
+r_int
+id|ata66_pdc202xx
+c_func
+(paren
+id|ide_hwif_t
+op_star
+)paren
+suffix:semicolon
+r_extern
 r_void
 id|ide_init_pdc202xx
 c_func
@@ -327,13 +382,17 @@ op_star
 suffix:semicolon
 DECL|macro|PCI_PDC202XX
 mdefine_line|#define PCI_PDC202XX&t;&amp;pci_init_pdc202xx
+DECL|macro|ATA66_PDC202XX
+mdefine_line|#define ATA66_PDC202XX&t;&amp;ata66_pdc202xx
 DECL|macro|INIT_PDC202XX
-mdefine_line|#define&t;INIT_PDC202XX&t;&amp;ide_init_pdc202xx
+mdefine_line|#define INIT_PDC202XX&t;&amp;ide_init_pdc202xx
 macro_line|#else
 DECL|macro|PCI_PDC202XX
 mdefine_line|#define PCI_PDC202XX&t;NULL
+DECL|macro|ATA66_PDC202XX
+mdefine_line|#define ATA66_PDC202XX&t;NULL
 DECL|macro|INIT_PDC202XX
-mdefine_line|#define&t;INIT_PDC202XX&t;NULL
+mdefine_line|#define INIT_PDC202XX&t;NULL
 macro_line|#endif
 macro_line|#ifdef CONFIG_BLK_DEV_PIIX
 r_extern
@@ -346,10 +405,10 @@ op_star
 )paren
 suffix:semicolon
 DECL|macro|INIT_PIIX
-mdefine_line|#define&t;INIT_PIIX&t;&amp;ide_init_piix
+mdefine_line|#define INIT_PIIX&t;&amp;ide_init_piix
 macro_line|#else
 DECL|macro|INIT_PIIX
-mdefine_line|#define&t;INIT_PIIX&t;NULL
+mdefine_line|#define INIT_PIIX&t;NULL
 macro_line|#endif
 macro_line|#ifdef CONFIG_BLK_DEV_AEC6210
 r_extern
@@ -401,14 +460,18 @@ suffix:semicolon
 DECL|macro|PCI_HPT34X
 mdefine_line|#define PCI_HPT34X&t;&amp;pci_init_hpt34x
 DECL|macro|INIT_HPT34X
-mdefine_line|#define&t;INIT_HPT34X&t;&amp;ide_init_hpt34x
+mdefine_line|#define INIT_HPT34X&t;&amp;ide_init_hpt34x
 macro_line|#else
 DECL|macro|PCI_HPT34X
 mdefine_line|#define PCI_HPT34X&t;NULL
 DECL|macro|INIT_HPT34X
-mdefine_line|#define&t;INIT_HPT34X&t;NULL
+mdefine_line|#define INIT_HPT34X&t;NULL
 macro_line|#endif
 macro_line|#ifdef CONFIG_BLK_DEV_HPT366
+r_extern
+id|byte
+id|hpt363_shared_irq
+suffix:semicolon
 r_extern
 r_int
 r_int
@@ -425,6 +488,16 @@ op_star
 )paren
 suffix:semicolon
 r_extern
+r_int
+r_int
+id|ata66_hpt366
+c_func
+(paren
+id|ide_hwif_t
+op_star
+)paren
+suffix:semicolon
+r_extern
 r_void
 id|ide_init_hpt366
 c_func
@@ -433,15 +506,42 @@ id|ide_hwif_t
 op_star
 )paren
 suffix:semicolon
+r_extern
+r_void
+id|ide_dmacapable_hpt366
+c_func
+(paren
+id|ide_hwif_t
+op_star
+comma
+r_int
+r_int
+)paren
+suffix:semicolon
 DECL|macro|PCI_HPT366
 mdefine_line|#define PCI_HPT366&t;&amp;pci_init_hpt366
+DECL|macro|ATA66_HPT366
+mdefine_line|#define ATA66_HPT366&t;&amp;ata66_hpt366
 DECL|macro|INIT_HPT366
 mdefine_line|#define INIT_HPT366&t;&amp;ide_init_hpt366
+DECL|macro|DMA_HPT366
+mdefine_line|#define DMA_HPT366&t;&amp;ide_dmacapable_hpt366
 macro_line|#else
+DECL|variable|hpt363_shared_irq
+r_static
+id|byte
+id|hpt363_shared_irq
+op_assign
+l_int|0
+suffix:semicolon
 DECL|macro|PCI_HPT366
 mdefine_line|#define PCI_HPT366&t;NULL
+DECL|macro|ATA66_HPT366
+mdefine_line|#define ATA66_HPT366&t;NULL
 DECL|macro|INIT_HPT366
-mdefine_line|#define INIT_HPT366&t;IDE_IGNORE
+mdefine_line|#define INIT_HPT366&t;NULL
+DECL|macro|DMA_HPT366
+mdefine_line|#define DMA_HPT366&t;NULL
 macro_line|#endif
 macro_line|#ifdef CONFIG_BLK_DEV_SIS5513
 r_extern
@@ -460,6 +560,16 @@ op_star
 )paren
 suffix:semicolon
 r_extern
+r_int
+r_int
+id|ata66_sis5513
+c_func
+(paren
+id|ide_hwif_t
+op_star
+)paren
+suffix:semicolon
+r_extern
 r_void
 id|ide_init_sis5513
 c_func
@@ -470,11 +580,15 @@ op_star
 suffix:semicolon
 DECL|macro|PCI_SIS5513
 mdefine_line|#define PCI_SIS5513&t;&amp;pci_init_sis5513
+DECL|macro|ATA66_SIS5513
+mdefine_line|#define ATA66_SIS5513&t;&amp;ata66_sis5513
 DECL|macro|INIT_SIS5513
 mdefine_line|#define INIT_SIS5513&t;&amp;ide_init_sis5513
 macro_line|#else
 DECL|macro|PCI_SIS5513
 mdefine_line|#define PCI_SIS5513&t;NULL
+DECL|macro|ATA66_SIS5513
+mdefine_line|#define ATA66_SIS5513&t;NULL
 DECL|macro|INIT_SIS5513
 mdefine_line|#define INIT_SIS5513&t;NULL
 macro_line|#endif
@@ -540,6 +654,19 @@ op_star
 id|name
 )paren
 suffix:semicolon
+DECL|member|ata66_check
+r_int
+r_int
+(paren
+op_star
+id|ata66_check
+)paren
+(paren
+id|ide_hwif_t
+op_star
+id|hwif
+)paren
+suffix:semicolon
 DECL|member|init_hwif
 r_void
 (paren
@@ -579,10 +706,6 @@ DECL|member|bootable
 id|byte
 id|bootable
 suffix:semicolon
-DECL|member|sixtysix
-id|byte
-id|sixtysix
-suffix:semicolon
 DECL|member|extra
 r_int
 r_int
@@ -608,6 +731,8 @@ l_string|&quot;PIIX&quot;
 comma
 l_int|NULL
 comma
+l_int|NULL
+comma
 id|INIT_PIIX
 comma
 l_int|NULL
@@ -631,8 +756,6 @@ l_int|0x80
 )brace
 comma
 id|ON_BOARD
-comma
-l_int|0
 comma
 l_int|0
 )brace
@@ -644,6 +767,8 @@ l_string|&quot;PIIX&quot;
 comma
 l_int|NULL
 comma
+l_int|NULL
+comma
 id|INIT_PIIX
 comma
 l_int|NULL
@@ -667,8 +792,6 @@ l_int|0x80
 )brace
 comma
 id|ON_BOARD
-comma
-l_int|0
 comma
 l_int|0
 )brace
@@ -680,6 +803,8 @@ l_string|&quot;PIIX3&quot;
 comma
 l_int|NULL
 comma
+l_int|NULL
+comma
 id|INIT_PIIX
 comma
 l_int|NULL
@@ -703,8 +828,6 @@ l_int|0x80
 )brace
 comma
 id|ON_BOARD
-comma
-l_int|0
 comma
 l_int|0
 )brace
@@ -716,6 +839,8 @@ l_string|&quot;PIIX4&quot;
 comma
 l_int|NULL
 comma
+l_int|NULL
+comma
 id|INIT_PIIX
 comma
 l_int|NULL
@@ -739,8 +864,6 @@ l_int|0x80
 )brace
 comma
 id|ON_BOARD
-comma
-l_int|0
 comma
 l_int|0
 )brace
@@ -756,6 +879,8 @@ l_int|NULL
 comma
 l_int|NULL
 comma
+l_int|NULL
+comma
 (brace
 (brace
 l_int|0x00
@@ -775,8 +900,6 @@ l_int|0x00
 )brace
 comma
 id|ON_BOARD
-comma
-l_int|0
 comma
 l_int|0
 )brace
@@ -786,11 +909,13 @@ id|DEVID_VP_IDE
 comma
 l_string|&quot;VP_IDE&quot;
 comma
-id|PCI_VIA82C586
+id|PCI_VIA82CXXX
 comma
-id|INIT_VIA82C586
+id|ATA66_VIA82CXXX
 comma
-id|DMA_VIA82C586
+id|INIT_VIA82CXXX
+comma
+id|DMA_VIA82CXXX
 comma
 (brace
 (brace
@@ -811,8 +936,6 @@ l_int|0x01
 )brace
 comma
 id|ON_BOARD
-comma
-l_int|0
 comma
 l_int|0
 )brace
@@ -824,6 +947,8 @@ l_string|&quot;PDC20246&quot;
 comma
 id|PCI_PDC202XX
 comma
+l_int|NULL
+comma
 id|INIT_PDC202XX
 comma
 l_int|NULL
@@ -847,8 +972,6 @@ l_int|0x04
 )brace
 comma
 id|OFF_BOARD
-comma
-l_int|0
 comma
 l_int|16
 )brace
@@ -860,6 +983,8 @@ l_string|&quot;PDC20262&quot;
 comma
 id|PCI_PDC202XX
 comma
+id|ATA66_PDC202XX
+comma
 id|INIT_PDC202XX
 comma
 l_int|NULL
@@ -884,8 +1009,6 @@ l_int|0x04
 comma
 id|OFF_BOARD
 comma
-l_int|1
-comma
 l_int|48
 )brace
 comma
@@ -893,6 +1016,8 @@ comma
 id|DEVID_RZ1000
 comma
 l_string|&quot;RZ1000&quot;
+comma
+l_int|NULL
 comma
 l_int|NULL
 comma
@@ -919,8 +1044,6 @@ l_int|0x00
 )brace
 comma
 id|ON_BOARD
-comma
-l_int|0
 comma
 l_int|0
 )brace
@@ -932,6 +1055,8 @@ l_string|&quot;RZ1001&quot;
 comma
 l_int|NULL
 comma
+l_int|NULL
+comma
 id|INIT_RZ1000
 comma
 l_int|NULL
@@ -957,14 +1082,14 @@ comma
 id|ON_BOARD
 comma
 l_int|0
-comma
-l_int|0
 )brace
 comma
 (brace
 id|DEVID_SAMURAI
 comma
 l_string|&quot;SAMURAI&quot;
+comma
+l_int|NULL
 comma
 l_int|NULL
 comma
@@ -993,14 +1118,14 @@ comma
 id|ON_BOARD
 comma
 l_int|0
-comma
-l_int|0
 )brace
 comma
 (brace
 id|DEVID_CMD640
 comma
 l_string|&quot;CMD640&quot;
+comma
+l_int|NULL
 comma
 l_int|NULL
 comma
@@ -1029,14 +1154,14 @@ comma
 id|ON_BOARD
 comma
 l_int|0
-comma
-l_int|0
 )brace
 comma
 (brace
 id|DEVID_NS87410
 comma
 l_string|&quot;NS87410&quot;
+comma
+l_int|NULL
 comma
 l_int|NULL
 comma
@@ -1065,8 +1190,6 @@ comma
 id|ON_BOARD
 comma
 l_int|0
-comma
-l_int|0
 )brace
 comma
 (brace
@@ -1075,6 +1198,8 @@ comma
 l_string|&quot;SIS5513&quot;
 comma
 id|PCI_SIS5513
+comma
+id|ATA66_SIS5513
 comma
 id|INIT_SIS5513
 comma
@@ -1100,8 +1225,6 @@ l_int|0x04
 comma
 id|ON_BOARD
 comma
-l_int|1
-comma
 l_int|0
 )brace
 comma
@@ -1109,6 +1232,8 @@ comma
 id|DEVID_CMD643
 comma
 l_string|&quot;CMD643&quot;
+comma
+l_int|NULL
 comma
 l_int|NULL
 comma
@@ -1137,14 +1262,14 @@ comma
 id|ON_BOARD
 comma
 l_int|0
-comma
-l_int|0
 )brace
 comma
 (brace
 id|DEVID_CMD646
 comma
 l_string|&quot;CMD646&quot;
+comma
+l_int|NULL
 comma
 l_int|NULL
 comma
@@ -1173,8 +1298,6 @@ comma
 id|ON_BOARD
 comma
 l_int|0
-comma
-l_int|0
 )brace
 comma
 (brace
@@ -1188,6 +1311,8 @@ l_int|NULL
 comma
 l_int|NULL
 comma
+l_int|NULL
+comma
 (brace
 (brace
 l_int|0x00
@@ -1207,8 +1332,6 @@ l_int|0x00
 )brace
 comma
 id|ON_BOARD
-comma
-l_int|0
 comma
 l_int|0
 )brace
@@ -1220,6 +1343,8 @@ l_string|&quot;OPTI621&quot;
 comma
 l_int|NULL
 comma
+l_int|NULL
+comma
 id|INIT_OPTI621
 comma
 l_int|NULL
@@ -1243,8 +1368,6 @@ l_int|0x00
 )brace
 comma
 id|ON_BOARD
-comma
-l_int|0
 comma
 l_int|0
 )brace
@@ -1256,6 +1379,8 @@ l_string|&quot;OPTI621X&quot;
 comma
 l_int|NULL
 comma
+l_int|NULL
+comma
 id|INIT_OPTI621
 comma
 l_int|NULL
@@ -1281,14 +1406,14 @@ comma
 id|ON_BOARD
 comma
 l_int|0
-comma
-l_int|0
 )brace
 comma
 (brace
 id|DEVID_TRM290
 comma
 l_string|&quot;TRM290&quot;
+comma
+l_int|NULL
 comma
 l_int|NULL
 comma
@@ -1317,14 +1442,14 @@ comma
 id|ON_BOARD
 comma
 l_int|0
-comma
-l_int|0
 )brace
 comma
 (brace
 id|DEVID_NS87415
 comma
 l_string|&quot;NS87415&quot;
+comma
+l_int|NULL
 comma
 l_int|NULL
 comma
@@ -1353,8 +1478,6 @@ comma
 id|ON_BOARD
 comma
 l_int|0
-comma
-l_int|0
 )brace
 comma
 (brace
@@ -1363,6 +1486,8 @@ comma
 l_string|&quot;AEC6210&quot;
 comma
 id|PCI_AEC6210
+comma
+l_int|NULL
 comma
 l_int|NULL
 comma
@@ -1389,14 +1514,14 @@ comma
 id|OFF_BOARD
 comma
 l_int|0
-comma
-l_int|0
 )brace
 comma
 (brace
 id|DEVID_W82C105
 comma
 l_string|&quot;W82C105&quot;
+comma
+l_int|NULL
 comma
 l_int|NULL
 comma
@@ -1425,14 +1550,14 @@ comma
 id|ON_BOARD
 comma
 l_int|0
-comma
-l_int|0
 )brace
 comma
 (brace
 id|DEVID_UM8886A
 comma
 l_string|&quot;UM8886A&quot;
+comma
+l_int|NULL
 comma
 l_int|NULL
 comma
@@ -1459,8 +1584,6 @@ l_int|0x00
 )brace
 comma
 id|ON_BOARD
-comma
-l_int|0
 comma
 l_int|0
 )brace
@@ -1476,6 +1599,8 @@ l_int|NULL
 comma
 l_int|NULL
 comma
+l_int|NULL
+comma
 (brace
 (brace
 l_int|0x00
@@ -1497,8 +1622,6 @@ comma
 id|ON_BOARD
 comma
 l_int|0
-comma
-l_int|0
 )brace
 comma
 (brace
@@ -1507,6 +1630,8 @@ comma
 l_string|&quot;HPT34X&quot;
 comma
 id|PCI_HPT34X
+comma
+l_int|NULL
 comma
 id|INIT_HPT34X
 comma
@@ -1532,8 +1657,6 @@ l_int|0x00
 comma
 id|NEVER_BOARD
 comma
-l_int|0
-comma
 l_int|16
 )brace
 comma
@@ -1544,9 +1667,11 @@ l_string|&quot;HPT366&quot;
 comma
 id|PCI_HPT366
 comma
+id|ATA66_HPT366
+comma
 id|INIT_HPT366
 comma
-l_int|NULL
+id|DMA_HPT366
 comma
 (brace
 (brace
@@ -1566,9 +1691,7 @@ l_int|0x00
 )brace
 )brace
 comma
-id|ON_BOARD
-comma
-l_int|1
+id|OFF_BOARD
 comma
 l_int|256
 )brace
@@ -1580,31 +1703,31 @@ l_string|&quot;ALI15X3&quot;
 comma
 id|PCI_ALI15X3
 comma
+id|ATA66_ALI15X3
+comma
 id|INIT_ALI15X3
 comma
-l_int|NULL
+id|DMA_ALI15X3
 comma
 (brace
 (brace
-l_int|0x09
+l_int|0x00
 comma
-l_int|0x20
+l_int|0x00
 comma
-l_int|0x20
+l_int|0x00
 )brace
 comma
 (brace
-l_int|0x09
+l_int|0x00
 comma
-l_int|0x10
+l_int|0x00
 comma
-l_int|0x10
+l_int|0x00
 )brace
 )brace
 comma
 id|ON_BOARD
-comma
-l_int|0
 comma
 l_int|0
 )brace
@@ -1615,6 +1738,8 @@ comma
 l_string|&quot;CY82C693&quot;
 comma
 id|PCI_CY82C693
+comma
+l_int|NULL
 comma
 id|INIT_CY82C693
 comma
@@ -1641,14 +1766,14 @@ comma
 id|ON_BOARD
 comma
 l_int|0
-comma
-l_int|0
 )brace
 comma
 (brace
 id|DEVID_HINT
 comma
 l_string|&quot;HINT_IDE&quot;
+comma
+l_int|NULL
 comma
 l_int|NULL
 comma
@@ -1677,14 +1802,14 @@ comma
 id|ON_BOARD
 comma
 l_int|0
-comma
-l_int|0
 )brace
 comma
 (brace
 id|DEVID_CX5530
 comma
 l_string|&quot;CX5530&quot;
+comma
+l_int|NULL
 comma
 l_int|NULL
 comma
@@ -1713,14 +1838,14 @@ comma
 id|ON_BOARD
 comma
 l_int|0
-comma
-l_int|0
 )brace
 comma
 (brace
-id|IDE_PCI_DEVID_NULL
+id|DEVID_AMD7409
 comma
-l_string|&quot;PCI_IDE&quot;
+l_string|&quot;AMD7409&quot;
+comma
+l_int|NULL
 comma
 l_int|NULL
 comma
@@ -1749,17 +1874,44 @@ comma
 id|ON_BOARD
 comma
 l_int|0
+)brace
+comma
+(brace
+id|IDE_PCI_DEVID_NULL
+comma
+l_string|&quot;PCI_IDE&quot;
+comma
+l_int|NULL
+comma
+l_int|NULL
+comma
+l_int|NULL
+comma
+l_int|NULL
+comma
+(brace
+(brace
+l_int|0x00
+comma
+l_int|0x00
+comma
+l_int|0x00
+)brace
+comma
+(brace
+l_int|0x00
+comma
+l_int|0x00
+comma
+l_int|0x00
+)brace
+)brace
+comma
+id|ON_BOARD
 comma
 l_int|0
 )brace
 )brace
-suffix:semicolon
-DECL|variable|hpt363_shared_irq
-r_static
-id|byte
-id|hpt363_shared_irq
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/*&n; * This allows offboard ide-pci cards the enable a BIOS, verify interrupt&n; * settings of split-mirror pci-config space, place chipset into init-mode,&n; * and/or preserve an interrupt if the card is not native ide support.&n; */
 DECL|function|ide_special_settings
@@ -1790,6 +1942,20 @@ r_case
 id|PCI_DEVICE_ID_TTI_HPT343
 suffix:colon
 (brace
+r_int
+id|i
+suffix:semicolon
+r_int
+r_int
+id|hpt34xIoBase
+op_assign
+id|dev-&gt;resource
+(braket
+l_int|4
+)braket
+dot
+id|start
+suffix:semicolon
 r_int
 r_int
 id|pcicmd
@@ -1828,20 +1994,30 @@ id|PCI_COMMAND_MEMORY
 )paren
 )paren
 (brace
-r_int
-id|i
+id|pci_write_config_byte
+c_func
+(paren
+id|dev
+comma
+id|PCI_LATENCY_TIMER
+comma
+l_int|0x20
+)paren
 suffix:semicolon
-r_int
-r_int
-id|hpt34xIoBase
-op_assign
-id|dev-&gt;resource
-(braket
-l_int|4
-)braket
-dot
-id|start
+)brace
+r_else
+(brace
+id|pci_write_config_byte
+c_func
+(paren
+id|dev
+comma
+id|PCI_LATENCY_TIMER
+comma
+l_int|0xF0
+)paren
 suffix:semicolon
+)brace
 id|dev-&gt;resource
 (braket
 l_int|0
@@ -1917,30 +2093,6 @@ dot
 id|flags
 op_or_assign
 id|PCI_BASE_ADDRESS_SPACE_IO
-suffix:semicolon
-)brace
-id|pci_write_config_byte
-c_func
-(paren
-id|dev
-comma
-id|PCI_LATENCY_TIMER
-comma
-l_int|0x20
-)paren
-suffix:semicolon
-)brace
-r_else
-(brace
-id|pci_write_config_byte
-c_func
-(paren
-id|dev
-comma
-id|PCI_LATENCY_TIMER
-comma
-l_int|0xF0
-)paren
 suffix:semicolon
 )brace
 )brace
@@ -3173,20 +3325,21 @@ r_goto
 id|bypass_umc_dma
 suffix:semicolon
 )brace
-r_if
-c_cond
-(paren
-(paren
-op_logical_neg
-id|d-&gt;sixtysix
-)paren
-op_logical_and
-(paren
-id|hwif-&gt;udma_four
-)paren
-)paren
 id|hwif-&gt;udma_four
 op_assign
+(paren
+id|d-&gt;ata66_check
+)paren
+ques
+c_cond
+id|d
+op_member_access_from_pointer
+id|ata66_check
+c_func
+(paren
+id|hwif
+)paren
+suffix:colon
 l_int|0
 suffix:semicolon
 macro_line|#ifdef CONFIG_BLK_DEV_IDEDMA
@@ -3504,6 +3657,11 @@ r_struct
 id|pci_dev
 op_star
 id|dev2
+op_assign
+l_int|NULL
+comma
+op_star
+id|findev
 suffix:semicolon
 id|ide_pci_device_t
 op_star
@@ -3519,10 +3677,6 @@ id|pin2
 op_assign
 l_int|0
 suffix:semicolon
-id|d2
-op_assign
-id|d
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -3536,48 +3690,6 @@ l_int|1
 )paren
 r_return
 suffix:semicolon
-r_for
-c_loop
-(paren
-id|dev2
-op_assign
-id|pci_devices
-suffix:semicolon
-id|dev2
-suffix:semicolon
-id|dev2
-op_assign
-id|dev2-&gt;next
-)paren
-(brace
-r_if
-c_cond
-(paren
-(paren
-id|dev2-&gt;vendor
-op_eq
-id|dev-&gt;vendor
-)paren
-op_logical_and
-(paren
-id|dev2-&gt;device
-op_eq
-id|dev-&gt;device
-)paren
-op_logical_and
-(paren
-id|PCI_FUNC
-c_func
-(paren
-id|dev2-&gt;devfn
-)paren
-op_amp
-l_int|1
-)paren
-)paren
-r_break
-suffix:semicolon
-)brace
 id|pci_read_config_byte
 c_func
 (paren
@@ -3589,12 +3701,60 @@ op_amp
 id|pin1
 )paren
 suffix:semicolon
+r_for
+c_loop
+(paren
+id|findev
+op_assign
+id|pci_devices
+suffix:semicolon
+id|findev
+suffix:semicolon
+id|findev
+op_assign
+id|findev-&gt;next
+)paren
+(brace
 r_if
 c_cond
 (paren
-id|dev2
+(paren
+id|findev-&gt;vendor
+op_eq
+id|dev-&gt;vendor
+)paren
+op_logical_and
+(paren
+id|findev-&gt;device
+op_eq
+id|dev-&gt;device
+)paren
+op_logical_and
+(paren
+(paren
+id|findev-&gt;devfn
+op_minus
+id|dev-&gt;devfn
+)paren
+op_eq
+l_int|1
+)paren
+op_logical_and
+(paren
+id|PCI_FUNC
+c_func
+(paren
+id|findev-&gt;devfn
+)paren
+op_amp
+l_int|1
+)paren
 )paren
 (brace
+id|dev2
+op_assign
+id|findev
+suffix:semicolon
 id|pci_read_config_byte
 c_func
 (paren
@@ -3619,13 +3779,16 @@ l_int|1
 suffix:colon
 l_int|0
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
 id|hpt363_shared_irq
 )paren
 (brace
+id|d-&gt;bootable
+op_assign
+id|ON_BOARD
+suffix:semicolon
 id|printk
 c_func
 (paren
@@ -3638,6 +3801,10 @@ comma
 id|pin2
 )paren
 suffix:semicolon
+)brace
+r_break
+suffix:semicolon
+)brace
 )brace
 id|printk
 c_func
@@ -3662,12 +3829,15 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|dev2
-op_logical_and
 op_logical_neg
-id|hpt363_shared_irq
+id|dev2
 )paren
-(brace
+r_return
+suffix:semicolon
+id|d2
+op_assign
+id|d
+suffix:semicolon
 id|printk
 c_func
 (paren
@@ -3688,7 +3858,6 @@ comma
 id|d2
 )paren
 suffix:semicolon
-)brace
 )brace
 multiline_comment|/*&n; * ide_scan_pcibus() gets invoked at boot time from ide.c.&n; * It finds all PCI IDE controllers and calls ide_setup_pci_device for them.&n; */
 DECL|function|ide_scan_pcibus

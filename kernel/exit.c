@@ -458,9 +458,13 @@ op_eq
 id|father
 )paren
 (brace
+multiline_comment|/* We dont want people slaying init */
 id|p-&gt;exit_signal
 op_assign
 id|SIGCHLD
+suffix:semicolon
+id|p-&gt;self_exec_id
+op_increment
 suffix:semicolon
 id|p-&gt;p_opptr
 op_assign
@@ -1089,6 +1093,9 @@ r_struct
 id|task_struct
 op_star
 id|p
+comma
+op_star
+id|t
 suffix:semicolon
 id|forget_original_parent
 c_func
@@ -1097,17 +1104,21 @@ id|current
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * Check to see if any process groups have become orphaned&n;&t; * as a result of our exiting, and if they have any stopped&n;&t; * jobs, send them a SIGHUP and then a SIGCONT.  (POSIX 3.2.2.2)&n;&t; *&n;&t; * Case i: Our father is in a different pgrp than we are&n;&t; * and we were the only connection outside, so our pgrp&n;&t; * is about to become orphaned.&n;&t; */
+id|t
+op_assign
+id|current-&gt;p_pptr
+suffix:semicolon
 r_if
 c_cond
 (paren
 (paren
-id|current-&gt;p_pptr-&gt;pgrp
+id|t-&gt;pgrp
 op_ne
 id|current-&gt;pgrp
 )paren
 op_logical_and
 (paren
-id|current-&gt;p_pptr-&gt;session
+id|t-&gt;session
 op_eq
 id|current-&gt;session
 )paren
@@ -1148,7 +1159,37 @@ l_int|1
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Let father know we died */
+multiline_comment|/* Let father know we died &n;&t; *&n;&t; * Thread signals are configurable, but you aren&squot;t going to use&n;&t; * that to send signals to arbitary processes. &n;&t; * That stops right now.&n;&t; *&n;&t; * If the parent exec id doesn&squot;t match the exec id we saved&n;&t; * when we started then we know the parent has changed security&n;&t; * domain.&n;&t; *&n;&t; * If our self_exec id doesn&squot;t match our parent_exec_id then&n;&t; * we have changed execution domain as these two values started&n;&t; * the same after a fork.&n;&t; *&t;&n;&t; */
+r_if
+c_cond
+(paren
+id|current-&gt;exit_signal
+op_ne
+id|SIGCHLD
+op_logical_and
+(paren
+id|current-&gt;parent_exec_id
+op_ne
+id|t-&gt;self_exec_id
+op_logical_or
+id|current-&gt;self_exec_id
+op_ne
+id|current-&gt;parent_exec_id
+)paren
+op_logical_and
+op_logical_neg
+id|capable
+c_func
+(paren
+id|CAP_KILL
+)paren
+)paren
+(brace
+id|current-&gt;exit_signal
+op_assign
+id|SIGCHLD
+suffix:semicolon
+)brace
 id|notify_parent
 c_func
 (paren

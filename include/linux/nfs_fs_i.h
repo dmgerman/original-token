@@ -8,6 +8,15 @@ DECL|struct|nfs_inode_info
 r_struct
 id|nfs_inode_info
 (brace
+multiline_comment|/*&n;&t; * The 64bit &squot;inode number&squot;&n;&t; */
+DECL|member|fsid
+id|__u32
+id|fsid
+suffix:semicolon
+DECL|member|fileid
+id|__u32
+id|fileid
+suffix:semicolon
 multiline_comment|/*&n;&t; * Various flags&n;&t; */
 DECL|member|flags
 r_int
@@ -50,8 +59,8 @@ suffix:semicolon
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * Legal inode flag values&n; */
-DECL|macro|NFS_INO_REVALIDATE
-mdefine_line|#define NFS_INO_REVALIDATE&t;0x0001&t;&t;/* revalidating attrs */
+DECL|macro|NFS_INO_REVALIDATING
+mdefine_line|#define NFS_INO_REVALIDATING&t;0x0001&t;&t;/* revalidating attrs */
 DECL|macro|NFS_IS_SNAPSHOT
 mdefine_line|#define NFS_IS_SNAPSHOT&t;&t;0x0010&t;&t;/* a snapshot file */
 multiline_comment|/*&n; * NFS lock info&n; */

@@ -53,25 +53,12 @@ DECL|macro|SO_SECURITY_ENCRYPTION_TRANSPORT
 mdefine_line|#define SO_SECURITY_ENCRYPTION_TRANSPORT&t;23
 DECL|macro|SO_SECURITY_ENCRYPTION_NETWORK
 mdefine_line|#define SO_SECURITY_ENCRYPTION_NETWORK&t;&t;24
-multiline_comment|/* Nasty libc5 fixup - bletch */
-macro_line|#if defined(__KERNEL__)
-multiline_comment|/* Socket types. */
-DECL|macro|SOCK_STREAM
-mdefine_line|#define SOCK_STREAM&t;1&t;&t;/* stream (connection) socket&t;*/
-DECL|macro|SOCK_DGRAM
-mdefine_line|#define SOCK_DGRAM&t;2&t;&t;/* datagram (conn.less) socket&t;*/
-DECL|macro|SOCK_RAW
-mdefine_line|#define SOCK_RAW&t;3&t;&t;/* raw socket&t;&t;&t;*/
-DECL|macro|SOCK_RDM
-mdefine_line|#define SOCK_RDM&t;4&t;&t;/* reliably-delivered message&t;*/
-DECL|macro|SOCK_SEQPACKET
-mdefine_line|#define SOCK_SEQPACKET&t;5&t;&t;/* sequential packet socket&t;*/
-DECL|macro|SOCK_PACKET
-mdefine_line|#define SOCK_PACKET&t;10&t;&t;/* linux specific way of&t;*/
-multiline_comment|/* getting packets at the dev&t;*/
-multiline_comment|/* level.  For writing rarp and&t;*/
-multiline_comment|/* other similar things on the&t;*/
-multiline_comment|/* user level.&t;&t;&t;*/
-macro_line|#endif&t;&t;&t;&t;&t;
+DECL|macro|SO_BINDTODEVICE
+mdefine_line|#define SO_BINDTODEVICE&t;25
+multiline_comment|/* Socket filtering */
+DECL|macro|SO_ATTACH_FILTER
+mdefine_line|#define SO_ATTACH_FILTER        26
+DECL|macro|SO_DETACH_FILTER
+mdefine_line|#define SO_DETACH_FILTER        27
 macro_line|#endif /* __ASM_SH_SOCKET_H */
 eof

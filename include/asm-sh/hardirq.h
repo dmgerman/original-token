@@ -22,7 +22,7 @@ mdefine_line|#define hardirq_enter(cpu)&t;(local_irq_count[cpu]++)
 DECL|macro|hardirq_exit
 mdefine_line|#define hardirq_exit(cpu)&t;(local_irq_count[cpu]--)
 DECL|macro|synchronize_irq
-mdefine_line|#define synchronize_irq()&t;do { } while (0)
+mdefine_line|#define synchronize_irq()&t;barrier()
 macro_line|#else
 macro_line|#error Super-H SMP is not available
 macro_line|#endif /* __SMP__ */

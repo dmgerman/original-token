@@ -3224,8 +3224,6 @@ id|drive
 comma
 op_amp
 id|idefloppy_pc_intr
-comma
-id|IDEFLOPPY_WAIT_CMD
 )paren
 suffix:semicolon
 r_return
@@ -3326,8 +3324,6 @@ id|drive
 comma
 op_amp
 id|idefloppy_pc_intr
-comma
-id|IDEFLOPPY_WAIT_CMD
 )paren
 suffix:semicolon
 multiline_comment|/* And set the interrupt handler again */
@@ -3411,8 +3407,6 @@ id|drive
 comma
 op_amp
 id|idefloppy_pc_intr
-comma
-id|IDEFLOPPY_WAIT_CMD
 )paren
 suffix:semicolon
 multiline_comment|/* Set the interrupt routine */
@@ -3784,8 +3778,6 @@ id|drive
 comma
 op_amp
 id|idefloppy_transfer_pc
-comma
-id|IDEFLOPPY_WAIT_CMD
 )paren
 suffix:semicolon
 id|OUT_BYTE
@@ -6681,6 +6673,10 @@ suffix:semicolon
 id|drive-&gt;ready_stat
 op_assign
 l_int|0
+suffix:semicolon
+id|drive-&gt;timeout
+op_assign
+id|IDEFLOPPY_WAIT_CMD
 suffix:semicolon
 id|memset
 (paren

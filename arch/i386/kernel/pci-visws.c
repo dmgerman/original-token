@@ -8,6 +8,7 @@ macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/irq.h&gt;
 macro_line|#include &lt;asm/smp.h&gt;
 macro_line|#include &lt;asm/lithium.h&gt;
+macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &quot;pci-i386.h&quot;
 DECL|variable|pci_probe
 r_int

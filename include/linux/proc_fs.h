@@ -2214,6 +2214,11 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+r_extern
+r_struct
+id|proc_dir_entry
+id|proc_root
+suffix:semicolon
 macro_line|#endif /* CONFIG_PROC_FS */
 macro_line|#endif /* _LINUX_PROC_FS_H */
 eof

@@ -14,6 +14,65 @@ c_func
 r_void
 )paren
 (brace
+r_extern
+r_int
+r_int
+id|loops_per_sec
+suffix:semicolon
+id|cpu_data-&gt;loops_per_sec
+op_assign
+id|loops_per_sec
+suffix:semicolon
+r_switch
+c_cond
+(paren
+id|cpu_data-&gt;type
+)paren
+(brace
+r_case
+id|CPU_SH7708
+suffix:colon
+id|printk
+c_func
+(paren
+l_string|&quot;CPU: SH7708/SH7709&bslash;n&quot;
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|CPU_SH7729
+suffix:colon
+id|printk
+c_func
+(paren
+l_string|&quot;CPU: SH7709A/SH7729&bslash;n&quot;
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|CPU_SH7750
+suffix:colon
+id|printk
+c_func
+(paren
+l_string|&quot;CPU: SH7750&bslash;n&quot;
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_default
+suffix:colon
+id|printk
+c_func
+(paren
+l_string|&quot;CPU: ??????&bslash;n&quot;
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
 )brace
 macro_line|#endif /* __ASM_SH_BUGS_H */
 eof

@@ -2,10 +2,10 @@ macro_line|#ifndef __ASM_SH_PGTABLE_H
 DECL|macro|__ASM_SH_PGTABLE_H
 mdefine_line|#define __ASM_SH_PGTABLE_H
 multiline_comment|/* Copyright (C) 1999 Niibe Yutaka */
-macro_line|#include &lt;linux/config.h&gt;
 multiline_comment|/*&n; * This file contains the functions and defines necessary to modify and use&n; * the SuperH page table tree.&n; */
 macro_line|#ifndef __ASSEMBLY__
 macro_line|#include &lt;asm/processor.h&gt;
+macro_line|#include &lt;asm/addrspace.h&gt;
 macro_line|#include &lt;linux/threads.h&gt;
 r_extern
 id|pgd_t
@@ -14,7 +14,7 @@ id|swapper_pg_dir
 l_int|1024
 )braket
 suffix:semicolon
-macro_line|#ifdef CONFIG_CPU_SH3
+macro_line|#if defined(__sh3__)
 multiline_comment|/* Cache flushing:&n; *&n; *  - flush_cache_all() flushes entire cache&n; *  - flush_cache_mm(mm) flushes the specified mm context&squot;s cache lines&n; *  - flush_cache_page(mm, vmaddr) flushes a single page&n; *  - flush_cache_range(mm, start, end) flushes a range of pages&n; *  - flush_page_to_ram(page) write back kernel page to ram&n; *&n; *  Caches are indexed (effectively) by physical address on SH-3, so&n; *  we don&squot;t need them.&n; */
 DECL|macro|flush_cache_all
 mdefine_line|#define flush_cache_all()&t;&t;&t;do { } while (0)
@@ -28,45 +28,85 @@ DECL|macro|flush_page_to_ram
 mdefine_line|#define flush_page_to_ram(page)&t;&t;&t;do { } while (0)
 DECL|macro|flush_icache_range
 mdefine_line|#define flush_icache_range(start, end)&t;&t;do { } while (0)
-macro_line|#elif CONFIG_CPU_SH4
-multiline_comment|/*&n; *  Caches are broken on SH-4, so we need them.&n; *  You do bad job!&n; */
+macro_line|#elif defined(__SH4__)
+multiline_comment|/*&n; *  Caches are broken on SH-4, so we need them.&n; */
+r_extern
+r_void
 id|flush_cache_all
 c_func
 (paren
+r_void
 )paren
+suffix:semicolon
+r_extern
+r_void
 id|flush_cache_mm
 c_func
 (paren
+r_struct
+id|mm_struct
+op_star
 id|mm
 )paren
+suffix:semicolon
+r_extern
+r_void
 id|flush_cache_range
 c_func
 (paren
+r_struct
+id|mm_struct
+op_star
 id|mm
 comma
+r_int
+r_int
 id|start
 comma
+r_int
+r_int
 id|end
 )paren
+suffix:semicolon
+r_extern
+r_void
 id|flush_cache_page
 c_func
 (paren
+r_struct
+id|vm_area_struct
+op_star
 id|vma
 comma
-id|vmaddr
+r_int
+r_int
+id|addr
 )paren
+suffix:semicolon
+r_extern
+r_void
 id|flush_page_to_ram
 c_func
 (paren
+r_int
+r_int
 id|page
 )paren
+suffix:semicolon
+r_extern
+r_void
 id|flush_icache_range
 c_func
 (paren
+r_int
+r_int
 id|start
 comma
+r_int
+r_int
 id|end
 )paren
+suffix:semicolon
 macro_line|#endif
 multiline_comment|/* TLB flushing:&n; *&n; *  - flush_tlb_all() flushes all processes TLB entries&n; *  - flush_tlb_mm(mm) flushes the specified mm context TLB entries&n; *  - flush_tlb_page(mm, vmaddr) flushes a single page&n; *  - flush_tlb_range(mm, start, end) flushes a range of pages&n; */
 r_extern
@@ -149,11 +189,11 @@ DECL|macro|USER_PTRS_PER_PGD
 mdefine_line|#define USER_PTRS_PER_PGD&t;(TASK_SIZE/PGDIR_SIZE)
 macro_line|#ifndef __ASSEMBLY__
 DECL|macro|VMALLOC_START
-mdefine_line|#define VMALLOC_START&t;0xc0000000
+mdefine_line|#define VMALLOC_START&t;P3SEG
 DECL|macro|VMALLOC_VMADDR
 mdefine_line|#define VMALLOC_VMADDR(x) ((unsigned long)(x))
 DECL|macro|VMALLOC_END
-mdefine_line|#define VMALLOC_END&t;0xe0000000
+mdefine_line|#define VMALLOC_END&t;P4SEG
 DECL|macro|_PAGE_READ
 mdefine_line|#define _PAGE_READ &t;0x001  /* software: read access alowed */
 DECL|macro|_PAGE_ACCESSED
@@ -169,12 +209,21 @@ mdefine_line|#define _PAGE_USER&t;0x040  /* PR1-bit : user space access allowed 
 multiline_comment|/*&t;&t; &t;0x080  */
 DECL|macro|_PAGE_PRESENT
 mdefine_line|#define _PAGE_PRESENT&t;0x100  /* V-bit   : page is valid */
+macro_line|#if defined(__sh3__)
 multiline_comment|/* Mask which drop software flags */
 DECL|macro|_PAGE_FLAGS_HARDWARE_MASK
-mdefine_line|#define _PAGE_FLAGS_HARDWARE_MASK&t;0xfffff164
+mdefine_line|#define _PAGE_FLAGS_HARDWARE_MASK&t;0x1ffff164
 multiline_comment|/* Flags defalult: SZ=1 (4k-byte), C=1 (cachable), SH=0 (not shared) */
 DECL|macro|_PAGE_FLAGS_HARDWARE_DEFAULT
 mdefine_line|#define _PAGE_FLAGS_HARDWARE_DEFAULT&t;0x00000018
+macro_line|#elif defined(__SH4__)
+multiline_comment|/* Mask which drops software flags */
+DECL|macro|_PAGE_FLAGS_HARDWARE_MASK
+mdefine_line|#define _PAGE_FLAGS_HARDWARE_MASK&t;0x1ffff164
+multiline_comment|/* Flags defalult: SZ=01 (4k-byte), C=1 (cachable), SH=0 (not shared), WT=0 */
+DECL|macro|_PAGE_FLAGS_HARDWARE_DEFAULT
+mdefine_line|#define _PAGE_FLAGS_HARDWARE_DEFAULT&t;0x00000018
+macro_line|#endif
 DECL|macro|_PAGE_TABLE
 mdefine_line|#define _PAGE_TABLE&t;(_PAGE_PRESENT | _PAGE_RW | _PAGE_USER | _PAGE_ACCESSED | _PAGE_DIRTY)
 DECL|macro|_KERNPG_TABLE

@@ -1,7 +1,7 @@
 macro_line|#ifndef __ASM_SH_DELAY_H
 DECL|macro|__ASM_SH_DELAY_H
 mdefine_line|#define __ASM_SH_DELAY_H
-multiline_comment|/*&n; * Copyright (C) 1999  Niibe Yutaka&n; */
+multiline_comment|/*&n; * Copyright (C) 1999  Kaz Kojima&n; */
 DECL|function|__delay
 r_extern
 id|__inline__
@@ -14,21 +14,18 @@ r_int
 id|loops
 )paren
 (brace
-r_int
-r_int
-id|__dummy
-suffix:semicolon
 id|__asm__
 id|__volatile__
 c_func
 (paren
+l_string|&quot;tst&t;%0,%0&bslash;n&bslash;t&quot;
 l_string|&quot;1:&bslash;t&quot;
-l_string|&quot;dt&t;%0&bslash;n&bslash;t&quot;
-l_string|&quot;bf&t;1b&quot;
+l_string|&quot;bf/s&t;1b&bslash;n&bslash;t&quot;
+l_string|&quot; dt&t;%0&quot;
 suffix:colon
 l_string|&quot;=r&quot;
 (paren
-id|__dummy
+id|loops
 )paren
 suffix:colon
 l_string|&quot;0&quot;
@@ -62,10 +59,10 @@ multiline_comment|/* 2**32 / 1000000 */
 id|__asm__
 c_func
 (paren
-l_string|&quot;mul.l&t;%0,%2&bslash;n&bslash;t&quot;
-l_string|&quot;sts&t;macl,%0&quot;
+l_string|&quot;dmulu.l&t;%0,%2&bslash;n&bslash;t&quot;
+l_string|&quot;sts&t;mach,%0&quot;
 suffix:colon
-l_string|&quot;=&amp;r&quot;
+l_string|&quot;=r&quot;
 (paren
 id|usecs
 )paren
@@ -101,36 +98,5 @@ mdefine_line|#define __udelay_val loops_per_sec
 macro_line|#endif
 DECL|macro|udelay
 mdefine_line|#define udelay(usecs) __udelay((usecs),__udelay_val)
-DECL|function|muldiv
-r_extern
-id|__inline__
-r_int
-r_int
-id|muldiv
-c_func
-(paren
-r_int
-r_int
-id|a
-comma
-r_int
-r_int
-id|b
-comma
-r_int
-r_int
-id|c
-)paren
-(brace
-r_return
-(paren
-id|a
-op_star
-id|b
-)paren
-op_div
-id|c
-suffix:semicolon
-)brace
 macro_line|#endif /* __ASM_SH_DELAY_H */
 eof

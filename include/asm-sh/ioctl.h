@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: ioctl.h,v 1.5 1993/07/19 21:53:50 root Exp root $&n; *&n; * linux/ioctl.h for Linux by H.H. Bergman.&n; */
+multiline_comment|/* $Id: ioctl.h,v 1.1 1999/09/18 17:29:53 gniibe Exp $&n; *&n; * linux/ioctl.h for Linux by H.H. Bergman.&n; */
 macro_line|#ifndef __ASM_SH_IOCTL_H
 DECL|macro|__ASM_SH_IOCTL_H
 mdefine_line|#define __ASM_SH_IOCTL_H

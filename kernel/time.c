@@ -67,6 +67,11 @@ id|t
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* The xtime_lock is not only serializing the xtime read/writes but it&squot;s also&n;   serializing all accesses to the global NTP variables now. */
+r_extern
+id|rwlock_t
+id|xtime_lock
+suffix:semicolon
 macro_line|#if !defined(__alpha__) &amp;&amp; !defined(__ia64__)
 multiline_comment|/*&n; * sys_time() can be implemented in user-level using&n; * sys_gettimeofday().  Is this for backwards compatibility?  If so,&n; * why not move it into the appropriate arch directory (for those&n; * architectures that need it).&n; *&n; * XXX This function is NOT 64-bit clean!&n; */
 DECL|function|sys_time
@@ -159,9 +164,11 @@ r_return
 op_minus
 id|EFAULT
 suffix:semicolon
-id|cli
+id|write_lock_irq
 c_func
 (paren
+op_amp
+id|xtime_lock
 )paren
 suffix:semicolon
 id|xtime.tv_sec
@@ -189,9 +196,11 @@ id|time_esterror
 op_assign
 id|NTP_PHASE_LIMIT
 suffix:semicolon
-id|sti
+id|write_unlock_irq
 c_func
 (paren
+op_amp
+id|xtime_lock
 )paren
 suffix:semicolon
 r_return
@@ -298,9 +307,11 @@ c_func
 r_void
 )paren
 (brace
-id|cli
+id|write_lock_irq
 c_func
 (paren
+op_amp
+id|xtime_lock
 )paren
 suffix:semicolon
 id|xtime.tv_sec
@@ -309,9 +320,11 @@ id|sys_tz.tz_minuteswest
 op_star
 l_int|60
 suffix:semicolon
-id|sti
+id|write_unlock_irq
 c_func
 (paren
+op_amp
+id|xtime_lock
 )paren
 suffix:semicolon
 )brace
@@ -627,10 +640,7 @@ id|save_adjust
 suffix:semicolon
 r_int
 id|result
-op_assign
-id|time_state
 suffix:semicolon
-multiline_comment|/* mostly `TIME_OK&squot; */
 multiline_comment|/* In order to modify anything, you gotta be super-user! */
 r_if
 c_cond
@@ -700,12 +710,18 @@ r_return
 op_minus
 id|EINVAL
 suffix:semicolon
-id|cli
+id|write_lock_irq
 c_func
 (paren
+op_amp
+id|xtime_lock
 )paren
 suffix:semicolon
-multiline_comment|/* SMP: global cli() is enough protection. */
+id|result
+op_assign
+id|time_state
+suffix:semicolon
+multiline_comment|/* mostly `TIME_OK&squot; */
 multiline_comment|/* Save for later - semantics of adjtime is to return old value */
 id|save_adjust
 op_assign
@@ -1352,13 +1368,6 @@ id|txc-&gt;tolerance
 op_assign
 id|time_tolerance
 suffix:semicolon
-id|do_gettimeofday
-c_func
-(paren
-op_amp
-id|txc-&gt;time
-)paren
-suffix:semicolon
 id|txc-&gt;tick
 op_assign
 id|tick
@@ -1397,9 +1406,18 @@ id|txc-&gt;stbcnt
 op_assign
 id|pps_stbcnt
 suffix:semicolon
-id|sti
+id|write_unlock_irq
 c_func
 (paren
+op_amp
+id|xtime_lock
+)paren
+suffix:semicolon
+id|do_gettimeofday
+c_func
+(paren
+op_amp
+id|txc-&gt;time
 )paren
 suffix:semicolon
 r_return

@@ -1,7 +1,7 @@
 macro_line|#ifndef __ASM_SH_PTRACE_H
 DECL|macro|__ASM_SH_PTRACE_H
 mdefine_line|#define __ASM_SH_PTRACE_H
-multiline_comment|/*&n; * Copyright (C) 1999 Niibe Yutaka&n; *&n; */
+multiline_comment|/*&n; * Copyright (C) 1999  Niibe Yutaka&n; *&n; */
 multiline_comment|/*&n; * This struct defines the way the registers are stored on the&n; * kernel stack during a system call or other kernel entry.&n; */
 DECL|struct|pt_regs
 r_struct
@@ -11,12 +11,22 @@ DECL|member|syscall_nr
 r_int
 id|syscall_nr
 suffix:semicolon
-DECL|member|u_regs
+DECL|member|sr
 r_int
 r_int
-id|u_regs
+id|sr
+suffix:semicolon
+DECL|member|sp
+r_int
+r_int
+id|sp
+suffix:semicolon
+DECL|member|regs
+r_int
+r_int
+id|regs
 (braket
-l_int|16
+l_int|15
 )braket
 suffix:semicolon
 DECL|member|gbr
@@ -38,11 +48,6 @@ DECL|member|pr
 r_int
 r_int
 id|pr
-suffix:semicolon
-DECL|member|sr
-r_int
-r_int
-id|sr
 suffix:semicolon
 DECL|member|pc
 r_int
@@ -67,7 +72,5 @@ op_star
 )paren
 suffix:semicolon
 macro_line|#endif
-DECL|macro|UREG_SP
-mdefine_line|#define UREG_SP 15
 macro_line|#endif /* __ASM_SH_PTRACE_H */
 eof

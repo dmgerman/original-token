@@ -401,6 +401,12 @@ r_int
 id|service_time
 suffix:semicolon
 multiline_comment|/* service time of last request */
+DECL|member|timeout
+r_int
+r_int
+id|timeout
+suffix:semicolon
+multiline_comment|/* max time to wait for irq */
 DECL|member|special
 id|special_t
 id|special
@@ -840,6 +846,17 @@ id|ide_drive_t
 op_star
 )paren
 suffix:semicolon
+DECL|typedef|ide_resetproc_t
+r_typedef
+r_void
+(paren
+id|ide_resetproc_t
+)paren
+(paren
+id|ide_drive_t
+op_star
+)paren
+suffix:semicolon
 multiline_comment|/*&n; * hwif_chipset_t is used to keep track of the specific hardware&n; * chipset used by each IDE interface, if known.&n; */
 DECL|enumerator|ide_unknown
 DECL|enumerator|ide_generic
@@ -973,6 +990,12 @@ op_star
 id|selectproc
 suffix:semicolon
 multiline_comment|/* tweaks hardware to select drive */
+DECL|member|resetproc
+id|ide_resetproc_t
+op_star
+id|resetproc
+suffix:semicolon
+multiline_comment|/* routine to reset controller after a disk reset */
 DECL|member|dmaproc
 id|ide_dmaproc_t
 op_star
@@ -1933,10 +1956,6 @@ comma
 id|ide_handler_t
 op_star
 id|handler
-comma
-r_int
-r_int
-id|timeout
 )paren
 suffix:semicolon
 multiline_comment|/*&n; * Error reporting, in human readable form (luxurious, but a memory hog).&n; */

@@ -432,10 +432,10 @@ DECL|macro|DISCONNECT_ALLOWED
 mdefine_line|#define DISCONNECT_ALLOWED           0x80
 DECL|macro|NO_AUTO_REQUEST_SENSE
 mdefine_line|#define NO_AUTO_REQUEST_SENSE        0x40
-DECL|macro|DATA_IN
-mdefine_line|#define DATA_IN                      0x01
-DECL|macro|DATA_OUT
-mdefine_line|#define DATA_OUT                     0x02
+DECL|macro|IPS_DATA_IN
+mdefine_line|#define IPS_DATA_IN                  0x01
+DECL|macro|IPS_DATA_OUT
+mdefine_line|#define IPS_DATA_OUT                 0x02
 DECL|macro|TRANSFER_64K
 mdefine_line|#define TRANSFER_64K                 0x08
 DECL|macro|NOTIMEOUT

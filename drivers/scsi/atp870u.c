@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: atp870u.c,v 1.0 1997/05/07 15:22:00 root Exp root $&n; *  linux/kernel/atp870u.c&n; *&n; *  Copyright (C) 1997&t;Wu Ching Chen&n; *  2.1.x update (C) 1998  Krzysztof G. Baranowski&n; *   &n; * Marcelo Tosatti &lt;marcelo@conectiva.com.br&gt; : SMP fixes &n; * &n; */
+multiline_comment|/* $Id: atp870u.c,v 1.0 1997/05/07 15:22:00 root Exp root $&n; *  linux/kernel/atp870u.c&n; *&n; *  Copyright (C) 1997  Wu Ching Chen&n; *  2.1.x update (C) 1998  Krzysztof G. Baranowski&n; *   &n; * Marcelo Tosatti &lt;marcelo@conectiva.com.br&gt; : SMP fixes &n; * &n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -45,7 +45,7 @@ r_int
 r_int
 )paren
 suffix:semicolon
-multiline_comment|/*&n;static const char RCSid[] = &quot;$Header: /usr/src/linux/kernel/blk_drv/scsi/RCS/atp870u.c,v 1.0 1997/05/07 15:22:00 root Exp root $&quot;;&n;*/
+multiline_comment|/*&n; *   static const char RCSid[] = &quot;$Header: /usr/src/linux/kernel/blk_drv/scsi/RCS/atp870u.c,v 1.0 1997/05/07 15:22:00 root Exp root $&quot;;&n; */
 DECL|variable|admaxu
 DECL|variable|host_idu
 DECL|variable|chip_veru
@@ -111,7 +111,11 @@ id|workingu
 l_int|2
 )braket
 op_assign
-initialization_block
+(brace
+l_int|0
+comma
+l_int|0
+)brace
 suffix:semicolon
 DECL|variable|querequ
 DECL|variable|curr_req
@@ -268,7 +272,11 @@ id|ioportu
 l_int|2
 )braket
 op_assign
-initialization_block
+(brace
+l_int|0
+comma
+l_int|0
+)brace
 suffix:semicolon
 DECL|variable|irqnumu
 r_static
@@ -279,7 +287,11 @@ id|irqnumu
 l_int|2
 )braket
 op_assign
-initialization_block
+(brace
+l_int|0
+comma
+l_int|0
+)brace
 suffix:semicolon
 DECL|variable|pciportu
 r_static
@@ -456,7 +468,11 @@ id|atp_host
 l_int|2
 )braket
 op_assign
-initialization_block
+(brace
+l_int|NULL
+comma
+l_int|NULL
+)brace
 suffix:semicolon
 DECL|function|atp870u_intr_handle
 r_static
@@ -542,11 +558,7 @@ op_increment
 r_if
 c_cond
 (paren
-(paren
 id|irq
-op_amp
-l_int|0x0f
-)paren
 op_eq
 id|irqnumu
 (braket
@@ -646,9 +658,7 @@ l_int|0x08
 op_ne
 l_int|0
 )paren
-(brace
 suffix:semicolon
-)brace
 )brace
 id|tmpcip
 op_assign
@@ -714,7 +724,6 @@ suffix:semicolon
 )brace
 )brace
 r_else
-(brace
 id|last_cmd
 (braket
 id|h
@@ -722,7 +731,6 @@ id|h
 op_or_assign
 l_int|0x40
 suffix:semicolon
-)brace
 id|tmport
 op_sub_assign
 l_int|0x02
@@ -1934,7 +1942,6 @@ id|workrequ-&gt;result
 op_assign
 id|errstus
 suffix:semicolon
-multiline_comment|/*&t;  if ( errstus == 0x02 )&n;&t;  {&n;&t;     tmport +=0x10;&n;&t;     if ((inb(tmport) &amp; 0x80) != 0)&n;&t;     {&n;&t;&t;printk(&quot; autosense &quot;);&n;&t;     }&n;&t;     tmport -=0x09;&n;&t;     outb(0,tmport);&n;&t;     tmport=workportu+0x3a;&n;&t;     outb((unsigned char)(inb(tmport) | 0x10),tmport);&n;&t;     tmport -= 0x39;&n;&n;&t;     outb(0x08,tmport++);&n;&t;     outb(0x7f,tmport++);&n;&t;     outb(0x03,tmport++);&n;&t;     outb(0x00,tmport++);&n;&t;     outb(0x00,tmport++);&n;&t;     outb(0x00,tmport++);&n;&t;     outb(0x0e,tmport++);&n;&t;     outb(0x00,tmport);&n;&t;     tmport+=0x07;&n;&t;     outb(0x00,tmport++);&n;&t;     tmport++;&n;&t;     outb(devspu[h][workrequ-&gt;target],tmport++);&n;&t;     outb(0x00,tmport++);&n;&t;     outb(0x00,tmport++);&n;&t;     outb(0x0e,tmport++);&n;&t;     tmport+=0x03;&n;&t;     outb(0x09,tmport);&n;&t;     tmport+=0x07;&n;&t;     i=0;&n;&t;     adrcntu=(unsigned long)(&amp;workrequ-&gt;sense_buffer[0]);&n;get_sens:&n;&t;     j=inb(tmport);&n;&t;     if ((j &amp; 0x01) != 0)&n;&t;     {&n;&t;&t;tmport-=0x06;&n;&t;&t;(unsigned char)(((caddr_t) adrcntu)[i++])=inb(tmport);&n;&t;&t;tmport+=0x06;&n;&t;&t;goto get_sens;&n;&t;     }&n;&t;     if ((j &amp; 0x80) == 0)&n;&t;     {&n;&t;&t;goto get_sens;&n;&t;     }&n;&t;     if ((j &amp; 0x40) == 0)&n;&t;     {&n;&t;&t;tmport-=0x08;&n;&t;&t;i=inb(tmport);&n;&t;     }&n;&t;     tmport=workportu+0x3a;&n;&t;     outb((unsigned char)(inb(tmport) &amp; 0xef),tmport);&n;&t;     tmport=workportu+0x01;&n;&t;     outb(0x2c,tmport);&n;&t;     tmport += 0x15;&n;&t;     outb(0x80,tmport);&n;&t;  }   */
 id|go_42
 suffix:colon
 id|spin_lock_irqsave
@@ -3868,16 +3875,16 @@ l_int|1
 )braket
 )paren
 op_assign
+id|virt_to_bus
+c_func
 (paren
-r_int
-r_int
-)paren
 id|sgpnt
 (braket
 id|j
 )braket
 dot
 id|address
+)paren
 suffix:semicolon
 (paren
 r_int
@@ -3972,11 +3979,11 @@ r_else
 (brace
 id|bttl
 op_assign
+id|virt_to_bus
+c_func
 (paren
-r_int
-r_int
-)paren
 id|workrequ-&gt;request_buffer
+)paren
 suffix:semicolon
 id|l
 op_assign
@@ -4174,10 +4181,9 @@ id|h
 id|tarid
 )braket
 op_assign
+id|virt_to_bus
+c_func
 (paren
-r_int
-r_int
-)paren
 op_amp
 id|prd_tableu
 (braket
@@ -4189,6 +4195,7 @@ id|tarid
 (braket
 l_int|0
 )braket
+)paren
 suffix:semicolon
 id|outl
 c_func
@@ -4472,6 +4479,7 @@ DECL|function|fun_scam
 r_int
 r_char
 id|fun_scam
+c_func
 (paren
 r_int
 r_char
@@ -4533,8 +4541,8 @@ suffix:semicolon
 id|i
 op_increment
 )paren
-multiline_comment|/* stable &gt;= bus settle delay(400 ns)  */
 (brace
+multiline_comment|/* stable &gt;= bus settle delay(400 ns)  */
 id|k
 op_assign
 id|inw
@@ -4566,8 +4574,8 @@ l_int|0x8000
 op_ne
 l_int|0
 )paren
-multiline_comment|/* DB7 all release?    */
 (brace
+multiline_comment|/* DB7 all release?    */
 r_goto
 id|FUN_D7
 suffix:semicolon
@@ -4578,7 +4586,7 @@ id|val
 op_or_assign
 l_int|0x4000
 suffix:semicolon
-multiline_comment|/* assert DB6&t;    */
+multiline_comment|/* assert DB6           */
 id|outw
 c_func
 (paren
@@ -4593,7 +4601,7 @@ id|val
 op_and_assign
 l_int|0xdfff
 suffix:semicolon
-multiline_comment|/* assert DB5&t;    */
+multiline_comment|/* assert DB5           */
 id|outw
 c_func
 (paren
@@ -4619,8 +4627,8 @@ suffix:semicolon
 id|i
 op_increment
 )paren
-multiline_comment|/* stable &gt;= bus settle delay(400 ns) */
 (brace
+multiline_comment|/* stable &gt;= bus settle delay(400 ns) */
 r_if
 c_cond
 (paren
@@ -4636,8 +4644,8 @@ l_int|0x2000
 op_ne
 l_int|0
 )paren
-multiline_comment|/* DB5 all release?&t;*/
 (brace
+multiline_comment|/* DB5 all release?       */
 r_goto
 id|FUN_D5
 suffix:semicolon
@@ -4648,7 +4656,7 @@ id|val
 op_or_assign
 l_int|0x8000
 suffix:semicolon
-multiline_comment|/* no DB4-0, assert DB7&t;*/
+multiline_comment|/* no DB4-0, assert DB7    */
 op_star
 id|val
 op_and_assign
@@ -4668,7 +4676,7 @@ id|val
 op_and_assign
 l_int|0xbfff
 suffix:semicolon
-multiline_comment|/* release DB6&t;&t;*/
+multiline_comment|/* release DB6             */
 id|outw
 c_func
 (paren
@@ -4694,8 +4702,8 @@ suffix:semicolon
 id|i
 op_increment
 )paren
-multiline_comment|/* stable &gt;= bus settle delay(400 ns)  */
 (brace
+multiline_comment|/* stable &gt;= bus settle delay(400 ns)  */
 r_if
 c_cond
 (paren
@@ -4711,8 +4719,8 @@ l_int|0x4000
 op_ne
 l_int|0
 )paren
-multiline_comment|/* DB6 all release?  */
 (brace
+multiline_comment|/* DB6 all release?  */
 r_goto
 id|FUN_D6
 suffix:semicolon
@@ -4777,7 +4785,23 @@ id|g2q_tab
 l_int|8
 )braket
 op_assign
-initialization_block
+(brace
+l_int|0x38
+comma
+l_int|0x31
+comma
+l_int|0x32
+comma
+l_int|0x2b
+comma
+l_int|0x34
+comma
+l_int|0x2d
+comma
+l_int|0x2e
+comma
+l_int|0x27
+)brace
 suffix:semicolon
 r_for
 c_loop
@@ -5371,7 +5395,7 @@ id|val
 op_and_assign
 l_int|0x007f
 suffix:semicolon
-multiline_comment|/* no bsy&t;*/
+multiline_comment|/* no bsy  */
 id|outw
 c_func
 (paren
@@ -5472,8 +5496,8 @@ l_int|0x80
 op_ne
 l_int|0
 )paren
-multiline_comment|/* bsy ? */
 (brace
+multiline_comment|/* bsy ? */
 r_goto
 id|wait_io
 suffix:semicolon
@@ -5554,7 +5578,7 @@ id|val
 op_and_assign
 l_int|0x00bf
 suffix:semicolon
-multiline_comment|/* no sel&t;   */
+multiline_comment|/* no sel     */
 id|outw
 c_func
 (paren
@@ -5594,8 +5618,8 @@ l_int|0x80
 op_eq
 l_int|0x00
 )paren
-multiline_comment|/* bsy ? */
 (brace
+multiline_comment|/* bsy ? */
 id|outw
 c_func
 (paren
@@ -5705,7 +5729,7 @@ id|val
 op_and_assign
 l_int|0x00ff
 suffix:semicolon
-multiline_comment|/* isolation&t;     */
+multiline_comment|/* isolation        */
 id|val
 op_or_assign
 l_int|0x2000
@@ -5863,7 +5887,7 @@ suffix:semicolon
 id|TCM_5
 suffix:colon
 multiline_comment|/* isolation complete..  */
-multiline_comment|/*    mbuf[32]=0;&n;    printk(&quot; &bslash;n%x %x %x %s&bslash;n &quot;,assignid_map,mbuf[0],mbuf[1],&amp;mbuf[2]); */
+multiline_comment|/*    mbuf[32]=0;&n;&t;printk(&quot; &bslash;n%x %x %x %s&bslash;n &quot;,assignid_map,mbuf[0],mbuf[1],&amp;mbuf[2]); */
 id|i
 op_assign
 l_int|15
@@ -5886,8 +5910,8 @@ l_int|0x20
 op_ne
 l_int|0
 )paren
-multiline_comment|/* bit5=1:ID upto 7      */
 (brace
+multiline_comment|/* bit5=1:ID upto 7      */
 id|i
 op_assign
 l_int|7
@@ -5904,8 +5928,8 @@ l_int|0x06
 op_eq
 l_int|0
 )paren
-multiline_comment|/* IDvalid?&t;      */
 (brace
+multiline_comment|/* IDvalid?             */
 r_goto
 id|G2Q5
 suffix:semicolon
@@ -5965,7 +5989,7 @@ id|k
 op_assign
 id|i
 suffix:semicolon
-multiline_comment|/* max acceptable ID#&t;       */
+multiline_comment|/* max acceptable ID#            */
 id|G2Q_LP
 suffix:colon
 id|m
@@ -6009,7 +6033,7 @@ suffix:semicolon
 )brace
 id|G2Q_QUIN
 suffix:colon
-multiline_comment|/* k=binID#,&t; */
+multiline_comment|/* k=binID#,       */
 id|assignid_map
 op_or_assign
 id|m
@@ -6029,7 +6053,7 @@ l_int|0
 op_assign
 l_int|0x38
 suffix:semicolon
-multiline_comment|/* 1st dft ID&lt;8&t; */
+multiline_comment|/* 1st dft ID&lt;8    */
 )brace
 r_else
 (brace
@@ -6040,7 +6064,7 @@ l_int|0
 op_assign
 l_int|0x31
 suffix:semicolon
-multiline_comment|/* 1st  ID&gt;=8&t; */
+multiline_comment|/* 1st  ID&gt;=8      */
 )brace
 id|k
 op_and_assign
@@ -9504,7 +9528,21 @@ id|devid
 l_int|7
 )braket
 op_assign
-initialization_block
+(brace
+l_int|0x8002
+comma
+l_int|0x8010
+comma
+l_int|0x8020
+comma
+l_int|0x8030
+comma
+l_int|0x8040
+comma
+l_int|0x8050
+comma
+l_int|0
+)brace
 suffix:semicolon
 r_static
 r_struct
@@ -10792,8 +10830,8 @@ r_int
 r_char
 id|h
 suffix:semicolon
-multiline_comment|/*&n;     * See if a bus reset was suggested.&n;     */
-multiline_comment|/*    printk(&quot;atp870u_reset: &bslash;n&quot;);    */
+multiline_comment|/*&n;&t; * See if a bus reset was suggested.&n;&t; */
+multiline_comment|/*&t;printk(&quot;atp870u_reset: &bslash;n&quot;);    */
 r_for
 c_loop
 (paren
@@ -10833,17 +10871,17 @@ l_string|&quot;Reset bus host not found !&quot;
 suffix:semicolon
 id|find_host
 suffix:colon
-multiline_comment|/*    SCpnt-&gt;result = 0x00080000;&n;    SCpnt-&gt;scsi_done(SCpnt);&n;    workingu[h]=0;&n;    quhdu[h]=0;&n;    quendu[h]=0;&n;    return (SCSI_RESET_SUCCESS | SCSI_RESET_BUS_RESET);  */
+multiline_comment|/*      SCpnt-&gt;result = 0x00080000;&n;&t;SCpnt-&gt;scsi_done(SCpnt);&n;&t;workingu[h]=0;&n;&t;quhdu[h]=0;&n;&t;quendu[h]=0;&n;&t;return (SCSI_RESET_SUCCESS | SCSI_RESET_BUS_RESET);  */
 r_return
 (paren
 id|SCSI_RESET_SNOOZE
 )paren
 suffix:semicolon
 )brace
+DECL|function|atp870u_info
 r_const
 r_char
 op_star
-DECL|function|atp870u_info
 id|atp870u_info
 c_func
 (paren
@@ -10872,8 +10910,8 @@ r_return
 id|buffer
 suffix:semicolon
 )brace
-r_int
 DECL|function|atp870u_set_info
+r_int
 id|atp870u_set_info
 c_func
 (paren
@@ -10900,8 +10938,8 @@ multiline_comment|/* Currently this is a no-op */
 )brace
 DECL|macro|BLS
 mdefine_line|#define BLS buffer + len + size
-r_int
 DECL|function|atp870u_proc_info
+r_int
 id|atp870u_proc_info
 c_func
 (paren
@@ -11058,8 +11096,8 @@ id|inout
 op_eq
 id|TRUE
 )paren
-multiline_comment|/* Has data been written to the file? */
 (brace
+multiline_comment|/* Has data been written to the file? */
 r_return
 (paren
 id|atp870u_set_info

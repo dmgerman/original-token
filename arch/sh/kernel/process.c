@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/arch/sh/kernel/process.c&n; *&n; *  Copyright (C) 1995  Linus Torvalds&n; *&n; *  SuperH version:  Copyright (C) 1999  Niibe Yutaka&n; */
+multiline_comment|/* $Id: process.c,v 1.7 1999/09/23 00:05:41 gniibe Exp $&n; *&n; *  linux/arch/sh/kernel/process.c&n; *&n; *  Copyright (C) 1995  Linus Torvalds&n; *&n; *  SuperH version:  Copyright (C) 1999  Niibe Yutaka &amp; Kaz Kojima&n; */
 multiline_comment|/*&n; * This file handles the architecture-dependent parts of process handling..&n; */
 DECL|macro|__KERNEL_SYSCALLS__
 mdefine_line|#define __KERNEL_SYSCALLS__
@@ -28,6 +28,16 @@ macro_line|#include &lt;asm/processor.h&gt;
 macro_line|#include &lt;asm/mmu_context.h&gt;
 macro_line|#include &lt;asm/elf.h&gt;
 macro_line|#include &lt;linux/irq.h&gt;
+macro_line|#if defined(__SH4__)
+DECL|variable|last_task_used_math
+r_struct
+id|task_struct
+op_star
+id|last_task_used_math
+op_assign
+l_int|NULL
+suffix:semicolon
+macro_line|#endif
 DECL|variable|hlt_counter
 r_static
 r_int
@@ -185,51 +195,42 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;PC: [&lt;%08lx&gt;]&quot;
+l_string|&quot;PC  : %08lx SP  : %08lx SR  : %08lx TEA : %08lx&bslash;n&quot;
 comma
 id|regs-&gt;pc
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot; SP: %08lx&quot;
 comma
-id|regs-&gt;u_regs
-(braket
-id|UREG_SP
-)braket
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot; SR: %08lx&bslash;n&quot;
+id|regs-&gt;sp
 comma
 id|regs-&gt;sr
+comma
+id|ctrl_inl
+c_func
+(paren
+id|MMU_TEA
+)paren
 )paren
 suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;R0 : %08lx R1 : %08lx R2 : %08lx R3 : %08lx&bslash;n&quot;
+l_string|&quot;R0  : %08lx R1  : %08lx R2  : %08lx R3  : %08lx&bslash;n&quot;
 comma
-id|regs-&gt;u_regs
+id|regs-&gt;regs
 (braket
 l_int|0
 )braket
 comma
-id|regs-&gt;u_regs
+id|regs-&gt;regs
 (braket
 l_int|1
 )braket
 comma
-id|regs-&gt;u_regs
+id|regs-&gt;regs
 (braket
 l_int|2
 )braket
 comma
-id|regs-&gt;u_regs
+id|regs-&gt;regs
 (braket
 l_int|3
 )braket
@@ -238,24 +239,24 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;R4 : %08lx R5 : %08lx R6 : %08lx R7 : %08lx&bslash;n&quot;
+l_string|&quot;R4  : %08lx R5  : %08lx R6  : %08lx R7  : %08lx&bslash;n&quot;
 comma
-id|regs-&gt;u_regs
+id|regs-&gt;regs
 (braket
 l_int|4
 )braket
 comma
-id|regs-&gt;u_regs
+id|regs-&gt;regs
 (braket
 l_int|5
 )braket
 comma
-id|regs-&gt;u_regs
+id|regs-&gt;regs
 (braket
 l_int|6
 )braket
 comma
-id|regs-&gt;u_regs
+id|regs-&gt;regs
 (braket
 l_int|7
 )braket
@@ -264,24 +265,24 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;R8 : %08lx R9 : %08lx R10: %08lx R11: %08lx&bslash;n&quot;
+l_string|&quot;R8  : %08lx R9  : %08lx R10 : %08lx R11 : %08lx&bslash;n&quot;
 comma
-id|regs-&gt;u_regs
+id|regs-&gt;regs
 (braket
 l_int|8
 )braket
 comma
-id|regs-&gt;u_regs
+id|regs-&gt;regs
 (braket
 l_int|9
 )braket
 comma
-id|regs-&gt;u_regs
+id|regs-&gt;regs
 (braket
 l_int|10
 )braket
 comma
-id|regs-&gt;u_regs
+id|regs-&gt;regs
 (braket
 l_int|11
 )braket
@@ -290,19 +291,19 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;R12: %08lx R13: %08lx R14: %08lx&bslash;n&quot;
+l_string|&quot;R12 : %08lx R13 : %08lx R14 : %08lx&bslash;n&quot;
 comma
-id|regs-&gt;u_regs
+id|regs-&gt;regs
 (braket
 l_int|12
 )braket
 comma
-id|regs-&gt;u_regs
+id|regs-&gt;regs
 (braket
 l_int|13
 )braket
 comma
-id|regs-&gt;u_regs
+id|regs-&gt;regs
 (braket
 l_int|14
 )braket
@@ -311,7 +312,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;MACH: %08lx MACL: %08lx GBR: %08lx PR: %08lx&quot;
+l_string|&quot;MACH: %08lx MACL: %08lx GBR : %08lx PR  : %08lx&bslash;n&quot;
 comma
 id|regs-&gt;mach
 comma
@@ -538,7 +539,40 @@ c_func
 r_void
 )paren
 (brace
+macro_line|#if defined(__sh3__)
 multiline_comment|/* nothing to do ... */
+macro_line|#elif defined(__SH4__)
+macro_line|#if 0 /* for the time being... */
+multiline_comment|/* Forget lazy fpu state */
+r_if
+c_cond
+(paren
+id|last_task_used_math
+op_eq
+id|current
+)paren
+(brace
+id|set_status_register
+(paren
+id|SR_FD
+comma
+l_int|0
+)paren
+suffix:semicolon
+id|write_system_register
+(paren
+id|fpscr
+comma
+id|FPSCR_PR
+)paren
+suffix:semicolon
+id|last_task_used_math
+op_assign
+l_int|NULL
+suffix:semicolon
+)brace
+macro_line|#endif
+macro_line|#endif
 )brace
 DECL|function|flush_thread
 r_void
@@ -548,8 +582,41 @@ c_func
 r_void
 )paren
 (brace
+macro_line|#if defined(__sh3__)
 multiline_comment|/* do nothing */
 multiline_comment|/* Possibly, set clear debug registers */
+macro_line|#elif defined(__SH4__)
+macro_line|#if 0 /* for the time being... */
+multiline_comment|/* Forget lazy fpu state */
+r_if
+c_cond
+(paren
+id|last_task_used_math
+op_eq
+id|current
+)paren
+(brace
+id|set_status_register
+(paren
+id|SR_FD
+comma
+l_int|0
+)paren
+suffix:semicolon
+id|write_system_register
+(paren
+id|fpscr
+comma
+id|FPSCR_PR
+)paren
+suffix:semicolon
+id|last_task_used_math
+op_assign
+l_int|NULL
+suffix:semicolon
+)brace
+macro_line|#endif
+macro_line|#endif
 )brace
 DECL|function|release_thread
 r_void
@@ -580,6 +647,40 @@ op_star
 id|r
 )paren
 (brace
+macro_line|#if defined(__SH4__)
+macro_line|#if 0 /* for the time being... */
+multiline_comment|/* We store the FPU info in the task-&gt;thread area.  */
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|regs-&gt;sr
+op_amp
+id|SR_FD
+)paren
+)paren
+(brace
+id|memcpy
+(paren
+id|r
+comma
+op_amp
+id|current-&gt;thread.fpu
+comma
+r_sizeof
+(paren
+op_star
+id|r
+)paren
+)paren
+suffix:semicolon
+r_return
+l_int|1
+suffix:semicolon
+)brace
+macro_line|#endif
+macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
@@ -652,6 +753,50 @@ op_assign
 op_star
 id|regs
 suffix:semicolon
+macro_line|#if defined(__SH4__)
+macro_line|#if 0 /* for the time being... */
+r_if
+c_cond
+(paren
+id|last_task_used_math
+op_eq
+id|current
+)paren
+(brace
+id|set_status_register
+(paren
+id|SR_FD
+comma
+l_int|0
+)paren
+suffix:semicolon
+id|sh4_save_fp
+(paren
+id|p
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/* New tasks loose permission to use the fpu. This accelerates context&n;&t;   switching for most programs since they don&squot;t use the fpu.  */
+id|p-&gt;thread.sr
+op_assign
+(paren
+id|read_control_register
+(paren
+id|sr
+)paren
+op_amp
+op_complement
+id|SR_MD
+)paren
+op_or
+id|SR_FD
+suffix:semicolon
+id|childregs-&gt;sr
+op_or_assign
+id|SR_FD
+suffix:semicolon
+macro_line|#endif
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -662,20 +807,14 @@ id|regs
 )paren
 )paren
 (brace
-id|childregs-&gt;u_regs
-(braket
-id|UREG_SP
-)braket
+id|childregs-&gt;sp
 op_assign
 id|usp
 suffix:semicolon
 )brace
 r_else
 (brace
-id|childregs-&gt;u_regs
-(braket
-id|UREG_SP
-)braket
+id|childregs-&gt;sp
 op_assign
 (paren
 r_int
@@ -688,7 +827,7 @@ op_star
 id|PAGE_SIZE
 suffix:semicolon
 )brace
-id|childregs-&gt;u_regs
+id|childregs-&gt;regs
 (braket
 l_int|0
 )braket
@@ -749,14 +888,15 @@ id|CMAGIC
 suffix:semicolon
 id|dump-&gt;start_code
 op_assign
-l_int|0
+id|current-&gt;mm-&gt;start_code
+suffix:semicolon
+id|dump-&gt;start_data
+op_assign
+id|current-&gt;mm-&gt;start_data
 suffix:semicolon
 id|dump-&gt;start_stack
 op_assign
-id|regs-&gt;u_regs
-(braket
-id|UREG_SP
-)braket
+id|regs-&gt;sp
 op_amp
 op_complement
 (paren
@@ -768,22 +908,15 @@ suffix:semicolon
 id|dump-&gt;u_tsize
 op_assign
 (paren
-(paren
-r_int
-r_int
-)paren
 id|current-&gt;mm-&gt;end_code
+op_minus
+id|dump-&gt;start_code
 )paren
 op_rshift
 id|PAGE_SHIFT
 suffix:semicolon
 id|dump-&gt;u_dsize
 op_assign
-(paren
-(paren
-r_int
-r_int
-)paren
 (paren
 id|current-&gt;mm-&gt;brk
 op_plus
@@ -792,48 +925,54 @@ id|PAGE_SIZE
 op_minus
 l_int|1
 )paren
-)paren
+op_minus
+id|dump-&gt;start_data
 )paren
 op_rshift
 id|PAGE_SHIFT
 suffix:semicolon
-id|dump-&gt;u_dsize
-op_sub_assign
-id|dump-&gt;u_tsize
-suffix:semicolon
-id|dump-&gt;u_ssize
-op_assign
-l_int|0
-suffix:semicolon
-multiline_comment|/* Debug registers will come here. */
-r_if
-c_cond
-(paren
-id|dump-&gt;start_stack
-OL
-id|TASK_SIZE
-)paren
 id|dump-&gt;u_ssize
 op_assign
 (paren
-(paren
-r_int
-r_int
-)paren
-(paren
-id|TASK_SIZE
+id|current-&gt;mm-&gt;start_stack
 op_minus
 id|dump-&gt;start_stack
-)paren
+op_plus
+id|PAGE_SIZE
+op_minus
+l_int|1
 )paren
 op_rshift
 id|PAGE_SHIFT
 suffix:semicolon
+multiline_comment|/* Debug registers will come here. */
 id|dump-&gt;regs
 op_assign
 op_star
 id|regs
 suffix:semicolon
+macro_line|#if 0 /* defined(__SH4__) */
+multiline_comment|/* FPU */
+id|memcpy
+(paren
+op_amp
+id|dump-&gt;regs
+(braket
+id|EF_SIZE
+op_div
+l_int|4
+)braket
+comma
+op_amp
+id|current-&gt;thread.fpu
+comma
+r_sizeof
+(paren
+id|current-&gt;thread.fpu
+)paren
+)paren
+suffix:semicolon
+macro_line|#endif
 )brace
 multiline_comment|/*&n; *&t;switch_to(x,y) should switch tasks from x to y.&n; *&n; */
 DECL|function|__switch_to
@@ -906,10 +1045,7 @@ c_func
 (paren
 id|SIGCHLD
 comma
-id|regs.u_regs
-(braket
-id|UREG_SP
-)braket
+id|regs.sp
 comma
 op_amp
 id|regs
@@ -951,10 +1087,7 @@ id|newsp
 )paren
 id|newsp
 op_assign
-id|regs.u_regs
-(braket
-id|UREG_SP
-)braket
+id|regs.sp
 suffix:semicolon
 r_return
 id|do_fork
@@ -1007,10 +1140,7 @@ id|CLONE_VM
 op_or
 id|SIGCHLD
 comma
-id|regs.u_regs
-(braket
-id|UREG_SP
-)braket
+id|regs.sp
 comma
 op_amp
 id|regs

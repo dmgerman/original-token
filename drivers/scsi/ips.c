@@ -6533,7 +6533,7 @@ id|SC-&gt;request_bufflen
 )paren
 id|scb-&gt;dcdb.cmd_attribute
 op_or_assign
-id|DATA_IN
+id|IPS_DATA_IN
 suffix:semicolon
 r_if
 c_cond
@@ -6550,7 +6550,7 @@ id|SC-&gt;request_bufflen
 )paren
 id|scb-&gt;dcdb.cmd_attribute
 op_or_assign
-id|DATA_OUT
+id|IPS_DATA_OUT
 suffix:semicolon
 r_if
 c_cond
@@ -7806,7 +7806,7 @@ id|scb-&gt;data_len
 )paren
 id|scb-&gt;dcdb.cmd_attribute
 op_or_assign
-id|DATA_IN
+id|IPS_DATA_IN
 suffix:semicolon
 r_if
 c_cond
@@ -7823,7 +7823,7 @@ id|scb-&gt;data_len
 )paren
 id|scb-&gt;dcdb.cmd_attribute
 op_or_assign
-id|DATA_OUT
+id|IPS_DATA_OUT
 suffix:semicolon
 r_if
 c_cond

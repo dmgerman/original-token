@@ -2298,6 +2298,12 @@ id|tmp
 op_rshift
 id|PAGE_SHIFT
 suffix:semicolon
+id|vmlist_modify_lock
+c_func
+(paren
+id|current-&gt;mm
+)paren
+suffix:semicolon
 id|insert_vm_struct
 c_func
 (paren
@@ -2314,6 +2320,12 @@ comma
 id|shmd-&gt;vm_start
 comma
 id|shmd-&gt;vm_end
+)paren
+suffix:semicolon
+id|vmlist_modify_unlock
+c_func
+(paren
+id|current-&gt;mm
 )paren
 suffix:semicolon
 r_return

@@ -714,6 +714,7 @@ id|skb
 )paren
 suffix:semicolon
 )brace
+macro_line|#ifdef CONFIG_NET&t;&t;
 r_if
 c_cond
 (paren
@@ -727,6 +728,7 @@ id|skb-&gt;rx_dev
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif&t;&t;
 id|skb_headerinit
 c_func
 (paren

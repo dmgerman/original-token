@@ -21,7 +21,7 @@ macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/delay.h&gt;
 macro_line|#include &lt;asm/desc.h&gt;
 macro_line|#include &lt;asm/cobalt.h&gt;
-macro_line|#include &quot;irq.h&quot;
+macro_line|#include &lt;linux/irq.h&gt;
 multiline_comment|/*&n; * This is the PIIX4-based 8259 that is wired up indirectly to Cobalt&n; * -- not the manner expected by the normal 8259 code in irq.c.&n; *&n; * there is a &squot;master&squot; physical interrupt source that gets sent to&n; * the CPU. But in the chipset there are various &squot;virtual&squot; interrupts&n; * waiting to be handled. We represent this to Linux through a &squot;master&squot;&n; * interrupt controller type, and through a special virtual interrupt-&n; * controller. Device drivers only see the virtual interrupt sources.&n; */
 DECL|macro|CO_IRQ_BASE
 mdefine_line|#define&t;CO_IRQ_BASE&t;0x20&t;/* This is the 0x20 in init_IRQ()! */

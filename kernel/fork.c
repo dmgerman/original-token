@@ -7,8 +7,8 @@ macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/vmalloc.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
-macro_line|#include &lt;asm/mmu_context.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
+macro_line|#include &lt;asm/mmu_context.h&gt;
 multiline_comment|/* The idle threads do not count.. */
 DECL|variable|nr_threads
 r_int
@@ -2839,6 +2839,11 @@ suffix:semicolon
 id|p-&gt;semundo
 op_assign
 l_int|NULL
+suffix:semicolon
+multiline_comment|/* Our parent execution domain becomes current domain&n;&t;   These must match for thread signalling to apply */
+id|p-&gt;parent_exec_id
+op_assign
+id|p-&gt;self_exec_id
 suffix:semicolon
 multiline_comment|/* ok, now we should be set up.. */
 id|p-&gt;swappable

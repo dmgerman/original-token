@@ -7745,12 +7745,14 @@ suffix:semicolon
 id|init_waitqueue_head
 c_func
 (paren
+op_amp
 id|ch-&gt;open_wait
 )paren
 suffix:semicolon
 id|init_waitqueue_head
 c_func
 (paren
+op_amp
 id|ch-&gt;close_wait
 )paren
 suffix:semicolon

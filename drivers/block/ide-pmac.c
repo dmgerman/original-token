@@ -1543,6 +1543,10 @@ id|ide_disk
 r_return
 l_int|0
 suffix:semicolon
+id|drive-&gt;timeout
+op_assign
+id|WAIT_CMD
+suffix:semicolon
 id|ide_set_handler
 c_func
 (paren
@@ -1550,8 +1554,6 @@ id|drive
 comma
 op_amp
 id|ide_dma_intr
-comma
-id|WAIT_CMD
 )paren
 suffix:semicolon
 id|OUT_BYTE

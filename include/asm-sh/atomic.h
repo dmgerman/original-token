@@ -37,7 +37,7 @@ mdefine_line|#define atomic_set(v,i)&t;&t;((v)-&gt;counter = (i))
 macro_line|#include &lt;asm/system.h&gt;
 multiline_comment|/*&n; * Make sure gcc doesn&squot;t try to be clever and move things around&n; * on us. We need to use _exactly_ the address the user gave us,&n; * not some alias that contains the same information.&n; */
 DECL|macro|__atomic_fool_gcc
-mdefine_line|#define __atomic_fool_gcc(x) (*(struct { int a[100]; } *)x)
+mdefine_line|#define __atomic_fool_gcc(x) (*(volatile struct { int a[100]; } *)x)
 multiline_comment|/*&n; * To get proper branch prediction for the main line, we must branch&n; * forward to code at the end of this object&squot;s .text section, then&n; * branch back to restart the operation.&n; */
 DECL|function|atomic_add
 r_extern
@@ -58,15 +58,10 @@ r_int
 r_int
 id|flags
 suffix:semicolon
-id|save_flags
+id|save_and_cli
 c_func
 (paren
 id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
 )paren
 suffix:semicolon
 op_star
@@ -104,15 +99,10 @@ r_int
 r_int
 id|flags
 suffix:semicolon
-id|save_flags
+id|save_and_cli
 c_func
 (paren
 id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
 )paren
 suffix:semicolon
 op_star
@@ -152,15 +142,10 @@ id|temp
 comma
 id|flags
 suffix:semicolon
-id|save_flags
+id|save_and_cli
 c_func
 (paren
 id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
 )paren
 suffix:semicolon
 id|temp
@@ -216,15 +201,10 @@ id|temp
 comma
 id|flags
 suffix:semicolon
-id|save_flags
+id|save_and_cli
 c_func
 (paren
 id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
 )paren
 suffix:semicolon
 id|temp
@@ -279,6 +259,7 @@ id|atomic_clear_mask
 c_func
 (paren
 r_int
+r_int
 id|mask
 comma
 id|atomic_t
@@ -290,15 +271,10 @@ r_int
 r_int
 id|flags
 suffix:semicolon
-id|save_flags
+id|save_and_cli
 c_func
 (paren
 id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
 )paren
 suffix:semicolon
 op_star
@@ -326,6 +302,7 @@ id|atomic_set_mask
 c_func
 (paren
 r_int
+r_int
 id|mask
 comma
 id|atomic_t
@@ -337,15 +314,10 @@ r_int
 r_int
 id|flags
 suffix:semicolon
-id|save_flags
+id|save_and_cli
 c_func
 (paren
 id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
 )paren
 suffix:semicolon
 op_star

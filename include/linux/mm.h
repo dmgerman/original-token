@@ -1364,6 +1364,14 @@ DECL|macro|buffer_under_min
 mdefine_line|#define buffer_under_min()&t;((atomic_read(&amp;buffermem) &gt;&gt; PAGE_SHIFT) * 100 &lt; &bslash;&n;&t;&t;&t;&t;buffer_mem.min_percent * num_physpages)
 DECL|macro|pgcache_under_min
 mdefine_line|#define pgcache_under_min()&t;(atomic_read(&amp;page_cache_size) * 100 &lt; &bslash;&n;&t;&t;&t;&t;page_cache.min_percent * num_physpages)
+DECL|macro|vmlist_access_lock
+mdefine_line|#define vmlist_access_lock(mm)&t;&t;spin_lock(&amp;mm-&gt;page_table_lock)
+DECL|macro|vmlist_access_unlock
+mdefine_line|#define vmlist_access_unlock(mm)&t;spin_unlock(&amp;mm-&gt;page_table_lock)
+DECL|macro|vmlist_modify_lock
+mdefine_line|#define vmlist_modify_lock(mm)&t;&t;vmlist_access_lock(mm)
+DECL|macro|vmlist_modify_unlock
+mdefine_line|#define vmlist_modify_unlock(mm)&t;vmlist_access_unlock(mm)
 macro_line|#endif /* __KERNEL__ */
 macro_line|#endif
 eof

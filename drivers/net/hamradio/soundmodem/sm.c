@@ -3708,7 +3708,6 @@ id|str
 (brace
 r_static
 r_int
-id|__initdata
 id|nr_dev
 op_assign
 l_int|0

@@ -30,6 +30,14 @@ op_star
 id|mm
 )paren
 (brace
+r_extern
+r_void
+id|flush_tlb_all
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
 r_int
 r_int
 id|mc
@@ -73,7 +81,7 @@ op_assign
 id|mc
 suffix:semicolon
 )brace
-multiline_comment|/*P&n; * Get MMU context if needed.&n; */
+multiline_comment|/*&n; * Get MMU context if needed.&n; */
 r_extern
 id|__inline__
 r_void
@@ -119,7 +127,7 @@ id|mm
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*P&n; * Initialize the context related info for a new mm_struct&n; * instance.&n; */
+multiline_comment|/*&n; * Initialize the context related info for a new mm_struct&n; * instance.&n; */
 DECL|function|init_new_context
 r_extern
 id|__inline__
@@ -143,7 +151,7 @@ op_assign
 id|NO_CONTEXT
 suffix:semicolon
 )brace
-multiline_comment|/*P&n; * Destroy context related info for an mm_struct that is about&n; * to be put to rest.&n; */
+multiline_comment|/*&n; * Destroy context related info for an mm_struct that is about&n; * to be put to rest.&n; */
 DECL|function|destroy_context
 r_extern
 id|__inline__
@@ -163,10 +171,15 @@ id|NO_CONTEXT
 suffix:semicolon
 )brace
 multiline_comment|/* Other MMU related constants. */
+macro_line|#if defined(__sh3__)
 DECL|macro|MMU_PTEH
 mdefine_line|#define MMU_PTEH&t;0xFFFFFFF0&t;/* Page table entry register HIGH */
 DECL|macro|MMU_PTEL
 mdefine_line|#define MMU_PTEL&t;0xFFFFFFF4&t;/* Page table entry register LOW */
+DECL|macro|MMU_TTB
+mdefine_line|#define MMU_TTB&t;&t;0xFFFFFFF8&t;/* Translation table base register */
+DECL|macro|MMU_TEA
+mdefine_line|#define MMU_TEA&t;&t;0xFFFFFFFC&t;/* TLB Exception Address */
 DECL|macro|MMUCR
 mdefine_line|#define MMUCR&t;&t;0xFFFFFFE0&t;/* MMU Control Register */
 DECL|macro|MMU_TLB_ADDRESS_ARRAY
@@ -177,7 +190,28 @@ DECL|macro|MMU_NTLB_ENTRIES
 mdefine_line|#define MMU_NTLB_ENTRIES       128&t;/* for 7708 */
 DECL|macro|MMU_CONTROL_INIT
 mdefine_line|#define MMU_CONTROL_INIT 0x007&t;/* SV=0, TF=1, IX=1, AT=1 */
-macro_line|#include &lt;asm/uaccess.h&gt; /* to get the definition of  __m */
+macro_line|#elif defined(__SH4__)
+DECL|macro|MMU_PTEH
+mdefine_line|#define MMU_PTEH&t;0xFF000000&t;/* Page table entry register HIGH */
+DECL|macro|MMU_PTEL
+mdefine_line|#define MMU_PTEL&t;0xFF000004&t;/* Page table entry register LOW */
+DECL|macro|MMU_TTB
+mdefine_line|#define MMU_TTB&t;&t;0xFF000008&t;/* Translation table base register */
+DECL|macro|MMU_TEA
+mdefine_line|#define MMU_TEA&t;&t;0xFF00000C&t;/* TLB Exception Address */
+DECL|macro|MMUCR
+mdefine_line|#define MMUCR&t;&t;0xFF000010&t;/* MMU Control Register */
+DECL|macro|MMU_ITLB_ADDRESS_ARRAY
+mdefine_line|#define MMU_ITLB_ADDRESS_ARRAY 0xF2000000
+DECL|macro|MMU_UTLB_ADDRESS_ARRAY
+mdefine_line|#define MMU_UTLB_ADDRESS_ARRAY 0xF6000000
+DECL|macro|MMU_PAGE_ASSOC_BIT
+mdefine_line|#define MMU_PAGE_ASSOC_BIT 0x80
+DECL|macro|MMU_NTLB_ENTRIES
+mdefine_line|#define MMU_NTLB_ENTRIES       64&t;/* for 7750 */
+DECL|macro|MMU_CONTROL_INIT
+mdefine_line|#define MMU_CONTROL_INIT 0x205&t;/* SQMD=1, SV=0, TI=1, AT=1 */
+macro_line|#endif
 DECL|function|set_asid
 r_extern
 id|__inline__
@@ -254,7 +288,7 @@ r_return
 id|asid
 suffix:semicolon
 )brace
-multiline_comment|/*P&n; * After we have set current-&gt;mm to a new value, this activates&n; * the context for the new mm so we see the new mappings.&n; */
+multiline_comment|/*&n; * After we have set current-&gt;mm to a new value, this activates&n; * the context for the new mm so we see the new mappings.&n; */
 DECL|function|activate_context
 r_extern
 id|__inline__
@@ -284,8 +318,6 @@ id|MMU_CONTEXT_ASID_MASK
 suffix:semicolon
 )brace
 multiline_comment|/* MMU_TTB can be used for optimizing the fault handling.&n;   (Currently not used) */
-DECL|macro|MMU_TTB
-mdefine_line|#define MMU_TTB   0xFFFFFFF8&t;/* Translation table base register */
 DECL|function|switch_mm
 r_extern
 id|__inline__

@@ -64,7 +64,7 @@ multiline_comment|/*&n; * These aren&squot;t exported outside the kernel to avoi
 macro_line|#ifdef __KERNEL__
 DECL|typedef|s8
 r_typedef
-r_int
+id|__signed__
 r_char
 id|s8
 suffix:semicolon
@@ -76,7 +76,7 @@ id|u8
 suffix:semicolon
 DECL|typedef|s16
 r_typedef
-r_int
+id|__signed__
 r_int
 id|s16
 suffix:semicolon
@@ -88,7 +88,7 @@ id|u16
 suffix:semicolon
 DECL|typedef|s32
 r_typedef
-r_int
+id|__signed__
 r_int
 id|s32
 suffix:semicolon
@@ -100,7 +100,7 @@ id|u32
 suffix:semicolon
 DECL|typedef|s64
 r_typedef
-r_int
+id|__signed__
 r_int
 r_int
 id|s64

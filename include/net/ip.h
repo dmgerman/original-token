@@ -469,6 +469,7 @@ id|sysctl_local_port_range
 l_int|2
 )braket
 suffix:semicolon
+macro_line|#ifdef CONFIG_INET
 DECL|function|ip_send
 r_extern
 id|__inline__
@@ -687,6 +688,7 @@ op_amp
 l_int|0x7F
 suffix:semicolon
 )brace
+macro_line|#endif
 r_extern
 r_int
 id|ip_call_ra_chain

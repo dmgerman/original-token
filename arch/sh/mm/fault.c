@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/arch/sh/mm/fault.c&n; *  Copyright (C) 1999  Niibe Yutaka&n; *&n; *  Based on linux/arch/i386/mm/fault.c:&n; *   Copyright (C) 1995  Linus Torvalds&n; */
+multiline_comment|/* $Id: fault.c,v 1.3 1999/09/21 23:09:53 gniibe Exp $&n; *&n; *  linux/arch/sh/mm/fault.c&n; *  Copyright (C) 1999  Niibe Yutaka&n; *&n; *  Based on linux/arch/i386/mm/fault.c:&n; *   Copyright (C) 1995  Linus Torvalds&n; */
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -12,6 +12,7 @@ macro_line|#include &lt;linux/smp.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
+macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/hardirq.h&gt;
@@ -798,39 +799,51 @@ c_func
 (paren
 )paren
 suffix:semicolon
+id|address
+op_and_assign
+id|PAGE_MASK
+suffix:semicolon
+macro_line|#if 0/*defined(__SH4__)*//* SH-4 has separate I/D caches: XXX really needed? */
+r_if
+c_cond
+(paren
+(paren
+id|vma-&gt;vm_flags
+op_amp
+id|VM_EXEC
+)paren
+op_ne
+l_int|0
+)paren
+multiline_comment|/*&t; &amp;&amp;&n;&t;    ((pte_val(pte) &amp; (_PAGE_PRESENT | _PAGE_DIRTY)) ==&n;&t;    (_PAGE_PRESENT | _PAGE_DIRTY))) */
+id|flush_icache_range
+c_func
+(paren
+id|address
+comma
+id|address
+op_plus
+id|PAGE_SIZE
+)paren
+suffix:semicolon
+macro_line|#endif
 id|save_and_cli
 c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
-id|address
-op_and_assign
-id|PAGE_MASK
-suffix:semicolon
 multiline_comment|/* Set PTEH register */
-id|asm
-r_volatile
+id|ctrl_outl
+c_func
 (paren
-l_string|&quot;mov.l&t;%0,%1&quot;
-suffix:colon
-multiline_comment|/* no output */
-suffix:colon
-l_string|&quot;r&quot;
 (paren
 id|address
 op_or
 id|asid
 )paren
 comma
-l_string|&quot;m&quot;
-(paren
-id|__m
-c_func
-(paren
 id|MMU_PTEH
-)paren
-)paren
 )paren
 suffix:semicolon
 id|pteval
@@ -852,26 +865,12 @@ id|_PAGE_FLAGS_HARDWARE_DEFAULT
 suffix:semicolon
 multiline_comment|/* add default flags */
 multiline_comment|/* Set PTEL register */
-id|asm
-r_volatile
-(paren
-l_string|&quot;mov.l&t;%0,%1&quot;
-suffix:colon
-multiline_comment|/* no output */
-suffix:colon
-l_string|&quot;r&quot;
-(paren
-id|pteval
-)paren
-comma
-l_string|&quot;m&quot;
-(paren
-id|__m
+id|ctrl_outl
 c_func
 (paren
+id|pteval
+comma
 id|MMU_PTEL
-)paren
-)paren
 )paren
 suffix:semicolon
 multiline_comment|/* Load the TLB */
@@ -916,6 +915,7 @@ id|addr
 comma
 id|data
 suffix:semicolon
+macro_line|#if defined(__sh3__)
 id|addr
 op_assign
 id|MMU_TLB_ADDRESS_ARRAY
@@ -935,28 +935,102 @@ op_or
 id|asid
 suffix:semicolon
 multiline_comment|/* VALID bit is off */
-id|__asm__
-id|__volatile__
-(paren
-l_string|&quot;mov.l&t;%0,%1&quot;
-suffix:colon
-multiline_comment|/* no output */
-suffix:colon
-l_string|&quot;r&quot;
+id|ctrl_outl
+c_func
 (paren
 id|data
-)paren
 comma
-l_string|&quot;m&quot;
+id|addr
+)paren
+suffix:semicolon
+macro_line|#elif defined(__SH4__)
+r_int
+id|i
+suffix:semicolon
+id|addr
+op_assign
+id|MMU_UTLB_ADDRESS_ARRAY
+op_or
+id|MMU_PAGE_ASSOC_BIT
+suffix:semicolon
+id|data
+op_assign
+id|page
+op_or
+id|asid
+suffix:semicolon
+multiline_comment|/* VALID bit is off */
+id|ctrl_outl
+c_func
 (paren
-id|__m
+id|data
+comma
+id|addr
+)paren
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+l_int|4
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
+id|addr
+op_assign
+id|MMU_ITLB_ADDRESS_ARRAY
+op_or
+(paren
+id|i
+op_lshift
+l_int|8
+)paren
+suffix:semicolon
+id|data
+op_assign
+id|ctrl_inl
 c_func
 (paren
 id|addr
 )paren
+suffix:semicolon
+id|data
+op_and_assign
+op_complement
+l_int|0x30
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|data
+op_eq
+(paren
+id|page
+op_or
+id|asid
 )paren
+)paren
+(brace
+id|ctrl_outl
+c_func
+(paren
+id|data
+comma
+id|addr
 )paren
 suffix:semicolon
+r_break
+suffix:semicolon
+)brace
+)brace
+macro_line|#endif
 )brace
 DECL|function|flush_tlb_page
 r_void
@@ -985,6 +1059,10 @@ op_ne
 id|NO_CONTEXT
 )paren
 (brace
+r_int
+r_int
+id|flags
+suffix:semicolon
 id|page
 op_and_assign
 id|PAGE_MASK
@@ -995,11 +1073,23 @@ id|vma-&gt;vm_mm-&gt;context
 op_amp
 id|MMU_CONTEXT_ASID_MASK
 suffix:semicolon
+id|save_and_cli
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 id|__flush_tlb_page
 (paren
 id|asid
 comma
 id|page
+)paren
+suffix:semicolon
+id|restore_flags
+c_func
+(paren
+id|flags
 )paren
 suffix:semicolon
 )brace
@@ -1072,7 +1162,7 @@ l_int|4
 )paren
 )paren
 (brace
-multiline_comment|/* So many TLB to flush */
+multiline_comment|/* Too many TLB to flush */
 id|get_new_mmu_context
 c_func
 (paren
@@ -1224,7 +1314,7 @@ r_int
 r_int
 id|flags
 comma
-id|__dummy
+id|status
 suffix:semicolon
 id|save_and_cli
 c_func
@@ -1232,27 +1322,25 @@ c_func
 id|flags
 )paren
 suffix:semicolon
-id|asm
-r_volatile
-(paren
-l_string|&quot;mov.l&t;%1,%0&bslash;n&bslash;t&quot;
-l_string|&quot;or&t;#4,%0&bslash;n&bslash;t&quot;
-multiline_comment|/* Set TF-bit to flush */
-l_string|&quot;mov.l&t;%0,%1&quot;
-suffix:colon
-l_string|&quot;=&amp;z&quot;
-(paren
-id|__dummy
-)paren
-suffix:colon
-l_string|&quot;m&quot;
-(paren
-id|__m
+id|status
+op_assign
+id|ctrl_inl
 c_func
 (paren
 id|MMUCR
 )paren
-)paren
+suffix:semicolon
+id|status
+op_or_assign
+l_int|0x04
+suffix:semicolon
+multiline_comment|/* Set TF-bit to flush */
+id|ctrl_outl
+c_func
+(paren
+id|status
+comma
+id|MMUCR
 )paren
 suffix:semicolon
 id|restore_flags

@@ -15,32 +15,11 @@ macro_line|#ifndef MIN
 DECL|macro|MIN
 mdefine_line|#define MIN(a,b) (((a) &lt; (b)) ? (a) : (b))
 macro_line|#endif
-macro_line|#ifdef CONFIG_BLK_DEV_VIA82C586
-DECL|variable|via_display_info
-r_int
-(paren
-op_star
-id|via_display_info
-)paren
-(paren
-r_char
-op_star
-comma
-r_char
-op_star
-op_star
-comma
-id|off_t
-comma
-r_int
-comma
-r_int
-)paren
-op_assign
-l_int|NULL
-suffix:semicolon
-macro_line|#endif /* CONFIG_BLK_DEV_VIA82C586 */
 macro_line|#ifdef CONFIG_BLK_DEV_ALI15X3
+r_extern
+id|byte
+id|ali_proc
+suffix:semicolon
 DECL|variable|ali_display_info
 r_int
 (paren
@@ -65,6 +44,64 @@ op_assign
 l_int|NULL
 suffix:semicolon
 macro_line|#endif /* CONFIG_BLK_DEV_ALI15X3 */
+macro_line|#ifdef CONFIG_BLK_DEV_SIS5513
+r_extern
+id|byte
+id|sis_proc
+suffix:semicolon
+DECL|variable|sis_display_info
+r_int
+(paren
+op_star
+id|sis_display_info
+)paren
+(paren
+r_char
+op_star
+comma
+r_char
+op_star
+op_star
+comma
+id|off_t
+comma
+r_int
+comma
+r_int
+)paren
+op_assign
+l_int|NULL
+suffix:semicolon
+macro_line|#endif /* CONFIG_BLK_DEV_SIS5513 */
+macro_line|#ifdef CONFIG_BLK_DEV_VIA82CXXX
+r_extern
+id|byte
+id|via_proc
+suffix:semicolon
+DECL|variable|via_display_info
+r_int
+(paren
+op_star
+id|via_display_info
+)paren
+(paren
+r_char
+op_star
+comma
+r_char
+op_star
+op_star
+comma
+id|off_t
+comma
+r_int
+comma
+r_int
+)paren
+op_assign
+l_int|NULL
+suffix:semicolon
+macro_line|#endif /* CONFIG_BLK_DEV_VIA82CXXX */
 DECL|function|ide_getxdigit
 r_static
 r_int
@@ -1001,7 +1038,8 @@ macro_line|#endif&t;/* CONFIG_BLK_DEV_IDEPCI */
 r_else
 (brace
 multiline_comment|/* not pci */
-macro_line|#ifndef CONFIG_Q40
+macro_line|#if !defined(__mc68000__) &amp;&amp; !defined(CONFIG_APUS)
+multiline_comment|/*&n; * Geert Uytterhoeven&n; *&n; * unless you can explain me what it really does.&n; * On m68k, we don&squot;t have outw() and outl() yet,&n; * and I need a good reason to implement it.&n; * &n; * BTW, IMHO the main remaining portability problem with the IDE driver &n; * is that it mixes IO (ioport) and MMIO (iomem) access on different platforms.&n; * &n; * I think all accesses should be done using&n; * &n; *     ide_in[bwl](ide_device_instance, offset)&n; *     ide_out[bwl](ide_device_instance, value, offset)&n; * &n; * so the architecture specific code can #define ide_{in,out}[bwl] to the&n; * appropriate function.&n; * &n; */
 r_switch
 c_cond
 (paren
@@ -1048,7 +1086,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
-macro_line|#endif&t;/* CONFIG_Q40 */
+macro_line|#endif /* !__mc68000__ &amp;&amp; !CONFIG_APUS */
 )brace
 )brace
 )brace
@@ -4166,36 +4204,17 @@ id|ent-&gt;read_proc
 op_assign
 id|proc_ide_read_drivers
 suffix:semicolon
-macro_line|#ifdef CONFIG_BLK_DEV_VIA82C586
-r_if
-c_cond
-(paren
-id|via_display_info
-)paren
-(brace
-id|ent
-op_assign
-id|create_proc_entry
-c_func
-(paren
-l_string|&quot;via&quot;
-comma
-l_int|0
-comma
-id|proc_ide_root
-)paren
-suffix:semicolon
-id|ent-&gt;get_info
-op_assign
-id|via_display_info
-suffix:semicolon
-)brace
-macro_line|#endif /* CONFIG_BLK_DEV_VIA82C586 */
 macro_line|#ifdef CONFIG_BLK_DEV_ALI15X3
 r_if
 c_cond
 (paren
+(paren
 id|ali_display_info
+)paren
+op_logical_and
+(paren
+id|ali_proc
+)paren
 )paren
 (brace
 id|ent
@@ -4216,6 +4235,68 @@ id|ali_display_info
 suffix:semicolon
 )brace
 macro_line|#endif /* CONFIG_BLK_DEV_ALI15X3 */
+macro_line|#ifdef CONFIG_BLK_DEV_SIS5513
+r_if
+c_cond
+(paren
+(paren
+id|sis_display_info
+)paren
+op_logical_and
+(paren
+id|sis_proc
+)paren
+)paren
+(brace
+id|ent
+op_assign
+id|create_proc_entry
+c_func
+(paren
+l_string|&quot;sis&quot;
+comma
+l_int|0
+comma
+id|proc_ide_root
+)paren
+suffix:semicolon
+id|ent-&gt;get_info
+op_assign
+id|sis_display_info
+suffix:semicolon
+)brace
+macro_line|#endif /* CONFIG_BLK_DEV_SIS5513 */
+macro_line|#ifdef CONFIG_BLK_DEV_VIA82CXXX
+r_if
+c_cond
+(paren
+(paren
+id|via_display_info
+)paren
+op_logical_and
+(paren
+id|via_proc
+)paren
+)paren
+(brace
+id|ent
+op_assign
+id|create_proc_entry
+c_func
+(paren
+l_string|&quot;via&quot;
+comma
+l_int|0
+comma
+id|proc_ide_root
+)paren
+suffix:semicolon
+id|ent-&gt;get_info
+op_assign
+id|via_display_info
+suffix:semicolon
+)brace
+macro_line|#endif /* CONFIG_BLK_DEV_VIA82CXXX */
 )brace
 DECL|function|proc_ide_destroy
 r_void
@@ -4226,26 +4307,17 @@ r_void
 )paren
 (brace
 multiline_comment|/*&n;&t; * Mmmm.. does this free up all resources,&n;&t; * or do we need to do a more proper cleanup here ??&n;&t; */
-macro_line|#ifdef CONFIG_BLK_DEV_VIA82C586
-r_if
-c_cond
-(paren
-id|via_display_info
-)paren
-id|remove_proc_entry
-c_func
-(paren
-l_string|&quot;ide/via&quot;
-comma
-l_int|0
-)paren
-suffix:semicolon
-macro_line|#endif /* CONFIG_BLK_DEV_VIA82C586 */
 macro_line|#ifdef CONFIG_BLK_DEV_ALI15X3
 r_if
 c_cond
 (paren
+(paren
 id|ali_display_info
+)paren
+op_logical_and
+(paren
+id|ali_proc
+)paren
 )paren
 id|remove_proc_entry
 c_func
@@ -4256,6 +4328,48 @@ l_int|0
 )paren
 suffix:semicolon
 macro_line|#endif /* CONFIG_BLK_DEV_ALI15X3 */
+macro_line|#ifdef CONFIG_BLK_DEV_SIS5513
+r_if
+c_cond
+(paren
+(paren
+id|sis_display_info
+)paren
+op_logical_and
+(paren
+id|sis_proc
+)paren
+)paren
+id|remove_proc_entry
+c_func
+(paren
+l_string|&quot;ide/sis&quot;
+comma
+l_int|0
+)paren
+suffix:semicolon
+macro_line|#endif /* CONFIG_BLK_DEV_SIS5513 */
+macro_line|#ifdef CONFIG_BLK_DEV_VIA82CXXX
+r_if
+c_cond
+(paren
+(paren
+id|via_display_info
+)paren
+op_logical_and
+(paren
+id|via_proc
+)paren
+)paren
+id|remove_proc_entry
+c_func
+(paren
+l_string|&quot;ide/via&quot;
+comma
+l_int|0
+)paren
+suffix:semicolon
+macro_line|#endif /* CONFIG_BLK_DEV_VIA82CXXX */
 id|remove_proc_entry
 c_func
 (paren

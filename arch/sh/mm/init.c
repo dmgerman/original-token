@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/arch/sh/mm/init.c&n; *&n; *  Copyright (C) 1999  Niibe Yutaka&n; *&n; *  Based on linux/arch/i386/mm/init.c:&n; *   Copyright (C) 1995  Linus Torvalds&n; */
+multiline_comment|/* $Id: init.c,v 1.3 1999/10/11 10:41:30 gniibe Exp $&n; *&n; *  linux/arch/sh/mm/init.c&n; *&n; *  Copyright (C) 1999  Niibe Yutaka&n; *&n; *  Based on linux/arch/i386/mm/init.c:&n; *   Copyright (C) 1995  Linus Torvalds&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -20,6 +20,7 @@ macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/mmu_context.h&gt;
+macro_line|#include &lt;asm/io.h&gt;
 multiline_comment|/*&n; * Cache of MMU context last used.&n; */
 DECL|variable|mmu_context_cache
 r_int
@@ -529,7 +530,8 @@ r_void
 )paren
 (brace
 r_extern
-r_char
+r_int
+r_int
 id|empty_bad_page_table
 (braket
 id|PAGE_SIZE
@@ -870,26 +872,24 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* Enable MMU */
-id|__asm__
-id|__volatile__
-(paren
-l_string|&quot;mov.l&t;%0,%1&quot;
-suffix:colon
-multiline_comment|/* no output */
-suffix:colon
-l_string|&quot;r&quot;
-(paren
-id|MMU_CONTROL_INIT
-)paren
-comma
-l_string|&quot;m&quot;
-(paren
-id|__m
+id|ctrl_outl
 c_func
 (paren
+id|MMU_CONTROL_INIT
+comma
 id|MMUCR
 )paren
-)paren
+suffix:semicolon
+id|mmu_context_cache
+op_assign
+id|MMU_CONTEXT_FIRST_VERSION
+suffix:semicolon
+id|set_asid
+c_func
+(paren
+id|mmu_context_cache
+op_amp
+id|MMU_CONTEXT_ASID_MASK
 )paren
 suffix:semicolon
 r_return
@@ -918,7 +918,7 @@ id|empty_bad_page_table
 l_int|1024
 )braket
 suffix:semicolon
-DECL|variable|empty_zero_page
+r_extern
 r_int
 r_int
 id|empty_zero_page

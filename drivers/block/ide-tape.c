@@ -4953,8 +4953,6 @@ id|drive
 comma
 op_amp
 id|idetape_pc_intr
-comma
-id|IDETAPE_WAIT_CMD
 )paren
 suffix:semicolon
 r_return
@@ -5055,8 +5053,6 @@ id|drive
 comma
 op_amp
 id|idetape_pc_intr
-comma
-id|IDETAPE_WAIT_CMD
 )paren
 suffix:semicolon
 multiline_comment|/* And set the interrupt handler again */
@@ -5214,8 +5210,6 @@ id|drive
 comma
 op_amp
 id|idetape_pc_intr
-comma
-id|IDETAPE_WAIT_CMD
 )paren
 suffix:semicolon
 multiline_comment|/* Set the interrupt routine */
@@ -5587,8 +5581,6 @@ id|drive
 comma
 op_amp
 id|idetape_transfer_pc
-comma
-id|IDETAPE_WAIT_CMD
 )paren
 suffix:semicolon
 id|OUT_BYTE
@@ -12826,6 +12818,10 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* An ATAPI device ignores DRDY */
+id|drive-&gt;timeout
+op_assign
+id|IDETAPE_WAIT_CMD
+suffix:semicolon
 macro_line|#ifdef CONFIG_BLK_DEV_IDEPCI
 multiline_comment|/*&n;&t; *  These two ide-pci host adapters appear to need this disabled.&n;&t; */
 r_if

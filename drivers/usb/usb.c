@@ -3054,9 +3054,7 @@ id|dr.length
 op_assign
 l_int|0
 suffix:semicolon
-r_if
-c_cond
-(paren
+r_return
 id|dev-&gt;bus-&gt;op
 op_member_access_from_pointer
 id|control_msg
@@ -3081,13 +3079,6 @@ l_int|0
 comma
 id|HZ
 )paren
-)paren
-r_return
-op_minus
-l_int|1
-suffix:semicolon
-r_return
-l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* keyboards want a nonzero duration according to HID spec, but&n;   mice should use infinity (0) -keryan */
@@ -3137,9 +3128,7 @@ id|dr.length
 op_assign
 l_int|0
 suffix:semicolon
-r_if
-c_cond
-(paren
+r_return
 id|dev-&gt;bus-&gt;op
 op_member_access_from_pointer
 id|control_msg
@@ -3164,13 +3153,6 @@ l_int|0
 comma
 id|HZ
 )paren
-)paren
-r_return
-op_minus
-l_int|1
-suffix:semicolon
-r_return
-l_int|0
 suffix:semicolon
 )brace
 DECL|function|usb_set_maxpacket
@@ -3466,8 +3448,9 @@ id|status
 op_amp
 l_int|1
 )paren
+multiline_comment|/* endpoint status is Halted */
 r_return
-l_int|1
+id|USB_ST_STALL
 suffix:semicolon
 multiline_comment|/* still halted */
 macro_line|#endif
@@ -3530,6 +3513,9 @@ id|alternate
 id|devrequest
 id|dr
 suffix:semicolon
+r_int
+id|err
+suffix:semicolon
 id|dr.requesttype
 op_assign
 l_int|1
@@ -3550,9 +3536,8 @@ id|dr.length
 op_assign
 l_int|0
 suffix:semicolon
-r_if
-c_cond
-(paren
+id|err
+op_assign
 id|dev-&gt;bus-&gt;op
 op_member_access_from_pointer
 id|control_msg
@@ -3577,10 +3562,14 @@ l_int|0
 comma
 id|HZ
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|err
 )paren
 r_return
-op_minus
-l_int|1
+id|err
 suffix:semicolon
 id|dev-&gt;ifnum
 op_assign
@@ -3834,9 +3823,7 @@ id|dr.length
 op_assign
 id|size
 suffix:semicolon
-r_if
-c_cond
-(paren
+r_return
 id|dev-&gt;bus-&gt;op
 op_member_access_from_pointer
 id|control_msg
@@ -3861,13 +3848,6 @@ id|size
 comma
 id|HZ
 )paren
-)paren
-r_return
-op_minus
-l_int|1
-suffix:semicolon
-r_return
-l_int|0
 suffix:semicolon
 )brace
 DECL|function|usb_get_configuration
@@ -4379,7 +4359,7 @@ r_return
 id|ptr
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * By the time we get here, the device has gotten a new device ID&n; * and is in the default state. We need to identify the thing and&n; * get the ball rolling..&n; */
+multiline_comment|/*&n; * By the time we get here, the device has gotten a new device ID&n; * and is in the default state. We need to identify the thing and&n; * get the ball rolling..&n; *&n; * Returns 0 for success, != 0 for error.&n; */
 DECL|function|usb_new_device
 r_int
 id|usb_new_device
@@ -4393,6 +4373,9 @@ id|dev
 (brace
 r_int
 id|addr
+suffix:semicolon
+r_int
+id|err
 suffix:semicolon
 id|printk
 c_func
@@ -4432,9 +4415,8 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* Slow devices */
-r_if
-c_cond
-(paren
+id|err
+op_assign
 id|usb_get_descriptor
 c_func
 (paren
@@ -4449,13 +4431,20 @@ id|dev-&gt;descriptor
 comma
 l_int|8
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|err
 )paren
 (brace
 id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;usbcore: USB device not responding, giving up&bslash;n&quot;
+l_string|&quot;usbcore: USB device not responding, giving up (error=%d)&bslash;n&quot;
+comma
+id|err
 )paren
 suffix:semicolon
 id|dev-&gt;devnum
@@ -4528,21 +4517,27 @@ id|dev-&gt;devnum
 op_assign
 id|addr
 suffix:semicolon
-r_if
-c_cond
-(paren
+id|err
+op_assign
 id|usb_set_address
 c_func
 (paren
 id|dev
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|err
 )paren
 (brace
 id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;usbcore: USB device not accepting new address&bslash;n&quot;
+l_string|&quot;usbcore: USB device not accepting new address (error=%d)&bslash;n&quot;
+comma
+id|err
 )paren
 suffix:semicolon
 id|dev-&gt;devnum
@@ -4561,21 +4556,27 @@ l_int|10
 )paren
 suffix:semicolon
 multiline_comment|/* Let the SET_ADDRESS settle */
-r_if
-c_cond
-(paren
+id|err
+op_assign
 id|usb_get_device_descriptor
 c_func
 (paren
 id|dev
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|err
 )paren
 (brace
 id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;usbcore: unable to get device descriptor&bslash;n&quot;
+l_string|&quot;usbcore: unable to get device descriptor (error=%d)&bslash;n&quot;
+comma
+id|err
 )paren
 suffix:semicolon
 id|dev-&gt;devnum
@@ -5556,10 +5557,6 @@ l_string|&quot;unable to get major %d for usb devices&bslash;n&quot;
 comma
 id|MISC_MAJOR
 )paren
-suffix:semicolon
-r_return
-op_minus
-id|EIO
 suffix:semicolon
 )brace
 )brace

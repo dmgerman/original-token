@@ -8,9 +8,9 @@ DECL|macro|TIMER_IRP_OFFSET
 mdefine_line|#define TIMER_IRP_OFFSET&t;12
 DECL|macro|TIMER_PRIORITY
 mdefine_line|#define TIMER_PRIORITY&t;&t; 1
-multiline_comment|/*&n; * 40 = 24+16&n; *&n; * 24 for on chip support modules.&n; * 16 for external interrupts.&n; *&n; */
+multiline_comment|/*&n; * 48 = 32+16&n; *&n; * 32 for on chip support modules.&n; * 16 for external interrupts.&n; *&n; */
 DECL|macro|NR_IRQS
-mdefine_line|#define NR_IRQS&t;40
+mdefine_line|#define NR_IRQS&t;48
 r_extern
 r_void
 id|disable_irq

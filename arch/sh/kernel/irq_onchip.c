@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/arch/sh/kernel/irq_onchip.c&n; *&n; * Copyright (C) 1999  Niibe Yutaka&n; *&n; * Interrupt handling for on-chip supporting modules (TMU, RTC, etc.).&n; *&n; */
+multiline_comment|/* $Id: irq_onchip.c,v 1.3 1999/10/11 13:12:19 gniibe Exp $&n; *&n; * linux/arch/sh/kernel/irq_onchip.c&n; *&n; * Copyright (C) 1999  Niibe Yutaka&n; *&n; * Interrupt handling for on-chip supporting modules (TMU, RTC, etc.).&n; *&n; */
 macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/kernel_stat.h&gt;
@@ -20,85 +20,6 @@ macro_line|#include &lt;asm/smp.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/delay.h&gt;
 macro_line|#include &lt;linux/irq.h&gt;
-multiline_comment|/*&n; * SH (non-)specific no controller code&n; */
-DECL|function|enable_none
-r_static
-r_void
-id|enable_none
-c_func
-(paren
-r_int
-r_int
-id|irq
-)paren
-(brace
-)brace
-DECL|function|startup_none
-r_static
-r_int
-r_int
-id|startup_none
-c_func
-(paren
-r_int
-r_int
-id|irq
-)paren
-(brace
-r_return
-l_int|0
-suffix:semicolon
-)brace
-DECL|function|disable_none
-r_static
-r_void
-id|disable_none
-c_func
-(paren
-r_int
-r_int
-id|irq
-)paren
-(brace
-)brace
-DECL|function|ack_none
-r_static
-r_void
-id|ack_none
-c_func
-(paren
-r_int
-r_int
-id|irq
-)paren
-(brace
-)brace
-multiline_comment|/* startup is the same as &quot;enable&quot;, shutdown is same as &quot;disable&quot; */
-DECL|macro|shutdown_none
-mdefine_line|#define shutdown_none&t;disable_none
-DECL|macro|end_none
-mdefine_line|#define end_none&t;enable_none
-DECL|variable|no_irq_type
-r_struct
-id|hw_interrupt_type
-id|no_irq_type
-op_assign
-(brace
-l_string|&quot;none&quot;
-comma
-id|startup_none
-comma
-id|shutdown_none
-comma
-id|enable_none
-comma
-id|disable_none
-comma
-id|ack_none
-comma
-id|end_none
-)brace
-suffix:semicolon
 DECL|struct|ipr_data
 r_struct
 id|ipr_data
@@ -250,8 +171,17 @@ id|end_onChip_irq
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * These have to be protected by the irq controller spinlock&n; * before being called.&n; *&n; *&n; * IPRA  15-12  11-8  7-4  3-0&n; * IPRB  15-12  11-8  7-4  3-0&n; * IPRC  15-12  11-8  7-4  3-0&n; *&n; */
+macro_line|#if defined(__sh3__)
 DECL|macro|INTC_IPR
 mdefine_line|#define INTC_IPR&t;0xfffffee2UL&t;/* Word access */
+DECL|macro|INTC_SIZE
+mdefine_line|#define INTC_SIZE&t;0x2
+macro_line|#elif defined(__SH4__)
+DECL|macro|INTC_IPR
+mdefine_line|#define INTC_IPR&t;0xffd00004UL&t;/* Word access */
+DECL|macro|INTC_SIZE
+mdefine_line|#define INTC_SIZE&t;0x4
+macro_line|#endif
 DECL|function|disable_onChip_irq
 r_void
 id|disable_onChip_irq
@@ -281,9 +211,13 @@ id|intc_ipr_address
 op_assign
 id|INTC_IPR
 op_plus
+(paren
 id|offset
 op_div
 l_int|16
+op_star
+id|INTC_SIZE
+)paren
 suffix:semicolon
 r_int
 r_int
@@ -303,31 +237,26 @@ l_int|16
 suffix:semicolon
 r_int
 r_int
-id|__dummy
+id|val
 suffix:semicolon
-id|asm
-r_volatile
-(paren
-l_string|&quot;mov.w&t;@%1,%0&bslash;n&bslash;t&quot;
-l_string|&quot;and&t;%2,%0&bslash;n&bslash;t&quot;
-l_string|&quot;mov.w&t;%0,@%1&quot;
-suffix:colon
-l_string|&quot;=&amp;z&quot;
-(paren
-id|__dummy
-)paren
-suffix:colon
-l_string|&quot;r&quot;
+id|val
+op_assign
+id|ctrl_inw
+c_func
 (paren
 id|intc_ipr_address
 )paren
-comma
-l_string|&quot;r&quot;
-(paren
+suffix:semicolon
+id|val
+op_and_assign
 id|mask
-)paren
-suffix:colon
-l_string|&quot;memory&quot;
+suffix:semicolon
+id|ctrl_outw
+c_func
+(paren
+id|val
+comma
+id|intc_ipr_address
 )paren
 suffix:semicolon
 )brace
@@ -373,9 +302,13 @@ id|intc_ipr_address
 op_assign
 id|INTC_IPR
 op_plus
+(paren
 id|offset
 op_div
 l_int|16
+op_star
+id|INTC_SIZE
+)paren
 suffix:semicolon
 r_int
 r_int
@@ -393,31 +326,26 @@ l_int|16
 suffix:semicolon
 r_int
 r_int
-id|__dummy
+id|val
 suffix:semicolon
-id|asm
-r_volatile
-(paren
-l_string|&quot;mov.w&t;@%1,%0&bslash;n&bslash;t&quot;
-l_string|&quot;or&t;%2,%0&bslash;n&bslash;t&quot;
-l_string|&quot;mov.w&t;%0,@%1&quot;
-suffix:colon
-l_string|&quot;=&amp;z&quot;
-(paren
-id|__dummy
-)paren
-suffix:colon
-l_string|&quot;r&quot;
+id|val
+op_assign
+id|ctrl_inw
+c_func
 (paren
 id|intc_ipr_address
 )paren
-comma
-l_string|&quot;r&quot;
-(paren
+suffix:semicolon
+id|val
+op_or_assign
 id|value
-)paren
-suffix:colon
-l_string|&quot;memory&quot;
+suffix:semicolon
+id|ctrl_outw
+c_func
+(paren
+id|val
+comma
+id|intc_ipr_address
 )paren
 suffix:semicolon
 )brace
@@ -471,11 +399,6 @@ c_func
 id|irq
 )paren
 suffix:semicolon
-id|sti
-c_func
-(paren
-)paren
-suffix:semicolon
 )brace
 DECL|function|end_onChip_irq
 r_static
@@ -492,11 +415,6 @@ id|enable_onChip_irq
 c_func
 (paren
 id|irq
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
 )paren
 suffix:semicolon
 )brace

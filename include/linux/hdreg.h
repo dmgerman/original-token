@@ -120,6 +120,8 @@ DECL|macro|WIN_SRST
 mdefine_line|#define WIN_SRST&t;&t;0x08&t;/* ATAPI soft reset command */
 DECL|macro|WIN_PACKETCMD
 mdefine_line|#define WIN_PACKETCMD&t;&t;0xa0&t;/* Send a packet command. */
+DECL|macro|EXABYTE_ENABLE_NEST
+mdefine_line|#define EXABYTE_ENABLE_NEST&t;0xf0
 multiline_comment|/* WIN_SMART sub-commands */
 DECL|macro|SMART_READ_VALUES
 mdefine_line|#define SMART_READ_VALUES&t;0xd0

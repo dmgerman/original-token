@@ -12,7 +12,6 @@ macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/hydra.h&gt;
 macro_line|#include &lt;asm/prom.h&gt;
 macro_line|#include &lt;asm/gg2.h&gt;
-macro_line|#include &lt;asm/ide.h&gt;
 macro_line|#include &lt;asm/machdep.h&gt;
 macro_line|#include &quot;pci.h&quot;
 multiline_comment|/* LongTrail */

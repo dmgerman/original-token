@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/arch/sh/kernel/setup.c&n; *&n; *  Copyright (C) 1999  Niibe Yutaka&n; *&n; */
+multiline_comment|/* $Id: setup.c,v 1.4 1999/10/17 02:49:24 gniibe Exp $&n; *&n; *  linux/arch/sh/kernel/setup.c&n; *&n; *  Copyright (C) 1999  Niibe Yutaka&n; *&n; */
 multiline_comment|/*&n; * This file handles the architecture-dependent parts of initialization&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -20,6 +20,7 @@ macro_line|#include &lt;linux/blk.h&gt;
 macro_line|#endif
 macro_line|#include &lt;asm/processor.h&gt;
 macro_line|#include &lt;linux/console.h&gt;
+macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
@@ -31,7 +32,7 @@ id|sh_cpuinfo
 id|boot_cpu_data
 op_assign
 (brace
-l_int|0
+id|CPU_SH_NONE
 comma
 l_int|0
 comma
@@ -40,20 +41,6 @@ comma
 l_int|0
 comma
 )brace
-suffix:semicolon
-r_extern
-r_int
-id|_text
-comma
-id|_etext
-comma
-id|_edata
-comma
-id|_end
-comma
-id|_stext
-comma
-id|__bss_start
 suffix:semicolon
 macro_line|#ifdef CONFIG_BLK_DEV_RAM
 r_extern
@@ -76,8 +63,44 @@ r_extern
 r_int
 id|root_mountflags
 suffix:semicolon
+r_extern
+r_int
+id|_text
+comma
+id|_etext
+comma
+id|_edata
+comma
+id|_end
+suffix:semicolon
+multiline_comment|/*&n; * This is set up by the setup-routine at boot-time&n; */
+DECL|macro|PARAM
+mdefine_line|#define PARAM&t;((unsigned char *)empty_zero_page)
+DECL|macro|MOUNT_ROOT_RDONLY
+mdefine_line|#define MOUNT_ROOT_RDONLY (*(unsigned long *) (PARAM+0x000))
+DECL|macro|RAMDISK_FLAGS
+mdefine_line|#define RAMDISK_FLAGS (*(unsigned long *) (PARAM+0x004))
+DECL|macro|ORIG_ROOT_DEV
+mdefine_line|#define ORIG_ROOT_DEV (*(unsigned long *) (PARAM+0x008))
+DECL|macro|LOADER_TYPE
+mdefine_line|#define LOADER_TYPE (*(unsigned long *) (PARAM+0x00c))
+DECL|macro|INITRD_START
+mdefine_line|#define INITRD_START (*(unsigned long *) (PARAM+0x010))
+DECL|macro|INITRD_SIZE
+mdefine_line|#define INITRD_SIZE (*(unsigned long *) (PARAM+0x014))
+DECL|macro|MEMORY_END
+mdefine_line|#define MEMORY_END (*(unsigned long *) (PARAM+0x018))
+multiline_comment|/* ... */
+DECL|macro|COMMAND_LINE
+mdefine_line|#define COMMAND_LINE ((char *) (PARAM+0x100))
 DECL|macro|COMMAND_LINE_SIZE
-mdefine_line|#define COMMAND_LINE_SIZE 1024
+mdefine_line|#define COMMAND_LINE_SIZE 256
+DECL|macro|RAMDISK_IMAGE_START_MASK
+mdefine_line|#define RAMDISK_IMAGE_START_MASK  &t;0x07FF
+DECL|macro|RAMDISK_PROMPT_FLAG
+mdefine_line|#define RAMDISK_PROMPT_FLAG&t;&t;0x8000
+DECL|macro|RAMDISK_LOAD_FLAG
+mdefine_line|#define RAMDISK_LOAD_FLAG&t;&t;0x4000&t;
 DECL|variable|command_line
 r_static
 r_char
@@ -97,12 +120,6 @@ id|saved_command_line
 (braket
 id|COMMAND_LINE_SIZE
 )braket
-suffix:semicolon
-r_extern
-r_int
-r_char
-op_star
-id|root_fs_image
 suffix:semicolon
 DECL|variable|standard_io_resources
 r_struct
@@ -292,13 +309,64 @@ op_star
 id|memory_end_p
 )paren
 (brace
-op_star
-id|cmdline_p
-op_assign
-id|command_line
+r_int
+r_int
+id|memory_start
+comma
+id|memory_end
 suffix:semicolon
-op_star
-id|memory_start_p
+id|ROOT_DEV
+op_assign
+id|to_kdev_t
+c_func
+(paren
+id|ORIG_ROOT_DEV
+)paren
+suffix:semicolon
+macro_line|#ifdef CONFIG_BLK_DEV_RAM
+id|rd_image_start
+op_assign
+id|RAMDISK_FLAGS
+op_amp
+id|RAMDISK_IMAGE_START_MASK
+suffix:semicolon
+id|rd_prompt
+op_assign
+(paren
+(paren
+id|RAMDISK_FLAGS
+op_amp
+id|RAMDISK_PROMPT_FLAG
+)paren
+op_ne
+l_int|0
+)paren
+suffix:semicolon
+id|rd_doload
+op_assign
+(paren
+(paren
+id|RAMDISK_FLAGS
+op_amp
+id|RAMDISK_LOAD_FLAG
+)paren
+op_ne
+l_int|0
+)paren
+suffix:semicolon
+macro_line|#endif
+r_if
+c_cond
+(paren
+op_logical_neg
+id|MOUNT_ROOT_RDONLY
+)paren
+id|root_mountflags
+op_and_assign
+op_complement
+id|MS_RDONLY
+suffix:semicolon
+id|memory_start
 op_assign
 (paren
 r_int
@@ -307,23 +375,9 @@ r_int
 op_amp
 id|_end
 suffix:semicolon
-op_star
-id|memory_end_p
+id|memory_end
 op_assign
-l_int|0x8c400000
-suffix:semicolon
-multiline_comment|/* For my board. */
-id|ram_resources
-(braket
-l_int|1
-)braket
-dot
-id|end
-op_assign
-op_star
-id|memory_end_p
-op_minus
-l_int|1
+id|MEMORY_END
 suffix:semicolon
 id|init_mm.start_code
 op_assign
@@ -332,7 +386,7 @@ r_int
 r_int
 )paren
 op_amp
-id|_stext
+id|_text
 suffix:semicolon
 id|init_mm.end_code
 op_assign
@@ -401,42 +455,126 @@ id|_edata
 op_minus
 l_int|1
 suffix:semicolon
-id|ROOT_DEV
-op_assign
-id|MKDEV
+multiline_comment|/* Save unparsed command line copy for /proc/cmdline */
+id|memcpy
 c_func
 (paren
-id|FLOPPY_MAJOR
+id|saved_command_line
 comma
-l_int|0
+id|COMMAND_LINE
+comma
+id|COMMAND_LINE_SIZE
 )paren
 suffix:semicolon
-id|initrd_below_start_ok
+id|saved_command_line
+(braket
+id|COMMAND_LINE_SIZE
+op_minus
+l_int|1
+)braket
 op_assign
+l_char|&squot;&bslash;0&squot;
+suffix:semicolon
+id|memcpy
+c_func
+(paren
+id|command_line
+comma
+id|COMMAND_LINE
+comma
+id|COMMAND_LINE_SIZE
+)paren
+suffix:semicolon
+id|command_line
+(braket
+id|COMMAND_LINE_SIZE
+op_minus
+l_int|1
+)braket
+op_assign
+l_char|&squot;&bslash;0&squot;
+suffix:semicolon
+multiline_comment|/* Not support &quot;mem=XXX[kKmM]&quot; command line option. */
+op_star
+id|cmdline_p
+op_assign
+id|command_line
+suffix:semicolon
+id|memory_end
+op_and_assign
+id|PAGE_MASK
+suffix:semicolon
+id|ram_resources
+(braket
+l_int|1
+)braket
+dot
+id|end
+op_assign
+id|memory_end
+op_minus
 l_int|1
 suffix:semicolon
+op_star
+id|memory_start_p
+op_assign
+id|memory_start
+suffix:semicolon
+op_star
+id|memory_end_p
+op_assign
+id|memory_end
+suffix:semicolon
+macro_line|#ifdef CONFIG_BLK_DEV_INITRD
+r_if
+c_cond
+(paren
+id|LOADER_TYPE
+)paren
+(brace
 id|initrd_start
 op_assign
-(paren
-r_int
-)paren
-op_amp
-id|root_fs_image
+id|INITRD_START
+ques
+c_cond
+id|INITRD_START
+suffix:colon
+l_int|0
 suffix:semicolon
 id|initrd_end
 op_assign
+id|initrd_start
+op_plus
+id|INITRD_SIZE
+suffix:semicolon
+r_if
+c_cond
 (paren
-r_int
+id|initrd_end
+OG
+id|memory_end
 )paren
-op_amp
-id|__bss_start
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;initrd extends beyond end of memory &quot;
+l_string|&quot;(0x%08lx &gt; 0x%08lx)&bslash;ndisabling initrd&bslash;n&quot;
+comma
+id|initrd_end
+comma
+id|memory_end
+)paren
 suffix:semicolon
-id|mount_initrd
+id|initrd_start
 op_assign
-l_int|1
+l_int|0
 suffix:semicolon
+)brace
+)brace
+macro_line|#endif
 macro_line|#if 0
-multiline_comment|/* Request the standard RAM and ROM resources - they eat up PCI memory space */
+multiline_comment|/*&n;&t; * Request the standard RAM and ROM resources -&n;&t; * they eat up PCI memory space&n;&t; */
 id|request_resource
 c_func
 (paren
@@ -492,8 +630,12 @@ op_amp
 id|data_resource
 )paren
 suffix:semicolon
-macro_line|#endif
-macro_line|#if 0
+id|probe_roms
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/* request I/O space for devices used on all i[345]86 PCs */
 r_for
 c_loop
 (paren
@@ -520,126 +662,19 @@ id|i
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#if 0
-id|rd_image_start
+macro_line|#ifdef CONFIG_VT
+macro_line|#if defined(CONFIG_VGA_CONSOLE)
+id|conswitchp
 op_assign
-(paren
-r_int
-)paren
-id|root_fs_image
-suffix:semicolon
-id|rd_prompt
-op_assign
-l_int|0
-suffix:semicolon
-id|rd_doload
-op_assign
-l_int|1
-suffix:semicolon
-macro_line|#endif
-macro_line|#if 0
-id|ROOT_DEV
-op_assign
-id|to_kdev_t
-c_func
-(paren
-id|ORIG_ROOT_DEV
-)paren
-suffix:semicolon
-macro_line|#ifdef CONFIG_BLK_DEV_RAM
-id|rd_image_start
-op_assign
-id|RAMDISK_FLAGS
 op_amp
-id|RAMDISK_IMAGE_START_MASK
+id|vga_con
 suffix:semicolon
-id|rd_prompt
+macro_line|#elif defined(CONFIG_DUMMY_CONSOLE)
+id|conswitchp
 op_assign
-(paren
-(paren
-id|RAMDISK_FLAGS
 op_amp
-id|RAMDISK_PROMPT_FLAG
-)paren
-op_ne
-l_int|0
-)paren
+id|dummy_con
 suffix:semicolon
-id|rd_doload
-op_assign
-(paren
-(paren
-id|RAMDISK_FLAGS
-op_amp
-id|RAMDISK_LOAD_FLAG
-)paren
-op_ne
-l_int|0
-)paren
-suffix:semicolon
-macro_line|#endif
-r_if
-c_cond
-(paren
-op_logical_neg
-id|MOUNT_ROOT_RDONLY
-)paren
-id|root_mountflags
-op_and_assign
-op_complement
-id|MS_RDONLY
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_BLK_DEV_INITRD
-macro_line|#if 0
-r_if
-c_cond
-(paren
-id|LOADER_TYPE
-)paren
-(brace
-id|initrd_start
-op_assign
-id|INITRD_START
-ques
-c_cond
-id|INITRD_START
-op_plus
-id|PAGE_OFFSET
-suffix:colon
-l_int|0
-suffix:semicolon
-id|initrd_end
-op_assign
-id|initrd_start
-op_plus
-id|INITRD_SIZE
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|initrd_end
-OG
-id|memory_end
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;initrd extends beyond end of memory &quot;
-l_string|&quot;(0x%08lx &gt; 0x%08lx)&bslash;ndisabling initrd&bslash;n&quot;
-comma
-id|initrd_end
-comma
-id|memory_end
-)paren
-suffix:semicolon
-id|initrd_start
-op_assign
-l_int|0
-suffix:semicolon
-)brace
-)brace
 macro_line|#endif
 macro_line|#endif
 )brace
@@ -660,7 +695,7 @@ id|p
 op_assign
 id|buffer
 suffix:semicolon
-macro_line|#ifdef CONFIG_CPU_SH3
+macro_line|#if defined(__sh3__)
 id|p
 op_add_assign
 id|sprintf
@@ -668,11 +703,11 @@ c_func
 (paren
 id|p
 comma
-l_string|&quot;cpu family&bslash;t: SH3&bslash;n&quot;
+l_string|&quot;cpu family&bslash;t: SH-3&bslash;n&quot;
 l_string|&quot;cache size&bslash;t: 8K-byte&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#elif CONFIG_CPU_SH4
+macro_line|#elif defined(__SH4__)
 id|p
 op_add_assign
 id|sprintf
@@ -680,8 +715,8 @@ c_func
 (paren
 id|p
 comma
-l_string|&quot;cpu family&bslash;t: SH4&bslash;n&quot;
-l_string|&quot;cache size&bslash;t: ??K-byte&bslash;n&quot;
+l_string|&quot;cpu family&bslash;t: SH-4&bslash;n&quot;
+l_string|&quot;cache size&bslash;t: 8K-byte/16K-byte&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif

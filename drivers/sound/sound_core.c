@@ -50,6 +50,15 @@ r_void
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef CONFIG_SOUND_CMPCI
+r_extern
+id|init_cmpci
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/*&n; *&t;Low level list operator. Scan the ordered list, find a hole and&n; *&t;join into it. Called with the lock asserted&n; */
 DECL|function|__sound_insert_unit
 r_static

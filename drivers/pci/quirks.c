@@ -368,6 +368,16 @@ id|quirk_isa_dma_hangs
 )brace
 comma
 (brace
+id|PCI_FIXUP_FINAL
+comma
+id|PCI_VENDOR_ID_INTEL
+comma
+id|PCI_DEVICE_ID_INTEL_82371SB_0
+comma
+id|quirk_isa_dma_hangs
+)brace
+comma
+(brace
 id|PCI_FIXUP_HEADER
 comma
 id|PCI_VENDOR_ID_S3

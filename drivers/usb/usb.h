@@ -423,50 +423,52 @@ id|packed
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/* &n; * Status codes (these follow OHCI controllers condition codes)&n; */
+multiline_comment|/* &n; * Status codes (these [used to] follow OHCI controllers condition codes)&n; */
 DECL|macro|USB_ST_NOERROR
-mdefine_line|#define USB_ST_NOERROR&t;&t;0x0
+mdefine_line|#define USB_ST_NOERROR&t;&t;0
 DECL|macro|USB_ST_CRC
-mdefine_line|#define USB_ST_CRC&t;&t;0x1
+mdefine_line|#define USB_ST_CRC&t;&t;-1
 DECL|macro|USB_ST_BITSTUFF
-mdefine_line|#define USB_ST_BITSTUFF&t;&t;0x2
+mdefine_line|#define USB_ST_BITSTUFF&t;&t;-2
 DECL|macro|USB_ST_DTMISMATCH
-mdefine_line|#define USB_ST_DTMISMATCH&t;0x3&t;/* data toggle mismatch */
+mdefine_line|#define USB_ST_DTMISMATCH&t;-3&t;/* data toggle mismatch */
 DECL|macro|USB_ST_STALL
-mdefine_line|#define USB_ST_STALL&t;&t;0x4
+mdefine_line|#define USB_ST_STALL&t;&t;-4
 DECL|macro|USB_ST_NORESPONSE
-mdefine_line|#define USB_ST_NORESPONSE&t;0x5&t;/* device not responding/handshaking */
+mdefine_line|#define USB_ST_NORESPONSE&t;-5&t;/* device not responding/handshaking */
 DECL|macro|USB_ST_PIDCHECK
-mdefine_line|#define USB_ST_PIDCHECK&t;&t;0x6&t;/* Check bits on PID failed */
+mdefine_line|#define USB_ST_PIDCHECK&t;&t;-6&t;/* Check bits on PID failed */
 DECL|macro|USB_ST_PIDUNDEF
-mdefine_line|#define USB_ST_PIDUNDEF&t;&t;0x7&t;/* PID unexpected/undefined */
+mdefine_line|#define USB_ST_PIDUNDEF&t;&t;-7&t;/* PID unexpected/undefined */
 DECL|macro|USB_ST_DATAOVERRUN
-mdefine_line|#define USB_ST_DATAOVERRUN&t;0x8
+mdefine_line|#define USB_ST_DATAOVERRUN&t;-8
 DECL|macro|USB_ST_DATAUNDERRUN
-mdefine_line|#define USB_ST_DATAUNDERRUN&t;0x9
+mdefine_line|#define USB_ST_DATAUNDERRUN&t;-9
 DECL|macro|USB_ST_RESERVED1
-mdefine_line|#define USB_ST_RESERVED1&t;0xA
+mdefine_line|#define USB_ST_RESERVED1&t;-10
 DECL|macro|USB_ST_RESERVED2
-mdefine_line|#define USB_ST_RESERVED2&t;0xB
+mdefine_line|#define USB_ST_RESERVED2&t;-11
 DECL|macro|USB_ST_BUFFEROVERRUN
-mdefine_line|#define USB_ST_BUFFEROVERRUN&t;0xC
+mdefine_line|#define USB_ST_BUFFEROVERRUN&t;-12
 DECL|macro|USB_ST_BUFFERUNDERRUN
-mdefine_line|#define USB_ST_BUFFERUNDERRUN&t;0xD
+mdefine_line|#define USB_ST_BUFFERUNDERRUN&t;-13
 DECL|macro|USB_ST_RESERVED3
-mdefine_line|#define USB_ST_RESERVED3&t;0xE
+mdefine_line|#define USB_ST_RESERVED3&t;-14
 DECL|macro|USB_ST_RESERVED4
-mdefine_line|#define USB_ST_RESERVED4&t;0xF
+mdefine_line|#define USB_ST_RESERVED4&t;-15
 multiline_comment|/* internal errors */
 DECL|macro|USB_ST_REMOVED
-mdefine_line|#define USB_ST_REMOVED&t;&t;0x100
+mdefine_line|#define USB_ST_REMOVED&t;&t;-100
 DECL|macro|USB_ST_TIMEOUT
-mdefine_line|#define USB_ST_TIMEOUT&t;&t;0x110
+mdefine_line|#define USB_ST_TIMEOUT&t;&t;-101
 DECL|macro|USB_ST_INTERNALERROR
-mdefine_line|#define USB_ST_INTERNALERROR&t;-1
+mdefine_line|#define USB_ST_INTERNALERROR&t;-200
 DECL|macro|USB_ST_NOTSUPPORTED
-mdefine_line|#define USB_ST_NOTSUPPORTED&t;-2
+mdefine_line|#define USB_ST_NOTSUPPORTED&t;-201
 DECL|macro|USB_ST_BANDWIDTH_ERROR
-mdefine_line|#define USB_ST_BANDWIDTH_ERROR&t;-3
+mdefine_line|#define USB_ST_BANDWIDTH_ERROR&t;-202
+DECL|macro|USB_ST_NOCHANGE
+mdefine_line|#define USB_ST_NOCHANGE&t;&t;-203
 multiline_comment|/*&n; * USB device number allocation bitmap. There&squot;s one bitmap&n; * per USB tree.&n; */
 DECL|struct|usb_devmap
 r_struct
@@ -2201,22 +2203,6 @@ id|duration
 comma
 r_int
 id|report_id
-)paren
-suffix:semicolon
-r_int
-id|usb_set_interface
-c_func
-(paren
-r_struct
-id|usb_device
-op_star
-id|dev
-comma
-r_int
-id|interface
-comma
-r_int
-id|alternate
 )paren
 suffix:semicolon
 r_int

@@ -460,11 +460,11 @@ c_func
 id|iunique
 )paren
 suffix:semicolon
-DECL|variable|iget
+DECL|variable|iget4
 id|EXPORT_SYMBOL
 c_func
 (paren
-id|iget
+id|iget4
 )paren
 suffix:semicolon
 DECL|variable|iput

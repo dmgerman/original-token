@@ -1,7 +1,8 @@
 macro_line|#ifndef __ASM_SH_IO_H
 DECL|macro|__ASM_SH_IO_H
 mdefine_line|#define __ASM_SH_IO_H
-multiline_comment|/* XXXXXXXXXXXXXXXXX */
+multiline_comment|/*&n; * Convention:&n; *    read{b,w,l}/write{b,w,l} are for PCI,&n; *    while in{b,w,l}/out{b,w,l} are for ISA&n; * These may (will) be platform specific function.&n; *&n; * In addition, we have &n; *   ctrl_in{b,w,l}/ctrl_out{b,w,l} for SuperH specific I/O.&n; *   which are processor specific.&n; */
+macro_line|#include &lt;asm/cache.h&gt;
 DECL|macro|virt_to_bus
 mdefine_line|#define virt_to_bus virt_to_phys
 DECL|macro|bus_to_virt
@@ -86,7 +87,7 @@ id|writeb
 c_func
 (paren
 r_int
-r_int
+r_char
 id|b
 comma
 r_int
@@ -350,6 +351,162 @@ id|addr
 )paren
 suffix:semicolon
 )brace
+DECL|function|ctrl_inb
+r_extern
+id|__inline__
+r_int
+r_int
+id|ctrl_inb
+c_func
+(paren
+r_int
+r_int
+id|addr
+)paren
+(brace
+r_return
+op_star
+(paren
+r_volatile
+r_int
+r_char
+op_star
+)paren
+id|addr
+suffix:semicolon
+)brace
+DECL|function|ctrl_inw
+r_extern
+id|__inline__
+r_int
+r_int
+id|ctrl_inw
+c_func
+(paren
+r_int
+r_int
+id|addr
+)paren
+(brace
+r_return
+op_star
+(paren
+r_volatile
+r_int
+r_int
+op_star
+)paren
+id|addr
+suffix:semicolon
+)brace
+DECL|function|ctrl_inl
+r_extern
+id|__inline__
+r_int
+r_int
+id|ctrl_inl
+c_func
+(paren
+r_int
+r_int
+id|addr
+)paren
+(brace
+r_return
+op_star
+(paren
+r_volatile
+r_int
+r_int
+op_star
+)paren
+id|addr
+suffix:semicolon
+)brace
+DECL|function|ctrl_outb
+r_extern
+id|__inline__
+r_void
+id|ctrl_outb
+c_func
+(paren
+r_int
+r_char
+id|b
+comma
+r_int
+r_int
+id|addr
+)paren
+(brace
+op_star
+(paren
+r_volatile
+r_int
+r_char
+op_star
+)paren
+id|addr
+op_assign
+id|b
+suffix:semicolon
+)brace
+DECL|function|ctrl_outw
+r_extern
+id|__inline__
+r_void
+id|ctrl_outw
+c_func
+(paren
+r_int
+r_int
+id|b
+comma
+r_int
+r_int
+id|addr
+)paren
+(brace
+op_star
+(paren
+r_volatile
+r_int
+r_int
+op_star
+)paren
+id|addr
+op_assign
+id|b
+suffix:semicolon
+)brace
+DECL|function|ctrl_outl
+r_extern
+id|__inline__
+r_void
+id|ctrl_outl
+c_func
+(paren
+r_int
+r_int
+id|b
+comma
+r_int
+r_int
+id|addr
+)paren
+(brace
+op_star
+(paren
+r_volatile
+r_int
+r_int
+op_star
+)paren
+id|addr
+op_assign
+id|b
+suffix:semicolon
+)brace
 DECL|macro|inb_p
 mdefine_line|#define inb_p inb
 DECL|macro|outb_p
@@ -397,7 +554,7 @@ r_return
 r_void
 op_star
 )paren
-id|KSEG0ADDR
+id|P1SEGADDR
 c_func
 (paren
 id|address
@@ -452,7 +609,7 @@ r_return
 r_void
 op_star
 )paren
-id|KSEG1ADDR
+id|P2SEGADDR
 c_func
 (paren
 id|offset
@@ -481,7 +638,7 @@ r_return
 r_void
 op_star
 )paren
-id|KSEG1ADDR
+id|P2SEGADDR
 c_func
 (paren
 id|offset
@@ -570,13 +727,13 @@ r_return
 id|retval
 suffix:semicolon
 )brace
-multiline_comment|/* Nothing to do */
-DECL|macro|dma_cache_inv
-mdefine_line|#define dma_cache_inv(_start,_size)&t;&t;do { } while (0)
-DECL|macro|dma_cache_wback
-mdefine_line|#define dma_cache_wback(_start,_size)&t;&t;do { } while (0)
+multiline_comment|/*&n; * The caches on some architectures aren&squot;t dma-coherent and have need to&n; * handle this in software.  There are three types of operations that&n; * can be applied to dma buffers.&n; *&n; *  - dma_cache_wback_inv(start, size) makes caches and RAM coherent by&n; *    writing the content of the caches back to memory, if necessary.&n; *    The function also invalidates the affected part of the caches as&n; *    necessary before DMA transfers from outside to memory.&n; *  - dma_cache_inv(start, size) invalidates the affected parts of the&n; *    caches.  Dirty lines of the caches may be written back or simply&n; *    be discarded.  This operation is necessary before dma operations&n; *    to the memory.&n; *  - dma_cache_wback(start, size) writes back any dirty lines but does&n; *    not invalidate the cache.  This can be used before DMA reads from&n; *    memory,&n; */
 DECL|macro|dma_cache_wback_inv
-mdefine_line|#define dma_cache_wback_inv(_start,_size)&t;do { } while (0)
+mdefine_line|#define dma_cache_wback_inv(_start,_size) &bslash;&n;    cache_flush_area((unsigned long)(_start),((unsigned long)(_start)+(_size)))
+DECL|macro|dma_cache_inv
+mdefine_line|#define dma_cache_inv(_start,_size) &bslash;&n;    cache_purge_area((unsigned long)(_start),((unsigned long)(_start)+(_size)))
+DECL|macro|dma_cache_wback
+mdefine_line|#define dma_cache_wback(_start,_size) &bslash;&n;    cache_wback_area((unsigned long)(_start),((unsigned long)(_start)+(_size)))
 macro_line|#endif /* __KERNEL__ */
 macro_line|#endif /* __ASM_SH_IO_H */
 eof

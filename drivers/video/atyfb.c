@@ -10943,7 +10943,7 @@ l_int|5
 )paren
 op_plus
 (paren
-l_int|1
+l_int|3
 op_lshift
 l_int|6
 )paren
@@ -11063,6 +11063,8 @@ op_assign
 l_int|3
 op_star
 id|page_size
+op_plus
+l_int|2
 )paren
 op_lshift
 l_int|6

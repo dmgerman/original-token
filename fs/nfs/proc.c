@@ -90,14 +90,14 @@ op_star
 id|fhandle
 comma
 r_struct
-id|nfs_sattr
-op_star
-id|sattr
-comma
-r_struct
 id|nfs_fattr
 op_star
 id|fattr
+comma
+r_struct
+id|iattr
+op_star
+id|sattr
 )paren
 (brace
 r_struct
@@ -476,7 +476,7 @@ op_star
 id|name
 comma
 r_struct
-id|nfs_sattr
+id|iattr
 op_star
 id|sattr
 comma
@@ -816,7 +816,7 @@ op_star
 id|path
 comma
 r_struct
-id|nfs_sattr
+id|iattr
 op_star
 id|sattr
 )paren
@@ -898,7 +898,7 @@ op_star
 id|name
 comma
 r_struct
-id|nfs_sattr
+id|iattr
 op_star
 id|sattr
 comma

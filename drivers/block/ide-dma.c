@@ -1377,6 +1377,10 @@ id|ide_disk
 r_return
 l_int|0
 suffix:semicolon
+id|drive-&gt;timeout
+op_assign
+id|WAIT_CMD
+suffix:semicolon
 id|ide_set_handler
 c_func
 (paren
@@ -1384,8 +1388,6 @@ id|drive
 comma
 op_amp
 id|ide_dma_intr
-comma
-id|WAIT_CMD
 )paren
 suffix:semicolon
 multiline_comment|/* issue cmd to drive */
@@ -1996,15 +1998,9 @@ id|dev-&gt;device
 r_case
 id|PCI_DEVICE_ID_CMD_643
 suffix:colon
-macro_line|#ifdef CONFIG_BLK_DEV_ALI15X3
 r_case
 id|PCI_DEVICE_ID_AL_M5219
 suffix:colon
-r_case
-id|PCI_DEVICE_ID_AL_M5229
-suffix:colon
-multiline_comment|/*&n;&t;&t;&t;&t; * Ali 15x3 chipsets know as ALI IV and V report&n;&t;&t;&t;&t; * this as simplex, skip this test for them.&n;&t;&t;&t;&t; */
-macro_line|#endif /* CONFIG_BLK_DEV_ALI15X3 */
 id|outb
 c_func
 (paren

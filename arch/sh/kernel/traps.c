@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/arch/sh/traps.c&n; *&n; *  SuperH version: Copyright (C) 1999  Niibe Yutaka&n; */
+multiline_comment|/* $Id: traps.c,v 1.3 1999/09/21 14:37:19 gniibe Exp $&n; *&n; *  linux/arch/sh/traps.c&n; *&n; *  SuperH version: Copyright (C) 1999  Niibe Yutaka&n; */
 multiline_comment|/*&n; * &squot;Traps.c&squot; handles hardware traps and faults after we have saved some&n; * state in &squot;entry.S&squot;.&n; */
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -42,20 +42,6 @@ DECL|macro|VMALLOC_OFFSET
 mdefine_line|#define VMALLOC_OFFSET (8*1024*1024)
 DECL|macro|MODULE_RANGE
 mdefine_line|#define MODULE_RANGE (8*1024*1024)
-DECL|function|show_registers
-r_static
-r_void
-id|show_registers
-c_func
-(paren
-r_struct
-id|pt_regs
-op_star
-id|regs
-)paren
-(brace
-multiline_comment|/* Not implemented yet. */
-)brace
 DECL|variable|die_lock
 id|spinlock_t
 id|die_lock
@@ -103,7 +89,7 @@ op_amp
 l_int|0xffff
 )paren
 suffix:semicolon
-id|show_registers
+id|show_regs
 c_func
 (paren
 id|regs

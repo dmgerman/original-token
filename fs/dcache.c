@@ -444,6 +444,20 @@ op_star
 id|dentry
 )paren
 (brace
+multiline_comment|/*&n;&t; * If it&squot;s already been dropped, return OK.&n;&t; */
+r_if
+c_cond
+(paren
+id|list_empty
+c_func
+(paren
+op_amp
+id|dentry-&gt;d_hash
+)paren
+)paren
+r_return
+l_int|0
+suffix:semicolon
 multiline_comment|/*&n;&t; * Check whether to do a partial shrink_dcache&n;&t; * to get rid of unused child entries.&n;&t; */
 r_if
 c_cond

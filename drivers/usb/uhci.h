@@ -228,6 +228,8 @@ DECL|macro|TD_TOKEN_TOGGLE
 mdefine_line|#define TD_TOKEN_TOGGLE&t;&t;19
 DECL|macro|uhci_maxlen
 mdefine_line|#define uhci_maxlen(token)&t;((token) &gt;&gt; 21)
+DECL|macro|uhci_expected_length
+mdefine_line|#define uhci_expected_length(info) ((info &gt;&gt; 21) + 1)  /* 1-based */ 
 DECL|macro|uhci_toggle
 mdefine_line|#define uhci_toggle(token)&t;(((token) &gt;&gt; TD_TOKEN_TOGGLE) &amp; 1)
 DECL|macro|uhci_endpoint
@@ -344,10 +346,6 @@ multiline_comment|/*&n; * Note the alignment requirements of the entries&n; *&n;
 r_struct
 id|uhci
 suffix:semicolon
-macro_line|#if 0
-mdefine_line|#define UHCI_MAXTD&t;64
-mdefine_line|#define UHCI_MAXQH&t;16
-macro_line|#endif
 multiline_comment|/* The usb device part must be first! Not anymore -jerdfelt */
 DECL|struct|uhci_device
 r_struct
@@ -369,23 +367,6 @@ id|uhci
 op_star
 id|uhci
 suffix:semicolon
-macro_line|#if 0
-r_struct
-id|uhci_qh
-id|qh
-(braket
-id|UHCI_MAXQH
-)braket
-suffix:semicolon
-multiline_comment|/* These are the &quot;common&quot; qh&squot;s for each device */
-r_struct
-id|uhci_td
-id|td
-(braket
-id|UHCI_MAXTD
-)braket
-suffix:semicolon
-macro_line|#endif
 DECL|member|data
 r_int
 r_int
@@ -433,6 +414,7 @@ r_int
 id|__interval_to_skel
 c_func
 (paren
+r_int
 id|interval
 )paren
 (brace

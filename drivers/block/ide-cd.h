@@ -225,11 +225,18 @@ suffix:colon
 l_int|1
 suffix:semicolon
 multiline_comment|/* We think that the drive door is locked. */
+DECL|member|writing
+id|__u8
+id|writing
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* the drive is currently writing */
 DECL|member|reserved
 id|__u8
 id|reserved
 suffix:colon
-l_int|5
+l_int|4
 suffix:semicolon
 DECL|member|current_speed
 id|byte
