@@ -1338,6 +1338,18 @@ r_return
 suffix:semicolon
 )brace
 multiline_comment|/* look for a free request. */
+multiline_comment|/* Loop uses two requests, 1 for loop and 1 for the real device.&n;        * Cut max_req in half to avoid running out and deadlocking. */
+r_if
+c_cond
+(paren
+id|major
+op_eq
+id|LOOP_MAJOR
+)paren
+id|max_req
+op_rshift_assign
+l_int|1
+suffix:semicolon
 multiline_comment|/*&n;&t; * Try to coalesce the new request with old requests&n;&t; */
 id|cli
 c_func
@@ -2188,6 +2200,9 @@ r_int
 id|buffersize
 suffix:semicolon
 r_int
+id|max_req
+suffix:semicolon
+r_int
 r_int
 id|rsector
 suffix:semicolon
@@ -2247,6 +2262,10 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+id|max_req
+op_assign
+id|NR_REQUEST
+suffix:semicolon
 r_switch
 c_cond
 (paren
@@ -2261,6 +2280,16 @@ suffix:semicolon
 r_case
 id|WRITE
 suffix:colon
+id|max_req
+op_assign
+(paren
+id|NR_REQUEST
+op_star
+l_int|2
+)paren
+op_div
+l_int|3
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2303,6 +2332,17 @@ op_assign
 id|PAGE_SIZE
 op_div
 id|nb
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|major
+op_eq
+id|LOOP_MAJOR
+)paren
+id|max_req
+op_rshift_assign
+l_int|1
 suffix:semicolon
 r_for
 c_loop
@@ -2415,7 +2455,7 @@ op_assign
 id|get_request_wait
 c_func
 (paren
-id|NR_REQUEST
+id|max_req
 comma
 id|rdev
 )paren
@@ -2436,7 +2476,7 @@ op_assign
 id|get_request
 c_func
 (paren
-id|NR_REQUEST
+id|max_req
 comma
 id|rdev
 )paren

@@ -4592,7 +4592,7 @@ c_func
 (paren
 id|ROOT_DEV
 comma
-l_string|&quot;rootfs&quot;
+l_string|&quot;/dev/root&quot;
 comma
 l_string|&quot;/&quot;
 )paren
@@ -4903,7 +4903,7 @@ c_func
 (paren
 id|ROOT_DEV
 comma
-l_string|&quot;rootfs&quot;
+l_string|&quot;/dev/root&quot;
 comma
 l_string|&quot;/&quot;
 )paren
@@ -5250,7 +5250,7 @@ c_func
 (paren
 id|old_root_dev
 comma
-l_string|&quot;old_rootfs&quot;
+l_string|&quot;/dev/root.old&quot;
 comma
 id|put_old
 )paren

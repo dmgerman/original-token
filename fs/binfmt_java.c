@@ -4,7 +4,6 @@ macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/binfmts.h&gt;
-macro_line|#include &lt;paths.h&gt;
 DECL|macro|_PATH_JAVA
 mdefine_line|#define _PATH_JAVA&t;&quot;/usr/bin/java&quot;
 DECL|macro|_PATH_APPLET
@@ -408,7 +407,7 @@ id|bprm-&gt;dont_iput
 op_assign
 l_int|1
 suffix:semicolon
-multiline_comment|/*&n;&t; * OK, we&squot;ve set the interpreter name&n;&t; * Splice in (1) the interpreter&squot;s name for argv[0] (_PATH_BSHELL)&n;&t; *           (2) the name of the appletviewer wrapper for argv[1] (_PATH_APPLET)&n;&t; *           (3) filename of html file (replace argv[0])&n;&t; *&n;&t; * This is done in reverse order, because of how the&n;&t; * user environment and arguments are stored.&n;&t; */
+multiline_comment|/*&n;&t; * OK, we&squot;ve set the interpreter name&n;&t; * Splice in (1) the interpreter&squot;s name for argv[0] (_PATH_SH)&n;&t; *           (2) the name of the appletviewer wrapper for argv[1] (_PATH_APPLET)&n;&t; *           (3) filename of html file (replace argv[0])&n;&t; *&n;&t; * This is done in reverse order, because of how the&n;&t; * user environment and arguments are stored.&n;&t; */
 id|remove_arg_zero
 c_func
 (paren

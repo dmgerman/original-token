@@ -7,7 +7,7 @@ macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 multiline_comment|/*&n; *&t;Linux ports don&squot;t normally get allocated above 32K.&n; *&t;I used an extra 4K port-space&n; */
 DECL|macro|PORT_MASQ_BEGIN
-mdefine_line|#define PORT_MASQ_BEGIN&t;60000
+mdefine_line|#define PORT_MASQ_BEGIN&t;61000
 DECL|macro|PORT_MASQ_END
 mdefine_line|#define PORT_MASQ_END&t;(PORT_MASQ_BEGIN+4096)
 DECL|macro|MASQUERADE_EXPIRE_TCP

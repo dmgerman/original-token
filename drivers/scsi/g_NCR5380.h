@@ -3,6 +3,7 @@ multiline_comment|/*&n; * $Log: generic_NCR5380.h,v $&n; */
 macro_line|#ifndef GENERIC_NCR5380_H
 DECL|macro|GENERIC_NCR5380_H
 mdefine_line|#define GENERIC_NCR5380_H
+macro_line|#include &lt;linux/config.h&gt;
 DECL|macro|GENERIC_NCR5380_PUBLIC_RELEASE
 mdefine_line|#define GENERIC_NCR5380_PUBLIC_RELEASE 1
 macro_line|#ifdef NCR53C400

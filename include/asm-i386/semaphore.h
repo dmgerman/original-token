@@ -87,7 +87,7 @@ c_func
 (paren
 l_string|&quot;# atomic down operation&bslash;n&quot;
 l_string|&quot;1:&bslash;n&bslash;t&quot;
-l_string|&quot;leal 1b,%%eax&bslash;n&bslash;t&quot;
+l_string|&quot;movl $1b,%%eax&bslash;n&bslash;t&quot;
 macro_line|#ifdef __SMP__
 l_string|&quot;lock ; &quot;
 macro_line|#endif
@@ -138,7 +138,7 @@ id|__volatile__
 c_func
 (paren
 l_string|&quot;# atomic up operation&bslash;n&bslash;t&quot;
-l_string|&quot;leal 1f,%%eax&bslash;n&bslash;t&quot;
+l_string|&quot;movl $1f,%%eax&bslash;n&bslash;t&quot;
 macro_line|#ifdef __SMP__
 l_string|&quot;lock ; &quot;
 macro_line|#endif

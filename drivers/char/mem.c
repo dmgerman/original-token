@@ -932,6 +932,10 @@ r_int
 id|count
 )paren
 (brace
+id|file-&gt;f_pos
+op_add_assign
+id|count
+suffix:semicolon
 r_return
 id|count
 suffix:semicolon

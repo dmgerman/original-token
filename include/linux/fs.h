@@ -56,9 +56,9 @@ mdefine_line|#define READ 0
 DECL|macro|WRITE
 mdefine_line|#define WRITE 1
 DECL|macro|READA
-mdefine_line|#define READA 2&t;&t;/* read-ahead - don&squot;t pause */
+mdefine_line|#define READA 2&t;&t;/* read-ahead  - don&squot;t block if no resources */
 DECL|macro|WRITEA
-mdefine_line|#define WRITEA 3&t;/* &quot;write-ahead&quot; - silly, but somewhat useful */
+mdefine_line|#define WRITEA 3&t;/* write-ahead - don&squot;t block if no resources */
 macro_line|#ifndef NULL
 DECL|macro|NULL
 mdefine_line|#define NULL ((void *) 0)

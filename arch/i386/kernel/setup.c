@@ -1457,6 +1457,8 @@ id|CD
 c_func
 (paren
 id|loops_per_sec
+op_plus
+l_int|2500
 )paren
 op_div
 l_int|500000
@@ -1466,6 +1468,8 @@ id|CD
 c_func
 (paren
 id|loops_per_sec
+op_plus
+l_int|2500
 )paren
 op_div
 l_int|5000

@@ -2508,7 +2508,11 @@ op_or
 (paren
 id|mode
 op_amp
+(paren
 id|S_IRWXUGO
+op_or
+id|S_ISVTX
+)paren
 op_amp
 op_complement
 id|current-&gt;fs-&gt;umask

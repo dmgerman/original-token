@@ -5797,6 +5797,18 @@ comma
 id|nbytes
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|to_user
+op_logical_and
+id|need_resched
+)paren
+id|schedule
+c_func
+(paren
+)paren
+suffix:semicolon
 )brace
 multiline_comment|/* Wipe data from memory */
 id|memset
@@ -6954,6 +6966,8 @@ r_if
 c_cond
 (paren
 id|retval
+OL
+l_int|0
 )paren
 r_return
 id|retval

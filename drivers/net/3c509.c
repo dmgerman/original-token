@@ -1378,7 +1378,7 @@ suffix:semicolon
 multiline_comment|/* Pause for at least 162 us. for the read to take place. */
 id|udelay
 (paren
-l_int|200
+l_int|300
 )paren
 suffix:semicolon
 r_return
@@ -1423,7 +1423,7 @@ suffix:semicolon
 multiline_comment|/* Pause for at least 162 us. for the read to take place. */
 id|udelay
 (paren
-l_int|200
+l_int|300
 )paren
 suffix:semicolon
 r_for

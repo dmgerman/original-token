@@ -1616,7 +1616,7 @@ suffix:semicolon
 id|print_sense
 c_func
 (paren
-l_string|&quot;sr&quot;
+l_string|&quot;sd&quot;
 comma
 id|SCpnt
 )paren

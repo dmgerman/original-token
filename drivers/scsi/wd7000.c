@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: $&n; *  linux/drivers/scsi/wd7000.c&n; *&n; *  Copyright (C) 1992  Thomas Wuensche&n; *&t;closely related to the aha1542 driver from Tommy Thorn&n; *&t;( as close as different hardware allows on a lowlevel-driver :-) )&n; *&n; *  Revised (and renamed) by John Boyd &lt;boyd@cis.ohio-state.edu&gt; to&n; *  accommodate Eric Youngdale&squot;s modifications to scsi.c.  Nov 1992.&n; *&n; *  Additional changes to support scatter/gather.  Dec. 1992.  tw/jb&n; *&n; *  No longer tries to reset SCSI bus at boot (it wasn&squot;t working anyway).&n; *  Rewritten to support multiple host adapters.&n; *  Miscellaneous cleanup.&n; *  So far, still doesn&squot;t do reset or abort correctly, since I have no idea&n; *  how to do them with this board (8^(.                      Jan 1994 jb&n; *&n; * This driver now supports both of the two standard configurations (per&n; * the 3.36 Owner&squot;s Manual, my latest reference) by the same method as&n; * before; namely, by looking for a BIOS signature.  Thus, the location of&n; * the BIOS signature determines the board configuration.  Until I have&n; * time to do something more flexible, users should stick to one of the&n; * following:&n; *&n; * Standard configuration for single-adapter systems:&n; *    - BIOS at CE00h&n; *    - I/O base address 350h&n; *    - IRQ level 15&n; *    - DMA channel 6&n; * Standard configuration for a second adapter in a system:&n; *    - BIOS at C800h&n; *    - I/O base address 330h&n; *    - IRQ level 11&n; *    - DMA channel 5&n; *&n; * Anyone who can recompile the kernel is welcome to add others as need&n; * arises, but unpredictable results may occur if there are conflicts.&n; * In any event, if there are multiple adapters in a system, they MUST&n; * use different I/O bases, IRQ levels, and DMA channels, since they will be&n; * indistinguishable (and in direct conflict) otherwise.&n; *&n; *   As a point of information, the NO_OP command toggles the CMD_RDY bit&n; * of the status port, and this fact could be used as a test for the I/O&n; * base address (or more generally, board detection).  There is an interrupt&n; * status port, so IRQ probing could also be done.  I suppose the full&n; * DMA diagnostic could be used to detect the DMA channel being used.  I&n; * haven&squot;t done any of this, though, because I think there&squot;s too much of&n; * a chance that such explorations could be destructive, if some other&n; * board&squot;s resources are used inadvertently.  So, call me a wimp, but I&n; * don&squot;t want to try it.  The only kind of exploration I trust is memory&n; * exploration, since it&squot;s more certain that reading memory won&squot;t be&n; * destructive.&n; *&n; * More to my liking would be a LILO boot command line specification, such&n; * as is used by the aha152x driver (and possibly others).  I&squot;ll look into&n; * it, as I have time...&n; *&n; *   I get mail occasionally from people who either are using or are&n; * considering using a WD7000 with Linux.  There is a variety of&n; * nomenclature describing WD7000&squot;s.  To the best of my knowledge, the&n; * following is a brief summary (from an old WD doc - I don&squot;t work for&n; * them or anything like that):&n; *&n; * WD7000-FASST2: This is a WD7000 board with the real-mode SST ROM BIOS&n; *        installed.  Last I heard, the BIOS was actually done by Columbia&n; *        Data Products.  The BIOS is only used by this driver (and thus&n; *        by Linux) to identify the board; none of it can be executed under&n; *        Linux.&n; *&n; * WD7000-ASC: This is the original adapter board, with or without BIOS.&n; *        The board uses a WD33C93 or WD33C93A SBIC, which in turn is&n; *        controlled by an onboard Z80 processor.  The board interface&n; *        visible to the host CPU is defined effectively by the Z80&squot;s&n; *        firmware, and it is this firmware&squot;s revision level that is&n; *        determined and reported by this driver.  (The version of the&n; *        on-board BIOS is of no interest whatsoever.)  The host CPU has&n; *        no access to the SBIC; hence the fact that it is a WD33C93 is&n; *        also of no interest to this driver.&n; *&n; * WD7000-AX:&n; * WD7000-MX:&n; * WD7000-EX: These are newer versions of the WD7000-ASC.  The -ASC is&n; *        largely built from discrete components; these boards use more&n; *        integration.  The -AX is an ISA bus board (like the -ASC),&n; *        the -MX is an MCA (i.e., PS/2) bus board), and the -EX is an&n; *        EISA bus board.&n; *&n; *  At the time of my documentation, the -?X boards were &quot;future&quot; products,&n; *  and were not yet available.  However, I vaguely recall that Thomas&n; *  Wuensche had an -AX, so I believe at least it is supported by this&n; *  driver.  I have no personal knowledge of either -MX or -EX boards.&n; *&n; *  P.S. Just recently, I&squot;ve discovered (directly from WD and Future&n; *  Domain) that all but the WD7000-EX have been out of production for&n; *  two years now.  FD has production rights to the 7000-EX, and are&n; *  producing it under a new name, and with a new BIOS.  If anyone has&n; *  one of the FD boards, it would be nice to come up with a signature&n; *  for it.&n; *                                                           J.B. Jan 1994.&n; *&n; *&n; *  Revision: 08/24/1996. by Miroslav Zagorac &lt;zaga@fly.cc.fer.hr&gt;&n; *&n; *  Enhancement for wd7000_detect function has been made, so you don&squot;t have&n; *  to enter BIOS ROM adress and IO port in initialisation data (see struct&n; *  Config). We cannot detect IRQ and DMA for now, so we have to enter them&n; *  as arguments while wd_7000 is detected. If someone has IRQ and DMA set&n; *  to some other value, he can enter them in configuration without any&n; *  problem. Also I wrote a function wd7000_setup, so now you can enter&n; *  WD-7000 definition as kernel arguments, as in lilo.conf:&n; *&n; *     append=&quot;wd7000=IRQ,DMA&quot;&n; *&n; *  PS: If card BIOS ROM is disabled, function wd7000_detect now will recognize&n; *      adapter, unlike the old one. Anyway, BIOS ROM from WD7000 adapter is&n; *      worthless for Linux. :)&n; */
+multiline_comment|/* $Id: $&n; *  linux/drivers/scsi/wd7000.c&n; *&n; *  Copyright (C) 1992  Thomas Wuensche&n; *&t;closely related to the aha1542 driver from Tommy Thorn&n; *&t;( as close as different hardware allows on a lowlevel-driver :-) )&n; *&n; *  Revised (and renamed) by John Boyd &lt;boyd@cis.ohio-state.edu&gt; to&n; *  accommodate Eric Youngdale&squot;s modifications to scsi.c.  Nov 1992.&n; *&n; *  Additional changes to support scatter/gather.  Dec. 1992.  tw/jb&n; *&n; *  No longer tries to reset SCSI bus at boot (it wasn&squot;t working anyway).&n; *  Rewritten to support multiple host adapters.&n; *  Miscellaneous cleanup.&n; *  So far, still doesn&squot;t do reset or abort correctly, since I have no idea&n; *  how to do them with this board (8^(.                      Jan 1994 jb&n; *&n; * This driver now supports both of the two standard configurations (per&n; * the 3.36 Owner&squot;s Manual, my latest reference) by the same method as&n; * before; namely, by looking for a BIOS signature.  Thus, the location of&n; * the BIOS signature determines the board configuration.  Until I have&n; * time to do something more flexible, users should stick to one of the&n; * following:&n; *&n; * Standard configuration for single-adapter systems:&n; *    - BIOS at CE00h&n; *    - I/O base address 350h&n; *    - IRQ level 15&n; *    - DMA channel 6&n; * Standard configuration for a second adapter in a system:&n; *    - BIOS at C800h&n; *    - I/O base address 330h&n; *    - IRQ level 11&n; *    - DMA channel 5&n; *&n; * Anyone who can recompile the kernel is welcome to add others as need&n; * arises, but unpredictable results may occur if there are conflicts.&n; * In any event, if there are multiple adapters in a system, they MUST&n; * use different I/O bases, IRQ levels, and DMA channels, since they will be&n; * indistinguishable (and in direct conflict) otherwise.&n; *&n; *   As a point of information, the NO_OP command toggles the CMD_RDY bit&n; * of the status port, and this fact could be used as a test for the I/O&n; * base address (or more generally, board detection).  There is an interrupt&n; * status port, so IRQ probing could also be done.  I suppose the full&n; * DMA diagnostic could be used to detect the DMA channel being used.  I&n; * haven&squot;t done any of this, though, because I think there&squot;s too much of&n; * a chance that such explorations could be destructive, if some other&n; * board&squot;s resources are used inadvertently.  So, call me a wimp, but I&n; * don&squot;t want to try it.  The only kind of exploration I trust is memory&n; * exploration, since it&squot;s more certain that reading memory won&squot;t be&n; * destructive.&n; *&n; * More to my liking would be a LILO boot command line specification, such&n; * as is used by the aha152x driver (and possibly others).  I&squot;ll look into&n; * it, as I have time...&n; *&n; *   I get mail occasionally from people who either are using or are&n; * considering using a WD7000 with Linux.  There is a variety of&n; * nomenclature describing WD7000&squot;s.  To the best of my knowledge, the&n; * following is a brief summary (from an old WD doc - I don&squot;t work for&n; * them or anything like that):&n; *&n; * WD7000-FASST2: This is a WD7000 board with the real-mode SST ROM BIOS&n; *        installed.  Last I heard, the BIOS was actually done by Columbia&n; *        Data Products.  The BIOS is only used by this driver (and thus&n; *        by Linux) to identify the board; none of it can be executed under&n; *        Linux.&n; *&n; * WD7000-ASC: This is the original adapter board, with or without BIOS.&n; *        The board uses a WD33C93 or WD33C93A SBIC, which in turn is&n; *        controlled by an onboard Z80 processor.  The board interface&n; *        visible to the host CPU is defined effectively by the Z80&squot;s&n; *        firmware, and it is this firmware&squot;s revision level that is&n; *        determined and reported by this driver.  (The version of the&n; *        on-board BIOS is of no interest whatsoever.)  The host CPU has&n; *        no access to the SBIC; hence the fact that it is a WD33C93 is&n; *        also of no interest to this driver.&n; *&n; * WD7000-AX:&n; * WD7000-MX:&n; * WD7000-EX: These are newer versions of the WD7000-ASC.  The -ASC is&n; *        largely built from discrete components; these boards use more&n; *        integration.  The -AX is an ISA bus board (like the -ASC),&n; *        the -MX is an MCA (i.e., PS/2) bus board), and the -EX is an&n; *        EISA bus board.&n; *&n; *  At the time of my documentation, the -?X boards were &quot;future&quot; products,&n; *  and were not yet available.  However, I vaguely recall that Thomas&n; *  Wuensche had an -AX, so I believe at least it is supported by this&n; *  driver.  I have no personal knowledge of either -MX or -EX boards.&n; *&n; *  P.S. Just recently, I&squot;ve discovered (directly from WD and Future&n; *  Domain) that all but the WD7000-EX have been out of production for&n; *  two years now.  FD has production rights to the 7000-EX, and are&n; *  producing it under a new name, and with a new BIOS.  If anyone has&n; *  one of the FD boards, it would be nice to come up with a signature&n; *  for it.&n; *                                                           J.B. Jan 1994.&n; *&n; *&n; *  Revisions by Miroslav Zagorac &lt;zaga@fly.cc.fer.hr&gt;&n; *&n; *  08/24/1996.&n; *&n; *  Enhancement for wd7000_detect function has been made, so you don&squot;t have&n; *  to enter BIOS ROM adress in initialisation data (see struct Config).&n; *  We cannot detect IRQ, DMA and I/O base address for now, so we have to&n; *  enter them as arguments while wd_7000 is detected. If someone has IRQ,&n; *  DMA or I/O base address set to some other value, he can enter them in&n; *  configuration without any problem. Also I wrote a function wd7000_setup,&n; *  so now you can enter WD-7000 definition as kernel arguments,&n; *  as in lilo.conf:&n; *&n; *     append=&quot;wd7000=IRQ,DMA,IO&quot;&n; *&n; *  PS: If card BIOS ROM is disabled, function wd7000_detect now will recognize&n; *      adapter, unlike the old one. Anyway, BIOS ROM from WD7000 adapter is&n; *      useless for Linux. B^)&n; *&n; *&n; *  09/06/1996.&n; *&n; *  Autodetecting of I/O base address from wd7000_detect function is removed,&n; *  some little bugs removed, etc...&n; *&n; *  Thanks to Roger Scott for driver debugging.&n; *&n; */
 macro_line|#ifdef MODULE
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#endif
@@ -343,12 +343,17 @@ DECL|member|irq
 r_int
 id|irq
 suffix:semicolon
-multiline_comment|/* IRQ level */
+multiline_comment|/* IRQ level        */
 DECL|member|dma
 r_int
 id|dma
 suffix:semicolon
-multiline_comment|/* DMA channel */
+multiline_comment|/* DMA channel      */
+DECL|member|iobase
+r_int
+id|iobase
+suffix:semicolon
+multiline_comment|/* I/O base address */
 DECL|typedef|Config
 )brace
 id|Config
@@ -367,6 +372,8 @@ op_assign
 l_int|15
 comma
 l_int|6
+comma
+l_int|0x350
 )brace
 comma
 multiline_comment|/* defaults for single adapter */
@@ -374,22 +381,28 @@ multiline_comment|/* defaults for single adapter */
 l_int|11
 comma
 l_int|5
+comma
+l_int|0x320
 )brace
 comma
 multiline_comment|/* defaults for second adapter */
 (brace
-l_int|9
+l_int|7
 comma
 l_int|6
+comma
+l_int|0x350
 )brace
 comma
-multiline_comment|/* My configuretion (Zaga)     */
+multiline_comment|/* My configuration (Zaga)     */
 (brace
 op_minus
 l_int|1
 comma
 op_minus
 l_int|1
+comma
+l_int|0x0
 )brace
 multiline_comment|/* Empty slot                  */
 )brace
@@ -1204,6 +1217,14 @@ id|wd7000_setupDMA
 id|NUM_CONFIGS
 )braket
 suffix:semicolon
+DECL|variable|wd7000_setupIO
+r_static
+r_int
+id|wd7000_setupIO
+(braket
+id|NUM_CONFIGS
+)braket
+suffix:semicolon
 DECL|variable|wd7000_card_num
 r_static
 r_int
@@ -1212,7 +1233,7 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/*&n; *  END of data/declarations - code follows.&n; */
-multiline_comment|/*&n; * Note: You can now set these options from the kernel&squot;s &quot;command line&quot;.&n; * The syntax is:&n; *&n; *     wd7000=IRQ,DMA&n; * eg:&n; *     wd7000=15,6&n; *&n; * will configure the driver for a WD-7000 controller&n; * using IRQ 15 with a DMA channel 6.&n; */
+multiline_comment|/*&n; * Note: You can now set these options from the kernel&squot;s &quot;command line&quot;.&n; * The syntax is:&n; *&n; *     wd7000=IRQ,DMA,IO&n; * eg:&n; *     wd7000=7,6,0x350&n; *&n; * will configure the driver for a WD-7000 controller&n; * using IRQ 15 with a DMA channel 6, at IO base address 0x350.&n; */
 DECL|function|wd7000_setup
 r_void
 id|wd7000_setup
@@ -1256,12 +1277,12 @@ id|ints
 l_int|0
 )braket
 op_ne
-l_int|2
+l_int|3
 )paren
 id|printk
 (paren
 l_string|&quot;wd7000_setup: Error in command line!  &quot;
-l_string|&quot;Usage: wd7000=IRQ,DMA&bslash;n&quot;
+l_string|&quot;Usage: wd7000=IRQ,DMA,IO&bslash;n&quot;
 )paren
 suffix:semicolon
 r_else
@@ -1305,7 +1326,23 @@ id|NUM_IRQS
 (brace
 id|printk
 (paren
-l_string|&quot;wd7000_setup: invalid IRQ.&bslash;n&quot;
+l_string|&quot;wd7000_setup: &bslash;&quot;wd7000=%d,%d,0x%x&bslash;&quot; -&gt; &quot;
+l_string|&quot;invalid IRQ.&bslash;n&quot;
+comma
+id|ints
+(braket
+l_int|1
+)braket
+comma
+id|ints
+(braket
+l_int|2
+)braket
+comma
+id|ints
+(braket
+l_int|3
+)braket
 )paren
 suffix:semicolon
 r_return
@@ -1356,12 +1393,28 @@ c_cond
 (paren
 id|i
 op_eq
-id|NUM_IRQS
+id|NUM_DMAS
 )paren
 (brace
 id|printk
 (paren
-l_string|&quot;wd7000_setup: invalid DMA channel.&bslash;n&quot;
+l_string|&quot;wd7000_setup: &bslash;&quot;wd7000=%d,%d,0x%x&bslash;&quot; -&gt; &quot;
+l_string|&quot;invalid DMA channel.&bslash;n&quot;
+comma
+id|ints
+(braket
+l_int|1
+)braket
+comma
+id|ints
+(braket
+l_int|2
+)braket
+comma
+id|ints
+(braket
+l_int|3
+)braket
 )paren
 suffix:semicolon
 r_return
@@ -1376,6 +1429,78 @@ op_assign
 id|ints
 (braket
 l_int|2
+)braket
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|NUM_IOPORTS
+suffix:semicolon
+id|i
+op_increment
+)paren
+r_if
+c_cond
+(paren
+id|ints
+(braket
+l_int|3
+)braket
+op_eq
+id|wd7000_iobase
+(braket
+id|i
+)braket
+)paren
+r_break
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|i
+op_eq
+id|NUM_IOPORTS
+)paren
+(brace
+id|printk
+(paren
+l_string|&quot;wd7000_setup: &bslash;&quot;wd7000=%d,%d,0x%x&bslash;&quot; -&gt; &quot;
+l_string|&quot;invalid I/O base address.&bslash;n&quot;
+comma
+id|ints
+(braket
+l_int|1
+)braket
+comma
+id|ints
+(braket
+l_int|2
+)braket
+comma
+id|ints
+(braket
+l_int|3
+)braket
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+r_else
+id|wd7000_setupIO
+(braket
+id|wd7000_card_num
+)braket
+op_assign
+id|ints
+(braket
+l_int|3
 )braket
 suffix:semicolon
 r_if
@@ -1433,7 +1558,23 @@ id|j
 (brace
 id|printk
 (paren
-l_string|&quot;wd7000_setup: duplicated IRQ!&bslash;n&quot;
+l_string|&quot;wd7000_setup: &bslash;&quot;wd7000=%d,%d,0x%x&bslash;&quot; -&gt; &quot;
+l_string|&quot;duplicated IRQ!&bslash;n&quot;
+comma
+id|ints
+(braket
+l_int|1
+)braket
+comma
+id|ints
+(braket
+l_int|2
+)braket
+comma
+id|ints
+(braket
+l_int|3
+)braket
 )paren
 suffix:semicolon
 r_return
@@ -1456,7 +1597,62 @@ id|j
 (brace
 id|printk
 (paren
-l_string|&quot;wd7000_setup: duplicated DMA channel!&bslash;n&quot;
+l_string|&quot;wd7000_setup: &bslash;&quot;wd7000=%d,%d,0x%x&bslash;&quot; -&gt; &quot;
+l_string|&quot;duplicated DMA channel!&bslash;n&quot;
+comma
+id|ints
+(braket
+l_int|1
+)braket
+comma
+id|ints
+(braket
+l_int|2
+)braket
+comma
+id|ints
+(braket
+l_int|3
+)braket
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+r_else
+r_if
+c_cond
+(paren
+id|wd7000_setupIO
+(braket
+id|i
+)braket
+op_eq
+id|wd7000_setupIO
+(braket
+id|j
+)braket
+)paren
+(brace
+id|printk
+(paren
+l_string|&quot;wd7000_setup: &bslash;&quot;wd7000=%d,%d,0x%x&bslash;&quot; -&gt; &quot;
+l_string|&quot;duplicated I/O base address!&bslash;n&quot;
+comma
+id|ints
+(braket
+l_int|1
+)braket
+comma
+id|ints
+(braket
+l_int|2
+)braket
+comma
+id|ints
+(braket
+l_int|3
+)braket
 )paren
 suffix:semicolon
 r_return
@@ -1465,7 +1661,7 @@ suffix:semicolon
 macro_line|#ifdef DEBUG
 id|printk
 (paren
-l_string|&quot;wd7000_setup: IRQ=%d, DMA=%d&bslash;n&quot;
+l_string|&quot;wd7000_setup: IRQ=%d, DMA=%d, I/O=0x%x&bslash;n&quot;
 comma
 id|wd7000_setupIRQ
 (braket
@@ -1473,6 +1669,11 @@ id|wd7000_card_num
 )braket
 comma
 id|wd7000_setupDMA
+(braket
+id|wd7000_card_num
+)braket
+comma
+id|wd7000_setupIO
 (braket
 id|wd7000_card_num
 )braket
@@ -1709,8 +1910,90 @@ suffix:semicolon
 )brace
 DECL|macro|WAITnexttimeout
 mdefine_line|#define WAITnexttimeout 200  /* 2 seconds */
-DECL|macro|WAIT
-mdefine_line|#define WAIT(port, mask, allof, noneof)&t;&t;&t;&t;&t;&bslash;&n; { register volatile unsigned WAITbits; &t;&t;&t;&t;&bslash;&n;   register unsigned long WAITtimeout = jiffies + WAITnexttimeout;&t;&bslash;&n;   while (1) {&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;     WAITbits = inb(port) &amp; (mask);&t;&t;&t;&t;&t;&bslash;&n;     if ((WAITbits &amp; (allof)) == (allof) &amp;&amp; ((WAITbits &amp; (noneof)) == 0)) &bslash;&n;       break;                                                         &t;&bslash;&n;     if (jiffies &gt; WAITtimeout) goto fail;&t;&t;&t;&t;&bslash;&n;   }&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n; }
+DECL|function|WAIT
+r_static
+r_inline
+r_int
+id|WAIT
+(paren
+r_int
+id|port
+comma
+r_int
+id|mask
+comma
+r_int
+id|allof
+comma
+r_int
+id|noneof
+)paren
+(brace
+r_register
+r_int
+id|WAITbits
+suffix:semicolon
+r_register
+r_int
+r_int
+id|WAITtimeout
+op_assign
+id|jiffies
+op_plus
+id|WAITnexttimeout
+suffix:semicolon
+r_while
+c_loop
+(paren
+id|jiffies
+op_le
+id|WAITtimeout
+)paren
+(brace
+id|WAITbits
+op_assign
+id|inb
+(paren
+id|port
+)paren
+op_amp
+id|mask
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+(paren
+id|WAITbits
+op_amp
+id|allof
+)paren
+op_eq
+id|allof
+)paren
+op_logical_and
+(paren
+(paren
+id|WAITbits
+op_amp
+id|noneof
+)paren
+op_eq
+l_int|0
+)paren
+)paren
+r_return
+(paren
+l_int|0
+)paren
+suffix:semicolon
+)brace
+r_return
+(paren
+l_int|1
+)paren
+suffix:semicolon
+)brace
 DECL|function|delay
 r_static
 r_inline
@@ -1759,8 +2042,11 @@ r_int
 id|len
 )paren
 (brace
+r_if
+c_cond
+(paren
+op_logical_neg
 id|WAIT
-c_func
 (paren
 id|host-&gt;iobase
 op_plus
@@ -1772,7 +2058,8 @@ id|CMD_RDY
 comma
 l_int|0
 )paren
-suffix:semicolon
+)paren
+(brace
 r_while
 c_loop
 (paren
@@ -1829,8 +2116,7 @@ suffix:semicolon
 r_return
 l_int|1
 suffix:semicolon
-id|fail
-suffix:colon
+)brace
 id|printk
 c_func
 (paren
@@ -2695,9 +2981,8 @@ id|SCpnt
 (brace
 macro_line|#ifdef DEBUG
 id|printk
-c_func
 (paren
-l_string|&quot;wd7000_scsi_done: 0x%06x&bslash;n&quot;
+l_string|&quot;wd7000_scsi_done: 0x%06lx&bslash;n&quot;
 comma
 (paren
 r_int
@@ -3607,7 +3892,7 @@ suffix:semicolon
 r_int
 id|diag
 suffix:semicolon
-multiline_comment|/*&n;       Reset the adapter - only.  The SCSI bus was initialized at power-up,&n;       and we need to do this just so we control the mailboxes, etc.&n;    */
+multiline_comment|/*&n;     *  Reset the adapter - only.  The SCSI bus was initialized at power-up,&n;     *  and we need to do this just so we control the mailboxes, etc.&n;     */
 id|outb
 c_func
 (paren
@@ -3640,8 +3925,10 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* this must always shadow ASC_CONTROL */
+r_if
+c_cond
+(paren
 id|WAIT
-c_func
 (paren
 id|host-&gt;iobase
 op_plus
@@ -3653,7 +3940,18 @@ id|CMD_RDY
 comma
 l_int|0
 )paren
+)paren
+(brace
+id|printk
+(paren
+l_string|&quot;wd7000_init: WAIT timed out.&bslash;n&quot;
+)paren
 suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+multiline_comment|/* 0 = not ok */
+)brace
 r_if
 c_cond
 (paren
@@ -3837,8 +4135,10 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
 id|WAIT
-c_func
 (paren
 id|host-&gt;iobase
 op_plus
@@ -3850,7 +4150,17 @@ id|ASC_INIT
 comma
 l_int|0
 )paren
+)paren
+(brace
+id|printk
+(paren
+l_string|&quot;wd7000_init: WAIT timed out.&bslash;n&quot;
+)paren
 suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -3959,18 +4269,6 @@ suffix:semicolon
 r_return
 l_int|1
 suffix:semicolon
-id|fail
-suffix:colon
-id|printk
-c_func
-(paren
-l_string|&quot;wd7000_init: WAIT timed out.&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-multiline_comment|/* 0 = not ok */
 )brace
 DECL|function|wd7000_revision
 r_void
@@ -4046,19 +4344,22 @@ l_int|0
 comma
 id|biosaddr_ptr
 comma
-id|iobase_ptr
-comma
 id|cfg_ptr
 comma
 id|sig_ptr
 comma
 id|i
+comma
+id|pass
 suffix:semicolon
 r_int
 id|biosptr
 (braket
 id|NUM_CONFIGS
 )braket
+suffix:semicolon
+r_int
+id|iobase
 suffix:semicolon
 id|Adapter
 op_star
@@ -4105,15 +4406,19 @@ suffix:semicolon
 r_for
 c_loop
 (paren
+id|pass
+op_assign
+l_int|0
+comma
 id|cfg_ptr
 op_assign
 l_int|0
 suffix:semicolon
-id|cfg_ptr
+id|pass
 OL
 id|NUM_CONFIGS
 suffix:semicolon
-id|cfg_ptr
+id|pass
 op_increment
 )paren
 (brace
@@ -4155,7 +4460,7 @@ l_int|0
 suffix:semicolon
 id|i
 OL
-id|cfg_ptr
+id|pass
 suffix:semicolon
 id|i
 op_increment
@@ -4178,7 +4483,7 @@ c_cond
 (paren
 id|i
 op_eq
-id|cfg_ptr
+id|pass
 )paren
 op_logical_and
 op_logical_neg
@@ -4228,7 +4533,7 @@ id|printk
 (paren
 l_string|&quot;wd7000_detect: pass %d&bslash;n&quot;
 comma
-id|cfg_ptr
+id|pass
 op_plus
 l_int|1
 )paren
@@ -4257,44 +4562,85 @@ id|biosaddr_ptr
 )paren
 suffix:semicolon
 macro_line|#endif
-r_for
-c_loop
+r_if
+c_cond
 (paren
-id|iobase_ptr
-op_assign
-l_int|0
-suffix:semicolon
-id|iobase_ptr
-OL
-id|NUM_IOPORTS
-suffix:semicolon
-id|iobase_ptr
-op_increment
+id|wd7000_card_num
 )paren
+id|iobase
+op_assign
+id|wd7000_setupIO
+(braket
+id|wd7000_card_num
+op_minus
+l_int|1
+)braket
+suffix:semicolon
+r_else
+(brace
+r_if
+c_cond
+(paren
+id|configs
+(braket
+id|cfg_ptr
+op_increment
+)braket
+dot
+id|irq
+OL
+l_int|0
+)paren
+r_continue
+suffix:semicolon
+id|iobase
+op_assign
+id|configs
+(braket
+id|cfg_ptr
+op_minus
+l_int|1
+)braket
+dot
+id|iobase
+suffix:semicolon
+)brace
+macro_line|#ifdef DEBUG
+id|printk
+(paren
+l_string|&quot;wd7000_detect: check IO 0x%x region...&bslash;n&quot;
+comma
+id|iobase
+)paren
+suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
 op_logical_neg
 id|check_region
 (paren
-id|wd7000_iobase
-(braket
-id|iobase_ptr
-)braket
+id|iobase
 comma
 l_int|4
 )paren
 )paren
 (brace
-multiline_comment|/*&n;&t;&t; * ASC reset...&n;&t;&t; */
+macro_line|#ifdef DEBUG
+id|printk
+(paren
+l_string|&quot;wd7000_detect: ASC reset (IO 0x%x) ...&quot;
+comma
+id|iobase
+)paren
+suffix:semicolon
+macro_line|#endif
+multiline_comment|/*&n;  &t;     * ASC reset...&n; &t;     */
 id|outb
 (paren
 id|ASC_RES
 comma
-id|wd7000_iobase
-(braket
-id|iobase_ptr
-)braket
+id|iobase
 op_plus
 id|ASC_CONTROL
 )paren
@@ -4308,20 +4654,17 @@ id|outb
 (paren
 l_int|0
 comma
-id|wd7000_iobase
-(braket
-id|iobase_ptr
-)braket
+id|iobase
 op_plus
 id|ASC_CONTROL
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
 id|WAIT
 (paren
-id|wd7000_iobase
-(braket
-id|iobase_ptr
-)braket
+id|iobase
 op_plus
 id|ASC_STAT
 comma
@@ -4331,16 +4674,33 @@ id|CMD_RDY
 comma
 l_int|0
 )paren
+)paren
+macro_line|#ifdef DEBUG
+(brace
+id|printk
+(paren
+l_string|&quot;failed!&bslash;n&quot;
+)paren
 suffix:semicolon
+r_continue
+suffix:semicolon
+)brace
+r_else
+id|printk
+(paren
+l_string|&quot;ok!&bslash;n&quot;
+)paren
+suffix:semicolon
+macro_line|#else
+r_continue
+suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
 id|inb
 (paren
-id|wd7000_iobase
-(braket
-id|iobase_ptr
-)braket
+id|iobase
 op_plus
 id|ASC_INTR_STAT
 )paren
@@ -4348,7 +4708,7 @@ op_eq
 l_int|1
 )paren
 (brace
-multiline_comment|/*&n;&t;&t;    *  We register here, to get a pointer to the extra space,&n;&t;&t;    *  which we&squot;ll use as the Adapter structure (host) for&n;&t;&t;    *  this adapter.  It is located just after the registered&n;&t;&t;    *  Scsi_Host structure (sh), and is located by the empty&n;&t;&t;    *  array hostdata.&n;&t;&t;    */
+multiline_comment|/*&n;&t;&t; *  We register here, to get a pointer to the extra space,&n;&t;&t; *  which we&squot;ll use as the Adapter structure (host) for&n;&t;&t; *  this adapter.  It is located just after the registered&n;&t;&t; *  Scsi_Host structure (sh), and is located by the empty&n;&t;&t; *  array hostdata.&n;&t;&t; */
 id|sh
 op_assign
 id|scsi_register
@@ -4422,6 +4782,8 @@ op_assign
 id|configs
 (braket
 id|cfg_ptr
+op_minus
+l_int|1
 )braket
 dot
 id|irq
@@ -4431,6 +4793,8 @@ op_assign
 id|configs
 (braket
 id|cfg_ptr
+op_minus
+l_int|1
 )braket
 dot
 id|dma
@@ -4442,10 +4806,7 @@ id|sh
 suffix:semicolon
 id|host-&gt;iobase
 op_assign
-id|wd7000_iobase
-(braket
-id|iobase_ptr
-)braket
+id|iobase
 suffix:semicolon
 id|irq2host
 (braket
@@ -4487,14 +4848,14 @@ suffix:semicolon
 r_continue
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t;&t;     *  OK from here - we&squot;ll use this adapter/configuration.&n;&t;&t;     */
+multiline_comment|/*&n;&t;&t; *  OK from here - we&squot;ll use this adapter/configuration.&n;&t;&t; */
 id|wd7000_revision
 (paren
 id|host
 )paren
 suffix:semicolon
 multiline_comment|/* important for scatter/gather */
-multiline_comment|/*&n;&t;&t;     * Register our ports.&n;&t;&t;     */
+multiline_comment|/*&n;&t;&t; * Register our ports.&n;&t;&t; */
 id|request_region
 (paren
 id|host-&gt;iobase
@@ -4504,7 +4865,7 @@ comma
 l_string|&quot;wd7000&quot;
 )paren
 suffix:semicolon
-multiline_comment|/*&n;    &t;&t;     *  For boards before rev 6.0, scatter/gather&n;&t;&t;     *  isn&squot;t supported.&n;    &t;&t;     */
+multiline_comment|/*&n;&t;&t; *  For boards before rev 6.0, scatter/gather&n;&t;&t; *  isn&squot;t supported.&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -4529,7 +4890,7 @@ id|NUM_ADDRS
 )paren
 id|biosptr
 (braket
-id|cfg_ptr
+id|pass
 )braket
 op_assign
 id|biosaddr_ptr
@@ -4545,7 +4906,7 @@ id|host-&gt;rev2
 suffix:semicolon
 id|printk
 (paren
-l_string|&quot;using IO 0x%xh, IRQ %d, DMA %d.&bslash;n&quot;
+l_string|&quot;using IO 0x%x, IRQ %d, DMA %d.&bslash;n&quot;
 comma
 id|host-&gt;iobase
 comma
@@ -4554,12 +4915,18 @@ comma
 id|host-&gt;dma
 )paren
 suffix:semicolon
-r_break
+)brace
+)brace
+macro_line|#ifdef DEBUG
+r_else
+id|printk
+(paren
+l_string|&quot;wd7000_detect: IO 0x%x region already allocated!&bslash;n&quot;
+comma
+id|iobase
+)paren
 suffix:semicolon
-)brace
-id|fail
-suffix:colon
-)brace
+macro_line|#endif
 )brace
 r_if
 c_cond

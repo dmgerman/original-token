@@ -459,7 +459,7 @@ DECL|macro|CDROMREADALL
 mdefine_line|#define CDROMREADALL&t;&t;0x5318&t;/* read all 2646 bytes */
 DECL|macro|CDROMCLOSETRAY
 mdefine_line|#define CDROMCLOSETRAY&t;&t;0x5319&t;/* pendant of CDROMEJECT */
-multiline_comment|/*&n; * For controlling a changer.  (Used by ATAPI driver.)&n; */
+multiline_comment|/*&n; * For controlling a changer.  (Used by ATAPI driver.)&n; * This ioctl is depreciated in favor of CDROM_SELECT_DISC from&n; * ucdrom.h.  It will probably be deleted during the 2.1 kernel series.&n; */
 DECL|macro|CDROMLOADFROMSLOT
 mdefine_line|#define CDROMLOADFROMSLOT&t;0x531a&t;/* LOAD disk from slot*/
 multiline_comment|/*&n; * CD-ROM-specific SCSI command opcodes&n; */

@@ -2805,7 +2805,7 @@ id|namelen
 comma
 id|mode
 op_amp
-l_int|0777
+l_int|01777
 op_amp
 op_complement
 id|current-&gt;fs-&gt;umask

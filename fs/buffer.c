@@ -319,6 +319,13 @@ id|nr_buffer_heads
 op_assign
 l_int|0
 suffix:semicolon
+DECL|variable|refilled
+r_int
+id|refilled
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* Set NZ when a buffer freelist is refilled */
 r_extern
 r_int
 op_star
@@ -2741,6 +2748,9 @@ l_int|100
 )paren
 r_return
 suffix:semicolon
+op_increment
+id|refilled
+suffix:semicolon
 multiline_comment|/* If there are too many dirty buffers, we wake up the update process&n;&t;   now so as to ensure that there are still clean buffers available&n;&t;   for user processes to use (and dirty) */
 multiline_comment|/* We are going to try to locate this much memory */
 id|needed
@@ -3962,6 +3972,9 @@ id|buf
 r_int
 id|dispose
 suffix:semicolon
+r_int
+id|isize
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -4137,7 +4150,13 @@ c_cond
 id|dispose
 op_eq
 id|BUF_DIRTY
-op_logical_and
+)paren
+(brace
+multiline_comment|/* This buffer is dirty, maybe we need to start flushing. */
+multiline_comment|/* If too high a percentage of the buffers are dirty... */
+r_if
+c_cond
+(paren
 id|nr_buffers_type
 (braket
 id|BUF_DIRTY
@@ -4156,11 +4175,52 @@ id|bdf_prm.b_un.nfract
 op_div
 l_int|100
 )paren
-(brace
 id|wakeup_bdflush
 c_func
 (paren
 l_int|0
+)paren
+suffix:semicolon
+multiline_comment|/* If this is a loop device, and&n;&t;&t; * more than half of the buffers of this size are dirty... */
+multiline_comment|/* (Prevents no-free-buffers deadlock with loop device.) */
+id|isize
+op_assign
+id|BUFSIZE_INDEX
+c_func
+(paren
+id|buf-&gt;b_size
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|MAJOR
+c_func
+(paren
+id|buf-&gt;b_dev
+)paren
+op_eq
+id|LOOP_MAJOR
+op_logical_and
+id|nr_buffers_st
+(braket
+id|isize
+)braket
+(braket
+id|BUF_DIRTY
+)braket
+op_star
+l_int|2
+OG
+id|nr_buffers_size
+(braket
+id|isize
+)braket
+)paren
+id|wakeup_bdflush
+c_func
+(paren
+l_int|1
 )paren
 suffix:semicolon
 )brace
@@ -6336,6 +6396,12 @@ suffix:semicolon
 op_increment
 id|nr_buffers
 suffix:semicolon
+op_increment
+id|nr_buffers_size
+(braket
+id|isize
+)braket
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -7353,7 +7419,7 @@ suffix:semicolon
 r_continue
 suffix:semicolon
 )brace
-multiline_comment|/* At priority 6, only consider really old&n;                           (age==0) buffers for reclaiming.  At&n;                           priority 0, consider any buffers. */
+multiline_comment|/* At priority 6, only consider really old&n;&t;&t;&t;   (age==0) buffers for reclaiming.  At&n;&t;&t;&t;   priority 0, consider any buffers. */
 r_if
 c_cond
 (paren
@@ -8753,6 +8819,14 @@ id|bdflush_done
 op_assign
 l_int|NULL
 suffix:semicolon
+DECL|variable|bdflush_tsk
+r_struct
+id|task_struct
+op_star
+id|bdflush_tsk
+op_assign
+l_int|0
+suffix:semicolon
 DECL|function|wakeup_bdflush
 r_static
 r_void
@@ -8763,6 +8837,15 @@ r_int
 id|wait
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|current
+op_eq
+id|bdflush_tsk
+)paren
+r_return
+suffix:semicolon
 id|wake_up
 c_func
 (paren
@@ -9297,6 +9380,7 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* This is the actual bdflush daemon itself. It used to be started from&n; * the syscall above, but now we launch it ourselves internally with&n; * kernel_thread(...)  directly after the first thread in init/main.c */
+multiline_comment|/* To prevent deadlocks for a loop device:&n; * 1) Do non-blocking writes to loop (avoids deadlock with running&n; *&t;out of request blocks).&n; * 2) But do a blocking write if the only dirty buffers are loop buffers&n; *&t;(otherwise we go into an infinite busy-loop).&n; * 3) Quit writing loop blocks if a freelist went low (avoids deadlock&n; *&t;with running out of free buffers for loop&squot;s &quot;real&quot; device).&n;*/
 DECL|function|bdflush
 r_int
 id|bdflush
@@ -9327,6 +9411,15 @@ comma
 op_star
 id|next
 suffix:semicolon
+r_int
+id|major
+suffix:semicolon
+r_int
+id|wrta_cmd
+op_assign
+id|WRITEA
+suffix:semicolon
+multiline_comment|/* non-blocking write for LOOP */
 multiline_comment|/*&n;&t; *&t;We have a bare-bones task_struct, and really should fill&n;&t; *&t;in a few more things so &quot;top&quot; and /proc/2/{exe,root,cwd}&n;&t; *&t;display semi-sane things. Not real crucial though...  &n;&t; */
 id|current-&gt;session
 op_assign
@@ -9343,6 +9436,10 @@ id|current-&gt;comm
 comma
 l_string|&quot;kflushd&quot;
 )paren
+suffix:semicolon
+id|bdflush_tsk
+op_assign
+id|current
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;As a kernel thread we want to tamper with system buffers&n;&t; *&t;and other internals and thus be subject to the SMP locking&n;&t; *&t;rules. (On a uniprocessor box this does nothing).&n;&t; */
 macro_line|#ifdef __SMP__
@@ -9407,6 +9504,10 @@ op_increment
 macro_line|#endif
 (brace
 id|ndirty
+op_assign
+l_int|0
+suffix:semicolon
+id|refilled
 op_assign
 l_int|0
 suffix:semicolon
@@ -9536,7 +9637,26 @@ id|bh
 )paren
 r_continue
 suffix:semicolon
+id|major
+op_assign
+id|MAJOR
+c_func
+(paren
+id|bh-&gt;b_dev
+)paren
+suffix:semicolon
 multiline_comment|/* Should we write back buffers that are shared or not??&n;&t;&t;&t;&t;&t;     currently dirty buffers are not shared, so it does not matter */
+r_if
+c_cond
+(paren
+id|refilled
+op_logical_and
+id|major
+op_eq
+id|LOOP_MAJOR
+)paren
+r_continue
+suffix:semicolon
 id|bh-&gt;b_count
 op_increment
 suffix:semicolon
@@ -9547,6 +9667,43 @@ id|bh-&gt;b_flushtime
 op_assign
 l_int|0
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|major
+op_eq
+id|LOOP_MAJOR
+)paren
+(brace
+id|ll_rw_block
+c_func
+(paren
+id|wrta_cmd
+comma
+l_int|1
+comma
+op_amp
+id|bh
+)paren
+suffix:semicolon
+id|wrta_cmd
+op_assign
+id|WRITEA
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|buffer_dirty
+c_func
+(paren
+id|bh
+)paren
+)paren
+op_decrement
+id|ndirty
+suffix:semicolon
+)brace
+r_else
 id|ll_rw_block
 c_func
 (paren
@@ -9598,6 +9755,29 @@ l_string|&quot;sleeping again.&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
+multiline_comment|/* If we didn&squot;t write anything, but there are still&n;&t;&t; * dirty buffers, then make the next write to a&n;&t;&t; * loop device to be a blocking write.&n;&t;&t; * This lets us block--which we _must_ do! */
+r_if
+c_cond
+(paren
+id|ndirty
+op_eq
+l_int|0
+op_logical_and
+id|nr_buffers_type
+(braket
+id|BUF_DIRTY
+)braket
+OG
+l_int|0
+)paren
+(brace
+id|wrta_cmd
+op_assign
+id|WRITE
+suffix:semicolon
+r_continue
+suffix:semicolon
+)brace
 id|run_task_queue
 c_func
 (paren
