@@ -158,8 +158,15 @@ id|secondary
 suffix:semicolon
 )brace
 suffix:semicolon
-DECL|macro|TTY_WRITE
-mdefine_line|#define TTY_WRITE(tty) &bslash;&n;do { &bslash;&n;&t;cli(); &bslash;&n;&t;if (!(tty)-&gt;busy) { &bslash;&n;&t;&t;(tty)-&gt;busy = 1; &bslash;&n;&t;&t;sti(); &bslash;&n;&t;&t;(tty)-&gt;write((tty)); &bslash;&n;&t;&t;(tty)-&gt;busy = 0; &bslash;&n;&t;} else &bslash;&n;&t;&t;sti(); &bslash;&n;} while (0)
+multiline_comment|/*&n; * so that interrupts won&squot;t be able to mess up the&n; * queues, copy_to_cooked must be atomic with repect&n; * to itself, as must tty-&gt;write.&n; */
+DECL|macro|TTY_WRITE_BUSY
+mdefine_line|#define TTY_WRITE_BUSY 1
+DECL|macro|TTY_READ_BUSY
+mdefine_line|#define TTY_READ_BUSY 2
+DECL|macro|TTY_WRITE_FLUSH
+mdefine_line|#define TTY_WRITE_FLUSH(tty) &bslash;&n;do { &bslash;&n;&t;cli(); &bslash;&n;&t;if (!EMPTY((tty)-&gt;write_q) &amp;&amp; !(TTY_WRITE_BUSY &amp; (tty)-&gt;busy)) { &bslash;&n;&t;&t;(tty)-&gt;busy |= TTY_WRITE_BUSY; &bslash;&n;&t;&t;sti(); &bslash;&n;&t;&t;(tty)-&gt;write((tty)); &bslash;&n;&t;&t;cli(); &bslash;&n;&t;&t;(tty)-&gt;busy &amp;= ~TTY_WRITE_BUSY; &bslash;&n;&t;} &bslash;&n;&t;sti(); &bslash;&n;} while (0)
+DECL|macro|TTY_READ_FLUSH
+mdefine_line|#define TTY_READ_FLUSH(tty) &bslash;&n;do { &bslash;&n;&t;cli(); &bslash;&n;&t;if (!EMPTY((tty)-&gt;read_q) &amp;&amp; !(TTY_READ_BUSY &amp; (tty)-&gt;busy)) { &bslash;&n;&t;&t;(tty)-&gt;busy |= TTY_READ_BUSY; &bslash;&n;&t;&t;sti(); &bslash;&n;&t;&t;copy_to_cooked((tty)); &bslash;&n;&t;&t;cli(); &bslash;&n;&t;&t;(tty)-&gt;busy &amp;= ~TTY_READ_BUSY; &bslash;&n;&t;} &bslash;&n;&t;sti(); &bslash;&n;} while (0)
 r_extern
 r_struct
 id|tty_struct

@@ -241,6 +241,12 @@ id|inode
 suffix:semicolon
 r_return
 id|read
+ques
+c_cond
+id|read
+suffix:colon
+op_minus
+id|EAGAIN
 suffix:semicolon
 )brace
 DECL|function|pipe_write

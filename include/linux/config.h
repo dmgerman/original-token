@@ -1,18 +1,25 @@
 macro_line|#ifndef _CONFIG_H
 DECL|macro|_CONFIG_H
 mdefine_line|#define _CONFIG_H
-multiline_comment|/*&n; * Define this if you want the math-emulation code: if this is undefined,&n; * the kernel will be smaller, but you&squot;ll get FPU exceptions if you don&squot;t&n; * have a 387 and are trying to use math.&n; */
-DECL|macro|KERNEL_MATH_EMULATION
-mdefine_line|#define KERNEL_MATH_EMULATION
 multiline_comment|/*&n; * Defines for what uname() should return &n; */
+macro_line|#ifndef UTS_SYSNAME
 DECL|macro|UTS_SYSNAME
 mdefine_line|#define UTS_SYSNAME &quot;Linux&quot;
+macro_line|#endif
+macro_line|#ifndef UTS_NODENAME
 DECL|macro|UTS_NODENAME
 mdefine_line|#define UTS_NODENAME &quot;(none)&quot;&t;/* set by sethostname() */
+macro_line|#endif
+macro_line|#include &lt;linux/config_rel.h&gt;
+macro_line|#ifndef UTS_RELEASE
 DECL|macro|UTS_RELEASE
-mdefine_line|#define UTS_RELEASE &quot;0&quot;&t;&t;/* patchlevel */
+mdefine_line|#define UTS_RELEASE &quot;0.95c-0&quot; 
+macro_line|#endif
+macro_line|#include &lt;linux/config_ver.h&gt;
+macro_line|#ifndef UTS_VERSION
 DECL|macro|UTS_VERSION
-mdefine_line|#define UTS_VERSION &quot;0.95a&quot;
+mdefine_line|#define UTS_VERSION &quot;mm/dd/yy&quot;
+macro_line|#endif
 DECL|macro|UTS_MACHINE
 mdefine_line|#define UTS_MACHINE &quot;i386&quot;&t;/* hardware type */
 multiline_comment|/* Don&squot;t touch these, unless you really know what your doing. */

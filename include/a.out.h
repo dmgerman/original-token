@@ -1,16 +1,17 @@
-macro_line|#ifndef _A_OUT_H
-DECL|macro|_A_OUT_H
-mdefine_line|#define _A_OUT_H
+macro_line|#ifndef __A_OUT_GNU_H__
+DECL|macro|__A_OUT_GNU_H__
+mdefine_line|#define __A_OUT_GNU_H__
 DECL|macro|__GNU_EXEC_MACROS__
 mdefine_line|#define __GNU_EXEC_MACROS__
+macro_line|#ifndef __STRUCT_EXEC_OVERRIDE__
 DECL|struct|exec
 r_struct
 id|exec
 (brace
-DECL|member|a_magic
+DECL|member|a_info
 r_int
 r_int
-id|a_magic
+id|a_info
 suffix:semicolon
 multiline_comment|/* Use macros N_MAGIC, etc for access */
 DECL|member|a_text
@@ -50,11 +51,84 @@ suffix:semicolon
 multiline_comment|/* length of relocation info for data, in bytes */
 )brace
 suffix:semicolon
-macro_line|#ifndef N_MAGIC
-DECL|macro|N_MAGIC
-mdefine_line|#define N_MAGIC(exec) ((exec).a_magic)
+macro_line|#endif /* __STRUCT_EXEC_OVERRIDE__ */
+multiline_comment|/* these go in the N_MACHTYPE field */
+DECL|enum|machine_type
+r_enum
+id|machine_type
+(brace
+macro_line|#if defined (M_OLDSUN2)
+DECL|enumerator|M__OLDSUN2
+id|M__OLDSUN2
+op_assign
+id|M_OLDSUN2
+comma
+macro_line|#else
+id|M_OLDSUN2
+op_assign
+l_int|0
+comma
 macro_line|#endif
-macro_line|#ifndef OMAGIC
+macro_line|#if defined (M_68010)
+DECL|enumerator|M__68010
+id|M__68010
+op_assign
+id|M_68010
+comma
+macro_line|#else
+id|M_68010
+op_assign
+l_int|1
+comma
+macro_line|#endif
+macro_line|#if defined (M_68020)
+DECL|enumerator|M__68020
+id|M__68020
+op_assign
+id|M_68020
+comma
+macro_line|#else
+id|M_68020
+op_assign
+l_int|2
+comma
+macro_line|#endif
+macro_line|#if defined (M_SPARC)
+DECL|enumerator|M__SPARC
+id|M__SPARC
+op_assign
+id|M_SPARC
+comma
+macro_line|#else
+id|M_SPARC
+op_assign
+l_int|3
+comma
+macro_line|#endif
+multiline_comment|/* skip a bunch so we don&squot;t run into any of sun&squot;s numbers */
+DECL|enumerator|M_386
+id|M_386
+op_assign
+l_int|100
+comma
+)brace
+suffix:semicolon
+macro_line|#if !defined (N_MAGIC)
+DECL|macro|N_MAGIC
+mdefine_line|#define N_MAGIC(exec) ((exec).a_info &amp; 0xffff)
+macro_line|#endif
+DECL|macro|N_MACHTYPE
+mdefine_line|#define N_MACHTYPE(exec) ((enum machine_type)(((exec).a_info &gt;&gt; 16) &amp; 0xff))
+DECL|macro|N_FLAGS
+mdefine_line|#define N_FLAGS(exec) (((exec).a_info &gt;&gt; 24) &amp; 0xff)
+DECL|macro|N_SET_INFO
+mdefine_line|#define N_SET_INFO(exec, magic, type, flags) &bslash;&n;&t;((exec).a_info = ((magic) &amp; 0xffff) &bslash;&n;&t; | (((int)(type) &amp; 0xff) &lt;&lt; 16) &bslash;&n;&t; | (((flags) &amp; 0xff) &lt;&lt; 24))
+DECL|macro|N_SET_MAGIC
+mdefine_line|#define N_SET_MAGIC(exec, magic) &bslash;&n;&t;((exec).a_info = (((exec).a_info &amp; 0xffff0000) | ((magic) &amp; 0xffff)))
+DECL|macro|N_SET_MACHTYPE
+mdefine_line|#define N_SET_MACHTYPE(exec, machtype) &bslash;&n;&t;((exec).a_info = &bslash;&n;&t; ((exec).a_info&amp;0xff00ffff) | ((((int)(machtype))&amp;0xff) &lt;&lt; 16))
+DECL|macro|N_SET_FLAGS
+mdefine_line|#define N_SET_FLAGS(exec, flags) &bslash;&n;&t;((exec).a_info = &bslash;&n;&t; ((exec).a_info&amp;0x00ffffff) | (((flags) &amp; 0xff) &lt;&lt; 24))
 multiline_comment|/* Code indicating object file or impure executable.  */
 DECL|macro|OMAGIC
 mdefine_line|#define OMAGIC 0407
@@ -64,52 +138,47 @@ mdefine_line|#define NMAGIC 0410
 multiline_comment|/* Code indicating demand-paged executable.  */
 DECL|macro|ZMAGIC
 mdefine_line|#define ZMAGIC 0413
-macro_line|#endif /* not OMAGIC */
-macro_line|#ifndef N_BADMAG
+macro_line|#if !defined (N_BADMAG)
 DECL|macro|N_BADMAG
 mdefine_line|#define N_BADMAG(x)&t;&t;&t;&t;&t;&bslash;&n; (N_MAGIC(x) != OMAGIC &amp;&amp; N_MAGIC(x) != NMAGIC&t;&t;&bslash;&n;  &amp;&amp; N_MAGIC(x) != ZMAGIC)
 macro_line|#endif
 DECL|macro|_N_BADMAG
 mdefine_line|#define _N_BADMAG(x)&t;&t;&t;&t;&t;&bslash;&n; (N_MAGIC(x) != OMAGIC &amp;&amp; N_MAGIC(x) != NMAGIC&t;&t;&bslash;&n;  &amp;&amp; N_MAGIC(x) != ZMAGIC)
 DECL|macro|_N_HDROFF
-mdefine_line|#define _N_HDROFF(x) (SEGMENT_SIZE - sizeof (struct exec))
-macro_line|#ifndef N_TXTOFF
+mdefine_line|#define _N_HDROFF(x) (1024 - sizeof (struct exec))
+macro_line|#if !defined (N_TXTOFF)
 DECL|macro|N_TXTOFF
 mdefine_line|#define N_TXTOFF(x) &bslash;&n; (N_MAGIC(x) == ZMAGIC ? _N_HDROFF((x)) + sizeof (struct exec) : sizeof (struct exec))
 macro_line|#endif
-macro_line|#ifndef N_DATOFF
+macro_line|#if !defined (N_DATOFF)
 DECL|macro|N_DATOFF
 mdefine_line|#define N_DATOFF(x) (N_TXTOFF(x) + (x).a_text)
 macro_line|#endif
-macro_line|#ifndef N_TRELOFF
+macro_line|#if !defined (N_TRELOFF)
 DECL|macro|N_TRELOFF
 mdefine_line|#define N_TRELOFF(x) (N_DATOFF(x) + (x).a_data)
 macro_line|#endif
-macro_line|#ifndef N_DRELOFF
+macro_line|#if !defined (N_DRELOFF)
 DECL|macro|N_DRELOFF
 mdefine_line|#define N_DRELOFF(x) (N_TRELOFF(x) + (x).a_trsize)
 macro_line|#endif
-macro_line|#ifndef N_SYMOFF
+macro_line|#if !defined (N_SYMOFF)
 DECL|macro|N_SYMOFF
 mdefine_line|#define N_SYMOFF(x) (N_DRELOFF(x) + (x).a_drsize)
 macro_line|#endif
-macro_line|#ifndef N_STROFF
+macro_line|#if !defined (N_STROFF)
 DECL|macro|N_STROFF
 mdefine_line|#define N_STROFF(x) (N_SYMOFF(x) + (x).a_syms)
 macro_line|#endif
 multiline_comment|/* Address of text segment in memory after it is loaded.  */
-macro_line|#ifndef N_TXTADDR
+macro_line|#if !defined (N_TXTADDR)
 DECL|macro|N_TXTADDR
 mdefine_line|#define N_TXTADDR(x) 0
 macro_line|#endif
 multiline_comment|/* Address of data segment in memory after it is loaded.&n;   Note that it is up to you to define SEGMENT_SIZE&n;   on machines not listed here.  */
 macro_line|#if defined(vax) || defined(hp300) || defined(pyr)
 DECL|macro|SEGMENT_SIZE
-mdefine_line|#define SEGMENT_SIZE PAGE_SIZE
-macro_line|#endif
-macro_line|#ifdef&t;hp300
-DECL|macro|PAGE_SIZE
-mdefine_line|#define&t;PAGE_SIZE&t;4096
+mdefine_line|#define SEGMENT_SIZE page_size
 macro_line|#endif
 macro_line|#ifdef&t;sony
 DECL|macro|SEGMENT_SIZE
@@ -125,10 +194,12 @@ mdefine_line|#define PAGE_SIZE 0x400
 DECL|macro|SEGMENT_SIZE
 mdefine_line|#define SEGMENT_SIZE PAGE_SIZE
 macro_line|#endif
+macro_line|#ifdef linux
 DECL|macro|PAGE_SIZE
-mdefine_line|#define PAGE_SIZE 4096
+mdefine_line|#define PAGE_SIZE&t;4096
 DECL|macro|SEGMENT_SIZE
-mdefine_line|#define SEGMENT_SIZE 1024
+mdefine_line|#define SEGMENT_SIZE&t;1024
+macro_line|#endif
 DECL|macro|_N_SEGMENT_ROUND
 mdefine_line|#define _N_SEGMENT_ROUND(x) (((x) + SEGMENT_SIZE - 1) &amp; ~(SEGMENT_SIZE - 1))
 DECL|macro|_N_TXTENDADDR
@@ -138,11 +209,12 @@ DECL|macro|N_DATADDR
 mdefine_line|#define N_DATADDR(x) &bslash;&n;    (N_MAGIC(x)==OMAGIC? (_N_TXTENDADDR(x)) &bslash;&n;     : (_N_SEGMENT_ROUND (_N_TXTENDADDR(x))))
 macro_line|#endif
 multiline_comment|/* Address of bss segment in memory after it is loaded.  */
-macro_line|#ifndef N_BSSADDR
+macro_line|#if !defined (N_BSSADDR)
 DECL|macro|N_BSSADDR
 mdefine_line|#define N_BSSADDR(x) (N_DATADDR(x) + (x).a_data)
 macro_line|#endif
-macro_line|#ifndef N_NLIST_DECLARED
+"&f;"
+macro_line|#if !defined (N_NLIST_DECLARED)
 DECL|struct|nlist
 r_struct
 id|nlist
@@ -188,44 +260,40 @@ id|n_value
 suffix:semicolon
 )brace
 suffix:semicolon
-macro_line|#endif
-macro_line|#ifndef N_UNDF
+macro_line|#endif /* no N_NLIST_DECLARED.  */
+macro_line|#if !defined (N_UNDF)
 DECL|macro|N_UNDF
 mdefine_line|#define N_UNDF 0
 macro_line|#endif
-macro_line|#ifndef N_ABS
+macro_line|#if !defined (N_ABS)
 DECL|macro|N_ABS
 mdefine_line|#define N_ABS 2
 macro_line|#endif
-macro_line|#ifndef N_TEXT
+macro_line|#if !defined (N_TEXT)
 DECL|macro|N_TEXT
 mdefine_line|#define N_TEXT 4
 macro_line|#endif
-macro_line|#ifndef N_DATA
+macro_line|#if !defined (N_DATA)
 DECL|macro|N_DATA
 mdefine_line|#define N_DATA 6
 macro_line|#endif
-macro_line|#ifndef N_BSS
+macro_line|#if !defined (N_BSS)
 DECL|macro|N_BSS
 mdefine_line|#define N_BSS 8
 macro_line|#endif
-macro_line|#ifndef N_COMM
-DECL|macro|N_COMM
-mdefine_line|#define N_COMM 18
-macro_line|#endif
-macro_line|#ifndef N_FN
+macro_line|#if !defined (N_FN)
 DECL|macro|N_FN
 mdefine_line|#define N_FN 15
 macro_line|#endif
-macro_line|#ifndef N_EXT
+macro_line|#if !defined (N_EXT)
 DECL|macro|N_EXT
 mdefine_line|#define N_EXT 1
 macro_line|#endif
-macro_line|#ifndef N_TYPE
+macro_line|#if !defined (N_TYPE)
 DECL|macro|N_TYPE
 mdefine_line|#define N_TYPE 036
 macro_line|#endif
-macro_line|#ifndef N_STAB
+macro_line|#if !defined (N_STAB)
 DECL|macro|N_STAB
 mdefine_line|#define N_STAB 0340
 macro_line|#endif
@@ -245,7 +313,8 @@ mdefine_line|#define&t;N_SETB&t;0x1A&t;&t;/* Bss set element symbol */
 multiline_comment|/* This is output from LD.  */
 DECL|macro|N_SETV
 mdefine_line|#define N_SETV&t;0x1C&t;&t;/* Pointer to set vector in data area.  */
-macro_line|#ifndef N_RELOCATION_INFO_DECLARED
+"&f;"
+macro_line|#if !defined (N_RELOCATION_INFO_DECLARED)
 multiline_comment|/* This structure describes a single relocation to be performed.&n;   The text-relocation section of the file is a vector of these structures,&n;   all of which apply to the text section.&n;   Likewise, the data-relocation section applies to the data section.  */
 DECL|struct|relocation_info
 r_struct
@@ -289,6 +358,26 @@ suffix:colon
 l_int|1
 suffix:semicolon
 multiline_comment|/* Four bits that aren&squot;t used, but when writing an object file&n;     it is desirable to clear them.  */
+macro_line|#ifdef NS32K
+DECL|member|r_bsr
+r_int
+id|r_bsr
+suffix:colon
+l_int|1
+suffix:semicolon
+DECL|member|r_disp
+r_int
+id|r_disp
+suffix:colon
+l_int|1
+suffix:semicolon
+DECL|member|r_pad
+r_int
+id|r_pad
+suffix:colon
+l_int|2
+suffix:semicolon
+macro_line|#else
 DECL|member|r_pad
 r_int
 r_int
@@ -296,6 +385,7 @@ id|r_pad
 suffix:colon
 l_int|4
 suffix:semicolon
+macro_line|#endif
 )brace
 suffix:semicolon
 macro_line|#endif /* no N_RELOCATION_INFO_DECLARED.  */

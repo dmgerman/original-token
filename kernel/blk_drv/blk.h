@@ -144,13 +144,15 @@ mdefine_line|#define DEVICE_ON(device) floppy_on(DEVICE_NR(device))
 DECL|macro|DEVICE_OFF
 mdefine_line|#define DEVICE_OFF(device) floppy_off(DEVICE_NR(device))
 macro_line|#elif (MAJOR_NR == 3)
-multiline_comment|/* harddisk */
+multiline_comment|/* harddisk: timeout is 6 seconds.. */
 DECL|macro|DEVICE_NAME
 mdefine_line|#define DEVICE_NAME &quot;harddisk&quot;
 DECL|macro|DEVICE_INTR
 mdefine_line|#define DEVICE_INTR do_hd
 DECL|macro|DEVICE_TIMEOUT
 mdefine_line|#define DEVICE_TIMEOUT HD_TIMER
+DECL|macro|TIMEOUT_VALUE
+mdefine_line|#define TIMEOUT_VALUE 600
 DECL|macro|DEVICE_REQUEST
 mdefine_line|#define DEVICE_REQUEST do_hd_request
 DECL|macro|DEVICE_NR
@@ -182,8 +184,12 @@ l_int|NULL
 suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef DEVICE_TIMEOUT
+DECL|macro|SET_TIMER
+mdefine_line|#define SET_TIMER &bslash;&n;((timer_table[DEVICE_TIMEOUT].expires = jiffies + TIMEOUT_VALUE), &bslash;&n;(timer_active |= 1&lt;&lt;DEVICE_TIMEOUT))
+DECL|macro|CLEAR_TIMER
+mdefine_line|#define CLEAR_TIMER &bslash;&n;timer_active &amp;= ~(1&lt;&lt;DEVICE_TIMEOUT)
 DECL|macro|SET_INTR
-mdefine_line|#define SET_INTR(x) if (DEVICE_INTR = (x)) { &bslash;&n;timer_table[DEVICE_TIMEOUT].expires = jiffies + 200; &bslash;&n;timer_active |= 1&lt;&lt;DEVICE_TIMEOUT; &bslash;&n;} else timer_active &amp;= ~(1&lt;&lt;DEVICE_TIMEOUT)
+mdefine_line|#define SET_INTR(x) &bslash;&n;if (DEVICE_INTR = (x)) &bslash;&n;&t;SET_TIMER; &bslash;&n;else &bslash;&n;&t;CLEAR_TIMER;
 macro_line|#else
 DECL|macro|SET_INTR
 mdefine_line|#define SET_INTR(x) (DEVICE_INTR = (x))

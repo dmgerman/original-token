@@ -76,6 +76,10 @@ DECL|macro|_PC_VDISABLE
 mdefine_line|#define _PC_VDISABLE&t;&t;8
 DECL|macro|_PC_CHOWN_RESTRICTED
 mdefine_line|#define _PC_CHOWN_RESTRICTED&t;9
+macro_line|#if 0
+multiline_comment|/* XXX - &lt;sys/stat.h&gt; illegally &lt;sys/types.h&gt; already.&n; * The rest of these includes are also illegal (too much pollution).&n; */
+macro_line|#include &lt;sys/types.h&gt;
+macro_line|#endif
 macro_line|#include &lt;sys/stat.h&gt;
 macro_line|#include &lt;sys/time.h&gt;
 macro_line|#include &lt;sys/times.h&gt;
@@ -261,6 +265,9 @@ DECL|macro|__NR_swapon
 mdefine_line|#define __NR_swapon&t;87
 DECL|macro|__NR_reboot
 mdefine_line|#define __NR_reboot&t;88
+DECL|macro|__NR_readdir
+mdefine_line|#define __NR_readdir&t;89
+multiline_comment|/* XXX - _foo needs to be __foo, while __NR_bar could be _NR_bar. */
 DECL|macro|_syscall0
 mdefine_line|#define _syscall0(type,name) &bslash;&n;type name(void) &bslash;&n;{ &bslash;&n;long __res; &bslash;&n;__asm__ volatile (&quot;int $0x80&quot; &bslash;&n;&t;: &quot;=a&quot; (__res) &bslash;&n;&t;: &quot;0&quot; (__NR_##name)); &bslash;&n;if (__res &gt;= 0) &bslash;&n;&t;return (type) __res; &bslash;&n;errno = -__res; &bslash;&n;return -1; &bslash;&n;}
 DECL|macro|_syscall1
@@ -270,10 +277,12 @@ mdefine_line|#define _syscall2(type,name,atype,a,btype,b) &bslash;&n;type name(a
 DECL|macro|_syscall3
 mdefine_line|#define _syscall3(type,name,atype,a,btype,b,ctype,c) &bslash;&n;type name(atype a,btype b,ctype c) &bslash;&n;{ &bslash;&n;long __res; &bslash;&n;__asm__ volatile (&quot;movl %2,%%ebx&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;int $0x80&quot; &bslash;&n;&t;: &quot;=a&quot; (__res) &bslash;&n;&t;: &quot;0&quot; (__NR_##name),&quot;g&quot; ((long)(a)),&quot;c&quot; ((long)(b)),&quot;d&quot; ((long)(c)):&quot;bx&quot;); &bslash;&n;if (__res&gt;=0) &bslash;&n;&t;return (type) __res; &bslash;&n;errno=-__res; &bslash;&n;return -1; &bslash;&n;}
 macro_line|#endif /* __LIBRARY__ */
+multiline_comment|/* XXX - illegal. */
 r_extern
 r_int
 id|errno
 suffix:semicolon
+multiline_comment|/* XXX - several non-POSIX functions here, and POSIX functions that are&n; * supposed to be declared elsewhere.  Non-promotion of short types in&n; * prototypes may cause trouble.  Arg names should be prefixed by&n; * underscores.&n; */
 r_int
 id|access
 c_func
@@ -287,6 +296,7 @@ id|mode_t
 id|mode
 )paren
 suffix:semicolon
+multiline_comment|/* XXX - short type */
 r_int
 id|acct
 c_func
@@ -298,20 +308,21 @@ id|filename
 )paren
 suffix:semicolon
 r_int
-id|alarm
-c_func
-(paren
-r_int
-id|sec
-)paren
-suffix:semicolon
-r_int
 id|brk
 c_func
 (paren
 r_void
 op_star
 id|end_data_segment
+)paren
+suffix:semicolon
+multiline_comment|/* XXX - POSIX says unsigned alarm(unsigned sec) */
+r_int
+id|alarm
+c_func
+(paren
+r_int
+id|sec
 )paren
 suffix:semicolon
 r_void
@@ -346,6 +357,7 @@ id|mode_t
 id|mode
 )paren
 suffix:semicolon
+multiline_comment|/* XXX - short type */
 r_int
 id|chown
 c_func
@@ -362,6 +374,7 @@ id|gid_t
 id|group
 )paren
 suffix:semicolon
+multiline_comment|/* XXX - shorts */
 r_int
 id|chroot
 c_func
@@ -393,6 +406,7 @@ id|mode_t
 id|mode
 )paren
 suffix:semicolon
+multiline_comment|/* XXX - short type */
 r_int
 id|dup
 c_func
@@ -537,42 +551,42 @@ dot
 dot
 )paren
 suffix:semicolon
-r_int
+id|pid_t
 id|fork
 c_func
 (paren
 r_void
 )paren
 suffix:semicolon
-r_int
+id|pid_t
 id|getpid
 c_func
 (paren
 r_void
 )paren
 suffix:semicolon
-r_int
+id|uid_t
 id|getuid
 c_func
 (paren
 r_void
 )paren
 suffix:semicolon
-r_int
+id|uid_t
 id|geteuid
 c_func
 (paren
 r_void
 )paren
 suffix:semicolon
-r_int
+id|gid_t
 id|getgid
 c_func
 (paren
 r_void
 )paren
 suffix:semicolon
-r_int
+id|gid_t
 id|getegid
 c_func
 (paren
@@ -620,7 +634,7 @@ op_star
 id|filename2
 )paren
 suffix:semicolon
-r_int
+id|off_t
 id|lseek
 c_func
 (paren
@@ -650,6 +664,7 @@ id|dev_t
 id|dev
 )paren
 suffix:semicolon
+multiline_comment|/* XXX - shorts */
 r_int
 id|mount
 c_func
@@ -709,6 +724,7 @@ op_star
 id|fildes
 )paren
 suffix:semicolon
+multiline_comment|/* XXX**2 - POSIX says unsigned count */
 r_int
 id|read
 c_func
@@ -742,6 +758,7 @@ id|pid_t
 id|pgid
 )paren
 suffix:semicolon
+multiline_comment|/* XXX - short types */
 r_int
 id|setuid
 c_func
@@ -750,6 +767,7 @@ id|uid_t
 id|uid
 )paren
 suffix:semicolon
+multiline_comment|/* XXX - short type */
 r_int
 id|setgid
 c_func
@@ -758,6 +776,7 @@ id|gid_t
 id|gid
 )paren
 suffix:semicolon
+multiline_comment|/* XXX - short type */
 r_void
 (paren
 op_star
@@ -945,6 +964,7 @@ op_star
 id|wait_stat
 )paren
 suffix:semicolon
+multiline_comment|/* XXX**2 - POSIX says unsigned count */
 r_int
 id|write
 c_func

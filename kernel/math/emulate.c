@@ -1,7 +1,6 @@
-multiline_comment|/*&n; * linux/kernel/math/math_emulate.c&n; *&n; * (C) 1991 Linus Torvalds&n; */
+multiline_comment|/*&n; * linux/kernel/math/emulate.c&n; *&n; * (C) 1991 Linus Torvalds&n; */
 multiline_comment|/*&n; * Limited emulation 27.12.91 - mostly loads/stores, which gcc wants&n; * even for soft-float, unless you use bruce evans&squot; patches. The patches&n; * are great, but they have to be re-applied for every version, and the&n; * library is different for soft-float and 80387. So emulation is more&n; * practical, even though it&squot;s slower.&n; *&n; * 28.12.91 - loads/stores work, even BCD. I&squot;ll have to start thinking&n; * about add/sub/mul/div. Urgel. I should find some good source, but I&squot;ll&n; * just fake up something.&n; *&n; * 30.12.91 - add/sub/mul/div/com seem to work mostly. I should really&n; * test every possible combination.&n; */
 multiline_comment|/*&n; * This file is full of ugly macros etc: one problem was that gcc simply&n; * didn&squot;t want to make the structures as they should be: it has to try to&n; * align them. Sickening code, but at least I&squot;ve hidden the ugly things&n; * in this one file: the other files don&squot;t need to know about these things.&n; *&n; * The other files also don&squot;t care about ST(x) etc - they just get addresses&n; * to 80-bit temporary reals, and do with them as they please. I wanted to&n; * hide most of the 387-specific things here.&n; */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#ifdef KERNEL_MATH_EMULATION
 macro_line|#include &lt;signal.h&gt;
 DECL|macro|__ALIGNED_TEMP_REAL
@@ -802,18 +801,7 @@ op_amp
 l_int|7
 )paren
 comma
-op_amp
-id|tmp
-)paren
-suffix:semicolon
-id|real_to_real
-c_func
-(paren
-op_amp
-id|tmp
-comma
-op_amp
-id|ST
+id|PST
 c_func
 (paren
 l_int|0
@@ -836,18 +824,7 @@ op_amp
 l_int|7
 )paren
 comma
-op_amp
-id|tmp
-)paren
-suffix:semicolon
-id|real_to_real
-c_func
-(paren
-op_amp
-id|tmp
-comma
-op_amp
-id|ST
+id|PST
 c_func
 (paren
 l_int|0
@@ -1065,11 +1042,11 @@ c_func
 (paren
 (paren
 id|code
-op_amp
-l_int|7
-)paren
 op_plus
 l_int|1
+)paren
+op_amp
+l_int|7
 )paren
 suffix:semicolon
 r_return

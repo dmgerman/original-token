@@ -1975,6 +1975,14 @@ l_int|3
 )paren
 )paren
 (brace
+id|seek
+op_assign
+l_int|1
+suffix:semicolon
+id|current_track
+op_assign
+id|NO_TRACK
+suffix:semicolon
 id|current_DOR
 op_and_assign
 l_int|0xFC

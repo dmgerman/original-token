@@ -1,10 +1,109 @@
 multiline_comment|/*&n; *  linux/fs/read_write.c&n; *&n; *  (C) 1991  Linus Torvalds&n; */
-macro_line|#include &lt;sys/stat.h&gt;
 macro_line|#include &lt;errno.h&gt;
 macro_line|#include &lt;sys/types.h&gt;
+macro_line|#include &lt;sys/stat.h&gt;
+macro_line|#include &lt;sys/dirent.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
+macro_line|#include &lt;linux/minix_fs.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
+multiline_comment|/*&n; * Count is not yet used: but we&squot;ll probably support reading several entries&n; * at once in the future. Use count=1 in the library for future expansions.&n; */
+DECL|function|sys_readdir
+r_int
+id|sys_readdir
+c_func
+(paren
+r_int
+r_int
+id|fd
+comma
+r_struct
+id|dirent
+op_star
+id|dirent
+comma
+r_int
+r_int
+id|count
+)paren
+(brace
+r_struct
+id|file
+op_star
+id|file
+suffix:semicolon
+r_struct
+id|inode
+op_star
+id|inode
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|fd
+op_ge
+id|NR_OPEN
+op_logical_or
+op_logical_neg
+(paren
+id|file
+op_assign
+id|current-&gt;filp
+(braket
+id|fd
+)braket
+)paren
+op_logical_or
+op_logical_neg
+(paren
+id|inode
+op_assign
+id|file-&gt;f_inode
+)paren
+)paren
+r_return
+op_minus
+id|EBADF
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|file-&gt;f_op
+op_logical_and
+id|file-&gt;f_op-&gt;readdir
+)paren
+(brace
+id|verify_area
+c_func
+(paren
+id|dirent
+comma
+r_sizeof
+(paren
+op_star
+id|dirent
+)paren
+)paren
+suffix:semicolon
+r_return
+id|file-&gt;f_op
+op_member_access_from_pointer
+id|readdir
+c_func
+(paren
+id|inode
+comma
+id|file
+comma
+id|dirent
+)paren
+suffix:semicolon
+)brace
+r_return
+op_minus
+id|EBADF
+suffix:semicolon
+)brace
 DECL|function|sys_lseek
 r_int
 id|sys_lseek
@@ -29,6 +128,8 @@ id|file
 suffix:semicolon
 r_int
 id|tmp
+comma
+id|mem_dev
 suffix:semicolon
 r_if
 c_cond
@@ -98,6 +199,14 @@ comma
 id|origin
 )paren
 suffix:semicolon
+id|mem_dev
+op_assign
+id|S_ISCHR
+c_func
+(paren
+id|file-&gt;f_inode-&gt;i_mode
+)paren
+suffix:semicolon
 multiline_comment|/* this is the default handler if no lseek handler is present */
 r_switch
 c_cond
@@ -114,6 +223,9 @@ c_cond
 id|offset
 OL
 l_int|0
+op_logical_and
+op_logical_neg
+id|mem_dev
 )paren
 r_return
 op_minus
@@ -136,6 +248,9 @@ op_plus
 id|offset
 OL
 l_int|0
+op_logical_and
+op_logical_neg
+id|mem_dev
 )paren
 r_return
 op_minus
@@ -162,6 +277,9 @@ id|offset
 )paren
 OL
 l_int|0
+op_logical_and
+op_logical_neg
+id|mem_dev
 )paren
 r_return
 op_minus
@@ -172,6 +290,18 @@ op_assign
 id|tmp
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|mem_dev
+op_logical_and
+id|file-&gt;f_pos
+OL
+l_int|0
+)paren
+r_return
+l_int|0
+suffix:semicolon
 r_return
 id|file-&gt;f_pos
 suffix:semicolon

@@ -1,6 +1,30 @@
 multiline_comment|/*&n; * linux/fs/minix/minix_op.c&n; *&n; * structures for the minix super_block/inode/file-operations&n; */
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/minix_fs.h&gt;
+DECL|function|minix_put_inode
+r_void
+id|minix_put_inode
+c_func
+(paren
+r_struct
+id|inode
+op_star
+id|inode
+)paren
+(brace
+id|minix_truncate
+c_func
+(paren
+id|inode
+)paren
+suffix:semicolon
+id|minix_free_inode
+c_func
+(paren
+id|inode
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/*&n; * These are the low-level inode operations for minix filesystem inodes.&n; */
 DECL|variable|minix_inode_operations
 r_struct
@@ -33,9 +57,17 @@ comma
 id|minix_release
 comma
 id|minix_follow_link
+comma
+id|minix_bmap
+comma
+id|minix_truncate
+comma
+id|minix_write_inode
+comma
+id|minix_put_inode
 )brace
 suffix:semicolon
-multiline_comment|/*&n; * We have just NULL&squot;s here: the current defaults are ok for&n; * the minix filesystem.&n; */
+multiline_comment|/*&n; * We have mostly NULL&squot;s here: the current defaults are ok for&n; * the minix filesystem.&n; */
 DECL|variable|minix_file_operations
 r_struct
 id|file_operations
@@ -49,7 +81,9 @@ l_int|NULL
 comma
 multiline_comment|/* read */
 l_int|NULL
+comma
 multiline_comment|/* write */
+id|minix_readdir
 )brace
 suffix:semicolon
 eof

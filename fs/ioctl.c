@@ -5,6 +5,21 @@ macro_line|#include &lt;sys/stat.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 r_extern
 r_int
+id|hd_ioctl
+c_func
+(paren
+r_int
+id|dev
+comma
+r_int
+id|cmd
+comma
+r_int
+id|arg
+)paren
+suffix:semicolon
+r_extern
+r_int
 id|tty_ioctl
 c_func
 (paren

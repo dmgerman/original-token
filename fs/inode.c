@@ -2,7 +2,6 @@ multiline_comment|/*&n; *  linux/fs/inode.c&n; *&n; *  (C) 1991  Linus Torvalds&
 macro_line|#include &lt;string.h&gt;
 macro_line|#include &lt;sys/stat.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
-macro_line|#include &lt;linux/minix_fs.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -15,28 +14,6 @@ id|NR_INODE
 )braket
 op_assign
 initialization_block
-suffix:semicolon
-r_extern
-r_void
-id|minix_read_inode
-c_func
-(paren
-r_struct
-id|inode
-op_star
-id|inode
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|minix_write_inode
-c_func
-(paren
-r_struct
-id|inode
-op_star
-id|inode
-)paren
 suffix:semicolon
 DECL|function|wait_on_inode
 r_static
@@ -176,7 +153,16 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-id|minix_write_inode
+r_if
+c_cond
+(paren
+id|inode-&gt;i_op
+op_logical_and
+id|inode-&gt;i_op-&gt;write_inode
+)paren
+id|inode-&gt;i_op
+op_member_access_from_pointer
+id|write_inode
 c_func
 (paren
 id|inode
@@ -207,7 +193,18 @@ c_func
 id|inode
 )paren
 suffix:semicolon
-id|minix_read_inode
+r_if
+c_cond
+(paren
+id|inode-&gt;i_sb
+op_logical_and
+id|inode-&gt;i_sb-&gt;s_op
+op_logical_and
+id|inode-&gt;i_sb-&gt;s_op-&gt;read_inode
+)paren
+id|inode-&gt;i_sb-&gt;s_op
+op_member_access_from_pointer
+id|read_inode
 c_func
 (paren
 id|inode
@@ -220,6 +217,7 @@ id|inode
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * bmap is needed for demand-loading and paging: if this function&n; * doesn&squot;t exist for a filesystem, then those things are impossible:&n; * executables cannot be run from the filesystem etc...&n; *&n; * This isn&squot;t as bad as it sounds: the read-routines might still work,&n; * so the filesystem would be otherwise ok (for example, you might have&n; * a DOS filesystem, which doesn&squot;t lend itself to bmap very well, but&n; * you could still transfer files to/from the filesystem)&n; */
 DECL|function|bmap
 r_int
 id|bmap
@@ -234,14 +232,26 @@ r_int
 id|block
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|inode-&gt;i_op
+op_logical_and
+id|inode-&gt;i_op-&gt;bmap
+)paren
 r_return
-id|minix_bmap
+id|inode-&gt;i_op
+op_member_access_from_pointer
+id|bmap
 c_func
 (paren
 id|inode
 comma
 id|block
 )paren
+suffix:semicolon
+r_return
+l_int|0
 suffix:semicolon
 )brace
 DECL|function|invalidate_inodes
@@ -530,13 +540,16 @@ op_logical_neg
 id|inode-&gt;i_nlink
 )paren
 (brace
-id|minix_truncate
-c_func
+r_if
+c_cond
 (paren
-id|inode
+id|inode-&gt;i_op
+op_logical_and
+id|inode-&gt;i_op-&gt;put_inode
 )paren
-suffix:semicolon
-id|minix_free_inode
+id|inode-&gt;i_op
+op_member_access_from_pointer
+id|put_inode
 c_func
 (paren
 id|inode

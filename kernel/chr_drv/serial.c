@@ -32,7 +32,7 @@ c_func
 r_void
 )paren
 (brace
-id|copy_to_cooked
+id|TTY_READ_FLUSH
 c_func
 (paren
 id|tty_table
@@ -50,7 +50,7 @@ c_func
 r_void
 )paren
 (brace
-id|copy_to_cooked
+id|TTY_READ_FLUSH
 c_func
 (paren
 id|tty_table
@@ -68,7 +68,7 @@ c_func
 r_void
 )paren
 (brace
-id|copy_to_cooked
+id|TTY_READ_FLUSH
 c_func
 (paren
 id|tty_table
@@ -86,7 +86,7 @@ c_func
 r_void
 )paren
 (brace
-id|copy_to_cooked
+id|TTY_READ_FLUSH
 c_func
 (paren
 id|tty_table

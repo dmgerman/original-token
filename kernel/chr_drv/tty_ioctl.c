@@ -1582,7 +1582,7 @@ id|tty-&gt;stopped
 op_assign
 l_int|1
 suffix:semicolon
-id|TTY_WRITE
+id|TTY_WRITE_FLUSH
 c_func
 (paren
 id|tty
@@ -1598,7 +1598,7 @@ id|tty-&gt;stopped
 op_assign
 l_int|0
 suffix:semicolon
-id|TTY_WRITE
+id|TTY_WRITE_FLUSH
 c_func
 (paren
 id|tty

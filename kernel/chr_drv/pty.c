@@ -60,7 +60,7 @@ id|to-&gt;secondary
 )paren
 r_break
 suffix:semicolon
-id|copy_to_cooked
+id|TTY_READ_FLUSH
 c_func
 (paren
 id|to
@@ -96,7 +96,7 @@ id|current-&gt;blocked
 r_break
 suffix:semicolon
 )brace
-id|copy_to_cooked
+id|TTY_READ_FLUSH
 c_func
 (paren
 id|to

@@ -1,5 +1,8 @@
+macro_line|#ifndef _ASM_IO_H
+DECL|macro|_ASM_IO_H
+mdefine_line|#define _ASM_IO_H
 DECL|function|outb
-r_static
+r_extern
 r_void
 r_inline
 id|outb
@@ -38,7 +41,7 @@ id|port
 suffix:semicolon
 )brace
 DECL|function|outb_p
-r_static
+r_extern
 r_void
 r_inline
 id|outb_p
@@ -82,7 +85,7 @@ id|port
 suffix:semicolon
 )brace
 DECL|function|inb
-r_static
+r_extern
 r_int
 r_char
 r_inline
@@ -123,9 +126,10 @@ id|_v
 suffix:semicolon
 )brace
 DECL|function|inb_p
-r_static
+r_extern
 r_int
 r_char
+r_inline
 id|inb_p
 c_func
 (paren
@@ -167,4 +171,5 @@ r_return
 id|_v
 suffix:semicolon
 )brace
+macro_line|#endif
 eof

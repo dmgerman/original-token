@@ -419,19 +419,36 @@ id|translations
 )braket
 op_assign
 (brace
-multiline_comment|/* normal 7-bit ascii */
+multiline_comment|/* 8-bit Latin-1 mapped to the PC charater set: &squot;&bslash;0&squot; means non-printable */
+l_string|&quot;&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&quot;
+l_string|&quot;&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&quot;
 l_string|&quot; !&bslash;&quot;#$%&amp;&squot;()*+,-./0123456789:;&lt;=&gt;?&quot;
 l_string|&quot;@ABCDEFGHIJKLMNOPQRSTUVWXYZ[&bslash;&bslash;]^_&quot;
-l_string|&quot;`abcdefghijklmnopqrstuvwxyz{|}~ &quot;
+l_string|&quot;`abcdefghijklmnopqrstuvwxyz{|}~&bslash;0&quot;
+l_string|&quot;&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&quot;
+l_string|&quot;&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&quot;
+l_string|&quot;&bslash;040&bslash;255&bslash;233&bslash;234&bslash;376&bslash;235&bslash;174&bslash;025&bslash;376&bslash;376&bslash;246&bslash;256&bslash;252&bslash;055&bslash;376&bslash;376&quot;
+l_string|&quot;&bslash;370&bslash;361&bslash;375&bslash;376&bslash;376&bslash;346&bslash;024&bslash;371&bslash;376&bslash;376&bslash;247&bslash;257&bslash;254&bslash;253&bslash;376&bslash;250&quot;
+l_string|&quot;&bslash;376&bslash;376&bslash;376&bslash;376&bslash;216&bslash;217&bslash;222&bslash;200&bslash;376&bslash;220&bslash;376&bslash;376&bslash;376&bslash;376&bslash;376&bslash;376&quot;
+l_string|&quot;&bslash;376&bslash;245&bslash;376&bslash;376&bslash;376&bslash;376&bslash;231&bslash;376&bslash;376&bslash;376&bslash;376&bslash;376&bslash;232&bslash;376&bslash;376&bslash;341&quot;
+l_string|&quot;&bslash;205&bslash;240&bslash;203&bslash;376&bslash;204&bslash;206&bslash;221&bslash;207&bslash;212&bslash;202&bslash;210&bslash;211&bslash;215&bslash;241&bslash;214&bslash;213&quot;
+l_string|&quot;&bslash;376&bslash;244&bslash;225&bslash;242&bslash;223&bslash;376&bslash;224&bslash;366&bslash;376&bslash;227&bslash;243&bslash;226&bslash;201&bslash;376&bslash;376&bslash;230&quot;
 comma
 multiline_comment|/* vt100 graphics */
-l_string|&quot; !&bslash;&quot;#$%&amp;&squot;()*+,-./&bslash;333123456789:;&lt;=&gt;?&quot;
-l_string|&quot;@ABCDEFGH&bslash;017JKLMNOPQRSTUVWXYZ[&bslash;&bslash;]^ &quot;
-multiline_comment|/* &squot;   a   b   c   d   e   f   g   h   i   j   k   l   m   n   o */
-l_string|&quot;&bslash;004&bslash;261&bslash;007&bslash;007&bslash;007&bslash;007&bslash;370&bslash;361&bslash;040&bslash;007&bslash;331&bslash;277&bslash;332&bslash;300&bslash;305&bslash;007&quot;
-multiline_comment|/* p   q   r   s   t   u   v   w   x   y   z   {   |   }   ~     */
-l_string|&quot;&bslash;007&bslash;304&bslash;007&bslash;007&bslash;303&bslash;264&bslash;301&bslash;302&bslash;263&bslash;007&bslash;007&bslash;007&bslash;007&bslash;007&bslash;234 &quot;
-multiline_comment|/*&quot;&bslash;004&bslash;261&bslash;007&bslash;007&bslash;007&bslash;007&bslash;370&bslash;361&bslash;007&bslash;007&bslash;275&bslash;267&bslash;326&bslash;323&bslash;327&bslash;304&quot;&n;        &quot;&bslash;304&bslash;304&bslash;304&bslash;304&bslash;307&bslash;266&bslash;320&bslash;322&bslash;272&bslash;363&bslash;362&bslash;343&bslash;&bslash;007&bslash;234&bslash;007 &quot; */
+l_string|&quot;&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&quot;
+l_string|&quot;&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&quot;
+l_string|&quot; !&bslash;&quot;#$%&amp;&squot;()*+,-./0123456789:;&lt;=&gt;?&quot;
+l_string|&quot;@ABCDEFGHIJKLMNOPQRSTUVWXYZ[&bslash;&bslash;]^ &quot;
+l_string|&quot;&bslash;004&bslash;261&bslash;007&bslash;007&bslash;007&bslash;007&bslash;370&bslash;361&bslash;007&bslash;007&bslash;275&bslash;267&bslash;326&bslash;323&bslash;327&bslash;304&quot;
+l_string|&quot;&bslash;304&bslash;304&bslash;304&bslash;304&bslash;307&bslash;266&bslash;320&bslash;322&bslash;272&bslash;363&bslash;362&bslash;343&bslash;007&bslash;234&bslash;007&bslash;0&quot;
+l_string|&quot;&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&quot;
+l_string|&quot;&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&quot;
+l_string|&quot;&bslash;040&bslash;255&bslash;233&bslash;234&bslash;376&bslash;235&bslash;174&bslash;025&bslash;376&bslash;376&bslash;246&bslash;256&bslash;252&bslash;055&bslash;376&bslash;376&quot;
+l_string|&quot;&bslash;370&bslash;361&bslash;375&bslash;376&bslash;376&bslash;346&bslash;024&bslash;371&bslash;376&bslash;376&bslash;247&bslash;257&bslash;254&bslash;253&bslash;376&bslash;250&quot;
+l_string|&quot;&bslash;376&bslash;376&bslash;376&bslash;376&bslash;216&bslash;217&bslash;222&bslash;200&bslash;376&bslash;220&bslash;376&bslash;376&bslash;376&bslash;376&bslash;376&bslash;376&quot;
+l_string|&quot;&bslash;376&bslash;245&bslash;376&bslash;376&bslash;376&bslash;376&bslash;231&bslash;376&bslash;376&bslash;376&bslash;376&bslash;376&bslash;232&bslash;376&bslash;376&bslash;341&quot;
+l_string|&quot;&bslash;205&bslash;240&bslash;203&bslash;376&bslash;204&bslash;206&bslash;221&bslash;207&bslash;212&bslash;202&bslash;210&bslash;211&bslash;215&bslash;241&bslash;214&bslash;213&quot;
+l_string|&quot;&bslash;376&bslash;244&bslash;225&bslash;242&bslash;223&bslash;376&bslash;224&bslash;366&bslash;376&bslash;227&bslash;243&bslash;226&bslash;201&bslash;376&bslash;376&bslash;230&quot;
 )brace
 suffix:semicolon
 DECL|macro|NORM_TRANS
@@ -1976,7 +1993,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|copy_to_cooked
+id|TTY_READ_FLUSH
 c_func
 (paren
 id|tty
@@ -2529,15 +2546,19 @@ suffix:colon
 r_if
 c_cond
 (paren
+id|translate
+(braket
 id|c
-OG
-l_int|31
-op_logical_and
-id|c
-OL
-l_int|127
+)braket
 )paren
 (brace
+id|c
+op_assign
+id|translate
+(braket
+id|c
+)braket
+suffix:semicolon
 r_while
 c_loop
 (paren
@@ -2568,12 +2589,7 @@ op_star
 )paren
 id|pos
 op_assign
-id|translate
-(braket
 id|c
-op_minus
-l_int|32
-)braket
 suffix:semicolon
 op_star
 (paren
@@ -3974,7 +3990,7 @@ c_func
 r_void
 )paren
 (brace
-id|copy_to_cooked
+id|TTY_READ_FLUSH
 c_func
 (paren
 id|TTY_TABLE

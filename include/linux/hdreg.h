@@ -142,5 +142,28 @@ suffix:semicolon
 multiline_comment|/* nr of sectors in partition */
 )brace
 suffix:semicolon
+DECL|macro|HDIO_REQ
+mdefine_line|#define HDIO_REQ 0x301
+DECL|struct|hd_geometry
+r_struct
+id|hd_geometry
+(brace
+DECL|member|heads
+r_int
+r_char
+id|heads
+suffix:semicolon
+DECL|member|sectors
+r_int
+r_char
+id|sectors
+suffix:semicolon
+DECL|member|cylinders
+r_int
+r_int
+id|cylinders
+suffix:semicolon
+)brace
+suffix:semicolon
 macro_line|#endif
 eof

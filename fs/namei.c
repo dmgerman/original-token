@@ -1,7 +1,6 @@
 multiline_comment|/*&n; *  linux/fs/namei.c&n; *&n; *  (C) 1991  Linus Torvalds&n; */
 multiline_comment|/*&n; * Some corrections by tytso.&n; */
 macro_line|#include &lt;linux/sched.h&gt;
-macro_line|#include &lt;linux/minix_fs.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;string.h&gt;
@@ -1145,7 +1144,16 @@ id|flag
 op_amp
 id|O_TRUNC
 )paren
-id|minix_truncate
+r_if
+c_cond
+(paren
+id|inode-&gt;i_op
+op_logical_and
+id|inode-&gt;i_op-&gt;truncate
+)paren
+id|inode-&gt;i_op
+op_member_access_from_pointer
+id|truncate
 c_func
 (paren
 id|inode
@@ -1268,7 +1276,7 @@ id|dir
 suffix:semicolon
 r_return
 op_minus
-id|EPERM
+id|EACCES
 suffix:semicolon
 )brace
 r_if
@@ -1402,7 +1410,7 @@ id|dir
 suffix:semicolon
 r_return
 op_minus
-id|EPERM
+id|EACCES
 suffix:semicolon
 )brace
 r_if
@@ -1531,7 +1539,7 @@ id|dir
 suffix:semicolon
 r_return
 op_minus
-id|EPERM
+id|EACCES
 suffix:semicolon
 )brace
 r_if
@@ -1634,7 +1642,7 @@ id|dir
 suffix:semicolon
 r_return
 op_minus
-id|ENOENT
+id|EPERM
 suffix:semicolon
 )brace
 r_if
@@ -1658,7 +1666,7 @@ id|dir
 suffix:semicolon
 r_return
 op_minus
-id|EPERM
+id|EACCES
 suffix:semicolon
 )brace
 r_if
@@ -1749,7 +1757,7 @@ id|dir
 )paren
 r_return
 op_minus
-id|EACCES
+id|ENOENT
 suffix:semicolon
 r_if
 c_cond
@@ -1766,7 +1774,7 @@ id|dir
 suffix:semicolon
 r_return
 op_minus
-id|EPERM
+id|ENOENT
 suffix:semicolon
 )brace
 r_if
@@ -1790,7 +1798,7 @@ id|dir
 suffix:semicolon
 r_return
 op_minus
-id|EPERM
+id|EACCES
 suffix:semicolon
 )brace
 r_if

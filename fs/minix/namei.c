@@ -8,41 +8,6 @@ macro_line|#include &lt;fcntl.h&gt;
 macro_line|#include &lt;errno.h&gt;
 macro_line|#include &lt;const.h&gt;
 macro_line|#include &lt;sys/stat.h&gt;
-r_extern
-r_int
-id|permission
-c_func
-(paren
-r_struct
-id|inode
-op_star
-id|inode
-comma
-r_int
-id|mask
-)paren
-suffix:semicolon
-r_extern
-r_struct
-id|inode
-op_star
-id|_namei
-c_func
-(paren
-r_const
-r_char
-op_star
-id|filename
-comma
-r_struct
-id|inode
-op_star
-id|base
-comma
-r_int
-id|follow_links
-)paren
-suffix:semicolon
 multiline_comment|/*&n; * comment out this line if you want names &gt; MINIX_NAME_LEN chars to be&n; * truncated. Else they will be disallowed.&n; */
 multiline_comment|/* #define NO_TRUNCATE */
 multiline_comment|/*&n; * ok, we cannot use strncmp, as the name is not in our data space.&n; * Thus we&squot;ll have to use minix_match. No big problem. Match also makes&n; * some sanity tests.&n; *&n; * NOTE! unlike strncmp, minix_match returns 1 for success, 0 for failure.&n; */
@@ -367,7 +332,7 @@ op_logical_neg
 (paren
 id|block
 op_assign
-id|bmap
+id|minix_bmap
 c_func
 (paren
 id|dir
@@ -2075,7 +2040,7 @@ id|bh
 suffix:semicolon
 id|block
 op_assign
-id|bmap
+id|minix_bmap
 c_func
 (paren
 id|inode
