@@ -1,5 +1,4 @@
-multiline_comment|/*&n; *&t;dev_table.h&n; *&n; *&t;Global definitions for device call tables&n; */
-multiline_comment|/*&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
+multiline_comment|/*&n; *&t;dev_table.h&n; *&n; *&t;Global definitions for device call tables&n; *&n; *&n; * Copyright (C) by Hannu Savolainen 1993-1997&n; *&n; * OSS/Free for Linux is distributed under the GNU GENERAL PUBLIC LICENSE (GPL)&n; * Version 2 (June 1991). See the &quot;COPYING&quot; file distributed with this software&n; * for more info.&n; */
 macro_line|#ifndef _DEV_TABLE_H_
 DECL|macro|_DEV_TABLE_H_
 mdefine_line|#define _DEV_TABLE_H_
@@ -2195,7 +2194,7 @@ comma
 id|unload_sb
 )brace
 comma
-macro_line|#&t;ifdef CONFIG_MIDI
+macro_line|#ifdef CONFIG_MIDI
 (brace
 l_string|&quot;SBMPU&quot;
 comma
@@ -2212,7 +2211,7 @@ comma
 id|unload_sbmpu
 )brace
 comma
-macro_line|#&t;endif
+macro_line|#endif
 macro_line|#endif
 macro_line|#ifdef CONFIG_SSCAPEHW
 (brace
@@ -2430,7 +2429,7 @@ comma
 id|SND_DEFAULT_ENABLE
 )brace
 comma
-macro_line|#&t;ifdef PSS_MPU_BASE
+macro_line|#ifdef PSS_MPU_BASE
 (brace
 id|SNDCARD_PSS_MPU
 comma
@@ -2448,8 +2447,8 @@ comma
 id|SND_DEFAULT_ENABLE
 )brace
 comma
-macro_line|#&t;endif
-macro_line|#&t;ifdef PSS_MSS_BASE
+macro_line|#endif
+macro_line|#ifdef PSS_MSS_BASE
 (brace
 id|SNDCARD_PSS_MSS
 comma
@@ -2467,7 +2466,7 @@ comma
 id|SND_DEFAULT_ENABLE
 )brace
 comma
-macro_line|#&t;endif
+macro_line|#endif
 macro_line|#endif
 macro_line|#ifdef CONFIG_TRIX
 macro_line|#ifndef TRIX_DMA2
@@ -2490,7 +2489,7 @@ comma
 id|SND_DEFAULT_ENABLE
 )brace
 comma
-macro_line|#&t;ifdef TRIX_SB_BASE
+macro_line|#ifdef TRIX_SB_BASE
 (brace
 id|SNDCARD_TRXPRO_SB
 comma
@@ -2508,8 +2507,8 @@ comma
 id|SND_DEFAULT_ENABLE
 )brace
 comma
-macro_line|#&t;endif
-macro_line|#&t;ifdef TRIX_MPU_BASE
+macro_line|#endif
+macro_line|#ifdef TRIX_MPU_BASE
 (brace
 id|SNDCARD_TRXPRO_MPU
 comma
@@ -2527,7 +2526,7 @@ comma
 id|SND_DEFAULT_ENABLE
 )brace
 comma
-macro_line|#&t;endif
+macro_line|#endif
 macro_line|#endif
 macro_line|#ifdef CONFIG_OPL3SA1
 (brace
@@ -2546,7 +2545,7 @@ comma
 id|SND_DEFAULT_ENABLE
 )brace
 comma
-macro_line|#&t;ifdef OPL3SA1_MPU_BASE
+macro_line|#ifdef OPL3SA1_MPU_BASE
 (brace
 id|SNDCARD_OPL3SA1_MPU
 comma
@@ -2564,7 +2563,7 @@ comma
 id|SND_DEFAULT_ENABLE
 )brace
 comma
-macro_line|#&t;endif
+macro_line|#endif
 macro_line|#endif
 macro_line|#ifdef CONFIG_SOFTOSS
 (brace
@@ -2643,7 +2642,7 @@ comma
 id|SND_DEFAULT_ENABLE
 )brace
 comma
-macro_line|#&t;ifdef MAD16_MPU_BASE
+macro_line|#ifdef MAD16_MPU_BASE
 (brace
 id|SNDCARD_MAD16_MPU
 comma
@@ -2661,14 +2660,14 @@ comma
 id|SND_DEFAULT_ENABLE
 )brace
 comma
-macro_line|#&t;endif
+macro_line|#endif
 macro_line|#endif
 macro_line|#ifdef CONFIG_CS4232
 macro_line|#ifndef CS4232_DMA2
 DECL|macro|CS4232_DMA2
 mdefine_line|#define CS4232_DMA2 CS4232_DMA
 macro_line|#endif
-macro_line|#&t;ifdef CS4232_MPU_BASE
+macro_line|#ifdef CS4232_MPU_BASE
 (brace
 id|SNDCARD_CS4232_MPU
 comma
@@ -2686,7 +2685,7 @@ comma
 id|SND_DEFAULT_ENABLE
 )brace
 comma
-macro_line|#&t;endif
+macro_line|#endif
 (brace
 id|SNDCARD_CS4232
 comma
@@ -2705,11 +2704,11 @@ id|SND_DEFAULT_ENABLE
 comma
 macro_line|#endif
 macro_line|#ifdef CONFIG_MSS
-macro_line|#&t;ifndef MSS_DMA2
+macro_line|#ifndef MSS_DMA2
 DECL|macro|MSS_DMA2
-macro_line|#&t;define MSS_DMA2 -1
-macro_line|#&t;endif
-macro_line|#&t;ifdef DESKPROXL
+mdefine_line|#define MSS_DMA2 -1
+macro_line|#endif
+macro_line|#ifdef DESKPROXL
 (brace
 id|SNDCARD_DESKPROXL
 comma
@@ -2726,7 +2725,7 @@ comma
 id|SND_DEFAULT_ENABLE
 )brace
 comma
-macro_line|#&t;else
+macro_line|#else
 (brace
 id|SNDCARD_MSS
 comma
@@ -2743,8 +2742,8 @@ comma
 id|SND_DEFAULT_ENABLE
 )brace
 comma
-macro_line|#&t;endif
-macro_line|#&t;ifdef MSS2_BASE
+macro_line|#endif
+macro_line|#ifdef MSS2_BASE
 (brace
 id|SNDCARD_MSS
 comma
@@ -2761,7 +2760,7 @@ comma
 id|SND_DEFAULT_ENABLE
 )brace
 comma
-macro_line|#&t;endif
+macro_line|#endif
 macro_line|#endif
 macro_line|#ifdef CONFIG_PAS
 (brace
@@ -2783,14 +2782,14 @@ id|SND_DEFAULT_ENABLE
 comma
 macro_line|#endif
 macro_line|#ifdef CONFIG_SB
-macro_line|#&t;ifndef SBC_DMA
+macro_line|#ifndef SBC_DMA
 DECL|macro|SBC_DMA
-macro_line|#&t;&t;define SBC_DMA&t;&t;1
-macro_line|#&t;endif
-macro_line|#&t;ifndef SB_DMA2
+mdefine_line|#define SBC_DMA&t;&t;1
+macro_line|#endif
+macro_line|#ifndef SB_DMA2
 DECL|macro|SB_DMA2
-macro_line|#&t;&t;define SB_DMA2&t;&t;-1
-macro_line|#&t;endif
+mdefine_line|#define SB_DMA2&t;&t;-1
+macro_line|#endif
 (brace
 id|SNDCARD_SB
 comma
@@ -2807,7 +2806,7 @@ comma
 id|SND_DEFAULT_ENABLE
 )brace
 comma
-macro_line|# &t;ifdef SB2_BASE
+macro_line|#ifdef SB2_BASE
 (brace
 id|SNDCARD_SB
 comma
@@ -2824,7 +2823,7 @@ comma
 id|SND_DEFAULT_ENABLE
 )brace
 comma
-macro_line|#&t;endif
+macro_line|#endif
 macro_line|#endif
 macro_line|#if defined(CONFIG_MAUI) 
 (brace
@@ -3099,14 +3098,14 @@ id|trace_init
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#   else
+macro_line|#else
 DECL|variable|trace_init
 r_int
 id|trace_init
 op_assign
 l_int|1
 suffix:semicolon
-macro_line|#   endif
+macro_line|#endif
 macro_line|#else
 r_extern
 r_struct
@@ -3384,6 +3383,7 @@ id|name
 suffix:semicolon
 r_int
 id|sound_start_dma
+c_func
 (paren
 r_int
 id|dev

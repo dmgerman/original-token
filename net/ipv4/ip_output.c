@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;The Internet Protocol (IP) output module.&n; *&n; * Version:&t;$Id: ip_output.c,v 1.44 1997/12/27 20:41:14 kuznet Exp $&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Donald Becker, &lt;becker@super.org&gt;&n; *&t;&t;Alan Cox, &lt;Alan.Cox@linux.org&gt;&n; *&t;&t;Richard Underwood&n; *&t;&t;Stefan Becker, &lt;stefanb@yello.ping.de&gt;&n; *&t;&t;Jorge Cwik, &lt;jorge@laser.satlink.net&gt;&n; *&t;&t;Arnt Gulbrandsen, &lt;agulbra@nvg.unit.no&gt;&n; *&n; *&t;See ip_input.c for original log&n; *&n; *&t;Fixes:&n; *&t;&t;Alan Cox&t;:&t;Missing nonblock feature in ip_build_xmit.&n; *&t;&t;Mike Kilburn&t;:&t;htons() missing in ip_build_xmit.&n; *&t;&t;Bradford Johnson:&t;Fix faulty handling of some frames when &n; *&t;&t;&t;&t;&t;no route is found.&n; *&t;&t;Alexander Demenshin:&t;Missing sk/skb free in ip_queue_xmit&n; *&t;&t;&t;&t;&t;(in case if packet not accepted by&n; *&t;&t;&t;&t;&t;output firewall rules)&n; *&t;&t;Alexey Kuznetsov:&t;use new route cache&n; *&t;&t;Andi Kleen:&t;&t;Fix broken PMTU recovery and remove&n; *&t;&t;&t;&t;&t;some redundant tests.&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;The Internet Protocol (IP) output module.&n; *&n; * Version:&t;$Id: ip_output.c,v 1.45 1998/01/15 22:06:35 freitag Exp $&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Donald Becker, &lt;becker@super.org&gt;&n; *&t;&t;Alan Cox, &lt;Alan.Cox@linux.org&gt;&n; *&t;&t;Richard Underwood&n; *&t;&t;Stefan Becker, &lt;stefanb@yello.ping.de&gt;&n; *&t;&t;Jorge Cwik, &lt;jorge@laser.satlink.net&gt;&n; *&t;&t;Arnt Gulbrandsen, &lt;agulbra@nvg.unit.no&gt;&n; *&n; *&t;See ip_input.c for original log&n; *&n; *&t;Fixes:&n; *&t;&t;Alan Cox&t;:&t;Missing nonblock feature in ip_build_xmit.&n; *&t;&t;Mike Kilburn&t;:&t;htons() missing in ip_build_xmit.&n; *&t;&t;Bradford Johnson:&t;Fix faulty handling of some frames when &n; *&t;&t;&t;&t;&t;no route is found.&n; *&t;&t;Alexander Demenshin:&t;Missing sk/skb free in ip_queue_xmit&n; *&t;&t;&t;&t;&t;(in case if packet not accepted by&n; *&t;&t;&t;&t;&t;output firewall rules)&n; *&t;&t;Alexey Kuznetsov:&t;use new route cache&n; *&t;&t;Andi Kleen:&t;&t;Fix broken PMTU recovery and remove&n; *&t;&t;&t;&t;&t;some redundant tests.&n; */
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -1037,7 +1037,7 @@ id|iph-&gt;ihl
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Queues a packet to be sent, and starts the transmitter&n; * if necessary.  if free = 1 then we free the block after&n; * transmit, otherwise we don&squot;t. If free==2 we not only&n; * free the block but also don&squot;t assign a new ip seq number.&n; * This routine also needs to put in the total length,&n; * and compute the checksum&n; */
+multiline_comment|/*&n; * Queues a packet to be sent, and starts the transmitter if necessary.  &n; * This routine also needs to put in the total length and compute the &n; * checksum&n; */
 DECL|function|ip_queue_xmit
 r_void
 id|ip_queue_xmit
@@ -1110,11 +1110,55 @@ c_cond
 (paren
 id|rt-&gt;u.dst.obsolete
 )paren
-r_goto
-id|check_route
+(brace
+multiline_comment|/* Ugly... ugly... but what can I do?&n;&t;&t;   Essentially it is &quot;ip_reroute_output&quot; function. --ANK&n;&t;&t;*/
+r_struct
+id|rtable
+op_star
+id|nrt
 suffix:semicolon
-id|after_check_route
+r_if
+c_cond
+(paren
+id|ip_route_output
+c_func
+(paren
+op_amp
+id|nrt
+comma
+id|rt-&gt;key.dst
+comma
+id|rt-&gt;key.src
+comma
+id|rt-&gt;key.tos
+comma
+id|sk
+ques
+c_cond
+id|sk-&gt;bound_dev_if
 suffix:colon
+l_int|0
+)paren
+)paren
+r_goto
+id|drop
+suffix:semicolon
+id|skb-&gt;dst
+op_assign
+op_amp
+id|nrt-&gt;u.dst
+suffix:semicolon
+id|ip_rt_put
+c_func
+(paren
+id|rt
+)paren
+suffix:semicolon
+id|rt
+op_assign
+id|nrt
+suffix:semicolon
+)brace
 id|dev
 op_assign
 id|rt-&gt;u.dst.dev
@@ -1139,18 +1183,9 @@ id|skb
 OL
 id|FW_ACCEPT
 )paren
-(brace
-id|kfree_skb
-c_func
-(paren
-id|skb
-comma
-id|FREE_WRITE
-)paren
+r_goto
+id|drop
 suffix:semicolon
-r_return
-suffix:semicolon
-)brace
 macro_line|#ifdef CONFIG_NET_SECURITY&t;
 multiline_comment|/*&n;&t; *&t;Add an IP checksum (must do this before SECurity because&n;&t; *&t;of possible tunneling)&n;&t; */
 id|ip_send_check
@@ -1183,18 +1218,9 @@ id|skb
 OL
 id|FW_ACCEPT
 )paren
-(brace
-id|kfree_skb
-c_func
-(paren
-id|skb
-comma
-id|FREE_WRITE
-)paren
+r_goto
+id|drop
 suffix:semicolon
-r_return
-suffix:semicolon
-)brace
 id|iph
 op_assign
 id|skb-&gt;nh.iph
@@ -1275,6 +1301,7 @@ id|rt-&gt;u.dst.pmtu
 r_goto
 id|fragment
 suffix:semicolon
+macro_line|#ifndef CONFIG_NET_SECURITY
 multiline_comment|/*&n;&t; *&t;Add an IP checksum&n;&t; */
 id|ip_send_check
 c_func
@@ -1282,6 +1309,7 @@ c_func
 id|iph
 )paren
 suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -1300,69 +1328,6 @@ id|skb
 )paren
 suffix:semicolon
 r_return
-suffix:semicolon
-id|check_route
-suffix:colon
-multiline_comment|/* Ugly... ugly... but what can I do?&n;&n;&t;   Essentially it is &quot;ip_reroute_output&quot; function. --ANK&n;&t; */
-(brace
-r_struct
-id|rtable
-op_star
-id|nrt
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|ip_route_output
-c_func
-(paren
-op_amp
-id|nrt
-comma
-id|rt-&gt;key.dst
-comma
-id|rt-&gt;key.src
-comma
-id|rt-&gt;key.tos
-comma
-id|sk
-ques
-c_cond
-id|sk-&gt;bound_dev_if
-suffix:colon
-l_int|0
-)paren
-)paren
-(brace
-id|kfree_skb
-c_func
-(paren
-id|skb
-comma
-l_int|0
-)paren
-suffix:semicolon
-r_return
-suffix:semicolon
-)brace
-id|skb-&gt;dst
-op_assign
-op_amp
-id|nrt-&gt;u.dst
-suffix:semicolon
-id|ip_rt_put
-c_func
-(paren
-id|rt
-)paren
-suffix:semicolon
-id|rt
-op_assign
-id|nrt
-suffix:semicolon
-)brace
-r_goto
-id|after_check_route
 suffix:semicolon
 id|fragment
 suffix:colon
@@ -1403,15 +1368,8 @@ id|rt-&gt;u.dst.pmtu
 )paren
 )paren
 suffix:semicolon
-id|kfree_skb
-c_func
-(paren
-id|skb
-comma
-id|FREE_WRITE
-)paren
-suffix:semicolon
-r_return
+r_goto
+id|drop
 suffix:semicolon
 )brace
 id|ip_fragment
@@ -1420,6 +1378,18 @@ c_func
 id|skb
 comma
 id|skb-&gt;dst-&gt;output
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+id|drop
+suffix:colon
+id|kfree_skb
+c_func
+(paren
+id|skb
+comma
+id|FREE_WRITE
 )paren
 suffix:semicolon
 )brace
@@ -2082,7 +2052,7 @@ id|mf
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;Can&squot;t fragment raw packets &n;&t; */
+multiline_comment|/*&n;&t; *&t;Don&squot;t fragment packets for path mtu discovery.&n;&t; */
 r_if
 c_cond
 (paren
@@ -2092,10 +2062,12 @@ l_int|0
 op_logical_and
 id|df
 )paren
+(brace
 r_return
 op_minus
 id|EMSGSIZE
 suffix:semicolon
+)brace
 multiline_comment|/*&n;&t; *&t;Lock the device lists.&n;&t; */
 id|dev_lock_list
 c_func

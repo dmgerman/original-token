@@ -40,6 +40,7 @@ macro_line|#include &lt;linux/genhd.h&gt;
 macro_line|#include &lt;linux/swap.h&gt;
 macro_line|#include &lt;linux/ctype.h&gt;
 macro_line|#include &lt;linux/file.h&gt;
+macro_line|#include &lt;linux/console.h&gt;
 r_extern
 r_int
 r_char
@@ -1983,6 +1984,21 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|put_write_access
+)paren
+suffix:semicolon
+multiline_comment|/* dynamic registering of consoles */
+DECL|variable|register_console
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|register_console
+)paren
+suffix:semicolon
+DECL|variable|unregister_console
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|unregister_console
 )paren
 suffix:semicolon
 eof

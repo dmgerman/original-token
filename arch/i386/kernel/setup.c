@@ -2383,7 +2383,7 @@ l_string|&quot;mca&quot;
 comma
 l_string|&quot;cmov&quot;
 comma
-l_string|&quot;16&quot;
+l_string|&quot;fcmov&quot;
 comma
 l_string|&quot;17&quot;
 comma
@@ -2399,7 +2399,7 @@ l_string|&quot;22&quot;
 comma
 l_string|&quot;mmx&quot;
 comma
-l_string|&quot;24&quot;
+l_string|&quot;cxmmx&quot;
 comma
 l_string|&quot;25&quot;
 comma
@@ -2413,7 +2413,7 @@ l_string|&quot;29&quot;
 comma
 l_string|&quot;30&quot;
 comma
-l_string|&quot;31&quot;
+l_string|&quot;amd3d&quot;
 )brace
 suffix:semicolon
 r_struct

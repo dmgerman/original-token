@@ -128,9 +128,9 @@ r_int
 id|dma_mode
 )paren
 suffix:semicolon
+DECL|function|dma_init_buffers
 r_static
 r_void
-DECL|function|dma_init_buffers
 id|dma_init_buffers
 c_func
 (paren
@@ -204,9 +204,9 @@ id|DMA_BUSY
 suffix:semicolon
 multiline_comment|/* Other flags off */
 )brace
+DECL|function|open_dmap
 r_static
 r_int
-DECL|function|open_dmap
 id|open_dmap
 c_func
 (paren
@@ -225,6 +225,9 @@ r_int
 id|chan
 )paren
 (brace
+r_int
+id|err
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -235,10 +238,6 @@ id|DMA_BUSY
 r_return
 op_minus
 id|EBUSY
-suffix:semicolon
-(brace
-r_int
-id|err
 suffix:semicolon
 r_if
 c_cond
@@ -262,7 +261,6 @@ l_int|0
 r_return
 id|err
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -274,6 +272,7 @@ l_int|NULL
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;Sound: DMA buffers not available&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -303,6 +302,7 @@ id|name
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;Unable to grab(2) DMA%d for the audio driver&bslash;n&quot;
 comma
 id|chan
@@ -375,7 +375,6 @@ id|dmap-&gt;dma_mode
 op_amp
 id|DMODE_OUTPUT
 )paren
-(brace
 id|out_sleep_flag
 (braket
 id|dev
@@ -385,9 +384,7 @@ id|opts
 op_assign
 id|WK_NONE
 suffix:semicolon
-)brace
 r_else
-(brace
 id|in_sleep_flag
 (braket
 id|dev
@@ -397,14 +394,13 @@ id|opts
 op_assign
 id|WK_NONE
 suffix:semicolon
-)brace
 r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|close_dmap
 r_static
 r_void
-DECL|function|close_dmap
 id|close_dmap
 c_func
 (paren
@@ -655,9 +651,9 @@ r_return
 id|r
 suffix:semicolon
 )brace
+DECL|function|check_driver
 r_static
 r_void
-DECL|function|check_driver
 id|check_driver
 c_func
 (paren
@@ -701,8 +697,8 @@ op_assign
 id|default_set_channels
 suffix:semicolon
 )brace
-r_int
 DECL|function|DMAbuf_open
+r_int
 id|DMAbuf_open
 c_func
 (paren
@@ -744,12 +740,10 @@ id|dev
 op_eq
 l_int|NULL
 )paren
-(brace
 r_return
 op_minus
 id|ENXIO
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -759,12 +753,10 @@ id|audio_devs
 id|dev
 )braket
 )paren
-(brace
 r_return
 op_minus
 id|ENXIO
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -1175,8 +1167,8 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-r_void
 DECL|function|DMAbuf_reset
+r_void
 id|DMAbuf_reset
 c_func
 (paren
@@ -1221,9 +1213,9 @@ id|dev
 )paren
 suffix:semicolon
 )brace
+DECL|function|dma_reset_output
 r_static
 r_void
-DECL|function|dma_reset_output
 id|dma_reset_output
 c_func
 (paren
@@ -1263,7 +1255,7 @@ id|DMA_STARTED
 multiline_comment|/* DMA is not active */
 r_return
 suffix:semicolon
-multiline_comment|/*&n; * First wait until the current fragment has been played completely&n; */
+multiline_comment|/*&n;&t; *&t;First wait until the current fragment has been played completely&n;&t; */
 id|save_flags
 c_func
 (paren
@@ -1369,7 +1361,6 @@ op_eq
 l_int|0
 )paren
 (brace
-(brace
 r_int
 r_int
 id|tlimit
@@ -1462,8 +1453,6 @@ op_complement
 id|WK_SLEEP
 suffix:semicolon
 )brace
-suffix:semicolon
-)brace
 id|audio_devs
 (braket
 id|dev
@@ -1478,7 +1467,7 @@ op_or
 id|DMA_ACTIVE
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * Finally shut the device off&n; */
+multiline_comment|/*&n;&t; *&t;Finally shut the device off&n;&t; */
 r_if
 c_cond
 (paren
@@ -1587,9 +1576,9 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|dma_reset_input
 r_static
 r_void
-DECL|function|dma_reset_input
 id|dma_reset_input
 c_func
 (paren
@@ -1720,8 +1709,8 @@ l_int|1
 )paren
 suffix:semicolon
 )brace
-r_void
 DECL|function|DMAbuf_launch_output
+r_void
 id|DMAbuf_launch_output
 c_func
 (paren
@@ -1845,7 +1834,6 @@ op_amp
 id|DMA_NODMA
 )paren
 )paren
-(brace
 id|local_start_dma
 c_func
 (paren
@@ -1858,7 +1846,6 @@ comma
 id|DMA_MODE_WRITE
 )paren
 suffix:semicolon
-)brace
 id|dmap-&gt;flags
 op_or_assign
 id|DMA_STARTED
@@ -1954,8 +1941,8 @@ op_or_assign
 id|DMA_ACTIVE
 suffix:semicolon
 )brace
-r_int
 DECL|function|DMAbuf_sync
+r_int
 id|DMAbuf_sync
 c_func
 (paren
@@ -2085,7 +2072,6 @@ l_int|20
 op_star
 id|HZ
 suffix:semicolon
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2110,7 +2096,6 @@ id|dev
 comma
 id|dmap
 )paren
-suffix:semicolon
 suffix:semicolon
 id|audio_devs
 (braket
@@ -2166,7 +2151,6 @@ id|dmap_out-&gt;underrun_count
 op_eq
 l_int|0
 )paren
-(brace
 (brace
 r_int
 r_int
@@ -2258,8 +2242,6 @@ id|opts
 op_and_assign
 op_complement
 id|WK_SLEEP
-suffix:semicolon
-)brace
 suffix:semicolon
 r_if
 c_cond
@@ -2322,7 +2304,7 @@ c_func
 id|flags
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;   * Some devices such as GUS have huge amount of on board RAM for the&n;&t;&t;   * audio data. We have to wait until the device has finished playing.&n;&t;&t;   */
+multiline_comment|/*&n;&t;&t; * Some devices such as GUS have huge amount of on board RAM for the&n;&t;&t; * audio data. We have to wait until the device has finished playing.&n;&t;&t; */
 id|save_flags
 c_func
 (paren
@@ -2369,7 +2351,6 @@ c_func
 id|dev
 )paren
 )paren
-(brace
 (brace
 r_int
 r_int
@@ -2463,8 +2444,6 @@ op_complement
 id|WK_SLEEP
 suffix:semicolon
 )brace
-suffix:semicolon
-)brace
 )brace
 id|restore_flags
 c_func
@@ -2491,8 +2470,8 @@ op_member_access_from_pointer
 id|dmap_out-&gt;qlen
 suffix:semicolon
 )brace
-r_int
 DECL|function|DMAbuf_release
+r_int
 id|DMAbuf_release
 c_func
 (paren
@@ -2738,6 +2717,7 @@ op_amp
 id|DMA_DUPLEX
 )paren
 )paren
+(brace
 id|close_dmap
 c_func
 (paren
@@ -2758,6 +2738,7 @@ op_member_access_from_pointer
 id|dmap_in-&gt;dma
 )paren
 suffix:semicolon
+)brace
 id|audio_devs
 (braket
 id|dev
@@ -2777,8 +2758,8 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-r_int
 DECL|function|DMAbuf_activate_recording
+r_int
 id|DMAbuf_activate_recording
 c_func
 (paren
@@ -2899,11 +2880,9 @@ id|dmap-&gt;nbufs
 OL
 l_int|0
 )paren
-(brace
 r_return
 id|err
 suffix:semicolon
-)brace
 id|dmap-&gt;dma_mode
 op_assign
 id|DMODE_INPUT
@@ -3016,8 +2995,8 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-r_int
 DECL|function|DMAbuf_getrdbuffer
+r_int
 id|DMAbuf_getrdbuffer
 c_func
 (paren
@@ -3120,12 +3099,7 @@ op_amp
 id|DMA_MAP_MAPPED
 )paren
 (brace
-id|printk
-c_func
-(paren
-l_string|&quot;Sound: Can&squot;t read from mmapped device (1)&bslash;n&quot;
-)paren
-suffix:semicolon
+multiline_comment|/*&t;&t;  printk(KERN_WARNING &quot;Sound: Can&squot;t read from mmapped device (1)&bslash;n&quot;);*/
 id|restore_flags
 c_func
 (paren
@@ -3153,6 +3127,10 @@ l_int|10
 (brace
 r_int
 id|tmout
+suffix:semicolon
+r_int
+r_int
+id|tlimit
 suffix:semicolon
 r_if
 c_cond
@@ -3302,11 +3280,6 @@ op_star
 id|HZ
 suffix:semicolon
 )brace
-(brace
-r_int
-r_int
-id|tlimit
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -3394,8 +3367,6 @@ op_and_assign
 op_complement
 id|WK_SLEEP
 suffix:semicolon
-)brace
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -3411,6 +3382,7 @@ id|WK_TIMEOUT
 )paren
 )paren
 (brace
+multiline_comment|/* FIXME: include device name */
 id|err
 op_assign
 op_minus
@@ -3419,6 +3391,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;Sound: DMA (input) timed out - IRQ/DRQ config error?&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -3427,7 +3400,6 @@ c_func
 (paren
 id|dev
 )paren
-suffix:semicolon
 suffix:semicolon
 )brace
 r_else
@@ -3497,8 +3469,8 @@ r_return
 id|dmap-&gt;qhead
 suffix:semicolon
 )brace
-r_int
 DECL|function|DMAbuf_rmchars
+r_int
 id|DMAbuf_rmchars
 c_func
 (paren
@@ -3542,12 +3514,7 @@ op_amp
 id|DMA_MAP_MAPPED
 )paren
 (brace
-id|printk
-c_func
-(paren
-l_string|&quot;Sound: Can&squot;t read from mmapped device (2)&bslash;n&quot;
-)paren
-suffix:semicolon
+multiline_comment|/*&t;&t;  printk(&quot;Sound: Can&squot;t read from mmapped device (2)&bslash;n&quot;);*/
 r_return
 op_minus
 id|EINVAL
@@ -3608,8 +3575,8 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-r_int
 DECL|function|DMAbuf_get_buffer_pointer
+r_int
 id|DMAbuf_get_buffer_pointer
 c_func
 (paren
@@ -3625,7 +3592,7 @@ r_int
 id|direction
 )paren
 (brace
-multiline_comment|/*&n; * Try to approximate the active byte position of the DMA pointer within the&n; * buffer area as well as possible.&n; */
+multiline_comment|/*&n;&t; *&t;Try to approximate the active byte position of the DMA pointer within the&n;&t; *&t;buffer area as well as possible.&n;&t; */
 r_int
 id|pos
 suffix:semicolon
@@ -3701,6 +3668,7 @@ op_amp
 id|DMA_MAP_MAPPED
 )paren
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -3749,6 +3717,7 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
+)brace
 r_if
 c_cond
 (paren
@@ -3789,10 +3758,10 @@ r_return
 id|pos
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * DMAbuf_start_devices() is called by the /dev/music driver to start&n; * one or more audio devices at desired moment.&n; */
+multiline_comment|/*&n; *&t;DMAbuf_start_devices() is called by the /dev/music driver to start&n; *&t;one or more audio devices at desired moment.&n; */
+DECL|function|DMAbuf_start_device
 r_static
 r_void
-DECL|function|DMAbuf_start_device
 id|DMAbuf_start_device
 c_func
 (paren
@@ -3812,6 +3781,7 @@ id|open_mode
 op_ne
 l_int|0
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -3873,8 +3843,9 @@ id|go
 suffix:semicolon
 )brace
 )brace
-r_void
+)brace
 DECL|function|DMAbuf_start_devices
+r_void
 id|DMAbuf_start_devices
 c_func
 (paren
@@ -3927,8 +3898,8 @@ id|dev
 )paren
 suffix:semicolon
 )brace
-r_int
 DECL|function|DMAbuf_space_in_queue
+r_int
 id|DMAbuf_space_in_queue
 c_func
 (paren
@@ -3982,7 +3953,7 @@ multiline_comment|/* No space at all */
 r_return
 l_int|0
 suffix:semicolon
-multiline_comment|/*&n;&t; * Verify that there are no more pending buffers than the limit&n;&t; * defined by the process.&n;&t; */
+multiline_comment|/*&n;&t; *&t;Verify that there are no more pending buffers than the limit&n;&t; *&t;defined by the process.&n;&t; */
 id|max
 op_assign
 id|dmap-&gt;max_fragments
@@ -4038,7 +4009,7 @@ id|len
 id|tmp
 op_decrement
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t;&t; * This buffer has been counted twice&n;&t;&t;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t; * This buffer has been counted twice&n;&t;&t;&t;&t; */
 id|len
 op_add_assign
 id|tmp
@@ -4074,9 +4045,9 @@ op_minus
 id|len
 suffix:semicolon
 )brace
+DECL|function|output_sleep
 r_static
 r_int
-DECL|function|output_sleep
 id|output_sleep
 c_func
 (paren
@@ -4107,17 +4078,19 @@ id|dev
 op_member_access_from_pointer
 id|dmap_out
 suffix:semicolon
+r_int
+r_int
+id|tlimit
+suffix:semicolon
 r_if
 c_cond
 (paren
 id|dontblock
 )paren
-(brace
 r_return
 op_minus
 id|EAGAIN
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -4133,12 +4106,10 @@ op_amp
 id|PCM_ENABLE_OUTPUT
 )paren
 )paren
-(brace
 r_return
 op_minus
 id|EAGAIN
 suffix:semicolon
-)brace
 multiline_comment|/*&n;&t; * Wait for free space&n;&t; */
 r_if
 c_cond
@@ -4223,11 +4194,6 @@ id|current
 r_return
 op_minus
 id|EIO
-suffix:semicolon
-(brace
-r_int
-r_int
-id|tlimit
 suffix:semicolon
 r_if
 c_cond
@@ -4316,8 +4282,6 @@ op_and_assign
 op_complement
 id|WK_SLEEP
 suffix:semicolon
-)brace
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -4336,9 +4300,9 @@ id|WK_TIMEOUT
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;Sound: DMA (output) timed out - IRQ/DRQ config error?&bslash;n&quot;
 )paren
-suffix:semicolon
 suffix:semicolon
 id|dma_reset_output
 c_func
@@ -4357,20 +4321,18 @@ c_func
 id|current
 )paren
 )paren
-(brace
 id|err
 op_assign
 op_minus
 id|EINTR
 suffix:semicolon
-)brace
 r_return
 id|err
 suffix:semicolon
 )brace
+DECL|function|find_output_space
 r_static
 r_int
-DECL|function|find_output_space
 id|find_output_space
 c_func
 (paren
@@ -4446,11 +4408,9 @@ op_logical_and
 op_logical_neg
 id|occupied_bytes
 )paren
-(brace
 r_return
 l_int|0
 suffix:semicolon
-)brace
 id|save_flags
 c_func
 (paren
@@ -4531,7 +4491,8 @@ id|dmap-&gt;bytes_in_use
 id|printk
 c_func
 (paren
-l_string|&quot;OSS: Got unexpected offs %ld. Giving up.&bslash;n&quot;
+id|KERN_ERR
+l_string|&quot;Sound: Got unexpected offs %ld. Giving up.&bslash;n&quot;
 comma
 id|offs
 )paren
@@ -4577,14 +4538,12 @@ id|len
 OG
 id|dmap-&gt;bytes_in_use
 )paren
-(brace
 id|len
 op_assign
 id|dmap-&gt;bytes_in_use
 op_minus
 id|offs
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -4618,7 +4577,6 @@ op_minus
 id|occupied_bytes
 )paren
 )paren
-(brace
 id|len
 op_assign
 (paren
@@ -4629,7 +4587,6 @@ id|dmap-&gt;fragment_size
 op_minus
 id|occupied_bytes
 suffix:semicolon
-)brace
 op_star
 id|size
 op_assign
@@ -4653,8 +4610,8 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
-r_int
 DECL|function|DMAbuf_getwrbuffer
+r_int
 id|DMAbuf_getwrbuffer
 c_func
 (paren
@@ -4719,12 +4676,7 @@ op_amp
 id|DMA_MAP_MAPPED
 )paren
 (brace
-id|printk
-c_func
-(paren
-l_string|&quot;Sound: Can&squot;t write to mmapped device (3)&bslash;n&quot;
-)paren
-suffix:semicolon
+multiline_comment|/*&t;&t;printk(KERN_DEBUG &quot;Sound: Can&squot;t write to mmapped device (3)&bslash;n&quot;);*/
 r_return
 op_minus
 id|EINVAL
@@ -4820,8 +4772,8 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-r_int
 DECL|function|DMAbuf_move_wrpointer
+r_int
 id|DMAbuf_move_wrpointer
 c_func
 (paren
@@ -4870,7 +4822,6 @@ id|dmap-&gt;flags
 op_amp
 id|DMA_POST
 )paren
-suffix:semicolon
 suffix:semicolon
 id|dmap-&gt;flags
 op_and_assign
@@ -4993,7 +4944,7 @@ id|dmap-&gt;user_counter
 op_minus
 id|ptr
 suffix:semicolon
-multiline_comment|/*&n; * Let the low level driver to perform some postprocessing to&n; * the written data.&n; */
+multiline_comment|/*&n;&t; *&t;Let the low level driver to perform some postprocessing to&n;&t; *&t;the written data.&n;&t; */
 r_if
 c_cond
 (paren
@@ -5027,6 +4978,7 @@ op_amp
 id|DMA_ACTIVE
 )paren
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -5050,7 +5002,6 @@ l_int|1
 )paren
 )paren
 )paren
-(brace
 id|DMAbuf_launch_output
 c_func
 (paren
@@ -5060,13 +5011,12 @@ id|dmap
 )paren
 suffix:semicolon
 )brace
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
 )brace
-r_int
 DECL|function|DMAbuf_start_dma
+r_int
 id|DMAbuf_start_dma
 c_func
 (paren
@@ -5151,6 +5101,7 @@ l_int|NULL
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;sound: DMA buffer(1) == NULL&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -5214,9 +5165,9 @@ r_return
 id|count
 suffix:semicolon
 )brace
+DECL|function|local_start_dma
 r_static
 r_int
-DECL|function|local_start_dma
 id|local_start_dma
 c_func
 (paren
@@ -5301,12 +5252,14 @@ l_int|NULL
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;sound: DMA buffer(2) == NULL&bslash;n&quot;
 )paren
 suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;Device %d, chn=%s&bslash;n&quot;
 comma
 id|dev
@@ -5380,9 +5333,9 @@ r_return
 id|count
 suffix:semicolon
 )brace
+DECL|function|finish_output_interrupt
 r_static
 r_void
-DECL|function|finish_output_interrupt
 id|finish_output_interrupt
 c_func
 (paren
@@ -5442,7 +5395,6 @@ id|WK_SLEEP
 )paren
 )paren
 (brace
-(brace
 id|out_sleep_flag
 (braket
 id|dev
@@ -5463,8 +5415,6 @@ id|dev
 )paren
 suffix:semicolon
 )brace
-suffix:semicolon
-)brace
 id|restore_flags
 c_func
 (paren
@@ -5472,9 +5422,9 @@ id|flags
 )paren
 suffix:semicolon
 )brace
+DECL|function|do_outputintr
 r_static
 r_void
-DECL|function|do_outputintr
 id|do_outputintr
 c_func
 (paren
@@ -5549,7 +5499,8 @@ l_int|NULL
 id|printk
 c_func
 (paren
-l_string|&quot;Sound: Fatal error. Audio interrupt (%d) after freeing buffers.&bslash;n&quot;
+id|KERN_ERR
+l_string|&quot;Sound: Error. Audio interrupt (%d) after freeing buffers.&bslash;n&quot;
 comma
 id|dev
 )paren
@@ -5871,8 +5822,8 @@ id|dmap
 )paren
 suffix:semicolon
 )brace
-r_void
 DECL|function|DMAbuf_outputintr
+r_void
 id|DMAbuf_outputintr
 c_func
 (paren
@@ -5996,7 +5947,6 @@ op_increment
 OL
 id|dmap-&gt;nbufs
 )paren
-(brace
 id|do_outputintr
 c_func
 (paren
@@ -6005,7 +5955,6 @@ comma
 id|notify_only
 )paren
 suffix:semicolon
-)brace
 )brace
 r_else
 id|do_outputintr
@@ -6023,9 +5972,9 @@ id|flags
 )paren
 suffix:semicolon
 )brace
+DECL|function|do_inputintr
 r_static
 r_void
-DECL|function|do_inputintr
 id|do_inputintr
 c_func
 (paren
@@ -6094,6 +6043,7 @@ l_int|NULL
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;Sound: Fatal error. Audio interrupt after freeing buffers.&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -6293,6 +6243,7 @@ l_int|1
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;Sound: Recording overrun&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -6510,6 +6461,7 @@ id|dmap-&gt;qlen
 OG
 l_int|0
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -6524,7 +6476,6 @@ op_amp
 id|WK_SLEEP
 )paren
 )paren
-(brace
 (brace
 id|in_sleep_flag
 (braket
@@ -6546,7 +6497,6 @@ id|dev
 )paren
 suffix:semicolon
 )brace
-suffix:semicolon
 )brace
 id|restore_flags
 c_func
@@ -6555,8 +6505,8 @@ id|flags
 )paren
 suffix:semicolon
 )brace
-r_void
 DECL|function|DMAbuf_inputintr
+r_void
 id|DMAbuf_inputintr
 c_func
 (paren
@@ -6677,14 +6627,12 @@ id|n
 OL
 id|dmap-&gt;nbufs
 )paren
-(brace
 id|do_inputintr
 c_func
 (paren
 id|dev
 )paren
 suffix:semicolon
-)brace
 )brace
 r_else
 id|do_inputintr
@@ -6700,8 +6648,8 @@ id|flags
 )paren
 suffix:semicolon
 )brace
-r_int
 DECL|function|DMAbuf_open_dma
+r_int
 id|DMAbuf_open_dma
 c_func
 (paren
@@ -6709,7 +6657,7 @@ r_int
 id|dev
 )paren
 (brace
-multiline_comment|/*&n; *    NOTE!  This routine opens only the primary DMA channel (output).&n; */
+multiline_comment|/*&n;&t; *    NOTE!  This routine opens only the primary DMA channel (output).&n;&t; */
 r_int
 id|chan
 op_assign
@@ -6749,12 +6697,10 @@ id|chan
 OL
 l_int|0
 )paren
-(brace
 r_return
 op_minus
 id|EBUSY
 suffix:semicolon
-)brace
 id|dma_init_buffers
 c_func
 (paren
@@ -6851,8 +6797,8 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-r_void
 DECL|function|DMAbuf_close_dma
+r_void
 id|DMAbuf_close_dma
 c_func
 (paren
@@ -6881,8 +6827,8 @@ id|dmap_out-&gt;dma
 )paren
 suffix:semicolon
 )brace
-r_void
 DECL|function|DMAbuf_init
+r_void
 id|DMAbuf_init
 c_func
 (paren
@@ -6896,7 +6842,7 @@ r_int
 id|dma2
 )paren
 (brace
-multiline_comment|/*&n;&t;   * NOTE! This routine could be called several times.&n;&t; */
+multiline_comment|/*&n;&t; * NOTE! This routine could be called several times.&n;&t; */
 r_if
 c_cond
 (paren
@@ -7060,8 +7006,8 @@ suffix:semicolon
 )brace
 )brace
 )brace
-r_int
 DECL|function|DMAbuf_select
+r_int
 id|DMAbuf_select
 c_func
 (paren
@@ -7305,8 +7251,6 @@ suffix:semicolon
 r_return
 l_int|1
 suffix:semicolon
-r_break
-suffix:semicolon
 r_case
 id|SEL_OUT
 suffix:colon
@@ -7402,11 +7346,9 @@ id|dmap-&gt;dma_mode
 op_eq
 id|DMODE_INPUT
 )paren
-(brace
 r_return
 l_int|0
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -7414,11 +7356,9 @@ id|dmap-&gt;dma_mode
 op_eq
 id|DMODE_NONE
 )paren
-(brace
 r_return
 l_int|1
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -7488,8 +7428,8 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-r_void
 DECL|function|DMAbuf_deinit
+r_void
 id|DMAbuf_deinit
 c_func
 (paren

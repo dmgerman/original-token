@@ -4360,7 +4360,7 @@ suffix:semicolon
 )brace
 )brace
 macro_line|#endif
-macro_line|#ifdef 0
+macro_line|#if 0
 r_if
 c_cond
 (paren

@@ -254,7 +254,7 @@ suffix:semicolon
 )brace
 multiline_comment|/* Allocation and freeing of basic task resources. */
 DECL|macro|alloc_task_struct
-mdefine_line|#define alloc_task_struct() &bslash;&n;&t;((struct task_struct *) __get_free_pages(GFP_KERNEL,1,0))
+mdefine_line|#define alloc_task_struct() &bslash;&n;&t;((struct task_struct *) __get_free_pages(GFP_KERNEL,1))
 DECL|macro|free_task_struct
 mdefine_line|#define free_task_struct(p)&t;free_pages((unsigned long)(p),1)
 DECL|macro|init_task

@@ -279,6 +279,10 @@ l_int|0
 suffix:semicolon
 )brace
 suffix:semicolon
+macro_line|#ifdef __KERNEL__
+DECL|macro|optlength
+mdefine_line|#define optlength(opt) (sizeof(struct ip_options) + opt-&gt;optlen)
+macro_line|#endif
 DECL|struct|iphdr
 r_struct
 id|iphdr

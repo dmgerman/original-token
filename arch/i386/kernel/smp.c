@@ -336,95 +336,6 @@ r_int
 id|ipi_count
 suffix:semicolon
 multiline_comment|/* Number of IPI&squot;s delivered&t;&t;&t;&t;*/
-macro_line|#ifdef __SMP_PROF__
-DECL|variable|smp_spins
-r_volatile
-r_int
-r_int
-id|smp_spins
-(braket
-id|NR_CPUS
-)braket
-op_assign
-initialization_block
-suffix:semicolon
-multiline_comment|/* Count interrupt spins &t;&t;&t;&t;*/
-DECL|variable|smp_spins_syscall
-r_volatile
-r_int
-r_int
-id|smp_spins_syscall
-(braket
-id|NR_CPUS
-)braket
-op_assign
-initialization_block
-suffix:semicolon
-multiline_comment|/* Count syscall spins                   &t;&t;*/
-DECL|variable|smp_spins_syscall_cur
-r_volatile
-r_int
-r_int
-id|smp_spins_syscall_cur
-(braket
-id|NR_CPUS
-)braket
-op_assign
-initialization_block
-suffix:semicolon
-multiline_comment|/* Count spins for the actual syscall                 */
-DECL|variable|smp_spins_sys_idle
-r_volatile
-r_int
-r_int
-id|smp_spins_sys_idle
-(braket
-id|NR_CPUS
-)braket
-op_assign
-initialization_block
-suffix:semicolon
-multiline_comment|/* Count spins for sys_idle &t;&t;&t;&t;*/
-DECL|variable|smp_idle_count
-r_volatile
-r_int
-r_int
-id|smp_idle_count
-(braket
-l_int|1
-op_plus
-id|NR_CPUS
-)braket
-op_assign
-initialization_block
-suffix:semicolon
-multiline_comment|/* Count idle ticks&t;&t;&t;&t;&t;*/
-multiline_comment|/* Count local APIC timer ticks */
-DECL|variable|smp_local_timer_ticks
-r_volatile
-r_int
-r_int
-id|smp_local_timer_ticks
-(braket
-l_int|1
-op_plus
-id|NR_CPUS
-)braket
-op_assign
-initialization_block
-suffix:semicolon
-macro_line|#endif
-macro_line|#if defined (__SMP_PROF__)
-DECL|variable|smp_idle_map
-r_volatile
-r_int
-r_int
-id|smp_idle_map
-op_assign
-l_int|0
-suffix:semicolon
-multiline_comment|/* Map for idle processors &t;&t;&t;&t;*/
-macro_line|#endif
 DECL|variable|smp_proc_in_lock
 r_volatile
 r_int
@@ -456,7 +367,32 @@ id|lk_lockmsg
 op_assign
 l_string|&quot;lock from interrupt context at %p&bslash;n&quot;
 suffix:semicolon
-multiline_comment|/*#define SMP_DEBUG*/
+DECL|variable|mp_bus_id_to_type
+r_int
+id|mp_bus_id_to_type
+(braket
+id|MAX_MP_BUSSES
+)braket
+op_assign
+(brace
+op_minus
+l_int|1
+comma
+)brace
+suffix:semicolon
+r_extern
+r_int
+id|mp_irq_entries
+suffix:semicolon
+r_extern
+r_struct
+id|mpc_config_intsrc
+id|mp_irqs
+(braket
+id|MAX_IRQ_SOURCES
+)braket
+suffix:semicolon
+multiline_comment|/* #define SMP_DEBUG */
 macro_line|#ifdef SMP_DEBUG
 DECL|macro|SMP_PRINTK
 mdefine_line|#define SMP_PRINTK(x)&t;printk x
@@ -509,8 +445,6 @@ l_int|0
 suffix:semicolon
 )brace
 DECL|function|ack_APIC_irq
-r_static
-r_inline
 r_void
 id|ack_APIC_irq
 (paren
@@ -1199,6 +1133,67 @@ id|str
 )paren
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|strncmp
+c_func
+(paren
+id|m-&gt;mpc_bustype
+comma
+l_string|&quot;ISA&quot;
+comma
+l_int|3
+)paren
+op_eq
+l_int|0
+)paren
+op_logical_or
+(paren
+id|strncmp
+c_func
+(paren
+id|m-&gt;mpc_bustype
+comma
+l_string|&quot;EISA&quot;
+comma
+l_int|4
+)paren
+op_eq
+l_int|0
+)paren
+)paren
+id|mp_bus_id_to_type
+(braket
+id|m-&gt;mpc_busid
+)braket
+op_assign
+id|MP_BUS_ISA
+suffix:semicolon
+r_else
+r_if
+c_cond
+(paren
+id|strncmp
+c_func
+(paren
+id|m-&gt;mpc_bustype
+comma
+l_string|&quot;PCI&quot;
+comma
+l_int|3
+)paren
+op_eq
+l_int|0
+)paren
+id|mp_bus_id_to_type
+(braket
+id|m-&gt;mpc_busid
+)braket
+op_assign
+id|MP_BUS_PCI
+suffix:semicolon
 id|mpt
 op_add_assign
 r_sizeof
@@ -1304,6 +1299,57 @@ id|mpc_config_intsrc
 op_star
 )paren
 id|mpt
+suffix:semicolon
+id|mp_irqs
+(braket
+id|mp_irq_entries
+)braket
+op_assign
+op_star
+id|m
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_increment
+id|mp_irq_entries
+op_eq
+id|MAX_IRQ_SOURCES
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;Max irq sources exceeded!!&bslash;n&quot;
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;Skipping remaining sources.&bslash;n&quot;
+)paren
+suffix:semicolon
+op_decrement
+id|mp_irq_entries
+suffix:semicolon
+)brace
+id|printk
+c_func
+(paren
+l_string|&quot; Itype:%d Iflag:%d srcbus:%d srcbusI:%d dstapic:%d dstI:%d.&bslash;n&quot;
+comma
+id|m-&gt;mpc_irqtype
+comma
+id|m-&gt;mpc_irqflag
+comma
+id|m-&gt;mpc_srcbus
+comma
+id|m-&gt;mpc_srcbusirq
+comma
+id|m-&gt;mpc_dstapic
+comma
+id|m-&gt;mpc_dstirq
+)paren
 suffix:semicolon
 id|mpt
 op_add_assign
@@ -2096,6 +2142,7 @@ id|l
 suffix:semicolon
 multiline_comment|/*&n;&t; * Set up our APIC timer.&n;&t; */
 id|setup_APIC_clock
+c_func
 (paren
 )paren
 suffix:semicolon
@@ -4486,29 +4533,6 @@ op_add_assign
 id|system
 suffix:semicolon
 )brace
-r_else
-(brace
-macro_line|#ifdef __SMP_PROF__
-r_if
-c_cond
-(paren
-id|test_bit
-c_func
-(paren
-id|cpu
-comma
-op_amp
-id|smp_idle_map
-)paren
-)paren
-id|smp_idle_count
-(braket
-id|cpu
-)braket
-op_increment
-suffix:semicolon
-macro_line|#endif
-)brace
 id|prof_counter
 (braket
 id|cpu
@@ -4528,14 +4552,6 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifdef __SMP_PROF__
-id|smp_local_timer_ticks
-(braket
-id|cpu
-)braket
-op_increment
-suffix:semicolon
-macro_line|#endif
 multiline_comment|/*&n;&t; * We take the &squot;long&squot; return path, and there every subsystem&n;&t; * grabs the apropriate locks (kernel lock/ irq lock).&n;&t; *&n;&t; * we might want to decouple profiling from the &squot;long path&squot;,&n;&t; * and do the profiling totally in assembly.&n;&t; *&n;&t; * Currently this isnt too much of an issue (performance wise),&n;&t; * we can take more than 100K local irqs per second on a 100 MHz P5.&n;&t; */
 )brace
 multiline_comment|/*&n; * Local APIC timer interrupt. This is the most natural way for doing&n; * local interrupts, but local timer interrupts can be emulated by&n; * broadcast interrupts too. [in case the hw doesnt support APIC timers]&n; *&n; * [ if a single-CPU system runs an SMP kernel then we call the local&n; *   interrupt as well. Thus we cannot inline the local irq ... ]&n; */
@@ -4586,6 +4602,12 @@ c_func
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * This looks silly, but we actually do need to wait&n;&t; * for the global interrupt lock.&n;&t; */
+id|printk
+c_func
+(paren
+l_string|&quot;huh, this is used, where???&bslash;n&quot;
+)paren
+suffix:semicolon
 id|irq_enter
 c_func
 (paren

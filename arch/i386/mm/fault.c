@@ -14,6 +14,7 @@ macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
+macro_line|#include &lt;asm/hardirq.h&gt;
 r_extern
 r_void
 id|die_if_kernel
@@ -316,6 +317,27 @@ l_string|&quot;=r&quot;
 (paren
 id|address
 )paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|local_irq_count
+(braket
+id|smp_processor_id
+c_func
+(paren
+)paren
+)braket
+)paren
+id|die_if_kernel
+c_func
+(paren
+l_string|&quot;page fault from irq handler&quot;
+comma
+id|regs
+comma
+id|error_code
 )paren
 suffix:semicolon
 id|lock_kernel

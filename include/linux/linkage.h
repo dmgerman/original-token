@@ -19,6 +19,12 @@ macro_line|#else
 DECL|macro|SYMBOL_NAME_LABEL
 mdefine_line|#define SYMBOL_NAME_LABEL(X) X/**/:
 macro_line|#endif
+macro_line|#ifdef __arm__
+DECL|macro|__ALIGN
+mdefine_line|#define __ALIGN .align 0
+DECL|macro|__ALIGN_STR
+mdefine_line|#define __ALIGN_STR &quot;.align 0&quot;
+macro_line|#else
 macro_line|#ifdef __mc68000__
 DECL|macro|__ALIGN
 mdefine_line|#define __ALIGN .align 4
@@ -37,6 +43,7 @@ DECL|macro|__ALIGN_STR
 mdefine_line|#define __ALIGN_STR &quot;.align 16,0x90&quot;
 macro_line|#endif /* __i486__/__i586__ */
 macro_line|#endif /* __mc68000__ */
+macro_line|#endif /* __arm__ */
 macro_line|#ifdef __ASSEMBLY__
 DECL|macro|ALIGN
 mdefine_line|#define ALIGN __ALIGN

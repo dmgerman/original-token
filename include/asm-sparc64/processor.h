@@ -234,7 +234,7 @@ mdefine_line|#define release_thread(tsk)&t;&t;do { } while(0)
 macro_line|#ifdef __KERNEL__
 multiline_comment|/* Allocation and freeing of task_struct and kernel stack. */
 DECL|macro|alloc_task_struct
-mdefine_line|#define alloc_task_struct()   ((struct task_struct *)__get_free_pages(GFP_KERNEL, 1, 0))
+mdefine_line|#define alloc_task_struct()   ((struct task_struct *)__get_free_pages(GFP_KERNEL, 1))
 DECL|macro|free_task_struct
 mdefine_line|#define free_task_struct(tsk) free_pages((unsigned long)(tsk),1)
 DECL|macro|init_task

@@ -110,8 +110,6 @@ c_func
 id|GFP_ATOMIC
 comma
 id|RBUF_RESERVED_ORDER
-comma
-l_int|0
 )paren
 )paren
 )paren
@@ -702,8 +700,6 @@ c_func
 id|GFP_USER
 comma
 id|order
-comma
-l_int|0
 )paren
 suffix:semicolon
 r_if

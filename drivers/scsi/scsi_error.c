@@ -3997,13 +3997,11 @@ op_assign
 l_int|1
 suffix:semicolon
 multiline_comment|/*&n;         * FIXME(eric) this is still a child process of the one that did the insmod.&n;         * This needs to be attached to task[0] instead.&n;         */
-id|siginitsetinv
+id|sigfillset
 c_func
 (paren
 op_amp
 id|current-&gt;blocked
-comma
-id|SHUTDOWN_SIGS
 )paren
 suffix:semicolon
 id|current-&gt;fs-&gt;umask

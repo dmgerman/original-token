@@ -637,8 +637,6 @@ c_func
 id|GFP_ATOMIC
 comma
 l_int|0
-comma
-l_int|0
 )paren
 suffix:semicolon
 r_if

@@ -1073,8 +1073,6 @@ c_func
 id|GFP_ATOMIC
 comma
 id|QOF_ORDER
-comma
-l_int|0
 )paren
 suffix:semicolon
 r_for
@@ -1396,8 +1394,6 @@ c_func
 id|GFP_ATOMIC
 comma
 id|SYSTEM_RINGBUF_ORDER
-comma
-l_int|0
 )paren
 suffix:semicolon
 r_for
@@ -1473,8 +1469,6 @@ c_func
 id|GFP_ATOMIC
 comma
 id|DUMMY_RINGBUF_ORDER
-comma
-l_int|0
 )paren
 suffix:semicolon
 r_for

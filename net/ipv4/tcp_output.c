@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Implementation of the Transmission Control Protocol(TCP).&n; *&n; * Version:&t;$Id: tcp_output.c,v 1.50 1997/10/15 19:13:02 freitag Exp $&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&t;&t;Corey Minyard &lt;wf-rch!minyard@relay.EU.net&gt;&n; *&t;&t;Florian La Roche, &lt;flla@stud.uni-sb.de&gt;&n; *&t;&t;Charles Hedrick, &lt;hedrick@klinzhai.rutgers.edu&gt;&n; *&t;&t;Linus Torvalds, &lt;torvalds@cs.helsinki.fi&gt;&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;Matthew Dillon, &lt;dillon@apollo.west.oic.com&gt;&n; *&t;&t;Arnt Gulbrandsen, &lt;agulbra@nvg.unit.no&gt;&n; *&t;&t;Jorge Cwik, &lt;jorge@laser.satlink.net&gt;&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Implementation of the Transmission Control Protocol(TCP).&n; *&n; * Version:&t;$Id: tcp_output.c,v 1.51 1998/01/15 22:40:39 freitag Exp $&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&t;&t;Corey Minyard &lt;wf-rch!minyard@relay.EU.net&gt;&n; *&t;&t;Florian La Roche, &lt;flla@stud.uni-sb.de&gt;&n; *&t;&t;Charles Hedrick, &lt;hedrick@klinzhai.rutgers.edu&gt;&n; *&t;&t;Linus Torvalds, &lt;torvalds@cs.helsinki.fi&gt;&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;Matthew Dillon, &lt;dillon@apollo.west.oic.com&gt;&n; *&t;&t;Arnt Gulbrandsen, &lt;agulbra@nvg.unit.no&gt;&n; *&t;&t;Jorge Cwik, &lt;jorge@laser.satlink.net&gt;&n; */
 multiline_comment|/*&n; * Changes:&t;Pedro Roque&t;:&t;Retransmit queue handled by TCP.&n; *&t;&t;&t;&t;:&t;Fragmentation on mtu decrease&n; *&t;&t;&t;&t;:&t;Segment collapse on retransmit&n; *&t;&t;&t;&t;:&t;AF independence&n; *&n; *&t;&t;Linus Torvalds&t;:&t;send_delayed_ack&n; *&t;&t;David S. Miller&t;:&t;Charge memory using the right skb&n; *&t;&t;&t;&t;&t;during syn/ack processing.&n; *&n; */
 macro_line|#include &lt;net/tcp.h&gt;
 r_extern
@@ -192,129 +192,9 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
-DECL|function|tcp_build_options
-r_static
-id|__inline__
-r_void
-id|tcp_build_options
-c_func
-(paren
-id|__u32
-op_star
-id|ptr
-comma
-r_struct
-id|tcp_opt
-op_star
-id|tp
-)paren
-(brace
-multiline_comment|/* FIXME: We will still need to do SACK here. */
-r_if
-c_cond
-(paren
-id|tp-&gt;tstamp_ok
-)paren
-(brace
-op_star
-id|ptr
-op_increment
-op_assign
-id|ntohl
-c_func
-(paren
-(paren
-id|TCPOPT_NOP
-op_lshift
-l_int|24
-)paren
-op_or
-(paren
-id|TCPOPT_NOP
-op_lshift
-l_int|16
-)paren
-op_or
-(paren
-id|TCPOPT_TIMESTAMP
-op_lshift
-l_int|8
-)paren
-op_or
-id|TCPOLEN_TIMESTAMP
-)paren
-suffix:semicolon
-multiline_comment|/* WARNING: If HZ is ever larger than 1000 on some system,&n;&t; &t; * then we will be violating RFC1323 here because our timestamps&n;&t; &t; * will be moving too fast.&n;&t;&t; * FIXME: code TCP so it uses at most ~ 1000 ticks a second?&n;&t;&t; * (I notice alpha is 1024 ticks now). -- erics&n;&t; &t; */
-op_star
-id|ptr
-op_increment
-op_assign
-id|htonl
-c_func
-(paren
-id|jiffies
-)paren
-suffix:semicolon
-op_star
-id|ptr
-op_assign
-id|htonl
-c_func
-(paren
-id|tp-&gt;ts_recent
-)paren
-suffix:semicolon
-)brace
-)brace
-DECL|function|tcp_update_options
-r_static
-id|__inline__
-r_void
-id|tcp_update_options
-c_func
-(paren
-id|__u32
-op_star
-id|ptr
-comma
-r_struct
-id|tcp_opt
-op_star
-id|tp
-)paren
-(brace
-multiline_comment|/* FIXME: We will still need to do SACK here. */
-r_if
-c_cond
-(paren
-id|tp-&gt;tstamp_ok
-)paren
-(brace
-op_star
-op_increment
-id|ptr
-op_assign
-id|htonl
-c_func
-(paren
-id|jiffies
-)paren
-suffix:semicolon
-op_star
-op_increment
-id|ptr
-op_assign
-id|htonl
-c_func
-(paren
-id|tp-&gt;ts_recent
-)paren
-suffix:semicolon
-)brace
-)brace
 multiline_comment|/*&n; *&t;This is the main buffer sending routine. We queue the buffer&n; *&t;having checked it is sane seeming.&n; */
 DECL|function|tcp_send_skb
-r_int
+r_void
 id|tcp_send_skb
 c_func
 (paren
@@ -399,7 +279,6 @@ id|FREE_WRITE
 )paren
 suffix:semicolon
 r_return
-l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* If we have queued a header size packet.. (these crash a few&n;&t; * tcp stacks if ack is not set)&n;&t; * FIXME: What is the equivalent below when we have options?&n;&t; */
@@ -442,7 +321,6 @@ id|FREE_WRITE
 )paren
 suffix:semicolon
 r_return
-l_int|0
 suffix:semicolon
 )brace
 )brace
@@ -498,6 +376,8 @@ suffix:semicolon
 multiline_comment|/* This is going straight out. */
 id|tp-&gt;last_ack_sent
 op_assign
+id|tp-&gt;rcv_nxt
+suffix:semicolon
 id|th-&gt;ack_seq
 op_assign
 id|htonl
@@ -627,7 +507,6 @@ id|tp-&gt;rto
 )paren
 suffix:semicolon
 r_return
-l_int|0
 suffix:semicolon
 )brace
 id|queue
@@ -671,7 +550,6 @@ id|tp-&gt;rto
 suffix:semicolon
 )brace
 r_return
-l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;Function to create two new tcp segments.&n; *&t;Shrinks the given segment to the specified size and appends a new&n; *&t;segment with the rest of the packet to the list.&n; *&t;This won&squot;t be called frenquently, I hope... &n; */
@@ -2441,7 +2319,9 @@ c_func
 (paren
 id|sk
 comma
-l_string|&quot;retransmit sending&bslash;n&quot;
+l_string|&quot;retransmit sending seq=%x&bslash;n&quot;
+comma
+id|skb-&gt;seq
 )paren
 suffix:semicolon
 multiline_comment|/* Update ack and window. */
@@ -2898,6 +2778,7 @@ op_eq
 l_int|NULL
 )paren
 (brace
+multiline_comment|/* FIXME: BUG! we need to check if the fin fits into the window&n;&t;&t; * here. If not we need to do window probing (sick, but true)&n;&t;&t; */
 r_struct
 id|sk_buff
 op_star
@@ -3573,9 +3454,11 @@ id|tp-&gt;snd_nxt
 suffix:semicolon
 id|tp-&gt;last_ack_sent
 op_assign
+id|tp-&gt;rcv_nxt
+suffix:semicolon
 id|th-&gt;ack_seq
 op_assign
-id|ntohl
+id|htonl
 c_func
 (paren
 id|tp-&gt;rcv_nxt
@@ -3596,6 +3479,7 @@ comma
 id|buff
 )paren
 suffix:semicolon
+macro_line|#if 0
 id|SOCK_DEBUG
 c_func
 (paren
@@ -3608,6 +3492,7 @@ comma
 id|tp-&gt;rcv_nxt
 )paren
 suffix:semicolon
+macro_line|#endif
 id|tp-&gt;af_specific
 op_member_access_from_pointer
 id|queue_xmit
@@ -4059,14 +3944,6 @@ op_amp
 id|sk-&gt;tp_pinfo.af_tcp
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|sk-&gt;zapped
-)paren
-r_return
-suffix:semicolon
-multiline_comment|/* After a valid reset we can send no more. */
 id|tcp_write_wakeup
 c_func
 (paren

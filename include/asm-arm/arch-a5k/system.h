@@ -1,0 +1,70 @@
+multiline_comment|/*&n; * linux/include/asm-arm/arch-a5k/system.h&n; *&n; * Copyright (c) 1996 Russell King&n; */
+macro_line|#ifndef __ASM_ARCH_SYSTEM_H
+DECL|macro|__ASM_ARCH_SYSTEM_H
+mdefine_line|#define __ASM_ARCH_SYSTEM_H
+DECL|function|arch_hard_reset
+r_extern
+id|__inline__
+r_void
+id|arch_hard_reset
+(paren
+r_void
+)paren
+(brace
+r_extern
+r_void
+id|ecard_reset
+(paren
+r_int
+id|card
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t; * Reset all expansion cards.&n;&t; */
+id|ecard_reset
+(paren
+op_minus
+l_int|1
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t; * copy branch instruction to reset location and call it&n;&t; */
+op_star
+(paren
+r_int
+r_int
+op_star
+)paren
+l_int|0
+op_assign
+op_star
+(paren
+r_int
+r_int
+op_star
+)paren
+l_int|0x03800000
+suffix:semicolon
+(paren
+(paren
+r_void
+(paren
+op_star
+)paren
+(paren
+r_void
+)paren
+)paren
+l_int|0
+)paren
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t; * If that didn&squot;t work, loop endlessly&n;&t; */
+r_while
+c_loop
+(paren
+l_int|1
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
+eof

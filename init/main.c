@@ -216,6 +216,20 @@ id|ints
 suffix:semicolon
 r_extern
 r_void
+id|ioapic_pirq_setup
+c_func
+(paren
+r_char
+op_star
+id|str
+comma
+r_int
+op_star
+id|ints
+)paren
+suffix:semicolon
+r_extern
+r_void
 id|no_scroll
 c_func
 (paren
@@ -2383,6 +2397,12 @@ comma
 id|smp_setup
 )brace
 comma
+(brace
+l_string|&quot;pirq=&quot;
+comma
+id|ioapic_pirq_setup
+)brace
+comma
 macro_line|#endif
 macro_line|#ifdef CONFIG_BLK_DEV_RAM
 (brace
@@ -4081,6 +4101,14 @@ suffix:semicolon
 )brace
 )brace
 macro_line|#else
+r_extern
+r_void
+id|setup_IO_APIC
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
 multiline_comment|/*&n; *&t;Multiprocessor idle thread is in arch/...&n; */
 r_extern
 r_int
@@ -4228,6 +4256,16 @@ c_func
 (paren
 )paren
 suffix:semicolon
+id|memory_start
+op_assign
+id|console_init
+c_func
+(paren
+id|memory_start
+comma
+id|memory_end
+)paren
+suffix:semicolon
 id|sched_init
 c_func
 (paren
@@ -4352,6 +4390,7 @@ id|memory_end
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#if HACK
 id|memory_start
 op_assign
 id|console_init
@@ -4362,6 +4401,7 @@ comma
 id|memory_end
 )paren
 suffix:semicolon
+macro_line|#endif
 macro_line|#if defined(CONFIG_PCI) &amp;&amp; !defined(CONFIG_PCI_CONSOLE)
 id|memory_start
 op_assign
@@ -4528,6 +4568,11 @@ l_string|&quot;POSIX conformance testing by UNIFIX&bslash;n&quot;
 suffix:semicolon
 macro_line|#ifdef __SMP__
 id|smp_init
+c_func
+(paren
+)paren
+suffix:semicolon
+id|setup_IO_APIC
 c_func
 (paren
 )paren

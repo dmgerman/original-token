@@ -222,6 +222,13 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef CONFIG_ADFS_FS
+id|init_adfs_fs
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef CONFIG_NLS
 id|init_nls
 c_func

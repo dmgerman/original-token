@@ -468,6 +468,16 @@ op_star
 )paren
 suffix:semicolon
 r_extern
+r_int
+id|unregister_console
+c_func
+(paren
+r_struct
+id|console
+op_star
+)paren
+suffix:semicolon
+r_extern
 r_struct
 id|console
 op_star

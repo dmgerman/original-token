@@ -124,6 +124,11 @@ id|nr
 )braket
 op_increment
 suffix:semicolon
+id|synchronize_irq
+c_func
+(paren
+)paren
+suffix:semicolon
 )brace
 DECL|function|enable_bh
 r_extern

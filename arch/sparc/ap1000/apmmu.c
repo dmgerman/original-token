@@ -3315,8 +3315,6 @@ c_func
 id|GFP_KERNEL
 comma
 l_int|1
-comma
-l_int|0
 )paren
 suffix:semicolon
 r_if

@@ -181,6 +181,7 @@ r_struct
 id|floppy_drive_params
 (brace
 DECL|member|cmos
+r_int
 r_char
 id|cmos
 suffix:semicolon

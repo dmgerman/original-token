@@ -5007,19 +5007,16 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
 id|page_cache
 )paren
-(brace
+r_continue
+suffix:semicolon
 id|status
 op_assign
 op_minus
 id|ENOMEM
 suffix:semicolon
 r_break
-suffix:semicolon
-)brace
-r_continue
 suffix:semicolon
 )brace
 id|page
@@ -5049,7 +5046,7 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t;&t; * WSH 06/05/97: restructured slightly to make sure we release&n;&t;&t; * the page on an error exit.  Removed explicit setting of&n;&t;&t; * PG_locked, as that&squot;s handled below the i_op-&gt;xxx interface.&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; * Note: setting of the PG_locked bit is handled&n;&t;&t; * below the i_op-&gt;xxx interface.&n;&t;&t; */
 id|didread
 op_assign
 l_int|0
@@ -5062,25 +5059,30 @@ c_func
 id|page
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; * If the page is not uptodate, and we&squot;re writing less&n;&t;&t; * than a full page of data, we may have to read it first.&n;&t;&t; * However, don&squot;t bother with reading the page when it&squot;s&n;&t;&t; * after the current end of file.&n;&t;&t; */
 r_if
 c_cond
 (paren
-op_logical_neg
 id|PageUptodate
 c_func
 (paren
 id|page
 )paren
 )paren
-(brace
+r_goto
+id|do_update_page
+suffix:semicolon
+multiline_comment|/*&n;&t;&t; * The page is not up-to-date ... if we&squot;re writing less&n;&t;&t; * than a full page of data, we may have to read it first.&n;&t;&t; * But if the page is past the current end of file, we must&n;&t;&t; * clear it before updating.&n;&t;&t; */
 r_if
 c_cond
 (paren
 id|bytes
 OL
 id|PAGE_SIZE
-op_logical_and
+)paren
+(brace
+r_if
+c_cond
+(paren
 id|pgpos
 OL
 id|inode-&gt;i_size
@@ -5091,14 +5093,16 @@ op_assign
 op_minus
 id|EIO
 suffix:semicolon
-multiline_comment|/* two tries ... error out */
 r_if
 c_cond
 (paren
 id|didread
-OL
+op_ge
 l_int|2
 )paren
+r_goto
+id|done_with_page
+suffix:semicolon
 id|status
 op_assign
 id|inode-&gt;i_op
@@ -5128,6 +5132,30 @@ r_goto
 id|page_wait
 suffix:semicolon
 )brace
+r_else
+(brace
+multiline_comment|/* Must clear for partial writes */
+id|memset
+c_func
+(paren
+(paren
+r_void
+op_star
+)paren
+id|page_address
+c_func
+(paren
+id|page
+)paren
+comma
+l_int|0
+comma
+id|PAGE_SIZE
+)paren
+suffix:semicolon
+)brace
+)brace
+multiline_comment|/*&n;&t;&t; * N.B. We should defer setting PG_uptodate at least until&n;&t;&t; * the data is copied. A failure in i_op-&gt;updatepage() could&n;&t;&t; * leave the page with garbage data.&n;&t;&t; */
 id|set_bit
 c_func
 (paren
@@ -5137,7 +5165,8 @@ op_amp
 id|page-&gt;flags
 )paren
 suffix:semicolon
-)brace
+id|do_update_page
+suffix:colon
 multiline_comment|/* Alright, the page is there.  Now update it. */
 id|status
 op_assign
@@ -5220,15 +5249,12 @@ c_func
 id|page_cache
 )paren
 suffix:semicolon
-r_if
+r_return
+id|written
+ques
 c_cond
-(paren
 id|written
-)paren
-r_return
-id|written
-suffix:semicolon
-r_return
+suffix:colon
 id|status
 suffix:semicolon
 )brace
@@ -5267,6 +5293,8 @@ suffix:semicolon
 r_int
 r_int
 id|page_cache
+op_assign
+l_int|0
 suffix:semicolon
 id|hash
 op_assign
@@ -5362,6 +5390,7 @@ l_int|2
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;get_cached_page: page count=%d&bslash;n&quot;
 comma
 id|atomic_read
@@ -5387,6 +5416,7 @@ id|page-&gt;flags
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;get_cached_page: page already locked!&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -5399,14 +5429,18 @@ op_amp
 id|page-&gt;flags
 )paren
 suffix:semicolon
-id|out
-suffix:colon
-r_return
+id|page_cache
+op_assign
 id|page_address
 c_func
 (paren
 id|page
 )paren
+suffix:semicolon
+id|out
+suffix:colon
+r_return
+id|page_cache
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Unlock and free a page.&n; */

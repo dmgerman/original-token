@@ -206,9 +206,10 @@ r_int
 id|ioaddr
 )paren
 suffix:semicolon
-DECL|function|charpas_read
+DECL|function|pas_read
 r_int
-id|charpas_read
+r_char
+id|pas_read
 c_func
 (paren
 r_int

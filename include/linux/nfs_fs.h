@@ -156,7 +156,9 @@ mdefine_line|#define NFS_WRITE_UNCOMMITTED&t;0x0008&t;/* written but uncommitted
 DECL|macro|NFS_WRITE_INVALIDATE
 mdefine_line|#define NFS_WRITE_INVALIDATE&t;0x0010&t;/* invalidate after write */
 DECL|macro|NFS_WRITE_INPROGRESS
-mdefine_line|#define NFS_WRITE_INPROGRESS&t;0x0020&t;/* RPC call in progress */
+mdefine_line|#define NFS_WRITE_INPROGRESS&t;0x0100&t;/* RPC call in progress */
+DECL|macro|NFS_WRITE_COMPLETE
+mdefine_line|#define NFS_WRITE_COMPLETE&t;0x0200&t;/* RPC call completed */
 DECL|macro|WB_WANTLOCK
 mdefine_line|#define WB_WANTLOCK(req)&t;((req)-&gt;wb_flags &amp; NFS_WRITE_WANTLOCK)
 DECL|macro|WB_HAVELOCK
@@ -169,6 +171,8 @@ DECL|macro|WB_INVALIDATE
 mdefine_line|#define WB_INVALIDATE(req)&t;((req)-&gt;wb_flags &amp; NFS_WRITE_INVALIDATE)
 DECL|macro|WB_INPROGRESS
 mdefine_line|#define WB_INPROGRESS(req)&t;((req)-&gt;wb_flags &amp; NFS_WRITE_INPROGRESS)
+DECL|macro|WB_COMPLETE
+mdefine_line|#define WB_COMPLETE(req)&t;((req)-&gt;wb_flags &amp; NFS_WRITE_COMPLETE)
 multiline_comment|/*&n; * linux/fs/nfs/proc.c&n; */
 r_extern
 r_int

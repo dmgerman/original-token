@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * sysctl_net_ipv4.c: sysctl interface to net IPV4 subsystem.&n; *&n; * $Id: sysctl_net_ipv4.c,v 1.23 1997/12/13 21:52:57 kuznet Exp $&n; *&n; * Begun April 1, 1996, Mike Shaver.&n; * Added /proc/sys/net/ipv4 directory entry (empty =) ). [MS]&n; */
+multiline_comment|/*&n; * sysctl_net_ipv4.c: sysctl interface to net IPV4 subsystem.&n; *&n; * $Id: sysctl_net_ipv4.c,v 1.25 1998/01/15 22:40:57 freitag Exp $&n; *&n; * Begun April 1, 1996, Mike Shaver.&n; * Added /proc/sys/net/ipv4 directory entry (empty =) ). [MS]&n; */
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/sysctl.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
@@ -102,10 +102,6 @@ suffix:semicolon
 r_extern
 r_int
 id|sysctl_tcp_retries2
-suffix:semicolon
-r_extern
-r_int
-id|sysctl_tcp_max_delay_acks
 suffix:semicolon
 r_extern
 r_int
@@ -1029,27 +1025,6 @@ l_string|&quot;tcp_retries2&quot;
 comma
 op_amp
 id|sysctl_tcp_retries2
-comma
-r_sizeof
-(paren
-r_int
-)paren
-comma
-l_int|0644
-comma
-l_int|NULL
-comma
-op_amp
-id|proc_dointvec
-)brace
-comma
-(brace
-id|NET_IPV4_TCP_MAX_DELAY_ACKS
-comma
-l_string|&quot;tcp_max_delay_acks&quot;
-comma
-op_amp
-id|sysctl_tcp_max_delay_acks
 comma
 r_sizeof
 (paren

@@ -5193,8 +5193,6 @@ comma
 id|alloced
 op_plus
 l_int|1
-comma
-l_int|0
 )paren
 suffix:semicolon
 r_if
@@ -5945,8 +5943,6 @@ id|__get_free_pages
 c_func
 (paren
 id|GFP_KERNEL
-comma
-l_int|0
 comma
 l_int|0
 )paren

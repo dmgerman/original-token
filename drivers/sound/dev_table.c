@@ -29,8 +29,8 @@ c_func
 r_void
 )paren
 suffix:semicolon
-r_int
 DECL|function|snd_find_driver
+r_int
 id|snd_find_driver
 c_func
 (paren
@@ -79,9 +79,9 @@ op_minus
 l_int|1
 suffix:semicolon
 )brace
+DECL|function|start_services
 r_static
 r_void
-DECL|function|start_services
 id|start_services
 c_func
 (paren
@@ -177,6 +177,7 @@ id|trace_init
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;Sound initialization started&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -246,6 +247,7 @@ suffix:semicolon
 id|i
 op_increment
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -297,7 +299,7 @@ id|enabled
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t; * Mark as not detected&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;&t;&t;&t; * Mark as not detected&n;&t;&t;&t;&t;&t;&t;&t;&t;&t; */
 r_continue
 suffix:semicolon
 )brace
@@ -335,7 +337,6 @@ dot
 id|config
 )paren
 )paren
-(brace
 id|sound_drivers
 (braket
 id|drv
@@ -353,7 +354,6 @@ dot
 id|config
 )paren
 suffix:semicolon
-)brace
 r_else
 id|snd_installed_cards
 (braket
@@ -365,6 +365,7 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;&t;&t;&t; * Mark as not detected&n;&t;&t;&t;&t;&t;&t;&t;&t;&t; */
+)brace
 )brace
 macro_line|#ifdef CONFIG_LOWLEVEL_SOUND
 (brace
@@ -391,12 +392,13 @@ id|trace_init
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;Sound initialization complete&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
-r_void
 DECL|function|sndtable_init
+r_void
 id|sndtable_init
 c_func
 (paren
@@ -409,8 +411,8 @@ c_func
 )paren
 suffix:semicolon
 )brace
-r_void
 DECL|function|sound_unload_drivers
+r_void
 id|sound_unload_drivers
 c_func
 (paren
@@ -443,6 +445,7 @@ id|trace_init
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;Sound unload started&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -467,6 +470,7 @@ suffix:semicolon
 id|i
 op_increment
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -540,6 +544,7 @@ suffix:semicolon
 )brace
 )brace
 )brace
+)brace
 r_for
 c_loop
 (paren
@@ -568,12 +573,13 @@ id|trace_init
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;Sound unload complete&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
-r_void
 DECL|function|sound_unload_driver
+r_void
 id|sound_unload_driver
 c_func
 (paren
@@ -626,6 +632,7 @@ suffix:semicolon
 id|i
 op_increment
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -720,6 +727,7 @@ suffix:semicolon
 )brace
 )brace
 )brace
+)brace
 id|DEB
 c_func
 (paren
@@ -731,8 +739,8 @@ l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
-r_int
 DECL|function|sndtable_probe
+r_int
 id|sndtable_probe
 c_func
 (paren
@@ -757,6 +765,7 @@ c_func
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;sndtable_probe(%d)&bslash;n&quot;
 comma
 id|unit
@@ -955,6 +964,7 @@ c_func
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;Failed to find driver&bslash;n&quot;
 )paren
 )paren
@@ -969,6 +979,7 @@ c_func
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;Driver name &squot;%s&squot;&bslash;n&quot;
 comma
 id|sound_drivers
@@ -1017,6 +1028,7 @@ c_func
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;Hardware probed OK&bslash;n&quot;
 )paren
 )paren
@@ -1053,8 +1065,8 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-r_int
 DECL|function|sndtable_init_card
+r_int
 id|sndtable_init_card
 c_func
 (paren
@@ -1123,6 +1135,7 @@ suffix:semicolon
 id|i
 op_increment
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -1259,6 +1272,7 @@ c_func
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;Located card - calling attach routine&bslash;n&quot;
 )paren
 )paren
@@ -1294,6 +1308,7 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
+)brace
 id|DEB
 c_func
 (paren
@@ -1312,8 +1327,8 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-r_int
 DECL|function|sndtable_get_cardcount
+r_int
 id|sndtable_get_cardcount
 c_func
 (paren
@@ -1330,8 +1345,8 @@ op_plus
 id|num_midis
 suffix:semicolon
 )brace
-r_int
 DECL|function|sndtable_identify_card
+r_int
 id|sndtable_identify_card
 c_func
 (paren
@@ -1371,6 +1386,7 @@ suffix:semicolon
 id|i
 op_increment
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -1449,12 +1465,13 @@ dot
 id|card_type
 suffix:semicolon
 )brace
+)brace
 r_return
 l_int|0
 suffix:semicolon
 )brace
-r_void
 DECL|function|sound_setup
+r_void
 id|sound_setup
 c_func
 (paren
@@ -1474,7 +1491,7 @@ id|n
 op_assign
 id|num_sound_cards
 suffix:semicolon
-multiline_comment|/*&n;&t;   * First disable all drivers&n;&t; */
+multiline_comment|/*&n;&t; *&t;First disable all drivers&n;&t; */
 r_for
 c_loop
 (paren
@@ -1524,7 +1541,7 @@ l_int|0
 )paren
 r_return
 suffix:semicolon
-multiline_comment|/*&n;&t;   * Then enable them one by time&n;&t; */
+multiline_comment|/*&n;&t; *&t;Then enable them one by time&n;&t; */
 r_for
 c_loop
 (paren
@@ -1591,7 +1608,7 @@ OG
 l_int|127
 )paren
 (brace
-multiline_comment|/*&n;&t;&t;&t;     * Add any future extensions here&n;&t;&t;&t;     */
+multiline_comment|/*&n;&t;&t;&t; * Add any future extensions here&n;&t;&t;&t; */
 r_return
 suffix:semicolon
 )brace
@@ -1657,6 +1674,7 @@ suffix:semicolon
 id|j
 op_increment
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -1682,6 +1700,7 @@ id|ptr
 op_assign
 id|j
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -1693,6 +1712,7 @@ l_int|1
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;Sound: Invalid setup parameter 0x%08x&bslash;n&quot;
 comma
 id|val
@@ -1793,10 +1813,10 @@ suffix:semicolon
 )brace
 )brace
 )brace
+DECL|function|sound_getconf
 r_struct
 id|address_info
 op_star
-DECL|function|sound_getconf
 id|sound_getconf
 c_func
 (paren
@@ -1845,6 +1865,7 @@ suffix:semicolon
 id|j
 op_increment
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -1861,6 +1882,7 @@ id|ptr
 op_assign
 id|j
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -1887,8 +1909,8 @@ dot
 id|config
 suffix:semicolon
 )brace
-r_int
 DECL|function|sound_install_audiodrv
+r_int
 id|sound_install_audiodrv
 c_func
 (paren
@@ -2048,7 +2070,6 @@ l_int|1024
 id|sound_nblocks
 op_increment
 suffix:semicolon
-suffix:semicolon
 id|op
 op_assign
 (paren
@@ -2093,7 +2114,6 @@ l_int|1024
 )paren
 id|sound_nblocks
 op_increment
-suffix:semicolon
 suffix:semicolon
 r_if
 c_cond
@@ -2256,7 +2276,7 @@ id|op-&gt;devc
 op_assign
 id|devc
 suffix:semicolon
-multiline_comment|/*&n; *    Hardcoded defaults&n; */
+multiline_comment|/*&n;&t; *    Hardcoded defaults&n;&t; */
 id|audio_devs
 (braket
 id|num
@@ -2289,8 +2309,8 @@ id|EINVAL
 suffix:semicolon
 macro_line|#endif
 )brace
-r_int
 DECL|function|sound_install_mixer
+r_int
 id|sound_install_mixer
 c_func
 (paren
@@ -2348,9 +2368,7 @@ l_string|&quot;Sound: Too many mixer drivers&bslash;n&quot;
 suffix:semicolon
 r_return
 op_minus
-(paren
 id|EBUSY
-)paren
 suffix:semicolon
 )brace
 r_if
@@ -2380,11 +2398,10 @@ id|name
 suffix:semicolon
 r_return
 op_minus
-(paren
 id|EINVAL
-)paren
 suffix:semicolon
 )brace
+multiline_comment|/* FIXME: This leaks a mixer_operations struct every time its called&n;&t;   until you unload sound! */
 id|op
 op_assign
 (paren
@@ -2430,7 +2447,6 @@ l_int|1024
 id|sound_nblocks
 op_increment
 suffix:semicolon
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2450,9 +2466,7 @@ id|name
 suffix:semicolon
 r_return
 op_minus
-(paren
 id|ENOMEM
-)paren
 suffix:semicolon
 )brace
 id|memset
@@ -2552,8 +2566,8 @@ r_return
 id|n
 suffix:semicolon
 )brace
-r_void
 DECL|function|sound_unload_audiodev
+r_void
 id|sound_unload_audiodev
 c_func
 (paren
@@ -2577,8 +2591,8 @@ op_assign
 l_int|NULL
 suffix:semicolon
 )brace
-r_int
 DECL|function|sound_alloc_audiodev
+r_int
 id|sound_alloc_audiodev
 c_func
 (paren
@@ -2637,8 +2651,8 @@ op_minus
 l_int|1
 suffix:semicolon
 )brace
-r_int
 DECL|function|sound_alloc_mididev
+r_int
 id|sound_alloc_mididev
 c_func
 (paren
@@ -2694,8 +2708,8 @@ op_minus
 l_int|1
 suffix:semicolon
 )brace
-r_int
 DECL|function|sound_alloc_synthdev
+r_int
 id|sound_alloc_synthdev
 c_func
 (paren
@@ -2751,8 +2765,8 @@ op_minus
 l_int|1
 suffix:semicolon
 )brace
-r_int
 DECL|function|sound_alloc_mixerdev
+r_int
 id|sound_alloc_mixerdev
 c_func
 (paren
@@ -2808,8 +2822,8 @@ op_minus
 l_int|1
 suffix:semicolon
 )brace
-r_int
 DECL|function|sound_alloc_timerdev
+r_int
 id|sound_alloc_timerdev
 c_func
 (paren
@@ -2865,8 +2879,8 @@ op_minus
 l_int|1
 suffix:semicolon
 )brace
-r_void
 DECL|function|sound_unload_mixerdev
+r_void
 id|sound_unload_mixerdev
 c_func
 (paren
@@ -2890,8 +2904,8 @@ op_assign
 l_int|NULL
 suffix:semicolon
 )brace
-r_void
 DECL|function|sound_unload_mididev
+r_void
 id|sound_unload_mididev
 c_func
 (paren
@@ -2917,8 +2931,8 @@ l_int|NULL
 suffix:semicolon
 macro_line|#endif
 )brace
-r_void
 DECL|function|sound_unload_synthdev
+r_void
 id|sound_unload_synthdev
 c_func
 (paren
@@ -2942,8 +2956,8 @@ op_assign
 l_int|NULL
 suffix:semicolon
 )brace
-r_void
 DECL|function|sound_unload_timerdev
+r_void
 id|sound_unload_timerdev
 c_func
 (paren

@@ -14770,7 +14770,7 @@ c_func
 (paren
 id|hw_config-&gt;slots
 (braket
-l_int|4
+l_int|5
 )braket
 )paren
 suffix:semicolon

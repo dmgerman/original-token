@@ -70,6 +70,19 @@ c_func
 l_string|&quot;childq&quot;
 )paren
 suffix:semicolon
+multiline_comment|/*&n; * RPC tasks sit here while waiting for conditions to improve.&n; */
+DECL|variable|delay_queue
+r_static
+r_struct
+id|rpc_wait_queue
+id|delay_queue
+op_assign
+id|RPC_INIT_WAITQ
+c_func
+(paren
+l_string|&quot;delayq&quot;
+)paren
+suffix:semicolon
 multiline_comment|/*&n; * All RPC tasks are linked into this list&n; */
 DECL|variable|all_tasks
 r_static
@@ -1037,11 +1050,6 @@ r_int
 id|delay
 )paren
 (brace
-r_static
-r_struct
-id|rpc_wait_queue
-id|delay_queue
-suffix:semicolon
 id|task-&gt;tk_timeout
 op_assign
 id|delay
@@ -1446,21 +1454,35 @@ r_if
 c_cond
 (paren
 id|incr
-op_logical_and
-(paren
-id|executing
-op_logical_or
-id|rpc_inhibit
 )paren
+(brace
+r_if
+c_cond
+(paren
+id|rpc_inhibit
 )paren
 (brace
 id|printk
 c_func
 (paren
-l_string|&quot;RPC: rpc_execute called recursively!&bslash;n&quot;
+l_string|&quot;RPC: execution inhibited!&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|executing
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;RPC: %d tasks executed&bslash;n&quot;
+comma
+id|executing
+)paren
 suffix:semicolon
 )brace
 id|executing
@@ -2421,6 +2443,7 @@ c_func
 id|oldflags
 )paren
 suffix:semicolon
+multiline_comment|/* N.B. Is it possible for the child to have already finished? */
 id|rpc_sleep_on
 c_func
 (paren
@@ -2464,6 +2487,7 @@ comma
 id|clnt
 )paren
 suffix:semicolon
+multiline_comment|/* N.B. Why bother to inhibit? Nothing blocks here ... */
 id|rpc_inhibit
 op_increment
 suffix:semicolon
@@ -3231,7 +3255,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;-pid- proc flgs status -client- --rqstp- -timeout &quot;
+l_string|&quot;-pid- proc flgs status -client- -prog- --rqstp- -timeout &quot;
 l_string|&quot;-rpcwait -action- --exit--&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -3253,7 +3277,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;%05d %04d %04x %06d %8p %8p %08ld %8p %8p %8p&bslash;n&quot;
+l_string|&quot;%05d %04d %04x %06d %8p %6d %8p %08ld %8s %8p %8p&bslash;n&quot;
 comma
 id|t-&gt;tk_pid
 comma
@@ -3265,11 +3289,22 @@ id|t-&gt;tk_status
 comma
 id|t-&gt;tk_client
 comma
+id|t-&gt;tk_client-&gt;cl_prog
+comma
 id|t-&gt;tk_rqstp
 comma
 id|t-&gt;tk_timeout
 comma
 id|t-&gt;tk_rpcwait
+ques
+c_cond
+id|rpc_qname
+c_func
+(paren
+id|t-&gt;tk_rpcwait
+)paren
+suffix:colon
+l_string|&quot; &lt;NULL&gt; &quot;
 comma
 id|t-&gt;tk_action
 comma

@@ -9,9 +9,9 @@ DECL|macro|KEY_PORT
 mdefine_line|#define KEY_PORT&t;0x279&t;/* Same as LPT1 status port */
 DECL|macro|CSN_NUM
 mdefine_line|#define CSN_NUM&t;&t;0x99&t;/* Just a random number */
+DECL|function|CS_OUT
 r_static
 r_void
-DECL|function|CS_OUT
 id|CS_OUT
 c_func
 (paren
@@ -23,9 +23,7 @@ id|a
 id|outb
 c_func
 (paren
-(paren
 id|a
-)paren
 comma
 id|KEY_PORT
 )paren
@@ -54,8 +52,8 @@ id|mpu_detected
 op_assign
 l_int|0
 suffix:semicolon
-r_int
 DECL|function|probe_cs4232_mpu
+r_int
 id|probe_cs4232_mpu
 c_func
 (paren
@@ -65,7 +63,7 @@ op_star
 id|hw_config
 )paren
 (brace
-multiline_comment|/*&n; * Just write down the config values.&n; */
+multiline_comment|/*&n;&t; *&t;Just write down the config values.&n;&t; */
 id|mpu_base
 op_assign
 id|hw_config-&gt;io_base
@@ -78,8 +76,8 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
-r_void
 DECL|function|attach_cs4232_mpu
+r_void
 id|attach_cs4232_mpu
 c_func
 (paren
@@ -89,6 +87,7 @@ op_star
 id|hw_config
 )paren
 (brace
+multiline_comment|/* Nothing needs doing */
 )brace
 DECL|variable|crystal_key
 r_static
@@ -165,8 +164,8 @@ comma
 l_int|0x1a
 )brace
 suffix:semicolon
-r_int
 DECL|function|probe_cs4232
+r_int
 id|probe_cs4232
 c_func
 (paren
@@ -199,6 +198,10 @@ id|dma2
 op_assign
 id|hw_config-&gt;dma2
 suffix:semicolon
+r_int
+r_int
+id|tlimit
+suffix:semicolon
 r_static
 r_struct
 id|wait_queue
@@ -217,7 +220,7 @@ op_assign
 l_int|0
 )brace
 suffix:semicolon
-multiline_comment|/*&n; * Verify that the I/O port range is free.&n; */
+multiline_comment|/*&n;&t; * Verify that the I/O port range is free.&n;&t; */
 r_if
 c_cond
 (paren
@@ -233,6 +236,7 @@ l_int|4
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;cs4232.c: I/O port 0x%03x not free&bslash;n&quot;
 comma
 id|base
@@ -259,8 +263,8 @@ r_return
 l_int|1
 suffix:semicolon
 multiline_comment|/* The card is already active */
-multiline_comment|/*&n; * This version of the driver doesn&squot;t use the PnP method when configuring&n; * the card but a simplified method defined by Crystal. This means that&n; * just one CS4232 compatible device can exist on the system. Also this&n; * method conflicts with possible PnP support in the OS. For this reason &n; * driver is just a temporary kludge.&n; */
-multiline_comment|/*&n; * Repeat initialization few times since it doesn&squot;t always succeed in&n; * first time.&n; */
+multiline_comment|/*&n;&t; * This version of the driver doesn&squot;t use the PnP method when configuring&n;&t; * the card but a simplified method defined by Crystal. This means that&n;&t; * just one CS4232 compatible device can exist on the system. Also this&n;&t; * method conflicts with possible PnP support in the OS. For this reason &n;&t; * driver is just a temporary kludge.&n;&t; */
+multiline_comment|/*&n;&t; * Repeat initialization few times since it doesn&squot;t always succeed in&n;&t; * first time.&n;&t; */
 r_for
 c_loop
 (paren
@@ -280,7 +284,7 @@ id|cs_sleep_flag.opts
 op_assign
 id|WK_NONE
 suffix:semicolon
-multiline_comment|/*&n; * Wake up the card by sending a 32 byte Crystal key to the key port.&n; */
+multiline_comment|/*&n;&t;&t; *&t;Wake up the card by sending a 32 byte Crystal key to the key port.&n;&t;&t; */
 r_for
 c_loop
 (paren
@@ -304,18 +308,6 @@ id|i
 )braket
 )paren
 suffix:semicolon
-(brace
-r_int
-r_int
-id|tlimit
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|HZ
-op_div
-l_int|10
-)paren
 id|current-&gt;timeout
 op_assign
 id|tlimit
@@ -327,16 +319,6 @@ id|HZ
 op_div
 l_int|10
 )paren
-suffix:semicolon
-r_else
-id|tlimit
-op_assign
-(paren
-r_int
-r_int
-)paren
-op_minus
-l_int|1
 suffix:semicolon
 id|cs_sleep_flag.opts
 op_assign
@@ -377,10 +359,7 @@ op_and_assign
 op_complement
 id|WK_SLEEP
 suffix:semicolon
-)brace
-suffix:semicolon
-multiline_comment|/* Delay */
-multiline_comment|/*&n; * Now set the CSN (Card Select Number).&n; */
+multiline_comment|/*&n;&t;&t; *&t;Now set the CSN (Card Select Number).&n;&t;&t; */
 id|CS_OUT2
 c_func
 (paren
@@ -389,7 +368,7 @@ comma
 id|CSN_NUM
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * Then set some config bytes. First logical device 0 &n; */
+multiline_comment|/*&n;&t;&t; *&t;Then set some config bytes. First logical device 0 &n;&t;&t; */
 id|CS_OUT2
 c_func
 (paren
@@ -516,18 +495,6 @@ l_int|0x01
 )paren
 suffix:semicolon
 multiline_comment|/* Activate logical dev 0 */
-(brace
-r_int
-r_int
-id|tlimit
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|HZ
-op_div
-l_int|10
-)paren
 id|current-&gt;timeout
 op_assign
 id|tlimit
@@ -539,16 +506,6 @@ id|HZ
 op_div
 l_int|10
 )paren
-suffix:semicolon
-r_else
-id|tlimit
-op_assign
-(paren
-r_int
-r_int
-)paren
-op_minus
-l_int|1
 suffix:semicolon
 id|cs_sleep_flag.opts
 op_assign
@@ -589,10 +546,7 @@ op_and_assign
 op_complement
 id|WK_SLEEP
 suffix:semicolon
-)brace
-suffix:semicolon
-multiline_comment|/* Delay */
-multiline_comment|/*&n; * Initialize logical device 3 (MPU)&n; */
+multiline_comment|/*&n;&t;&t; * Initialize logical device 3 (MPU)&n;&t;&t; */
 macro_line|#if defined(CONFIG_UART401) &amp;&amp; defined(CONFIG_MIDI)
 r_if
 c_cond
@@ -654,25 +608,13 @@ suffix:semicolon
 multiline_comment|/* Activate logical dev 3 */
 )brace
 macro_line|#endif
-multiline_comment|/*&n; * Finally activate the chip&n; */
+multiline_comment|/*&n;&t;&t; * Finally activate the chip&n;&t;&t; */
 id|CS_OUT
 c_func
 (paren
 l_int|0x79
 )paren
 suffix:semicolon
-(brace
-r_int
-r_int
-id|tlimit
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|HZ
-op_div
-l_int|5
-)paren
 id|current-&gt;timeout
 op_assign
 id|tlimit
@@ -684,16 +626,6 @@ id|HZ
 op_div
 l_int|5
 )paren
-suffix:semicolon
-r_else
-id|tlimit
-op_assign
-(paren
-r_int
-r_int
-)paren
-op_minus
-l_int|1
 suffix:semicolon
 id|cs_sleep_flag.opts
 op_assign
@@ -734,10 +666,7 @@ op_and_assign
 op_complement
 id|WK_SLEEP
 suffix:semicolon
-)brace
-suffix:semicolon
-multiline_comment|/* Delay */
-multiline_comment|/*&n; * Then try to detect the codec part of the chip&n; */
+multiline_comment|/*&n;&t;&t; * Then try to detect the codec part of the chip&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -754,16 +683,6 @@ id|hw_config-&gt;osp
 r_return
 l_int|1
 suffix:semicolon
-(brace
-r_int
-r_int
-id|tlimit
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|HZ
-)paren
 id|current-&gt;timeout
 op_assign
 id|tlimit
@@ -773,16 +692,6 @@ op_plus
 (paren
 id|HZ
 )paren
-suffix:semicolon
-r_else
-id|tlimit
-op_assign
-(paren
-r_int
-r_int
-)paren
-op_minus
-l_int|1
 suffix:semicolon
 id|cs_sleep_flag.opts
 op_assign
@@ -824,15 +733,12 @@ op_complement
 id|WK_SLEEP
 suffix:semicolon
 )brace
-suffix:semicolon
-multiline_comment|/* Longer delay */
-)brace
 r_return
 l_int|0
 suffix:semicolon
 )brace
-r_void
 DECL|function|attach_cs4232
+r_void
 id|attach_cs4232
 c_func
 (paren
@@ -1043,8 +949,8 @@ suffix:semicolon
 )brace
 macro_line|#endif
 )brace
-r_void
 DECL|function|unload_cs4232
+r_void
 id|unload_cs4232
 c_func
 (paren
@@ -1192,8 +1098,8 @@ suffix:semicolon
 )brace
 macro_line|#endif
 )brace
-r_void
 DECL|function|unload_cs4232_mpu
+r_void
 id|unload_cs4232_mpu
 c_func
 (paren
@@ -1234,12 +1140,44 @@ op_assign
 op_minus
 l_int|1
 suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|io
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|irq
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|dma
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM
+c_func
+(paren
+id|dma2
+comma
+l_string|&quot;i&quot;
+)paren
+suffix:semicolon
 DECL|variable|cfg
 r_struct
 id|address_info
 id|cfg
 suffix:semicolon
-multiline_comment|/*&n; *    Install a CS4232 based card. Need to have ad1848 and mpu401&n; *      loaded ready.&n; */
+multiline_comment|/*&n; *&t;Install a CS4232 based card. Need to have ad1848 and mpu401&n; *&t;loaded ready.&n; */
 r_int
 DECL|function|init_module
 id|init_module
@@ -1344,8 +1282,8 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-r_void
 DECL|function|cleanup_module
+r_void
 id|cleanup_module
 c_func
 (paren

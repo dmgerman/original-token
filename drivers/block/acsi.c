@@ -7102,10 +7102,10 @@ id|__get_free_pages
 c_func
 (paren
 id|GFP_KERNEL
+op_or
+id|GFP_DMA
 comma
 id|ACSI_BUFFER_ORDER
-comma
-l_int|1
 )paren
 )paren
 )paren

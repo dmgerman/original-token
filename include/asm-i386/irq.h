@@ -1,9 +1,14 @@
 macro_line|#ifndef _ASM_IRQ_H
 DECL|macro|_ASM_IRQ_H
 mdefine_line|#define _ASM_IRQ_H
-multiline_comment|/*&n; *&t;linux/include/asm/irq.h&n; *&n; *&t;(C) 1992, 1993 Linus Torvalds&n; *&n; *&t;IRQ/IPI changes taken from work by Thomas Radke &lt;tomsoft@informatik.tu-chemnitz.de&gt;&n; */
+multiline_comment|/*&n; *&t;linux/include/asm/irq.h&n; *&n; *&t;(C) 1992, 1993 Linus Torvalds, (C) 1997 Ingo Molnar&n; *&n; *&t;IRQ/IPI changes taken from work by Thomas Radke&n; *&t;&lt;tomsoft@informatik.tu-chemnitz.de&gt;&n; */
+macro_line|#ifndef __SMP__
 DECL|macro|NR_IRQS
 mdefine_line|#define NR_IRQS 16
+macro_line|#else
+DECL|macro|NR_IRQS
+mdefine_line|#define NR_IRQS 24
+macro_line|#endif
 DECL|macro|TIMER_IRQ
 mdefine_line|#define TIMER_IRQ 0
 r_extern

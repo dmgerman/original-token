@@ -142,8 +142,6 @@ c_func
 id|priority
 comma
 id|bp-&gt;pageorder
-comma
-l_int|0
 )paren
 suffix:semicolon
 r_if

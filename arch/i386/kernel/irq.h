@@ -2,6 +2,109 @@ macro_line|#ifndef __irq_h
 DECL|macro|__irq_h
 mdefine_line|#define __irq_h
 multiline_comment|/*&n; * Various low-level irq details needed by irq.c and smp.c&n; *&n; * Interrupt entry/exit code at both C and assembly level&n; */
+DECL|macro|IO_APIC_GATE_OFFSET
+mdefine_line|#define IO_APIC_GATE_OFFSET 0x51
+r_void
+id|mask_irq
+c_func
+(paren
+r_int
+r_int
+id|irq_nr
+)paren
+suffix:semicolon
+r_void
+id|unmask_irq
+c_func
+(paren
+r_int
+r_int
+id|irq_nr
+)paren
+suffix:semicolon
+r_void
+id|enable_IO_APIC_irq
+(paren
+r_int
+id|irq
+)paren
+suffix:semicolon
+r_void
+id|disable_IO_APIC_irq
+(paren
+r_int
+id|irq
+)paren
+suffix:semicolon
+r_void
+id|set_8259A_irq_mask
+c_func
+(paren
+r_int
+id|irq_nr
+)paren
+suffix:semicolon
+r_void
+id|setup_IO_APIC_irq
+(paren
+r_int
+id|irq
+)paren
+suffix:semicolon
+r_void
+id|ack_APIC_irq
+(paren
+r_void
+)paren
+suffix:semicolon
+r_void
+id|setup_IO_APIC
+(paren
+r_void
+)paren
+suffix:semicolon
+r_void
+id|init_IO_APIC_traps
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_const
+r_int
+r_int
+id|io_apic_irqs
+suffix:semicolon
+DECL|macro|IO_APIC_IRQ
+mdefine_line|#define IO_APIC_IRQ(x) ((1&lt;&lt;x) &amp; io_apic_irqs)
+DECL|macro|MAX_IRQ_SOURCES
+mdefine_line|#define MAX_IRQ_SOURCES 128
+DECL|macro|MAX_MP_BUSSES
+mdefine_line|#define MAX_MP_BUSSES 32
+DECL|enum|mp_bustype
+r_enum
+id|mp_bustype
+(brace
+DECL|enumerator|MP_BUS_ISA
+id|MP_BUS_ISA
+comma
+DECL|enumerator|MP_BUS_PCI
+id|MP_BUS_PCI
+)brace
+suffix:semicolon
+r_extern
+r_int
+id|mp_bus_id_to_type
+(braket
+id|MAX_MP_BUSSES
+)braket
+suffix:semicolon
+r_extern
+id|spinlock_t
+id|irq_controller_lock
+suffix:semicolon
+multiline_comment|/*&n;&t;&t;&t;&t;&t;* Protects both the 8259 and the&n;&t;&t;&t;&t;&t;* IO-APIC&n;&t;&t;&t;&t;&t;*/
 macro_line|#ifdef __SMP__
 DECL|function|irq_enter
 r_static
@@ -95,7 +198,7 @@ macro_line|#endif /* __SMP__ */
 DECL|macro|BUILD_COMMON_IRQ
 mdefine_line|#define BUILD_COMMON_IRQ() &bslash;&n;__asm__( &bslash;&n;&t;&quot;&bslash;n&quot; __ALIGN_STR&quot;&bslash;n&quot; &bslash;&n;&t;&quot;common_interrupt:&bslash;n&bslash;t&quot; &bslash;&n;&t;SAVE_ALL &bslash;&n;&t;&quot;pushl $ret_from_intr&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;jmp &quot;SYMBOL_NAME_STR(do_IRQ));
 DECL|macro|BUILD_IRQ
-mdefine_line|#define BUILD_IRQ(chip,nr,mask) &bslash;&n;asmlinkage void IRQ_NAME(nr); &bslash;&n;__asm__( &bslash;&n;&quot;&bslash;n&quot;__ALIGN_STR&quot;&bslash;n&quot; &bslash;&n;SYMBOL_NAME_STR(IRQ) #nr &quot;_interrupt:&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;pushl $&quot;#nr&quot;-256&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;jmp common_interrupt&quot;);
+mdefine_line|#define BUILD_IRQ(nr) &bslash;&n;asmlinkage void IRQ_NAME(nr); &bslash;&n;__asm__( &bslash;&n;&quot;&bslash;n&quot;__ALIGN_STR&quot;&bslash;n&quot; &bslash;&n;SYMBOL_NAME_STR(IRQ) #nr &quot;_interrupt:&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;pushl $&quot;#nr&quot;-256&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;jmp common_interrupt&quot;);
 multiline_comment|/*&n; * x86 profiling function, SMP safe. We might want to do this in&n; * assembly totally?&n; */
 DECL|function|x86_do_profile
 r_static

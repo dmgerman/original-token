@@ -1477,10 +1477,9 @@ l_int|60
 op_star
 id|HZ
 suffix:semicolon
-id|disable_bh
+id|start_bh_atomic
 c_func
 (paren
-id|NET_BH
 )paren
 suffix:semicolon
 r_if
@@ -1503,19 +1502,17 @@ comma
 id|xprt_reconn_timeout
 )paren
 suffix:semicolon
-id|enable_bh
+id|end_bh_atomic
 c_func
 (paren
-id|NET_BH
 )paren
 suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-id|enable_bh
+id|end_bh_atomic
 c_func
 (paren
-id|NET_BH
 )paren
 suffix:semicolon
 )brace
@@ -3530,10 +3527,9 @@ id|task
 suffix:semicolon
 )brace
 multiline_comment|/* For fast networks/servers we have to put the request on&n;&t; * the pending list now:&n;&t; */
-id|disable_bh
+id|start_bh_atomic
 c_func
 (paren
-id|NET_BH
 )paren
 suffix:semicolon
 id|rpc_add_wait_queue
@@ -3549,10 +3545,9 @@ id|task-&gt;tk_callback
 op_assign
 l_int|NULL
 suffix:semicolon
-id|enable_bh
+id|end_bh_atomic
 c_func
 (paren
-id|NET_BH
 )paren
 suffix:semicolon
 multiline_comment|/* Continue transmitting the packet/record. We must be careful&n;&t; * to cope with writespace callbacks arriving _after_ we have&n;&t; * called xprt_sendmsg().&n;&t; */
@@ -3612,10 +3607,9 @@ id|task-&gt;tk_status
 op_assign
 l_int|0
 suffix:semicolon
-id|disable_bh
+id|start_bh_atomic
 c_func
 (paren
-id|NET_BH
 )paren
 suffix:semicolon
 r_if
@@ -3645,19 +3639,17 @@ comma
 l_int|NULL
 )paren
 suffix:semicolon
-id|enable_bh
+id|end_bh_atomic
 c_func
 (paren
-id|NET_BH
 )paren
 suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-id|enable_bh
+id|end_bh_atomic
 c_func
 (paren
-id|NET_BH
 )paren
 suffix:semicolon
 )brace
@@ -3774,10 +3766,9 @@ id|task-&gt;tk_timeout
 op_assign
 id|req-&gt;rq_timeout.to_current
 suffix:semicolon
-id|disable_bh
+id|start_bh_atomic
 c_func
 (paren
-id|NET_BH
 )paren
 suffix:semicolon
 r_if
@@ -3801,10 +3792,9 @@ id|xprt_timer
 )paren
 suffix:semicolon
 )brace
-id|enable_bh
+id|end_bh_atomic
 c_func
 (paren
-id|NET_BH
 )paren
 suffix:semicolon
 id|dprintk
@@ -4303,10 +4293,9 @@ id|req
 )paren
 suffix:semicolon
 multiline_comment|/* remove slot from queue of pending */
-id|disable_bh
+id|start_bh_atomic
 c_func
 (paren
-id|NET_BH
 )paren
 suffix:semicolon
 r_if
@@ -4348,10 +4337,9 @@ id|task
 )paren
 suffix:semicolon
 )brace
-id|enable_bh
+id|end_bh_atomic
 c_func
 (paren
-id|NET_BH
 )paren
 suffix:semicolon
 multiline_comment|/* Decrease congestion value. If congestion threshold is not yet&n;&t; * reached, pass on the request slot.&n;&t; * This looks kind of kludgy, but it guarantees backlogged requests&n;&t; * are served in order.&n;&t; */

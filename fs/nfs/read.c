@@ -379,10 +379,15 @@ l_int|0
 suffix:semicolon
 id|io_error
 suffix:colon
+multiline_comment|/* Note: we don&squot;t refresh if the call returned error */
 r_if
 c_cond
 (paren
 id|refresh
+op_logical_and
+id|result
+op_ge
+l_int|0
 )paren
 id|nfs_refresh_inode
 c_func
@@ -393,6 +398,7 @@ op_amp
 id|rqst.ra_fattr
 )paren
 suffix:semicolon
+multiline_comment|/* N.B. Use nfs_unlock_page here? */
 id|clear_bit
 c_func
 (paren
@@ -446,6 +452,16 @@ op_assign
 id|req-&gt;ra_page
 suffix:semicolon
 r_int
+r_int
+id|address
+op_assign
+id|page_address
+c_func
+(paren
+id|page
+)paren
+suffix:semicolon
+r_int
 id|result
 op_assign
 id|task-&gt;tk_status
@@ -467,11 +483,7 @@ l_string|&quot;NFS: %4d received callback for page %lx, result %d&bslash;n&quot;
 comma
 id|task-&gt;tk_pid
 comma
-id|page_address
-c_func
-(paren
-id|page
-)paren
+id|address
 comma
 id|result
 )paren
@@ -503,11 +515,7 @@ c_func
 r_char
 op_star
 )paren
-id|page_address
-c_func
-(paren
-id|page
-)paren
+id|address
 op_plus
 id|result
 comma
@@ -566,6 +574,7 @@ id|fail
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* N.B. Use nfs_unlock_page here? */
 id|clear_bit
 c_func
 (paren
@@ -585,11 +594,7 @@ suffix:semicolon
 id|free_page
 c_func
 (paren
-id|page_address
-c_func
-(paren
-id|page
-)paren
+id|address
 )paren
 suffix:semicolon
 id|rpc_release_task
@@ -628,6 +633,16 @@ op_star
 id|page
 )paren
 (brace
+r_int
+r_int
+id|address
+op_assign
+id|page_address
+c_func
+(paren
+id|page
+)paren
+suffix:semicolon
 r_struct
 id|nfs_rreq
 op_star
@@ -635,6 +650,9 @@ id|req
 suffix:semicolon
 r_int
 id|result
+op_assign
+op_minus
+l_int|1
 comma
 id|flags
 suffix:semicolon
@@ -646,6 +664,19 @@ comma
 id|page
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|NFS_CONGESTED
+c_func
+(paren
+id|inode
+)paren
+)paren
+r_goto
+id|out_defer
+suffix:semicolon
+multiline_comment|/* N.B. Do we need to test? Never called for swapfile inode */
 id|flags
 op_assign
 id|RPC_TASK_ASYNC
@@ -663,17 +694,6 @@ suffix:colon
 l_int|0
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|NFS_CONGESTED
-c_func
-(paren
-id|inode
-)paren
-op_logical_or
-op_logical_neg
-(paren
 id|req
 op_assign
 (paren
@@ -692,21 +712,18 @@ op_star
 id|req
 )paren
 )paren
-)paren
-)paren
-(brace
-id|dprintk
-c_func
+suffix:semicolon
+r_if
+c_cond
 (paren
-l_string|&quot;NFS: deferring async READ request.&bslash;n&quot;
+op_logical_neg
+id|req
 )paren
+r_goto
+id|out_defer
 suffix:semicolon
-r_return
-op_minus
-l_int|1
-suffix:semicolon
-)brace
 multiline_comment|/* Initialize request */
+multiline_comment|/* N.B. Will the dentry remain valid for life of request? */
 id|nfs_readreq_setup
 c_func
 (paren
@@ -724,11 +741,7 @@ comma
 r_void
 op_star
 )paren
-id|page_address
-c_func
-(paren
-id|page
-)paren
+id|address
 comma
 id|PAGE_SIZE
 )paren
@@ -741,6 +754,7 @@ id|req-&gt;ra_page
 op_assign
 id|page
 suffix:semicolon
+multiline_comment|/* count has been incremented by caller */
 multiline_comment|/* Start the async call */
 id|dprintk
 c_func
@@ -778,21 +792,34 @@ r_if
 c_cond
 (paren
 id|result
-op_ge
+OL
 l_int|0
 )paren
-(brace
-id|atomic_inc
+r_goto
+id|out_free
+suffix:semicolon
+id|result
+op_assign
+l_int|0
+suffix:semicolon
+id|out
+suffix:colon
+r_return
+id|result
+suffix:semicolon
+id|out_defer
+suffix:colon
+id|dprintk
 c_func
 (paren
-op_amp
-id|page-&gt;count
+l_string|&quot;NFS: deferring async READ request.&bslash;n&quot;
 )paren
 suffix:semicolon
-r_return
-l_int|0
+r_goto
+id|out
 suffix:semicolon
-)brace
+id|out_free
+suffix:colon
 id|dprintk
 c_func
 (paren
@@ -805,9 +832,8 @@ c_func
 id|req
 )paren
 suffix:semicolon
-r_return
-op_minus
-l_int|1
+r_goto
+id|out
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Read a page over NFS.&n; * We read the page synchronously in the following cases:&n; *  -&t;The file is a swap file. Swap-ins are always sync operations,&n; *&t;so there&squot;s no need bothering to make async reads 100% fail-safe.&n; *  -&t;The NFS rsize is smaller than PAGE_SIZE. We could kludge our way&n; *&t;around this by creating several consecutive read requests, but&n; *&t;that&squot;s hardly worth it.&n; *  -&t;The error flag is set for this page. This happens only when a&n; *&t;previous async read operation failed.&n; *  -&t;The server is congested.&n; */
@@ -835,10 +861,6 @@ op_assign
 id|dentry-&gt;d_inode
 suffix:semicolon
 r_int
-r_int
-id|address
-suffix:semicolon
-r_int
 id|error
 op_assign
 op_minus
@@ -847,13 +869,13 @@ suffix:semicolon
 id|dprintk
 c_func
 (paren
-l_string|&quot;NFS: nfs_readpage %08lx&bslash;n&quot;
+l_string|&quot;NFS: nfs_readpage (%p %ld@%ld)&bslash;n&quot;
 comma
-id|page_address
-c_func
-(paren
 id|page
-)paren
+comma
+id|PAGE_SIZE
+comma
+id|page-&gt;offset
 )paren
 suffix:semicolon
 id|set_bit
@@ -863,14 +885,6 @@ id|PG_locked
 comma
 op_amp
 id|page-&gt;flags
-)paren
-suffix:semicolon
-id|address
-op_assign
-id|page_address
-c_func
-(paren
-id|page
 )paren
 suffix:semicolon
 id|atomic_inc
@@ -926,6 +940,7 @@ id|error
 OL
 l_int|0
 )paren
+(brace
 multiline_comment|/* couldn&squot;t enqueue */
 id|error
 op_assign
@@ -961,9 +976,14 @@ suffix:semicolon
 id|free_page
 c_func
 (paren
-id|address
+id|page_address
+c_func
+(paren
+id|page
+)paren
 )paren
 suffix:semicolon
+)brace
 r_return
 id|error
 suffix:semicolon

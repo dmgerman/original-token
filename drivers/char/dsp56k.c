@@ -2160,7 +2160,7 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/* As of 2.1.26 this should be dsp56k_poll,&n; * but how do I then check device minor number?&n; * Do I need this function at all???&n; */
-macro_line|#ifdef 0
+macro_line|#if 0
 r_static
 r_int
 id|dsp56k_select

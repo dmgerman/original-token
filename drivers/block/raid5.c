@@ -7784,8 +7784,6 @@ c_func
 id|GFP_ATOMIC
 comma
 id|HASH_PAGES_ORDER
-comma
-l_int|0
 )paren
 )paren
 op_eq

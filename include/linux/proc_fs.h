@@ -79,11 +79,6 @@ comma
 DECL|enumerator|PROC_IOPORTS
 id|PROC_IOPORTS
 comma
-macro_line|#ifdef __SMP_PROF__
-DECL|enumerator|PROC_SMP_PROF
-id|PROC_SMP_PROF
-comma
-macro_line|#endif
 DECL|enumerator|PROC_PROFILE
 id|PROC_PROFILE
 comma
