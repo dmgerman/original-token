@@ -1,8 +1,9 @@
 multiline_comment|/*&n; *  linux/mm/kmalloc.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds &amp; Roger Wolff.&n; *&n; *  Written by R.E. Wolff Sept/Oct &squot;93.&n; *&n; */
 multiline_comment|/*&n; * Modified by Alex Bligh (alex@cconcepts.co.uk) 4 Apr 1994 to use multiple&n; * pages. So for &squot;page&squot; throughout, read &squot;area&squot;.&n; */
 macro_line|#include &lt;linux/mm.h&gt;
-macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
+macro_line|#include &lt;asm/system.h&gt;
+macro_line|#include &lt;asm/dma.h&gt;
 DECL|macro|GFP_LEVEL_MASK
 mdefine_line|#define GFP_LEVEL_MASK 0xf
 multiline_comment|/* I want this low enough for a while to catch errors.&n;   I want this number to be increased in the near future:&n;        loadable device drivers should use this function to get memory */
@@ -1218,33 +1219,23 @@ id|order
 suffix:semicolon
 multiline_comment|/* sz is the size of the blocks we&squot;re dealing with */
 multiline_comment|/* This can be done with ints on: This is private to this invocation */
+(brace
+r_int
+r_int
+id|max_addr
+op_assign
+op_complement
+l_int|0UL
+suffix:semicolon
 r_if
 c_cond
 (paren
 id|dma_flag
 )paren
-id|page
+id|max_addr
 op_assign
-(paren
-r_struct
-id|page_descriptor
-op_star
-)paren
-id|__get_dma_pages
-(paren
-id|priority
-op_amp
-id|GFP_LEVEL_MASK
-comma
-id|sizes
-(braket
-id|order
-)braket
-dot
-id|gfporder
-)paren
+id|MAX_DMA_ADDRESS
 suffix:semicolon
-r_else
 id|page
 op_assign
 (paren
@@ -1264,8 +1255,11 @@ id|order
 )braket
 dot
 id|gfporder
+comma
+id|max_addr
 )paren
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren

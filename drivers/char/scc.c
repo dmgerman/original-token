@@ -4254,13 +4254,17 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+(paren
 id|grp1
 op_amp
 l_int|0x3f
+)paren
 op_eq
+(paren
 id|grp2
 op_amp
 l_int|0x3f
+)paren
 )paren
 (brace
 r_if
@@ -7266,7 +7270,7 @@ c_func
 id|flags
 )paren
 suffix:semicolon
-id|put_fs_long
+id|put_user
 c_func
 (paren
 id|result
@@ -7342,7 +7346,7 @@ id|TIOCMSET
 suffix:colon
 id|value
 op_assign
-id|get_fs_long
+id|get_user
 c_func
 (paren
 (paren

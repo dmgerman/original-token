@@ -1,23 +1,25 @@
-multiline_comment|/*&n; *  @(#)aha274x.c 1.29 94/10/29 jda&n; *&n; *  Adaptec 274x device driver for Linux.&n; *  Copyright (c) 1994 The University of Calgary Department of Computer Science.&n; *  &n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *  &n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *  &n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; *  Sources include the Adaptec 1740 driver (aha1740.c), the&n; *  Ultrastor 24F driver (ultrastor.c), various Linux kernel&n; *  source, the Adaptec EISA config file (!adp7771.cfg), the&n; *  Adaptec AHA-2740A Series User&squot;s Guide, the Linux Kernel&n; *  Hacker&squot;s Guide, Writing a SCSI Device Driver for Linux,&n; *  the Adaptec 1542 driver (aha1542.c), the Adaptec EISA&n; *  overlay file (adp7770.ovl), the Adaptec AHA-2740 Series&n; *  Technical Reference Manual, the Adaptec AIC-7770 Data&n; *  Book, the ANSI SCSI specification, the ANSI SCSI-2&n; *  specification (draft 10c), ...&n; *&n; *  On a twin-bus adapter card, channel B is ignored.  Rationale:&n; *  it would greatly complicate the sequencer and host driver code,&n; *  and both busses are multiplexed on to the EISA bus anyway.  So&n; *  I don&squot;t really see any technical advantage to supporting both.&n; *&n; *  As well, multiple adapter card using the same IRQ level are&n; *  not supported.  It doesn&squot;t make sense to configure the cards&n; *  this way from a performance standpoint.  Not to mention that&n; *  the kernel would have to support two devices per registered IRQ.&n; */
+multiline_comment|/*&n; *  @(#)aic7xxx.c 1.34 94/11/30 jda&n; *&n; *  Adaptec 274x/284x/294x device driver for Linux.&n; *  Copyright (c) 1994 The University of Calgary Department of Computer Science.&n; *  &n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *  &n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *  &n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; *  Sources include the Adaptec 1740 driver (aha1740.c), the&n; *  Ultrastor 24F driver (ultrastor.c), various Linux kernel&n; *  source, the Adaptec EISA config file (!adp7771.cfg), the&n; *  Adaptec AHA-2740A Series User&squot;s Guide, the Linux Kernel&n; *  Hacker&squot;s Guide, Writing a SCSI Device Driver for Linux,&n; *  the Adaptec 1542 driver (aha1542.c), the Adaptec EISA&n; *  overlay file (adp7770.ovl), the Adaptec AHA-2740 Series&n; *  Technical Reference Manual, the Adaptec AIC-7770 Data&n; *  Book, the ANSI SCSI specification, the ANSI SCSI-2&n; *  specification (draft 10c), ...&n; *&n; *  On a twin-bus adapter card, channel B is ignored.  Rationale:&n; *  it would greatly complicate the sequencer and host driver code,&n; *  and both busses are multiplexed on to the EISA bus anyway.  So&n; *  I don&squot;t really see any technical advantage to supporting both.&n; *&n; *  As well, multiple adapter card using the same IRQ level are&n; *  not supported.  It doesn&squot;t make sense to configure the cards&n; *  this way from a performance standpoint.  Not to mention that&n; *  the kernel would have to support two devices per registered IRQ.&n; */
 macro_line|#include &lt;stdarg.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
+macro_line|#include &lt;linux/bios32.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
+macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &quot;../block/blk.h&quot;
 macro_line|#include &quot;sd.h&quot;
 macro_line|#include &quot;scsi.h&quot;
 macro_line|#include &quot;hosts.h&quot;
-macro_line|#include &quot;aha274x.h&quot;
+macro_line|#include &quot;aic7xxx.h&quot;
 multiline_comment|/*&n; *  There should be a specific return value for this in scsi.h, but&n; *  it seems that most drivers ignore it.&n; */
 DECL|macro|DID_UNDERFLOW
 mdefine_line|#define DID_UNDERFLOW&t;DID_ERROR
-multiline_comment|/* EISA stuff */
-DECL|macro|MINEISA
-mdefine_line|#define MINEISA&t;&t;1
-DECL|macro|MAXEISA
-mdefine_line|#define MAXEISA&t;&t;15
+multiline_comment|/* EISA/VL-bus stuff */
+DECL|macro|MINSLOT
+mdefine_line|#define MINSLOT&t;&t;1
+DECL|macro|MAXSLOT
+mdefine_line|#define MAXSLOT&t;&t;15
 DECL|macro|SLOTBASE
 mdefine_line|#define SLOTBASE(x)&t;((x) &lt;&lt; 12)
 DECL|macro|MAXIRQ
@@ -77,6 +79,9 @@ DECL|macro|O_QOUTCNT
 mdefine_line|#define O_QOUTCNT(x)&t;((x) + 0xc9e)&t;&t;/* queue out count */
 DECL|macro|O_SCBARRAY
 mdefine_line|#define O_SCBARRAY(x)&t;((x) + 0xca0)&t;&t;/* scb array start */
+multiline_comment|/* AIC-7870-only definitions */
+DECL|macro|O_DSPCISTATUS
+mdefine_line|#define O_DSPCISTATUS(x) ((x) + 0xc86)&t;&t;/* ??? */
 multiline_comment|/* host adapter offset definitions */
 DECL|macro|HA_REJBYTE
 mdefine_line|#define HA_REJBYTE(x)&t;((x) + 0xc31)&t;&t;/* 1st message in byte */
@@ -98,6 +103,8 @@ DECL|macro|HA_SIGSTATE
 mdefine_line|#define HA_SIGSTATE(x)&t;((x) + 0xc4e)&t;&t;/* value in SCSISIGO */
 DECL|macro|HA_NEEDSDTR
 mdefine_line|#define HA_NEEDSDTR(x)&t;((x) + 0xc4f)&t;&t;/* synchronous negotiation? */
+DECL|macro|HA_SCBCOUNT
+mdefine_line|#define HA_SCBCOUNT(x)&t;((x) + 0xc56)&t;&t;/* number of hardware SCBs */
 DECL|macro|HA_SCSICONF
 mdefine_line|#define HA_SCSICONF(x)&t;((x) + 0xc5a)&t;&t;/* SCSI config register */
 DECL|macro|HA_INTDEF
@@ -105,41 +112,53 @@ mdefine_line|#define HA_INTDEF(x)&t;((x) + 0xc5c)&t;&t;/* interrupt def&squot;n 
 DECL|macro|HA_HOSTCONF
 mdefine_line|#define HA_HOSTCONF(x)&t;((x) + 0xc5d)&t;&t;/* host config def&squot;n register */
 multiline_comment|/* debugging code */
-DECL|macro|AHA274X_DEBUG
-mdefine_line|#define AHA274X_DEBUG
+multiline_comment|/*&n;#define AIC7XXX_DEBUG&n;*/
 multiline_comment|/*&n; *  If a parity error occurs during a data transfer phase, run the&n; *  command to completion - it&squot;s easier that way - making a note&n; *  of the error condition in this location.  This then will modify&n; *  a DID_OK status into a DID_PARITY one for the higher-level SCSI&n; *  code.&n; */
-DECL|macro|aha274x_parity
-mdefine_line|#define aha274x_parity(cmd)&t;((cmd)-&gt;SCp.Status)
+DECL|macro|aic7xxx_parity
+mdefine_line|#define aic7xxx_parity(cmd)&t;((cmd)-&gt;SCp.Status)
 multiline_comment|/*&n; *  Since the sequencer code DMAs the scatter-gather structures&n; *  directly from memory, we use this macro to assert that the&n; *  kernel structure hasn&squot;t changed.&n; */
 DECL|macro|SG_STRUCT_CHECK
 mdefine_line|#define SG_STRUCT_CHECK(sg) &bslash;&n;&t;((char *)&amp;(sg).address - (char *)&amp;(sg) != 0 ||&t;&bslash;&n;&t; (char *)&amp;(sg).length  - (char *)&amp;(sg) != 8 ||&t;&bslash;&n;&t; sizeof((sg).address) != 4 ||&t;&t;&t;&bslash;&n;&t; sizeof((sg).length)  != 4 ||&t;&t;&t;&bslash;&n;&t; sizeof(sg)&t;      != 12)
-multiline_comment|/*&n; *  &quot;Static&quot; structures.  Note that these are NOT initialized&n; *  to zero inside the kernel - we have to initialize them all&n; *  explicitly.&n; *&n; *  We support a maximum of one adapter card per IRQ level (see the&n; *  rationale for this above).  On an interrupt, use the IRQ as an&n; *  index into aha274x_boards[] to locate the card information.&n; */
-DECL|variable|aha274x_boards
+multiline_comment|/*&n; *  &quot;Static&quot; structures.  Note that these are NOT initialized&n; *  to zero inside the kernel - we have to initialize them all&n; *  explicitly.&n; *&n; *  We support a maximum of one adapter card per IRQ level (see the&n; *  rationale for this above).  On an interrupt, use the IRQ as an&n; *  index into aic7xxx_boards[] to locate the card information.&n; */
+DECL|variable|aic7xxx_boards
 r_static
 r_struct
 id|Scsi_Host
 op_star
-id|aha274x_boards
+id|aic7xxx_boards
 (braket
 id|MAXIRQ
 op_plus
 l_int|1
 )braket
 suffix:semicolon
-DECL|struct|aha274x_host
+multiline_comment|/*&n; *  The maximum number of SCBs we could have for ANY type&n; *  of card.  DON&squot;T FORGET TO CHANGE THE SCB MASK IN THE&n; *  SEQUENCER CODE IF THIS IS MODIFIED!&n; */
+DECL|macro|AIC7XXX_MAXSCB
+mdefine_line|#define AIC7XXX_MAXSCB&t;16
+DECL|struct|aic7xxx_host
 r_struct
-id|aha274x_host
+id|aic7xxx_host
 (brace
 DECL|member|base
 r_int
 id|base
 suffix:semicolon
 multiline_comment|/* card base address */
+DECL|member|maxscb
+r_int
+id|maxscb
+suffix:semicolon
+multiline_comment|/* hardware SCBs */
 DECL|member|startup
 r_int
 id|startup
 suffix:semicolon
 multiline_comment|/* intr type check */
+DECL|member|extended
+r_int
+id|extended
+suffix:semicolon
+multiline_comment|/* extended xlate? */
 DECL|member|unpause
 r_volatile
 r_int
@@ -152,15 +171,51 @@ id|Scsi_Cmnd
 op_star
 id|SCB_array
 (braket
-id|AHA274X_MAXSCB
+id|AIC7XXX_MAXSCB
 )braket
 suffix:semicolon
 multiline_comment|/* active commands */
 )brace
 suffix:semicolon
-DECL|struct|aha274x_scb
+DECL|struct|aic7xxx_host_config
 r_struct
-id|aha274x_scb
+id|aic7xxx_host_config
+(brace
+DECL|member|irq
+r_int
+id|irq
+suffix:semicolon
+multiline_comment|/* IRQ number */
+DECL|member|base
+r_int
+id|base
+suffix:semicolon
+multiline_comment|/* I/O base */
+DECL|member|maxscb
+r_int
+id|maxscb
+suffix:semicolon
+multiline_comment|/* hardware SCBs */
+DECL|member|unpause
+r_int
+id|unpause
+suffix:semicolon
+multiline_comment|/* value for HCNTRL */
+DECL|member|scsi_id
+r_int
+id|scsi_id
+suffix:semicolon
+multiline_comment|/* host SCSI id */
+DECL|member|extended
+r_int
+id|extended
+suffix:semicolon
+multiline_comment|/* extended xlate? */
+)brace
+suffix:semicolon
+DECL|struct|aic7xxx_scb
+r_struct
+id|aic7xxx_scb
 (brace
 DECL|member|control
 r_int
@@ -271,91 +326,75 @@ r_char
 op_star
 id|english
 suffix:semicolon
-DECL|variable|aha274x_synctab
+DECL|variable|aic7xxx_synctab
 )brace
-id|aha274x_synctab
+id|aic7xxx_synctab
 (braket
 )braket
 op_assign
-(brace
 (brace
 l_int|100
 comma
 l_int|0
 comma
 l_string|&quot;10.0&quot;
-)brace
 comma
-(brace
 l_int|125
 comma
 l_int|1
 comma
 l_string|&quot;8.0&quot;
-)brace
 comma
-(brace
 l_int|150
 comma
 l_int|2
 comma
 l_string|&quot;6.67&quot;
-)brace
 comma
-(brace
 l_int|175
 comma
 l_int|3
 comma
 l_string|&quot;5.7&quot;
-)brace
 comma
-(brace
 l_int|200
 comma
 l_int|4
 comma
 l_string|&quot;5.0&quot;
-)brace
 comma
-(brace
 l_int|225
 comma
 l_int|5
 comma
 l_string|&quot;4.4&quot;
-)brace
 comma
-(brace
 l_int|250
 comma
 l_int|6
 comma
 l_string|&quot;4.0&quot;
-)brace
 comma
-(brace
 l_int|275
 comma
 l_int|7
 comma
 l_string|&quot;3.6&quot;
 )brace
-)brace
 suffix:semicolon
-DECL|variable|aha274x_synctab_max
+DECL|variable|aic7xxx_synctab_max
 r_static
 r_int
-id|aha274x_synctab_max
+id|aic7xxx_synctab_max
 op_assign
 r_sizeof
 (paren
-id|aha274x_synctab
+id|aic7xxx_synctab
 )paren
 op_div
 r_sizeof
 (paren
-id|aha274x_synctab
+id|aic7xxx_synctab
 (braket
 l_int|0
 )braket
@@ -374,11 +413,14 @@ comma
 DECL|enumerator|T_284X
 id|T_284X
 comma
+DECL|enumerator|T_294X
+id|T_294X
+comma
 DECL|enumerator|T_MAX
 id|T_MAX
 )brace
 suffix:semicolon
-macro_line|#ifdef AHA274X_DEBUG
+macro_line|#ifdef AIC7XXX_DEBUG
 r_extern
 r_int
 id|vsprintf
@@ -460,16 +502,16 @@ r_enum
 id|aha_type
 id|type
 comma
-r_int
-id|base
+r_struct
+id|aic7xxx_host_config
+op_star
+id|p
 )paren
 (brace
 r_int
 id|ioport2
 comma
 id|ioport3
-comma
-id|ioport4
 suffix:semicolon
 r_static
 r_char
@@ -556,6 +598,41 @@ l_string|&quot;56&quot;
 comma
 l_string|&quot;60&quot;
 )brace
+comma
+(brace
+l_string|&quot;???&quot;
+comma
+l_string|&quot;???&quot;
+comma
+l_string|&quot;???&quot;
+comma
+l_string|&quot;???&quot;
+comma
+multiline_comment|/* T_294X */
+l_string|&quot;???&quot;
+comma
+l_string|&quot;???&quot;
+comma
+l_string|&quot;???&quot;
+comma
+l_string|&quot;???&quot;
+comma
+l_string|&quot;???&quot;
+comma
+l_string|&quot;???&quot;
+comma
+l_string|&quot;???&quot;
+comma
+l_string|&quot;???&quot;
+comma
+l_string|&quot;???&quot;
+comma
+l_string|&quot;???&quot;
+comma
+l_string|&quot;???&quot;
+comma
+l_string|&quot;???&quot;
+)brace
 )brace
 suffix:semicolon
 r_static
@@ -600,7 +677,7 @@ c_func
 id|HA_HOSTCONF
 c_func
 (paren
-id|base
+id|p-&gt;base
 )paren
 )paren
 suffix:semicolon
@@ -612,50 +689,66 @@ c_func
 id|HA_SCSICONF
 c_func
 (paren
-id|base
+id|p-&gt;base
 )paren
 )paren
 suffix:semicolon
-id|ioport4
-op_assign
-id|inb
-c_func
-(paren
-id|HA_INTDEF
-c_func
-(paren
-id|base
-)paren
-)paren
-suffix:semicolon
-r_if
+r_switch
 c_cond
 (paren
 id|type
-op_eq
-id|T_284X
 )paren
-id|printk
-c_func
-(paren
-l_string|&quot;AHA284X AT SLOT %d:&bslash;n&quot;
-comma
-id|base
-op_rshift
-l_int|12
-)paren
-suffix:semicolon
-r_else
+(brace
+r_case
+id|T_274X
+suffix:colon
 id|printk
 c_func
 (paren
 l_string|&quot;AHA274X AT EISA SLOT %d:&bslash;n&quot;
 comma
-id|base
+id|p-&gt;base
 op_rshift
 l_int|12
 )paren
 suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|T_284X
+suffix:colon
+id|printk
+c_func
+(paren
+l_string|&quot;AHA284X AT SLOT %d:&bslash;n&quot;
+comma
+id|p-&gt;base
+op_rshift
+l_int|12
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|T_294X
+suffix:colon
+id|printk
+c_func
+(paren
+l_string|&quot;AHA294X (PCI-bus):&bslash;n&quot;
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_default
+suffix:colon
+id|panic
+c_func
+(paren
+l_string|&quot;aic7xxx debug_config: internal error&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
 id|printk
 c_func
 (paren
@@ -663,9 +756,7 @@ l_string|&quot;    irq %d&bslash;n&quot;
 l_string|&quot;    bus release time %s bclks&bslash;n&quot;
 l_string|&quot;    data fifo threshold %d%%&bslash;n&quot;
 comma
-id|ioport4
-op_amp
-l_int|0xf
+id|p-&gt;irq
 comma
 id|BRT
 (braket
@@ -804,11 +895,11 @@ id|rate
 id|printk
 c_func
 (paren
-l_string|&quot;aha274x: target %d now synchronous at %sMb/s&bslash;n&quot;
+l_string|&quot;aic7xxx: target %d now synchronous at %sMb/s&bslash;n&quot;
 comma
 id|target
 comma
-id|aha274x_synctab
+id|aic7xxx_synctab
 (braket
 (paren
 id|rate
@@ -828,7 +919,7 @@ r_else
 id|printk
 c_func
 (paren
-l_string|&quot;aha274x: target %d using asynchronous mode&bslash;n&quot;
+l_string|&quot;aic7xxx: target %d using asynchronous mode&bslash;n&quot;
 comma
 id|target
 )paren
@@ -842,19 +933,19 @@ DECL|macro|debug_config
 macro_line|#&t;define debug_config(x)
 DECL|macro|debug_rate
 macro_line|#&t;define debug_rate(x,y)
-macro_line|#endif AHA274X_DEBUG
-multiline_comment|/*&n; *  XXX - these options apply unilaterally to _all_ 274x/284x&n; *&t;  cards in the system.  This should be fixed, but then,&n; *&t;  does anyone really have more than one in a machine?&n; */
-DECL|variable|aha274x_extended
+macro_line|#endif AIC7XXX_DEBUG
+multiline_comment|/*&n; *  XXX - these options apply unilaterally to _all_ 274x/284x/294x&n; *&t;  cards in the system.  This should be fixed, but then,&n; *&t;  does anyone really have more than one in a machine?&n; */
+DECL|variable|aic7xxx_extended
 r_static
 r_int
-id|aha274x_extended
+id|aic7xxx_extended
 op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* extended translation on? */
-DECL|function|aha274x_setup
+DECL|function|aic7xxx_setup
 r_void
-id|aha274x_setup
+id|aic7xxx_setup
 c_func
 (paren
 r_char
@@ -890,18 +981,12 @@ id|options
 )braket
 op_assign
 (brace
-(brace
 l_string|&quot;extended&quot;
 comma
 op_amp
-id|aha274x_extended
-)brace
-comma
-(brace
-l_int|NULL
+id|aic7xxx_extended
 comma
 l_int|NULL
-)brace
 )brace
 suffix:semicolon
 r_for
@@ -980,21 +1065,21 @@ suffix:semicolon
 )brace
 )brace
 r_static
-DECL|function|aha274x_getscb
+DECL|function|aic7xxx_getscb
 r_void
-id|aha274x_getscb
+id|aic7xxx_getscb
 c_func
 (paren
 r_int
 id|base
 comma
 r_struct
-id|aha274x_scb
+id|aic7xxx_scb
 op_star
 id|scb
 )paren
 (brace
-multiline_comment|/*&n;&t; *  This is almost identical to aha274x_putscb().&n;&t; */
+multiline_comment|/*&n;&t; *  This is almost identical to aic7xxx_putscb().&n;&t; */
 id|outb
 c_func
 (paren
@@ -1062,9 +1147,9 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; *  How much data should be transferred for this SCSI command?  Stop&n; *  at segment sg_last if it&squot;s a scatter-gather command so we can&n; *  compute underflow easily.&n; */
 r_static
-DECL|function|aha274x_length
+DECL|function|aic7xxx_length
 r_int
-id|aha274x_length
+id|aic7xxx_length
 c_func
 (paren
 id|Scsi_Cmnd
@@ -1151,9 +1236,9 @@ id|length
 suffix:semicolon
 )brace
 r_static
-DECL|function|aha274x_sg_check
+DECL|function|aic7xxx_sg_check
 r_void
-id|aha274x_sg_check
+id|aic7xxx_sg_check
 c_func
 (paren
 id|Scsi_Cmnd
@@ -1214,15 +1299,15 @@ l_int|0xffff
 id|panic
 c_func
 (paren
-l_string|&quot;aha274x_sg_check: s/g segment &gt; 64k&bslash;n&quot;
+l_string|&quot;aic7xxx_sg_check: s/g segment &gt; 64k&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
 )brace
 r_static
-DECL|function|aha274x_to_scsirate
+DECL|function|aic7xxx_to_scsirate
 r_void
-id|aha274x_to_scsirate
+id|aic7xxx_to_scsirate
 c_func
 (paren
 r_int
@@ -1255,7 +1340,7 @@ l_int|0
 suffix:semicolon
 id|i
 OL
-id|aha274x_synctab_max
+id|aic7xxx_synctab_max
 op_minus
 l_int|1
 suffix:semicolon
@@ -1268,7 +1353,7 @@ c_cond
 (paren
 id|transfer
 op_eq
-id|aha274x_synctab
+id|aic7xxx_synctab
 (braket
 id|i
 )braket
@@ -1280,7 +1365,7 @@ op_star
 id|rate
 op_assign
 (paren
-id|aha274x_synctab
+id|aic7xxx_synctab
 (braket
 id|i
 )braket
@@ -1304,7 +1389,7 @@ c_cond
 (paren
 id|transfer
 OG
-id|aha274x_synctab
+id|aic7xxx_synctab
 (braket
 id|i
 )braket
@@ -1313,7 +1398,7 @@ id|period
 op_logical_and
 id|transfer
 OL
-id|aha274x_synctab
+id|aic7xxx_synctab
 (braket
 id|i
 op_plus
@@ -1327,7 +1412,7 @@ op_star
 id|rate
 op_assign
 (paren
-id|aha274x_synctab
+id|aic7xxx_synctab
 (braket
 id|i
 op_plus
@@ -1361,23 +1446,18 @@ mdefine_line|#define PAUSE_SEQUENCER(p)&t;&bslash;&n;&t;do {&t;&t;&t;&t;&t;&t;&t
 multiline_comment|/*&n; *  Unpause the sequencer.  Unremarkable, yet done often enough to&n; *  warrant an easy way to do it.&n; */
 DECL|macro|UNPAUSE_SEQUENCER
 mdefine_line|#define UNPAUSE_SEQUENCER(p)&t;&bslash;&n;&t;outb(p-&gt;unpause, O_HCNTRL(p-&gt;base))&t;/* IRQMS|INTEN */
-multiline_comment|/*&n; *  See comments in aha274x_loadram() wrt this.&n; */
+multiline_comment|/*&n; *  See comments in aic7xxx_loadram() wrt this.&n; */
 DECL|macro|RESTART_SEQUENCER
-mdefine_line|#define RESTART_SEQUENCER(p)&t;&bslash;&n;&t;do {&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;do {&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;outb(0x2, O_SEQCTL(p-&gt;base));&t;&bslash;&n;&t;&t;} while (inw(O_SEQADDR(p-&gt;base)) != 0);&t;&bslash;&n;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;UNPAUSE_SEQUENCER(p);&t;&t;&t;&bslash;&n;&t;} while (0)
+mdefine_line|#define RESTART_SEQUENCER(p)&t;&bslash;&n;&t;do {&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;do {&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;outb(0x2, O_SEQCTL(p-&gt;base));&t;&t;&bslash;&n;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;} while (inb(O_SEQADDR(p-&gt;base)) != 0 &amp;&amp;&t;&bslash;&n;&t;&t;&t; inb(O_SEQADDR(p-&gt;base) + 1) != 0);&t;&bslash;&n;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;UNPAUSE_SEQUENCER(p);&t;&t;&t;&t;&bslash;&n;&t;} while (0)
 multiline_comment|/*&n; *  Since we declared this using SA_INTERRUPT, interrupts should&n; *  be disabled all through this function unless we say otherwise.&n; */
 r_static
-DECL|function|aha274x_isr
+DECL|function|aic7xxx_isr
 r_void
-id|aha274x_isr
+id|aic7xxx_isr
 c_func
 (paren
 r_int
 id|irq
-comma
-r_struct
-id|pt_regs
-op_star
-id|regs
 )paren
 (brace
 r_int
@@ -1386,7 +1466,7 @@ comma
 id|intstat
 suffix:semicolon
 r_struct
-id|aha274x_host
+id|aic7xxx_host
 op_star
 id|p
 suffix:semicolon
@@ -1394,10 +1474,10 @@ id|p
 op_assign
 (paren
 r_struct
-id|aha274x_host
+id|aic7xxx_host
 op_star
 )paren
-id|aha274x_boards
+id|aic7xxx_boards
 (braket
 id|irq
 )braket
@@ -1469,7 +1549,7 @@ multiline_comment|/* BRKADRINT */
 id|panic
 c_func
 (paren
-l_string|&quot;aha274x_isr: brkadrint, error = 0x%x, seqaddr = 0x%x&bslash;n&quot;
+l_string|&quot;aic7xxx_isr: brkadrint, error = 0x%x, seqaddr = 0x%x&bslash;n&quot;
 comma
 id|inb
 c_func
@@ -1553,7 +1633,7 @@ id|cmd
 id|printk
 c_func
 (paren
-l_string|&quot;aha274x_isr: no command for scb (scsiint)&bslash;n&quot;
+l_string|&quot;aic7xxx_isr: no command for scb (scsiint)&bslash;n&quot;
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t; *  Turn off the interrupt and set status&n;&t;&t;&t; *  to zero, so that it falls through the&n;&t;&t;&t; *  reset of the SCSIINT code.&n;&t;&t;&t; */
@@ -1697,14 +1777,14 @@ multiline_comment|/*&n;&t;&t;&t; *  A parity error has occurred during a data&n;
 id|printk
 c_func
 (paren
-l_string|&quot;aha274x: parity error on target %d, lun %d&bslash;n&quot;
+l_string|&quot;aic7xxx: parity error on target %d, lun %d&bslash;n&quot;
 comma
 id|cmd-&gt;target
 comma
 id|cmd-&gt;lun
 )paren
 suffix:semicolon
-id|aha274x_parity
+id|aic7xxx_parity
 c_func
 (paren
 id|cmd
@@ -1768,7 +1848,7 @@ multiline_comment|/*&n;&t;&t;&t; *  We don&squot;t know what&squot;s going on.  
 id|printk
 c_func
 (paren
-l_string|&quot;aha274x_isr: sstat1 = 0x%x&bslash;n&quot;
+l_string|&quot;aic7xxx_isr: sstat1 = 0x%x&bslash;n&quot;
 comma
 id|status
 )paren
@@ -1821,7 +1901,7 @@ comma
 id|old_scbptr
 suffix:semicolon
 r_struct
-id|aha274x_scb
+id|aic7xxx_scb
 id|scb
 suffix:semicolon
 r_int
@@ -1867,7 +1947,7 @@ id|cmd
 id|printk
 c_func
 (paren
-l_string|&quot;aha274x warning: &quot;
+l_string|&quot;aic7xxx warning: &quot;
 l_string|&quot;no command for scb (cmdcmplt)&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -1912,7 +1992,7 @@ id|base
 )paren
 )paren
 suffix:semicolon
-id|aha274x_getscb
+id|aic7xxx_getscb
 c_func
 (paren
 id|base
@@ -1944,7 +2024,7 @@ op_assign
 id|scb.target_status
 op_or
 (paren
-id|aha274x_parity
+id|aic7xxx_parity
 c_func
 (paren
 id|cmd
@@ -1956,7 +2036,7 @@ suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t; *  Did we underflow?  At this time, there&squot;s only&n;&t;&t;&t; *  one other driver that bothers to check for this,&n;&t;&t;&t; *  and cmd-&gt;underflow seems to be set rather half-&n;&t;&t;&t; *  heartedly in the higher-level SCSI code.&n;&t;&t;&t; */
 id|actual
 op_assign
-id|aha274x_length
+id|aic7xxx_length
 c_func
 (paren
 id|cmd
@@ -2004,7 +2084,7 @@ id|cmd-&gt;underflow
 id|printk
 c_func
 (paren
-l_string|&quot;aha274x: target %d underflow - &quot;
+l_string|&quot;aic7xxx: target %d underflow - &quot;
 l_string|&quot;wanted (at least) %u, got %u&bslash;n&quot;
 comma
 id|cmd-&gt;target
@@ -2101,7 +2181,7 @@ suffix:colon
 id|panic
 c_func
 (paren
-l_string|&quot;aha274x_isr: unknown scsi bus phase&bslash;n&quot;
+l_string|&quot;aic7xxx_isr: unknown scsi bus phase&bslash;n&quot;
 )paren
 suffix:semicolon
 r_case
@@ -2110,7 +2190,7 @@ suffix:colon
 id|debug
 c_func
 (paren
-l_string|&quot;aha274x_isr warning: &quot;
+l_string|&quot;aic7xxx_isr warning: &quot;
 l_string|&quot;issuing message reject, 1st byte 0x%x&bslash;n&quot;
 comma
 id|inb
@@ -2132,7 +2212,7 @@ suffix:colon
 id|panic
 c_func
 (paren
-l_string|&quot;aha274x_isr: reconnecting target %d &quot;
+l_string|&quot;aic7xxx_isr: reconnecting target %d &quot;
 l_string|&quot;didn&squot;t issue IDENTIFY message&bslash;n&quot;
 comma
 (paren
@@ -2158,7 +2238,7 @@ suffix:colon
 id|debug
 c_func
 (paren
-l_string|&quot;aha274x_isr: sequencer couldn&squot;t find match &quot;
+l_string|&quot;aic7xxx_isr: sequencer couldn&squot;t find match &quot;
 l_string|&quot;for reconnecting target %d - issuing ABORT&bslash;n&quot;
 comma
 (paren
@@ -2207,7 +2287,7 @@ id|base
 )paren
 )paren
 suffix:semicolon
-id|aha274x_to_scsirate
+id|aic7xxx_to_scsirate
 c_func
 (paren
 op_amp
@@ -2245,7 +2325,7 @@ suffix:colon
 id|debug
 c_func
 (paren
-l_string|&quot;aha274x_isr: seqint, &quot;
+l_string|&quot;aic7xxx_isr: seqint, &quot;
 l_string|&quot;intstat = 0x%x, scsisigi = 0x%x&bslash;n&quot;
 comma
 id|intstat
@@ -2287,10 +2367,10 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; *  Probing for EISA boards: it looks like the first two bytes&n; *  are a manufacturer code - three characters, five bits each:&n; *&n; *&t;&t; BYTE 0   BYTE 1   BYTE 2   BYTE 3&n; *&t;&t;?1111122 22233333 PPPPPPPP RRRRRRRR&n; *&n; *  The characters are baselined off ASCII &squot;@&squot;, so add that value&n; *  to each to get the real ASCII code for it.  The next two bytes&n; *  appear to be a product and revision number, probably vendor-&n; *  specific.  This is what is being searched for at each port,&n; *  and what should probably correspond to the ID= field in the&n; *  ECU&squot;s .cfg file for the card - if your card is not detected,&n; *  make sure your signature is listed in the array.&n; *&n; *  The fourth byte&squot;s lowest bit seems to be an enabled/disabled&n; *  flag (rest of the bits are reserved?).&n; */
 r_static
-DECL|function|aha274x_probe
+DECL|function|aic7xxx_probe
 r_enum
 id|aha_type
-id|aha274x_probe
+id|aic7xxx_probe
 c_func
 (paren
 r_int
@@ -2336,7 +2416,6 @@ id|S
 )braket
 op_assign
 (brace
-(brace
 l_int|4
 comma
 (brace
@@ -2350,10 +2429,8 @@ l_int|0x71
 )brace
 comma
 id|T_274X
-)brace
 comma
 multiline_comment|/* host adapter 274x */
-(brace
 l_int|4
 comma
 (brace
@@ -2367,10 +2444,8 @@ l_int|0x70
 )brace
 comma
 id|T_274X
-)brace
 comma
 multiline_comment|/* motherboard 274x  */
-(brace
 l_int|4
 comma
 (brace
@@ -2384,7 +2459,6 @@ l_int|0x56
 )brace
 comma
 id|T_284X
-)brace
 comma
 multiline_comment|/* 284x, BIOS enabled */
 )brace
@@ -2508,7 +2582,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;aha274x disabled at slot %d, ignored&bslash;n&quot;
+l_string|&quot;aic7xxx disabled at slot %d, ignored&bslash;n&quot;
 comma
 id|slot
 )paren
@@ -2521,16 +2595,16 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; *  Return &squot; &squot; for plain 274x, &squot;T&squot; for twin-channel, &squot;W&squot; for&n; *  wide channel, &squot;?&squot; for anything else.&n; */
 r_static
-DECL|function|aha274x_type
+DECL|function|aic7xxx_type
 r_char
-id|aha274x_type
+id|aic7xxx_type
 c_func
 (paren
 r_int
 id|base
 )paren
 (brace
-multiline_comment|/*&n;&t; *  The AIC-7770 can be wired so that, on chip reset,&n;&t; *  the SCSI Block Control register indicates how many&n;&t; *  busses the chip is configured for.&n;&t; */
+multiline_comment|/*&n;&t; *  AIC-7770/7870s can be wired so that, on chip reset,&n;&t; *  the SCSI Block Control register indicates how many&n;&t; *  busses the chip is configured for.  The two high bits&n;&t; *  set indicate a 294x.&n;&t; */
 r_switch
 c_cond
 (paren
@@ -2548,11 +2622,17 @@ id|base
 r_case
 l_int|0
 suffix:colon
+r_case
+l_int|0xc0
+suffix:colon
 r_return
 l_char|&squot; &squot;
 suffix:semicolon
 r_case
 l_int|2
+suffix:colon
+r_case
+l_int|0xc2
 suffix:colon
 r_return
 l_char|&squot;W&squot;
@@ -2568,7 +2648,7 @@ suffix:colon
 id|printk
 c_func
 (paren
-l_string|&quot;aha274x has unknown bus configuration&bslash;n&quot;
+l_string|&quot;aic7xxx has unknown bus configuration&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -2577,9 +2657,9 @@ suffix:semicolon
 )brace
 )brace
 r_static
-DECL|function|aha274x_loadram
+DECL|function|aic7xxx_loadram
 r_void
-id|aha274x_loadram
+id|aic7xxx_loadram
 c_func
 (paren
 r_int
@@ -2595,7 +2675,7 @@ id|seqprog
 op_assign
 (brace
 multiline_comment|/*&n;&t;&t; *  Each sequencer instruction is 29 bits&n;&t;&t; *  long (fill in the excess with zeroes)&n;&t;&t; *  and has to be loaded from least -&gt; most&n;&t;&t; *  significant byte, so this table has the&n;&t;&t; *  byte ordering reversed.&n;&t;&t; */
-macro_line|#&t;&t;include &quot;aha274x_seq.h&quot;
+macro_line|#&t;&t;include &quot;aic7xxx_seq.h&quot;
 )brace
 suffix:semicolon
 multiline_comment|/*&n;&t; *  When the AIC-7770 is paused (as on chip reset), the&n;&t; *  sequencer address can be altered and a sequencer&n;&t; *  program can be loaded by writing it, byte by byte, to&n;&t; *  the sequencer RAM port - the Adaptec documentation&n;&t; *  recommends using REP OUTSB to do this, hence the inline&n;&t; *  assembly.  Since the address autoincrements as we load&n;&t; *  the program, reset it back to zero afterward.  Disable&n;&t; *  sequencer RAM parity error detection while loading, and&n;&t; *  make sure the LOADRAM bit is enabled for loading.&n;&t; */
@@ -2683,7 +2763,7 @@ multiline_comment|/* SEQRESET */
 r_while
 c_loop
 (paren
-id|inw
+id|inb
 c_func
 (paren
 id|O_SEQADDR
@@ -2694,43 +2774,48 @@ id|base
 )paren
 op_ne
 l_int|0
+op_logical_and
+id|inb
+c_func
+(paren
+id|O_SEQADDR
+c_func
+(paren
+id|base
+)paren
+op_plus
+l_int|1
+)paren
+op_ne
+l_int|0
 )paren
 suffix:semicolon
 )brace
 r_static
-DECL|function|aha274x_register
-r_int
-id|aha274x_register
+DECL|function|aha274x_config
+r_void
+id|aha274x_config
 c_func
 (paren
-id|Scsi_Host_Template
+r_struct
+id|aic7xxx_host_config
 op_star
-r_template
+id|p
 comma
-r_enum
-id|aha_type
-id|type
-comma
-r_int
-id|base
+id|va_list
+id|ap
 )paren
 (brace
 r_int
-id|i
+id|base
+op_assign
+id|va_arg
+c_func
+(paren
+id|ap
 comma
-id|irq
-comma
-id|scsi_id
-suffix:semicolon
-r_struct
-id|Scsi_Host
-op_star
-id|host
-suffix:semicolon
-r_struct
-id|aha274x_host
-op_star
-id|p
+r_int
+)paren
 suffix:semicolon
 multiline_comment|/*&n;&t; *  Give the AIC-7770 a reset - reading the 274x&squot;s registers&n;&t; *  returns zeroes unless you do.  This forces a pause of the&n;&t; *  Sequencer.&n;&t; */
 id|outb
@@ -2746,8 +2831,11 @@ id|base
 )paren
 suffix:semicolon
 multiline_comment|/* CHIPRST */
-multiline_comment|/*&n;&t; *  The IRQ level in i/o port 4 maps directly onto the real&n;&t; *  IRQ number.  If it&squot;s ok, register it with the kernel.&n;&t; *&n;&t; *  NB. the Adaptec documentation says the IRQ number is only&n;&t; *&t;in the lower four bits; the ECU information shows the&n;&t; *&t;high bit being used as well.  Which is correct?&n;&t; */
-id|irq
+id|p-&gt;base
+op_assign
+id|base
+suffix:semicolon
+id|p-&gt;irq
 op_assign
 id|inb
 c_func
@@ -2761,10 +2849,483 @@ id|base
 op_amp
 l_int|0xf
 suffix:semicolon
+id|p-&gt;scsi_id
+op_assign
+id|inb
+c_func
+(paren
+id|HA_SCSICONF
+c_func
+(paren
+id|base
+)paren
+)paren
+op_amp
+l_int|0x7
+suffix:semicolon
+multiline_comment|/*&n;&t; *  This value for HCNTRL may be changed in the ISR if we&n;&t; *  catch a spurious interrupt right away.&n;&t; */
+id|p-&gt;unpause
+op_assign
+l_int|0xa
+suffix:semicolon
+multiline_comment|/*&n;&t; *  XXX - these are values that I don&squot;t know how to query&n;&t; *&t;  the hardware for.  Apparently some revision E&n;&t; *&t;  &squot;7770s can have more SCBs, and I don&squot;t know how&n;&t; *&t;  to get the &quot;extended translation&quot; flag from the&n;&t; *&t;  EISA data area.&n;&t; */
+id|p-&gt;maxscb
+op_assign
+l_int|4
+suffix:semicolon
+id|p-&gt;extended
+op_assign
+id|aic7xxx_extended
+suffix:semicolon
+multiline_comment|/*&n;&t; *  A reminder until this can be detected automatically.&n;&t; */
+id|printk
+c_func
+(paren
+l_string|&quot;aha274x: extended translation %sabled&bslash;n&quot;
+comma
+id|p-&gt;extended
+ques
+c_cond
+l_string|&quot;en&quot;
+suffix:colon
+l_string|&quot;dis&quot;
+)paren
+suffix:semicolon
+)brace
+r_static
+DECL|function|aha284x_config
+r_void
+id|aha284x_config
+c_func
+(paren
+r_struct
+id|aic7xxx_host_config
+op_star
+id|p
+comma
+id|va_list
+id|ap
+)paren
+(brace
+r_int
+id|base
+op_assign
+id|va_arg
+c_func
+(paren
+id|ap
+comma
+r_int
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t; *  Give the AIC-7770 a reset - this forces a pause of the&n;&t; *  Sequencer and returns everything to default values.&n;&t; */
+id|outb
+c_func
+(paren
+l_int|1
+comma
+id|O_HCNTRL
+c_func
+(paren
+id|base
+)paren
+)paren
+suffix:semicolon
+multiline_comment|/* CHIPRST */
+id|p-&gt;base
+op_assign
+id|base
+suffix:semicolon
+id|p-&gt;unpause
+op_assign
+l_int|0x2
+suffix:semicolon
+id|p-&gt;irq
+op_assign
+id|inb
+c_func
+(paren
+id|HA_INTDEF
+c_func
+(paren
+id|base
+)paren
+)paren
+op_amp
+l_int|0xf
+suffix:semicolon
+id|p-&gt;scsi_id
+op_assign
+id|inb
+c_func
+(paren
+id|HA_SCSICONF
+c_func
+(paren
+id|base
+)paren
+)paren
+op_amp
+l_int|0x7
+suffix:semicolon
+multiline_comment|/*&n;&t; *  XXX - these are values that I don&squot;t know how to query&n;&t; *&t;  the hardware for.  Apparently some revision E&n;&t; *&t;  &squot;7770s can have more SCBs, and I don&squot;t know how&n;&t; *&t;  to get the &quot;extended translation&quot; flag from the&n;&t; *&t;  onboard memory.&n;&t; */
+id|p-&gt;maxscb
+op_assign
+l_int|4
+suffix:semicolon
+id|p-&gt;extended
+op_assign
+id|aic7xxx_extended
+suffix:semicolon
+multiline_comment|/*&n;&t; *  A reminder until this can be detected automatically.&n;&t; */
+id|printk
+c_func
+(paren
+l_string|&quot;aha284x: extended translation %sabled&bslash;n&quot;
+comma
+id|p-&gt;extended
+ques
+c_cond
+l_string|&quot;en&quot;
+suffix:colon
+l_string|&quot;dis&quot;
+)paren
+suffix:semicolon
+)brace
+r_static
+DECL|function|aha294x_config
+r_void
+id|aha294x_config
+c_func
+(paren
+r_struct
+id|aic7xxx_host_config
+op_star
+id|p
+comma
+id|va_list
+id|ap
+)paren
+(brace
+r_int
+id|error
+suffix:semicolon
+r_int
+r_int
+id|io_port
+suffix:semicolon
+r_int
+r_char
+id|bus
+comma
+id|device_fn
+comma
+id|irq
+suffix:semicolon
+id|bus
+op_assign
+id|va_arg
+c_func
+(paren
+id|ap
+comma
+r_int
+r_char
+)paren
+suffix:semicolon
+id|device_fn
+op_assign
+id|va_arg
+c_func
+(paren
+id|ap
+comma
+r_int
+r_char
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t; *  Read esundry information from PCI BIOS.&n;&t; */
+id|error
+op_assign
+id|pcibios_read_config_dword
+c_func
+(paren
+id|bus
+comma
+id|device_fn
+comma
+id|PCI_BASE_ADDRESS_0
+comma
+op_amp
+id|io_port
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
+id|error
+)paren
+(brace
+id|panic
+c_func
+(paren
+l_string|&quot;aha294x_config: error %s reading i/o port&bslash;n&quot;
+comma
+id|pcibios_strerror
+c_func
+(paren
+id|error
+)paren
+)paren
+suffix:semicolon
+)brace
+id|error
+op_assign
+id|pcibios_read_config_byte
+c_func
+(paren
+id|bus
+comma
+id|device_fn
+comma
+id|PCI_INTERRUPT_LINE
+comma
+op_amp
 id|irq
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|error
+)paren
+(brace
+id|panic
+c_func
+(paren
+l_string|&quot;aha294x_config: error %s reading irq&bslash;n&quot;
+comma
+id|pcibios_strerror
+c_func
+(paren
+id|error
+)paren
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/*&n;&t; *  Make the base I/O register look like EISA and VL-bus.&n;&t; */
+id|p-&gt;base
+op_assign
+id|io_port
+op_minus
+l_int|0xc01
+suffix:semicolon
+multiline_comment|/*&n;&t; *  Give the AIC-7870 a reset - this forces a pause of the&n;&t; *  Sequencer and returns everything to default values.&n;&t; */
+id|outb
+c_func
+(paren
+l_int|1
+comma
+id|O_HCNTRL
+c_func
+(paren
+id|p-&gt;base
+)paren
+)paren
+suffix:semicolon
+multiline_comment|/* CHIPRST */
+id|p-&gt;irq
+op_assign
+id|irq
+suffix:semicolon
+id|p-&gt;maxscb
+op_assign
+l_int|16
+suffix:semicolon
+id|p-&gt;unpause
+op_assign
+l_int|0xa
+suffix:semicolon
+multiline_comment|/*&n;&t; *  XXX - these are values that I don&squot;t know how to query&n;&t; *&t;  the hardware for, so for now the SCSI host ID is&n;&t; *&t;  hardwired to 7, and the &quot;extended translation&quot;&n;&t; *&t;  flag is taken from boot-time flags.&n;&t; */
+id|p-&gt;scsi_id
+op_assign
+l_int|7
+suffix:semicolon
+id|p-&gt;extended
+op_assign
+id|aic7xxx_extended
+suffix:semicolon
+multiline_comment|/*&n;&t; *  XXX - force data fifo threshold to 100%.  Why does this&n;&t; *&t;  need to be done?&n;&t; */
+DECL|macro|DFTHRESH
+macro_line|#&t;define&t;DFTHRESH&t;3
+id|outb
+c_func
+(paren
+id|DFTHRESH
+op_lshift
+l_int|6
+comma
+id|O_DSPCISTATUS
+c_func
+(paren
+id|p-&gt;base
+)paren
+)paren
+suffix:semicolon
+id|outb
+c_func
+(paren
+id|p-&gt;scsi_id
+op_or
+(paren
+id|DFTHRESH
+op_lshift
+l_int|6
+)paren
+comma
+id|HA_SCSICONF
+c_func
+(paren
+id|p-&gt;base
+)paren
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t; *  A reminder until this can be detected automatically.&n;&t; */
+id|printk
+c_func
+(paren
+l_string|&quot;aha294x: extended translation %sabled&bslash;n&quot;
+comma
+id|p-&gt;extended
+ques
+c_cond
+l_string|&quot;en&quot;
+suffix:colon
+l_string|&quot;dis&quot;
+)paren
+suffix:semicolon
+)brace
+r_static
+DECL|function|aic7xxx_register
+r_int
+id|aic7xxx_register
+c_func
+(paren
+id|Scsi_Host_Template
+op_star
+r_template
+comma
+r_enum
+id|aha_type
+id|type
+comma
+dot
+dot
+dot
+)paren
+(brace
+id|va_list
+id|ap
+suffix:semicolon
+r_int
+id|i
+comma
+id|base
+suffix:semicolon
+r_struct
+id|Scsi_Host
+op_star
+id|host
+suffix:semicolon
+r_struct
+id|aic7xxx_host
+op_star
+id|p
+suffix:semicolon
+r_struct
+id|aic7xxx_host_config
+id|config
+suffix:semicolon
+id|va_start
+c_func
+(paren
+id|ap
+comma
+id|type
+)paren
+suffix:semicolon
+r_switch
+c_cond
+(paren
+id|type
+)paren
+(brace
+r_case
+id|T_274X
+suffix:colon
+id|aha274x_config
+c_func
+(paren
+op_amp
+id|config
+comma
+id|ap
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|T_284X
+suffix:colon
+id|aha284x_config
+c_func
+(paren
+op_amp
+id|config
+comma
+id|ap
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|T_294X
+suffix:colon
+id|aha294x_config
+c_func
+(paren
+op_amp
+id|config
+comma
+id|ap
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_default
+suffix:colon
+id|panic
+c_func
+(paren
+l_string|&quot;aic7xxx_register: internal error&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
+id|va_end
+c_func
+(paren
+id|ap
+)paren
+suffix:semicolon
+id|base
+op_assign
+id|config.base
+suffix:semicolon
+multiline_comment|/*&n;&t; *  The IRQ level in i/o port 4 maps directly onto the real&n;&t; *  IRQ number.  If it&squot;s ok, register it with the kernel.&n;&t; *&n;&t; *  NB. the Adaptec documentation says the IRQ number is only&n;&t; *&t;in the lower four bits; the ECU information shows the&n;&t; *&t;high bit being used as well.  Which is correct?&n;&t; */
+r_if
+c_cond
+(paren
+id|config.irq
 template_param
 l_int|15
 )paren
@@ -2772,7 +3333,7 @@ l_int|15
 id|printk
 c_func
 (paren
-l_string|&quot;aha274x uses unsupported IRQ level, ignoring&bslash;n&quot;
+l_string|&quot;aic7xxx uses unsupported IRQ level, ignoring&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -2780,7 +3341,7 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; *  Lock out other contenders for our i/o space.&n;&t; */
-id|request_region
+id|snarf_region
 c_func
 (paren
 id|O_MINREG
@@ -2800,29 +3361,13 @@ c_func
 (paren
 id|base
 )paren
-comma
-l_string|&quot;aha27x&quot;
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; *  Any card-type-specific adjustments before we register&n;&t; *  the scsi host(s).&n;&t; */
-id|scsi_id
-op_assign
-id|inb
-c_func
-(paren
-id|HA_SCSICONF
-c_func
-(paren
-id|base
-)paren
-)paren
-op_amp
-l_int|0x7
-suffix:semicolon
 r_switch
 c_cond
 (paren
-id|aha274x_type
+id|aic7xxx_type
 c_func
 (paren
 id|base
@@ -2835,7 +3380,7 @@ suffix:colon
 id|printk
 c_func
 (paren
-l_string|&quot;aha274x warning: ignoring channel B of 274x-twin&bslash;n&quot;
+l_string|&quot;aic7xxx warning: ignoring channel B of 274x-twin&bslash;n&quot;
 )paren
 suffix:semicolon
 r_break
@@ -2850,7 +3395,7 @@ suffix:colon
 id|printk
 c_func
 (paren
-l_string|&quot;aha274x is an unsupported type, ignoring&bslash;n&quot;
+l_string|&quot;aic7xxx is an unsupported type, ignoring&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -2885,7 +3430,7 @@ id|sg
 id|printk
 c_func
 (paren
-l_string|&quot;aha274x warning: kernel scatter-gather &quot;
+l_string|&quot;aic7xxx warning: kernel scatter-gather &quot;
 l_string|&quot;structures changed, disabling it&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -2897,7 +3442,7 @@ id|SG_NONE
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n;&t; *  Register each &quot;host&quot; and fill in the returned Scsi_Host&n;&t; *  structure as best we can.  Some of the parameters aren&squot;t&n;&t; *  really relevant for EISA, and none of the high-level SCSI&n;&t; *  code looks at it anyway.. why are the fields there?  Also&n;&t; *  save the pointer so that we can find the information when&n;&t; *  an IRQ is triggered.&n;&t; */
+multiline_comment|/*&n;&t; *  Register each &quot;host&quot; and fill in the returned Scsi_Host&n;&t; *  structure as best we can.  Some of the parameters aren&squot;t&n;&t; *  really relevant for bus types beyond ISA, and none of the&n;&t; *  high-level SCSI code looks at it anyway.. why are the fields&n;&t; *  there?  Also save the pointer so that we can find the&n;&t; *  information when an IRQ is triggered.&n;&t; */
 id|host
 op_assign
 id|scsi_register
@@ -2908,21 +3453,25 @@ comma
 r_sizeof
 (paren
 r_struct
-id|aha274x_host
+id|aic7xxx_host
 )paren
 )paren
+suffix:semicolon
+id|host-&gt;can_queue
+op_assign
+id|config.maxscb
 suffix:semicolon
 id|host-&gt;this_id
 op_assign
-id|scsi_id
+id|config.scsi_id
 suffix:semicolon
 id|host-&gt;irq
 op_assign
-id|irq
+id|config.irq
 suffix:semicolon
-id|aha274x_boards
+id|aic7xxx_boards
 (braket
-id|irq
+id|config.irq
 )braket
 op_assign
 id|host
@@ -2931,7 +3480,7 @@ id|p
 op_assign
 (paren
 r_struct
-id|aha274x_host
+id|aic7xxx_host
 op_star
 )paren
 id|host-&gt;hostdata
@@ -2945,7 +3494,7 @@ l_int|0
 suffix:semicolon
 id|i
 OL
-id|AHA274X_MAXSCB
+id|AIC7XXX_MAXSCB
 suffix:semicolon
 id|i
 op_increment
@@ -2959,21 +3508,20 @@ l_int|NULL
 suffix:semicolon
 id|p-&gt;base
 op_assign
-id|base
+id|config.base
 suffix:semicolon
-multiline_comment|/*&n;&t; *  The interrupt trigger is different depending&n;&t; *  on whether the card is EISA or VL-bus - sometimes.&n;&t; *  The startup variable will be cleared once the first&n;&t; *  command is queued, and is checked in the isr to&n;&t; *  try and detect when the interrupt type is set&n;&t; *  incorrectly, triggering an interrupt immediately.&n;&t; */
+id|p-&gt;maxscb
+op_assign
+id|config.maxscb
+suffix:semicolon
+id|p-&gt;extended
+op_assign
+id|config.extended
+suffix:semicolon
+multiline_comment|/*&n;&t; *  The interrupt trigger is different depending&n;&t; *  on whether the card is EISA or VL-bus - sometimes.&n;&t; *  The startup variable will be cleared once the first&n;&t; *  command is queued, and is checked in the isr to&n;&t; *  try and detect when the interrupt type is set&n;&t; *  incorrectly, triggering an interrupt immediately.&n;&t; *  This is now just set on a per-card-type basis.&n;&t; */
 id|p-&gt;unpause
 op_assign
-(paren
-id|type
-op_ne
-id|T_274X
-ques
-c_cond
-l_int|0x2
-suffix:colon
-l_int|0xa
-)paren
+id|config.unpause
 suffix:semicolon
 id|p-&gt;startup
 op_assign
@@ -2987,58 +3535,54 @@ c_cond
 id|request_irq
 c_func
 (paren
-id|irq
+id|config.irq
 comma
-id|aha274x_isr
+id|aic7xxx_isr
 comma
 id|SA_INTERRUPT
 comma
-l_string|&quot;AHA274x/284x&quot;
+l_string|&quot;aic7xxx&quot;
 )paren
 )paren
 (brace
 id|printk
 c_func
 (paren
-l_string|&quot;aha274x couldn&squot;t register irq %d, ignoring&bslash;n&quot;
+l_string|&quot;aic7xxx couldn&squot;t register irq %d, ignoring&bslash;n&quot;
 comma
-id|irq
+id|config.irq
 )paren
 suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; *  A reminder until this can be detected automatically.&n;&t; */
-id|printk
-c_func
-(paren
-l_string|&quot;aha274x: extended translation %sabled&bslash;n&quot;
-comma
-id|aha274x_extended
-ques
-c_cond
-l_string|&quot;en&quot;
-suffix:colon
-l_string|&quot;dis&quot;
-)paren
-suffix:semicolon
 multiline_comment|/*&n;&t; *  Print out debugging information before re-enabling&n;&t; *  the card - a lot of registers on it can&squot;t be read&n;&t; *  when the sequencer is active.&n;&t; */
+macro_line|#ifdef AIC7XXX_DEBUG
 id|debug_config
 c_func
 (paren
 id|type
 comma
-id|base
+op_amp
+id|config
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; *  Load the sequencer program, then re-enable the board -&n;&t; *  resetting the AIC-7770 disables it, leaving the lights&n;&t; *  on with nobody home.&n;&t; */
-id|aha274x_loadram
+macro_line|#endif
+multiline_comment|/*&n;&t; *  Load the sequencer program, then re-enable the board -&n;&t; *  resetting the AIC-7770 disables it, leaving the lights&n;&t; *  on with nobody home.  On the PCI bus you *may* be home,&n;&t; *  but then your mailing address is dynamically assigned&n;&t; *  so no one can find you anyway :-)&n;&t; */
+id|aic7xxx_loadram
 c_func
 (paren
 id|base
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|type
+op_ne
+id|T_294X
+)paren
 id|outb
 c_func
 (paren
@@ -3077,6 +3621,19 @@ id|base
 )paren
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t; *  For reconnecting targets, the sequencer code needs to&n;&t; *  know how many SCBs it has to search through.&n;&t; */
+id|outb
+c_func
+(paren
+id|config.maxscb
+comma
+id|HA_SCBCOUNT
+c_func
+(paren
+id|base
+)paren
+)paren
+suffix:semicolon
 multiline_comment|/*&n;&t; *  Unpause the sequencer before returning and enable&n;&t; *  interrupts - we shouldn&squot;t get any until the first&n;&t; *  command is sent to us by the high-level SCSI code.&n;&t; */
 id|UNPAUSE_SEQUENCER
 c_func
@@ -3088,9 +3645,9 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
-DECL|function|aha274x_detect
+DECL|function|aic7xxx_detect
 r_int
-id|aha274x_detect
+id|aic7xxx_detect
 c_func
 (paren
 id|Scsi_Host_Template
@@ -3111,16 +3668,17 @@ id|slot
 comma
 id|base
 suffix:semicolon
+multiline_comment|/*&n;&t; *  EISA/VL-bus card signature probe.&n;&t; */
 r_for
 c_loop
 (paren
 id|slot
 op_assign
-id|MINEISA
+id|MINSLOT
 suffix:semicolon
 id|slot
 op_le
-id|MAXEISA
+id|MAXSLOT
 suffix:semicolon
 id|slot
 op_increment
@@ -3166,7 +3724,7 @@ suffix:semicolon
 )brace
 id|type
 op_assign
-id|aha274x_probe
+id|aic7xxx_probe
 c_func
 (paren
 id|slot
@@ -3189,7 +3747,7 @@ id|T_NONE
 multiline_comment|/*&n;&t;&t;&t; *  We &quot;find&quot; a 274x if we locate the card&n;&t;&t;&t; *  signature and we can set it up and register&n;&t;&t;&t; *  it with the kernel without incident.&n;&t;&t;&t; */
 id|found
 op_add_assign
-id|aha274x_register
+id|aic7xxx_register
 c_func
 (paren
 r_template
@@ -3201,6 +3759,68 @@ id|base
 suffix:semicolon
 )brace
 )brace
+multiline_comment|/*&n;&t; *  PCI-bus probe.&n;&t; */
+r_if
+c_cond
+(paren
+id|pcibios_present
+c_func
+(paren
+)paren
+)paren
+(brace
+r_int
+id|index
+op_assign
+l_int|0
+suffix:semicolon
+r_int
+r_char
+id|bus
+comma
+id|device_fn
+suffix:semicolon
+r_while
+c_loop
+(paren
+op_logical_neg
+id|pcibios_find_device
+c_func
+(paren
+id|PCI_VENDOR_ID_ADAPTEC
+comma
+id|PCI_DEVICE_ID_ADAPTEC_2940
+comma
+id|index
+comma
+op_amp
+id|bus
+comma
+op_amp
+id|device_fn
+)paren
+)paren
+(brace
+id|found
+op_add_assign
+id|aic7xxx_register
+c_func
+(paren
+r_template
+comma
+id|T_294X
+comma
+id|bus
+comma
+id|device_fn
+)paren
+suffix:semicolon
+id|index
+op_add_assign
+l_int|1
+suffix:semicolon
+)brace
+)brace
 r_template
 op_member_access_from_pointer
 id|name
@@ -3209,7 +3829,7 @@ op_assign
 r_char
 op_star
 )paren
-id|aha274x_info
+id|aic7xxx_info
 c_func
 (paren
 l_int|NULL
@@ -3219,54 +3839,36 @@ r_return
 id|found
 suffix:semicolon
 )brace
-DECL|function|aha274x_info
+DECL|function|aic7xxx_info
 r_const
 r_char
 op_star
-id|aha274x_info
+id|aic7xxx_info
 c_func
 (paren
 r_struct
 id|Scsi_Host
 op_star
-id|shost
+id|notused
 )paren
 (brace
 r_return
-l_string|&quot;Adaptec AHA274x/284x (EISA/VL-bus -&gt; Fast SCSI) &quot;
-id|AHA274X_SEQ_VERSION
+l_string|&quot;Adaptec AHA274x/284x/294x (EISA/VL-bus/PCI -&gt; Fast SCSI) &quot;
+id|AIC7XXX_SEQ_VERSION
 l_string|&quot;/&quot;
-id|AHA274X_H_VERSION
+id|AIC7XXX_H_VERSION
 l_string|&quot;/&quot;
-l_string|&quot;1.29&quot;
-suffix:semicolon
-)brace
-DECL|function|aha274x_command
-r_int
-id|aha274x_command
-c_func
-(paren
-id|Scsi_Cmnd
-op_star
-id|cmd
-)paren
-(brace
-multiline_comment|/*&n;&t; *  This is a relic of non-interrupt-driven SCSI&n;&t; *  drivers.  With the can_queue variable set, this&n;&t; *  should never be called.&n;&t; */
-id|panic
-c_func
-(paren
-l_string|&quot;aha274x_command was called&bslash;n&quot;
-)paren
+l_string|&quot;1.34&quot;
 suffix:semicolon
 )brace
 r_static
-DECL|function|aha274x_buildscb
+DECL|function|aic7xxx_buildscb
 r_void
-id|aha274x_buildscb
+id|aic7xxx_buildscb
 c_func
 (paren
 r_struct
-id|aha274x_host
+id|aic7xxx_host
 op_star
 id|p
 comma
@@ -3275,7 +3877,7 @@ op_star
 id|cmd
 comma
 r_struct
-id|aha274x_scb
+id|aic7xxx_scb
 op_star
 id|scb
 )paren
@@ -3323,7 +3925,7 @@ suffix:semicolon
 multiline_comment|/*&n;&t; *  The interpretation of request_buffer and request_bufflen&n;&t; *  changes depending on whether or not use_sg is zero; a&n;&t; *  non-zero use_sg indicates the number of elements in the&n;&t; *  scatter-gather array.&n;&t; *&n;&t; *  The AIC-7770 can&squot;t support transfers of any sort larger&n;&t; *  than 2^24 (three-byte count) without backflips.  For what&n;&t; *  the kernel is doing, this shouldn&squot;t occur.  I hope.&n;&t; */
 id|length
 op_assign
-id|aha274x_length
+id|aic7xxx_length
 c_func
 (paren
 id|cmd
@@ -3332,7 +3934,7 @@ l_int|0
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; *  The sequencer code cannot yet handle scatter-gather segments&n;&t; *  larger than 64k (two-byte length).  The 1.1.x kernels, however,&n;&t; *  have a four-byte length field in the struct scatterlist, so&n;&t; *  make sure we don&squot;t exceed 64k on these kernels for now.&n;&t; */
-id|aha274x_sg_check
+id|aic7xxx_sg_check
 c_func
 (paren
 id|cmd
@@ -3349,7 +3951,7 @@ l_int|0xffffff
 id|panic
 c_func
 (paren
-l_string|&quot;aha274x_buildscb: can&squot;t transfer &gt; 2^24 - 1 bytes&bslash;n&quot;
+l_string|&quot;aic7xxx_buildscb: can&squot;t transfer &gt; 2^24 - 1 bytes&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
@@ -3386,7 +3988,7 @@ macro_line|#if 0
 id|debug
 c_func
 (paren
-l_string|&quot;aha274x_buildscb: SG used, %d segments, length %u&bslash;n&quot;
+l_string|&quot;aic7xxx_buildscb: SG used, %d segments, length %u&bslash;n&quot;
 comma
 id|cmd-&gt;use_sg
 comma
@@ -3450,16 +4052,16 @@ suffix:semicolon
 )brace
 )brace
 r_static
-DECL|function|aha274x_putscb
+DECL|function|aic7xxx_putscb
 r_void
-id|aha274x_putscb
+id|aic7xxx_putscb
 c_func
 (paren
 r_int
 id|base
 comma
 r_struct
-id|aha274x_scb
+id|aic7xxx_scb
 op_star
 id|scb
 )paren
@@ -3530,9 +4132,9 @@ id|base
 )paren
 suffix:semicolon
 )brace
-DECL|function|aha274x_queue
+DECL|function|aic7xxx_queue
 r_int
-id|aha274x_queue
+id|aic7xxx_queue
 c_func
 (paren
 id|Scsi_Cmnd
@@ -3559,19 +4161,19 @@ comma
 id|old_scbptr
 suffix:semicolon
 r_struct
-id|aha274x_host
+id|aic7xxx_host
 op_star
 id|p
 suffix:semicolon
 r_struct
-id|aha274x_scb
+id|aic7xxx_scb
 id|scb
 suffix:semicolon
 macro_line|#if 0
 id|debug
 c_func
 (paren
-l_string|&quot;aha274x_queue: cmd 0x%x (size %u), target %d, lun %d&bslash;n&quot;
+l_string|&quot;aic7xxx_queue: cmd 0x%x (size %u), target %d, lun %d&bslash;n&quot;
 comma
 id|cmd-&gt;cmnd
 (braket
@@ -3590,13 +4192,13 @@ id|p
 op_assign
 (paren
 r_struct
-id|aha274x_host
+id|aic7xxx_host
 op_star
 )paren
 id|cmd-&gt;host-&gt;hostdata
 suffix:semicolon
 multiline_comment|/*&n;&t; *  Construct the SCB beforehand, so the sequencer is&n;&t; *  paused a minimal amount of time.&n;&t; */
-id|aha274x_buildscb
+id|aic7xxx_buildscb
 c_func
 (paren
 id|p
@@ -3624,7 +4226,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; *  Find a free slot in the SCB array to load this command&n;&t; *  into.  Since can_queue is set to AHA274X_MAXSCB, we&n;&t; *  should always find one.&n;&t; */
+multiline_comment|/*&n;&t; *  Find a free slot in the SCB array to load this command&n;&t; *  into.  Since can_queue is set to the maximum number of&n;&t; *  SCBs for the card, we should always find one.&n;&t; */
 r_for
 c_loop
 (paren
@@ -3634,7 +4236,7 @@ l_int|0
 suffix:semicolon
 id|empty
 OL
-id|AHA274X_MAXSCB
+id|p-&gt;maxscb
 suffix:semicolon
 id|empty
 op_increment
@@ -3655,12 +4257,12 @@ c_cond
 (paren
 id|empty
 op_eq
-id|AHA274X_MAXSCB
+id|p-&gt;maxscb
 )paren
 id|panic
 c_func
 (paren
-l_string|&quot;aha274x_queue: couldn&squot;t find a free scb&bslash;n&quot;
+l_string|&quot;aic7xxx_queue: couldn&squot;t find a free scb&bslash;n&quot;
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; *  Pause the sequencer so we can play with its registers -&n;&t; *  wait for it to acknowledge the pause.&n;&t; *&n;&t; *  XXX - should the interrupts be left on while doing this?&n;&t; */
@@ -3695,7 +4297,7 @@ id|p-&gt;base
 )paren
 )paren
 suffix:semicolon
-id|aha274x_putscb
+id|aic7xxx_putscb
 c_func
 (paren
 id|p-&gt;base
@@ -3740,7 +4342,7 @@ id|empty
 op_assign
 id|cmd
 suffix:semicolon
-id|aha274x_parity
+id|aic7xxx_parity
 c_func
 (paren
 id|cmd
@@ -3764,7 +4366,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* return values from aha274x_kill */
+multiline_comment|/* return values from aic7xxx_kill */
 DECL|enum|k_state
 r_enum
 id|k_state
@@ -3789,10 +4391,10 @@ multiline_comment|/* scb found, but disconnected */
 suffix:semicolon
 multiline_comment|/*&n; *  This must be called with interrupts disabled - it&squot;s going to&n; *  be messing around with the host data, and an interrupt being&n; *  fielded in the middle could get ugly.&n; *&n; *  Since so much of the abort and reset code is shared, this&n; *  function performs more magic than it really should.  If the&n; *  command completes ok, then it will call scsi_done with the&n; *  result code passed in.  The unpause parameter controls whether&n; *  or not the sequencer gets unpaused - the reset function, for&n; *  instance, may want to do something more aggressive.&n; *&n; *  Note that the command is checked for in our SCB_array first&n; *  before the sequencer is paused, so if k_absent is returned,&n; *  then the sequencer is NOT paused.&n; */
 r_static
-DECL|function|aha274x_kill
+DECL|function|aic7xxx_kill
 r_enum
 id|k_state
-id|aha274x_kill
+id|aic7xxx_kill
 c_func
 (paren
 id|Scsi_Cmnd
@@ -3812,7 +4414,7 @@ id|unpause
 )paren
 (brace
 r_struct
-id|aha274x_host
+id|aic7xxx_host
 op_star
 id|p
 suffix:semicolon
@@ -3829,14 +4431,14 @@ r_int
 r_char
 id|scbsave
 (braket
-id|AHA274X_MAXSCB
+id|AIC7XXX_MAXSCB
 )braket
 suffix:semicolon
 id|p
 op_assign
 (paren
 r_struct
-id|aha274x_host
+id|aic7xxx_host
 op_star
 )paren
 id|cmd-&gt;host-&gt;hostdata
@@ -3851,7 +4453,7 @@ l_int|0
 suffix:semicolon
 id|scb
 OL
-id|AHA274X_MAXSCB
+id|p-&gt;maxscb
 suffix:semicolon
 id|scb
 op_increment
@@ -3873,7 +4475,7 @@ c_cond
 (paren
 id|scb
 op_eq
-id|AHA274X_MAXSCB
+id|p-&gt;maxscb
 )paren
 r_return
 id|k_absent
@@ -4156,9 +4758,9 @@ r_return
 id|k_ok
 suffix:semicolon
 )brace
-DECL|function|aha274x_abort
+DECL|function|aic7xxx_abort
 r_int
-id|aha274x_abort
+id|aic7xxx_abort
 c_func
 (paren
 id|Scsi_Cmnd
@@ -4186,7 +4788,7 @@ suffix:semicolon
 r_switch
 c_cond
 (paren
-id|aha274x_kill
+id|aic7xxx_kill
 c_func
 (paren
 id|cmd
@@ -4241,7 +4843,7 @@ suffix:colon
 id|panic
 c_func
 (paren
-l_string|&quot;aha274x_do_abort: internal error&bslash;n&quot;
+l_string|&quot;aic7xxx_do_abort: internal error&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
@@ -4256,9 +4858,9 @@ id|rv
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *  Resetting the bus always succeeds - is has to, otherwise the&n; *  kernel will panic!  Try a surgical technique - sending a BUS&n; *  DEVICE RESET message - on the offending target before pulling&n; *  the SCSI bus reset line.&n; */
-DECL|function|aha274x_reset
+DECL|function|aic7xxx_reset
 r_int
-id|aha274x_reset
+id|aic7xxx_reset
 c_func
 (paren
 id|Scsi_Cmnd
@@ -4277,7 +4879,7 @@ op_star
 id|reset
 suffix:semicolon
 r_struct
-id|aha274x_host
+id|aic7xxx_host
 op_star
 id|p
 suffix:semicolon
@@ -4285,7 +4887,7 @@ id|p
 op_assign
 (paren
 r_struct
-id|aha274x_host
+id|aic7xxx_host
 op_star
 )paren
 id|cmd-&gt;host-&gt;hostdata
@@ -4304,7 +4906,7 @@ suffix:semicolon
 r_switch
 c_cond
 (paren
-id|aha274x_kill
+id|aic7xxx_kill
 c_func
 (paren
 id|cmd
@@ -4348,7 +4950,7 @@ suffix:semicolon
 r_case
 id|k_absent
 suffix:colon
-multiline_comment|/*&n;&t;&t; *  The sequencer will not be paused if aha274x_kill()&n;&t;&t; *  couldn&squot;t find the command.&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; *  The sequencer will not be paused if aic7xxx_kill()&n;&t;&t; *  couldn&squot;t find the command.&n;&t;&t; */
 id|PAUSE_SEQUENCER
 c_func
 (paren
@@ -4366,7 +4968,7 @@ multiline_comment|/*&n;&t;&t; *  Do a hard reset of the SCSI bus.  According to 
 id|debug
 c_func
 (paren
-l_string|&quot;aha274x: attempting to reset scsi bus and card&bslash;n&quot;
+l_string|&quot;aic7xxx: attempting to reset scsi bus and card&bslash;n&quot;
 )paren
 suffix:semicolon
 id|outb
@@ -4429,7 +5031,7 @@ l_int|0
 suffix:semicolon
 id|i
 OL
-id|AHA274X_MAXSCB
+id|p-&gt;maxscb
 suffix:semicolon
 id|i
 op_increment
@@ -4489,7 +5091,7 @@ suffix:colon
 id|panic
 c_func
 (paren
-l_string|&quot;aha274x_reset: internal error&bslash;n&quot;
+l_string|&quot;aic7xxx_reset: internal error&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
@@ -4503,9 +5105,9 @@ r_return
 id|SCSI_RESET_SUCCESS
 suffix:semicolon
 )brace
-DECL|function|aha274x_biosparam
+DECL|function|aic7xxx_biosparam
 r_int
-id|aha274x_biosparam
+id|aic7xxx_biosparam
 c_func
 (paren
 id|Disk
@@ -4527,6 +5129,20 @@ comma
 id|sectors
 comma
 id|cylinders
+suffix:semicolon
+r_struct
+id|aic7xxx_host
+op_star
+id|p
+suffix:semicolon
+id|p
+op_assign
+(paren
+r_struct
+id|aic7xxx_host
+op_star
+)paren
+id|disk-&gt;device-&gt;host-&gt;hostdata
 suffix:semicolon
 multiline_comment|/*&n;&t; *  XXX - if I could portably find the card&squot;s configuration&n;&t; *&t;  information, then this could be autodetected instead&n;&t; *&t;  of left to a boot-time switch.&n;&t; */
 id|heads
@@ -4550,7 +5166,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|aha274x_extended
+id|p-&gt;extended
 op_logical_and
 id|cylinders
 OG

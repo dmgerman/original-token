@@ -24,6 +24,12 @@ multiline_comment|/*************************************************************
 DECL|macro|REALLY_SLOW_IO
 mdefine_line|#define REALLY_SLOW_IO&t;&t;&t;/* most systems can safely undef this */
 macro_line|#include &lt;asm/io.h&gt;
+macro_line|#ifdef __alpha__
+macro_line|# ifndef SUPPORT_VLB_SYNC
+DECL|macro|SUPPORT_VLB_SYNC
+macro_line|#  define SUPPORT_VLB_SYNC&t;0
+macro_line|# endif
+macro_line|#endif
 DECL|macro|REALLY_FAST_IO
 macro_line|#undef&t;REALLY_FAST_IO&t;&t;&t;/* define if ide ports are perfect */
 DECL|macro|INITIAL_MULT_COUNT
@@ -197,15 +203,15 @@ DECL|macro|SECTOR_WORDS
 mdefine_line|#define SECTOR_WORDS&t;(512 / 4)&t;/* number of 32bit words per sector */
 multiline_comment|/*&n; * Timeouts for various operations:&n; */
 DECL|macro|WAIT_DRQ
-mdefine_line|#define WAIT_DRQ&t;5&t;/* 50msec - spec allows up to 20ms */
+mdefine_line|#define WAIT_DRQ&t;(5*HZ/100)&t;/* 50msec - spec allows up to 20ms */
 DECL|macro|WAIT_READY
-mdefine_line|#define WAIT_READY&t;3&t;/* 30msec - should be instantaneous */
+mdefine_line|#define WAIT_READY&t;(3*HZ/100)&t;/* 30msec - should be instantaneous */
 DECL|macro|WAIT_PIDENTIFY
-mdefine_line|#define WAIT_PIDENTIFY&t;100&t;/* 1sec   - should be less than 3ms (?) */
+mdefine_line|#define WAIT_PIDENTIFY&t;(1*HZ)&t;/* 1sec   - should be less than 3ms (?) */
 DECL|macro|WAIT_WORSTCASE
-mdefine_line|#define WAIT_WORSTCASE&t;3000&t;/* 30sec  - worst case when spinning up */
+mdefine_line|#define WAIT_WORSTCASE&t;(30*HZ)&t;/* 30sec  - worst case when spinning up */
 DECL|macro|WAIT_CMD
-mdefine_line|#define WAIT_CMD&t;1000&t;/* 10sec  - maximum wait for an IRQ to happen */
+mdefine_line|#define WAIT_CMD&t;(10*HZ)&t;/* 10sec  - maximum wait for an IRQ to happen */
 multiline_comment|/*&n; * Now for the data we need to maintain per-device:  ide_dev_t&n; *&n; * For fast indexing, sizeof(ide_dev_t) = 32 = power_of_2;&n; * Everything is carefully aligned on appropriate boundaries,&n; *  and several fields are placed for optimal (gcc) access.&n; */
 DECL|enumerator|disk
 DECL|enumerator|cdrom
@@ -911,7 +917,7 @@ multiline_comment|/*&n; * One final include file, which references some of the d
 DECL|macro|IDE_DRIVER
 mdefine_line|#define IDE_DRIVER&t;/* &quot;parameter&quot; for blk.h */
 macro_line|#include &quot;blk.h&quot;
-multiline_comment|/*&n; * For really screwy hardware (hey, at least it *can* be used with Linux!&n; */
+multiline_comment|/*&n; * For really screwy hardware (hey, at least it *can* be used with Linux!)&n; */
 macro_line|#if (DISK_RECOVERY_TIME &gt; 0)
 DECL|variable|ide_lastreq
 r_static
@@ -6334,7 +6340,7 @@ r_int
 r_return
 id|err
 suffix:semicolon
-id|put_fs_long
+id|put_user
 c_func
 (paren
 (paren
@@ -6479,7 +6485,7 @@ id|err
 r_return
 id|err
 suffix:semicolon
-id|put_fs_byte
+id|put_user
 c_func
 (paren
 id|dev-&gt;bios_head
@@ -6492,7 +6498,7 @@ op_amp
 id|loc-&gt;heads
 )paren
 suffix:semicolon
-id|put_fs_byte
+id|put_user
 c_func
 (paren
 id|dev-&gt;bios_sect
@@ -6505,7 +6511,7 @@ op_amp
 id|loc-&gt;sectors
 )paren
 suffix:semicolon
-id|put_fs_word
+id|put_user
 c_func
 (paren
 id|dev-&gt;bios_cyl
@@ -6518,7 +6524,7 @@ op_amp
 id|loc-&gt;cylinders
 )paren
 suffix:semicolon
-id|put_fs_long
+id|put_user
 c_func
 (paren
 (paren
@@ -7154,7 +7160,7 @@ r_int
 (brace
 id|args
 op_assign
-id|get_fs_long
+id|get_user
 c_func
 (paren
 (paren
@@ -7179,7 +7185,7 @@ op_amp
 id|args
 )paren
 suffix:semicolon
-id|put_fs_long
+id|put_user
 c_func
 (paren
 id|args
@@ -7940,20 +7946,30 @@ id|check
 op_eq
 id|capacity
 )paren
+(brace
 multiline_comment|/* was it swapped? */
-op_star
+multiline_comment|/* yes, bring it into little-endian order: */
+id|id-&gt;cur_capacity0
+op_assign
 (paren
-(paren
-r_int
-op_star
+id|capacity
+op_rshift
+l_int|0
 )paren
 op_amp
-id|id-&gt;cur_capacity0
-)paren
-op_assign
-id|capacity
+l_int|0xffff
 suffix:semicolon
-multiline_comment|/* fix it */
+id|id-&gt;cur_capacity1
+op_assign
+(paren
+id|capacity
+op_rshift
+l_int|16
+)paren
+op_amp
+l_int|0xffff
+suffix:semicolon
+)brace
 )brace
 multiline_comment|/* Use physical geometry if what we have still makes no sense */
 r_if
@@ -8150,6 +8166,7 @@ l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * Delay for *at least* 10ms.  As we don&squot;t know how much time is left&n; * until the next tick occurs, we wait an extra tick to be safe.&n; */
 DECL|function|delay_10ms
 r_static
 r_void
@@ -8164,7 +8181,15 @@ id|timer
 op_assign
 id|jiffies
 op_plus
-l_int|2
+(paren
+id|HZ
+op_plus
+l_int|99
+)paren
+op_div
+l_int|100
+op_plus
+l_int|1
 suffix:semicolon
 r_while
 c_loop
@@ -8241,6 +8266,16 @@ id|DEV_HWIF
 )paren
 (brace
 multiline_comment|/* already probed for IRQ? */
+id|probe_irq_off
+c_func
+(paren
+id|probe_irq_on
+c_func
+(paren
+)paren
+)paren
+suffix:semicolon
+multiline_comment|/* clear dangling irqs */
 id|irqs
 op_assign
 id|probe_irq_on
@@ -9821,11 +9856,6 @@ suffix:semicolon
 )brace
 macro_line|#ifndef CONFIG_BLK_DEV_HD
 multiline_comment|/*&n; * We query CMOS about hard disks : it could be that we have a SCSI/ESDI/etc&n; * controller that is BIOS compatible with ST-506, and thus showing up in our&n; * BIOS table, but not register compatible, and therefore not present in CMOS.&n; *&n; * Furthermore, we will assume that our ST-506 drives &lt;if any&gt; are the primary&n; * drives in the system -- the ones reflected as drive 1 or 2.  The first&n; * drive is stored in the high nibble of CMOS byte 0x12, the second in the low&n; * nibble.  This will be either a 4 bit drive type or 0xf indicating use byte&n; * 0x19 for an 8 bit type, drive 1, 0x1a for drive 2 in CMOS.  A non-zero value &n; * means we have an AT controller hard disk for that drive.&n; */
-r_extern
-r_struct
-id|drive_info_struct
-id|drive_info
-suffix:semicolon
 DECL|function|probe_cmos_for_drives
 r_static
 r_void
@@ -9834,6 +9864,12 @@ id|probe_cmos_for_drives
 r_void
 )paren
 (brace
+macro_line|#ifdef __i386__
+r_extern
+r_struct
+id|drive_info_struct
+id|drive_info
+suffix:semicolon
 id|byte
 id|drive
 comma
@@ -10010,6 +10046,7 @@ op_add_assign
 l_int|16
 suffix:semicolon
 )brace
+macro_line|#endif
 )brace
 macro_line|#endif&t;/* CONFIG_BLK_DEV_HD */
 DECL|function|init_ide_data
@@ -10805,7 +10842,7 @@ id|probe_cmos_for_drives
 (paren
 )paren
 suffix:semicolon
-macro_line|#endif /* CONFIG_BLJ_DEV_HD */
+macro_line|#endif /* CONFIG_BLK_DEV_HD */
 id|probe_mem_start
 op_assign
 (paren

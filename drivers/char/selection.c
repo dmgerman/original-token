@@ -401,7 +401,7 @@ l_int|1
 suffix:semicolon
 id|xs
 op_assign
-id|get_fs_word
+id|get_user
 c_func
 (paren
 id|args
@@ -412,7 +412,7 @@ l_int|1
 suffix:semicolon
 id|ys
 op_assign
-id|get_fs_word
+id|get_user
 c_func
 (paren
 id|args
@@ -423,7 +423,7 @@ l_int|1
 suffix:semicolon
 id|xe
 op_assign
-id|get_fs_word
+id|get_user
 c_func
 (paren
 id|args
@@ -434,7 +434,7 @@ l_int|1
 suffix:semicolon
 id|ye
 op_assign
-id|get_fs_word
+id|get_user
 c_func
 (paren
 id|args
@@ -445,7 +445,7 @@ l_int|1
 suffix:semicolon
 id|sel_mode
 op_assign
-id|get_fs_word
+id|get_user
 c_func
 (paren
 id|args

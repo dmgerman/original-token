@@ -745,11 +745,13 @@ r_int
 id|arg
 )paren
 (brace
+r_int
 r_char
 op_star
 id|argp
 op_assign
 (paren
+r_int
 r_char
 op_star
 )paren
@@ -763,7 +765,7 @@ r_int
 r_int
 id|mode
 op_assign
-id|get_fs_byte
+id|get_user
 c_func
 (paren
 id|argp

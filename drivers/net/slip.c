@@ -3641,7 +3641,7 @@ op_minus
 id|err
 suffix:semicolon
 )brace
-id|put_fs_long
+id|put_user
 c_func
 (paren
 id|sl-&gt;mode
@@ -3687,7 +3687,7 @@ suffix:semicolon
 )brace
 id|tmp
 op_assign
-id|get_fs_long
+id|get_user
 c_func
 (paren
 (paren

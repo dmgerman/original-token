@@ -1,14 +1,20 @@
 multiline_comment|/* idprom.h: Macros and defines for idprom routines&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+macro_line|#ifndef _SPARC_IDPROM_H
+DECL|macro|_SPARC_IDPROM_H
+mdefine_line|#define _SPARC_IDPROM_H
 r_extern
 r_struct
 id|linux_romvec
 op_star
 id|romvec
 suffix:semicolon
-DECL|macro|IDPROM_ADDR
-mdefine_line|#define IDPROM_ADDR  (0xffd04000 + 0x7d8)
-DECL|macro|IDPROM_SIZE
-mdefine_line|#define IDPROM_SIZE  36
+multiline_comment|/* Offset into the EEPROM where the id PROM is located on the 4c */
+DECL|macro|IDPROM_OFFSET
+mdefine_line|#define IDPROM_OFFSET  0x7d8
+multiline_comment|/* On sun4m; physical. */
+multiline_comment|/* MicroSPARC(-II) does not decode 31rd bit, but it works. */
+DECL|macro|IDPROM_OFFSET_M
+mdefine_line|#define IDPROM_OFFSET_M  0xfd8
 DECL|struct|idp_struct
 r_struct
 id|idp_struct
@@ -64,4 +70,13 @@ suffix:semicolon
 multiline_comment|/* XXX */
 )brace
 suffix:semicolon
+r_extern
+r_struct
+id|idp_struct
+op_star
+id|idprom
+suffix:semicolon
+DECL|macro|IDPROM_SIZE
+mdefine_line|#define IDPROM_SIZE  (sizeof(struct idp_struct))
+macro_line|#endif /* !(_SPARC_IDPROM_H) */
 eof

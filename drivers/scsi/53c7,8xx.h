@@ -2,6 +2,33 @@ multiline_comment|/*&n; * NCR 53c{7,8}0x0 driver, header file&n; *&n; * Sponsore
 macro_line|#ifndef NCR53c7x0_H
 DECL|macro|NCR53c7x0_H
 mdefine_line|#define NCR53c7x0_H
+macro_line|#ifdef __alpha__
+DECL|macro|ncr_readb
+macro_line|# define ncr_readb(a)&t;&t;((unsigned int)readb((unsigned long)(a)))
+DECL|macro|ncr_readw
+macro_line|# define ncr_readw(a)&t;&t;((unsigned int)readw((unsigned long)(a)))
+DECL|macro|ncr_readl
+macro_line|# define ncr_readl(a)&t;&t;((unsigned int)readl((unsigned long)(a)))
+DECL|macro|ncr_writeb
+macro_line|# define ncr_writeb(v,a)&t;(writeb((v), (unsigned long)(a)))
+DECL|macro|ncr_writew
+macro_line|# define ncr_writew(v,a)&t;(writew((v), (unsigned long)(a)))
+DECL|macro|ncr_writel
+macro_line|# define ncr_writel(v,a)&t;(writel((v), (unsigned long)(a)))
+macro_line|#else
+DECL|macro|ncr_readb
+macro_line|# define ncr_readb(a)&t;&t;(*(unsigned char*)(a))
+DECL|macro|ncr_readw
+macro_line|# define ncr_readw(a)&t;&t;(*(unsigned short*)(a))
+DECL|macro|ncr_readl
+macro_line|# define ncr_readl(a)&t;&t;(*(unsigned int*)(a))
+DECL|macro|ncr_writeb
+macro_line|# define ncr_writeb(v,a)&t;(*(unsigned char*)(a) = (v))
+DECL|macro|ncr_writew
+macro_line|# define ncr_writew(v,a)&t;(*(unsigned short*)(a) = (v))
+DECL|macro|ncr_writel
+macro_line|# define ncr_writel(v,a)&t;(*(unsigned int*)(a) = (v))
+macro_line|#endif
 multiline_comment|/* &n; * Prevent name space pollution in hosts.c, and only provide the &n; * define we need to get the NCR53c7x0 driver into the host template&n; * array.&n; */
 macro_line|#if defined(HOSTS_C) || defined(MODULE)
 macro_line|#include &lt;linux/scsicam.h&gt;
@@ -775,7 +802,7 @@ mdefine_line|#define DCMD_RWRI_OP_ADD&t;0x06
 DECL|macro|DCMD_RWRI_OP_ADDC
 mdefine_line|#define DCMD_RWRI_OP_ADDC&t;0x07
 DECL|macro|DCMD_TYPE_MMI
-mdefine_line|#define DCMD_TYPE_MMI&t;&t;0xc0&t;/* Indicates a Memory Move instruction &n;&t;&t;&t;&t;&t;   (three longs) */
+mdefine_line|#define DCMD_TYPE_MMI&t;&t;0xc0&t;/* Indicates a Memory Move instruction &n;&t;&t;&t;&t;&t;   (three words) */
 DECL|macro|DNAD_REG
 mdefine_line|#define DNAD_REG&t;&t;0x28&t;/* through 0x2b DMA next address for &n;&t;&t;&t;&t;&t;   data */
 DECL|macro|DSP_REG
@@ -1050,14 +1077,12 @@ r_struct
 id|NCR53c7x0_synchronous
 (brace
 DECL|member|select_indirect
-r_int
-r_int
+id|u32
 id|select_indirect
 suffix:semicolon
 multiline_comment|/* Value used for indirect selection */
 DECL|member|script
-r_int
-r_int
+id|u32
 id|script
 (braket
 l_int|6
@@ -1084,8 +1109,7 @@ r_struct
 id|NCR53c7x0_table_indirect
 (brace
 DECL|member|count
-r_int
-r_int
+id|u32
 id|count
 suffix:semicolon
 DECL|member|address
@@ -1154,22 +1178,19 @@ id|prev
 suffix:semicolon
 multiline_comment|/* Linux maintained lists.  Note that&n;&t;&t;&t;&t;&t;   hostdata-&gt;free is a singly linked&n;&t;&t;&t;&t;&t;   list; the rest are doubly linked */
 DECL|member|data_transfer_start
-r_int
-r_int
+id|u32
 op_star
 id|data_transfer_start
 suffix:semicolon
 multiline_comment|/* Start of data transfer routines */
 DECL|member|data_transfer_end
-r_int
-r_int
+id|u32
 op_star
 id|data_transfer_end
 suffix:semicolon
 multiline_comment|/* Address after end of data transfer o&n;    &t;    &t;    &t;    &t;    &t;   routines */
 DECL|member|residual
-r_int
-r_int
+id|u32
 id|residual
 (braket
 l_int|8
@@ -1177,8 +1198,7 @@ l_int|8
 suffix:semicolon
 multiline_comment|/* Residual data transfer&n;&t;&t;&t;&t;&t;   shadow of data_transfer code.&n;&n;&t;&t;&t;&t;&t;   Has instruction with modified&n;&t;&t;&t;&t;&t;   DBC field followed by jump to &n;&t;&t;&t;&t;&t;   CALL routine following command.&n;&t;&t;&t;&t;&t; */
 DECL|member|dsa
-r_int
-r_int
+id|u32
 id|dsa
 (braket
 l_int|0
@@ -1193,8 +1213,7 @@ id|NCR53c7x0_break
 (brace
 DECL|member|address
 DECL|member|old_instruction
-r_int
-r_int
+id|u32
 op_star
 id|address
 comma
@@ -1288,8 +1307,7 @@ suffix:colon
 l_int|1
 suffix:semicolon
 DECL|member|dsp
-r_int
-r_int
+id|u32
 op_star
 id|dsp
 suffix:semicolon
@@ -1419,152 +1437,152 @@ suffix:semicolon
 multiline_comment|/* Size of DSA structure */
 multiline_comment|/*&n;     * Location of DSA fields for the SCSI SCRIPT corresponding to this &n;     * chip.  &n;     */
 DECL|member|dsa_start
-r_int
+id|s32
 id|dsa_start
 suffix:semicolon
 DECL|member|dsa_end
-r_int
+id|s32
 id|dsa_end
 suffix:semicolon
 DECL|member|dsa_next
-r_int
+id|s32
 id|dsa_next
 suffix:semicolon
 DECL|member|dsa_prev
-r_int
+id|s32
 id|dsa_prev
 suffix:semicolon
 DECL|member|dsa_cmnd
-r_int
+id|s32
 id|dsa_cmnd
 suffix:semicolon
 DECL|member|dsa_select
-r_int
+id|s32
 id|dsa_select
 suffix:semicolon
 DECL|member|dsa_msgout
-r_int
+id|s32
 id|dsa_msgout
 suffix:semicolon
 DECL|member|dsa_cmdout
-r_int
+id|s32
 id|dsa_cmdout
 suffix:semicolon
 DECL|member|dsa_dataout
-r_int
+id|s32
 id|dsa_dataout
 suffix:semicolon
 DECL|member|dsa_datain
-r_int
+id|s32
 id|dsa_datain
 suffix:semicolon
 DECL|member|dsa_msgin
-r_int
+id|s32
 id|dsa_msgin
 suffix:semicolon
 DECL|member|dsa_msgout_other
-r_int
+id|s32
 id|dsa_msgout_other
 suffix:semicolon
 DECL|member|dsa_write_sync
-r_int
+id|s32
 id|dsa_write_sync
 suffix:semicolon
 DECL|member|dsa_write_resume
-r_int
+id|s32
 id|dsa_write_resume
 suffix:semicolon
 DECL|member|dsa_jump_resume
-r_int
+id|s32
 id|dsa_jump_resume
 suffix:semicolon
 DECL|member|dsa_check_reselect
-r_int
+id|s32
 id|dsa_check_reselect
 suffix:semicolon
 DECL|member|dsa_status
-r_int
+id|s32
 id|dsa_status
 suffix:semicolon
 multiline_comment|/* &n;     * Important entry points that generic fixup code needs&n;     * to know about, fixed up.&n;     */
 DECL|member|E_accept_message
-r_int
+id|s32
 id|E_accept_message
 suffix:semicolon
 DECL|member|E_dsa_code_template
-r_int
+id|s32
 id|E_dsa_code_template
 suffix:semicolon
 DECL|member|E_dsa_code_template_end
-r_int
+id|s32
 id|E_dsa_code_template_end
 suffix:semicolon
 DECL|member|E_command_complete
-r_int
+id|s32
 id|E_command_complete
 suffix:semicolon
 DECL|member|E_msg_in
-r_int
+id|s32
 id|E_msg_in
 suffix:semicolon
 DECL|member|E_initiator_abort
-r_int
+id|s32
 id|E_initiator_abort
 suffix:semicolon
 DECL|member|E_other_transfer
-r_int
+id|s32
 id|E_other_transfer
 suffix:semicolon
 DECL|member|E_target_abort
-r_int
+id|s32
 id|E_target_abort
 suffix:semicolon
 DECL|member|E_schedule
-r_int
+id|s32
 id|E_schedule
 suffix:semicolon
 DECL|member|E_debug_break
-r_int
+id|s32
 id|E_debug_break
 suffix:semicolon
 DECL|member|E_reject_message
-r_int
+id|s32
 id|E_reject_message
 suffix:semicolon
 DECL|member|E_respond_message
-r_int
+id|s32
 id|E_respond_message
 suffix:semicolon
 DECL|member|E_select
-r_int
+id|s32
 id|E_select
 suffix:semicolon
 DECL|member|E_select_msgout
-r_int
+id|s32
 id|E_select_msgout
 suffix:semicolon
 DECL|member|E_test_0
-r_int
+id|s32
 id|E_test_0
 suffix:semicolon
 DECL|member|E_test_1
-r_int
+id|s32
 id|E_test_1
 suffix:semicolon
 DECL|member|E_test_2
-r_int
+id|s32
 id|E_test_2
 suffix:semicolon
 DECL|member|E_test_3
-r_int
+id|s32
 id|E_test_3
 suffix:semicolon
 DECL|member|E_dsa_zero
-r_int
+id|s32
 id|E_dsa_zero
 suffix:semicolon
 DECL|member|E_dsa_jump_resume
-r_int
+id|s32
 id|E_dsa_jump_resume
 suffix:semicolon
 DECL|member|options
@@ -1573,7 +1591,8 @@ id|options
 suffix:semicolon
 multiline_comment|/* Bitfielded set of options enabled */
 DECL|member|test_completed
-r_int
+r_volatile
+id|u32
 id|test_completed
 suffix:semicolon
 multiline_comment|/* Test completed */
@@ -1819,19 +1838,16 @@ suffix:semicolon
 multiline_comment|/* Shared variables between SCRIPT and host driver */
 DECL|member|issue_dsa_head
 r_volatile
-r_int
-r_char
-op_star
+id|u32
 id|issue_dsa_head
 suffix:semicolon
 multiline_comment|/* commands waiting to be &n;&t;&t;&t;&t;&t;&t;   issued, insertions are &n;&t;&t;&t;&t;&t;&t;   done by Linux driver,&n;&t;&t;&t;&t;&t;&t;   deletions are done by&n;&t;&t;&t;&t;&t;&t;   NCR */
 DECL|member|issue_dsa_tail
-r_volatile
-r_int
-r_char
+id|u32
 op_star
 id|issue_dsa_tail
 suffix:semicolon
+multiline_comment|/* issue queue tail pointer;&n;&t;&t;&t;&t;&t;&t;   used by Linux driver only */
 DECL|member|msg_buf
 r_volatile
 r_int
@@ -1844,9 +1860,7 @@ suffix:semicolon
 multiline_comment|/* buffer for messages&n;&t;&t;&t;&t;&t;&t;   other than the command&n;&t;&t;&t;&t;&t;&t;   complete message */
 DECL|member|reconnect_dsa_head
 r_volatile
-r_int
-r_char
-op_star
+id|u32
 id|reconnect_dsa_head
 suffix:semicolon
 multiline_comment|/* disconnected commands,&n;&t;&t;&t;&t;&t;&t;   maintained by NCR */
@@ -1867,11 +1881,11 @@ suffix:semicolon
 multiline_comment|/* second byte of queue tag &n;&t;&t;&t;&t;&t;&t;   message or 0 */
 multiline_comment|/* These were static variables before we moved them */
 DECL|member|NCR53c7xx_zero
-r_int
+id|s32
 id|NCR53c7xx_zero
 suffix:semicolon
 DECL|member|NCR53c7xx_sink
-r_int
+id|s32
 id|NCR53c7xx_sink
 suffix:semicolon
 DECL|member|NCR53c7xx_msg_reject
@@ -1890,10 +1904,9 @@ DECL|member|script_count
 r_int
 id|script_count
 suffix:semicolon
-multiline_comment|/* Size of script in longs */
+multiline_comment|/* Size of script in words */
 DECL|member|script
-r_int
-r_int
+id|u32
 id|script
 (braket
 l_int|0
@@ -1915,27 +1928,27 @@ mdefine_line|#define BOARD_GENERIC&t;0
 DECL|macro|NCR53c7x0_insn_size
 mdefine_line|#define NCR53c7x0_insn_size(insn)&t;&t;&t;&t;&t;&bslash;&n;    (((insn) &amp; DCMD_TYPE_MASK) == DCMD_TYPE_MMI ? 3 : 2)
 DECL|macro|NCR53c7x0_local_declare
-mdefine_line|#define NCR53c7x0_local_declare()&t;&t;&t;&t;&t;&bslash;&n;    volatile unsigned char *NCR53c7x0_address_memory;&t;&t;&t;&bslash;&n;    unsigned short NCR53c7x0_address_io;&t;&t;&t;&t;&bslash;&n;    int NCR53c7x0_memory_mapped
+mdefine_line|#define NCR53c7x0_local_declare()&t;&t;&t;&t;&t;&bslash;&n;    volatile unsigned char *NCR53c7x0_address_memory;&t;&t;&t;&bslash;&n;    unsigned int NCR53c7x0_address_io;&t;&t;&t;&t;&t;&bslash;&n;    int NCR53c7x0_memory_mapped
 DECL|macro|NCR53c7x0_local_setup
-mdefine_line|#define NCR53c7x0_local_setup(host)&t;&t;&t;&t;&t;&bslash;&n;    NCR53c7x0_address_memory = (void *) (host)-&gt;base;&t;&t;&t;&bslash;&n;    NCR53c7x0_address_io = (unsigned short) (host)-&gt;io_port;&t;&t;&bslash;&n;    NCR53c7x0_memory_mapped = ((struct NCR53c7x0_hostdata *) &t;&t;&bslash;&n;&t;host-&gt;hostdata)-&gt; options &amp; OPTION_MEMORY_MAPPED 
+mdefine_line|#define NCR53c7x0_local_setup(host)&t;&t;&t;&t;&t;&bslash;&n;    NCR53c7x0_address_memory = (void *) (host)-&gt;base;&t;&t;&t;&bslash;&n;    NCR53c7x0_address_io = (unsigned int) (host)-&gt;io_port;&t;&t;&bslash;&n;    NCR53c7x0_memory_mapped = ((struct NCR53c7x0_hostdata *) &t;&t;&bslash;&n;&t;host-&gt;hostdata)-&gt; options &amp; OPTION_MEMORY_MAPPED 
 DECL|macro|NCR53c7x0_read8
-mdefine_line|#define NCR53c7x0_read8(address) &t;&t;&t;&t;&t;&bslash;&n;    (NCR53c7x0_memory_mapped ? &t;&t;&t;&t;&t;&t;&bslash;&n;&t;*( (NCR53c7x0_address_memory) + (address))  : &t;&t;&t;&bslash;&n;&t;inb(NCR53c7x0_address_io + (address)))
+mdefine_line|#define NCR53c7x0_read8(address) &t;&t;&t;&t;&t;&bslash;&n;    (NCR53c7x0_memory_mapped ? &t;&t;&t;&t;&t;&t;&bslash;&n;&t;ncr_readb(NCR53c7x0_address_memory + (address))  :&t;&t;&bslash;&n;&t;inb(NCR53c7x0_address_io + (address)))
 DECL|macro|NCR53c7x0_read16
-mdefine_line|#define NCR53c7x0_read16(address) &t;&t;&t;&t;&t;&bslash;&n;    (NCR53c7x0_memory_mapped ? &t;&t;&t;&t;&t;&t;&bslash;&n;&t;*((unsigned short *) (NCR53c7x0_address_memory) + (address))  :&t;&bslash;&n;&t;inw(NCR53c7x0_address_io + (address)))
+mdefine_line|#define NCR53c7x0_read16(address) &t;&t;&t;&t;&t;&bslash;&n;    (NCR53c7x0_memory_mapped ? &t;&t;&t;&t;&t;&t;&bslash;&n;&t;ncr_readw(NCR53c7x0_address_memory + (address))  :&t;&t;&bslash;&n;&t;inw(NCR53c7x0_address_io + (address)))
 DECL|macro|NCR53c7x0_read32
-mdefine_line|#define NCR53c7x0_read32(address) &t;&t;&t;&t;&t;&bslash;&n;    (NCR53c7x0_memory_mapped ? &t;&t;&t;&t;&t;&t;&bslash;&n;&t;*((unsigned long *) (NCR53c7x0_address_memory) + (address))  : &t;&bslash;&n;&t;inl(NCR53c7x0_address_io + (address)))
+mdefine_line|#define NCR53c7x0_read32(address) &t;&t;&t;&t;&t;&bslash;&n;    (NCR53c7x0_memory_mapped ? &t;&t;&t;&t;&t;&t;&bslash;&n;&t;ncr_readl(NCR53c7x0_address_memory + (address))  :&t;&t;&bslash;&n;&t;inl(NCR53c7x0_address_io + (address)))
 DECL|macro|NCR53c7x0_write8
-mdefine_line|#define NCR53c7x0_write8(address,value) &t;&t;&t;&t;&bslash;&n;    (NCR53c7x0_memory_mapped ? &t;&t;&t;&t;&t;&t;&bslash;&n;&t;*((unsigned char *) (NCR53c7x0_address_memory) + (address)) =&t;&bslash;&n;&t;  (value) :&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;outb((value), NCR53c7x0_address_io + (address)))
+mdefine_line|#define NCR53c7x0_write8(address,value) &t;&t;&t;&t;&bslash;&n;    (NCR53c7x0_memory_mapped ? &t;&t;&t;&t;&t;&t;&bslash;&n;&t;ncr_writeb((value), NCR53c7x0_address_memory + (address)) :&t;&bslash;&n;&t;outb((value), NCR53c7x0_address_io + (address)))
 DECL|macro|NCR53c7x0_write16
-mdefine_line|#define NCR53c7x0_write16(address,value) &t;&t;&t;&t;&bslash;&n;    (NCR53c7x0_memory_mapped ? &t;&t;&t;&t;&t;&t;&bslash;&n;&t;*((unsigned short *) (NCR53c7x0_address_memory) + (address)) =&t;&bslash;&n;&t;  (value) : &t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;outw((value), NCR53c7x0_address_io + (address)))
+mdefine_line|#define NCR53c7x0_write16(address,value) &t;&t;&t;&t;&bslash;&n;    (NCR53c7x0_memory_mapped ? &t;&t;&t;&t;&t;&t;&bslash;&n;&t;ncr_writew((value), NCR53c7x0_address_memory + (address)) :&t;&bslash;&n;&t;outw((value), NCR53c7x0_address_io + (address)))
 DECL|macro|NCR53c7x0_write32
-mdefine_line|#define NCR53c7x0_write32(address,value) &t;&t;&t;&t;&bslash;&n;    (NCR53c7x0_memory_mapped ? &t;&t;&t;&t;&t;&t;&bslash;&n;&t;*((unsigned long *) (NCR53c7x0_address_memory) + (address)) =  &t;&bslash;&n;&t;  (value) : &t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;outl((value), NCR53c7x0_address_io + (address)))
+mdefine_line|#define NCR53c7x0_write32(address,value) &t;&t;&t;&t;&bslash;&n;    (NCR53c7x0_memory_mapped ? &t;&t;&t;&t;&t;&t;&bslash;&n;&t;ncr_writel((value), NCR53c7x0_address_memory + (address)) :&t;&bslash;&n;&t;outl((value), NCR53c7x0_address_io + (address)))
 DECL|macro|patch_abs_32
-mdefine_line|#define patch_abs_32(script, offset, symbol, value)&t;&t;&t;&bslash;&n;    &t;for (i = 0; i &lt; (sizeof (A_##symbol##_used) / sizeof &t;&t;&bslash;&n;    &t;    (unsigned long)); ++i) {&t;&t;&t;&t;&t;&bslash;&n;&t;    (script)[A_##symbol##_used[i] - (offset)] += (value);&t;&bslash;&n;&t;    if (hostdata-&gt;options &amp; OPTION_DEBUG_FIXUP) &t;&t;&bslash;&n;&t;      printk(&quot;scsi%d : %s reference %d at 0x%lx in %s is now 0x%lx&bslash;n&quot;,&bslash;&n;&t;&t;host-&gt;host_no, #symbol, i, A_##symbol##_used[i] - &t;&bslash;&n;&t;&t;(offset), #script, (script)[A_##symbol##_used[i] - &t;&bslash;&n;&t;&t;(offset)]);&t;&t;&t;&t;&t;&t;&bslash;&n;    &t;}
+mdefine_line|#define patch_abs_32(script, offset, symbol, value)&t;&t;&t;&bslash;&n;    &t;for (i = 0; i &lt; (sizeof (A_##symbol##_used) / sizeof &t;&t;&bslash;&n;    &t;    (u32)); ++i) {&t;&t;&t;&t;&t;&t;&bslash;&n;&t;    (script)[A_##symbol##_used[i] - (offset)] += (value);&t;&bslash;&n;&t;    if (hostdata-&gt;options &amp; OPTION_DEBUG_FIXUP) &t;&t;&bslash;&n;&t;      printk(&quot;scsi%d : %s reference %d at 0x%x in %s is now 0x%x&bslash;n&quot;,&bslash;&n;&t;&t;host-&gt;host_no, #symbol, i, A_##symbol##_used[i] - &t;&bslash;&n;&t;&t;(int)(offset), #script, (script)[A_##symbol##_used[i] -&t;&bslash;&n;&t;&t;(offset)]);&t;&t;&t;&t;&t;&t;&bslash;&n;    &t;}
 DECL|macro|patch_abs_rwri_data
-mdefine_line|#define patch_abs_rwri_data(script, offset, symbol, value)&t;        &bslash;&n;    &t;for (i = 0; i &lt; (sizeof (A_##symbol##_used) / sizeof &t;&t;&bslash;&n;    &t;    (unsigned long)); ++i)&t;&t;&t;&t;&t;&bslash;&n;    &t;    (script)[A_##symbol##_used[i] - (offset)] =&t;&t;&t;&bslash;&n;&t;    &t;((script)[A_##symbol##_used[i] - (offset)] &amp; &t;&t;&bslash;&n;&t;    &t;~DBC_RWRI_IMMEDIATE_MASK) | &t;&t;&t;&t;&bslash;&n;    &t;    &t;(((value) &lt;&lt; DBC_RWRI_IMMEDIATE_SHIFT) &amp;&t;&t;&bslash;&n;&t;&t; DBC_RWRI_IMMEDIATE_MASK)
+mdefine_line|#define patch_abs_rwri_data(script, offset, symbol, value)&t;        &bslash;&n;    &t;for (i = 0; i &lt; (sizeof (A_##symbol##_used) / sizeof &t;&t;&bslash;&n;    &t;    (u32)); ++i)&t;&t;&t;&t;&t;&t;&bslash;&n;    &t;    (script)[A_##symbol##_used[i] - (offset)] =&t;&t;&t;&bslash;&n;&t;    &t;((script)[A_##symbol##_used[i] - (offset)] &amp; &t;&t;&bslash;&n;&t;    &t;~DBC_RWRI_IMMEDIATE_MASK) | &t;&t;&t;&t;&bslash;&n;    &t;    &t;(((value) &lt;&lt; DBC_RWRI_IMMEDIATE_SHIFT) &amp;&t;&t;&bslash;&n;&t;&t; DBC_RWRI_IMMEDIATE_MASK)
 DECL|macro|patch_dsa_32
-mdefine_line|#define patch_dsa_32(dsa, symbol, word, value)&t;&t;&t;&t;&bslash;&n;&t;{&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;(dsa)[(hostdata-&gt;##symbol - hostdata-&gt;dsa_start) / sizeof(long)&t;&bslash;&n;&t;&t;+ (word)] = (unsigned long) (value);&t;&t;&t;&bslash;&n;&t;if (hostdata-&gt;options &amp; OPTION_DEBUG_DSA)&t;&t;&t;&bslash;&n;&t;    printk(&quot;scsi : dsa %s symbol %s(%ld) word %d now 0x%lx&bslash;n&quot;,&t;&bslash;&n;&t;&t;#dsa, #symbol, (long) hostdata-&gt;##symbol, &t;&t;&bslash;&n;&t;&t;(int) (word), (long) (value));&t;&t;&t;&t;&t;&bslash;&n;&t;}
+mdefine_line|#define patch_dsa_32(dsa, symbol, word, value)&t;&t;&t;&t;&bslash;&n;&t;{&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;(dsa)[(hostdata-&gt;##symbol - hostdata-&gt;dsa_start) / sizeof(u32)&t;&bslash;&n;&t;&t;+ (word)] = (value);&t;&t;&t;&t;&t;&bslash;&n;&t;if (hostdata-&gt;options &amp; OPTION_DEBUG_DSA)&t;&t;&t;&bslash;&n;&t;    printk(&quot;scsi : dsa %s symbol %s(%d) word %d now 0x%x&bslash;n&quot;,&t;&bslash;&n;&t;&t;#dsa, #symbol, hostdata-&gt;##symbol,&t; &t;&t;&bslash;&n;&t;&t;(word), (u32)(value));&t;&t;&t;&t;&bslash;&n;&t;}
 macro_line|#endif /* NCR53c7x0_C */
 macro_line|#endif /* NCR53c7x0_H */
 eof

@@ -14,7 +14,7 @@ multiline_comment|/*&n; * Uh, these should become the main single-value transfer
 DECL|macro|put_user
 mdefine_line|#define put_user(x,ptr) __put_user((unsigned long)(x),(ptr),sizeof(*(ptr)))
 DECL|macro|get_user
-mdefine_line|#define get_user(ptr) __get_user((ptr),sizeof(*(ptr)))
+mdefine_line|#define get_user(ptr) ((__typeof__(*(ptr)))__get_user((ptr),sizeof(*(ptr))))
 multiline_comment|/*&n; * This is a silly but good way to make sure that&n; * the __put_user function is indeed always optimized,&n; * and that we use the correct sizes..&n; */
 r_extern
 r_int
@@ -497,25 +497,114 @@ id|n
 )paren
 (brace
 id|__asm__
-c_func
+r_volatile
 (paren
-l_string|&quot;cld&bslash;n&bslash;t&quot;
-l_string|&quot;push %%es&bslash;n&bslash;t&quot;
-l_string|&quot;push %%fs&bslash;n&bslash;t&quot;
-l_string|&quot;pop %%es&bslash;n&bslash;t&quot;
-l_string|&quot;testb $1,%%cl&bslash;n&bslash;t&quot;
-l_string|&quot;je 1f&bslash;n&bslash;t&quot;
-l_string|&quot;movsb&bslash;n&quot;
-l_string|&quot;1:&bslash;ttestb $2,%%cl&bslash;n&bslash;t&quot;
-l_string|&quot;je 2f&bslash;n&bslash;t&quot;
-l_string|&quot;movsw&bslash;n&quot;
-l_string|&quot;2:&bslash;tshrl $2,%%ecx&bslash;n&bslash;t&quot;
-l_string|&quot;rep ; movsl&bslash;n&bslash;t&quot;
-l_string|&quot;pop %%es&quot;
+"&quot;"
+id|cld
+id|push
+op_mod
+op_mod
+id|es
+id|movw
+op_mod
+op_mod
+id|fs
+comma
+op_mod
+op_mod
+id|cx
+id|movw
+op_mod
+op_mod
+id|cx
+comma
+op_mod
+op_mod
+id|es
+id|cmpl
+"$"
+l_int|3
+comma
+op_mod
+l_int|0
+id|jbe
+l_float|1f
+id|movl
+op_mod
+op_mod
+id|edi
+comma
+op_mod
+op_mod
+id|ecx
+id|negl
+op_mod
+op_mod
+id|ecx
+id|andl
+"$"
+l_int|3
+comma
+op_mod
+op_mod
+id|ecx
+id|subl
+op_mod
+op_mod
+id|ecx
+comma
+op_mod
+l_int|0
+id|rep
+suffix:semicolon
+id|movsb
+id|movl
+op_mod
+l_int|0
+comma
+op_mod
+op_mod
+id|ecx
+id|shrl
+"$"
+l_int|2
+comma
+op_mod
+op_mod
+id|ecx
+id|rep
+suffix:semicolon
+id|movsl
+id|andl
+"$"
+l_int|3
+comma
+op_mod
+l_int|0
+l_int|1
 suffix:colon
-multiline_comment|/* no outputs */
+id|movl
+op_mod
+l_int|0
+comma
+op_mod
+op_mod
+id|ecx
+id|rep
+suffix:semicolon
+id|movsb
+id|pop
+op_mod
+op_mod
+id|es
+"&quot;"
 suffix:colon
-l_string|&quot;c&quot;
+l_string|&quot;=abd&quot;
+(paren
+id|n
+)paren
+suffix:colon
+l_string|&quot;0&quot;
 (paren
 id|n
 )paren
@@ -1014,21 +1103,96 @@ id|n
 )paren
 (brace
 id|__asm__
-c_func
+r_volatile
 (paren
-l_string|&quot;cld&bslash;n&bslash;t&quot;
-l_string|&quot;testb $1,%%cl&bslash;n&bslash;t&quot;
-l_string|&quot;je 1f&bslash;n&bslash;t&quot;
-l_string|&quot;fs ; movsb&bslash;n&quot;
-l_string|&quot;1:&bslash;ttestb $2,%%cl&bslash;n&bslash;t&quot;
-l_string|&quot;je 2f&bslash;n&bslash;t&quot;
-l_string|&quot;fs ; movsw&bslash;n&quot;
-l_string|&quot;2:&bslash;tshrl $2,%%ecx&bslash;n&bslash;t&quot;
-l_string|&quot;rep ; fs ; movsl&quot;
+"&quot;"
+id|cld
+id|cmpl
+"$"
+l_int|3
+comma
+op_mod
+l_int|0
+id|jbe
+l_float|1f
+id|movl
+op_mod
+op_mod
+id|edi
+comma
+op_mod
+op_mod
+id|ecx
+id|negl
+op_mod
+op_mod
+id|ecx
+id|andl
+"$"
+l_int|3
+comma
+op_mod
+op_mod
+id|ecx
+id|subl
+op_mod
+op_mod
+id|ecx
+comma
+op_mod
+l_int|0
+id|fs
+suffix:semicolon
+id|rep
+suffix:semicolon
+id|movsb
+id|movl
+op_mod
+l_int|0
+comma
+op_mod
+op_mod
+id|ecx
+id|shrl
+"$"
+l_int|2
+comma
+op_mod
+op_mod
+id|ecx
+id|fs
+suffix:semicolon
+id|rep
+suffix:semicolon
+id|movsl
+id|andl
+"$"
+l_int|3
+comma
+op_mod
+l_int|0
+l_int|1
 suffix:colon
-multiline_comment|/* no outputs */
+id|movl
+op_mod
+l_int|0
+comma
+op_mod
+op_mod
+id|ecx
+id|fs
+suffix:semicolon
+id|rep
+suffix:semicolon
+id|movsb
+"&quot;"
 suffix:colon
-l_string|&quot;c&quot;
+l_string|&quot;=abd&quot;
+(paren
+id|n
+)paren
+suffix:colon
+l_string|&quot;0&quot;
 (paren
 id|n
 )paren

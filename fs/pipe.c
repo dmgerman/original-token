@@ -795,7 +795,7 @@ c_cond
 op_logical_neg
 id|error
 )paren
-id|put_fs_long
+id|put_user
 c_func
 (paren
 id|PIPE_SIZE

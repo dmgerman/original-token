@@ -362,7 +362,7 @@ suffix:semicolon
 )brace
 id|len
 op_assign
-id|get_fs_long
+id|get_user
 c_func
 (paren
 id|ulen
@@ -434,7 +434,7 @@ id|len
 )paren
 suffix:semicolon
 )brace
-id|put_fs_long
+id|put_user
 c_func
 (paren
 id|len
@@ -2170,7 +2170,6 @@ r_int
 id|protocol
 comma
 r_int
-r_int
 id|usockvec
 (braket
 l_int|2
@@ -2349,11 +2348,9 @@ id|VERIFY_WRITE
 comma
 id|usockvec
 comma
-l_int|2
-op_star
 r_sizeof
 (paren
-r_int
+id|usockvec
 )paren
 )paren
 suffix:semicolon
@@ -2379,7 +2376,7 @@ r_return
 id|er
 suffix:semicolon
 )brace
-id|put_fs_long
+id|put_user
 c_func
 (paren
 id|fd1
@@ -2391,7 +2388,7 @@ l_int|0
 )braket
 )paren
 suffix:semicolon
-id|put_fs_long
+id|put_user
 c_func
 (paren
 id|fd2
@@ -4552,7 +4549,7 @@ suffix:semicolon
 )brace
 id|a0
 op_assign
-id|get_fs_long
+id|get_user
 c_func
 (paren
 id|args
@@ -4560,7 +4557,7 @@ id|args
 suffix:semicolon
 id|a1
 op_assign
-id|get_fs_long
+id|get_user
 c_func
 (paren
 id|args
@@ -4585,7 +4582,7 @@ id|a0
 comma
 id|a1
 comma
-id|get_fs_long
+id|get_user
 c_func
 (paren
 id|args
@@ -4610,7 +4607,7 @@ op_star
 )paren
 id|a1
 comma
-id|get_fs_long
+id|get_user
 c_func
 (paren
 id|args
@@ -4635,7 +4632,7 @@ op_star
 )paren
 id|a1
 comma
-id|get_fs_long
+id|get_user
 c_func
 (paren
 id|args
@@ -4676,7 +4673,7 @@ comma
 r_int
 op_star
 )paren
-id|get_fs_long
+id|get_user
 c_func
 (paren
 id|args
@@ -4705,7 +4702,7 @@ comma
 r_int
 op_star
 )paren
-id|get_fs_long
+id|get_user
 c_func
 (paren
 id|args
@@ -4734,7 +4731,7 @@ comma
 r_int
 op_star
 )paren
-id|get_fs_long
+id|get_user
 c_func
 (paren
 id|args
@@ -4754,7 +4751,7 @@ id|a0
 comma
 id|a1
 comma
-id|get_fs_long
+id|get_user
 c_func
 (paren
 id|args
@@ -4764,10 +4761,9 @@ l_int|2
 comma
 (paren
 r_int
-r_int
 op_star
 )paren
-id|get_fs_long
+id|get_user
 c_func
 (paren
 id|args
@@ -4791,7 +4787,7 @@ op_star
 )paren
 id|a1
 comma
-id|get_fs_long
+id|get_user
 c_func
 (paren
 id|args
@@ -4799,7 +4795,7 @@ op_plus
 l_int|2
 )paren
 comma
-id|get_fs_long
+id|get_user
 c_func
 (paren
 id|args
@@ -4823,7 +4819,7 @@ op_star
 )paren
 id|a1
 comma
-id|get_fs_long
+id|get_user
 c_func
 (paren
 id|args
@@ -4831,7 +4827,7 @@ op_plus
 l_int|2
 )paren
 comma
-id|get_fs_long
+id|get_user
 c_func
 (paren
 id|args
@@ -4844,7 +4840,7 @@ r_struct
 id|sockaddr
 op_star
 )paren
-id|get_fs_long
+id|get_user
 c_func
 (paren
 id|args
@@ -4852,7 +4848,7 @@ op_plus
 l_int|4
 )paren
 comma
-id|get_fs_long
+id|get_user
 c_func
 (paren
 id|args
@@ -4876,7 +4872,7 @@ op_star
 )paren
 id|a1
 comma
-id|get_fs_long
+id|get_user
 c_func
 (paren
 id|args
@@ -4884,7 +4880,7 @@ op_plus
 l_int|2
 )paren
 comma
-id|get_fs_long
+id|get_user
 c_func
 (paren
 id|args
@@ -4908,7 +4904,7 @@ op_star
 )paren
 id|a1
 comma
-id|get_fs_long
+id|get_user
 c_func
 (paren
 id|args
@@ -4916,7 +4912,7 @@ op_plus
 l_int|2
 )paren
 comma
-id|get_fs_long
+id|get_user
 c_func
 (paren
 id|args
@@ -4929,7 +4925,7 @@ r_struct
 id|sockaddr
 op_star
 )paren
-id|get_fs_long
+id|get_user
 c_func
 (paren
 id|args
@@ -4941,7 +4937,7 @@ comma
 r_int
 op_star
 )paren
-id|get_fs_long
+id|get_user
 c_func
 (paren
 id|args
@@ -4973,7 +4969,7 @@ id|a0
 comma
 id|a1
 comma
-id|get_fs_long
+id|get_user
 c_func
 (paren
 id|args
@@ -4985,7 +4981,7 @@ comma
 r_char
 op_star
 )paren
-id|get_fs_long
+id|get_user
 c_func
 (paren
 id|args
@@ -4993,7 +4989,7 @@ op_plus
 l_int|3
 )paren
 comma
-id|get_fs_long
+id|get_user
 c_func
 (paren
 id|args
@@ -5013,7 +5009,7 @@ id|a0
 comma
 id|a1
 comma
-id|get_fs_long
+id|get_user
 c_func
 (paren
 id|args
@@ -5025,7 +5021,7 @@ comma
 r_char
 op_star
 )paren
-id|get_fs_long
+id|get_user
 c_func
 (paren
 id|args
@@ -5037,7 +5033,7 @@ comma
 r_int
 op_star
 )paren
-id|get_fs_long
+id|get_user
 c_func
 (paren
 id|args

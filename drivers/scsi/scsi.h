@@ -585,8 +585,13 @@ id|length
 suffix:semicolon
 )brace
 suffix:semicolon
+macro_line|#ifdef __alpha__
 DECL|macro|ISA_DMA_THRESHOLD
-mdefine_line|#define ISA_DMA_THRESHOLD (0x00ffffff)
+macro_line|# define ISA_DMA_THRESHOLD (~0UL)
+macro_line|#else
+DECL|macro|ISA_DMA_THRESHOLD
+macro_line|# define ISA_DMA_THRESHOLD (0x00ffffff)
+macro_line|#endif
 DECL|macro|CONTIGUOUS_BUFFERS
 mdefine_line|#define CONTIGUOUS_BUFFERS(X,Y) ((X-&gt;b_data+X-&gt;b_size) == Y-&gt;b_data)
 multiline_comment|/*&n; * These are the return codes for the abort and reset functions.  The mid-level&n; * code uses these to decide what to do next.  Each of the low level abort&n; * and reset functions must correctly indicate what it has done.&n; */

@@ -66,7 +66,7 @@ mdefine_line|#define _LINUX_SBPCD_H
 multiline_comment|/*==========================================================================*/
 multiline_comment|/*==========================================================================*/
 DECL|macro|LONG_TIMING
-mdefine_line|#define LONG_TIMING 0 /* test against timeouts with &quot;gold&quot; CDs on CR-521 */
+mdefine_line|#define LONG_TIMING 1 /* test against timeouts with &quot;gold&quot; CDs on CR-521 */
 DECL|macro|FUTURE
 macro_line|#undef  FUTURE
 DECL|macro|TEST_UPC

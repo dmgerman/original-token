@@ -65,6 +65,7 @@ r_void
 op_star
 id|__buf
 comma
+r_const
 r_char
 op_star
 id|name
@@ -356,6 +357,7 @@ r_void
 op_star
 id|__buf
 comma
+r_const
 r_char
 op_star
 id|name

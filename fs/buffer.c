@@ -6482,7 +6482,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Try to free up some pages by shrinking the buffer-cache&n; *&n; * Priority tells the routine how hard to try to shrink the&n; * buffers: 3 means &quot;don&squot;t bother too much&quot;, while a value&n; * of 0 means &quot;we&squot;d better get some free pages now&quot;.&n; */
+multiline_comment|/*&n; * Try to free up some pages by shrinking the buffer-cache&n; *&n; * Priority tells the routine how hard to try to shrink the&n; * buffers: 3 means &quot;don&squot;t bother too much&quot;, while a value&n; * of 0 means &quot;we&squot;d better get some free pages now&quot;.&n; *&n; * &quot;limit&quot; is meant to limit the shrink-action only to pages&n; * that are in the 0 - limit address range, for DMA re-allocations.&n; * We ignore that right now.&n; */
 DECL|function|shrink_buffers
 r_int
 id|shrink_buffers
@@ -6491,6 +6491,10 @@ c_func
 r_int
 r_int
 id|priority
+comma
+r_int
+r_int
+id|limit
 )paren
 (brace
 r_if

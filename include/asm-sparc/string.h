@@ -1,7 +1,10 @@
-multiline_comment|/* string.h: External definitions for optimized assembly string&n;             routines for the Linux Kernel.&n;&n;   Copyright (C) 1994 David S. Miller (davem@caip.rutgers.edu)&n;*/
+multiline_comment|/* string.h: External definitions for optimized assembly string&n; *           routines for the Linux Kernel.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+macro_line|#ifndef _SPARC_STRING_H
+DECL|macro|_SPARC_STRING_H
+mdefine_line|#define _SPARC_STRING_H
 DECL|function|strlen
 r_extern
-r_inline
+id|__inline__
 r_int
 id|strlen
 c_func
@@ -12,79 +15,32 @@ op_star
 id|str
 )paren
 (brace
-r_register
-r_int
-id|retval
-op_assign
-l_int|0
-suffix:semicolon
-r_register
-r_char
-id|tmp
-op_assign
-l_int|0
-suffix:semicolon
-r_register
+r_const
 r_char
 op_star
-id|lstr
+id|sc
 suffix:semicolon
-id|lstr
-op_assign
+r_for
+c_loop
 (paren
-r_char
-op_star
-)paren
+id|sc
+op_assign
 id|str
 suffix:semicolon
-id|__asm__
-c_func
-(paren
-l_string|&quot;ldub [%1], %2&bslash;n&bslash;t&quot;
-l_string|&quot;or %%g0, %%g0, %0&bslash;n&bslash;t&quot;
-l_string|&quot;orcc %2, %%g0, %%g0&bslash;n&bslash;t&quot;
-l_string|&quot;be 2f&bslash;n&bslash;t&quot;
-l_string|&quot;add %1, 0x1, %1&bslash;n&bslash;t&quot;
-l_string|&quot;1: ldub [%1], %2&bslash;n&bslash;t&quot;
-l_string|&quot;add %0, 0x1, %0&bslash;n&bslash;t&quot;
-l_string|&quot;orcc %2, %%g0, %%g0&bslash;n&bslash;t&quot;
-l_string|&quot;bne 1b&bslash;n&bslash;t&quot;
-l_string|&quot;add %1, 0x1, %1&bslash;n&bslash;t&quot;
-l_string|&quot;2:&quot;
-suffix:colon
-l_string|&quot;=r&quot;
-(paren
-id|retval
+op_star
+id|sc
+op_ne
+l_char|&squot;&bslash;0&squot;
+suffix:semicolon
+op_increment
+id|sc
 )paren
-comma
-l_string|&quot;=r&quot;
-(paren
-id|lstr
-)paren
-comma
-l_string|&quot;=r&quot;
-(paren
-id|tmp
-)paren
-suffix:colon
-l_string|&quot;0&quot;
-(paren
-id|retval
-)paren
-comma
-l_string|&quot;1&quot;
-(paren
-id|lstr
-)paren
-comma
-l_string|&quot;2&quot;
-(paren
-id|tmp
-)paren
-)paren
+multiline_comment|/* nothing */
 suffix:semicolon
 r_return
-id|retval
+id|sc
+op_minus
+id|str
 suffix:semicolon
 )brace
 DECL|function|strcmp
@@ -107,95 +63,41 @@ id|str2
 (brace
 r_register
 r_int
-r_int
-id|tmp1
-op_assign
-l_int|0
-comma
-id|tmp2
-op_assign
-l_int|0
+r_char
+id|__res
 suffix:semicolon
-r_register
-r_int
-id|retval
-op_assign
-l_int|0
-suffix:semicolon
-id|__asm__
-c_func
+r_while
+c_loop
 (paren
-l_string|&quot;ldub [%1], %3&bslash;n&bslash;t&quot;
-l_string|&quot;ldub [%2], %4&bslash;n&bslash;t&quot;
-l_string|&quot;1: add %2, 0x1, %2&bslash;n&bslash;t&quot;
-l_string|&quot;cmp %3, %4&bslash;n&bslash;t&quot;
-l_string|&quot;bne,a 2f&bslash;n&bslash;t&quot;
-l_string|&quot;sub %2, 0x1, %2&bslash;n&bslash;t&quot;
-l_string|&quot;ldub [%1], %3&bslash;n&bslash;t&quot;
-l_string|&quot;add %1, 0x1, %1&bslash;n&bslash;t&quot;
-l_string|&quot;cmp %3, 0x0&bslash;n&bslash;t&quot;
-l_string|&quot;bne,a 1b&bslash;n&bslash;t&quot;
-l_string|&quot;ldub [%2], %4&bslash;n&bslash;t&quot;
-l_string|&quot;b 3f&bslash;n&bslash;t&quot;
-l_string|&quot;or %%g0, %%g0, %0&bslash;n&bslash;t&quot;
-l_string|&quot;2: ldub [%1], %3&bslash;n&bslash;t&quot;
-l_string|&quot;ldub [%2], %4&bslash;n&bslash;t&quot;
-l_string|&quot;sub %3, %4, %0&bslash;n&bslash;t&quot;
-l_string|&quot;3: &bslash;n&bslash;t&quot;
-suffix:colon
-l_string|&quot;=r&quot;
-(paren
-id|retval
+l_int|1
 )paren
-comma
-l_string|&quot;=r&quot;
+(brace
+r_if
+c_cond
 (paren
+(paren
+id|__res
+op_assign
+op_star
 id|str1
-)paren
-comma
-l_string|&quot;=r&quot;
-(paren
+op_minus
+op_star
 id|str2
+op_increment
 )paren
-comma
-l_string|&quot;=r&quot;
-(paren
-id|tmp1
-)paren
-comma
-l_string|&quot;=r&quot;
-(paren
-id|tmp2
-)paren
-suffix:colon
-l_string|&quot;0&quot;
-(paren
-id|retval
-)paren
-comma
-l_string|&quot;1&quot;
-(paren
+op_ne
+l_int|0
+op_logical_or
+op_logical_neg
+op_star
 id|str1
+op_increment
 )paren
-comma
-l_string|&quot;2&quot;
-(paren
-id|str2
-)paren
-comma
-l_string|&quot;3&quot;
-(paren
-id|tmp1
-)paren
-comma
-l_string|&quot;4&quot;
-(paren
-id|tmp2
-)paren
-)paren
+r_break
 suffix:semicolon
+)brace
 r_return
-id|retval
+id|__res
 suffix:semicolon
 )brace
 DECL|function|strncmp
@@ -221,76 +123,46 @@ id|strlen
 (brace
 r_register
 r_int
-id|retval
+r_char
+id|__res
 op_assign
 l_int|0
 suffix:semicolon
-id|__asm__
-c_func
-(paren
-l_string|&quot;cmp %3, 0x0&bslash;n&bslash;t&quot;
-l_string|&quot;be 2f&bslash;n&bslash;t&quot;
-l_string|&quot;ldub [%2], %%g3&bslash;n&bslash;t&quot;
-l_string|&quot;1: ldub [%1], %%g2&bslash;n&bslash;t&quot;
-l_string|&quot;sub %%g2, %%g3, %0&bslash;n&bslash;t&quot;
-l_string|&quot;cmp %0, 0x0&bslash;n&bslash;t&quot;
-l_string|&quot;bne 2f&bslash;n&bslash;t&quot;
-l_string|&quot;add %2, 0x1, %2&bslash;n&bslash;t&quot;
-l_string|&quot;cmp %%g2, 0x0&bslash;n&bslash;t&quot;
-l_string|&quot;be 2f&bslash;n&bslash;t&quot;
-l_string|&quot;add %1, 0x1, %1&bslash;n&bslash;t&quot;
-l_string|&quot;addcc %3, -1, %3&bslash;n&bslash;t&quot;
-l_string|&quot;bne,a 1b&bslash;n&bslash;t&quot;
-l_string|&quot;ldub [%2], %%g3&bslash;n&bslash;t&quot;
-l_string|&quot;2: &quot;
-suffix:colon
-l_string|&quot;=r&quot;
-(paren
-id|retval
-)paren
-comma
-l_string|&quot;=r&quot;
-(paren
-id|str1
-)paren
-comma
-l_string|&quot;=r&quot;
-(paren
-id|str2
-)paren
-comma
-l_string|&quot;=r&quot;
+r_while
+c_loop
 (paren
 id|strlen
 )paren
-suffix:colon
-l_string|&quot;0&quot;
+(brace
+r_if
+c_cond
 (paren
-id|retval
-)paren
-comma
-l_string|&quot;1&quot;
 (paren
+id|__res
+op_assign
+op_star
 id|str1
-)paren
-comma
-l_string|&quot;2&quot;
-(paren
+op_minus
+op_star
 id|str2
+op_increment
 )paren
-comma
-l_string|&quot;3&quot;
-(paren
-id|strlen
+op_ne
+l_int|0
+op_logical_or
+op_logical_neg
+op_star
+id|str1
+op_increment
 )paren
-suffix:colon
-l_string|&quot;%g2&quot;
-comma
-l_string|&quot;%g3&quot;
-)paren
+r_break
 suffix:semicolon
+id|strlen
+op_decrement
+suffix:semicolon
+)brace
 r_return
-id|retval
+id|__res
 suffix:semicolon
 )brace
 DECL|function|strcpy
@@ -311,68 +183,31 @@ op_star
 id|source
 )paren
 (brace
-r_register
-r_char
-id|tmp
-suffix:semicolon
-r_register
 r_char
 op_star
-id|retval
+id|tmp
+op_assign
+id|dest
 suffix:semicolon
-id|__asm__
-c_func
+r_while
+c_loop
 (paren
-l_string|&quot;or %%g0, %2, %0&bslash;n&bslash;t&quot;
-l_string|&quot;ldub [%1], %3&bslash;n&bslash;t&quot;
-l_string|&quot;1: stb %3, [%2]&bslash;n&bslash;t&quot;
-l_string|&quot;cmp %3, 0x0&bslash;n&bslash;t&quot;
-l_string|&quot;bne,a 1b&bslash;n&bslash;t&quot;
-l_string|&quot;ldub [%1], %3&bslash;n&bslash;t&quot;
-suffix:colon
-l_string|&quot;=r&quot;
 (paren
-id|retval
-)paren
-comma
-l_string|&quot;=r&quot;
-(paren
-id|source
-)paren
-comma
-l_string|&quot;=r&quot;
-(paren
+op_star
 id|dest
-)paren
-comma
-l_string|&quot;=r&quot;
-(paren
-id|tmp
-)paren
-suffix:colon
-l_string|&quot;0&quot;
-(paren
-id|retval
-)paren
-comma
-l_string|&quot;1&quot;
-(paren
+op_increment
+op_assign
+op_star
 id|source
+op_increment
 )paren
-comma
-l_string|&quot;2&quot;
-(paren
-id|dest
+op_ne
+l_char|&squot;&bslash;0&squot;
 )paren
-comma
-l_string|&quot;3&quot;
-(paren
-id|tmp
-)paren
-)paren
+multiline_comment|/* nothing */
 suffix:semicolon
 r_return
-id|retval
+id|tmp
 suffix:semicolon
 )brace
 DECL|function|strncpy
@@ -396,81 +231,34 @@ r_int
 id|cpylen
 )paren
 (brace
-r_register
-r_char
-id|tmp
-suffix:semicolon
-r_register
 r_char
 op_star
-id|retval
+id|tmp
+op_assign
+id|dest
 suffix:semicolon
-id|__asm__
-c_func
-(paren
-l_string|&quot;or %%g0, %1, %0&bslash;n&bslash;t&quot;
-l_string|&quot;1: cmp %4, 0x0&bslash;n&bslash;t&quot;
-l_string|&quot;be 2f&bslash;n&bslash;t&quot;
-l_string|&quot;ldub [%1], %3&bslash;n&bslash;t&quot;
-l_string|&quot;add %1, 0x1, %1&bslash;n&bslash;t&quot;
-l_string|&quot;stb %3, [%2]&bslash;n&bslash;t&quot;
-l_string|&quot;sub %4, 0x1, %4&bslash;n&bslash;t&quot;
-l_string|&quot;ba 1&bslash;n&bslash;t&quot;
-l_string|&quot;add %2, 0x1, %2&bslash;n&bslash;t&quot;
-suffix:colon
-l_string|&quot;=r&quot;
-(paren
-id|retval
-)paren
-comma
-l_string|&quot;=r&quot;
-(paren
-id|dest
-)paren
-comma
-l_string|&quot;=r&quot;
-(paren
-id|source
-)paren
-comma
-l_string|&quot;=r&quot;
-(paren
-id|tmp
-)paren
-comma
-l_string|&quot;=r&quot;
+r_while
+c_loop
 (paren
 id|cpylen
-)paren
-suffix:colon
-l_string|&quot;0&quot;
+op_decrement
+op_logical_and
 (paren
-id|retval
-)paren
-comma
-l_string|&quot;1&quot;
-(paren
+op_star
 id|dest
-)paren
-comma
-l_string|&quot;2&quot;
-(paren
+op_increment
+op_assign
+op_star
 id|source
+op_increment
 )paren
-comma
-l_string|&quot;3&quot;
-(paren
-id|tmp
+op_ne
+l_char|&squot;&bslash;0&squot;
 )paren
-comma
-l_string|&quot;4&quot;
-(paren
-id|cpylen
-)paren
-)paren
+multiline_comment|/* nothing */
 suffix:semicolon
 r_return
-id|retval
+id|tmp
 suffix:semicolon
 )brace
 DECL|function|strcat
@@ -491,75 +279,39 @@ op_star
 id|src
 )paren
 (brace
-r_register
 r_char
 op_star
-id|retval
-suffix:semicolon
-r_register
-r_char
-id|temp
+id|tmp
 op_assign
-l_int|0
+id|dest
 suffix:semicolon
-id|__asm__
-c_func
+r_while
+c_loop
 (paren
-l_string|&quot;or %%g0, %1, %0&bslash;n&bslash;t&quot;
-l_string|&quot;1: ldub [%1], %3&bslash;n&bslash;t&quot;
-l_string|&quot;cmp %3, 0x0&bslash;n&bslash;t&quot;
-l_string|&quot;bne,a 1b&bslash;n&bslash;t&quot;
-l_string|&quot;add %1, 0x1, %1&bslash;n&bslash;t&quot;
-l_string|&quot;2: ldub [%2], %3&bslash;n&bslash;t&quot;
-l_string|&quot;stb %3, [%1]&bslash;n&bslash;t&quot;
-l_string|&quot;add %1, 0x1, %1&bslash;n&bslash;t&quot;
-l_string|&quot;cmp %3, 0x0&bslash;n&bslash;t&quot;
-l_string|&quot;bne 2b&bslash;n&bslash;t&quot;
-l_string|&quot;add %2, 0x1, %2&bslash;n&bslash;t&quot;
-suffix:colon
-l_string|&quot;=r&quot;
-(paren
-id|retval
-)paren
-comma
-l_string|&quot;=r&quot;
-(paren
+op_star
 id|dest
 )paren
-comma
-l_string|&quot;=r&quot;
-(paren
-id|src
-)paren
-comma
-l_string|&quot;=r&quot;
-(paren
-id|temp
-)paren
-suffix:colon
-l_string|&quot;0&quot;
-(paren
-id|retval
-)paren
-comma
-l_string|&quot;1&quot;
-(paren
 id|dest
-)paren
-comma
-l_string|&quot;2&quot;
+op_increment
+suffix:semicolon
+r_while
+c_loop
 (paren
+(paren
+op_star
+id|dest
+op_increment
+op_assign
+op_star
 id|src
+op_increment
 )paren
-comma
-l_string|&quot;3&quot;
-(paren
-id|temp
-)paren
+op_ne
+l_char|&squot;&bslash;0&squot;
 )paren
 suffix:semicolon
 r_return
-id|retval
+id|tmp
 suffix:semicolon
 )brace
 DECL|function|strncat
@@ -583,86 +335,55 @@ r_int
 id|len
 )paren
 (brace
-r_register
 r_char
 op_star
-id|retval
-suffix:semicolon
-r_register
-r_char
-id|temp
+id|tmp
 op_assign
+id|dest
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|len
+)paren
+(brace
+r_while
+c_loop
+(paren
+op_star
+id|dest
+)paren
+id|dest
+op_increment
+suffix:semicolon
+r_while
+c_loop
+(paren
+(paren
+op_star
+id|dest
+op_increment
+op_assign
+op_star
+id|src
+op_increment
+)paren
+)paren
+(brace
+r_if
+c_cond
+(paren
+op_decrement
+id|len
+op_eq
 l_int|0
+)paren
+r_break
 suffix:semicolon
-id|__asm__
-c_func
-(paren
-l_string|&quot;or %%g0, %1, %0&bslash;n&bslash;t&quot;
-l_string|&quot;1: ldub [%1], %3&bslash;n&bslash;t&quot;
-l_string|&quot;cmp %3, 0x0&bslash;n&bslash;t&quot;
-l_string|&quot;bne,a 1b&bslash;n&bslash;t&quot;
-l_string|&quot;add %1, 0x1, %1&bslash;n&bslash;t&quot;
-l_string|&quot;2: ldub [%2], %3&bslash;n&bslash;t&quot;
-l_string|&quot;stb %3, [%1]&bslash;n&bslash;t&quot;
-l_string|&quot;add %1, 0x1, %1&bslash;n&bslash;t&quot;
-l_string|&quot;add %3, -1, %3&bslash;n&bslash;t&quot;
-l_string|&quot;cmp %3, 0x0&bslash;n&bslash;t&quot;
-l_string|&quot;bne 2b&bslash;n&bslash;t&quot;
-l_string|&quot;add %2, 0x1, %2&bslash;n&bslash;t&quot;
-suffix:colon
-l_string|&quot;=r&quot;
-(paren
-id|retval
-)paren
-comma
-l_string|&quot;=r&quot;
-(paren
-id|dest
-)paren
-comma
-l_string|&quot;=r&quot;
-(paren
-id|src
-)paren
-comma
-l_string|&quot;=r&quot;
-(paren
-id|len
-)paren
-comma
-l_string|&quot;=r&quot;
-(paren
-id|temp
-)paren
-suffix:colon
-l_string|&quot;0&quot;
-(paren
-id|retval
-)paren
-comma
-l_string|&quot;1&quot;
-(paren
-id|dest
-)paren
-comma
-l_string|&quot;2&quot;
-(paren
-id|src
-)paren
-comma
-l_string|&quot;3&quot;
-(paren
-id|len
-)paren
-comma
-l_string|&quot;4&quot;
-(paren
-id|temp
-)paren
-)paren
-suffix:semicolon
+)brace
+)brace
 r_return
-id|retval
+id|tmp
 suffix:semicolon
 )brace
 DECL|function|strchr
@@ -682,81 +403,35 @@ r_int
 id|c
 )paren
 (brace
-r_register
-r_char
-id|temp
-op_assign
-l_int|0
+r_for
+c_loop
+(paren
 suffix:semicolon
-r_register
-r_char
 op_star
-id|trick
-op_assign
-l_int|0
+id|src
+op_ne
+id|c
 suffix:semicolon
-id|__asm__
-c_func
-(paren
-l_string|&quot;1: ldub [%0], %2&bslash;n&bslash;t&quot;
-l_string|&quot;cmp %2, %1&bslash;n&bslash;t&quot;
-l_string|&quot;bne,a 1b&bslash;n&bslash;t&quot;
-l_string|&quot;add %0, 0x1, %0&bslash;n&bslash;t&quot;
-l_string|&quot;or %%g0, %0, %3&bslash;n&bslash;t&quot;
-suffix:colon
-l_string|&quot;=r&quot;
-(paren
+op_increment
 id|src
 )paren
-comma
-l_string|&quot;=r&quot;
+r_if
+c_cond
 (paren
-id|c
-)paren
-comma
-l_string|&quot;=r&quot;
-(paren
-id|temp
-)paren
-comma
-l_string|&quot;=r&quot;
-(paren
-id|trick
-)paren
-comma
-l_string|&quot;=r&quot;
-(paren
+op_star
 id|src
+op_eq
+l_char|&squot;&bslash;0&squot;
 )paren
-suffix:colon
-l_string|&quot;0&quot;
-(paren
-id|src
-)paren
-comma
-l_string|&quot;1&quot;
-(paren
-id|c
-)paren
-comma
-l_string|&quot;2&quot;
-(paren
-id|temp
-)paren
-comma
-l_string|&quot;3&quot;
-(paren
-id|trick
-)paren
-comma
-l_string|&quot;4&quot;
-(paren
-id|src
-)paren
-)paren
+r_return
+l_int|NULL
 suffix:semicolon
 r_return
-id|trick
+(paren
+r_char
+op_star
+)paren
+id|src
 suffix:semicolon
 )brace
 DECL|function|strpbrk
@@ -778,84 +453,66 @@ op_star
 id|ct
 )paren
 (brace
-r_register
-r_char
-id|temp1
-comma
-id|temp2
-suffix:semicolon
-r_register
+r_const
 r_char
 op_star
-id|scratch
-suffix:semicolon
-r_register
-r_char
+id|sc1
+comma
 op_star
-id|trick
+id|sc2
 suffix:semicolon
-id|__asm__
-c_func
+r_for
+c_loop
 (paren
-l_string|&quot;or %%g0, %1, %4&bslash;n&bslash;t&quot;
-l_string|&quot;1: ldub [%0], %2&bslash;n&bslash;t&quot;
-l_string|&quot;2: ldub [%1], %3&bslash;n&bslash;t&quot;
-l_string|&quot;cmp %3, %2&bslash;n&bslash;t&quot;
-l_string|&quot;be 3f&bslash;n&bslash;t&quot;
-l_string|&quot;nop&bslash;n&bslash;t&quot;
-l_string|&quot;cmp %3, 0x0&bslash;n&bslash;t&quot;
-l_string|&quot;bne 2b&bslash;n&bslash;t&quot;
-l_string|&quot;add %1, 0x1, %1&bslash;n&bslash;t&quot;
-l_string|&quot;or %%g0, %4, %1&bslash;n&bslash;t&quot;
-l_string|&quot;b 1b&bslash;n&bslash;t&quot;
-l_string|&quot;add %0, 0x1, %0&bslash;n&bslash;t&quot;
-l_string|&quot;or %%g0, %0, %5&bslash;n&bslash;t&quot;
-suffix:colon
-l_string|&quot;=r&quot;
-(paren
-id|cs
-)paren
-suffix:colon
-l_string|&quot;r&quot;
-(paren
-id|ct
-)paren
-comma
-l_string|&quot;r&quot;
-(paren
-id|temp1
-)paren
-comma
-l_string|&quot;r&quot;
-(paren
-id|temp2
-)paren
-comma
-l_string|&quot;r&quot;
-(paren
-id|scratch
-)paren
-comma
-l_string|&quot;r&quot;
-(paren
-id|trick
+id|sc1
 op_assign
-l_int|0
-)paren
-comma
-l_string|&quot;0&quot;
-(paren
 id|cs
-)paren
-comma
-l_string|&quot;1&quot;
-(paren
-id|ct
-)paren
-)paren
 suffix:semicolon
+op_star
+id|sc1
+op_ne
+l_char|&squot;&bslash;0&squot;
+suffix:semicolon
+op_increment
+id|sc1
+)paren
+(brace
+r_for
+c_loop
+(paren
+id|sc2
+op_assign
+id|ct
+suffix:semicolon
+op_star
+id|sc2
+op_ne
+l_char|&squot;&bslash;0&squot;
+suffix:semicolon
+op_increment
+id|sc2
+)paren
+(brace
+r_if
+c_cond
+(paren
+op_star
+id|sc1
+op_eq
+op_star
+id|sc2
+)paren
 r_return
-id|trick
+(paren
+r_char
+op_star
+)paren
+id|sc1
+suffix:semicolon
+)brace
+)brace
+r_return
+l_int|NULL
 suffix:semicolon
 )brace
 DECL|function|strspn
@@ -876,77 +533,82 @@ op_star
 id|accept
 )paren
 (brace
-r_register
-r_char
-id|temp1
-comma
-id|temp2
-suffix:semicolon
-r_register
+r_const
 r_char
 op_star
-id|scratch
+id|p
 suffix:semicolon
-r_register
+r_const
+r_char
+op_star
+id|a
+suffix:semicolon
 r_int
-id|trick
-suffix:semicolon
-id|__asm__
-c_func
-(paren
-l_string|&quot;or %%g0, %1, %4&bslash;n&bslash;t&quot;
-l_string|&quot;1: ldub [%0], %2&bslash;n&bslash;t&quot;
-l_string|&quot;2: ldub [%1], %3&bslash;n&bslash;t&quot;
-l_string|&quot;cmp %3, 0x0&bslash;n&bslash;t&quot;
-l_string|&quot;be 3f&bslash;n&bslash;t&quot;
-l_string|&quot;cmp %3, %2&quot;
-l_string|&quot;bne 2b&bslash;n&bslash;t&quot;
-l_string|&quot;add %1, 0x1, %1&bslash;n&bslash;t&quot;
-l_string|&quot;add %0, 0x1, %0&bslash;n&bslash;t&quot;
-l_string|&quot;b 1b&bslash;n&bslash;t&quot;
-l_string|&quot;add %5, 0x1, %5&bslash;n&bslash;t&quot;
-l_string|&quot;3: or %%g0, %0, %4&bslash;n&bslash;t&quot;
-suffix:colon
-l_string|&quot;=r&quot;
-(paren
-id|s
-)paren
-suffix:colon
-l_string|&quot;r&quot;
-(paren
-id|accept
-)paren
-comma
-l_string|&quot;r&quot;
-(paren
-id|temp1
-)paren
-comma
-l_string|&quot;r&quot;
-(paren
-id|temp2
-)paren
-comma
-l_string|&quot;r&quot;
-(paren
-id|scratch
-)paren
-comma
-l_string|&quot;r&quot;
-(paren
-id|trick
+id|count
 op_assign
 l_int|0
-)paren
-comma
-l_string|&quot;0&quot;
-(paren
-id|s
-)paren
-)paren
 suffix:semicolon
+r_for
+c_loop
+(paren
+id|p
+op_assign
+id|s
+suffix:semicolon
+op_star
+id|p
+op_ne
+l_char|&squot;&bslash;0&squot;
+suffix:semicolon
+op_increment
+id|p
+)paren
+(brace
+r_for
+c_loop
+(paren
+id|a
+op_assign
+id|accept
+suffix:semicolon
+op_star
+id|a
+op_ne
+l_char|&squot;&bslash;0&squot;
+suffix:semicolon
+op_increment
+id|a
+)paren
+(brace
+r_if
+c_cond
+(paren
+op_star
+id|p
+op_eq
+op_star
+id|a
+)paren
+r_break
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+op_star
+id|a
+op_eq
+l_char|&squot;&bslash;0&squot;
+)paren
 r_return
-id|trick
+id|count
+suffix:semicolon
+op_increment
+id|count
+suffix:semicolon
+)brace
+r_return
+id|count
 suffix:semicolon
 )brace
 DECL|function|strtok
@@ -967,61 +629,39 @@ op_star
 id|ct
 )paren
 (brace
-r_static
 r_char
 op_star
-id|old
-suffix:semicolon
-multiline_comment|/* frob this kludge for now */
-r_register
-r_char
+id|sbegin
+comma
 op_star
-id|tok
+id|send
 suffix:semicolon
-r_if
-c_cond
-(paren
+id|sbegin
+op_assign
 id|s
-op_eq
-(paren
-r_char
-op_star
-)paren
-l_int|0
-)paren
-(brace
+ques
+c_cond
+id|s
+suffix:colon
+id|___strtok
+suffix:semicolon
 r_if
 c_cond
 (paren
-id|old
-op_eq
-(paren
-r_char
-op_star
-)paren
-l_int|0
+op_logical_neg
+id|sbegin
 )paren
 (brace
 r_return
-(paren
-r_char
-op_star
-)paren
-l_int|0
+l_int|NULL
 suffix:semicolon
 )brace
-r_else
-id|s
-op_assign
-id|old
-suffix:semicolon
-)brace
-id|s
+id|sbegin
 op_add_assign
 id|strspn
 c_func
 (paren
-id|s
+id|sbegin
 comma
 id|ct
 )paren
@@ -1030,37 +670,25 @@ r_if
 c_cond
 (paren
 op_star
-id|s
+id|sbegin
 op_eq
 l_char|&squot;&bslash;0&squot;
 )paren
 (brace
-id|old
+id|___strtok
 op_assign
-(paren
-r_char
-op_star
-)paren
-l_int|0
+l_int|NULL
 suffix:semicolon
 r_return
-(paren
-r_char
-op_star
-)paren
-l_int|0
+l_int|NULL
 suffix:semicolon
 )brace
-id|tok
-op_assign
-id|s
-suffix:semicolon
-id|s
+id|send
 op_assign
 id|strpbrk
 c_func
 (paren
-id|tok
+id|sbegin
 comma
 id|ct
 )paren
@@ -1068,38 +696,27 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|s
-op_eq
-(paren
-r_char
+id|send
+op_logical_and
 op_star
+id|send
+op_ne
+l_char|&squot;&bslash;0&squot;
 )paren
-l_int|0
-)paren
-id|old
-op_assign
-(paren
-r_char
 op_star
-)paren
-l_int|0
-suffix:semicolon
-r_else
-(brace
-op_star
-id|s
+id|send
+op_increment
 op_assign
 l_char|&squot;&bslash;0&squot;
 suffix:semicolon
-id|old
+id|___strtok
 op_assign
-id|s
-op_plus
-l_int|1
+id|send
 suffix:semicolon
-)brace
 r_return
-id|tok
+(paren
+id|sbegin
+)paren
 suffix:semicolon
 )brace
 DECL|function|memset
@@ -1121,64 +738,30 @@ r_int
 id|count
 )paren
 (brace
-r_register
-r_void
+r_char
 op_star
-id|retval
+id|xs
+op_assign
+(paren
+r_char
+op_star
+)paren
+id|src
 suffix:semicolon
-id|__asm__
-c_func
-(paren
-l_string|&quot;or %%g0, %1, %0&bslash;n&bslash;t&quot;
-l_string|&quot;1: add %1, 0x1, %1&bslash;n&bslash;t&quot;
-l_string|&quot;2: add %3, -1, %3&bslash;n&bslash;t&quot;
-l_string|&quot;cmp %3, -1&bslash;n&bslash;t&quot;
-l_string|&quot;bne,a 1b&bslash;n&bslash;t&quot;
-l_string|&quot;stb %2, [%1]&bslash;n&bslash;t&quot;
-suffix:colon
-l_string|&quot;=r&quot;
-(paren
-id|retval
-)paren
-comma
-l_string|&quot;=r&quot;
-(paren
-id|src
-)paren
-comma
-l_string|&quot;=r&quot;
-(paren
-id|c
-)paren
-comma
-l_string|&quot;=r&quot;
+r_while
+c_loop
 (paren
 id|count
+op_decrement
 )paren
-suffix:colon
-l_string|&quot;0&quot;
-(paren
-id|retval
-)paren
-comma
-l_string|&quot;1&quot;
-(paren
-id|src
-)paren
-comma
-l_string|&quot;2&quot;
-(paren
+op_star
+id|xs
+op_increment
+op_assign
 id|c
-)paren
-comma
-l_string|&quot;3&quot;
-(paren
-id|count
-)paren
-)paren
 suffix:semicolon
 r_return
-id|retval
+id|src
 suffix:semicolon
 )brace
 DECL|function|memcpy
@@ -1202,84 +785,41 @@ r_int
 id|count
 )paren
 (brace
-r_register
-r_void
-op_star
-id|retval
-suffix:semicolon
-r_register
 r_char
+op_star
 id|tmp
+op_assign
+(paren
+r_char
+op_star
+)paren
+id|dest
+comma
+op_star
+id|s
+op_assign
+(paren
+r_char
+op_star
+)paren
+id|src
 suffix:semicolon
-id|__asm__
-c_func
-(paren
-l_string|&quot;or %%g0, %1, %0&bslash;n&bslash;t&quot;
-l_string|&quot;add %3, -1, %3&bslash;n&bslash;t&quot;
-l_string|&quot;cmp %3, -1&bslash;n&bslash;t&quot;
-l_string|&quot;be 2f&bslash;n&bslash;t&quot;
-l_string|&quot;1: ldub [%2], %4&bslash;n&bslash;t&quot;
-l_string|&quot;add %2, 0x1, %2&bslash;n&bslash;t&quot;
-l_string|&quot;add %3, -1, %3&bslash;n&bslash;t&quot;
-l_string|&quot;cmp %3, -1&bslash;n&bslash;t&quot;
-l_string|&quot;stb %4, [%1]&bslash;n&bslash;t&quot;
-l_string|&quot;bne 1b&bslash;n&bslash;t&quot;
-l_string|&quot;add %1, 0x1, %1&bslash;n&bslash;t&quot;
-l_string|&quot;2: &quot;
-suffix:colon
-l_string|&quot;=r&quot;
-(paren
-id|retval
-)paren
-comma
-l_string|&quot;=r&quot;
-(paren
-id|dest
-)paren
-comma
-l_string|&quot;=r&quot;
-(paren
-id|src
-)paren
-comma
-l_string|&quot;=r&quot;
+r_while
+c_loop
 (paren
 id|count
+op_decrement
 )paren
-comma
-l_string|&quot;=r&quot;
-(paren
+op_star
 id|tmp
-)paren
-suffix:colon
-l_string|&quot;0&quot;
-(paren
-id|retval
-)paren
-comma
-l_string|&quot;1&quot;
-(paren
-id|dest
-)paren
-comma
-l_string|&quot;2&quot;
-(paren
-id|src
-)paren
-comma
-l_string|&quot;3&quot;
-(paren
-id|count
-)paren
-comma
-l_string|&quot;4&quot;
-(paren
-id|tmp
-)paren
-)paren
+op_increment
+op_assign
+op_star
+id|s
+op_increment
 suffix:semicolon
 r_return
-id|retval
+id|dest
 suffix:semicolon
 )brace
 DECL|function|memmove
@@ -1303,84 +843,91 @@ r_int
 id|count
 )paren
 (brace
-r_register
-r_void
-op_star
-id|retval
-suffix:semicolon
-r_register
 r_char
+op_star
 id|tmp
-suffix:semicolon
-id|__asm__
-c_func
-(paren
-l_string|&quot;or %%g0, %1, %1&bslash;n&bslash;t&quot;
-l_string|&quot;add %3, -1, %3&bslash;n&bslash;t&quot;
-l_string|&quot;cmp %3, -1&bslash;n&bslash;t&quot;
-l_string|&quot;be 2f&bslash;n&bslash;t&quot;
-l_string|&quot;1: ldub [%2], %4&bslash;n&bslash;t&quot;
-l_string|&quot;add %2, 0x1, %2&bslash;n&bslash;t&quot;
-l_string|&quot;add %3, -1, %3&bslash;n&bslash;t&quot;
-l_string|&quot;cmp %3, -1&bslash;n&bslash;t&quot;
-l_string|&quot;stb %4, [%1]&bslash;n&bslash;t&quot;
-l_string|&quot;bne 1b&bslash;n&bslash;t&quot;
-l_string|&quot;add %1, 0x1, %1&bslash;n&bslash;t&quot;
-l_string|&quot;2: &quot;
-suffix:colon
-l_string|&quot;=r&quot;
-(paren
-id|retval
-)paren
 comma
-l_string|&quot;=r&quot;
+op_star
+id|s
+suffix:semicolon
+r_if
+c_cond
 (paren
 id|dest
-)paren
-comma
-l_string|&quot;=r&quot;
-(paren
+op_le
 id|src
 )paren
-comma
-l_string|&quot;=r&quot;
-(paren
-id|count
-)paren
-comma
-l_string|&quot;=r&quot;
-(paren
+(brace
 id|tmp
-)paren
-suffix:colon
-l_string|&quot;0&quot;
+op_assign
 (paren
-id|retval
+r_char
+op_star
 )paren
-comma
-l_string|&quot;1&quot;
-(paren
 id|dest
-)paren
-comma
-l_string|&quot;2&quot;
+suffix:semicolon
+id|s
+op_assign
 (paren
-id|src
+r_char
+op_star
 )paren
-comma
-l_string|&quot;3&quot;
+id|src
+suffix:semicolon
+r_while
+c_loop
 (paren
 id|count
+op_decrement
 )paren
-comma
-l_string|&quot;4&quot;
-(paren
+op_star
 id|tmp
-)paren
-)paren
+op_increment
+op_assign
+op_star
+id|s
+op_increment
 suffix:semicolon
+)brace
+r_else
+(brace
+id|tmp
+op_assign
+(paren
+r_char
+op_star
+)paren
+id|dest
+op_plus
+id|count
+suffix:semicolon
+id|s
+op_assign
+(paren
+r_char
+op_star
+)paren
+id|src
+op_plus
+id|count
+suffix:semicolon
+r_while
+c_loop
+(paren
+id|count
+op_decrement
+)paren
+op_star
+op_decrement
+id|tmp
+op_assign
+op_star
+op_decrement
+id|s
+suffix:semicolon
+)brace
 r_return
-id|retval
+id|dest
 suffix:semicolon
 )brace
 DECL|function|memcmp
@@ -1404,77 +951,65 @@ r_int
 id|count
 )paren
 (brace
-r_register
+r_const
 r_int
-id|retval
-suffix:semicolon
-r_register
-r_int
-r_int
-id|tmp1
+r_char
+op_star
+id|su1
 comma
-id|tmp2
+op_star
+id|su2
 suffix:semicolon
-id|__asm__
-c_func
+r_int
+r_char
+id|res
+op_assign
+l_int|0
+suffix:semicolon
+r_for
+c_loop
 (paren
-l_string|&quot;or %%g0, %1, %0&bslash;n&bslash;t&quot;
-l_string|&quot;cmp %3, 0x0&bslash;n&bslash;t&quot;
-l_string|&quot;ble,a 3f&bslash;n&bslash;t&quot;
-l_string|&quot;or %%g0, %%g0, %0&bslash;n&bslash;t&quot;
-l_string|&quot;1: ldub [%1], %4&bslash;n&bslash;t&quot;
-l_string|&quot;ldub [%2], %5&bslash;n&bslash;t&quot;
-l_string|&quot;cmp %4, %5&bslash;n&bslash;t&quot;
-l_string|&quot;be,a 2f&bslash;n&bslash;t&quot;
-l_string|&quot;add %1, 0x1, %1&bslash;n&bslash;t&quot;
-l_string|&quot;bgeu 3f&bslash;n&bslash;t&quot;
-l_string|&quot;or %%g0, 0x1, %0&bslash;n&bslash;t&quot;
-l_string|&quot;b 3f&bslash;n&bslash;t&quot;
-l_string|&quot;or %%g0, -1, %0&bslash;n&bslash;t&quot;
-l_string|&quot;2: add %3, -1, %3&bslash;n&bslash;t&quot;
-l_string|&quot;cmp %3, 0x0&bslash;n&bslash;t&quot;
-l_string|&quot;bg 1b&bslash;n&bslash;t&quot;
-l_string|&quot;add %2, 0x1, %2&bslash;n&bslash;t&quot;
-l_string|&quot;or %%g0, %%g0, %0&bslash;n&bslash;t&quot;
-l_string|&quot;3: &quot;
-suffix:colon
-l_string|&quot;=r&quot;
-(paren
-id|retval
-)paren
-suffix:colon
-l_string|&quot;r&quot;
-(paren
+id|su1
+op_assign
 id|cs
-)paren
 comma
-l_string|&quot;r&quot;
-(paren
+id|su2
+op_assign
 id|ct
-)paren
-comma
-l_string|&quot;r&quot;
-(paren
+suffix:semicolon
+l_int|0
+OL
 id|count
-)paren
+suffix:semicolon
+op_increment
+id|su1
 comma
-l_string|&quot;r&quot;
+op_increment
+id|su2
+comma
+id|count
+op_decrement
+)paren
+r_if
+c_cond
 (paren
-id|tmp1
+(paren
+id|res
 op_assign
+op_star
+id|su1
+op_minus
+op_star
+id|su2
+)paren
+op_ne
 l_int|0
 )paren
-comma
-l_string|&quot;r&quot;
-(paren
-id|tmp2
-op_assign
-l_int|0
-)paren
-)paren
+r_break
 suffix:semicolon
 r_return
-id|retval
+id|res
 suffix:semicolon
 )brace
+macro_line|#endif /* !(_SPARC_STRING_H) */
 eof

@@ -113,9 +113,11 @@ multiline_comment|/* This is meaningless in raw sockets. */
 r_if
 c_cond
 (paren
+(paren
 id|err
 op_amp
 l_int|0xff00
+)paren
 op_eq
 (paren
 id|ICMP_SOURCE_QUENCH

@@ -419,7 +419,7 @@ c_func
 )paren
 suffix:semicolon
 multiline_comment|/* Allowed interrupts to occur during data gathering - shouldn&squot;t hurt */
-id|put_fs_byte
+id|put_user
 c_func
 (paren
 (paren
@@ -461,7 +461,7 @@ id|mouse.dx
 op_assign
 l_int|127
 suffix:semicolon
-id|put_fs_byte
+id|put_user
 c_func
 (paren
 (paren
@@ -498,7 +498,7 @@ id|mouse.dy
 op_assign
 l_int|127
 suffix:semicolon
-id|put_fs_byte
+id|put_user
 c_func
 (paren
 (paren
@@ -527,7 +527,7 @@ id|i
 op_increment
 )paren
 (brace
-id|put_fs_byte
+id|put_user
 c_func
 (paren
 l_int|0x00

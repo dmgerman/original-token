@@ -255,7 +255,7 @@ c_cond
 (paren
 id|mtype
 op_assign
-id|get_fs_long
+id|get_user
 (paren
 op_amp
 id|msgp-&gt;mtype
@@ -991,7 +991,7 @@ op_amp
 id|msq-&gt;wwait
 )paren
 suffix:semicolon
-id|put_fs_long
+id|put_user
 (paren
 id|nmsg-&gt;msg_type
 comma

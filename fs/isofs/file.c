@@ -217,7 +217,7 @@ l_char|&squot; &squot;
 suffix:semicolon
 )brace
 )brace
-id|put_fs_byte
+id|put_user
 c_func
 (paren
 id|outchar
@@ -1063,7 +1063,7 @@ op_decrement
 OG
 l_int|0
 )paren
-id|put_fs_byte
+id|put_user
 c_func
 (paren
 l_int|0

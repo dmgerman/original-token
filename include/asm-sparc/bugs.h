@@ -3,17 +3,14 @@ multiline_comment|/*&n; * This is included by init/main.c to check for architect
 DECL|macro|CONFIG_BUGSPARC
 mdefine_line|#define CONFIG_BUGSPARC
 macro_line|#include &lt;asm/openprom.h&gt;
+macro_line|#include &lt;asm/page.h&gt;
 r_extern
-r_struct
-id|linux_romvec
-op_star
-id|romvec
+id|pgd_t
+id|swapper_pg_dir
+(braket
+l_int|16384
+)braket
 suffix:semicolon
-r_extern
-r_int
-id|tbase_needs_unmapping
-suffix:semicolon
-multiline_comment|/* We do the bug workaround in pagetables.c */
 DECL|function|check_mmu
 r_static
 r_void
@@ -53,10 +50,6 @@ id|romvec-&gt;pv_nodeops-&gt;no_nextnode
 l_int|0
 )paren
 suffix:semicolon
-id|tbase_needs_unmapping
-op_assign
-l_int|0
-suffix:semicolon
 id|present
 op_assign
 l_int|0
@@ -88,16 +81,55 @@ op_eq
 l_int|1
 )paren
 (brace
-id|tbase_needs_unmapping
-op_assign
-l_int|1
-suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;MMU bug found: not allowing trapbase to be cached&bslash;n&quot;
+l_string|&quot;MMU bug found: uncaching trap table&bslash;n&quot;
 )paren
 suffix:semicolon
+r_for
+c_loop
+(paren
+id|present
+op_assign
+(paren
+r_int
+r_int
+)paren
+op_amp
+id|trapbase
+suffix:semicolon
+id|present
+OL
+(paren
+r_int
+r_int
+)paren
+op_amp
+id|swapper_pg_dir
+suffix:semicolon
+id|present
+op_add_assign
+id|PAGE_SIZE
+)paren
+(brace
+id|put_pte
+c_func
+(paren
+id|present
+comma
+(paren
+id|get_pte
+c_func
+(paren
+id|present
+)paren
+op_or
+id|PTE_NC
+)paren
+)paren
+suffix:semicolon
+)brace
 )brace
 r_return
 suffix:semicolon

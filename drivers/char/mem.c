@@ -164,7 +164,7 @@ template_param
 l_int|0
 )paren
 (brace
-id|put_fs_byte
+id|put_user
 c_func
 (paren
 l_int|0
@@ -568,7 +568,7 @@ OL
 l_int|65536
 )paren
 (brace
-id|put_fs_byte
+id|put_user
 c_func
 (paren
 id|inb
@@ -649,7 +649,7 @@ l_int|65536
 id|outb
 c_func
 (paren
-id|get_fs_byte
+id|get_user
 c_func
 (paren
 id|tmp
@@ -773,7 +773,7 @@ id|left
 op_decrement
 )paren
 (brace
-id|put_fs_byte
+id|put_user
 c_func
 (paren
 l_int|0

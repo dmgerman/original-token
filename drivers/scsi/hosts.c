@@ -22,8 +22,8 @@ macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_AHA1740
 macro_line|#include &quot;aha1740.h&quot;
 macro_line|#endif
-macro_line|#ifdef CONFIG_SCSI_AHA274X
-macro_line|#include &quot;aha274x.h&quot;
+macro_line|#ifdef CONFIG_SCSI_AIC7XXX
+macro_line|#include &quot;aic7xxx.h&quot;
 macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_BUSLOGIC
 macro_line|#include &quot;buslogic.h&quot;
@@ -116,8 +116,8 @@ macro_line|#ifdef CONFIG_SCSI_AHA1740
 id|AHA1740
 comma
 macro_line|#endif
-macro_line|#ifdef CONFIG_SCSI_AHA274X
-id|AHA274X
+macro_line|#ifdef CONFIG_SCSI_AIC7XXX
+id|AIC7XXX
 comma
 macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_FUTURE_DOMAIN

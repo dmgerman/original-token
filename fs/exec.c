@@ -1362,7 +1362,7 @@ suffix:semicolon
 r_while
 c_loop
 (paren
-id|get_fs_byte
+id|get_user
 c_func
 (paren
 id|p
@@ -1411,7 +1411,7 @@ suffix:semicolon
 r_while
 c_loop
 (paren
-id|get_fs_byte
+id|get_user
 c_func
 (paren
 id|p
@@ -1511,10 +1511,6 @@ c_loop
 (paren
 id|p
 op_assign
-(paren
-r_char
-op_star
-)paren
 id|get_user
 c_func
 (paren
@@ -1671,10 +1667,6 @@ op_logical_neg
 (paren
 id|tmp
 op_assign
-(paren
-r_char
-op_star
-)paren
 id|get_user
 c_func
 (paren
@@ -1717,7 +1709,7 @@ suffix:semicolon
 r_while
 c_loop
 (paren
-id|get_fs_byte
+id|get_user
 c_func
 (paren
 id|tmp
@@ -1857,7 +1849,7 @@ op_plus
 id|offset
 )paren
 op_assign
-id|get_fs_byte
+id|get_user
 c_func
 (paren
 id|tmp

@@ -76,6 +76,10 @@ DECL|macro|FD_SECTSIZE
 mdefine_line|#define FD_SECTSIZE(floppy) ( (floppy)-&gt;rate &amp; FD_2M ? &bslash;&n;&t;&t;&t;     512 : 128 &lt;&lt; FD_SIZECODE(floppy) )
 DECL|macro|FD_PERP
 mdefine_line|#define FD_PERP 0x40
+DECL|macro|FD_STRETCH
+mdefine_line|#define FD_STRETCH 1
+DECL|macro|FD_SWAPSIDES
+mdefine_line|#define FD_SWAPSIDES 2
 macro_line|#ifndef __ASSEMBLY__
 multiline_comment|/* the following structure is used by FDSETPRM, FDDEFPRM and FDGETPRM */
 DECL|struct|floppy_struct
@@ -411,6 +415,15 @@ r_int
 id|last_checked
 suffix:semicolon
 multiline_comment|/* when was the drive last checked for a disk change? */
+DECL|member|dmabuf
+r_char
+op_star
+id|dmabuf
+suffix:semicolon
+DECL|member|bufblocks
+r_int
+id|bufblocks
+suffix:semicolon
 )brace
 suffix:semicolon
 DECL|struct|floppy_write_errors

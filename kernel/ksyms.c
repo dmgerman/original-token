@@ -47,9 +47,18 @@ macro_line|#endif
 macro_line|#include &lt;asm/irq.h&gt;
 r_extern
 r_char
-id|floppy_track_buffer
-(braket
-)braket
+op_star
+id|get_options
+c_func
+(paren
+r_char
+op_star
+id|str
+comma
+r_int
+op_star
+id|ints
+)paren
 suffix:semicolon
 r_extern
 r_void
@@ -174,6 +183,12 @@ id|X
 c_func
 (paren
 id|register_symtab
+)paren
+comma
+id|X
+c_func
+(paren
+id|get_options
 )paren
 comma
 multiline_comment|/* system info variables */
@@ -1090,12 +1105,6 @@ id|ftape_big_buffer
 )paren
 comma
 macro_line|#endif
-id|X
-c_func
-(paren
-id|floppy_track_buffer
-)paren
-comma
 macro_line|#ifdef CONFIG_INET
 multiline_comment|/* support for loadable net drivers */
 id|X

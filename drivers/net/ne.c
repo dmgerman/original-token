@@ -1601,7 +1601,7 @@ id|ENISR_RESET
 comma
 id|NE_BASE
 op_plus
-id|NE_RESET
+id|EN0_ISR
 )paren
 suffix:semicolon
 multiline_comment|/* Ack intr. */

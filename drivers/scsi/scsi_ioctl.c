@@ -63,7 +63,7 @@ id|buffer
 (brace
 id|len
 op_assign
-id|get_fs_long
+id|get_user
 (paren
 (paren
 r_int
@@ -514,7 +514,7 @@ id|EINVAL
 suffix:semicolon
 id|inlen
 op_assign
-id|get_fs_long
+id|get_user
 c_func
 (paren
 (paren
@@ -527,7 +527,7 @@ id|buffer
 suffix:semicolon
 id|outlen
 op_assign
-id|get_fs_long
+id|get_user
 c_func
 (paren
 (paren
@@ -562,7 +562,7 @@ l_int|2
 suffix:semicolon
 id|opcode
 op_assign
-id|get_fs_byte
+id|get_user
 c_func
 (paren
 id|cmd_in
@@ -1100,7 +1100,7 @@ r_int
 )paren
 )paren
 suffix:semicolon
-id|put_fs_long
+id|put_user
 c_func
 (paren
 id|dev-&gt;id

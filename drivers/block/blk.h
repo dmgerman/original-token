@@ -146,20 +146,8 @@ id|flag
 )paren
 suffix:semicolon
 r_extern
-r_void
-id|floppy_init
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-macro_line|#ifdef FD_MODULE
-r_static
-macro_line|#else
-r_extern
-macro_line|#endif
 r_int
-id|new_floppy_init
+id|floppy_init
 c_func
 (paren
 r_void

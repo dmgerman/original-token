@@ -1,15 +1,18 @@
 macro_line|#ifndef __SPARC_OPENPROM_H
 DECL|macro|__SPARC_OPENPROM_H
 mdefine_line|#define __SPARC_OPENPROM_H
-multiline_comment|/* openprom.h:  Prom structures and defines for access to the OPENBOOT&n;                prom routines and data areas.&n;&n;   Copyright (C) 1994 David S. Miller (davem@caip.rutgers.edu)&n;*/
-multiline_comment|/* In the v0 interface of the openboot prom we could traverse a nice&n;   little list structure to figure out where in vm-space the prom had&n;   mapped itself and how much space it was taking up. In the v2 prom&n;   interface we have to rely on &squot;magic&squot; values. :-( Most of the machines&n;   I have checked on have the prom mapped here all the time though.&n;*/
+multiline_comment|/* openprom.h:  Prom structures and defines for access to the OPENBOOT&n; *              prom routines and data areas.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* In the v0 interface of the openboot prom we could traverse a nice&n; * little list structure to figure out where in vm-space the prom had&n; * mapped itself and how much space it was taking up. In the v2 prom&n; * interface we have to rely on &squot;magic&squot; values. :-( Most of the machines&n; * I have checked on have the prom mapped here all the time though.&n; */
+DECL|macro|KADB_DEBUGGER_BEGVM
+mdefine_line|#define KADB_DEBUGGER_BEGVM     0xffc00000    /* Where kern debugger is in virt-mem */
 DECL|macro|LINUX_OPPROM_BEGVM
 mdefine_line|#define&t;LINUX_OPPROM_BEGVM&t;0xffd00000
 DECL|macro|LINUX_OPPROM_ENDVM
 mdefine_line|#define&t;LINUX_OPPROM_ENDVM&t;0xfff00000
 DECL|macro|LINUX_OPPROM_MAGIC
 mdefine_line|#define&t;LINUX_OPPROM_MAGIC      0x10010407
-multiline_comment|/* The device functions structure for the v0 prom. Nice and neat, open,&n;   close, read &amp; write divvied up between net + block + char devices. We&n;   also have a seek routine only usable for block devices. The divide&n;   and conquer strategy of this struct becomes unnecessary for v2.&n;&n;   V0 device names are limited to two characters, &squot;sd&squot; for scsi-disk,&n;   &squot;le&squot; for local-ethernet, etc. Note that it is technically possible&n;   to boot a kernel off of a tape drive and use the tape as the root&n;   partition! In order to do this you have to have &squot;magic&squot; formatted&n;   tapes from Sun supposedly :-)&n;*/
+macro_line|#ifndef __ASSEMBLY__
+multiline_comment|/* The device functions structure for the v0 prom. Nice and neat, open,&n; * close, read &amp; write divvied up between net + block + char devices. We&n; * also have a seek routine only usable for block devices. The divide&n; * and conquer strategy of this struct becomes unnecessary for v2.&n; *&n; * V0 device names are limited to two characters, &squot;sd&squot; for scsi-disk,&n; * &squot;le&squot; for local-ethernet, etc. Note that it is technically possible&n; * to boot a kernel off of a tape drive and use the tape as the root&n; * partition! In order to do this you have to have &squot;magic&squot; formatted&n; * tapes from Sun supposedly :-)&n; */
 DECL|struct|linux_dev_v0_funcs
 r_struct
 id|linux_dev_v0_funcs
@@ -176,24 +179,24 @@ id|from
 suffix:semicolon
 )brace
 suffix:semicolon
-multiline_comment|/* The OpenBoot Prom device operations for version-2 interfaces are both&n;   good and bad. They now allow you to address ANY device whatsoever&n;   that is in the machine via these funny &quot;device paths&quot;. They look like&n;   this:&n;&n;     &quot;/sbus/esp@0,0xf004002c/sd@3,1&quot;&n;&n;   You can basically reference any device on the machine this way, and&n;   you pass this string to the v2 dev_ops. Producing these strings all&n;   the time can be a pain in the rear after a while. Why v2 has memory&n;   allocations in here are beyond me. Perhaps they figure that if you&n;   are going to use only the prom&squot;s device drivers then your memory&n;   management is either non-existent or pretty sad. :-)&n;*/
+multiline_comment|/* The OpenBoot Prom device operations for version-2 interfaces are both&n; * good and bad. They now allow you to address ANY device whatsoever&n; * that is in the machine via these funny &quot;device paths&quot;. They look like&n; * this:&n; *&n; *   &quot;/sbus/esp@0,0xf004002c/sd@3,1&quot;&n; *&n; * You can basically reference any device on the machine this way, and&n; * you pass this string to the v2 dev_ops. Producing these strings all&n; * the time can be a pain in the rear after a while. Why v2 has memory&n; * allocations in here are beyond me. Perhaps they figure that if you&n; * are going to use only the prom&squot;s device drivers then your memory&n; * management is either non-existent or pretty sad. :-)&n; */
 DECL|struct|linux_dev_v2_funcs
 r_struct
 id|linux_dev_v2_funcs
 (brace
-DECL|member|v2_aieee
+DECL|member|v2_inst2pkg
 r_int
 (paren
 op_star
-id|v2_aieee
+id|v2_inst2pkg
 )paren
 (paren
 r_int
 id|d
 )paren
 suffix:semicolon
-multiline_comment|/* figure this out later... */
-multiline_comment|/* &quot;dumb&quot; prom memory management routines, probably&n;&t;    only safe to use for mapping device address spaces...&n;        */
+multiline_comment|/* Convert ihandle to phandle */
+multiline_comment|/* &quot;dumb&quot; prom memory management routines, probably&n;&t; *  only safe to use for mapping device address spaces...&n;         */
 DECL|member|v2_dumb_mem_alloc
 r_char
 op_star
@@ -239,10 +242,10 @@ op_star
 id|virta
 comma
 r_int
-id|asi
+id|which_io
 comma
 r_int
-id|prot
+id|paddr
 comma
 r_int
 id|sz
@@ -340,7 +343,7 @@ r_int
 id|lo
 )paren
 suffix:semicolon
-multiline_comment|/* huh? */
+multiline_comment|/* Never issued (multistage load support) */
 DECL|member|v2_wheee2
 r_void
 (paren
@@ -363,7 +366,7 @@ r_void
 suffix:semicolon
 )brace
 suffix:semicolon
-multiline_comment|/* Just like the device ops, they slightly screwed up the mem-list&n;   from v0 to v2. Probably easier on the prom-writer dude, sucks for&n;   us though. See above comment about prom-vm mapped address space&n;   magic numbers. :-(&n;*/
+multiline_comment|/* Just like the device ops, they slightly screwed up the mem-list&n; * from v0 to v2. Probably easier on the prom-writer dude, sucks for&n; * us though. See above comment about prom-vm mapped address space&n; * magic numbers. :-(&n; */
 DECL|struct|linux_mlist_v0
 r_struct
 id|linux_mlist_v0
@@ -385,7 +388,7 @@ id|num_bytes
 suffix:semicolon
 )brace
 suffix:semicolon
-multiline_comment|/* The linux_mlist_v0&squot;s are pointer by this structure. One list&n;   per description. This means one list for total physical memory,&n;   one for prom&squot;s address mapping, and one for physical mem left after&n;   the kernel is loaded.&n; */
+multiline_comment|/* The linux_mlist_v0&squot;s are pointed to by this structure. One list&n; * per description. This means one list for total physical memory,&n; * one for prom&squot;s address mapping, and one for physical mem left after&n; * the kernel is loaded.&n; */
 DECL|struct|linux_mem_v0
 r_struct
 id|linux_mem_v0
@@ -475,7 +478,7 @@ suffix:semicolon
 multiline_comment|/* give me some time  :&gt; */
 )brace
 suffix:semicolon
-multiline_comment|/* Prom version-2 gives us the raw strings for boot arguments and&n;   boot device path. We also get the stdin and stdout file pseudo&n;   descriptors for use with the mungy v2 device functions.&n;*/
+multiline_comment|/* Prom version-2 gives us the raw strings for boot arguments and&n; * boot device path. We also get the stdin and stdout file pseudo&n; * descriptors for use with the mungy v2 device functions.&n; */
 DECL|struct|linux_bootargs_v2
 r_struct
 id|linux_bootargs_v2
@@ -508,7 +511,7 @@ suffix:semicolon
 multiline_comment|/* V2: Stdout descriptor */
 )brace
 suffix:semicolon
-multiline_comment|/* This is the actual Prom Vector from which everything else is accessed&n;   via struct and function pointers, etc. The prom when it loads us into&n;   memory plops a pointer to this master structure in register %o0 before&n;   it jumps to the kernel start address. I will update this soon to cover&n;   the v3 semantics (cpu_start, cpu_stop and other SMP fun things). :-)&n;*/
+multiline_comment|/* This is the actual Prom Vector from which everything else is accessed&n; * via struct and function pointers, etc. The prom when it loads us into&n; * memory plops a pointer to this master structure in register %o0 before&n; * it jumps to the kernel start address. I will update this soon to cover&n; * the v3 semantics (cpu_start, cpu_stop and other SMP fun things). :-)&n; */
 DECL|struct|linux_romvec
 r_struct
 id|linux_romvec
@@ -788,14 +791,13 @@ id|linux_dev_v2_funcs
 id|pv_v2devops
 suffix:semicolon
 multiline_comment|/* V2: device operations */
-DECL|member|whatzthis
+DECL|member|filler
 r_int
-id|whatzthis
+id|filler
 (braket
 l_int|15
 )braket
 suffix:semicolon
-multiline_comment|/* huh? */
 multiline_comment|/*&n;&t; * The following is machine-dependent.&n;&t; *&n;&t; * The sun4c needs a PROM function to set a PMEG for another&n;&t; * context, so that the kernel can map itself in all contexts.&n;&t; * It is not possible simply to set the context register, because&n;&t; * contexts 1 through N may have invalid translations for the&n;&t; * current program counter.  The hardware has a mode in which&n;&t; * all memory references go to the PROM, so the PROM can do it&n;&t; * easily.&n;&t; */
 DECL|member|pv_setctxt
 r_void
@@ -816,7 +818,7 @@ id|pmeg
 )paren
 suffix:semicolon
 multiline_comment|/* Prom version 3 Multiprocessor routines. This stuff is crazy.&n;&t; * No joke. Calling these when there is only one cpu probably&n;&t; * crashes the machine, have to test this. :-)&n;         */
-multiline_comment|/* v3_cpustart() will start the cpu &squot;whichcpu&squot; in mmu-context&n;&t; * &squot;thiscontext&squot; executing at address &squot;prog_counter&squot;&n;&t; *&n;&t; * XXX Have to figure out what &squot;cancontext&squot; means.&n;         */
+multiline_comment|/* v3_cpustart() will start the cpu &squot;whichcpu&squot; in mmu-context&n;&t; * &squot;thiscontext&squot; executing at address &squot;prog_counter&squot;&n;         */
 DECL|member|v3_cpustart
 r_int
 (paren
@@ -829,7 +831,7 @@ r_int
 id|whichcpu
 comma
 r_int
-id|cancontext
+id|ctxtbl_ptr
 comma
 r_int
 id|thiscontext
@@ -881,29 +883,6 @@ suffix:semicolon
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * In addition to the global stuff defined in the PROM vectors above,&n; * the PROM has quite a collection of `nodes&squot;.  A node is described by&n; * an integer---these seem to be internal pointers, actually---and the&n; * nodes are arranged into an N-ary tree.  Each node implements a fixed&n; * set of functions, as described below.  The first two deal with the tree&n; * structure, allowing traversals in either breadth- or depth-first fashion.&n; * The rest deal with `properties&squot;.&n; *&n; * A node property is simply a name/value pair.  The names are C strings&n; * (NUL-terminated); the values are arbitrary byte strings (counted strings).&n; * Many values are really just C strings.  Sometimes these are NUL-terminated,&n; * sometimes not, depending on the the interface version; v0 seems to&n; * terminate and v2 not.  Many others are simply integers stored as four&n; * bytes in machine order: you just get them and go.  The third popular&n; * format is an `address&squot;, which is made up of one or more sets of three&n; * integers as defined below.&n; *&n; * One uses these functions to traverse the device tree to see what devices&n; * this machine has attached to it.&n; *&n; * N.B.: for the `next&squot; functions, next(0) = first, and next(last) = 0.&n; * Whoever designed this part had good taste.  On the other hand, these&n; * operation vectors are global, rather than per-node, yet the pointers&n; * are not in the openprom vectors but rather found by indirection from&n; * there.  So the taste balances out.&n; */
-DECL|struct|linux_prom_addr
-r_struct
-id|linux_prom_addr
-(brace
-DECL|member|oa_space
-r_int
-id|oa_space
-suffix:semicolon
-multiline_comment|/* address space (may be relative) */
-DECL|member|oa_base
-r_int
-r_int
-id|oa_base
-suffix:semicolon
-multiline_comment|/* address within space */
-DECL|member|oa_size
-r_int
-r_int
-id|oa_size
-suffix:semicolon
-multiline_comment|/* extent (number of bytes) */
-)brace
-suffix:semicolon
 DECL|struct|linux_nodeops
 r_struct
 id|linux_nodeops
@@ -1008,5 +987,85 @@ id|name
 suffix:semicolon
 )brace
 suffix:semicolon
+multiline_comment|/* More fun PROM structures for device probing. */
+DECL|macro|PROMREG_MAX
+mdefine_line|#define PROMREG_MAX     16
+DECL|macro|PROMVADDR_MAX
+mdefine_line|#define PROMVADDR_MAX   16
+DECL|macro|PROMINTR_MAX
+mdefine_line|#define PROMINTR_MAX    15
+DECL|struct|linux_prom_registers
+r_struct
+id|linux_prom_registers
+(brace
+DECL|member|which_io
+r_int
+id|which_io
+suffix:semicolon
+multiline_comment|/* is this in OBIO space? */
+DECL|member|phys_addr
+r_char
+op_star
+id|phys_addr
+suffix:semicolon
+multiline_comment|/* The physical address of this register */
+DECL|member|reg_size
+r_int
+id|reg_size
+suffix:semicolon
+multiline_comment|/* How many bytes does this register take up? */
+)brace
+suffix:semicolon
+DECL|struct|linux_prom_irqs
+r_struct
+id|linux_prom_irqs
+(brace
+DECL|member|pri
+r_int
+id|pri
+suffix:semicolon
+multiline_comment|/* IRQ priority */
+DECL|member|vector
+r_int
+id|vector
+suffix:semicolon
+multiline_comment|/* This is foobar, what does it do? */
+)brace
+suffix:semicolon
+multiline_comment|/* Element of the &quot;ranges&quot; vector */
+DECL|struct|linux_prom_ranges
+r_struct
+id|linux_prom_ranges
+(brace
+DECL|member|ot_child_space
+r_int
+r_int
+id|ot_child_space
+suffix:semicolon
+DECL|member|ot_child_base
+r_int
+r_int
+id|ot_child_base
+suffix:semicolon
+multiline_comment|/* Bus feels this */
+DECL|member|ot_parent_space
+r_int
+r_int
+id|ot_parent_space
+suffix:semicolon
+DECL|member|ot_parent_base
+r_int
+r_int
+id|ot_parent_base
+suffix:semicolon
+multiline_comment|/* CPU looks from here */
+DECL|member|or_size
+r_int
+r_int
+id|or_size
+suffix:semicolon
+)brace
+suffix:semicolon
+macro_line|#endif /* !(__ASSEMBLY__) */
 macro_line|#endif /* !(__SPARC_OPENPROM_H) */
 eof

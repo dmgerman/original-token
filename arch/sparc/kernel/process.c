@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/arch/i386/kernel/process.c&n; *&n; *  Copyright (C) 1995  Linus Torvalds&n; */
+multiline_comment|/*&n; *  linux/arch/sparc/kernel/process.c&n; *&n; *  Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 multiline_comment|/*&n; * This file handles the architecture-dependent parts of process handling..&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -11,24 +11,11 @@ macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/ldt.h&gt;
 macro_line|#include &lt;linux/user.h&gt;
 macro_line|#include &lt;linux/a.out.h&gt;
+macro_line|#include &lt;asm/oplib.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
-DECL|function|ret_from_sys_call
-r_void
-id|ret_from_sys_call
-c_func
-(paren
-r_void
-)paren
-(brace
-id|__asm__
-c_func
-(paren
-l_string|&quot;nop&quot;
-)paren
-suffix:semicolon
-)brace
-multiline_comment|/*&n; * The idle loop on a i386..&n; */
+macro_line|#include &lt;asm/processor.h&gt;
+multiline_comment|/*&n; * The idle loop on a sparc... ;)&n; */
 DECL|function|sys_idle
 id|asmlinkage
 r_int
@@ -49,6 +36,12 @@ r_return
 op_minus
 id|EPERM
 suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;in sys_idle...&bslash;n&quot;
+)paren
+suffix:semicolon
 multiline_comment|/* Map out the low memory: it&squot;s no longer needed */
 multiline_comment|/* Sparc version RSN */
 multiline_comment|/* endless idle loop with no priority at all */
@@ -64,7 +57,24 @@ suffix:semicolon
 suffix:semicolon
 )paren
 (brace
+id|printk
+c_func
+(paren
+l_string|&quot;calling schedule() aieee!&bslash;n&quot;
+)paren
+suffix:semicolon
 id|schedule
+c_func
+(paren
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;schedule() returned, halting...&bslash;n&quot;
+)paren
+suffix:semicolon
+id|halt
 c_func
 (paren
 )paren
@@ -79,9 +89,10 @@ c_func
 r_void
 )paren
 (brace
-id|halt
+id|prom_reboot
 c_func
 (paren
+l_string|&quot;boot vmlinux&quot;
 )paren
 suffix:semicolon
 )brace
@@ -99,43 +110,17 @@ id|regs
 id|printk
 c_func
 (paren
-l_string|&quot;&bslash;nSP: %08lx PC: %08lx NPC: %08lx&bslash;n&quot;
+l_string|&quot;&bslash;nFP: %08lx PC: %08lx NPC: %08lx&bslash;n&quot;
 comma
-id|regs-&gt;sp
+id|regs-&gt;u_regs
+(braket
+l_int|14
+)braket
 comma
 id|regs-&gt;pc
 comma
 id|regs-&gt;npc
 )paren
-suffix:semicolon
-)brace
-multiline_comment|/*&n; * Do necessary setup to start up a newly executed thread.&n; */
-DECL|function|start_thread
-r_void
-id|start_thread
-c_func
-(paren
-r_struct
-id|pt_regs
-op_star
-id|regs
-comma
-r_int
-r_int
-id|sp
-comma
-r_int
-r_int
-id|fp
-)paren
-(brace
-id|regs-&gt;sp
-op_assign
-id|sp
-suffix:semicolon
-id|regs-&gt;fp
-op_assign
-id|fp
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Free current thread data structures etc..&n; */
@@ -167,6 +152,15 @@ c_func
 )paren
 suffix:semicolon
 )brace
+r_extern
+r_void
+id|ret_sys_call
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+multiline_comment|/*&n; * Copy a Sparc thread.  The context of a process on the Sparc is&n; * composed of the following:&n; *  1) status registers  %psr (for condition codes + CWP) and %wim&n; *  2) current register window (in&squot;s and global registers)&n; *  3) the current live stack frame, it contains the register&n; *     windows the child may &squot;restore&squot; into, this is important&n; *  4) kernel stack pointer, user stack pointer (which is %i6)&n; *  5) The pc and npc the child returns to during a switch&n; */
 DECL|function|copy_thread
 r_void
 id|copy_thread
@@ -199,6 +193,26 @@ id|pt_regs
 op_star
 id|childregs
 suffix:semicolon
+r_int
+r_char
+op_star
+id|old_stack
+suffix:semicolon
+r_int
+r_char
+op_star
+id|new_stack
+suffix:semicolon
+r_int
+id|i
+suffix:semicolon
+multiline_comment|/* This process has no context yet. */
+id|p-&gt;tss.context
+op_assign
+op_minus
+l_int|1
+suffix:semicolon
+multiline_comment|/* Grrr, Sparc stack alignment restrictions make things difficult. */
 id|childregs
 op_assign
 (paren
@@ -208,21 +222,20 @@ id|pt_regs
 op_star
 )paren
 (paren
+(paren
 id|p-&gt;kernel_stack_page
 op_plus
 id|PAGE_SIZE
-)paren
-)paren
 op_minus
-l_int|1
-suffix:semicolon
-id|p-&gt;tss.usp
-op_assign
-(paren
-r_int
-r_int
+l_int|80
 )paren
-id|childregs
+op_amp
+(paren
+op_complement
+l_int|7
+)paren
+)paren
+)paren
 suffix:semicolon
 op_star
 id|childregs
@@ -230,15 +243,127 @@ op_assign
 op_star
 id|regs
 suffix:semicolon
-id|childregs-&gt;sp
+id|p-&gt;tss.usp
 op_assign
 id|sp
 suffix:semicolon
-id|p-&gt;tss.psr
+multiline_comment|/* both processes have the same user stack */
+multiline_comment|/* See entry.S */
+multiline_comment|/* Allocate new processes kernel stack right under pt_regs.&n;&t; * Hopefully this should align things the right way.&n;&t; */
+id|p-&gt;tss.ksp
 op_assign
-id|regs-&gt;psr
+(paren
+r_int
+r_int
+)paren
+(paren
+(paren
+id|p-&gt;kernel_stack_page
+op_plus
+id|PAGE_SIZE
+op_minus
+l_int|80
+op_minus
+l_int|96
+)paren
+op_amp
+(paren
+op_complement
+l_int|7
+)paren
+)paren
 suffix:semicolon
-multiline_comment|/* for condition codes */
+id|new_stack
+op_assign
+(paren
+r_int
+r_char
+op_star
+)paren
+(paren
+id|p-&gt;tss.ksp
+)paren
+suffix:semicolon
+id|old_stack
+op_assign
+(paren
+r_int
+r_char
+op_star
+)paren
+(paren
+(paren
+(paren
+r_int
+r_int
+)paren
+id|regs
+)paren
+op_minus
+l_int|96
+)paren
+suffix:semicolon
+multiline_comment|/* Copy c-stack. */
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+l_int|96
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
+op_star
+id|new_stack
+op_increment
+op_assign
+op_star
+id|old_stack
+op_increment
+suffix:semicolon
+)brace
+multiline_comment|/* These pc values are only used when we switch to the child for&n;&t; * the first time, it jumps the child to ret_sys_call in entry.S&n;&t; * so that the child returns from the sys_call just like parent.&n;&t; */
+id|p-&gt;tss.pc
+op_assign
+(paren
+(paren
+(paren
+r_int
+r_int
+)paren
+id|ret_sys_call
+)paren
+op_minus
+l_int|8
+)paren
+suffix:semicolon
+id|p-&gt;tss.npc
+op_assign
+id|p-&gt;tss.pc
+op_plus
+l_int|4
+suffix:semicolon
+multiline_comment|/* Set the return values for both the parent and the child */
+id|regs-&gt;u_regs
+(braket
+l_int|8
+)braket
+op_assign
+id|p-&gt;pid
+suffix:semicolon
+id|childregs-&gt;u_regs
+(braket
+l_int|8
+)braket
+op_assign
+l_int|0
+suffix:semicolon
 r_return
 suffix:semicolon
 )brace
@@ -271,6 +396,7 @@ c_func
 (paren
 r_struct
 id|pt_regs
+op_star
 id|regs
 )paren
 (brace
@@ -282,9 +408,11 @@ id|COPYVM
 op_or
 id|SIGCHLD
 comma
-id|regs.sp
+id|regs-&gt;u_regs
+(braket
+l_int|14
+)braket
 comma
-op_amp
 id|regs
 )paren
 suffix:semicolon
@@ -301,6 +429,12 @@ id|pt_regs
 id|regs
 )paren
 (brace
+id|printk
+c_func
+(paren
+l_string|&quot;sys_execve()... halting&bslash;n&quot;
+)paren
+suffix:semicolon
 id|halt
 c_func
 (paren

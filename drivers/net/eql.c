@@ -3103,9 +3103,11 @@ l_int|0
 r_if
 c_cond
 (paren
+(paren
 id|slave-&gt;dev-&gt;flags
 op_amp
 id|IFF_UP
+)paren
 op_eq
 id|IFF_UP
 )paren
@@ -3565,9 +3567,11 @@ l_int|0
 r_if
 c_cond
 (paren
+(paren
 id|slave-&gt;dev-&gt;flags
 op_amp
 id|IFF_UP
+)paren
 op_eq
 id|IFF_UP
 )paren

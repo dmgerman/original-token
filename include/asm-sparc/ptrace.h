@@ -7,12 +7,12 @@ DECL|struct|pt_regs
 r_struct
 id|pt_regs
 (brace
-DECL|member|ps
+DECL|member|psr
 r_int
 r_int
-id|ps
+id|psr
 suffix:semicolon
-multiline_comment|/* previous supervisor, same as alpha I believe */
+multiline_comment|/* for condition codes */
 DECL|member|pc
 r_int
 r_int
@@ -24,54 +24,27 @@ r_int
 r_int
 id|npc
 suffix:semicolon
-DECL|member|sp
+DECL|member|y
 r_int
 r_int
-id|sp
+id|y
 suffix:semicolon
-multiline_comment|/* stack and frame pointer */
-DECL|member|fp
-r_int
-r_int
-id|fp
-suffix:semicolon
-DECL|member|psr
-r_int
-r_int
-id|psr
-suffix:semicolon
-multiline_comment|/* for condition codes */
-DECL|member|nuwin
-r_int
-r_int
-id|nuwin
-suffix:semicolon
-multiline_comment|/* number of user windows */
 multiline_comment|/* not sure yet whether all regs are necessary&n;&t; * but this is how it is traditionally done on the sparc.&n;&t; */
 DECL|member|u_regs
 r_int
 r_int
 id|u_regs
 (braket
-l_int|24
-op_star
 l_int|16
 )braket
 suffix:semicolon
-DECL|member|f_regs
-r_int
-r_int
-id|f_regs
-(braket
-l_int|64
-)braket
-suffix:semicolon
-multiline_comment|/* yuck yuck yuck */
+multiline_comment|/* globals and ins */
 )brace
 suffix:semicolon
 macro_line|#ifdef __KERNEL__
+multiline_comment|/* if previous supervisor is 0, came from user */
 DECL|macro|user_mode
-mdefine_line|#define user_mode(regs) (0x0)  /* if previous supervisor is 0, came from user */
+mdefine_line|#define user_mode(regs) (0x0)
 r_extern
 r_void
 id|show_regs

@@ -1077,10 +1077,10 @@ c_func
 (paren
 l_string|&quot;cld&bslash;n&bslash;t&quot;
 l_string|&quot;rep ; movsl&bslash;n&bslash;t&quot;
-l_string|&quot;testb $2,%%dl&bslash;n&bslash;t&quot;
+l_string|&quot;testb $2,%b1&bslash;n&bslash;t&quot;
 l_string|&quot;je 1f&bslash;n&bslash;t&quot;
 l_string|&quot;movsw&bslash;n&quot;
-l_string|&quot;1:&bslash;ttestb $1,%%dl&bslash;n&bslash;t&quot;
+l_string|&quot;1:&bslash;ttestb $1,%b1&bslash;n&bslash;t&quot;
 l_string|&quot;je 2f&bslash;n&bslash;t&quot;
 l_string|&quot;movsb&bslash;n&quot;
 l_string|&quot;2:&quot;
@@ -1094,7 +1094,7 @@ op_div
 l_int|4
 )paren
 comma
-l_string|&quot;d&quot;
+l_string|&quot;q&quot;
 (paren
 id|n
 )paren
@@ -1458,79 +1458,8 @@ r_return
 id|dest
 suffix:semicolon
 )brace
-DECL|function|memcmp
-r_extern
-r_inline
-r_int
-id|memcmp
-c_func
-(paren
-r_const
-r_void
-op_star
-id|cs
-comma
-r_const
-r_void
-op_star
-id|ct
-comma
-r_int
-id|count
-)paren
-(brace
-r_register
-r_int
-id|__res
-suffix:semicolon
-id|__asm__
-id|__volatile__
-c_func
-(paren
-l_string|&quot;cld&bslash;n&bslash;t&quot;
-l_string|&quot;repe&bslash;n&bslash;t&quot;
-l_string|&quot;cmpsb&bslash;n&bslash;t&quot;
-l_string|&quot;je 1f&bslash;n&bslash;t&quot;
-l_string|&quot;sbbl %%eax,%%eax&bslash;n&bslash;t&quot;
-l_string|&quot;orb $1,%%al&bslash;n&quot;
-l_string|&quot;1:&quot;
-suffix:colon
-l_string|&quot;=a&quot;
-(paren
-id|__res
-)paren
-suffix:colon
-l_string|&quot;0&quot;
-(paren
-l_int|0
-)paren
-comma
-l_string|&quot;S&quot;
-(paren
-id|cs
-)paren
-comma
-l_string|&quot;D&quot;
-(paren
-id|ct
-)paren
-comma
-l_string|&quot;c&quot;
-(paren
-id|count
-)paren
-suffix:colon
-l_string|&quot;si&quot;
-comma
-l_string|&quot;di&quot;
-comma
-l_string|&quot;cx&quot;
-)paren
-suffix:semicolon
-r_return
-id|__res
-suffix:semicolon
-)brace
+DECL|macro|memcmp
+mdefine_line|#define memcmp __builtin_memcmp
 DECL|function|memchr
 r_extern
 r_inline
@@ -1688,10 +1617,10 @@ c_func
 (paren
 l_string|&quot;cld&bslash;n&bslash;t&quot;
 l_string|&quot;rep ; stosl&bslash;n&bslash;t&quot;
-l_string|&quot;testb $2,%%dl&bslash;n&bslash;t&quot;
+l_string|&quot;testb $2,%b1&bslash;n&bslash;t&quot;
 l_string|&quot;je 1f&bslash;n&bslash;t&quot;
 l_string|&quot;stosw&bslash;n&quot;
-l_string|&quot;1:&bslash;ttestb $1,%%dl&bslash;n&bslash;t&quot;
+l_string|&quot;1:&bslash;ttestb $1,%b1&bslash;n&bslash;t&quot;
 l_string|&quot;je 2f&bslash;n&bslash;t&quot;
 l_string|&quot;stosb&bslash;n&quot;
 l_string|&quot;2:&quot;
@@ -1703,7 +1632,7 @@ l_string|&quot;a&quot;
 id|c
 )paren
 comma
-l_string|&quot;d&quot;
+l_string|&quot;q&quot;
 (paren
 id|count
 )paren

@@ -329,7 +329,13 @@ op_logical_neg
 (paren
 id|de-&gt;attr
 op_amp
+(paren
 id|ATTR_VOLUME
+op_or
+id|ATTR_SYS
+op_or
+id|ATTR_HIDDEN
+)paren
 )paren
 )paren
 (brace

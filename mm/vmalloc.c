@@ -1222,7 +1222,7 @@ l_int|0
 r_goto
 id|finished
 suffix:semicolon
-id|put_fs_byte
+id|put_user
 c_func
 (paren
 l_char|&squot;&bslash;0&squot;
@@ -1276,7 +1276,7 @@ l_int|0
 r_goto
 id|finished
 suffix:semicolon
-id|put_fs_byte
+id|put_user
 c_func
 (paren
 op_star

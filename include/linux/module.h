@@ -237,7 +237,7 @@ op_star
 suffix:semicolon
 multiline_comment|/*&n; * The first word of the module contains the use count.&n; */
 DECL|macro|GET_USE_COUNT
-mdefine_line|#define GET_USE_COUNT(module)&t;(* (int *) (module)-&gt;addr)
+mdefine_line|#define GET_USE_COUNT(module)&t;(* (long *) (module)-&gt;addr)
 multiline_comment|/*&n; * define the count variable, and usage macros.&n; */
 r_extern
 r_int

@@ -57,13 +57,12 @@ op_mul_assign
 l_int|0x000010c6
 suffix:semicolon
 multiline_comment|/* Sparc is 32-bit just like ix86 */
-id|__asm__
+id|__delay
 c_func
 (paren
-l_string|&quot;sethi %hi(_loops_per_sec), %o1&bslash;n&bslash;t&quot;
-l_string|&quot;ld [%o1 + %lo(_loops_per_sec)], %o1&bslash;n&bslash;t&quot;
-l_string|&quot;call ___delay&bslash;n&bslash;t&quot;
-l_string|&quot;umul %o1, %o0, %o0&bslash;n&bslash;t&quot;
+id|loops_per_sec
+op_star
+id|usecs
 )paren
 suffix:semicolon
 )brace

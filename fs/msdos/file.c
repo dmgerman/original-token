@@ -1010,7 +1010,7 @@ op_ne
 l_char|&squot;&bslash;r&squot;
 )paren
 (brace
-id|put_fs_byte
+id|put_user
 c_func
 (paren
 id|ch
@@ -1526,7 +1526,7 @@ c_cond
 (paren
 id|ch
 op_assign
-id|get_fs_byte
+id|get_user
 c_func
 (paren
 id|buf

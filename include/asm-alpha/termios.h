@@ -137,6 +137,10 @@ DECL|macro|TIOCSWINSZ
 mdefine_line|#define TIOCSWINSZ&t;_IOW(&squot;t&squot;, 103, struct winsize)
 DECL|macro|TIOCGWINSZ
 mdefine_line|#define TIOCGWINSZ&t;_IOR(&squot;t&squot;, 104, struct winsize)
+DECL|macro|TIOCSTART
+mdefine_line|#define&t;TIOCSTART&t;_IO(&squot;t&squot;, 110)&t;&t;/* start output, like ^Q */
+DECL|macro|TIOCSTOP
+mdefine_line|#define&t;TIOCSTOP&t;_IO(&squot;t&squot;, 111)&t;&t;/* stop output, like ^S */
 DECL|macro|TIOCOUTQ
 mdefine_line|#define TIOCOUTQ        _IOR(&squot;t&squot;, 115, int)     /* output queue size */
 DECL|macro|TIOCGLTC
@@ -375,10 +379,10 @@ DECL|macro|VLNEXT
 mdefine_line|#define VLNEXT 14
 DECL|macro|VDISCARD
 mdefine_line|#define VDISCARD 15
-DECL|macro|VTIME
-mdefine_line|#define VTIME 17
 DECL|macro|VMIN
 mdefine_line|#define VMIN 16
+DECL|macro|VTIME
+mdefine_line|#define VTIME 17
 multiline_comment|/*&n; * ..and the same for c_cc in the termio structure.. &n; * Oh, how I love being backwardly compatible.&n; */
 DECL|macro|_VINTR
 mdefine_line|#define _VINTR&t;0
@@ -401,9 +405,9 @@ mdefine_line|#define _VEOL2&t;6
 DECL|macro|_VSWTC
 mdefine_line|#define _VSWTC&t;7
 macro_line|#ifdef __KERNEL__
-multiline_comment|/*&t;intr=^C&t;&t;quit=^|&t;&t;erase=del&t;kill=^U&n;&t;eof=^D&t;&t;vtime=&bslash;0&t;vmin=&bslash;1&t;&t;sxtc=&bslash;0&n;&t;start=^Q&t;stop=^S&t;&t;susp=^Z&t;&t;eol=&bslash;0&n;&t;reprint=^R&t;discard=^U&t;werase=^W&t;lnext=^V&n;&t;eol2=&bslash;0&n;*/
+multiline_comment|/*&t;eof=^D&t;&t;eol=&bslash;0&t;&t;eol2=&bslash;0&t;&t;erase=del&n;&t;werase=^W&t;kill=^U&t;&t;reprint=^R&t;sxtc=&bslash;0&n;&t;intr=^C&t;&t;quit=^&bslash;&t;&t;susp=^Z&t;&t;&lt;OSF/1 VDSUSP&gt;&n;&t;start=^Q&t;stop=^S&t;&t;lnext=^V&t;discard=^U&n;&t;vmin=&bslash;1&t;&t;vtime=&bslash;0&n;*/
 DECL|macro|INIT_C_CC
-mdefine_line|#define INIT_C_CC &quot;&bslash;004&bslash;000&bslash;000&bslash;177&bslash;027&bslash;025&bslash;022&bslash;000&bslash;003&bslash;034&bslash;032&bslash;000&bslash;021&bslash;023&bslash;026&bslash;025&bslash;000&bslash;001&quot;
+mdefine_line|#define INIT_C_CC &quot;&bslash;004&bslash;000&bslash;000&bslash;177&bslash;027&bslash;025&bslash;022&bslash;000&bslash;003&bslash;034&bslash;032&bslash;000&bslash;021&bslash;023&bslash;026&bslash;025&bslash;001&bslash;000&quot;
 macro_line|#endif
 multiline_comment|/* c_iflag bits */
 DECL|macro|IGNBRK

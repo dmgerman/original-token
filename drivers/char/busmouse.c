@@ -512,7 +512,7 @@ r_return
 op_minus
 id|EAGAIN
 suffix:semicolon
-multiline_comment|/*&n;&t; * Obtain the current mouse parameters and limit as appropriate for&n;&t; * the return data format.  Interrupts are only disabled while &n;&t; * obtaining the parameters, NOT during the puts_fs_byte() calls,&n;&t; * so paging in put_fs_byte() does not effect mouse tracking.&n;&t; */
+multiline_comment|/*&n;&t; * Obtain the current mouse parameters and limit as appropriate for&n;&t; * the return data format.  Interrupts are only disabled while &n;&t; * obtaining the parameters, NOT during the puts_fs_byte() calls,&n;&t; * so paging in put_user() does not effect mouse tracking.&n;&t; */
 id|MSE_INT_OFF
 c_func
 (paren
@@ -595,7 +595,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|put_fs_byte
+id|put_user
 c_func
 (paren
 id|buttons
@@ -605,7 +605,7 @@ comma
 id|buffer
 )paren
 suffix:semicolon
-id|put_fs_byte
+id|put_user
 c_func
 (paren
 (paren
@@ -618,7 +618,7 @@ op_plus
 l_int|1
 )paren
 suffix:semicolon
-id|put_fs_byte
+id|put_user
 c_func
 (paren
 (paren
@@ -645,7 +645,7 @@ suffix:semicolon
 id|r
 op_increment
 )paren
-id|put_fs_byte
+id|put_user
 c_func
 (paren
 l_int|0x00

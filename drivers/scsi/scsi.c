@@ -7221,6 +7221,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+(paren
 id|dma_malloc_freelist
 (braket
 id|page
@@ -7230,6 +7231,7 @@ op_amp
 id|mask
 op_lshift
 id|sector
+)paren
 )paren
 op_ne
 (paren

@@ -11418,7 +11418,7 @@ op_plus
 id|i
 )paren
 op_assign
-id|get_fs_byte
+id|get_user
 c_func
 (paren
 id|arg
@@ -11441,7 +11441,7 @@ suffix:semicolon
 id|i
 op_increment
 )paren
-id|put_fs_byte
+id|put_user
 c_func
 (paren
 op_star

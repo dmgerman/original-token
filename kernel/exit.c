@@ -1,6 +1,6 @@
 multiline_comment|/*&n; *  linux/kernel/exit.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; */
 DECL|macro|DEBUG_PROC_TREE
-mdefine_line|#define DEBUG_PROC_TREE
+macro_line|#undef DEBUG_PROC_TREE
 macro_line|#include &lt;linux/wait.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
@@ -2403,7 +2403,7 @@ c_cond
 (paren
 id|stat_addr
 )paren
-id|put_fs_long
+id|put_user
 c_func
 (paren
 (paren
@@ -2498,7 +2498,7 @@ c_cond
 (paren
 id|stat_addr
 )paren
-id|put_fs_long
+id|put_user
 c_func
 (paren
 id|p-&gt;exit_code

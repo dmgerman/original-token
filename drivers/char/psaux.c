@@ -301,7 +301,15 @@ id|current-&gt;timeout
 op_assign
 id|jiffies
 op_plus
+(paren
 l_int|5
+op_star
+id|HZ
+op_plus
+l_int|99
+)paren
+op_div
+l_int|100
 suffix:semicolon
 id|schedule
 c_func
@@ -638,6 +646,7 @@ op_star
 id|file
 )paren
 (brace
+macro_line|#ifndef __alpha__
 id|aux_write_dev
 c_func
 (paren
@@ -645,6 +654,7 @@ id|AUX_DISABLE_DEV
 )paren
 suffix:semicolon
 multiline_comment|/* disable aux device */
+macro_line|#endif
 id|aux_write_cmd
 c_func
 (paren
@@ -1129,7 +1139,7 @@ suffix:semicolon
 id|outb_p
 c_func
 (paren
-id|get_fs_byte
+id|get_user
 c_func
 (paren
 id|buffer
@@ -1202,7 +1212,7 @@ suffix:semicolon
 id|outb_p
 c_func
 (paren
-id|get_fs_byte
+id|get_user
 c_func
 (paren
 id|buffer
@@ -1364,7 +1374,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|put_fs_byte
+id|put_user
 c_func
 (paren
 id|c
@@ -1769,7 +1779,15 @@ id|current-&gt;timeout
 op_assign
 id|jiffies
 op_plus
+(paren
 l_int|5
+op_star
+id|HZ
+op_plus
+l_int|99
+)paren
+op_div
+l_int|100
 suffix:semicolon
 id|schedule
 c_func
@@ -1862,7 +1880,15 @@ id|current-&gt;timeout
 op_assign
 id|jiffies
 op_plus
+(paren
 l_int|5
+op_star
+id|HZ
+op_plus
+l_int|99
+)paren
+op_div
+l_int|100
 suffix:semicolon
 id|schedule
 c_func

@@ -1,7 +1,7 @@
 macro_line|#ifndef _SPARC_MEMERR_H
 DECL|macro|_SPARC_MEMERR_H
 mdefine_line|#define _SPARC_MEMERR_H
-multiline_comment|/* memerr.h:  Bit fields in the asynchronous and synchronous memory error&n;              registers used to determine what &squot;type&squot; of error has just&n;&t;      induced a trap.&n;&n;   Copyright (C) 1994 David S. Miller (davem@caip.rutgers.edu)&n;*/
+multiline_comment|/* memerr.h:  Bit fields in the asynchronous and synchronous memory error&n; *            registers used to determine what &squot;type&squot; of error has just&n; *&t;      induced a trap.&n; *&n; * Copyright (C) 1994 David S. Miller (davem@caip.rutgers.edu)&n; */
 multiline_comment|/* synchronous error register fields come first... */
 DECL|macro|SYNCER_WRITE
 mdefine_line|#define SYNCER_WRITE    0x8000        /* write error...                               */

@@ -822,7 +822,7 @@ id|i
 OL
 id|buflen
 )paren
-id|put_fs_byte
+id|put_user
 c_func
 (paren
 id|buf

@@ -418,10 +418,12 @@ r_sizeof
 r_int
 )paren
 op_plus
-l_int|4095
+id|PAGE_SIZE
+op_minus
+l_int|1
 )paren
 op_div
-l_int|4096
+id|PAGE_SIZE
 suffix:semicolon
 r_if
 c_cond
@@ -434,7 +436,7 @@ c_func
 (paren
 id|npages
 op_star
-l_int|4096
+id|PAGE_SIZE
 )paren
 )paren
 op_eq
@@ -604,6 +606,7 @@ r_return
 op_minus
 id|EPERM
 suffix:semicolon
+macro_line|#ifdef __i386__
 multiline_comment|/* A little bit of protection... we &quot;know&quot; where the user stack is... */
 r_if
 c_cond
@@ -632,6 +635,7 @@ op_assign
 l_int|NULL
 suffix:semicolon
 )brace
+macro_line|#endif
 multiline_comment|/*&n;&t; * First reclaim any memory from dead modules that where not&n;&t; * freed when deleted. Should I think be done by timers when&n;&t; * the module was deleted - Jon.&n;&t; */
 id|free_modules
 c_func
@@ -714,10 +718,12 @@ r_sizeof
 r_int
 )paren
 op_plus
-l_int|4095
+id|PAGE_SIZE
+op_minus
+l_int|1
 )paren
 op_div
-l_int|4096
+id|PAGE_SIZE
 OG
 id|mp-&gt;size
 )paren
@@ -764,7 +770,7 @@ l_int|0
 comma
 id|mp-&gt;size
 op_star
-l_int|4096
+id|PAGE_SIZE
 op_minus
 (paren
 id|codesize
@@ -838,11 +844,12 @@ c_func
 (paren
 id|VERIFY_READ
 comma
-id|symtab
+op_amp
+id|symtab-&gt;size
 comma
 r_sizeof
 (paren
-r_int
+id|symtab-&gt;size
 )paren
 )paren
 )paren
@@ -850,26 +857,13 @@ r_int
 r_return
 id|error
 suffix:semicolon
-id|memcpy_fromfs
+id|size
+op_assign
+id|get_user
 c_func
 (paren
-(paren
-r_char
-op_star
-)paren
-(paren
 op_amp
-(paren
-id|size
-)paren
-)paren
-comma
-id|symtab
-comma
-r_sizeof
-(paren
-r_int
-)paren
+id|symtab-&gt;size
 )paren
 suffix:semicolon
 r_if
@@ -1643,7 +1637,7 @@ id|buf
 id|i
 )braket
 op_assign
-id|get_fs_byte
+id|get_user
 c_func
 (paren
 id|user_name
@@ -2469,7 +2463,7 @@ op_minus
 id|buf
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Rules:&n; * - The new symbol table should be statically allocated, or else you _have_&n; *   to set the &quot;size&quot; field of the struct to the number of bytes allocated.&n; *&n; * - The strings that name the symbols will not be copied, maybe the pointers&n; *&n; * - For a loadable module, the function should only be called in the&n; *   context of init_module&n; *&n; * Those are the only restrictions! (apart from not being reenterable...)&n; *&n; * If you want to remove a symbol table for a loadable module,&n; * the call looks like: &quot;register_symtab(0)&quot;.&n; *&n; * The look of the code is mostly dictated by the format of&n; * the frozen struct symbol_table, due to compatibility demands.&n; */
+multiline_comment|/*&n; * Rules:&n; * - The new symbol table should be statically allocated, or else you _have_&n; *   to set the &quot;size&quot; field of the struct to the number of bytes allocated.&n; *&n; * - The strings that name the symbols will not be copied, maybe the pointers&n; *&n; * - For a loadable module, the function should only be called in the&n; *   context of init_module&n; *&n; * Those are the only restrictions! (apart from not being reentrant...)&n; *&n; * If you want to remove a symbol table for a loadable module,&n; * the call looks like: &quot;register_symtab(0)&quot;.&n; *&n; * The look of the code is mostly dictated by the format of&n; * the frozen struct symbol_table, due to compatibility demands.&n; */
 DECL|macro|INTSIZ
 mdefine_line|#define INTSIZ sizeof(struct internal_symbol)
 DECL|macro|REFSIZ

@@ -235,6 +235,16 @@ r_int
 id|val
 )paren
 (brace
+r_int
+r_int
+id|foo
+suffix:semicolon
+id|foo
+op_assign
+id|val
+suffix:semicolon
+r_return
+suffix:semicolon
 )brace
 macro_line|#endif /* _ASM_SEGMENT_H */
 eof

@@ -121,9 +121,11 @@ id|elf_bss
 (brace
 r_int
 r_int
-id|fpnt
-comma
 id|nbyte
+suffix:semicolon
+r_char
+op_star
+id|fpnt
 suffix:semicolon
 id|nbyte
 op_assign
@@ -163,11 +165,15 @@ id|nbyte
 suffix:semicolon
 id|fpnt
 op_assign
+(paren
+r_char
+op_star
+)paren
 id|elf_bss
 suffix:semicolon
 r_do
 (brace
-id|put_fs_byte
+id|put_user
 c_func
 (paren
 l_int|0
@@ -393,26 +399,18 @@ op_logical_neg
 id|ibcs
 )paren
 (brace
-id|put_fs_long
+id|put_user
 c_func
 (paren
-(paren
-r_int
-r_int
-)paren
 id|envp
 comma
 op_decrement
 id|sp
 )paren
 suffix:semicolon
-id|put_fs_long
+id|put_user
 c_func
 (paren
-(paren
-r_int
-r_int
-)paren
 id|argv
 comma
 op_decrement
@@ -442,7 +440,7 @@ op_star
 )paren
 id|exec-&gt;e_phoff
 suffix:semicolon
-id|put_fs_long
+id|put_user
 c_func
 (paren
 l_int|3
@@ -451,7 +449,7 @@ id|dlinfo
 op_increment
 )paren
 suffix:semicolon
-id|put_fs_long
+id|put_user
 c_func
 (paren
 id|load_addr
@@ -462,7 +460,7 @@ id|dlinfo
 op_increment
 )paren
 suffix:semicolon
-id|put_fs_long
+id|put_user
 c_func
 (paren
 l_int|4
@@ -471,7 +469,7 @@ id|dlinfo
 op_increment
 )paren
 suffix:semicolon
-id|put_fs_long
+id|put_user
 c_func
 (paren
 r_sizeof
@@ -484,7 +482,7 @@ id|dlinfo
 op_increment
 )paren
 suffix:semicolon
-id|put_fs_long
+id|put_user
 c_func
 (paren
 l_int|5
@@ -493,7 +491,7 @@ id|dlinfo
 op_increment
 )paren
 suffix:semicolon
-id|put_fs_long
+id|put_user
 c_func
 (paren
 id|exec-&gt;e_phnum
@@ -502,7 +500,7 @@ id|dlinfo
 op_increment
 )paren
 suffix:semicolon
-id|put_fs_long
+id|put_user
 c_func
 (paren
 l_int|9
@@ -511,7 +509,7 @@ id|dlinfo
 op_increment
 )paren
 suffix:semicolon
-id|put_fs_long
+id|put_user
 c_func
 (paren
 (paren
@@ -524,7 +522,7 @@ id|dlinfo
 op_increment
 )paren
 suffix:semicolon
-id|put_fs_long
+id|put_user
 c_func
 (paren
 l_int|7
@@ -533,7 +531,7 @@ id|dlinfo
 op_increment
 )paren
 suffix:semicolon
-id|put_fs_long
+id|put_user
 c_func
 (paren
 id|interp_load_addr
@@ -542,7 +540,7 @@ id|dlinfo
 op_increment
 )paren
 suffix:semicolon
-id|put_fs_long
+id|put_user
 c_func
 (paren
 l_int|8
@@ -551,7 +549,7 @@ id|dlinfo
 op_increment
 )paren
 suffix:semicolon
-id|put_fs_long
+id|put_user
 c_func
 (paren
 l_int|0
@@ -560,7 +558,7 @@ id|dlinfo
 op_increment
 )paren
 suffix:semicolon
-id|put_fs_long
+id|put_user
 c_func
 (paren
 l_int|6
@@ -569,7 +567,7 @@ id|dlinfo
 op_increment
 )paren
 suffix:semicolon
-id|put_fs_long
+id|put_user
 c_func
 (paren
 id|PAGE_SIZE
@@ -578,7 +576,7 @@ id|dlinfo
 op_increment
 )paren
 suffix:semicolon
-id|put_fs_long
+id|put_user
 c_func
 (paren
 l_int|0
@@ -587,7 +585,7 @@ id|dlinfo
 op_increment
 )paren
 suffix:semicolon
-id|put_fs_long
+id|put_user
 c_func
 (paren
 l_int|0
@@ -597,7 +595,7 @@ op_increment
 )paren
 suffix:semicolon
 )brace
-id|put_fs_long
+id|put_user
 c_func
 (paren
 (paren
@@ -627,13 +625,9 @@ OG
 l_int|0
 )paren
 (brace
-id|put_fs_long
+id|put_user
 c_func
 (paren
-(paren
-r_int
-r_int
-)paren
 id|p
 comma
 id|argv
@@ -643,7 +637,7 @@ suffix:semicolon
 r_while
 c_loop
 (paren
-id|get_fs_byte
+id|get_user
 c_func
 (paren
 id|p
@@ -653,7 +647,7 @@ op_increment
 multiline_comment|/* nothing */
 suffix:semicolon
 )brace
-id|put_fs_long
+id|put_user
 c_func
 (paren
 l_int|0
@@ -680,13 +674,9 @@ OG
 l_int|0
 )paren
 (brace
-id|put_fs_long
+id|put_user
 c_func
 (paren
-(paren
-r_int
-r_int
-)paren
 id|p
 comma
 id|envp
@@ -696,7 +686,7 @@ suffix:semicolon
 r_while
 c_loop
 (paren
-id|get_fs_byte
+id|get_user
 c_func
 (paren
 id|p
@@ -706,7 +696,7 @@ op_increment
 multiline_comment|/* nothing */
 suffix:semicolon
 )brace
-id|put_fs_long
+id|put_user
 c_func
 (paren
 l_int|0
@@ -3517,9 +3507,11 @@ c_cond
 (paren
 id|error
 op_ne
+(paren
 id|elf_phdata-&gt;p_vaddr
 op_amp
 l_int|0xfffff000
+)paren
 )paren
 (brace
 id|kfree

@@ -274,7 +274,7 @@ id|dev
 dot
 id|timeout
 op_assign
-id|get_fs_long
+id|get_user
 c_func
 (paren
 (paren
@@ -1512,7 +1512,7 @@ l_int|0
 suffix:semicolon
 id|opcode
 op_assign
-id|get_fs_byte
+id|get_user
 c_func
 (paren
 id|buf

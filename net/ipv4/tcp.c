@@ -3081,12 +3081,10 @@ r_void
 id|tcp_send_ack
 c_func
 (paren
-r_int
-r_int
+id|u32
 id|sequence
 comma
-r_int
-r_int
+id|u32
 id|ack
 comma
 r_struct
@@ -3487,7 +3485,7 @@ id|sk-&gt;debug
 id|printk
 c_func
 (paren
-l_string|&quot;&bslash;rtcp_ack: seq %lx ack %lx&bslash;n&quot;
+l_string|&quot;&bslash;rtcp_ack: seq %x ack %x&bslash;n&quot;
 comma
 id|sequence
 comma
@@ -5621,13 +5619,11 @@ id|copied
 op_assign
 l_int|0
 suffix:semicolon
-r_int
-r_int
+id|u32
 id|peek_seq
 suffix:semicolon
 r_volatile
-r_int
-r_int
+id|u32
 op_star
 id|seq
 suffix:semicolon
@@ -7653,8 +7649,7 @@ multiline_comment|/*&n; *&t;Default sequence number picking algorithm.&n; *&t;As
 DECL|function|tcp_init_seq
 r_extern
 r_inline
-r_int
-r_int
+id|u32
 id|tcp_init_seq
 c_func
 (paren
@@ -7715,8 +7710,7 @@ id|device
 op_star
 id|dev
 comma
-r_int
-r_int
+id|u32
 id|seq
 )paren
 (brace
@@ -9265,8 +9259,7 @@ r_int
 id|len
 )paren
 (brace
-r_int
-r_int
+id|u32
 id|ack
 suffix:semicolon
 r_int
@@ -9386,7 +9379,7 @@ id|sk-&gt;debug
 id|printk
 c_func
 (paren
-l_string|&quot;Ack ignored %lu %lu&bslash;n&quot;
+l_string|&quot;Ack ignored %u %u&bslash;n&quot;
 comma
 id|ack
 comma
@@ -10434,7 +10427,7 @@ id|sk-&gt;debug
 id|printk
 c_func
 (paren
-l_string|&quot;rcv_ack_seq: %lX==%lX, acked_seq: %lX==%lX&bslash;n&quot;
+l_string|&quot;rcv_ack_seq: %X==%X, acked_seq: %X==%X&bslash;n&quot;
 comma
 id|sk-&gt;rcv_ack_seq
 comma
@@ -10985,12 +10978,9 @@ id|dup_dumped
 op_assign
 l_int|0
 suffix:semicolon
-r_int
-r_int
+id|u32
 id|new_seq
-suffix:semicolon
-r_int
-r_int
+comma
 id|shut_seq
 suffix:semicolon
 id|th
@@ -11113,7 +11103,7 @@ id|sk-&gt;debug
 id|printk
 c_func
 (paren
-l_string|&quot;Data arrived on %p after close [Data right edge %lX, Socket shut on %lX] %d&bslash;n&quot;
+l_string|&quot;Data arrived on %p after close [Data right edge %X, Socket shut on %X] %d&bslash;n&quot;
 comma
 id|sk
 comma
@@ -11253,7 +11243,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;skb1-&gt;h.th-&gt;seq = %ld: &quot;
+l_string|&quot;skb1-&gt;h.th-&gt;seq = %d: &quot;
 comma
 id|skb1-&gt;h.th-&gt;seq
 )paren
@@ -11261,7 +11251,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;skb-&gt;h.th-&gt;seq = %ld&bslash;n&quot;
+l_string|&quot;skb-&gt;h.th-&gt;seq = %d&bslash;n&quot;
 comma
 id|skb-&gt;h.th-&gt;seq
 )paren
@@ -11269,7 +11259,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;copied_seq = %ld acked_seq = %ld&bslash;n&quot;
+l_string|&quot;copied_seq = %d acked_seq = %d&bslash;n&quot;
 comma
 id|sk-&gt;copied_seq
 comma
@@ -12987,8 +12977,7 @@ op_star
 id|dev
 )paren
 (brace
-r_int
-r_int
+id|u32
 id|next_seq
 suffix:semicolon
 id|next_seq
@@ -14166,7 +14155,7 @@ op_logical_neg
 id|th-&gt;rst
 )paren
 (brace
-r_int
+id|u32
 id|seq
 op_assign
 id|sk-&gt;write_seq

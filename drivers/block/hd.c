@@ -2228,7 +2228,7 @@ id|i
 op_increment
 )paren
 (brace
-id|nop
+id|barrier
 c_func
 (paren
 )paren
@@ -2264,7 +2264,7 @@ id|i
 op_increment
 )paren
 (brace
-id|nop
+id|barrier
 c_func
 (paren
 )paren
@@ -4433,7 +4433,7 @@ id|err
 r_return
 id|err
 suffix:semicolon
-id|put_fs_byte
+id|put_user
 c_func
 (paren
 id|bios_info
@@ -4451,7 +4451,7 @@ op_amp
 id|loc-&gt;heads
 )paren
 suffix:semicolon
-id|put_fs_byte
+id|put_user
 c_func
 (paren
 id|bios_info
@@ -4469,7 +4469,7 @@ op_amp
 id|loc-&gt;sectors
 )paren
 suffix:semicolon
-id|put_fs_word
+id|put_user
 c_func
 (paren
 id|bios_info
@@ -4487,7 +4487,7 @@ op_amp
 id|loc-&gt;cylinders
 )paren
 suffix:semicolon
-id|put_fs_long
+id|put_user
 c_func
 (paren
 id|hd
@@ -4597,7 +4597,7 @@ id|err
 r_return
 id|err
 suffix:semicolon
-id|put_fs_long
+id|put_user
 c_func
 (paren
 id|read_ahead
@@ -4660,7 +4660,7 @@ id|err
 r_return
 id|err
 suffix:semicolon
-id|put_fs_long
+id|put_user
 c_func
 (paren
 id|hd
@@ -4819,7 +4819,7 @@ id|err
 r_return
 id|err
 suffix:semicolon
-id|put_fs_long
+id|put_user
 c_func
 (paren
 id|unmask_intr
@@ -4877,7 +4877,7 @@ id|err
 r_return
 id|err
 suffix:semicolon
-id|put_fs_long
+id|put_user
 c_func
 (paren
 id|mult_count
@@ -5359,10 +5359,16 @@ r_void
 )paren
 (brace
 r_int
-id|drive
-comma
 id|i
 suffix:semicolon
+macro_line|#ifdef __i386__
+r_if
+c_cond
+(paren
+op_logical_neg
+id|NR_HD
+)paren
+(brace
 r_extern
 r_struct
 id|drive_info
@@ -5383,14 +5389,9 @@ id|drive_info
 suffix:semicolon
 r_int
 id|cmos_disks
+comma
+id|drive
 suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|NR_HD
-)paren
-(brace
 r_for
 c_loop
 (paren
@@ -5600,6 +5601,7 @@ op_assign
 l_int|1
 suffix:semicolon
 )brace
+macro_line|#endif /* __i386__ */
 id|i
 op_assign
 id|NR_HD

@@ -75,7 +75,7 @@ id|regs
 suffix:semicolon
 r_static
 r_int
-id|halt
+id|ncr_halt
 (paren
 r_struct
 id|Scsi_Host
@@ -122,8 +122,7 @@ id|Scsi_Host
 op_star
 id|host
 comma
-r_int
-r_int
+id|u32
 op_star
 id|dsa
 )paren
@@ -137,8 +136,7 @@ id|Scsi_Host
 op_star
 id|host
 comma
-r_int
-r_int
+id|u32
 op_star
 id|insn
 comma
@@ -236,13 +234,13 @@ DECL|member|chip
 r_int
 id|chip
 suffix:semicolon
-DECL|member|max_revision
-r_int
-id|max_revision
-suffix:semicolon
 DECL|member|min_revision
 r_int
 id|min_revision
+suffix:semicolon
+DECL|member|max_revision
+r_int
+id|max_revision
 suffix:semicolon
 )brace
 suffix:semicolon
@@ -605,7 +603,7 @@ id|overrides
 id|commandline_current
 )braket
 dot
-id|data.pci.device
+id|data.pci.function
 op_assign
 id|ints
 (braket
@@ -988,7 +986,7 @@ suffix:colon
 id|ISTAT_REG_700
 suffix:semicolon
 multiline_comment|/* Only the ISTAT register is readable when the NCR is running, so make &n;   sure it&squot;s halted. */
-id|halt
+id|ncr_halt
 c_func
 (paren
 id|host
@@ -1498,7 +1496,7 @@ l_int|NULL
 suffix:semicolon
 id|hostdata-&gt;issue_dsa_head
 op_assign
-l_int|NULL
+l_int|0
 suffix:semicolon
 id|hostdata-&gt;issue_dsa_tail
 op_assign
@@ -1625,7 +1623,7 @@ comma
 r_int
 id|chip
 comma
-r_int
+id|u32
 id|base
 comma
 r_int
@@ -1805,7 +1803,7 @@ id|printk
 l_string|&quot;scsi-ncr53c7,8xx : for better reliability and performance, please use the&bslash;n&quot;
 l_string|&quot;        PCI override instead.&bslash;n&quot;
 l_string|&quot;&t; Syntax : ncr53c8{10,15,20,25}=pci,&lt;bus&gt;,&lt;device&gt;,&lt;function&gt;&bslash;n&quot;
-l_string|&quot;&t;          &lt;bus&gt; and &lt;device&gt; are usually 0.&bslash;n&quot;
+l_string|&quot;                 &lt;bus&gt; and &lt;device&gt; are usually 0.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_if
@@ -1906,7 +1904,7 @@ id|script_len
 op_div
 r_sizeof
 (paren
-r_int
+id|u32
 )paren
 suffix:semicolon
 id|hostdata
@@ -1958,6 +1956,10 @@ op_assign
 r_int
 r_char
 op_star
+)paren
+(paren
+r_int
+r_int
 )paren
 id|base
 suffix:semicolon
@@ -2108,11 +2110,11 @@ id|instance
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* &n; * Function : static int ncr_init(Scsi_Host_Template *tpnt, int board, &n; *&t;int chip, int bus, int device_fn, int options)&n; *&n; * Purpose : initializes a NCR53c800 family based on the PCI&n; *&t;bus, device, and function location of it.  Allows &n; * &t;reprogramming of latency timer and determining addresses&n; *&t;and whether bus mastering, etc. are OK.&n; *&t;&n; *&t;Useful where a new NCR chip is backwards compatible with&n; *&t;a supported chip, but the DEVICE ID has changed so it &n; *&t;doesn&squot;t show up when the autoprobe does a pcibios_find_device.&n; *&n; * Inputs : tpnt - Template for this SCSI adapter, board - board level&n; *&t;product, chip - 810, 820, or 825, bus - PCI bus, device_fn -&n; *&t;device and function encoding as used by PCI BIOS calls.&n; * &n; * Returns : 0 on success, -1 on failure.&n; *&n; */
-DECL|function|ncr_init
+multiline_comment|/* &n; * Function : static int pci_init(Scsi_Host_Template *tpnt, int board, &n; *&t;int chip, int bus, int device_fn, int options)&n; *&n; * Purpose : initializes a NCR53c800 family based on the PCI&n; *&t;bus, device, and function location of it.  Allows &n; * &t;reprogramming of latency timer and determining addresses&n; *&t;and whether bus mastering, etc. are OK.&n; *&t;&n; *&t;Useful where a new NCR chip is backwards compatible with&n; *&t;a supported chip, but the DEVICE ID has changed so it &n; *&t;doesn&squot;t show up when the autoprobe does a pcibios_find_device.&n; *&n; * Inputs : tpnt - Template for this SCSI adapter, board - board level&n; *&t;product, chip - 810, 820, or 825, bus - PCI bus, device_fn -&n; *&t;device and function encoding as used by PCI BIOS calls.&n; * &n; * Returns : 0 on success, -1 on failure.&n; *&n; */
+DECL|function|ncr_pci_init
 r_static
 r_int
-id|ncr_init
+id|ncr_pci_init
 (paren
 id|Scsi_Host_Template
 op_star
@@ -2144,10 +2146,10 @@ id|device_id
 comma
 id|command
 suffix:semicolon
-r_int
-r_int
+id|u32
 id|base
-comma
+suffix:semicolon
+r_int
 id|io_port
 suffix:semicolon
 r_int
@@ -2344,9 +2346,9 @@ id|irq
 id|printk
 (paren
 l_string|&quot;scsi-ncr53c7,8xx : error %s not initializing due to error reading configuration space&bslash;n&quot;
-l_string|&quot;&t; perhaps you specified an incorrect PCI bus, device, or function.&bslash;n&quot;
+l_string|&quot;        perhaps you specified an incorrect PCI bus, device, or function.&bslash;n&quot;
 comma
-id|pcibios_strerror
+id|pci_strbioserr
 c_func
 (paren
 id|error
@@ -2405,7 +2407,7 @@ l_int|1
 (brace
 id|printk
 (paren
-l_string|&quot;scsi-ncr53c7,8xx : disabling I/O mapping since base address 0 (0x%lx)&bslash;n&quot;
+l_string|&quot;scsi-ncr53c7,8xx : disabling I/O mapping since base address 0 (0x%x)&bslash;n&quot;
 l_string|&quot;        bits 0..1 indicate a non-IO mapping&bslash;n&quot;
 comma
 id|io_port
@@ -2683,9 +2685,6 @@ r_int
 )paren
 id|base
 comma
-(paren
-r_int
-)paren
 id|io_port
 comma
 (paren
@@ -2768,7 +2767,7 @@ id|pci
 ques
 c_cond
 op_logical_neg
-id|ncr_init
+id|ncr_pci_init
 (paren
 id|tpnt
 comma
@@ -2955,7 +2954,7 @@ id|pci_device_fn
 )paren
 op_logical_and
 op_logical_neg
-id|ncr_init
+id|ncr_pci_init
 (paren
 id|tpnt
 comma
@@ -3053,8 +3052,7 @@ id|memory_to_ncr
 comma
 id|ncr_to_ncr
 suffix:semicolon
-r_int
-r_int
+id|u32
 id|base
 suffix:semicolon
 id|NCR53c7x0_local_setup
@@ -3108,11 +3106,11 @@ id|i
 )braket
 )braket
 op_add_assign
+id|virt_to_bus
+c_func
 (paren
-r_int
-r_int
-)paren
 id|hostdata-&gt;script
+)paren
 suffix:semicolon
 multiline_comment|/* Fixup addresses of constants that used to be EXTERNAL */
 id|patch_abs_32
@@ -3123,11 +3121,10 @@ l_int|0
 comma
 id|NCR53c7xx_msg_abort
 comma
+id|virt_to_bus
+c_func
 (paren
-r_int
-)paren
 op_amp
-(paren
 id|hostdata-&gt;NCR53c7xx_msg_abort
 )paren
 )paren
@@ -3140,11 +3137,10 @@ l_int|0
 comma
 id|NCR53c7xx_msg_reject
 comma
+id|virt_to_bus
+c_func
 (paren
-r_int
-)paren
 op_amp
-(paren
 id|hostdata-&gt;NCR53c7xx_msg_reject
 )paren
 )paren
@@ -3157,11 +3153,10 @@ l_int|0
 comma
 id|NCR53c7xx_zero
 comma
+id|virt_to_bus
+c_func
 (paren
-r_int
-)paren
 op_amp
-(paren
 id|hostdata-&gt;NCR53c7xx_zero
 )paren
 )paren
@@ -3174,13 +3169,48 @@ l_int|0
 comma
 id|NCR53c7xx_sink
 comma
+id|virt_to_bus
+c_func
 (paren
-r_int
-)paren
 op_amp
-(paren
 id|hostdata-&gt;NCR53c7xx_sink
 )paren
+)paren
+suffix:semicolon
+multiline_comment|/* Fixup references to external variables: */
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|EXTERNAL_PATCHES_LEN
+suffix:semicolon
+op_increment
+id|i
+)paren
+id|hostdata-&gt;script
+(braket
+id|EXTERNAL_PATCHES
+(braket
+id|i
+)braket
+dot
+id|offset
+)braket
+op_add_assign
+id|virt_to_bus
+c_func
+(paren
+id|EXTERNAL_PATCHES
+(braket
+id|i
+)braket
+dot
+id|address
 )paren
 suffix:semicolon
 multiline_comment|/* &n;     * Fixup absolutes set at boot-time.&n;     * &n;     * All Absolute variables suffixed with &quot;dsa_&quot; and &quot;int_&quot;&n;     * are constants, and need no fixup provided the assembler has done &n;     * it for us (I don&squot;t know what the &quot;real&quot; NCR assembler does in &n;     * this case, my assembler does the right magic).&n;     */
@@ -3215,7 +3245,7 @@ id|OPTION_MEMORY_MAPPED
 id|base
 op_assign
 (paren
-r_int
+id|u32
 )paren
 id|host-&gt;io_port
 suffix:semicolon
@@ -3244,10 +3274,11 @@ r_else
 (brace
 id|base
 op_assign
+id|virt_to_phys
+c_func
 (paren
-r_int
-)paren
 id|host-&gt;base
+)paren
 suffix:semicolon
 id|ncr_to_ncr
 op_assign
@@ -3350,11 +3381,14 @@ l_int|0
 comma
 id|issue_dsa_head
 comma
+id|virt_to_bus
+c_func
 (paren
-r_int
+(paren
+r_void
+op_star
 )paren
 op_amp
-(paren
 id|hostdata-&gt;issue_dsa_head
 )paren
 )paren
@@ -3367,11 +3401,14 @@ l_int|0
 comma
 id|msg_buf
 comma
+id|virt_to_bus
+c_func
 (paren
-r_int
+(paren
+r_void
+op_star
 )paren
 op_amp
-(paren
 id|hostdata-&gt;msg_buf
 )paren
 )paren
@@ -3384,11 +3421,14 @@ l_int|0
 comma
 id|reconnect_dsa_head
 comma
+id|virt_to_bus
+c_func
 (paren
-r_int
+(paren
+r_void
+op_star
 )paren
 op_amp
-(paren
 id|hostdata-&gt;reconnect_dsa_head
 )paren
 )paren
@@ -3401,11 +3441,14 @@ l_int|0
 comma
 id|reselected_identify
 comma
+id|virt_to_bus
+c_func
 (paren
-r_int
+(paren
+r_void
+op_star
 )paren
 op_amp
-(paren
 id|hostdata-&gt;reselected_identify
 )paren
 )paren
@@ -3418,11 +3461,14 @@ l_int|0
 comma
 id|reselected_tag
 comma
+id|virt_to_bus
+c_func
 (paren
-r_int
+(paren
+r_void
+op_star
 )paren
 op_amp
-(paren
 id|hostdata-&gt;reselected_tag
 )paren
 )paren
@@ -3435,11 +3481,14 @@ l_int|0
 comma
 id|test_dest
 comma
+id|virt_to_bus
+c_func
 (paren
-r_int
+(paren
+r_void
+op_star
 )paren
 op_amp
-(paren
 id|hostdata-&gt;test_dest
 )paren
 )paren
@@ -3452,17 +3501,16 @@ l_int|0
 comma
 id|test_src
 comma
+id|virt_to_bus
+c_func
 (paren
-r_int
-)paren
 op_amp
-(paren
 id|hostdata-&gt;test_source
 )paren
 )paren
 suffix:semicolon
 multiline_comment|/*&n;     * Make sure the NCR and Linux code agree on the location of &n;     * certain fields.&n;     */
-multiline_comment|/* &n; * XXX - for cleanness, E_* fields should be type unsigned long *&n; * and should reflect the _relocated_ addresses.  Change this.&n; */
+multiline_comment|/* &n; * XXX - for cleanness, E_* fields should be type u32 *&n; * and should reflect the _relocated_ addresses.  Change this.&n; */
 id|hostdata-&gt;E_accept_message
 op_assign
 id|Ent_accept_message
@@ -3616,14 +3664,10 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;scsi%d : NCR code relocated to 0x%lx&bslash;n&quot;
+l_string|&quot;scsi%d : NCR code relocated to 0x%p&bslash;n&quot;
 comma
 id|host-&gt;host_no
 comma
-(paren
-r_int
-r_int
-)paren
 id|hostdata-&gt;script
 )paren
 suffix:semicolon
@@ -3660,7 +3704,8 @@ suffix:semicolon
 r_int
 r_int
 id|timeout
-comma
+suffix:semicolon
+id|u32
 id|start
 suffix:semicolon
 r_int
@@ -3731,7 +3776,7 @@ id|host-&gt;host_no
 suffix:semicolon
 id|hostdata-&gt;issue_dsa_head
 op_assign
-l_int|NULL
+l_int|0
 suffix:semicolon
 )brace
 r_if
@@ -3765,11 +3810,9 @@ l_int|0xdeadbeef
 suffix:semicolon
 id|start
 op_assign
+id|virt_to_bus
+c_func
 (paren
-(paren
-r_int
-r_int
-)paren
 id|hostdata-&gt;script
 )paren
 op_plus
@@ -3793,6 +3836,11 @@ comma
 id|start
 )paren
 suffix:semicolon
+id|mb
+c_func
+(paren
+)paren
+suffix:semicolon
 id|printk
 (paren
 l_string|&quot; started&bslash;n&quot;
@@ -3807,7 +3855,11 @@ id|timeout
 op_assign
 id|jiffies
 op_plus
-l_int|50
+l_int|5
+op_star
+id|HZ
+op_div
+l_int|10
 suffix:semicolon
 multiline_comment|/* arbitrary */
 r_while
@@ -3856,7 +3908,7 @@ ques
 c_cond
 l_string|&quot; due to lost interrupt.&bslash;n&quot;
 l_string|&quot;         Please verify that the correct IRQ is being used for your board,&bslash;n&quot;
-l_string|&quot;&t;      and that the motherboard IRQ jumpering matches the PCI setup on&bslash;n&quot;
+l_string|&quot;         and that the motherboard IRQ jumpering matches the PCI setup on&bslash;n&quot;
 l_string|&quot;         PCI systems.&bslash;n&quot;
 l_string|&quot;         If you are using a NCR53c810 board in a PCI system, you should&bslash;n&quot;
 l_string|&quot;         also verify that the board is jumpered to use PCI INTA, since&bslash;n&quot;
@@ -3875,7 +3927,7 @@ l_int|1
 )paren
 id|printk
 (paren
-l_string|&quot;scsi%d : test 1 bad interrupt value (%ld)&bslash;n&quot;
+l_string|&quot;scsi%d : test 1 bad interrupt value (%d)&bslash;n&quot;
 comma
 id|host-&gt;host_no
 comma
@@ -3902,8 +3954,8 @@ l_int|0xdeadbeef
 id|printk
 (paren
 l_string|&quot;scsi%d : driver test 1 read 0x%x instead of 0xdeadbeef indicating a&bslash;n&quot;
-l_string|&quot;         probable cache invalidation problem.  Please configure caching&bslash;n&quot;
-l_string|&quot;&t;      as write-through or disabled&bslash;n&quot;
+l_string|&quot;        probable cache invalidation problem.  Please configure caching&bslash;n&quot;
+l_string|&quot;        as write-through or disabled&bslash;n&quot;
 comma
 id|host-&gt;host_no
 comma
@@ -3919,24 +3971,16 @@ id|failed
 (brace
 id|printk
 (paren
-l_string|&quot;scsi%d : DSP = 0x%lx (script at 0x%lx, start at 0x%lx)&bslash;n&quot;
+l_string|&quot;scsi%d : DSP = 0x%x (script at 0x%p, start at 0x%x)&bslash;n&quot;
 comma
 id|host-&gt;host_no
 comma
-(paren
-r_int
-r_int
-)paren
 id|NCR53c7x0_read32
 c_func
 (paren
 id|DSP_REG
 )paren
 comma
-(paren
-r_int
-r_int
-)paren
 id|hostdata-&gt;script
 comma
 id|start
@@ -3944,14 +3988,10 @@ id|start
 suffix:semicolon
 id|printk
 (paren
-l_string|&quot;scsi%d : DSPS = 0x%lx&bslash;n&quot;
+l_string|&quot;scsi%d : DSPS = 0x%x&bslash;n&quot;
 comma
 id|host-&gt;host_no
 comma
-(paren
-r_int
-r_int
-)paren
 id|NCR53c7x0_read32
 c_func
 (paren
@@ -3990,7 +4030,7 @@ id|host-&gt;host_no
 suffix:semicolon
 id|hostdata-&gt;issue_dsa_head
 op_assign
-l_int|NULL
+l_int|0
 suffix:semicolon
 )brace
 r_if
@@ -4001,8 +4041,7 @@ op_amp
 id|OPTION_DEBUG_TEST2
 )paren
 (brace
-r_int
-r_int
+id|u32
 id|dsa
 (braket
 l_int|48
@@ -4097,12 +4136,12 @@ id|dsa
 l_int|3
 )braket
 op_assign
+id|virt_to_bus
+c_func
 (paren
-r_int
-r_int
-)paren
 op_amp
 id|identify
+)paren
 suffix:semicolon
 id|dsa
 (braket
@@ -4116,12 +4155,12 @@ id|dsa
 l_int|5
 )braket
 op_assign
+id|virt_to_bus
+c_func
 (paren
-r_int
-r_int
-)paren
 op_amp
 id|cmd
+)paren
 suffix:semicolon
 id|dsa
 (braket
@@ -4138,12 +4177,12 @@ id|dsa
 l_int|7
 )braket
 op_assign
+id|virt_to_bus
+c_func
 (paren
-r_int
-r_int
-)paren
 op_amp
 id|data
+)paren
 suffix:semicolon
 id|dsa
 (braket
@@ -4157,12 +4196,12 @@ id|dsa
 l_int|9
 )braket
 op_assign
+id|virt_to_bus
+c_func
 (paren
-r_int
-r_int
-)paren
 op_amp
 id|status
+)paren
 suffix:semicolon
 id|dsa
 (braket
@@ -4176,12 +4215,12 @@ id|dsa
 l_int|11
 )braket
 op_assign
+id|virt_to_bus
+c_func
 (paren
-r_int
-r_int
-)paren
 op_amp
 id|msg
+)paren
 suffix:semicolon
 r_for
 c_loop
@@ -4261,11 +4300,9 @@ l_int|1
 suffix:semicolon
 id|start
 op_assign
+id|virt_to_bus
+c_func
 (paren
-(paren
-r_int
-r_int
-)paren
 id|hostdata-&gt;script
 )paren
 op_plus
@@ -4279,11 +4316,11 @@ id|NCR53c7x0_write32
 (paren
 id|DSA_REG
 comma
+id|virt_to_bus
+c_func
 (paren
-r_int
-r_int
-)paren
 id|dsa
+)paren
 )paren
 suffix:semicolon
 id|NCR53c7x0_write32
@@ -4291,6 +4328,11 @@ id|NCR53c7x0_write32
 id|DSP_REG
 comma
 id|start
+)paren
+suffix:semicolon
+id|mb
+c_func
+(paren
 )paren
 suffix:semicolon
 id|sti
@@ -4302,7 +4344,9 @@ id|timeout
 op_assign
 id|jiffies
 op_plus
-l_int|500
+l_int|5
+op_star
+id|HZ
 suffix:semicolon
 multiline_comment|/* arbitrary */
 r_while
@@ -4329,6 +4373,11 @@ id|NCR53c7x0_write32
 id|DSA_REG
 comma
 l_int|0
+)paren
+suffix:semicolon
+id|mb
+c_func
+(paren
 )paren
 suffix:semicolon
 r_if
@@ -4485,7 +4534,7 @@ id|i
 suffix:semicolon
 id|hostdata-&gt;issue_dsa_head
 op_assign
-l_int|NULL
+l_int|0
 suffix:semicolon
 )brace
 )brace
@@ -4565,16 +4614,14 @@ id|Ent_dsa_code_template
 op_div
 r_sizeof
 (paren
-r_int
+id|u32
 )paren
 comma
 id|dsa_temp_jump_resume
 comma
+id|virt_to_bus
+c_func
 (paren
-(paren
-r_int
-r_int
-)paren
 id|cmd-&gt;dsa
 )paren
 op_plus
@@ -4591,7 +4638,7 @@ id|Ent_dsa_code_template
 op_div
 r_sizeof
 (paren
-r_int
+id|u32
 )paren
 comma
 id|dsa_temp_lun
@@ -4607,16 +4654,14 @@ id|Ent_dsa_code_template
 op_div
 r_sizeof
 (paren
-r_int
+id|u32
 )paren
 comma
 id|dsa_temp_dsa_next
 comma
+id|virt_to_bus
+c_func
 (paren
-(paren
-r_int
-r_int
-)paren
 id|cmd-&gt;dsa
 )paren
 op_plus
@@ -4631,7 +4676,7 @@ id|Ent_dsa_code_template
 op_div
 r_sizeof
 (paren
-r_int
+id|u32
 )paren
 comma
 id|dsa_temp_sync
@@ -4652,7 +4697,7 @@ id|Ent_dsa_code_template
 op_div
 r_sizeof
 (paren
-r_int
+id|u32
 )paren
 comma
 id|dsa_temp_target
@@ -4705,12 +4750,11 @@ r_int
 r_int
 id|flags
 suffix:semicolon
-r_char
-op_star
+r_volatile
+id|u32
 op_star
 id|prev
 comma
-op_star
 id|search
 suffix:semicolon
 r_int
@@ -4748,10 +4792,6 @@ c_loop
 id|search
 op_assign
 (paren
-r_char
-op_star
-)paren
-(paren
 id|i
 ques
 c_cond
@@ -4763,29 +4803,28 @@ comma
 id|prev
 op_assign
 (paren
-r_char
-op_star
-op_star
-)paren
-(paren
 id|i
 ques
 c_cond
 op_amp
-(paren
 id|hostdata-&gt;issue_dsa_head
-)paren
 suffix:colon
 op_amp
-(paren
 id|hostdata-&gt;reconnect_dsa_head
-)paren
 )paren
 suffix:semicolon
 id|search
 op_logical_and
 (paren
+(paren
+r_char
+op_star
+)paren
+id|bus_to_virt
+c_func
+(paren
 id|search
+)paren
 op_plus
 id|hostdata-&gt;dsa_start
 )paren
@@ -4799,12 +4838,19 @@ suffix:semicolon
 id|prev
 op_assign
 (paren
-r_char
-op_star
+id|u32
 op_star
 )paren
 (paren
+(paren
+r_char
+op_star
+)paren
+id|bus_to_virt
+c_func
+(paren
 id|search
+)paren
 op_plus
 id|hostdata-&gt;dsa_next
 )paren
@@ -4825,12 +4871,19 @@ id|prev
 op_assign
 op_star
 (paren
-r_char
-op_star
+id|u32
 op_star
 )paren
 (paren
+(paren
+r_char
+op_star
+)paren
+id|bus_to_virt
+c_func
+(paren
 id|search
+)paren
 op_plus
 id|hostdata-&gt;dsa_next
 )paren
@@ -4936,8 +4989,7 @@ suffix:colon
 l_int|NULL
 suffix:semicolon
 macro_line|#endif
-r_int
-r_int
+id|u32
 op_star
 id|dsp
 suffix:semicolon
@@ -4978,14 +5030,17 @@ suffix:semicolon
 id|dsp
 op_assign
 (paren
-r_int
-r_int
+id|u32
 op_star
 )paren
+id|bus_to_virt
+c_func
+(paren
 id|NCR53c7x0_read32
 c_func
 (paren
 id|DSP_REG
+)paren
 )paren
 suffix:semicolon
 r_for
@@ -5034,6 +5089,11 @@ id|hostdata-&gt;dmode
 )paren
 op_or
 id|DMODE_MAN
+)paren
+suffix:semicolon
+id|mb
+c_func
+(paren
 )paren
 suffix:semicolon
 multiline_comment|/*&n;     * And update the DSP register, using the size of the old &n;     * instruction in bytes.&n;     */
@@ -5187,6 +5247,11 @@ id|NCR53c7x0_write8
 id|SXFER_REG
 comma
 l_int|0
+)paren
+suffix:semicolon
+id|mb
+c_func
+(paren
 )paren
 suffix:semicolon
 )brace
@@ -5455,8 +5520,7 @@ id|i
 comma
 id|limit
 suffix:semicolon
-r_int
-r_int
+id|u32
 op_star
 id|script
 suffix:semicolon
@@ -5714,7 +5778,7 @@ suffix:semicolon
 id|script
 op_assign
 (paren
-r_int
+id|u32
 op_star
 )paren
 id|hostdata-&gt;sync
@@ -5893,8 +5957,7 @@ op_star
 )paren
 id|host-&gt;hostdata
 suffix:semicolon
-r_int
-r_int
+id|u32
 id|dsps
 comma
 op_star
@@ -5917,15 +5980,14 @@ id|DSPS_REG
 suffix:semicolon
 id|dsp
 op_assign
+id|bus_to_virt
+c_func
 (paren
-r_int
-r_int
-op_star
-)paren
 id|NCR53c7x0_read32
 c_func
 (paren
 id|DSP_REG
+)paren
 )paren
 suffix:semicolon
 r_if
@@ -5937,7 +5999,7 @@ id|OPTION_DEBUG_INTR
 )paren
 id|printk
 (paren
-l_string|&quot;scsi%d : DSPS = 0x%lx&bslash;n&quot;
+l_string|&quot;scsi%d : DSPS = 0x%x&bslash;n&quot;
 comma
 id|host-&gt;host_no
 comma
@@ -6011,7 +6073,7 @@ id|hostdata-&gt;E_accept_message
 op_div
 r_sizeof
 (paren
-r_int
+id|u32
 )paren
 suffix:semicolon
 id|hostdata-&gt;dsp_changed
@@ -6038,7 +6100,7 @@ id|hostdata-&gt;E_reject_message
 op_div
 r_sizeof
 (paren
-r_int
+id|u32
 )paren
 suffix:semicolon
 id|hostdata-&gt;dsp_changed
@@ -6126,7 +6188,7 @@ id|hostdata-&gt;E_accept_message
 op_div
 r_sizeof
 (paren
-r_int
+id|u32
 )paren
 suffix:semicolon
 id|hostdata-&gt;dsp_changed
@@ -6196,7 +6258,15 @@ id|dsa_msgout_other
 comma
 l_int|1
 comma
+id|virt_to_bus
+c_func
+(paren
+(paren
+r_void
+op_star
+)paren
 id|hostdata-&gt;msg_buf
+)paren
 )paren
 suffix:semicolon
 id|hostdata-&gt;dsp
@@ -6207,7 +6277,7 @@ id|hostdata-&gt;E_respond_message
 op_div
 r_sizeof
 (paren
-r_int
+id|u32
 )paren
 suffix:semicolon
 id|hostdata-&gt;dsp_changed
@@ -6335,7 +6405,7 @@ id|hostdata-&gt;E_reject_message
 op_div
 r_sizeof
 (paren
-r_int
+id|u32
 )paren
 suffix:semicolon
 id|hostdata-&gt;dsp_changed
@@ -6394,7 +6464,7 @@ id|hostdata-&gt;E_target_abort
 op_div
 r_sizeof
 (paren
-r_int
+id|u32
 )paren
 suffix:semicolon
 id|hostdata-&gt;dsp_changed
@@ -6431,7 +6501,7 @@ id|hostdata-&gt;E_initiator_abort
 op_div
 r_sizeof
 (paren
-r_int
+id|u32
 )paren
 suffix:semicolon
 id|hostdata-&gt;dsp_changed
@@ -6578,7 +6648,11 @@ id|dsa_datain
 comma
 l_int|0
 comma
+id|virt_to_bus
+c_func
+(paren
 id|cmd-&gt;data_transfer_start
+)paren
 )paren
 suffix:semicolon
 id|cmd-&gt;data_transfer_start
@@ -6610,11 +6684,11 @@ id|cmd-&gt;data_transfer_start
 l_int|1
 )braket
 op_assign
+id|virt_to_bus
+c_func
 (paren
-r_int
-r_int
-)paren
 id|c-&gt;sense_buffer
+)paren
 suffix:semicolon
 id|cmd-&gt;data_transfer_start
 (braket
@@ -6654,7 +6728,7 @@ id|hostdata-&gt;E_select
 op_div
 r_sizeof
 (paren
-r_int
+id|u32
 )paren
 suffix:semicolon
 id|hostdata-&gt;dsp_changed
@@ -6681,7 +6755,7 @@ id|hostdata-&gt;E_schedule
 op_div
 r_sizeof
 (paren
-r_int
+id|u32
 )paren
 suffix:semicolon
 id|hostdata-&gt;dsp_changed
@@ -6737,7 +6811,7 @@ id|OPTION_DEBUG_INTR
 id|printk
 c_func
 (paren
-l_string|&quot;scsi%d : test%ld complete&bslash;n&quot;
+l_string|&quot;scsi%d : test %d complete&bslash;n&quot;
 comma
 id|host-&gt;host_no
 comma
@@ -6766,7 +6840,7 @@ id|OPTION_DEBUG_INTR
 id|printk
 c_func
 (paren
-l_string|&quot;scsi%d : new I/O 0x%lx scheduled&bslash;n&quot;
+l_string|&quot;scsi%d : new I/O 0x%x scheduled&bslash;n&quot;
 comma
 id|host-&gt;host_no
 comma
@@ -6857,7 +6931,7 @@ id|OPTION_DEBUG_INTR
 id|printk
 c_func
 (paren
-l_string|&quot;scsi%d : DSA loaded with 0x%lx&bslash;n&quot;
+l_string|&quot;scsi%d : DSA loaded with 0x%x&bslash;n&quot;
 comma
 id|host-&gt;host_no
 comma
@@ -6937,14 +7011,10 @@ id|OPTION_DEBUG_INTR
 id|printk
 c_func
 (paren
-l_string|&quot;scsi%d : issue_dsa_head now 0x%lx&bslash;n&quot;
+l_string|&quot;scsi%d : issue_dsa_head now 0x%x&bslash;n&quot;
 comma
 id|host-&gt;host_no
 comma
-(paren
-r_int
-r_int
-)paren
 id|hostdata-&gt;issue_dsa_head
 )paren
 suffix:semicolon
@@ -6971,7 +7041,7 @@ l_int|0x03000000
 (brace
 id|printk
 (paren
-l_string|&quot;scsi%d : misc debug interrupt 0x%lx&bslash;n&quot;
+l_string|&quot;scsi%d : misc debug interrupt 0x%x&bslash;n&quot;
 comma
 id|host-&gt;host_no
 comma
@@ -7041,8 +7111,7 @@ id|debugger_token
 op_star
 id|token
 comma
-r_int
-r_int
+id|u32
 id|args
 (braket
 )braket
@@ -7206,8 +7275,7 @@ id|debugger_token
 op_star
 id|token
 comma
-r_int
-r_int
+id|u32
 id|args
 (braket
 )braket
@@ -7363,7 +7431,7 @@ l_string|&quot;%08x&bslash;n&quot;
 comma
 op_star
 (paren
-r_int
+id|u32
 op_star
 )paren
 id|bp-&gt;addr
@@ -7426,8 +7494,7 @@ id|debugger_token
 op_star
 id|token
 comma
-r_int
-r_int
+id|u32
 id|args
 (braket
 )braket
@@ -7560,8 +7627,7 @@ suffix:semicolon
 id|bp-&gt;address
 op_assign
 (paren
-r_int
-r_int
+id|u32
 op_star
 )paren
 id|args
@@ -7608,6 +7674,7 @@ c_cond
 l_int|3
 suffix:colon
 l_int|2
+)paren
 suffix:semicolon
 id|bp-&gt;next
 op_assign
@@ -7673,8 +7740,7 @@ id|debugger_token
 op_star
 id|token
 comma
-r_int
-r_int
+id|u32
 id|args
 (braket
 )braket
@@ -7917,8 +7983,7 @@ op_star
 id|ptr
 suffix:semicolon
 multiline_comment|/* Pointer to argument list */
-r_int
-r_int
+id|u32
 id|args
 (braket
 l_int|3
@@ -8389,12 +8454,22 @@ comma
 id|ISTAT_10_SRST
 )paren
 suffix:semicolon
+id|mb
+c_func
+(paren
+)paren
+suffix:semicolon
 id|NCR53c7x0_write8
 c_func
 (paren
 id|ISTAT_REG_800
 comma
 l_int|0
+)paren
+suffix:semicolon
+id|mb
+c_func
+(paren
 )paren
 suffix:semicolon
 id|NCR53c7x0_write8
@@ -8562,6 +8637,11 @@ comma
 id|STEST3_800_TE
 )paren
 suffix:semicolon
+id|mb
+c_func
+(paren
+)paren
+suffix:semicolon
 )brace
 multiline_comment|/*&n; * Function static struct NCR53c7x0_cmd *create_cmd (Scsi_Cmnd *cmd) &n; *&n; * Purpose : If we have not already allocated enough NCR53c7x0_cmd&n; *&t;structures to satisfy any allowable number of simultaneous &n; *&t;commands for this host; do so (using either scsi_malloc()&n; *&t;or kmalloc() depending on configuration), and add them to the &n; *&t;hostdata free list.  Take the first structure off the free list, &n; *&t;initialize it based on the Scsi_Cmnd structure passed in, &n; *&t;including dsa and Linux field initialization, and dsa code relocation.&n; *&n; * Inputs : cmd - SCSI command&n; *&n; * Returns : NCR53c7x0_cmd structure corresponding to cmd,&n; *&t;NULL on failure.&n; */
 r_static
@@ -8621,8 +8701,7 @@ multiline_comment|/* Count of dynamic instructions */
 id|i
 suffix:semicolon
 multiline_comment|/* Counter */
-r_int
-r_int
+id|u32
 op_star
 id|cmd_datain
 comma
@@ -8644,7 +8723,7 @@ multiline_comment|/* Size of *tmp */
 r_int
 id|alignment
 suffix:semicolon
-multiline_comment|/* Alignment adjustment (0 - 4) */
+multiline_comment|/* Alignment adjustment (0 - sizeof(long)-1) */
 macro_line|#endif
 r_int
 r_int
@@ -8747,7 +8826,11 @@ id|size
 op_assign
 id|hostdata-&gt;max_cmd_size
 op_plus
-l_int|4
+r_sizeof
+(paren
+r_void
+op_star
+)paren
 suffix:semicolon
 id|real
 op_assign
@@ -8760,7 +8843,11 @@ id|GFP_ATOMIC
 suffix:semicolon
 id|alignment
 op_assign
-l_int|4
+r_sizeof
+(paren
+r_void
+op_star
+)paren
 op_minus
 (paren
 (paren
@@ -8770,7 +8857,15 @@ r_int
 id|real
 )paren
 op_amp
-l_int|3
+(paren
+r_sizeof
+(paren
+r_void
+op_star
+)paren
+op_minus
+l_int|1
+)paren
 )paren
 suffix:semicolon
 id|tmp
@@ -9082,7 +9177,7 @@ id|hostdata-&gt;dsa_start
 op_div
 r_sizeof
 (paren
-r_int
+id|u32
 )paren
 suffix:semicolon
 id|tmp-&gt;data_transfer_end
@@ -9148,7 +9243,7 @@ id|dsa_next
 comma
 l_int|0
 comma
-l_int|NULL
+l_int|0
 )paren
 suffix:semicolon
 id|patch_dsa_32
@@ -9160,7 +9255,11 @@ id|dsa_cmnd
 comma
 l_int|0
 comma
+id|virt_to_bus
+c_func
+(paren
 id|cmd
+)paren
 )paren
 suffix:semicolon
 id|patch_dsa_32
@@ -9229,7 +9328,11 @@ id|dsa_msgout
 comma
 l_int|1
 comma
+id|virt_to_bus
+c_func
+(paren
 id|tmp-&gt;select
+)paren
 )paren
 suffix:semicolon
 id|patch_dsa_32
@@ -9253,7 +9356,11 @@ id|dsa_cmdout
 comma
 l_int|1
 comma
+id|virt_to_bus
+c_func
+(paren
 id|cmd-&gt;cmnd
+)paren
 )paren
 suffix:semicolon
 id|patch_dsa_32
@@ -9268,16 +9375,19 @@ comma
 id|cmd_dataout
 ques
 c_cond
+id|virt_to_bus
+c_func
+(paren
 id|cmd_dataout
+)paren
 suffix:colon
+id|virt_to_bus
+c_func
+(paren
 id|hostdata-&gt;script
+)paren
 op_plus
 id|hostdata-&gt;E_other_transfer
-op_div
-r_sizeof
-(paren
-r_int
-)paren
 )paren
 suffix:semicolon
 id|patch_dsa_32
@@ -9292,16 +9402,19 @@ comma
 id|cmd_datain
 ques
 c_cond
+id|virt_to_bus
+c_func
+(paren
 id|cmd_datain
+)paren
 suffix:colon
+id|virt_to_bus
+c_func
+(paren
 id|hostdata-&gt;script
+)paren
 op_plus
 id|hostdata-&gt;E_other_transfer
-op_div
-r_sizeof
-(paren
-r_int
-)paren
 )paren
 suffix:semicolon
 multiline_comment|/* &n;     * XXX - need to make endian aware, should use separate variables&n;     * for both status and message bytes.&n;     */
@@ -9326,19 +9439,15 @@ id|dsa_msgin
 comma
 l_int|1
 comma
+id|virt_to_bus
+c_func
 (paren
-(paren
-(paren
-r_int
-r_int
-)paren
 op_amp
 id|cmd-&gt;result
 )paren
 op_plus
 l_int|1
 )paren
-)paren
 suffix:semicolon
 id|patch_dsa_32
 c_func
@@ -9361,9 +9470,13 @@ id|dsa_status
 comma
 l_int|1
 comma
+id|virt_to_bus
+c_func
+(paren
 op_amp
 id|cmd-&gt;result
 )paren
+)paren
 suffix:semicolon
 id|patch_dsa_32
 c_func
@@ -9386,8 +9499,10 @@ id|dsa_msgout_other
 comma
 l_int|1
 comma
-op_amp
+id|virt_to_bus
+c_func
 (paren
+op_amp
 id|hostdata-&gt;NCR53c7xx_msg_nop
 )paren
 )paren
@@ -9453,18 +9568,15 @@ op_increment
 id|i
 )paren
 (brace
-r_int
-r_int
+id|u32
 id|buf
 op_assign
-(paren
-r_int
-r_int
-)paren
-(paren
 id|cmd-&gt;use_sg
 ques
 c_cond
+id|virt_to_bus
+c_func
+(paren
 (paren
 (paren
 r_struct
@@ -9478,19 +9590,17 @@ id|i
 )braket
 dot
 id|address
+)paren
 suffix:colon
+id|virt_to_bus
+c_func
+(paren
 id|cmd-&gt;request_buffer
 )paren
 suffix:semicolon
-r_int
-r_int
+id|u32
 id|count
 op_assign
-(paren
-r_int
-r_int
-)paren
-(paren
 id|cmd-&gt;use_sg
 ques
 c_cond
@@ -9509,7 +9619,6 @@ dot
 id|length
 suffix:colon
 id|cmd-&gt;request_bufflen
-)paren
 suffix:semicolon
 r_if
 c_cond
@@ -9575,11 +9684,11 @@ id|cmd_datain
 l_int|3
 )braket
 op_assign
+id|virt_to_bus
+c_func
 (paren
-r_int
-r_int
-)paren
 id|hostdata-&gt;script
+)paren
 op_plus
 id|hostdata-&gt;E_msg_in
 suffix:semicolon
@@ -9672,11 +9781,11 @@ id|cmd_dataout
 l_int|3
 )braket
 op_assign
+id|virt_to_bus
+c_func
 (paren
-r_int
-r_int
-)paren
 id|hostdata-&gt;script
+)paren
 op_plus
 id|hostdata-&gt;E_msg_in
 suffix:semicolon
@@ -9737,11 +9846,11 @@ id|cmd_datain
 l_int|1
 )braket
 op_assign
+id|virt_to_bus
+c_func
 (paren
-r_int
-r_int
-)paren
 id|hostdata-&gt;script
+)paren
 op_plus
 id|hostdata-&gt;E_other_transfer
 suffix:semicolon
@@ -9818,11 +9927,11 @@ id|cmd_dataout
 l_int|1
 )braket
 op_assign
+id|virt_to_bus
+c_func
 (paren
-r_int
-r_int
-)paren
 id|hostdata-&gt;script
+)paren
 op_plus
 id|hostdata-&gt;E_other_transfer
 suffix:semicolon
@@ -10173,13 +10282,10 @@ macro_line|#if 0&t;
 id|printk
 c_func
 (paren
-l_string|&quot;scsi%d : new dsa is 0x%x&bslash;n&quot;
+l_string|&quot;scsi%d : new dsa is 0x%p&bslash;n&quot;
 comma
 id|host-&gt;host_no
 comma
-(paren
-r_int
-)paren
 id|dsa
 )paren
 suffix:semicolon
@@ -10195,6 +10301,11 @@ id|tmp
 suffix:semicolon
 id|tmp-&gt;next
 op_assign
+(paren
+r_struct
+id|NCR53c7x0_cmd
+op_star
+)paren
 id|hostdata-&gt;running_list
 suffix:semicolon
 r_if
@@ -10205,6 +10316,11 @@ id|hostdata-&gt;running_list
 )paren
 id|hostdata-&gt;running_list
 op_assign
+(paren
+r_struct
+id|NCR53c7x0_cmd
+op_star
+)paren
 id|tmp
 suffix:semicolon
 r_if
@@ -10225,15 +10341,18 @@ id|NCR53c7x0_write32
 (paren
 id|DSP_REG
 comma
+id|virt_to_bus
+c_func
 (paren
-(paren
-r_int
-r_int
-)paren
 id|hostdata-&gt;script
 )paren
 op_plus
 id|hostdata-&gt;E_schedule
+)paren
+suffix:semicolon
+id|mb
+c_func
+(paren
 )paren
 suffix:semicolon
 )brace
@@ -10264,9 +10383,19 @@ suffix:semicolon
 macro_line|#endif
 id|hostdata-&gt;issue_dsa_tail
 op_assign
+(paren
+id|u32
+op_star
+)paren
+id|dsa
+suffix:semicolon
 id|hostdata-&gt;issue_dsa_head
 op_assign
+id|virt_to_bus
+c_func
+(paren
 id|dsa
+)paren
 suffix:semicolon
 id|NCR53c7x0_write8
 c_func
@@ -10282,6 +10411,11 @@ op_or
 id|ISTAT_10_SIGP
 )paren
 suffix:semicolon
+id|mb
+c_func
+(paren
+)paren
+suffix:semicolon
 r_break
 suffix:semicolon
 multiline_comment|/*&n;&t;     * Otherwise, we blindly perform an atomic write &n;&t;     * to the next pointer of the last command we &n;&t;     * placed in that queue.&n;&t;     *&n;&t;     * Looks like it doesn&squot;t work, but I think it does - &n; &t;     */
@@ -10295,24 +10429,28 @@ comma
 id|host-&gt;host_no
 )paren
 suffix:semicolon
-multiline_comment|/* XXX - Replace with XCHG or equivalent */
 id|hostdata-&gt;issue_dsa_tail
-op_assign
-op_star
-(paren
-(paren
-r_int
-r_char
-op_star
-op_star
-)paren
-(paren
-id|hostdata-&gt;issue_dsa_tail
-op_plus
+(braket
 id|hostdata-&gt;dsa_next
+op_div
+r_sizeof
+(paren
+id|u32
 )paren
-)paren
+)braket
 op_assign
+id|virt_to_bus
+c_func
+(paren
+id|dsa
+)paren
+suffix:semicolon
+id|hostdata-&gt;issue_dsa_tail
+op_assign
+(paren
+id|u32
+op_star
+)paren
 id|dsa
 suffix:semicolon
 multiline_comment|/*&n;&t;     * After which, one of two things will happen : &n;&t;     * The NCR will have scheduled a command, either this&n;&t;     * one, or the next one.  In this case, we successfully&n;&t;     * added our command to the queue.&n;&t;     *&n;&t;     * The NCR will have written the hostdata-&gt;issue_dsa_head&n;&t;     * pointer with the NULL pointer terminating the list,&n;&t;     * in which case we were too late.  If this happens,&n;&t;     * we restart&n;&t;     */
@@ -10381,8 +10519,7 @@ DECL|function|fix_pointers
 r_int
 id|fix_pointers
 (paren
-r_int
-r_int
+id|u32
 id|dsa
 )paren
 (brace
@@ -10434,6 +10571,9 @@ multiline_comment|/* Registers */
 id|fatal
 suffix:semicolon
 multiline_comment|/* Did a fatal interrupt &n;&t;&t;&t;&t;&t;&t;   occur ? */
+r_int
+id|is_8xx_chip
+suffix:semicolon
 id|NCR53c7x0_local_setup
 c_func
 (paren
@@ -10444,16 +10584,25 @@ id|fatal
 op_assign
 l_int|0
 suffix:semicolon
+id|is_8xx_chip
+op_assign
+(paren
+(paren
+r_int
+)paren
+(paren
+id|hostdata-&gt;chip
+op_minus
+l_int|800
+)paren
+)paren
+OL
+l_int|100
+suffix:semicolon
 r_if
 c_cond
 (paren
-(paren
-id|hostdata-&gt;chip
-op_div
-l_int|100
-)paren
-op_eq
-l_int|8
+id|is_8xx_chip
 )paren
 (brace
 id|sstat0_sist0
@@ -10512,20 +10661,12 @@ comma
 id|sist1
 )paren
 suffix:semicolon
-multiline_comment|/* 250ms selection timeout */
+multiline_comment|/* selection timeout */
 r_if
 c_cond
 (paren
 (paren
-(paren
-(paren
-id|hostdata-&gt;chip
-op_div
-l_int|100
-)paren
-op_eq
-l_int|8
-)paren
+id|is_8xx_chip
 op_logical_and
 (paren
 id|sist1
@@ -10535,15 +10676,8 @@ id|SIST1_800_STO
 )paren
 op_logical_or
 (paren
-(paren
-(paren
-id|hostdata-&gt;chip
-op_div
-l_int|100
-)paren
-op_ne
-l_int|8
-)paren
+op_logical_neg
+id|is_8xx_chip
 op_logical_and
 (paren
 id|sstat0_sist0
@@ -10730,7 +10864,7 @@ id|hostdata-&gt;E_schedule
 op_div
 r_sizeof
 (paren
-r_int
+id|u32
 )paren
 suffix:semicolon
 id|hostdata-&gt;dsp_changed
@@ -10800,7 +10934,7 @@ id|hostdata-&gt;E_initiator_abort
 op_div
 r_sizeof
 (paren
-r_int
+id|u32
 )paren
 suffix:semicolon
 id|hostdata-&gt;dsp_changed
@@ -10838,7 +10972,7 @@ id|hostdata-&gt;E_initiator_abort
 op_div
 r_sizeof
 (paren
-r_int
+id|u32
 )paren
 suffix:semicolon
 id|hostdata-&gt;dsp_changed
@@ -10947,6 +11081,11 @@ comma
 id|CTEST3_800_FLF
 )paren
 suffix:semicolon
+id|mb
+c_func
+(paren
+)paren
+suffix:semicolon
 r_while
 c_loop
 (paren
@@ -10977,6 +11116,11 @@ comma
 id|CTEST3_800_CLF
 )paren
 suffix:semicolon
+id|mb
+c_func
+(paren
+)paren
+suffix:semicolon
 r_while
 c_loop
 (paren
@@ -10995,6 +11139,11 @@ id|NCR53c7x0_write8
 id|STEST3_REG_800
 comma
 id|STEST3_800_CSF
+)paren
+suffix:semicolon
+id|mb
+c_func
+(paren
 )paren
 suffix:semicolon
 r_while
@@ -11058,8 +11207,7 @@ op_star
 op_star
 id|cmd_prev_ptr
 suffix:semicolon
-r_int
-r_int
+id|u32
 op_star
 id|dsa
 suffix:semicolon
@@ -11121,11 +11269,6 @@ suffix:semicolon
 id|host
 op_assign
 id|hostdata-&gt;next
-ques
-c_cond
-id|hostdata-&gt;next
-suffix:colon
-l_int|NULL
 )paren
 (brace
 id|NCR53c7x0_local_setup
@@ -11153,6 +11296,9 @@ l_int|0
 suffix:semicolon
 r_do
 (brace
+r_int
+id|is_8xx_chip
+suffix:semicolon
 id|hostdata-&gt;dstat_valid
 op_assign
 l_int|0
@@ -11172,6 +11318,21 @@ id|hostdata-&gt;istat
 suffix:semicolon
 multiline_comment|/*&n;&t;&t; * INTFLY interrupts are used by the NCR53c720, NCR53c810,&n;&t;&t; * and NCR53c820 to signify completion of a command.  Since &n;&t;&t; * the SCSI processor continues running, we can&squot;t just look&n;&t;&t; * at the contents of the DSA register and continue running.&n;&t;&t; */
 multiline_comment|/* XXX - this is getting big, and should move to intr_intfly() */
+id|is_8xx_chip
+op_assign
+(paren
+(paren
+r_int
+)paren
+(paren
+id|hostdata-&gt;chip
+op_minus
+l_int|800
+)paren
+)paren
+OL
+l_int|100
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -11182,13 +11343,7 @@ id|OPTION_INTFLY
 )paren
 op_logical_and
 (paren
-(paren
-id|hostdata-&gt;chip
-op_div
-l_int|100
-)paren
-op_eq
-l_int|8
+id|is_8xx_chip
 op_logical_and
 (paren
 id|istat
@@ -11221,6 +11376,11 @@ comma
 id|istat
 op_or
 id|ISTAT_800_INTF
+)paren
+suffix:semicolon
+id|mb
+c_func
+(paren
 )paren
 suffix:semicolon
 r_if
@@ -11557,15 +11717,14 @@ r_else
 (brace
 id|dsa
 op_assign
+id|bus_to_virt
+c_func
 (paren
-r_int
-r_int
-op_star
-)paren
 id|NCR53c7x0_read32
 c_func
 (paren
 id|DSA_REG
+)paren
 )paren
 suffix:semicolon
 r_for
@@ -11590,7 +11749,7 @@ id|hostdata-&gt;dsa_start
 op_div
 r_sizeof
 (paren
-r_int
+id|u32
 )paren
 )paren
 )paren
@@ -11781,6 +11940,11 @@ comma
 id|CTEST3_800_FLF
 )paren
 suffix:semicolon
+id|mb
+c_func
+(paren
+)paren
+suffix:semicolon
 r_while
 c_loop
 (paren
@@ -11809,6 +11973,11 @@ id|NCR53c7x0_write8
 id|CTEST3_REG_800
 comma
 id|CTEST3_800_CLF
+)paren
+suffix:semicolon
+id|mb
+c_func
+(paren
 )paren
 suffix:semicolon
 r_while
@@ -11897,15 +12066,14 @@ id|hostdata-&gt;dsp_changed
 (brace
 id|hostdata-&gt;dsp
 op_assign
+id|bus_to_virt
+c_func
 (paren
-r_int
-r_int
-op_star
-)paren
 id|NCR53c7x0_read32
 c_func
 (paren
 id|DSP_REG
+)paren
 )paren
 suffix:semicolon
 )brace
@@ -11913,13 +12081,10 @@ macro_line|#if 0
 id|printk
 c_func
 (paren
-l_string|&quot;scsi%d : new dsp is 0x%lx&bslash;n&quot;
+l_string|&quot;scsi%d : new dsp is 0x%p&bslash;n&quot;
 comma
 id|host-&gt;host_no
 comma
-(paren
-r_int
-)paren
 id|hostdata-&gt;dsp
 )paren
 suffix:semicolon
@@ -11932,11 +12097,16 @@ id|NCR53c7x0_write32
 (paren
 id|DSP_REG
 comma
+id|virt_to_bus
+c_func
 (paren
-r_int
-r_int
-)paren
 id|hostdata-&gt;dsp
+)paren
+)paren
+suffix:semicolon
+id|mb
+c_func
+(paren
 )paren
 suffix:semicolon
 )brace
@@ -11982,7 +12152,7 @@ id|hostdata-&gt;E_initiator_abort
 op_div
 r_sizeof
 (paren
-r_int
+id|u32
 )paren
 suffix:semicolon
 id|hostdata-&gt;dsp_changed
@@ -12023,8 +12193,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-r_int
-r_int
+id|u32
 id|dbc_dcmd
 comma
 op_star
@@ -12087,18 +12256,17 @@ suffix:semicolon
 multiline_comment|/*&n;     * Corrective action is based on where in the SCSI SCRIPT(tm) the error &n;     * occurred, as well as which SCSI phase we are currently in.&n;     */
 id|dsp_next
 op_assign
+id|bus_to_virt
+c_func
 (paren
-r_int
-r_int
-op_star
-)paren
 id|NCR53c7x0_read32
 c_func
 (paren
 id|DSP_REG
 )paren
+)paren
 suffix:semicolon
-multiline_comment|/*&n;     * Like other processors, the NCR adjusts the DSP pointer before&n;     * instruction decode.  Set the DSP address back to what it should&n;     * be for this instruction based on its size (2 or 3 longs).&n;     */
+multiline_comment|/*&n;     * Like other processors, the NCR adjusts the DSP pointer before&n;     * instruction decode.  Set the DSP address back to what it should&n;     * be for this instruction based on its size (2 or 3 words).&n;     */
 id|dbc_dcmd
 op_assign
 id|NCR53c7x0_read32
@@ -12212,7 +12380,7 @@ c_cond
 id|dsp
 op_ge
 id|cmd-&gt;data_transfer_start
-op_amp
+op_logical_and
 id|dsp
 OL
 id|cmd-&gt;data_transfer_end
@@ -12253,7 +12421,7 @@ id|hostdata-&gt;E_command_complete
 op_div
 r_sizeof
 (paren
-r_int
+id|u32
 )paren
 suffix:semicolon
 id|hostdata-&gt;dsp_changed
@@ -12330,11 +12498,16 @@ c_func
 (paren
 id|TEMP_REG
 comma
+id|virt_to_bus
+c_func
 (paren
-r_int
-r_int
-)paren
 id|dsp
+)paren
+)paren
+suffix:semicolon
+id|mb
+c_func
+(paren
 )paren
 suffix:semicolon
 id|hostdata-&gt;dsp
@@ -12345,7 +12518,7 @@ id|hostdata-&gt;E_msg_in
 op_div
 r_sizeof
 (paren
-r_int
+id|u32
 )paren
 suffix:semicolon
 id|hostdata-&gt;dsp_changed
@@ -12420,15 +12593,12 @@ r_else
 (brace
 id|printk
 (paren
-l_string|&quot;scsi%d : unexpected phase %s at dsp = 0x%x&bslash;n&quot;
+l_string|&quot;scsi%d : unexpected phase %s at dsp = 0x%p&bslash;n&quot;
 comma
 id|host-&gt;host_no
 comma
 id|phase
 comma
-(paren
-r_int
-)paren
 id|dsp
 )paren
 suffix:semicolon
@@ -12501,8 +12671,7 @@ r_char
 id|dstat
 suffix:semicolon
 multiline_comment|/* DSTAT */
-r_int
-r_int
+id|u32
 op_star
 id|dsp
 comma
@@ -12582,15 +12751,14 @@ id|DBC_REG
 suffix:semicolon
 id|next_dsp
 op_assign
+id|bus_to_virt
+c_func
 (paren
-r_int
-r_int
-op_star
-)paren
 id|NCR53c7x0_read32
 c_func
 (paren
 id|DSP_REG
+)paren
 )paren
 suffix:semicolon
 id|dsp
@@ -12611,15 +12779,14 @@ suffix:semicolon
 multiline_comment|/* XXX - check chip type */
 id|dsa
 op_assign
+id|bus_to_virt
+c_func
 (paren
-r_int
-r_int
-op_star
-)paren
 id|NCR53c7x0_read32
 c_func
 (paren
 id|DSA_REG
+)paren
 )paren
 suffix:semicolon
 multiline_comment|/*&n;     * DSTAT_ABRT is the aborted interrupt.  This is set whenever the &n;     * SCSI chip is aborted.  &n;     * &n;     * With NCR53c700 and NCR53c700-66 style chips, we should only &n;     * get this when the chip is currently running the accept &n;     * reselect/select code and we have set the abort bit in the &n;     * ISTAT register.&n;     *&n;     */
@@ -12748,6 +12915,11 @@ op_or
 id|DCNTL_STD
 )paren
 suffix:semicolon
+id|mb
+c_func
+(paren
+)paren
+suffix:semicolon
 id|restore_flags
 c_func
 (paren
@@ -12809,7 +12981,7 @@ id|hostdata-&gt;E_select
 op_div
 r_sizeof
 (paren
-r_int
+id|u32
 )paren
 )paren
 )paren
@@ -12824,7 +12996,7 @@ id|hostdata-&gt;E_select_msgout
 op_div
 r_sizeof
 (paren
-r_int
+id|u32
 )paren
 op_plus
 l_int|8
@@ -12932,24 +13104,16 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;scsi%d : DSP=0x%lx, DCMD|DBC=0x%lx, DSA=0x%lx&bslash;n&quot;
-l_string|&quot;         DSPS=0x%lx, TEMP=0x%lx, DMODE=0x%x,&bslash;n&quot;
-l_string|&quot;&t; DNAD=0x%lx&bslash;n&quot;
+l_string|&quot;scsi%d : DSP=0x%p, DCMD|DBC=0x%x, DSA=0x%p&bslash;n&quot;
+l_string|&quot;         DSPS=0x%x, TEMP=0x%x, DMODE=0x%x,&bslash;n&quot;
+l_string|&quot;         DNAD=0x%x&bslash;n&quot;
 comma
 id|host-&gt;host_no
 comma
-(paren
-r_int
-r_int
-)paren
 id|dsp
 comma
 id|dbc_dcmd
 comma
-(paren
-r_int
-r_int
-)paren
 id|dsa
 comma
 id|NCR53c7x0_read32
@@ -12964,9 +13128,6 @@ c_func
 id|TEMP_REG
 )paren
 comma
-(paren
-r_int
-)paren
 id|NCR53c7x0_read8
 c_func
 (paren
@@ -13000,15 +13161,11 @@ id|DSTAT_800_BF
 id|printk
 c_func
 (paren
-l_string|&quot;scsi%d : BUS FAULT, DSP=0x%lx, DCMD|DBC=0x%lx, DSA=0x%lx&bslash;n&quot;
-l_string|&quot;         DSPS=0x%lx, TEMP=0x%lx, DMODE=0x%x&bslash;n&quot;
+l_string|&quot;scsi%d : BUS FAULT, DSP=0x%p, DCMD|DBC=0x%x, DSA=0x%p&bslash;n&quot;
+l_string|&quot;         DSPS=0x%x, TEMP=0x%x, DMODE=0x%x&bslash;n&quot;
 comma
 id|host-&gt;host_no
 comma
-(paren
-r_int
-r_int
-)paren
 id|dsp
 comma
 id|NCR53c7x0_read32
@@ -13017,10 +13174,6 @@ c_func
 id|DBC_REG
 )paren
 comma
-(paren
-r_int
-r_int
-)paren
 id|dsa
 comma
 id|NCR53c7x0_read32
@@ -13035,9 +13188,6 @@ c_func
 id|TEMP_REG
 )paren
 comma
-(paren
-r_int
-)paren
 id|NCR53c7x0_read8
 c_func
 (paren
@@ -13240,6 +13390,11 @@ comma
 id|STEST3_800_CSF
 )paren
 suffix:semicolon
+id|mb
+c_func
+(paren
+)paren
+suffix:semicolon
 r_while
 c_loop
 (paren
@@ -13252,7 +13407,7 @@ id|STEST3_800_CSF
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function : static int print_insn (struct Scsi_Host *host, &n; * &t;unsigned long *insn, int kernel)&n; *&n; * Purpose : print numeric representation of the instruction pointed&n; * &t;to by insn to the debugging or kernel message buffer&n; *&t;as appropriate.  &n; *&n; * &t;If desired, a user level program can interpret this &n; * &t;information.&n; *&n; * Inputs : host, insn - host, pointer to instruction, prefix - &n; *&t;string to prepend, kernel - use printk instead of debugging buffer.&n; *&n; * Returns : size, in longs, of instruction printed.&n; */
+multiline_comment|/*&n; * Function : static int print_insn (struct Scsi_Host *host, &n; * &t;u32 *insn, int kernel)&n; *&n; * Purpose : print numeric representation of the instruction pointed&n; * &t;to by insn to the debugging or kernel message buffer&n; *&t;as appropriate.  &n; *&n; * &t;If desired, a user level program can interpret this &n; * &t;information.&n; *&n; * Inputs : host, insn - host, pointer to instruction, prefix - &n; *&t;string to prepend, kernel - use printk instead of debugging buffer.&n; *&n; * Returns : size, in ints, of instruction printed.&n; */
 DECL|function|print_insn
 r_static
 r_int
@@ -13263,8 +13418,7 @@ id|Scsi_Host
 op_star
 id|host
 comma
-r_int
-r_int
+id|u32
 op_star
 id|insn
 comma
@@ -13312,7 +13466,7 @@ c_func
 (paren
 id|buf
 comma
-l_string|&quot;%s%08lx : 0x%08lx 0x%08lx&quot;
+l_string|&quot;%s%p : 0x%08x 0x%08x&quot;
 comma
 (paren
 id|prefix
@@ -13323,10 +13477,6 @@ suffix:colon
 l_string|&quot;&quot;
 )paren
 comma
-(paren
-r_int
-r_int
-)paren
 id|insn
 comma
 id|insn
@@ -13366,7 +13516,7 @@ id|sprintf
 (paren
 id|tmp
 comma
-l_string|&quot; 0x%08lx&bslash;n&quot;
+l_string|&quot; 0x%08x&bslash;n&quot;
 comma
 id|insn
 (braket
@@ -13466,6 +13616,7 @@ r_int
 r_int
 id|flags
 suffix:semicolon
+r_volatile
 r_struct
 id|NCR53c7x0_cmd
 op_star
@@ -13493,6 +13644,7 @@ c_loop
 id|curr
 op_assign
 (paren
+r_volatile
 r_struct
 id|NCR53c7x0_cmd
 op_star
@@ -13502,6 +13654,7 @@ comma
 id|prev
 op_assign
 (paren
+r_volatile
 r_struct
 id|NCR53c7x0_cmd
 op_star
@@ -13521,6 +13674,7 @@ suffix:semicolon
 id|prev
 op_assign
 (paren
+r_volatile
 r_struct
 id|NCR53c7x0_cmd
 op_star
@@ -13534,6 +13688,7 @@ comma
 id|curr
 op_assign
 (paren
+r_volatile
 r_struct
 id|NCR53c7x0_cmd
 op_star
@@ -13604,6 +13759,7 @@ c_loop
 id|curr
 op_assign
 (paren
+r_volatile
 r_struct
 id|NCR53c7x0_cmd
 op_star
@@ -13613,6 +13769,7 @@ comma
 id|prev
 op_assign
 (paren
+r_volatile
 r_struct
 id|NCR53c7x0_cmd
 op_star
@@ -13632,6 +13789,7 @@ suffix:semicolon
 id|prev
 op_assign
 (paren
+r_volatile
 r_struct
 id|NCR53c7x0_cmd
 op_star
@@ -13645,6 +13803,7 @@ comma
 id|curr
 op_assign
 (paren
+r_volatile
 r_struct
 id|NCR53c7x0_cmd
 op_star
@@ -13820,7 +13979,7 @@ c_func
 id|flags
 )paren
 suffix:semicolon
-id|halt
+id|ncr_halt
 (paren
 id|host
 )paren
@@ -13966,13 +14125,6 @@ c_func
 id|flags
 )paren
 suffix:semicolon
-id|printk
-(paren
-l_string|&quot;scsi%d : DANGER : NCR53c7xx_reset is NOP&bslash;n&quot;
-comma
-id|cmd-&gt;host-&gt;host_no
-)paren
-suffix:semicolon
 r_return
 id|SCSI_RESET_SUCCESS
 suffix:semicolon
@@ -13988,8 +14140,7 @@ id|Scsi_Host
 op_star
 id|host
 comma
-r_int
-r_int
+id|u32
 op_star
 id|dsa
 )paren
@@ -14018,14 +14169,11 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;scsi%d : dsa at 0x%x&bslash;n&quot;
-l_string|&quot;        + %ld : dsa_msgout length = %lu, data = 0x%lx&bslash;n&quot;
+l_string|&quot;scsi%d : dsa at 0x%p&bslash;n&quot;
+l_string|&quot;        + %d : dsa_msgout length = %d, data = 0x%x&bslash;n&quot;
 comma
 id|host-&gt;host_no
 comma
-(paren
-r_int
-)paren
 id|dsa
 comma
 id|hostdata-&gt;dsa_msgout
@@ -14036,7 +14184,7 @@ id|hostdata-&gt;dsa_msgout
 op_div
 r_sizeof
 (paren
-r_int
+id|u32
 )paren
 )braket
 comma
@@ -14046,7 +14194,7 @@ id|hostdata-&gt;dsa_msgout
 op_div
 r_sizeof
 (paren
-r_int
+id|u32
 )paren
 op_plus
 l_int|1
@@ -14064,27 +14212,27 @@ id|hostdata-&gt;dsa_msgout
 op_div
 r_sizeof
 (paren
-r_int
+id|u32
 )paren
 )braket
 comma
 id|ptr
 op_assign
+id|bus_to_virt
+c_func
 (paren
-r_char
-op_star
-)paren
 id|dsa
 (braket
 id|hostdata-&gt;dsa_msgout
 op_div
 r_sizeof
 (paren
-r_int
+id|u32
 )paren
 op_plus
 l_int|1
 )braket
+)paren
 suffix:semicolon
 id|i
 OG
@@ -14170,7 +14318,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|halt
+id|ncr_halt
 (paren
 id|host
 )paren
@@ -14217,11 +14365,11 @@ l_int|0
 suffix:semicolon
 )brace
 macro_line|#endif
-multiline_comment|/*&n; * Function : static int halt (struct Scsi_Host *host)&n; * &n; * Purpose : halts the SCSI SCRIPTS(tm) processor on the NCR chip&n; *&n; * Inputs : host - SCSI chip to halt&n; *&n; * Returns : 0 on success&n; */
+multiline_comment|/*&n; * Function : static int ncr_halt (struct Scsi_Host *host)&n; * &n; * Purpose : halts the SCSI SCRIPTS(tm) processor on the NCR chip&n; *&n; * Inputs : host - SCSI chip to halt&n; *&n; * Returns : 0 on success&n; */
 r_static
 r_int
-DECL|function|halt
-id|halt
+DECL|function|ncr_halt
+id|ncr_halt
 (paren
 r_struct
 id|Scsi_Host

@@ -506,7 +506,7 @@ comma
 id|len
 )paren
 suffix:semicolon
-id|put_fs_byte
+id|put_user
 c_func
 (paren
 l_char|&squot;&bslash;0&squot;

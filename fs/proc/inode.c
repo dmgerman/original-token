@@ -870,6 +870,14 @@ r_if
 c_cond
 (paren
 id|p-&gt;dumpable
+op_logical_and
+id|p-&gt;uid
+op_eq
+id|p-&gt;euid
+op_logical_and
+id|p-&gt;gid
+op_eq
+id|p-&gt;egid
 )paren
 (brace
 id|inode-&gt;i_uid

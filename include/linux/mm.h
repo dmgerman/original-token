@@ -489,7 +489,9 @@ id|NR_MEM_LISTS
 suffix:semicolon
 multiline_comment|/*&n; * This is timing-critical - most of the time in getting a new page&n; * goes to clearing the page. If you want a page without the clearing&n; * overhead, just use __get_free_page() directly..&n; */
 DECL|macro|__get_free_page
-mdefine_line|#define __get_free_page(priority) __get_free_pages((priority),0)
+mdefine_line|#define __get_free_page(priority) __get_free_pages((priority),0,~0UL)
+DECL|macro|__get_dma_pages
+mdefine_line|#define __get_dma_pages(priority, order) __get_free_pages((priority),(order),MAX_DMA_ADDRESS)
 r_extern
 r_int
 r_int
@@ -502,20 +504,10 @@ comma
 r_int
 r_int
 id|gfporder
-)paren
-suffix:semicolon
-r_extern
-r_int
-r_int
-id|__get_dma_pages
-c_func
-(paren
-r_int
-id|priority
 comma
 r_int
 r_int
-id|gfporder
+id|max_addr
 )paren
 suffix:semicolon
 DECL|function|get_free_page

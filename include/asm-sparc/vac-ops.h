@@ -14,7 +14,7 @@ id|end
 comma
 id|etext
 comma
-id|msgbuf
+id|edata
 suffix:semicolon
 r_extern
 r_void

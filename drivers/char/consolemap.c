@@ -2405,7 +2405,7 @@ id|i
 op_assign
 id|UNI_DIRECT_BASE
 op_or
-id|get_fs_byte
+id|get_user
 c_func
 (paren
 id|arg
@@ -2498,7 +2498,7 @@ id|i
 )braket
 )paren
 suffix:semicolon
-id|put_fs_byte
+id|put_user
 c_func
 (paren
 (paren
@@ -2595,7 +2595,7 @@ id|p
 id|i
 )braket
 op_assign
-id|get_fs_word
+id|get_user
 c_func
 (paren
 id|arg
@@ -2680,7 +2680,7 @@ suffix:semicolon
 id|i
 op_increment
 )paren
-id|put_fs_word
+id|put_user
 c_func
 (paren
 id|p
@@ -2870,7 +2870,7 @@ id|ct
 (brace
 id|u
 op_assign
-id|get_fs_word
+id|get_user
 c_func
 (paren
 op_amp
@@ -2963,7 +2963,7 @@ id|i
 dot
 id|fontpos
 op_assign
-id|get_fs_word
+id|get_user
 c_func
 (paren
 op_amp
@@ -3072,7 +3072,7 @@ OL
 id|ct
 )paren
 (brace
-id|put_fs_word
+id|put_user
 c_func
 (paren
 id|hashtable
@@ -3086,7 +3086,7 @@ op_amp
 id|list-&gt;unicode
 )paren
 suffix:semicolon
-id|put_fs_word
+id|put_user
 c_func
 (paren
 id|hashtable
@@ -3105,7 +3105,7 @@ op_increment
 suffix:semicolon
 )brace
 )brace
-id|put_fs_word
+id|put_user
 c_func
 (paren
 id|ect

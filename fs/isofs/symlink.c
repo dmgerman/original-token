@@ -390,7 +390,7 @@ id|i
 id|i
 op_increment
 suffix:semicolon
-id|put_fs_byte
+id|put_user
 c_func
 (paren
 id|c

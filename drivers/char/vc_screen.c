@@ -321,7 +321,7 @@ op_decrement
 OG
 l_int|0
 )paren
-id|put_fs_byte
+id|put_user
 c_func
 (paren
 id|scr_readw
@@ -391,7 +391,7 @@ id|p
 template_param
 l_int|0
 )paren
-id|put_fs_byte
+id|put_user
 c_func
 (paren
 id|header
@@ -437,7 +437,7 @@ op_decrement
 OG
 l_int|0
 )paren
-id|put_fs_byte
+id|put_user
 c_func
 (paren
 id|scr_readw
@@ -461,7 +461,7 @@ OG
 l_int|1
 )paren
 (brace
-id|put_fs_word
+id|put_user
 c_func
 (paren
 id|scr_readw
@@ -471,6 +471,11 @@ id|org
 op_increment
 )paren
 comma
+(paren
+r_int
+r_int
+op_star
+)paren
 id|buf
 )paren
 suffix:semicolon
@@ -490,7 +495,7 @@ id|count
 OG
 l_int|0
 )paren
-id|put_fs_byte
+id|put_user
 c_func
 (paren
 id|scr_readw
@@ -714,7 +719,7 @@ op_amp
 l_int|0xff00
 )paren
 op_or
-id|get_fs_byte
+id|get_user
 c_func
 (paren
 id|buf
@@ -768,7 +773,7 @@ id|p
 op_increment
 )braket
 op_assign
-id|get_fs_byte
+id|get_user
 c_func
 (paren
 id|buf
@@ -829,7 +834,7 @@ id|scr_writew
 c_func
 (paren
 (paren
-id|get_fs_byte
+id|get_user
 c_func
 (paren
 id|buf
@@ -867,9 +872,14 @@ l_int|1
 id|scr_writew
 c_func
 (paren
-id|get_fs_word
+id|get_user
 c_func
 (paren
+(paren
+r_int
+r_int
+op_star
+)paren
 id|buf
 )paren
 comma
@@ -906,7 +916,7 @@ op_amp
 l_int|0xff00
 )paren
 op_or
-id|get_fs_byte
+id|get_user
 c_func
 (paren
 id|buf

@@ -231,7 +231,7 @@ suffix:semicolon
 id|i
 op_increment
 )paren
-id|put_fs_byte
+id|put_user
 c_func
 (paren
 id|c
@@ -249,13 +249,10 @@ id|buflen
 op_minus
 l_int|1
 )paren
-id|put_fs_byte
+id|put_user
 c_func
 (paren
-(paren
-r_char
-)paren
-l_int|0
+l_char|&squot;&bslash;0&squot;
 comma
 id|buffer
 )paren

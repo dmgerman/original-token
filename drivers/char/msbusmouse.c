@@ -399,7 +399,7 @@ r_return
 op_minus
 id|EAGAIN
 suffix:semicolon
-id|put_fs_byte
+id|put_user
 c_func
 (paren
 id|mouse.buttons
@@ -433,7 +433,7 @@ suffix:colon
 op_minus
 id|mouse.dy
 suffix:semicolon
-id|put_fs_byte
+id|put_user
 c_func
 (paren
 (paren
@@ -446,7 +446,7 @@ op_plus
 l_int|1
 )paren
 suffix:semicolon
-id|put_fs_byte
+id|put_user
 c_func
 (paren
 (paren
@@ -473,7 +473,7 @@ suffix:semicolon
 id|i
 op_increment
 )paren
-id|put_fs_byte
+id|put_user
 c_func
 (paren
 l_int|0x00

@@ -188,7 +188,7 @@ suffix:semicolon
 )brace
 id|c
 op_assign
-id|get_fs_byte
+id|get_user
 c_func
 (paren
 id|filename
@@ -253,7 +253,7 @@ id|c
 suffix:semicolon
 id|c
 op_assign
-id|get_fs_byte
+id|get_user
 c_func
 (paren
 id|filename

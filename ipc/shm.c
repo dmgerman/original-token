@@ -3390,6 +3390,10 @@ id|shm_swap
 (paren
 r_int
 id|prio
+comma
+r_int
+r_int
+id|limit
 )paren
 (brace
 id|pte_t
@@ -3558,6 +3562,20 @@ id|page
 r_goto
 id|check_table
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|pte_page
+c_func
+(paren
+id|page
+)paren
+op_ge
+id|limit
+)paren
+r_goto
+id|check_table
+suffix:semicolon
 id|swap_attempts
 op_increment
 suffix:semicolon
@@ -3630,6 +3648,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+(paren
 id|SWP_OFFSET
 c_func
 (paren
@@ -3637,6 +3656,7 @@ id|shmd-&gt;vm_pte
 )paren
 op_amp
 id|SHM_ID_MASK
+)paren
 op_ne
 id|id
 )paren

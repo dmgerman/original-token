@@ -3398,12 +3398,14 @@ multiline_comment|/* &n;         * Start and end of packet must be set, because 
 r_if
 c_cond
 (paren
+(paren
 id|rmdstat
 op_amp
 (paren
 id|RX_STP
 op_or
 id|RX_ENP
+)paren
 )paren
 op_ne
 (paren

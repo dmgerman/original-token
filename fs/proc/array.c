@@ -231,7 +231,7 @@ template_param
 l_int|0
 )paren
 (brace
-id|put_fs_byte
+id|put_user
 c_func
 (paren
 l_int|0
@@ -443,7 +443,7 @@ template_param
 l_int|0
 )paren
 (brace
-id|put_fs_byte
+id|put_user
 c_func
 (paren
 op_star

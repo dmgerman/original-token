@@ -760,7 +760,7 @@ op_decrement
 OG
 l_int|0
 )paren
-id|put_fs_byte
+id|put_user
 (paren
 l_int|0
 comma

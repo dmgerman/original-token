@@ -4081,7 +4081,7 @@ id|buf
 )paren
 r_break
 suffix:semicolon
-id|put_fs_byte
+id|put_user
 c_func
 (paren
 id|tty-&gt;link-&gt;ctrl_status
@@ -4253,7 +4253,7 @@ op_eq
 id|buf
 )paren
 (brace
-id|put_fs_byte
+id|put_user
 c_func
 (paren
 id|TIOCPKT_DATA
@@ -4357,7 +4357,7 @@ op_logical_neg
 id|eol
 )paren
 (brace
-id|put_fs_byte
+id|put_user
 c_func
 (paren
 id|c
@@ -4399,7 +4399,7 @@ op_ne
 id|__DISABLED_CHAR
 )paren
 (brace
-id|put_fs_byte
+id|put_user
 c_func
 (paren
 id|c
@@ -4772,7 +4772,7 @@ l_int|0
 (brace
 id|c
 op_assign
-id|get_fs_byte
+id|get_user
 c_func
 (paren
 id|b

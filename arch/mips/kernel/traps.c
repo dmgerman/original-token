@@ -286,12 +286,14 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+(paren
 id|regs-&gt;cp0_status
 op_amp
 (paren
 id|ST0_ERL
 op_or
 id|ST0_EXL
+)paren
 )paren
 op_eq
 l_int|0

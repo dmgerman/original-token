@@ -93,6 +93,16 @@ op_star
 suffix:semicolon
 r_extern
 r_int
+id|eepro_probe
+c_func
+(paren
+r_struct
+id|device
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_int
 id|el3_probe
 c_func
 (paren
@@ -403,6 +413,14 @@ macro_line|#endif
 macro_line|#ifdef CONFIG_EEXPRESS&t;&t;/* Intel EtherExpress */
 op_logical_and
 id|express_probe
+c_func
+(paren
+id|dev
+)paren
+macro_line|#endif
+macro_line|#ifdef CONFIG_EEXPRESS_PRO&t;/* Intel EtherExpress Pro/10 */
+op_logical_and
+id|eepro_probe
 c_func
 (paren
 id|dev

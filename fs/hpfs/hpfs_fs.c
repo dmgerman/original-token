@@ -3430,7 +3430,7 @@ l_char|&squot;&bslash;n&squot;
 )paren
 suffix:semicolon
 r_else
-id|put_fs_byte
+id|put_user
 c_func
 (paren
 id|c

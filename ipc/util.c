@@ -174,6 +174,10 @@ id|shm_swap
 (paren
 r_int
 id|prio
+comma
+r_int
+r_int
+id|limit
 )paren
 (brace
 r_return

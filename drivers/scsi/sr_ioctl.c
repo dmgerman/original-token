@@ -1466,9 +1466,13 @@ dot
 id|device
 op_member_access_from_pointer
 id|access_count
-op_eq
+op_ne
 l_int|1
 )paren
+r_return
+op_minus
+id|EBUSY
+suffix:semicolon
 id|sr_ioctl
 (paren
 id|inode

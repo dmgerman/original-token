@@ -1,6 +1,5 @@
 DECL|variable|SCRIPT
-r_int
-r_int
+id|u32
 id|SCRIPT
 (braket
 )braket
@@ -40,7 +39,7 @@ l_int|0x80080000
 comma
 l_int|0x000005ac
 comma
-multiline_comment|/*&n;&n;ABSOLUTE dsa_check_reselect = 0&n;; dsa_check_reselect determines weather or not the current target and&n;; lun match the current DSA&n;ENTRY dsa_code_check_reselect&n;dsa_code_check_reselect:&n;&t;MOVE SSID TO SFBR&t;&t;; SSID contains 3 bit target ID&n;&n;at 0x0000000e : */
+multiline_comment|/*&n;&n;ABSOLUTE dsa_check_reselect = 0&n;; dsa_check_reselect determines whether or not the current target and&n;; lun match the current DSA&n;ENTRY dsa_code_check_reselect&n;dsa_code_check_reselect:&n;&t;MOVE SSID TO SFBR&t;&t;; SSID contains 3 bit target ID&n;&n;at 0x0000000e : */
 l_int|0x720a0000
 comma
 l_int|0x00000000
@@ -316,7 +315,7 @@ l_int|0x78380000
 comma
 l_int|0x00000000
 comma
-multiline_comment|/*&n;issue_remove:&n;;&t;The actual UPDATE of the issue_dsa_head variable is &n;; &t;atomic, with all of the setup code being irrelevant to&n;;&t;weather the updated value being the old or new contents of &n;;&t;dsa_next field.&n;;&n;; &t;To insure synchronization, the host system merely needs to &n;;&t;do a XCHG instruction with interrupts disabled on the &n;;&t;issue_dsa_head memory address.&n;;&n;;&t;The net effect will be that the XCHG instruction will return&n;;&t;either a non-NULL value, indicating that the NCR chip will not&n;;&t;go into the idle loop when this command DISCONNECTS, or a NULL&n;;&t;value indicating that the NCR wrote first and that the Linux&n;;&t;code must rewrite the issue_dsa_head pointer and set SIG_P.&n;;&t;&n;&n;&n;    MOVE MEMORY 4, 0, issue_dsa_head&n;&n;at 0x0000007e : */
+multiline_comment|/*&n;issue_remove:&n;;&t;The actual UPDATE of the issue_dsa_head variable is &n;; &t;atomic, with all of the setup code being irrelevant to&n;;&t;whether the updated value being the old or new contents of &n;;&t;dsa_next field.&n;;&n;; &t;To insure synchronization, the host system merely needs to &n;;&t;do a XCHG instruction with interrupts disabled on the &n;;&t;issue_dsa_head memory address.&n;;&n;;&t;The net effect will be that the XCHG instruction will return&n;;&t;either a non-NULL value, indicating that the NCR chip will not&n;;&t;go into the idle loop when this command DISCONNECTS, or a NULL&n;;&t;value indicating that the NCR wrote first and that the Linux&n;;&t;code must rewrite the issue_dsa_head pointer and set SIG_P.&n;;&t;&n;&n;&n;    MOVE MEMORY 4, 0, issue_dsa_head&n;&n;at 0x0000007e : */
 l_int|0xc0000004
 comma
 l_int|0x00000000
@@ -1355,8 +1354,7 @@ suffix:semicolon
 DECL|macro|A_NCR53c7xx_msg_abort
 mdefine_line|#define A_NCR53c7xx_msg_abort&t;0x00000000
 DECL|variable|A_NCR53c7xx_msg_abort_used
-r_int
-r_int
+id|u32
 id|A_NCR53c7xx_msg_abort_used
 (braket
 )braket
@@ -1369,8 +1367,7 @@ suffix:semicolon
 DECL|macro|A_NCR53c7xx_msg_reject
 mdefine_line|#define A_NCR53c7xx_msg_reject&t;0x00000000
 DECL|variable|A_NCR53c7xx_msg_reject_used
-r_int
-r_int
+id|u32
 id|A_NCR53c7xx_msg_reject_used
 (braket
 )braket
@@ -1383,8 +1380,7 @@ suffix:semicolon
 DECL|macro|A_NCR53c7xx_sink
 mdefine_line|#define A_NCR53c7xx_sink&t;0x00000000
 DECL|variable|A_NCR53c7xx_sink_used
-r_int
-r_int
+id|u32
 id|A_NCR53c7xx_sink_used
 (braket
 )braket
@@ -1401,8 +1397,7 @@ suffix:semicolon
 DECL|macro|A_NCR53c7xx_zero
 mdefine_line|#define A_NCR53c7xx_zero&t;0x00000000
 DECL|variable|A_NCR53c7xx_zero_used
-r_int
-r_int
+id|u32
 id|A_NCR53c7xx_zero_used
 (braket
 )braket
@@ -1419,8 +1414,7 @@ suffix:semicolon
 DECL|macro|A_addr_scratch
 mdefine_line|#define A_addr_scratch&t;0x00000000
 DECL|variable|A_addr_scratch_used
-r_int
-r_int
+id|u32
 id|A_addr_scratch_used
 (braket
 )braket
@@ -1451,8 +1445,7 @@ suffix:semicolon
 DECL|macro|A_addr_sfbr
 mdefine_line|#define A_addr_sfbr&t;0x00000000
 DECL|variable|A_addr_sfbr_used
-r_int
-r_int
+id|u32
 id|A_addr_sfbr_used
 (braket
 )braket
@@ -1465,8 +1458,7 @@ suffix:semicolon
 DECL|macro|A_addr_temp
 mdefine_line|#define A_addr_temp&t;0x00000000
 DECL|variable|A_addr_temp_used
-r_int
-r_int
+id|u32
 id|A_addr_temp_used
 (braket
 )braket
@@ -1479,8 +1471,7 @@ suffix:semicolon
 DECL|macro|A_dmode_memory_to_memory
 mdefine_line|#define A_dmode_memory_to_memory&t;0x00000000
 DECL|variable|A_dmode_memory_to_memory_used
-r_int
-r_int
+id|u32
 id|A_dmode_memory_to_memory_used
 (braket
 )braket
@@ -1515,8 +1506,7 @@ suffix:semicolon
 DECL|macro|A_dmode_memory_to_ncr
 mdefine_line|#define A_dmode_memory_to_ncr&t;0x00000000
 DECL|variable|A_dmode_memory_to_ncr_used
-r_int
-r_int
+id|u32
 id|A_dmode_memory_to_ncr_used
 (braket
 )braket
@@ -1535,8 +1525,7 @@ suffix:semicolon
 DECL|macro|A_dmode_ncr_to_memory
 mdefine_line|#define A_dmode_ncr_to_memory&t;0x00000000
 DECL|variable|A_dmode_ncr_to_memory_used
-r_int
-r_int
+id|u32
 id|A_dmode_ncr_to_memory_used
 (braket
 )braket
@@ -1563,8 +1552,7 @@ suffix:semicolon
 DECL|macro|A_dmode_ncr_to_ncr
 mdefine_line|#define A_dmode_ncr_to_ncr&t;0x00000000
 DECL|variable|A_dmode_ncr_to_ncr_used
-r_int
-r_int
+id|u32
 id|A_dmode_ncr_to_ncr_used
 (braket
 )braket
@@ -1575,8 +1563,7 @@ suffix:semicolon
 DECL|macro|A_dsa_check_reselect
 mdefine_line|#define A_dsa_check_reselect&t;0x00000000
 DECL|variable|A_dsa_check_reselect_used
-r_int
-r_int
+id|u32
 id|A_dsa_check_reselect_used
 (braket
 )braket
@@ -1589,8 +1576,7 @@ suffix:semicolon
 DECL|macro|A_dsa_cmdout
 mdefine_line|#define A_dsa_cmdout&t;0x00000048
 DECL|variable|A_dsa_cmdout_used
-r_int
-r_int
+id|u32
 id|A_dsa_cmdout_used
 (braket
 )braket
@@ -1603,8 +1589,7 @@ suffix:semicolon
 DECL|macro|A_dsa_cmnd
 mdefine_line|#define A_dsa_cmnd&t;0x00000038
 DECL|variable|A_dsa_cmnd_used
-r_int
-r_int
+id|u32
 id|A_dsa_cmnd_used
 (braket
 )braket
@@ -1615,8 +1600,7 @@ suffix:semicolon
 DECL|macro|A_dsa_datain
 mdefine_line|#define A_dsa_datain&t;0x00000054
 DECL|variable|A_dsa_datain_used
-r_int
-r_int
+id|u32
 id|A_dsa_datain_used
 (braket
 )braket
@@ -1629,8 +1613,7 @@ suffix:semicolon
 DECL|macro|A_dsa_dataout
 mdefine_line|#define A_dsa_dataout&t;0x00000050
 DECL|variable|A_dsa_dataout_used
-r_int
-r_int
+id|u32
 id|A_dsa_dataout_used
 (braket
 )braket
@@ -1643,8 +1626,7 @@ suffix:semicolon
 DECL|macro|A_dsa_end
 mdefine_line|#define A_dsa_end&t;0x00000070
 DECL|variable|A_dsa_end_used
-r_int
-r_int
+id|u32
 id|A_dsa_end_used
 (braket
 )braket
@@ -1655,8 +1637,7 @@ suffix:semicolon
 DECL|macro|A_dsa_fields_start
 mdefine_line|#define A_dsa_fields_start&t;0x00000024
 DECL|variable|A_dsa_fields_start_used
-r_int
-r_int
+id|u32
 id|A_dsa_fields_start_used
 (braket
 )braket
@@ -1667,8 +1648,7 @@ suffix:semicolon
 DECL|macro|A_dsa_msgin
 mdefine_line|#define A_dsa_msgin&t;0x00000058
 DECL|variable|A_dsa_msgin_used
-r_int
-r_int
+id|u32
 id|A_dsa_msgin_used
 (braket
 )braket
@@ -1681,8 +1661,7 @@ suffix:semicolon
 DECL|macro|A_dsa_msgout
 mdefine_line|#define A_dsa_msgout&t;0x00000040
 DECL|variable|A_dsa_msgout_used
-r_int
-r_int
+id|u32
 id|A_dsa_msgout_used
 (braket
 )braket
@@ -1695,8 +1674,7 @@ suffix:semicolon
 DECL|macro|A_dsa_msgout_other
 mdefine_line|#define A_dsa_msgout_other&t;0x00000068
 DECL|variable|A_dsa_msgout_other_used
-r_int
-r_int
+id|u32
 id|A_dsa_msgout_other_used
 (braket
 )braket
@@ -1709,8 +1687,7 @@ suffix:semicolon
 DECL|macro|A_dsa_next
 mdefine_line|#define A_dsa_next&t;0x00000030
 DECL|variable|A_dsa_next_used
-r_int
-r_int
+id|u32
 id|A_dsa_next_used
 (braket
 )braket
@@ -1725,8 +1702,7 @@ suffix:semicolon
 DECL|macro|A_dsa_select
 mdefine_line|#define A_dsa_select&t;0x0000003c
 DECL|variable|A_dsa_select_used
-r_int
-r_int
+id|u32
 id|A_dsa_select_used
 (braket
 )braket
@@ -1739,8 +1715,7 @@ suffix:semicolon
 DECL|macro|A_dsa_status
 mdefine_line|#define A_dsa_status&t;0x00000060
 DECL|variable|A_dsa_status_used
-r_int
-r_int
+id|u32
 id|A_dsa_status_used
 (braket
 )braket
@@ -1753,8 +1728,7 @@ suffix:semicolon
 DECL|macro|A_dsa_temp_dsa_next
 mdefine_line|#define A_dsa_temp_dsa_next&t;0x00000000
 DECL|variable|A_dsa_temp_dsa_next_used
-r_int
-r_int
+id|u32
 id|A_dsa_temp_dsa_next_used
 (braket
 )braket
@@ -1771,8 +1745,7 @@ suffix:semicolon
 DECL|macro|A_dsa_temp_jump_resume
 mdefine_line|#define A_dsa_temp_jump_resume&t;0x00000000
 DECL|variable|A_dsa_temp_jump_resume_used
-r_int
-r_int
+id|u32
 id|A_dsa_temp_jump_resume_used
 (braket
 )braket
@@ -1785,8 +1758,7 @@ suffix:semicolon
 DECL|macro|A_dsa_temp_lun
 mdefine_line|#define A_dsa_temp_lun&t;0x00000000
 DECL|variable|A_dsa_temp_lun_used
-r_int
-r_int
+id|u32
 id|A_dsa_temp_lun_used
 (braket
 )braket
@@ -1799,8 +1771,7 @@ suffix:semicolon
 DECL|macro|A_dsa_temp_sync
 mdefine_line|#define A_dsa_temp_sync&t;0x00000000
 DECL|variable|A_dsa_temp_sync_used
-r_int
-r_int
+id|u32
 id|A_dsa_temp_sync_used
 (braket
 )braket
@@ -1813,8 +1784,7 @@ suffix:semicolon
 DECL|macro|A_dsa_temp_target
 mdefine_line|#define A_dsa_temp_target&t;0x00000000
 DECL|variable|A_dsa_temp_target_used
-r_int
-r_int
+id|u32
 id|A_dsa_temp_target_used
 (braket
 )braket
@@ -1827,8 +1797,7 @@ suffix:semicolon
 DECL|macro|A_int_debug_break
 mdefine_line|#define A_int_debug_break&t;0x03000000
 DECL|variable|A_int_debug_break_used
-r_int
-r_int
+id|u32
 id|A_int_debug_break_used
 (braket
 )braket
@@ -1841,8 +1810,7 @@ suffix:semicolon
 DECL|macro|A_int_debug_dsa_loaded
 mdefine_line|#define A_int_debug_dsa_loaded&t;0x03030000
 DECL|variable|A_int_debug_dsa_loaded_used
-r_int
-r_int
+id|u32
 id|A_int_debug_dsa_loaded_used
 (braket
 )braket
@@ -1853,8 +1821,7 @@ suffix:semicolon
 DECL|macro|A_int_debug_head
 mdefine_line|#define A_int_debug_head&t;0x03050000
 DECL|variable|A_int_debug_head_used
-r_int
-r_int
+id|u32
 id|A_int_debug_head_used
 (braket
 )braket
@@ -1865,8 +1832,7 @@ suffix:semicolon
 DECL|macro|A_int_debug_idle
 mdefine_line|#define A_int_debug_idle&t;0x03020000
 DECL|variable|A_int_debug_idle_used
-r_int
-r_int
+id|u32
 id|A_int_debug_idle_used
 (braket
 )braket
@@ -1877,8 +1843,7 @@ suffix:semicolon
 DECL|macro|A_int_debug_reselected
 mdefine_line|#define A_int_debug_reselected&t;0x03040000
 DECL|variable|A_int_debug_reselected_used
-r_int
-r_int
+id|u32
 id|A_int_debug_reselected_used
 (braket
 )braket
@@ -1889,8 +1854,7 @@ suffix:semicolon
 DECL|macro|A_int_debug_scheduled
 mdefine_line|#define A_int_debug_scheduled&t;0x03010000
 DECL|variable|A_int_debug_scheduled_used
-r_int
-r_int
+id|u32
 id|A_int_debug_scheduled_used
 (braket
 )braket
@@ -1901,8 +1865,7 @@ suffix:semicolon
 DECL|macro|A_int_err_check_condition
 mdefine_line|#define A_int_err_check_condition&t;0x00030000
 DECL|variable|A_int_err_check_condition_used
-r_int
-r_int
+id|u32
 id|A_int_err_check_condition_used
 (braket
 )braket
@@ -1915,8 +1878,7 @@ suffix:semicolon
 DECL|macro|A_int_err_no_phase
 mdefine_line|#define A_int_err_no_phase&t;0x00040000
 DECL|variable|A_int_err_no_phase_used
-r_int
-r_int
+id|u32
 id|A_int_err_no_phase_used
 (braket
 )braket
@@ -1927,8 +1889,7 @@ suffix:semicolon
 DECL|macro|A_int_err_selected
 mdefine_line|#define A_int_err_selected&t;0x00010000
 DECL|variable|A_int_err_selected_used
-r_int
-r_int
+id|u32
 id|A_int_err_selected_used
 (braket
 )braket
@@ -1941,8 +1902,7 @@ suffix:semicolon
 DECL|macro|A_int_err_unexpected_phase
 mdefine_line|#define A_int_err_unexpected_phase&t;0x00000000
 DECL|variable|A_int_err_unexpected_phase_used
-r_int
-r_int
+id|u32
 id|A_int_err_unexpected_phase_used
 (braket
 )braket
@@ -1971,8 +1931,7 @@ suffix:semicolon
 DECL|macro|A_int_err_unexpected_reselect
 mdefine_line|#define A_int_err_unexpected_reselect&t;0x00020000
 DECL|variable|A_int_err_unexpected_reselect_used
-r_int
-r_int
+id|u32
 id|A_int_err_unexpected_reselect_used
 (braket
 )braket
@@ -1985,8 +1944,7 @@ suffix:semicolon
 DECL|macro|A_int_msg_1
 mdefine_line|#define A_int_msg_1&t;0x01020000
 DECL|variable|A_int_msg_1_used
-r_int
-r_int
+id|u32
 id|A_int_msg_1_used
 (braket
 )braket
@@ -2001,8 +1959,7 @@ suffix:semicolon
 DECL|macro|A_int_msg_sdtr
 mdefine_line|#define A_int_msg_sdtr&t;0x01010000
 DECL|variable|A_int_msg_sdtr_used
-r_int
-r_int
+id|u32
 id|A_int_msg_sdtr_used
 (braket
 )braket
@@ -2015,8 +1972,7 @@ suffix:semicolon
 DECL|macro|A_int_msg_wdtr
 mdefine_line|#define A_int_msg_wdtr&t;0x01000000
 DECL|variable|A_int_msg_wdtr_used
-r_int
-r_int
+id|u32
 id|A_int_msg_wdtr_used
 (braket
 )braket
@@ -2029,8 +1985,7 @@ suffix:semicolon
 DECL|macro|A_int_norm_aborted
 mdefine_line|#define A_int_norm_aborted&t;0x02040000
 DECL|variable|A_int_norm_aborted_used
-r_int
-r_int
+id|u32
 id|A_int_norm_aborted_used
 (braket
 )braket
@@ -2043,8 +1998,7 @@ suffix:semicolon
 DECL|macro|A_int_norm_command_complete
 mdefine_line|#define A_int_norm_command_complete&t;0x02020000
 DECL|variable|A_int_norm_command_complete_used
-r_int
-r_int
+id|u32
 id|A_int_norm_command_complete_used
 (braket
 )braket
@@ -2055,8 +2009,7 @@ suffix:semicolon
 DECL|macro|A_int_norm_disconnected
 mdefine_line|#define A_int_norm_disconnected&t;0x02030000
 DECL|variable|A_int_norm_disconnected_used
-r_int
-r_int
+id|u32
 id|A_int_norm_disconnected_used
 (braket
 )braket
@@ -2067,8 +2020,7 @@ suffix:semicolon
 DECL|macro|A_int_norm_reselect_complete
 mdefine_line|#define A_int_norm_reselect_complete&t;0x02010000
 DECL|variable|A_int_norm_reselect_complete_used
-r_int
-r_int
+id|u32
 id|A_int_norm_reselect_complete_used
 (braket
 )braket
@@ -2079,8 +2031,7 @@ suffix:semicolon
 DECL|macro|A_int_norm_reset
 mdefine_line|#define A_int_norm_reset&t;0x02050000
 DECL|variable|A_int_norm_reset_used
-r_int
-r_int
+id|u32
 id|A_int_norm_reset_used
 (braket
 )braket
@@ -2091,8 +2042,7 @@ suffix:semicolon
 DECL|macro|A_int_norm_select_complete
 mdefine_line|#define A_int_norm_select_complete&t;0x02000000
 DECL|variable|A_int_norm_select_complete_used
-r_int
-r_int
+id|u32
 id|A_int_norm_select_complete_used
 (braket
 )braket
@@ -2103,8 +2053,7 @@ suffix:semicolon
 DECL|macro|A_int_test_1
 mdefine_line|#define A_int_test_1&t;0x04000000
 DECL|variable|A_int_test_1_used
-r_int
-r_int
+id|u32
 id|A_int_test_1_used
 (braket
 )braket
@@ -2117,8 +2066,7 @@ suffix:semicolon
 DECL|macro|A_int_test_2
 mdefine_line|#define A_int_test_2&t;0x04010000
 DECL|variable|A_int_test_2_used
-r_int
-r_int
+id|u32
 id|A_int_test_2_used
 (braket
 )braket
@@ -2131,8 +2079,7 @@ suffix:semicolon
 DECL|macro|A_int_test_3
 mdefine_line|#define A_int_test_3&t;0x04020000
 DECL|variable|A_int_test_3_used
-r_int
-r_int
+id|u32
 id|A_int_test_3_used
 (braket
 )braket
@@ -2143,8 +2090,7 @@ suffix:semicolon
 DECL|macro|A_issue_dsa_head
 mdefine_line|#define A_issue_dsa_head&t;0x00000000
 DECL|variable|A_issue_dsa_head_used
-r_int
-r_int
+id|u32
 id|A_issue_dsa_head_used
 (braket
 )braket
@@ -2159,8 +2105,7 @@ suffix:semicolon
 DECL|macro|A_msg_buf
 mdefine_line|#define A_msg_buf&t;0x00000000
 DECL|variable|A_msg_buf_used
-r_int
-r_int
+id|u32
 id|A_msg_buf_used
 (braket
 )braket
@@ -2183,8 +2128,7 @@ suffix:semicolon
 DECL|macro|A_reconnect_dsa_head
 mdefine_line|#define A_reconnect_dsa_head&t;0x00000000
 DECL|variable|A_reconnect_dsa_head_used
-r_int
-r_int
+id|u32
 id|A_reconnect_dsa_head_used
 (braket
 )braket
@@ -2203,8 +2147,7 @@ suffix:semicolon
 DECL|macro|A_reselected_identify
 mdefine_line|#define A_reselected_identify&t;0x00000000
 DECL|variable|A_reselected_identify_used
-r_int
-r_int
+id|u32
 id|A_reselected_identify_used
 (braket
 )braket
@@ -2219,8 +2162,7 @@ suffix:semicolon
 DECL|macro|A_reselected_tag
 mdefine_line|#define A_reselected_tag&t;0x00000000
 DECL|variable|A_reselected_tag_used
-r_int
-r_int
+id|u32
 id|A_reselected_tag_used
 (braket
 )braket
@@ -2233,8 +2175,7 @@ suffix:semicolon
 DECL|macro|A_test_dest
 mdefine_line|#define A_test_dest&t;0x00000000
 DECL|variable|A_test_dest_used
-r_int
-r_int
+id|u32
 id|A_test_dest_used
 (braket
 )braket
@@ -2247,8 +2188,7 @@ suffix:semicolon
 DECL|macro|A_test_src
 mdefine_line|#define A_test_src&t;0x00000000
 DECL|variable|A_test_src_used
-r_int
-r_int
+id|u32
 id|A_test_src_used
 (braket
 )braket
@@ -2307,8 +2247,7 @@ mdefine_line|#define Ent_test_2&t;0x000006e8
 DECL|macro|Ent_test_2_msgout
 mdefine_line|#define Ent_test_2_msgout&t;0x00000700
 DECL|variable|LABELPATCHES
-r_int
-r_int
+id|u32
 id|LABELPATCHES
 (braket
 )braket
@@ -2460,18 +2399,42 @@ l_int|0x000001ef
 comma
 )brace
 suffix:semicolon
+r_struct
+(brace
+DECL|member|offset
+id|u32
+id|offset
+suffix:semicolon
+DECL|member|address
+r_void
+op_star
+id|address
+suffix:semicolon
+DECL|variable|EXTERNAL_PATCHES
+)brace
+id|EXTERNAL_PATCHES
+(braket
+)braket
+op_assign
+(brace
+)brace
+suffix:semicolon
 DECL|variable|INSTRUCTIONS
-r_int
-r_int
+id|u32
 id|INSTRUCTIONS
 op_assign
-l_int|0x00000104
+l_int|260
 suffix:semicolon
 DECL|variable|PATCHES
-r_int
-r_int
+id|u32
 id|PATCHES
 op_assign
-l_int|0x00000048
+l_int|72
+suffix:semicolon
+DECL|variable|EXTERNAL_PATCHES_LEN
+id|u32
+id|EXTERNAL_PATCHES_LEN
+op_assign
+l_int|0
 suffix:semicolon
 eof

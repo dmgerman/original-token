@@ -1246,7 +1246,7 @@ r_return
 id|err
 )paren
 suffix:semicolon
-id|put_fs_byte
+id|put_user
 c_func
 (paren
 id|xd_info
@@ -1256,15 +1256,11 @@ id|dev
 dot
 id|heads
 comma
-(paren
-r_char
-op_star
-)paren
 op_amp
 id|geometry-&gt;heads
 )paren
 suffix:semicolon
-id|put_fs_byte
+id|put_user
 c_func
 (paren
 id|xd_info
@@ -1274,15 +1270,11 @@ id|dev
 dot
 id|sectors
 comma
-(paren
-r_char
-op_star
-)paren
 op_amp
 id|geometry-&gt;sectors
 )paren
 suffix:semicolon
-id|put_fs_word
+id|put_user
 c_func
 (paren
 id|xd_info
@@ -1292,15 +1284,11 @@ id|dev
 dot
 id|cylinders
 comma
-(paren
-r_int
-op_star
-)paren
 op_amp
 id|geometry-&gt;cylinders
 )paren
 suffix:semicolon
-id|put_fs_long
+id|put_user
 c_func
 (paren
 id|xd
@@ -1314,10 +1302,6 @@ id|inode-&gt;i_rdev
 dot
 id|start_sect
 comma
-(paren
-r_int
-op_star
-)paren
 op_amp
 id|geometry-&gt;start
 )paren
@@ -1425,7 +1409,7 @@ r_return
 id|err
 )paren
 suffix:semicolon
-id|put_fs_long
+id|put_user
 c_func
 (paren
 id|xd
@@ -2403,6 +2387,7 @@ l_int|0xFFFF0000
 op_ne
 (paren
 (paren
+(paren
 id|u_int
 )paren
 id|buffer
@@ -2411,6 +2396,7 @@ id|count
 )paren
 op_amp
 l_int|0xFFFF0000
+)paren
 )paren
 (brace
 macro_line|#ifdef DEBUG_OTHER

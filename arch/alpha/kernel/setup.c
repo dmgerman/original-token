@@ -44,6 +44,8 @@ DECL|variable|aux_device_present
 r_int
 r_char
 id|aux_device_present
+op_assign
+l_int|0xaa
 suffix:semicolon
 multiline_comment|/*&n; * This is setup by the secondary bootstrap loader.  Because&n; * the zero page is zeroed out as soon as the vm system is&n; * initialized, we need to copy things out into a more permanent&n; * place.&n; */
 DECL|macro|PARAM
@@ -65,7 +67,7 @@ l_int|0
 comma
 )brace
 suffix:semicolon
-multiline_comment|/*&n; * The format of &quot;screen_info&quot; is strange, and due to early&n; * i386-setup code. This is just enough to make the console&n; * code think we&squot;re on a EGA+ colour display.&n; */
+multiline_comment|/*&n; * The format of &quot;screen_info&quot; is strange, and due to early&n; * i386-setup code. This is just enough to make the console&n; * code think we&squot;re on a VGA color display.&n; */
 DECL|variable|screen_info
 r_struct
 id|screen_info
@@ -103,6 +105,9 @@ multiline_comment|/* ega_ax, ega_bx, ega_cx */
 l_int|25
 comma
 multiline_comment|/* orig-video-lines */
+l_int|1
+comma
+multiline_comment|/* orig-video-isVGA */
 l_int|16
 multiline_comment|/* orig-video-points */
 )brace
@@ -272,10 +277,6 @@ op_assign
 l_int|0x0802
 suffix:semicolon
 multiline_comment|/* sda2 */
-id|aux_device_present
-op_assign
-l_int|0xaa
-suffix:semicolon
 id|command_line
 (braket
 id|COMMAND_LINE_SIZE

@@ -359,7 +359,7 @@ id|ints
 suffix:semicolon
 r_extern
 r_void
-id|aha274x_setup
+id|aic7xxx_setup
 c_func
 (paren
 r_char
@@ -915,11 +915,11 @@ id|aha1542_setup
 )brace
 comma
 macro_line|#endif
-macro_line|#ifdef CONFIG_SCSI_AHA274X
+macro_line|#ifdef CONFIG_SCSI_AIC7XXX
 (brace
-l_string|&quot;aha274x=&quot;
+l_string|&quot;aic7xxx=&quot;
 comma
-id|aha274x_setup
+id|aic7xxx_setup
 )brace
 comma
 macro_line|#endif

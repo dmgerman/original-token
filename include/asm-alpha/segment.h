@@ -6,7 +6,7 @@ multiline_comment|/*&n; * Uh, these should become the main single-value transfer
 DECL|macro|put_user
 mdefine_line|#define put_user(x,ptr) __put_user((unsigned long)(x),(ptr),sizeof(*(ptr)))
 DECL|macro|get_user
-mdefine_line|#define get_user(ptr) __get_user((ptr),sizeof(*(ptr)))
+mdefine_line|#define get_user(ptr) ((__typeof__(*(ptr)))__get_user((ptr),sizeof(*(ptr))))
 multiline_comment|/*&n; * This is a silly but good way to make sure that&n; * the __put_user function is indeed always optimized,&n; * and that we use the correct sizes..&n; */
 r_extern
 r_int
@@ -116,6 +116,7 @@ r_int
 id|__get_user
 c_func
 (paren
+r_const
 r_void
 op_star
 id|y
