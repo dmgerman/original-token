@@ -1,4 +1,4 @@
-multiline_comment|/*  Generic MTRR (Memory Type Range Register) driver.&n;&n;    Copyright (C) 1997-1998  Richard Gooch&n;&n;    This library is free software; you can redistribute it and/or&n;    modify it under the terms of the GNU Library General Public&n;    License as published by the Free Software Foundation; either&n;    version 2 of the License, or (at your option) any later version.&n;&n;    This library is distributed in the hope that it will be useful,&n;    but WITHOUT ANY WARRANTY; without even the implied warranty of&n;    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU&n;    Library General Public License for more details.&n;&n;    You should have received a copy of the GNU Library General Public&n;    License along with this library; if not, write to the Free&n;    Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n;&n;    Richard Gooch may be reached by email at  rgooch@atnf.csiro.au&n;    The postal address is:&n;      Richard Gooch, c/o ATNF, P. O. Box 76, Epping, N.S.W., 2121, Australia.&n;&n;    Source: &quot;Pentium Pro Family Developer&squot;s Manual, Volume 3:&n;    Operating System Writer&squot;s Guide&quot; (Intel document number 242692),&n;    section 11.11.7&n;&n;    ChangeLog&n;&n;    Prehistory Martin Tischh&#xfffd;user &lt;martin@ikcbarka.fzk.de&gt;&n;&t;       Initial register-setting code (from proform-1.0).&n;    19971216   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;               Original version for /proc/mtrr interface, SMP-safe.&n;  v1.0&n;    19971217   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;               Bug fix for ioctls()&squot;s.&n;&t;       Added sample code in Documentation/mtrr.txt&n;  v1.1&n;    19971218   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;               Disallow overlapping regions.&n;    19971219   Jens Maurer &lt;jmaurer@menuett.rhein-main.de&gt;&n;               Register-setting fixups.&n;  v1.2&n;    19971222   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;               Fixups for kernel 2.1.75.&n;  v1.3&n;    19971229   David Wragg &lt;dpw@doc.ic.ac.uk&gt;&n;               Register-setting fixups and conformity with Intel conventions.&n;    19971229   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;               Cosmetic changes and wrote this ChangeLog ;-)&n;    19980106   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;               Fixups for kernel 2.1.78.&n;  v1.4&n;    19980119   David Wragg &lt;dpw@doc.ic.ac.uk&gt;&n;               Included passive-release enable code (elsewhere in PCI setup).&n;  v1.5&n;    19980131   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;               Replaced global kernel lock with private spinlock.&n;  v1.6&n;    19980201   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;               Added wait for other CPUs to complete changes.&n;  v1.7&n;    19980202   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;               Bug fix in definition of &lt;set_mtrr&gt; for UP.&n;  v1.8&n;    19980319   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;               Fixups for kernel 2.1.90.&n;    19980323   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;               Move SMP BIOS fixup before secondary CPUs call &lt;calibrate_delay&gt;&n;  v1.9&n;    19980325   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;               Fixed test for overlapping regions: confused by adjacent regions&n;    19980326   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;               Added wbinvd in &lt;set_mtrr_prepare&gt;.&n;    19980401   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;               Bug fix for non-SMP compilation.&n;    19980418   David Wragg &lt;dpw@doc.ic.ac.uk&gt;&n;               Fixed-MTRR synchronisation for SMP and use atomic operations&n;&t;       instead of spinlocks.&n;    19980418   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;&t;       Differentiate different MTRR register classes for BIOS fixup.&n;  v1.10&n;    19980419   David Wragg &lt;dpw@doc.ic.ac.uk&gt;&n;&t;       Bug fix in variable MTRR synchronisation.&n;  v1.11&n;    19980419   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;&t;       Fixups for kernel 2.1.97.&n;  v1.12&n;    19980421   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;&t;       Safer synchronisation across CPUs when changing MTRRs.&n;  v1.13&n;    19980423   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;&t;       Bugfix for SMP systems without MTRR support.&n;  v1.14&n;    19980427   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;&t;       Trap calls to &lt;mtrr_add&gt; and &lt;mtrr_del&gt; on non-MTRR machines.&n;  v1.15&n;    19980427   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;&t;       Use atomic bitops for setting SMP change mask.&n;  v1.16&n;    19980428   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;&t;       Removed spurious diagnostic message.&n;  v1.17&n;    19980429   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;&t;       Moved register-setting macros into this file.&n;&t;       Moved setup code from init/main.c to i386-specific areas.&n;  v1.18&n;    19980502   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;&t;       Moved MTRR detection outside conditionals in &lt;mtrr_init&gt;.&n;  v1.19&n;    19980502   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;&t;       Documentation improvement: mention Pentium II and AGP.&n;  v1.20&n;    19980521   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;&t;       Only manipulate interrupt enable flag on local CPU.&n;&t;       Allow enclosed uncachable regions.&n;  v1.21&n;    19980611   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;&t;       Always define &lt;main_lock&gt;.&n;  v1.22&n;*/
+multiline_comment|/*  Generic MTRR (Memory Type Range Register) driver.&n;&n;    Copyright (C) 1997-1998  Richard Gooch&n;&n;    This library is free software; you can redistribute it and/or&n;    modify it under the terms of the GNU Library General Public&n;    License as published by the Free Software Foundation; either&n;    version 2 of the License, or (at your option) any later version.&n;&n;    This library is distributed in the hope that it will be useful,&n;    but WITHOUT ANY WARRANTY; without even the implied warranty of&n;    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU&n;    Library General Public License for more details.&n;&n;    You should have received a copy of the GNU Library General Public&n;    License along with this library; if not, write to the Free&n;    Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n;&n;    Richard Gooch may be reached by email at  rgooch@atnf.csiro.au&n;    The postal address is:&n;      Richard Gooch, c/o ATNF, P. O. Box 76, Epping, N.S.W., 2121, Australia.&n;&n;    Source: &quot;Pentium Pro Family Developer&squot;s Manual, Volume 3:&n;    Operating System Writer&squot;s Guide&quot; (Intel document number 242692),&n;    section 11.11.7&n;&n;    ChangeLog&n;&n;    Prehistory Martin Tischh&#xfffd;user &lt;martin@ikcbarka.fzk.de&gt;&n;&t;       Initial register-setting code (from proform-1.0).&n;    19971216   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;               Original version for /proc/mtrr interface, SMP-safe.&n;  v1.0&n;    19971217   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;               Bug fix for ioctls()&squot;s.&n;&t;       Added sample code in Documentation/mtrr.txt&n;  v1.1&n;    19971218   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;               Disallow overlapping regions.&n;    19971219   Jens Maurer &lt;jmaurer@menuett.rhein-main.de&gt;&n;               Register-setting fixups.&n;  v1.2&n;    19971222   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;               Fixups for kernel 2.1.75.&n;  v1.3&n;    19971229   David Wragg &lt;dpw@doc.ic.ac.uk&gt;&n;               Register-setting fixups and conformity with Intel conventions.&n;    19971229   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;               Cosmetic changes and wrote this ChangeLog ;-)&n;    19980106   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;               Fixups for kernel 2.1.78.&n;  v1.4&n;    19980119   David Wragg &lt;dpw@doc.ic.ac.uk&gt;&n;               Included passive-release enable code (elsewhere in PCI setup).&n;  v1.5&n;    19980131   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;               Replaced global kernel lock with private spinlock.&n;  v1.6&n;    19980201   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;               Added wait for other CPUs to complete changes.&n;  v1.7&n;    19980202   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;               Bug fix in definition of &lt;set_mtrr&gt; for UP.&n;  v1.8&n;    19980319   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;               Fixups for kernel 2.1.90.&n;    19980323   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;               Move SMP BIOS fixup before secondary CPUs call &lt;calibrate_delay&gt;&n;  v1.9&n;    19980325   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;               Fixed test for overlapping regions: confused by adjacent regions&n;    19980326   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;               Added wbinvd in &lt;set_mtrr_prepare&gt;.&n;    19980401   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;               Bug fix for non-SMP compilation.&n;    19980418   David Wragg &lt;dpw@doc.ic.ac.uk&gt;&n;               Fixed-MTRR synchronisation for SMP and use atomic operations&n;&t;       instead of spinlocks.&n;    19980418   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;&t;       Differentiate different MTRR register classes for BIOS fixup.&n;  v1.10&n;    19980419   David Wragg &lt;dpw@doc.ic.ac.uk&gt;&n;&t;       Bug fix in variable MTRR synchronisation.&n;  v1.11&n;    19980419   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;&t;       Fixups for kernel 2.1.97.&n;  v1.12&n;    19980421   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;&t;       Safer synchronisation across CPUs when changing MTRRs.&n;  v1.13&n;    19980423   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;&t;       Bugfix for SMP systems without MTRR support.&n;  v1.14&n;    19980427   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;&t;       Trap calls to &lt;mtrr_add&gt; and &lt;mtrr_del&gt; on non-MTRR machines.&n;  v1.15&n;    19980427   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;&t;       Use atomic bitops for setting SMP change mask.&n;  v1.16&n;    19980428   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;&t;       Removed spurious diagnostic message.&n;  v1.17&n;    19980429   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;&t;       Moved register-setting macros into this file.&n;&t;       Moved setup code from init/main.c to i386-specific areas.&n;  v1.18&n;    19980502   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;&t;       Moved MTRR detection outside conditionals in &lt;mtrr_init&gt;.&n;  v1.19&n;    19980502   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;&t;       Documentation improvement: mention Pentium II and AGP.&n;  v1.20&n;    19980521   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;&t;       Only manipulate interrupt enable flag on local CPU.&n;&t;       Allow enclosed uncachable regions.&n;  v1.21&n;    19980611   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;&t;       Always define &lt;main_lock&gt;.&n;  v1.22&n;    19980901   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;&t;       Removed module support in order to tidy up code.&n;&t;       Added sanity check for &lt;mtrr_add&gt;/&lt;mtrr_del&gt; before &lt;mtrr_init&gt;.&n;&t;       Created addition queue for prior to SMP commence.&n;  v1.23&n;    19980910   Richard Gooch &lt;rgooch@atnf.csiro.au&gt;&n;&t;       Removed sanity checks and addition queue: Linus prefers an OOPS.&n;  v1.24&n;*/
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -30,7 +30,7 @@ macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/atomic.h&gt;
 DECL|macro|MTRR_VERSION
-mdefine_line|#define MTRR_VERSION            &quot;1.22 (19980611)&quot;
+mdefine_line|#define MTRR_VERSION            &quot;1.24 (19980910)&quot;
 DECL|macro|TRUE
 mdefine_line|#define TRUE  1
 DECL|macro|FALSE
@@ -2044,19 +2044,8 @@ id|TRUE
 suffix:semicolon
 )brace
 multiline_comment|/*  End Function set_mtrr_smp  */
-multiline_comment|/* A warning that is common to the module and non-module cases. */
 multiline_comment|/* Some BIOS&squot;s are fucked and don&squot;t set all MTRRs the same! */
-macro_line|#ifdef MODULE
-DECL|function|mtrr_state_warn
-r_static
-r_void
-id|mtrr_state_warn
-(paren
-r_int
-r_int
-id|mask
-)paren
-macro_line|#else
+DECL|function|__initfunc
 id|__initfunc
 c_func
 (paren
@@ -2069,7 +2058,6 @@ r_int
 id|mask
 )paren
 )paren
-macro_line|#endif
 (brace
 r_if
 c_cond
@@ -2122,138 +2110,6 @@ l_string|&quot;mtrr: probably your BIOS does not setup all CPUs&bslash;n&quot;
 suffix:semicolon
 )brace
 multiline_comment|/*  End Function mtrr_state_warn  */
-macro_line|#ifdef MODULE
-multiline_comment|/* As a module, copy the MTRR state using an IPI handler. */
-DECL|variable|smp_changes_mask
-r_static
-r_volatile
-r_int
-r_int
-id|smp_changes_mask
-op_assign
-l_int|0
-suffix:semicolon
-DECL|function|copy_mtrr_state_handler
-r_static
-r_void
-id|copy_mtrr_state_handler
-(paren
-r_struct
-id|set_mtrr_context
-op_star
-id|ctxt
-comma
-r_void
-op_star
-id|info
-)paren
-(brace
-r_int
-r_int
-id|mask
-comma
-id|count
-suffix:semicolon
-r_struct
-id|mtrr_state
-op_star
-id|smp_mtrr_state
-op_assign
-id|info
-suffix:semicolon
-id|mask
-op_assign
-id|set_mtrr_state
-(paren
-id|smp_mtrr_state
-comma
-id|ctxt
-)paren
-suffix:semicolon
-multiline_comment|/*  Use the atomic bitops to update the global mask  */
-r_for
-c_loop
-(paren
-id|count
-op_assign
-l_int|0
-suffix:semicolon
-id|count
-OL
-r_sizeof
-id|mask
-op_star
-l_int|8
-suffix:semicolon
-op_increment
-id|count
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|mask
-op_amp
-l_int|0x01
-)paren
-id|set_bit
-(paren
-id|count
-comma
-op_amp
-id|smp_changes_mask
-)paren
-suffix:semicolon
-id|mask
-op_rshift_assign
-l_int|1
-suffix:semicolon
-)brace
-)brace
-multiline_comment|/*  End Function copy_mtrr_state_handler  */
-multiline_comment|/* Copies the entire MTRR state of this CPU to all the others. */
-DECL|function|copy_mtrr_state
-r_static
-r_void
-id|copy_mtrr_state
-(paren
-r_void
-)paren
-(brace
-r_struct
-id|mtrr_state
-id|ms
-suffix:semicolon
-id|get_mtrr_state
-(paren
-op_amp
-id|ms
-)paren
-suffix:semicolon
-id|do_all_cpus
-(paren
-id|copy_mtrr_state_handler
-comma
-op_amp
-id|ms
-comma
-id|FALSE
-)paren
-suffix:semicolon
-id|finalize_mtrr_state
-(paren
-op_amp
-id|ms
-)paren
-suffix:semicolon
-id|mtrr_state_warn
-(paren
-id|smp_changes_mask
-)paren
-suffix:semicolon
-)brace
-multiline_comment|/*  End Function copy_mtrr_state  */
-macro_line|#endif /* MODULE */
 macro_line|#endif  /*  __SMP__  */
 DECL|function|attrib_to_str
 r_static
@@ -4641,7 +4497,7 @@ c_func
 id|mtrr_del
 )paren
 suffix:semicolon
-macro_line|#if defined(__SMP__) &amp;&amp; !defined(MODULE)
+macro_line|#ifdef __SMP__
 DECL|variable|__initdata
 r_static
 r_volatile
@@ -4802,15 +4658,8 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/*  End Function mtrr_init_secondary_cpu  */
-macro_line|#endif
-macro_line|#ifdef MODULE
-DECL|function|init_module
-r_int
-id|init_module
-(paren
-r_void
-)paren
-macro_line|#else
+macro_line|#endif  /*  __SMP__  */
+DECL|function|__initfunc
 id|__initfunc
 c_func
 (paren
@@ -4821,7 +4670,6 @@ c_func
 r_void
 )paren
 )paren
-macro_line|#endif
 (brace
 r_if
 c_cond
@@ -4836,7 +4684,7 @@ id|X86_FEATURE_MTRR
 r_return
 l_int|0
 suffix:semicolon
-macro_line|#  if !defined(__SMP__) || defined(MODULE) 
+macro_line|#  ifndef __SMP__
 id|printk
 c_func
 (paren
@@ -4847,12 +4695,6 @@ id|MTRR_VERSION
 suffix:semicolon
 macro_line|#  endif
 macro_line|#  ifdef __SMP__
-macro_line|#    ifdef MODULE
-id|copy_mtrr_state
-(paren
-)paren
-suffix:semicolon
-macro_line|#    else /* MODULE */
 id|finalize_mtrr_state
 (paren
 op_amp
@@ -4864,7 +4706,6 @@ id|mtrr_state_warn
 id|smp_changes_mask
 )paren
 suffix:semicolon
-macro_line|#    endif /* MODULE */
 macro_line|#  endif /* __SMP__ */
 macro_line|#  ifdef CONFIG_PROC_FS
 id|proc_register
@@ -4885,42 +4726,5 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#ifdef&t;MODULE
-DECL|function|cleanup_module
-r_void
-id|cleanup_module
-(paren
-r_void
-)paren
-(brace
-r_if
-c_cond
-(paren
-op_logical_neg
-(paren
-id|boot_cpu_data.x86_capability
-op_amp
-id|X86_FEATURE_MTRR
-)paren
-)paren
-r_return
-suffix:semicolon
-macro_line|#  ifdef CONFIG_PROC_FS
-id|proc_unregister
-(paren
-op_amp
-id|proc_root
-comma
-id|PROC_MTRR
-)paren
-suffix:semicolon
-macro_line|#  endif
-macro_line|#    ifdef __SMP__
-id|mtrr_hook
-op_assign
-l_int|NULL
-suffix:semicolon
-macro_line|#    endif
-)brace
-macro_line|#endif
+multiline_comment|/*  End Function mtrr_init  */
 eof

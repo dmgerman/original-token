@@ -1324,6 +1324,8 @@ id|this_char
 comma
 l_string|&quot;iocharset&quot;
 )paren
+op_logical_and
+id|value
 )paren
 (brace
 id|popt-&gt;iocharset
