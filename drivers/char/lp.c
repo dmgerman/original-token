@@ -609,6 +609,11 @@ c_func
 (paren
 r_int
 id|irq
+comma
+r_struct
+id|pt_regs
+op_star
+id|regs
 )paren
 (brace
 r_struct

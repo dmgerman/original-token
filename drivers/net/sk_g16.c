@@ -434,7 +434,12 @@ id|SK_interrupt
 c_func
 (paren
 r_int
-id|reg_ptr
+id|irq
+comma
+r_struct
+id|pt_regs
+op_star
+id|regs
 )paren
 suffix:semicolon
 r_static
@@ -2897,7 +2902,7 @@ suffix:semicolon
 )brace
 multiline_comment|/* End of SK_send_packet */
 "&f;"
-multiline_comment|/*-&n; * Function       : SK_interrupt&n; * Author         : Patrick J.D. Weichmann&n; * Date Created   : 94/05/27&n; *&n; * Description    : SK_G16 interrupt handler which checks for LANCE&n; *                  Errors, handles transmit and receive interrupts&n; *&n; * Parameters     : I : int reg_ptr -&n; * Return Value   : None&n; * Errors         : None&n; * Globals        : None&n; * Side Effects   : None&n; * Update History :&n; *     YY/MM/DD  uid  Description&n;-*/
+multiline_comment|/*-&n; * Function       : SK_interrupt&n; * Author         : Patrick J.D. Weichmann&n; * Date Created   : 94/05/27&n; *&n; * Description    : SK_G16 interrupt handler which checks for LANCE&n; *                  Errors, handles transmit and receive interrupts&n; *&n; * Parameters     : I : int irq, struct pt_regs * regs -&n; * Return Value   : None&n; * Errors         : None&n; * Globals        : None&n; * Side Effects   : None&n; * Update History :&n; *     YY/MM/DD  uid  Description&n;-*/
 DECL|function|SK_interrupt
 r_static
 r_void
@@ -2905,28 +2910,14 @@ id|SK_interrupt
 c_func
 (paren
 r_int
-id|reg_ptr
-)paren
-(brace
-r_int
 id|irq
-op_assign
-op_minus
-(paren
-(paren
-(paren
+comma
 r_struct
 id|pt_regs
 op_star
+id|regs
 )paren
-id|reg_ptr
-)paren
-op_member_access_from_pointer
-id|orig_eax
-op_plus
-l_int|2
-)paren
-suffix:semicolon
+(brace
 r_int
 id|csr0
 suffix:semicolon

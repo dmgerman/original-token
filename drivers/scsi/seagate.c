@@ -421,6 +421,10 @@ id|seagate_reconnect_intr
 c_func
 (paren
 r_int
+comma
+r_struct
+id|pt_regs
+op_star
 )paren
 suffix:semicolon
 macro_line|#ifdef FAST
@@ -1136,9 +1140,15 @@ DECL|function|seagate_reconnect_intr
 r_static
 r_void
 id|seagate_reconnect_intr
+c_func
 (paren
 r_int
-id|unused
+id|irq
+comma
+r_struct
+id|pt_regs
+op_star
+id|regs
 )paren
 (brace
 r_int

@@ -272,7 +272,7 @@ r_int
 id|page
 comma
 r_int
-id|error_code
+id|write_access
 )paren
 suffix:semicolon
 DECL|member|wppage
@@ -338,38 +338,10 @@ suffix:semicolon
 )brace
 suffix:semicolon
 r_extern
-r_int
-r_int
-id|__bad_page
-c_func
-(paren
-r_void
-)paren
+id|mem_map_t
+op_star
+id|mem_map
 suffix:semicolon
-r_extern
-r_int
-r_int
-id|__bad_pagetable
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_extern
-r_int
-r_int
-id|__zero_page
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-DECL|macro|BAD_PAGETABLE
-mdefine_line|#define BAD_PAGETABLE __bad_pagetable()
-DECL|macro|BAD_PAGE
-mdefine_line|#define BAD_PAGE __bad_page()
-DECL|macro|ZERO_PAGE
-mdefine_line|#define ZERO_PAGE __zero_page()
 multiline_comment|/* planning stage.. */
 DECL|macro|P_DIRTY
 mdefine_line|#define P_DIRTY&t;&t;0x0001
@@ -722,8 +694,7 @@ r_int
 id|address
 comma
 r_int
-r_int
-id|error_code
+id|write_access
 )paren
 suffix:semicolon
 r_extern
@@ -741,8 +712,7 @@ r_int
 id|address
 comma
 r_int
-r_int
-id|error_code
+id|write_access
 )paren
 suffix:semicolon
 r_extern
@@ -765,10 +735,6 @@ r_void
 id|mem_init
 c_func
 (paren
-r_int
-r_int
-id|low_start_mem
-comma
 r_int
 r_int
 id|start_mem
@@ -1004,42 +970,6 @@ r_int
 r_int
 id|high_memory
 suffix:semicolon
-DECL|macro|MAP_NR
-mdefine_line|#define MAP_NR(addr) ((addr) &gt;&gt; PAGE_SHIFT)
-DECL|macro|MAP_PAGE_RESERVED
-mdefine_line|#define MAP_PAGE_RESERVED (1&lt;&lt;15)
-r_extern
-r_int
-r_int
-op_star
-id|mem_map
-suffix:semicolon
-DECL|macro|PAGE_PRESENT
-mdefine_line|#define PAGE_PRESENT&t;0x001
-DECL|macro|PAGE_RW
-mdefine_line|#define PAGE_RW&t;&t;0x002
-DECL|macro|PAGE_USER
-mdefine_line|#define PAGE_USER&t;0x004
-DECL|macro|PAGE_PWT
-mdefine_line|#define PAGE_PWT&t;0x008&t;/* 486 only - not used currently */
-DECL|macro|PAGE_PCD
-mdefine_line|#define PAGE_PCD&t;0x010&t;/* 486 only - not used currently */
-DECL|macro|PAGE_ACCESSED
-mdefine_line|#define PAGE_ACCESSED&t;0x020
-DECL|macro|PAGE_DIRTY
-mdefine_line|#define PAGE_DIRTY&t;0x040
-DECL|macro|PAGE_COW
-mdefine_line|#define PAGE_COW&t;0x200&t;/* implemented in software (one of the AVL bits) */
-DECL|macro|PAGE_PRIVATE
-mdefine_line|#define PAGE_PRIVATE&t;(PAGE_PRESENT | PAGE_RW | PAGE_USER | PAGE_ACCESSED | PAGE_COW)
-DECL|macro|PAGE_SHARED
-mdefine_line|#define PAGE_SHARED&t;(PAGE_PRESENT | PAGE_RW | PAGE_USER | PAGE_ACCESSED)
-DECL|macro|PAGE_COPY
-mdefine_line|#define PAGE_COPY&t;(PAGE_PRESENT | PAGE_USER | PAGE_ACCESSED | PAGE_COW)
-DECL|macro|PAGE_READONLY
-mdefine_line|#define PAGE_READONLY&t;(PAGE_PRESENT | PAGE_USER | PAGE_ACCESSED)
-DECL|macro|PAGE_TABLE
-mdefine_line|#define PAGE_TABLE&t;(PAGE_PRESENT | PAGE_RW | PAGE_USER | PAGE_ACCESSED)
 DECL|macro|GFP_BUFFER
 mdefine_line|#define GFP_BUFFER&t;0x00
 DECL|macro|GFP_ATOMIC
@@ -1123,9 +1053,11 @@ id|addr
 r_return
 id|swap_cache
 (braket
+id|MAP_NR
+c_func
+(paren
 id|addr
-op_rshift
-id|PAGE_SHIFT
+)paren
 )braket
 suffix:semicolon
 )brace
@@ -1160,10 +1092,10 @@ c_func
 (paren
 id|swap_cache
 op_plus
+id|MAP_NR
+c_func
 (paren
 id|addr
-op_rshift
-id|PAGE_SHIFT
 )paren
 comma
 l_int|NULL
@@ -1215,10 +1147,10 @@ c_func
 (paren
 id|swap_cache
 op_plus
+id|MAP_NR
+c_func
 (paren
 id|addr
-op_rshift
-id|PAGE_SHIFT
 )paren
 comma
 l_int|NULL

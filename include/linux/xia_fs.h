@@ -189,6 +189,7 @@ l_int|1
 suffix:semicolon
 )brace
 suffix:semicolon
+macro_line|#ifdef __KERNEL__
 r_extern
 r_int
 id|xiafs_lookup
@@ -647,5 +648,6 @@ r_struct
 id|inode_operations
 id|xiafs_symlink_inode_operations
 suffix:semicolon
+macro_line|#endif /* __KERNEL__ */
 macro_line|#endif  /* _XIA_FS_H */
 eof

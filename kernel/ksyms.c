@@ -53,6 +53,17 @@ id|flag
 )paren
 suffix:semicolon
 r_extern
+r_struct
+id|file_operations
+op_star
+id|get_blkfops
+c_func
+(paren
+r_int
+r_int
+)paren
+suffix:semicolon
+r_extern
 r_void
 op_star
 id|sys_call_table
@@ -559,6 +570,12 @@ id|X
 c_func
 (paren
 id|sync_dev
+)paren
+comma
+id|X
+c_func
+(paren
+id|get_blkfops
 )paren
 comma
 multiline_comment|/* Module creation of serial units */

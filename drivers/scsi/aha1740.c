@@ -559,7 +559,12 @@ id|aha1740_intr_handle
 c_func
 (paren
 r_int
-id|foo
+id|irq
+comma
+r_struct
+id|pt_regs
+op_star
+id|regs
 )paren
 (brace
 r_void

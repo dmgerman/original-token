@@ -1,4 +1,4 @@
-multiline_comment|/* fdomain.c -- Future Domain TMC-16x0 SCSI driver&n; * Created: Sun May  3 18:53:19 1992 by faith@cs.unc.edu&n; * Revised: Wed Dec  7 09:36:57 1994 by faith@cs.unc.edu&n; * Author: Rickard E. Faith, faith@cs.unc.edu&n; * Copyright 1992, 1993, 1994 Rickard E. Faith&n; *&n; * $Id: fdomain.c,v 5.22 1994/12/07 15:15:46 root Exp $&n;&n; * This program is free software; you can redistribute it and/or modify it&n; * under the terms of the GNU General Public License as published by the&n; * Free Software Foundation; either version 2, or (at your option) any&n; * later version.&n;&n; * This program is distributed in the hope that it will be useful, but&n; * WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU&n; * General Public License for more details.&n;&n; * You should have received a copy of the GNU General Public License along&n; * with this program; if not, write to the Free Software Foundation, Inc.,&n; * 675 Mass Ave, Cambridge, MA 02139, USA.&n;&n; **************************************************************************&n; &n; DESCRIPTION:&n;&n; This is the Linux low-level SCSI driver for Future Domain TMC-1660/1680&n; TMC-1650/1670, and TMC-3260 SCSI host adapters.  The 1650 and 1670 have a&n; 25-pin external connector, whereas the 1660 and 1680 have a SCSI-2 50-pin&n; high-density external connector.  The 1670 and 1680 have floppy disk&n; controllers built in.  The TMC-3260 is a PCI bus card.&n;&n; Future Domain&squot;s older boards are based on the TMC-1800 chip, and this&n; driver was originally written for a TMC-1680 board with the TMC-1800 chip.&n; More recently, boards are being produced with the TMC-18C50 and TMC-18C30&n; chips.  The latest and greatest board may not work with this driver.  If&n; you have to patch this driver so that it will recognize your board&squot;s BIOS&n; signature, then the driver may fail to function after the board is&n; detected.&n;&n; The following BIOS versions are supported: 2.0, 3.0, 3.2, 3.4, and 3.5.&n; The following chips are supported: TMC-1800, TMC-18C50, TMC-18C30.&n; Reports suggest that the driver will also work with the 36C70 chip and&n; with the Quantum ISA-200S SCSI adapter.&n;&n; Please note that the drive ordering that Future Domain implemented in BIOS&n; versions 3.4 and 3.5 is the opposite of the order (currently) used by the&n; rest of the SCSI industry.  If you have BIOS version 3.4 or 3.5, and have&n; more then one drive, then the drive ordering will be the reverse of that&n; which you see under DOS.  For example, under DOS SCSI ID 0 will be D: and&n; SCSI ID 1 will be C: (the boot device).  Under Linux, SCSI ID 0 will be&n; /dev/sda and SCSI ID 1 will be /dev/sdb.  The Linux ordering is consistent&n; with that provided by all the other SCSI drivers for Linux.  If you want&n; this changed, send me patches that are protected by #ifdefs.&n;&n; If you have a TMC-8xx or TMC-9xx board, then this is not the driver for&n; your board.  Please refer to the Seagate driver for more information and&n; possible support.&n;&n; &n;&n; REFERENCES USED:&n;&n; &quot;TMC-1800 SCSI Chip Specification (FDC-1800T)&quot;, Future Domain Corporation,&n; 1990.&n;&n; &quot;Technical Reference Manual: 18C50 SCSI Host Adapter Chip&quot;, Future Domain&n; Corporation, January 1992.&n;&n; &quot;LXT SCSI Products: Specifications and OEM Technical Manual (Revision&n; B/September 1991)&quot;, Maxtor Corporation, 1991.&n;&n; &quot;7213S product Manual (Revision P3)&quot;, Maxtor Corporation, 1992.&n;&n; &quot;Draft Proposed American National Standard: Small Computer System&n; Interface - 2 (SCSI-2)&quot;, Global Engineering Documents. (X3T9.2/86-109,&n; revision 10h, October 17, 1991)&n;&n; Private communications, Drew Eckhardt (drew@cs.colorado.edu) and Eric&n; Youngdale (ericy@cais.com), 1992.&n;&n; Private communication, Tuong Le (Future Domain Engineering department),&n; 1994. (Disk geometry computations for Future Domain BIOS version 3.4, and&n; TMC-18C30 detection.)&n;&n; Hogan, Thom. The Programmer&squot;s PC Sourcebook. Microsoft Press, 1988. Page&n; 60 (2.39: Disk Partition Table Layout).&n;&n; &quot;18C30 Technical Reference Manual&quot;, Future Domain Corporation, 1993, page&n; 6-1.&n;&n;&n; &n; NOTES ON REFERENCES:&n;&n; The Maxtor manuals were free.  Maxtor telephone technical support is&n; great!&n;&n; The Future Domain manuals were $25 and $35.  They document the chip, not&n; the TMC-16x0 boards, so some information I had to guess at.  In 1992,&n; Future Domain sold DOS BIOS source for $250 and the UN*X driver source was&n; $750, but these required a non-disclosure agreement, so even if I could&n; have afforded them, they would *not* have been useful for writing this&n; publically distributable driver.  Future Domain technical support has&n; provided some information on the phone and have sent a few useful FAXs.&n; They have been much more helpful since they started to recognize that the&n; word &quot;Linux&quot; refers to an operating system :-).&n;&n; &n;&n; ALPHA TESTERS:&n;&n; There are many other alpha testers that come and go as the driver&n; develops.  The people listed here were most helpful in times of greatest&n; need (mostly early on -- I&squot;ve probably left out a few worthy people in&n; more recent times):&n;&n; Todd Carrico (todd@wutc.wustl.edu), Dan Poirier (poirier@cs.unc.edu ), Ken&n; Corey (kenc@sol.acs.unt.edu), C. de Bruin (bruin@bruin@sterbbs.nl), Sakari&n; Aaltonen (sakaria@vipunen.hit.fi), John Rice (rice@xanth.cs.odu.edu), Brad&n; Yearwood (brad@optilink.com), and Ray Toy (toy@soho.crd.ge.com).&n;&n; Special thanks to Tien-Wan Yang (twyang@cs.uh.edu), who graciously lent me&n; his 18C50-based card for debugging.  He is the sole reason that this&n; driver works with the 18C50 chip.&n;&n; Thanks to Dave Newman (dnewman@crl.com) for providing initial patches for&n; the version 3.4 BIOS.&n;&n; Thanks to James T. McKinley (mckinley@msupa.pa.msu.edu) for providing&n; patches that support the TMC-3260, a PCI bus card with the 36C70 chip.&n; The 36C70 chip appears to be &quot;completely compatible&quot; with the 18C30 chip.&n;&n; Thanks to Eric Kasten (tigger@petroglyph.cl.msu.edu) for providing the&n; patch for the version 3.5 BIOS.&n;&n; Thanks for Stephen Henson (shenson@nyx10.cs.du.edu) for providing the&n; patch for the Quantum ISA-200S SCSI adapter.&n;&n; All of the alpha testers deserve much thanks.&n;&n;&n;&n; NOTES ON USER DEFINABLE OPTIONS:&n;&n; DEBUG: This turns on the printing of various debug information.&n;&n; ENABLE_PARITY: This turns on SCSI parity checking.  With the current&n; driver, all attached devices must support SCSI parity.  If none of your&n; devices support parity, then you can probably get the driver to work by&n; turning this option off.  I have no way of testing this, however.&n;&n; FIFO_COUNT: The host adapter has an 8K cache (host adapters based on the&n; 18C30 chip have a 2k cache).  When this many 512 byte blocks are filled by&n; the SCSI device, an interrupt will be raised.  Therefore, this could be as&n; low as 0, or as high as 16.  Note, however, that values which are too high&n; or too low seem to prevent any interrupts from occurring, and thereby lock&n; up the machine.  I have found that 2 is a good number, but throughput may&n; be increased by changing this value to values which are close to 2.&n; Please let me know if you try any different values.&n;&n; DO_DETECT: This activates some old scan code which was needed before the&n; high level drivers got fixed.  If you are having trouble with the driver,&n; turning this on should not hurt, and might help.  Please let me know if&n; this is the case, since this code will be removed from future drivers.&n;&n; RESELECTION: This is no longer an option, since I gave up trying to&n; implement it in version 4.x of this driver.  It did not improve&n; performance at all and made the driver unstable (because I never found one&n; of the two race conditions which were introduced by the multiple&n; outstanding command code).  The instability seems a very high price to pay&n; just so that you don&squot;t have to wait for the tape to rewind.  If you want&n; this feature implemented, send me patches.  I&squot;ll be happy to send a copy&n; of my (broken) driver to anyone who would like to see a copy.&n;&n; **************************************************************************/
+multiline_comment|/* fdomain.c -- Future Domain TMC-16x0 SCSI driver&n; * Created: Sun May  3 18:53:19 1992 by faith@cs.unc.edu&n; * Revised: Sat Jan 14 21:39:15 1995 by faith@cs.unc.edu&n; * Author: Rickard E. Faith, faith@cs.unc.edu&n; * Copyright 1992, 1993, 1994, 1995 Rickard E. Faith&n; *&n; * $Id: fdomain.c,v 5.26 1995/01/15 02:39:19 root Exp $&n;&n; * This program is free software; you can redistribute it and/or modify it&n; * under the terms of the GNU General Public License as published by the&n; * Free Software Foundation; either version 2, or (at your option) any&n; * later version.&n;&n; * This program is distributed in the hope that it will be useful, but&n; * WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU&n; * General Public License for more details.&n;&n; * You should have received a copy of the GNU General Public License along&n; * with this program; if not, write to the Free Software Foundation, Inc.,&n; * 675 Mass Ave, Cambridge, MA 02139, USA.&n;&n; **************************************************************************&n; &n; DESCRIPTION:&n;&n; This is the Linux low-level SCSI driver for Future Domain TMC-1660/1680&n; TMC-1650/1670, and TMC-3260 SCSI host adapters.  The 1650 and 1670 have a&n; 25-pin external connector, whereas the 1660 and 1680 have a SCSI-2 50-pin&n; high-density external connector.  The 1670 and 1680 have floppy disk&n; controllers built in.  The TMC-3260 is a PCI bus card.&n;&n; Future Domain&squot;s older boards are based on the TMC-1800 chip, and this&n; driver was originally written for a TMC-1680 board with the TMC-1800 chip.&n; More recently, boards are being produced with the TMC-18C50 and TMC-18C30&n; chips.  The latest and greatest board may not work with this driver.  If&n; you have to patch this driver so that it will recognize your board&squot;s BIOS&n; signature, then the driver may fail to function after the board is&n; detected.&n;&n; The following BIOS versions are supported: 2.0, 3.0, 3.2, 3.4, and 3.5.&n; The following chips are supported: TMC-1800, TMC-18C50, TMC-18C30.&n; Reports suggest that the driver will also work with the 36C70 chip and&n; with the Quantum ISA-200S SCSI adapter.&n;&n; Please note that the drive ordering that Future Domain implemented in BIOS&n; versions 3.4 and 3.5 is the opposite of the order (currently) used by the&n; rest of the SCSI industry.  If you have BIOS version 3.4 or 3.5, and have&n; more then one drive, then the drive ordering will be the reverse of that&n; which you see under DOS.  For example, under DOS SCSI ID 0 will be D: and&n; SCSI ID 1 will be C: (the boot device).  Under Linux, SCSI ID 0 will be&n; /dev/sda and SCSI ID 1 will be /dev/sdb.  The Linux ordering is consistent&n; with that provided by all the other SCSI drivers for Linux.  If you want&n; this changed, send me patches that are protected by #ifdefs.&n;&n; If you have a TMC-8xx or TMC-9xx board, then this is not the driver for&n; your board.  Please refer to the Seagate driver for more information and&n; possible support.&n;&n; &n;&n; REFERENCES USED:&n;&n; &quot;TMC-1800 SCSI Chip Specification (FDC-1800T)&quot;, Future Domain Corporation,&n; 1990.&n;&n; &quot;Technical Reference Manual: 18C50 SCSI Host Adapter Chip&quot;, Future Domain&n; Corporation, January 1992.&n;&n; &quot;LXT SCSI Products: Specifications and OEM Technical Manual (Revision&n; B/September 1991)&quot;, Maxtor Corporation, 1991.&n;&n; &quot;7213S product Manual (Revision P3)&quot;, Maxtor Corporation, 1992.&n;&n; &quot;Draft Proposed American National Standard: Small Computer System&n; Interface - 2 (SCSI-2)&quot;, Global Engineering Documents. (X3T9.2/86-109,&n; revision 10h, October 17, 1991)&n;&n; Private communications, Drew Eckhardt (drew@cs.colorado.edu) and Eric&n; Youngdale (ericy@cais.com), 1992.&n;&n; Private communication, Tuong Le (Future Domain Engineering department),&n; 1994. (Disk geometry computations for Future Domain BIOS version 3.4, and&n; TMC-18C30 detection.)&n;&n; Hogan, Thom. The Programmer&squot;s PC Sourcebook. Microsoft Press, 1988. Page&n; 60 (2.39: Disk Partition Table Layout).&n;&n; &quot;18C30 Technical Reference Manual&quot;, Future Domain Corporation, 1993, page&n; 6-1.&n;&n;&n; &n; NOTES ON REFERENCES:&n;&n; The Maxtor manuals were free.  Maxtor telephone technical support is&n; great!&n;&n; The Future Domain manuals were $25 and $35.  They document the chip, not&n; the TMC-16x0 boards, so some information I had to guess at.  In 1992,&n; Future Domain sold DOS BIOS source for $250 and the UN*X driver source was&n; $750, but these required a non-disclosure agreement, so even if I could&n; have afforded them, they would *not* have been useful for writing this&n; publically distributable driver.  Future Domain technical support has&n; provided some information on the phone and have sent a few useful FAXs.&n; They have been much more helpful since they started to recognize that the&n; word &quot;Linux&quot; refers to an operating system :-).&n;&n; &n;&n; ALPHA TESTERS:&n;&n; There are many other alpha testers that come and go as the driver&n; develops.  The people listed here were most helpful in times of greatest&n; need (mostly early on -- I&squot;ve probably left out a few worthy people in&n; more recent times):&n;&n; Todd Carrico (todd@wutc.wustl.edu), Dan Poirier (poirier@cs.unc.edu ), Ken&n; Corey (kenc@sol.acs.unt.edu), C. de Bruin (bruin@bruin@sterbbs.nl), Sakari&n; Aaltonen (sakaria@vipunen.hit.fi), John Rice (rice@xanth.cs.odu.edu), Brad&n; Yearwood (brad@optilink.com), and Ray Toy (toy@soho.crd.ge.com).&n;&n; Special thanks to Tien-Wan Yang (twyang@cs.uh.edu), who graciously lent me&n; his 18C50-based card for debugging.  He is the sole reason that this&n; driver works with the 18C50 chip.&n;&n; Thanks to Dave Newman (dnewman@crl.com) for providing initial patches for&n; the version 3.4 BIOS.&n;&n; Thanks to James T. McKinley (mckinley@msupa.pa.msu.edu) for providing&n; patches that support the TMC-3260, a PCI bus card with the 36C70 chip.&n; The 36C70 chip appears to be &quot;completely compatible&quot; with the 18C30 chip.&n;&n; Thanks to Eric Kasten (tigger@petroglyph.cl.msu.edu) for providing the&n; patch for the version 3.5 BIOS.&n;&n; Thanks for Stephen Henson (shenson@nyx10.cs.du.edu) for providing the&n; patch for the Quantum ISA-200S SCSI adapter.&n; &n; Thanks to Adam Bowen for the signature to the 1610M/MER/MEX scsi cards,&n; and to Martin Andrews (andrewm@ccfadm.eeg.ccf.org) for the signature to&n; some random TMC-1680 repackaged by IBM.&n;&n; All of the alpha testers deserve much thanks.&n;&n;&n;&n; NOTES ON USER DEFINABLE OPTIONS:&n;&n; DEBUG: This turns on the printing of various debug information.&n;&n; ENABLE_PARITY: This turns on SCSI parity checking.  With the current&n; driver, all attached devices must support SCSI parity.  If none of your&n; devices support parity, then you can probably get the driver to work by&n; turning this option off.  I have no way of testing this, however.&n;&n; FIFO_COUNT: The host adapter has an 8K cache (host adapters based on the&n; 18C30 chip have a 2k cache).  When this many 512 byte blocks are filled by&n; the SCSI device, an interrupt will be raised.  Therefore, this could be as&n; low as 0, or as high as 16.  Note, however, that values which are too high&n; or too low seem to prevent any interrupts from occurring, and thereby lock&n; up the machine.  I have found that 2 is a good number, but throughput may&n; be increased by changing this value to values which are close to 2.&n; Please let me know if you try any different values.&n;&n; DO_DETECT: This activates some old scan code which was needed before the&n; high level drivers got fixed.  If you are having trouble with the driver,&n; turning this on should not hurt, and might help.  Please let me know if&n; this is the case, since this code will be removed from future drivers.&n;&n; RESELECTION: This is no longer an option, since I gave up trying to&n; implement it in version 4.x of this driver.  It did not improve&n; performance at all and made the driver unstable (because I never found one&n; of the two race conditions which were introduced by the multiple&n; outstanding command code).  The instability seems a very high price to pay&n; just so that you don&squot;t have to wait for the tape to rewind.  If you want&n; this feature implemented, send me patches.  I&squot;ll be happy to send a copy&n; of my (broken) driver to anyone who would like to see a copy.&n;&n; **************************************************************************/
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &quot;../block/blk.h&quot;
@@ -10,7 +10,7 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 DECL|macro|VERSION
-mdefine_line|#define VERSION          &quot;$Revision: 5.22 $&quot;
+mdefine_line|#define VERSION          &quot;$Revision: 5.26 $&quot;
 multiline_comment|/* START OF USER DEFINABLE OPTIONS */
 DECL|macro|DEBUG
 mdefine_line|#define DEBUG            1&t;/* Enable debugging output */
@@ -427,7 +427,12 @@ id|fdomain_16x0_intr
 c_func
 (paren
 r_int
-id|unused
+id|irq
+comma
+r_struct
+id|pt_regs
+op_star
+id|regs
 )paren
 suffix:semicolon
 DECL|variable|addresses
@@ -470,6 +475,12 @@ op_star
 l_int|0xd0000
 comma
 multiline_comment|/* Extra addresses for PCI boards */
+(paren
+r_void
+op_star
+)paren
+l_int|0xe0000
+comma
 )brace
 suffix:semicolon
 DECL|macro|ADDRESS_COUNT
@@ -631,6 +642,21 @@ l_int|0
 )brace
 comma
 (brace
+l_string|&quot;IBM F1 P2 BIOS v1.0104/29/93&quot;
+comma
+l_int|5
+comma
+l_int|28
+comma
+l_int|3
+comma
+op_minus
+l_int|1
+comma
+l_int|0
+)brace
+comma
+(brace
 l_string|&quot;Future Domain Corp. V1.0008/18/93&quot;
 comma
 l_int|5
@@ -640,20 +666,6 @@ comma
 l_int|3
 comma
 l_int|4
-comma
-l_int|0
-)brace
-comma
-(brace
-l_string|&quot;FUTURE DOMAIN CORP.  V3.5008/18/93&quot;
-comma
-l_int|5
-comma
-l_int|34
-comma
-l_int|3
-comma
-l_int|5
 comma
 l_int|0
 )brace
@@ -673,6 +685,34 @@ l_int|1
 )brace
 comma
 (brace
+l_string|&quot;FUTURE DOMAIN CORP.  V3.5008/18/93&quot;
+comma
+l_int|5
+comma
+l_int|34
+comma
+l_int|3
+comma
+l_int|5
+comma
+l_int|0
+)brace
+comma
+(brace
+l_string|&quot;FUTURE DOMAIN 18c30/18c50/1800 (C) 1994 V3.5&quot;
+comma
+l_int|5
+comma
+l_int|44
+comma
+l_int|3
+comma
+l_int|5
+comma
+l_int|0
+)brace
+comma
+(brace
 l_string|&quot;FUTURE DOMAIN TMC-18XX&quot;
 comma
 l_int|5
@@ -688,7 +728,7 @@ comma
 l_int|0
 )brace
 comma
-multiline_comment|/* READ NOTICE ABOVE *BEFORE* YOU WASTE YOUR TIME ADDING A SIGNATURE&n;    Also, fix the disk geometry code for your signature and send your&n;    changes for faith@cs.unc.edu.  Above all, do *NOT* change any old&n;    signatures!&n;&n;    Note that the last line will match a &quot;generic&quot; 18XX bios.  Because&n;    Future Domain has changed the host SCSI ID and/or the location of the&n;    geometry information in the on-board RAM area for each of the first&n;    three BIOS&squot;s, it is still important to enter a fully qualified&n;    signature in the table for any new BIOS&squot;s (after the host SCSI ID and&n;    geometry location are verified.) */
+multiline_comment|/* READ NOTICE ABOVE *BEFORE* YOU WASTE YOUR TIME ADDING A SIGNATURE&n;    Also, fix the disk geometry code for your signature and send your&n;    changes for faith@cs.unc.edu.  Above all, do *NOT* change any old&n;    signatures!&n;&n;    Note that the last line will match a &quot;generic&quot; 18XX bios.  Because&n;    Future Domain has changed the host SCSI ID and/or the location of the&n;    geometry information in the on-board RAM area for each of the first&n;    three BIOS&squot;s, it is still important to enter a fully qualified&n;    signature in the table for any new BIOS&squot;s (after the host SCSI ID and&n;    geometry location are verified). */
 )brace
 suffix:semicolon
 DECL|macro|SIGNATURE_COUNT
@@ -705,26 +745,86 @@ op_star
 id|shpnt
 )paren
 (brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|shpnt
+)paren
+r_return
+suffix:semicolon
+multiline_comment|/* This won&squot;t ever happen */
 id|printk
 c_func
 (paren
-l_string|&quot;%s&quot;
+l_string|&quot;scsi%d &lt;fdomain&gt;: BIOS version &quot;
 comma
-id|fdomain_16x0_info
+id|shpnt-&gt;host_no
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|bios_major
+op_ge
+l_int|0
+)paren
+id|printk
 c_func
 (paren
-id|shpnt
+l_string|&quot;%d.&quot;
+comma
+id|bios_major
 )paren
+suffix:semicolon
+r_else
+id|printk
+c_func
+(paren
+l_string|&quot;?.&quot;
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|bios_minor
+op_ge
+l_int|0
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;%d&quot;
+comma
+id|bios_minor
+)paren
+suffix:semicolon
+r_else
+id|printk
+c_func
+(paren
+l_string|&quot;?.&quot;
 )paren
 suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;Future Domain: BIOS version %d.%d, %s&bslash;n&quot;
+l_string|&quot; at 0x%x using scsi id %d&bslash;n&quot;
 comma
-id|bios_major
+(paren
+r_int
+)paren
+id|bios_base
 comma
-id|bios_minor
+id|shpnt-&gt;this_id
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;scsi%d &lt;fdomain&gt;: %s chip at 0x%x irq &quot;
+comma
+id|shpnt-&gt;host_no
 comma
 id|chip
 op_eq
@@ -752,6 +852,8 @@ suffix:colon
 l_string|&quot;Unknown&quot;
 )paren
 )paren
+comma
+id|port_base
 )paren
 suffix:semicolon
 r_if
@@ -759,39 +861,38 @@ c_cond
 (paren
 id|interrupt_level
 )paren
-(brace
 id|printk
 c_func
 (paren
-l_string|&quot;Future Domain: BIOS at %x; port base at %x; using IRQ %d&bslash;n&quot;
-comma
-(paren
-r_int
-)paren
-id|bios_base
-comma
-id|port_base
+l_string|&quot;%d&quot;
 comma
 id|interrupt_level
 )paren
 suffix:semicolon
-)brace
 r_else
-(brace
 id|printk
 c_func
 (paren
-l_string|&quot;Future Domain: BIOS at %x; port base at %x; *NO* IRQ&bslash;n&quot;
-comma
-(paren
-r_int
-)paren
-id|bios_base
-comma
-id|port_base
+l_string|&quot;&lt;none&gt;&quot;
 )paren
 suffix:semicolon
-)brace
+r_if
+c_cond
+(paren
+id|PCI_bus
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot; (PCI bus)&quot;
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;&bslash;n&quot;
+)paren
+suffix:semicolon
 )brace
 DECL|function|do_pause
 r_static
@@ -1242,6 +1343,11 @@ l_int|0
 suffix:semicolon
 r_int
 id|retcode
+suffix:semicolon
+r_struct
+id|Scsi_Host
+op_star
+id|shpnt
 suffix:semicolon
 macro_line|#if DO_DETECT
 r_const
@@ -1828,12 +1934,6 @@ l_int|0
 suffix:semicolon
 multiline_comment|/* Cannot find valid set of ports */
 )brace
-id|print_banner
-c_func
-(paren
-l_int|NULL
-)paren
-suffix:semicolon
 id|SCSI_Mode_Cntl_port
 op_assign
 id|port_base
@@ -1931,7 +2031,7 @@ macro_line|#if DEBUG_DETECT
 id|printk
 c_func
 (paren
-l_string|&quot;Future Domain: LOOPBACK TEST FAILED, FAILING DETECT!&bslash;n&quot;
+l_string|&quot;fdomain: LOOPBACK TEST FAILED, FAILING DETECT!&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -1939,154 +2039,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* Log IRQ with kernel */
-r_if
-c_cond
-(paren
-op_logical_neg
-id|interrupt_level
-)paren
-(brace
-id|panic
-c_func
-(paren
-l_string|&quot;Future Domain: *NO* interrupt level selected!&bslash;n&quot;
-)paren
-suffix:semicolon
-)brace
-r_else
-(brace
-multiline_comment|/* Register the IRQ with the kernel */
-id|retcode
-op_assign
-id|request_irq
-c_func
-(paren
-id|interrupt_level
-comma
-id|fdomain_16x0_intr
-comma
-id|SA_INTERRUPT
-comma
-l_string|&quot;FDomain&quot;
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|retcode
-OL
-l_int|0
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|retcode
-op_eq
-op_minus
-id|EINVAL
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;Future Domain: IRQ %d is bad!&bslash;n&quot;
-comma
-id|interrupt_level
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;               This shouldn&squot;t happen!&bslash;n&quot;
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;               Send mail to faith@cs.unc.edu&bslash;n&quot;
-)paren
-suffix:semicolon
-)brace
-r_else
-r_if
-c_cond
-(paren
-id|retcode
-op_eq
-op_minus
-id|EBUSY
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;Future Domain: IRQ %d is already in use!&bslash;n&quot;
-comma
-id|interrupt_level
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;               Please use another IRQ!&bslash;n&quot;
-)paren
-suffix:semicolon
-)brace
-r_else
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;Future Domain: Error getting IRQ %d&bslash;n&quot;
-comma
-id|interrupt_level
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;               This shouldn&squot;t happen!&bslash;n&quot;
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;               Send mail to faith@cs.unc.edu&bslash;n&quot;
-)paren
-suffix:semicolon
-)brace
-id|panic
-c_func
-(paren
-l_string|&quot;Future Domain: Driver requires interruptions&bslash;n&quot;
-)paren
-suffix:semicolon
-)brace
-r_else
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;Future Domain: IRQ %d requested from kernel&bslash;n&quot;
-comma
-id|interrupt_level
-)paren
-suffix:semicolon
-)brace
-)brace
-multiline_comment|/* Log I/O ports with kernel */
-id|request_region
-c_func
-(paren
-id|port_base
-comma
-l_int|0x10
-comma
-l_string|&quot;fdomain&quot;
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2114,6 +2066,160 @@ op_assign
 l_int|7
 suffix:semicolon
 )brace
+multiline_comment|/* Print out a banner here in case we can&squot;t&n;&t;&t;&t;&t;   get resources.  */
+id|shpnt
+op_assign
+id|scsi_register
+c_func
+(paren
+id|tpnt
+comma
+l_int|0
+)paren
+suffix:semicolon
+id|print_banner
+c_func
+(paren
+id|shpnt
+)paren
+suffix:semicolon
+multiline_comment|/* Log IRQ with kernel */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|interrupt_level
+)paren
+(brace
+id|panic
+c_func
+(paren
+l_string|&quot;fdomain: *NO* interrupt level selected!&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
+multiline_comment|/* Register the IRQ with the kernel */
+id|retcode
+op_assign
+id|request_irq
+c_func
+(paren
+id|interrupt_level
+comma
+id|fdomain_16x0_intr
+comma
+id|SA_INTERRUPT
+comma
+l_string|&quot;fdomain&quot;
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|retcode
+OL
+l_int|0
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|retcode
+op_eq
+op_minus
+id|EINVAL
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;fdomain: IRQ %d is bad!&bslash;n&quot;
+comma
+id|interrupt_level
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;         This shouldn&squot;t happen!&bslash;n&quot;
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;         Send mail to faith@cs.unc.edu&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
+r_else
+r_if
+c_cond
+(paren
+id|retcode
+op_eq
+op_minus
+id|EBUSY
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;fdomain: IRQ %d is already in use!&bslash;n&quot;
+comma
+id|interrupt_level
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;         Please use another IRQ!&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;fdomain: Error getting IRQ %d&bslash;n&quot;
+comma
+id|interrupt_level
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;         This shouldn&squot;t happen!&bslash;n&quot;
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;         Send mail to faith@cs.unc.edu&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
+id|panic
+c_func
+(paren
+l_string|&quot;fdomain: Driver requires interruptions&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
+)brace
+multiline_comment|/* Log I/O ports with kernel */
+id|request_region
+c_func
+(paren
+id|port_base
+comma
+l_int|0x10
+comma
+l_string|&quot;fdomain&quot;
+)paren
+suffix:semicolon
 macro_line|#if DO_DETECT
 multiline_comment|/* These routines are here because of the way the SCSI bus behaves after&n;      a reset.  This appropriate behavior was not handled correctly by the&n;      higher level SCSI routines when I first wrote this driver.  Now,&n;      however, correct scan routines are part of scsi.c and these routines&n;      are no longer needed.  However, this code is still good for&n;      debugging.  */
 id|SCinit.request_buffer
@@ -2144,7 +2250,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;Future Domain detection routine scanning for devices:&bslash;n&quot;
+l_string|&quot;fdomain: detection routine scanning for devices:&bslash;n&quot;
 )paren
 suffix:semicolon
 r_for
@@ -2499,6 +2605,7 @@ macro_line|#endif
 r_return
 l_int|1
 suffix:semicolon
+multiline_comment|/* Maximum of one adapter will be detected. */
 )brace
 DECL|function|fdomain_16x0_info
 r_const
@@ -2510,7 +2617,7 @@ c_func
 r_struct
 id|Scsi_Host
 op_star
-id|shpnt
+id|ignore
 )paren
 (brace
 r_static
@@ -2529,7 +2636,7 @@ c_func
 (paren
 id|buffer
 comma
-l_string|&quot;Future Domain: TMC-16x0 SCSI driver, version&quot;
+l_string|&quot;Future Domain TMC-16x0 SCSI driver, version&quot;
 )paren
 suffix:semicolon
 r_if
@@ -2605,12 +2712,6 @@ id|pt
 suffix:semicolon
 op_star
 id|pt
-op_increment
-op_assign
-l_char|&squot;&bslash;n&squot;
-suffix:semicolon
-op_star
-id|pt
 op_assign
 l_char|&squot;&bslash;0&squot;
 suffix:semicolon
@@ -2625,7 +2726,6 @@ id|buffer
 comma
 l_string|&quot; &quot;
 id|VERSION
-l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
@@ -2746,7 +2846,7 @@ macro_line|#if ERRORS_ONLY
 id|printk
 c_func
 (paren
-l_string|&quot;Future Domain: Arbitration failed, status = %x&bslash;n&quot;
+l_string|&quot;fdomain: Arbitration failed, status = %x&bslash;n&quot;
 comma
 id|status
 )paren
@@ -2905,7 +3005,7 @@ r_else
 id|printk
 c_func
 (paren
-l_string|&quot;Future Domain: Selection failed&bslash;n&quot;
+l_string|&quot;fdomain: Selection failed&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
@@ -2967,7 +3067,7 @@ r_else
 id|panic
 c_func
 (paren
-l_string|&quot;Future Domain: current_SC-&gt;scsi_done() == NULL&quot;
+l_string|&quot;fdomain: current_SC-&gt;scsi_done() == NULL&quot;
 )paren
 suffix:semicolon
 )brace
@@ -2976,7 +3076,7 @@ r_else
 id|panic
 c_func
 (paren
-l_string|&quot;Future Domain: my_done() called outside of command&bslash;n&quot;
+l_string|&quot;fdomain: my_done() called outside of command&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
@@ -2993,7 +3093,12 @@ id|fdomain_16x0_intr
 c_func
 (paren
 r_int
-id|unused
+id|irq
+comma
+r_struct
+id|pt_regs
+op_star
+id|regs
 )paren
 (brace
 r_int
@@ -3007,11 +3112,13 @@ suffix:semicolon
 r_int
 id|data_count
 suffix:semicolon
+multiline_comment|/* The fdomain_16x0_intr is only called via&n;                                   the interrupt handler.  The goal of the&n;                                   sti() here is to allow other&n;                                   interruptions while this routine is&n;                                   running. */
 id|sti
 c_func
 (paren
 )paren
 suffix:semicolon
+multiline_comment|/* Yes, we really want sti() here */
 id|outb
 c_func
 (paren
@@ -3447,8 +3554,7 @@ l_int|2
 id|printk
 c_func
 (paren
-l_string|&quot;Future Domain: target = %d, command = %x, &quot;
-l_string|&quot;Status = %x&bslash;n&quot;
+l_string|&quot;fdomain: target = %d, command = %x, status = %x&bslash;n&quot;
 comma
 id|current_SC-&gt;target
 comma
@@ -3520,7 +3626,7 @@ id|current_SC-&gt;SCp.Message
 id|printk
 c_func
 (paren
-l_string|&quot;Future Domain: Message = %x&bslash;n&quot;
+l_string|&quot;fdomain: message = %x&bslash;n&quot;
 comma
 id|current_SC-&gt;SCp.Message
 )paren
@@ -4175,7 +4281,7 @@ id|code
 id|printk
 c_func
 (paren
-l_string|&quot;Future Domain: REQUEST SENSE &quot;
+l_string|&quot;fdomain: REQUEST SENSE &quot;
 l_string|&quot;Key = %x, Code = %x, Qualifier = %x&bslash;n&quot;
 comma
 id|key
@@ -4312,7 +4418,7 @@ id|in_command
 id|panic
 c_func
 (paren
-l_string|&quot;Future Domain: fdomain_16x0_queue() NOT REENTRANT!&bslash;n&quot;
+l_string|&quot;fdomain: fdomain_16x0_queue() NOT REENTRANT!&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
@@ -4570,6 +4676,35 @@ suffix:semicolon
 r_int
 r_int
 id|isr
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|SCpnt
+op_logical_or
+op_logical_neg
+id|SCpnt-&gt;host
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;fdomain: cannot provide detailed information&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
+id|printk
+c_func
+(paren
+l_string|&quot;%s&bslash;n&quot;
+comma
+id|fdomain_16x0_info
+c_func
+(paren
+id|SCpnt-&gt;host
+)paren
+)paren
 suffix:semicolon
 id|print_banner
 c_func
@@ -4966,14 +5101,24 @@ op_star
 id|SCpnt
 )paren
 (brace
+r_int
+r_int
+id|flags
+suffix:semicolon
 macro_line|#if EVERY_ACCESS || ERRORS_ONLY || DEBUG_ABORT
 id|printk
 c_func
 (paren
-l_string|&quot;Future Domain: Abort &quot;
+l_string|&quot;fdomain: abort &quot;
 )paren
 suffix:semicolon
 macro_line|#endif
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 id|cli
 c_func
 (paren
@@ -4994,9 +5139,10 @@ l_string|&quot; (not in command)&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
-id|sti
+id|restore_flags
 c_func
 (paren
+id|flags
 )paren
 suffix:semicolon
 r_return
@@ -5026,9 +5172,10 @@ id|DID_ABORT
 op_lshift
 l_int|16
 suffix:semicolon
-id|sti
+id|restore_flags
 c_func
 (paren
+id|flags
 )paren
 suffix:semicolon
 multiline_comment|/* Aborts are not done well. . . */
@@ -5063,10 +5210,15 @@ l_int|0
 suffix:semicolon
 macro_line|#endif
 macro_line|#if ERRORS_ONLY
+r_if
+c_cond
+(paren
+id|SCpnt
+)paren
 id|printk
 c_func
 (paren
-l_string|&quot;Future Domain: SCSI Bus Reset&bslash;n&quot;
+l_string|&quot;fdomain: SCSI Bus Reset&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -5345,6 +5497,10 @@ c_cond
 id|bios_major
 op_eq
 l_int|3
+op_logical_and
+id|bios_minor
+op_ge
+l_int|0
 op_logical_and
 id|bios_minor
 OL

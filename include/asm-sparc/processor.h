@@ -3,12 +3,13 @@ macro_line|#ifndef __ASM_SPARC_PROCESSOR_H
 DECL|macro|__ASM_SPARC_PROCESSOR_H
 mdefine_line|#define __ASM_SPARC_PROCESSOR_H
 multiline_comment|/*&n; * Bus types&n; */
-r_extern
-r_int
-id|EISA_bus
-suffix:semicolon
+DECL|macro|EISA_bus
+mdefine_line|#define EISA_bus 1
 DECL|macro|MCA_bus
 mdefine_line|#define MCA_bus 0
+multiline_comment|/*&n; * Write Protection works right in supervisor mode on the Sparc&n; */
+DECL|macro|wp_works_ok
+mdefine_line|#define wp_works_ok 1
 multiline_comment|/*&n; * User space process size: 3GB. This is hardcoded into a few places,&n; * so don&squot;t change it unless you know what you are doing.&n; *&n; * &quot;this is gonna have to change to 1gig for the sparc&quot; - David S. Miller&n; */
 DECL|macro|TASK_SIZE
 mdefine_line|#define TASK_SIZE&t;(0xc0000000UL)
@@ -262,7 +263,7 @@ l_string|&quot;wr %2, 0x20, %%psr&bslash;n&bslash;t&quot;
 l_string|&quot;ld %1,%0&bslash;n&bslash;t&quot;
 l_string|&quot;sub %0,1,%0&bslash;n&bslash;t&quot;
 l_string|&quot;st %0,%1&bslash;n&bslash;t&quot;
-l_string|&quot;wr %2, 0x0, %2&bslash;n&bslash;t&quot;
+l_string|&quot;wr %2, 0x0, %%psr&bslash;n&bslash;t&quot;
 suffix:colon
 l_string|&quot;=r&quot;
 (paren

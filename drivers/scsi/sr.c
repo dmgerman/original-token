@@ -1623,7 +1623,7 @@ id|buf
 (braket
 l_int|8
 op_plus
-l_int|2
+l_int|4
 )braket
 op_assign
 l_int|12
@@ -5101,7 +5101,7 @@ l_int|0
 suffix:semicolon
 id|i
 OL
-id|sg_template.dev_max
+id|sr_template.dev_max
 suffix:semicolon
 id|i
 op_increment

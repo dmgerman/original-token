@@ -570,7 +570,10 @@ id|ultrastor_interrupt
 c_func
 (paren
 r_int
-id|cpl
+comma
+r_struct
+id|pt_regs
+op_star
 )paren
 suffix:semicolon
 r_static
@@ -3707,7 +3710,12 @@ id|ultrastor_interrupt
 c_func
 (paren
 r_int
-id|cpl
+id|irq
+comma
+r_struct
+id|pt_regs
+op_star
+id|regs
 )paren
 (brace
 r_int

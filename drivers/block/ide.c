@@ -5038,6 +5038,11 @@ id|ide0_intr
 (paren
 r_int
 id|irq
+comma
+r_struct
+id|pt_regs
+op_star
+id|regs
 )paren
 (brace
 id|IDE_INTR
@@ -5055,6 +5060,11 @@ id|ide1_intr
 (paren
 r_int
 id|irq
+comma
+r_struct
+id|pt_regs
+op_star
+id|regs
 )paren
 (brace
 id|IDE_INTR
@@ -5077,6 +5087,11 @@ id|ide_intr
 (paren
 r_int
 id|irq
+comma
+r_struct
+id|pt_regs
+op_star
+id|regs
 )paren
 (brace
 macro_line|#if SUPPORT_TWO_INTERFACES
@@ -7091,7 +7106,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * Non-ATAPI drives seem to always use big-endian string ordering.&n;&t; * Most ATAPI cdrom drives, such as the NEC, Vertos, and some Mitsumi&n;&t; * models, use little-endian.  But otherMitsumi models appear to use&n;&t; * big-endian, confusing the issue.  We try to take all of this into &n;&t; * consideration, &quot;knowing&quot; that Mitsumi drive names begin with &quot;FX&quot;.&n;&t; */
+multiline_comment|/*&n;&t; * Non-ATAPI drives seem to always use big-endian string ordering.&n;&t; * Most ATAPI cdrom drives, such as the NEC, Vertos, and some Mitsumi&n;&t; * models, use little-endian.  But other Mitsumi models appear to use&n;&t; * big-endian, confusing the issue.  We try to take all of this into &n;&t; * consideration, &quot;knowing&quot; that Mitsumi drive names begin with &quot;FX&quot;.&n;&t; */
 id|bswap
 op_assign
 l_int|1
@@ -9545,6 +9560,10 @@ id|handler
 )paren
 (paren
 r_int
+comma
+r_struct
+id|pt_regs
+op_star
 )paren
 op_assign
 id|HWIF

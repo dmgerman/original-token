@@ -1,4 +1,35 @@
+macro_line|#ifndef _SPARC_VAC_OPS_H
+DECL|macro|_SPARC_VAC_OPS_H
+mdefine_line|#define _SPARC_VAC_OPS_H
 multiline_comment|/* vac-ops.h: Inline assembly routines to do operations on the Sparc&n;              VAC (virtual address cache).&n;&n;   Copyright (C) 1994, David S. Miller (davem@caip.rutgers.edu)&n;*/
+r_extern
+r_void
+id|flush_vac_context
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|flush_vac_segment
+c_func
+(paren
+r_int
+r_int
+id|foo_segment
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|flush_vac_page
+c_func
+(paren
+r_int
+r_int
+id|foo_addr
+)paren
+suffix:semicolon
 multiline_comment|/* enable_vac() enables the virtual address cache. It returns 0 on&n;   success, 1 on failure.&n;*/
 DECL|function|enable_vac
 r_extern
@@ -250,4 +281,5 @@ id|addr
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif /* !(_SPARC_VAC_OPS_H) */
 eof

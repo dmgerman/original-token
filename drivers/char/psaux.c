@@ -466,6 +466,11 @@ c_func
 (paren
 r_int
 id|cpl
+comma
+r_struct
+id|pt_regs
+op_star
+id|regs
 )paren
 (brace
 r_int
@@ -543,6 +548,11 @@ c_func
 (paren
 r_int
 id|cpl
+comma
+r_struct
+id|pt_regs
+op_star
+id|regs
 )paren
 (brace
 r_int

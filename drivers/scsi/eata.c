@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *      eata.c - Low-level driver for EATA/DMA SCSI host adapters.&n; *&n; *      17 Dec 1994 rev. 1.11 for linux 1.1.74&n; *          Use the scsicam_bios_param routine. This allows an easy&n; *          migration path from disk partition tables created using &n; *          different SCSI drivers and non optimal disk geometry.&n; *&n; *      15 Dec 1994 rev. 1.10 for linux 1.1.74&n; *          Added support for ISA EATA boards (DPT PM2011, DPT PM2021).&n; *          The host-&gt;block flag is set for all the detected ISA boards.&n; *          The detect routine no longer enforces LEVEL triggering&n; *          for EISA boards, it just prints a warning message.&n; *&n; *      30 Nov 1994 rev. 1.09 for linux 1.1.68&n; *          Redo i/o on target status CONDITION_GOOD for TYPE_DISK only.&n; *          Added optional support for using a single board at a time.&n; *&n; *      18 Nov 1994 rev. 1.08 for linux 1.1.64&n; *          Forces sg_tablesize = 64 and can_queue = 64 if these&n; *          values are not correctly detected (DPT PM2012).&n; *&n; *      14 Nov 1994 rev. 1.07 for linux 1.1.63  Final BETA release.&n; *      04 Aug 1994 rev. 1.00 for linux 1.1.39  First BETA release.&n; *&n; *&n; *          This driver is based on the CAM (Common Access Method Committee)&n; *          EATA (Enhanced AT Bus Attachment) rev. 2.0A, using DMA protocol.&n; *&n; *      Released by Dario Ballabio (Dario_Ballabio@milano.europe.dg.com)&n; *&n; */
+multiline_comment|/*&n; *      eata.c - Low-level driver for EATA/DMA SCSI host adapters.&n; *&n; *      16 Jan 1995 rev. 1.12 for linux 1.1.81&n; *          Fix mscp structure comments (no functional change).&n; *          Display a message if check_region detects a port address&n; *          already in use.&n; *&n; *      17 Dec 1994 rev. 1.11 for linux 1.1.74&n; *          Use the scsicam_bios_param routine. This allows an easy&n; *          migration path from disk partition tables created using &n; *          different SCSI drivers and non optimal disk geometry.&n; *&n; *      15 Dec 1994 rev. 1.10 for linux 1.1.74&n; *          Added support for ISA EATA boards (DPT PM2011, DPT PM2021).&n; *          The host-&gt;block flag is set for all the detected ISA boards.&n; *          The detect routine no longer enforces LEVEL triggering&n; *          for EISA boards, it just prints a warning message.&n; *&n; *      30 Nov 1994 rev. 1.09 for linux 1.1.68&n; *          Redo i/o on target status CONDITION_GOOD for TYPE_DISK only.&n; *          Added optional support for using a single board at a time.&n; *&n; *      18 Nov 1994 rev. 1.08 for linux 1.1.64&n; *          Forces sg_tablesize = 64 and can_queue = 64 if these&n; *          values are not correctly detected (DPT PM2012).&n; *&n; *      14 Nov 1994 rev. 1.07 for linux 1.1.63  Final BETA release.&n; *      04 Aug 1994 rev. 1.00 for linux 1.1.39  First BETA release.&n; *&n; *&n; *          This driver is based on the CAM (Common Access Method Committee)&n; *          EATA (Enhanced AT Bus Attachment) rev. 2.0A, using DMA protocol.&n; *&n; *      Released by Dario Ballabio (Dario_Ballabio@milano.europe.dg.com)&n; *&n; */
 multiline_comment|/*&n; *&n; *  Here is a brief description of the DPT SCSI host adapters.&n; *  All these boards provide an EATA/DMA compatible programming interface&n; *  and are fully supported by this driver:&n; *&n; *  PM2011B/9X -  Entry Level ISA&n; *  PM2021A/9X -  High Performance ISA&n; *  PM2012A       Old EISA&n; *  PM2012B       Old EISA&n; *  PM2022A/9X -  Entry Level EISA&n; *  PM2122A/9X -  High Performance EISA&n; *  PM2322A/9X -  Extra High Performance EISA&n; *&n; *  The DPT PM2001 provides only the EATA/PIO interface and hence is not&n; *  supported by this driver.&n; *&n; *  This code has been tested with up to 3 Distributed Processing Technology &n; *  PM2122A/9X (DPT SCSI BIOS v002.D1, firmware v05E.0) eisa controllers,&n; *  no on board cache and no RAID option. &n; *  BIOS must be enabled on the first board and must be disabled for all other &n; *  boards. &n; *  Support is provided for any number of DPT PM2122 eisa boards.&n; *  All boards should be configured at the same IRQ level.&n; *  Multiple IRQ configurations are supported too.&n; *  Boards can be located in any eisa slot (1-15) and are named EATA0, &n; *  EATA1,... in increasing eisa slot number. ISA boards are detected&n; *  after the eisa slot probes.&n; *&n; *  The IRQ for EISA boards should be _level_ triggered (not _edge_ triggered).&n; *  This is a requirement in order to support multiple boards on the same IRQ.&n; *&n; *  Other eisa configuration parameters are:&n; *&n; *  COMMAND QUEUING   : ENABLED&n; *  COMMAND TIMEOUT   : ENABLED&n; *  CACHE             : DISABLED&n; *&n; *  In order to support multiple ISA boards in a reliable way,&n; *  the driver sets host-&gt;block = TRUE for all ISA boards.&n; */
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -359,12 +359,12 @@ suffix:colon
 l_int|1
 comma
 multiline_comment|/* SCSI Bus Reset Signal should be asserted */
-DECL|member|interp
-id|interp
+DECL|member|init
+id|init
 suffix:colon
 l_int|1
 comma
-multiline_comment|/* The controller interprets cp, not the target */
+multiline_comment|/* Re-initialize controller and self test */
 DECL|member|reqsen
 id|reqsen
 suffix:colon
@@ -380,12 +380,12 @@ multiline_comment|/* Use Scatter/Gather */
 suffix:colon
 l_int|1
 comma
-DECL|member|init
-id|init
+DECL|member|interp
+id|interp
 suffix:colon
 l_int|1
 comma
-multiline_comment|/* Re-initialize controller and self test */
+multiline_comment|/* The controller interprets cp, not the target */
 DECL|member|dout
 id|dout
 suffix:colon
@@ -664,6 +664,10 @@ id|eata_interrupt_handler
 c_func
 (paren
 r_int
+comma
+r_struct
+id|pt_regs
+op_star
 )paren
 suffix:semicolon
 DECL|variable|do_trace
@@ -1009,6 +1013,17 @@ id|REG_REGION
 )paren
 )paren
 (brace
+id|printk
+c_func
+(paren
+l_string|&quot;%s: address 0x%03x already in use, detaching.&bslash;n&quot;
+comma
+id|name
+comma
+op_star
+id|port_base
+)paren
+suffix:semicolon
 r_return
 id|FALSE
 suffix:semicolon
@@ -1465,7 +1480,7 @@ id|io_port
 comma
 id|REG_REGION
 comma
-l_string|&quot;eata&quot;
+id|driver_name
 )paren
 suffix:semicolon
 id|memset
@@ -3800,6 +3815,11 @@ c_func
 (paren
 r_int
 id|irq
+comma
+r_struct
+id|pt_regs
+op_star
+id|regs
 )paren
 (brace
 id|Scsi_Cmnd

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/kernel/vsprintf.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; */
+multiline_comment|/*&n; *  linux/lib/vsprintf.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; */
 multiline_comment|/* vsprintf.c -- Lars Wirzenius &amp; Linus Torvalds. */
 multiline_comment|/*&n; * Wirzenius wrote this portably, Torvalds fucked it up :-)&n; */
 macro_line|#include &lt;stdarg.h&gt;

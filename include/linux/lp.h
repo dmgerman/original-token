@@ -120,28 +120,29 @@ id|lp_buffer
 suffix:semicolon
 )brace
 suffix:semicolon
+multiline_comment|/*&n; * The following constants describe the various signals of the printer port&n; * hardware.  Note that the hardware inverts some signals and that some&n; * signals are active low.  An example is LP_STROBE, which must be programmed&n; * with 1 for being active and 0 for being inactive, because the strobe signal&n; * gets inverted, but it is also active low.&n; */
 multiline_comment|/* &n; * bit defines for 8255 status port&n; * base + 1&n; * accessed with LP_S(minor), which gets the byte...&n; */
 DECL|macro|LP_PBUSY
-mdefine_line|#define LP_PBUSY&t;0x80 /* active low */
+mdefine_line|#define LP_PBUSY&t;0x80  /* inverted input, active high */
 DECL|macro|LP_PACK
-mdefine_line|#define LP_PACK&t;&t;0x40 /* active low */
+mdefine_line|#define LP_PACK&t;&t;0x40  /* unchanged input, active low */
 DECL|macro|LP_POUTPA
-mdefine_line|#define LP_POUTPA&t;0x20
+mdefine_line|#define LP_POUTPA&t;0x20  /* unchanged input, active high */
 DECL|macro|LP_PSELECD
-mdefine_line|#define LP_PSELECD&t;0x10
+mdefine_line|#define LP_PSELECD&t;0x10  /* unchanged input, active high */
 DECL|macro|LP_PERRORP
-mdefine_line|#define LP_PERRORP&t;0x08 /* active low*/
+mdefine_line|#define LP_PERRORP&t;0x08  /* unchanged input, active low */
 multiline_comment|/* &n; * defines for 8255 control port&n; * base + 2 &n; * accessed with LP_C(minor)&n; */
 DECL|macro|LP_PINTEN
 mdefine_line|#define LP_PINTEN&t;0x10
 DECL|macro|LP_PSELECP
-mdefine_line|#define LP_PSELECP&t;0x08
+mdefine_line|#define LP_PSELECP&t;0x08  /* inverted output, active low */
 DECL|macro|LP_PINITP
-mdefine_line|#define LP_PINITP&t;0x04  /* active low */
+mdefine_line|#define LP_PINITP&t;0x04  /* unchanged output, active low */
 DECL|macro|LP_PAUTOLF
-mdefine_line|#define LP_PAUTOLF&t;0x02
+mdefine_line|#define LP_PAUTOLF&t;0x02  /* inverted output, active low */
 DECL|macro|LP_PSTROBE
-mdefine_line|#define LP_PSTROBE&t;0x01
+mdefine_line|#define LP_PSTROBE&t;0x01  /* inverted output, active low */
 multiline_comment|/* &n; * the value written to ports to test existence. PC-style ports will &n; * return the value written. AT-style ports will return 0. so why not&n; * make them the same ? &n; */
 DECL|macro|LP_DUMMY
 mdefine_line|#define LP_DUMMY&t;0x00

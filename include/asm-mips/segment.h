@@ -1,7 +1,38 @@
 multiline_comment|/*&n; * include/asm-mips/segment.h&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1994 by Ralf Baechle&n; *&n; */
-macro_line|#ifndef _ASM_MIPS_SEGMENT_H_
-DECL|macro|_ASM_MIPS_SEGMENT_H_
-mdefine_line|#define _ASM_MIPS_SEGMENT_H_
+macro_line|#ifndef __ASM_MIPS_SEGMENT_H
+DECL|macro|__ASM_MIPS_SEGMENT_H
+mdefine_line|#define __ASM_MIPS_SEGMENT_H
+multiline_comment|/*&n; * Memory segments (32bit kernel mode addresses)&n; */
+DECL|macro|KUSEG
+mdefine_line|#define KUSEG                   0x00000000
+DECL|macro|KSEG0
+mdefine_line|#define KSEG0                   0x80000000
+DECL|macro|KSEG1
+mdefine_line|#define KSEG1                   0xa0000000
+DECL|macro|KSEG2
+mdefine_line|#define KSEG2                   0xc0000000
+DECL|macro|KSEG3
+mdefine_line|#define KSEG3                   0xe0000000
+multiline_comment|/*&n; * returns the kernel segment base of a given address&n; * Address space is a scarce resource on a R3000, so&n; * emulate the Intel segment braindamage...&n; */
+DECL|macro|KSEGX
+mdefine_line|#define KSEGX(a)                (a &amp; 0xe0000000)
+DECL|macro|KERNEL_CS
+mdefine_line|#define KERNEL_CS&t;KERNELBASE
+DECL|macro|KERNEL_DS
+mdefine_line|#define KERNEL_DS&t;KERNEL_CS
+DECL|macro|USER_CS
+mdefine_line|#define USER_CS&t;&t;0x00000000
+DECL|macro|USER_DS
+mdefine_line|#define USER_DS&t;&t;USER_CS
+macro_line|#ifndef __ASSEMBLY__
+multiline_comment|/*&n; * This variable is defined in arch/mips/kernel/head.S.&n; */
+r_extern
+r_int
+r_int
+id|segment_fs
+suffix:semicolon
+DECL|macro|get_fs_byte
+mdefine_line|#define get_fs_byte(addr) get_user_byte((char *)(addr))
 DECL|function|get_user_byte
 r_static
 r_inline
@@ -16,33 +47,28 @@ op_star
 id|addr
 )paren
 (brace
-r_register
-r_int
-r_char
-id|_v
-suffix:semicolon
-id|__asm__
-(paren
-l_string|&quot;lbu&bslash;t%0,%1&quot;
-suffix:colon
-l_string|&quot;=r&quot;
-(paren
-id|_v
-)paren
-suffix:colon
-l_string|&quot;r&quot;
-(paren
+r_return
 op_star
+(paren
+r_const
+r_char
+op_star
+)paren
+(paren
+(paren
+(paren
+r_int
+r_int
+)paren
 id|addr
 )paren
+op_plus
+id|segment_fs
 )paren
 suffix:semicolon
-r_return
-id|_v
-suffix:semicolon
 )brace
-DECL|macro|get_fs_byte
-mdefine_line|#define get_fs_byte(addr) get_user_byte((char *)(addr))
+DECL|macro|get_fs_word
+mdefine_line|#define get_fs_word(addr) get_user_word((short *)(addr))
 DECL|function|get_user_word
 r_static
 r_inline
@@ -57,32 +83,28 @@ op_star
 id|addr
 )paren
 (brace
-r_int
-r_int
-id|_v
-suffix:semicolon
-id|__asm__
-(paren
-l_string|&quot;lhu&bslash;t%0,%1&quot;
-suffix:colon
-l_string|&quot;=r&quot;
-(paren
-id|_v
-)paren
-suffix:colon
-l_string|&quot;r&quot;
-(paren
+r_return
 op_star
+(paren
+r_const
+r_int
+op_star
+)paren
+(paren
+(paren
+(paren
+r_int
+r_int
+)paren
 id|addr
 )paren
+op_plus
+id|segment_fs
 )paren
 suffix:semicolon
-r_return
-id|_v
-suffix:semicolon
 )brace
-DECL|macro|get_fs_word
-mdefine_line|#define get_fs_word(addr) get_user_word((short *)(addr))
+DECL|macro|get_fs_long
+mdefine_line|#define get_fs_long(addr) get_user_long((int *)(addr))
 DECL|function|get_user_long
 r_static
 r_inline
@@ -97,33 +119,28 @@ op_star
 id|addr
 )paren
 (brace
-r_int
-r_int
-id|_v
-suffix:semicolon
-id|__asm__
-(paren
-l_string|&quot;lwu&bslash;t%0,%1&quot;
-suffix:colon
-l_string|&quot;=r&quot;
-(paren
-id|_v
-)paren
-suffix:colon
-l_string|&quot;r&quot;
-(paren
+r_return
 op_star
+(paren
+r_const
+r_int
+op_star
+)paren
+(paren
+(paren
+(paren
+r_int
+r_int
+)paren
 id|addr
 )paren
+op_plus
+id|segment_fs
 )paren
 suffix:semicolon
-"&bslash;"
-r_return
-id|_v
-suffix:semicolon
 )brace
-DECL|macro|get_fs_long
-mdefine_line|#define get_fs_long(addr) get_user_long((int *)(addr))
+DECL|macro|get_fs_dlong
+mdefine_line|#define get_fs_dlong(addr) get_user_dlong((long long *)(addr))
 DECL|function|get_user_dlong
 r_static
 r_inline
@@ -134,37 +151,34 @@ c_func
 (paren
 r_const
 r_int
+r_int
 op_star
 id|addr
 )paren
 (brace
-r_int
-r_int
-id|_v
-suffix:semicolon
-id|__asm__
-(paren
-l_string|&quot;ld&bslash;t%0,%1&quot;
-suffix:colon
-l_string|&quot;=r&quot;
-(paren
-id|_v
-)paren
-suffix:colon
-l_string|&quot;r&quot;
-(paren
+r_return
 op_star
+(paren
+r_const
+r_int
+r_int
+op_star
+)paren
+(paren
+(paren
+(paren
+r_int
+r_int
+)paren
 id|addr
 )paren
+op_plus
+id|segment_fs
 )paren
 suffix:semicolon
-"&bslash;"
-r_return
-id|_v
-suffix:semicolon
 )brace
-DECL|macro|get_fs_dlong
-mdefine_line|#define get_fs_dlong(addr) get_user_dlong((int *)(addr))
+DECL|macro|put_fs_byte
+mdefine_line|#define put_fs_byte(x,addr) put_user_byte((x),(char *)(addr))
 DECL|function|put_user_byte
 r_static
 r_inline
@@ -180,27 +194,28 @@ op_star
 id|addr
 )paren
 (brace
-id|__asm__
-(paren
-l_string|&quot;sb&bslash;t%0,%1&quot;
-suffix:colon
-multiline_comment|/* no outputs */
-suffix:colon
-l_string|&quot;r&quot;
-(paren
-id|val
-)paren
-comma
-l_string|&quot;r&quot;
-(paren
 op_star
+(paren
+r_char
+op_star
+)paren
+(paren
+(paren
+(paren
+r_int
+r_int
+)paren
 id|addr
 )paren
+op_plus
+id|segment_fs
 )paren
+op_assign
+id|val
 suffix:semicolon
 )brace
-DECL|macro|put_fs_byte
-mdefine_line|#define put_fs_byte(x,addr) put_user_byte((x),(char *)(addr))
+DECL|macro|put_fs_word
+mdefine_line|#define put_fs_word(x,addr) put_user_word((x),(short *)(addr))
 DECL|function|put_user_word
 r_static
 r_inline
@@ -216,27 +231,28 @@ op_star
 id|addr
 )paren
 (brace
-id|__asm__
-(paren
-l_string|&quot;sh&bslash;t%0,%1&quot;
-suffix:colon
-multiline_comment|/* no outputs */
-suffix:colon
-l_string|&quot;r&quot;
-(paren
-id|val
-)paren
-comma
-l_string|&quot;r&quot;
-(paren
 op_star
+(paren
+r_int
+op_star
+)paren
+(paren
+(paren
+(paren
+r_int
+r_int
+)paren
 id|addr
 )paren
+op_plus
+id|segment_fs
 )paren
+op_assign
+id|val
 suffix:semicolon
 )brace
-DECL|macro|put_fs_word
-mdefine_line|#define put_fs_word(x,addr) put_user_word((x),(short *)(addr))
+DECL|macro|put_fs_long
+mdefine_line|#define put_fs_long(x,addr) put_user_long((x),(int *)(addr))
 DECL|function|put_user_long
 r_static
 r_inline
@@ -253,27 +269,28 @@ op_star
 id|addr
 )paren
 (brace
-id|__asm__
-(paren
-l_string|&quot;sw&bslash;t%0,%1&quot;
-suffix:colon
-multiline_comment|/* no outputs */
-suffix:colon
-l_string|&quot;r&quot;
-(paren
-id|val
-)paren
-comma
-l_string|&quot;r&quot;
-(paren
 op_star
+(paren
+r_int
+op_star
+)paren
+(paren
+(paren
+(paren
+r_int
+r_int
+)paren
 id|addr
 )paren
+op_plus
+id|segment_fs
 )paren
+op_assign
+id|val
 suffix:semicolon
 )brace
-DECL|macro|put_fs_long
-mdefine_line|#define put_fs_long(x,addr) put_user_long((x),(int *)(addr))
+DECL|macro|put_fs_dlong
+mdefine_line|#define put_fs_dlong(x,addr) put_user_dlong((x),(int *)(addr))
 DECL|function|put_user_dlong
 r_static
 r_inline
@@ -286,37 +303,32 @@ r_int
 id|val
 comma
 r_int
+r_int
 op_star
 id|addr
 )paren
 (brace
-id|__asm__
-(paren
-l_string|&quot;sd&bslash;t%0,%1&quot;
-suffix:colon
-multiline_comment|/* no outputs */
-suffix:colon
-l_string|&quot;r&quot;
-(paren
-id|val
-)paren
-comma
-l_string|&quot;r&quot;
-(paren
 op_star
+(paren
+r_int
+r_int
+op_star
+)paren
+(paren
+(paren
+(paren
+r_int
+r_int
+)paren
 id|addr
 )paren
+op_plus
+id|segment_fs
 )paren
+op_assign
+id|val
 suffix:semicolon
 )brace
-DECL|macro|put_fs_dlong
-mdefine_line|#define put_fs_dlong(x,addr) put_user_dlong((x),(int *)(addr))
-multiline_comment|/*&n; * These following two variables are defined in mips/head.S.&n; */
-r_extern
-r_int
-r_int
-id|segment_fs
-suffix:semicolon
 DECL|function|__generic_memcpy_tofs
 r_static
 r_inline
@@ -354,12 +366,12 @@ l_string|&quot;.set&bslash;treorder&quot;
 suffix:colon
 multiline_comment|/* no outputs */
 suffix:colon
-l_string|&quot;d&quot;
+l_string|&quot;r&quot;
 (paren
 id|n
 )paren
 comma
-l_string|&quot;d&quot;
+l_string|&quot;r&quot;
 (paren
 (paren
 (paren
@@ -371,7 +383,7 @@ op_or
 id|segment_fs
 )paren
 comma
-l_string|&quot;d&quot;
+l_string|&quot;r&quot;
 (paren
 (paren
 r_int
@@ -707,12 +719,12 @@ l_string|&quot;.set&bslash;treorder&quot;
 suffix:colon
 multiline_comment|/* no outputs */
 suffix:colon
-l_string|&quot;d&quot;
+l_string|&quot;r&quot;
 (paren
 id|n
 )paren
 comma
-l_string|&quot;d&quot;
+l_string|&quot;r&quot;
 (paren
 (paren
 r_int
@@ -720,7 +732,7 @@ r_int
 id|to
 )paren
 comma
-l_string|&quot;d&quot;
+l_string|&quot;r&quot;
 (paren
 (paren
 (paren
@@ -1048,5 +1060,6 @@ op_assign
 id|val
 suffix:semicolon
 )brace
-macro_line|#endif /* _ASM_MIPS_SEGMENT_H_ */
+macro_line|#endif
+macro_line|#endif /* __ASM_MIPS_SEGMENT_H */
 eof

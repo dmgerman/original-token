@@ -273,7 +273,11 @@ id|aha152x_intr
 c_func
 (paren
 r_int
-id|irqno
+id|irq
+comma
+r_struct
+id|pt_regs
+op_star
 )paren
 suffix:semicolon
 r_void
@@ -3663,6 +3667,11 @@ c_func
 (paren
 r_int
 id|irqno
+comma
+r_struct
+id|pt_regs
+op_star
+id|regs
 )paren
 (brace
 r_int

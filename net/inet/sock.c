@@ -1651,15 +1651,17 @@ op_star
 id|sk
 )paren
 (brace
+r_int
+r_int
+id|flags
+suffix:semicolon
+macro_line|#ifdef CONFIG_INET
 r_struct
 id|sk_buff
 op_star
 id|skb
 suffix:semicolon
-r_int
-r_int
-id|flags
-suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren

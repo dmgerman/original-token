@@ -3,7 +3,7 @@ macro_line|#include &lt;asm/vac-ops.h&gt;
 multiline_comment|/* Flush all VAC entries for the current context */
 r_extern
 r_int
-id|do_hw_vac_flushes
+id|vac_do_hw_vac_flushes
 comma
 id|vac_size
 comma
@@ -52,7 +52,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|do_hw_vac_flushes
+id|vac_do_hw_vac_flushes
 )paren
 (brace
 r_while
@@ -125,6 +125,12 @@ r_register
 r_char
 op_star
 id|address
+op_assign
+(paren
+r_char
+op_star
+)paren
+l_int|0
 suffix:semicolon
 id|entries_left
 op_assign
@@ -151,7 +157,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|do_hw_vac_flushes
+id|vac_do_hw_vac_flushes
 )paren
 (brace
 r_while
@@ -223,12 +229,17 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|do_hw_vac_flushes
+id|vac_do_hw_vac_flushes
 )paren
 (brace
 id|hw_flush_vac_page_entry
 c_func
 (paren
+(paren
+r_int
+r_int
+op_star
+)paren
 id|addr
 )paren
 suffix:semicolon
@@ -255,6 +266,11 @@ l_int|0
 id|sw_flush_vac_page_entry
 c_func
 (paren
+(paren
+r_int
+r_int
+op_star
+)paren
 id|addr
 )paren
 suffix:semicolon

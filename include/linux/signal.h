@@ -7,7 +7,7 @@ r_int
 r_int
 id|sigset_t
 suffix:semicolon
-multiline_comment|/* 32 bits */
+multiline_comment|/* at least 32 bits */
 DECL|macro|_NSIG
 mdefine_line|#define _NSIG             32
 DECL|macro|NSIG
@@ -58,12 +58,8 @@ DECL|macro|SIGTTIN
 mdefine_line|#define SIGTTIN&t;&t;21
 DECL|macro|SIGTTOU
 mdefine_line|#define SIGTTOU&t;&t;22
-DECL|macro|SIGIO
-mdefine_line|#define SIGIO&t;&t;23
-DECL|macro|SIGPOLL
-mdefine_line|#define SIGPOLL&t;&t;SIGIO
 DECL|macro|SIGURG
-mdefine_line|#define SIGURG&t;&t;SIGIO
+mdefine_line|#define SIGURG&t;&t;23
 DECL|macro|SIGXCPU
 mdefine_line|#define SIGXCPU&t;&t;24
 DECL|macro|SIGXFSZ
@@ -74,6 +70,10 @@ DECL|macro|SIGPROF
 mdefine_line|#define SIGPROF&t;&t;27
 DECL|macro|SIGWINCH
 mdefine_line|#define SIGWINCH&t;28
+DECL|macro|SIGIO
+mdefine_line|#define SIGIO&t;&t;29
+DECL|macro|SIGPOLL
+mdefine_line|#define SIGPOLL&t;&t;SIGIO
 multiline_comment|/*&n;#define SIGLOST&t;&t;29&n;*/
 DECL|macro|SIGPWR
 mdefine_line|#define SIGPWR&t;&t;30
@@ -130,6 +130,7 @@ id|sa_mask
 suffix:semicolon
 DECL|member|sa_flags
 r_int
+r_int
 id|sa_flags
 suffix:semicolon
 DECL|member|sa_restorer
@@ -145,140 +146,7 @@ suffix:semicolon
 )brace
 suffix:semicolon
 macro_line|#ifdef __KERNEL__
-DECL|struct|sigcontext_struct
-r_struct
-id|sigcontext_struct
-(brace
-DECL|member|gs
-DECL|member|__gsh
-r_int
-r_int
-id|gs
-comma
-id|__gsh
-suffix:semicolon
-DECL|member|fs
-DECL|member|__fsh
-r_int
-r_int
-id|fs
-comma
-id|__fsh
-suffix:semicolon
-DECL|member|es
-DECL|member|__esh
-r_int
-r_int
-id|es
-comma
-id|__esh
-suffix:semicolon
-DECL|member|ds
-DECL|member|__dsh
-r_int
-r_int
-id|ds
-comma
-id|__dsh
-suffix:semicolon
-DECL|member|edi
-r_int
-r_int
-id|edi
-suffix:semicolon
-DECL|member|esi
-r_int
-r_int
-id|esi
-suffix:semicolon
-DECL|member|ebp
-r_int
-r_int
-id|ebp
-suffix:semicolon
-DECL|member|esp
-r_int
-r_int
-id|esp
-suffix:semicolon
-DECL|member|ebx
-r_int
-r_int
-id|ebx
-suffix:semicolon
-DECL|member|edx
-r_int
-r_int
-id|edx
-suffix:semicolon
-DECL|member|ecx
-r_int
-r_int
-id|ecx
-suffix:semicolon
-DECL|member|eax
-r_int
-r_int
-id|eax
-suffix:semicolon
-DECL|member|trapno
-r_int
-r_int
-id|trapno
-suffix:semicolon
-DECL|member|err
-r_int
-r_int
-id|err
-suffix:semicolon
-DECL|member|eip
-r_int
-r_int
-id|eip
-suffix:semicolon
-DECL|member|cs
-DECL|member|__csh
-r_int
-r_int
-id|cs
-comma
-id|__csh
-suffix:semicolon
-DECL|member|eflags
-r_int
-r_int
-id|eflags
-suffix:semicolon
-DECL|member|esp_at_signal
-r_int
-r_int
-id|esp_at_signal
-suffix:semicolon
-DECL|member|ss
-DECL|member|__ssh
-r_int
-r_int
-id|ss
-comma
-id|__ssh
-suffix:semicolon
-DECL|member|i387
-r_int
-r_int
-id|i387
-suffix:semicolon
-DECL|member|oldmask
-r_int
-r_int
-id|oldmask
-suffix:semicolon
-DECL|member|cr2
-r_int
-r_int
-id|cr2
-suffix:semicolon
-)brace
-suffix:semicolon
+macro_line|#include &lt;asm/signal.h&gt;
 macro_line|#endif
 macro_line|#endif
 eof

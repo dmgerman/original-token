@@ -2,15 +2,31 @@ macro_line|#ifndef __ALPHA_SYSTEM_H
 DECL|macro|__ALPHA_SYSTEM_H
 mdefine_line|#define __ALPHA_SYSTEM_H
 multiline_comment|/*&n; * System defines.. Note that this is included both from .c and .S&n; * files, so it does only defines, not any C code.&n; */
-multiline_comment|/*&n; * We leave one page for the initial stack page, and one page for&n; * the initial process structure. Also, the console eats 3 MB for&n; * the initial bootloader (one of which we can reclaim later).&n; * So the initial load address is 0xfffffc0000304000UL&n; */
+multiline_comment|/*&n; * We leave one page for the initial stack page, and one page for&n; * the initial process structure. Also, the console eats 3 MB for&n; * the initial bootloader (one of which we can reclaim later).&n; * With a few other pages for various reasons, we&squot;ll use an initial&n; * load address of 0xfffffc0000310000UL&n; */
+DECL|macro|BOOT_PCB
+mdefine_line|#define BOOT_PCB&t;0x20000000
+DECL|macro|BOOT_ADDR
+mdefine_line|#define BOOT_ADDR&t;0x20000000
+DECL|macro|BOOT_SIZE
+mdefine_line|#define BOOT_SIZE&t;(16*1024)
+DECL|macro|KERNEL_START
+mdefine_line|#define KERNEL_START&t;0xfffffc0000300000
 DECL|macro|INIT_PCB
 mdefine_line|#define INIT_PCB&t;0xfffffc0000300000
 DECL|macro|INIT_STACK
 mdefine_line|#define INIT_STACK&t;0xfffffc0000302000
+DECL|macro|EMPTY_PGT
+mdefine_line|#define EMPTY_PGT&t;0xfffffc0000304000
+DECL|macro|EMPTY_PGE
+mdefine_line|#define EMPTY_PGE&t;0xfffffc0000308000
+DECL|macro|ZERO_PGE
+mdefine_line|#define ZERO_PGE&t;0xfffffc000030A000
+DECL|macro|SWAPPER_PGD
+mdefine_line|#define SWAPPER_PGD&t;0xfffffc000030C000
 DECL|macro|START_ADDR
-mdefine_line|#define START_ADDR&t;0xfffffc0000304000
+mdefine_line|#define START_ADDR&t;0xfffffc0000310000
 DECL|macro|START_SIZE
-mdefine_line|#define START_SIZE&t;(32*1024)
+mdefine_line|#define START_SIZE&t;(1024*1024)
 multiline_comment|/*&n; * Common PAL-code&n; */
 DECL|macro|PAL_halt
 mdefine_line|#define PAL_halt&t;  0
@@ -100,6 +116,24 @@ c_func
 (paren
 r_int
 r_int
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|wrusp
+c_func
+(paren
+r_int
+r_int
+)paren
+suffix:semicolon
+r_extern
+r_int
+r_int
+id|rdusp
+c_func
+(paren
+r_void
 )paren
 suffix:semicolon
 DECL|macro|halt

@@ -55,8 +55,7 @@ suffix:semicolon
 DECL|macro|copy_page
 mdefine_line|#define copy_page(from,to) memcpy((void *) to, (void *) from, PAGE_SIZE)
 DECL|variable|mem_map
-r_int
-r_int
+id|mem_map_t
 op_star
 id|mem_map
 op_assign
@@ -2674,8 +2673,7 @@ r_int
 id|address
 comma
 r_int
-r_int
-id|error_code
+id|write_access
 )paren
 (brace
 r_int
@@ -3924,8 +3922,7 @@ r_int
 id|address
 comma
 r_int
-r_int
-id|error_code
+id|write_access
 comma
 r_int
 r_int
@@ -3988,11 +3985,7 @@ op_amp
 id|PAGE_COW
 )paren
 op_logical_and
-(paren
-id|error_code
-op_amp
-id|PAGE_RW
-)paren
+id|write_access
 )paren
 (brace
 r_if
@@ -4440,8 +4433,7 @@ r_int
 id|address
 comma
 r_int
-r_int
-id|error_code
+id|write_access
 )paren
 (brace
 r_int
@@ -4576,7 +4568,7 @@ id|vma
 comma
 id|address
 comma
-id|error_code
+id|write_access
 comma
 id|page
 )paren
@@ -4643,11 +4635,7 @@ id|address
 comma
 id|page
 comma
-(paren
-id|error_code
-op_amp
-id|PAGE_RW
-)paren
+id|write_access
 op_logical_and
 (paren
 id|prot
@@ -4666,7 +4654,7 @@ id|vma
 comma
 id|address
 comma
-id|error_code
+id|write_access
 comma
 l_int|0
 )paren
@@ -4681,13 +4669,11 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; * This silly early PAGE_DIRTY setting removes a race&n;&t; * due to the bad i386 page protection.&n;&t; */
+multiline_comment|/*&n;&t; * This silly early PAGE_DIRTY setting removes a race&n;&t; * due to the bad i386 page protection. But it&squot;s valid&n;&t; * for other architectures too.&n;&t; */
 r_if
 c_cond
 (paren
-id|error_code
-op_amp
-id|PAGE_RW
+id|write_access
 )paren
 (brace
 id|prot

@@ -1361,7 +1361,12 @@ id|keyboard_interrupt
 c_func
 (paren
 r_int
-id|int_pt_regs
+id|irq
+comma
+r_struct
+id|pt_regs
+op_star
+id|regs
 )paren
 (brace
 r_int
@@ -1387,12 +1392,7 @@ id|raw_mode
 suffix:semicolon
 id|pt_regs
 op_assign
-(paren
-r_struct
-id|pt_regs
-op_star
-)paren
-id|int_pt_regs
+id|regs
 suffix:semicolon
 id|send_cmd
 c_func
@@ -4809,6 +4809,7 @@ l_int|0
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * This routine reboots the machine by asking the keyboard&n; * controller to pulse the reset-line low. We try that for a while,&n; * and if it doesn&squot;t work, we do some other stupid things.&n; */
+macro_line|#ifdef __i386__
 DECL|function|hard_reset_now
 r_void
 id|hard_reset_now
@@ -4821,14 +4822,6 @@ r_int
 id|i
 comma
 id|j
-suffix:semicolon
-r_extern
-r_int
-r_int
-id|pg0
-(braket
-l_int|1024
-)braket
 suffix:semicolon
 id|sti
 c_func
@@ -4910,16 +4903,15 @@ l_int|0x64
 suffix:semicolon
 multiline_comment|/* pulse reset low */
 )brace
-macro_line|#ifdef __i386__
 id|__asm__
 c_func
 (paren
 l_string|&quot;&bslash;tlidt _no_idt&quot;
 )paren
 suffix:semicolon
+)brace
+)brace
 macro_line|#endif
-)brace
-)brace
 DECL|function|kbd_init
 r_int
 r_int
@@ -5011,6 +5003,65 @@ comma
 l_string|&quot;keyboard&quot;
 )paren
 suffix:semicolon
+macro_line|#ifdef __alpha__
+multiline_comment|/* enable keyboard interrupts */
+id|outb
+c_func
+(paren
+l_int|0x60
+comma
+l_int|0x64
+)paren
+suffix:semicolon
+r_while
+c_loop
+(paren
+id|inb
+c_func
+(paren
+l_int|0x64
+)paren
+op_amp
+l_int|2
+)paren
+multiline_comment|/* nothing */
+suffix:semicolon
+id|outb
+c_func
+(paren
+l_int|0x1
+comma
+l_int|0x60
+)paren
+suffix:semicolon
+r_while
+c_loop
+(paren
+id|inb
+c_func
+(paren
+l_int|0x64
+)paren
+op_amp
+l_int|2
+)paren
+multiline_comment|/* nothing */
+suffix:semicolon
+id|send_data
+c_func
+(paren
+l_int|0xf0
+)paren
+suffix:semicolon
+multiline_comment|/* Select scan code */
+id|send_data
+c_func
+(paren
+l_int|0x01
+)paren
+suffix:semicolon
+multiline_comment|/* type 1 */
+macro_line|#endif&t;&t;
 id|mark_bh
 c_func
 (paren

@@ -76,7 +76,12 @@ id|ei_interrupt
 c_func
 (paren
 r_int
-id|reg_ptr
+id|irq
+comma
+r_struct
+id|pt_regs
+op_star
+id|regs
 )paren
 suffix:semicolon
 macro_line|#ifndef HAVE_AUTOIRQ

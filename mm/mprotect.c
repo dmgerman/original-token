@@ -10,8 +10,6 @@ macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
-DECL|macro|CHG_MASK
-mdefine_line|#define CHG_MASK (PAGE_MASK | PAGE_ACCESSED | PAGE_DIRTY | PAGE_PWT | PAGE_PCD)
 DECL|function|change_protection
 r_static
 r_void
@@ -181,7 +179,7 @@ op_assign
 (paren
 id|page
 op_amp
-id|CHG_MASK
+id|PAGE_CHG_MASK
 )paren
 op_or
 id|prot

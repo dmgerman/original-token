@@ -2255,28 +2255,13 @@ c_func
 (paren
 r_int
 id|irq
+comma
+r_struct
+id|pt_regs
+op_star
+id|regs
 )paren
 (brace
-macro_line|#ifdef 0
-multiline_comment|/*&n;     * Use irqp as the parm, and the following declaration, if&n;     * SA_INTERRUPT is not used.&n;     */
-r_register
-r_int
-id|irq
-op_assign
-op_star
-(paren
-(paren
-(paren
-r_int
-op_star
-)paren
-id|irqp
-)paren
-op_minus
-l_int|2
-)paren
-suffix:semicolon
-macro_line|#endif
 r_register
 r_int
 id|flag
@@ -3906,6 +3891,8 @@ id|wd7000_intr_handle
 c_func
 (paren
 id|host-&gt;irq
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 r_return

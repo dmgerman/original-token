@@ -2296,9 +2296,15 @@ DECL|function|xd_interrupt_handler
 r_static
 r_void
 id|xd_interrupt_handler
+c_func
 (paren
 r_int
-id|unused
+id|irq
+comma
+r_struct
+id|pt_regs
+op_star
+id|regs
 )paren
 (brace
 r_if

@@ -1637,7 +1637,7 @@ op_increment
 id|rq-&gt;sector
 suffix:semicolon
 )brace
-multiline_comment|/* If we&squot;ve statisfied the current request, terminate it successfully. */
+multiline_comment|/* If we&squot;ve satisfied the current request, terminate it successfully. */
 r_if
 c_cond
 (paren

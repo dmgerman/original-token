@@ -1481,6 +1481,11 @@ c_func
 (paren
 r_int
 id|irq
+comma
+r_struct
+id|pt_regs
+op_star
+id|regs
 )paren
 (brace
 id|rs_irq_triggered
@@ -2185,6 +2190,11 @@ c_func
 (paren
 r_int
 id|irq
+comma
+r_struct
+id|pt_regs
+op_star
+id|regs
 )paren
 (brace
 r_int
@@ -2405,6 +2415,11 @@ c_func
 (paren
 r_int
 id|irq
+comma
+r_struct
+id|pt_regs
+op_star
+id|regs
 )paren
 (brace
 r_int
@@ -2570,6 +2585,11 @@ c_func
 (paren
 r_int
 id|irq
+comma
+r_struct
+id|pt_regs
+op_star
+id|regs
 )paren
 (brace
 r_int
@@ -2783,6 +2803,11 @@ c_func
 (paren
 r_int
 id|irq
+comma
+r_struct
+id|pt_regs
+op_star
+id|regs
 )paren
 (brace
 r_int
@@ -3156,6 +3181,8 @@ id|rs_interrupt
 c_func
 (paren
 id|i
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 )brace
@@ -3164,6 +3191,8 @@ id|rs_interrupt_single
 c_func
 (paren
 id|i
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 id|sti
@@ -3214,6 +3243,8 @@ id|rs_interrupt
 c_func
 (paren
 l_int|0
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 id|sti
@@ -3489,6 +3520,10 @@ id|handler
 )paren
 (paren
 r_int
+comma
+r_struct
+id|pt_regs
+op_star
 )paren
 suffix:semicolon
 r_if

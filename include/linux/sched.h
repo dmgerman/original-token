@@ -2,8 +2,7 @@ macro_line|#ifndef _LINUX_SCHED_H
 DECL|macro|_LINUX_SCHED_H
 mdefine_line|#define _LINUX_SCHED_H
 multiline_comment|/*&n; * define DEBUG if you want the wait-queues to have some extra&n; * debugging code. It&squot;s not normally used, but might catch some&n; * wait-queue coding errors.&n; *&n; *  #define DEBUG&n; */
-DECL|macro|HZ
-mdefine_line|#define HZ 100
+macro_line|#include &lt;asm/param.h&gt;&t;/* for HZ */
 r_extern
 r_int
 r_int
@@ -761,6 +760,10 @@ id|handler
 )paren
 (paren
 r_int
+comma
+r_struct
+id|pt_regs
+op_star
 )paren
 comma
 r_int

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *      u14-34f.c - Low-level driver for UltraStor 14F/34F SCSI host adapters.&n; *&n; *      15 Dec 1994 rev. 1.12 for linux 1.1.74&n; *          The host-&gt;block flag is set for all the detected ISA boards.&n; *&n; *      30 Nov 1994 rev. 1.11 for linux 1.1.68&n; *          Redo i/o on target status CONDITION_GOOD for TYPE_DISK only.&n; *          Added optional support for using a single board at a time.&n; *&n; *      14 Nov 1994 rev. 1.10 for linux 1.1.63&n; *&n; *      28 Oct 1994 rev. 1.09 for linux 1.1.58  Final BETA release.&n; *      16 Jul 1994 rev. 1.00 for linux 1.1.29  Initial ALPHA release.&n; *&n; *          This driver is a total replacement of the original UltraStor &n; *          scsi driver, but it supports ONLY the 14F and 34F boards.&n; *          It can be configured in the same kernel in which the original&n; *          ultrastor driver is configured to allow the original U24F&n; *          support.&n; * &n; *          Multiple U14F and/or U34F host adapters are supported.&n; *&n; *      Released by Dario Ballabio (Dario_Ballabio@milano.europe.dg.com)&n; *&n; *      WARNING: if your 14F board has an old firmware revision (see below)&n; *               you must change &quot;#undef&quot; into &quot;#define&quot; in the following&n; *               statement.&n; */
+multiline_comment|/*&n; *      u14-34f.c - Low-level driver for UltraStor 14F/34F SCSI host adapters.&n; *&n; *      16 Jan 1995 rev. 1.13 for linux 1.1.81&n; *          Display a message if check_region detects a port address&n; *          already in use.&n; *&n; *      15 Dec 1994 rev. 1.12 for linux 1.1.74&n; *          The host-&gt;block flag is set for all the detected ISA boards.&n; *&n; *      30 Nov 1994 rev. 1.11 for linux 1.1.68&n; *          Redo i/o on target status CONDITION_GOOD for TYPE_DISK only.&n; *          Added optional support for using a single board at a time.&n; *&n; *      14 Nov 1994 rev. 1.10 for linux 1.1.63&n; *&n; *      28 Oct 1994 rev. 1.09 for linux 1.1.58  Final BETA release.&n; *      16 Jul 1994 rev. 1.00 for linux 1.1.29  Initial ALPHA release.&n; *&n; *          This driver is a total replacement of the original UltraStor &n; *          scsi driver, but it supports ONLY the 14F and 34F boards.&n; *          It can be configured in the same kernel in which the original&n; *          ultrastor driver is configured to allow the original U24F&n; *          support.&n; * &n; *          Multiple U14F and/or U34F host adapters are supported.&n; *&n; *      Released by Dario Ballabio (Dario_Ballabio@milano.europe.dg.com)&n; *&n; *      WARNING: if your 14F board has an old firmware revision (see below)&n; *               you must change &quot;#undef&quot; into &quot;#define&quot; in the following&n; *               statement.&n; */
 DECL|macro|HAVE_OLD_U14F_FIRMWARE
 macro_line|#undef HAVE_OLD_U14F_FIRMWARE
 multiline_comment|/*&n; *  The UltraStor 14F, 24F, and 34F are a family of intelligent, high&n; *  performance SCSI-2 host adapters.&n; *  Here is the scoop on the various models:&n; *&n; *  14F - ISA first-party DMA HA with floppy support and WD1003 emulation.&n; *  24F - EISA Bus Master HA with floppy support and WD1003 emulation.&n; *  34F - VESA Local-Bus Bus Master HA (no WD1003 emulation).&n; *&n; *  This code has been tested with up to two U14F boards, using both &n; *  firmware 28004-005/38004-004 (BIOS rev. 2.00) and the latest firmware&n; *  28004-006/38004-005 (BIOS rev. 2.01). &n; *&n; *  The latest firmware is required in order to get reliable operations when &n; *  clustering is enabled. ENABLE_CLUSTERING provides a performance increase&n; *  up to 50% on sequential access.&n; *&n; *  Since the Scsi_Host_Template structure is shared among all 14F and 34F,&n; *  the last setting of use_clustering is in effect for all of these boards.&n; *&n; *  Here a sample configuration using two U14F boards:&n; *&n; U14F0: PORT 0x330, BIOS 0xc8000, IRQ 11, DMA 5, SG 33, Mbox 16, CmdLun 2, C1.&n; U14F1: PORT 0x340, BIOS 0x00000, IRQ 10, DMA 6, SG 33, Mbox 16, CmdLun 2, C1.&n; *&n; *  The boot controller must have its BIOS enabled, while other boards can&n; *  have their BIOS disabled, or enabled to an higher address.&n; *  Boards are named Ux4F0, Ux4F1..., according to the port address order in&n; *  the io_port[] array.&n; *  &n; *  The following facts are based on real testing results (not on&n; *  documentation) on the above U14F board.&n; *  &n; *  - The U14F board should be jumpered for bus on time less or equal to 7 &n; *    microseconds, while the default is 11 microseconds. This is order to &n; *    get acceptable performance while using floppy drive and hard disk &n; *    together. The jumpering for 7 microseconds is: JP13 pin 15-16, &n; *    JP14 pin 7-8 and pin 9-10.&n; *    The reduction has a little impact on scsi performance.&n; *  &n; *  - If scsi bus length exceeds 3m., the scsi bus speed needs to be reduced&n; *    from 10Mhz to 5Mhz (do this by inserting a jumper on JP13 pin 7-8).&n; *&n; *  - If U14F on board firmware is older than 28004-006/38004-005,&n; *    the U14F board is unable to provide reliable operations if the scsi &n; *    request length exceeds 16Kbyte. When this length is exceeded the&n; *    behavior is: &n; *    - adapter_status equal 0x96 or 0xa3 or 0x93 or 0x94;&n; *    - adapter_status equal 0 and target_status equal 2 on for all targets&n; *      in the next operation following the reset.&n; *    This sequence takes a long time (&gt;3 seconds), so in the meantime&n; *    the SD_TIMEOUT in sd.c could expire giving rise to scsi aborts&n; *    (SD_TIMEOUT has been increased from 3 to 6 seconds in 1.1.31).&n; *    Because of this I had to DISABLE_CLUSTERING and to work around the&n; *    bus reset in the interrupt service routine, returning DID_BUS_BUSY&n; *    so that the operations are retried without complains from the scsi.c&n; *    code.&n; *    Any reset of the scsi bus is going to kill tape operations, since&n; *    no retry is allowed for tapes. Bus resets are more likely when the&n; *    scsi bus is under heavy load.&n; *    Requests using scatter/gather have a maximum length of 16 x 1024 bytes &n; *    when DISABLE_CLUSTERING is in effect, but unscattered requests could be&n; *    larger than 16Kbyte.&n; *&n; *    The new firmware has fixed all the above problems and has been tested &n; *    with up to 33 scatter/gather lists.&n; *&n; *  In order to support multiple ISA boards in a reliable way,&n; *  the driver sets host-&gt;block = TRUE for all ISA boards.&n; */
@@ -464,6 +464,10 @@ id|u14_34f_interrupt_handler
 c_func
 (paren
 r_int
+comma
+r_struct
+id|pt_regs
+op_star
 )paren
 suffix:semicolon
 DECL|variable|do_trace
@@ -774,6 +778,17 @@ id|REG_REGION
 )paren
 )paren
 (brace
+id|printk
+c_func
+(paren
+l_string|&quot;%s: address 0x%03x already in use, detaching.&bslash;n&quot;
+comma
+id|name
+comma
+op_star
+id|port_base
+)paren
+suffix:semicolon
 r_return
 id|FALSE
 suffix:semicolon
@@ -1125,7 +1140,7 @@ id|io_port
 comma
 id|REG_REGION
 comma
-l_string|&quot;u14-34f&quot;
+id|driver_name
 )paren
 suffix:semicolon
 id|memset
@@ -3458,6 +3473,11 @@ c_func
 (paren
 r_int
 id|irq
+comma
+r_struct
+id|pt_regs
+op_star
+id|regs
 )paren
 (brace
 id|Scsi_Cmnd

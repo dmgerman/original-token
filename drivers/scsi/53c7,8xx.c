@@ -52,9 +52,15 @@ suffix:semicolon
 r_static
 r_void
 id|NCR53c7x0_intr
+c_func
 (paren
 r_int
 id|irq
+comma
+r_struct
+id|pt_regs
+op_star
+id|regs
 )paren
 suffix:semicolon
 r_static
@@ -10816,7 +10822,7 @@ suffix:semicolon
 )brace
 macro_line|#endif
 )brace
-multiline_comment|/*&n; * Function : static void NCR53c7x0_intr (int irq)&n; *&n; * Purpose : handle NCR53c7x0 interrupts for all NCR devices sharing&n; *&t;the same IRQ line.  &n; * &n; * Inputs : Since we&squot;re using the SA_INTERRUPT interrupt handler&n; *&t;semantics, irq indicates the interrupt which invoked &n; *&t;this handler.  &n; */
+multiline_comment|/*&n; * Function : static void NCR53c7x0_intr (int irq, struct pt_regs * regs)&n; *&n; * Purpose : handle NCR53c7x0 interrupts for all NCR devices sharing&n; *&t;the same IRQ line.  &n; * &n; * Inputs : Since we&squot;re using the SA_INTERRUPT interrupt handler&n; *&t;semantics, irq indicates the interrupt which invoked &n; *&t;this handler.  &n; */
 DECL|function|NCR53c7x0_intr
 r_static
 r_void
@@ -10824,6 +10830,11 @@ id|NCR53c7x0_intr
 (paren
 r_int
 id|irq
+comma
+r_struct
+id|pt_regs
+op_star
+id|regs
 )paren
 (brace
 id|NCR53c7x0_local_declare

@@ -1,6 +1,6 @@
-macro_line|#ifndef _MIPS_DELAY_H
-DECL|macro|_MIPS_DELAY_H
-mdefine_line|#define _MIPS_DELAY_H
+macro_line|#ifndef __ASM_MIPS_DELAY_H
+DECL|macro|__ASM_MIPS_DELAY_H
+mdefine_line|#define __ASM_MIPS_DELAY_H
 DECL|function|__delay
 r_extern
 id|__inline__
@@ -13,14 +13,21 @@ id|loops
 )paren
 (brace
 id|__asm__
-c_func
+id|__volatile__
 (paren
-l_string|&quot;.align 3&bslash;n&quot;
-l_string|&quot;1:&bslash;tbeq&bslash;t$0,%0,1b&bslash;n&bslash;t&quot;
-l_string|&quot;addiu&bslash;t%0,%0,-1&bslash;n&bslash;t&quot;
+l_string|&quot;.set&bslash;tnoreorder&bslash;n&bslash;t&quot;
+l_string|&quot;.set&bslash;tnoat&bslash;n&bslash;t&quot;
+l_string|&quot;1:&bslash;tbne&bslash;t$0,%0,1b&bslash;n&bslash;t&quot;
+l_string|&quot;subu&bslash;t%0,%0,1&bslash;n&bslash;t&quot;
+l_string|&quot;.set&bslash;tat&bslash;n&bslash;t&quot;
+l_string|&quot;.set&bslash;treorder&quot;
 suffix:colon
+l_string|&quot;=r&quot;
+(paren
+id|loops
+)paren
 suffix:colon
-l_string|&quot;d&quot;
+l_string|&quot;0&quot;
 (paren
 id|loops
 )paren
@@ -50,7 +57,7 @@ c_func
 (paren
 l_string|&quot;mul&bslash;t%0,%0,%1&quot;
 suffix:colon
-l_string|&quot;=d&quot;
+l_string|&quot;=r&quot;
 (paren
 id|usecs
 )paren
@@ -60,12 +67,10 @@ l_string|&quot;0&quot;
 id|usecs
 )paren
 comma
-l_string|&quot;d&quot;
+l_string|&quot;r&quot;
 (paren
 id|loops_per_sec
 )paren
-suffix:colon
-l_string|&quot;ax&quot;
 )paren
 suffix:semicolon
 id|__delay
@@ -75,5 +80,37 @@ id|usecs
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif /* defined(_MIPS_DELAY_H) */
+multiline_comment|/*&n; * 64-bit integers means we don&squot;t have to worry about overflow as&n; * on some other architectures..&n; */
+DECL|function|muldiv
+r_extern
+id|__inline__
+r_int
+r_int
+id|muldiv
+c_func
+(paren
+r_int
+r_int
+id|a
+comma
+r_int
+r_int
+id|b
+comma
+r_int
+r_int
+id|c
+)paren
+(brace
+r_return
+(paren
+id|a
+op_star
+id|b
+)paren
+op_div
+id|c
+suffix:semicolon
+)brace
+macro_line|#endif /* __ASM_MIPS_DELAY_H */
 eof

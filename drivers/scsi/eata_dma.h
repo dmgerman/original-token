@@ -1,4 +1,4 @@
-multiline_comment|/********************************************************&n;* Header file for eata_dma.c Linux EATA-DMA SCSI driver *&n;* (c) 1993,94,95 Michael Neuffer                        *&n;*********************************************************&n;* last change: 94/01/08                                 *&n;********************************************************/
+multiline_comment|/********************************************************&n;* Header file for eata_dma.c Linux EATA-DMA SCSI driver *&n;* (c) 1993,94,95 Michael Neuffer                        *&n;*********************************************************&n;* last change: 95/01/15                                 *&n;********************************************************/
 macro_line|#ifndef _EATA_DMA_H
 DECL|macro|_EATA_DMA_H
 mdefine_line|#define _EATA_DMA_H
@@ -11,7 +11,7 @@ mdefine_line|#define VER_MAJOR 2
 DECL|macro|VER_MINOR
 mdefine_line|#define VER_MINOR 1
 DECL|macro|VER_SUB
-mdefine_line|#define VER_SUB   &quot;0f&quot;
+mdefine_line|#define VER_SUB   &quot;0g&quot;
 multiline_comment|/************************************************************************&n; * Here you can configure your drives that are using a non-standard     *&n; * geometry.                                                            *&n; * To enable this set HARDCODED to 1                                    *&n; * If you have only one drive that need reconfiguration, set ID1 to -1  *&n; ************************************************************************/
 DECL|macro|HARDCODED
 mdefine_line|#define HARDCODED     0          /* Here are drives running in emu. mode   */
@@ -71,7 +71,7 @@ DECL|macro|DBG
 mdefine_line|#define DBG(x, y)
 macro_line|#endif
 DECL|macro|EATA_DMA
-mdefine_line|#define EATA_DMA {                   &bslash;&n;&t;NULL, NULL,                  &bslash;&n;        &quot;EATA (Extended Attachment) driver&bslash;n&quot;, &bslash;&n;        eata_detect,                 &bslash;&n;        NULL,                        &bslash;&n;        eata_info,                   &bslash;&n;        eata_command,                &bslash;&n;        eata_queue,                  &bslash;&n;        eata_abort,                  &bslash;&n;        eata_reset,                  &bslash;&n;        NULL, /* Slave attach */     &bslash;&n;&t;scsicam_bios_param,          &bslash;&n;        0,      /* Canqueue     */   &bslash;&n;        0,      /* this_id      */   &bslash;&n;        0,      /* sg_tablesize */   &bslash;&n;        0,      /* cmd_per_lun  */   &bslash;&n;        0,      /* present      */   &bslash;&n;        0,      /* True if ISA  */   &bslash;&n;&t;ENABLE_CLUSTERING }
+mdefine_line|#define EATA_DMA {                   &bslash;&n;&t;NULL, NULL,                  &bslash;&n;        &quot;EATA (Extended Attachment) driver&quot;, &bslash;&n;        eata_detect,                 &bslash;&n;        NULL,                        &bslash;&n;        eata_info,                   &bslash;&n;        eata_command,                &bslash;&n;        eata_queue,                  &bslash;&n;        eata_abort,                  &bslash;&n;        eata_reset,                  &bslash;&n;        NULL, /* Slave attach */     &bslash;&n;&t;scsicam_bios_param,          &bslash;&n;        0,      /* Canqueue     */   &bslash;&n;        0,      /* this_id      */   &bslash;&n;        0,      /* sg_tablesize */   &bslash;&n;        0,      /* cmd_per_lun  */   &bslash;&n;        0,      /* present      */   &bslash;&n;        0,      /* True if ISA  */   &bslash;&n;&t;ENABLE_CLUSTERING }
 r_int
 id|eata_detect
 c_func
@@ -267,7 +267,7 @@ id|more
 suffix:colon
 l_int|1
 suffix:semicolon
-multiline_comment|/* more DATA comming soon, poll BSY &amp; DRQ (PIO) */
+multiline_comment|/* more DATA coming soon, poll BSY &amp; DRQ (PIO) */
 DECL|member|corr
 id|unchar
 id|corr
@@ -281,7 +281,7 @@ id|drq
 suffix:colon
 l_int|1
 suffix:semicolon
-multiline_comment|/* data request aktive  */
+multiline_comment|/* data request active  */
 DECL|member|sc
 id|unchar
 id|sc
@@ -891,6 +891,27 @@ r_typedef
 r_struct
 id|hstd
 (brace
+DECL|member|vendor
+r_char
+id|vendor
+(braket
+l_int|9
+)braket
+suffix:semicolon
+DECL|member|name
+r_char
+id|name
+(braket
+l_int|18
+)braket
+suffix:semicolon
+DECL|member|revision
+r_char
+id|revision
+(braket
+l_int|6
+)braket
+suffix:semicolon
 DECL|member|bustype
 id|unchar
 id|bustype
@@ -1029,6 +1050,96 @@ l_int|2
 suffix:semicolon
 multiline_comment|/* drive structures          */
 )brace
+suffix:semicolon
+DECL|struct|lun_map
+r_struct
+id|lun_map
+(brace
+DECL|member|id
+id|unchar
+id|id
+suffix:colon
+l_int|5
+comma
+DECL|member|chan
+id|chan
+suffix:colon
+l_int|3
+suffix:semicolon
+DECL|member|lun
+id|unchar
+id|lun
+suffix:semicolon
+)brace
+suffix:semicolon
+DECL|struct|emul_pp
+r_typedef
+r_struct
+id|emul_pp
+(brace
+DECL|member|p_code
+id|unchar
+id|p_code
+suffix:colon
+l_int|6
+comma
+DECL|member|null
+id|null
+suffix:colon
+l_int|1
+comma
+DECL|member|p_save
+id|p_save
+suffix:colon
+l_int|1
+suffix:semicolon
+DECL|member|p_lenght
+id|unchar
+id|p_lenght
+suffix:semicolon
+DECL|member|cylinder
+id|ushort
+id|cylinder
+suffix:semicolon
+DECL|member|heads
+id|unchar
+id|heads
+suffix:semicolon
+DECL|member|sectors
+id|unchar
+id|sectors
+suffix:semicolon
+DECL|member|null2
+id|unchar
+id|null2
+suffix:semicolon
+DECL|member|s_lunmap
+id|unchar
+id|s_lunmap
+suffix:colon
+l_int|4
+comma
+DECL|member|ems
+id|ems
+suffix:colon
+l_int|1
+suffix:semicolon
+DECL|member|drive_type
+id|ushort
+id|drive_type
+suffix:semicolon
+multiline_comment|/* In Little Endian ! */
+DECL|member|lunmap
+r_struct
+id|lun_map
+id|lunmap
+(braket
+l_int|4
+)braket
+suffix:semicolon
+DECL|typedef|emulpp
+)brace
+id|emulpp
 suffix:semicolon
 macro_line|#endif /* _EATA_H */
 eof

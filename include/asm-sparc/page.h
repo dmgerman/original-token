@@ -32,9 +32,9 @@ DECL|macro|SIZEOF_PTR_LOG2
 mdefine_line|#define SIZEOF_PTR_LOG2   2
 multiline_comment|/* The rest is kind of funky because on the sparc, the offsets into the mmu &n; * entries are encoded in magic alternate address space tables. I will &n; * probably find some nifty inline assembly routines to do the equivalent. &n; * Much thought must go into this code.   (davem@caip.rutgers.edu)&n; */
 DECL|macro|PAGE_DIR_OFFSET
-mdefine_line|#define PAGE_DIR_OFFSET(base, address)   ((void *) 0)
+mdefine_line|#define PAGE_DIR_OFFSET(base, address)   ((unsigned long *) 0)
 DECL|macro|PAGE_PTR
-mdefine_line|#define PAGE_PTR(address)                ((void *) 0)
+mdefine_line|#define PAGE_PTR(address)                ((unsigned long) 0)
 DECL|macro|PTRS_PER_PAGE
 mdefine_line|#define PTRS_PER_PAGE                    (64)  /* 64 pte&squot;s per phys_seg */
 multiline_comment|/* Bitfields within a Sparc sun4c PTE (page table entry). */
@@ -288,6 +288,9 @@ r_return
 id|ctx
 suffix:semicolon
 )brace
+multiline_comment|/* to set the page-dir&n; *&n; * On the Sparc this is a nop for now. It will set the proper segmap&n; * in the real implementation.&n; */
+DECL|macro|SET_PAGE_DIR
+mdefine_line|#define SET_PAGE_DIR(tsk,pgdir)
 macro_line|#endif /* !(__ASSEMBLY__) */
 macro_line|#endif /* __KERNEL__ */
 macro_line|#endif /* _SPARC_PAGE_H */

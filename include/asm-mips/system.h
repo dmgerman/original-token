@@ -1,21 +1,354 @@
 multiline_comment|/*&n; * include/asm-mips/system.h&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * Copyright (C) 1994 by Ralf Baechle&n; */
-macro_line|#ifndef _ASM_MIPS_SYSTEM_H_
-DECL|macro|_ASM_MIPS_SYSTEM_H_
-mdefine_line|#define _ASM_MIPS_SYSTEM_H_
+macro_line|#ifndef __ASM_MIPS_SYSTEM_H
+DECL|macro|__ASM_MIPS_SYSTEM_H
+mdefine_line|#define __ASM_MIPS_SYSTEM_H
+macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
-macro_line|#include &lt;mips/mipsregs.h&gt;
-multiline_comment|/*&n; * move_to_user_mode() doesn&squot;t switch to user mode on the mips, since&n; * that would run us into problems: The kernel is located at virtual&n; * address 0x80000000. If we now would switch over to user mode, we&n; * we would immediately get an address error exception.&n; * Anyway - we don&squot;t have problems with a task running in kernel mode,&n; * as long it&squot;s code is foolproof.&n; */
+macro_line|#include &lt;asm/mipsregs.h&gt;
+macro_line|#include &lt;asm/mipsconfig.h&gt;
+multiline_comment|/*&n; * (Currently empty to support debugging)&n; */
 DECL|macro|move_to_user_mode
-mdefine_line|#define move_to_user_mode()
+mdefine_line|#define move_to_user_mode()              &bslash;&n;__asm__ __volatile__ (                   &bslash;&n;&t;&quot;.set&bslash;tnoreorder&bslash;n&bslash;t&quot;            &bslash;&n;&t;&quot;.set&bslash;tnoat&bslash;n&bslash;t&quot;                 &bslash;&n;&t;&quot;la&bslash;t$1,1f&bslash;n&bslash;t&quot;                  &bslash;&n;&t;&quot;subu&bslash;t$1,$1,%0&bslash;n&bslash;t&quot;             &bslash;&n;&t;&quot;jr&bslash;t$1&bslash;n&bslash;t&quot;                     &bslash;&n;&t;&quot;mfc0&bslash;t$1,$12&bslash;n&bslash;t&quot;               &bslash;&n;&t;&quot;1:ori&bslash;t$1,0x00&bslash;n&bslash;t&quot;             &bslash;&n;&t;&quot;mtc0&bslash;t$1,$12&bslash;n&bslash;t&quot;               &bslash;&n;&t;&quot;subu&bslash;t$29,%0&bslash;n&bslash;t&quot;               &bslash;&n;&t;&quot;.set&bslash;tat&bslash;n&bslash;t&quot;                   &bslash;&n;&t;&quot;.set&bslash;treorder&quot;                  &bslash;&n;&t;: /* no outputs */               &bslash;&n;&t;: &quot;r&quot; (KERNELBASE));
+macro_line|#if defined (__R4000__)
 DECL|macro|sti
-mdefine_line|#define sti() &bslash;&n;__asm__ __volatile__( &bslash;&n;&t;&quot;mfc0&bslash;t$1,&quot;STR(CP0_STATUS)&quot;&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;ori&bslash;t$1,$1,1&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;mtc0&bslash;t$1,&quot;STR(CP0_STATUS)&quot;&bslash;n&bslash;t&quot; &bslash;&n;&t;: /* no outputs */ &bslash;&n;&t;: /* no inputs */ &bslash;&n;&t;: &quot;$1&quot;,&quot;memory&quot;)
+mdefine_line|#define sti() &bslash;&n;__asm__ __volatile__(                    &bslash;&n;&t;&quot;.set&bslash;tnoat&bslash;n&bslash;t&quot;                 &bslash;&n;&t;&quot;mfc0&bslash;t$1,&quot;STR(CP0_STATUS)&quot;&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;ori&bslash;t$1,$1,0x1f&bslash;n&bslash;t&quot;            &bslash;&n;&t;&quot;xori&bslash;t$1,$1,0x1e&bslash;n&bslash;t&quot;           &bslash;&n;&t;&quot;mtc0&bslash;t$1,&quot;STR(CP0_STATUS)&quot;&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;.set&bslash;tat&quot;                       &bslash;&n;&t;: /* no outputs */               &bslash;&n;&t;: /* no inputs */                &bslash;&n;&t;: &quot;$1&quot;)
 DECL|macro|cli
-mdefine_line|#define cli() &bslash;&n;__asm__ __volatile__( &bslash;&n;&t;&quot;mfc0&bslash;t$1,&quot;STR(CP0_STATUS)&quot;&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;srl&bslash;t$1,$1,1&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;sll&bslash;t$1,$1,1&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;mtc0&bslash;t$1,&quot;STR(CP0_STATUS)&quot;&bslash;n&bslash;t&quot; &bslash;&n;&t;: /* no outputs */ &bslash;&n;&t;: /* no inputs */ &bslash;&n;&t;: &quot;$1&quot;,&quot;memory&quot;)
+mdefine_line|#define cli() &bslash;&n;__asm__ __volatile__(                    &bslash;&n;&t;&quot;.set&bslash;tnoat&bslash;n&bslash;t&quot;                 &bslash;&n;&t;&quot;mfc0&bslash;t$1,&quot;STR(CP0_STATUS)&quot;&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;ori&bslash;t$1,$1,1&bslash;n&bslash;t&quot;               &bslash;&n;&t;&quot;xori&bslash;t$1,$1,1&bslash;n&bslash;t&quot;              &bslash;&n;&t;&quot;mtc0&bslash;t$1,&quot;STR(CP0_STATUS)&quot;&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;.set&bslash;tat&quot;                       &bslash;&n;&t;: /* no outputs */               &bslash;&n;&t;: /* no inputs */                &bslash;&n;&t;: &quot;$1&quot;)
+macro_line|#else /* !defined (__R4000__) */
+multiline_comment|/*&n; * Cheese - I don&squot;t have a R3000 manual&n; */
+macro_line|#error &quot;Yikes - write cli()/sti() macros for  R3000!&quot;
+macro_line|#endif /* !defined (__R4000__) */
 DECL|macro|nop
 mdefine_line|#define nop() __asm__ __volatile__ (&quot;nop&quot;)
 DECL|macro|save_flags
-mdefine_line|#define save_flags(x) &bslash;&n;__asm__ __volatile__( &bslash;&n;&t;&quot;.set&bslash;tnoreorder&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;.set&bslash;tnoat&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;mfc0&bslash;t%0,$12&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;.set&bslash;tat&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;.set&bslash;treorder&quot; &bslash;&n;&t;: &quot;=r&quot; (x) &bslash;&n;&t;: /* no inputs */ &bslash;&n;&t;: &quot;memory&quot;)
+mdefine_line|#define save_flags(x)                    &bslash;&n;__asm__ __volatile__(                    &bslash;&n;&t;&quot;mfc0&bslash;t%0,$12&quot;                   &bslash;&n;&t;: &quot;=r&quot; (x))                      &bslash;&n;
 DECL|macro|restore_flags
-mdefine_line|#define restore_flags(x) &bslash;&n;__asm__ __volatile__( &bslash;&n;&t;&quot;.set&bslash;tnoreorder&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;.set&bslash;tnoat&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;mtc0&bslash;t%0,$12&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;.set&bslash;tat&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;.set&bslash;treorder&quot; &bslash;&n;&t;: /* no output */ &bslash;&n;&t;: &quot;r&quot; (x) &bslash;&n;&t;: &quot;memory&quot;)
-macro_line|#endif /* _ASM_MIPS_SYSTEM_H_ */
+mdefine_line|#define restore_flags(x)                 &bslash;&n;__asm__ __volatile__(                    &bslash;&n;&t;&quot;mtc0&bslash;t%0,$12&quot;                   &bslash;&n;&t;: /* no output */                &bslash;&n;&t;: &quot;r&quot; (x))                       &bslash;&n;
+DECL|function|xchg_u8
+r_extern
+r_inline
+r_int
+r_int
+id|xchg_u8
+c_func
+(paren
+r_char
+op_star
+id|m
+comma
+r_int
+r_int
+id|val
+)paren
+(brace
+r_int
+r_int
+id|flags
+comma
+id|retval
+suffix:semicolon
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|sti
+c_func
+(paren
+)paren
+suffix:semicolon
+id|retval
+op_assign
+op_star
+id|m
+suffix:semicolon
+op_star
+id|m
+op_assign
+id|val
+suffix:semicolon
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+r_return
+id|retval
+suffix:semicolon
+)brace
+DECL|function|xchg_u16
+r_extern
+r_inline
+r_int
+r_int
+id|xchg_u16
+c_func
+(paren
+r_int
+op_star
+id|m
+comma
+r_int
+r_int
+id|val
+)paren
+(brace
+r_int
+r_int
+id|flags
+comma
+id|retval
+suffix:semicolon
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|sti
+c_func
+(paren
+)paren
+suffix:semicolon
+id|retval
+op_assign
+op_star
+id|m
+suffix:semicolon
+op_star
+id|m
+op_assign
+id|val
+suffix:semicolon
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+r_return
+id|retval
+suffix:semicolon
+)brace
+multiline_comment|/*&n; * For 32 and 64 bit operands we can take advantage of ll and sc.&n; * The later isn&squot;t currently being used.&n; */
+DECL|function|xchg_u32
+r_extern
+r_inline
+r_int
+r_int
+id|xchg_u32
+c_func
+(paren
+r_int
+op_star
+id|m
+comma
+r_int
+r_int
+id|val
+)paren
+(brace
+r_int
+r_int
+id|dummy
+suffix:semicolon
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;.set&bslash;tnoreorder&bslash;n&bslash;t&quot;
+l_string|&quot;.set&bslash;tnoat&bslash;n&bslash;t&quot;
+l_string|&quot;ll&bslash;t%0,(%1)&bslash;n&quot;
+l_string|&quot;1:&bslash;tmove&bslash;t$1,%2&bslash;n&bslash;t&quot;
+l_string|&quot;sc&bslash;t$1,(%1)&bslash;n&bslash;t&quot;
+l_string|&quot;beqzl&bslash;t%3,1b&bslash;n&bslash;t&quot;
+l_string|&quot;ll&bslash;t%0,(%1)&bslash;n&bslash;t&quot;
+l_string|&quot;.set&bslash;tat&bslash;n&bslash;t&quot;
+l_string|&quot;.set&bslash;treorder&quot;
+suffix:colon
+l_string|&quot;=r&quot;
+(paren
+id|val
+)paren
+comma
+l_string|&quot;=r&quot;
+(paren
+id|m
+)paren
+comma
+l_string|&quot;=r&quot;
+(paren
+id|dummy
+)paren
+suffix:colon
+l_string|&quot;1&quot;
+(paren
+op_star
+id|m
+)paren
+comma
+l_string|&quot;2&quot;
+(paren
+id|val
+)paren
+)paren
+suffix:semicolon
+r_return
+id|val
+suffix:semicolon
+)brace
+DECL|function|xchg_u64
+r_extern
+r_inline
+r_int
+r_int
+id|xchg_u64
+c_func
+(paren
+r_int
+op_star
+id|m
+comma
+r_int
+r_int
+id|val
+)paren
+(brace
+r_int
+r_int
+id|dummy
+suffix:semicolon
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;.set&bslash;tnoreorder&bslash;n&bslash;t&quot;
+l_string|&quot;.set&bslash;tnoat&bslash;n&bslash;t&quot;
+l_string|&quot;lld&bslash;t%0,(%1)&bslash;n&quot;
+l_string|&quot;1:&bslash;tmove&bslash;t$1,%2&bslash;n&bslash;t&quot;
+l_string|&quot;scd&bslash;t$1,(%1)&bslash;n&bslash;t&quot;
+l_string|&quot;beqzl&bslash;t%3,1b&bslash;n&bslash;t&quot;
+l_string|&quot;ll&bslash;t%0,(%1)&bslash;n&bslash;t&quot;
+l_string|&quot;.set&bslash;tat&bslash;n&bslash;t&quot;
+l_string|&quot;.set&bslash;treorder&quot;
+suffix:colon
+l_string|&quot;=r&quot;
+(paren
+id|val
+)paren
+comma
+l_string|&quot;=r&quot;
+(paren
+id|m
+)paren
+comma
+l_string|&quot;=r&quot;
+(paren
+id|dummy
+)paren
+suffix:colon
+l_string|&quot;1&quot;
+(paren
+op_star
+id|m
+)paren
+comma
+l_string|&quot;2&quot;
+(paren
+id|val
+)paren
+)paren
+suffix:semicolon
+r_return
+id|val
+suffix:semicolon
+)brace
+macro_line|#if 0
+DECL|function|tas
+r_extern
+r_inline
+r_int
+id|tas
+c_func
+(paren
+r_char
+op_star
+id|m
+)paren
+(brace
+r_return
+id|xchg_u8
+c_func
+(paren
+id|m
+comma
+l_int|1
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
+DECL|function|xchg_ptr
+r_extern
+r_inline
+r_void
+op_star
+id|xchg_ptr
+c_func
+(paren
+r_void
+op_star
+id|m
+comma
+r_void
+op_star
+id|val
+)paren
+(brace
+r_return
+(paren
+r_void
+op_star
+)paren
+id|xchg_u32
+c_func
+(paren
+id|m
+comma
+(paren
+r_int
+r_int
+)paren
+id|val
+)paren
+suffix:semicolon
+)brace
+r_extern
+id|ulong
+id|IRQ_vectors
+(braket
+l_int|256
+)braket
+suffix:semicolon
+r_extern
+id|ulong
+id|exception_handlers
+(braket
+l_int|256
+)braket
+suffix:semicolon
+DECL|macro|set_intr_gate
+mdefine_line|#define set_intr_gate(n,addr) &bslash;&n;&t;IRQ_vectors[n] = (ulong) (addr)
+DECL|macro|set_except_vector
+mdefine_line|#define set_except_vector(n,addr) &bslash;&n;&t;exception_handlers[n] = (ulong) (addr)
+multiline_comment|/*&n; * atomic exchange of one word&n; */
+macro_line|#if defined (__R4000__)
+DECL|macro|atomic_exchange
+mdefine_line|#define atomic_exchange(m,r)             &bslash;&n;&t;__asm__ __volatile__(            &bslash;&n;&t;&t;&quot;.set&bslash;tnoreorder&bslash;n&bslash;t&quot;    &bslash;&n;&t;&t;&quot;ll&bslash;t%0,(%2)&bslash;n&quot;          &bslash;&n;&t;&t;&quot;1:&bslash;tmove&bslash;t$8,%1&bslash;n&bslash;t&quot;    &bslash;&n;&t;&t;&quot;sc&bslash;t$8,(%2)&bslash;n&bslash;t&quot;        &bslash;&n;&t;&t;&quot;beql&bslash;t$0,$8,1b&bslash;n&bslash;t&quot;     &bslash;&n;&t;&t;&quot;ll&bslash;t%0,(%2)&bslash;n&bslash;t&quot;        &bslash;&n;&t;&t;&quot;.set&bslash;treorder&quot;          &bslash;&n;&t;&t;: &quot;=r&quot; (r)               &bslash;&n;&t;&t;: &quot;r&quot; (r), &quot;r&quot; (&amp;(m))    &bslash;&n;&t;&t;: &quot;$8&quot;,&quot;memory&quot;)
+macro_line|#else
+DECL|macro|atomic_exchange
+mdefine_line|#define atomic_exchange(m,r)             &bslash;&n;&t;{                                &bslash;&n;&t;&t;unsigned long flags;     &bslash;&n;&t;&t;unsigned long tmp;       &bslash;&n;&t;&t;save_flags(flags);       &bslash;&t;&n;&t;&t;cli();                   &bslash;&n;&t;&t;tmp = (m);               &bslash;&n;&t;&t;(m) = (r);               &bslash;&n;&t;&t;(r) = tmp;               &bslash;&n;&t;&t;restore_flags(flags);    &bslash;&t;&n;&t;}
+macro_line|#endif
+macro_line|#endif /* __ASM_MIPS_SYSTEM_H */
 eof
