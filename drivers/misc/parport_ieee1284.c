@@ -6,7 +6,7 @@ macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 DECL|macro|DEBUG
-mdefine_line|#define DEBUG /* undef me for production */
+macro_line|#undef DEBUG /* undef me for production */
 macro_line|#ifdef CONFIG_LP_CONSOLE
 DECL|macro|DEBUG
 macro_line|#undef DEBUG /* Don&squot;t want a garbled console */

@@ -491,6 +491,10 @@ id|GFP_KERNEL
 )paren
 )paren
 (brace
+id|p-&gt;isopen
+op_assign
+l_int|0
+suffix:semicolon
 r_return
 op_minus
 id|ENOMEM

@@ -1334,13 +1334,6 @@ id|size
 )paren
 r_break
 suffix:semicolon
-id|spin_lock
-c_func
-(paren
-op_amp
-id|mm-&gt;page_table_lock
-)paren
-suffix:semicolon
 id|page
 op_assign
 op_star
@@ -1358,13 +1351,6 @@ c_func
 id|pte
 op_minus
 l_int|1
-)paren
-suffix:semicolon
-id|spin_unlock
-c_func
-(paren
-op_amp
-id|mm-&gt;page_table_lock
 )paren
 suffix:semicolon
 r_if
@@ -1601,6 +1587,14 @@ comma
 id|address
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t; * This is a long-lived spinlock. That&squot;s fine.&n;&t; * There&squot;s no contention, because the page table&n;&t; * lock only protects against kswapd anyway, and&n;&t; * even if kswapd happened to be looking at this&n;&t; * process we _want_ it to get stuck.&n;&t; */
+id|spin_lock
+c_func
+(paren
+op_amp
+id|mm-&gt;page_table_lock
+)paren
+suffix:semicolon
 r_while
 c_loop
 (paren
@@ -1639,6 +1633,13 @@ id|dir
 op_increment
 suffix:semicolon
 )brace
+id|spin_unlock
+c_func
+(paren
+op_amp
+id|mm-&gt;page_table_lock
+)paren
+suffix:semicolon
 multiline_comment|/*&n;&t; * Update rss for the mm_struct (not necessarily current-&gt;mm)&n;&t; */
 r_if
 c_cond

@@ -8,6 +8,8 @@ mdefine_line|#define C_HUB_LOCAL_POWER&t;0
 DECL|macro|C_HUB_OVER_CURRENT
 mdefine_line|#define C_HUB_OVER_CURRENT&t;1
 multiline_comment|/*&n; * Port feature numbers&n; */
+DECL|macro|USB_PORT_FEAT_CONNECTION
+mdefine_line|#define USB_PORT_FEAT_CONNECTION&t;0
 DECL|macro|USB_PORT_FEAT_ENABLE
 mdefine_line|#define USB_PORT_FEAT_ENABLE&t;&t;1
 DECL|macro|USB_PORT_FEAT_SUSPEND
@@ -56,7 +58,7 @@ DECL|macro|USB_PORT_STAT_C_OVERCURRENT
 mdefine_line|#define USB_PORT_STAT_C_OVERCURRENT&t;0x0008
 DECL|macro|USB_PORT_STAT_C_RESET
 mdefine_line|#define USB_PORT_STAT_C_RESET&t;&t;0x0010
-multiline_comment|/* Characteristics */
+multiline_comment|/* wHubCharacteristics (masks) */
 DECL|macro|HUB_CHAR_LPSM
 mdefine_line|#define HUB_CHAR_LPSM&t;&t;0x0003
 DECL|macro|HUB_CHAR_COMPOUND

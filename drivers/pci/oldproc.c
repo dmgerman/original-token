@@ -2328,6 +2328,16 @@ comma
 id|DEVICE
 c_func
 (paren
+id|SGI
+comma
+id|SGI_IOC3
+comma
+l_string|&quot;IOC3&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
 id|ACC
 comma
 id|ACC_2056

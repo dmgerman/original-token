@@ -122,9 +122,23 @@ DECL|typedef|devrequest
 )brace
 id|devrequest
 suffix:semicolon
-multiline_comment|/*&n; * Class codes&n; */
+multiline_comment|/*&n; * Device and/or Interface Class codes&n; */
+DECL|macro|USB_CLASS_PER_INTERFACE
+mdefine_line|#define USB_CLASS_PER_INTERFACE&t;&t;0&t;/* for DeviceClass */
+DECL|macro|USB_CLASS_AUDIO
+mdefine_line|#define USB_CLASS_AUDIO&t;&t;&t;1
+DECL|macro|USB_CLASS_COMM
+mdefine_line|#define USB_CLASS_COMM&t;&t;&t;2
+DECL|macro|USB_CLASS_HID
+mdefine_line|#define USB_CLASS_HID&t;&t;&t;3
+DECL|macro|USB_CLASS_PRINTER
+mdefine_line|#define USB_CLASS_PRINTER&t;&t;7
+DECL|macro|USB_CLASS_MASS_STORAGE
+mdefine_line|#define USB_CLASS_MASS_STORAGE&t;&t;8
 DECL|macro|USB_CLASS_HUB
 mdefine_line|#define USB_CLASS_HUB&t;&t;&t;9
+DECL|macro|USB_CLASS_VENDOR_SPEC
+mdefine_line|#define USB_CLASS_VENDOR_SPEC&t;&t;0xff
 multiline_comment|/*&n; * Descriptor types&n; */
 DECL|macro|USB_DT_DEVICE
 mdefine_line|#define USB_DT_DEVICE&t;&t;&t;0x01
@@ -140,6 +154,29 @@ DECL|macro|USB_DT_HUB
 mdefine_line|#define USB_DT_HUB&t;&t;&t;0x29
 DECL|macro|USB_DT_HID
 mdefine_line|#define USB_DT_HID&t;&t;&t;0x21
+multiline_comment|/*&n; * Descriptor sizes per descriptor type&n; */
+DECL|macro|USB_DT_DEVICE_SIZE
+mdefine_line|#define USB_DT_DEVICE_SIZE&t;&t;18
+DECL|macro|USB_DT_CONFIG_SIZE
+mdefine_line|#define USB_DT_CONFIG_SIZE&t;&t;9
+DECL|macro|USB_DT_INTERFACE_SIZE
+mdefine_line|#define USB_DT_INTERFACE_SIZE&t;&t;9
+DECL|macro|USB_DT_ENDPOINT_SIZE
+mdefine_line|#define USB_DT_ENDPOINT_SIZE&t;&t;7
+DECL|macro|USB_DT_HUB_NONVAR_SIZE
+mdefine_line|#define USB_DT_HUB_NONVAR_SIZE&t;&t;7
+multiline_comment|/*&n; * USB Request Type and Endpoint Directions&n; */
+DECL|macro|USB_DIR_OUT
+mdefine_line|#define USB_DIR_OUT&t;&t;&t;0
+DECL|macro|USB_DIR_IN
+mdefine_line|#define USB_DIR_IN&t;&t;&t;0x80
+multiline_comment|/*&n; * USB Packet IDs (PIDs)&n; */
+DECL|macro|USB_PID_OUT
+mdefine_line|#define USB_PID_OUT&t;&t;&t;0xe1
+DECL|macro|USB_PID_IN
+mdefine_line|#define USB_PID_IN&t;&t;&t;0x69
+DECL|macro|USB_PID_SETUP
+mdefine_line|#define USB_PID_SETUP&t;&t;&t;0x2d
 multiline_comment|/*&n; * Standard requests&n; */
 DECL|macro|USB_REQ_GET_STATUS
 mdefine_line|#define USB_REQ_GET_STATUS&t;&t;0x00
@@ -810,7 +847,7 @@ DECL|member|maxpacketsize
 r_int
 id|maxpacketsize
 suffix:semicolon
-multiline_comment|/* Maximum packet size */
+multiline_comment|/* Maximum packet size; encoded as 0,1,2,3 = 8,16,32,64 */
 DECL|member|toggle
 r_int
 id|toggle
@@ -1079,7 +1116,7 @@ op_star
 id|dev
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * Calling this entity a &quot;pipe&quot; is glorifying it. A USB pipe&n; * is something embarrassingly simple: it basically consists&n; * of the following information:&n; *  - device number (7 bits)&n; *  - endpoint number (4 bits)&n; *  - current Data0/1 state (1 bit)&n; *  - direction (1 bit)&n; *  - speed (1 bit)&n; *  - max packet size (2 bits: 8, 16, 32 or 64)&n; *  - pipe type (2 bits: control, interrupt, bulk, isochronous)&n; *&n; * That&squot;s 18 bits. Really. Nothing more. And the USB people have&n; * documented these eighteen bits as some kind of glorious&n; * virtual data structure.&n; *&n; * Let&squot;s not fall in that trap. We&squot;ll just encode it as a simple&n; * unsigned int. The encoding is:&n; *&n; *  - device:&t;&t;bits 8-14&n; *  - endpoint:&t;&t;bits 15-18&n; *  - Data0/1:&t;&t;bit 19&n; *  - direction:&t;bit 7&t;&t;(0 = Host-to-Device, 1 = Device-to-Host)&n; *  - speed:&t;&t;bit 26&t;&t;(0 = High, 1 = Low Speed)&n; *  - max size:&t;&t;bits 0-1&t;(00 = 8, 01 = 16, 10 = 32, 11 = 64)&n; *  - pipe type:&t;bits 30-31&t;(00 = isochronous, 01 = interrupt, 10 = control, 11 = bulk)&n; *&n; * Why? Because it&squot;s arbitrary, and whatever encoding we select is really&n; * up to us. This one happens to share a lot of bit positions with the UCHI&n; * specification, so that much of the uhci driver can just mask the bits&n; * appropriately.&n; */
+multiline_comment|/*&n; * Calling this entity a &quot;pipe&quot; is glorifying it. A USB pipe&n; * is something embarrassingly simple: it basically consists&n; * of the following information:&n; *  - device number (7 bits)&n; *  - endpoint number (4 bits)&n; *  - current Data0/1 state (1 bit)&n; *  - direction (1 bit)&n; *  - speed (1 bit)&n; *  - max packet size (2 bits: 8, 16, 32 or 64)&n; *  - pipe type (2 bits: control, interrupt, bulk, isochronous)&n; *&n; * That&squot;s 18 bits. Really. Nothing more. And the USB people have&n; * documented these eighteen bits as some kind of glorious&n; * virtual data structure.&n; *&n; * Let&squot;s not fall in that trap. We&squot;ll just encode it as a simple&n; * unsigned int. The encoding is:&n; *&n; *  - max size:&t;&t;bits 0-1&t;(00 = 8, 01 = 16, 10 = 32, 11 = 64)&n; *  - direction:&t;bit 7&t;&t;(0 = Host-to-Device, 1 = Device-to-Host)&n; *  - device:&t;&t;bits 8-14&n; *  - endpoint:&t;&t;bits 15-18&n; *  - Data0/1:&t;&t;bit 19&n; *  - speed:&t;&t;bit 26&t;&t;(00 = Full, 01 = Low Speed)&n; *  - pipe type:&t;bits 30-31&t;(00 = isochronous, 01 = interrupt, 10 = control, 11 = bulk)&n; *&n; * Why? Because it&squot;s arbitrary, and whatever encoding we select is really&n; * up to us. This one happens to share a lot of bit positions with the UHCI&n; * specification, so that much of the uhci driver can just mask the bits&n; * appropriately.&n; */
 DECL|macro|usb_maxpacket
 mdefine_line|#define usb_maxpacket(dev,pipe)&t;((dev)-&gt;epmaxpacket[usb_pipeendpoint(pipe)])
 DECL|macro|usb_packetid
@@ -1106,6 +1143,8 @@ DECL|macro|usb_pipebulk
 mdefine_line|#define usb_pipebulk(pipe)&t;(usb_pipetype((pipe)) == 3)
 DECL|macro|usb_pipe_endpdev
 mdefine_line|#define usb_pipe_endpdev(pipe)&t;(((pipe) &gt;&gt; 8) &amp; 0x7ff)
+DECL|macro|PIPE_DEVEP_MASK
+mdefine_line|#define PIPE_DEVEP_MASK&t;&t;0x0007ff00
 multiline_comment|/* The D0/D1 toggle bits */
 DECL|macro|usb_gettoggle
 mdefine_line|#define usb_gettoggle(dev, ep, out) (((dev)-&gt;toggle[out] &gt;&gt; ep) &amp; 1)
@@ -1182,7 +1221,7 @@ l_int|26
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Create control pipes.. */
+multiline_comment|/* Create various pipes... */
 DECL|macro|usb_sndctrlpipe
 mdefine_line|#define usb_sndctrlpipe(dev,endpoint)&t;((2 &lt;&lt; 30) | __create_pipe(dev,endpoint))
 DECL|macro|usb_rcvctrlpipe
