@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: cache.c,v 1.7 1999/09/23 11:43:07 gniibe Exp $&n; *&n; *  linux/arch/sh/mm/cache.c&n; *&n; * Copyright (C) 1999  Niibe Yutaka&n; *&n; */
+multiline_comment|/* $Id: cache.c,v 1.9 2000/02/14 12:45:26 gniibe Exp $&n; *&n; *  linux/arch/sh/mm/cache.c&n; *&n; * Copyright (C) 1999  Niibe Yutaka&n; *&n; */
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/mman.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -1026,7 +1026,118 @@ id|__dummy
 suffix:semicolon
 )brace
 macro_line|#if defined(__SH4__)
-multiline_comment|/* Write back data caches, and invalidates instructiin caches */
+DECL|function|flush_icache_page
+r_void
+id|flush_icache_page
+c_func
+(paren
+r_struct
+id|vm_area_struct
+op_star
+id|vma
+comma
+r_struct
+id|page
+op_star
+id|pg
+)paren
+(brace
+r_int
+r_int
+id|flags
+comma
+id|__dummy
+suffix:semicolon
+r_int
+r_int
+id|addr
+comma
+id|data
+comma
+id|v
+suffix:semicolon
+id|save_and_cli
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|jump_to_p2
+c_func
+(paren
+id|__dummy
+)paren
+suffix:semicolon
+id|v
+op_assign
+id|page_address
+c_func
+(paren
+id|pg
+)paren
+suffix:semicolon
+multiline_comment|/* Write back O Cache */
+id|asm
+r_volatile
+(paren
+l_string|&quot;ocbwb&t;%0&quot;
+suffix:colon
+multiline_comment|/* no output */
+suffix:colon
+l_string|&quot;m&quot;
+(paren
+id|__m
+c_func
+(paren
+id|v
+)paren
+)paren
+)paren
+suffix:semicolon
+multiline_comment|/* Invalidate I Cache */
+id|addr
+op_assign
+id|CACHE_IC_ADDRESS_ARRAY
+op_or
+(paren
+id|v
+op_amp
+id|CACHE_IC_ENTRY_MASK
+)paren
+op_or
+l_int|0x8
+multiline_comment|/* A-bit */
+suffix:semicolon
+id|data
+op_assign
+(paren
+id|v
+op_amp
+l_int|0xfffffc00
+)paren
+suffix:semicolon
+multiline_comment|/* Valid=0 */
+id|ctrl_outl
+c_func
+(paren
+id|data
+comma
+id|addr
+)paren
+suffix:semicolon
+id|back_to_p1
+c_func
+(paren
+id|__dummy
+)paren
+suffix:semicolon
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+)brace
 DECL|function|flush_icache_range
 r_void
 id|flush_icache_range
@@ -1390,9 +1501,9 @@ id|PAGE_SIZE
 )paren
 suffix:semicolon
 )brace
-DECL|function|flush_page_to_ram
+DECL|function|__flush_page_to_ram
 r_void
-id|flush_page_to_ram
+id|__flush_page_to_ram
 c_func
 (paren
 r_int

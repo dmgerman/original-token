@@ -47,8 +47,8 @@ DECL|macro|__NR_getpid
 mdefine_line|#define __NR_getpid&t;&t; 20
 DECL|macro|__NR_mount
 mdefine_line|#define __NR_mount&t;&t; 21
-DECL|macro|__NR_oldumount
-mdefine_line|#define __NR_oldumount&t;&t; 22
+DECL|macro|__NR_umount
+mdefine_line|#define __NR_umount&t;&t; 22
 DECL|macro|__NR_setuid
 mdefine_line|#define __NR_setuid&t;&t; 23
 DECL|macro|__NR_getuid
@@ -107,8 +107,8 @@ DECL|macro|__NR_getegid
 mdefine_line|#define __NR_getegid&t;&t; 50
 DECL|macro|__NR_acct
 mdefine_line|#define __NR_acct&t;&t; 51
-DECL|macro|__NR_umount
-mdefine_line|#define __NR_umount&t;&t; 52
+DECL|macro|__NR_umount2
+mdefine_line|#define __NR_umount2&t;&t; 52
 DECL|macro|__NR_lock
 mdefine_line|#define __NR_lock&t;&t; 53
 DECL|macro|__NR_ioctl
@@ -156,7 +156,7 @@ mdefine_line|#define __NR_sethostname&t; 74
 DECL|macro|__NR_setrlimit
 mdefine_line|#define __NR_setrlimit&t;&t; 75
 DECL|macro|__NR_getrlimit
-mdefine_line|#define __NR_getrlimit&t;&t; 76
+mdefine_line|#define __NR_getrlimit&t; &t; 76&t;/* Back compatible 2Gig limited rlimit */
 DECL|macro|__NR_getrusage
 mdefine_line|#define __NR_getrusage&t;&t; 77
 DECL|macro|__NR_gettimeofday
@@ -385,20 +385,76 @@ DECL|macro|__NR_streams2
 mdefine_line|#define __NR_streams2&t;&t;189&t;/* some people actually want it */
 DECL|macro|__NR_vfork
 mdefine_line|#define __NR_vfork&t;&t;190
+DECL|macro|__NR_ugetrlimit
+mdefine_line|#define __NR_ugetrlimit&t;&t;191&t;/* SuS compliant getrlimit */
+DECL|macro|__NR_mmap2
+mdefine_line|#define __NR_mmap2&t;&t;192
+DECL|macro|__NR_truncate64
+mdefine_line|#define __NR_truncate64&t;&t;193
+DECL|macro|__NR_ftruncate64
+mdefine_line|#define __NR_ftruncate64&t;194
+DECL|macro|__NR_stat64
+mdefine_line|#define __NR_stat64&t;&t;195
+DECL|macro|__NR_lstat64
+mdefine_line|#define __NR_lstat64&t;&t;196
+DECL|macro|__NR_fstat64
+mdefine_line|#define __NR_fstat64&t;&t;197
+DECL|macro|__NR_lchown32
+mdefine_line|#define __NR_lchown32&t;&t;198
+DECL|macro|__NR_getuid32
+mdefine_line|#define __NR_getuid32&t;&t;199
+DECL|macro|__NR_getgid32
+mdefine_line|#define __NR_getgid32&t;&t;200
+DECL|macro|__NR_geteuid32
+mdefine_line|#define __NR_geteuid32&t;&t;201
+DECL|macro|__NR_getegid32
+mdefine_line|#define __NR_getegid32&t;&t;202
+DECL|macro|__NR_setreuid32
+mdefine_line|#define __NR_setreuid32&t;&t;203
+DECL|macro|__NR_setregid32
+mdefine_line|#define __NR_setregid32&t;&t;204
+DECL|macro|__NR_getgroups32
+mdefine_line|#define __NR_getgroups32&t;205
+DECL|macro|__NR_setgroups32
+mdefine_line|#define __NR_setgroups32&t;206
+DECL|macro|__NR_fchown32
+mdefine_line|#define __NR_fchown32&t;&t;207
+DECL|macro|__NR_setresuid32
+mdefine_line|#define __NR_setresuid32&t;208
+DECL|macro|__NR_getresuid32
+mdefine_line|#define __NR_getresuid32&t;209
+DECL|macro|__NR_setresgid32
+mdefine_line|#define __NR_setresgid32&t;210
+DECL|macro|__NR_getresgid32
+mdefine_line|#define __NR_getresgid32&t;211
+DECL|macro|__NR_chown32
+mdefine_line|#define __NR_chown32&t;&t;212
+DECL|macro|__NR_setuid32
+mdefine_line|#define __NR_setuid32&t;&t;213
+DECL|macro|__NR_setgid32
+mdefine_line|#define __NR_setgid32&t;&t;214
+DECL|macro|__NR_setfsuid32
+mdefine_line|#define __NR_setfsuid32&t;&t;215
+DECL|macro|__NR_setfsgid32
+mdefine_line|#define __NR_setfsgid32&t;&t;216
+DECL|macro|__NR_pivot_root
+mdefine_line|#define __NR_pivot_root&t;&t;217
 multiline_comment|/* user-visible error numbers are in the range -1 - -125: see &lt;asm-sh/errno.h&gt; */
 DECL|macro|__syscall_return
 mdefine_line|#define __syscall_return(type, res) &bslash;&n;do { &bslash;&n;&t;if ((unsigned long)(res) &gt;= (unsigned long)(-125)) { &bslash;&n;&t;/* Avoid using &quot;res&quot; which is declared to be in register r0; &bslash;&n;&t;   errno might expand to a function call and clobber it.  */ &bslash;&n;&t;&t;int __err = -(res); &bslash;&n;&t;&t;errno = __err; &bslash;&n;&t;&t;res = -1; &bslash;&n;&t;} &bslash;&n;&t;return (type) (res); &bslash;&n;} while (0)
 multiline_comment|/* XXX - _foo needs to be __foo, while __NR_bar could be _NR_bar. */
 DECL|macro|_syscall0
-mdefine_line|#define _syscall0(type,name) &bslash;&n;type name(void) &bslash;&n;{ &bslash;&n;register long __sc0 __asm__ (&quot;r0&quot;) = __NR_##name; &bslash;&n;__asm__ __volatile__ (&quot;trapa&t;#0&quot; &bslash;&n;&t;: &quot;=z&quot; (__sc0) &bslash;&n;&t;: &quot;0&quot; (__sc0) &bslash;&n;&t;: &quot;memory&quot; ); &bslash;&n;__syscall_return(type,__sc0); &bslash;&n;}
+mdefine_line|#define _syscall0(type,name) &bslash;&n;type name(void) &bslash;&n;{ &bslash;&n;register long __sc0 __asm__ (&quot;$r0&quot;) = __NR_##name; &bslash;&n;__asm__ __volatile__ (&quot;trapa&t;#0&quot; &bslash;&n;&t;: &quot;=z&quot; (__sc0) &bslash;&n;&t;: &quot;0&quot; (__sc0) &bslash;&n;&t;: &quot;memory&quot; ); &bslash;&n;__syscall_return(type,__sc0); &bslash;&n;}
 DECL|macro|_syscall1
-mdefine_line|#define _syscall1(type,name,type1,arg1) &bslash;&n;type name(type1 arg1) &bslash;&n;{ &bslash;&n;register long __sc0 __asm__ (&quot;r0&quot;) = __NR_##name; &bslash;&n;register long __sc4 __asm__ (&quot;r4&quot;) = (long) arg1; &bslash;&n;__asm__ __volatile__ (&quot;trapa&t;#0&quot; &bslash;&n;&t;: &quot;=z&quot; (__sc0) &bslash;&n;&t;: &quot;0&quot; (__sc0), &quot;r&quot; (__sc4) &bslash;&n;&t;: &quot;memory&quot;); &bslash;&n;__syscall_return(type,__sc0); &bslash;&n;}
+mdefine_line|#define _syscall1(type,name,type1,arg1) &bslash;&n;type name(type1 arg1) &bslash;&n;{ &bslash;&n;register long __sc0 __asm__ (&quot;$r0&quot;) = __NR_##name; &bslash;&n;register long __sc4 __asm__ (&quot;$r4&quot;) = (long) arg1; &bslash;&n;__asm__ __volatile__ (&quot;trapa&t;#0&quot; &bslash;&n;&t;: &quot;=z&quot; (__sc0) &bslash;&n;&t;: &quot;0&quot; (__sc0), &quot;r&quot; (__sc4) &bslash;&n;&t;: &quot;memory&quot;); &bslash;&n;__syscall_return(type,__sc0); &bslash;&n;}
 DECL|macro|_syscall2
-mdefine_line|#define _syscall2(type,name,type1,arg1,type2,arg2) &bslash;&n;type name(type1 arg1,type2 arg2) &bslash;&n;{ &bslash;&n;register long __sc0 __asm__ (&quot;r0&quot;) = __NR_##name; &bslash;&n;register long __sc4 __asm__ (&quot;r4&quot;) = (long) arg1; &bslash;&n;register long __sc5 __asm__ (&quot;r5&quot;) = (long) arg2; &bslash;&n;__asm__ __volatile__ (&quot;trapa&t;#0&quot; &bslash;&n;&t;: &quot;=z&quot; (__sc0) &bslash;&n;&t;: &quot;0&quot; (__sc0), &quot;r&quot; (__sc4), &quot;r&quot; (__sc5) &bslash;&n;&t;: &quot;memory&quot;); &bslash;&n;__syscall_return(type,__sc0); &bslash;&n;}
+mdefine_line|#define _syscall2(type,name,type1,arg1,type2,arg2) &bslash;&n;type name(type1 arg1,type2 arg2) &bslash;&n;{ &bslash;&n;register long __sc0 __asm__ (&quot;$r0&quot;) = __NR_##name; &bslash;&n;register long __sc4 __asm__ (&quot;$r4&quot;) = (long) arg1; &bslash;&n;register long __sc5 __asm__ (&quot;$r5&quot;) = (long) arg2; &bslash;&n;__asm__ __volatile__ (&quot;trapa&t;#0&quot; &bslash;&n;&t;: &quot;=z&quot; (__sc0) &bslash;&n;&t;: &quot;0&quot; (__sc0), &quot;r&quot; (__sc4), &quot;r&quot; (__sc5) &bslash;&n;&t;: &quot;memory&quot;); &bslash;&n;__syscall_return(type,__sc0); &bslash;&n;}
 DECL|macro|_syscall3
-mdefine_line|#define _syscall3(type,name,type1,arg1,type2,arg2,type3,arg3) &bslash;&n;type name(type1 arg1,type2 arg2,type3 arg3) &bslash;&n;{ &bslash;&n;register long __sc0 __asm__ (&quot;r0&quot;) = __NR_##name; &bslash;&n;register long __sc4 __asm__ (&quot;r4&quot;) = (long) arg1; &bslash;&n;register long __sc5 __asm__ (&quot;r5&quot;) = (long) arg2; &bslash;&n;register long __sc6 __asm__ (&quot;r6&quot;) = (long) arg3; &bslash;&n;__asm__ __volatile__ (&quot;trapa&t;#0&quot; &bslash;&n;&t;: &quot;=z&quot; (__sc0) &bslash;&n;&t;: &quot;0&quot; (__sc0), &quot;r&quot; (__sc4), &quot;r&quot; (__sc5), &quot;r&quot; (__sc6) &bslash;&n;&t;: &quot;memory&quot;); &bslash;&n;__syscall_return(type,__sc0); &bslash;&n;}
+mdefine_line|#define _syscall3(type,name,type1,arg1,type2,arg2,type3,arg3) &bslash;&n;type name(type1 arg1,type2 arg2,type3 arg3) &bslash;&n;{ &bslash;&n;register long __sc0 __asm__ (&quot;$r0&quot;) = __NR_##name; &bslash;&n;register long __sc4 __asm__ (&quot;$r4&quot;) = (long) arg1; &bslash;&n;register long __sc5 __asm__ (&quot;$r5&quot;) = (long) arg2; &bslash;&n;register long __sc6 __asm__ (&quot;$r6&quot;) = (long) arg3; &bslash;&n;__asm__ __volatile__ (&quot;trapa&t;#0&quot; &bslash;&n;&t;: &quot;=z&quot; (__sc0) &bslash;&n;&t;: &quot;0&quot; (__sc0), &quot;r&quot; (__sc4), &quot;r&quot; (__sc5), &quot;r&quot; (__sc6) &bslash;&n;&t;: &quot;memory&quot;); &bslash;&n;__syscall_return(type,__sc0); &bslash;&n;}
 DECL|macro|_syscall4
-mdefine_line|#define _syscall4(type,name,type1,arg1,type2,arg2,type3,arg3,type4,arg4) &bslash;&n;type name (type1 arg1, type2 arg2, type3 arg3, type4 arg4) &bslash;&n;{ &bslash;&n;register long __sc0 __asm__ (&quot;r0&quot;) = __NR_##name; &bslash;&n;register long __sc4 __asm__ (&quot;r4&quot;) = (long) arg1; &bslash;&n;register long __sc5 __asm__ (&quot;r5&quot;) = (long) arg2; &bslash;&n;register long __sc6 __asm__ (&quot;r6&quot;) = (long) arg3; &bslash;&n;register long __sc6 __asm__ (&quot;r7&quot;) = (long) arg4; &bslash;&n;__asm__ __volatile__ (&quot;trapa&t;#0&quot; &bslash;&n;&t;: &quot;=z&quot; (__sc0) &bslash;&n;&t;: &quot;0&quot; (__sc0), &quot;r&quot; (__sc4), &quot;r&quot; (__sc5), &quot;r&quot; (__sc6),  &bslash;&n;&t;  &quot;r&quot; (__sc7) &bslash;&n;&t;: &quot;memory&quot; ); &bslash;&n;__syscall_return(type,__sc0); &bslash;&n;}
+mdefine_line|#define _syscall4(type,name,type1,arg1,type2,arg2,type3,arg3,type4,arg4) &bslash;&n;type name (type1 arg1, type2 arg2, type3 arg3, type4 arg4) &bslash;&n;{ &bslash;&n;register long __sc0 __asm__ (&quot;$r0&quot;) = __NR_##name; &bslash;&n;register long __sc4 __asm__ (&quot;$r4&quot;) = (long) arg1; &bslash;&n;register long __sc5 __asm__ (&quot;$r5&quot;) = (long) arg2; &bslash;&n;register long __sc6 __asm__ (&quot;$r6&quot;) = (long) arg3; &bslash;&n;register long __sc7 __asm__ (&quot;$r7&quot;) = (long) arg4; &bslash;&n;__asm__ __volatile__ (&quot;trapa&t;#0&quot; &bslash;&n;&t;: &quot;=z&quot; (__sc0) &bslash;&n;&t;: &quot;0&quot; (__sc0), &quot;r&quot; (__sc4), &quot;r&quot; (__sc5), &quot;r&quot; (__sc6),  &bslash;&n;&t;  &quot;r&quot; (__sc7) &bslash;&n;&t;: &quot;memory&quot; ); &bslash;&n;__syscall_return(type,__sc0); &bslash;&n;}
+DECL|macro|_syscall5
+mdefine_line|#define _syscall5(type,name,type1,arg1,type2,arg2,type3,arg3,type4,arg4,type5,arg5) &bslash;&n;type name (type1 arg1, type2 arg2, type3 arg3, type4 arg4, type5 arg5) &bslash;&n;{ &bslash;&n;register long __sc0 __asm__ (&quot;$r0&quot;) = __NR_##name; &bslash;&n;register long __sc4 __asm__ (&quot;$r4&quot;) = (long) arg1; &bslash;&n;register long __sc5 __asm__ (&quot;$r5&quot;) = (long) arg2; &bslash;&n;register long __sc6 __asm__ (&quot;$r6&quot;) = (long) arg3; &bslash;&n;register long __sc7 __asm__ (&quot;$r7&quot;) = (long) arg4; &bslash;&n;__asm__ __volatile__ (&quot;mov.l&t;%2, @-$r15&bslash;n&bslash;t&quot; &bslash;&n;&t;&t;      &quot;trapa&t;#0&quot; &bslash;&n;&t;: &quot;=z&quot; (__sc0) &bslash;&n;&t;: &quot;0&quot; (__sc0), &quot;r&quot; (arg5), &bslash;&n;&t;  &quot;r&quot; (__sc4), &quot;r&quot; (__sc5), &quot;r&quot; (__sc6), &quot;r&quot; (__sc7) &bslash;&n;&t;: &quot;memory&quot; ); &bslash;&n;__syscall_return(type,__sc0); &bslash;&n;}
 macro_line|#ifdef __KERNEL_SYSCALLS__
 multiline_comment|/*&n; * we need this inline - forking from kernel space will result&n; * in NO COPY ON WRITE (!!!), until an execve is executed. This&n; * is no problem, but for the stack. This is handled by not letting&n; * main() use the stack at all after fork(). Thus, no function&n; * calls - which means inline code for fork too, as otherwise we&n; * would use the stack upon exit from &squot;fork()&squot;.&n; *&n; * Actually only pause and fork are needed inline, so that there&n; * won&squot;t be any messing with the stack from main(), but we define&n; * some others too.&n; */
 DECL|macro|__NR__exit

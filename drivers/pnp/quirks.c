@@ -144,7 +144,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;ISAPnP: AWE32 quirk - adding two ports&bslash;n&quot;
+l_string|&quot;isapnp: AWE32 quirk - adding two ports&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
@@ -283,7 +283,7 @@ id|printk
 c_func
 (paren
 id|KERN_DEBUG
-l_string|&quot;PnP: Calling quirk for %02x:%02x&bslash;n&quot;
+l_string|&quot;isapnp: Calling quirk for %02x:%02x&bslash;n&quot;
 comma
 id|dev-&gt;bus-&gt;number
 comma

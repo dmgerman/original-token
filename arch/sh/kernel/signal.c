@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: signal.c,v 1.10 1999/09/27 23:25:44 gniibe Exp $&n; *&n; *  linux/arch/sh/kernel/signal.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *&n; *  1997-11-28  Modified for POSIX.1b signals by Richard Henderson&n; *&n; *  SuperH version:  Copyright (C) 1999  Niibe Yutaka&n; *&n; */
+multiline_comment|/* $Id: signal.c,v 1.16 2000/01/29 11:31:31 gniibe Exp gniibe $&n; *&n; *  linux/arch/sh/kernel/signal.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *&n; *  1997-11-28  Modified for POSIX.1b signals by Richard Henderson&n; *&n; *  SuperH version:  Copyright (C) 1999  Niibe Yutaka&n; *&n; */
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/smp.h&gt;
@@ -1655,7 +1655,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-multiline_comment|/* This is ; mov  #__NR_sigreturn,r0 ; trapa #0 */
+multiline_comment|/* This is : mov  #__NR_sigreturn,r0 ; trapa #0 */
 macro_line|#ifdef __LITTLE_ENDIAN__
 r_int
 r_int
@@ -2053,7 +2053,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-multiline_comment|/* This is ; mov  #__NR_sigreturn,r0 ; trapa #0 */
+multiline_comment|/* This is : mov  #__NR_rt_sigreturn,r0 ; trapa #0 */
 macro_line|#ifdef __LITTLE_ENDIAN__
 r_int
 r_int
@@ -2062,7 +2062,7 @@ op_assign
 l_int|0xc300e000
 op_or
 (paren
-id|__NR_sigreturn
+id|__NR_rt_sigreturn
 )paren
 suffix:semicolon
 macro_line|#else
@@ -2073,7 +2073,7 @@ op_assign
 l_int|0xe000c300
 op_or
 (paren
-id|__NR_sigreturn
+id|__NR_rt_sigreturn
 op_lshift
 l_int|16
 )paren
@@ -2428,6 +2428,20 @@ r_struct
 id|k_sigaction
 op_star
 id|ka
+suffix:semicolon
+multiline_comment|/*&n;&t; * We want the common case to go fast, which&n;&t; * is why we may in certain cases get here from&n;&t; * kernel mode. Just return without doing anything&n;&t; * if so.&n;&t; */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|user_mode
+c_func
+(paren
+id|regs
+)paren
+)paren
+r_return
+l_int|1
 suffix:semicolon
 r_if
 c_cond

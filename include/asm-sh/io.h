@@ -3,6 +3,14 @@ DECL|macro|__ASM_SH_IO_H
 mdefine_line|#define __ASM_SH_IO_H
 multiline_comment|/*&n; * Convention:&n; *    read{b,w,l}/write{b,w,l} are for PCI,&n; *    while in{b,w,l}/out{b,w,l} are for ISA&n; * These may (will) be platform specific function.&n; *&n; * In addition, we have &n; *   ctrl_in{b,w,l}/ctrl_out{b,w,l} for SuperH specific I/O.&n; *   which are processor specific.&n; */
 macro_line|#include &lt;asm/cache.h&gt;
+DECL|macro|inb_p
+mdefine_line|#define inb_p&t;inb
+DECL|macro|outb_p
+mdefine_line|#define outb_p&t;outb
+DECL|macro|inw_p
+mdefine_line|#define inw_p&t;inw
+DECL|macro|outw_p
+mdefine_line|#define outw_p&t;outw
 DECL|macro|virt_to_bus
 mdefine_line|#define virt_to_bus virt_to_phys
 DECL|macro|bus_to_virt
@@ -627,6 +635,10 @@ id|addr
 suffix:semicolon
 )brace
 )brace
+DECL|macro|ctrl_in
+mdefine_line|#define ctrl_in(addr)&t;&t;*(addr)
+DECL|macro|ctrl_out
+mdefine_line|#define ctrl_out(data,addr)&t;*(addr) = (data)
 DECL|function|ctrl_inb
 r_extern
 id|__inline__
@@ -783,13 +795,9 @@ op_assign
 id|b
 suffix:semicolon
 )brace
-DECL|macro|inb_p
-mdefine_line|#define inb_p inb
-DECL|macro|outb_p
-mdefine_line|#define outb_p outb
 macro_line|#ifdef __KERNEL__
 DECL|macro|IO_SPACE_LIMIT
-mdefine_line|#define IO_SPACE_LIMIT 0xffff
+mdefine_line|#define IO_SPACE_LIMIT 0xffffffff
 macro_line|#include &lt;asm/addrspace.h&gt;
 multiline_comment|/*&n; * Change virtual addresses to physical addresses and vv.&n; * These are trivial on the 1:1 Linux/SuperH mapping&n; */
 DECL|function|virt_to_phys

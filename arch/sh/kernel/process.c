@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: process.c,v 1.8 1999/10/31 13:19:16 gniibe Exp $&n; *&n; *  linux/arch/sh/kernel/process.c&n; *&n; *  Copyright (C) 1995  Linus Torvalds&n; *&n; *  SuperH version:  Copyright (C) 1999  Niibe Yutaka &amp; Kaz Kojima&n; */
+multiline_comment|/* $Id: process.c,v 1.28 2000/03/05 02:16:15 gniibe Exp $&n; *&n; *  linux/arch/sh/kernel/process.c&n; *&n; *  Copyright (C) 1995  Linus Torvalds&n; *&n; *  SuperH version:  Copyright (C) 1999, 2000  Niibe Yutaka &amp; Kaz Kojima&n; */
 multiline_comment|/*&n; * This file handles the architecture-dependent parts of process handling..&n; */
 DECL|macro|__KERNEL_SYSCALLS__
 mdefine_line|#define __KERNEL_SYSCALLS__
@@ -28,16 +28,6 @@ macro_line|#include &lt;asm/processor.h&gt;
 macro_line|#include &lt;asm/mmu_context.h&gt;
 macro_line|#include &lt;asm/elf.h&gt;
 macro_line|#include &lt;linux/irq.h&gt;
-macro_line|#if defined(__SH4__)
-DECL|variable|last_task_used_math
-r_struct
-id|task_struct
-op_star
-id|last_task_used_math
-op_assign
-l_int|NULL
-suffix:semicolon
-macro_line|#endif
 DECL|variable|hlt_counter
 r_static
 r_int
@@ -407,7 +397,7 @@ r_int
 id|__sc0
 id|__asm__
 (paren
-l_string|&quot;r0&quot;
+l_string|&quot;$r0&quot;
 )paren
 op_assign
 id|__NR_clone
@@ -418,7 +408,7 @@ r_int
 id|__sc4
 id|__asm__
 (paren
-l_string|&quot;r4&quot;
+l_string|&quot;$r4&quot;
 )paren
 op_assign
 (paren
@@ -434,7 +424,7 @@ r_int
 id|__sc5
 id|__asm__
 (paren
-l_string|&quot;r5&quot;
+l_string|&quot;$r5&quot;
 )paren
 op_assign
 l_int|0
@@ -445,7 +435,7 @@ r_int
 id|__sc8
 id|__asm__
 (paren
-l_string|&quot;r8&quot;
+l_string|&quot;$r8&quot;
 )paren
 op_assign
 (paren
@@ -459,7 +449,7 @@ r_int
 id|__sc9
 id|__asm__
 (paren
-l_string|&quot;r9&quot;
+l_string|&quot;$r9&quot;
 )paren
 op_assign
 (paren
@@ -468,22 +458,21 @@ r_int
 id|fn
 suffix:semicolon
 id|__asm__
-id|__volatile__
 c_func
 (paren
 l_string|&quot;trapa&t;#0&bslash;n&bslash;t&quot;
 multiline_comment|/* Linux/SH system call */
-l_string|&quot;tst&t;#0xff,r0&bslash;n&bslash;t&quot;
+l_string|&quot;tst&t;#0xff, $r0&bslash;n&bslash;t&quot;
 multiline_comment|/* child or parent? */
 l_string|&quot;bf&t;1f&bslash;n&bslash;t&quot;
 multiline_comment|/* parent - jump */
-l_string|&quot;jsr&t;@r9&bslash;n&bslash;t&quot;
+l_string|&quot;jsr&t;@$r9&bslash;n&bslash;t&quot;
 multiline_comment|/* call fn */
-l_string|&quot; mov&t;r8,r4&bslash;n&bslash;t&quot;
+l_string|&quot; mov&t;$r8, $r4&bslash;n&bslash;t&quot;
 multiline_comment|/* push argument */
-l_string|&quot;mov&t;r0,r4&bslash;n&bslash;t&quot;
+l_string|&quot;mov&t;$r0, $r4&bslash;n&bslash;t&quot;
 multiline_comment|/* return value to arg of exit */
-l_string|&quot;mov&t;%2,r0&bslash;n&bslash;t&quot;
+l_string|&quot;mov&t;%2, $r0&bslash;n&bslash;t&quot;
 multiline_comment|/* exit */
 l_string|&quot;trapa&t;#0&bslash;n&quot;
 l_string|&quot;1:&quot;
@@ -539,40 +528,7 @@ c_func
 r_void
 )paren
 (brace
-macro_line|#if defined(__sh3__)
-multiline_comment|/* nothing to do ... */
-macro_line|#elif defined(__SH4__)
-macro_line|#if 0 /* for the time being... */
-multiline_comment|/* Forget lazy fpu state */
-r_if
-c_cond
-(paren
-id|last_task_used_math
-op_eq
-id|current
-)paren
-(brace
-id|set_status_register
-(paren
-id|SR_FD
-comma
-l_int|0
-)paren
-suffix:semicolon
-id|write_system_register
-(paren
-id|fpscr
-comma
-id|FPSCR_PR
-)paren
-suffix:semicolon
-id|last_task_used_math
-op_assign
-l_int|NULL
-suffix:semicolon
-)brace
-macro_line|#endif
-macro_line|#endif
+multiline_comment|/* Nothing to do. */
 )brace
 DECL|function|flush_thread
 r_void
@@ -586,36 +542,24 @@ macro_line|#if defined(__sh3__)
 multiline_comment|/* do nothing */
 multiline_comment|/* Possibly, set clear debug registers */
 macro_line|#elif defined(__SH4__)
-macro_line|#if 0 /* for the time being... */
-multiline_comment|/* Forget lazy fpu state */
-r_if
-c_cond
-(paren
-id|last_task_used_math
-op_eq
-id|current
-)paren
-(brace
-id|set_status_register
-(paren
-id|SR_FD
-comma
-l_int|0
-)paren
-suffix:semicolon
-id|write_system_register
-(paren
-id|fpscr
-comma
-id|FPSCR_PR
-)paren
-suffix:semicolon
-id|last_task_used_math
+r_struct
+id|task_struct
+op_star
+id|tsk
 op_assign
-l_int|NULL
+id|current
 suffix:semicolon
-)brace
-macro_line|#endif
+multiline_comment|/* Forget lazy FPU state */
+id|clear_fpu
+c_func
+(paren
+id|tsk
+)paren
+suffix:semicolon
+id|tsk-&gt;used_math
+op_assign
+l_int|0
+suffix:semicolon
 macro_line|#endif
 )brace
 DECL|function|release_thread
@@ -644,47 +588,61 @@ id|regs
 comma
 id|elf_fpregset_t
 op_star
-id|r
+id|fpu
 )paren
 (brace
 macro_line|#if defined(__SH4__)
-macro_line|#if 0 /* for the time being... */
-multiline_comment|/* We store the FPU info in the task-&gt;thread area.  */
+r_int
+id|fpvalid
+suffix:semicolon
+r_struct
+id|task_struct
+op_star
+id|tsk
+op_assign
+id|current
+suffix:semicolon
+id|fpvalid
+op_assign
+id|tsk-&gt;used_math
+suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
-(paren
-id|regs-&gt;sr
-op_amp
-id|SR_FD
-)paren
+id|fpvalid
 )paren
 (brace
-id|memcpy
+id|unlazy_fpu
+c_func
 (paren
-id|r
+id|tsk
+)paren
+suffix:semicolon
+id|memcpy
+c_func
+(paren
+id|fpu
 comma
 op_amp
-id|current-&gt;thread.fpu
+id|tsk-&gt;thread.fpu.hard
 comma
 r_sizeof
 (paren
 op_star
-id|r
+id|fpu
 )paren
 )paren
-suffix:semicolon
-r_return
-l_int|1
 suffix:semicolon
 )brace
-macro_line|#endif
-macro_line|#endif
+r_return
+id|fpvalid
+suffix:semicolon
+macro_line|#else
 r_return
 l_int|0
 suffix:semicolon
 multiline_comment|/* Task didn&squot;t use the fpu at all. */
+macro_line|#endif
 )brace
 id|asmlinkage
 r_void
@@ -726,6 +684,13 @@ id|pt_regs
 op_star
 id|childregs
 suffix:semicolon
+r_struct
+id|task_struct
+op_star
+id|tsk
+op_assign
+id|current
+suffix:semicolon
 id|childregs
 op_assign
 (paren
@@ -747,55 +712,45 @@ id|p
 op_minus
 l_int|1
 suffix:semicolon
-op_star
+id|struct_cpy
+c_func
+(paren
 id|childregs
-op_assign
-op_star
+comma
 id|regs
+)paren
 suffix:semicolon
 macro_line|#if defined(__SH4__)
-macro_line|#if 0 /* for the time being... */
 r_if
 c_cond
 (paren
-id|last_task_used_math
-op_eq
-id|current
+id|tsk
+op_ne
+op_amp
+id|init_task
 )paren
 (brace
-id|set_status_register
+id|unlazy_fpu
+c_func
 (paren
-id|SR_FD
-comma
-l_int|0
+id|tsk
 )paren
 suffix:semicolon
-id|sh4_save_fp
+id|struct_cpy
+c_func
 (paren
-id|p
+op_amp
+id|p-&gt;thread.fpu
+comma
+op_amp
+id|current-&gt;thread.fpu
 )paren
+suffix:semicolon
+id|p-&gt;used_math
+op_assign
+id|tsk-&gt;used_math
 suffix:semicolon
 )brace
-multiline_comment|/* New tasks loose permission to use the fpu. This accelerates context&n;&t;   switching for most programs since they don&squot;t use the fpu.  */
-id|p-&gt;thread.sr
-op_assign
-(paren
-id|read_control_register
-(paren
-id|sr
-)paren
-op_amp
-op_complement
-id|SR_MD
-)paren
-op_or
-id|SR_FD
-suffix:semicolon
-id|childregs-&gt;sr
-op_or_assign
-id|SR_FD
-suffix:semicolon
-macro_line|#endif
 macro_line|#endif
 r_if
 c_cond
@@ -835,6 +790,11 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* Set return value for child */
+id|childregs-&gt;sr
+op_or_assign
+id|SR_FD
+suffix:semicolon
+multiline_comment|/* Invalidate FPU flag */
 id|p-&gt;thread.sp
 op_assign
 (paren
@@ -872,7 +832,6 @@ op_star
 id|dump
 )paren
 (brace
-multiline_comment|/* changed the size calculations - should hopefully work better. lbt */
 id|dump-&gt;magic
 op_assign
 id|CMAGIC
@@ -942,28 +901,17 @@ op_assign
 op_star
 id|regs
 suffix:semicolon
-macro_line|#if 0 /* defined(__SH4__) */
-multiline_comment|/* FPU */
-id|memcpy
+id|dump-&gt;u_fpvalid
+op_assign
+id|dump_fpu
+c_func
 (paren
-op_amp
-id|dump-&gt;regs
-(braket
-id|EF_SIZE
-op_div
-l_int|4
-)braket
+id|regs
 comma
 op_amp
-id|current-&gt;thread.fpu
-comma
-r_sizeof
-(paren
-id|current-&gt;thread.fpu
-)paren
+id|dump-&gt;fpu
 )paren
 suffix:semicolon
-macro_line|#endif
 )brace
 multiline_comment|/*&n; *&t;switch_to(x,y) should switch tasks from x to y.&n; *&n; */
 DECL|function|__switch_to
@@ -982,11 +930,27 @@ op_star
 id|next
 )paren
 (brace
+macro_line|#if defined(__SH4__)
+r_if
+c_cond
+(paren
+id|prev
+op_ne
+op_amp
+id|init_task
+)paren
+id|unlazy_fpu
+c_func
+(paren
+id|prev
+)paren
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/*&n;&t; * Restore the kernel stack onto kernel mode register&n;&t; *   &t;k4 (r4_bank1)&n;&t; */
 id|asm
 r_volatile
 (paren
-l_string|&quot;ldc&t;%0,r4_bank&quot;
+l_string|&quot;ldc&t;%0, $r4_bank&quot;
 suffix:colon
 multiline_comment|/* no output */
 suffix:colon
@@ -1250,6 +1214,220 @@ c_func
 suffix:semicolon
 r_return
 id|error
+suffix:semicolon
+)brace
+multiline_comment|/*&n; * These bracket the sleeping functions..&n; */
+r_extern
+r_void
+id|scheduling_functions_start_here
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|scheduling_functions_end_here
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+DECL|macro|first_sched
+mdefine_line|#define first_sched&t;((unsigned long) scheduling_functions_start_here)
+DECL|macro|last_sched
+mdefine_line|#define last_sched&t;((unsigned long) scheduling_functions_end_here)
+DECL|function|get_wchan
+r_int
+r_int
+id|get_wchan
+c_func
+(paren
+r_struct
+id|task_struct
+op_star
+id|p
+)paren
+(brace
+r_int
+r_int
+id|schedule_frame
+suffix:semicolon
+r_int
+r_int
+id|pc
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|p
+op_logical_or
+id|p
+op_eq
+id|current
+op_logical_or
+id|p-&gt;state
+op_eq
+id|TASK_RUNNING
+)paren
+r_return
+l_int|0
+suffix:semicolon
+multiline_comment|/*&n;&t; * The same comment as on the Alpha applies here, too ...&n;&t; */
+id|pc
+op_assign
+id|thread_saved_pc
+c_func
+(paren
+op_amp
+id|p-&gt;thread
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|pc
+op_ge
+(paren
+r_int
+r_int
+)paren
+id|interruptible_sleep_on
+op_logical_and
+id|pc
+OL
+(paren
+r_int
+r_int
+)paren
+id|add_timer
+)paren
+(brace
+id|schedule_frame
+op_assign
+(paren
+(paren
+r_int
+r_int
+op_star
+)paren
+(paren
+r_int
+)paren
+id|p-&gt;thread.sp
+)paren
+(braket
+l_int|1
+)braket
+suffix:semicolon
+r_return
+(paren
+r_int
+r_int
+)paren
+(paren
+(paren
+r_int
+r_int
+op_star
+)paren
+id|schedule_frame
+)paren
+(braket
+l_int|1
+)braket
+suffix:semicolon
+)brace
+r_return
+id|pc
+suffix:semicolon
+)brace
+DECL|function|print_syscall
+id|asmlinkage
+r_void
+id|print_syscall
+c_func
+(paren
+r_int
+id|x
+)paren
+(brace
+r_int
+r_int
+id|flags
+comma
+id|sr
+suffix:semicolon
+id|asm
+c_func
+(paren
+l_string|&quot;stc&t;$sr, %0&quot;
+suffix:colon
+l_string|&quot;=r&quot;
+(paren
+id|sr
+)paren
+)paren
+suffix:semicolon
+id|save_and_cli
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;%c: %c %c, %c: SYSCALL&bslash;n&quot;
+comma
+(paren
+id|x
+op_amp
+l_int|63
+)paren
+op_plus
+l_int|32
+comma
+(paren
+id|current-&gt;flags
+op_amp
+id|PF_USEDFPU
+)paren
+ques
+c_cond
+l_char|&squot;C&squot;
+suffix:colon
+l_char|&squot; &squot;
+comma
+(paren
+id|init_task.flags
+op_amp
+id|PF_USEDFPU
+)paren
+ques
+c_cond
+l_char|&squot;K&squot;
+suffix:colon
+l_char|&squot; &squot;
+comma
+(paren
+id|sr
+op_amp
+id|SR_FD
+)paren
+ques
+c_cond
+l_char|&squot; &squot;
+suffix:colon
+l_char|&squot;F&squot;
+)paren
+suffix:semicolon
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
 suffix:semicolon
 )brace
 eof

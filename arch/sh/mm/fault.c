@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: fault.c,v 1.5 1999/10/31 13:17:31 gniibe Exp $&n; *&n; *  linux/arch/sh/mm/fault.c&n; *  Copyright (C) 1999  Niibe Yutaka&n; *&n; *  Based on linux/arch/i386/mm/fault.c:&n; *   Copyright (C) 1995  Linus Torvalds&n; */
+multiline_comment|/* $Id: fault.c,v 1.12 2000/03/01 11:15:27 gniibe Exp $&n; *&n; *  linux/arch/sh/mm/fault.c&n; *  Copyright (C) 1999  Niibe Yutaka&n; *&n; *  Based on linux/arch/i386/mm/fault.c:&n; *   Copyright (C) 1995  Linus Torvalds&n; */
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -14,7 +14,7 @@ macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
-macro_line|#include &lt;asm/pgtable.h&gt;
+macro_line|#include &lt;asm/pgalloc.h&gt;
 macro_line|#include &lt;asm/hardirq.h&gt;
 macro_line|#include &lt;asm/mmu_context.h&gt;
 r_extern
@@ -766,13 +766,25 @@ comma
 id|regs-&gt;pc
 )paren
 suffix:semicolon
-id|page
-op_assign
+id|asm
+r_volatile
 (paren
-r_int
-r_int
+l_string|&quot;mov.l&t;%1,%0&quot;
+suffix:colon
+l_string|&quot;=r&quot;
+(paren
+id|page
 )paren
-id|mm-&gt;pgd
+suffix:colon
+l_string|&quot;m&quot;
+(paren
+id|__m
+c_func
+(paren
+id|MMU_TTB
+)paren
+)paren
+)paren
 suffix:semicolon
 id|page
 op_assign
@@ -782,11 +794,7 @@ r_int
 r_int
 op_star
 )paren
-id|__va
-c_func
-(paren
 id|page
-)paren
 )paren
 (braket
 id|address
@@ -808,7 +816,7 @@ c_cond
 (paren
 id|page
 op_amp
-l_int|1
+id|_PAGE_PRESENT
 )paren
 (brace
 id|page
@@ -972,6 +980,10 @@ r_int
 r_int
 id|pteval
 suffix:semicolon
+r_int
+r_int
+id|pteaddr
+suffix:semicolon
 id|save_and_cli
 c_func
 (paren
@@ -1004,6 +1016,29 @@ c_func
 id|pteval
 comma
 id|MMU_PTEL
+)paren
+suffix:semicolon
+multiline_comment|/* Set PTEH register */
+id|pteaddr
+op_assign
+(paren
+id|address
+op_amp
+id|MMU_VPN_MASK
+)paren
+op_or
+(paren
+id|vma-&gt;vm_mm-&gt;context
+op_amp
+id|MMU_CONTEXT_ASID_MASK
+)paren
+suffix:semicolon
+id|ctrl_outl
+c_func
+(paren
+id|pteaddr
+comma
+id|MMU_PTEH
 )paren
 suffix:semicolon
 multiline_comment|/* Load the TLB */
@@ -1056,6 +1091,11 @@ id|saved_asid
 op_assign
 id|MMU_NO_ASID
 suffix:semicolon
+macro_line|#if defined(__SH4__)
+r_int
+id|i
+suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -1127,9 +1167,6 @@ id|addr
 )paren
 suffix:semicolon
 macro_line|#elif defined(__SH4__)
-r_int
-id|i
-suffix:semicolon
 id|addr
 op_assign
 id|MMU_UTLB_ADDRESS_ARRAY
@@ -1187,7 +1224,7 @@ suffix:semicolon
 id|data
 op_and_assign
 op_complement
-l_int|0x30
+l_int|0x300
 suffix:semicolon
 r_if
 c_cond

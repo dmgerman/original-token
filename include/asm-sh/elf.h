@@ -21,21 +21,11 @@ id|elf_gregset_t
 id|ELF_NGREG
 )braket
 suffix:semicolon
-multiline_comment|/* Though SH-3 has no floating point regs.. */
-DECL|macro|ELF_NFPREG
-mdefine_line|#define ELF_NFPREG 34
-DECL|typedef|elf_fpreg_t
-r_typedef
-r_float
-id|elf_fpreg_t
-suffix:semicolon
 DECL|typedef|elf_fpregset_t
 r_typedef
-id|elf_fpreg_t
+r_struct
+id|user_fpu_struct
 id|elf_fpregset_t
-(braket
-id|ELF_NFPREG
-)braket
 suffix:semicolon
 multiline_comment|/*&n; * This is used to ensure we don&squot;t load something for the wrong architecture.&n; */
 DECL|macro|elf_check_arch

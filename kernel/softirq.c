@@ -745,6 +745,15 @@ c_func
 id|t
 )paren
 suffix:semicolon
+id|clear_bit
+c_func
+(paren
+id|TASKLET_STATE_SCHED
+comma
+op_amp
+id|t-&gt;state
+)paren
+suffix:semicolon
 )brace
 multiline_comment|/* Old style BHs */
 DECL|variable|bh_base

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: setup.c,v 1.7 1999/10/23 01:34:50 gniibe Exp gniibe $&n; *&n; *  linux/arch/sh/kernel/setup.c&n; *&n; *  Copyright (C) 1999  Niibe Yutaka&n; *&n; */
+multiline_comment|/* $Id: setup.c,v 1.20 2000/03/05 02:44:41 gniibe Exp $&n; *&n; *  linux/arch/sh/kernel/setup.c&n; *&n; *  Copyright (C) 1999  Niibe Yutaka&n; *&n; */
 multiline_comment|/*&n; * This file handles the architecture-dependent parts of initialization&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -61,6 +61,14 @@ id|rd_image_start
 suffix:semicolon
 multiline_comment|/* starting block # of image */
 macro_line|#endif
+r_extern
+r_void
+id|fpu_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
 r_extern
 r_int
 id|root_mountflags
@@ -736,22 +744,6 @@ DECL|macro|PFN_DOWN
 mdefine_line|#define PFN_DOWN(x)&t;((x) &gt;&gt; PAGE_SHIFT)
 DECL|macro|PFN_PHYS
 mdefine_line|#define PFN_PHYS(x)&t;((x) &lt;&lt; PAGE_SHIFT)
-multiline_comment|/*&n;&t; * partially used pages are not usable - thus&n;&t; * we are rounding upwards:&n;&t; */
-id|start_pfn
-op_assign
-id|PFN_UP
-c_func
-(paren
-id|__pa
-c_func
-(paren
-op_amp
-id|_end
-)paren
-op_minus
-id|__MEMORY_START
-)paren
-suffix:semicolon
 multiline_comment|/*&n;&t; * Find the highest page frame number we have available&n;&t; */
 id|max_pfn
 op_assign
@@ -763,8 +755,6 @@ c_func
 (paren
 id|memory_end
 )paren
-op_minus
-id|__MEMORY_START
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * Determine low and high memory ranges:&n;&t; */
@@ -772,34 +762,36 @@ id|max_low_pfn
 op_assign
 id|max_pfn
 suffix:semicolon
-multiline_comment|/*&n;&t; * Initialize the boot-time allocator (with low memory only):&n;&t; */
-id|bootmap_size
+multiline_comment|/*&n;&t; * Partially used pages are not usable - thus&n;&t; * we are rounding upwards:&n; &t; */
+id|start_pfn
 op_assign
-id|init_bootmem
+id|PFN_UP
 c_func
 (paren
-id|start_pfn
-comma
-id|max_low_pfn
-comma
-id|__MEMORY_START
+id|__pa
+c_func
+(paren
+op_amp
+id|_end
+)paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * FIXME: what about high memory?&n;&t; */
-id|ram_resources
-(braket
-l_int|1
-)braket
-dot
-id|end
+multiline_comment|/*&n;&t; * Find a proper area for the bootmem bitmap. After this&n;&t; * bootstrap step all allocations (until the page allocator&n;&t; * is intact) must be done via bootmem_alloc().&n;&t; */
+id|bootmap_size
 op_assign
-id|PFN_PHYS
+id|init_bootmem_node
 c_func
 (paren
+l_int|0
+comma
+id|start_pfn
+comma
+id|__MEMORY_START
+op_rshift
+id|PAGE_SHIFT
+comma
 id|max_low_pfn
 )paren
-op_plus
-id|__MEMORY_START
 suffix:semicolon
 multiline_comment|/*&n;&t; * Register fully available low RAM pages with the bootmem allocator.&n;&t; */
 (brace
@@ -809,7 +801,7 @@ id|curr_pfn
 comma
 id|last_pfn
 comma
-id|size
+id|pages
 suffix:semicolon
 multiline_comment|/*&n;&t;&t; * We are rounding up the start address of usable memory:&n;&t;&t; */
 id|curr_pfn
@@ -817,7 +809,7 @@ op_assign
 id|PFN_UP
 c_func
 (paren
-l_int|0
+id|__MEMORY_START
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t;&t; * ... and at the end of the usable range downwards:&n;&t;&t; */
@@ -826,9 +818,11 @@ op_assign
 id|PFN_DOWN
 c_func
 (paren
+id|__pa
+c_func
+(paren
 id|memory_end
-op_minus
-id|__MEMORY_START
+)paren
 )paren
 suffix:semicolon
 r_if
@@ -842,7 +836,7 @@ id|last_pfn
 op_assign
 id|max_low_pfn
 suffix:semicolon
-id|size
+id|pages
 op_assign
 id|last_pfn
 op_minus
@@ -860,17 +854,20 @@ comma
 id|PFN_PHYS
 c_func
 (paren
-id|size
+id|pages
 )paren
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; * Reserve the kernel text and&n;&t; * Reserve the bootmem bitmap itself as well. We do this in two&n;&t; * steps (first step was init_bootmem()) because this catches&n;&t; * the (very unlikely) case of us accidentally initializing the&n;&t; * bootmem allocator with an invalid RAM area.&n;&t; */
+multiline_comment|/*&n;&t; * Reserve the kernel text and&n;&t; * Reserve the bootmem bitmap.We do this in two steps (first step&n;&t; * was init_bootmem()), because this catches the (definitely buggy)&n;&t; * case of us accidentally initializing the bootmem allocator with&n;&t; * an invalid RAM area.&n;&t; */
 id|reserve_bootmem
 c_func
 (paren
+id|__MEMORY_START
+op_plus
 id|PAGE_SIZE
 comma
+(paren
 id|PFN_PHYS
 c_func
 (paren
@@ -878,13 +875,20 @@ id|start_pfn
 )paren
 op_plus
 id|bootmap_size
+op_plus
+id|PAGE_SIZE
+op_minus
+l_int|1
+)paren
+op_minus
+id|__MEMORY_START
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * reserve physical page 0 - it&squot;s a special BIOS page on many boxes,&n;&t; * enabling clean reboots, SMP operation, laptop functions.&n;&t; */
 id|reserve_bootmem
 c_func
 (paren
-l_int|0
+id|__MEMORY_START
 comma
 id|PAGE_SIZE
 )paren
@@ -894,6 +898,8 @@ r_if
 c_cond
 (paren
 id|LOADER_TYPE
+op_logical_and
+id|INITRD_START
 )paren
 (brace
 r_if
@@ -914,6 +920,8 @@ id|reserve_bootmem
 c_func
 (paren
 id|INITRD_START
+op_plus
+id|__MEMORY_START
 comma
 id|INITRD_SIZE
 )paren
@@ -1066,6 +1074,31 @@ id|dummy_con
 suffix:semicolon
 macro_line|#endif
 macro_line|#endif
+macro_line|#if defined(__SH4__)
+id|init_task.used_math
+op_assign
+l_int|1
+suffix:semicolon
+id|init_task.flags
+op_or_assign
+id|PF_USEDFPU
+suffix:semicolon
+id|grab_fpu
+c_func
+(paren
+)paren
+suffix:semicolon
+id|fpu_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+id|paging_init
+c_func
+(paren
+)paren
+suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;Get CPU information for use by the procfs.&n; */
 DECL|function|get_cpuinfo

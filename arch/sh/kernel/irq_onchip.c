@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: irq_onchip.c,v 1.5 1999/10/28 02:18:33 gniibe Exp $&n; *&n; * linux/arch/sh/kernel/irq_onchip.c&n; *&n; * Copyright (C) 1999  Niibe Yutaka &amp; Takeshi Yaegashi&n; *&n; * Interrupt handling for on-chip supporting modules (TMU, RTC, etc.).&n; *&n; */
+multiline_comment|/* $Id: irq_onchip.c,v 1.7 2000-01-09 15:55:55+09 gniibe Exp $&n; *&n; * linux/arch/sh/kernel/irq_onchip.c&n; *&n; * Copyright (C) 1999  Niibe Yutaka &amp; Takeshi Yaegashi&n; *&n; * Interrupt handling for on-chip supporting modules (TMU, RTC, etc.).&n; *&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -451,8 +451,28 @@ macro_line|#ifdef CONFIG_CPU_SUBTYPE_SH7709
 multiline_comment|/*&n; * SH7707/SH7709/SH7709A/SH7729 Extended on-chip I/O&n; */
 DECL|macro|INTC_IRR0
 mdefine_line|#define INTC_IRR0&t;0xa4000004UL
+DECL|macro|INTC_IRR1
+mdefine_line|#define INTC_IRR1&t;0xa4000006UL
+DECL|macro|INTC_IRR2
+mdefine_line|#define INTC_IRR2&t;0xa4000008UL
+DECL|macro|INTC_ICR0
+mdefine_line|#define INTC_ICR0  &t;0xfffffee0
+DECL|macro|INTC_ICR1
+mdefine_line|#define INTC_ICR1  &t;0xa4000010
+DECL|macro|INTC_ICR2
+mdefine_line|#define INTC_ICR2  &t;0xa4000012
+DECL|macro|INTC_INTER
+mdefine_line|#define INTC_INTER &t;0xa4000014
+DECL|macro|INTC_IPRA
+mdefine_line|#define INTC_IPRA  &t;0xfffffee2
+DECL|macro|INTC_IPRB
+mdefine_line|#define INTC_IPRB  &t;0xfffffee4
 DECL|macro|INTC_IPRC
-mdefine_line|#define INTC_IPRC&t;0xa4000016UL
+mdefine_line|#define INTC_IPRC  &t;0xa4000016
+DECL|macro|INTC_IPRD
+mdefine_line|#define INTC_IPRD  &t;0xa4000018
+DECL|macro|INTC_IPRE
+mdefine_line|#define INTC_IPRE  &t;0xa400001a
 DECL|macro|IRQ0_IRQ
 mdefine_line|#define IRQ0_IRQ&t;32
 DECL|macro|IRQ1_IRQ
@@ -894,6 +914,103 @@ id|onChip_irq_type
 suffix:semicolon
 )brace
 macro_line|#ifdef CONFIG_CPU_SUBTYPE_SH7709
+multiline_comment|/*&n;&t; * Initialize the Interrupt Controller (INTC)&n;&t; * registers to their power on values&n;&t; */
+id|ctrl_outb
+c_func
+(paren
+l_int|0
+comma
+id|INTC_IRR0
+)paren
+suffix:semicolon
+id|ctrl_outb
+c_func
+(paren
+l_int|0
+comma
+id|INTC_IRR1
+)paren
+suffix:semicolon
+id|ctrl_outb
+c_func
+(paren
+l_int|0
+comma
+id|INTC_IRR2
+)paren
+suffix:semicolon
+id|ctrl_outw
+c_func
+(paren
+l_int|0
+comma
+id|INTC_ICR0
+)paren
+suffix:semicolon
+id|ctrl_outw
+c_func
+(paren
+l_int|0
+comma
+id|INTC_ICR1
+)paren
+suffix:semicolon
+id|ctrl_outw
+c_func
+(paren
+l_int|0
+comma
+id|INTC_ICR2
+)paren
+suffix:semicolon
+id|ctrl_outw
+c_func
+(paren
+l_int|0
+comma
+id|INTC_INTER
+)paren
+suffix:semicolon
+id|ctrl_outw
+c_func
+(paren
+l_int|0
+comma
+id|INTC_IPRA
+)paren
+suffix:semicolon
+id|ctrl_outw
+c_func
+(paren
+l_int|0
+comma
+id|INTC_IPRB
+)paren
+suffix:semicolon
+id|ctrl_outw
+c_func
+(paren
+l_int|0
+comma
+id|INTC_IPRC
+)paren
+suffix:semicolon
+id|ctrl_outw
+c_func
+(paren
+l_int|0
+comma
+id|INTC_IPRD
+)paren
+suffix:semicolon
+id|ctrl_outw
+c_func
+(paren
+l_int|0
+comma
+id|INTC_IPRE
+)paren
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -979,20 +1096,6 @@ comma
 id|IRQ5_IRP_OFFSET
 comma
 id|IRQ5_PRIORITY
-)paren
-suffix:semicolon
-id|ctrl_inb
-c_func
-(paren
-id|INTC_IRR0
-)paren
-suffix:semicolon
-id|ctrl_outb
-c_func
-(paren
-l_int|0
-comma
-id|INTC_IRR0
 )paren
 suffix:semicolon
 macro_line|#endif /* CONFIG_CPU_SUBTYPE_SH7709 */

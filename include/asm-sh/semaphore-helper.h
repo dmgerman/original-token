@@ -24,7 +24,7 @@ id|atomic_t
 op_star
 )paren
 op_amp
-id|sem-&gt;waking
+id|sem-&gt;sleepers
 )paren
 suffix:semicolon
 )brace
@@ -62,12 +62,12 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|sem-&gt;waking
+id|sem-&gt;sleepers
 OG
 l_int|0
 )paren
 (brace
-id|sem-&gt;waking
+id|sem-&gt;sleepers
 op_decrement
 suffix:semicolon
 id|ret
@@ -128,12 +128,12 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|sem-&gt;waking
+id|sem-&gt;sleepers
 OG
 l_int|0
 )paren
 (brace
-id|sem-&gt;waking
+id|sem-&gt;sleepers
 op_decrement
 suffix:semicolon
 id|ret
@@ -213,7 +213,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|sem-&gt;waking
+id|sem-&gt;sleepers
 op_le
 l_int|0
 )paren
@@ -226,7 +226,7 @@ id|sem-&gt;count
 suffix:semicolon
 r_else
 (brace
-id|sem-&gt;waking
+id|sem-&gt;sleepers
 op_decrement
 suffix:semicolon
 id|ret

@@ -67,6 +67,14 @@ suffix:semicolon
 )brace
 DECL|macro|pgd_clear
 mdefine_line|#define pgd_clear(xp)&t;do { } while (0)
+multiline_comment|/*&n; * Certain architectures need to do special things when PTEs&n; * within a page table are directly modified.  Thus, the following&n; * hook is made available.&n; */
+DECL|macro|set_pte
+mdefine_line|#define set_pte(pteptr, pteval) (*(pteptr) = pteval)
+multiline_comment|/*&n; * (pmds are folded into pgds so this doesnt get actually called,&n; * but the define is needed for a generic inline function.)&n; */
+DECL|macro|set_pmd
+mdefine_line|#define set_pmd(pmdptr, pmdval) (*(pmdptr) = pmdval)
+DECL|macro|set_pgd
+mdefine_line|#define set_pgd(pgdptr, pgdval) (*(pgdptr) = pgdval)
 DECL|macro|pgd_page
 mdefine_line|#define pgd_page(pgd) &bslash;&n;((unsigned long) __va(pgd_val(pgd) &amp; PAGE_MASK))
 DECL|function|pmd_offset
@@ -92,87 +100,6 @@ id|pmd_t
 op_star
 )paren
 id|dir
-suffix:semicolon
-)brace
-DECL|function|get_pmd_fast
-r_extern
-id|__inline__
-id|pmd_t
-op_star
-id|get_pmd_fast
-c_func
-(paren
-r_void
-)paren
-(brace
-r_return
-(paren
-id|pmd_t
-op_star
-)paren
-l_int|0
-suffix:semicolon
-)brace
-DECL|function|free_pmd_fast
-r_extern
-id|__inline__
-r_void
-id|free_pmd_fast
-c_func
-(paren
-id|pmd_t
-op_star
-id|pmd
-)paren
-(brace
-)brace
-DECL|function|free_pmd_slow
-r_extern
-id|__inline__
-r_void
-id|free_pmd_slow
-c_func
-(paren
-id|pmd_t
-op_star
-id|pmd
-)paren
-(brace
-)brace
-DECL|function|pmd_alloc
-r_extern
-r_inline
-id|pmd_t
-op_star
-id|pmd_alloc
-c_func
-(paren
-id|pgd_t
-op_star
-id|pgd
-comma
-r_int
-r_int
-id|address
-)paren
-(brace
-r_if
-c_cond
-(paren
-op_logical_neg
-id|pgd
-)paren
-id|BUG
-c_func
-(paren
-)paren
-suffix:semicolon
-r_return
-(paren
-id|pmd_t
-op_star
-)paren
-id|pgd
 suffix:semicolon
 )brace
 macro_line|#endif /* __ASM_SH_PGTABLE_2LEVEL_H */

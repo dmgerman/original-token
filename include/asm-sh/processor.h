@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * include/asm-sh/processor.h&n; *&n; * Copyright (C) 1999 Niibe Yutaka&n; */
+multiline_comment|/*&n; * include/asm-sh/processor.h&n; *&n; * Copyright (C) 1999, 2000  Niibe Yutaka&n; */
 macro_line|#ifndef __ASM_SH_PROCESSOR_H
 DECL|macro|__ASM_SH_PROCESSOR_H
 mdefine_line|#define __ASM_SH_PROCESSOR_H
@@ -7,7 +7,7 @@ macro_line|#include &lt;asm/types.h&gt;
 macro_line|#include &lt;linux/threads.h&gt;
 multiline_comment|/*&n; * Default implementation of macro that returns current&n; * instruction pointer (&quot;program counter&quot;).&n; */
 DECL|macro|current_text_addr
-mdefine_line|#define current_text_addr() ({ void *pc; __asm__(&quot;mova&t;1f,%0&bslash;n1:&quot;:&quot;=z&quot; (pc)); pc; })
+mdefine_line|#define current_text_addr() ({ void *pc; __asm__(&quot;mova&t;1f, %0&bslash;n1:&quot;:&quot;=z&quot; (pc)); pc; })
 multiline_comment|/*&n; *  CPU type and hardware bug flags. Kept separately for each CPU.&n; */
 DECL|enum|cpu_type
 r_enum
@@ -80,6 +80,10 @@ mdefine_line|#define TASK_SIZE&t;0x80000000
 multiline_comment|/* This decides where the kernel will search for a free chunk of vm&n; * space during mmap&squot;s.&n; */
 DECL|macro|TASK_UNMAPPED_BASE
 mdefine_line|#define TASK_UNMAPPED_BASE&t;(TASK_SIZE / 3)
+multiline_comment|/*&n; * FPU structure and data&n; */
+multiline_comment|/* FD-bit of SR register.&n; * When it&squot;s set, it means the processor doesn&squot;t have right to use FPU,&n; * and it results exception when the floating operation is executed.&n; */
+DECL|macro|SR_FD
+mdefine_line|#define SR_FD&t;0x00008000
 DECL|macro|NUM_FPU_REGS
 mdefine_line|#define NUM_FPU_REGS&t;16
 DECL|struct|sh_fpu_hard_struct
@@ -132,14 +136,6 @@ id|fp_regs
 id|NUM_FPU_REGS
 )braket
 suffix:semicolon
-DECL|member|xf_regs
-r_int
-r_int
-id|xf_regs
-(braket
-id|NUM_FPU_REGS
-)braket
-suffix:semicolon
 DECL|member|fpscr
 r_int
 r_int
@@ -149,6 +145,14 @@ DECL|member|fpul
 r_int
 r_int
 id|fpul
+suffix:semicolon
+DECL|member|xf_regs
+r_int
+r_int
+id|xf_regs
+(braket
+id|NUM_FPU_REGS
+)braket
 suffix:semicolon
 DECL|member|lookahead
 r_int
@@ -217,7 +221,7 @@ suffix:semicolon
 DECL|macro|INIT_MMAP
 mdefine_line|#define INIT_MMAP &bslash;&n;{ &amp;init_mm, 0x80000000, 0xa0000000, NULL, PAGE_SHARED, VM_READ | VM_WRITE | VM_EXEC, 1, NULL, NULL }
 DECL|macro|INIT_THREAD
-mdefine_line|#define INIT_THREAD  {&t;&t;&t;&t;&t;&t;&bslash;&n;&t;sizeof(init_stack) + (long) &amp;init_stack, /* sp */&t;&bslash;&n;&t;0,&t;&t;&t;&t;&t; /* pc */&t;&bslash;&n;&t;0, 0, &bslash;&n;&t;0, &bslash;&n;&t;{{{0,}},} &bslash;&n;}
+mdefine_line|#define INIT_THREAD  {&t;&t;&t;&t;&t;&t;&bslash;&n;&t;sizeof(init_stack) + (long) &amp;init_stack, /* sp */&t;&bslash;&n;&t;0,&t;&t;&t;&t;&t; /* pc */&t;&bslash;&n;&t;0, 0, &t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;0, &t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;{{{0,}},} &t;&t;&t;&t;/* fpu state */&t;&bslash;&n;}
 multiline_comment|/*&n; * Do necessary setup to start up a newly executed thread.&n; */
 DECL|macro|start_thread
 mdefine_line|#define start_thread(regs, new_pc, new_sp)&t; &bslash;&n;&t;set_fs(USER_DS);&t;&t;&t; &bslash;&n;&t;regs-&gt;pr = 0;   &t;&t; &t; &bslash;&n;&t;regs-&gt;sr = 0;&t;&t;/* User mode. */ &bslash;&n;&t;regs-&gt;pc = new_pc;&t;&t;&t; &bslash;&n;&t;regs-&gt;sp = new_sp
@@ -280,9 +284,7 @@ DECL|macro|release_segments
 mdefine_line|#define release_segments(mm)&t;do { } while(0)
 DECL|macro|forget_segments
 mdefine_line|#define forget_segments()&t;do { } while (0)
-multiline_comment|/*&n; * FPU lazy state save handling..&n; */
-DECL|macro|SR_FD
-mdefine_line|#define SR_FD&t;0x00008000
+multiline_comment|/*&n; * FPU lazy state save handling.&n; */
 DECL|function|release_fpu
 r_extern
 id|__inline__
@@ -300,10 +302,11 @@ suffix:semicolon
 multiline_comment|/* Set FD flag in SR */
 id|__asm__
 id|__volatile__
+c_func
 (paren
-l_string|&quot;stc&t;sr,%0&bslash;n&bslash;t&quot;
-l_string|&quot;or&t;%1,%0&bslash;n&bslash;t&quot;
-l_string|&quot;ldc&t;%0,sr&quot;
+l_string|&quot;stc&t;$sr, %0&bslash;n&bslash;t&quot;
+l_string|&quot;or&t;%1, %0&bslash;n&bslash;t&quot;
+l_string|&quot;ldc&t;%0, $sr&quot;
 suffix:colon
 l_string|&quot;=&amp;r&quot;
 (paren
@@ -334,10 +337,11 @@ suffix:semicolon
 multiline_comment|/* Clear out FD flag in SR */
 id|__asm__
 id|__volatile__
+c_func
 (paren
-l_string|&quot;stc&t;sr,%0&bslash;n&bslash;t&quot;
-l_string|&quot;and&t;%1,%0&bslash;n&bslash;t&quot;
-l_string|&quot;ldc&t;%0,sr&quot;
+l_string|&quot;stc&t;$sr, %0&bslash;n&bslash;t&quot;
+l_string|&quot;and&t;%1, %0&bslash;n&bslash;t&quot;
+l_string|&quot;ldc&t;%0, $sr&quot;
 suffix:colon
 l_string|&quot;=&amp;r&quot;
 (paren
@@ -364,9 +368,9 @@ id|__tsk
 )paren
 suffix:semicolon
 DECL|macro|unlazy_fpu
-mdefine_line|#define unlazy_fpu(tsk) do { &bslash;&n;&t;if (tsk-&gt;flags &amp; PF_USEDFPU) &bslash;&n;&t;&t;save_fpu(tsk); &bslash;&n;} while (0)
+mdefine_line|#define unlazy_fpu(tsk) do { &t;&t;&t;&bslash;&n;&t;if ((tsk)-&gt;flags &amp; PF_USEDFPU) {&t;&bslash;&n;&t;&t;grab_fpu();&t;&t;&t;&bslash;&n;&t;&t;save_fpu(tsk); &t;&t;&t;&bslash;&n;&t;}&t;&t;&t;&t;&t;&bslash;&n;} while (0)
 DECL|macro|clear_fpu
-mdefine_line|#define clear_fpu(tsk) do { &bslash;&n;&t;if (tsk-&gt;flags &amp; PF_USEDFPU) { &bslash;&n;&t;&t;tsk-&gt;flags &amp;= ~PF_USEDFPU; &bslash;&n;&t;&t;release_fpu(); &bslash;&n;&t;} &bslash;&n;} while (0)
+mdefine_line|#define clear_fpu(tsk) do { &t;&t;&t;&bslash;&n;&t;if ((tsk)-&gt;flags &amp; PF_USEDFPU)&t; &t;&bslash;&n;&t;&t;(tsk)-&gt;flags &amp;= ~PF_USEDFPU; &t;&bslash;&n;} while (0)
 multiline_comment|/*&n; * Return saved PC of a blocked thread.&n; */
 DECL|function|thread_saved_pc
 r_extern
@@ -386,9 +390,7 @@ r_return
 id|t-&gt;pc
 suffix:semicolon
 )brace
-DECL|function|get_wchan
-r_static
-r_inline
+r_extern
 r_int
 r_int
 id|get_wchan
@@ -399,29 +401,7 @@ id|task_struct
 op_star
 id|p
 )paren
-(brace
-r_if
-c_cond
-(paren
-op_logical_neg
-id|p
-op_logical_or
-id|p
-op_eq
-id|current
-op_logical_or
-id|p-&gt;state
-op_eq
-id|TASK_RUNNING
-)paren
-r_return
-l_int|0
 suffix:semicolon
-multiline_comment|/* FIXME: here the actual wchan calculation should sit */
-r_return
-l_int|0
-suffix:semicolon
-)brace
 DECL|macro|KSTK_EIP
 mdefine_line|#define KSTK_EIP(tsk)  ((tsk)-&gt;thread.pc)
 DECL|macro|KSTK_ESP
@@ -448,6 +428,8 @@ id|task_struct
 op_star
 )paren
 suffix:semicolon
+DECL|macro|get_task_struct
+mdefine_line|#define get_task_struct(tsk)      atomic_inc(&amp;mem_map[MAP_NR(tsk)].count)
 DECL|macro|init_task
 mdefine_line|#define init_task&t;(init_task_union.task)
 DECL|macro|init_stack

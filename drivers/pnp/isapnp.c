@@ -11375,7 +11375,7 @@ macro_line|#ifdef ISAPNP_DEBUG
 id|printk
 c_func
 (paren
-l_string|&quot;IRQ %i is reserved now.&bslash;n&quot;
+l_string|&quot;isapnp: IRQ %i is reserved now.&bslash;n&quot;
 comma
 id|irq
 )paren
@@ -11417,7 +11417,7 @@ macro_line|#ifdef ISAPNP_DEBUG
 id|printk
 c_func
 (paren
-l_string|&quot;PCI: reserved IRQ: %i&bslash;n&quot;
+l_string|&quot;isapnp: PCI: reserved IRQ: %i&bslash;n&quot;
 comma
 id|dev-&gt;irq
 )paren

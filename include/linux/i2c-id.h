@@ -61,6 +61,8 @@ DECL|macro|I2C_DRIVERID_SAA5249
 mdefine_line|#define I2C_DRIVERID_SAA5249&t;24&t;/* SAA5249 and compatibles&t;*/
 DECL|macro|I2C_DRIVERID_PCF8583
 mdefine_line|#define I2C_DRIVERID_PCF8583&t;25&t;/* real time clock&t;&t;*/
+DECL|macro|I2C_DRIVERID_SAB3036
+mdefine_line|#define I2C_DRIVERID_SAB3036&t;26&t;/* SAB3036 tuner&t;&t;*/
 DECL|macro|I2C_DRIVERID_EXP0
 mdefine_line|#define I2C_DRIVERID_EXP0&t;0xF0&t;/* experimental use id&squot;s&t;*/
 DECL|macro|I2C_DRIVERID_EXP1

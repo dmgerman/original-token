@@ -2331,6 +2331,12 @@ id|info-&gt;okfn
 )paren
 suffix:semicolon
 )brace
+id|br_read_unlock_bh
+c_func
+(paren
+id|BR_NETPROTO_LOCK
+)paren
+suffix:semicolon
 r_switch
 c_cond
 (paren

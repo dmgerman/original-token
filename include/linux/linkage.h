@@ -18,23 +18,6 @@ macro_line|#else
 DECL|macro|asmlinkage
 mdefine_line|#define asmlinkage CPP_ASMLINKAGE
 macro_line|#endif
-macro_line|#ifdef __sh__
-DECL|macro|STRINGIFY
-mdefine_line|#define STRINGIFY(X) #X
-DECL|macro|SYMBOL_NAME_STR
-mdefine_line|#define SYMBOL_NAME_STR(X) STRINGIFY(SYMBOL_NAME(X))
-macro_line|#ifdef __STDC__
-DECL|macro|SYMBOL_NAME
-mdefine_line|#define SYMBOL_NAME(X) _##X
-DECL|macro|SYMBOL_NAME_LABEL
-mdefine_line|#define SYMBOL_NAME_LABEL(X) _##X##:
-macro_line|#else
-DECL|macro|SYMBOL_NAME
-mdefine_line|#define SYMBOL_NAME(X) _/**/X
-DECL|macro|SYMBOL_NAME_LABEL
-mdefine_line|#define SYMBOL_NAME_LABEL(X) _/**/X/**/:
-macro_line|#endif
-macro_line|#else
 DECL|macro|SYMBOL_NAME_STR
 mdefine_line|#define SYMBOL_NAME_STR(X) #X
 DECL|macro|SYMBOL_NAME
@@ -45,7 +28,6 @@ mdefine_line|#define SYMBOL_NAME_LABEL(X) X##:
 macro_line|#else
 DECL|macro|SYMBOL_NAME_LABEL
 mdefine_line|#define SYMBOL_NAME_LABEL(X) X/**/:
-macro_line|#endif
 macro_line|#endif
 macro_line|#ifdef __arm__
 DECL|macro|__ALIGN

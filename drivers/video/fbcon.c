@@ -12931,7 +12931,7 @@ r_break
 suffix:semicolon
 )brace
 macro_line|#endif
-macro_line|#if defined(CONFIG_FBCON_MFB) || defined(CONFIG_FBCON_AFB) || &bslash;&n;    defined(CONFIG_FBCON_ILBM)
+macro_line|#if defined(CONFIG_FBCON_MFB) || defined(CONFIG_FBCON_AFB) || &bslash;&n;    defined(CONFIG_FBCON_ILBM) || defined(CONFIG_FBCON_HGA)
 r_if
 c_cond
 (paren
@@ -12970,6 +12970,20 @@ l_int|0x00
 suffix:colon
 l_int|0xff
 suffix:semicolon
+r_int
+id|is_hga
+op_assign
+op_logical_neg
+id|strncmp
+c_func
+(paren
+id|p-&gt;fb_info-&gt;modename
+comma
+l_string|&quot;HGA&quot;
+comma
+l_int|3
+)paren
+suffix:semicolon
 multiline_comment|/* can&squot;t use simply memcpy because need to apply inverse */
 r_for
 c_loop
@@ -12994,6 +13008,36 @@ id|y1
 op_star
 id|LOGO_LINE
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|is_hga
+)paren
+id|dst
+op_assign
+id|fb
+op_plus
+(paren
+id|y1
+op_mod
+l_int|4
+)paren
+op_star
+l_int|8192
+op_plus
+(paren
+id|y1
+op_rshift
+l_int|2
+)paren
+op_star
+id|line
+op_plus
+id|x
+op_div
+l_int|8
+suffix:semicolon
+r_else
 id|dst
 op_assign
 id|fb

@@ -3,28 +3,6 @@ macro_line|#ifndef __ASM_SH_MMU_CONTEXT_H
 DECL|macro|__ASM_SH_MMU_CONTEXT_H
 mdefine_line|#define __ASM_SH_MMU_CONTEXT_H
 multiline_comment|/* The MMU &quot;context&quot; consists of two things:&n;     (a) TLB cache version (or round, cycle whatever expression you like)&n;     (b) ASID (Address Space IDentifier)&n; */
-DECL|function|enter_lazy_tlb
-r_static
-r_inline
-r_void
-id|enter_lazy_tlb
-c_func
-(paren
-r_struct
-id|mm_struct
-op_star
-id|mm
-comma
-r_struct
-id|task_struct
-op_star
-id|tsk
-comma
-r_int
-id|cpu
-)paren
-(brace
-)brace
 multiline_comment|/*&n; * Cache of MMU context last used.&n; */
 r_extern
 r_int
@@ -42,6 +20,9 @@ mdefine_line|#define NO_CONTEXT&t;&t;&t;0
 multiline_comment|/* ASID is 8-bit value, so it can&squot;t be 0x100 */
 DECL|macro|MMU_NO_ASID
 mdefine_line|#define MMU_NO_ASID&t;&t;&t;0x100
+multiline_comment|/*&n; * Virtual Page Number mask&n; */
+DECL|macro|MMU_VPN_MASK
+mdefine_line|#define MMU_VPN_MASK&t;0xfffff000
 r_extern
 id|__inline__
 r_void
@@ -246,12 +227,22 @@ r_int
 id|asid
 )paren
 (brace
+r_int
+r_int
+id|__dummy
+suffix:semicolon
 id|__asm__
 id|__volatile__
 (paren
-l_string|&quot;mov.l&t;%0,%1&quot;
+l_string|&quot;mov.l&t;%2, %0&bslash;n&bslash;t&quot;
+l_string|&quot;and&t;%3, %0&bslash;n&bslash;t&quot;
+l_string|&quot;or&t;%1, %0&bslash;n&bslash;t&quot;
+l_string|&quot;mov.l&t;%0, %2&quot;
 suffix:colon
-multiline_comment|/* no output */
+l_string|&quot;=&amp;r&quot;
+(paren
+id|__dummy
+)paren
 suffix:colon
 l_string|&quot;r&quot;
 (paren
@@ -265,6 +256,11 @@ c_func
 (paren
 id|MMU_PTEH
 )paren
+)paren
+comma
+l_string|&quot;r&quot;
+(paren
+l_int|0xffffff00
 )paren
 )paren
 suffix:semicolon
@@ -287,7 +283,7 @@ suffix:semicolon
 id|__asm__
 id|__volatile__
 (paren
-l_string|&quot;mov.l&t;%1,%0&quot;
+l_string|&quot;mov.l&t;%1, %0&quot;
 suffix:colon
 l_string|&quot;=r&quot;
 (paren
@@ -369,6 +365,15 @@ r_int
 id|cpu
 )paren
 (brace
+id|set_bit
+c_func
+(paren
+id|cpu
+comma
+op_amp
+id|next-&gt;cpu_vm_mask
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -391,7 +396,7 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;mov.l&t;%0,%1&quot;
+l_string|&quot;mov.l&t;%0, %1&quot;
 suffix:colon
 multiline_comment|/* no output */
 suffix:colon
@@ -426,17 +431,30 @@ id|prev-&gt;cpu_vm_mask
 )paren
 suffix:semicolon
 )brace
-id|set_bit
-c_func
-(paren
-id|cpu
-comma
-op_amp
-id|next-&gt;cpu_vm_mask
-)paren
-suffix:semicolon
 )brace
 DECL|macro|activate_mm
 mdefine_line|#define activate_mm(prev, next) &bslash;&n;&t;switch_mm((prev),(next),NULL,smp_processor_id())
+r_extern
+id|__inline__
+r_void
+DECL|function|enter_lazy_tlb
+id|enter_lazy_tlb
+c_func
+(paren
+r_struct
+id|mm_struct
+op_star
+id|mm
+comma
+r_struct
+id|task_struct
+op_star
+id|tsk
+comma
+r_int
+id|cpu
+)paren
+(brace
+)brace
 macro_line|#endif /* __ASM_SH_MMU_CONTEXT_H */
 eof

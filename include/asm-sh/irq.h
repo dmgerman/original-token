@@ -5,10 +5,10 @@ multiline_comment|/*&n; *&n; * linux/include/asm-sh/irq.h&n; *&n; * Copyright (C
 macro_line|#include &lt;linux/config.h&gt;
 DECL|macro|TIMER_IRQ
 mdefine_line|#define TIMER_IRQ&t;&t;16&t;/* Hard-wired */
-DECL|macro|TIMER_IRP_OFFSET
-mdefine_line|#define TIMER_IRP_OFFSET&t;12
+DECL|macro|TIMER_IPR_OFFSET
+mdefine_line|#define TIMER_IPR_OFFSET&t;12
 DECL|macro|TIMER_PRIORITY
-mdefine_line|#define TIMER_PRIORITY&t;&t; 1
+mdefine_line|#define TIMER_PRIORITY&t;&t; 2
 macro_line|#if defined(__SH4__)
 multiline_comment|/*&n; * 48 = 32+16&n; *&n; * 32 for on chip support modules.&n; * 16 for external interrupts.&n; *&n; */
 DECL|macro|NR_IRQS
@@ -67,6 +67,16 @@ suffix:semicolon
 r_extern
 r_void
 id|make_onChip_irq
+c_func
+(paren
+r_int
+r_int
+id|irq
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|make_imask_irq
 c_func
 (paren
 r_int

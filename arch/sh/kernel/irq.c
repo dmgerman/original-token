@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: irq.c,v 1.4 1999/10/11 13:12:14 gniibe Exp $&n; *&n; * linux/arch/sh/kernel/irq.c&n; *&n; *&t;Copyright (C) 1992, 1998 Linus Torvalds, Ingo Molnar&n; *&n; *&n; * SuperH version:  Copyright (C) 1999  Niibe Yutaka&n; */
+multiline_comment|/* $Id: irq.c,v 1.11 2000/02/29 11:03:40 gniibe Exp $&n; *&n; * linux/arch/sh/kernel/irq.c&n; *&n; *&t;Copyright (C) 1992, 1998 Linus Torvalds, Ingo Molnar&n; *&n; *&n; * SuperH version:  Copyright (C) 1999  Niibe Yutaka&n; */
 multiline_comment|/*&n; * IRQs are in fact implemented a bit like signal handlers for the kernel.&n; * Naturally it&squot;s not a 1:1 relation, but there are similarities.&n; */
 macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -17,7 +17,7 @@ macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/smp.h&gt;
-macro_line|#include &lt;asm/pgtable.h&gt;
+macro_line|#include &lt;asm/pgalloc.h&gt;
 macro_line|#include &lt;asm/delay.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;linux/irq.h&gt;
@@ -354,7 +354,6 @@ id|action
 op_assign
 id|action-&gt;next
 )paren
-(brace
 id|p
 op_add_assign
 id|sprintf
@@ -367,7 +366,6 @@ comma
 id|action-&gt;name
 )paren
 suffix:semicolon
-)brace
 op_star
 id|p
 op_increment
@@ -875,12 +873,7 @@ op_amp
 id|irq_controller_lock
 )paren
 suffix:semicolon
-id|irq_desc
-(braket
-id|irq
-)braket
-dot
-id|handler
+id|desc-&gt;handler
 op_member_access_from_pointer
 id|ack
 c_func
@@ -1028,13 +1021,7 @@ op_amp
 id|IRQ_DISABLED
 )paren
 )paren
-(brace
-id|irq_desc
-(braket
-id|irq
-)braket
-dot
-id|handler
+id|desc-&gt;handler
 op_member_access_from_pointer
 id|end
 c_func
@@ -1042,7 +1029,6 @@ c_func
 id|irq
 )paren
 suffix:semicolon
-)brace
 id|spin_unlock
 c_func
 (paren
@@ -1050,26 +1036,35 @@ op_amp
 id|irq_controller_lock
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * This should be conditional: we should really get&n;&t; * a return code from the irq handler to tell us&n;&t; * whether the handler wants us to do software bottom&n;&t; * half handling or not..&n;&t; */
-r_if
-c_cond
-(paren
-l_int|1
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|bh_active
-op_amp
-id|bh_mask
-)paren
-id|do_bottom_half
+macro_line|#if 1
+id|__sti
 c_func
 (paren
 )paren
 suffix:semicolon
-)brace
+macro_line|#endif
+r_if
+c_cond
+(paren
+id|softirq_state
+(braket
+id|cpu
+)braket
+dot
+id|active
+op_amp
+id|softirq_state
+(braket
+id|cpu
+)braket
+dot
+id|mask
+)paren
+id|do_softirq
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
 l_int|1
 suffix:semicolon
@@ -1365,24 +1360,6 @@ comma
 id|flags
 )paren
 suffix:semicolon
-multiline_comment|/* Wait to make sure it&squot;s not being used on another CPU */
-r_while
-c_loop
-(paren
-id|irq_desc
-(braket
-id|irq
-)braket
-dot
-id|status
-op_amp
-id|IRQ_INPROGRESS
-)paren
-id|barrier
-c_func
-(paren
-)paren
-suffix:semicolon
 id|kfree
 c_func
 (paren
@@ -1430,6 +1407,10 @@ suffix:semicolon
 r_int
 r_int
 id|delay
+suffix:semicolon
+r_int
+r_int
+id|val
 suffix:semicolon
 multiline_comment|/*&n;&t; * first, enable any unassigned irqs&n;&t; */
 id|spin_lock_irq
@@ -1543,6 +1524,10 @@ c_func
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * Now filter out any obviously spurious interrupts&n;&t; */
+id|val
+op_assign
+l_int|0
+suffix:semicolon
 id|spin_lock_irq
 c_func
 (paren
@@ -1626,6 +1611,19 @@ id|i
 )paren
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|i
+OL
+l_int|32
+)paren
+id|val
+op_or_assign
+l_int|1
+op_lshift
+id|i
+suffix:semicolon
 )brace
 id|spin_unlock_irq
 c_func
@@ -1635,7 +1633,7 @@ id|irq_controller_lock
 )paren
 suffix:semicolon
 r_return
-l_int|0x12345678
+id|val
 suffix:semicolon
 )brace
 DECL|function|probe_irq_off
@@ -1645,7 +1643,7 @@ c_func
 (paren
 r_int
 r_int
-id|unused
+id|val
 )paren
 (brace
 r_int
@@ -1654,28 +1652,6 @@ comma
 id|irq_found
 comma
 id|nr_irqs
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|unused
-op_ne
-l_int|0x12345678
-)paren
-id|printk
-c_func
-(paren
-l_string|&quot;Bad IRQ probe from %lx&bslash;n&quot;
-comma
-(paren
-op_amp
-id|unused
-)paren
-(braket
-op_minus
-l_int|1
-)braket
-)paren
 suffix:semicolon
 id|nr_irqs
 op_assign
