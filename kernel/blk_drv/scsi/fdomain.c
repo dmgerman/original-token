@@ -1,4 +1,4 @@
-multiline_comment|/* fdomain.c -- Future Domain TMC-1660/TMC-1680 driver&n; * Created: Sun May  3 18:53:19 1992 by faith&n; * Revised: Sun Jan 10 01:23:29 1993 by root&n; * Author: Rickard E. Faith, faith@cs.unc.edu&n; * Copyright 1992, 1993 Rickard E. Faith&n; *&n; * $Log$&n;&n; * This program is free software; you can redistribute it and/or modify it&n; * under the terms of the GNU General Public License as published by the&n; * Free Software Foundation; either version 2, or (at your option) any&n; * later version.&n;&n; * This program is distributed in the hope that it will be useful, but&n; * WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU&n; * General Public License for more details.&n;&n; **************************************************************************&n;&n;&n; DESCRIPTION:&n;&n; This is the Linux low-level SCSI driver for Future Domain TMC-1660/1680&n; and TMC-1670 SCSI host adapters.&n;&n;&n; REFERENCES USED:&n;&n; &quot;TMC-1800 SCSI Chip Specification (FDC-1800T)&quot;, Future Domain Corporation,&n; 1990.&n;&n; &quot;LXT SCSI Products: Specifications and OEM Technical Manual (Revision&n; B/September 1991)&quot;, Maxtor Corporation, 1991.&n;&n; &quot;7213S product Manual (Revision P3)&quot;, Maxtor Corporation, 1992.&n;&n; Private communications, Drew Eckhardt (drew@cs.colorado.edu) and Eric&n; Youngdale (eric@tantalus.nrl.navy.mil), 1992.&n;&n;&n; NOTES ON REFERENCES:&n;&n; The Maxtor manuals were free.  Maxtor telephone technical support is&n; great!&n;&n; The Future Domain manual is $25.  It documents the chip, not the TMC-16x0&n; boards, so some information I had to guess at.  Future Domain sells DOS&n; BIOS source for $250 and the UN*X driver source was $750, but these&n; require a non-disclosure agreement, so even if I could afford them, they&n; would *not* have been useful for writing this publically distributable&n; driver.  Future Domain technical support has provided some information on&n; the phone, and this has been somewhat helpful.&n;&n;&n; ALPHA TESTERS:&n;&n; Todd Carrico (todd@wutc.wustl.edu), Dan Poirier (poirier@cs.unc.edu ), Ken&n; Corey (kenc@sol.acs.unt.edu), C. de Bruin (bruin@dutiba.tudelft.nl),&n; Sakari Aaltonen (sakaria@vipunen.hit.fi), John Rice&n; (rice@xanth.cs.odu.edu), and Brad Yearwood (brad@optilink.com).&n;&n;&n; NOTES ON USER DEFINABLE OPTIONS:&n;&n; DEBUG: This turns on the printing of various debug informaiton.&n;&n; ENABLE_PARITY: This turns on SCSI parity checking.  With the current&n; driver, all attached devices must support SCSI parity.  If none of your&n; devices support parity, then you can probably get the driver to work by&n; turning this option off.  I have no way of testing this, however.&n;&n; QUEUE: Enable &quot;command queueing.&quot;  This is supported by the higher level&n; SCSI code, and allows the kernel to continue to schedule tasks while the&n; SCSI request is pending.  If this option is turned off, then everything&n; will &quot;freeze&quot; during SCSI requests, and system performance will become&n; unbearable.  Later, this will allow multiple outstanding SCSI requests.  I&n; have received reports that if this option is turned off, the driver will&n; no longer function correctly.  I have not had time to track down this bug,&n; since I hope to make the driver work for everyone with QUEUE on.&n;&n; FIFO_COUNT: The host adapter has an 8K cache.  When this many 512 byte&n; blocks are filled by the SCSI device, an interrupt will be raised.&n; Therefore, this could be as low as 0, or as high as 16.  Note, however,&n; that values which are too high or too low seem to prevent any interrupts&n; from occuring, and thereby lock up the machine.  I have found that 2 is a&n; good number, but throughput may be increased by changing this value to&n; values which are close to 2.  Please let me know if you try any different&n; values.&n;&n; DO_DETECT: This activates some old scan code which was needed before the&n; high level drivers got fixed.  If you are having toruble with the driver,&n; turning this on should not hurt, and might help.  Please let me know if&n; this is the case, since this code will be removed from future drivers.&n;&n; RESELECTION: DO *NOT* USE THIS OPTION!  This turns on SCSI device&n; disconnect and reselection, which does not work at this time.  When I get&n; this working, it will support multiple outstanding SCSI commands.&n;&n; **************************************************************************/
+multiline_comment|/* fdomain.c -- Future Domain TMC-1660/TMC-1680 driver&n; * Created: Sun May  3 18:53:19 1992 by faith&n; * Revised: Thu Feb 18 21:02:12 1993 by faith@cs.unc.edu&n; * Author: Rickard E. Faith, faith@cs.unc.edu&n; * Copyright 1992, 1993 Rickard E. Faith&n; *&n; * $Log$&n;&n; * This program is free software; you can redistribute it and/or modify it&n; * under the terms of the GNU General Public License as published by the&n; * Free Software Foundation; either version 2, or (at your option) any&n; * later version.&n;&n; * This program is distributed in the hope that it will be useful, but&n; * WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU&n; * General Public License for more details.&n;&n; **************************************************************************&n;&n;&n; DESCRIPTION:&n;&n; This is the Linux low-level SCSI driver for Future Domain TMC-1660/1680&n; and TMC-1670 SCSI host adapters.&n;&n;&n; REFERENCES USED:&n;&n; &quot;TMC-1800 SCSI Chip Specification (FDC-1800T)&quot;, Future Domain Corporation,&n; 1990.&n;&n; &quot;LXT SCSI Products: Specifications and OEM Technical Manual (Revision&n; B/September 1991)&quot;, Maxtor Corporation, 1991.&n;&n; &quot;7213S product Manual (Revision P3)&quot;, Maxtor Corporation, 1992.&n;&n; Private communications, Drew Eckhardt (drew@cs.colorado.edu) and Eric&n; Youngdale (eric@tantalus.nrl.navy.mil), 1992.&n;&n;&n; NOTES ON REFERENCES:&n;&n; The Maxtor manuals were free.  Maxtor telephone technical support is&n; great!&n;&n; The Future Domain manual is $25.  It documents the chip, not the TMC-16x0&n; boards, so some information I had to guess at.  Future Domain sells DOS&n; BIOS source for $250 and the UN*X driver source was $750, but these&n; require a non-disclosure agreement, so even if I could afford them, they&n; would *not* have been useful for writing this publically distributable&n; driver.  Future Domain technical support has provided some information on&n; the phone, and this has been somewhat helpful.&n;&n;&n; ALPHA TESTERS:&n;&n; Todd Carrico (todd@wutc.wustl.edu), Dan Poirier (poirier@cs.unc.edu ), Ken&n; Corey (kenc@sol.acs.unt.edu), C. de Bruin (bruin@dutiba.tudelft.nl),&n; Sakari Aaltonen (sakaria@vipunen.hit.fi), John Rice&n; (rice@xanth.cs.odu.edu), and Brad Yearwood (brad@optilink.com).&n;&n;&n; NOTES ON USER DEFINABLE OPTIONS:&n;&n; DEBUG: This turns on the printing of various debug informaiton.&n;&n; ENABLE_PARITY: This turns on SCSI parity checking.  With the current&n; driver, all attached devices must support SCSI parity.  If none of your&n; devices support parity, then you can probably get the driver to work by&n; turning this option off.  I have no way of testing this, however.&n;&n; QUEUE: Enable &quot;command queueing.&quot;  This is supported by the higher level&n; SCSI code, and allows the kernel to continue to schedule tasks while the&n; SCSI request is pending.  If this option is turned off, then everything&n; will &quot;freeze&quot; during SCSI requests, and system performance will become&n; unbearable.  Later, this will allow multiple outstanding SCSI requests.  I&n; have received reports that if this option is turned off, the driver will&n; no longer function correctly.  I have not had time to track down this bug,&n; since I hope to make the driver work for everyone with QUEUE on.&n;&n; FIFO_COUNT: The host adapter has an 8K cache.  When this many 512 byte&n; blocks are filled by the SCSI device, an interrupt will be raised.&n; Therefore, this could be as low as 0, or as high as 16.  Note, however,&n; that values which are too high or too low seem to prevent any interrupts&n; from occuring, and thereby lock up the machine.  I have found that 2 is a&n; good number, but throughput may be increased by changing this value to&n; values which are close to 2.  Please let me know if you try any different&n; values.&n;&n; DO_DETECT: This activates some old scan code which was needed before the&n; high level drivers got fixed.  If you are having toruble with the driver,&n; turning this on should not hurt, and might help.  Please let me know if&n; this is the case, since this code will be removed from future drivers.&n;&n; RESELECTION: DO *NOT* USE THIS OPTION!  This turns on SCSI device&n; disconnect and reselection, which does not work at this time.  When I get&n; this working, it will support multiple outstanding SCSI commands.&n;&n; **************************************************************************/
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &quot;../blk.h&quot;
@@ -8,7 +8,7 @@ macro_line|#include &quot;fdomain.h&quot;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 DECL|macro|VERSION
-mdefine_line|#define VERSION          &quot;3.3&quot;&t;/* Change with each revision */
+mdefine_line|#define VERSION          &quot;3.5&quot;&t;/* Change with each revision */
 multiline_comment|/* START OF USER DEFINABLE OPTIONS */
 DECL|macro|DEBUG
 mdefine_line|#define DEBUG            1&t;/* Enable debugging output */
@@ -166,14 +166,6 @@ r_static
 r_volatile
 r_int
 id|in_command
-op_assign
-l_int|0
-suffix:semicolon
-DECL|variable|in_interrupt_code
-r_static
-r_volatile
-r_int
-id|in_interrupt_code
 op_assign
 l_int|0
 suffix:semicolon
@@ -2326,10 +2318,6 @@ id|in_command
 op_assign
 l_int|0
 suffix:semicolon
-id|in_interrupt_code
-op_assign
-l_int|0
-suffix:semicolon
 id|outb
 c_func
 (paren
@@ -2403,21 +2391,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|in_interrupt_code
-)paren
-id|panic
-c_func
-(paren
-l_string|&quot;SCSI (Future Domain): fdomain_16x0_intr() NOT REENTRANT!&bslash;n&quot;
-)paren
-suffix:semicolon
-r_else
-op_increment
-id|in_interrupt_code
-suffix:semicolon
 id|outb
 c_func
 (paren
@@ -2426,6 +2399,21 @@ comma
 id|Interrupt_Cntl_port
 )paren
 suffix:semicolon
+multiline_comment|/* We usually have one spurious interrupt after each command.  Ignore it. */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|in_command
+op_logical_or
+op_logical_neg
+id|current_SC
+)paren
+(brace
+multiline_comment|/* Spurious interrupt */
+r_return
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -2511,22 +2499,6 @@ l_int|16
 )paren
 suffix:semicolon
 )brace
-r_return
-suffix:semicolon
-)brace
-multiline_comment|/* We usually have one spurious interrupt after each command.  Ignore it. */
-r_if
-c_cond
-(paren
-op_logical_neg
-id|in_command
-)paren
-(brace
-multiline_comment|/* Spurious interrupt */
-id|in_interrupt_code
-op_assign
-l_int|0
-suffix:semicolon
 r_return
 suffix:semicolon
 )brace
@@ -2716,10 +2688,6 @@ comma
 id|TMC_Cntl_port
 )paren
 suffix:semicolon
-id|in_interrupt_code
-op_assign
-l_int|0
-suffix:semicolon
 r_return
 suffix:semicolon
 )brace
@@ -2807,10 +2775,6 @@ suffix:semicolon
 id|current_SC-&gt;SCp.phase
 op_assign
 id|in_other
-suffix:semicolon
-id|in_interrupt_code
-op_assign
-l_int|0
 suffix:semicolon
 id|outb
 c_func
@@ -3822,10 +3786,6 @@ macro_line|#endif
 )brace
 r_else
 (brace
-id|in_interrupt_code
-op_assign
-l_int|0
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -5069,11 +5029,9 @@ macro_line|#if DEBUG_ABORT
 id|printk
 c_func
 (paren
-l_string|&quot;Phase = %d, flag = %d, target = %d cmnd = 0x%02x pieces = %d size = %u&bslash;n&quot;
+l_string|&quot;Phase = %d, target = %d cmnd = 0x%02x pieces = %d size = %u&bslash;n&quot;
 comma
 id|current_SC-&gt;SCp.phase
-comma
-id|in_interrupt_code
 comma
 id|current_SC-&gt;target
 comma

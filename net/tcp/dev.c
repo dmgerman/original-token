@@ -1483,6 +1483,13 @@ op_minus
 l_int|1
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|dev-&gt;tbusy
+)paren
+r_return
+suffix:semicolon
 )brace
 )brace
 )brace

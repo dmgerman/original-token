@@ -31,7 +31,7 @@ DECL|variable|read_ahead
 r_int
 id|read_ahead
 (braket
-id|NR_BLK_DEV
+id|MAX_BLKDEV
 )braket
 op_assign
 (brace
@@ -45,7 +45,7 @@ r_struct
 id|blk_dev_struct
 id|blk_dev
 (braket
-id|NR_BLK_DEV
+id|MAX_BLKDEV
 )braket
 op_assign
 (brace
@@ -126,7 +126,7 @@ r_int
 op_star
 id|blk_size
 (braket
-id|NR_BLK_DEV
+id|MAX_BLKDEV
 )braket
 op_assign
 (brace
@@ -142,7 +142,7 @@ r_static
 r_int
 id|ro_bits
 (braket
-id|NR_BLK_DEV
+id|MAX_BLKDEV
 )braket
 (braket
 l_int|8
@@ -187,7 +187,7 @@ l_int|0
 op_logical_or
 id|major
 op_ge
-id|NR_BLK_DEV
+id|MAX_BLKDEV
 )paren
 r_return
 l_int|0
@@ -256,7 +256,7 @@ l_int|0
 op_logical_or
 id|major
 op_ge
-id|NR_BLK_DEV
+id|MAX_BLKDEV
 )paren
 r_return
 suffix:semicolon
@@ -949,7 +949,7 @@ c_cond
 (paren
 id|major
 op_ge
-id|NR_BLK_DEV
+id|MAX_BLKDEV
 op_logical_or
 op_logical_neg
 (paren
@@ -1320,7 +1320,7 @@ id|b_dev
 )paren
 )paren
 op_ge
-id|NR_BLK_DEV
+id|MAX_BLKDEV
 op_logical_or
 op_logical_neg
 (paren
@@ -1651,7 +1651,7 @@ c_cond
 (paren
 id|major
 op_ge
-id|NR_BLK_DEV
+id|MAX_BLKDEV
 op_logical_or
 op_logical_neg
 (paren

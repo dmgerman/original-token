@@ -1109,13 +1109,25 @@ id|count
 op_assign
 l_int|0
 suffix:semicolon
-id|chrdev_fops
-(braket
+r_if
+c_cond
+(paren
+id|register_chrdev
+c_func
+(paren
 l_int|6
-)braket
-op_assign
+comma
+l_string|&quot;lp&quot;
+comma
 op_amp
 id|lp_fops
+)paren
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;unable to get major 6 for line printer&bslash;n&quot;
+)paren
 suffix:semicolon
 multiline_comment|/* take on all known port values */
 r_for

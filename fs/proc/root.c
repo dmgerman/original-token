@@ -77,7 +77,10 @@ l_int|NULL
 comma
 multiline_comment|/* no special open code */
 l_int|NULL
+comma
 multiline_comment|/* no special release code */
+l_int|NULL
+multiline_comment|/* no fsync */
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * proc directories can do almost nothing..&n; */

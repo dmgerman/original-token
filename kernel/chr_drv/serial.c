@@ -2384,13 +2384,6 @@ c_func
 id|info
 )paren
 suffix:semicolon
-id|wake_up_interruptible
-c_func
-(paren
-op_amp
-id|info-&gt;open_wait
-)paren
-suffix:semicolon
 r_return
 suffix:semicolon
 )brace
@@ -3535,11 +3528,22 @@ id|baud_base
 suffix:semicolon
 id|info-&gt;flags
 op_assign
+(paren
+(paren
+id|info-&gt;flags
+op_amp
+op_complement
+id|ASYNC_FLAGS
+)paren
+op_or
+(paren
 r_new
 dot
 id|flags
 op_amp
 id|ASYNC_FLAGS
+)paren
+)paren
 suffix:semicolon
 id|info-&gt;custom_divisor
 op_assign
@@ -6071,7 +6075,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;ttyS%d%s at 0x%04x (irq = %d)&quot;
+l_string|&quot;tty%02d%s at 0x%04x (irq = %d)&quot;
 comma
 id|info-&gt;line
 comma

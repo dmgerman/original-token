@@ -85,7 +85,10 @@ l_int|NULL
 comma
 multiline_comment|/* no special open code */
 l_int|NULL
+comma
 multiline_comment|/* no special release code */
+l_int|NULL
+multiline_comment|/* default fsync */
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * directories can handle most operations...&n; */

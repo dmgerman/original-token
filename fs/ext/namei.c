@@ -1704,7 +1704,7 @@ id|inode-&gt;i_mode
 id|inode-&gt;i_op
 op_assign
 op_amp
-id|ext_chrdev_inode_operations
+id|chrdev_inode_operations
 suffix:semicolon
 r_else
 r_if
@@ -1719,7 +1719,7 @@ id|inode-&gt;i_mode
 id|inode-&gt;i_op
 op_assign
 op_amp
-id|ext_blkdev_inode_operations
+id|blkdev_inode_operations
 suffix:semicolon
 r_else
 r_if
@@ -1735,7 +1735,7 @@ id|inode-&gt;i_mode
 id|inode-&gt;i_op
 op_assign
 op_amp
-id|ext_fifo_inode_operations
+id|fifo_inode_operations
 suffix:semicolon
 id|inode-&gt;i_pipe
 op_assign

@@ -683,6 +683,17 @@ id|inode
 op_increment
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|dev
+op_logical_and
+id|inode-&gt;i_dev
+op_ne
+id|dev
+)paren
+r_continue
+suffix:semicolon
 id|wait_on_inode
 c_func
 (paren

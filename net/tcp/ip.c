@@ -3426,17 +3426,7 @@ id|iph-&gt;daddr
 )paren
 )paren
 suffix:semicolon
-id|icmp_reply
-(paren
-id|skb
-comma
-id|ICMP_DEST_UNREACH
-comma
-id|ICMP_PROT_UNREACH
-comma
-id|dev
-)paren
-suffix:semicolon
+multiline_comment|/*      icmp_reply (skb, ICMP_DEST_UNREACH, ICMP_PROT_UNREACH, dev); */
 id|skb-&gt;sk
 op_assign
 l_int|NULL

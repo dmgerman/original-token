@@ -1899,7 +1899,7 @@ id|inode-&gt;i_mode
 id|inode-&gt;i_op
 op_assign
 op_amp
-id|minix_chrdev_inode_operations
+id|chrdev_inode_operations
 suffix:semicolon
 r_else
 r_if
@@ -1914,7 +1914,7 @@ id|inode-&gt;i_mode
 id|inode-&gt;i_op
 op_assign
 op_amp
-id|minix_blkdev_inode_operations
+id|blkdev_inode_operations
 suffix:semicolon
 r_else
 r_if
@@ -1930,7 +1930,7 @@ id|inode-&gt;i_mode
 id|inode-&gt;i_op
 op_assign
 op_amp
-id|minix_fifo_inode_operations
+id|fifo_inode_operations
 suffix:semicolon
 id|inode-&gt;i_pipe
 op_assign
@@ -2087,12 +2087,20 @@ id|BLOCK_SIZE
 )paren
 )paren
 )paren
-id|panic
+(brace
+id|printk
 c_func
 (paren
-l_string|&quot;unable to read i-node block&quot;
+l_string|&quot;unable to read i-node block&bslash;n&quot;
 )paren
 suffix:semicolon
+id|inode-&gt;i_dirt
+op_assign
+l_int|0
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
 id|raw_inode
 op_assign
 (paren

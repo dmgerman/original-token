@@ -4476,6 +4476,10 @@ r_int
 op_star
 id|p
 suffix:semicolon
+r_extern
+r_int
+id|etext
+suffix:semicolon
 id|cli
 c_func
 (paren
@@ -4651,10 +4655,14 @@ r_if
 c_cond
 (paren
 id|tmp
-OL
+op_ge
 l_int|0xA0000
+op_logical_and
+id|tmp
+OL
+l_int|0x100000
 )paren
-id|codepages
+id|reservedpages
 op_increment
 suffix:semicolon
 r_else
@@ -4663,9 +4671,14 @@ c_cond
 (paren
 id|tmp
 OL
-l_int|0x100000
+(paren
+r_int
+r_int
 )paren
-id|reservedpages
+op_amp
+id|etext
+)paren
+id|codepages
 op_increment
 suffix:semicolon
 r_else
@@ -4702,7 +4715,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;Memory: %dk/%dk available (%dk kernel, %dk reserved, %dk data)&bslash;n&quot;
+l_string|&quot;Memory: %dk/%dk available (%dk kernel code, %dk reserved, %dk data)&bslash;n&quot;
 comma
 id|tmp
 op_rshift

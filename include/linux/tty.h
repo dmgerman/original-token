@@ -291,6 +291,8 @@ DECL|macro|STOP_CHAR
 mdefine_line|#define STOP_CHAR(tty) ((tty)-&gt;termios-&gt;c_cc[VSTOP])
 DECL|macro|SUSPEND_CHAR
 mdefine_line|#define SUSPEND_CHAR(tty) ((tty)-&gt;termios-&gt;c_cc[VSUSP])
+DECL|macro|LNEXT_CHAR
+mdefine_line|#define LNEXT_CHAR(tty)&t;((tty)-&gt;termios-&gt;c_cc[VLNEXT])
 DECL|macro|_L_FLAG
 mdefine_line|#define _L_FLAG(tty,f)&t;((tty)-&gt;termios-&gt;c_lflag &amp; f)
 DECL|macro|_I_FLAG
@@ -365,6 +367,7 @@ suffix:semicolon
 DECL|member|stopped
 DECL|member|status_changed
 DECL|member|packet
+DECL|member|lnext
 r_int
 r_char
 id|stopped
@@ -376,6 +379,10 @@ suffix:colon
 l_int|1
 comma
 id|packet
+suffix:colon
+l_int|1
+comma
+id|lnext
 suffix:colon
 l_int|1
 suffix:semicolon

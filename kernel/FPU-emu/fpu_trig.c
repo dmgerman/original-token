@@ -277,6 +277,9 @@ op_or_assign
 l_int|0x40000000
 suffix:semicolon
 )brace
+r_break
+suffix:semicolon
+multiline_comment|/* return with a NaN in st(0) */
 r_case
 id|TW_Empty
 suffix:colon
@@ -284,6 +287,9 @@ id|stack_underflow
 c_func
 (paren
 )paren
+suffix:semicolon
+multiline_comment|/* Puts a QNaN in st(0) */
+r_break
 suffix:semicolon
 macro_line|#ifdef PARANOID
 r_default

@@ -607,8 +607,8 @@ l_string|&quot;&bslash;376&bslash;245&bslash;376&bslash;376&bslash;376&bslash;37
 l_string|&quot;&bslash;205&bslash;240&bslash;203&bslash;376&bslash;204&bslash;206&bslash;221&bslash;207&bslash;212&bslash;202&bslash;210&bslash;211&bslash;215&bslash;241&bslash;214&bslash;213&quot;
 l_string|&quot;&bslash;376&bslash;244&bslash;225&bslash;242&bslash;223&bslash;376&bslash;224&bslash;366&bslash;376&bslash;227&bslash;243&bslash;226&bslash;201&bslash;376&bslash;376&bslash;230&quot;
 comma
-multiline_comment|/* IBM grapgics: minimal translations (CR, LF, LL and ESC) */
-l_string|&quot;&bslash;000&bslash;001&bslash;002&bslash;003&bslash;004&bslash;005&bslash;006&bslash;007&bslash;010&bslash;011&bslash;000&bslash;013&bslash;000&bslash;000&bslash;016&bslash;017&quot;
+multiline_comment|/* IBM grapgics: minimal translations (CR, LF, LL, SO, SI and ESC) */
+l_string|&quot;&bslash;000&bslash;001&bslash;002&bslash;003&bslash;004&bslash;005&bslash;006&bslash;007&bslash;010&bslash;011&bslash;000&bslash;013&bslash;000&bslash;000&bslash;000&bslash;000&quot;
 l_string|&quot;&bslash;020&bslash;021&bslash;022&bslash;023&bslash;024&bslash;025&bslash;026&bslash;027&bslash;030&bslash;031&bslash;032&bslash;000&bslash;034&bslash;035&bslash;036&bslash;037&quot;
 l_string|&quot;&bslash;040&bslash;041&bslash;042&bslash;043&bslash;044&bslash;045&bslash;046&bslash;047&bslash;050&bslash;051&bslash;052&bslash;053&bslash;054&bslash;055&bslash;056&bslash;057&quot;
 l_string|&quot;&bslash;060&bslash;061&bslash;062&bslash;063&bslash;064&bslash;065&bslash;066&bslash;067&bslash;070&bslash;071&bslash;072&bslash;073&bslash;074&bslash;075&bslash;076&bslash;077&quot;

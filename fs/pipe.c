@@ -1055,6 +1055,8 @@ l_int|NULL
 comma
 multiline_comment|/* no special open code */
 id|pipe_read_release
+comma
+l_int|NULL
 )brace
 suffix:semicolon
 DECL|variable|write_pipe_fops
@@ -1082,6 +1084,8 @@ l_int|NULL
 comma
 multiline_comment|/* no special open code */
 id|pipe_write_release
+comma
+l_int|NULL
 )brace
 suffix:semicolon
 DECL|variable|rdwr_pipe_fops
@@ -1109,6 +1113,8 @@ l_int|NULL
 comma
 multiline_comment|/* no special open code */
 id|pipe_rdwr_release
+comma
+l_int|NULL
 )brace
 suffix:semicolon
 DECL|function|sys_pipe

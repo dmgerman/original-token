@@ -968,6 +968,39 @@ op_star
 l_int|1024
 suffix:semicolon
 macro_line|#endif
+r_if
+c_cond
+(paren
+(paren
+r_int
+r_int
+)paren
+op_amp
+id|end
+op_ge
+(paren
+l_int|1024
+op_star
+l_int|1024
+)paren
+)paren
+(brace
+id|memory_start
+op_assign
+(paren
+r_int
+r_int
+)paren
+op_amp
+id|end
+suffix:semicolon
+id|low_memory_start
+op_assign
+l_int|4096
+suffix:semicolon
+)brace
+r_else
+(brace
 id|memory_start
 op_assign
 l_int|1024
@@ -983,6 +1016,7 @@ r_int
 op_amp
 id|end
 suffix:semicolon
+)brace
 id|low_memory_start
 op_add_assign
 l_int|0xfff
@@ -1161,6 +1195,12 @@ r_int
 r_int
 id|control_word
 suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;Checking for 387 error mechanism ...&quot;
+)paren
+suffix:semicolon
 id|__asm__
 c_func
 (paren
@@ -1213,6 +1253,19 @@ id|__asm__
 c_func
 (paren
 l_string|&quot;fldz ; fld1 ; fdiv %st,%st(1) ; fwait&quot;
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot; ok, using %s.&bslash;n&quot;
+comma
+id|ignore_irq13
+ques
+c_cond
+l_string|&quot;exception 16&quot;
+suffix:colon
+l_string|&quot;irq13&quot;
 )paren
 suffix:semicolon
 )brace

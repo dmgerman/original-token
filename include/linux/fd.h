@@ -21,6 +21,8 @@ DECL|macro|FDFMTEND
 mdefine_line|#define FDFMTEND 8 /* end formatting a disk */
 DECL|macro|FDSETEMSGTRESH
 mdefine_line|#define FDSETEMSGTRESH&t;10&t;/* set fdc error reporting treshold */
+DECL|macro|FDFLUSH
+mdefine_line|#define FDFLUSH  11 /* flush buffers for media; either for verifying media, or for&n;                       handling a media change without closing the file&n;&t;&t;       descriptor */
 DECL|macro|FD_FILL_BYTE
 mdefine_line|#define FD_FILL_BYTE 0xF6 /* format fill byte */
 DECL|macro|FORMAT_NONE

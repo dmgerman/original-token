@@ -87,7 +87,10 @@ l_int|NULL
 comma
 multiline_comment|/* no special open is needed */
 l_int|NULL
+comma
 multiline_comment|/* release */
+l_int|NULL
+multiline_comment|/* fsync */
 )brace
 suffix:semicolon
 DECL|variable|ext_file_inode_operations

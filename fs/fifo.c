@@ -446,6 +446,61 @@ id|fifo_open
 comma
 multiline_comment|/* will set read or write pipe_fops */
 l_int|NULL
+comma
+l_int|NULL
+)brace
+suffix:semicolon
+DECL|variable|fifo_inode_operations
+r_struct
+id|inode_operations
+id|fifo_inode_operations
+op_assign
+(brace
+op_amp
+id|def_fifo_fops
+comma
+multiline_comment|/* default file operations */
+l_int|NULL
+comma
+multiline_comment|/* create */
+l_int|NULL
+comma
+multiline_comment|/* lookup */
+l_int|NULL
+comma
+multiline_comment|/* link */
+l_int|NULL
+comma
+multiline_comment|/* unlink */
+l_int|NULL
+comma
+multiline_comment|/* symlink */
+l_int|NULL
+comma
+multiline_comment|/* mkdir */
+l_int|NULL
+comma
+multiline_comment|/* rmdir */
+l_int|NULL
+comma
+multiline_comment|/* mknod */
+l_int|NULL
+comma
+multiline_comment|/* rename */
+l_int|NULL
+comma
+multiline_comment|/* readlink */
+l_int|NULL
+comma
+multiline_comment|/* follow_link */
+l_int|NULL
+comma
+multiline_comment|/* bmap */
+l_int|NULL
+comma
+multiline_comment|/* truncate */
+l_int|NULL
+multiline_comment|/* permission */
 )brace
 suffix:semicolon
 eof

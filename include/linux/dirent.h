@@ -1,6 +1,7 @@
 macro_line|#ifndef _LINUX_DIRENT_H
 DECL|macro|_LINUX_DIRENT_H
 mdefine_line|#define _LINUX_DIRENT_H
+macro_line|#include &lt;linux/limits.h&gt;
 DECL|struct|dirent
 r_struct
 id|dirent

@@ -300,7 +300,10 @@ l_int|NULL
 comma
 multiline_comment|/* no special open code */
 l_int|NULL
+comma
 multiline_comment|/* no special release code */
+l_int|NULL
+multiline_comment|/* fsync */
 )brace
 suffix:semicolon
 DECL|variable|nfs_dir_inode_operations
@@ -3527,7 +3530,7 @@ id|inode-&gt;i_mode
 id|inode-&gt;i_op
 op_assign
 op_amp
-id|nfs_chrdev_inode_operations
+id|chrdev_inode_operations
 suffix:semicolon
 r_else
 r_if
@@ -3542,7 +3545,7 @@ id|inode-&gt;i_mode
 id|inode-&gt;i_op
 op_assign
 op_amp
-id|nfs_blkdev_inode_operations
+id|blkdev_inode_operations
 suffix:semicolon
 r_else
 r_if
@@ -3558,7 +3561,7 @@ id|inode-&gt;i_mode
 id|inode-&gt;i_op
 op_assign
 op_amp
-id|nfs_fifo_inode_operations
+id|fifo_inode_operations
 suffix:semicolon
 id|inode-&gt;i_pipe
 op_assign

@@ -214,6 +214,9 @@ multiline_comment|/* mmap */
 id|kmsg_open
 comma
 id|kmsg_release
+comma
+l_int|NULL
+multiline_comment|/* can&squot;t fsync */
 )brace
 suffix:semicolon
 DECL|variable|proc_kmsg_inode_operations
