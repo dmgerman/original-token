@@ -1,38 +1,12 @@
-macro_line|#ifndef DALLOC_H
-DECL|macro|DALLOC_H
-mdefine_line|#define DALLOC_H
-multiline_comment|/*&n; * $Id: dalloc.h,v 1.3 1997/06/13 04:39:34 davem Exp $&n; *&n; * include/linux/dalloc.h - alloc routines for dcache&n; * alloc / free space for pathname strings&n; * Copyright (C) 1997, Thomas Schoebel-Theuer,&n; * &lt;schoebel@informatik.uni-stuttgart.de&gt;.&n; */
+macro_line|#ifndef __LINUX_DCACHE_H
+DECL|macro|__LINUX_DCACHE_H
+mdefine_line|#define __LINUX_DCACHE_H
+multiline_comment|/*&n; * linux/include/linux/dcache.h&n; *&n; * Directory cache data structures&n; */
 DECL|macro|D_MAXLEN
 mdefine_line|#define D_MAXLEN 1024
-multiline_comment|/* public flags for d_add() */
-DECL|macro|D_NORMAL
-mdefine_line|#define D_NORMAL&t;  0
-DECL|macro|D_BASKET
-mdefine_line|#define D_BASKET&t;  1 /* put into basket (deleted/unref&squot;d files) */
-DECL|macro|D_DUPLICATE
-mdefine_line|#define D_DUPLICATE&t;  2 /* allow duplicate entries */
-DECL|macro|D_NOCHECKDUP
-mdefine_line|#define D_NOCHECKDUP&t;  4 /* no not check for duplicates */
-DECL|macro|D_NEGATIVE
-mdefine_line|#define D_NEGATIVE&t;  8 /* negative entry */
-DECL|macro|D_PRELOADED
-mdefine_line|#define D_PRELOADED&t; 16
-DECL|macro|D_DIR
-mdefine_line|#define D_DIR&t;&t; 32 /* directory entry - look out for allocation issues */
-DECL|macro|D_HASHED
-mdefine_line|#define D_HASHED&t; 64
-DECL|macro|D_ZOMBIE
-mdefine_line|#define D_ZOMBIE&t;128
-DECL|macro|D_INC_DDIR
-mdefine_line|#define D_INC_DDIR&t;512
-multiline_comment|/* public flags for d_del() */
-DECL|macro|D_REMOVE
-mdefine_line|#define D_REMOVE         0
-DECL|macro|D_NO_CLEAR_INODE
-mdefine_line|#define D_NO_CLEAR_INODE 1
 DECL|macro|IS_ROOT
 mdefine_line|#define IS_ROOT(x) ((x) == (x)-&gt;d_parent)
-multiline_comment|/* &quot;quick string&quot; -- I introduced this to shorten the parameter list&n; * of many routines. Think of it as a (str,stlen,hash) pair.&n; * Storing the len instead of doing strlen() very often is performance&n; * critical.&n; */
+multiline_comment|/*&n; * &quot;quick string&quot; -- eases parameter passing, but more importantly&n; * saves &quot;metadata&quot; about the string (ie length and the hash).&n; */
 DECL|struct|qstr
 r_struct
 id|qstr
@@ -46,6 +20,7 @@ id|name
 suffix:semicolon
 DECL|member|len
 DECL|member|hash
+r_int
 r_int
 id|len
 comma
@@ -155,15 +130,14 @@ DECL|struct|dentry
 r_struct
 id|dentry
 (brace
-DECL|member|d_flag
-r_int
-r_int
-id|d_flag
-suffix:semicolon
 DECL|member|d_count
 r_int
-r_int
 id|d_count
+suffix:semicolon
+DECL|member|d_flags
+r_int
+r_int
+id|d_flags
 suffix:semicolon
 DECL|member|d_inode
 r_struct
@@ -171,7 +145,7 @@ id|inode
 op_star
 id|d_inode
 suffix:semicolon
-multiline_comment|/* Where the name belongs to */
+multiline_comment|/* Where the name belongs to - NULL is negative */
 DECL|member|d_parent
 r_struct
 id|dentry
@@ -192,43 +166,16 @@ id|dentry
 op_star
 id|d_covers
 suffix:semicolon
-DECL|member|d_next
+DECL|member|d_list
 r_struct
-id|dentry
-op_star
-id|d_next
+id|list_head
+id|d_list
 suffix:semicolon
 multiline_comment|/* hardlink aliasname / empty list */
-DECL|member|d_prev
+DECL|member|d_hash
 r_struct
-id|dentry
-op_star
-id|d_prev
-suffix:semicolon
-multiline_comment|/* hardlink aliasname */
-DECL|member|d_hash_next
-r_struct
-id|dentry
-op_star
-id|d_hash_next
-suffix:semicolon
-DECL|member|d_hash_prev
-r_struct
-id|dentry
-op_star
-id|d_hash_prev
-suffix:semicolon
-DECL|member|d_basket_next
-r_struct
-id|dentry
-op_star
-id|d_basket_next
-suffix:semicolon
-DECL|member|d_basket_prev
-r_struct
-id|dentry
-op_star
-id|d_basket_prev
+id|list_head
+id|d_hash
 suffix:semicolon
 DECL|member|d_name
 r_struct
@@ -236,12 +183,6 @@ id|qstr
 id|d_name
 suffix:semicolon
 )brace
-suffix:semicolon
-r_extern
-r_struct
-id|dentry
-op_star
-id|the_root
 suffix:semicolon
 multiline_comment|/*&n; * These are the low-level FS interfaces to the dcache..&n; */
 r_extern
@@ -256,8 +197,6 @@ comma
 r_struct
 id|inode
 op_star
-comma
-r_int
 )paren
 suffix:semicolon
 r_extern
@@ -273,7 +212,6 @@ suffix:semicolon
 multiline_comment|/* Note that all these routines must be called with vfs_lock() held */
 multiline_comment|/* get inode, if necessary retrieve it with iget() */
 r_extern
-id|blocking
 r_struct
 id|inode
 op_star
@@ -310,18 +248,15 @@ id|dentry
 op_star
 id|parent
 comma
+r_const
 r_struct
 id|qstr
 op_star
 id|name
-comma
-r_int
-id|isdir
 )paren
 suffix:semicolon
 multiline_comment|/* only used at mount-time */
 r_extern
-id|blocking
 r_struct
 id|dentry
 op_star
@@ -341,7 +276,6 @@ id|old_root
 suffix:semicolon
 multiline_comment|/*&n; * This adds the entry to the hash queues and initializes &quot;d_inode&quot;.&n; * The entry was actually filled in earlier during &quot;d_alloc()&quot;&n; */
 r_extern
-id|blocking
 r_void
 id|d_add
 c_func
@@ -355,76 +289,10 @@ r_struct
 id|inode
 op_star
 id|inode
-comma
-r_int
-id|flags
-)paren
-suffix:semicolon
-multiline_comment|/* combination of d_alloc() and d_add(), less lookup overhead */
-r_extern
-id|blocking
-r_struct
-id|dentry
-op_star
-id|d_entry
-c_func
-(paren
-r_struct
-id|dentry
-op_star
-id|parent
-comma
-r_struct
-id|qstr
-op_star
-id|name
-comma
-r_struct
-id|inode
-op_star
-id|inode
-)paren
-suffix:semicolon
-r_extern
-id|blocking
-r_void
-id|d_entry_preliminary
-c_func
-(paren
-r_struct
-id|dentry
-op_star
-id|parent
-comma
-r_struct
-id|qstr
-op_star
-id|name
-comma
-r_int
-r_int
-id|ino
-)paren
-suffix:semicolon
-multiline_comment|/* recursive d_del() all successors */
-r_extern
-id|blocking
-r_void
-id|d_del
-c_func
-(paren
-r_struct
-id|dentry
-op_star
-id|entry
-comma
-r_int
-id|flags
 )paren
 suffix:semicolon
 multiline_comment|/* used for rename() and baskets */
 r_extern
-id|blocking
 r_void
 id|d_move
 c_func
@@ -485,53 +353,7 @@ op_star
 id|buf
 )paren
 suffix:semicolon
-r_extern
-r_struct
-id|dentry
-op_star
-id|d_basket
-c_func
-(paren
-r_struct
-id|dentry
-op_star
-id|dir_entry
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|d_isbasket
-c_func
-(paren
-r_struct
-id|dentry
-op_star
-id|entry
-)paren
-suffix:semicolon
-multiline_comment|/*&n; * Whee..&n; */
-DECL|function|dput
-r_static
-r_inline
-r_void
-id|dput
-c_func
-(paren
-r_struct
-id|dentry
-op_star
-id|dentry
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|dentry
-)paren
-id|dentry-&gt;d_count
-op_decrement
-suffix:semicolon
-)brace
+multiline_comment|/* Allocation counts.. */
 DECL|function|dget
 r_static
 r_inline
@@ -559,5 +381,18 @@ r_return
 id|dentry
 suffix:semicolon
 )brace
-macro_line|#endif
+r_extern
+r_void
+id|dput
+c_func
+(paren
+r_struct
+id|dentry
+op_star
+)paren
+suffix:semicolon
+multiline_comment|/*&n; * This is ugly. The inode:dentry relationship is a 1:n&n; * relationship, so we have to return one (random) dentry&n; * from the list. We select the first one..&n; */
+DECL|macro|i_dentry
+mdefine_line|#define i_dentry(inode) &bslash;&n;&t;list_entry((inode)-&gt;i_dentry.next, struct dentry, d_list)
+macro_line|#endif&t;/* __LINUX_DCACHE_H */
 eof

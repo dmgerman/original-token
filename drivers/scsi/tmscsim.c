@@ -23,12 +23,8 @@ macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
-macro_line|#include &lt;linux/version.h&gt;
-macro_line|#if LINUX_VERSION_CODE &lt; 66354 /* 1.3.50 */
-macro_line|#include &quot;../block/blk.h&quot;
-macro_line|#else
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/blk.h&gt;
-macro_line|#endif
 macro_line|#include &quot;scsi.h&quot;
 macro_line|#include &quot;hosts.h&quot;
 macro_line|#include &quot;tmscsim.h&quot;
@@ -38,7 +34,6 @@ macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &quot;dc390.h&quot;
 DECL|macro|PCI_DEVICE_ID_AMD53C974
 mdefine_line|#define PCI_DEVICE_ID_AMD53C974 &t;PCI_DEVICE_ID_AMD_SCSI
-macro_line|#ifndef  VERSION_ELF_1_2_13
 DECL|variable|proc_scsi_tmscsim
 r_struct
 id|proc_dir_entry
@@ -46,7 +41,6 @@ id|proc_scsi_tmscsim
 op_assign
 initialization_block
 suffix:semicolon
-macro_line|#endif
 r_static
 id|USHORT
 id|DC390_StartSCSI
@@ -2344,25 +2338,7 @@ r_return
 suffix:semicolon
 )brace
 multiline_comment|/***********************************************************************&n; * Function:&n; *   DC390_bios_param&n; *&n; * Description:&n; *   Return the disk geometry for the given SCSI device.&n; ***********************************************************************/
-macro_line|#ifdef&t;VERSION_ELF_1_2_13
 DECL|function|DC390_bios_param
-r_int
-id|DC390_bios_param
-c_func
-(paren
-id|Disk
-op_star
-id|disk
-comma
-r_int
-id|devno
-comma
-r_int
-id|geom
-(braket
-)braket
-)paren
-macro_line|#else
 r_int
 id|DC390_bios_param
 c_func
@@ -2379,7 +2355,6 @@ id|geom
 (braket
 )braket
 )paren
-macro_line|#endif
 (brace
 r_int
 id|heads
@@ -3601,7 +3576,6 @@ id|PSRB
 id|psrb
 )paren
 (brace
-macro_line|#ifndef VERSION_ELF_1_2_13
 macro_line|#ifdef DC390_DEBUG0
 id|printk
 c_func
@@ -3632,15 +3606,6 @@ c_func
 id|psrb
 )paren
 suffix:semicolon
-macro_line|#else
-id|psrb-&gt;PhysSRB
-op_assign
-(paren
-id|ULONG
-)paren
-id|psrb
-suffix:semicolon
-macro_line|#endif
 )brace
 DECL|function|DC390_linkSRB
 r_void
@@ -3734,7 +3699,10 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/***********************************************************************&n; * Function : static void DC390_initACB&n; *&n; * Purpose :  initialize the internal structures for a given SCSI host&n; *&n; * Inputs : psh - pointer to this host adapter&squot;s structure&n; *&n; ***********************************************************************/
-DECL|function|DC390_initACB
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
 id|DC390_initACB
 c_func
@@ -3750,6 +3718,7 @@ id|Irq
 comma
 id|USHORT
 id|index
+)paren
 )paren
 (brace
 id|PACB
@@ -3798,7 +3767,6 @@ id|PACB
 )paren
 id|psh-&gt;hostdata
 suffix:semicolon
-macro_line|#ifndef VERSION_ELF_1_2_13
 id|psh-&gt;max_id
 op_assign
 l_int|8
@@ -3829,7 +3797,6 @@ id|psh-&gt;max_lun
 op_assign
 l_int|1
 suffix:semicolon
-macro_line|#endif
 id|pACB-&gt;max_id
 op_assign
 l_int|7
@@ -4046,7 +4013,10 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/***********************************************************************&n; * Function : static int DC390_initAdapter&n; *&n; * Purpose :  initialize the SCSI chip ctrl registers&n; *&n; * Inputs : psh - pointer to this host adapter&squot;s structure&n; *&n; ***********************************************************************/
-DECL|function|DC390_initAdapter
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 id|DC390_initAdapter
 c_func
@@ -4062,6 +4032,7 @@ id|Irq
 comma
 id|USHORT
 id|index
+)paren
 )paren
 (brace
 id|USHORT
@@ -4137,23 +4108,6 @@ op_logical_neg
 id|used_irq
 )paren
 (brace
-macro_line|#ifdef&t;VERSION_ELF_1_2_13
-r_if
-c_cond
-(paren
-id|request_irq
-c_func
-(paren
-id|Irq
-comma
-id|DC390_Interrupt
-comma
-id|SA_INTERRUPT
-comma
-l_string|&quot;tmscsim&quot;
-)paren
-)paren
-macro_line|#else
 r_if
 c_cond
 (paren
@@ -4171,7 +4125,6 @@ comma
 l_int|NULL
 )paren
 )paren
-macro_line|#endif
 (brace
 id|printk
 c_func
@@ -5578,9 +5531,12 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/***********************************************************************&n; * Function : static int DC390_init (struct Scsi_Host *host)&n; *&n; * Purpose :  initialize the internal structures for a given SCSI host&n; *&n; * Inputs : host - pointer to this host adapter&squot;s structure/&n; *&n; * Preconditions : when this function is called, the chip_type&n; *&t;field of the pACB structure MUST have been set.&n; ***********************************************************************/
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_int
-DECL|function|DC390_init
 id|DC390_init
 (paren
 id|PSHT
@@ -5597,6 +5553,7 @@ id|index
 comma
 id|USHORT
 id|MechNum
+)paren
 )paren
 (brace
 id|PSH
@@ -5851,14 +5808,18 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/***********************************************************************&n; * Function : int DC390_detect(Scsi_Host_Template *psht)&n; *&n; * Purpose : detects and initializes AMD53C974 SCSI chips&n; *&t;     that were autoprobed, overridden on the LILO command line,&n; *&t;     or specified at compile time.&n; *&n; * Inputs : psht - template for this SCSI adapter&n; *&n; * Returns : number of host adapters detected&n; *&n; ***********************************************************************/
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
-DECL|function|DC390_detect
 id|DC390_detect
 c_func
 (paren
 id|Scsi_Host_Template
 op_star
 id|psht
+)paren
 )paren
 (brace
 macro_line|#ifdef FOR_PCI_OK
@@ -5887,15 +5848,9 @@ suffix:semicolon
 id|UCHAR
 id|istatus
 suffix:semicolon
-macro_line|#ifndef VERSION_ELF_1_2_13
 id|UINT
 id|io_port
 suffix:semicolon
-macro_line|#else
-id|ULONG
-id|io_port
-suffix:semicolon
-macro_line|#endif
 id|USHORT
 id|adaptCnt
 op_assign
@@ -5916,13 +5871,11 @@ suffix:semicolon
 id|ULONG
 id|wlval
 suffix:semicolon
-macro_line|#ifndef VERSION_ELF_1_2_13
 id|psht-&gt;proc_dir
 op_assign
 op_amp
 id|proc_scsi_tmscsim
 suffix:semicolon
-macro_line|#endif
 id|InitialTime
 op_assign
 l_int|1
@@ -6303,7 +6256,6 @@ r_return
 id|adaptCnt
 suffix:semicolon
 )brace
-macro_line|#ifndef VERSION_ELF_1_2_13
 multiline_comment|/********************************************************************&n; * Function: tmscsim_set_info()&n; *&n; * Purpose: Set adapter info (!)&n; *&n; * Not yet implemented&n; *&n; *******************************************************************/
 DECL|function|tmscsim_set_info
 r_int
@@ -6774,7 +6726,6 @@ r_return
 id|length
 suffix:semicolon
 )brace
-macro_line|#endif /* VERSION_ELF_1_2_13 */
 macro_line|#ifdef MODULE
 multiline_comment|/***********************************************************************&n; * Function : static int DC390_shutdown (struct Scsi_Host *host)&n; *&n; * Purpose : does a clean (we hope) shutdown of the SCSI chip.&n; *&t;     Use prior to dumping core, unloading the driver, etc.&n; *&n; * Returns : 0 on success&n; ***********************************************************************/
 r_static
@@ -6954,7 +6905,6 @@ id|host-&gt;irq
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifndef VERSION_ELF_1_2_13
 id|free_irq
 c_func
 (paren
@@ -6963,14 +6913,6 @@ comma
 l_int|NULL
 )paren
 suffix:semicolon
-macro_line|#else
-id|free_irq
-c_func
-(paren
-id|host-&gt;irq
-)paren
-suffix:semicolon
-macro_line|#endif
 )brace
 )brace
 id|release_region

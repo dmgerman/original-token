@@ -16,7 +16,6 @@ macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/acct.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
-macro_line|#include &lt;linux/nametrans.h&gt;
 macro_line|#include &lt;linux/smp.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/notifier.h&gt;
@@ -1596,8 +1595,6 @@ l_int|0600
 comma
 op_amp
 id|inode
-comma
-l_int|0
 )paren
 suffix:semicolon
 id|putname

@@ -1,5 +1,4 @@
 multiline_comment|/*&n; *  linux/fs/open.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/vfs.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/utime.h&gt;
@@ -16,7 +15,6 @@ macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/file.h&gt;
 macro_line|#include &lt;linux/smp.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
-macro_line|#include &lt;linux/omirr.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 DECL|function|sys_statfs
@@ -961,30 +959,6 @@ op_amp
 id|newattrs
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_OMIRR
-r_if
-c_cond
-(paren
-op_logical_neg
-id|error
-)paren
-(brace
-id|omirr_printall
-c_func
-(paren
-id|inode
-comma
-l_string|&quot; U %ld %ld %ld &quot;
-comma
-id|CURRENT_TIME
-comma
-id|newattrs.ia_atime
-comma
-id|newattrs.ia_mtime
-)paren
-suffix:semicolon
-)brace
-macro_line|#endif
 id|iput_and_out
 suffix:colon
 id|iput
@@ -1181,30 +1155,6 @@ op_amp
 id|newattrs
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_OMIRR
-r_if
-c_cond
-(paren
-op_logical_neg
-id|error
-)paren
-(brace
-id|omirr_printall
-c_func
-(paren
-id|inode
-comma
-l_string|&quot; U %ld %ld %ld &quot;
-comma
-id|CURRENT_TIME
-comma
-id|newattrs.ia_atime
-comma
-id|newattrs.ia_mtime
-)paren
-suffix:semicolon
-)brace
-macro_line|#endif
 id|iput_and_out
 suffix:colon
 id|iput
@@ -1416,12 +1366,15 @@ op_assign
 op_minus
 id|ENOENT
 suffix:semicolon
+id|inode
+op_assign
+id|dentry-&gt;d_inode
+suffix:semicolon
 r_if
 c_cond
 (paren
-id|dentry-&gt;d_flag
-op_amp
-id|D_NEGATIVE
+op_logical_neg
+id|inode
 )paren
 r_goto
 id|dput_and_out
@@ -1430,10 +1383,6 @@ id|error
 op_assign
 op_minus
 id|ENOTDIR
-suffix:semicolon
-id|inode
-op_assign
-id|dentry-&gt;d_inode
 suffix:semicolon
 r_if
 c_cond
@@ -1518,14 +1467,6 @@ r_struct
 id|inode
 op_star
 id|inode
-suffix:semicolon
-r_struct
-id|dentry
-op_star
-id|dentry
-comma
-op_star
-id|tmp
 suffix:semicolon
 r_int
 id|error
@@ -1614,12 +1555,25 @@ id|error
 r_goto
 id|out
 suffix:semicolon
+(brace
+r_struct
+id|dentry
+op_star
+id|dentry
+comma
+op_star
+id|tmp
+suffix:semicolon
 id|dentry
 op_assign
 id|dget
 c_func
 (paren
-id|inode-&gt;i_dentry
+id|i_dentry
+c_func
+(paren
+id|inode
+)paren
 )paren
 suffix:semicolon
 id|tmp
@@ -1636,6 +1590,7 @@ c_func
 id|tmp
 )paren
 suffix:semicolon
+)brace
 id|out
 suffix:colon
 id|unlock_kernel
@@ -1717,12 +1672,15 @@ op_assign
 op_minus
 id|ENOENT
 suffix:semicolon
+id|inode
+op_assign
+id|dentry-&gt;d_inode
+suffix:semicolon
 r_if
 c_cond
 (paren
-id|dentry-&gt;d_flag
-op_amp
-id|D_NEGATIVE
+op_logical_neg
+id|inode
 )paren
 r_goto
 id|dput_and_out
@@ -1731,10 +1689,6 @@ id|error
 op_assign
 op_minus
 id|ENOTDIR
-suffix:semicolon
-id|inode
-op_assign
-id|dentry-&gt;d_inode
 suffix:semicolon
 r_if
 c_cond
@@ -2867,8 +2821,6 @@ id|mode
 comma
 op_amp
 id|inode
-comma
-l_int|NULL
 )paren
 suffix:semicolon
 r_if

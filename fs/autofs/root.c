@@ -685,9 +685,19 @@ c_func
 id|res-&gt;i_mode
 )paren
 op_logical_and
-id|res-&gt;i_dentry-&gt;d_covers
+id|i_dentry
+c_func
+(paren
+id|res
+)paren
+op_member_access_from_pointer
+id|d_covers
 op_eq
-id|res-&gt;i_dentry
+id|i_dentry
+c_func
+(paren
+id|res
+)paren
 )paren
 (brace
 multiline_comment|/* Not a mount point yet, call 1-800-DAEMON */
@@ -1100,8 +1110,6 @@ id|dir-&gt;i_sb
 comma
 id|ent-&gt;ino
 )paren
-comma
-l_int|0
 )paren
 suffix:semicolon
 r_return
@@ -1557,8 +1565,6 @@ id|dir-&gt;i_sb
 comma
 id|ent-&gt;ino
 )paren
-comma
-id|D_DIR
 )paren
 suffix:semicolon
 r_return

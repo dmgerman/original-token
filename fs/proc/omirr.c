@@ -2,7 +2,6 @@ multiline_comment|/*&n; * fs/proc/omirr.c  -  online mirror support&n; *&n; * (C
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
-macro_line|#include &lt;linux/dalloc.h&gt;
 macro_line|#include &lt;linux/omirr.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 DECL|variable|nr_omirr_open

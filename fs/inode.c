@@ -2,8 +2,6 @@ multiline_comment|/*&n; * linux/fs/inode.c&n; *&n; * (C) 1997 Linus Torvalds&n; 
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
-macro_line|#include &lt;linux/dalloc.h&gt;
-macro_line|#include &lt;linux/list.h&gt;
 multiline_comment|/*&n; * New inode.c implementation.&n; *&n; * This implementation has the basic premise of trying&n; * to be extremely low-overhead and SMP-safe, yet be&n; * simple enough to be &quot;obviously correct&quot;.&n; *&n; * Famous last words.&n; */
 multiline_comment|/*&n; * Inode lookup is no longer as critical as it used to be:&n; * most of the lookups are going to be through the dcache.&n; */
 DECL|macro|HASH_BITS
@@ -290,6 +288,13 @@ c_func
 (paren
 op_amp
 id|inode-&gt;i_wait
+)paren
+suffix:semicolon
+id|INIT_LIST_HEAD
+c_func
+(paren
+op_amp
+id|inode-&gt;i_dentry
 )paren
 suffix:semicolon
 id|sema_init
@@ -1121,6 +1126,10 @@ suffix:semicolon
 id|inode-&gt;i_nlink
 op_assign
 l_int|1
+suffix:semicolon
+id|inode-&gt;i_writecount
+op_assign
+l_int|0
 suffix:semicolon
 id|memset
 c_func

@@ -2157,8 +2157,6 @@ l_int|0
 comma
 op_amp
 id|interpreter_inode
-comma
-l_int|NULL
 )paren
 suffix:semicolon
 id|set_fs
@@ -4734,8 +4732,6 @@ l_int|0600
 comma
 op_amp
 id|inode
-comma
-l_int|NULL
 )paren
 )paren
 (brace

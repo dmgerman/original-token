@@ -6,7 +6,6 @@ macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
-macro_line|#include &lt;linux/dalloc.h&gt;
 r_static
 r_int
 id|proc_readlink
@@ -341,7 +340,11 @@ r_return
 id|dget
 c_func
 (paren
-id|vma-&gt;vm_inode-&gt;i_dentry
+id|i_dentry
+c_func
+(paren
+id|vma-&gt;vm_inode
+)paren
 )paren
 suffix:semicolon
 id|vma
@@ -417,12 +420,16 @@ op_assign
 id|dget
 c_func
 (paren
+id|i_dentry
+c_func
+(paren
 id|p-&gt;files-&gt;fd
 (braket
 id|ino
 )braket
 op_member_access_from_pointer
-id|f_inode-&gt;i_dentry
+id|f_inode
+)paren
 )paren
 suffix:semicolon
 r_break

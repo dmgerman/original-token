@@ -188,6 +188,7 @@ r_void
 id|kfree_s
 c_func
 (paren
+r_const
 r_void
 op_star
 comma

@@ -4,7 +4,6 @@ macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/sysctl.h&gt;
 macro_line|#include &lt;linux/swapctl.h&gt;
-macro_line|#include &lt;linux/nametrans.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
@@ -875,28 +874,6 @@ id|proc_dostring
 comma
 op_amp
 id|sysctl_string
-)brace
-comma
-macro_line|#endif
-macro_line|#ifdef CONFIG_TRANS_NAMES
-(brace
-id|KERN_NAMETRANS
-comma
-l_string|&quot;nametrans&quot;
-comma
-id|nametrans_txt
-comma
-id|MAX_DEFAULT_TRANSLEN
-comma
-l_int|0644
-comma
-l_int|NULL
-comma
-op_amp
-id|nametrans_dostring
-comma
-op_amp
-id|nametrans_string
 )brace
 comma
 macro_line|#endif

@@ -1775,8 +1775,6 @@ c_func
 id|dentry
 comma
 id|inode
-comma
-l_int|0
 )paren
 suffix:semicolon
 r_return
@@ -1989,8 +1987,6 @@ c_func
 id|dentry
 comma
 id|inode
-comma
-l_int|0
 )paren
 suffix:semicolon
 r_return
@@ -2180,8 +2176,6 @@ c_func
 id|dentry
 comma
 id|inode
-comma
-id|D_DIR
 )paren
 suffix:semicolon
 r_return
@@ -2606,8 +2600,6 @@ c_func
 id|dentry
 comma
 id|inode
-comma
-l_int|0
 )paren
 suffix:semicolon
 r_return
@@ -2740,8 +2732,6 @@ c_func
 id|dentry
 comma
 id|inode
-comma
-l_int|0
 )paren
 suffix:semicolon
 r_return

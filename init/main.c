@@ -22,7 +22,6 @@ macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/slab.h&gt;
 macro_line|#include &lt;linux/major.h&gt;
 macro_line|#include &lt;linux/blk.h&gt;
-macro_line|#include &lt;linux/nametrans.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#ifdef CONFIG_ROOT_NFS
 macro_line|#include &lt;linux/nfs_fs.h&gt;
@@ -2536,35 +2535,6 @@ l_int|1
 suffix:semicolon
 )brace
 macro_line|#endif
-macro_line|#ifdef CONFIG_TRANS_NAMES
-r_if
-c_cond
-(paren
-op_logical_neg
-id|strncmp
-c_func
-(paren
-id|line
-comma
-l_string|&quot;nametrans=&quot;
-comma
-l_int|10
-)paren
-)paren
-(brace
-id|nametrans_setup
-c_func
-(paren
-id|line
-op_plus
-l_int|10
-)paren
-suffix:semicolon
-r_return
-l_int|1
-suffix:semicolon
-)brace
-macro_line|#endif
 r_while
 c_loop
 (paren
@@ -4016,16 +3986,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|memory_start
-op_assign
-id|name_cache_init
-c_func
-(paren
-id|memory_start
-comma
-id|memory_end
-)paren
-suffix:semicolon
 macro_line|#ifdef CONFIG_BLK_DEV_INITRD
 r_if
 c_cond
@@ -4084,6 +4044,11 @@ c_func
 )paren
 suffix:semicolon
 id|filescache_init
+c_func
+(paren
+)paren
+suffix:semicolon
+id|dcache_init
 c_func
 (paren
 )paren

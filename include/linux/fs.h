@@ -12,12 +12,9 @@ macro_line|#include &lt;linux/net.h&gt;
 macro_line|#include &lt;linux/kdev_t.h&gt;
 macro_line|#include &lt;linux/ioctl.h&gt;
 macro_line|#include &lt;linux/list.h&gt;
+macro_line|#include &lt;linux/dcache.h&gt;
 macro_line|#include &lt;asm/atomic.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
-multiline_comment|/* Prefixes for routines (having no effect), but indicate what&n; * the routine may do. This can greatly ease reasoning about routines...&n; */
-DECL|macro|blocking
-mdefine_line|#define blocking /*routine may schedule()*/
-macro_line|#include &lt;linux/dalloc.h&gt;
 multiline_comment|/*&n; * It&squot;s silly to have NR_OPEN bigger than NR_FILE, but I&squot;ll fix&n; * that later. Anyway, now the file code is no longer dependent&n; * on bitmaps in unsigned longs, but uses the new fd_set structure..&n; *&n; * Some programs (notably those using select()) may have to be &n; * recompiled to take full advantage of the new limits..&n; */
 multiline_comment|/* Fixed constants first: */
 DECL|macro|NR_OPEN
@@ -188,18 +185,11 @@ r_void
 )paren
 suffix:semicolon
 r_extern
-r_int
-r_int
-id|name_cache_init
+r_void
+id|dcache_init
 c_func
 (paren
-r_int
-r_int
-id|start
-comma
-r_int
-r_int
-id|end
+r_void
 )paren
 suffix:semicolon
 DECL|typedef|buffer_block
@@ -741,8 +731,7 @@ id|MAXQUOTAS
 suffix:semicolon
 DECL|member|i_dentry
 r_struct
-id|dentry
-op_star
+id|list_head
 id|i_dentry
 suffix:semicolon
 DECL|member|i_state
@@ -3161,11 +3150,6 @@ id|inode
 op_star
 op_star
 id|res_inode
-comma
-r_struct
-id|dentry
-op_star
-id|base
 )paren
 suffix:semicolon
 r_extern
@@ -3315,7 +3299,6 @@ id|inode
 )paren
 suffix:semicolon
 r_extern
-id|blocking
 r_struct
 id|inode
 op_star
@@ -3333,7 +3316,6 @@ id|nr
 )paren
 suffix:semicolon
 r_extern
-id|blocking
 r_void
 id|clear_inode
 c_func
@@ -3345,7 +3327,6 @@ id|inode
 )paren
 suffix:semicolon
 r_extern
-id|blocking
 r_struct
 id|inode
 op_star
@@ -3356,7 +3337,7 @@ r_void
 )paren
 suffix:semicolon
 multiline_comment|/* Please prefer to use this function in future, instead of using&n; * a get_empty_inode()/insert_inode_hash() combination.&n; * It allows for better checking and less race conditions.&n; */
-id|blocking
+r_extern
 r_struct
 id|inode
 op_star
@@ -3382,7 +3363,6 @@ op_star
 )paren
 suffix:semicolon
 r_extern
-id|blocking
 r_struct
 id|inode
 op_star

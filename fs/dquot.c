@@ -4866,8 +4866,6 @@ l_int|0600
 comma
 op_amp
 id|inode
-comma
-l_int|0
 )paren
 suffix:semicolon
 id|putname

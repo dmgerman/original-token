@@ -434,6 +434,8 @@ id|KBD_DATA_REG
 suffix:semicolon
 multiline_comment|/* Write data */
 )brace
+multiline_comment|/*&n; * Write to device &amp; handle returned ack&n; */
+macro_line|#ifdef INITIALIZE_DEVICE
 DECL|function|__initfunc
 id|__initfunc
 c_func
@@ -475,8 +477,6 @@ id|KBD_DATA_REG
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Write to device &amp; handle returned ack&n; */
-macro_line|#ifdef INITIALIZE_DEVICE
 DECL|function|__initfunc
 id|__initfunc
 c_func

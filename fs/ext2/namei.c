@@ -1585,7 +1585,7 @@ op_minus
 id|ENOENT
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * By the time this is called, we already have created&n; * the directory cache entry for the new file, but it&n; * is so far marked &quot;D_NEGATIVE&quot;.&n; *&n; * If the create succeeds, remove the D_NEGATIVE flag,&n; * and fill in the inode information with d_instantiate().&n; */
+multiline_comment|/*&n; * By the time this is called, we already have created&n; * the directory cache entry for the new file, but it&n; * is so far negative - it has no inode.&n; *&n; * If the create succeeds, we fill in the inode information&n; * with d_instantiate(). &n; */
 DECL|function|ext2_create
 r_int
 id|ext2_create
@@ -1768,8 +1768,6 @@ c_func
 id|dentry
 comma
 id|inode
-comma
-l_int|0
 )paren
 suffix:semicolon
 r_return
@@ -2103,8 +2101,6 @@ c_func
 id|dentry
 comma
 id|inode
-comma
-l_int|0
 )paren
 suffix:semicolon
 r_return
@@ -2510,8 +2506,6 @@ c_func
 id|dentry
 comma
 id|inode
-comma
-id|D_DIR
 )paren
 suffix:semicolon
 id|brelse
@@ -3952,8 +3946,6 @@ c_func
 id|dentry
 comma
 id|inode
-comma
-l_int|0
 )paren
 suffix:semicolon
 r_return
@@ -4140,8 +4132,6 @@ c_func
 id|dentry
 comma
 id|inode
-comma
-l_int|0
 )paren
 suffix:semicolon
 r_return

@@ -2345,8 +2345,6 @@ l_int|0
 comma
 op_amp
 id|bprm-&gt;inode
-comma
-l_int|NULL
 )paren
 suffix:semicolon
 r_if
@@ -2684,8 +2682,6 @@ l_int|0
 comma
 op_amp
 id|bprm.inode
-comma
-l_int|NULL
 )paren
 suffix:semicolon
 r_if

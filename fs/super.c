@@ -14,7 +14,6 @@ macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/smp.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/fd.h&gt;
-macro_line|#include &lt;linux/dalloc.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
@@ -3387,9 +3386,8 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|dir_d-&gt;d_flag
-op_amp
-id|D_NEGATIVE
+op_logical_neg
+id|dir_d-&gt;d_inode
 )paren
 (brace
 id|dput

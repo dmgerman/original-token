@@ -1,4 +1,4 @@
-multiline_comment|/* $Revision: 1.7 $$Date: 1997/03/26 10:30:00 $&n; * linux/include/linux/cyclades.h&n; *&n; * This file is maintained by Marcio Saito &lt;marcio@cyclades.com&gt; and&n; * Randolph Bentson &lt;bentson@grieg.seaslug.org&gt;.&n; *&n; * This file contains the general definitions for the cyclades.c driver&n; *$Log: cyclades.h,v $&n; *Revision 1.7  1997/03/26 10:30:00  daniel&n; *new entries at the end of cyclades_port struct to reallocate&n; *variables illegally allocated within card memory.&n; *&n; *Revision 1.6  1996/09/09 18:35:30  bentson&n; *fold in changes for Cyclom-Z -- including structures for&n; *communicating with board as well modest changes to original&n; *structures to support new features.&n; *&n; *Revision 1.5  1995/11/13 21:13:31  bentson&n; *changes suggested by Michael Chastain &lt;mec@duracef.shout.net&gt;&n; *to support use of this file in non-kernel applications&n; *&n; *&n; */
+multiline_comment|/* $Revision: 2.0 $$Date: 1997/06/30 10:30:00 $&n; * linux/include/linux/cyclades.h&n; *&n; * This file is maintained by Marcio Saito &lt;marcio@cyclades.com&gt; and&n; * Randolph Bentson &lt;bentson@grieg.seaslug.org&gt;.&n; *&n; * This file contains the general definitions for the cyclades.c driver&n; *$Log: cyclades.h,v $&n; *Revision 2.0  1997/06/30 10:30:00  ivan&n; *added some new doorbell command constants related to IOCTLW and&n; *UART error signaling&n; *&n; *Revision 1.8  1997/06/03 15:30:00  ivan&n; *added constant ZFIRM_HLT&n; *added constant CyPCI_Ze_win ( = 2 * Cy_PCI_Zwin)&n; *&n; *Revision 1.7  1997/03/26 10:30:00  daniel&n; *new entries at the end of cyclades_port struct to reallocate&n; *variables illegally allocated within card memory.&n; *&n; *Revision 1.6  1996/09/09 18:35:30  bentson&n; *fold in changes for Cyclom-Z -- including structures for&n; *communicating with board as well modest changes to original&n; *structures to support new features.&n; *&n; *Revision 1.5  1995/11/13 21:13:31  bentson&n; *changes suggested by Michael Chastain &lt;mec@duracef.shout.net&gt;&n; *to support use of this file in non-kernel applications&n; *&n; *&n; */
 macro_line|#ifndef _LINUX_CYCLADES_H
 DECL|macro|_LINUX_CYCLADES_H
 mdefine_line|#define _LINUX_CYCLADES_H
@@ -142,6 +142,8 @@ multiline_comment|/* 8 bits, unsigned */
 multiline_comment|/*&n; *&t;Memory Window Sizes&n; */
 DECL|macro|DP_WINDOW_SIZE
 mdefine_line|#define&t;DP_WINDOW_SIZE&t;&t;(0x00080000)&t;/* window size 512 Kb */
+DECL|macro|ZE_DP_WINDOW_SIZE
+mdefine_line|#define&t;ZE_DP_WINDOW_SIZE&t;(0x00100000)&t;/* window size 1 Mb (Ze and&n;&t;&t;&t;&t;&t;&t;  8Zo V.2 */
 DECL|macro|CTRL_WINDOW_SIZE
 mdefine_line|#define&t;CTRL_WINDOW_SIZE&t;(0x00000100)&t;/* runtime regs 256 bytes */
 multiline_comment|/*&n; *&t;CUSTOM_REG - Cyclom-Z/PCI Custom Registers Set. The driver&n; *&t;normally will access only interested on the fpga_id, fpga_version,&n; *&t;start_cpu and stop_cpu.&n; */
@@ -416,6 +418,8 @@ DECL|macro|ID_ADDRESS
 mdefine_line|#define ID_ADDRESS&t;0x00000180L&t;/* signature/pointer address */
 DECL|macro|ZFIRM_ID
 mdefine_line|#define&t;ZFIRM_ID&t;0x5557465AL&t;/* ZFIRM/U signature */
+DECL|macro|ZFIRM_HLT
+mdefine_line|#define&t;ZFIRM_HLT&t;0x59505B5CL&t;/* ZFIRM needs external power supply */
 DECL|struct|FIRM_ID
 r_struct
 id|FIRM_ID
@@ -507,6 +511,12 @@ DECL|macro|C_IN_PR_ERROR
 mdefine_line|#define&t;C_IN_PR_ERROR&t;0x00002000&t;/* parity error */
 DECL|macro|C_IN_FR_ERROR
 mdefine_line|#define&t;C_IN_FR_ERROR&t;0x00004000&t;/* frame error */
+DECL|macro|C_IN_OVR_ERROR
+mdefine_line|#define C_IN_OVR_ERROR  0x00008000      /* overrun error */
+DECL|macro|C_IN_RXOFL
+mdefine_line|#define C_IN_RXOFL&t;0x00010000      /* RX buffer overflow */
+DECL|macro|C_IN_IOCTLW
+mdefine_line|#define C_IN_IOCTLW&t;0x00020000      /* I/O control w/ wait */
 multiline_comment|/* flow control */
 DECL|macro|C_FL_OXX
 mdefine_line|#define&t;C_FL_OXX&t;0x00000001&t;/* output Xon/Xoff flow control */
@@ -597,6 +607,10 @@ DECL|macro|C_CM_PR_ERROR
 mdefine_line|#define&t;C_CM_PR_ERROR&t;0x85&t;&t;/* Parity error */
 DECL|macro|C_CM_FR_ERROR
 mdefine_line|#define&t;C_CM_FR_ERROR&t;0x86&t;&t;/* Frame error */
+DECL|macro|C_CM_OVR_ERROR
+mdefine_line|#define C_CM_OVR_ERROR  0x87            /* Overrun error */
+DECL|macro|C_CM_RXOFL
+mdefine_line|#define C_CM_RXOFL&t;0x88            /* RX buffer overflow */
 DECL|macro|C_CM_CMDERROR
 mdefine_line|#define&t;C_CM_CMDERROR&t;0x90&t;&t;/* command error */
 DECL|macro|C_CM_FATAL
@@ -1110,11 +1124,13 @@ mdefine_line|#define Cy_EVENT_OPEN_WAKEUP&t;4
 DECL|macro|CyMaxChipsPerCard
 mdefine_line|#define CyMaxChipsPerCard 8
 DECL|macro|CyPCI_Ywin
-mdefine_line|#define CyPCI_Ywin 0x4000
+mdefine_line|#define CyPCI_Ywin &t;0x4000
 DECL|macro|CyPCI_Zctl
-mdefine_line|#define CyPCI_Zctl 0x100
+mdefine_line|#define CyPCI_Zctl &t;0x100
 DECL|macro|CyPCI_Zwin
-mdefine_line|#define CyPCI_Zwin 0x80000
+mdefine_line|#define CyPCI_Zwin &t;0x80000
+DECL|macro|CyPCI_Ze_win
+mdefine_line|#define CyPCI_Ze_win &t;(2 * CyPCI_Zwin)
 multiline_comment|/**** CD1400 registers ****/
 DECL|macro|CyRegSize
 mdefine_line|#define CyRegSize  0x0400

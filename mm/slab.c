@@ -4394,6 +4394,7 @@ r_char
 op_star
 id|str
 comma
+r_const
 r_void
 op_star
 id|objp
@@ -5115,6 +5116,7 @@ id|kmem_cache_t
 op_star
 id|cachep
 comma
+r_const
 r_void
 op_star
 id|objp
@@ -5892,6 +5894,7 @@ DECL|function|kfree_s
 id|kfree_s
 c_func
 (paren
+r_const
 r_void
 op_star
 id|objp
