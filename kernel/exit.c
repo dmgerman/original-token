@@ -1934,16 +1934,6 @@ id|current-&gt;fs-&gt;root
 op_assign
 l_int|NULL
 suffix:semicolon
-id|iput
-c_func
-(paren
-id|current-&gt;executable
-)paren
-suffix:semicolon
-id|current-&gt;executable
-op_assign
-l_int|NULL
-suffix:semicolon
 )brace
 DECL|function|do_exit
 id|NORET_TYPE

@@ -1359,13 +1359,13 @@ id|PAGE_DIRTY
 suffix:semicolon
 id|mpnt-&gt;vm_flags
 op_assign
-id|VM_GROWSDOWN
+id|VM_STACK_FLAGS
 suffix:semicolon
 id|mpnt-&gt;vm_share
 op_assign
 l_int|NULL
 suffix:semicolon
-id|mpnt-&gt;vm_inode
+id|mpnt-&gt;vm_ops
 op_assign
 l_int|NULL
 suffix:semicolon
@@ -1373,9 +1373,13 @@ id|mpnt-&gt;vm_offset
 op_assign
 l_int|0
 suffix:semicolon
-id|mpnt-&gt;vm_ops
+id|mpnt-&gt;vm_inode
 op_assign
 l_int|NULL
+suffix:semicolon
+id|mpnt-&gt;vm_pte
+op_assign
+l_int|0
 suffix:semicolon
 id|insert_vm_struct
 c_func
@@ -2401,23 +2405,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|current-&gt;executable
-)paren
-(brace
-id|iput
-c_func
-(paren
-id|current-&gt;executable
-)paren
-suffix:semicolon
-id|current-&gt;executable
-op_assign
-l_int|NULL
-suffix:semicolon
-)brace
 multiline_comment|/* Release all of the old mmap stuff. */
 id|mpnt
 op_assign
@@ -4092,11 +4079,6 @@ id|current-&gt;mm-&gt;mmap
 op_assign
 l_int|NULL
 suffix:semicolon
-id|current-&gt;executable
-op_assign
-l_int|NULL
-suffix:semicolon
-multiline_comment|/* for OMAGIC files */
 id|current-&gt;suid
 op_assign
 id|current-&gt;euid
@@ -4305,6 +4287,8 @@ comma
 id|MAP_FIXED
 op_or
 id|MAP_SHARED
+op_or
+id|MAP_DENYWRITE
 comma
 id|fd_offset
 )paren
@@ -4369,6 +4353,8 @@ comma
 id|MAP_FIXED
 op_or
 id|MAP_PRIVATE
+op_or
+id|MAP_DENYWRITE
 comma
 id|fd_offset
 op_plus
@@ -4410,13 +4396,6 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
-id|current-&gt;executable
-op_assign
-id|bprm-&gt;inode
-suffix:semicolon
-id|bprm-&gt;inode-&gt;i_count
-op_increment
-suffix:semicolon
 )brace
 id|beyond_if
 suffix:colon
@@ -4810,6 +4789,8 @@ comma
 id|MAP_FIXED
 op_or
 id|MAP_PRIVATE
+op_or
+id|MAP_DENYWRITE
 comma
 id|N_TXTOFF
 c_func

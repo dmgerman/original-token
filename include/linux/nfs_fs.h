@@ -549,19 +549,10 @@ id|file
 op_star
 id|file
 comma
-r_int
-r_int
-id|addr
-comma
-r_int
-id|len
-comma
-r_int
-id|prot
-comma
-r_int
-r_int
-id|off
+r_struct
+id|vm_area_struct
+op_star
+id|vma
 )paren
 suffix:semicolon
 macro_line|#endif /* __KERNEL__ */

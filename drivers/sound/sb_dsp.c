@@ -2299,7 +2299,7 @@ id|sbc_major
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifndef EXCLUDE_YM8312
+macro_line|#ifndef EXCLUDE_YM3812
 r_if
 c_cond
 (paren

@@ -19,5 +19,9 @@ DECL|macro|MAP_FIXED
 mdefine_line|#define MAP_FIXED        0x10      /* Interpret addr exactly */
 DECL|macro|MAP_ANONYMOUS
 mdefine_line|#define MAP_ANONYMOUS    0x20      /* don&squot;t use a file */
+DECL|macro|MAP_GROWSDOWN
+mdefine_line|#define MAP_GROWSDOWN&t;0x0400&t;&t;/* stack-like segment */
+DECL|macro|MAP_DENYWRITE
+mdefine_line|#define MAP_DENYWRITE&t;0x0800&t;&t;/* ETXTBSY */
 macro_line|#endif /* _LINUX_MMAN_H */
 eof

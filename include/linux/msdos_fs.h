@@ -1017,6 +1017,7 @@ multiline_comment|/* mmap.c */
 r_extern
 r_int
 id|msdos_mmap
+c_func
 (paren
 r_struct
 id|inode
@@ -1026,15 +1027,9 @@ r_struct
 id|file
 op_star
 comma
-r_int
-r_int
-comma
-r_int
-comma
-r_int
-comma
-r_int
-r_int
+r_struct
+id|vm_area_struct
+op_star
 )paren
 suffix:semicolon
 macro_line|#endif /* __KERNEL__ */

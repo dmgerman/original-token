@@ -1387,6 +1387,12 @@ id|page
 )paren
 )paren
 (brace
+op_star
+id|table_ptr
+op_and_assign
+op_complement
+id|PAGE_ACCESSED
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon

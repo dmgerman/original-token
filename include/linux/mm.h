@@ -71,32 +71,58 @@ op_star
 id|vm_share
 suffix:semicolon
 multiline_comment|/* linked list */
-DECL|member|vm_inode
-r_struct
-id|inode
-op_star
-id|vm_inode
-suffix:semicolon
-DECL|member|vm_offset
-r_int
-r_int
-id|vm_offset
-suffix:semicolon
 DECL|member|vm_ops
 r_struct
 id|vm_operations_struct
 op_star
 id|vm_ops
 suffix:semicolon
+DECL|member|vm_offset
+r_int
+r_int
+id|vm_offset
+suffix:semicolon
+DECL|member|vm_inode
+r_struct
+id|inode
+op_star
+id|vm_inode
+suffix:semicolon
+DECL|member|vm_pte
+r_int
+r_int
+id|vm_pte
+suffix:semicolon
+multiline_comment|/* shared mem */
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * vm_flags..&n; */
+DECL|macro|VM_READ
+mdefine_line|#define VM_READ&t;&t;0x0001&t;/* currently active flags */
+DECL|macro|VM_WRITE
+mdefine_line|#define VM_WRITE&t;0x0002
+DECL|macro|VM_EXEC
+mdefine_line|#define VM_EXEC&t;&t;0x0004
+DECL|macro|VM_SHARED
+mdefine_line|#define VM_SHARED&t;0x0008
+DECL|macro|VM_MAYREAD
+mdefine_line|#define VM_MAYREAD&t;0x0010&t;/* limits for mprotect() etc */
+DECL|macro|VM_MAYWRITE
+mdefine_line|#define VM_MAYWRITE&t;0x0020
+DECL|macro|VM_MAYEXEC
+mdefine_line|#define VM_MAYEXEC&t;0x0040
+DECL|macro|VM_MAYSHARE
+mdefine_line|#define VM_MAYSHARE&t;0x0080
 DECL|macro|VM_GROWSDOWN
-mdefine_line|#define VM_GROWSDOWN&t;0x01
+mdefine_line|#define VM_GROWSDOWN&t;0x0100&t;/* general info on the segment */
 DECL|macro|VM_GROWSUP
-mdefine_line|#define VM_GROWSUP&t;0x02
+mdefine_line|#define VM_GROWSUP&t;0x0200
 DECL|macro|VM_SHM
-mdefine_line|#define VM_SHM&t;&t;0x04
+mdefine_line|#define VM_SHM&t;&t;0x0400
+DECL|macro|VM_DENYWRITE
+mdefine_line|#define VM_DENYWRITE&t;0x0800&t;/* ETXTBSY on write attempts.. */
+DECL|macro|VM_STACK_FLAGS
+mdefine_line|#define VM_STACK_FLAGS&t;0x0177
 multiline_comment|/*&n; * These are the virtual MM functions - opening of an area, closing it (needed to&n; * keep files on disk up-to-date etc), pointer to the functions called when a&n; * no-page or a wp-page exception occurs, and the function which decides on sharing&n; * of pages between different processes.&n; */
 DECL|struct|vm_operations_struct
 r_struct
@@ -851,28 +877,6 @@ r_int
 id|off
 )paren
 suffix:semicolon
-DECL|typedef|map_mergep_fnp
-r_typedef
-r_int
-(paren
-op_star
-id|map_mergep_fnp
-)paren
-(paren
-r_const
-r_struct
-id|vm_area_struct
-op_star
-comma
-r_const
-r_struct
-id|vm_area_struct
-op_star
-comma
-r_void
-op_star
-)paren
-suffix:semicolon
 r_extern
 r_void
 id|merge_segments
@@ -880,11 +884,6 @@ c_func
 (paren
 r_struct
 id|vm_area_struct
-op_star
-comma
-id|map_mergep_fnp
-comma
-r_void
 op_star
 )paren
 suffix:semicolon
@@ -899,25 +898,6 @@ op_star
 comma
 r_struct
 id|vm_area_struct
-op_star
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|ignoff_mergep
-c_func
-(paren
-r_const
-r_struct
-id|vm_area_struct
-op_star
-comma
-r_const
-r_struct
-id|vm_area_struct
-op_star
-comma
-r_void
 op_star
 )paren
 suffix:semicolon

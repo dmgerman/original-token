@@ -656,14 +656,6 @@ id|current-&gt;fs-&gt;root
 id|current-&gt;fs-&gt;root-&gt;i_count
 op_increment
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|current-&gt;executable
-)paren
-id|current-&gt;executable-&gt;i_count
-op_increment
-suffix:semicolon
 )brace
 DECL|macro|IS_CLONE
 mdefine_line|#define IS_CLONE (regs.orig_eax == __NR_clone)

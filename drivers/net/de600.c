@@ -4,7 +4,7 @@ r_char
 op_star
 id|version
 op_assign
-l_string|&quot;de600.c: $Revision: 1.39 $,  Bjorn Ekwall (bj0rn@blox.se)&bslash;n&quot;
+l_string|&quot;de600.c: $Revision: 1.40 $,  Bjorn Ekwall (bj0rn@blox.se)&bslash;n&quot;
 suffix:semicolon
 multiline_comment|/*&n; *&t;de600.c&n; *&n; *&t;Linux driver for the D-Link DE-600 Ethernet pocket adapter.&n; *&n; *&t;Portions (C) Copyright 1993, 1994 by Bjorn Ekwall&n; *&t;The Author may be reached as bj0rn@blox.se&n; *&n; *&t;Based on adapter information gathered from DE600.ASM by D-Link Inc.,&n; *&t;as included on disk C in the v.2.11 of PC/TCP from FTP Software.&n; *&t;For DE600.asm:&n; *&t;&t;Portions (C) Copyright 1990 D-Link, Inc.&n; *&t;&t;Copyright, 1988-1992, Russell Nelson, Crynwr Software&n; *&n; *&t;Adapted to the sample network driver core for linux,&n; *&t;written by: Donald Becker &lt;becker@super.org&gt;&n; *&t;C/O Supercomputing Research Ctr., 17100 Science Dr., Bowie MD 20715&n; *&n; *&t;compile-command:&n; *&t;&quot;gcc -D__KERNEL__  -Wall -Wstrict-prototypes -O6 -fomit-frame-pointer &bslash;&n; *&t; -m486 -c de600.c&n; *&n; **************************************************************/
 multiline_comment|/*&n; *&t;This program is free software; you can redistribute it and/or modify&n; *&t;it under the terms of the GNU General Public License as published by&n; *&t;the Free Software Foundation; either version 2, or (at your option)&n; *&t;any later version.&n; *&n; *&t;This program is distributed in the hope that it will be useful,&n; *&t;but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *&t;MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *&t;GNU General Public License for more details.&n; *&n; *&t;You should have received a copy of the GNU General Public License&n; *&t;along with this program; if not, write to the Free Software&n; *&t;Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA. &n; *&n; **************************************************************/
@@ -20,9 +20,9 @@ mdefine_line|#define CHECK_LOST_DE600
 multiline_comment|/*&n; * Enable this #define if you want the adapter to do a &quot;ifconfig down&quot; on&n; * itself when we have detected that something is possibly wrong with it.&n; * The default behaviour is to retry with &quot;adapter_init()&quot; until success.&n; * This should be used for debugging purposes only.&n; * (Depends on the CHECK_LOST_DE600 above)&n; *&n; */
 DECL|macro|SHUTDOWN_WHEN_LOST
 mdefine_line|#define SHUTDOWN_WHEN_LOST
-multiline_comment|/*&n; * See comment at &quot;de600_rspace()&quot;!&n; * This is an *ugly* hack, but for now it achieves its goal of&n; * faking a TCP flow-control that will not flood the poor DE600.&n; *&n; * Tricks TCP to announce a small max window (max 2 fast packets please :-)&n; *&n; * Comment away at your own risk!&n; */
+multiline_comment|/*&n; * See comment at &quot;de600_rspace()&quot;!&n; * This is an *ugly* hack, but for now it achieves its goal of&n; * faking a TCP flow-control that will not flood the poor DE600.&n; *&n; * Tricks TCP to announce a small max window (max 2 fast packets please :-)&n; *&n; * Comment away at your own risk!&n; *&n; * Update: Use the more general per-device maxwindow parameter instead.&n; */
 DECL|macro|FAKE_SMALL_MAX
-mdefine_line|#define FAKE_SMALL_MAX
+macro_line|#undef FAKE_SMALL_MAX
 multiline_comment|/* use 0 for production, 1 for verification, &gt;2 for debug */
 macro_line|#ifdef DE600_DEBUG
 DECL|macro|PRINTK
@@ -57,8 +57,10 @@ macro_line|#include &lt;linux/inet.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
+macro_line|#ifdef MODULE
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &quot;../../tools/version.h&quot;
+macro_line|#endif
 macro_line|#ifdef FAKE_SMALL_MAX
 r_static
 r_int

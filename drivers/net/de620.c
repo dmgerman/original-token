@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;de620.c $Revision: 1.30 $ BETA&n; *&n; *&n; *&t;Linux driver for the D-Link DE-620 Ethernet pocket adapter.&n; *&n; *&t;Portions (C) Copyright 1993, 1994 by Bjorn Ekwall &lt;bj0rn@blox.se&gt;&n; *&n; *&t;Based on adapter information gathered from DOS packetdriver&n; *&t;sources from D-Link Inc:  (Special thanks to Henry Ngai of D-Link.)&n; *&t;&t;Portions (C) Copyright D-Link SYSTEM Inc. 1991, 1992&n; *&t;&t;Copyright, 1988, Russell Nelson, Crynwr Software&n; *&n; *&t;Adapted to the sample network driver core for linux,&n; *&t;written by: Donald Becker &lt;becker@super.org&gt;&n; *&t;&t;(Now at &lt;becker@cesdis.gsfc.nasa.gov&gt;&n; *&n; *&t;Valuable assistance from:&n; *&t;&t;J. Joshua Kopper &lt;kopper@rtsg.mot.com&gt;&n; *&t;&t;Olav Kvittem &lt;Olav.Kvittem@uninett.no&gt;&n; *&t;&t;Germano Caronni &lt;caronni@nessie.cs.id.ethz.ch&gt;&n; *&t;&t;Jeremy Fitzhardinge &lt;jeremy@suite.sw.oz.au&gt;&n; *&n; *****************************************************************************/
+multiline_comment|/*&n; *&t;de620.c $Revision: 1.31 $ BETA&n; *&n; *&n; *&t;Linux driver for the D-Link DE-620 Ethernet pocket adapter.&n; *&n; *&t;Portions (C) Copyright 1993, 1994 by Bjorn Ekwall &lt;bj0rn@blox.se&gt;&n; *&n; *&t;Based on adapter information gathered from DOS packetdriver&n; *&t;sources from D-Link Inc:  (Special thanks to Henry Ngai of D-Link.)&n; *&t;&t;Portions (C) Copyright D-Link SYSTEM Inc. 1991, 1992&n; *&t;&t;Copyright, 1988, Russell Nelson, Crynwr Software&n; *&n; *&t;Adapted to the sample network driver core for linux,&n; *&t;written by: Donald Becker &lt;becker@super.org&gt;&n; *&t;&t;(Now at &lt;becker@cesdis.gsfc.nasa.gov&gt;&n; *&n; *&t;Valuable assistance from:&n; *&t;&t;J. Joshua Kopper &lt;kopper@rtsg.mot.com&gt;&n; *&t;&t;Olav Kvittem &lt;Olav.Kvittem@uninett.no&gt;&n; *&t;&t;Germano Caronni &lt;caronni@nessie.cs.id.ethz.ch&gt;&n; *&t;&t;Jeremy Fitzhardinge &lt;jeremy@suite.sw.oz.au&gt;&n; *&n; *****************************************************************************/
 multiline_comment|/*&n; *&t;This program is free software; you can redistribute it and/or modify&n; *&t;it under the terms of the GNU General Public License as published by&n; *&t;the Free Software Foundation; either version 2, or (at your option)&n; *&t;any later version.&n; *&n; *&t;This program is distributed in the hope that it will be useful,&n; *&t;but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *&t;MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *&t;GNU General Public License for more details.&n; *&n; *&t;You should have received a copy of the GNU General Public License&n; *&t;along with this program; if not, write to the Free Software&n; *&t;Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA. &n; *&n; *****************************************************************************/
 DECL|variable|version
 r_static
@@ -6,7 +6,7 @@ r_char
 op_star
 id|version
 op_assign
-l_string|&quot;de620.c: $Revision: 1.30 $,  Bjorn Ekwall &lt;bj0rn@blox.se&gt;&bslash;n&quot;
+l_string|&quot;de620.c: $Revision: 1.31 $,  Bjorn Ekwall &lt;bj0rn@blox.se&gt;&bslash;n&quot;
 suffix:semicolon
 "&f;"
 multiline_comment|/***********************************************************************&n; *&n; * &quot;Tuning&quot; section.&n; *&n; * Compile-time options: (see below for descriptions)&n; * -DDE620_IO=0x378&t;(lpt1)&n; * -DDE620_IRQ=7&t;(lpt1)&n; * -DDE602_DEBUG=...&n; * -DSHUTDOWN_WHEN_LOST&n; * -DCOUNT_LOOPS&n; * -DLOWSPEED&n; * -DREAD_DELAY&n; * -DWRITE_DELAY&n; */
@@ -41,8 +41,10 @@ macro_line|#include &lt;linux/inet.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
+macro_line|#ifdef MODULE
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &quot;../../tools/version.h&quot;
+macro_line|#endif
 multiline_comment|/* Constant definitions for the DE-620 registers, commands and bits */
 macro_line|#include &quot;de620.h&quot;
 DECL|macro|netstats
