@@ -1441,6 +1441,7 @@ r_int
 id|pid
 comma
 r_int
+r_int
 id|sig
 )paren
 (brace
@@ -1454,6 +1455,17 @@ comma
 id|count
 op_assign
 l_int|0
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|sig
+OG
+l_int|32
+)paren
+r_return
+op_minus
+id|EINVAL
 suffix:semicolon
 r_if
 c_cond

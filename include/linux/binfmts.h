@@ -62,11 +62,17 @@ suffix:semicolon
 multiline_comment|/* Name of binary */
 )brace
 suffix:semicolon
-multiline_comment|/* This structure defines the functions that are used to load the binary formats that&n; * linux accepts. */
+multiline_comment|/*&n; * This structure defines the functions that are used to load the binary formats that&n; * linux accepts.&n; */
 DECL|struct|linux_binfmt
 r_struct
 id|linux_binfmt
 (brace
+DECL|member|next
+r_struct
+id|linux_binfmt
+op_star
+id|next
+suffix:semicolon
 DECL|member|load_binary
 r_int
 (paren
@@ -98,11 +104,24 @@ suffix:semicolon
 )brace
 suffix:semicolon
 r_extern
+r_int
+id|register_binfmt
+c_func
+(paren
 r_struct
 id|linux_binfmt
-id|formats
-(braket
-)braket
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|unregister_binfmt
+c_func
+(paren
+r_struct
+id|linux_binfmt
+op_star
+)paren
 suffix:semicolon
 r_extern
 r_int

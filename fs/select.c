@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * This file contains the procedures for the handling of select&n; *&n; * Created for Linux based loosely upon Mathius Lattner&squot;s minix&n; * patches by Peter MacDonald. Heavily edited by Linus.&n; */
+multiline_comment|/*&n; * This file contains the procedures for the handling of select&n; *&n; * Created for Linux based loosely upon Mathius Lattner&squot;s minix&n; * patches by Peter MacDonald. Heavily edited by Linus.&n; *&n; *  4 February 1994&n; *     COFF/ELF binary emulation. If the process has the STICKY_TIMEOUTS&n; *     flag set in its personality we do *not* modify the given timeout&n; *     parameter to reflect time remaining.&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/time.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
@@ -8,6 +8,7 @@ macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
+macro_line|#include &lt;linux/personality.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 DECL|macro|ROUND_UP
@@ -1126,6 +1127,13 @@ r_if
 c_cond
 (paren
 id|tvp
+op_logical_and
+op_logical_neg
+(paren
+id|current-&gt;personality
+op_amp
+id|STICKY_TIMEOUTS
+)paren
 )paren
 (brace
 id|put_fs_long

@@ -3320,7 +3320,7 @@ c_cond
 id|irqaction
 c_func
 (paren
-id|MCD_INTR_NR
+id|mcd_irq
 comma
 op_amp
 id|mcd_sigaction
@@ -3332,7 +3332,7 @@ c_func
 (paren
 l_string|&quot;mcd: Unable to get IRQ%d for Mitsumi CD-ROM&bslash;n&quot;
 comma
-id|MCD_INTR_NR
+id|mcd_irq
 )paren
 suffix:semicolon
 r_return

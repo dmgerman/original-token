@@ -1347,6 +1347,15 @@ id|EBADF
 suffix:semicolon
 )brace
 multiline_comment|/*&n; &t;&t; *&t;We have been given a non page aligned block of&n;&t;&t; *&t;the data we asked for + a bit. We have been given&n; &t;&t; *&t;the start pointer and we know the length.. &n;&t;&t; */
+r_if
+c_cond
+(paren
+id|length
+op_le
+l_int|0
+)paren
+r_break
+suffix:semicolon
 multiline_comment|/*&n; &t;&t; *&t;Copy the bytes&n;&t;&t; */
 id|memcpy_tofs
 c_func

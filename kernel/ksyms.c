@@ -10,6 +10,7 @@ macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/sys.h&gt;
 macro_line|#include &lt;linux/utsname.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
+macro_line|#include &lt;linux/binfmts.h&gt;
 macro_line|#ifdef CONFIG_INET
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#endif
@@ -37,7 +38,6 @@ r_void
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef CONFIG_BINFMT_IBCS
 r_extern
 r_int
 id|do_execve
@@ -112,15 +112,6 @@ id|count
 )paren
 suffix:semicolon
 r_extern
-r_void
-id|check_pending
-c_func
-(paren
-r_int
-id|signum
-)paren
-suffix:semicolon
-r_extern
 r_int
 id|do_signal
 c_func
@@ -136,16 +127,6 @@ id|regs
 )paren
 suffix:semicolon
 r_extern
-r_int
-(paren
-op_star
-id|ibcs_invmapsig
-)paren
-(paren
-r_int
-)paren
-suffix:semicolon
-r_extern
 r_void
 (paren
 op_star
@@ -158,7 +139,6 @@ op_star
 id|regs
 )paren
 suffix:semicolon
-macro_line|#endif
 macro_line|#ifdef CONFIG_INET
 r_extern
 r_int
@@ -326,6 +306,18 @@ c_func
 id|do_munmap
 )paren
 comma
+id|X
+c_func
+(paren
+id|insert_vm_struct
+)paren
+comma
+id|X
+c_func
+(paren
+id|zeromap_page_range
+)paren
+comma
 multiline_comment|/* internal kernel memory management */
 id|X
 c_func
@@ -438,6 +430,19 @@ c_func
 id|unregister_filesystem
 )paren
 comma
+multiline_comment|/* executable format registration */
+id|X
+c_func
+(paren
+id|register_binfmt
+)paren
+comma
+id|X
+c_func
+(paren
+id|unregister_binfmt
+)paren
+comma
 multiline_comment|/* interrupt handling */
 id|X
 c_func
@@ -531,47 +536,11 @@ c_func
 id|sys_call_table
 )paren
 comma
-macro_line|#ifdef CONFIG_FTAPE
-multiline_comment|/* The next labels are needed for ftape driver.  */
-id|X
-c_func
-(paren
-id|ftape_big_buffer
-)paren
-comma
-id|X
-c_func
-(paren
-id|do_floppy
-)paren
-comma
-macro_line|#endif
-macro_line|#ifdef CONFIG_BINFMT_IBCS
-multiline_comment|/*&n; * The following are needed if iBCS support is modular rather than&n; * compiled in.&n; */
-multiline_comment|/* Emulator hooks. */
-id|X
-c_func
-(paren
-id|iABI_hook
-)paren
-comma
-id|X
-c_func
-(paren
-id|ibcs_invmapsig
-)paren
-comma
 multiline_comment|/* Signal interfaces */
 id|X
 c_func
 (paren
 id|do_signal
-)paren
-comma
-id|X
-c_func
-(paren
-id|check_pending
 )paren
 comma
 id|X
@@ -614,18 +583,6 @@ comma
 id|X
 c_func
 (paren
-id|formats
-)paren
-comma
-id|X
-c_func
-(paren
-id|insert_vm_struct
-)paren
-comma
-id|X
-c_func
-(paren
 id|open_inode
 )paren
 comma
@@ -635,17 +592,25 @@ c_func
 id|read_exec
 )paren
 comma
-id|X
-c_func
-(paren
-id|zeromap_page_range
-)paren
-comma
 multiline_comment|/* Miscellaneous access points */
 id|X
 c_func
 (paren
 id|si_meminfo
+)paren
+comma
+macro_line|#ifdef CONFIG_FTAPE
+multiline_comment|/* The next labels are needed for ftape driver.  */
+id|X
+c_func
+(paren
+id|ftape_big_buffer
+)paren
+comma
+id|X
+c_func
+(paren
+id|do_floppy
 )paren
 comma
 macro_line|#endif

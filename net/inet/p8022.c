@@ -3,7 +3,6 @@ macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &quot;datalink.h&quot;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/in.h&gt;
-macro_line|#include &lt;linux/ddi.h&gt;
 DECL|variable|p8022_list
 r_static
 r_struct

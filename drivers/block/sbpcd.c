@@ -12,7 +12,6 @@ macro_line|#include &lt;linux/string.h&gt;
 macro_line|#if SBPCD_USE_IRQ
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#endif SBPCD_USE_IRQ
-macro_line|#include &lt;linux/ddi.h&gt;
 macro_line|#include &lt;linux/major.h&gt; 
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
@@ -28,6 +27,9 @@ mdefine_line|#define SBPCD_DEBUG
 macro_line|#ifndef CONFIG_ISO9660_FS
 macro_line|#error &quot;SBPCD: &bslash;&quot;make config&bslash;&quot; again. File system iso9660 is necessary.&quot;
 macro_line|#endif
+multiline_comment|/*&n; * This may come back some day..&n; */
+DECL|macro|DDIOCSDBG
+mdefine_line|#define DDIOCSDBG&t;0x9000
 multiline_comment|/*&n; * still testing around...&n; */
 DECL|macro|LONG_TIMING
 mdefine_line|#define LONG_TIMING 0 /* test against timeouts with &quot;gold&quot; CDs on CR-521 */
