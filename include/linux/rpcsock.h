@@ -66,7 +66,7 @@ r_char
 id|gotit
 suffix:semicolon
 DECL|member|xid
-id|u32
+id|__u32
 id|xid
 suffix:semicolon
 )brace

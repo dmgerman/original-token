@@ -1,14 +1,58 @@
 multiline_comment|/*&n; * include/linux/random.h&n; *&n; * Include file for the random number generator.&n; */
-multiline_comment|/*&n; * We should always include the random number generator, since it&squot;s&n; * relatively small, and it&squot;s most useful when application developers&n; * can assume that all Linux systems have it.  (Ideally, it would be&n; * best if we could assume that all Unix systems had it, but oh&n; * well....)&n; * &n; * Also, many kernel routines will have a use for good random numbers,&n; * for example, for truely random TCP sequence numbers, which prevent&n; * certain forms of TCP spoofing attacks.&n; */
-DECL|macro|CONFIG_RANDOM
-mdefine_line|#define CONFIG_RANDOM
+macro_line|#ifndef _LINUX_RANDOM_H
+DECL|macro|_LINUX_RANDOM_H
+mdefine_line|#define _LINUX_RANDOM_H
+multiline_comment|/* ioctl()&squot;s for the random number generator */
+DECL|macro|RNDGETENTCNT
+mdefine_line|#define RNDGETENTCNT&t;0x01080000
+DECL|macro|RNDADDTOENTCNT
+mdefine_line|#define RNDADDTOENTCNT&t;0x01080001
+DECL|macro|RNDGETPOOL
+mdefine_line|#define RNDGETPOOL&t;0x01080002
+DECL|struct|rand_pool_state
+r_struct
+id|rand_pool_state
+(brace
+DECL|member|entropy_count
+r_int
+id|entropy_count
+suffix:semicolon
+DECL|member|pool_size
+r_int
+id|pool_size
+suffix:semicolon
+DECL|member|pool
+id|__u32
+id|pool
+(braket
+l_int|0
+)braket
+suffix:semicolon
+)brace
+suffix:semicolon
 multiline_comment|/* Exported functions */
-macro_line|#ifdef CONFIG_RANDOM
+macro_line|#ifdef __KERNEL__
 r_void
 id|rand_initialize
 c_func
 (paren
 r_void
+)paren
+suffix:semicolon
+r_void
+id|rand_initialize_irq
+c_func
+(paren
+r_int
+id|irq
+)paren
+suffix:semicolon
+r_void
+id|rand_initialize_blkdev
+c_func
+(paren
+r_int
+id|irq
 )paren
 suffix:semicolon
 r_void
@@ -21,11 +65,27 @@ id|scancode
 )paren
 suffix:semicolon
 r_void
+id|add_mouse_randomness
+c_func
+(paren
+id|__u32
+id|mouse_data
+)paren
+suffix:semicolon
+r_void
 id|add_interrupt_randomness
 c_func
 (paren
 r_int
 id|irq
+)paren
+suffix:semicolon
+r_void
+id|add_blkdev_randomness
+c_func
+(paren
+r_int
+id|major
 )paren
 suffix:semicolon
 r_void
@@ -84,10 +144,52 @@ r_int
 id|nbytes
 )paren
 suffix:semicolon
-macro_line|#else
-DECL|macro|add_keyboard_randomness
-mdefine_line|#define add_keyboard_randomness(x)
-DECL|macro|add_interrupt_randomness
-mdefine_line|#define add_interrupt_randomness(x)
-macro_line|#endif
+r_int
+id|write_random
+c_func
+(paren
+r_struct
+id|inode
+op_star
+id|inode
+comma
+r_struct
+id|file
+op_star
+id|file
+comma
+r_const
+r_char
+op_star
+id|buffer
+comma
+r_int
+id|count
+)paren
+suffix:semicolon
+r_int
+id|random_ioctl
+c_func
+(paren
+r_struct
+id|inode
+op_star
+id|inode
+comma
+r_struct
+id|file
+op_star
+id|file
+comma
+r_int
+r_int
+id|cmd
+comma
+r_int
+r_int
+id|arg
+)paren
+suffix:semicolon
+macro_line|#endif /* __KERNEL___ */
+macro_line|#endif /* _LINUX_RANDOM_H */
 eof

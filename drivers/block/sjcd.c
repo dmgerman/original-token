@@ -1,6 +1,23 @@
-multiline_comment|/* -- sjcd.c&n; *&n; *   Sanyo CD-ROM device driver implementation, Version 1.3&n; *   Copyright (C) 1995  Vadim V. Model&n; *&n; *   model@cecmow.enet.dec.com&n; *   vadim@rbrf.msk.su&n; *   vadim@ipsun.ras.ru&n; *&n; *   ISP16 detection and configuration.&n; *   Copyright (C) 1995  Eric van der Maarel (maarel@marin.nl)&n; *&n; *&n; *  This driver is based on pre-works by Eberhard Moenkeberg (emoenke@gwdg.de);&n; *  it was developed under use of mcd.c from Martin Harriss, with help of&n; *  Eric van der Maarel (maarel@marin.nl).&n; *&n; *  ISP16 detection and configuration by Eric van der Maarel (maarel@marin.nl),&n; *  with some data communicated by Vadim V. Model (vadim@rbrf.msk.su)&n; *  and Leo Spiekman (spiekman@et.tudelft.nl)&n; *&n; *&n; *  It is planned to include these routines into sbpcd.c later - to make&n; *  a &quot;mixed use&quot; on one cable possible for all kinds of drives which use&n; *  the SoundBlaster/Panasonic style CDROM interface. But today, the&n; *  ability to install directly from CDROM is more important than flexibility.&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; *  History:&n; *  1.1 First public release with kernel version 1.3.7.&n; *      Written by Vadim Model.&n; *  1.2 Added detection and configuration of cdrom interface&n; *      on ISP16 soundcard.&n; *      Allow for command line options: sjcd=&lt;io_base&gt;,&lt;irq&gt;,&lt;dma&gt;&n; *  1.3 Some minor changes to README.sjcd.&n; *&n; */
+multiline_comment|/* -- sjcd.c&n; *&n; *   Sanyo CD-ROM device driver implementation, Version 1.5&n; *   Copyright (C) 1995  Vadim V. Model&n; *&n; *   model@cecmow.enet.dec.com&n; *   vadim@rbrf.ru&n; *   vadim@ipsun.ras.ru&n; *&n; *   ISP16 detection and configuration.&n; *   Copyright (C) 1995  Eric van der Maarel (maarel@marin.nl)&n; *                   and Vadim Model (vadim@cecmow.enet.dec.com)&n; *&n; *&n; *  This driver is based on pre-works by Eberhard Moenkeberg (emoenke@gwdg.de);&n; *  it was developed under use of mcd.c from Martin Harriss, with help of&n; *  Eric van der Maarel (maarel@marin.nl).&n; *&n; *  ISP16 detection and configuration by Eric van der Maarel (maarel@marin.nl).&n; *  Sound configuration by Vadim V. Model (model@cecmow.enet.dec.com)&n; *&n; *  It is planned to include these routines into sbpcd.c later - to make&n; *  a &quot;mixed use&quot; on one cable possible for all kinds of drives which use&n; *  the SoundBlaster/Panasonic style CDROM interface. But today, the&n; *  ability to install directly from CDROM is more important than flexibility.&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; *  History:&n; *  1.1 First public release with kernel version 1.3.7.&n; *      Written by Vadim Model.&n; *  1.2 Added detection and configuration of cdrom interface&n; *      on ISP16 soundcard.&n; *      Allow for command line options: sjcd=&lt;io_base&gt;,&lt;irq&gt;,&lt;dma&gt;&n; *  1.3 Some minor changes to README.sjcd.&n; *  1.4 MSS Sound support!! Listen to a CD through the speakers.&n; *  1.5 Module support and bugfixes.&n; *      Tray locking.&n; *&n; */
+macro_line|#include &lt;linux/major.h&gt;
+macro_line|#include &lt;linux/config.h&gt;
+macro_line|#ifdef MODULE
+macro_line|#include &lt;linux/module.h&gt;
+macro_line|#include &lt;linux/version.h&gt;
+DECL|macro|sjcd_init
+mdefine_line|#define sjcd_init init_module
+macro_line|#ifndef CONFIG_MODVERSIONS
+DECL|variable|kernel_version
+r_char
+id|kernel_version
+(braket
+)braket
+op_assign
+id|UTS_RELEASE
+suffix:semicolon
+macro_line|#endif
+macro_line|#endif
 macro_line|#include &lt;linux/errno.h&gt;
-macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
@@ -9,7 +26,6 @@ macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/cdrom.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
-macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
@@ -78,20 +94,20 @@ mdefine_line|#define ISP16_IO_SET_MASK  0x20  /* don&squot;t change 5-bit */
 multiline_comment|/* ...for port */
 DECL|macro|ISP16_IO_SET_PORT
 mdefine_line|#define ISP16_IO_SET_PORT  0xF8E
-multiline_comment|/* enable the drive */
-DECL|macro|ISP16_NO_IDE__ENABLE_CDROM_PORT
-mdefine_line|#define ISP16_NO_IDE__ENABLE_CDROM_PORT  0xF90  /* ISP16 without IDE interface */
-DECL|macro|ISP16_IDE__ENABLE_CDROM_PORT
-mdefine_line|#define ISP16_IDE__ENABLE_CDROM_PORT  0xF91  /* ISP16 with IDE interface */
+multiline_comment|/* enable the card */
+DECL|macro|ISP16_C928__ENABLE_PORT
+mdefine_line|#define ISP16_C928__ENABLE_PORT  0xF90  /* ISP16 with OPTi 82C928 chip */
+DECL|macro|ISP16_C929__ENABLE_PORT
+mdefine_line|#define ISP16_C929__ENABLE_PORT  0xF91  /* ISP16 with OPTi 82C929 chip */
 DECL|macro|ISP16_ENABLE_CDROM
 mdefine_line|#define ISP16_ENABLE_CDROM  0x80  /* seven bit */
 multiline_comment|/* the magic stuff */
 DECL|macro|ISP16_CTRL_PORT
 mdefine_line|#define ISP16_CTRL_PORT  0xF8F
-DECL|macro|ISP16_NO_IDE__CTRL
-mdefine_line|#define ISP16_NO_IDE__CTRL  0xE2  /* ISP16 without IDE interface */
-DECL|macro|ISP16_IDE__CTRL
-mdefine_line|#define ISP16_IDE__CTRL  0xE3  /* ISP16 with IDE interface */
+DECL|macro|ISP16_C928__CTRL
+mdefine_line|#define ISP16_C928__CTRL  0xE2  /* ISP16 with OPTi 82C928 chip */
+DECL|macro|ISP16_C929__CTRL
+mdefine_line|#define ISP16_C929__CTRL  0xE3  /* ISP16 with OPTi 82C929 chip */
 r_static
 r_int
 id|isp16_detect
@@ -102,7 +118,7 @@ r_void
 suffix:semicolon
 r_static
 r_int
-id|isp16_no_ide__detect
+id|isp16_c928__detect
 c_func
 (paren
 r_void
@@ -110,7 +126,7 @@ r_void
 suffix:semicolon
 r_static
 r_int
-id|isp16_with_ide__detect
+id|isp16_c929__detect
 c_func
 (paren
 r_void
@@ -118,7 +134,7 @@ r_void
 suffix:semicolon
 r_static
 r_int
-id|isp16_config
+id|isp16_cdi_config
 c_func
 (paren
 r_int
@@ -134,6 +150,14 @@ r_int
 id|dma
 )paren
 suffix:semicolon
+r_static
+r_void
+id|isp16_sound_config
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
 DECL|variable|isp16_type
 r_static
 r_int
@@ -145,10 +169,10 @@ r_static
 id|u_char
 id|isp16_ctrl
 suffix:semicolon
-DECL|variable|isp16_enable_cdrom_port
+DECL|variable|isp16_enable_port
 r_static
 id|u_short
-id|isp16_enable_cdrom_port
+id|isp16_enable_port
 suffix:semicolon
 DECL|variable|sjcd_present
 r_static
@@ -156,6 +180,56 @@ r_int
 id|sjcd_present
 op_assign
 l_int|0
+suffix:semicolon
+DECL|variable|special_mask
+r_static
+id|u_char
+id|special_mask
+op_assign
+l_int|0
+suffix:semicolon
+DECL|variable|defaults
+r_static
+r_int
+r_char
+id|defaults
+(braket
+l_int|16
+)braket
+op_assign
+(brace
+l_int|0xA8
+comma
+l_int|0xA8
+comma
+l_int|0x18
+comma
+l_int|0x18
+comma
+l_int|0x18
+comma
+l_int|0x18
+comma
+l_int|0x8E
+comma
+l_int|0x8E
+comma
+l_int|0x03
+comma
+l_int|0x00
+comma
+l_int|0x02
+comma
+l_int|0x00
+comma
+l_int|0x0A
+comma
+l_int|0x00
+comma
+l_int|0x00
+comma
+l_int|0x00
+)brace
 suffix:semicolon
 DECL|macro|SJCD_BUF_SIZ
 mdefine_line|#define SJCD_BUF_SIZ 32 /* cdr-h94a has internal 64K buffer */
@@ -208,6 +282,12 @@ r_static
 r_int
 r_int
 id|sjcd_door_closed
+suffix:semicolon
+DECL|variable|sjcd_door_was_open
+r_static
+r_int
+r_int
+id|sjcd_door_was_open
 suffix:semicolon
 DECL|variable|sjcd_media_is_available
 r_static
@@ -304,7 +384,7 @@ r_static
 r_int
 id|sjcd_dma
 op_assign
-id|SJCD_DMA
+id|SJCD_DMA_NR
 suffix:semicolon
 DECL|variable|sjcd_waitq
 r_static
@@ -387,13 +467,6 @@ id|sjcd_read_count
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#if 0
-r_static
-r_int
-r_int
-id|sjcd_tries
-suffix:semicolon
-macro_line|#endif
 DECL|variable|sjcd_mode
 r_static
 r_int
@@ -404,6 +477,7 @@ l_int|0
 suffix:semicolon
 DECL|macro|SJCD_READ_TIMEOUT
 mdefine_line|#define SJCD_READ_TIMEOUT 5000
+macro_line|#if defined( SJCD_GATHER_STAT )
 multiline_comment|/*&n; * Statistic.&n; */
 DECL|variable|statistic
 r_static
@@ -411,6 +485,7 @@ r_struct
 id|sjcd_stat
 id|statistic
 suffix:semicolon
+macro_line|#endif
 multiline_comment|/*&n; * Timer.&n; */
 DECL|variable|sjcd_delay_timer
 r_static
@@ -437,7 +512,6 @@ mdefine_line|#define CLEAR_TIMER del_timer( &amp;sjcd_delay_timer )
 multiline_comment|/*&n; * Set up device, i.e., use command line data to set&n; * base address, irq and dma.&n; */
 DECL|function|sjcd_setup
 r_void
-(def_block
 id|sjcd_setup
 c_func
 (paren
@@ -502,7 +576,6 @@ l_int|3
 )braket
 suffix:semicolon
 )brace
-)def_block
 multiline_comment|/*&n; * Special converters.&n; */
 DECL|function|bin2bcd
 r_static
@@ -695,7 +768,7 @@ r_char
 id|cmd
 )paren
 (brace
-macro_line|#if 0
+macro_line|#if defined( SJCD_TRACE )
 id|printk
 c_func
 (paren
@@ -748,7 +821,7 @@ r_char
 id|a
 )paren
 (brace
-macro_line|#if 0
+macro_line|#if defined( SJCD_TRACE )
 id|printk
 c_func
 (paren
@@ -827,7 +900,7 @@ r_char
 id|d
 )paren
 (brace
-macro_line|#if 0
+macro_line|#if defined( SJCD_TRACE )
 id|printk
 c_func
 (paren
@@ -929,7 +1002,7 @@ op_star
 id|pms
 )paren
 (brace
-macro_line|#if 0
+macro_line|#if defined( SJCD_TRACE )
 id|printk
 c_func
 (paren
@@ -1088,6 +1161,10 @@ suffix:semicolon
 id|i
 op_decrement
 op_logical_and
+op_logical_neg
+id|SJCD_STATUS_AVAILABLE
+c_func
+(paren
 id|inb
 c_func
 (paren
@@ -1097,8 +1174,7 @@ c_func
 l_int|1
 )paren
 )paren
-op_ne
-l_int|0x09
+)paren
 suffix:semicolon
 )paren
 (brace
@@ -1140,7 +1216,7 @@ id|len
 suffix:semicolon
 )brace
 )def_block
-multiline_comment|/*&n; * Load and parse status.&n; */
+multiline_comment|/*&n; * Load and parse command completion status (drive info byte and maybe error).&n; * Sorry, no error classification yet.&n; */
 DECL|function|sjcd_load_status
 r_static
 r_void
@@ -1216,9 +1292,13 @@ op_amp
 l_int|0x0F
 )paren
 (brace
+multiline_comment|/*&n;       * OK, we seem to catch an error ...&n;       */
 r_while
 c_loop
 (paren
+op_logical_neg
+id|SJCD_STATUS_AVAILABLE
+c_func
 (paren
 id|inb
 c_func
@@ -1229,11 +1309,7 @@ c_func
 l_int|1
 )paren
 )paren
-op_amp
-l_int|0x0B
 )paren
-op_ne
-l_int|0x09
 )paren
 (brace
 suffix:semicolon
@@ -1296,6 +1372,7 @@ id|sjcd_command_is_in_progress
 op_assign
 l_int|0
 suffix:semicolon
+multiline_comment|/*&n;   * If the disk is changed, the TOC is not valid.&n;   */
 r_if
 c_cond
 (paren
@@ -1307,7 +1384,7 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#if 0
+macro_line|#if defined( SJCD_TRACE )
 id|printk
 c_func
 (paren
@@ -1342,6 +1419,8 @@ multiline_comment|/*&n;   * Try to load the response from cdrom into buffer.&n; 
 r_if
 c_cond
 (paren
+id|SJCD_STATUS_AVAILABLE
+c_func
 (paren
 id|inb
 c_func
@@ -1352,11 +1431,7 @@ c_func
 l_int|1
 )paren
 )paren
-op_amp
-l_int|0x0B
 )paren
-op_eq
-l_int|0x09
 )paren
 (brace
 id|sjcd_load_status
@@ -1377,12 +1452,14 @@ suffix:semicolon
 )brace
 )brace
 )def_block
+multiline_comment|/*&n; * This is just timout counter, and nothing more. Surprized ? :-)&n; */
 DECL|variable|sjcd_status_timeout
 r_static
 r_volatile
 r_int
 id|sjcd_status_timeout
 suffix:semicolon
+multiline_comment|/*&n; * We need about 10 seconds to wait. The longest command takes about 5 seconds&n; * to probe the disk (usually after tray closed or drive reset). Other values&n; * should be thought of for other commands.&n; */
 DECL|macro|SJCD_WAIT_FOR_STATUS_TIMEOUT
 mdefine_line|#define SJCD_WAIT_FOR_STATUS_TIMEOUT 1000
 DECL|function|sjcd_status_timer
@@ -1404,6 +1481,7 @@ c_func
 )paren
 )paren
 (brace
+multiline_comment|/*&n;     * The command completed and status is loaded, stop waiting.&n;     */
 id|wake_up
 c_func
 (paren
@@ -1422,6 +1500,7 @@ op_le
 l_int|0
 )paren
 (brace
+multiline_comment|/*&n;     * We are timed out. &n;     */
 id|wake_up
 c_func
 (paren
@@ -1432,19 +1511,19 @@ suffix:semicolon
 )brace
 r_else
 (brace
+multiline_comment|/*&n;     * We have still some time to wait. Try again.&n;     */
 id|SJCD_SET_TIMER
 c_func
 (paren
 id|sjcd_status_timer
 comma
-id|HZ
-op_div
-l_int|100
+l_int|1
 )paren
 suffix:semicolon
 )brace
 )brace
 )def_block
+multiline_comment|/*&n; * Wait for status for 10 sec approx. Returns non-positive when timed out.&n; * Should not be used while reading data CDs.&n; */
 DECL|function|sjcd_wait_for_status
 r_static
 r_int
@@ -1464,9 +1543,7 @@ c_func
 (paren
 id|sjcd_status_timer
 comma
-id|HZ
-op_div
-l_int|100
+l_int|1
 )paren
 suffix:semicolon
 id|sleep_on
@@ -1476,6 +1553,7 @@ op_amp
 id|sjcd_waitq
 )paren
 suffix:semicolon
+macro_line|#if defined( SJCD_DIAGNOSTIC ) || defined ( SJCD_TRACE )
 r_if
 c_cond
 (paren
@@ -1491,6 +1569,7 @@ l_string|&quot;sjcd: Error Wait For Status.&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
 r_return
 id|sjcd_status_timeout
 suffix:semicolon
@@ -1509,7 +1588,7 @@ r_void
 r_int
 id|i
 suffix:semicolon
-macro_line|#if 0
+macro_line|#if defined( SJCD_TRACE )
 id|printk
 c_func
 (paren
@@ -1549,7 +1628,7 @@ OL
 l_int|0
 )paren
 (brace
-macro_line|#if 0
+macro_line|#if defined( SJCD_TRACE )
 id|printk
 c_func
 (paren
@@ -1586,7 +1665,7 @@ id|i
 suffix:semicolon
 )brace
 )def_block
-multiline_comment|/*&n; * Load the status.&n; */
+multiline_comment|/*&n; * Load the status. Issue get status command and wait for status available.&n; */
 DECL|function|sjcd_get_status
 r_static
 r_void
@@ -1597,7 +1676,7 @@ c_func
 r_void
 )paren
 (brace
-macro_line|#if 0
+macro_line|#if defined( SJCD_TRACE )
 id|printk
 c_func
 (paren
@@ -1618,7 +1697,7 @@ c_func
 suffix:semicolon
 )brace
 )def_block
-multiline_comment|/*&n; * Check the drive if the disk is changed.&n; */
+multiline_comment|/*&n; * Check the drive if the disk is changed. Should be revised.&n; */
 DECL|function|sjcd_disk_change
 r_static
 r_int
@@ -1692,7 +1771,7 @@ r_struct
 id|sjcd_hw_disk_info
 id|sjcd_table_of_contents
 (braket
-l_int|100
+id|SJCD_MAX_TRACKS
 )braket
 suffix:semicolon
 DECL|variable|sjcd_first_track_no
@@ -1723,7 +1802,7 @@ suffix:semicolon
 r_int
 id|i
 suffix:semicolon
-macro_line|#if 0
+macro_line|#if defined( SJCD_TRACE )
 id|printk
 c_func
 (paren
@@ -1850,7 +1929,7 @@ op_minus
 l_int|1
 suffix:semicolon
 )brace
-macro_line|#if 0
+macro_line|#if defined( SJCD_TRACE )
 id|printk
 c_func
 (paren
@@ -1968,7 +2047,7 @@ op_minus
 l_int|1
 suffix:semicolon
 )brace
-macro_line|#if 0
+macro_line|#if defined( SJCD_TRACE )
 id|printk
 c_func
 (paren
@@ -2217,7 +2296,7 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
-macro_line|#if 0
+macro_line|#if defined( SJCD_TRACE )
 id|printk
 c_func
 (paren
@@ -2253,7 +2332,7 @@ id|qp
 r_int
 id|s
 suffix:semicolon
-macro_line|#if 0
+macro_line|#if defined( SJCD_TRACE )
 id|printk
 c_func
 (paren
@@ -2481,6 +2560,135 @@ c_func
 suffix:semicolon
 )brace
 )def_block
+multiline_comment|/*&n; * Tray control functions.&n; */
+DECL|function|sjcd_tray_close
+r_static
+r_int
+(def_block
+id|sjcd_tray_close
+c_func
+(paren
+r_void
+)paren
+(brace
+macro_line|#if defined( SJCD_TRACE )
+id|printk
+c_func
+(paren
+l_string|&quot;sjcd: tray_close&bslash;n&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
+id|sjcd_send_cmd
+c_func
+(paren
+id|SCMD_CLOSE_TRAY
+)paren
+suffix:semicolon
+r_return
+id|sjcd_receive_status
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+)def_block
+DECL|function|sjcd_tray_lock
+r_static
+r_int
+(def_block
+id|sjcd_tray_lock
+c_func
+(paren
+r_void
+)paren
+(brace
+macro_line|#if defined( SJCD_TRACE )
+id|printk
+c_func
+(paren
+l_string|&quot;sjcd: tray_lock&bslash;n&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
+id|sjcd_send_cmd
+c_func
+(paren
+id|SCMD_LOCK_TRAY
+)paren
+suffix:semicolon
+r_return
+id|sjcd_receive_status
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+)def_block
+DECL|function|sjcd_tray_unlock
+r_static
+r_int
+(def_block
+id|sjcd_tray_unlock
+c_func
+(paren
+r_void
+)paren
+(brace
+macro_line|#if defined( SJCD_TRACE )
+id|printk
+c_func
+(paren
+l_string|&quot;sjcd: tray_unlock&bslash;n&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
+id|sjcd_send_cmd
+c_func
+(paren
+id|SCMD_UNLOCK_TRAY
+)paren
+suffix:semicolon
+r_return
+id|sjcd_receive_status
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+)def_block
+DECL|function|sjcd_tray_open
+r_static
+r_int
+(def_block
+id|sjcd_tray_open
+c_func
+(paren
+r_void
+)paren
+(brace
+macro_line|#if defined( SJCD_TRACE )
+id|printk
+c_func
+(paren
+l_string|&quot;sjcd: tray_open&bslash;n&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
+id|sjcd_send_cmd
+c_func
+(paren
+id|SCMD_EJECT_TRAY
+)paren
+suffix:semicolon
+r_return
+id|sjcd_receive_status
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+)def_block
 multiline_comment|/*&n; * Do some user commands.&n; */
 DECL|function|sjcd_ioctl
 r_static
@@ -2508,7 +2716,7 @@ r_int
 id|arg
 )paren
 (brace
-macro_line|#if 0
+macro_line|#if defined( SJCD_TRACE )
 id|printk
 c_func
 (paren
@@ -2572,7 +2780,7 @@ r_case
 id|CDROMSTART
 suffix:colon
 (brace
-macro_line|#if 0
+macro_line|#if defined( SJCD_TRACE )
 id|printk
 c_func
 (paren
@@ -2588,7 +2796,7 @@ r_case
 id|CDROMSTOP
 suffix:colon
 (brace
-macro_line|#if 0
+macro_line|#if defined( SJCD_TRACE )
 id|printk
 c_func
 (paren
@@ -2626,7 +2834,7 @@ r_struct
 id|sjcd_hw_qinfo
 id|q_info
 suffix:semicolon
-macro_line|#if 0
+macro_line|#if defined( SJCD_TRACE )
 id|printk
 c_func
 (paren
@@ -2699,7 +2907,7 @@ r_case
 id|CDROMRESUME
 suffix:colon
 (brace
-macro_line|#if 0
+macro_line|#if defined( SJCD_TRACE )
 id|printk
 c_func
 (paren
@@ -2766,7 +2974,7 @@ suffix:semicolon
 r_int
 id|s
 suffix:semicolon
-macro_line|#if 0
+macro_line|#if defined( SJCD_TRACE )
 id|printk
 c_func
 (paren
@@ -2935,7 +3143,7 @@ suffix:semicolon
 r_int
 id|s
 suffix:semicolon
-macro_line|#if 0
+macro_line|#if defined( SJCD_TRACE )
 id|printk
 c_func
 (paren
@@ -3106,7 +3314,7 @@ suffix:semicolon
 r_int
 id|s
 suffix:semicolon
-macro_line|#if 0
+macro_line|#if defined (SJCD_TRACE )
 id|printk
 c_func
 (paren
@@ -3183,7 +3391,7 @@ suffix:semicolon
 r_int
 id|s
 suffix:semicolon
-macro_line|#if 0
+macro_line|#if defined( SJCD_TRACE )
 id|printk
 c_func
 (paren
@@ -3399,7 +3607,7 @@ suffix:semicolon
 r_int
 id|s
 suffix:semicolon
-macro_line|#if 0
+macro_line|#if defined( SJCD_TRACE )
 id|printk
 c_func
 (paren
@@ -3633,7 +3841,7 @@ suffix:semicolon
 r_int
 id|s
 suffix:semicolon
-macro_line|#if 0
+macro_line|#if defined( SJCD_TRACE )
 id|printk
 c_func
 (paren
@@ -3743,7 +3951,7 @@ r_case
 id|CDROMEJECT
 suffix:colon
 (brace
-macro_line|#if 0
+macro_line|#if defined( SJCD_TRACE )
 id|printk
 c_func
 (paren
@@ -3758,6 +3966,11 @@ op_logical_neg
 id|sjcd_command_is_in_progress
 )paren
 (brace
+id|sjcd_tray_unlock
+c_func
+(paren
+)paren
+suffix:semicolon
 id|sjcd_send_cmd
 c_func
 (paren
@@ -3777,6 +3990,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#if defined( SJCD_GATHER_STAT )
 r_case
 l_int|0xABCD
 suffix:colon
@@ -3784,7 +3998,7 @@ suffix:colon
 r_int
 id|s
 suffix:semicolon
-macro_line|#if 0
+macro_line|#if defined( SJCD_TRACE )
 id|printk
 c_func
 (paren
@@ -3842,6 +4056,7 @@ r_return
 id|s
 suffix:semicolon
 )brace
+macro_line|#endif
 r_default
 suffix:colon
 r_return
@@ -3851,32 +4066,6 @@ suffix:semicolon
 )brace
 )brace
 )def_block
-macro_line|#if 0
-multiline_comment|/*&n; * We only seem to get interrupts after an error.&n; * Just take the interrupt and clear out the status reg.&n; */
-r_static
-r_void
-(def_block
-id|sjcd_interrupt
-c_func
-(paren
-r_int
-id|irq
-comma
-r_struct
-id|pt_regs
-op_star
-id|regs
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;sjcd: interrupt is cought&bslash;n&quot;
-)paren
-suffix:semicolon
-)brace
-)def_block
-macro_line|#endif
 multiline_comment|/*&n; * Invalidate internal buffers of the driver.&n; */
 DECL|function|sjcd_invalidate_buffers
 r_static
@@ -3934,7 +4123,7 @@ c_func
 r_void
 )paren
 (brace
-macro_line|#if 0
+macro_line|#if defined( SJCD_TRACE )
 id|printk
 c_func
 (paren
@@ -4068,7 +4257,7 @@ op_assign
 id|CURRENT-&gt;nr_sectors
 suffix:semicolon
 )brace
-macro_line|#if 0
+macro_line|#if defined( SJCD_TRACE )
 id|printk
 c_func
 (paren
@@ -4117,7 +4306,7 @@ suffix:semicolon
 )brace
 )brace
 )brace
-macro_line|#if 0
+macro_line|#if defined( SJCD_TRACE )
 id|printk
 c_func
 (paren
@@ -4137,6 +4326,7 @@ c_func
 r_void
 )paren
 (brace
+macro_line|#if defined( SJCD_GATHER_STAT )
 multiline_comment|/*&n;   * Update total number of ticks.&n;   */
 id|statistic.ticks
 op_increment
@@ -4147,6 +4337,7 @@ id|sjcd_transfer_state
 )braket
 op_increment
 suffix:semicolon
+macro_line|#endif
 id|ReSwitch
 suffix:colon
 r_switch
@@ -4159,10 +4350,12 @@ r_case
 id|SJCD_S_IDLE
 suffix:colon
 (brace
+macro_line|#if defined( SJCD_GATHER_STAT )
 id|statistic.idle_ticks
 op_increment
 suffix:semicolon
-macro_line|#if 0
+macro_line|#endif
+macro_line|#if defined( SJCD_TRACE )
 id|printk
 c_func
 (paren
@@ -4177,9 +4370,11 @@ r_case
 id|SJCD_S_START
 suffix:colon
 (brace
+macro_line|#if defined( SJCD_GATHER_STAT )
 id|statistic.start_ticks
 op_increment
 suffix:semicolon
+macro_line|#endif
 id|sjcd_send_cmd
 c_func
 (paren
@@ -4201,7 +4396,7 @@ id|sjcd_transfer_timeout
 op_assign
 l_int|500
 suffix:semicolon
-macro_line|#if 0
+macro_line|#if defined( SJCD_TRACE )
 id|printk
 c_func
 (paren
@@ -4234,7 +4429,7 @@ c_func
 )paren
 )paren
 (brace
-multiline_comment|/*&n;       * Previos command is completed.&n;       */
+multiline_comment|/*&n;       * Previous command is completed.&n;       */
 r_if
 c_cond
 (paren
@@ -4244,7 +4439,7 @@ op_logical_or
 id|sjcd_command_failed
 )paren
 (brace
-macro_line|#if 0
+macro_line|#if defined( SJCD_TRACE )
 id|printk
 c_func
 (paren
@@ -4281,7 +4476,7 @@ id|sjcd_transfer_timeout
 op_assign
 l_int|1000
 suffix:semicolon
-macro_line|#if 0
+macro_line|#if defined( SJCD_TRACE )
 id|printk
 c_func
 (paren
@@ -4290,10 +4485,12 @@ l_string|&quot;SJCD_S_MODE: goto SJCD_S_READ mode&bslash;n&quot;
 suffix:semicolon
 macro_line|#endif
 )brace
+macro_line|#if defined( SJCD_GATHER_STAT )
 r_else
 id|statistic.mode_ticks
 op_increment
 suffix:semicolon
+macro_line|#endif
 r_break
 suffix:semicolon
 )brace
@@ -4325,7 +4522,7 @@ op_logical_or
 id|sjcd_command_failed
 )paren
 (brace
-macro_line|#if 0
+macro_line|#if defined( SJCD_TRACE )
 id|printk
 c_func
 (paren
@@ -4348,7 +4545,7 @@ op_logical_neg
 id|sjcd_media_is_available
 )paren
 (brace
-macro_line|#if 0
+macro_line|#if defined( SJCD_TRACE )
 id|printk
 c_func
 (paren
@@ -4388,7 +4585,7 @@ op_ne
 l_int|0
 )paren
 (brace
-macro_line|#if 0
+macro_line|#if defined( SJCD_TRACE )
 id|printk
 c_func
 (paren
@@ -4412,7 +4609,7 @@ op_ne
 id|SCMD_MODE_COOKED
 )paren
 (brace
-macro_line|#if 0
+macro_line|#if defined( SJCD_TRACE )
 id|printk
 c_func
 (paren
@@ -4468,7 +4665,7 @@ id|sjcd_read_count
 op_assign
 id|SJCD_BUF_SIZ
 suffix:semicolon
-macro_line|#if 0
+macro_line|#if defined( SJCD_TRACE )
 id|printk
 c_func
 (paren
@@ -4523,7 +4720,7 @@ id|sjcd_transfer_timeout
 op_assign
 l_int|500
 suffix:semicolon
-macro_line|#if 0
+macro_line|#if defined( SJCD_TRACE )
 id|printk
 c_func
 (paren
@@ -4534,7 +4731,7 @@ macro_line|#endif
 )brace
 r_else
 (brace
-macro_line|#if 0
+macro_line|#if defined( SJCD_TRACE )
 id|printk
 c_func
 (paren
@@ -4551,10 +4748,12 @@ id|ReSwitch
 suffix:semicolon
 )brace
 )brace
+macro_line|#if defined( SJCD_GATHER_STAT )
 r_else
 id|statistic.read_ticks
 op_increment
 suffix:semicolon
+macro_line|#endif
 r_break
 suffix:semicolon
 )brace
@@ -4579,10 +4778,8 @@ c_func
 l_int|1
 )paren
 )paren
-op_amp
-l_int|0x0B
 suffix:semicolon
-macro_line|#if 0
+macro_line|#if defined( SJCD_TRACE )
 id|printk
 c_func
 (paren
@@ -4595,9 +4792,11 @@ macro_line|#endif
 r_if
 c_cond
 (paren
+id|SJCD_STATUS_AVAILABLE
+c_func
+(paren
 id|stat
-op_eq
-l_int|0x09
+)paren
 )paren
 (brace
 multiline_comment|/*&n;       * No data is waiting for us in the drive buffer. Status of operation&n;       * completion is available. Read and parse it.&n;       */
@@ -4615,6 +4814,7 @@ op_logical_or
 id|sjcd_command_failed
 )paren
 (brace
+macro_line|#if defined( SJCD_TRACE )
 id|printk
 c_func
 (paren
@@ -4623,6 +4823,7 @@ comma
 id|sjcd_next_bn
 )paren
 suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -4636,12 +4837,14 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
+macro_line|#if defined( SJCD_TRACE )
 id|printk
 c_func
 (paren
 l_string|&quot;SJCD_S_DATA: pre-cmd failed: go to SJCD_S_STOP mode&bslash;n&quot;
 )paren
 suffix:semicolon
+macro_line|#endif
 id|sjcd_transfer_state
 op_assign
 id|SJCD_S_STOP
@@ -4673,7 +4876,7 @@ suffix:semicolon
 )brace
 id|sjcd_transfer_state
 op_assign
-id|SJCD_S_START
+id|SJCD_S_READ
 suffix:semicolon
 r_goto
 id|ReSwitch
@@ -4683,12 +4886,14 @@ r_else
 r_if
 c_cond
 (paren
+id|SJCD_DATA_AVAILABLE
+c_func
+(paren
 id|stat
-op_eq
-l_int|0x0A
+)paren
 )paren
 (brace
-multiline_comment|/*&n;       * One frame is read into device buffer. We must copy it to our memory.&n;       * Otherwise cdrom hangs up. Check to see if we have something to read&n;       * to.&n;       */
+multiline_comment|/*&n;       * One frame is read into device buffer. We must copy it to our memory.&n;       * Otherwise cdrom hangs up. Check to see if we have something to copy&n;       * to.&n;       */
 r_if
 c_cond
 (paren
@@ -4700,6 +4905,7 @@ op_eq
 id|sjcd_buf_out
 )paren
 (brace
+macro_line|#if defined( SJCD_TRACE )
 id|printk
 c_func
 (paren
@@ -4712,6 +4918,7 @@ c_func
 l_string|&quot; ... all the date would be discarded&bslash;n&quot;
 )paren
 suffix:semicolon
+macro_line|#endif
 id|sjcd_transfer_state
 op_assign
 id|SJCD_S_STOP
@@ -4748,7 +4955,7 @@ comma
 l_int|2048
 )paren
 suffix:semicolon
-macro_line|#if 0
+macro_line|#if defined( SJCD_TRACE )
 id|printk
 c_func
 (paren
@@ -4869,7 +5076,7 @@ id|SJCD_BUF_SIZ
 )paren
 )paren
 (brace
-macro_line|#if 0
+macro_line|#if defined( SJCD_TRACE )
 id|printk
 c_func
 (paren
@@ -4886,15 +5093,17 @@ id|ReSwitch
 suffix:semicolon
 )brace
 )brace
+multiline_comment|/*&n;       * Now we should turn around rather than wait for while.&n;       */
 r_goto
 id|sjcd_s_data
 suffix:semicolon
-multiline_comment|/* sjcd_transfer_timeout = 500; */
 )brace
+macro_line|#if defined( SJCD_GATHER_STAT )
 r_else
 id|statistic.data_ticks
 op_increment
 suffix:semicolon
+macro_line|#endif
 r_break
 suffix:semicolon
 )brace
@@ -4920,9 +5129,11 @@ id|sjcd_transfer_timeout
 op_assign
 l_int|500
 suffix:semicolon
+macro_line|#if defined( SJCD_GATHER_STAT )
 id|statistic.stop_ticks
 op_increment
 suffix:semicolon
+macro_line|#endif
 r_break
 suffix:semicolon
 )brace
@@ -4945,10 +5156,8 @@ c_func
 l_int|1
 )paren
 )paren
-op_amp
-l_int|0x0B
 suffix:semicolon
-macro_line|#if 0
+macro_line|#if defined( SJCD_TRACE )
 id|printk
 c_func
 (paren
@@ -4961,15 +5170,17 @@ macro_line|#endif
 r_if
 c_cond
 (paren
+id|SJCD_DATA_AVAILABLE
+c_func
+(paren
 id|stat
-op_eq
-l_int|0x0A
+)paren
 )paren
 (brace
 r_int
 id|i
 suffix:semicolon
-macro_line|#if 0
+macro_line|#if defined( SJCD_TRACE )
 id|printk
 c_func
 (paren
@@ -5013,9 +5224,11 @@ r_else
 r_if
 c_cond
 (paren
+id|SJCD_STATUS_AVAILABLE
+c_func
+(paren
 id|stat
-op_eq
-l_int|0x09
+)paren
 )paren
 (brace
 id|sjcd_load_status
@@ -5073,10 +5286,12 @@ r_goto
 id|ReSwitch
 suffix:semicolon
 )brace
+macro_line|#if defined( SJCD_GATHER_STAT )
 r_else
 id|statistic.stopping_ticks
 op_increment
 suffix:semicolon
+macro_line|#endif
 r_break
 suffix:semicolon
 )brace
@@ -5137,15 +5352,13 @@ r_goto
 id|ReSwitch
 suffix:semicolon
 )brace
-multiline_comment|/*&n;   * Get back in some time.&n;   */
+multiline_comment|/*&n;   * Get back in some time. 1 should be replaced with count variable to&n;   * avoid unnecessary testings.&n;   */
 id|SJCD_SET_TIMER
 c_func
 (paren
 id|sjcd_poll
 comma
-id|HZ
-op_div
-l_int|100
+l_int|1
 )paren
 suffix:semicolon
 )brace
@@ -5160,7 +5373,7 @@ c_func
 r_void
 )paren
 (brace
-macro_line|#if 0
+macro_line|#if defined( SJCD_TRACE )
 id|printk
 c_func
 (paren
@@ -5302,7 +5515,7 @@ id|sjcd_transfer_is_active
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#if 0
+macro_line|#if defined( SJCD_TRACE )
 id|printk
 c_func
 (paren
@@ -5329,7 +5542,7 @@ suffix:semicolon
 macro_line|#endif
 )brace
 )def_block
-multiline_comment|/*&n; * Open the device special file. Check that a disk is in.&n; */
+multiline_comment|/*&n; * Open the device special file. Check disk is in.&n; */
 DECL|function|sjcd_open
 r_int
 (def_block
@@ -5382,11 +5595,18 @@ op_eq
 l_int|0
 )paren
 (brace
-id|sjcd_audio_status
-op_assign
-id|CDROM_AUDIO_NO_STATUS
+r_int
+id|s
+comma
+id|sjcd_open_tries
 suffix:semicolon
+multiline_comment|/* We don&squot;t know that, do we? */
+multiline_comment|/*&n;    sjcd_audio_status = CDROM_AUDIO_NO_STATUS;&n;*/
 id|sjcd_mode
+op_assign
+l_int|0
+suffix:semicolon
+id|sjcd_door_was_open
 op_assign
 l_int|0
 suffix:semicolon
@@ -5399,12 +5619,23 @@ c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;     * Strict status checking.&n;     */
-id|sjcd_get_status
-c_func
-(paren
-)paren
+id|sjcd_status_valid
+op_assign
+l_int|0
 suffix:semicolon
+multiline_comment|/*&n;     * Strict status checking.&n;     */
+r_for
+c_loop
+(paren
+id|sjcd_open_tries
+op_assign
+l_int|4
+suffix:semicolon
+op_decrement
+id|sjcd_open_tries
+suffix:semicolon
+)paren
+(brace
 r_if
 c_cond
 (paren
@@ -5412,7 +5643,20 @@ op_logical_neg
 id|sjcd_status_valid
 )paren
 (brace
-macro_line|#if 0
+id|sjcd_get_status
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|sjcd_status_valid
+)paren
+(brace
+macro_line|#if defined( SJCD_DIAGNOSTIC )
 id|printk
 c_func
 (paren
@@ -5433,11 +5677,58 @@ op_logical_neg
 id|sjcd_media_is_available
 )paren
 (brace
-macro_line|#if 0
+macro_line|#if defined( SJCD_DIAGNOSTIC )
 id|printk
 c_func
 (paren
 l_string|&quot;sjcd: open: no disk in drive&bslash;n&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
+r_if
+c_cond
+(paren
+op_logical_neg
+id|sjcd_door_closed
+)paren
+(brace
+id|sjcd_door_was_open
+op_assign
+l_int|1
+suffix:semicolon
+macro_line|#if defined( SJCD_TRACE )
+id|printk
+c_func
+(paren
+l_string|&quot;sjcd: open: close the tray&bslash;n&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
+id|s
+op_assign
+id|sjcd_tray_close
+c_func
+(paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|s
+OL
+l_int|0
+op_logical_or
+op_logical_neg
+id|sjcd_status_valid
+op_logical_or
+id|sjcd_command_failed
+)paren
+(brace
+macro_line|#if defined( SJCD_DIAGNOSTIC )
+id|printk
+c_func
+(paren
+l_string|&quot;sjcd: open: tray close attempt failed&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -5446,7 +5737,52 @@ op_minus
 id|EIO
 suffix:semicolon
 )brace
-macro_line|#if 0
+r_continue
+suffix:semicolon
+)brace
+r_else
+r_return
+op_minus
+id|EIO
+suffix:semicolon
+)brace
+r_break
+suffix:semicolon
+)brace
+id|s
+op_assign
+id|sjcd_tray_lock
+c_func
+(paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|s
+OL
+l_int|0
+op_logical_or
+op_logical_neg
+id|sjcd_status_valid
+op_logical_or
+id|sjcd_command_failed
+)paren
+(brace
+macro_line|#if defined( SJCD_DIAGNOSTIC )
+id|printk
+c_func
+(paren
+l_string|&quot;sjcd: open: tray lock attempt failed&bslash;n&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
+r_return
+op_minus
+id|EIO
+suffix:semicolon
+)brace
+macro_line|#if defined( SJCD_TRACE )
 id|printk
 c_func
 (paren
@@ -5455,10 +5791,14 @@ l_string|&quot;sjcd: open: done&bslash;n&quot;
 suffix:semicolon
 macro_line|#endif
 )brace
-r_return
+macro_line|#ifdef MODULE
+id|MOD_INC_USE_COUNT
+suffix:semicolon
+macro_line|#endif
 op_increment
 id|sjcd_open_count
-comma
+suffix:semicolon
+r_return
 l_int|0
 suffix:semicolon
 )brace
@@ -5482,12 +5822,19 @@ op_star
 id|file
 )paren
 (brace
-macro_line|#if 0
+r_int
+id|s
+suffix:semicolon
+macro_line|#if defined( SJCD_TRACE )
 id|printk
 c_func
 (paren
 l_string|&quot;sjcd: release&bslash;n&quot;
 )paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef MODULE
+id|MOD_DEC_USE_COUNT
 suffix:semicolon
 macro_line|#endif
 r_if
@@ -5516,6 +5863,71 @@ c_func
 id|inode-&gt;i_rdev
 )paren
 suffix:semicolon
+id|s
+op_assign
+id|sjcd_tray_unlock
+c_func
+(paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|s
+OL
+l_int|0
+op_logical_or
+op_logical_neg
+id|sjcd_status_valid
+op_logical_or
+id|sjcd_command_failed
+)paren
+(brace
+macro_line|#if defined( SJCD_DIAGNOSTIC )
+id|printk
+c_func
+(paren
+l_string|&quot;sjcd: release: tray unlock attempt failed.&bslash;n&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
+)brace
+r_if
+c_cond
+(paren
+id|sjcd_door_was_open
+)paren
+(brace
+id|s
+op_assign
+id|sjcd_tray_open
+c_func
+(paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|s
+OL
+l_int|0
+op_logical_or
+op_logical_neg
+id|sjcd_status_valid
+op_logical_or
+id|sjcd_command_failed
+)paren
+(brace
+macro_line|#if defined( SJCD_DIAGNOSTIC )
+id|printk
+c_func
+(paren
+l_string|&quot;sjcd: release: tray unload attempt failed.&bslash;n&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
+)brace
+)brace
 )brace
 )brace
 )def_block
@@ -5567,7 +5979,7 @@ l_int|NULL
 multiline_comment|/* revalidate */
 )brace
 suffix:semicolon
-multiline_comment|/*&n; * Following stuff is intended for initialization of the cdrom. It&n; * first looks for presence of device. If the device is present, it&n; * will be reset. Then read the version of the drive and load status.&n; */
+multiline_comment|/*&n; * Following stuff is intended for initialization of the cdrom. It&n; * first looks for presence of device. If the device is present, it&n; * will be reset. Then read the version of the drive and load status.&n; * The version is two BCD-coded bytes.&n; */
 r_static
 r_struct
 (brace
@@ -5624,7 +6036,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;ISP16 cdrom interface (%s optional IDE) detected.&bslash;n&quot;
+l_string|&quot;ISP16 cdrom interface (with OPTi 82C92%s chip) detected.&bslash;n&quot;
 comma
 (paren
 id|isp16_type
@@ -5633,9 +6045,20 @@ l_int|2
 )paren
 ques
 c_cond
-l_string|&quot;with&quot;
+l_string|&quot;9&quot;
 suffix:colon
-l_string|&quot;without&quot;
+l_string|&quot;8&quot;
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;ISP16 sound configuration.&bslash;n&quot;
+)paren
+suffix:semicolon
+id|isp16_sound_config
+c_func
+(paren
 )paren
 suffix:semicolon
 id|expected_drive
@@ -5652,7 +6075,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|isp16_config
+id|isp16_cdi_config
 c_func
 (paren
 id|sjcd_port
@@ -5675,10 +6098,22 @@ l_string|&quot;ISP16 cdrom interface has not been properly configured.&bslash;n&
 suffix:semicolon
 r_return
 op_minus
-l_int|1
+id|EIO
 suffix:semicolon
 )brace
 )brace
+macro_line|#if defined( SJCD_TRACE )
+id|printk
+c_func
+(paren
+l_string|&quot;sjcd=0x%x,%d: &quot;
+comma
+id|sjcd_port
+comma
+id|sjcd_irq
+)paren
+suffix:semicolon
+macro_line|#endif  
 r_if
 c_cond
 (paren
@@ -5706,7 +6141,7 @@ id|MAJOR_NR
 suffix:semicolon
 r_return
 op_minus
-l_int|1
+id|EIO
 suffix:semicolon
 )brace
 id|blk_dev
@@ -5747,50 +6182,83 @@ id|sjcd_port
 suffix:semicolon
 r_return
 op_minus
-l_int|1
+id|EIO
 suffix:semicolon
 )brace
+multiline_comment|/*&n;   * Check for card. Since we are booting now, we can&squot;t use standard&n;   * wait algorithm.&n;   */
 id|printk
 c_func
 (paren
-l_string|&quot;Sanyo CDR-H94A:&quot;
+l_string|&quot;Sanyo: Resetting: &quot;
 )paren
 suffix:semicolon
-multiline_comment|/*&n;   * Check for card.&n;   */
+id|sjcd_send_cmd
+c_func
+(paren
+id|SCMD_RESET
+)paren
+suffix:semicolon
 r_for
 c_loop
 (paren
 id|i
 op_assign
-l_int|100
+l_int|1000
 suffix:semicolon
 id|i
+op_decrement
 OG
 l_int|0
+op_logical_and
+op_logical_neg
+id|sjcd_status_valid
 suffix:semicolon
-op_decrement
-id|i
 )paren
+(brace
+r_int
+r_int
+id|timer
+suffix:semicolon
+multiline_comment|/*&n;     * Wait 10ms approx.&n;     */
+r_for
+c_loop
+(paren
+id|timer
+op_assign
+id|jiffies
+suffix:semicolon
+id|jiffies
+op_le
+id|timer
+suffix:semicolon
+)paren
+(brace
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
-op_logical_neg
 (paren
-id|inb
+id|i
+op_mod
+l_int|100
+)paren
+op_eq
+l_int|0
+)paren
+id|printk
 c_func
 (paren
-id|SJCDPORT
+l_string|&quot;.&quot;
+)paren
+suffix:semicolon
+(paren
+r_void
+)paren
+id|sjcd_check_status
 c_func
 (paren
-l_int|1
 )paren
-)paren
-op_amp
-l_int|0x04
-)paren
-)paren
-(brace
-r_break
 suffix:semicolon
 )brace
 r_if
@@ -5799,57 +6267,96 @@ c_cond
 id|i
 op_eq
 l_int|0
+op_logical_or
+id|sjcd_command_failed
 )paren
 (brace
 id|printk
 c_func
 (paren
-l_string|&quot; No device at 0x%x found.&bslash;n&quot;
-comma
-id|sjcd_port
+l_string|&quot; reset failed, no drive found.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
 op_minus
-l_int|1
+id|EIO
 suffix:semicolon
 )brace
-id|sjcd_send_cmd
+r_else
+id|printk
 c_func
 (paren
-id|SCMD_RESET
+l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
-r_while
-c_loop
-(paren
-op_logical_neg
-id|sjcd_status_valid
-)paren
-(brace
-(paren
-r_void
-)paren
-id|sjcd_check_status
-c_func
-(paren
-)paren
-suffix:semicolon
-)brace
 multiline_comment|/*&n;   * Get and print out cdrom version.&n;   */
+id|printk
+c_func
+(paren
+l_string|&quot;Sanyo: Getting version: &quot;
+)paren
+suffix:semicolon
 id|sjcd_send_cmd
 c_func
 (paren
 id|SCMD_GET_VERSION
 )paren
 suffix:semicolon
-r_while
+r_for
 c_loop
 (paren
+id|i
+op_assign
+l_int|1000
+suffix:semicolon
+id|i
+OG
+l_int|0
+op_logical_and
 op_logical_neg
 id|sjcd_status_valid
+suffix:semicolon
+op_decrement
+id|i
 )paren
 (brace
+r_int
+r_int
+id|timer
+suffix:semicolon
+multiline_comment|/*&n;     * Wait 10ms approx.&n;     */
+r_for
+c_loop
+(paren
+id|timer
+op_assign
+id|jiffies
+suffix:semicolon
+id|jiffies
+op_le
+id|timer
+suffix:semicolon
+)paren
+(brace
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+(paren
+id|i
+op_mod
+l_int|100
+)paren
+op_eq
+l_int|0
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;.&quot;
+)paren
+suffix:semicolon
 (paren
 r_void
 )paren
@@ -5857,6 +6364,27 @@ id|sjcd_check_status
 c_func
 (paren
 )paren
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|i
+op_eq
+l_int|0
+op_logical_or
+id|sjcd_command_failed
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot; get version failed, no drive found.&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|EIO
 suffix:semicolon
 )brace
 r_if
@@ -5880,7 +6408,7 @@ l_int|0
 id|printk
 c_func
 (paren
-l_string|&quot; Version %1x.%02x.&quot;
+l_string|&quot; %1x.%02x&bslash;n&quot;
 comma
 (paren
 r_int
@@ -5899,12 +6427,12 @@ r_else
 id|printk
 c_func
 (paren
-l_string|&quot; Read version failed.&bslash;n&quot;
+l_string|&quot; read version failed, no drive found.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
 op_minus
-l_int|1
+id|EIO
 suffix:semicolon
 )brace
 multiline_comment|/*&n;   * Check and print out the tray state. (if it is needed?).&n;   */
@@ -5915,19 +6443,73 @@ op_logical_neg
 id|sjcd_status_valid
 )paren
 (brace
+id|printk
+c_func
+(paren
+l_string|&quot;Sanyo: Getting status: &quot;
+)paren
+suffix:semicolon
 id|sjcd_send_cmd
 c_func
 (paren
 id|SCMD_GET_STATUS
 )paren
 suffix:semicolon
-r_while
+r_for
 c_loop
 (paren
+id|i
+op_assign
+l_int|1000
+suffix:semicolon
+id|i
+OG
+l_int|0
+op_logical_and
 op_logical_neg
 id|sjcd_status_valid
+suffix:semicolon
+op_decrement
+id|i
 )paren
 (brace
+r_int
+r_int
+id|timer
+suffix:semicolon
+multiline_comment|/*&n;       * Wait 10ms approx.&n;       */
+r_for
+c_loop
+(paren
+id|timer
+op_assign
+id|jiffies
+suffix:semicolon
+id|jiffies
+op_le
+id|timer
+suffix:semicolon
+)paren
+(brace
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+(paren
+id|i
+op_mod
+l_int|100
+)paren
+op_eq
+l_int|0
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;.&quot;
+)paren
+suffix:semicolon
 (paren
 r_void
 )paren
@@ -5937,15 +6519,45 @@ c_func
 )paren
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|i
+op_eq
+l_int|0
+op_logical_or
+id|sjcd_command_failed
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot; get status failed, no drive found.&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|EIO
+suffix:semicolon
+)brace
+r_else
+id|printk
+c_func
+(paren
+l_string|&quot;&bslash;n&quot;
+)paren
+suffix:semicolon
 )brace
 id|printk
 c_func
 (paren
-l_string|&quot; Status: port=0x%x, irq=%d&bslash;n&quot;
+l_string|&quot;SANYO CDR-H94A: Status: port=0x%x, irq=%d, dma=%d.&bslash;n&quot;
 comma
 id|sjcd_port
 comma
 id|sjcd_irq
+comma
+id|sjcd_dma
 )paren
 suffix:semicolon
 id|sjcd_present
@@ -5956,7 +6568,75 @@ l_int|0
 suffix:semicolon
 )brace
 )def_block
-multiline_comment|/*&n; * -- ISP16 detection and configuration&n; *&n; *    Copyright (c) 1995, Eric van der Maarel &lt;maarel@marin.nl&gt;&n; *&n; *    Version 0.5&n; *&n; *    Detect cdrom interface on ISP16 soundcard.&n; *    Configure cdrom interface.&n; *&n; *    Algorithm for the card with no IDE support option taken&n; *    from the CDSETUP.SYS driver for MSDOS,&n; *    by OPTi Computers, version 2.03.&n; *    Algorithm for the IDE supporting ISP16 as communicated&n; *    to me by Vadim Model and Leo Spiekman.&n; *&n; *    Use, modifification or redistribution of this software is&n; *    allowed under the terms of the GPL.&n; *&n; */
+macro_line|#ifdef MODULE
+DECL|function|cleanup_module
+r_void
+(def_block
+id|cleanup_module
+c_func
+(paren
+r_void
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|MOD_IN_USE
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;sjcd: module: in use - can not remove.&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
+r_else
+r_if
+c_cond
+(paren
+(paren
+id|unregister_blkdev
+c_func
+(paren
+id|MAJOR_NR
+comma
+l_string|&quot;sjcd&quot;
+)paren
+op_eq
+op_minus
+id|EINVAL
+)paren
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;sjcd: module: can not unregister device.&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
+id|release_region
+c_func
+(paren
+id|sjcd_port
+comma
+l_int|4
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;sjcd: module: removed.&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
+)brace
+)def_block
+macro_line|#endif
+multiline_comment|/*&n; * -- ISP16 detection and configuration&n; *&n; *    Copyright (c) 1995, Eric van der Maarel &lt;maarel@marin.nl&gt;&n; *&n; *    Version 0.5&n; *&n; *    Detect cdrom interface on ISP16 soundcard.&n; *    Configure cdrom interface.&n; *    Configure sound interface.&n; *&n; *    Algorithm for the card with OPTi 82C928 taken&n; *    from the CDSETUP.SYS driver for MSDOS,&n; *    by OPTi Computers, version 2.03.&n; *    Algorithm for the card with OPTi 82C929 as communicated&n; *    to me by Vadim Model and Leo Spiekman.&n; *&n; *    Use, modifification or redistribution of this software is&n; *    allowed under the terms of the GPL.&n; *&n; */
 DECL|macro|ISP16_IN
 mdefine_line|#define ISP16_IN(p) (outb(isp16_ctrl,ISP16_CTRL_PORT), inb(p))
 DECL|macro|ISP16_OUT
@@ -5975,7 +6655,7 @@ c_cond
 (paren
 op_logical_neg
 (paren
-id|isp16_with_ide__detect
+id|isp16_c929__detect
 c_func
 (paren
 )paren
@@ -5988,7 +6668,7 @@ l_int|2
 suffix:semicolon
 r_else
 r_return
-id|isp16_no_ide__detect
+id|isp16_c928__detect
 c_func
 (paren
 )paren
@@ -5996,8 +6676,8 @@ suffix:semicolon
 )brace
 r_static
 r_int
-DECL|function|isp16_no_ide__detect
-id|isp16_no_ide__detect
+DECL|function|isp16_c928__detect
+id|isp16_c928__detect
 c_func
 (paren
 r_void
@@ -6020,11 +6700,11 @@ l_int|1
 suffix:semicolon
 id|isp16_ctrl
 op_assign
-id|ISP16_NO_IDE__CTRL
+id|ISP16_C928__CTRL
 suffix:semicolon
-id|isp16_enable_cdrom_port
+id|isp16_enable_port
 op_assign
-id|ISP16_NO_IDE__ENABLE_CDROM_PORT
+id|ISP16_C928__ENABLE_PORT
 suffix:semicolon
 multiline_comment|/* read&squot; and write&squot; are a special read and write, respectively */
 multiline_comment|/* read&squot; ISP16_CTRL_PORT, clear last two bits and write&squot; back the result */
@@ -6052,7 +6732,7 @@ op_assign
 id|ISP16_IN
 c_func
 (paren
-id|ISP16_NO_IDE__ENABLE_CDROM_PORT
+id|ISP16_C928__ENABLE_PORT
 )paren
 op_amp
 l_int|0x38
@@ -6135,7 +6815,7 @@ suffix:semicolon
 id|ISP16_OUT
 c_func
 (paren
-id|ISP16_NO_IDE__ENABLE_CDROM_PORT
+id|ISP16_C928__ENABLE_PORT
 comma
 id|enable_cdrom
 )paren
@@ -6197,8 +6877,8 @@ suffix:semicolon
 )brace
 r_static
 r_int
-DECL|function|isp16_with_ide__detect
-id|isp16_with_ide__detect
+DECL|function|isp16_c929__detect
+id|isp16_c929__detect
 c_func
 (paren
 r_void
@@ -6212,11 +6892,11 @@ id|tmp
 suffix:semicolon
 id|isp16_ctrl
 op_assign
-id|ISP16_IDE__CTRL
+id|ISP16_C929__CTRL
 suffix:semicolon
-id|isp16_enable_cdrom_port
+id|isp16_enable_port
 op_assign
-id|ISP16_IDE__ENABLE_CDROM_PORT
+id|ISP16_C929__ENABLE_PORT
 suffix:semicolon
 multiline_comment|/* read&squot; and write&squot; are a special read and write, respectively */
 multiline_comment|/* read&squot; ISP16_CTRL_PORT and save */
@@ -6252,7 +6932,7 @@ id|tmp
 op_ne
 l_int|2
 )paren
-multiline_comment|/* isp16 with ide option not detected */
+multiline_comment|/* isp16 with 82C929 not detected */
 r_return
 op_minus
 l_int|1
@@ -6272,8 +6952,8 @@ suffix:semicolon
 )brace
 r_static
 r_int
-DECL|function|isp16_config
-id|isp16_config
+DECL|function|isp16_cdi_config
+id|isp16_cdi_config
 c_func
 (paren
 r_int
@@ -6629,7 +7309,7 @@ op_or
 id|drive_type
 )paren
 suffix:semicolon
-multiline_comment|/* enable cdrom on interface with ide support */
+multiline_comment|/* enable cdrom on interface with 82C929 chip */
 r_if
 c_cond
 (paren
@@ -6640,7 +7320,7 @@ l_int|1
 id|ISP16_OUT
 c_func
 (paren
-id|isp16_enable_cdrom_port
+id|isp16_enable_port
 comma
 id|ISP16_ENABLE_CDROM
 )paren
@@ -6674,5 +7354,375 @@ suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
+)brace
+DECL|function|isp16_sound_config
+r_static
+r_void
+id|isp16_sound_config
+c_func
+(paren
+r_void
+)paren
+(brace
+r_int
+id|i
+suffix:semicolon
+id|u_char
+id|saved
+suffix:semicolon
+id|saved
+op_assign
+id|ISP16_IN
+c_func
+(paren
+l_int|0xF8D
+)paren
+op_amp
+l_int|0x8F
+suffix:semicolon
+id|ISP16_OUT
+c_func
+(paren
+l_int|0xF8D
+comma
+l_int|0x40
+)paren
+suffix:semicolon
+multiline_comment|/*&n;   * Now we should wait for a while...&n;   */
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|16
+op_star
+l_int|1024
+suffix:semicolon
+id|i
+op_decrement
+suffix:semicolon
+)paren
+(brace
+suffix:semicolon
+)brace
+id|ISP16_OUT
+c_func
+(paren
+l_int|0xF8D
+comma
+id|saved
+)paren
+suffix:semicolon
+id|ISP16_OUT
+c_func
+(paren
+l_int|0xF91
+comma
+l_int|0x1B
+)paren
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|5
+op_star
+l_int|64
+op_star
+l_int|1024
+suffix:semicolon
+id|i
+op_ne
+l_int|0
+suffix:semicolon
+id|i
+op_decrement
+)paren
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|inb
+c_func
+(paren
+l_int|0x534
+)paren
+op_amp
+l_int|0x80
+)paren
+)paren
+(brace
+r_break
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|i
+OG
+l_int|0
+)paren
+(brace
+id|saved
+op_assign
+(paren
+id|inb
+c_func
+(paren
+l_int|0x534
+)paren
+op_amp
+l_int|0xE0
+)paren
+op_or
+l_int|0x0A
+suffix:semicolon
+id|outb
+c_func
+(paren
+id|saved
+comma
+l_int|0x534
+)paren
+suffix:semicolon
+id|special_mask
+op_assign
+(paren
+id|inb
+c_func
+(paren
+l_int|0x535
+)paren
+op_rshift
+l_int|4
+)paren
+op_amp
+l_int|0x08
+suffix:semicolon
+id|saved
+op_assign
+(paren
+id|inb
+c_func
+(paren
+l_int|0x534
+)paren
+op_amp
+l_int|0xE0
+)paren
+op_or
+l_int|0x0C
+suffix:semicolon
+id|outb
+c_func
+(paren
+id|saved
+comma
+l_int|0x534
+)paren
+suffix:semicolon
+r_switch
+c_cond
+(paren
+id|inb
+c_func
+(paren
+l_int|0x535
+)paren
+)paren
+(brace
+r_case
+l_int|0x09
+suffix:colon
+r_case
+l_int|0x0A
+suffix:colon
+id|special_mask
+op_or_assign
+l_int|0x05
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|0x8A
+suffix:colon
+id|special_mask
+op_assign
+l_int|0x0F
+suffix:semicolon
+r_break
+suffix:semicolon
+r_default
+suffix:colon
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+)brace
+)brace
+r_if
+c_cond
+(paren
+id|i
+op_eq
+l_int|0
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;Strange MediaMagic, but&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;Conf:&quot;
+)paren
+suffix:semicolon
+id|saved
+op_assign
+id|inb
+c_func
+(paren
+l_int|0x534
+)paren
+op_amp
+l_int|0xE0
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+l_int|16
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
+id|outb
+c_func
+(paren
+l_int|0x20
+op_or
+(paren
+id|u_char
+)paren
+id|i
+comma
+l_int|0x534
+)paren
+suffix:semicolon
+id|outb
+c_func
+(paren
+id|defaults
+(braket
+id|i
+)braket
+comma
+l_int|0x535
+)paren
+suffix:semicolon
+)brace
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+l_int|16
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
+id|outb
+c_func
+(paren
+l_int|0x20
+op_or
+(paren
+id|u_char
+)paren
+id|i
+comma
+l_int|0x534
+)paren
+suffix:semicolon
+id|saved
+op_assign
+id|inb
+c_func
+(paren
+l_int|0x535
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot; %02X&quot;
+comma
+id|saved
+)paren
+suffix:semicolon
+)brace
+id|printk
+c_func
+(paren
+l_string|&quot;&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
+id|ISP16_OUT
+c_func
+(paren
+l_int|0xF91
+comma
+l_int|0xA0
+op_or
+id|special_mask
+)paren
+suffix:semicolon
+multiline_comment|/*&n;   * The following have no explaination yet.&n;   */
+id|ISP16_OUT
+c_func
+(paren
+l_int|0xF90
+comma
+l_int|0xA2
+)paren
+suffix:semicolon
+id|ISP16_OUT
+c_func
+(paren
+l_int|0xF92
+comma
+l_int|0x03
+)paren
+suffix:semicolon
+multiline_comment|/*&n;   * Turn general sound on and set total volume.&n;   */
+id|ISP16_OUT
+c_func
+(paren
+l_int|0xF93
+comma
+l_int|0x0A
+)paren
+suffix:semicolon
+multiline_comment|/*&n;  outb( 0x04, 0x224 );&n;  saved = inb( 0x225 );&n;  outb( 0x04, 0x224 );&n;  outb( saved, 0x225 );&n;*/
 )brace
 eof

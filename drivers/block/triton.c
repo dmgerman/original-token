@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/drivers/block/triton.c&t;Version 1.01  Aug 28, 1995&n; *&n; *  Copyright (c) 1995  Mark Lord&n; *  May be copied or modified under the terms of the GNU General Public License&n; */
+multiline_comment|/*&n; *  linux/drivers/block/triton.c&t;Version 1.02  Oct 13, 1995&n; *&n; *  Copyright (c) 1995  Mark Lord&n; *  May be copied or modified under the terms of the GNU General Public License&n; */
 multiline_comment|/*&n; * This module provides support for the Bus Master IDE DMA function&n; * of the Intel PCI Triton chipset (82371FB).&n; *&n; * DMA is currently supported only for hard disk drives (not cdroms).&n; *&n; * Support for cdroms will likely be added at a later date,&n; * after broader experience has been obtained with hard disks.&n; *&n; * Up to four drives may be enabled for DMA, and the Triton chipset will&n; * (hopefully) arbitrate the PCI bus among them.  Note that the 82371FB chip&n; * provides a single &quot;line buffer&quot; for the BM IDE function, so performance of&n; * multiple (two) drives doing DMA simultaneously will suffer somewhat,&n; * as they contest for that resource bottleneck.  This is handled transparently&n; * inside the 82371FB chip.&n; *&n; * By default, DMA support is prepared for use, but is currently enabled only&n; * for drives which support multi-word DMA mode2 (mword2), or which are&n; * recognized as &quot;good&quot; (see table below).  Drives with only mode0 or mode1&n; * (single or multi) DMA should also work with this chipset/driver (eg. MC2112A)&n; * but are not enabled by default.  Use &quot;hdparm -i&quot; to view modes supported&n; * by a given drive.&n; *&n; * The hdparm-2.4 (or later) utility can be used for manually enabling/disabling&n; * DMA support, but must be (re-)compiled against this kernel version or later.&n; *&n; * To enable DMA, use &quot;hdparm -d1 /dev/hd?&quot; on a per-drive basis after booting.&n; * If problems arise, ide.c will disable DMA operation after a few retries.&n; * This error recovery mechanism works and has been extremely well exercised.&n; *&n; * IDE drives, depending on their vintage, may support several different modes&n; * of DMA operation.  The boot-time modes are indicated with a &quot;*&quot; in&n; * the &quot;hdparm -i&quot; listing, and can be changed with *knowledgeable* use of&n; * the &quot;hdparm -X&quot; feature.  There is seldom a need to do this, as drives&n; * normally power-up with their &quot;best&quot; PIO/DMA modes enabled.&n; *&n; * Testing was done with an ASUS P55TP4XE/100 system and the following drives:&n; *&n; *   Quantum Fireball 1080A (1Gig w/83kB buffer), DMA mode2, PIO mode4.&n; *&t;- DMA mode2 works well (7.4MB/sec), despite the tiny on-drive buffer.&n; *&t;- This drive also does PIO mode4, at about the same speed as DMA mode2.&n; *&t;  An awesome drive for the price!&n; *&n; *   Fujitsu M1606TA (1Gig w/256kB buffer), DMA mode2, PIO mode4.&n; *&t;- DMA mode2 gives horrible performance (1.6MB/sec), despite the good&n; *&t;  size of the on-drive buffer and a boasted 10ms average access time.&n; *&t;- PIO mode4 was better, but peaked at a mere 4.5MB/sec.&n; *&n; *   Micropolis MC2112A (1Gig w/508kB buffer), drive pre-dates EIDE and ATA2.&n; *&t;- DMA works fine (2.2MB/sec), probably due to the large on-drive buffer.&n; *&t;- This older drive can also be tweaked for fastPIO (3.7MB/sec) by using&n; *&t;  maximum clock settings (5,4) and setting all flags except prefetch.&n; *&n; *   Western Digital AC31000H (1Gig w/128kB buffer), DMA mode1, PIO mode3.&n; *&t;- DMA does not work reliably.  The drive appears to be somewhat tardy&n; *&t;  in deasserting DMARQ at the end of a sector.  This is evident in&n; *&t;  the observation that WRITEs work most of the time, depending on&n; *&t;  cache-buffer occupancy, but multi-sector reads seldom work.&n; *&n; * Drives like the AC31000H could likely be made to work if all DMA were done&n; * one sector at a time, but that would likely negate any advantage over PIO.&n; *&n; * If you have any drive models to add, email your results to:  mlord@bnr.ca&n; * Keep an eye on /var/adm/messages for &quot;DMA disabled&quot; messages.&n; */
 DECL|macro|_TRITON_C
 mdefine_line|#define _TRITON_C
@@ -33,9 +33,11 @@ op_assign
 l_string|&quot;Micropolis 2112A&quot;
 )brace
 suffix:semicolon
-multiline_comment|/*&n; * Our Physical Region Descriptor (PRD) table should be large enough&n; * to handle the biggest I/O request we are likely to see.  Since requests&n; * can have no more than 256 sectors, and since the typical blocksize is&n; * two sectors, we can get by with a limit of 128 entries here for the&n; * usual worst case.  Most requests seem to include some contiguous blocks,&n; * further reducing the number of table entries required.&n; *&n; * Note that the driver reverts to PIO mode for individual requests that exceed&n; * this limit (possible with 512 byte blocksizes, eg. MSDOS f/s), so handling&n; * 100% of all crazy scenarios here is not necessary.&n; */
+multiline_comment|/*&n; * Our Physical Region Descriptor (PRD) table should be large enough&n; * to handle the biggest I/O request we are likely to see.  Since requests&n; * can have no more than 256 sectors, and since the typical blocksize is&n; * two sectors, we can get by with a limit of 128 entries here for the&n; * usual worst case.  Most requests seem to include some contiguous blocks,&n; * further reducing the number of table entries required.&n; *&n; * Note that the driver reverts to PIO mode for individual requests that exceed&n; * this limit (possible with 512 byte blocksizes, eg. MSDOS f/s), so handling&n; * 100% of all crazy scenarios here is not necessary.&n; *&n; * As it turns out, though, we must allocate a full 4KB page for this,&n; * so the two PRD tables (ide0 &amp; ide1) will each get half of that,&n; * allowing each to have about 256 entries (8 bytes each) from this.&n; */
+DECL|macro|PRD_BYTES
+mdefine_line|#define PRD_BYTES&t;8
 DECL|macro|PRD_ENTRIES
-mdefine_line|#define PRD_ENTRIES&t;128&t;/* max memory area count per DMA */
+mdefine_line|#define PRD_ENTRIES&t;(PAGE_SIZE / (2 * PRD_BYTES))
 multiline_comment|/*&n; * dma_intr() is the handler for disk read/write DMA interrupts&n; */
 DECL|function|dma_intr
 r_static
@@ -891,6 +893,13 @@ r_int
 r_int
 id|timings
 suffix:semicolon
+r_int
+r_char
+op_star
+id|dmatable
+op_assign
+l_int|NULL
+suffix:semicolon
 r_extern
 id|ide_hwif_t
 id|ide_hwifs
@@ -1186,11 +1195,6 @@ suffix:semicolon
 )brace
 r_else
 (brace
-r_int
-r_int
-op_star
-id|table
-suffix:semicolon
 id|request_region
 c_func
 (paren
@@ -1205,7 +1209,16 @@ id|hwif-&gt;dma_base
 op_assign
 id|base
 suffix:semicolon
-id|table
+r_if
+c_cond
+(paren
+id|dmatable
+op_eq
+l_int|NULL
+)paren
+(brace
+multiline_comment|/*&n;&t;&t;&t;&t; * Since we know we are on a PCI bus, we could&n;&t;&t;&t;&t; * actually use __get_free_pages() here instead&n;&t;&t;&t;&t; * of __get_dma_pages() -- no ISA limitations.&n;&t;&t;&t;&t; */
+id|dmatable
 op_assign
 (paren
 r_void
@@ -1219,9 +1232,31 @@ comma
 l_int|0
 )paren
 suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|dmatable
+op_ne
+l_int|NULL
+)paren
+(brace
 id|hwif-&gt;dmatable
 op_assign
-id|table
+(paren
+r_int
+r_int
+op_star
+)paren
+id|dmatable
+suffix:semicolon
+id|dmatable
+op_add_assign
+(paren
+id|PRD_ENTRIES
+op_star
+id|PRD_BYTES
+)paren
 suffix:semicolon
 id|outl
 c_func
@@ -1229,7 +1264,7 @@ c_func
 id|virt_to_bus
 c_func
 (paren
-id|table
+id|hwif-&gt;dmatable
 )paren
 comma
 id|base
@@ -1242,6 +1277,7 @@ op_assign
 op_amp
 id|triton_dmaproc
 suffix:semicolon
+)brace
 )brace
 id|printk
 c_func

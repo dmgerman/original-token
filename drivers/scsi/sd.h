@@ -35,6 +35,18 @@ id|Scsi_Device
 op_star
 id|device
 suffix:semicolon
+DECL|member|ready
+r_int
+r_char
+id|ready
+suffix:semicolon
+multiline_comment|/* flag ready for FLOPTICAL */
+DECL|member|write_prot
+r_int
+r_char
+id|write_prot
+suffix:semicolon
+multiline_comment|/* flag write_protect for rmvable dev */
 DECL|member|sector_bit_size
 r_int
 r_char

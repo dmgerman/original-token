@@ -6,6 +6,7 @@ macro_line|#include &lt;linux/kernel_stat.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
+macro_line|#include &lt;linux/random.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
@@ -1576,7 +1577,6 @@ id|irq_action
 op_plus
 id|irq
 suffix:semicolon
-macro_line|#ifdef CONFIG_RANDOM
 r_if
 c_cond
 (paren
@@ -1590,7 +1590,6 @@ c_func
 id|irq
 )paren
 suffix:semicolon
-macro_line|#endif
 multiline_comment|/* quick interrupts get executed with no extra overhead */
 r_if
 c_cond

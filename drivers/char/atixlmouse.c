@@ -23,6 +23,7 @@ macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/mouse.h&gt;
+macro_line|#include &lt;linux/random.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -201,6 +202,24 @@ op_ne
 id|mouse.latch_buttons
 )paren
 (brace
+id|add_mouse_randomness
+c_func
+(paren
+(paren
+id|buttons
+op_lshift
+l_int|16
+)paren
+op_plus
+(paren
+id|dy
+op_lshift
+l_int|8
+)paren
+op_plus
+id|dx
+)paren
+suffix:semicolon
 id|mouse.latch_buttons
 op_or_assign
 id|buttons

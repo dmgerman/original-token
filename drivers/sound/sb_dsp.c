@@ -3656,6 +3656,28 @@ l_int|0x0f
 )paren
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|snd_set_irq_handler
+(paren
+id|sbc_irq
+comma
+id|sbintr
+comma
+l_string|&quot;SoundBlaster&quot;
+comma
+id|sb_osp
+)paren
+OL
+l_int|0
+)paren
+id|printk
+(paren
+l_string|&quot;sb_dsp: Can&squot;t allocate IRQ&bslash;n&quot;
+)paren
+suffix:semicolon
+suffix:semicolon
 macro_line|#ifndef EXCLUDE_SBPRO
 r_if
 c_cond
@@ -3957,28 +3979,6 @@ suffix:semicolon
 )brace
 )brace
 macro_line|#endif
-r_if
-c_cond
-(paren
-id|snd_set_irq_handler
-(paren
-id|sbc_irq
-comma
-id|sbintr
-comma
-l_string|&quot;SoundBlaster&quot;
-comma
-id|sb_osp
-)paren
-OL
-l_int|0
-)paren
-id|printk
-(paren
-l_string|&quot;sb_dsp: Can&squot;t allocate IRQ&bslash;n&quot;
-)paren
-suffix:semicolon
-suffix:semicolon
 )brace
 r_else
 id|printk

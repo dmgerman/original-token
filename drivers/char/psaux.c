@@ -17,6 +17,7 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/mouse.h&gt;
+macro_line|#include &lt;linux/random.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -545,6 +546,9 @@ id|AUX_OBUF_FULL
 )paren
 r_return
 suffix:semicolon
+id|add_mouse_randomness
+c_func
+(paren
 id|queue-&gt;buf
 (braket
 id|head
@@ -554,6 +558,7 @@ id|inb
 c_func
 (paren
 id|AUX_INPUT_PORT
+)paren
 )paren
 suffix:semicolon
 r_if
@@ -640,6 +645,9 @@ op_minus
 l_int|1
 )paren
 suffix:semicolon
+id|add_mouse_randomness
+c_func
+(paren
 id|queue-&gt;buf
 (braket
 id|head
@@ -649,6 +657,7 @@ id|inb
 c_func
 (paren
 id|qp_data
+)paren
 )paren
 suffix:semicolon
 r_if

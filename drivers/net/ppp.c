@@ -10966,13 +10966,10 @@ id|SC_DEBUG
 id|printk
 (paren
 id|KERN_DEBUG
-l_string|&quot;ppp_dev_xmit [%s]: skb %X&bslash;n&quot;
+l_string|&quot;ppp_dev_xmit [%s]: skb %p&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma
-(paren
-r_int
-)paren
 id|skb
 )paren
 suffix:semicolon

@@ -2056,6 +2056,25 @@ id|q
 op_assign
 id|mp-&gt;name
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_star
+id|q
+op_eq
+l_char|&squot;&bslash;0&squot;
+op_logical_and
+id|mp-&gt;size
+op_eq
+l_int|0
+op_logical_and
+id|mp-&gt;ref
+op_eq
+l_int|NULL
+)paren
+r_continue
+suffix:semicolon
+multiline_comment|/* don&squot;t list modules for kernel syms */
 id|i
 op_assign
 l_int|20

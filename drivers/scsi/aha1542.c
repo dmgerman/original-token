@@ -6046,6 +6046,8 @@ multiline_comment|/* &n;&t; * This does a scsi reset for all devices on the bus.
 id|outb
 c_func
 (paren
+id|HRST
+op_or
 id|SCRST
 comma
 id|CONTROL
@@ -6053,6 +6055,42 @@ c_func
 (paren
 id|SCpnt-&gt;host-&gt;io_port
 )paren
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t; * Wait for the thing to settle down a bit.  Unfortunately&n;&t; * this is going to basically lock up the machine while we&n;&t; * wait for this to complete.  To be 100% correct, we need to&n;&t; * check for timeout, and if we are doing something like this&n;&t; * we are pretty desperate anyways.&n;&t; */
+id|WAIT
+c_func
+(paren
+id|STATUS
+c_func
+(paren
+id|SCpnt-&gt;host-&gt;io_port
+)paren
+comma
+id|STATMASK
+comma
+id|INIT
+op_or
+id|IDLE
+comma
+id|STST
+op_or
+id|DIAGF
+op_or
+id|INVDCMD
+op_or
+id|DF
+op_or
+id|CDF
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t; * We need to do this too before the 1542 can interact with&n;&t; * us again.&n;&t; */
+id|setup_mailboxes
+c_func
+(paren
+id|SCpnt-&gt;host-&gt;io_port
+comma
+id|SCpnt-&gt;host
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * Now try and pick up the pieces.  Restart all commands&n;&t; * that are currently active on the bus, and reset all of&n;&t; * the datastructures.  We have some time to kill while&n;&t; * things settle down, so print a nice message.&n;&t; */
@@ -6180,6 +6218,27 @@ multiline_comment|/*&n;&t; * Now tell the mid-level code what we did here.  Sinc
 r_return
 (paren
 id|SCSI_RESET_SUCCESS
+op_or
+id|SCSI_RESET_BUS_RESET
+)paren
+suffix:semicolon
+id|fail
+suffix:colon
+id|printk
+c_func
+(paren
+l_string|&quot;aha1542.c: Unable to perform hard reset.&bslash;n&quot;
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;Power cycle machine to reset&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+(paren
+id|SCSI_RESET_ERROR
 op_or
 id|SCSI_RESET_BUS_RESET
 )paren

@@ -921,7 +921,6 @@ id|irq
 )braket
 op_increment
 suffix:semicolon
-macro_line|#ifdef CONFIG_RANDOM
 r_if
 c_cond
 (paren
@@ -935,7 +934,6 @@ c_func
 id|irq
 )paren
 suffix:semicolon
-macro_line|#endif
 id|action
 op_member_access_from_pointer
 id|handler
@@ -1009,7 +1007,6 @@ id|irq
 )braket
 op_increment
 suffix:semicolon
-macro_line|#ifdef CONFIG_RANDOM
 r_if
 c_cond
 (paren
@@ -1023,7 +1020,6 @@ c_func
 id|irq
 )paren
 suffix:semicolon
-macro_line|#endif
 id|action
 op_member_access_from_pointer
 id|handler
@@ -1113,6 +1109,19 @@ id|handler
 r_return
 op_minus
 id|EINVAL
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|irqflags
+op_amp
+id|SA_SAMPLE_RANDOM
+)paren
+id|rand_initialize_irq
+c_func
+(paren
+id|irq
+)paren
 suffix:semicolon
 id|save_flags
 c_func

@@ -1046,8 +1046,6 @@ DECL|macro|zero_lseek
 mdefine_line|#define zero_lseek&t;null_lseek
 DECL|macro|write_zero
 mdefine_line|#define write_zero&t;write_null
-DECL|macro|write_random
-mdefine_line|#define write_random&t;write_null
 DECL|variable|ram_fops
 r_static
 r_struct
@@ -1284,7 +1282,6 @@ l_int|NULL
 multiline_comment|/* no special release code */
 )brace
 suffix:semicolon
-macro_line|#ifdef CONFIG_RANDOM
 DECL|variable|random_fops
 r_static
 r_struct
@@ -1300,16 +1297,15 @@ id|write_random
 comma
 l_int|NULL
 comma
-multiline_comment|/* full_readdir */
+multiline_comment|/* random_readdir */
 l_int|NULL
 comma
-multiline_comment|/* full_select */
+multiline_comment|/* random_select */
+id|random_ioctl
+comma
 l_int|NULL
 comma
-multiline_comment|/* full_ioctl */
-l_int|NULL
-comma
-multiline_comment|/* full_mmap */
+multiline_comment|/* random_mmap */
 l_int|NULL
 comma
 multiline_comment|/* no special open code */
@@ -1332,16 +1328,15 @@ id|write_random
 comma
 l_int|NULL
 comma
-multiline_comment|/* full_readdir */
+multiline_comment|/* urandom_readdir */
 l_int|NULL
 comma
-multiline_comment|/* full_select */
+multiline_comment|/* urandom_select */
+id|random_ioctl
+comma
 l_int|NULL
 comma
-multiline_comment|/* full_ioctl */
-l_int|NULL
-comma
-multiline_comment|/* full_mmap */
+multiline_comment|/* urandom_mmap */
 l_int|NULL
 comma
 multiline_comment|/* no special open code */
@@ -1349,7 +1344,6 @@ l_int|NULL
 multiline_comment|/* no special release code */
 )brace
 suffix:semicolon
-macro_line|#endif
 DECL|function|memory_open
 r_static
 r_int
@@ -1447,7 +1441,6 @@ id|full_fops
 suffix:semicolon
 r_break
 suffix:semicolon
-macro_line|#ifdef CONFIG_RANDOM
 r_case
 l_int|8
 suffix:colon
@@ -1468,7 +1461,6 @@ id|urandom_fops
 suffix:semicolon
 r_break
 suffix:semicolon
-macro_line|#endif
 r_default
 suffix:colon
 r_return
@@ -1566,13 +1558,11 @@ comma
 id|MEM_MAJOR
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_RANDOM
 id|rand_initialize
 c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#endif
 id|tty_init
 c_func
 (paren

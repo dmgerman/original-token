@@ -1538,14 +1538,12 @@ r_goto
 id|end_kbd_intr
 suffix:semicolon
 )brace
-macro_line|#ifdef CONFIG_RANDOM
 id|add_keyboard_randomness
 c_func
 (paren
 id|scancode
 )paren
 suffix:semicolon
-macro_line|#endif
 id|tty
 op_assign
 id|ttytab
