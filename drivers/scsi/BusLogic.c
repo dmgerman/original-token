@@ -1,8 +1,8 @@
 multiline_comment|/*&n;&n;  Linux Driver for BusLogic MultiMaster SCSI Host Adapters&n;&n;  Copyright 1995 by Leonard N. Zubkoff &lt;lnz@dandelion.com&gt;&n;&n;  This program is free software; you may redistribute and/or modify it under&n;  the terms of the GNU General Public License Version 2 as published by the&n;  Free Software Foundation, provided that none of the source code or runtime&n;  copyright notices are removed or modified.&n;&n;  This program is distributed in the hope that it will be useful, but&n;  WITHOUT ANY WARRANTY, without even the implied warranty of MERCHANTABILITY&n;  or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License&n;  for complete details.&n;&n;  The author respectfully requests that any modifications to this software be&n;  sent directly to him for evaluation and testing.&n;&n;  Special thanks to Wayne Yen and Alex Win of BusLogic, whose advice has been&n;  invaluable, to David Gentzel, for writing the original Linux BusLogic driver,&n;  and to Paul Gortmaker, for being such a dedicated test site.&n;&n;*/
 DECL|macro|BusLogic_DriverVersion
-mdefine_line|#define BusLogic_DriverVersion&t;&t;&quot;2.0.3&quot;
+mdefine_line|#define BusLogic_DriverVersion&t;&t;&quot;2.0.4&quot;
 DECL|macro|BusLogic_DriverDate
-mdefine_line|#define BusLogic_DriverDate&t;&t;&quot;17 May 1996&quot;
+mdefine_line|#define BusLogic_DriverDate&t;&t;&quot;5 June 1996&quot;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -105,13 +105,13 @@ op_assign
 l_int|0
 )brace
 suffix:semicolon
-multiline_comment|/*&n;  BusLogic_IRQ_UsageCount stores a count of the number of Host Adapters using&n;  a given IRQ Channel, which is necessary to support PCI, EISA, or MCA shared&n;  interrupts.  Only IRQ Channels 9, 10, 11, 12, 14, and 15 are supported by&n;  BusLogic Host Adapters.&n;*/
+multiline_comment|/*&n;  BusLogic_IRQ_UsageCount stores a count of the number of Host Adapters using&n;  a given IRQ Channel, which is necessary to support PCI, EISA, or MCA shared&n;  interrupts.&n;*/
 r_static
 r_int
 DECL|variable|BusLogic_IRQ_UsageCount
 id|BusLogic_IRQ_UsageCount
 (braket
-l_int|7
+id|NR_IRQS
 )braket
 op_assign
 (brace
@@ -963,12 +963,11 @@ comma
 id|InterruptRegister
 suffix:semicolon
 r_int
-id|TimeoutCounter
-suffix:semicolon
-r_int
 id|ReplyBytes
 op_assign
 l_int|0
+comma
+id|TimeoutCounter
 suffix:semicolon
 multiline_comment|/*&n;    Clear out the Reply Data if provided.&n;  */
 r_if
@@ -2951,210 +2950,7 @@ comma
 l_string|&quot;INQUIRE FIRMWARE 3RD DIGIT&quot;
 )paren
 suffix:semicolon
-multiline_comment|/*&n;    Issue the Inquire Firmware Version Letter command.&n;  */
-id|FirmwareVersionLetter
-op_assign
-l_char|&squot;&bslash;0&squot;
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|BoardID.FirmwareVersion1stDigit
-OG
-l_char|&squot;3&squot;
-op_logical_or
-(paren
-id|BoardID.FirmwareVersion1stDigit
-op_eq
-l_char|&squot;3&squot;
-op_logical_and
-id|BoardID.FirmwareVersion2ndDigit
-op_ge
-l_char|&squot;3&squot;
-)paren
-)paren
-r_if
-c_cond
-(paren
-id|BusLogic_Command
-c_func
-(paren
-id|HostAdapter
-comma
-id|BusLogic_InquireFirmwareVersionLetter
-comma
-l_int|NULL
-comma
-l_int|0
-comma
-op_amp
-id|FirmwareVersionLetter
-comma
-r_sizeof
-(paren
-id|FirmwareVersionLetter
-)paren
-)paren
-op_ne
-r_sizeof
-(paren
-id|FirmwareVersionLetter
-)paren
-)paren
-r_return
-id|BusLogic_Failure
-c_func
-(paren
-id|HostAdapter
-comma
-l_string|&quot;INQUIRE FIRMWARE VERSION LETTER&quot;
-)paren
-suffix:semicolon
 multiline_comment|/*&n;    BusLogic Host Adapters can be identified by their model number and&n;    the major version number of their firmware as follows:&n;&n;    5.xx&t;BusLogic &quot;W&quot; Series Host Adapters:&n;&t;&t;  BT-948/958/958D&n;    4.xx&t;BusLogic &quot;C&quot; Series Host Adapters:&n;&t;&t;  BT-946C/956C/956CD/747C/757C/757CD/445C/545C/540CF&n;    3.xx&t;BusLogic &quot;S&quot; Series Host Adapters:&n;&t;&t;  BT-747S/747D/757S/757D/445S/545S/542D&n;&t;&t;  BT-542B/742A (revision H)&n;    2.xx&t;BusLogic &quot;A&quot; Series Host Adapters:&n;&t;&t;  BT-542B/742A (revision G and below)&n;    0.xx&t;AMI FastDisk VLB/EISA BusLogic Clone Host Adapter&n;  */
-multiline_comment|/*&n;    Issue the Inquire Generic I/O Port Information command to read the&n;    termination information from &quot;W&quot; Series Host Adapters.&n;  */
-r_if
-c_cond
-(paren
-id|BoardID.FirmwareVersion1stDigit
-op_eq
-l_char|&squot;5&squot;
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|BusLogic_Command
-c_func
-(paren
-id|HostAdapter
-comma
-id|BusLogic_InquireGenericIOPortInformation
-comma
-l_int|NULL
-comma
-l_int|0
-comma
-op_amp
-id|GenericIOPortInformation
-comma
-r_sizeof
-(paren
-id|GenericIOPortInformation
-)paren
-)paren
-op_ne
-r_sizeof
-(paren
-id|GenericIOPortInformation
-)paren
-)paren
-r_return
-id|BusLogic_Failure
-c_func
-(paren
-id|HostAdapter
-comma
-l_string|&quot;INQUIRE GENERIC I/O PORT INFORMATION&quot;
-)paren
-suffix:semicolon
-multiline_comment|/*&n;&t;Save the Termination Information in the Host Adapter structure.&n;      */
-r_if
-c_cond
-(paren
-id|GenericIOPortInformation.Valid
-)paren
-(brace
-id|HostAdapter-&gt;TerminationInfoValid
-op_assign
-l_bool|true
-suffix:semicolon
-id|HostAdapter-&gt;LowByteTerminated
-op_assign
-id|GenericIOPortInformation.LowByteTerminated
-suffix:semicolon
-id|HostAdapter-&gt;HighByteTerminated
-op_assign
-id|GenericIOPortInformation.HighByteTerminated
-suffix:semicolon
-)brace
-)brace
-multiline_comment|/*&n;    Issue the Fetch Host Adapter Local RAM command to read the termination&n;    information from the AutoSCSI area of &quot;C&quot; Series Host Adapters.&n;  */
-r_if
-c_cond
-(paren
-id|BoardID.FirmwareVersion1stDigit
-op_eq
-l_char|&squot;4&squot;
-)paren
-(brace
-id|FetchHostAdapterLocalRAMRequest.ByteOffset
-op_assign
-id|BusLogic_AutoSCSI_BaseOffset
-op_plus
-l_int|15
-suffix:semicolon
-id|FetchHostAdapterLocalRAMRequest.ByteCount
-op_assign
-r_sizeof
-(paren
-id|AutoSCSIByte15
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|BusLogic_Command
-c_func
-(paren
-id|HostAdapter
-comma
-id|BusLogic_FetchHostAdapterLocalRAM
-comma
-op_amp
-id|FetchHostAdapterLocalRAMRequest
-comma
-r_sizeof
-(paren
-id|FetchHostAdapterLocalRAMRequest
-)paren
-comma
-op_amp
-id|AutoSCSIByte15
-comma
-r_sizeof
-(paren
-id|AutoSCSIByte15
-)paren
-)paren
-op_ne
-r_sizeof
-(paren
-id|AutoSCSIByte15
-)paren
-)paren
-r_return
-id|BusLogic_Failure
-c_func
-(paren
-id|HostAdapter
-comma
-l_string|&quot;FETCH HOST ADAPTER LOCAL RAM&quot;
-)paren
-suffix:semicolon
-multiline_comment|/*&n;&t;Save the Termination Information in the Host Adapter structure.&n;      */
-id|HostAdapter-&gt;TerminationInfoValid
-op_assign
-l_bool|true
-suffix:semicolon
-id|HostAdapter-&gt;LowByteTerminated
-op_assign
-id|AutoSCSIByte15.LowByteTerminated
-suffix:semicolon
-id|HostAdapter-&gt;HighByteTerminated
-op_assign
-id|AutoSCSIByte15.HighByteTerminated
-suffix:semicolon
-)brace
 multiline_comment|/*&n;    Save the Model Name and Board Name in the Host Adapter structure.&n;  */
 id|TargetPointer
 op_assign
@@ -3293,6 +3089,63 @@ op_increment
 op_assign
 id|FirmwareVersion3rdDigit
 suffix:semicolon
+op_star
+id|TargetPointer
+op_assign
+l_char|&squot;&bslash;0&squot;
+suffix:semicolon
+multiline_comment|/*&n;    Issue the Inquire Firmware Version Letter command.&n;  */
+r_if
+c_cond
+(paren
+id|strcmp
+c_func
+(paren
+id|HostAdapter-&gt;FirmwareVersion
+comma
+l_string|&quot;3.3&quot;
+)paren
+op_ge
+l_int|0
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|BusLogic_Command
+c_func
+(paren
+id|HostAdapter
+comma
+id|BusLogic_InquireFirmwareVersionLetter
+comma
+l_int|NULL
+comma
+l_int|0
+comma
+op_amp
+id|FirmwareVersionLetter
+comma
+r_sizeof
+(paren
+id|FirmwareVersionLetter
+)paren
+)paren
+op_ne
+r_sizeof
+(paren
+id|FirmwareVersionLetter
+)paren
+)paren
+r_return
+id|BusLogic_Failure
+c_func
+(paren
+id|HostAdapter
+comma
+l_string|&quot;INQUIRE FIRMWARE VERSION LETTER&quot;
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -3312,11 +3165,191 @@ id|FirmwareVersionLetter
 suffix:semicolon
 op_star
 id|TargetPointer
-op_increment
 op_assign
 l_char|&squot;&bslash;0&squot;
 suffix:semicolon
+)brace
+multiline_comment|/*&n;    Issue the Inquire Generic I/O Port Information command to read the&n;    IRQ Channel from all PCI Host Adapters, and the Termination Information&n;    from &quot;W&quot; Series Host Adapters.&n;  */
+r_if
+c_cond
+(paren
+id|HostAdapter-&gt;ModelName
+(braket
+l_int|3
+)braket
+op_eq
+l_char|&squot;9&squot;
+op_logical_and
+id|strcmp
+c_func
+(paren
+id|HostAdapter-&gt;FirmwareVersion
+comma
+l_string|&quot;4.25&quot;
+)paren
+op_ge
+l_int|0
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|BusLogic_Command
+c_func
+(paren
+id|HostAdapter
+comma
+id|BusLogic_InquireGenericIOPortInformation
+comma
+l_int|NULL
+comma
+l_int|0
+comma
+op_amp
+id|GenericIOPortInformation
+comma
+r_sizeof
+(paren
+id|GenericIOPortInformation
+)paren
+)paren
+op_ne
+r_sizeof
+(paren
+id|GenericIOPortInformation
+)paren
+)paren
+r_return
+id|BusLogic_Failure
+c_func
+(paren
+id|HostAdapter
+comma
+l_string|&quot;INQUIRE GENERIC I/O PORT INFORMATION&quot;
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t;Save the IRQ Channel in the Host Adapter structure.&n;      */
+id|HostAdapter-&gt;IRQ_Channel
+op_assign
+id|GenericIOPortInformation.PCIAssignedIRQChannel
+suffix:semicolon
+multiline_comment|/*&n;&t;Save the Termination Information in the Host Adapter structure.&n;      */
+r_if
+c_cond
+(paren
+id|HostAdapter-&gt;FirmwareVersion
+(braket
+l_int|0
+)braket
+op_eq
+l_char|&squot;5&squot;
+op_logical_and
+id|GenericIOPortInformation.Valid
+)paren
+(brace
+id|HostAdapter-&gt;TerminationInfoValid
+op_assign
+l_bool|true
+suffix:semicolon
+id|HostAdapter-&gt;LowByteTerminated
+op_assign
+id|GenericIOPortInformation.LowByteTerminated
+suffix:semicolon
+id|HostAdapter-&gt;HighByteTerminated
+op_assign
+id|GenericIOPortInformation.HighByteTerminated
+suffix:semicolon
+)brace
+)brace
+multiline_comment|/*&n;    Issue the Fetch Host Adapter Local RAM command to read the Termination&n;    Information from the AutoSCSI area of &quot;C&quot; Series Host Adapters.&n;  */
+r_if
+c_cond
+(paren
+id|HostAdapter-&gt;FirmwareVersion
+(braket
+l_int|0
+)braket
+op_eq
+l_char|&squot;4&squot;
+)paren
+(brace
+id|FetchHostAdapterLocalRAMRequest.ByteOffset
+op_assign
+id|BusLogic_AutoSCSI_BaseOffset
+op_plus
+l_int|15
+suffix:semicolon
+id|FetchHostAdapterLocalRAMRequest.ByteCount
+op_assign
+r_sizeof
+(paren
+id|AutoSCSIByte15
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|BusLogic_Command
+c_func
+(paren
+id|HostAdapter
+comma
+id|BusLogic_FetchHostAdapterLocalRAM
+comma
+op_amp
+id|FetchHostAdapterLocalRAMRequest
+comma
+r_sizeof
+(paren
+id|FetchHostAdapterLocalRAMRequest
+)paren
+comma
+op_amp
+id|AutoSCSIByte15
+comma
+r_sizeof
+(paren
+id|AutoSCSIByte15
+)paren
+)paren
+op_ne
+r_sizeof
+(paren
+id|AutoSCSIByte15
+)paren
+)paren
+r_return
+id|BusLogic_Failure
+c_func
+(paren
+id|HostAdapter
+comma
+l_string|&quot;FETCH HOST ADAPTER LOCAL RAM&quot;
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t;Save the Termination Information in the Host Adapter structure.&n;      */
+id|HostAdapter-&gt;TerminationInfoValid
+op_assign
+l_bool|true
+suffix:semicolon
+id|HostAdapter-&gt;LowByteTerminated
+op_assign
+id|AutoSCSIByte15.LowByteTerminated
+suffix:semicolon
+id|HostAdapter-&gt;HighByteTerminated
+op_assign
+id|AutoSCSIByte15.HighByteTerminated
+suffix:semicolon
+)brace
 multiline_comment|/*&n;    Determine the IRQ Channel and save it in the Host Adapter structure.&n;  */
+r_if
+c_cond
+(paren
+id|HostAdapter-&gt;IRQ_Channel
+op_eq
+l_int|0
+)paren
+(brace
 r_if
 c_cond
 (paren
@@ -3376,7 +3409,47 @@ id|HostAdapter-&gt;IRQ_Channel
 op_assign
 l_int|15
 suffix:semicolon
-multiline_comment|/*&n;    Determine the DMA Channel and save it in the Host Adapter structure.&n;  */
+)brace
+multiline_comment|/*&n;    Save the Host Adapter SCSI ID in the Host Adapter structure.&n;  */
+id|HostAdapter-&gt;SCSI_ID
+op_assign
+id|Configuration.HostAdapterID
+suffix:semicolon
+multiline_comment|/*&n;    Save the Synchronous Initiation flag and SCSI Parity Checking flag&n;    in the Host Adapter structure.&n;  */
+id|HostAdapter-&gt;SynchronousInitiation
+op_assign
+id|SetupInformation.SynchronousInitiationEnabled
+suffix:semicolon
+id|HostAdapter-&gt;ParityChecking
+op_assign
+id|SetupInformation.ParityCheckEnabled
+suffix:semicolon
+multiline_comment|/*&n;    Determine the Bus Type and save it in the Host Adapter structure,&n;    and determine and save the DMA Channel for ISA Host Adapters.&n;  */
+r_switch
+c_cond
+(paren
+id|HostAdapter-&gt;ModelName
+(braket
+l_int|3
+)braket
+)paren
+(brace
+r_case
+l_char|&squot;4&squot;
+suffix:colon
+id|HostAdapter-&gt;BusType
+op_assign
+id|BusLogic_VESA_Bus
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_char|&squot;5&squot;
+suffix:colon
+id|HostAdapter-&gt;BusType
+op_assign
+id|BusLogic_ISA_Bus
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -3406,50 +3479,6 @@ id|HostAdapter-&gt;DMA_Channel
 op_assign
 l_int|7
 suffix:semicolon
-multiline_comment|/*&n;    Save the Host Adapter SCSI ID in the Host Adapter structure.&n;  */
-id|HostAdapter-&gt;SCSI_ID
-op_assign
-id|Configuration.HostAdapterID
-suffix:semicolon
-multiline_comment|/*&n;    Save the Synchronous Initiation flag and SCSI Parity Checking flag&n;    in the Host Adapter structure.&n;  */
-id|HostAdapter-&gt;SynchronousInitiation
-op_assign
-id|SetupInformation.SynchronousInitiationEnabled
-suffix:semicolon
-id|HostAdapter-&gt;ParityChecking
-op_assign
-id|SetupInformation.ParityCheckEnabled
-suffix:semicolon
-multiline_comment|/*&n;    Determine the Bus Type and save it in the Host Adapter structure,&n;    overriding the DMA Channel if it is inappropriate for the bus type.&n;  */
-r_switch
-c_cond
-(paren
-id|HostAdapter-&gt;ModelName
-(braket
-l_int|3
-)braket
-)paren
-(brace
-r_case
-l_char|&squot;4&squot;
-suffix:colon
-id|HostAdapter-&gt;BusType
-op_assign
-id|BusLogic_VESA_Bus
-suffix:semicolon
-id|HostAdapter-&gt;DMA_Channel
-op_assign
-l_int|0
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-l_char|&squot;5&squot;
-suffix:colon
-id|HostAdapter-&gt;BusType
-op_assign
-id|BusLogic_ISA_Bus
-suffix:semicolon
 r_break
 suffix:semicolon
 r_case
@@ -3458,10 +3487,6 @@ suffix:colon
 id|HostAdapter-&gt;BusType
 op_assign
 id|BusLogic_MCA_Bus
-suffix:semicolon
-id|HostAdapter-&gt;DMA_Channel
-op_assign
-l_int|0
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -3472,10 +3497,6 @@ id|HostAdapter-&gt;BusType
 op_assign
 id|BusLogic_EISA_Bus
 suffix:semicolon
-id|HostAdapter-&gt;DMA_Channel
-op_assign
-l_int|0
-suffix:semicolon
 r_break
 suffix:semicolon
 r_case
@@ -3484,10 +3505,6 @@ suffix:colon
 id|HostAdapter-&gt;BusType
 op_assign
 id|BusLogic_PCI_Bus
-suffix:semicolon
-id|HostAdapter-&gt;DMA_Channel
-op_assign
-l_int|0
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -4092,7 +4109,7 @@ l_int|0
 id|printk
 c_func
 (paren
-l_string|&quot;BIOS Address: 0x%lX, &quot;
+l_string|&quot;BIOS Address: 0x%X, &quot;
 comma
 id|HostAdapter-&gt;BIOS_Address
 )paren
@@ -4580,8 +4597,6 @@ c_cond
 id|BusLogic_IRQ_UsageCount
 (braket
 id|HostAdapter-&gt;IRQ_Channel
-op_minus
-l_int|9
 )braket
 op_increment
 op_eq
@@ -4613,8 +4628,6 @@ l_int|0
 id|BusLogic_IRQ_UsageCount
 (braket
 id|HostAdapter-&gt;IRQ_Channel
-op_minus
-l_int|9
 )braket
 op_decrement
 suffix:semicolon
@@ -4790,8 +4803,6 @@ op_decrement
 id|BusLogic_IRQ_UsageCount
 (braket
 id|HostAdapter-&gt;IRQ_Channel
-op_minus
-l_int|9
 )braket
 op_eq
 l_int|0
@@ -5069,7 +5080,11 @@ id|HostAdapter-&gt;MailboxCount
 suffix:semicolon
 id|ExtendedMailboxRequest.BaseMailboxAddress
 op_assign
+id|Virtual_to_Bus
+c_func
+(paren
 id|HostAdapter-&gt;FirstOutgoingMailbox
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -6046,6 +6061,7 @@ id|TaggedDeviceCount
 OG
 l_int|0
 )paren
+(brace
 id|TaggedQueueDepth
 op_assign
 l_int|1
@@ -6067,12 +6083,13 @@ c_cond
 (paren
 id|TaggedQueueDepth
 OG
-id|BusLogic_MaxTaggedQueueDepth
+id|BusLogic_PreferredTaggedQueueDepth
 )paren
 id|TaggedQueueDepth
 op_assign
-id|BusLogic_MaxTaggedQueueDepth
+id|BusLogic_PreferredTaggedQueueDepth
 suffix:semicolon
+)brace
 r_for
 c_loop
 (paren
@@ -6893,7 +6910,15 @@ id|BusLogic_CCB_T
 op_star
 id|CCB
 op_assign
+(paren
+id|BusLogic_CCB_T
+op_star
+)paren
+id|Bus_to_Virtual
+c_func
+(paren
 id|NextIncomingMailbox-&gt;CCB
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -6968,7 +6993,7 @@ multiline_comment|/*&n;&t;&t;&t;  If a CCB ever appears in an Incoming Mailbox a
 id|printk
 c_func
 (paren
-l_string|&quot;scsi%d: Illegal CCB #%d status %d in &quot;
+l_string|&quot;scsi%d: Illegal CCB #%ld status %d in &quot;
 l_string|&quot;Incoming Mailbox&bslash;n&quot;
 comma
 id|HostAdapter-&gt;HostNumber
@@ -6983,7 +7008,7 @@ r_else
 id|printk
 c_func
 (paren
-l_string|&quot;scsi%d: Aborted CCB #%d to Target %d &quot;
+l_string|&quot;scsi%d: Aborted CCB #%ld to Target %d &quot;
 l_string|&quot;Not Found&bslash;n&quot;
 comma
 id|HostAdapter-&gt;HostNumber
@@ -7088,7 +7113,6 @@ id|BusLogic_BusDeviceReset
 )paren
 (brace
 r_int
-r_char
 id|TargetID
 op_assign
 id|CCB-&gt;TargetID
@@ -7096,7 +7120,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;scsi%d: Bus Device Reset CCB #%d to Target %d Completed&bslash;n&quot;
+l_string|&quot;scsi%d: Bus Device Reset CCB #%ld to Target %d Completed&bslash;n&quot;
 comma
 id|HostAdapter-&gt;HostNumber
 comma
@@ -7249,7 +7273,7 @@ suffix:colon
 id|printk
 c_func
 (paren
-l_string|&quot;scsi%d: CCB #%d to Target %d Impossible State&bslash;n&quot;
+l_string|&quot;scsi%d: CCB #%ld to Target %d Impossible State&bslash;n&quot;
 comma
 id|HostAdapter-&gt;HostNumber
 comma
@@ -7284,7 +7308,7 @@ suffix:colon
 id|printk
 c_func
 (paren
-l_string|&quot;scsi%d: CCB #%d to Target %d Aborted&bslash;n&quot;
+l_string|&quot;scsi%d: CCB #%ld to Target %d Aborted&bslash;n&quot;
 comma
 id|HostAdapter-&gt;HostNumber
 comma
@@ -7335,7 +7359,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;scsi%d: CCB #%d Target %d: Result %X &quot;
+l_string|&quot;scsi%d: CCB #%ld Target %d: Result %X &quot;
 l_string|&quot;Host Adapter Status %02X Target Status %02X&bslash;n&quot;
 comma
 id|HostAdapter-&gt;HostNumber
@@ -7417,10 +7441,7 @@ c_func
 (paren
 l_string|&quot; %02X&quot;
 comma
-(paren
-op_star
-id|CCB-&gt;SenseDataPointer
-)paren
+id|Command-&gt;sense_buffer
 (braket
 id|i
 )braket
@@ -7559,7 +7580,11 @@ suffix:semicolon
 multiline_comment|/*&n;&t;The CCB field must be written before the Action Code field since&n;&t;the Host Adapter is operating asynchronously and the locking code&n;&t;does not protect against simultaneous access by the Host Adapter.&n;      */
 id|NextOutgoingMailbox-&gt;CCB
 op_assign
+id|Virtual_to_Bus
+c_func
+(paren
 id|CCB
+)paren
 suffix:semicolon
 id|NextOutgoingMailbox-&gt;ActionCode
 op_assign
@@ -7647,19 +7672,16 @@ op_assign
 id|Command-&gt;cmnd
 suffix:semicolon
 r_int
-r_char
 id|CDB_Length
 op_assign
 id|Command-&gt;cmd_len
 suffix:semicolon
 r_int
-r_char
 id|TargetID
 op_assign
 id|Command-&gt;target
 suffix:semicolon
 r_int
-r_char
 id|LogicalUnit
 op_assign
 id|Command-&gt;lun
@@ -7807,7 +7829,11 @@ id|BufferLength
 suffix:semicolon
 id|CCB-&gt;DataPointer
 op_assign
+id|Virtual_to_Bus
+c_func
+(paren
 id|BufferPointer
+)paren
 suffix:semicolon
 )brace
 r_else
@@ -7840,7 +7866,11 @@ id|BusLogic_ScatterGatherSegment_T
 suffix:semicolon
 id|CCB-&gt;DataPointer
 op_assign
+id|Virtual_to_Bus
+c_func
+(paren
 id|CCB-&gt;ScatterGatherList
+)paren
 suffix:semicolon
 r_for
 c_loop
@@ -7878,12 +7908,16 @@ id|Segment
 dot
 id|SegmentDataPointer
 op_assign
+id|Virtual_to_Bus
+c_func
+(paren
 id|ScatterList
 (braket
 id|Segment
 )braket
 dot
 id|address
+)paren
 suffix:semicolon
 )brace
 )brace
@@ -7979,7 +8013,7 @@ id|CCB-&gt;TagEnable
 op_assign
 l_bool|false
 suffix:semicolon
-multiline_comment|/*&n;    BusLogic recommends that after a Reset the first couple of commands that&n;    are sent to a Target Device be sent in a non Tagged Queue fashion so that&n;    the Host Adapter and Target Device can establish Synchronous and Wide&n;    Transfer before Queue Tag messages can interfere with the Synchronous and&n;    Wide Negotiation message.  By waiting to enable Tagged Queuing until after&n;    the first BusLogic_MaxTaggedQueueDepth commands have been sent, it is&n;    assured that after a Reset any pending commands are resent before Tagged&n;    Queuing is enabled and that the Tagged Queuing message will not occur while&n;    the partition table is being printed.&n;  */
+multiline_comment|/*&n;    BusLogic recommends that after a Reset the first couple of commands that&n;    are sent to a Target Device be sent in a non Tagged Queue fashion so that&n;    the Host Adapter and Target Device can establish Synchronous and Wide&n;    Transfer before Queue Tag messages can interfere with the Synchronous and&n;    Wide Negotiation message.  By waiting to enable Tagged Queuing until after&n;    the first BusLogic_PreferredQueueDepth commands have been sent, it is&n;    assured that after a Reset any pending commands are resent before Tagged&n;    Queuing is enabled and that the Tagged Queuing message will not occur while&n;    the partition table is being printed.&n;  */
 r_if
 c_cond
 (paren
@@ -7989,7 +8023,7 @@ id|TargetID
 )braket
 op_increment
 op_eq
-id|BusLogic_MaxTaggedQueueDepth
+id|BusLogic_PreferredTaggedQueueDepth
 op_logical_and
 (paren
 id|HostAdapter-&gt;TaggedQueuingPermitted
@@ -8121,12 +8155,12 @@ id|CDB_Length
 suffix:semicolon
 id|CCB-&gt;SenseDataPointer
 op_assign
+id|Virtual_to_Bus
+c_func
 (paren
-id|SCSI_SenseData_T
-op_star
-)paren
 op_amp
 id|Command-&gt;sense_buffer
+)paren
 suffix:semicolon
 id|CCB-&gt;Command
 op_assign
@@ -8250,7 +8284,6 @@ op_star
 id|Command-&gt;host-&gt;hostdata
 suffix:semicolon
 r_int
-r_char
 id|TargetID
 op_assign
 id|Command-&gt;target
@@ -8428,7 +8461,7 @@ l_char|&squot;5&squot;
 id|printk
 c_func
 (paren
-l_string|&quot;scsi%d: Unable to Abort CCB #%d to Target %d - &quot;
+l_string|&quot;scsi%d: Unable to Abort CCB #%ld to Target %d - &quot;
 l_string|&quot;Abort Tag Not Supported&bslash;n&quot;
 comma
 id|HostAdapter-&gt;HostNumber
@@ -8461,7 +8494,7 @@ id|CCB
 id|printk
 c_func
 (paren
-l_string|&quot;scsi%d: Aborting CCB #%d to Target %d&bslash;n&quot;
+l_string|&quot;scsi%d: Aborting CCB #%ld to Target %d&bslash;n&quot;
 comma
 id|HostAdapter-&gt;HostNumber
 comma
@@ -8480,7 +8513,7 @@ r_else
 id|printk
 c_func
 (paren
-l_string|&quot;scsi%d: Unable to Abort CCB #%d to Target %d - &quot;
+l_string|&quot;scsi%d: Unable to Abort CCB #%ld to Target %d - &quot;
 l_string|&quot;No Outgoing Mailboxes&bslash;n&quot;
 comma
 id|HostAdapter-&gt;HostNumber
@@ -8970,7 +9003,6 @@ id|ResetFlags
 )paren
 (brace
 r_int
-r_char
 id|TargetID
 op_assign
 id|Command-&gt;target
@@ -9266,7 +9298,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;scsi%d: Sending Bus Device Reset CCB #%d to Target %d&bslash;n&quot;
+l_string|&quot;scsi%d: Sending Bus Device Reset CCB #%ld to Target %d&bslash;n&quot;
 comma
 id|HostAdapter-&gt;HostNumber
 comma
@@ -9448,13 +9480,11 @@ op_star
 id|Command-&gt;host-&gt;hostdata
 suffix:semicolon
 r_int
-r_char
 id|TargetID
 op_assign
 id|Command-&gt;target
 suffix:semicolon
 r_int
-r_char
 id|ErrorRecoveryStrategy
 op_assign
 id|HostAdapter-&gt;ErrorRecoveryStrategy
@@ -9998,7 +10028,8 @@ id|Integers
 (braket
 l_int|0
 )braket
-comma
+suffix:semicolon
+r_int
 id|TargetID
 comma
 id|i

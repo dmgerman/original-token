@@ -9,10 +9,10 @@ macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/bios32.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
-macro_line|#include &lt;unistd.h&gt;
+macro_line|#include &lt;linux/delay.h&gt;
+macro_line|#include &lt;linux/unistd.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
-macro_line|#include &lt;asm/delay.h&gt;
 macro_line|#include &quot;sd.h&quot;
 macro_line|#include &quot;hosts.h&quot;
 macro_line|#include &quot;qlogicisp.h&quot;
@@ -23,9 +23,6 @@ mdefine_line|#define RELOAD_FIRMWARE&t;&t;1
 multiline_comment|/* Set the following macro to 1 to reload the ISP1020&squot;s defaults from nvram.&n;   If you are not sure of your settings, leave this alone, the driver will&n;   use a set of &squot;safe&squot; defaults */
 DECL|macro|USE_NVRAM_DEFAULTS
 mdefine_line|#define USE_NVRAM_DEFAULTS&t;0
-multiline_comment|/*  Set this macro to 1 if you want to create a scsi loadable module. */
-DECL|macro|MODULE
-mdefine_line|#define MODULE&t;&t;&t;0
 multiline_comment|/*  Macros used for debugging */
 DECL|macro|DEBUG_ISP1020
 mdefine_line|#define DEBUG_ISP1020&t;&t;0
@@ -7104,12 +7101,12 @@ l_int|16
 )paren
 suffix:semicolon
 )brace
-macro_line|#if MODULE
+macro_line|#ifdef MODULE
 DECL|variable|driver_template
 id|Scsi_Host_Template
 id|driver_template
 op_assign
-id|ISP1020
+id|QLOGICISP
 suffix:semicolon
 macro_line|#include &quot;scsi_module.c&quot;
 macro_line|#endif /* MODULE */

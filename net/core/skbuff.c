@@ -969,10 +969,6 @@ op_star
 id|newsk
 )paren
 (brace
-r_int
-r_int
-id|flags
-suffix:semicolon
 r_struct
 id|sk_buff
 op_star
@@ -1048,6 +1044,7 @@ op_star
 id|list_
 )paren
 (brace
+r_int
 r_int
 id|flags
 suffix:semicolon

@@ -262,10 +262,25 @@ r_void
 r_int
 id|i
 suffix:semicolon
+r_int
+id|max
+op_assign
+id|max_files
+suffix:semicolon
 r_struct
 id|file
 op_star
 id|f
+suffix:semicolon
+multiline_comment|/*&n;&t; * Reserve a few files for the super-user..&n;&t; */
+r_if
+c_cond
+(paren
+id|current-&gt;euid
+)paren
+id|max
+op_sub_assign
+l_int|10
 suffix:semicolon
 multiline_comment|/* if the return is taken, we are in deep trouble */
 r_if
@@ -359,7 +374,7 @@ c_loop
 (paren
 id|nr_files
 OL
-id|max_files
+id|max
 op_logical_and
 id|grow_files
 c_func

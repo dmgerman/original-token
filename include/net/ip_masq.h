@@ -26,10 +26,15 @@ DECL|macro|IP_MASQ_F_NO_DADDR
 mdefine_line|#define IP_MASQ_F_NO_DADDR      &t;0x08 &t;/* no daddr yet */
 DECL|macro|IP_MASQ_F_HASHED
 mdefine_line|#define IP_MASQ_F_HASHED&t;&t;0x10 &t;/* hashed entry */
-DECL|macro|IP_MASQ_F_SAW_FIN
-mdefine_line|#define IP_MASQ_F_SAW_FIN&t;&t;0x20 &t;/* tcp fin pkt seen */
 DECL|macro|IP_MASQ_F_SAW_RST
-mdefine_line|#define IP_MASQ_F_SAW_RST&t;&t;0x40 &t;/* tcp rst pkt seen */
+mdefine_line|#define IP_MASQ_F_SAW_RST&t;&t;0x20 &t;/* tcp rst pkt seen */
+DECL|macro|IP_MASQ_F_SAW_FIN_IN
+mdefine_line|#define IP_MASQ_F_SAW_FIN_IN&t;&t;0x40 &t;/* tcp fin pkt seen incoming */
+DECL|macro|IP_MASQ_F_SAW_FIN_OUT
+mdefine_line|#define IP_MASQ_F_SAW_FIN_OUT&t;&t;0x80 &t;/* tcp fin pkt seen outgoing */
+DECL|macro|IP_MASQ_F_SAW_FIN
+mdefine_line|#define IP_MASQ_F_SAW_FIN&t;&t;(IP_MASQ_F_SAW_FIN_IN | &bslash;&n;&t;&t;&t;&t;&t; IP_MASQ_F_SAW_FIN_OUT)
+multiline_comment|/* tcp fin pkts seen */
 macro_line|#ifdef __KERNEL__
 multiline_comment|/*&n; *&t;Delta seq. info structure&n; *&t;Each MASQ struct has 2 (output AND input seq. changes).&n; */
 DECL|struct|ip_masq_seq

@@ -1,6 +1,8 @@
 multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Implementation of the Transmission Control Protocol(TCP).&n; *&n; * Version:&t;@(#)tcp_input.c&t;1.0.16&t;05/25/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&t;&t;Corey Minyard &lt;wf-rch!minyard@relay.EU.net&gt;&n; *&t;&t;Florian La Roche, &lt;flla@stud.uni-sb.de&gt;&n; *&t;&t;Charles Hedrick, &lt;hedrick@klinzhai.rutgers.edu&gt;&n; *&t;&t;Linus Torvalds, &lt;torvalds@cs.helsinki.fi&gt;&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;Matthew Dillon, &lt;dillon@apollo.west.oic.com&gt;&n; *&t;&t;Arnt Gulbrandsen, &lt;agulbra@nvg.unit.no&gt;&n; *&t;&t;Jorge Cwik, &lt;jorge@laser.satlink.net&gt;&n; *&n; * Fixes:&t;Eric Schenk&t;: avoid multiple retransmissions in one&n; *&t;&t;&t;&t;: round trip timeout.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;net/tcp.h&gt;
+macro_line|#include &lt;linux/ip_fw.h&gt;
+macro_line|#include &lt;linux/firewall.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 multiline_comment|/*&n; * RFC 1122 says:&n; *&n; * &quot;the suggested [SWS] avoidance algorithm for the receiver is to keep&n; *  RECV.NEXT + RCV.WIN fixed until:&n; *  RCV.BUFF - RCV.USER - RCV.WINDOW &gt;= min(1/2 RCV.BUFF, MSS)&quot;&n; *&n; * Experiments against BSD and Solaris machines show that following&n; * these rules results in the BSD and Solaris machines making very&n; * bad guesses about how much data they can have in flight.&n; *&n; * Instead we follow the BSD lead and offer a window that gives&n; * the size of the current free space, truncated to a multiple&n; * of 1024 bytes. If the window is smaller than&n; * &t;min(sk-&gt;mss, MAX_WINDOW/2)&n; * then we advertise the window as having size 0, unless this&n; * would shrink the window we offered last time.&n; * This results in as much as double the throughput as the original&n; * implementation.&n; *&n; * We do BSD style SWS avoidance -- note that RFC1122 only says we&n; * must do silly window avoidance, it does not require that we use&n; * the suggested algorithm.&n; *&n; * The &quot;rcvbuf&quot; and &quot;rmem_alloc&quot; values are shifted by 1, because&n; * they also contain buffer handling overhead etc, so the window&n; * we actually use is essentially based on only half those values.&n; */
 DECL|function|tcp_new_window
@@ -302,6 +304,26 @@ r_return
 suffix:semicolon
 )brace
 )brace
+multiline_comment|/*&n;&t; * Jacobson recommends this in the appendix of his SIGCOMM&squot;88 paper.&n;&t; * The idea is to do a slow start again if we haven&squot;t been doing&n;&t; * anything for a long time, in which case we have no reason to&n;&t; * believe that our congestion window is still correct.&n;&t; */
+r_if
+c_cond
+(paren
+id|sk-&gt;send_head
+op_eq
+l_int|0
+op_logical_and
+(paren
+id|jiffies
+op_minus
+id|sk-&gt;idletime
+)paren
+OG
+id|sk-&gt;rto
+)paren
+id|sk-&gt;cong_window
+op_assign
+l_int|1
+suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Actual processing.&n;&t; */
 id|tcp_statistics.TcpOutSegs
 op_increment
@@ -1080,7 +1102,7 @@ suffix:semicolon
 )brace
 id|skb
 op_assign
-id|sk-&gt;send_head
+id|sk-&gt;send_next
 suffix:semicolon
 r_while
 c_loop
@@ -1304,6 +1326,9 @@ id|skb-&gt;sk
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* Can&squot;t transmit this packet, no reason&n;&t;&t;&t; * to transmit the later ones, even if&n;&t;&t;&t; * the congestion window allows.&n;&t;&t;&t; */
+r_break
+suffix:semicolon
 )brace
 r_else
 (brace
@@ -1323,6 +1348,30 @@ id|skb-&gt;arp
 op_assign
 l_int|1
 suffix:semicolon
+macro_line|#ifdef CONFIG_FIREWALL
+r_if
+c_cond
+(paren
+id|call_out_firewall
+c_func
+(paren
+id|PF_INET
+comma
+id|skb-&gt;dev
+comma
+id|iph
+comma
+l_int|NULL
+)paren
+OL
+id|FW_ACCEPT
+)paren
+(brace
+multiline_comment|/* The firewall wants us to dump the packet.&n;&t;&t;&t; &t;* We have to check this here, because&n;&t;&t;&t; &t;* the drop in ip_queue_xmit only catches the&n;&t;&t;&t; &t;* first time we send it. We must drop on&n;&t;&t;&t;&t;* every resend as well.&n;&t;&t;&t; &t;*/
+r_break
+suffix:semicolon
+)brace
+macro_line|#endif 
 r_if
 c_cond
 (paren

@@ -1069,7 +1069,7 @@ r_struct
 id|iovec
 id|iov
 (braket
-id|MAX_IOVEC
+id|UIO_MAXIOV
 )braket
 suffix:semicolon
 r_if
@@ -1246,7 +1246,7 @@ r_struct
 id|iovec
 id|iov
 (braket
-id|MAX_IOVEC
+id|UIO_MAXIOV
 )braket
 suffix:semicolon
 id|u32

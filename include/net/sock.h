@@ -508,6 +508,13 @@ r_int
 r_int
 id|lrcvtime
 suffix:semicolon
+multiline_comment|/* jiffies at last data rcv */
+DECL|member|idletime
+r_volatile
+r_int
+r_int
+id|idletime
+suffix:semicolon
 multiline_comment|/* jiffies at last rcv */
 DECL|member|bytes_rcv
 r_int
@@ -1349,7 +1356,7 @@ mdefine_line|#define TIME_PROBE0&t;6
 multiline_comment|/*&n; *&t;About 10 seconds &n; */
 DECL|macro|SOCK_DESTROY_TIME
 mdefine_line|#define SOCK_DESTROY_TIME (10*HZ)
-multiline_comment|/*&n; *&t;Sockets 0-1023 can&squot;t be bound too unless you are superuser &n; */
+multiline_comment|/*&n; *&t;Sockets 0-1023 can&squot;t be bound to unless you are superuser &n; */
 DECL|macro|PROT_SOCK
 mdefine_line|#define PROT_SOCK&t;1024
 DECL|macro|SHUTDOWN_MASK

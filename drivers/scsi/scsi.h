@@ -4,6 +4,7 @@ DECL|macro|_SCSI_H
 mdefine_line|#define _SCSI_H
 multiline_comment|/*&n; * Some of the public constants are being moved to this file.&n; * We include it here so that what came from where is transparent.&n; */
 macro_line|#include &lt;scsi/scsi.h&gt;
+macro_line|#include &lt;linux/random.h&gt;
 multiline_comment|/*&n; * Some defs, in case these are not defined elsewhere.&n; */
 macro_line|#ifndef TRUE
 DECL|macro|TRUE
@@ -1214,6 +1215,16 @@ id|req-&gt;sem
 )paren
 suffix:semicolon
 )brace
+id|add_blkdev_randomness
+c_func
+(paren
+id|MAJOR
+c_func
+(paren
+id|req-&gt;rq_dev
+)paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren

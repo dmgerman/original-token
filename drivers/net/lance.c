@@ -90,7 +90,7 @@ multiline_comment|/*&n;&t;&t;&t;&t;Theory of Operation&n;&n;I. Board Compatibili
 multiline_comment|/* Memory accessed from LANCE card must be aligned on 8-byte boundaries.&n;   But we can&squot;t believe that kmalloc()&squot;ed memory satisfies it. -- SAW */
 DECL|macro|LANCE_KMALLOC
 mdefine_line|#define LANCE_KMALLOC(x) &bslash;&n;&t;((void *) (((unsigned long)kmalloc((x)+7, GFP_DMA | GFP_KERNEL)+7) &amp; ~7))
-multiline_comment|/*&n; * Changes:&n; *&t;Thomas Bogendoerfer (tsbogend@bigbug.franken.de):&n; *&t;- added support for Linux/Alpha, but removed most of it, because&n; *        it worked only for the PCI chip. &n; *      - added hook for the 32bit lance driver&n; *&n; *&t;Paul Gortmaker (gpg109@rsphy1.anu.edu.au):&n; *&t;- hopefully fix above so Linux/Alpha can use ISA cards too.&n; */
+multiline_comment|/*&n; * Changes:&n; *&t;Thomas Bogendoerfer (tsbogend@bigbug.franken.de):&n; *&t;- added support for Linux/Alpha, but removed most of it, because&n; *        it worked only for the PCI chip. &n; *      - added hook for the 32bit lance driver&n; *      - added PCnetPCI II (79C970A) to chip table&n; *&n; *&t;Paul Gortmaker (gpg109@rsphy1.anu.edu.au):&n; *&t;- hopefully fix above so Linux/Alpha can use ISA cards too.&n; */
 multiline_comment|/* Set the number of Tx and Rx buffers, using Log_2(# buffers).&n;   Reasonable default values are 16 Tx buffers, and 16 Rx buffers.&n;   That translates to 4 and 4 (16 == 2^^4). */
 macro_line|#ifndef LANCE_LOG_TX_BUFFERS
 DECL|macro|LANCE_LOG_TX_BUFFERS
@@ -404,6 +404,19 @@ id|LANCE_HAS_MISSED_FRAME
 )brace
 comma
 (brace
+l_int|0x2621
+comma
+l_string|&quot;PCnet/PCI-II 79C970A&quot;
+comma
+multiline_comment|/* 79C970A PCInetPCI II. */
+id|LANCE_ENABLE_AUTOSELECT
+op_plus
+id|LANCE_MUST_REINIT_RING
+op_plus
+id|LANCE_HAS_MISSED_FRAME
+)brace
+comma
+(brace
 l_int|0x0
 comma
 l_string|&quot;PCnet (unknown)&quot;
@@ -422,6 +435,7 @@ DECL|enumerator|PCNET_ISA
 DECL|enumerator|PCNET_ISAP
 DECL|enumerator|PCNET_PCI
 DECL|enumerator|PCNET_VLB
+DECL|enumerator|PCNET_PCI_II
 DECL|enumerator|LANCE_UNKNOWN
 r_enum
 (brace
@@ -445,9 +459,13 @@ id|PCNET_VLB
 op_assign
 l_int|4
 comma
-id|LANCE_UNKNOWN
+id|PCNET_PCI_II
 op_assign
 l_int|5
+comma
+id|LANCE_UNKNOWN
+op_assign
+l_int|6
 )brace
 suffix:semicolon
 multiline_comment|/* Non-zero only if the current card is a PCI with BIOS-set IRQ. */
@@ -1340,6 +1358,10 @@ op_logical_or
 id|lance_version
 op_eq
 id|PCNET_VLB
+op_logical_or
+id|lance_version
+op_eq
+id|PCNET_PCI_II
 )paren
 (brace
 r_extern

@@ -3040,14 +3040,14 @@ suffix:colon
 r_if
 c_cond
 (paren
+op_logical_neg
+(paren
 id|cfg-&gt;flags
 op_amp
 id|GLOBAL_WRITTEN
 )paren
+)paren
 (brace
-r_break
-suffix:semicolon
-)brace
 id|cfg-&gt;flags
 op_or_assign
 id|GLOBAL_WRITTEN
@@ -3060,6 +3060,7 @@ comma
 id|cfg-&gt;optionname
 )paren
 suffix:semicolon
+)brace
 multiline_comment|/* fall through */
 r_case
 id|tok_make

@@ -1,4 +1,5 @@
 multiline_comment|/*&n; *  proc.c&n; *&n; *  Copyright (C) 1995 by Paal-Kr. Engstad and Volker Lendecke&n; *&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/smbno.h&gt;
 macro_line|#include &lt;linux/smb_fs.h&gt;
@@ -8206,6 +8207,7 @@ l_string|&quot;LANMAN1.0&quot;
 )brace
 comma
 macro_line|#endif
+macro_line|#ifdef CONFIG_SMB_LONG
 macro_line|#ifdef LANMAN2
 (brace
 id|PROTOCOL_LANMAN2
@@ -8227,6 +8229,7 @@ comma
 l_string|&quot;NT LANMAN 1.0&quot;
 )brace
 comma
+macro_line|#endif
 macro_line|#endif
 (brace
 op_minus
@@ -10668,5 +10671,4 @@ r_return
 suffix:semicolon
 )brace
 macro_line|#endif /* DEBUG_SMB &gt; 0 */
-multiline_comment|/*&n; * Overrides for Emacs so that we follow Linus&squot;s tabbing style.&n; * Emacs will notice this stuff at the end of the file and automatically&n; * adjust the settings for this buffer only.  This must remain at the end&n; * of the file.&n; * ---------------------------------------------------------------------------&n; * Local variables:&n; * c-indent-level: 8&n; * c-brace-imaginary-offset: 0&n; * c-brace-offset: -8&n; * c-argdecl-indent: 8&n; * c-label-offset: -8&n; * c-continued-statement-offset: 8&n; * c-continued-brace-offset: 0&n; * End:&n; */
 eof

@@ -120,6 +120,9 @@ comma
 DECL|enumerator|RISCOM8_BH
 id|RISCOM8_BH
 comma
+DECL|enumerator|BAYCOM_BH
+id|BAYCOM_BH
+comma
 DECL|enumerator|NET_BH
 id|NET_BH
 comma

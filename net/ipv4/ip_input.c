@@ -291,7 +291,7 @@ l_int|NULL
 comma
 id|ip_acct_chain
 comma
-id|IP_FW_F_ACCEPT
+l_int|0
 comma
 id|IP_FW_MODE_ACCT_IN
 )paren

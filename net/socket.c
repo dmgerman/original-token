@@ -4565,7 +4565,7 @@ r_struct
 id|iovec
 id|iov
 (braket
-id|MAX_IOVEC
+id|UIO_MAXIOV
 )braket
 suffix:semicolon
 r_struct
@@ -4686,7 +4686,7 @@ c_cond
 (paren
 id|msg_sys.msg_iovlen
 OG
-id|MAX_IOVEC
+id|UIO_MAXIOV
 )paren
 (brace
 r_return
@@ -4781,7 +4781,7 @@ r_struct
 id|iovec
 id|iov
 (braket
-id|MAX_IOVEC
+id|UIO_MAXIOV
 )braket
 suffix:semicolon
 r_struct
@@ -4911,7 +4911,7 @@ c_cond
 (paren
 id|msg_sys.msg_iovlen
 OG
-id|MAX_IOVEC
+id|UIO_MAXIOV
 )paren
 (brace
 r_return

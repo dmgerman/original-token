@@ -1299,6 +1299,14 @@ id|newsk-&gt;ssthresh
 op_assign
 l_int|0x7fffffff
 suffix:semicolon
+id|newsk-&gt;lrcvtime
+op_assign
+l_int|0
+suffix:semicolon
+id|newsk-&gt;idletime
+op_assign
+l_int|0
+suffix:semicolon
 id|newsk-&gt;high_seq
 op_assign
 l_int|0
@@ -1984,20 +1992,6 @@ id|sk-&gt;rcv_ack_seq
 r_goto
 id|uninteresting_ack
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;If there is data set flag 1&n;&t; */
-r_if
-c_cond
-(paren
-id|len
-op_ne
-id|th-&gt;doff
-op_star
-l_int|4
-)paren
-id|flag
-op_or_assign
-l_int|1
-suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Have we discovered a larger window&n;&t; */
 id|window_seq
 op_assign
@@ -2062,11 +2056,6 @@ comma
 id|window_seq
 )paren
 )paren
-(brace
-id|flag
-op_or_assign
-l_int|4
-suffix:semicolon
 id|tcp_window_shrunk
 c_func
 (paren
@@ -2075,7 +2064,6 @@ comma
 id|window_seq
 )paren
 suffix:semicolon
-)brace
 multiline_comment|/*&n;&t; *&t;Pipe has emptied&n;&t; */
 r_if
 c_cond
@@ -2177,12 +2165,11 @@ id|sk-&gt;window_seq
 op_eq
 id|window_seq
 op_logical_and
-op_logical_neg
-(paren
-id|flag
-op_amp
-l_int|1
-)paren
+id|len
+op_ne
+id|th-&gt;doff
+op_star
+l_int|4
 op_logical_and
 id|before
 c_func
@@ -2229,6 +2216,10 @@ op_plus
 l_int|1
 )paren
 (brace
+r_int
+id|tmp
+suffix:semicolon
+multiline_comment|/* We need to be a bit careful to preserve the&n;&t;&t;&t; * count of packets that are out in the system here.&n;&t;&t;&t; */
 id|sk-&gt;ssthresh
 op_assign
 id|max
@@ -2249,6 +2240,10 @@ id|MAX_DUP_ACKS
 op_plus
 l_int|1
 suffix:semicolon
+id|tmp
+op_assign
+id|sk-&gt;packets_out
+suffix:semicolon
 id|tcp_do_retransmit
 c_func
 (paren
@@ -2256,6 +2251,10 @@ id|sk
 comma
 l_int|0
 )paren
+suffix:semicolon
+id|sk-&gt;packets_out
+op_assign
+id|tmp
 suffix:semicolon
 )brace
 r_else
@@ -2478,6 +2477,10 @@ id|sk-&gt;send_tail
 op_assign
 l_int|NULL
 suffix:semicolon
+id|sk-&gt;send_next
+op_assign
+l_int|NULL
+suffix:semicolon
 id|sk-&gt;retransmits
 op_assign
 l_int|0
@@ -2507,6 +2510,7 @@ l_int|0
 id|sk-&gt;packets_out
 op_decrement
 suffix:semicolon
+multiline_comment|/* This is really only supposed to be called when we&n;&t;&t; * are actually ACKing new data, which should exclude&n;&t;&t; * the ACK handshake on an initial SYN packet as well.&n;&t;&t; * Rather than introducing a new test here for this&n;&t;&t; * special case, we just reset the initial values for&n;&t;&t; * rtt immediatly after we move to the established state.&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -2526,15 +2530,6 @@ comma
 id|skb
 )paren
 suffix:semicolon
-id|flag
-op_or_assign
-(paren
-l_int|2
-op_or
-l_int|4
-)paren
-suffix:semicolon
-multiline_comment|/* 2 is really more like &squot;don&squot;t adjust the rtt &n;&t;&t;&t;&t;   In this case as we just set it up */
 id|IS_SKB
 c_func
 (paren
@@ -2633,10 +2628,6 @@ id|sk-&gt;cong_window
 )paren
 (brace
 multiline_comment|/*&n;&t;&t; *&t;Add more data to the send queue.&n;&t;&t; */
-id|flag
-op_or_assign
-l_int|1
-suffix:semicolon
 id|tcp_write_xmit
 c_func
 (paren
@@ -2783,10 +2774,6 @@ op_eq
 l_int|NULL
 )paren
 (brace
-id|flag
-op_or_assign
-l_int|1
-suffix:semicolon
 id|tcp_send_partial
 c_func
 (paren
@@ -2847,10 +2834,6 @@ id|sk-&gt;write_seq
 multiline_comment|/*&amp;&amp; sk-&gt;acked_seq == sk-&gt;fin_seq*/
 )paren
 (brace
-id|flag
-op_or_assign
-l_int|1
-suffix:semicolon
 id|sk-&gt;shutdown
 op_assign
 id|SHUTDOWN_MASK
@@ -2899,10 +2882,6 @@ op_eq
 id|sk-&gt;write_seq
 )paren
 (brace
-id|flag
-op_or_assign
-l_int|1
-suffix:semicolon
 id|sk-&gt;shutdown
 op_or_assign
 id|SEND_SHUTDOWN
@@ -2964,10 +2943,6 @@ op_eq
 id|sk-&gt;write_seq
 )paren
 (brace
-id|flag
-op_or_assign
-l_int|1
-suffix:semicolon
 id|tcp_time_wait
 c_func
 (paren
@@ -3049,6 +3024,19 @@ id|sk-&gt;mtu
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* Reset the RTT estimator to the initial&n;&t;&t; * state rather than testing to avoid&n;&t;&t; * updating it on the ACK to the SYN packet.&n;&t;&t; */
+id|sk-&gt;rtt
+op_assign
+l_int|0
+suffix:semicolon
+id|sk-&gt;rto
+op_assign
+id|TCP_TIMEOUT_INIT
+suffix:semicolon
+id|sk-&gt;mdev
+op_assign
+id|TCP_TIMEOUT_INIT
+suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; * The following code has been greatly simplified from the&n;&t; * old hacked up stuff. The wonders of properly setting the&n;&t; * retransmission timeouts.&n;&t; *&n;&t; * If we are retransmitting, and we acked a packet on the retransmit&n;&t; * queue, and there is still something in the retransmit queue,&n;&t; * then we can output some retransmission packets.&n;&t; */
 r_if
@@ -4636,8 +4624,6 @@ suffix:semicolon
 macro_line|#ifdef CONFIG_IP_TRANSPARENT_PROXY
 r_int
 id|r
-op_assign
-l_int|0
 suffix:semicolon
 macro_line|#endif
 multiline_comment|/*&n;&t; * &quot;redo&quot; is 1 if we have already seen this skb but couldn&squot;t&n;&t; * use it at that time (the socket was locked).  In that case&n;&t; * we have already done a lot of the work (looked up the socket&n;&t; * etc).&n;&t; */
@@ -4881,6 +4867,11 @@ comma
 op_amp
 id|sk-&gt;rmem_alloc
 )paren
+suffix:semicolon
+multiline_comment|/*&n;&t; * Mark the time of the last received packet.&n;&t; */
+id|sk-&gt;idletime
+op_assign
+id|jiffies
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;We should now do header prediction.&n;&t; */
 multiline_comment|/*&n;&t; *&t;This basically follows the flow suggested by RFC793, with the corrections in RFC1122. We&n;&t; *&t;don&squot;t implement precedence and we process URG incorrectly (deliberately so) for BSD bug&n;&t; *&t;compatibility. We also set up variables more thoroughly [Karn notes in the&n;&t; *&t;KA9Q code the RFC793 incoming segment rules don&squot;t initialise the variables for all paths].&n;&t; */
@@ -5276,6 +5267,19 @@ id|sk-&gt;mtu
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* Reset the RTT estimator to the initial&n;&t;&t;&t;&t; * state rather than testing to avoid&n;&t;&t;&t;&t; * updating it on the ACK to the SYN packet.&n;&t;&t;&t;&t; */
+id|sk-&gt;rtt
+op_assign
+l_int|0
+suffix:semicolon
+id|sk-&gt;rto
+op_assign
+id|TCP_TIMEOUT_INIT
+suffix:semicolon
+id|sk-&gt;mdev
+op_assign
+id|TCP_TIMEOUT_INIT
+suffix:semicolon
 )brace
 r_else
 (brace

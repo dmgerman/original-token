@@ -1061,7 +1061,7 @@ r_struct
 id|iovec
 id|iov
 (braket
-id|MAX_IOVEC
+id|UIO_MAXIOV
 )braket
 suffix:semicolon
 r_int
@@ -1087,7 +1087,7 @@ c_cond
 (paren
 id|count
 OG
-id|MAX_IOVEC
+id|UIO_MAXIOV
 )paren
 r_return
 op_minus

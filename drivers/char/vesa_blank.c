@@ -2,6 +2,7 @@ multiline_comment|/*&n; * vesa_blank.c&n; *&n; * Exported functions:&n; *&t;void
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
+macro_line|#include &lt;linux/mm.h&gt;
 r_extern
 r_int
 r_int
@@ -779,6 +780,23 @@ l_int|1
 suffix:semicolon
 r_int
 r_int
+id|mode
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|verify_area
+c_func
+(paren
+id|VERIFY_READ
+comma
+id|argp
+comma
+l_int|1
+)paren
+)paren
+r_return
+suffix:semicolon
 id|mode
 op_assign
 id|get_user

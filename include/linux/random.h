@@ -124,6 +124,24 @@ r_int
 id|nbytes
 )paren
 suffix:semicolon
+r_extern
+id|__u32
+id|secure_tcp_sequence_number
+c_func
+(paren
+id|__u32
+id|saddr
+comma
+id|__u32
+id|daddr
+comma
+id|__u16
+id|sport
+comma
+id|__u16
+id|dport
+)paren
+suffix:semicolon
 macro_line|#ifndef MODULE
 r_extern
 r_struct

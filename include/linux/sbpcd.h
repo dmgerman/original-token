@@ -48,6 +48,8 @@ mdefine_line|#define DISTRIBUTION 1
 macro_line|#if DISTRIBUTION
 DECL|macro|READ_AUDIO
 mdefine_line|#define READ_AUDIO 0
+DECL|macro|KLOGD_PAUSE
+mdefine_line|#define KLOGD_PAUSE 55
 macro_line|#else
 multiline_comment|/* max. number of audio frames to read with one     */
 multiline_comment|/* request (allocates n* 2352 bytes kernel memory!) */
@@ -55,6 +57,9 @@ multiline_comment|/* may be freely adjusted, f.e. 75 (= 1 sec.), at   */
 multiline_comment|/* runtime by use of the CDROMAUDIOBUFSIZ ioctl.    */
 DECL|macro|READ_AUDIO
 mdefine_line|#define READ_AUDIO 75
+multiline_comment|/*&n; * Time to wait after giving a message.&n; * This gets important if you enable non-standard DBG_xxx flags.&n; * You will see what happens if you omit the pause or make it&n; * too short. Be warned!&n; */
+DECL|macro|KLOGD_PAUSE
+mdefine_line|#define KLOGD_PAUSE 1
 multiline_comment|/* tray control: eject tray if no disk is in (0 or 1) */
 DECL|macro|JUKEBOX
 mdefine_line|#define JUKEBOX 1
@@ -74,6 +79,8 @@ DECL|macro|LONG_TIMING
 mdefine_line|#define LONG_TIMING 0 /* test against timeouts with &quot;gold&quot; CDs on CR-521 */
 DECL|macro|FUTURE
 macro_line|#undef  FUTURE
+DECL|macro|SAFE_MIXED
+macro_line|#undef SAFE_MIXED
 DECL|macro|TEST_UPC
 mdefine_line|#define TEST_UPC 0
 DECL|macro|SPEA_TEST

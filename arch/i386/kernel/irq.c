@@ -1518,6 +1518,11 @@ op_plus
 id|irq_action
 )paren
 suffix:semicolon
+r_int
+id|do_random
+op_assign
+l_int|0
+suffix:semicolon
 macro_line|#ifdef __SMP__
 r_if
 c_cond
@@ -1575,18 +1580,9 @@ c_loop
 id|action
 )paren
 (brace
-r_if
-c_cond
-(paren
+id|do_random
+op_or_assign
 id|action-&gt;flags
-op_amp
-id|SA_SAMPLE_RANDOM
-)paren
-id|add_interrupt_randomness
-c_func
-(paren
-id|irq
-)paren
 suffix:semicolon
 id|action
 op_member_access_from_pointer
@@ -1605,6 +1601,19 @@ op_assign
 id|action-&gt;next
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|do_random
+op_amp
+id|SA_SAMPLE_RANDOM
+)paren
+id|add_interrupt_randomness
+c_func
+(paren
+id|irq
+)paren
+suffix:semicolon
 )brace
 multiline_comment|/*&n; * do_fast_IRQ handles IRQ&squot;s that don&squot;t need the fancy interrupt return&n; * stuff - the handler is also running with interrupts disabled unless&n; * it explicitly enables them later.&n; */
 DECL|function|do_fast_IRQ
@@ -1628,6 +1637,11 @@ id|irq
 op_plus
 id|irq_action
 )paren
+suffix:semicolon
+r_int
+id|do_random
+op_assign
+l_int|0
 suffix:semicolon
 macro_line|#ifdef __SMP__
 multiline_comment|/* IRQ 13 is allowed - that&squot;s a flush tlb */
@@ -1691,6 +1705,10 @@ c_loop
 id|action
 )paren
 (brace
+id|do_random
+op_or_assign
+id|action-&gt;flags
+suffix:semicolon
 id|action
 op_member_access_from_pointer
 id|handler
@@ -1708,6 +1726,19 @@ op_assign
 id|action-&gt;next
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|do_random
+op_amp
+id|SA_SAMPLE_RANDOM
+)paren
+id|add_interrupt_randomness
+c_func
+(paren
+id|irq
+)paren
+suffix:semicolon
 )brace
 DECL|function|setup_x86_irq
 r_int

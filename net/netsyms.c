@@ -584,6 +584,12 @@ comma
 id|X
 c_func
 (paren
+id|netlink_donothing
+)paren
+comma
+id|X
+c_func
+(paren
 id|netlink_post
 )paren
 comma

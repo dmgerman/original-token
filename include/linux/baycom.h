@@ -108,6 +108,9 @@ DECL|macro|KISS_CMD_TXTAIL
 mdefine_line|#define KISS_CMD_TXTAIL     4
 DECL|macro|KISS_CMD_FULLDUP
 mdefine_line|#define KISS_CMD_FULLDUP    5
+multiline_comment|/*&n; * use bottom halves? (HDLC processing done with interrupts on or off)&n; */
+DECL|macro|BAYCOM_USE_BH
+mdefine_line|#define BAYCOM_USE_BH
 multiline_comment|/*&n; * modem types&n; */
 DECL|macro|BAYCOM_MODEM_INVALID
 mdefine_line|#define BAYCOM_MODEM_INVALID 0

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&n; * &t;Masquerading functionality&n; *&n; * &t;Copyright (c) 1994 Pauline Middelink&n; *&n; *&t;See ip_fw.c for original log&n; *&n; * Fixes:&n; *&t;Juan Jose Ciarlante&t;:&t;Modularized application masquerading (see ip_masq_app.c)&n; *&t;Juan Jose Ciarlante&t;:&t;New struct ip_masq_seq that holds output/input delta seq.&n; *&t;Juan Jose Ciarlante&t;:&t;Added hashed lookup by proto,maddr,mport and proto,saddr,sport&n; *&t;Juan Jose Ciarlante&t;:&t;Fixed deadlock if free ports get exhausted&n; *&t;Juan Jose Ciarlante&t;:&t;Added NO_ADDR status flag.&n; *&t;Nigel Metheringham&t;:&t;Added ICMP handling for demasquerade&n; *&t;Nigel Metheringham&t;:&t;Checksum checking of masqueraded data&n; *&n; *&t;&n; */
+multiline_comment|/*&n; *&n; * &t;Masquerading functionality&n; *&n; * &t;Copyright (c) 1994 Pauline Middelink&n; *&n; *&t;See ip_fw.c for original log&n; *&n; * Fixes:&n; *&t;Juan Jose Ciarlante&t;:&t;Modularized application masquerading (see ip_masq_app.c)&n; *&t;Juan Jose Ciarlante&t;:&t;New struct ip_masq_seq that holds output/input delta seq.&n; *&t;Juan Jose Ciarlante&t;:&t;Added hashed lookup by proto,maddr,mport and proto,saddr,sport&n; *&t;Juan Jose Ciarlante&t;:&t;Fixed deadlock if free ports get exhausted&n; *&t;Juan Jose Ciarlante&t;:&t;Added NO_ADDR status flag.&n; *&t;Nigel Metheringham&t;:&t;Added ICMP handling for demasquerade&n; *&t;Nigel Metheringham&t;:&t;Checksum checking of masqueraded data&n; *&t;Nigel Metheringham&t;:&t;Better handling of timeouts of TCP conns&n; *&n; *&t;&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -1907,44 +1907,59 @@ op_star
 )paren
 id|portptr
 suffix:semicolon
-multiline_comment|/*&n; &t;&t; *&t;Timeout depends if FIN packet was seen&n;&t;&t; *&t;Very short timeout if RST packet seen.&n; &t;&t; */
+multiline_comment|/* Set the flags up correctly... */
+r_if
+c_cond
+(paren
+id|th-&gt;fin
+)paren
+(brace
+id|ms-&gt;flags
+op_or_assign
+id|IP_MASQ_F_SAW_FIN_OUT
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|th-&gt;rst
+)paren
+(brace
+id|ms-&gt;flags
+op_or_assign
+id|IP_MASQ_F_SAW_RST
+suffix:semicolon
+)brace
+multiline_comment|/*&n; &t;&t; *&t;Timeout depends if FIN packet has been seen&n;&t;&t; *&t;Very short timeout if RST packet seen.&n; &t;&t; */
 r_if
 c_cond
 (paren
 id|ms-&gt;flags
 op_amp
 id|IP_MASQ_F_SAW_RST
-op_logical_or
-id|th-&gt;rst
 )paren
 (brace
 id|timeout
 op_assign
 l_int|1
 suffix:semicolon
-id|ms-&gt;flags
-op_or_assign
-id|IP_MASQ_F_SAW_RST
-suffix:semicolon
 )brace
 r_else
 r_if
 c_cond
 (paren
+(paren
 id|ms-&gt;flags
 op_amp
 id|IP_MASQ_F_SAW_FIN
-op_logical_or
-id|th-&gt;fin
+)paren
+op_eq
+id|IP_MASQ_F_SAW_FIN
 )paren
 (brace
 id|timeout
 op_assign
 id|ip_masq_expire-&gt;tcp_fin_timeout
-suffix:semicolon
-id|ms-&gt;flags
-op_or_assign
-id|IP_MASQ_F_SAW_FIN
 suffix:semicolon
 )brace
 r_else
@@ -2898,6 +2913,10 @@ r_int
 r_int
 id|len
 suffix:semicolon
+r_int
+r_int
+id|timeout
+suffix:semicolon
 r_switch
 c_cond
 (paren
@@ -3137,6 +3156,15 @@ op_ne
 l_int|NULL
 )paren
 (brace
+multiline_comment|/* Stop the timer ticking.... */
+id|ip_masq_set_expire
+c_func
+(paren
+id|ms
+comma
+l_int|0
+)paren
+suffix:semicolon
 multiline_comment|/*&n;                 *&t;Set dport if not defined yet.&n;                 */
 r_if
 c_cond
@@ -3288,7 +3316,7 @@ l_int|4
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n;                 * Yug! adjust UDP/TCP and IP checksums, also update&n;&t;&t; * UDP timeouts since you cannot depend on traffic&n;&t;&t; * going through the other way to hold the timeout open.&n;&t;&t; * (With TCP the ACK packets hold the tunnel open).&n;&t;&t; * If a TCP RST is seen collapse the tunnel!&n;                 */
+multiline_comment|/*&n;                 * Yug! adjust UDP/TCP and IP checksums, also update&n;&t;&t; * timeouts.&n;&t;&t; * If a TCP RST is seen collapse the tunnel (by using short timeout)!&n;                 */
 r_if
 c_cond
 (paren
@@ -3314,21 +3342,9 @@ comma
 id|len
 )paren
 suffix:semicolon
-id|ip_masq_set_expire
-c_func
-(paren
-id|ms
-comma
-l_int|0
-)paren
-suffix:semicolon
-id|ip_masq_set_expire
-c_func
-(paren
-id|ms
-comma
+id|timeout
+op_assign
 id|ip_masq_expire-&gt;udp_timeout
-)paren
 suffix:semicolon
 )brace
 r_else
@@ -3390,7 +3406,7 @@ comma
 id|skb
 )paren
 suffix:semicolon
-multiline_comment|/* Check if TCP RST */
+multiline_comment|/* Check if TCP FIN or RST */
 id|th
 op_assign
 (paren
@@ -3403,31 +3419,71 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|th-&gt;fin
+)paren
+(brace
+id|ms-&gt;flags
+op_or_assign
+id|IP_MASQ_F_SAW_FIN_IN
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
 id|th-&gt;rst
 )paren
 (brace
-id|ip_masq_set_expire
-c_func
-(paren
-id|ms
-comma
-l_int|0
-)paren
-suffix:semicolon
 id|ms-&gt;flags
 op_or_assign
 id|IP_MASQ_F_SAW_RST
 suffix:semicolon
+)brace
+multiline_comment|/* Now set the timeouts */
+r_if
+c_cond
+(paren
+id|ms-&gt;flags
+op_amp
+id|IP_MASQ_F_SAW_RST
+)paren
+(brace
+id|timeout
+op_assign
+l_int|1
+suffix:semicolon
+)brace
+r_else
+r_if
+c_cond
+(paren
+(paren
+id|ms-&gt;flags
+op_amp
+id|IP_MASQ_F_SAW_FIN
+)paren
+op_eq
+id|IP_MASQ_F_SAW_FIN
+)paren
+(brace
+id|timeout
+op_assign
+id|ip_masq_expire-&gt;tcp_fin_timeout
+suffix:semicolon
+)brace
+r_else
+id|timeout
+op_assign
+id|ip_masq_expire-&gt;tcp_timeout
+suffix:semicolon
+)brace
 id|ip_masq_set_expire
 c_func
 (paren
 id|ms
 comma
-l_int|1
+id|timeout
 )paren
 suffix:semicolon
-)brace
-)brace
 id|ip_send_check
 c_func
 (paren
