@@ -95,29 +95,6 @@ id|underflow
 id|NF_IP_NUMHOOKS
 )braket
 suffix:semicolon
-DECL|member|padding
-r_char
-id|padding
-(braket
-id|SMP_ALIGN
-c_func
-(paren
-(paren
-id|NF_IP_NUMHOOKS
-op_star
-l_int|2
-op_plus
-l_int|2
-)paren
-op_star
-r_sizeof
-(paren
-r_int
-r_int
-)paren
-)paren
-)braket
-suffix:semicolon
 multiline_comment|/* ipt_entry tables: one per CPU */
 DECL|member|entries
 r_char
@@ -125,6 +102,17 @@ id|entries
 (braket
 l_int|0
 )braket
+id|__attribute__
+c_func
+(paren
+(paren
+id|aligned
+c_func
+(paren
+id|SMP_CACHE_BYTES
+)paren
+)paren
+)paren
 suffix:semicolon
 )brace
 suffix:semicolon
@@ -153,7 +141,7 @@ DECL|macro|ADD_COUNTER
 mdefine_line|#define ADD_COUNTER(c,b,p) do { (c).bcnt += (b); (c).pcnt += (p); } while(0)
 macro_line|#ifdef CONFIG_SMP
 DECL|macro|TABLE_OFFSET
-mdefine_line|#define TABLE_OFFSET(t,p) (SMP_ALIGN((t)-&gt;size)*cpu_number_map(p))
+mdefine_line|#define TABLE_OFFSET(t,p) (SMP_ALIGN((t)-&gt;size)*(p))
 macro_line|#else
 DECL|macro|TABLE_OFFSET
 mdefine_line|#define TABLE_OFFSET(t,p) 0
@@ -1049,9 +1037,13 @@ id|table
 op_member_access_from_pointer
 r_private
 comma
+id|cpu_number_map
+c_func
+(paren
 id|smp_processor_id
 c_func
 (paren
+)paren
 )paren
 )paren
 suffix:semicolon
@@ -3752,9 +3744,9 @@ id|SMP_ALIGN
 c_func
 (paren
 id|newinfo-&gt;size
+)paren
 op_star
 id|i
-)paren
 comma
 id|newinfo-&gt;entries
 comma
@@ -6049,9 +6041,6 @@ l_int|0
 comma
 (brace
 l_int|0
-)brace
-comma
-(brace
 )brace
 comma
 (brace

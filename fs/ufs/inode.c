@@ -2503,11 +2503,6 @@ id|ufs_writepage
 c_func
 (paren
 r_struct
-id|file
-op_star
-id|file
-comma
-r_struct
 id|page
 op_star
 id|page

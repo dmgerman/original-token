@@ -2052,10 +2052,6 @@ id|writepage
 )paren
 (paren
 r_struct
-id|file
-op_star
-comma
-r_struct
 id|page
 op_star
 )paren
@@ -2126,14 +2122,6 @@ suffix:semicolon
 id|writepage
 c_func
 (paren
-l_int|NULL
-comma
-id|page
-)paren
-suffix:semicolon
-id|UnlockPage
-c_func
-(paren
 id|page
 )paren
 suffix:semicolon
@@ -2144,8 +2132,14 @@ id|page
 )paren
 suffix:semicolon
 multiline_comment|/* And re-start the thing.. */
-r_goto
-id|dirty_page_rescan
+id|spin_lock
+c_func
+(paren
+op_amp
+id|pagemap_lru_lock
+)paren
+suffix:semicolon
+r_continue
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t;&t; * If the page has buffers, try to free the buffer mappings&n;&t;&t; * associated with this page. If we succeed we either free&n;&t;&t; * the page (in case it was a buffercache only page) or we&n;&t;&t; * move the page to the inactive_clean list.&n;&t;&t; *&n;&t;&t; * On the first round, we should free all previously cleaned&n;&t;&t; * buffer pages&n;&t;&t; */

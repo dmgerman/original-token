@@ -2370,11 +2370,6 @@ id|ext2_writepage
 c_func
 (paren
 r_struct
-id|file
-op_star
-id|file
-comma
-r_struct
 id|page
 op_star
 id|page
@@ -5070,12 +5065,10 @@ id|inode-&gt;u.ext2_i.i_data
 id|block
 )braket
 suffix:semicolon
-id|mark_buffer_dirty_inode
+id|mark_buffer_dirty
 c_func
 (paren
 id|bh
-comma
-id|inode
 )paren
 suffix:semicolon
 r_if
