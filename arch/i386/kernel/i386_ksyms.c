@@ -467,6 +467,27 @@ c_func
 id|mca_isadapter
 )paren
 suffix:semicolon
+DECL|variable|mca_mark_as_used
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|mca_mark_as_used
+)paren
+suffix:semicolon
+DECL|variable|mca_mark_as_unused
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|mca_mark_as_unused
+)paren
+suffix:semicolon
+DECL|variable|mca_find_unused_adapter
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|mca_find_unused_adapter
+)paren
+suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef CONFIG_VT
 DECL|variable|screen_info

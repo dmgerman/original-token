@@ -3917,9 +3917,6 @@ op_star
 id|tty-&gt;disc_data
 suffix:semicolon
 r_int
-id|err
-suffix:semicolon
-r_int
 r_int
 id|tmp
 suffix:semicolon

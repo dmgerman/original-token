@@ -1,22 +1,9 @@
 multiline_comment|/*&n; * This file contains the procedures for the handling of select and poll&n; *&n; * Created for Linux based loosely upon Mathius Lattner&squot;s minix&n; * patches by Peter MacDonald. Heavily edited by Linus.&n; *&n; *  4 February 1994&n; *     COFF/ELF binary emulation. If the process has the STICKY_TIMEOUTS&n; *     flag set in its personality we do *not* modify the given timeout&n; *     parameter to reflect time remaining.&n; */
-macro_line|#include &lt;linux/types.h&gt;
-macro_line|#include &lt;linux/time.h&gt;
-macro_line|#include &lt;linux/fs.h&gt;
-macro_line|#include &lt;linux/kernel.h&gt;
-macro_line|#include &lt;linux/sched.h&gt;
-macro_line|#include &lt;linux/string.h&gt;
-macro_line|#include &lt;linux/stat.h&gt;
-macro_line|#include &lt;linux/signal.h&gt;
-macro_line|#include &lt;linux/errno.h&gt;
-macro_line|#include &lt;linux/personality.h&gt;
-macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
-macro_line|#include &lt;linux/smp.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/poll.h&gt;
 macro_line|#include &lt;linux/file.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
-macro_line|#include &lt;asm/system.h&gt;
 DECL|macro|ROUND_UP
 mdefine_line|#define ROUND_UP(x,y) (((x)+(y)-1)/(y))
 DECL|macro|DEFAULT_POLLMASK

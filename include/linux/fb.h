@@ -90,6 +90,20 @@ DECL|macro|FB_ACCEL_SUN_LEO
 mdefine_line|#define FB_ACCEL_SUN_LEO&t;13&t;/* Sun leo/zx&t;&t;&t;*/
 DECL|macro|FB_ACCEL_IMS_TWINTURBO
 mdefine_line|#define FB_ACCEL_IMS_TWINTURBO&t;14&t;/* IMS Twin Turbo&t;&t;*/
+DECL|macro|FB_ACCEL_3DLABS_PERMEDIA2
+mdefine_line|#define FB_ACCEL_3DLABS_PERMEDIA2 15&t;/* 3Dlabs Permedia 2&t;&t;*/
+DECL|macro|FB_ACCEL_MATROX_MGA2064W
+mdefine_line|#define FB_ACCEL_MATROX_MGA2064W 16&t;/* Matrox MGA2064W (Millenium)&t;*/
+DECL|macro|FB_ACCEL_MATROX_MGA1064SG
+mdefine_line|#define FB_ACCEL_MATROX_MGA1064SG 17&t;/* Matrox MGA1064SG (Mystique)&t;*/
+DECL|macro|FB_ACCEL_MATROX_MGA2164W
+mdefine_line|#define FB_ACCEL_MATROX_MGA2164W 18&t;/* Matrox MGA2164W (Millenium II) */
+DECL|macro|FB_ACCEL_MATROX_MGA2164W_AGP
+mdefine_line|#define FB_ACCEL_MATROX_MGA2164W_AGP 19&t;/* Matrox MGA2164W (Millenium II) */
+DECL|macro|FB_ACCEL_MATROX_MGAG100
+mdefine_line|#define FB_ACCEL_MATROX_MGAG100&t;20&t;/* Matrox G100 (Productiva G100) */
+DECL|macro|FB_ACCEL_MATROX_MGAG200
+mdefine_line|#define FB_ACCEL_MATROX_MGAG200&t;21&t;/* Matrox G200 (Myst, Mill, ...) */
 DECL|struct|fb_fix_screeninfo
 r_struct
 id|fb_fix_screeninfo
@@ -214,6 +228,8 @@ DECL|macro|FB_ACTIVATE_VBL
 mdefine_line|#define FB_ACTIVATE_VBL&t;       16&t;/* activate values on next vbl  */
 DECL|macro|FB_CHANGE_CMAP_VBL
 mdefine_line|#define FB_CHANGE_CMAP_VBL     32&t;/* change colormap on vbl&t;*/
+DECL|macro|FB_ACTIVATE_ALL
+mdefine_line|#define FB_ACTIVATE_ALL&t;       64&t;/* change all VCs on this fb&t;*/
 DECL|macro|FB_ACCELF_TEXT
 mdefine_line|#define FB_ACCELF_TEXT&t;&t;1&t;/* text mode acceleration */
 DECL|macro|FB_SYNC_HOR_HIGH_ACT

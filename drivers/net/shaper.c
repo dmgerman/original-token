@@ -270,9 +270,13 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|time_before
+c_func
+(paren
 id|skb-&gt;shapeclock
-OL
+comma
 id|jiffies
+)paren
 )paren
 (brace
 id|skb-&gt;shapeclock
@@ -842,9 +846,9 @@ r_if
 c_cond
 (paren
 id|skb-&gt;shapeclock
-op_le
+op_minus
 id|jiffies
-op_plus
+op_le
 id|SHAPER_BURST
 )paren
 (brace
@@ -999,7 +1003,7 @@ id|shaper
 op_assign
 id|dev-&gt;priv
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;Can&squot;t open until attached.&n;&t; */
+multiline_comment|/*&n;&t; *&t;Can&squot;t open until attached.&n;&t; *&t;Also can&squot;t open until speed is set, or we&squot;ll get&n;&t; *&t;a division by zero.&n;&t; */
 r_if
 c_cond
 (paren
@@ -1011,6 +1015,19 @@ l_int|NULL
 r_return
 op_minus
 id|ENODEV
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|shaper-&gt;bitspersec
+op_eq
+l_int|0
+)paren
+(brace
+r_return
+op_minus
+id|EINVAL
 suffix:semicolon
 )brace
 id|MOD_INC_USE_COUNT
@@ -1613,6 +1630,10 @@ id|shdev-&gt;mtu
 op_assign
 id|dev-&gt;mtu
 suffix:semicolon
+id|sh-&gt;bitspersec
+op_assign
+l_int|0
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -1730,17 +1751,12 @@ op_minus
 id|ENODEV
 suffix:semicolon
 )brace
-id|memcpy
+id|strcpy
 c_func
 (paren
 id|ss-&gt;ss_name
 comma
 id|sh-&gt;dev-&gt;name
-comma
-r_sizeof
-(paren
-id|ss-&gt;ss_name
-)paren
 )paren
 suffix:semicolon
 r_return

@@ -255,10 +255,6 @@ op_assign
 l_char|&squot;&bslash;0&squot;
 suffix:semicolon
 multiline_comment|/* we depend on this a lot! */
-id|drive-&gt;present
-op_assign
-l_int|1
-suffix:semicolon
 id|printk
 c_func
 (paren
@@ -269,6 +265,51 @@ comma
 id|id-&gt;model
 )paren
 suffix:semicolon
+id|drive-&gt;present
+op_assign
+l_int|1
+suffix:semicolon
+multiline_comment|/*&n;&t; * Prevent long system lockup probing later for non-existant&n;&t; * slave drive if the hwif is actually a Kodak CompactFlash card.&n;&t; */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|strcmp
+c_func
+(paren
+id|id-&gt;model
+comma
+l_string|&quot;KODAK ATA_FLASH&quot;
+)paren
+)paren
+(brace
+id|ide_drive_t
+op_star
+id|mate
+op_assign
+op_amp
+id|HWIF
+c_func
+(paren
+id|drive
+)paren
+op_member_access_from_pointer
+id|drives
+(braket
+l_int|1
+op_xor
+id|drive-&gt;select.b.unit
+)braket
+suffix:semicolon
+id|mate-&gt;present
+op_assign
+l_int|0
+suffix:semicolon
+id|mate-&gt;noprobe
+op_assign
+l_int|1
+suffix:semicolon
+)brace
 multiline_comment|/*&n;&t; * Check for an ATAPI device&n;&t; */
 r_if
 c_cond

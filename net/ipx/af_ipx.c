@@ -9349,6 +9349,7 @@ id|datalink_proto
 op_star
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_PROC_FS
 DECL|variable|ipx_procinfo
 r_struct
 id|proc_dir_entry
@@ -9439,6 +9440,7 @@ comma
 id|ipx_rt_get_info
 )brace
 suffix:semicolon
+macro_line|#endif
 DECL|variable|ipx_8022_type
 r_static
 r_int

@@ -2208,7 +2208,7 @@ id|device
 id|dev_ltpc
 op_assign
 (brace
-l_string|&quot;ltalk0&bslash;0   &quot;
+l_string|&quot;lt0&bslash;0   &quot;
 comma
 l_int|0
 comma

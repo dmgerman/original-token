@@ -5,6 +5,7 @@ macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/fb.h&gt;
 macro_line|#include &lt;linux/slab.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
+macro_line|#include &lt;asm/io.h&gt;
 DECL|variable|currcon
 r_static
 r_int
@@ -1207,7 +1208,15 @@ id|info
 suffix:semicolon
 id|display-&gt;screen_base
 op_assign
+id|phys_to_virt
+c_func
+(paren
+(paren
+r_int
+r_int
+)paren
 id|fix.smem_start
+)paren
 suffix:semicolon
 id|display-&gt;visual
 op_assign

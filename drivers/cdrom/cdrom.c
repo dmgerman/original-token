@@ -241,6 +241,7 @@ id|u_char
 id|requested
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_SYSCTL
 r_static
 r_void
 id|cdrom_sysctl_register
@@ -249,6 +250,7 @@ c_func
 r_void
 )paren
 suffix:semicolon
+macro_line|#endif /* CONFIG_SYSCTL */ 
 DECL|variable|topCdromPtr
 r_static
 r_struct

@@ -199,6 +199,16 @@ r_char
 id|SFR
 suffix:semicolon
 multiline_comment|/* Shadow of special function register */
+DECL|member|fbmem_phys
+r_int
+r_int
+id|fbmem_phys
+suffix:semicolon
+DECL|member|fbregs_phys
+r_int
+r_int
+id|fbregs_phys
+suffix:semicolon
 DECL|member|currentmode
 r_struct
 id|clgenfb_par
@@ -1493,7 +1503,7 @@ op_assign
 r_char
 op_star
 )paren
-id|_info-&gt;fbmem
+id|_info-&gt;fbmem_phys
 suffix:semicolon
 multiline_comment|/* monochrome: only 1 memory plane */
 multiline_comment|/* 8 bit and above: Use whole memory area */
@@ -1544,7 +1554,7 @@ op_assign
 r_char
 op_star
 )paren
-id|_info-&gt;regs
+id|_info-&gt;fbregs_phys
 suffix:semicolon
 id|fix-&gt;mmio_len
 op_assign
@@ -1928,7 +1938,7 @@ op_eq
 op_minus
 l_int|1
 op_logical_and
-id|_par-&gt;var.xres_virtual
+id|_par-&gt;var.yres_virtual
 op_eq
 op_minus
 l_int|1
@@ -7710,14 +7720,24 @@ id|fb_info-&gt;regs
 op_add_assign
 l_int|0x600000
 suffix:semicolon
+id|fb_info-&gt;fbregs_phys
+op_assign
+id|board_addr
+op_plus
+l_int|0x600000
+suffix:semicolon
+id|fb_info-&gt;fbmem_phys
+op_assign
+id|board_addr
+op_plus
+l_int|16777216
+suffix:semicolon
 id|fb_info-&gt;fbmem
 op_assign
 id|kernel_map
 c_func
 (paren
-id|board_addr
-op_plus
-l_int|16777216
+id|fb_info-&gt;fbmem_phys
 comma
 l_int|16777216
 comma
@@ -7758,6 +7778,10 @@ r_int
 )paren
 id|cd2-&gt;cd_BoardAddr
 )paren
+suffix:semicolon
+id|fb_info-&gt;fbmem_phys
+op_assign
+id|board_addr
 suffix:semicolon
 r_if
 c_cond
@@ -7802,6 +7826,14 @@ c_func
 (paren
 id|cd2-&gt;cd_BoardAddr
 )paren
+suffix:semicolon
+id|fb_info-&gt;fbregs_phys
+op_assign
+(paren
+r_int
+r_int
+)paren
+id|cd2-&gt;cd_BoardAddr
 suffix:semicolon
 id|DEBUG
 id|printk

@@ -894,19 +894,15 @@ op_amp
 id|page-&gt;flags
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * Try to flush any pending writes to the file..&n;&t; *&n;&t; * NOTE! Because we own the page lock, there cannot&n;&t; * be any new pending writes generated at this point.&n;&t; */
+multiline_comment|/*&n;&t; * Try to flush any pending writes to the file..&n;&t; *&n;&t; * NOTE! Because we own the page lock, there cannot&n;&t; * be any new pending writes generated at this point&n;&t; * for this page (other pages can be written to).&n;&t; */
 id|error
 op_assign
-id|nfs_flush_pages
+id|nfs_wb_page
 c_func
 (paren
 id|inode
 comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
+id|page
 )paren
 suffix:semicolon
 r_if

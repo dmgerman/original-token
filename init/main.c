@@ -1854,6 +1854,22 @@ id|ints
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef CONFIG_LTPC
+r_extern
+r_void
+id|ltpc_setup
+c_func
+(paren
+r_char
+op_star
+id|str
+comma
+r_int
+op_star
+id|ints
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#if defined(CONFIG_SYSVIPC)
 r_extern
 r_void
@@ -2037,11 +2053,18 @@ c_loop
 (paren
 id|cur
 op_logical_and
+(paren
+op_star
+id|cur
+op_eq
+l_char|&squot;-&squot;
+op_logical_or
 id|isdigit
 c_func
 (paren
 op_star
 id|cur
+)paren
 )paren
 op_logical_and
 id|i
@@ -3629,6 +3652,14 @@ macro_line|#ifdef CONFIG_MACMOUSE
 l_string|&quot;adb_buttons=&quot;
 comma
 id|adb_mouse_setup
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_LTPC
+(brace
+l_string|&quot;ltpc=&quot;
+comma
+id|ltpc_setup
 )brace
 comma
 macro_line|#endif

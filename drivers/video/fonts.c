@@ -201,7 +201,7 @@ id|c
 op_assign
 id|f-&gt;pref
 suffix:semicolon
-macro_line|#ifdef __mc68000__
+macro_line|#if defined(__mc68000__) || defined(CONFIG_APUS)
 macro_line|#ifdef CONFIG_FONT_PEARL_8x8
 r_if
 c_cond

@@ -8936,10 +8936,11 @@ id|share_dma
 r_if
 c_cond
 (paren
-id|irq
+id|devc-&gt;irq
 OG
 l_int|0
 )paren
+multiline_comment|/* There is no point in freeing irq, if it wasn&squot;t allocated */
 id|free_irq
 c_func
 (paren

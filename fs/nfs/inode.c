@@ -309,7 +309,7 @@ id|inode-&gt;i_ino
 )paren
 suffix:semicolon
 macro_line|#endif
-id|nfs_invalidate_pages
+id|nfs_inval
 c_func
 (paren
 id|inode
@@ -3217,7 +3217,7 @@ id|inode-&gt;i_mode
 )paren
 (brace
 multiline_comment|/* This sends off all dirty pages off to the server.&n;&t;&t; * Note that this function must not sleep. */
-id|nfs_invalidate_pages
+id|nfs_inval
 c_func
 (paren
 id|inode

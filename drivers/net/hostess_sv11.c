@@ -384,14 +384,7 @@ r_int
 id|cmd
 )paren
 (brace
-r_struct
-id|sv11_device
-op_star
-id|sv11
-op_assign
-id|d-&gt;priv
-suffix:semicolon
-multiline_comment|/* z8530_ioctl(d,&amp;sv11-&gt;sync.chanA,ifr,cmd) */
+multiline_comment|/* struct sv11_device *sv11=d-&gt;priv;&n;&t;   z8530_ioctl(d,&amp;sv11-&gt;sync.chanA,ifr,cmd) */
 r_return
 id|sppp_do_ioctl
 c_func

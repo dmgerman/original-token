@@ -4,18 +4,11 @@ multiline_comment|/* Start bdflush() with kernel_thread not syscall - Paul Gortm
 multiline_comment|/* Removed a lot of unnecessary code and simplified things now that&n; * the buffer cache isn&squot;t our primary cache - Andrew Tridgell 12/96&n; */
 multiline_comment|/* Speed up hash, lru, and free list operations.  Use gfp() for allocating&n; * hash table, use SLAB cache for buffer heads. -DaveM&n; */
 multiline_comment|/* Added 32k buffer block sizes - these are required older ARM systems.&n; * - RMK&n; */
-macro_line|#include &lt;linux/sched.h&gt;
-macro_line|#include &lt;linux/kernel.h&gt;
-macro_line|#include &lt;linux/major.h&gt;
-macro_line|#include &lt;linux/string.h&gt;
+macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/locks.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
-macro_line|#include &lt;linux/malloc.h&gt;
-macro_line|#include &lt;linux/slab.h&gt;
-macro_line|#include &lt;linux/pagemap.h&gt;
 macro_line|#include &lt;linux/swap.h&gt;
 macro_line|#include &lt;linux/swapctl.h&gt;
-macro_line|#include &lt;linux/smp.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/vmalloc.h&gt;
 macro_line|#include &lt;linux/blkdev.h&gt;
@@ -23,7 +16,6 @@ macro_line|#include &lt;linux/sysrq.h&gt;
 macro_line|#include &lt;linux/file.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/quotaops.h&gt;
-macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;

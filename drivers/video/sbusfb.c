@@ -870,18 +870,20 @@ macro_line|#ifdef __sparc_v9__
 multiline_comment|/* Align it as much as desirable */
 (brace
 r_int
+r_int
 id|j
-comma
-id|max
-op_assign
-op_minus
-l_int|1
 comma
 id|alignment
 comma
 id|s
 op_assign
 l_int|0
+suffix:semicolon
+r_int
+id|max
+op_assign
+op_minus
+l_int|1
 suffix:semicolon
 id|map_offset
 op_assign

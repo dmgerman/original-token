@@ -518,6 +518,14 @@ op_logical_and
 id|dentry-&gt;d_inode
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|status
+op_ne
+op_minus
+id|ENOENT
+)paren
 id|printk
 c_func
 (paren

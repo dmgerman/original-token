@@ -2357,12 +2357,7 @@ comma
 l_int|0xe0
 )brace
 comma
-(brace
-l_int|0x12
-comma
-l_int|0x40
-)brace
-comma
+multiline_comment|/* { 0x12, 0x40 }, -- 3400 needs 40, 2400 needs 48, no way to tell */
 (brace
 l_int|0x20
 comma

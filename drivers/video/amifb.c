@@ -18,6 +18,7 @@ macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/amigahw.h&gt;
 macro_line|#include &lt;asm/amigaints.h&gt;
 macro_line|#include &lt;asm/setup.h&gt;
+macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;video/fbcon.h&gt;
 macro_line|#include &lt;video/fbcon-afb.h&gt;
 macro_line|#include &lt;video/fbcon-ilbm.h&gt;
@@ -5159,7 +5160,14 @@ id|par
 suffix:semicolon
 id|display-&gt;screen_base
 op_assign
+id|phys_to_virt
+(paren
+(paren
+r_int
+r_int
+)paren
 id|fix.smem_start
+)paren
 suffix:semicolon
 id|display-&gt;visual
 op_assign
@@ -8203,7 +8211,15 @@ op_assign
 r_char
 op_star
 )paren
+id|virt_to_phys
+c_func
+(paren
+(paren
+r_void
+op_star
+)paren
 id|videomemory
+)paren
 suffix:semicolon
 id|fix-&gt;smem_len
 op_assign

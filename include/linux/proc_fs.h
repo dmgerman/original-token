@@ -395,6 +395,9 @@ comma
 DECL|enumerator|PROC_NET_IPFW_CHAIN_NAMES
 id|PROC_NET_IPFW_CHAIN_NAMES
 comma
+DECL|enumerator|PROC_NET_AT_AARP
+id|PROC_NET_AT_AARP
+comma
 DECL|enumerator|PROC_NET_LAST
 id|PROC_NET_LAST
 )brace
@@ -485,6 +488,9 @@ id|PROC_SCSI_7000FASST
 comma
 DECL|enumerator|PROC_SCSI_IBMMCA
 id|PROC_SCSI_IBMMCA
+comma
+DECL|enumerator|PROC_SCSI_FD_MCS
+id|PROC_SCSI_FD_MCS
 comma
 DECL|enumerator|PROC_SCSI_EATA2X
 id|PROC_SCSI_EATA2X
@@ -1185,7 +1191,7 @@ r_if
 c_cond
 (paren
 id|x
-op_le
+OL
 id|PROC_SCSI_FILE
 )paren
 (brace

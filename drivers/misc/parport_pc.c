@@ -3091,6 +3091,7 @@ c_func
 l_string|&quot;]&bslash;n&quot;
 )paren
 suffix:semicolon
+macro_line|#ifdef&t;CONFIG_PROC_FS
 r_if
 c_cond
 (paren
@@ -3114,6 +3115,7 @@ c_func
 id|p
 )paren
 suffix:semicolon
+macro_line|#endif
 id|p-&gt;flags
 op_or_assign
 id|PARPORT_FLAG_COMA
@@ -3550,12 +3552,14 @@ c_func
 id|p
 )paren
 suffix:semicolon
+macro_line|#ifdef&t;CONFIG_PROC_FS
 id|parport_proc_unregister
 c_func
 (paren
 id|p
 )paren
 suffix:semicolon
+macro_line|#endif
 id|parport_unregister_port
 c_func
 (paren

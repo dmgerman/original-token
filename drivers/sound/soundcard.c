@@ -1551,6 +1551,7 @@ r_return
 id|len
 suffix:semicolon
 )brace
+macro_line|#ifdef CONFIG_PROC_FS
 DECL|variable|proc_root_sound
 r_static
 r_struct
@@ -1581,6 +1582,7 @@ comma
 id|sound_proc_get_info
 )brace
 suffix:semicolon
+macro_line|#endif
 macro_line|#ifndef MIN
 DECL|macro|MIN
 mdefine_line|#define MIN(a,b) (((a) &lt; (b)) ? (a) : (b))
@@ -3993,6 +3995,7 @@ c_func
 suffix:semicolon
 )brace
 macro_line|#endif
+macro_line|#ifdef CONFIG_PROC_FS
 r_if
 c_cond
 (paren
@@ -4013,6 +4016,7 @@ id|KERN_ERR
 l_string|&quot;sound: registering /proc/sound failed&bslash;n&quot;
 )paren
 suffix:semicolon
+macro_line|#endif&t;&t;
 )brace
 DECL|variable|sound
 r_static

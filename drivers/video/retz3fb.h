@@ -1,24 +1,24 @@
 multiline_comment|/*&n; * linux/drivers/video/retz3fb.h -- Defines and macros for the RetinaZ3 frame&n; *&t;&t;&t;&t;    buffer device&n; *&n; *    Copyright (C) 1997 Jes Sorensen&n; *&n; * History:&n; *   - 22 Jan 97: Initial work&n; *&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file COPYING in the main directory of this archive&n; * for more details.&n; */
 multiline_comment|/*&n; * Macros to read and write to registers.&n; */
 DECL|macro|reg_w
-mdefine_line|#define reg_w(reg,dat) (*(z3_regs + reg) = dat)
+mdefine_line|#define reg_w(regs, reg,dat) (*(regs + reg) = dat)
 DECL|macro|reg_r
-mdefine_line|#define reg_r(reg) (*(z3_regs + reg))
+mdefine_line|#define reg_r(regs, reg) (*(regs + reg))
 multiline_comment|/*&n; * Macro to access the sequencer.&n; */
 DECL|macro|seq_w
-mdefine_line|#define seq_w(sreg,sdat) &bslash;&n;&t;do{ reg_w(SEQ_IDX, sreg); reg_w(SEQ_DATA, sdat); } while(0)
+mdefine_line|#define seq_w(regs, sreg, sdat) &bslash;&n;&t;do{ reg_w(regs, SEQ_IDX, sreg); reg_w(regs, SEQ_DATA, sdat); } while(0)
 multiline_comment|/*&n; * Macro to access the CRT controller.&n; */
 DECL|macro|crt_w
-mdefine_line|#define crt_w(creg,cdat) &bslash;&n;&t;do{ reg_w(CRT_IDX, creg); reg_w(CRT_DATA, cdat); } while(0)
+mdefine_line|#define crt_w(regs, creg, cdat) &bslash;&n;&t;do{ reg_w(regs, CRT_IDX, creg); reg_w(regs, CRT_DATA, cdat); } while(0)
 multiline_comment|/*&n; * Macro to access the graphics controller.&n; */
 DECL|macro|gfx_w
-mdefine_line|#define gfx_w(greg,gdat) &bslash;&n;&t;do{ reg_w(GFX_IDX, greg); reg_w(GFX_DATA, gdat); } while(0)
+mdefine_line|#define gfx_w(regs, greg, gdat) &bslash;&n;&t;do{ reg_w(regs, GFX_IDX, greg); reg_w(regs, GFX_DATA, gdat); } while(0)
 multiline_comment|/*&n; * Macro to access the attribute controller.&n; */
 DECL|macro|attr_w
-mdefine_line|#define attr_w(areg,adat) &bslash;&n;&t;do{ reg_w(ACT_IDX, areg); reg_w(ACT_DATA, adat); } while(0)
+mdefine_line|#define attr_w(regs, areg, adat) &bslash;&n;&t;do{ reg_w(regs, ACT_IDX, areg); reg_w(regs, ACT_DATA, adat); } while(0)
 multiline_comment|/*&n; * Macro to access the pll.&n; */
 DECL|macro|pll_w
-mdefine_line|#define pll_w(preg,pdat) &bslash;&n;&t;do{ reg_w(PLL_IDX, preg); &bslash;&n;&t;    reg_w(PLL_DATA, (pdat &amp; 0xff)); &bslash;&n;&t;    reg_w(PLL_DATA, (pdat &gt;&gt; 8));&bslash;&n;&t;} while(0)
+mdefine_line|#define pll_w(regs, preg, pdat) &bslash;&n;&t;do{ reg_w(regs, PLL_IDX, preg); &bslash;&n;&t;    reg_w(regs, PLL_DATA, (pdat &amp; 0xff)); &bslash;&n;&t;    reg_w(regs, PLL_DATA, (pdat &gt;&gt; 8));&bslash;&n;&t;} while(0)
 multiline_comment|/*&n; * Offsets&n; */
 DECL|macro|VIDEO_MEM_OFFSET
 mdefine_line|#define VIDEO_MEM_OFFSET&t;0x00c00000

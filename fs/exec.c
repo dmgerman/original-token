@@ -1,31 +1,18 @@
 multiline_comment|/*&n; *  linux/fs/exec.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; */
 multiline_comment|/*&n; * #!-checking implemented by tytso.&n; */
 multiline_comment|/*&n; * Demand-loading implemented 01.12.91 - no need to read anything but&n; * the header into memory. The inode of the executable is put into&n; * &quot;current-&gt;executable&quot;, and page faults do the actual loading. Clean.&n; *&n; * Once more I can proudly say that linux stood up to being changed: it&n; * was less than 2 hours work to get demand-loading completely implemented.&n; *&n; * Demand loading changed July 1993 by Eric Youngdale.   Use mmap instead,&n; * current-&gt;executable is only used by the procfs.  This allows a dispatch&n; * table to check for several different types  of binary formats.  We keep&n; * trying until we recognize the file or we run out of supported binary&n; * formats. &n; */
-macro_line|#include &lt;linux/fs.h&gt;
-macro_line|#include &lt;linux/sched.h&gt;
-macro_line|#include &lt;linux/kernel.h&gt;
-macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/slab.h&gt;
 macro_line|#include &lt;linux/file.h&gt;
 macro_line|#include &lt;linux/mman.h&gt;
 macro_line|#include &lt;linux/a.out.h&gt;
-macro_line|#include &lt;linux/errno.h&gt;
-macro_line|#include &lt;linux/signal.h&gt;
-macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
-macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/user.h&gt;
-macro_line|#include &lt;linux/binfmts.h&gt;
-macro_line|#include &lt;linux/personality.h&gt;
-macro_line|#include &lt;linux/smp.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
-macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/mmu_context.h&gt;
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#ifdef CONFIG_KMOD
 macro_line|#include &lt;linux/kmod.h&gt;
 macro_line|#endif

@@ -1,10 +1,7 @@
 multiline_comment|/*&n; *  linux/fs/attr.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *  changes by Thomas Schoebel-Theuer&n; */
-macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
-macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
-macro_line|#include &lt;asm/system.h&gt;
 multiline_comment|/* Taken over from the old code... */
 multiline_comment|/* POSIX UID/GID verification for setting inode attributes. */
 DECL|function|inode_change_ok

@@ -647,6 +647,17 @@ id|BLIST_NOLUN
 comma
 multiline_comment|/* Locks-up when LUN&gt;0 polled. */
 (brace
+l_string|&quot;PHILIPS&quot;
+comma
+l_string|&quot;PCA80SC&quot;
+comma
+l_string|&quot;V4-2&quot;
+comma
+id|BLIST_NOLUN
+)brace
+comma
+multiline_comment|/* Responds to all lun */
+(brace
 l_string|&quot;RODIME&quot;
 comma
 l_string|&quot;RO3000S&quot;
