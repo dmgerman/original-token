@@ -217,7 +217,7 @@ op_assign
 id|PAGE_DIR_OFFSET
 c_func
 (paren
-id|vma-&gt;vm_task
+id|vma-&gt;vm_mm
 comma
 id|addr
 )paren
@@ -404,7 +404,7 @@ op_assign
 id|PAGE_DIR_OFFSET
 c_func
 (paren
-id|vma-&gt;vm_task
+id|vma-&gt;vm_mm
 comma
 id|addr
 )paren

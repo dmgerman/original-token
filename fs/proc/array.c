@@ -1185,7 +1185,7 @@ op_assign
 id|pgd_offset
 c_func
 (paren
-id|p
+id|p-&gt;mm
 comma
 id|ptr
 )paren
@@ -2846,8 +2846,12 @@ op_assign
 id|pgd_offset
 c_func
 (paren
+(paren
 op_star
 id|p
+)paren
+op_member_access_from_pointer
+id|mm
 comma
 id|vma-&gt;vm_start
 )paren

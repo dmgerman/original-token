@@ -290,6 +290,8 @@ macro_line|#endif
 id|do_wp_page
 c_func
 (paren
+id|current
+comma
 id|vma
 comma
 id|address
@@ -305,6 +307,8 @@ suffix:semicolon
 id|do_no_page
 c_func
 (paren
+id|current
+comma
 id|vma
 comma
 id|address

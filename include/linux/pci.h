@@ -148,7 +148,7 @@ mdefine_line|#define PCI_CLASS_STORAGE_FLOPPY&t;0x0102
 DECL|macro|PCI_CLASS_STORAGE_IPI
 mdefine_line|#define PCI_CLASS_STORAGE_IPI&t;&t;0x0103
 DECL|macro|PCI_CLASS_STORAGE_RAID
-mdefine_line|#define PCI_CLASS_STORAGE_RAID&t;&t;0x0104 
+mdefine_line|#define PCI_CLASS_STORAGE_RAID&t;&t;0x0104
 DECL|macro|PCI_CLASS_STORAGE_OTHER
 mdefine_line|#define PCI_CLASS_STORAGE_OTHER&t;&t;0x0180
 DECL|macro|PCI_BASE_CLASS_NETWORK

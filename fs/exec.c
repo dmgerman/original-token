@@ -1184,9 +1184,9 @@ c_cond
 id|mpnt
 )paren
 (brace
-id|mpnt-&gt;vm_task
+id|mpnt-&gt;vm_mm
 op_assign
-id|current
+id|current-&gt;mm
 suffix:semicolon
 id|mpnt-&gt;vm_start
 op_assign
@@ -2405,7 +2405,7 @@ multiline_comment|/* Release all of the old mmap stuff. */
 id|exit_mmap
 c_func
 (paren
-id|current
+id|current-&gt;mm
 )paren
 suffix:semicolon
 id|flush_thread

@@ -231,9 +231,9 @@ id|dup_mmap
 c_func
 (paren
 r_struct
-id|task_struct
+id|mm_struct
 op_star
-id|tsk
+id|mm
 )paren
 (brace
 r_struct
@@ -248,14 +248,14 @@ comma
 op_star
 id|tmp
 suffix:semicolon
-id|tsk-&gt;mm-&gt;mmap
+id|mm-&gt;mmap
 op_assign
 l_int|NULL
 suffix:semicolon
 id|p
 op_assign
 op_amp
-id|tsk-&gt;mm-&gt;mmap
+id|mm-&gt;mmap
 suffix:semicolon
 r_for
 c_loop
@@ -300,7 +300,7 @@ id|tmp
 id|exit_mmap
 c_func
 (paren
-id|tsk
+id|mm
 )paren
 suffix:semicolon
 r_return
@@ -314,9 +314,9 @@ op_assign
 op_star
 id|mpnt
 suffix:semicolon
-id|tmp-&gt;vm_task
+id|tmp-&gt;vm_mm
 op_assign
-id|tsk
+id|mm
 suffix:semicolon
 id|tmp-&gt;vm_next
 op_assign
@@ -374,7 +374,7 @@ suffix:semicolon
 id|build_mmap_avl
 c_func
 (paren
-id|tsk
+id|mm
 )paren
 suffix:semicolon
 r_return
@@ -483,7 +483,7 @@ id|dup_mmap
 c_func
 (paren
 op_amp
-id|u-&gt;tsk
+id|u-&gt;mm
 )paren
 )paren
 r_return

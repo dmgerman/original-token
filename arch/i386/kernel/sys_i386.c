@@ -204,6 +204,15 @@ op_minus
 id|EBADF
 suffix:semicolon
 )brace
+id|flags
+op_and_assign
+op_complement
+(paren
+id|MAP_EXECUTABLE
+op_or
+id|MAP_DENYWRITE
+)paren
+suffix:semicolon
 r_return
 id|do_mmap
 c_func

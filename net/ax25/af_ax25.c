@@ -7336,6 +7336,8 @@ id|size
 comma
 l_int|0
 comma
+l_int|0
+comma
 op_amp
 id|err
 )paren

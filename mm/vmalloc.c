@@ -75,7 +75,7 @@ op_star
 id|pgd_offset
 c_func
 (paren
-id|p
+id|p-&gt;mm
 comma
 id|address
 )paren
@@ -430,7 +430,7 @@ id|pgd_offset
 c_func
 (paren
 op_amp
-id|init_task
+id|init_mm
 comma
 id|address
 )paren
@@ -740,7 +740,7 @@ id|pgd_offset
 c_func
 (paren
 op_amp
-id|init_task
+id|init_mm
 comma
 id|address
 )paren
@@ -1091,7 +1091,7 @@ id|pgd_offset
 c_func
 (paren
 op_amp
-id|init_task
+id|init_mm
 comma
 id|address
 )paren

@@ -1981,9 +1981,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;shm_close: %d %08lx-%08lx %c%c%c%c %08lx %08lx&bslash;n&quot;
-comma
-id|shmd-&gt;vm_task-&gt;pid
+l_string|&quot;shm_close: %08lx-%08lx %c%c%c%c %08lx %08lx&bslash;n&quot;
 comma
 id|shmd-&gt;vm_start
 comma
@@ -2171,7 +2169,7 @@ op_assign
 id|pgd_offset
 c_func
 (paren
-id|shmd-&gt;vm_task
+id|shmd-&gt;vm_mm
 comma
 id|tmp
 )paren
@@ -2596,9 +2594,9 @@ id|shp-&gt;shm_npages
 op_star
 id|PAGE_SIZE
 suffix:semicolon
-id|shmd-&gt;vm_task
+id|shmd-&gt;vm_mm
 op_assign
-id|current
+id|current-&gt;mm
 suffix:semicolon
 id|shmd-&gt;vm_page_prot
 op_assign
@@ -3715,7 +3713,7 @@ op_assign
 id|pgd_offset
 c_func
 (paren
-id|shmd-&gt;vm_task
+id|shmd-&gt;vm_mm
 comma
 id|tmp
 )paren
@@ -3920,11 +3918,11 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|shmd-&gt;vm_task-&gt;mm-&gt;rss
+id|shmd-&gt;vm_mm-&gt;rss
 OG
 l_int|0
 )paren
-id|shmd-&gt;vm_task-&gt;mm-&gt;rss
+id|shmd-&gt;vm_mm-&gt;rss
 op_decrement
 suffix:semicolon
 id|invalid

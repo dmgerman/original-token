@@ -378,6 +378,8 @@ c_cond
 id|regs-&gt;ss
 op_ne
 id|USER_DS
+op_logical_and
+id|sa-&gt;sa_restorer
 )paren
 id|frame
 op_assign

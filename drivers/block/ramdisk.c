@@ -818,7 +818,7 @@ id|printk
 c_func
 (paren
 id|KERN_NOTICE
-l_string|&quot;VFS: Insert ramdisk floppy and press ENTER&bslash;n&quot;
+l_string|&quot;VFS: Insert root floppy to be loaded into ramdisk and press ENTER&bslash;n&quot;
 )paren
 suffix:semicolon
 id|wait_for_keypress

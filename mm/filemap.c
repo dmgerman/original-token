@@ -1162,7 +1162,7 @@ op_assign
 id|pgd_offset
 c_func
 (paren
-id|current
+id|current-&gt;mm
 comma
 id|address
 )paren

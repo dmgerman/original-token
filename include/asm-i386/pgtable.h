@@ -1106,9 +1106,9 @@ id|pgd_offset
 c_func
 (paren
 r_struct
-id|task_struct
+id|mm_struct
 op_star
-id|tsk
+id|mm
 comma
 r_int
 r_int
@@ -1116,11 +1116,7 @@ id|address
 )paren
 (brace
 r_return
-(paren
-id|pgd_t
-op_star
-)paren
-id|tsk-&gt;tss.cr3
+id|mm-&gt;pgd
 op_plus
 (paren
 id|address

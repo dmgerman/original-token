@@ -1,15 +1,9 @@
 multiline_comment|/*&n; *  linux/mm/kmalloc.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds &amp; Roger Wolff.&n; *&n; *  Written by R.E. Wolff Sept/Oct &squot;93.&n; *&n; */
-multiline_comment|/*&n; * Modified by Alex Bligh (alex@cconcepts.co.uk) 4 Apr 1994 to use multiple&n; * pages. So for &squot;page&squot; throughout, read &squot;area&squot;.&n; */
+multiline_comment|/*&n; * Modified by Alex Bligh (alex@cconcepts.co.uk) 4 Apr 1994 to use multiple&n; * pages. So for &squot;page&squot; throughout, read &squot;area&squot;.&n; *&n; * Largely rewritten.. Linus&n; */
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
-multiline_comment|/* I want this low enough for a while to catch errors.&n;   I want this number to be increased in the near future:&n;        loadable device drivers should use this function to get memory */
-DECL|macro|MAX_KMALLOC_K
-mdefine_line|#define MAX_KMALLOC_K ((PAGE_SIZE&lt;&lt;(NUM_AREA_ORDERS-1))&gt;&gt;10)
-multiline_comment|/* This defines how many times we should try to allocate a free page before&n;   giving up. Normally this shouldn&squot;t happen at all. */
-DECL|macro|MAX_GET_FREE_PAGE_TRIES
-mdefine_line|#define MAX_GET_FREE_PAGE_TRIES 4
 multiline_comment|/* Private flags. */
 DECL|macro|MF_USED
 mdefine_line|#define MF_USED 0xffaa0055
@@ -1152,6 +1146,13 @@ id|found_it
 suffix:semicolon
 )brace
 multiline_comment|/* We need to get a new free page..... */
+multiline_comment|/* This can be done with ints on: This is private to this invocation */
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 multiline_comment|/* sz is the size of the blocks we&squot;re dealing with */
 id|sz
 op_assign
@@ -1161,7 +1162,6 @@ c_func
 id|order
 )paren
 suffix:semicolon
-multiline_comment|/* This can be done with ints on: This is private to this invocation */
 id|page
 op_assign
 (paren
@@ -1173,8 +1173,6 @@ id|__get_free_pages
 c_func
 (paren
 id|priority
-op_amp
-id|GFP_LEVEL_MASK
 comma
 id|sizes
 (braket
@@ -1203,6 +1201,11 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|priority
+op_ne
+id|GFP_BUFFER
+op_logical_and
+(paren
 id|last
 op_plus
 l_int|10
@@ -1210,6 +1213,7 @@ op_star
 id|HZ
 OL
 id|jiffies
+)paren
 )paren
 (brace
 id|last

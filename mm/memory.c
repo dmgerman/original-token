@@ -489,7 +489,7 @@ op_assign
 id|pgd_offset
 c_func
 (paren
-id|tsk
+id|tsk-&gt;mm
 comma
 l_int|0
 )paren
@@ -584,6 +584,10 @@ id|tsk
 comma
 id|new_pg
 )paren
+suffix:semicolon
+id|tsk-&gt;mm-&gt;pgd
+op_assign
+id|new_pg
 suffix:semicolon
 id|pgd_free
 c_func
@@ -680,7 +684,7 @@ op_assign
 id|pgd_offset
 c_func
 (paren
-id|tsk
+id|tsk-&gt;mm
 comma
 l_int|0
 )paren
@@ -714,6 +718,10 @@ id|tsk
 comma
 id|swapper_pg_dir
 )paren
+suffix:semicolon
+id|tsk-&gt;mm-&gt;pgd
+op_assign
+id|swapper_pg_dir
 suffix:semicolon
 r_if
 c_cond
@@ -789,7 +797,7 @@ op_assign
 id|pgd_offset
 c_func
 (paren
-id|current
+id|current-&gt;mm
 comma
 l_int|0
 )paren
@@ -807,6 +815,10 @@ id|tsk
 comma
 id|pg_dir
 )paren
+suffix:semicolon
+id|tsk-&gt;mm-&gt;pgd
+op_assign
+id|pg_dir
 suffix:semicolon
 r_return
 l_int|0
@@ -1377,12 +1389,16 @@ comma
 id|new_pgd
 )paren
 suffix:semicolon
+id|tsk-&gt;mm-&gt;pgd
+op_assign
+id|new_pgd
+suffix:semicolon
 id|old_pgd
 op_assign
 id|pgd_offset
 c_func
 (paren
-id|current
+id|current-&gt;mm
 comma
 l_int|0
 )paren
@@ -1854,7 +1870,7 @@ op_assign
 id|pgd_offset
 c_func
 (paren
-id|current
+id|current-&gt;mm
 comma
 id|address
 )paren
@@ -2159,7 +2175,7 @@ op_assign
 id|pgd_offset
 c_func
 (paren
-id|current
+id|current-&gt;mm
 comma
 id|address
 )paren
@@ -2544,7 +2560,7 @@ op_assign
 id|pgd_offset
 c_func
 (paren
-id|current
+id|current-&gt;mm
 comma
 id|from
 )paren
@@ -2771,7 +2787,7 @@ op_assign
 id|pgd_offset
 c_func
 (paren
-id|tsk
+id|tsk-&gt;mm
 comma
 id|address
 )paren
@@ -2906,6 +2922,11 @@ id|do_wp_page
 c_func
 (paren
 r_struct
+id|task_struct
+op_star
+id|tsk
+comma
+r_struct
 id|vm_area_struct
 op_star
 id|vma
@@ -2951,7 +2972,7 @@ op_assign
 id|pgd_offset
 c_func
 (paren
-id|vma-&gt;vm_task
+id|vma-&gt;vm_mm
 comma
 id|address
 )paren
@@ -3076,7 +3097,7 @@ id|high_memory
 r_goto
 id|bad_wp_page
 suffix:semicolon
-id|vma-&gt;vm_task-&gt;mm-&gt;min_flt
+id|vma-&gt;vm_mm-&gt;min_flt
 op_increment
 suffix:semicolon
 multiline_comment|/*&n;&t; * Do we need to copy?&n;&t; */
@@ -3116,7 +3137,7 @@ op_amp
 id|MAP_PAGE_RESERVED
 )paren
 op_increment
-id|vma-&gt;vm_task-&gt;mm-&gt;rss
+id|vma-&gt;vm_mm-&gt;rss
 suffix:semicolon
 id|copy_page
 c_func
@@ -3179,7 +3200,7 @@ suffix:semicolon
 id|oom
 c_func
 (paren
-id|vma-&gt;vm_task
+id|tsk
 )paren
 suffix:semicolon
 id|invalidate
@@ -3241,7 +3262,7 @@ c_func
 (paren
 id|SIGKILL
 comma
-id|vma-&gt;vm_task
+id|tsk
 comma
 l_int|1
 )paren
@@ -3271,7 +3292,7 @@ c_func
 (paren
 id|SIGKILL
 comma
-id|vma-&gt;vm_task
+id|tsk
 comma
 l_int|1
 )paren
@@ -3301,7 +3322,7 @@ c_func
 (paren
 id|SIGKILL
 comma
-id|vma-&gt;vm_task
+id|tsk
 comma
 l_int|1
 )paren
@@ -3609,6 +3630,8 @@ suffix:semicolon
 id|do_wp_page
 c_func
 (paren
+id|current
+comma
 id|vma
 comma
 id|start
@@ -3690,6 +3713,11 @@ id|get_empty_page
 c_func
 (paren
 r_struct
+id|task_struct
+op_star
+id|tsk
+comma
+r_struct
 id|vm_area_struct
 op_star
 id|vma
@@ -3721,7 +3749,7 @@ id|GFP_KERNEL
 id|oom
 c_func
 (paren
-id|vma-&gt;vm_task
+id|tsk
 )paren
 suffix:semicolon
 id|put_page
@@ -3815,7 +3843,7 @@ op_assign
 id|pgd_offset
 c_func
 (paren
-id|from_area-&gt;vm_task
+id|from_area-&gt;vm_mm
 comma
 id|from_address
 )paren
@@ -4022,7 +4050,7 @@ op_assign
 id|pgd_offset
 c_func
 (paren
-id|to_area-&gt;vm_task
+id|to_area-&gt;vm_mm
 comma
 id|to_address
 )paren
@@ -4607,7 +4635,7 @@ op_assign
 id|pgd_offset
 c_func
 (paren
-id|tsk
+id|tsk-&gt;mm
 comma
 id|address
 )paren
@@ -4678,6 +4706,11 @@ id|do_swap_page
 c_func
 (paren
 r_struct
+id|task_struct
+op_star
+id|tsk
+comma
+r_struct
 id|vm_area_struct
 op_star
 id|vma
@@ -4713,6 +4746,8 @@ id|vma-&gt;vm_ops-&gt;swapin
 id|swap_in
 c_func
 (paren
+id|tsk
+comma
 id|vma
 comma
 id|page_table
@@ -4815,10 +4850,10 @@ id|page
 )paren
 suffix:semicolon
 op_increment
-id|vma-&gt;vm_task-&gt;mm-&gt;rss
+id|vma-&gt;vm_mm-&gt;rss
 suffix:semicolon
 op_increment
-id|vma-&gt;vm_task-&gt;mm-&gt;maj_flt
+id|vma-&gt;vm_mm-&gt;maj_flt
 suffix:semicolon
 id|set_pte
 c_func
@@ -4837,6 +4872,11 @@ r_void
 id|do_no_page
 c_func
 (paren
+r_struct
+id|task_struct
+op_star
+id|tsk
+comma
 r_struct
 id|vm_area_struct
 op_star
@@ -4866,7 +4906,7 @@ op_assign
 id|get_empty_pgtable
 c_func
 (paren
-id|vma-&gt;vm_task
+id|tsk
 comma
 id|address
 )paren
@@ -4909,6 +4949,8 @@ id|entry
 id|do_swap_page
 c_func
 (paren
+id|tsk
+comma
 id|vma
 comma
 id|address
@@ -4938,14 +4980,16 @@ id|vma-&gt;vm_ops-&gt;nopage
 )paren
 (brace
 op_increment
-id|vma-&gt;vm_task-&gt;mm-&gt;rss
+id|vma-&gt;vm_mm-&gt;rss
 suffix:semicolon
 op_increment
-id|vma-&gt;vm_task-&gt;mm-&gt;min_flt
+id|vma-&gt;vm_mm-&gt;min_flt
 suffix:semicolon
 id|get_empty_page
 c_func
 (paren
+id|tsk
+comma
 id|vma
 comma
 id|page_table
@@ -4979,10 +5023,10 @@ id|page
 )paren
 (brace
 op_increment
-id|vma-&gt;vm_task-&gt;mm-&gt;min_flt
+id|vma-&gt;vm_mm-&gt;min_flt
 suffix:semicolon
 op_increment
-id|vma-&gt;vm_task-&gt;mm-&gt;rss
+id|vma-&gt;vm_mm-&gt;rss
 suffix:semicolon
 r_return
 suffix:semicolon
@@ -4997,7 +5041,7 @@ id|page
 id|oom
 c_func
 (paren
-id|current
+id|tsk
 )paren
 suffix:semicolon
 id|put_page
@@ -5012,10 +5056,10 @@ r_return
 suffix:semicolon
 )brace
 op_increment
-id|vma-&gt;vm_task-&gt;mm-&gt;maj_flt
+id|vma-&gt;vm_mm-&gt;maj_flt
 suffix:semicolon
 op_increment
-id|vma-&gt;vm_task-&gt;mm-&gt;rss
+id|vma-&gt;vm_mm-&gt;rss
 suffix:semicolon
 multiline_comment|/*&n;&t; * The fourth argument is &quot;no_share&quot;, which tells the low-level code&n;&t; * to copy, not share the page even if sharing is possible.  It&squot;s&n;&t; * essentially an early COW detection &n;&t; */
 id|page
@@ -5175,6 +5219,8 @@ id|pte
 id|do_no_page
 c_func
 (paren
+id|current
+comma
 id|vma
 comma
 id|address
@@ -5236,6 +5282,8 @@ suffix:semicolon
 id|do_wp_page
 c_func
 (paren
+id|current
+comma
 id|vma
 comma
 id|address
@@ -5279,7 +5327,7 @@ op_assign
 id|pgd_offset
 c_func
 (paren
-id|vma-&gt;vm_task
+id|vma-&gt;vm_mm
 comma
 id|address
 )paren
@@ -5352,7 +5400,7 @@ suffix:colon
 id|oom
 c_func
 (paren
-id|vma-&gt;vm_task
+id|current
 )paren
 suffix:semicolon
 )brace

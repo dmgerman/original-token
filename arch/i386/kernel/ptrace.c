@@ -197,6 +197,11 @@ id|get_long
 c_func
 (paren
 r_struct
+id|task_struct
+op_star
+id|tsk
+comma
+r_struct
 id|vm_area_struct
 op_star
 id|vma
@@ -229,7 +234,7 @@ op_assign
 id|pgd_offset
 c_func
 (paren
-id|vma-&gt;vm_task
+id|vma-&gt;vm_mm
 comma
 id|addr
 )paren
@@ -248,6 +253,8 @@ id|pgdir
 id|do_no_page
 c_func
 (paren
+id|tsk
+comma
 id|vma
 comma
 id|addr
@@ -317,6 +324,8 @@ id|pgmiddle
 id|do_no_page
 c_func
 (paren
+id|tsk
+comma
 id|vma
 comma
 id|addr
@@ -387,6 +396,8 @@ id|pgtable
 id|do_no_page
 c_func
 (paren
+id|tsk
+comma
 id|vma
 comma
 id|addr
@@ -443,6 +454,11 @@ id|put_long
 c_func
 (paren
 r_struct
+id|task_struct
+op_star
+id|tsk
+comma
+r_struct
 id|vm_area_struct
 op_star
 id|vma
@@ -479,7 +495,7 @@ op_assign
 id|pgd_offset
 c_func
 (paren
-id|vma-&gt;vm_task
+id|vma-&gt;vm_mm
 comma
 id|addr
 )paren
@@ -499,6 +515,8 @@ id|pgdir
 id|do_no_page
 c_func
 (paren
+id|tsk
+comma
 id|vma
 comma
 id|addr
@@ -567,6 +585,8 @@ id|pgmiddle
 id|do_no_page
 c_func
 (paren
+id|tsk
+comma
 id|vma
 comma
 id|addr
@@ -636,6 +656,8 @@ id|pgtable
 id|do_no_page
 c_func
 (paren
+id|tsk
+comma
 id|vma
 comma
 id|addr
@@ -671,6 +693,8 @@ id|pgtable
 id|do_wp_page
 c_func
 (paren
+id|tsk
+comma
 id|vma
 comma
 id|addr
@@ -948,6 +972,8 @@ op_assign
 id|get_long
 c_func
 (paren
+id|tsk
+comma
 id|vma
 comma
 id|addr
@@ -968,6 +994,8 @@ op_assign
 id|get_long
 c_func
 (paren
+id|tsk
+comma
 id|vma_high
 comma
 (paren
@@ -1064,6 +1092,8 @@ op_assign
 id|get_long
 c_func
 (paren
+id|tsk
+comma
 id|vma
 comma
 id|addr
@@ -1185,6 +1215,8 @@ op_assign
 id|get_long
 c_func
 (paren
+id|tsk
+comma
 id|vma
 comma
 id|addr
@@ -1205,6 +1237,8 @@ op_assign
 id|get_long
 c_func
 (paren
+id|tsk
+comma
 id|vma_high
 comma
 (paren
@@ -1334,6 +1368,8 @@ suffix:semicolon
 id|put_long
 c_func
 (paren
+id|tsk
+comma
 id|vma
 comma
 id|addr
@@ -1354,6 +1390,8 @@ suffix:semicolon
 id|put_long
 c_func
 (paren
+id|tsk
+comma
 id|vma_high
 comma
 (paren
@@ -1383,6 +1421,8 @@ r_else
 id|put_long
 c_func
 (paren
+id|tsk
+comma
 id|vma
 comma
 id|addr

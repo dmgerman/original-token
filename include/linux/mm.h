@@ -37,11 +37,11 @@ DECL|struct|vm_area_struct
 r_struct
 id|vm_area_struct
 (brace
-DECL|member|vm_task
+DECL|member|vm_mm
 r_struct
-id|task_struct
+id|mm_struct
 op_star
-id|vm_task
+id|vm_mm
 suffix:semicolon
 multiline_comment|/* VM area parameters */
 DECL|member|vm_start
@@ -722,6 +722,11 @@ id|do_wp_page
 c_func
 (paren
 r_struct
+id|task_struct
+op_star
+id|tsk
+comma
+r_struct
 id|vm_area_struct
 op_star
 id|vma
@@ -739,6 +744,11 @@ r_void
 id|do_no_page
 c_func
 (paren
+r_struct
+id|task_struct
+op_star
+id|tsk
+comma
 r_struct
 id|vm_area_struct
 op_star
@@ -889,6 +899,10 @@ r_void
 id|swap_in
 c_func
 (paren
+r_struct
+id|task_struct
+op_star
+comma
 r_struct
 id|vm_area_struct
 op_star
@@ -1042,7 +1056,7 @@ id|build_mmap_avl
 c_func
 (paren
 r_struct
-id|task_struct
+id|mm_struct
 op_star
 )paren
 suffix:semicolon
@@ -1052,7 +1066,7 @@ id|exit_mmap
 c_func
 (paren
 r_struct
-id|task_struct
+id|mm_struct
 op_star
 )paren
 suffix:semicolon

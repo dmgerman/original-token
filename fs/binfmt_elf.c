@@ -297,9 +297,9 @@ c_cond
 id|mpnt
 )paren
 (brace
-id|mpnt-&gt;vm_task
+id|mpnt-&gt;vm_mm
 op_assign
-id|current
+id|current-&gt;mm
 suffix:semicolon
 id|mpnt-&gt;vm_start
 op_assign
@@ -1034,7 +1034,7 @@ comma
 id|eppnt-&gt;p_filesz
 op_plus
 (paren
-id|vaddr
+id|eppnt-&gt;p_vaddr
 op_amp
 l_int|0xfff
 )paren

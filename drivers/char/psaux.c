@@ -74,7 +74,7 @@ mdefine_line|#define QP_DATA         0x310&t;&t;/* Data Port I/O Address */
 DECL|macro|QP_STATUS
 mdefine_line|#define QP_STATUS       0x311&t;&t;/* Status Port I/O Address */
 DECL|macro|QP_DEV_IDLE
-mdefine_line|#define QP_DEV_IDLE     0x01&t;        /* Device Idle */
+mdefine_line|#define QP_DEV_IDLE     0x01&t;&t;/* Device Idle */
 DECL|macro|QP_RX_FULL
 mdefine_line|#define QP_RX_FULL      0x02&t;&t;/* Device Char received */
 DECL|macro|QP_TX_IDLE
@@ -876,6 +876,10 @@ comma
 op_star
 id|prev
 suffix:semicolon
+r_int
+r_int
+id|flags
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -951,6 +955,17 @@ r_return
 op_minus
 id|ENOMEM
 suffix:semicolon
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
 id|fa-&gt;magic
 op_assign
 id|FASYNC_MAGIC
@@ -967,6 +982,12 @@ id|queue-&gt;fasync
 op_assign
 id|fa
 suffix:semicolon
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 )brace
 r_else
 (brace
@@ -978,6 +999,17 @@ id|fa
 )paren
 r_return
 l_int|0
+suffix:semicolon
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|cli
+c_func
+(paren
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -992,6 +1024,12 @@ r_else
 id|queue-&gt;fasync
 op_assign
 id|fa-&gt;fa_next
+suffix:semicolon
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
 suffix:semicolon
 id|kfree_s
 c_func

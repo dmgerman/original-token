@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;iovec manipulation routines.&n; *&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; *&t;iovec manipulation routines.&n; *&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;Fixes:&n; *&t;&t;Andrew Lunn&t;:&t;Errors in iovec copying.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -242,6 +242,12 @@ OG
 l_int|0
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|iov-&gt;iov_len
+)paren
+(brace
 r_int
 id|copy
 op_assign
@@ -271,6 +277,15 @@ id|len
 op_sub_assign
 id|copy
 suffix:semicolon
+id|iov-&gt;iov_len
+op_sub_assign
+id|copy
+suffix:semicolon
+id|iov-&gt;iov_base
+op_add_assign
+id|copy
+suffix:semicolon
+)brace
 id|iov
 op_increment
 suffix:semicolon
@@ -296,9 +311,6 @@ r_int
 id|len
 )paren
 (brace
-r_int
-id|copy
-suffix:semicolon
 r_while
 c_loop
 (paren
@@ -307,6 +319,13 @@ OG
 l_int|0
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|iov-&gt;iov_len
+)paren
+(brace
+r_int
 id|copy
 op_assign
 id|min
@@ -335,6 +354,15 @@ id|kdata
 op_add_assign
 id|copy
 suffix:semicolon
+id|iov-&gt;iov_base
+op_add_assign
+id|copy
+suffix:semicolon
+id|iov-&gt;iov_len
+op_sub_assign
+id|copy
+suffix:semicolon
+)brace
 id|iov
 op_increment
 suffix:semicolon

@@ -157,7 +157,7 @@ op_assign
 id|pgd_offset
 c_func
 (paren
-id|tsk
+id|tsk-&gt;mm
 comma
 l_int|0xA0000
 )paren

@@ -338,7 +338,7 @@ op_assign
 id|pgd_offset
 c_func
 (paren
-id|tsk
+id|tsk-&gt;mm
 comma
 id|addr
 )paren
@@ -1180,7 +1180,7 @@ op_assign
 id|pgd_offset
 c_func
 (paren
-id|tsk
+id|tsk-&gt;mm
 comma
 id|stmp
 )paren
@@ -1389,7 +1389,7 @@ op_assign
 id|pgd_offset
 c_func
 (paren
-id|tsk
+id|tsk-&gt;mm
 comma
 id|stmp
 )paren
@@ -1419,7 +1419,7 @@ op_assign
 id|pgd_offset
 c_func
 (paren
-id|current
+id|current-&gt;mm
 comma
 id|dtmp
 )paren
@@ -1478,6 +1478,8 @@ id|src_table
 id|do_no_page
 c_func
 (paren
+id|tsk
+comma
 id|src_vma
 comma
 id|stmp
@@ -1505,6 +1507,8 @@ id|src_table
 id|do_wp_page
 c_func
 (paren
+id|tsk
+comma
 id|src_vma
 comma
 id|stmp
