@@ -1,4 +1,5 @@
 multiline_comment|/*&n; *      linux/arch/alpha/kernel/irq_i8259.c&n; *&n; * This is the &squot;legacy&squot; 8259A Programmable Interrupt Controller,&n; * present in the majority of PC/AT boxes.&n; *&n; * Started hacking from linux-2.3.30pre6/arch/i386/kernel/i8259.c.&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/cache.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;

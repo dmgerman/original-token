@@ -10,10 +10,10 @@ multiline_comment|/* Don&squot;t get into trouble with dueling __EXTERN_INLINEs.
 macro_line|#ifndef __EXTERN_INLINE
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#endif
-DECL|function|enter_lazy_tlb
 r_static
 r_inline
 r_void
+DECL|function|enter_lazy_tlb
 id|enter_lazy_tlb
 c_func
 (paren
@@ -117,7 +117,7 @@ r_return
 id|v0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * The maximum ASN&squot;s the processor supports.  On the EV4 this is 63&n; * but the PAL-code doesn&squot;t actually use this information.  On the&n; * EV5 this is 127, and EV6 has 255.&n; *&n; * On the EV4, the ASNs are more-or-less useless anyway, as they are&n; * only used as an icache tag, not for TB entries.  On the EV5 and EV6,&n; * ASN&squot;s also validate the TB entries, and thus make a lot more sense.&n; *&n; * The EV4 ASN&squot;s don&squot;t even match the architecture manual, ugh.  And&n; * I quote: &quot;If a processor implements address space numbers (ASNs),&n; * and the old PTE has the Address Space Match (ASM) bit clear (ASNs&n; * in use) and the Valid bit set, then entries can also effectively be&n; * made coherent by assigning a new, unused ASN to the currently&n; * running process and not reusing the previous ASN before calling the&n; * appropriate PALcode routine to invalidate the translation buffer&n; * (TB)&quot;. &n; *&n; * In short, the EV4 has a &quot;kind of&quot; ASN capability, but it doesn&squot;t actually&n; * work correctly and can thus not be used (explaining the lack of PAL-code&n; * support).&n; */
+multiline_comment|/*&n; * The maximum ASN&squot;s the processor supports.  On the EV4 this is 63&n; * but the PAL-code doesn&squot;t actually use this information.  On the&n; * EV5 this is 127, and EV6 has 255.&n; *&n; * On the EV4, the ASNs are more-or-less useless anyway, as they are&n; * only used as an icache tag, not for TB entries.  On the EV5 and EV6,&n; * ASN&squot;s also validate the TB entries, and thus make a lot more sense.&n; *&n; * The EV4 ASN&squot;s don&squot;t even match the architecture manual, ugh.  And&n; * I quote: &quot;If a processor implements address space numbers (ASNs),&n; * and the old PTE has the Address Space Match (ASM) bit clear (ASNs&n; * in use) and the Valid bit set, then entries can also effectively be&n; * made coherent by assigning a new, unused ASN to the currently&n; * running process and not reusing the previous ASN before calling the&n; * appropriate PALcode routine to invalidate the translation buffer (TB)&quot;. &n; *&n; * In short, the EV4 has a &quot;kind of&quot; ASN capability, but it doesn&squot;t actually&n; * work correctly and can thus not be used (explaining the lack of PAL-code&n; * support).&n; */
 DECL|macro|EV4_MAX_ASN
 mdefine_line|#define EV4_MAX_ASN 63
 DECL|macro|EV5_MAX_ASN
@@ -173,22 +173,6 @@ mdefine_line|#define __EXTERN_INLINE extern inline
 DECL|macro|__MMU_EXTERN_INLINE
 mdefine_line|#define __MMU_EXTERN_INLINE
 macro_line|#endif
-r_extern
-r_void
-id|get_new_mm_context
-c_func
-(paren
-r_struct
-id|task_struct
-op_star
-id|p
-comma
-r_struct
-id|mm_struct
-op_star
-id|mm
-)paren
-suffix:semicolon
 r_static
 r_inline
 r_int
@@ -241,6 +225,11 @@ c_func
 (paren
 )paren
 suffix:semicolon
+id|imb
+c_func
+(paren
+)paren
+suffix:semicolon
 id|next
 op_assign
 (paren
@@ -263,94 +252,6 @@ id|next
 suffix:semicolon
 r_return
 id|next
-suffix:semicolon
-)brace
-id|__EXTERN_INLINE
-r_void
-DECL|function|ev4_switch_mm
-id|ev4_switch_mm
-c_func
-(paren
-r_struct
-id|mm_struct
-op_star
-id|prev_mm
-comma
-r_struct
-id|mm_struct
-op_star
-id|next_mm
-comma
-r_struct
-id|task_struct
-op_star
-id|next
-comma
-r_int
-id|cpu
-)paren
-(brace
-multiline_comment|/* As described, ASN&squot;s are broken.  But we can optimize for&n;&t;   switching between threads -- if the mm is unchanged from&n;&t;   current we needn&squot;t flush.  */
-multiline_comment|/* ??? May not be needed because EV4 PALcode recognizes that&n;&t;   ASN&squot;s are broken and does a tbiap itself on swpctx, under&n;&t;   the &quot;Must set ASN or flush&quot; rule.  At least this is true&n;&t;   for a 1992 SRM, reports Joseph Martin (jmartin@hlo.dec.com).&n;&t;   I&squot;m going to leave this here anyway, just to Be Sure.  -- r~  */
-r_if
-c_cond
-(paren
-id|prev_mm
-op_ne
-id|next_mm
-)paren
-id|tbiap
-c_func
-(paren
-)paren
-suffix:semicolon
-)brace
-id|__EXTERN_INLINE
-r_void
-DECL|function|ev4_activate_mm
-id|ev4_activate_mm
-c_func
-(paren
-r_struct
-id|mm_struct
-op_star
-id|prev_mm
-comma
-r_struct
-id|mm_struct
-op_star
-id|next_mm
-comma
-r_int
-id|cpu
-)paren
-(brace
-multiline_comment|/* This is only called after changing mm on current.  */
-id|tbiap
-c_func
-(paren
-)paren
-suffix:semicolon
-id|current-&gt;thread.ptbr
-op_assign
-(paren
-(paren
-r_int
-r_int
-)paren
-id|next_mm-&gt;pgd
-op_minus
-id|IDENT_ADDR
-)paren
-op_rshift
-id|PAGE_SHIFT
-suffix:semicolon
-id|__reload_thread
-c_func
-(paren
-op_amp
-id|current-&gt;thread
-)paren
 suffix:semicolon
 )brace
 id|__EXTERN_INLINE
@@ -434,6 +335,69 @@ suffix:semicolon
 )brace
 id|__EXTERN_INLINE
 r_void
+DECL|function|ev4_switch_mm
+id|ev4_switch_mm
+c_func
+(paren
+r_struct
+id|mm_struct
+op_star
+id|prev_mm
+comma
+r_struct
+id|mm_struct
+op_star
+id|next_mm
+comma
+r_struct
+id|task_struct
+op_star
+id|next
+comma
+r_int
+id|cpu
+)paren
+(brace
+multiline_comment|/* As described, ASN&squot;s are broken for TLB usage.  But we can&n;&t;   optimize for switching between threads -- if the mm is&n;&t;   unchanged from current we needn&squot;t flush.  */
+multiline_comment|/* ??? May not be needed because EV4 PALcode recognizes that&n;&t;   ASN&squot;s are broken and does a tbiap itself on swpctx, under&n;&t;   the &quot;Must set ASN or flush&quot; rule.  At least this is true&n;&t;   for a 1992 SRM, reports Joseph Martin (jmartin@hlo.dec.com).&n;&t;   I&squot;m going to leave this here anyway, just to Be Sure.  -- r~  */
+r_if
+c_cond
+(paren
+id|prev_mm
+op_ne
+id|next_mm
+)paren
+id|tbiap
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/* Do continue to allocate ASNs, because we can still use them&n;&t;   to avoid flushing the icache.  */
+id|ev5_switch_mm
+c_func
+(paren
+id|prev_mm
+comma
+id|next_mm
+comma
+id|next
+comma
+id|cpu
+)paren
+suffix:semicolon
+)brace
+r_extern
+r_void
+id|__load_new_mm_context
+c_func
+(paren
+r_struct
+id|mm_struct
+op_star
+)paren
+suffix:semicolon
+id|__EXTERN_INLINE
+r_void
 DECL|function|ev5_activate_mm
 id|ev5_activate_mm
 c_func
@@ -447,71 +411,60 @@ r_struct
 id|mm_struct
 op_star
 id|next_mm
-comma
-r_int
-id|cpu
 )paren
 (brace
-r_int
-r_int
-id|mmc
-op_assign
-id|__get_new_mm_context
+id|__load_new_mm_context
 c_func
 (paren
 id|next_mm
-comma
-id|cpu
 )paren
 suffix:semicolon
-id|next_mm-&gt;context
-op_assign
-id|mmc
-suffix:semicolon
-id|current-&gt;thread.asn
-op_assign
-id|mmc
-op_amp
-id|HARDWARE_ASN_MASK
-suffix:semicolon
-id|current-&gt;thread.ptbr
-op_assign
-(paren
-(paren
-r_int
-r_int
-)paren
-id|next_mm-&gt;pgd
-op_minus
-id|IDENT_ADDR
-)paren
-op_rshift
-id|PAGE_SHIFT
-suffix:semicolon
-id|__reload_thread
+)brace
+id|__EXTERN_INLINE
+r_void
+DECL|function|ev4_activate_mm
+id|ev4_activate_mm
 c_func
 (paren
-op_amp
-id|current-&gt;thread
+r_struct
+id|mm_struct
+op_star
+id|prev_mm
+comma
+r_struct
+id|mm_struct
+op_star
+id|next_mm
+)paren
+(brace
+id|__load_new_mm_context
+c_func
+(paren
+id|next_mm
+)paren
+suffix:semicolon
+id|tbiap
+c_func
+(paren
 )paren
 suffix:semicolon
 )brace
 macro_line|#ifdef CONFIG_ALPHA_GENERIC
 DECL|macro|switch_mm
-macro_line|# define switch_mm&t;&t;&t;alpha_mv.mv_switch_mm
+macro_line|# define switch_mm(a,b,c,d)&t;alpha_mv.mv_switch_mm((a),(b),(c),(d))
 DECL|macro|activate_mm
-macro_line|# define activate_mm(x,y)&t;&t;alpha_mv.mv_activate_mm((x),(y),smp_processor_id())
+macro_line|# define activate_mm(x,y)&t;alpha_mv.mv_activate_mm((x),(y))
 macro_line|#else
 macro_line|# ifdef CONFIG_ALPHA_EV4
 DECL|macro|switch_mm
-macro_line|#  define switch_mm&t;&t;&t;ev4_switch_mm
+macro_line|#  define switch_mm(a,b,c,d)&t;ev4_switch_mm((a),(b),(c),(d))
 DECL|macro|activate_mm
-macro_line|#  define activate_mm(x,y)&t;&t;ev4_activate_mm((x),(y),smp_processor_id())
+macro_line|#  define activate_mm(x,y)&t;ev4_activate_mm((x),(y))
 macro_line|# else
 DECL|macro|switch_mm
-macro_line|#  define switch_mm&t;&t;&t;ev5_switch_mm
+macro_line|#  define switch_mm(a,b,c,d)&t;ev5_switch_mm((a),(b),(c),(d))
 DECL|macro|activate_mm
-macro_line|#  define activate_mm(x,y)&t;&t;ev5_activate_mm((x),(y),smp_processor_id())
+macro_line|#  define activate_mm(x,y)&t;ev5_activate_mm((x),(y))
 macro_line|# endif
 macro_line|#endif
 r_extern

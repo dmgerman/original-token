@@ -1367,12 +1367,15 @@ id|n
 op_increment
 )braket
 op_assign
+(paren
+id|__u8
+)paren
 id|va_arg
 c_func
 (paren
 id|args
 comma
-id|__u8
+r_int
 )paren
 suffix:semicolon
 r_break
@@ -1383,12 +1386,15 @@ suffix:colon
 multiline_comment|/* 16 bits unsigned short */
 id|arg.s
 op_assign
+(paren
+id|__u16
+)paren
 id|va_arg
 c_func
 (paren
 id|args
 comma
-id|__u16
+r_int
 )paren
 suffix:semicolon
 id|put_unaligned
@@ -1449,6 +1455,7 @@ l_int|4
 suffix:semicolon
 r_break
 suffix:semicolon
+macro_line|#if 0
 r_case
 l_char|&squot;c&squot;
 suffix:colon
@@ -1486,6 +1493,7 @@ l_int|1
 suffix:semicolon
 r_break
 suffix:semicolon
+macro_line|#endif
 r_default
 suffix:colon
 id|va_end

@@ -1,7 +1,7 @@
 multiline_comment|/*&n; * unicode.c&n; *&n; * PURPOSE&n; *&t;Routines for converting between UTF-8 and OSTA Compressed Unicode.&n; *      Also handles filename mangling&n; *&n; * DESCRIPTION&n; *&t;OSTA Compressed Unicode is explained in the OSTA UDF specification.&n; *&t;&t;http://www.osta.org/&n; *&t;UTF-8 is explained in the IETF RFC XXXX.&n; *&t;&t;ftp://ftp.internic.net/rfc/rfcxxxx.txt&n; *&n; * CONTACTS&n; *&t;E-mail regarding any portion of the Linux UDF file system should be&n; *&t;directed to the development team&squot;s mailing list (run by majordomo):&n; *&t;&t;linux_udf@hootie.lvld.hp.com&n; *&n; * COPYRIGHT&n; *&t;This file is distributed under the terms of the GNU General Public&n; *&t;License (GPL). Copies of the GPL can be obtained from:&n; *&t;&t;ftp://prep.ai.mit.edu/pub/gnu/GPL&n; *&t;Each contributing author retains all rights to their own work.&n; */
 macro_line|#ifdef __KERNEL__
 macro_line|#include &lt;linux/kernel.h&gt;
-macro_line|#include &lt;linux/string.h&gt;       /* for memset */
+macro_line|#include &lt;linux/string.h&gt;&t;/* for memset */
 macro_line|#include &lt;linux/udf_fs.h&gt;
 macro_line|#else
 macro_line|#include &lt;string.h&gt;

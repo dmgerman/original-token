@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sys_sparc32.c,v 1.132 2000/02/16 07:31:35 davem Exp $&n; * sys_sparc32.c: Conversion between 32bit and 64bit native syscalls.&n; *&n; * Copyright (C) 1997,1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; * Copyright (C) 1997 David S. Miller (davem@caip.rutgers.edu)&n; *&n; * These routines maintain argument size conversion between 32bit and 64bit&n; * environment.&n; */
+multiline_comment|/* $Id: sys_sparc32.c,v 1.133 2000/03/01 02:53:33 davem Exp $&n; * sys_sparc32.c: Conversion between 32bit and 64bit native syscalls.&n; *&n; * Copyright (C) 1997,1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; * Copyright (C) 1997 David S. Miller (davem@caip.rutgers.edu)&n; *&n; * These routines maintain argument size conversion between 32bit and 64bit&n; * environment.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -17757,6 +17757,11 @@ l_int|0
 )paren
 )paren
 suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|dentry
 op_assign
 id|open_namei
@@ -17767,6 +17772,11 @@ comma
 l_int|0
 comma
 l_int|0
+)paren
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
 )paren
 suffix:semicolon
 id|retval
@@ -17825,10 +17835,20 @@ OL
 l_int|0
 )paren
 (brace
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|dput
 c_func
 (paren
 id|dentry
+)paren
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
 )paren
 suffix:semicolon
 r_return
@@ -17851,10 +17871,20 @@ OL
 l_int|0
 )paren
 (brace
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|dput
 c_func
 (paren
 id|dentry
+)paren
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
 )paren
 suffix:semicolon
 r_return
@@ -17984,12 +18014,24 @@ c_cond
 (paren
 id|bprm.dentry
 )paren
+(brace
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|dput
 c_func
 (paren
 id|bprm.dentry
 )paren
 suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
 r_for
 c_loop
 (paren
@@ -18070,11 +18112,6 @@ op_assign
 l_int|1
 suffix:semicolon
 )brace
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 id|filename
 op_assign
 id|getname32
@@ -18205,11 +18242,6 @@ suffix:semicolon
 )brace
 id|out
 suffix:colon
-id|unlock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 r_return
 id|error
 suffix:semicolon

@@ -112,6 +112,8 @@ DECL|macro|PTRS_PER_PGD
 mdefine_line|#define PTRS_PER_PGD&t;&t;(__IA64_UL(1) &lt;&lt; (PAGE_SHIFT-3))
 DECL|macro|USER_PTRS_PER_PGD
 mdefine_line|#define USER_PTRS_PER_PGD&t;PTRS_PER_PGD
+DECL|macro|FIRST_USER_PGD_NR
+mdefine_line|#define FIRST_USER_PGD_NR&t;0
 multiline_comment|/*&n; * Definitions for second level:&n; *&n; * PMD_SHIFT determines the size of the area a second-level page table&n; * can map.&n; */
 DECL|macro|PMD_SHIFT
 mdefine_line|#define PMD_SHIFT&t;(PAGE_SHIFT + (PAGE_SHIFT-3))

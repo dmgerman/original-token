@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * DECnet       An implementation of the DECnet protocol suite for the LINUX&n; *              operating system.  DECnet is implemented using the  BSD Socket&n; *              interface as the means of communication with the user level.&n; *&n; *              DECnet Network Services Protocol (Output)&n; *&n; * Author:      Eduardo Marcelo Serrat &lt;emserrat@geocities.com&gt;&n; *&n; * Changes:&n; *&n; *    Steve Whitehouse:  Split into dn_nsp_in.c and dn_nsp_out.c from&n; *                       original dn_nsp.c.&n; *    Steve Whitehouse:  Updated to work with my new routing architecture.&n; *    Steve Whitehouse:  Added changes from Eduardo Serrat&squot;s patches.&n; *    Steve Whitehouse:  Now conninits have the &quot;return&quot; bit set.&n; *    Steve Whitehouse:  Fixes to check alloc&squot;d skbs are non NULL!&n; *                       Moved output state machine into one function&n; *    Steve Whitehouse:  New output state machine&n; *         Paul Koning:  Connect Confirm message fix.&n; */
+multiline_comment|/*&n; * DECnet       An implementation of the DECnet protocol suite for the LINUX&n; *              operating system.  DECnet is implemented using the  BSD Socket&n; *              interface as the means of communication with the user level.&n; *&n; *              DECnet Network Services Protocol (Output)&n; *&n; * Author:      Eduardo Marcelo Serrat &lt;emserrat@geocities.com&gt;&n; *&n; * Changes:&n; *&n; *    Steve Whitehouse:  Split into dn_nsp_in.c and dn_nsp_out.c from&n; *                       original dn_nsp.c.&n; *    Steve Whitehouse:  Updated to work with my new routing architecture.&n; *    Steve Whitehouse:  Added changes from Eduardo Serrat&squot;s patches.&n; *    Steve Whitehouse:  Now conninits have the &quot;return&quot; bit set.&n; *    Steve Whitehouse:  Fixes to check alloc&squot;d skbs are non NULL!&n; *                       Moved output state machine into one function&n; *    Steve Whitehouse:  New output state machine&n; *         Paul Koning:  Connect Confirm message fix.&n; *      Eduardo Serrat:  Fix to stop dn_nsp_do_disc() sending malformed packets.&n; */
 multiline_comment|/******************************************************************************&n;    (c) 1995-1998 E.M. Serrat&t;&t;emserrat@geocities.com&n;    &n;    This program is free software; you can redistribute it and/or modify&n;    it under the terms of the GNU General Public License as published by&n;    the Free Software Foundation; either version 2 of the License, or&n;    any later version.&n;&n;    This program is distributed in the hope that it will be useful,&n;    but WITHOUT ANY WARRANTY; without even the implied warranty of&n;    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n;    GNU General Public License for more details.&n;*******************************************************************************/
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -1964,20 +1964,9 @@ suffix:semicolon
 r_int
 id|size
 op_assign
-l_int|7
+l_int|8
 op_plus
-(paren
 id|ddl
-ques
-c_cond
-(paren
-id|ddl
-op_plus
-l_int|1
-)paren
-suffix:colon
-l_int|0
-)paren
 suffix:semicolon
 r_int
 r_char
@@ -2105,18 +2094,18 @@ id|msg
 op_add_assign
 l_int|2
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|ddl
-)paren
-(brace
 op_star
 id|msg
 op_increment
 op_assign
 id|ddl
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|ddl
+)paren
+(brace
 id|memcpy
 c_func
 (paren

@@ -24,6 +24,8 @@ macro_line|#else
 DECL|macro|DBGA2
 macro_line|# define DBGA2(args...)
 macro_line|#endif
+DECL|macro|DEBUG_NODIRECT
+mdefine_line|#define DEBUG_NODIRECT 0
 r_static
 r_inline
 r_int
@@ -82,6 +84,11 @@ DECL|function|iommu_arena_new
 id|iommu_arena_new
 c_func
 (paren
+r_struct
+id|pci_controler
+op_star
+id|hose
+comma
 id|dma_addr_t
 id|base
 comma
@@ -96,40 +103,38 @@ id|align
 (brace
 r_int
 r_int
-id|entries
-comma
 id|mem_size
-comma
-id|mem_pages
 suffix:semicolon
 r_struct
 id|pci_iommu_arena
 op_star
 id|arena
 suffix:semicolon
-id|entries
-op_assign
-id|window_size
-op_rshift
-id|PAGE_SHIFT
-suffix:semicolon
 id|mem_size
 op_assign
-id|entries
-op_star
+id|window_size
+op_div
+(paren
+id|PAGE_SIZE
+op_div
 r_sizeof
 (paren
 r_int
 r_int
 )paren
+)paren
 suffix:semicolon
-id|mem_pages
-op_assign
-id|calc_npages
-c_func
+multiline_comment|/* Note that the TLB lookup logic uses bitwise concatenation,&n;&t;   not addition, so the required arena alignment is based on&n;&t;   the size of the window.  Retain the align parameter so that&n;&t;   particular systems can over-align the arena.  */
+r_if
+c_cond
 (paren
+id|align
+OL
 id|mem_size
 )paren
+id|align
+op_assign
+id|mem_size
 suffix:semicolon
 id|arena
 op_assign
@@ -148,9 +153,7 @@ op_assign
 id|__alloc_bootmem
 c_func
 (paren
-id|mem_pages
-op_star
-id|PAGE_SIZE
+id|mem_size
 comma
 id|align
 comma
@@ -164,6 +167,10 @@ op_amp
 id|arena-&gt;lock
 )paren
 suffix:semicolon
+id|arena-&gt;hose
+op_assign
+id|hose
+suffix:semicolon
 id|arena-&gt;dma_base
 op_assign
 id|base
@@ -172,7 +179,7 @@ id|arena-&gt;size
 op_assign
 id|window_size
 suffix:semicolon
-id|arena-&gt;alloc_hint
+id|arena-&gt;next_entry
 op_assign
 l_int|0
 suffix:semicolon
@@ -240,7 +247,7 @@ id|p
 op_assign
 id|beg
 op_plus
-id|arena-&gt;alloc_hint
+id|arena-&gt;next_entry
 suffix:semicolon
 id|i
 op_assign
@@ -277,12 +284,25 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|p
-op_ge
-id|end
+id|i
+OL
+id|n
 )paren
 (brace
-multiline_comment|/* Failure.  Assume the hint was wrong and go back to&n;&t;&t;   search from the beginning.  */
+multiline_comment|/* Reached the end.  Flush the TLB and restart the&n;&t;&t;   search from the beginning.  */
+id|alpha_mv
+dot
+id|mv_pci_tbi
+c_func
+(paren
+id|arena-&gt;hose
+comma
+l_int|0
+comma
+op_minus
+l_int|1
+)paren
+suffix:semicolon
 id|p
 op_assign
 id|beg
@@ -322,9 +342,9 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|p
-op_ge
-id|end
+id|i
+OL
+id|n
 )paren
 (brace
 id|spin_unlock_irqrestore
@@ -371,7 +391,7 @@ op_assign
 op_complement
 l_int|1UL
 suffix:semicolon
-id|arena-&gt;alloc_hint
+id|arena-&gt;next_entry
 op_assign
 id|p
 op_minus
@@ -446,10 +466,6 @@ id|i
 )braket
 op_assign
 l_int|0
-suffix:semicolon
-id|arena-&gt;alloc_hint
-op_assign
-id|ofs
 suffix:semicolon
 )brace
 "&f;"
@@ -536,6 +552,7 @@ c_func
 id|cpu_addr
 )paren
 suffix:semicolon
+macro_line|#if !DEBUG_NODIRECT
 multiline_comment|/* First check to see if we can use the direct map window.  */
 r_if
 c_cond
@@ -585,6 +602,7 @@ r_return
 id|ret
 suffix:semicolon
 )brace
+macro_line|#endif
 multiline_comment|/* If the machine doesn&squot;t define a pci_tbi routine, we have to&n;&t;   assume it doesn&squot;t support sg mapping.  */
 r_if
 c_cond
@@ -802,6 +820,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#if !DEBUG_NODIRECT
 r_if
 c_cond
 (paren
@@ -836,6 +855,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+macro_line|#endif
 id|arena
 op_assign
 id|hose-&gt;sg_pci
@@ -921,23 +941,7 @@ comma
 id|npages
 )paren
 suffix:semicolon
-id|alpha_mv
-dot
-id|mv_pci_tbi
-c_func
-(paren
-id|hose
-comma
-id|dma_addr
-comma
-id|dma_addr
-op_plus
-id|size
-op_minus
-l_int|1
-)paren
-suffix:semicolon
-id|DBGA2
+id|DBGA
 c_func
 (paren
 l_string|&quot;pci_unmap_single: sg [%x,%lx] np %ld from %p&bslash;n&quot;
@@ -1414,6 +1418,7 @@ id|dma_ofs
 comma
 id|i
 suffix:semicolon
+macro_line|#if !DEBUG_NODIRECT
 multiline_comment|/* If everything is physically contiguous, and the addresses&n;&t;   fall into the direct-map window, use it.  */
 r_if
 c_cond
@@ -1465,6 +1470,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#endif
 multiline_comment|/* Otherwise, we&squot;ll use the iommu to make the pages virtually&n;&t;   contiguous.  */
 id|paddr
 op_and_assign
@@ -1530,6 +1536,7 @@ comma
 id|npages
 )paren
 suffix:semicolon
+multiline_comment|/* All virtually contiguous.  We need to find the length of each&n;&t;   physically contiguous subsegment to fill in the ptes.  */
 id|ptes
 op_assign
 op_amp
@@ -1542,107 +1549,6 @@ id|sg
 op_assign
 id|leader
 suffix:semicolon
-r_if
-c_cond
-(paren
-l_int|0
-op_logical_and
-id|leader-&gt;dma_address
-op_eq
-l_int|0
-)paren
-(brace
-multiline_comment|/* All physically contiguous.  We already have the&n;&t;&t;   length, all we need is to fill in the ptes.  */
-id|paddr
-op_assign
-id|virt_to_phys
-c_func
-(paren
-id|sg-&gt;address
-)paren
-op_amp
-id|PAGE_MASK
-suffix:semicolon
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-id|npages
-suffix:semicolon
-op_increment
-id|i
-comma
-id|paddr
-op_add_assign
-id|PAGE_SIZE
-)paren
-op_star
-id|ptes
-op_increment
-op_assign
-id|mk_iommu_pte
-c_func
-(paren
-id|paddr
-)paren
-suffix:semicolon
-macro_line|#if DEBUG_ALLOC &gt; 0
-id|DBGA
-c_func
-(paren
-l_string|&quot;    (0) [%p,%x] np %ld&bslash;n&quot;
-comma
-id|sg-&gt;address
-comma
-id|sg-&gt;length
-comma
-id|npages
-)paren
-suffix:semicolon
-r_for
-c_loop
-(paren
-op_increment
-id|sg
-suffix:semicolon
-id|sg
-OL
-id|end
-op_logical_and
-(paren
-r_int
-)paren
-id|sg-&gt;dma_address
-OL
-l_int|0
-suffix:semicolon
-op_increment
-id|sg
-)paren
-id|DBGA
-c_func
-(paren
-l_string|&quot;        (%ld) [%p,%x] cont&bslash;n&quot;
-comma
-id|sg
-op_minus
-id|leader
-comma
-id|sg-&gt;address
-comma
-id|sg-&gt;length
-)paren
-suffix:semicolon
-macro_line|#endif
-)brace
-r_else
-(brace
-multiline_comment|/* All virtually contiguous.  We need to find the&n;&t;&t;   length of each physically contiguous subsegment&n;&t;&t;   to fill in the ptes.  */
 r_do
 (brace
 r_struct
@@ -1806,7 +1712,6 @@ OL
 l_int|0
 )paren
 suffix:semicolon
-)brace
 r_return
 l_int|1
 suffix:semicolon
@@ -2003,9 +1908,6 @@ op_increment
 id|sg
 )paren
 (brace
-r_int
-id|ret
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2018,8 +1920,9 @@ l_int|0
 )paren
 r_continue
 suffix:semicolon
-id|ret
-op_assign
+r_if
+c_cond
+(paren
 id|sg_fill
 c_func
 (paren
@@ -2033,11 +1936,6 @@ id|arena
 comma
 id|max_dma
 )paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|ret
 OL
 l_int|0
 )paren
@@ -2168,11 +2066,6 @@ suffix:semicolon
 id|dma_addr_t
 id|max_dma
 suffix:semicolon
-id|dma_addr_t
-id|fstart
-comma
-id|fend
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2231,15 +2124,6 @@ id|arena
 op_assign
 id|hose-&gt;sg_isa
 suffix:semicolon
-id|fstart
-op_assign
-op_minus
-l_int|1
-suffix:semicolon
-id|fend
-op_assign
-l_int|0
-suffix:semicolon
 r_for
 c_loop
 (paren
@@ -2263,6 +2147,11 @@ id|addr
 comma
 id|size
 suffix:semicolon
+r_int
+id|npages
+comma
+id|ofs
+suffix:semicolon
 id|addr
 op_assign
 id|sg-&gt;dma_address
@@ -2279,6 +2168,7 @@ id|size
 )paren
 r_break
 suffix:semicolon
+macro_line|#if !DEBUG_NODIRECT
 r_if
 c_cond
 (paren
@@ -2310,17 +2200,10 @@ comma
 id|size
 )paren
 suffix:semicolon
+r_continue
+suffix:semicolon
 )brace
-r_else
-(brace
-r_int
-id|npages
-comma
-id|ofs
-suffix:semicolon
-id|dma_addr_t
-id|tend
-suffix:semicolon
+macro_line|#endif
 id|DBGA
 c_func
 (paren
@@ -2372,55 +2255,7 @@ comma
 id|npages
 )paren
 suffix:semicolon
-id|tend
-op_assign
-id|addr
-op_plus
-id|size
-op_minus
-l_int|1
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|fstart
-OG
-id|addr
-)paren
-id|fstart
-op_assign
-id|addr
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|fend
-OL
-id|tend
-)paren
-id|fend
-op_assign
-id|tend
-suffix:semicolon
 )brace
-)brace
-r_if
-c_cond
-(paren
-id|fend
-)paren
-id|alpha_mv
-dot
-id|mv_pci_tbi
-c_func
-(paren
-id|hose
-comma
-id|fstart
-comma
-id|fend
-)paren
-suffix:semicolon
 id|DBGA
 c_func
 (paren
@@ -2461,6 +2296,7 @@ id|pci_iommu_arena
 op_star
 id|arena
 suffix:semicolon
+macro_line|#if !DEBUG_NODIRECT
 multiline_comment|/* If there exists a direct map, and the mask fits either&n;&t;   MAX_DMA_ADDRESS defined such that GFP_DMA does something&n;&t;   useful, or the total system memory as shifted by the&n;&t;   map base.  */
 r_if
 c_cond
@@ -2496,6 +2332,7 @@ id|mask
 r_return
 l_int|1
 suffix:semicolon
+macro_line|#endif
 multiline_comment|/* Check that we have a scatter-gather arena that fits.  */
 id|hose
 op_assign

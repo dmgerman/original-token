@@ -1339,19 +1339,19 @@ l_int|3
 dot
 id|csr
 suffix:semicolon
-multiline_comment|/*&n;&t; * Set up the PCI to main memory translation windows.&n;&t; *&n;&t; * Window 0 is scatter-gather 8MB at 8MB (for isa)&n;&t; * Window 1 is scatter-gather 128MB at 3GB&n;&t; * Window 2 is direct access 1GB at 1GB&n;&t; * Window 3 is direct access 1GB at 2GB&n;&t; * ??? We ought to scale window 1 memory.&n;&t; *&n;&t; * We must actually use 2 windows to direct-map the 2GB space,&n;&t; * because of an idiot-syncrasy of the CYPRESS chip.  It may&n;&t; * respond to a PCI bus address in the last 1MB of the 4GB&n;&t; * address range.&n;&t; *&n;&t; * Note that the TLB lookup logic uses bitwise concatenation,&n;&t; * not addition, so the required arena alignment is based on&n;&t; * the size of the window.&n;&t; */
+multiline_comment|/*&n;&t; * Set up the PCI to main memory translation windows.&n;&t; *&n;&t; * Window 0 is scatter-gather 8MB at 8MB (for isa)&n;&t; * Window 1 is scatter-gather 128MB at 3GB&n;&t; * Window 2 is direct access 1GB at 1GB&n;&t; * Window 3 is direct access 1GB at 2GB&n;&t; * ??? We ought to scale window 1 memory.&n;&t; *&n;&t; * We must actually use 2 windows to direct-map the 2GB space,&n;&t; * because of an idiot-syncrasy of the CYPRESS chip.  It may&n;&t; * respond to a PCI bus address in the last 1MB of the 4GB&n;&t; * address range.&n;&t; */
 id|hose-&gt;sg_isa
 op_assign
 id|iommu_arena_new
 c_func
 (paren
-l_int|0x00800000
+id|hose
 comma
 l_int|0x00800000
 comma
 l_int|0x00800000
-op_rshift
-l_int|10
+comma
+l_int|0
 )paren
 suffix:semicolon
 id|hose-&gt;sg_pci
@@ -1359,13 +1359,13 @@ op_assign
 id|iommu_arena_new
 c_func
 (paren
+id|hose
+comma
 l_int|0xc0000000
 comma
 l_int|0x08000000
 comma
-l_int|0x08000000
-op_rshift
-l_int|10
+l_int|0
 )paren
 suffix:semicolon
 id|__direct_map_base

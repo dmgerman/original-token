@@ -65,6 +65,44 @@ suffix:semicolon
 multiline_comment|/* The following macro is used to implement the table-based irq mapping&n;   function for all single-bus Alphas.  */
 DECL|macro|COMMON_TABLE_LOOKUP
 mdefine_line|#define COMMON_TABLE_LOOKUP&t;&t;&t;&t;&t;&t;&bslash;&n;({ long _ctl_ = -1; &t;&t;&t;&t;&t;&t;&t;&bslash;&n;   if (slot &gt;= min_idsel &amp;&amp; slot &lt;= max_idsel &amp;&amp; pin &lt; irqs_per_slot)&t;&bslash;&n;     _ctl_ = irq_tab[slot - min_idsel][pin];&t;&t;&t;&t;&bslash;&n;   _ctl_; })
+multiline_comment|/* A PCI IOMMU allocation arena.  There are typically two of these&n;   regions per bus.  */
+multiline_comment|/* ??? The 8400 has a 32-byte pte entry, and the entire table apparently&n;   lives directly on the host bridge (no tlb?).  We don&squot;t support this&n;   machine, but if we ever did, we&squot;d need to parameterize all this quite&n;   a bit further.  Probably with per-bus operation tables.  */
+DECL|struct|pci_iommu_arena
+r_struct
+id|pci_iommu_arena
+(brace
+DECL|member|lock
+id|spinlock_t
+id|lock
+suffix:semicolon
+DECL|member|hose
+r_struct
+id|pci_controler
+op_star
+id|hose
+suffix:semicolon
+DECL|member|ptes
+r_int
+r_int
+op_star
+id|ptes
+suffix:semicolon
+DECL|member|dma_base
+id|dma_addr_t
+id|dma_base
+suffix:semicolon
+DECL|member|size
+r_int
+r_int
+id|size
+suffix:semicolon
+DECL|member|next_entry
+r_int
+r_int
+id|next_entry
+suffix:semicolon
+)brace
+suffix:semicolon
 multiline_comment|/* The hose list.  */
 r_extern
 r_struct
@@ -130,6 +168,10 @@ op_star
 id|iommu_arena_new
 c_func
 (paren
+r_struct
+id|pci_controler
+op_star
+comma
 id|dma_addr_t
 comma
 r_int

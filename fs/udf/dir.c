@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * dir.c&n; *&n; * PURPOSE&n; *  Directory handling routines for the OSTA-UDF(tm) filesystem.&n; *&n; * CONTACTS&n; *&t;E-mail regarding any portion of the Linux UDF file system should be&n; *&t;directed to the development team mailing list (run by majordomo):&n; *&t;&t;linux_udf@hootie.lvld.hp.com&n; *&n; * COPYRIGHT&n; *&t;This file is distributed under the terms of the GNU General Public&n; *&t;License (GPL). Copies of the GPL can be obtained from:&n; *&t;&t;ftp://prep.ai.mit.edu/pub/gnu/GPL&n; *&t;Each contributing author retains all rights to their own work.&n; *&n; *  (C) 1998-1999 Ben Fennema&n; *&n; * HISTORY&n; *&n; *  10/05/98 dgb  Split directory operations into it&squot;s own file&n; *                Implemented directory reads via do_udf_readdir&n; *  10/06/98      Made directory operations work!&n; *  11/17/98      Rewrote directory to support ICB_FLAG_AD_LONG&n; *  11/25/98 blf  Rewrote directory handling (readdir+lookup) to support reading&n; *                across blocks.&n; *  12/12/98      Split out the lookup code to namei.c. bulk of directory&n; *                code now in directory.c:udf_fileident_read.&n; */
+multiline_comment|/*&n; * dir.c&n; *&n; * PURPOSE&n; *  Directory handling routines for the OSTA-UDF(tm) filesystem.&n; *&n; * CONTACTS&n; *&t;E-mail regarding any portion of the Linux UDF file system should be&n; *&t;directed to the development team mailing list (run by majordomo):&n; *&t;&t;linux_udf@hootie.lvld.hp.com&n; *&n; * COPYRIGHT&n; *&t;This file is distributed under the terms of the GNU General Public&n; *&t;License (GPL). Copies of the GPL can be obtained from:&n; *&t;&t;ftp://prep.ai.mit.edu/pub/gnu/GPL&n; *&t;Each contributing author retains all rights to their own work.&n; *&n; *  (C) 1998-2000 Ben Fennema&n; *&n; * HISTORY&n; *&n; *  10/05/98 dgb  Split directory operations into it&squot;s own file&n; *                Implemented directory reads via do_udf_readdir&n; *  10/06/98      Made directory operations work!&n; *  11/17/98      Rewrote directory to support ICB_FLAG_AD_LONG&n; *  11/25/98 blf  Rewrote directory handling (readdir+lookup) to support reading&n; *                across blocks.&n; *  12/12/98      Split out the lookup code to namei.c. bulk of directory&n; *                code now in directory.c:udf_fileident_read.&n; */
 macro_line|#include &quot;udfdecl.h&quot;
 macro_line|#if defined(__linux__) &amp;&amp; defined(__KERNEL__)
 macro_line|#include &lt;linux/version.h&gt;
@@ -512,6 +512,12 @@ op_amp
 id|extoffset
 comma
 op_amp
+id|eloc
+comma
+op_amp
+id|elen
+comma
+op_amp
 id|offset
 comma
 op_amp
@@ -672,10 +678,12 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|IS_UNDELETE
+id|UDF_QUERY_FLAG
 c_func
 (paren
 id|dir-&gt;i_sb
+comma
+id|UDF_FLAG_UNDELETE
 )paren
 )paren
 r_continue
@@ -697,10 +705,12 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|IS_UNHIDE
+id|UDF_QUERY_FLAG
 c_func
 (paren
 id|dir-&gt;i_sb
+comma
+id|UDF_FLAG_UNHIDE
 )paren
 )paren
 r_continue

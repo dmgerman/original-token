@@ -63,15 +63,6 @@ mdefine_line|#define NF_IP_NUMHOOKS&t;&t;5
 macro_line|#ifdef CONFIG_NETFILTER_DEBUG
 macro_line|#ifdef __KERNEL__
 r_void
-id|debug_print_hooks_ip
-c_func
-(paren
-r_int
-r_int
-id|nf_debug
-)paren
-suffix:semicolon
-r_void
 id|nf_debug_ip_local_deliver
 c_func
 (paren

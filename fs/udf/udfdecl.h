@@ -1,15 +1,12 @@
 macro_line|#ifndef __UDF_DECL_H
 DECL|macro|__UDF_DECL_H
 mdefine_line|#define __UDF_DECL_H
-DECL|macro|UDF_VERSION_NOTICE
-mdefine_line|#define UDF_VERSION_NOTICE &quot;v0.9.0&quot;
 macro_line|#include &lt;linux/udf_167.h&gt;
 macro_line|#include &lt;linux/udf_udf.h&gt;
 macro_line|#include &quot;udfend.h&quot;
+macro_line|#include &lt;linux/udf_fs.h&gt;
 macro_line|#ifdef __KERNEL__
 macro_line|#include &lt;linux/types.h&gt;
-macro_line|#include &lt;linux/udf_fs.h&gt;
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#ifndef LINUX_VERSION_CODE
 macro_line|#include &lt;linux/version.h&gt;
 macro_line|#endif
@@ -61,18 +58,23 @@ id|udf_dir_inode_operations
 suffix:semicolon
 r_extern
 r_struct
+id|file_operations
+id|udf_dir_operations
+suffix:semicolon
+r_extern
+r_struct
 id|inode_operations
 id|udf_file_inode_operations
 suffix:semicolon
 r_extern
 r_struct
 id|file_operations
-id|udf_dir_operations
+id|udf_file_operations
 suffix:semicolon
 r_extern
 r_struct
-id|file_operations
-id|udf_file_operations
+id|address_space_operations
+id|udf_aops
 suffix:semicolon
 r_extern
 r_struct
@@ -335,7 +337,7 @@ id|udf_expand_file_adinicb
 c_func
 (paren
 r_struct
-id|file
+id|inode
 op_star
 comma
 r_int
@@ -828,9 +830,6 @@ c_func
 r_struct
 id|super_block
 op_star
-comma
-r_int
-op_star
 )paren
 suffix:semicolon
 multiline_comment|/* partition.c */
@@ -998,7 +997,7 @@ id|Uint32
 suffix:semicolon
 r_extern
 r_int
-id|udf_alloc_blocks
+id|udf_prealloc_blocks
 c_func
 (paren
 r_const
@@ -1098,6 +1097,12 @@ op_star
 comma
 r_struct
 id|FileIdentDesc
+op_star
+comma
+id|lb_addr
+op_star
+comma
+id|Uint32
 op_star
 comma
 id|lb_addr

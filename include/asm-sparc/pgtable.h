@@ -449,6 +449,8 @@ DECL|macro|PTRS_PER_PGD
 mdefine_line|#define PTRS_PER_PGD    &t;BTFIXUP_SIMM13(ptrs_per_pgd)
 DECL|macro|USER_PTRS_PER_PGD
 mdefine_line|#define USER_PTRS_PER_PGD&t;BTFIXUP_SIMM13(user_ptrs_per_pgd)
+DECL|macro|FIRST_USER_PGD_NR
+mdefine_line|#define FIRST_USER_PGD_NR&t;0
 DECL|macro|PAGE_NONE
 mdefine_line|#define PAGE_NONE      __pgprot(BTFIXUP_INT(page_none))
 DECL|macro|PAGE_SHARED

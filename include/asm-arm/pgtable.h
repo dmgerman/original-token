@@ -82,8 +82,10 @@ DECL|macro|PGDIR_SIZE
 mdefine_line|#define PGDIR_SIZE&t;&t;(1UL &lt;&lt; PGDIR_SHIFT)
 DECL|macro|PGDIR_MASK
 mdefine_line|#define PGDIR_MASK&t;&t;(~(PGDIR_SIZE-1))
+DECL|macro|FIRST_USER_PGD_NR
+mdefine_line|#define FIRST_USER_PGD_NR&t;1
 DECL|macro|USER_PTRS_PER_PGD
-mdefine_line|#define USER_PTRS_PER_PGD&t;(TASK_SIZE/PGDIR_SIZE)
+mdefine_line|#define USER_PTRS_PER_PGD&t;((TASK_SIZE/PGDIR_SIZE) - FIRST_USER_PGD_NR)
 multiline_comment|/*&n; * The table below defines the page protection levels that we insert into our&n; * Linux page table version.  These get translated into the best that the&n; * architecture can perform.  Note that on most ARM hardware:&n; *  1) We cannot do execute protection&n; *  2) If we could do execute protection, then read is implied&n; *  3) write implies read permissions&n; */
 DECL|macro|__P000
 mdefine_line|#define __P000  PAGE_NONE

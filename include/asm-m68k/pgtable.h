@@ -34,6 +34,8 @@ DECL|macro|PTRS_PER_PGD
 mdefine_line|#define PTRS_PER_PGD&t;128
 DECL|macro|USER_PTRS_PER_PGD
 mdefine_line|#define USER_PTRS_PER_PGD&t;(TASK_SIZE/PGDIR_SIZE)
+DECL|macro|FIRST_USER_PGD_NR
+mdefine_line|#define FIRST_USER_PGD_NR&t;0
 multiline_comment|/* Virtual address region for use by kernel_map() */
 DECL|macro|KMAP_START
 mdefine_line|#define&t;KMAP_START&t;0xd0000000

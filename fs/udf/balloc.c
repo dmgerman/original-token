@@ -1,7 +1,8 @@
-multiline_comment|/*&n; * balloc.c&n; *&n; * PURPOSE&n; *&t;Block allocation handling routines for the OSTA-UDF(tm) filesystem.&n; *&n; * CONTACTS&n; *&t;E-mail regarding any portion of the Linux UDF file system should be&n; *&t;directed to the development team mailing list (run by majordomo):&n; *&t;&t;linux_udf@hootie.lvld.hp.com&n; *&n; * COPYRIGHT&n; *&t;This file is distributed under the terms of the GNU General Public&n; *&t;License (GPL). Copies of the GPL can be obtained from:&n; *&t;&t;ftp://prep.ai.mit.edu/pub/gnu/GPL&n; *&t;Each contributing author retains all rights to their own work.&n; *&n; *  (C) 1999 Ben Fennema&n; *  (C) 1999 Stelias Computing Inc&n; *&n; * HISTORY&n; *&n; *  02/24/99 blf  Created.&n; *&n; */
+multiline_comment|/*&n; * balloc.c&n; *&n; * PURPOSE&n; *&t;Block allocation handling routines for the OSTA-UDF(tm) filesystem.&n; *&n; * CONTACTS&n; *&t;E-mail regarding any portion of the Linux UDF file system should be&n; *&t;directed to the development team mailing list (run by majordomo):&n; *&t;&t;linux_udf@hootie.lvld.hp.com&n; *&n; * COPYRIGHT&n; *&t;This file is distributed under the terms of the GNU General Public&n; *&t;License (GPL). Copies of the GPL can be obtained from:&n; *&t;&t;ftp://prep.ai.mit.edu/pub/gnu/GPL&n; *&t;Each contributing author retains all rights to their own work.&n; *&n; *  (C) 1999-2000 Ben Fennema&n; *  (C) 1999 Stelias Computing Inc&n; *&n; * HISTORY&n; *&n; *  02/24/99 blf  Created.&n; *&n; */
 macro_line|#include &quot;udfdecl.h&quot;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/locks.h&gt;
+macro_line|#include &lt;linux/quotaops.h&gt;
 macro_line|#include &lt;linux/udf_fs.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &quot;udf_i.h&quot;
@@ -1259,6 +1260,17 @@ l_int|3
 suffix:semicolon
 )brace
 r_else
+(brace
+id|DQUOT_FREE_BLOCK
+c_func
+(paren
+id|sb
+comma
+id|inode
+comma
+l_int|1
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1309,6 +1321,7 @@ op_plus
 l_int|1
 )paren
 suffix:semicolon
+)brace
 )brace
 )brace
 id|mark_buffer_dirty
@@ -1373,9 +1386,9 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-DECL|function|udf_alloc_blocks
+DECL|function|udf_prealloc_blocks
 r_int
-id|udf_alloc_blocks
+id|udf_prealloc_blocks
 c_func
 (paren
 r_const
@@ -1608,6 +1621,24 @@ id|bh-&gt;b_data
 r_goto
 id|out
 suffix:semicolon
+r_else
+r_if
+c_cond
+(paren
+id|DQUOT_PREALLOC_BLOCK
+c_func
+(paren
+id|sb
+comma
+id|inode
+comma
+l_int|1
+)paren
+)paren
+r_goto
+id|out
+suffix:semicolon
+r_else
 r_if
 c_cond
 (paren
@@ -1627,6 +1658,16 @@ c_func
 l_string|&quot;bit already cleared for block %d&bslash;n&quot;
 comma
 id|bit
+)paren
+suffix:semicolon
+id|DQUOT_FREE_BLOCK
+c_func
+(paren
+id|sb
+comma
+id|inode
+comma
+l_int|1
 )paren
 suffix:semicolon
 r_goto
@@ -2440,6 +2481,37 @@ op_decrement
 suffix:semicolon
 id|got_block
 suffix:colon
+multiline_comment|/*&n;&t; * Check quota for allocation of this block.&n;&t; */
+r_if
+c_cond
+(paren
+id|DQUOT_ALLOC_BLOCK
+c_func
+(paren
+id|sb
+comma
+id|inode
+comma
+l_int|1
+)paren
+)paren
+(brace
+id|unlock_super
+c_func
+(paren
+id|sb
+)paren
+suffix:semicolon
+op_star
+id|err
+op_assign
+op_minus
+id|EDQUOT
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
 id|newblock
 op_assign
 id|bit

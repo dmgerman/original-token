@@ -69,8 +69,6 @@ DECL|variable|initrd_users
 r_static
 r_int
 id|initrd_users
-op_assign
-l_int|0
 suffix:semicolon
 macro_line|#endif
 macro_line|#endif
@@ -139,8 +137,6 @@ macro_line|#ifndef MODULE
 DECL|variable|rd_doload
 r_int
 id|rd_doload
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* 1 = load RAM disk, 0 = don&squot;t load */
 DECL|variable|rd_prompt
@@ -153,8 +149,6 @@ multiline_comment|/* 1 = prompt for RAM disk, 0 = don&squot;t prompt */
 DECL|variable|rd_image_start
 r_int
 id|rd_image_start
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* starting block # of image */
 macro_line|#ifdef CONFIG_BLK_DEV_INITRD
@@ -176,8 +170,6 @@ multiline_comment|/* zero if initrd should not be mounted */
 DECL|variable|initrd_below_start_ok
 r_int
 id|initrd_below_start_ok
-op_assign
-l_int|0
 suffix:semicolon
 DECL|function|no_initrd
 r_static
@@ -770,7 +762,7 @@ op_amp
 id|inode-&gt;i_bdev-&gt;bd_openers
 )paren
 OG
-l_int|1
+l_int|2
 )paren
 )paren
 r_return
@@ -1068,6 +1060,11 @@ suffix:semicolon
 id|initrd_users
 op_increment
 suffix:semicolon
+id|filp-&gt;f_op
+op_assign
+op_amp
+id|initrd_fops
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -1165,6 +1162,37 @@ suffix:semicolon
 id|i
 op_increment
 )paren
+(brace
+r_struct
+id|block_device
+op_star
+id|bdev
+suffix:semicolon
+id|bdev
+op_assign
+id|bdget
+c_func
+(paren
+id|kdev_t_to_nr
+c_func
+(paren
+id|MKDEV
+c_func
+(paren
+id|MAJOR_NR
+comma
+id|i
+)paren
+)paren
+)paren
+suffix:semicolon
+id|atomic_dec
+c_func
+(paren
+op_amp
+id|bdev-&gt;bd_openers
+)paren
+suffix:semicolon
 id|destroy_buffers
 c_func
 (paren
@@ -1177,6 +1205,7 @@ id|i
 )paren
 )paren
 suffix:semicolon
+)brace
 id|devfs_unregister
 (paren
 id|devfs_handle
@@ -1423,6 +1452,12 @@ suffix:semicolon
 id|i
 op_increment
 )paren
+(brace
+r_struct
+id|block_device
+op_star
+id|bdev
+suffix:semicolon
 id|register_disk
 c_func
 (paren
@@ -1446,6 +1481,33 @@ op_lshift
 l_int|1
 )paren
 suffix:semicolon
+id|bdev
+op_assign
+id|bdget
+c_func
+(paren
+id|kdev_t_to_nr
+c_func
+(paren
+id|MKDEV
+c_func
+(paren
+id|MAJOR_NR
+comma
+id|i
+)paren
+)paren
+)paren
+suffix:semicolon
+id|atomic_inc
+c_func
+(paren
+op_amp
+id|bdev-&gt;bd_openers
+)paren
+suffix:semicolon
+multiline_comment|/* avoid invalidate_buffers() */
+)brace
 macro_line|#ifdef CONFIG_BLK_DEV_INITRD
 multiline_comment|/* We ought to separate initrd operations here */
 id|register_disk
@@ -2101,7 +2163,7 @@ suffix:semicolon
 id|infile.f_op
 op_assign
 op_amp
-id|initrd_fops
+id|def_blk_fops
 suffix:semicolon
 id|init_special_inode
 c_func

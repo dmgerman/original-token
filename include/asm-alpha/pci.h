@@ -14,37 +14,8 @@ suffix:semicolon
 r_struct
 id|resource
 suffix:semicolon
-multiline_comment|/* A PCI IOMMU allocation arena.  There are typically two of these&n;   regions per bus.  */
-multiline_comment|/* ??? The 8400 has a 32-byte pte entry, and the entire table apparently&n;   lives directly on the host bridge (no tlb?).  We don&squot;t support this&n;   machine, but if we ever did, we&squot;d need to parameterize all this quite&n;   a bit further.  Probably with per-bus operation tables.  */
-DECL|struct|pci_iommu_arena
 r_struct
 id|pci_iommu_arena
-(brace
-DECL|member|lock
-id|spinlock_t
-id|lock
-suffix:semicolon
-DECL|member|ptes
-r_int
-r_int
-op_star
-id|ptes
-suffix:semicolon
-DECL|member|dma_base
-id|dma_addr_t
-id|dma_base
-suffix:semicolon
-DECL|member|size
-r_int
-r_int
-id|size
-suffix:semicolon
-DECL|member|alloc_hint
-r_int
-r_int
-id|alloc_hint
-suffix:semicolon
-)brace
 suffix:semicolon
 multiline_comment|/* A controler.  Used to manage multiple PCI busses.  */
 DECL|struct|pci_controler

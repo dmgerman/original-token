@@ -153,11 +153,11 @@ mdefine_line|#define TVR_EVEN        0x0E    /* Timer value registers - even and
 DECL|macro|TVR_ODD
 mdefine_line|#define TVR_ODD         0x0F
 DECL|macro|SRPR_EVEN
-mdefine_line|#define SRPR_EVEN       0x10    /* Shared RAM paging registers - even and odd */
+mdefine_line|#define SRPR_EVEN       0x18    /* Shared RAM paging registers - even and odd */
 DECL|macro|SRPR_ENABLE_PAGING
 mdefine_line|#define SRPR_ENABLE_PAGING 0xc0
 DECL|macro|SRPR_ODD
-mdefine_line|#define SRPR_ODD        0x11 /* Not used. */
+mdefine_line|#define SRPR_ODD        0x19 /* Not used. */
 DECL|macro|TOKREAD
 mdefine_line|#define TOKREAD         0x60
 DECL|macro|TOKOR
@@ -190,7 +190,7 @@ DECL|macro|ACA_RW
 mdefine_line|#define ACA_RW 0x00
 macro_line|#ifdef ENABLE_PAGING
 DECL|macro|SET_PAGE
-mdefine_line|#define SET_PAGE(x) (isa_writeb(((x&gt;&gt;8)&amp;ti.page_mask), &bslash;&n;  ti-&gt;mmio + ACA_OFFSET + ACA_RW + SRPR_EVEN))
+mdefine_line|#define SET_PAGE(x) (isa_writeb((x), &bslash;&n;  ti-&gt;mmio + ACA_OFFSET + ACA_RW + SRPR_EVEN))
 macro_line|#else
 DECL|macro|SET_PAGE
 mdefine_line|#define SET_PAGE(x)
@@ -366,6 +366,26 @@ id|__u32
 id|asb
 suffix:semicolon
 multiline_comment|/* Adapter Status Block address */
+DECL|member|init_srb_page
+id|__u8
+id|init_srb_page
+suffix:semicolon
+DECL|member|srb_page
+id|__u8
+id|srb_page
+suffix:semicolon
+DECL|member|ssb_page
+id|__u8
+id|ssb_page
+suffix:semicolon
+DECL|member|arb_page
+id|__u8
+id|arb_page
+suffix:semicolon
+DECL|member|asb_page
+id|__u8
+id|asb_page
+suffix:semicolon
 DECL|member|exsap_station_id
 r_int
 r_int

@@ -159,6 +159,8 @@ DECL|macro|PTRS_PER_PGD
 mdefine_line|#define PTRS_PER_PGD&t;1024
 DECL|macro|USER_PTRS_PER_PGD
 mdefine_line|#define USER_PTRS_PER_PGD&t;(TASK_SIZE/PGDIR_SIZE)
+DECL|macro|FIRST_USER_PGD_NR
+mdefine_line|#define FIRST_USER_PGD_NR&t;0
 DECL|macro|VMALLOC_START
 mdefine_line|#define VMALLOC_START     KSEG2
 DECL|macro|VMALLOC_VMADDR

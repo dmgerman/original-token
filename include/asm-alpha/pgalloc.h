@@ -2,6 +2,22 @@ macro_line|#ifndef _ALPHA_PGALLOC_H
 DECL|macro|_ALPHA_PGALLOC_H
 mdefine_line|#define _ALPHA_PGALLOC_H
 macro_line|#include &lt;linux/config.h&gt;
+macro_line|#ifndef __EXTERN_INLINE
+DECL|macro|__EXTERN_INLINE
+mdefine_line|#define __EXTERN_INLINE extern inline
+DECL|macro|__MMU_EXTERN_INLINE
+mdefine_line|#define __MMU_EXTERN_INLINE
+macro_line|#endif
+r_extern
+r_void
+id|__load_new_mm_context
+c_func
+(paren
+r_struct
+id|mm_struct
+op_star
+)paren
+suffix:semicolon
 multiline_comment|/* Caches aren&squot;t brain-dead on the Alpha. */
 DECL|macro|flush_cache_all
 mdefine_line|#define flush_cache_all()&t;&t;&t;do { } while (0)
@@ -13,7 +29,8 @@ DECL|macro|flush_cache_page
 mdefine_line|#define flush_cache_page(vma, vmaddr)&t;&t;do { } while (0)
 DECL|macro|flush_page_to_ram
 mdefine_line|#define flush_page_to_ram(page)&t;&t;&t;do { } while (0)
-multiline_comment|/*&n; * The icache is not coherent with the dcache on alpha, thus before&n; * running self modified code like kernel modules we must always run&n; * an imb().&n; */
+multiline_comment|/* Note that the following two definitions are _highly_ dependent&n;   on the contexts in which they are used in the kernel.  I personally&n;   think it is criminal how loosely defined these macros are.  */
+multiline_comment|/* We need to flush the kernel&squot;s icache after loading modules.  The&n;   only other use of this macro is in load_aout_interp which is not&n;   used on Alpha. &n;&n;   Note that this definition should *not* be used for userspace&n;   icache flushing.  While functional, it is _way_ overkill.  The&n;   icache is tagged with ASNs and it suffices to allocate a new ASN&n;   for the process.  */
 macro_line|#ifndef __SMP__
 DECL|macro|flush_icache_range
 mdefine_line|#define flush_icache_range(start, end)&t;&t;imb()
@@ -29,15 +46,80 @@ r_void
 )paren
 suffix:semicolon
 macro_line|#endif
-DECL|macro|flush_icache_page
-mdefine_line|#define flush_icache_page(vma, page)&t;&t;do { } while (0)
-multiline_comment|/*&n; * Use a few helper functions to hide the ugly broken ASN&n; * numbers on early Alphas (ev4 and ev45)&n; */
-macro_line|#ifndef __EXTERN_INLINE
-DECL|macro|__EXTERN_INLINE
-mdefine_line|#define __EXTERN_INLINE extern inline
-DECL|macro|__MMU_EXTERN_INLINE
-mdefine_line|#define __MMU_EXTERN_INLINE
+multiline_comment|/* We need to flush the userspace icache after setting breakpoints in&n;   ptrace.  I don&squot;t think it&squot;s needed in do_swap_page, or do_no_page,&n;   but I don&squot;t know how to get rid of it either.&n;&n;   Instead of indiscriminately using imb, take advantage of the fact&n;   that icache entries are tagged with the ASN and load a new mm context.  */
+multiline_comment|/* ??? Ought to use this in arch/alpha/kernel/signal.c too.  */
+macro_line|#ifndef __SMP__
+r_static
+r_inline
+r_void
+DECL|function|flush_icache_page
+id|flush_icache_page
+c_func
+(paren
+r_struct
+id|vm_area_struct
+op_star
+id|vma
+comma
+r_struct
+id|page
+op_star
+id|page
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|vma-&gt;vm_flags
+op_amp
+id|VM_EXEC
+)paren
+(brace
+r_struct
+id|mm_struct
+op_star
+id|mm
+op_assign
+id|vma-&gt;vm_mm
+suffix:semicolon
+id|mm-&gt;context
+op_assign
+l_int|0
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|current-&gt;active_mm
+op_eq
+id|mm
+)paren
+id|__load_new_mm_context
+c_func
+(paren
+id|mm
+)paren
+suffix:semicolon
+)brace
+)brace
+macro_line|#else
+r_extern
+r_void
+id|flush_icache_page
+c_func
+(paren
+r_struct
+id|vm_area_struct
+op_star
+id|vma
+comma
+r_struct
+id|page
+op_star
+id|page
+)paren
+suffix:semicolon
 macro_line|#endif
+multiline_comment|/*&n; * Use a few helper functions to hide the ugly broken ASN&n; * numbers on early Alphas (ev4 and ev45)&n; */
 id|__EXTERN_INLINE
 r_void
 DECL|function|ev4_flush_tlb_current
@@ -50,6 +132,12 @@ op_star
 id|mm
 )paren
 (brace
+id|__load_new_mm_context
+c_func
+(paren
+id|mm
+)paren
+suffix:semicolon
 id|tbiap
 c_func
 (paren
@@ -58,19 +146,7 @@ suffix:semicolon
 )brace
 id|__EXTERN_INLINE
 r_void
-DECL|function|ev4_flush_tlb_other
-id|ev4_flush_tlb_other
-c_func
-(paren
-r_struct
-id|mm_struct
-op_star
-id|mm
-)paren
-(brace
-)brace
-r_extern
-r_void
+DECL|function|ev5_flush_tlb_current
 id|ev5_flush_tlb_current
 c_func
 (paren
@@ -79,11 +155,19 @@ id|mm_struct
 op_star
 id|mm
 )paren
+(brace
+id|__load_new_mm_context
+c_func
+(paren
+id|mm
+)paren
 suffix:semicolon
-id|__EXTERN_INLINE
+)brace
+r_extern
+r_inline
 r_void
-DECL|function|ev5_flush_tlb_other
-id|ev5_flush_tlb_other
+DECL|function|flush_tlb_other
+id|flush_tlb_other
 c_func
 (paren
 r_struct
@@ -119,20 +203,34 @@ r_int
 id|addr
 )paren
 (brace
-id|tbi
-c_func
-(paren
+r_int
+id|tbi_flag
+op_assign
 l_int|2
-op_plus
-(paren
+suffix:semicolon
+r_if
+c_cond
 (paren
 id|vma-&gt;vm_flags
 op_amp
 id|VM_EXEC
 )paren
-op_ne
-l_int|0
+(brace
+id|__load_new_mm_context
+c_func
+(paren
+id|mm
 )paren
+suffix:semicolon
+id|tbi_flag
+op_assign
+l_int|3
+suffix:semicolon
+)brace
+id|tbi
+c_func
+(paren
+id|tbi_flag
 comma
 id|addr
 )paren
@@ -166,7 +264,7 @@ id|vma-&gt;vm_flags
 op_amp
 id|VM_EXEC
 )paren
-id|ev5_flush_tlb_current
+id|__load_new_mm_context
 c_func
 (paren
 id|mm
@@ -185,23 +283,17 @@ suffix:semicolon
 macro_line|#ifdef CONFIG_ALPHA_GENERIC
 DECL|macro|flush_tlb_current
 macro_line|# define flush_tlb_current&t;&t;alpha_mv.mv_flush_tlb_current
-DECL|macro|flush_tlb_other
-macro_line|# define flush_tlb_other&t;&t;alpha_mv.mv_flush_tlb_other
 DECL|macro|flush_tlb_current_page
 macro_line|# define flush_tlb_current_page&t;&t;alpha_mv.mv_flush_tlb_current_page
 macro_line|#else
 macro_line|# ifdef CONFIG_ALPHA_EV4
 DECL|macro|flush_tlb_current
 macro_line|#  define flush_tlb_current&t;&t;ev4_flush_tlb_current
-DECL|macro|flush_tlb_other
-macro_line|#  define flush_tlb_other&t;&t;ev4_flush_tlb_other
 DECL|macro|flush_tlb_current_page
 macro_line|#  define flush_tlb_current_page&t;ev4_flush_tlb_current_page
 macro_line|# else
 DECL|macro|flush_tlb_current
 macro_line|#  define flush_tlb_current&t;&t;ev5_flush_tlb_current
-DECL|macro|flush_tlb_other
-macro_line|#  define flush_tlb_other&t;&t;ev5_flush_tlb_other
 DECL|macro|flush_tlb_current_page
 macro_line|#  define flush_tlb_current_page&t;ev5_flush_tlb_current_page
 macro_line|# endif

@@ -1153,7 +1153,7 @@ r_if
 c_cond
 (paren
 id|skb-&gt;len
-op_ne
+OL
 l_int|2
 )paren
 r_goto

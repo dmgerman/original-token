@@ -416,9 +416,9 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|inode-&gt;i_sb
+id|inode
 op_logical_and
-id|inode-&gt;i_sb-&gt;s_op
+id|inode-&gt;i_op
 op_logical_and
 id|inode-&gt;i_op-&gt;setattr
 )paren

@@ -341,6 +341,14 @@ id|Uint32
 op_star
 id|extoffset
 comma
+id|lb_addr
+op_star
+id|eloc
+comma
+id|Uint32
+op_star
+id|elen
+comma
 id|Uint32
 op_star
 id|offset
@@ -356,12 +364,6 @@ r_struct
 id|FileIdentDesc
 op_star
 id|fi
-suffix:semicolon
-id|lb_addr
-id|eloc
-suffix:semicolon
-id|Uint32
-id|elen
 suffix:semicolon
 r_int
 id|block
@@ -396,10 +398,8 @@ id|bloc
 comma
 id|extoffset
 comma
-op_amp
 id|eloc
 comma
-op_amp
 id|elen
 comma
 id|bh
@@ -421,6 +421,7 @@ c_func
 (paren
 id|dir-&gt;i_sb
 comma
+op_star
 id|eloc
 comma
 op_star
@@ -443,6 +444,7 @@ op_lshift
 id|dir-&gt;i_sb-&gt;s_blocksize_bits
 )paren
 op_ge
+op_star
 id|elen
 )paren
 op_star
@@ -607,10 +609,8 @@ id|bloc
 comma
 id|extoffset
 comma
-op_amp
 id|eloc
 comma
-op_amp
 id|elen
 comma
 id|bh
@@ -632,6 +632,7 @@ c_func
 (paren
 id|dir-&gt;i_sb
 comma
+op_star
 id|eloc
 comma
 op_star
@@ -654,6 +655,7 @@ op_lshift
 id|dir-&gt;i_sb-&gt;s_blocksize_bits
 )paren
 op_ge
+op_star
 id|elen
 )paren
 op_star

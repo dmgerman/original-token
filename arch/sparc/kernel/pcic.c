@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: pcic.c,v 1.13 2000/02/12 03:05:37 zaitcev Exp $&n; * pcic.c: Sparc/PCI controller support&n; *&n; * Copyright (C) 1998 V. Roganov and G. Raiko&n; *&n; * Code is derived from Ultra/PCI PSYCHO controller support, see that&n; * for author info.&n; *&n; * Support for diverse IIep based platforms by Pete Zaitcev.&n; * CP-1200 by Eric Brower.&n; */
+multiline_comment|/* $Id: pcic.c,v 1.14 2000/03/01 02:53:28 davem Exp $&n; * pcic.c: Sparc/PCI controller support&n; *&n; * Copyright (C) 1998 V. Roganov and G. Raiko&n; *&n; * Code is derived from Ultra/PCI PSYCHO controller support, see that&n; * for author info.&n; *&n; * Support for diverse IIep based platforms by Pete Zaitcev.&n; * CP-1200 by Eric Brower.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -3849,27 +3849,6 @@ id|size
 )paren
 (brace
 )brace
-macro_line|#if 0
-r_int
-id|pci_assign_resource
-c_func
-(paren
-r_struct
-id|pci_dev
-op_star
-id|dev
-comma
-r_int
-id|i
-)paren
-(brace
-r_return
-op_minus
-id|ENOSYS
-suffix:semicolon
-multiline_comment|/* :-)... actually implement this soon */
-)brace
-macro_line|#endif
 DECL|function|pcibios_enable_device
 r_int
 id|pcibios_enable_device

@@ -72,7 +72,7 @@ id|ptr
 )paren
 suffix:semicolon
 r_extern
-r_void
+r_int
 id|dn_neigh_router_hello
 c_func
 (paren
@@ -83,7 +83,7 @@ id|skb
 )paren
 suffix:semicolon
 r_extern
-r_void
+r_int
 id|dn_neigh_endnode_hello
 c_func
 (paren

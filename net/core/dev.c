@@ -2939,6 +2939,13 @@ c_cond
 (paren
 id|pt_prev
 )paren
+(brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|pt_prev-&gt;data
+)paren
 id|deliver_to_old_ones
 c_func
 (paren
@@ -2970,6 +2977,7 @@ comma
 id|pt_prev
 )paren
 suffix:semicolon
+)brace
 )brace
 id|br_handle_frame_hook
 c_func

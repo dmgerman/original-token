@@ -1919,7 +1919,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * Ethernet router hello message received&n; */
 DECL|function|dn_neigh_router_hello
-r_void
+r_int
 id|dn_neigh_router_hello
 c_func
 (paren
@@ -2171,10 +2171,13 @@ c_func
 id|skb
 )paren
 suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
 )brace
 multiline_comment|/*&n; * Endnode hello message received&n; */
 DECL|function|dn_neigh_endnode_hello
-r_void
+r_int
 id|dn_neigh_endnode_hello
 c_func
 (paren
@@ -2333,6 +2336,9 @@ c_func
 (paren
 id|skb
 )paren
+suffix:semicolon
+r_return
+l_int|0
 suffix:semicolon
 )brace
 macro_line|#ifdef CONFIG_DECNET_ROUTER

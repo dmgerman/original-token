@@ -1725,17 +1725,19 @@ l_string|&quot;Failed to request HAE_MEM&bslash;n&quot;
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * Set up the PCI to main memory translation windows.&n;&t; *&n;&t; * Window 0 is scatter-gather 8MB at 8MB (for isa)&n;&t; * Window 1 is scatter-gather 128MB at 1GB&n;&t; * Window 2 is direct access 2GB at 2GB&n;&t; * ??? We ought to scale window 1 with memory.&n;&t; */
-multiline_comment|/* NetBSD hints that page tables must be aligned to 32K due&n;&t;   to a hardware bug.  No description of what models affected.  */
+multiline_comment|/* ??? NetBSD hints that page tables must be aligned to 32K,&n;&t;   possibly due to a hardware bug.  This is over-aligned&n;&t;   from the 8K alignment one would expect for an 8MB window. &n;&t;   No description of what CIA revisions affected.  */
 id|hose-&gt;sg_isa
 op_assign
 id|iommu_arena_new
 c_func
 (paren
-l_int|0x00800000
+id|hose
 comma
 l_int|0x00800000
 comma
-l_int|32768
+l_int|0x00800000
+comma
+l_int|0x8000
 )paren
 suffix:semicolon
 id|hose-&gt;sg_pci
@@ -1743,11 +1745,13 @@ op_assign
 id|iommu_arena_new
 c_func
 (paren
+id|hose
+comma
 l_int|0x40000000
 comma
 l_int|0x08000000
 comma
-l_int|32768
+l_int|0
 )paren
 suffix:semicolon
 id|__direct_map_base

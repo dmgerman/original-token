@@ -513,6 +513,10 @@ c_func
 (paren
 )paren
 suffix:semicolon
+r_int
+r_int
+id|pstate
+suffix:semicolon
 id|inherit_locked_prom_mappings
 c_func
 (paren
@@ -534,7 +538,26 @@ c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/* Master did this already, now is the time for us to do it. */
+multiline_comment|/* Guarentee that the following sequences execute&n;&t; * uninterrupted.&n;&t; */
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;rdpr&t;%%pstate, %0&bslash;n&bslash;t&quot;
+l_string|&quot;wrpr&t;%0, %1, %%pstate&quot;
+suffix:colon
+l_string|&quot;=r&quot;
+(paren
+id|pstate
+)paren
+suffix:colon
+l_string|&quot;i&quot;
+(paren
+id|PSTATE_IE
+)paren
+)paren
+suffix:semicolon
+multiline_comment|/* Set things up so user can access tick register for profiling&n;&t; * purposes.  Also workaround BB_ERRATA_1 by doing a dummy&n;&t; * read back of %tick after writing it.&n;&t; */
 id|__asm__
 id|__volatile__
 c_func
@@ -552,6 +575,14 @@ comma
 op_mod
 op_mod
 id|g1
+id|ba
+comma
+id|pt
+op_mod
+op_mod
+id|xcc
+comma
+l_float|1f
 id|sllx
 op_mod
 op_mod
@@ -562,6 +593,11 @@ comma
 op_mod
 op_mod
 id|g1
+dot
+id|align
+l_int|64
+l_int|1
+suffix:colon
 id|rd
 op_mod
 op_mod
@@ -602,6 +638,14 @@ comma
 op_mod
 op_mod
 id|tick
+id|rdpr
+op_mod
+op_mod
+id|tick
+comma
+op_mod
+op_mod
+id|g0
 "&quot;"
 suffix:colon
 multiline_comment|/* no outputs */
@@ -611,6 +655,21 @@ suffix:colon
 l_string|&quot;g1&quot;
 comma
 l_string|&quot;g2&quot;
+)paren
+suffix:semicolon
+multiline_comment|/* Restore PSTATE_IE. */
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;wrpr&t;%0, 0x0, %%pstate&quot;
+suffix:colon
+multiline_comment|/* no outputs */
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+id|pstate
+)paren
 )paren
 suffix:semicolon
 id|smp_setup_percpu_timer
@@ -2752,6 +2811,8 @@ r_int
 id|compare
 comma
 id|tick
+comma
+id|pstate
 suffix:semicolon
 r_int
 id|cpu
@@ -3046,14 +3107,38 @@ id|cpu
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* Guarentee that the following sequences execute&n;&t;&t; * uninterrupted.&n;&t;&t; */
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;rdpr&t;%%pstate, %0&bslash;n&bslash;t&quot;
+l_string|&quot;wrpr&t;%0, %1, %%pstate&quot;
+suffix:colon
+l_string|&quot;=r&quot;
+(paren
+id|pstate
+)paren
+suffix:colon
+l_string|&quot;i&quot;
+(paren
+id|PSTATE_IE
+)paren
+)paren
+suffix:semicolon
+multiline_comment|/* Workaround for Spitfire Errata (#54 I think??), I discovered&n;&t;&t; * this via Sun BugID 4008234, mentioned in Solaris-2.5.1 patch&n;&t;&t; * number 103640.&n;&t;&t; *&n;&t;&t; * On Blackbird writes to %tick_cmpr can fail, the&n;&t;&t; * workaround seems to be to execute the wr instruction&n;&t;&t; * at the start of an I-cache line, and perform a dummy&n;&t;&t; * read back from %tick_cmpr right after writing to it. -DaveM&n;&t;&t; *&n;&t;&t; * Just to be anal we add a workaround for Spitfire&n;&t;&t; * Errata 50 by preventing pipeline bypasses on the&n;&t;&t; * final read of the %tick register into a compare&n;&t;&t; * instruction.  The Errata 50 description states&n;&t;&t; * that %tick is not prone to this bug, but I am not&n;&t;&t; * taking any chances.&n;&t;&t; */
 id|__asm__
 id|__volatile__
 c_func
 (paren
 l_string|&quot;rd&t;%%tick_cmpr, %0&bslash;n&bslash;t&quot;
-l_string|&quot;add&t;%0, %2, %0&bslash;n&bslash;t&quot;
-l_string|&quot;wr&t;%0, 0x0, %%tick_cmpr&bslash;n&bslash;t&quot;
-l_string|&quot;rd&t;%%tick, %1&quot;
+l_string|&quot;ba,pt&t;%%xcc, 1f&bslash;n&bslash;t&quot;
+l_string|&quot; add&t;%0, %2, %0&bslash;n&bslash;t&quot;
+l_string|&quot;.align&t;64&bslash;n&quot;
+l_string|&quot;1: wr&t;%0, 0x0, %%tick_cmpr&bslash;n&bslash;t&quot;
+l_string|&quot;rd&t;%%tick_cmpr, %%g0&bslash;n&bslash;t&quot;
+l_string|&quot;rd&t;%%tick, %1&bslash;n&bslash;t&quot;
+l_string|&quot;mov&t;%1, %1&quot;
 suffix:colon
 l_string|&quot;=&amp;r&quot;
 (paren
@@ -3068,6 +3153,21 @@ suffix:colon
 l_string|&quot;r&quot;
 (paren
 id|current_tick_offset
+)paren
+)paren
+suffix:semicolon
+multiline_comment|/* Restore PSTATE_IE. */
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;wrpr&t;%0, 0x0, %%pstate&quot;
+suffix:colon
+multiline_comment|/* no outputs */
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+id|pstate
 )paren
 )paren
 suffix:semicolon
@@ -3099,6 +3199,10 @@ c_func
 (paren
 )paren
 suffix:semicolon
+r_int
+r_int
+id|pstate
+suffix:semicolon
 id|prof_counter
 c_func
 (paren
@@ -3113,13 +3217,82 @@ id|cpu
 op_assign
 l_int|1
 suffix:semicolon
+multiline_comment|/* Guarentee that the following sequences execute&n;&t; * uninterrupted.&n;&t; */
 id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;rd&t;%%tick, %%g1&bslash;n&bslash;t&quot;
-l_string|&quot;add&t;%%g1, %0, %%g1&bslash;n&bslash;t&quot;
-l_string|&quot;wr&t;%%g1, 0x0, %%tick_cmpr&quot;
+l_string|&quot;rdpr&t;%%pstate, %0&bslash;n&bslash;t&quot;
+l_string|&quot;wrpr&t;%0, %1, %%pstate&quot;
+suffix:colon
+l_string|&quot;=r&quot;
+(paren
+id|pstate
+)paren
+suffix:colon
+l_string|&quot;i&quot;
+(paren
+id|PSTATE_IE
+)paren
+)paren
+suffix:semicolon
+multiline_comment|/* Workaround for Spitfire Errata (#54 I think??), I discovered&n;&t; * this via Sun BugID 4008234, mentioned in Solaris-2.5.1 patch&n;&t; * number 103640.&n;&t; *&n;&t; * On Blackbird writes to %tick_cmpr can fail, the&n;&t; * workaround seems to be to execute the wr instruction&n;&t; * at the start of an I-cache line, and perform a dummy&n;&t; * read back from %tick_cmpr right after writing to it. -DaveM&n;&t; */
+id|__asm__
+id|__volatile__
+c_func
+(paren
+"&quot;"
+id|rd
+op_mod
+op_mod
+id|tick
+comma
+op_mod
+op_mod
+id|g1
+id|ba
+comma
+id|pt
+op_mod
+op_mod
+id|xcc
+comma
+l_float|1f
+id|add
+op_mod
+op_mod
+id|g1
+comma
+op_mod
+l_int|0
+comma
+op_mod
+op_mod
+id|g1
+dot
+id|align
+l_int|64
+l_int|1
+suffix:colon
+id|wr
+op_mod
+op_mod
+id|g1
+comma
+l_int|0x0
+comma
+op_mod
+op_mod
+id|tick_cmpr
+id|rd
+op_mod
+op_mod
+id|tick_cmpr
+comma
+op_mod
+op_mod
+id|g0
+"&quot;"
 suffix:colon
 multiline_comment|/* no outputs */
 suffix:colon
@@ -3129,6 +3302,21 @@ id|current_tick_offset
 )paren
 suffix:colon
 l_string|&quot;g1&quot;
+)paren
+suffix:semicolon
+multiline_comment|/* Restore PSTATE_IE. */
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;wrpr&t;%0, 0x0, %%pstate&quot;
+suffix:colon
+multiline_comment|/* no outputs */
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+id|pstate
+)paren
 )paren
 suffix:semicolon
 )brace

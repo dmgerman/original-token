@@ -436,6 +436,15 @@ comma
 id|len
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|s-&gt;cb_config
+)paren
+r_goto
+id|fail
+suffix:semicolon
 id|dev
 op_assign
 op_amp

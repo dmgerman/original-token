@@ -17,6 +17,8 @@ DECL|macro|UDF_I_EXTENDED_FE
 mdefine_line|#define UDF_I_EXTENDED_FE(X)( UDF_I(X)-&gt;i_extended_fe )
 DECL|macro|UDF_I_STRAT4096
 mdefine_line|#define UDF_I_STRAT4096(X)&t;( UDF_I(X)-&gt;i_strat_4096 )
+DECL|macro|UDF_I_NEW_INODE
+mdefine_line|#define UDF_I_NEW_INODE(X)&t;( UDF_I(X)-&gt;i_new_inode )
 DECL|macro|UDF_I_NEXT_ALLOC_BLOCK
 mdefine_line|#define UDF_I_NEXT_ALLOC_BLOCK(X)&t;( UDF_I(X)-&gt;i_next_alloc_block )
 DECL|macro|UDF_I_NEXT_ALLOC_GOAL

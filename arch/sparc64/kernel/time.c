@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: time.c,v 1.23 1999/09/21 14:35:27 davem Exp $&n; * time.c: UltraSparc timer and TOD clock support.&n; *&n; * Copyright (C) 1997 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1998 Eddie C. Dost   (ecd@skynet.be)&n; *&n; * Based largely on code which is:&n; *&n; * Copyright (C) 1996 Thomas K. Dyas (tdyas@eden.rutgers.edu)&n; */
+multiline_comment|/* $Id: time.c,v 1.24 2000/03/02 02:00:25 davem Exp $&n; * time.c: UltraSparc timer and TOD clock support.&n; *&n; * Copyright (C) 1997 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1998 Eddie C. Dost   (ecd@skynet.be)&n; *&n; * Based largely on code which is:&n; *&n; * Copyright (C) 1996 Thomas K. Dyas (tdyas@eden.rutgers.edu)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -182,6 +182,8 @@ id|regs
 r_int
 r_int
 id|ticks
+comma
+id|pstate
 suffix:semicolon
 id|write_lock
 c_func
@@ -198,6 +200,26 @@ c_func
 id|regs
 )paren
 suffix:semicolon
+multiline_comment|/* Guarentee that the following sequences execute&n;&t;&t; * uninterrupted.&n;&t;&t; */
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;rdpr&t;%%pstate, %0&bslash;n&bslash;t&quot;
+l_string|&quot;wrpr&t;%0, %1, %%pstate&quot;
+suffix:colon
+l_string|&quot;=r&quot;
+(paren
+id|pstate
+)paren
+suffix:colon
+l_string|&quot;i&quot;
+(paren
+id|PSTATE_IE
+)paren
+)paren
+suffix:semicolon
+multiline_comment|/* Workaround for Spitfire Errata (#54 I think??), I discovered&n;&t;&t; * this via Sun BugID 4008234, mentioned in Solaris-2.5.1 patch&n;&t;&t; * number 103640.&n;&t;&t; *&n;&t;&t; * On Blackbird writes to %tick_cmpr can fail, the&n;&t;&t; * workaround seems to be to execute the wr instruction&n;&t;&t; * at the start of an I-cache line, and perform a dummy&n;&t;&t; * read back from %tick_cmpr right after writing to it. -DaveM&n;&t;&t; *&n;&t;&t; * Just to be anal we add a workaround for Spitfire&n;&t;&t; * Errata 50 by preventing pipeline bypasses on the&n;&t;&t; * final read of the %tick register into a compare&n;&t;&t; * instruction.  The Errata 50 description states&n;&t;&t; * that %tick is not prone to this bug, but I am not&n;&t;&t; * taking any chances.&n;&t;&t; */
 id|__asm__
 id|__volatile__
 c_func
@@ -210,6 +232,14 @@ id|tick_cmpr
 comma
 op_mod
 l_int|0
+id|ba
+comma
+id|pt
+op_mod
+op_mod
+id|xcc
+comma
+l_float|1f
 id|add
 op_mod
 l_int|0
@@ -219,6 +249,11 @@ l_int|2
 comma
 op_mod
 l_int|0
+dot
+id|align
+l_int|64
+l_int|1
+suffix:colon
 id|wr
 op_mod
 l_int|0
@@ -231,7 +266,21 @@ id|tick_cmpr
 id|rd
 op_mod
 op_mod
+id|tick_cmpr
+comma
+op_mod
+op_mod
+id|g0
+id|rd
+op_mod
+op_mod
 id|tick
+comma
+op_mod
+l_int|1
+id|mov
+op_mod
+l_int|1
 comma
 op_mod
 l_int|1
@@ -250,6 +299,21 @@ suffix:colon
 l_string|&quot;r&quot;
 (paren
 id|timer_tick_offset
+)paren
+)paren
+suffix:semicolon
+multiline_comment|/* Restore PSTATE_IE. */
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;wrpr&t;%0, 0x0, %%pstate&quot;
+suffix:colon
+multiline_comment|/* no outputs */
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+id|pstate
 )paren
 )paren
 suffix:semicolon

@@ -39,6 +39,8 @@ mdefine_line|#define PTRS_PER_PGD&t;&t;((1UL &lt;&lt; (PAGE_SHIFT-3))-1)
 multiline_comment|/* Kernel has a separate 44bit address space. */
 DECL|macro|USER_PTRS_PER_PGD
 mdefine_line|#define USER_PTRS_PER_PGD&t;((const int)((current-&gt;thread.flags &amp; SPARC_FLAG_32BIT) ? &bslash;&n;&t;&t;&t;&t; (1) : (PTRS_PER_PGD)))
+DECL|macro|FIRST_USER_PGD_NR
+mdefine_line|#define FIRST_USER_PGD_NR&t;0
 DECL|macro|PTE_TABLE_SIZE
 mdefine_line|#define PTE_TABLE_SIZE&t;0x2000&t;/* 1024 entries 8 bytes each */
 DECL|macro|PMD_TABLE_SIZE

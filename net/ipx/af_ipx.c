@@ -9492,7 +9492,6 @@ comma
 id|PF_IPX
 )paren
 suffix:semicolon
-multiline_comment|/* Called by protocol.c on kernel start up */
 DECL|variable|ipx_8023_packet_type
 r_static
 r_struct
@@ -9500,9 +9499,12 @@ id|packet_type
 id|ipx_8023_packet_type
 op_assign
 (brace
-l_int|0
+id|__constant_htons
+c_func
+(paren
+id|ETH_P_802_3
+)paren
 comma
-multiline_comment|/* MUTTER ntohs(ETH_P_802_3),*/
 l_int|NULL
 comma
 multiline_comment|/* All devices */
@@ -9521,9 +9523,12 @@ id|packet_type
 id|ipx_dix_packet_type
 op_assign
 (brace
-l_int|0
+id|__constant_htons
+c_func
+(paren
+id|ETH_P_IPX
+)paren
 comma
-multiline_comment|/* MUTTER ntohs(ETH_P_IPX),*/
 l_int|NULL
 comma
 multiline_comment|/* All devices */
@@ -9612,6 +9617,7 @@ comma
 l_int|0x37
 )brace
 suffix:semicolon
+multiline_comment|/* Called by protocols.c on kernel start up */
 DECL|function|ipx_proto_init
 r_void
 id|ipx_proto_init
@@ -9640,14 +9646,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|ipx_dix_packet_type.type
-op_assign
-id|htons
-c_func
-(paren
-id|ETH_P_IPX
-)paren
-suffix:semicolon
 id|dev_add_pack
 c_func
 (paren
@@ -9660,14 +9658,6 @@ op_assign
 id|make_8023_client
 c_func
 (paren
-)paren
-suffix:semicolon
-id|ipx_8023_packet_type.type
-op_assign
-id|htons
-c_func
-(paren
-id|ETH_P_802_3
 )paren
 suffix:semicolon
 id|dev_add_pack

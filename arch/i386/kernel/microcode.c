@@ -1,15 +1,16 @@
-multiline_comment|/*&n; *&t;CPU Microcode Update interface for Linux&n; *&n; *&t;Copyright (C) 2000 Tigran Aivazian&n; *&n; *&t;This driver allows to upgrade microcode on Intel processors&n; *&t;belonging to P6 family - PentiumPro, Pentium II, Pentium III etc.&n; *&n; *&t;Reference: Section 8.10 of Volume III, Intel Pentium III Manual, &n; *&t;Order Number 243192 or download from:&n; *&t;&t;&n; *&t;http://developer.intel.com/design/pentiumii/manuals/243192.htm&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; *&t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;1.0&t;16 February 2000, Tigran Aivazian &lt;tigran@sco.com&gt;&n; *&t;&t;Initial release.&n; *&t;1.01&t;18 February 2000, Tigran Aivazian &lt;tigran@sco.com&gt;&n; *&t;&t;Added read() support + cleanups.&n; *&t;1.02&t;21 February 2000, Tigran Aivazian &lt;tigran@sco.com&gt;&n; *&t;&t;Added &squot;device trimming&squot; support. open(O_WRONLY) zeroes&n; *&t;&t;and frees the saved copy of applied microcode.&n; */
+multiline_comment|/*&n; *&t;CPU Microcode Update interface for Linux&n; *&n; *&t;Copyright (C) 2000 Tigran Aivazian&n; *&n; *&t;This driver allows to upgrade microcode on Intel processors&n; *&t;belonging to P6 family - PentiumPro, Pentium II, Pentium III etc.&n; *&n; *&t;Reference: Section 8.10 of Volume III, Intel Pentium III Manual, &n; *&t;Order Number 243192 or download from:&n; *&t;&t;&n; *&t;http://developer.intel.com/design/pentiumii/manuals/243192.htm&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; *&t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;1.0&t;16 February 2000, Tigran Aivazian &lt;tigran@sco.com&gt;&n; *&t;&t;Initial release.&n; *&t;1.01&t;18 February 2000, Tigran Aivazian &lt;tigran@sco.com&gt;&n; *&t;&t;Added read() support + cleanups.&n; *&t;1.02&t;21 February 2000, Tigran Aivazian &lt;tigran@sco.com&gt;&n; *&t;&t;Added &squot;device trimming&squot; support. open(O_WRONLY) zeroes&n; *&t;&t;and frees the saved copy of applied microcode.&n; *&t;1.03&t;29 February 2000, Tigran Aivazian &lt;tigran@sco.com&gt;&n; *&t;&t;Made to use devfs (/dev/cpu/microcode) + cleanups.&n; */
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/slab.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/vmalloc.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
-macro_line|#include &lt;linux/proc_fs.h&gt;
+macro_line|#include &lt;linux/devfs_fs_kernel.h&gt;
 macro_line|#include &lt;asm/msr.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;
 DECL|macro|MICROCODE_VERSION
-mdefine_line|#define MICROCODE_VERSION &t;&quot;1.02&quot;
+mdefine_line|#define MICROCODE_VERSION &t;&quot;1.03&quot;
 id|MODULE_DESCRIPTION
 c_func
 (paren
@@ -146,6 +147,13 @@ op_assign
 l_int|NULL
 suffix:semicolon
 multiline_comment|/* holds an array of applied microcode blocks */
+DECL|variable|mc_fsize
+r_static
+r_int
+r_int
+id|mc_fsize
+suffix:semicolon
+multiline_comment|/* used often, so compute once at microcode_init() */
 DECL|variable|microcode_fops
 r_static
 r_struct
@@ -171,12 +179,10 @@ id|microcode_release
 comma
 )brace
 suffix:semicolon
-DECL|variable|proc_microcode
+DECL|variable|devfs_handle
 r_static
-r_struct
-id|proc_dir_entry
-op_star
-id|proc_microcode
+id|devfs_handle_t
+id|devfs_handle
 suffix:semicolon
 DECL|function|microcode_init
 r_static
@@ -188,32 +194,51 @@ c_func
 r_void
 )paren
 (brace
-id|proc_microcode
+id|devfs_handle
 op_assign
-id|create_proc_entry
+id|devfs_register
 c_func
 (paren
-l_string|&quot;microcode&quot;
+l_int|NULL
 comma
-id|S_IWUSR
+l_string|&quot;cpu/microcode&quot;
+comma
+l_int|0
+comma
+id|DEVFS_FL_DEFAULT
+comma
+l_int|0
+comma
+l_int|0
+comma
+id|S_IFREG
 op_or
 id|S_IRUSR
+op_or
+id|S_IWUSR
 comma
-id|proc_root_driver
+l_int|0
+comma
+l_int|0
+comma
+op_amp
+id|microcode_fops
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 r_if
 c_cond
 (paren
 op_logical_neg
-id|proc_microcode
+id|devfs_handle
 )paren
 (brace
 id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;microcode: can&squot;t create /proc/driver/microcode&bslash;n&quot;
+l_string|&quot;microcode: can&squot;t create /dev/cpu/microcode&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -221,10 +246,16 @@ op_minus
 id|ENOMEM
 suffix:semicolon
 )brace
-id|proc_microcode-&gt;proc_fops
+multiline_comment|/* XXX assume no hotplug CPUs so smp_num_cpus does not change */
+id|mc_fsize
 op_assign
-op_amp
-id|microcode_fops
+id|smp_num_cpus
+op_star
+r_sizeof
+(paren
+r_struct
+id|microcode
+)paren
 suffix:semicolon
 id|printk
 c_func
@@ -249,12 +280,10 @@ c_func
 r_void
 )paren
 (brace
-id|remove_proc_entry
+id|devfs_unregister
 c_func
 (paren
-l_string|&quot;microcode&quot;
-comma
-id|proc_root_driver
+id|devfs_handle
 )paren
 suffix:semicolon
 r_if
@@ -351,18 +380,18 @@ id|O_ACCMODE
 )paren
 op_eq
 id|O_WRONLY
-)paren
-(brace
-id|proc_microcode-&gt;size
-op_assign
-l_int|0
-suffix:semicolon
-r_if
-c_cond
-(paren
+op_logical_and
 id|mc_applied
 )paren
 (brace
+id|devfs_set_file_size
+c_func
+(paren
+id|devfs_handle
+comma
+l_int|0
+)paren
+suffix:semicolon
 id|memset
 c_func
 (paren
@@ -370,13 +399,7 @@ id|mc_applied
 comma
 l_int|0
 comma
-id|smp_num_cpus
-op_star
-r_sizeof
-(paren
-r_struct
-id|microcode
-)paren
+id|mc_fsize
 )paren
 suffix:semicolon
 id|kfree
@@ -389,7 +412,6 @@ id|mc_applied
 op_assign
 l_int|NULL
 suffix:semicolon
-)brace
 )brace
 id|MOD_INC_USE_COUNT
 suffix:semicolon
@@ -414,8 +436,6 @@ op_star
 id|file
 )paren
 (brace
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
 id|clear_bit
 c_func
 (paren
@@ -424,6 +444,8 @@ comma
 op_amp
 id|microcode_status
 )paren
+suffix:semicolon
+id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return
 l_int|0
@@ -582,12 +604,6 @@ suffix:semicolon
 )brace
 r_return
 id|error
-ques
-c_cond
-op_minus
-id|EIO
-suffix:colon
-l_int|0
 suffix:semicolon
 )brace
 DECL|function|do_update_one
@@ -601,15 +617,36 @@ op_star
 id|arg
 )paren
 (brace
-r_struct
-id|update_req
-op_star
-id|req
+r_int
+id|cpu_num
+op_assign
+id|smp_processor_id
+c_func
+(paren
+)paren
 suffix:semicolon
 r_struct
 id|cpuinfo_x86
 op_star
 id|c
+op_assign
+id|cpu_data
+op_plus
+id|cpu_num
+suffix:semicolon
+r_struct
+id|update_req
+op_star
+id|req
+op_assign
+(paren
+r_struct
+id|update_req
+op_star
+)paren
+id|arg
+op_plus
+id|cpu_num
 suffix:semicolon
 r_int
 r_int
@@ -628,32 +665,6 @@ id|sig
 suffix:semicolon
 r_int
 id|i
-comma
-id|cpu_num
-suffix:semicolon
-id|cpu_num
-op_assign
-id|smp_processor_id
-c_func
-(paren
-)paren
-suffix:semicolon
-id|c
-op_assign
-id|cpu_data
-op_plus
-id|cpu_num
-suffix:semicolon
-id|req
-op_assign
-(paren
-r_struct
-id|update_req
-op_star
-)paren
-id|arg
-op_plus
-id|cpu_num
 suffix:semicolon
 id|req-&gt;err
 op_assign
@@ -955,8 +966,8 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;microcode: CPU%d microcode updated &quot;
-l_string|&quot;from revision %d to %d, date=%08x&bslash;n&quot;
+l_string|&quot;microcode: CPU%d updated from revision &quot;
+l_string|&quot;%d to %d, date=%08x&bslash;n&quot;
 comma
 id|cpu_num
 comma
@@ -998,32 +1009,17 @@ op_star
 id|ppos
 )paren
 (brace
-r_int
-id|fsize
-op_assign
-id|smp_num_cpus
-op_star
-r_sizeof
-(paren
-r_struct
-id|microcode
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
-id|proc_microcode-&gt;size
-op_logical_or
 op_star
 id|ppos
 op_ge
-id|fsize
+id|mc_fsize
 )paren
 r_return
 l_int|0
 suffix:semicolon
-multiline_comment|/* EOF */
 r_if
 c_cond
 (paren
@@ -1032,11 +1028,11 @@ id|ppos
 op_plus
 id|len
 OG
-id|fsize
+id|mc_fsize
 )paren
 id|len
 op_assign
-id|fsize
+id|mc_fsize
 op_minus
 op_star
 id|ppos
@@ -1136,23 +1132,12 @@ op_logical_neg
 id|mc_applied
 )paren
 (brace
-r_int
-id|size
-op_assign
-id|smp_num_cpus
-op_star
-r_sizeof
-(paren
-r_struct
-id|microcode
-)paren
-suffix:semicolon
 id|mc_applied
 op_assign
 id|kmalloc
 c_func
 (paren
-id|size
+id|mc_fsize
 comma
 id|GFP_KERNEL
 )paren
@@ -1168,7 +1153,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;microcode: can&squot;t allocate memory for saved microcode&bslash;n&quot;
+l_string|&quot;microcode: out of memory for saved microcode&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -1183,7 +1168,7 @@ id|mc_applied
 comma
 l_int|0
 comma
-id|size
+id|mc_fsize
 )paren
 suffix:semicolon
 )brace
@@ -1217,14 +1202,13 @@ op_logical_neg
 id|microcode
 )paren
 (brace
-id|unlock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
-r_return
+id|ret
+op_assign
 op_minus
 id|ENOMEM
+suffix:semicolon
+r_goto
+id|out_unlock
 suffix:semicolon
 )brace
 r_if
@@ -1241,44 +1225,39 @@ id|len
 )paren
 )paren
 (brace
-id|vfree
-c_func
-(paren
-id|microcode
-)paren
-suffix:semicolon
-id|unlock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
-r_return
+id|ret
+op_assign
 op_minus
 id|EFAULT
 suffix:semicolon
+r_goto
+id|out_vfree
+suffix:semicolon
 )brace
-id|ret
-op_assign
+r_if
+c_cond
+(paren
 id|do_microcode_update
 c_func
 (paren
 )paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|ret
 )paren
 (brace
-id|proc_microcode-&gt;size
+id|ret
 op_assign
-id|smp_num_cpus
-op_star
-r_sizeof
+op_minus
+id|EIO
+suffix:semicolon
+r_goto
+id|out_vfree
+suffix:semicolon
+)brace
+id|devfs_set_file_size
+c_func
 (paren
-r_struct
-id|microcode
+id|devfs_handle
+comma
+id|mc_fsize
 )paren
 suffix:semicolon
 id|ret
@@ -1288,13 +1267,16 @@ id|ssize_t
 )paren
 id|len
 suffix:semicolon
-)brace
+id|out_vfree
+suffix:colon
 id|vfree
 c_func
 (paren
 id|microcode
 )paren
 suffix:semicolon
+id|out_unlock
+suffix:colon
 id|unlock_kernel
 c_func
 (paren

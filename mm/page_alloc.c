@@ -1221,13 +1221,6 @@ suffix:semicolon
 id|sum
 op_assign
 id|nr_lru_pages
-op_minus
-id|atomic_read
-c_func
-(paren
-op_amp
-id|page_cache_size
-)paren
 suffix:semicolon
 r_for
 c_loop

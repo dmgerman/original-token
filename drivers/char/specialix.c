@@ -1,6 +1,6 @@
-multiline_comment|/*&n; *      specialix.c  -- specialix IO8+ multiport serial driver.&n; *&n; *      Copyright (C) 1997  Roger Wolff (R.E.Wolff@BitWizard.nl)&n; *      Copyright (C) 1994-1996  Dmitry Gorodchanin (pgmdsg@ibi.com)&n; *&n; *      Specialix pays for the development and support of this driver.&n; *      Please DO contact io8-linux@specialix.co.uk if you require&n; *      support. But please read the documentation (specialix.txt)&n; *      first.&n; *&n; *      This driver was developped in the BitWizard linux device&n; *      driver service. If you require a linux device driver for your&n; *      product, please contact devices@BitWizard.nl for a quote.&n; *&n; *      This code is firmly based on the riscom/8 serial driver,&n; *      written by Dmitry Gorodchanin. The specialix IO8+ card&n; *      programming information was obtained from the CL-CD1865 Data&n; *      Book, and Specialix document number 6200059: IO8+ Hardware&n; *      Functional Specification.&n; *&n; *      This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License as&n; *      published by the Free Software Foundation; either version 2 of&n; *      the License, or (at your option) any later version.&n; *&n; *      This program is distributed in the hope that it will be&n; *      useful, but WITHOUT ANY WARRANTY; without even the implied&n; *      warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR&n; *      PURPOSE.  See the GNU General Public License for more details.&n; *&n; *      You should have received a copy of the GNU General Public&n; *      License along with this program; if not, write to the Free&n; *      Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139,&n; *      USA.&n; *&n; * Revision history:&n; *&n; * Revision 1.0:  April 1st 1997.&n; *                Initial release for alpha testing.&n; * Revision 1.1:  April 14th 1997. &n; *                Incorporated Richard Hudsons suggestions, &n; *                removed some debugging printk&squot;s.&n; * Revision 1.2:  April 15th 1997.&n; *                Ported to 2.1.x kernels.&n; * Revision 1.3:  April 17th 1997 &n; *                Backported to 2.0. (Compatibility macros). &n; * Revision 1.4:  April 18th 1997&n; *                Fixed DTR/RTS bug that caused the card to indicate &n; *                &quot;don&squot;t send data&quot; to a modem after the password prompt.  &n; *                Fixed bug for premature (fake) interrupts.&n; * Revision 1.5:  April 19th 1997&n; *                fixed a minor typo in the header file, cleanup a little. &n; *                performance warnings are now MAXed at once per minute.&n; * Revision 1.6:  May 23 1997&n; *                Changed the specialix=... format to include interrupt.&n; * Revision 1.7:  May 27 1997&n; *                Made many more debug printk&squot;s a compile time option.&n; * Revision 1.8:  Jul 1  1997&n; *                port to linux-2.1.43 kernel.&n; * Revision 1.9:  Oct 9  1998&n; *                Added stuff for the IO8+/PCI version. . &n; * &n; */
+multiline_comment|/*&n; *      specialix.c  -- specialix IO8+ multiport serial driver.&n; *&n; *      Copyright (C) 1997  Roger Wolff (R.E.Wolff@BitWizard.nl)&n; *      Copyright (C) 1994-1996  Dmitry Gorodchanin (pgmdsg@ibi.com)&n; *&n; *      Specialix pays for the development and support of this driver.&n; *      Please DO contact io8-linux@specialix.co.uk if you require&n; *      support. But please read the documentation (specialix.txt)&n; *      first.&n; *&n; *      This driver was developped in the BitWizard linux device&n; *      driver service. If you require a linux device driver for your&n; *      product, please contact devices@BitWizard.nl for a quote.&n; *&n; *      This code is firmly based on the riscom/8 serial driver,&n; *      written by Dmitry Gorodchanin. The specialix IO8+ card&n; *      programming information was obtained from the CL-CD1865 Data&n; *      Book, and Specialix document number 6200059: IO8+ Hardware&n; *      Functional Specification.&n; *&n; *      This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License as&n; *      published by the Free Software Foundation; either version 2 of&n; *      the License, or (at your option) any later version.&n; *&n; *      This program is distributed in the hope that it will be&n; *      useful, but WITHOUT ANY WARRANTY; without even the implied&n; *      warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR&n; *      PURPOSE.  See the GNU General Public License for more details.&n; *&n; *      You should have received a copy of the GNU General Public&n; *      License along with this program; if not, write to the Free&n; *      Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139,&n; *      USA.&n; *&n; * Revision history:&n; *&n; * Revision 1.0:  April 1st 1997.&n; *                Initial release for alpha testing.&n; * Revision 1.1:  April 14th 1997. &n; *                Incorporated Richard Hudsons suggestions, &n; *                removed some debugging printk&squot;s.&n; * Revision 1.2:  April 15th 1997.&n; *                Ported to 2.1.x kernels.&n; * Revision 1.3:  April 17th 1997 &n; *                Backported to 2.0. (Compatibility macros). &n; * Revision 1.4:  April 18th 1997&n; *                Fixed DTR/RTS bug that caused the card to indicate &n; *                &quot;don&squot;t send data&quot; to a modem after the password prompt.  &n; *                Fixed bug for premature (fake) interrupts.&n; * Revision 1.5:  April 19th 1997&n; *                fixed a minor typo in the header file, cleanup a little. &n; *                performance warnings are now MAXed at once per minute.&n; * Revision 1.6:  May 23 1997&n; *                Changed the specialix=... format to include interrupt.&n; * Revision 1.7:  May 27 1997&n; *                Made many more debug printk&squot;s a compile time option.&n; * Revision 1.8:  Jul 1  1997&n; *                port to linux-2.1.43 kernel.&n; * Revision 1.9:  Oct 9  1998&n; *                Added stuff for the IO8+/PCI version.&n; * Revision 1.10: Oct 22  1999 / Jan 21 2000. &n; *                Added stuff for setserial. &n; *                Nicolas Mailhot (Nicolas.Mailhot@email.enst.fr)&n; * &n; */
 DECL|macro|VERSION
-mdefine_line|#define VERSION &quot;1.8&quot;
+mdefine_line|#define VERSION &quot;1.10&quot;
 multiline_comment|/*&n; * There is a bunch of documentation about the card, jumpers, config&n; * settings, restrictions, cables, device names and numbers in&n; * ../../Documentation/specialix.txt &n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
@@ -4166,6 +4166,30 @@ multiline_comment|/*&n;&t; * Now we must calculate some speed depended things &n
 multiline_comment|/* Set baud rate for port */
 id|tmp
 op_assign
+id|port-&gt;custom_divisor
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|tmp
+)paren
+id|printk
+(paren
+id|KERN_INFO
+l_string|&quot;sx%d: Using custom baud rate divisor %ld. &bslash;n&quot;
+l_string|&quot;This is an untested option, please be carefull.&bslash;n&quot;
+comma
+id|port_No
+(paren
+id|port
+)paren
+comma
+id|tmp
+)paren
+suffix:semicolon
+r_else
+id|tmp
+op_assign
 (paren
 (paren
 (paren
@@ -4319,6 +4343,36 @@ op_amp
 l_int|0xff
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|port-&gt;custom_divisor
+)paren
+(brace
+id|baud
+op_assign
+(paren
+id|SX_OSCFREQ
+op_plus
+id|port-&gt;custom_divisor
+op_div
+l_int|2
+)paren
+op_div
+id|port-&gt;custom_divisor
+suffix:semicolon
+id|baud
+op_assign
+(paren
+id|baud
+op_plus
+l_int|5
+)paren
+op_div
+l_int|10
+suffix:semicolon
+)brace
+r_else
 id|baud
 op_assign
 (paren
@@ -8073,6 +8127,9 @@ id|error
 r_return
 id|error
 suffix:semicolon
+r_if
+c_cond
+(paren
 id|copy_from_user
 c_func
 (paren
@@ -8086,6 +8143,10 @@ r_sizeof
 id|tmp
 )paren
 )paren
+)paren
+r_return
+op_minus
+id|EFAULT
 suffix:semicolon
 macro_line|#if 0&t;
 r_if
@@ -8163,6 +8224,14 @@ id|ASYNC_SPD_MASK
 )paren
 )paren
 suffix:semicolon
+id|change_speed
+op_or_assign
+(paren
+id|tmp.custom_divisor
+op_ne
+id|port-&gt;custom_divisor
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -8226,6 +8295,10 @@ id|ASYNC_USR_MASK
 )paren
 )paren
 suffix:semicolon
+id|port-&gt;custom_divisor
+op_assign
+id|tmp.custom_divisor
+suffix:semicolon
 )brace
 r_else
 (brace
@@ -8253,6 +8326,10 @@ suffix:semicolon
 id|port-&gt;closing_wait
 op_assign
 id|tmp.closing_wait
+suffix:semicolon
+id|port-&gt;custom_divisor
+op_assign
+id|tmp.custom_divisor
 suffix:semicolon
 )brace
 r_if
@@ -8418,10 +8495,17 @@ id|HZ
 op_div
 l_int|100
 suffix:semicolon
+id|tmp.custom_divisor
+op_assign
+id|port-&gt;custom_divisor
+suffix:semicolon
 id|tmp.xmit_fifo_size
 op_assign
 id|CD186x_NFIFO
 suffix:semicolon
+r_if
+c_cond
+(paren
 id|copy_to_user
 c_func
 (paren
@@ -8435,6 +8519,10 @@ r_sizeof
 id|tmp
 )paren
 )paren
+)paren
+r_return
+op_minus
+id|EFAULT
 suffix:semicolon
 r_return
 l_int|0

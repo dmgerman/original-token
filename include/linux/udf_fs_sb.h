@@ -230,6 +230,11 @@ DECL|member|s_serialnum
 id|__u16
 id|s_serialnum
 suffix:semicolon
+multiline_comment|/* highest UDF revision we have recorded to this media */
+DECL|member|s_udfrev
+id|__u16
+id|s_udfrev
+suffix:semicolon
 multiline_comment|/* Miscellaneous flags */
 DECL|member|s_flags
 id|__u32

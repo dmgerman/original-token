@@ -32,7 +32,13 @@ mdefine_line|#define NF_DN_LOCAL_OUT&t;&t;3
 multiline_comment|/* Packets about to hit the wire. */
 DECL|macro|NF_DN_POST_ROUTING
 mdefine_line|#define NF_DN_POST_ROUTING&t;4
+multiline_comment|/* Input Hello Packets */
+DECL|macro|NF_DN_HELLO
+mdefine_line|#define NF_DN_HELLO&t;&t;5
+multiline_comment|/* Input Routing Packets */
+DECL|macro|NF_DN_ROUTE
+mdefine_line|#define NF_DN_ROUTE&t;&t;6
 DECL|macro|NF_DN_NUMHOOKS
-mdefine_line|#define NF_DN_NUMHOOKS&t;&t;5
+mdefine_line|#define NF_DN_NUMHOOKS&t;&t;7
 macro_line|#endif /*__LINUX_DECNET_NETFILTER_H*/
 eof

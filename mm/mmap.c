@@ -3390,7 +3390,7 @@ c_func
 (paren
 id|mm
 comma
-l_int|0
+id|FIRST_USER_PGD_NR
 comma
 id|USER_PTRS_PER_PGD
 )paren

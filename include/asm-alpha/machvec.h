@@ -343,8 +343,6 @@ comma
 r_struct
 id|mm_struct
 op_star
-comma
-r_int
 )paren
 suffix:semicolon
 DECL|member|mv_flush_tlb_current
@@ -352,18 +350,6 @@ r_void
 (paren
 op_star
 id|mv_flush_tlb_current
-)paren
-(paren
-r_struct
-id|mm_struct
-op_star
-)paren
-suffix:semicolon
-DECL|member|mv_flush_tlb_other
-r_void
-(paren
-op_star
-id|mv_flush_tlb_other
 )paren
 (paren
 r_struct

@@ -6,6 +6,7 @@ macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;linux/net.h&gt;
+macro_line|#include &lt;linux/if.h&gt;
 macro_line|#include &lt;linux/wait.h&gt;
 macro_line|#include &lt;linux/list.h&gt;
 macro_line|#endif
@@ -38,7 +39,7 @@ r_void
 suffix:semicolon
 multiline_comment|/* Largest hook number + 1 */
 DECL|macro|NF_MAX_HOOKS
-mdefine_line|#define NF_MAX_HOOKS 5
+mdefine_line|#define NF_MAX_HOOKS 8
 r_struct
 id|sk_buff
 suffix:semicolon
@@ -86,37 +87,6 @@ op_star
 )paren
 )paren
 suffix:semicolon
-DECL|typedef|nf_cacheflushfn
-r_typedef
-r_int
-r_int
-id|nf_cacheflushfn
-c_func
-(paren
-r_const
-r_void
-op_star
-id|packet
-comma
-r_const
-r_struct
-id|net_device
-op_star
-id|in
-comma
-r_const
-r_struct
-id|net_device
-op_star
-id|out
-comma
-id|u_int32_t
-id|packetcount
-comma
-id|u_int32_t
-id|bytecount
-)paren
-suffix:semicolon
 DECL|struct|nf_hook_ops
 r_struct
 id|nf_hook_ops
@@ -131,11 +101,6 @@ DECL|member|hook
 id|nf_hookfn
 op_star
 id|hook
-suffix:semicolon
-DECL|member|flush
-id|nf_cacheflushfn
-op_star
-id|flush
 suffix:semicolon
 DECL|member|pf
 r_int
@@ -232,6 +197,52 @@ id|len
 suffix:semicolon
 )brace
 suffix:semicolon
+multiline_comment|/* Each queued (to userspace) skbuff has one of these. */
+DECL|struct|nf_info
+r_struct
+id|nf_info
+(brace
+multiline_comment|/* The ops struct which sent us to userspace. */
+DECL|member|elem
+r_struct
+id|nf_hook_ops
+op_star
+id|elem
+suffix:semicolon
+multiline_comment|/* If we&squot;re sent to userspace, this keeps housekeeping info */
+DECL|member|pf
+r_int
+id|pf
+suffix:semicolon
+DECL|member|hook
+r_int
+r_int
+id|hook
+suffix:semicolon
+DECL|member|indev
+DECL|member|outdev
+r_struct
+id|net_device
+op_star
+id|indev
+comma
+op_star
+id|outdev
+suffix:semicolon
+DECL|member|okfn
+r_int
+(paren
+op_star
+id|okfn
+)paren
+(paren
+r_struct
+id|sk_buff
+op_star
+)paren
+suffix:semicolon
+)brace
+suffix:semicolon
 multiline_comment|/* Function to register/unregister hook points. */
 r_int
 id|nf_register_hook
@@ -285,7 +296,7 @@ id|NPROTO
 id|NF_MAX_HOOKS
 )braket
 suffix:semicolon
-multiline_comment|/* Activate hook/flush; either okfn or kfree_skb called, unless a hook&n;   returns NF_STOLEN (in which case, it&squot;s up to the hook to deal with&n;   the consequences).&n;&n;   Returns -ERRNO if packet dropped.  Zero means queued, stolen or&n;   accepted.&n;*/
+multiline_comment|/* Activate hook; either okfn or kfree_skb called, unless a hook&n;   returns NF_STOLEN (in which case, it&squot;s up to the hook to deal with&n;   the consequences).&n;&n;   Returns -ERRNO if packet dropped.  Zero means queued, stolen or&n;   accepted.&n;*/
 multiline_comment|/* RR:&n;   &gt; I don&squot;t want nf_hook to return anything because people might forget&n;   &gt; about async and trust the return value to mean &quot;packet was ok&quot;.&n;&n;   AK:&n;   Just document it clearly, then you can expect some sense from kernel&n;   coders :)&n;*/
 multiline_comment|/* This is gross, but inline doesn&squot;t cut it for avoiding the function&n;   call in fast path: gcc doesn&squot;t inline (needs value tracking?). --RR */
 macro_line|#ifdef CONFIG_NETFILTER_DEBUG
@@ -331,41 +342,6 @@ r_struct
 id|sk_buff
 op_star
 )paren
-)paren
-suffix:semicolon
-r_void
-id|nf_cacheflush
-c_func
-(paren
-r_int
-id|pf
-comma
-r_int
-r_int
-id|hook
-comma
-r_const
-r_void
-op_star
-id|packet
-comma
-r_const
-r_struct
-id|net_device
-op_star
-id|indev
-comma
-r_const
-r_struct
-id|net_device
-op_star
-id|outdev
-comma
-id|__u32
-id|packetcount
-comma
-id|__u32
-id|bytecount
 )paren
 suffix:semicolon
 multiline_comment|/* Call setsockopt() */
@@ -416,111 +392,53 @@ op_star
 id|len
 )paren
 suffix:semicolon
-DECL|struct|nf_wakeme
-r_struct
-id|nf_wakeme
-(brace
-DECL|member|sleep
-id|wait_queue_head_t
-id|sleep
-suffix:semicolon
-DECL|member|skbq
-r_struct
-id|sk_buff_head
-id|skbq
-suffix:semicolon
-)brace
-suffix:semicolon
-multiline_comment|/* For netfilter device. */
-DECL|struct|nf_interest
-r_struct
-id|nf_interest
-(brace
-DECL|member|list
-r_struct
-id|list_head
-id|list
-suffix:semicolon
-DECL|member|pf
+multiline_comment|/* Packet queuing */
+DECL|typedef|nf_queue_outfn_t
+r_typedef
 r_int
-id|pf
-suffix:semicolon
-multiline_comment|/* Bitmask of hook numbers to match (1 &lt;&lt; hooknum). */
-DECL|member|hookmask
-r_int
-r_int
-id|hookmask
-suffix:semicolon
-multiline_comment|/* If non-zero, only catch packets with this mark. */
-DECL|member|mark
-r_int
-r_int
-id|mark
-suffix:semicolon
-multiline_comment|/* If non-zero, only catch packets of this reason. */
-DECL|member|reason
-r_int
-r_int
-id|reason
-suffix:semicolon
-DECL|member|wake
-r_struct
-id|nf_wakeme
-op_star
-id|wake
-suffix:semicolon
-)brace
-suffix:semicolon
-multiline_comment|/* For asynchronous packet handling. */
-r_extern
-r_void
-id|nf_register_interest
-c_func
 (paren
-r_struct
-id|nf_interest
 op_star
-id|interest
+id|nf_queue_outfn_t
 )paren
-suffix:semicolon
-r_extern
-r_void
-id|nf_unregister_interest
-c_func
 (paren
-r_struct
-id|nf_interest
-op_star
-id|interest
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|nf_getinfo
-c_func
-(paren
-r_const
 r_struct
 id|sk_buff
 op_star
 id|skb
 comma
 r_struct
-id|net_device
+id|nf_info
 op_star
-op_star
-id|indev
+id|info
 comma
-r_struct
-id|net_device
+r_void
 op_star
-op_star
-id|outdev
+id|data
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|nf_register_queue_handler
+c_func
+(paren
+r_int
+id|pf
 comma
-r_int
-r_int
+id|nf_queue_outfn_t
+id|outfn
+comma
+r_void
 op_star
-id|mark
+id|data
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|nf_unregister_queue_handler
+c_func
+(paren
+r_int
+id|pf
 )paren
 suffix:semicolon
 r_extern
@@ -533,9 +451,10 @@ id|sk_buff
 op_star
 id|skb
 comma
-r_int
-r_int
-id|mark
+r_struct
+id|nf_info
+op_star
+id|info
 comma
 r_int
 r_int

@@ -982,11 +982,13 @@ op_assign
 id|iommu_arena_new
 c_func
 (paren
-l_int|0x00800000
+id|hose
 comma
 l_int|0x00800000
 comma
-id|PAGE_SIZE
+l_int|0x00800000
+comma
+l_int|0
 )paren
 suffix:semicolon
 id|hose-&gt;sg_pci

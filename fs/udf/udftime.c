@@ -822,9 +822,9 @@ id|sys_tz
 suffix:semicolon
 macro_line|#endif
 DECL|macro|SECS_PER_HOUR
-mdefine_line|#define SECS_PER_HOUR   (60 * 60)
+mdefine_line|#define SECS_PER_HOUR&t;(60 * 60)
 DECL|macro|SECS_PER_DAY
-mdefine_line|#define SECS_PER_DAY    (SECS_PER_HOUR * 24)
+mdefine_line|#define SECS_PER_DAY&t;(SECS_PER_HOUR * 24)
 id|time_t
 op_star
 DECL|function|udf_stamp_to_time
@@ -1058,10 +1058,8 @@ suffix:semicolon
 macro_line|#endif
 id|offset
 op_assign
-(paren
 op_minus
 id|sys_tz.tz_minuteswest
-)paren
 suffix:semicolon
 r_if
 c_cond

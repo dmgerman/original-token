@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: irq.c,v 1.84 2000/02/25 05:44:41 davem Exp $&n; * irq.c: UltraSparc IRQ handling/init/registry.&n; *&n; * Copyright (C) 1997  David S. Miller  (davem@caip.rutgers.edu)&n; * Copyright (C) 1998  Eddie C. Dost    (ecd@skynet.be)&n; * Copyright (C) 1998  Jakub Jelinek    (jj@ultra.linux.cz)&n; */
+multiline_comment|/* $Id: irq.c,v 1.85 2000/03/02 02:00:24 davem Exp $&n; * irq.c: UltraSparc IRQ handling/init/registry.&n; *&n; * Copyright (C) 1997  David S. Miller  (davem@caip.rutgers.edu)&n; * Copyright (C) 1998  Eddie C. Dost    (ecd@skynet.be)&n; * Copyright (C) 1998  Jakub Jelinek    (jj@ultra.linux.cz)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -4181,7 +4181,7 @@ id|clock
 (brace
 r_int
 r_int
-id|flags
+id|pstate
 suffix:semicolon
 r_extern
 r_int
@@ -4286,13 +4286,26 @@ c_func
 )paren
 suffix:semicolon
 )brace
-id|save_and_cli
+multiline_comment|/* Guarentee that the following sequences execute&n;&t; * uninterrupted.&n;&t; */
+id|__asm__
+id|__volatile__
 c_func
 (paren
-id|flags
+l_string|&quot;rdpr&t;%%pstate, %0&bslash;n&bslash;t&quot;
+l_string|&quot;wrpr&t;%0, %1, %%pstate&quot;
+suffix:colon
+l_string|&quot;=r&quot;
+(paren
+id|pstate
+)paren
+suffix:colon
+l_string|&quot;i&quot;
+(paren
+id|PSTATE_IE
+)paren
 )paren
 suffix:semicolon
-multiline_comment|/* Set things up so user can access tick register for profiling&n;&t; * purposes.&n;&t; */
+multiline_comment|/* Set things up so user can access tick register for profiling&n;&t; * purposes.  Also workaround BB_ERRATA_1 by doing a dummy&n;&t; * read back of %tick after writing it.&n;&t; */
 id|__asm__
 id|__volatile__
 c_func
@@ -4310,6 +4323,14 @@ comma
 op_mod
 op_mod
 id|g1
+id|ba
+comma
+id|pt
+op_mod
+op_mod
+id|xcc
+comma
+l_float|1f
 id|sllx
 op_mod
 op_mod
@@ -4320,6 +4341,11 @@ comma
 op_mod
 op_mod
 id|g1
+dot
+id|align
+l_int|64
+l_int|1
+suffix:colon
 id|rd
 op_mod
 op_mod
@@ -4360,6 +4386,14 @@ comma
 op_mod
 op_mod
 id|tick
+id|rdpr
+op_mod
+op_mod
+id|tick
+comma
+op_mod
+op_mod
+id|g0
 "&quot;"
 suffix:colon
 multiline_comment|/* no outputs */
@@ -4371,6 +4405,7 @@ comma
 l_string|&quot;g2&quot;
 )paren
 suffix:semicolon
+multiline_comment|/* Workaround for Spitfire Errata (#54 I think??), I discovered&n;&t; * this via Sun BugID 4008234, mentioned in Solaris-2.5.1 patch&n;&t; * number 103640.&n;&t; *&n;&t; * On Blackbird writes to %tick_cmpr can fail, the&n;&t; * workaround seems to be to execute the wr instruction&n;&t; * at the start of an I-cache line, and perform a dummy&n;&t; * read back from %tick_cmpr right after writing to it. -DaveM&n;&t; */
 id|__asm__
 id|__volatile__
 c_func
@@ -4384,6 +4419,14 @@ comma
 op_mod
 op_mod
 id|g1
+id|ba
+comma
+id|pt
+op_mod
+op_mod
+id|xcc
+comma
+l_float|1f
 id|add
 op_mod
 op_mod
@@ -4395,6 +4438,11 @@ comma
 op_mod
 op_mod
 id|g1
+dot
+id|align
+l_int|64
+l_int|1
+suffix:colon
 id|wr
 op_mod
 op_mod
@@ -4405,6 +4453,14 @@ comma
 op_mod
 op_mod
 id|tick_cmpr
+id|rd
+op_mod
+op_mod
+id|tick_cmpr
+comma
+op_mod
+op_mod
+id|g0
 "&quot;"
 suffix:colon
 multiline_comment|/* no outputs */
@@ -4417,10 +4473,19 @@ suffix:colon
 l_string|&quot;g1&quot;
 )paren
 suffix:semicolon
-id|restore_flags
+multiline_comment|/* Restore PSTATE_IE. */
+id|__asm__
+id|__volatile__
 c_func
 (paren
-id|flags
+l_string|&quot;wrpr&t;%0, 0x0, %%pstate&quot;
+suffix:colon
+multiline_comment|/* no outputs */
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+id|pstate
+)paren
 )paren
 suffix:semicolon
 id|sti
