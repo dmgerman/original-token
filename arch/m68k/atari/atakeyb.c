@@ -2394,6 +2394,8 @@ id|handle_scancode
 c_func
 (paren
 id|rep_scancode
+comma
+l_int|1
 )paren
 suffix:semicolon
 )brace
@@ -2885,9 +2887,10 @@ suffix:semicolon
 id|handle_scancode
 c_func
 (paren
-id|break_flag
-op_or
 id|scancode
+comma
+op_logical_neg
+id|break_flag
 )paren
 suffix:semicolon
 r_break

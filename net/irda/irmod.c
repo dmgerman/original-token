@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irmod.c&n; * Version:       0.8&n; * Description:   IrDA module code and some other stuff&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Mon Dec 15 13:55:39 1997&n; * Modified at:   Mon Mar 29 09:06:52 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1997 Dag Brattli, All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *     &n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irmod.c&n; * Version:       0.8&n; * Description:   IrDA module code and some other stuff&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Mon Dec 15 13:55:39 1997&n; * Modified at:   Mon Apr 12 11:31:01 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1997 Dag Brattli, All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *     &n; ********************************************************************/
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt; 
 macro_line|#include &lt;linux/init.h&gt;
@@ -34,7 +34,7 @@ DECL|variable|irda_debug
 id|__u32
 id|irda_debug
 op_assign
-id|IRDA_DEBUG
+id|IRDA_DEBUG_LEVEL
 suffix:semicolon
 macro_line|#endif
 r_extern
@@ -983,51 +983,6 @@ c_func
 suffix:semicolon
 )brace
 macro_line|#endif /* MODULE */
-multiline_comment|/*&n; * Function irda_lock (lock)&n; *&n; *    Lock variable. Returns false if the lock is already set.&n; *    &n; */
-DECL|function|irda_lock
-r_inline
-r_int
-id|irda_lock
-c_func
-(paren
-r_int
-op_star
-id|lock
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|test_and_set_bit
-c_func
-(paren
-l_int|0
-comma
-(paren
-r_void
-op_star
-)paren
-id|lock
-)paren
-)paren
-(brace
-id|DEBUG
-c_func
-(paren
-l_int|3
-comma
-id|__FUNCTION__
-l_string|&quot;(), Trying to lock, already locked variable!&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-id|FALSE
-suffix:semicolon
-)brace
-r_return
-id|TRUE
-suffix:semicolon
-)brace
 multiline_comment|/*&n; * Function irda_unlock (lock)&n; *&n; *    Unlock variable. Returns false if lock is already unlocked&n; *&n; */
 DECL|function|irda_unlock
 r_inline

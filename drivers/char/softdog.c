@@ -305,9 +305,6 @@ r_int
 id|arg
 )paren
 (brace
-r_int
-id|i
-suffix:semicolon
 r_static
 r_struct
 id|watchdog_info

@@ -1,10 +1,9 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlan_client.c&n; * Version:       0.9&n; * Description:   IrDA LAN Access Protocol (IrLAN) Client&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sun Aug 31 20:14:37 1997&n; * Modified at:   Wed Apr  7 16:56:35 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Sources:       skeleton.c by Donald Becker &lt;becker@CESDIS.gsfc.nasa.gov&gt;&n; *                slip.c by Laurence Culhane, &lt;loz@holmes.demon.co.uk&gt;&n; *                          Fred N. van Kempen, &lt;waltje@uwalt.nl.mugnet.org&gt;&n; * &n; *     Copyright (c) 1998 Dag Brattli &lt;dagb@cs.uit.no&gt;, All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlan_client.c&n; * Version:       0.9&n; * Description:   IrDA LAN Access Protocol (IrLAN) Client&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sun Aug 31 20:14:37 1997&n; * Modified at:   Thu Apr 22 23:03:55 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Sources:       skeleton.c by Donald Becker &lt;becker@CESDIS.gsfc.nasa.gov&gt;&n; *                slip.c by Laurence Culhane, &lt;loz@holmes.demon.co.uk&gt;&n; *                          Fred N. van Kempen, &lt;waltje@uwalt.nl.mugnet.org&gt;&n; * &n; *     Copyright (c) 1998 Dag Brattli &lt;dagb@cs.uit.no&gt;, All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
-macro_line|#include &lt;linux/inetdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/if_arp.h&gt;
 macro_line|#include &lt;net/arp.h&gt;
@@ -267,7 +266,7 @@ suffix:semicolon
 id|DEBUG
 c_func
 (paren
-l_int|2
+l_int|0
 comma
 id|__FUNCTION__
 l_string|&quot;()&bslash;n&quot;
@@ -430,7 +429,7 @@ suffix:semicolon
 id|DEBUG
 c_func
 (paren
-l_int|2
+l_int|0
 comma
 id|__FUNCTION__
 l_string|&quot;()&bslash;n&quot;
@@ -466,7 +465,7 @@ id|daddr
 op_assign
 id|discovery-&gt;daddr
 suffix:semicolon
-multiline_comment|/* &n;&t; *  Check if we already have an instance for dealing with this &n;&t; *  provider.&n;&t; */
+multiline_comment|/* &n;&t; *  Check if we already dealing with this provider.&n;&t; */
 id|self
 op_assign
 (paren
@@ -545,7 +544,7 @@ id|self
 id|DEBUG
 c_func
 (paren
-l_int|2
+l_int|0
 comma
 id|__FUNCTION__
 l_string|&quot;(), Found instance with DEV_ADDR_ANY!&bslash;n&quot;
@@ -586,7 +585,7 @@ suffix:semicolon
 id|DEBUG
 c_func
 (paren
-l_int|2
+l_int|0
 comma
 id|__FUNCTION__
 l_string|&quot;(), daddr=%08x&bslash;n&quot;
@@ -623,67 +622,6 @@ c_func
 id|self
 )paren
 suffix:semicolon
-multiline_comment|/* Remember that we might have to start a new provider */
-id|self-&gt;client.start_new_provider
-op_assign
-id|TRUE
-suffix:semicolon
-)brace
-r_else
-(brace
-id|DEBUG
-c_func
-(paren
-l_int|2
-comma
-id|__FUNCTION__
-l_string|&quot;(), Found none, starting new one!&bslash;n&quot;
-)paren
-suffix:semicolon
-multiline_comment|/* No instance available, so we have to start one! */
-id|self
-op_assign
-id|irlan_open
-c_func
-(paren
-id|saddr
-comma
-id|daddr
-comma
-id|TRUE
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|self
-)paren
-(brace
-id|DEBUG
-c_func
-(paren
-l_int|2
-comma
-id|__FUNCTION__
-l_string|&quot;(), irlan_open failed!&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-suffix:semicolon
-)brace
-id|ASSERT
-c_func
-(paren
-id|self
-op_ne
-l_int|NULL
-comma
-r_return
-suffix:semicolon
-)paren
-suffix:semicolon
-)brace
 multiline_comment|/* Restart watchdog timer */
 id|irlan_start_watchdog_timer
 c_func
@@ -693,6 +631,7 @@ comma
 id|IRLAN_TIMEOUT
 )paren
 suffix:semicolon
+)brace
 )brace
 multiline_comment|/*&n; * Function irlan_client_data_indication (handle, skb)&n; *&n; *    This function gets the data that is received on the control channel&n; *&n; */
 DECL|function|irlan_client_ctrl_data_indication
@@ -1264,10 +1203,10 @@ id|skb
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function irlan_client_extract_params (skb)&n; *&n; *    Extract all parameters from received buffer, then feed them to &n; *    check_params for parsing&n; *&n; */
-DECL|function|irlan_client_extract_params
+multiline_comment|/*&n; * Function irlan_client_parse_response (self, skb)&n; *&n; *    Extract all parameters from received buffer, then feed them to &n; *    check_params for parsing&n; */
+DECL|function|irlan_client_parse_response
 r_void
-id|irlan_client_extract_params
+id|irlan_client_parse_response
 c_func
 (paren
 r_struct
@@ -1363,11 +1302,9 @@ op_logical_neg
 id|skb
 )paren
 (brace
-id|DEBUG
+id|ERROR
 c_func
 (paren
-l_int|2
-comma
 id|__FUNCTION__
 l_string|&quot;(), Got NULL skb!&bslash;n&quot;
 )paren
@@ -1488,7 +1425,7 @@ op_increment
 (brace
 id|ret
 op_assign
-id|irlan_get_param
+id|irlan_extract_param
 c_func
 (paren
 id|ptr
@@ -1577,13 +1514,6 @@ r_int
 id|val_len
 )paren
 (brace
-macro_line|#ifdef CONFIG_IRLAN_GRATUITOUS_ARP
-r_struct
-id|in_device
-op_star
-id|in_dev
-suffix:semicolon
-macro_line|#endif
 id|__u16
 id|tmp_cpu
 suffix:semicolon
@@ -2214,42 +2144,6 @@ id|bytes
 id|i
 )braket
 suffix:semicolon
-macro_line|#ifdef CONFIG_IRLAN_GRATUITOUS_ARP
-multiline_comment|/* &n;&t;&t; * When we get a new MAC address do a gratuitous ARP. This&n;&t;&t; * is useful if we have changed access points on the same&n;&t;&t; * subnet.  &n;&t;&t; */
-id|DEBUG
-c_func
-(paren
-l_int|4
-comma
-l_string|&quot;IrLAN: Sending gratuitous ARP&bslash;n&quot;
-)paren
-suffix:semicolon
-id|in_dev
-op_assign
-id|self-&gt;dev.ip_ptr
-suffix:semicolon
-id|arp_send
-c_func
-(paren
-id|ARPOP_REQUEST
-comma
-id|ETH_P_ARP
-comma
-id|in_dev-&gt;ifa_list-&gt;ifa_address
-comma
-op_amp
-id|self-&gt;dev
-comma
-id|in_dev-&gt;ifa_list-&gt;ifa_address
-comma
-l_int|NULL
-comma
-id|self-&gt;dev.dev_addr
-comma
-l_int|NULL
-)paren
-suffix:semicolon
-macro_line|#endif
 )brace
 )brace
 multiline_comment|/*&n; * Function irlan_client_get_value_confirm (obj_id, value)&n; *&n; *    Got results from remote LM-IAS&n; *&n; */
@@ -2258,6 +2152,9 @@ r_void
 id|irlan_client_get_value_confirm
 c_func
 (paren
+r_int
+id|result
+comma
 id|__u16
 id|obj_id
 comma
@@ -2320,8 +2217,9 @@ multiline_comment|/* Check if request succeeded */
 r_if
 c_cond
 (paren
-op_logical_neg
-id|value
+id|result
+op_ne
+id|IAS_SUCCESS
 )paren
 (brace
 id|DEBUG

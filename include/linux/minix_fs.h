@@ -186,7 +186,9 @@ suffix:semicolon
 suffix:semicolon
 macro_line|#ifdef __KERNEL__
 r_extern
-r_int
+r_struct
+id|dentry
+op_star
 id|minix_lookup
 c_func
 (paren

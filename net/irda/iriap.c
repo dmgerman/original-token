@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      iriap.c&n; * Version:       0.8&n; * Description:   Information Access Protocol (IAP)&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Thu Aug 21 00:02:07 1997&n; * Modified at:   Tue Mar 23 19:38:46 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998 Dag Brattli &lt;dagb@cs.uit.no&gt;, &n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      iriap.c&n; * Version:       0.8&n; * Description:   Information Access Protocol (IAP)&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Thu Aug 21 00:02:07 1997&n; * Modified at:   Fri Apr 23 09:57:12 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998 Dag Brattli &lt;dagb@cs.uit.no&gt;, &n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
@@ -6,6 +6,7 @@ macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/irda.h&gt;
 macro_line|#include &lt;asm/byteorder.h&gt;
+macro_line|#include &lt;asm/unaligned.h&gt;
 macro_line|#include &lt;net/irda/irda.h&gt;
 macro_line|#include &lt;net/irda/irttp.h&gt;
 macro_line|#include &lt;net/irda/irmod.h&gt;
@@ -510,6 +511,10 @@ r_return
 l_int|NULL
 suffix:semicolon
 )brace
+id|slsap_sel
+op_assign
+id|lsap-&gt;slsap_sel
+suffix:semicolon
 id|DEBUG
 c_func
 (paren
@@ -537,7 +542,13 @@ id|self-&gt;mode
 op_assign
 id|mode
 suffix:semicolon
-multiline_comment|/* init_timer( &amp;self-&gt;watchdog_timer); */
+id|init_timer
+c_func
+(paren
+op_amp
+id|self-&gt;watchdog_timer
+)paren
+suffix:semicolon
 id|hashbin_insert
 c_func
 (paren
@@ -634,7 +645,13 @@ r_return
 suffix:semicolon
 )paren
 suffix:semicolon
-multiline_comment|/* del_timer( &amp;self-&gt;watchdog_timer); */
+id|del_timer
+c_func
+(paren
+op_amp
+id|self-&gt;watchdog_timer
+)paren
+suffix:semicolon
 id|self-&gt;magic
 op_assign
 l_int|0
@@ -831,7 +848,13 @@ r_return
 suffix:semicolon
 )paren
 suffix:semicolon
-multiline_comment|/* del_timer( &amp;self-&gt;watchdog_timer); */
+id|del_timer
+c_func
+(paren
+op_amp
+id|self-&gt;watchdog_timer
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -860,6 +883,8 @@ op_member_access_from_pointer
 id|confirm
 c_func
 (paren
+id|IAS_DISCONNECT
+comma
 l_int|0
 comma
 l_int|NULL
@@ -1214,8 +1239,17 @@ id|self-&gt;operation
 op_assign
 id|GET_VALUE_BY_CLASS
 suffix:semicolon
-multiline_comment|/* Give ourselves 7 secs to finish this operation */
-multiline_comment|/* iriap_start_watchdog_timer( self, 700); */
+multiline_comment|/* Give ourselves 10 secs to finish this operation */
+id|iriap_start_watchdog_timer
+c_func
+(paren
+id|self
+comma
+l_int|10
+op_star
+id|HZ
+)paren
+suffix:semicolon
 id|skb
 op_assign
 id|dev_alloc_skb
@@ -1377,9 +1411,6 @@ id|__u32
 id|tmp_cpu32
 suffix:semicolon
 id|__u16
-id|tmp_cpu16
-suffix:semicolon
-id|__u16
 id|obj_id
 suffix:semicolon
 id|__u16
@@ -1435,29 +1466,29 @@ op_assign
 l_int|2
 suffix:semicolon
 multiline_comment|/* Get length, MSB first */
-id|memcpy
+id|len
+op_assign
+id|be16_to_cpu
 c_func
 (paren
-op_amp
-id|len
-comma
+id|get_unaligned
+c_func
+(paren
+(paren
+id|__u16
+op_star
+)paren
+(paren
 id|fp
 op_plus
 id|n
-comma
-l_int|2
+)paren
+)paren
 )paren
 suffix:semicolon
 id|n
 op_add_assign
 l_int|2
-suffix:semicolon
-id|be16_to_cpus
-c_func
-(paren
-op_amp
-id|len
-)paren
 suffix:semicolon
 id|DEBUG
 c_func
@@ -1471,30 +1502,32 @@ id|len
 )paren
 suffix:semicolon
 multiline_comment|/* Get object ID, MSB first */
-id|memcpy
+id|obj_id
+op_assign
+id|be16_to_cpu
 c_func
 (paren
-op_amp
-id|obj_id
-comma
+id|get_unaligned
+c_func
+(paren
+(paren
+id|__u16
+op_star
+)paren
+(paren
 id|fp
 op_plus
 id|n
-comma
-l_int|2
+)paren
+)paren
 )paren
 suffix:semicolon
 id|n
 op_add_assign
 l_int|2
 suffix:semicolon
-id|be16_to_cpus
-c_func
-(paren
-op_amp
-id|obj_id
-)paren
-suffix:semicolon
+multiline_comment|/* &t;memcpy(&amp;obj_id, fp+n, 2); n += 2; */
+multiline_comment|/* &t;be16_to_cpus(&amp;obj_id); */
 id|type
 op_assign
 id|fp
@@ -1688,33 +1721,29 @@ suffix:semicolon
 r_case
 id|IAS_OCT_SEQ
 suffix:colon
-id|memcpy
+id|value_len
+op_assign
+id|be16_to_cpu
 c_func
 (paren
-op_amp
-id|tmp_cpu16
-comma
+id|get_unaligned
+c_func
+(paren
+(paren
+id|__u16
+op_star
+)paren
+(paren
 id|fp
 op_plus
 id|n
-comma
-l_int|2
+)paren
+)paren
 )paren
 suffix:semicolon
 id|n
 op_add_assign
 l_int|2
-suffix:semicolon
-id|be16_to_cpus
-c_func
-(paren
-op_amp
-id|tmp_cpu16
-)paren
-suffix:semicolon
-id|value_len
-op_assign
-id|tmp_cpu16
 suffix:semicolon
 multiline_comment|/* FIXME:should be 1024, but.... */
 id|DEBUG
@@ -1763,6 +1792,13 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
+multiline_comment|/* Finished, close connection! */
+id|iriap_disconnect_request
+c_func
+(paren
+id|self
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1773,18 +1809,13 @@ op_member_access_from_pointer
 id|confirm
 c_func
 (paren
+id|IAS_SUCCESS
+comma
 id|obj_id
 comma
 id|value
 comma
 id|self-&gt;priv
-)paren
-suffix:semicolon
-multiline_comment|/* Finished, close connection! */
-id|iriap_disconnect_request
-c_func
-(paren
-id|self
 )paren
 suffix:semicolon
 )brace
@@ -2993,7 +3024,7 @@ id|IAP_ACK
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|2
 comma
 id|__FUNCTION__
 l_string|&quot;() Got ack frame!&bslash;n&quot;
@@ -3069,6 +3100,32 @@ id|KERN_WARNING
 l_string|&quot;IrIAP No such class!&bslash;n&quot;
 )paren
 suffix:semicolon
+multiline_comment|/* Finished, close connection! */
+id|iriap_disconnect_request
+c_func
+(paren
+id|self
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|self-&gt;confirm
+)paren
+id|self
+op_member_access_from_pointer
+id|confirm
+c_func
+(paren
+id|IAS_CLASS_UNKNOWN
+comma
+l_int|0
+comma
+l_int|NULL
+comma
+id|self-&gt;priv
+)paren
+suffix:semicolon
 r_break
 suffix:semicolon
 r_case
@@ -3079,6 +3136,32 @@ c_func
 (paren
 id|KERN_WARNING
 l_string|&quot;IrIAP No such attribute!&bslash;n&quot;
+)paren
+suffix:semicolon
+multiline_comment|/* Finished, close connection! */
+id|iriap_disconnect_request
+c_func
+(paren
+id|self
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|self-&gt;confirm
+)paren
+id|self
+op_member_access_from_pointer
+id|confirm
+c_func
+(paren
+id|IAS_CLASS_UNKNOWN
+comma
+l_int|0
+comma
+l_int|NULL
+comma
+id|self-&gt;priv
 )paren
 suffix:semicolon
 r_break
@@ -3259,6 +3342,7 @@ r_break
 suffix:semicolon
 )brace
 )brace
+multiline_comment|/*&n; * Function iriap_watchdog_timer_expired (data)&n; *&n; *    &n; *&n; */
 DECL|function|iriap_watchdog_timer_expired
 r_void
 id|iriap_watchdog_timer_expired
@@ -3280,17 +3364,6 @@ id|iriap_cb
 op_star
 )paren
 id|data
-suffix:semicolon
-id|DEBUG
-c_func
-(paren
-l_int|0
-comma
-id|__FUNCTION__
-l_string|&quot;()&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
 suffix:semicolon
 id|ASSERT
 c_func

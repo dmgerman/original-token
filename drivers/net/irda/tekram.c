@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      tekram.c&n; * Version:       0.5&n; * Description:   Implementation of the Tekram IrMate IR-210B dongle&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Wed Oct 21 20:02:35 1998&n; * Modified at:   Mon Feb 15 14:13:17 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998 Dag Brattli, All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *     &n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      tekram.c&n; * Version:       1.0&n; * Description:   Implementation of the Tekram IrMate IR-210B dongle&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Wed Oct 21 20:02:35 1998&n; * Modified at:   Tue Apr 13 16:33:54 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998 Dag Brattli, All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *     &n; ********************************************************************/
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
@@ -8,7 +8,6 @@ macro_line|#include &lt;asm/ioctls.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;net/irda/irda.h&gt;
-macro_line|#include &lt;net/irda/irmod.h&gt;
 macro_line|#include &lt;net/irda/irda_device.h&gt;
 macro_line|#include &lt;net/irda/irtty.h&gt;
 macro_line|#include &lt;net/irda/dongle.h&gt;
@@ -81,6 +80,18 @@ op_star
 id|qos
 )paren
 suffix:semicolon
+DECL|macro|TEKRAM_115200
+mdefine_line|#define TEKRAM_115200 0x00
+DECL|macro|TEKRAM_57600
+mdefine_line|#define TEKRAM_57600  0x01
+DECL|macro|TEKRAM_38400
+mdefine_line|#define TEKRAM_38400  0x02
+DECL|macro|TEKRAM_19200
+mdefine_line|#define TEKRAM_19200  0x03
+DECL|macro|TEKRAM_9600
+mdefine_line|#define TEKRAM_9600   0x04
+DECL|macro|TEKRAM_PW
+mdefine_line|#define TEKRAM_PW 0x10 /* Pulse select bit */
 DECL|variable|dongle
 r_static
 r_struct
@@ -106,7 +117,7 @@ DECL|function|__initfunc
 id|__initfunc
 c_func
 (paren
-r_void
+r_int
 id|tekram_init
 c_func
 (paren
@@ -114,6 +125,7 @@ r_void
 )paren
 )paren
 (brace
+r_return
 id|irtty_register_dongle
 c_func
 (paren
@@ -319,10 +331,11 @@ c_cond
 id|baud
 )paren
 (brace
+r_default
+suffix:colon
+multiline_comment|/* FALLTHROUGH */
 r_case
 l_int|9600
-suffix:colon
-r_default
 suffix:colon
 id|cflag
 op_or_assign
@@ -330,7 +343,9 @@ id|B9600
 suffix:semicolon
 id|byte
 op_assign
-l_int|4
+id|TEKRAM_PW
+op_or
+id|TEKRAM_9600
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -343,7 +358,9 @@ id|B19200
 suffix:semicolon
 id|byte
 op_assign
-l_int|3
+id|TEKRAM_PW
+op_or
+id|TEKRAM_19200
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -356,7 +373,9 @@ id|B38400
 suffix:semicolon
 id|byte
 op_assign
-l_int|2
+id|TEKRAM_PW
+op_or
+id|TEKRAM_38400
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -369,7 +388,9 @@ id|B57600
 suffix:semicolon
 id|byte
 op_assign
-l_int|1
+id|TEKRAM_PW
+op_or
+id|TEKRAM_57600
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -382,7 +403,9 @@ id|B115200
 suffix:semicolon
 id|byte
 op_assign
-l_int|0
+id|TEKRAM_PW
+op_or
+id|TEKRAM_115200
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -434,7 +457,11 @@ suffix:semicolon
 id|schedule_timeout
 c_func
 (paren
-l_int|10
+id|MSECS_TO_JIFFIES
+c_func
+(paren
+l_int|100
+)paren
 )paren
 suffix:semicolon
 multiline_comment|/* Set DTR, Set RTS */
@@ -465,7 +492,7 @@ id|old_termios
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function tekram_reset (driver)&n; *&n; *      This function resets the tekram dongle. Warning, this function &n; *      must be called with a process context!! &n; *&n; *      Algorithm:&n; *    &t;  0. set RTS and DTR, and wait 50 ms &n; *           ( power off the IR-210 )&n; *        1. clear RTS &n; *        2. set DTR, and wait at least 1 ms &n; *        3. clear DTR to SPACE state, wait at least 50 us for further &n; *         operation&n; */
+multiline_comment|/*&n; * Function tekram_reset (driver)&n; *&n; *      This function resets the tekram dongle. Warning, this function &n; *      must be called with a process context!! &n; *&n; *      Algorithm:&n; *    &t;  0. Clear RTS and DTR, and wait 50 ms (power off the IR-210 )&n; *        1. clear RTS &n; *        2. set DTR, and wait at least 1 ms &n; *        3. clear DTR to SPACE state, wait at least 50 us for further &n; *         operation&n; */
 DECL|function|tekram_reset
 r_void
 id|tekram_reset
@@ -583,7 +610,11 @@ suffix:semicolon
 id|schedule_timeout
 c_func
 (paren
-l_int|5
+id|MSECS_TO_JIFFIES
+c_func
+(paren
+l_int|50
+)paren
 )paren
 suffix:semicolon
 multiline_comment|/* Clear DTR, Set RTS */
@@ -605,7 +636,11 @@ suffix:semicolon
 id|schedule_timeout
 c_func
 (paren
-l_int|2
+id|MSECS_TO_JIFFIES
+c_func
+(paren
+l_int|20
+)paren
 )paren
 suffix:semicolon
 multiline_comment|/* Set DTR, Set RTS */
@@ -617,6 +652,12 @@ comma
 id|TRUE
 comma
 id|TRUE
+)paren
+suffix:semicolon
+id|udelay
+c_func
+(paren
+l_int|50
 )paren
 suffix:semicolon
 multiline_comment|/* Finished! */
@@ -653,9 +694,15 @@ id|IR_115200
 suffix:semicolon
 id|qos-&gt;min_turn_time.bits
 op_and_assign
-l_int|0xfe
+l_int|0x01
 suffix:semicolon
-multiline_comment|/* All except 0 ms */
+multiline_comment|/* Needs at least 10 ms */
+id|irda_qos_bits_to_value
+c_func
+(paren
+id|qos
+)paren
+suffix:semicolon
 )brace
 macro_line|#ifdef MODULE
 id|MODULE_AUTHOR
@@ -679,13 +726,11 @@ c_func
 r_void
 )paren
 (brace
+r_return
 id|tekram_init
 c_func
 (paren
 )paren
-suffix:semicolon
-r_return
-l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Function cleanup_module (void)&n; *&n; *    Cleanup Tekram module&n; *&n; */

@@ -353,48 +353,6 @@ id|dir
 (brace
 )brace
 macro_line|#endif
-multiline_comment|/*&n; * Check whether we can delete from the directory.&n; */
-DECL|function|is_sticky
-r_static
-r_int
-id|is_sticky
-c_func
-(paren
-r_struct
-id|inode
-op_star
-id|dir
-comma
-r_int
-id|uid
-)paren
-(brace
-r_return
-op_logical_neg
-(paren
-(paren
-id|dir-&gt;i_mode
-op_amp
-id|S_ISVTX
-)paren
-op_eq
-l_int|0
-op_logical_or
-id|current-&gt;fsuid
-op_eq
-id|uid
-op_logical_or
-id|current-&gt;fsuid
-op_eq
-id|dir-&gt;i_uid
-op_logical_or
-id|capable
-(paren
-id|CAP_FOWNER
-)paren
-)paren
-suffix:semicolon
-)brace
 DECL|function|umsdos_nevercreat
 r_static
 r_int
@@ -2142,7 +2100,7 @@ suffix:semicolon
 multiline_comment|/* Do a real lookup to get the short name dentry */
 id|temp
 op_assign
-id|umsdos_lookup_dentry
+id|umsdos_covered
 c_func
 (paren
 id|olddentry-&gt;d_parent
@@ -2150,8 +2108,6 @@ comma
 id|old_info.fake.fname
 comma
 id|old_info.fake.len
-comma
-l_int|1
 )paren
 suffix:semicolon
 id|ret
@@ -2508,7 +2464,7 @@ suffix:semicolon
 multiline_comment|/* lookup the short name dentry */
 id|temp
 op_assign
-id|umsdos_lookup_dentry
+id|umsdos_covered
 c_func
 (paren
 id|dentry-&gt;d_parent
@@ -2516,8 +2472,6 @@ comma
 id|info.fake.fname
 comma
 id|info.fake.len
-comma
-l_int|1
 )paren
 suffix:semicolon
 id|ret
@@ -2539,20 +2493,6 @@ id|temp
 )paren
 r_goto
 id|out_remove
-suffix:semicolon
-multiline_comment|/* Keep the short name dentry anonymous */
-r_if
-c_cond
-(paren
-id|temp
-op_ne
-id|dentry
-)paren
-id|d_drop
-c_func
-(paren
-id|temp
-)paren
 suffix:semicolon
 multiline_comment|/* Make sure the short name doesn&squot;t exist */
 id|ret
@@ -2611,26 +2551,6 @@ op_amp
 id|inode-&gt;i_sem
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * Note! The long and short name might be the same,&n;&t; * so check first before doing the instantiate ...&n;&t; */
-r_if
-c_cond
-(paren
-id|dentry
-op_ne
-id|temp
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|dentry-&gt;d_inode
-)paren
-id|printk
-c_func
-(paren
-l_string|&quot;umsdos_mkdir: dentry not negative!&bslash;n&quot;
-)paren
-suffix:semicolon
 id|inode-&gt;i_count
 op_increment
 suffix:semicolon
@@ -2642,7 +2562,6 @@ comma
 id|inode
 )paren
 suffix:semicolon
-)brace
 multiline_comment|/* N.B. this should have an option to create the EMD ... */
 id|umsdos_lookup_patch_new
 c_func
@@ -2987,7 +2906,7 @@ l_int|2
 suffix:semicolon
 id|temp
 op_assign
-id|umsdos_lookup_dentry
+id|umsdos_covered
 c_func
 (paren
 id|dentry-&gt;d_parent
@@ -2995,8 +2914,6 @@ comma
 id|info.fake.fname
 comma
 id|info.fake.len
-comma
-l_int|1
 )paren
 suffix:semicolon
 id|ret
@@ -3018,27 +2935,6 @@ id|temp
 )paren
 r_goto
 id|out
-suffix:semicolon
-multiline_comment|/*&n;&t; * If the short name is an alias, dput() it now;&n;&t; * otherwise d_drop() it to keep it anonymous.&n;&t; */
-r_if
-c_cond
-(paren
-id|temp
-op_eq
-id|dentry
-)paren
-id|dput
-c_func
-(paren
-id|temp
-)paren
-suffix:semicolon
-r_else
-id|d_drop
-c_func
-(paren
-id|temp
-)paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * Attempt to remove the msdos name.&n;&t; */
 id|ret
@@ -3096,13 +2992,6 @@ macro_line|#endif
 multiline_comment|/* dput() temp if we didn&squot;t do it above */
 id|out_dput
 suffix:colon
-r_if
-c_cond
-(paren
-id|temp
-op_ne
-id|dentry
-)paren
 id|dput
 c_func
 (paren
@@ -3264,38 +3153,6 @@ id|info.fake.fname
 )paren
 )paren
 suffix:semicolon
-id|ret
-op_assign
-op_minus
-id|EPERM
-suffix:semicolon
-multiline_comment|/* check sticky bit */
-r_if
-c_cond
-(paren
-id|is_sticky
-c_func
-(paren
-id|dir
-comma
-id|info.entry.uid
-)paren
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;umsdos_unlink: %s/%s is sticky&bslash;n&quot;
-comma
-id|dentry-&gt;d_parent-&gt;d_name.name
-comma
-id|dentry-&gt;d_name.name
-)paren
-suffix:semicolon
-r_goto
-id|out_unlock
-suffix:semicolon
-)brace
 multiline_comment|/*&n;&t; * Note! If this is a hardlink and the names are aliased,&n;&t; * the short-name lookup will return the hardlink dentry.&n;&t; * In order to get the correct (real) inode, we just drop&n;&t; * the original dentry.&n;&t; */
 r_if
 c_cond
@@ -3315,7 +3172,7 @@ suffix:semicolon
 multiline_comment|/* Do a real lookup to get the short name dentry */
 id|temp
 op_assign
-id|umsdos_lookup_dentry
+id|umsdos_covered
 c_func
 (paren
 id|dentry-&gt;d_parent
@@ -3323,8 +3180,6 @@ comma
 id|info.fake.fname
 comma
 id|info.fake.len
-comma
-l_int|1
 )paren
 suffix:semicolon
 id|ret
@@ -3369,20 +3224,6 @@ id|temp
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; * If the short and long names are aliased,&n;&t; * dput() it now so the dentry isn&squot;t busy.&n;&t; */
-r_if
-c_cond
-(paren
-id|temp
-op_eq
-id|dentry
-)paren
-id|dput
-c_func
-(paren
-id|temp
-)paren
-suffix:semicolon
 multiline_comment|/* Delete the EMD entry */
 id|ret
 op_assign
@@ -3424,7 +3265,8 @@ suffix:semicolon
 )brace
 id|ret
 op_assign
-id|msdos_unlink_umsdos
+id|msdos_unlink
+c_func
 (paren
 id|dir
 comma
@@ -3453,20 +3295,6 @@ macro_line|#endif
 multiline_comment|/* dput() temp if we didn&squot;t do it above */
 id|out_dput
 suffix:colon
-r_if
-c_cond
-(paren
-id|temp
-op_ne
-id|dentry
-)paren
-(brace
-id|d_drop
-c_func
-(paren
-id|temp
-)paren
-suffix:semicolon
 id|dput
 c_func
 (paren
@@ -3484,7 +3312,6 @@ id|d_delete
 id|dentry
 )paren
 suffix:semicolon
-)brace
 id|out_unlock
 suffix:colon
 id|umsdos_unlockcreate

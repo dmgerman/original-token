@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlmp.c&n; * Version:       0.9&n; * Description:   IrDA Link Management Protocol (LMP) layer                 &n; * Status:        Stable.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sun Aug 17 20:54:32 1997&n; * Modified at:   Wed Apr  7 17:31:48 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998 Dag Brattli &lt;dagb@cs.uit.no&gt;, &n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlmp.c&n; * Version:       0.9&n; * Description:   IrDA Link Management Protocol (LMP) layer                 &n; * Status:        Stable.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sun Aug 17 20:54:32 1997&n; * Modified at:   Fri Apr 23 09:13:24 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998 Dag Brattli &lt;dagb@cs.uit.no&gt;, &n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
@@ -2626,6 +2626,18 @@ comma
 id|nslots
 )paren
 suffix:semicolon
+multiline_comment|/* Check if user wants to override the default */
+r_if
+c_cond
+(paren
+id|nslots
+op_eq
+id|DISCOVERY_DEFAULT_SLOTS
+)paren
+id|nslots
+op_assign
+id|sysctl_discovery_slots
+suffix:semicolon
 multiline_comment|/* &n;&t; * If discovery is already running, then just return the current &n;&t; * discovery log&n;&t; */
 r_if
 c_cond
@@ -3120,15 +3132,6 @@ op_star
 id|skb
 )paren
 (brace
-id|DEBUG
-c_func
-(paren
-l_int|4
-comma
-id|__FUNCTION__
-l_string|&quot;()&bslash;n&quot;
-)paren
-suffix:semicolon
 id|ASSERT
 c_func
 (paren
@@ -3199,6 +3202,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * Function irlmp_data_indication (handle, skb)&n; *&n; *    Got data from LAP layer so pass it up to upper layer&n; *&n; */
 DECL|function|irlmp_data_indication
+r_inline
 r_void
 id|irlmp_data_indication
 c_func
@@ -3214,48 +3218,6 @@ op_star
 id|skb
 )paren
 (brace
-id|DEBUG
-c_func
-(paren
-l_int|4
-comma
-id|__FUNCTION__
-l_string|&quot;()&bslash;n&quot;
-)paren
-suffix:semicolon
-id|ASSERT
-c_func
-(paren
-id|self
-op_ne
-l_int|NULL
-comma
-r_return
-suffix:semicolon
-)paren
-suffix:semicolon
-id|ASSERT
-c_func
-(paren
-id|self-&gt;magic
-op_eq
-id|LMP_LSAP_MAGIC
-comma
-r_return
-suffix:semicolon
-)paren
-suffix:semicolon
-id|ASSERT
-c_func
-(paren
-id|skb
-op_ne
-l_int|NULL
-comma
-r_return
-suffix:semicolon
-)paren
-suffix:semicolon
 multiline_comment|/* Hide LMP header from layer above */
 id|skb_pull
 c_func

@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlmp_event.c&n; * Version:       0.8&n; * Description:   An IrDA LMP event driver for Linux&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Mon Aug  4 20:40:53 1997&n; * Modified at:   Thu Apr  8 16:26:41 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998 Dag Brattli &lt;dagb@cs.uit.no&gt;, &n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlmp_event.c&n; * Version:       0.8&n; * Description:   An IrDA LMP event driver for Linux&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Mon Aug  4 20:40:53 1997&n; * Modified at:   Fri Apr 23 08:57:23 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998 Dag Brattli &lt;dagb@cs.uit.no&gt;, &n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;net/irda/irda.h&gt;
 macro_line|#include &lt;net/irda/timer.h&gt;
@@ -466,7 +466,6 @@ r_int
 id|data
 )paren
 (brace
-multiline_comment|/* &t;struct irlmp_cb *self = ( struct irlmp_cb *) data; */
 id|DEBUG
 c_func
 (paren
@@ -1237,7 +1236,7 @@ l_int|0
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|2
 comma
 id|__FUNCTION__
 l_string|&quot;(), no more LSAPs so time to close IrLAP&bslash;n&quot;
@@ -1908,6 +1907,86 @@ id|event
 )paren
 (brace
 r_case
+id|LM_DATA_REQUEST
+suffix:colon
+multiline_comment|/* Optimize for the common case */
+id|irlmp_send_data_pdu
+c_func
+(paren
+id|self-&gt;lap
+comma
+id|self-&gt;dlsap_sel
+comma
+id|self-&gt;slsap_sel
+comma
+id|FALSE
+comma
+id|skb
+)paren
+suffix:semicolon
+multiline_comment|/* irlmp_next_lsap_state( DATA_TRANSFER_READY, info-&gt;handle);*/
+r_break
+suffix:semicolon
+r_case
+id|LM_DATA_INDICATION
+suffix:colon
+multiline_comment|/* Optimize for the common case */
+id|irlmp_data_indication
+c_func
+(paren
+id|self
+comma
+id|skb
+)paren
+suffix:semicolon
+multiline_comment|/* irlmp_next_lsap_state( DATA_TRANSFER_READY, info-&gt;handle);*/
+r_break
+suffix:semicolon
+r_case
+id|LM_UDATA_REQUEST
+suffix:colon
+id|ASSERT
+c_func
+(paren
+id|skb
+op_ne
+l_int|NULL
+comma
+r_return
+suffix:semicolon
+)paren
+suffix:semicolon
+id|irlmp_send_data_pdu
+c_func
+(paren
+id|self-&gt;lap
+comma
+id|self-&gt;dlsap_sel
+comma
+id|self-&gt;slsap_sel
+comma
+id|TRUE
+comma
+id|skb
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|LM_UDATA_INDICATION
+suffix:colon
+id|irlmp_udata_indication
+c_func
+(paren
+id|self
+comma
+id|skb
+)paren
+suffix:semicolon
+multiline_comment|/* irlmp_next_lsap_state( DATA_TRANSFER_READY, info-&gt;handle);*/
+r_break
+suffix:semicolon
+r_case
 id|LM_CONNECT_REQUEST
 suffix:colon
 id|DEBUG
@@ -2002,95 +2081,6 @@ l_int|NULL
 )paren
 suffix:semicolon
 )brace
-r_break
-suffix:semicolon
-r_case
-id|LM_DATA_REQUEST
-suffix:colon
-id|ASSERT
-c_func
-(paren
-id|skb
-op_ne
-l_int|NULL
-comma
-r_return
-suffix:semicolon
-)paren
-suffix:semicolon
-id|irlmp_send_data_pdu
-c_func
-(paren
-id|self-&gt;lap
-comma
-id|self-&gt;dlsap_sel
-comma
-id|self-&gt;slsap_sel
-comma
-id|FALSE
-comma
-id|skb
-)paren
-suffix:semicolon
-multiline_comment|/* irlmp_next_lsap_state( DATA_TRANSFER_READY, info-&gt;handle);*/
-r_break
-suffix:semicolon
-r_case
-id|LM_UDATA_REQUEST
-suffix:colon
-id|ASSERT
-c_func
-(paren
-id|skb
-op_ne
-l_int|NULL
-comma
-r_return
-suffix:semicolon
-)paren
-suffix:semicolon
-id|irlmp_send_data_pdu
-c_func
-(paren
-id|self-&gt;lap
-comma
-id|self-&gt;dlsap_sel
-comma
-id|self-&gt;slsap_sel
-comma
-id|TRUE
-comma
-id|skb
-)paren
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-id|LM_DATA_INDICATION
-suffix:colon
-id|irlmp_data_indication
-c_func
-(paren
-id|self
-comma
-id|skb
-)paren
-suffix:semicolon
-multiline_comment|/* irlmp_next_lsap_state( DATA_TRANSFER_READY, info-&gt;handle);*/
-r_break
-suffix:semicolon
-r_case
-id|LM_UDATA_INDICATION
-suffix:colon
-id|irlmp_udata_indication
-c_func
-(paren
-id|self
-comma
-id|skb
-)paren
-suffix:semicolon
-multiline_comment|/* irlmp_next_lsap_state( DATA_TRANSFER_READY, info-&gt;handle);*/
 r_break
 suffix:semicolon
 r_case

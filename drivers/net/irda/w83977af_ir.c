@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      w83977af_ir.c&n; * Version:       0.8&n; * Description:   FIR/MIR driver for the Winbond W83977AF Super I/O chip&n; * Status:        Experimental.&n; * Author:        Paul VanderSpek&n; * Created at:    Wed Nov  4 11:46:16 1998&n; * Modified at:   Wed Apr  7 17:35:59 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998 Corel Computer Corp.&n; *     Copyright (c) 1998 Dag Brattli &lt;dagb@cs.uit.no&gt;&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Paul VanderSpek nor Corel Computer Corp. admit liability&n; *     nor provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *     &n; *     If you find bugs in this file, its very likely that the same bug&n; *     will also be in pc87108.c since the implementations is quite&n; *     similar.&n; *&n; *     Notice that all functions that needs to access the chip in _any_&n; *     way, must save BSR register on entry, and restore it on exit. &n; *     It is _very_ important to follow this policy!&n; *&n; *         __u8 bank;&n; *     &n; *         bank = inb( iobase+BSR);&n; *  &n; *         do_your_stuff_here();&n; *&n; *         outb( bank, iobase+BSR);&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      w83977af_ir.c&n; * Version:       0.8&n; * Description:   FIR/MIR driver for the Winbond W83977AF Super I/O chip&n; * Status:        Experimental.&n; * Author:        Paul VanderSpek&n; * Created at:    Wed Nov  4 11:46:16 1998&n; * Modified at:   Tue Apr 20 11:15:00 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998 Corel Computer Corp.&n; *     Copyright (c) 1998 Dag Brattli &lt;dagb@cs.uit.no&gt;&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Paul VanderSpek nor Corel Computer Corp. admit liability&n; *     nor provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *     &n; *     If you find bugs in this file, its very likely that the same bug&n; *     will also be in pc87108.c since the implementations is quite&n; *     similar.&n; *&n; *     Notice that all functions that needs to access the chip in _any_&n; *     way, must save BSR register on entry, and restore it on exit. &n; *     It is _very_ important to follow this policy!&n; *&n; *         __u8 bank;&n; *     &n; *         bank = inb( iobase+BSR);&n; *  &n; *         do_your_stuff_here();&n; *&n; *         outb( bank, iobase+BSR);&n; *&n; ********************************************************************/
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -1839,13 +1839,9 @@ id|idev-&gt;tx_buff.len
 op_assign
 id|skb-&gt;len
 suffix:semicolon
-id|idev-&gt;tx_buff.head
-op_assign
 id|idev-&gt;tx_buff.data
-suffix:semicolon
-id|idev-&gt;tx_buff.offset
 op_assign
-l_int|0
+id|idev-&gt;tx_buff.head
 suffix:semicolon
 id|mtt
 op_assign
@@ -1988,6 +1984,10 @@ suffix:semicolon
 )brace
 r_else
 (brace
+id|idev-&gt;tx_buff.data
+op_assign
+id|idev-&gt;tx_buff.head
+suffix:semicolon
 id|idev-&gt;tx_buff.len
 op_assign
 id|async_wrap_skb
@@ -1999,14 +1999,6 @@ id|idev-&gt;tx_buff.data
 comma
 id|idev-&gt;tx_buff.truesize
 )paren
-suffix:semicolon
-id|idev-&gt;tx_buff.offset
-op_assign
-l_int|0
-suffix:semicolon
-id|idev-&gt;tx_buff.head
-op_assign
-id|idev-&gt;tx_buff.data
 suffix:semicolon
 multiline_comment|/* Add interrupt on tx low level (will fire immediately) */
 id|switch_bank
@@ -2709,13 +2701,9 @@ id|idev-&gt;io.direction
 op_assign
 id|IO_RECV
 suffix:semicolon
-id|idev-&gt;rx_buff.head
-op_assign
 id|idev-&gt;rx_buff.data
-suffix:semicolon
-id|idev-&gt;rx_buff.offset
 op_assign
-l_int|0
+id|idev-&gt;rx_buff.head
 suffix:semicolon
 multiline_comment|/* &n;&t; * Reset Rx FIFO. This will also flush the ST_FIFO, it&squot;s very &n;&t; * important that we don&squot;t reset the Tx FIFO since it might not&n;&t; * be finished transmitting yet&n;&t; */
 id|outb
@@ -3018,11 +3006,7 @@ multiline_comment|/* Skip frame */
 id|idev-&gt;stats.rx_errors
 op_increment
 suffix:semicolon
-id|idev-&gt;rx_buff.offset
-op_add_assign
-id|len
-suffix:semicolon
-id|idev-&gt;rx_buff.head
+id|idev-&gt;rx_buff.data
 op_add_assign
 id|len
 suffix:semicolon
@@ -3203,7 +3187,7 @@ c_func
 (paren
 id|skb-&gt;data
 comma
-id|idev-&gt;rx_buff.head
+id|idev-&gt;rx_buff.data
 comma
 id|len
 op_minus
@@ -3228,7 +3212,7 @@ c_func
 (paren
 id|skb-&gt;data
 comma
-id|idev-&gt;rx_buff.head
+id|idev-&gt;rx_buff.data
 comma
 id|len
 op_minus
@@ -3237,11 +3221,7 @@ l_int|4
 suffix:semicolon
 )brace
 multiline_comment|/* Move to next frame */
-id|idev-&gt;rx_buff.offset
-op_add_assign
-id|len
-suffix:semicolon
-id|idev-&gt;rx_buff.head
+id|idev-&gt;rx_buff.data
 op_add_assign
 id|len
 suffix:semicolon
@@ -3385,19 +3365,6 @@ id|iobase
 op_assign
 id|idev-&gt;io.iobase
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|idev-&gt;rx_buff.len
-op_eq
-l_int|0
-)paren
-(brace
-id|idev-&gt;rx_buff.head
-op_assign
-id|idev-&gt;rx_buff.data
-suffix:semicolon
-)brace
 multiline_comment|/*  Receive all characters in Rx FIFO */
 r_do
 (brace
@@ -3453,9 +3420,6 @@ id|isr
 )paren
 (brace
 r_int
-id|len
-suffix:semicolon
-r_int
 id|actual
 suffix:semicolon
 id|__u8
@@ -3484,24 +3448,6 @@ id|ISR_TXTH_I
 )paren
 (brace
 multiline_comment|/* Write data left in transmit buffer */
-id|len
-op_assign
-id|idev-&gt;tx_buff.len
-op_minus
-id|idev-&gt;tx_buff.offset
-suffix:semicolon
-id|ASSERT
-c_func
-(paren
-id|len
-OG
-l_int|0
-comma
-r_return
-l_int|0
-suffix:semicolon
-)paren
-suffix:semicolon
 id|actual
 op_assign
 id|w83977af_pio_write
@@ -3509,45 +3455,38 @@ c_func
 (paren
 id|idev-&gt;io.iobase
 comma
-id|idev-&gt;tx_buff.head
+id|idev-&gt;tx_buff.data
 comma
-id|len
+id|idev-&gt;tx_buff.len
 comma
 id|idev-&gt;io.fifo_size
 )paren
 suffix:semicolon
-id|idev-&gt;tx_buff.offset
+id|idev-&gt;tx_buff.data
 op_add_assign
 id|actual
 suffix:semicolon
-id|idev-&gt;tx_buff.head
-op_add_assign
+id|idev-&gt;tx_buff.len
+op_sub_assign
 id|actual
 suffix:semicolon
 id|idev-&gt;io.direction
 op_assign
 id|IO_XMIT
 suffix:semicolon
-id|ASSERT
-c_func
-(paren
-id|actual
-op_le
-id|len
-comma
-r_return
-l_int|0
-suffix:semicolon
-)paren
-suffix:semicolon
 multiline_comment|/* Check if finished */
 r_if
 c_cond
 (paren
-id|actual
-op_eq
-id|len
+id|idev-&gt;tx_buff.len
+OG
+l_int|0
 )paren
+id|new_icr
+op_or_assign
+id|ICR_ETXTHI
+suffix:semicolon
+r_else
 (brace
 id|DEBUG
 c_func
@@ -3578,11 +3517,6 @@ op_or_assign
 id|ICR_ETBREI
 suffix:semicolon
 )brace
-r_else
-id|new_icr
-op_or_assign
-id|ICR_ETXTHI
-suffix:semicolon
 )brace
 multiline_comment|/* Check if transmission has completed */
 r_if

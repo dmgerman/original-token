@@ -15,6 +15,9 @@ c_func
 r_int
 r_char
 id|scancode
+comma
+r_int
+id|down
 )paren
 suffix:semicolon
 macro_line|#endif&t;/* _KBD_LL_H */

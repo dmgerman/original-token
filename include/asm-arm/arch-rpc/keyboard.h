@@ -4,16 +4,6 @@ DECL|macro|NR_SCANCODES
 mdefine_line|#define NR_SCANCODES 128
 r_extern
 r_int
-id|ps2kbd_pretranslate
-c_func
-(paren
-r_int
-r_char
-id|scancode
-)paren
-suffix:semicolon
-r_extern
-r_int
 id|ps2kbd_translate
 c_func
 (paren
@@ -61,9 +51,6 @@ DECL|macro|kbd_setkeycode
 mdefine_line|#define kbd_setkeycode(sc,kc)&t;&t;(-EINVAL)
 DECL|macro|kbd_getkeycode
 mdefine_line|#define kbd_getkeycode(sc)&t;&t;(-EINVAL)
-multiline_comment|/* Prototype: int kbd_pretranslate(scancode, raw_mode)&n; * Returns  : 0 to ignore scancode&n; */
-DECL|macro|kbd_pretranslate
-mdefine_line|#define kbd_pretranslate(sc,rm)&t;&t;ps2kbd_pretranslate(sc)
 multiline_comment|/* Prototype: int kbd_translate(scancode, *keycode, *up_flag, raw_mode)&n; * Returns  : 0 to ignore scancode, *keycode set to keycode, *up_flag&n; *            set to 0200 if scancode indicates release&n; */
 macro_line|#ifdef NEW_KEYBOARD
 DECL|macro|kbd_translate

@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlap.c&n; * Version:       0.9&n; * Description:   An IrDA LAP driver for Linux&n; * Status:        Stable.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Mon Aug  4 20:40:53 1997&n; * Modified at:   Tue Apr  6 21:07:08 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998 Dag Brattli &lt;dagb@cs.uit.no&gt;, &n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute iyt and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlap.c&n; * Version:       0.9&n; * Description:   An IrDA LAP driver for Linux&n; * Status:        Stable.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Mon Aug  4 20:40:53 1997&n; * Modified at:   Fri Apr 23 10:12:29 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998 Dag Brattli &lt;dagb@cs.uit.no&gt;, &n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute iyt and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
@@ -29,6 +29,10 @@ r_int
 id|sysctl_slot_timeout
 op_assign
 id|SLOT_TIMEOUT
+op_star
+l_int|1000
+op_div
+id|HZ
 suffix:semicolon
 r_static
 r_void
@@ -980,48 +984,6 @@ op_star
 id|skb
 )paren
 (brace
-id|DEBUG
-c_func
-(paren
-l_int|4
-comma
-id|__FUNCTION__
-l_string|&quot;()&bslash;n&quot;
-)paren
-suffix:semicolon
-id|ASSERT
-c_func
-(paren
-id|self
-op_ne
-l_int|NULL
-comma
-r_return
-suffix:semicolon
-)paren
-suffix:semicolon
-id|ASSERT
-c_func
-(paren
-id|self-&gt;magic
-op_eq
-id|LAP_MAGIC
-comma
-r_return
-suffix:semicolon
-)paren
-suffix:semicolon
-id|ASSERT
-c_func
-(paren
-id|skb
-op_ne
-l_int|NULL
-comma
-r_return
-suffix:semicolon
-)paren
-suffix:semicolon
 multiline_comment|/* Hide LAP header from IrLMP layer */
 id|skb_pull
 c_func
@@ -1853,21 +1815,19 @@ c_cond
 (paren
 id|sysctl_slot_timeout
 OL
-l_int|2
+l_int|20
 )paren
 (brace
-id|DEBUG
+id|ERROR
 c_func
 (paren
-l_int|1
-comma
 id|__FUNCTION__
 l_string|&quot;(), to low value for slot timeout!&bslash;n&quot;
 )paren
 suffix:semicolon
 id|sysctl_slot_timeout
 op_assign
-l_int|2
+l_int|20
 suffix:semicolon
 )brace
 multiline_comment|/* &n;&t;&t; * Highest value is actually 8, but we allow higher since&n;&t;&t; * some devices seems to require it.&n;&t;&t; */
@@ -1876,26 +1836,28 @@ c_cond
 (paren
 id|sysctl_slot_timeout
 OG
-l_int|16
+l_int|160
 )paren
 (brace
-id|DEBUG
+id|ERROR
 c_func
 (paren
-l_int|1
-comma
 id|__FUNCTION__
 l_string|&quot;(), to high value for slot timeout!&bslash;n&quot;
 )paren
 suffix:semicolon
 id|sysctl_slot_timeout
 op_assign
-l_int|16
+l_int|160
 suffix:semicolon
 )brace
 id|self-&gt;slot_timeout
 op_assign
 id|sysctl_slot_timeout
+op_star
+id|HZ
+op_div
+l_int|1000
 suffix:semicolon
 id|irlap_do_event
 c_func
@@ -2806,41 +2768,6 @@ id|speed
 suffix:semicolon
 r_int
 id|bytes
-op_assign
-l_int|0
-suffix:semicolon
-id|ASSERT
-c_func
-(paren
-id|self
-op_ne
-l_int|NULL
-comma
-r_return
-suffix:semicolon
-)paren
-suffix:semicolon
-id|ASSERT
-c_func
-(paren
-id|self-&gt;magic
-op_eq
-id|LAP_MAGIC
-comma
-r_return
-suffix:semicolon
-)paren
-suffix:semicolon
-id|ASSERT
-c_func
-(paren
-id|qos
-op_ne
-l_int|NULL
-comma
-r_return
-suffix:semicolon
-)paren
 suffix:semicolon
 multiline_comment|/* Get QoS values.  */
 id|speed
@@ -2867,17 +2794,6 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-id|DEBUG
-c_func
-(paren
-l_int|4
-comma
-id|__FUNCTION__
-l_string|&quot;(), delay=%d usecs&bslash;n&quot;
-comma
-id|usecs
-)paren
-suffix:semicolon
 multiline_comment|/*  &n;&t; *  Send additional BOF&squot;s for the next frame for the requested&n;&t; *  min turn time, so now we must calculate how many chars (XBOF&squot;s) we &n;&t; *  must send for the requested time period (min turn time)&n;&t; */
 id|bytes
 op_assign
@@ -2886,17 +2802,6 @@ op_star
 id|usecs
 op_div
 l_int|10000000
-suffix:semicolon
-id|DEBUG
-c_func
-(paren
-l_int|4
-comma
-id|__FUNCTION__
-l_string|&quot;(), xbofs delay = %d&bslash;n&quot;
-comma
-id|bytes
-)paren
 suffix:semicolon
 id|self-&gt;xbofs_delay
 op_assign
@@ -3666,18 +3571,22 @@ comma
 id|self-&gt;N2
 )paren
 suffix:semicolon
-multiline_comment|/* &n;&t; *  Initialize timeout values, some of the rules are listed on &n;&t; *  page 92 in IrLAP. Divide by 10 since the kernel timers has a&n;&t; *  resolution of 10 ms.&n;&t; */
+multiline_comment|/* &n;&t; *  Initialize timeout values, some of the rules are listed on &n;&t; *  page 92 in IrLAP.&n;&t; */
 id|self-&gt;poll_timeout
 op_assign
 id|qos-&gt;max_turn_time.value
+op_star
+id|HZ
 op_div
-l_int|10
+l_int|1000
 suffix:semicolon
 id|self-&gt;final_timeout
 op_assign
 id|qos-&gt;max_turn_time.value
+op_star
+id|HZ
 op_div
-l_int|10
+l_int|1000
 suffix:semicolon
 id|self-&gt;wd_timeout
 op_assign

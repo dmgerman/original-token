@@ -1445,7 +1445,9 @@ id|filldir_t
 )paren
 suffix:semicolon
 r_extern
-r_int
+r_struct
+id|dentry
+op_star
 id|proc_lookup
 c_func
 (paren

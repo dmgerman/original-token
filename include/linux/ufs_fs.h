@@ -1559,7 +1559,9 @@ op_star
 suffix:semicolon
 multiline_comment|/* namei.c */
 r_extern
-r_int
+r_struct
+id|dentry
+op_star
 id|ufs_lookup
 (paren
 r_struct

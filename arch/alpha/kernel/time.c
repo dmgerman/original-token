@@ -746,6 +746,10 @@ suffix:semicolon
 r_int
 r_int
 id|cycle_freq
+comma
+id|diff
+comma
+id|one_percent
 suffix:semicolon
 multiline_comment|/*&n;&t; * The Linux interpretation of the CMOS clock register contents:&n;&t; * When the Update-In-Progress (UIP) flag goes from 1 to 0, the&n;&t; * RTC registers show the second which has precisely just started.&n;&t; * Let&squot;s hope other operating systems interpret the RTC the same way.&n;&t; */
 r_do
@@ -789,25 +793,14 @@ c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/* If our cycle frequency isn&squot;t valid, go another round and give&n;&t;   a guess at what it should be.  */
-id|cycle_freq
-op_assign
-id|hwrpb-&gt;cycle_freq
-suffix:semicolon
 r_if
 c_cond
 (paren
-id|cycle_freq
-op_eq
-l_int|0
+op_logical_neg
+id|est_cycle_freq
 )paren
 (brace
-id|printk
-c_func
-(paren
-l_string|&quot;HWRPB cycle frequency bogus.  Estimating... &quot;
-)paren
-suffix:semicolon
+multiline_comment|/* Sometimes the hwrpb-&gt;cycle_freq value is bogus. &n;&t;   &t;Go another round to check up on it and see.  */
 r_do
 (brace
 )brace
@@ -850,8 +843,6 @@ c_func
 suffix:semicolon
 id|est_cycle_freq
 op_assign
-id|cycle_freq
-op_assign
 id|cc2
 op_minus
 id|cc1
@@ -860,13 +851,62 @@ id|cc1
 op_assign
 id|cc2
 suffix:semicolon
+)brace
+multiline_comment|/* If the given value is within 1% of what we calculated, &n;&t;   accept it.  Otherwise, use what we found.  */
+id|cycle_freq
+op_assign
+id|hwrpb-&gt;cycle_freq
+suffix:semicolon
+id|one_percent
+op_assign
+id|cycle_freq
+op_div
+l_int|100
+suffix:semicolon
+id|diff
+op_assign
+id|cycle_freq
+op_minus
+id|est_cycle_freq
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|diff
+OL
+l_int|0
+)paren
+id|diff
+op_assign
+op_minus
+id|diff
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|diff
+OG
+id|one_percent
+)paren
+(brace
+id|cycle_freq
+op_assign
+id|est_cycle_freq
+suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;%lu Hz&bslash;n&quot;
+l_string|&quot;HWRPB cycle frequency bogus.  Estimated %lu Hz&bslash;n&quot;
 comma
 id|cycle_freq
 )paren
+suffix:semicolon
+)brace
+r_else
+(brace
+id|est_cycle_freq
+op_assign
+l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* From John Bowman &lt;bowman@math.ualberta.ca&gt;: allow the values&n;&t;   to settle, as the Update-In-Progress bit going low isn&squot;t good&n;&t;   enough on some hardware.  2ms is our guess; we havn&squot;t found &n;&t;   bogomips yet, but this is close on a 500Mhz box.  */

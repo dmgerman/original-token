@@ -2842,15 +2842,17 @@ id|handle_scancode
 c_func
 (paren
 id|DNKEY_CAPS
+comma
+l_int|1
 )paren
 suffix:semicolon
 multiline_comment|/*    printk(&quot;handle_scancode: %02x&bslash;n&quot;,BREAK_FLAG | DNKEY_CAPS); */
 id|handle_scancode
 c_func
 (paren
-id|BREAK_FLAG
-op_or
 id|DNKEY_CAPS
+comma
+l_int|0
 )paren
 suffix:semicolon
 )brace
@@ -2913,6 +2915,8 @@ id|handle_scancode
 c_func
 (paren
 id|prev_scancode
+comma
+l_int|1
 )paren
 suffix:semicolon
 )brace
@@ -2928,6 +2932,16 @@ id|handle_scancode
 c_func
 (paren
 id|scancode
+op_amp
+op_complement
+id|BREAK_FLAG
+comma
+op_logical_neg
+(paren
+id|scancode
+op_amp
+id|BREAK_FLAG
+)paren
 )paren
 suffix:semicolon
 id|lastkeypress

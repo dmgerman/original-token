@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlmp_frame.c&n; * Version:       0.8&n; * Description:   IrLMP frame implementation&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Tue Aug 19 02:09:59 1997&n; * Modified at:   Tue Apr  6 18:31:11 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998 Dag Brattli &lt;dagb@cs.uit.no&gt;&n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlmp_frame.c&n; * Version:       0.8&n; * Description:   IrLMP frame implementation&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Tue Aug 19 02:09:59 1997&n; * Modified at:   Fri Apr 23 09:12:23 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998 Dag Brattli &lt;dagb@cs.uit.no&gt;&n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -63,39 +63,6 @@ id|__u8
 op_star
 id|frame
 suffix:semicolon
-id|ASSERT
-c_func
-(paren
-id|self
-op_ne
-l_int|NULL
-comma
-r_return
-suffix:semicolon
-)paren
-suffix:semicolon
-id|ASSERT
-c_func
-(paren
-id|self-&gt;magic
-op_eq
-id|LMP_LAP_MAGIC
-comma
-r_return
-suffix:semicolon
-)paren
-suffix:semicolon
-id|ASSERT
-c_func
-(paren
-id|skb
-op_ne
-l_int|NULL
-comma
-r_return
-suffix:semicolon
-)paren
-suffix:semicolon
 id|frame
 op_assign
 id|skb-&gt;data
@@ -141,16 +108,6 @@ id|FALSE
 suffix:semicolon
 )brace
 r_else
-(brace
-id|DEBUG
-c_func
-(paren
-l_int|4
-comma
-id|__FUNCTION__
-l_string|&quot;(), sending reliable data&bslash;n&quot;
-)paren
-suffix:semicolon
 id|irlap_data_request
 c_func
 (paren
@@ -161,7 +118,6 @@ comma
 id|TRUE
 )paren
 suffix:semicolon
-)brace
 )brace
 multiline_comment|/*&n; * Function irlmp_send_lcf_pdu (dlsap, slsap, opcode,skb)&n; *&n; *    Send Link Control Frame to IrLAP&n; */
 DECL|function|irlmp_send_lcf_pdu
@@ -328,9 +284,10 @@ op_star
 id|skb
 )paren
 (brace
-id|__u8
+r_struct
+id|lsap_cb
 op_star
-id|fp
+id|lsap
 suffix:semicolon
 id|__u8
 id|slsap_sel
@@ -340,10 +297,9 @@ id|__u8
 id|dlsap_sel
 suffix:semicolon
 multiline_comment|/* Destination LSAP address */
-r_struct
-id|lsap_cb
+id|__u8
 op_star
-id|lsap
+id|fp
 suffix:semicolon
 id|ASSERT
 c_func
@@ -362,17 +318,6 @@ c_func
 id|self-&gt;magic
 op_eq
 id|LMP_LAP_MAGIC
-comma
-r_return
-suffix:semicolon
-)paren
-suffix:semicolon
-id|ASSERT
-c_func
-(paren
-id|skb
-op_ne
-l_int|NULL
 comma
 r_return
 suffix:semicolon
@@ -713,7 +658,23 @@ op_eq
 id|LAP_RELIABLE
 )paren
 (brace
-multiline_comment|/* Must be pure data */
+multiline_comment|/* Optimize and bypass the state machine if possible */
+r_if
+c_cond
+(paren
+id|lsap-&gt;lsap_state
+op_eq
+id|LSAP_DATA_TRANSFER_READY
+)paren
+id|irlmp_data_indication
+c_func
+(paren
+id|lsap
+comma
+id|skb
+)paren
+suffix:semicolon
+r_else
 id|irlmp_do_lsap_event
 c_func
 (paren
@@ -734,6 +695,23 @@ op_eq
 id|LAP_UNRELIABLE
 )paren
 (brace
+multiline_comment|/* Optimize and bypass the state machine if possible */
+r_if
+c_cond
+(paren
+id|lsap-&gt;lsap_state
+op_eq
+id|LSAP_DATA_TRANSFER_READY
+)paren
+id|irlmp_data_indication
+c_func
+(paren
+id|lsap
+comma
+id|skb
+)paren
+suffix:semicolon
+r_else
 id|irlmp_do_lsap_event
 c_func
 (paren
@@ -1094,15 +1072,6 @@ comma
 l_int|NULL
 )paren
 suffix:semicolon
-id|DEBUG
-c_func
-(paren
-l_int|4
-comma
-id|__FUNCTION__
-l_string|&quot;() --&gt;&bslash;n&quot;
-)paren
-suffix:semicolon
 )brace
 macro_line|#ifdef CONFIG_IRDA_CACHE_LAST_LSAP
 DECL|function|irlmp_update_cache
@@ -1168,30 +1137,6 @@ r_struct
 id|lsap_cb
 op_star
 id|lsap
-suffix:semicolon
-id|ASSERT
-c_func
-(paren
-id|self
-op_ne
-l_int|NULL
-comma
-r_return
-l_int|NULL
-suffix:semicolon
-)paren
-suffix:semicolon
-id|ASSERT
-c_func
-(paren
-id|self-&gt;magic
-op_eq
-id|LMP_LAP_MAGIC
-comma
-r_return
-l_int|NULL
-suffix:semicolon
-)paren
 suffix:semicolon
 multiline_comment|/* &n;&t; *  Optimize for the common case. We assume that the last frame&n;&t; *  received is in the same connection as the last one, so check in&n;&t; *  cache first to avoid the linear search&n;&t; */
 macro_line|#ifdef CONFIG_IRDA_CACHE_LAST_LSAP
@@ -1266,16 +1211,6 @@ id|LSAP_ANY
 )paren
 )paren
 (brace
-id|DEBUG
-c_func
-(paren
-l_int|4
-comma
-l_string|&quot;Incoming connection: Setting dlsap_sel=%d&bslash;n&quot;
-comma
-id|dlsap_sel
-)paren
-suffix:semicolon
 id|lsap-&gt;dlsap_sel
 op_assign
 id|dlsap_sel

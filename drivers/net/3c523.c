@@ -1,4 +1,4 @@
-multiline_comment|/*&n;   net-3-driver for the 3c523 Etherlink/MC card (i82586 Ethernet chip)&n;&n;&n;   This is an extension to the Linux operating system, and is covered by the&n;   same Gnu Public License that covers that work.&n;&n;   Copyright 1995, 1996 by Chris Beauregard (cpbeaure@undergrad.math.uwaterloo.ca)&n;&n;   This is basically Michael Hipp&squot;s ni52 driver, with a new probing&n;   algorithm and some minor changes to the 82586 CA and reset routines.&n;   Thanks a lot Michael for a really clean i82586 implementation!  Unless&n;   otherwise documented in ni52.c, any bugs are mine.&n;&n;   Contrary to the Ethernet-HOWTO, this isn&squot;t based on the 3c507 driver in&n;   any way.  The ni52 is a lot easier to modify.&n;&n;   sources:&n;   ni52.c&n;&n;   Crynwr packet driver collection was a great reference for my first&n;   attempt at this sucker.  The 3c507 driver also helped, until I noticed&n;   that ni52.c was a lot nicer.&n;&n;   EtherLink/MC: Micro Channel Ethernet Adapter Technical Reference&n;   Manual, courtesy of 3Com CardFacts, documents the 3c523-specific&n;   stuff.  Information on CardFacts is found in the Ethernet HOWTO.&n;   Also see &lt;a href=&quot;http://www.3com.com/&quot;&gt;&n;&n;   Microprocessor Communications Support Chips, T.J. Byers, ISBN&n;   0-444-01224-9, has a section on the i82586.  It tells you just enough&n;   to know that you really don&squot;t want to learn how to program the chip.&n;&n;   The original device probe code was stolen from ps2esdi.c&n;&n;   Known Problems:&n;   Since most of the code was stolen from ni52.c, you&squot;ll run across the&n;   same bugs in the 0.62 version of ni52.c, plus maybe a few because of&n;   the 3c523 idiosynchacies.  The 3c523 has 16K of RAM though, so there&n;   shouldn&squot;t be the overrun problem that the 8K ni52 has.&n;&n;   This driver is for a 16K adapter.  It should work fine on the 64K&n;   adapters, but it will only use one of the 4 banks of RAM.  Modifying&n;   this for the 64K version would require a lot of heinous bank&n;   switching, which I&squot;m sure not interested in doing.  If you try to&n;   implement a bank switching version, you&squot;ll basically have to remember&n;   what bank is enabled and do a switch everytime you access a memory&n;   location that&squot;s not current.  You&squot;ll also have to remap pointers on&n;   the driver side, because it only knows about 16K of the memory.&n;   Anyone desperate or masochistic enough to try?&n;&n;   It seems to be stable now when multiple transmit buffers are used.  I&n;   can&squot;t see any performance difference, but then I&squot;m working on a 386SX.&n;&n;   Multicast doesn&squot;t work.  It doesn&squot;t even pretend to work.  Don&squot;t use&n;   it.  Don&squot;t compile your kernel with multicast support.  I don&squot;t know&n;   why.&n;&n;   Features:&n;   This driver is useable as a loadable module.  If you try to specify an&n;   IRQ or a IO address (via insmod 3c523.o irq=xx io=0xyyy), it will&n;   search the MCA slots until it finds a 3c523 with the specified&n;   parameters.&n;&n;   This driver should support multiple ethernet cards, but I can&squot;t test&n;   that.  If someone would I&squot;d greatly appreciate it.&n;&n;   This has been tested with both BNC and TP versions, internal and&n;   external transceivers.  Haven&squot;t tested with the 64K version (that I&n;   know of).&n;&n;   History:&n;   Jan 1st, 1996&n;   first public release&n;   Feb 4th, 1996&n;   update to 1.3.59, incorporated multicast diffs from ni52.c&n;   Feb 15th, 1996&n;   added shared irq support&n;&n;   $Header: /fsys2/home/chrisb/linux-1.3.59-MCA/drivers/net/RCS/3c523.c,v 1.1 1996/02/05 01:53:46 chrisb Exp chrisb $&n; */
+multiline_comment|/*&n;   net-3-driver for the 3c523 Etherlink/MC card (i82586 Ethernet chip)&n;&n;&n;   This is an extension to the Linux operating system, and is covered by the&n;   same Gnu Public License that covers that work.&n;&n;   Copyright 1995, 1996 by Chris Beauregard (cpbeaure@undergrad.math.uwaterloo.ca)&n;&n;   This is basically Michael Hipp&squot;s ni52 driver, with a new probing&n;   algorithm and some minor changes to the 82586 CA and reset routines.&n;   Thanks a lot Michael for a really clean i82586 implementation!  Unless&n;   otherwise documented in ni52.c, any bugs are mine.&n;&n;   Contrary to the Ethernet-HOWTO, this isn&squot;t based on the 3c507 driver in&n;   any way.  The ni52 is a lot easier to modify.&n;&n;   sources:&n;   ni52.c&n;&n;   Crynwr packet driver collection was a great reference for my first&n;   attempt at this sucker.  The 3c507 driver also helped, until I noticed&n;   that ni52.c was a lot nicer.&n;&n;   EtherLink/MC: Micro Channel Ethernet Adapter Technical Reference&n;   Manual, courtesy of 3Com CardFacts, documents the 3c523-specific&n;   stuff.  Information on CardFacts is found in the Ethernet HOWTO.&n;   Also see &lt;a href=&quot;http://www.3com.com/&quot;&gt;&n;&n;   Microprocessor Communications Support Chips, T.J. Byers, ISBN&n;   0-444-01224-9, has a section on the i82586.  It tells you just enough&n;   to know that you really don&squot;t want to learn how to program the chip.&n;&n;   The original device probe code was stolen from ps2esdi.c&n;&n;   Known Problems:&n;   Since most of the code was stolen from ni52.c, you&squot;ll run across the&n;   same bugs in the 0.62 version of ni52.c, plus maybe a few because of&n;   the 3c523 idiosynchacies.  The 3c523 has 16K of RAM though, so there&n;   shouldn&squot;t be the overrun problem that the 8K ni52 has.&n;&n;   This driver is for a 16K adapter.  It should work fine on the 64K&n;   adapters, but it will only use one of the 4 banks of RAM.  Modifying&n;   this for the 64K version would require a lot of heinous bank&n;   switching, which I&squot;m sure not interested in doing.  If you try to&n;   implement a bank switching version, you&squot;ll basically have to remember&n;   what bank is enabled and do a switch everytime you access a memory&n;   location that&squot;s not current.  You&squot;ll also have to remap pointers on&n;   the driver side, because it only knows about 16K of the memory.&n;   Anyone desperate or masochistic enough to try?&n;&n;   It seems to be stable now when multiple transmit buffers are used.  I&n;   can&squot;t see any performance difference, but then I&squot;m working on a 386SX.&n;&n;   Multicast doesn&squot;t work.  It doesn&squot;t even pretend to work.  Don&squot;t use&n;   it.  Don&squot;t compile your kernel with multicast support.  I don&squot;t know&n;   why.&n;&n;   Features:&n;   This driver is useable as a loadable module.  If you try to specify an&n;   IRQ or a IO address (via insmod 3c523.o irq=xx io=0xyyy), it will&n;   search the MCA slots until it finds a 3c523 with the specified&n;   parameters.&n;&n;   This driver does support multiple ethernet cards when used as a module&n;   (up to MAX_3C523_CARDS, the default being 4)&n;&n;   This has been tested with both BNC and TP versions, internal and&n;   external transceivers.  Haven&squot;t tested with the 64K version (that I&n;   know of).&n;&n;   History:&n;   Jan 1st, 1996&n;   first public release&n;   Feb 4th, 1996&n;   update to 1.3.59, incorporated multicast diffs from ni52.c&n;   Feb 15th, 1996&n;   added shared irq support&n;   Apr 1999&n;   added support for multiple cards when used as a module&n;   added option to disable multicast as is causes problems&n;       Ganesh Sittampalam &lt;ganesh.sittampalam@magdalen.oxford.ac.uk&gt;&n;       Stuart Adamson &lt;stuart.adamson@compsoc.net&gt;&n;&t;&n;   $Header: /fsys2/home/chrisb/linux-1.3.59-MCA/drivers/net/RCS/3c523.c,v 1.1 1996/02/05 01:53:46 chrisb Exp chrisb $&n; */
 macro_line|#ifdef MODULE
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#endif
@@ -24,6 +24,8 @@ DECL|macro|DEBUG
 mdefine_line|#define DEBUG&t;&t;&t;/* debug on */
 DECL|macro|SYSBUSVAL
 mdefine_line|#define SYSBUSVAL 0&t;&t;/* 1 = 8 Bit, 0 = 16 bit - 3c523 only does 16 bit */
+DECL|macro|ELMC_MULTICAST
+macro_line|#undef ELMC_MULTICAST&t;&t;/* Disable multicast support as it is somewhat seriously broken at the moment */
 DECL|macro|make32
 mdefine_line|#define make32(ptr16) (p-&gt;memtop + (short) (ptr16) )
 DECL|macro|make24
@@ -177,6 +179,7 @@ op_star
 id|dev
 )paren
 suffix:semicolon
+macro_line|#ifdef ELMC_MULTICAST
 r_static
 r_void
 id|set_multicast_list
@@ -188,6 +191,7 @@ op_star
 id|dev
 )paren
 suffix:semicolon
+macro_line|#endif
 multiline_comment|/* helper-functions */
 r_static
 r_int
@@ -1419,23 +1423,8 @@ comma
 l_int|2
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;   If we&squot;re trying to match a specified irq or IO address,&n;&t;&t;   we&squot;ll reject a match unless it&squot;s what we&squot;re looking for.&n;&t;&t; */
-r_if
-c_cond
-(paren
-id|base_addr
-op_logical_or
-id|irq
-)paren
-(brace
-multiline_comment|/* we&squot;re looking for a card at a particular place */
-r_if
-c_cond
-(paren
-id|irq
-op_logical_and
-id|irq
-op_ne
+id|dev-&gt;irq
+op_assign
 id|irq_table
 (braket
 (paren
@@ -1446,30 +1435,9 @@ id|ELMC_STATUS_IRQ_SELECT
 op_rshift
 l_int|6
 )braket
-)paren
-(brace
-id|slot
+suffix:semicolon
+id|dev-&gt;base_addr
 op_assign
-id|mca_find_adapter
-c_func
-(paren
-id|ELMC_MCA_ID
-comma
-id|slot
-op_plus
-l_int|1
-)paren
-suffix:semicolon
-r_continue
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|base_addr
-op_logical_and
-id|base_addr
-op_ne
 id|csr_table
 (braket
 (paren
@@ -1480,6 +1448,34 @@ id|ELMC_STATUS_CSR_SELECT
 op_rshift
 l_int|1
 )braket
+suffix:semicolon
+multiline_comment|/*&n;&t;&t;   If we&squot;re trying to match a specified irq or IO address,&n;&t;&t;   we&squot;ll reject a match unless it&squot;s what we&squot;re looking for.&n;&t;&t;   Also reject it if the card is already in use.&n;&t;&t; */
+r_if
+c_cond
+(paren
+(paren
+id|irq
+op_logical_and
+id|irq
+op_ne
+id|dev-&gt;irq
+)paren
+op_logical_or
+(paren
+id|base_addr
+op_logical_and
+id|base_addr
+op_ne
+id|dev-&gt;base_addr
+)paren
+op_logical_or
+id|check_region
+c_func
+(paren
+id|dev-&gt;base_addr
+comma
+id|ELMC_IO_EXTENT
+)paren
 )paren
 (brace
 id|slot
@@ -1496,7 +1492,6 @@ l_int|1
 suffix:semicolon
 r_continue
 suffix:semicolon
-)brace
 )brace
 multiline_comment|/* found what we&squot;re looking for... */
 r_break
@@ -1574,20 +1569,6 @@ id|ELMC_REVISION
 op_amp
 l_int|0xf
 suffix:semicolon
-multiline_comment|/* figure out our irq */
-id|dev-&gt;irq
-op_assign
-id|irq_table
-(braket
-(paren
-id|status
-op_amp
-id|ELMC_STATUS_IRQ_SELECT
-)paren
-op_rshift
-l_int|6
-)braket
-suffix:semicolon
 multiline_comment|/* according to docs, we read the interrupt and write it back to&n;&t;   the IRQ select register, since the POST might not configure the IRQ&n;&t;   properly. */
 r_switch
 c_cond
@@ -1656,20 +1637,6 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
-multiline_comment|/* Our IO address? */
-id|dev-&gt;base_addr
-op_assign
-id|csr_table
-(braket
-(paren
-id|status
-op_amp
-id|ELMC_STATUS_CSR_SELECT
-)paren
-op_rshift
-l_int|1
-)braket
-suffix:semicolon
 id|request_region
 c_func
 (paren
@@ -1982,11 +1949,18 @@ op_assign
 op_amp
 id|elmc_send_packet
 suffix:semicolon
+macro_line|#ifdef ELMC_MULTICAST
 id|dev-&gt;set_multicast_list
 op_assign
 op_amp
 id|set_multicast_list
 suffix:semicolon
+macro_line|#else
+id|dev-&gt;set_multicast_list
+op_assign
+l_int|NULL
+suffix:semicolon
+macro_line|#endif
 id|ether_setup
 c_func
 (paren
@@ -2006,6 +1980,14 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* note that we haven&squot;t actually requested the IRQ from the kernel.&n;&t;   That gets done in elmc_open().  I&squot;m not sure that&squot;s such a good idea,&n;&t;   but it works, so I&squot;ll go with it. */
+macro_line|#ifndef ELMC_MULTICAST
+id|dev-&gt;flags
+op_and_assign
+op_complement
+id|IFF_MULTICAST
+suffix:semicolon
+multiline_comment|/* Multicast doesn&squot;t work */
+macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
@@ -5285,6 +5267,7 @@ id|p-&gt;stats
 suffix:semicolon
 )brace
 multiline_comment|/********************************************************&n; * Set MC list ..&n; */
+macro_line|#ifdef ELMC_MULTICAST
 DECL|function|set_multicast_list
 r_static
 r_void
@@ -5335,14 +5318,23 @@ op_assign
 l_int|1
 suffix:semicolon
 )brace
+macro_line|#endif
 multiline_comment|/*************************************************************************/
 macro_line|#ifdef MODULE
-DECL|variable|devicename
+multiline_comment|/* Increase if needed ;) */
+DECL|macro|MAX_3C523_CARDS
+mdefine_line|#define MAX_3C523_CARDS 4
+multiline_comment|/* I&squot;m not sure where this magic 9 comes from */
+DECL|macro|NAMELEN
+mdefine_line|#define NAMELEN 9
+DECL|variable|devicenames
 r_static
 r_char
-id|devicename
+id|devicenames
 (braket
-l_int|9
+id|NAMELEN
+op_star
+id|MAX_3C523_CARDS
 )braket
 op_assign
 (brace
@@ -5355,9 +5347,13 @@ r_static
 r_struct
 id|device
 id|dev_elmc
+(braket
+id|MAX_3C523_CARDS
+)braket
 op_assign
 (brace
-id|devicename
+(brace
+l_int|NULL
 multiline_comment|/*&quot;3c523&quot; */
 comma
 l_int|0
@@ -5380,28 +5376,48 @@ l_int|0
 comma
 l_int|NULL
 comma
-id|elmc_probe
+l_int|NULL
+)brace
+comma
 )brace
 suffix:semicolon
 DECL|variable|irq
 r_static
 r_int
 id|irq
+(braket
+id|MAX_3C523_CARDS
+)braket
 op_assign
+(brace
 l_int|0
+comma
+)brace
 suffix:semicolon
 DECL|variable|io
 r_static
 r_int
 id|io
+(braket
+id|MAX_3C523_CARDS
+)braket
 op_assign
+(brace
 l_int|0
+comma
+)brace
 suffix:semicolon
 id|MODULE_PARM
 c_func
 (paren
 id|irq
 comma
+l_string|&quot;1-&quot;
+id|__MODULE_STRING
+c_func
+(paren
+id|MAX_3C523_CARDS
+)paren
 l_string|&quot;i&quot;
 )paren
 suffix:semicolon
@@ -5410,6 +5426,12 @@ c_func
 (paren
 id|io
 comma
+l_string|&quot;1-&quot;
+id|__MODULE_STRING
+c_func
+(paren
+id|MAX_3C523_CARDS
+)paren
 l_string|&quot;i&quot;
 )paren
 suffix:semicolon
@@ -5421,6 +5443,29 @@ c_func
 r_void
 )paren
 (brace
+r_int
+id|this_dev
+comma
+id|found
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* Loop until we either can&squot;t find any more cards, or we have MAX_3C523_CARDS */
+r_for
+c_loop
+(paren
+id|this_dev
+op_assign
+l_int|0
+suffix:semicolon
+id|this_dev
+OL
+id|MAX_3C523_CARDS
+suffix:semicolon
+id|this_dev
+op_increment
+)paren
+(brace
 r_struct
 id|device
 op_star
@@ -5428,14 +5473,37 @@ id|dev
 op_assign
 op_amp
 id|dev_elmc
+(braket
+id|this_dev
+)braket
 suffix:semicolon
-id|dev-&gt;base_addr
+id|dev-&gt;name
 op_assign
-id|io
+id|devicenames
+op_plus
+(paren
+id|NAMELEN
+op_star
+id|this_dev
+)paren
 suffix:semicolon
 id|dev-&gt;irq
 op_assign
 id|irq
+(braket
+id|this_dev
+)braket
+suffix:semicolon
+id|dev-&gt;base_addr
+op_assign
+id|io
+(braket
+id|this_dev
+)braket
+suffix:semicolon
+id|dev-&gt;init
+op_assign
+id|elmc_probe
 suffix:semicolon
 r_if
 c_cond
@@ -5449,11 +5517,71 @@ op_ne
 l_int|0
 )paren
 (brace
-r_return
-op_minus
-id|EIO
+r_if
+c_cond
+(paren
+id|io
+(braket
+id|this_dev
+)braket
+op_eq
+l_int|0
+)paren
+(brace
+r_break
 suffix:semicolon
 )brace
+id|printk
+c_func
+(paren
+id|KERN_WARNING
+l_string|&quot;3c523.c: No 3c523 card found at io=%#x&bslash;n&quot;
+comma
+id|io
+(braket
+id|this_dev
+)braket
+)paren
+suffix:semicolon
+)brace
+r_else
+id|found
+op_increment
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|found
+op_eq
+l_int|0
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|io
+(braket
+l_int|0
+)braket
+op_eq
+l_int|0
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_NOTICE
+l_string|&quot;3c523.c: No 3c523 cards found&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
+r_return
+op_minus
+id|ENXIO
+suffix:semicolon
+)brace
+r_else
 r_return
 l_int|0
 suffix:semicolon
@@ -5466,6 +5594,24 @@ c_func
 r_void
 )paren
 (brace
+r_int
+id|this_dev
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|this_dev
+op_assign
+l_int|0
+suffix:semicolon
+id|this_dev
+OL
+id|MAX_3C523_CARDS
+suffix:semicolon
+id|this_dev
+op_increment
+)paren
+(brace
 r_struct
 id|device
 op_star
@@ -5473,7 +5619,16 @@ id|dev
 op_assign
 op_amp
 id|dev_elmc
+(braket
+id|this_dev
+)braket
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|dev-&gt;priv
+)paren
+(brace
 multiline_comment|/* shutdown interrupts on the card */
 id|elmc_id_reset586
 c_func
@@ -5488,7 +5643,7 @@ op_ne
 l_int|0
 )paren
 (brace
-multiline_comment|/* this should be done by close, but if we failed to&n;&t;&t;   initialize properly something may have gotten hosed. */
+multiline_comment|/* this should be done by close, but if we failed to&n;&t;&t;&t;&t;   initialize properly something may have gotten hosed. */
 id|free_irq
 c_func
 (paren
@@ -5524,10 +5679,16 @@ l_int|0
 suffix:semicolon
 )brace
 id|irq
+(braket
+id|this_dev
+)braket
 op_assign
 l_int|0
 suffix:semicolon
 id|io
+(braket
+id|this_dev
+)braket
 op_assign
 l_int|0
 suffix:semicolon
@@ -5574,6 +5735,8 @@ id|dev-&gt;priv
 op_assign
 l_int|NULL
 suffix:semicolon
+)brace
+)brace
 )brace
 macro_line|#endif&t;&t;&t;&t;/* MODULE */
 eof

@@ -2005,6 +2005,8 @@ id|handle_scancode
 c_func
 (paren
 id|rep_scancode
+comma
+l_int|1
 )paren
 suffix:semicolon
 id|restore_flags
@@ -2170,14 +2172,16 @@ id|handle_scancode
 c_func
 (paren
 id|AMIKEY_CAPS
+comma
+l_int|1
 )paren
 suffix:semicolon
 id|handle_scancode
 c_func
 (paren
-id|BREAK_MASK
-op_or
 id|AMIKEY_CAPS
+comma
+l_int|0
 )paren
 suffix:semicolon
 )brace
@@ -2246,6 +2250,9 @@ id|handle_scancode
 c_func
 (paren
 id|scancode
+comma
+op_logical_neg
+id|break_flag
 )paren
 suffix:semicolon
 )brace

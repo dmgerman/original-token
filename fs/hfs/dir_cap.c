@@ -5,7 +5,9 @@ macro_line|#include &lt;linux/hfs_fs_i.h&gt;
 macro_line|#include &lt;linux/hfs_fs.h&gt;
 multiline_comment|/*================ Forward declarations ================*/
 r_static
-r_int
+r_struct
+id|dentry
+op_star
 id|cap_lookup
 c_func
 (paren
@@ -358,7 +360,9 @@ multiline_comment|/*================ File-local functions ================*/
 multiline_comment|/*&n; * cap_lookup()&n; *&n; * This is the lookup() entry in the inode_operations structure for&n; * HFS directories in the CAP scheme.  The purpose is to generate the&n; * inode corresponding to an entry in a directory, given the inode for&n; * the directory and the name (and its length) of the entry.&n; */
 DECL|function|cap_lookup
 r_static
-r_int
+r_struct
+id|dentry
+op_star
 id|cap_lookup
 c_func
 (paren
@@ -396,25 +400,6 @@ id|inode
 op_assign
 l_int|NULL
 suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|dir
-op_logical_or
-op_logical_neg
-id|S_ISDIR
-c_func
-(paren
-id|dir-&gt;i_mode
-)paren
-)paren
-(brace
-r_return
-op_minus
-id|ENOENT
-suffix:semicolon
-)brace
 id|dentry-&gt;d_op
 op_assign
 op_amp
@@ -670,7 +655,7 @@ id|inode
 )paren
 suffix:semicolon
 r_return
-l_int|0
+l_int|NULL
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * cap_readdir()&n; *&n; * This is the readdir() entry in the file_operations structure for&n; * HFS directories in the CAP scheme.  The purpose is to enumerate the&n; * entries in a directory, given the inode of the directory and a&n; * (struct file *), the &squot;f_pos&squot; field of which indicates the location&n; * in the directory.  The (struct file *) is updated so that the next&n; * call with the same &squot;dir&squot; and &squot;filp&squot; arguments will produce the next&n; * directory entry.  The entries are returned in &squot;dirent&squot;, which is&n; * &quot;filled-in&quot; by calling filldir().  This allows the same readdir()&n; * function be used for different dirent formats.  We try to read in&n; * as many entries as we can before filldir() refuses to take any more.&n; *&n; * XXX: In the future it may be a good idea to consider not generating&n; * metadata files for covered directories since the data doesn&squot;t&n; * correspond to the mounted directory.&t; However this requires an&n; * iget() for every directory which could be considered an excessive&n; * amount of overhead.&t;Since the inode for a mount point is always&n; * in-core this is another argument for a call to get an inode if it&n; * is in-core or NULL if it is not.&n; */

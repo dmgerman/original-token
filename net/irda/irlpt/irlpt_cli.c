@@ -1812,6 +1812,9 @@ r_void
 id|irlpt_client_get_value_confirm
 c_func
 (paren
+r_int
+id|result
+comma
 id|__u16
 id|obj_id
 comma
@@ -1890,8 +1893,9 @@ multiline_comment|/* Check if request succeeded */
 r_if
 c_cond
 (paren
-op_logical_neg
-id|value
+id|result
+op_ne
+id|IAS_SUCCESS
 )paren
 (brace
 id|DEBUG

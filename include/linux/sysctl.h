@@ -98,7 +98,23 @@ DECL|enumerator|CTL_DEV
 id|CTL_DEV
 op_assign
 l_int|7
+comma
 multiline_comment|/* Devices */
+DECL|enumerator|CTL_BUS
+id|CTL_BUS
+op_assign
+l_int|8
+multiline_comment|/* Buses */
+)brace
+suffix:semicolon
+multiline_comment|/* CTL_BUS names: */
+r_enum
+(brace
+DECL|enumerator|BUS_ISA
+id|BUS_ISA
+op_assign
+l_int|1
+multiline_comment|/* ISA */
 )brace
 suffix:semicolon
 multiline_comment|/* CTL_KERN names: */
@@ -422,6 +438,30 @@ DECL|enumerator|NET_DECNET
 id|NET_DECNET
 op_assign
 l_int|15
+comma
+DECL|enumerator|NET_ECONET
+id|NET_ECONET
+op_assign
+l_int|16
+)brace
+suffix:semicolon
+multiline_comment|/* /proc/sys/bus/isa */
+r_enum
+(brace
+DECL|enumerator|BUS_ISA_MEM_BASE
+id|BUS_ISA_MEM_BASE
+op_assign
+l_int|1
+comma
+DECL|enumerator|BUS_ISA_PORT_BASE
+id|BUS_ISA_PORT_BASE
+op_assign
+l_int|2
+comma
+DECL|enumerator|BUS_ISA_PORT_SHIFT
+id|BUS_ISA_PORT_SHIFT
+op_assign
+l_int|3
 )brace
 suffix:semicolon
 multiline_comment|/* /proc/sys/net/core */

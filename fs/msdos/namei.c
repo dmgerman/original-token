@@ -1303,7 +1303,9 @@ suffix:semicolon
 )brace
 multiline_comment|/***** Get inode using directory and name */
 DECL|function|msdos_lookup
-r_int
+r_struct
+id|dentry
+op_star
 id|msdos_lookup
 c_func
 (paren
@@ -1511,7 +1513,11 @@ suffix:semicolon
 id|out
 suffix:colon
 r_return
+id|ERR_PTR
+c_func
+(paren
 id|res
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/***** Creates a directory entry (name is already formatted). */

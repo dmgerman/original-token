@@ -250,7 +250,9 @@ suffix:semicolon
 multiline_comment|/*&n; * Lookup into a non promoted directory.&n; * If the result is a directory, make sure we find out if it is&n; * a promoted one or not (calling umsdos_setup_dir_inode(inode)).&n; */
 multiline_comment|/* #Specification: pseudo root / DOS/..&n; * In the real root directory (c:&bslash;), the directory ..&n; * is the pseudo root (c:&bslash;linux).&n; */
 DECL|function|umsdos_rlookup_x
-r_int
+r_struct
+id|dentry
+op_star
 id|umsdos_rlookup_x
 (paren
 r_struct
@@ -267,7 +269,9 @@ r_int
 id|nopseudo
 )paren
 (brace
-r_int
+r_struct
+id|dentry
+op_star
 id|ret
 suffix:semicolon
 r_if
@@ -301,8 +305,12 @@ l_int|0
 multiline_comment|/* #Specification: pseudo root / DOS/linux&n;&t;&t; * Even in the real root directory (c:&bslash;), the directory&n;&t;&t; * /linux won&squot;t show&n;&t;&t; */
 id|ret
 op_assign
+id|ERR_PTR
+c_func
+(paren
 op_minus
 id|ENOENT
+)paren
 suffix:semicolon
 r_goto
 id|out
@@ -327,13 +335,17 @@ id|printk
 c_func
 (paren
 id|KERN_WARNING
-l_string|&quot;umsdos_rlookup_x: %s/%s failed, ret=%d&bslash;n&quot;
+l_string|&quot;umsdos_rlookup_x: %s/%s failed, ret=%ld&bslash;n&quot;
 comma
 id|dentry-&gt;d_parent-&gt;d_name.name
 comma
 id|dentry-&gt;d_name.name
 comma
+id|PTR_ERR
+c_func
+(paren
 id|ret
+)paren
 )paren
 suffix:semicolon
 r_goto
@@ -381,7 +393,9 @@ id|ret
 suffix:semicolon
 )brace
 DECL|function|UMSDOS_rlookup
-r_int
+r_struct
+id|dentry
+op_star
 id|UMSDOS_rlookup
 (paren
 r_struct

@@ -1,4 +1,4 @@
-multiline_comment|/* SF16FMI radio driver for Linux radio support&n; * heavily based on rtrack driver...&n; * (c) 1997 M. Kirkwood&n; * (c) 1998 Petr Vandrovec, vandrove@vc.cvut.cz&n; *&n; * Fitted to new interface by Alan Cox &lt;alan.cox@linux.org&gt;&n; *&n; * Notes on the hardware&n; *&n; *  Frequency control is done digitally -- ie out(port,encodefreq(95.8));&n; *  No volume control - only mute/unmute - you have to use line volume&n; *  control on SB-part of SF16FMI&n; *  &n; */
+multiline_comment|/* SF16FMI radio driver for Linux radio support&n; * heavily based on rtrack driver...&n; * (c) 1997 M. Kirkwood&n; * (c) 1998 Petr Vandrovec, vandrove@vc.cvut.cz&n; *&n; * Fitted to new interface by Alan Cox &lt;alan.cox@linux.org&gt;&n; * Made working and cleaned up functions &lt;mikael.hedin@irf.se&gt;&n; *&n; * Notes on the hardware&n; *&n; *  Frequency control is done digitally -- ie out(port,encodefreq(95.8));&n; *  No volume control - only mute/unmute - you have to use line volume&n; *  control on SB-part of SF16FMI&n; *  &n; */
 macro_line|#include &lt;linux/module.h&gt;&t;/* Modules &t;&t;&t;*/
 macro_line|#include &lt;linux/init.h&gt;&t;&t;/* Initdata&t;&t;&t;*/
 macro_line|#include &lt;linux/ioport.h&gt;&t;/* check_region, request_region&t;*/
@@ -207,16 +207,18 @@ r_struct
 id|fmi_device
 op_star
 id|dev
-comma
-r_int
-r_int
-id|freq
 )paren
 (brace
 r_int
 id|myport
 op_assign
 id|dev-&gt;port
+suffix:semicolon
+r_int
+r_int
+id|freq
+op_assign
+id|dev-&gt;curfreq
 suffix:semicolon
 r_int
 id|i
@@ -621,14 +623,6 @@ c_func
 id|fmi
 )paren
 suffix:semicolon
-id|strcpy
-c_func
-(paren
-id|v.name
-comma
-l_string|&quot;FM&quot;
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -817,16 +811,21 @@ r_return
 op_minus
 id|EINVAL
 suffix:semicolon
+multiline_comment|/*rounding in steps of 800 to match th freq&n;&t;&t;&t;  that will be used */
 id|fmi-&gt;curfreq
 op_assign
+(paren
 id|tmp
+op_div
+l_int|800
+)paren
+op_star
+l_int|800
 suffix:semicolon
 id|fmi_setfreq
 c_func
 (paren
 id|fmi
-comma
-id|fmi-&gt;curfreq
 )paren
 suffix:semicolon
 r_return
@@ -880,7 +879,7 @@ l_string|&quot;Radio&quot;
 suffix:semicolon
 id|v.mode
 op_assign
-id|VIDEO_SOUND_MONO
+id|VIDEO_SOUND_STEREO
 suffix:semicolon
 id|v.balance
 op_assign

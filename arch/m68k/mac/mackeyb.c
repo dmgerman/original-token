@@ -96,6 +96,8 @@ c_func
 (paren
 r_int
 r_char
+comma
+r_int
 )paren
 suffix:semicolon
 r_extern
@@ -3013,6 +3015,8 @@ id|handle_scancode
 c_func
 (paren
 id|keycode
+comma
+l_int|1
 )paren
 suffix:semicolon
 multiline_comment|/* down */
@@ -3046,7 +3050,8 @@ id|handle_scancode
 c_func
 (paren
 id|keycode
-op_plus
+comma
+op_logical_neg
 id|up_flag
 )paren
 suffix:semicolon

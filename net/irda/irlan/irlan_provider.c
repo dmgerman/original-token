@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlan_provider.c&n; * Version:       0.9&n; * Description:   IrDA LAN Access Protocol Implementation&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sun Aug 31 20:14:37 1997&n; * Modified at:   Tue Apr  6 19:08:20 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Sources:       skeleton.c by Donald Becker &lt;becker@CESDIS.gsfc.nasa.gov&gt;&n; *                slip.c by Laurence Culhane,   &lt;loz@holmes.demon.co.uk&gt;&n; *                          Fred N. van Kempen, &lt;waltje@uwalt.nl.mugnet.org&gt;&n; * &n; *     Copyright (c) 1998 Dag Brattli &lt;dagb@cs.uit.no&gt;, All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlan_provider.c&n; * Version:       0.9&n; * Description:   IrDA LAN Access Protocol Implementation&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sun Aug 31 20:14:37 1997&n; * Modified at:   Thu Apr 22 14:28:52 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Sources:       skeleton.c by Donald Becker &lt;becker@CESDIS.gsfc.nasa.gov&gt;&n; *                slip.c by Laurence Culhane,   &lt;loz@holmes.demon.co.uk&gt;&n; *                          Fred N. van Kempen, &lt;waltje@uwalt.nl.mugnet.org&gt;&n; * &n; *     Copyright (c) 1998 Dag Brattli &lt;dagb@cs.uit.no&gt;, All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -388,7 +388,7 @@ r_return
 suffix:semicolon
 )paren
 suffix:semicolon
-multiline_comment|/* Check if this provider is unused */
+multiline_comment|/* Check if this provider is currently unused */
 r_if
 c_cond
 (paren
@@ -544,23 +544,6 @@ id|self-&gt;saddr
 comma
 id|self-&gt;daddr
 )paren
-suffix:semicolon
-multiline_comment|/* &n;&t; * This provider is now in use, so start a new provider instance to&n;         * serve other clients. This will also change the LM-IAS entry so that&n;&t; * other clients don&squot;t try to connect to us, now that we are busy.&n;&t; */
-r_new
-op_assign
-id|irlan_open
-c_func
-(paren
-id|DEV_ADDR_ANY
-comma
-id|DEV_ADDR_ANY
-comma
-id|FALSE
-)paren
-suffix:semicolon
-id|self-&gt;client.start_new_provider
-op_assign
-id|FALSE
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Function irlan_provider_connect_response (handle)&n; *&n; *    Accept incomming connection&n; *&n; */
@@ -776,7 +759,7 @@ id|ret
 suffix:semicolon
 id|ret
 op_assign
-id|irlan_provider_extract_params
+id|irlan_provider_parse_command
 c_func
 (paren
 id|self
@@ -790,10 +773,10 @@ r_return
 id|ret
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function extract_params (skb)&n; *&n; *    Extract all parameters from received buffer, then feed them to &n; *    check_params for parsing&n; *&n; */
-DECL|function|irlan_provider_extract_params
+multiline_comment|/*&n; * Function parse_command (skb)&n; *&n; *    Extract all parameters from received buffer, then feed them to &n; *    check_params for parsing&n; *&n; */
+DECL|function|irlan_provider_parse_command
 r_int
-id|irlan_provider_extract_params
+id|irlan_provider_parse_command
 c_func
 (paren
 r_struct
@@ -997,7 +980,7 @@ op_increment
 (brace
 id|ret
 op_assign
-id|irlan_get_param
+id|irlan_extract_param
 c_func
 (paren
 id|ptr
@@ -1477,7 +1460,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * Function irlan_provider_register(void)&n; *&n; *    Register provider support so we can accept incomming connections.&n; * &n; */
 DECL|function|irlan_provider_open_ctrl_tsap
-r_void
+r_int
 id|irlan_provider_open_ctrl_tsap
 c_func
 (paren
@@ -1513,6 +1496,8 @@ op_ne
 l_int|NULL
 comma
 r_return
+op_minus
+l_int|1
 suffix:semicolon
 )paren
 suffix:semicolon
@@ -1524,6 +1509,8 @@ op_eq
 id|IRLAN_MAGIC
 comma
 r_return
+op_minus
+l_int|1
 suffix:semicolon
 )paren
 suffix:semicolon
@@ -1534,6 +1521,8 @@ c_cond
 id|self-&gt;provider.tsap_ctrl
 )paren
 r_return
+op_minus
+l_int|1
 suffix:semicolon
 multiline_comment|/*&n;&t; *  First register well known control TSAP&n;&t; */
 id|irda_notify_init
@@ -1599,6 +1588,8 @@ l_string|&quot;(), Got no tsap!&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
+op_minus
+l_int|1
 suffix:semicolon
 )brace
 id|self-&gt;provider.tsap_ctrl
@@ -1613,6 +1604,9 @@ id|self
 comma
 id|tsap-&gt;stsap_sel
 )paren
+suffix:semicolon
+r_return
+l_int|0
 suffix:semicolon
 )brace
 eof

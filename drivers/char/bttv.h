@@ -307,6 +307,10 @@ DECL|member|audio_chip
 r_int
 id|audio_chip
 suffix:semicolon
+DECL|member|fader_chip
+r_int
+id|fader_chip
+suffix:semicolon
 DECL|member|radio
 r_int
 id|radio
@@ -608,6 +612,8 @@ DECL|macro|TDA8425
 mdefine_line|#define TDA8425            0x02
 DECL|macro|TDA9840
 mdefine_line|#define TDA9840            0x03
+DECL|macro|TEA6300
+mdefine_line|#define TEA6300            0x04
 DECL|macro|I2C_TSA5522
 mdefine_line|#define I2C_TSA5522        0xc2
 DECL|macro|I2C_TDA9840
@@ -622,6 +628,8 @@ DECL|macro|I2C_STBEE
 mdefine_line|#define I2C_STBEE          0xae
 DECL|macro|I2C_VHX
 mdefine_line|#define I2C_VHX &t;   0xc0
+DECL|macro|I2C_TEA6300
+mdefine_line|#define I2C_TEA6300        0x80
 DECL|macro|TDA9840_SW
 mdefine_line|#define TDA9840_SW&t;   0x00
 DECL|macro|TDA9840_LVADJ
@@ -654,5 +662,17 @@ DECL|macro|TDA8425_TR
 mdefine_line|#define TDA8425_TR         0x03
 DECL|macro|TDA8425_S1
 mdefine_line|#define TDA8425_S1         0x08
+DECL|macro|TEA6300_VL
+mdefine_line|#define TEA6300_VL         0x00&t;&t;/* volume control left */
+DECL|macro|TEA6300_VR
+mdefine_line|#define TEA6300_VR         0x01&t;&t;/* volume control right */
+DECL|macro|TEA6300_BA
+mdefine_line|#define TEA6300_BA         0x02&t;&t;/* bass control */
+DECL|macro|TEA6300_TR
+mdefine_line|#define TEA6300_TR         0x03&t;&t;/* treble control */
+DECL|macro|TEA6300_FA
+mdefine_line|#define TEA6300_FA         0x04&t;&t;/* fader control */
+DECL|macro|TEA6300_SW
+mdefine_line|#define TEA6300_SW         0x05&t;&t;/* mute and source switch */
 macro_line|#endif
 eof

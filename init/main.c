@@ -1019,6 +1019,20 @@ id|ints
 suffix:semicolon
 r_extern
 r_void
+id|fd_mcs_setup
+c_func
+(paren
+r_char
+op_star
+id|str
+comma
+r_int
+op_star
+id|ints
+)paren
+suffix:semicolon
+r_extern
+r_void
 id|in2000_setup
 c_func
 (paren
@@ -3345,6 +3359,14 @@ macro_line|#ifdef CONFIG_SCSI_IBMMCA
 l_string|&quot;ibmmcascsi=&quot;
 comma
 id|ibmmca_scsi_setup
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_SCSI_FD_MCS
+(brace
+l_string|&quot;fd_mcs=&quot;
+comma
+id|fd_mcs_setup
 )brace
 comma
 macro_line|#endif

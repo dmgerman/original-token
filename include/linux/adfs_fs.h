@@ -708,7 +708,9 @@ id|offset
 suffix:semicolon
 multiline_comment|/* namei.c */
 r_extern
-r_int
+r_struct
+id|dentry
+op_star
 id|adfs_lookup
 (paren
 r_struct

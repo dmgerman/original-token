@@ -71,7 +71,7 @@ r_char
 op_star
 id|revision_date
 op_assign
-l_string|&quot;Wed Mar 10 15:33:03 1999&quot;
+l_string|&quot;Sun Apr 18 17:31:53 1999&quot;
 suffix:semicolon
 multiline_comment|/*&n; * prototypes&n; */
 r_int
@@ -258,6 +258,16 @@ op_star
 id|tty
 )paren
 suffix:semicolon
+r_void
+id|irvtd_flush_chars
+c_func
+(paren
+r_struct
+id|tty_struct
+op_star
+id|tty
+)paren
+suffix:semicolon
 r_static
 r_void
 id|change_speed
@@ -396,7 +406,6 @@ op_star
 id|unused
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * ----------------------------------------------------------------------&n; * &n; *&n;&n; * ----------------------------------------------------------------------&n; */
 multiline_comment|/*&n; **********************************************************************&n; *&n; * ircomm_receive_data() and friends&n; *&n; * like interrupt handler in the serial.c,we receive data when &n; * ircomm_data_indication comes&n; *&n; **********************************************************************&n; */
 multiline_comment|/* &n; * irvtd_write_to_tty&n; * send incoming/queued data to tty&n; */
 DECL|function|irvtd_write_to_tty
@@ -430,6 +439,15 @@ id|tty
 op_assign
 id|driver-&gt;tty
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|driver-&gt;rx_disable
+)paren
+(brace
+r_return
+suffix:semicolon
+)brace
 id|skb
 op_assign
 id|skb_dequeue
@@ -935,6 +953,12 @@ op_assign
 l_int|1
 suffix:semicolon
 )brace
+id|irvtd_write_to_tty
+c_func
+(paren
+id|driver
+)paren
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -1001,10 +1025,10 @@ op_plus
 (paren
 id|HZ
 op_div
-l_int|20
+l_int|5
 )paren
 suffix:semicolon
-multiline_comment|/* 50msec */
+multiline_comment|/* 200msec */
 id|add_timer
 c_func
 (paren
@@ -1067,43 +1091,18 @@ id|__FUNCTION__
 l_string|&quot;()&bslash;n&quot;
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-(paren
-id|driver-&gt;tty-&gt;hw_stopped
-)paren
-op_logical_and
-op_logical_neg
-(paren
-id|driver-&gt;tx_disable
-)paren
-)paren
-(brace
 id|irvtd_send_data_request
 c_func
 (paren
 id|driver
 )paren
 suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-op_logical_neg
-(paren
-id|driver-&gt;rx_disable
-)paren
-)paren
-(brace
 id|irvtd_write_to_tty
 c_func
 (paren
 id|driver
 )paren
 suffix:semicolon
-)brace
 multiline_comment|/* start our timer again and again */
 id|irvtd_start_timer
 c_func
@@ -1154,6 +1153,17 @@ id|__FUNCTION__
 l_string|&quot;()&bslash;n&quot;
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|driver-&gt;tty-&gt;hw_stopped
+op_logical_or
+id|driver-&gt;tx_disable
+)paren
+(brace
+r_return
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -1219,10 +1229,10 @@ macro_line|#endif
 id|DEBUG
 c_func
 (paren
-l_int|4
+l_int|1
 comma
 id|__FUNCTION__
-l_string|&quot;():sending %d bytes&bslash;n&quot;
+l_string|&quot;():sending %d octets&bslash;n&quot;
 comma
 (paren
 r_int
@@ -1305,7 +1315,7 @@ id|printk
 c_func
 (paren
 id|__FUNCTION__
-l_string|&quot;():flush_txbuff():alloc_skb failed!&bslash;n&quot;
+l_string|&quot;():alloc_skb failed!&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
@@ -1405,7 +1415,6 @@ id|MSR_CTS
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * sending initial control parameters here&n;&t; */
-macro_line|#if 1
 r_if
 c_cond
 (paren
@@ -1418,6 +1427,18 @@ r_return
 suffix:semicolon
 )brace
 multiline_comment|/* do nothing */
+id|driver-&gt;comm-&gt;dte
+op_or_assign
+(paren
+id|MCR_DTR
+op_or
+id|MCR_RTS
+op_or
+id|DELTA_DTR
+op_or
+id|DELTA_RTS
+)paren
+suffix:semicolon
 id|ircomm_control_request
 c_func
 (paren
@@ -1488,7 +1509,6 @@ suffix:colon
 (brace
 )brace
 )brace
-macro_line|#endif
 id|driver-&gt;tx_disable
 op_assign
 l_int|0
@@ -1605,7 +1625,6 @@ comma
 l_string|&quot;irvtd_connect_indication:sending connect_response...&bslash;n&quot;
 )paren
 suffix:semicolon
-multiline_comment|/*TODO: connect_response should send initialcontrolparameters! TH*/
 id|ircomm_connect_response
 c_func
 (paren
@@ -1616,7 +1635,59 @@ comma
 id|SAR_DISABLE
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * set default value&n;&t; */
+id|driver-&gt;tx_disable
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/*&n;&t; * send initial control parameters&n;&t; */
+r_if
+c_cond
+(paren
+id|driver-&gt;comm-&gt;servicetype
+op_eq
+id|THREE_WIRE_RAW
+)paren
+(brace
+r_return
+suffix:semicolon
+)brace
+multiline_comment|/* do nothing */
+id|driver-&gt;comm-&gt;dte
+op_or_assign
+(paren
+id|MCR_DTR
+op_or
+id|MCR_RTS
+op_or
+id|DELTA_DTR
+op_or
+id|DELTA_RTS
+)paren
+suffix:semicolon
+r_switch
+c_cond
+(paren
+id|driver-&gt;comm-&gt;servicetype
+)paren
+(brace
+r_case
+id|NINE_WIRE
+suffix:colon
+id|ircomm_control_request
+c_func
+(paren
+id|driver-&gt;comm
+comma
+id|DTELINE_STATE
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_default
+suffix:colon
+(brace
+)brace
+)brace
 id|driver-&gt;msr
 op_or_assign
 (paren
@@ -1628,10 +1699,6 @@ id|MSR_DSR
 op_or
 id|MSR_CTS
 )paren
-suffix:semicolon
-id|driver-&gt;tx_disable
-op_assign
-l_int|0
 suffix:semicolon
 id|wake_up_interruptible
 c_func
@@ -1721,10 +1788,36 @@ id|driver-&gt;tx_disable
 op_assign
 l_int|1
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|skb_queue_empty
+c_func
+(paren
+op_amp
+id|driver-&gt;rxbuff
+)paren
+)paren
+(brace
+multiline_comment|/* disconnect */
+id|driver-&gt;rx_disable
+op_assign
+l_int|1
+suffix:semicolon
+id|tty_hangup
+c_func
+(paren
+id|driver-&gt;tty
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
 id|driver-&gt;disconnect_pend
 op_assign
 l_int|1
 suffix:semicolon
+)brace
 )brace
 multiline_comment|/*&n; * Function irvtd_control_indication (instance, sap, cmd)&n; *&n; *    &n; *&n; */
 DECL|function|irvtd_control_indication
@@ -2142,6 +2235,21 @@ suffix:semicolon
 )brace
 r_break
 suffix:semicolon
+r_case
+id|FLOW_CONTROL
+suffix:colon
+r_case
+id|DATA_RATE
+suffix:colon
+r_case
+id|XON_XOFF_CHAR
+suffix:colon
+r_case
+id|DTELINE_STATE
+suffix:colon
+multiline_comment|/* (maybe) nothing to do  */
+r_break
+suffix:semicolon
 r_default
 suffix:colon
 id|DEBUG
@@ -2278,38 +2386,6 @@ id|current-&gt;state
 op_assign
 id|TASK_INTERRUPTIBLE
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|driver-&gt;comm-&gt;state
-op_eq
-id|COMM_CONN
-)paren
-(brace
-multiline_comment|/* &n;&t;&t;&t; * signal DTR and RTS&n;&t;&t;&t; */
-id|driver-&gt;comm-&gt;dte
-op_assign
-id|driver-&gt;mcr
-op_or_assign
-(paren
-id|MCR_DTR
-op_or
-id|MCR_RTS
-op_or
-id|DELTA_DTR
-op_or
-id|DELTA_RTS
-)paren
-suffix:semicolon
-id|ircomm_control_request
-c_func
-(paren
-id|driver-&gt;comm
-comma
-id|DTELINE_STATE
-)paren
-suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -2748,11 +2824,6 @@ op_star
 id|driver
 )paren
 (brace
-r_int
-id|retval
-op_assign
-l_int|0
-suffix:semicolon
 r_struct
 id|ias_object
 op_star
@@ -2958,9 +3029,7 @@ op_or_assign
 id|ASYNC_INITIALIZED
 suffix:semicolon
 multiline_comment|/*&n;&t; * discover a peer device&n;&t; *&t;   TODO: other servicetype(i.e. 3wire,3wireraw) support&n;&t; */
-id|retval
-op_assign
-id|ircomm_query_ias_and_connect
+id|ircomm_connect_request
 c_func
 (paren
 id|driver-&gt;comm
@@ -2968,27 +3037,6 @@ comma
 id|NINE_WIRE
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|retval
-)paren
-(brace
-id|DEBUG
-c_func
-(paren
-l_int|0
-comma
-id|__FUNCTION__
-l_string|&quot;(): ircomm_query_ias returns %d&bslash;n&quot;
-comma
-id|retval
-)paren
-suffix:semicolon
-r_return
-id|retval
-suffix:semicolon
-)brace
 multiline_comment|/*&n;&t; * TODO:we have to initialize control-channel here!&n;&t; *   i.e.set something into RTS,CTS and so on....&n;&t; */
 r_if
 c_cond
@@ -3378,7 +3426,7 @@ suffix:semicolon
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|1
 comma
 id|__FUNCTION__
 l_string|&quot;():&bslash;n&quot;
@@ -3419,7 +3467,7 @@ id|driver-&gt;comm-&gt;tsap-&gt;disconnect_pend
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|1
 comma
 id|__FUNCTION__
 l_string|&quot;():wait..&bslash;n&quot;
@@ -3506,7 +3554,7 @@ suffix:semicolon
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|1
 comma
 id|__FUNCTION__
 l_string|&quot;()&bslash;n&quot;
@@ -3703,7 +3751,7 @@ suffix:semicolon
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|1
 comma
 id|__FUNCTION__
 l_string|&quot;():refcount= %d&bslash;n&quot;
@@ -3758,7 +3806,7 @@ multiline_comment|/*&n;&t;&t; * upper tty layer caught a HUP signal and called i
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|1
 comma
 id|__FUNCTION__
 l_string|&quot;():tty_hung_up_p.&bslash;n&quot;
@@ -4261,6 +4309,12 @@ id|buf
 op_add_assign
 id|c
 suffix:semicolon
+id|irvtd_send_data_request
+c_func
+(paren
+id|driver
+)paren
+suffix:semicolon
 )brace
 id|restore_flags
 c_func
@@ -4271,6 +4325,67 @@ suffix:semicolon
 r_return
 (paren
 id|wrote
+)paren
+suffix:semicolon
+)brace
+DECL|function|irvtd_flush_chars
+r_void
+id|irvtd_flush_chars
+c_func
+(paren
+r_struct
+id|tty_struct
+op_star
+id|tty
+)paren
+(brace
+r_struct
+id|irvtd_cb
+op_star
+id|driver
+op_assign
+(paren
+r_struct
+id|irvtd_cb
+op_star
+)paren
+id|tty-&gt;driver_data
+suffix:semicolon
+id|ASSERT
+c_func
+(paren
+id|driver
+op_ne
+l_int|NULL
+comma
+r_return
+suffix:semicolon
+)paren
+suffix:semicolon
+id|ASSERT
+c_func
+(paren
+id|driver-&gt;magic
+op_eq
+id|IRVTD_MAGIC
+comma
+r_return
+suffix:semicolon
+)paren
+suffix:semicolon
+id|DEBUG
+c_func
+(paren
+l_int|4
+comma
+id|__FUNCTION__
+l_string|&quot;()&bslash;n&quot;
+)paren
+suffix:semicolon
+id|irvtd_send_data_request
+c_func
+(paren
+id|driver
 )paren
 suffix:semicolon
 )brace
@@ -6291,7 +6406,7 @@ id|ch
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|1
 comma
 id|__FUNCTION__
 l_string|&quot;():&bslash;n&quot;
@@ -6334,7 +6449,7 @@ suffix:semicolon
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|1
 comma
 l_string|&quot;irvtd_throttle:&bslash;n&quot;
 )paren
@@ -6418,7 +6533,7 @@ suffix:semicolon
 id|DEBUG
 c_func
 (paren
-l_int|0
+l_int|1
 comma
 l_string|&quot;irvtd_unthrottle:&bslash;n&quot;
 )paren
@@ -6840,7 +6955,7 @@ id|irvtd_put_char
 suffix:semicolon
 id|irvtd_drv.flush_chars
 op_assign
-l_int|NULL
+id|irvtd_flush_chars
 suffix:semicolon
 id|irvtd_drv.write_room
 op_assign
@@ -7633,7 +7748,7 @@ id|i
 op_member_access_from_pointer
 id|closing_wait
 op_assign
-l_int|30
+l_int|10
 op_star
 id|HZ
 suffix:semicolon

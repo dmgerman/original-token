@@ -759,6 +759,14 @@ id|io.size
 op_assign
 id|vol-&gt;mft_recordsize
 suffix:semicolon
+id|io.fn_put
+op_assign
+id|ntfs_put
+suffix:semicolon
+id|io.fn_get
+op_assign
+id|ntfs_get
+suffix:semicolon
 id|error
 op_assign
 id|ntfs_write_attr

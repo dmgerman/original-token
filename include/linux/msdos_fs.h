@@ -1212,7 +1212,9 @@ id|inode
 )paren
 suffix:semicolon
 r_extern
-r_int
+r_struct
+id|dentry
+op_star
 id|msdos_lookup
 c_func
 (paren
@@ -1608,7 +1610,9 @@ id|inode
 )paren
 suffix:semicolon
 r_extern
-r_int
+r_struct
+id|dentry
+op_star
 id|vfat_lookup
 c_func
 (paren

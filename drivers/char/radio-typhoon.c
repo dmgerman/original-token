@@ -785,7 +785,7 @@ multiline_comment|/* We can&squot;t get the signal strength */
 id|strcpy
 c_func
 (paren
-id|v.tuner
+id|v.name
 comma
 l_string|&quot;FM&quot;
 )paren

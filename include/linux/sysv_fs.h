@@ -1055,7 +1055,9 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * Function prototypes&n; */
 r_extern
-r_int
+r_struct
+id|dentry
+op_star
 id|sysv_lookup
 c_func
 (paren

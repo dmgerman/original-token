@@ -16,6 +16,7 @@ DECL|macro|RT_UNLOCK
 mdefine_line|#define RT_UNLOCK
 macro_line|#include &lt;asm/spinlock.h&gt;
 macro_line|#include &quot;z85230.h&quot;
+macro_line|#include &quot;syncppp.h&quot;
 DECL|variable|z8530_buffer_lock
 r_static
 id|spinlock_t

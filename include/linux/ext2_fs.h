@@ -1347,7 +1347,9 @@ op_star
 )paren
 suffix:semicolon
 r_extern
-r_int
+r_struct
+id|dentry
+op_star
 id|ext2_lookup
 (paren
 r_struct

@@ -1828,14 +1828,6 @@ r_goto
 id|out_no_bread
 suffix:semicolon
 )brace
-id|set_blocksize
-c_func
-(paren
-id|sb-&gt;s_dev
-comma
-id|blksize
-)paren
-suffix:semicolon
 multiline_comment|/*&n; * The DOS3 partition size limit is *not* 32M as many people think.  &n; * Instead, it is 64K sectors (with the usual sector size being&n; * 512 bytes, leading to a 32M limit).&n; * &n; * DOS 3 partition managers got around this problem by faking a &n; * larger sector size, ie treating multiple physical sectors as &n; * a single logical sector.&n; * &n; * We can accommodate this scheme by adjusting our cluster size,&n; * fat_start, and data_start by an appropriate value.&n; *&n; * (by Drew Eckhardt)&n; */
 DECL|macro|ROUND_TO_MULTIPLE
 mdefine_line|#define ROUND_TO_MULTIPLE(n,m) ((n) &amp;&amp; (m) ? (n)+(m)-1-((n)-1)%(m) : 0)
@@ -2446,6 +2438,14 @@ c_func
 id|sb
 comma
 id|bh
+)paren
+suffix:semicolon
+id|set_blocksize
+c_func
+(paren
+id|sb-&gt;s_dev
+comma
+id|blksize
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;This must be done after the brelse because the bh is a dummy&n;&t;&t;allocated by fat_bread (see buffer.c)&n;&t;*/

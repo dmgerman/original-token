@@ -550,9 +550,10 @@ id|bh-&gt;b_state
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Deprecated - we don&squot;t keep per-buffer reference flags&n; * any more.&n; *&n; * We _could_ try to update the page reference, but that&n; * doesn&squot;t seem to really be worth it either. If we did,&n; * it would look something like this:&n; *&n; *&t;#define buffer_page(bh)&t;&t;(mem_map + MAP_NR((bh)-&gt;b_data))&n; *&t;#define touch_buffer(bh)&t;set_bit(PG_referenced, &amp;buffer_page(bh)-&gt;flags)&n; */
+DECL|macro|buffer_page
+mdefine_line|#define buffer_page(bh)&t;&t;(mem_map + MAP_NR((bh)-&gt;b_data))
 DECL|macro|touch_buffer
-mdefine_line|#define touch_buffer(bh)&t;do { } while (0)
+mdefine_line|#define touch_buffer(bh)&t;set_bit(PG_referenced, &amp;buffer_page(bh)-&gt;flags)
 macro_line|#include &lt;linux/pipe_fs_i.h&gt;
 macro_line|#include &lt;linux/minix_fs_i.h&gt;
 macro_line|#include &lt;linux/ext2_fs_i.h&gt;
@@ -1984,7 +1985,9 @@ r_int
 )paren
 suffix:semicolon
 DECL|member|lookup
-r_int
+r_struct
+id|dentry
+op_star
 (paren
 op_star
 id|lookup

@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      af_irda.c&n; * Version:       0.6&n; * Description:   IrDA sockets implementation&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sun May 31 10:12:43 1998&n; * Modified at:   Wed Apr  7 17:32:27 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Sources:       af_netroom.c, af_ax25.c, af_rose.c, af_x25.c etc.&n; * &n; *     Copyright (c) 1999 Dag Brattli, All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *     &n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      af_irda.c&n; * Version:       0.6&n; * Description:   IrDA sockets implementation&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sun May 31 10:12:43 1998&n; * Modified at:   Thu Apr 22 12:08:04 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Sources:       af_netroom.c, af_ax25.c, af_rose.c, af_x25.c etc.&n; * &n; *     Copyright (c) 1999 Dag Brattli, All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *     &n; ********************************************************************/
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/socket.h&gt;
 macro_line|#include &lt;linux/sockios.h&gt;
@@ -12,6 +12,7 @@ macro_line|#include &lt;net/irda/irda.h&gt;
 macro_line|#include &lt;net/irda/iriap.h&gt;
 macro_line|#include &lt;net/irda/irias_object.h&gt;
 macro_line|#include &lt;net/irda/irttp.h&gt;
+macro_line|#include &lt;net/irda/discovery.h&gt;
 r_extern
 r_int
 id|irda_init
@@ -728,6 +729,9 @@ r_void
 id|irda_get_value_confirm
 c_func
 (paren
+r_int
+id|result
+comma
 id|__u16
 id|obj_id
 comma
@@ -787,8 +791,9 @@ multiline_comment|/* Check if request succeeded */
 r_if
 c_cond
 (paren
-op_logical_neg
-id|value
+id|result
+op_ne
+id|IAS_SUCCESS
 )paren
 (brace
 id|DEBUG
@@ -799,6 +804,10 @@ comma
 id|__FUNCTION__
 l_string|&quot;(), IAS query failed!&bslash;n&quot;
 )paren
+suffix:semicolon
+id|self-&gt;errno
+op_assign
+id|result
 suffix:semicolon
 multiline_comment|/* Wake up any processes waiting for result */
 id|wake_up_interruptible
@@ -2386,9 +2395,8 @@ suffix:semicolon
 multiline_comment|/* Default value */
 id|self-&gt;nslots
 op_assign
-l_int|6
+id|DISCOVERY_DEFAULT_SLOTS
 suffix:semicolon
-multiline_comment|/* Default for now */
 multiline_comment|/* Notify that we are using the irda module, so nobody removes it */
 id|irda_mod_inc_use_count
 c_func
@@ -3043,6 +3051,7 @@ r_return
 id|copied
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * Function irda_shutdown (sk, how)&n; *&n; *    &n; *&n; */
 DECL|function|irda_shutdown
 r_static
 r_int
@@ -3073,6 +3082,7 @@ op_minus
 id|EOPNOTSUPP
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * Function irda_poll (file, sock, wait)&n; *&n; *    &n; *&n; */
 DECL|function|irda_poll
 r_int
 r_int

@@ -94,6 +94,20 @@ macro_line|#else
 DECL|macro|DEBUG
 mdefine_line|#define DEBUG(x)
 macro_line|#endif
+DECL|variable|blksize
+r_static
+r_int
+id|blksize
+op_assign
+l_int|2048
+suffix:semicolon
+DECL|variable|hsecsize
+r_static
+r_int
+id|hsecsize
+op_assign
+l_int|2048
+suffix:semicolon
 "&f;"
 multiline_comment|/* Drive hardware/firmware characteristics&n;   Identifiers in accordance with Optics Storage documentation */
 DECL|macro|optcd_port
@@ -8375,6 +8389,22 @@ op_minus
 id|EIO
 suffix:semicolon
 )brace
+id|hardsect_size
+(braket
+id|MAJOR_NR
+)braket
+op_assign
+op_amp
+id|hsecsize
+suffix:semicolon
+id|blksize_size
+(braket
+id|MAJOR_NR
+)braket
+op_assign
+op_amp
+id|blksize
+suffix:semicolon
 id|blk_dev
 (braket
 id|MAJOR_NR

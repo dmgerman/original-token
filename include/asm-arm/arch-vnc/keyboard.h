@@ -30,19 +30,6 @@ id|scancode
 suffix:semicolon
 r_extern
 r_int
-id|pckbd_pretranslate
-c_func
-(paren
-r_int
-r_char
-id|scancode
-comma
-r_char
-id|raw_mode
-)paren
-suffix:semicolon
-r_extern
-r_int
 id|pckbd_translate
 c_func
 (paren
@@ -99,8 +86,6 @@ DECL|macro|kbd_setkeycode
 mdefine_line|#define kbd_setkeycode&t;&t;&t;pckbd_setkeycode
 DECL|macro|kbd_getkeycode
 mdefine_line|#define kbd_getkeycode&t;&t;&t;pckbd_getkeycode
-DECL|macro|kbd_pretranslate
-mdefine_line|#define kbd_pretranslate&t;&t;pckbd_pretranslate
 DECL|macro|kbd_translate
 mdefine_line|#define kbd_translate(sc, kcp, ufp, rm) ({ *ufp = sc &amp; 0200; &bslash;&n;&t;&t;pckbd_translate(sc &amp; 0x7f, kcp, rm);})
 DECL|macro|kbd_unexpected_up

@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *&t;&t;  &n; * Filename:&t;  irport.c&n; * Version:&t;  0.8&n; * Description:   Serial driver for IrDA. &n; * Status:&t;  Experimental.&n; * Author:&t;  Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:&t;  Sun Aug  3 13:49:59 1997&n; * Modified at:   Sat May 23 23:15:20 1998&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Sources:&t;  serial.c by Linus Torvalds &n; *&t;&t;  serial_serial.c by Aage Kvalnes &lt;aage@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1997,1998 Dag Brattli &lt;dagb@cs.uit.no&gt;&n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; *     NOTICE:&n; *&n; *     This driver is ment to be a small serial driver to be used for&n; *     IR-chipsets that has a UART (16550) compatibility mode. If your&n; *     chipset is is UART only, you should probably use IrTTY instead since&n; *     the Linux serial driver is probably more robust and optimized.&n; *&n; *     The functions in this file may be used by FIR drivers, but this&n; *     driver knows nothing about FIR drivers so don&squot;t ever insert such&n; *     code into this file. Instead you should code your FIR driver in a&n; *     separate file, and then call the functions in this file if&n; *     necessary. This is becase it is difficult to use the Linux serial&n; *     driver with a FIR driver becase they must share interrupts etc. Most&n; *     FIR chipsets can function in advanced SIR mode, and you should&n; *     probably use that mode instead of the UART compatibility mode (and&n; *     then just forget about this file)&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *&t;&t;  &n; * Filename:&t;  irport.c&n; * Version:&t;  0.9&n; * Description:   Serial driver for IrDA. &n; * Status:&t;  Experimental.&n; * Author:&t;  Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:&t;  Sun Aug  3 13:49:59 1997&n; * Modified at:   Sat May 23 23:15:20 1998&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Sources:&t;  serial.c by Linus Torvalds &n; * &n; *     Copyright (c) 1997,1998 Dag Brattli &lt;dagb@cs.uit.no&gt;&n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; *     NOTICE:&n; *&n; *     This driver is ment to be a small half duplex serial driver to be&n; *     used for IR-chipsets that has a UART (16550) compatibility mode. If&n; *     your chipset is is UART only, you should probably use IrTTY instead&n; *     since the Linux serial driver is probably more robust and optimized.&n; *&n; *     The functions in this file may be used by FIR drivers, but this&n; *     driver knows nothing about FIR drivers so don&squot;t ever insert such&n; *     code into this file. Instead you should code your FIR driver in a&n; *     separate file, and then call the functions in this file if&n; *     necessary. This is becase it is difficult to use the Linux serial&n; *     driver with a FIR driver becase they must share interrupts etc. Most&n; *     FIR chipsets can function in advanced SIR mode, and you should&n; *     probably use that mode instead of the UART compatibility mode (and&n; *     then just forget about this file)&n; *&n; ********************************************************************/
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -18,8 +18,6 @@ macro_line|#include &lt;net/irda/wrapper.h&gt;
 macro_line|#include &lt;net/irda/irport.h&gt;
 DECL|macro|IO_EXTENT
 mdefine_line|#define IO_EXTENT 8
-DECL|macro|CONFIG_HALF_DUPLEX
-mdefine_line|#define CONFIG_HALF_DUPLEX
 multiline_comment|/* static unsigned int io[]  = { 0x3e8, ~0, ~0, ~0 }; */
 multiline_comment|/* static unsigned int irq[] = { 11, 0, 0, 0 }; */
 r_static
@@ -379,8 +377,6 @@ r_int
 id|actual
 op_assign
 l_int|0
-comma
-id|count
 suffix:semicolon
 r_int
 id|iobase
@@ -411,10 +407,36 @@ multiline_comment|/* Finished with frame?  */
 r_if
 c_cond
 (paren
-id|idev-&gt;tx_buff.offset
-op_eq
+id|idev-&gt;tx_buff.len
+OG
+l_int|0
+)paren
+(brace
+multiline_comment|/* Write data left in transmit buffer */
+id|actual
+op_assign
+id|irport_write
+c_func
+(paren
+id|idev-&gt;io.iobase2
+comma
+id|idev-&gt;io.fifo_size
+comma
+id|idev-&gt;tx_buff.data
+comma
 id|idev-&gt;tx_buff.len
 )paren
+suffix:semicolon
+id|idev-&gt;tx_buff.data
+op_add_assign
+id|actual
+suffix:semicolon
+id|idev-&gt;tx_buff.len
+op_sub_assign
+id|actual
+suffix:semicolon
+)brace
+r_else
 (brace
 id|iobase
 op_assign
@@ -436,7 +458,6 @@ c_func
 id|NET_BH
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_HALF_DUPLEX
 id|outb
 c_func
 (paren
@@ -465,39 +486,7 @@ op_plus
 id|UART_IER
 )paren
 suffix:semicolon
-macro_line|#endif
-r_return
-suffix:semicolon
 )brace
-multiline_comment|/* Write data left in transmit buffer */
-id|count
-op_assign
-id|idev-&gt;tx_buff.len
-op_minus
-id|idev-&gt;tx_buff.offset
-suffix:semicolon
-id|actual
-op_assign
-id|irport_write
-c_func
-(paren
-id|idev-&gt;io.iobase2
-comma
-id|idev-&gt;io.fifo_size
-comma
-id|idev-&gt;tx_buff.head
-comma
-id|count
-)paren
-suffix:semicolon
-id|idev-&gt;tx_buff.offset
-op_add_assign
-id|actual
-suffix:semicolon
-id|idev-&gt;tx_buff.head
-op_add_assign
-id|actual
-suffix:semicolon
 )brace
 multiline_comment|/*&n; * Function irport_write (driver)&n; *&n; *    &n; *&n; */
 DECL|function|irport_write
@@ -723,7 +712,12 @@ r_return
 op_minus
 id|EBUSY
 suffix:semicolon
-multiline_comment|/*  &n;&t; *  Transfer skb to tx_buff while wrapping, stuffing and making CRC &n;&t; */
+multiline_comment|/* Init tx buffer */
+id|idev-&gt;tx_buff.data
+op_assign
+id|idev-&gt;tx_buff.head
+suffix:semicolon
+multiline_comment|/* Copy skb to tx_buff while wrapping, stuffing and making CRC */
 id|idev-&gt;tx_buff.len
 op_assign
 id|async_wrap_skb
@@ -736,19 +730,14 @@ comma
 id|idev-&gt;tx_buff.truesize
 )paren
 suffix:semicolon
-multiline_comment|/* &t;actual = irport_write(idev-&gt;io.iobase2, idev-&gt;io.fifo_size,  */
-multiline_comment|/* &t;&t;&t;      idev-&gt;tx_buff.data, idev-&gt;tx_buff.len); */
-id|idev-&gt;tx_buff.offset
-op_assign
-id|actual
-suffix:semicolon
-id|idev-&gt;tx_buff.head
-op_assign
 id|idev-&gt;tx_buff.data
-op_plus
+op_add_assign
 id|actual
 suffix:semicolon
-macro_line|#ifdef CONFIG_HALF_DUPLEX
+id|idev-&gt;tx_buff.len
+op_sub_assign
+id|actual
+suffix:semicolon
 multiline_comment|/* Turn on transmit finished interrupt. Will fire immediately!  */
 id|outb
 c_func
@@ -760,7 +749,6 @@ op_plus
 id|UART_IER
 )paren
 suffix:semicolon
-macro_line|#endif
 id|dev_kfree_skb
 c_func
 (paren
@@ -812,17 +800,6 @@ suffix:semicolon
 id|iobase
 op_assign
 id|idev-&gt;io.iobase2
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|idev-&gt;rx_buff.len
-op_eq
-l_int|0
-)paren
-id|idev-&gt;rx_buff.head
-op_assign
-id|idev-&gt;rx_buff.data
 suffix:semicolon
 multiline_comment|/*  &n;&t; * Receive all characters in Rx FIFO, unwrap and unstuff them. &n;         * async_unwrap_char will deliver all found frames  &n;&t; */
 r_do
@@ -879,7 +856,7 @@ id|UART_LSR_DR
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function irport_interrupt (irq, dev_id, regs)&n; *&n; *    &n; */
+multiline_comment|/*&n; * Function irport_interrupt (irq, dev_id, regs)&n; *&n; *    Interrupt handler&n; */
 DECL|function|irport_interrupt
 r_void
 id|irport_interrupt
@@ -922,17 +899,6 @@ r_int
 id|boguscount
 op_assign
 l_int|0
-suffix:semicolon
-id|DEBUG
-c_func
-(paren
-l_int|5
-comma
-id|__FUNCTION__
-l_string|&quot;(), irq %d&bslash;n&quot;
-comma
-id|irq
-)paren
 suffix:semicolon
 r_if
 c_cond
@@ -980,17 +946,6 @@ c_loop
 id|iir
 )paren
 (brace
-id|DEBUG
-c_func
-(paren
-l_int|4
-comma
-id|__FUNCTION__
-l_string|&quot;(), iir=%#x&bslash;n&quot;
-comma
-id|iir
-)paren
-suffix:semicolon
 multiline_comment|/* Clear interrupt */
 id|lsr
 op_assign
@@ -1026,9 +981,7 @@ id|idev
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifdef CONFIG_HALF_DUPLEX
 r_else
-macro_line|#endif
 r_if
 c_cond
 (paren

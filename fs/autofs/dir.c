@@ -119,7 +119,9 @@ suffix:semicolon
 multiline_comment|/*&n; * No entries except for &quot;.&quot; and &quot;..&quot;, both of which are handled by the VFS layer&n; */
 DECL|function|autofs_dir_lookup
 r_static
-r_int
+r_struct
+id|dentry
+op_star
 id|autofs_dir_lookup
 c_func
 (paren
@@ -143,7 +145,7 @@ l_int|NULL
 )paren
 suffix:semicolon
 r_return
-l_int|0
+l_int|NULL
 suffix:semicolon
 )brace
 DECL|variable|autofs_dir_operations

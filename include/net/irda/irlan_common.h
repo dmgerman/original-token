@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlan_common.h&n; * Version:       0.8&n; * Description:   IrDA LAN access layer&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sun Aug 31 20:14:37 1997&n; * Modified at:   Tue Apr  6 16:19:41 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998 Dag Brattli &lt;dagb@cs.uit.no&gt;, All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlan_common.h&n; * Version:       0.8&n; * Description:   IrDA LAN access layer&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sun Aug 31 20:14:37 1997&n; * Modified at:   Thu Apr 22 14:30:37 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998 Dag Brattli &lt;dagb@cs.uit.no&gt;, All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
 macro_line|#ifndef IRLAN_H
 DECL|macro|IRLAN_H
 mdefine_line|#define IRLAN_H
@@ -163,10 +163,6 @@ DECL|member|kick_timer
 r_struct
 id|timer_list
 id|kick_timer
-suffix:semicolon
-DECL|member|start_new_provider
-r_int
-id|start_new_provider
 suffix:semicolon
 )brace
 suffix:semicolon
@@ -357,6 +353,30 @@ r_struct
 id|irlan_cb
 op_star
 id|self
+)paren
+suffix:semicolon
+r_void
+id|irlan_close_tsaps
+c_func
+(paren
+r_struct
+id|irlan_cb
+op_star
+id|self
+)paren
+suffix:semicolon
+r_void
+id|irlan_mod_inc_use_count
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_void
+id|irlan_mod_dec_use_count
+c_func
+(paren
+r_void
 )paren
 suffix:semicolon
 r_int
@@ -565,7 +585,7 @@ id|value_len
 )paren
 suffix:semicolon
 r_int
-id|irlan_get_param
+id|irlan_extract_param
 c_func
 (paren
 id|__u8

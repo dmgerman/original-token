@@ -1,5 +1,6 @@
 multiline_comment|/*&n; * linux/drivers/char/keyboard.c&n; *&n; * Written for linux by Johan Myreen as a translation from&n; * the assembly version by Linus (with diacriticals added)&n; *&n; * Some additional features added by Christoph Niemann (ChN), March 1993&n; *&n; * Loadable keymaps by Risto Kankkunen, May 1993&n; *&n; * Diacriticals redone &amp; other small changes, aeb@cwi.nl, June 1993&n; * Added decr/incr_console, dynamic keymaps, Unicode support,&n; * dynamic function/string keys, led setting,  Sept 1994&n; * `Sticky&squot; modifier keys, 951006.&n; *&n; * 11-11-96: SAK should now work in the raw mode (Martin Mares)&n; * &n; * Modified to provide &squot;generic&squot; keyboard support by Hamish Macdonald&n; * Merge with the m68k keyboard driver and split-off of the PC low-level&n; * parts by Geert Uytterhoeven, May 1997&n; *&n; * 27-05-97: Added support for the Magic SysRq Key (Martin Mares)&n; * 30-07-98: Dead keys redone, aeb@cwi.nl.&n; */
 macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/tty_flip.h&gt;
@@ -29,6 +30,13 @@ macro_line|#ifndef KBD_DEFLOCK
 DECL|macro|KBD_DEFLOCK
 mdefine_line|#define KBD_DEFLOCK 0
 macro_line|#endif
+DECL|variable|handle_scancode
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|handle_scancode
+)paren
+suffix:semicolon
 r_extern
 r_void
 id|ctrl_alt_del
@@ -695,6 +703,9 @@ c_func
 r_int
 r_char
 id|scancode
+comma
+r_int
+id|down
 )paren
 (brace
 r_int
@@ -703,8 +714,14 @@ id|keycode
 suffix:semicolon
 r_char
 id|up_flag
+op_assign
+id|down
+ques
+c_cond
+l_int|0
+suffix:colon
+l_int|0200
 suffix:semicolon
-multiline_comment|/* 0 or 0200 */
 r_char
 id|raw_mode
 suffix:semicolon
@@ -722,6 +739,8 @@ id|add_keyboard_randomness
 c_func
 (paren
 id|scancode
+op_or
+id|up_flag
 )paren
 suffix:semicolon
 id|tty
@@ -777,37 +796,13 @@ id|put_queue
 c_func
 (paren
 id|scancode
+op_or
+id|up_flag
 )paren
 suffix:semicolon
 multiline_comment|/* we do not return yet, because we want to maintain&n;&t;&t;   the key_down array, so that we have the correct&n;&t;&t;   values when finishing RAW mode or when changing VT&squot;s */
 )brace
-r_if
-c_cond
-(paren
-op_logical_neg
-id|kbd_pretranslate
-c_func
-(paren
-id|scancode
-comma
-id|raw_mode
-)paren
-)paren
-r_return
-suffix:semicolon
-multiline_comment|/*&n;&t; *  Convert scancode to keycode&n; &t; */
-id|up_flag
-op_assign
-(paren
-id|scancode
-op_amp
-l_int|0200
-)paren
-suffix:semicolon
-id|scancode
-op_and_assign
-l_int|0x7f
-suffix:semicolon
+multiline_comment|/*&n;&t; *  Convert scancode to keycode&n;&t; */
 r_if
 c_cond
 (paren
@@ -943,7 +938,7 @@ suffix:semicolon
 multiline_comment|/* Most key classes will be ignored */
 )brace
 multiline_comment|/*&n;&t; * Small change in philosophy: earlier we defined repetition by&n;&t; *&t; rep = keycode == prev_keycode;&n;&t; *&t; prev_keycode = keycode;&n;&t; * but now by the fact that the depressed key was down already.&n;&t; * Does this ever make a difference? Yes.&n;&t; */
-multiline_comment|/*&n; &t; *  Repeat a key only if the input buffers are empty or the&n; &t; *  characters get echoed locally. This makes key repeat usable&n; &t; *  with slow applications and under heavy loads.&n;&t; */
+multiline_comment|/*&n;&t; *  Repeat a key only if the input buffers are empty or the&n;&t; *  characters get echoed locally. This makes key repeat usable&n;&t; *  with slow applications and under heavy loads.&n;&t; */
 r_if
 c_cond
 (paren

@@ -42,6 +42,8 @@ DECL|macro|FB_TYPE_INTERLEAVED_PLANES
 mdefine_line|#define FB_TYPE_INTERLEAVED_PLANES&t;2&t;/* Interleaved planes&t;*/
 DECL|macro|FB_TYPE_TEXT
 mdefine_line|#define FB_TYPE_TEXT&t;&t;&t;3&t;/* Text/attributes&t;*/
+DECL|macro|FB_TYPE_VGA_PLANES
+mdefine_line|#define FB_TYPE_VGA_PLANES&t;&t;4&t;/* EGA/VGA planes&t;*/
 DECL|macro|FB_AUX_TEXT_MDA
 mdefine_line|#define FB_AUX_TEXT_MDA&t;&t;0&t;/* Monochrome text */
 DECL|macro|FB_AUX_TEXT_CGA
@@ -983,7 +985,7 @@ l_int|40
 suffix:semicolon
 multiline_comment|/* default video mode */
 DECL|member|node
-r_int
+id|kdev_t
 id|node
 suffix:semicolon
 DECL|member|flags

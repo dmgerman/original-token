@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irda_device.c&n; * Version:       0.4&n; * Description:   Abstract device driver layer and helper functions&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Wed Sep  2 20:22:08 1998&n; * Modified at:   Wed Apr  7 17:16:54 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998 Dag Brattli, All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *     &n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irda_device.c&n; * Version:       0.5&n; * Description:   Abstract device driver layer and helper functions&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Wed Sep  2 20:22:08 1998&n; * Modified at:   Wed Apr 21 09:48:19 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998 Dag Brattli, All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *     &n; ********************************************************************/
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
@@ -351,7 +351,7 @@ OG
 l_int|0
 )paren
 (brace
-id|self-&gt;rx_buff.data
+id|self-&gt;rx_buff.head
 op_assign
 (paren
 id|__u8
@@ -368,7 +368,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|self-&gt;rx_buff.data
+id|self-&gt;rx_buff.head
 op_eq
 l_int|NULL
 )paren
@@ -379,7 +379,7 @@ suffix:semicolon
 id|memset
 c_func
 (paren
-id|self-&gt;rx_buff.data
+id|self-&gt;rx_buff.head
 comma
 l_int|0
 comma
@@ -395,7 +395,7 @@ OG
 l_int|0
 )paren
 (brace
-id|self-&gt;tx_buff.data
+id|self-&gt;tx_buff.head
 op_assign
 (paren
 id|__u8
@@ -412,7 +412,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|self-&gt;tx_buff.data
+id|self-&gt;tx_buff.head
 op_eq
 l_int|NULL
 )paren
@@ -423,7 +423,7 @@ suffix:semicolon
 id|memset
 c_func
 (paren
-id|self-&gt;tx_buff.data
+id|self-&gt;tx_buff.head
 comma
 l_int|0
 comma
@@ -442,6 +442,14 @@ suffix:semicolon
 id|self-&gt;rx_buff.state
 op_assign
 id|OUTSIDE_FRAME
+suffix:semicolon
+id|self-&gt;tx_buff.data
+op_assign
+id|self-&gt;tx_buff.head
+suffix:semicolon
+id|self-&gt;rx_buff.data
+op_assign
+id|self-&gt;rx_buff.head
 suffix:semicolon
 multiline_comment|/* Initialize timers */
 id|init_timer
@@ -588,10 +596,10 @@ op_amp
 id|self-&gt;netdev
 )paren
 suffix:semicolon
-id|printk
+id|MESSAGE
 c_func
 (paren
-l_string|&quot;IrDA device %s registered.&bslash;n&quot;
+l_string|&quot;IrDA: Registred device %s&bslash;n&quot;
 comma
 id|self-&gt;name
 )paren
@@ -623,15 +631,6 @@ op_amp
 id|self-&gt;irlap-&gt;saddr
 comma
 l_int|4
-)paren
-suffix:semicolon
-id|DEBUG
-c_func
-(paren
-l_int|4
-comma
-id|__FUNCTION__
-l_string|&quot;()-&gt;&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -717,23 +716,23 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|self-&gt;tx_buff.data
+id|self-&gt;tx_buff.head
 )paren
 id|kfree
 c_func
 (paren
-id|self-&gt;tx_buff.data
+id|self-&gt;tx_buff.head
 )paren
 suffix:semicolon
 r_if
 c_cond
 (paren
-id|self-&gt;rx_buff.data
+id|self-&gt;rx_buff.head
 )paren
 id|kfree
 c_func
 (paren
-id|self-&gt;rx_buff.data
+id|self-&gt;rx_buff.head
 )paren
 suffix:semicolon
 id|self-&gt;magic
@@ -1559,78 +1558,6 @@ id|FALSE
 suffix:semicolon
 r_return
 id|TRUE
-suffix:semicolon
-)brace
-multiline_comment|/*&n; * Function irda_get_mtt (skb)&n; *&n; *    Utility function for getting the minimum turnaround time out of &n; *    the skb, where it has been hidden in the cb field.&n; */
-DECL|function|irda_get_mtt
-r_inline
-r_int
-r_int
-id|irda_get_mtt
-c_func
-(paren
-r_struct
-id|sk_buff
-op_star
-id|skb
-)paren
-(brace
-r_int
-r_int
-id|mtt
-suffix:semicolon
-r_if
-c_cond
-(paren
-(paren
-(paren
-r_struct
-id|irlap_skb_cb
-op_star
-)paren
-(paren
-id|skb-&gt;cb
-)paren
-)paren
-op_member_access_from_pointer
-id|magic
-op_ne
-id|LAP_MAGIC
-)paren
-id|mtt
-op_assign
-l_int|10000
-suffix:semicolon
-r_else
-id|mtt
-op_assign
-(paren
-(paren
-r_struct
-id|irlap_skb_cb
-op_star
-)paren
-(paren
-id|skb-&gt;cb
-)paren
-)paren
-op_member_access_from_pointer
-id|mtt
-suffix:semicolon
-id|ASSERT
-c_func
-(paren
-id|mtt
-op_le
-l_int|10000
-comma
-r_return
-l_int|10000
-suffix:semicolon
-)paren
-suffix:semicolon
-r_return
-id|mtt
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Function setup_dma (idev, buffer, count, mode)&n; *&n; *    Setup the DMA channel&n; *&n; */

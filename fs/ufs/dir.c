@@ -79,24 +79,6 @@ id|flags
 comma
 id|swab
 suffix:semicolon
-multiline_comment|/* Isn&squot;t that already done in the upper layer???&n;&t; * the VFS layer really needs some explicit documentation!&n;&t; */
-r_if
-c_cond
-(paren
-op_logical_neg
-id|inode
-op_logical_or
-op_logical_neg
-id|S_ISDIR
-c_func
-(paren
-id|inode-&gt;i_mode
-)paren
-)paren
-r_return
-op_minus
-id|EBADF
-suffix:semicolon
 id|sb
 op_assign
 id|inode-&gt;i_sb

@@ -973,31 +973,6 @@ r_int
 id|dir-&gt;i_mode
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|dir
-op_logical_or
-(paren
-id|dir-&gt;i_ino
-op_eq
-l_int|0
-)paren
-op_logical_or
-op_logical_neg
-id|S_ISDIR
-c_func
-(paren
-id|dir-&gt;i_mode
-)paren
-)paren
-(brace
-r_return
-op_minus
-id|EBADF
-suffix:semicolon
-)brace
 id|ntfs_debug
 c_func
 (paren
@@ -2011,7 +1986,9 @@ suffix:semicolon
 )brace
 DECL|function|ntfs_lookup
 r_static
-r_int
+r_struct
+id|dentry
+op_star
 id|ntfs_lookup
 c_func
 (paren
@@ -2094,7 +2071,12 @@ id|error
 )paren
 (brace
 r_return
+id|ERR_PTR
+c_func
+(paren
+op_minus
 id|error
+)paren
 suffix:semicolon
 )brace
 id|item
@@ -2113,7 +2095,12 @@ id|item
 )paren
 (brace
 r_return
+id|ERR_PTR
+c_func
+(paren
+op_minus
 id|ENOMEM
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/* ntfs_getdir will place the directory entry into item,&n;&t;   and the first long long is the MFT record number */
@@ -2181,7 +2168,7 @@ id|walk.name
 suffix:semicolon
 multiline_comment|/* Always return success, the dcache will handle negative entries. */
 r_return
-l_int|0
+l_int|NULL
 suffix:semicolon
 )brace
 DECL|variable|ntfs_file_operations_nommap
@@ -3928,6 +3915,7 @@ id|error
 )paren
 (brace
 r_return
+op_minus
 id|error
 suffix:semicolon
 )brace

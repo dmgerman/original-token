@@ -58,7 +58,9 @@ op_star
 )paren
 suffix:semicolon
 r_static
-r_int
+r_struct
+id|dentry
+op_star
 id|smb_lookup
 c_func
 (paren
@@ -1171,7 +1173,9 @@ suffix:semicolon
 )brace
 )brace
 r_static
-r_int
+r_struct
+id|dentry
+op_star
 DECL|function|smb_lookup
 id|smb_lookup
 c_func
@@ -1331,7 +1335,11 @@ suffix:semicolon
 id|out
 suffix:colon
 r_return
+id|ERR_PTR
+c_func
+(paren
 id|error
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * This code is common to all routines creating a new inode.&n; */

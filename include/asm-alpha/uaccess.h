@@ -115,7 +115,7 @@ DECL|macro|__get_user_64
 mdefine_line|#define __get_user_64(addr)&t;&t;&t;&t;&bslash;&n;&t;__asm__(&quot;1: ldq %0,%2&bslash;n&quot;&t;&t;&t;&bslash;&n;&t;&quot;2:&bslash;n&quot;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;.section __ex_table,&bslash;&quot;a&bslash;&quot;&bslash;n&quot;&t;&t;&t;&bslash;&n;&t;&quot;&t;.gprel32 1b&bslash;n&quot;&t;&t;&t;&t;&bslash;&n;&t;&quot;&t;lda %0, 2b-1b(%1)&bslash;n&quot;&t;&t;&t;&bslash;&n;&t;&quot;.previous&quot;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;: &quot;=r&quot;(__gu_val), &quot;=r&quot;(__gu_err)&t;&bslash;&n;&t;&t;: &quot;m&quot;(__m(addr)), &quot;1&quot;(__gu_err))
 DECL|macro|__get_user_32
 mdefine_line|#define __get_user_32(addr)&t;&t;&t;&t;&bslash;&n;&t;__asm__(&quot;1: ldl %0,%2&bslash;n&quot;&t;&t;&t;&bslash;&n;&t;&quot;2:&bslash;n&quot;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;.section __ex_table,&bslash;&quot;a&bslash;&quot;&bslash;n&quot;&t;&t;&t;&bslash;&n;&t;&quot;&t;.gprel32 1b&bslash;n&quot;&t;&t;&t;&t;&bslash;&n;&t;&quot;&t;lda %0, 2b-1b(%1)&bslash;n&quot;&t;&t;&t;&bslash;&n;&t;&quot;.previous&quot;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;: &quot;=r&quot;(__gu_val), &quot;=r&quot;(__gu_err)&t;&bslash;&n;&t;&t;: &quot;m&quot;(__m(addr)), &quot;1&quot;(__gu_err))
-macro_line|#ifdef __HAVE_CPU_BWX
+macro_line|#ifdef __alpha_bwx__
 multiline_comment|/* Those lucky bastards with ev56 and later CPUs can do byte/word moves.  */
 DECL|macro|__get_user_16
 mdefine_line|#define __get_user_16(addr)&t;&t;&t;&t;&bslash;&n;&t;__asm__(&quot;1: ldwu %0,%2&bslash;n&quot;&t;&t;&t;&bslash;&n;&t;&quot;2:&bslash;n&quot;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;.section __ex_table,&bslash;&quot;a&bslash;&quot;&bslash;n&quot;&t;&t;&t;&bslash;&n;&t;&quot;&t;.gprel32 1b&bslash;n&quot;&t;&t;&t;&t;&bslash;&n;&t;&quot;&t;lda %0, 2b-1b(%1)&bslash;n&quot;&t;&t;&t;&bslash;&n;&t;&quot;.previous&quot;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;: &quot;=r&quot;(__gu_val), &quot;=r&quot;(__gu_err)&t;&bslash;&n;&t;&t;: &quot;m&quot;(__m(addr)), &quot;1&quot;(__gu_err))
@@ -145,7 +145,7 @@ DECL|macro|__put_user_64
 mdefine_line|#define __put_user_64(x,addr)&t;&t;&t;&t;&t;&bslash;&n;__asm__ __volatile__(&quot;1: stq %r2,%1&bslash;n&quot;&t;&t;&t;&t;&bslash;&n;&t;&quot;2:&bslash;n&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;.section __ex_table,&bslash;&quot;a&bslash;&quot;&bslash;n&quot;&t;&t;&t;&t;&bslash;&n;&t;&quot;&t;.gprel32 1b&bslash;n&quot;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;&t;lda $31,2b-1b(%0)&bslash;n&quot;&t;&t;&t;&t;&bslash;&n;&t;&quot;.previous&quot;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;: &quot;=r&quot;(__pu_err)&t;&t;&t;&t;&bslash;&n;&t;&t;: &quot;m&quot; (__m(addr)), &quot;rJ&quot; (x), &quot;0&quot;(__pu_err))
 DECL|macro|__put_user_32
 mdefine_line|#define __put_user_32(x,addr)&t;&t;&t;&t;&t;&bslash;&n;__asm__ __volatile__(&quot;1: stl %r2,%1&bslash;n&quot;&t;&t;&t;&t;&bslash;&n;&t;&quot;2:&bslash;n&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;.section __ex_table,&bslash;&quot;a&bslash;&quot;&bslash;n&quot;&t;&t;&t;&t;&bslash;&n;&t;&quot;&t;.gprel32 1b&bslash;n&quot;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;&t;lda $31,2b-1b(%0)&bslash;n&quot;&t;&t;&t;&t;&bslash;&n;&t;&quot;.previous&quot;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;: &quot;=r&quot;(__pu_err)&t;&t;&t;&t;&bslash;&n;&t;&t;: &quot;m&quot;(__m(addr)), &quot;rJ&quot;(x), &quot;0&quot;(__pu_err))
-macro_line|#ifdef __HAVE_CPU_BWX
+macro_line|#ifdef __alpha_bwx__
 multiline_comment|/* Those lucky bastards with ev56 and later CPUs can do byte/word moves.  */
 DECL|macro|__put_user_16
 mdefine_line|#define __put_user_16(x,addr)&t;&t;&t;&t;&t;&bslash;&n;__asm__ __volatile__(&quot;1: stw %r2,%1&bslash;n&quot;&t;&t;&t;&t;&bslash;&n;&t;&quot;2:&bslash;n&quot;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;.section __ex_table,&bslash;&quot;a&bslash;&quot;&bslash;n&quot;&t;&t;&t;&t;&bslash;&n;&t;&quot;&t;.gprel32 1b&bslash;n&quot;&t;&t;&t;&t;&t;&bslash;&n;&t;&quot;&t;lda $31,2b-1b(%0)&bslash;n&quot;&t;&t;&t;&t;&bslash;&n;&t;&quot;.previous&quot;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;: &quot;=r&quot;(__pu_err)&t;&t;&t;&t;&bslash;&n;&t;&t;: &quot;m&quot;(__m(addr)), &quot;rJ&quot;(x), &quot;0&quot;(__pu_err))
@@ -187,6 +187,19 @@ r_int
 id|len
 )paren
 (brace
+multiline_comment|/* This little bit of silliness is to get the GP loaded for&n;&t;   a function that ordinarily wouldn&squot;t.  Otherwise we could&n;&t;   have it done by the macro directly, which can be optimized&n;&t;   the linker.  */
+r_register
+r_void
+op_star
+id|pv
+id|__asm__
+c_func
+(paren
+l_string|&quot;$27&quot;
+)paren
+op_assign
+id|__copy_user
+suffix:semicolon
 r_register
 r_void
 op_star
@@ -227,7 +240,7 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;jsr $28,__copy_user&quot;
+l_string|&quot;jsr $28,(%3),__copy_user&bslash;n&bslash;tldgp $29,0($28)&quot;
 suffix:colon
 l_string|&quot;=r&quot;
 (paren
@@ -242,6 +255,11 @@ comma
 l_string|&quot;=r&quot;
 (paren
 id|__cu_to
+)paren
+comma
+l_string|&quot;=r&quot;
+(paren
+id|pv
 )paren
 suffix:colon
 l_string|&quot;0&quot;
@@ -258,6 +276,11 @@ l_string|&quot;2&quot;
 (paren
 id|__cu_to
 )paren
+comma
+l_string|&quot;3&quot;
+(paren
+id|pv
+)paren
 suffix:colon
 l_string|&quot;$1&quot;
 comma
@@ -268,8 +291,6 @@ comma
 l_string|&quot;$4&quot;
 comma
 l_string|&quot;$5&quot;
-comma
-l_string|&quot;$27&quot;
 comma
 l_string|&quot;$28&quot;
 comma
@@ -328,6 +349,18 @@ c_func
 r_register
 r_void
 op_star
+id|pv
+id|__asm__
+c_func
+(paren
+l_string|&quot;$27&quot;
+)paren
+op_assign
+id|__copy_user
+suffix:semicolon
+r_register
+r_void
+op_star
 id|__cu_to
 id|__asm__
 c_func
@@ -365,7 +398,7 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;jsr $28,__copy_user&quot;
+l_string|&quot;jsr $28,(%3),__copy_user&bslash;n&bslash;tldgp $29,0($28)&quot;
 suffix:colon
 l_string|&quot;=r&quot;
 (paren
@@ -380,6 +413,11 @@ comma
 l_string|&quot;=r&quot;
 (paren
 id|__cu_to
+)paren
+comma
+l_string|&quot;=r&quot;
+(paren
+id|pv
 )paren
 suffix:colon
 l_string|&quot;0&quot;
@@ -396,6 +434,11 @@ l_string|&quot;2&quot;
 (paren
 id|__cu_to
 )paren
+comma
+l_string|&quot;3&quot;
+(paren
+id|pv
+)paren
 suffix:colon
 l_string|&quot;$1&quot;
 comma
@@ -406,8 +449,6 @@ comma
 l_string|&quot;$4&quot;
 comma
 l_string|&quot;$5&quot;
-comma
-l_string|&quot;$27&quot;
 comma
 l_string|&quot;$28&quot;
 comma
@@ -522,6 +563,19 @@ r_int
 id|len
 )paren
 (brace
+multiline_comment|/* This little bit of silliness is to get the GP loaded for&n;&t;   a function that ordinarily wouldn&squot;t.  Otherwise we could&n;&t;   have it done by the macro directly, which can be optimized&n;&t;   the linker.  */
+r_register
+r_void
+op_star
+id|pv
+id|__asm__
+c_func
+(paren
+l_string|&quot;$27&quot;
+)paren
+op_assign
+id|__do_clear_user
+suffix:semicolon
 r_register
 r_void
 op_star
@@ -549,7 +603,7 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;jsr $28,__do_clear_user&quot;
+l_string|&quot;jsr $28,(%2),__do_clear_user&bslash;n&bslash;tldgp $29,0($28)&quot;
 suffix:colon
 l_string|&quot;=r&quot;
 (paren
@@ -559,6 +613,11 @@ comma
 l_string|&quot;=r&quot;
 (paren
 id|__cl_to
+)paren
+comma
+l_string|&quot;=r&quot;
+(paren
+id|pv
 )paren
 suffix:colon
 l_string|&quot;0&quot;
@@ -570,6 +629,11 @@ l_string|&quot;1&quot;
 (paren
 id|__cl_to
 )paren
+comma
+l_string|&quot;2&quot;
+(paren
+id|pv
+)paren
 suffix:colon
 l_string|&quot;$1&quot;
 comma
@@ -580,8 +644,6 @@ comma
 l_string|&quot;$4&quot;
 comma
 l_string|&quot;$5&quot;
-comma
-l_string|&quot;$27&quot;
 comma
 l_string|&quot;$28&quot;
 comma
@@ -630,6 +692,18 @@ c_func
 r_register
 r_void
 op_star
+id|pv
+id|__asm__
+c_func
+(paren
+l_string|&quot;$27&quot;
+)paren
+op_assign
+id|__do_clear_user
+suffix:semicolon
+r_register
+r_void
+op_star
 id|__cl_to
 id|__asm__
 c_func
@@ -654,7 +728,7 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;jsr $28,__do_clear_user&quot;
+l_string|&quot;jsr $28,(%2),__do_clear_user&bslash;n&bslash;tldgp $29,0($28)&quot;
 suffix:colon
 l_string|&quot;=r&quot;
 (paren
@@ -664,6 +738,11 @@ comma
 l_string|&quot;=r&quot;
 (paren
 id|__cl_to
+)paren
+comma
+l_string|&quot;=r&quot;
+(paren
+id|pv
 )paren
 suffix:colon
 l_string|&quot;0&quot;
@@ -675,6 +754,11 @@ l_string|&quot;1&quot;
 (paren
 id|__cl_to
 )paren
+comma
+l_string|&quot;2&quot;
+(paren
+id|pv
+)paren
 suffix:colon
 l_string|&quot;$1&quot;
 comma
@@ -685,8 +769,6 @@ comma
 l_string|&quot;$4&quot;
 comma
 l_string|&quot;$5&quot;
-comma
-l_string|&quot;$27&quot;
 comma
 l_string|&quot;$28&quot;
 comma

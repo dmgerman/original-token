@@ -908,16 +908,10 @@ id|reserved3
 suffix:colon
 l_int|2
 suffix:semicolon
-multiline_comment|/* Drive can fake writes */
-DECL|member|test_write
+multiline_comment|/* Drive can write DVD-RAM discs */
+DECL|member|dvd_ram_write
 id|__u8
-id|test_write
-suffix:colon
-l_int|1
-suffix:semicolon
-DECL|member|reserved3a
-id|__u8
-id|reserved3a
+id|dvd_ram_write
 suffix:colon
 l_int|1
 suffix:semicolon
@@ -928,10 +922,16 @@ id|dvd_r_write
 suffix:colon
 l_int|1
 suffix:semicolon
-multiline_comment|/* Drive can write DVD-RAM discs */
-DECL|member|dvd_ram_write
+DECL|member|reserved3a
 id|__u8
-id|dvd_ram_write
+id|reserved3a
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* Drive can fake writes */
+DECL|member|test_write
+id|__u8
+id|test_write
 suffix:colon
 l_int|1
 suffix:semicolon
@@ -968,10 +968,16 @@ suffix:colon
 l_int|1
 suffix:semicolon
 multiline_comment|/* reserved in 1.2 */
-multiline_comment|/* Drive can write DVD-RAM discs */
-DECL|member|dvd_ram_write
+multiline_comment|/* Drive can fake writes */
+DECL|member|test_write
 id|__u8
-id|dvd_ram_write
+id|test_write
+suffix:colon
+l_int|1
+suffix:semicolon
+DECL|member|reserved3a
+id|__u8
+id|reserved3a
 suffix:colon
 l_int|1
 suffix:semicolon
@@ -982,16 +988,10 @@ id|dvd_r_write
 suffix:colon
 l_int|1
 suffix:semicolon
-DECL|member|reserved3a
+multiline_comment|/* Drive can write DVD-RAM discs */
+DECL|member|dvd_ram_write
 id|__u8
-id|reserved3a
-suffix:colon
-l_int|1
-suffix:semicolon
-multiline_comment|/* Drive can fake writes */
-DECL|member|test_write
-id|__u8
-id|test_write
+id|dvd_ram_write
 suffix:colon
 l_int|1
 suffix:semicolon

@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlan_provider_event.c&n; * Version:       0.9&n; * Description:   IrLAN provider state machine)&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sun Aug 31 20:14:37 1997&n; * Modified at:   Wed Feb  3 21:43:06 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998 Dag Brattli &lt;dagb@cs.uit.no&gt;, All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlan_provider_event.c&n; * Version:       0.9&n; * Description:   IrLAN provider state machine)&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sun Aug 31 20:14:37 1997&n; * Modified at:   Thu Apr 22 10:46:28 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998 Dag Brattli &lt;dagb@cs.uit.no&gt;, All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
 macro_line|#include &lt;net/irda/irda.h&gt;
 macro_line|#include &lt;net/irda/iriap.h&gt;
 macro_line|#include &lt;net/irda/irlmp.h&gt;
@@ -351,10 +351,29 @@ id|self-&gt;access_type
 op_eq
 id|ACCESS_PEER
 )paren
+(brace
 id|self-&gt;media
 op_assign
 id|MEDIA_802_3
 suffix:semicolon
+multiline_comment|/* Check if client has started yet */
+r_if
+c_cond
+(paren
+id|self-&gt;client.state
+op_eq
+id|IRLAN_IDLE
+)paren
+(brace
+multiline_comment|/* This should get the client going */
+id|irlmp_discovery_request
+c_func
+(paren
+l_int|8
+)paren
+suffix:semicolon
+)brace
+)brace
 id|irlan_provider_send_reply
 c_func
 (paren
@@ -555,7 +574,7 @@ id|event
 r_case
 id|IRLAN_FILTER_CONFIG_CMD
 suffix:colon
-id|irlan_provider_extract_params
+id|irlan_provider_parse_command
 c_func
 (paren
 id|self
@@ -716,7 +735,7 @@ id|event
 r_case
 id|IRLAN_FILTER_CONFIG_CMD
 suffix:colon
-id|irlan_provider_extract_params
+id|irlan_provider_parse_command
 c_func
 (paren
 id|self

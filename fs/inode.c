@@ -1246,19 +1246,12 @@ c_cond
 (paren
 id|found
 )paren
-(brace
 id|dispose_list
 c_func
 (paren
 id|freeable
 )paren
 suffix:semicolon
-id|found
-op_assign
-l_int|1
-suffix:semicolon
-multiline_comment|/* silly compiler */
-)brace
 r_return
 id|found
 suffix:semicolon
@@ -2868,7 +2861,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * Initialize the hash tables and default&n; * value for max inodes&n; */
 DECL|macro|MAX_INODE
-mdefine_line|#define MAX_INODE (12288)
+mdefine_line|#define MAX_INODE (16384)
 DECL|function|inode_init
 r_void
 id|__init

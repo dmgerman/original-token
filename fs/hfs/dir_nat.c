@@ -5,7 +5,9 @@ macro_line|#include &lt;linux/hfs_fs_i.h&gt;
 macro_line|#include &lt;linux/hfs_fs.h&gt;
 multiline_comment|/*================ Forward declarations ================*/
 r_static
-r_int
+r_struct
+id|dentry
+op_star
 id|nat_lookup
 c_func
 (paren
@@ -355,7 +357,9 @@ multiline_comment|/*================ File-local functions ================*/
 multiline_comment|/*&n; * nat_lookup()&n; *&n; * This is the lookup() entry in the inode_operations structure for&n; * HFS directories in the Netatalk scheme.  The purpose is to generate&n; * the inode corresponding to an entry in a directory, given the inode&n; * for the directory and the name (and its length) of the entry.&n; */
 DECL|function|nat_lookup
 r_static
-r_int
+r_struct
+id|dentry
+op_star
 id|nat_lookup
 c_func
 (paren
@@ -393,25 +397,6 @@ id|inode
 op_assign
 l_int|NULL
 suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|dir
-op_logical_or
-op_logical_neg
-id|S_ISDIR
-c_func
-(paren
-id|dir-&gt;i_mode
-)paren
-)paren
-(brace
-r_return
-op_minus
-id|ENOENT
-suffix:semicolon
-)brace
 id|dentry-&gt;d_op
 op_assign
 op_amp
@@ -687,7 +672,7 @@ id|inode
 )paren
 suffix:semicolon
 r_return
-l_int|0
+l_int|NULL
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * nat_readdir()&n; *&n; * This is the readdir() entry in the file_operations structure for&n; * HFS directories in the netatalk scheme.  The purpose is to&n; * enumerate the entries in a directory, given the inode of the&n; * directory and a struct file which indicates the location in the&n; * directory.  The struct file is updated so that the next call with&n; * the same dir and filp will produce the next directory entry.&t; The&n; * entries are returned in dirent, which is &quot;filled-in&quot; by calling&n; * filldir().  This allows the same readdir() function be used for&n; * different dirent formats.  We try to read in as many entries as we&n; * can before filldir() refuses to take any more.&n; *&n; * Note that the Netatalk format doesn&squot;t have the problem with&n; * metadata for covered directories that exists in the other formats,&n; * since the metadata is contained within the directory.&n; */

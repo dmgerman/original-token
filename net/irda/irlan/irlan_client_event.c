@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlan_client_event.c&n; * Version:       0.9&n; * Description:   IrLAN client state machine&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sun Aug 31 20:14:37 1997&n; * Modified at:   Thu Feb  4 16:08:07 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998 Dag Brattli &lt;dagb@cs.uit.no&gt;, &n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlan_client_event.c&n; * Version:       0.9&n; * Description:   IrLAN client state machine&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sun Aug 31 20:14:37 1997&n; * Modified at:   Thu Apr 22 12:23:22 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998 Dag Brattli &lt;dagb@cs.uit.no&gt;, &n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;net/irda/irda.h&gt;
 macro_line|#include &lt;net/irda/timer.h&gt;
@@ -864,7 +864,7 @@ l_int|1
 suffix:semicolon
 )paren
 suffix:semicolon
-id|irlan_client_extract_params
+id|irlan_client_parse_response
 c_func
 (paren
 id|self
@@ -1001,7 +1001,7 @@ id|event
 r_case
 id|IRLAN_DATA_INDICATION
 suffix:colon
-id|irlan_client_extract_params
+id|irlan_client_parse_response
 c_func
 (paren
 id|self
@@ -1142,7 +1142,7 @@ id|event
 r_case
 id|IRLAN_DATA_INDICATION
 suffix:colon
-id|irlan_client_extract_params
+id|irlan_client_parse_response
 c_func
 (paren
 id|self
@@ -1252,27 +1252,6 @@ comma
 id|IRLAN_DATA
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|self-&gt;client.start_new_provider
-)paren
-(brace
-id|irlan_open
-c_func
-(paren
-id|DEV_ADDR_ANY
-comma
-id|DEV_ADDR_ANY
-comma
-id|FALSE
-)paren
-suffix:semicolon
-id|self-&gt;client.start_new_provider
-op_assign
-id|FALSE
-suffix:semicolon
-)brace
 r_break
 suffix:semicolon
 r_default
@@ -1765,7 +1744,7 @@ id|event
 r_case
 id|IRLAN_DATA_INDICATION
 suffix:colon
-id|irlan_client_extract_params
+id|irlan_client_parse_response
 c_func
 (paren
 id|self

@@ -14,6 +14,9 @@ macro_line|#include &lt;net/snmp.h&gt;
 macro_line|#include &lt;net/dst.h&gt;
 macro_line|#include &lt;net/checksum.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
+macro_line|#ifdef CONFIG_HIPPI
+macro_line|#include &lt;linux/hippidevice.h&gt;
+macro_line|#endif
 macro_line|#include &lt;net/pkt_sched.h&gt;
 macro_line|#ifdef CONFIG_BRIDGE
 macro_line|#include &lt;net/br.h&gt;
@@ -38,6 +41,14 @@ r_extern
 r_struct
 id|net_proto_family
 id|inet_family_ops
+suffix:semicolon
+r_extern
+id|__u32
+id|sysctl_wmem_max
+suffix:semicolon
+r_extern
+id|__u32
+id|sysctl_rmem_max
 suffix:semicolon
 macro_line|#if defined(CONFIG_IPV6) || defined (CONFIG_IPV6_MODULE)
 macro_line|#include &lt;linux/in6.h&gt;
@@ -2145,6 +2156,43 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|if_port_text
+)paren
+suffix:semicolon
+macro_line|#ifdef CONFIG_HIPPI
+DECL|variable|hippi_type_trans
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|hippi_type_trans
+)paren
+suffix:semicolon
+DECL|variable|init_hippi_dev
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|init_hippi_dev
+)paren
+suffix:semicolon
+DECL|variable|unregister_hipdev
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|unregister_hipdev
+)paren
+suffix:semicolon
+macro_line|#endif
+DECL|variable|sysctl_wmem_max
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|sysctl_wmem_max
+)paren
+suffix:semicolon
+DECL|variable|sysctl_rmem_max
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|sysctl_rmem_max
 )paren
 suffix:semicolon
 macro_line|#if defined(CONFIG_ATALK) || defined(CONFIG_ATALK_MODULE) 

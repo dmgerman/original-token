@@ -388,7 +388,9 @@ id|hashsize
 )paren
 suffix:semicolon
 r_extern
-r_int
+r_struct
+id|dentry
+op_star
 id|affs_lookup
 c_func
 (paren

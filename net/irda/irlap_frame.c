@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlap_frame.c&n; * Version:       0.9&n; * Description:   Build and transmit IrLAP frames&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Tue Aug 19 10:27:26 1997&n; * Modified at:   Tue Apr  6 16:35:21 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998 Dag Brattli &lt;dagb@cs.uit.no&gt;, All Rights Resrved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlap_frame.c&n; * Version:       0.9&n; * Description:   Build and transmit IrLAP frames&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Tue Aug 19 10:27:26 1997&n; * Modified at:   Fri Apr 23 09:30:42 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998 Dag Brattli &lt;dagb@cs.uit.no&gt;, All Rights Resrved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;linux/if.h&gt;
 macro_line|#include &lt;linux/if_ether.h&gt;
@@ -16,6 +16,8 @@ macro_line|#include &lt;net/irda/irlap_frame.h&gt;
 macro_line|#include &lt;net/irda/qos.h&gt;
 multiline_comment|/*&n; * Function irlap_insert_mtt (self, skb)&n; *&n; *    Insert minimum turnaround time relevant information into the skb. We &n; *    need to do this since it&squot;s per packet relevant information.&n; *&n; */
 DECL|function|irlap_insert_mtt
+r_static
+r_inline
 r_void
 id|irlap_insert_mtt
 c_func
@@ -35,28 +37,6 @@ r_struct
 id|irlap_skb_cb
 op_star
 id|cb
-suffix:semicolon
-id|ASSERT
-c_func
-(paren
-id|self
-op_ne
-l_int|NULL
-comma
-r_return
-suffix:semicolon
-)paren
-suffix:semicolon
-id|ASSERT
-c_func
-(paren
-id|self-&gt;magic
-op_eq
-id|LAP_MAGIC
-comma
-r_return
-suffix:semicolon
-)paren
 suffix:semicolon
 id|cb
 op_assign
@@ -92,17 +72,6 @@ id|self-&gt;xbofs_delay
 op_assign
 l_int|0
 suffix:semicolon
-id|DEBUG
-c_func
-(paren
-l_int|4
-comma
-id|__FUNCTION__
-l_string|&quot;(), using %d xbofs&bslash;n&quot;
-comma
-id|cb-&gt;xbofs
-)paren
-suffix:semicolon
 )brace
 multiline_comment|/*&n; * Function irlap_queue_xmit (self, skb)&n; *&n; *    A little wrapper for dev_queue_xmit, so we can insert some common&n; *    code into it.&n; */
 DECL|function|irlap_queue_xmit
@@ -121,7 +90,7 @@ op_star
 id|skb
 )paren
 (brace
-multiline_comment|/* Some init stuff */
+multiline_comment|/* Some common init stuff */
 id|skb-&gt;dev
 op_assign
 id|self-&gt;netdev
@@ -141,6 +110,10 @@ c_func
 (paren
 id|ETH_P_IRDA
 )paren
+suffix:semicolon
+id|skb-&gt;priority
+op_assign
+id|TC_PRIO_BESTEFFORT
 suffix:semicolon
 multiline_comment|/* &n;&t; * Insert MTT (min. turn time) into skb, so that the device driver &n;&t; * knows which MTT to use &n;&t; */
 id|irlap_insert_mtt
@@ -1897,34 +1870,10 @@ r_struct
 id|sk_buff
 op_star
 id|skb
-op_assign
-l_int|NULL
 suffix:semicolon
 id|__u8
 op_star
 id|frame
-suffix:semicolon
-id|ASSERT
-c_func
-(paren
-id|self
-op_ne
-l_int|NULL
-comma
-r_return
-suffix:semicolon
-)paren
-suffix:semicolon
-id|ASSERT
-c_func
-(paren
-id|self-&gt;magic
-op_eq
-id|LAP_MAGIC
-comma
-r_return
-suffix:semicolon
-)paren
 suffix:semicolon
 id|skb
 op_assign
@@ -1988,19 +1937,6 @@ op_lshift
 l_int|5
 )paren
 suffix:semicolon
-id|DEBUG
-c_func
-(paren
-l_int|4
-comma
-id|__FUNCTION__
-l_string|&quot;(), vr=%d, %ld&bslash;n&quot;
-comma
-id|self-&gt;vr
-comma
-id|jiffies
-)paren
-suffix:semicolon
 id|irlap_queue_xmit
 c_func
 (paren
@@ -2037,73 +1973,15 @@ r_int
 id|command
 )paren
 (brace
-id|__u8
-op_star
-id|frame
-suffix:semicolon
-id|frame
-op_assign
-id|skb-&gt;data
-suffix:semicolon
 id|info-&gt;nr
 op_assign
-id|frame
+id|skb-&gt;data
 (braket
 l_int|1
 )braket
 op_rshift
 l_int|5
 suffix:semicolon
-id|DEBUG
-c_func
-(paren
-l_int|4
-comma
-id|__FUNCTION__
-l_string|&quot;(), nr=%d, %ld&bslash;n&quot;
-comma
-id|info-&gt;nr
-comma
-id|jiffies
-)paren
-suffix:semicolon
-multiline_comment|/*&n;&t; *  Make sure the state-machine is in the right state for receiving, &n;&t; *  if not, then we just discard the received frame for now!&n;&t; *  TODO: check if we should queue this frame, or make tty tell that&n;&t; *  it is receiving frames until the frame is delivered instead of&n;&t; *  until it is outside a frame.&n;&t; */
-macro_line|#if 0
-r_if
-c_cond
-(paren
-(paren
-id|self-&gt;state
-op_ne
-id|LAP_NRM_P
-)paren
-op_logical_and
-(paren
-id|self-&gt;state
-op_ne
-id|LAP_NRM_S
-)paren
-)paren
-(brace
-id|DEBUG
-c_func
-(paren
-l_int|0
-comma
-id|__FUNCTION__
-l_string|&quot;(), Wrong state, dropping frame!&bslash;n&quot;
-)paren
-suffix:semicolon
-id|dev_kfree_skb
-c_func
-(paren
-id|skb
-)paren
-suffix:semicolon
-r_return
-suffix:semicolon
-)brace
-macro_line|#endif
 multiline_comment|/* Check if this is a command or a response frame */
 r_if
 c_cond
@@ -2469,53 +2347,6 @@ id|sk_buff
 op_star
 id|tx_skb
 suffix:semicolon
-id|DEBUG
-c_func
-(paren
-l_int|4
-comma
-id|__FUNCTION__
-l_string|&quot;()&bslash;n&quot;
-)paren
-suffix:semicolon
-id|ASSERT
-c_func
-(paren
-id|self
-op_ne
-l_int|NULL
-comma
-r_return
-suffix:semicolon
-)paren
-suffix:semicolon
-id|ASSERT
-c_func
-(paren
-id|self-&gt;magic
-op_eq
-id|LAP_MAGIC
-comma
-r_return
-suffix:semicolon
-)paren
-suffix:semicolon
-id|ASSERT
-c_func
-(paren
-id|skb
-op_ne
-l_int|NULL
-comma
-r_return
-suffix:semicolon
-)paren
-suffix:semicolon
-multiline_comment|/* Initialize variables */
-id|tx_skb
-op_assign
-l_int|NULL
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2541,7 +2372,7 @@ op_lshift
 l_int|1
 )paren
 suffix:semicolon
-multiline_comment|/* * Copy buffer */
+multiline_comment|/* Copy buffer */
 id|tx_skb
 op_assign
 id|skb_clone
@@ -2673,53 +2504,6 @@ id|sk_buff
 op_star
 id|tx_skb
 suffix:semicolon
-id|DEBUG
-c_func
-(paren
-l_int|4
-comma
-id|__FUNCTION__
-l_string|&quot;()&bslash;n&quot;
-)paren
-suffix:semicolon
-id|ASSERT
-c_func
-(paren
-id|self
-op_ne
-l_int|NULL
-comma
-r_return
-suffix:semicolon
-)paren
-suffix:semicolon
-id|ASSERT
-c_func
-(paren
-id|self-&gt;magic
-op_eq
-id|LAP_MAGIC
-comma
-r_return
-suffix:semicolon
-)paren
-suffix:semicolon
-id|ASSERT
-c_func
-(paren
-id|skb
-op_ne
-l_int|NULL
-comma
-r_return
-suffix:semicolon
-)paren
-suffix:semicolon
-multiline_comment|/* Initialize variables */
-id|tx_skb
-op_assign
-l_int|NULL
-suffix:semicolon
 multiline_comment|/* Is this reliable or unreliable data? */
 r_if
 c_cond
@@ -2800,7 +2584,7 @@ comma
 id|skb
 )paren
 suffix:semicolon
-multiline_comment|/*  &n;&t;&t; *  Set poll bit if necessary. We do this to the copied&n;&t;&t; *  skb, since retransmitted need to set or clear the poll&n;&t;&t; *  bit depending on when * they are sent.  &n;&t;&t; */
+multiline_comment|/*  &n;&t;&t; *  Set poll bit if necessary. We do this to the copied&n;&t;&t; *  skb, since retransmitted need to set or clear the poll&n;&t;&t; *  bit depending on when they are sent.  &n;&t;&t; */
 multiline_comment|/* Stop P timer */
 id|del_timer
 c_func
@@ -3413,7 +3197,7 @@ suffix:semicolon
 id|DEBUG
 c_func
 (paren
-l_int|4
+l_int|2
 comma
 id|__FUNCTION__
 l_string|&quot;(), retry_count=%d&bslash;n&quot;
@@ -3464,9 +3248,11 @@ op_amp
 id|self-&gt;qos_tx
 )paren
 suffix:semicolon
+multiline_comment|/* We copy the skb to be retransmitted since we will have to &n;&t;&t; * modify it. Cloning will confuse packet sniffers &n;&t;&t; */
+multiline_comment|/* tx_skb = skb_clone( skb, GFP_ATOMIC); */
 id|tx_skb
 op_assign
-id|skb_clone
+id|skb_copy
 c_func
 (paren
 id|skb
@@ -3904,6 +3690,38 @@ l_int|5
 )paren
 suffix:semicolon
 multiline_comment|/* insert nr */
+macro_line|#if 0
+(brace
+r_int
+id|ns
+suffix:semicolon
+id|ns
+op_assign
+(paren
+id|frame
+(braket
+l_int|1
+)braket
+op_rshift
+l_int|1
+)paren
+op_amp
+l_int|0x07
+suffix:semicolon
+multiline_comment|/* Next to send */
+id|DEBUG
+c_func
+(paren
+l_int|0
+comma
+id|__FUNCTION__
+l_string|&quot;(), ns=%d&bslash;n&quot;
+comma
+id|ns
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
 id|irlap_queue_xmit
 c_func
 (paren
@@ -3940,17 +3758,9 @@ r_int
 id|command
 )paren
 (brace
-id|__u8
-op_star
-id|frame
-suffix:semicolon
-id|frame
-op_assign
-id|skb-&gt;data
-suffix:semicolon
 id|info-&gt;nr
 op_assign
-id|frame
+id|skb-&gt;data
 (braket
 l_int|1
 )braket
@@ -3960,7 +3770,7 @@ suffix:semicolon
 multiline_comment|/* Next to receive */
 id|info-&gt;pf
 op_assign
-id|frame
+id|skb-&gt;data
 (braket
 l_int|1
 )braket
@@ -3971,7 +3781,7 @@ multiline_comment|/* Final bit */
 id|info-&gt;ns
 op_assign
 (paren
-id|frame
+id|skb-&gt;data
 (braket
 l_int|1
 )braket
@@ -4001,41 +3811,6 @@ comma
 id|jiffies
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; *  Make sure the state-machine is in the right state for receiving, &n;&t; *  if not, then we just discard the received frame for now!&n;&t; *  TODO: check if we should queue this frame, or make tty tell that&n;&t; *  it is receiving frames until the frame is delivered instead of&n;&t; *  until it is outside a frame.&n;&t; */
-r_if
-c_cond
-(paren
-(paren
-id|self-&gt;state
-op_ne
-id|LAP_NRM_P
-)paren
-op_logical_and
-(paren
-id|self-&gt;state
-op_ne
-id|LAP_NRM_S
-)paren
-)paren
-(brace
-id|DEBUG
-c_func
-(paren
-l_int|0
-comma
-id|__FUNCTION__
-l_string|&quot;(), Wrong state, dropping frame!&bslash;n&quot;
-)paren
-suffix:semicolon
-id|dev_kfree_skb
-c_func
-(paren
-id|skb
-)paren
-suffix:semicolon
-r_return
-suffix:semicolon
-)brace
 multiline_comment|/* Check if this is a command or a response frame */
 r_if
 c_cond
@@ -4737,17 +4512,9 @@ suffix:semicolon
 id|ASSERT
 c_func
 (paren
-(paren
-id|skb
-op_ne
-l_int|NULL
-)paren
-op_logical_and
-(paren
 id|skb-&gt;len
 OG
 l_int|1
-)paren
 comma
 r_return
 op_minus

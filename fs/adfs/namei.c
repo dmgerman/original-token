@@ -442,7 +442,9 @@ l_int|0
 suffix:semicolon
 )brace
 DECL|function|adfs_lookup
-r_int
+r_struct
+id|dentry
+op_star
 id|adfs_lookup
 (paren
 r_struct
@@ -479,8 +481,12 @@ OG
 id|ADFS_NAME_LEN
 )paren
 r_return
+id|ERR_PTR
+c_func
+(paren
 op_minus
 id|ENAMETOOLONG
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -518,8 +524,12 @@ op_logical_neg
 id|inode
 )paren
 r_return
+id|ERR_PTR
+c_func
+(paren
 op_minus
 id|EACCES
+)paren
 suffix:semicolon
 )brace
 id|d_add
@@ -531,7 +541,7 @@ id|inode
 )paren
 suffix:semicolon
 r_return
-l_int|0
+l_int|NULL
 suffix:semicolon
 )brace
 eof

@@ -694,7 +694,9 @@ l_int|NULL
 suffix:semicolon
 )brace
 DECL|function|ufs_lookup
-r_int
+r_struct
+id|dentry
+op_star
 id|ufs_lookup
 c_func
 (paren
@@ -755,8 +757,12 @@ OG
 id|UFS_MAXNAMLEN
 )paren
 r_return
+id|ERR_PTR
+c_func
+(paren
 op_minus
 id|ENAMETOOLONG
+)paren
 suffix:semicolon
 id|bh
 op_assign
@@ -814,8 +820,12 @@ op_logical_neg
 id|inode
 )paren
 r_return
+id|ERR_PTR
+c_func
+(paren
 op_minus
 id|EACCES
+)paren
 suffix:semicolon
 )brace
 id|d_add
@@ -834,7 +844,7 @@ l_string|&quot;EXIT&bslash;n&quot;
 )paren
 )paren
 r_return
-l_int|0
+l_int|NULL
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;ufs_add_entry()&n; *&n; * adds a file entry to the specified directory, using the same&n; * semantics as ufs_find_entry(). It returns NULL if it failed.&n; *&n; * NOTE!! The inode part of &squot;de&squot; is left at 0 - which means you&n; * may not sleep between calling this and putting something into&n; * the entry, as someone else might have used it while you slept.&n; */

@@ -1002,23 +1002,6 @@ id|ROMFS_MAXFN
 )braket
 suffix:semicolon
 multiline_comment|/* XXX dynamic? */
-r_if
-c_cond
-(paren
-op_logical_neg
-id|i
-op_logical_or
-op_logical_neg
-id|S_ISDIR
-c_func
-(paren
-id|i-&gt;i_mode
-)paren
-)paren
-r_return
-op_minus
-id|EBADF
-suffix:semicolon
 id|maxoff
 op_assign
 id|i-&gt;i_sb-&gt;u.romfs_sb.s_maxsize
@@ -1246,7 +1229,9 @@ suffix:semicolon
 )brace
 )brace
 r_static
-r_int
+r_struct
+id|dentry
+op_star
 DECL|function|romfs_lookup
 id|romfs_lookup
 c_func
@@ -1297,27 +1282,6 @@ suffix:semicolon
 multiline_comment|/* got from dentry */
 r_int
 id|len
-suffix:semicolon
-id|res
-op_assign
-op_minus
-id|EBADF
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|dir
-op_logical_or
-op_logical_neg
-id|S_ISDIR
-c_func
-(paren
-id|dir-&gt;i_mode
-)paren
-)paren
-r_goto
-id|out
 suffix:semicolon
 id|res
 op_assign
@@ -1623,7 +1587,11 @@ suffix:semicolon
 id|out
 suffix:colon
 r_return
+id|ERR_PTR
+c_func
+(paren
 id|res
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Ok, we do readpage, to be able to execute programs.  Unfortunately,&n; * we can&squot;t use bmap, since we have looser alignments.&n; */

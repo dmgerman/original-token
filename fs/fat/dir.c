@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/fs/fat/dir.c&n; *&n; *  directory handling functions for fat-based filesystems&n; *&n; *  Written 1992,1993 by Werner Almesberger&n; *&n; *  Hidden files 1995 by Albert Cahalan &lt;albert@ccs.neu.edu&gt; &lt;adc@coe.neu.edu&gt;&n; *&n; *  VFAT extensions by Gordon Chaffee &lt;chaffee@plateau.cs.berkeley.edu&gt;&n; *  Merged with msdos fs by Henrik Storner &lt;storner@osiris.ping.dk&gt;&n; */
+multiline_comment|/*&n; *  linux/fs/fat/dir.c&n; *&n; *  directory handling functions for fat-based filesystems&n; *&n; *  Written 1992,1993 by Werner Almesberger&n; *&n; *  Hidden files 1995 by Albert Cahalan &lt;albert@ccs.neu.edu&gt; &lt;adc@coe.neu.edu&gt;&n; *&n; *  VFAT extensions by Gordon Chaffee &lt;chaffee@plateau.cs.berkeley.edu&gt;&n; *  Merged with msdos fs by Henrik Storner &lt;storner@osiris.ping.dk&gt;&n; *  Plugged buffer overrun in readdir(). AV&n; */
 DECL|macro|ASC_LINUX_VERSION
 mdefine_line|#define ASC_LINUX_VERSION(V, P, S)&t;(((V) * 65536) + ((P) * 256) + (S))
 macro_line|#include &lt;linux/version.h&gt;
@@ -84,7 +84,7 @@ id|file_fsync
 multiline_comment|/* fsync */
 )brace
 suffix:semicolon
-multiline_comment|/*&n; * Convert Unicode 16 to UTF8, translated Unicode, or ASCII.&n; * If uni_xlate is enabled and we&n; * can&squot;t get a 1:1 conversion, use a colon as an escape character since&n; * it is normally invalid on the vfat filesystem.  The following three&n; * characters are a sort of uuencoded 16 bit Unicode value.  This lets&n; * us do a full dump and restore of Unicode filenames.  We could get&n; * into some trouble with long Unicode names, but ignore that right now.&n; */
+multiline_comment|/*&n; * Convert Unicode 16 to UTF8, translated Unicode, or ASCII.&n; * If uni_xlate is enabled and we&n; * can&squot;t get a 1:1 conversion, use a colon as an escape character since&n; * it is normally invalid on the vfat filesystem.  The following three&n; * characters are a sort of uuencoded 16 bit Unicode value.  This lets&n; * us do a full dump and restore of Unicode filenames.  We could get&n; * into some trouble with long Unicode names, but ignore that right now.&n; * Ahem... Stack smashing in ring 0 isn&squot;t fun. Fixed.&n; */
 r_static
 r_int
 DECL|function|uni16_to_x8
@@ -275,6 +275,26 @@ op_assign
 l_char|&squot;?&squot;
 suffix:semicolon
 )brace
+)brace
+multiline_comment|/* We have some slack there, so it&squot;s OK */
+r_if
+c_cond
+(paren
+id|op
+OG
+id|ascii
+op_plus
+l_int|256
+)paren
+(brace
+id|op
+op_assign
+id|ascii
+op_plus
+l_int|256
+suffix:semicolon
+r_break
+suffix:semicolon
 )brace
 )brace
 op_star
@@ -503,23 +523,6 @@ id|sb
 )paren
 op_member_access_from_pointer
 id|nls_io
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|inode
-op_logical_or
-op_logical_neg
-id|S_ISDIR
-c_func
-(paren
-id|inode-&gt;i_mode
-)paren
-)paren
-r_return
-op_minus
-id|EBADF
 suffix:semicolon
 multiline_comment|/* Fake . and .. for the root directory. */
 r_if
@@ -801,6 +804,20 @@ op_amp
 op_complement
 l_int|0x40
 suffix:semicolon
+multiline_comment|/*&n;&t;&t;&t;&t; * Dirty, but not dirtier than the original,&n;&t;&t;&t;&t; * and plugs the hole.&n;&t;&t;&t;&t; */
+r_if
+c_cond
+(paren
+id|slots
+OG
+l_int|20
+)paren
+id|slots
+op_assign
+l_int|0
+suffix:semicolon
+r_else
+(brace
 id|long_slots
 op_assign
 id|slots
@@ -813,6 +830,7 @@ id|alias_checksum
 op_assign
 id|ds-&gt;alias_checksum
 suffix:semicolon
+)brace
 )brace
 id|get_new_entry
 op_assign

@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irtty.c&n; * Version:       1.1&n; * Description:   IrDA line discipline implementation&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Tue Dec  9 21:18:38 1997&n; * Modified at:   Tue Apr  6 21:35:25 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Sources:       slip.c by Laurence Culhane,   &lt;loz@holmes.demon.co.uk&gt;&n; *                          Fred N. van Kempen, &lt;waltje@uwalt.nl.mugnet.org&gt;&n; * &n; *     Copyright (c) 1998 Dag Brattli, All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *     &n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irtty.c&n; * Version:       1.1&n; * Description:   IrDA line discipline implementation&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Tue Dec  9 21:18:38 1997&n; * Modified at:   Thu Apr 22 09:20:24 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Sources:       slip.c by Laurence Culhane,   &lt;loz@holmes.demon.co.uk&gt;&n; *                          Fred N. van Kempen, &lt;waltje@uwalt.nl.mugnet.org&gt;&n; * &n; *     Copyright (c) 1998 Dag Brattli, All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *     &n; ********************************************************************/
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
@@ -428,11 +428,11 @@ l_int|NULL
 )paren
 )paren
 (brace
-id|printk
+id|ERROR
 c_func
 (paren
-id|KERN_ERR
-l_string|&quot;IrTTY: can&squot;t unregister line discipline (err = %d)&bslash;n&quot;
+id|__FUNCTION__
+l_string|&quot;(), can&squot;t unregister line discipline (err = %d)&bslash;n&quot;
 comma
 id|ret
 )paren
@@ -623,7 +623,6 @@ c_cond
 (paren
 id|tty-&gt;driver.flush_buffer
 )paren
-(brace
 id|tty-&gt;driver
 dot
 id|flush_buffer
@@ -632,13 +631,11 @@ c_func
 id|tty
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
 id|tty-&gt;ldisc.flush_buffer
 )paren
-(brace
 id|tty-&gt;ldisc
 dot
 id|flush_buffer
@@ -647,7 +644,6 @@ c_func
 id|tty
 )paren
 suffix:semicolon
-)brace
 id|self-&gt;magic
 op_assign
 id|IRTTY_MAGIC
@@ -680,7 +676,7 @@ id|IR_115200
 suffix:semicolon
 id|self-&gt;idev.qos.min_turn_time.bits
 op_assign
-l_int|0x03
+l_int|0x0f
 suffix:semicolon
 id|self-&gt;idev.flags
 op_assign
@@ -762,7 +758,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* &n; *  Function irtty_close ( tty)&n; *&n; *    Close down a IrDA channel. This means flushing out any pending queues,&n; *    and then restoring the TTY line discipline to what it was before it got&n; *    hooked to IrDA (which usually is TTY again).  &n; */
+multiline_comment|/* &n; *  Function irtty_close (tty)&n; *&n; *    Close down a IrDA channel. This means flushing out any pending queues,&n; *    and then restoring the TTY line discipline to what it was before it got&n; *    hooked to IrDA (which usually is TTY again).  &n; */
 DECL|function|irtty_close
 r_static
 r_void
@@ -886,7 +882,86 @@ suffix:semicolon
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
 )brace
-multiline_comment|/* &n; *  Function irtty_change_speed ( self, baud)&n; *&n; *    Change the speed of the serial port. The driver layer must check that&n; *    all transmission has finished using the irtty_wait_until_sent() &n; *    function.&n; */
+multiline_comment|/*&n; * Function irtty_stop_receiver (irda_device, stop)&n; *&n; *    &n; *&n; */
+DECL|function|irtty_stop_receiver
+r_static
+r_void
+id|irtty_stop_receiver
+c_func
+(paren
+r_struct
+id|irda_device
+op_star
+id|idev
+comma
+r_int
+id|stop
+)paren
+(brace
+r_struct
+id|termios
+id|old_termios
+suffix:semicolon
+r_struct
+id|irtty_cb
+op_star
+id|self
+suffix:semicolon
+r_int
+id|cflag
+suffix:semicolon
+id|self
+op_assign
+(paren
+r_struct
+id|irtty_cb
+op_star
+)paren
+id|idev-&gt;priv
+suffix:semicolon
+id|old_termios
+op_assign
+op_star
+(paren
+id|self-&gt;tty-&gt;termios
+)paren
+suffix:semicolon
+id|cflag
+op_assign
+id|self-&gt;tty-&gt;termios-&gt;c_cflag
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|stop
+)paren
+id|cflag
+op_and_assign
+op_complement
+id|CREAD
+suffix:semicolon
+r_else
+id|cflag
+op_or_assign
+id|CREAD
+suffix:semicolon
+id|self-&gt;tty-&gt;termios-&gt;c_cflag
+op_assign
+id|cflag
+suffix:semicolon
+id|self-&gt;tty-&gt;driver
+dot
+id|set_termios
+c_func
+(paren
+id|self-&gt;tty
+comma
+op_amp
+id|old_termios
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/* &n; *  Function irtty_change_speed (self, baud)&n; *&n; *    Change the speed of the serial port. The driver layer must check that&n; *    all transmission has finished using the irtty_wait_until_sent() &n; *    function.&n; */
 DECL|function|irtty_change_speed
 r_static
 r_void
@@ -1156,13 +1231,10 @@ id|type
 r_case
 id|ESI_DONGLE
 suffix:colon
-id|DEBUG
+id|MESSAGE
 c_func
 (paren
-l_int|0
-comma
-id|__FUNCTION__
-l_string|&quot;(), ESI dongle!&bslash;n&quot;
+l_string|&quot;IrDA: Trying to initialize ESI dongle!&bslash;n&quot;
 )paren
 suffix:semicolon
 id|request_module
@@ -1176,13 +1248,10 @@ suffix:semicolon
 r_case
 id|TEKRAM_DONGLE
 suffix:colon
-id|DEBUG
+id|MESSAGE
 c_func
 (paren
-l_int|0
-comma
-id|__FUNCTION__
-l_string|&quot;(), Tekram dongle!&bslash;n&quot;
+l_string|&quot;IrDA: Trying to initialize Tekram dongle!&bslash;n&quot;
 )paren
 suffix:semicolon
 id|request_module
@@ -1200,13 +1269,10 @@ multiline_comment|/* FALLTHROUGH */
 r_case
 id|ACTISYS_PLUS_DONGLE
 suffix:colon
-id|DEBUG
+id|MESSAGE
 c_func
 (paren
-l_int|0
-comma
-id|__FUNCTION__
-l_string|&quot;(), ACTiSYS dongle!&bslash;n&quot;
+l_string|&quot;IrDA: Trying to initialize ACTiSYS dongle!&bslash;n&quot;
 )paren
 suffix:semicolon
 id|request_module
@@ -1220,13 +1286,10 @@ suffix:semicolon
 r_case
 id|GIRBIL_DONGLE
 suffix:colon
-id|DEBUG
+id|MESSAGE
 c_func
 (paren
-l_int|0
-comma
-id|__FUNCTION__
-l_string|&quot;(), GIrBIL dongle!&bslash;n&quot;
+l_string|&quot;IrDA: Trying to initialize GIrBIL dongle!&bslash;n&quot;
 )paren
 suffix:semicolon
 id|request_module
@@ -1239,18 +1302,13 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
-id|DEBUG
+id|ERROR
 c_func
 (paren
-l_int|0
-comma
-id|__FUNCTION__
-l_string|&quot;(), Unknown dongle type!&bslash;n&quot;
+l_string|&quot;Unknown dongle type!&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
-suffix:semicolon
-r_break
 suffix:semicolon
 )brace
 macro_line|#endif /* CONFIG_KMOD */
@@ -1273,13 +1331,10 @@ op_logical_neg
 id|node
 )paren
 (brace
-id|DEBUG
+id|ERROR
 c_func
 (paren
-l_int|0
-comma
-id|__FUNCTION__
-l_string|&quot;(), Unable to find requested dongle&bslash;n&quot;
+l_string|&quot;Unable to find requested dongle&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
@@ -1644,7 +1699,6 @@ comma
 id|TRUE
 )paren
 suffix:semicolon
-multiline_comment|/* sl-&gt;rx_errors++; */
 id|cp
 op_increment
 suffix:semicolon
@@ -1665,7 +1719,7 @@ op_increment
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n; * Function irtty_hard_xmit (skb, dev)&n; *&n; *    Transmit skb&n; *&n; */
+multiline_comment|/*&n; * Function irtty_hard_xmit (skb, dev)&n; *&n; *    Transmit frame&n; *&n; */
 DECL|function|irtty_hard_xmit
 r_static
 r_int
@@ -1697,30 +1751,6 @@ r_int
 id|actual
 op_assign
 l_int|0
-suffix:semicolon
-id|ASSERT
-c_func
-(paren
-id|dev
-op_ne
-l_int|NULL
-comma
-r_return
-l_int|0
-suffix:semicolon
-)paren
-suffix:semicolon
-id|ASSERT
-c_func
-(paren
-id|skb
-op_ne
-l_int|NULL
-comma
-r_return
-l_int|0
-suffix:semicolon
-)paren
 suffix:semicolon
 id|idev
 op_assign
@@ -1810,7 +1840,12 @@ r_return
 op_minus
 id|EBUSY
 suffix:semicolon
-multiline_comment|/*  &n;&t; *  Transfer skb to tx_buff while wrapping, stuffing and making CRC &n;&t; */
+multiline_comment|/* Init tx buffer*/
+id|idev-&gt;tx_buff.data
+op_assign
+id|idev-&gt;tx_buff.head
+suffix:semicolon
+multiline_comment|/* Copy skb to tx_buff while wrapping, stuffing and making CRC */
 id|idev-&gt;tx_buff.len
 op_assign
 id|async_wrap_skb
@@ -1856,14 +1891,13 @@ comma
 id|idev-&gt;tx_buff.len
 )paren
 suffix:semicolon
-id|idev-&gt;tx_buff.offset
-op_assign
+multiline_comment|/* Hide the part we just transmitted */
+id|idev-&gt;tx_buff.data
+op_add_assign
 id|actual
 suffix:semicolon
-id|idev-&gt;tx_buff.head
-op_assign
-id|idev-&gt;tx_buff.data
-op_plus
+id|idev-&gt;tx_buff.len
+op_sub_assign
 id|actual
 suffix:semicolon
 id|idev-&gt;stats.tx_packets
@@ -1879,11 +1913,9 @@ r_if
 c_cond
 (paren
 (paren
-id|idev-&gt;tx.count
-op_minus
-id|idev-&gt;tx.ptr
+id|idev-&gt;tx_buff.len
 )paren
-op_le
+op_eq
 l_int|0
 )paren
 (brace
@@ -1936,6 +1968,15 @@ op_star
 id|tty
 )paren
 (brace
+id|DEBUG
+c_func
+(paren
+l_int|0
+comma
+id|__FUNCTION__
+l_string|&quot;()&bslash;n&quot;
+)paren
+suffix:semicolon
 r_return
 l_int|65536
 suffix:semicolon
@@ -1954,13 +1995,6 @@ op_star
 id|tty
 )paren
 (brace
-r_int
-id|actual
-op_assign
-l_int|0
-comma
-id|count
-suffix:semicolon
 r_struct
 id|irtty_cb
 op_star
@@ -1977,6 +2011,11 @@ r_struct
 id|irda_device
 op_star
 id|idev
+suffix:semicolon
+r_int
+id|actual
+op_assign
+l_int|0
 suffix:semicolon
 multiline_comment|/* &n;&t; *  First make sure we&squot;re connected. &n;&t; */
 id|ASSERT
@@ -2006,14 +2045,42 @@ op_assign
 op_amp
 id|self-&gt;idev
 suffix:semicolon
-multiline_comment|/*&n;&t; *  Finished with frame?&n;&t; */
+multiline_comment|/* Finished with frame?  */
 r_if
 c_cond
 (paren
-id|idev-&gt;tx_buff.offset
-op_eq
+id|idev-&gt;tx_buff.len
+OG
+l_int|0
+)paren
+(brace
+multiline_comment|/* Write data left in transmit buffer */
+id|actual
+op_assign
+id|tty-&gt;driver
+dot
+id|write
+c_func
+(paren
+id|tty
+comma
+l_int|0
+comma
+id|idev-&gt;tx_buff.data
+comma
 id|idev-&gt;tx_buff.len
 )paren
+suffix:semicolon
+id|idev-&gt;tx_buff.data
+op_add_assign
+id|actual
+suffix:semicolon
+id|idev-&gt;tx_buff.len
+op_sub_assign
+id|actual
+suffix:semicolon
+)brace
+r_else
 (brace
 multiline_comment|/* &n;&t;&t; *  Now serial buffer is almost free &amp; we can start &n;&t;&t; *  transmission of another packet &n;&t;&t; */
 id|DEBUG
@@ -2046,40 +2113,7 @@ c_func
 id|NET_BH
 )paren
 suffix:semicolon
-r_return
-suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; *  Write data left in transmit buffer&n;&t; */
-id|count
-op_assign
-id|idev-&gt;tx_buff.len
-op_minus
-id|idev-&gt;tx_buff.offset
-suffix:semicolon
-id|actual
-op_assign
-id|tty-&gt;driver
-dot
-id|write
-c_func
-(paren
-id|tty
-comma
-l_int|0
-comma
-id|idev-&gt;tx_buff.head
-comma
-id|count
-)paren
-suffix:semicolon
-id|idev-&gt;tx_buff.offset
-op_add_assign
-id|actual
-suffix:semicolon
-id|idev-&gt;tx_buff.head
-op_add_assign
-id|actual
-suffix:semicolon
 )brace
 multiline_comment|/*&n; * Function irtty_is_receiving (idev)&n; *&n; *    Return TRUE is we are currently receiving a frame&n; *&n; */
 DECL|function|irtty_is_receiving
@@ -2244,11 +2278,10 @@ r_new
 op_eq
 l_int|NULL
 )paren
-(brace
 r_return
+op_minus
 l_int|1
 suffix:semicolon
-)brace
 id|memset
 c_func
 (paren
@@ -2325,11 +2358,9 @@ op_logical_neg
 id|node
 )paren
 (brace
-id|DEBUG
+id|ERROR
 c_func
 (paren
-l_int|0
-comma
 id|__FUNCTION__
 l_string|&quot;(), dongle not found!&bslash;n&quot;
 )paren
@@ -2434,13 +2465,11 @@ id|arg
 )paren
 )paren
 (brace
-id|DEBUG
+id|ERROR
 c_func
 (paren
-l_int|0
-comma
 id|__FUNCTION__
-l_string|&quot;(), error!&bslash;n&quot;
+l_string|&quot;(), error doing ioctl!&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace

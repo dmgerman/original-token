@@ -241,7 +241,9 @@ DECL|macro|QNX4DEBUG
 mdefine_line|#define QNX4DEBUG(X) (void) 0
 macro_line|#endif
 r_extern
-r_int
+r_struct
+id|dentry
+op_star
 id|qnx4_lookup
 c_func
 (paren

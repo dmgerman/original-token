@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      esi.c&n; * Version:       1.2&n; * Description:   Driver for the Extended Systems JetEye PC dongle&n; * Status:        Experimental.&n; * Author:        Thomas Davis, &lt;ratbert@radiks.net&gt;&n; * Created at:    Sat Feb 21 18:54:38 1998&n; * Modified at:   Tue Feb  9 15:36:47 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Sources:&t;  esi.c&n; *&n; *     Copyright (c) 1998, Thomas Davis, &lt;ratbert@radiks.net&gt;,&n; *     Copyright (c) 1998, Dag Brattli,  &lt;dagb@cs.uit.no&gt;&n; *     All Rights Reserved.&n; *&n; *     This program is free software; you can redistribute it and/or&n; *     modify it under the terms of the GNU General Public License as&n; *     published by the Free Software Foundation; either version 2 of&n; *     the License, or (at your option) any later version.&n; *&n; *     I, Thomas Davis, provide no warranty for any of this software.&n; *     This material is provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      esi.c&n; * Version:       1.2&n; * Description:   Driver for the Extended Systems JetEye PC dongle&n; * Status:        Experimental.&n; * Author:        Thomas Davis, &lt;ratbert@radiks.net&gt;&n; * Created at:    Sat Feb 21 18:54:38 1998&n; * Modified at:   Mon Apr 12 11:55:30 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Sources:&t;  esi.c&n; *&n; *     Copyright (c) 1998, Thomas Davis, &lt;ratbert@radiks.net&gt;,&n; *     Copyright (c) 1998, Dag Brattli,  &lt;dagb@cs.uit.no&gt;&n; *     All Rights Reserved.&n; *&n; *     This program is free software; you can redistribute it and/or&n; *     modify it under the terms of the GNU General Public License as&n; *     published by the Free Software Foundation; either version 2 of&n; *     the License, or (at your option) any later version.&n; *&n; *     I, Thomas Davis, provide no warranty for any of this software.&n; *     This material is provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
@@ -106,7 +106,7 @@ DECL|function|__initfunc
 id|__initfunc
 c_func
 (paren
-r_void
+r_int
 id|esi_init
 c_func
 (paren
@@ -114,6 +114,7 @@ r_void
 )paren
 )paren
 (brace
+r_return
 id|irtty_register_dongle
 c_func
 (paren
@@ -434,6 +435,11 @@ id|IR_19200
 op_or
 id|IR_115200
 suffix:semicolon
+id|qos-&gt;min_turn_time.bits
+op_and_assign
+l_int|0x01
+suffix:semicolon
+multiline_comment|/* Needs at least 10 ms */
 )brace
 macro_line|#ifdef MODULE
 multiline_comment|/*&n; * Function init_module (void)&n; *&n; *    Initialize ESI module&n; *&n; */
@@ -445,13 +451,11 @@ c_func
 r_void
 )paren
 (brace
+r_return
 id|esi_init
 c_func
 (paren
 )paren
-suffix:semicolon
-r_return
-l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Function cleanup_module (void)&n; *&n; *    Cleanup ESI module&n; *&n; */

@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      uircc.c&n; * Version:       0.3&n; * Description:   Driver for the Sharp Universal Infrared &n; *                Communications Controller (UIRCC v 1.3)&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sat Dec 26 10:59:03 1998&n; * Modified at:   Sat Apr  3 15:54:41 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998 Dag Brattli, All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; *     Applicable Models : Tecra 510CDT, 500C Series, 530CDT, 520CDT,&n; *     740CDT, Portege 300CT, 660CDT, Satellite 220C Series, &n; *     Satellite Pro, 440C Series, 470CDT, 460C Series, 480C Series&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      uircc.c&n; * Version:       0.3&n; * Description:   Driver for the Sharp Universal Infrared &n; *                Communications Controller (UIRCC v 1.3)&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sat Dec 26 10:59:03 1998&n; * Modified at:   Tue Apr 20 11:15:52 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998 Dag Brattli, All Rights Reserved.&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; *     Applicable Models : Tecra 510CDT, 500C Series, 530CDT, 520CDT,&n; *     740CDT, Portege 300CT, 660CDT, Satellite 220C Series, &n; *     Satellite Pro, 440C Series, 470CDT, 460C Series, 480C Series&n; *&n; ********************************************************************/
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -788,13 +788,7 @@ op_or
 id|IR_57600
 op_or
 id|IR_115200
-op_or
-multiline_comment|/*IR_576000|IR_1152000| */
-(paren
-id|IR_4000000
-op_lshift
-l_int|8
-)paren
+multiline_comment|/*IR_576000|IR_1152000 |(IR_4000000 &lt;&lt; 8)*/
 suffix:semicolon
 id|idev-&gt;qos.min_turn_time.bits
 op_assign
@@ -1410,16 +1404,7 @@ l_string|&quot;(), handling baud of 4000000&bslash;n&quot;
 )paren
 suffix:semicolon
 multiline_comment|/* Set self pole address */
-id|outb
-c_func
-(paren
-l_int|0x10
-comma
-id|iobase
-op_plus
-id|UIRCC_CR8
-)paren
-suffix:semicolon
+singleline_comment|//outb(0xfe, iobase+UIRCC_CR8);
 multiline_comment|/* outb(0x10, iobase+UIRCC_CR11); */
 r_break
 suffix:semicolon
@@ -1703,13 +1688,9 @@ id|idev-&gt;tx_buff.len
 op_assign
 id|skb-&gt;len
 suffix:semicolon
-id|idev-&gt;tx_buff.head
-op_assign
 id|idev-&gt;tx_buff.data
-suffix:semicolon
-id|idev-&gt;tx_buff.offset
 op_assign
-l_int|0
+id|idev-&gt;tx_buff.head
 suffix:semicolon
 id|mtt
 op_assign
@@ -2208,6 +2189,8 @@ id|outb
 c_func
 (paren
 id|UIRCC_CR0_XMIT_RST
+op_or
+l_int|0x17
 comma
 id|iobase
 op_plus
@@ -2223,6 +2206,25 @@ comma
 id|iobase
 op_plus
 id|UIRCC_CR10
+)paren
+suffix:semicolon
+multiline_comment|/* Enable receiving with CRC */
+id|self-&gt;cr3
+op_assign
+(paren
+id|UIRCC_CR3_RECV_EN
+op_or
+id|UIRCC_CR3_RX_CRC_EN
+)paren
+suffix:semicolon
+id|outb
+c_func
+(paren
+id|self-&gt;cr3
+comma
+id|iobase
+op_plus
+id|UIRCC_CR3
 )paren
 suffix:semicolon
 multiline_comment|/* Make sure Rx DMA is set */
@@ -2257,14 +2259,11 @@ id|idev-&gt;io.direction
 op_assign
 id|IO_RECV
 suffix:semicolon
-id|idev-&gt;rx_buff.head
-op_assign
 id|idev-&gt;rx_buff.data
-suffix:semicolon
-id|idev-&gt;rx_buff.offset
 op_assign
-l_int|0
+id|idev-&gt;rx_buff.head
 suffix:semicolon
+macro_line|#if 0
 multiline_comment|/* Enable receiving with CRC */
 id|self-&gt;cr3
 op_assign
@@ -2284,6 +2283,7 @@ op_plus
 id|UIRCC_CR3
 )paren
 suffix:semicolon
+macro_line|#endif
 id|DEBUG
 c_func
 (paren
@@ -2495,7 +2495,7 @@ c_func
 (paren
 id|skb-&gt;data
 comma
-id|idev-&gt;rx_buff.head
+id|idev-&gt;rx_buff.data
 comma
 id|len
 )paren
@@ -2746,7 +2746,16 @@ c_func
 id|idev
 )paren
 suffix:semicolon
-multiline_comment|/* outb(0, iobase+UIRCC_CR2);  */
+id|outb
+c_func
+(paren
+l_int|0x0d
+comma
+id|iobase
+op_plus
+id|UIRCC_CR2
+)paren
+suffix:semicolon
 r_break
 suffix:semicolon
 r_case

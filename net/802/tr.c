@@ -14,7 +14,6 @@ macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/trdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
-macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;linux/net.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
@@ -135,6 +134,13 @@ id|RIF_TABLE_SIZE
 )braket
 op_assign
 initialization_block
+suffix:semicolon
+DECL|variable|rif_lock
+r_static
+id|spinlock_t
+id|rif_lock
+op_assign
+id|SPIN_LOCK_UNLOCKED
 suffix:semicolon
 DECL|macro|RIF_TIMEOUT
 mdefine_line|#define RIF_TIMEOUT 60*10*HZ
@@ -787,6 +793,19 @@ r_char
 op_star
 id|olddata
 suffix:semicolon
+r_int
+r_int
+id|flags
+suffix:semicolon
+id|spin_lock_irqsave
+c_func
+(paren
+op_amp
+id|rif_lock
+comma
+id|flags
+)paren
+suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Broadcasts are single route as stated in RFC 1042 &n;&t; */
 r_if
 c_cond
@@ -1153,6 +1172,15 @@ id|olddata
 op_assign
 id|skb-&gt;data
 suffix:semicolon
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|rif_lock
+comma
+id|flags
+)paren
+suffix:semicolon
 id|skb_pull
 c_func
 (paren
@@ -1209,6 +1237,19 @@ l_int|0
 suffix:semicolon
 id|rif_cache
 id|entry
+suffix:semicolon
+r_int
+r_int
+id|flags
+suffix:semicolon
+id|spin_lock_irqsave
+c_func
+(paren
+op_amp
+id|rif_lock
+comma
+id|flags
+)paren
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Firstly see if the entry exists&n;&t; */
 r_if
@@ -1407,6 +1448,15 @@ c_func
 (paren
 id|KERN_DEBUG
 l_string|&quot;tr.c: Couldn&squot;t malloc rif cache entry !&bslash;n&quot;
+)paren
+suffix:semicolon
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|rif_lock
+comma
+id|flags
 )paren
 suffix:semicolon
 r_return
@@ -1673,6 +1723,15 @@ op_assign
 id|jiffies
 suffix:semicolon
 )brace
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|rif_lock
+comma
+id|flags
+)paren
+suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;Scan the cache with a timer and see what we need to throw out.&n; */
 DECL|function|rif_check_expire
@@ -1697,15 +1756,13 @@ id|jiffies
 comma
 id|flags
 suffix:semicolon
-id|save_flags
+id|spin_lock_irqsave
 c_func
 (paren
+op_amp
+id|rif_lock
+comma
 id|flags
-)paren
-suffix:semicolon
-id|cli
-c_func
-(paren
 )paren
 suffix:semicolon
 r_for
@@ -1783,9 +1840,12 @@ id|entry-&gt;next
 suffix:semicolon
 )brace
 )brace
-id|restore_flags
+id|spin_unlock_irqrestore
 c_func
 (paren
+op_amp
+id|rif_lock
+comma
 id|flags
 )paren
 suffix:semicolon

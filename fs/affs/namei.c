@@ -977,7 +977,9 @@ r_return
 id|bh
 suffix:semicolon
 )brace
-r_int
+r_struct
+id|dentry
+op_star
 DECL|function|affs_lookup
 id|affs_lookup
 c_func
@@ -1095,8 +1097,12 @@ op_logical_neg
 id|inode
 )paren
 r_return
+id|ERR_PTR
+c_func
+(paren
 op_minus
 id|EACCES
+)paren
 suffix:semicolon
 )brace
 id|dentry-&gt;d_op
@@ -1113,7 +1119,7 @@ id|inode
 )paren
 suffix:semicolon
 r_return
-l_int|0
+l_int|NULL
 suffix:semicolon
 )brace
 r_int

@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      wrapper.c&n; * Version:       1.0&n; * Description:   SIR wrapper layer&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Mon Aug  4 20:40:53 1997&n; * Modified at:   Fri Mar 26 21:52:53 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998 Dag Brattli &lt;dagb@cs.uit.no&gt;, &n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      wrapper.c&n; * Version:       1.1&n; * Description:   SIR wrapper layer&n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Mon Aug  4 20:40:53 1997&n; * Modified at:   Wed Apr 21 12:45:55 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998 Dag Brattli &lt;dagb@cs.uit.no&gt;, &n; *     All Rights Reserved.&n; *     &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *&n; *     Neither Dag Brattli nor University of Troms&#xfffd; admit liability nor&n; *     provide warranty for any of this software. This material is &n; *     provided &quot;AS-IS&quot; and at no charge.&n; *&n; ********************************************************************/
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;asm/byteorder.h&gt;
 macro_line|#include &lt;net/irda/irda.h&gt;
@@ -8,8 +8,6 @@ macro_line|#include &lt;net/irda/crc.h&gt;
 macro_line|#include &lt;net/irda/irlap.h&gt;
 macro_line|#include &lt;net/irda/irlap_frame.h&gt;
 macro_line|#include &lt;net/irda/irda_device.h&gt;
-DECL|macro|MIN_LENGTH
-mdefine_line|#define MIN_LENGTH 14
 r_inline
 r_static
 r_int
@@ -43,12 +41,10 @@ r_int
 id|buffsize
 )paren
 (brace
-id|__u8
-id|byte
-suffix:semicolon
 r_int
 id|i
-comma
+suffix:semicolon
+r_int
 id|n
 suffix:semicolon
 r_int
@@ -146,7 +142,7 @@ l_string|&quot;(), wrong magic in skb!&bslash;n&quot;
 suffix:semicolon
 id|xbofs
 op_assign
-l_int|11
+l_int|10
 suffix:semicolon
 )brace
 r_else
@@ -165,6 +161,7 @@ id|skb-&gt;cb
 op_member_access_from_pointer
 id|xbofs
 suffix:semicolon
+macro_line|#if 0
 r_for
 c_loop
 (paren
@@ -179,7 +176,6 @@ suffix:semicolon
 id|i
 op_increment
 )paren
-(brace
 id|tx_buff
 (braket
 id|n
@@ -188,7 +184,24 @@ op_increment
 op_assign
 id|XBOF
 suffix:semicolon
-)brace
+macro_line|#else
+id|memset
+c_func
+(paren
+id|tx_buff
+op_plus
+id|n
+comma
+id|XBOF
+comma
+id|xbofs
+)paren
+suffix:semicolon
+id|n
+op_add_assign
+id|xbofs
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/* Start of packet character BOF */
 id|tx_buff
 (braket
@@ -214,41 +227,32 @@ id|i
 op_increment
 )paren
 (brace
-id|byte
-op_assign
-id|skb-&gt;data
-(braket
-id|i
-)braket
-suffix:semicolon
 multiline_comment|/*&n;&t;&t; *  Check for the possibility of tx buffer overflow. We use&n;&t;&t; *  bufsize-5 since the maximum number of bytes that can be &n;&t;&t; *  transmitted after this point is 5.&n;&t;&t; */
-r_if
-c_cond
+id|ASSERT
+c_func
 (paren
 id|n
-OG
+OL
+(paren
 id|buffsize
 op_minus
 l_int|5
 )paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_WARNING
-l_string|&quot;IrDA Wrapper: TX-buffer overflow!&bslash;n&quot;
-)paren
-suffix:semicolon
+comma
 r_return
 id|n
 suffix:semicolon
-)brace
+)paren
+suffix:semicolon
 id|n
 op_add_assign
 id|stuff_byte
 c_func
 (paren
-id|byte
+id|skb-&gt;data
+(braket
+id|i
+)braket
 comma
 id|tx_buff
 op_plus
@@ -262,7 +266,10 @@ c_func
 (paren
 id|fcs.value
 comma
-id|byte
+id|skb-&gt;data
+(braket
+id|i
+)braket
 )paren
 suffix:semicolon
 )brace
@@ -343,6 +350,44 @@ op_increment
 op_assign
 id|EOF
 suffix:semicolon
+macro_line|#if 0
+(brace
+r_int
+id|i
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|n
+suffix:semicolon
+id|i
+op_increment
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;%02x&quot;
+comma
+id|tx_buff
+(braket
+id|i
+)braket
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
 r_return
 id|n
 suffix:semicolon
@@ -405,20 +450,10 @@ comma
 l_int|1
 )paren
 suffix:semicolon
-id|ASSERT
+multiline_comment|/* Copy data without CRC */
+id|memcpy
 c_func
 (paren
-id|len
-op_minus
-l_int|2
-OG
-l_int|0
-comma
-r_return
-suffix:semicolon
-)paren
-suffix:semicolon
-multiline_comment|/* Copy data without CRC */
 id|skb_put
 c_func
 (paren
@@ -428,11 +463,6 @@ id|len
 op_minus
 l_int|2
 )paren
-suffix:semicolon
-id|memcpy
-c_func
-(paren
-id|skb-&gt;data
 comma
 id|buf
 comma
@@ -442,7 +472,6 @@ l_int|2
 )paren
 suffix:semicolon
 multiline_comment|/* &n;&t; *  Feed it to IrLAP layer &n;&t; */
-multiline_comment|/* memcpy(skb_put(skb,count), ax-&gt;rbuff, count); */
 id|skb-&gt;dev
 op_assign
 op_amp
@@ -521,9 +550,7 @@ suffix:semicolon
 r_case
 id|XBOF
 suffix:colon
-id|idev-&gt;xbofs
-op_increment
-suffix:semicolon
+multiline_comment|/* idev-&gt;xbofs++; */
 r_break
 suffix:semicolon
 r_case
@@ -591,6 +618,14 @@ r_default
 suffix:colon
 multiline_comment|/* Got first byte of frame */
 id|idev-&gt;rx_buff.data
+op_assign
+id|idev-&gt;rx_buff.head
+suffix:semicolon
+id|idev-&gt;rx_buff.len
+op_assign
+l_int|0
+suffix:semicolon
+id|idev-&gt;rx_buff.data
 (braket
 id|idev-&gt;rx_buff.len
 op_increment
@@ -634,10 +669,6 @@ id|idev-&gt;rx_buff.state
 op_assign
 id|BEGIN_FRAME
 suffix:semicolon
-id|idev-&gt;rx_buff.len
-op_assign
-l_int|0
-suffix:semicolon
 id|irda_device_set_media_busy
 c_func
 (paren
@@ -668,10 +699,6 @@ multiline_comment|/* Abort frame */
 id|idev-&gt;rx_buff.state
 op_assign
 id|OUTSIDE_FRAME
-suffix:semicolon
-id|idev-&gt;rx_buff.len
-op_assign
-l_int|0
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -728,10 +755,6 @@ id|idev-&gt;rx_buff.state
 op_assign
 id|OUTSIDE_FRAME
 suffix:semicolon
-id|idev-&gt;rx_buff.len
-op_assign
-l_int|0
-suffix:semicolon
 )brace
 r_break
 suffix:semicolon
@@ -754,10 +777,6 @@ multiline_comment|/* New frame? */
 id|idev-&gt;rx_buff.state
 op_assign
 id|BEGIN_FRAME
-suffix:semicolon
-id|idev-&gt;rx_buff.len
-op_assign
-l_int|0
 suffix:semicolon
 id|irda_device_set_media_busy
 c_func
@@ -810,10 +829,6 @@ comma
 id|idev-&gt;rx_buff.len
 )paren
 suffix:semicolon
-id|idev-&gt;rx_buff.len
-op_assign
-l_int|0
-suffix:semicolon
 )brace
 r_else
 (brace
@@ -825,10 +840,6 @@ id|idev
 comma
 id|TRUE
 )paren
-suffix:semicolon
-id|idev-&gt;rx_buff.len
-op_assign
-l_int|0
 suffix:semicolon
 id|idev-&gt;stats.rx_errors
 op_increment
@@ -885,10 +896,6 @@ suffix:semicolon
 id|idev-&gt;rx_buff.state
 op_assign
 id|OUTSIDE_FRAME
-suffix:semicolon
-id|idev-&gt;rx_buff.len
-op_assign
-l_int|0
 suffix:semicolon
 )brace
 r_break

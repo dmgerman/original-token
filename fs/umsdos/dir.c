@@ -654,7 +654,7 @@ suffix:semicolon
 multiline_comment|/*&n;&t;&t; * Do a real lookup on the short name.&n;&t;&t; */
 id|dret
 op_assign
-id|umsdos_lookup_dentry
+id|umsdos_covered
 c_func
 (paren
 id|filp-&gt;f_dentry
@@ -662,8 +662,6 @@ comma
 id|info.fake.fname
 comma
 id|info.fake.len
-comma
-l_int|1
 )paren
 suffix:semicolon
 id|ret
@@ -1333,7 +1331,9 @@ suffix:semicolon
 multiline_comment|/*&n; * Check whether a file exists in the current directory.&n; * Return 0 if OK, negative error code if not (ex: -ENOENT).&n; *&n; * fills dentry-&gt;d_inode with found inode, and increments its count.&n; * if not found, return -ENOENT.&n; */
 multiline_comment|/* #Specification: umsdos / lookup&n; * A lookup for a file is done in two steps.  First, we&n; * locate the file in the EMD file.  If not present, we&n; * return an error code (-ENOENT).  If it is there, we&n; * repeat the operation on the msdos file system. If&n; * this fails, it means that the file system is not in&n; * sync with the EMD file.   We silently remove this&n; * entry from the EMD file, and return ENOENT.&n; */
 DECL|function|umsdos_lookup_x
-r_int
+r_struct
+id|dentry
+op_star
 id|umsdos_lookup_x
 (paren
 r_struct
@@ -1513,7 +1513,7 @@ suffix:semicolon
 multiline_comment|/* do a real lookup to get the short name ... */
 id|dret
 op_assign
-id|umsdos_lookup_dentry
+id|umsdos_covered
 c_func
 (paren
 id|dentry-&gt;d_parent
@@ -1521,8 +1521,6 @@ comma
 id|info.fake.fname
 comma
 id|info.fake.len
-comma
-l_int|1
 )paren
 suffix:semicolon
 id|ret
@@ -1748,7 +1746,11 @@ id|dir
 )paren
 suffix:semicolon
 r_return
+id|ERR_PTR
+c_func
+(paren
 id|ret
+)paren
 suffix:semicolon
 id|out_remove
 suffix:colon
@@ -1787,7 +1789,9 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * Check whether a file exists in the current directory.&n; * Return 0 if OK, negative error code if not (ex: -ENOENT).&n; * &n; * Called by VFS; should fill dentry-&gt;d_inode via d_add.&n; */
 DECL|function|UMSDOS_lookup
-r_int
+r_struct
+id|dentry
+op_star
 id|UMSDOS_lookup
 (paren
 r_struct
@@ -1801,7 +1805,9 @@ op_star
 id|dentry
 )paren
 (brace
-r_int
+r_struct
+id|dentry
+op_star
 id|ret
 suffix:semicolon
 id|ret
@@ -1821,8 +1827,12 @@ c_cond
 (paren
 id|ret
 op_eq
+id|ERR_PTR
+c_func
+(paren
 op_minus
 id|ENOENT
+)paren
 )paren
 (brace
 id|Printk
@@ -1847,7 +1857,7 @@ id|umsdos_dentry_operations
 suffix:semicolon
 id|ret
 op_assign
-l_int|0
+l_int|NULL
 suffix:semicolon
 )brace
 r_return
@@ -1881,9 +1891,6 @@ id|result
 comma
 op_star
 id|dentry
-suffix:semicolon
-r_int
-id|error
 suffix:semicolon
 r_struct
 id|qstr
@@ -1933,34 +1940,33 @@ c_cond
 id|dentry
 )paren
 (brace
-id|result
-op_assign
-id|dentry
-suffix:semicolon
 multiline_comment|/* XXXXXXXXXXXXXXXXXXX Race alert! */
-id|error
+id|result
 op_assign
 id|UMSDOS_rlookup
 c_func
 (paren
 id|parent-&gt;d_inode
 comma
-id|result
+id|dentry
 )paren
 suffix:semicolon
 id|d_drop
 c_func
 (paren
-id|result
+id|dentry
 )paren
 suffix:semicolon
 r_if
 c_cond
 (paren
-id|error
+id|result
 )paren
 r_goto
 id|out_fail
+suffix:semicolon
+r_return
+id|dentry
 suffix:semicolon
 )brace
 id|out
@@ -1973,15 +1979,7 @@ suffix:colon
 id|dput
 c_func
 (paren
-id|result
-)paren
-suffix:semicolon
-id|result
-op_assign
-id|ERR_PTR
-c_func
-(paren
-id|error
+id|dentry
 )paren
 suffix:semicolon
 r_goto
@@ -2019,9 +2017,6 @@ id|result
 comma
 op_star
 id|dentry
-suffix:semicolon
-r_int
-id|error
 suffix:semicolon
 r_struct
 id|qstr
@@ -2091,10 +2086,6 @@ id|dentry
 (brace
 id|result
 op_assign
-id|dentry
-suffix:semicolon
-id|error
-op_assign
 id|real
 ques
 c_cond
@@ -2103,7 +2094,7 @@ c_func
 (paren
 id|parent-&gt;d_inode
 comma
-id|result
+id|dentry
 )paren
 suffix:colon
 id|UMSDOS_lookup
@@ -2111,16 +2102,19 @@ c_func
 (paren
 id|parent-&gt;d_inode
 comma
-id|result
+id|dentry
 )paren
 suffix:semicolon
 r_if
 c_cond
 (paren
-id|error
+id|result
 )paren
 r_goto
 id|out_fail
+suffix:semicolon
+r_return
+id|dentry
 suffix:semicolon
 )brace
 )brace
@@ -2134,15 +2128,7 @@ suffix:colon
 id|dput
 c_func
 (paren
-id|result
-)paren
-suffix:semicolon
-id|result
-op_assign
-id|ERR_PTR
-c_func
-(paren
-id|error
+id|dentry
 )paren
 suffix:semicolon
 r_goto

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * This file define a set of standard wireless extensions&n; *&n; * Version :&t;6&t;18.2.99&n; *&n; * Authors :&t;Jean Tourrilhes - HPLB - &lt;jt@hplb.hpl.hp.com&gt;&n; */
+multiline_comment|/*&n; * This file define a set of standard wireless extensions&n; *&n; * Version :&t;7&t;23.4.99&n; *&n; * Authors :&t;Jean Tourrilhes - HPLB - &lt;jt@hplb.hpl.hp.com&gt;&n; */
 macro_line|#ifndef _LINUX_WIRELESS_H
 DECL|macro|_LINUX_WIRELESS_H
 mdefine_line|#define _LINUX_WIRELESS_H
@@ -13,7 +13,7 @@ multiline_comment|/* --------------------------- VERSION -----------------------
 multiline_comment|/*&n; * This constant is used to know the availability of the wireless&n; * extensions and to know which version of wireless extensions it is&n; * (there is some stuff that will be added in the future...)&n; * I just plan to increment with each new version.&n; */
 DECL|macro|WIRELESS_EXT
 mdefine_line|#define WIRELESS_EXT&t;6
-multiline_comment|/*&n; * Changes :&n; *&n; * V2 to V3&n; * --------&n; *&t;Alan Cox start some incompatibles changes. I&squot;ve integrated a bit more.&n; *&t;- Encryption renamed to Encode to avoid US regulation problems&n; *&t;- Frequency changed from float to struct to avoid problems on old 386&n; *&n; * V3 to V4&n; * --------&n; *&t;- Add sensitivity&n; *&n; * V4 to V5&n; * --------&n; *&t;- Missing encoding definitions in range&n; *&t;- Access points stuff&n; *&n; * V5 to V6&n; * --------&n; *&t;- 802.11 support&n; */
+multiline_comment|/*&n; * Changes :&n; *&n; * V2 to V3&n; * --------&n; *&t;Alan Cox start some incompatibles changes. I&squot;ve integrated a bit more.&n; *&t;- Encryption renamed to Encode to avoid US regulation problems&n; *&t;- Frequency changed from float to struct to avoid problems on old 386&n; *&n; * V3 to V4&n; * --------&n; *&t;- Add sensitivity&n; *&n; * V4 to V5&n; * --------&n; *&t;- Missing encoding definitions in range&n; *&t;- Access points stuff&n; *&n; * V5 to V6&n; * --------&n; *&t;- 802.11 support (ESSID ioctls)&n; *&n; * V6 to V7&n; * --------&n; *&t;- define IW_ESSID_MAX_SIZE and IW_MAX_AP&n; */
 multiline_comment|/* -------------------------- IOCTL LIST -------------------------- */
 multiline_comment|/* Basic operations */
 DECL|macro|SIOCSIWNAME
@@ -62,7 +62,7 @@ DECL|macro|SIOCSIWESSID
 mdefine_line|#define SIOCSIWESSID&t;0x8B1A&t;&t;/* set ESSID (network name) */
 DECL|macro|SIOCGIWESSID
 mdefine_line|#define SIOCGIWESSID&t;0x8B1B&t;&t;/* get ESSID */
-multiline_comment|/* As the ESSID is a string up to 32 bytes long, it doesn&squot;t fit within the&n; * &squot;iwreq&squot; structure, so we need to use the &squot;data&squot; member to point to a&n; * string in user space, like it is done for RANGE...&n; */
+multiline_comment|/* As the ESSID is a string up to 32 bytes long, it doesn&squot;t fit within the&n; * &squot;iwreq&squot; structure, so we need to use the &squot;data&squot; member to point to a&n; * string in user space, like it is done for RANGE...&n; * The &quot;flags&quot; member indicate if the ESSID is active or not.&n; */
 multiline_comment|/* ------------------------- IOCTL STUFF ------------------------- */
 multiline_comment|/* The first and the last (range) */
 DECL|macro|SIOCIWFIRST
@@ -101,6 +101,12 @@ multiline_comment|/* Note : if you have something like 80 frequencies,&n; * don&
 multiline_comment|/* Maximum of address that you may set with SPY */
 DECL|macro|IW_MAX_SPY
 mdefine_line|#define IW_MAX_SPY&t;&t;8
+multiline_comment|/* Maximum of address that you may get in the&n;   list of access points in range */
+DECL|macro|IW_MAX_AP
+mdefine_line|#define IW_MAX_AP&t;&t;8
+multiline_comment|/* Maximum size of the ESSID string */
+DECL|macro|IW_ESSID_MAX_SIZE
+mdefine_line|#define IW_ESSID_MAX_SIZE&t;32
 multiline_comment|/****************************** TYPES ******************************/
 multiline_comment|/* --------------------------- SUBTYPES --------------------------- */
 multiline_comment|/*&n; *&t;A frequency&n; *&t;For numbers lower than 10^9, we encode the number in &squot;mant&squot; and&n; *&t;set &squot;exp&squot; to 0&n; *&t;For number greater than 10^9, we divide it by a power of 10.&n; *&t;The power of 10 is in &squot;exp&squot;, the result is in &squot;mant&squot;.&n; */
@@ -301,7 +307,7 @@ DECL|member|flags
 id|__u16
 id|flags
 suffix:semicolon
-multiline_comment|/* Unused */
+multiline_comment|/* Optional params */
 DECL|member|data
 )brace
 id|data

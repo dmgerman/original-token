@@ -1,4 +1,4 @@
-multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlpt_cli.h&n; * Version:       0.1&n; * Description:   &n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sat Feb 21 18:54:38 1998&n; * Modified at:   Mon Jan 11 15:58:16 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998, Thomas Davis, &lt;ratbert@radiks.net&gt;&n; *     Copyright (c) 1998, Dag Brattli, &n; *     All Rights Reserved&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     I, Thomas Davis, provide no warranty for any of this software. This&n; *     material is provided &quot;AS-IS&quot; and at no charge.&n; *     &n; ********************************************************************/
+multiline_comment|/*********************************************************************&n; *                &n; * Filename:      irlpt_cli.h&n; * Version:       0.1&n; * Description:   &n; * Status:        Experimental.&n; * Author:        Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * Created at:    Sat Feb 21 18:54:38 1998&n; * Modified at:   Wed Apr 21 16:46:26 1999&n; * Modified by:   Dag Brattli &lt;dagb@cs.uit.no&gt;&n; * &n; *     Copyright (c) 1998, Thomas Davis, &lt;ratbert@radiks.net&gt;&n; *     Copyright (c) 1998, Dag Brattli, &n; *     All Rights Reserved&n; *      &n; *     This program is free software; you can redistribute it and/or &n; *     modify it under the terms of the GNU General Public License as &n; *     published by the Free Software Foundation; either version 2 of &n; *     the License, or (at your option) any later version.&n; *  &n; *     I, Thomas Davis, provide no warranty for any of this software. This&n; *     material is provided &quot;AS-IS&quot; and at no charge.&n; *     &n; ********************************************************************/
 macro_line|#ifndef IRLPT_CLIENT_H
 DECL|macro|IRLPT_CLIENT_H
 mdefine_line|#define IRLPT_CLIENT_H
@@ -9,6 +9,9 @@ r_void
 id|irlpt_client_get_value_confirm
 c_func
 (paren
+r_int
+id|result
+comma
 id|__u16
 id|obj_id
 comma

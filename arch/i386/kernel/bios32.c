@@ -4563,6 +4563,10 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/*&n; * Fix base addresses, I/O and memory enables and IRQ&squot;s (mostly work-arounds&n; * for buggy PCI BIOS&squot;es :-[).&n; */
+r_extern
+r_int
+id|skip_ioapic_setup
+suffix:semicolon
 DECL|function|pcibios_fixup_devices
 r_static
 r_void
@@ -4801,6 +4805,12 @@ suffix:semicolon
 )brace
 macro_line|#if defined(CONFIG_X86_IO_APIC)
 multiline_comment|/*&n;&t;&t; * Recalculate IRQ numbers if we use the I/O APIC&n;&t;&t; */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|skip_ioapic_setup
+)paren
 (brace
 r_int
 id|irq
