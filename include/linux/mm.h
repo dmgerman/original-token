@@ -1,11 +1,10 @@
-macro_line|#ifndef _MM_H
-DECL|macro|_MM_H
-mdefine_line|#define _MM_H
+macro_line|#ifndef _LINUX_MM_H
+DECL|macro|_LINUX_MM_H
+mdefine_line|#define _LINUX_MM_H
 DECL|macro|PAGE_SIZE
 mdefine_line|#define PAGE_SIZE 4096
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
-macro_line|#include &lt;linux/signal.h&gt;
 multiline_comment|/*&n; * BAD_PAGE is the page that is used for page faults when linux&n; * is out-of-memory. Older versions of linux just did a&n; * do_exit(), but using this instead means there is less risk&n; * for a process dying in kernel mode, possibly leaving a inode&n; * unused etc..&n; *&n; * BAD_PAGETABLE is the accompanying page-table: it is initialized&n; * to point to BAD_PAGE entries.&n; */
 DECL|function|__bad_page
 r_extern

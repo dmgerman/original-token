@@ -6,7 +6,8 @@ r_struct
 id|sockaddr_un
 (brace
 DECL|member|sun_family
-id|u_short
+r_int
+r_int
 id|sun_family
 suffix:semicolon
 multiline_comment|/* AF_UNIX */
@@ -20,5 +21,5 @@ suffix:semicolon
 multiline_comment|/* pathname */
 )brace
 suffix:semicolon
-macro_line|#endif /* _UN_H */
+macro_line|#endif /* _LINUX_UN_H */
 eof

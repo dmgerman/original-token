@@ -170,7 +170,6 @@ r_return
 op_minus
 id|EBADF
 suffix:semicolon
-multiline_comment|/*&t;if (filp-&gt;f_pos &amp; (sizeof (struct ext_dir_entry) - 1))&n;&t;&t;return -EBADF; */
 r_while
 c_loop
 (paren
@@ -351,7 +350,6 @@ id|i
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&t;&t;&t;de++; */
 id|de
 op_assign
 (paren

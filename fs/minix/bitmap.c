@@ -292,12 +292,17 @@ id|dev
 )paren
 )paren
 )paren
-id|panic
+(brace
+id|printk
 c_func
 (paren
-l_string|&quot;trying to free block on nonexistent device&quot;
+l_string|&quot;trying to free block on nonexistent device&bslash;n&quot;
 )paren
 suffix:semicolon
+r_return
+l_int|1
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -309,12 +314,17 @@ id|block
 op_ge
 id|sb-&gt;u.minix_sb.s_nzones
 )paren
-id|panic
+(brace
+id|printk
 c_func
 (paren
-l_string|&quot;trying to free block not in datazone&quot;
+l_string|&quot;trying to free block not in datazone&bslash;n&quot;
 )paren
 suffix:semicolon
+r_return
+l_int|1
+suffix:semicolon
+)brace
 id|bh
 op_assign
 id|get_hash_table
@@ -463,12 +473,19 @@ id|dev
 )paren
 )paren
 )paren
-id|panic
+(brace
+id|printk
 c_func
 (paren
-l_string|&quot;trying to get new block from nonexistant device&quot;
+l_string|&quot;trying to get new block from nonexistant device&bslash;n&quot;
 )paren
 suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+id|repeat
+suffix:colon
 id|j
 op_assign
 l_int|8192
@@ -542,12 +559,17 @@ comma
 id|bh-&gt;b_data
 )paren
 )paren
-id|panic
+(brace
+id|printk
 c_func
 (paren
 l_string|&quot;new_block: bit already set&quot;
 )paren
 suffix:semicolon
+r_goto
+id|repeat
+suffix:semicolon
+)brace
 id|bh-&gt;b_dirt
 op_assign
 l_int|1
@@ -590,12 +612,17 @@ id|BLOCK_SIZE
 )paren
 )paren
 )paren
-id|panic
+(brace
+id|printk
 c_func
 (paren
 l_string|&quot;new_block: cannot get block&quot;
 )paren
 suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -603,12 +630,17 @@ id|bh-&gt;b_count
 op_ne
 l_int|1
 )paren
-id|panic
+(brace
+id|printk
 c_func
 (paren
 l_string|&quot;new block: count is != 1&quot;
 )paren
 suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
 id|clear_block
 c_func
 (paren

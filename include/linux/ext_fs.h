@@ -1,25 +1,15 @@
-macro_line|#ifndef _EXT_FS_H
-DECL|macro|_EXT_FS_H
-mdefine_line|#define _EXT_FS_H
+macro_line|#ifndef _LINUX_EXT_FS_H
+DECL|macro|_LINUX_EXT_FS_H
+mdefine_line|#define _LINUX_EXT_FS_H
 multiline_comment|/*&n; * The ext filesystem constants/structures&n; */
-multiline_comment|/*&n; * Free blocks/inodes management style&n; *&n; * One of these two constants must be defined&n; *&n; */
-multiline_comment|/* #define EXTFS_BITMAP&t;*/
-multiline_comment|/* use a bitmap */
-DECL|macro|EXTFS_FREELIST
-mdefine_line|#define EXTFS_FREELIST&t;&t;/* use a linked list */
 DECL|macro|EXT_NAME_LEN
 mdefine_line|#define EXT_NAME_LEN 255
 DECL|macro|EXT_ROOT_INO
 mdefine_line|#define EXT_ROOT_INO 1
-DECL|macro|EXT_I_MAP_SLOTS
-mdefine_line|#define EXT_I_MAP_SLOTS 8
-DECL|macro|EXT_Z_MAP_SLOTS
-mdefine_line|#define EXT_Z_MAP_SLOTS 8
 DECL|macro|EXT_SUPER_MAGIC
 mdefine_line|#define EXT_SUPER_MAGIC 0x137D
 DECL|macro|EXT_INODES_PER_BLOCK
 mdefine_line|#define EXT_INODES_PER_BLOCK ((BLOCK_SIZE)/(sizeof (struct ext_inode)))
-multiline_comment|/* #define EXT_DIR_ENTRIES_PER_BLOCK ((BLOCK_SIZE)/(sizeof (struct ext_dir_entry))) */
 DECL|struct|ext_inode
 r_struct
 id|ext_inode
@@ -126,19 +116,6 @@ r_int
 r_int
 id|s_nzones
 suffix:semicolon
-macro_line|#ifdef EXTFS_BITMAP
-DECL|member|s_imap_blocks
-r_int
-r_int
-id|s_imap_blocks
-suffix:semicolon
-DECL|member|s_zmap_blocks
-r_int
-r_int
-id|s_zmap_blocks
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef EXTFS_FREELIST
 DECL|member|s_firstfreeblock
 r_int
 r_int
@@ -159,7 +136,6 @@ r_int
 r_int
 id|s_freeinodescount
 suffix:semicolon
-macro_line|#endif
 DECL|member|s_firstdatazone
 r_int
 r_int

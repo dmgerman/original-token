@@ -1,6 +1,6 @@
-macro_line|#ifndef _MINIX_FS_H
-DECL|macro|_MINIX_FS_H
-mdefine_line|#define _MINIX_FS_H
+macro_line|#ifndef _LINUX_MINIX_FS_H
+DECL|macro|_LINUX_MINIX_FS_H
+mdefine_line|#define _LINUX_MINIX_FS_H
 multiline_comment|/*&n; * The minix filesystem constants/structures&n; */
 DECL|macro|MINIX_NAME_LEN
 mdefine_line|#define MINIX_NAME_LEN 14

@@ -1,6 +1,6 @@
-macro_line|#ifndef _CONFIG_H
-DECL|macro|_CONFIG_H
-mdefine_line|#define _CONFIG_H
+macro_line|#ifndef _LINUX_CONFIG_H
+DECL|macro|_LINUX_CONFIG_H
+mdefine_line|#define _LINUX_CONFIG_H
 DECL|macro|CONFIG_DISTRIBUTION
 mdefine_line|#define CONFIG_DISTRIBUTION
 multiline_comment|/*&n; * Defines for what uname() should return &n; */

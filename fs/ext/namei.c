@@ -90,7 +90,6 @@ l_char|&squot;&bslash;0&squot;
 r_return
 l_int|1
 suffix:semicolon
-multiline_comment|/*&t;if (len &lt; EXT_NAME_LEN &amp;&amp; de-&gt;name[len])&n;&t;&t;return 0; */
 r_if
 c_cond
 (paren
@@ -195,10 +194,8 @@ op_star
 id|next_dir
 )paren
 (brace
-multiline_comment|/*&t;int entries; */
 r_int
 id|block
-multiline_comment|/* ,i */
 suffix:semicolon
 r_int
 id|offset
@@ -251,7 +248,6 @@ op_assign
 id|EXT_NAME_LEN
 suffix:semicolon
 macro_line|#endif
-multiline_comment|/*&t;entries = dir-&gt;i_size / (sizeof (struct ext_dir_entry)); */
 r_if
 c_cond
 (paren
@@ -309,7 +305,6 @@ id|next_dir
 op_assign
 l_int|NULL
 suffix:semicolon
-multiline_comment|/*&t;i = 0; */
 id|offset
 op_assign
 l_int|0
@@ -389,8 +384,6 @@ id|BLOCK_SIZE
 )paren
 )paren
 (brace
-multiline_comment|/*&t;&t;&t;&t;i += EXT_DIR_ENTRIES_PER_BLOCK; */
-multiline_comment|/* &t;&t;&t;&t;offset += BLOCK_SIZE; */
 r_continue
 suffix:semicolon
 )brace
@@ -506,7 +499,6 @@ op_plus
 id|de-&gt;rec_len
 )paren
 suffix:semicolon
-multiline_comment|/*&t;&t;i++; */
 )brace
 id|brelse
 c_func
@@ -835,7 +827,6 @@ id|EXT_DIR_PAD
 op_star
 id|EXT_DIR_PAD
 suffix:semicolon
-multiline_comment|/*&t;i = 0; */
 id|offset
 op_assign
 l_int|0
@@ -930,7 +921,6 @@ id|BLOCK_SIZE
 )paren
 )paren
 (brace
-multiline_comment|/*&t;&t;&t;&t;i += EXT_DIR_ENTRIES_PER_BLOCK; */
 id|offset
 op_add_assign
 id|BLOCK_SIZE
@@ -1112,7 +1102,6 @@ id|de-&gt;rec_len
 op_assign
 id|rec_len
 suffix:semicolon
-multiline_comment|/*&t;&t;&t;dir-&gt;i_size = (i+1)*sizeof(struct ext_dir_entry); */
 id|dir-&gt;i_size
 op_add_assign
 id|de-&gt;rec_len
@@ -1215,7 +1204,6 @@ id|de-&gt;name
 id|i
 )braket
 op_assign
-multiline_comment|/*(i&lt;namelen)?*/
 id|get_fs_byte
 c_func
 (paren
@@ -1223,7 +1211,6 @@ id|name
 op_plus
 id|i
 )paren
-multiline_comment|/*:0*/
 suffix:semicolon
 id|bh-&gt;b_dirt
 op_assign
@@ -2055,7 +2042,6 @@ comma
 l_string|&quot;.&quot;
 )paren
 suffix:semicolon
-multiline_comment|/*&t;de++; */
 id|de
 op_assign
 (paren
@@ -2218,10 +2204,8 @@ id|inode
 )paren
 (brace
 r_int
-multiline_comment|/* nr, */
 id|block
 suffix:semicolon
-multiline_comment|/*&t;int len; */
 r_int
 r_int
 id|offset
@@ -2239,7 +2223,6 @@ comma
 op_star
 id|de1
 suffix:semicolon
-multiline_comment|/*&t;len = inode-&gt;i_size / sizeof (struct ext_dir_entry); */
 r_if
 c_cond
 (paren
@@ -2351,7 +2334,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&t;nr = 2; */
 id|offset
 op_assign
 id|de-&gt;rec_len
@@ -3784,10 +3766,8 @@ suffix:semicolon
 )brace
 DECL|macro|PARENT_INO
 mdefine_line|#define PARENT_INO(buffer) &bslash;&n;((struct ext_dir_entry *) ((char *) buffer + &bslash;&n;((struct ext_dir_entry *) buffer)-&gt;rec_len))-&gt;inode
-multiline_comment|/* (((struct ext_dir_entry *) (buffer))[1].inode) */
 DECL|macro|PARENT_NAME
 mdefine_line|#define PARENT_NAME(buffer) &bslash;&n;((struct ext_dir_entry *) ((char *) buffer + &bslash;&n;((struct ext_dir_entry *) buffer)-&gt;rec_len))-&gt;name
-multiline_comment|/* (((struct ext_dir_entry *) (buffer))[1].name) */
 multiline_comment|/*&n; * rename uses retrying to avoid race-conditions: at least they should be minimal.&n; * it tries to allocate all the blocks, then sanity-checks, and if the sanity-&n; * checks fail, it tries to restart itself again. Very practical - no changes&n; * are done until we know everything works ok.. and then all the changes can be&n; * done in one fell swoop when we have claimed all the buffers needed.&n; *&n; * Anybody can rename anything with this: the permission checks are left to the&n; * higher-level routines.&n; */
 DECL|function|do_ext_rename
 r_static

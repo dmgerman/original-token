@@ -4061,17 +4061,6 @@ r_continue
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t;&t; *  Control characters can be used in the _middle_&n;&t;&t; *  of an escape sequence.&n;&t;&t; */
-r_if
-c_cond
-(paren
-id|c
-OL
-l_int|32
-op_logical_or
-id|c
-op_eq
-l_int|127
-)paren
 r_switch
 c_cond
 (paren
@@ -4086,7 +4075,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-r_break
+r_continue
 suffix:semicolon
 r_case
 l_int|8
@@ -4097,7 +4086,7 @@ c_func
 id|currcons
 )paren
 suffix:semicolon
-r_break
+r_continue
 suffix:semicolon
 r_case
 l_int|9
@@ -4154,7 +4143,7 @@ op_lshift
 l_int|1
 )paren
 suffix:semicolon
-r_break
+r_continue
 suffix:semicolon
 r_case
 l_int|10
@@ -4177,7 +4166,7 @@ c_cond
 op_logical_neg
 id|lfnlmode
 )paren
-r_break
+r_continue
 suffix:semicolon
 r_case
 l_int|13
@@ -4188,7 +4177,7 @@ c_func
 id|currcons
 )paren
 suffix:semicolon
-r_break
+r_continue
 suffix:semicolon
 r_case
 l_int|14
@@ -4201,7 +4190,7 @@ id|translate
 op_assign
 id|G1_charset
 suffix:semicolon
-r_break
+r_continue
 suffix:semicolon
 r_case
 l_int|15
@@ -4214,7 +4203,7 @@ id|translate
 op_assign
 id|G0_charset
 suffix:semicolon
-r_break
+r_continue
 suffix:semicolon
 r_case
 l_int|24
@@ -4226,7 +4215,7 @@ id|state
 op_assign
 id|ESnormal
 suffix:semicolon
-r_break
+r_continue
 suffix:semicolon
 r_case
 l_int|27
@@ -4235,7 +4224,7 @@ id|state
 op_assign
 id|ESesc
 suffix:semicolon
-r_break
+r_continue
 suffix:semicolon
 r_case
 l_int|127
@@ -4246,10 +4235,20 @@ c_func
 id|currcons
 )paren
 suffix:semicolon
-r_break
+r_continue
+suffix:semicolon
+r_case
+l_int|128
+op_plus
+l_int|27
+suffix:colon
+id|state
+op_assign
+id|ESsquare
+suffix:semicolon
+r_continue
 suffix:semicolon
 )brace
-r_else
 r_switch
 c_cond
 (paren
@@ -4276,7 +4275,7 @@ id|state
 op_assign
 id|ESsquare
 suffix:semicolon
-r_break
+r_continue
 suffix:semicolon
 r_case
 l_char|&squot;E&squot;
@@ -4293,7 +4292,7 @@ c_func
 id|currcons
 )paren
 suffix:semicolon
-r_break
+r_continue
 suffix:semicolon
 r_case
 l_char|&squot;M&squot;
@@ -4304,7 +4303,7 @@ c_func
 id|currcons
 )paren
 suffix:semicolon
-r_break
+r_continue
 suffix:semicolon
 r_case
 l_char|&squot;D&squot;
@@ -4315,7 +4314,7 @@ c_func
 id|currcons
 )paren
 suffix:semicolon
-r_break
+r_continue
 suffix:semicolon
 r_case
 l_char|&squot;H&squot;
@@ -4337,7 +4336,7 @@ l_int|31
 )paren
 )paren
 suffix:semicolon
-r_break
+r_continue
 suffix:semicolon
 r_case
 l_char|&squot;Z&squot;
@@ -4350,7 +4349,7 @@ comma
 id|tty
 )paren
 suffix:semicolon
-r_break
+r_continue
 suffix:semicolon
 r_case
 l_char|&squot;7&squot;
@@ -4361,7 +4360,7 @@ c_func
 id|currcons
 )paren
 suffix:semicolon
-r_break
+r_continue
 suffix:semicolon
 r_case
 l_char|&squot;8&squot;
@@ -4372,7 +4371,7 @@ c_func
 id|currcons
 )paren
 suffix:semicolon
-r_break
+r_continue
 suffix:semicolon
 r_case
 l_char|&squot;(&squot;
@@ -4381,7 +4380,7 @@ id|state
 op_assign
 id|ESsetG0
 suffix:semicolon
-r_break
+r_continue
 suffix:semicolon
 r_case
 l_char|&squot;)&squot;
@@ -4390,7 +4389,7 @@ id|state
 op_assign
 id|ESsetG1
 suffix:semicolon
-r_break
+r_continue
 suffix:semicolon
 r_case
 l_char|&squot;#&squot;
@@ -4399,7 +4398,7 @@ id|state
 op_assign
 id|EShash
 suffix:semicolon
-r_break
+r_continue
 suffix:semicolon
 r_case
 l_char|&squot;c&squot;
@@ -4412,7 +4411,7 @@ comma
 l_int|1
 )paren
 suffix:semicolon
-r_break
+r_continue
 suffix:semicolon
 r_case
 l_char|&squot;&gt;&squot;
@@ -4428,7 +4427,7 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-r_break
+r_continue
 suffix:semicolon
 r_case
 l_char|&squot;=&squot;
@@ -4444,10 +4443,10 @@ comma
 l_int|1
 )paren
 suffix:semicolon
-r_break
+r_continue
 suffix:semicolon
 )brace
-r_break
+r_continue
 suffix:semicolon
 r_case
 id|ESsquare
@@ -4496,7 +4495,7 @@ id|state
 op_assign
 id|ESfunckey
 suffix:semicolon
-r_break
+r_continue
 suffix:semicolon
 )brace
 r_if
@@ -4510,7 +4509,7 @@ op_eq
 l_char|&squot;?&squot;
 )paren
 )paren
-r_break
+r_continue
 suffix:semicolon
 r_case
 id|ESgetpars
@@ -4532,7 +4531,7 @@ l_int|1
 id|npar
 op_increment
 suffix:semicolon
-r_break
+r_continue
 suffix:semicolon
 )brace
 r_else
@@ -4564,7 +4563,7 @@ id|c
 op_minus
 l_char|&squot;0&squot;
 suffix:semicolon
-r_break
+r_continue
 suffix:semicolon
 )brace
 r_else
@@ -4596,7 +4595,7 @@ comma
 l_int|1
 )paren
 suffix:semicolon
-r_break
+r_continue
 suffix:semicolon
 r_case
 l_char|&squot;l&squot;
@@ -4609,7 +4608,7 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-r_break
+r_continue
 suffix:semicolon
 r_case
 l_char|&squot;n&squot;
@@ -4657,7 +4656,7 @@ comma
 id|tty
 )paren
 suffix:semicolon
-r_break
+r_continue
 suffix:semicolon
 )brace
 r_if
@@ -4670,7 +4669,7 @@ id|ques
 op_assign
 l_int|0
 suffix:semicolon
-r_break
+r_continue
 suffix:semicolon
 )brace
 r_switch
@@ -4712,7 +4711,7 @@ comma
 id|y
 )paren
 suffix:semicolon
-r_break
+r_continue
 suffix:semicolon
 r_case
 l_char|&squot;A&squot;
@@ -4747,7 +4746,7 @@ l_int|0
 )braket
 )paren
 suffix:semicolon
-r_break
+r_continue
 suffix:semicolon
 r_case
 l_char|&squot;B&squot;
@@ -4785,7 +4784,7 @@ l_int|0
 )braket
 )paren
 suffix:semicolon
-r_break
+r_continue
 suffix:semicolon
 r_case
 l_char|&squot;C&squot;
@@ -4823,7 +4822,7 @@ comma
 id|y
 )paren
 suffix:semicolon
-r_break
+r_continue
 suffix:semicolon
 r_case
 l_char|&squot;D&squot;
@@ -4858,7 +4857,7 @@ comma
 id|y
 )paren
 suffix:semicolon
-r_break
+r_continue
 suffix:semicolon
 r_case
 l_char|&squot;E&squot;
@@ -4893,7 +4892,7 @@ l_int|0
 )braket
 )paren
 suffix:semicolon
-r_break
+r_continue
 suffix:semicolon
 r_case
 l_char|&squot;F&squot;
@@ -4928,7 +4927,7 @@ l_int|0
 )braket
 )paren
 suffix:semicolon
-r_break
+r_continue
 suffix:semicolon
 r_case
 l_char|&squot;d&squot;
@@ -4960,7 +4959,7 @@ l_int|0
 )braket
 )paren
 suffix:semicolon
-r_break
+r_continue
 suffix:semicolon
 r_case
 l_char|&squot;H&squot;
@@ -5012,7 +5011,7 @@ l_int|0
 )braket
 )paren
 suffix:semicolon
-r_break
+r_continue
 suffix:semicolon
 r_case
 l_char|&squot;J&squot;
@@ -5028,7 +5027,7 @@ l_int|0
 )braket
 )paren
 suffix:semicolon
-r_break
+r_continue
 suffix:semicolon
 r_case
 l_char|&squot;K&squot;
@@ -5044,7 +5043,7 @@ l_int|0
 )braket
 )paren
 suffix:semicolon
-r_break
+r_continue
 suffix:semicolon
 r_case
 l_char|&squot;L&squot;
@@ -5060,7 +5059,7 @@ l_int|0
 )braket
 )paren
 suffix:semicolon
-r_break
+r_continue
 suffix:semicolon
 r_case
 l_char|&squot;M&squot;
@@ -5076,7 +5075,7 @@ l_int|0
 )braket
 )paren
 suffix:semicolon
-r_break
+r_continue
 suffix:semicolon
 r_case
 l_char|&squot;P&squot;
@@ -5092,7 +5091,7 @@ l_int|0
 )braket
 )paren
 suffix:semicolon
-r_break
+r_continue
 suffix:semicolon
 r_case
 l_char|&squot;c&squot;
@@ -5114,7 +5113,7 @@ comma
 id|tty
 )paren
 suffix:semicolon
-r_break
+r_continue
 suffix:semicolon
 r_case
 l_char|&squot;g&squot;
@@ -5186,7 +5185,7 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
-r_break
+r_continue
 suffix:semicolon
 r_case
 l_char|&squot;m&squot;
@@ -5197,7 +5196,7 @@ c_func
 id|currcons
 )paren
 suffix:semicolon
-r_break
+r_continue
 suffix:semicolon
 r_case
 l_char|&squot;r&squot;
@@ -5282,7 +5281,7 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
-r_break
+r_continue
 suffix:semicolon
 r_case
 l_char|&squot;s&squot;
@@ -5293,7 +5292,7 @@ c_func
 id|currcons
 )paren
 suffix:semicolon
-r_break
+r_continue
 suffix:semicolon
 r_case
 l_char|&squot;u&squot;
@@ -5304,7 +5303,7 @@ c_func
 id|currcons
 )paren
 suffix:semicolon
-r_break
+r_continue
 suffix:semicolon
 r_case
 l_char|&squot;@&squot;
@@ -5320,7 +5319,7 @@ l_int|0
 )braket
 )paren
 suffix:semicolon
-r_break
+r_continue
 suffix:semicolon
 r_case
 l_char|&squot;]&squot;
@@ -5332,10 +5331,10 @@ c_func
 id|currcons
 )paren
 suffix:semicolon
-r_break
+r_continue
 suffix:semicolon
 )brace
-r_break
+r_continue
 suffix:semicolon
 r_case
 id|ESfunckey
@@ -5344,7 +5343,7 @@ id|state
 op_assign
 id|ESnormal
 suffix:semicolon
-r_break
+r_continue
 suffix:semicolon
 r_case
 id|EShash
@@ -5391,7 +5390,7 @@ op_or
 l_char|&squot; &squot;
 suffix:semicolon
 )brace
-r_break
+r_continue
 suffix:semicolon
 r_case
 id|ESsetG0
@@ -5446,7 +5445,7 @@ id|state
 op_assign
 id|ESnormal
 suffix:semicolon
-r_break
+r_continue
 suffix:semicolon
 r_case
 id|ESsetG1
@@ -5501,7 +5500,7 @@ id|state
 op_assign
 id|ESnormal
 suffix:semicolon
-r_break
+r_continue
 suffix:semicolon
 r_default
 suffix:colon

@@ -10,7 +10,31 @@ macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/head.h&gt;
 macro_line|#include &lt;linux/unistd.h&gt;
+r_extern
+r_int
+r_int
+op_star
+id|prof_buffer
+suffix:semicolon
+r_extern
+r_int
+r_int
+id|prof_len
+suffix:semicolon
+r_extern
+r_int
+id|end
+suffix:semicolon
 multiline_comment|/*&n; * we need this inline - forking from kernel space will result&n; * in NO COPY ON WRITE (!!!), until an execve is executed. This&n; * is no problem, but for the stack. This is handled by not letting&n; * main() use the stack at all after fork(). Thus, no function&n; * calls - which means inline code for fork too, as otherwise we&n; * would use the stack upon exit from &squot;fork()&squot;.&n; *&n; * Actually only pause and fork are needed inline, so that there&n; * won&squot;t be any messing with the stack from main(), but we define&n; * some others too.&n; */
+r_static
+r_inline
+id|_syscall0
+c_func
+(paren
+r_int
+comma
+id|idle
+)paren
 r_static
 r_inline
 id|_syscall0
@@ -256,14 +280,6 @@ c_func
 r_int
 comma
 r_int
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|hd_init
-c_func
-(paren
-r_void
 )paren
 suffix:semicolon
 r_extern
@@ -756,6 +772,40 @@ c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#ifdef PROFILE_SHIFT
+id|prof_buffer
+op_assign
+(paren
+r_int
+r_int
+op_star
+)paren
+id|memory_start
+suffix:semicolon
+id|prof_len
+op_assign
+(paren
+r_int
+r_int
+)paren
+op_amp
+id|end
+suffix:semicolon
+id|prof_len
+op_rshift_assign
+id|PROFILE_SHIFT
+suffix:semicolon
+id|memory_start
+op_add_assign
+id|prof_len
+op_star
+r_sizeof
+(paren
+r_int
+r_int
+)paren
+suffix:semicolon
+macro_line|#endif
 id|memory_start
 op_assign
 id|chr_dev_init
@@ -808,11 +858,6 @@ id|__TIME__
 l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
-id|hd_init
-c_func
-(paren
-)paren
-suffix:semicolon
 id|floppy_init
 c_func
 (paren
@@ -835,6 +880,11 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
+id|sti
+c_func
+(paren
+)paren
+suffix:semicolon
 id|move_to_user_mode
 c_func
 (paren
@@ -849,15 +899,13 @@ c_func
 (paren
 )paren
 )paren
-(brace
 multiline_comment|/* we count on this going ok */
 id|init
 c_func
 (paren
 )paren
 suffix:semicolon
-)brace
-multiline_comment|/*&n; * task[0] is meant to be used as an &quot;idle&quot; task: it may not sleep, but&n; * it might do some general things like count free pages or it could be&n; * used to implement a reasonable LRU algorithm for the paging routines:&n; * anything that can be useful, but shouldn&squot;t take time from the real&n; * processes.&n; *&n; * Right now task[0] just does a infinite loop in user mode.&n; */
+multiline_comment|/*&n; * task[0] is meant to be used as an &quot;idle&quot; task: it may not sleep, but&n; * it might do some general things like count free pages or it could be&n; * used to implement a reasonable LRU algorithm for the paging routines:&n; * anything that can be useful, but shouldn&squot;t take time from the real&n; * processes.&n; *&n; * Right now task[0] just does a infinite idle loop.&n; */
 r_for
 c_loop
 (paren
@@ -865,7 +913,10 @@ suffix:semicolon
 suffix:semicolon
 )paren
 (brace
-multiline_comment|/* nothing */
+id|idle
+c_func
+(paren
+)paren
 suffix:semicolon
 )brace
 )brace

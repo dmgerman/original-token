@@ -4,6 +4,7 @@ macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &quot;blk.h&quot;
 r_extern
@@ -1376,6 +1377,18 @@ id|ro_bits
 )paren
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_BLK_DEV_HD
+id|mem_start
+op_assign
+id|hd_init
+c_func
+(paren
+id|mem_start
+comma
+id|mem_end
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef RAMDISK
 id|mem_start
 op_add_assign

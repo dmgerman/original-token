@@ -1,6 +1,6 @@
-macro_line|#ifndef _CTYPE_H
-DECL|macro|_CTYPE_H
-mdefine_line|#define _CTYPE_H
+macro_line|#ifndef _LINUX_CTYPE_H
+DECL|macro|_LINUX_CTYPE_H
+mdefine_line|#define _LINUX_CTYPE_H
 DECL|macro|_U
 mdefine_line|#define _U&t;0x01&t;/* upper */
 DECL|macro|_L

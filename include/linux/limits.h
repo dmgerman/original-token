@@ -12,7 +12,7 @@ mdefine_line|#define NR_FILE 128
 DECL|macro|NR_SUPER
 mdefine_line|#define NR_SUPER 8
 DECL|macro|NR_HASH
-mdefine_line|#define NR_HASH 307
+mdefine_line|#define NR_HASH 997
 DECL|macro|BLOCK_SIZE
 mdefine_line|#define BLOCK_SIZE 1024
 DECL|macro|BLOCK_SIZE_BITS
@@ -24,7 +24,7 @@ mdefine_line|#define MAX_BLKDEV 16
 DECL|macro|NGROUPS_MAX
 mdefine_line|#define NGROUPS_MAX       32&t;/* supplemental group IDs are available */
 DECL|macro|ARG_MAX
-mdefine_line|#define ARG_MAX        40960&t;/* # bytes of args + environ for exec() */
+mdefine_line|#define ARG_MAX       131072&t;/* # bytes of args + environ for exec() */
 DECL|macro|CHILD_MAX
 mdefine_line|#define CHILD_MAX        999    /* no limit :-) */
 DECL|macro|OPEN_MAX

@@ -1,6 +1,6 @@
-macro_line|#ifndef _GENHD_H
-DECL|macro|_GENHD_H
-mdefine_line|#define _GENHD_H
+macro_line|#ifndef _LINUX_GENHD_H
+DECL|macro|_LINUX_GENHD_H
+mdefine_line|#define _LINUX_GENHD_H
 multiline_comment|/*&n; * &t;genhd.h Copyright (C) 1992 Drew Eckhardt&n; *&t;Generic hard disk header file by  &n; * &t;&t;Drew Eckhardt&n; *&n; *&t;&t;&lt;drew@colorado.edu&gt;&n; */
 DECL|macro|EXTENDED_PARTITION
 mdefine_line|#define EXTENDED_PARTITION 5

@@ -1,6 +1,6 @@
-macro_line|#ifndef _MSDOS_FS_H
-DECL|macro|_MSDOS_FS_H
-mdefine_line|#define _MSDOS_FS_H
+macro_line|#ifndef _LINUX_MSDOS_FS_H
+DECL|macro|_LINUX_MSDOS_FS_H
+mdefine_line|#define _LINUX_MSDOS_FS_H
 multiline_comment|/*&n; * The MS-DOS filesystem constants/structures&n; */
 macro_line|#include &lt;linux/fs.h&gt;
 DECL|macro|MSDOS_ROOT_INO

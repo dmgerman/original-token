@@ -1,6 +1,6 @@
-macro_line|#ifndef _FCNTL_H
-DECL|macro|_FCNTL_H
-mdefine_line|#define _FCNTL_H
+macro_line|#ifndef _LINUX_FCNTL_H
+DECL|macro|_LINUX_FCNTL_H
+mdefine_line|#define _LINUX_FCNTL_H
 multiline_comment|/* open/fcntl - O_SYNC isn&squot;t implemented yet */
 DECL|macro|O_ACCMODE
 mdefine_line|#define O_ACCMODE&t;  0003
@@ -43,6 +43,10 @@ DECL|macro|F_SETLK
 mdefine_line|#define F_SETLK&t;&t;6
 DECL|macro|F_SETLKW
 mdefine_line|#define F_SETLKW&t;7
+DECL|macro|F_SETOWN
+mdefine_line|#define F_SETOWN&t;8&t;/*  for sockets. */
+DECL|macro|F_GETOWN
+mdefine_line|#define F_GETOWN&t;9&t;/*  for sockets. */
 multiline_comment|/* for F_[GET|SET]FL */
 DECL|macro|FD_CLOEXEC
 mdefine_line|#define FD_CLOEXEC&t;1&t;/* actually anything with low bit set goes */

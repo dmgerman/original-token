@@ -1,7 +1,7 @@
 macro_line|#ifndef _EXT_FS_SB
 DECL|macro|_EXT_FS_SB
 mdefine_line|#define _EXT_FS_SB
-multiline_comment|/*&n; * extended-fs super-block data in memory (same as minix: has to change)&n; */
+multiline_comment|/*&n; * extended-fs super-block data in memory&n; */
 DECL|struct|ext_sb_info
 r_struct
 id|ext_sb_info
@@ -15,16 +15,6 @@ DECL|member|s_nzones
 r_int
 r_int
 id|s_nzones
-suffix:semicolon
-DECL|member|s_imap_blocks
-r_int
-r_int
-id|s_imap_blocks
-suffix:semicolon
-DECL|member|s_zmap_blocks
-r_int
-r_int
-id|s_zmap_blocks
 suffix:semicolon
 DECL|member|s_firstdatazone
 r_int
@@ -41,23 +31,37 @@ r_int
 r_int
 id|s_max_size
 suffix:semicolon
-DECL|member|s_imap
-r_struct
-id|buffer_head
-op_star
-id|s_imap
-(braket
-l_int|8
-)braket
+DECL|member|s_firstfreeblocknumber
+r_int
+r_int
+id|s_firstfreeblocknumber
 suffix:semicolon
-DECL|member|s_zmap
+DECL|member|s_freeblockscount
+r_int
+r_int
+id|s_freeblockscount
+suffix:semicolon
+DECL|member|s_firstfreeblock
 r_struct
 id|buffer_head
 op_star
-id|s_zmap
-(braket
-l_int|8
-)braket
+id|s_firstfreeblock
+suffix:semicolon
+DECL|member|s_firstfreeinodenumber
+r_int
+r_int
+id|s_firstfreeinodenumber
+suffix:semicolon
+DECL|member|s_freeinodescount
+r_int
+r_int
+id|s_freeinodescount
+suffix:semicolon
+DECL|member|s_firstfreeinodeblock
+r_struct
+id|buffer_head
+op_star
+id|s_firstfreeinodeblock
 suffix:semicolon
 )brace
 suffix:semicolon

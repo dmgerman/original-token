@@ -1,6 +1,6 @@
-macro_line|#ifndef _CONFIG_DIST_H
-DECL|macro|_CONFIG_DIST_H
-mdefine_line|#define _CONFIG_DIST_H
+macro_line|#ifndef _LINUX_CONFIG_DIST_H
+DECL|macro|_LINUX_CONFIG_DIST_H
+mdefine_line|#define _LINUX_CONFIG_DIST_H
 macro_line|#ifdef CONFIG_DISTRIBUTION
 DECL|macro|CONFG_SCSI
 macro_line|#undef CONFG_SCSI

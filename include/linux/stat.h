@@ -1,6 +1,7 @@
 macro_line|#ifndef _LINUX_STAT_H
 DECL|macro|_LINUX_STAT_H
 mdefine_line|#define _LINUX_STAT_H
+macro_line|#ifndef __NOT_KERNEL
 DECL|struct|old_stat
 r_struct
 id|old_stat
@@ -168,6 +169,7 @@ id|__unused5
 suffix:semicolon
 )brace
 suffix:semicolon
+macro_line|#endif
 DECL|macro|S_IFMT
 mdefine_line|#define S_IFMT  00170000
 DECL|macro|S_IFSOCK

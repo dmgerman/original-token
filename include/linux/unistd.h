@@ -224,6 +224,10 @@ DECL|macro|__NR_uname
 mdefine_line|#define __NR_uname&t;&t;109
 DECL|macro|__NR_iopl
 mdefine_line|#define __NR_iopl&t;&t;110
+DECL|macro|__NR_vhangup
+mdefine_line|#define __NR_vhangup&t;&t;111
+DECL|macro|__NR_idle
+mdefine_line|#define __NR_idle&t;&t;112
 r_extern
 r_int
 id|errno

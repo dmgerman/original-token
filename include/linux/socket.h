@@ -6,7 +6,8 @@ r_struct
 id|sockaddr
 (brace
 DECL|member|sa_family
-id|u_short
+r_int
+r_int
 id|sa_family
 suffix:semicolon
 multiline_comment|/* address family, AF_xxx */
@@ -25,10 +26,12 @@ DECL|macro|SOCK_STREAM
 mdefine_line|#define SOCK_STREAM&t;1&t;&t;/* stream (connection) socket */
 DECL|macro|SOCK_DGRAM
 mdefine_line|#define SOCK_DGRAM&t;2&t;&t;/* datagram (connectionless) socket */
-DECL|macro|SOCK_SEQPACKET
-mdefine_line|#define SOCK_SEQPACKET&t;3&t;&t;/* sequential packet socket */
 DECL|macro|SOCK_RAW
-mdefine_line|#define SOCK_RAW&t;4&t;&t;/* raw socket */
+mdefine_line|#define SOCK_RAW&t;3&t;&t;/* raw socket */
+DECL|macro|SOCK_RDM
+mdefine_line|#define SOCK_RDM&t;4&t;&t;/* reliably-delivered message */
+DECL|macro|SOCK_SEQPACKET
+mdefine_line|#define SOCK_SEQPACKET&t;5&t;&t;/* sequential packet socket */
 multiline_comment|/*&n; * supported address families&n; */
 DECL|macro|AF_UNSPEC
 mdefine_line|#define AF_UNSPEC&t;0
@@ -41,5 +44,32 @@ DECL|macro|PF_UNIX
 mdefine_line|#define PF_UNIX&t;&t;AF_UNIX
 DECL|macro|PF_INET
 mdefine_line|#define PF_INET&t;&t;AF_INET
-macro_line|#endif
+multiline_comment|/* flags we can use with send/ and recv. */
+DECL|macro|MSG_OOB
+mdefine_line|#define MSG_OOB&t;&t;1
+DECL|macro|MSG_PEEK
+mdefine_line|#define MSG_PEEK&t;2
+multiline_comment|/* for setsockoptions */
+DECL|macro|SO_DEBUG
+mdefine_line|#define SO_DEBUG&t;1
+DECL|macro|SO_REUSEADDR
+mdefine_line|#define SO_REUSEADDR&t;2
+DECL|macro|SO_TYPE
+mdefine_line|#define SO_TYPE&t;&t;3
+DECL|macro|SO_ERROR
+mdefine_line|#define SO_ERROR&t;4
+DECL|macro|SO_DONTROUTE
+mdefine_line|#define SO_DONTROUTE&t;5
+DECL|macro|SO_BROADCAST
+mdefine_line|#define SO_BROADCAST&t;6
+DECL|macro|SO_SNDBUF
+mdefine_line|#define SO_SNDBUF&t;7
+DECL|macro|SO_RCVBUF
+mdefine_line|#define SO_RCVBUF&t;8
+DECL|macro|SO_KEEPALIVE
+mdefine_line|#define SO_KEEPALIVE&t;9
+multiline_comment|/* setsockoptions level */
+DECL|macro|SOL_SOCKET
+mdefine_line|#define SOL_SOCKET&t;1
+macro_line|#endif /* _LINUX_SOCKET_H */
 eof

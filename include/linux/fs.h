@@ -1092,7 +1092,9 @@ r_int
 id|shrink_buffers
 c_func
 (paren
-r_void
+r_int
+r_int
+id|priority
 )paren
 suffix:semicolon
 r_extern

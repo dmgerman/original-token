@@ -2666,11 +2666,14 @@ l_int|NULL
 )brace
 suffix:semicolon
 DECL|function|hd_init
-r_void
+r_int
+r_int
 id|hd_init
 c_func
 (paren
-r_void
+r_int
+r_int
+id|mem_start
 )paren
 (brace
 id|blk_dev
@@ -2727,6 +2730,9 @@ dot
 id|fn
 op_assign
 id|hd_times_out
+suffix:semicolon
+r_return
+id|mem_start
 suffix:semicolon
 )brace
 macro_line|#endif

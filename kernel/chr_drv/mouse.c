@@ -280,11 +280,6 @@ id|mouse.latch_buttons
 op_assign
 l_int|0x80
 suffix:semicolon
-id|MSE_INT_ON
-c_func
-(paren
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -297,28 +292,24 @@ id|mouse_interrupt
 )paren
 )paren
 (brace
-id|MSE_INT_OFF
-c_func
-(paren
-)paren
-suffix:semicolon
+multiline_comment|/* once we get to here mouse is unused, IRQ is busy */
 id|mouse.active
 op_assign
 l_int|0
 suffix:semicolon
-id|mouse.ready
-op_assign
-l_int|0
-suffix:semicolon
-id|mouse.inode
-op_assign
-l_int|NULL
-suffix:semicolon
+multiline_comment|/* it&squot;s not active, fix it */
 r_return
 op_minus
 id|EBUSY
 suffix:semicolon
+multiline_comment|/* IRQ is busy, so we&squot;re BUSY */
 )brace
+multiline_comment|/* if we can&squot;t get the IRQ and mouse not active */
+id|MSE_INT_ON
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon

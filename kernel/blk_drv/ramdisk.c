@@ -1,11 +1,11 @@
 multiline_comment|/*&n; *  linux/kernel/blk_drv/ramdisk.c&n; *&n; *  Written by Theodore Ts&squot;o, 12/2/91&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#ifdef RAMDISK
-macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/minix_fs.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
+macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/memory.h&gt;

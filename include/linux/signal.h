@@ -59,7 +59,16 @@ mdefine_line|#define SIGTTIN&t;&t;21
 DECL|macro|SIGTTOU
 mdefine_line|#define SIGTTOU&t;&t;22
 multiline_comment|/*&n; * Most of these aren&squot;t used yet (and perhaps never will),&n; * so they are commented out.&n; */
-multiline_comment|/*&n;#define SIGIO&t;&t;23&n;#define SIGPOLL&t;&t;SIGIO&n;#define SIGXCPU&t;&t;24&n;#define SIGXFSZ&t;&t;25&n;*/
+DECL|macro|SIGIO
+mdefine_line|#define SIGIO&t;&t;23
+DECL|macro|SIGPOLL
+mdefine_line|#define SIGPOLL&t;&t;SIGIO
+DECL|macro|SIGURG
+mdefine_line|#define SIGURG&t;&t;SIGIO
+DECL|macro|SIGXCPU
+mdefine_line|#define SIGXCPU&t;&t;24
+DECL|macro|SIGXFSZ
+mdefine_line|#define SIGXFSZ&t;&t;25
 DECL|macro|SIGVTALRM
 mdefine_line|#define SIGVTALRM&t;26
 DECL|macro|SIGPROF
@@ -81,25 +90,31 @@ DECL|macro|SIG_UNBLOCK
 mdefine_line|#define SIG_UNBLOCK        1&t;/* for unblocking signals */
 DECL|macro|SIG_SETMASK
 mdefine_line|#define SIG_SETMASK        2&t;/* for setting the signal mask */
+multiline_comment|/* Type of a signal handler.  */
+DECL|typedef|__sighandler_t
+r_typedef
+r_void
+(paren
+op_star
+id|__sighandler_t
+)paren
+(paren
+r_int
+)paren
+suffix:semicolon
 DECL|macro|SIG_DFL
-mdefine_line|#define SIG_DFL&t;&t;((void (*)(int))0)&t;/* default signal handling */
+mdefine_line|#define SIG_DFL&t;((__sighandler_t)0)&t;/* default signal handling */
 DECL|macro|SIG_IGN
-mdefine_line|#define SIG_IGN&t;&t;((void (*)(int))1)&t;/* ignore signal */
+mdefine_line|#define SIG_IGN&t;((__sighandler_t)1)&t;/* ignore signal */
 DECL|macro|SIG_ERR
-mdefine_line|#define SIG_ERR&t;&t;((void (*)(int))-1)&t;/* error return from signal */
+mdefine_line|#define SIG_ERR&t;((__sighandler_t)-1)&t;/* error return from signal */
 DECL|struct|sigaction
 r_struct
 id|sigaction
 (brace
 DECL|member|sa_handler
-r_void
-(paren
-op_star
+id|__sighandler_t
 id|sa_handler
-)paren
-(paren
-r_int
-)paren
 suffix:semicolon
 DECL|member|sa_mask
 id|sigset_t

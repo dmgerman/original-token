@@ -683,6 +683,10 @@ r_extern
 r_int
 id|jiffies_offset
 suffix:semicolon
+r_extern
+r_int
+id|need_resched
+suffix:semicolon
 DECL|macro|CURRENT_TIME
 mdefine_line|#define CURRENT_TIME (startup_time+(jiffies+jiffies_offset)/HZ)
 r_extern

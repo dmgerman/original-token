@@ -808,7 +808,6 @@ id|inode-&gt;i_mode
 )paren
 r_return
 suffix:semicolon
-multiline_comment|/*&t;if (inode-&gt;i_data[7] &amp; 0xffff0000)&n;&t;&t;printk(&quot;BAD! ext inode has 16 high bits set&bslash;n&quot;); */
 r_while
 c_loop
 (paren
