@@ -2,7 +2,6 @@ macro_line|#ifndef __ASM_SH_BIOS_H
 DECL|macro|__ASM_SH_BIOS_H
 mdefine_line|#define __ASM_SH_BIOS_H
 multiline_comment|/*&n; * Copyright (C) 2000 Greg Banks, Mitch Davis&n; * C API to interface to the standard LinuxSH BIOS&n; * usually from within the early stages of kernel boot.&n; */
-macro_line|#include &lt;config/sh/standard/bios.h&gt;
 r_extern
 r_void
 id|sh_bios_console_write

@@ -2035,7 +2035,6 @@ c_cond
 op_star
 id|line
 )paren
-(brace
 id|argv_init
 (braket
 op_increment
@@ -2044,7 +2043,6 @@ id|args
 op_assign
 id|line
 suffix:semicolon
-)brace
 )brace
 )brace
 id|argv_init

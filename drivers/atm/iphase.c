@@ -9544,7 +9544,7 @@ c_func
 id|printk
 c_func
 (paren
-l_string|&quot;UBR: txtp.pcr = 0x%d f_rate = 0x%x&bslash;n&quot;
+l_string|&quot;UBR: txtp.pcr = 0x%x f_rate = 0x%x&bslash;n&quot;
 comma
 id|vcc-&gt;qos.txtp.max_pcr
 comma

@@ -406,7 +406,7 @@ id|PRINTK
 c_func
 (paren
 (paren
-l_string|&quot;fat_bread: 0x%x, nr=0x%x, first=0x%x, next=0x%d&bslash;n&quot;
+l_string|&quot;fat_bread: 0x%x, nr=0x%x, first=0x%x, next=0x%x&bslash;n&quot;
 comma
 id|b
 comma

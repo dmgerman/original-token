@@ -790,7 +790,7 @@ op_star
 id|info
 )paren
 suffix:semicolon
-multiline_comment|/* pan display */
+multiline_comment|/* pan display (optional) */
 DECL|member|fb_pan_display
 r_int
 (paren
@@ -812,7 +812,7 @@ op_star
 id|info
 )paren
 suffix:semicolon
-multiline_comment|/* perform fb specific ioctl */
+multiline_comment|/* perform fb specific ioctl (optional) */
 DECL|member|fb_ioctl
 r_int
 (paren
@@ -1438,38 +1438,6 @@ r_struct
 id|fb_var_screeninfo
 op_star
 id|var
-comma
-r_int
-id|con
-comma
-r_struct
-id|fb_info
-op_star
-id|info
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|fbgen_ioctl
-c_func
-(paren
-r_struct
-id|inode
-op_star
-id|inode
-comma
-r_struct
-id|file
-op_star
-id|file
-comma
-r_int
-r_int
-id|cmd
-comma
-r_int
-r_int
-id|arg
 comma
 r_int
 id|con

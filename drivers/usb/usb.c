@@ -2118,6 +2118,26 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
+id|current-&gt;fs-&gt;root
+)paren
+(brace
+multiline_comment|/* statically linked USB is initted rather early */
+id|dbg
+(paren
+l_string|&quot;call_policy %s, num %d -- no FS yet&quot;
+comma
+id|verb
+comma
+id|dev-&gt;devnum
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
 id|dev-&gt;devnum
 OL
 l_int|0
@@ -2450,17 +2470,16 @@ multiline_comment|/* assert: (scratch - buf) &lt; sizeof buf */
 multiline_comment|/* NOTE: user mode daemons can call the agents too */
 id|dbg
 (paren
-l_string|&quot;kusbd: %s %s&quot;
+l_string|&quot;kusbd: %s %s %d&quot;
 comma
 id|argv
 (braket
 l_int|0
 )braket
 comma
-id|argv
-(braket
-l_int|1
-)braket
+id|verb
+comma
+id|dev-&gt;devnum
 )paren
 suffix:semicolon
 id|value
@@ -2610,9 +2629,13 @@ id|claimed
 id|warn
 c_func
 (paren
-l_string|&quot;USB device %d is not claimed by any active driver.&quot;
+l_string|&quot;USB device %d (prod/vend 0x%x/0x%x) is not claimed by any active driver.&quot;
 comma
 id|dev-&gt;devnum
+comma
+id|dev-&gt;descriptor.idVendor
+comma
+id|dev-&gt;descriptor.idProduct
 )paren
 suffix:semicolon
 macro_line|#ifdef DEBUG

@@ -832,7 +832,7 @@ r_return
 id|result
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; * Uhhuh! Nasty case: the cache was re-populated while&n;&t; * we waited on the semaphore. Need to revalidate, but&n;&t; * we&squot;re going to return this entry regardless (same&n;&t; * as if it was busy).&n;&t; */
+multiline_comment|/*&n;&t; * Uhhuh! Nasty case: the cache was re-populated while&n;&t; * we waited on the semaphore. Need to revalidate.&n;&t; */
 id|up
 c_func
 (paren
@@ -847,6 +847,11 @@ id|result-&gt;d_op
 op_logical_and
 id|result-&gt;d_op-&gt;d_revalidate
 )paren
+(brace
+r_if
+c_cond
+(paren
+op_logical_neg
 id|result-&gt;d_op
 op_member_access_from_pointer
 id|d_revalidate
@@ -856,7 +861,32 @@ id|result
 comma
 id|flags
 )paren
+op_logical_and
+op_logical_neg
+id|d_invalidate
+c_func
+(paren
+id|result
+)paren
+)paren
+(brace
+id|dput
+c_func
+(paren
+id|result
+)paren
 suffix:semicolon
+id|result
+op_assign
+id|ERR_PTR
+c_func
+(paren
+op_minus
+id|ENOENT
+)paren
+suffix:semicolon
+)brace
+)brace
 r_return
 id|result
 suffix:semicolon

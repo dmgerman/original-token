@@ -4551,7 +4551,7 @@ id|count
 id|printk
 c_func
 (paren
-l_string|&quot;mitsumi get version failed at 0x%d&bslash;n&quot;
+l_string|&quot;mitsumi get version failed at 0x%x&bslash;n&quot;
 comma
 id|mcd_port
 )paren

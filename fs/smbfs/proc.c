@@ -3637,6 +3637,7 @@ id|returned_count
 comma
 id|data_len
 suffix:semicolon
+r_int
 r_char
 op_star
 id|buf
@@ -3759,6 +3760,50 @@ comma
 l_int|1
 )paren
 suffix:semicolon
+multiline_comment|/* we can NOT simply trust the data_len given by the server ... */
+r_if
+c_cond
+(paren
+id|data_len
+OG
+id|server-&gt;packet_size
+op_minus
+(paren
+id|buf
+op_plus
+l_int|3
+op_minus
+id|server-&gt;packet
+)paren
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;smb_proc_read: invalid data length!! &quot;
+l_string|&quot;%d &gt; %d - (%p - %p)&bslash;n&quot;
+comma
+id|data_len
+comma
+id|server-&gt;packet_size
+comma
+id|buf
+op_plus
+l_int|3
+comma
+id|server-&gt;packet
+)paren
+suffix:semicolon
+id|result
+op_assign
+op_minus
+id|EIO
+suffix:semicolon
+r_goto
+id|out
+suffix:semicolon
+)brace
 id|memcpy
 c_func
 (paren
@@ -5231,12 +5276,10 @@ id|len
 OG
 l_int|12
 )paren
-(brace
 id|len
 op_assign
 l_int|12
 suffix:semicolon
-)brace
 multiline_comment|/*&n;&t; * Trim trailing blanks for Pathworks servers&n;&t; */
 r_while
 c_loop
@@ -5301,7 +5344,9 @@ suffix:semicolon
 id|DEBUG1
 c_func
 (paren
-l_string|&quot;len=%d, name=%s&bslash;n&quot;
+l_string|&quot;len=%d, name=%.*s&bslash;n&quot;
+comma
+id|len
 comma
 id|len
 comma
@@ -5339,6 +5384,7 @@ op_star
 id|cachep
 )paren
 (brace
+r_int
 r_char
 op_star
 id|p
@@ -5390,6 +5436,11 @@ l_int|3
 comma
 l_int|0
 )brace
+suffix:semicolon
+r_int
+r_char
+op_star
+id|last_status
 suffix:semicolon
 id|VERBOSE
 c_func
@@ -5694,12 +5745,9 @@ id|p
 op_add_assign
 l_int|7
 suffix:semicolon
-multiline_comment|/* Read the last entry into the status field. */
-id|memcpy
-c_func
-(paren
-id|status
-comma
+multiline_comment|/* Make sure the response fits in the buffer. Fixed sized &n;&t;&t;   entries means we don&squot;t have to check in the decode loop. */
+id|last_status
+op_assign
 id|SMB_BUF
 c_func
 (paren
@@ -5715,6 +5763,47 @@ l_int|1
 )paren
 op_star
 id|SMB_DIRINFO_SIZE
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|last_status
+op_plus
+id|SMB_DIRINFO_SIZE
+op_ge
+id|server-&gt;packet
+op_plus
+id|server-&gt;packet_size
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;smb_proc_readdir_short: &quot;
+l_string|&quot;last dir entry outside buffer! &quot;
+l_string|&quot;%d@%p  %d@%p&bslash;n&quot;
+comma
+id|SMB_DIRINFO_SIZE
+comma
+id|last_status
+comma
+id|server-&gt;packet_size
+comma
+id|server-&gt;packet
+)paren
+suffix:semicolon
+r_goto
+id|unlock_return
+suffix:semicolon
+)brace
+multiline_comment|/* Read the last entry into the status field. */
+id|memcpy
+c_func
+(paren
+id|status
+comma
+id|last_status
 comma
 id|SMB_STATUS_SIZE
 )paren
@@ -6140,10 +6229,12 @@ op_star
 id|cachep
 )paren
 (brace
+r_int
 r_char
 op_star
 id|p
-comma
+suffix:semicolon
+r_char
 op_star
 id|mask
 comma
@@ -6881,6 +6972,46 @@ op_assign
 op_amp
 id|this_ent
 suffix:semicolon
+multiline_comment|/* make sure we stay within the buffer */
+r_if
+c_cond
+(paren
+id|p
+op_ge
+id|resp_data
+op_plus
+id|resp_data_len
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;smb_proc_readdir_long: &quot;
+l_string|&quot;dirent pointer outside buffer! &quot;
+l_string|&quot;%p  %d@%p  %d@%p&bslash;n&quot;
+comma
+id|p
+comma
+id|resp_data_len
+comma
+id|resp_data
+comma
+id|server-&gt;packet_size
+comma
+id|server-&gt;packet
+)paren
+suffix:semicolon
+id|result
+op_assign
+op_minus
+id|EIO
+suffix:semicolon
+multiline_comment|/* always a comm. error? */
+r_goto
+id|unlock_return
+suffix:semicolon
+)brace
 id|p
 op_assign
 id|smb_decode_long_dirent
@@ -6983,6 +7114,8 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
+id|unlock_return
+suffix:colon
 id|smb_unlock_server
 c_func
 (paren

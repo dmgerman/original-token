@@ -3983,6 +3983,19 @@ comma
 id|version
 )paren
 suffix:semicolon
+multiline_comment|/*&n;     * Ugly. But we want to wait for the socket threads to have started up.&n;     * We really should let the drivers themselves drive some of this..&n;     */
+id|current-&gt;state
+op_assign
+id|TASK_INTERRUPTIBLE
+suffix:semicolon
+id|schedule_timeout
+c_func
+(paren
+id|HZ
+op_div
+l_int|10
+)paren
+suffix:semicolon
 id|pcmcia_get_card_services_info
 c_func
 (paren

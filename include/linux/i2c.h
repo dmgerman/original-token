@@ -11,6 +11,7 @@ macro_line|#ifndef I2C_H
 DECL|macro|I2C_H
 mdefine_line|#define I2C_H
 macro_line|#include &lt;linux/i2c-id.h&gt;&t;/* id values of adapters et. al. &t;*/
+macro_line|#include &lt;linux/types.h&gt;
 r_struct
 id|i2c_msg
 suffix:semicolon
@@ -27,7 +28,6 @@ macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#else
 macro_line|#include &lt;asm/semaphore.h&gt;
 macro_line|#endif
-macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 multiline_comment|/* --- General options ------------------------------------------------&t;*/
 DECL|macro|I2C_ALGO_MAX
@@ -1085,7 +1085,6 @@ id|func
 )paren
 suffix:semicolon
 macro_line|#endif /* __KERNEL__ */
-macro_line|#include &lt;linux/types.h&gt;
 multiline_comment|/*&n; * I2C Message - used for pure i2c transaction, also from /dev interface&n; */
 DECL|struct|i2c_msg
 r_struct

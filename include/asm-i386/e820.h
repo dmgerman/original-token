@@ -27,7 +27,9 @@ DECL|member|nr_map
 r_int
 id|nr_map
 suffix:semicolon
+DECL|struct|e820entry
 r_struct
+id|e820entry
 (brace
 DECL|member|addr
 r_int

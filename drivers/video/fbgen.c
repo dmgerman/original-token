@@ -931,44 +931,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n;     *  Frame Buffer Specific ioctls&n;     */
-DECL|function|fbgen_ioctl
-r_int
-id|fbgen_ioctl
-c_func
-(paren
-r_struct
-id|inode
-op_star
-id|inode
-comma
-r_struct
-id|file
-op_star
-id|file
-comma
-r_int
-r_int
-id|cmd
-comma
-r_int
-r_int
-id|arg
-comma
-r_int
-id|con
-comma
-r_struct
-id|fb_info
-op_star
-id|info
-)paren
-(brace
-r_return
-op_minus
-id|EINVAL
-suffix:semicolon
-)brace
 multiline_comment|/* ---- Helper functions --------------------------------------------------- */
 multiline_comment|/*&n;     *  Change the video mode&n;     */
 DECL|function|fbgen_do_set_var

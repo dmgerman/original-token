@@ -4289,7 +4289,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;RC New speed = 0x%d&bslash;n&quot;
+l_string|&quot;RC New speed = 0x%x&bslash;n&quot;
 comma
 id|RCUD_SETSPEED-&gt;LinkSpeedCode
 )paren
@@ -4324,7 +4324,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;RC New prom mode = 0x%d&bslash;n&quot;
+l_string|&quot;RC New prom mode = 0x%x&bslash;n&quot;
 comma
 id|RCUD_SETPROM-&gt;PromMode
 )paren
@@ -4359,7 +4359,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;RC New broadcast mode = 0x%d&bslash;n&quot;
+l_string|&quot;RC New broadcast mode = 0x%x&bslash;n&quot;
 comma
 id|RCUD_SETBROADCAST-&gt;BroadcastMode
 )paren

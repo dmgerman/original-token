@@ -1034,8 +1034,9 @@ id|fbgen_pan_display
 comma
 id|fb_ioctl
 suffix:colon
-id|fbgen_ioctl
+id|xxxfb_ioctl
 comma
+multiline_comment|/* optional */
 )brace
 suffix:semicolon
 multiline_comment|/* ------------------------------------------------------------------------- */
