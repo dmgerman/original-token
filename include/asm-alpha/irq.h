@@ -104,5 +104,20 @@ r_int
 r_int
 )paren
 suffix:semicolon
+r_extern
+r_void
+(paren
+op_star
+id|perf_irq
+)paren
+(paren
+r_int
+r_int
+comma
+r_struct
+id|pt_regs
+op_star
+)paren
+suffix:semicolon
 macro_line|#endif /* _ALPHA_IRQ_H */
 eof

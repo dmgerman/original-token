@@ -62,7 +62,7 @@ r_char
 id|bh_running
 suffix:semicolon
 r_extern
-r_int
+id|atomic_t
 id|bh_mask_count
 (braket
 l_int|32

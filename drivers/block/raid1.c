@@ -1154,12 +1154,6 @@ op_or
 (paren
 l_int|1
 op_lshift
-id|BH_Touched
-)paren
-op_or
-(paren
-l_int|1
-op_lshift
 id|BH_Dirty
 )paren
 suffix:semicolon

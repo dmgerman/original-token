@@ -12300,7 +12300,7 @@ suffix:colon
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * This routine is called by rs_init() to initialize a specific serial&n; * port.  It determines what type of UART chip this serial port is&n; * using: 8250, 16450, 16550, 16550A.  The important question is&n; * whether or not this UART is a 16550A or not, since this will&n; * determine whether or not we can use its FIFO features or not.&n; */
+multiline_comment|/*&n; * This routine is called by rs_init() to initialize a specific serial&n; * port.  It determines what type of UART chip this serial port is&n; * using: 8250, 16450, 16550, 16550A.  The important question is&n; * whether or not this UART is a 16550A, since this will determine&n; * whether or not we can use its FIFO features.&n; */
 DECL|function|autoconfig
 r_static
 r_void

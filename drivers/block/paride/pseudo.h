@@ -1,7 +1,7 @@
-multiline_comment|/* &n;        pseudo.h    (c) 1997-8  Grant R. Guenther &lt;grant@torque.net&gt;&n;                                Under the terms of the GNU public license.&n;&n;&t;This is the &quot;pseudo-interrupt&quot; logic for parallel port drivers.&n;&n;        This module is #included into each driver.  It makes one&n;        function available:&n;&n;&t;&t;ps_set_intr( void (*continuation)(void),&n;&t;&t;&t;     int  (*ready)(void),&n;&t;&t;&t;     int timeout,&n;&t;&t;&t;     int nice )&n;&n;&t;Which will arrange for ready() to be evaluated frequently and&n;&t;when either it returns true, or timeout jiffies have passed,&n;&t;continuation() will be invoked.&n;&n;&t;If nice is true, the test will done approximately once a&n;&t;jiffy.  If nice is 0, the test will also be done whenever&n;&t;the scheduler runs (by adding it to a task queue).&n;&n;*/
-multiline_comment|/* Changes:&n;&n;&t;1.01&t;1998.05.03&t;Switched from cli()/sti() to spinlocks&n;&n;*/
+multiline_comment|/* &n;        pseudo.h    (c) 1997-8  Grant R. Guenther &lt;grant@torque.net&gt;&n;                                Under the terms of the GNU public license.&n;&n;&t;This is the &quot;pseudo-interrupt&quot; logic for parallel port drivers.&n;&n;        This module is #included into each driver.  It makes one&n;        function available:&n;&n;&t;&t;ps_set_intr( void (*continuation)(void),&n;&t;&t;&t;     int  (*ready)(void),&n;&t;&t;&t;     int timeout,&n;&t;&t;&t;     int nice )&n;&n;&t;Which will arrange for ready() to be evaluated frequently and&n;&t;when either it returns true, or timeout jiffies have passed,&n;&t;continuation() will be invoked.&n;&n;&t;If nice is 1, the test will done approximately once a&n;&t;jiffy.  If nice is 0, the test will also be done whenever&n;&t;the scheduler runs (by adding it to a task queue).  If&n;&t;nice is greater than 1, the test will be done once every&n;&t;(nice-1) jiffies. &n;&n;*/
+multiline_comment|/* Changes:&n;&n;&t;1.01&t;1998.05.03&t;Switched from cli()/sti() to spinlocks&n;&t;1.02    1998.12.14      Added support for nice &gt; 1&n;*/
 DECL|macro|PS_VERSION
-mdefine_line|#define PS_VERSION&t;&quot;1.01&quot;
+mdefine_line|#define PS_VERSION&t;&quot;1.02&quot;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;linux/tqueue.h&gt;
@@ -24,13 +24,6 @@ r_void
 op_star
 id|data
 )paren
-suffix:semicolon
-DECL|variable|ps_use_tq
-r_static
-r_int
-id|ps_use_tq
-op_assign
-l_int|1
 suffix:semicolon
 DECL|variable|ps_continuation
 r_static
@@ -75,6 +68,13 @@ DECL|variable|ps_tq_active
 r_static
 r_int
 id|ps_tq_active
+op_assign
+l_int|0
+suffix:semicolon
+DECL|variable|ps_nice
+r_static
+r_int
+id|ps_nice
 op_assign
 l_int|0
 suffix:semicolon
@@ -180,15 +180,15 @@ id|jiffies
 op_plus
 id|timeout
 suffix:semicolon
-id|ps_use_tq
+id|ps_nice
 op_assign
-op_logical_neg
 id|nice
 suffix:semicolon
 r_if
 c_cond
 (paren
-id|ps_use_tq
+op_logical_neg
+id|ps_nice
 op_logical_and
 op_logical_neg
 id|ps_tq_active
@@ -230,6 +230,23 @@ suffix:semicolon
 id|ps_timer.expires
 op_assign
 id|jiffies
+op_plus
+(paren
+(paren
+id|ps_nice
+OG
+l_int|0
+)paren
+ques
+c_cond
+(paren
+id|ps_nice
+op_minus
+l_int|1
+)paren
+suffix:colon
+l_int|0
+)paren
 suffix:semicolon
 id|add_timer
 c_func
@@ -490,6 +507,23 @@ suffix:semicolon
 id|ps_timer.expires
 op_assign
 id|jiffies
+op_plus
+(paren
+(paren
+id|ps_nice
+OG
+l_int|0
+)paren
+ques
+c_cond
+(paren
+id|ps_nice
+op_minus
+l_int|1
+)paren
+suffix:colon
+l_int|0
+)paren
 suffix:semicolon
 id|add_timer
 c_func

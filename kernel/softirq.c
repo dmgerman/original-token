@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;linux/kernel/softirq.c&n; *&n; *&t;Copyright (C) 1992 Linus Torvalds&n; *&n; * do_bottom_half() runs at normal kernel priority: all interrupts&n; * enabled.  do_bottom_half() is atomic with respect to itself: a&n; * bottom_half handler need not be re-entrant.&n; */
+multiline_comment|/*&n; *&t;linux/kernel/softirq.c&n; *&n; *&t;Copyright (C) 1992 Linus Torvalds&n; *&n; * do_bottom_half() runs at normal kernel priority: all interrupts&n; * enabled.  do_bottom_half() is atomic with respect to itself: a&n; * bottom_half handler need not be re-entrant.&n; *&n; * Fixed a disable_bh()/enable_bh() race (was causing a console lockup)&n; * due bh_mask_count not atomic handling. Copyright (C) 1998  Andrea Arcangeli&n; */
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/kernel_stat.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
@@ -6,7 +6,7 @@ macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 multiline_comment|/* intr_count died a painless death... -DaveM */
 DECL|variable|bh_mask_count
-r_int
+id|atomic_t
 id|bh_mask_count
 (braket
 l_int|32

@@ -1,7 +1,7 @@
 multiline_comment|/* &n;        on26.c    (c) 1997-8  Grant R. Guenther &lt;grant@torque.net&gt;&n;                              Under the terms of the GNU public license.&n;&n;        on26.c is a low-level protocol driver for the &n;        OnSpec 90c26 parallel to IDE adapter chip.&n;&n;*/
-multiline_comment|/* Changes:&n;&n;        1.01    GRG 1998.05.06 init_proto, release_proto&n;&t;1.02    GRG 1998.09.23 updates for the -E rev chip&n;&n;*/
+multiline_comment|/* Changes:&n;&n;        1.01    GRG 1998.05.06 init_proto, release_proto&n;&t;1.02    GRG 1998.09.23 updates for the -E rev chip&n;&t;1.03    GRG 1998.12.14 fix for slave drives&n;&t;1.04    GRG 1998.12.20 yet another bug fix&n;&n;*/
 DECL|macro|ON26_VERSION
-mdefine_line|#define ON26_VERSION      &quot;1.02&quot;
+mdefine_line|#define ON26_VERSION      &quot;1.04&quot;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -655,6 +655,8 @@ id|pi-&gt;saved_r2
 )paren
 suffix:semicolon
 )brace
+DECL|macro|RESET_WAIT
+mdefine_line|#define&t;RESET_WAIT  200
 DECL|function|on26_test_port
 r_static
 r_int
@@ -673,6 +675,10 @@ comma
 id|m
 comma
 id|d
+comma
+id|x
+comma
+id|y
 suffix:semicolon
 id|pi-&gt;saved_r0
 op_assign
@@ -962,17 +968,26 @@ l_int|0
 suffix:semicolon
 id|i
 OL
-l_int|100
+id|RESET_WAIT
 suffix:semicolon
 id|i
 op_increment
 )paren
 (brace
-r_if
-c_cond
+id|on26_write_regr
+c_func
 (paren
-op_logical_neg
-(paren
+id|pi
+comma
+l_int|0
+comma
+l_int|6
+comma
+l_int|0xa0
+)paren
+suffix:semicolon
+id|x
+op_assign
 id|on26_read_regr
 c_func
 (paren
@@ -982,19 +997,75 @@ l_int|0
 comma
 l_int|7
 )paren
+suffix:semicolon
+id|on26_write_regr
+c_func
+(paren
+id|pi
+comma
+l_int|0
+comma
+l_int|6
+comma
+l_int|0xb0
+)paren
+suffix:semicolon
+id|y
+op_assign
+id|on26_read_regr
+c_func
+(paren
+id|pi
+comma
+l_int|0
+comma
+l_int|7
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+(paren
+id|x
+op_amp
+l_int|0x80
+)paren
+op_logical_or
+(paren
+id|y
 op_amp
 l_int|0x80
 )paren
 )paren
+)paren
 r_break
 suffix:semicolon
-id|udelay
+id|mdelay
 c_func
 (paren
-l_int|100000
+l_int|100
 )paren
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|i
+op_eq
+id|RESET_WAIT
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;on26: Device reset failed (%x,%x)&bslash;n&quot;
+comma
+id|x
+comma
+id|y
+)paren
+suffix:semicolon
 id|w0
 c_func
 (paren

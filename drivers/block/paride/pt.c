@@ -1835,6 +1835,14 @@ id|k
 op_assign
 l_int|0
 suffix:semicolon
+id|e
+op_assign
+l_int|0
+suffix:semicolon
+id|s
+op_assign
+l_int|0
+suffix:semicolon
 r_while
 c_loop
 (paren
