@@ -215,10 +215,6 @@ op_amp
 id|tty-&gt;write_wait
 )paren
 suffix:semicolon
-id|tty-&gt;packet
-op_assign
-l_int|0
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -226,10 +222,6 @@ op_logical_neg
 id|tty-&gt;link
 )paren
 r_return
-suffix:semicolon
-id|tty-&gt;link-&gt;packet
-op_assign
-l_int|0
 suffix:semicolon
 id|wake_up_interruptible
 c_func

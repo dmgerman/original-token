@@ -410,7 +410,7 @@ macro_line|#ifndef MIN
 DECL|macro|MIN
 mdefine_line|#define MIN(a,b) (((a) &lt; (b)) ? (a) : (b))
 macro_line|#endif
-multiline_comment|/*&n; * Unfortunately, while the GCC optimizer for the i386 understands how&n; * to opimize a static rotate left of x bits, it doesn&squot;t know how to&n; * deal with a variable rotate of x bits.  So we use a bit of asm magic.&n; */
+multiline_comment|/*&n; * Unfortunately, while the GCC optimizer for the i386 understands how&n; * to optimize a static rotate left of x bits, it doesn&squot;t know how to&n; * deal with a variable rotate of x bits.  So we use a bit of asm magic.&n; */
 macro_line|#if (!defined (__i386__))
 DECL|function|rotate_left
 r_extern

@@ -20,7 +20,7 @@ macro_line|#include &quot;constants.h&quot;
 DECL|macro|MAX_RETRIES
 mdefine_line|#define MAX_RETRIES 3
 DECL|macro|SR_TIMEOUT
-mdefine_line|#define SR_TIMEOUT (15 * HZ)
+mdefine_line|#define SR_TIMEOUT (30 * HZ)
 r_static
 r_int
 id|sr_init

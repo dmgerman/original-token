@@ -2510,7 +2510,7 @@ l_int|0
 id|sk-&gt;packets_out
 op_decrement
 suffix:semicolon
-multiline_comment|/* This is really only supposed to be called when we&n;&t;&t; * are actually ACKing new data, which should exclude&n;&t;&t; * the ACK handshake on an initial SYN packet as well.&n;&t;&t; * Rather than introducing a new test here for this&n;&t;&t; * special case, we just reset the initial values for&n;&t;&t; * rtt immediatly after we move to the established state.&n;&t;&t; */
+multiline_comment|/* This is really only supposed to be called when we&n;&t;&t; * are actually ACKing new data, which should exclude&n;&t;&t; * the ACK handshake on an initial SYN packet as well.&n;&t;&t; * Rather than introducing a new test here for this&n;&t;&t; * special case, we just reset the initial values for&n;&t;&t; * rtt immediately after we move to the established state.&n;&t;&t; */
 r_if
 c_cond
 (paren
