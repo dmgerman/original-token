@@ -376,7 +376,7 @@ id|pt_regs
 suffix:semicolon
 macro_line|#ifdef __KERNEL__
 DECL|macro|user_mode
-mdefine_line|#define user_mode(regs) ((regs)-&gt;psw.mask &amp; PSW_PROBLEM_STATE)
+mdefine_line|#define user_mode(regs) (((regs)-&gt;psw.mask &amp; PSW_PROBLEM_STATE) != 0)
 DECL|macro|instruction_pointer
 mdefine_line|#define instruction_pointer(regs) ((regs)-&gt;psw.addr)
 r_struct

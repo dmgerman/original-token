@@ -1898,9 +1898,9 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|p-&gt;priority
-OL
-id|DEF_PRIORITY
+id|p-&gt;nice
+OG
+l_int|0
 )paren
 (brace
 id|kstat.cpu_nice

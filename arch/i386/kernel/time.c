@@ -57,10 +57,9 @@ id|rwlock_t
 id|xtime_lock
 suffix:semicolon
 r_extern
-r_volatile
 r_int
 r_int
-id|lost_ticks
+id|wall_jiffies
 suffix:semicolon
 DECL|variable|rtc_lock
 id|spinlock_t
@@ -411,7 +410,9 @@ r_int
 r_int
 id|lost
 op_assign
-id|lost_ticks
+id|jiffies
+op_minus
+id|wall_jiffies
 suffix:semicolon
 r_if
 c_cond
@@ -489,7 +490,7 @@ op_amp
 id|xtime_lock
 )paren
 suffix:semicolon
-multiline_comment|/* This is revolting. We need to set the xtime.tv_usec&n;&t; * correctly. However, the value in this location is&n;&t; * is value at the last tick.&n;&t; * Discover what correction gettimeofday&n;&t; * would have done, and then undo it!&n;&t; */
+multiline_comment|/*&n;&t; * This is revolting. We need to set &quot;xtime&quot; correctly. However, the&n;&t; * value in this location is the value at the most recent update of&n;&t; * wall time.  Discover what correction gettimeofday() would have&n;&t; * made, and then undo it!&n;&t; */
 id|tv-&gt;tv_usec
 op_sub_assign
 id|do_gettimeoffset
@@ -499,7 +500,11 @@ c_func
 suffix:semicolon
 id|tv-&gt;tv_usec
 op_sub_assign
-id|lost_ticks
+(paren
+id|jiffies
+op_minus
+id|wall_jiffies
+)paren
 op_star
 (paren
 l_int|1000000

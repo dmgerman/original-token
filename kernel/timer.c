@@ -2499,11 +2499,11 @@ id|active_tasks
 suffix:semicolon
 )brace
 )brace
-DECL|variable|lost_ticks
-r_volatile
+multiline_comment|/* jiffies at the most recent update of wall time */
+DECL|variable|wall_jiffies
 r_int
 r_int
-id|lost_ticks
+id|wall_jiffies
 suffix:semicolon
 multiline_comment|/*&n; * This spinlock protect us from races in SMP while playing with xtime. -arca&n; */
 DECL|variable|xtime_lock
@@ -2536,11 +2536,9 @@ id|xtime_lock
 suffix:semicolon
 id|ticks
 op_assign
-id|lost_ticks
-suffix:semicolon
-id|lost_ticks
-op_assign
-l_int|0
+id|jiffies
+op_minus
+id|wall_jiffies
 suffix:semicolon
 r_if
 c_cond
@@ -2548,11 +2546,9 @@ c_cond
 id|ticks
 )paren
 (brace
-id|calc_load
-c_func
-(paren
+id|wall_jiffies
+op_add_assign
 id|ticks
-)paren
 suffix:semicolon
 id|update_wall_time
 c_func
@@ -2566,6 +2562,12 @@ c_func
 (paren
 op_amp
 id|xtime_lock
+)paren
+suffix:semicolon
+id|calc_load
+c_func
+(paren
+id|ticks
 )paren
 suffix:semicolon
 )brace
@@ -2609,9 +2611,6 @@ op_star
 op_amp
 id|jiffies
 )paren
-op_increment
-suffix:semicolon
-id|lost_ticks
 op_increment
 suffix:semicolon
 id|update_process_times

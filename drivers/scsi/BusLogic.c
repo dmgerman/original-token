@@ -3281,7 +3281,7 @@ suffix:semicolon
 id|BusLogic_Error
 c_func
 (paren
-l_string|&quot;BusLogic: I/O Address 0x%X PCI Address 0x%X, &quot;
+l_string|&quot;BusLogic: I/O Address 0x%X PCI Address 0x%X, irq %d, &quot;
 l_string|&quot;but FlashPoint&bslash;n&quot;
 comma
 l_int|NULL
@@ -3289,6 +3289,8 @@ comma
 id|IO_Address
 comma
 id|PCI_Address
+comma
+id|IRQ_Channel
 )paren
 suffix:semicolon
 id|BusLogic_Error

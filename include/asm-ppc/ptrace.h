@@ -87,7 +87,7 @@ mdefine_line|#define __SIGNAL_FRAMESIZE&t;64
 DECL|macro|instruction_pointer
 mdefine_line|#define instruction_pointer(regs) ((regs)-&gt;nip)
 DECL|macro|user_mode
-mdefine_line|#define user_mode(regs) ((regs)-&gt;msr &amp; MSR_PR)
+mdefine_line|#define user_mode(regs) (((regs)-&gt;msr &amp; MSR_PR) != 0)
 multiline_comment|/*&n; * Offsets used by &squot;ptrace&squot; system call interface.&n; * These can&squot;t be changed without breaking binary compatibility&n; * with MkLinux, etc.&n; */
 DECL|macro|PT_R0
 mdefine_line|#define PT_R0&t;0

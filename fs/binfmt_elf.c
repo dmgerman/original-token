@@ -4872,9 +4872,7 @@ l_char|&squot;Z&squot;
 suffix:semicolon
 id|psinfo.pr_nice
 op_assign
-id|current-&gt;priority
-op_minus
-l_int|15
+id|current-&gt;nice
 suffix:semicolon
 id|psinfo.pr_flag
 op_assign

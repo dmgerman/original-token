@@ -1080,7 +1080,7 @@ r_void
 op_star
 id|s
 comma
-r_char
+r_int
 id|c
 comma
 r_int

@@ -3152,9 +3152,9 @@ id|user
 r_if
 c_cond
 (paren
-id|current-&gt;priority
-OL
-id|DEF_PRIORITY
+id|current-&gt;nice
+OG
+l_int|0
 )paren
 (brace
 id|inc

@@ -48,6 +48,25 @@ c_func
 r_void
 )paren
 suffix:semicolon
+multiline_comment|/*&n; * Scheduling quanta.&n; *&n; * NOTE! The unix &quot;nice&quot; value influences how long a process&n; * gets. The nice value ranges from -20 to +19, where a -20&n; * is a &quot;high-priority&quot; task, and a &quot;+10&quot; is a low-priority&n; * task.&n; *&n; * We want the time-slice to be around 50ms or so, so this&n; * calculation depends on the value of HZ.&n; */
+macro_line|#if HZ &lt; 200
+DECL|macro|LOG2_HZ
+mdefine_line|#define LOG2_HZ 7
+macro_line|#elif HZ &lt; 400
+DECL|macro|LOG2_HZ
+mdefine_line|#define LOG2_HZ 8
+macro_line|#elif HZ &lt; 800
+DECL|macro|LOG2_HZ
+mdefine_line|#define LOG2_HZ 9
+macro_line|#elif HZ &lt; 1600
+DECL|macro|LOG2_HZ
+mdefine_line|#define LOG2_HZ 10
+macro_line|#else
+DECL|macro|LOG2_HZ
+mdefine_line|#define LOG2_HZ 11
+macro_line|#endif
+DECL|macro|NICE_TO_TICKS
+mdefine_line|#define NICE_TO_TICKS(nice)&t;((((20)-(nice)) &gt;&gt; (LOG2_HZ-5))+1)
 multiline_comment|/*&n; *&t;Init task must be ok at boot for the ix86 as we will check its signals&n; *&t;via the SMP irq return path.&n; */
 DECL|variable|init_tasks
 r_struct
@@ -207,10 +226,6 @@ id|weight
 op_assign
 l_int|1000
 op_plus
-l_int|2
-op_star
-id|DEF_PRIORITY
-op_plus
 id|p-&gt;rt_priority
 suffix:semicolon
 r_goto
@@ -263,7 +278,9 @@ l_int|1
 suffix:semicolon
 id|weight
 op_add_assign
-id|p-&gt;priority
+l_int|20
+op_minus
+id|p-&gt;nice
 suffix:semicolon
 id|out
 suffix:colon
@@ -1784,7 +1801,11 @@ op_rshift
 l_int|1
 )paren
 op_plus
-id|p-&gt;priority
+id|NICE_TO_TICKS
+c_func
+(paren
+id|p-&gt;nice
+)paren
 suffix:semicolon
 id|read_unlock
 c_func
@@ -1864,7 +1885,11 @@ id|prev-&gt;counter
 (brace
 id|prev-&gt;counter
 op_assign
-id|prev-&gt;priority
+id|NICE_TO_TICKS
+c_func
+(paren
+id|prev-&gt;nice
+)paren
 suffix:semicolon
 id|move_last_runqueue
 c_func
@@ -2393,19 +2418,9 @@ id|increment
 )paren
 (brace
 r_int
-r_int
 id|newprio
-suffix:semicolon
-r_int
-id|increase
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Setpriority might change our priority at the same moment.&n;&t; *&t;We don&squot;t have to worry. Conceptually one call occurs first&n;&t; *&t;and we have a single winner.&n;&t; */
-id|newprio
-op_assign
-id|increment
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2428,75 +2443,48 @@ r_return
 op_minus
 id|EPERM
 suffix:semicolon
-id|newprio
+r_if
+c_cond
+(paren
+id|increment
+OL
+op_minus
+l_int|40
+)paren
+id|increment
 op_assign
 op_minus
-id|increment
-suffix:semicolon
-id|increase
-op_assign
-l_int|1
+l_int|40
 suffix:semicolon
 )brace
 r_if
 c_cond
 (paren
-id|newprio
+id|increment
 OG
 l_int|40
 )paren
-id|newprio
+id|increment
 op_assign
 l_int|40
 suffix:semicolon
-multiline_comment|/*&n;&t; * do a &quot;normalization&quot; of the priority (traditionally&n;&t; * Unix nice values are -20 to 20; Linux doesn&squot;t really&n;&t; * use that kind of thing, but uses the length of the&n;&t; * timeslice instead (default 200 ms). The rounding is&n;&t; * why we want to avoid negative values.&n;&t; */
 id|newprio
 op_assign
-(paren
-id|newprio
-op_star
-id|DEF_PRIORITY
+id|current-&gt;nice
 op_plus
-l_int|10
-)paren
-op_div
-l_int|20
-suffix:semicolon
-id|increment
-op_assign
-id|newprio
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|increase
-)paren
-id|increment
-op_assign
-op_minus
-id|increment
-suffix:semicolon
-multiline_comment|/*&n;&t; *&t;Current-&gt;priority can change between this point&n;&t; *&t;and the assignment. We are assigning not doing add/subs&n;&t; *&t;so thats ok. Conceptually a process might just instantaneously&n;&t; *&t;read the value we stomp over. I don&squot;t think that is an issue&n;&t; *&t;unless posix makes it one. If so we can loop on changes&n;&t; *&t;to current-&gt;priority.&n;&t; */
-id|newprio
-op_assign
-id|current-&gt;priority
-op_minus
 id|increment
 suffix:semicolon
 r_if
 c_cond
 (paren
-(paren
-r_int
-)paren
 id|newprio
 OL
-l_int|1
+op_minus
+l_int|20
 )paren
 id|newprio
 op_assign
-id|DEF_PRIORITY
-op_div
+op_minus
 l_int|20
 suffix:semicolon
 r_if
@@ -2504,17 +2492,13 @@ c_cond
 (paren
 id|newprio
 OG
-id|DEF_PRIORITY
-op_star
-l_int|2
+l_int|19
 )paren
 id|newprio
 op_assign
-id|DEF_PRIORITY
-op_star
-l_int|2
+l_int|19
 suffix:semicolon
-id|current-&gt;priority
+id|current-&gt;nice
 op_assign
 id|newprio
 suffix:semicolon
@@ -3328,7 +3312,11 @@ ques
 c_cond
 l_int|0
 suffix:colon
-id|p-&gt;priority
+id|NICE_TO_TICKS
+c_func
+(paren
+id|p-&gt;nice
+)paren
 comma
 op_amp
 id|t

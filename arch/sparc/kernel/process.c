@@ -102,9 +102,9 @@ r_goto
 id|out
 suffix:semicolon
 multiline_comment|/* endless idle loop with no priority at all */
-id|current-&gt;priority
+id|current-&gt;nice
 op_assign
-l_int|0
+l_int|20
 suffix:semicolon
 id|current-&gt;counter
 op_assign

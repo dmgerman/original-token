@@ -2446,11 +2446,9 @@ id|current-&gt;counter
 op_assign
 l_int|5
 suffix:semicolon
-id|current-&gt;priority
+id|current-&gt;nice
 op_assign
-id|DEF_PRIORITY
-op_div
-l_int|4
+l_int|0
 suffix:semicolon
 )brace
 id|DRM_DEBUG
@@ -2667,9 +2665,9 @@ id|current-&gt;counter
 op_assign
 l_int|5
 suffix:semicolon
-id|current-&gt;priority
+id|current-&gt;nice
 op_assign
-id|DEF_PRIORITY
+l_int|0
 suffix:semicolon
 )brace
 r_return
