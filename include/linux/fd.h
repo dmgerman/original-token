@@ -1,4 +1,4 @@
-macro_line|#ifndef _FD_H_
+macro_line|#ifndef _FD_H
 DECL|macro|_FD_H
 mdefine_line|#define _FD_H
 DECL|macro|FDCLRPRM

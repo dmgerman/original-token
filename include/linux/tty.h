@@ -119,11 +119,9 @@ DECL|macro|FULL
 mdefine_line|#define FULL(a) (!LEFT(a))
 DECL|macro|CHARS
 mdefine_line|#define CHARS(a) (((a)-&gt;head-(a)-&gt;tail)&amp;(TTY_BUF_SIZE-1))
-DECL|function|PUTCH
-r_static
-r_inline
+r_extern
 r_void
-id|PUTCH
+id|put_tty_queue
 c_func
 (paren
 r_char
@@ -134,76 +132,10 @@ id|tty_queue
 op_star
 id|queue
 )paren
-(brace
+suffix:semicolon
+r_extern
 r_int
-id|head
-suffix:semicolon
-r_int
-r_int
-id|flags
-suffix:semicolon
-id|__asm__
-c_func
-(paren
-l_string|&quot;pushfl ; popl %0 ; cli&quot;
-suffix:colon
-l_string|&quot;=r&quot;
-(paren
-id|flags
-)paren
-)paren
-suffix:semicolon
-id|head
-op_assign
-(paren
-id|queue-&gt;head
-op_plus
-l_int|1
-)paren
-op_amp
-(paren
-id|TTY_BUF_SIZE
-op_minus
-l_int|1
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|head
-op_ne
-id|queue-&gt;tail
-)paren
-(brace
-id|queue-&gt;buf
-(braket
-id|queue-&gt;head
-)braket
-op_assign
-id|c
-suffix:semicolon
-id|queue-&gt;head
-op_assign
-id|head
-suffix:semicolon
-)brace
-id|__asm__
-c_func
-(paren
-l_string|&quot;pushl %0 ; popfl&quot;
-op_scope_resolution
-l_string|&quot;r&quot;
-(paren
-id|flags
-)paren
-)paren
-suffix:semicolon
-)brace
-DECL|function|GETCH
-r_static
-r_inline
-r_int
-id|GETCH
+id|get_tty_queue
 c_func
 (paren
 r_struct
@@ -211,75 +143,11 @@ id|tty_queue
 op_star
 id|queue
 )paren
-(brace
-r_int
-id|result
-op_assign
-op_minus
-l_int|1
 suffix:semicolon
-r_int
-r_int
-id|flags
-suffix:semicolon
-id|__asm__
-c_func
-(paren
-l_string|&quot;pushfl ; popl %0 ; cli&quot;
-suffix:colon
-l_string|&quot;=r&quot;
-(paren
-id|flags
-)paren
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|queue-&gt;tail
-op_ne
-id|queue-&gt;head
-)paren
-(brace
-id|result
-op_assign
-l_int|0xff
-op_amp
-id|queue-&gt;buf
-(braket
-id|queue-&gt;tail
-)braket
-suffix:semicolon
-id|queue-&gt;tail
-op_assign
-(paren
-id|queue-&gt;tail
-op_plus
-l_int|1
-)paren
-op_amp
-(paren
-id|TTY_BUF_SIZE
-op_minus
-l_int|1
-)paren
-suffix:semicolon
-)brace
-id|__asm__
-c_func
-(paren
-l_string|&quot;pushl %0 ; popfl&quot;
-op_scope_resolution
-l_string|&quot;r&quot;
-(paren
-id|flags
-)paren
-)paren
-suffix:semicolon
-r_return
-id|result
-suffix:semicolon
-)brace
+DECL|macro|PUTCH
+mdefine_line|#define PUTCH(c,queue) put_tty_queue((c),(queue))
+DECL|macro|GETCH
+mdefine_line|#define GETCH(queue) get_tty_queue(queue)
 DECL|macro|INTR_CHAR
 mdefine_line|#define INTR_CHAR(tty) ((tty)-&gt;termios.c_cc[VINTR])
 DECL|macro|QUIT_CHAR
@@ -367,9 +235,9 @@ DECL|member|stopped
 r_int
 id|stopped
 suffix:semicolon
-DECL|member|busy
+DECL|member|flags
 r_int
-id|busy
+id|flags
 suffix:semicolon
 DECL|member|count
 r_int
@@ -419,15 +287,37 @@ id|secondary
 suffix:semicolon
 )brace
 suffix:semicolon
-multiline_comment|/*&n; * so that interrupts won&squot;t be able to mess up the&n; * queues, copy_to_cooked must be atomic with repect&n; * to itself, as must tty-&gt;write.&n; */
+multiline_comment|/*&n; * so that interrupts won&squot;t be able to mess up the&n; * queues, copy_to_cooked must be atomic with repect&n; * to itself, as must tty-&gt;write. These are the flag bits.&n; */
 DECL|macro|TTY_WRITE_BUSY
 mdefine_line|#define TTY_WRITE_BUSY 1
 DECL|macro|TTY_READ_BUSY
 mdefine_line|#define TTY_READ_BUSY 2
+DECL|macro|TTY_CR_PENDING
+mdefine_line|#define TTY_CR_PENDING 4
 DECL|macro|TTY_WRITE_FLUSH
-mdefine_line|#define TTY_WRITE_FLUSH(tty) &bslash;&n;do { &bslash;&n;&t;cli(); &bslash;&n;&t;if (!EMPTY((tty)-&gt;write_q) &amp;&amp; !(TTY_WRITE_BUSY &amp; (tty)-&gt;busy)) { &bslash;&n;&t;&t;(tty)-&gt;busy |= TTY_WRITE_BUSY; &bslash;&n;&t;&t;sti(); &bslash;&n;&t;&t;(tty)-&gt;write((tty)); &bslash;&n;&t;&t;cli(); &bslash;&n;&t;&t;(tty)-&gt;busy &amp;= ~TTY_WRITE_BUSY; &bslash;&n;&t;} &bslash;&n;&t;sti(); &bslash;&n;} while (0)
+mdefine_line|#define TTY_WRITE_FLUSH(tty) tty_write_flush((tty))
 DECL|macro|TTY_READ_FLUSH
-mdefine_line|#define TTY_READ_FLUSH(tty) &bslash;&n;do { &bslash;&n;&t;cli(); &bslash;&n;&t;if (!EMPTY((tty)-&gt;read_q) &amp;&amp; !(TTY_READ_BUSY &amp; (tty)-&gt;busy)) { &bslash;&n;&t;&t;(tty)-&gt;busy |= TTY_READ_BUSY; &bslash;&n;&t;&t;sti(); &bslash;&n;&t;&t;copy_to_cooked((tty)); &bslash;&n;&t;&t;cli(); &bslash;&n;&t;&t;(tty)-&gt;busy &amp;= ~TTY_READ_BUSY; &bslash;&n;&t;} &bslash;&n;&t;sti(); &bslash;&n;} while (0)
+mdefine_line|#define TTY_READ_FLUSH(tty) tty_read_flush((tty))
+r_extern
+r_void
+id|tty_write_flush
+c_func
+(paren
+r_struct
+id|tty_struct
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|tty_read_flush
+c_func
+(paren
+r_struct
+id|tty_struct
+op_star
+)paren
+suffix:semicolon
 r_extern
 r_struct
 id|tty_struct

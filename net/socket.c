@@ -6,7 +6,7 @@ macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;sys/socket.h&gt;
-macro_line|#include &lt;fcntl.h&gt;
+macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;termios.h&gt;
 macro_line|#include &quot;kern_sock.h&quot;
 macro_line|#include &quot;socketcall.h&quot;
@@ -2581,7 +2581,7 @@ l_string|&quot;sys_accept: sleep was interrupted&bslash;n&quot;
 suffix:semicolon
 r_return
 op_minus
-id|EINTR
+id|ERESTARTSYS
 suffix:semicolon
 )brace
 )brace

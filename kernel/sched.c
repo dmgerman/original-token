@@ -22,6 +22,7 @@ mdefine_line|#define _S(nr) (1&lt;&lt;((nr)-1))
 DECL|macro|_BLOCKABLE
 mdefine_line|#define _BLOCKABLE (~(_S(SIGKILL) | _S(SIGSTOP)))
 DECL|function|show_task
+r_static
 r_void
 id|show_task
 c_func

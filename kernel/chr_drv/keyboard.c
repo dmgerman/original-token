@@ -2,6 +2,7 @@ multiline_comment|/*&n; * linux/kernel/chr_drv/keyboard.c&n; *&n; * Keyboard dri
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/ctype.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
+macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 DECL|macro|LSHIFT
@@ -102,20 +103,6 @@ suffix:semicolon
 r_extern
 r_void
 id|ctrl_alt_del
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|show_mem
-c_func
-(paren
-r_void
-)paren
-comma
-id|show_state
 c_func
 (paren
 r_void
@@ -6582,7 +6569,7 @@ l_int|0
 comma
 l_int|0
 comma
-l_char|&squot;|&squot;
+l_char|&squot;&bslash;&bslash;&squot;
 comma
 l_int|0
 comma
@@ -8234,7 +8221,7 @@ id|ch
 suffix:semicolon
 )brace
 )brace
-macro_line|#if defined KBD_FR
+macro_line|#if defined KBD_FR || defined KBD_US
 DECL|variable|num_table
 r_static
 r_int

@@ -1,11 +1,11 @@
 multiline_comment|/*&n; *  linux/kernel/chr_drv/pty.c&n; *&n; *  (C) 1991  Linus Torvalds&n; */
 multiline_comment|/*&n; *&t;pty.c&n; *&n; * This module implements the pty functions&n; *&t;void mpty_write(struct tty_struct * queue);&n; *&t;void spty_write(struct tty_struct * queue);&n; */
+macro_line|#include &lt;errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
+macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
-macro_line|#include&lt;errno.h&gt;
-macro_line|#include&lt;fcntl.h&gt;
 DECL|function|pty_open
 r_int
 id|pty_open
@@ -68,10 +68,14 @@ c_func
 id|dev
 )paren
 )paren
+(brace
+id|tty-&gt;link-&gt;count
+op_increment
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
-macro_line|#if 0
+)brace
 r_while
 c_loop
 (paren
@@ -103,7 +107,6 @@ r_return
 op_minus
 id|ERESTARTSYS
 suffix:semicolon
-macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
@@ -151,6 +154,9 @@ id|dev
 )paren
 )paren
 (brace
+id|tty-&gt;link-&gt;count
+op_decrement
+suffix:semicolon
 r_if
 c_cond
 (paren

@@ -1,6 +1,6 @@
 multiline_comment|/*&n; *  linux/fs/ioctl.c&n; *&n; *  (C) 1991  Linus Torvalds&n; */
-macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;errno.h&gt;
+macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 DECL|function|sys_ioctl

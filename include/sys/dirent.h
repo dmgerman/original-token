@@ -2,6 +2,7 @@ macro_line|#ifndef _SYS_DIRENT_H
 DECL|macro|_SYS_DIRENT_H
 mdefine_line|#define _SYS_DIRENT_H
 macro_line|#include &lt;limits.h&gt;
+macro_line|#include &lt;sys/types.h&gt;
 DECL|struct|dirent
 r_struct
 id|dirent

@@ -12,6 +12,8 @@ r_int
 id|exit_code
 )paren
 (brace
+id|fake_volatile
+suffix:colon
 id|__asm__
 c_func
 (paren
@@ -28,6 +30,9 @@ l_string|&quot;g&quot;
 id|exit_code
 )paren
 )paren
+suffix:semicolon
+r_goto
+id|fake_volatile
 suffix:semicolon
 )brace
 eof

@@ -3372,11 +3372,12 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+(paren
+(paren
+r_int
+)paren
 id|format_req.track
-OL
-l_int|0
-op_logical_or
-id|format_req.track
+)paren
 op_ge
 id|floppy-&gt;track
 op_logical_or

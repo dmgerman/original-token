@@ -66,6 +66,10 @@ DECL|macro|PIPE_HEAD
 mdefine_line|#define PIPE_HEAD(inode) ((inode).i_data[0])
 DECL|macro|PIPE_TAIL
 mdefine_line|#define PIPE_TAIL(inode) ((inode).i_data[1])
+DECL|macro|PIPE_READERS
+mdefine_line|#define PIPE_READERS(inode) ((inode).i_data[2])
+DECL|macro|PIPE_WRITERS
+mdefine_line|#define PIPE_WRITERS(inode) ((inode).i_data[3])
 DECL|macro|PIPE_SIZE
 mdefine_line|#define PIPE_SIZE(inode) ((PIPE_HEAD(inode)-PIPE_TAIL(inode))&amp;(PAGE_SIZE-1))
 DECL|macro|PIPE_EMPTY
@@ -997,6 +1001,19 @@ op_star
 id|sb
 )paren
 suffix:semicolon
+DECL|member|write_super
+r_void
+(paren
+op_star
+id|write_super
+)paren
+(paren
+r_struct
+id|super_block
+op_star
+id|sb
+)paren
+suffix:semicolon
 DECL|member|statfs
 r_void
 (paren
@@ -1114,6 +1131,15 @@ suffix:semicolon
 r_extern
 r_void
 id|check_disk_change
+c_func
+(paren
+r_int
+id|dev
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|invalidate_inodes
 c_func
 (paren
 r_int
@@ -1501,6 +1527,15 @@ r_struct
 id|super_block
 op_star
 id|get_super
+c_func
+(paren
+r_int
+id|dev
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|put_super
 c_func
 (paren
 r_int

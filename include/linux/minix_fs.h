@@ -647,6 +647,11 @@ id|minix_blkdev_inode_operations
 suffix:semicolon
 r_extern
 r_struct
+id|inode_operations
+id|minix_fifo_inode_operations
+suffix:semicolon
+r_extern
+r_struct
 id|file_operations
 id|minix_file_operations
 suffix:semicolon

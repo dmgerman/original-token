@@ -14,6 +14,7 @@ mdefine_line|#define MAX_SCSI_HOSTS
 macro_line|#endif
 macro_line|#include &quot;hosts.h&quot;
 macro_line|#ifdef CONFIG_SCSI_AHA1542
+macro_line|#include &lt;sys/types.h&gt;
 macro_line|#include &quot;aha1542.h&quot;
 macro_line|#endif
 macro_line|#ifdef CONFIG_SCSI_SEAGATE

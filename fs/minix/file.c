@@ -1,9 +1,9 @@
 multiline_comment|/*&n; *  linux/fs/minix/file.c&n; *&n; *  (C) 1991 Linus Torvalds&n; *&n; *  minix regular file handling primitives&n; */
 macro_line|#include &lt;errno.h&gt;
-macro_line|#include &lt;fcntl.h&gt;
 macro_line|#include &lt;sys/dirent.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
+macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/minix_fs.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;

@@ -2,6 +2,7 @@ multiline_comment|/*&n; *&t;linux/mm/mmap.c&n; *&n; * Written by obz.&n; */
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
+macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;errno.h&gt;
@@ -19,41 +20,6 @@ DECL|macro|PERMISS
 mdefine_line|#define PERMISS(T,P) (PREAD(T,P)|PWRITE(T,P)|PEXEC(T,P))
 DECL|macro|CODE_SPACE
 mdefine_line|#define CODE_SPACE(addr) ((((addr)+4095)&amp;~4095) &lt; &bslash;&n;&t;&t;&t;  current-&gt;start_code + current-&gt;end_code)
-r_extern
-r_int
-id|remap_page_range
-c_func
-(paren
-r_int
-r_int
-id|from
-comma
-r_int
-r_int
-id|to
-comma
-r_int
-r_int
-id|size
-comma
-r_int
-id|permiss
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|unmap_page_range
-c_func
-(paren
-r_int
-r_int
-id|from
-comma
-r_int
-r_int
-id|size
-)paren
-suffix:semicolon
 r_static
 id|caddr_t
 DECL|function|mmap_chr
@@ -87,11 +53,6 @@ r_int
 id|major
 comma
 id|minor
-suffix:semicolon
-r_extern
-r_int
-r_int
-id|HIGH_MEMORY
 suffix:semicolon
 id|major
 op_assign

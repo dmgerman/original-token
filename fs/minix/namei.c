@@ -4,8 +4,8 @@ macro_line|#include &lt;linux/minix_fs.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
+macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
-macro_line|#include &lt;fcntl.h&gt;
 macro_line|#include &lt;errno.h&gt;
 macro_line|#include &lt;const.h&gt;
 multiline_comment|/*&n; * comment out this line if you want names &gt; MINIX_NAME_LEN chars to be&n; * truncated. Else they will be disallowed.&n; */
@@ -1285,6 +1285,63 @@ op_assign
 op_amp
 id|minix_blkdev_inode_operations
 suffix:semicolon
+r_else
+r_if
+c_cond
+(paren
+id|S_ISFIFO
+c_func
+(paren
+id|inode-&gt;i_mode
+)paren
+)paren
+(brace
+id|inode-&gt;i_op
+op_assign
+op_amp
+id|minix_fifo_inode_operations
+suffix:semicolon
+id|inode-&gt;i_size
+op_assign
+l_int|0
+suffix:semicolon
+id|inode-&gt;i_pipe
+op_assign
+l_int|1
+suffix:semicolon
+id|PIPE_HEAD
+c_func
+(paren
+op_star
+id|inode
+)paren
+op_assign
+id|PIPE_TAIL
+c_func
+(paren
+op_star
+id|inode
+)paren
+op_assign
+l_int|0
+suffix:semicolon
+id|PIPE_READERS
+c_func
+(paren
+op_star
+id|inode
+)paren
+op_assign
+id|PIPE_WRITERS
+c_func
+(paren
+op_star
+id|inode
+)paren
+op_assign
+l_int|0
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren

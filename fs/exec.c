@@ -3,11 +3,11 @@ multiline_comment|/*&n; * #!-checking implemented by tytso.&n; */
 multiline_comment|/*&n; * Demand-loading implemented 01.12.91 - no need to read anything but&n; * the header into memory. The inode of the executable is put into&n; * &quot;current-&gt;executable&quot;, and page faults do the actual loading. Clean.&n; *&n; * Once more I can proudly say that linux stood up to being changed: it&n; * was less than 2 hours work to get demand-loading completely implemented.&n; */
 macro_line|#include &lt;signal.h&gt;
 macro_line|#include &lt;errno.h&gt;
-macro_line|#include &lt;linux/string.h&gt;
-macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;sys/ptrace.h&gt;
 macro_line|#include &lt;a.out.h&gt;
-macro_line|#include &lt;fcntl.h&gt;
+macro_line|#include &lt;linux/string.h&gt;
+macro_line|#include &lt;linux/stat.h&gt;
+macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -1199,6 +1199,8 @@ id|tmp
 comma
 op_star
 id|pag
+op_assign
+l_int|NULL
 suffix:semicolon
 r_int
 id|len

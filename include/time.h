@@ -26,11 +26,15 @@ mdefine_line|#define NULL ((void *) 0)
 macro_line|#endif
 DECL|macro|CLOCKS_PER_SEC
 mdefine_line|#define CLOCKS_PER_SEC 100
+macro_line|#ifndef _CLOCK_T
+DECL|macro|_CLOCK_T
+mdefine_line|#define _CLOCK_T
 DECL|typedef|clock_t
 r_typedef
 r_int
 id|clock_t
 suffix:semicolon
+macro_line|#endif
 DECL|struct|tm
 r_struct
 id|tm

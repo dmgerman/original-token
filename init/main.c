@@ -1,11 +1,11 @@
 multiline_comment|/*&n; *  linux/init/main.c&n; *&n; *  (C) 1991  Linus Torvalds&n; */
 macro_line|#include &lt;stddef.h&gt;
 macro_line|#include &lt;stdarg.h&gt;
-macro_line|#include &lt;fcntl.h&gt;
 macro_line|#include &lt;time.h&gt;
 macro_line|#include &lt;sys/types.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
+macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
@@ -127,6 +127,29 @@ id|envp
 )paren
 r_static
 r_inline
+id|_syscall3
+c_func
+(paren
+r_int
+comma
+id|open
+comma
+r_const
+r_char
+op_star
+comma
+id|file
+comma
+r_int
+comma
+id|flag
+comma
+r_int
+comma
+id|mode
+)paren
+r_static
+r_inline
 id|_syscall1
 c_func
 (paren
@@ -209,11 +232,13 @@ r_void
 )paren
 suffix:semicolon
 r_extern
-r_void
+r_int
 id|blk_dev_init
 c_func
 (paren
-r_void
+r_int
+comma
+r_int
 )paren
 suffix:semicolon
 r_extern
@@ -221,6 +246,8 @@ r_int
 id|chr_dev_init
 c_func
 (paren
+r_int
+comma
 r_int
 )paren
 suffix:semicolon
@@ -783,20 +810,6 @@ id|main_memory_start
 op_assign
 id|buffer_memory_end
 suffix:semicolon
-macro_line|#ifdef RAMDISK
-id|main_memory_start
-op_add_assign
-id|rd_init
-c_func
-(paren
-id|main_memory_start
-comma
-id|RAMDISK
-op_star
-l_int|1024
-)paren
-suffix:semicolon
-macro_line|#endif
 id|trap_init
 c_func
 (paren
@@ -813,11 +826,18 @@ id|chr_dev_init
 c_func
 (paren
 id|main_memory_start
+comma
+id|memory_end
 )paren
 suffix:semicolon
+id|main_memory_start
+op_assign
 id|blk_dev_init
 c_func
 (paren
+id|main_memory_start
+comma
+id|memory_end
 )paren
 suffix:semicolon
 id|mem_init

@@ -751,8 +751,8 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * a more complete version of free_page_tables which performs with page&n; * granularity.&n; */
-r_int
 DECL|function|unmap_page_range
+r_int
 id|unmap_page_range
 c_func
 (paren
@@ -1074,8 +1074,8 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * maps a range of physical memory into the requested pages. the old&n; * mappings are removed. any references to nonexistent pages results&n; * in null mappings (currently treated as &quot;copy-on-access&quot;)&n; *&n; * permiss is encoded as cxwr (copy,exec,write,read) where copy modifies&n; * the behavior of write to be copy-on-write.&n; *&n; * due to current limitations, we actually have the following&n; *&t;&t;on&t;&t;off&n; * read:&t;yes&t;&t;yes&n; * write/copy:&t;yes/copy&t;copy/copy&n; * exec:&t;yes&t;&t;yes&n; */
-r_int
 DECL|function|remap_page_range
+r_int
 id|remap_page_range
 c_func
 (paren
@@ -2299,6 +2299,7 @@ r_return
 suffix:semicolon
 )brace
 DECL|function|get_empty_page
+r_static
 r_void
 id|get_empty_page
 c_func

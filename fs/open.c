@@ -1,9 +1,9 @@
 multiline_comment|/*&n; *  linux/fs/open.c&n; *&n; *  (C) 1991  Linus Torvalds&n; */
 macro_line|#include &lt;errno.h&gt;
-macro_line|#include &lt;fcntl.h&gt;
 macro_line|#include &lt;sys/types.h&gt;
 macro_line|#include &lt;utime.h&gt;
 macro_line|#include &lt;sys/vfs.h&gt;
+macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -460,6 +460,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+multiline_comment|/* If times==NULL, set access and modification to current time,&n; * must be owner or have write permission.&n; * Else, update from *times, must be owner or super user.&n; */
 DECL|function|sys_utime
 r_int
 id|sys_utime
@@ -512,17 +513,16 @@ id|times
 r_if
 c_cond
 (paren
+(paren
 id|current-&gt;euid
 op_ne
 id|inode-&gt;i_uid
+)paren
 op_logical_and
 op_logical_neg
-id|permission
+id|suser
 c_func
 (paren
-id|inode
-comma
-id|MAY_WRITE
 )paren
 )paren
 (brace
@@ -534,7 +534,7 @@ id|inode
 suffix:semicolon
 r_return
 op_minus
-id|EACCES
+id|EPERM
 suffix:semicolon
 )brace
 id|actime
@@ -567,12 +567,44 @@ id|times-&gt;modtime
 suffix:semicolon
 )brace
 r_else
+(brace
+r_if
+c_cond
+(paren
+(paren
+id|current-&gt;euid
+op_ne
+id|inode-&gt;i_uid
+)paren
+op_logical_and
+op_logical_neg
+id|permission
+c_func
+(paren
+id|inode
+comma
+id|MAY_WRITE
+)paren
+)paren
+(brace
+id|iput
+c_func
+(paren
+id|inode
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|EACCES
+suffix:semicolon
+)brace
 id|actime
 op_assign
 id|modtime
 op_assign
 id|CURRENT_TIME
 suffix:semicolon
+)brace
 id|inode-&gt;i_atime
 op_assign
 id|actime

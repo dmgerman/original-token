@@ -1,19 +1,10 @@
 macro_line|#ifndef _STRING_H_
 DECL|macro|_STRING_H_
 mdefine_line|#define _STRING_H_
+macro_line|#include &lt;sys/types.h&gt;
 macro_line|#ifndef NULL
 DECL|macro|NULL
 mdefine_line|#define NULL ((void *) 0)
-macro_line|#endif
-macro_line|#ifndef _SIZE_T
-DECL|macro|_SIZE_T
-mdefine_line|#define _SIZE_T
-DECL|typedef|size_t
-r_typedef
-r_int
-r_int
-r_int
-suffix:semicolon
 macro_line|#endif
 r_extern
 r_char

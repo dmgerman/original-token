@@ -5,6 +5,18 @@ macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &quot;blk.h&quot;
+r_extern
+r_int
+id|rd_init
+c_func
+(paren
+r_int
+id|mem_start
+comma
+r_int
+id|length
+)paren
+suffix:semicolon
 multiline_comment|/*&n; * The request-struct contains all necessary data&n; * to load a nr of sectors into memory&n; */
 DECL|variable|request
 r_struct
@@ -993,11 +1005,15 @@ id|bh
 suffix:semicolon
 )brace
 DECL|function|blk_dev_init
-r_void
+r_int
 id|blk_dev_init
 c_func
 (paren
-r_void
+r_int
+id|mem_start
+comma
+r_int
+id|mem_end
 )paren
 (brace
 r_int
@@ -1038,6 +1054,23 @@ op_assign
 l_int|NULL
 suffix:semicolon
 )brace
+macro_line|#ifdef RAMDISK
+id|mem_start
+op_add_assign
+id|rd_init
+c_func
+(paren
+id|mem_start
+comma
+id|RAMDISK
+op_star
+l_int|1024
+)paren
+suffix:semicolon
+macro_line|#endif
+r_return
+id|mem_start
+suffix:semicolon
 )brace
 DECL|function|ll_rw_swap_file
 r_void

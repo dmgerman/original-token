@@ -1,12 +1,12 @@
 multiline_comment|/*&n; *  linux/fs/namei.c&n; *&n; *  (C) 1991  Linus Torvalds&n; */
 multiline_comment|/*&n; * Some corrections by tytso.&n; */
-macro_line|#include &lt;linux/sched.h&gt;
-macro_line|#include &lt;linux/kernel.h&gt;
-macro_line|#include &lt;asm/segment.h&gt;
-macro_line|#include &lt;linux/string.h&gt;
-macro_line|#include &lt;fcntl.h&gt;
 macro_line|#include &lt;errno.h&gt;
 macro_line|#include &lt;const.h&gt;
+macro_line|#include &lt;asm/segment.h&gt;
+macro_line|#include &lt;linux/sched.h&gt;
+macro_line|#include &lt;linux/kernel.h&gt;
+macro_line|#include &lt;linux/string.h&gt;
+macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 r_struct
 id|inode
@@ -1316,6 +1316,12 @@ id|dev
 r_if
 c_cond
 (paren
+id|S_ISFIFO
+c_func
+(paren
+id|mode
+)paren
+op_logical_or
 id|suser
 c_func
 (paren

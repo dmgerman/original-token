@@ -1,11 +1,5 @@
 macro_line|#ifndef _AHA1542_H
 multiline_comment|/* $Id: aha1542.h,v 1.1 1992/04/24 18:01:50 root Exp root $&n; *&n; * Header file for the adaptec 1542 driver for Linux&n; *&n; * $Log: aha1542.h,v $&n; * Revision 1.1  1992/04/24  18:01:50  root&n; * Initial revision&n; *&n; * Revision 1.1  1992/04/02  03:23:13  drew&n; * Initial revision&n; *&n; * Revision 1.3  1992/01/27  14:46:29  tthorn&n; * *** empty log message ***&n; *&n; */
-DECL|typedef|unchar
-r_typedef
-r_int
-r_char
-id|unchar
-suffix:semicolon
 multiline_comment|/* I/O Port interface 4.2 */
 multiline_comment|/* READ */
 DECL|macro|STATUS

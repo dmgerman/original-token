@@ -3,6 +3,7 @@ multiline_comment|/*&n; * super.c contains code to handle the super-block tables
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/minix_fs.h&gt;
+macro_line|#include &lt;linux/ext_fs.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -55,6 +56,12 @@ op_assign
 id|minix_read_super
 comma
 l_string|&quot;minix&quot;
+)brace
+comma
+(brace
+id|ext_read_super
+comma
+l_string|&quot;ext&quot;
 )brace
 comma
 (brace
@@ -759,6 +766,20 @@ suffix:semicolon
 id|sb-&gt;s_mounted
 op_assign
 l_int|NULL
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|sb-&gt;s_op
+op_logical_and
+id|sb-&gt;s_op-&gt;write_super
+op_logical_and
+id|sb-&gt;s_dirt
+)paren
+id|sb-&gt;s_op-&gt;write_super
+(paren
+id|sb
+)paren
 suffix:semicolon
 id|put_super
 c_func

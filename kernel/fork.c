@@ -4,18 +4,9 @@ macro_line|#include &lt;errno.h&gt;
 macro_line|#include &lt;stddef.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
+macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
-r_extern
-r_void
-id|write_verify
-c_func
-(paren
-r_int
-r_int
-id|address
-)paren
-suffix:semicolon
 DECL|variable|last_pid
 r_int
 id|last_pid

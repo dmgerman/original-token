@@ -1,10 +1,10 @@
 multiline_comment|/*&n; *  linux/fs/truncate.c&n; *&n; *  (C) 1991  Linus Torvalds&n; */
+macro_line|#include &lt;errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/minix_fs.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
-macro_line|#include &lt;errno.h&gt;
-macro_line|#include &lt;fcntl.h&gt;
+macro_line|#include &lt;linux/fcntl.h&gt;
 multiline_comment|/*&n; * Truncate has the most races in the whole filesystem: coding it is&n; * a pain in the a**. Especially as I don&squot;t do any locking...&n; *&n; * The code may look a bit weird, but that&squot;s just because I&squot;ve tried to&n; * handle things like file-size changes in a somewhat graceful manner.&n; * Anyway, truncating a file at the same time somebody else writes to it&n; * is likely to result in pretty weird behaviour...&n; *&n; * The new code handles normal truncates (size = 0) as well as the more&n; * general case (size = XXX). I hope.&n; */
 DECL|function|trunc_direct
 r_static

@@ -8,7 +8,7 @@ macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;sys/socket.h&gt;
 macro_line|#include &lt;sys/un.h&gt;
-macro_line|#include &lt;fcntl.h&gt;
+macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;termios.h&gt;
 macro_line|#include &quot;kern_sock.h&quot;
 DECL|struct|unix_proto_data
@@ -2210,7 +2210,8 @@ c_cond
 id|nonblock
 )paren
 r_return
-l_int|0
+op_minus
+id|EAGAIN
 suffix:semicolon
 id|interruptible_sleep_on
 c_func
@@ -2235,7 +2236,7 @@ l_string|&quot;unix_proto_write: interrupted&bslash;n&quot;
 suffix:semicolon
 r_return
 op_minus
-id|EINTR
+id|ERESTARTSYS
 suffix:semicolon
 )brace
 r_if

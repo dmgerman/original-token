@@ -1,10 +1,10 @@
 multiline_comment|/*&n; *  linux/fs/minix/chrdev.c&n; *&n; *  (C) 1991  Linus Torvalds&n; */
+macro_line|#include &lt;errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/minix_fs.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
-macro_line|#include &lt;errno.h&gt;
-macro_line|#include &lt;fcntl.h&gt;
+macro_line|#include &lt;linux/fcntl.h&gt;
 multiline_comment|/*&n; * Called every time a minix character special file is opened&n; */
 DECL|function|chrdev_open
 r_static

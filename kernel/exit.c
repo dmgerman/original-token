@@ -6,6 +6,7 @@ macro_line|#include &lt;signal.h&gt;
 macro_line|#include &lt;sys/wait.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
+macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 r_int
@@ -1674,6 +1675,8 @@ suffix:semicolon
 r_int
 id|i
 suffix:semicolon
+id|fake_volatile
+suffix:colon
 id|free_page_tables
 c_func
 (paren
@@ -2133,6 +2136,10 @@ id|schedule
 c_func
 (paren
 )paren
+suffix:semicolon
+multiline_comment|/*&n; * In order to get rid of the &quot;volatile function does return&quot; message&n; * I did this little loop that confuses gcc to think do_exit really&n; * is volatile. In fact it&squot;s schedule() that is volatile in some&n; * circumstances: when current-&gt;state = ZOMBIE, schedule() never&n; * returns.&n; *&n; * In fact the natural way to do all this is to have the label and the&n; * goto right after each other, but I put the fake_volatile label at&n; * the start of the function just in case something /really/ bad&n; * happens, and the schedule returns. This way we can try again. I&squot;m&n; * not paranoid: it&squot;s just that everybody is out to get me.&n; */
+r_goto
+id|fake_volatile
 suffix:semicolon
 )brace
 DECL|function|sys_exit
