@@ -400,68 +400,6 @@ DECL|macro|_syscall5
 mdefine_line|#define _syscall5(type,name,type1,arg1,type2,arg2,type3,arg3,type4,arg4,type5,arg5) &bslash;&n;type name(type1 arg1, type2 arg2, type3 arg3, type4 arg4, type5 arg5)&t;&bslash;&n;{&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;unsigned long __sc_ret, __sc_err;&t;&t;&t;&t;&bslash;&n;&t;{&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;register unsigned long __sc_0 __asm__ (&quot;r0&quot;);&t;&t;&bslash;&n;&t;&t;register unsigned long __sc_3 __asm__ (&quot;r3&quot;);&t;&t;&bslash;&n;&t;&t;register unsigned long __sc_4 __asm__ (&quot;r4&quot;);&t;&t;&bslash;&n;&t;&t;register unsigned long __sc_5 __asm__ (&quot;r5&quot;);&t;&t;&bslash;&n;&t;&t;register unsigned long __sc_6 __asm__ (&quot;r6&quot;);&t;&t;&bslash;&n;&t;&t;register unsigned long __sc_7 __asm__ (&quot;r7&quot;);&t;&t;&bslash;&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;__sc_3 = (unsigned long) (arg1);&t;&t;&t;&bslash;&n;&t;&t;__sc_4 = (unsigned long) (arg2);&t;&t;&t;&bslash;&n;&t;&t;__sc_5 = (unsigned long) (arg3);&t;&t;&t;&bslash;&n;&t;&t;__sc_6 = (unsigned long) (arg4);&t;&t;&t;&bslash;&n;&t;&t;__sc_7 = (unsigned long) (arg5);&t;&t;&t;&bslash;&n;&t;&t;__sc_0 = __NR_##name;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;__asm__ __volatile__&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;(&quot;sc           &bslash;n&bslash;t&quot;&t;&t;&t;&t;&bslash;&n;&t;&t;&t; &quot;mfcr %1      &quot;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;: &quot;=&amp;r&quot; (__sc_3), &quot;=&amp;r&quot; (__sc_0)&t;&t;&bslash;&n;&t;&t;&t;: &quot;0&quot;   (__sc_3), &quot;1&quot;   (__sc_0),&t;&t;&bslash;&n;&t;&t;&t;  &quot;r&quot;   (__sc_4),&t;&t;&t;&t;&bslash;&n;&t;&t;&t;  &quot;r&quot;   (__sc_5),&t;&t;&t;&t;&bslash;&n;&t;&t;&t;  &quot;r&quot;   (__sc_6),&t;&t;&t;&t;&bslash;&n;&t;&t;&t;  &quot;r&quot;   (__sc_7)&t;&t;&t;&t;&bslash;&n;&t;&t;&t;: __syscall_clobbers);&t;&t;&t;&t;&bslash;&n;&t;&t;__sc_ret = __sc_3;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;__sc_err = __sc_0;&t;&t;&t;&t;&t;&bslash;&n;&t;}&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;__syscall_return (type);&t;&t;&t;&t;&t;&bslash;&n;}
 macro_line|#ifdef __KERNEL_SYSCALLS__
 multiline_comment|/*&n; * Forking from kernel space will result in the child getting a new,&n; * empty kernel stack area.  Thus the child cannot access automatic&n; * variables set in the parent unless they are in registers, and the&n; * procedure where the fork was done cannot return to its caller in&n; * the child.&n; */
-multiline_comment|/*&n; * Create a new kernel thread.&n; */
-r_extern
-r_int
-id|__kernel_thread
-c_func
-(paren
-r_int
-r_int
-comma
-r_int
-(paren
-op_star
-)paren
-(paren
-r_void
-op_star
-)paren
-comma
-r_void
-op_star
-)paren
-suffix:semicolon
-DECL|function|kernel_thread
-r_static
-r_inline
-r_int
-id|kernel_thread
-c_func
-(paren
-r_int
-(paren
-op_star
-id|fn
-)paren
-(paren
-r_void
-op_star
-)paren
-comma
-r_void
-op_star
-id|arg
-comma
-r_int
-r_int
-id|flags
-)paren
-(brace
-r_return
-id|__kernel_thread
-c_func
-(paren
-id|flags
-op_or
-id|CLONE_VM
-comma
-id|fn
-comma
-id|arg
-)paren
-suffix:semicolon
-)brace
 multiline_comment|/*&n; * System call prototypes.&n; */
 DECL|macro|__NR__exit
 mdefine_line|#define __NR__exit __NR_exit

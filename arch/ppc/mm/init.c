@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  $Id: init.c,v 1.166 1999/05/22 18:18:30 cort Exp $&n; *&n; *  PowerPC version &n; *    Copyright (C) 1995-1996 Gary Thomas (gdt@linuxppc.org)&n; *&n; *  Modifications by Paul Mackerras (PowerMac) (paulus@cs.anu.edu.au)&n; *  and Cort Dougan (PReP) (cort@cs.nmt.edu)&n; *    Copyright (C) 1996 Paul Mackerras&n; *  Amiga/APUS changes by Jesper Skov (jskov@cygnus.co.uk).&n; *&n; *  Derived from &quot;arch/i386/mm/init.c&quot;&n; *    Copyright (C) 1991, 1992, 1993, 1994  Linus Torvalds&n; *&n; *  This program is free software; you can redistribute it and/or&n; *  modify it under the terms of the GNU General Public License&n; *  as published by the Free Software Foundation; either version&n; *  2 of the License, or (at your option) any later version.&n; *&n; */
+multiline_comment|/*&n; *  $Id: init.c,v 1.169 1999/06/17 19:03:13 cort Exp $&n; *&n; *  PowerPC version &n; *    Copyright (C) 1995-1996 Gary Thomas (gdt@linuxppc.org)&n; *&n; *  Modifications by Paul Mackerras (PowerMac) (paulus@cs.anu.edu.au)&n; *  and Cort Dougan (PReP) (cort@cs.nmt.edu)&n; *    Copyright (C) 1996 Paul Mackerras&n; *  Amiga/APUS changes by Jesper Skov (jskov@cygnus.co.uk).&n; *&n; *  Derived from &quot;arch/i386/mm/init.c&quot;&n; *    Copyright (C) 1991, 1992, 1993, 1994  Linus Torvalds&n; *&n; *  This program is free software; you can redistribute it and/or&n; *  modify it under the terms of the GNU General Public License&n; *  as published by the Free Software Foundation; either version&n; *  2 of the License, or (at your option) any later version.&n; *&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -1125,21 +1125,49 @@ id|p-&gt;comm
 comma
 id|p-&gt;pid
 comma
+(paren
+id|p-&gt;mm
+)paren
+ques
+c_cond
 id|atomic_read
 c_func
 (paren
 op_amp
 id|p-&gt;mm-&gt;count
 )paren
+suffix:colon
+l_int|0
 comma
+(paren
+id|p-&gt;mm
+)paren
+ques
+c_cond
 id|p-&gt;mm-&gt;context
+suffix:colon
+l_int|0
 comma
+(paren
+id|p-&gt;mm
+)paren
+ques
+c_cond
+(paren
 id|p-&gt;mm-&gt;context
 op_lshift
 l_int|4
+)paren
+suffix:colon
+l_int|0
 comma
 id|p-&gt;tss.last_syscall
 comma
+(paren
+id|p-&gt;tss.regs
+)paren
+ques
+c_cond
 id|user_mode
 c_func
 (paren
@@ -1150,8 +1178,17 @@ c_cond
 l_char|&squot;u&squot;
 suffix:colon
 l_char|&squot;k&squot;
+suffix:colon
+l_char|&squot;?&squot;
 comma
+(paren
+id|p-&gt;tss.regs
+)paren
+ques
+c_cond
 id|p-&gt;tss.regs-&gt;nip
+suffix:colon
+l_int|0
 comma
 (paren
 id|ulong
@@ -1204,7 +1241,7 @@ l_string|&quot;current&quot;
 )paren
 suffix:semicolon
 )brace
-macro_line|#else&t;&t;
+macro_line|#else
 r_if
 c_cond
 (paren
@@ -1440,6 +1477,22 @@ id|size
 op_minus
 id|p
 suffix:semicolon
+multiline_comment|/*&n;&t; * If the address lies within the first 16 MB, assume it&squot;s in ISA&n;&t; * memory space&n;&t; */
+r_if
+c_cond
+(paren
+id|p
+OL
+l_int|16
+op_star
+l_int|1024
+op_star
+l_int|1024
+)paren
+id|p
+op_add_assign
+id|_ISA_MEM_BASE
+suffix:semicolon
 multiline_comment|/*&n;&t; * Don&squot;t allow anybody to remap normal RAM that we&squot;re using.&n;&t; * mem_init() sets high_memory so only do the check after that.&n;&t; */
 r_if
 c_cond
@@ -1496,10 +1549,10 @@ op_assign
 id|p_mapped_by_bats
 c_func
 (paren
-id|addr
+id|p
 )paren
 )paren
-multiline_comment|/*&amp;&amp; p_mapped_by_bats(addr+(size-1))*/
+multiline_comment|/*&amp;&amp; p_mapped_by_bats(p+size-1)*/
 )paren
 r_goto
 id|out

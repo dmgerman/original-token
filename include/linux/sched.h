@@ -198,6 +198,10 @@ DECL|member|count
 id|atomic_t
 id|count
 suffix:semicolon
+DECL|member|file_lock
+id|rwlock_t
+id|file_lock
+suffix:semicolon
 DECL|member|max_fds
 r_int
 id|max_fds
@@ -221,7 +225,7 @@ suffix:semicolon
 )brace
 suffix:semicolon
 DECL|macro|INIT_FILES
-mdefine_line|#define INIT_FILES { &bslash;&n;&t;ATOMIC_INIT(1), &bslash;&n;&t;NR_OPEN, &bslash;&n;&t;&amp;init_fd_array[0], &bslash;&n;&t;{ { 0, } }, &bslash;&n;&t;{ { 0, } } &bslash;&n;}
+mdefine_line|#define INIT_FILES { &bslash;&n;&t;ATOMIC_INIT(1), &bslash;&n;&t;RW_LOCK_UNLOCKED, &bslash;&n;&t;NR_OPEN, &bslash;&n;&t;&amp;init_fd_array[0], &bslash;&n;&t;{ { 0, } }, &bslash;&n;&t;{ { 0, } } &bslash;&n;}
 DECL|struct|fs_struct
 r_struct
 id|fs_struct

@@ -37,6 +37,7 @@ macro_line|#include &lt;asm/machdep.h&gt;
 macro_line|#include &lt;asm/mk48t59.h&gt;
 macro_line|#include &lt;asm/prep_nvram.h&gt;
 macro_line|#include &lt;asm/raven.h&gt;
+macro_line|#include &lt;asm/keyboard.h&gt;
 macro_line|#include &quot;time.h&quot;
 macro_line|#include &quot;local_irq.h&quot;
 macro_line|#include &quot;i8259.h&quot;
@@ -3248,15 +3249,15 @@ id|ppc_ide_md.default_io_base
 op_assign
 id|prep_ide_default_io_base
 suffix:semicolon
-id|ppc_ide_md.check_region
+id|ppc_ide_md.ide_check_region
 op_assign
 id|prep_ide_check_region
 suffix:semicolon
-id|ppc_ide_md.request_region
+id|ppc_ide_md.ide_request_region
 op_assign
 id|prep_ide_request_region
 suffix:semicolon
-id|ppc_ide_md.release_region
+id|ppc_ide_md.ide_release_region
 op_assign
 id|prep_ide_release_region
 suffix:semicolon
@@ -3299,9 +3300,13 @@ op_assign
 id|pckbd_init_hw
 suffix:semicolon
 macro_line|#ifdef CONFIG_MAGIC_SYSRQ
-id|ppc_md.kbd_sysrq_xlate
+id|ppc_md.ppc_kbd_sysrq_xlate
 op_assign
 id|pckbd_sysrq_xlate
+suffix:semicolon
+id|SYSRQ_KEY
+op_assign
+l_int|0x54
 suffix:semicolon
 macro_line|#endif
 macro_line|#endif

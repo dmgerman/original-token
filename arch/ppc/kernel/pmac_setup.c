@@ -21,6 +21,7 @@ macro_line|#include &lt;linux/blk.h&gt;
 macro_line|#include &lt;linux/vt_kern.h&gt;
 macro_line|#include &lt;linux/console.h&gt;
 macro_line|#include &lt;linux/ide.h&gt;
+macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;asm/prom.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
@@ -35,6 +36,7 @@ macro_line|#include &lt;asm/mediabay.h&gt;
 macro_line|#include &lt;asm/feature.h&gt;
 macro_line|#include &lt;asm/ide.h&gt;
 macro_line|#include &lt;asm/machdep.h&gt;
+macro_line|#include &lt;asm/keyboard.h&gt;
 macro_line|#include &quot;time.h&quot;
 macro_line|#include &quot;local_irq.h&quot;
 macro_line|#include &quot;pmac_pic.h&quot;
@@ -263,6 +265,14 @@ suffix:semicolon
 r_static
 r_void
 id|ohare_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_static
+r_void
+id|init_p2pbridge
 c_func
 (paren
 r_void
@@ -1098,6 +1108,11 @@ op_star
 id|memory_end_p
 )paren
 suffix:semicolon
+id|init_p2pbridge
+c_func
+(paren
+)paren
+suffix:semicolon
 multiline_comment|/* Checks &quot;l2cr-value&quot; property in the registry */
 r_if
 c_cond
@@ -1268,6 +1283,130 @@ id|to_kdev_t
 c_func
 (paren
 id|DEFAULT_ROOT_DEVICE
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/*&n; * Tweak the PCI-PCI bridge chip on the blue &amp; white G3s.&n; */
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
+r_static
+r_void
+id|init_p2pbridge
+c_func
+(paren
+r_void
+)paren
+)paren
+(brace
+r_struct
+id|device_node
+op_star
+id|p2pbridge
+suffix:semicolon
+r_int
+r_char
+id|bus
+comma
+id|devfn
+suffix:semicolon
+r_int
+r_int
+id|val
+suffix:semicolon
+multiline_comment|/* XXX it would be better here to identify the specific&n;&t;   PCI-PCI bridge chip we have. */
+r_if
+c_cond
+(paren
+(paren
+id|p2pbridge
+op_assign
+id|find_devices
+c_func
+(paren
+l_string|&quot;pci-bridge&quot;
+)paren
+)paren
+op_eq
+l_int|0
+op_logical_or
+id|p2pbridge-&gt;parent
+op_eq
+l_int|NULL
+op_logical_or
+id|strcmp
+c_func
+(paren
+id|p2pbridge-&gt;parent-&gt;name
+comma
+l_string|&quot;pci&quot;
+)paren
+op_ne
+l_int|0
+)paren
+r_return
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|pci_device_loc
+c_func
+(paren
+id|p2pbridge
+comma
+op_amp
+id|bus
+comma
+op_amp
+id|devfn
+)paren
+OL
+l_int|0
+)paren
+r_return
+suffix:semicolon
+id|pcibios_read_config_word
+c_func
+(paren
+id|bus
+comma
+id|devfn
+comma
+id|PCI_BRIDGE_CONTROL
+comma
+op_amp
+id|val
+)paren
+suffix:semicolon
+id|val
+op_and_assign
+op_complement
+id|PCI_BRIDGE_CTL_MASTER_ABORT
+suffix:semicolon
+id|pcibios_write_config_word
+c_func
+(paren
+id|bus
+comma
+id|devfn
+comma
+id|PCI_BRIDGE_CONTROL
+comma
+id|val
+)paren
+suffix:semicolon
+id|pcibios_read_config_word
+c_func
+(paren
+id|bus
+comma
+id|devfn
+comma
+id|PCI_BRIDGE_CONTROL
+comma
+op_amp
+id|val
 )paren
 suffix:semicolon
 )brace
@@ -2064,10 +2203,12 @@ r_int
 id|ns
 )paren
 (brace
-id|ide_insw
+id|_insw_ns
 c_func
 (paren
 id|port
+op_plus
+id|_IO_BASE
 comma
 id|buf
 comma
@@ -2091,10 +2232,12 @@ r_int
 id|ns
 )paren
 (brace
-id|ide_outsw
+id|_outsw_ns
 c_func
 (paren
 id|port
+op_plus
+id|_IO_BASE
 comma
 id|buf
 comma
@@ -2390,9 +2533,13 @@ op_assign
 id|mackbd_init_hw
 suffix:semicolon
 macro_line|#ifdef CONFIG_MAGIC_SYSRQ
-id|ppc_md.kbd_sysrq_xlate
+id|ppc_md.ppc_kbd_sysrq_xlate
 op_assign
 id|mackbd_sysrq_xlate
+suffix:semicolon
+id|SYSRQ_KEY
+op_assign
+l_int|0x69
 suffix:semicolon
 macro_line|#endif
 macro_line|#endif
@@ -2413,15 +2560,15 @@ id|ppc_ide_md.default_io_base
 op_assign
 id|pmac_ide_default_io_base
 suffix:semicolon
-id|ppc_ide_md.check_region
+id|ppc_ide_md.ide_check_region
 op_assign
 id|pmac_ide_check_region
 suffix:semicolon
-id|ppc_ide_md.request_region
+id|ppc_ide_md.ide_request_region
 op_assign
 id|pmac_ide_request_region
 suffix:semicolon
-id|ppc_ide_md.release_region
+id|ppc_ide_md.ide_release_region
 op_assign
 id|pmac_ide_release_region
 suffix:semicolon
@@ -2435,8 +2582,9 @@ id|pmac_ide_init_hwif_ports
 suffix:semicolon
 id|ppc_ide_md.io_base
 op_assign
-l_int|0
+id|_IO_BASE
 suffix:semicolon
+multiline_comment|/* actually too early for this :-( */
 macro_line|#endif&t;&t;
 )brace
 eof

@@ -79,7 +79,6 @@ l_string|&quot;i&quot;
 suffix:semicolon
 macro_line|#endif
 multiline_comment|/*&n; *&t;Lock&n; */
-macro_line|#ifdef __SMP__
 DECL|variable|portfw_lock
 r_static
 id|spinlock_t
@@ -87,7 +86,6 @@ id|portfw_lock
 op_assign
 id|SPIN_LOCK_UNLOCKED
 suffix:semicolon
-macro_line|#endif
 DECL|variable|portfw_list
 r_static
 r_struct

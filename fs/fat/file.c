@@ -109,7 +109,7 @@ comma
 multiline_comment|/* follow_link */
 id|fat_bmap
 comma
-multiline_comment|/* bmap */
+multiline_comment|/* get_block */
 id|block_read_full_page
 comma
 multiline_comment|/* readpage */
@@ -220,7 +220,7 @@ comma
 multiline_comment|/* follow_link */
 l_int|NULL
 comma
-multiline_comment|/* bmap */
+multiline_comment|/* get_block */
 id|block_read_full_page
 comma
 multiline_comment|/* readpage */
@@ -329,7 +329,7 @@ comma
 multiline_comment|/* follow_link */
 l_int|NULL
 comma
-multiline_comment|/* bmap */
+multiline_comment|/* get_block */
 id|fat_readpage
 comma
 multiline_comment|/* readpage */

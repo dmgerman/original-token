@@ -1092,6 +1092,14 @@ id|trap
 )paren
 )paren
 suffix:semicolon
+id|DEFINE
+c_func
+(paren
+id|CLONE_VM
+comma
+id|CLONE_VM
+)paren
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon

@@ -380,6 +380,31 @@ id|task_struct
 op_star
 )paren
 suffix:semicolon
+multiline_comment|/*&n; * Create a new kernel thread.&n; */
+r_extern
+r_int
+id|kernel_thread
+c_func
+(paren
+r_int
+(paren
+op_star
+id|fn
+)paren
+(paren
+r_void
+op_star
+)paren
+comma
+r_void
+op_star
+id|arg
+comma
+r_int
+r_int
+id|flags
+)paren
+suffix:semicolon
 multiline_comment|/*&n; * Bus types&n; */
 DECL|macro|EISA_bus
 mdefine_line|#define EISA_bus 0

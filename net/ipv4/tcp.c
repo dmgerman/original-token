@@ -1190,11 +1190,6 @@ id|err
 comma
 id|copied
 suffix:semicolon
-id|unlock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 id|lock_sock
 c_func
 (paren
@@ -2077,11 +2072,6 @@ c_func
 id|sk
 )paren
 suffix:semicolon
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 r_return
 id|err
 suffix:semicolon
@@ -2686,11 +2676,6 @@ id|MSG_WAITALL
 id|target
 op_assign
 id|len
-suffix:semicolon
-id|unlock_kernel
-c_func
-(paren
-)paren
 suffix:semicolon
 id|add_wait_queue
 c_func
@@ -3356,11 +3341,6 @@ id|release_sock
 c_func
 (paren
 id|sk
-)paren
-suffix:semicolon
-id|lock_kernel
-c_func
-(paren
 )paren
 suffix:semicolon
 r_return

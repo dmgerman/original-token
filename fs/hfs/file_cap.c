@@ -154,7 +154,7 @@ comma
 multiline_comment|/* follow_link */
 l_int|NULL
 comma
-multiline_comment|/* bmap - none */
+multiline_comment|/* get_block - none */
 l_int|NULL
 comma
 multiline_comment|/* readpage */

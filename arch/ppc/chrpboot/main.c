@@ -56,7 +56,7 @@ mdefine_line|#define RAM_START&t;0x00000000
 DECL|macro|RAM_END
 mdefine_line|#define RAM_END&t;&t;(8&lt;&lt;20)
 DECL|macro|RAM_FREE
-mdefine_line|#define RAM_FREE&t;(6&lt;&lt;20)&t;&t;/* after image of chrpboot */
+mdefine_line|#define RAM_FREE&t;((unsigned long)(_end+0x1000)&amp;~0xFFF)
 DECL|macro|PROG_START
 mdefine_line|#define PROG_START&t;0x00010000
 DECL|variable|avail_ram
@@ -68,6 +68,12 @@ DECL|variable|end_avail
 r_char
 op_star
 id|end_avail
+suffix:semicolon
+r_extern
+r_char
+id|_end
+(braket
+)braket
 suffix:semicolon
 r_extern
 r_char
@@ -175,9 +181,11 @@ suffix:semicolon
 id|printf
 c_func
 (paren
-l_string|&quot;initial ramdisk at 0x%x (%u bytes)&bslash;n&bslash;r&quot;
+l_string|&quot;initial ramdisk moving 0x%x &lt;- 0x%x (%x bytes)&bslash;n&bslash;r&quot;
 comma
 id|initrd_start
+comma
+id|initrd_data
 comma
 id|initrd_size
 )paren

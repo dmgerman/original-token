@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * $Id: setup.c,v 1.133 1999/05/14 07:24:30 davem Exp $&n; * Common prep/pmac/chrp boot and setup code.&n; */
+multiline_comment|/*&n; * $Id: setup.c,v 1.136 1999/06/18 07:11:35 cort Exp $&n; * Common prep/pmac/chrp boot and setup code.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
@@ -226,6 +226,13 @@ id|is_chrp
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#ifdef CONFIG_MAGIC_SYSRQ
+DECL|variable|SYSRQ_KEY
+r_int
+r_int
+id|SYSRQ_KEY
+suffix:semicolon
+macro_line|#endif /* CONFIG_MAGIC_SYSRQ */
 multiline_comment|/* For MTX/MVME boards.. with Raven/Falcon Chipset&n;      Real close to CHRP, but boot like PReP (via PPCbug)&n;      There&squot;s probably a nicer way to do this.. --Troy */
 DECL|variable|is_powerplus
 r_int
@@ -455,51 +462,6 @@ c_func
 )paren
 suffix:semicolon
 )brace
-macro_line|#if defined(CONFIG_BLK_DEV_IDE) || defined(CONFIG_BLK_DEV_IDE_MODULE)
-DECL|function|ide_init_hwif_ports
-r_void
-id|ide_init_hwif_ports
-(paren
-id|hw_regs_t
-op_star
-id|hw
-comma
-id|ide_ioreg_t
-id|data_port
-comma
-id|ide_ioreg_t
-id|ctrl_port
-comma
-r_int
-op_star
-id|irq
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|ppc_ide_md.ide_init_hwif
-op_ne
-l_int|NULL
-)paren
-(brace
-id|ppc_ide_md
-dot
-id|ide_init_hwif
-c_func
-(paren
-id|hw
-comma
-id|data_port
-comma
-id|ctrl_port
-comma
-id|irq
-)paren
-suffix:semicolon
-)brace
-)brace
-macro_line|#endif
 DECL|function|cpu_temp
 r_int
 r_int
@@ -1428,10 +1390,6 @@ r_else
 id|_machine
 op_assign
 id|_MACH_Pmac
-suffix:semicolon
-id|is_prep
-op_assign
-l_int|1
 suffix:semicolon
 )brace
 )brace

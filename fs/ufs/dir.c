@@ -146,10 +146,9 @@ id|filp-&gt;f_pos
 op_rshift
 id|sb-&gt;s_blocksize_bits
 suffix:semicolon
-multiline_comment|/* XXX - ufs_bmap() call needs error checking */
 id|blk
 op_assign
-id|ufs_bmap
+id|ufs_frag_map
 c_func
 (paren
 id|inode
@@ -157,6 +156,14 @@ comma
 id|lblk
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|blk
+op_logical_or
+op_logical_neg
+(paren
 id|bh
 op_assign
 id|bread
@@ -167,12 +174,7 @@ id|blk
 comma
 id|sb-&gt;s_blocksize
 )paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|bh
+)paren
 )paren
 (brace
 multiline_comment|/* XXX - error - skip to the next block */
@@ -856,7 +858,7 @@ comma
 multiline_comment|/* follow_link */
 l_int|NULL
 comma
-multiline_comment|/* bmap */
+multiline_comment|/* get_block */
 l_int|NULL
 comma
 multiline_comment|/* readpage */

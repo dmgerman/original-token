@@ -2402,6 +2402,11 @@ id|ERESTARTSYS
 suffix:semicolon
 )brace
 macro_line|#endif
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2427,6 +2432,11 @@ id|i
 op_assign
 op_minus
 id|EIO
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -2551,6 +2561,11 @@ id|size
 op_assign
 id|count
 suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 id|ret
 op_assign
 id|write
@@ -2563,6 +2578,11 @@ comma
 id|buf
 comma
 id|size
+)paren
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
 )paren
 suffix:semicolon
 r_if

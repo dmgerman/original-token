@@ -186,6 +186,26 @@ id|calibrate_decr
 r_void
 )paren
 suffix:semicolon
+DECL|member|heartbeat
+r_void
+(paren
+op_star
+id|heartbeat
+)paren
+(paren
+r_void
+)paren
+suffix:semicolon
+DECL|member|heartbeat_reset
+r_int
+r_int
+id|heartbeat_reset
+suffix:semicolon
+DECL|member|heartbeat_count
+r_int
+r_int
+id|heartbeat_count
+suffix:semicolon
 DECL|member|nvram_read_val
 r_int
 r_char
@@ -297,11 +317,11 @@ r_void
 )paren
 suffix:semicolon
 macro_line|#ifdef CONFIG_MAGIC_SYSRQ
-DECL|member|kbd_sysrq_xlate
+DECL|member|ppc_kbd_sysrq_xlate
 r_int
 r_char
 op_star
-id|kbd_sysrq_xlate
+id|ppc_kbd_sysrq_xlate
 suffix:semicolon
 macro_line|#endif
 multiline_comment|/* PCI interfaces */

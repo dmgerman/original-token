@@ -17,81 +17,6 @@ DECL|macro|MAX
 mdefine_line|#define MAX(a,b) (((a)&gt;(b))?(a):(b))
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/sysv_fs.h&gt;
-DECL|function|sysv_writepage
-r_static
-r_int
-id|sysv_writepage
-(paren
-r_struct
-id|file
-op_star
-id|file
-comma
-r_struct
-id|page
-op_star
-id|page
-)paren
-(brace
-r_return
-id|block_write_full_page
-c_func
-(paren
-id|file
-comma
-id|page
-comma
-id|sysv_getblk_block
-)paren
-suffix:semicolon
-)brace
-DECL|function|sysv_write_one_page
-r_static
-r_int
-id|sysv_write_one_page
-(paren
-r_struct
-id|file
-op_star
-id|file
-comma
-r_struct
-id|page
-op_star
-id|page
-comma
-r_int
-r_int
-id|offset
-comma
-r_int
-r_int
-id|bytes
-comma
-r_const
-r_char
-op_star
-id|buf
-)paren
-(brace
-r_return
-id|block_write_partial_page
-c_func
-(paren
-id|file
-comma
-id|page
-comma
-id|offset
-comma
-id|bytes
-comma
-id|buf
-comma
-id|sysv_getblk_block
-)paren
-suffix:semicolon
-)brace
 multiline_comment|/*&n; * Write to a file (through the page cache).&n; */
 r_static
 id|ssize_t
@@ -129,7 +54,7 @@ id|count
 comma
 id|ppos
 comma
-id|sysv_write_one_page
+id|block_write_partial_page
 )paren
 suffix:semicolon
 )brace
@@ -227,13 +152,13 @@ multiline_comment|/* readlink */
 l_int|NULL
 comma
 multiline_comment|/* follow_link */
-id|sysv_bmap
+id|sysv_get_block
 comma
-multiline_comment|/* bmap */
+multiline_comment|/* get_block */
 id|block_read_full_page
 comma
 multiline_comment|/* readpage */
-id|sysv_writepage
+id|block_write_full_page
 comma
 multiline_comment|/* writepage */
 id|block_flushpage

@@ -143,8 +143,12 @@ id|entry-&gt;filp
 op_assign
 id|filp
 suffix:semicolon
+id|atomic_inc
+c_func
+(paren
+op_amp
 id|filp-&gt;f_count
-op_increment
+)paren
 suffix:semicolon
 id|entry-&gt;wait_address
 op_assign

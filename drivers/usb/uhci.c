@@ -1,6 +1,7 @@
 multiline_comment|/*&n; * Universal Host Controller Interface driver for USB.&n; *&n; * (C) Copyright 1999 Linus Torvalds&n; *&n; * Intel documents this fairly well, and as far as I know there&n; * are no royalties or anything like that, but even so there are&n; * people who decided that they want to do the same thing in a&n; * completely different way.&n; *&n; * Oh, well. The intel version is the more common by far. As such,&n; * that&squot;s the one I care about right now.&n; *&n; * WARNING! The USB documentation is downright evil. Most of it&n; * is just crap, written by a committee. You&squot;re better off ignoring&n; * most of it, the important stuff is:&n; *  - the low-level protocol (fairly simple but lots of small details)&n; *  - working around the horridness of the rest&n; */
 multiline_comment|/* 4/4/1999 added data toggle for interrupt pipes -keryan */
 multiline_comment|/* 5/16/1999 added global toggles for bulk and control */
+multiline_comment|/* 6/25/1999 added fix for data toggles on bidirectional bulk endpoints */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
@@ -269,6 +270,12 @@ c_func
 id|dev-&gt;usb
 comma
 id|usb_pipeendpoint
+c_func
+(paren
+id|tmp-&gt;info
+)paren
+comma
+id|usb_pipeout
 c_func
 (paren
 id|tmp-&gt;info
@@ -1396,6 +1403,12 @@ c_func
 id|usb_dev
 comma
 id|usb_pipeendpoint
+c_func
+(paren
+id|pipe
+)paren
+comma
+id|usb_pipeout
 c_func
 (paren
 id|pipe
@@ -4105,6 +4118,12 @@ c_func
 (paren
 id|pipe
 )paren
+comma
+id|usb_pipeout
+c_func
+(paren
+id|pipe
+)paren
 )paren
 op_lshift
 l_int|19
@@ -4175,6 +4194,12 @@ c_func
 id|usb_dev
 comma
 id|usb_pipeendpoint
+c_func
+(paren
+id|pipe
+)paren
+comma
+id|usb_pipeout
 c_func
 (paren
 id|pipe
@@ -5307,6 +5332,12 @@ c_func
 (paren
 id|td-&gt;info
 )paren
+comma
+id|usb_pipeout
+c_func
+(paren
+id|td-&gt;info
+)paren
 )paren
 suffix:semicolon
 id|td-&gt;info
@@ -5327,6 +5358,12 @@ c_func
 id|td-&gt;dev
 comma
 id|usb_pipeendpoint
+c_func
+(paren
+id|td-&gt;info
+)paren
+comma
+id|usb_pipeout
 c_func
 (paren
 id|td-&gt;info
@@ -5402,6 +5439,12 @@ c_func
 id|td-&gt;dev
 comma
 id|usb_pipeendpoint
+c_func
+(paren
+id|td-&gt;info
+)paren
+comma
+id|usb_pipeout
 c_func
 (paren
 id|td-&gt;info

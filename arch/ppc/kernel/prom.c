@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * $Id: prom.c,v 1.60 1999/05/25 01:42:41 cort Exp $&n; *&n; * Procedures for interfacing to the Open Firmware PROM on&n; * Power Macintosh computers.&n; *&n; * In particular, we are interested in the device tree&n; * and in using some of its services (exit, write to stdout).&n; *&n; * Paul Mackerras&t;August 1996.&n; * Copyright (C) 1996 Paul Mackerras.&n; */
+multiline_comment|/*&n; * $Id: prom.c,v 1.61 1999/06/17 06:05:52 paulus Exp $&n; *&n; * Procedures for interfacing to the Open Firmware PROM on&n; * Power Macintosh computers.&n; *&n; * In particular, we are interested in the device tree&n; * and in using some of its services (exit, write to stdout).&n; *&n; * Paul Mackerras&t;August 1996.&n; * Copyright (C) 1996 Paul Mackerras.&n; */
 macro_line|#include &lt;stdarg.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -1434,6 +1434,7 @@ c_cond
 (paren
 id|model
 op_logical_and
+(paren
 id|strcmp
 c_func
 (paren
@@ -1447,6 +1448,21 @@ l_string|&quot;iMac,1&quot;
 )paren
 op_eq
 l_int|0
+op_logical_or
+id|strcmp
+c_func
+(paren
+id|model
+comma
+id|RELOC
+c_func
+(paren
+l_string|&quot;PowerMac1,1&quot;
+)paren
+)paren
+op_eq
+l_int|0
+)paren
 )paren
 (brace
 id|out_le32
@@ -4837,7 +4853,7 @@ l_int|0
 (brace
 r_int
 r_int
-id|busdevfn
+id|devfn
 op_assign
 id|pci_addrs
 (braket
@@ -4846,7 +4862,7 @@ l_int|0
 dot
 id|addr.a_hi
 op_amp
-l_int|0xffff00
+l_int|0xff00
 suffix:semicolon
 id|np-&gt;n_intrs
 op_assign
@@ -4894,7 +4910,7 @@ id|i
 dot
 id|addr.a_hi
 op_eq
-id|busdevfn
+id|devfn
 )paren
 (brace
 id|np-&gt;intrs

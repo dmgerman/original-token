@@ -3926,11 +3926,6 @@ id|ppos
 id|ssize_t
 id|retval
 suffix:semicolon
-id|unlock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 id|retval
 op_assign
 op_minus
@@ -4008,11 +4003,6 @@ id|desc.error
 suffix:semicolon
 )brace
 )brace
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 r_return
 id|retval
 suffix:semicolon
@@ -5267,8 +5257,12 @@ op_assign
 id|dentry-&gt;d_inode
 suffix:semicolon
 multiline_comment|/*&n;&t; * If a task terminates while we&squot;re swapping the page, the vma and&n;&t; * and file could be released ... increment the count to be safe.&n;&t; */
+id|atomic_inc
+c_func
+(paren
+op_amp
 id|file-&gt;f_count
-op_increment
+)paren
 suffix:semicolon
 id|result
 op_assign
@@ -6865,11 +6859,6 @@ op_minus
 id|pos
 suffix:semicolon
 )brace
-id|unlock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 r_while
 c_loop
 (paren
@@ -7139,11 +7128,6 @@ c_cond
 id|written
 suffix:colon
 id|status
-suffix:semicolon
-id|lock_kernel
-c_func
-(paren
-)paren
 suffix:semicolon
 id|out
 suffix:colon

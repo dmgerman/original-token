@@ -2242,6 +2242,7 @@ suffix:semicolon
 id|i
 op_increment
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -2254,6 +2255,7 @@ id|down
 op_eq
 id|oano
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -2274,12 +2276,15 @@ r_else
 r_goto
 id|go_up
 suffix:semicolon
+)brace
+)brace
 id|hpfs_error
 c_func
 (paren
 id|s
 comma
-l_string|&quot;reference to anode %08x not found in anode %08x (probably bad up pointer)&quot;
+l_string|&quot;reference to anode %08x not found in anode %08x &quot;
+l_string|&quot;(probably bad up pointer)&quot;
 comma
 id|oano
 comma

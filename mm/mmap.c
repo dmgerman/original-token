@@ -1119,8 +1119,12 @@ id|vma-&gt;vm_file
 op_assign
 id|file
 suffix:semicolon
+id|atomic_inc
+c_func
+(paren
+op_amp
 id|file-&gt;f_count
-op_increment
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; * merge_segments may merge our vma, so we can&squot;t refer to it&n;&t; * after the call.  Save the values we need now ...&n;&t; */
@@ -2050,8 +2054,12 @@ c_cond
 (paren
 id|mpnt-&gt;vm_file
 )paren
+id|atomic_inc
+c_func
+(paren
+op_amp
 id|mpnt-&gt;vm_file-&gt;f_count
-op_increment
+)paren
 suffix:semicolon
 r_if
 c_cond

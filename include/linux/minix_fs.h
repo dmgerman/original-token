@@ -467,7 +467,8 @@ r_int
 suffix:semicolon
 r_extern
 r_int
-id|minix_getblk_block
+id|minix_get_block
+c_func
 (paren
 r_struct
 id|inode
@@ -475,13 +476,11 @@ op_star
 comma
 r_int
 comma
-r_int
-comma
-r_int
+r_struct
+id|buffer_head
 op_star
 comma
 r_int
-op_star
 )paren
 suffix:semicolon
 r_extern

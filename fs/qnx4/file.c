@@ -739,7 +739,7 @@ comma
 multiline_comment|/* follow_link */
 id|qnx4_bmap
 comma
-multiline_comment|/* bmap */
+multiline_comment|/* get_block */
 id|qnx4_readpage
 comma
 multiline_comment|/* readpage */

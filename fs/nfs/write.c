@@ -1565,8 +1565,12 @@ c_func
 id|page
 )paren
 suffix:semicolon
+id|atomic_inc
+c_func
+(paren
+op_amp
 id|file-&gt;f_count
-op_increment
+)paren
 suffix:semicolon
 multiline_comment|/* Schedule request */
 id|synchronous

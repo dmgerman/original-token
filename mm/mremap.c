@@ -660,8 +660,12 @@ c_cond
 (paren
 id|new_vma-&gt;vm_file
 )paren
+id|atomic_inc
+c_func
+(paren
+op_amp
 id|new_vma-&gt;vm_file-&gt;f_count
-op_increment
+)paren
 suffix:semicolon
 r_if
 c_cond

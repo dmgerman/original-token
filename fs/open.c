@@ -3450,9 +3450,13 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
+id|atomic_read
+c_func
+(paren
+op_amp
 id|filp-&gt;f_count
-op_eq
-l_int|0
+)paren
 )paren
 (brace
 id|printk

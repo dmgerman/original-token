@@ -311,7 +311,12 @@ id|s-&gt;socket
 op_logical_and
 id|s-&gt;socket-&gt;file
 op_logical_and
+id|atomic_read
+c_func
+(paren
+op_amp
 id|s-&gt;socket-&gt;file-&gt;f_count
+)paren
 OG
 id|s-&gt;protinfo.af_unix.inflight
 )paren

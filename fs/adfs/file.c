@@ -101,7 +101,7 @@ comma
 multiline_comment|/* follow_link&t;&t;&t;*/
 id|adfs_bmap
 comma
-multiline_comment|/* bmap&t;&t;&t;&t;*/
+multiline_comment|/* get_block&t;&t;&t;*/
 id|block_read_full_page
 comma
 multiline_comment|/* readpage&t;&t;&t;*/

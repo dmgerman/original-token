@@ -530,7 +530,7 @@ r_char
 op_star
 id|help_string
 op_assign
-l_string|&quot;&bslash;&n;Commands:&bslash;n&bslash;&n;  d&t;dump bytes&bslash;n&bslash;&n;  dc&t;dump characters&bslash;n&bslash;&n;  di&t;dump instructions&bslash;n&bslash;&n;  df&t;dump float values&bslash;n&bslash;&n;  dd&t;dump double values&bslash;n&bslash;&n;  e&t;print exception information&bslash;n&bslash;&n;  h&t;dump hash table&bslash;n&bslash;&n;  m&t;examine/change memory&bslash;n&bslash;&n;  mm&t;move a block of memory&bslash;n&bslash;&n;  ms&t;set a block of memory&bslash;n&bslash;&n;  md&t;compare two blocks of memory&bslash;n&bslash;&n;  r&t;print registers&bslash;n&bslash;&n;  S&t;print special registers&bslash;n&bslash;&n;  t&t;print backtrace&bslash;n&bslash;&n;  x&t;exit monitor&bslash;n&bslash;&n;&quot;
+l_string|&quot;&bslash;&n;Commands:&bslash;n&bslash;&n;  d&t;dump bytes&bslash;n&bslash;&n;  di&t;dump instructions&bslash;n&bslash;&n;  df&t;dump float values&bslash;n&bslash;&n;  dd&t;dump double values&bslash;n&bslash;&n;  e&t;print exception information&bslash;n&bslash;&n;  h&t;dump hash table&bslash;n&bslash;&n;  m&t;examine/change memory&bslash;n&bslash;&n;  mm&t;move a block of memory&bslash;n&bslash;&n;  ms&t;set a block of memory&bslash;n&bslash;&n;  md&t;compare two blocks of memory&bslash;n&bslash;&n;  r&t;print registers&bslash;n&bslash;&n;  S&t;print special registers&bslash;n&bslash;&n;  t&t;print backtrace&bslash;n&bslash;&n;  x&t;exit monitor&bslash;n&bslash;&n;&quot;
 suffix:semicolon
 DECL|variable|xmon_trace
 r_static
@@ -2457,23 +2457,13 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-(paren
 id|fp-&gt;trap
 op_eq
 l_int|0x300
-)paren
 op_logical_or
-(paren
 id|fp-&gt;trap
 op_eq
 l_int|0x600
-)paren
-op_logical_or
-(paren
-id|fp-&gt;trap
-op_eq
-l_int|0x200
-)paren
 )paren
 id|printf
 c_func
@@ -5082,7 +5072,7 @@ id|c
 suffix:semicolon
 )brace
 DECL|macro|isxdigit
-mdefine_line|#define isxdigit(c)&t;(&squot;0&squot; &lt;= (c) &amp;&amp; (c) &lt;= &squot;9&squot; || &squot;a&squot; &lt;= (c) &amp;&amp; (c) &lt;= &squot;f&squot; &bslash;&n;&t;&t;&t; || &squot;A&squot; &lt;= (c) &amp;&amp; (c) &lt;= &squot;F&squot;)
+mdefine_line|#define isxdigit(c)&t;((&squot;0&squot; &lt;= (c) &amp;&amp; (c) &lt;= &squot;9&squot;) &bslash;&n;&t;&t;&t; || (&squot;a&squot; &lt;= (c) &amp;&amp; (c) &lt;= &squot;f&squot;) &bslash;&n;&t;&t;&t; || (&squot;A&squot; &lt;= (c) &amp;&amp; (c) &lt;= &squot;F&squot;))
 r_void
 DECL|function|dump
 id|dump
@@ -5110,24 +5100,18 @@ c_func
 id|c
 )paren
 op_logical_and
-(paren
 id|c
 op_ne
 l_char|&squot;f&squot;
-)paren
 op_logical_and
-(paren
 id|c
 op_ne
 l_char|&squot;d&squot;
 )paren
-)paren
 op_logical_or
-(paren
 id|c
 op_eq
 l_char|&squot;&bslash;n&squot;
-)paren
 )paren
 id|termch
 op_assign

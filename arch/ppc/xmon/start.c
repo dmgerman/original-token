@@ -112,7 +112,7 @@ r_int
 r_int
 id|addr
 op_assign
-l_int|0xf3013030
+l_int|0xf3013020
 suffix:semicolon
 macro_line|#endif
 id|TXRDY

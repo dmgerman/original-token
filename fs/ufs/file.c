@@ -189,82 +189,6 @@ id|inode
 suffix:semicolon
 )brace
 )brace
-DECL|function|ufs_writepage
-r_static
-r_int
-id|ufs_writepage
-(paren
-r_struct
-id|file
-op_star
-id|file
-comma
-r_struct
-id|page
-op_star
-id|page
-)paren
-(brace
-r_return
-id|block_write_full_page
-c_func
-(paren
-id|file
-comma
-id|page
-comma
-id|ufs_getfrag_block
-)paren
-suffix:semicolon
-)brace
-DECL|function|ufs_write_one_page
-r_static
-r_int
-id|ufs_write_one_page
-c_func
-(paren
-r_struct
-id|file
-op_star
-id|file
-comma
-r_struct
-id|page
-op_star
-id|page
-comma
-r_int
-r_int
-id|offset
-comma
-r_int
-r_int
-id|bytes
-comma
-r_const
-r_char
-op_star
-id|buf
-)paren
-(brace
-r_return
-id|block_write_partial_page
-c_func
-(paren
-id|file
-comma
-id|page
-comma
-id|offset
-comma
-id|bytes
-comma
-id|buf
-comma
-id|ufs_getfrag_block
-)paren
-suffix:semicolon
-)brace
 multiline_comment|/*&n; * Write to a file (through the page cache).&n; */
 r_static
 id|ssize_t
@@ -292,6 +216,8 @@ id|ppos
 (brace
 id|ssize_t
 id|retval
+suffix:semicolon
+id|retval
 op_assign
 id|generic_file_write
 c_func
@@ -304,7 +230,7 @@ id|count
 comma
 id|ppos
 comma
-id|ufs_write_one_page
+id|block_write_partial_page
 )paren
 suffix:semicolon
 r_if
@@ -460,13 +386,13 @@ multiline_comment|/* readlink */
 l_int|NULL
 comma
 multiline_comment|/* follow_link */
-id|ufs_bmap
+id|ufs_getfrag_block
 comma
-multiline_comment|/* bmap */
+multiline_comment|/* get_block */
 id|block_read_full_page
 comma
 multiline_comment|/* readpage */
-id|ufs_writepage
+id|block_write_full_page
 comma
 multiline_comment|/* writepage */
 id|block_flushpage
@@ -482,7 +408,6 @@ l_int|NULL
 comma
 multiline_comment|/* smap */
 l_int|NULL
-comma
 multiline_comment|/* revalidate */
 )brace
 suffix:semicolon

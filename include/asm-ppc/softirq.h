@@ -3,6 +3,10 @@ DECL|macro|__ASM_SOFTIRQ_H
 mdefine_line|#define __ASM_SOFTIRQ_H
 macro_line|#include &lt;asm/atomic.h&gt;
 macro_line|#include &lt;asm/hardirq.h&gt;
+DECL|macro|get_active_bhs
+mdefine_line|#define get_active_bhs()&t;(bh_mask &amp; bh_active)
+DECL|macro|clear_active_bhs
+mdefine_line|#define clear_active_bhs(x)&t;atomic_clear_mask((x),&amp;bh_active)
 r_extern
 r_int
 r_int
@@ -11,10 +15,6 @@ id|ppc_local_bh_count
 id|NR_CPUS
 )braket
 suffix:semicolon
-DECL|macro|get_active_bhs
-mdefine_line|#define get_active_bhs()&t;(bh_mask &amp; bh_active)
-DECL|macro|clear_active_bhs
-mdefine_line|#define clear_active_bhs(x)&t;atomic_clear_mask((x),&amp;bh_active)
 DECL|function|init_bh
 r_extern
 r_inline
@@ -91,7 +91,7 @@ id|bh_base
 id|nr
 )braket
 op_assign
-l_int|NULL
+l_int|0
 suffix:semicolon
 )brace
 DECL|function|mark_bh
@@ -209,6 +209,11 @@ c_func
 op_amp
 id|global_bh_lock
 )paren
+op_logical_and
+id|ppc_local_bh_count
+(braket
+id|cpu
+)braket
 op_eq
 l_int|0
 )paren
@@ -323,6 +328,10 @@ mdefine_line|#define softirq_endlock(cpu)&t;(ppc_local_bh_count[cpu] = 0)
 DECL|macro|synchronize_bh
 mdefine_line|#define synchronize_bh()&t;barrier()
 macro_line|#endif&t;/* SMP */
+DECL|macro|local_bh_disable
+mdefine_line|#define local_bh_disable()&t;(ppc_local_bh_count[smp_processor_id()]++)
+DECL|macro|local_bh_enable
+mdefine_line|#define local_bh_enable()&t;(ppc_local_bh_count[smp_processor_id()]--)
 multiline_comment|/*&n; * These use a mask count to correctly handle&n; * nested disable/enable calls&n; */
 DECL|function|disable_bh
 r_extern

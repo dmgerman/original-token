@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * $Id: smp.c,v 1.52 1999/05/23 22:43:51 cort Exp $&n; *&n; * Smp support for ppc.&n; *&n; * Written by Cort Dougan (cort@cs.nmt.edu) borrowing a great&n; * deal of code from the sparc and intel versions.&n; *&n; * Support for PReP (Motorola MTX/MVME) SMP by Troy Benjegerdes&n; * (troy@microux.com, hozer@drgw.net)&n; */
+multiline_comment|/*&n; * $Id: smp.c,v 1.54 1999/06/24 17:13:34 cort Exp $&n; *&n; * Smp support for ppc.&n; *&n; * Written by Cort Dougan (cort@cs.nmt.edu) borrowing a great&n; * deal of code from the sparc and intel versions.&n; *&n; * Support for PReP (Motorola MTX/MVME) SMP by Troy Benjegerdes&n; * (troy@microux.com, hozer@drgw.net)&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/tasks.h&gt;
@@ -836,8 +836,18 @@ c_func
 r_void
 )paren
 suffix:semicolon
+r_extern
+r_void
+id|__secondary_start_chrp
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
 r_int
 id|i
+comma
+id|cpu_nr
 suffix:semicolon
 r_struct
 id|task_struct
@@ -859,6 +869,10 @@ id|first_cpu_booted
 op_assign
 l_int|1
 suffix:semicolon
+id|smp_num_cpus
+op_assign
+l_int|1
+suffix:semicolon
 multiline_comment|/*&n;&t; * assume for now that the first cpu booted is&n;&t; * cpu 0, the master -- Cort&n;&t; */
 id|cpu_callin_map
 (braket
@@ -866,13 +880,6 @@ l_int|0
 )braket
 op_assign
 l_int|1
-suffix:semicolon
-id|cpu_callin_map
-(braket
-l_int|1
-)braket
-op_assign
-l_int|0
 suffix:semicolon
 id|smp_store_cpu_info
 c_func
@@ -959,7 +966,7 @@ r_case
 id|_MACH_Pmac
 suffix:colon
 multiline_comment|/* assume powersurge board - 2 processors -- Cort */
-id|smp_num_cpus
+id|cpu_nr
 op_assign
 l_int|2
 suffix:semicolon
@@ -968,7 +975,7 @@ suffix:semicolon
 r_case
 id|_MACH_chrp
 suffix:colon
-id|smp_num_cpus
+id|cpu_nr
 op_assign
 (paren
 (paren
@@ -987,18 +994,6 @@ id|OPENPIC_FEATURE_LAST_PROCESSOR_SHIFT
 op_plus
 l_int|1
 suffix:semicolon
-multiline_comment|/* get our processor # - we may not be cpu 0 */
-id|printk
-c_func
-(paren
-l_string|&quot;SMP %d processors, boot CPU is %d (should be 0)&bslash;n&quot;
-comma
-id|smp_num_cpus
-comma
-l_int|10
-multiline_comment|/*openpic_read(&amp;OpenPIC-&gt;Processor[0]._Who_Am_I)*/
-)paren
-suffix:semicolon
 r_break
 suffix:semicolon
 )brace
@@ -1012,7 +1007,7 @@ l_int|1
 suffix:semicolon
 id|i
 OL
-id|smp_num_cpus
+id|cpu_nr
 suffix:semicolon
 id|i
 op_increment
@@ -1185,6 +1180,102 @@ suffix:colon
 l_string|&quot;memory&quot;
 )paren
 suffix:semicolon
+macro_line|#if 0
+id|device
+op_assign
+id|find_type_devices
+c_func
+(paren
+l_string|&quot;cpu&quot;
+)paren
+suffix:semicolon
+multiline_comment|/* assume cpu device list is in order, find the ith cpu */
+r_for
+c_loop
+(paren
+id|a
+op_assign
+id|i
+suffix:semicolon
+id|device
+op_logical_and
+id|a
+suffix:semicolon
+id|device
+op_assign
+id|device-&gt;next
+comma
+id|a
+op_decrement
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|device
+)paren
+r_break
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;Starting %s (%lu): &quot;
+comma
+id|device-&gt;full_name
+comma
+op_star
+(paren
+id|ulong
+op_star
+)paren
+id|get_property
+c_func
+(paren
+id|device
+comma
+l_string|&quot;reg&quot;
+comma
+l_int|NULL
+)paren
+)paren
+suffix:semicolon
+id|call_rtas
+c_func
+(paren
+l_string|&quot;start-cpu&quot;
+comma
+l_int|3
+comma
+l_int|1
+comma
+l_int|NULL
+comma
+op_star
+(paren
+id|ulong
+op_star
+)paren
+id|get_property
+c_func
+(paren
+id|device
+comma
+l_string|&quot;reg&quot;
+comma
+l_int|NULL
+)paren
+comma
+id|__pa
+c_func
+(paren
+id|__secondary_start_chrp
+)paren
+comma
+id|i
+)paren
+suffix:semicolon
+macro_line|#endif&t;&t;&t;
 r_break
 suffix:semicolon
 )brace
@@ -1243,6 +1334,9 @@ c_func
 (paren
 id|decrementer_count
 )paren
+suffix:semicolon
+id|smp_num_cpus
+op_increment
 suffix:semicolon
 )brace
 r_else
@@ -1303,14 +1397,6 @@ c_func
 r_void
 )paren
 (brace
-id|printk
-c_func
-(paren
-l_string|&quot;SMP %d: smp_commence()&bslash;n&quot;
-comma
-id|current-&gt;processor
-)paren
-suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Lets the callin&squot;s below out of their loop.&n;&t; */
 id|smp_commenced
 op_assign
@@ -1341,14 +1427,6 @@ op_star
 id|unused
 )paren
 (brace
-id|printk
-c_func
-(paren
-l_string|&quot;SMP %d: start_secondary()&bslash;n&quot;
-comma
-id|current-&gt;processor
-)paren
-suffix:semicolon
 id|smp_callin
 c_func
 (paren
@@ -1371,17 +1449,6 @@ c_func
 r_void
 )paren
 (brace
-r_int
-id|i
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;SMP %d: smp_callin()&bslash;n&quot;
-comma
-id|current-&gt;processor
-)paren
-suffix:semicolon
 id|smp_store_cpu_info
 c_func
 (paren
@@ -1449,14 +1516,6 @@ op_star
 id|ints
 )paren
 (brace
-id|printk
-c_func
-(paren
-l_string|&quot;SMP %d: smp_setup()&bslash;n&quot;
-comma
-id|current-&gt;processor
-)paren
-suffix:semicolon
 )brace
 DECL|function|setup_profiling_timer
 r_int

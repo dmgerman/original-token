@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * $Id: mbx_setup.c,v 1.10 1999/05/14 07:24:19 davem Exp $&n; *&n; *  linux/arch/ppc/kernel/setup.c&n; *&n; *  Copyright (C) 1995  Linus Torvalds&n; *  Adapted from &squot;alpha&squot; version by Gary Thomas&n; *  Modified by Cort Dougan (cort@cs.nmt.edu)&n; *  Modified for MBX using prep/chrp/pmac functions by Dan (dmalek@jlc.net)&n; */
+multiline_comment|/*&n; * $Id: mbx_setup.c,v 1.11 1999/06/28 17:59:43 cort Exp $&n; *&n; *  linux/arch/ppc/kernel/setup.c&n; *&n; *  Copyright (C) 1995  Linus Torvalds&n; *  Adapted from &squot;alpha&squot; version by Gary Thomas&n; *  Modified by Cort Dougan (cort@cs.nmt.edu)&n; *  Modified for MBX using prep/chrp/pmac functions by Dan (dmalek@jlc.net)&n; */
 multiline_comment|/*&n; * bootup setup stuff..&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -1633,15 +1633,15 @@ id|ppc_ide_md.default_io_base
 op_assign
 id|mbx_ide_default_io_base
 suffix:semicolon
-id|ppc_ide_md.check_region
+id|ppc_ide_md.ide_check_region
 op_assign
 id|mbx_ide_check_region
 suffix:semicolon
-id|ppc_ide_md.request_region
+id|ppc_ide_md.ide_request_region
 op_assign
 id|mbx_ide_request_region
 suffix:semicolon
-id|ppc_ide_md.release_region
+id|ppc_ide_md.ide_release_region
 op_assign
 id|mbx_ide_release_region
 suffix:semicolon

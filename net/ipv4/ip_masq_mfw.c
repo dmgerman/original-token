@@ -108,12 +108,10 @@ id|atomic_t
 id|nhosts
 suffix:semicolon
 multiline_comment|/* number of &quot;&quot; */
-macro_line|#ifdef __SMP__
 DECL|member|lock
 id|rwlock_t
 id|lock
 suffix:semicolon
-macro_line|#endif
 )brace
 suffix:semicolon
 r_static
@@ -123,7 +121,6 @@ c_func
 id|mfw_sema
 )paren
 suffix:semicolon
-macro_line|#ifdef __SMP__
 DECL|variable|mfw_lock
 r_static
 id|rwlock_t
@@ -131,7 +128,6 @@ id|mfw_lock
 op_assign
 id|RW_LOCK_UNLOCKED
 suffix:semicolon
-macro_line|#endif
 DECL|variable|ip_masq_mfw_table
 r_static
 r_struct
@@ -335,7 +331,6 @@ id|mfw-&gt;fwmark
 op_assign
 id|fwmark
 suffix:semicolon
-macro_line|#ifdef __SMP__
 id|mfw-&gt;lock
 op_assign
 (paren
@@ -343,7 +338,6 @@ id|rwlock_t
 )paren
 id|RW_LOCK_UNLOCKED
 suffix:semicolon
-macro_line|#endif
 id|INIT_LIST_HEAD
 c_func
 (paren

@@ -14,6 +14,15 @@ r_int
 suffix:semicolon
 r_extern
 r_void
+id|disable_irq_nosync
+c_func
+(paren
+r_int
+r_int
+)paren
+suffix:semicolon
+r_extern
+r_void
 id|enable_irq
 c_func
 (paren

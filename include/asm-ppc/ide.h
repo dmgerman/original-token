@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/include/asm-ppc/ide.h&n; *&n; *  Copyright (C) 1994-1996  Linus Torvalds &amp; authors&n; */
+multiline_comment|/*&n; *  linux/include/asm-ppc/ide.h&n; *&n; *  Copyright (C) 1994-1996 Linus Torvalds &amp; authors */
 multiline_comment|/*&n; *  This file contains the ppc architecture specific IDE code.&n; */
 macro_line|#ifndef __ASMPPC_IDE_H
 DECL|macro|__ASMPPC_IDE_H
@@ -131,11 +131,11 @@ r_int
 id|index
 )paren
 suffix:semicolon
-DECL|member|check_region
+DECL|member|ide_check_region
 r_int
 (paren
 op_star
-id|check_region
+id|ide_check_region
 )paren
 (paren
 id|ide_ioreg_t
@@ -146,11 +146,11 @@ r_int
 id|extent
 )paren
 suffix:semicolon
-DECL|member|request_region
+DECL|member|ide_request_region
 r_void
 (paren
 op_star
-id|request_region
+id|ide_request_region
 )paren
 (paren
 id|ide_ioreg_t
@@ -166,11 +166,11 @@ op_star
 id|name
 )paren
 suffix:semicolon
-DECL|member|release_region
+DECL|member|ide_release_region
 r_void
 (paren
 op_star
-id|release_region
+id|ide_release_region
 )paren
 (paren
 id|ide_ioreg_t
@@ -226,25 +226,6 @@ r_extern
 r_struct
 id|ide_machdep_calls
 id|ppc_ide_md
-suffix:semicolon
-r_void
-id|ide_init_hwif_ports
-c_func
-(paren
-id|hw_regs_t
-op_star
-id|hw
-comma
-id|ide_ioreg_t
-id|data_port
-comma
-id|ide_ioreg_t
-id|ctrl_port
-comma
-r_int
-op_star
-id|irq
-)paren
 suffix:semicolon
 r_void
 id|ide_insw
@@ -366,6 +347,50 @@ op_minus
 l_int|1
 suffix:semicolon
 )brace
+DECL|function|ide_init_hwif_ports
+r_static
+id|__inline__
+r_void
+id|ide_init_hwif_ports
+c_func
+(paren
+id|hw_regs_t
+op_star
+id|hw
+comma
+id|ide_ioreg_t
+id|data_port
+comma
+id|ide_ioreg_t
+id|ctrl_port
+comma
+r_int
+op_star
+id|irq
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|ppc_ide_md.ide_init_hwif
+op_ne
+l_int|NULL
+)paren
+id|ppc_ide_md
+dot
+id|ide_init_hwif
+c_func
+(paren
+id|hw
+comma
+id|data_port
+comma
+id|ctrl_port
+comma
+id|irq
+)paren
+suffix:semicolon
+)brace
 DECL|function|ide_init_default_hwifs
 r_static
 id|__inline__
@@ -456,12 +481,12 @@ id|extent
 r_if
 c_cond
 (paren
-id|ppc_ide_md.check_region
+id|ppc_ide_md.ide_check_region
 )paren
 r_return
 id|ppc_ide_md
 dot
-id|check_region
+id|ide_check_region
 c_func
 (paren
 id|from
@@ -497,11 +522,11 @@ id|name
 r_if
 c_cond
 (paren
-id|ppc_ide_md.request_region
+id|ppc_ide_md.ide_request_region
 )paren
 id|ppc_ide_md
 dot
-id|request_region
+id|ide_request_region
 c_func
 (paren
 id|from
@@ -529,11 +554,11 @@ id|extent
 r_if
 c_cond
 (paren
-id|ppc_ide_md.release_region
+id|ppc_ide_md.ide_release_region
 )paren
 id|ppc_ide_md
 dot
-id|release_region
+id|ide_release_region
 c_func
 (paren
 id|from
@@ -568,22 +593,16 @@ id|id
 )paren
 suffix:semicolon
 )brace
-DECL|macro|inb
+macro_line|#if 0&t;/* inb/outb from io.h is OK now -- paulus */
 macro_line|#undef inb
-DECL|macro|inb
 mdefine_line|#define inb(port)&t;in_8((unsigned char *)((port) + ppc_ide_md.io_base))
-DECL|macro|inb_p
 macro_line|#undef inb_p
-DECL|macro|inb_p
 mdefine_line|#define inb_p(port)&t;inb(port)
-DECL|macro|outb
 macro_line|#undef outb
-DECL|macro|outb
 mdefine_line|#define outb(val, port)&t;&bslash;&n;&t;out_8((unsigned char *)((port) + ppc_ide_md.io_base), (val) )
-DECL|macro|outb_p
 macro_line|#undef outb_p
-DECL|macro|outb_p
 mdefine_line|#define outb_p(val, port)&t;outb(val, port)
+macro_line|#endif
 r_typedef
 r_union
 (brace

@@ -29,9 +29,9 @@ macro_line|#include &lt;asm/feature.h&gt;
 macro_line|#include &lt;asm/spinlock.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;asm/machdep.h&gt;
-DECL|macro|__KERNEL_SYSCALLS__
-mdefine_line|#define __KERNEL_SYSCALLS__
-macro_line|#include &lt;linux/unistd.h&gt;
+multiline_comment|/* Tell string.h we don&squot;t want memcpy etc. as cpp defines */
+DECL|macro|EXPORT_SYMTAB_STROPS
+mdefine_line|#define EXPORT_SYMTAB_STROPS
 r_extern
 r_void
 id|transfer_to_handler
@@ -153,18 +153,6 @@ op_star
 suffix:semicolon
 id|asmlinkage
 r_int
-r_int
-id|__ashrdi3
-c_func
-(paren
-r_int
-r_int
-comma
-r_int
-)paren
-suffix:semicolon
-id|asmlinkage
-r_int
 id|abs
 c_func
 (paren
@@ -281,6 +269,13 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|disable_irq
+)paren
+suffix:semicolon
+DECL|variable|disable_irq_nosync
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|disable_irq_nosync
 )paren
 suffix:semicolon
 DECL|variable|ppc_local_irq_count
@@ -562,41 +557,6 @@ c_func
 id|strncmp
 )paren
 suffix:semicolon
-DECL|variable|memset
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|memset
-)paren
-suffix:semicolon
-DECL|variable|memcpy
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|memcpy
-)paren
-suffix:semicolon
-DECL|variable|memmove
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|memmove
-)paren
-suffix:semicolon
-DECL|variable|memscan
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|memscan
-)paren
-suffix:semicolon
-DECL|variable|memcmp
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|memcmp
-)paren
-suffix:semicolon
 multiline_comment|/* EXPORT_SYMBOL(csum_partial); already in net/netsyms.c */
 DECL|variable|csum_partial_copy_generic
 id|EXPORT_SYMBOL
@@ -753,6 +713,13 @@ c_func
 id|ide_outsw
 )paren
 suffix:semicolon
+DECL|variable|ppc_ide_md
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|ppc_ide_md
+)paren
+suffix:semicolon
 DECL|variable|start_thread
 id|EXPORT_SYMBOL
 c_func
@@ -760,11 +727,11 @@ c_func
 id|start_thread
 )paren
 suffix:semicolon
-DECL|variable|__kernel_thread
+DECL|variable|kernel_thread
 id|EXPORT_SYMBOL
 c_func
 (paren
-id|__kernel_thread
+id|kernel_thread
 )paren
 suffix:semicolon
 DECL|variable|__cli
@@ -1098,6 +1065,41 @@ id|nvram_write_byte
 )paren
 suffix:semicolon
 macro_line|#endif /* CONFIG_PMAC */
+DECL|variable|memcpy
+id|EXPORT_SYMBOL_NOVERS
+c_func
+(paren
+id|memcpy
+)paren
+suffix:semicolon
+DECL|variable|memset
+id|EXPORT_SYMBOL_NOVERS
+c_func
+(paren
+id|memset
+)paren
+suffix:semicolon
+DECL|variable|memmove
+id|EXPORT_SYMBOL_NOVERS
+c_func
+(paren
+id|memmove
+)paren
+suffix:semicolon
+DECL|variable|memscan
+id|EXPORT_SYMBOL_NOVERS
+c_func
+(paren
+id|memscan
+)paren
+suffix:semicolon
+DECL|variable|memcmp
+id|EXPORT_SYMBOL_NOVERS
+c_func
+(paren
+id|memcmp
+)paren
+suffix:semicolon
 DECL|variable|abs
 id|EXPORT_SYMBOL
 c_func
@@ -1110,14 +1112,6 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|device_is_compatible
-)paren
-suffix:semicolon
-multiline_comment|/* The following are special because they&squot;re not called&n;   explicitly (the C compiler generates them).  Fortunately,&n;   their interface isn&squot;t gonna change any time soon now, so&n;   it&squot;s OK to leave it out of version control.  */
-DECL|variable|__ashrdi3
-id|EXPORT_SYMBOL_NOVERS
-c_func
-(paren
-id|__ashrdi3
 )paren
 suffix:semicolon
 eof

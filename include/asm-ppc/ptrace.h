@@ -2,77 +2,76 @@ macro_line|#ifndef _PPC_PTRACE_H
 DECL|macro|_PPC_PTRACE_H
 mdefine_line|#define _PPC_PTRACE_H
 multiline_comment|/*&n; * This struct defines the way the registers are stored on the&n; * kernel stack during a system call or other kernel entry.&n; *&n; * this should only contain volatile regs&n; * since we can keep non-volatile in the tss&n; * should set this up when only volatiles are saved&n; * by intr code.&n; *&n; * Since this is going on the stack, *CARE MUST BE TAKEN* to insure&n; * that the overall structure is a multiple of 16 bytes in length.&n; *&n; * Note that the offsets of the fields in this struct correspond with&n; * the PT_* values below.  This simplifies arch/ppc/kernel/ptrace.c.&n; */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#ifndef __ASSEMBLY__
 macro_line|#ifdef CONFIG_PPC64
-DECL|macro|REG
-mdefine_line|#define REG unsigned long /*long*/
+DECL|macro|PPC_REG
+mdefine_line|#define PPC_REG unsigned long /*long*/
 macro_line|#else
-DECL|macro|REG
-mdefine_line|#define REG unsigned long
+DECL|macro|PPC_REG
+mdefine_line|#define PPC_REG unsigned long
 macro_line|#endif
 DECL|struct|pt_regs
 r_struct
 id|pt_regs
 (brace
 DECL|member|gpr
-id|REG
+id|PPC_REG
 id|gpr
 (braket
 l_int|32
 )braket
 suffix:semicolon
 DECL|member|nip
-id|REG
+id|PPC_REG
 id|nip
 suffix:semicolon
 DECL|member|msr
-id|REG
+id|PPC_REG
 id|msr
 suffix:semicolon
 DECL|member|orig_gpr3
-id|REG
+id|PPC_REG
 id|orig_gpr3
 suffix:semicolon
 multiline_comment|/* Used for restarting system calls */
 DECL|member|ctr
-id|REG
+id|PPC_REG
 id|ctr
 suffix:semicolon
 DECL|member|link
-id|REG
+id|PPC_REG
 id|link
 suffix:semicolon
 DECL|member|xer
-id|REG
+id|PPC_REG
 id|xer
 suffix:semicolon
 DECL|member|ccr
-id|REG
+id|PPC_REG
 id|ccr
 suffix:semicolon
 DECL|member|mq
-id|REG
+id|PPC_REG
 id|mq
 suffix:semicolon
 multiline_comment|/* 601 only (not used at present) */
 multiline_comment|/* Used on APUS to hold IPL value. */
 DECL|member|trap
-id|REG
+id|PPC_REG
 id|trap
 suffix:semicolon
 multiline_comment|/* Reason for being here */
 DECL|member|dar
-id|REG
+id|PPC_REG
 id|dar
 suffix:semicolon
 multiline_comment|/* Fault registers */
 DECL|member|dsisr
-id|REG
+id|PPC_REG
 id|dsisr
 suffix:semicolon
 DECL|member|result
-id|REG
+id|PPC_REG
 id|result
 suffix:semicolon
 multiline_comment|/* Result of a system call */

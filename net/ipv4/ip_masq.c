@@ -1013,7 +1013,6 @@ id|masq_port
 op_assign
 id|PORT_MASQ_BEGIN
 suffix:semicolon
-macro_line|#ifdef __SMP__
 DECL|variable|masq_port_lock
 r_static
 id|spinlock_t
@@ -1021,7 +1020,6 @@ id|masq_port_lock
 op_assign
 id|SPIN_LOCK_UNLOCKED
 suffix:semicolon
-macro_line|#endif
 multiline_comment|/*&n; *&t;free ports counters (UDP &amp; TCP)&n; *&n; *&t;Their value is _less_ or _equal_ to actual free ports:&n; *&t;same masq port, diff masq addr (firewall iface address) allocated&n; *&t;entries are accounted but their actually don&squot;t eat a more than 1 port.&n; *&n; *&t;Greater values could lower MASQ_EXPIRATION setting as a way to&n; *&t;manage &squot;masq_entries resource&squot;.&n; *&n; *&t;By default we will reuse masq.port iff (output) connection&n; *&t;(5-upla) if not duplicated. &n; *&t;This may break midentd and others ...&n; */
 macro_line|#ifdef CONFIG_IP_MASQ_NREUSE
 DECL|macro|PORT_MASQ_MUL

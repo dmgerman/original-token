@@ -428,7 +428,7 @@ comma
 multiline_comment|/* followlink */
 id|fat_bmap
 comma
-multiline_comment|/* bmap */
+multiline_comment|/* get_block */
 id|block_read_full_page
 comma
 multiline_comment|/* readpage */

@@ -65,6 +65,24 @@ l_int|NULL
 multiline_comment|/* revalidate */
 )brace
 suffix:semicolon
+r_extern
+r_int
+id|efs_get_block
+c_func
+(paren
+r_struct
+id|inode
+op_star
+comma
+r_int
+comma
+r_struct
+id|buffer_head
+op_star
+comma
+r_int
+)paren
+suffix:semicolon
 DECL|variable|efs_dir_inode_operations
 r_struct
 id|inode_operations
@@ -108,9 +126,9 @@ multiline_comment|/* readlink */
 l_int|NULL
 comma
 multiline_comment|/* follow_link */
-id|efs_bmap
+id|efs_get_block
 comma
-multiline_comment|/* bmap */
+multiline_comment|/* get_block */
 l_int|NULL
 comma
 multiline_comment|/* readpage */

@@ -38,7 +38,6 @@ c_func
 id|ip_masq_mod_lkp_unlink
 )paren
 suffix:semicolon
-macro_line|#ifdef __SMP__
 DECL|variable|masq_mod_lock
 r_static
 id|spinlock_t
@@ -46,7 +45,6 @@ id|masq_mod_lock
 op_assign
 id|SPIN_LOCK_UNLOCKED
 suffix:semicolon
-macro_line|#endif
 multiline_comment|/*&n; *&t;Base pointer for registered modules&n; */
 DECL|variable|ip_masq_mod_reg_base
 r_struct

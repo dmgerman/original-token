@@ -1664,6 +1664,7 @@ r_void
 id|hpfs_help
 c_func
 (paren
+r_void
 )paren
 (brace
 id|printk

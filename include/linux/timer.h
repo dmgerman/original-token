@@ -180,6 +180,7 @@ r_int
 id|timer_pending
 c_func
 (paren
+r_const
 r_struct
 id|timer_list
 op_star

@@ -1632,6 +1632,7 @@ c_cond
 op_logical_neg
 id|fnode-&gt;ea_anode
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -1645,9 +1646,11 @@ op_plus
 id|len
 )paren
 )paren
+(brace
 id|len
 op_increment
 suffix:semicolon
+)brace
 r_else
 (brace
 multiline_comment|/* Aargh... don&squot;t know how to create ea anodes :-( */
@@ -1875,11 +1878,13 @@ op_rshift
 l_int|9
 suffix:semicolon
 )brace
+)brace
 r_if
 c_cond
 (paren
 id|fnode-&gt;ea_anode
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -1898,13 +1903,18 @@ op_ne
 op_minus
 l_int|1
 )paren
+(brace
 id|len
 op_increment
 suffix:semicolon
+)brace
 r_else
+(brace
 r_goto
 id|bail
 suffix:semicolon
+)brace
+)brace
 )brace
 id|h
 (braket

@@ -37,6 +37,7 @@ macro_line|#include &lt;asm/machdep.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/adb.h&gt;
 macro_line|#include &lt;asm/hydra.h&gt;
+macro_line|#include &lt;asm/keyboard.h&gt;
 macro_line|#include &quot;time.h&quot;
 macro_line|#include &quot;local_irq.h&quot;
 macro_line|#include &quot;i8259.h&quot;
@@ -114,18 +115,6 @@ r_int
 r_int
 id|nowtime
 )paren
-suffix:semicolon
-DECL|variable|rtas_event_scan_rate
-DECL|variable|rtas_event_scan_ct
-r_int
-r_int
-id|rtas_event_scan_rate
-op_assign
-l_int|0
-comma
-id|rtas_event_scan_ct
-op_assign
-l_int|0
 suffix:semicolon
 r_void
 id|chrp_calibrate_decr
@@ -1231,7 +1220,11 @@ id|OpenPIC
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; *  Fix the Super I/O configuration&n;&t; */
-multiline_comment|/*sio_init();*/
+id|sio_init
+c_func
+(paren
+)paren
+suffix:semicolon
 macro_line|#ifdef CONFIG_DUMMY_CONSOLE
 id|conswitchp
 op_assign
@@ -1279,6 +1272,8 @@ id|p
 op_assign
 id|device-&gt;properties
 suffix:semicolon
+id|p
+op_logical_and
 id|strncmp
 c_func
 (paren
@@ -1288,8 +1283,6 @@ l_string|&quot;rtas-event-scan-rate&quot;
 comma
 l_int|20
 )paren
-op_logical_and
-id|p
 suffix:semicolon
 id|p
 op_assign
@@ -1311,7 +1304,11 @@ op_star
 id|p-&gt;value
 )paren
 (brace
-id|rtas_event_scan_rate
+id|ppc_md.heartbeat
+op_assign
+id|chrp_event_scan
+suffix:semicolon
+id|ppc_md.heartbeat_reset
 op_assign
 (paren
 id|HZ
@@ -1331,7 +1328,7 @@ l_int|30
 op_minus
 l_int|1
 suffix:semicolon
-id|rtas_event_scan_ct
+id|ppc_md.heartbeat_count
 op_assign
 l_int|1
 suffix:semicolon
@@ -1348,7 +1345,7 @@ op_star
 )paren
 id|p-&gt;value
 comma
-id|rtas_event_scan_rate
+id|ppc_md.heartbeat_reset
 )paren
 suffix:semicolon
 )brace
@@ -1369,19 +1366,6 @@ id|log
 l_int|1024
 )braket
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|rtas_event_scan_rate
-op_logical_and
-(paren
-id|rtas_event_scan_ct
-op_decrement
-op_le
-l_int|0
-)paren
-)paren
-(brace
 id|call_rtas
 c_func
 (paren
@@ -1406,11 +1390,10 @@ comma
 l_int|1024
 )paren
 suffix:semicolon
-id|rtas_event_scan_ct
+id|ppc_md.heartbeat_count
 op_assign
-id|rtas_event_scan_rate
+id|ppc_md.heartbeat_reset
 suffix:semicolon
-)brace
 )brace
 r_void
 DECL|function|chrp_restart
@@ -1458,7 +1441,7 @@ r_void
 (brace
 multiline_comment|/* allow power on only with power button press */
 DECL|macro|PWR_FIELD
-mdefine_line|#define&t;PWR_FIELD(x) (0x8000000000000000 &gt;&gt; ((x)-96))
+mdefine_line|#define&t;PWR_FIELD(x) (0x8000000000000000ULL &gt;&gt; ((x)-96))
 id|printk
 c_func
 (paren
@@ -2576,9 +2559,13 @@ op_assign
 id|pckbd_init_hw
 suffix:semicolon
 macro_line|#ifdef CONFIG_MAGIC_SYSRQ
-id|ppc_md.kbd_sysrq_xlate
+id|ppc_md.ppc_kbd_sysrq_xlate
 op_assign
 id|pckbd_sysrq_xlate
+suffix:semicolon
+id|SYSRQ_KEY
+op_assign
+l_int|0x54
 suffix:semicolon
 macro_line|#endif&t;&t;
 )brace
@@ -2609,9 +2596,13 @@ op_assign
 id|mackbd_init_hw
 suffix:semicolon
 macro_line|#ifdef CONFIG_MAGIC_SYSRQ
-id|ppc_md.kbd_sysrq_xlate
+id|ppc_md.ppc_kbd_sysrq_xlate
 op_assign
 id|mackbd_sysrq_xlate
+suffix:semicolon
+id|SYSRQ_KEY
+op_assign
+l_int|0x69
 suffix:semicolon
 macro_line|#endif&t;&t;
 )brace
@@ -2641,9 +2632,13 @@ op_assign
 id|pckbd_init_hw
 suffix:semicolon
 macro_line|#ifdef CONFIG_MAGIC_SYSRQ
-id|ppc_md.kbd_sysrq_xlate
+id|ppc_md.ppc_kbd_sysrq_xlate
 op_assign
 id|pckbd_sysrq_xlate
+suffix:semicolon
+id|SYSRQ_KEY
+op_assign
+l_int|0x54
 suffix:semicolon
 macro_line|#endif
 macro_line|#endif
@@ -2665,15 +2660,15 @@ id|ppc_ide_md.default_io_base
 op_assign
 id|chrp_ide_default_io_base
 suffix:semicolon
-id|ppc_ide_md.check_region
+id|ppc_ide_md.ide_check_region
 op_assign
 id|chrp_ide_check_region
 suffix:semicolon
-id|ppc_ide_md.request_region
+id|ppc_ide_md.ide_request_region
 op_assign
 id|chrp_ide_request_region
 suffix:semicolon
-id|ppc_ide_md.release_region
+id|ppc_ide_md.ide_release_region
 op_assign
 id|chrp_ide_release_region
 suffix:semicolon

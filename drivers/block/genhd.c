@@ -734,11 +734,6 @@ id|dev
 )paren
 r_return
 suffix:semicolon
-multiline_comment|/*&n;&t;   * This block is from a device that we&squot;re about to stomp on.&n;&t;   * So make sure nobody thinks this block is usable.&n;&t;   */
-id|bh-&gt;b_state
-op_assign
-l_int|0
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1018,7 +1013,8 @@ comma
 id|current_minor
 )paren
 suffix:semicolon
-id|brelse
+multiline_comment|/* Use bforget(), as we have changed the disk geometry */
+id|bforget
 c_func
 (paren
 id|bh
@@ -1027,7 +1023,7 @@ suffix:semicolon
 )brace
 id|done
 suffix:colon
-id|brelse
+id|bforget
 c_func
 (paren
 id|bh
@@ -1477,10 +1473,6 @@ id|dev
 )paren
 r_return
 suffix:semicolon
-id|bh-&gt;b_state
-op_assign
-l_int|0
-suffix:semicolon
 id|l
 op_assign
 (paren
@@ -1574,7 +1566,8 @@ id|dev
 )paren
 suffix:semicolon
 )brace
-id|brelse
+multiline_comment|/* Use bforget(), as we have changed the disk setup */
+id|bforget
 c_func
 (paren
 id|bh
@@ -1648,10 +1641,6 @@ id|dev
 )paren
 )paren
 r_return
-suffix:semicolon
-id|bh-&gt;b_state
-op_assign
-l_int|0
 suffix:semicolon
 id|l
 op_assign
@@ -1773,7 +1762,8 @@ id|p
 op_increment
 suffix:semicolon
 )brace
-id|brelse
+multiline_comment|/* Use bforget, as we have changed the disk setup */
+id|bforget
 c_func
 (paren
 id|bh
@@ -1910,17 +1900,11 @@ id|data
 op_assign
 id|bh-&gt;b_data
 suffix:semicolon
-multiline_comment|/* In some cases we modify the geometry    */
-multiline_comment|/*  of the drive (below), so ensure that   */
-multiline_comment|/*  nobody else tries to re-use this data. */
-id|bh-&gt;b_state
-op_assign
-l_int|0
-suffix:semicolon
 macro_line|#ifdef CONFIG_BLK_DEV_IDE
 id|check_table
 suffix:colon
 macro_line|#endif
+multiline_comment|/* Use bforget(), because we have potentially changed the disk geometry */
 r_if
 c_cond
 (paren
@@ -1943,7 +1927,7 @@ id|MSDOS_LABEL_MAGIC
 )paren
 )paren
 (brace
-id|brelse
+id|bforget
 c_func
 (paren
 id|bh
@@ -2076,7 +2060,7 @@ l_string|&quot; [DM6:DDO]&quot;
 )paren
 )paren
 (brace
-id|brelse
+id|bforget
 c_func
 (paren
 id|bh
@@ -2736,7 +2720,7 @@ c_func
 l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
-id|brelse
+id|bforget
 c_func
 (paren
 id|bh

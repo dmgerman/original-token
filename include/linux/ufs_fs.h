@@ -1458,7 +1458,7 @@ suffix:semicolon
 multiline_comment|/* inode.c */
 r_extern
 r_int
-id|ufs_bmap
+id|ufs_frag_map
 (paren
 r_struct
 id|inode
@@ -1549,13 +1549,11 @@ op_star
 comma
 r_int
 comma
-r_int
-comma
-r_int
+r_struct
+id|buffer_head
 op_star
 comma
 r_int
-op_star
 )paren
 suffix:semicolon
 r_extern

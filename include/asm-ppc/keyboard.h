@@ -162,14 +162,12 @@ c_func
 suffix:semicolon
 )brace
 DECL|macro|kbd_sysrq_xlate
-mdefine_line|#define kbd_sysrq_xlate&t;(ppc_md.kbd_sysrq_xlate)
-macro_line|#ifdef CONFIG_MAC_KEYBOARD
-DECL|macro|SYSRQ_KEY
-macro_line|# define SYSRQ_KEY 0x69
-macro_line|#else
-DECL|macro|SYSRQ_KEY
-macro_line|# define SYSRQ_KEY 0x54
-macro_line|#endif
+mdefine_line|#define kbd_sysrq_xlate&t;(ppc_md.ppc_kbd_sysrq_xlate)
+r_extern
+r_int
+r_int
+id|SYSRQ_KEY
+suffix:semicolon
 macro_line|#endif /* CONFIG_APUS */
 macro_line|#endif /* __KERNEL__ */
 macro_line|#endif /* __ASMPPC_KEYBOARD_H */

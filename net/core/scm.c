@@ -958,13 +958,17 @@ r_break
 suffix:semicolon
 )brace
 multiline_comment|/* Bump the usage count and install the file. */
+id|atomic_inc
+c_func
+(paren
+op_amp
 id|fp
 (braket
 id|i
 )braket
 op_member_access_from_pointer
 id|f_count
-op_increment
+)paren
 suffix:semicolon
 id|current-&gt;files-&gt;fd
 (braket
@@ -1179,13 +1183,17 @@ suffix:semicolon
 id|i
 op_decrement
 )paren
+id|atomic_inc
+c_func
+(paren
+op_amp
 id|fpl-&gt;fp
 (braket
 id|i
 )braket
 op_member_access_from_pointer
 id|f_count
-op_increment
+)paren
 suffix:semicolon
 )brace
 r_return

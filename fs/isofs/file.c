@@ -92,9 +92,9 @@ multiline_comment|/* readlink */
 l_int|NULL
 comma
 multiline_comment|/* follow_link */
-id|isofs_bmap
+id|isofs_get_block
 comma
-multiline_comment|/* bmap */
+multiline_comment|/* get_block */
 id|block_read_full_page
 comma
 multiline_comment|/* readpage */

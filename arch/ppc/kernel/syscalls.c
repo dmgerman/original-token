@@ -12,6 +12,7 @@ macro_line|#include &lt;linux/mman.h&gt;
 macro_line|#include &lt;linux/sys.h&gt;
 macro_line|#include &lt;linux/ipc.h&gt;
 macro_line|#include &lt;linux/utsname.h&gt;
+macro_line|#include &lt;linux/file.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/ipc.h&gt;
 r_void

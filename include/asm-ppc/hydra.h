@@ -195,19 +195,19 @@ mdefine_line|#define HYDRA_INT_ADB&t;&t;10
 DECL|macro|HYDRA_INT_ADB_NMI
 mdefine_line|#define HYDRA_INT_ADB_NMI&t;11
 DECL|macro|HYDRA_INT_EXT1
-mdefine_line|#define HYDRA_INT_EXT1&t;&t;12
+mdefine_line|#define HYDRA_INT_EXT1&t;&t;12&t;/* PCI IRQW */
 DECL|macro|HYDRA_INT_EXT2
-mdefine_line|#define HYDRA_INT_EXT2&t;&t;13
+mdefine_line|#define HYDRA_INT_EXT2&t;&t;13&t;/* PCI IRQX */
 DECL|macro|HYDRA_INT_EXT3
-mdefine_line|#define HYDRA_INT_EXT3&t;&t;14
+mdefine_line|#define HYDRA_INT_EXT3&t;&t;14&t;/* PCI IRQY */
 DECL|macro|HYDRA_INT_EXT4
-mdefine_line|#define HYDRA_INT_EXT4&t;&t;15
+mdefine_line|#define HYDRA_INT_EXT4&t;&t;15&t;/* PCI IRQZ */
 DECL|macro|HYDRA_INT_EXT5
-mdefine_line|#define HYDRA_INT_EXT5&t;&t;16
+mdefine_line|#define HYDRA_INT_EXT5&t;&t;16&t;/* IDE Primay/Secondary */
 DECL|macro|HYDRA_INT_EXT6
-mdefine_line|#define HYDRA_INT_EXT6&t;&t;17
+mdefine_line|#define HYDRA_INT_EXT6&t;&t;17&t;/* IDE Secondary */
 DECL|macro|HYDRA_INT_EXT7
-mdefine_line|#define HYDRA_INT_EXT7&t;&t;18
+mdefine_line|#define HYDRA_INT_EXT7&t;&t;18&t;/* Power Off Request */
 DECL|macro|HYDRA_INT_SPARE
 mdefine_line|#define HYDRA_INT_SPARE&t;&t;19
 r_extern

@@ -161,7 +161,7 @@ comma
 multiline_comment|/* follow_link */
 l_int|NULL
 comma
-multiline_comment|/* bmap - XXX: not available since&n;&t;&t;&t;&t;   header part has no disk block */
+multiline_comment|/* get_block - XXX: not available since&n;&t;&t;&t;&t;   header part has no disk block */
 l_int|NULL
 comma
 multiline_comment|/* readpage */

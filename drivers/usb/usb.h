@@ -812,8 +812,11 @@ multiline_comment|/* Maximum packet size */
 DECL|member|toggle
 r_int
 id|toggle
+(braket
+l_int|2
+)braket
 suffix:semicolon
-multiline_comment|/* one bit for each endpoint */
+multiline_comment|/* one bit for each endpoint ([0] = IN, [1] = OUT) */
 DECL|member|halted
 r_int
 id|halted
@@ -1086,7 +1089,7 @@ mdefine_line|#define usb_pipeendpoint(pipe)&t;(((pipe) &gt;&gt; 15) &amp; 0xf)
 DECL|macro|usb_pipedata
 mdefine_line|#define usb_pipedata(pipe)&t;(((pipe) &gt;&gt; 19) &amp; 1)
 DECL|macro|usb_pipeout
-mdefine_line|#define usb_pipeout(pipe)&t;(((pipe) &amp; 0x80) == 0)
+mdefine_line|#define usb_pipeout(pipe)&t;((((pipe) &gt;&gt; 7) &amp; 1) ^ 1)
 DECL|macro|usb_pipeslow
 mdefine_line|#define usb_pipeslow(pipe)&t;(((pipe) &gt;&gt; 26) &amp; 1)
 DECL|macro|usb_pipetype
@@ -1103,11 +1106,11 @@ DECL|macro|usb_pipe_endpdev
 mdefine_line|#define usb_pipe_endpdev(pipe)&t;(((pipe) &gt;&gt; 8) &amp; 0x7ff)
 multiline_comment|/* The D0/D1 toggle bits */
 DECL|macro|usb_gettoggle
-mdefine_line|#define usb_gettoggle(dev, ep) (((dev)-&gt;toggle &gt;&gt; ep) &amp; 1)
+mdefine_line|#define usb_gettoggle(dev, ep, out) (((dev)-&gt;toggle[out] &gt;&gt; ep) &amp; 1)
 DECL|macro|usb_dotoggle
-mdefine_line|#define&t;usb_dotoggle(dev, ep)&t;((dev)-&gt;toggle ^= (1 &lt;&lt;&t;ep))
+mdefine_line|#define&t;usb_dotoggle(dev, ep, out)  ((dev)-&gt;toggle[out] ^= (1 &lt;&lt; ep))
 DECL|macro|usb_settoggle
-mdefine_line|#define usb_settoggle(dev, ep, bit) ((dev)-&gt;toggle = ((dev)-&gt;toggle &amp; ~(1 &lt;&lt; ep)) | ((bit) &lt;&lt; ep))
+mdefine_line|#define usb_settoggle(dev, ep, out, bit) ((dev)-&gt;toggle[out] = ((dev)-&gt;toggle[out] &amp; ~(1 &lt;&lt; ep)) | ((bit) &lt;&lt; ep))
 multiline_comment|/* Endpoint halt */
 DECL|macro|usb_endpoint_halt
 mdefine_line|#define usb_endpoint_halt(dev, ep) ((dev)-&gt;halted |= (1 &lt;&lt; (ep)))
