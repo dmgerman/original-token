@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: unistd.h,v 1.26 1999/02/10 22:24:35 jj Exp $ */
+multiline_comment|/* $Id: unistd.h,v 1.27 1999/03/25 00:40:14 davem Exp $ */
 macro_line|#ifndef _SPARC64_UNISTD_H
 DECL|macro|_SPARC64_UNISTD_H
 mdefine_line|#define _SPARC64_UNISTD_H
@@ -539,6 +539,27 @@ comma
 id|buf
 comma
 id|off_t
+comma
+id|count
+)paren
+r_static
+id|__inline__
+id|_syscall3
+c_func
+(paren
+id|off_t
+comma
+id|lseek
+comma
+r_int
+comma
+id|fd
+comma
+id|off_t
+comma
+id|offset
+comma
+r_int
 comma
 id|count
 )paren

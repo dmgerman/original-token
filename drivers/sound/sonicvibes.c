@@ -1,5 +1,5 @@
 multiline_comment|/*****************************************************************************/
-multiline_comment|/*&n; *      sonicvibes.c  --  S3 Sonic Vibes audio driver.&n; *&n; *      Copyright (C) 1998  Thomas Sailer (sailer@ife.ee.ethz.ch)&n; *&n; *      This program is free software; you can redistribute it and/or modify&n; *      it under the terms of the GNU General Public License as published by&n; *      the Free Software Foundation; either version 2 of the License, or&n; *      (at your option) any later version.&n; *&n; *      This program is distributed in the hope that it will be useful,&n; *      but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *      GNU General Public License for more details.&n; *&n; *      You should have received a copy of the GNU General Public License&n; *      along with this program; if not, write to the Free Software&n; *      Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * Special thanks to David C. Niemi&n; *&n; *&n; * Module command line parameters:&n; *   none so far&n; *&n; *&n; *  Supported devices:&n; *  /dev/dsp    standard /dev/dsp device, (mostly) OSS compatible&n; *  /dev/mixer  standard /dev/mixer device, (mostly) OSS compatible&n; *  /dev/midi   simple MIDI UART interface, no ioctl&n; *&n; *  The card has both an FM and a Wavetable synth, but I have to figure&n; *  out first how to drive them...&n; *&n; *  Revision history&n; *    06.05.98   0.1   Initial release&n; *    10.05.98   0.2   Fixed many bugs, esp. ADC rate calculation&n; *                     First stab at a simple midi interface (no bells&amp;whistles)&n; *    13.05.98   0.3   Fix stupid cut&amp;paste error: set_adc_rate was called instead of&n; *                     set_dac_rate in the FMODE_WRITE case in sv_open&n; *                     Fix hwptr out of bounds (now mpg123 works)&n; *    14.05.98   0.4   Don&squot;t allow excessive interrupt rates&n; *    08.06.98   0.5   First release using Alan Cox&squot; soundcore instead of miscdevice&n; *    03.08.98   0.6   Do not include modversions.h&n; *                     Now mixer behaviour can basically be selected between&n; *                     &quot;OSS documented&quot; and &quot;OSS actual&quot; behaviour&n; *    31.08.98   0.7   Fix realplayer problems - dac.count issues&n; *    10.12.98   0.8   Fix drain_dac trying to wait on not yet initialized DMA&n; *    16.12.98   0.9   Fix a few f_file &amp; FMODE_ bugs&n; *    06.01.99   0.10  remove the silly SA_INTERRUPT flag.&n; *                     hopefully killed the egcs section type conflict&n; *&n; */
+multiline_comment|/*&n; *      sonicvibes.c  --  S3 Sonic Vibes audio driver.&n; *&n; *      Copyright (C) 1998  Thomas Sailer (sailer@ife.ee.ethz.ch)&n; *&n; *      This program is free software; you can redistribute it and/or modify&n; *      it under the terms of the GNU General Public License as published by&n; *      the Free Software Foundation; either version 2 of the License, or&n; *      (at your option) any later version.&n; *&n; *      This program is distributed in the hope that it will be useful,&n; *      but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *      GNU General Public License for more details.&n; *&n; *      You should have received a copy of the GNU General Public License&n; *      along with this program; if not, write to the Free Software&n; *      Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * Special thanks to David C. Niemi&n; *&n; *&n; * Module command line parameters:&n; *   none so far&n; *&n; *&n; *  Supported devices:&n; *  /dev/dsp    standard /dev/dsp device, (mostly) OSS compatible&n; *  /dev/mixer  standard /dev/mixer device, (mostly) OSS compatible&n; *  /dev/midi   simple MIDI UART interface, no ioctl&n; *&n; *  The card has both an FM and a Wavetable synth, but I have to figure&n; *  out first how to drive them...&n; *&n; *  Revision history&n; *    06.05.98   0.1   Initial release&n; *    10.05.98   0.2   Fixed many bugs, esp. ADC rate calculation&n; *                     First stab at a simple midi interface (no bells&amp;whistles)&n; *    13.05.98   0.3   Fix stupid cut&amp;paste error: set_adc_rate was called instead of&n; *                     set_dac_rate in the FMODE_WRITE case in sv_open&n; *                     Fix hwptr out of bounds (now mpg123 works)&n; *    14.05.98   0.4   Don&squot;t allow excessive interrupt rates&n; *    08.06.98   0.5   First release using Alan Cox&squot; soundcore instead of miscdevice&n; *    03.08.98   0.6   Do not include modversions.h&n; *                     Now mixer behaviour can basically be selected between&n; *                     &quot;OSS documented&quot; and &quot;OSS actual&quot; behaviour&n; *    31.08.98   0.7   Fix realplayer problems - dac.count issues&n; *    10.12.98   0.8   Fix drain_dac trying to wait on not yet initialized DMA&n; *    16.12.98   0.9   Fix a few f_file &amp; FMODE_ bugs&n; *    06.01.99   0.10  remove the silly SA_INTERRUPT flag.&n; *                     hopefully killed the egcs section type conflict&n; *    12.03.99   0.11  cinfo.blocks should be reset after GETxPTR ioctl.&n; *                     reported by Johan Maes &lt;joma@telindus.be&gt;&n; *    22.03.99   0.12  return EAGAIN instead of EBUSY when O_NONBLOCK&n; *                     read/write cannot be executed&n; *&n; */
 multiline_comment|/*****************************************************************************/
 macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
@@ -6758,7 +6758,7 @@ c_cond
 id|ret
 suffix:colon
 op_minus
-id|EBUSY
+id|EAGAIN
 suffix:semicolon
 id|interruptible_sleep_on
 c_func
@@ -7123,7 +7123,7 @@ c_cond
 id|ret
 suffix:colon
 op_minus
-id|EBUSY
+id|EAGAIN
 suffix:semicolon
 id|interruptible_sleep_on
 c_func
@@ -8938,7 +8938,7 @@ id|s-&gt;dma_adc.total_bytes
 suffix:semicolon
 id|cinfo.blocks
 op_assign
-id|s-&gt;dma_adc.total_bytes
+id|s-&gt;dma_adc.count
 op_rshift
 id|s-&gt;dma_adc.fragshift
 suffix:semicolon
@@ -9023,7 +9023,7 @@ id|s-&gt;dma_dac.total_bytes
 suffix:semicolon
 id|cinfo.blocks
 op_assign
-id|s-&gt;dma_dac.total_bytes
+id|s-&gt;dma_dac.count
 op_rshift
 id|s-&gt;dma_dac.fragshift
 suffix:semicolon
@@ -10059,7 +10059,7 @@ c_cond
 id|ret
 suffix:colon
 op_minus
-id|EBUSY
+id|EAGAIN
 suffix:semicolon
 id|interruptible_sleep_on
 c_func
@@ -10352,7 +10352,7 @@ c_cond
 id|ret
 suffix:colon
 op_minus
-id|EBUSY
+id|EAGAIN
 suffix:semicolon
 id|interruptible_sleep_on
 c_func
@@ -12811,7 +12811,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;sv: version v0.10 time &quot;
+l_string|&quot;sv: version v0.12 time &quot;
 id|__TIME__
 l_string|&quot; &quot;
 id|__DATE__

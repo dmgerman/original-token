@@ -1308,10 +1308,47 @@ comma
 id|sig
 )paren
 )paren
+(brace
 id|t-&gt;sigpending
 op_assign
 l_int|1
 suffix:semicolon
+macro_line|#ifdef __SMP__
+multiline_comment|/*&n;&t;&t; * If the task is running on a different CPU &n;&t;&t; * force a reschedule on the other CPU - note that&n;&t;&t; * the code below is a tad loose and might occasionally&n;&t;&t; * kick the wrong CPU if we catch the process in the&n;&t;&t; * process of changing - but no harm is done by that&n;&t;&t; * other than doing an extra (lightweight) IPI interrupt.&n;&t;&t; *&n;&t;&t; * note that we rely on the previous spin_lock to&n;&t;&t; * lock interrupts for us! No need to set need_resched&n;&t;&t; * since signal event passing goes through -&gt;blocked.&n;&t;&t; */
+id|spin_lock
+c_func
+(paren
+op_amp
+id|runqueue_lock
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|t-&gt;has_cpu
+op_logical_and
+id|t-&gt;processor
+op_ne
+id|smp_processor_id
+c_func
+(paren
+)paren
+)paren
+id|smp_send_reschedule
+c_func
+(paren
+id|t-&gt;processor
+)paren
+suffix:semicolon
+id|spin_unlock
+c_func
+(paren
+op_amp
+id|runqueue_lock
+)paren
+suffix:semicolon
+macro_line|#endif /* __SMP__ */
+)brace
 id|out
 suffix:colon
 id|spin_unlock_irqrestore

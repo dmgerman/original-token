@@ -307,9 +307,6 @@ r_int
 id|timeout
 suffix:semicolon
 r_int
-id|tmp_timeout
-suffix:semicolon
-r_int
 id|retrans
 suffix:semicolon
 r_int

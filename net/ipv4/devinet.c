@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;NET3&t;IP device support routines.&n; *&n; *&t;Version: $Id: devinet.c,v 1.26 1999/03/21 05:22:31 davem Exp $&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;Derived from the IP parts of dev.c 1.0.19&n; * &t;&t;Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&n; *&t;Additional Authors:&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;Alexey Kuznetsov, &lt;kuznet@ms2.inr.ac.ru&gt;&n; *&n; *&t;Changes:&n; *&t;        Alexey Kuznetsov:&t;pa_* fields are replaced with ifaddr lists.&n; *&t;&t;Cyrus Durgin:&t;&t;updated for kmod&n; */
+multiline_comment|/*&n; *&t;NET3&t;IP device support routines.&n; *&n; *&t;Version: $Id: devinet.c,v 1.27 1999/03/25 10:04:06 davem Exp $&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;Derived from the IP parts of dev.c 1.0.19&n; * &t;&t;Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&n; *&t;Additional Authors:&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;Alexey Kuznetsov, &lt;kuznet@ms2.inr.ac.ru&gt;&n; *&n; *&t;Changes:&n; *&t;        Alexey Kuznetsov:&t;pa_* fields are replaced with ifaddr lists.&n; *&t;&t;Cyrus Durgin:&t;&t;updated for kmod&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -458,16 +458,11 @@ id|in_dev-&gt;cnf
 )paren
 suffix:semicolon
 macro_line|#endif
-id|net_serialize_enter
-c_func
-(paren
-)paren
-suffix:semicolon
 id|in_dev-&gt;dev-&gt;ip_ptr
 op_assign
 l_int|NULL
 suffix:semicolon
-id|net_serialize_leave
+id|synchronize_bh
 c_func
 (paren
 )paren
@@ -654,17 +649,12 @@ suffix:semicolon
 r_continue
 suffix:semicolon
 )brace
-id|net_serialize_enter
-c_func
-(paren
-)paren
-suffix:semicolon
 op_star
 id|ifap1
 op_assign
 id|ifa-&gt;ifa_next
 suffix:semicolon
-id|net_serialize_leave
+id|synchronize_bh
 c_func
 (paren
 )paren
@@ -697,17 +687,12 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/* 2. Unlink it */
-id|net_serialize_enter
-c_func
-(paren
-)paren
-suffix:semicolon
 op_star
 id|ifap
 op_assign
 id|ifa1-&gt;ifa_next
 suffix:semicolon
-id|net_serialize_leave
+id|synchronize_bh
 c_func
 (paren
 )paren
@@ -947,7 +932,7 @@ op_assign
 op_star
 id|ifap
 suffix:semicolon
-id|net_serialize_enter
+id|wmb
 c_func
 (paren
 )paren
@@ -956,11 +941,6 @@ op_star
 id|ifap
 op_assign
 id|ifa
-suffix:semicolon
-id|net_serialize_leave
-c_func
-(paren
-)paren
 suffix:semicolon
 multiline_comment|/* Send message first, then call notifier.&n;&t;   Notifier will trigger FIB update, so that&n;&t;   listeners of netlink will know about new ifaddr */
 id|rtmsg_ifa

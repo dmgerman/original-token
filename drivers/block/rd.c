@@ -291,9 +291,6 @@ r_int
 id|arg
 )paren
 (brace
-r_int
-id|err
-suffix:semicolon
 r_if
 c_cond
 (paren

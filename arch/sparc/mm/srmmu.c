@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: srmmu.c,v 1.184 1999/03/20 22:02:03 davem Exp $&n; * srmmu.c:  SRMMU specific routines for memory management.&n; *&n; * Copyright (C) 1995 David S. Miller  (davem@caip.rutgers.edu)&n; * Copyright (C) 1995 Peter A. Zaitcev (zaitcev@ithil.mcst.ru)&n; * Copyright (C) 1996 Eddie C. Dost    (ecd@skynet.be)&n; * Copyright (C) 1997,1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: srmmu.c,v 1.185 1999/03/24 11:42:35 davem Exp $&n; * srmmu.c:  SRMMU specific routines for memory management.&n; *&n; * Copyright (C) 1995 David S. Miller  (davem@caip.rutgers.edu)&n; * Copyright (C) 1995 Peter A. Zaitcev (zaitcev@ithil.mcst.ru)&n; * Copyright (C) 1996 Eddie C. Dost    (ecd@skynet.be)&n; * Copyright (C) 1997,1998 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -5443,11 +5443,6 @@ op_star
 id|tsk
 )paren
 (brace
-r_int
-id|set
-op_assign
-l_int|0
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -5457,12 +5452,6 @@ id|NO_CONTEXT
 )paren
 (brace
 id|alloc_context
-c_func
-(paren
-id|tsk-&gt;mm
-)paren
-suffix:semicolon
-id|flush_cache_mm
 c_func
 (paren
 id|tsk-&gt;mm
@@ -5480,46 +5469,13 @@ comma
 id|tsk-&gt;mm-&gt;pgd
 )paren
 suffix:semicolon
-id|flush_tlb_mm
-c_func
-(paren
-id|tsk-&gt;mm
-)paren
-suffix:semicolon
-id|set
-op_assign
-l_int|1
-suffix:semicolon
 )brace
-r_else
-r_if
-c_cond
-(paren
-id|tsk-&gt;mm
-op_ne
-id|current-&gt;mm
-)paren
-(brace
-id|set
-op_assign
-l_int|1
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|set
-op_ne
-l_int|0
-)paren
-(brace
 id|srmmu_set_context
 c_func
 (paren
 id|tsk-&gt;mm-&gt;context
 )paren
 suffix:semicolon
-)brace
 )brace
 DECL|function|srmmu_init_new_context
 r_static
@@ -8318,7 +8274,7 @@ op_ne
 id|swapper_pg_dir
 )paren
 (brace
-id|viking_flush_page
+id|flush_chunk
 c_func
 (paren
 (paren
@@ -8606,11 +8562,6 @@ op_star
 id|tsk
 )paren
 (brace
-r_int
-id|set
-op_assign
-l_int|0
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -8679,33 +8630,7 @@ r_int
 id|ctxp
 )paren
 suffix:semicolon
-id|set
-op_assign
-l_int|1
-suffix:semicolon
 )brace
-r_else
-r_if
-c_cond
-(paren
-id|tsk-&gt;mm
-op_ne
-id|current-&gt;mm
-)paren
-(brace
-id|set
-op_assign
-l_int|1
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|set
-op_ne
-l_int|0
-)paren
-(brace
 id|hyper_flush_whole_icache
 c_func
 (paren
@@ -8717,7 +8642,6 @@ c_func
 id|tsk-&gt;mm-&gt;context
 )paren
 suffix:semicolon
-)brace
 )brace
 DECL|function|hypersparc_init_new_context
 r_static
@@ -15981,7 +15905,6 @@ id|BTFIXUPCALL_NOP
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* flush_cache_* are nops */
 id|BTFIXUPSET_CALL
 c_func
 (paren
@@ -15989,7 +15912,7 @@ id|flush_cache_all
 comma
 id|viking_flush_cache_all
 comma
-id|BTFIXUPCALL_NOP
+id|BTFIXUPCALL_NORM
 )paren
 suffix:semicolon
 id|BTFIXUPSET_CALL
@@ -15999,7 +15922,7 @@ id|flush_cache_mm
 comma
 id|viking_flush_cache_mm
 comma
-id|BTFIXUPCALL_NOP
+id|BTFIXUPCALL_NORM
 )paren
 suffix:semicolon
 id|BTFIXUPSET_CALL
@@ -16009,7 +15932,7 @@ id|flush_cache_page
 comma
 id|viking_flush_cache_page
 comma
-id|BTFIXUPCALL_NOP
+id|BTFIXUPCALL_NORM
 )paren
 suffix:semicolon
 id|BTFIXUPSET_CALL
@@ -16019,7 +15942,7 @@ id|flush_cache_range
 comma
 id|viking_flush_cache_range
 comma
-id|BTFIXUPCALL_NOP
+id|BTFIXUPCALL_NORM
 )paren
 suffix:semicolon
 macro_line|#ifdef __SMP__

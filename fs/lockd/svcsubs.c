@@ -509,7 +509,7 @@ suffix:semicolon
 id|fp
 op_assign
 op_amp
-id|file-&gt;f_next
+id|f-&gt;f_next
 suffix:semicolon
 )brace
 id|printk

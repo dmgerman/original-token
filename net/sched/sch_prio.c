@@ -866,11 +866,6 @@ c_cond
 id|child
 )paren
 (brace
-id|net_serialize_enter
-c_func
-(paren
-)paren
-suffix:semicolon
 id|child
 op_assign
 id|xchg
@@ -885,7 +880,7 @@ comma
 id|child
 )paren
 suffix:semicolon
-id|net_serialize_leave
+id|synchronize_bh
 c_func
 (paren
 )paren

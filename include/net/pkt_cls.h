@@ -415,11 +415,6 @@ r_int
 id|cl
 )paren
 (brace
-id|net_serialize_enter
-c_func
-(paren
-)paren
-suffix:semicolon
 id|cl
 op_assign
 id|xchg
@@ -430,7 +425,7 @@ comma
 id|cl
 )paren
 suffix:semicolon
-id|net_serialize_leave
+id|synchronize_bh
 c_func
 (paren
 )paren

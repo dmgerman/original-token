@@ -1571,16 +1571,11 @@ id|old_fp
 op_assign
 id|sk-&gt;filter
 suffix:semicolon
-id|net_serialize_enter
-c_func
-(paren
-)paren
-suffix:semicolon
 id|sk-&gt;filter
 op_assign
 id|fp
 suffix:semicolon
-id|net_serialize_leave
+id|synchronize_bh
 c_func
 (paren
 )paren

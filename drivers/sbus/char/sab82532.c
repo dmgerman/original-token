@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sab82532.c,v 1.28 1999/01/02 16:47:35 davem Exp $&n; * sab82532.c: ASYNC Driver for the SIEMENS SAB82532 DUSCC.&n; *&n; * Copyright (C) 1997  Eddie C. Dost  (ecd@skynet.be)&n; *&n; */
+multiline_comment|/* $Id: sab82532.c,v 1.30 1999/03/24 11:34:52 davem Exp $&n; * sab82532.c: ASYNC Driver for the SIEMENS SAB82532 DUSCC.&n; *&n; * Copyright (C) 1997  Eddie C. Dost  (ecd@skynet.be)&n; *&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -8628,7 +8628,7 @@ r_char
 op_star
 id|revision
 op_assign
-l_string|&quot;$Revision: 1.28 $&quot;
+l_string|&quot;$Revision: 1.30 $&quot;
 suffix:semicolon
 r_char
 op_star
@@ -9656,29 +9656,44 @@ id|i
 op_increment
 )paren
 (brace
-r_if
-c_cond
+r_struct
+id|sab82532
+op_star
+id|info
+op_assign
 (paren
+r_struct
+id|sab82532
+op_star
+)paren
 id|sab82532_table
 (braket
 id|i
 )braket
-dot
-id|type
+op_member_access_from_pointer
+id|driver_data
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|info-&gt;type
 op_ne
 id|PORT_UNKNOWN
 )paren
 id|release_region
 c_func
 (paren
-id|sab82532_table
-(braket
-id|i
-)braket
-dot
-id|port
+(paren
+r_int
+r_int
+)paren
+id|info-&gt;regs
 comma
-l_int|8
+r_sizeof
+(paren
+r_union
+id|sab82532_async_regs
+)paren
 )paren
 suffix:semicolon
 )brace

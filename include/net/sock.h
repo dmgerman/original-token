@@ -3345,17 +3345,6 @@ suffix:colon
 id|GFP_KERNEL
 suffix:semicolon
 )brace
-macro_line|#ifdef __SMP__
-DECL|macro|net_serialize_enter
-mdefine_line|#define net_serialize_enter()&t;start_bh_atomic()
-DECL|macro|net_serialize_leave
-mdefine_line|#define net_serialize_leave()&t;end_bh_atomic()
-macro_line|#else
-DECL|macro|net_serialize_enter
-mdefine_line|#define net_serialize_enter()&t;barrier();
-DECL|macro|net_serialize_leave
-mdefine_line|#define net_serialize_leave()&t;barrier();
-macro_line|#endif
 multiline_comment|/* &n; *&t;Enable debug/info messages &n; */
 macro_line|#if 1
 DECL|macro|NETDEBUG

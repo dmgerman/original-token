@@ -93,7 +93,6 @@ suffix:semicolon
 DECL|macro|PPA_EMPTY
 mdefine_line|#define PPA_EMPTY&t;&bslash;&n;{&t;dev:&t;&t;NULL,&t;&t;&bslash;&n;&t;base:&t;&t;-1,&t;&t;&bslash;&n;&t;mode:&t;&t;PPA_AUTODETECT,&t;&bslash;&n;&t;host:&t;&t;-1,&t;&t;&bslash;&n;&t;cur_cmd:&t;NULL,&t;&t;&bslash;&n;&t;ppa_tq:&t;&t;{0, 0, ppa_interrupt, NULL},&t;&bslash;&n;&t;jstart:&t;&t;0,&t;&t;&bslash;&n;&t;failed:&t;&t;0,&t;&t;&bslash;&n;&t;p_busy:&t;&t;0&t;&t;&bslash;&n;}
 macro_line|#include  &quot;ppa.h&quot;
-macro_line|#include &lt;linux/parport.h&gt;
 DECL|macro|NO_HOSTS
 mdefine_line|#define NO_HOSTS 4
 DECL|variable|ppa_hosts

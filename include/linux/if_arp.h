@@ -81,6 +81,16 @@ DECL|macro|ARPHRD_ECONET
 mdefine_line|#define ARPHRD_ECONET&t;782&t;&t;/* Acorn Econet&t;&t;&t;*/
 DECL|macro|ARPHRD_IRDA
 mdefine_line|#define ARPHRD_IRDA &t;783&t;&t;/* Linux/IR&t;&t;&t;*/
+multiline_comment|/* ARP works differently on different FC media .. so  */
+DECL|macro|ARPHRD_FCPP
+mdefine_line|#define ARPHRD_FCPP&t;784&t;&t;/* Point to point fibrechanel&t;*/
+DECL|macro|ARPHRD_FCAL
+mdefine_line|#define ARPHRD_FCAL&t;785&t;&t;/* Fibrechannel arbitrated loop */
+DECL|macro|ARPHRD_FCPL
+mdefine_line|#define ARPHRD_FCPL&t;786&t;&t;/* Fibrechannel public loop&t;*/
+DECL|macro|ARPHRD_FCFABRIC
+mdefine_line|#define ARPHRD_FCFABRIC&t;786&t;&t;/* Fibrechannel fabric&t;&t;*/
+multiline_comment|/* 787-&gt;799 reserved for fibrechannel media types */
 multiline_comment|/* ARP protocol opcodes. */
 DECL|macro|ARPOP_REQUEST
 mdefine_line|#define&t;ARPOP_REQUEST&t;1&t;&t;/* ARP request&t;&t;&t;*/

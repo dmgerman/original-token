@@ -141,6 +141,14 @@ r_void
 suffix:semicolon
 r_extern
 r_void
+id|dtlk_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_void
 id|pcwatchdog_init
 c_func
 (paren

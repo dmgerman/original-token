@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: processor.h,v 1.69 1999/01/19 07:57:44 davem Exp $&n; * include/asm-sparc/processor.h&n; *&n; * Copyright (C) 1994 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: processor.h,v 1.70 1999/03/24 11:42:44 davem Exp $&n; * include/asm-sparc/processor.h&n; *&n; * Copyright (C) 1994 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef __ASM_SPARC_PROCESSOR_H
 DECL|macro|__ASM_SPARC_PROCESSOR_H
 mdefine_line|#define __ASM_SPARC_PROCESSOR_H
@@ -436,7 +436,7 @@ id|flags
 )paren
 suffix:semicolon
 DECL|macro|copy_segments
-mdefine_line|#define copy_segments(nr, tsk, mm)&t;do { } while (0)
+mdefine_line|#define copy_segments(__nr, __tsk, __mm)&t;&bslash;&n;&t;if((__tsk) == current &amp;&amp;&t;&t;&bslash;&n;&t;   (__mm) != NULL)&t;&t;&t;&bslash;&n;&t;&t;flush_user_windows()
 DECL|macro|release_segments
 mdefine_line|#define release_segments(mm)&t;&t;do { } while (0)
 DECL|macro|forget_segments

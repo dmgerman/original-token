@@ -22,6 +22,26 @@ op_star
 id|s_dr
 suffix:semicolon
 multiline_comment|/* pointer to disc record in s_sbh&t; */
+DECL|member|s_uid
+id|uid_t
+id|s_uid
+suffix:semicolon
+multiline_comment|/* owner uid&t;&t;&t;&t; */
+DECL|member|s_gid
+id|gid_t
+id|s_gid
+suffix:semicolon
+multiline_comment|/* owner gid&t;&t;&t;&t; */
+DECL|member|s_owner_mask
+r_int
+id|s_owner_mask
+suffix:semicolon
+multiline_comment|/* ADFS Owner perm -&gt; unix perm&t;&t; */
+DECL|member|s_other_mask
+r_int
+id|s_other_mask
+suffix:semicolon
+multiline_comment|/* ADFS Other perm -&gt; unix perm&t;&t; */
 DECL|member|s_zone_size
 id|__u16
 id|s_zone_size

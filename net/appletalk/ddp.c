@@ -1012,6 +1012,10 @@ l_int|0xFF
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; * Scan the networks.&n;&t; */
+id|atif-&gt;status
+op_or_assign
+id|ATIF_PROBE
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -1093,6 +1097,11 @@ id|ATIF_PROBE_FAIL
 )paren
 )paren
 (brace
+id|atif-&gt;status
+op_and_assign
+op_complement
+id|ATIF_PROBE
+suffix:semicolon
 r_return
 (paren
 l_int|0
@@ -1131,6 +1140,11 @@ id|atif-&gt;nets.nr_firstnet
 suffix:semicolon
 )brace
 )brace
+id|atif-&gt;status
+op_and_assign
+op_complement
+id|ATIF_PROBE
+suffix:semicolon
 r_return
 (paren
 op_minus

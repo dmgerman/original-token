@@ -323,7 +323,7 @@ op_assign
 id|skb-&gt;nh.iph
 suffix:semicolon
 macro_line|#endif
-macro_line|#if !defined( __i386__) &amp;&amp; !defined(__m68k__)
+macro_line|#if !defined( __i386__) &amp;&amp; !defined(__mc68000__)
 r_if
 c_cond
 (paren
@@ -1230,17 +1230,12 @@ r_int
 r_int
 id|cl
 suffix:semicolon
-id|net_serialize_enter
-c_func
-(paren
-)paren
-suffix:semicolon
 op_star
 id|fp
 op_assign
 id|f-&gt;next
 suffix:semicolon
-id|net_serialize_leave
+id|synchronize_bh
 c_func
 (paren
 )paren
@@ -1361,17 +1356,12 @@ op_eq
 id|s
 )paren
 (brace
-id|net_serialize_enter
-c_func
-(paren
-)paren
-suffix:semicolon
 op_star
 id|sp
 op_assign
 id|s-&gt;next
 suffix:semicolon
-id|net_serialize_leave
+id|synchronize_bh
 c_func
 (paren
 )paren
@@ -2049,11 +2039,6 @@ l_int|1
 )braket
 )paren
 suffix:semicolon
-id|net_serialize_enter
-c_func
-(paren
-)paren
-suffix:semicolon
 id|police
 op_assign
 id|xchg
@@ -2065,7 +2050,7 @@ comma
 id|police
 )paren
 suffix:semicolon
-id|net_serialize_leave
+id|synchronize_bh
 c_func
 (paren
 )paren
@@ -2700,7 +2685,7 @@ op_assign
 op_star
 id|fp
 suffix:semicolon
-id|net_serialize_enter
+id|wmb
 c_func
 (paren
 )paren
@@ -2709,11 +2694,6 @@ op_star
 id|fp
 op_assign
 id|f
-suffix:semicolon
-id|net_serialize_leave
-c_func
-(paren
-)paren
 suffix:semicolon
 op_star
 id|arg
@@ -2847,7 +2827,7 @@ op_assign
 op_star
 id|sp
 suffix:semicolon
-id|net_serialize_enter
+id|wmb
 c_func
 (paren
 )paren
@@ -2856,11 +2836,6 @@ op_star
 id|sp
 op_assign
 id|s
-suffix:semicolon
-id|net_serialize_leave
-c_func
-(paren
-)paren
 suffix:semicolon
 r_goto
 id|insert

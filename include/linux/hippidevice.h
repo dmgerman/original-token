@@ -156,6 +156,17 @@ comma
 r_int
 )paren
 suffix:semicolon
+r_extern
+r_void
+id|unregister_hipdev
+c_func
+(paren
+r_struct
+id|device
+op_star
+id|dev
+)paren
+suffix:semicolon
 macro_line|#endif
 macro_line|#endif&t;/* _LINUX_HIPPIDEVICE_H */
 eof

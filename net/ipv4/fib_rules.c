@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;IPv4 Forwarding Information Base: policy rules.&n; *&n; * Version:&t;$Id: fib_rules.c,v 1.8 1999/03/21 05:22:33 davem Exp $&n; *&n; * Authors:&t;Alexey Kuznetsov, &lt;kuznet@ms2.inr.ac.ru&gt;&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; * Fixes:&n; * &t;&t;Rani Assaf&t;:&t;local_rule cannot be deleted&n; *&t;&t;Marc Boucher&t;:&t;routing by fwmark&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;IPv4 Forwarding Information Base: policy rules.&n; *&n; * Version:&t;$Id: fib_rules.c,v 1.9 1999/03/25 10:04:23 davem Exp $&n; *&n; * Authors:&t;Alexey Kuznetsov, &lt;kuznet@ms2.inr.ac.ru&gt;&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; * Fixes:&n; * &t;&t;Rani Assaf&t;:&t;local_rule cannot be deleted&n; *&t;&t;Marc Boucher&t;:&t;routing by fwmark&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -457,17 +457,12 @@ r_return
 op_minus
 id|EPERM
 suffix:semicolon
-id|net_serialize_enter
-c_func
-(paren
-)paren
-suffix:semicolon
 op_star
 id|rp
 op_assign
 id|r-&gt;r_next
 suffix:semicolon
-id|net_serialize_leave
+id|synchronize_bh
 c_func
 (paren
 )paren
