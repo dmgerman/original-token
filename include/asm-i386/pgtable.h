@@ -155,7 +155,7 @@ id|atomic_read
 c_func
 (paren
 op_amp
-id|current-&gt;mm-&gt;count
+id|current-&gt;mm-&gt;mm_users
 )paren
 op_eq
 l_int|1
@@ -201,7 +201,7 @@ id|atomic_read
 c_func
 (paren
 op_amp
-id|mm-&gt;count
+id|mm-&gt;mm_users
 )paren
 op_eq
 l_int|1
@@ -246,7 +246,7 @@ id|atomic_read
 c_func
 (paren
 op_amp
-id|current-&gt;mm-&gt;count
+id|current-&gt;mm-&gt;mm_users
 )paren
 op_eq
 l_int|1

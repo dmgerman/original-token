@@ -1390,29 +1390,29 @@ id|mm
 comma
 op_star
 id|old_mm
+comma
+op_star
+id|active_mm
 suffix:semicolon
-multiline_comment|/*&n;&t; * NOTE: This works even if &quot;old_mm&quot; is a lazy&n;&t; * memory state. If count == 1 at this point,&n;&t; * we know that we&squot;re the only holders of that&n;&t; * lazy mm, so we can turn it into a real mm.&n;&t; */
 id|old_mm
 op_assign
-id|current-&gt;active_mm
+id|current-&gt;mm
 suffix:semicolon
 r_if
 c_cond
 (paren
+id|old_mm
+op_logical_and
 id|atomic_read
 c_func
 (paren
 op_amp
-id|old_mm-&gt;count
+id|old_mm-&gt;mm_users
 )paren
 op_eq
 l_int|1
 )paren
 (brace
-id|current-&gt;mm
-op_assign
-id|old_mm
-suffix:semicolon
 id|flush_cache_mm
 c_func
 (paren
@@ -1456,12 +1456,9 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
 id|mm
 )paren
-r_goto
-id|fail_nomem
-suffix:semicolon
+(brace
 id|mm-&gt;cpu_vm_mask
 op_assign
 (paren
@@ -1491,11 +1488,15 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
 id|mm-&gt;pgd
 )paren
-r_goto
-id|fail_free
+(brace
+r_struct
+id|mm_struct
+op_star
+id|active_mm
+op_assign
+id|current-&gt;active_mm
 suffix:semicolon
 id|current-&gt;mm
 op_assign
@@ -1524,6 +1525,12 @@ c_func
 (paren
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|old_mm
+)paren
+(brace
 id|mmput
 c_func
 (paren
@@ -1533,8 +1540,17 @@ suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
-id|fail_free
-suffix:colon
+)brace
+id|mmdrop
+c_func
+(paren
+id|active_mm
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
 id|kmem_cache_free
 c_func
 (paren
@@ -1543,8 +1559,7 @@ comma
 id|mm
 )paren
 suffix:semicolon
-id|fail_nomem
-suffix:colon
+)brace
 r_return
 op_minus
 id|ENOMEM
@@ -2338,7 +2353,7 @@ id|cap_raised
 (brace
 multiline_comment|/* We can&squot;t suid-execute if we&squot;re sharing parts of the executable */
 multiline_comment|/* or if we&squot;re being traced (or if suid execs are not allowed)    */
-multiline_comment|/* (current-&gt;mm-&gt;count &gt; 1 is ok, as we&squot;ll get a new mm anyway)   */
+multiline_comment|/* (current-&gt;mm-&gt;mm_users &gt; 1 is ok, as we&squot;ll get a new mm anyway)   */
 r_if
 c_cond
 (paren

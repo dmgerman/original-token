@@ -295,10 +295,16 @@ id|pgd_t
 op_star
 id|pgd
 suffix:semicolon
-DECL|member|count
+DECL|member|mm_users
 id|atomic_t
-id|count
+id|mm_users
 suffix:semicolon
+multiline_comment|/* How many users with user space? */
+DECL|member|mm_count
+id|atomic_t
+id|mm_count
+suffix:semicolon
+multiline_comment|/* How many references to &quot;struct mm_struct&quot; (users count as 1) */
 DECL|member|map_count
 r_int
 id|map_count
@@ -398,7 +404,7 @@ suffix:semicolon
 )brace
 suffix:semicolon
 DECL|macro|INIT_MM
-mdefine_line|#define INIT_MM(name) {&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&amp;init_mmap, NULL, NULL,&t;&t;&t;&bslash;&n;&t;&t;swapper_pg_dir, &t;&t;&t;&bslash;&n;&t;&t;ATOMIC_INIT(2), 1,&t;&t;&t;&bslash;&n;&t;&t;__MUTEX_INITIALIZER(name.mmap_sem),&t;&bslash;&n;&t;&t;SPIN_LOCK_UNLOCKED,&t;&t;&t;&bslash;&n;&t;&t;0,&t;&t;&t;&t;&t;&bslash;&n;&t;&t;0, 0, 0, 0,&t;&t;&t;&t;&bslash;&n;&t;&t;0, 0, 0, &t;&t;&t;&t;&bslash;&n;&t;&t;0, 0, 0, 0,&t;&t;&t;&t;&bslash;&n;&t;&t;0, 0, 0,&t;&t;&t;&t;&bslash;&n;&t;&t;0, 0, 0, 0, NULL }
+mdefine_line|#define INIT_MM(name) {&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&amp;init_mmap, NULL, NULL,&t;&t;&t;&bslash;&n;&t;&t;swapper_pg_dir, &t;&t;&t;&bslash;&n;&t;&t;ATOMIC_INIT(2), ATOMIC_INIT(1), 1,&t;&bslash;&n;&t;&t;__MUTEX_INITIALIZER(name.mmap_sem),&t;&bslash;&n;&t;&t;SPIN_LOCK_UNLOCKED,&t;&t;&t;&bslash;&n;&t;&t;0,&t;&t;&t;&t;&t;&bslash;&n;&t;&t;0, 0, 0, 0,&t;&t;&t;&t;&bslash;&n;&t;&t;0, 0, 0, &t;&t;&t;&t;&bslash;&n;&t;&t;0, 0, 0, 0,&t;&t;&t;&t;&bslash;&n;&t;&t;0, 0, 0,&t;&t;&t;&t;&bslash;&n;&t;&t;0, 0, 0, 0, NULL }
 DECL|struct|signal_struct
 r_struct
 id|signal_struct
@@ -1971,11 +1977,27 @@ c_func
 r_void
 )paren
 suffix:semicolon
-DECL|function|mmget
+multiline_comment|/* mmdrop drops the mm and the page tables */
+r_extern
+r_inline
+r_void
+id|FASTCALL
+c_func
+(paren
+id|__mmdrop
+c_func
+(paren
+r_struct
+id|mm_struct
+op_star
+)paren
+)paren
+suffix:semicolon
+DECL|function|mmdrop
 r_static
 r_inline
 r_void
-id|mmget
+id|mmdrop
 c_func
 (paren
 r_struct
@@ -1984,14 +2006,24 @@ op_star
 id|mm
 )paren
 (brace
-id|atomic_inc
+r_if
+c_cond
+(paren
+id|atomic_dec_and_test
 c_func
 (paren
 op_amp
-id|mm-&gt;count
+id|mm-&gt;mm_count
+)paren
+)paren
+id|__mmdrop
+c_func
+(paren
+id|mm
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* mmput gets rid of the mappings and all user-space */
 r_extern
 r_void
 id|mmput

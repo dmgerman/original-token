@@ -4543,11 +4543,11 @@ l_string|&quot;pushfl ; andl $0xffffbfff,(%esp) ; popfl&quot;
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * set up and load the per-CPU TSS and LDT&n;&t; */
-id|mmget
+id|atomic_inc
 c_func
 (paren
 op_amp
-id|init_mm
+id|init_mm.mm_count
 )paren
 suffix:semicolon
 id|current-&gt;active_mm

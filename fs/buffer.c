@@ -8169,10 +8169,11 @@ id|user_mm
 op_assign
 id|current-&gt;mm
 suffix:semicolon
-id|mmget
+id|atomic_inc
 c_func
 (paren
-id|user_mm
+op_amp
+id|user_mm-&gt;mm_count
 )paren
 suffix:semicolon
 id|current-&gt;mm
@@ -8191,7 +8192,7 @@ id|current-&gt;mm
 op_assign
 id|user_mm
 suffix:semicolon
-id|mmput
+id|mmdrop
 c_func
 (paren
 id|current-&gt;active_mm

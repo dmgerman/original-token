@@ -269,7 +269,7 @@ id|atomic_read
 c_func
 (paren
 op_amp
-id|mm-&gt;count
+id|mm-&gt;mm_users
 )paren
 OG
 l_int|1
