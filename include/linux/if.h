@@ -5,6 +5,7 @@ mdefine_line|#define _LINUX_IF_H
 macro_line|#include &lt;linux/types.h&gt;&t;&t;/* for &quot;caddr_t&quot; et al&t;&t;*/
 macro_line|#include &lt;linux/socket.h&gt;&t;&t;/* for &quot;struct sockaddr&quot; et al&t;*/
 multiline_comment|/* Structure defining a queue for a network interface. */
+macro_line|#ifdef not_yet_in_linux
 DECL|struct|ifnet
 r_struct
 id|ifnet
@@ -51,7 +52,6 @@ DECL|struct|ifqueue
 r_struct
 id|ifqueue
 (brace
-macro_line|#ifdef not_yet_in_linux
 DECL|member|ifq_head
 r_struct
 id|mbuf
@@ -76,7 +76,6 @@ DECL|member|ifq_drops
 r_int
 id|ifq_drops
 suffix:semicolon
-macro_line|#endif
 DECL|member|if_snd
 )brace
 id|if_snd
@@ -168,6 +167,7 @@ id|if_next
 suffix:semicolon
 )brace
 suffix:semicolon
+macro_line|#endif
 multiline_comment|/* Standard interface flags. */
 DECL|macro|IFF_UP
 mdefine_line|#define&t;IFF_UP&t;&t;0x1&t;&t;/* interface is up&t;&t;*/

@@ -1528,6 +1528,11 @@ id|sk_buff
 op_star
 id|x
 op_assign
+(paren
+r_struct
+id|sk_buff
+op_star
+)paren
 id|mem
 suffix:semicolon
 id|IS_SKB

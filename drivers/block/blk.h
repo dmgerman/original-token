@@ -73,9 +73,9 @@ id|next
 suffix:semicolon
 )brace
 suffix:semicolon
-multiline_comment|/*&n; * This is used in the elevator algorithm: Note that&n; * reads always go before writes. This is natural: reads&n; * are much more time-critical than writes.&n; *&n; * Update: trying with writes being preferred due to test&n; * by Alessandro Rubini..&n; */
+multiline_comment|/*&n; * This is used in the elevator algorithm: Note that&n; * reads always go before writes. This is natural: reads&n; * are much more time-critical than writes.&n; */
 DECL|macro|IN_ORDER
-mdefine_line|#define IN_ORDER(s1,s2) &bslash;&n;((s1)-&gt;cmd &gt; (s2)-&gt;cmd || ((s1)-&gt;cmd == (s2)-&gt;cmd &amp;&amp; &bslash;&n;((s1)-&gt;dev &lt; (s2)-&gt;dev || (((s1)-&gt;dev == (s2)-&gt;dev &amp;&amp; &bslash;&n;(s1)-&gt;sector &lt; (s2)-&gt;sector)))))
+mdefine_line|#define IN_ORDER(s1,s2) &bslash;&n;((s1)-&gt;cmd &lt; (s2)-&gt;cmd || ((s1)-&gt;cmd == (s2)-&gt;cmd &amp;&amp; &bslash;&n;((s1)-&gt;dev &lt; (s2)-&gt;dev || (((s1)-&gt;dev == (s2)-&gt;dev &amp;&amp; &bslash;&n;(s1)-&gt;sector &lt; (s2)-&gt;sector)))))
 DECL|struct|blk_dev_struct
 r_struct
 id|blk_dev_struct

@@ -6,6 +6,11 @@ macro_line|#ifndef NULL
 DECL|macro|NULL
 mdefine_line|#define NULL ((void *) 0)
 macro_line|#endif
+macro_line|#ifdef __cplusplus
+r_extern
+l_string|&quot;C&quot;
+(brace
+macro_line|#endif
 multiline_comment|/*&n; * This string-include defines all string functions as inline&n; * functions. Use gcc. It also assumes ds=es=data space, this should be&n; * normal. Most of the string-functions are rather heavily hand-optimized,&n; * see especially strtok,strstr,str[c]spn. They should work, but are not&n; * very easy to understand. Everything is done entirely within the register&n; * set, making the functions fast and clean. String instructions have been&n; * used through-out, making for &quot;slightly&quot; unclear code :-)&n; *&n; *&t;&t;Copyright (C) 1991, 1992 Linus Torvalds&n; */
 DECL|function|strcpy
 r_extern
@@ -1486,5 +1491,8 @@ r_return
 id|s
 suffix:semicolon
 )brace
+macro_line|#ifdef __cplusplus
+)brace
+macro_line|#endif
 macro_line|#endif
 eof

@@ -957,53 +957,6 @@ id|skb-&gt;dev
 op_assign
 id|dev
 suffix:semicolon
-macro_line|#ifdef OLD
-multiline_comment|/*&n;   * This code used to hack in some form of fragmentation.&n;   * I removed that, since it didn&squot;t work anyway, and it made the&n;   * code a bad thing to read and understand. -FvK&n;   */
-r_if
-c_cond
-(paren
-id|len
-OG
-id|dev-&gt;mtu
-)paren
-(brace
-macro_line|#else
-r_if
-c_cond
-(paren
-id|skb-&gt;len
-OG
-l_int|4095
-)paren
-(brace
-macro_line|#endif    
-id|printk
-c_func
-(paren
-l_string|&quot;UDP: send: length %d &gt; mtu %d (ignored)&bslash;n&quot;
-comma
-id|len
-comma
-id|dev-&gt;mtu
-)paren
-suffix:semicolon
-id|sk-&gt;prot
-op_member_access_from_pointer
-id|wfree
-c_func
-(paren
-id|sk
-comma
-id|skb-&gt;mem_addr
-comma
-id|skb-&gt;mem_len
-)paren
-suffix:semicolon
-r_return
-op_minus
-id|EMSGSIZE
-suffix:semicolon
-)brace
 multiline_comment|/* Fill in the UDP header. */
 id|uh
 op_assign

@@ -374,12 +374,7 @@ suffix:semicolon
 )brace
 suffix:semicolon
 multiline_comment|/* end of planning stage */
-r_extern
-r_volatile
-r_int
-id|free_page_ptr
-suffix:semicolon
-multiline_comment|/* used by malloc and tcp/ip. */
+multiline_comment|/*&n; * Free area management&n; */
 r_extern
 r_int
 id|nr_swap_pages
@@ -388,31 +383,60 @@ r_extern
 r_int
 id|nr_free_pages
 suffix:semicolon
-r_extern
-r_int
-r_int
-id|free_page_list
-suffix:semicolon
-r_extern
-r_int
-id|nr_secondary_pages
-suffix:semicolon
-r_extern
-r_int
-r_int
-id|secondary_page_list
-suffix:semicolon
 DECL|macro|MAX_SECONDARY_PAGES
 mdefine_line|#define MAX_SECONDARY_PAGES 20
+DECL|macro|NR_MEM_LISTS
+mdefine_line|#define NR_MEM_LISTS 6
+DECL|struct|mem_list
+r_struct
+id|mem_list
+(brace
+DECL|member|next
+r_struct
+id|mem_list
+op_star
+id|next
+suffix:semicolon
+DECL|member|prev
+r_struct
+id|mem_list
+op_star
+id|prev
+suffix:semicolon
+)brace
+suffix:semicolon
+r_extern
+r_struct
+id|mem_list
+id|free_area_list
+(braket
+id|NR_MEM_LISTS
+)braket
+suffix:semicolon
+r_extern
+r_int
+r_char
+op_star
+id|free_area_map
+(braket
+id|NR_MEM_LISTS
+)braket
+suffix:semicolon
 multiline_comment|/*&n; * This is timing-critical - most of the time in getting a new page&n; * goes to clearing the page. If you want a page without the clearing&n; * overhead, just use __get_free_page() directly..&n; */
+DECL|macro|__get_free_page
+mdefine_line|#define __get_free_page(priority) __get_free_pages((priority),0)
 r_extern
 r_int
 r_int
-id|__get_free_page
+id|__get_free_pages
 c_func
 (paren
 r_int
 id|priority
+comma
+r_int
+r_int
+id|gfporder
 )paren
 suffix:semicolon
 DECL|function|get_free_page
@@ -477,15 +501,29 @@ r_return
 id|page
 suffix:semicolon
 )brace
-multiline_comment|/* memory.c */
+multiline_comment|/* memory.c &amp; swap.c*/
+DECL|macro|free_page
+mdefine_line|#define free_page(addr) free_pages((addr),0)
 r_extern
 r_void
-id|free_page
+id|free_pages
 c_func
 (paren
 r_int
 r_int
 id|addr
+comma
+r_int
+r_int
+id|order
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|show_free_areas
+c_func
+(paren
+r_void
 )paren
 suffix:semicolon
 r_extern

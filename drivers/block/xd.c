@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * This file contains the driver for an XT hard disk controller (at least the DTC 5150X) for Linux.&n; *&n; * Author: Pat Mackinlay, smackinla@cc.curtin.edu.au&n; * Date: 29/09/92&n; * &n; * Revised: 01/01/93, ...&n; *&n; * Ref: DTC 5150X Controller Specification (thanks to Kevin Fowler, kevinf@agora.rain.com)&n; * Also thanks to: Salvador Abreu, Dave Thaler, Risto Kankkunen and Wim Van Dorst.&n; */
+multiline_comment|/*&n; * This file contains the driver for an XT hard disk controller&n; * (at least the DTC 5150X) for Linux.&n; *&n; * Author: Pat Mackinlay, pat@it.com.au&n; * Date: 29/09/92&n; * &n; * Revised: 01/01/93, ...&n; *&n; * Ref: DTC 5150X Controller Specification (thanks to Kevin Fowler,&n; *   kevinf@agora.rain.com)&n; * Also thanks to: Salvador Abreu, Dave Thaler, Risto Kankkunen and&n; *   Wim Van Dorst.&n; *&n; * Revised: 04/04/94 by Risto Kankkunen&n; *   Moved the detection code from xd_init() to xd_geninit() as it needed&n; *   interrupts enabled and Linus didn&squot;t want to enable them in that first&n; *   phase. xd_geninit() is the place to do these kinds of things anyway,&n; *   he says.&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
@@ -40,7 +40,7 @@ comma
 l_string|&quot;n unknown&quot;
 )brace
 comma
-multiline_comment|/* Pat Mackinlay, smackinla@cc.curtin.edu.au (pat@gu.uwa.edu.au) */
+multiline_comment|/* Pat Mackinlay, pat@it.com.au */
 (brace
 l_int|0x000B
 comma
@@ -53,7 +53,7 @@ comma
 l_string|&quot; DTC 5150X&quot;
 )brace
 comma
-multiline_comment|/* Pat Mackinlay, smackinla@cc.curtin.edu.au (pat@gu.uwa.edu.au) */
+multiline_comment|/* Pat Mackinlay, pat@it.com.au */
 (brace
 l_int|0x0008
 comma
@@ -238,31 +238,42 @@ op_assign
 (brace
 id|MAJOR_NR
 comma
+multiline_comment|/* Major number */
 l_string|&quot;xd&quot;
 comma
+multiline_comment|/* Major name */
 l_int|6
 comma
+multiline_comment|/* Bits to shift to get real from partition */
 l_int|1
 op_lshift
 l_int|6
 comma
+multiline_comment|/* Number of partitions per real */
 id|XD_MAXDRIVES
 comma
+multiline_comment|/* maximum number of real */
 id|xd_geninit
 comma
+multiline_comment|/* init function */
 id|xd
 comma
+multiline_comment|/* hd struct */
 id|xd_sizes
 comma
+multiline_comment|/* block sizes */
 l_int|0
 comma
+multiline_comment|/* number */
 (paren
 r_void
 op_star
 )paren
 id|xd_info
 comma
+multiline_comment|/* internal */
 l_int|NULL
+multiline_comment|/* next */
 )brace
 suffix:semicolon
 DECL|variable|xd_fops
@@ -274,23 +285,33 @@ op_assign
 (brace
 l_int|NULL
 comma
+multiline_comment|/* lseek - default */
 id|block_read
 comma
+multiline_comment|/* read - general block-dev read */
 id|block_write
 comma
+multiline_comment|/* write - general block-dev write */
 l_int|NULL
 comma
+multiline_comment|/* readdir - bad */
 l_int|NULL
 comma
+multiline_comment|/* select */
 id|xd_ioctl
 comma
+multiline_comment|/* ioctl */
 l_int|NULL
 comma
+multiline_comment|/* mmap */
 id|xd_open
 comma
+multiline_comment|/* open */
 id|xd_release
 comma
+multiline_comment|/* release */
 id|block_fsync
+multiline_comment|/* fsync */
 )brace
 suffix:semicolon
 DECL|variable|xd_wait_int
@@ -326,8 +347,6 @@ DECL|variable|xd_drives
 DECL|variable|xd_irq
 DECL|variable|xd_dma
 DECL|variable|xd_maxsectors
-DECL|variable|xd_override
-DECL|variable|xd_type
 r_static
 id|u_char
 id|xd_drives
@@ -343,7 +362,11 @@ op_assign
 l_int|0
 comma
 id|xd_maxsectors
-comma
+suffix:semicolon
+DECL|variable|xd_override
+DECL|variable|xd_type
+r_static
+id|u_char
 id|xd_override
 op_assign
 l_int|0
@@ -359,7 +382,7 @@ id|xd_iobase
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* xd_init: grab the IRQ and DMA channel and initialise the drives */
+multiline_comment|/* xd_init: register the block device number and set up pointer tables */
 DECL|function|xd_init
 id|u_long
 id|xd_init
@@ -371,14 +394,6 @@ id|u_long
 id|mem_end
 )paren
 (brace
-id|u_char
-id|i
-comma
-id|controller
-comma
-op_star
-id|address
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -434,179 +449,6 @@ op_assign
 op_amp
 id|xd_gendisk
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|xd_detect
-c_func
-(paren
-op_amp
-id|controller
-comma
-op_amp
-id|address
-)paren
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;xd_init: detected a%s controller (type %d) at address %p&bslash;n&quot;
-comma
-id|xd_sigs
-(braket
-id|controller
-)braket
-dot
-id|name
-comma
-id|controller
-comma
-id|address
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|controller
-)paren
-id|xd_sigs
-(braket
-id|controller
-)braket
-dot
-id|init_controller
-c_func
-(paren
-id|address
-)paren
-suffix:semicolon
-id|xd_drives
-op_assign
-id|xd_initdrives
-c_func
-(paren
-id|xd_sigs
-(braket
-id|controller
-)braket
-dot
-id|init_drive
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;xd_init: detected %d hard drive%s (using IRQ%d &amp; DMA%d)&bslash;n&quot;
-comma
-id|xd_drives
-comma
-id|xd_drives
-op_eq
-l_int|1
-ques
-c_cond
-l_string|&quot;&quot;
-suffix:colon
-l_string|&quot;s&quot;
-comma
-id|xd_irq
-comma
-id|xd_dma
-)paren
-suffix:semicolon
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-id|xd_drives
-suffix:semicolon
-id|i
-op_increment
-)paren
-id|printk
-c_func
-(paren
-l_string|&quot;xd_init: drive %d geometry - heads = %d, cylinders = %d, sectors = %d&bslash;n&quot;
-comma
-id|i
-comma
-id|xd_info
-(braket
-id|i
-)braket
-dot
-id|heads
-comma
-id|xd_info
-(braket
-id|i
-)braket
-dot
-id|cylinders
-comma
-id|xd_info
-(braket
-id|i
-)braket
-dot
-id|sectors
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|request_irq
-c_func
-(paren
-id|xd_irq
-comma
-id|xd_interrupt_handler
-)paren
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|request_dma
-c_func
-(paren
-id|xd_dma
-)paren
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;xd_init: unable to get DMA%d&bslash;n&quot;
-comma
-id|xd_dma
-)paren
-suffix:semicolon
-id|free_irq
-c_func
-(paren
-id|xd_irq
-)paren
-suffix:semicolon
-)brace
-)brace
-r_else
-id|printk
-c_func
-(paren
-l_string|&quot;xd_init: unable to get IRQ%d&bslash;n&quot;
-comma
-id|xd_irq
-)paren
-suffix:semicolon
-)brace
 r_return
 id|mem_start
 suffix:semicolon
@@ -778,7 +620,8 @@ id|found
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* xd_geninit: set up the &quot;raw&quot; device entries in the table */
+multiline_comment|/* xd_geninit: grab the IRQ and DMA channel, initialise the drives */
+multiline_comment|/* and set up the &quot;raw&quot; device entries in the table */
 DECL|function|xd_geninit
 r_static
 r_void
@@ -789,7 +632,185 @@ r_void
 (brace
 id|u_char
 id|i
+comma
+id|controller
+comma
+op_star
+id|address
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|xd_detect
+c_func
+(paren
+op_amp
+id|controller
+comma
+op_amp
+id|address
+)paren
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;xd_geninit: detected a%s controller (type %d) at address %p&bslash;n&quot;
+comma
+id|xd_sigs
+(braket
+id|controller
+)braket
+dot
+id|name
+comma
+id|controller
+comma
+id|address
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|controller
+)paren
+id|xd_sigs
+(braket
+id|controller
+)braket
+dot
+id|init_controller
+c_func
+(paren
+id|address
+)paren
+suffix:semicolon
+id|xd_drives
+op_assign
+id|xd_initdrives
+c_func
+(paren
+id|xd_sigs
+(braket
+id|controller
+)braket
+dot
+id|init_drive
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;xd_geninit: detected %d hard drive%s (using IRQ%d &amp; DMA%d)&bslash;n&quot;
+comma
+id|xd_drives
+comma
+id|xd_drives
+op_eq
+l_int|1
+ques
+c_cond
+l_string|&quot;&quot;
+suffix:colon
+l_string|&quot;s&quot;
+comma
+id|xd_irq
+comma
+id|xd_dma
+)paren
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|xd_drives
+suffix:semicolon
+id|i
+op_increment
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;xd_geninit: drive %d geometry - heads = %d, cylinders = %d, sectors = %d&bslash;n&quot;
+comma
+id|i
+comma
+id|xd_info
+(braket
+id|i
+)braket
+dot
+id|heads
+comma
+id|xd_info
+(braket
+id|i
+)braket
+dot
+id|cylinders
+comma
+id|xd_info
+(braket
+id|i
+)braket
+dot
+id|sectors
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|request_irq
+c_func
+(paren
+id|xd_irq
+comma
+id|xd_interrupt_handler
+)paren
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|request_dma
+c_func
+(paren
+id|xd_dma
+)paren
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;xd_geninit: unable to get DMA%d&bslash;n&quot;
+comma
+id|xd_dma
+)paren
+suffix:semicolon
+id|free_irq
+c_func
+(paren
+id|xd_irq
+)paren
+suffix:semicolon
+)brace
+)brace
+r_else
+id|printk
+c_func
+(paren
+l_string|&quot;xd_geninit: unable to get IRQ%d&bslash;n&quot;
+comma
+id|xd_irq
+)paren
+suffix:semicolon
+)brace
 r_for
 c_loop
 (paren
@@ -3019,7 +3040,7 @@ l_int|0
 comma
 id|XD_TIMEOUT
 op_star
-l_int|2
+l_int|8
 )paren
 )paren
 (brace

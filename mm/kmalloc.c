@@ -1,4 +1,5 @@
 multiline_comment|/*&n; *  linux/mm/kmalloc.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds &amp; Roger Wolff.&n; *&n; *  Written by R.E. Wolff Sept/Oct &squot;93.&n; *&n; */
+multiline_comment|/*&n; * Modified by Alex Bligh (alex@cconcepts.co.uk) 4 Apr 1994 to use multiple&n; * pages. So for &squot;page&squot; throughout, read &squot;area&squot;.&n; */
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
@@ -6,7 +7,7 @@ DECL|macro|GFP_LEVEL_MASK
 mdefine_line|#define GFP_LEVEL_MASK 0xf
 multiline_comment|/* I want this low enough for a while to catch errors.&n;   I want this number to be increased in the near future:&n;        loadable device drivers should use this function to get memory */
 DECL|macro|MAX_KMALLOC_K
-mdefine_line|#define MAX_KMALLOC_K 4
+mdefine_line|#define MAX_KMALLOC_K ((PAGE_SIZE&lt;&lt;(NUM_AREA_ORDERS-1))&gt;&gt;10)
 multiline_comment|/* This defines how many times we should try to allocate a free page before&n;   giving up. Normally this shouldn&squot;t happen at all. */
 DECL|macro|MAX_GET_FREE_PAGE_TRIES
 mdefine_line|#define MAX_GET_FREE_PAGE_TRIES 4
@@ -115,8 +116,15 @@ DECL|member|npages
 r_int
 id|npages
 suffix:semicolon
+DECL|member|gfporder
+r_int
+r_int
+id|gfporder
+suffix:semicolon
+multiline_comment|/* number of pages in the area required */
 )brace
 suffix:semicolon
+multiline_comment|/*&n; * For now it is unsafe to allocate bucket sizes between n &amp; n=16 where n is&n; * 4096 * any power of two&n; */
 DECL|variable|sizes
 r_struct
 id|size_descriptor
@@ -131,6 +139,8 @@ comma
 l_int|32
 comma
 l_int|127
+comma
+l_int|0
 comma
 l_int|0
 comma
@@ -155,6 +165,8 @@ comma
 l_int|0
 comma
 l_int|0
+comma
+l_int|0
 )brace
 comma
 (brace
@@ -163,6 +175,8 @@ comma
 l_int|128
 comma
 l_int|31
+comma
+l_int|0
 comma
 l_int|0
 comma
@@ -187,6 +201,8 @@ comma
 l_int|0
 comma
 l_int|0
+comma
+l_int|0
 )brace
 comma
 (brace
@@ -195,6 +211,8 @@ comma
 l_int|508
 comma
 l_int|8
+comma
+l_int|0
 comma
 l_int|0
 comma
@@ -219,6 +237,8 @@ comma
 l_int|0
 comma
 l_int|0
+comma
+l_int|0
 )brace
 comma
 (brace
@@ -235,12 +255,16 @@ comma
 l_int|0
 comma
 l_int|0
+comma
+l_int|0
 )brace
 comma
 (brace
 l_int|NULL
 comma
-l_int|4080
+l_int|4096
+op_minus
+l_int|16
 comma
 l_int|1
 comma
@@ -251,10 +275,114 @@ comma
 l_int|0
 comma
 l_int|0
+comma
+l_int|0
 )brace
 comma
 (brace
 l_int|NULL
+comma
+l_int|8192
+op_minus
+l_int|16
+comma
+l_int|1
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|1
+)brace
+comma
+(brace
+l_int|NULL
+comma
+l_int|16384
+op_minus
+l_int|16
+comma
+l_int|1
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|2
+)brace
+comma
+(brace
+l_int|NULL
+comma
+l_int|32768
+op_minus
+l_int|16
+comma
+l_int|1
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|3
+)brace
+comma
+(brace
+l_int|NULL
+comma
+l_int|65536
+op_minus
+l_int|16
+comma
+l_int|1
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|4
+)brace
+comma
+(brace
+l_int|NULL
+comma
+l_int|131072
+op_minus
+l_int|16
+comma
+l_int|1
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|5
+)brace
+comma
+(brace
+l_int|NULL
+comma
+l_int|0
 comma
 l_int|0
 comma
@@ -274,6 +402,8 @@ DECL|macro|NBLOCKS
 mdefine_line|#define NBLOCKS(order)          (sizes[order].nblocks)
 DECL|macro|BLOCKSIZE
 mdefine_line|#define BLOCKSIZE(order)        (sizes[order].size)
+DECL|macro|AREASIZE
+mdefine_line|#define AREASIZE(order)&t;&t;(PAGE_SIZE&lt;&lt;(sizes[order].gfporder))
 DECL|function|kmalloc_init
 r_int
 id|kmalloc_init
@@ -328,7 +458,11 @@ id|page_descriptor
 )paren
 )paren
 OG
-id|PAGE_SIZE
+id|AREASIZE
+c_func
+(paren
+id|order
+)paren
 )paren
 (brace
 id|printk
@@ -355,7 +489,11 @@ comma
 (paren
 r_int
 )paren
-id|PAGE_SIZE
+id|AREASIZE
+c_func
+(paren
+id|order
+)paren
 comma
 id|BLOCKSIZE
 (paren
@@ -514,33 +652,6 @@ op_assign
 id|GFP_ATOMIC
 suffix:semicolon
 )brace
-)brace
-r_if
-c_cond
-(paren
-id|size
-OG
-id|MAX_KMALLOC_K
-op_star
-l_int|1024
-)paren
-(brace
-id|printk
-(paren
-l_string|&quot;kmalloc: I refuse to allocate %d bytes (for now max = %d).&bslash;n&quot;
-comma
-id|size
-comma
-id|MAX_KMALLOC_K
-op_star
-l_int|1024
-)paren
-suffix:semicolon
-r_return
-(paren
-l_int|NULL
-)paren
-suffix:semicolon
 )brace
 id|order
 op_assign
@@ -729,11 +840,18 @@ r_struct
 id|page_descriptor
 op_star
 )paren
-id|__get_free_page
+id|__get_free_pages
 (paren
 id|priority
 op_amp
 id|GFP_LEVEL_MASK
+comma
+id|sizes
+(braket
+id|order
+)braket
+dot
+id|gfporder
 )paren
 suffix:semicolon
 r_if
@@ -1255,12 +1373,20 @@ id|page
 )paren
 suffix:semicolon
 )brace
-id|free_page
+multiline_comment|/* FIXME: I&squot;m sure we should do something with npages here (like npages--) */
+id|free_pages
 (paren
 (paren
 r_int
 )paren
 id|page
+comma
+id|sizes
+(braket
+id|order
+)braket
+dot
+id|gfporder
 )paren
 suffix:semicolon
 )brace
@@ -1270,6 +1396,7 @@ c_func
 id|flags
 )paren
 suffix:semicolon
+multiline_comment|/* FIXME: ?? Are these increment &amp; decrement operations guaranteed to be&n; *&t;     atomic? Could an IRQ not occur between the read &amp; the write?&n; *&t;     Maybe yes on a x86 with GCC...??&n; */
 id|sizes
 (braket
 id|order

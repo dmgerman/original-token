@@ -7011,6 +7011,11 @@ suffix:semicolon
 id|IS_SKB
 c_func
 (paren
+(paren
+r_struct
+id|sk_buff
+op_star
+)paren
 id|mem
 )paren
 suffix:semicolon
@@ -7116,6 +7121,11 @@ suffix:semicolon
 id|IS_SKB
 c_func
 (paren
+(paren
+r_struct
+id|sk_buff
+op_star
+)paren
 id|mem
 )paren
 suffix:semicolon

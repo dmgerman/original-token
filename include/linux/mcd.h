@@ -10,7 +10,7 @@ DECL|macro|MCD_STATUS_DELAY
 mdefine_line|#define MCD_STATUS_DELAY&t;100
 multiline_comment|/* number of times to retry a command before giving up */
 DECL|macro|MCD_RETRY_ATTEMPTS
-mdefine_line|#define MCD_RETRY_ATTEMPTS      3
+mdefine_line|#define MCD_RETRY_ATTEMPTS      5
 multiline_comment|/* port access macro */
 DECL|macro|MCDPORT
 mdefine_line|#define MCDPORT(x)&t;&t;(mcd_port + (x))
@@ -57,6 +57,8 @@ DECL|macro|MCMD_PLAY_READ
 mdefine_line|#define MCMD_PLAY_READ&t;&t;0xC0&t;&t;/* play or read data */
 DECL|macro|MCMD_GET_VERSION
 mdefine_line|#define MCMD_GET_VERSION  &t;0xDC
+DECL|macro|MCMD_EJECT
+mdefine_line|#define MCMD_EJECT&t;&t;0xF6            /* eject (FX drive) */
 multiline_comment|/* borrowed from hd.c */
 DECL|macro|READ_DATA
 mdefine_line|#define READ_DATA(port, buf, nr) &bslash;&n;insb(port, buf, nr)

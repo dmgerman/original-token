@@ -224,7 +224,7 @@ suffix:semicolon
 )brace
 suffix:semicolon
 DECL|macro|SK_WMEM_MAX
-mdefine_line|#define SK_WMEM_MAX&t;8192
+mdefine_line|#define SK_WMEM_MAX&t;32767
 DECL|macro|SK_RMEM_MAX
 mdefine_line|#define SK_RMEM_MAX&t;32767
 DECL|macro|SK_FREED_SKB

@@ -256,7 +256,7 @@ id|buffer
 op_plus
 id|PAGE_SIZE
 op_minus
-l_int|80
+l_int|90
 )paren
 (brace
 id|printk
