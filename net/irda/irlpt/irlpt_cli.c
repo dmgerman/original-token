@@ -507,42 +507,10 @@ r_return
 id|len
 suffix:semicolon
 )brace
-DECL|variable|proc_irlpt_client
-r_struct
-id|proc_dir_entry
-id|proc_irlpt_client
-op_assign
-(brace
-l_int|0
-comma
-l_int|12
-comma
-l_string|&quot;irlpt_client&quot;
-comma
-id|S_IFREG
-op_or
-id|S_IRUGO
-comma
-l_int|1
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|NULL
-multiline_comment|/* ops -- default to array */
-comma
-op_amp
-id|irlpt_client_proc_read
-multiline_comment|/* get_info */
-comma
-)brace
-suffix:semicolon
 r_extern
 r_struct
 id|proc_dir_entry
+op_star
 id|proc_irda
 suffix:semicolon
 macro_line|#endif /* CONFIG_PROC_FS */
@@ -630,15 +598,19 @@ l_int|NULL
 )paren
 suffix:semicolon
 macro_line|#ifdef CONFIG_PROC_FS
-id|proc_register
+id|create_proc_entry
 c_func
 (paren
-op_amp
-id|proc_irda
+l_string|&quot;irlpt_client&quot;
 comma
-op_amp
-id|proc_irlpt_client
+l_int|0
+comma
+id|proc_irda
 )paren
+op_member_access_from_pointer
+id|get_info
+op_assign
+id|irlpt_client_proc_read
 suffix:semicolon
 macro_line|#endif /* CONFIG_PROC_FS */
 id|DEBUG
@@ -694,13 +666,12 @@ id|irlpt_client_close
 )paren
 suffix:semicolon
 macro_line|#ifdef CONFIG_PROC_FS
-id|proc_unregister
+id|remove_proc_entry
 c_func
 (paren
-op_amp
-id|proc_irda
+l_string|&quot;irlpt_client&quot;
 comma
-id|proc_irlpt_client.low_ino
+id|proc_irda
 )paren
 suffix:semicolon
 macro_line|#endif

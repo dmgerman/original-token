@@ -525,40 +525,8 @@ suffix:semicolon
 r_extern
 r_struct
 id|proc_dir_entry
+op_star
 id|proc_irda
-suffix:semicolon
-DECL|variable|proc_irlpt_server
-r_struct
-id|proc_dir_entry
-id|proc_irlpt_server
-op_assign
-(brace
-l_int|0
-comma
-l_int|12
-comma
-l_string|&quot;irlpt_server&quot;
-comma
-id|S_IFREG
-op_or
-id|S_IRUGO
-comma
-l_int|1
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|NULL
-multiline_comment|/* ops -- default to array */
-comma
-op_amp
-id|irlpt_server_proc_read
-multiline_comment|/* get_info */
-comma
-)brace
 suffix:semicolon
 macro_line|#endif /* CONFIG_PROC_FS */
 multiline_comment|/*&n; * Function irlpt_init (dev)&n; *&n; *   Initializes the irlpt control structure&n; *&n; */
@@ -723,15 +691,19 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#ifdef CONFIG_PROC_FS
-id|proc_register
+id|create_proc_entry
 c_func
 (paren
-op_amp
-id|proc_irda
+l_string|&quot;irlpt_server&quot;
 comma
-op_amp
-id|proc_irlpt_server
+l_int|0
+comma
+id|proc_irda
 )paren
+op_member_access_from_pointer
+id|get_info
+op_assign
+id|irlpt_server_proc_read
 suffix:semicolon
 macro_line|#endif /* CONFIG_PROC_FS */
 id|DEBUG
@@ -830,13 +802,12 @@ id|irlpt_server
 )paren
 suffix:semicolon
 macro_line|#ifdef CONFIG_PROC_FS
-id|proc_unregister
+id|remove_proc_entry
 c_func
 (paren
-op_amp
-id|proc_irda
+l_string|&quot;irlpt_server&quot;
 comma
-id|proc_irlpt_server.low_ino
+id|proc_irda
 )paren
 suffix:semicolon
 macro_line|#endif

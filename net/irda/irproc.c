@@ -285,7 +285,7 @@ id|i
 suffix:semicolon
 id|proc_irda
 op_assign
-id|proc_create_entry
+id|create_proc_entry
 c_func
 (paren
 l_string|&quot;net/irda&quot;
@@ -316,7 +316,7 @@ suffix:semicolon
 id|i
 op_increment
 )paren
-id|proc_create_entry
+id|create_proc_entry
 c_func
 (paren
 id|dir
@@ -367,7 +367,7 @@ suffix:semicolon
 id|i
 op_increment
 )paren
-id|proc_remove_entry
+id|remove_proc_entry
 c_func
 (paren
 id|dir
@@ -380,7 +380,7 @@ comma
 id|proc_irda
 )paren
 suffix:semicolon
-id|proc_remove_entry
+id|remove_proc_entry
 c_func
 (paren
 l_string|&quot;net/irda&quot;

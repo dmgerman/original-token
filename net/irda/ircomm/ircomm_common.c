@@ -438,38 +438,8 @@ macro_line|#ifdef CONFIG_PROC_FS
 r_extern
 r_struct
 id|proc_dir_entry
+op_star
 id|proc_irda
-suffix:semicolon
-DECL|variable|proc_ircomm
-r_struct
-id|proc_dir_entry
-id|proc_ircomm
-op_assign
-(brace
-l_int|0
-comma
-l_int|6
-comma
-l_string|&quot;ircomm&quot;
-comma
-id|S_IFREG
-op_or
-id|S_IRUGO
-comma
-l_int|1
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|NULL
-comma
-op_amp
-id|ircomm_proc_read
-comma
-)brace
 suffix:semicolon
 macro_line|#endif
 DECL|variable|state
@@ -821,15 +791,19 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; * we register /proc/irda/ircomm&n;&t; */
 macro_line|#ifdef CONFIG_PROC_FS
-id|proc_register
+id|create_proc_entry
 c_func
 (paren
-op_amp
-id|proc_irda
+l_string|&quot;ircomm&quot;
 comma
-op_amp
-id|proc_ircomm
+l_int|0
+comma
+id|proc_irda
 )paren
+op_member_access_from_pointer
+id|get_info
+op_assign
+id|ircomm_proc_read
 suffix:semicolon
 macro_line|#endif /* CONFIG_PROC_FS */
 id|discovering_instance
@@ -971,13 +945,12 @@ l_int|NULL
 suffix:semicolon
 )brace
 macro_line|#ifdef CONFIG_PROC_FS
-id|proc_unregister
+id|remove_proc_entry
 c_func
 (paren
-op_amp
-id|proc_irda
+l_string|&quot;ircomm&quot;
 comma
-id|proc_ircomm.low_ino
+id|proc_irda
 )paren
 suffix:semicolon
 macro_line|#endif /* CONFIG_PROC_FS */
