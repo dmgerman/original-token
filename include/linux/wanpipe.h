@@ -2,7 +2,8 @@ multiline_comment|/*************************************************************
 macro_line|#ifndef&t;_WANPIPE_H
 DECL|macro|_WANPIPE_H
 mdefine_line|#define&t;_WANPIPE_H
-macro_line|#ifdef __SMP__
+macro_line|#include &lt;linux/config.h&gt;
+macro_line|#ifdef CONFIG_SMP
 macro_line|#include &lt;asm/spinlock.h&gt;       /* Support for SMP Locking */
 macro_line|#endif
 macro_line|#include &lt;linux/wanrouter.h&gt;
@@ -685,7 +686,7 @@ id|global_stats_t
 id|statistics
 suffix:semicolon
 multiline_comment|/* global statistics */
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 DECL|member|lock
 id|spinlock_t
 id|lock

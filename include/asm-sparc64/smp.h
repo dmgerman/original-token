@@ -43,11 +43,6 @@ r_struct
 id|cpuinfo_sparc
 (brace
 multiline_comment|/* Dcache line 1 */
-DECL|member|irq_count
-r_int
-r_int
-id|irq_count
-suffix:semicolon
 DECL|member|bh_count
 r_int
 r_int
@@ -72,6 +67,9 @@ DECL|member|__pad
 r_int
 r_int
 id|__pad
+(braket
+l_int|2
+)braket
 suffix:semicolon
 DECL|member|udelay_val
 r_int

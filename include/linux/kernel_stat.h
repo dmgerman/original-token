@@ -1,6 +1,7 @@
 macro_line|#ifndef _LINUX_KERNEL_STAT_H
 DECL|macro|_LINUX_KERNEL_STAT_H
 mdefine_line|#define _LINUX_KERNEL_STAT_H
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;linux/smp.h&gt;
 macro_line|#include &lt;linux/threads.h&gt;
@@ -98,6 +99,7 @@ id|pswpin
 comma
 id|pswpout
 suffix:semicolon
+macro_line|#if !defined(CONFIG_ARCH_S390)
 DECL|member|irqs
 r_int
 r_int
@@ -109,6 +111,7 @@ id|NR_CPUS
 id|NR_IRQS
 )braket
 suffix:semicolon
+macro_line|#endif
 DECL|member|ipackets
 DECL|member|opackets
 r_int
@@ -142,6 +145,7 @@ r_struct
 id|kernel_stat
 id|kstat
 suffix:semicolon
+macro_line|#if !defined(CONFIG_ARCH_S390)
 multiline_comment|/*&n; * Number of interrupts per specific IRQ source, since bootup&n; */
 DECL|function|kstat_irqs
 r_extern
@@ -192,5 +196,6 @@ r_return
 id|sum
 suffix:semicolon
 )brace
+macro_line|#endif
 macro_line|#endif /* _LINUX_KERNEL_STAT_H */
 eof

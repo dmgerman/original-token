@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sh-sci.c,v 1.36 2000/03/22 13:32:10 gniibe Exp $&n; *&n; *  linux/drivers/char/sh-sci.c&n; *&n; *  SuperH on-chip serial module support.  (SCI with no FIFO / with FIFO)&n; *  Copyright (C) 1999, 2000  Niibe Yutaka&n; *  Copyright (C) 2000  Sugioka Toshinobu&n; *&n; * TTY code is based on sx.c (Specialix SX driver) by:&n; *&n; *   (C) 1998 R.E.Wolff@BitWizard.nl&n; *&n; */
+multiline_comment|/* $Id: sh-sci.c,v 1.40 2000/04/15 06:57:29 gniibe Exp $&n; *&n; *  linux/drivers/char/sh-sci.c&n; *&n; *  SuperH on-chip serial module support.  (SCI with no FIFO / with FIFO)&n; *  Copyright (C) 1999, 2000  Niibe Yutaka&n; *  Copyright (C) 2000  Sugioka Toshinobu&n; *&n; * TTY code is based on sx.c (Specialix SX driver) by:&n; *&n; *   (C) 1998 R.E.Wolff@BitWizard.nl&n; *&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -638,6 +638,16 @@ id|fcr_val
 op_or_assign
 l_int|0x08
 suffix:semicolon
+r_else
+id|ctrl_outw
+c_func
+(paren
+l_int|0x0080
+comma
+id|SCSPTR
+)paren
+suffix:semicolon
+multiline_comment|/* Set RTS = 1 */
 id|ctrl_out
 c_func
 (paren
@@ -662,17 +672,6 @@ id|SCSCR
 )paren
 suffix:semicolon
 multiline_comment|/* TIE=0,RIE=0,TE=1,RE=1 */
-macro_line|#if 0 /* defined(CONFIG_SH_SCIF_SERIAL) */
-id|ctrl_outw
-c_func
-(paren
-l_int|0x0080
-comma
-id|SCSPTR
-)paren
-suffix:semicolon
-multiline_comment|/* Set RTS = 1 */
-macro_line|#endif
 id|sci_enable_rx_interrupts
 c_func
 (paren
@@ -2812,6 +2811,8 @@ op_or
 id|HUPCL
 op_or
 id|CLOCAL
+op_or
+id|CRTSCTS
 suffix:semicolon
 id|sci_driver.flags
 op_assign
@@ -3052,13 +3053,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#ifdef MODULE
-DECL|macro|sci_init
-mdefine_line|#define sci_init init_module
-macro_line|#else
-DECL|macro|sci_init
-mdefine_line|#define sci_init rs_init
-macro_line|#endif
 DECL|function|sci_init
 r_int
 id|__init
@@ -3216,6 +3210,13 @@ l_int|0
 suffix:semicolon
 multiline_comment|/* Return -EIO when not detected */
 )brace
+DECL|variable|sci_init
+id|module_init
+c_func
+(paren
+id|sci_init
+)paren
+suffix:semicolon
 macro_line|#ifdef MODULE
 DECL|macro|func_enter
 macro_line|#undef func_enter

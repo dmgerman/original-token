@@ -1752,51 +1752,81 @@ id|proto_ops
 id|inet6_stream_ops
 op_assign
 (brace
+id|family
+suffix:colon
 id|PF_INET6
 comma
+id|release
+suffix:colon
 id|inet6_release
 comma
+id|bind
+suffix:colon
 id|inet6_bind
 comma
+id|connect
+suffix:colon
 id|inet_stream_connect
 comma
 multiline_comment|/* ok&t;&t;*/
+id|socketpair
+suffix:colon
 id|sock_no_socketpair
 comma
 multiline_comment|/* a do nothing&t;*/
+id|accept
+suffix:colon
 id|inet_accept
 comma
 multiline_comment|/* ok&t;&t;*/
+id|getname
+suffix:colon
 id|inet6_getname
 comma
+id|poll
+suffix:colon
 id|tcp_poll
 comma
 multiline_comment|/* ok&t;&t;*/
+id|ioctl
+suffix:colon
 id|inet6_ioctl
 comma
 multiline_comment|/* must change  */
+id|listen
+suffix:colon
 id|inet_listen
 comma
 multiline_comment|/* ok&t;&t;*/
+id|shutdown
+suffix:colon
 id|inet_shutdown
 comma
 multiline_comment|/* ok&t;&t;*/
+id|setsockopt
+suffix:colon
 id|inet_setsockopt
 comma
 multiline_comment|/* ok&t;&t;*/
+id|getsockopt
+suffix:colon
 id|inet_getsockopt
 comma
 multiline_comment|/* ok&t;&t;*/
-id|sock_no_fcntl
-comma
-multiline_comment|/* ok&t;&t;*/
+id|sendmsg
+suffix:colon
 id|inet_sendmsg
 comma
 multiline_comment|/* ok&t;&t;*/
+id|recvmsg
+suffix:colon
 id|inet_recvmsg
 comma
 multiline_comment|/* ok&t;&t;*/
+id|mmap
+suffix:colon
 id|sock_no_mmap
+comma
 )brace
 suffix:semicolon
 DECL|variable|inet6_dgram_ops
@@ -1805,50 +1835,79 @@ id|proto_ops
 id|inet6_dgram_ops
 op_assign
 (brace
+id|family
+suffix:colon
 id|PF_INET6
 comma
+id|release
+suffix:colon
 id|inet6_release
 comma
+id|bind
+suffix:colon
 id|inet6_bind
 comma
+id|connect
+suffix:colon
 id|inet_dgram_connect
 comma
 multiline_comment|/* ok&t;&t;*/
+id|socketpair
+suffix:colon
 id|sock_no_socketpair
 comma
 multiline_comment|/* a do nothing&t;*/
+id|accept
+suffix:colon
 id|sock_no_accept
 comma
 multiline_comment|/* a do nothing&t;*/
+id|getname
+suffix:colon
 id|inet6_getname
 comma
+id|poll
+suffix:colon
 id|datagram_poll
 comma
 multiline_comment|/* ok&t;&t;*/
+id|ioctl
+suffix:colon
 id|inet6_ioctl
 comma
 multiline_comment|/* must change  */
+id|listen
+suffix:colon
 id|sock_no_listen
 comma
 multiline_comment|/* ok&t;&t;*/
+id|shutdown
+suffix:colon
 id|inet_shutdown
 comma
 multiline_comment|/* ok&t;&t;*/
+id|setsockopt
+suffix:colon
 id|inet_setsockopt
 comma
 multiline_comment|/* ok&t;&t;*/
+id|getsockopt
+suffix:colon
 id|inet_getsockopt
 comma
 multiline_comment|/* ok&t;&t;*/
-id|sock_no_fcntl
-comma
-multiline_comment|/* ok&t;&t;*/
+id|sendmsg
+suffix:colon
 id|inet_sendmsg
 comma
 multiline_comment|/* ok&t;&t;*/
+id|recvmsg
+suffix:colon
 id|inet_recvmsg
 comma
 multiline_comment|/* ok&t;&t;*/
+id|mmap
+suffix:colon
 id|sock_no_mmap
 comma
 )brace

@@ -113,6 +113,11 @@ op_star
 id|frip
 c_func
 (paren
+r_struct
+id|files_struct
+op_star
+id|files
+comma
 r_int
 r_int
 id|fd
@@ -130,7 +135,7 @@ c_cond
 (paren
 id|fd
 OL
-id|current-&gt;files-&gt;max_fds
+id|files-&gt;max_fds
 )paren
 id|file
 op_assign
@@ -138,7 +143,7 @@ id|xchg
 c_func
 (paren
 op_amp
-id|current-&gt;files-&gt;fd
+id|files-&gt;fd
 (braket
 id|fd
 )braket

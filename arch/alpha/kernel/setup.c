@@ -1683,7 +1683,7 @@ id|hwrpb-&gt;max_asn
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; * Identify the flock of penguins.&n;&t; */
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 id|setup_smp
 c_func
 (paren
@@ -3812,7 +3812,7 @@ comma
 id|nr_processors
 )paren
 suffix:semicolon
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 id|len
 op_add_assign
 id|smp_info

@@ -34,9 +34,9 @@ macro_line|#include &lt;asm/feature.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;asm/machdep.h&gt;
 macro_line|#include &lt;asm/hw_irq.h&gt;
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 macro_line|#include &lt;asm/smplock.h&gt;
-macro_line|#endif /* __SMP__ */
+macro_line|#endif /* CONFIG_SMP */
 macro_line|#include &quot;time.h&quot;
 multiline_comment|/* Tell string.h we don&squot;t want memcpy etc. as cpp defines */
 DECL|macro|EXPORT_SYMTAB_STROPS
@@ -306,7 +306,7 @@ c_func
 id|local_bh_count
 )paren
 suffix:semicolon
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 DECL|variable|kernel_flag
 id|EXPORT_SYMBOL
 c_func
@@ -314,7 +314,7 @@ c_func
 id|kernel_flag
 )paren
 suffix:semicolon
-macro_line|#endif /* __SMP__ */
+macro_line|#endif /* CONFIG_SMP */
 macro_line|#if !defined(CONFIG_4xx) &amp;&amp; !defined(CONFIG_8xx)
 DECL|variable|isa_io_base
 id|EXPORT_SYMBOL
@@ -846,7 +846,7 @@ c_func
 id|xchg_u32
 )paren
 suffix:semicolon
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 DECL|variable|__global_cli
 id|EXPORT_SYMBOL
 c_func

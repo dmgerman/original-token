@@ -19,6 +19,21 @@ id|sc_regs
 l_int|16
 )braket
 suffix:semicolon
+DECL|member|sc_pc
+r_int
+r_int
+id|sc_pc
+suffix:semicolon
+DECL|member|sc_pr
+r_int
+r_int
+id|sc_pr
+suffix:semicolon
+DECL|member|sc_sr
+r_int
+r_int
+id|sc_sr
+suffix:semicolon
 DECL|member|sc_gbr
 r_int
 r_int
@@ -33,21 +48,6 @@ DECL|member|sc_macl
 r_int
 r_int
 id|sc_macl
-suffix:semicolon
-DECL|member|sc_pr
-r_int
-r_int
-id|sc_pr
-suffix:semicolon
-DECL|member|sc_sr
-r_int
-r_int
-id|sc_sr
-suffix:semicolon
-DECL|member|sc_pc
-r_int
-r_int
-id|sc_pc
 suffix:semicolon
 macro_line|#if defined(__SH4__)
 multiline_comment|/* FPU registers */

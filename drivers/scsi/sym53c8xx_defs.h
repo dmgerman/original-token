@@ -96,6 +96,9 @@ macro_line|#if defined(CONFIG_SCSI_NCR53C8XX_IARB)
 DECL|macro|SCSI_NCR_IARB_SUPPORT
 mdefine_line|#define SCSI_NCR_IARB_SUPPORT
 macro_line|#endif
+multiline_comment|/*&n; * Should we enable DAC cycles on sparc64 platforms?&n; * Until further investigation we do not enable it&n; * anywhere at the moment.&n; */
+DECL|macro|SCSI_NCR_USE_64BIT_DAC
+macro_line|#undef SCSI_NCR_USE_64BIT_DAC
 multiline_comment|/*&n; * Sync transfer frequency at startup.&n; * Allow from 5Mhz to 40Mhz default 20 Mhz.&n; */
 macro_line|#ifndef&t;CONFIG_SCSI_NCR53C8XX_SYNC
 DECL|macro|CONFIG_SCSI_NCR53C8XX_SYNC

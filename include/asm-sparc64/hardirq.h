@@ -3,15 +3,25 @@ macro_line|#ifndef __SPARC64_HARDIRQ_H
 DECL|macro|__SPARC64_HARDIRQ_H
 mdefine_line|#define __SPARC64_HARDIRQ_H
 macro_line|#include &lt;linux/threads.h&gt;
+macro_line|#include &lt;linux/brlock.h&gt;
+macro_line|#include &lt;linux/spinlock.h&gt;
 macro_line|#ifndef __SMP__
 r_extern
 r_int
 r_int
 id|local_irq_count
 suffix:semicolon
+DECL|macro|irq_enter
+mdefine_line|#define irq_enter(cpu, irq)&t;(local_irq_count++)
+DECL|macro|irq_exit
+mdefine_line|#define irq_exit(cpu, irq)&t;(local_irq_count--)
 macro_line|#else
 DECL|macro|local_irq_count
-mdefine_line|#define local_irq_count&t;&t;(cpu_data[smp_processor_id()].irq_count)
+mdefine_line|#define local_irq_count&t;&t;(__brlock_array[smp_processor_id()][BR_GLOBALIRQ_LOCK])
+DECL|macro|irq_enter
+mdefine_line|#define irq_enter(cpu, irq)&t;br_read_lock(BR_GLOBALIRQ_LOCK)
+DECL|macro|irq_exit
+mdefine_line|#define irq_exit(cpu, irq)&t;br_read_unlock(BR_GLOBALIRQ_LOCK)
 macro_line|#endif
 multiline_comment|/*&n; * Are we in an interrupt context? Either doing bottom half&n; * or hardware interrupt processing?  On any cpu?&n; */
 DECL|macro|in_interrupt
@@ -31,22 +41,70 @@ mdefine_line|#define hardirq_exit(cpu)&t;((void)(cpu), local_irq_count--)
 DECL|macro|synchronize_irq
 mdefine_line|#define synchronize_irq()&t;barrier()
 macro_line|#else /* (__SMP__) */
-macro_line|#include &lt;asm/atomic.h&gt;
 macro_line|#include &lt;linux/spinlock.h&gt;
-macro_line|#include &lt;asm/system.h&gt;
-macro_line|#include &lt;asm/smp.h&gt;
+DECL|function|irqs_running
+r_static
+id|__inline__
+r_int
+id|irqs_running
+c_func
+(paren
+r_void
+)paren
+(brace
+r_enum
+id|brlock_indices
+id|idx
+op_assign
+id|BR_GLOBALIRQ_LOCK
+suffix:semicolon
+r_int
+id|i
+comma
+id|count
+op_assign
+l_int|0
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|smp_num_cpus
+suffix:semicolon
+id|i
+op_increment
+)paren
+id|count
+op_add_assign
+(paren
+id|__brlock_array
+(braket
+id|cpu_logical_map
+c_func
+(paren
+id|i
+)paren
+)braket
+(braket
+id|idx
+)braket
+op_ne
+l_int|0
+)paren
+suffix:semicolon
+r_return
+id|count
+suffix:semicolon
+)brace
 r_extern
 r_int
 r_char
 id|global_irq_holder
-suffix:semicolon
-r_extern
-id|spinlock_t
-id|global_irq_lock
-suffix:semicolon
-r_extern
-id|atomic_t
-id|global_irq_count
 suffix:semicolon
 DECL|function|release_irqlock
 r_static
@@ -76,84 +134,13 @@ id|global_irq_holder
 op_assign
 id|NO_PROC_ID
 suffix:semicolon
-id|spin_unlock
+id|br_write_unlock
 c_func
 (paren
-op_amp
-id|global_irq_lock
+id|BR_GLOBALIRQ_LOCK
 )paren
 suffix:semicolon
 )brace
-)brace
-DECL|function|hardirq_enter
-r_static
-r_inline
-r_void
-id|hardirq_enter
-c_func
-(paren
-r_int
-id|cpu
-)paren
-(brace
-op_increment
-(paren
-id|cpu_data
-(braket
-id|cpu
-)braket
-dot
-id|irq_count
-)paren
-suffix:semicolon
-id|atomic_inc
-c_func
-(paren
-op_amp
-id|global_irq_count
-)paren
-suffix:semicolon
-id|membar
-c_func
-(paren
-l_string|&quot;#StoreLoad | #StoreStore&quot;
-)paren
-suffix:semicolon
-)brace
-DECL|function|hardirq_exit
-r_static
-r_inline
-r_void
-id|hardirq_exit
-c_func
-(paren
-r_int
-id|cpu
-)paren
-(brace
-id|membar
-c_func
-(paren
-l_string|&quot;#StoreStore | #LoadStore&quot;
-)paren
-suffix:semicolon
-id|atomic_dec
-c_func
-(paren
-op_amp
-id|global_irq_count
-)paren
-suffix:semicolon
-op_decrement
-(paren
-id|cpu_data
-(braket
-id|cpu
-)braket
-dot
-id|irq_count
-)paren
-suffix:semicolon
 )brace
 DECL|function|hardirq_trylock
 r_static
@@ -166,21 +153,31 @@ r_int
 id|cpu
 )paren
 (brace
+id|spinlock_t
+op_star
+id|lock
+op_assign
+op_amp
+id|__br_write_locks
+(braket
+id|BR_GLOBALIRQ_LOCK
+)braket
+dot
+id|lock
+suffix:semicolon
 r_return
 (paren
 op_logical_neg
-id|atomic_read
+id|irqs_running
 c_func
 (paren
-op_amp
-id|global_irq_count
 )paren
 op_logical_and
 op_logical_neg
 id|spin_is_locked
+c_func
 (paren
-op_amp
-id|global_irq_lock
+id|lock
 )paren
 )paren
 suffix:semicolon

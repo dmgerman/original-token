@@ -1,8 +1,9 @@
 macro_line|#ifndef __ARCH_I386_ATOMIC__
 DECL|macro|__ARCH_I386_ATOMIC__
 mdefine_line|#define __ARCH_I386_ATOMIC__
+macro_line|#include &lt;linux/config.h&gt;
 multiline_comment|/*&n; * Atomic operations that C can&squot;t guarantee us.  Useful for&n; * resource counting etc..&n; */
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 DECL|macro|LOCK
 mdefine_line|#define LOCK &quot;lock ; &quot;
 macro_line|#else
@@ -12,7 +13,7 @@ macro_line|#endif
 multiline_comment|/*&n; * Make sure gcc doesn&squot;t try to be clever and move things around&n; * on us. We need to use _exactly_ the address the user gave us,&n; * not some alias that contains the same information.&n; */
 DECL|macro|__atomic_fool_gcc
 mdefine_line|#define __atomic_fool_gcc(x) (*(volatile struct { int a[100]; } *)x)
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 DECL|member|counter
 DECL|typedef|atomic_t
 r_typedef

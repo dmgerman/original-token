@@ -1,3 +1,4 @@
+multiline_comment|/*&n; *&t;Intel i810 and friends ICH driver for Linux&n; *&t;Alan Cox &lt;alan@redhat.com&gt;&n; *&n; *  Built from:&n; *&t;Low level code:  Zach Brown (original nonworking i810 OSS driver)&n; *&t;&t;&t; Jaroslav Kysela &lt;perex@suse.cz&gt; (working ALSA driver)&n; *&n; *&t;Framework: Thomas Sailer &lt;sailer@ife.ee.ethz.ch&gt;&n; *&t;Extended by: Zach Brown &lt;zab@redhat.com&gt;  &n; *&t;&t;&t;and others..&n; *&n; *  Hardware Provided By:&n; *&t;Analog Devices (A major AC97 codec maker)&n; *&t;Intel Corp  (you&squot;ve probably heard of them already)&n; *&n; *&t;This program is free software; you can redistribute it and/or modify&n; *&t;it under the terms of the GNU General Public License as published by&n; *&t;the Free Software Foundation; either version 2 of the License, or&n; *&t;(at your option) any later version.&n; *&n; *&t;This program is distributed in the hope that it will be useful,&n; *&t;but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *&t;MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *&t;GNU General Public License for more details.&n; *&n; *&t;You should have received a copy of the GNU General Public License&n; *&t;along with this program; if not, write to the Free Software&n; *&t;Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; *&n; *&t;Intel 810 theory of operation&n; *&n; *&t;The chipset provides three DMA channels that talk to an AC97&n; *&t;CODEC (AC97 is a digital/analog mixer standard). At its simplest&n; *&t;you get 48Khz audio with basic volume and mixer controls. At the&n; *&t;best you get rate adaption in the codec. We set the card up so&n; *&t;that we never take completion interrupts but instead keep the card&n; *&t;chasing its tail around a ring buffer. This is needed for mmap&n; *&t;mode audio and happens to work rather well for non-mmap modes too.&n; *&n; *&t;The board has one output channel for PCM audio (supported) and&n; *&t;a stereo line in and mono microphone input. Again these are normally&n; *&t;locked to 48Khz only. Right now recording is not finished.&n; *&n; *&t;There is no midi support, no synth support. Use timidity. To get&n; *&t;esd working you need to use esd -r 48000 as it won&squot;t probe 48KHz&n; *&t;by default. mpg123 can&squot;t handle 48Khz only audio so use xmms.&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
@@ -532,14 +533,14 @@ r_int
 r_int
 id|magic
 suffix:semicolon
-multiline_comment|/* We keep trident cards in a linked list */
+multiline_comment|/* We keep i810 cards in a linked list */
 DECL|member|next
 r_struct
 id|i810_card
 op_star
 id|next
 suffix:semicolon
-multiline_comment|/* The trident has a certain amount of cross channel interaction&n;&t;   so we use a single per card lock */
+multiline_comment|/* The i810 has a certain amount of cross channel interaction&n;&t;   so we use a single per card lock */
 DECL|member|lock
 id|spinlock_t
 id|lock
@@ -1225,6 +1226,36 @@ op_assign
 op_amp
 id|state-&gt;dmabuf
 suffix:semicolon
+id|u16
+id|dacp
+comma
+id|rp
+suffix:semicolon
+r_struct
+id|ac97_codec
+op_star
+id|codec
+op_assign
+id|state-&gt;card-&gt;ac97_codec
+(braket
+l_int|0
+)braket
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|state-&gt;card-&gt;ac97_features
+op_amp
+l_int|0x0001
+)paren
+)paren
+(brace
+r_return
+l_int|48000
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -1241,11 +1272,83 @@ c_cond
 (paren
 id|rate
 OL
-l_int|48000
+l_int|4000
 )paren
 id|rate
 op_assign
-l_int|48000
+l_int|4000
+suffix:semicolon
+multiline_comment|/* Power down the ADC */
+id|dacp
+op_assign
+id|i810_ac97_get
+c_func
+(paren
+id|codec
+comma
+id|AC97_POWER_CONTROL
+)paren
+suffix:semicolon
+id|i810_ac97_set
+c_func
+(paren
+id|codec
+comma
+id|AC97_POWER_CONTROL
+comma
+id|dacp
+op_or
+l_int|0x0100
+)paren
+suffix:semicolon
+multiline_comment|/* Load the rate and read the effective rate */
+id|i810_ac97_set
+c_func
+(paren
+id|codec
+comma
+id|AC97_PCM_LR_ADC_RATE
+comma
+id|rate
+)paren
+suffix:semicolon
+id|rp
+op_assign
+id|i810_ac97_get
+c_func
+(paren
+id|codec
+comma
+id|AC97_PCM_LR_ADC_RATE
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;ADC rate set to %d Returned %d&bslash;n&quot;
+comma
+id|rate
+comma
+(paren
+r_int
+)paren
+id|rp
+)paren
+suffix:semicolon
+id|rate
+op_assign
+id|rp
+suffix:semicolon
+multiline_comment|/* Power it back up */
+id|i810_ac97_set
+c_func
+(paren
+id|codec
+comma
+id|AC97_POWER_CONTROL
+comma
+id|dacp
+)paren
 suffix:semicolon
 id|dmabuf-&gt;rate
 op_assign
@@ -2811,7 +2914,6 @@ op_minus
 id|EBUSY
 suffix:semicolon
 )brace
-multiline_comment|/* No matter how much data left in the buffer, we have to wait untill&n;&t;&t;   CSO == ESO/2 or CSO == ESO when address engine interrupts */
 id|tmo
 op_assign
 (paren
@@ -3094,7 +3196,6 @@ l_int|1
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/* since dma machine only interrupts at ESO and ESO/2, we sure have at&n;&t;&t;&t;   least half of dma buffer free, so wake up the process unconditionally */
 id|wake_up
 c_func
 (paren
@@ -3172,7 +3273,6 @@ id|dmabuf-&gt;error
 op_increment
 suffix:semicolon
 )brace
-multiline_comment|/* since dma machine only interrupts at ESO and ESO/2, we sure have at&n;&t;&t;&t;   least half of dma buffer free, so wake up the process unconditionally */
 id|wake_up
 c_func
 (paren
@@ -3338,7 +3438,7 @@ id|DMA_INT_COMPLETE
 r_int
 id|x
 suffix:semicolon
-multiline_comment|/* Kepe the card chasing its tail */
+multiline_comment|/* Keep the card chasing its tail */
 id|outb
 c_func
 (paren
@@ -3773,7 +3873,7 @@ r_return
 id|ret
 suffix:semicolon
 )brace
-multiline_comment|/* No matter how much space left in the buffer, we have to wait untill&n;&t;&t;&t;   CSO == ESO/2 or CSO == ESO when address engine interrupts */
+multiline_comment|/* This isnt strictly right for the 810  but it&squot;ll do */
 id|tmo
 op_assign
 (paren
@@ -4203,7 +4303,7 @@ r_return
 id|ret
 suffix:semicolon
 )brace
-multiline_comment|/* No matter how much data left in the buffer, we have to wait untill&n;&t;&t;&t;   CSO == ESO/2 or CSO == ESO when address engine interrupts */
+multiline_comment|/* Not strictly correct but works */
 id|tmo
 op_assign
 (paren

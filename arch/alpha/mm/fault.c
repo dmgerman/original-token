@@ -1,4 +1,5 @@
 multiline_comment|/*&n; *  linux/arch/alpha/mm/fault.c&n; *&n; *  Copyright (C) 1995  Linus Torvalds&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -40,7 +41,7 @@ op_star
 )paren
 suffix:semicolon
 multiline_comment|/*&n; * Force a new ASN for a task.&n; */
-macro_line|#ifndef __SMP__
+macro_line|#ifndef CONFIG_SMP
 DECL|variable|last_asn
 r_int
 r_int
@@ -369,7 +370,7 @@ op_assign
 id|handle_mm_fault
 c_func
 (paren
-id|current
+id|mm
 comma
 id|vma
 comma

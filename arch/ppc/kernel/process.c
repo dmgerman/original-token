@@ -557,7 +557,7 @@ c_func
 r_void
 )paren
 (brace
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 r_if
 c_cond
 (paren
@@ -607,7 +607,7 @@ c_func
 r_void
 )paren
 (brace
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 r_if
 c_cond
 (paren
@@ -640,7 +640,7 @@ c_func
 id|last_task_used_math
 )paren
 suffix:semicolon
-macro_line|#endif /* __SMP__ */
+macro_line|#endif /* CONFIG_SMP */
 )brace
 r_int
 DECL|function|dump_fpu
@@ -785,7 +785,7 @@ id|prev-&gt;fs-&gt;root
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 multiline_comment|/* avoid complexity of lazy save/restore of fpu&n;&t; * by just saving it every time we switch out if&n;&t; * this task used the fpu during the last quantum.&n;&t; * &n;&t; * If it tries to use the fpu again, it&squot;ll trap and&n;&t; * reload its fp regs.  So we don&squot;t have to do a restore&n;&t; * every switch, just a save.&n;&t; *  -- Cort&n;&t; */
 r_if
 c_cond
@@ -842,7 +842,7 @@ c_func
 op_assign
 r_new
 suffix:semicolon
-macro_line|#endif /* __SMP__ */
+macro_line|#endif /* CONFIG_SMP */
 multiline_comment|/* Avoid the trap.  On smp this this never happens since&n;&t; * we don&squot;t set last_task_used_altivec -- Cort&n;&t; */
 r_if
 c_cond
@@ -1009,7 +1009,7 @@ comma
 id|last_task_used_altivec
 )paren
 suffix:semicolon
-macro_line|#ifdef __SMP__&t;
+macro_line|#ifdef CONFIG_SMP
 id|printk
 c_func
 (paren
@@ -1020,7 +1020,7 @@ comma
 id|current-&gt;last_processor
 )paren
 suffix:semicolon
-macro_line|#endif /* __SMP__ */
+macro_line|#endif /* CONFIG_SMP */
 id|printk
 c_func
 (paren
@@ -1231,7 +1231,7 @@ comma
 op_star
 id|kregs
 suffix:semicolon
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 r_extern
 r_void
 id|ret_from_smpfork
@@ -1352,7 +1352,7 @@ op_plus
 id|STACK_FRAME_OVERHEAD
 )paren
 suffix:semicolon
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 id|kregs-&gt;nip
 op_assign
 (paren
@@ -1534,12 +1534,12 @@ op_complement
 id|MSR_VEC
 suffix:semicolon
 macro_line|#endif /* CONFIG_ALTIVEC */
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 id|p-&gt;last_processor
 op_assign
 id|NO_PROC_ID
 suffix:semicolon
-macro_line|#endif /* __SMP__ */
+macro_line|#endif /* CONFIG_SMP */
 r_return
 l_int|0
 suffix:semicolon
@@ -1904,7 +1904,7 @@ comma
 id|regs
 )paren
 suffix:semicolon
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 multiline_comment|/* When we clone the idle task we keep the same pid but&n;&t; * the return value of 0 for both causes problems.&n;&t; * -- Cort&n;&t; */
 r_if
 c_cond
@@ -1926,7 +1926,7 @@ id|res
 op_assign
 l_int|1
 suffix:semicolon
-macro_line|#endif /* __SMP__ */
+macro_line|#endif /* CONFIG_SMP */
 id|unlock_kernel
 c_func
 (paren
@@ -1984,7 +1984,7 @@ comma
 id|regs
 )paren
 suffix:semicolon
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 multiline_comment|/* When we clone the idle task we keep the same pid but&n;&t; * the return value of 0 for both causes problems.&n;&t; * -- Cort&n;&t; */
 r_if
 c_cond
@@ -2006,7 +2006,7 @@ id|res
 op_assign
 l_int|1
 suffix:semicolon
-macro_line|#endif /* __SMP__ */
+macro_line|#endif /* CONFIG_SMP */
 r_return
 id|res
 suffix:semicolon

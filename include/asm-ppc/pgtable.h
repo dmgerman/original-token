@@ -477,7 +477,7 @@ mdefine_line|#define _PAGE_SHARED&t;0
 macro_line|#endif
 DECL|macro|_PAGE_CHG_MASK
 mdefine_line|#define _PAGE_CHG_MASK&t;(PAGE_MASK | _PAGE_ACCESSED | _PAGE_DIRTY)
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 DECL|macro|_PAGE_BASE
 mdefine_line|#define _PAGE_BASE&t;_PAGE_PRESENT | _PAGE_ACCESSED | _PAGE_COHERENT
 macro_line|#else

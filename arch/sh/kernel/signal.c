@@ -634,7 +634,14 @@ op_star
 id|sc
 )paren
 (brace
-id|current-&gt;used_math
+r_struct
+id|task_struct
+op_star
+id|tsk
+op_assign
+id|current
+suffix:semicolon
+id|tsk-&gt;used_math
 op_assign
 l_int|1
 suffix:semicolon
@@ -657,7 +664,7 @@ r_int
 )paren
 op_star
 (paren
-id|NUM_FPU_REGS
+l_int|16
 op_star
 l_int|2
 op_plus
@@ -686,6 +693,10 @@ id|tsk
 op_assign
 id|current
 suffix:semicolon
+r_int
+r_int
+id|flags
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -693,7 +704,7 @@ op_logical_neg
 id|tsk-&gt;used_math
 )paren
 (brace
-id|sc-&gt;owend_fp
+id|sc-&gt;sc_ownedfp
 op_assign
 l_int|0
 suffix:semicolon
@@ -701,7 +712,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-id|sc-&gt;owend_fp
+id|sc-&gt;sc_ownedfp
 op_assign
 l_int|1
 suffix:semicolon
@@ -710,10 +721,22 @@ id|tsk-&gt;used_math
 op_assign
 l_int|0
 suffix:semicolon
+id|save_and_cli
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 id|unlazy_fpu
 c_func
 (paren
 id|tsk
+)paren
+suffix:semicolon
+id|restore_flags
+c_func
+(paren
+id|flags
 )paren
 suffix:semicolon
 r_return
@@ -735,7 +758,7 @@ r_int
 )paren
 op_star
 (paren
-id|NUM_FPU_REGS
+l_int|16
 op_star
 l_int|2
 op_plus
@@ -979,7 +1002,7 @@ id|__get_user
 id|owned_fp
 comma
 op_amp
-id|context-&gt;sc_ownedfp
+id|sc-&gt;sc_ownedfp
 )paren
 suffix:semicolon
 r_if
@@ -1859,13 +1882,13 @@ suffix:semicolon
 )brace
 r_else
 (brace
-multiline_comment|/* This is : mov  #__NR_sigreturn,r0 ; trapa #0 */
+multiline_comment|/* This is : mov  #__NR_sigreturn,r3 ; trapa #0x10 */
 macro_line|#ifdef __LITTLE_ENDIAN__
 r_int
 r_int
 id|code
 op_assign
-l_int|0xc300e000
+l_int|0xc310e300
 op_or
 (paren
 id|__NR_sigreturn
@@ -1876,7 +1899,7 @@ r_int
 r_int
 id|code
 op_assign
-l_int|0xe000c300
+l_int|0xe300c310
 op_or
 (paren
 id|__NR_sigreturn
@@ -2266,13 +2289,13 @@ suffix:semicolon
 )brace
 r_else
 (brace
-multiline_comment|/* This is : mov  #__NR_rt_sigreturn,r0 ; trapa #0 */
+multiline_comment|/* This is : mov  #__NR_rt_sigreturn,r3 ; trapa #0x10 */
 macro_line|#ifdef __LITTLE_ENDIAN__
 r_int
 r_int
 id|code
 op_assign
-l_int|0xc300e000
+l_int|0xc310e300
 op_or
 (paren
 id|__NR_rt_sigreturn
@@ -2283,7 +2306,7 @@ r_int
 r_int
 id|code
 op_assign
-l_int|0xe000c300
+l_int|0xe300c310
 op_or
 (paren
 id|__NR_rt_sigreturn

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: pci_psycho.c,v 1.15 2000/03/25 05:18:11 davem Exp $&n; * pci_psycho.c: PSYCHO/U2P specific PCI controller support.&n; *&n; * Copyright (C) 1997, 1998, 1999 David S. Miller (davem@caipfs.rutgers.edu)&n; * Copyright (C) 1998, 1999 Eddie C. Dost   (ecd@skynet.be)&n; * Copyright (C) 1999 Jakub Jelinek   (jakub@redhat.com)&n; */
+multiline_comment|/* $Id: pci_psycho.c,v 1.16 2000/04/15 10:06:16 davem Exp $&n; * pci_psycho.c: PSYCHO/U2P specific PCI controller support.&n; *&n; * Copyright (C) 1997, 1998, 1999 David S. Miller (davem@caipfs.rutgers.edu)&n; * Copyright (C) 1998, 1999 Eddie C. Dost   (ecd@skynet.be)&n; * Copyright (C) 1999 Jakub Jelinek   (jakub@redhat.com)&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
@@ -4411,15 +4411,7 @@ r_struct
 id|resource
 op_star
 id|res
-op_assign
-op_amp
-id|pdev-&gt;resource
-(braket
-id|resource
-)braket
-suffix:semicolon
-r_struct
-id|resource
+comma
 op_star
 id|root
 suffix:semicolon
@@ -4430,6 +4422,30 @@ r_int
 id|where
 comma
 id|size
+comma
+id|is_64bit
+suffix:semicolon
+id|res
+op_assign
+op_amp
+id|pdev-&gt;resource
+(braket
+id|resource
+)braket
+suffix:semicolon
+id|where
+op_assign
+id|PCI_BASE_ADDRESS_0
+op_plus
+(paren
+id|resource
+op_star
+l_int|4
+)paren
+suffix:semicolon
+id|is_64bit
+op_assign
+l_int|0
 suffix:semicolon
 r_if
 c_cond
@@ -4444,21 +4460,28 @@ op_amp
 id|pbm-&gt;io_space
 suffix:semicolon
 r_else
+(brace
 id|root
 op_assign
 op_amp
 id|pbm-&gt;mem_space
 suffix:semicolon
-id|where
-op_assign
-id|PCI_BASE_ADDRESS_0
-op_plus
+r_if
+c_cond
 (paren
-id|resource
-op_star
-l_int|4
+(paren
+id|res-&gt;flags
+op_amp
+id|PCI_BASE_ADDRESS_MEM_TYPE_MASK
 )paren
+op_eq
+id|PCI_BASE_ADDRESS_MEM_TYPE_64
+)paren
+id|is_64bit
+op_assign
+l_int|1
 suffix:semicolon
+)brace
 id|size
 op_assign
 id|res-&gt;end
@@ -4510,6 +4533,24 @@ comma
 id|where
 comma
 id|reg
+)paren
+suffix:semicolon
+multiline_comment|/* This knows that the upper 32-bits of the address&n;&t; * must be zero.  Our PCI common layer enforces this.&n;&t; */
+r_if
+c_cond
+(paren
+id|is_64bit
+)paren
+id|pci_write_config_dword
+c_func
+(paren
+id|pdev
+comma
+id|where
+op_plus
+l_int|4
+comma
+l_int|0
 )paren
 suffix:semicolon
 )brace

@@ -16,7 +16,7 @@ DECL|macro|in_interrupt
 mdefine_line|#define in_interrupt() ({ int __cpu = smp_processor_id(); &bslash;&n;&t;(local_irq_count[__cpu] + local_bh_count[__cpu] != 0); })
 DECL|macro|in_irq
 mdefine_line|#define in_irq() (local_irq_count[smp_processor_id()] != 0)
-macro_line|#ifndef __SMP__
+macro_line|#ifndef CONFIG_SMP
 DECL|macro|hardirq_trylock
 mdefine_line|#define hardirq_trylock(cpu)&t;(local_irq_count[cpu] == 0)
 DECL|macro|hardirq_endlock
@@ -27,7 +27,7 @@ DECL|macro|hardirq_exit
 mdefine_line|#define hardirq_exit(cpu)&t;(local_irq_count[cpu]--)
 DECL|macro|synchronize_irq
 mdefine_line|#define synchronize_irq()&t;do { } while (0)
-macro_line|#else /* __SMP__ */
+macro_line|#else /* CONFIG_SMP */
 macro_line|#include &lt;asm/atomic.h&gt;
 r_extern
 r_int
@@ -248,6 +248,6 @@ c_func
 r_void
 )paren
 suffix:semicolon
-macro_line|#endif /* __SMP__ */
+macro_line|#endif /* CONFIG_SMP */
 macro_line|#endif /* __ASM_HARDIRQ_H */
 eof

@@ -9222,6 +9222,7 @@ id|attach_count
 op_increment
 suffix:semicolon
 )brace
+macro_line|#if 0&t;/* Restore previous behaviour of ncr53c8xx driver */
 r_else
 r_if
 c_cond
@@ -9243,6 +9244,7 @@ comma
 id|devp-&gt;chip.name
 )paren
 suffix:semicolon
+macro_line|#endif
 r_else
 r_continue
 suffix:semicolon

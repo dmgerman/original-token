@@ -17703,7 +17703,7 @@ comma
 id|pci_siig20x_fn
 )brace
 comma
-multiline_comment|/* Computone devices submitted by Doug McNash dmcnash@computone.com */
+multiline_comment|/* Computone devices submitted by Doug McNash dougm@computone.com */
 (brace
 id|PCI_VENDOR_ID_COMPUTONE
 comma
@@ -21386,5 +21386,5 @@ id|sercons
 suffix:semicolon
 )brace
 macro_line|#endif
-multiline_comment|/*&n;  Local variables:&n;  compile-command: &quot;gcc -D__KERNEL__ -I../../include -Wall -Wstrict-prototypes -O2 -fomit-frame-pointer -fno-strict-aliasing -D__SMP__ -pipe -fno-strength-reduce  -march=i686 -DMODULE -DMODVERSIONS -include ../../include/linux/modversions.h   -DEXPORT_SYMTAB -c serial.c&quot;&n;  End:&n;*/
+multiline_comment|/*&n;  Local variables:&n;  compile-command: &quot;gcc -D__KERNEL__ -I../../include -Wall -Wstrict-prototypes -O2 -fomit-frame-pointer -fno-strict-aliasing -pipe -fno-strength-reduce  -march=i686 -DMODULE -DMODVERSIONS -include ../../include/linux/modversions.h   -DEXPORT_SYMTAB -c serial.c&quot;&n;  End:&n;*/
 eof

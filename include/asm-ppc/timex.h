@@ -2,6 +2,7 @@ multiline_comment|/*&n; * linux/include/asm-ppc/timex.h&n; *&n; * ppc architectu
 macro_line|#ifndef _ASMppc_TIMEX_H
 DECL|macro|_ASMppc_TIMEX_H
 mdefine_line|#define _ASMppc_TIMEX_H
+macro_line|#include &lt;linux/config.h&gt;
 DECL|macro|CLOCK_TICK_RATE
 mdefine_line|#define CLOCK_TICK_RATE&t;1193180 /* Underlying HZ */
 DECL|macro|CLOCK_TICK_FACTOR
@@ -29,7 +30,7 @@ c_func
 r_void
 )paren
 (brace
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 id|cycles_t
 id|ret
 suffix:semicolon

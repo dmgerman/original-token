@@ -167,7 +167,7 @@ id|boot_infos_t
 op_star
 id|boot_infos
 suffix:semicolon
-macro_line|#ifndef __SMP__
+macro_line|#ifndef CONFIG_SMP
 DECL|variable|quicklists
 r_struct
 id|pgtable_cache_struct
@@ -1160,7 +1160,7 @@ comma
 l_string|&quot;task&quot;
 )paren
 suffix:semicolon
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 id|printk
 c_func
 (paren
@@ -1169,7 +1169,7 @@ comma
 l_string|&quot;CPU&quot;
 )paren
 suffix:semicolon
-macro_line|#endif /* __SMP__ */
+macro_line|#endif /* CONFIG_SMP */
 id|printk
 c_func
 (paren
@@ -1254,7 +1254,7 @@ id|iscur
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 id|printk
 c_func
 (paren
@@ -1339,7 +1339,7 @@ l_string|&quot;last math&quot;
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif /* __SMP__ */
+macro_line|#endif /* CONFIG_SMP */
 id|printk
 c_func
 (paren
@@ -2013,7 +2013,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 id|smp_send_tlb_invalidate
 c_func
 (paren
@@ -2053,7 +2053,7 @@ comma
 id|mm
 )paren
 suffix:semicolon
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 id|smp_send_tlb_invalidate
 c_func
 (paren
@@ -2101,7 +2101,7 @@ comma
 id|vmaddr
 )paren
 suffix:semicolon
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 id|smp_send_tlb_invalidate
 c_func
 (paren
@@ -2181,7 +2181,7 @@ id|start
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 id|smp_send_tlb_invalidate
 c_func
 (paren
@@ -2249,7 +2249,7 @@ comma
 l_int|0xffffff
 )paren
 suffix:semicolon
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 id|smp_send_tlb_invalidate
 c_func
 (paren
@@ -2720,7 +2720,7 @@ suffix:semicolon
 )brace
 DECL|macro|IO_PAGE
 mdefine_line|#define IO_PAGE&t;(_PAGE_NO_CACHE | _PAGE_GUARDED | _PAGE_RW)
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 DECL|macro|RAM_PAGE
 mdefine_line|#define RAM_PAGE (_PAGE_RW|_PAGE_COHERENT)
 macro_line|#else

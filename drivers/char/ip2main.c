@@ -1,16 +1,63 @@
 multiline_comment|/*&n;*&n;*   (c) 1999 by Computone Corporation&n;*&n;********************************************************************************&n;*&n;*   PACKAGE:     Linux tty Device Driver for IntelliPort family of multiport&n;*                serial I/O controllers.&n;*&n;*   DESCRIPTION: Mainline code for the device driver&n;*&n;*******************************************************************************/
+singleline_comment|// ToDo:
+singleline_comment|//
+singleline_comment|// Done:
+singleline_comment|//
+singleline_comment|// 1.2.9
+singleline_comment|// Four box EX was barfing on &gt;128k kmalloc, made structure smaller by
+singleline_comment|// reducing output buffer size
+singleline_comment|//
+singleline_comment|// 1.2.8
+singleline_comment|// Device file system support (MHW)
+singleline_comment|//
+singleline_comment|// 1.2.7 
+singleline_comment|// Fixed
+singleline_comment|// Reload of ip2 without unloading ip2main hangs system on cat of /proc/modules
+singleline_comment|//
+singleline_comment|// 1.2.6
+singleline_comment|//Fixes DCD problems
+singleline_comment|//&t;DCD was not reported when CLOCAL was set on call to TIOCMGET
+singleline_comment|//
+singleline_comment|//Enhancements:
+singleline_comment|//&t;TIOCMGET requests and waits for status return
+singleline_comment|//&t;No DSS interrupts enabled except for DCD when needed
+singleline_comment|//
+singleline_comment|// For internal use only
+singleline_comment|//
+singleline_comment|//#define IP2DEBUG_INIT
+singleline_comment|//#define IP2DEBUG_OPEN
+singleline_comment|//#define IP2DEBUG_WRITE
+singleline_comment|//#define IP2DEBUG_READ
+singleline_comment|//#define IP2DEBUG_IOCTL
+singleline_comment|//#define IP2DEBUG_IPL
+singleline_comment|//#define IP2DEBUG_TRACE
+singleline_comment|//#define DEBUG_FIFO
 multiline_comment|/************/
 multiline_comment|/* Includes */
 multiline_comment|/************/
-macro_line|#include &lt;linux/config.h&gt;
-macro_line|#include &lt;linux/module.h&gt;
+singleline_comment|// Uncomment the following if you want it compiled with modversions
+macro_line|#ifdef MODULE
+macro_line|#&t;include &lt;linux/autoconf.h&gt;
+macro_line|#&t;if defined(CONFIG_MODVERSIONS) &amp;&amp; !defined(MODVERSIONS)
+DECL|macro|MODVERSIONS
+macro_line|#&t;&t;define MODVERSIONS
+macro_line|#&t;endif
+macro_line|#&t;ifdef MODVERSIONS
+macro_line|#&t;&t;include &lt;linux/modversions.h&gt;
+macro_line|#&t;endif
+macro_line|#endif
 macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/ctype.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
+macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
+macro_line|#ifdef&t;CONFIG_DEVFS_FS
+macro_line|#include &lt;linux/devfs_fs_kernel.h&gt;
+macro_line|#endif
 macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
@@ -32,12 +79,72 @@ macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
-macro_line|#include &lt;linux/vmalloc.h&gt;
-macro_line|#include &lt;linux/init.h&gt;
-macro_line|#include &lt;asm/serial.h&gt;
-macro_line|#include &lt;asm/uaccess.h&gt;
+macro_line|#ifndef KERNEL_VERSION
+DECL|macro|KERNEL_VERSION
+mdefine_line|#define KERNEL_VERSION(ver,rel,seq) (((ver)&lt;&lt;16) | ((rel)&lt;&lt;8) | (seq))
+macro_line|#endif
+macro_line|#if LINUX_VERSION_CODE &gt;= KERNEL_VERSION(2,1,0)
+macro_line|#&t;include &lt;linux/vmalloc.h&gt;
+macro_line|#&t;include &lt;linux/init.h&gt;
+macro_line|#&t;include &lt;asm/serial.h&gt;
+macro_line|#else
+macro_line|#&t;include &lt;linux/bios32.h&gt;
+macro_line|#endif
+singleline_comment|// These VERSION switches maybe inexact because I simply don&squot;t know
+singleline_comment|// when the various features appeared in the 2.1.XX kernels.
+singleline_comment|// They are good enough for 2.0 vs 2.2 and if you are fooling with
+singleline_comment|// the 2.1.XX stuff then it would be trivial for you to fix.
+singleline_comment|// Most of these macros were stolen from some other drivers
+singleline_comment|// so blame them.
+macro_line|#if LINUX_VERSION_CODE &gt;= KERNEL_VERSION(2,1,4)
+macro_line|#&t;include &lt;asm/segment.h&gt;
+DECL|macro|GET_USER
+macro_line|#&t;define GET_USER(error,value,addr) error = get_user(value,addr)
+DECL|macro|COPY_FROM_USER
+macro_line|#&t;define COPY_FROM_USER(error,dest,src,size) error = copy_from_user(dest,src,size) ? -EFAULT : 0
+DECL|macro|PUT_USER
+macro_line|#&t;define PUT_USER(error,value,addr) error = put_user(value,addr)
+DECL|macro|COPY_TO_USER
+macro_line|#&t;define COPY_TO_USER(error,dest,src,size) error = copy_to_user(dest,src,size) ? -EFAULT : 0
+macro_line|#&t;if LINUX_VERSION_CODE &gt;= KERNEL_VERSION(2,1,5)
+macro_line|#&t;&t;include &lt;asm/uaccess.h&gt;
 DECL|macro|pcibios_strerror
-mdefine_line|#define&t;&t;pcibios_strerror(status)&t;&bslash;&n;&t;printk( KERN_ERR &quot;IP2: PCI error 0x%x &bslash;n&quot;, status );
+macro_line|#&t;&t;define&t;&t;pcibios_strerror(status)&t;&bslash;&n;&t;&t;&t;&t;&t;printk( KERN_ERR &quot;IP2: PCI error 0x%x &bslash;n&quot;, status );
+macro_line|#&t;endif
+macro_line|#else  /* 2.0.x and 2.1.x before 2.1.4 */
+DECL|macro|proc_register_dynamic
+macro_line|#&t;define&t;&t;proc_register_dynamic(a,b) proc_register(a,b) 
+DECL|macro|GET_USER
+macro_line|#&t;define GET_USER(error,value,addr)&t;&t;&t;&t;&t;  &bslash;&n;&t;do {&t;&t;&t;&t;&t;&t;&t;&t;&t;  &bslash;&n;&t;&t;error = verify_area (VERIFY_READ, (void *) addr, sizeof (value)); &bslash;&n;&t;&t;if (error == 0)&t;&t;&t;&t;&t;&t;&t;  &bslash;&n;&t;&t;&t;value = get_user(addr);&t;&t;&t;&t;&t;  &bslash;&n;&t;} while (0)
+DECL|macro|COPY_FROM_USER
+macro_line|#&t;define COPY_FROM_USER(error,dest,src,size)&t;&t;&t;&t;  &bslash;&n;&t;do {&t;&t;&t;&t;&t;&t;&t;&t;&t;  &bslash;&n;&t;&t;error = verify_area (VERIFY_READ, (void *) src, size);&t;&t;  &bslash;&n;&t;&t;if (error == 0)&t;&t;&t;&t;&t;&t;&t;  &bslash;&n;&t;&t;&t;memcpy_fromfs (dest, src, size);&t;&t;&t;  &bslash;&n;&t;} while (0)
+DECL|macro|PUT_USER
+macro_line|#&t;define PUT_USER(error,value,addr)&t;&t;&t;&t;&t;   &bslash;&n;&t;do {&t;&t;&t;&t;&t;&t;&t;&t;&t;   &bslash;&n;&t;&t;error = verify_area (VERIFY_WRITE, (void *) addr, sizeof (value)); &bslash;&n;&t;&t;if (error == 0)&t;&t;&t;&t;&t;&t;&t;   &bslash;&n;&t;&t;&t;put_user (value, addr);&t;&t;&t;&t;&t;   &bslash;&n;&t;} while (0)
+DECL|macro|COPY_TO_USER
+macro_line|#&t;define COPY_TO_USER(error,dest,src,size)&t;&t;&t;&t;  &bslash;&n;&t;do {&t;&t;&t;&t;&t;&t;&t;&t;&t;  &bslash;&n;&t;&t;error = verify_area (VERIFY_WRITE, (void *) dest, size);&t;&t;  &bslash;&n;&t;&t;if (error == 0)&t;&t;&t;&t;&t;&t;&t;  &bslash;&n;&t;&t;&t;memcpy_tofs (dest, src, size);&t;&t;&t;&t;  &bslash;&n;&t;} while (0)
+macro_line|#endif
+macro_line|#if LINUX_VERSION_CODE &lt; KERNEL_VERSION(2,1,0)
+DECL|macro|__init
+mdefine_line|#define __init
+DECL|macro|__initfunc
+mdefine_line|#define __initfunc(a) a
+DECL|macro|__initdata
+mdefine_line|#define __initdata
+DECL|macro|ioremap
+mdefine_line|#define ioremap(a,b) vremap((a),(b))
+DECL|macro|iounmap
+mdefine_line|#define iounmap(a) vfree((a))
+DECL|macro|SERIAL_TYPE_NORMAL
+mdefine_line|#define SERIAL_TYPE_NORMAL&t;1
+DECL|macro|SERIAL_TYPE_CALLOUT
+mdefine_line|#define SERIAL_TYPE_CALLOUT&t;2
+DECL|macro|schedule_timeout
+mdefine_line|#define schedule_timeout(a){current-&gt;timeout = jiffies + (a); schedule();}
+DECL|macro|signal_pending
+mdefine_line|#define signal_pending(a) ((a)-&gt;signal &amp; ~(a)-&gt;blocked)
+DECL|macro|in_interrupt
+mdefine_line|#define in_interrupt()&t;intr_count
+macro_line|#endif
 macro_line|#include &quot;./ip2/ip2types.h&quot;
 macro_line|#include &quot;./ip2/ip2trace.h&quot;
 macro_line|#include &quot;./ip2/ip2ioctl.h&quot;
@@ -106,7 +213,7 @@ r_char
 op_star
 id|pcVersion
 op_assign
-l_string|&quot;1.2.4&quot;
+l_string|&quot;1.2.9&quot;
 suffix:semicolon
 multiline_comment|/* String constants for port names */
 DECL|variable|pcDriver_name
@@ -117,13 +224,31 @@ id|pcDriver_name
 op_assign
 l_string|&quot;ip2&quot;
 suffix:semicolon
+macro_line|#ifdef&t;CONFIG_DEVFS_FS
 DECL|variable|pcTty
 r_static
 r_char
 op_star
 id|pcTty
 op_assign
-l_string|&quot;ttyf&quot;
+l_string|&quot;ttf/%d&quot;
+suffix:semicolon
+DECL|variable|pcCallout
+r_static
+r_char
+op_star
+id|pcCallout
+op_assign
+l_string|&quot;cuf/%d&quot;
+suffix:semicolon
+macro_line|#else
+DECL|variable|pcTty
+r_static
+r_char
+op_star
+id|pcTty
+op_assign
+l_string|&quot;ttyF&quot;
 suffix:semicolon
 DECL|variable|pcCallout
 r_static
@@ -133,6 +258,7 @@ id|pcCallout
 op_assign
 l_string|&quot;cuf&quot;
 suffix:semicolon
+macro_line|#endif
 DECL|variable|pcIpl
 r_static
 r_char
@@ -454,18 +580,6 @@ op_star
 suffix:semicolon
 r_static
 r_int
-id|get_modem_info
-c_func
-(paren
-id|i2ChanStrPtr
-comma
-r_int
-r_int
-op_star
-)paren
-suffix:semicolon
-r_static
-r_int
 id|set_modem_info
 c_func
 (paren
@@ -503,6 +617,26 @@ id|serial_struct
 op_star
 )paren
 suffix:semicolon
+macro_line|#if LINUX_VERSION_CODE &lt; KERNEL_VERSION(2,1,0)
+r_static
+r_int
+id|ip2_ipl_read
+c_func
+(paren
+r_struct
+id|inode
+op_star
+comma
+r_char
+op_star
+comma
+r_int
+comma
+id|loff_t
+op_star
+)paren
+suffix:semicolon
+macro_line|#else
 r_static
 id|ssize_t
 id|ip2_ipl_read
@@ -521,6 +655,7 @@ id|loff_t
 op_star
 )paren
 suffix:semicolon
+macro_line|#endif
 r_static
 id|ssize_t
 id|ip2_ipl_write
@@ -857,6 +992,7 @@ macro_line|#include &quot;./ip2/i2cmd.c&quot;      /* Standard loadware command 
 macro_line|#include &quot;./ip2/i2lib.c&quot;      /* High level interface services */
 multiline_comment|/* Configuration area for modprobe */
 macro_line|#ifdef MODULE
+macro_line|#&t;if LINUX_VERSION_CODE &gt;= KERNEL_VERSION(2,1,0)
 id|MODULE_AUTHOR
 c_func
 (paren
@@ -869,18 +1005,12 @@ c_func
 l_string|&quot;Computone IntelliPort Plus Driver&quot;
 )paren
 suffix:semicolon
+macro_line|#&t;endif&t;/* LINUX_VERSION */
 macro_line|#endif&t;/* MODULE */
 DECL|variable|poll_only
 r_static
 r_int
 id|poll_only
-op_assign
-l_int|0
-suffix:semicolon
-DECL|variable|Pci_index
-r_static
-r_int
-id|Pci_index
 op_assign
 l_int|0
 suffix:semicolon
@@ -1358,6 +1488,7 @@ id|i
 )paren
 (brace
 id|iiReset
+c_func
 (paren
 id|i2BoardPtrTable
 (braket
@@ -1413,6 +1544,28 @@ comma
 l_int|8
 )paren
 suffix:semicolon
+macro_line|#ifdef&t;CONFIG_DEVFS_FS
+id|devfs_unregister
+(paren
+id|i2BoardPtrTable
+(braket
+id|i
+)braket
+op_member_access_from_pointer
+id|devfs_ipl_handle
+)paren
+suffix:semicolon
+id|devfs_unregister
+(paren
+id|i2BoardPtrTable
+(braket
+id|i
+)braket
+op_member_access_from_pointer
+id|devfs_stat_handle
+)paren
+suffix:semicolon
+macro_line|#endif
 )brace
 multiline_comment|/* Disable and remove interrupt handler. */
 r_if
@@ -1511,6 +1664,22 @@ id|err
 )paren
 suffix:semicolon
 )brace
+macro_line|#ifdef&t;CONFIG_DEVFS_FS
+r_if
+c_cond
+(paren
+(paren
+id|err
+op_assign
+id|devfs_unregister_chrdev
+(paren
+id|IP2_IPL_MAJOR
+comma
+id|pcIpl
+)paren
+)paren
+)paren
+macro_line|#else
 r_if
 c_cond
 (paren
@@ -1525,6 +1694,7 @@ id|pcIpl
 )paren
 )paren
 )paren
+macro_line|#endif
 (brace
 id|printk
 c_func
@@ -1664,6 +1834,19 @@ c_func
 r_void
 )paren
 (brace
+macro_line|#ifdef&t;CONFIG_DEVFS_FS
+r_static
+id|devfs_handle_t
+id|devfs_handle
+op_assign
+l_int|NULL
+suffix:semicolon
+r_int
+id|j
+comma
+id|box
+suffix:semicolon
+macro_line|#endif
 r_int
 id|i
 suffix:semicolon
@@ -1672,6 +1855,12 @@ id|err
 suffix:semicolon
 r_int
 id|status
+op_assign
+l_int|0
+suffix:semicolon
+r_static
+r_int
+id|loaded
 op_assign
 l_int|0
 suffix:semicolon
@@ -1710,6 +1899,29 @@ id|pcName
 comma
 id|pcVersion
 )paren
+suffix:semicolon
+singleline_comment|// ip2 can be unloaded and reloaded for no good reason
+singleline_comment|// we can&squot;t let that happen here or bad things happen
+singleline_comment|// second load hoses board but not system - fixme later
+r_if
+c_cond
+(paren
+id|loaded
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_INFO
+l_string|&quot;Still loaded&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+id|loaded
+op_increment
 suffix:semicolon
 multiline_comment|/* if all irq config is zero we shall poll_only */
 r_for
@@ -1939,6 +2151,204 @@ r_case
 id|PCI
 suffix:colon
 macro_line|#ifdef CONFIG_PCI
+macro_line|#if (LINUX_VERSION_CODE &lt; 0x020163) /* 2.1.99 */
+r_if
+c_cond
+(paren
+id|pcibios_present
+c_func
+(paren
+)paren
+)paren
+(brace
+r_int
+r_char
+id|pci_bus
+comma
+id|pci_devfn
+suffix:semicolon
+r_int
+id|Pci_index
+op_assign
+l_int|0
+suffix:semicolon
+id|status
+op_assign
+id|pcibios_find_device
+c_func
+(paren
+id|PCI_VENDOR_ID_COMPUTONE
+comma
+id|PCI_DEVICE_ID_COMPUTONE_IP2EX
+comma
+id|Pci_index
+comma
+op_amp
+id|pci_bus
+comma
+op_amp
+id|pci_devfn
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|status
+op_eq
+l_int|0
+)paren
+(brace
+r_int
+r_int
+id|addr
+suffix:semicolon
+r_int
+r_char
+id|pci_irq
+suffix:semicolon
+id|ip2config.type
+(braket
+id|i
+)braket
+op_assign
+id|PCI
+suffix:semicolon
+multiline_comment|/* &n;&t;&t;&t;&t;&t; * Update Pci_index, so that the next time we go&n;&t;&t;&t;&t;&t; * searching for a PCI board we find a different&n;&t;&t;&t;&t;&t; * one.&n;&t;&t;&t;&t;&t; */
+op_increment
+id|Pci_index
+suffix:semicolon
+id|pcibios_read_config_dword
+c_func
+(paren
+id|pci_bus
+comma
+id|pci_devfn
+comma
+id|PCI_BASE_ADDRESS_1
+comma
+op_amp
+id|addr
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|addr
+op_amp
+l_int|1
+)paren
+(brace
+id|ip2config.addr
+(braket
+id|i
+)braket
+op_assign
+(paren
+id|USHORT
+)paren
+(paren
+id|addr
+op_amp
+l_int|0xfffe
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;IP2: PCI I/O address error&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
+id|pcibios_read_config_byte
+c_func
+(paren
+id|pci_bus
+comma
+id|pci_devfn
+comma
+id|PCI_INTERRUPT_LINE
+comma
+op_amp
+id|pci_irq
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|is_valid_irq
+c_func
+(paren
+id|pci_irq
+)paren
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;IP2: Bad PCI BIOS IRQ(%d)&bslash;n&quot;
+comma
+id|pci_irq
+)paren
+suffix:semicolon
+id|pci_irq
+op_assign
+l_int|0
+suffix:semicolon
+)brace
+id|ip2config.irq
+(braket
+id|i
+)braket
+op_assign
+id|pci_irq
+suffix:semicolon
+)brace
+r_else
+(brace
+singleline_comment|// ann error
+id|ip2config.addr
+(braket
+id|i
+)braket
+op_assign
+l_int|0
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|status
+op_eq
+id|PCIBIOS_DEVICE_NOT_FOUND
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;IP2: PCI board %d not found&bslash;n&quot;
+comma
+id|i
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
+id|pcibios_strerror
+c_func
+(paren
+id|status
+)paren
+suffix:semicolon
+)brace
+)brace
+)brace
+macro_line|#else /* LINUX_VERSION_CODE &gt; 2.1.99 */
 r_if
 c_cond
 (paren
@@ -1989,10 +2399,6 @@ id|i
 )braket
 op_assign
 id|PCI
-suffix:semicolon
-multiline_comment|/* &n;&t;&t;&t;&t;&t; * Update Pci_index, so that the next time we go&n;&t;&t;&t;&t;&t; * searching for a PCI board we find a different&n;&t;&t;&t;&t;&t; * one.&n;&t;&t;&t;&t;&t; */
-op_increment
-id|Pci_index
 suffix:semicolon
 id|status
 op_assign
@@ -2125,6 +2531,7 @@ suffix:semicolon
 )brace
 )brace
 )brace
+macro_line|#endif&t;/* ! 2_0_X */
 macro_line|#else
 id|printk
 c_func
@@ -2401,6 +2808,7 @@ id|ip2_tty_driver.name
 op_assign
 id|pcTty
 suffix:semicolon
+macro_line|#if LINUX_VERSION_CODE &gt; KERNEL_VERSION(2,1,0)
 id|ip2_tty_driver.driver_name
 op_assign
 id|pcDriver_name
@@ -2409,6 +2817,7 @@ id|ip2_tty_driver.read_proc
 op_assign
 id|ip2_read_proc
 suffix:semicolon
+macro_line|#endif
 id|ip2_tty_driver.major
 op_assign
 id|IP2_TTY_MAJOR
@@ -2445,10 +2854,19 @@ id|HUPCL
 op_or
 id|CLOCAL
 suffix:semicolon
+macro_line|#ifdef&t;CONFIG_DEVFS_FS
+id|ip2_tty_driver.flags
+op_assign
+id|TTY_DRIVER_REAL_RAW
+op_or
+id|TTY_DRIVER_NO_DEVFS
+suffix:semicolon
+macro_line|#else
 id|ip2_tty_driver.flags
 op_assign
 id|TTY_DRIVER_REAL_RAW
 suffix:semicolon
+macro_line|#endif
 id|ip2_tty_driver.refcount
 op_assign
 op_amp
@@ -2540,6 +2958,7 @@ id|ip2_callout_driver.name
 op_assign
 id|pcCallout
 suffix:semicolon
+macro_line|#if LINUX_VERSION_CODE &gt; KERNEL_VERSION(2,1,0)
 id|ip2_callout_driver.driver_name
 op_assign
 id|pcDriver_name
@@ -2548,6 +2967,7 @@ id|ip2_callout_driver.read_proc
 op_assign
 l_int|NULL
 suffix:semicolon
+macro_line|#endif
 id|ip2_callout_driver.major
 op_assign
 id|IP2_CALLOUT_MAJOR
@@ -2621,6 +3041,25 @@ suffix:semicolon
 )brace
 r_else
 multiline_comment|/* Register the IPL driver. */
+macro_line|#ifdef&t;CONFIG_DEVFS_FS
+r_if
+c_cond
+(paren
+(paren
+id|err
+op_assign
+id|devfs_register_chrdev
+(paren
+id|IP2_IPL_MAJOR
+comma
+id|pcIpl
+comma
+op_amp
+id|ip2_ipl
+)paren
+)paren
+)paren
+macro_line|#else
 r_if
 c_cond
 (paren
@@ -2638,6 +3077,7 @@ id|ip2_ipl
 )paren
 )paren
 )paren
+macro_line|#endif
 (brace
 id|printk
 c_func
@@ -2693,6 +3133,27 @@ l_int|0
 suffix:semicolon
 macro_line|#endif
 multiline_comment|/* Register the interrupt handler or poll handler, depending upon the&n;&t;&t; * specified interrupt.&n;&t;&t; */
+macro_line|#ifdef&t;CONFIG_DEVFS_FS
+r_if
+c_cond
+(paren
+op_logical_neg
+id|devfs_handle
+)paren
+id|devfs_handle
+op_assign
+id|devfs_mk_dir
+(paren
+l_int|NULL
+comma
+l_string|&quot;ip2&quot;
+comma
+l_int|3
+comma
+l_int|NULL
+)paren
+suffix:semicolon
+macro_line|#endif
 r_for
 c_loop
 (paren
@@ -2708,6 +3169,14 @@ op_increment
 id|i
 )paren
 (brace
+macro_line|#ifdef&t;CONFIG_DEVFS_FS
+r_char
+id|name
+(braket
+l_int|16
+)braket
+suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -2722,6 +3191,202 @@ id|i
 r_continue
 suffix:semicolon
 )brace
+macro_line|#ifdef&t;CONFIG_DEVFS_FS
+id|sprintf
+c_func
+(paren
+id|name
+comma
+l_string|&quot;ipl%d&quot;
+comma
+id|i
+)paren
+suffix:semicolon
+id|i2BoardPtrTable
+(braket
+id|i
+)braket
+op_member_access_from_pointer
+id|devfs_ipl_handle
+op_assign
+id|devfs_register
+(paren
+id|devfs_handle
+comma
+id|name
+comma
+l_int|0
+comma
+id|DEVFS_FL_NONE
+comma
+id|IP2_IPL_MAJOR
+comma
+l_int|4
+op_star
+id|i
+comma
+id|S_IRUSR
+op_or
+id|S_IWUSR
+op_or
+id|S_IRGRP
+op_or
+id|S_IFCHR
+comma
+l_int|0
+comma
+l_int|0
+comma
+op_amp
+id|ip2_ipl
+comma
+l_int|NULL
+)paren
+suffix:semicolon
+id|sprintf
+c_func
+(paren
+id|name
+comma
+l_string|&quot;stat%d&quot;
+comma
+id|i
+)paren
+suffix:semicolon
+id|i2BoardPtrTable
+(braket
+id|i
+)braket
+op_member_access_from_pointer
+id|devfs_stat_handle
+op_assign
+id|devfs_register
+(paren
+id|devfs_handle
+comma
+id|name
+comma
+l_int|0
+comma
+id|DEVFS_FL_NONE
+comma
+id|IP2_IPL_MAJOR
+comma
+l_int|4
+op_star
+id|i
+op_plus
+l_int|1
+comma
+id|S_IRUSR
+op_or
+id|S_IWUSR
+op_or
+id|S_IRGRP
+op_or
+id|S_IFCHR
+comma
+l_int|0
+comma
+l_int|0
+comma
+op_amp
+id|ip2_ipl
+comma
+l_int|NULL
+)paren
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|box
+op_assign
+l_int|0
+suffix:semicolon
+id|box
+OL
+id|ABS_MAX_BOXES
+suffix:semicolon
+op_increment
+id|box
+)paren
+(brace
+r_for
+c_loop
+(paren
+id|j
+op_assign
+l_int|0
+suffix:semicolon
+id|j
+OL
+id|ABS_BIGGEST_BOX
+suffix:semicolon
+op_increment
+id|j
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|pB-&gt;i2eChannelMap
+(braket
+id|box
+)braket
+op_amp
+(paren
+l_int|1
+op_lshift
+id|j
+)paren
+)paren
+(brace
+id|tty_register_devfs
+c_func
+(paren
+op_amp
+id|ip2_tty_driver
+comma
+l_int|0
+comma
+id|j
+op_plus
+id|ABS_BIGGEST_BOX
+op_star
+(paren
+id|box
+op_plus
+id|i
+op_star
+id|ABS_MAX_BOXES
+)paren
+)paren
+suffix:semicolon
+id|tty_register_devfs
+c_func
+(paren
+op_amp
+id|ip2_callout_driver
+comma
+l_int|0
+comma
+id|j
+op_plus
+id|ABS_BIGGEST_BOX
+op_star
+(paren
+id|box
+op_plus
+id|i
+op_star
+id|ABS_MAX_BOXES
+)paren
+)paren
+suffix:semicolon
+)brace
+)brace
+)brace
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -4046,9 +4711,6 @@ r_int
 id|boardIrq
 )paren
 (brace
-id|i2ChanStrPtr
-id|pCh
-suffix:semicolon
 r_int
 r_char
 id|tempCommand
@@ -4069,13 +4731,6 @@ r_int
 id|flags
 suffix:semicolon
 multiline_comment|/*&n;&t; * Notify the boards they may generate interrupts. This is done by&n;&t; * sending an in-line command to channel 0 on each board. This is why&n;&t; * the channels have to be defined already. For each board, if the&n;&t; * interrupt has never been defined, we must do so NOW, directly, since&n;&t; * board will not send flow control or even give an interrupt until this&n;&t; * is done.  If polling we must send 0 as the interrupt parameter.&n;&t; */
-id|pCh
-op_assign
-(paren
-id|i2ChanStrPtr
-)paren
-id|pB-&gt;i2eChannelPtr
-suffix:semicolon
 singleline_comment|// We will get an interrupt here at the end of this function
 id|iiDisableMailIrq
 c_func
@@ -4792,7 +5447,7 @@ macro_line|#ifdef IP2DEBUG_TRACE
 id|ip2trace
 c_func
 (paren
-id|PORTN
+id|CHANN
 comma
 id|ITRC_INPUT
 comma
@@ -4863,7 +5518,7 @@ macro_line|#ifdef IP2DEBUG_TRACE
 id|ip2trace
 c_func
 (paren
-id|PORTN
+id|CHANN
 comma
 id|ITRC_INPUT
 comma
@@ -4987,7 +5642,7 @@ suffix:semicolon
 macro_line|#ifdef IP2DEBUG_TRACE
 id|ip2trace
 (paren
-id|PORTN
+id|CHANN
 comma
 id|ITRC_STATUS
 comma
@@ -5301,7 +5956,7 @@ suffix:semicolon
 macro_line|#ifdef IP2DEBUG_TRACE
 id|ip2trace
 (paren
-id|PORTN
+id|CHANN
 comma
 id|ITRC_STATUS
 comma
@@ -5561,11 +6216,13 @@ id|pCh
 comma
 l_int|100
 comma
-l_int|2
+l_int|3
 comma
 id|CMD_DTRUP
 comma
 id|CMD_RTSUP
+comma
+id|CMD_DCD_REP
 )paren
 suffix:semicolon
 id|pCh-&gt;dataSetOut
@@ -5574,38 +6231,6 @@ op_or_assign
 id|I2_DTR
 op_or
 id|I2_RTS
-)paren
-suffix:semicolon
-id|i2QueueCommands
-c_func
-(paren
-id|PTYPE_INLINE
-comma
-id|pCh
-comma
-l_int|100
-comma
-l_int|1
-comma
-id|CMD_DCD_REP
-)paren
-suffix:semicolon
-id|i2QueueCommands
-c_func
-(paren
-id|PTYPE_INLINE
-comma
-id|pCh
-comma
-l_int|100
-comma
-l_int|3
-comma
-id|CMD_CTS_REP
-comma
-id|CMD_DSR_REP
-comma
-id|CMD_RI_REP
 )paren
 suffix:semicolon
 id|serviceOutgoingFifo
@@ -6010,7 +6635,7 @@ macro_line|#endif
 macro_line|#ifdef IP2DEBUG_TRACE
 id|ip2trace
 (paren
-id|PORTN
+id|CHANN
 comma
 id|ITRC_OPEN
 comma
@@ -6078,7 +6703,7 @@ singleline_comment|//why count?
 macro_line|#ifdef IP2DEBUG_TRACE
 id|ip2trace
 (paren
-id|PORTN
+id|CHANN
 comma
 id|ITRC_OPEN
 comma
@@ -6203,7 +6828,7 @@ suffix:semicolon
 macro_line|#ifdef IP2DEBUG_TRACE
 id|ip2trace
 (paren
-id|PORTN
+id|CHANN
 comma
 id|ITRC_OPEN
 comma
@@ -6260,7 +6885,7 @@ suffix:semicolon
 macro_line|#ifdef IP2DEBUG_TRACE
 id|ip2trace
 (paren
-id|PORTN
+id|CHANN
 comma
 id|ITRC_CLOSE
 comma
@@ -6299,7 +6924,7 @@ suffix:semicolon
 macro_line|#ifdef IP2DEBUG_TRACE
 id|ip2trace
 (paren
-id|PORTN
+id|CHANN
 comma
 id|ITRC_CLOSE
 comma
@@ -6328,7 +6953,7 @@ suffix:semicolon
 macro_line|#ifdef IP2DEBUG_TRACE
 id|ip2trace
 (paren
-id|PORTN
+id|CHANN
 comma
 id|ITRC_CLOSE
 comma
@@ -6412,9 +7037,15 @@ id|pCh
 comma
 l_int|100
 comma
-l_int|1
+l_int|4
 comma
 id|CMD_DCD_NREP
+comma
+id|CMD_CTS_NREP
+comma
+id|CMD_DSR_NREP
+comma
+id|CMD_RI_NREP
 )paren
 suffix:semicolon
 r_if
@@ -6474,24 +7105,6 @@ l_int|25
 )paren
 suffix:semicolon
 )brace
-id|i2QueueCommands
-c_func
-(paren
-id|PTYPE_INLINE
-comma
-id|pCh
-comma
-l_int|100
-comma
-l_int|3
-comma
-id|CMD_CTS_NREP
-comma
-id|CMD_DSR_NREP
-comma
-id|CMD_RI_NREP
-)paren
-suffix:semicolon
 id|serviceOutgoingFifo
 (paren
 id|pCh-&gt;pMyBord
@@ -6593,7 +7206,7 @@ suffix:semicolon
 macro_line|#ifdef IP2DEBUG_TRACE
 id|ip2trace
 (paren
-id|PORTN
+id|CHANN
 comma
 id|ITRC_CLOSE
 comma
@@ -6634,7 +7247,7 @@ suffix:semicolon
 macro_line|#ifdef IP2DEBUG_TRACE
 id|ip2trace
 (paren
-id|PORTN
+id|CHANN
 comma
 id|ITRC_HANGUP
 comma
@@ -6789,7 +7402,7 @@ suffix:semicolon
 macro_line|#ifdef IP2DEBUG_TRACE
 id|ip2trace
 (paren
-id|PORTN
+id|CHANN
 comma
 id|ITRC_HANGUP
 comma
@@ -6856,7 +7469,7 @@ suffix:semicolon
 macro_line|#ifdef IP2DEBUG_TRACE
 id|ip2trace
 (paren
-id|PORTN
+id|CHANN
 comma
 id|ITRC_WRITE
 comma
@@ -6914,7 +7527,7 @@ suffix:semicolon
 macro_line|#ifdef IP2DEBUG_TRACE
 id|ip2trace
 (paren
-id|PORTN
+id|CHANN
 comma
 id|ITRC_WRITE
 comma
@@ -6971,7 +7584,7 @@ r_int
 id|flags
 suffix:semicolon
 macro_line|#ifdef IP2DEBUG_TRACE
-singleline_comment|//&t;ip2trace (PORTN, ITRC_PUTC, ITRC_ENTER, 1, ch );
+singleline_comment|//&t;ip2trace (CHANN, ITRC_PUTC, ITRC_ENTER, 1, ch );
 macro_line|#endif
 id|WRITE_LOCK_IRQSAVE
 c_func
@@ -7026,7 +7639,7 @@ id|flags
 )paren
 suffix:semicolon
 macro_line|#ifdef IP2DEBUG_TRACE
-singleline_comment|//&t;ip2trace (PORTN, ITRC_PUTC, ITRC_RETURN, 1, ch );
+singleline_comment|//&t;ip2trace (CHANN, ITRC_PUTC, ITRC_RETURN, 1, ch );
 macro_line|#endif
 )brace
 multiline_comment|/******************************************************************************/
@@ -7075,7 +7688,7 @@ id|pCh-&gt;Pbuf_stuff
 )paren
 (brace
 macro_line|#ifdef IP2DEBUG_TRACE
-singleline_comment|//&t;ip2trace (PORTN, ITRC_PUTC, 10, 1, strip );
+singleline_comment|//&t;ip2trace (CHANN, ITRC_PUTC, 10, 1, strip );
 macro_line|#endif
 singleline_comment|//
 singleline_comment|// We may need to restart i2Output if it does not fullfill this request
@@ -7194,7 +7807,7 @@ suffix:semicolon
 macro_line|#ifdef IP2DEBUG_TRACE
 id|ip2trace
 (paren
-id|PORTN
+id|CHANN
 comma
 id|ITRC_WRITE
 comma
@@ -7254,7 +7867,7 @@ suffix:semicolon
 macro_line|#ifdef IP2DEBUG_TRACE
 id|ip2trace
 (paren
-id|PORTN
+id|CHANN
 comma
 id|ITRC_WRITE
 comma
@@ -7363,7 +7976,7 @@ suffix:semicolon
 macro_line|#ifdef IP2DEBUG_TRACE
 id|ip2trace
 (paren
-id|PORTN
+id|CHANN
 comma
 id|ITRC_FLUSH
 comma
@@ -7418,7 +8031,7 @@ suffix:semicolon
 macro_line|#ifdef IP2DEBUG_TRACE
 id|ip2trace
 (paren
-id|PORTN
+id|CHANN
 comma
 id|ITRC_FLUSH
 comma
@@ -7829,6 +8442,10 @@ id|rc
 op_assign
 l_int|0
 suffix:semicolon
+r_int
+r_int
+id|flags
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -7845,7 +8462,7 @@ suffix:semicolon
 macro_line|#ifdef IP2DEBUG_TRACE
 id|ip2trace
 (paren
-id|PORTN
+id|CHANN
 comma
 id|ITRC_IOCTL
 comma
@@ -7884,7 +8501,7 @@ suffix:colon
 macro_line|#ifdef IP2DEBUG_TRACE
 id|ip2trace
 (paren
-id|PORTN
+id|CHANN
 comma
 id|ITRC_IOCTL
 comma
@@ -7927,7 +8544,7 @@ suffix:colon
 macro_line|#ifdef IP2DEBUG_TRACE
 id|ip2trace
 (paren
-id|PORTN
+id|CHANN
 comma
 id|ITRC_IOCTL
 comma
@@ -8106,7 +8723,7 @@ suffix:semicolon
 macro_line|#ifdef IP2DEBUG_TRACE
 id|ip2trace
 (paren
-id|PORTN
+id|CHANN
 comma
 id|ITRC_IOCTL
 comma
@@ -8183,7 +8800,7 @@ suffix:semicolon
 macro_line|#ifdef IP2DEBUG_TRACE
 id|ip2trace
 (paren
-id|PORTN
+id|CHANN
 comma
 id|ITRC_IOCTL
 comma
@@ -8249,7 +8866,7 @@ suffix:colon
 macro_line|#ifdef IP2DEBUG_TRACE
 id|ip2trace
 (paren
-id|PORTN
+id|CHANN
 comma
 id|ITRC_IOCTL
 comma
@@ -8261,11 +8878,11 @@ id|rc
 )paren
 suffix:semicolon
 macro_line|#endif
-id|rc
-op_assign
-id|put_user
+id|PUT_USER
 c_func
 (paren
+id|rc
+comma
 id|C_CLOCAL
 c_func
 (paren
@@ -8301,7 +8918,7 @@ suffix:colon
 macro_line|#ifdef IP2DEBUG_TRACE
 id|ip2trace
 (paren
-id|PORTN
+id|CHANN
 comma
 id|ITRC_IOCTL
 comma
@@ -8313,11 +8930,11 @@ id|rc
 )paren
 suffix:semicolon
 macro_line|#endif
-id|rc
-op_assign
-id|get_user
+id|GET_USER
 c_func
 (paren
+id|rc
+comma
 id|arg
 comma
 (paren
@@ -8364,7 +8981,7 @@ suffix:colon
 macro_line|#ifdef IP2DEBUG_TRACE
 id|ip2trace
 (paren
-id|PORTN
+id|CHANN
 comma
 id|ITRC_IOCTL
 comma
@@ -8376,12 +8993,90 @@ id|rc
 )paren
 suffix:semicolon
 macro_line|#endif
-id|rc
-op_assign
-id|get_modem_info
+multiline_comment|/*&n;&t;FIXME - the following code is causing a NULL pointer dereference in&n;&t;2.3.51 in an interrupt handler.  It&squot;s suppose to prompt the board&n;&t;to return the DSS signal status immediately.  Why doesn&squot;t it do&n;&t;the same thing in 2.2.14?&n;*/
+multiline_comment|/*&n;&t;&t;i2QueueCommands(PTYPE_BYPASS, pCh, 100, 1, CMD_DSS_NOW);&n;&t;&t;serviceOutgoingFifo( pCh-&gt;pMyBord );&n;&t;&t;interruptible_sleep_on(&amp;pCh-&gt;dss_now_wait);&n;&t;&t;if (signal_pending(current)) {&n;&t;&t;&t;return -EINTR;&n;&t;&t;}&n;*/
+id|PUT_USER
 c_func
 (paren
-id|pCh
+id|rc
+comma
+(paren
+(paren
+id|pCh-&gt;dataSetOut
+op_amp
+id|I2_RTS
+)paren
+ques
+c_cond
+id|TIOCM_RTS
+suffix:colon
+l_int|0
+)paren
+op_or
+(paren
+(paren
+id|pCh-&gt;dataSetOut
+op_amp
+id|I2_DTR
+)paren
+ques
+c_cond
+id|TIOCM_DTR
+suffix:colon
+l_int|0
+)paren
+op_or
+(paren
+(paren
+id|pCh-&gt;dataSetIn
+op_amp
+id|I2_DCD
+)paren
+ques
+c_cond
+id|TIOCM_CAR
+suffix:colon
+l_int|0
+)paren
+op_or
+(paren
+(paren
+id|pCh-&gt;dataSetIn
+op_amp
+id|I2_RI
+)paren
+ques
+c_cond
+id|TIOCM_RNG
+suffix:colon
+l_int|0
+)paren
+op_or
+(paren
+(paren
+id|pCh-&gt;dataSetIn
+op_amp
+id|I2_DSR
+)paren
+ques
+c_cond
+id|TIOCM_DSR
+suffix:colon
+l_int|0
+)paren
+op_or
+(paren
+(paren
+id|pCh-&gt;dataSetIn
+op_amp
+id|I2_CTS
+)paren
+ques
+c_cond
+id|TIOCM_CTS
+suffix:colon
+l_int|0
+)paren
 comma
 (paren
 r_int
@@ -8390,14 +9085,6 @@ op_star
 )paren
 id|arg
 )paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|rc
-)paren
-r_return
-id|rc
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -8413,7 +9100,7 @@ suffix:colon
 macro_line|#ifdef IP2DEBUG_TRACE
 id|ip2trace
 (paren
-id|PORTN
+id|CHANN
 comma
 id|ITRC_IOCTL
 comma
@@ -8446,11 +9133,54 @@ multiline_comment|/*&n;&t; * Wait for any of the 4 modem inputs (DCD,RI,DSR,CTS)
 r_case
 id|TIOCMIWAIT
 suffix:colon
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
 id|cprev
 op_assign
 id|pCh-&gt;icount
 suffix:semicolon
 multiline_comment|/* note the counters on entry */
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|i2QueueCommands
+c_func
+(paren
+id|PTYPE_BYPASS
+comma
+id|pCh
+comma
+l_int|100
+comma
+l_int|4
+comma
+id|CMD_DCD_REP
+comma
+id|CMD_CTS_REP
+comma
+id|CMD_DSR_REP
+comma
+id|CMD_RI_REP
+)paren
+suffix:semicolon
+id|serviceOutgoingFifo
+c_func
+(paren
+id|pCh-&gt;pMyBord
+)paren
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -8461,7 +9191,7 @@ suffix:semicolon
 macro_line|#ifdef IP2DEBUG_TRACE
 id|ip2trace
 (paren
-id|PORTN
+id|CHANN
 comma
 id|ITRC_IOCTL
 comma
@@ -8478,6 +9208,19 @@ op_amp
 id|pCh-&gt;delta_msr_wait
 )paren
 suffix:semicolon
+macro_line|#ifdef IP2DEBUG_TRACE
+id|ip2trace
+(paren
+id|CHANN
+comma
+id|ITRC_IOCTL
+comma
+l_int|11
+comma
+l_int|0
+)paren
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/* see if a signal did it */
 r_if
 c_cond
@@ -8497,11 +9240,28 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
 id|cnow
 op_assign
 id|pCh-&gt;icount
 suffix:semicolon
 multiline_comment|/* atomic copy */
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -8603,7 +9363,59 @@ op_assign
 id|cnow
 suffix:semicolon
 )brace
-multiline_comment|/* NOTREACHED */
+id|i2QueueCommands
+c_func
+(paren
+id|PTYPE_BYPASS
+comma
+id|pCh
+comma
+l_int|100
+comma
+l_int|3
+comma
+id|CMD_CTS_NREP
+comma
+id|CMD_DSR_NREP
+comma
+id|CMD_RI_NREP
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|pCh-&gt;flags
+op_amp
+id|ASYNC_CHECK_CD
+)paren
+)paren
+(brace
+id|i2QueueCommands
+c_func
+(paren
+id|PTYPE_BYPASS
+comma
+id|pCh
+comma
+l_int|100
+comma
+l_int|1
+comma
+id|CMD_DCD_NREP
+)paren
+suffix:semicolon
+)brace
+id|serviceOutgoingFifo
+c_func
+(paren
+id|pCh-&gt;pMyBord
+)paren
+suffix:semicolon
+r_return
+id|rc
+suffix:semicolon
 r_break
 suffix:semicolon
 multiline_comment|/*&n;&t; * Get counter of input serial line interrupts (DCD,RI,DSR,CTS)&n;&t; * Return: write counters to the user passed counter struct&n;&t; * NB: both 1-&gt;0 and 0-&gt;1 transitions are counted except for RI where&n;&t; * only 0-&gt;1 is counted. The controller is quite capable of counting&n;&t; * both, but this done to preserve compatibility with the standard&n;&t; * serial driver.&n;&t; */
@@ -8613,7 +9425,7 @@ suffix:colon
 macro_line|#ifdef IP2DEBUG_TRACE
 id|ip2trace
 (paren
-id|PORTN
+id|CHANN
 comma
 id|ITRC_IOCTL
 comma
@@ -8625,9 +9437,26 @@ id|rc
 )paren
 suffix:semicolon
 macro_line|#endif
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
 id|cnow
 op_assign
 id|pCh-&gt;icount
+suffix:semicolon
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
 suffix:semicolon
 id|p_cuser
 op_assign
@@ -8638,40 +9467,125 @@ op_star
 )paren
 id|arg
 suffix:semicolon
-id|put_user
+id|PUT_USER
 c_func
 (paren
+id|rc
+comma
 id|cnow.cts
 comma
 op_amp
 id|p_cuser-&gt;cts
 )paren
 suffix:semicolon
-id|put_user
+id|PUT_USER
 c_func
 (paren
+id|rc
+comma
 id|cnow.dsr
 comma
 op_amp
 id|p_cuser-&gt;dsr
 )paren
 suffix:semicolon
-id|put_user
+id|PUT_USER
 c_func
 (paren
+id|rc
+comma
 id|cnow.rng
 comma
 op_amp
 id|p_cuser-&gt;rng
 )paren
 suffix:semicolon
-id|put_user
+id|PUT_USER
 c_func
 (paren
+id|rc
+comma
 id|cnow.dcd
 comma
 op_amp
 id|p_cuser-&gt;dcd
+)paren
+suffix:semicolon
+id|PUT_USER
+c_func
+(paren
+id|rc
+comma
+id|cnow.rx
+comma
+op_amp
+id|p_cuser-&gt;rx
+)paren
+suffix:semicolon
+id|PUT_USER
+c_func
+(paren
+id|rc
+comma
+id|cnow.tx
+comma
+op_amp
+id|p_cuser-&gt;tx
+)paren
+suffix:semicolon
+id|PUT_USER
+c_func
+(paren
+id|rc
+comma
+id|cnow.frame
+comma
+op_amp
+id|p_cuser-&gt;frame
+)paren
+suffix:semicolon
+id|PUT_USER
+c_func
+(paren
+id|rc
+comma
+id|cnow.overrun
+comma
+op_amp
+id|p_cuser-&gt;overrun
+)paren
+suffix:semicolon
+id|PUT_USER
+c_func
+(paren
+id|rc
+comma
+id|cnow.parity
+comma
+op_amp
+id|p_cuser-&gt;parity
+)paren
+suffix:semicolon
+id|PUT_USER
+c_func
+(paren
+id|rc
+comma
+id|cnow.brk
+comma
+op_amp
+id|p_cuser-&gt;brk
+)paren
+suffix:semicolon
+id|PUT_USER
+c_func
+(paren
+id|rc
+comma
+id|cnow.buf_overrun
+comma
+op_amp
+id|p_cuser-&gt;buf_overrun
 )paren
 suffix:semicolon
 r_break
@@ -8703,7 +9617,7 @@ suffix:colon
 macro_line|#ifdef IP2DEBUG_TRACE
 id|ip2trace
 (paren
-id|PORTN
+id|CHANN
 comma
 id|ITRC_IOCTL
 comma
@@ -8724,7 +9638,7 @@ suffix:semicolon
 macro_line|#ifdef IP2DEBUG_TRACE
 id|ip2trace
 (paren
-id|PORTN
+id|CHANN
 comma
 id|ITRC_IOCTL
 comma
@@ -8734,141 +9648,6 @@ l_int|0
 )paren
 suffix:semicolon
 macro_line|#endif
-r_return
-id|rc
-suffix:semicolon
-)brace
-multiline_comment|/******************************************************************************/
-multiline_comment|/* Function:   get_modem_info()                                               */
-multiline_comment|/* Parameters: Pointer to channel structure                                   */
-multiline_comment|/*             Pointer to destination for data                                */
-multiline_comment|/* Returns:    Nothing                                                        */
-multiline_comment|/*                                                                            */
-multiline_comment|/* Description:                                                               */
-multiline_comment|/* This returns the current settings of the dataset signal inputs to the user */
-multiline_comment|/* program.                                                                   */
-multiline_comment|/******************************************************************************/
-r_static
-r_int
-DECL|function|get_modem_info
-id|get_modem_info
-c_func
-(paren
-id|i2ChanStrPtr
-id|pCh
-comma
-r_int
-r_int
-op_star
-id|value
-)paren
-(brace
-r_int
-r_int
-id|status
-suffix:semicolon
-r_int
-r_int
-id|result
-suffix:semicolon
-r_int
-id|rc
-suffix:semicolon
-id|status
-op_assign
-id|pCh-&gt;dataSetIn
-suffix:semicolon
-singleline_comment|// snapshot settings
-id|result
-op_assign
-(paren
-(paren
-id|pCh-&gt;dataSetOut
-op_amp
-id|I2_RTS
-)paren
-ques
-c_cond
-id|TIOCM_RTS
-suffix:colon
-l_int|0
-)paren
-op_or
-(paren
-(paren
-id|pCh-&gt;dataSetOut
-op_amp
-id|I2_DTR
-)paren
-ques
-c_cond
-id|TIOCM_DTR
-suffix:colon
-l_int|0
-)paren
-op_or
-(paren
-(paren
-id|status
-op_amp
-id|I2_DCD
-)paren
-ques
-c_cond
-id|TIOCM_CAR
-suffix:colon
-l_int|0
-)paren
-op_or
-(paren
-(paren
-id|status
-op_amp
-id|I2_RI
-)paren
-ques
-c_cond
-id|TIOCM_RNG
-suffix:colon
-l_int|0
-)paren
-op_or
-(paren
-(paren
-id|status
-op_amp
-id|I2_DSR
-)paren
-ques
-c_cond
-id|TIOCM_DSR
-suffix:colon
-l_int|0
-)paren
-op_or
-(paren
-(paren
-id|status
-op_amp
-id|I2_CTS
-)paren
-ques
-c_cond
-id|TIOCM_CTS
-suffix:colon
-l_int|0
-)paren
-suffix:semicolon
-id|rc
-op_assign
-id|put_user
-c_func
-(paren
-id|result
-comma
-id|value
-)paren
-suffix:semicolon
 r_return
 id|rc
 suffix:semicolon
@@ -8909,11 +9688,11 @@ r_int
 r_int
 id|arg
 suffix:semicolon
-id|rc
-op_assign
-id|get_user
+id|GET_USER
 c_func
 (paren
+id|rc
+comma
 id|arg
 comma
 id|value
@@ -9253,8 +10032,6 @@ id|tmp
 suffix:semicolon
 r_int
 id|rc
-op_assign
-l_int|0
 suffix:semicolon
 r_if
 c_cond
@@ -9357,12 +10134,11 @@ id|tmp.custom_divisor
 op_assign
 id|pCh-&gt;BaudDivisor
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|copy_to_user
+id|COPY_TO_USER
 c_func
 (paren
+id|rc
+comma
 id|retinfo
 comma
 op_amp
@@ -9374,14 +10150,7 @@ op_star
 id|retinfo
 )paren
 )paren
-)paren
-(brace
-id|rc
-op_assign
-op_minus
-id|EFAULT
 suffix:semicolon
-)brace
 r_return
 id|rc
 suffix:semicolon
@@ -9438,11 +10207,11 @@ op_minus
 id|EFAULT
 suffix:semicolon
 )brace
-id|rc
-op_assign
-id|copy_from_user
+id|COPY_FROM_USER
 c_func
 (paren
+id|rc
+comma
 op_amp
 id|ns
 comma
@@ -11181,6 +11950,7 @@ op_amp
 id|CLOCAL
 )paren
 (brace
+singleline_comment|// Status reporting fails for DCD if this is off
 id|i2QueueCommands
 c_func
 (paren
@@ -11291,6 +12061,39 @@ multiline_comment|/*                                                            
 multiline_comment|/*                                                                            */
 multiline_comment|/******************************************************************************/
 r_static
+macro_line|#if LINUX_VERSION_CODE &lt; KERNEL_VERSION(2,1,0)
+r_int
+id|ip2_ipl_read
+c_func
+(paren
+r_struct
+id|inode
+op_star
+id|pInode
+comma
+r_char
+op_star
+id|pData
+comma
+r_int
+id|count
+comma
+id|loff_t
+op_star
+id|off
+)paren
+DECL|variable|minor
+r_int
+r_int
+id|minor
+op_assign
+id|MINOR
+c_func
+(paren
+id|pInode-&gt;i_rdev
+)paren
+suffix:semicolon
+macro_line|#else
 id|ssize_t
 DECL|function|ip2_ipl_read
 id|ip2_ipl_read
@@ -11323,6 +12126,7 @@ c_func
 id|pFile-&gt;f_dentry-&gt;d_inode-&gt;i_rdev
 )paren
 suffix:semicolon
+macro_line|#endif
 r_int
 id|rc
 op_assign
@@ -11439,29 +12243,19 @@ id|count
 macro_line|#ifdef DEBUG_FIFO
 r_int
 id|rc
-op_assign
-l_int|0
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|copy_to_user
+id|COPY_TO_USER
 c_func
 (paren
+id|rc
+comma
 id|pData
 comma
 id|DBGBuf
 comma
 id|count
 )paren
-)paren
-(brace
-id|rc
-op_assign
-op_minus
-id|EFAULT
 suffix:semicolon
-)brace
 id|printk
 c_func
 (paren
@@ -11532,35 +12326,43 @@ op_minus
 id|EIO
 suffix:semicolon
 )brace
-id|put_user
+id|PUT_USER
 c_func
 (paren
+id|rc
+comma
 id|tracewrap
 comma
 id|pIndex
 )paren
 suffix:semicolon
-id|put_user
+id|PUT_USER
 c_func
 (paren
+id|rc
+comma
 id|TRACEMAX
 comma
 op_increment
 id|pIndex
 )paren
 suffix:semicolon
-id|put_user
+id|PUT_USER
 c_func
 (paren
+id|rc
+comma
 id|tracestrip
 comma
 op_increment
 id|pIndex
 )paren
 suffix:semicolon
-id|put_user
+id|PUT_USER
 c_func
 (paren
+id|rc
+comma
 id|tracestuff
 comma
 op_increment
@@ -11631,11 +12433,11 @@ OG
 id|chunk
 )paren
 (brace
-id|rc
-op_assign
-id|copy_to_user
+id|COPY_TO_USER
 c_func
 (paren
+id|rc
+comma
 id|pData
 comma
 op_amp
@@ -11654,11 +12456,6 @@ l_int|0
 )braket
 )paren
 )paren
-ques
-op_minus
-id|EFAULT
-suffix:colon
-l_int|0
 suffix:semicolon
 id|pData
 op_add_assign
@@ -11690,11 +12487,11 @@ op_assign
 id|dumpcount
 suffix:semicolon
 )brace
-id|rc
-op_assign
-id|copy_to_user
+id|COPY_TO_USER
 c_func
 (paren
+id|rc
+comma
 id|pData
 comma
 op_amp
@@ -11713,11 +12510,7 @@ l_int|0
 )braket
 )paren
 )paren
-ques
-op_minus
-id|EFAULT
-suffix:colon
-l_int|0
+suffix:semicolon
 id|tracestrip
 op_add_assign
 id|chunk
@@ -11726,18 +12519,22 @@ id|tracewrap
 op_assign
 l_int|0
 suffix:semicolon
-id|put_user
+id|PUT_USER
 c_func
 (paren
+id|rc
+comma
 id|tracestrip
 comma
 op_increment
 id|pIndex
 )paren
 suffix:semicolon
-id|put_user
+id|PUT_USER
 c_func
 (paren
+id|rc
+comma
 id|tracestuff
 comma
 op_increment
@@ -11929,27 +12726,33 @@ r_case
 l_int|64
 suffix:colon
 multiline_comment|/* Driver - ip2stat */
-id|put_user
+id|PUT_USER
 c_func
 (paren
+id|rc
+comma
 id|ref_count
 comma
 id|pIndex
 op_increment
 )paren
 suffix:semicolon
-id|put_user
+id|PUT_USER
 c_func
 (paren
+id|rc
+comma
 id|irq_counter
 comma
 id|pIndex
 op_increment
 )paren
 suffix:semicolon
-id|put_user
+id|PUT_USER
 c_func
 (paren
+id|rc
+comma
 id|bh_counter
 comma
 id|pIndex
@@ -11968,12 +12771,11 @@ c_cond
 id|pB
 )paren
 (brace
-r_if
-c_cond
-(paren
-id|copy_to_user
+id|COPY_TO_USER
 c_func
 (paren
+id|rc
+comma
 (paren
 r_char
 op_star
@@ -11991,17 +12793,12 @@ r_sizeof
 id|i2eBordStr
 )paren
 )paren
-)paren
-(brace
-id|rc
-op_assign
-op_minus
-id|EFAULT
 suffix:semicolon
-)brace
-id|put_user
+id|PUT_USER
 c_func
 (paren
+id|rc
+comma
 id|INB
 c_func
 (paren
@@ -12056,12 +12853,11 @@ c_cond
 id|pCh
 )paren
 (brace
-r_if
-c_cond
-(paren
-id|copy_to_user
+id|COPY_TO_USER
 c_func
 (paren
+id|rc
+comma
 (paren
 r_char
 op_star
@@ -12079,14 +12875,7 @@ r_sizeof
 id|i2ChanStr
 )paren
 )paren
-)paren
-(brace
-id|rc
-op_assign
-op_minus
-id|EFAULT
 suffix:semicolon
-)brace
 )brace
 r_else
 (brace
@@ -12130,235 +12919,287 @@ op_eq
 l_int|1
 )paren
 (brace
-id|put_user
+id|PUT_USER
 c_func
 (paren
+id|rc
+comma
 id|iiSendPendingMail
 comma
 id|pIndex
 op_increment
 )paren
 suffix:semicolon
-id|put_user
+id|PUT_USER
 c_func
 (paren
+id|rc
+comma
 id|i2InitChannels
 comma
 id|pIndex
 op_increment
 )paren
 suffix:semicolon
-id|put_user
+id|PUT_USER
 c_func
 (paren
+id|rc
+comma
 id|i2QueueNeeds
 comma
 id|pIndex
 op_increment
 )paren
 suffix:semicolon
-id|put_user
+id|PUT_USER
 c_func
 (paren
+id|rc
+comma
 id|i2QueueCommands
 comma
 id|pIndex
 op_increment
 )paren
 suffix:semicolon
-id|put_user
+id|PUT_USER
 c_func
 (paren
+id|rc
+comma
 id|i2GetStatus
 comma
 id|pIndex
 op_increment
 )paren
 suffix:semicolon
-id|put_user
+id|PUT_USER
 c_func
 (paren
+id|rc
+comma
 id|i2Input
 comma
 id|pIndex
 op_increment
 )paren
 suffix:semicolon
-id|put_user
+id|PUT_USER
 c_func
 (paren
+id|rc
+comma
 id|i2InputFlush
 comma
 id|pIndex
 op_increment
 )paren
 suffix:semicolon
-id|put_user
+id|PUT_USER
 c_func
 (paren
+id|rc
+comma
 id|i2Output
 comma
 id|pIndex
 op_increment
 )paren
 suffix:semicolon
-id|put_user
+id|PUT_USER
 c_func
 (paren
+id|rc
+comma
 id|i2FlushOutput
 comma
 id|pIndex
 op_increment
 )paren
 suffix:semicolon
-id|put_user
+id|PUT_USER
 c_func
 (paren
+id|rc
+comma
 id|i2DrainWakeup
 comma
 id|pIndex
 op_increment
 )paren
 suffix:semicolon
-id|put_user
+id|PUT_USER
 c_func
 (paren
+id|rc
+comma
 id|i2DrainOutput
 comma
 id|pIndex
 op_increment
 )paren
 suffix:semicolon
-id|put_user
+id|PUT_USER
 c_func
 (paren
+id|rc
+comma
 id|i2OutputFree
 comma
 id|pIndex
 op_increment
 )paren
 suffix:semicolon
-id|put_user
+id|PUT_USER
 c_func
 (paren
+id|rc
+comma
 id|i2StripFifo
 comma
 id|pIndex
 op_increment
 )paren
 suffix:semicolon
-id|put_user
+id|PUT_USER
 c_func
 (paren
+id|rc
+comma
 id|i2StuffFifoBypass
 comma
 id|pIndex
 op_increment
 )paren
 suffix:semicolon
-id|put_user
+id|PUT_USER
 c_func
 (paren
+id|rc
+comma
 id|i2StuffFifoFlow
 comma
 id|pIndex
 op_increment
 )paren
 suffix:semicolon
-id|put_user
+id|PUT_USER
 c_func
 (paren
+id|rc
+comma
 id|i2StuffFifoInline
 comma
 id|pIndex
 op_increment
 )paren
 suffix:semicolon
-id|put_user
+id|PUT_USER
 c_func
 (paren
+id|rc
+comma
 id|i2ServiceBoard
 comma
 id|pIndex
 op_increment
 )paren
 suffix:semicolon
-id|put_user
+id|PUT_USER
 c_func
 (paren
+id|rc
+comma
 id|serviceOutgoingFifo
 comma
 id|pIndex
 op_increment
 )paren
 suffix:semicolon
-singleline_comment|// put_user(ip2_init, pIndex++ );
-id|put_user
+singleline_comment|// PUT_USER(rc, ip2_init, pIndex++ );
+id|PUT_USER
 c_func
 (paren
+id|rc
+comma
 id|ip2_init_board
 comma
 id|pIndex
 op_increment
 )paren
 suffix:semicolon
-id|put_user
+id|PUT_USER
 c_func
 (paren
+id|rc
+comma
 id|find_eisa_board
 comma
 id|pIndex
 op_increment
 )paren
 suffix:semicolon
-id|put_user
+id|PUT_USER
 c_func
 (paren
+id|rc
+comma
 id|set_irq
 comma
 id|pIndex
 op_increment
 )paren
 suffix:semicolon
-id|put_user
+id|PUT_USER
 c_func
 (paren
+id|rc
+comma
 id|ip2_interrupt
 comma
 id|pIndex
 op_increment
 )paren
 suffix:semicolon
-id|put_user
+id|PUT_USER
 c_func
 (paren
+id|rc
+comma
 id|ip2_poll
 comma
 id|pIndex
 op_increment
 )paren
 suffix:semicolon
-id|put_user
+id|PUT_USER
 c_func
 (paren
+id|rc
+comma
 id|service_all_boards
 comma
 id|pIndex
 op_increment
 )paren
 suffix:semicolon
-id|put_user
+id|PUT_USER
 c_func
 (paren
+id|rc
+comma
 id|do_input
 comma
 id|pIndex
 op_increment
 )paren
 suffix:semicolon
-id|put_user
+id|PUT_USER
 c_func
 (paren
+id|rc
+comma
 id|do_status
 comma
 id|pIndex
@@ -12366,9 +13207,11 @@ op_increment
 )paren
 suffix:semicolon
 macro_line|#ifndef IP2DEBUG_OPEN
-id|put_user
+id|PUT_USER
 c_func
 (paren
+id|rc
+comma
 l_int|0
 comma
 id|pIndex
@@ -12376,9 +13219,11 @@ op_increment
 )paren
 suffix:semicolon
 macro_line|#else
-id|put_user
+id|PUT_USER
 c_func
 (paren
+id|rc
+comma
 id|open_sanity_check
 comma
 id|pIndex
@@ -12386,181 +13231,210 @@ op_increment
 )paren
 suffix:semicolon
 macro_line|#endif
-id|put_user
+id|PUT_USER
 c_func
 (paren
+id|rc
+comma
 id|ip2_open
 comma
 id|pIndex
 op_increment
 )paren
 suffix:semicolon
-id|put_user
+id|PUT_USER
 c_func
 (paren
+id|rc
+comma
 id|ip2_close
 comma
 id|pIndex
 op_increment
 )paren
 suffix:semicolon
-id|put_user
+id|PUT_USER
 c_func
 (paren
+id|rc
+comma
 id|ip2_hangup
 comma
 id|pIndex
 op_increment
 )paren
 suffix:semicolon
-id|put_user
+id|PUT_USER
 c_func
 (paren
+id|rc
+comma
 id|ip2_write
 comma
 id|pIndex
 op_increment
 )paren
 suffix:semicolon
-id|put_user
+id|PUT_USER
 c_func
 (paren
+id|rc
+comma
 id|ip2_putchar
 comma
 id|pIndex
 op_increment
 )paren
 suffix:semicolon
-id|put_user
+id|PUT_USER
 c_func
 (paren
+id|rc
+comma
 id|ip2_flush_chars
 comma
 id|pIndex
 op_increment
 )paren
 suffix:semicolon
-id|put_user
+id|PUT_USER
 c_func
 (paren
+id|rc
+comma
 id|ip2_write_room
 comma
 id|pIndex
 op_increment
 )paren
 suffix:semicolon
-id|put_user
+id|PUT_USER
 c_func
 (paren
+id|rc
+comma
 id|ip2_chars_in_buf
 comma
 id|pIndex
 op_increment
 )paren
 suffix:semicolon
-id|put_user
+id|PUT_USER
 c_func
 (paren
+id|rc
+comma
 id|ip2_flush_buffer
 comma
 id|pIndex
 op_increment
 )paren
 suffix:semicolon
-singleline_comment|//put_user(ip2_wait_until_sent, pIndex++ );
-id|put_user
+singleline_comment|//PUT_USER(rc, ip2_wait_until_sent, pIndex++ );
+id|PUT_USER
 c_func
 (paren
+id|rc
+comma
 l_int|0
 comma
 id|pIndex
 op_increment
 )paren
 suffix:semicolon
-id|put_user
+id|PUT_USER
 c_func
 (paren
+id|rc
+comma
 id|ip2_throttle
 comma
 id|pIndex
 op_increment
 )paren
 suffix:semicolon
-id|put_user
+id|PUT_USER
 c_func
 (paren
+id|rc
+comma
 id|ip2_unthrottle
 comma
 id|pIndex
 op_increment
 )paren
 suffix:semicolon
-id|put_user
+id|PUT_USER
 c_func
 (paren
+id|rc
+comma
 id|ip2_ioctl
 comma
 id|pIndex
 op_increment
 )paren
 suffix:semicolon
-id|put_user
+id|PUT_USER
 c_func
 (paren
-id|get_modem_info
+id|rc
 comma
-id|pIndex
-op_increment
-)paren
-suffix:semicolon
-id|put_user
-c_func
-(paren
 id|set_modem_info
 comma
 id|pIndex
 op_increment
 )paren
 suffix:semicolon
-id|put_user
+id|PUT_USER
 c_func
 (paren
+id|rc
+comma
 id|get_serial_info
 comma
 id|pIndex
 op_increment
 )paren
 suffix:semicolon
-id|put_user
+id|PUT_USER
 c_func
 (paren
+id|rc
+comma
 id|set_serial_info
 comma
 id|pIndex
 op_increment
 )paren
 suffix:semicolon
-id|put_user
+id|PUT_USER
 c_func
 (paren
+id|rc
+comma
 id|ip2_set_termios
 comma
 id|pIndex
 op_increment
 )paren
 suffix:semicolon
-id|put_user
+id|PUT_USER
 c_func
 (paren
+id|rc
+comma
 id|ip2_set_line_discipline
 comma
 id|pIndex
 op_increment
 )paren
 suffix:semicolon
-id|put_user
+id|PUT_USER
 c_func
 (paren
+id|rc
+comma
 id|set_params
 comma
 id|pIndex

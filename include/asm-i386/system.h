@@ -703,7 +703,7 @@ DECL|macro|local_irq_disable
 mdefine_line|#define local_irq_disable()&t;__asm__ __volatile__(&quot;cli&quot;: : :&quot;memory&quot;)
 DECL|macro|local_irq_enable
 mdefine_line|#define local_irq_enable()&t;__asm__ __volatile__(&quot;sti&quot;: : :&quot;memory&quot;)
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 r_extern
 r_void
 id|__global_cli

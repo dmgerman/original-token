@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sparc64_ksyms.c,v 1.81 2000/04/13 04:45:58 davem Exp $&n; * arch/sparc64/kernel/sparc64_ksyms.c: Sparc64 specific ksyms support.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; * Copyright (C) 1999 Jakub Jelinek (jj@ultra.linux.cz)&n; */
+multiline_comment|/* $Id: sparc64_ksyms.c,v 1.83 2000/04/19 08:38:25 davem Exp $&n; * arch/sparc64/kernel/sparc64_ksyms.c: Sparc64 specific ksyms support.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; * Copyright (C) 1999 Jakub Jelinek (jj@ultra.linux.cz)&n; */
 multiline_comment|/* Tell string.h we don&squot;t want memcpy etc. as cpp defines */
 DECL|macro|EXPORT_SYMTAB_STROPS
 mdefine_line|#define EXPORT_SYMTAB_STROPS
@@ -407,6 +407,46 @@ id|mode
 )paren
 suffix:semicolon
 r_extern
+r_int
+id|register_ioctl32_conversion
+c_func
+(paren
+r_int
+r_int
+id|cmd
+comma
+r_int
+(paren
+op_star
+id|handler
+)paren
+(paren
+r_int
+r_int
+comma
+r_int
+r_int
+comma
+r_int
+r_int
+comma
+r_struct
+id|file
+op_star
+)paren
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|unregister_ioctl32_conversion
+c_func
+(paren
+r_int
+r_int
+id|cmd
+)paren
+suffix:semicolon
+r_extern
 r_void
 id|bcopy
 (paren
@@ -594,20 +634,6 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|global_irq_holder
-)paren
-suffix:semicolon
-DECL|variable|global_irq_lock
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|global_irq_lock
-)paren
-suffix:semicolon
-DECL|variable|global_irq_count
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|global_irq_count
 )paren
 suffix:semicolon
 DECL|variable|synchronize_irq
@@ -1065,6 +1091,21 @@ id|pci_dma_supported
 )paren
 suffix:semicolon
 macro_line|#endif
+multiline_comment|/* IOCTL32 emulation hooks. */
+DECL|variable|register_ioctl32_conversion
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|register_ioctl32_conversion
+)paren
+suffix:semicolon
+DECL|variable|unregister_ioctl32_conversion
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|unregister_ioctl32_conversion
+)paren
+suffix:semicolon
 multiline_comment|/* Solaris/SunOS binary compatibility */
 DECL|variable|_sigpause_common
 id|EXPORT_SYMBOL

@@ -308,7 +308,7 @@ op_and_assign
 op_complement
 l_int|0x00ff0001UL
 suffix:semicolon
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 multiline_comment|/* Secondaries halt here. */
 r_if
 c_cond
@@ -388,7 +388,7 @@ id|pflags
 op_assign
 id|flags
 suffix:semicolon
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 multiline_comment|/* Wait for the secondaries to halt. */
 id|clear_bit
 c_func
@@ -513,7 +513,7 @@ id|args.restart_cmd
 op_assign
 id|restart_cmd
 suffix:semicolon
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 id|smp_call_function
 c_func
 (paren
@@ -1058,7 +1058,7 @@ op_assign
 op_star
 id|stack
 suffix:semicolon
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 id|childstack-&gt;r26
 op_assign
 (paren

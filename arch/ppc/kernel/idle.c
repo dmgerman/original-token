@@ -152,7 +152,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 r_if
 c_cond
 (paren
@@ -486,7 +486,7 @@ suffix:colon
 l_string|&quot;cc&quot;
 )paren
 suffix:semicolon
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 multiline_comment|/* if another cpu beat us above this can happen -- Cort */
 r_if
 c_cond
@@ -498,7 +498,7 @@ l_int|0
 r_return
 l_int|0
 suffix:semicolon
-macro_line|#endif /* __SMP__ */&t;&t;
+macro_line|#endif /* CONFIG_SMP */&t;&t;
 multiline_comment|/* we can update zerocount after the fact since it is not&n;&t;&t; * used for anything but control of a loop which doesn&squot;t&n;&t;&t; * matter since it won&squot;t affect anything if it zeros one&n;&t;&t; * less page -- Cort&n;&t;&t; */
 id|atomic_inc
 c_func
@@ -776,7 +776,7 @@ l_string|&quot;101:lwarx  %0,0,%2&bslash;n&quot;
 multiline_comment|/* reserve zero_cache */
 l_string|&quot;    stw    %0,0(%3)&bslash;n&quot;
 multiline_comment|/* update *pageptr */
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 l_string|&quot;    sync&bslash;n&quot;
 multiline_comment|/* let store settle */
 macro_line|#endif&t;&t;&t;

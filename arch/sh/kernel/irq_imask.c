@@ -109,7 +109,7 @@ id|hw_interrupt_type
 id|imask_irq_type
 op_assign
 (brace
-l_string|&quot;Interrupt using IMASK of SR register&quot;
+l_string|&quot;SR.IMASK&quot;
 comma
 id|startup_imask_irq
 comma
@@ -142,13 +142,13 @@ suffix:semicolon
 id|asm
 r_volatile
 (paren
-l_string|&quot;ldc&t;%2, $r5_bank&bslash;n&bslash;t&quot;
+l_string|&quot;ldc&t;%2, $r6_bank&bslash;n&bslash;t&quot;
 l_string|&quot;stc&t;$sr, %0&bslash;n&bslash;t&quot;
 l_string|&quot;and&t;#0xf0, %0&bslash;n&bslash;t&quot;
-l_string|&quot;shlr8&t;%0&bslash;n&bslash;t&quot;
-l_string|&quot;cmp/eq&t;#0x0f, %0&bslash;n&bslash;t&quot;
-l_string|&quot;bt&t;1f&t;! CLI-ed&bslash;n&bslash;t&quot;
-l_string|&quot;stc&t;$sr, %0&bslash;n&bslash;t&quot;
+l_string|&quot;shlr2&t;%0&bslash;n&bslash;t&quot;
+l_string|&quot;cmp/eq&t;#0x3c, %0&bslash;n&bslash;t&quot;
+l_string|&quot;bt/s&t;1f&t;! CLI-ed&bslash;n&bslash;t&quot;
+l_string|&quot; stc&t;$sr, %0&bslash;n&bslash;t&quot;
 l_string|&quot;and&t;%1, %0&bslash;n&bslash;t&quot;
 l_string|&quot;or&t;%2, %0&bslash;n&bslash;t&quot;
 l_string|&quot;ldc&t;%0, $sr&bslash;n&quot;

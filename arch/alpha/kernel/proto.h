@@ -1,3 +1,4 @@
+macro_line|#include &lt;linux/config.h&gt;
 multiline_comment|/* Prototypes of functions used across modules here in this directory.  */
 DECL|macro|vucp
 mdefine_line|#define vucp&t;volatile unsigned char  *
@@ -719,7 +720,7 @@ r_void
 )paren
 suffix:semicolon
 multiline_comment|/* irq.c */
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 DECL|macro|mcheck_expected
 mdefine_line|#define mcheck_expected(cpu)&t;(cpu_data[cpu].mcheck_expected)
 DECL|macro|mcheck_taken

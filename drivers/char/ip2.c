@@ -9,6 +9,18 @@ macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/wait.h&gt;
+macro_line|#ifndef __init
+DECL|macro|__init
+mdefine_line|#define __init
+macro_line|#endif
+macro_line|#ifndef __initfunc
+DECL|macro|__initfunc
+mdefine_line|#define __initfunc(a) a
+macro_line|#endif
+macro_line|#ifndef __initdata
+DECL|macro|__initdata
+mdefine_line|#define __initdata
+macro_line|#endif
 macro_line|#include &quot;./ip2/ip2types.h&quot;&t;&t;
 macro_line|#include &quot;./ip2/fip_firm.h&quot;&t;&t;
 singleline_comment|// the meat
@@ -31,6 +43,14 @@ r_int
 suffix:semicolon
 singleline_comment|// ref into ip2main.c
 macro_line|#ifdef MODULE
+macro_line|#include &lt;linux/autoconf.h&gt;
+macro_line|#if defined(CONFIG_MODVERSIONS) &amp;&amp; !defined(MODVERSIONS)
+DECL|macro|MODVERSIONS
+macro_line|#&t;define MODVERSIONS
+macro_line|#endif
+macro_line|#ifdef MODVERSIONS
+macro_line|#&t;include &lt;linux/modversions.h&gt;
+macro_line|#endif
 DECL|variable|io
 r_static
 r_int
@@ -57,6 +77,7 @@ l_int|0
 comma
 )brace
 suffix:semicolon
+macro_line|#&t;if LINUX_VERSION_CODE &gt;= KERNEL_VERSION(2,1,0)
 id|MODULE_AUTHOR
 c_func
 (paren
@@ -113,6 +134,7 @@ comma
 l_string|&quot;I/O ports for IntelliPort Cards&quot;
 )paren
 suffix:semicolon
+macro_line|#&t;endif&t;/* LINUX_VERSION */
 singleline_comment|//======================================================================
 r_int
 DECL|function|init_module

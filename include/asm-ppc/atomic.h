@@ -2,7 +2,8 @@ multiline_comment|/*&n; * PowerPC atomic operations&n; */
 macro_line|#ifndef _ASM_PPC_ATOMIC_H_ 
 DECL|macro|_ASM_PPC_ATOMIC_H_
 mdefine_line|#define _ASM_PPC_ATOMIC_H_
-macro_line|#ifdef __SMP__
+macro_line|#include &lt;linux/config.h&gt;
+macro_line|#ifdef CONFIG_SMP
 DECL|member|counter
 DECL|typedef|atomic_t
 r_typedef

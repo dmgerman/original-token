@@ -11437,7 +11437,7 @@ c_func
 (paren
 id|card-&gt;irq
 comma
-id|devs
+id|card
 )paren
 suffix:semicolon
 id|release_region
@@ -11466,7 +11466,7 @@ op_increment
 r_if
 c_cond
 (paren
-id|devs-&gt;ac97_codec
+id|card-&gt;ac97_codec
 (braket
 id|i
 )braket

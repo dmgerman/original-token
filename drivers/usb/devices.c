@@ -4,6 +4,7 @@ macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/slab.h&gt;
 macro_line|#include &lt;linux/poll.h&gt;
 macro_line|#include &lt;linux/usb.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/usbdevice_fs.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 DECL|macro|MAX_TOPO_LEVEL

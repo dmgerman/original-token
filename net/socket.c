@@ -5376,9 +5376,7 @@ op_logical_and
 id|sock-&gt;ops
 )paren
 r_return
-id|sock-&gt;ops
-op_member_access_from_pointer
-id|fcntl
+id|sock_no_fcntl
 c_func
 (paren
 id|sock
@@ -6338,7 +6336,11 @@ id|counter
 op_add_assign
 id|sockets_in_use
 (braket
+id|cpu_logical_map
+c_func
+(paren
 id|cpu
+)paren
 )braket
 dot
 id|counter

@@ -114,7 +114,7 @@ c_func
 (paren
 l_string|&quot;stc&t;$sr, %0&bslash;n&bslash;t&quot;
 l_string|&quot;and&t;%1, %0&bslash;n&bslash;t&quot;
-l_string|&quot;stc&t;$r5_bank, %1&bslash;n&bslash;t&quot;
+l_string|&quot;stc&t;$r6_bank, %1&bslash;n&bslash;t&quot;
 l_string|&quot;or&t;%1, %0&bslash;n&bslash;t&quot;
 l_string|&quot;ldc&t;%0, $sr&quot;
 suffix:colon
@@ -131,7 +131,7 @@ suffix:colon
 l_string|&quot;1&quot;
 (paren
 op_complement
-l_int|0xf0
+l_int|0x000000f0
 )paren
 suffix:colon
 l_string|&quot;memory&quot;
@@ -176,7 +176,7 @@ mdefine_line|#define __save_flags(x) &t;&t;&t;&bslash;&n;x = (__extension__ ({&t
 DECL|macro|__save_and_cli
 mdefine_line|#define __save_and_cli(x)    &t;&t;&t;&t;&bslash;&n;x = (__extension__ ({&t;unsigned long __dummy,__sr;&t;&bslash;&n;&t;__asm__ __volatile__(                   &t;&bslash;&n;&t;&t;&quot;stc&t;$sr, %1&bslash;n&bslash;t&quot; &t;&t;&t;&bslash;&n;&t;&t;&quot;mov&t;%1, %0&bslash;n&bslash;t&quot; &t;&t;&t;&bslash;&n;&t;&t;&quot;or&t;#0xf0, %0&bslash;n&bslash;t&quot; &t;&t;&t;&bslash;&n;&t;&t;&quot;ldc&t;%0, $sr&quot;     &t;&t;&t;&bslash;&n;&t;&t;: &quot;=&amp;z&quot; (__dummy), &quot;=&amp;r&quot; (__sr)&t;&t;&bslash;&n;&t;&t;: /* no inputs */ &t;&t;&t;&bslash;&n;&t;&t;: &quot;memory&quot;); (__sr &amp; 0x000000f0); }))
 DECL|macro|__restore_flags
-mdefine_line|#define __restore_flags(x) do { &t;&t;&t;&bslash;&n;&t;unsigned long __dummy0, __dummy1;&t;&t;&bslash;&n;&t;if (x != 0xf0)&t;/* not CLI-ed? */&t;&t;&bslash;&n;&t;&t;__asm__ __volatile__(&t;&t;       &t;&bslash;&n;&t;&t;&quot;stc&t;$sr, %0&bslash;n&bslash;t&quot;&t;&t;&t;&bslash;&n;&t;&t;&quot;and&t;%1, %0&bslash;n&bslash;t&quot;&t;&t;&t;&bslash;&n;&t;&t;&quot;stc&t;$r5_bank, %1&bslash;n&bslash;t&quot;&t;&t;&bslash;&n;&t;&t;&quot;or&t;%1, %0&bslash;n&bslash;t&quot;&t;&t;&t;&bslash;&n;&t;&t;&quot;ldc&t;%0, $sr&quot;&t;&t;&t;&bslash;&n;&t;&t;: &quot;=&amp;r&quot; (__dummy0), &quot;=r&quot; (__dummy1)&t;&bslash;&n;&t;&t;: &quot;1&quot; (0xffffff0f)&t; &t;&t;&bslash;&n;&t;&t;: &quot;memory&quot;); &t;&t;&t;&t;&bslash;&n;} while (0)
+mdefine_line|#define __restore_flags(x) do { &t;&t;&t;&bslash;&n;&t;if (x != 0x000000f0)&t;/* not CLI-ed? */&t;&t;&bslash;&n;&t;&t;__sti();&t;&t;&t;&t;&bslash;&n;} while (0)
 multiline_comment|/*&n; * Jump to P2 area.&n; * When handling TLB or caches, we need to do it from P2 area.&n; */
 DECL|macro|jump_to_P2
 mdefine_line|#define jump_to_P2()&t;&t;&t;&bslash;&n;do {&t;&t;&t;&t;&t;&bslash;&n;&t;unsigned long __dummy;&t;&t;&bslash;&n;&t;__asm__ __volatile__(&t;&t;&bslash;&n;&t;&t;&quot;mov.l&t;1f, %0&bslash;n&bslash;t&quot;&t;&bslash;&n;&t;&t;&quot;or&t;%1, %0&bslash;n&bslash;t&quot;&t;&bslash;&n;&t;&t;&quot;jmp&t;@%0&bslash;n&bslash;t&quot;&t;&bslash;&n;&t;&t;&quot; nop&bslash;n&bslash;t&quot; &t;&t;&bslash;&n;&t;&t;&quot;.balign 4&bslash;n&quot;&t;&t;&bslash;&n;&t;&t;&quot;1:&t;.long 2f&bslash;n&quot;&t;&bslash;&n;&t;&t;&quot;2:&quot;&t;&t;&t;&bslash;&n;&t;&t;: &quot;=&amp;r&quot; (__dummy)&t;&bslash;&n;&t;&t;: &quot;r&quot; (0x20000000));&t;&bslash;&n;} while (0)

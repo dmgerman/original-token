@@ -531,7 +531,7 @@ id|skb
 )paren
 suffix:semicolon
 DECL|macro|DN_ASCBUF_LEN
-mdefine_line|#define DN_ASCBUF_LEN 7
+mdefine_line|#define DN_ASCBUF_LEN 9
 r_extern
 r_char
 op_star

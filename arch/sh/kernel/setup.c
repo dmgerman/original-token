@@ -859,7 +859,7 @@ id|pages
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; * Reserve the kernel text and&n;&t; * Reserve the bootmem bitmap.We do this in two steps (first step&n;&t; * was init_bootmem()), because this catches the (definitely buggy)&n;&t; * case of us accidentally initializing the bootmem allocator with&n;&t; * an invalid RAM area.&n;&t; */
+multiline_comment|/*&n;&t; * Reserve the kernel text and&n;&t; * Reserve the bootmem bitmap. We do this in two steps (first step&n;&t; * was init_bootmem()), because this catches the (definitely buggy)&n;&t; * case of us accidentally initializing the bootmem allocator with&n;&t; * an invalid RAM area.&n;&t; */
 id|reserve_bootmem
 c_func
 (paren
@@ -1075,6 +1075,7 @@ suffix:semicolon
 macro_line|#endif
 macro_line|#endif
 macro_line|#if defined(__SH4__)
+multiline_comment|/* We already grab/initialized FPU in head.S.  Make it consisitent. */
 id|init_task.used_math
 op_assign
 l_int|1
@@ -1082,16 +1083,6 @@ suffix:semicolon
 id|init_task.flags
 op_or_assign
 id|PF_USEDFPU
-suffix:semicolon
-id|grab_fpu
-c_func
-(paren
-)paren
-suffix:semicolon
-id|fpu_init
-c_func
-(paren
-)paren
 suffix:semicolon
 macro_line|#endif
 id|paging_init

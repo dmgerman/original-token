@@ -2675,66 +2675,64 @@ id|proto
 id|raw_prot
 op_assign
 (brace
-id|raw_close
-comma
-multiline_comment|/* close */
-id|udp_connect
-comma
-multiline_comment|/* connect */
-id|udp_disconnect
-comma
-multiline_comment|/* disconnect */
-l_int|NULL
-comma
-multiline_comment|/* accept */
-macro_line|#ifdef CONFIG_IP_MROUTE
-id|ipmr_ioctl
-comma
-multiline_comment|/* ioctl */
-macro_line|#else
-l_int|NULL
-comma
-multiline_comment|/* ioctl */
-macro_line|#endif
-id|raw_init
-comma
-multiline_comment|/* init */
-l_int|NULL
-comma
-multiline_comment|/* destroy */
-l_int|NULL
-comma
-multiline_comment|/* shutdown */
-id|raw_setsockopt
-comma
-multiline_comment|/* setsockopt */
-id|raw_getsockopt
-comma
-multiline_comment|/* getsockopt */
-id|raw_sendmsg
-comma
-multiline_comment|/* sendmsg */
-id|raw_recvmsg
-comma
-multiline_comment|/* recvmsg */
-id|raw_bind
-comma
-multiline_comment|/* bind */
-id|raw_rcv_skb
-comma
-multiline_comment|/* backlog_rcv */
-id|raw_v4_hash
-comma
-multiline_comment|/* hash */
-id|raw_v4_unhash
-comma
-multiline_comment|/* unhash */
-l_int|NULL
-comma
-multiline_comment|/* get_port */
+id|name
+suffix:colon
 l_string|&quot;RAW&quot;
 comma
-multiline_comment|/* name */
+id|close
+suffix:colon
+id|raw_close
+comma
+id|connect
+suffix:colon
+id|udp_connect
+comma
+id|disconnect
+suffix:colon
+id|udp_disconnect
+comma
+macro_line|#ifdef CONFIG_IP_MROUTE
+id|ioctl
+suffix:colon
+id|ipmr_ioctl
+comma
+macro_line|#endif
+id|init
+suffix:colon
+id|raw_init
+comma
+id|setsockopt
+suffix:colon
+id|raw_setsockopt
+comma
+id|getsockopt
+suffix:colon
+id|raw_getsockopt
+comma
+id|sendmsg
+suffix:colon
+id|raw_sendmsg
+comma
+id|recvmsg
+suffix:colon
+id|raw_recvmsg
+comma
+id|bind
+suffix:colon
+id|raw_bind
+comma
+id|backlog_rcv
+suffix:colon
+id|raw_rcv_skb
+comma
+id|hash
+suffix:colon
+id|raw_v4_hash
+comma
+id|unhash
+suffix:colon
+id|raw_v4_unhash
+comma
 )brace
 suffix:semicolon
 eof

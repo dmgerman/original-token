@@ -400,7 +400,7 @@ r_int
 id|__sc0
 id|__asm__
 (paren
-l_string|&quot;$r0&quot;
+l_string|&quot;$r3&quot;
 )paren
 op_assign
 id|__NR_clone
@@ -463,7 +463,7 @@ suffix:semicolon
 id|__asm__
 c_func
 (paren
-l_string|&quot;trapa&t;#0&bslash;n&bslash;t&quot;
+l_string|&quot;trapa&t;#0x12&bslash;n&bslash;t&quot;
 multiline_comment|/* Linux/SH system call */
 l_string|&quot;tst&t;#0xff, $r0&bslash;n&bslash;t&quot;
 multiline_comment|/* child or parent? */
@@ -475,9 +475,9 @@ l_string|&quot; mov&t;$r8, $r4&bslash;n&bslash;t&quot;
 multiline_comment|/* push argument */
 l_string|&quot;mov&t;$r0, $r4&bslash;n&bslash;t&quot;
 multiline_comment|/* return value to arg of exit */
-l_string|&quot;mov&t;%2, $r0&bslash;n&bslash;t&quot;
+l_string|&quot;mov&t;%2, $r3&bslash;n&bslash;t&quot;
 multiline_comment|/* exit */
-l_string|&quot;trapa&t;#0&bslash;n&quot;
+l_string|&quot;trapa&t;#0x11&bslash;n&quot;
 l_string|&quot;1:&quot;
 suffix:colon
 l_string|&quot;=z&quot;
@@ -615,10 +615,26 @@ c_cond
 id|fpvalid
 )paren
 (brace
+r_int
+r_int
+id|flags
+suffix:semicolon
+id|save_and_cli
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 id|unlazy_fpu
 c_func
 (paren
 id|tsk
+)paren
+suffix:semicolon
+id|restore_flags
+c_func
+(paren
+id|flags
 )paren
 suffix:semicolon
 id|memcpy
@@ -704,10 +720,26 @@ op_amp
 id|init_task
 )paren
 (brace
+r_int
+r_int
+id|flags
+suffix:semicolon
+id|save_and_cli
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 id|unlazy_fpu
 c_func
 (paren
 id|tsk
+)paren
+suffix:semicolon
+id|restore_flags
+c_func
+(paren
+id|flags
 )paren
 suffix:semicolon
 id|p-&gt;thread.fpu
@@ -943,30 +975,42 @@ op_ne
 op_amp
 id|init_task
 )paren
+(brace
+r_int
+r_int
+id|flags
+suffix:semicolon
+id|save_and_cli
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 id|unlazy_fpu
 c_func
 (paren
 id|prev
 )paren
 suffix:semicolon
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+)brace
 macro_line|#endif
-multiline_comment|/*&n;&t; * Restore the kernel stack onto kernel mode register&n;&t; *   &t;k4 (r4_bank1)&n;&t; */
+multiline_comment|/*&n;&t; * Restore the kernel mode register&n;&t; *   &t;k7 (r7_bank1)&n;&t; */
 id|asm
 r_volatile
 (paren
-l_string|&quot;ldc&t;%0, $r4_bank&quot;
+l_string|&quot;ldc&t;%0, $r7_bank&quot;
 suffix:colon
 multiline_comment|/* no output */
 suffix:colon
 l_string|&quot;r&quot;
 (paren
-(paren
-r_int
-r_int
-)paren
 id|next
-op_plus
-l_int|8192
 )paren
 )paren
 suffix:semicolon

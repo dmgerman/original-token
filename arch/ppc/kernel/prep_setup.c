@@ -338,7 +338,7 @@ id|len
 comma
 id|i
 suffix:semicolon
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 DECL|macro|CD
 mdefine_line|#define CD(X)&t;&t;(cpu_data[n].X)  
 macro_line|#else
@@ -2463,7 +2463,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 id|request_irq
 c_func
 (paren
@@ -2482,7 +2482,7 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-macro_line|#endif /* __SMP__ */
+macro_line|#endif /* CONFIG_SMP */
 )brace
 macro_line|#if defined(CONFIG_BLK_DEV_IDE) || defined(CONFIG_BLK_DEV_IDE_MODULE)
 multiline_comment|/*&n; * IDE stuff.&n; */

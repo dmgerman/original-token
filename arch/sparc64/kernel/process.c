@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: process.c,v 1.105 2000/03/26 09:13:48 davem Exp $&n; *  arch/sparc64/kernel/process.c&n; *&n; *  Copyright (C) 1995, 1996 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1996       Eddie C. Dost   (ecd@skynet.be)&n; *  Copyright (C) 1997, 1998 Jakub Jelinek   (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/*  $Id: process.c,v 1.106 2000/04/15 06:02:50 davem Exp $&n; *  arch/sparc64/kernel/process.c&n; *&n; *  Copyright (C) 1995, 1996 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1996       Eddie C. Dost   (ecd@skynet.be)&n; *  Copyright (C) 1997, 1998 Jakub Jelinek   (jj@sunsite.mff.cuni.cz)&n; */
 multiline_comment|/*&n; * This file handles the architecture-dependent parts of process handling..&n; */
 DECL|macro|__KERNEL_SYSCALLS__
 mdefine_line|#define __KERNEL_SYSCALLS__
@@ -1275,7 +1275,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;CPU[%d]: local_irq_count[%u] global_irq_count[%d]&bslash;n&quot;
+l_string|&quot;CPU[%d]: local_irq_count[%u] irqs_running[%d]&bslash;n&quot;
 comma
 id|smp_processor_id
 c_func
@@ -1284,11 +1284,9 @@ c_func
 comma
 id|local_irq_count
 comma
-id|atomic_read
+id|irqs_running
 c_func
 (paren
-op_amp
-id|global_irq_count
 )paren
 )paren
 suffix:semicolon

@@ -1767,7 +1767,7 @@ l_int|0
 )paren
 suffix:semicolon
 macro_line|#endif&t;/* CONFIG_XMON */
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 id|request_irq
 c_func
 (paren
@@ -1786,7 +1786,7 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-macro_line|#endif&t;/* __SMP__ */
+macro_line|#endif&t;/* CONFIG_SMP */
 )brace
 r_void
 id|__init

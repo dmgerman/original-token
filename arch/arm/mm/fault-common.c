@@ -498,7 +498,7 @@ op_logical_neg
 id|handle_mm_fault
 c_func
 (paren
-id|tsk
+id|mm
 comma
 id|vma
 comma

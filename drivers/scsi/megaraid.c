@@ -1,10 +1,10 @@
-multiline_comment|/*===================================================================&n; *&n; *                    Linux MegaRAID device driver&n; *&n; * Copyright 1998 American Megatrends Inc.&n; *&n; *              This program is free software; you can redistribute it and/or&n; *              modify it under the terms of the GNU General Public License&n; *              as published by the Free Software Foundation; either version&n; *              2 of the License, or (at your option) any later version.&n; *&n; * Version : 1.05&n; * &n; * Description: Linux device driver for AMI MegaRAID controller&n; *&n; * Supported controllers: MegaRAID 418, 428, 438, 466, 762, 467, 490&n; * &n; * History:&n; *&n; * Version 0.90:&n; *     Original source contributed by Dell; integrated it into the kernel and&n; *     cleaned up some things.  Added support for 438/466 controllers.&n; *&n; * Version 0.91:&n; *     Aligned mailbox area on 16-byte boundry.&n; *     Added schedule() at the end to properly clean up.&n; *     Made improvements for conformity to linux driver standards.&n; *&n; * Version 0.92:&n; *     Added support for 2.1 kernels.&n; *         Reads from pci_dev struct, so it&squot;s not dependent on pcibios.&n; *         Added some missing virt_to_bus() translations.&n; *     Added support for SMP.&n; *         Changed global cli()&squot;s to spinlocks for 2.1, and simulated&n; *          spinlocks for 2.0.&n; *     Removed setting of SA_INTERRUPT flag when requesting Irq.&n; *&n; * Version 0.92ac:&n; *     Small changes to the comments/formatting. Plus a couple of&n; *      added notes. Returned to the authors. No actual code changes&n; *      save printk levels.&n; *     8 Oct 98        Alan Cox &lt;alan.cox@linux.org&gt;&n; *&n; *     Merged with 2.1.131 source tree.&n; *     12 Dec 98       K. Baranowski &lt;kgb@knm.org.pl&gt;                          &n; *&n; * Version 0.93:&n; *     Added support for vendor specific ioctl commands (0x80+xxh)&n; *     Changed some fields in MEGARAID struct to better values.&n; *     Added signature check for Rp controllers under 2.0 kernels&n; *     Changed busy-wait loop to be time-based&n; *     Fixed SMP race condition in isr&n; *     Added kfree (sgList) on release&n; *     Added #include linux/version.h to megaraid.h for hosts.h&n; *     Changed max_id to represent max logical drives instead of targets.&n; *&n; * Version 0.94:&n; *     Got rid of some excess locking/unlocking&n; *     Fixed slight memory corruption problem while memcpy&squot;ing into mailbox&n; *     Changed logical drives to be reported as luns rather than targets&n; *     Changed max_id to 16 since it is now max targets/chan again.&n; *     Improved ioctl interface for upcoming megamgr&n; *&n; * Version 0.95:&n; *     Fixed problem of queueing multiple commands to adapter;&n; *       still has some strange problems on some setups, so still&n; *       defaults to single.  To enable parallel commands change&n; *       #define MULTI_IO in megaraid.h&n; *     Changed kmalloc allocation to be done in beginning.&n; *     Got rid of C++ style comments&n; *&n; * Version 0.96:&n; *     762 fully supported.&n; *&n; * Version 0.97:&n; *     Changed megaraid_command to use wait_queue.&n; *     Fixed bug of undesirably detecting HP onboard controllers which&n; *       are disabled.&n; *     &n; * Version 1.00:&n; *     Checks to see if an irq ocurred while in isr, and runs through&n; *       routine again.&n; *     Copies mailbox to temp area before processing in isr&n; *     Added barrier() in busy wait to fix volatility bug&n; *     Uses separate list for freed Scbs, keeps track of cmd state&n; *     Put spinlocks around entire queue function for now...&n; *     Full multi-io commands working stablely without previous problems&n; *     Added skipXX LILO option for Madrona motherboard support&n; *&n; * Version 1.01:&n; *     Fixed bug in mega_cmd_done() for megamgr control commands,&n; *       the host_byte in the result code from the scsi request to &n; *       scsi midlayer is set to DID_BAD_TARGET when adapter&squot;s &n; *       returned codes are 0xF0 and 0xF4.  &n; *&n; * Version 1.02:&n; *     Fixed the tape drive bug by extending the adapter timeout value&n; *       for passthrough command to 60 seconds in mega_build_cmd(). &n; *&n; * Version 1.03:&n; *    Fixed Madrona support.&n; *    Changed the adapter timeout value from 60 sec in 1.02 to 10 min&n; *      for bigger and slower tape drive.&n; *    Added driver version printout at driver loadup time&n; *&n; * Version 1.04&n; *    Added code for 40 ld FW support. &n; *    Added new ioctl command 0x81 to support NEW_READ/WRITE_CONFIG with&n; *      data area greater than 4 KB, which is the upper bound for data&n; *      tranfer through scsi_ioctl interface.&n; *    The addtional 32 bit field for 64bit address in the newly defined&n; *      mailbox64 structure is set to 0 at this point.&n; *&n; * Version 1.05&n; *    Changed the queing implementation for handling SCBs and completed&n; *      commands.&n; *    Added spinlocks in the interrupt service routine to enable the dirver&n; *      function in the SMP environment.&n; *    Fixed the problem of unnecessary aborts in the abort entry point, which&n; *      also enables the driver to handle large amount of I/O requests for&n; *      long duration of time.&n; *&n; *&n; * BUGS:&n; *     Some older 2.1 kernels (eg. 2.1.90) have a bug in pci.c that&n; *     fails to detect the controller as a pci device on the system.&n; *&n; *     Timeout period for upper scsi layer, i.e. SD_TIMEOUT in&n; *     /drivers/scsi/sd.c, is too short for this controller. SD_TIMEOUT&n; *     value must be increased to (30 * HZ) otherwise false timeouts &n; *     will occur in the upper layer.&n; *&n; *===================================================================*/
+multiline_comment|/*===================================================================&n; *&n; *                    Linux MegaRAID device driver&n; *&n; * Copyright 1999 American Megatrends Inc.&n; *&n; *              This program is free software; you can redistribute it and/or&n; *              modify it under the terms of the GNU General Public License&n; *              as published by the Free Software Foundation; either version&n; *              2 of the License, or (at your option) any later version.&n; *&n; * Version : 1.07b&n; * &n; * Description: Linux device driver for AMI MegaRAID controller&n; *&n; * Supported controllers: MegaRAID 418, 428, 438, 466, 762, 467, 490&n; * &n; * History:&n; *&n; * Version 0.90:&n; *     Original source contributed by Dell; integrated it into the kernel and&n; *     cleaned up some things.  Added support for 438/466 controllers.&n; *&n; * Version 0.91:&n; *     Aligned mailbox area on 16-byte boundry.&n; *     Added schedule() at the end to properly clean up.&n; *     Made improvements for conformity to linux driver standards.&n; *&n; * Version 0.92:&n; *     Added support for 2.1 kernels.&n; *         Reads from pci_dev struct, so it&squot;s not dependent on pcibios.&n; *         Added some missing virt_to_bus() translations.&n; *     Added support for SMP.&n; *         Changed global cli()&squot;s to spinlocks for 2.1, and simulated&n; *          spinlocks for 2.0.&n; *     Removed setting of SA_INTERRUPT flag when requesting Irq.&n; *&n; * Version 0.92ac:&n; *     Small changes to the comments/formatting. Plus a couple of&n; *      added notes. Returned to the authors. No actual code changes&n; *      save printk levels.&n; *     8 Oct 98        Alan Cox &lt;alan.cox@linux.org&gt;&n; *&n; *     Merged with 2.1.131 source tree.&n; *     12 Dec 98       K. Baranowski &lt;kgb@knm.org.pl&gt;                          &n; *&n; * Version 0.93:&n; *     Added support for vendor specific ioctl commands (0x80+xxh)&n; *     Changed some fields in MEGARAID struct to better values.&n; *     Added signature check for Rp controllers under 2.0 kernels&n; *     Changed busy-wait loop to be time-based&n; *     Fixed SMP race condition in isr&n; *     Added kfree (sgList) on release&n; *     Added #include linux/version.h to megaraid.h for hosts.h&n; *     Changed max_id to represent max logical drives instead of targets.&n; *&n; * Version 0.94:&n; *     Got rid of some excess locking/unlocking&n; *     Fixed slight memory corruption problem while memcpy&squot;ing into mailbox&n; *     Changed logical drives to be reported as luns rather than targets&n; *     Changed max_id to 16 since it is now max targets/chan again.&n; *     Improved ioctl interface for upcoming megamgr&n; *&n; * Version 0.95:&n; *     Fixed problem of queueing multiple commands to adapter;&n; *       still has some strange problems on some setups, so still&n; *       defaults to single.  To enable parallel commands change&n; *       #define MULTI_IO in megaraid.h&n; *     Changed kmalloc allocation to be done in beginning.&n; *     Got rid of C++ style comments&n; *&n; * Version 0.96:&n; *     762 fully supported.&n; *&n; * Version 0.97:&n; *     Changed megaraid_command to use wait_queue.&n; *     Fixed bug of undesirably detecting HP onboard controllers which&n; *       are disabled.&n; *     &n; * Version 1.00:&n; *     Checks to see if an irq ocurred while in isr, and runs through&n; *       routine again.&n; *     Copies mailbox to temp area before processing in isr&n; *     Added barrier() in busy wait to fix volatility bug&n; *     Uses separate list for freed Scbs, keeps track of cmd state&n; *     Put spinlocks around entire queue function for now...&n; *     Full multi-io commands working stablely without previous problems&n; *     Added skipXX LILO option for Madrona motherboard support&n; *&n; * Version 1.01:&n; *     Fixed bug in mega_cmd_done() for megamgr control commands,&n; *       the host_byte in the result code from the scsi request to &n; *       scsi midlayer is set to DID_BAD_TARGET when adapter&squot;s &n; *       returned codes are 0xF0 and 0xF4.  &n; *&n; * Version 1.02:&n; *     Fixed the tape drive bug by extending the adapter timeout value&n; *       for passthrough command to 60 seconds in mega_build_cmd(). &n; *&n; * Version 1.03:&n; *    Fixed Madrona support.&n; *    Changed the adapter timeout value from 60 sec in 1.02 to 10 min&n; *      for bigger and slower tape drive.&n; *    Added driver version printout at driver loadup time&n; *&n; * Version 1.04&n; *    Added code for 40 ld FW support. &n; *    Added new ioctl command 0x81 to support NEW_READ/WRITE_CONFIG with&n; *      data area greater than 4 KB, which is the upper bound for data&n; *      tranfer through scsi_ioctl interface.&n; *    The addtional 32 bit field for 64bit address in the newly defined&n; *      mailbox64 structure is set to 0 at this point.&n; *&n; * Version 1.05&n; *    Changed the queing implementation for handling SCBs and completed&n; *      commands.&n; *    Added spinlocks in the interrupt service routine to enable the dirver&n; *      function in the SMP environment.&n; *    Fixed the problem of unnecessary aborts in the abort entry point, which&n; *      also enables the driver to handle large amount of I/O requests for&n; *      long duration of time.&n; *&n; * Version 1.07&n; *    Removed the usage of uaccess.h file for kernel versions less than&n; *    2.0.36, as this file is not present in those versions.&n; *&n; * Version 1.07b&n; *    The MegaRAID 466 cards with 3.00 firmware lockup and seem to very&n; *    occasionally hang. We check such cards and report them. You can&n; *    get firmware upgrades to flash the board to 3.10 for free.&n; *&n; * BUGS:&n; *     Some older 2.1 kernels (eg. 2.1.90) have a bug in pci.c that&n; *     fails to detect the controller as a pci device on the system.&n; *&n; *     Timeout period for upper scsi layer, i.e. SD_TIMEOUT in&n; *     /drivers/scsi/sd.c, is too short for this controller. SD_TIMEOUT&n; *     value must be increased to (30 * HZ) otherwise false timeouts &n; *     will occur in the upper layer.&n; *&n; *===================================================================*/
 DECL|macro|CRLFSTR
 mdefine_line|#define CRLFSTR &quot;&bslash;n&quot;
 DECL|macro|IOCTL_CMD_NEW
 mdefine_line|#define IOCTL_CMD_NEW  0x81
 DECL|macro|MEGARAID_VERSION
-mdefine_line|#define MEGARAID_VERSION &quot;v1.05 (October 27, 1999)&quot;
+mdefine_line|#define MEGARAID_VERSION &quot;v107 (December 22, 1999)&quot;
 macro_line|#include &lt;linux/version.h&gt;
 macro_line|#ifdef MODULE
 macro_line|#include &lt;linux/modversions.h&gt;
@@ -45,7 +45,9 @@ macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/spinlock.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/irq.h&gt;
+macro_line|#if LINUX_VERSION_CODE &gt; 0x020024
 macro_line|#include &lt;asm/uaccess.h&gt;
+macro_line|#endif
 macro_line|#include &quot;sd.h&quot;
 macro_line|#include &quot;scsi.h&quot;
 macro_line|#include &quot;hosts.h&quot;
@@ -1280,8 +1282,6 @@ id|SCpnt
 op_assign
 id|pScb-&gt;SCpnt
 suffix:semicolon
-multiline_comment|/*freeSCB(megaCfg, pScb);*/
-multiline_comment|/*delay this to the end of this func.*/
 id|pthru
 op_assign
 op_amp
@@ -1791,7 +1791,6 @@ l_int|8
 op_plus
 id|lun
 suffix:semicolon
-macro_line|#if 1
 r_if
 c_cond
 (paren
@@ -1817,7 +1816,6 @@ r_return
 l_int|NULL
 suffix:semicolon
 )brace
-macro_line|#endif
 )brace
 multiline_comment|/*-----------------------------------------------------&n;   *&n;   *               Logical drive commands&n;   *&n;   *-----------------------------------------------------*/
 r_if
@@ -2835,6 +2833,8 @@ id|pScb
 suffix:semicolon
 )brace
 multiline_comment|/* else normal (nonpassthru) command */
+macro_line|#if LINUX_VERSION_CODE &gt; 0x020024
+multiline_comment|/*&n; * usage of the function copy from user is used in case of data more than&n; * 4KB.  This is used only with adapters which supports more than 8 logical&n; * drives.  This feature is disabled on kernels earlier or same as 2.0.36&n; * as the uaccess.h file is not available with those kernels.&n; */
 r_if
 c_cond
 (paren
@@ -2981,6 +2981,7 @@ op_assign
 id|kern_area
 suffix:semicolon
 )brace
+macro_line|#endif
 id|mbox-&gt;cmd
 op_assign
 id|data
@@ -3262,7 +3263,9 @@ op_star
 id|regs
 )paren
 (brace
+macro_line|#if LINUX_VERSION_CODE &gt;= 0x20100
 id|IO_LOCK_T
+macro_line|#endif
 id|mega_host_config
 op_star
 id|megaCfg
@@ -3399,10 +3402,6 @@ op_and_assign
 op_complement
 id|IN_ISR
 suffix:semicolon
-singleline_comment|//#if LINUX_VERSION_CODE &gt;= 0x20100
-singleline_comment|//        IO_UNLOCK;
-singleline_comment|//#endif
-singleline_comment|//&t;break;
 r_return
 suffix:semicolon
 )brace
@@ -3436,10 +3435,6 @@ op_and_assign
 op_complement
 id|IN_ISR
 suffix:semicolon
-singleline_comment|//#if LINUX_VERSION_CODE &gt;= 0x20100
-singleline_comment|//&t;IO_UNLOCK;
-singleline_comment|//#endif
-singleline_comment|//&t;break;
 r_return
 suffix:semicolon
 )brace
@@ -3722,20 +3717,6 @@ id|SCpnt
 op_assign
 id|pScb-&gt;SCpnt
 suffix:semicolon
-macro_line|#if DEBUG
-id|printk
-c_func
-(paren
-l_string|&quot;megaraid_isr:fcnt=%d, pcnt=%d, qcnt=%d&bslash;n&quot;
-comma
-id|megaCfg-&gt;qFcnt
-comma
-id|megaCfg-&gt;qPcnt
-comma
-id|megaCfg-&gt;qCcnt
-)paren
-suffix:semicolon
-macro_line|#endif
 )brace
 r_if
 c_cond
@@ -4036,16 +4017,6 @@ id|pScb
 suffix:semicolon
 macro_line|#endif
 multiline_comment|/* Wait until mailbox is free */
-macro_line|#if 0
-r_while
-c_loop
-(paren
-id|mega_busyWaitMbox
-(paren
-id|megaCfg
-)paren
-)paren
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -4258,7 +4229,6 @@ comma
 id|mbox-&gt;status
 )paren
 suffix:semicolon
-singleline_comment|//&t;mega_rundoneq (megaCfg);
 )brace
 id|WRINDOOR
 (paren
@@ -4347,7 +4317,6 @@ comma
 id|mbox-&gt;status
 )paren
 suffix:semicolon
-singleline_comment|//&t;mega_rundoneq (megaCfg);
 )brace
 r_else
 (brace
@@ -5229,111 +5198,6 @@ op_minus
 l_int|1
 suffix:semicolon
 )brace
-macro_line|#if 0 
-r_int
-id|i
-suffix:semicolon
-id|printk
-(paren
-id|KERN_DEBUG
-l_string|&quot;---- Logical drive info from enquiry3 struct----&bslash;n&quot;
-)paren
-suffix:semicolon
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-id|megaCfg-&gt;numldrv
-suffix:semicolon
-id|i
-op_increment
-)paren
-(brace
-id|printk
-(paren
-l_string|&quot;%d: size: %d prop: %x state: %x&bslash;n&quot;
-comma
-id|i
-comma
-id|enquiry3Pnt-&gt;lDrvSize
-(braket
-id|i
-)braket
-comma
-id|enquiry3Pnt-&gt;lDrvProp
-(braket
-id|i
-)braket
-comma
-id|enquiry3Pnt-&gt;lDrvState
-(braket
-id|i
-)braket
-)paren
-suffix:semicolon
-)brace
-id|printk
-(paren
-id|KERN_DEBUG
-l_string|&quot;---- Physical drive info ----&bslash;n&quot;
-)paren
-suffix:semicolon
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-id|FC_MAX_PHYSICAL_DEVICES
-suffix:semicolon
-id|i
-op_increment
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|i
-op_logical_and
-op_logical_neg
-(paren
-id|i
-op_mod
-l_int|8
-)paren
-)paren
-id|printk
-(paren
-l_string|&quot;&bslash;n&quot;
-)paren
-suffix:semicolon
-id|printk
-(paren
-l_string|&quot;%d: %x   &quot;
-comma
-id|i
-comma
-id|enquiry3Pnt-&gt;pDrvState
-(braket
-id|i
-)braket
-)paren
-suffix:semicolon
-)brace
-id|printk
-(paren
-l_string|&quot;&bslash;n&quot;
-)paren
-suffix:semicolon
-macro_line|#endif
 macro_line|#ifdef HP&t;&t;&t;/* use HP firmware and bios version encoding */
 id|sprintf
 (paren
@@ -5930,6 +5794,143 @@ id|mega_i_query_adapter
 id|megaCfg
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|flag
+op_eq
+id|BOARD_QUARTZ
+)paren
+(brace
+multiline_comment|/* Check to see if this is a Dell PERC RAID controller model 466 */
+id|u16
+id|subsysid
+comma
+id|subsysvid
+suffix:semicolon
+macro_line|#if LINUX_VERSION_CODE &lt; 0x20100
+id|pcibios_read_config_word
+(paren
+id|pciBus
+comma
+id|pciDevFun
+comma
+id|PCI_SUBSYSTEM_VENDOR_ID
+comma
+op_amp
+id|subsysvid
+)paren
+suffix:semicolon
+id|pcibios_read_config_word
+(paren
+id|pciBus
+comma
+id|pciDevFun
+comma
+id|PCI_SUBSYSTEM_ID
+comma
+op_amp
+id|subsysid
+)paren
+suffix:semicolon
+macro_line|#else
+id|pci_read_config_word
+(paren
+id|pdev
+comma
+id|PCI_SUBSYSTEM_VENDOR_ID
+comma
+op_amp
+id|subsysvid
+)paren
+suffix:semicolon
+id|pci_read_config_word
+(paren
+id|pdev
+comma
+id|PCI_SUBSYSTEM_ID
+comma
+op_amp
+id|subsysid
+)paren
+suffix:semicolon
+macro_line|#endif
+r_if
+c_cond
+(paren
+(paren
+id|subsysid
+op_eq
+l_int|0x1111
+)paren
+op_logical_and
+(paren
+id|subsysvid
+op_eq
+l_int|0x1111
+)paren
+op_logical_and
+(paren
+op_logical_neg
+id|strcmp
+c_func
+(paren
+id|megaCfg-&gt;fwVer
+comma
+l_string|&quot;3.00&quot;
+)paren
+op_logical_or
+op_logical_neg
+id|strcmp
+c_func
+(paren
+id|megaCfg-&gt;fwVer
+comma
+l_string|&quot;3.01&quot;
+)paren
+)paren
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_WARNING
+l_string|&quot;megaraid: Your card is a Dell PERC 2/SC RAID controller with firmware&bslash;n&quot;
+l_string|&quot;megaraid: 3.00 or 3.01.  This driver is known to have corruption issues&bslash;n&quot;
+l_string|&quot;megaraid: with those firmware versions on this specific card.  In order&bslash;n&quot;
+l_string|&quot;megaraid: to protect your data, please upgrade your firmware to version&bslash;n&quot;
+l_string|&quot;megaraid: 3.10 or later, available from the Dell Technical Support web&bslash;n&quot;
+l_string|&quot;megaraid: site at&bslash;n&quot;
+l_string|&quot;http://support.dell.com/us/en/filelib/download/index.asp?fileid=2489&bslash;n&quot;
+)paren
+suffix:semicolon
+id|megaraid_release
+(paren
+id|host
+)paren
+suffix:semicolon
+macro_line|#ifdef MODULE&t;
+r_continue
+suffix:semicolon
+macro_line|#else
+r_while
+c_loop
+(paren
+l_int|1
+)paren
+(brace
+id|schedule_timeout
+c_func
+(paren
+l_int|1
+op_star
+id|HZ
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif&t;
+)brace
+)brace
 multiline_comment|/* Initialize SCBs */
 r_if
 c_cond
@@ -5940,7 +5941,7 @@ id|megaCfg
 )paren
 )paren
 (brace
-id|scsi_unregister
+id|megaraid_release
 (paren
 id|host
 )paren
@@ -6375,14 +6376,6 @@ op_amp
 id|IN_ABORT
 )paren
 (brace
-macro_line|#if DEBUG
-id|printk
-c_func
-(paren
-l_string|&quot;mq: got a request while in abort&bslash;n&quot;
-)paren
-suffix:semicolon
-macro_line|#endif
 id|SCpnt-&gt;result
 op_assign
 (paren
@@ -6454,14 +6447,6 @@ op_amp
 id|IN_RESET
 )paren
 (brace
-macro_line|#if DEBUG
-id|printk
-c_func
-(paren
-l_string|&quot;mq: got a request while in reset&bslash;n&quot;
-)paren
-suffix:semicolon
-macro_line|#endif
 id|SCpnt-&gt;result
 op_assign
 (paren
@@ -6582,16 +6567,13 @@ suffix:semicolon
 id|megaCfg-&gt;qPcnt
 op_increment
 suffix:semicolon
-multiline_comment|/* Issue any pending command to the card if not in ISR */
-singleline_comment|//    if (!(megaCfg-&gt;flag &amp; IN_ISR)) {
 id|mega_runpendq
 c_func
 (paren
 id|megaCfg
 )paren
 suffix:semicolon
-singleline_comment|//    }
-multiline_comment|/* &n; * try running the pend queue, irrespective of the driver&squot;s context.&n; * -cn &n; */
+macro_line|#if LINUX_VERSION_CODE &gt; 0x020024
 r_if
 c_cond
 (paren
@@ -6681,6 +6663,7 @@ id|pScb
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
 )brace
 id|megaCfg-&gt;flag
 op_and_assign
@@ -6825,20 +6808,6 @@ id|megaCfg-&gt;flag
 op_or_assign
 id|IN_ABORT
 suffix:semicolon
-macro_line|#if DEBUG
-id|printk
-c_func
-(paren
-l_string|&quot;ma:fcnt=%d, pcnt=%d, qcnt=%d&bslash;n&quot;
-comma
-id|megaCfg-&gt;qFcnt
-comma
-id|megaCfg-&gt;qPcnt
-comma
-id|megaCfg-&gt;qCcnt
-)paren
-suffix:semicolon
-macro_line|#endif
 r_for
 c_loop
 (paren
@@ -6988,81 +6957,6 @@ r_break
 suffix:semicolon
 )brace
 )brace
-macro_line|#if 0
-id|TRACE
-(paren
-(paren
-l_string|&quot;ABORT!!! %.08lx %.02x &lt;%d.%d.%d&gt;&bslash;n&quot;
-comma
-id|SCpnt-&gt;serial_number
-comma
-id|SCpnt-&gt;cmnd
-(braket
-l_int|0
-)braket
-comma
-id|SCpnt-&gt;channel
-comma
-id|SCpnt-&gt;target
-comma
-id|SCpnt-&gt;lun
-)paren
-)paren
-suffix:semicolon
-r_for
-c_loop
-(paren
-id|pScb
-op_assign
-id|megaCfg-&gt;qPending
-suffix:semicolon
-id|pScb
-suffix:semicolon
-id|pScb
-op_assign
-id|pScb-&gt;next
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|pScb-&gt;SCpnt
-op_eq
-id|SCpnt
-)paren
-(brace
-id|ser_printk
-c_func
-(paren
-l_string|&quot;** %d&lt;%x&gt;  %c&bslash;n&quot;
-comma
-id|pScb-&gt;SCpnt-&gt;pid
-comma
-id|pScb-&gt;idx
-op_plus
-l_int|1
-comma
-id|pScb-&gt;state
-op_eq
-id|SCB_ACTIVE
-ques
-c_cond
-l_char|&squot;A&squot;
-suffix:colon
-l_char|&squot;I&squot;
-)paren
-suffix:semicolon
-macro_line|#if DEBUG
-id|showMbox
-c_func
-(paren
-id|pScb
-)paren
-suffix:semicolon
-macro_line|#endif
-)brace
-)brace
-macro_line|#endif
 id|megaCfg-&gt;flag
 op_and_assign
 op_complement
@@ -7131,7 +7025,6 @@ op_star
 )paren
 l_int|NULL
 suffix:semicolon
-singleline_comment|// XC : sep 14
 multiline_comment|/* Callback */
 id|callDone
 (paren

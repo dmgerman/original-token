@@ -1923,7 +1923,7 @@ c_cond
 id|handle_mm_fault
 c_func
 (paren
-id|current
+id|current-&gt;mm
 comma
 id|vma
 comma
@@ -3447,9 +3447,9 @@ id|do_wp_page
 c_func
 (paren
 r_struct
-id|task_struct
+id|mm_struct
 op_star
-id|tsk
+id|mm
 comma
 r_struct
 id|vm_area_struct
@@ -3498,7 +3498,7 @@ id|max_mapnr
 r_goto
 id|bad_wp_page
 suffix:semicolon
-id|tsk-&gt;min_flt
+id|mm-&gt;min_flt
 op_increment
 suffix:semicolon
 id|old_page
@@ -3611,7 +3611,7 @@ id|spin_unlock
 c_func
 (paren
 op_amp
-id|tsk-&gt;mm-&gt;page_table_lock
+id|mm-&gt;page_table_lock
 )paren
 suffix:semicolon
 r_return
@@ -3623,7 +3623,7 @@ id|spin_unlock
 c_func
 (paren
 op_amp
-id|tsk-&gt;mm-&gt;page_table_lock
+id|mm-&gt;page_table_lock
 )paren
 suffix:semicolon
 id|new_page
@@ -3648,7 +3648,7 @@ id|spin_lock
 c_func
 (paren
 op_amp
-id|tsk-&gt;mm-&gt;page_table_lock
+id|mm-&gt;page_table_lock
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * Re-check the pte - we dropped the lock&n;&t; */
@@ -3679,7 +3679,7 @@ id|old_page
 )paren
 )paren
 op_increment
-id|vma-&gt;vm_mm-&gt;rss
+id|mm-&gt;rss
 suffix:semicolon
 id|break_cow
 c_func
@@ -3705,7 +3705,7 @@ id|spin_unlock
 c_func
 (paren
 op_amp
-id|tsk-&gt;mm-&gt;page_table_lock
+id|mm-&gt;page_table_lock
 )paren
 suffix:semicolon
 id|__free_page
@@ -3723,7 +3723,7 @@ id|spin_unlock
 c_func
 (paren
 op_amp
-id|tsk-&gt;mm-&gt;page_table_lock
+id|mm-&gt;page_table_lock
 )paren
 suffix:semicolon
 id|printk
@@ -4437,9 +4437,9 @@ id|do_swap_page
 c_func
 (paren
 r_struct
-id|task_struct
+id|mm_struct
 op_star
-id|tsk
+id|mm
 comma
 r_struct
 id|vm_area_struct
@@ -4531,10 +4531,10 @@ id|page
 )paren
 suffix:semicolon
 )brace
-id|vma-&gt;vm_mm-&gt;rss
+id|mm-&gt;rss
 op_increment
 suffix:semicolon
-id|tsk-&gt;min_flt
+id|mm-&gt;min_flt
 op_increment
 suffix:semicolon
 id|pte
@@ -4660,9 +4660,9 @@ id|do_anonymous_page
 c_func
 (paren
 r_struct
-id|task_struct
+id|mm_struct
 op_star
-id|tsk
+id|mm
 comma
 r_struct
 id|vm_area_struct
@@ -4775,10 +4775,10 @@ id|vma-&gt;vm_page_prot
 )paren
 )paren
 suffix:semicolon
-id|vma-&gt;vm_mm-&gt;rss
+id|mm-&gt;rss
 op_increment
 suffix:semicolon
-id|tsk-&gt;min_flt
+id|mm-&gt;min_flt
 op_increment
 suffix:semicolon
 id|flush_page_to_ram
@@ -4819,9 +4819,9 @@ id|do_no_page
 c_func
 (paren
 r_struct
-id|task_struct
+id|mm_struct
 op_star
-id|tsk
+id|mm
 comma
 r_struct
 id|vm_area_struct
@@ -4861,7 +4861,7 @@ r_return
 id|do_anonymous_page
 c_func
 (paren
-id|tsk
+id|mm
 comma
 id|vma
 comma
@@ -4921,10 +4921,10 @@ op_minus
 l_int|1
 suffix:semicolon
 op_increment
-id|tsk-&gt;maj_flt
+id|mm-&gt;maj_flt
 suffix:semicolon
 op_increment
-id|vma-&gt;vm_mm-&gt;rss
+id|mm-&gt;rss
 suffix:semicolon
 multiline_comment|/*&n;&t; * This silly early PAGE_DIRTY setting removes a race&n;&t; * due to the bad i386 page protection. But it&squot;s valid&n;&t; * for other architectures too.&n;&t; *&n;&t; * Note that if write_access is true, we either now have&n;&t; * an exclusive copy of the page, or this is a shared mapping,&n;&t; * so we can make it writable and dirty to avoid having to&n;&t; * handle that later.&n;&t; */
 id|flush_page_to_ram
@@ -5029,9 +5029,9 @@ id|handle_pte_fault
 c_func
 (paren
 r_struct
-id|task_struct
+id|mm_struct
 op_star
-id|tsk
+id|mm
 comma
 r_struct
 id|vm_area_struct
@@ -5082,7 +5082,7 @@ r_return
 id|do_no_page
 c_func
 (paren
-id|tsk
+id|mm
 comma
 id|vma
 comma
@@ -5097,7 +5097,7 @@ r_return
 id|do_swap_page
 c_func
 (paren
-id|tsk
+id|mm
 comma
 id|vma
 comma
@@ -5120,7 +5120,7 @@ id|spin_lock
 c_func
 (paren
 op_amp
-id|tsk-&gt;mm-&gt;page_table_lock
+id|mm-&gt;page_table_lock
 )paren
 suffix:semicolon
 r_if
@@ -5160,7 +5160,7 @@ r_return
 id|do_wp_page
 c_func
 (paren
-id|tsk
+id|mm
 comma
 id|vma
 comma
@@ -5205,7 +5205,7 @@ id|spin_unlock
 c_func
 (paren
 op_amp
-id|tsk-&gt;mm-&gt;page_table_lock
+id|mm-&gt;page_table_lock
 )paren
 suffix:semicolon
 r_return
@@ -5219,9 +5219,9 @@ id|handle_mm_fault
 c_func
 (paren
 r_struct
-id|task_struct
+id|mm_struct
 op_star
-id|tsk
+id|mm
 comma
 r_struct
 id|vm_area_struct
@@ -5255,7 +5255,7 @@ op_assign
 id|pgd_offset
 c_func
 (paren
-id|vma-&gt;vm_mm
+id|mm
 comma
 id|address
 )paren
@@ -5298,7 +5298,7 @@ op_assign
 id|handle_pte_fault
 c_func
 (paren
-id|tsk
+id|mm
 comma
 id|vma
 comma
@@ -5333,11 +5333,11 @@ r_int
 id|write
 suffix:semicolon
 r_struct
-id|task_struct
+id|mm_struct
 op_star
-id|tsk
+id|mm
 op_assign
-id|current
+id|current-&gt;mm
 suffix:semicolon
 r_struct
 id|vm_area_struct
@@ -5349,7 +5349,7 @@ op_assign
 id|find_vma
 c_func
 (paren
-id|tsk-&gt;mm
+id|mm
 comma
 id|addr
 )paren
@@ -5384,7 +5384,7 @@ c_cond
 id|handle_mm_fault
 c_func
 (paren
-id|tsk
+id|mm
 comma
 id|vma
 comma

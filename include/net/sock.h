@@ -877,13 +877,19 @@ id|tcp_listen_opt
 op_star
 id|listen_opt
 suffix:semicolon
+multiline_comment|/* FIFO of established children */
 DECL|member|accept_queue
 r_struct
 id|open_request
 op_star
 id|accept_queue
 suffix:semicolon
-multiline_comment|/* Established children */
+DECL|member|accept_queue_tail
+r_struct
+id|open_request
+op_star
+id|accept_queue_tail
+suffix:semicolon
 DECL|member|write_pending
 r_int
 id|write_pending

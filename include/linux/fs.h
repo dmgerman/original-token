@@ -215,7 +215,8 @@ r_void
 id|inode_init
 c_func
 (paren
-r_void
+r_int
+r_int
 )paren
 suffix:semicolon
 r_extern
@@ -231,7 +232,8 @@ r_void
 id|dcache_init
 c_func
 (paren
-r_void
+r_int
+r_int
 )paren
 suffix:semicolon
 multiline_comment|/* bh state bits */
@@ -3357,6 +3359,20 @@ r_void
 suffix:semicolon
 r_extern
 r_void
+id|__put_unused_fd
+c_func
+(paren
+r_struct
+id|files_struct
+op_star
+comma
+r_int
+r_int
+)paren
+suffix:semicolon
+multiline_comment|/* locked outside */
+r_extern
+r_void
 id|put_unused_fd
 c_func
 (paren
@@ -3364,6 +3380,7 @@ r_int
 r_int
 )paren
 suffix:semicolon
+multiline_comment|/* locked inside */
 r_extern
 r_struct
 id|file
@@ -3727,11 +3744,6 @@ suffix:semicolon
 r_extern
 r_struct
 id|file_operations
-id|connecting_fifo_fops
-suffix:semicolon
-r_extern
-r_struct
-id|file_operations
 id|read_fifo_fops
 suffix:semicolon
 r_extern
@@ -4039,14 +4051,6 @@ c_func
 id|kdev_t
 id|dev
 comma
-r_int
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|floppy_is_wp
-c_func
-(paren
 r_int
 )paren
 suffix:semicolon

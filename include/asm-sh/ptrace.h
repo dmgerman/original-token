@@ -2,7 +2,7 @@ macro_line|#ifndef __ASM_SH_PTRACE_H
 DECL|macro|__ASM_SH_PTRACE_H
 mdefine_line|#define __ASM_SH_PTRACE_H
 multiline_comment|/*&n; * Copyright (C) 1999, 2000  Niibe Yutaka&n; *&n; */
-multiline_comment|/*&n; * As GCC does:&n; *  0 - 15 are integer registers&n; * 17 - 22 are control/special registers&n; * 24 - 39 fp registers&n; * 40 - 47 xd registers&n; * 48 -    fpscr register&n; * -----------------------------&n; * Not as GCC:&n; * 16 --- program counter PC&n; * 23 --- syscall #&n; */
+multiline_comment|/*&n; * GCC defines register number like this:&n; * -----------------------------&n; *&t; 0 - 15 are integer registers&n; *&t;17 - 22 are control/special registers&n; *&t;24 - 39 fp registers&n; *&t;40 - 47 xd registers&n; *&t;48 -    fpscr register&n; * -----------------------------&n; *&n; * We follows above, except:&n; *&t;16 --- program counter (PC)&n; *&t;22 --- syscall #&n; *&t;23 --- floating point communication register&n; */
 DECL|macro|REG_REG0
 mdefine_line|#define REG_REG0&t; 0
 DECL|macro|REG_REG15
@@ -19,10 +19,10 @@ DECL|macro|REG_MACH
 mdefine_line|#define REG_MACH&t;20
 DECL|macro|REG_MACL
 mdefine_line|#define REG_MACL&t;21
-DECL|macro|REG_FPUL
-mdefine_line|#define REG_FPUL&t;22
 DECL|macro|REG_SYSCALL
-mdefine_line|#define REG_SYSCALL&t;23
+mdefine_line|#define REG_SYSCALL&t;22
+DECL|macro|REG_FPUL
+mdefine_line|#define REG_FPUL&t;23
 DECL|macro|REG_FPREG0
 mdefine_line|#define REG_FPREG0&t;24
 DECL|macro|REG_FPREG15
@@ -38,15 +38,6 @@ DECL|struct|pt_regs
 r_struct
 id|pt_regs
 (brace
-DECL|member|syscall_nr
-r_int
-id|syscall_nr
-suffix:semicolon
-DECL|member|sr
-r_int
-r_int
-id|sr
-suffix:semicolon
 DECL|member|regs
 r_int
 r_int
@@ -54,6 +45,21 @@ id|regs
 (braket
 l_int|16
 )braket
+suffix:semicolon
+DECL|member|pc
+r_int
+r_int
+id|pc
+suffix:semicolon
+DECL|member|pr
+r_int
+r_int
+id|pr
+suffix:semicolon
+DECL|member|sr
+r_int
+r_int
+id|sr
 suffix:semicolon
 DECL|member|gbr
 r_int
@@ -70,15 +76,9 @@ r_int
 r_int
 id|macl
 suffix:semicolon
-DECL|member|pr
+DECL|member|syscall_nr
 r_int
-r_int
-id|pr
-suffix:semicolon
-DECL|member|pc
-r_int
-r_int
-id|pc
+id|syscall_nr
 suffix:semicolon
 )brace
 suffix:semicolon
@@ -99,29 +99,28 @@ op_star
 suffix:semicolon
 multiline_comment|/* User Break Controller */
 macro_line|#if defined(__sh3__)
-multiline_comment|/* The value is for sh4, please fix... */
 DECL|macro|UBC_BARA
-mdefine_line|#define UBC_BARA&t;&t;0xff200000
+mdefine_line|#define UBC_BARA                0xffffffb0
 DECL|macro|UBC_BAMRA
-mdefine_line|#define UBC_BAMRA&t;&t;0xff200004
+mdefine_line|#define UBC_BAMRA               0xffffffb4
 DECL|macro|UBC_BBRA
-mdefine_line|#define UBC_BBRA&t;&t;0xff200008
+mdefine_line|#define UBC_BBRA                0xffffffb8
 DECL|macro|UBC_BASRA
-mdefine_line|#define UBC_BASRA&t;&t;0xff000014
+mdefine_line|#define UBC_BASRA               0xffffffe4
 DECL|macro|UBC_BARB
-mdefine_line|#define UBC_BARB&t;&t;0xff20000c
+mdefine_line|#define UBC_BARB                0xffffffa0
 DECL|macro|UBC_BAMRB
-mdefine_line|#define UBC_BAMRB&t;&t;0xff200010
+mdefine_line|#define UBC_BAMRB               0xffffffa4
 DECL|macro|UBC_BBRB
-mdefine_line|#define UBC_BBRB&t;&t;0xff200014
+mdefine_line|#define UBC_BBRB                0xffffffa8
 DECL|macro|UBC_BASRB
-mdefine_line|#define UBC_BASRB&t;&t;0xff000018
+mdefine_line|#define UBC_BASRB               0xffffffe8
 DECL|macro|UBC_BDRB
-mdefine_line|#define UBC_BDRB&t;&t;0xff200018
+mdefine_line|#define UBC_BDRB                0xffffff90
 DECL|macro|UBC_BDMRB
-mdefine_line|#define UBC_BDMRB&t;&t;0xff20001c
+mdefine_line|#define UBC_BDMRB               0xffffff94
 DECL|macro|UBC_BRCR
-mdefine_line|#define UBC_BRCR&t;&t;0xff200020
+mdefine_line|#define UBC_BRCR                0xffffff98
 macro_line|#elif defined(__SH4__)
 DECL|macro|UBC_BARA
 mdefine_line|#define UBC_BARA&t;&t;0xff200000

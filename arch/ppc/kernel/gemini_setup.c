@@ -1233,7 +1233,7 @@ op_lshift
 l_int|25
 )paren
 suffix:semicolon
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 multiline_comment|/* A couple errata for the 750&squot;s (both IBM and Motorola silicon)&n;&t;&t;   note that you can get missed cache lines on MP implementations.&n;&t;&t;   The workaround - if you call it that - is to make the L2&n;&t;&t;   write-through.  This is fixed in IBM&squot;s 3.1 rev (I&squot;m told), but&n;&t;&t;   for now, always make 2.x versions use L2 write-through. --Dan */
 r_if
 c_cond
@@ -1405,7 +1405,7 @@ c_func
 l_int|1
 )paren
 suffix:semicolon
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 id|request_irq
 c_func
 (paren
@@ -1468,7 +1468,7 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-macro_line|#endif&t;/* __SMP__ */
+macro_line|#endif&t;/* CONFIG_SMP */
 )brace
 DECL|macro|gemini_rtc_read
 mdefine_line|#define gemini_rtc_read(x)       (readb(GEMINI_RTC+(x)))

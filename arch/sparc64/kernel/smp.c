@@ -332,15 +332,6 @@ id|cpu_data
 id|id
 )braket
 dot
-id|irq_count
-op_assign
-l_int|0
-suffix:semicolon
-id|cpu_data
-(braket
-id|id
-)braket
-dot
 id|bh_count
 op_assign
 l_int|0
@@ -2861,7 +2852,6 @@ c_cond
 op_logical_neg
 id|user
 )paren
-(brace
 id|sparc64_do_profile
 c_func
 (paren
@@ -2873,7 +2863,6 @@ id|UREG_RETPC
 )braket
 )paren
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -2894,11 +2883,6 @@ op_eq
 id|boot_cpu_id
 )paren
 (brace
-multiline_comment|/* XXX Keep this in sync with irq.c --DaveM */
-DECL|macro|irq_enter
-mdefine_line|#define irq_enter(cpu, irq)&t;&t;&t;&bslash;&n;do {&t;hardirq_enter(cpu);&t;&t;&t;&bslash;&n;&t;spin_unlock_wait(&amp;global_irq_lock);&t;&bslash;&n;} while(0)
-DECL|macro|irq_exit
-mdefine_line|#define irq_exit(cpu, irq)&t;hardirq_exit(cpu)
 id|irq_enter
 c_func
 (paren
@@ -2930,10 +2914,6 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-DECL|macro|irq_enter
-macro_line|#undef irq_enter
-DECL|macro|irq_exit
-macro_line|#undef irq_exit
 )brace
 r_if
 c_cond

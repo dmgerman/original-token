@@ -57,10 +57,10 @@ DECL|macro|MAX_CBUF_BLOCK
 mdefine_line|#define MAX_CBUF_BLOCK  6&t;
 singleline_comment|// Maximum total length of a bypass command block
 DECL|macro|IBUF_SIZE
-mdefine_line|#define IBUF_SIZE       500&t;
+mdefine_line|#define IBUF_SIZE       512&t;
 singleline_comment|// character capacity of input buffer per channel
 DECL|macro|OBUF_SIZE
-mdefine_line|#define OBUF_SIZE       2048
+mdefine_line|#define OBUF_SIZE       1024
 singleline_comment|// character capacity of output buffer per channel
 DECL|macro|CBUF_SIZE
 mdefine_line|#define CBUF_SIZE       10&t;
@@ -134,6 +134,11 @@ singleline_comment|// Pointer for OS sleep function.
 DECL|member|delta_msr_wait
 id|PWAITQ
 id|delta_msr_wait
+suffix:semicolon
+singleline_comment|// Pointer for OS sleep function.
+DECL|member|dss_now_wait
+id|PWAITQ
+id|dss_now_wait
 suffix:semicolon
 singleline_comment|// Pointer for OS sleep function.
 DECL|member|BookmarkTimer
@@ -411,7 +416,6 @@ dot
 dot
 )paren
 suffix:semicolon
-macro_line|#ifdef __KERNEL__
 multiline_comment|/*&n;&t; * Kernel counters for the 4 input interrupts &n;&t; */
 DECL|member|icount
 r_struct
@@ -434,7 +438,6 @@ r_struct
 id|tq_struct
 id|tqueue_hangup
 suffix:semicolon
-macro_line|#endif 
 DECL|member|Ibuf_spinlock
 id|spinlock_t
 id|Ibuf_spinlock

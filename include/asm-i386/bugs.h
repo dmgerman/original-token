@@ -1352,7 +1352,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#ifndef __SMP__
+macro_line|#ifndef CONFIG_SMP
 id|printk
 c_func
 (paren

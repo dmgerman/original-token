@@ -23,6 +23,32 @@ DECL|macro|TMU0_TCR_INIT
 mdefine_line|#define TMU0_TCR_INIT&t;0x0020
 DECL|macro|TMU_TSTR_INIT
 mdefine_line|#define TMU_TSTR_INIT&t;1
+multiline_comment|/* RCR1 Bits */
+DECL|macro|RCR1_CF
+mdefine_line|#define RCR1_CF&t;&t;0x80&t;/* Carry Flag             */
+DECL|macro|RCR1_CIE
+mdefine_line|#define RCR1_CIE&t;0x10&t;/* Carry Interrupt Enable */
+DECL|macro|RCR1_AIE
+mdefine_line|#define RCR1_AIE&t;0x08&t;/* Alarm Interrupt Enable */
+DECL|macro|RCR1_AF
+mdefine_line|#define RCR1_AF&t;&t;0x01&t;/* Alarm Flag             */
+multiline_comment|/* RCR2 Bits */
+DECL|macro|RCR2_PEF
+mdefine_line|#define RCR2_PEF&t;0x80&t;/* PEriodic interrupt Flag */
+DECL|macro|RCR2_PESMASK
+mdefine_line|#define RCR2_PESMASK&t;0x70&t;/* Periodic interrupt Set  */
+DECL|macro|RCR2_RTCEN
+mdefine_line|#define RCR2_RTCEN&t;0x08&t;/* ENable RTC              */
+DECL|macro|RCR2_ADJ
+mdefine_line|#define RCR2_ADJ&t;0x04&t;/* ADJustment (30-second)  */
+DECL|macro|RCR2_RESET
+mdefine_line|#define RCR2_RESET&t;0x02&t;/* Reset bit               */
+DECL|macro|RCR2_START
+mdefine_line|#define RCR2_START&t;0x01&t;/* Start bit               */
+DECL|macro|RTC_IRQ
+mdefine_line|#define RTC_IRQ&t;&t;22
+DECL|macro|RTC_IPR_OFFSET
+mdefine_line|#define RTC_IPR_OFFSET&t;0
 macro_line|#if defined(__sh3__)
 DECL|macro|TMU_TOCR
 mdefine_line|#define TMU_TOCR&t;0xfffffe90&t;/* Byte access */
@@ -36,10 +62,6 @@ DECL|macro|TMU0_TCR
 mdefine_line|#define TMU0_TCR&t;0xfffffe9c&t;/* Word access */
 DECL|macro|FRQCR
 mdefine_line|#define FRQCR&t;&t;0xffffff80
-DECL|macro|RTC_IRQ
-mdefine_line|#define RTC_IRQ         22
-DECL|macro|RTC_IPR_OFFSET
-mdefine_line|#define RTC_IPR_OFFSET  0
 multiline_comment|/* SH-3 RTC */
 DECL|macro|R64CNT
 mdefine_line|#define R64CNT  &t;0xfffffec0
@@ -86,10 +108,6 @@ DECL|macro|TMU0_TCR
 mdefine_line|#define TMU0_TCR&t;0xffd80010&t;/* Word access */
 DECL|macro|FRQCR
 mdefine_line|#define FRQCR&t;&t;0xffc00000
-DECL|macro|RTC_IRQ
-mdefine_line|#define RTC_IRQ&t;&t;22
-DECL|macro|RTC_IPR_OFFSET
-mdefine_line|#define RTC_IPR_OFFSET&t;0
 multiline_comment|/* SH-4 RTC */
 DECL|macro|R64CNT
 mdefine_line|#define R64CNT  &t;0xffc80000
@@ -317,12 +335,12 @@ suffix:semicolon
 id|ctrl_outb
 c_func
 (paren
-l_int|0x02
+id|RCR2_RESET
 comma
 id|RCR2
 )paren
 suffix:semicolon
-multiline_comment|/* reset pre-scaler &amp; stop RTC */
+multiline_comment|/* Reset pre-scaler &amp; stop RTC */
 id|cmos_minutes
 op_assign
 id|ctrl_inb
@@ -445,12 +463,14 @@ suffix:semicolon
 id|ctrl_outb
 c_func
 (paren
-l_int|0x01
+id|RCR2_RTCEN
+op_or
+id|RCR2_START
 comma
 id|RCR2
 )paren
 suffix:semicolon
-multiline_comment|/* start RTC */
+multiline_comment|/* Start RTC */
 r_return
 id|retval
 suffix:semicolon
@@ -819,17 +839,17 @@ id|yr100
 suffix:semicolon
 id|again
 suffix:colon
+r_do
+(brace
 id|ctrl_outb
 c_func
 (paren
-l_int|0x01
+l_int|0
 comma
 id|RCR1
 )paren
 suffix:semicolon
-multiline_comment|/* clear CF bit */
-r_do
-(brace
+multiline_comment|/* Clear CF-bit */
 id|sec
 op_assign
 id|ctrl_inb
@@ -933,7 +953,7 @@ c_func
 id|RCR1
 )paren
 op_amp
-l_int|0x80
+id|RCR1_CF
 )paren
 op_ne
 l_int|0
@@ -1019,12 +1039,12 @@ suffix:semicolon
 id|ctrl_outb
 c_func
 (paren
-l_int|0x02
+id|RCR2_RESET
 comma
 id|RCR2
 )paren
 suffix:semicolon
-multiline_comment|/* reset, stop */
+multiline_comment|/* Reset &amp; Stop */
 id|ctrl_outb
 c_func
 (paren
@@ -1095,12 +1115,14 @@ macro_line|#endif
 id|ctrl_outb
 c_func
 (paren
-l_int|0x01
+id|RCR2_RTCEN
+op_or
+id|RCR2_START
 comma
 id|RCR2
 )paren
 suffix:semicolon
-multiline_comment|/* start */
+multiline_comment|/* Start */
 r_goto
 id|again
 suffix:semicolon
@@ -1169,11 +1191,12 @@ suffix:semicolon
 id|ctrl_outb
 c_func
 (paren
-l_int|0x11
+id|RCR1_CIE
 comma
 id|RCR1
 )paren
 suffix:semicolon
+multiline_comment|/* Enable carry interrupt */
 id|asm
 r_volatile
 (paren
@@ -1182,12 +1205,12 @@ l_string|&quot;tst&t;%1,%1&bslash;n&bslash;t&quot;
 l_string|&quot;bt/s&t;1b&bslash;n&bslash;t&quot;
 l_string|&quot; add&t;#1,%0&quot;
 suffix:colon
-l_string|&quot;=&amp;r&quot;
+l_string|&quot;=r&quot;
 (paren
 id|count
 )paren
 comma
-l_string|&quot;=&amp;z&quot;
+l_string|&quot;=z&quot;
 (paren
 id|__dummy
 )paren
@@ -1245,11 +1268,12 @@ id|regs
 id|ctrl_outb
 c_func
 (paren
-l_int|0x01
+l_int|0
 comma
 id|RCR1
 )paren
 suffix:semicolon
+multiline_comment|/* Disable Carry Interrupts */
 id|regs-&gt;regs
 (braket
 l_int|0

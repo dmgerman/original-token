@@ -30,13 +30,11 @@ op_star
 id|mnt_sb
 suffix:semicolon
 multiline_comment|/* pointer to superblock */
-DECL|member|mnt_next
+DECL|member|mnt_list
 r_struct
-id|vfsmount
-op_star
-id|mnt_next
+id|list_head
+id|mnt_list
 suffix:semicolon
-multiline_comment|/* pointer to next in linkedlist */
 )brace
 suffix:semicolon
 multiline_comment|/* MOUNT_REWRITE: fill these */

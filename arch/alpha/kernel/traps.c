@@ -428,7 +428,7 @@ l_int|8
 )paren
 r_return
 suffix:semicolon
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 id|printk
 c_func
 (paren

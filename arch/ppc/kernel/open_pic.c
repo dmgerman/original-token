@@ -162,7 +162,7 @@ id|regs
 )paren
 (brace
 )brace
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 DECL|function|openpic_ipi_action
 r_void
 id|openpic_ipi_action
@@ -190,7 +190,7 @@ id|OPENPIC_VEC_IPI
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif /* __SMP__ */
+macro_line|#endif /* CONFIG_SMP */
 macro_line|#ifdef __i386__
 DECL|function|in_le32
 r_static

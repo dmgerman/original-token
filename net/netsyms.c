@@ -367,13 +367,6 @@ c_func
 id|sock_no_setsockopt
 )paren
 suffix:semicolon
-DECL|variable|sock_no_fcntl
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|sock_no_fcntl
-)paren
-suffix:semicolon
 DECL|variable|sock_no_sendmsg
 id|EXPORT_SYMBOL
 c_func

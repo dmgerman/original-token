@@ -639,17 +639,26 @@ id|fsbr
 suffix:colon
 l_int|1
 suffix:semicolon
-multiline_comment|/* Did this URB turn on FSBR? */
+multiline_comment|/* URB turned on FSBR */
+DECL|member|fsbr_timeout
+r_int
+id|fsbr_timeout
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* URB timed out on FSBR */
 DECL|member|queued
 r_int
 id|queued
 suffix:colon
 l_int|1
 suffix:semicolon
-multiline_comment|/* 0 if QH was linked in */
+multiline_comment|/* QH was queued (not linked in) */
 DECL|member|short_control_packet
-r_char
+r_int
 id|short_control_packet
+suffix:colon
+l_int|1
 suffix:semicolon
 multiline_comment|/* If we get a short packet during */
 multiline_comment|/*  a control transfer, retrigger */
@@ -789,6 +798,16 @@ r_struct
 id|uhci
 op_star
 id|uhci
+)paren
+suffix:semicolon
+r_void
+id|uhci_show_urb_queue
+c_func
+(paren
+r_struct
+id|urb
+op_star
+id|urb
 )paren
 suffix:semicolon
 r_void

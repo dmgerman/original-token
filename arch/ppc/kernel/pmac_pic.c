@@ -783,7 +783,7 @@ id|bits
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 r_void
 id|pmac_smp_message_recv
 c_func
@@ -831,7 +831,7 @@ l_int|2
 suffix:semicolon
 multiline_comment|/* ignore, already handled */
 )brace
-macro_line|#endif /* __SMP__ */
+macro_line|#endif /* CONFIG_SMP */
 multiline_comment|/* Yeah, I know, this could be a separate get_irq function */
 r_if
 c_cond

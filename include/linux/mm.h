@@ -1026,9 +1026,9 @@ id|handle_mm_fault
 c_func
 (paren
 r_struct
-id|task_struct
+id|mm_struct
 op_star
-id|tsk
+id|mm
 comma
 r_struct
 id|vm_area_struct
@@ -1803,9 +1803,9 @@ id|find_extend_vma
 c_func
 (paren
 r_struct
-id|task_struct
+id|mm_struct
 op_star
-id|tsk
+id|mm
 comma
 r_int
 r_int

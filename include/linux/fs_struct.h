@@ -1,6 +1,6 @@
 macro_line|#ifndef _LINUX_FS_STRUCT_H
-DECL|macro|_LINUX_FS_STRUC_H
-mdefine_line|#define _LINUX_FS_STRUC_H
+DECL|macro|_LINUX_FS_STRUCT_H
+mdefine_line|#define _LINUX_FS_STRUCT_H
 macro_line|#ifdef __KERNEL__
 DECL|struct|fs_struct
 r_struct

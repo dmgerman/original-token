@@ -2482,8 +2482,7 @@ id|__u8
 id|nslots
 suffix:semicolon
 DECL|member|slot_tablelen
-id|__u8
-r_int
+id|__u16
 id|slot_tablelen
 suffix:semicolon
 )brace

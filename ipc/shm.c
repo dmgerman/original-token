@@ -8024,10 +8024,10 @@ comma
 id|inp
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * Copy over /dev/zero dev/ino for benefit of procfs. Use&n;&t; * ino to indicate seperate mappings.&n;&t; */
+multiline_comment|/*&n;&t; * Copy over dev/ino for benefit of procfs. Use&n;&t; * ino to indicate seperate mappings.&n;&t; */
 id|filp-&gt;f_dentry-&gt;d_inode-&gt;i_dev
 op_assign
-id|fzero-&gt;f_dentry-&gt;d_inode-&gt;i_dev
+id|shm_sb-&gt;s_dev
 suffix:semicolon
 id|filp-&gt;f_dentry-&gt;d_inode-&gt;i_ino
 op_assign
@@ -8037,6 +8037,11 @@ r_int
 )paren
 id|shp
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|fzero
+)paren
 id|fput
 c_func
 (paren

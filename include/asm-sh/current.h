@@ -25,18 +25,11 @@ suffix:semicolon
 id|__asm__
 c_func
 (paren
-l_string|&quot;stc&t;$r4_bank, %0&bslash;n&bslash;t&quot;
-l_string|&quot;add&t;%1, %0&quot;
+l_string|&quot;stc&t;$r7_bank, %0&quot;
 suffix:colon
-l_string|&quot;=&amp;r&quot;
+l_string|&quot;=r&quot;
 (paren
 id|current
-)paren
-suffix:colon
-l_string|&quot;r&quot;
-(paren
-op_minus
-l_int|8192
 )paren
 )paren
 suffix:semicolon

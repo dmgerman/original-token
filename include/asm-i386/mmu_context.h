@@ -10,7 +10,7 @@ DECL|macro|destroy_context
 mdefine_line|#define destroy_context(mm)&t;&t;do { } while(0)
 DECL|macro|init_new_context
 mdefine_line|#define init_new_context(tsk,mm)&t;do { } while (0)
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 DECL|function|enter_lazy_tlb
 r_static
 r_inline
@@ -184,7 +184,7 @@ id|prev-&gt;cpu_vm_mask
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 r_else
 (brace
 r_int

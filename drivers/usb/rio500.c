@@ -19,7 +19,7 @@ multiline_comment|/* stall/wait timeout for rio */
 DECL|macro|NAK_TIMEOUT
 mdefine_line|#define NAK_TIMEOUT (HZ)
 DECL|macro|IBUF_SIZE
-mdefine_line|#define IBUF_SIZE 128
+mdefine_line|#define IBUF_SIZE 0x1000
 multiline_comment|/* Size of the rio buffer */
 DECL|macro|OBUF_SIZE
 mdefine_line|#define OBUF_SIZE 0x10000
@@ -1216,8 +1216,7 @@ r_int
 (paren
 id|HZ
 op_star
-dot
-l_int|1
+l_int|8
 )paren
 )paren
 suffix:semicolon

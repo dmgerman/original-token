@@ -1,10 +1,11 @@
 macro_line|#ifndef _PPC_PGALLOC_H
 DECL|macro|_PPC_PGALLOC_H
 mdefine_line|#define _PPC_PGALLOC_H
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/threads.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;
 multiline_comment|/*&n; * This is handled very differently on the PPC since out page tables&n; * are all 0&squot;s and I want to be able to use these zero&squot;d pages elsewhere&n; * as well - it gives us quite a speedup.&n; *&n; * Note that the SMP/UP versions are the same but we don&squot;t need a&n; * per cpu list of zero pages because we do the zero-ing with the cache&n; * off and the access routines are lock-free but the pgt cache stuff&n; * is per-cpu since it isn&squot;t done with any lock-free access routines&n; * (although I think we need arch-specific routines so I can do lock-free).&n; *&n; * I need to generalize this so we can use it for other arch&squot;s as well.&n; * -- Cort&n; */
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 DECL|macro|quicklists
 mdefine_line|#define quicklists&t;cpu_data[smp_processor_id()]
 macro_line|#else
@@ -123,7 +124,7 @@ id|pgd_t
 op_star
 id|pgd
 suffix:semicolon
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 r_int
 id|i
 suffix:semicolon
@@ -168,7 +169,7 @@ op_amp
 id|tasklist_lock
 )paren
 suffix:semicolon
-macro_line|#ifndef __SMP__
+macro_line|#ifndef CONFIG_SMP
 r_for
 c_loop
 (paren

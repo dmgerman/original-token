@@ -897,7 +897,7 @@ comma
 id|i
 )paren
 suffix:semicolon
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 r_for
 c_loop
 (paren
@@ -955,7 +955,7 @@ id|i
 )paren
 )paren
 suffix:semicolon
-macro_line|#endif /* __SMP__ */
+macro_line|#endif /* CONFIG_SMP */
 r_if
 c_cond
 (paren
@@ -1056,7 +1056,7 @@ l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 multiline_comment|/* should this be per processor send/receive? */
 id|len
 op_add_assign
@@ -1403,7 +1403,7 @@ c_func
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 DECL|variable|global_irq_holder
 r_int
 r_char
@@ -2423,7 +2423,7 @@ suffix:semicolon
 )brace
 )brace
 )brace
-macro_line|#endif /* __SMP__ */
+macro_line|#endif /* CONFIG_SMP */
 DECL|variable|root_irq_dir
 r_static
 r_struct

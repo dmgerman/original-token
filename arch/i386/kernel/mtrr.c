@@ -71,7 +71,7 @@ DECL|macro|MTRRfix4K_F0000_MSR
 mdefine_line|#define MTRRfix4K_F0000_MSR 0x26e
 DECL|macro|MTRRfix4K_F8000_MSR
 mdefine_line|#define MTRRfix4K_F8000_MSR 0x26f
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 DECL|macro|MTRR_CHANGE_MASK_FIXED
 macro_line|#  define MTRR_CHANGE_MASK_FIXED     0x01
 DECL|macro|MTRR_CHANGE_MASK_VARIABLE
@@ -89,7 +89,7 @@ DECL|macro|LINE_SIZE
 mdefine_line|#define LINE_SIZE      80
 DECL|macro|JIFFIE_TIMEOUT
 mdefine_line|#define JIFFIE_TIMEOUT 100
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 DECL|macro|set_mtrr
 macro_line|#  define set_mtrr(reg,base,size,type) set_mtrr_smp (reg, base, size, type)
 macro_line|#else
@@ -2051,7 +2051,7 @@ id|do_safe
 op_assign
 l_int|NULL
 suffix:semicolon
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 DECL|struct|mtrr_var_range
 r_struct
 id|mtrr_var_range
@@ -3329,7 +3329,7 @@ l_string|&quot;mtrr: probably your BIOS does not setup all CPUs&bslash;n&quot;
 suffix:semicolon
 )brace
 multiline_comment|/*  End Function mtrr_state_warn  */
-macro_line|#endif  /*  __SMP__  */
+macro_line|#endif  /*  CONFIG_SMP  */
 DECL|function|attrib_to_str
 r_static
 r_char
@@ -6157,7 +6157,7 @@ c_func
 id|mtrr_del
 )paren
 suffix:semicolon
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 r_typedef
 r_struct
 (brace
@@ -6457,7 +6457,7 @@ comma
 l_int|0
 )brace
 suffix:semicolon
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 r_int
 id|i
 suffix:semicolon
@@ -6744,7 +6744,7 @@ l_int|5
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 r_for
 c_loop
 (paren
@@ -7048,7 +7048,7 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/*  End Function mtrr_setup  */
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 DECL|variable|__initdata
 r_static
 r_volatile
@@ -7304,7 +7304,7 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/*  End Function mtrr_init_secondary_cpu  */
-macro_line|#endif  /*  __SMP__  */
+macro_line|#endif  /*  CONFIG_SMP  */
 DECL|function|mtrr_init
 r_int
 id|__init
@@ -7327,7 +7327,7 @@ id|X86_FEATURE_MTRR
 r_return
 l_int|0
 suffix:semicolon
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 r_switch
 c_cond
 (paren
@@ -7364,7 +7364,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
-macro_line|#else  /*  __SMP__  */
+macro_line|#else  /*  CONFIG_SMP  */
 id|mtrr_setup
 (paren
 )paren
@@ -7394,7 +7394,7 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
-macro_line|#endif  /*  !__SMP__  */
+macro_line|#endif  /*  !CONFIG_SMP  */
 macro_line|#ifdef CONFIG_PROC_FS
 id|proc_root_mtrr
 op_assign

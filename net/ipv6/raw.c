@@ -3359,60 +3359,62 @@ id|proto
 id|rawv6_prot
 op_assign
 (brace
-id|rawv6_close
-comma
-multiline_comment|/* close */
-id|udpv6_connect
-comma
-multiline_comment|/* connect */
-id|udp_disconnect
-comma
-multiline_comment|/* disconnect */
-l_int|NULL
-comma
-multiline_comment|/* accept */
-l_int|NULL
-comma
-multiline_comment|/* ioctl */
-id|rawv6_init_sk
-comma
-multiline_comment|/* init */
-id|inet6_destroy_sock
-comma
-multiline_comment|/* destroy */
-l_int|NULL
-comma
-multiline_comment|/* shutdown */
-id|rawv6_setsockopt
-comma
-multiline_comment|/* setsockopt */
-id|rawv6_getsockopt
-comma
-multiline_comment|/* getsockopt */
-id|rawv6_sendmsg
-comma
-multiline_comment|/* sendmsg */
-id|rawv6_recvmsg
-comma
-multiline_comment|/* recvmsg */
-id|rawv6_bind
-comma
-multiline_comment|/* bind */
-id|rawv6_rcv_skb
-comma
-multiline_comment|/* backlog_rcv */
-id|raw_v6_hash
-comma
-multiline_comment|/* hash */
-id|raw_v6_unhash
-comma
-multiline_comment|/* unhash */
-l_int|NULL
-comma
-multiline_comment|/* get_port */
+id|name
+suffix:colon
 l_string|&quot;RAW&quot;
 comma
-multiline_comment|/* name */
+id|close
+suffix:colon
+id|rawv6_close
+comma
+id|connect
+suffix:colon
+id|udpv6_connect
+comma
+id|disconnect
+suffix:colon
+id|udp_disconnect
+comma
+id|init
+suffix:colon
+id|rawv6_init_sk
+comma
+id|destroy
+suffix:colon
+id|inet6_destroy_sock
+comma
+id|setsockopt
+suffix:colon
+id|rawv6_setsockopt
+comma
+id|getsockopt
+suffix:colon
+id|rawv6_getsockopt
+comma
+id|sendmsg
+suffix:colon
+id|rawv6_sendmsg
+comma
+id|recvmsg
+suffix:colon
+id|rawv6_recvmsg
+comma
+id|bind
+suffix:colon
+id|rawv6_bind
+comma
+id|backlog_rcv
+suffix:colon
+id|rawv6_rcv_skb
+comma
+id|hash
+suffix:colon
+id|raw_v6_hash
+comma
+id|unhash
+suffix:colon
+id|raw_v6_unhash
+comma
 )brace
 suffix:semicolon
 eof

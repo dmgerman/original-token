@@ -212,11 +212,18 @@ id|Scsi_Device
 op_star
 id|device
 suffix:semicolon
+DECL|member|lock
+r_struct
+id|semaphore
+id|lock
+suffix:semicolon
+multiline_comment|/* For serialization */
 DECL|member|sem
 r_struct
 id|semaphore
 id|sem
 suffix:semicolon
+multiline_comment|/* For SCSI commands */
 DECL|member|buffer
 id|ST_buffer
 op_star

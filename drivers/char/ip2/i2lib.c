@@ -3651,11 +3651,11 @@ c_cond
 id|user
 )paren
 (brace
-id|rc
-op_assign
-id|copy_from_user
+id|COPY_FROM_USER
 c_func
 (paren
+id|rc
+comma
 (paren
 r_char
 op_star
@@ -5388,14 +5388,18 @@ singleline_comment|// Channel is illegally big ?
 r_if
 c_cond
 (paren
+(paren
 id|channel
 op_ge
 id|pB-&gt;i2eChannelCnt
+)paren
 op_logical_or
+(paren
+l_int|NULL
+op_eq
 (paren
 id|pCh
 op_assign
-(paren
 (paren
 (paren
 id|i2ChanStrPtr
@@ -5408,8 +5412,6 @@ id|channel
 )braket
 )paren
 )paren
-op_eq
-l_int|NULL
 )paren
 (brace
 id|iiReadBuf
@@ -5542,6 +5544,10 @@ comma
 id|amountToRead
 )paren
 suffix:semicolon
+id|pCh-&gt;icount.rx
+op_add_assign
+id|amountToRead
+suffix:semicolon
 singleline_comment|// Update the stuffIndex by the amount of data moved. Note we could
 singleline_comment|// never ask for more data than would just fit. However, we might
 singleline_comment|// have read in one more byte than we wanted because the read
@@ -5632,6 +5638,10 @@ id|stuffIndex
 comma
 id|amountToRead
 )paren
+suffix:semicolon
+id|pCh-&gt;icount.rx
+op_add_assign
+id|amountToRead
 suffix:semicolon
 id|stuffIndex
 op_add_assign
@@ -5844,8 +5854,8 @@ id|pCh-&gt;dataSetIn
 op_or_assign
 id|I2_DCTS
 suffix:semicolon
-op_increment
 id|pCh-&gt;icount.cts
+op_increment
 suffix:semicolon
 id|dss_change
 op_assign
@@ -5873,8 +5883,8 @@ id|pCh-&gt;dataSetIn
 op_or_assign
 id|I2_DCTS
 suffix:semicolon
-op_increment
 id|pCh-&gt;icount.cts
+op_increment
 suffix:semicolon
 id|dss_change
 op_assign
@@ -5934,8 +5944,8 @@ id|pCh-&gt;dataSetIn
 op_or_assign
 id|I2_DDCD
 suffix:semicolon
-op_increment
 id|pCh-&gt;icount.dcd
+op_increment
 suffix:semicolon
 id|dss_change
 op_assign
@@ -6006,8 +6016,8 @@ id|pCh-&gt;dataSetIn
 op_or_assign
 id|I2_DDCD
 suffix:semicolon
-op_increment
 id|pCh-&gt;icount.dcd
+op_increment
 suffix:semicolon
 id|dss_change
 op_assign
@@ -6054,8 +6064,8 @@ id|pCh-&gt;dataSetIn
 op_or_assign
 id|I2_DDSR
 suffix:semicolon
-op_increment
 id|pCh-&gt;icount.dsr
+op_increment
 suffix:semicolon
 id|dss_change
 op_assign
@@ -6083,8 +6093,8 @@ id|pCh-&gt;dataSetIn
 op_or_assign
 id|I2_DDSR
 suffix:semicolon
-op_increment
 id|pCh-&gt;icount.dsr
+op_increment
 suffix:semicolon
 id|dss_change
 op_assign
@@ -6116,8 +6126,8 @@ id|pCh-&gt;dataSetIn
 op_or_assign
 id|I2_DRI
 suffix:semicolon
-op_increment
 id|pCh-&gt;icount.rng
+op_increment
 suffix:semicolon
 id|dss_change
 op_assign
@@ -6133,23 +6143,13 @@ suffix:semicolon
 r_case
 id|STAT_RI_DN
 suffix:colon
-r_if
-c_cond
-(paren
-id|pCh-&gt;dataSetIn
-op_amp
-id|I2_RI
-)paren
-(brace
-id|pCh-&gt;dataSetIn
-op_or_assign
-id|I2_DRI
-suffix:semicolon
-id|dss_change
-op_assign
-l_int|1
-suffix:semicolon
-)brace
+singleline_comment|// to be compat with serial.c
+singleline_comment|//if ( pCh-&gt;dataSetIn &amp; I2_RI )
+singleline_comment|//{
+singleline_comment|//&t;pCh-&gt;dataSetIn |= I2_DRI;
+singleline_comment|//&t;pCh-&gt;icount.rng++; 
+singleline_comment|//&t;dss_change = 1;
+singleline_comment|//}
 id|pCh-&gt;dataSetIn
 op_and_assign
 op_complement
@@ -6163,6 +6163,9 @@ suffix:colon
 id|pCh-&gt;dataSetIn
 op_or_assign
 id|I2_BRK
+suffix:semicolon
+id|pCh-&gt;icount.brk
+op_increment
 suffix:semicolon
 id|dss_change
 op_assign
@@ -6420,9 +6423,6 @@ r_sizeof
 id|bidStat
 )paren
 suffix:semicolon
-singleline_comment|//printk(&quot;boxids: %x %x %x %x&bslash;n&quot;,
-singleline_comment|//&t;pB-&gt;channelBtypes.bid_value[0],pB-&gt;channelBtypes.bid_value[1],
-singleline_comment|//&t;pB-&gt;channelBtypes.bid_value[2],pB-&gt;channelBtypes.bid_value[3]);
 id|set_baud_params
 c_func
 (paren
@@ -6489,10 +6489,15 @@ id|uc
 op_amp
 id|STAT_E_PARITY
 )paren
+(brace
 id|pCh-&gt;dataSetIn
 op_or_assign
 id|I2_PAR
 suffix:semicolon
+id|pCh-&gt;icount.parity
+op_increment
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -6500,10 +6505,15 @@ id|uc
 op_amp
 id|STAT_E_FRAMING
 )paren
+(brace
 id|pCh-&gt;dataSetIn
 op_or_assign
 id|I2_FRA
 suffix:semicolon
+id|pCh-&gt;icount.frame
+op_increment
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -6511,15 +6521,21 @@ id|uc
 op_amp
 id|STAT_E_OVERRUN
 )paren
+(brace
 id|pCh-&gt;dataSetIn
 op_or_assign
 id|I2_OVR
 suffix:semicolon
+id|pCh-&gt;icount.overrun
+op_increment
+suffix:semicolon
+)brace
 r_break
 suffix:semicolon
 r_case
 id|STAT_MODEM
 suffix:colon
+singleline_comment|// the answer to DSS_NOW request (not change)
 id|pCh-&gt;dataSetIn
 op_assign
 (paren
@@ -6543,6 +6559,12 @@ id|uc
 op_amp
 l_int|0xf
 )braket
+suffix:semicolon
+id|wake_up_interruptible
+(paren
+op_amp
+id|pCh-&gt;dss_now_wait
+)paren
 suffix:semicolon
 r_default
 suffix:colon
@@ -6608,36 +6630,6 @@ suffix:semicolon
 multiline_comment|/* Skip the data */
 r_break
 suffix:semicolon
-r_case
-id|STAT_CTS_UP
-suffix:colon
-r_case
-id|STAT_CTS_DN
-suffix:colon
-r_case
-id|STAT_DCD_UP
-suffix:colon
-r_case
-id|STAT_DCD_DN
-suffix:colon
-r_case
-id|STAT_DSR_UP
-suffix:colon
-r_case
-id|STAT_DSR_DN
-suffix:colon
-r_case
-id|STAT_RI_UP
-suffix:colon
-r_case
-id|STAT_RI_DN
-suffix:colon
-r_case
-id|STAT_BRK_DET
-suffix:colon
-r_case
-id|STAT_BMARK
-suffix:colon
 r_default
 suffix:colon
 r_break
@@ -7567,6 +7559,10 @@ suffix:semicolon
 macro_line|#endif /* DEBUG_FIFO */
 id|pB-&gt;debugInlineCount
 op_increment
+suffix:semicolon
+id|pCh-&gt;icount.tx
+op_add_assign
+id|flowsize
 suffix:semicolon
 singleline_comment|// Update current credits
 id|pCh-&gt;outfl.room

@@ -19,6 +19,7 @@ r_volatile
 (paren
 l_string|&quot;sts.l&t;$fpul, @-%0&bslash;n&bslash;t&quot;
 l_string|&quot;sts.l&t;$fpscr, @-%0&bslash;n&bslash;t&quot;
+l_string|&quot;lds&t;%1, $fpscr&bslash;n&bslash;t&quot;
 l_string|&quot;frchg&bslash;n&bslash;t&quot;
 l_string|&quot;fmov.s&t;$fr15, @-%0&bslash;n&bslash;t&quot;
 l_string|&quot;fmov.s&t;$fr14, @-%0&bslash;n&bslash;t&quot;
@@ -67,6 +68,11 @@ op_amp
 id|tsk-&gt;thread.fpu.hard.status
 )paren
 )paren
+comma
+l_string|&quot;r&quot;
+(paren
+id|FPSCR_INIT
+)paren
 suffix:colon
 l_string|&quot;memory&quot;
 )paren
@@ -97,6 +103,7 @@ id|tsk
 id|asm
 r_volatile
 (paren
+l_string|&quot;lds&t;%1, $fpscr&bslash;n&bslash;t&quot;
 l_string|&quot;fmov.s&t;@%0+, $fr0&bslash;n&bslash;t&quot;
 l_string|&quot;fmov.s&t;@%0+, $fr1&bslash;n&bslash;t&quot;
 l_string|&quot;fmov.s&t;@%0+, $fr2&bslash;n&bslash;t&quot;
@@ -140,6 +147,11 @@ l_string|&quot;r&quot;
 (paren
 op_amp
 id|tsk-&gt;thread.fpu
+)paren
+comma
+l_string|&quot;r&quot;
+(paren
+id|FPSCR_INIT
 )paren
 suffix:colon
 l_string|&quot;memory&quot;
@@ -243,11 +255,6 @@ id|tsk
 op_assign
 id|current
 suffix:semicolon
-id|regs.syscall_nr
-op_assign
-op_minus
-l_int|1
-suffix:semicolon
 id|regs.pc
 op_add_assign
 l_int|2
@@ -314,11 +321,6 @@ id|tsk
 op_assign
 id|current
 suffix:semicolon
-id|regs.syscall_nr
-op_assign
-op_minus
-l_int|1
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -359,11 +361,16 @@ id|tsk-&gt;flags
 op_amp
 id|PF_USEDFPU
 )paren
-id|BUG
+(brace
+multiline_comment|/*&n;&t;&t;&t; * This weird situation can be occurred.&n;&t;&t;&t; *&n;&t;&t;&t; * There&squot;s race condition in __cli:&n;&t;&t;&t; *&n;&t;&t;&t; *   (1) $SR --&gt; register&n;&t;&t;&t; *   (2) Set IMASK of register&n;&t;&t;&t; *   (3) $SR &lt;-- register&n;&t;&t;&t; *&n;&t;&t;&t; * Between (1) and (2), or (2) and (3) getting&n;&t;&t;&t; * interrupt, and interrupt handler (or&n;&t;&t;&t; * softirq) may use FPU.&n;&t;&t;&t; *&n;&t;&t;&t; * Then, SR.FD is overwritten by (3).&n;&t;&t;&t; *&n;&t;&t;&t; * This results init_task.PF_USEDFPU is on,&n;&t;&t;&t; * with SR.FD == 1.&n;&t;&t;&t; *&n;&t;&t;&t; */
+id|release_fpu
 c_func
 (paren
 )paren
 suffix:semicolon
+r_return
+suffix:semicolon
+)brace
 )brace
 id|grab_fpu
 c_func
@@ -477,12 +484,12 @@ id|SR_FD
 )paren
 )paren
 (brace
-id|release_fpu
+id|BUG
 c_func
 (paren
 )paren
 suffix:semicolon
-id|BUG
+id|release_fpu
 c_func
 (paren
 )paren
@@ -523,14 +530,17 @@ op_amp
 id|PF_USEDFPU
 )paren
 (brace
-id|init_task.flags
-op_and_assign
-op_complement
-id|PF_USEDFPU
-suffix:semicolon
-id|BUG
+multiline_comment|/*&n;&t;&t;&t;&t; * This weird situation can be occurred.&n;&t;&t;&t;&t; * See the comment in do_fpu_state_restore.&n;&t;&t;&t;&t; */
+id|grab_fpu
 c_func
 (paren
+)paren
+suffix:semicolon
+id|save_fpu
+c_func
+(paren
+op_amp
+id|init_task
 )paren
 suffix:semicolon
 )brace
@@ -554,12 +564,12 @@ id|init_task
 suffix:semicolon
 r_else
 (brace
-id|release_fpu
+id|BUG
 c_func
 (paren
 )paren
 suffix:semicolon
-id|BUG
+id|release_fpu
 c_func
 (paren
 )paren

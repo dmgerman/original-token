@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: pci_common.c,v 1.7 2000/03/25 05:18:11 davem Exp $&n; * pci_common.c: PCI controller common support.&n; *&n; * Copyright (C) 1999 David S. Miller (davem@redhat.com)&n; */
+multiline_comment|/* $Id: pci_common.c,v 1.10 2000/04/15 13:19:13 davem Exp $&n; * pci_common.c: PCI controller common support.&n; *&n; * Copyright (C) 1999 David S. Miller (davem@redhat.com)&n; */
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
@@ -884,14 +884,20 @@ suffix:semicolon
 r_case
 l_int|3
 suffix:colon
+multiline_comment|/* 64-bit MEM space, these are allocated out of&n;&t;&t; * the 32-bit mem_space range for the PBM, ie.&n;&t;&t; * we just zero out the upper 32-bits.&n;&t;&t; */
+r_return
+op_amp
+id|pbm-&gt;mem_space
+suffix:semicolon
 r_default
 suffix:colon
-multiline_comment|/* 64-bit MEM space, unsupported. */
 id|printk
 c_func
 (paren
-l_string|&quot;PCI: 64-bit MEM assignment??? &quot;
+l_string|&quot;PCI: What is resource space %x? &quot;
 l_string|&quot;Tell davem@redhat.com about it!&bslash;n&quot;
+comma
+id|space
 )paren
 suffix:semicolon
 r_return
@@ -920,6 +926,11 @@ op_star
 id|pdev
 )paren
 (brace
+r_struct
+id|resource
+op_star
+id|res
+suffix:semicolon
 r_int
 id|breg
 op_assign
@@ -967,12 +978,15 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-r_return
+id|res
+op_assign
 op_amp
 id|pdev-&gt;resource
 (braket
 id|PCI_ROM_RESOURCE
 )braket
+suffix:semicolon
+r_break
 suffix:semicolon
 r_case
 id|PCI_BASE_ADDRESS_0
@@ -992,7 +1006,8 @@ suffix:colon
 r_case
 id|PCI_BASE_ADDRESS_5
 suffix:colon
-r_return
+id|res
+op_assign
 op_amp
 id|pdev-&gt;resource
 (braket
@@ -1004,6 +1019,8 @@ id|PCI_BASE_ADDRESS_0
 op_div
 l_int|4
 )braket
+suffix:semicolon
+r_break
 suffix:semicolon
 r_default
 suffix:colon
@@ -1017,10 +1034,16 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-r_return
+id|res
+op_assign
 l_int|NULL
 suffix:semicolon
+r_break
+suffix:semicolon
 )brace
+suffix:semicolon
+r_return
+id|res
 suffix:semicolon
 )brace
 DECL|function|pdev_record_assignments
@@ -1143,6 +1166,116 @@ comma
 l_int|1
 )paren
 suffix:semicolon
+multiline_comment|/* If it is a 64-bit MEM space assignment, verify that&n;&t;&t; * the resource is too and that the upper 32-bits match.&n;&t;&t; */
+r_if
+c_cond
+(paren
+(paren
+(paren
+id|ap-&gt;phys_hi
+op_rshift
+l_int|24
+)paren
+op_amp
+l_int|3
+)paren
+op_eq
+l_int|3
+)paren
+(brace
+r_if
+c_cond
+(paren
+(paren
+(paren
+id|res-&gt;flags
+op_amp
+id|IORESOURCE_MEM
+)paren
+op_eq
+l_int|0
+)paren
+op_logical_or
+(paren
+(paren
+id|res-&gt;flags
+op_amp
+id|PCI_BASE_ADDRESS_MEM_TYPE_MASK
+)paren
+op_ne
+id|PCI_BASE_ADDRESS_MEM_TYPE_64
+)paren
+)paren
+id|bad_assignment
+c_func
+(paren
+id|ap
+comma
+id|res
+comma
+l_int|1
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|res-&gt;start
+op_rshift
+l_int|32
+)paren
+op_ne
+id|ap-&gt;phys_mid
+)paren
+id|bad_assignment
+c_func
+(paren
+id|ap
+comma
+id|res
+comma
+l_int|1
+)paren
+suffix:semicolon
+multiline_comment|/* PBM cannot generate cpu initiated PIOs&n;&t;&t;&t; * to the full 64-bit space.  Therefore the&n;&t;&t;&t; * upper 32-bits better be zero.  If it is&n;&t;&t;&t; * not, just skip it and we will assign it&n;&t;&t;&t; * properly ourselves.&n;&t;&t;&t; */
+r_if
+c_cond
+(paren
+(paren
+id|res-&gt;start
+op_rshift
+l_int|32
+)paren
+op_ne
+l_int|0UL
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;PCI: OBP assigns out of range MEM address &quot;
+l_string|&quot;%016lx for region %ld on device %s&bslash;n&quot;
+comma
+id|res-&gt;start
+comma
+(paren
+id|res
+op_minus
+op_amp
+id|pdev-&gt;resource
+(braket
+l_int|0
+)braket
+)paren
+comma
+id|pdev-&gt;name
+)paren
+suffix:semicolon
+r_continue
+suffix:semicolon
+)brace
+)brace
 multiline_comment|/* Adjust the resource into the physical address space&n;&t;&t; * of this PBM.&n;&t;&t; */
 id|pbm-&gt;parent
 op_member_access_from_pointer
@@ -1831,7 +1964,7 @@ l_int|0
 r_return
 l_int|0
 suffix:semicolon
-multiline_comment|/* If we are underneath a PCI bridge, use PROM register&n;&t; * property of parent bridge.&n;&t; */
+multiline_comment|/* If we are underneath a PCI bridge, use PROM register&n;&t; * property of the parent bridge which is closest to&n;&t; * the PBM.&n;&t; */
 r_if
 c_cond
 (paren
@@ -1845,12 +1978,34 @@ id|pcidev_cookie
 op_star
 id|bus_pcp
 suffix:semicolon
+r_struct
+id|pci_dev
+op_star
+id|pwalk
+suffix:semicolon
 r_int
 id|offset
 suffix:semicolon
+id|pwalk
+op_assign
+id|pdev-&gt;bus-&gt;self
+suffix:semicolon
+r_while
+c_loop
+(paren
+id|pwalk-&gt;bus
+op_logical_and
+id|pwalk-&gt;bus-&gt;number
+op_ne
+id|pbm-&gt;pci_first_busno
+)paren
+id|pwalk
+op_assign
+id|pwalk-&gt;bus-&gt;self
+suffix:semicolon
 id|bus_pcp
 op_assign
-id|pdev-&gt;bus-&gt;self-&gt;sysdata
+id|pwalk-&gt;bus-&gt;self-&gt;sysdata
 suffix:semicolon
 id|pregs
 op_assign

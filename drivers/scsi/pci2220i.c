@@ -1,4 +1,4 @@
-multiline_comment|/****************************************************************************&n; * Perceptive Solutions, Inc. PCI-2220I device driver for Linux.&n; *&n; * pci2220i.c - Linux Host Driver for PCI-2220I EIDE RAID Adapters&n; *&n; * Copyright (c) 1997-1999 Perceptive Solutions, Inc.&n; * All Rights Reserved.&n; *&n; * Redistribution and use in source and binary forms, with or without&n; * modification, are permitted provided that redistributions of source&n; * code retain the above copyright notice and this comment without&n; * modification.&n; *&n; * Technical updates and product information at:&n; *  http://www.psidisk.com&n; *&n; * Please send questions, comments, bug reports to:&n; *  tech@psidisk.com Technical Support&n; *&n; *&n; *&t;Revisions 1.10&t;&t;Mar-26-1999&n; *&t;&t;- Updated driver for RAID and hot reconstruct support.&n; *&n; *&t;Revisions 1.11&t;&t;Mar-26-1999&n; *&t;&t;- Fixed spinlock and PCI configuration.&n; *&n; *&t;Revision 2.00&t;&t;December-1-1999&n; *&t;&t;- Added code for the PCI-2240I controller&n; *&t;&t;- Added code for ATAPI devices.&n; *&t;&t;- Double buffer for scatter/gather support&n; *&n; ****************************************************************************/
+multiline_comment|/****************************************************************************&n; * Perceptive Solutions, Inc. PCI-2220I device driver for Linux.&n; *&n; * pci2220i.c - Linux Host Driver for PCI-2220I EIDE RAID Adapters&n; *&n; * Copyright (c) 1997-1999 Perceptive Solutions, Inc.&n; * All Rights Reserved.&n; *&n; * Redistribution and use in source and binary forms, with or without&n; * modification, are permitted provided that redistributions of source&n; * code retain the above copyright notice and this comment without&n; * modification.&n; *&n; * Technical updates and product information at:&n; *  http://www.psidisk.com&n; *&n; * Please send questions, comments, bug reports to:&n; *  tech@psidisk.com Technical Support&n; *&n; *&n; *&t;Revisions 1.10&t;&t;Mar-26-1999&n; *&t;&t;- Updated driver for RAID and hot reconstruct support.&n; *&n; *&t;Revisions 1.11&t;&t;Mar-26-1999&n; *&t;&t;- Fixed spinlock and PCI configuration.&n; *&n; *&t;Revision 2.00&t;&t;December-1-1999&n; *&t;&t;- Added code for the PCI-2240I controller&n; *&t;&t;- Added code for ATAPI devices.&n; *&t;&t;- Double buffer for scatter/gather support&n; *&n; *&t;Revision 2.10&t;&t;March-27-2000&n; *&t;&t;- Added support for dynamic DMA&n; *&n; ****************************************************************************/
 singleline_comment|//#define DEBUG 1
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -23,7 +23,7 @@ macro_line|#include &quot;hosts.h&quot;
 macro_line|#include &quot;pci2220i.h&quot;
 macro_line|#include &quot;psi_dale.h&quot;
 DECL|macro|PCI2220I_VERSION
-mdefine_line|#define&t;PCI2220I_VERSION&t;&t;&quot;2.00&quot;
+mdefine_line|#define&t;PCI2220I_VERSION&t;&t;&quot;2.10&quot;
 DECL|macro|READ_CMD
 mdefine_line|#define&t;READ_CMD&t;&t;&t;&t;IDE_CMD_READ_MULTIPLE
 DECL|macro|WRITE_CMD
@@ -169,122 +169,122 @@ id|atapi
 suffix:semicolon
 singleline_comment|// this interface is for ATAPI devices only
 DECL|member|regDmaDesc
-id|USHORT
+id|ULONG
 id|regDmaDesc
 suffix:semicolon
 singleline_comment|// address of the DMA discriptor register for direction of transfer
 DECL|member|regDmaCmdStat
-id|USHORT
+id|ULONG
 id|regDmaCmdStat
 suffix:semicolon
 singleline_comment|// Byte #1 of DMA command status register
 DECL|member|regDmaAddrPci
-id|USHORT
+id|ULONG
 id|regDmaAddrPci
 suffix:semicolon
 singleline_comment|// 32 bit register for PCI address of DMA
 DECL|member|regDmaAddrLoc
-id|USHORT
+id|ULONG
 id|regDmaAddrLoc
 suffix:semicolon
 singleline_comment|// 32 bit register for local bus address of DMA
 DECL|member|regDmaCount
-id|USHORT
+id|ULONG
 id|regDmaCount
 suffix:semicolon
 singleline_comment|// 32 bit register for DMA transfer count
 DECL|member|regDmaMode
-id|USHORT
+id|ULONG
 id|regDmaMode
 suffix:semicolon
 singleline_comment|// 32 bit register for DMA mode control
 DECL|member|regRemap
-id|USHORT
+id|ULONG
 id|regRemap
 suffix:semicolon
 singleline_comment|// 32 bit local space remap
 DECL|member|regDesc
-id|USHORT
+id|ULONG
 id|regDesc
 suffix:semicolon
 singleline_comment|// 32 bit local region descriptor
 DECL|member|regRange
-id|USHORT
+id|ULONG
 id|regRange
 suffix:semicolon
 singleline_comment|// 32 bit local range
 DECL|member|regIrqControl
-id|USHORT
+id|ULONG
 id|regIrqControl
 suffix:semicolon
 singleline_comment|// 16 bit Interrupt enable/disable and status
 DECL|member|regScratchPad
-id|USHORT
+id|ULONG
 id|regScratchPad
 suffix:semicolon
 singleline_comment|// scratch pad I/O base address
 DECL|member|regBase
-id|USHORT
+id|ULONG
 id|regBase
 suffix:semicolon
 singleline_comment|// Base I/O register for data space
 DECL|member|regData
-id|USHORT
+id|ULONG
 id|regData
 suffix:semicolon
 singleline_comment|// data register I/O address
 DECL|member|regError
-id|USHORT
+id|ULONG
 id|regError
 suffix:semicolon
 singleline_comment|// error register I/O address
 DECL|member|regSectCount
-id|USHORT
+id|ULONG
 id|regSectCount
 suffix:semicolon
 singleline_comment|// sector count register I/O address
 DECL|member|regLba0
-id|USHORT
+id|ULONG
 id|regLba0
 suffix:semicolon
 singleline_comment|// least significant byte of LBA
 DECL|member|regLba8
-id|USHORT
+id|ULONG
 id|regLba8
 suffix:semicolon
 singleline_comment|// next least significant byte of LBA
 DECL|member|regLba16
-id|USHORT
+id|ULONG
 id|regLba16
 suffix:semicolon
 singleline_comment|// next most significan byte of LBA
 DECL|member|regLba24
-id|USHORT
+id|ULONG
 id|regLba24
 suffix:semicolon
 singleline_comment|// head and most 4 significant bits of LBA
 DECL|member|regStatCmd
-id|USHORT
+id|ULONG
 id|regStatCmd
 suffix:semicolon
 singleline_comment|// status on read and command on write register
 DECL|member|regStatSel
-id|USHORT
+id|ULONG
 id|regStatSel
 suffix:semicolon
 singleline_comment|// board status on read and spigot select on write register
 DECL|member|regFail
-id|USHORT
+id|ULONG
 id|regFail
 suffix:semicolon
 singleline_comment|// fail bits control register
 DECL|member|regAltStat
-id|USHORT
+id|ULONG
 id|regAltStat
 suffix:semicolon
 singleline_comment|// alternate status and drive control register
 DECL|member|basePort
-id|USHORT
+id|ULONG
 id|basePort
 suffix:semicolon
 singleline_comment|// PLX base I/O port
@@ -298,6 +298,12 @@ id|USHORT
 id|timingPIO
 suffix:semicolon
 singleline_comment|// TRUE if PIO timing is active
+DECL|member|pcidev
+r_struct
+id|pci_dev
+op_star
+id|pcidev
+suffix:semicolon
 DECL|member|timingAddress
 id|ULONG
 id|timingAddress
@@ -421,6 +427,10 @@ DECL|member|kBuffer
 id|UCHAR
 op_star
 id|kBuffer
+suffix:semicolon
+DECL|member|kBufferDma
+id|dma_addr_t
+id|kBufferDma
 suffix:semicolon
 DECL|member|reqSense
 id|UCHAR
@@ -1671,10 +1681,7 @@ id|padapter-&gt;regDmaAddrLoc
 suffix:semicolon
 id|outl
 (paren
-id|virt_to_bus
-(paren
-id|padapter-&gt;kBuffer
-)paren
+id|padapter-&gt;kBufferDma
 comma
 id|padapter-&gt;regDmaAddrPci
 )paren
@@ -1720,10 +1727,7 @@ id|padapter-&gt;regDmaAddrLoc
 suffix:semicolon
 id|outl
 (paren
-id|virt_to_bus
-(paren
-id|padapter-&gt;kBuffer
-)paren
+id|padapter-&gt;kBufferDma
 comma
 id|padapter-&gt;regDmaAddrPci
 )paren
@@ -3794,20 +3798,6 @@ id|padapter-&gt;expectingIRQ
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#ifdef DEBUG
-id|printk
-(paren
-l_string|&quot; @@@@@@  status: %X @@@@@@@ &quot;
-comma
-id|status
-)paren
-suffix:semicolon
-id|STOP_HERE
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -4326,28 +4316,10 @@ id|temp
 comma
 id|temp1
 suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &lt; LINUXVERSION(2,1,95)
-r_int
-id|flags
-suffix:semicolon
-macro_line|#else /* version &gt;= v2.1.95 */
 r_int
 r_int
 id|flags
 suffix:semicolon
-macro_line|#endif /* version &gt;= v2.1.95 */
-macro_line|#if LINUX_VERSION_CODE &lt; LINUXVERSION(2,1,95)
-multiline_comment|/* Disable interrupts, if they aren&squot;t already disabled. */
-id|save_flags
-(paren
-id|flags
-)paren
-suffix:semicolon
-id|cli
-(paren
-)paren
-suffix:semicolon
-macro_line|#else /* version &gt;= v2.1.95 */
 multiline_comment|/*&n;     * Disable interrupts, if they aren&squot;t already disabled and acquire&n;     * the I/O spinlock.&n;     */
 id|spin_lock_irqsave
 (paren
@@ -4357,7 +4329,6 @@ comma
 id|flags
 )paren
 suffix:semicolon
-macro_line|#endif /* version &gt;= v2.1.95 */
 id|DEB
 (paren
 id|printk
@@ -5004,14 +4975,6 @@ suffix:semicolon
 id|timerExpiryDone
 suffix:colon
 suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &lt; LINUXVERSION(2,1,95)
-multiline_comment|/*&n;     * Restore the original flags which will enable interrupts&n;     * if and only if they were enabled on entry.&n;     */
-id|restore_flags
-(paren
-id|flags
-)paren
-suffix:semicolon
-macro_line|#else /* version &gt;= v2.1.95 */
 multiline_comment|/*&n;     * Release the I/O spinlock and restore the original flags&n;     * which will enable interrupts if and only if they were&n;     * enabled on entry.&n;     */
 id|spin_unlock_irqrestore
 (paren
@@ -5021,7 +4984,6 @@ comma
 id|flags
 )paren
 suffix:semicolon
-macro_line|#endif /* version &gt;= v2.1.95 */
 )brace
 multiline_comment|/****************************************************************&n; *&t;Name:&t;&t;&t;SetReconstruct&t;:LOCAL&n; *&n; *&t;Description:&t;Set the reconstruct up.&n; *&n; *&t;Parameters:&t;&t;pdev&t;- Pointer to device structure.&n; *&t;&t;&t;&t;&t;index&t;- Mirror index number.&n; *&n; *&t;Returns:&t;&t;Number of sectors on new disk required.&n; *&n; ****************************************************************/
 DECL|function|SetReconstruct
@@ -5122,28 +5084,10 @@ suffix:semicolon
 id|USHORT
 id|z
 suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &lt; LINUXVERSION(2,1,95)
-r_int
-id|flags
-suffix:semicolon
-macro_line|#else /* version &gt;= v2.1.95 */
 r_int
 r_int
 id|flags
 suffix:semicolon
-macro_line|#endif /* version &gt;= v2.1.95 */
-macro_line|#if LINUX_VERSION_CODE &lt; LINUXVERSION(2,1,95)
-multiline_comment|/* Disable interrupts, if they aren&squot;t already disabled. */
-id|save_flags
-(paren
-id|flags
-)paren
-suffix:semicolon
-id|cli
-(paren
-)paren
-suffix:semicolon
-macro_line|#else /* version &gt;= v2.1.95 */
 multiline_comment|/*&n;     * Disable interrupts, if they aren&squot;t already disabled and acquire&n;     * the I/O spinlock.&n;     */
 id|spin_lock_irqsave
 (paren
@@ -5153,7 +5097,6 @@ comma
 id|flags
 )paren
 suffix:semicolon
-macro_line|#endif /* version &gt;= v2.1.95 */
 id|padapter
 op_assign
 (paren
@@ -6251,14 +6194,6 @@ suffix:semicolon
 id|reconTimerExpiry
 suffix:colon
 suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &lt; LINUXVERSION(2,1,95)
-multiline_comment|/*&n;     * Restore the original flags which will enable interrupts&n;     * if and only if they were enabled on entry.&n;     */
-id|restore_flags
-(paren
-id|flags
-)paren
-suffix:semicolon
-macro_line|#else /* version &gt;= v2.1.95 */
 multiline_comment|/*&n;     * Release the I/O spinlock and restore the original flags&n;     * which will enable interrupts if and only if they were&n;     * enabled on entry.&n;     */
 id|spin_unlock_irqrestore
 (paren
@@ -6268,7 +6203,6 @@ comma
 id|flags
 )paren
 suffix:semicolon
-macro_line|#endif /* version &gt;= v2.1.95 */
 )brace
 multiline_comment|/****************************************************************&n; *&t;Name:&t;Irq_Handler&t;:LOCAL&n; *&n; *&t;Description:&t;Interrupt handler.&n; *&n; *&t;Parameters:&t;&t;irq&t;&t;- Hardware IRQ number.&n; *&t;&t;&t;&t;&t;dev_id&t;-&n; *&t;&t;&t;&t;&t;regs&t;-&n; *&n; *&t;Returns:&t;&t;TRUE if drive is not ready in time.&n; *&n; ****************************************************************/
 DECL|function|Irq_Handler
@@ -6329,28 +6263,10 @@ suffix:semicolon
 id|ULONG
 id|zl
 suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &lt; LINUXVERSION(2,1,95)
-r_int
-id|flags
-suffix:semicolon
-macro_line|#else /* version &gt;= v2.1.95 */
 r_int
 r_int
 id|flags
 suffix:semicolon
-macro_line|#endif /* version &gt;= v2.1.95 */
-macro_line|#if LINUX_VERSION_CODE &lt; LINUXVERSION(2,1,95)
-multiline_comment|/* Disable interrupts, if they aren&squot;t already disabled. */
-id|save_flags
-(paren
-id|flags
-)paren
-suffix:semicolon
-id|cli
-(paren
-)paren
-suffix:semicolon
-macro_line|#else /* version &gt;= v2.1.95 */
 multiline_comment|/*&n;     * Disable interrupts, if they aren&squot;t already disabled and acquire&n;     * the I/O spinlock.&n;     */
 id|spin_lock_irqsave
 (paren
@@ -6360,7 +6276,6 @@ comma
 id|flags
 )paren
 suffix:semicolon
-macro_line|#endif /* version &gt;= v2.1.95 */
 singleline_comment|//&t;DEB (printk (&quot;&bslash;npci2220i recieved interrupt&bslash;n&quot;));
 r_for
 c_loop
@@ -7353,10 +7268,7 @@ id|padapter-&gt;regDmaAddrLoc
 suffix:semicolon
 id|outl
 (paren
-id|virt_to_bus
-(paren
-id|padapter-&gt;kBuffer
-)paren
+id|padapter-&gt;kBufferDma
 comma
 id|padapter-&gt;regDmaAddrPci
 )paren
@@ -8584,14 +8496,6 @@ suffix:semicolon
 id|irq_return
 suffix:colon
 suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &lt; LINUXVERSION(2,1,95)
-multiline_comment|/*&n;     * Restore the original flags which will enable interrupts&n;     * if and only if they were enabled on entry.&n;     */
-id|restore_flags
-(paren
-id|flags
-)paren
-suffix:semicolon
-macro_line|#else /* version &gt;= v2.1.95 */
 multiline_comment|/*&n;     * Release the I/O spinlock and restore the original flags&n;     * which will enable interrupts if and only if they were&n;     * enabled on entry.&n;     */
 id|spin_unlock_irqrestore
 (paren
@@ -8601,7 +8505,6 @@ comma
 id|flags
 )paren
 suffix:semicolon
-macro_line|#endif /* version &gt;= v2.1.95 */
 )brace
 multiline_comment|/****************************************************************&n; *&t;Name:&t;Pci2220i_QueueCommand&n; *&n; *&t;Description:&t;Process a queued command from the SCSI manager.&n; *&n; *&t;Parameters:&t;&t;SCpnt - Pointer to SCSI command structure.&n; *&t;&t;&t;&t;&t;done  - Pointer to done function to call.&n; *&n; *&t;Returns:&t;&t;Status code.&n; *&n; ****************************************************************/
 DECL|function|Pci2220i_QueueCommand
@@ -10118,8 +10021,7 @@ id|padapter-&gt;regDesc
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/****************************************************************&n; *&t;Name:&t;&t;&t;GetRegs&n; *&n; *&t;Description:&t;Initialize the regester information.&n; *&n; *&t;Parameters:&t;&t;pshost&t;&t;  - Pointer to SCSI host data structure.&n; *&t;&t;&t;&t;&t;bigd&t;&t;  - PCI-2240I identifier&n; *&t;&t;&t;&t;&t;pcidev&t;&t;  - Pointer to device data structure.&n; *&t;&t;&t;&t;&t;pci_bus&t;&t;  - PCI bus number.&n; *&t;&t;&t;&t;&t;pci_device_fn - PCI device and function number.&n; *&n; *&t;Returns:&t;&t;TRUE if failure to install.&n; *&n; ****************************************************************/
-macro_line|#if LINUX_VERSION_CODE &gt; LINUXVERSION(2,1,92)
+multiline_comment|/****************************************************************&n; *&t;Name:&t;&t;&t;GetRegs&n; *&n; *&t;Description:&t;Initialize the regester information.&n; *&n; *&t;Parameters:&t;&t;pshost&t;&t;  - Pointer to SCSI host data structure.&n; *&t;&t;&t;&t;&t;bigd&t;&t;  - PCI-2240I identifier&n; *&t;&t;&t;&t;&t;pcidev&t;&t;  - Pointer to device data structure.&n; *&n; *&t;Returns:&t;&t;TRUE if failure to install.&n; *&n; ****************************************************************/
 DECL|function|GetRegs
 r_static
 id|USHORT
@@ -10138,26 +10040,6 @@ id|pci_dev
 op_star
 id|pcidev
 )paren
-macro_line|#else
-r_static
-id|USHORT
-id|GetRegs
-(paren
-r_struct
-id|Scsi_Host
-op_star
-id|pshost
-comma
-id|BOOL
-id|bigd
-comma
-id|UCHAR
-id|pci_bus
-comma
-id|UCHAR
-id|pci_device_fn
-)paren
-macro_line|#endif
 (brace
 id|PADAPTER2220I
 id|padapter
@@ -10172,6 +10054,13 @@ id|USHORT
 id|zr
 comma
 id|zl
+suffix:semicolon
+id|UCHAR
+op_star
+id|consistent
+suffix:semicolon
+id|dma_addr_t
+id|consistentDma
 suffix:semicolon
 id|padapter
 op_assign
@@ -10220,21 +10109,25 @@ id|DiskMirror
 suffix:semicolon
 id|zr
 op_assign
-id|pci_resource_start
-(paren
-id|pcidev
-comma
+id|pcidev-&gt;resource
+(braket
 l_int|1
-)paren
+)braket
+dot
+id|start
+op_amp
+id|PCI_BASE_ADDRESS_IO_MASK
 suffix:semicolon
 id|zl
 op_assign
-id|pci_resource_start
-(paren
-id|pcidev
-comma
+id|pcidev-&gt;resource
+(braket
 l_int|2
-)paren
+)braket
+dot
+id|start
+op_amp
+id|PCI_BASE_ADDRESS_IO_MASK
 suffix:semicolon
 id|padapter-&gt;basePort
 op_assign
@@ -10353,6 +10246,10 @@ op_assign
 id|zl
 op_plus
 id|REG_ALT_STAT
+suffix:semicolon
+id|padapter-&gt;pcidev
+op_assign
+id|pcidev
 suffix:semicolon
 r_if
 c_cond
@@ -10481,25 +10378,10 @@ singleline_comment|// if no devices on this board
 r_return
 id|TRUE
 suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &gt; LINUXVERSION(2,1,92)
 id|pshost-&gt;irq
 op_assign
 id|pcidev-&gt;irq
 suffix:semicolon
-macro_line|#else
-id|pcibios_read_config_byte
-(paren
-id|pci_bus
-comma
-id|pci_device_fn
-comma
-id|PCI_INTERRUPT_LINE
-comma
-op_amp
-id|pshost-&gt;irq
-)paren
-suffix:semicolon
-macro_line|#endif
 id|setirq
 op_assign
 l_int|1
@@ -10606,36 +10488,38 @@ c_cond
 (paren
 id|padapter-&gt;numberOfDrives
 )paren
-id|padapter-&gt;kBuffer
+id|consistent
 op_assign
-id|kmalloc
+id|pci_alloc_consistent
 (paren
+id|pcidev
+comma
 id|SECTORSXFER
 op_star
 id|BYTES_PER_SECTOR
 comma
-id|GFP_DMA
-op_or
-id|GFP_ATOMIC
+op_amp
+id|consistentDma
 )paren
 suffix:semicolon
 r_else
-id|padapter-&gt;kBuffer
+id|consistent
 op_assign
-id|kmalloc
+id|pci_alloc_consistent
 (paren
+id|pcidev
+comma
 id|ATAPI_TRANSFER
 comma
-id|GFP_DMA
-op_or
-id|GFP_ATOMIC
+op_amp
+id|consistentDma
 )paren
 suffix:semicolon
 r_if
 c_cond
 (paren
 op_logical_neg
-id|padapter-&gt;kBuffer
+id|consistent
 )paren
 (brace
 id|printk
@@ -10643,13 +10527,6 @@ id|printk
 l_string|&quot;Unable to allocate DMA buffer for PCI-2220I controller.&bslash;n&quot;
 )paren
 suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &lt; LINUXVERSION(1,3,70)
-id|free_irq
-(paren
-id|pshost-&gt;irq
-)paren
-suffix:semicolon
-macro_line|#else /* version &gt;= v1.3.70 */
 id|free_irq
 (paren
 id|pshost-&gt;irq
@@ -10657,11 +10534,18 @@ comma
 id|padapter
 )paren
 suffix:semicolon
-macro_line|#endif /* version &gt;= v1.3.70 */
 r_return
 id|TRUE
 suffix:semicolon
 )brace
+id|padapter-&gt;kBuffer
+op_assign
+id|consistent
+suffix:semicolon
+id|padapter-&gt;kBufferDma
+op_assign
+id|consistentDma
+suffix:semicolon
 id|PsiHost
 (braket
 id|Installed
@@ -10826,7 +10710,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;&bslash;nPCI-%sI EIDE CONTROLLER: at I/O = %X/%X  IRQ = %d&bslash;n&quot;
+l_string|&quot;&bslash;nPCI-%sI EIDE CONTROLLER: at I/O = %lX/%lX  IRQ = %ld&bslash;n&quot;
 comma
 id|str
 comma
@@ -10888,7 +10772,6 @@ suffix:semicolon
 id|UCHAR
 id|device
 suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &gt; LINUXVERSION(2,1,92)
 r_struct
 id|pci_dev
 op_star
@@ -10896,17 +10779,6 @@ id|pcidev
 op_assign
 l_int|NULL
 suffix:semicolon
-macro_line|#else
-r_int
-id|found
-suffix:semicolon
-id|UCHAR
-id|pci_bus
-comma
-id|pci_device_fn
-suffix:semicolon
-macro_line|#endif
-macro_line|#if LINUX_VERSION_CODE &gt; LINUXVERSION(2,1,92)
 r_if
 c_cond
 (paren
@@ -10915,16 +10787,6 @@ id|pci_present
 (paren
 )paren
 )paren
-macro_line|#else
-r_if
-c_cond
-(paren
-op_logical_neg
-id|pcibios_present
-(paren
-)paren
-)paren
-macro_line|#endif
 (brace
 id|printk
 (paren
@@ -10935,7 +10797,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-macro_line|#if LINUX_VERSION_CODE &gt; LINUXVERSION(2,1,92)
 r_while
 c_loop
 (paren
@@ -10954,32 +10815,6 @@ id|pcidev
 op_ne
 l_int|NULL
 )paren
-macro_line|#else
-id|found
-op_assign
-l_int|0
-suffix:semicolon
-r_while
-c_loop
-(paren
-op_logical_neg
-id|pcibios_find_device
-(paren
-id|VENDOR_PSI
-comma
-id|DEVICE_DALE_1
-comma
-id|found
-op_increment
-comma
-op_amp
-id|pci_bus
-comma
-op_amp
-id|pci_device_fn
-)paren
-)paren
-macro_line|#endif
 (brace
 id|pshost
 op_assign
@@ -11001,7 +10836,6 @@ c_func
 id|pshost
 )paren
 suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &gt; LINUXVERSION(2,1,92)
 r_if
 c_cond
 (paren
@@ -11014,22 +10848,6 @@ comma
 id|pcidev
 )paren
 )paren
-macro_line|#else
-r_if
-c_cond
-(paren
-id|GetRegs
-(paren
-id|pshost
-comma
-id|FALSE
-comma
-id|pci_bus
-comma
-id|pci_device_fn
-)paren
-)paren
-macro_line|#endif
 r_goto
 id|unregister
 suffix:semicolon
@@ -11651,7 +11469,6 @@ id|pshost
 )paren
 suffix:semicolon
 )brace
-macro_line|#if LINUX_VERSION_CODE &gt; LINUXVERSION(2,1,92)
 r_while
 c_loop
 (paren
@@ -11670,32 +11487,6 @@ id|pcidev
 op_ne
 l_int|NULL
 )paren
-macro_line|#else
-id|found
-op_assign
-l_int|0
-suffix:semicolon
-r_while
-c_loop
-(paren
-op_logical_neg
-id|pcibios_find_device
-(paren
-id|VENDOR_PSI
-comma
-id|DEVICE_BIGD_1
-comma
-id|found
-op_increment
-comma
-op_amp
-id|pci_bus
-comma
-op_amp
-id|pci_device_fn
-)paren
-)paren
-macro_line|#endif
 (brace
 id|pshost
 op_assign
@@ -11717,7 +11508,6 @@ c_func
 id|pshost
 )paren
 suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &gt; LINUXVERSION(2,1,92)
 r_if
 c_cond
 (paren
@@ -11730,22 +11520,6 @@ comma
 id|pcidev
 )paren
 )paren
-macro_line|#else
-r_if
-c_cond
-(paren
-id|GetRegs
-(paren
-id|pshost
-comma
-id|TRUE
-comma
-id|pci_bus
-comma
-id|pci_device_fn
-)paren
-)paren
-macro_line|#endif
 r_goto
 id|unregister1
 suffix:semicolon
@@ -12958,13 +12732,6 @@ c_cond
 (paren
 id|padapter-&gt;irqOwned
 )paren
-macro_line|#if LINUX_VERSION_CODE &lt; LINUXVERSION(1,3,70)
-id|free_irq
-(paren
-id|pshost-&gt;irq
-)paren
-suffix:semicolon
-macro_line|#else /* version &gt;= v1.3.70 */
 id|free_irq
 (paren
 id|pshost-&gt;irq
@@ -12972,7 +12739,6 @@ comma
 id|padapter
 )paren
 suffix:semicolon
-macro_line|#endif /* version &gt;= v1.3.70 */
 id|release_region
 (paren
 id|pshost-&gt;io_port
@@ -12980,9 +12746,34 @@ comma
 id|pshost-&gt;n_io_port
 )paren
 suffix:semicolon
-id|kfree
+r_if
+c_cond
 (paren
+id|padapter-&gt;numberOfDrives
+)paren
+id|pci_free_consistent
+(paren
+id|padapter-&gt;pcidev
+comma
+id|SECTORSXFER
+op_star
+id|BYTES_PER_SECTOR
+comma
 id|padapter-&gt;kBuffer
+comma
+id|padapter-&gt;kBufferDma
+)paren
+suffix:semicolon
+r_else
+id|pci_free_consistent
+(paren
+id|padapter-&gt;pcidev
+comma
+id|ATAPI_TRANSFER
+comma
+id|padapter-&gt;kBuffer
+comma
+id|padapter-&gt;kBufferDma
 )paren
 suffix:semicolon
 id|scsi_unregister

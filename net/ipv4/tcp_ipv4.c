@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Implementation of the Transmission Control Protocol(TCP).&n; *&n; * Version:&t;$Id: tcp_ipv4.c,v 1.205 2000/03/26 09:16:08 davem Exp $&n; *&n; *&t;&t;IPv4 specific functions&n; *&n; *&n; *&t;&t;code split from:&n; *&t;&t;linux/ipv4/tcp.c&n; *&t;&t;linux/ipv4/tcp_input.c&n; *&t;&t;linux/ipv4/tcp_output.c&n; *&n; *&t;&t;See tcp.c for author information&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Implementation of the Transmission Control Protocol(TCP).&n; *&n; * Version:&t;$Id: tcp_ipv4.c,v 1.206 2000/04/15 01:48:10 davem Exp $&n; *&n; *&t;&t;IPv4 specific functions&n; *&n; *&n; *&t;&t;code split from:&n; *&t;&t;linux/ipv4/tcp.c&n; *&t;&t;linux/ipv4/tcp_input.c&n; *&t;&t;linux/ipv4/tcp_output.c&n; *&n; *&t;&t;See tcp.c for author information&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
 multiline_comment|/*&n; * Changes:&n; *&t;&t;David S. Miller&t;:&t;New socket lookup architecture.&n; *&t;&t;&t;&t;&t;This code is dedicated to John Dyson.&n; *&t;&t;David S. Miller :&t;Change semantics of established hash,&n; *&t;&t;&t;&t;&t;half is devoted to TIME_WAIT sockets&n; *&t;&t;&t;&t;&t;and the rest go in the other half.&n; *&t;&t;Andi Kleen :&t;&t;Add support for syncookies and fixed&n; *&t;&t;&t;&t;&t;some bugs: ip options weren&squot;t passed to&n; *&t;&t;&t;&t;&t;the TCP layer, missed a check for an ACK bit.&n; *&t;&t;Andi Kleen :&t;&t;Implemented fast path mtu discovery.&n; *&t;     &t;&t;&t;&t;Fixed many serious bugs in the&n; *&t;&t;&t;&t;&t;open_request handling and moved&n; *&t;&t;&t;&t;&t;most of it into the af independent code.&n; *&t;&t;&t;&t;&t;Added tail drop and some other bugfixes.&n; *&t;&t;&t;&t;&t;Added new listen sematics.&n; *&t;&t;Mike McLagan&t;:&t;Routing by source&n; *&t;Juan Jose Ciarlante:&t;&t;ip_dynaddr bits&n; *&t;&t;Andi Kleen:&t;&t;various fixes.&n; *&t;Vitaly E. Lavrov&t;:&t;Transparent proxy revived after year coma.&n; *&t;Andi Kleen&t;&t;:&t;Fix new listen.&n; *&t;Andi Kleen&t;&t;:&t;Fix accept error reporting.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -9073,60 +9073,74 @@ id|proto
 id|tcp_prot
 op_assign
 (brace
-id|tcp_close
-comma
-multiline_comment|/* close */
-id|tcp_v4_connect
-comma
-multiline_comment|/* connect */
-id|tcp_disconnect
-comma
-multiline_comment|/* disconnect */
-id|tcp_accept
-comma
-multiline_comment|/* accept */
-id|tcp_ioctl
-comma
-multiline_comment|/* ioctl */
-id|tcp_v4_init_sock
-comma
-multiline_comment|/* init */
-id|tcp_v4_destroy_sock
-comma
-multiline_comment|/* destroy */
-id|tcp_shutdown
-comma
-multiline_comment|/* shutdown */
-id|tcp_setsockopt
-comma
-multiline_comment|/* setsockopt */
-id|tcp_getsockopt
-comma
-multiline_comment|/* getsockopt */
-id|tcp_sendmsg
-comma
-multiline_comment|/* sendmsg */
-id|tcp_recvmsg
-comma
-multiline_comment|/* recvmsg */
-l_int|NULL
-comma
-multiline_comment|/* bind */
-id|tcp_v4_do_rcv
-comma
-multiline_comment|/* backlog_rcv */
-id|tcp_v4_hash
-comma
-multiline_comment|/* hash */
-id|tcp_unhash
-comma
-multiline_comment|/* unhash */
-id|tcp_v4_get_port
-comma
-multiline_comment|/* get_port */
+id|name
+suffix:colon
 l_string|&quot;TCP&quot;
 comma
-multiline_comment|/* name */
+id|close
+suffix:colon
+id|tcp_close
+comma
+id|connect
+suffix:colon
+id|tcp_v4_connect
+comma
+id|disconnect
+suffix:colon
+id|tcp_disconnect
+comma
+id|accept
+suffix:colon
+id|tcp_accept
+comma
+id|ioctl
+suffix:colon
+id|tcp_ioctl
+comma
+id|init
+suffix:colon
+id|tcp_v4_init_sock
+comma
+id|destroy
+suffix:colon
+id|tcp_v4_destroy_sock
+comma
+id|shutdown
+suffix:colon
+id|tcp_shutdown
+comma
+id|setsockopt
+suffix:colon
+id|tcp_setsockopt
+comma
+id|getsockopt
+suffix:colon
+id|tcp_getsockopt
+comma
+id|sendmsg
+suffix:colon
+id|tcp_sendmsg
+comma
+id|recvmsg
+suffix:colon
+id|tcp_recvmsg
+comma
+id|backlog_rcv
+suffix:colon
+id|tcp_v4_do_rcv
+comma
+id|hash
+suffix:colon
+id|tcp_v4_hash
+comma
+id|unhash
+suffix:colon
+id|tcp_unhash
+comma
+id|get_port
+suffix:colon
+id|tcp_v4_get_port
+comma
 )brace
 suffix:semicolon
 DECL|function|tcp_v4_init

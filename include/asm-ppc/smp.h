@@ -2,8 +2,9 @@ multiline_comment|/* smp.h: PPC specific SMP stuff.&n; *&n; * Taken from asm-spa
 macro_line|#ifndef _PPC_SMP_H
 DECL|macro|_PPC_SMP_H
 mdefine_line|#define _PPC_SMP_H
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 macro_line|#ifndef __ASSEMBLY__
 DECL|struct|cpuinfo_PPC
 r_struct
@@ -145,7 +146,7 @@ mdefine_line|#define KLOCK_HELD       0xffffffff
 DECL|macro|KLOCK_CLEAR
 mdefine_line|#define KLOCK_CLEAR      0x0
 macro_line|#endif /* __ASSEMBLY__ */
-macro_line|#else /* !(__SMP__) */
-macro_line|#endif /* !(__SMP__) */
+macro_line|#else /* !(CONFIG_SMP) */
+macro_line|#endif /* !(CONFIG_SMP) */
 macro_line|#endif /* !(_PPC_SMP_H) */
 eof

@@ -259,7 +259,7 @@ id|pgdir
 id|handle_mm_fault
 c_func
 (paren
-id|tsk
+id|tsk-&gt;mm
 comma
 id|vma
 comma
@@ -330,7 +330,7 @@ id|pgmiddle
 id|handle_mm_fault
 c_func
 (paren
-id|tsk
+id|tsk-&gt;mm
 comma
 id|vma
 comma
@@ -402,7 +402,7 @@ id|pgtable
 id|handle_mm_fault
 c_func
 (paren
-id|tsk
+id|tsk-&gt;mm
 comma
 id|vma
 comma
@@ -524,7 +524,7 @@ id|pgdir
 id|handle_mm_fault
 c_func
 (paren
-id|tsk
+id|tsk-&gt;mm
 comma
 id|vma
 comma
@@ -594,7 +594,7 @@ id|pgmiddle
 id|handle_mm_fault
 c_func
 (paren
-id|tsk
+id|tsk-&gt;mm
 comma
 id|vma
 comma
@@ -665,7 +665,7 @@ id|pgtable
 id|handle_mm_fault
 c_func
 (paren
-id|tsk
+id|tsk-&gt;mm
 comma
 id|vma
 comma
@@ -702,7 +702,7 @@ id|pgtable
 id|handle_mm_fault
 c_func
 (paren
-id|tsk
+id|tsk-&gt;mm
 comma
 id|vma
 comma
@@ -817,7 +817,7 @@ op_assign
 id|find_extend_vma
 c_func
 (paren
-id|tsk
+id|tsk-&gt;mm
 comma
 id|addr
 )paren
@@ -1059,7 +1059,7 @@ op_assign
 id|find_extend_vma
 c_func
 (paren
-id|tsk
+id|tsk-&gt;mm
 comma
 id|addr
 )paren

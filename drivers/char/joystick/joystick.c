@@ -2297,10 +2297,6 @@ id|result
 suffix:semicolon
 id|MOD_INC_USE_COUNT
 suffix:semicolon
-r_if
-c_cond
-(paren
-(paren
 r_new
 op_assign
 id|kmalloc
@@ -2314,7 +2310,12 @@ id|js_list
 comma
 id|GFP_KERNEL
 )paren
-)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+r_new
 )paren
 (brace
 id|jd

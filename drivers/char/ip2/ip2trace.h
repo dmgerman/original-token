@@ -38,8 +38,6 @@ suffix:semicolon
 suffix:semicolon
 DECL|macro|ITRC_NO_PORT
 mdefine_line|#define ITRC_NO_PORT &t;0xFF
-DECL|macro|PORTN
-mdefine_line|#define PORTN&t;(port-&gt;port_index)
 DECL|macro|CHANN
 mdefine_line|#define CHANN&t;(pCh-&gt;port_index)
 DECL|macro|ITRC_ERROR

@@ -13,11 +13,6 @@ id|pro
 )paren
 suffix:semicolon
 r_extern
-r_struct
-id|proto_ops
-id|unix_proto_ops
-suffix:semicolon
-r_extern
 r_void
 id|unix_inflight
 c_func

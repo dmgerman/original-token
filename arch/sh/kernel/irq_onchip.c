@@ -156,7 +156,7 @@ id|hw_interrupt_type
 id|onChip_irq_type
 op_assign
 (brace
-l_string|&quot;On-Chip Supporting Module&quot;
+l_string|&quot;On-Chip-IPR&quot;
 comma
 id|startup_onChip_irq
 comma
@@ -580,7 +580,7 @@ id|hw_interrupt_type
 id|onChip2_irq_type
 op_assign
 (brace
-l_string|&quot;SH7709 Extended On-Chip Supporting Module&quot;
+l_string|&quot;Extended-IPR&quot;
 comma
 id|startup_onChip2_irq
 comma

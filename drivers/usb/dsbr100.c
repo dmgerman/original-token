@@ -1,4 +1,4 @@
-multiline_comment|/* A driver for the D-Link DSB-R100 USB radio.  The R100 plugs&n; into both the USB and an analog audio input, so this thing&n; only deals with initialisation and frequency setting, the&n; audio data has to be handled by a sound driver.&n;&n; Major issue: I can&squot;t find out where the device reports the signal&n; strength, and indeed the windows software appearantly just looks&n; at the stereo indicator as well.  So, scanning will only find&n; stereo stations.  Sad, but I can&squot;t help it.&n;&n; Also, the windows program sends oodles of messages over to the&n; device, and I couldn&squot;t figure out their meaning.  My suspicion&n; is that they don&squot;t have any:-)&n;&n; You might find some interesting stuff about this module at&n; http://unimut.fsk.uni-heidelberg.de/unimut/demi/dsbr&n;&n; Copyright (c) 2000 Markus Demleitner&n;&n; This program is free software; you can redistribute it and/or modify&n; it under the terms of the GNU General Public License as published by&n; the Free Software Foundation; either version 2 of the License, or&n; (at your option) any later version.&n;&n; This program is distributed in the hope that it will be useful,&n; but WITHOUT ANY WARRANTY; without even the implied warranty of&n; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; GNU General Public License for more details.&n;&n; You should have received a copy of the GNU General Public License&n; along with this program; if not, write to the Free Software&n; Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA&n;&n; History:&n;&n; Version 0.21:&n; &t;Markus Demleitner &lt;msdemlei@tucana.harvard.edu&gt;:&n;&t;Minor cleanup, warnings if something goes wrong, lame attempt&n;&t;to adhere to Documentation/CodingStyle&n;&n; Version 0.2: &n; &t;Brad Hards &lt;bradh@dynamite.com.au&gt;: Fixes to make it work as non-module&n;&t;Markus: Copyright clarification&n;&n; Version 0.01: Markus: initial release&n;&n;*/
+multiline_comment|/* A driver for the D-Link DSB-R100 USB radio.  The R100 plugs&n; into both the USB and an analog audio input, so this thing&n; only deals with initialisation and frequency setting, the&n; audio data has to be handled by a sound driver.&n;&n; Major issue: I can&squot;t find out where the device reports the signal&n; strength, and indeed the windows software appearantly just looks&n; at the stereo indicator as well.  So, scanning will only find&n; stereo stations.  Sad, but I can&squot;t help it.&n;&n; Also, the windows program sends oodles of messages over to the&n; device, and I couldn&squot;t figure out their meaning.  My suspicion&n; is that they don&squot;t have any:-)&n;&n; You might find some interesting stuff about this module at&n; http://unimut.fsk.uni-heidelberg.de/unimut/demi/dsbr&n;&n; Copyright (c) 2000 Markus Demleitner &lt;msdemlei@tucana.harvard.edu&gt;&n;&n; This program is free software; you can redistribute it and/or modify&n; it under the terms of the GNU General Public License as published by&n; the Free Software Foundation; either version 2 of the License, or&n; (at your option) any later version.&n;&n; This program is distributed in the hope that it will be useful,&n; but WITHOUT ANY WARRANTY; without even the implied warranty of&n; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; GNU General Public License for more details.&n;&n; You should have received a copy of the GNU General Public License&n; along with this program; if not, write to the Free Software&n; Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA&n;&n; History:&n;&n; Version 0.22:&n; &t;Markus: Some (brown bag) cleanup in what VIDIOCSTUNER returns, &n;&t;thanks to Mike Cox for pointing the problem out.&n;&n; Version 0.21:&n; &t;Markus: Minor cleanup, warnings if something goes wrong, lame attempt&n;&t;to adhere to Documentation/CodingStyle&n;&n; Version 0.2: &n; &t;Brad Hards &lt;bradh@dynamite.com.au&gt;: Fixes to make it work as non-module&n;&t;Markus: Copyright clarification&n;&n; Version 0.01: Markus: initial release&n;&n;*/
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
@@ -889,21 +889,20 @@ suffix:semicolon
 )brace
 id|v.rangelow
 op_assign
-(paren
 l_int|87
 op_star
-l_int|16000
-)paren
+l_int|16
 suffix:semicolon
 id|v.rangehigh
 op_assign
-(paren
 l_int|108
 op_star
-l_int|16000
-)paren
+l_int|16
 suffix:semicolon
-multiline_comment|/*v.flags=VIDEO_TUNER_LOW;*/
+id|v.flags
+op_assign
+id|VIDEO_TUNER_LOW
+suffix:semicolon
 id|v.mode
 op_assign
 id|VIDEO_MODE_AUTO
@@ -911,17 +910,22 @@ suffix:semicolon
 id|v.signal
 op_assign
 id|radio-&gt;stereo
+op_star
+l_int|0x7000
 suffix:semicolon
+multiline_comment|/* Don&squot;t know how to get signal strength */
 id|v.flags
 op_or_assign
 id|VIDEO_TUNER_STEREO_ON
+op_star
+id|radio-&gt;stereo
 suffix:semicolon
 id|strcpy
 c_func
 (paren
 id|v.name
 comma
-l_string|&quot;FM&quot;
+l_string|&quot;DSB R-100&quot;
 )paren
 suffix:semicolon
 r_if

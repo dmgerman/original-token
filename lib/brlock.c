@@ -74,7 +74,11 @@ id|__brlock_array
 id|idx
 )braket
 op_plus
+id|cpu_logical_map
+c_func
+(paren
 id|i
+)paren
 )paren
 suffix:semicolon
 )brace
@@ -112,7 +116,11 @@ id|__brlock_array
 id|idx
 )braket
 op_plus
+id|cpu_logical_map
+c_func
+(paren
 id|i
+)paren
 )paren
 suffix:semicolon
 )brace
@@ -222,7 +230,11 @@ c_cond
 (paren
 id|__brlock_array
 (braket
+id|cpu_logical_map
+c_func
+(paren
 id|i
+)paren
 )braket
 (braket
 id|idx

@@ -597,7 +597,7 @@ id|maj
 comma
 id|min
 suffix:semicolon
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 DECL|macro|CPU_PRESENT
 mdefine_line|#define CPU_PRESENT(x) (cpu_callin_map[(x)])
 DECL|macro|GET_PVR
@@ -1393,7 +1393,7 @@ id|loops_per_sec
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 r_if
 c_cond
 (paren
@@ -1441,7 +1441,7 @@ op_mod
 l_int|100
 )paren
 suffix:semicolon
-macro_line|#endif /* __SMP__ */
+macro_line|#endif /* CONFIG_SMP */
 multiline_comment|/*&n;&t; * Ooh&squot;s and aah&squot;s info about zero&squot;d pages in idle task&n;&t; */
 id|len
 op_add_assign

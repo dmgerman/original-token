@@ -886,8 +886,9 @@ op_ne
 l_int|0
 )paren
 (brace
-op_decrement
 id|togo
+op_sub_assign
+l_int|4
 suffix:semicolon
 id|copy_from_user
 c_func

@@ -233,7 +233,7 @@ DECL|macro|DECLARE_MUTEX_LOCKED
 mdefine_line|#define DECLARE_MUTEX_LOCKED(name) struct semaphore name=MUTEX_LOCKED
 DECL|macro|__set_current_state
 mdefine_line|#define __set_current_state(state_value)                        &bslash;&n;&t;do { current-&gt;state = state_value; } while (0)
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 DECL|macro|set_current_state
 mdefine_line|#define set_current_state(state_value)          &bslash;&n;&t;set_mb(current-&gt;state, state_value)
 macro_line|#else

@@ -829,12 +829,6 @@ r_int
 r_int
 id|status
 suffix:semicolon
-id|regs.syscall_nr
-op_assign
-op_minus
-l_int|1
-suffix:semicolon
-multiline_comment|/* It&squot;s not system call */
 multiline_comment|/* Get IRQ number */
 id|asm
 r_volatile

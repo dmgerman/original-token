@@ -49,7 +49,7 @@ r_struct
 id|thread_struct
 id|original_pcb
 suffix:semicolon
-macro_line|#ifndef __SMP__
+macro_line|#ifndef CONFIG_SMP
 DECL|variable|quicklists
 r_struct
 id|pgtable_cache_struct

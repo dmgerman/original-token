@@ -220,7 +220,7 @@ id|mtrr_init
 r_void
 )paren
 suffix:semicolon
-macro_line|#  if defined(__SMP__) &amp;&amp; defined(CONFIG_MTRR)
+macro_line|#  if defined(CONFIG_SMP) &amp;&amp; defined(CONFIG_MTRR)
 r_extern
 r_void
 id|mtrr_init_boot_cpu

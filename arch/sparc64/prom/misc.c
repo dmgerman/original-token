@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: misc.c,v 1.16 1999/11/19 05:53:04 davem Exp $&n; * misc.c:  Miscellaneous prom functions that don&squot;t belong&n; *          anywhere else.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996,1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: misc.c,v 1.17 2000/04/15 06:02:50 davem Exp $&n; * misc.c:  Miscellaneous prom functions that don&squot;t belong&n; *          anywhere else.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996,1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -167,13 +167,15 @@ suffix:semicolon
 macro_line|#endif
 multiline_comment|/* We always arrive here via a serial interrupt.&n;&t; * So in order for everything to work reliably, even&n;&t; * on SMP, we need to drop the IRQ locks we hold.&n;&t; */
 macro_line|#ifdef __SMP__
-id|hardirq_exit
+id|irq_exit
 c_func
 (paren
 id|smp_processor_id
 c_func
 (paren
 )paren
+comma
+l_int|0
 )paren
 suffix:semicolon
 id|smp_capture
@@ -205,20 +207,27 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|hardirq_enter
+id|irq_enter
 c_func
 (paren
 id|smp_processor_id
 c_func
 (paren
 )paren
+comma
+l_int|0
 )paren
 suffix:semicolon
 id|spin_unlock_wait
 c_func
 (paren
 op_amp
-id|global_irq_lock
+id|__br_write_locks
+(braket
+id|BR_GLOBALIRQ_LOCK
+)braket
+dot
+id|lock
 )paren
 suffix:semicolon
 macro_line|#else

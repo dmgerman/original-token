@@ -616,7 +616,7 @@ id|flags
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Write back the cache.&n; *&n; * For SH-4, flush (write back) Operand Cache, as Instruction Cache&n; * doesn&squot;t have &quot;updated&quot; data.&n; */
+multiline_comment|/*&n; * Write back the cache.&n; *&n; * For SH-4, flush (write back) Operand Cache, as Instruction Cache&n; * doesn&squot;t have &quot;updated&quot; data.&n; *&n; * Assumes that called in interrupt disabled.&n; */
 DECL|function|cache_wback_all
 r_static
 r_void
@@ -628,10 +628,6 @@ r_void
 (brace
 r_int
 r_int
-id|flags
-suffix:semicolon
-r_int
-r_int
 id|addr
 comma
 id|data
@@ -639,12 +635,6 @@ comma
 id|i
 comma
 id|j
-suffix:semicolon
-id|save_and_cli
-c_func
-(paren
-id|flags
-)paren
 suffix:semicolon
 id|jump_to_P2
 c_func
@@ -736,12 +726,6 @@ suffix:semicolon
 id|back_to_P1
 c_func
 (paren
-)paren
-suffix:semicolon
-id|restore_flags
-c_func
-(paren
-id|flags
 )paren
 suffix:semicolon
 )brace
@@ -1242,18 +1226,19 @@ r_int
 r_int
 id|flags
 suffix:semicolon
-multiline_comment|/* Write back Operand Cache */
-id|cache_wback_all
-(paren
-)paren
-suffix:semicolon
-multiline_comment|/* Then, invalidate Instruction Cache and Operand Cache */
 id|save_and_cli
 c_func
 (paren
 id|flags
 )paren
 suffix:semicolon
+multiline_comment|/* Write back Operand Cache */
+id|cache_wback_all
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/* Then, invalidate Instruction Cache and Operand Cache */
 id|jump_to_P2
 c_func
 (paren

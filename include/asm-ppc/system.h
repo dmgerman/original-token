@@ -2,6 +2,7 @@ multiline_comment|/*&n; * $Id: system.h,v 1.49 1999/09/11 18:37:54 cort Exp $&n;
 macro_line|#ifndef __PPC_SYSTEM_H
 DECL|macro|__PPC_SYSTEM_H
 mdefine_line|#define __PPC_SYSTEM_H
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kdev_t.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;
 macro_line|#include &lt;asm/atomic.h&gt;
@@ -365,7 +366,7 @@ id|pt_regs
 op_star
 )paren
 suffix:semicolon
-macro_line|#ifndef __SMP__
+macro_line|#ifndef CONFIG_SMP
 DECL|macro|cli
 mdefine_line|#define cli()&t;__cli()
 DECL|macro|sti
@@ -376,7 +377,7 @@ DECL|macro|restore_flags
 mdefine_line|#define restore_flags(flags)&t;__restore_flags(flags)
 DECL|macro|save_and_cli
 mdefine_line|#define save_and_cli(flags)&t;__save_and_cli(flags)
-macro_line|#else /* __SMP__ */
+macro_line|#else /* CONFIG_SMP */
 r_extern
 r_void
 id|__global_cli
@@ -419,7 +420,7 @@ DECL|macro|save_flags
 mdefine_line|#define save_flags(x) ((x)=__global_save_flags())
 DECL|macro|restore_flags
 mdefine_line|#define restore_flags(x) __global_restore_flags(x)
-macro_line|#endif /* !__SMP__ */
+macro_line|#endif /* !CONFIG_SMP */
 DECL|macro|local_irq_disable
 mdefine_line|#define local_irq_disable()&t;&t;__cli()
 DECL|macro|local_irq_enable

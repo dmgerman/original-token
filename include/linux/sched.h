@@ -408,11 +408,17 @@ id|env_start
 comma
 id|env_end
 suffix:semicolon
+DECL|member|min_flt
+DECL|member|maj_flt
 DECL|member|rss
 DECL|member|total_vm
 DECL|member|locked_vm
 r_int
 r_int
+id|min_flt
+comma
+id|maj_flt
+comma
 id|rss
 comma
 id|total_vm
@@ -449,7 +455,7 @@ suffix:semicolon
 )brace
 suffix:semicolon
 DECL|macro|INIT_MM
-mdefine_line|#define INIT_MM(name) {&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&amp;init_mmap, NULL, NULL,&t;&t;&t;&bslash;&n;&t;&t;swapper_pg_dir, &t;&t;&t;&bslash;&n;&t;&t;ATOMIC_INIT(2), ATOMIC_INIT(1), 1,&t;&bslash;&n;&t;&t;__MUTEX_INITIALIZER(name.mmap_sem),&t;&bslash;&n;&t;&t;SPIN_LOCK_UNLOCKED,&t;&t;&t;&bslash;&n;&t;&t;0,&t;&t;&t;&t;&t;&bslash;&n;&t;&t;0, 0, 0, 0,&t;&t;&t;&t;&bslash;&n;&t;&t;0, 0, 0, &t;&t;&t;&t;&bslash;&n;&t;&t;0, 0, 0, 0,&t;&t;&t;&t;&bslash;&n;&t;&t;0, 0, 0,&t;&t;&t;&t;&bslash;&n;&t;&t;0, 0, 0, 0, NULL }
+mdefine_line|#define INIT_MM(name) {&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&amp;init_mmap, NULL, NULL,&t;&t;&t;&bslash;&n;&t;&t;swapper_pg_dir, &t;&t;&t;&bslash;&n;&t;&t;ATOMIC_INIT(2), ATOMIC_INIT(1), 1,&t;&bslash;&n;&t;&t;__MUTEX_INITIALIZER(name.mmap_sem),&t;&bslash;&n;&t;&t;SPIN_LOCK_UNLOCKED,&t;&t;&t;&bslash;&n;&t;&t;0,&t;&t;&t;&t;&t;&bslash;&n;&t;&t;0, 0, 0, 0,&t;&t;&t;&t;&bslash;&n;&t;&t;0, 0, 0, &t;&t;&t;&t;&bslash;&n;&t;&t;0, 0, 0, 0,&t;&t;&t;&t;&bslash;&n;&t;&t;0, 0, 0, 0, 0,&t;&t;&t;&t;&bslash;&n;&t;&t;0, 0, 0, 0, NULL }
 DECL|struct|signal_struct
 r_struct
 id|signal_struct

@@ -746,7 +746,7 @@ id|pgd_t
 op_star
 id|pgd
 suffix:semicolon
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 r_int
 id|i
 suffix:semicolon
@@ -791,7 +791,7 @@ op_amp
 id|tasklist_lock
 )paren
 suffix:semicolon
-macro_line|#ifndef __SMP__
+macro_line|#ifndef CONFIG_SMP
 r_for
 c_loop
 (paren
@@ -888,7 +888,7 @@ suffix:semicolon
 macro_line|#endif
 )brace
 multiline_comment|/*&n; * TLB flushing:&n; *&n; *  - flush_tlb() flushes the current mm struct TLBs&n; *  - flush_tlb_all() flushes all processes TLBs&n; *  - flush_tlb_mm(mm) flushes the specified mm context TLB&squot;s&n; *  - flush_tlb_page(vma, vmaddr) flushes one page&n; *  - flush_tlb_range(mm, start, end) flushes a range of pages&n; *  - flush_tlb_pgtables(mm, start, end) flushes a range of page tables&n; *&n; * ..but the i386 has somewhat limited tlb flushing capabilities,&n; * and page-granular flushes are available only on i486 and up.&n; */
-macro_line|#ifndef __SMP__
+macro_line|#ifndef CONFIG_SMP
 DECL|macro|flush_tlb
 mdefine_line|#define flush_tlb() __flush_tlb()
 DECL|macro|flush_tlb_all

@@ -93,7 +93,7 @@ c_func
 id|cpu
 )paren
 suffix:semicolon
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 (brace
 r_int
 r_int
@@ -170,7 +170,7 @@ macro_line|#endif
 )brace
 )brace
 )brace
-macro_line|#endif /* __SMP__ */&t;&t;&t;
+macro_line|#endif /* CONFIG_SMP */&t;&t;&t;
 id|dval
 op_assign
 id|get_dec
@@ -287,7 +287,7 @@ id|xtime.tv_sec
 suffix:semicolon
 )brace
 )brace
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 id|smp_local_timer_interrupt
 c_func
 (paren
@@ -355,7 +355,7 @@ op_assign
 id|xtime
 suffix:semicolon
 multiline_comment|/* XXX we don&squot;t seem to have the decrementers synced properly yet */
-macro_line|#ifndef __SMP__
+macro_line|#ifndef CONFIG_SMP
 id|tv-&gt;tv_usec
 op_add_assign
 (paren

@@ -9400,60 +9400,74 @@ id|proto
 id|tcpv6_prot
 op_assign
 (brace
-id|tcp_close
-comma
-multiline_comment|/* close */
-id|tcp_v6_connect
-comma
-multiline_comment|/* connect */
-id|tcp_disconnect
-comma
-multiline_comment|/* disconnect */
-id|tcp_accept
-comma
-multiline_comment|/* accept */
-id|tcp_ioctl
-comma
-multiline_comment|/* ioctl */
-id|tcp_v6_init_sock
-comma
-multiline_comment|/* init */
-id|tcp_v6_destroy_sock
-comma
-multiline_comment|/* destroy */
-id|tcp_shutdown
-comma
-multiline_comment|/* shutdown */
-id|tcp_setsockopt
-comma
-multiline_comment|/* setsockopt */
-id|tcp_getsockopt
-comma
-multiline_comment|/* getsockopt */
-id|tcp_sendmsg
-comma
-multiline_comment|/* sendmsg */
-id|tcp_recvmsg
-comma
-multiline_comment|/* recvmsg */
-l_int|NULL
-comma
-multiline_comment|/* bind */
-id|tcp_v6_do_rcv
-comma
-multiline_comment|/* backlog_rcv */
-id|tcp_v6_hash
-comma
-multiline_comment|/* hash */
-id|tcp_unhash
-comma
-multiline_comment|/* unhash */
-id|tcp_v6_get_port
-comma
-multiline_comment|/* get_port */
+id|name
+suffix:colon
 l_string|&quot;TCPv6&quot;
 comma
-multiline_comment|/* name */
+id|close
+suffix:colon
+id|tcp_close
+comma
+id|connect
+suffix:colon
+id|tcp_v6_connect
+comma
+id|disconnect
+suffix:colon
+id|tcp_disconnect
+comma
+id|accept
+suffix:colon
+id|tcp_accept
+comma
+id|ioctl
+suffix:colon
+id|tcp_ioctl
+comma
+id|init
+suffix:colon
+id|tcp_v6_init_sock
+comma
+id|destroy
+suffix:colon
+id|tcp_v6_destroy_sock
+comma
+id|shutdown
+suffix:colon
+id|tcp_shutdown
+comma
+id|setsockopt
+suffix:colon
+id|tcp_setsockopt
+comma
+id|getsockopt
+suffix:colon
+id|tcp_getsockopt
+comma
+id|sendmsg
+suffix:colon
+id|tcp_sendmsg
+comma
+id|recvmsg
+suffix:colon
+id|tcp_recvmsg
+comma
+id|backlog_rcv
+suffix:colon
+id|tcp_v6_do_rcv
+comma
+id|hash
+suffix:colon
+id|tcp_v6_hash
+comma
+id|unhash
+suffix:colon
+id|tcp_unhash
+comma
+id|get_port
+suffix:colon
+id|tcp_v6_get_port
+comma
 )brace
 suffix:semicolon
 DECL|variable|tcpv6_protocol

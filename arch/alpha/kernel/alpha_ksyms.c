@@ -832,7 +832,7 @@ id|__rwsem_wake
 )paren
 suffix:semicolon
 multiline_comment|/* &n; * SMP-specific symbols.&n; */
-macro_line|#ifdef __SMP__
+macro_line|#ifdef CONFIG_SMP
 DECL|variable|kernel_flag
 id|EXPORT_SYMBOL
 c_func
@@ -977,7 +977,7 @@ id|read_lock
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#else /* __SMP__ */
+macro_line|#else /* CONFIG_SMP */
 DECL|variable|__local_bh_count
 id|EXPORT_SYMBOL
 c_func
@@ -992,7 +992,7 @@ c_func
 id|__local_irq_count
 )paren
 suffix:semicolon
-macro_line|#endif /* __SMP__ */
+macro_line|#endif /* CONFIG_SMP */
 DECL|variable|rtc_lock
 id|EXPORT_SYMBOL
 c_func
