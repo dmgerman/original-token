@@ -5542,12 +5542,16 @@ id|__init
 id|myri_sbus_probe
 c_func
 (paren
+r_void
+)paren
+(brace
 r_struct
 id|net_device
 op_star
 id|dev
-)paren
-(brace
+op_assign
+l_int|NULL
+suffix:semicolon
 r_struct
 id|linux_sbus
 op_star
@@ -5707,7 +5711,6 @@ r_return
 id|myri_sbus_probe
 c_func
 (paren
-l_int|NULL
 )paren
 suffix:semicolon
 )brace

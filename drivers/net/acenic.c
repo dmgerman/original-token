@@ -275,11 +275,9 @@ DECL|function|acenic_probe
 r_int
 id|__init
 id|acenic_probe
+c_func
 (paren
-r_struct
-id|net_device
-op_star
-id|dev
+r_void
 )paren
 (brace
 r_int
@@ -301,6 +299,11 @@ op_star
 id|pdev
 op_assign
 l_int|NULL
+suffix:semicolon
+r_struct
+id|net_device
+op_star
+id|dev
 suffix:semicolon
 r_if
 c_cond
@@ -350,10 +353,6 @@ id|pdev
 )paren
 )paren
 (brace
-id|dev
-op_assign
-l_int|NULL
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -440,7 +439,7 @@ op_assign
 id|init_etherdev
 c_func
 (paren
-id|dev
+l_int|NULL
 comma
 r_sizeof
 (paren
@@ -461,7 +460,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;Unable to allocate etherdev &quot;
+l_string|&quot;acenic: Unable to allocate net_device &quot;
 l_string|&quot;structure!&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -494,10 +493,19 @@ c_cond
 op_logical_neg
 id|dev-&gt;priv
 )paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;acenic: Unable to allocate memory.&bslash;n&quot;
+)paren
+suffix:semicolon
 r_return
 op_minus
 id|ENOMEM
 suffix:semicolon
+)brace
 id|ap
 op_assign
 id|dev-&gt;priv
@@ -1057,7 +1065,6 @@ op_assign
 id|acenic_probe
 c_func
 (paren
-l_int|NULL
 )paren
 suffix:semicolon
 r_return

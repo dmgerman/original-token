@@ -273,11 +273,6 @@ comma
 r_int
 id|pci_devfn
 comma
-r_struct
-id|net_device
-op_star
-id|dev
-comma
 r_int
 id|ioaddr
 comma
@@ -305,11 +300,6 @@ id|pci_bus
 comma
 r_int
 id|pci_devfn
-comma
-r_struct
-id|net_device
-op_star
-id|dev
 comma
 r_int
 id|ioaddr
@@ -1330,10 +1320,7 @@ r_int
 id|rtl8139_probe
 c_func
 (paren
-r_struct
-id|net_device
-op_star
-id|dev
+r_void
 )paren
 (brace
 r_int
@@ -1351,6 +1338,11 @@ r_char
 id|pci_bus
 comma
 id|pci_device_fn
+suffix:semicolon
+r_struct
+id|net_device
+op_star
+id|dev
 suffix:semicolon
 r_if
 c_cond
@@ -1689,8 +1681,6 @@ id|pci_bus
 comma
 id|pci_device_fn
 comma
-id|dev
-comma
 id|ioaddr
 comma
 id|irq
@@ -1797,11 +1787,6 @@ comma
 r_int
 id|pci_devfn
 comma
-r_struct
-id|net_device
-op_star
-id|dev
-comma
 r_int
 id|ioaddr
 comma
@@ -1844,6 +1829,11 @@ id|found_cnt
 suffix:colon
 l_int|0
 suffix:semicolon
+r_struct
+id|net_device
+op_star
+id|dev
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1870,7 +1860,7 @@ op_assign
 id|init_etherdev
 c_func
 (paren
-id|dev
+l_int|NULL
 comma
 l_int|0
 )paren
@@ -7917,7 +7907,6 @@ r_return
 id|rtl8139_probe
 c_func
 (paren
-l_int|0
 )paren
 suffix:semicolon
 )brace

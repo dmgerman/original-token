@@ -1081,9 +1081,7 @@ r_int
 id|dmfe_reg_board
 c_func
 (paren
-r_struct
-id|net_device
-op_star
+r_void
 )paren
 suffix:semicolon
 r_static
@@ -1386,13 +1384,11 @@ multiline_comment|/* DM910X network board routine ---------------------------- *
 multiline_comment|/*&n; *&t;Search DM910X board, allocate space and register it&n; */
 DECL|function|dmfe_reg_board
 r_int
+id|__init
 id|dmfe_reg_board
 c_func
 (paren
-r_struct
-id|net_device
-op_star
-id|dev
+r_void
 )paren
 (brace
 id|u32
@@ -1428,6 +1424,11 @@ op_star
 id|net_dev
 op_assign
 l_int|NULL
+suffix:semicolon
+r_struct
+id|net_device
+op_star
+id|dev
 suffix:semicolon
 id|DMFE_DBUG
 c_func
@@ -1598,7 +1599,7 @@ op_assign
 id|init_etherdev
 c_func
 (paren
-id|dev
+l_int|NULL
 comma
 l_int|0
 )paren
@@ -1798,11 +1799,6 @@ op_plus
 id|i
 )braket
 suffix:semicolon
-id|dev
-op_assign
-l_int|0
-suffix:semicolon
-multiline_comment|/* NULL device */
 )brace
 macro_line|#ifdef MODULE
 r_if
@@ -6314,7 +6310,6 @@ r_return
 id|dmfe_reg_board
 c_func
 (paren
-l_int|0
 )paren
 suffix:semicolon
 multiline_comment|/* search board and register */

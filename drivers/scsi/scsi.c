@@ -27,6 +27,38 @@ macro_line|#include &lt;linux/kmod.h&gt;
 macro_line|#endif
 DECL|macro|USE_STATIC_SCSI_MEMORY
 macro_line|#undef USE_STATIC_SCSI_MEMORY
+DECL|variable|proc_scsi
+r_struct
+id|proc_dir_entry
+op_star
+id|proc_scsi
+op_assign
+l_int|NULL
+suffix:semicolon
+r_static
+r_int
+id|scsi_proc_info
+c_func
+(paren
+r_char
+op_star
+id|buffer
+comma
+r_char
+op_star
+op_star
+id|start
+comma
+id|off_t
+id|offset
+comma
+r_int
+id|length
+comma
+r_int
+id|inout
+)paren
+suffix:semicolon
 multiline_comment|/*&n;   static const char RCSid[] = &quot;$Header: /vger/u4/cvs/linux/drivers/scsi/scsi.c,v 1.38 1997/01/19 23:07:18 davem Exp $&quot;;&n; */
 multiline_comment|/*&n; * Definitions and constants.&n; */
 DECL|macro|INTERNAL_ERROR
@@ -204,48 +236,6 @@ id|host_active
 op_assign
 l_int|NULL
 suffix:semicolon
-macro_line|#if CONFIG_PROC_FS
-multiline_comment|/* &n; * This is the pointer to the /proc/scsi code.&n; * It is only initialized to !=0 if the scsi code is present&n; */
-DECL|variable|proc_scsi_scsi
-r_struct
-id|proc_dir_entry
-id|proc_scsi_scsi
-op_assign
-(brace
-id|PROC_SCSI_SCSI
-comma
-l_int|4
-comma
-l_string|&quot;scsi&quot;
-comma
-id|S_IFREG
-op_or
-id|S_IRUGO
-op_or
-id|S_IWUSR
-comma
-l_int|1
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|NULL
-comma
-l_int|NULL
-comma
-l_int|NULL
-comma
-l_int|NULL
-comma
-l_int|NULL
-comma
-l_int|NULL
-)brace
-suffix:semicolon
-macro_line|#endif
 DECL|variable|scsi_device_types
 r_const
 r_char
@@ -399,64 +389,6 @@ op_star
 id|SCpnt
 )paren
 suffix:semicolon
-macro_line|#if CONFIG_PROC_FS
-r_extern
-r_int
-(paren
-op_star
-id|dispatch_scsi_info_ptr
-)paren
-(paren
-r_int
-id|ino
-comma
-r_char
-op_star
-id|buffer
-comma
-r_char
-op_star
-op_star
-id|start
-comma
-id|off_t
-id|offset
-comma
-r_int
-id|length
-comma
-r_int
-id|inout
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|dispatch_scsi_info
-c_func
-(paren
-r_int
-id|ino
-comma
-r_char
-op_star
-id|buffer
-comma
-r_char
-op_star
-op_star
-id|start
-comma
-id|off_t
-id|offset
-comma
-r_int
-id|length
-comma
-r_int
-id|inout
-)paren
-suffix:semicolon
-macro_line|#endif
 DECL|macro|SCSI_BLOCK
 mdefine_line|#define SCSI_BLOCK(DEVICE, HOST)                                                &bslash;&n;                ((HOST-&gt;block &amp;&amp; host_active &amp;&amp; HOST != host_active)            &bslash;&n;&t;&t;  || ((HOST)-&gt;can_queue &amp;&amp; HOST-&gt;host_busy &gt;= HOST-&gt;can_queue)    &bslash;&n;                  || ((HOST)-&gt;host_blocked)                                       &bslash;&n;                  || ((DEVICE) != NULL &amp;&amp; (DEVICE)-&gt;device_blocked) )
 r_static
@@ -7517,10 +7449,47 @@ r_return
 suffix:semicolon
 macro_line|#endif
 multiline_comment|/* Yes we&squot;re here... */
+multiline_comment|/*&n;&t; * This makes /proc/scsi and /proc/scsi/scsi visible.&n;&t; */
 macro_line|#if CONFIG_PROC_FS
-id|dispatch_scsi_info_ptr
+id|proc_scsi
 op_assign
-id|dispatch_scsi_info
+id|create_proc_entry
+(paren
+l_string|&quot;scsi&quot;
+comma
+id|S_IFDIR
+comma
+l_int|0
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|proc_scsi
+)paren
+(brace
+id|printk
+(paren
+id|KERN_ERR
+l_string|&quot;cannot init /proc/scsi&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|ENOMEM
+suffix:semicolon
+)brace
+id|create_proc_info_entry
+(paren
+l_string|&quot;scsi/scsi&quot;
+comma
+l_int|0
+comma
+l_int|0
+comma
+id|scsi_proc_info
+)paren
 suffix:semicolon
 macro_line|#endif
 multiline_comment|/* Init a few things so we can &quot;malloc&quot; memory. */
@@ -7528,18 +7497,6 @@ id|scsi_loadable_module_flag
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* Register the /proc/scsi/scsi entry */
-macro_line|#if CONFIG_PROC_FS
-id|proc_scsi_register
-c_func
-(paren
-l_int|0
-comma
-op_amp
-id|proc_scsi_scsi
-)paren
-suffix:semicolon
-macro_line|#endif
 multiline_comment|/* initialize all hosts */
 id|scsi_init
 c_func
@@ -8089,6 +8046,7 @@ suffix:semicolon
 )brace
 macro_line|#ifdef CONFIG_PROC_FS
 DECL|function|scsi_proc_info
+r_static
 r_int
 id|scsi_proc_info
 c_func
@@ -8107,9 +8065,6 @@ id|offset
 comma
 r_int
 id|length
-comma
-r_int
-id|hostno
 comma
 r_int
 id|inout
@@ -12681,29 +12636,53 @@ id|has_space
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/*&n;&t; * This makes /proc/scsi visible.&n;&t; */
+multiline_comment|/*&n;&t; * This makes /proc/scsi and /proc/scsi/scsi visible.&n;&t; */
 macro_line|#if CONFIG_PROC_FS
-id|dispatch_scsi_info_ptr
+id|proc_scsi
 op_assign
-id|dispatch_scsi_info
+id|create_proc_entry
+(paren
+l_string|&quot;scsi&quot;
+comma
+id|S_IFDIR
+comma
+l_int|0
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|proc_scsi
+)paren
+(brace
+id|printk
+(paren
+id|KERN_ERR
+l_string|&quot;cannot init /proc/scsi&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|ENOMEM
+suffix:semicolon
+)brace
+id|create_proc_info_entry
+(paren
+l_string|&quot;scsi/scsi&quot;
+comma
+l_int|0
+comma
+l_int|0
+comma
+id|scsi_proc_info
+)paren
 suffix:semicolon
 macro_line|#endif
 id|scsi_loadable_module_flag
 op_assign
 l_int|1
 suffix:semicolon
-multiline_comment|/* Register the /proc/scsi/scsi entry */
-macro_line|#if CONFIG_PROC_FS
-id|proc_scsi_register
-c_func
-(paren
-l_int|0
-comma
-op_amp
-id|proc_scsi_scsi
-)paren
-suffix:semicolon
-macro_line|#endif
 id|dma_sectors
 op_assign
 id|PAGE_SIZE
@@ -12907,18 +12886,20 @@ id|SCSI_BH
 )paren
 suffix:semicolon
 macro_line|#if CONFIG_PROC_FS
-id|proc_scsi_unregister
-c_func
+multiline_comment|/* No, we&squot;re not here anymore. Don&squot;t show the /proc/scsi files. */
+id|remove_proc_entry
 (paren
-l_int|0
+l_string|&quot;scsi/scsi&quot;
 comma
-id|PROC_SCSI_SCSI
+l_int|0
 )paren
 suffix:semicolon
-multiline_comment|/* No, we&squot;re not here anymore. Don&squot;t show the /proc/scsi files. */
-id|dispatch_scsi_info_ptr
-op_assign
-l_int|0L
+id|remove_proc_entry
+(paren
+l_string|&quot;scsi&quot;
+comma
+l_int|0
+)paren
 suffix:semicolon
 macro_line|#endif
 multiline_comment|/*&n;&t; * Free up the DMA pool.&n;&t; */

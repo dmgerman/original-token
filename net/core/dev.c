@@ -748,6 +748,12 @@ id|name
 r_int
 id|i
 suffix:semicolon
+r_char
+id|buf
+(braket
+l_int|32
+)braket
+suffix:semicolon
 multiline_comment|/*&n;&t; *&t;If you need over 100 please also fix the algorithm...&n;&t; */
 r_for
 c_loop
@@ -767,7 +773,7 @@ op_increment
 id|sprintf
 c_func
 (paren
-id|dev-&gt;name
+id|buf
 comma
 id|name
 comma
@@ -780,12 +786,20 @@ c_cond
 id|__dev_get_by_name
 c_func
 (paren
-id|dev-&gt;name
+id|buf
 )paren
 op_eq
 l_int|NULL
 )paren
 (brace
+id|strcpy
+c_func
+(paren
+id|dev-&gt;name
+comma
+id|buf
+)paren
+suffix:semicolon
 r_return
 id|i
 suffix:semicolon
@@ -6721,70 +6735,6 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;Initialize the DEV module. At boot time this walks the device list and&n; *&t;unhooks any devices that fail to initialise (normally hardware not &n; *&t;present) and leaves us with a valid list of present and active devices.&n; *&n; */
 r_extern
-r_int
-id|lance_init
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|bpq_init
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|scc_init
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|sdla_setup
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|dlci_setup
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|dmascc_init
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|lapbeth_init
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|arcnet_init
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_extern
 r_void
 id|ip_auto_config
 c_func
@@ -6792,16 +6742,6 @@ c_func
 r_void
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_8xx
-r_extern
-r_int
-id|cpm_enet_init
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-macro_line|#endif /* CONFIG_8xx */
 DECL|function|net_dev_init
 r_int
 id|__init
@@ -6843,80 +6783,6 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif&t;
-multiline_comment|/*&n;&t; * This is Very Ugly(tm).&n;&t; *&n;&t; * Some devices want to be initialized early..&n;&t; */
-macro_line|#if defined(CONFIG_SCC)
-id|scc_init
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#if defined(CONFIG_DMASCC)
-id|dmascc_init
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif&t;
-macro_line|#if defined(CONFIG_BPQETHER)
-id|bpq_init
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#if defined(CONFIG_DLCI)
-id|dlci_setup
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#if defined(CONFIG_SDLA)
-id|sdla_setup
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#if defined(CONFIG_LAPBETHER)
-id|lapbeth_init
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#if defined(CONFIG_PLIP)
-id|plip_init
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#if defined(CONFIG_ARCNET)
-id|arcnet_init
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#if defined(CONFIG_8xx)
-id|cpm_enet_init
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-multiline_comment|/*&n;&t; *&t;SLHC if present needs attaching so other people see it&n;&t; *&t;even if not opened.&n;&t; */
-macro_line|#ifdef CONFIG_INET&t; 
-macro_line|#if (defined(CONFIG_SLIP) &amp;&amp; defined(CONFIG_SLIP_COMPRESSED)) &bslash;&n;&t; || defined(CONFIG_PPP) &bslash;&n;    || (defined(CONFIG_ISDN) &amp;&amp; defined(CONFIG_ISDN_PPP))
-id|slhc_install
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif&t;
-macro_line|#endif
 macro_line|#ifdef CONFIG_NET_PROFILE
 id|net_profile_init
 c_func
@@ -6991,6 +6857,26 @@ id|dev_hold
 c_func
 (paren
 id|dev
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t;&t; *&t;We can allocate the name ahead of time. If the&n;&t;&t; *&t;init fails the name will be reissued correctly.&n;&t;&t; */
+r_if
+c_cond
+(paren
+id|strchr
+c_func
+(paren
+id|dev-&gt;name
+comma
+l_char|&squot;%&squot;
+)paren
+)paren
+id|dev_alloc_name
+c_func
+(paren
+id|dev
+comma
+id|dev-&gt;name
 )paren
 suffix:semicolon
 r_if
@@ -7139,6 +7025,12 @@ c_func
 )paren
 suffix:semicolon
 id|dev_mcast_init
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t; *&t;Initialise network devices&n;&t; */
+id|net_device_init
 c_func
 (paren
 )paren

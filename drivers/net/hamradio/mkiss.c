@@ -4282,16 +4282,9 @@ c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#ifdef MODULE
 r_return
 id|status
 suffix:semicolon
-macro_line|#else
-multiline_comment|/*&n;&t; * Return &quot;not found&quot;, so that dev_init() will unlink&n;&t; * the placeholder device entry for us.&n;&t; */
-r_return
-id|ENODEV
-suffix:semicolon
-macro_line|#endif
 )brace
 multiline_comment|/* Initialize the driver.  Called by network startup. */
 DECL|function|ax25_init

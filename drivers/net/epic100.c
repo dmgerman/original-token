@@ -191,11 +191,6 @@ comma
 r_int
 id|pci_devfn
 comma
-r_struct
-id|net_device
-op_star
-id|dev
-comma
 r_int
 id|ioaddr
 comma
@@ -302,11 +297,6 @@ id|pci_bus
 comma
 r_int
 id|pci_devfn
-comma
-r_struct
-id|net_device
-op_star
-id|dev
 comma
 r_int
 id|ioaddr
@@ -1130,10 +1120,7 @@ r_int
 id|epic100_probe
 c_func
 (paren
-r_struct
-id|net_device
-op_star
-id|dev
+r_void
 )paren
 (brace
 r_int
@@ -1156,6 +1143,11 @@ r_char
 id|pci_bus
 comma
 id|pci_device_fn
+suffix:semicolon
+r_struct
+id|net_device
+op_star
+id|dev
 suffix:semicolon
 macro_line|#ifdef PCI_SUPPORT_VER2
 r_struct
@@ -1589,8 +1581,6 @@ id|pci_bus
 comma
 id|pci_device_fn
 comma
-id|dev
-comma
 id|pci_ioaddr
 comma
 id|irq
@@ -1705,11 +1695,6 @@ comma
 r_int
 id|pci_devfn
 comma
-r_struct
-id|net_device
-op_star
-id|dev
-comma
 r_int
 id|ioaddr
 comma
@@ -1739,33 +1724,16 @@ id|duplex
 op_assign
 l_int|0
 suffix:semicolon
-r_if
-c_cond
-(paren
+r_struct
+id|net_device
+op_star
 id|dev
-op_logical_and
-id|dev-&gt;mem_start
-)paren
-(brace
-id|option
-op_assign
-id|dev-&gt;mem_start
 suffix:semicolon
-id|duplex
-op_assign
-(paren
-id|dev-&gt;mem_start
-op_amp
-l_int|16
-)paren
-ques
-c_cond
-l_int|1
-suffix:colon
-l_int|0
-suffix:semicolon
-)brace
-r_else
+singleline_comment|// FIXME&t;if (dev &amp;&amp; dev-&gt;mem_start) {
+singleline_comment|//&t;&t;option = dev-&gt;mem_start;
+singleline_comment|//&t;&t;duplex = (dev-&gt;mem_start &amp; 16) ? 1 : 0;
+singleline_comment|//&t;}
+singleline_comment|//&t;else 
 r_if
 c_cond
 (paren
@@ -1818,7 +1786,7 @@ op_assign
 id|init_etherdev
 c_func
 (paren
-id|dev
+l_int|NULL
 comma
 l_int|0
 )paren
@@ -7074,8 +7042,6 @@ id|bus
 comma
 id|devfn
 comma
-l_int|NULL
-comma
 id|io
 comma
 id|irq
@@ -7541,7 +7507,6 @@ r_return
 id|epic100_probe
 c_func
 (paren
-l_int|0
 )paren
 suffix:semicolon
 macro_line|#endif

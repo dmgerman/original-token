@@ -1392,11 +1392,6 @@ comma
 r_int
 id|pci_devfn
 comma
-r_struct
-id|net_device
-op_star
-id|dev
-comma
 r_int
 id|chip_id
 comma
@@ -1661,10 +1656,7 @@ r_int
 id|tulip_probe
 c_func
 (paren
-r_struct
-id|net_device
-op_star
-id|dev
+r_void
 )paren
 (brace
 r_int
@@ -2025,8 +2017,9 @@ id|new_command
 )paren
 suffix:semicolon
 )brace
-id|dev
-op_assign
+r_if
+c_cond
+(paren
 id|tulip_probe1
 c_func
 (paren
@@ -2034,20 +2027,13 @@ id|pci_bus
 comma
 id|pci_device_fn
 comma
-id|dev
-comma
 id|chip_idx
 comma
 id|cards_found
 )paren
-suffix:semicolon
-multiline_comment|/* Get and check the bus-master and latency values. */
-r_if
-c_cond
-(paren
-id|dev
 )paren
 (brace
+multiline_comment|/* Get and check the bus-master and latency values. */
 r_int
 r_char
 id|pci_latency
@@ -2136,10 +2122,6 @@ comma
 l_int|0x40000000
 )paren
 suffix:semicolon
-id|dev
-op_assign
-l_int|0
-suffix:semicolon
 id|cards_found
 op_increment
 suffix:semicolon
@@ -2169,11 +2151,6 @@ comma
 r_int
 id|pci_device_fn
 comma
-r_struct
-id|net_device
-op_star
-id|dev
-comma
 r_int
 id|chip_id
 comma
@@ -2181,6 +2158,11 @@ r_int
 id|board_idx
 )paren
 (brace
+r_struct
+id|net_device
+op_star
+id|dev
+suffix:semicolon
 r_static
 r_int
 id|did_version
@@ -2268,7 +2250,7 @@ op_assign
 id|init_etherdev
 c_func
 (paren
-id|dev
+l_int|NULL
 comma
 l_int|0
 )paren
@@ -15256,8 +15238,6 @@ id|bus
 comma
 id|devfn
 comma
-l_int|NULL
-comma
 id|DC21142
 comma
 op_minus
@@ -15574,7 +15554,6 @@ r_return
 id|tulip_probe
 c_func
 (paren
-l_int|NULL
 )paren
 suffix:semicolon
 macro_line|#endif

@@ -28,191 +28,12 @@ macro_line|#include &lt;linux/udp.h&gt;
 macro_line|#include &lt;linux/tcp.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
+macro_line|#include &lt;linux/version.h&gt;
+macro_line|#include &lt;asm/uaccess.h&gt;
+macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/yam.h&gt;
 macro_line|#include &quot;yam9600.h&quot;
 macro_line|#include &quot;yam1200.h&quot;
-multiline_comment|/* --------------------------------------------------------------------- */
-multiline_comment|/*&n; * currently this module is supposed to support both module styles, i.e.&n; * the old one present up to about 2.1.9, and the new one functioning&n; * starting with 2.1.21. The reason is I have a kit allowing to compile&n; * this module also under 2.0.x which was requested by several people.&n; * This will go in 2.2&n; */
-macro_line|#include &lt;linux/version.h&gt;
-macro_line|#if LINUX_VERSION_CODE &gt;= 0x20100
-macro_line|#include &lt;asm/uaccess.h&gt;
-macro_line|#else
-macro_line|#include &lt;asm/segment.h&gt;
-macro_line|#include &lt;linux/mm.h&gt;
-DECL|macro|put_user
-macro_line|#undef put_user
-DECL|macro|get_user
-macro_line|#undef get_user
-DECL|macro|put_user
-mdefine_line|#define put_user(x,ptr) ({ __put_user((unsigned long)(x),(ptr),sizeof(*(ptr))); 0; })
-DECL|macro|get_user
-mdefine_line|#define get_user(x,ptr) ({ x = ((__typeof__(*(ptr)))__get_user((ptr),sizeof(*(ptr)))); 0; })
-DECL|function|copy_from_user
-r_extern
-r_inline
-r_int
-id|copy_from_user
-c_func
-(paren
-r_void
-op_star
-id|to
-comma
-r_const
-r_void
-op_star
-id|from
-comma
-r_int
-r_int
-id|n
-)paren
-(brace
-r_int
-id|i
-op_assign
-id|verify_area
-c_func
-(paren
-id|VERIFY_READ
-comma
-id|from
-comma
-id|n
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|i
-)paren
-r_return
-id|i
-suffix:semicolon
-id|memcpy_fromfs
-c_func
-(paren
-id|to
-comma
-id|from
-comma
-id|n
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
-DECL|function|copy_to_user
-r_extern
-r_inline
-r_int
-id|copy_to_user
-c_func
-(paren
-r_void
-op_star
-id|to
-comma
-r_const
-r_void
-op_star
-id|from
-comma
-r_int
-r_int
-id|n
-)paren
-(brace
-r_int
-id|i
-op_assign
-id|verify_area
-c_func
-(paren
-id|VERIFY_WRITE
-comma
-id|to
-comma
-id|n
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|i
-)paren
-r_return
-id|i
-suffix:semicolon
-id|memcpy_tofs
-c_func
-(paren
-id|to
-comma
-id|from
-comma
-id|n
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
-macro_line|#endif
-macro_line|#if LINUX_VERSION_CODE &lt; 0x20115
-DECL|function|dev_init_buffers
-r_extern
-id|__inline__
-r_void
-id|dev_init_buffers
-c_func
-(paren
-r_struct
-id|net_device
-op_star
-id|dev
-)paren
-(brace
-r_int
-id|i
-suffix:semicolon
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-id|DEV_NUMBUFFS
-suffix:semicolon
-id|i
-op_increment
-)paren
-(brace
-id|skb_queue_head_init
-c_func
-(paren
-op_amp
-id|dev-&gt;buffs
-(braket
-id|i
-)braket
-)paren
-suffix:semicolon
-)brace
-)brace
-macro_line|#endif
-macro_line|#if LINUX_VERSION_CODE &gt;= 0x20123
-macro_line|#include &lt;linux/init.h&gt;
-macro_line|#else
-DECL|macro|__init
-mdefine_line|#define __init
-DECL|macro|__initdata
-mdefine_line|#define __initdata
-macro_line|#endif
 multiline_comment|/* --------------------------------------------------------------------- */
 DECL|variable|yam_drvname
 r_static
@@ -312,19 +133,11 @@ id|net_device
 id|dev
 suffix:semicolon
 multiline_comment|/* Stats section */
-macro_line|#if LINUX_VERSION_CODE &lt; 0x20119
-DECL|member|stats
-r_struct
-id|enet_statistics
-id|stats
-suffix:semicolon
-macro_line|#else
 DECL|member|stats
 r_struct
 id|net_device_stats
 id|stats
 suffix:semicolon
-macro_line|#endif
 DECL|member|nb_rxint
 r_int
 id|nb_rxint
@@ -4686,12 +4499,11 @@ DECL|macro|yam_net_procfs_remove
 mdefine_line|#define yam_net_procfs_remove()
 macro_line|#endif /* CONFIG_INET */
 multiline_comment|/* --------------------------------------------------------------------- */
-macro_line|#if LINUX_VERSION_CODE &gt;= 0x20119
+DECL|function|yam_get_stats
 r_static
 r_struct
 id|net_device_stats
 op_star
-DECL|function|yam_get_stats
 id|yam_get_stats
 c_func
 (paren
@@ -4700,20 +4512,6 @@ id|net_device
 op_star
 id|dev
 )paren
-macro_line|#else
-r_static
-r_struct
-id|enet_statistics
-op_star
-id|yam_get_stats
-c_func
-(paren
-r_struct
-id|net_device
-op_star
-id|dev
-)paren
-macro_line|#endif
 (brace
 r_struct
 id|yam_port
@@ -5998,12 +5796,14 @@ id|__init
 id|yam_init
 c_func
 (paren
+r_void
+)paren
+(brace
 r_struct
 id|net_device
 op_star
 id|dev
-)paren
-(brace
+suffix:semicolon
 r_int
 id|i
 suffix:semicolon
@@ -6281,7 +6081,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/* do not keep this device */
 r_return
 l_int|1
 suffix:semicolon
@@ -6289,7 +6088,6 @@ suffix:semicolon
 multiline_comment|/* --------------------------------------------------------------------- */
 macro_line|#ifdef MODULE
 multiline_comment|/*&n; * command line settable parameters&n; */
-macro_line|#if LINUX_VERSION_CODE &gt;= 0x20115
 id|MODULE_AUTHOR
 c_func
 (paren
@@ -6302,7 +6100,6 @@ c_func
 l_string|&quot;Yam amateur radio modem driver&quot;
 )paren
 suffix:semicolon
-macro_line|#endif
 DECL|function|init_module
 r_int
 id|init_module
@@ -6317,7 +6114,6 @@ op_assign
 id|yam_init
 c_func
 (paren
-l_int|NULL
 )paren
 suffix:semicolon
 r_return

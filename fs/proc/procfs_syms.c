@@ -2,41 +2,6 @@ macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
-multiline_comment|/*&n; * This is all required so that if we load all of scsi as a module,&n; * that the scsi code will be able to talk to the /proc/scsi handling&n; * in the procfs.&n; */
-r_extern
-r_int
-(paren
-op_star
-id|dispatch_scsi_info_ptr
-)paren
-(paren
-r_int
-id|ino
-comma
-r_char
-op_star
-id|buffer
-comma
-r_char
-op_star
-op_star
-id|start
-comma
-id|off_t
-id|offset
-comma
-r_int
-id|length
-comma
-r_int
-id|inout
-)paren
-suffix:semicolon
-r_extern
-r_struct
-id|inode_operations
-id|proc_scsi_inode_operations
-suffix:semicolon
 r_extern
 r_struct
 id|proc_dir_entry
@@ -120,28 +85,6 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|proc_bus
-)paren
-suffix:semicolon
-multiline_comment|/*&n; * This is required so that if we load scsi later, that the&n; * scsi code can attach to /proc/scsi in the correct manner.&n; */
-DECL|variable|proc_scsi
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|proc_scsi
-)paren
-suffix:semicolon
-DECL|variable|proc_scsi_inode_operations
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|proc_scsi_inode_operations
-)paren
-suffix:semicolon
-DECL|variable|dispatch_scsi_info_ptr
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|dispatch_scsi_info_ptr
 )paren
 suffix:semicolon
 macro_line|#if defined(CONFIG_SUN_OPENPROMFS_MODULE)

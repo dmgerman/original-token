@@ -7532,7 +7532,7 @@ l_int|0
 suffix:semicolon
 )brace
 DECL|function|sdla_setup
-r_void
+r_int
 id|__init
 id|sdla_setup
 c_func
@@ -7553,6 +7553,9 @@ c_func
 (paren
 id|devname
 )paren
+suffix:semicolon
+r_return
+l_int|0
 suffix:semicolon
 )brace
 macro_line|#ifdef MODULE

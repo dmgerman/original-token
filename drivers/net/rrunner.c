@@ -58,10 +58,7 @@ r_int
 id|__init
 id|rr_hippi_probe
 (paren
-r_struct
-id|net_device
-op_star
-id|dev
+r_void
 )paren
 (brace
 r_int
@@ -73,6 +70,11 @@ r_int
 id|version_disp
 suffix:semicolon
 multiline_comment|/* was version info already displayed? */
+r_struct
+id|net_device
+op_star
+id|dev
+suffix:semicolon
 r_struct
 id|pci_dev
 op_star
@@ -159,7 +161,7 @@ op_assign
 id|init_hippi_dev
 c_func
 (paren
-id|dev
+l_int|NULL
 comma
 r_sizeof
 (paren
@@ -448,27 +450,9 @@ id|pdev
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; * If we&squot;re at this point we&squot;re going through rr_hippi_probe()&n;&t; * for the first time.  Return success (0) if we&squot;ve initialized&n;&t; * 1 or more boards. Otherwise, return failure (-ENODEV).&n;&t; */
-macro_line|#ifdef MODULE
 r_return
 id|boards_found
 suffix:semicolon
-macro_line|#else
-r_if
-c_cond
-(paren
-id|boards_found
-OG
-l_int|0
-)paren
-r_return
-l_int|0
-suffix:semicolon
-r_else
-r_return
-op_minus
-id|ENODEV
-suffix:semicolon
-macro_line|#endif
 )brace
 DECL|variable|root_dev
 r_static
@@ -502,23 +486,11 @@ c_func
 r_void
 )paren
 (brace
-r_int
-id|cards
-suffix:semicolon
-id|root_dev
-op_assign
-l_int|NULL
-suffix:semicolon
-id|cards
-op_assign
+r_return
 id|rr_hippi_probe
 c_func
 (paren
-l_int|NULL
 )paren
-suffix:semicolon
-r_return
-id|cards
 ques
 c_cond
 l_int|0

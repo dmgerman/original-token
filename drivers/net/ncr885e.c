@@ -275,11 +275,6 @@ r_int
 id|ncr885e_probe1
 c_func
 (paren
-r_struct
-id|net_device
-op_star
-id|dev
-comma
 r_int
 r_int
 id|ioaddr
@@ -4914,11 +4909,6 @@ DECL|function|ncr885e_probe1
 id|ncr885e_probe1
 c_func
 (paren
-r_struct
-id|net_device
-op_star
-id|dev
-comma
 r_int
 r_int
 id|ioaddr
@@ -4928,6 +4918,11 @@ r_char
 id|irq
 )paren
 (brace
+r_struct
+id|net_device
+op_star
+id|dev
+suffix:semicolon
 r_struct
 id|ncr885e_private
 op_star
@@ -4955,7 +4950,7 @@ op_assign
 id|init_etherdev
 c_func
 (paren
-id|dev
+l_int|NULL
 comma
 l_int|0
 )paren
@@ -5215,10 +5210,7 @@ id|__init
 id|ncr885e_probe
 c_func
 (paren
-r_struct
-id|net_device
-op_star
-id|dev
+r_void
 )paren
 (brace
 r_struct
@@ -5343,8 +5335,6 @@ op_logical_neg
 id|ncr885e_probe1
 c_func
 (paren
-id|dev
-comma
 id|ioaddr
 comma
 id|irq
@@ -6161,7 +6151,6 @@ r_return
 id|ncr885e_probe
 c_func
 (paren
-l_int|NULL
 )paren
 suffix:semicolon
 )brace

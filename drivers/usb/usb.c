@@ -4756,6 +4756,10 @@ l_int|4
 OL
 l_int|0
 op_logical_or
+(paren
+(paren
+id|ret
+op_assign
 id|usb_get_string
 c_func
 (paren
@@ -4769,8 +4773,10 @@ id|u.buffer
 comma
 id|u.desc.bLength
 )paren
+)paren
 OL
 l_int|0
+)paren
 )paren
 (brace
 id|printk
@@ -4784,6 +4790,18 @@ r_return
 l_int|NULL
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|ret
+OG
+l_int|0
+)paren
+id|ret
+op_div_assign
+l_int|2
+suffix:semicolon
+multiline_comment|/* going from 16-bit chars to 8-bit */
 id|len
 op_assign
 id|u.desc.bLength
@@ -4791,6 +4809,19 @@ op_div
 l_int|2
 suffix:semicolon
 multiline_comment|/* includes terminating null */
+multiline_comment|/* after removing bLength &amp; bDescType */
+r_if
+c_cond
+(paren
+id|ret
+OL
+id|len
+)paren
+id|len
+op_assign
+id|ret
+suffix:semicolon
+multiline_comment|/* use min of (ret, len) */
 id|ptr
 op_assign
 id|kmalloc

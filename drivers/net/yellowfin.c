@@ -1017,11 +1017,6 @@ op_star
 id|yellowfin_probe1
 c_func
 (paren
-r_struct
-id|net_device
-op_star
-id|dev
-comma
 r_int
 id|ioaddr
 comma
@@ -1254,10 +1249,7 @@ r_int
 id|yellowfin_probe
 c_func
 (paren
-r_struct
-id|net_device
-op_star
-id|dev
+r_void
 )paren
 (brace
 r_int
@@ -1558,13 +1550,12 @@ id|new_command
 )paren
 suffix:semicolon
 )brace
-id|dev
-op_assign
+r_if
+c_cond
+(paren
 id|yellowfin_probe1
 c_func
 (paren
-id|dev
-comma
 id|ioaddr
 comma
 id|irq
@@ -1573,11 +1564,6 @@ id|chip_idx
 comma
 id|cards_found
 )paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|dev
 )paren
 (brace
 multiline_comment|/* Get and check the bus-master and latency values. */
@@ -1644,10 +1630,6 @@ comma
 id|pci_latency
 )paren
 suffix:semicolon
-id|dev
-op_assign
-l_int|0
-suffix:semicolon
 id|cards_found
 op_increment
 suffix:semicolon
@@ -1671,11 +1653,6 @@ op_star
 id|yellowfin_probe1
 c_func
 (paren
-r_struct
-id|net_device
-op_star
-id|dev
-comma
 r_int
 id|ioaddr
 comma
@@ -1706,6 +1683,11 @@ id|option
 comma
 id|i
 suffix:semicolon
+r_struct
+id|net_device
+op_star
+id|dev
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1729,7 +1711,7 @@ op_assign
 id|init_etherdev
 c_func
 (paren
-id|dev
+l_int|NULL
 comma
 r_sizeof
 (paren
@@ -7229,7 +7211,6 @@ r_return
 id|yellowfin_probe
 c_func
 (paren
-l_int|0
 )paren
 suffix:semicolon
 )brace

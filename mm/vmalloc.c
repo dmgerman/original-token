@@ -1126,7 +1126,6 @@ id|PAGE_SHIFT
 OG
 id|max_mapnr
 )paren
-)paren
 (brace
 id|BUG
 c_func

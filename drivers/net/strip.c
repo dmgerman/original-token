@@ -10839,9 +10839,6 @@ suffix:semicolon
 multiline_comment|/************************************************************************/
 multiline_comment|/* Initialization&t;&t;&t;&t;&t;&t;&t;*/
 multiline_comment|/*&n; * Initialize the STRIP driver.&n; * This routine is called at boot time, to bootstrap the multi-channel&n; * STRIP driver&n; */
-macro_line|#ifdef MODULE
-r_static
-macro_line|#endif
 DECL|function|strip_init_ctrl_dev
 r_int
 id|strip_init_ctrl_dev

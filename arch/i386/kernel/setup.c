@@ -2038,6 +2038,8 @@ DECL|macro|MAXMEM
 mdefine_line|#define MAXMEM&t;&t;(unsigned long)(-PAGE_OFFSET-VMALLOC_RESERVE)
 DECL|macro|MAXMEM_PFN
 mdefine_line|#define MAXMEM_PFN&t;PFN_DOWN(MAXMEM)
+DECL|macro|MAX_NONPAE_PFN
+mdefine_line|#define MAX_NONPAE_PFN&t;(1 &lt;&lt; 20)
 multiline_comment|/*&n;&t; * partially used pages are not usable - thus&n;&t; * we are rounding upwards:&n;&t; */
 id|start_pfn
 op_assign
@@ -2135,10 +2137,78 @@ id|max_low_pfn
 OG
 id|MAXMEM_PFN
 )paren
+(brace
 id|max_low_pfn
 op_assign
 id|MAXMEM_PFN
 suffix:semicolon
+macro_line|#ifndef CONFIG_HIGHMEM
+multiline_comment|/* Maximum memory usable is what is directly addressable */
+id|printk
+c_func
+(paren
+id|KERN_WARNING
+l_string|&quot;Warning only %ldMB will be used.&bslash;n&quot;
+comma
+id|MAXMEM
+op_rshift
+l_int|20
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|max_pfn
+OG
+id|MAX_NONPAE_PFN
+)paren
+id|printk
+c_func
+(paren
+id|KERN_WARNING
+l_string|&quot;Use a PAE enabled kernel.&bslash;n&quot;
+)paren
+suffix:semicolon
+r_else
+id|printk
+c_func
+(paren
+id|KERN_WARNING
+l_string|&quot;Use a HIGHMEM enabled kernel.&bslash;n&quot;
+)paren
+suffix:semicolon
+macro_line|#else /* !CONFIG_HIGHMEM */
+macro_line|#ifndef CONFIG_X86_PAE
+r_if
+c_cond
+(paren
+id|max_pfn
+OG
+id|MAX_NONPAE_PFN
+)paren
+(brace
+id|max_pfn
+op_assign
+id|MAX_NONPAE_PFN
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_WARNING
+l_string|&quot;Warning only 4GB will be used.&bslash;n&quot;
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_WARNING
+l_string|&quot;Use a PAE enabled kernel.&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif /* !CONFIG_X86_PAE */
+macro_line|#endif /* !CONFIG_HIGHMEM */
+)brace
 macro_line|#ifdef CONFIG_HIGHMEM
 id|highstart_pfn
 op_assign

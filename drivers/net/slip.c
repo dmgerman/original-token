@@ -4942,27 +4942,14 @@ suffix:semicolon
 macro_line|#endif
 multiline_comment|/* VSV changes end */
 multiline_comment|/* Initialize SLIP control device -- register SLIP line discipline */
-macro_line|#ifdef MODULE
 DECL|function|slip_init_ctrl_dev
-r_static
-r_int
-id|slip_init_ctrl_dev
-c_func
-(paren
-r_void
-)paren
-macro_line|#else&t;/* !MODULE */
 r_int
 id|__init
 id|slip_init_ctrl_dev
 c_func
 (paren
-r_struct
-id|net_device
-op_star
-id|dummy
+r_void
 )paren
-macro_line|#endif&t;/* !MODULE */
 (brace
 r_int
 id|status
@@ -5181,16 +5168,9 @@ id|status
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifdef MODULE
 r_return
 id|status
 suffix:semicolon
-macro_line|#else
-multiline_comment|/* Return &quot;not found&quot;, so that dev_init() will unlink&n;&t; * the placeholder device entry for us.&n;&t; */
-r_return
-id|ENODEV
-suffix:semicolon
-macro_line|#endif
 )brace
 macro_line|#ifdef MODULE
 r_int

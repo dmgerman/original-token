@@ -275,6 +275,13 @@ c_func
 id|proc_print_scsidevice
 )paren
 suffix:semicolon
+DECL|variable|proc_scsi
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|proc_scsi
+)paren
+suffix:semicolon
 multiline_comment|/*&n; * These are here only while I debug the rest of the scsi stuff.&n; */
 DECL|variable|scsi_hostlist
 id|EXPORT_SYMBOL

@@ -73,7 +73,7 @@ op_assign
 l_int|0
 )brace
 suffix:semicolon
-multiline_comment|/*&n; * These are the generic /proc directory operations. They&n; * use the in-memory &quot;struct proc_dir_entry&quot; tree to parse&n; * the /proc directory.&n; *&n; * NOTE! The /proc/scsi directory currently does not correctly&n; * build up the proc_dir_entry tree, and will show up empty.&n; */
+multiline_comment|/*&n; * These are the generic /proc directory operations. They&n; * use the in-memory &quot;struct proc_dir_entry&quot; tree to parse&n; * the /proc directory.&n; */
 DECL|variable|proc_dir_operations
 r_static
 r_struct
@@ -224,16 +224,12 @@ l_int|NULL
 )brace
 suffix:semicolon
 DECL|variable|proc_net
-DECL|variable|proc_scsi
 DECL|variable|proc_bus
 DECL|variable|proc_sysvipc
 r_struct
 id|proc_dir_entry
 op_star
 id|proc_net
-comma
-op_star
-id|proc_scsi
 comma
 op_star
 id|proc_bus
@@ -1853,18 +1849,6 @@ id|create_proc_entry
 c_func
 (paren
 l_string|&quot;net&quot;
-comma
-id|S_IFDIR
-comma
-l_int|0
-)paren
-suffix:semicolon
-id|proc_scsi
-op_assign
-id|create_proc_entry
-c_func
-(paren
-l_string|&quot;scsi&quot;
 comma
 id|S_IFDIR
 comma

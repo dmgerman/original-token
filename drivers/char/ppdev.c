@@ -1963,13 +1963,13 @@ id|pp
 op_assign
 id|kmalloc
 (paren
-id|GFP_KERNEL
-comma
 r_sizeof
 (paren
 r_struct
 id|pp_struct
 )paren
+comma
+id|GFP_KERNEL
 )paren
 suffix:semicolon
 r_if

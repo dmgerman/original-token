@@ -21,13 +21,10 @@ DECL|enum|scsi_directory_inos
 r_enum
 id|scsi_directory_inos
 (brace
-DECL|enumerator|PROC_SCSI_SCSI
-id|PROC_SCSI_SCSI
-op_assign
-l_int|256
-comma
 DECL|enumerator|PROC_SCSI_ADVANSYS
 id|PROC_SCSI_ADVANSYS
+op_assign
+l_int|256
 comma
 DECL|enumerator|PROC_SCSI_PCI2000
 id|PROC_SCSI_PCI2000
@@ -488,6 +485,7 @@ suffix:semicolon
 multiline_comment|/* delete flag */
 )brace
 suffix:semicolon
+macro_line|#if 0 /* FIXME! /proc/scsi is broken right now */
 r_extern
 r_int
 (paren
@@ -517,6 +515,12 @@ r_int
 id|inout
 )paren
 suffix:semicolon
+r_extern
+r_struct
+id|inode_operations
+id|proc_scsi_inode_operations
+suffix:semicolon
+macro_line|#endif
 DECL|macro|PROC_INODE_PROPER
 mdefine_line|#define PROC_INODE_PROPER(inode) ((inode)-&gt;i_ino &amp; ~0xffff)
 DECL|macro|PROC_INODE_OPENPROM
@@ -593,11 +597,6 @@ r_extern
 r_struct
 id|proc_dir_entry
 id|proc_root_kcore
-suffix:semicolon
-r_extern
-r_struct
-id|inode_operations
-id|proc_scsi_inode_operations
 suffix:semicolon
 r_extern
 r_void
@@ -740,11 +739,13 @@ op_star
 id|x
 )paren
 (brace
+macro_line|#if 0 /* FIXME! */
 id|x-&gt;ops
 op_assign
 op_amp
 id|proc_scsi_inode_operations
 suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren

@@ -4408,11 +4408,9 @@ DECL|function|sparc_lance_probe
 r_int
 id|__init
 id|sparc_lance_probe
+c_func
 (paren
-r_struct
-id|net_device
-op_star
-id|dev
+r_void
 )paren
 (brace
 r_static
@@ -4496,7 +4494,7 @@ r_return
 id|sparc_lance_init
 c_func
 (paren
-id|dev
+l_int|NULL
 comma
 op_amp
 id|sdev
@@ -4518,10 +4516,7 @@ r_int
 id|__init
 id|sparc_lance_probe
 (paren
-r_struct
-id|net_device
-op_star
-id|dev
+r_void
 )paren
 (brace
 r_struct
@@ -4535,6 +4530,13 @@ op_star
 id|sdev
 op_assign
 l_int|0
+suffix:semicolon
+r_struct
+id|net_device
+op_star
+id|dev
+op_assign
+l_int|NULL
 suffix:semicolon
 r_struct
 id|Linux_SBus_DMA
@@ -4755,7 +4757,6 @@ r_return
 id|sparc_lance_probe
 c_func
 (paren
-l_int|NULL
 )paren
 suffix:semicolon
 )brace

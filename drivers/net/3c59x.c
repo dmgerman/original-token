@@ -359,11 +359,6 @@ comma
 r_int
 id|pci_devfn
 comma
-r_struct
-id|net_device
-op_star
-id|dev
-comma
 r_int
 id|ioaddr
 comma
@@ -430,11 +425,6 @@ id|pci_bus
 comma
 r_int
 id|pci_devfn
-comma
-r_struct
-id|net_device
-op_star
-id|dev
 comma
 r_int
 id|ioaddr
@@ -2317,11 +2307,6 @@ id|vortex_scan
 c_func
 (paren
 r_struct
-id|net_device
-op_star
-id|dev
-comma
-r_struct
 id|pci_id_info
 id|pci_tbl
 (braket
@@ -2888,8 +2873,6 @@ id|bus
 comma
 id|devfn
 comma
-l_int|NULL
-comma
 id|io
 comma
 id|irq
@@ -3181,8 +3164,6 @@ r_return
 id|vortex_scan
 c_func
 (paren
-l_int|0
-comma
 id|pci_tbl
 )paren
 suffix:semicolon
@@ -3194,10 +3175,7 @@ r_int
 id|tc59x_probe
 c_func
 (paren
-r_struct
-id|net_device
-op_star
-id|dev
+r_void
 )paren
 (brace
 r_static
@@ -3231,8 +3209,6 @@ r_return
 id|vortex_scan
 c_func
 (paren
-id|dev
-comma
 id|pci_tbl
 )paren
 suffix:semicolon
@@ -3246,11 +3222,6 @@ id|vortex_scan
 c_func
 (paren
 r_struct
-id|net_device
-op_star
-id|dev
-comma
-r_struct
 id|pci_id_info
 id|pci_tbl
 (braket
@@ -3261,6 +3232,11 @@ r_int
 id|cards_found
 op_assign
 l_int|0
+suffix:semicolon
+r_struct
+id|net_device
+op_star
+id|dev
 suffix:semicolon
 multiline_comment|/* Allow an EISA-only driver. */
 macro_line|#if defined(CONFIG_PCI) || (defined(MODULE) &amp;&amp; !defined(NO_PCI))
@@ -3653,8 +3629,6 @@ id|pci_bus
 comma
 id|pci_device_fn
 comma
-id|dev
-comma
 id|ioaddr
 comma
 id|irq
@@ -3850,8 +3824,6 @@ l_int|0
 comma
 l_int|0
 comma
-id|dev
-comma
 id|ioaddr
 comma
 id|inw
@@ -3868,10 +3840,6 @@ l_int|4
 comma
 id|cards_found
 )paren
-suffix:semicolon
-id|dev
-op_assign
-l_int|0
 suffix:semicolon
 id|cards_found
 op_increment
@@ -3892,8 +3860,6 @@ c_func
 l_int|0
 comma
 l_int|0
-comma
-id|dev
 comma
 id|compaq_ioaddr
 comma
@@ -3936,11 +3902,6 @@ comma
 r_int
 id|pci_devfn
 comma
-r_struct
-id|net_device
-op_star
-id|dev
-comma
 r_int
 id|ioaddr
 comma
@@ -3977,12 +3938,17 @@ multiline_comment|/* EEPROM contents */
 r_int
 id|i
 suffix:semicolon
+r_struct
+id|net_device
+op_star
+id|dev
+suffix:semicolon
 id|dev
 op_assign
 id|init_etherdev
 c_func
 (paren
-id|dev
+l_int|NULL
 comma
 l_int|0
 )paren

@@ -2279,15 +2279,13 @@ suffix:semicolon
 DECL|macro|PPP_MAJOR
 mdefine_line|#define PPP_MAJOR&t;108
 multiline_comment|/* Called at boot time if ppp is compiled into the kernel,&n;   or at module load time (from init_module) if compiled as a module. */
-r_int
 DECL|function|ppp_init
+r_int
+id|__init
 id|ppp_init
 c_func
 (paren
-r_struct
-id|net_device
-op_star
-id|dev
+r_void
 )paren
 (brace
 r_int
@@ -6924,7 +6922,6 @@ r_void
 id|ppp_init
 c_func
 (paren
-l_int|0
 )paren
 suffix:semicolon
 r_return
