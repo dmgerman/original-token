@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;$Id: oldproc.c,v 1.10 1998/03/15 13:50:11 ecd Exp $&n; *&n; *&t;Backward-compatible procfs interface for PCI.&n; *&n; *&t;Copyright 1993, 1994, 1995, 1997 Drew Eckhardt, Frederic Potter,&n; *&t;David Mosberger-Tang, Martin Mares&n; */
+multiline_comment|/*&n; *&t;$Id: oldproc.c,v 1.12 1998/05/01 10:58:21 mj Exp $&n; *&n; *&t;Backward-compatible procfs interface for PCI.&n; *&n; *&t;Copyright 1993, 1994, 1995, 1997 Drew Eckhardt, Frederic Potter,&n; *&t;David Mosberger-Tang, Martin Mares&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -300,9 +300,29 @@ c_func
 (paren
 id|ATI
 comma
+id|ATI_215GI
+comma
+l_string|&quot;Mach64 GI (Rage Pro)&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|ATI
+comma
 id|ATI_215GP
 comma
 l_string|&quot;Mach64 GP (Rage Pro)&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|ATI
+comma
+id|ATI_215GQ
+comma
+l_string|&quot;Mach64 GQ (Rage Pro)&quot;
 )paren
 comma
 id|DEVICE
@@ -333,6 +353,26 @@ comma
 id|ATI_210888GX
 comma
 l_string|&quot;210888GX&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|ATI
+comma
+id|ATI_215LG
+comma
+l_string|&quot;Mach64 LG (Rage Pro)&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|ATI
+comma
+id|ATI_264LT
+comma
+l_string|&quot;Mach64 LT&quot;
 )paren
 comma
 id|DEVICE
@@ -858,6 +898,36 @@ comma
 id|DEVICE
 c_func
 (paren
+id|IBM
+comma
+id|IBM_SERVERAID
+comma
+l_string|&quot;ServeRAID&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|IBM
+comma
+id|IBM_TR_WAKE
+comma
+l_string|&quot;Wake On LAN Token Ring&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|IBM
+comma
+id|IBM_3780IDSP
+comma
+l_string|&quot;MWave DSP&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
 id|WD
 comma
 id|WD_7197
@@ -1048,6 +1118,16 @@ comma
 id|DEVICE
 c_func
 (paren
+id|CT
+comma
+id|CT_65555
+comma
+l_string|&quot;65555&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
 id|MIRO
 comma
 id|MIRO_36050
@@ -1080,9 +1160,9 @@ c_func
 (paren
 id|SI
 comma
-id|SI_6201
+id|SI_5591_AGP
 comma
-l_string|&quot;6201&quot;
+l_string|&quot;5591/5592 AGP&quot;
 )paren
 comma
 id|DEVICE
@@ -1103,6 +1183,26 @@ comma
 id|SI_503
 comma
 l_string|&quot;85C503&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|SI
+comma
+id|SI_ACPI
+comma
+l_string|&quot;ACPI&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|SI
+comma
+id|SI_5597_VGA
+comma
+l_string|&quot;5597/5598 VGA&quot;
 )paren
 comma
 id|DEVICE
@@ -1190,9 +1290,19 @@ c_func
 (paren
 id|SI
 comma
+id|SI_5591
+comma
+l_string|&quot;5591/5592 Host&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|SI
+comma
 id|SI_5597
 comma
-l_string|&quot;5597&quot;
+l_string|&quot;5597/5598 Host&quot;
 )paren
 comma
 id|DEVICE
@@ -1202,7 +1312,7 @@ id|SI
 comma
 id|SI_7001
 comma
-l_string|&quot;7001&quot;
+l_string|&quot;7001 USB&quot;
 )paren
 comma
 id|DEVICE
@@ -1678,6 +1788,16 @@ comma
 id|DEVICE
 c_func
 (paren
+id|PICOP
+comma
+id|PICOP_PT80C524
+comma
+l_string|&quot;PT80C524 Nile&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
 id|APPLE
 comma
 id|APPLE_BANDIT
@@ -2118,6 +2238,28 @@ comma
 id|DEVICE
 c_func
 (paren
+id|MADGE
+comma
+id|MADGE_MK2
+comma
+l_string|&quot;Smart 16/4 BM Mk2 Ringnode&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+l_int|3
+id|COM
+comma
+l_int|3
+id|COM_3C339
+comma
+l_string|&quot;3C339 TokenRing&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
 l_int|3
 id|COM
 comma
@@ -2197,6 +2339,30 @@ l_int|3
 id|COM_3C905TX
 comma
 l_string|&quot;3C905 100bTX&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+l_int|3
+id|COM
+comma
+l_int|3
+id|COM_3C905T4
+comma
+l_string|&quot;3C905 100bT4&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+l_int|3
+id|COM
+comma
+l_int|3
+id|COM_3C905B_TX
+comma
+l_string|&quot;3C905B 100bTX&quot;
 )paren
 comma
 id|DEVICE
@@ -2452,6 +2618,26 @@ comma
 id|DEVICE
 c_func
 (paren
+id|MACRONIX
+comma
+id|MACRONIX_MX98713
+comma
+l_string|&quot;MX98713&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|MACRONIX
+comma
+id|MACRONIX_MX987x5
+comma
+l_string|&quot;MX98715 / MX98725&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
 id|CERN
 comma
 id|CERN_SPSB_PMC
@@ -2534,6 +2720,16 @@ c_func
 (paren
 id|AMCC
 comma
+id|AMCC_PARASTATION
+comma
+l_string|&quot;ParaStation Interface&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|AMCC
+comma
 id|AMCC_S5933
 comma
 l_string|&quot;S5933 PCI44&quot;
@@ -2587,6 +2783,16 @@ comma
 id|REALTEK_8129
 comma
 l_string|&quot;8129&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|REALTEK
+comma
+id|REALTEK_8139
+comma
+l_string|&quot;8139&quot;
 )paren
 comma
 id|DEVICE
@@ -2747,6 +2953,16 @@ comma
 id|VIA_82C586_3
 comma
 l_string|&quot;VT 82C586B Apollo ACPI&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|VIA
+comma
+id|VIA_86C100A
+comma
+l_string|&quot;VT 86C100A&quot;
 )paren
 comma
 id|DEVICE
@@ -3134,6 +3350,16 @@ c_func
 (paren
 id|PHILIPS
 comma
+id|PHILIPS_SAA7145
+comma
+l_string|&quot;SAA7145&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|PHILIPS
+comma
 id|PHILIPS_SAA7146
 comma
 l_string|&quot;SAA7146&quot;
@@ -3267,6 +3493,16 @@ comma
 id|DIGI_EPCJ
 comma
 l_string|&quot;AccelPort EPC/J&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|DIGI
+comma
+id|DIGI_XR_920
+comma
+l_string|&quot;AccelPort Xr 920&quot;
 )paren
 comma
 id|DEVICE
@@ -3482,6 +3718,16 @@ comma
 id|DEVICE
 c_func
 (paren
+id|KINETIC
+comma
+id|KINETIC_2915
+comma
+l_string|&quot;2915 CAMAC&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
 id|COMPEX
 comma
 id|COMPEX_ENET100VG4
@@ -3542,16 +3788,6 @@ comma
 id|DEVICE
 c_func
 (paren
-id|ESSENTIAL
-comma
-id|ROADRUNNER
-comma
-l_string|&quot;RoadRunner serial HIPPI&quot;
-)paren
-comma
-id|DEVICE
-c_func
-(paren
 id|CYCLADES
 comma
 id|CYCLOM_Y_Lo
@@ -3587,6 +3823,16 @@ comma
 id|CYCLOM_Z_Hi
 comma
 l_string|&quot;Cyclom-Z above 1Mbyte&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|ESSENTIAL
+comma
+id|ESSENTIAL_ROADRUNNER
+comma
+l_string|&quot;Roadrunner serial HIPPI&quot;
 )paren
 comma
 id|DEVICE
@@ -3716,6 +3962,36 @@ comma
 id|DEVICE
 c_func
 (paren
+id|SATSAGEM
+comma
+id|SATSAGEM_PCR2101
+comma
+l_string|&quot;PCR2101 DVB receiver&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|SATSAGEM
+comma
+id|SATSAGEM_TELSATTURBO
+comma
+l_string|&quot;Telsat Turbo DVB&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|HUGHES
+comma
+id|HUGHES_DIRECPC
+comma
+l_string|&quot;DirecPC&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
 id|ENSONIQ
 comma
 id|ENSONIQ_AUDIOPCI
@@ -3741,6 +4017,16 @@ comma
 id|NVIDIA_SGS_RIVA128
 comma
 l_string|&quot;Riva 128&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|CBOARDS
+comma
+id|CBOARDS_DAS1602_16
+comma
+l_string|&quot;DAS1602/16&quot;
 )paren
 comma
 id|DEVICE
@@ -3809,6 +4095,18 @@ l_int|3
 id|DLABS_PERMEDIA
 comma
 l_string|&quot;PERMEDIA&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+l_int|3
+id|DLABS
+comma
+l_int|3
+id|DLABS_MX
+comma
+l_string|&quot;GLINT MX&quot;
 )paren
 comma
 id|DEVICE
@@ -4226,6 +4524,16 @@ c_func
 (paren
 id|INTEL
 comma
+id|INTEL_82380FB
+comma
+l_string|&quot;82380FB Mobile&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|INTEL
+comma
 id|INTEL_82439
 comma
 l_string|&quot;82439HX Triton II&quot;
@@ -4346,6 +4654,36 @@ c_func
 (paren
 id|INTEL
 comma
+id|INTEL_82443BX_0
+comma
+l_string|&quot;440BX - 82443BX Host&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|INTEL
+comma
+id|INTEL_82443BX_1
+comma
+l_string|&quot;440BX - 82443BX AGP&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|INTEL
+comma
+id|INTEL_82443BX_2
+comma
+l_string|&quot;440BX - 82443BX Host (no AGP)&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|INTEL
+comma
 id|INTEL_P6
 comma
 l_string|&quot;Orion P6&quot;
@@ -4369,6 +4707,16 @@ comma
 id|KTI_ET32P2
 comma
 l_string|&quot;ET32P2&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|ADAPTEC
+comma
+id|ADAPTEC_7810
+comma
+l_string|&quot;AIC-7810 RAID&quot;
 )paren
 comma
 id|DEVICE
@@ -4534,11 +4882,31 @@ comma
 id|DEVICE
 c_func
 (paren
+id|ADAPTEC
+comma
+id|ADAPTEC_1030
+comma
+l_string|&quot;ABA-1030 DVB receiver&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
 id|ATRONICS
 comma
 id|ATRONICS_2015
 comma
 l_string|&quot;IDE-2015PL&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|TIGERJET
+comma
+id|TIGERJET_300
+comma
+l_string|&quot;Tiger300 ISDN&quot;
 )paren
 comma
 id|DEVICE
@@ -5431,6 +5799,12 @@ r_return
 l_string|&quot;PLX&quot;
 suffix:semicolon
 r_case
+id|PCI_VENDOR_ID_MADGE
+suffix:colon
+r_return
+l_string|&quot;Madge Networks&quot;
+suffix:semicolon
+r_case
 id|PCI_VENDOR_ID_3COM
 suffix:colon
 r_return
@@ -5471,6 +5845,12 @@ id|PCI_VENDOR_ID_ASP
 suffix:colon
 r_return
 l_string|&quot;Advanced System Products&quot;
+suffix:semicolon
+r_case
+id|PCI_VENDOR_ID_MACRONIX
+suffix:colon
+r_return
+l_string|&quot;Macronix&quot;
 suffix:semicolon
 r_case
 id|PCI_VENDOR_ID_CERN
@@ -5677,6 +6057,12 @@ r_return
 l_string|&quot;Zoran&quot;
 suffix:semicolon
 r_case
+id|PCI_VENDOR_ID_KINETIC
+suffix:colon
+r_return
+l_string|&quot;Kinetic&quot;
+suffix:semicolon
+r_case
 id|PCI_VENDOR_ID_COMPEX
 suffix:colon
 r_return
@@ -5707,22 +6093,46 @@ r_return
 l_string|&quot;3Dfx&quot;
 suffix:semicolon
 r_case
-id|PCI_VENDOR_ID_STALLION
-suffix:colon
-r_return
-l_string|&quot;Stallion Technologies&quot;
-suffix:semicolon
-r_case
 id|PCI_VENDOR_ID_SIGMADES
 suffix:colon
 r_return
 l_string|&quot;Sigma Designs&quot;
 suffix:semicolon
 r_case
+id|PCI_VENDOR_ID_CCUBE
+suffix:colon
+r_return
+l_string|&quot;C-Cube&quot;
+suffix:semicolon
+r_case
+id|PCI_VENDOR_ID_DIPIX
+suffix:colon
+r_return
+l_string|&quot;Dipix&quot;
+suffix:semicolon
+r_case
+id|PCI_VENDOR_ID_STALLION
+suffix:colon
+r_return
+l_string|&quot;Stallion Technologies&quot;
+suffix:semicolon
+r_case
 id|PCI_VENDOR_ID_OPTIBASE
 suffix:colon
 r_return
 l_string|&quot;Optibase&quot;
+suffix:semicolon
+r_case
+id|PCI_VENDOR_ID_SATSAGEM
+suffix:colon
+r_return
+l_string|&quot;SatSagem&quot;
+suffix:semicolon
+r_case
+id|PCI_VENDOR_ID_HUGHES
+suffix:colon
+r_return
+l_string|&quot;Hughes&quot;
 suffix:semicolon
 r_case
 id|PCI_VENDOR_ID_ENSONIQ
@@ -5741,6 +6151,12 @@ id|PCI_VENDOR_ID_NVIDIA_SGS
 suffix:colon
 r_return
 l_string|&quot;NVidia/SGS Thomson&quot;
+suffix:semicolon
+r_case
+id|PCI_VENDOR_ID_CBOARDS
+suffix:colon
+r_return
+l_string|&quot;ComputerBoards&quot;
 suffix:semicolon
 r_case
 id|PCI_VENDOR_ID_SYMPHONY
@@ -5801,6 +6217,12 @@ id|PCI_VENDOR_ID_ATRONICS
 suffix:colon
 r_return
 l_string|&quot;Atronics&quot;
+suffix:semicolon
+r_case
+id|PCI_VENDOR_ID_TIGERJET
+suffix:colon
+r_return
+l_string|&quot;TigerJet&quot;
 suffix:semicolon
 r_case
 id|PCI_VENDOR_ID_ARK
@@ -5882,8 +6304,6 @@ id|base
 suffix:semicolon
 r_int
 r_int
-id|l
-comma
 id|class_rev
 comma
 id|bus
@@ -6479,40 +6899,12 @@ op_minus
 l_int|1
 suffix:semicolon
 )brace
-id|pcibios_read_config_dword
-c_func
-(paren
-id|bus
-comma
-id|devfn
-comma
-id|PCI_BASE_ADDRESS_0
-op_plus
-(paren
+id|base
+op_assign
+id|dev-&gt;base_address
+(braket
 id|reg
-op_lshift
-l_int|2
-)paren
-comma
-op_amp
-id|l
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|l
-op_eq
-l_int|0xffffffff
-)paren
-id|base
-op_assign
-l_int|0
-suffix:semicolon
-r_else
-id|base
-op_assign
-id|l
+)braket
 suffix:semicolon
 r_if
 c_cond
@@ -6616,35 +7008,6 @@ suffix:colon
 id|type
 op_assign
 l_string|&quot;64 bit&quot;
-suffix:semicolon
-multiline_comment|/* read top 32 bit address of base addr: */
-id|reg
-op_add_assign
-l_int|4
-suffix:semicolon
-id|pcibios_read_config_dword
-c_func
-(paren
-id|bus
-comma
-id|devfn
-comma
-id|reg
-comma
-op_amp
-id|l
-)paren
-suffix:semicolon
-id|base
-op_or_assign
-(paren
-(paren
-id|u64
-)paren
-id|l
-)paren
-op_lshift
-l_int|32
 suffix:semicolon
 r_break
 suffix:semicolon

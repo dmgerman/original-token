@@ -14,6 +14,7 @@ macro_line|#include &lt;linux/coda_linux.h&gt;
 macro_line|#include &lt;linux/coda_psdev.h&gt;
 macro_line|#include &lt;linux/coda_fs_i.h&gt;
 macro_line|#include &lt;linux/coda_cache.h&gt;
+macro_line|#include &lt;linux/coda_proc.h&gt;
 multiline_comment|/* dir inode-ops */
 r_static
 r_int
@@ -792,6 +793,12 @@ id|error
 suffix:semicolon
 id|ENTRY
 suffix:semicolon
+id|coda_vfs_stat.permission
+op_increment
+suffix:semicolon
+id|coda_permission_stat.count
+op_increment
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -826,6 +833,9 @@ id|mask
 )paren
 )paren
 (brace
+id|coda_permission_stat.hit_count
+op_increment
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -971,6 +981,9 @@ suffix:semicolon
 r_struct
 id|coda_vattr
 id|attrs
+suffix:semicolon
+id|coda_vfs_stat.create
+op_increment
 suffix:semicolon
 id|CDEBUG
 c_func
@@ -1238,6 +1251,9 @@ suffix:semicolon
 r_struct
 id|ViceFid
 id|newfid
+suffix:semicolon
+id|coda_vfs_stat.mkdir
+op_increment
 suffix:semicolon
 r_if
 c_cond
@@ -1514,6 +1530,9 @@ id|error
 suffix:semicolon
 id|ENTRY
 suffix:semicolon
+id|coda_vfs_stat.link
+op_increment
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1747,6 +1766,9 @@ l_int|0
 suffix:semicolon
 id|ENTRY
 suffix:semicolon
+id|coda_vfs_stat.symlink
+op_increment
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1905,6 +1927,9 @@ id|de-&gt;d_name.len
 suffix:semicolon
 id|ENTRY
 suffix:semicolon
+id|coda_vfs_stat.unlink
+op_increment
+suffix:semicolon
 id|dircnp
 op_assign
 id|ITOC
@@ -2036,6 +2061,9 @@ comma
 id|rehash
 op_assign
 l_int|0
+suffix:semicolon
+id|coda_vfs_stat.rmdir
+op_increment
 suffix:semicolon
 r_if
 c_cond
@@ -2298,6 +2326,9 @@ op_assign
 l_int|1
 suffix:semicolon
 id|ENTRY
+suffix:semicolon
+id|coda_vfs_stat.rename
+op_increment
 suffix:semicolon
 id|old_cnp
 op_assign
@@ -2572,6 +2603,9 @@ id|file-&gt;f_dentry-&gt;d_inode
 suffix:semicolon
 id|ENTRY
 suffix:semicolon
+id|coda_vfs_stat.readdir
+op_increment
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2770,6 +2804,9 @@ id|flags
 )paren
 suffix:semicolon
 id|ENTRY
+suffix:semicolon
+id|coda_vfs_stat.open
+op_increment
 suffix:semicolon
 id|CDEBUG
 c_func
@@ -3011,6 +3048,9 @@ id|flags
 )paren
 suffix:semicolon
 id|ENTRY
+suffix:semicolon
+id|coda_vfs_stat.release
+op_increment
 suffix:semicolon
 id|cnp
 op_assign

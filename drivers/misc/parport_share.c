@@ -1181,9 +1181,27 @@ l_int|NULL
 suffix:semicolon
 )brace
 multiline_comment|/* Now we do the change of devices */
+id|spin_lock_irqsave
+c_func
+(paren
+op_amp
+id|port-&gt;lock
+comma
+id|flags
+)paren
+suffix:semicolon
 id|port-&gt;cad
 op_assign
 id|dev
+suffix:semicolon
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|port-&gt;lock
+comma
+id|flags
+)paren
 suffix:semicolon
 multiline_comment|/* Swap the IRQ handlers. */
 r_if
@@ -1353,14 +1371,12 @@ op_assign
 id|dev
 suffix:semicolon
 r_else
-(brace
 id|port-&gt;waithead
 op_assign
-id|dev-&gt;port-&gt;waittail
+id|port-&gt;waittail
 op_assign
 id|dev
 suffix:semicolon
-)brace
 )brace
 id|spin_unlock_irqrestore
 (paren

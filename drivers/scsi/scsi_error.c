@@ -357,9 +357,10 @@ id|rtn
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Function:    scsi_times_out()&n; *&n; * Purpose:     Timeout function for normal scsi commands..&n; *&n; * Arguments:   SCpnt   - command that is timing out.&n; *&n; * Returns:     Nothing.&n; *&n; * Notes:&n; */
-DECL|function|scsi_times_out
+DECL|function|do_scsi_times_out
+r_static
 r_void
-id|scsi_times_out
+id|do_scsi_times_out
 (paren
 id|Scsi_Cmnd
 op_star
@@ -477,6 +478,44 @@ id|SCpnt-&gt;host-&gt;eh_wait
 suffix:semicolon
 )brace
 )brace
+DECL|function|scsi_times_out
+r_void
+id|scsi_times_out
+(paren
+id|Scsi_Cmnd
+op_star
+id|SCpnt
+)paren
+(brace
+r_int
+r_int
+id|flags
+suffix:semicolon
+id|spin_lock_irqsave
+c_func
+(paren
+op_amp
+id|io_request_lock
+comma
+id|flags
+)paren
+suffix:semicolon
+id|do_scsi_times_out
+c_func
+(paren
+id|SCpnt
+)paren
+suffix:semicolon
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|io_request_lock
+comma
+id|flags
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/*&n; * Function     scsi_block_when_processing_errors&n; *&n; * Purpose:     Prevent more commands from being queued while error recovery&n; *              is taking place.&n; *&n; * Arguments:   SDpnt - device on which we are performing recovery.&n; *&n; * Returns:     FALSE   The device was taken offline by error recovery.&n; *              TRUE    OK to proceed.&n; *&n; * Notes:       We block until the host is out of error recovery, and then&n; *              check to see whether the host or the device is offline.&n; */
 r_int
 DECL|function|scsi_block_when_processing_errors
@@ -526,6 +565,19 @@ op_star
 id|SCpnt
 )paren
 (brace
+r_int
+r_int
+id|flags
+suffix:semicolon
+id|spin_lock_irqsave
+c_func
+(paren
+op_amp
+id|io_request_lock
+comma
+id|flags
+)paren
+suffix:semicolon
 id|SCpnt-&gt;request.rq_status
 op_assign
 id|RQ_SCSI_DONE
@@ -566,10 +618,19 @@ id|SCpnt-&gt;host-&gt;eh_action
 )paren
 suffix:semicolon
 r_else
-id|panic
+id|printk
 c_func
 (paren
-l_string|&quot;Missing scsi error handler thread&quot;
+l_string|&quot;Missing scsi error handler thread&bslash;n&quot;
+)paren
+suffix:semicolon
+id|spin_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|io_request_lock
+comma
+id|flags
 )paren
 suffix:semicolon
 )brace
@@ -1006,6 +1067,7 @@ r_return
 id|SCpnt-&gt;eh_state
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * This would normally need to get the IO request lock,&n; * but as it doesn&squot;t actually touch anything that needs&n; * to be locked we can avoid the lock here..&n; */
 id|STATIC
 DECL|function|scsi_sleep_done
 r_void

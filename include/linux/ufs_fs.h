@@ -637,8 +637,11 @@ id|fs_inodefmt
 suffix:semicolon
 multiline_comment|/* format of on-disk inodes */
 DECL|member|fs_maxfilesize
-id|__u64
+id|__u32
 id|fs_maxfilesize
+(braket
+l_int|2
+)braket
 suffix:semicolon
 multiline_comment|/* max representable file size */
 DECL|member|fs_qbmask
@@ -669,12 +672,6 @@ suffix:semicolon
 DECL|member|fs_u
 )brace
 id|fs_u
-id|__attribute__
-(paren
-(paren
-id|packed
-)paren
-)paren
 suffix:semicolon
 DECL|member|fs_postblformat
 id|__s32

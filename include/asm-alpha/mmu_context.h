@@ -180,8 +180,24 @@ suffix:semicolon
 )brace
 macro_line|#endif
 )brace
-DECL|macro|init_new_context
-mdefine_line|#define init_new_context(mm)&t;do { } while(0)
+DECL|function|init_new_context
+r_extern
+r_inline
+r_void
+id|init_new_context
+c_func
+(paren
+r_struct
+id|mm_struct
+op_star
+id|mm
+)paren
+(brace
+id|mm-&gt;context
+op_assign
+l_int|0
+suffix:semicolon
+)brace
 DECL|macro|destroy_context
 mdefine_line|#define destroy_context(mm)&t;do { } while(0)
 macro_line|#endif

@@ -14,6 +14,7 @@ macro_line|#include &lt;linux/coda_linux.h&gt;
 macro_line|#include &lt;linux/coda_fs_i.h&gt;
 macro_line|#include &lt;linux/coda_psdev.h&gt;
 macro_line|#include &lt;linux/coda_cache.h&gt;
+macro_line|#include &lt;linux/coda_proc.h&gt;
 multiline_comment|/* file operations */
 r_static
 r_int
@@ -271,6 +272,9 @@ id|cii
 suffix:semicolon
 id|ENTRY
 suffix:semicolon
+id|coda_vfs_stat.readpage
+op_increment
+suffix:semicolon
 id|cii
 op_assign
 id|ITOC
@@ -371,6 +375,9 @@ suffix:semicolon
 r_int
 id|res
 suffix:semicolon
+id|coda_vfs_stat.file_mmap
+op_increment
+suffix:semicolon
 id|ENTRY
 suffix:semicolon
 id|cii
@@ -456,6 +463,9 @@ op_assign
 l_int|0
 suffix:semicolon
 id|ENTRY
+suffix:semicolon
+id|coda_vfs_stat.file_read
+op_increment
 suffix:semicolon
 id|cnp
 op_assign
@@ -648,6 +658,9 @@ l_int|0
 suffix:semicolon
 id|ENTRY
 suffix:semicolon
+id|coda_vfs_stat.file_write
+op_increment
+suffix:semicolon
 id|cnp
 op_assign
 id|ITOC
@@ -827,6 +840,9 @@ op_assign
 l_int|0
 suffix:semicolon
 id|ENTRY
+suffix:semicolon
+id|coda_vfs_stat.fsync
+op_increment
 suffix:semicolon
 r_if
 c_cond

@@ -27,10 +27,10 @@ op_assign
 l_int|48
 comma
 multiline_comment|/* freepages.min */
-l_int|72
+l_int|96
 comma
 multiline_comment|/* freepages.low */
-l_int|96
+l_int|144
 multiline_comment|/* freepages.high */
 )brace
 suffix:semicolon
@@ -108,6 +108,22 @@ comma
 multiline_comment|/* borrow percent page cache */
 l_int|75
 multiline_comment|/* maximum */
+)brace
+suffix:semicolon
+DECL|variable|pager_daemon
+id|pager_daemon_t
+id|pager_daemon
+op_assign
+(brace
+l_int|512
+comma
+multiline_comment|/* base number for calculating the number of tries */
+id|SWAP_CLUSTER_MAX
+comma
+multiline_comment|/* minimum number of tries */
+id|SWAP_CLUSTER_MAX
+comma
+multiline_comment|/* do swap I/O in clusters of this size */
 )brace
 suffix:semicolon
 eof

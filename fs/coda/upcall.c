@@ -20,6 +20,30 @@ macro_line|#include &lt;linux/coda_linux.h&gt;
 macro_line|#include &lt;linux/coda_psdev.h&gt;
 macro_line|#include &lt;linux/coda_fs_i.h&gt;
 macro_line|#include &lt;linux/coda_cache.h&gt;
+macro_line|#include &lt;linux/coda_proc.h&gt; 
+r_static
+r_int
+id|coda_upcall
+c_func
+(paren
+r_struct
+id|coda_sb_info
+op_star
+id|mntinfo
+comma
+r_int
+id|inSize
+comma
+r_int
+op_star
+id|outSize
+comma
+r_union
+id|inputArgs
+op_star
+id|buffer
+)paren
+suffix:semicolon
 DECL|macro|UPARG
 mdefine_line|#define UPARG(op)&bslash;&n;do {&bslash;&n;  &t;CODA_ALLOC(inp, union inputArgs *, insize);&bslash;&n;&t;outp = (union outputArgs *) (inp);&bslash;&n;        inp-&gt;ih.opcode = (op);&bslash;&n;&t;inp-&gt;ih.pid = current-&gt;pid;&bslash;&n;&t;inp-&gt;ih.pgid = current-&gt;pgrp;&bslash;&n;&t;coda_load_creds(&amp;(inp-&gt;ih.cred));&bslash;&n;        outsize = insize;&bslash;&n;} while (0)
 DECL|function|max
@@ -2938,7 +2962,8 @@ multiline_comment|/* &n; * coda_upcall will return a POSITIVE error in the case 
 DECL|function|coda_waitfor_upcall
 r_static
 r_inline
-r_void
+r_int
+r_int
 id|coda_waitfor_upcall
 c_func
 (paren
@@ -2958,7 +2983,15 @@ comma
 l_int|NULL
 )brace
 suffix:semicolon
+r_int
+r_int
+id|posttime
+suffix:semicolon
 id|vmp-&gt;vm_posttime
+op_assign
+id|jiffies
+suffix:semicolon
+id|posttime
 op_assign
 id|jiffies
 suffix:semicolon
@@ -3079,10 +3112,30 @@ id|current-&gt;state
 op_assign
 id|TASK_RUNNING
 suffix:semicolon
+id|CDEBUG
+c_func
+(paren
+id|D_SPECIAL
+comma
+l_string|&quot;posttime: %ld, returned: %ld&bslash;n&quot;
+comma
+id|posttime
+comma
+id|jiffies
+op_minus
+id|posttime
+)paren
+suffix:semicolon
 r_return
+(paren
+id|jiffies
+op_minus
+id|posttime
+)paren
 suffix:semicolon
 )brace
 DECL|function|coda_upcall
+r_static
 r_int
 id|coda_upcall
 c_func
@@ -3105,6 +3158,10 @@ op_star
 id|buffer
 )paren
 (brace
+r_int
+r_int
+id|runtime
+suffix:semicolon
 r_struct
 id|vcomm
 op_star
@@ -3142,21 +3199,6 @@ suffix:semicolon
 id|vcommp
 op_assign
 id|sbi-&gt;sbi_vcomm
-suffix:semicolon
-id|clstats
-c_func
-(paren
-(paren
-(paren
-r_union
-id|inputArgs
-op_star
-)paren
-id|buffer
-)paren
-op_member_access_from_pointer
-id|ih.opcode
-)paren
 suffix:semicolon
 r_if
 c_cond
@@ -3294,10 +3336,29 @@ id|vcommp-&gt;vc_waitq
 suffix:semicolon
 multiline_comment|/* We can be interrupted while we wait for Venus to process&n;&t; * our request.  If the interrupt occurs before Venus has read&n;&t; * the request, we dequeue and return. If it occurs after the&n;&t; * read but before the reply, we dequeue, send a signal&n;&t; * message, and return. If it occurs after the reply we ignore&n;&t; * it. In no case do we want to restart the syscall.  If it&n;&t; * was interrupted by a venus shutdown (psdev_close), return&n;&t; * ENODEV.  */
 multiline_comment|/* Go to sleep.  Wake up on signals only after the timeout. */
+id|runtime
+op_assign
 id|coda_waitfor_upcall
 c_func
 (paren
 id|vmp
+)paren
+suffix:semicolon
+id|coda_upcall_stats
+c_func
+(paren
+(paren
+(paren
+r_union
+id|inputArgs
+op_star
+)paren
+id|buffer
+)paren
+op_member_access_from_pointer
+id|ih.opcode
+comma
+id|runtime
 )paren
 suffix:semicolon
 id|CDEBUG

@@ -1836,12 +1836,10 @@ suffix:semicolon
 id|swapstats.wakeups
 op_increment
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; * Do the background pageout: be&n;&t;&t; * more aggressive if we&squot;re really&n;&t;&t; * low on free memory.&n;&t;&t; *&n;&t;&t; * The number of tries is 512 divided by an&n;&t;&t; * &squot;urgency factor&squot;. In practice this will mean&n;&t;&t; * a value of 512 / 8 = 64 pages at a time,&n;&t;&t; * giving 64 * 4 (times/sec) * 4k (pagesize) =&n;&t;&t; * 1 MB/s in lowest-priority background&n;&t;&t; * paging. This number rises to 8 MB/s when the&n;&t;&t; * priority is highest (but then we&squot;ll be woken&n;&t;&t; * up more often and the rate will be even higher).&n;&t;&t; * -- Should make this sysctl tunable...&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; * Do the background pageout: be&n;&t;&t; * more aggressive if we&squot;re really&n;&t;&t; * low on free memory.&n;&t;&t; *&n;&t;&t; * We try page_daemon.tries_base times, divided by&n;&t;&t; * an &squot;urgency factor&squot;. In practice this will mean&n;&t;&t; * a value of pager_daemon.tries_base / 8 or 4 = 64&n;&t;&t; * or 128 pages at a time.&n;&t;&t; * This gives us 64 (or 128) * 4k * 4 (times/sec) =&n;&t;&t; * 1 (or 2) MB/s swapping bandwidth in low-priority&n;&t;&t; * background paging. This number rises to 8 MB/s&n;&t;&t; * when the priority is highest (but then we&squot;ll be&n;&t;&t; * woken up more often and the rate will be even&n;&t;&t; * higher).&n;&t;&t; */
 id|tries
 op_assign
-(paren
-l_int|512
-)paren
+id|pager_daemon.tries_base
 op_rshift
 id|free_memory_available
 c_func
@@ -1865,7 +1863,7 @@ c_cond
 op_increment
 id|tried
 OG
-id|SWAP_CLUSTER_MAX
+id|pager_daemon.tries_min
 op_logical_and
 id|free_memory_available
 c_func
@@ -1896,7 +1894,7 @@ op_amp
 id|nr_async_pages
 )paren
 op_ge
-id|SWAP_CLUSTER_MAX
+id|pager_daemon.swap_cluster
 )paren
 id|run_task_queue
 c_func

@@ -3829,7 +3829,7 @@ id|unload_sscape
 c_func
 (paren
 op_amp
-id|config
+id|mpu_config
 )paren
 suffix:semicolon
 )brace

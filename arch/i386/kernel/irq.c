@@ -2442,6 +2442,14 @@ id|irq_desc
 op_plus
 id|irq
 suffix:semicolon
+macro_line|#if 0
+id|enable_IO_APIC_irq
+c_func
+(paren
+id|irq
+)paren
+suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -2451,6 +2459,11 @@ op_logical_neg
 id|desc-&gt;ipi
 )paren
 (brace
+id|ack_APIC_irq
+c_func
+(paren
+)paren
+suffix:semicolon
 id|desc-&gt;ipi
 op_assign
 l_int|1
@@ -2481,6 +2494,14 @@ r_int
 id|irq
 )paren
 (brace
+macro_line|#if 0
+id|disable_IO_APIC_irq
+c_func
+(paren
+id|irq
+)paren
+suffix:semicolon
+macro_line|#endif
 )brace
 DECL|function|do_ioapic_IRQ
 r_static
@@ -2516,17 +2537,11 @@ op_amp
 id|irq_controller_lock
 )paren
 suffix:semicolon
-multiline_comment|/* Ack the irq inside the lock! */
-id|ack_APIC_irq
-c_func
-(paren
-)paren
-suffix:semicolon
 id|desc-&gt;ipi
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* If the irq is disabled for whatever reason, just set a flag and return */
+multiline_comment|/*&n;&t; * If the irq is disabled for whatever reason, just&n;&t; * set a flag and return&n;&t; */
 r_if
 c_cond
 (paren
@@ -2542,6 +2557,11 @@ id|IRQ_INPROGRESS
 id|desc-&gt;events
 op_assign
 l_int|1
+suffix:semicolon
+id|ack_APIC_irq
+c_func
+(paren
+)paren
 suffix:semicolon
 id|spin_unlock
 c_func
@@ -2661,6 +2681,11 @@ id|irq_controller_lock
 suffix:semicolon
 id|no_handler
 suffix:colon
+id|ack_APIC_irq
+c_func
+(paren
+)paren
+suffix:semicolon
 id|hardirq_exit
 c_func
 (paren

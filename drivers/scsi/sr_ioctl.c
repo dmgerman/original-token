@@ -392,7 +392,9 @@ id|quiet
 id|printk
 c_func
 (paren
-l_string|&quot;sr%d: CDROM (ioctl) reports ILLEGAL REQUEST.&bslash;n&quot;
+id|KERN_ERR
+l_string|&quot;sr%d: CDROM (ioctl) reports ILLEGAL &quot;
+l_string|&quot;REQUEST.&bslash;n&quot;
 comma
 id|target
 )paren
@@ -453,6 +455,7 @@ suffix:colon
 id|printk
 c_func
 (paren
+id|KERN_ERR
 l_string|&quot;sr%d: CDROM (ioctl) error, command: &quot;
 comma
 id|target

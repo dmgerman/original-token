@@ -1,10 +1,11 @@
-multiline_comment|/*&n; * bios32.c - Low-Level PCI Access&n; *&n; * $Id: bios32.c,v 1.29 1998/04/17 16:31:15 mj Exp $&n; *&n; * Sponsored by&n; *&t;iX Multiuser Multitasking Magazine&n; *&t;Hannover, Germany&n; *&t;hm@ix.de&n; *&n; * Copyright 1993, 1994 Drew Eckhardt&n; *      Visionary Computing&n; *      (Unix and Linux consulting and custom programming)&n; *      Drew@Colorado.EDU&n; *      +1 (303) 786-7975&n; *&n; * For more information, please consult&n; *&n; * PCI BIOS Specification Revision&n; * PCI Local Bus Specification&n; * PCI System Design Guide&n; *&n; * PCI Special Interest Group&n; * M/S HF3-15A&n; * 5200 N.E. Elam Young Parkway&n; * Hillsboro, Oregon 97124-6497&n; * +1 (503) 696-2000&n; * +1 (800) 433-5177&n; *&n; * Manuals are $25 each or $50 for all three, plus $7 shipping&n; * within the United States, $35 abroad.&n; *&n; *&n; * CHANGELOG :&n; * Jun 17, 1994 : Modified to accommodate the broken pre-PCI BIOS SPECIFICATION&n; *&t;Revision 2.0 present on &lt;thys@dennis.ee.up.ac.za&gt;&squot;s ASUS mainboard.&n; *&n; * Jan 5,  1995 : Modified to probe PCI hardware at boot time by Frederic&n; *     Potter, potter@cao-vlsi.ibp.fr&n; *&n; * Jan 10, 1995 : Modified to store the information about configured pci&n; *      devices into a list, which can be accessed via /proc/pci by&n; *      Curtis Varner, cvarner@cs.ucr.edu&n; *&n; * Jan 12, 1995 : CPU-PCI bridge optimization support by Frederic Potter.&n; *&t;Alpha version. Intel &amp; UMC chipset support only.&n; *&n; * Apr 16, 1995 : Source merge with the DEC Alpha PCI support. Most of the code&n; *&t;moved to drivers/pci/pci.c.&n; *&n; * Dec 7, 1996  : Added support for direct configuration access of boards&n; *      with Intel compatible access schemes (tsbogend@alpha.franken.de)&n; *&n; * Feb 3, 1997  : Set internal functions to static, save/restore flags&n; *&t;avoid dead locks reading broken PCI BIOS, werner@suse.de &n; *&n; * Apr 26, 1997 : Fixed case when there is BIOS32, but not PCI BIOS&n; *&t;(mj@atrey.karlin.mff.cuni.cz)&n; *&n; * May 7,  1997 : Added some missing cli()&squot;s. [mj]&n; * &n; * Jun 20, 1997 : Corrected problems in &quot;conf1&quot; type accesses.&n; *      (paubert@iram.es)&n; *&n; * Aug 2,  1997 : Split to PCI BIOS handling and direct PCI access parts&n; *&t;and cleaned it up...     Martin Mares &lt;mj@atrey.karlin.mff.cuni.cz&gt;&n; *&n; * Feb 6,  1998 : No longer using BIOS to find devices and device classes. [mj]&n; */
+multiline_comment|/*&n; * bios32.c - Low-Level PCI Access&n; *&n; * $Id: bios32.c,v 1.32 1998/05/02 12:03:05 davem Exp $&n; *&n; * Sponsored by&n; *&t;iX Multiuser Multitasking Magazine&n; *&t;Hannover, Germany&n; *&t;hm@ix.de&n; *&n; * Copyright 1993, 1994 Drew Eckhardt&n; *      Visionary Computing&n; *      (Unix and Linux consulting and custom programming)&n; *      Drew@Colorado.EDU&n; *      +1 (303) 786-7975&n; *&n; * For more information, please consult&n; *&n; * PCI BIOS Specification Revision&n; * PCI Local Bus Specification&n; * PCI System Design Guide&n; *&n; * PCI Special Interest Group&n; * M/S HF3-15A&n; * 5200 N.E. Elam Young Parkway&n; * Hillsboro, Oregon 97124-6497&n; * +1 (503) 696-2000&n; * +1 (800) 433-5177&n; *&n; * Manuals are $25 each or $50 for all three, plus $7 shipping&n; * within the United States, $35 abroad.&n; *&n; *&n; * CHANGELOG :&n; * Jun 17, 1994 : Modified to accommodate the broken pre-PCI BIOS SPECIFICATION&n; *&t;Revision 2.0 present on &lt;thys@dennis.ee.up.ac.za&gt;&squot;s ASUS mainboard.&n; *&n; * Jan 5,  1995 : Modified to probe PCI hardware at boot time by Frederic&n; *     Potter, potter@cao-vlsi.ibp.fr&n; *&n; * Jan 10, 1995 : Modified to store the information about configured pci&n; *      devices into a list, which can be accessed via /proc/pci by&n; *      Curtis Varner, cvarner@cs.ucr.edu&n; *&n; * Jan 12, 1995 : CPU-PCI bridge optimization support by Frederic Potter.&n; *&t;Alpha version. Intel &amp; UMC chipset support only.&n; *&n; * Apr 16, 1995 : Source merge with the DEC Alpha PCI support. Most of the code&n; *&t;moved to drivers/pci/pci.c.&n; *&n; * Dec 7, 1996  : Added support for direct configuration access of boards&n; *      with Intel compatible access schemes (tsbogend@alpha.franken.de)&n; *&n; * Feb 3, 1997  : Set internal functions to static, save/restore flags&n; *&t;avoid dead locks reading broken PCI BIOS, werner@suse.de &n; *&n; * Apr 26, 1997 : Fixed case when there is BIOS32, but not PCI BIOS&n; *&t;(mj@atrey.karlin.mff.cuni.cz)&n; *&n; * May 7,  1997 : Added some missing cli()&squot;s. [mj]&n; * &n; * Jun 20, 1997 : Corrected problems in &quot;conf1&quot; type accesses.&n; *      (paubert@iram.es)&n; *&n; * Aug 2,  1997 : Split to PCI BIOS handling and direct PCI access parts&n; *&t;and cleaned it up...     Martin Mares &lt;mj@atrey.karlin.mff.cuni.cz&gt;&n; *&n; * Feb 6,  1998 : No longer using BIOS to find devices and device classes. [mj]&n; *&n; * May 1,  1998 : Support for peer host bridges. [mj]&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
+macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -3513,7 +3514,7 @@ r_return
 l_int|NULL
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Sort the device list according to PCI BIOS.&n; */
+multiline_comment|/*&n; * Sort the device list according to PCI BIOS. Nasty hack, but since some&n; * fool forgot to define the `correct&squot; device order in the PCI BIOS specs&n; * and we want to be (possibly bug-to-bug ;-]) compatible with older kernels&n; * which used BIOS ordering, we are bound to do this...&n; */
 DECL|function|__initfunc
 id|__initfunc
 c_func
@@ -4056,13 +4057,149 @@ id|cmd
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Arch-dependent fixups. We need to fix here base addresses, I/O&n; * and memory enables and IRQ&squot;s as the PCI BIOS&squot;es are buggy as hell.&n; */
+multiline_comment|/*&n; * In case there are peer host bridges, scan bus behind each of them.&n; * Although several sources claim that the host bridges should have&n; * header type 1 and be assigned a bus number as for PCI2PCI bridges,&n; * the reality doesn&squot;t pass this test and the bus number is usually&n; * hard-wired to 1.&n; */
 DECL|function|__initfunc
 id|__initfunc
 c_func
 (paren
 r_void
-id|pcibios_fixup
+id|pcibios_fixup_peer_bridges
+c_func
+(paren
+r_void
+)paren
+)paren
+(brace
+r_struct
+id|pci_dev
+op_star
+id|dev
+suffix:semicolon
+r_int
+id|cnt
+op_assign
+l_int|0
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|dev
+op_assign
+id|pci_root.devices
+suffix:semicolon
+id|dev
+suffix:semicolon
+id|dev
+op_assign
+id|dev-&gt;sibling
+)paren
+r_if
+c_cond
+(paren
+(paren
+id|dev
+op_member_access_from_pointer
+r_class
+op_rshift
+l_int|8
+)paren
+op_eq
+id|PCI_CLASS_BRIDGE_HOST
+)paren
+(brace
+id|DBG
+c_func
+(paren
+l_string|&quot;PCI: Host bridge at %02x&bslash;n&quot;
+comma
+id|dev-&gt;devfn
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|cnt
+)paren
+(brace
+r_struct
+id|pci_bus
+op_star
+id|b
+op_assign
+id|kmalloc
+c_func
+(paren
+r_sizeof
+(paren
+r_struct
+id|pci_bus
+)paren
+comma
+id|GFP_KERNEL
+)paren
+suffix:semicolon
+id|memset
+c_func
+(paren
+id|b
+comma
+l_int|0
+comma
+r_sizeof
+(paren
+op_star
+id|b
+)paren
+)paren
+suffix:semicolon
+id|b-&gt;parent
+op_assign
+op_amp
+id|pci_root
+suffix:semicolon
+id|b-&gt;next
+op_assign
+id|pci_root.next
+suffix:semicolon
+id|pci_root.next
+op_assign
+id|b
+suffix:semicolon
+id|b-&gt;self
+op_assign
+id|dev
+suffix:semicolon
+id|b-&gt;number
+op_assign
+id|b-&gt;secondary
+op_assign
+id|cnt
+suffix:semicolon
+id|b-&gt;subordinate
+op_assign
+l_int|0xff
+suffix:semicolon
+id|b-&gt;subordinate
+op_assign
+id|pci_scan_bus
+c_func
+(paren
+id|b
+)paren
+suffix:semicolon
+)brace
+id|cnt
+op_increment
+suffix:semicolon
+)brace
+)brace
+multiline_comment|/*&n; * Fix base addresses, I/O and memory enables and IRQ&squot;s (mostly work-arounds&n; * for buggy PCI BIOS&squot;es :-[).&n; */
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
+r_void
+id|pcibios_fixup_devices
 c_func
 (paren
 r_void
@@ -4358,6 +4495,30 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
+)brace
+multiline_comment|/*&n; * Arch-dependent fixups.&n; */
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
+r_void
+id|pcibios_fixup
+c_func
+(paren
+r_void
+)paren
+)paren
+(brace
+id|pcibios_fixup_peer_bridges
+c_func
+(paren
+)paren
+suffix:semicolon
+id|pcibios_fixup_devices
+c_func
+(paren
+)paren
+suffix:semicolon
 macro_line|#ifdef CONFIG_PCI_BIOS
 r_if
 c_cond

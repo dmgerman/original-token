@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * $Id: quirks.c,v 1.3 1998/02/06 19:51:42 mj Exp $&n; *&n; * PCI Chipset-Specific Quirks&n; *&n; * Extracted from pci.c and rewritten by Martin Mares&n; *&n; * This is the right place for all special fixups for on-board&n; * devices not depending on system architecture -- for example&n; * bus bridges. The only thing implemented in this release is&n; * the bridge optimization, but others might appear later.&n; */
+multiline_comment|/*&n; * $Id: quirks.c,v 1.5 1998/05/02 19:24:14 mj Exp $&n; *&n; * PCI Chipset-Specific Quirks&n; *&n; * Extracted from pci.c and rewritten by Martin Mares&n; *&n; * This is the right place for all special fixups for on-board&n; * devices not depending on system architecture -- for example&n; * bus bridges.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -277,18 +277,16 @@ id|bmap-&gt;addr
 id|printk
 c_func
 (paren
-l_string|&quot;Not supported.&quot;
+l_string|&quot;Not supported.&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
 r_else
 (brace
-id|pcibios_read_config_byte
+id|pci_read_config_byte
 c_func
 (paren
-id|dev-&gt;bus-&gt;number
-comma
-id|dev-&gt;devfn
+id|dev
 comma
 id|bmap-&gt;addr
 comma
@@ -310,7 +308,7 @@ id|bmap-&gt;value
 id|printk
 c_func
 (paren
-l_string|&quot;%s.&quot;
+l_string|&quot;%s.&bslash;n&quot;
 comma
 id|bridge_optimization
 (braket
@@ -325,7 +323,7 @@ r_else
 id|printk
 c_func
 (paren
-l_string|&quot;%s.&quot;
+l_string|&quot;%s&quot;
 comma
 id|bridge_optimization
 (braket
@@ -335,12 +333,10 @@ dot
 id|off
 )paren
 suffix:semicolon
-id|pcibios_write_config_byte
+id|pci_write_config_byte
 c_func
 (paren
-id|dev-&gt;bus-&gt;number
-comma
-id|dev-&gt;devfn
+id|dev
 comma
 id|bmap-&gt;addr
 comma
@@ -360,7 +356,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;Changed!  Now %s.&quot;
+l_string|&quot; -&gt; %s.&bslash;n&quot;
 comma
 id|bridge_optimization
 (braket
@@ -372,12 +368,6 @@ id|on
 suffix:semicolon
 )brace
 )brace
-id|printk
-c_func
-(paren
-l_string|&quot;&bslash;n&quot;
-)paren
-suffix:semicolon
 )brace
 )brace
 macro_line|#endif
@@ -404,54 +394,37 @@ id|arg
 r_struct
 id|pci_dev
 op_star
-id|piix3
+id|d
+op_assign
+l_int|NULL
 suffix:semicolon
 r_int
 r_char
 id|dlc
 suffix:semicolon
 multiline_comment|/* We have to make sure a particular bit is set in the PIIX3&n;&t;   ISA bridge, so we have to go out and find it. */
-r_for
+r_while
 c_loop
 (paren
-id|piix3
-op_assign
-id|pci_devices
-suffix:semicolon
-suffix:semicolon
-id|piix3
-op_assign
-id|piix3-&gt;next
-)paren
-(brace
-r_if
-c_cond
 (paren
-op_logical_neg
-id|piix3
-)paren
-r_return
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|piix3-&gt;vendor
-op_eq
-id|PCI_VENDOR_ID_INTEL
-op_logical_and
-id|piix3-&gt;device
-op_eq
-id|PCI_DEVICE_ID_INTEL_82371SB_0
-)paren
-r_break
-suffix:semicolon
-)brace
-id|pcibios_read_config_byte
+id|d
+op_assign
+id|pci_find_device
 c_func
 (paren
-id|piix3-&gt;bus-&gt;number
+id|PCI_VENDOR_ID_INTEL
 comma
-id|piix3-&gt;devfn
+id|PCI_DEVICE_ID_INTEL_82371SB_0
+comma
+id|d
+)paren
+)paren
+)paren
+(brace
+id|pci_read_config_byte
+c_func
+(paren
+id|d
 comma
 l_int|0x82
 comma
@@ -484,18 +457,17 @@ l_int|1
 op_lshift
 l_int|1
 suffix:semicolon
-id|pcibios_write_config_byte
+id|pci_write_config_byte
 c_func
 (paren
-id|piix3-&gt;bus-&gt;number
-comma
-id|piix3-&gt;devfn
+id|d
 comma
 l_int|0x82
 comma
 id|dlc
 )paren
 suffix:semicolon
+)brace
 )brace
 )brace
 DECL|typedef|quirk_handler
@@ -513,7 +485,7 @@ comma
 r_int
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * Mpping from quirk handler functions to names.&n; */
+multiline_comment|/*&n; * Mapping from quirk handler functions to names.&n; */
 DECL|struct|quirk_name
 r_struct
 id|quirk_name
@@ -688,6 +660,16 @@ comma
 id|PCI_VENDOR_ID_INTEL
 comma
 id|PCI_DEVICE_ID_INTEL_82434
+comma
+id|quirk_bridge
+comma
+l_int|0x00
+)brace
+comma
+(brace
+id|PCI_VENDOR_ID_INTEL
+comma
+id|PCI_DEVICE_ID_INTEL_82430
 comma
 id|quirk_bridge
 comma

@@ -224,7 +224,11 @@ comma
 multiline_comment|/* struct: Set buffer memory thresholds */
 DECL|enumerator|VM_PAGECACHE
 id|VM_PAGECACHE
+comma
 multiline_comment|/* struct: Set cache memory thresholds */
+DECL|enumerator|VM_PAGERDAEMON
+id|VM_PAGERDAEMON
+multiline_comment|/* struct: Control kswapd behaviour */
 )brace
 suffix:semicolon
 multiline_comment|/* CTL_NET names: */

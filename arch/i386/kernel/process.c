@@ -890,7 +890,7 @@ suffix:semicolon
 id|udelay
 c_func
 (paren
-l_int|10
+l_int|50
 )paren
 suffix:semicolon
 id|outb
@@ -905,7 +905,7 @@ multiline_comment|/* pulse reset low */
 id|udelay
 c_func
 (paren
-l_int|10
+l_int|50
 )paren
 suffix:semicolon
 )brace

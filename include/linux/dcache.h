@@ -521,7 +521,10 @@ r_void
 id|shrink_dcache_memory
 c_func
 (paren
-r_void
+r_int
+comma
+r_int
+r_int
 )paren
 suffix:semicolon
 r_extern

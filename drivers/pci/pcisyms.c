@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;$Id: pcisyms.c,v 1.4 1998/04/17 16:34:19 mj Exp $&n; *&n; *&t;PCI Bus Services -- Exported Symbols&n; *&n; *&t;Copyright 1998 Martin Mares&n; */
+multiline_comment|/*&n; *&t;$Id: pcisyms.c,v 1.7 1998/05/02 19:20:06 mj Exp $&n; *&n; *&t;PCI Bus Services -- Exported Symbols&n; *&n; *&t;Copyright 1998 Martin Mares&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 DECL|variable|pcibios_present
@@ -48,6 +48,48 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|pcibios_write_config_dword
+)paren
+suffix:semicolon
+DECL|variable|pci_read_config_byte
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|pci_read_config_byte
+)paren
+suffix:semicolon
+DECL|variable|pci_read_config_word
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|pci_read_config_word
+)paren
+suffix:semicolon
+DECL|variable|pci_read_config_dword
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|pci_read_config_dword
+)paren
+suffix:semicolon
+DECL|variable|pci_write_config_byte
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|pci_write_config_byte
+)paren
+suffix:semicolon
+DECL|variable|pci_write_config_word
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|pci_write_config_word
+)paren
+suffix:semicolon
+DECL|variable|pci_write_config_dword
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|pci_write_config_dword
 )paren
 suffix:semicolon
 DECL|variable|pci_devices

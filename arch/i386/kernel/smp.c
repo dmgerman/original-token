@@ -2066,6 +2066,65 @@ id|__initfunc
 c_func
 (paren
 r_void
+id|enable_local_APIC
+c_func
+(paren
+r_void
+)paren
+)paren
+(brace
+r_int
+r_int
+id|value
+suffix:semicolon
+id|value
+op_assign
+id|apic_read
+c_func
+(paren
+id|APIC_SPIV
+)paren
+suffix:semicolon
+id|value
+op_or_assign
+(paren
+l_int|1
+op_lshift
+l_int|8
+)paren
+suffix:semicolon
+multiline_comment|/* Enable APIC (bit==1) */
+id|value
+op_and_assign
+op_complement
+(paren
+l_int|1
+op_lshift
+l_int|9
+)paren
+suffix:semicolon
+multiline_comment|/* Enable focus processor (bit==0) */
+id|apic_write
+c_func
+(paren
+id|APIC_SPIV
+comma
+id|value
+)paren
+suffix:semicolon
+id|udelay
+c_func
+(paren
+l_int|100
+)paren
+suffix:semicolon
+multiline_comment|/* B safe */
+)brace
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
+r_void
 id|smp_callin
 c_func
 (paren
@@ -2094,10 +2153,6 @@ id|APIC_ID
 )paren
 )paren
 suffix:semicolon
-r_int
-r_int
-id|l
-suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Activate our APIC&n;&t; */
 id|SMP_PRINTK
 c_func
@@ -2117,29 +2172,9 @@ c_func
 )paren
 )paren
 suffix:semicolon
-id|l
-op_assign
-id|apic_read
+id|enable_local_APIC
 c_func
 (paren
-id|APIC_SPIV
-)paren
-suffix:semicolon
-id|l
-op_or_assign
-(paren
-l_int|1
-op_lshift
-l_int|8
-)paren
-suffix:semicolon
-multiline_comment|/* Enable */
-id|apic_write
-c_func
-(paren
-id|APIC_SPIV
-comma
-id|l
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * Set up our APIC timer.&n;&t; */
@@ -3496,36 +3531,9 @@ id|reg
 suffix:semicolon
 )brace
 macro_line|#endif
-multiline_comment|/*&n;&t; *&t;Enable the local APIC&n;&t; */
-id|cfg
-op_assign
-id|apic_read
+id|enable_local_APIC
 c_func
 (paren
-id|APIC_SPIV
-)paren
-suffix:semicolon
-id|cfg
-op_or_assign
-(paren
-l_int|1
-op_lshift
-l_int|8
-)paren
-suffix:semicolon
-multiline_comment|/* Enable APIC */
-id|apic_write
-c_func
-(paren
-id|APIC_SPIV
-comma
-id|cfg
-)paren
-suffix:semicolon
-id|udelay
-c_func
-(paren
-l_int|10
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * Set up our local APIC timer:&n;&t; */
@@ -4953,7 +4961,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * This function sets up the local APIC timer, with a timeout of&n; * &squot;clocks&squot; APIC bus clock. During calibration we actually call&n; * this function twice, once with a bogus timeout value, second&n; * time for real. The other (noncalibrating) CPUs call this&n; * function only once, with the real value.&n; *&n; * We are strictly in irqs off mode here, as we do not want to&n; * get an APIC interrupt go off accidentally.&n; *&n; * We do reads before writes even if unnecessary, to get around the&n; * APIC double write bug.&n; */
 DECL|macro|APIC_DIVISOR
-mdefine_line|#define APIC_DIVISOR 16
+mdefine_line|#define APIC_DIVISOR 1
 DECL|function|setup_APIC_timer
 r_void
 id|setup_APIC_timer
@@ -5015,7 +5023,7 @@ op_complement
 id|APIC_TDR_DIV_1
 )paren
 op_or
-id|APIC_TDR_DIV_16
+id|APIC_TDR_DIV_1
 )paren
 suffix:semicolon
 id|tmp_value

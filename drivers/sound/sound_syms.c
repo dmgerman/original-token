@@ -74,6 +74,13 @@ c_func
 id|seq_copy_to_input
 )paren
 suffix:semicolon
+DECL|variable|seq_input_event
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|seq_input_event
+)paren
+suffix:semicolon
 DECL|variable|sequencer_init
 id|EXPORT_SYMBOL
 c_func
@@ -282,6 +289,13 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|sound_timer_syncinterval
+)paren
+suffix:semicolon
+DECL|variable|sound_timer_devs
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|sound_timer_devs
 )paren
 suffix:semicolon
 multiline_comment|/* Locking */

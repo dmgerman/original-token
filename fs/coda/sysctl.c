@@ -17,7 +17,7 @@ macro_line|#include &lt;linux/coda_linux.h&gt;
 macro_line|#include &lt;linux/coda_fs_i.h&gt;
 macro_line|#include &lt;linux/coda_psdev.h&gt;
 macro_line|#include &lt;linux/coda_cache.h&gt;
-macro_line|#include &lt;linux/coda_sysctl.h&gt;
+macro_line|#include &lt;linux/coda_proc.h&gt;
 r_extern
 r_int
 id|coda_debug
@@ -94,6 +94,14 @@ DECL|macro|CODA_MC
 mdefine_line|#define CODA_MC         4       /* use/do not use the access cache */
 DECL|macro|CODA_HARD
 mdefine_line|#define CODA_HARD       5       /* mount type &quot;hard&quot; or &quot;soft&quot; */
+DECL|macro|CODA_VFS
+mdefine_line|#define CODA_VFS &t; 6       /* vfs statistics */
+DECL|macro|CODA_UPCALL
+mdefine_line|#define CODA_UPCALL &t; 7       /* upcall statistics */
+DECL|macro|CODA_PERMISSION
+mdefine_line|#define CODA_PERMISSION&t; 8       /* permission statistics */
+DECL|macro|CODA_CACHE_INV
+mdefine_line|#define CODA_CACHE_INV &t; 9       /* cache invalidation statistics */
 DECL|variable|coda_table
 r_static
 id|ctl_table
@@ -205,6 +213,74 @@ l_int|NULL
 comma
 op_amp
 id|coda_dointvec
+)brace
+comma
+(brace
+id|CODA_VFS
+comma
+l_string|&quot;vfs_stats&quot;
+comma
+l_int|NULL
+comma
+l_int|0
+comma
+l_int|0644
+comma
+l_int|NULL
+comma
+op_amp
+id|do_reset_coda_vfs_stats
+)brace
+comma
+(brace
+id|CODA_UPCALL
+comma
+l_string|&quot;upcall_stats&quot;
+comma
+l_int|NULL
+comma
+l_int|0
+comma
+l_int|0644
+comma
+l_int|NULL
+comma
+op_amp
+id|do_reset_coda_upcall_stats
+)brace
+comma
+(brace
+id|CODA_PERMISSION
+comma
+l_string|&quot;permission_stats&quot;
+comma
+l_int|NULL
+comma
+l_int|0
+comma
+l_int|0644
+comma
+l_int|NULL
+comma
+op_amp
+id|do_reset_coda_permission_stats
+)brace
+comma
+(brace
+id|CODA_CACHE_INV
+comma
+l_string|&quot;cache_inv_stats&quot;
+comma
+l_int|NULL
+comma
+l_int|0
+comma
+l_int|0644
+comma
+l_int|NULL
+comma
+op_amp
+id|do_reset_coda_cache_inv_stats
 )brace
 comma
 (brace
