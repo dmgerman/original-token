@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/fs/chrdev.c&n; *&n; *  (C) 1991  Linus Torvalds&n; */
+multiline_comment|/*&n; *  linux/fs/minix/blkdev.c&n; *&n; *  (C) 1991  Linus Torvalds&n; */
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/minix_fs.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
@@ -25,12 +25,6 @@ id|filp
 (brace
 r_int
 id|i
-suffix:semicolon
-id|check_disk_change
-c_func
-(paren
-id|inode-&gt;i_rdev
-)paren
 suffix:semicolon
 id|i
 op_assign

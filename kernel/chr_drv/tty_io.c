@@ -12,6 +12,8 @@ macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
+macro_line|#include &lt;sys/kd.h&gt;
+macro_line|#include &quot;vt_kern.h&quot;
 macro_line|#ifndef MIN
 DECL|macro|MIN
 mdefine_line|#define MIN(a,b) ((a) &lt; (b) ? (a) : (b))
@@ -87,6 +89,20 @@ r_int
 id|new_console
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|vt_cons
+(braket
+id|fg_console
+)braket
+dot
+id|vt_mode
+op_eq
+id|KD_GRAPHICS
+)paren
+r_return
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -475,10 +491,11 @@ id|c
 OL
 l_int|32
 )paren
+(brace
 id|PUTCH
 c_func
 (paren
-l_int|127
+l_int|8
 comma
 id|tty-&gt;write_q
 )paren
@@ -486,7 +503,40 @@ suffix:semicolon
 id|PUTCH
 c_func
 (paren
-l_int|127
+l_char|&squot; &squot;
+comma
+id|tty-&gt;write_q
+)paren
+suffix:semicolon
+id|PUTCH
+c_func
+(paren
+l_int|8
+comma
+id|tty-&gt;write_q
+)paren
+suffix:semicolon
+)brace
+id|PUTCH
+c_func
+(paren
+l_int|8
+comma
+id|tty-&gt;write_q
+)paren
+suffix:semicolon
+id|PUTCH
+c_func
+(paren
+l_char|&squot; &squot;
+comma
+id|tty-&gt;write_q
+)paren
+suffix:semicolon
+id|PUTCH
+c_func
+(paren
+l_int|8
 comma
 id|tty-&gt;write_q
 )paren
@@ -594,10 +644,11 @@ id|c
 OL
 l_int|32
 )paren
+(brace
 id|PUTCH
 c_func
 (paren
-l_int|127
+l_int|8
 comma
 id|tty-&gt;write_q
 )paren
@@ -605,7 +656,40 @@ suffix:semicolon
 id|PUTCH
 c_func
 (paren
-l_int|127
+l_char|&squot; &squot;
+comma
+id|tty-&gt;write_q
+)paren
+suffix:semicolon
+id|PUTCH
+c_func
+(paren
+l_int|8
+comma
+id|tty-&gt;write_q
+)paren
+suffix:semicolon
+)brace
+id|PUTCH
+c_func
+(paren
+l_int|8
+comma
+id|tty-&gt;write_q
+)paren
+suffix:semicolon
+id|PUTCH
+c_func
+(paren
+l_int|32
+comma
+id|tty-&gt;write_q
+)paren
+suffix:semicolon
+id|PUTCH
+c_func
+(paren
+l_int|8
 comma
 id|tty-&gt;write_q
 )paren

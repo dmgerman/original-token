@@ -1,24 +1,25 @@
-multiline_comment|/*&n; *&t;ultrastor.c&t;(C) 1991 David B. Gentzel&n; *&t;Low-level scsi driver for UltraStor 14F&n; *&t;by David B. Gentzel, Whitfield Software Services, Carnegie, PA&n; *&t;    (gentzel@nova.enet.dec.com)&n; *&t;Thanks to UltraStor for providing the necessary documentation&n; */
-multiline_comment|/* ??? Caveats:&n;   This driver is VERY stupid.  It takes no advantage of much of the power of&n;   the UltraStor controller.  We just sit-and-spin while waiting for commands&n;   to complete.  I hope to go back and beat it into shape, but PLEASE, anyone&n;   else who would like to, please make improvements! */
+multiline_comment|/*&n; *&t;ultrastor.c&t;(C) 1991 David B. Gentzel&n; *&t;Low-level SCSI driver for UltraStor 14F&n; *&t;by David B. Gentzel, Whitfield Software Services, Carnegie, PA&n; *&t;    (gentzel@nova.enet.dec.com)&n; *&t;Thanks to UltraStor for providing the necessary documentation&n; */
+multiline_comment|/*&n; * NOTES:&n; *    The UltraStor 14F is an intelligent, high performance ISA SCSI-2 host&n; *    adapter.  It is essentially an ISA version of the UltraStor 24F EISA&n; *    adapter.  It supports first-party DMA, command queueing, and&n; *    scatter/gather I/O.  It can also emulate the standard AT MFM/RLL/IDE&n; *    interface for use with OS&squot;s which don&squot;t support SCSI.&n; *&n; *    This driver may also work (with some small changes) with the UltraStor&n; *    24F.  I have no way of confirming this...&n; *&n; *    Places flagged with a triple question-mark are things which are either&n; *    unfinished, questionable, or wrong.&n; */
+multiline_comment|/*&n; * CAVEATS: ???&n; *    This driver is VERY stupid.  It takes no advantage of much of the power&n; *    of the UltraStor controller.  We just sit-and-spin while waiting for&n; *    commands to complete.  I hope to go back and beat it into shape, but&n; *    PLEASE, anyone else who would like to, please make improvements!&n; *&n; *    By defining USE_QUEUECOMMAND as TRUE in ultrastor.h, you enable the&n; *    queueing feature of the mid-level SCSI driver.  This should improve&n; *    performance somewhat.  However, it does not seem to work.  I believe&n; *    this is due to a bug in the mid-level driver, but I haven&squot;t looked&n; *    too closely.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#ifdef CONFIG_SCSI_ULTRASTOR
 macro_line|#include &lt;stddef.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
-macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
-macro_line|#include &lt;linux/hdreg.h&gt;
-macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
-macro_line|#include &lt;asm/segment.h&gt;
+macro_line|#include &lt;asm/system.h&gt;
+DECL|macro|ULTRASTOR_PRIVATE
+mdefine_line|#define ULTRASTOR_PRIVATE&t;/* Get the private stuff from ultrastor.h */
 macro_line|#include &quot;ultrastor.h&quot;
 macro_line|#include &quot;scsi.h&quot;
 macro_line|#include &quot;hosts.h&quot;
 DECL|macro|VERSION
-mdefine_line|#define VERSION &quot;1.0 alpha&quot;
+mdefine_line|#define VERSION &quot;1.0 beta&quot;
 DECL|macro|ARRAY_SIZE
 mdefine_line|#define ARRAY_SIZE(arr) (sizeof (arr) / sizeof (arr)[0])
+DECL|macro|BIT
+mdefine_line|#define BIT(n) (1ul &lt;&lt; (n))
 DECL|macro|BYTE
 mdefine_line|#define BYTE(num, n) ((unsigned char)((unsigned int)(num) &gt;&gt; ((n) * 8)))
 multiline_comment|/* Simply using &quot;unsigned long&quot; in these structures won&squot;t work as it causes&n;   alignment.  Perhaps the &quot;aligned&quot; attribute may be used in GCC 2.0 to get&n;   around this, but for now I use this hack. */
@@ -37,12 +38,10 @@ DECL|typedef|Longword
 )brace
 id|Longword
 suffix:semicolon
-multiline_comment|/* Used to store configuration info read from config i/o registers.  Most of&n;   this is not used yet, but might as well save it. */
-DECL|struct|config
+multiline_comment|/* Used to fetch the configuration info from the config i/o registers.  We&n;   then store (in a friendlier format) in config. */
+DECL|struct|config_1
 r_struct
-id|config
-(brace
-r_struct
+id|config_1
 (brace
 DECL|member|bios_segment
 r_int
@@ -72,11 +71,11 @@ id|dma_channel
 suffix:colon
 l_int|2
 suffix:semicolon
-DECL|member|config_1
 )brace
-id|config_1
 suffix:semicolon
+DECL|struct|config_2
 r_struct
+id|config_2
 (brace
 DECL|member|ha_scsi_id
 r_int
@@ -106,9 +105,65 @@ id|tfr_port
 suffix:colon
 l_int|2
 suffix:semicolon
-DECL|member|config_2
 )brace
-id|config_2
+suffix:semicolon
+multiline_comment|/* Used to store configuration info read from config i/o registers.  Most of&n;   this is not used yet, but might as well save it. */
+DECL|struct|config
+r_struct
+id|config
+(brace
+DECL|member|port_address
+r_int
+r_int
+id|port_address
+suffix:semicolon
+DECL|member|bios_segment
+r_const
+r_void
+op_star
+id|bios_segment
+suffix:semicolon
+DECL|member|interrupt
+r_int
+r_char
+id|interrupt
+suffix:colon
+l_int|4
+suffix:semicolon
+DECL|member|dma_channel
+r_int
+r_char
+id|dma_channel
+suffix:colon
+l_int|3
+suffix:semicolon
+DECL|member|ha_scsi_id
+r_int
+r_char
+id|ha_scsi_id
+suffix:colon
+l_int|3
+suffix:semicolon
+DECL|member|heads
+r_int
+r_char
+id|heads
+suffix:colon
+l_int|6
+suffix:semicolon
+DECL|member|sectors
+r_int
+r_char
+id|sectors
+suffix:colon
+l_int|6
+suffix:semicolon
+DECL|member|bios_drive_number
+r_int
+r_char
+id|bios_drive_number
+suffix:colon
+l_int|1
 suffix:semicolon
 )brace
 suffix:semicolon
@@ -347,19 +402,22 @@ comma
 l_int|0
 )brace
 suffix:semicolon
-macro_line|#if 0&t;/* Not currently used, head/sector mappings allowed by 14f */
+multiline_comment|/* Head/sector mappings allowed by 14f */
 r_static
 r_const
 r_struct
 (brace
+DECL|member|heads
 r_int
 r_char
 id|heads
 suffix:semicolon
+DECL|member|sectors
 r_int
 r_char
 id|sectors
 suffix:semicolon
+DECL|variable|mapping_table
 )brace
 id|mapping_table
 (braket
@@ -392,7 +450,6 @@ l_int|0
 )brace
 )brace
 suffix:semicolon
-macro_line|#endif
 multiline_comment|/* Config info */
 DECL|variable|config
 r_static
@@ -411,16 +468,8 @@ macro_line|#ifdef PORT_OVERRIDE
 DECL|macro|PORT_ADDRESS
 macro_line|# define PORT_ADDRESS PORT_OVERRIDE
 macro_line|#else
-DECL|variable|port_address
-r_static
-r_int
-r_int
-id|port_address
-op_assign
-l_int|0
-suffix:semicolon
 DECL|macro|PORT_ADDRESS
-macro_line|# define PORT_ADDRESS port_address
+macro_line|# define PORT_ADDRESS (config.port_address)
 macro_line|#endif
 DECL|variable|aborted
 r_static
@@ -460,6 +509,28 @@ comma
 )brace
 suffix:semicolon
 macro_line|#endif
+r_void
+id|ultrastor_interrupt
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+DECL|variable|ultrastor_done
+r_static
+r_void
+(paren
+op_star
+id|ultrastor_done
+)paren
+(paren
+r_int
+comma
+r_int
+)paren
+op_assign
+l_int|0
+suffix:semicolon
 r_static
 r_const
 r_struct
@@ -511,47 +582,59 @@ r_int
 r_char
 id|in_byte
 suffix:semicolon
-r_const
-r_void
-op_star
-id|base_address
+r_struct
+id|config_1
+id|config_1
 suffix:semicolon
-macro_line|#ifdef DEBUG
+r_struct
+id|config_2
+id|config_2
+suffix:semicolon
+macro_line|#if (ULTRASTOR_DEBUG &amp; UD_DETECT)
 id|printk
 c_func
 (paren
-l_string|&quot;ultrastor_14f_detect: called&bslash;n&quot;
+l_string|&quot;US14F: detect: called&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
 macro_line|#ifndef PORT_OVERRIDE
-multiline_comment|/* ??? This is easy to implement, but I&squot;m not sure how &quot;friendly&quot; it is to&n;   go off and read random i/o ports. */
-macro_line|# error Not implemented!
-macro_line|#endif
-r_if
-c_cond
-(paren
-op_logical_neg
 id|PORT_ADDRESS
+op_assign
+l_int|0
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|ARRAY_SIZE
+c_func
+(paren
+id|ultrastor_ports
+)paren
+suffix:semicolon
+id|i
+op_increment
 )paren
 (brace
-macro_line|#ifdef DEBUG
-id|printk
-c_func
-(paren
-l_string|&quot;ultrastor_14f_detect: no port address found!&bslash;n&quot;
-)paren
+id|PORT_ADDRESS
+op_assign
+id|ultrastor_ports
+(braket
+id|i
+)braket
 suffix:semicolon
 macro_line|#endif
-r_return
-id|FALSE
-suffix:semicolon
-)brace
-macro_line|#ifdef DEBUG
+macro_line|#if (ULTRASTOR_DEBUG &amp; UD_DETECT)
 id|printk
 c_func
 (paren
-l_string|&quot;ultrastor_14f_detect: port address = %X&bslash;n&quot;
+l_string|&quot;US14F: detect: testing port address %03X&bslash;n&quot;
 comma
 id|PORT_ADDRESS
 )paren
@@ -579,19 +662,35 @@ op_ne
 id|US14F_PRODUCT_ID_0
 )paren
 (brace
-macro_line|#ifdef DEBUG
+macro_line|#if (ULTRASTOR_DEBUG &amp; UD_DETECT)
+macro_line|# ifdef PORT_OVERRIDE
 id|printk
 c_func
 (paren
-l_string|&quot;ultrastor_14f_detect: unknown product ID 0 - %02X&bslash;n&quot;
+l_string|&quot;US14F: detect: wrong product ID 0 - %02X&bslash;n&quot;
 comma
 id|in_byte
 )paren
 suffix:semicolon
+macro_line|# else
+id|printk
+c_func
+(paren
+l_string|&quot;US14F: detect: no adapter at port %03X&quot;
+comma
+id|PORT_ADDRESS
+)paren
+suffix:semicolon
+macro_line|# endif
 macro_line|#endif
+macro_line|#ifdef PORT_OVERRIDE
 r_return
 id|FALSE
 suffix:semicolon
+macro_line|#else
+r_continue
+suffix:semicolon
+macro_line|#endif
 )brace
 id|in_byte
 op_assign
@@ -620,20 +719,75 @@ op_ne
 id|US14F_PRODUCT_ID_1
 )paren
 (brace
-macro_line|#ifdef DEBUG
+macro_line|#if (ULTRASTOR_DEBUG &amp; UD_DETECT)
+macro_line|# ifdef PORT_OVERRIDE
 id|printk
 c_func
 (paren
-l_string|&quot;ultrastor_14f_detect: unknown product ID 1 - %02X&bslash;n&quot;
+l_string|&quot;US14F: detect: wrong product ID 1 - %02X&bslash;n&quot;
 comma
 id|in_byte
 )paren
 suffix:semicolon
+macro_line|# else
+id|printk
+c_func
+(paren
+l_string|&quot;US14F: detect: no adapter at port %03X&quot;
+comma
+id|PORT_ADDRESS
+)paren
+suffix:semicolon
+macro_line|# endif
 macro_line|#endif
+macro_line|#ifdef PORT_OVERRIDE
+r_return
+id|FALSE
+suffix:semicolon
+macro_line|#else
+r_continue
+suffix:semicolon
+macro_line|#endif
+)brace
+macro_line|#ifndef PORT_OVERRIDE
+r_break
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|i
+op_eq
+id|ARRAY_SIZE
+c_func
+(paren
+id|ultrastor_ports
+)paren
+)paren
+(brace
+macro_line|# if (ULTRASTOR_DEBUG &amp; UD_DETECT)
+id|printk
+c_func
+(paren
+l_string|&quot;US14F: detect: no port address found!&bslash;n&quot;
+)paren
+suffix:semicolon
+macro_line|# endif
 r_return
 id|FALSE
 suffix:semicolon
 )brace
+macro_line|#endif
+macro_line|#if (ULTRASTOR_DEBUG &amp; UD_DETECT)
+id|printk
+c_func
+(paren
+l_string|&quot;US14F: detect: adapter found at port address %03X&bslash;n&quot;
+comma
+id|PORT_ADDRESS
+)paren
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/* All above tests passed, must be the right thing.  Get some useful&n;       info. */
 op_star
 (paren
@@ -641,7 +795,7 @@ r_char
 op_star
 )paren
 op_amp
-id|config.config_1
+id|config_1
 op_assign
 id|inb
 c_func
@@ -661,7 +815,7 @@ r_char
 op_star
 )paren
 op_amp
-id|config.config_2
+id|config_2
 op_assign
 id|inb
 c_func
@@ -675,18 +829,58 @@ l_int|1
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/* To verify this card, we simply look for the UltraStor SCSI from the&n;       BIOS version notice. */
-id|base_address
+id|config.bios_segment
 op_assign
 id|bios_segment_table
 (braket
-id|config.config_1.bios_segment
+id|config_1.bios_segment
 )braket
 suffix:semicolon
+id|config.interrupt
+op_assign
+id|interrupt_table
+(braket
+id|config_1.interrupt
+)braket
+suffix:semicolon
+id|config.dma_channel
+op_assign
+id|dma_channel_table
+(braket
+id|config_1.dma_channel
+)braket
+suffix:semicolon
+id|config.ha_scsi_id
+op_assign
+id|config_2.ha_scsi_id
+suffix:semicolon
+id|config.heads
+op_assign
+id|mapping_table
+(braket
+id|config_2.mapping_mode
+)braket
+dot
+id|heads
+suffix:semicolon
+id|config.sectors
+op_assign
+id|mapping_table
+(braket
+id|config_2.mapping_mode
+)braket
+dot
+id|sectors
+suffix:semicolon
+id|config.bios_drive_number
+op_assign
+id|config_2.bios_drive_number
+suffix:semicolon
+multiline_comment|/* To verify this card, we simply look for the UltraStor SCSI from the&n;       BIOS version notice. */
 r_if
 c_cond
 (paren
-id|base_address
+id|config.bios_segment
 op_ne
 l_int|NULL
 )paren
@@ -727,7 +921,7 @@ c_func
 r_char
 op_star
 )paren
-id|base_address
+id|config.bios_segment
 op_plus
 id|signatures
 (braket
@@ -761,7 +955,7 @@ c_cond
 op_logical_neg
 id|found
 )paren
-id|base_address
+id|config.bios_segment
 op_assign
 l_int|NULL
 suffix:semicolon
@@ -770,14 +964,14 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|base_address
+id|config.bios_segment
 )paren
 (brace
-macro_line|#ifdef DEBUG
+macro_line|#if (ULTRASTOR_DEBUG &amp; UD_DETECT)
 id|printk
 c_func
 (paren
-l_string|&quot;ultrastor_14f_detect: not detected.&bslash;n&quot;
+l_string|&quot;US14F: detect: not detected.&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -790,24 +984,21 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|dma_channel_table
-(braket
-id|config.config_1.dma_channel
-)braket
+id|config.dma_channel
 op_logical_or
 op_logical_neg
 (paren
-id|config.config_2.tfr_port
+id|config_2.tfr_port
 op_amp
 l_int|0x2
 )paren
 )paren
 (brace
-macro_line|#ifdef DEBUG
+macro_line|#if (ULTRASTOR_DEBUG &amp; UD_DETECT)
 id|printk
 c_func
 (paren
-l_string|&quot;ultrastor_14f_detect: consistancy check failed&bslash;n&quot;
+l_string|&quot;US14F: detect: consistancy check failed&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -817,29 +1008,26 @@ suffix:semicolon
 )brace
 multiline_comment|/* If we were TRULY paranoid, we could issue a host adapter inquiry&n;       command here and verify the data returned.  But frankly, I&squot;m&n;       exhausted! */
 multiline_comment|/* Finally!  Now I&squot;m satisfied... */
-macro_line|#ifdef DEBUG
+macro_line|#if (ULTRASTOR_DEBUG &amp; UD_DETECT)
 id|printk
 c_func
 (paren
-l_string|&quot;ultrastor_14f_detect: detect succeeded&bslash;n&quot;
+l_string|&quot;US14F: detect: detect succeeded&bslash;n&quot;
+l_string|&quot;  Port address: %03X&bslash;n&quot;
 l_string|&quot;  BIOS segment: %05X&bslash;n&quot;
-l_string|&quot;  Interrupt: %d&bslash;n&quot;
-l_string|&quot;  DMA channel: %d&bslash;n&quot;
-l_string|&quot;  H/A SCSI ID: %d&bslash;n&quot;
+l_string|&quot;  Interrupt: %u&bslash;n&quot;
+l_string|&quot;  DMA channel: %u&bslash;n&quot;
+l_string|&quot;  H/A SCSI ID: %u&bslash;n&quot;
 comma
-id|base_address
+id|PORT_ADDRESS
 comma
-id|interrupt_table
-(braket
-id|config.config_1.interrupt
-)braket
+id|config.bios_segment
 comma
-id|dma_channel_table
-(braket
-id|config.config_1.dma_channel
-)braket
+id|config.interrupt
 comma
-id|config.config_2.ha_scsi_id
+id|config.dma_channel
+comma
+id|config.ha_scsi_id
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -854,8 +1042,62 @@ id|hostnum
 dot
 id|this_id
 op_assign
-id|config.config_2.ha_scsi_id
+id|config.ha_scsi_id
 suffix:semicolon
+macro_line|#if USE_QUEUECOMMAND
+id|set_intr_gate
+c_func
+(paren
+l_int|0x20
+op_plus
+id|config.interrupt
+comma
+id|ultrastor_interrupt
+)paren
+suffix:semicolon
+multiline_comment|/* gate to PIC 2 */
+id|outb_p
+c_func
+(paren
+id|inb_p
+c_func
+(paren
+l_int|0x21
+)paren
+op_amp
+op_complement
+id|BIT
+c_func
+(paren
+l_int|2
+)paren
+comma
+l_int|0x21
+)paren
+suffix:semicolon
+multiline_comment|/* enable the interrupt */
+id|outb
+c_func
+(paren
+id|inb_p
+c_func
+(paren
+l_int|0xA1
+)paren
+op_amp
+op_complement
+id|BIT
+c_func
+(paren
+id|config.interrupt
+op_minus
+l_int|8
+)paren
+comma
+l_int|0xA1
+)paren
+suffix:semicolon
+macro_line|#endif
 r_return
 id|TRUE
 suffix:semicolon
@@ -876,7 +1118,26 @@ id|VERSION
 l_string|&quot; by David B. Gentzel&bslash;n&quot;
 suffix:semicolon
 )brace
-macro_line|#if 0
+DECL|variable|mscp
+r_static
+r_struct
+id|mscp
+id|mscp
+op_assign
+(brace
+id|OP_SCSI
+comma
+id|DTD_SCSI
+comma
+id|FALSE
+comma
+id|TRUE
+comma
+id|FALSE
+multiline_comment|/* This stuff doesn&squot;t change */
+)brace
+suffix:semicolon
+DECL|function|ultrastor_14f_queuecommand
 r_int
 id|ultrastor_14f_queuecommand
 c_func
@@ -908,52 +1169,50 @@ comma
 r_int
 )paren
 )paren
-macro_line|#else
-DECL|function|ultrastor_14f_command
-r_int
-id|ultrastor_14f_command
-c_func
-(paren
+(brace
 r_int
 r_char
-id|target
-comma
-r_const
-r_void
-op_star
-id|cmnd
-comma
-r_void
-op_star
-id|buff
-comma
-r_int
-id|bufflen
+id|in_byte
+suffix:semicolon
+macro_line|#if (ULTRASTOR_DEBUG &amp; UD_COMMAND)
+id|printk
+c_func
+(paren
+l_string|&quot;US14F: queuecommand: called&bslash;n&quot;
 )paren
+suffix:semicolon
 macro_line|#endif
-(brace
+multiline_comment|/* Skip first (constant) byte */
+id|memset
+c_func
+(paren
+(paren
+r_char
+op_star
+)paren
+op_amp
+id|mscp
+op_plus
+l_int|1
+comma
+l_int|0
+comma
+r_sizeof
+(paren
 r_struct
 id|mscp
-id|mscp
+)paren
+op_minus
+l_int|1
+)paren
+suffix:semicolon
+id|mscp.target_id
 op_assign
-(brace
-id|OP_SCSI
-comma
-id|DTD_SCSI
-comma
-id|FALSE
-comma
-id|TRUE
-comma
-id|FALSE
-comma
 id|target
-comma
-l_int|0
-comma
-l_int|0
-multiline_comment|/* LUN??? */
-comma
+suffix:semicolon
+multiline_comment|/* mscp.lun = ???; */
+id|mscp.transfer_data
+op_assign
 op_star
 (paren
 id|Longword
@@ -961,7 +1220,9 @@ op_star
 )paren
 op_amp
 id|buff
-comma
+suffix:semicolon
+id|mscp.transfer_data_length
+op_assign
 op_star
 (paren
 id|Longword
@@ -970,26 +1231,13 @@ op_star
 op_amp
 id|bufflen
 comma
-(brace
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-)brace
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
+id|mscp.length_of_scsi_cdbs
+op_assign
 (paren
 (paren
 op_star
 (paren
+r_int
 r_char
 op_star
 )paren
@@ -1003,30 +1251,6 @@ l_int|6
 suffix:colon
 l_int|10
 )paren
-comma
-(brace
-l_int|0
-)brace
-comma
-multiline_comment|/* Filled in via memcpy below */
-l_int|0
-comma
-l_int|0
-comma
-(brace
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-)brace
-)brace
-suffix:semicolon
-r_int
-r_char
-id|in_byte
 suffix:semicolon
 id|memcpy
 c_func
@@ -1042,7 +1266,7 @@ multiline_comment|/* Find free OGM slot (OGMINT bit is 0) */
 r_do
 id|in_byte
 op_assign
-id|inb
+id|inb_p
 c_func
 (paren
 id|LCL_DOORBELL_INTR
@@ -1079,7 +1303,7 @@ l_int|16
 )paren
 suffix:semicolon
 multiline_comment|/* Store pointer in OGM address bytes */
-id|outb
+id|outb_p
 c_func
 (paren
 id|BYTE
@@ -1100,7 +1324,7 @@ l_int|0
 )paren
 )paren
 suffix:semicolon
-id|outb
+id|outb_p
 c_func
 (paren
 id|BYTE
@@ -1121,7 +1345,7 @@ l_int|1
 )paren
 )paren
 suffix:semicolon
-id|outb
+id|outb_p
 c_func
 (paren
 id|BYTE
@@ -1142,7 +1366,7 @@ l_int|2
 )paren
 )paren
 suffix:semicolon
-id|outb
+id|outb_p
 c_func
 (paren
 id|BYTE
@@ -1164,7 +1388,7 @@ l_int|3
 )paren
 suffix:semicolon
 multiline_comment|/* Issue OGM interrupt */
-id|outb
+id|outb_p
 c_func
 (paren
 l_int|0x1
@@ -1176,11 +1400,79 @@ id|PORT_ADDRESS
 )paren
 )paren
 suffix:semicolon
+id|ultrastor_done
+op_assign
+id|done
+suffix:semicolon
+macro_line|#if (ULTRASTOR_DEBUG &amp; UD_COMMAND)
+id|printk
+c_func
+(paren
+l_string|&quot;US14F: queuecommand: returning&bslash;n&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
+r_return
+l_int|0
+suffix:semicolon
+)brace
+macro_line|#if !USE_QUEUECOMMAND
+DECL|function|ultrastor_14f_command
+r_int
+id|ultrastor_14f_command
+c_func
+(paren
+r_int
+r_char
+id|target
+comma
+r_const
+r_void
+op_star
+id|cmnd
+comma
+r_void
+op_star
+id|buff
+comma
+r_int
+id|bufflen
+)paren
+(brace
+r_int
+r_char
+id|in_byte
+suffix:semicolon
+macro_line|#if (ULTRASTOR_DEBUG &amp; UD_COMMAND)
+id|printk
+c_func
+(paren
+l_string|&quot;US14F: command: called&bslash;n&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
+(paren
+r_void
+)paren
+id|ultrastor_14f_queuecommand
+c_func
+(paren
+id|target
+comma
+id|cmnd
+comma
+id|buff
+comma
+id|bufflen
+comma
+l_int|0
+)paren
+suffix:semicolon
 multiline_comment|/* Wait for ICM interrupt */
 r_do
 id|in_byte
 op_assign
-id|inb
+id|inb_p
 c_func
 (paren
 id|SYS_DOORBELL_INTR
@@ -1218,7 +1510,7 @@ l_int|16
 )paren
 suffix:semicolon
 multiline_comment|/* Clean ICM slot (set ICMINT bit to 0) */
-id|outb
+id|outb_p
 c_func
 (paren
 l_int|0x1
@@ -1230,6 +1522,22 @@ id|PORT_ADDRESS
 )paren
 )paren
 suffix:semicolon
+macro_line|#if (ULTRASTOR_DEBUG &amp; UD_COMMAND)
+id|printk
+c_func
+(paren
+l_string|&quot;US14F: command: returning %08X&bslash;n&quot;
+comma
+(paren
+id|mscp.adapter_status
+op_lshift
+l_int|16
+)paren
+op_or
+id|mscp.target_status
+)paren
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/* ??? not right, but okay for now? */
 r_return
 (paren
@@ -1241,6 +1549,7 @@ op_or
 id|mscp.target_status
 suffix:semicolon
 )brace
+macro_line|#endif
 DECL|function|ultrastor_14f_abort
 r_int
 id|ultrastor_14f_abort
@@ -1277,16 +1586,16 @@ r_int
 r_char
 id|in_byte
 suffix:semicolon
-macro_line|#ifdef DEBUG
+macro_line|#if (ULTRASTOR_DEBUG &amp; UD_RESET)
 id|printk
 c_func
 (paren
-l_string|&quot;ultrastor_14f_reset: called&bslash;n&quot;
+l_string|&quot;US14F: reset: called&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
 multiline_comment|/* Issue SCSI BUS reset */
-id|outb
+id|outb_p
 c_func
 (paren
 l_int|0x20
@@ -1302,7 +1611,7 @@ multiline_comment|/* Wait for completion... */
 r_do
 id|in_byte
 op_assign
-id|inb
+id|inb_p
 c_func
 (paren
 id|LCL_DOORBELL_INTR
@@ -1324,11 +1633,11 @@ id|aborted
 op_assign
 id|DID_RESET
 suffix:semicolon
-macro_line|#ifdef DEBUG
+macro_line|#if (ULTRASTOR_DEBUG &amp; UD_RESET)
 id|printk
 c_func
 (paren
-l_string|&quot;ultrastor_14f_reset: returning&bslash;n&quot;
+l_string|&quot;US14F: reset: returning&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -1336,5 +1645,189 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#if USE_QUEUECOMMAND
+DECL|function|ultrastor_interrupt_service
+r_void
+id|ultrastor_interrupt_service
+c_func
+(paren
+r_void
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|ultrastor_done
+op_eq
+l_int|0
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;US14F: unexpected ultrastor interrupt&bslash;n&bslash;r&quot;
+)paren
+suffix:semicolon
+multiline_comment|/* ??? Anything else we should do here?  Reset? */
+r_return
+suffix:semicolon
+)brace
+id|printk
+c_func
+(paren
+l_string|&quot;US14F: got an ultrastor interrupt: %u&bslash;n&bslash;r&quot;
+comma
+(paren
+id|mscp.adapter_status
+op_lshift
+l_int|16
+)paren
+op_or
+id|mscp.target_status
+)paren
+suffix:semicolon
+id|ultrastor_done
+c_func
+(paren
+id|host_number
+comma
+(paren
+id|mscp.adapter_status
+op_lshift
+l_int|16
+)paren
+op_or
+id|mscp.target_status
+)paren
+suffix:semicolon
+id|ultrastor_done
+op_assign
+l_int|0
+suffix:semicolon
+)brace
+id|__asm__
+c_func
+(paren
+"&quot;"
+id|_ultrastor_interrupt
+suffix:colon
+id|cld
+id|pushl
+op_mod
+id|eax
+id|pushl
+op_mod
+id|ecx
+id|pushl
+op_mod
+id|edx
+id|push
+op_mod
+id|ds
+id|push
+op_mod
+id|es
+id|push
+op_mod
+id|fs
+id|movl
+"$"
+l_int|0x10
+comma
+op_mod
+id|eax
+id|mov
+op_mod
+id|ax
+comma
+op_mod
+id|ds
+id|mov
+op_mod
+id|ax
+comma
+op_mod
+id|es
+id|movl
+"$"
+l_int|0x17
+comma
+op_mod
+id|eax
+id|mov
+op_mod
+id|ax
+comma
+op_mod
+id|fs
+id|movb
+"$"
+l_int|0x20
+comma
+op_mod
+id|al
+id|outb
+op_mod
+id|al
+comma
+"$"
+l_int|0xA0
+macro_line|# EOI to interrupt controller #1
+id|outb
+op_mod
+id|al
+comma
+"$"
+l_int|0x80
+macro_line|# give port chance to breathe
+id|outb
+op_mod
+id|al
+comma
+"$"
+l_int|0x80
+id|outb
+op_mod
+id|al
+comma
+"$"
+l_int|0x80
+id|outb
+op_mod
+id|al
+comma
+"$"
+l_int|0x80
+id|outb
+op_mod
+id|al
+comma
+"$"
+l_int|0x20
+id|call
+id|_ultrastor_interrupt_service
+id|pop
+op_mod
+id|fs
+id|pop
+op_mod
+id|es
+id|pop
+op_mod
+id|ds
+id|popl
+op_mod
+id|edx
+id|popl
+op_mod
+id|ecx
+id|popl
+op_mod
+id|eax
+id|iret
+"&quot;"
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#endif
 eof

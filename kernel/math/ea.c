@@ -286,9 +286,6 @@ suffix:semicolon
 r_int
 op_star
 id|tmp
-op_assign
-op_amp
-id|EAX
 suffix:semicolon
 r_int
 id|offset

@@ -2,7 +2,6 @@ multiline_comment|/*&n; *&t;ultrastor.c&t;(C) 1991 David B. Gentzel&n; *&t;Low-l
 macro_line|#ifndef _ULTRASTOR_H
 DECL|macro|_ULTRASTOR_H
 mdefine_line|#define _ULTRASTOR_H
-multiline_comment|/* ??? Some of the stuff in this file is really private to ultrastor.c and&n;   should be moved elsewhere (as this file is included by higher-level driver&n;   files). */
 multiline_comment|/* ??? These don&squot;t really belong here */
 macro_line|#ifndef TRUE
 DECL|macro|TRUE
@@ -12,6 +11,9 @@ macro_line|#ifndef FALSE
 DECL|macro|FALSE
 macro_line|# define FALSE 0
 macro_line|#endif
+multiline_comment|/* ??? This should go eventually, once the queueing bug is fixed */
+DECL|macro|USE_QUEUECOMMAND
+mdefine_line|#define USE_QUEUECOMMAND FALSE
 r_int
 id|ultrastor_14f_detect
 c_func
@@ -28,7 +30,6 @@ c_func
 r_void
 )paren
 suffix:semicolon
-macro_line|#if 0&t;/* ??? Future direction... */
 r_int
 id|ultrastor_14f_queuecommand
 c_func
@@ -61,7 +62,7 @@ r_int
 )paren
 )paren
 suffix:semicolon
-macro_line|#else
+macro_line|#if !USE_QUEUECOMMAND
 r_int
 id|ultrastor_14f_command
 c_func
@@ -98,14 +99,21 @@ c_func
 r_void
 )paren
 suffix:semicolon
-macro_line|#if 0&t;/* ??? Future direction... */
-macro_line|# define ULTRASTOR_14F &bslash;&n;    { &quot;UltraStor 14F&quot;, ultrastor_14f_detect, ultrastor_14f_info, 0, &bslash;&n;      ultrastor_14f_queuecommand, ultrastor_14f_abort, ultrastor_14f_reset, &bslash;&n;      TRUE, 0, 0 }
+macro_line|#if !USE_QUEUECOMMAND
+DECL|macro|ULTRASTOR_14F
+mdefine_line|#define ULTRASTOR_14F &bslash;&n;    { &quot;UltraStor 14F&quot;, ultrastor_14f_detect, ultrastor_14f_info, &bslash;&n;      ultrastor_14f_command, 0, ultrastor_14f_abort, ultrastor_14f_reset, &bslash;&n;      FALSE, 0, 0 }
 macro_line|#else
 DECL|macro|ULTRASTOR_14F
-macro_line|# define ULTRASTOR_14F &bslash;&n;    { &quot;UltraStor 14F&quot;, ultrastor_14f_detect, ultrastor_14f_info, &bslash;&n;      ultrastor_14f_command, 0, ultrastor_14f_abort, ultrastor_14f_reset, &bslash;&n;      FALSE, 0, 0 }
+mdefine_line|#define ULTRASTOR_14F &bslash;&n;    { &quot;UltraStor 14F&quot;, ultrastor_14f_detect, ultrastor_14f_info, 0, &bslash;&n;      ultrastor_14f_queuecommand, ultrastor_14f_abort, ultrastor_14f_reset, &bslash;&n;      TRUE, 0, 0 }
 macro_line|#endif
-DECL|macro|PORT_OVERRIDE
-mdefine_line|#define PORT_OVERRIDE 0x330
+DECL|macro|UD_DETECT
+mdefine_line|#define UD_DETECT 0x1
+DECL|macro|UD_COMMAND
+mdefine_line|#define UD_COMMAND 0x2
+DECL|macro|UD_RESET
+mdefine_line|#define UD_RESET 0x4
+macro_line|#ifdef ULTRASTOR_PRIVATE
+multiline_comment|/* #define PORT_OVERRIDE 0x330 */
 multiline_comment|/* Port addresses (relative to the base address) */
 DECL|macro|LCL_DOORBELL_MASK
 mdefine_line|#define LCL_DOORBELL_MASK(port) ((port) + 0x0)
@@ -154,5 +162,6 @@ DECL|macro|HA_CMD_READ_BUFF
 mdefine_line|#define HA_CMD_READ_BUFF 0x3
 DECL|macro|HA_CMD_WRITE_BUFF
 mdefine_line|#define HA_CMD_WRITE_BUFF 0x4
+macro_line|#endif
 macro_line|#endif
 eof

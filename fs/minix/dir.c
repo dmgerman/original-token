@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/fs/minix/dir.c&n; *&n; * minix directory hadnling functions&n; */
+multiline_comment|/*&n; *  linux/fs/minix/dir.c&n; *&n; *  (C) 1991 Linus Torvalds&n; *&n; *  minix directory handling functions&n; */
 macro_line|#include &lt;errno.h&gt;
 macro_line|#include &lt;sys/stat.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;

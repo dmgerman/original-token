@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/fs/minix/file.c&n; *&n; * minix regular file handling primitives&n; */
+multiline_comment|/*&n; *  linux/fs/minix/file.c&n; *&n; *  (C) 1991 Linus Torvalds&n; *&n; *  minix regular file handling primitives&n; */
 macro_line|#include &lt;errno.h&gt;
 macro_line|#include &lt;fcntl.h&gt;
 macro_line|#include &lt;sys/dirent.h&gt;
@@ -941,26 +941,14 @@ id|inode-&gt;i_mtime
 op_assign
 id|CURRENT_TIME
 suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-(paren
-id|filp-&gt;f_flags
-op_amp
-id|O_APPEND
-)paren
-)paren
-(brace
-id|filp-&gt;f_pos
-op_assign
-id|pos
-suffix:semicolon
 id|inode-&gt;i_ctime
 op_assign
 id|CURRENT_TIME
 suffix:semicolon
-)brace
+id|filp-&gt;f_pos
+op_assign
+id|pos
+suffix:semicolon
 id|inode-&gt;i_dirt
 op_assign
 l_int|1

@@ -842,7 +842,7 @@ id|O_WRONLY
 suffix:semicolon
 id|mode
 op_and_assign
-l_int|0777
+l_int|07777
 op_amp
 op_complement
 id|current-&gt;umask

@@ -625,7 +625,7 @@ r_if
 c_cond
 (paren
 id|rgid
-OG
+op_ge
 l_int|0
 )paren
 (brace
@@ -657,7 +657,7 @@ r_if
 c_cond
 (paren
 id|egid
-OG
+op_ge
 l_int|0
 )paren
 (brace
@@ -887,7 +887,7 @@ r_if
 c_cond
 (paren
 id|ruid
-OG
+op_ge
 l_int|0
 )paren
 (brace
@@ -925,7 +925,7 @@ r_if
 c_cond
 (paren
 id|euid
-OG
+op_ge
 l_int|0
 )paren
 (brace

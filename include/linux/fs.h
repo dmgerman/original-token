@@ -4,6 +4,7 @@ DECL|macro|_FS_H
 mdefine_line|#define _FS_H
 macro_line|#include &lt;sys/types.h&gt;
 macro_line|#include &lt;sys/dirent.h&gt;
+macro_line|#include &lt;sys/vfs.h&gt;
 multiline_comment|/* devices are as follows: (same as minix, so we can use the minix&n; * file system. These are major numbers.)&n; *&n; * 0 - unused (nodev)&n; * 1 - /dev/mem&n; * 2 - /dev/fd&n; * 3 - /dev/hd&n; * 4 - /dev/ttyx&n; * 5 - /dev/tty&n; * 6 - /dev/lp&n; * 7 - unnamed pipes&n; * 8 - /dev/sd&n; * 9 - /dev/st&n; */
 DECL|macro|IS_SEEKABLE
 mdefine_line|#define IS_SEEKABLE(x) ((x)&gt;=1 &amp;&amp; (x)&lt;=3 || (x)==8)
@@ -993,6 +994,24 @@ r_struct
 id|super_block
 op_star
 id|sb
+)paren
+suffix:semicolon
+DECL|member|statfs
+r_void
+(paren
+op_star
+id|statfs
+)paren
+(paren
+r_struct
+id|super_block
+op_star
+id|sb
+comma
+r_struct
+id|statfs
+op_star
+id|buf
 )paren
 suffix:semicolon
 )brace

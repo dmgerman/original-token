@@ -8748,7 +8748,7 @@ c_cond
 id|inb
 c_func
 (paren
-l_int|0x64
+l_int|0x60
 )paren
 op_eq
 l_int|0xfa

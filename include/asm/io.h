@@ -60,9 +60,11 @@ id|__asm__
 r_volatile
 (paren
 l_string|&quot;outb %0,%1&bslash;n&bslash;t&quot;
+macro_line|#ifdef REALLY_SLOW_IO
 l_string|&quot;outb %0,$0x80&bslash;n&bslash;t&quot;
 l_string|&quot;outb %0,$0x80&bslash;n&bslash;t&quot;
 l_string|&quot;outb %0,$0x80&bslash;n&bslash;t&quot;
+macro_line|#endif
 l_string|&quot;outb %0,$0x80&quot;
 op_scope_resolution
 l_string|&quot;a&quot;
@@ -146,9 +148,11 @@ id|__asm__
 r_volatile
 (paren
 l_string|&quot;inb %1,%0&bslash;n&bslash;t&quot;
+macro_line|#ifdef REALLY_SLOW_IO
 l_string|&quot;outb %0,$0x80&bslash;n&bslash;t&quot;
 l_string|&quot;outb %0,$0x80&bslash;n&bslash;t&quot;
 l_string|&quot;outb %0,$0x80&bslash;n&bslash;t&quot;
+macro_line|#endif
 l_string|&quot;outb %0,$0x80&quot;
 suffix:colon
 l_string|&quot;=a&quot;

@@ -215,6 +215,10 @@ r_extern
 r_int
 id|errno
 suffix:semicolon
+DECL|macro|__NR_setitimer
+mdefine_line|#define __NR_setitimer&t;&t;104
+DECL|macro|__NR_getitimer
+mdefine_line|#define __NR_getitimer&t;&t;105
 multiline_comment|/* XXX - _foo needs to be __foo, while __NR_bar could be _NR_bar. */
 DECL|macro|_syscall0
 mdefine_line|#define _syscall0(type,name) &bslash;&n;type name(void) &bslash;&n;{ &bslash;&n;long __res; &bslash;&n;__asm__ volatile (&quot;int $0x80&quot; &bslash;&n;&t;: &quot;=a&quot; (__res) &bslash;&n;&t;: &quot;0&quot; (__NR_##name)); &bslash;&n;if (__res &gt;= 0) &bslash;&n;&t;return (type) __res; &bslash;&n;errno = -__res; &bslash;&n;return -1; &bslash;&n;}

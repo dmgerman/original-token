@@ -98,6 +98,37 @@ suffix:semicolon
 multiline_comment|/* current value */
 )brace
 suffix:semicolon
+r_int
+id|getitimer
+c_func
+(paren
+r_int
+id|which
+comma
+r_struct
+id|itimerval
+op_star
+id|value
+)paren
+suffix:semicolon
+r_int
+id|setitimer
+c_func
+(paren
+r_int
+id|which
+comma
+r_struct
+id|itimerval
+op_star
+id|value
+comma
+r_struct
+id|itimerval
+op_star
+id|ovalue
+)paren
+suffix:semicolon
 macro_line|#include &lt;time.h&gt;
 macro_line|#include &lt;sys/types.h&gt;
 r_int

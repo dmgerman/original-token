@@ -246,6 +246,12 @@ op_logical_and
 (paren
 id|major_root
 op_ne
+l_int|8
+)paren
+op_logical_and
+(paren
+id|major_root
+op_ne
 l_int|0
 )paren
 )paren

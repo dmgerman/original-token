@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/fs/minix/symlink.c&n; *&n; * minix symlink handling code&n; */
+multiline_comment|/*&n; *  linux/fs/minix/symlink.c&n; *&n; *  (C) 1991 Linus Torvalds&n; *&n; *  minix symlink handling code&n; */
 macro_line|#include &lt;errno.h&gt;
 macro_line|#include &lt;sys/stat.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;

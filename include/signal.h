@@ -65,7 +65,11 @@ mdefine_line|#define SIGTTIN&t;&t;21
 DECL|macro|SIGTTOU
 mdefine_line|#define SIGTTOU&t;&t;22
 multiline_comment|/*&n; * Most of these aren&squot;t used yet (and perhaps never will),&n; * so they are commented out.&n; */
-multiline_comment|/*&n;#define SIGIO&t;&t;23&n;#define SIGPOLL&t;&t;SIGIO&n;#define SIGXCPU&t;&t;24&n;#define SIGXFSZ&t;&t;25&n;#define SIGVTALRM&t;26&n;#define SIGPROF&t;&t;27&n;*/
+multiline_comment|/*&n;#define SIGIO&t;&t;23&n;#define SIGPOLL&t;&t;SIGIO&n;#define SIGXCPU&t;&t;24&n;#define SIGXFSZ&t;&t;25&n;*/
+DECL|macro|SIGVTALRM
+mdefine_line|#define SIGVTALRM&t;26
+DECL|macro|SIGPROF
+mdefine_line|#define SIGPROF&t;&t;27
 DECL|macro|SIGWINCH
 mdefine_line|#define SIGWINCH&t;28
 multiline_comment|/*&n;#define SIGLOST&t;&t;29&n;*/

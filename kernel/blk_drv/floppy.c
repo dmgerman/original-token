@@ -3,7 +3,7 @@ multiline_comment|/*&n; * 02.12.91 - Changed to static variables to indicate nee
 multiline_comment|/*&n; * This file is certainly a mess. I&squot;ve tried my best to get it working,&n; * but I don&squot;t like programming floppies, and I have only one anyway.&n; * Urgel. I should check for more errors, and do more graceful error&n; * recovery. Seems there are problems with several drives. I&squot;ve tried to&n; * correct them. No promises. &n; */
 multiline_comment|/*&n; * As with hd.c, all routines within this file can (and will) be called&n; * by interrupts, so extreme caution is needed. A hardware interrupt&n; * handler may not sleep, or a kernel panic will happen. Thus I cannot&n; * call &quot;floppy-on&quot; directly, but have to set a special timer interrupt&n; * etc.&n; */
 multiline_comment|/*&n; * 28.02.92 - made track-buffering routines, based on the routines written&n; * by entropy@wintermute.wpi.edu (Lawrence Foard). Linus.&n; */
-multiline_comment|/*&n; * Automatic floppy-detection and formatting written by Werner Almesberger&n; * (almesber@nessie.cs.id.ethz.ch), who also corrected some problems with&n; * the floppy-change signa| detection.&n; */
+multiline_comment|/*&n; * Automatic floppy-detection and formatting written by Werner Almesberger&n; * (almesber@nessie.cs.id.ethz.ch), who also corrected some problems with&n; * the floppy-change signal detection.&n; */
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -4378,7 +4378,7 @@ l_int|0
 )paren
 id|base_type
 (braket
-l_int|0
+l_int|1
 )braket
 op_assign
 l_int|NULL

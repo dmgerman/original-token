@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/fs/chrdev.c&n; *&n; *  (C) 1991  Linus Torvalds&n; */
+multiline_comment|/*&n; *  linux/fs/minix/chrdev.c&n; *&n; *  (C) 1991  Linus Torvalds&n; */
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/minix_fs.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;

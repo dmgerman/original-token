@@ -727,6 +727,20 @@ c_func
 (paren
 )paren
 suffix:semicolon
+r_extern
+r_int
+id|sys_getitimer
+c_func
+(paren
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|sys_setitimer
+c_func
+(paren
+)paren
+suffix:semicolon
 DECL|variable|sys_call_table
 id|fn_ptr
 id|sys_call_table
@@ -941,6 +955,10 @@ comma
 id|sys_socketcall
 comma
 id|sys_syslog
+comma
+id|sys_setitimer
+comma
+id|sys_getitimer
 )brace
 suffix:semicolon
 multiline_comment|/* So we don&squot;t have to do any more manual updating.... */
