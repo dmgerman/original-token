@@ -2282,31 +2282,6 @@ op_assign
 op_amp
 id|current-&gt;tss
 suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;current = %p, real_esp = %p, real_eip = %p&bslash;n&quot;
-comma
-id|current
-comma
-id|p-&gt;esp
-comma
-id|p-&gt;eip
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;start_secondary = %p, cpu=%d&bslash;n&quot;
-comma
-id|start_secondary
-comma
-id|smp_processor_id
-c_func
-(paren
-)paren
-)paren
-suffix:semicolon
 multiline_comment|/*&n;&t; * We don&squot;t actually need to load the full TSS,&n;&t; * just the stack pointer and the eip.&n;&t; */
 id|asm
 r_volatile

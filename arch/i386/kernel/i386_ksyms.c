@@ -144,13 +144,6 @@ c_func
 id|csum_partial_copy
 )paren
 suffix:semicolon
-DECL|variable|synchronize_irq
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|synchronize_irq
-)paren
-suffix:semicolon
 macro_line|#ifdef __SMP__
 DECL|variable|apic_reg
 id|EXPORT_SYMBOL
@@ -196,6 +189,13 @@ id|__lock_kernel
 )paren
 suffix:semicolon
 multiline_comment|/* Global SMP irq stuff */
+DECL|variable|synchronize_irq
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|synchronize_irq
+)paren
+suffix:semicolon
 DECL|variable|global_irq_holder
 id|EXPORT_SYMBOL
 c_func

@@ -2203,7 +2203,7 @@ c_func
 (brace
 id|local_irq_count
 (braket
-id|hard_smp_processor_id
+id|smp_processor_id
 c_func
 (paren
 )paren

@@ -1043,6 +1043,22 @@ id|ints
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef CONFIG_DIGIEPCA
+r_extern
+r_void
+id|epca_setup
+c_func
+(paren
+r_char
+op_star
+id|str
+comma
+r_int
+op_star
+id|ints
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef CONFIG_ISDN_DRV_PCBIT
 r_extern
 r_void
@@ -2146,6 +2162,14 @@ macro_line|#ifdef CONFIG_DIGI
 l_string|&quot;digi=&quot;
 comma
 id|pcxx_setup
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_DIGIEPCA
+(brace
+l_string|&quot;digiepca=&quot;
+comma
+id|epca_setup
 )brace
 comma
 macro_line|#endif

@@ -12,7 +12,7 @@ macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/console.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 DECL|macro|LOG_BUF_LEN
-mdefine_line|#define LOG_BUF_LEN&t;(8192*4)
+mdefine_line|#define LOG_BUF_LEN&t;8192
 DECL|variable|buf
 r_static
 r_char

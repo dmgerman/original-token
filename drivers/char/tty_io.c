@@ -7811,6 +7811,13 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef CONFIG_DIGIEPCA
+id|pc_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef CONFIG_RISCOM8
 id|riscom8_init
 c_func
