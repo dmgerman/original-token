@@ -411,6 +411,10 @@ comma
 op_amp
 id|std_midi_synth
 comma
+(brace
+l_int|0
+)brace
+comma
 id|sb16midi_open
 comma
 id|sb16midi_close

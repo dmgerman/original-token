@@ -92,6 +92,20 @@ r_void
 op_star
 id|sys_call_table
 suffix:semicolon
+r_extern
+r_int
+id|aout_core_dump
+c_func
+(paren
+r_int
+id|signr
+comma
+r_struct
+id|pt_regs
+op_star
+id|regs
+)paren
+suffix:semicolon
 macro_line|#ifdef CONFIG_FTAPE
 r_extern
 r_char

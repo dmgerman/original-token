@@ -312,9 +312,19 @@ multiline_comment|/* Do not call reset on error if we just did a reset within 10
 DECL|macro|MIN_RESET_PERIOD
 mdefine_line|#define MIN_RESET_PERIOD (10*HZ)
 multiline_comment|/* The following devices are known not to tolerate a lun != 0 scan for&n; * one reason or another.  Some will respond to all luns, others will&n; * lock up. &n; */
-DECL|struct|blist
+DECL|macro|BLIST_NOLUN
+mdefine_line|#define BLIST_NOLUN     0x01
+DECL|macro|BLIST_FORCELUN
+mdefine_line|#define BLIST_FORCELUN  0x02
+DECL|macro|BLIST_BORKEN
+mdefine_line|#define BLIST_BORKEN    0x04
+DECL|macro|BLIST_KEY
+mdefine_line|#define BLIST_KEY       0x08
+DECL|macro|BLIST_SINGLELUN
+mdefine_line|#define BLIST_SINGLELUN 0x10
+DECL|struct|dev_info
 r_struct
-id|blist
+id|dev_info
 (brace
 DECL|member|vendor
 r_char
@@ -332,13 +342,18 @@ op_star
 id|revision
 suffix:semicolon
 multiline_comment|/* Latest revision known to be bad.  Not used yet */
+DECL|member|flags
+r_int
+id|flags
+suffix:semicolon
 )brace
 suffix:semicolon
-DECL|variable|blacklist
+multiline_comment|/*&n; * This is what was previously known as the blacklist.  The concept&n; * has been expanded so that we can specify other &n; * The blacklist is used to determine which devices cannot tolerate a&n; * lun probe because of buggy firmware.  Far too many for my liking,&n; * which is why the default is now for there to be no lun scan. &n; */
+DECL|variable|device_list
 r_static
 r_struct
-id|blist
-id|blacklist
+id|dev_info
+id|device_list
 (braket
 )braket
 op_assign
@@ -349,6 +364,8 @@ comma
 l_string|&quot;CD-ROM CDS-431&quot;
 comma
 l_string|&quot;H42&quot;
+comma
+id|BLIST_NOLUN
 )brace
 comma
 multiline_comment|/* Locks up if polled for lun != 0 */
@@ -358,6 +375,8 @@ comma
 l_string|&quot;CD-ROM CDS-535&quot;
 comma
 l_string|&quot;Q14&quot;
+comma
+id|BLIST_NOLUN
 )brace
 comma
 multiline_comment|/* Locks up if polled for lun != 0 */
@@ -367,6 +386,8 @@ comma
 l_string|&quot;DRD-25X&quot;
 comma
 l_string|&quot;V&quot;
+comma
+id|BLIST_NOLUN
 )brace
 comma
 multiline_comment|/* Locks up if probed for lun != 0 */
@@ -376,6 +397,8 @@ comma
 l_string|&quot;DK312C&quot;
 comma
 l_string|&quot;CM81&quot;
+comma
+id|BLIST_NOLUN
 )brace
 comma
 multiline_comment|/* Responds to all lun - dtg */
@@ -385,6 +408,8 @@ comma
 l_string|&quot;DK314C&quot;
 comma
 l_string|&quot;CR21&quot;
+comma
+id|BLIST_NOLUN
 )brace
 comma
 multiline_comment|/* responds to all lun */
@@ -394,6 +419,8 @@ comma
 l_string|&quot;CDD521/10&quot;
 comma
 l_string|&quot;2.06&quot;
+comma
+id|BLIST_NOLUN
 )brace
 comma
 multiline_comment|/* Locks-up when LUN&gt;0 polled. */
@@ -403,6 +430,8 @@ comma
 l_string|&quot;XT-3280&quot;
 comma
 l_string|&quot;PR02&quot;
+comma
+id|BLIST_NOLUN
 )brace
 comma
 multiline_comment|/* Locks-up when LUN&gt;0 polled. */
@@ -412,6 +441,8 @@ comma
 l_string|&quot;XT-4380S&quot;
 comma
 l_string|&quot;B3C&quot;
+comma
+id|BLIST_NOLUN
 )brace
 comma
 multiline_comment|/* Locks-up when LUN&gt;0 polled. */
@@ -421,6 +452,8 @@ comma
 l_string|&quot;MXT-1240S&quot;
 comma
 l_string|&quot;I1.2&quot;
+comma
+id|BLIST_NOLUN
 )brace
 comma
 multiline_comment|/* Locks up when LUN&gt;0 polled */
@@ -430,6 +463,8 @@ comma
 l_string|&quot;XT-4170S&quot;
 comma
 l_string|&quot;B5A&quot;
+comma
+id|BLIST_NOLUN
 )brace
 comma
 multiline_comment|/* Locks-up sometimes when LUN&gt;0 polled. */
@@ -439,6 +474,8 @@ comma
 l_string|&quot;XT-8760S&quot;
 comma
 l_string|&quot;B7B&quot;
+comma
+id|BLIST_NOLUN
 )brace
 comma
 multiline_comment|/* guess what? */
@@ -448,6 +485,8 @@ comma
 l_string|&quot;CD-ROM DRIVE:841&quot;
 comma
 l_string|&quot;1.0&quot;
+comma
+id|BLIST_NOLUN
 )brace
 comma
 multiline_comment|/* Locks-up when LUN&gt;0 polled. */
@@ -457,6 +496,8 @@ comma
 l_string|&quot;RO3000S&quot;
 comma
 l_string|&quot;2.33&quot;
+comma
+id|BLIST_NOLUN
 )brace
 comma
 multiline_comment|/* Locks up if polled for lun != 0 */
@@ -466,15 +507,19 @@ comma
 l_string|&quot;ST157N&quot;
 comma
 l_string|&quot;&bslash;004|j&quot;
+comma
+id|BLIST_NOLUN
 )brace
 comma
-multiline_comment|/* causes failed REQUEST SENSE on lun 1 &n;&t;&t;&t;&t;    * for aha152x controller, which causes &n;&t;&t;&t;&t;    * SCSI code to reset bus.*/
+multiline_comment|/* causes failed REQUEST SENSE on lun 1 &n;                                                 * for aha152x controller, which causes &n;                                                 * SCSI code to reset bus.*/
 (brace
 l_string|&quot;SEAGATE&quot;
 comma
 l_string|&quot;ST296&quot;
 comma
 l_string|&quot;921&quot;
+comma
+id|BLIST_NOLUN
 )brace
 comma
 multiline_comment|/* Responds to all lun */
@@ -484,6 +529,8 @@ comma
 l_string|&quot;CD-ROM CDU-541&quot;
 comma
 l_string|&quot;4.3d&quot;
+comma
+id|BLIST_NOLUN
 )brace
 comma
 (brace
@@ -492,6 +539,18 @@ comma
 l_string|&quot;CD-ROM CDU-55S&quot;
 comma
 l_string|&quot;1.0i&quot;
+comma
+id|BLIST_NOLUN
+)brace
+comma
+(brace
+l_string|&quot;SONY&quot;
+comma
+l_string|&quot;CD-ROM CDU-561&quot;
+comma
+l_string|&quot;1.7x&quot;
+comma
+id|BLIST_NOLUN
 )brace
 comma
 (brace
@@ -500,6 +559,8 @@ comma
 l_string|&quot;TDC 3600&quot;
 comma
 l_string|&quot;U07&quot;
+comma
+id|BLIST_NOLUN
 )brace
 comma
 multiline_comment|/* Locks up if polled for lun != 0 */
@@ -509,24 +570,30 @@ comma
 l_string|&quot;CD-ROM&quot;
 comma
 l_string|&quot;1.06&quot;
+comma
+id|BLIST_NOLUN
 )brace
 comma
-multiline_comment|/* causes failed REQUEST SENSE on lun 1 &n;&t;&t;&t;&t;    * for seagate controller, which causes &n;&t;&t;&t;&t;    * SCSI code to reset bus.*/
+multiline_comment|/* causes failed REQUEST SENSE on lun 1 &n;                                                 * for seagate controller, which causes &n;                                                 * SCSI code to reset bus.*/
 (brace
 l_string|&quot;TEXEL&quot;
 comma
 l_string|&quot;CD-ROM&quot;
 comma
 l_string|&quot;1.06&quot;
+comma
+id|BLIST_NOLUN
 )brace
 comma
-multiline_comment|/* causes failed REQUEST SENSE on lun 1 &n;&t;&t;&t;&t;    * for seagate controller, which causes &n;&t;&t;&t;&t;    * SCSI code to reset bus.*/
+multiline_comment|/* causes failed REQUEST SENSE on lun 1 &n;                                                 * for seagate controller, which causes &n;                                                 * SCSI code to reset bus.*/
 (brace
 l_string|&quot;QUANTUM&quot;
 comma
 l_string|&quot;LPS525S&quot;
 comma
 l_string|&quot;3110&quot;
+comma
+id|BLIST_NOLUN
 )brace
 comma
 multiline_comment|/* Locks sometimes if polled for lun != 0 */
@@ -536,6 +603,8 @@ comma
 l_string|&quot;PD1225S&quot;
 comma
 l_string|&quot;3110&quot;
+comma
+id|BLIST_NOLUN
 )brace
 comma
 multiline_comment|/* Locks sometimes if polled for lun != 0 */
@@ -545,6 +614,8 @@ comma
 l_string|&quot;CDR-H93MV&quot;
 comma
 l_string|&quot;1.31&quot;
+comma
+id|BLIST_NOLUN
 )brace
 comma
 multiline_comment|/* Locks up if polled for lun != 0 */
@@ -554,6 +625,8 @@ comma
 l_string|&quot;CP525&quot;
 comma
 l_string|&quot;6.64&quot;
+comma
+id|BLIST_NOLUN
 )brace
 comma
 multiline_comment|/* causes failed REQ SENSE, extra reset */
@@ -563,6 +636,8 @@ comma
 l_string|&quot;C1750A&quot;
 comma
 l_string|&quot;3226&quot;
+comma
+id|BLIST_NOLUN
 )brace
 comma
 multiline_comment|/* scanjet iic */
@@ -572,6 +647,8 @@ comma
 l_string|&quot;C1790A&quot;
 comma
 l_string|&quot;&quot;
+comma
+id|BLIST_NOLUN
 )brace
 comma
 multiline_comment|/* scanjet iip */
@@ -581,9 +658,77 @@ comma
 l_string|&quot;C2500A&quot;
 comma
 l_string|&quot;&quot;
+comma
+id|BLIST_NOLUN
 )brace
 comma
 multiline_comment|/* scanjet iicx */
+multiline_comment|/*&n; * Other types of devices that have special flags.&n; */
+(brace
+l_string|&quot;SONY&quot;
+comma
+l_string|&quot;CD-ROM CDU-8001&quot;
+comma
+l_string|&quot;*&quot;
+comma
+id|BLIST_BORKEN
+)brace
+comma
+(brace
+l_string|&quot;TEXEL&quot;
+comma
+l_string|&quot;CD-ROM&quot;
+comma
+l_string|&quot;1.06&quot;
+comma
+id|BLIST_BORKEN
+)brace
+comma
+(brace
+l_string|&quot;INSITE&quot;
+comma
+l_string|&quot;Floptical   F*8I&quot;
+comma
+l_string|&quot;*&quot;
+comma
+id|BLIST_KEY
+)brace
+comma
+(brace
+l_string|&quot;INSITE&quot;
+comma
+l_string|&quot;I325VM&quot;
+comma
+l_string|&quot;*&quot;
+comma
+id|BLIST_KEY
+)brace
+comma
+(brace
+l_string|&quot;PIONEER&quot;
+comma
+l_string|&quot;CD-ROMDRM-602X&quot;
+comma
+l_string|&quot;*&quot;
+comma
+id|BLIST_FORCELUN
+op_or
+id|BLIST_SINGLELUN
+)brace
+comma
+(brace
+l_string|&quot;PIONEER&quot;
+comma
+l_string|&quot;CD-ROMDRM-604X&quot;
+comma
+l_string|&quot;*&quot;
+comma
+id|BLIST_FORCELUN
+op_or
+id|BLIST_SINGLELUN
+)brace
+comma
+multiline_comment|/*&n; * Must be at end of list...&n; */
 (brace
 l_int|NULL
 comma
@@ -593,11 +738,11 @@ l_int|NULL
 )brace
 )brace
 suffix:semicolon
-DECL|function|blacklisted
+DECL|function|get_device_flags
 r_static
 r_int
 (def_block
-id|blacklisted
+id|get_device_flags
 c_func
 (paren
 r_int
@@ -632,7 +777,7 @@ op_increment
 r_if
 c_cond
 (paren
-id|blacklist
+id|device_list
 (braket
 id|i
 )braket
@@ -676,7 +821,7 @@ c_cond
 id|memcmp
 c_func
 (paren
-id|blacklist
+id|device_list
 (braket
 id|i
 )braket
@@ -688,7 +833,7 @@ comma
 id|strlen
 c_func
 (paren
-id|blacklist
+id|device_list
 (braket
 id|i
 )braket
@@ -731,7 +876,7 @@ c_cond
 id|memcmp
 c_func
 (paren
-id|blacklist
+id|device_list
 (braket
 id|i
 )braket
@@ -743,7 +888,7 @@ comma
 id|strlen
 c_func
 (paren
-id|blacklist
+id|device_list
 (braket
 id|i
 )braket
@@ -757,9 +902,17 @@ r_continue
 suffix:semicolon
 )brace
 r_return
-l_int|1
+id|device_list
+(braket
+id|i
+)braket
+dot
+id|flags
 suffix:semicolon
 )brace
+r_return
+l_int|0
+suffix:semicolon
 )brace
 )def_block
 multiline_comment|/*&n; *  As the actual SCSI command runs in the background, we must set up a&n; *  flag that tells scan_scsis() when the result it has is valid.&n; *  scan_scsis can set the_result to -1, and watch for it to become the&n; *  actual return code for that call.  the scan_scsis_done function() is&n; *  our user specified completion function that is passed on to the&n; *  scsi_do_cmd() function.&n; */
@@ -1061,7 +1214,7 @@ l_int|1
 )braket
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *  Detecting SCSI devices :&n; *  We scan all present host adapter&squot;s busses,  from ID 0 to ID 6.&n; *  We use the INQUIRY command, determine device type, and pass the ID /&n; *  lun address of all sequential devices to the tape driver, all random&n; *  devices to the disk driver.&n; */
+multiline_comment|/*&n; *  Detecting SCSI devices :&n; *  We scan all present host adapter&squot;s busses,  from ID 0 to ID (max_id).&n; *  We use the INQUIRY command, determine device type, and pass the ID /&n; *  lun address of all sequential devices to the tape driver, all random&n; *  devices to the disk driver.&n; */
 DECL|function|scan_scsis
 r_void
 id|scan_scsis
@@ -1123,6 +1276,14 @@ r_struct
 id|Scsi_Device_Template
 op_star
 id|sdtpnt
+suffix:semicolon
+r_int
+id|bflags
+suffix:semicolon
+r_int
+id|max_dev_lun
+op_assign
+l_int|0
 suffix:semicolon
 id|Scsi_Cmnd
 op_star
@@ -1269,6 +1430,7 @@ suffix:semicolon
 r_goto
 id|crude
 suffix:semicolon
+multiline_comment|/* Anyone remember good ol&squot; BASIC ?  :-) */
 )brace
 r_for
 c_loop
@@ -1308,16 +1470,9 @@ op_ne
 id|dev
 )paren
 (brace
-multiline_comment|/*&n;&t;&t; * We need the for so our continue, etc. work fine.&n;&t;&t; */
-r_for
-c_loop
-(paren
-id|lun
+multiline_comment|/*&n;&t;&t; * We need the for so our continue, etc. work fine.&n;                 * We put this in a variable so that we can override&n;                 * it during the scan if we detect a device *KNOWN*&n;                 * to have multiple logical units.&n;&t;&t; */
+id|max_dev_lun
 op_assign
-l_int|0
-suffix:semicolon
-id|lun
-OL
 (paren
 id|max_scsi_luns
 OL
@@ -1328,6 +1483,17 @@ id|max_scsi_luns
 suffix:colon
 id|shpnt-&gt;max_lun
 )paren
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|lun
+op_assign
+l_int|0
+suffix:semicolon
+id|lun
+OL
+id|max_dev_lun
 suffix:semicolon
 op_increment
 id|lun
@@ -2081,6 +2247,10 @@ id|SDpnt-&gt;busy
 op_assign
 l_int|0
 suffix:semicolon
+id|SDpnt-&gt;has_cmdblocks
+op_assign
+l_int|0
+suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t; * Currently, all sequential devices are assumed to be&n;&t;&t;&t; * tapes, all random devices disk, with the appropriate&n;&t;&t;&t; * read only flags set for ROM / WORM treated as RO.&n;&t;&t;&t; */
 r_switch
 c_cond
@@ -2156,6 +2326,10 @@ l_int|1
 suffix:semicolon
 macro_line|#endif
 )brace
+id|SDpnt-&gt;single_lun
+op_assign
+l_int|0
+suffix:semicolon
 id|SDpnt-&gt;soft_reset
 op_assign
 (paren
@@ -2320,115 +2494,26 @@ id|SDpnt-&gt;disconnect
 op_assign
 l_int|0
 suffix:semicolon
+multiline_comment|/*&n;                             * Get any flags for this device.&n;                             */
+id|bflags
+op_assign
+id|get_device_flags
+c_func
+(paren
+id|scsi_result
+)paren
+suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t;     * Some revisions of the Texel CD ROM drives have &n;&t;&t;&t;     * handshaking problems when used with the Seagate&n;&t;&t;&t;     * controllers.  Before we know what type of device&n;&t;&t;&t;     * we&squot;re talking to, we assume it&squot;s borken and then&n;&t;&t;&t;     * change it here if it turns out that it isn&squot;t&n;&t;&t;&t;     * a TEXEL drive.&n;&t;&t;&t;     */
 r_if
 c_cond
 (paren
 (paren
-id|strncmp
-c_func
-(paren
-l_string|&quot;SONY&quot;
-comma
-(paren
-r_char
-op_star
-)paren
+id|bflags
 op_amp
-id|scsi_result
-(braket
-l_int|8
-)braket
-comma
-l_int|4
+id|BLIST_BORKEN
 )paren
-op_ne
+op_eq
 l_int|0
-op_logical_or
-id|strncmp
-c_func
-(paren
-l_string|&quot;CD-ROM CDU-8001&quot;
-comma
-(paren
-r_char
-op_star
-)paren
-op_amp
-id|scsi_result
-(braket
-l_int|16
-)braket
-comma
-l_int|15
-)paren
-op_ne
-l_int|0
-)paren
-op_logical_and
-(paren
-id|strncmp
-c_func
-(paren
-l_string|&quot;TEXEL&quot;
-comma
-(paren
-r_char
-op_star
-)paren
-op_amp
-id|scsi_result
-(braket
-l_int|8
-)braket
-comma
-l_int|5
-)paren
-op_ne
-l_int|0
-op_logical_or
-id|strncmp
-c_func
-(paren
-l_string|&quot;CD-ROM&quot;
-comma
-(paren
-r_char
-op_star
-)paren
-op_amp
-id|scsi_result
-(braket
-l_int|16
-)braket
-comma
-l_int|6
-)paren
-op_ne
-l_int|0
-multiline_comment|/*&n;&t;&t;&t;&t; * XXX 1.06 has problems, some one should &n;&t;&t;&t;&t; * figure out the others too so ALL TEXEL &n;&t;&t;&t;&t; * drives don&squot;t suffer in performance, &n;&t;&t;&t;&t; * especially when I finish integrating my &n;&t;&t;&t;&t; * seagate patches which do multiple I_T_L &n;&t;&t;&t;&t; * nexuses.&n;&t;&t;&t;&t; */
-macro_line|#ifdef notyet
-op_logical_or
-(paren
-id|strncmp
-c_func
-(paren
-l_string|&quot;1.06&quot;
-comma
-(paren
-r_char
-op_star
-)paren
-op_amp
-id|scsi_result
-comma
-l_int|4
-)paren
-op_ne
-l_int|0
-)paren
-macro_line|#endif
-)paren
 )paren
 (brace
 id|SDpnt-&gt;borken
@@ -2440,55 +2525,13 @@ multiline_comment|/* These devices need this &quot;key&quot; to unlock the&n;&t;
 r_if
 c_cond
 (paren
-id|memcmp
-c_func
 (paren
-l_string|&quot;INSITE&quot;
-comma
+id|bflags
 op_amp
-id|scsi_result
-(braket
-l_int|8
-)braket
-comma
-l_int|6
+id|BLIST_KEY
 )paren
-op_eq
+op_ne
 l_int|0
-op_logical_and
-(paren
-id|memcmp
-c_func
-(paren
-l_string|&quot;Floptical   F*8I&quot;
-comma
-op_amp
-id|scsi_result
-(braket
-l_int|16
-)braket
-comma
-l_int|16
-)paren
-op_eq
-l_int|0
-op_logical_or
-id|memcmp
-c_func
-(paren
-l_string|&quot;I325VM&quot;
-comma
-op_amp
-id|scsi_result
-(braket
-l_int|16
-)braket
-comma
-l_int|6
-)paren
-op_eq
-l_int|0
-)paren
 )paren
 (brace
 id|printk
@@ -2682,14 +2725,41 @@ multiline_comment|/* Some scsi devices cannot be polled for lun != 0&n;&t;&t;&t;
 r_if
 c_cond
 (paren
-id|blacklisted
-c_func
-(paren
-id|scsi_result
-)paren
+id|bflags
+op_amp
+id|BLIST_NOLUN
 )paren
 (brace
 r_break
+suffix:semicolon
+)brace
+multiline_comment|/*&n;                             * If we want to only allow I/O to one of the luns&n;                             * attached to this device at a time, then we set this&n;                             * flag.&n;                             */
+r_if
+c_cond
+(paren
+id|bflags
+op_amp
+id|BLIST_SINGLELUN
+)paren
+(brace
+id|SDpnt-&gt;single_lun
+op_assign
+l_int|1
+suffix:semicolon
+)brace
+multiline_comment|/*&n;                             * If this device is known to support multiple units, override&n;                             * the other settings, and scan all of them.&n;                             */
+r_if
+c_cond
+(paren
+id|bflags
+op_amp
+id|BLIST_FORCELUN
+)paren
+(brace
+multiline_comment|/*&n;                                 * We probably want to make this a variable, but this&n;                                 * will do for now.&n;                                 */
+id|max_dev_lun
+op_assign
+l_int|8
 suffix:semicolon
 )brace
 multiline_comment|/* Old drives like the MAXTOR XT-3280 say vers=0 */
@@ -2742,6 +2812,7 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/* if result == DID_OK ends */
+multiline_comment|/*&n;                     * This might screw us up with multi-lun devices, but the user can&n;                     * scan for them too.&n;                     */
 r_if
 c_cond
 (paren
@@ -2994,6 +3065,12 @@ suffix:semicolon
 r_int
 id|tablesize
 suffix:semicolon
+id|Scsi_Cmnd
+op_star
+id|found
+op_assign
+l_int|NULL
+suffix:semicolon
 r_struct
 id|buffer_head
 op_star
@@ -3032,6 +3109,18 @@ id|SCpnt
 op_assign
 id|device-&gt;host-&gt;host_queue
 suffix:semicolon
+multiline_comment|/*&n;     * Look for a free command block.  If we have been instructed not to queue&n;     * multiple commands to multi-lun devices, then check to see what else is going on&n;     * for this device first.&n;     */
+id|SCpnt
+op_assign
+id|device-&gt;host-&gt;host_queue
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|device-&gt;single_lun
+)paren
+(brace
 r_while
 c_loop
 (paren
@@ -3048,11 +3137,8 @@ op_logical_and
 id|SCpnt-&gt;lun
 op_eq
 id|device-&gt;lun
-op_logical_and
-id|SCpnt-&gt;channel
-op_eq
-id|device-&gt;channel
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -3064,9 +3150,77 @@ l_int|0
 r_break
 suffix:semicolon
 )brace
+)brace
 id|SCpnt
 op_assign
 id|SCpnt-&gt;next
+suffix:semicolon
+)brace
+)brace
+r_else
+(brace
+r_while
+c_loop
+(paren
+id|SCpnt
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|SCpnt-&gt;target
+op_eq
+id|device-&gt;id
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|SCpnt-&gt;lun
+op_eq
+id|device-&gt;lun
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|found
+op_eq
+l_int|NULL
+op_logical_and
+id|SCpnt-&gt;request.dev
+OL
+l_int|0
+)paren
+(brace
+id|found
+op_assign
+id|SCpnt
+suffix:semicolon
+)brace
+)brace
+r_if
+c_cond
+(paren
+id|SCpnt-&gt;request.dev
+op_ge
+l_int|0
+)paren
+(brace
+multiline_comment|/*&n;                     * I think that we should really limit things to one&n;                     * outstanding command per device - this is what tends to trip&n;                     * up buggy firmware.&n;                     */
+r_return
+l_int|NULL
+suffix:semicolon
+)brace
+)brace
+id|SCpnt
+op_assign
+id|SCpnt-&gt;next
+suffix:semicolon
+)brace
+id|SCpnt
+op_assign
+id|found
 suffix:semicolon
 )brace
 r_if
@@ -3292,7 +3446,6 @@ id|SCpnt-&gt;cmd_len
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#if 1
 multiline_comment|/* Since not everyone seems to set the device info correctly&n; * before Scsi_Cmnd gets send out to scsi_do_command, we do it here.&n; */
 id|SCpnt-&gt;channel
 op_assign
@@ -3306,7 +3459,6 @@ id|SCpnt-&gt;target
 op_assign
 id|device-&gt;id
 suffix:semicolon
-macro_line|#endif
 r_return
 id|SCpnt
 suffix:semicolon
@@ -3376,6 +3528,12 @@ id|SCwait
 op_assign
 l_int|NULL
 suffix:semicolon
+id|Scsi_Cmnd
+op_star
+id|found
+op_assign
+l_int|NULL
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -3442,8 +3600,15 @@ l_int|1
 (brace
 id|SCpnt
 op_assign
-id|host-&gt;host_queue
+id|device-&gt;host-&gt;host_queue
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|device-&gt;single_lun
+)paren
+(brace
 r_while
 c_loop
 (paren
@@ -3460,16 +3625,8 @@ op_logical_and
 id|SCpnt-&gt;lun
 op_eq
 id|device-&gt;lun
-op_logical_and
-id|SCpnt-&gt;channel
-op_eq
-id|device-&gt;channel
 )paren
 (brace
-id|SCwait
-op_assign
-id|SCpnt
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -3485,6 +3642,76 @@ suffix:semicolon
 id|SCpnt
 op_assign
 id|SCpnt-&gt;next
+suffix:semicolon
+)brace
+)brace
+r_else
+(brace
+r_while
+c_loop
+(paren
+id|SCpnt
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|SCpnt-&gt;target
+op_eq
+id|device-&gt;id
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|SCpnt-&gt;lun
+op_eq
+id|device-&gt;lun
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|found
+op_eq
+l_int|NULL
+op_logical_and
+id|SCpnt-&gt;request.dev
+OL
+l_int|0
+)paren
+(brace
+id|found
+op_assign
+id|SCpnt
+suffix:semicolon
+)brace
+)brace
+r_if
+c_cond
+(paren
+id|SCpnt-&gt;request.dev
+op_ge
+l_int|0
+)paren
+(brace
+multiline_comment|/*&n;                         * I think that we should really limit things to one&n;                         * outstanding command per device - this is what tends to trip&n;                         * up buggy firmware.&n;                         */
+id|found
+op_assign
+l_int|NULL
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
+)brace
+id|SCpnt
+op_assign
+id|SCpnt-&gt;next
+suffix:semicolon
+)brace
+id|SCpnt
+op_assign
+id|found
 suffix:semicolon
 )brace
 id|save_flags
@@ -3820,8 +4047,7 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* Do not flag underflow conditions */
-macro_line|#if 1
-multiline_comment|/* Since not everyone seems to set the device info correctly&n; * before Scsi_Cmnd gets send out to scsi_do_command, we do it here.&n; */
+multiline_comment|/* Since not everyone seems to set the device info correctly&n;     * before Scsi_Cmnd gets send out to scsi_do_command, we do it here.&n;     */
 id|SCpnt-&gt;channel
 op_assign
 id|device-&gt;channel
@@ -3834,7 +4060,6 @@ id|SCpnt-&gt;target
 op_assign
 id|device-&gt;id
 suffix:semicolon
-macro_line|#endif
 r_return
 id|SCpnt
 suffix:semicolon
@@ -8062,6 +8287,10 @@ op_assign
 id|SCpnt
 suffix:semicolon
 )brace
+id|SDpnt-&gt;has_cmdblocks
+op_assign
+l_int|1
+suffix:semicolon
 )brace
 multiline_comment|/*&n; * scsi_dev_init() is our initialization routine, which in turn calls host&n; * initialization, bus scanning, and sd/st initialization routines.  It&n; * should be called from main().&n; */
 DECL|function|scsi_dev_init
@@ -10303,6 +10532,10 @@ id|SCpnt-&gt;prev
 op_assign
 l_int|NULL
 suffix:semicolon
+id|sdpnt-&gt;has_cmdblocks
+op_assign
+l_int|0
+suffix:semicolon
 )brace
 multiline_comment|/* Next free up the Scsi_Device structures for this host */
 id|sdppnt
@@ -10630,9 +10863,6 @@ id|Scsi_Device
 op_star
 id|SDpnt
 suffix:semicolon
-r_int
-id|previous_attachment
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -10678,7 +10908,7 @@ id|SDpnt
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n;     * If any of the devices would match this driver, then perform the&n;     * init function.  +&n;     */
+multiline_comment|/*&n;     * If any of the devices would match this driver, then perform the&n;     * init function.&n;     */
 r_if
 c_cond
 (paren
@@ -10710,10 +10940,6 @@ op_assign
 id|SDpnt-&gt;next
 )paren
 (brace
-id|previous_attachment
-op_assign
-id|SDpnt-&gt;attached
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -10735,7 +10961,7 @@ c_cond
 (paren
 id|SDpnt-&gt;attached
 op_logical_and
-id|previous_attachment
+id|SDpnt-&gt;has_cmdblocks
 op_eq
 l_int|0
 )paren
@@ -10933,6 +11159,10 @@ id|SCpnt
 suffix:semicolon
 )brace
 )brace
+id|SDpnt-&gt;has_cmdblocks
+op_assign
+l_int|0
+suffix:semicolon
 )brace
 )brace
 multiline_comment|/*&n;     * Extract the template from the linked list.&n;     */

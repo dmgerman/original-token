@@ -2,12 +2,12 @@ macro_line|#ifndef SOUNDCARD_H
 DECL|macro|SOUNDCARD_H
 mdefine_line|#define SOUNDCARD_H
 multiline_comment|/*&n; * Copyright by Hannu Savolainen 1993&n; *&n; * Redistribution and use in source and binary forms, with or without&n; * modification, are permitted provided that the following conditions&n; * are met:&n; * 1. Redistributions of source code must retain the above copyright&n; *    notice, this list of conditions and the following disclaimer.&n; * 2. Redistributions in binary form must reproduce the above copyright&n; *    notice, this list of conditions and the following disclaimer in the&n; *    documentation and/or other materials provided with the distribution.&n; *&n; * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS&squot;&squot; AND&n; * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE&n; * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE&n; * ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE&n; * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL&n; * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS&n; * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)&n; * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT&n; * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY&n; * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF&n; * SUCH DAMAGE.&n; *&n; * &n; */
-multiline_comment|/* &n;  * If you make modifications to this file, please contact me before&n;  * distributing the modified version. There is already enough &n;  * diversity in the world.&n;  *&n;  * Regards,&n;  * Hannu Savolainen&n;  * hannu@voxware.pp.fi&n;  */
+multiline_comment|/* &n;  * If you make modifications to this file, please contact me before&n;  * distributing the modified version. There is already enough &n;  * diversity in the world.&n;  *&n;  * Regards,&n;  * Hannu Savolainen&n;  * hannu@voxware.pp.fi&n;  *&n;  **********************************************************************&n;  * PS.&t;The Hacker&squot;s Guide to VoxWare available from &n;  *     nic.funet.fi:pub/OS/Linux/ALPHA/sound. The file is&n;  *&t;snd-sdk-doc-0.1.ps.gz (gzipped postscript). It contains&n;  *&t;some useful information about programming with VoxWare.&n;  *&t;(NOTE! The pub/OS/Linux/ALPHA/ directories are hidden. You have&n;  *&t;to cd inside them before the files are accessible.)&n;  **********************************************************************&n;  */
 DECL|macro|SOUND_VERSION
-mdefine_line|#define SOUND_VERSION&t;300
+mdefine_line|#define SOUND_VERSION&t;301
 DECL|macro|VOXWARE
 mdefine_line|#define VOXWARE
-macro_line|#include &lt;linux/ioctl.h&gt;
+macro_line|#include &lt;sys/ioctl.h&gt;
 multiline_comment|/*&n; *&t;Supported card ID numbers (Should be somewhere else?)&n; */
 DECL|macro|SNDCARD_ADLIB
 mdefine_line|#define SNDCARD_ADLIB&t;&t;1
@@ -33,6 +33,22 @@ DECL|macro|SNDCARD_PSS
 mdefine_line|#define SNDCARD_PSS     &t;11
 DECL|macro|SNDCARD_SSCAPE
 mdefine_line|#define SNDCARD_SSCAPE&t;&t;12
+DECL|macro|SNDCARD_PSS_MPU
+mdefine_line|#define SNDCARD_PSS_MPU     &t;13
+DECL|macro|SNDCARD_PSS_MSS
+mdefine_line|#define SNDCARD_PSS_MSS     &t;14
+DECL|macro|SNDCARD_SSCAPE_MSS
+mdefine_line|#define SNDCARD_SSCAPE_MSS&t;15
+DECL|macro|SNDCARD_TRXPRO
+mdefine_line|#define SNDCARD_TRXPRO&t;&t;16
+DECL|macro|SNDCARD_TRXPRO_SB
+mdefine_line|#define SNDCARD_TRXPRO_SB&t;17
+DECL|macro|SNDCARD_TRXPRO_MPU
+mdefine_line|#define SNDCARD_TRXPRO_MPU&t;18
+DECL|macro|SNDCARD_MAD16
+mdefine_line|#define SNDCARD_MAD16&t;&t;19
+DECL|macro|SNDCARD_MAD16_MPU
+mdefine_line|#define SNDCARD_MAD16_MPU&t;20
 multiline_comment|/***********************************&n; * IOCTL Commands for /dev/sequencer&n; */
 macro_line|#ifndef _IOWR
 multiline_comment|/*&t;@(#)ioctlp.h */
@@ -85,8 +101,8 @@ DECL|macro|SNDCTL_SEQ_NRMIDIS
 mdefine_line|#define SNDCTL_SEQ_NRMIDIS&t;&t;_IOR (&squot;Q&squot;,11, int)
 DECL|macro|SNDCTL_MIDI_INFO
 mdefine_line|#define SNDCTL_MIDI_INFO&t;&t;_IOWR(&squot;Q&squot;,12, struct midi_info)
-DECL|macro|SNDCTL_SEQ_TRESHOLD
-mdefine_line|#define SNDCTL_SEQ_TRESHOLD&t;&t;_IOW (&squot;Q&squot;,13, int)
+DECL|macro|SNDCTL_SEQ_THRESHOLD
+mdefine_line|#define SNDCTL_SEQ_THRESHOLD&t;&t;_IOW (&squot;Q&squot;,13, int)
 DECL|macro|SNDCTL_SYNTH_MEMAVL
 mdefine_line|#define SNDCTL_SYNTH_MEMAVL&t;&t;_IOWR(&squot;Q&squot;,14, int)&t;/* in=dev#, out=memsize */
 DECL|macro|SNDCTL_FM_4OP_ENABLE
@@ -95,6 +111,22 @@ DECL|macro|SNDCTL_PMGR_ACCESS
 mdefine_line|#define SNDCTL_PMGR_ACCESS&t;&t;_IOWR(&squot;Q&squot;,16, struct patmgr_info)
 DECL|macro|SNDCTL_SEQ_PANIC
 mdefine_line|#define SNDCTL_SEQ_PANIC&t;&t;_IO  (&squot;Q&squot;,17)
+DECL|macro|SNDCTL_SEQ_OUTOFBAND
+mdefine_line|#define SNDCTL_SEQ_OUTOFBAND&t;&t;_IOW (&squot;Q&squot;,18, struct seq_event_rec)
+DECL|struct|seq_event_rec
+r_struct
+id|seq_event_rec
+(brace
+DECL|member|arr
+r_int
+r_char
+id|arr
+(braket
+l_int|8
+)braket
+suffix:semicolon
+)brace
+suffix:semicolon
 DECL|macro|SNDCTL_TMR_TIMEBASE
 mdefine_line|#define SNDCTL_TMR_TIMEBASE&t;&t;_IOWR(&squot;T&squot;, 1, int)
 DECL|macro|SNDCTL_TMR_START
@@ -123,7 +155,7 @@ DECL|macro|SNDCTL_TMR_METRONOME
 mdefine_line|#define SNDCTL_TMR_METRONOME&t;&t;_IOW (&squot;T&squot;, 7, int)
 DECL|macro|SNDCTL_TMR_SELECT
 mdefine_line|#define SNDCTL_TMR_SELECT&t;&t;_IOW (&squot;T&squot;, 8, int)
-multiline_comment|/*&n; *&t;Sample loading mechanism for internal synthesizers (/dev/sequencer)&n; *&t;The following patch_info structure has been designed to support&n; *&t;Gravis UltraSound. It tries to be universal format for uploading&n; *&t;sample based patches but is probably too limited.&n; */
+multiline_comment|/*&n; *&t;Sample loading mechanism for internal synthesizers (/dev/sequencer)&n; *&t;The following patch_info structure has been designed to support&n; *&t;Gravis UltraSound. It tries to be universal format for uploading&n; *&t;sample based patches but is propably too limited.&n; */
 DECL|struct|patch_info
 r_struct
 id|patch_info
@@ -312,6 +344,8 @@ suffix:semicolon
 multiline_comment|/* Use GUS_PATCH here */
 DECL|macro|SYSEX_PATCH
 mdefine_line|#define SYSEX_PATCH&t;0x05fd
+DECL|macro|MAUI_PATCH
+mdefine_line|#define MAUI_PATCH&t;0x06fd&t;&t;/* For future use */
 DECL|member|device_no
 r_int
 id|device_no
@@ -486,7 +520,7 @@ DECL|macro|SEQ_AFTERTOUCH
 mdefine_line|#define SEQ_AFTERTOUCH&t;&t;9
 DECL|macro|SEQ_CONTROLLER
 mdefine_line|#define SEQ_CONTROLLER&t;&t;10
-multiline_comment|/*******************************************&n; *&t;Midi controller numbers&n; *******************************************&n; * Controllers 0 to 31 (0x00 to 0x1f) and&n; * 32 to 63 (0x20 to 0x3f) are continuous&n; * controllers.&n; * In the MIDI 1.0 these controllers are sent using&n; * two messages. Controller numbers 0 to 31 are used&n; * to send the LSB and the controller numbers 32 to 63&n; * are for the LSB.&n; *&n; * This driver uses just the numbers 0 to 31 to store both&n; * the LSB and MSB. The controller value is a unsigned short&n; * and its valid range is between 0 and 16383 (0x0000 to 0x3fff).&n; * The driver sends the controller value using two messages when&n; * necessary.&n; */
+multiline_comment|/*******************************************&n; *&t;Midi controller numbers&n; *******************************************&n; * Controllers 0 to 31 (0x00 to 0x1f) and&n; * 32 to 63 (0x20 to 0x3f) are continuous&n; * controllers.&n; * In the MIDI 1.0 these controllers are sent using&n; * two messages. Controller numbers 0 to 31 are used&n; * to send the MSB and the controller numbers 32 to 63&n; * are for the LSB. Note that just 7 bits are used in MIDI bytes.&n; */
 DECL|macro|CTL_BANK_SELECT
 mdefine_line|#define&t;   CTL_BANK_SELECT&t;&t;0x00
 DECL|macro|CTL_MODWHEEL
@@ -860,6 +894,40 @@ DECL|macro|AFMT_U16_LE
 macro_line|#&t;define AFMT_U16_LE&t;&t;0x00000080&t;/* Little endian U16 */
 DECL|macro|AFMT_U16_BE
 macro_line|#&t;define AFMT_U16_BE&t;&t;0x00000100&t;/* Big endian U16 */
+DECL|macro|AFMT_MPEG
+macro_line|#&t;define AFMT_MPEG&t;&t;0x00000200&t;/* MPEG (2) audio */
+multiline_comment|/*&n; * Buffer status queries.&n; */
+DECL|struct|audio_buf_info
+r_typedef
+r_struct
+id|audio_buf_info
+(brace
+DECL|member|fragments
+r_int
+id|fragments
+suffix:semicolon
+multiline_comment|/* # of available fragments (partially usend ones not counted) */
+DECL|member|fragsize
+r_int
+id|fragsize
+suffix:semicolon
+multiline_comment|/* Size of a fragment in bytes */
+DECL|member|bytes
+r_int
+id|bytes
+suffix:semicolon
+multiline_comment|/* Available space in bytes (includes partially used fragments) */
+multiline_comment|/* Note! &squot;bytes&squot; could be more than fragments*fragsize */
+DECL|typedef|audio_buf_info
+)brace
+id|audio_buf_info
+suffix:semicolon
+DECL|macro|SNDCTL_DSP_GETOSPACE
+mdefine_line|#define SNDCTL_DSP_GETOSPACE&t;&t;_IOR (&squot;P&squot;,12, audio_buf_info)
+DECL|macro|SNDCTL_DSP_GETISPACE
+mdefine_line|#define SNDCTL_DSP_GETISPACE&t;&t;_IOR (&squot;P&squot;,13, audio_buf_info)
+DECL|macro|SNDCTL_DSP_NONBLOCK
+mdefine_line|#define SNDCTL_DSP_NONBLOCK&t;&t;_IO  (&squot;P&squot;,14)
 DECL|macro|SOUND_PCM_READ_RATE
 mdefine_line|#define SOUND_PCM_READ_RATE&t;&t;_IOR (&squot;P&squot;, 2, int)
 DECL|macro|SOUND_PCM_READ_CHANNELS
@@ -887,39 +955,131 @@ DECL|macro|SOUND_PCM_GETFMTS
 mdefine_line|#define SOUND_PCM_GETFMTS&t;&t;SNDCTL_DSP_GETFMTS
 DECL|macro|SOUND_PCM_SETFMT
 mdefine_line|#define SOUND_PCM_SETFMT&t;&t;SNDCTL_DSP_SETFMT
-multiline_comment|/*********************************************&n; * IOCTL /dev/pss (experimental PSS API by marc.hoffman@analog.com.&n; *&t;&t;likely to change in near future.&n; */
-DECL|macro|SNDCTL_PSS_RESET
-mdefine_line|#define SNDCTL_PSS_RESET             _IO  (&squot;C&squot;,  0)
-DECL|macro|SNDCTL_PSS_SETUP_REGISTERS
-mdefine_line|#define SNDCTL_PSS_SETUP_REGISTERS   _IO  (&squot;C&squot;,  1)
-DECL|macro|SNDCTL_PSS_SPEAKER
-mdefine_line|#define SNDCTL_PSS_SPEAKER           _IOW (&squot;C&squot;,  2, struct pss_speaker)
-DECL|struct|pss_speaker
+DECL|macro|SOUND_PCM_GETOSPACE
+mdefine_line|#define SOUND_PCM_GETOSPACE&t;&t;SNDCTL_DSP_GETOSPACE
+DECL|macro|SOUND_PCM_GETISPACE
+mdefine_line|#define SOUND_PCM_GETISPACE&t;&t;SNDCTL_DSP_GETISPACE
+DECL|macro|SOUND_PCM_NONBLOCK
+mdefine_line|#define SOUND_PCM_NONBLOCK&t;&t;SNDCTL_DSP_NONBLOCK
+multiline_comment|/*&n; * ioctl calls to be used in communication with coprocessors and&n; * DSP chips.&n; */
+DECL|struct|copr_buffer
+r_typedef
 r_struct
-id|pss_speaker
+id|copr_buffer
 (brace
-DECL|member|volume
+DECL|member|command
 r_int
-id|volume
+id|command
 suffix:semicolon
-DECL|member|bass
+multiline_comment|/* Set to 0 if not used */
+DECL|member|flags
 r_int
-id|bass
+id|flags
 suffix:semicolon
-DECL|member|treb
+DECL|macro|CPF_NONE
+mdefine_line|#define CPF_NONE&t;&t;0x0000
+DECL|macro|CPF_FIRST
+mdefine_line|#define CPF_FIRST&t;&t;0x0001&t;/* First block */
+DECL|macro|CPF_LAST
+mdefine_line|#define CPF_LAST&t;&t;0x0002&t;/* Last block */
+DECL|member|len
 r_int
-id|treb
+id|len
 suffix:semicolon
-DECL|member|mode
+DECL|member|offs
 r_int
-id|mode
+id|offs
 suffix:semicolon
+multiline_comment|/* If required by the device (0 if not used) */
+DECL|member|data
+r_int
+r_char
+id|data
+(braket
+l_int|4000
+)braket
+suffix:semicolon
+multiline_comment|/* NOTE! 4000 is not 4k */
+DECL|typedef|copr_buffer
 )brace
+id|copr_buffer
 suffix:semicolon
+DECL|struct|copr_debug_buf
+r_typedef
+r_struct
+id|copr_debug_buf
+(brace
+DECL|member|command
+r_int
+id|command
+suffix:semicolon
+multiline_comment|/* Used internally. Set to 0 */
+DECL|member|parm1
+r_int
+id|parm1
+suffix:semicolon
+DECL|member|parm2
+r_int
+id|parm2
+suffix:semicolon
+DECL|member|flags
+r_int
+id|flags
+suffix:semicolon
+DECL|member|len
+r_int
+id|len
+suffix:semicolon
+multiline_comment|/* Length of data in bytes */
+DECL|typedef|copr_debug_buf
+)brace
+id|copr_debug_buf
+suffix:semicolon
+DECL|struct|copr_msg
+r_typedef
+r_struct
+id|copr_msg
+(brace
+DECL|member|len
+r_int
+id|len
+suffix:semicolon
+DECL|member|data
+r_int
+r_char
+id|data
+(braket
+l_int|4000
+)braket
+suffix:semicolon
+DECL|typedef|copr_msg
+)brace
+id|copr_msg
+suffix:semicolon
+DECL|macro|SNDCTL_COPR_RESET
+mdefine_line|#define SNDCTL_COPR_RESET             _IO  (&squot;C&squot;,  0)
+DECL|macro|SNDCTL_COPR_LOAD
+mdefine_line|#define SNDCTL_COPR_LOAD&t;      _IOWR(&squot;C&squot;,  1, copr_buffer)
+DECL|macro|SNDCTL_COPR_RDATA
+mdefine_line|#define SNDCTL_COPR_RDATA&t;      _IOWR(&squot;C&squot;,  2, copr_debug_buf)
+DECL|macro|SNDCTL_COPR_RCODE
+mdefine_line|#define SNDCTL_COPR_RCODE&t;      _IOWR(&squot;C&squot;,  3, copr_debug_buf)
+DECL|macro|SNDCTL_COPR_WDATA
+mdefine_line|#define SNDCTL_COPR_WDATA&t;      _IOW (&squot;C&squot;,  4, copr_debug_buf)
+DECL|macro|SNDCTL_COPR_WCODE
+mdefine_line|#define SNDCTL_COPR_WCODE&t;      _IOW (&squot;C&squot;,  5, copr_debug_buf)
+DECL|macro|SNDCTL_COPR_RUN
+mdefine_line|#define SNDCTL_COPR_RUN&t;&t;      _IOWR(&squot;C&squot;,  6, copr_debug_buf)
+DECL|macro|SNDCTL_COPR_HALT
+mdefine_line|#define SNDCTL_COPR_HALT&t;      _IOWR(&squot;C&squot;,  7, copr_debug_buf)
+DECL|macro|SNDCTL_COPR_SENDMSG
+mdefine_line|#define SNDCTL_COPR_SENDMSG&t;      _IOW (&squot;C&squot;,  8, copr_msg)
+DECL|macro|SNDCTL_COPR_RCVMSG
+mdefine_line|#define SNDCTL_COPR_RCVMSG&t;      _IOR (&squot;C&squot;,  9, copr_msg)
 multiline_comment|/*********************************************&n; * IOCTL commands for /dev/mixer&n; */
 multiline_comment|/* &n; * Mixer devices&n; *&n; * There can be up to 20 different analog mixer channels. The&n; * SOUND_MIXER_NRDEVICES gives the currently supported maximum. &n; * The SOUND_MIXER_READ_DEVMASK returns a bitmask which tells&n; * the devices supported by the particular mixer.&n; */
 DECL|macro|SOUND_MIXER_NRDEVICES
-mdefine_line|#define SOUND_MIXER_NRDEVICES&t;12
+mdefine_line|#define SOUND_MIXER_NRDEVICES&t;17
 DECL|macro|SOUND_MIXER_VOLUME
 mdefine_line|#define SOUND_MIXER_VOLUME&t;0
 DECL|macro|SOUND_MIXER_BASS
@@ -944,6 +1104,17 @@ DECL|macro|SOUND_MIXER_ALTPCM
 mdefine_line|#define SOUND_MIXER_ALTPCM&t;10
 DECL|macro|SOUND_MIXER_RECLEV
 mdefine_line|#define SOUND_MIXER_RECLEV&t;11&t;/* Recording level */
+DECL|macro|SOUND_MIXER_IGAIN
+mdefine_line|#define SOUND_MIXER_IGAIN&t;12&t;/* Input gain */
+DECL|macro|SOUND_MIXER_OGAIN
+mdefine_line|#define SOUND_MIXER_OGAIN&t;13&t;/* Output gain */
+multiline_comment|/* &n; * The AD1848 codec and compatibles have three line level inputs&n; * (line, aux1 and aux2). Since each card manufacturer have assigned&n; * different meanings to these inputs, it&squot;s inpractical to assign&n; * specific meanings (line, cd, synth etc.) to them.&n; */
+DECL|macro|SOUND_MIXER_LINE1
+mdefine_line|#define SOUND_MIXER_LINE1&t;14&t;/* Input source 1  (aux1) */
+DECL|macro|SOUND_MIXER_LINE2
+mdefine_line|#define SOUND_MIXER_LINE2&t;15&t;/* Input source 2  (aux2) */
+DECL|macro|SOUND_MIXER_LINE3
+mdefine_line|#define SOUND_MIXER_LINE3&t;16&t;/* Input source 3  (line) */
 multiline_comment|/* Some on/off settings (SOUND_SPECIAL_MIN - SOUND_SPECIAL_MAX) */
 multiline_comment|/* Not counted to SOUND_MIXER_NRDEVICES, but use the same number space */
 DECL|macro|SOUND_ONOFF_MIN
@@ -958,9 +1129,9 @@ DECL|macro|SOUND_MIXER_LOUD
 mdefine_line|#define SOUND_MIXER_LOUD&t;30&t;/* 0 or 1 */
 multiline_comment|/* Note!&t;Number 31 cannot be used since the sign bit is reserved */
 DECL|macro|SOUND_DEVICE_LABELS
-mdefine_line|#define SOUND_DEVICE_LABELS&t;{&quot;Vol  &quot;, &quot;Bass &quot;, &quot;Trebl&quot;, &quot;Synth&quot;, &quot;Pcm  &quot;, &quot;Spkr &quot;, &quot;Line &quot;, &bslash;&n;&t;&t;&t;&t; &quot;Mic  &quot;, &quot;CD   &quot;, &quot;Mix  &quot;, &quot;Pcm2 &quot;, &quot;rec&quot;}
+mdefine_line|#define SOUND_DEVICE_LABELS&t;{&quot;Vol  &quot;, &quot;Bass &quot;, &quot;Trebl&quot;, &quot;Synth&quot;, &quot;Pcm  &quot;, &quot;Spkr &quot;, &quot;Line &quot;, &bslash;&n;&t;&t;&t;&t; &quot;Mic  &quot;, &quot;CD   &quot;, &quot;Mix  &quot;, &quot;Pcm2 &quot;, &quot;Rec  &quot;, &quot;IGain&quot;, &quot;OGain&quot;, &bslash;&n;&t;&t;&t;&t; &quot;Line1&quot;, &quot;Line2&quot;, &quot;Line3&quot;}
 DECL|macro|SOUND_DEVICE_NAMES
-mdefine_line|#define SOUND_DEVICE_NAMES&t;{&quot;vol&quot;, &quot;bass&quot;, &quot;treble&quot;, &quot;synth&quot;, &quot;pcm&quot;, &quot;speaker&quot;, &quot;line&quot;, &bslash;&n;&t;&t;&t;&t; &quot;mic&quot;, &quot;cd&quot;, &quot;mix&quot;, &quot;pcm2&quot;, &quot;rec&quot;}
+mdefine_line|#define SOUND_DEVICE_NAMES&t;{&quot;vol&quot;, &quot;bass&quot;, &quot;treble&quot;, &quot;synth&quot;, &quot;pcm&quot;, &quot;speaker&quot;, &quot;line&quot;, &bslash;&n;&t;&t;&t;&t; &quot;mic&quot;, &quot;cd&quot;, &quot;mix&quot;, &quot;pcm2&quot;, &quot;rec&quot;, &quot;igain&quot;, &quot;ogain&quot;, &bslash;&n;&t;&t;&t;&t; &quot;line1&quot;, &quot;line2&quot;, &quot;line3&quot;}
 multiline_comment|/*&t;Device bitmask identifiers&t;*/
 DECL|macro|SOUND_MIXER_RECSRC
 mdefine_line|#define SOUND_MIXER_RECSRC&t;0xff&t;/* Arg contains a bit for each recording source */
@@ -999,6 +1170,16 @@ DECL|macro|SOUND_MASK_ALTPCM
 mdefine_line|#define SOUND_MASK_ALTPCM&t;(1 &lt;&lt; SOUND_MIXER_ALTPCM)
 DECL|macro|SOUND_MASK_RECLEV
 mdefine_line|#define SOUND_MASK_RECLEV&t;(1 &lt;&lt; SOUND_MIXER_RECLEV)
+DECL|macro|SOUND_MASK_IGAIN
+mdefine_line|#define SOUND_MASK_IGAIN&t;(1 &lt;&lt; SOUND_MIXER_IGAIN)
+DECL|macro|SOUND_MASK_OGAIN
+mdefine_line|#define SOUND_MASK_OGAIN&t;(1 &lt;&lt; SOUND_MIXER_OGAIN)
+DECL|macro|SOUND_MASK_LINE1
+mdefine_line|#define SOUND_MASK_LINE1&t;(1 &lt;&lt; SOUND_MIXER_LINE1)
+DECL|macro|SOUND_MASK_LINE2
+mdefine_line|#define SOUND_MASK_LINE2&t;(1 &lt;&lt; SOUND_MIXER_LINE2)
+DECL|macro|SOUND_MASK_LINE3
+mdefine_line|#define SOUND_MASK_LINE3&t;(1 &lt;&lt; SOUND_MIXER_LINE3)
 DECL|macro|SOUND_MASK_MUTE
 mdefine_line|#define SOUND_MASK_MUTE&t;&t;(1 &lt;&lt; SOUND_MIXER_MUTE)
 DECL|macro|SOUND_MASK_ENHANCE
@@ -1031,6 +1212,16 @@ DECL|macro|SOUND_MIXER_READ_ALTPCM
 mdefine_line|#define SOUND_MIXER_READ_ALTPCM&t;&t;MIXER_READ(SOUND_MIXER_ALTPCM)
 DECL|macro|SOUND_MIXER_READ_RECLEV
 mdefine_line|#define SOUND_MIXER_READ_RECLEV&t;&t;MIXER_READ(SOUND_MIXER_RECLEV)
+DECL|macro|SOUND_MIXER_READ_IGAIN
+mdefine_line|#define SOUND_MIXER_READ_IGAIN&t;&t;MIXER_READ(SOUND_MIXER_IGAIN)
+DECL|macro|SOUND_MIXER_READ_OGAIN
+mdefine_line|#define SOUND_MIXER_READ_OGAIN&t;&t;MIXER_READ(SOUND_MIXER_OGAIN)
+DECL|macro|SOUND_MIXER_READ_LINE1
+mdefine_line|#define SOUND_MIXER_READ_LINE1&t;&t;MIXER_READ(SOUND_MIXER_LINE1)
+DECL|macro|SOUND_MIXER_READ_LINE2
+mdefine_line|#define SOUND_MIXER_READ_LINE2&t;&t;MIXER_READ(SOUND_MIXER_LINE2)
+DECL|macro|SOUND_MIXER_READ_LINE3
+mdefine_line|#define SOUND_MIXER_READ_LINE3&t;&t;MIXER_READ(SOUND_MIXER_LINE3)
 DECL|macro|SOUND_MIXER_READ_MUTE
 mdefine_line|#define SOUND_MIXER_READ_MUTE&t;&t;MIXER_READ(SOUND_MIXER_MUTE)
 DECL|macro|SOUND_MIXER_READ_ENHANCE
@@ -1073,6 +1264,16 @@ DECL|macro|SOUND_MIXER_WRITE_ALTPCM
 mdefine_line|#define SOUND_MIXER_WRITE_ALTPCM&t;MIXER_WRITE(SOUND_MIXER_ALTPCM)
 DECL|macro|SOUND_MIXER_WRITE_RECLEV
 mdefine_line|#define SOUND_MIXER_WRITE_RECLEV&t;MIXER_WRITE(SOUND_MIXER_RECLEV)
+DECL|macro|SOUND_MIXER_WRITE_IGAIN
+mdefine_line|#define SOUND_MIXER_WRITE_IGAIN&t;&t;MIXER_WRITE(SOUND_MIXER_IGAIN)
+DECL|macro|SOUND_MIXER_WRITE_OGAIN
+mdefine_line|#define SOUND_MIXER_WRITE_OGAIN&t;&t;MIXER_WRITE(SOUND_MIXER_OGAIN)
+DECL|macro|SOUND_MIXER_WRITE_LINE1
+mdefine_line|#define SOUND_MIXER_WRITE_LINE1&t;&t;MIXER_WRITE(SOUND_MIXER_LINE1)
+DECL|macro|SOUND_MIXER_WRITE_LINE2
+mdefine_line|#define SOUND_MIXER_WRITE_LINE2&t;&t;MIXER_WRITE(SOUND_MIXER_LINE2)
+DECL|macro|SOUND_MIXER_WRITE_LINE3
+mdefine_line|#define SOUND_MIXER_WRITE_LINE3&t;&t;MIXER_WRITE(SOUND_MIXER_LINE3)
 DECL|macro|SOUND_MIXER_WRITE_MUTE
 mdefine_line|#define SOUND_MIXER_WRITE_MUTE&t;&t;MIXER_WRITE(SOUND_MIXER_MUTE)
 DECL|macro|SOUND_MIXER_WRITE_ENHANCE
@@ -1204,7 +1405,7 @@ mdefine_line|#define SEQ_PANNING(dev, voice, pos) SEQ_CONTROL(dev, voice, CTL_PA
 macro_line|#if 0
 mdefine_line|#define SEQ_PANNING(dev, voice, pos)&t;{_SEQ_NEEDBUF(8);&bslash;&n;&t;&t;&t;&t;&t;_seqbuf[_seqbufptr] = SEQ_EXTENDED;&bslash;&n;&t;&t;&t;&t;&t;_seqbuf[_seqbufptr+1] = SEQ_BALANCE;&bslash;&n;&t;&t;&t;&t;&t;_seqbuf[_seqbufptr+2] = (dev);&bslash;&n;&t;&t;&t;&t;&t;_seqbuf[_seqbufptr+3] = (voice);&bslash;&n;&t;&t;&t;&t;&t;(char)_seqbuf[_seqbufptr+4] = (pos);&bslash;&n;&t;&t;&t;&t;&t;_seqbuf[_seqbufptr+5] = 0;&bslash;&n;&t;&t;&t;&t;&t;_seqbuf[_seqbufptr+6] = 0;&bslash;&n;&t;&t;&t;&t;&t;_seqbuf[_seqbufptr+7] = 1;&bslash;&n;&t;&t;&t;&t;&t;_SEQ_ADVBUF(8);}
 macro_line|#endif
-multiline_comment|/*&n; * Timing and synchronization macros&n; */
+multiline_comment|/*&n; * Timing and syncronization macros&n; */
 DECL|macro|_TIMER_EVENT
 mdefine_line|#define _TIMER_EVENT(ev, parm)&t;&t;{_SEQ_NEEDBUF(8);&bslash;&n;&t;&t;&t;&t; &t;_seqbuf[_seqbufptr+0] = EV_TIMING; &bslash;&n;&t;&t;&t;&t; &t;_seqbuf[_seqbufptr+1] = (ev); &bslash;&n;&t;&t;&t;&t;&t;_seqbuf[_seqbufptr+2] = 0;&bslash;&n;&t;&t;&t;&t;&t;_seqbuf[_seqbufptr+3] = 0;&bslash;&n;&t;&t;&t;&t; &t;*(unsigned int *)&amp;_seqbuf[_seqbufptr+4] = (parm); &bslash;&n;&t;&t;&t;&t;&t;_SEQ_ADVBUF(8);}
 DECL|macro|SEQ_START_TIMER

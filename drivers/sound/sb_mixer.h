@@ -12,7 +12,7 @@ mdefine_line|#define SGNXPRO_MIXER_DEVICES&t;(SBPRO_MIXER_DEVICES|SOUND_MASK_BAS
 DECL|macro|SB16_RECORDING_DEVICES
 mdefine_line|#define SB16_RECORDING_DEVICES&t;&t;(SOUND_MASK_SYNTH | SOUND_MASK_LINE | SOUND_MASK_MIC | &bslash;&n;&t;&t;&t;&t;&t; SOUND_MASK_CD)
 DECL|macro|SB16_MIXER_DEVICES
-mdefine_line|#define SB16_MIXER_DEVICES&t;&t;(SOUND_MASK_SYNTH | SOUND_MASK_PCM | SOUND_MASK_SPEAKER | SOUND_MASK_LINE | SOUND_MASK_MIC | &bslash;&n;&t;&t;&t;&t;&t; SOUND_MASK_CD | SOUND_MASK_RECLEV | &bslash;&n;&t;&t;&t;&t;&t; SOUND_MASK_VOLUME | SOUND_MASK_BASS | SOUND_MASK_TREBLE)
+mdefine_line|#define SB16_MIXER_DEVICES&t;&t;(SOUND_MASK_SYNTH | SOUND_MASK_PCM | SOUND_MASK_SPEAKER | SOUND_MASK_LINE | SOUND_MASK_MIC | &bslash;&n;&t;&t;&t;&t;&t; SOUND_MASK_CD | &bslash;&n;&t;&t;&t;&t;&t; SOUND_MASK_IGAIN | SOUND_MASK_OGAIN | &bslash;&n;&t;&t;&t;&t;&t; SOUND_MASK_VOLUME | SOUND_MASK_BASS | SOUND_MASK_TREBLE)
 multiline_comment|/*&n; * Mixer registers&n; * &n; * NOTE!&t;RECORD_SRC == IN_FILTER&n; */
 multiline_comment|/* &n; * Mixer registers of SB Pro&n; */
 DECL|macro|VOC_VOL
@@ -562,6 +562,42 @@ l_int|0
 comma
 l_int|0
 )paren
+comma
+id|MIX_ENT
+c_func
+(paren
+id|SOUND_MIXER_IGAIN
+comma
+l_int|0x00
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0x00
+comma
+l_int|0
+comma
+l_int|0
+)paren
+comma
+id|MIX_ENT
+c_func
+(paren
+id|SOUND_MIXER_OGAIN
+comma
+l_int|0x00
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0x00
+comma
+l_int|0
+comma
+l_int|0
+)paren
 )brace
 suffix:semicolon
 macro_line|#endif
@@ -785,8 +821,46 @@ l_int|7
 comma
 l_int|2
 )paren
+comma
+multiline_comment|/* Obsolete. Use IGAIN */
+id|MIX_ENT
+c_func
+(paren
+id|SOUND_MIXER_IGAIN
+comma
+l_int|0x3f
+comma
+l_int|7
+comma
+l_int|2
+comma
+l_int|0x40
+comma
+l_int|7
+comma
+l_int|2
+)paren
+comma
+id|MIX_ENT
+c_func
+(paren
+id|SOUND_MIXER_OGAIN
+comma
+l_int|0x41
+comma
+l_int|7
+comma
+l_int|2
+comma
+l_int|0x42
+comma
+l_int|7
+comma
+l_int|2
+)paren
 )brace
 suffix:semicolon
+macro_line|#ifdef SM_GAMES       /* Master volume is lower and PCM &amp; FM volumes&n;&t;&t;&t;     higher than with SB Pro. This improves the&n;&t;&t;&t;     sound quality */
 DECL|variable|levels
 r_static
 r_int
@@ -797,19 +871,19 @@ id|SOUND_MIXER_NRDEVICES
 )braket
 op_assign
 (brace
-l_int|0x5a5a
+l_int|0x2020
 comma
 multiline_comment|/* Master Volume */
-l_int|0x3232
+l_int|0x4b4b
 comma
 multiline_comment|/* Bass */
-l_int|0x3232
+l_int|0x4b4b
 comma
 multiline_comment|/* Treble */
-l_int|0x4b4b
+l_int|0x6464
 comma
 multiline_comment|/* FM */
-l_int|0x4b4b
+l_int|0x6464
 comma
 multiline_comment|/* PCM */
 l_int|0x4b4b
@@ -831,9 +905,70 @@ l_int|0x4b4b
 comma
 multiline_comment|/* SB PCM */
 l_int|0x4b4b
+comma
+multiline_comment|/* Recording level */
+l_int|0x4b4b
+comma
+multiline_comment|/* Input gain */
+l_int|0x4b4b
 )brace
 suffix:semicolon
+multiline_comment|/* Output gain */
+macro_line|#else  /* If the user selected just plain SB Pro */
+DECL|variable|levels
+r_static
+r_int
+r_int
+id|levels
+(braket
+id|SOUND_MIXER_NRDEVICES
+)braket
+op_assign
+(brace
+l_int|0x5a5a
+comma
+multiline_comment|/* Master Volume */
+l_int|0x4b4b
+comma
+multiline_comment|/* Bass */
+l_int|0x4b4b
+comma
+multiline_comment|/* Treble */
+l_int|0x4b4b
+comma
+multiline_comment|/* FM */
+l_int|0x4b4b
+comma
+multiline_comment|/* PCM */
+l_int|0x4b4b
+comma
+multiline_comment|/* PC Speaker */
+l_int|0x4b4b
+comma
+multiline_comment|/* Ext Line */
+l_int|0x1010
+comma
+multiline_comment|/* Mic */
+l_int|0x4b4b
+comma
+multiline_comment|/* CD */
+l_int|0x4b4b
+comma
+multiline_comment|/* Recording monitor */
+l_int|0x4b4b
+comma
+multiline_comment|/* SB PCM */
+l_int|0x4b4b
+comma
 multiline_comment|/* Recording level */
+l_int|0x4b4b
+comma
+multiline_comment|/* Input gain */
+l_int|0x4b4b
+)brace
+suffix:semicolon
+multiline_comment|/* Output gain */
+macro_line|#endif /* SM_GAMES */
 DECL|variable|sb16_recmasks_L
 r_static
 r_int
@@ -878,7 +1013,13 @@ l_int|0x00
 comma
 multiline_comment|/* SOUND_MIXER_ALTPCM&t;*/
 l_int|0x00
+comma
 multiline_comment|/* SOUND_MIXER_RECLEV&t;*/
+l_int|0x00
+comma
+multiline_comment|/* SOUND_MIXER_IGAIN&t;*/
+l_int|0x00
+multiline_comment|/* SOUND_MIXER_OGAIN&t;*/
 )brace
 suffix:semicolon
 DECL|variable|sb16_recmasks_R
@@ -925,7 +1066,13 @@ l_int|0x00
 comma
 multiline_comment|/* SOUND_MIXER_ALTPCM&t;*/
 l_int|0x00
+comma
 multiline_comment|/* SOUND_MIXER_RECLEV&t;*/
+l_int|0x00
+comma
+multiline_comment|/* SOUND_MIXER_IGAIN&t;*/
+l_int|0x00
+multiline_comment|/* SOUND_MIXER_OGAIN&t;*/
 )brace
 suffix:semicolon
 multiline_comment|/*&n; *&t;Recording sources (SB Pro)&n; */

@@ -270,7 +270,7 @@ r_int
 id|tmr_value
 )paren
 (brace
-multiline_comment|/*&n; *    Convert timer ticks to MIDI ticks&n; */
+multiline_comment|/*&n;     *    Convert timer ticks to MIDI ticks&n;   */
 r_int
 r_int
 id|tmp
@@ -349,7 +349,7 @@ op_star
 id|curr_timebase
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * Don&squot;t kill the system by setting too high timer rate&n; */
+multiline_comment|/*&n;     * Don&squot;t kill the system by setting too high timer rate&n;   */
 r_if
 c_cond
 (paren

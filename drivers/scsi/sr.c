@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  sr.c Copyright (C) 1992 David Giller&n; *&t;     Copyright (C) 1993, 1994, 1995 Eric Youngdale&n; *&n; *  adapted from:&n; *&t;sd.c Copyright (C) 1992 Drew Eckhardt &n; *&t;Linux scsi disk driver by&n; *&t;&t;Drew Eckhardt &lt;drew@colorado.edu&gt;&n; *&n; *      Modified by Eric Youngdale ericy@cais.com to&n; *      add scatter-gather, multiple outstanding request, and other&n; *      enhancements.&n; *&n; *&t;    Modified by Eric Youngdale eric@aib.com to support loadable&n; *&t;    low-level scsi drivers.&n; */
+multiline_comment|/*&n; *  sr.c Copyright (C) 1992 David Giller&n; *&t;     Copyright (C) 1993, 1994, 1995 Eric Youngdale&n; *&n; *  adapted from:&n; *&t;sd.c Copyright (C) 1992 Drew Eckhardt &n; *&t;Linux scsi disk driver by&n; *&t;&t;Drew Eckhardt &lt;drew@colorado.edu&gt;&n; *&n; *      Modified by Eric Youngdale ericy@cais.com to&n; *      add scatter-gather, multiple outstanding request, and other&n; *      enhancements.&n; *&n; *&t;    Modified by Eric Youngdale eric@aib.com to support loadable&n; *&t;    low-level scsi drivers.&n; *&n; *&t; Modified by Thomas Quinot thomas@melchior.frmug.fr.net to&n; *&t; provide auto-eject.&n; *&n; */
 macro_line|#ifdef MODULE
 macro_line|#include &lt;linux/autoconf.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
@@ -23,7 +23,7 @@ macro_line|#include &quot;constants.h&quot;
 DECL|macro|MAX_RETRIES
 mdefine_line|#define MAX_RETRIES 3
 DECL|macro|SR_TIMEOUT
-mdefine_line|#define SR_TIMEOUT 15000
+mdefine_line|#define SR_TIMEOUT (150 * HZ)
 r_static
 r_void
 id|sr_init
@@ -229,6 +229,32 @@ comma
 l_int|NULL
 comma
 id|SCSI_IOCTL_DOORUNLOCK
+comma
+l_int|0
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|scsi_CDs
+(braket
+id|MINOR
+c_func
+(paren
+id|inode-&gt;i_rdev
+)paren
+)braket
+dot
+id|auto_eject
+)paren
+id|sr_ioctl
+c_func
+(paren
+id|inode
+comma
+l_int|NULL
+comma
+id|CDROMEJECT
 comma
 l_int|0
 )paren
@@ -1248,6 +1274,7 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/*&n; * Here I tried to implement better support for PhotoCD&squot;s.&n; * &n; * Much of this has do be done with vendor-specific SCSI-commands.&n; * So I have to complete it step by step. Useful information is welcome.&n; *&n; * Actually works:&n; *   - NEC:     Detection and support of multisession CD&squot;s. Special handling&n; *              for XA-disks is not necessary.&n; *     &n; *   - TOSHIBA: setting density is done here now, mounting PhotoCD&squot;s should&n; *              work now without running the program &quot;set_density&quot;&n; *              Multisession CD&squot;s are supported too.&n; *&n; *   kraxel@cs.tu-berlin.de (Gerd Knorr)&n; */
+multiline_comment|/*&n; * 19950704 operator@melchior.frmug.fr.net (Thomas Quinot)&n; *&n; *   - SONY:&t;Same as Nec.&n; */
 DECL|function|sr_photocd
 r_static
 r_void
@@ -5628,6 +5655,16 @@ id|remap
 op_assign
 l_int|1
 suffix:semicolon
+id|scsi_CDs
+(braket
+id|i
+)braket
+dot
+id|auto_eject
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* Default is not to eject upon unmount. */
 id|sr_sizes
 (braket
 id|i

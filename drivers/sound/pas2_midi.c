@@ -195,7 +195,7 @@ id|ctrl
 op_or_assign
 id|M_C_ENA_INPUT_IRQ
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t;&t; * Enable input&n;&t;&t;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t;&t;   * Enable input&n;&t;&t;&t;&t;&t; */
 id|input_opened
 op_assign
 l_int|1
@@ -335,7 +335,7 @@ template_param
 l_int|13
 )paren
 )paren
-multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;&t;&t;&t; * Fifo&n;&t;&t;&t;&t;&t;&t;&t;&t;&t; * full&n;&t;&t;&t;&t;&t;&t;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;   * Fifo&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;   * full&n;&t;&t;&t;&t;&t;&t;&t;&t;&t; */
 (brace
 r_return
 l_int|0
@@ -563,6 +563,10 @@ id|SNDCARD_PAS
 comma
 op_amp
 id|std_midi_synth
+comma
+(brace
+l_int|0
+)brace
 comma
 id|pas_midi_open
 comma
@@ -792,6 +796,7 @@ id|flags
 )paren
 suffix:semicolon
 )brace
+macro_line|#if 0
 r_if
 c_cond
 (paren
@@ -804,6 +809,7 @@ id|printk
 l_string|&quot;MIDI framing error&bslash;n&quot;
 )paren
 suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -838,7 +844,7 @@ comma
 id|MIDI_STATUS
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t;&t; * Acknowledge interrupts&n;&t;&t;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t;&t;   * Acknowledge interrupts&n;&t;&t;&t;&t;&t; */
 )brace
 macro_line|#endif
 macro_line|#endif

@@ -1,6 +1,11 @@
 multiline_comment|/*&n; *&t;OS Specific settings for Linux&n; * &n; * Copyright by Hannu Savolainen 1993&n; *&n; * Redistribution and use in source and binary forms, with or without&n; * modification, are permitted provided that the following conditions&n; * are met:&n; * 1. Redistributions of source code must retain the above copyright&n; *    notice, this list of conditions and the following disclaimer.&n; * 2. Redistributions in binary form must reproduce the above copyright&n; *    notice, this list of conditions and the following disclaimer in the&n; *    documentation and/or other materials provided with the distribution.&n; *&n; * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS&squot;&squot; AND&n; * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE&n; * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE&n; * ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE&n; * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL&n; * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS&n; * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)&n; * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT&n; * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY&n; * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF&n; * SUCH DAMAGE.&n; *&n; */
 DECL|macro|ALLOW_SELECT
 mdefine_line|#define ALLOW_SELECT
+macro_line|#ifdef MODULE
+macro_line|#include &lt;linux/config.h&gt;
+macro_line|#include &lt;linux/module.h&gt;
+macro_line|#include &lt;linux/version.h&gt;
+macro_line|#endif
 macro_line|#include &lt;linux/param.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -18,7 +23,7 @@ macro_line|#include &lt;sys/kd.h&gt;
 macro_line|#include &lt;linux/wait.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
-macro_line|#include &lt;linux/soundcard.h&gt;
+macro_line|#include &quot;linux/soundcard.h&quot;
 DECL|typedef|snd_rw_buf
 r_typedef
 r_char
@@ -81,7 +86,7 @@ mdefine_line|#define SOMEONE_WAITING(q, f) (f.mode &amp; WK_SLEEP)
 DECL|macro|WAKE_UP
 mdefine_line|#define WAKE_UP(q, f)&t;&t;&t;{f.mode = WK_WAKEUP;wake_up(&amp;q);}
 DECL|macro|ALLOC_DMA_CHN
-mdefine_line|#define ALLOC_DMA_CHN(chn,deviceID)&t;request_dma(chn,deviceID)
+mdefine_line|#define ALLOC_DMA_CHN(chn,deviceID)&t;request_dma(chn, deviceID)
 DECL|macro|RELEASE_DMA_CHN
 mdefine_line|#define RELEASE_DMA_CHN(chn)&t;&t;free_dma(chn)
 DECL|macro|GET_TIME
@@ -90,7 +95,7 @@ DECL|macro|RELEASE_IRQ
 mdefine_line|#define RELEASE_IRQ&t;&t;&t;free_irq
 DECL|macro|RET_ERROR
 mdefine_line|#define RET_ERROR(err)&t;&t;&t;-err
-multiline_comment|/* DISABLE_INTR is used to disable interrupts.&n;   These macros store the current flags to the (unsigned long) variable given&n;   as a parameter. RESTORE_INTR returns the interrupt enable bit to state&n;   before DISABLE_INTR or ENABLE_INTR */
+multiline_comment|/* DISABLE_INTR is used to disable interrupts.&n;   These macros store the current flags to the (unsigned long) variable given&n;   as a parameter. RESTORE_INTR returns the interrupt ebable bit to state&n;   before DISABLE_INTR or ENABLE_INTR */
 DECL|macro|DISABLE_INTR
 mdefine_line|#define DISABLE_INTR(flags)&t;__asm__ __volatile__(&quot;pushfl ; popl %0 ; cli&quot;:&quot;=r&quot; (flags));
 DECL|macro|RESTORE_INTR
@@ -111,9 +116,24 @@ DECL|macro|ACTIVATE_TIMER
 mdefine_line|#define ACTIVATE_TIMER(name, proc, time) &bslash;&n;  {name.expires = time; &bslash;&n;  add_timer (&amp;name);}
 DECL|macro|INB
 mdefine_line|#define INB&t;inb
+DECL|macro|INW
+mdefine_line|#define INW&t;inw
 DECL|macro|OUTB
 mdefine_line|#define OUTB&t;outb
+DECL|macro|OUTW
+mdefine_line|#define OUTW&t;outw
 multiline_comment|/*&n; * SND_SA_INTERRUPT is required. Otherwise the IRQ number is not passed &n; * the handler.&n; */
 DECL|macro|SND_SA_INTERRUPT
 mdefine_line|#define SND_SA_INTERRUPT
+multiline_comment|/*&n; * The macro DECLARE_FILE() adds an entry to struct fileinfo referencing the&n; * connected filestructure.&n; * This entry must be initialized in sound_open() in soundcard.c&n; *&n; * ISSET_FILE_FLAG() allows checking of flags like O_NONBLOCK on files&n; *&n; */
+DECL|macro|DECLARE_FILE
+mdefine_line|#define DECLARE_FILE()                   struct file *filp
+DECL|macro|ISSET_FILE_FLAG
+mdefine_line|#define ISSET_FILE_FLAG(fileinfo, flag)  (fileinfo-&gt;filp-&gt;f_flags &amp; (flag) ? &bslash;&n;&t;&t;&t;&t;&t;  1 : 0)
+DECL|macro|INT_HANDLER_PROTO
+mdefine_line|#define INT_HANDLER_PROTO() void(*hndlr)(int, struct pt_regs *)
+DECL|macro|INT_HANDLER_PARMS
+mdefine_line|#define INT_HANDLER_PARMS(irq, parms) int irq, struct pt_regs *parms
+DECL|macro|INT_HANDLER_CALL
+mdefine_line|#define INT_HANDLER_CALL(irq) irq, NULL
 eof

@@ -93,6 +93,11 @@ suffix:semicolon
 r_int
 id|drv
 suffix:semicolon
+id|printk
+(paren
+l_string|&quot;Sound initialization started&bslash;n&quot;
+)paren
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -246,6 +251,11 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t;&t;&t;&t; * Mark as not detected&n;&t;&t;&t;&t;&t;&t; */
+id|printk
+(paren
+l_string|&quot;Sound initialization complete&bslash;n&quot;
+)paren
+suffix:semicolon
 r_return
 id|mem_start
 suffix:semicolon
@@ -648,7 +658,7 @@ r_struct
 id|card_info
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * First disable all drivers&n; */
+multiline_comment|/*&n;     * First disable all drivers&n;   */
 r_for
 c_loop
 (paren
@@ -691,7 +701,7 @@ l_int|0
 )paren
 r_return
 suffix:semicolon
-multiline_comment|/*&n; * Then enable them one by time&n; */
+multiline_comment|/*&n;     * Then enable them one by time&n;   */
 r_for
 c_loop
 (paren

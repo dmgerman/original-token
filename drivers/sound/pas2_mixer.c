@@ -5,10 +5,14 @@ macro_line|#include &quot;sound_config.h&quot;
 macro_line|#if defined(CONFIGURE_SOUNDCARD) &amp;&amp; !defined(EXCLUDE_PAS)
 macro_line|#include &quot;pas.h&quot;
 DECL|macro|TRACE
-mdefine_line|#define TRACE(what)&t;&t;/*&n;&t;&t;&t;&t;   * * * (what)   */
+mdefine_line|#define TRACE(what)&t;&t;/* (what) */
 r_extern
 r_int
 id|translat_code
+suffix:semicolon
+r_extern
+r_char
+id|pas_model
 suffix:semicolon
 DECL|variable|rec_devices
 r_static
@@ -19,7 +23,7 @@ op_assign
 id|SOUND_MASK_MIC
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&n;&n;&t;&t;&t;&t;&t;&t;&t; * *  * * Default *&n;&t;&t;&t;&t;&t;&t;&t; * recording * source&n;&t;&t;&t;&t;&t;&t;&t; *&n;&t;&t;&t;&t;&t;&t;&t; * *  */
+multiline_comment|/* Default recording source */
 DECL|variable|mode_control
 r_static
 r_int
@@ -43,41 +47,98 @@ op_assign
 (brace
 l_int|0x3232
 comma
-multiline_comment|/*&n;&t;&t;&t;&t; * Master Volume&n;&t;&t;&t;&t; */
+multiline_comment|/* Master Volume */
 l_int|0x3232
 comma
-multiline_comment|/*&n;&t;&t;&t;&t; * Bass&n;&t;&t;&t;&t; */
+multiline_comment|/* Bass */
 l_int|0x3232
 comma
-multiline_comment|/*&n;&t;&t;&t;&t; * Treble&n;&t;&t;&t;&t; */
+multiline_comment|/* Treble */
 l_int|0x5050
 comma
-multiline_comment|/*&n;&t;&t;&t;&t; * FM&n;&t;&t;&t;&t; */
+multiline_comment|/* FM */
 l_int|0x4b4b
 comma
-multiline_comment|/*&n;&t;&t;&t;&t; * PCM&n;&t;&t;&t;&t; */
+multiline_comment|/* PCM */
 l_int|0x3232
 comma
-multiline_comment|/*&n;&t;&t;&t;&t; * PC Speaker&n;&t;&t;&t;&t; */
+multiline_comment|/* PC Speaker */
 l_int|0x4b4b
 comma
-multiline_comment|/*&n;&t;&t;&t;&t; * Ext Line&n;&t;&t;&t;&t; */
+multiline_comment|/* Ext Line */
 l_int|0x4b4b
 comma
-multiline_comment|/*&n;&t;&t;&t;&t; * Mic&n;&t;&t;&t;&t; */
+multiline_comment|/* Mic */
 l_int|0x4b4b
 comma
-multiline_comment|/*&n;&t;&t;&t;&t; * CD&n;&t;&t;&t;&t; */
+multiline_comment|/* CD */
 l_int|0x6464
 comma
-multiline_comment|/*&n;&t;&t;&t;&t; * Recording monitor&n;&t;&t;&t;&t; */
+multiline_comment|/* Recording monitor */
 l_int|0x4b4b
 comma
-multiline_comment|/*&n;&t;&t;&t;&t; * SB PCM&n;&t;&t;&t;&t; */
+multiline_comment|/* SB PCM */
 l_int|0x6464
+multiline_comment|/* Recording level */
 )brace
 suffix:semicolon
-multiline_comment|/*&n;&n;&n;&t;&t;&t;&t; * *  * * Recording level   */
+r_void
+DECL|function|mix_write
+id|mix_write
+(paren
+r_int
+r_char
+id|data
+comma
+r_int
+id|ioaddr
+)paren
+(brace
+multiline_comment|/*&n;   * The Revision D cards have a problem with their MVA508 interface. The&n;   * kludge-o-rama fix is to make a 16-bit quantity with identical LSB and&n;   * MSBs out of the output byte and to do a 16-bit out to the mixer port -&n;   * 1. We need to do this because it isn&squot;t timing problem but chip access&n;   * sequence problem.&n;   */
+r_if
+c_cond
+(paren
+id|pas_model
+op_eq
+id|PAS_16D
+)paren
+(brace
+id|OUTW
+(paren
+id|data
+op_or
+(paren
+id|data
+op_lshift
+l_int|8
+)paren
+comma
+(paren
+id|ioaddr
+op_xor
+id|translat_code
+)paren
+op_minus
+l_int|1
+)paren
+suffix:semicolon
+id|OUTB
+(paren
+l_int|0x80
+comma
+l_int|0
+)paren
+suffix:semicolon
+)brace
+r_else
+id|pas_write
+(paren
+id|data
+comma
+id|ioaddr
+)paren
+suffix:semicolon
+)brace
 r_static
 r_int
 DECL|function|mixer_output
@@ -97,8 +158,8 @@ id|bits
 comma
 r_int
 id|mixer
-multiline_comment|/*&n;&t;&t;&t;&t; * Input or output mixer&n;     &t;      &t;      &t;      &t;      &t;      &t;&t;&t;&t; */
 )paren
+multiline_comment|/* Input or output mixer */
 (brace
 r_int
 id|left
@@ -118,7 +179,6 @@ id|div
 op_div
 l_int|100
 suffix:semicolon
-multiline_comment|/*&n;   * The Revision D cards have a problem with their MVA508 interface. The&n;   * kludge-o-rama fix is to make a 16-bit quantity with identical LSB and&n;   * MSBs out of the output byte and to do a 16-bit out to the mixer port -&n;   * 1. We don&squot;t need to do this because the call to pas_write more than&n;   * compensates for the timing problems.&n;   */
 r_if
 c_cond
 (paren
@@ -150,7 +210,7 @@ id|P_M_MV508_TREBLE
 )paren
 (brace
 multiline_comment|/*&n;&t;&t;&t;&t; * Bass and treble are mono devices&n;&t;&t;&t;&t; */
-id|pas_write
+id|mix_write
 (paren
 id|P_M_MV508_ADDRESS
 op_or
@@ -159,7 +219,7 @@ comma
 id|PARALLEL_MIXER
 )paren
 suffix:semicolon
-id|pas_write
+id|mix_write
 (paren
 id|left
 comma
@@ -173,7 +233,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|pas_write
+id|mix_write
 (paren
 id|P_M_MV508_ADDRESS
 op_or
@@ -184,14 +244,14 @@ comma
 id|PARALLEL_MIXER
 )paren
 suffix:semicolon
-id|pas_write
+id|mix_write
 (paren
 id|left
 comma
 id|PARALLEL_MIXER
 )paren
 suffix:semicolon
-id|pas_write
+id|mix_write
 (paren
 id|P_M_MV508_ADDRESS
 op_or
@@ -202,7 +262,7 @@ comma
 id|PARALLEL_MIXER
 )paren
 suffix:semicolon
-id|pas_write
+id|mix_write
 (paren
 id|right
 comma
@@ -230,7 +290,7 @@ r_int
 id|new_mode
 )paren
 (brace
-id|pas_write
+id|mix_write
 (paren
 id|P_M_MV508_ADDRESS
 op_or
@@ -239,7 +299,7 @@ comma
 id|PARALLEL_MIXER
 )paren
 suffix:semicolon
-id|pas_write
+id|mix_write
 (paren
 id|new_mode
 comma
@@ -343,7 +403,7 @@ id|whichDev
 r_case
 id|SOUND_MIXER_VOLUME
 suffix:colon
-multiline_comment|/*&n;&t;&t;&t;&t; * Master volume (0-63)&n;&t;&t;&t;&t; */
+multiline_comment|/* Master volume (0-63) */
 id|levels
 (braket
 id|whichDev
@@ -368,7 +428,7 @@ multiline_comment|/*&n;       * Note! Bass and Treble are mono devices. Will use
 r_case
 id|SOUND_MIXER_BASS
 suffix:colon
-multiline_comment|/*&n;&t;&t;&t;&t; * Bass (0-12)&n;&t;&t;&t;&t; */
+multiline_comment|/* Bass (0-12) */
 id|levels
 (braket
 id|whichDev
@@ -392,7 +452,7 @@ suffix:semicolon
 r_case
 id|SOUND_MIXER_TREBLE
 suffix:colon
-multiline_comment|/*&n;&t;&t;&t;&t; * Treble (0-12)&n;&t;&t;&t;&t; */
+multiline_comment|/* Treble (0-12) */
 id|levels
 (braket
 id|whichDev
@@ -416,7 +476,7 @@ suffix:semicolon
 r_case
 id|SOUND_MIXER_SYNTH
 suffix:colon
-multiline_comment|/*&n;&t;&t;&t;&t; * Internal synthesizer (0-31)&n;&t;&t;&t;&t; */
+multiline_comment|/* Internal synthesizer (0-31) */
 id|levels
 (braket
 id|whichDev
@@ -442,7 +502,7 @@ suffix:semicolon
 r_case
 id|SOUND_MIXER_PCM
 suffix:colon
-multiline_comment|/*&n;&t;&t;&t;&t; * PAS PCM (0-31)&n;&t;&t;&t;&t; */
+multiline_comment|/* PAS PCM (0-31) */
 id|levels
 (braket
 id|whichDev
@@ -468,7 +528,7 @@ suffix:semicolon
 r_case
 id|SOUND_MIXER_ALTPCM
 suffix:colon
-multiline_comment|/*&n;&t;&t;&t;&t; * SB PCM (0-31)&n;&t;&t;&t;&t; */
+multiline_comment|/* SB PCM (0-31) */
 id|levels
 (braket
 id|whichDev
@@ -494,7 +554,7 @@ suffix:semicolon
 r_case
 id|SOUND_MIXER_SPEAKER
 suffix:colon
-multiline_comment|/*&n;&t;&t;&t;&t; * PC speaker (0-31)&n;&t;&t;&t;&t; */
+multiline_comment|/* PC speaker (0-31) */
 id|levels
 (braket
 id|whichDev
@@ -520,7 +580,7 @@ suffix:semicolon
 r_case
 id|SOUND_MIXER_LINE
 suffix:colon
-multiline_comment|/*&n;&t;&t;&t;&t; * External line (0-31)&n;&t;&t;&t;&t; */
+multiline_comment|/* External line (0-31) */
 id|levels
 (braket
 id|whichDev
@@ -546,7 +606,7 @@ suffix:semicolon
 r_case
 id|SOUND_MIXER_CD
 suffix:colon
-multiline_comment|/*&n;&t;&t;&t;&t; * CD (0-31)&n;&t;&t;&t;&t; */
+multiline_comment|/* CD (0-31) */
 id|levels
 (braket
 id|whichDev
@@ -572,7 +632,7 @@ suffix:semicolon
 r_case
 id|SOUND_MIXER_MIC
 suffix:colon
-multiline_comment|/*&n;&t;&t;&t;&t; * External microphone (0-31)&n;&t;&t;&t;&t; */
+multiline_comment|/* External microphone (0-31) */
 id|levels
 (braket
 id|whichDev
@@ -598,7 +658,7 @@ suffix:semicolon
 r_case
 id|SOUND_MIXER_IMIX
 suffix:colon
-multiline_comment|/*&n;&t;&t;&t;&t; * Recording monitor (0-31) (Only available *&n;&t;&t;&t;&t; * on the Output Mixer)&n;&t;&t;&t;&t; */
+multiline_comment|/* Recording monitor (0-31) (Output mixer only) */
 id|levels
 (braket
 id|whichDev
@@ -624,7 +684,7 @@ suffix:semicolon
 r_case
 id|SOUND_MIXER_RECLEV
 suffix:colon
-multiline_comment|/*&n;&t;&t;&t;&t; * Recording level (0-15)&n;&t;&t;&t;&t; */
+multiline_comment|/* Recording level (0-15) */
 id|levels
 (braket
 id|whichDev
@@ -740,7 +800,7 @@ op_logical_neg
 op_logical_neg
 id|level
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t; * 0 or 1&n;&t;&t;&t;&t; */
+multiline_comment|/* 0 or 1 */
 r_break
 suffix:semicolon
 r_case
@@ -945,7 +1005,7 @@ id|arg
 suffix:semicolon
 r_else
 (brace
-multiline_comment|/*&n;&t;&t;&t;&t; * Read parameters&n;&t;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t;   * Read parameters&n;&t;&t;&t;&t; */
 r_switch
 c_cond
 (paren
@@ -1026,7 +1086,7 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t;&t;&t; * No special capabilities&n;&t;&t;&t;&t;&t;&t; */
+multiline_comment|/* No special capabilities */
 r_break
 suffix:semicolon
 r_case
@@ -1040,7 +1100,7 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t;&t;&t; * No mute yet&n;&t;&t;&t;&t;&t;&t; */
+multiline_comment|/* No mute yet */
 r_break
 suffix:semicolon
 r_case
@@ -1144,6 +1204,8 @@ id|mixer_operations
 id|pas_mixer_operations
 op_assign
 (brace
+l_string|&quot;Pro Audio Spectrum 16&quot;
+comma
 id|pas_mixer_ioctl
 )brace
 suffix:semicolon

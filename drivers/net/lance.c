@@ -227,17 +227,7 @@ DECL|struct|lance_private
 r_struct
 id|lance_private
 (brace
-DECL|member|name
-r_char
-op_star
-id|name
-suffix:semicolon
-DECL|member|pad
-r_void
-op_star
-id|pad
-suffix:semicolon
-multiline_comment|/* The Tx and Rx ring entries must aligned on 8-byte boundaries. */
+multiline_comment|/* The Tx and Rx ring entries must be aligned on 8-byte boundaries.&n;&t;   This is accomplished by allocating 7 extra bytes for the struct&n;&t;   and adjusting the start of the struct to be 8-byte aligned.  */
 DECL|member|rx_ring
 r_struct
 id|lance_rx_head
@@ -258,6 +248,11 @@ DECL|member|init_block
 r_struct
 id|lance_init_block
 id|init_block
+suffix:semicolon
+DECL|member|name
+r_char
+op_star
+id|name
 suffix:semicolon
 multiline_comment|/* The saved address of a sent-in-place packet/buffer, for skfree(). */
 DECL|member|tx_skbuff
@@ -324,14 +319,6 @@ DECL|member|lock
 r_char
 id|lock
 suffix:semicolon
-DECL|member|pad0
-DECL|member|pad1
-r_int
-id|pad0
-comma
-id|pad1
-suffix:semicolon
-multiline_comment|/* Used for 8-byte alignment */
 )brace
 suffix:semicolon
 DECL|macro|LANCE_MUST_PAD
@@ -490,6 +477,15 @@ id|pci_irq_line
 op_assign
 l_int|0
 suffix:semicolon
+multiline_comment|/* Non-zero if lance_probe1() needs to allocate low-memory bounce buffers.&n;   Assume yes until we know the memory size. */
+DECL|variable|lance_need_isa_bounce_buffers
+r_static
+r_int
+r_char
+id|lance_need_isa_bounce_buffers
+op_assign
+l_int|1
+suffix:semicolon
 r_static
 r_int
 id|lance_open
@@ -617,6 +613,21 @@ id|mem_end
 r_int
 op_star
 id|port
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|mem_end
+op_le
+l_int|16
+op_star
+l_int|1024
+op_star
+l_int|1024
+)paren
+id|lance_need_isa_bounce_buffers
+op_assign
+l_int|0
 suffix:semicolon
 macro_line|#if defined(CONFIG_PCI)
 r_if
@@ -944,6 +955,8 @@ op_eq
 l_int|0x5048
 )paren
 (brace
+r_static
+r_const
 r_int
 id|ioaddr_table
 (braket
@@ -1250,18 +1263,36 @@ c_func
 (paren
 l_int|0
 comma
+l_int|7
+op_plus
+(paren
+(paren
 r_sizeof
 (paren
 r_struct
 id|lance_private
 )paren
 op_plus
+l_int|7
+)paren
+op_amp
+op_complement
+l_int|7
+)paren
+op_plus
 id|PKT_BUF_SZ
 op_star
-(paren
 id|RX_RING_SIZE
 op_plus
+(paren
+id|lance_need_isa_bounce_buffers
+ques
+c_cond
+id|PKT_BUF_SZ
+op_star
 id|TX_RING_SIZE
+suffix:colon
+l_int|0
 )paren
 comma
 op_amp
@@ -1381,12 +1412,21 @@ op_assign
 (paren
 r_int
 )paren
-id|dev-&gt;priv
+id|lp
 op_plus
+(paren
+(paren
 r_sizeof
 (paren
 r_struct
 id|lance_private
+)paren
+op_plus
+l_int|7
+)paren
+op_amp
+op_complement
+l_int|7
 )paren
 suffix:semicolon
 id|lp-&gt;tx_bounce_buffs
@@ -1408,32 +1448,6 @@ op_star
 id|RX_RING_SIZE
 )paren
 suffix:semicolon
-macro_line|#ifndef final_version
-multiline_comment|/* This should never happen. */
-r_if
-c_cond
-(paren
-(paren
-r_int
-)paren
-(paren
-id|lp-&gt;rx_ring
-)paren
-op_amp
-l_int|0x07
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot; **ERROR** LANCE Rx and Tx rings not on even boundary.&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-id|mem_start
-suffix:semicolon
-)brace
-macro_line|#endif
 id|lp-&gt;chip_version
 op_assign
 id|lance_version
@@ -1611,6 +1625,8 @@ c_cond
 id|hp_builtin
 )paren
 (brace
+r_static
+r_const
 r_char
 id|dma_tbl
 (braket
@@ -1627,10 +1643,12 @@ comma
 l_int|0
 )brace
 suffix:semicolon
+r_static
+r_const
 r_char
 id|irq_tbl
 (braket
-l_int|8
+l_int|4
 )braket
 op_assign
 (brace
@@ -1697,6 +1715,8 @@ c_cond
 id|hpJ2405A
 )paren
 (brace
+r_static
+r_const
 r_char
 id|dma_tbl
 (braket
@@ -1713,6 +1733,8 @@ comma
 l_int|7
 )brace
 suffix:semicolon
+r_static
+r_const
 r_char
 id|irq_tbl
 (braket
@@ -2034,23 +2056,6 @@ suffix:semicolon
 r_else
 (brace
 multiline_comment|/* OK, we have to auto-DMA. */
-r_int
-id|dmas
-(braket
-)braket
-op_assign
-(brace
-l_int|5
-comma
-l_int|6
-comma
-l_int|7
-comma
-l_int|3
-)brace
-comma
-id|boguscnt
-suffix:semicolon
 r_for
 c_loop
 (paren
@@ -2066,6 +2071,23 @@ id|i
 op_increment
 )paren
 (brace
+r_static
+r_const
+r_char
+id|dmas
+(braket
+)braket
+op_assign
+(brace
+l_int|5
+comma
+l_int|6
+comma
+l_int|7
+comma
+l_int|3
+)brace
+suffix:semicolon
 r_int
 id|dma
 op_assign
@@ -2073,6 +2095,9 @@ id|dmas
 (braket
 id|i
 )braket
+suffix:semicolon
+r_int
+id|boguscnt
 suffix:semicolon
 multiline_comment|/* Don&squot;t enable a permanently busy DMA channel, or the machine&n;&t;&t;&t;   will hang. */
 r_if
@@ -4526,9 +4551,6 @@ l_int|2
 )paren
 suffix:semicolon
 multiline_comment|/* 16 byte align */
-id|eth_copy_and_sum
-c_func
-(paren
 id|skb_put
 c_func
 (paren
@@ -4536,6 +4558,12 @@ id|skb
 comma
 id|pkt_len
 )paren
+suffix:semicolon
+multiline_comment|/* Make room */
+id|eth_copy_and_sum
+c_func
+(paren
+id|skb
 comma
 (paren
 r_int

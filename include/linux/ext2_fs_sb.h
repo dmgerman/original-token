@@ -166,6 +166,23 @@ r_int
 r_int
 id|s_mount_state
 suffix:semicolon
+DECL|member|s_pad
+r_int
+r_int
+id|s_pad
+suffix:semicolon
+DECL|member|s_addr_per_block_bits
+r_int
+id|s_addr_per_block_bits
+suffix:semicolon
+DECL|member|s_inodes_per_block_bits
+r_int
+id|s_inodes_per_block_bits
+suffix:semicolon
+DECL|member|s_desc_per_block_bits
+r_int
+id|s_desc_per_block_bits
+suffix:semicolon
 )brace
 suffix:semicolon
 macro_line|#endif&t;/* _LINUX_EXT2_FS_SB */

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/fs/proc/scsi.c  &n; *  (c) 1995 Michael Neuffer neuffer@goofy.zdv.uni-mainz.de&n; *&n; *  The original version was derived from linux/fs/proc/net.c,&n; *  which is Copyright (C) 1991, 1992 Linus Torvalds. &n; *  Much has been rewritten, but some of the code still remains.&n; *&n; *  /proc/scsi directory handling functions&n; *&n; *  last change: 95/06/13    &n; *&n; *  Initial version: March &squot;95&n; *  95/15/05 Added subdirectories for each driver and show every&n; *&t;     registered HBA as a single file. &n; *  95/30/05 Added rudimentary write support for parameter passing&n; *&n; *  TODO: Improve support to write to the driver files&n; *&t;  Optimize directory handling &n; *&t;  Add some more comments&n; */
+multiline_comment|/*&n; *  linux/fs/proc/scsi.c  &n; *  (c) 1995 Michael Neuffer neuffer@goofy.zdv.uni-mainz.de&n; *&n; *  The original version was derived from linux/fs/proc/net.c,&n; *  which is Copyright (C) 1991, 1992 Linus Torvalds. &n; *  Much has been rewritten, but some of the code still remains.&n; *&n; *  /proc/scsi directory handling functions&n; *&n; *  last change: 95/07/04    &n; *&n; *  Initial version: March &squot;95&n; *  95/05/15 Added subdirectories for each driver and show every&n; *&t;     registered HBA as a single file. &n; *  95/05/30 Added rudimentary write support for parameter passing&n; *  95/07/04 Fixed bugs in directory handling&n; *&n; *  TODO: Improve support to write to the driver files&n; *&t;  Optimize directory handling &n; *&t;  Add some more comments&n; */
 macro_line|#include &lt;linux/autoconf.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -393,6 +393,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
+multiline_comment|/* Here we do not simply count the entries. Since the array&n;             * contains the directories of all drivers, we need to return&n;             * a pointer to the beginning of the directory information&n;             * and its length.&n;             */
 id|dir
 op_assign
 id|scsi_hba_dir
@@ -745,8 +746,6 @@ id|index
 comma
 id|num
 suffix:semicolon
-id|index
-op_assign
 id|num
 op_assign
 l_int|0
@@ -987,9 +986,6 @@ r_int
 id|count
 )paren
 (brace
-id|uint
-id|ino
-suffix:semicolon
 r_int
 id|length
 suffix:semicolon
@@ -1050,10 +1046,6 @@ r_return
 op_minus
 id|ENOMEM
 suffix:semicolon
-id|ino
-op_assign
-id|inode-&gt;i_ino
-suffix:semicolon
 r_while
 c_loop
 (paren
@@ -1100,7 +1092,7 @@ op_assign
 id|dispatch_scsi_info_ptr
 c_func
 (paren
-id|ino
+id|inode-&gt;i_ino
 comma
 id|page
 comma

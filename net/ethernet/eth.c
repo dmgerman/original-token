@@ -686,6 +686,14 @@ r_struct
 id|ethhdr
 op_star
 id|eth
+suffix:semicolon
+id|IS_SKB
+c_func
+(paren
+id|dest
+)paren
+suffix:semicolon
+id|eth
 op_assign
 (paren
 r_struct

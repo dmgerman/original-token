@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/fs/isofs/inode.c&n; * &n; *  (C) 1992, 1993, 1994  Eric Youngdale Modified for ISO9660 filesystem.&n; *&n; *  (C) 1991  Linus Torvalds - minix filesystem&n; */
+multiline_comment|/*&n; *  linux/fs/isofs/inode.c&n; * &n; *  (C) 1992, 1993, 1994  Eric Youngdale Modified for ISO9660 filesystem.&n; *      1995  Mark Dobie - patch to allow VideoCD and PhotoCD mounting.&n; *&n; *  (C) 1991  Linus Torvalds - minix filesystem&n; */
 macro_line|#ifdef MODULE
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
@@ -1963,6 +1963,9 @@ r_int
 id|block
 suffix:semicolon
 r_int
+id|volume_seq_no
+suffix:semicolon
+r_int
 id|i
 suffix:semicolon
 id|block
@@ -2607,7 +2610,15 @@ id|inode-&gt;i_op
 op_assign
 l_int|NULL
 suffix:semicolon
-multiline_comment|/* A volume number of 0 is nonsense.  Disable checking if we see&n;&t;   this */
+multiline_comment|/* get the volume sequence numner */
+id|volume_seq_no
+op_assign
+id|isonum_723
+(paren
+id|raw_inode-&gt;volume_sequence_number
+)paren
+suffix:semicolon
+multiline_comment|/* &n;&t; * Disable checking if we see any volume number other than 0 or 1.&n;&t; * We could use the cruft option, but that has multiple purposes, one&n;&t; * of which is limiting the file size to 16Mb.  Thus we silently allow&n;&t; * volume numbers of 0 to go through without complaining.&n;&t; */
 r_if
 c_cond
 (paren
@@ -2615,12 +2626,17 @@ id|inode-&gt;i_sb-&gt;u.isofs_sb.s_cruft
 op_eq
 l_char|&squot;n&squot;
 op_logical_and
-id|isonum_723
 (paren
-id|raw_inode-&gt;volume_sequence_number
-)paren
-op_eq
+id|volume_seq_no
+op_ne
 l_int|0
+)paren
+op_logical_and
+(paren
+id|volume_seq_no
+op_ne
+l_int|1
+)paren
 )paren
 (brace
 id|printk
@@ -2641,12 +2657,17 @@ id|inode-&gt;i_sb-&gt;u.isofs_sb.s_cruft
 op_ne
 l_char|&squot;y&squot;
 op_logical_and
-id|isonum_723
 (paren
-id|raw_inode-&gt;volume_sequence_number
+id|volume_seq_no
+op_ne
+l_int|0
 )paren
+op_logical_and
+(paren
+id|volume_seq_no
 op_ne
 l_int|1
+)paren
 )paren
 (brace
 id|printk

@@ -554,7 +554,7 @@ id|ENXIO
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *    Interrupts disabled. Be careful&n; */
+multiline_comment|/*&n;     *    Interrupts disabled. Be careful&n;   */
 id|DISABLE_INTR
 (paren
 id|flags
@@ -870,7 +870,7 @@ id|DISABLE_INTR
 id|flags
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * Wait until the queue is empty&n; */
+multiline_comment|/*&n;     * Wait until the queue is empty&n;   */
 r_if
 c_cond
 (paren
@@ -891,7 +891,7 @@ comma
 l_int|0xfe
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t;&t;&t; * Active sensing to shut the&n;&t;&t;&t;&t;&t;&t; * devices&n;&t;&t;&t;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;   * Active sensing to shut the&n;&t;&t;&t;&t;&t;&t;   * devices&n;&t;&t;&t;&t;&t;&t; */
 r_while
 c_loop
 (paren
@@ -1419,6 +1419,71 @@ id|dev
 op_rshift
 l_int|4
 suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+(paren
+id|cmd
+op_rshift
+l_int|8
+)paren
+op_amp
+l_int|0xff
+)paren
+op_eq
+l_char|&squot;C&squot;
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|midi_devs
+(braket
+id|dev
+)braket
+op_member_access_from_pointer
+id|coproc
+)paren
+multiline_comment|/* Coprocessor ioctl */
+r_return
+id|midi_devs
+(braket
+id|dev
+)braket
+op_member_access_from_pointer
+id|coproc-&gt;ioctl
+(paren
+id|midi_devs
+(braket
+id|dev
+)braket
+op_member_access_from_pointer
+id|coproc-&gt;devc
+comma
+id|cmd
+comma
+id|arg
+comma
+l_int|0
+)paren
+suffix:semicolon
+r_else
+id|printk
+(paren
+l_string|&quot;/dev/midi%d: No coprocessor for this device&bslash;n&quot;
+comma
+id|dev
+)paren
+suffix:semicolon
+r_return
+id|RET_ERROR
+(paren
+id|EREMOTEIO
+)paren
+suffix:semicolon
+)brace
+r_else
 r_switch
 c_cond
 (paren

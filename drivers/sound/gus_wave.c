@@ -4,7 +4,7 @@ macro_line|#include &lt;linux/ultrasound.h&gt;
 macro_line|#include &quot;gus_hw.h&quot;
 macro_line|#if defined(CONFIGURE_SOUNDCARD) &amp;&amp; !defined(EXCLUDE_GUS)
 DECL|macro|MAX_SAMPLE
-mdefine_line|#define MAX_SAMPLE&t;128
+mdefine_line|#define MAX_SAMPLE&t;150
 DECL|macro|MAX_PATCH
 mdefine_line|#define MAX_PATCH&t;256
 DECL|struct|voice_info
@@ -150,6 +150,21 @@ id|gus_irq
 comma
 id|gus_dma
 suffix:semicolon
+DECL|variable|gusmax_dma
+r_static
+r_int
+id|gusmax_dma
+op_assign
+op_minus
+l_int|1
+suffix:semicolon
+DECL|variable|dual_dma_mode
+r_static
+r_int
+id|dual_dma_mode
+op_assign
+l_int|0
+suffix:semicolon
 DECL|variable|gus_mem_size
 r_static
 r_int
@@ -168,6 +183,13 @@ DECL|variable|gus_busy
 r_static
 r_int
 id|gus_busy
+op_assign
+l_int|0
+suffix:semicolon
+DECL|variable|gus_no_dma
+r_static
+r_int
+id|gus_no_dma
 op_assign
 l_int|0
 suffix:semicolon
@@ -207,6 +229,13 @@ DECL|variable|recording_active
 r_static
 r_int
 id|recording_active
+op_assign
+l_int|0
+suffix:semicolon
+DECL|variable|only_read_access
+r_static
+r_int
+id|only_read_access
 op_assign
 l_int|0
 suffix:semicolon
@@ -2028,6 +2057,10 @@ id|gus_voice_volume
 l_int|0
 )paren
 suffix:semicolon
+id|gus_voice_off
+(paren
+)paren
+suffix:semicolon
 id|gus_write_addr
 (paren
 l_int|0x0a
@@ -2055,6 +2088,13 @@ l_int|0x03
 suffix:semicolon
 multiline_comment|/* Ramping off */
 id|voice_alloc-&gt;map
+(braket
+id|voice
+)braket
+op_assign
+l_int|0
+suffix:semicolon
+id|voice_alloc-&gt;alloc_times
 (braket
 id|voice
 )braket
@@ -2939,7 +2979,7 @@ l_int|0
 comma
 l_int|0
 comma
-l_int|1
+l_int|0
 comma
 l_int|3
 comma
@@ -2953,7 +2993,7 @@ l_int|4
 comma
 l_int|0
 comma
-l_int|0
+l_int|1
 comma
 l_int|0
 comma
@@ -3130,7 +3170,7 @@ id|mix_image
 op_or_assign
 l_int|0x02
 suffix:semicolon
-multiline_comment|/* Disable line out */
+multiline_comment|/* Disable line out (for a moment) */
 id|OUTB
 (paren
 id|mix_image
@@ -3186,6 +3226,30 @@ op_or_assign
 l_int|0x40
 suffix:semicolon
 multiline_comment|/* Combine IRQ1 (GF1) and IRQ2 (Midi) */
+id|dual_dma_mode
+op_assign
+l_int|1
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|have_gus_max
+op_logical_or
+id|gusmax_dma
+op_eq
+id|gus_dma
+op_logical_or
+id|gusmax_dma
+op_eq
+op_minus
+l_int|1
+)paren
+(brace
+id|dual_dma_mode
+op_assign
+l_int|0
+suffix:semicolon
 id|dma_image
 op_assign
 l_int|0x40
@@ -3213,6 +3277,64 @@ id|dma_image
 op_or_assign
 id|tmp
 suffix:semicolon
+)brace
+r_else
+multiline_comment|/* Setup dual DMA channel mode for GUS MAX */
+(brace
+id|dma_image
+op_assign
+id|gus_dma_map
+(braket
+id|gus_dma
+)braket
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|dma_image
+)paren
+id|printk
+(paren
+l_string|&quot;Warning! GUS DMA not selected&bslash;n&quot;
+)paren
+suffix:semicolon
+id|tmp
+op_assign
+id|gus_dma_map
+(braket
+id|gusmax_dma
+)braket
+op_lshift
+l_int|3
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|tmp
+)paren
+(brace
+id|printk
+(paren
+l_string|&quot;Warning! Invalid GUS MAX DMA&bslash;n&quot;
+)paren
+suffix:semicolon
+id|tmp
+op_assign
+l_int|0x40
+suffix:semicolon
+multiline_comment|/* Combine DMA channels */
+id|dual_dma_mode
+op_assign
+l_int|0
+suffix:semicolon
+)brace
+id|dma_image
+op_or_assign
+id|tmp
+suffix:semicolon
+)brace
 multiline_comment|/*&n;   * For some reason the IRQ and DMA addresses must be written twice&n;   */
 multiline_comment|/*&n;   * Doing it first time&n;   */
 id|OUTB
@@ -3319,9 +3441,10 @@ suffix:semicolon
 multiline_comment|/* This disables writes to IRQ/DMA reg */
 id|gusintr
 (paren
+id|INT_HANDLER_CALL
+(paren
 l_int|0
-comma
-l_int|NULL
+)paren
 )paren
 suffix:semicolon
 multiline_comment|/* Serve pending interrupts */
@@ -3815,13 +3938,7 @@ id|DISABLE_INTR
 id|flags
 )paren
 suffix:semicolon
-id|voice_alloc-&gt;map
-(braket
-id|voice
-)braket
-op_assign
-l_int|0xffff
-suffix:semicolon
+multiline_comment|/* voice_alloc-&gt;map[voice] = 0xffff; */
 r_if
 c_cond
 (paren
@@ -3863,6 +3980,11 @@ id|voice
 )paren
 suffix:semicolon
 )brace
+id|RESTORE_INTR
+(paren
+id|flags
+)paren
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -3882,6 +4004,7 @@ r_int
 id|pressure
 )paren
 (brace
+macro_line|#if 0
 r_int
 id|lo_limit
 comma
@@ -3891,9 +4014,6 @@ r_int
 r_int
 id|flags
 suffix:semicolon
-r_return
-suffix:semicolon
-multiline_comment|/* Procedure currently disabled */
 r_if
 c_cond
 (paren
@@ -4054,6 +4174,7 @@ id|RESTORE_INTR
 id|flags
 )paren
 suffix:semicolon
+macro_line|#endif /* 0 */
 )brace
 r_static
 r_void
@@ -4318,7 +4439,7 @@ id|DISABLE_INTR
 id|flags
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * CAUTION! Interrupts disabled. Enable them before returning&n; */
+multiline_comment|/*&n;     * CAUTION! Interrupts disabled. Enable them before returning&n;   */
 id|gus_select_voice
 (paren
 id|voice
@@ -5183,7 +5304,7 @@ id|samplep
 dot
 id|key
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t;&t;&t; * Follow link&n;&t;&t;&t;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;   * Follow link&n;&t;&t;&t;&t;&t;&t; */
 )brace
 r_if
 c_cond
@@ -5921,11 +6042,6 @@ id|volume
 suffix:semicolon
 r_else
 (brace
-id|RESTORE_INTR
-(paren
-id|flags
-)paren
-suffix:semicolon
 id|ret_val
 op_assign
 id|guswave_start_note2
@@ -6026,6 +6142,7 @@ id|RESTORE_INTR
 id|flags
 )paren
 suffix:semicolon
+multiline_comment|/* Run temporarily with interrupts enabled */
 id|guswave_set_instr
 (paren
 id|voices
@@ -6060,6 +6177,12 @@ id|DISABLE_INTR
 id|flags
 )paren
 suffix:semicolon
+id|gus_select_voice
+(paren
+id|voice
+)paren
+suffix:semicolon
+multiline_comment|/* Reselect the voice (just to be sure) */
 )brace
 r_if
 c_cond
@@ -6166,13 +6289,13 @@ l_int|0x40
 )paren
 suffix:semicolon
 multiline_comment|/* Ramp down, once, irq */
+)brace
+)brace
 id|RESTORE_INTR
 (paren
 id|flags
 )paren
 suffix:semicolon
-)brace
-)brace
 r_return
 id|ret_val
 suffix:semicolon
@@ -6246,6 +6369,10 @@ id|gus_initialize
 (paren
 )paren
 suffix:semicolon
+id|voice_alloc-&gt;timestamp
+op_assign
+l_int|0
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -6260,8 +6387,15 @@ id|gus_devnum
 OL
 l_int|0
 )paren
-r_return
-id|err
+id|gus_no_dma
+op_assign
+l_int|1
+suffix:semicolon
+multiline_comment|/* Upload samples using PIO */
+r_else
+id|gus_no_dma
+op_assign
+l_int|0
 suffix:semicolon
 id|RESET_WAIT_QUEUE
 (paren
@@ -6307,6 +6441,12 @@ id|gus_reset
 (paren
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|gus_no_dma
+)paren
 id|DMAbuf_close_dma
 (paren
 id|gus_devnum
@@ -6868,9 +7008,13 @@ op_minus
 id|target
 suffix:semicolon
 )brace
-macro_line|#if defined(GUS_NO_DMA) || defined(GUS_PATCH_NO_DMA)
-multiline_comment|/*&n;       * For some reason the DMA is not possible. We have to use PIO.&n;       */
+r_if
+c_cond
+(paren
+id|gus_no_dma
+)paren
 (brace
+multiline_comment|/*&n;&t;   * For some reason the DMA is not possible. We have to use PIO.&n;&t;   */
 r_int
 id|i
 suffix:semicolon
@@ -6943,7 +7087,7 @@ id|data
 suffix:semicolon
 )brace
 )brace
-macro_line|#else /* GUS_NO_DMA */
+r_else
 (brace
 r_int
 r_int
@@ -6959,7 +7103,7 @@ r_int
 r_int
 id|flags
 suffix:semicolon
-multiline_comment|/*&n;&t; * OK, move now. First in and then out.&n;&t; */
+multiline_comment|/*&n;&t;   * OK, move now. First in and then out.&n;&t;   */
 id|COPY_FROM_USER
 (paren
 id|audio_devs
@@ -7014,7 +7158,7 @@ comma
 id|DMA_MODE_WRITE
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * Set the DRAM address for the wave data&n;&t; */
+multiline_comment|/*&n;&t;   * Set the DRAM address for the wave data&n;&t;   */
 id|address
 op_assign
 id|target
@@ -7069,7 +7213,7 @@ l_int|0xffff
 )paren
 suffix:semicolon
 multiline_comment|/* DRAM DMA address */
-multiline_comment|/*&n;&t; * Start the DMA transfer&n;&t; */
+multiline_comment|/*&n;&t;   * Start the DMA transfer&n;&t;   */
 id|dma_command
 op_assign
 l_int|0x21
@@ -7124,7 +7268,7 @@ id|dma_command
 )paren
 suffix:semicolon
 multiline_comment|/* Lets bo luteet (=bugs) */
-multiline_comment|/*&n;&t; * Sleep here until the DRAM DMA done interrupt is served&n;&t; */
+multiline_comment|/*&n;&t;   * Sleep here until the DRAM DMA done interrupt is served&n;&t;   */
 id|active_device
 op_assign
 id|GUS_DEV_WAVE
@@ -7159,7 +7303,6 @@ id|flags
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif /* GUS_NO_DMA */
 multiline_comment|/*&n;       * Now the next part&n;       */
 id|left
 op_sub_assign
@@ -7846,8 +7989,20 @@ id|speed
 op_le
 l_int|0
 )paren
-r_return
+id|speed
+op_assign
 id|gus_sampling_speed
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|speed
+OL
+l_int|4000
+)paren
+id|speed
+op_assign
+l_int|4000
 suffix:semicolon
 r_if
 c_cond
@@ -7864,6 +8019,42 @@ id|gus_sampling_speed
 op_assign
 id|speed
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|only_read_access
+)paren
+(brace
+multiline_comment|/* Compute nearest valid recording speed  and return it */
+id|speed
+op_assign
+(paren
+l_int|9878400
+op_div
+(paren
+id|gus_sampling_speed
+op_plus
+l_int|2
+)paren
+)paren
+op_div
+l_int|16
+suffix:semicolon
+id|speed
+op_assign
+(paren
+l_int|9878400
+op_div
+(paren
+id|speed
+op_star
+l_int|16
+)paren
+)paren
+op_minus
+l_int|2
+suffix:semicolon
+)brace
 r_return
 id|speed
 suffix:semicolon
@@ -8205,14 +8396,6 @@ id|EINVAL
 suffix:semicolon
 r_break
 suffix:semicolon
-r_default
-suffix:colon
-r_return
-id|RET_ERROR
-(paren
-id|EINVAL
-)paren
-suffix:semicolon
 )brace
 r_return
 id|RET_ERROR
@@ -8230,6 +8413,25 @@ r_int
 id|dev
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|recording_active
+)paren
+(brace
+id|gus_write8
+(paren
+l_int|0x49
+comma
+l_int|0x00
+)paren
+suffix:semicolon
+multiline_comment|/* Halt recording */
+id|set_input_volumes
+(paren
+)paren
+suffix:semicolon
+)brace
 )brace
 r_static
 r_int
@@ -8243,19 +8445,28 @@ r_int
 id|mode
 )paren
 (brace
-macro_line|#ifdef GUS_NO_DMA
+r_if
+c_cond
+(paren
+id|mode
+op_amp
+id|OPEN_READ
+op_logical_and
+id|dual_dma_mode
+)paren
+(brace
 id|printk
 (paren
-l_string|&quot;GUS: DMA mode not enabled. Device not supported&bslash;n&quot;
+l_string|&quot;GUS: The 8 bit input device is disabled. Use GUS MAX&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
 id|RET_ERROR
 (paren
-id|ENXIO
+id|ENOTTY
 )paren
 suffix:semicolon
-macro_line|#endif
+)brace
 r_if
 c_cond
 (paren
@@ -8321,6 +8532,15 @@ id|set_input_volumes
 )paren
 suffix:semicolon
 )brace
+id|only_read_access
+op_assign
+op_logical_neg
+(paren
+id|mode
+op_amp
+id|OPEN_WRITE
+)paren
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -8355,10 +8575,20 @@ c_cond
 (paren
 id|recording_active
 )paren
+(brace
+id|gus_write8
+(paren
+l_int|0x49
+comma
+l_int|0x00
+)paren
+suffix:semicolon
+multiline_comment|/* Halt recording */
 id|set_input_volumes
 (paren
 )paren
 suffix:semicolon
+)brace
 id|recording_active
 op_assign
 l_int|0
@@ -8378,11 +8608,6 @@ id|flags
 suffix:semicolon
 r_int
 id|voice
-suffix:semicolon
-id|DISABLE_INTR
-(paren
-id|flags
-)paren
 suffix:semicolon
 r_if
 c_cond
@@ -8406,6 +8631,11 @@ id|voice
 op_increment
 )paren
 (brace
+id|DISABLE_INTR
+(paren
+id|flags
+)paren
+suffix:semicolon
 id|gus_select_voice
 (paren
 id|voice
@@ -8439,12 +8669,12 @@ id|gus_pcm_volume
 )paren
 )paren
 suffix:semicolon
-)brace
 id|RESTORE_INTR
 (paren
 id|flags
 )paren
 suffix:semicolon
+)brace
 )brace
 r_static
 r_void
@@ -8770,6 +9000,8 @@ id|pcm_bsize
 op_star
 id|pcm_nblk
 )paren
+op_minus
+l_int|1
 comma
 id|is16bits
 )paren
@@ -8793,6 +9025,8 @@ id|pcm_datasize
 (braket
 id|this_one
 )braket
+op_minus
+l_int|1
 comma
 id|is16bits
 )paren
@@ -9238,7 +9472,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-multiline_comment|/*&n;&t; * Left channel data. The right channel&n;&t; * is transferred after DMA interrupt&n;&t; */
+multiline_comment|/*&n;         * Left channel data. The right channel&n;         * is transferred after DMA interrupt&n;       */
 id|active_device
 op_assign
 id|GUS_DEV_PCM_CONTINUE
@@ -9770,11 +10004,15 @@ r_int
 id|in_left
 op_assign
 id|useroffs
+op_div
+l_int|2
 suffix:semicolon
 r_int
 id|in_right
 op_assign
 id|useroffs
+op_div
+l_int|2
 op_plus
 l_int|1
 suffix:semicolon
@@ -9914,6 +10152,105 @@ comma
 id|gus_copy_from_user
 )brace
 suffix:semicolon
+r_static
+r_void
+DECL|function|guswave_setup_voice
+id|guswave_setup_voice
+(paren
+r_int
+id|dev
+comma
+r_int
+id|voice
+comma
+r_int
+id|chn
+)paren
+(brace
+r_struct
+id|channel_info
+op_star
+id|info
+op_assign
+op_amp
+id|synth_devs
+(braket
+id|dev
+)braket
+op_member_access_from_pointer
+id|chn_info
+(braket
+id|chn
+)braket
+suffix:semicolon
+id|guswave_set_instr
+(paren
+id|dev
+comma
+id|voice
+comma
+id|info-&gt;pgm_num
+)paren
+suffix:semicolon
+id|voices
+(braket
+id|voice
+)braket
+dot
+id|expression_vol
+op_assign
+id|info-&gt;controllers
+(braket
+id|CTL_EXPRESSION
+)braket
+suffix:semicolon
+multiline_comment|/* Just msb */
+id|voices
+(braket
+id|voice
+)braket
+dot
+id|main_vol
+op_assign
+(paren
+id|info-&gt;controllers
+(braket
+id|CTL_MAIN_VOLUME
+)braket
+op_star
+l_int|100
+)paren
+op_div
+l_int|128
+suffix:semicolon
+id|voices
+(braket
+id|voice
+)braket
+dot
+id|panning
+op_assign
+(paren
+id|info-&gt;controllers
+(braket
+id|CTL_PAN
+)braket
+op_star
+l_int|2
+)paren
+op_minus
+l_int|128
+suffix:semicolon
+id|voices
+(braket
+id|voice
+)braket
+dot
+id|bender
+op_assign
+id|info-&gt;bender_value
+suffix:semicolon
+)brace
 r_static
 r_void
 DECL|function|guswave_bender
@@ -10488,7 +10825,7 @@ id|sample_ptrs
 id|sample
 )braket
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t;&t; * Begin offset + offset to DRAM&n;&t;&t;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t;&t; * Begin offsess + offset to DRAM&n;&t;&t;&t;&t;&t; */
 r_for
 c_loop
 (paren
@@ -10599,7 +10936,7 @@ id|len
 op_minus
 id|offs
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t;&t;&t; * Nr of bytes left&n;&t;&t;&t;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;   * Nr of bytes left&n;&t;&t;&t;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -10649,7 +10986,7 @@ id|sample_ptrs
 id|sample
 )braket
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t;&t; * Begin offset + offset to DRAM&n;&t;&t;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t;&t; * Begin offsess + offset to DRAM&n;&t;&t;&t;&t;&t; */
 r_for
 c_loop
 (paren
@@ -10720,12 +11057,21 @@ r_int
 id|i
 comma
 id|p
+comma
+id|best
+op_assign
+op_minus
+l_int|1
+comma
+id|best_time
+op_assign
+l_int|0x7fffffff
 suffix:semicolon
 id|p
 op_assign
 id|alloc-&gt;ptr
 suffix:semicolon
-multiline_comment|/*&n; * First look for a completely stopped voice&n; */
+multiline_comment|/*&n;     * First look for a completely stopped voice&n;   */
 r_for
 c_loop
 (paren
@@ -10760,6 +11106,29 @@ r_return
 id|p
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|alloc-&gt;alloc_times
+(braket
+id|p
+)braket
+OL
+id|best_time
+)paren
+(brace
+id|best
+op_assign
+id|p
+suffix:semicolon
+id|best_time
+op_assign
+id|alloc-&gt;alloc_times
+(braket
+id|p
+)braket
+suffix:semicolon
+)brace
 id|p
 op_assign
 (paren
@@ -10771,7 +11140,7 @@ op_mod
 id|alloc-&gt;max_voice
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Then look for a releasing voice&n; */
+multiline_comment|/*&n;     * Then look for a releasing voice&n;   */
 r_for
 c_loop
 (paren
@@ -10817,10 +11186,16 @@ op_mod
 id|alloc-&gt;max_voice
 suffix:semicolon
 )brace
-id|printk
+r_if
+c_cond
 (paren
-l_string|&quot;GUS: Out of free voices&bslash;n&quot;
+id|best
+op_ge
+l_int|0
 )paren
+id|p
+op_assign
+id|best
 suffix:semicolon
 id|alloc-&gt;ptr
 op_assign
@@ -10877,6 +11252,8 @@ comma
 id|guswave_bender
 comma
 id|guswave_alloc
+comma
+id|guswave_setup_voice
 )brace
 suffix:semicolon
 r_static
@@ -10901,12 +11278,20 @@ op_complement
 l_int|0x06
 suffix:semicolon
 multiline_comment|/* Just line out enabled */
+r_if
+c_cond
+(paren
+id|have_gus_max
+)paren
+multiline_comment|/* Don&squot;t disturb GUS MAX */
+r_return
+suffix:semicolon
 id|DISABLE_INTR
 (paren
 id|flags
 )paren
 suffix:semicolon
-multiline_comment|/*&n; *    Enable channels having vol &gt; 10%&n; *      Note! bit 0x01 means line in DISABLED while 0x04 means&n; *            mic in ENABLED.&n; */
+multiline_comment|/*&n;   *    Enable channels having vol &gt; 10%&n;   *      Note! bit 0x01 means the line in DISABLED while 0x04 means&n;   *            the mic in ENABLED.&n;   */
 r_if
 c_cond
 (paren
@@ -10936,7 +11321,7 @@ c_cond
 id|recording_active
 )paren
 (brace
-multiline_comment|/*&n; *    Disable channel, if not selected for recording&n; */
+multiline_comment|/*&n;       *    Disable channel, if not selected for recording&n;       */
 r_if
 c_cond
 (paren
@@ -11526,6 +11911,8 @@ id|mixer_operations
 id|gus_mixer_operations
 op_assign
 (brace
+l_string|&quot;Gravis Ultrasound&quot;
+comma
 id|gus_default_mixer_ioctl
 )brace
 suffix:semicolon
@@ -11555,6 +11942,31 @@ op_assign
 op_amp
 id|gus_mixer_operations
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|have_gus_max
+)paren
+(brace
+multiline_comment|/*&n; *  Enable all mixer channels on the GF1 side. Otherwise recording will&n; *  not be possible using GUS MAX.&n; */
+id|mix_image
+op_and_assign
+op_complement
+l_int|0x07
+suffix:semicolon
+id|mix_image
+op_or_assign
+l_int|0x04
+suffix:semicolon
+multiline_comment|/* All channels enabled */
+id|OUTB
+(paren
+id|mix_image
+comma
+id|u_Mixer
+)paren
+suffix:semicolon
+)brace
 r_return
 id|mem_start
 suffix:semicolon
@@ -11598,7 +12010,81 @@ id|mixer_type
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/*&n; * Try to identify the GUS model.&n; *&n; *&t;Versions &lt; 3.6 don&squot;t have the digital ASIC. Try to probe it first.&n; */
+r_if
+c_cond
+(paren
+id|irq
+template_param
+l_int|15
+)paren
+(brace
+id|printk
+(paren
+l_string|&quot;ERROR! Invalid IRQ#%d. GUS Disabled&quot;
+comma
+id|irq
+)paren
+suffix:semicolon
+r_return
+id|mem_start
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|dma
+template_param
+l_int|7
+)paren
+(brace
+id|printk
+(paren
+l_string|&quot;ERROR! Invalid DMA#%d. GUS Disabled&quot;
+comma
+id|dma
+)paren
+suffix:semicolon
+r_return
+id|mem_start
+suffix:semicolon
+)brace
+id|gus_irq
+op_assign
+id|irq
+suffix:semicolon
+id|gus_dma
+op_assign
+id|dma
+suffix:semicolon
+macro_line|#ifdef GUSMAX_DMA
+r_if
+c_cond
+(paren
+id|gusmax_dma
+op_eq
+op_minus
+l_int|1
+)paren
+multiline_comment|/* Not already set */
+id|gusmax_dma
+op_assign
+id|GUSMAX_DMA
+suffix:semicolon
+macro_line|#else
+r_if
+c_cond
+(paren
+id|gusmax_dma
+op_eq
+op_minus
+l_int|1
+)paren
+id|gusmax_dma
+op_assign
+id|dma
+suffix:semicolon
+macro_line|#endif
+multiline_comment|/*&n;     * Try to identify the GUS model.&n;     *&n;     *  Versions &lt; 3.6 don&squot;t have the digital ASIC. Try to probe it first.&n;   */
 id|DISABLE_INTR
 (paren
 id|flags
@@ -11642,7 +12128,7 @@ l_int|0x06
 )paren
 multiline_comment|/* Should be 0x02?? */
 (brace
-multiline_comment|/*&n;&t; * It has the digital ASIC so the card is at least v3.4.&n;&t; * Next try to detect the true model.&n;&t; */
+multiline_comment|/*&n;         * It has the digital ASIC so the card is at least v3.4.&n;         * Next try to detect the true model.&n;       */
 id|val
 op_assign
 id|INB
@@ -11650,7 +12136,7 @@ id|INB
 id|u_MixSelect
 )paren
 suffix:semicolon
-multiline_comment|/*&n;         * Value 255 means pre-3.7 which don&squot;t have mixer.&n;         * Values 5 thru 9 mean v3.7 which has a ICS2101 mixer.&n;         * 10 and above is GUS MAX which has the CS4231 codec/mixer.&n;         *&n;         * Sorry. No GUS max support yet but it should be available&n;&t; * soon after the SDK for GUS MAX is available.&n;&t; */
+multiline_comment|/*&n;         * Value 255 means pre-3.7 which don&squot;t have mixer.&n;         * Values 5 thru 9 mean v3.7 which has a ICS2101 mixer.&n;         * 10 and above is GUS MAX which has the CS4231 codec/mixer.&n;         *&n;       */
 r_if
 c_cond
 (paren
@@ -11720,15 +12206,27 @@ multiline_comment|/* Codec enable */
 r_if
 c_cond
 (paren
-id|dma
+id|gus_dma
 OG
 l_int|3
 )paren
 id|max_config
 op_or_assign
-l_int|0x30
+l_int|0x10
 suffix:semicolon
-multiline_comment|/* 16 bit playback and capture DMAs */
+multiline_comment|/* 16 bit capture DMA */
+r_if
+c_cond
+(paren
+id|gusmax_dma
+OG
+l_int|3
+)paren
+id|max_config
+op_or_assign
+l_int|0x20
+suffix:semicolon
+multiline_comment|/* 16 bit playback DMA */
 id|max_config
 op_or_assign
 (paren
@@ -11789,11 +12287,13 @@ comma
 op_minus
 id|irq
 comma
-id|dma
+id|gusmax_dma
 comma
-id|dma
+multiline_comment|/* Playback DMA */
+id|gus_dma
 )paren
 suffix:semicolon
+multiline_comment|/* Capture DMA */
 )brace
 r_else
 id|printk
@@ -11801,12 +12301,18 @@ id|printk
 l_string|&quot;[Where&squot;s the CS4231?]&quot;
 )paren
 suffix:semicolon
+macro_line|#else
+id|printk
+(paren
+l_string|&quot;&bslash;n&bslash;n&bslash;nGUS MAX support was not compiled in!!!&bslash;n&bslash;n&bslash;n&bslash;n&quot;
+)paren
+suffix:semicolon
 macro_line|#endif
 )brace
 )brace
 r_else
 (brace
-multiline_comment|/*&n;&t; * ASIC not detected so the card must be 2.2 or 2.4.&n;&t; * There could still be the 16-bit/mixer daughter card.&n;&t; * It has the same codec/mixer than MAX.&n;&t; * At this time there is no support for it but it will appear soon.&n;&t; */
+multiline_comment|/*&n;         * ASIC not detected so the card must be 2.2 or 2.4.&n;         * There could still be the 16-bit/mixer daughter card.&n;       */
 )brace
 id|printk
 (paren
@@ -11822,7 +12328,6 @@ op_div
 l_int|1024
 )paren
 suffix:semicolon
-macro_line|#ifndef SCO
 id|sprintf
 (paren
 id|gus_info.name
@@ -11838,53 +12343,6 @@ id|gus_mem_size
 op_div
 l_int|1024
 )paren
-suffix:semicolon
-macro_line|#endif
-r_if
-c_cond
-(paren
-id|irq
-template_param
-l_int|15
-)paren
-(brace
-id|printk
-(paren
-l_string|&quot;ERROR! Invalid IRQ#%d. GUS Disabled&quot;
-comma
-id|irq
-)paren
-suffix:semicolon
-r_return
-id|mem_start
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|dma
-template_param
-l_int|7
-)paren
-(brace
-id|printk
-(paren
-l_string|&quot;ERROR! Invalid DMA#%d. GUS Disabled&quot;
-comma
-id|dma
-)paren
-suffix:semicolon
-r_return
-id|mem_start
-suffix:semicolon
-)brace
-id|gus_irq
-op_assign
-id|irq
-suffix:semicolon
-id|gus_dma
-op_assign
-id|dma
 suffix:semicolon
 r_if
 c_cond
@@ -11999,7 +12457,7 @@ id|printk
 l_string|&quot;GUS: Too many PCM devices available&bslash;n&quot;
 )paren
 suffix:semicolon
-multiline_comment|/*&n; *  Mixer dependent initialization.&n; */
+multiline_comment|/*&n;     *  Mixer dependent initialization.&n;   */
 r_switch
 c_cond
 (paren
@@ -12040,9 +12498,6 @@ id|mem_start
 )paren
 suffix:semicolon
 )brace
-r_return
-id|mem_start
-suffix:semicolon
 )brace
 r_static
 r_void
@@ -12095,6 +12550,21 @@ l_int|0x00
 comma
 id|tmp
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|tmp
+op_amp
+l_int|0x03
+)paren
+multiline_comment|/* Voice stopped */
+id|voice_alloc-&gt;map
+(braket
+id|voice
+)braket
+op_assign
+l_int|0
 suffix:semicolon
 id|mode
 op_assign
@@ -12150,7 +12620,7 @@ l_int|4
 OL
 l_int|100
 )paren
-multiline_comment|/*&n;&t;&t;&t;&t;&t;&t; * Get current volume&n;&t;&t;&t;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;&t; * Get current volume&n;&t;&t;&t;&t;&t;&t;&t; */
 (brace
 id|gus_voice_off
 (paren
@@ -12235,6 +12705,8 @@ r_if
 c_cond
 (paren
 id|pcm_qlen
+op_logical_and
+id|pcm_active
 )paren
 (brace
 id|play_next_pcm_block
@@ -12245,6 +12717,26 @@ suffix:semicolon
 r_else
 (brace
 multiline_comment|/* Underrun. Just stop the voice */
+id|gus_select_voice
+(paren
+l_int|0
+)paren
+suffix:semicolon
+multiline_comment|/* Left channel */
+id|gus_voice_off
+(paren
+)paren
+suffix:semicolon
+id|gus_rampoff
+(paren
+)paren
+suffix:semicolon
+id|gus_select_voice
+(paren
+l_int|1
+)paren
+suffix:semicolon
+multiline_comment|/* Right channel */
 id|gus_voice_off
 (paren
 )paren
@@ -12258,7 +12750,7 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * If the queue was full before this interrupt, the DMA transfer was&n; * suspended. Let it continue now.&n; */
+multiline_comment|/*&n;&t;   * If the queue was full before this interrupt, the DMA transfer was&n;&t;   * suspended. Let it continue now.&n;&t; */
 r_if
 c_cond
 (paren
@@ -12647,7 +13139,7 @@ id|voice
 OL
 id|nr_voices
 )paren
-multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;&t;&t; * Not done&n;&t;&t;&t;&t;&t;&t;&t;&t; * yet&n;&t;&t;&t;&t;&t;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;   * Not done&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;   * yet&n;&t;&t;&t;&t;&t;&t;&t;&t;&t; */
 (brace
 id|wave_ignore
 op_or_assign
@@ -12687,7 +13179,7 @@ id|voice
 OL
 id|nr_voices
 )paren
-multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;&t;&t; * Not done&n;&t;&t;&t;&t;&t;&t;&t;&t; * yet&n;&t;&t;&t;&t;&t;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;   * Not done&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;   * yet&n;&t;&t;&t;&t;&t;&t;&t;&t;&t; */
 (brace
 id|volume_ignore
 op_or_assign

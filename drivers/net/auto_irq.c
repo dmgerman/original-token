@@ -35,12 +35,14 @@ multiline_comment|/* ... zeroed */
 suffix:semicolon
 DECL|variable|irqs_busy
 r_int
+r_int
 id|irqs_busy
 op_assign
 l_int|0x2147
 suffix:semicolon
 multiline_comment|/* The set of fixed IRQs (keyboard, timer, etc) */
 DECL|variable|irqs_used
+r_int
 r_int
 id|irqs_used
 op_assign
@@ -49,6 +51,7 @@ suffix:semicolon
 multiline_comment|/* The set of fixed IRQs sometimes enabled. */
 DECL|variable|irqs_reserved
 r_int
+r_int
 id|irqs_reserved
 op_assign
 l_int|0x0000
@@ -56,21 +59,16 @@ suffix:semicolon
 multiline_comment|/* An advisory &quot;reserved&quot; table. */
 DECL|variable|irqs_shared
 r_int
+r_int
 id|irqs_shared
 op_assign
 l_int|0x0000
 suffix:semicolon
 multiline_comment|/* IRQ lines &quot;shared&quot; among conforming cards.*/
-DECL|variable|irq_number
-r_static
-r_volatile
-r_int
-id|irq_number
-suffix:semicolon
-multiline_comment|/* The latest irq number we actually found. */
 DECL|variable|irq_bitmap
 r_static
 r_volatile
+r_int
 r_int
 id|irq_bitmap
 suffix:semicolon
@@ -78,9 +76,17 @@ multiline_comment|/* The irqs we actually found. */
 DECL|variable|irq_handled
 r_static
 r_int
+r_int
 id|irq_handled
 suffix:semicolon
 multiline_comment|/* The irq lines we have a handler on. */
+DECL|variable|irq_number
+r_static
+r_volatile
+r_int
+id|irq_number
+suffix:semicolon
+multiline_comment|/* The latest irq number we actually found. */
 DECL|function|autoirq_probe
 r_static
 r_void

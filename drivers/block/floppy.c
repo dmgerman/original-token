@@ -11,7 +11,7 @@ multiline_comment|/* 1994/6/24 --bbroad-- added the floppy table entries and mad
 multiline_comment|/* 1994/7/13 -- Paul Vojta -- modified the probing code to allow three or more&n; * disk types.&n; */
 multiline_comment|/*&n; * 1994/8/8 -- Alain Knaff -- Switched to fdpatch driver: Support for bigger&n; * format bug fixes, but unfortunately some new bugs too...&n; */
 multiline_comment|/* 1994/9/17 -- Koen Holtman -- added logging of physical floppy write &n; * errors to allow safe writing by specialized programs.&n; */
-multiline_comment|/* 1994/4/24 -- Dan Fandrich -- added support for Commodore 1581 3.5&quot; disks&n; * by defining bit 1 of the &quot;stretch&quot; parameter to mean put sectors on the&n; * opposite side of the disk, leaving the sector IDs alone (i.e. Commodore&squot;s&n; * drives are &quot;upside-down&quot;).&n; */
+multiline_comment|/* 1995/4/24 -- Dan Fandrich -- added support for Commodore 1581 3.5&quot; disks&n; * by defining bit 1 of the &quot;stretch&quot; parameter to mean put sectors on the&n; * opposite side of the disk, leaving the sector IDs alone (i.e. Commodore&squot;s&n; * drives are &quot;upside-down&quot;).&n; */
 DECL|macro|CONFIG_FLOPPY_SANITY
 mdefine_line|#define CONFIG_FLOPPY_SANITY
 DECL|macro|CONFIG_FLOPPY_SILENT_DCL_CLEAR

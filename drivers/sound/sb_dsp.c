@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * sound/sb_dsp.c&n; *&n; * The low level driver for the SoundBlaster DSP chip (SB1.0 to 2.1, SB Pro).&n; *&n; * Copyright by Hannu Savolainen 1994&n; *&n; * Redistribution and use in source and binary forms, with or without&n; * modification, are permitted provided that the following conditions are&n; * met: 1. Redistributions of source code must retain the above copyright&n; * notice, this list of conditions and the following disclaimer. 2.&n; * Redistributions in binary form must reproduce the above copyright notice,&n; * this list of conditions and the following disclaimer in the documentation&n; * and/or other materials provided with the distribution.&n; *&n; * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS&squot;&squot; AND ANY&n; * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED&n; * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE&n; * DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR&n; * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL&n; * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR&n; * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER&n; * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT&n; * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY&n; * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF&n; * SUCH DAMAGE.&n; *&n; * Modified:&n; *&t;Hunyue Yau&t;Jan 6 1994&n; *&t;Added code to support Sound Galaxy NX Pro&n; *&n; */
+multiline_comment|/*&n; * sound/sb_dsp.c&n; *&n; * The low level driver for the SoundBlaster DSP chip (SB1.0 to 2.1, SB Pro).&n; *&n; * Copyright by Hannu Savolainen 1994&n; *&n; * Redistribution and use in source and binary forms, with or without&n; * modification, are permitted provided that the following conditions are&n; * met: 1. Redistributions of source code must retain the above copyright&n; * notice, this list of conditions and the following disclaimer. 2.&n; * Redistributions in binary form must reproduce the above copyright notice,&n; * this list of conditions and the following disclaimer in the documentation&n; * and/or other materials provided with the distribution.&n; *&n; * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS&squot;&squot; AND ANY&n; * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED&n; * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE&n; * DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR&n; * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL&n; * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR&n; * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER&n; * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT&n; * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY&n; * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF&n; * SUCH DAMAGE.&n; *&n; * Modified:&n; *      Hunyue Yau      Jan 6 1994&n; *      Added code to support Sound Galaxy NX Pro&n; *&n; *      JRA Gibson      April 1995&n; *      Code added for MV ProSonic/Jazz 16 in 16 bit mode&n; */
 macro_line|#include &quot;sound_config.h&quot;
 macro_line|#if defined(CONFIGURE_SOUNDCARD) &amp;&amp; !defined(EXCLUDE_SB)
 macro_line|#include &quot;sb.h&quot;
@@ -26,6 +26,18 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* Read, write or both */
+DECL|variable|Jazz16_detected
+r_int
+id|Jazz16_detected
+op_assign
+l_int|0
+suffix:semicolon
+DECL|variable|sb_no_recording
+r_int
+id|sb_no_recording
+op_assign
+l_int|0
+suffix:semicolon
 multiline_comment|/*&n; * The DSP channel can be used either for input or output. Variable&n; * &squot;sb_irq_mode&squot; will be set when the program calls read or write first time&n; * after open. Current version doesn&squot;t support mode changes without closing&n; * and reopening the device. Support for this feature may be implemented in a&n; * future version of this driver.&n; */
 DECL|variable|sb_dsp_ok
 r_int
@@ -122,6 +134,46 @@ id|irq_ok
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#ifdef JAZZ16
+multiline_comment|/* 16 bit support&n; */
+DECL|variable|dsp_16bit
+r_static
+r_int
+id|dsp_16bit
+op_assign
+l_int|0
+suffix:semicolon
+DECL|variable|dma8
+r_static
+r_int
+id|dma8
+op_assign
+l_int|1
+suffix:semicolon
+DECL|variable|dma16
+r_static
+r_int
+id|dma16
+op_assign
+l_int|5
+suffix:semicolon
+r_static
+r_int
+id|dsp_set_bits
+(paren
+r_int
+id|arg
+)paren
+suffix:semicolon
+r_static
+r_int
+id|initialize_ProSonic16
+(paren
+r_void
+)paren
+suffix:semicolon
+multiline_comment|/* end of 16 bit support&n; */
+macro_line|#endif
 DECL|variable|sb_duplex_midi
 r_int
 id|sb_duplex_midi
@@ -193,7 +245,7 @@ id|HZ
 op_div
 l_int|10
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t;&t;   * The timeout is 0.1 seconds&n;&t;&t;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t;&t;   * The timeout is 0.1 secods&n;&t;&t;&t;&t;&t; */
 multiline_comment|/*&n;   * Note! the i&lt;500000 is an emergency exit. The sb_dsp_command() is sometimes&n;   * called while interrupts are disabled. This means that the timer is&n;   * disabled also. However the timeout situation is a abnormal condition.&n;   * Normally the DSP should be ready to accept commands after just couple of&n;   * loops.&n;   */
 r_for
 c_loop
@@ -260,16 +312,15 @@ l_int|0
 suffix:semicolon
 )brace
 r_void
-DECL|function|sbintr
+DECL|function|INT_HANDLER_PARMS
 id|sbintr
 (paren
-r_int
-id|unit
+id|INT_HANDLER_PARMS
+(paren
+id|irq
 comma
-r_struct
-id|pt_regs
-op_star
-id|regs
+id|dummy
+)paren
 )paren
 (brace
 r_int
@@ -291,7 +342,7 @@ id|sb_getmixer
 id|IRQ_STAT
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&n;&n;&t;&t;&t;&t;&t;&t;&t; * *  * * Interrupt&n;&t;&t;&t;&t;&t;&t;&t; * source * *&n;&t;&t;&t;&t;&t;&t;&t; * register   */
+multiline_comment|/* Interrupt source register */
 macro_line|#ifndef EXCLUDE_SB16
 r_if
 c_cond
@@ -302,7 +353,7 @@ l_int|3
 )paren
 id|sb16_dsp_interrupt
 (paren
-id|unit
+id|irq
 )paren
 suffix:semicolon
 macro_line|#ifndef EXCLUDE_MIDI
@@ -315,7 +366,7 @@ l_int|4
 )paren
 id|sb16midiintr
 (paren
-id|unit
+id|irq
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t;&t; * SB MPU401 interrupt&n;&t;&t;&t;&t; */
@@ -333,7 +384,7 @@ l_int|1
 )paren
 r_return
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t; * Not a DSP interrupt&n;&t;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t; * Not a DSP interupt&n;&t;&t;&t;&t; */
 )brace
 macro_line|#endif
 id|status
@@ -343,7 +394,7 @@ id|INB
 id|DSP_DATA_AVAIL
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t;&t; * Clear interrupt&n;&t;&t;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t;&t;   * Clear interrupt&n;&t;&t;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -405,7 +456,7 @@ suffix:colon
 macro_line|#ifndef EXCLUDE_MIDI
 id|sb_midi_interrupt
 (paren
-id|unit
+id|irq
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -454,6 +505,8 @@ id|snd_set_irq_handler
 id|sbc_irq
 comma
 id|sbintr
+comma
+l_string|&quot;SoundBlaster&quot;
 )paren
 )paren
 OL
@@ -644,7 +697,7 @@ id|speed
 op_assign
 l_int|4000
 suffix:semicolon
-multiline_comment|/*&n; * Older SB models don&squot;t support higher speeds than 22050.&n; */
+multiline_comment|/*&n;     * Older SB models don&squot;t support higher speeds than 22050.&n;   */
 r_if
 c_cond
 (paren
@@ -666,7 +719,7 @@ id|max_speed
 op_assign
 l_int|22050
 suffix:semicolon
-multiline_comment|/*&n; * SB models earlier than SB Pro have low limit for the input speed.&n; */
+multiline_comment|/*&n;     * SB models earlier than SB Pro have low limit for the input speed.&n;   */
 r_if
 c_cond
 (paren
@@ -715,6 +768,9 @@ op_assign
 id|max_speed
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t;&t; * Invalid speed&n;&t;&t;&t;&t; */
+multiline_comment|/* Logitech SoundMan Games and Jazz16 cards can support 44.1kHz stereo */
+macro_line|#if !defined (SM_GAMES)
+multiline_comment|/*&n;   * Max. stereo speed is 22050&n;   */
 r_if
 c_cond
 (paren
@@ -723,12 +779,16 @@ op_logical_and
 id|speed
 OG
 l_int|22050
+op_logical_and
+id|Jazz16_detected
+op_eq
+l_int|0
 )paren
 id|speed
 op_assign
 l_int|22050
 suffix:semicolon
-multiline_comment|/*&n;   * Max. stereo speed is 22050&n;   */
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -1087,7 +1147,7 @@ id|sb_dsp_command
 l_int|0x48
 )paren
 )paren
-multiline_comment|/*&n;&t;&t;&t;&t;&t; * High speed size&n;&t;&t;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t;&t;   * High speed size&n;&t;&t;&t;&t;&t; */
 (brace
 id|sb_dsp_command
 (paren
@@ -1124,7 +1184,7 @@ id|sb_dsp_command
 l_int|0x91
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t;&t; * High speed 8 bit DAC&n;&t;&t;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t;&t;   * High speed 8 bit DAC&n;&t;&t;&t;&t;&t; */
 )brace
 r_else
 id|printk
@@ -1153,7 +1213,7 @@ id|sb_dsp_command
 l_int|0x14
 )paren
 )paren
-multiline_comment|/*&n;&t;&t;&t;&t;&t; * 8-bit DAC (DMA)&n;&t;&t;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t;&t;   * 8-bit DAC (DMA)&n;&t;&t;&t;&t;&t; */
 (brace
 id|sb_dsp_command
 (paren
@@ -1294,7 +1354,7 @@ id|sb_dsp_command
 l_int|0x48
 )paren
 )paren
-multiline_comment|/*&n;&t;&t;&t;&t;&t; * High speed size&n;&t;&t;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t;&t;   * High speed size&n;&t;&t;&t;&t;&t; */
 (brace
 id|sb_dsp_command
 (paren
@@ -1331,7 +1391,7 @@ id|sb_dsp_command
 l_int|0x99
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t;&t; * High speed 8 bit ADC&n;&t;&t;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t;&t;   * High speed 8 bit ADC&n;&t;&t;&t;&t;&t; */
 )brace
 r_else
 id|printk
@@ -1360,7 +1420,7 @@ id|sb_dsp_command
 l_int|0x24
 )paren
 )paren
-multiline_comment|/*&n;&t;&t;&t;&t;&t; * 8-bit ADC (DMA)&n;&t;&t;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t;&t;   * 8-bit ADC (DMA)&n;&t;&t;&t;&t;&t; */
 (brace
 id|sb_dsp_command
 (paren
@@ -1456,6 +1516,50 @@ l_int|3
 )paren
 multiline_comment|/*&n;&t;&t;&t;&t; * SB Pro&n;&t;&t;&t;&t; */
 (brace
+macro_line|#ifdef JAZZ16
+multiline_comment|/* Select correct dma channel&n;         * for 16/8 bit acccess&n;       */
+id|audio_devs
+(braket
+id|my_dev
+)braket
+op_member_access_from_pointer
+id|dmachan
+op_assign
+id|dsp_16bit
+ques
+c_cond
+id|dma16
+suffix:colon
+id|dma8
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|dsp_stereo
+)paren
+id|sb_dsp_command
+(paren
+id|dsp_16bit
+ques
+c_cond
+l_int|0xac
+suffix:colon
+l_int|0xa8
+)paren
+suffix:semicolon
+r_else
+id|sb_dsp_command
+(paren
+id|dsp_16bit
+ques
+c_cond
+l_int|0xa4
+suffix:colon
+l_int|0xa0
+)paren
+suffix:semicolon
+macro_line|#else
+multiline_comment|/* 8 bit only cards use this&n;       */
 r_if
 c_cond
 (paren
@@ -1472,6 +1576,7 @@ id|sb_dsp_command
 l_int|0xa0
 )paren
 suffix:semicolon
+macro_line|#endif
 id|dsp_speed
 (paren
 id|dsp_current_speed
@@ -1517,11 +1622,68 @@ l_int|3
 )paren
 multiline_comment|/*&n;&t;&t;&t;&t; * SB Pro&n;&t;&t;&t;&t; */
 (brace
+macro_line|#ifdef JAZZ16
+multiline_comment|/* 16 bit specific instructions&n;       */
+id|audio_devs
+(braket
+id|my_dev
+)braket
+op_member_access_from_pointer
+id|dmachan
+op_assign
+id|dsp_16bit
+ques
+c_cond
+id|dma16
+suffix:colon
+id|dma8
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|Jazz16_detected
+op_ne
+l_int|2
+)paren
+multiline_comment|/* SM Wave */
 id|sb_mixer_set_stereo
 (paren
 id|dsp_stereo
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|dsp_stereo
+)paren
+id|sb_dsp_command
+(paren
+id|dsp_16bit
+ques
+c_cond
+l_int|0xac
+suffix:colon
+l_int|0xa8
+)paren
+suffix:semicolon
+r_else
+id|sb_dsp_command
+(paren
+id|dsp_16bit
+ques
+c_cond
+l_int|0xa4
+suffix:colon
+l_int|0xa0
+)paren
+suffix:semicolon
+macro_line|#else
+id|sb_mixer_set_stereo
+(paren
+id|dsp_stereo
+)paren
+suffix:semicolon
+macro_line|#endif
 id|dsp_speed
 (paren
 id|dsp_current_speed
@@ -1677,6 +1839,28 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+id|sb_no_recording
+op_logical_and
+id|mode
+op_amp
+id|OPEN_READ
+)paren
+(brace
+id|printk
+(paren
+l_string|&quot;SB Error: Recording not supported by this device&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+id|RET_ERROR
+(paren
+id|ENOTTY
+)paren
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
 id|sb_intr_active
 op_logical_or
 (paren
@@ -1744,6 +1928,18 @@ id|retval
 r_return
 id|retval
 suffix:semicolon
+multiline_comment|/* Allocate 8 bit dma&n;   */
+macro_line|#ifdef JAZZ16
+id|audio_devs
+(braket
+id|my_dev
+)braket
+op_member_access_from_pointer
+id|dmachan
+op_assign
+id|dma8
+suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -1771,6 +1967,52 @@ id|EBUSY
 )paren
 suffix:semicolon
 )brace
+macro_line|#ifdef JAZZ16
+multiline_comment|/* Allocate 16 bit dma&n;   */
+r_if
+c_cond
+(paren
+id|Jazz16_detected
+op_ne
+l_int|0
+)paren
+r_if
+c_cond
+(paren
+id|dma16
+op_ne
+id|dma8
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|ALLOC_DMA_CHN
+(paren
+id|dma16
+comma
+l_string|&quot;Jazz16 16 bit&quot;
+)paren
+)paren
+(brace
+id|sb_free_irq
+(paren
+)paren
+suffix:semicolon
+id|DMAbuf_close_dma
+(paren
+id|dev
+)paren
+suffix:semicolon
+r_return
+id|RET_ERROR
+(paren
+id|EBUSY
+)paren
+suffix:semicolon
+)brace
+)brace
+macro_line|#endif
 id|sb_irq_mode
 op_assign
 id|IMODE_NONE
@@ -1796,6 +2038,39 @@ r_int
 id|dev
 )paren
 (brace
+macro_line|#ifdef JAZZ16
+multiline_comment|/* Release 16 bit dma channel&n;   */
+r_if
+c_cond
+(paren
+id|Jazz16_detected
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|audio_devs
+(braket
+id|my_dev
+)braket
+op_member_access_from_pointer
+id|dmachan
+op_eq
+id|dma8
+)paren
+id|RELEASE_DMA_CHN
+(paren
+id|dma16
+)paren
+suffix:semicolon
+r_else
+id|RELEASE_DMA_CHN
+(paren
+id|dma8
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
 id|DMAbuf_close_dma
 (paren
 id|dev
@@ -1827,6 +2102,75 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#ifdef JAZZ16
+multiline_comment|/* Function dsp_set_bits() only required for 16 bit cards&n; */
+r_static
+r_int
+DECL|function|dsp_set_bits
+id|dsp_set_bits
+(paren
+r_int
+id|arg
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|arg
+)paren
+r_if
+c_cond
+(paren
+id|Jazz16_detected
+op_eq
+l_int|0
+)paren
+id|dsp_16bit
+op_assign
+l_int|0
+suffix:semicolon
+r_else
+r_switch
+c_cond
+(paren
+id|arg
+)paren
+(brace
+r_case
+l_int|8
+suffix:colon
+id|dsp_16bit
+op_assign
+l_int|0
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+l_int|16
+suffix:colon
+id|dsp_16bit
+op_assign
+l_int|1
+suffix:semicolon
+r_break
+suffix:semicolon
+r_default
+suffix:colon
+id|dsp_16bit
+op_assign
+l_int|0
+suffix:semicolon
+)brace
+r_return
+id|dsp_16bit
+ques
+c_cond
+l_int|16
+suffix:colon
+l_int|8
+suffix:semicolon
+)brace
+macro_line|#endif /* ifdef JAZZ16 */
 r_static
 r_int
 DECL|function|sb_dsp_ioctl
@@ -1997,6 +2341,70 @@ id|arg
 suffix:semicolon
 r_break
 suffix:semicolon
+macro_line|#ifdef JAZZ16
+multiline_comment|/* Word size specific cases here.&n;         * SNDCTL_DSP_SETFMT=SOUND_PCM_WRITE_BITS&n;       */
+r_case
+id|SNDCTL_DSP_SETFMT
+suffix:colon
+r_if
+c_cond
+(paren
+id|local
+)paren
+r_return
+id|dsp_set_bits
+(paren
+id|arg
+)paren
+suffix:semicolon
+r_return
+id|IOCTL_OUT
+(paren
+id|arg
+comma
+id|dsp_set_bits
+(paren
+id|IOCTL_IN
+(paren
+id|arg
+)paren
+)paren
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|SOUND_PCM_READ_BITS
+suffix:colon
+r_if
+c_cond
+(paren
+id|local
+)paren
+r_return
+id|dsp_16bit
+ques
+c_cond
+l_int|16
+suffix:colon
+l_int|8
+suffix:semicolon
+r_return
+id|IOCTL_OUT
+(paren
+id|arg
+comma
+id|dsp_16bit
+ques
+c_cond
+l_int|16
+suffix:colon
+l_int|8
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+macro_line|#else
 r_case
 id|SOUND_PCM_WRITE_BITS
 suffix:colon
@@ -2019,9 +2427,10 @@ comma
 l_int|8
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t;&t; * Only 8 bits/sample supported&n;&t;&t;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t;&t;   * Only 8 bits/sample supported&n;&t;&t;&t;&t;&t; */
 r_break
 suffix:semicolon
+macro_line|#endif /* ifdef JAZZ16  */
 r_case
 id|SOUND_PCM_WRITE_FILTER
 suffix:colon
@@ -2090,6 +2499,784 @@ id|flags
 suffix:semicolon
 )brace
 macro_line|#endif
+macro_line|#ifdef JAZZ16
+multiline_comment|/*&n; * Initialization of a Media Vision ProSonic 16 Soundcard.&n; * The function initializes a ProSonic 16 like PROS.EXE does for DOS. It sets&n; * the base address, the DMA-channels, interrupts and enables the joystickport.&n; *&n; * Also used by Jazz 16 (same card, different name)&n; *&n; * written 1994 by Rainer Vranken&n; * E-Mail: rvranken@polaris.informatik.uni-essen.de&n; */
+macro_line|#ifndef MPU_BASE&t;&t;/* take default values if not specified */
+DECL|macro|MPU_BASE
+mdefine_line|#define MPU_BASE 0x330
+macro_line|#endif
+macro_line|#ifndef MPU_IRQ
+DECL|macro|MPU_IRQ
+mdefine_line|#define MPU_IRQ 9
+macro_line|#endif
+r_int
+r_int
+DECL|function|get_sb_byte
+id|get_sb_byte
+(paren
+r_void
+)paren
+(brace
+r_int
+id|i
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|1000
+suffix:semicolon
+id|i
+suffix:semicolon
+id|i
+op_decrement
+)paren
+r_if
+c_cond
+(paren
+id|INB
+(paren
+id|DSP_DATA_AVAIL
+)paren
+op_amp
+l_int|0x80
+)paren
+(brace
+r_return
+id|INB
+(paren
+id|DSP_READ
+)paren
+suffix:semicolon
+)brace
+r_return
+l_int|0xffff
+suffix:semicolon
+)brace
+macro_line|#ifdef SM_WAVE
+multiline_comment|/*&n; * Logitech Soundman Wave detection and initialization by Hannu Savolainen.&n; *&n; * There is a microcontroller (8031) in the SM Wave card for MIDI emulation.&n; * it&squot;s located at address MPU_BASE+4.  MPU_BASE+7 is a SM Wave specific&n; * control register for MC reset, SCSI, OPL4 and DSP (future expansion)&n; * address decoding. Otherwise the SM Wave is just a ordinary MV Jazz16&n; * based soundcard.&n; */
+r_static
+r_void
+DECL|function|smw_putmem
+id|smw_putmem
+(paren
+r_int
+id|base
+comma
+r_int
+id|addr
+comma
+r_int
+r_char
+id|val
+)paren
+(brace
+r_int
+r_int
+id|flags
+suffix:semicolon
+id|DISABLE_INTR
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|OUTB
+(paren
+id|addr
+op_amp
+l_int|0xff
+comma
+id|base
+op_plus
+l_int|1
+)paren
+suffix:semicolon
+multiline_comment|/* Low address bits */
+id|OUTB
+(paren
+id|addr
+op_rshift
+l_int|8
+comma
+id|base
+op_plus
+l_int|2
+)paren
+suffix:semicolon
+multiline_comment|/* High address bits */
+id|OUTB
+(paren
+id|val
+comma
+id|base
+)paren
+suffix:semicolon
+multiline_comment|/* Data */
+id|RESTORE_INTR
+(paren
+id|flags
+)paren
+suffix:semicolon
+)brace
+r_static
+r_int
+r_char
+DECL|function|smw_getmem
+id|smw_getmem
+(paren
+r_int
+id|base
+comma
+r_int
+id|addr
+)paren
+(brace
+r_int
+r_int
+id|flags
+suffix:semicolon
+r_int
+r_char
+id|val
+suffix:semicolon
+id|DISABLE_INTR
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|OUTB
+(paren
+id|addr
+op_amp
+l_int|0xff
+comma
+id|base
+op_plus
+l_int|1
+)paren
+suffix:semicolon
+multiline_comment|/* Low address bits */
+id|OUTB
+(paren
+id|addr
+op_rshift
+l_int|8
+comma
+id|base
+op_plus
+l_int|2
+)paren
+suffix:semicolon
+multiline_comment|/* High address bits */
+id|val
+op_assign
+id|INB
+(paren
+id|base
+)paren
+suffix:semicolon
+multiline_comment|/* Data */
+id|RESTORE_INTR
+(paren
+id|flags
+)paren
+suffix:semicolon
+r_return
+id|val
+suffix:semicolon
+)brace
+r_static
+r_int
+DECL|function|initialize_smw
+id|initialize_smw
+(paren
+r_void
+)paren
+(brace
+macro_line|#ifdef SMW_MIDI0001_INCLUDED
+macro_line|#include &quot;smw-midi0001.h&quot;
+macro_line|#else
+r_int
+r_char
+id|smw_ucode
+(braket
+l_int|1
+)braket
+suffix:semicolon
+r_int
+id|smw_ucodeLen
+op_assign
+l_int|0
+suffix:semicolon
+macro_line|#endif
+r_int
+id|mp_base
+op_assign
+id|MPU_BASE
+op_plus
+l_int|4
+suffix:semicolon
+multiline_comment|/* Microcontroller base */
+r_int
+id|i
+suffix:semicolon
+r_int
+r_char
+id|control
+suffix:semicolon
+multiline_comment|/*&n;     *  Reset the microcontroller so that the RAM can be accessed&n;   */
+id|control
+op_assign
+id|INB
+(paren
+id|MPU_BASE
+op_plus
+l_int|7
+)paren
+suffix:semicolon
+id|OUTB
+(paren
+id|control
+op_or
+l_int|3
+comma
+id|MPU_BASE
+op_plus
+l_int|7
+)paren
+suffix:semicolon
+multiline_comment|/* Set last two bits to 1 (?) */
+id|OUTB
+(paren
+(paren
+id|control
+op_amp
+l_int|0xfe
+)paren
+op_or
+l_int|2
+comma
+id|MPU_BASE
+op_plus
+l_int|7
+)paren
+suffix:semicolon
+multiline_comment|/* xxxxxxx0 resets the mc */
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+l_int|300
+suffix:semicolon
+id|i
+op_increment
+)paren
+multiline_comment|/* Wait at least 1ms */
+id|tenmicrosec
+(paren
+)paren
+suffix:semicolon
+id|OUTB
+(paren
+id|control
+op_amp
+l_int|0xfc
+comma
+id|MPU_BASE
+op_plus
+l_int|7
+)paren
+suffix:semicolon
+multiline_comment|/* xxxxxx00 enables RAM */
+multiline_comment|/*&n;     *  Detect microcontroller by probing the 8k RAM area&n;   */
+id|smw_putmem
+(paren
+id|mp_base
+comma
+l_int|0
+comma
+l_int|0x00
+)paren
+suffix:semicolon
+id|smw_putmem
+(paren
+id|mp_base
+comma
+l_int|1
+comma
+l_int|0xff
+)paren
+suffix:semicolon
+id|tenmicrosec
+(paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|smw_getmem
+(paren
+id|mp_base
+comma
+l_int|0
+)paren
+op_ne
+l_int|0x00
+op_logical_or
+id|smw_getmem
+(paren
+id|mp_base
+comma
+l_int|1
+)paren
+op_ne
+l_int|0xff
+)paren
+(brace
+id|printk
+(paren
+l_string|&quot;&bslash;nSM Wave: No microcontroller RAM detected (%02x, %02x)&bslash;n&quot;
+comma
+id|smw_getmem
+(paren
+id|mp_base
+comma
+l_int|0
+)paren
+comma
+id|smw_getmem
+(paren
+id|mp_base
+comma
+l_int|1
+)paren
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+multiline_comment|/* No RAM */
+)brace
+multiline_comment|/*&n;     *  There is RAM so assume it&squot;s really a SM Wave&n;   */
+macro_line|#ifdef SMW_MIDI0001_INCLUDED
+r_if
+c_cond
+(paren
+id|smw_ucodeLen
+op_ne
+l_int|8192
+)paren
+(brace
+id|printk
+(paren
+l_string|&quot;&bslash;nSM Wave: Invalid microcode (MIDI0001.BIN) length&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+l_int|1
+suffix:semicolon
+)brace
+macro_line|#endif
+multiline_comment|/*&n;     *  Download microcode&n;   */
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+l_int|8192
+suffix:semicolon
+id|i
+op_increment
+)paren
+id|smw_putmem
+(paren
+id|mp_base
+comma
+id|i
+comma
+id|smw_ucode
+(braket
+id|i
+)braket
+)paren
+suffix:semicolon
+multiline_comment|/*&n;     *  Verify microcode&n;   */
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+l_int|8192
+suffix:semicolon
+id|i
+op_increment
+)paren
+r_if
+c_cond
+(paren
+id|smw_getmem
+(paren
+id|mp_base
+comma
+id|i
+)paren
+op_ne
+id|smw_ucode
+(braket
+id|i
+)braket
+)paren
+(brace
+id|printk
+(paren
+l_string|&quot;SM Wave: Microcode verification failed&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+id|control
+op_assign
+l_int|0
+suffix:semicolon
+macro_line|#ifdef SMW_SCSI_IRQ
+multiline_comment|/*&n;     * Set the SCSI interrupt (IRQ2/9, IRQ3 or IRQ10). The SCSI interrupt&n;     * is disabled by default.&n;     *&n;     * Btw the Zilog 5380 SCSI controller is located at MPU base + 0x10.&n;   */
+(brace
+r_static
+r_int
+r_char
+id|scsi_irq_bits
+(braket
+)braket
+op_assign
+(brace
+l_int|0
+comma
+l_int|0
+comma
+l_int|3
+comma
+l_int|1
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|3
+comma
+l_int|2
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+)brace
+suffix:semicolon
+id|control
+op_or_assign
+id|scsi_irq_bits
+(braket
+id|SMW_SCSI_IRQ
+)braket
+op_lshift
+l_int|6
+suffix:semicolon
+)brace
+macro_line|#endif
+macro_line|#ifdef SMW_OPL4_ENABLE
+multiline_comment|/*&n;     *  Make the OPL4 chip visible on the PC bus at 0x380.&n;     *&n;     *  There is no need to enable this feature since VoxWare&n;     *  doesn&squot;t support OPL4 yet. Also there is no RAM in SM Wave so&n;     *  enabling OPL4 is pretty useless.&n;   */
+id|control
+op_or_assign
+l_int|0x10
+suffix:semicolon
+multiline_comment|/* Uses IRQ12 if bit 0x20 == 0 */
+multiline_comment|/* control |= 0x20;      Uncomment this if you want to use IRQ7 */
+macro_line|#endif
+id|OUTB
+(paren
+id|control
+op_or
+l_int|0x03
+comma
+id|MPU_BASE
+op_plus
+l_int|7
+)paren
+suffix:semicolon
+multiline_comment|/* xxxxxx11 restarts */
+r_return
+l_int|1
+suffix:semicolon
+)brace
+macro_line|#endif
+r_static
+r_int
+DECL|function|initialize_ProSonic16
+id|initialize_ProSonic16
+(paren
+r_void
+)paren
+(brace
+r_int
+id|x
+suffix:semicolon
+r_static
+r_int
+r_char
+id|int_translat
+(braket
+l_int|16
+)braket
+op_assign
+(brace
+l_int|0
+comma
+l_int|0
+comma
+l_int|2
+comma
+l_int|3
+comma
+l_int|0
+comma
+l_int|1
+comma
+l_int|0
+comma
+l_int|4
+comma
+l_int|0
+comma
+l_int|2
+comma
+l_int|5
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|6
+)brace
+comma
+id|dma_translat
+(braket
+l_int|8
+)braket
+op_assign
+(brace
+l_int|0
+comma
+l_int|1
+comma
+l_int|0
+comma
+l_int|2
+comma
+l_int|0
+comma
+l_int|3
+comma
+l_int|0
+comma
+l_int|4
+)brace
+suffix:semicolon
+id|OUTB
+(paren
+l_int|0xAF
+comma
+l_int|0x201
+)paren
+suffix:semicolon
+multiline_comment|/* ProSonic/Jazz16 wakeup */
+r_for
+c_loop
+(paren
+id|x
+op_assign
+l_int|0
+suffix:semicolon
+id|x
+OL
+l_int|1000
+suffix:semicolon
+op_increment
+id|x
+)paren
+multiline_comment|/* wait 10 milliseconds */
+id|tenmicrosec
+(paren
+)paren
+suffix:semicolon
+id|OUTB
+(paren
+l_int|0x50
+comma
+l_int|0x201
+)paren
+suffix:semicolon
+id|OUTB
+(paren
+(paren
+id|sbc_base
+op_amp
+l_int|0x70
+)paren
+op_or
+(paren
+(paren
+id|MPU_BASE
+op_amp
+l_int|0x30
+)paren
+op_rshift
+l_int|4
+)paren
+comma
+l_int|0x201
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|sb_reset_dsp
+(paren
+)paren
+)paren
+(brace
+multiline_comment|/* OK. We have at least a SB */
+multiline_comment|/* Check the version number of ProSonic (I guess) */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|sb_dsp_command
+(paren
+l_int|0xFA
+)paren
+)paren
+r_return
+l_int|1
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|get_sb_byte
+(paren
+)paren
+op_ne
+l_int|0x12
+)paren
+r_return
+l_int|1
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|sb_dsp_command
+(paren
+l_int|0xFB
+)paren
+op_logical_and
+multiline_comment|/* set DMA-channels and Interrupts */
+id|sb_dsp_command
+(paren
+(paren
+id|dma_translat
+(braket
+id|JAZZ_DMA16
+)braket
+op_lshift
+l_int|4
+)paren
+op_or
+id|dma_translat
+(braket
+id|SBC_DMA
+)braket
+)paren
+op_logical_and
+id|sb_dsp_command
+(paren
+(paren
+id|int_translat
+(braket
+id|MPU_IRQ
+)braket
+op_lshift
+l_int|4
+)paren
+op_or
+id|int_translat
+(braket
+id|sbc_irq
+)braket
+)paren
+)paren
+(brace
+id|Jazz16_detected
+op_assign
+l_int|1
+suffix:semicolon
+macro_line|#ifdef SM_WAVE
+r_if
+c_cond
+(paren
+id|initialize_smw
+(paren
+)paren
+)paren
+id|Jazz16_detected
+op_assign
+l_int|2
+suffix:semicolon
+macro_line|#endif
+id|sb_dsp_disable_midi
+(paren
+)paren
+suffix:semicolon
+)brace
+r_return
+l_int|1
+suffix:semicolon
+multiline_comment|/* There was at least a SB */
+)brace
+r_return
+l_int|0
+suffix:semicolon
+multiline_comment|/* No SB or ProSonic16 detected */
+)brace
+macro_line|#endif /* ifdef JAZZ16  */
 r_int
 DECL|function|sb_dsp_detect
 id|sb_dsp_detect
@@ -2117,6 +3304,27 @@ r_return
 l_int|0
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t;&t; * Already initialized&n;&t;&t;&t;&t; */
+macro_line|#ifdef JAZZ16
+id|dma8
+op_assign
+id|hw_config-&gt;dma
+suffix:semicolon
+id|dma16
+op_assign
+id|JAZZ_DMA16
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|initialize_ProSonic16
+(paren
+)paren
+)paren
+r_return
+l_int|0
+suffix:semicolon
+macro_line|#else
 r_if
 c_cond
 (paren
@@ -2128,6 +3336,7 @@ id|sb_reset_dsp
 r_return
 l_int|0
 suffix:semicolon
+macro_line|#endif
 r_return
 l_int|1
 suffix:semicolon
@@ -2303,6 +3512,19 @@ id|sb_mixer_init
 id|sbc_major
 )paren
 suffix:semicolon
+macro_line|#else
+r_if
+c_cond
+(paren
+id|sbc_major
+op_ge
+l_int|3
+)paren
+id|printk
+(paren
+l_string|&quot;&bslash;n&bslash;n&bslash;n&bslash;nNOTE! SB Pro support is required with your soundcard!&bslash;n&bslash;n&bslash;n&quot;
+)paren
+suffix:semicolon
 macro_line|#endif
 macro_line|#ifndef EXCLUDE_YM3812
 r_if
@@ -2336,6 +3558,7 @@ id|OPL3_BOTH
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifndef EXCLUDE_AUDIO
 r_if
 c_cond
 (paren
@@ -2344,8 +3567,50 @@ op_ge
 l_int|3
 )paren
 (brace
-macro_line|#if !defined(SCO) &amp;&amp; !defined(EXCLUDE_AUDIO)
-macro_line|#  ifdef __SGNXPRO__
+r_if
+c_cond
+(paren
+id|Jazz16_detected
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|Jazz16_detected
+op_eq
+l_int|2
+)paren
+id|sprintf
+(paren
+id|sb_dsp_operations.name
+comma
+l_string|&quot;SoundMan Wave %d.%d&quot;
+comma
+id|sbc_major
+comma
+id|sbc_minor
+)paren
+suffix:semicolon
+r_else
+id|sprintf
+(paren
+id|sb_dsp_operations.name
+comma
+l_string|&quot;MV Jazz16 %d.%d&quot;
+comma
+id|sbc_major
+comma
+id|sbc_minor
+)paren
+suffix:semicolon
+id|sb_dsp_operations.format_mask
+op_or_assign
+id|AFMT_S16_LE
+suffix:semicolon
+multiline_comment|/* Hurrah, 16 bits          */
+)brace
+r_else
+macro_line|#ifdef __SGNXPRO__
 r_if
 c_cond
 (paren
@@ -2367,7 +3632,28 @@ id|sbc_minor
 suffix:semicolon
 )brace
 r_else
-macro_line|#  endif
+macro_line|#endif
+r_if
+c_cond
+(paren
+id|sbc_major
+op_eq
+l_int|4
+)paren
+(brace
+id|sprintf
+(paren
+id|sb_dsp_operations.name
+comma
+l_string|&quot;SoundBlaster 16 %d.%d&quot;
+comma
+id|sbc_major
+comma
+id|sbc_minor
+)paren
+suffix:semicolon
+)brace
+r_else
 (brace
 id|sprintf
 (paren
@@ -2381,11 +3667,9 @@ id|sbc_minor
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
 )brace
 r_else
 (brace
-macro_line|#ifndef SCO
 id|sprintf
 (paren
 id|sb_dsp_operations.name
@@ -2397,7 +3681,6 @@ comma
 id|sbc_minor
 )paren
 suffix:semicolon
-macro_line|#endif
 )brace
 id|printk
 (paren
@@ -2406,7 +3689,6 @@ comma
 id|sb_dsp_operations.name
 )paren
 suffix:semicolon
-macro_line|#ifndef EXCLUDE_AUDIO
 macro_line|#if !defined(EXCLUDE_SB16) &amp;&amp; !defined(EXCLUDE_SBPRO)
 r_if
 c_cond
@@ -2467,6 +3749,12 @@ r_else
 id|printk
 (paren
 l_string|&quot;SB: Too many DSP devices available&bslash;n&quot;
+)paren
+suffix:semicolon
+macro_line|#else
+id|printk
+(paren
+l_string|&quot; &lt;SoundBlaster (configured without audio support)&gt;&quot;
 )paren
 suffix:semicolon
 macro_line|#endif

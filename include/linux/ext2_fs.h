@@ -21,9 +21,9 @@ DECL|macro|EXT2_PREALLOCATE
 mdefine_line|#define EXT2_PREALLOCATE
 multiline_comment|/*&n; * The second extended file system version&n; */
 DECL|macro|EXT2FS_DATE
-mdefine_line|#define EXT2FS_DATE&t;&t;&quot;95/03/19&quot;
+mdefine_line|#define EXT2FS_DATE&t;&t;&quot;95/07/02&quot;
 DECL|macro|EXT2FS_VERSION
-mdefine_line|#define EXT2FS_VERSION&t;&t;&quot;0.5a&quot;
+mdefine_line|#define EXT2FS_VERSION&t;&t;&quot;0.5b&quot;
 multiline_comment|/*&n; * Debug code&n; */
 macro_line|#ifdef EXT2FS_DEBUG
 DECL|macro|ext2_debug
@@ -75,13 +75,19 @@ DECL|macro|EXT2_ADDR_PER_BLOCK
 mdefine_line|#define&t;EXT2_ADDR_PER_BLOCK(s)&t;&t;(EXT2_BLOCK_SIZE(s) / sizeof (__u32))
 macro_line|#ifdef __KERNEL__
 DECL|macro|EXT2_BLOCK_SIZE_BITS
-macro_line|# define EXT2_BLOCK_SIZE_BITS(s)&t;((s)-&gt;u.ext2_sb.s_es-&gt;s_log_block_size + 10)
+macro_line|# define EXT2_BLOCK_SIZE_BITS(s)&t;((s)-&gt;s_blocksize_bits)
 macro_line|#else
 DECL|macro|EXT2_BLOCK_SIZE_BITS
 macro_line|# define EXT2_BLOCK_SIZE_BITS(s)&t;((s)-&gt;s_log_block_size + 10)
 macro_line|#endif
 DECL|macro|EXT2_INODES_PER_BLOCK
 mdefine_line|#define&t;EXT2_INODES_PER_BLOCK(s)&t;(EXT2_BLOCK_SIZE(s) / sizeof (struct ext2_inode))
+macro_line|#ifdef __KERNEL__
+DECL|macro|EXT2_ADDR_PER_BLOCK_BITS
+mdefine_line|#define&t;EXT2_ADDR_PER_BLOCK_BITS(s)&t;((s)-&gt;u.ext2_sb.s_addr_per_block_bits)
+DECL|macro|EXT2_INODES_PER_BLOCK_BITS
+mdefine_line|#define&t;EXT2_INODES_PER_BLOCK_BITS(s)&t;((s)-&gt;u.ext2_sb.s_inodes_per_block_bits)
+macro_line|#endif
 multiline_comment|/*&n; * Macro-instructions used to manage fragments&n; */
 DECL|macro|EXT2_MIN_FRAG_SIZE
 mdefine_line|#define EXT2_MIN_FRAG_SIZE&t;&t;1024
@@ -247,6 +253,8 @@ DECL|macro|EXT2_DESC_PER_BLOCK
 macro_line|# define EXT2_DESC_PER_BLOCK(s)&t;&t;((s)-&gt;u.ext2_sb.s_desc_per_block)
 DECL|macro|EXT2_INODES_PER_GROUP
 macro_line|# define EXT2_INODES_PER_GROUP(s)&t;((s)-&gt;u.ext2_sb.s_inodes_per_group)
+DECL|macro|EXT2_DESC_PER_BLOCK_BITS
+macro_line|# define EXT2_DESC_PER_BLOCK_BITS(s)&t;((s)-&gt;u.ext2_sb.s_desc_per_block_bits)
 macro_line|#else
 DECL|macro|EXT2_BLOCKS_PER_GROUP
 macro_line|# define EXT2_BLOCKS_PER_GROUP(s)&t;((s)-&gt;s_blocks_per_group)

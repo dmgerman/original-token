@@ -19,7 +19,7 @@ id|sb16_dsp_ok
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/*&n;&n;&n;&t;&t;&t;&t;&t; * *  * * Set to 1 after successful *&n;&t;&t;&t;&t;&t; * * initialization   */
+multiline_comment|/*&n;&n;&n;&t;&t;&t;&t;&t;   * *  * * Set to 1 after successful *&n;&t;&t;&t;&t;&t;   * * initialization   */
 DECL|variable|dsp_16bit
 r_static
 r_int
@@ -816,7 +816,7 @@ id|ALLOC_DMA_CHN
 (paren
 id|dma8
 comma
-l_string|&quot;sb16 8bit&quot;
+l_string|&quot;SB16 (8bit)&quot;
 )paren
 )paren
 (brace
@@ -852,7 +852,7 @@ id|ALLOC_DMA_CHN
 (paren
 id|dma16
 comma
-l_string|&quot;sb16 16bit&quot;
+l_string|&quot;SB16 (16bit)&quot;
 )paren
 )paren
 (brace
@@ -1727,6 +1727,11 @@ l_int|0xd0
 )paren
 suffix:semicolon
 )brace
+id|DMAbuf_reset_dma
+(paren
+id|dev
+)paren
+suffix:semicolon
 )brace
 r_static
 r_void
@@ -1832,7 +1837,6 @@ r_return
 id|mem_start
 suffix:semicolon
 multiline_comment|/* Not a SB16 */
-macro_line|#ifndef SCO
 id|sprintf
 (paren
 id|sb16_dsp_operations.name
@@ -1844,7 +1848,6 @@ comma
 id|sbc_minor
 )paren
 suffix:semicolon
-macro_line|#endif
 id|printk
 (paren
 l_string|&quot; &lt;%s&gt;&quot;
@@ -2058,7 +2061,7 @@ id|hw_config-&gt;dma
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * dsp_showmessage(0xe3,99);&n; */
+multiline_comment|/*&n;     * dsp_showmessage(0xe3,99);&n;   */
 id|sb16_dsp_ok
 op_assign
 l_int|1

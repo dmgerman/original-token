@@ -241,7 +241,7 @@ id|ENOSYS
 suffix:semicolon
 multiline_comment|/* Currently this is a no-op */
 )brace
-multiline_comment|/*&n; * eata_proc_info&n; * inout : decides on the direction of the dataflow and the meaning of the variables&n; * buffer: If inout==FALSE data is beeing written to it else read from it&n; * *start: If inout==FALSE start of the valid data in the buffer&n; * offset: If inout==FALSE offset from the beginning of the imaginary file from which we start writing into the buffer&n; * length: If inout==FALSE max number of bytes to be written into the buffer else number of bytes in the buffer&n; */
+multiline_comment|/*&n; * eata_proc_info&n; * inout : decides on the direction of the dataflow and the meaning of the &n; *         variables&n; * buffer: If inout==FALSE data is beeing written to it else read from it&n; * *start: If inout==FALSE start of the valid data in the buffer&n; * offset: If inout==FALSE offset from the beginning of the imaginary file &n; *         from which we start writing into the buffer&n; * length: If inout==FALSE max number of bytes to be written into the buffer &n; *         else number of bytes in the buffer&n; */
 DECL|function|eata_proc_info
 r_int
 id|eata_proc_info
@@ -636,6 +636,90 @@ id|begin
 op_plus
 id|len
 suffix:semicolon
+id|size
+op_assign
+id|sprintf
+c_func
+(paren
+id|buffer
+op_plus
+id|len
+comma
+l_string|&quot;&bslash;nscsi%-2d: HBA %.10s&bslash;n&quot;
+comma
+id|HBA_ptr-&gt;host_no
+comma
+id|SD
+c_func
+(paren
+id|HBA_ptr
+)paren
+op_member_access_from_pointer
+id|name
+)paren
+suffix:semicolon
+id|len
+op_add_assign
+id|size
+suffix:semicolon
+id|pos
+op_assign
+id|begin
+op_plus
+id|len
+suffix:semicolon
+id|size
+op_assign
+id|sprintf
+c_func
+(paren
+id|buffer
+op_plus
+id|len
+comma
+l_string|&quot;Firmware revision: v%s&bslash;n&quot;
+comma
+id|SD
+c_func
+(paren
+id|HBA_ptr
+)paren
+op_member_access_from_pointer
+id|revision
+)paren
+suffix:semicolon
+id|len
+op_add_assign
+id|size
+suffix:semicolon
+id|pos
+op_assign
+id|begin
+op_plus
+id|len
+suffix:semicolon
+id|size
+op_assign
+id|sprintf
+c_func
+(paren
+id|buffer
+op_plus
+id|len
+comma
+l_string|&quot;Hardware Configuration:&bslash;n&quot;
+)paren
+suffix:semicolon
+id|len
+op_add_assign
+id|size
+suffix:semicolon
+id|pos
+op_assign
+id|begin
+op_plus
+id|len
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -650,10 +734,102 @@ op_eq
 id|IS_EISA
 )paren
 (brace
-r_goto
-id|devices
+r_if
+c_cond
+(paren
+id|HBA_ptr-&gt;dma_channel
+op_eq
+l_int|0xff
+)paren
+id|size
+op_assign
+id|sprintf
+c_func
+(paren
+id|buffer
+op_plus
+id|len
+comma
+l_string|&quot;DMA: BUSMASTER&bslash;n&quot;
+)paren
+suffix:semicolon
+r_else
+id|size
+op_assign
+id|sprintf
+c_func
+(paren
+id|buffer
+op_plus
+id|len
+comma
+l_string|&quot;DMA: %d&bslash;n&quot;
+comma
+id|HBA_ptr-&gt;dma_channel
+)paren
+suffix:semicolon
+id|len
+op_add_assign
+id|size
+suffix:semicolon
+id|pos
+op_assign
+id|begin
+op_plus
+id|len
+suffix:semicolon
+id|size
+op_assign
+id|sprintf
+c_func
+(paren
+id|buffer
+op_plus
+id|len
+comma
+l_string|&quot;Base IO : %#.4x&bslash;n&quot;
+comma
+(paren
+id|u32
+)paren
+id|HBA_ptr-&gt;base
+)paren
+suffix:semicolon
+id|len
+op_add_assign
+id|size
+suffix:semicolon
+id|pos
+op_assign
+id|begin
+op_plus
+id|len
+suffix:semicolon
+id|size
+op_assign
+id|sprintf
+c_func
+(paren
+id|buffer
+op_plus
+id|len
+comma
+l_string|&quot;Host Bus: EISA&bslash;n&quot;
+)paren
+suffix:semicolon
+id|len
+op_add_assign
+id|size
+suffix:semicolon
+id|pos
+op_assign
+id|begin
+op_plus
+id|len
 suffix:semicolon
 )brace
+r_else
+(brace
 id|scmd.cmnd
 (braket
 l_int|0
@@ -792,90 +968,6 @@ id|barrier
 c_func
 (paren
 )paren
-suffix:semicolon
-id|size
-op_assign
-id|sprintf
-c_func
-(paren
-id|buffer
-op_plus
-id|len
-comma
-l_string|&quot;&bslash;nscsi%-2d: HBA %.10s&bslash;n&quot;
-comma
-id|HBA_ptr-&gt;host_no
-comma
-id|SD
-c_func
-(paren
-id|HBA_ptr
-)paren
-op_member_access_from_pointer
-id|name
-)paren
-suffix:semicolon
-id|len
-op_add_assign
-id|size
-suffix:semicolon
-id|pos
-op_assign
-id|begin
-op_plus
-id|len
-suffix:semicolon
-id|size
-op_assign
-id|sprintf
-c_func
-(paren
-id|buffer
-op_plus
-id|len
-comma
-l_string|&quot;Firmware revision: v%s&bslash;n&quot;
-comma
-id|SD
-c_func
-(paren
-id|HBA_ptr
-)paren
-op_member_access_from_pointer
-id|revision
-)paren
-suffix:semicolon
-id|len
-op_add_assign
-id|size
-suffix:semicolon
-id|pos
-op_assign
-id|begin
-op_plus
-id|len
-suffix:semicolon
-id|size
-op_assign
-id|sprintf
-c_func
-(paren
-id|buffer
-op_plus
-id|len
-comma
-l_string|&quot;Hardware Configuration:&bslash;n&quot;
-)paren
-suffix:semicolon
-id|len
-op_add_assign
-id|size
-suffix:semicolon
-id|pos
-op_assign
-id|begin
-op_plus
-id|len
 suffix:semicolon
 id|size
 op_assign
@@ -1224,7 +1316,7 @@ id|buffer
 op_plus
 id|len
 comma
-l_string|&quot;    Type: %s&bslash;n&quot;
+l_string|&quot;&t;  Type: %s&bslash;n&quot;
 comma
 (paren
 (paren
@@ -1290,7 +1382,7 @@ id|buffer
 op_plus
 id|len
 comma
-l_string|&quot;    Max array groups:              %d&bslash;n&quot;
+l_string|&quot;&t;  Max array groups:&t;&t; %d&bslash;n&quot;
 comma
 (paren
 id|al-&gt;code
@@ -1323,7 +1415,7 @@ id|buffer
 op_plus
 id|len
 comma
-l_string|&quot;    Max drives per RAID 0 array:   %d&bslash;n&quot;
+l_string|&quot;&t;  Max drives per RAID 0 array:&t; %d&bslash;n&quot;
 comma
 (paren
 id|al-&gt;code
@@ -1356,7 +1448,7 @@ id|buffer
 op_plus
 id|len
 comma
-l_string|&quot;    Max drives per RAID 3/5 array: %d&bslash;n&quot;
+l_string|&quot;&t;  Max drives per RAID 3/5 array: %d&bslash;n&quot;
 comma
 (paren
 id|al-&gt;code
@@ -1420,7 +1512,7 @@ id|buffer
 op_plus
 id|len
 comma
-l_string|&quot;    Type: %s&bslash;n&quot;
+l_string|&quot;&t;  Type: %s&bslash;n&quot;
 comma
 (paren
 (paren
@@ -1958,7 +2050,7 @@ op_plus
 id|len
 comma
 l_string|&quot;Host Disk Command Statistics:&bslash;n&quot;
-l_string|&quot;         Reads:      Writes:&bslash;n&quot;
+l_string|&quot;&t; Reads:&t;     Writes:&bslash;n&quot;
 )paren
 suffix:semicolon
 id|len
@@ -2088,7 +2180,7 @@ id|buffer
 op_plus
 id|len
 comma
-l_string|&quot;Sum   :%12u %12u&bslash;n&quot;
+l_string|&quot;Sum&t; :%12u %12u&bslash;n&quot;
 comma
 id|SD
 c_func
@@ -2123,6 +2215,7 @@ id|begin
 op_plus
 id|len
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -2152,8 +2245,6 @@ id|length
 r_goto
 id|stop_output
 suffix:semicolon
-id|devices
-suffix:colon
 id|scd
 op_assign
 id|scsi_devices
@@ -2469,7 +2560,7 @@ r_int
 id|scd-&gt;type
 )braket
 suffix:colon
-l_string|&quot;Unknown          &quot;
+l_string|&quot;Unknown&t;       &quot;
 )paren
 suffix:semicolon
 id|size
@@ -2483,7 +2574,7 @@ id|len
 op_plus
 id|size
 comma
-l_string|&quot;               ANSI&quot;
+l_string|&quot;&t;&t; ANSI&quot;
 l_string|&quot; SCSI revision: %02x&quot;
 comma
 (paren

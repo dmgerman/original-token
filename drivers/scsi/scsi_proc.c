@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/drivers/scsi/scsi_proc.c&n; *&n; * The functions in this file provide an interface between&n; * the PROC file system and the SCSI device drivers&n; * It is mainly used for debugging, statistics and to pass &n; * information directly to the lowlevel driver.&n; *&n; * (c) 1995 Michael Neuffer neuffer@goofy.zdv.uni-mainz.de &n; * Version: 0.99.5   last change: 95/06/28&n; * &n; * generic command parser provided by: &n; * Andreas Heilwagen &lt;crashcar@informatik.uni-koblenz.de&gt;&n; */
+multiline_comment|/*&n; * linux/drivers/scsi/scsi_proc.c&n; *&n; * The functions in this file provide an interface between&n; * the PROC file system and the SCSI device drivers&n; * It is mainly used for debugging, statistics and to pass &n; * information directly to the lowlevel driver.&n; *&n; * (c) 1995 Michael Neuffer neuffer@goofy.zdv.uni-mainz.de &n; * Version: 0.99.6   last change: 95/07/04&n; * &n; * generic command parser provided by: &n; * Andreas Heilwagen &lt;crashcar@informatik.uni-koblenz.de&gt;&n; */
 macro_line|#ifdef MODULE
 multiline_comment|/*&n; * Don&squot;t import our own symbols, as this would severely mess up our&n; * symbol tables.&n; */
 DECL|macro|_SCSI_SYMS_VER_
@@ -316,24 +316,8 @@ op_eq
 id|PROC_SCSI_SCSI
 )paren
 (brace
-multiline_comment|/*&n;             * If there are no hosts, tell the user to go away.&n;             */
-r_if
-c_cond
-(paren
-id|hpnt
-op_eq
-l_int|NULL
-)paren
-(brace
+multiline_comment|/*&n;             * This is for the scsi core, rather than any specific&n;             * lowlevel driver.&n;             */
 r_return
-(paren
-op_minus
-id|ENOSYS
-)paren
-suffix:semicolon
-)brace
-id|retval
-op_assign
 id|scsi_proc_info
 c_func
 (paren
@@ -345,13 +329,10 @@ id|offset
 comma
 id|length
 comma
-id|hpnt-&gt;host_no
+l_int|0
 comma
 id|func
 )paren
-suffix:semicolon
-r_return
-id|retval
 suffix:semicolon
 )brace
 r_while
@@ -371,6 +352,7 @@ op_plus
 id|PROC_SCSI_FILE
 )paren
 )paren
+(brace
 r_if
 c_cond
 (paren
@@ -417,6 +399,7 @@ comma
 id|func
 )paren
 suffix:semicolon
+)brace
 id|hpnt
 op_assign
 id|hpnt-&gt;next
@@ -495,6 +478,12 @@ id|Scsi_Host
 op_star
 id|hpnt
 suffix:semicolon
+id|uint
+id|x
+comma
+id|y
+suffix:semicolon
+multiline_comment|/* namespace for 16 HBAs with host_no 0-999 &n;     * I don&squot;t think we&squot;ll need more. Having more than 2 &n;     * HBAs in one system is already highly unusual &n;     */
 r_static
 r_char
 id|names
@@ -504,13 +493,8 @@ op_minus
 id|PROC_SCSI_FILE
 )braket
 (braket
-l_int|3
+l_int|4
 )braket
-suffix:semicolon
-id|uint
-id|x
-comma
-id|y
 suffix:semicolon
 id|x
 op_assign

@@ -72,6 +72,13 @@ suffix:colon
 l_int|1
 suffix:semicolon
 multiline_comment|/* is this device still supportable&t;*/
+DECL|member|auto_eject
+r_int
+id|auto_eject
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* auto-eject medium on last release.&t;*/
 DECL|typedef|Scsi_CD
 )brace
 id|Scsi_CD

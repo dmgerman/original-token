@@ -1,5 +1,6 @@
 multiline_comment|/*&n; *  linux/fs/ext2/super.c&n; *&n; * Copyright (C) 1992, 1993, 1994, 1995&n; * Remy Card (card@masi.ibp.fr)&n; * Laboratoire MASI - Institut Blaise Pascal&n; * Universite Pierre et Marie Curie (Paris VI)&n; *&n; *  from&n; *&n; *  linux/fs/minix/inode.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; */
 macro_line|#include &lt;stdarg.h&gt;
+macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -2028,6 +2029,8 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
+DECL|macro|log2
+mdefine_line|#define log2(n) ffz(~(n))
 DECL|function|ext2_read_super
 r_struct
 id|super_block
@@ -2263,19 +2266,17 @@ r_return
 l_int|NULL
 suffix:semicolon
 )brace
-id|sb-&gt;s_blocksize
-op_assign
-id|EXT2_MIN_BLOCK_SIZE
-op_lshift
-id|es-&gt;s_log_block_size
-suffix:semicolon
 id|sb-&gt;s_blocksize_bits
 op_assign
-id|EXT2_BLOCK_SIZE_BITS
-c_func
-(paren
-id|sb
-)paren
+id|sb-&gt;u.ext2_sb.s_es-&gt;s_log_block_size
+op_plus
+l_int|10
+suffix:semicolon
+id|sb-&gt;s_blocksize
+op_assign
+l_int|1
+op_lshift
+id|sb-&gt;s_blocksize_bits
 suffix:semicolon
 r_if
 c_cond
@@ -2476,10 +2477,6 @@ id|sb-&gt;u.ext2_sb.s_sbh
 op_assign
 id|bh
 suffix:semicolon
-id|sb-&gt;u.ext2_sb.s_es
-op_assign
-id|es
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2523,6 +2520,39 @@ suffix:semicolon
 id|sb-&gt;u.ext2_sb.s_rename_wait
 op_assign
 l_int|NULL
+suffix:semicolon
+id|sb-&gt;u.ext2_sb.s_addr_per_block_bits
+op_assign
+id|log2
+(paren
+id|EXT2_ADDR_PER_BLOCK
+c_func
+(paren
+id|sb
+)paren
+)paren
+suffix:semicolon
+id|sb-&gt;u.ext2_sb.s_inodes_per_block_bits
+op_assign
+id|log2
+(paren
+id|EXT2_INODES_PER_BLOCK
+c_func
+(paren
+id|sb
+)paren
+)paren
+suffix:semicolon
+id|sb-&gt;u.ext2_sb.s_desc_per_block_bits
+op_assign
+id|log2
+(paren
+id|EXT2_DESC_PER_BLOCK
+c_func
+(paren
+id|sb
+)paren
+)paren
 suffix:semicolon
 macro_line|#ifdef EXT2FS_PRE_02B_COMPAT
 r_if

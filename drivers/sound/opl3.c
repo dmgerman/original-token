@@ -15,6 +15,13 @@ id|opl3_enabled
 op_assign
 l_int|0
 suffix:semicolon
+DECL|variable|opl4_enabled
+r_static
+r_int
+id|opl4_enabled
+op_assign
+l_int|0
+suffix:semicolon
 DECL|variable|left_address
 DECL|variable|right_address
 DECL|variable|both_address
@@ -710,6 +717,8 @@ r_char
 id|stat1
 comma
 id|stat2
+comma
+id|signature
 suffix:semicolon
 r_int
 id|i
@@ -734,6 +743,7 @@ id|ioaddr
 op_assign
 id|left_address
 suffix:semicolon
+multiline_comment|/* Reset timers 1 and 2 */
 id|opl3_command
 (paren
 id|ioaddr
@@ -745,7 +755,7 @@ op_or
 id|TIMER2_MASK
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t; * Reset&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t; * timers&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t; * 1&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t; * and&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t; * 2&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t; */
+multiline_comment|/* Reset the IRQ of the FM chip */
 id|opl3_command
 (paren
 id|ioaddr
@@ -755,7 +765,8 @@ comma
 id|IRQ_RESET
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;&t;&t; * Reset the&n;&t;&t;&t;&t;&t;&t;&t;&t; * IRQ of FM&n;&t;&t;&t;&t;&t;&t;&t;&t; * * chicp&n;&t;&t;&t;&t;&t;&t;&t;&t; */
+id|signature
+op_assign
 id|stat1
 op_assign
 id|INB
@@ -763,7 +774,7 @@ id|INB
 id|ioaddr
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t; * Read status register&n;&t;&t;&t;&t; */
+multiline_comment|/* Status register */
 r_if
 c_cond
 (paren
@@ -790,7 +801,7 @@ comma
 l_int|0xff
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;&t; * Set timer 1 to&n;&t;&t;&t;&t;&t;&t;&t; * 0xff&n;&t;&t;&t;&t;&t;&t;&t; */
+multiline_comment|/* Set timer1 to 0xff */
 id|opl3_command
 (paren
 id|ioaddr
@@ -803,7 +814,7 @@ id|TIMER1_START
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t;&t;&t;&t; * Unmask and start timer 1&n;&t;&t;&t;&t;&t;&t; */
-multiline_comment|/*&n;   * Now we have to delay at least 80 msec&n;   */
+multiline_comment|/*&n;   * Now we have to delay at least 80 usec&n;   */
 r_for
 c_loop
 (paren
@@ -822,7 +833,6 @@ id|tenmicrosec
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t; * To be sure&n;&t;&t;&t;&t; */
 id|stat2
 op_assign
 id|INB
@@ -832,6 +842,7 @@ id|ioaddr
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t;&t; * Read status after timers have expired&n;&t;&t;&t;&t; */
 multiline_comment|/*&n;   * Stop the timers&n;   */
+multiline_comment|/* Reset timers 1 and 2 */
 id|opl3_command
 (paren
 id|ioaddr
@@ -843,7 +854,7 @@ op_or
 id|TIMER2_MASK
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t; * Reset&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t; * timers&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t; * 1&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t; * and&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t; * 2&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t; */
+multiline_comment|/* Reset the IRQ of the FM chip */
 id|opl3_command
 (paren
 id|ioaddr
@@ -853,7 +864,6 @@ comma
 id|IRQ_RESET
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;&t;&t; * Reset the&n;&t;&t;&t;&t;&t;&t;&t;&t; * IRQ of FM&n;&t;&t;&t;&t;&t;&t;&t;&t; * * chicp&n;&t;&t;&t;&t;&t;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -871,7 +881,110 @@ l_int|0
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t;&t; * There is no YM3812&n;&t;&t;&t;&t; */
 )brace
-multiline_comment|/*&n;   * There is a FM chicp in this address. Now set some default values.&n;   */
+multiline_comment|/*&n;   * There is a FM chicp in this address. Detect the type (OPL2 to OPL4)&n;   */
+r_if
+c_cond
+(paren
+id|signature
+op_eq
+l_int|0x06
+)paren
+multiline_comment|/* OPL2 */
+(brace
+id|opl3_enabled
+op_assign
+l_int|0
+suffix:semicolon
+)brace
+r_else
+r_if
+c_cond
+(paren
+id|signature
+op_eq
+l_int|0x00
+)paren
+multiline_comment|/* OPL3 or OPL4 */
+(brace
+r_int
+r_char
+id|tmp
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|opl3_enabled
+)paren
+multiline_comment|/* Was not already enabled */
+(brace
+id|left_address
+op_assign
+id|ioaddr
+suffix:semicolon
+id|right_address
+op_assign
+id|ioaddr
+op_plus
+l_int|2
+suffix:semicolon
+id|opl3_enabled
+op_assign
+l_int|1
+suffix:semicolon
+)brace
+multiline_comment|/*&n;       * Detect availability of OPL4 (_experimental_). Works propably&n;       * only after a cold boot. In addition the OPL4 port&n;       * of the chip may not be connected to the PC bus at all.&n;       */
+id|opl3_command
+(paren
+id|right_address
+comma
+id|OPL3_MODE_REGISTER
+comma
+l_int|0x00
+)paren
+suffix:semicolon
+id|opl3_command
+(paren
+id|right_address
+comma
+id|OPL3_MODE_REGISTER
+comma
+id|OPL3_ENABLE
+op_or
+id|OPL4_ENABLE
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|tmp
+op_assign
+id|INB
+(paren
+id|ioaddr
+)paren
+)paren
+op_eq
+l_int|0x02
+)paren
+multiline_comment|/* Have a OPL4 */
+(brace
+id|opl4_enabled
+op_assign
+l_int|1
+suffix:semicolon
+)brace
+id|opl3_command
+(paren
+id|right_address
+comma
+id|OPL3_MODE_REGISTER
+comma
+l_int|0
+)paren
+suffix:semicolon
+)brace
 r_for
 c_loop
 (paren
@@ -1347,7 +1460,7 @@ comma
 op_minus
 l_int|6
 comma
-multiline_comment|/*&n;&t;&t;&t;&t;&t; * 32 -  39&n;&t;&t;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t;&t;   * 32 -  39&n;&t;&t;&t;&t;&t; */
 op_minus
 l_int|5
 comma
@@ -1372,7 +1485,7 @@ comma
 op_minus
 l_int|4
 comma
-multiline_comment|/*&n;&t;&t;&t;&t;&t; * 40 -  47&n;&t;&t;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t;&t;   * 40 -  47&n;&t;&t;&t;&t;&t; */
 op_minus
 l_int|3
 comma
@@ -1397,7 +1510,7 @@ comma
 op_minus
 l_int|2
 comma
-multiline_comment|/*&n;&t;&t;&t;&t;&t; * 48 -  55&n;&t;&t;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t;&t;   * 48 -  55&n;&t;&t;&t;&t;&t; */
 op_minus
 l_int|2
 comma
@@ -1819,7 +1932,7 @@ comma
 id|vol1
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;&t;&t;&t; * Modulator&n;&t;&t;&t;&t;&t;&t;&t;&t;&t; * volume&n;&t;&t;&t;&t;&t;&t;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;   * Modulator&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;   * volume&n;&t;&t;&t;&t;&t;&t;&t;&t;&t; */
 id|opl3_command
 (paren
 id|map-&gt;ioaddr
@@ -1834,7 +1947,7 @@ comma
 id|vol2
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;&t;&t;&t; * Carrier&n;&t;&t;&t;&t;&t;&t;&t;&t;&t; * volume&n;&t;&t;&t;&t;&t;&t;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;   * Carrier&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;   * volume&n;&t;&t;&t;&t;&t;&t;&t;&t;&t; */
 )brace
 r_else
 (brace
@@ -1994,7 +2107,7 @@ r_break
 suffix:semicolon
 r_default
 suffix:colon
-multiline_comment|/*&n;&t;&t;&t;&t; * Why ??&n;&t;  &t;  &t;  &t;  &t;  &t;  &t;  &t;  &t;  &t;  &t;  &t;  &t;  &t;  &t;  &t;  &t;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t; * Why ??&n;&t;&t;&t;&t; */
 suffix:semicolon
 )brace
 id|opl3_command
@@ -3409,6 +3522,9 @@ r_int
 id|mode
 )paren
 (brace
+r_int
+id|i
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -3436,6 +3552,51 @@ id|opl3_busy
 op_assign
 l_int|1
 suffix:semicolon
+id|voice_alloc-&gt;max_voice
+op_assign
+id|nr_voices
+op_assign
+id|opl3_enabled
+ques
+c_cond
+l_int|18
+suffix:colon
+l_int|9
+suffix:semicolon
+id|voice_alloc-&gt;timestamp
+op_assign
+l_int|0
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+l_int|18
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
+id|voice_alloc-&gt;map
+(braket
+id|i
+)braket
+op_assign
+l_int|0
+suffix:semicolon
+id|voice_alloc-&gt;alloc_times
+(braket
+id|i
+)braket
+op_assign
+l_int|0
+suffix:semicolon
+)brace
 id|connection_mask
 op_assign
 l_int|0x00
@@ -4244,7 +4405,15 @@ id|i
 comma
 id|p
 comma
+id|best
+comma
+id|first
+comma
 id|avail_voices
+comma
+id|best_time
+op_assign
+l_int|0x7fffffff
 suffix:semicolon
 r_struct
 id|sbi_instrument
@@ -4331,6 +4500,8 @@ c_cond
 id|is4op
 )paren
 (brace
+id|first
+op_assign
 id|p
 op_assign
 l_int|0
@@ -4350,11 +4521,15 @@ op_eq
 l_int|12
 )paren
 multiline_comment|/* 4 OP mode. Use the &squot;2 OP only&squot; voices first */
+id|first
+op_assign
 id|p
 op_assign
 l_int|6
 suffix:semicolon
 r_else
+id|first
+op_assign
 id|p
 op_assign
 l_int|0
@@ -4364,7 +4539,11 @@ op_assign
 id|nr_voices
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *    Now try to find a free voice&n; */
+multiline_comment|/*&n;     *    Now try to find a free voice&n;   */
+id|best
+op_assign
+id|first
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -4395,6 +4574,30 @@ r_return
 id|p
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|alloc-&gt;alloc_times
+(braket
+id|p
+)braket
+OL
+id|best_time
+)paren
+multiline_comment|/* Find oldest playing note */
+(brace
+id|best_time
+op_assign
+id|alloc-&gt;alloc_times
+(braket
+id|p
+)braket
+suffix:semicolon
+id|best
+op_assign
+id|p
+suffix:semicolon
+)brace
 id|p
 op_assign
 (paren
@@ -4403,19 +4606,86 @@ op_plus
 l_int|1
 )paren
 op_mod
-id|nr_voices
+id|avail_voices
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *    Insert some kind of priority mechanism here.&n; */
-id|printk
+multiline_comment|/*&n;     *    Insert some kind of priority mechanism here.&n;   */
+r_if
+c_cond
 (paren
-l_string|&quot;OPL3: Out of free voices&bslash;n&quot;
+id|best
+OL
+l_int|0
 )paren
-suffix:semicolon
-r_return
+id|best
+op_assign
 l_int|0
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|best
+OG
+id|nr_voices
+)paren
+id|best
+op_sub_assign
+id|nr_voices
+suffix:semicolon
+r_return
+id|best
+suffix:semicolon
 multiline_comment|/* All voices in use. Select the first one. */
+)brace
+r_static
+r_void
+DECL|function|opl3_setup_voice
+id|opl3_setup_voice
+(paren
+r_int
+id|dev
+comma
+r_int
+id|voice
+comma
+r_int
+id|chn
+)paren
+(brace
+r_struct
+id|channel_info
+op_star
+id|info
+op_assign
+op_amp
+id|synth_devs
+(braket
+id|dev
+)braket
+op_member_access_from_pointer
+id|chn_info
+(braket
+id|chn
+)braket
+suffix:semicolon
+id|opl3_set_instr
+(paren
+id|dev
+comma
+id|voice
+comma
+id|info-&gt;pgm_num
+)paren
+suffix:semicolon
+id|voices
+(braket
+id|voice
+)braket
+dot
+id|bender
+op_assign
+id|info-&gt;bender_value
+suffix:semicolon
 )brace
 DECL|variable|opl3_operations
 r_static
@@ -4464,6 +4734,8 @@ comma
 id|opl3_bender
 comma
 id|opl3_alloc_voice
+comma
+id|opl3_setup_voice
 )brace
 suffix:semicolon
 r_int
@@ -4547,6 +4819,17 @@ c_cond
 id|opl3_enabled
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|opl4_enabled
+)paren
+id|printk
+(paren
+l_string|&quot; &lt;Yamaha OPL4/OPL3 FM&gt;&quot;
+)paren
+suffix:semicolon
+r_else
 id|printk
 (paren
 l_string|&quot; &lt;Yamaha OPL-3 FM&gt;&quot;
@@ -4570,7 +4853,6 @@ id|fm_info.capabilities
 op_or_assign
 id|SYNTH_CAP_OPL3
 suffix:semicolon
-macro_line|#ifndef SCO
 id|strcpy
 (paren
 id|fm_info.name
@@ -4578,7 +4860,6 @@ comma
 l_string|&quot;Yamaha OPL-3&quot;
 )paren
 suffix:semicolon
-macro_line|#endif
 r_for
 c_loop
 (paren

@@ -15,7 +15,7 @@ macro_line|#include &lt;linux/in.h&gt;
 macro_line|#include &lt;linux/net.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
-macro_line|#include &quot;/usr/src/linux/include/net/ip.h&quot;
+macro_line|#include &lt;net/ip.h&gt;
 macro_line|#include &lt;linux/smb.h&gt;
 macro_line|#include &lt;linux/smbno.h&gt;
 DECL|macro|_S

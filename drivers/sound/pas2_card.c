@@ -26,7 +26,6 @@ op_assign
 l_int|0
 suffix:semicolon
 DECL|variable|pas_model
-r_static
 r_char
 id|pas_model
 suffix:semicolon
@@ -112,16 +111,15 @@ suffix:semicolon
 )brace
 multiline_comment|/******************* Begin of the Interrupt Handler ********************/
 r_void
-DECL|function|pasintr
+DECL|function|INT_HANDLER_PARMS
 id|pasintr
 (paren
-r_int
-id|unused
+id|INT_HANDLER_PARMS
+(paren
+id|irq
 comma
-r_struct
-id|pt_regs
-op_star
-id|regs
+id|dummy
+)paren
 )paren
 (brace
 r_int
@@ -141,7 +139,7 @@ comma
 id|INTERRUPT_STATUS
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t;&t;&t;&t; * Clear interrupt&n;&t;&t;&t;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;   * Clear interrupt&n;&t;&t;&t;&t;&t;&t; */
 r_if
 c_cond
 (paren
@@ -226,6 +224,8 @@ id|snd_set_irq_handler
 id|pas_irq
 comma
 id|pasintr
+comma
+l_string|&quot;PAS16&quot;
 )paren
 )paren
 OL
@@ -411,7 +411,7 @@ op_or
 id|S_M_SB_RESET
 op_or
 id|S_M_MIXER_RESET
-multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t; * |&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t; * S_M_OPL3_DUAL_MONO&n;&t;     &t;     &t;     &t;     &t;     &t;     &t;     &t;     &t;     &t;     &t;     &t;     &t;     &t;     &t;     &t;     &t;&t;&t;&t;&t;&t;&t;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t; * |&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t; * S_M_OPL3_DUAL_MONO&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&t; */
 comma
 id|SERIAL_MIXER
 )paren
@@ -419,6 +419,10 @@ suffix:semicolon
 id|pas_write
 (paren
 id|I_C_1_BOOT_RESET_ENABLE
+macro_line|#ifdef PAS_JOYSTICK_ENABLE
+op_or
+id|I_C_1_JOYSTICK_ENABLE
+macro_line|#endif
 comma
 id|IO_CONFIGURATION_1
 )paren
@@ -546,7 +550,7 @@ l_int|0
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n; * This fixes the timing problems of the PAS due to the Symphony chipset&n; * as per Media Vision.  Only define this if your PAS doesn&squot;t work correctly.&n; */
+multiline_comment|/*&n;     * This fixes the timing problems of the PAS due to the Symphony chipset&n;     * as per Media Vision.  Only define this if your PAS doesn&squot;t work correctly.&n;   */
 macro_line|#ifdef SYMPHONY_PAS
 id|OUTB
 (paren
@@ -635,7 +639,7 @@ comma
 id|PRESCALE_DIVIDER
 )paren
 suffix:semicolon
-id|pas_write
+id|mix_write
 (paren
 id|P_M_MV508_ADDRESS
 op_or
@@ -644,7 +648,7 @@ comma
 id|PARALLEL_MIXER
 )paren
 suffix:semicolon
-id|pas_write
+id|mix_write
 (paren
 l_int|5
 comma
@@ -752,6 +756,14 @@ id|EMULATION_CONFIGURATION
 suffix:semicolon
 )brace
 )brace
+macro_line|#else
+id|pas_write
+(paren
+l_int|0x00
+comma
+id|COMPATIBILITY_ENABLE
+)paren
+suffix:semicolon
 macro_line|#endif
 r_if
 c_cond
@@ -875,15 +887,10 @@ l_int|0
 suffix:semicolon
 id|pas_model
 op_assign
-id|O_M_1_to_card
-(braket
 id|pas_read
 (paren
-id|OPERATION_MODE_1
+id|CHIP_REV
 )paren
-op_amp
-l_int|0x0f
-)braket
 suffix:semicolon
 r_return
 id|pas_model
@@ -918,18 +925,11 @@ id|hw_config
 r_if
 c_cond
 (paren
-(paren
 id|pas_model
 op_assign
-id|O_M_1_to_card
-(braket
 id|pas_read
 (paren
-id|OPERATION_MODE_1
-)paren
-op_amp
-l_int|0x0f
-)braket
+id|CHIP_REV
 )paren
 )paren
 (brace

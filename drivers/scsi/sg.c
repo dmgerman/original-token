@@ -240,6 +240,9 @@ id|arg
 )paren
 (brace
 r_int
+id|result
+suffix:semicolon
+r_int
 id|dev
 op_assign
 id|MINOR
@@ -276,6 +279,29 @@ id|cmd_in
 r_case
 id|SG_SET_TIMEOUT
 suffix:colon
+id|result
+op_assign
+id|verify_area
+c_func
+(paren
+id|VERIFY_READ
+comma
+id|arg
+comma
+r_sizeof
+(paren
+r_int
+)paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|result
+)paren
+r_return
+id|result
+suffix:semicolon
 id|scsi_generics
 (braket
 id|dev
@@ -396,6 +422,7 @@ r_return
 op_minus
 id|EACCES
 suffix:semicolon
+multiline_comment|/*&n;   * If we want exclusive access, then wait until the device is not&n;   * busy, and then set the flag to prevent anyone else from using it.&n;   */
 r_if
 c_cond
 (paren
@@ -462,6 +489,7 @@ l_int|1
 suffix:semicolon
 )brace
 r_else
+multiline_comment|/*&n;         * Wait until nobody has an exclusive open on&n;         * this device.&n;         */
 r_while
 c_loop
 (paren
@@ -509,6 +537,7 @@ op_minus
 id|ERESTARTSYS
 suffix:semicolon
 )brace
+multiline_comment|/*&n;     * OK, we should have grabbed the device.  Mark the thing so&n;     * that other processes know that we have it, and initialize the&n;     * state variables to known values.&n;     */
 r_if
 c_cond
 (paren
@@ -863,6 +892,7 @@ id|size
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * Read back the results of a previous command.  We use the pending and&n; * complete semaphores to tell us whether the buffer is available for us&n; * and whether the command is actually done.&n; */
 DECL|function|sg_read
 r_static
 r_int
@@ -930,6 +960,7 @@ id|count
 r_return
 id|i
 suffix:semicolon
+multiline_comment|/*&n;     * Wait until the command is actually done.&n;     */
 r_while
 c_loop
 (paren
@@ -971,6 +1002,7 @@ op_minus
 id|ERESTARTSYS
 suffix:semicolon
 )brace
+multiline_comment|/*&n;     * Now copy the result back to the user buffer.&n;     */
 id|device-&gt;header.pack_len
 op_assign
 id|device-&gt;header.reply_len
@@ -1060,6 +1092,7 @@ id|count
 op_assign
 l_int|0
 suffix:semicolon
+multiline_comment|/*&n;     * Clean up, and release the device so that we can send another&n;     * command.&n;     */
 id|sg_free
 c_func
 (paren
@@ -1087,6 +1120,7 @@ r_return
 id|count
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * This function is called by the interrupt handler when we&n; * actually have a command that is complete.  Change the&n; * flags to indicate that we have a result.&n; */
 DECL|function|sg_command_done
 r_static
 r_void
@@ -1137,6 +1171,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+multiline_comment|/*&n;     * See if the command completed normally, or whether something went&n;     * wrong.&n;     */
 id|memcpy
 c_func
 (paren
@@ -1169,6 +1204,7 @@ id|device-&gt;header.result
 op_assign
 id|SCpnt-&gt;result
 suffix:semicolon
+multiline_comment|/*&n;     * Now wake up the process that is waiting for the&n;     * result.&n;     */
 id|device-&gt;complete
 op_assign
 l_int|1
@@ -1191,6 +1227,10 @@ id|read_wait
 )paren
 suffix:semicolon
 )brace
+DECL|macro|SG_SEND
+mdefine_line|#define SG_SEND 0
+DECL|macro|SG_REC
+mdefine_line|#define SG_REC  1
 DECL|function|sg_write
 r_static
 r_int
@@ -1216,19 +1256,6 @@ id|count
 )paren
 (brace
 r_int
-id|dev
-op_assign
-id|MINOR
-c_func
-(paren
-id|inode-&gt;i_rdev
-)paren
-suffix:semicolon
-id|Scsi_Cmnd
-op_star
-id|SCpnt
-suffix:semicolon
-r_int
 id|bsize
 comma
 id|size
@@ -1239,14 +1266,19 @@ id|i
 suffix:semicolon
 r_int
 r_char
-id|opcode
-suffix:semicolon
-r_int
-r_char
 id|cmnd
 (braket
 id|MAX_COMMAND_SIZE
 )braket
+suffix:semicolon
+r_int
+id|dev
+op_assign
+id|MINOR
+c_func
+(paren
+id|inode-&gt;i_rdev
+)paren
 suffix:semicolon
 r_struct
 id|scsi_generic
@@ -1258,6 +1290,20 @@ id|scsi_generics
 (braket
 id|dev
 )braket
+suffix:semicolon
+r_int
+id|direction
+suffix:semicolon
+r_int
+r_char
+id|opcode
+suffix:semicolon
+id|Scsi_Cmnd
+op_star
+id|SCpnt
+suffix:semicolon
+r_int
+id|sgcnt
 suffix:semicolon
 r_if
 c_cond
@@ -1279,7 +1325,7 @@ id|count
 r_return
 id|i
 suffix:semicolon
-multiline_comment|/*&n;     * The minimum scsi command length is 6 bytes.  If we get anything less than this,&n;     * it is clearly bogus.&n;     */
+multiline_comment|/*&n;     * The minimum scsi command length is 6 bytes.  If we get anything&n;     * less than this, it is clearly bogus.  &n;     */
 r_if
 c_cond
 (paren
@@ -1299,7 +1345,7 @@ r_return
 op_minus
 id|EIO
 suffix:semicolon
-multiline_comment|/* make sure we can fit */
+multiline_comment|/*&n;     * If we still have a result pending from a previous command,&n;     * wait until the result has been read by the user before sending&n;     * another command.&n;     */
 r_while
 c_loop
 (paren
@@ -1345,6 +1391,7 @@ op_minus
 id|ERESTARTSYS
 suffix:semicolon
 )brace
+multiline_comment|/*&n;     * Mark the device flags for the new state.&n;     */
 id|device-&gt;pending
 op_assign
 l_int|1
@@ -1368,7 +1415,7 @@ id|sg_header
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/* fix input size */
+multiline_comment|/*&n;     * fix input size, and see if we are sending data.&n;     */
 id|device-&gt;header.pack_len
 op_assign
 id|count
@@ -1381,19 +1428,35 @@ r_struct
 id|sg_header
 )paren
 suffix:semicolon
-id|bsize
-op_assign
+r_if
+c_cond
 (paren
 id|device-&gt;header.pack_len
 OG
 id|device-&gt;header.reply_len
 )paren
-ques
-c_cond
+(brace
+id|bsize
+op_assign
 id|device-&gt;header.pack_len
-suffix:colon
+suffix:semicolon
+id|direction
+op_assign
+id|SG_SEND
+suffix:semicolon
+)brace
+r_else
+(brace
+id|bsize
+op_assign
 id|device-&gt;header.reply_len
 suffix:semicolon
+id|direction
+op_assign
+id|SG_REC
+suffix:semicolon
+)brace
+multiline_comment|/*&n;     * Don&squot;t include the command header itself in the size.&n;     */
 id|bsize
 op_sub_assign
 r_sizeof
@@ -1402,6 +1465,7 @@ r_struct
 id|sg_header
 )paren
 suffix:semicolon
+multiline_comment|/*&n;     * Allocate a buffer that is large enough to hold the data&n;     * that has been requested.  Round up to an even number of sectors,&n;     * since scsi_malloc allocates in chunks of 512 bytes.&n;     */
 id|amt
 op_assign
 id|bsize
@@ -1426,6 +1490,7 @@ op_amp
 op_complement
 l_int|511
 suffix:semicolon
+multiline_comment|/*&n;     * If we cannot allocate the buffer, report an error.&n;     */
 r_if
 c_cond
 (paren
@@ -1473,6 +1538,7 @@ l_string|&quot;allocating device&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
+multiline_comment|/*&n;     * Grab a device pointer for the device we want to talk to.  If we&n;     * don&squot;t want to block, just return with the appropriate message.&n;     */
 r_if
 c_cond
 (paren
@@ -1533,7 +1599,7 @@ l_string|&quot;device allocated&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif    
-multiline_comment|/* now issue command */
+multiline_comment|/*&n;     * Now we need to grab the command itself from the user&squot;s buffer.&n;     */
 id|SCpnt-&gt;request.dev
 op_assign
 id|dev
@@ -1578,17 +1644,20 @@ id|SCpnt-&gt;cmd_len
 op_assign
 id|size
 suffix:semicolon
+multiline_comment|/*&n;     * If we are writing data, subtract off the size&n;     * of the command itself, to get the amount of actual data&n;     * that we need to send to the device.&n;     */
+r_if
+c_cond
+(paren
+id|direction
+op_eq
+id|SG_SEND
+)paren
+(brace
 id|amt
 op_sub_assign
-id|device-&gt;header.pack_len
-OG
-id|device-&gt;header.reply_len
-ques
-c_cond
 id|size
-suffix:colon
-l_int|0
 suffix:semicolon
+)brace
 multiline_comment|/*&n;     * Verify that the user has actually passed enough bytes for this command.&n;     */
 r_if
 c_cond
@@ -1634,6 +1703,7 @@ op_minus
 id|EIO
 suffix:semicolon
 )brace
+multiline_comment|/*&n;     * Now copy the SCSI command from the user&squot;s address space.&n;     */
 id|memcpy_fromfs
 c_func
 (paren
@@ -1648,6 +1718,15 @@ id|buf
 op_add_assign
 id|size
 suffix:semicolon
+multiline_comment|/*&n;     * If we are writing data, copy the data we are writing.  The pack_len&n;     * field also includes the length of the header and the command,&n;     * so we need to subtract these off.&n;     */
+r_if
+c_cond
+(paren
+id|direction
+op_eq
+id|SG_SEND
+)paren
+(brace
 id|memcpy_fromfs
 c_func
 (paren
@@ -1655,17 +1734,11 @@ id|device-&gt;buff
 comma
 id|buf
 comma
-id|device-&gt;header.pack_len
-op_minus
-id|size
-op_minus
-r_sizeof
-(paren
-r_struct
-id|sg_header
-)paren
+id|amt
 )paren
 suffix:semicolon
+)brace
+multiline_comment|/*&n;     * Set the LUN field in the command structure.&n;     */
 id|cmnd
 (braket
 l_int|1
@@ -1694,6 +1767,7 @@ l_string|&quot;do cmd&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
+multiline_comment|/*&n;     * Now pass the actual command down to the low-level driver.  We&n;     * do not do any more here - when the interrupt arrives, we will&n;     * then do the post-processing.&n;     */
 id|scsi_do_cmd
 (paren
 id|SCpnt

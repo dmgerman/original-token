@@ -469,6 +469,12 @@ id|random
 suffix:colon
 l_int|1
 suffix:semicolon
+DECL|member|has_cmdblocks
+r_int
+id|has_cmdblocks
+suffix:colon
+l_int|1
+suffix:semicolon
 DECL|member|changed
 r_int
 id|changed
@@ -532,6 +538,13 @@ suffix:colon
 l_int|1
 suffix:semicolon
 multiline_comment|/* Negotiate for sync transfers */
+DECL|member|single_lun
+r_int
+id|single_lun
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* Indicates we should only allow I/O to&n;                                       one of the luns for the device at a time. */
 DECL|member|current_tag
 r_int
 r_char

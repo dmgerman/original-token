@@ -543,7 +543,7 @@ id|msq-&gt;rwait
 )paren
 suffix:semicolon
 r_return
-id|msgsz
+l_int|0
 suffix:semicolon
 )brace
 DECL|function|sys_msgrcv

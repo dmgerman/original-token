@@ -9,7 +9,7 @@ r_extern
 r_int
 id|sb_dsp_ok
 suffix:semicolon
-multiline_comment|/* Set to 1 after successful initialization */
+multiline_comment|/* Set to 1 atfer successful initialization */
 r_extern
 r_int
 id|sbc_base
@@ -554,6 +554,10 @@ id|SNDCARD_SB
 comma
 op_amp
 id|std_midi_synth
+comma
+(brace
+l_int|0
+)brace
 comma
 id|sb_midi_open
 comma

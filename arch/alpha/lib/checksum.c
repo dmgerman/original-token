@@ -78,7 +78,7 @@ r_return
 id|x
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * computes the checksum of the TCP/UDP pseudo-header&n; * returns a 16-bit checksum, already complemented&n; */
+multiline_comment|/*&n; * computes the checksum of the TCP/UDP pseudo-header&n; * returns a 16-bit checksum, already complemented.&n; */
 DECL|function|csum_tcpudp_magic
 r_int
 r_int
@@ -119,6 +119,10 @@ op_plus
 id|sum
 op_plus
 (paren
+(paren
+r_int
+r_int
+)paren
 id|ntohs
 c_func
 (paren
@@ -129,6 +133,10 @@ l_int|16
 )paren
 op_plus
 (paren
+(paren
+r_int
+r_int
+)paren
 id|proto
 op_lshift
 l_int|8
@@ -361,6 +369,20 @@ suffix:semicolon
 id|result
 op_add_assign
 id|carry
+suffix:semicolon
+id|result
+op_assign
+(paren
+id|result
+op_amp
+l_int|0xffffffff
+)paren
+op_plus
+(paren
+id|result
+op_rshift
+l_int|32
+)paren
 suffix:semicolon
 )brace
 r_if

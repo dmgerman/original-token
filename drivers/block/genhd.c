@@ -1,5 +1,6 @@
 multiline_comment|/*&n; *  Code extracted from&n; *  linux/kernel/hd.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; */
 multiline_comment|/*&n; *  Thanks to Branko Lankester, lankeste@fwi.uva.nl, who found a bug&n; *  in the early extended-partition checks and added DM partitions&n; */
+multiline_comment|/*&n; *  Support for DiskManager v6.0x added by Mark Lord (mlord@bnr.ca)&n; *  with hints from uwe@eas.iis.fhg.de (us3@irz.inf.tu-dresden.de).&n; */
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/genhd.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -439,6 +440,10 @@ comma
 id|minor
 op_assign
 id|current_minor
+comma
+id|found_dm6
+op_assign
+l_int|0
 suffix:semicolon
 r_struct
 id|buffer_head
@@ -461,6 +466,16 @@ id|hd-&gt;minor_shift
 op_minus
 l_int|1
 suffix:semicolon
+r_extern
+r_void
+id|ide_xlate_1024
+c_func
+(paren
+id|dev_t
+)paren
+suffix:semicolon
+id|read_mbr
+suffix:colon
 r_if
 c_cond
 (paren
@@ -501,9 +516,9 @@ r_int
 op_star
 )paren
 (paren
-id|bh-&gt;b_data
+l_int|0x1fe
 op_plus
-l_int|510
+id|bh-&gt;b_data
 )paren
 op_ne
 l_int|0xAA55
@@ -519,11 +534,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-id|current_minor
-op_add_assign
-l_int|4
-suffix:semicolon
-multiline_comment|/* first &quot;extra&quot; minor (for extended partitions) */
 id|p
 op_assign
 (paren
@@ -532,11 +542,119 @@ id|partition
 op_star
 )paren
 (paren
-l_int|0x1BE
+l_int|0x1be
 op_plus
 id|bh-&gt;b_data
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t; *  Check for Disk Manager v6.0x &quot;Dynamic Disk Overlay&quot; (DDO)&n;&t; */
+r_if
+c_cond
+(paren
+id|p-&gt;sys_ind
+op_eq
+id|DM6_PARTITION
+op_logical_and
+op_logical_neg
+id|found_dm6
+op_increment
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot; [DM6:DDO]&quot;
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t;&t; * Everything is offset by one track (p-&gt;end_sector sectors),&n;&t;&t; * and a translated geometry is used to reduce the number&n;&t;&t; * of apparent cylinders to 1024 or less.&n;&t;&t; *&n;&t;&t; * For complete compatibility with linux fdisk, we do:&n;&t;&t; *  1. tell the driver to offset *everything* by one track,&n;&t;&t; *  2. reduce the apparent disk capacity by one track,&n;&t;&t; *  3. adjust the geometry reported by HDIO_GETGEO (for fdisk),&n;&t;&t; *&t;(does nothing if not an IDE drive, but that&squot;s okay).&n;&t;&t; *  4. invalidate our in-memory copy of block zero,&n;&t;&t; *  5. restart the partition table hunt from scratch.&n;&t;&t; */
+id|first_sector
+op_add_assign
+id|p-&gt;end_sector
+suffix:semicolon
+id|hd-&gt;part
+(braket
+id|MINOR
+c_func
+(paren
+id|dev
+)paren
+)braket
+dot
+id|start_sect
+op_add_assign
+id|p-&gt;end_sector
+suffix:semicolon
+id|hd-&gt;part
+(braket
+id|MINOR
+c_func
+(paren
+id|dev
+)paren
+)braket
+dot
+id|nr_sects
+op_sub_assign
+id|p-&gt;end_sector
+suffix:semicolon
+id|ide_xlate_1024
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
+multiline_comment|/* harmless if not an IDE drive */
+id|bh-&gt;b_dirt
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* prevent re-use of this block */
+id|bh-&gt;b_uptodate
+op_assign
+l_int|0
+suffix:semicolon
+id|bh-&gt;b_req
+op_assign
+l_int|0
+suffix:semicolon
+id|brelse
+c_func
+(paren
+id|bh
+)paren
+suffix:semicolon
+r_goto
+id|read_mbr
+suffix:semicolon
+)brace
+multiline_comment|/*&n;&t; *  Check for Disk Manager v6.0x DDO on a secondary drive (?)&n;&t; */
+r_if
+c_cond
+(paren
+id|p-&gt;sys_ind
+op_eq
+id|DM6_AUXPARTITION
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot; [DM6]&quot;
+)paren
+suffix:semicolon
+id|ide_xlate_1024
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
+multiline_comment|/* harmless if not an IDE drive */
+)brace
+id|current_minor
+op_add_assign
+l_int|4
+suffix:semicolon
+multiline_comment|/* first &quot;extra&quot; minor (for extended partitions) */
 r_for
 c_loop
 (paren
@@ -629,7 +747,7 @@ l_string|&quot; &gt;&quot;
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n;&t; * check for Disk Manager partition table&n;&t; */
+multiline_comment|/*&n;&t; *  Check for old-style Disk Manager partition table&n;&t; */
 r_if
 c_cond
 (paren
@@ -656,7 +774,7 @@ id|partition
 op_star
 )paren
 (paren
-l_int|0x1BE
+l_int|0x1be
 op_plus
 id|bh-&gt;b_data
 )paren

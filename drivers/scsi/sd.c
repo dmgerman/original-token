@@ -31,9 +31,9 @@ DECL|macro|MAX_RETRIES
 mdefine_line|#define MAX_RETRIES 5
 multiline_comment|/*&n; *  Time out in seconds for disks and Magneto-opticals (which are slower).&n; */
 DECL|macro|SD_TIMEOUT
-mdefine_line|#define SD_TIMEOUT 700
+mdefine_line|#define SD_TIMEOUT (7 * HZ)
 DECL|macro|SD_MOD_TIMEOUT
-mdefine_line|#define SD_MOD_TIMEOUT 750
+mdefine_line|#define SD_MOD_TIMEOUT (8 * HZ)
 DECL|macro|CLUSTERABLE_DEVICE
 mdefine_line|#define CLUSTERABLE_DEVICE(SC) (SC-&gt;host-&gt;use_clustering &amp;&amp; &bslash;&n;&t;&t;&t;&t;SC-&gt;device-&gt;type != TYPE_MOD)
 DECL|variable|sd
@@ -3978,7 +3978,7 @@ id|Scsi_Cmnd
 op_star
 id|SCpnt
 suffix:semicolon
-multiline_comment|/* We need to retry the READ_CAPACITY because a UNIT_ATTENTION is &n;     * considered a fatal error, and many devices report such an error &n;     * just after a scsi bus reset. */
+multiline_comment|/* We need to retry the READ_CAPACITY because a UNIT_ATTENTION is &n;     * considered a fatal error, and many devices report such an error &n;     * just after a scsi bus reset. &n;     */
 id|SCpnt
 op_assign
 id|allocate_device
@@ -5507,7 +5507,7 @@ op_assign
 l_int|120
 suffix:semicolon
 )brace
-multiline_comment|/* 64 sector read-ahead */
+multiline_comment|/* 120 sector read-ahead */
 r_else
 id|read_ahead
 (braket

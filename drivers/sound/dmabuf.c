@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * sound/dmabuf.c&n; *&n; * The DMA buffer manager for digitized voice applications&n; *&n; * Copyright by Hannu Savolainen 1993, 1994&n; *&n; * Redistribution and use in source and binary forms, with or without&n; * modification, are permitted provided that the following conditions are&n; * met: 1. Redistributions of source code must retain the above copyright&n; * notice, this list of conditions and the following disclaimer. 2.&n; * Redistributions in binary form must reproduce the above copyright notice,&n; * this list of conditions and the following disclaimer in the documentation&n; * and/or other materials provided with the distribution.&n; *&n; * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS&squot;&squot; AND ANY&n; * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED&n; * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE&n; * DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR&n; * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL&n; * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR&n; * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER&n; * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT&n; * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY&n; * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF&n; * SUCH DAMAGE.&n; *&n; */
+multiline_comment|/*&n; * sound/dmabuf.c&n; *&n; * The DMA buffer manager for digitized voice applications&n; *&n; * Copyright by Hannu Savolainen 1993, 1994, 1995&n; *&n; * Redistribution and use in source and binary forms, with or without&n; * modification, are permitted provided that the following conditions are&n; * met: 1. Redistributions of source code must retain the above copyright&n; * notice, this list of conditions and the following disclaimer. 2.&n; * Redistributions in binary form must reproduce the above copyright notice,&n; * this list of conditions and the following disclaimer in the documentation&n; * and/or other materials provided with the distribution.&n; *&n; * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS&squot;&squot; AND ANY&n; * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED&n; * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE&n; * DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE FOR&n; * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL&n; * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR&n; * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER&n; * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT&n; * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY&n; * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF&n; * SUCH DAMAGE.&n; *&n; */
 macro_line|#include &quot;sound_config.h&quot;
 macro_line|#ifdef CONFIGURE_SOUNDCARD
 macro_line|#include &quot;sound_calls.h&quot;
@@ -31,7 +31,7 @@ l_int|0
 )brace
 )brace
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; * Primitive way to allocate&n;&t;&t; * such a large array.&n;&t;&t; * Needs dynamic run-time allocation.&n;&t;&t; */
+multiline_comment|/*&n;&n;&t;&t;&t;&t;   * Primitive way to allocate&n;&t;&t;&t;&t;   * such a large array.&n;&t;&t;&t;&t;   * Needs dynamic run-time alloction.&n;&t;&t;&t;&t; */
 r_static
 r_void
 DECL|function|reorganize_buffers
@@ -183,7 +183,7 @@ id|nc
 op_star
 id|sz
 suffix:semicolon
-multiline_comment|/*&n;   * Compute a buffer size for time not exceeding 1 second.&n;   * Usually this algorithm gives a buffer size for 0.5 to 1.0 seconds&n;   * of sound (using the current speed, sample size and #channels).&n;   */
+multiline_comment|/*&n;         * Compute a buffer size for time not exeeding 1 second.&n;         * Usually this algorithm gives a buffer size for 0.5 to 1.0 seconds&n;         * of sound (using the current speed, sample size and #channels).&n;       */
 id|bsz
 op_assign
 id|dsp_dev-&gt;buffsize
@@ -268,7 +268,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-multiline_comment|/*&n; * The process has specified the buffer size with SNDCTL_DSP_SETFRAGMENT or&n; * the buffer size computation has already been done.&n; */
+multiline_comment|/*&n;         * The process has specified the buffer sice with SNDCTL_DSP_SETFRAGMENT or&n;         * the buffer sice computation has already been done.&n;       */
 r_if
 c_cond
 (paren
@@ -468,14 +468,6 @@ op_assign
 id|dmap-&gt;qhead
 op_assign
 id|dmap-&gt;qtail
-op_assign
-l_int|0
-suffix:semicolon
-id|dmap-&gt;qlen
-op_assign
-id|dmap-&gt;qtail
-op_assign
-id|dmap-&gt;qhead
 op_assign
 l_int|0
 suffix:semicolon
@@ -908,7 +900,7 @@ id|RESTORE_INTR
 id|flags
 )paren
 suffix:semicolon
-multiline_comment|/*&n;       * Some devices such as GUS have huge amount of on board RAM for the&n;       * audio data. We have to wait util the device has finished playing.&n;       */
+multiline_comment|/*&n;       * Some devices such as GUS have huge amount of on board RAM for the&n;       * audio data. We have to wait until the device has finished playing.&n;       */
 id|DISABLE_INTR
 (paren
 id|flags
@@ -1115,6 +1107,9 @@ comma
 r_int
 op_star
 id|len
+comma
+r_int
+id|dontblock
 )paren
 (brace
 r_int
@@ -1310,6 +1305,24 @@ op_or_assign
 id|DMA_ACTIVE
 op_or
 id|DMA_STARTED
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|dontblock
+)paren
+(brace
+id|RESTORE_INTR
+(paren
+id|flags
+)paren
+suffix:semicolon
+r_return
+id|RET_ERROR
+(paren
+id|EAGAIN
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/* Wait for the next block */
@@ -1671,7 +1684,7 @@ l_int|0
 op_logical_or
 id|dmap-&gt;fragment_size
 )paren
-multiline_comment|/* Too late to change */
+multiline_comment|/* Loo late to change */
 r_return
 id|RET_ERROR
 (paren
@@ -1774,7 +1787,7 @@ l_int|0
 op_logical_or
 id|dmap-&gt;fragment_size
 )paren
-multiline_comment|/* Too late to change */
+multiline_comment|/* Loo late to change */
 r_return
 id|RET_ERROR
 (paren
@@ -1916,6 +1929,53 @@ suffix:semicolon
 )brace
 r_break
 suffix:semicolon
+r_case
+id|SNDCTL_DSP_GETISPACE
+suffix:colon
+r_case
+id|SNDCTL_DSP_GETOSPACE
+suffix:colon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|local
+)paren
+r_return
+id|RET_ERROR
+(paren
+id|EINVAL
+)paren
+suffix:semicolon
+(brace
+id|audio_buf_info
+op_star
+id|info
+op_assign
+(paren
+id|audio_buf_info
+op_star
+)paren
+id|arg
+suffix:semicolon
+id|info-&gt;fragments
+op_assign
+id|dmap-&gt;qlen
+suffix:semicolon
+id|info-&gt;fragsize
+op_assign
+id|dmap-&gt;fragment_size
+suffix:semicolon
+id|info-&gt;bytes
+op_assign
+id|dmap-&gt;qlen
+op_star
+id|dmap-&gt;fragment_size
+suffix:semicolon
+)brace
+r_return
+l_int|0
+suffix:semicolon
 r_default
 suffix:colon
 r_return
@@ -1936,12 +1996,6 @@ id|local
 )paren
 suffix:semicolon
 )brace
-r_return
-id|RET_ERROR
-(paren
-id|EIO
-)paren
-suffix:semicolon
 )brace
 r_static
 r_int
@@ -1982,7 +2036,7 @@ multiline_comment|/* No space at all */
 r_return
 l_int|0
 suffix:semicolon
-multiline_comment|/*&n;  * Verify that there are no more pending buffers than the limit&n;  * defined by the process.&n;  */
+multiline_comment|/*&n;     * Verify that there are no more pending buffers than the limit&n;     * defined by the process.&n;   */
 id|max
 op_assign
 id|dmap-&gt;max_fragments
@@ -2024,7 +2078,7 @@ id|len
 id|tmp
 op_decrement
 suffix:semicolon
-multiline_comment|/*&n;&t;&t;&t; * This buffer has been counted twice&n;&t;&t;&t; */
+multiline_comment|/*&n;&t;&t;&t;&t;   * This buffer has been counted twice&n;&t;&t;&t;&t; */
 id|len
 op_add_assign
 id|tmp
@@ -2059,6 +2113,9 @@ comma
 r_int
 op_star
 id|size
+comma
+r_int
+id|dontblock
 )paren
 (brace
 r_int
@@ -2185,6 +2242,17 @@ r_return
 id|err
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|dontblock
+)paren
+r_return
+id|RET_ERROR
+(paren
+id|EAGAIN
+)paren
+suffix:semicolon
 id|DISABLE_INTR
 (paren
 id|flags
@@ -2689,6 +2757,25 @@ id|dev
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#if defined(SVR42)
+multiline_comment|/*&n;         ** send full count to snd_dma_prog, it will take care of subtracting&n;         ** one if it is required.&n;       */
+id|snd_dma_prog
+(paren
+id|chan
+comma
+id|dmap-&gt;raw_buf_phys
+(braket
+l_int|0
+)braket
+comma
+id|dmap-&gt;bytes_in_use
+comma
+id|dma_mode
+comma
+id|TRUE
+)paren
+suffix:semicolon
+macro_line|#else /* !SVR42 */
 id|dma_param
 (paren
 id|chan
@@ -2716,6 +2803,8 @@ l_int|0
 )braket
 comma
 id|dmap-&gt;bytes_in_use
+op_minus
+l_int|1
 )paren
 suffix:semicolon
 id|dma_enable
@@ -2723,6 +2812,7 @@ id|dma_enable
 id|chan
 )paren
 suffix:semicolon
+macro_line|#endif /*  ! SVR42 */
 macro_line|#else
 macro_line|#error This routine is not valid for this OS.
 macro_line|#endif
@@ -2802,6 +2892,21 @@ id|chan
 suffix:semicolon
 macro_line|#else
 macro_line|#if defined(GENERIC_SYSV)
+macro_line|#if defined(SVR42)
+id|snd_dma_prog
+(paren
+id|chan
+comma
+id|physaddr
+comma
+id|count
+comma
+id|dma_mode
+comma
+id|FALSE
+)paren
+suffix:semicolon
+macro_line|#else /* ! SVR42 */
 id|dma_param
 (paren
 id|chan
@@ -2829,6 +2934,7 @@ id|dma_enable
 id|chan
 )paren
 suffix:semicolon
+macro_line|#endif /* SVR42 */
 macro_line|#else
 macro_line|#error This routine is not valid for this OS.
 macro_line|#endif /* GENERIC_SYSV */
@@ -2850,7 +2956,13 @@ id|mem_start
 r_int
 id|dev
 suffix:semicolon
-multiline_comment|/*&n; * NOTE! This routine could be called several times.&n; */
+macro_line|#if defined(SVR42)
+id|snd_dma_init
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif /* SVR42 */
+multiline_comment|/*&n;     * NOTE! This routine could be called several times.&n;   */
 r_for
 c_loop
 (paren
@@ -2893,7 +3005,7 @@ r_int
 id|event_type
 )paren
 (brace
-multiline_comment|/*&n; * Event types:&n; *&t;0 = DMA transfer done. Device still has more data in the local&n; *&t;    buffer.&n; *&t;1 = DMA transfer done. Device doesn&squot;t have local buffer or it&squot;s&n; *&t;    empty now.&n; *&t;2 = No DMA transfer but the device has now more space in its local&n; *&t;    buffer.&n; */
+multiline_comment|/*&n;     * Event types:&n;     *  0 = DMA transfer done. Device still has more data in the local&n;     *      buffer.&n;     *  1 = DMA transfer done. Device doesn&squot;t have local buffer or it&squot;s&n;     *      empty now.&n;     *  2 = No DMA transfer but the device has now more space in it&squot;s local&n;     *      buffer.&n;   */
 r_int
 r_int
 id|flags
@@ -2910,6 +3022,18 @@ id|dev
 op_member_access_from_pointer
 id|dmap
 suffix:semicolon
+macro_line|#if defined(SVR42)
+id|snd_dma_intr
+(paren
+id|audio_devs
+(braket
+id|dev
+)braket
+op_member_access_from_pointer
+id|dmachan
+)paren
+suffix:semicolon
+macro_line|#endif /* SVR42 */
 r_if
 c_cond
 (paren
@@ -3131,6 +3255,18 @@ id|dev
 op_member_access_from_pointer
 id|dmap
 suffix:semicolon
+macro_line|#if defined(SVR42)
+id|snd_dma_intr
+(paren
+id|audio_devs
+(braket
+id|dev
+)braket
+op_member_access_from_pointer
+id|dmachan
+)paren
+suffix:semicolon
+macro_line|#endif /* SVR42 */
 r_if
 c_cond
 (paren
@@ -3333,7 +3469,12 @@ id|ALLOC_DMA_CHN
 (paren
 id|chan
 comma
-l_string|&quot;audio&quot;
+id|audio_devs
+(braket
+id|dev
+)braket
+op_member_access_from_pointer
+id|name
 )paren
 )paren
 (brace
@@ -3397,7 +3538,7 @@ id|dmachan
 suffix:semicolon
 id|DMAbuf_reset_dma
 (paren
-id|chan
+id|dev
 )paren
 suffix:semicolon
 id|RELEASE_DMA_CHN
@@ -3411,12 +3552,214 @@ DECL|function|DMAbuf_reset_dma
 id|DMAbuf_reset_dma
 (paren
 r_int
-id|chan
+id|dev
 )paren
 (brace
+macro_line|#if 0
+r_int
+id|chan
+op_assign
+id|audio_devs
+(braket
+id|dev
+)braket
+op_member_access_from_pointer
+id|dmachan
+suffix:semicolon
+id|disable_dma
+(paren
+id|chan
+)paren
+suffix:semicolon
+macro_line|#endif
 )brace
-multiline_comment|/*&n; * The sound_mem_init() is called by mem_init() immediately after mem_map is&n; * initialized and before free_page_list is created.&n; *&n; * This routine allocates DMA buffers at the end of available physical memory (&n; * &lt;16M) and marks pages reserved at mem_map.&n; */
-macro_line|#else
+macro_line|#ifdef ALLOW_SELECT
+r_int
+DECL|function|DMAbuf_select
+id|DMAbuf_select
+(paren
+r_int
+id|dev
+comma
+r_struct
+id|fileinfo
+op_star
+id|file
+comma
+r_int
+id|sel_type
+comma
+id|select_table
+op_star
+id|wait
+)paren
+(brace
+r_struct
+id|dma_buffparms
+op_star
+id|dmap
+op_assign
+id|audio_devs
+(braket
+id|dev
+)braket
+op_member_access_from_pointer
+id|dmap
+suffix:semicolon
+r_int
+r_int
+id|flags
+suffix:semicolon
+r_switch
+c_cond
+(paren
+id|sel_type
+)paren
+(brace
+r_case
+id|SEL_IN
+suffix:colon
+r_if
+c_cond
+(paren
+id|dmap-&gt;dma_mode
+op_ne
+id|DMODE_INPUT
+)paren
+r_return
+l_int|0
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|dmap-&gt;qlen
+)paren
+(brace
+id|DISABLE_INTR
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|dev_sleep_flag
+(braket
+id|dev
+)braket
+dot
+id|mode
+op_assign
+id|WK_SLEEP
+suffix:semicolon
+id|select_wait
+(paren
+op_amp
+id|dev_sleeper
+(braket
+id|dev
+)braket
+comma
+id|wait
+)paren
+suffix:semicolon
+id|RESTORE_INTR
+(paren
+id|flags
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+r_return
+l_int|1
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|SEL_OUT
+suffix:colon
+r_if
+c_cond
+(paren
+id|dmap-&gt;dma_mode
+op_eq
+id|DMODE_INPUT
+)paren
+r_return
+l_int|0
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|dmap-&gt;dma_mode
+op_eq
+id|DMODE_NONE
+)paren
+r_return
+l_int|1
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|space_in_queue
+(paren
+id|dev
+)paren
+)paren
+(brace
+id|DISABLE_INTR
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|dev_sleep_flag
+(braket
+id|dev
+)braket
+dot
+id|mode
+op_assign
+id|WK_SLEEP
+suffix:semicolon
+id|select_wait
+(paren
+op_amp
+id|dev_sleeper
+(braket
+id|dev
+)braket
+comma
+id|wait
+)paren
+suffix:semicolon
+id|RESTORE_INTR
+(paren
+id|flags
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+r_return
+l_int|1
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|SEL_EX
+suffix:colon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+r_return
+l_int|0
+suffix:semicolon
+)brace
+macro_line|#endif /* ALLOW_SELECT */
+macro_line|#else /* EXCLUDE_AUDIO */
 multiline_comment|/*&n; * Stub versions if audio services not included&n; */
 r_int
 DECL|function|DMAbuf_open
@@ -3466,6 +3809,9 @@ comma
 r_int
 op_star
 id|size
+comma
+r_int
+id|dontblock
 )paren
 (brace
 r_return
@@ -3490,6 +3836,9 @@ comma
 r_int
 op_star
 id|len
+comma
+r_int
+id|dontblock
 )paren
 (brace
 r_return
@@ -3609,7 +3958,7 @@ DECL|function|DMAbuf_open_dma
 id|DMAbuf_open_dma
 (paren
 r_int
-id|chan
+id|dev
 )paren
 (brace
 r_return
@@ -3624,7 +3973,7 @@ DECL|function|DMAbuf_close_dma
 id|DMAbuf_close_dma
 (paren
 r_int
-id|chan
+id|dev
 )paren
 (brace
 r_return
@@ -3635,7 +3984,7 @@ DECL|function|DMAbuf_reset_dma
 id|DMAbuf_reset_dma
 (paren
 r_int
-id|chan
+id|dev
 )paren
 (brace
 r_return

@@ -306,20 +306,23 @@ op_assign
 id|bh
 suffix:semicolon
 )brace
+r_for
+c_loop
+(paren
 id|block
 op_assign
 l_int|0
-suffix:semicolon
+comma
 id|offset
 op_assign
 l_int|0
 suffix:semicolon
-r_while
-c_loop
-(paren
 id|offset
 OL
 id|dir-&gt;i_size
+suffix:semicolon
+id|block
+op_increment
 )paren
 (brace
 r_struct
@@ -379,15 +382,27 @@ c_cond
 op_logical_neg
 id|bh
 )paren
-id|ext2_panic
+(brace
+id|ext2_error
 (paren
 id|sb
 comma
 l_string|&quot;ext2_find_entry&quot;
 comma
-l_string|&quot;buffer head pointer is NULL&quot;
+l_string|&quot;directory #%lu contains a hole at offset %lu&quot;
+comma
+id|dir-&gt;i_ino
+comma
+id|offset
 )paren
 suffix:semicolon
+id|offset
+op_add_assign
+id|sb-&gt;s_blocksize
+suffix:semicolon
+r_continue
+suffix:semicolon
+)brace
 id|wait_on_buffer
 (paren
 id|bh
@@ -580,7 +595,6 @@ suffix:semicolon
 id|bh_use
 (braket
 id|block
-op_increment
 op_mod
 id|NAMEI_RA_SIZE
 )braket
@@ -2670,7 +2684,7 @@ id|inode-&gt;i_sb
 comma
 l_string|&quot;empty_dir&quot;
 comma
-l_string|&quot;bad directory (dir %lu)&quot;
+l_string|&quot;bad directory (dir #%lu) - no data block&quot;
 comma
 id|inode-&gt;i_ino
 )paren
@@ -2736,7 +2750,7 @@ id|inode-&gt;i_sb
 comma
 l_string|&quot;empty_dir&quot;
 comma
-l_string|&quot;bad directory (dir %lu)&quot;
+l_string|&quot;bad directory (dir #%lu) - no `.&squot; or `..&squot;&quot;
 comma
 id|inode-&gt;i_ino
 )paren
@@ -2828,6 +2842,19 @@ op_logical_neg
 id|bh
 )paren
 (brace
+id|ext2_error
+(paren
+id|sb
+comma
+l_string|&quot;empty_dir&quot;
+comma
+l_string|&quot;directory #%lu contains a hole at offset %lu&quot;
+comma
+id|inode-&gt;i_ino
+comma
+id|offset
+)paren
+suffix:semicolon
 id|offset
 op_add_assign
 id|sb-&gt;s_blocksize

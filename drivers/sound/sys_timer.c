@@ -88,7 +88,7 @@ r_int
 id|tmr_value
 )paren
 (brace
-multiline_comment|/*&n; *    Convert system timer ticks (HZ) to MIDI ticks&n; */
+multiline_comment|/*&n;     *    Convert system timer ticks (HZ) to MIDI ticks&n;   */
 r_int
 r_int
 id|tmp
@@ -108,6 +108,23 @@ op_div
 id|HZ
 suffix:semicolon
 multiline_comment|/* Convert to msecs */
+r_if
+c_cond
+(paren
+id|curr_tempo
+op_eq
+l_int|0
+op_logical_or
+id|curr_timebase
+op_eq
+l_int|0
+)paren
+multiline_comment|/* Error? */
+id|scale
+op_assign
+l_int|1
+suffix:semicolon
+r_else
 id|scale
 op_assign
 (paren
@@ -123,14 +140,26 @@ id|curr_timebase
 )paren
 suffix:semicolon
 multiline_comment|/* msecs per MIDI tick */
+r_if
+c_cond
+(paren
+id|scale
+op_eq
+l_int|0
+)paren
+multiline_comment|/* Error? */
+id|scale
+op_assign
+l_int|1
+suffix:semicolon
 r_return
 (paren
 id|tmp
 op_plus
 (paren
 id|scale
-op_div
-l_int|2
+op_rshift
+l_int|1
 )paren
 )paren
 op_div

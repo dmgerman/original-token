@@ -1,13 +1,23 @@
 multiline_comment|/* sound_config.h&n; *&n; * A driver for Soundcards, misc configuration parameters.&n; *&n; * &n; * Copyright by Hannu Savolainen 1993&n; *&n; * Redistribution and use in source and binary forms, with or without&n; * modification, are permitted provided that the following conditions&n; * are met:&n; * 1. Redistributions of source code must retain the above copyright&n; *    notice, this list of conditions and the following disclaimer.&n; * 2. Redistributions in binary form must reproduce the above copyright&n; *    notice, this list of conditions and the following disclaimer in the&n; *    documentation and/or other materials provided with the distribution.&n; *&n; * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS&squot;&squot; AND&n; * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE&n; * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE&n; * ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE&n; * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL&n; * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS&n; * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)&n; * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT&n; * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY&n; * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF&n; * SUCH DAMAGE.&n; *&n; */
 macro_line|#include &quot;local.h&quot;
+macro_line|#include &quot;os.h&quot;
+macro_line|#include &quot;soundvers.h&quot;
+macro_line|#if !defined(PSS_MPU_BASE) &amp;&amp; defined(EXCLUDE_SSCAPE) &amp;&amp; &bslash;&n;&t;&t;&t;      defined(EXCLUDE_TRIX) &amp;&amp; !defined(MAD16_MPU_BASE)
+DECL|macro|EXCLUDE_MPU_EMU
+mdefine_line|#define EXCLUDE_MPU_EMU
+macro_line|#endif
 macro_line|#if defined(ISC) || defined(SCO) || defined(SVR42)
 DECL|macro|GENERIC_SYSV
 mdefine_line|#define GENERIC_SYSV
 macro_line|#endif
 multiline_comment|/*&n; * Disable the AD1848 driver if there are no other drivers requiring it.&n; */
-macro_line|#if defined(EXCLUDE_GUS16) &amp;&amp; defined(EXCLUDE_MSS) &amp;&amp; defined(EXCLUDE_PSS) &amp;&amp; defined(EXCLUDE_GUSMAX)
+macro_line|#if defined(EXCLUDE_GUS16) &amp;&amp; defined(EXCLUDE_MSS) &amp;&amp; &bslash;&n;    defined(EXCLUDE_PSS) &amp;&amp; defined(EXCLUDE_GUSMAX) &amp;&amp; &bslash;&n;    defined(EXCLUDE_SSCAPE) &amp;&amp; defined(EXCLUDE_TRIX) &amp;&amp; defined(EXCLUDE_MAD16)
 DECL|macro|EXCLUDE_AD1848
 mdefine_line|#define EXCLUDE_AD1848
+macro_line|#endif
+macro_line|#ifdef PSS_MSS_BASE
+DECL|macro|EXCLUDE_AD1848
+macro_line|#undef EXCLUDE_AD1848
 macro_line|#endif
 DECL|macro|CONFIGURE_SOUNDCARD
 macro_line|#undef CONFIGURE_SOUNDCARD
@@ -34,76 +44,6 @@ DECL|macro|SND_DEFAULT_ENABLE
 mdefine_line|#define SND_DEFAULT_ENABLE&t;1
 macro_line|#endif
 macro_line|#ifdef CONFIGURE_SOUNDCARD
-multiline_comment|/* ****** IO-address, DMA and IRQ settings ****&n;&n;If your card has nonstandard I/O address or IRQ number, change defines&n;   for the following settings in your kernel Makefile */
-macro_line|#ifndef SBC_BASE
-DECL|macro|SBC_BASE
-mdefine_line|#define SBC_BASE&t;0x220&t;/* 0x220 is the factory default. */
-macro_line|#endif
-macro_line|#ifndef SBC_IRQ
-DECL|macro|SBC_IRQ
-mdefine_line|#define SBC_IRQ&t;&t;7&t;/* IQR7 is the factory default.&t; */
-macro_line|#endif
-macro_line|#ifndef SBC_DMA
-DECL|macro|SBC_DMA
-mdefine_line|#define SBC_DMA&t;&t;1
-macro_line|#endif
-macro_line|#ifndef SB16_DMA
-DECL|macro|SB16_DMA
-mdefine_line|#define SB16_DMA&t;6
-macro_line|#endif
-macro_line|#ifndef SB16MIDI_BASE
-DECL|macro|SB16MIDI_BASE
-mdefine_line|#define SB16MIDI_BASE&t;0x300
-macro_line|#endif
-macro_line|#ifndef PAS_BASE
-DECL|macro|PAS_BASE
-mdefine_line|#define PAS_BASE&t;0x388
-macro_line|#endif
-macro_line|#ifndef PAS_IRQ
-DECL|macro|PAS_IRQ
-mdefine_line|#define PAS_IRQ&t;&t;5
-macro_line|#endif
-macro_line|#ifndef PAS_DMA
-DECL|macro|PAS_DMA
-mdefine_line|#define PAS_DMA&t;&t;3
-macro_line|#endif
-macro_line|#ifndef GUS_BASE
-DECL|macro|GUS_BASE
-mdefine_line|#define GUS_BASE&t;0x220
-macro_line|#endif
-macro_line|#ifndef GUS_IRQ
-DECL|macro|GUS_IRQ
-mdefine_line|#define GUS_IRQ&t;&t;15
-macro_line|#endif
-macro_line|#ifndef GUS_MIDI_IRQ
-DECL|macro|GUS_MIDI_IRQ
-mdefine_line|#define GUS_MIDI_IRQ&t;GUS_IRQ
-macro_line|#endif
-macro_line|#ifndef GUS_DMA
-DECL|macro|GUS_DMA
-mdefine_line|#define GUS_DMA&t;&t;6
-macro_line|#endif
-macro_line|#ifndef MPU_BASE
-DECL|macro|MPU_BASE
-mdefine_line|#define MPU_BASE&t;0x330
-macro_line|#endif
-macro_line|#ifndef MPU_IRQ
-DECL|macro|MPU_IRQ
-mdefine_line|#define MPU_IRQ&t;&t;6
-macro_line|#endif
-multiline_comment|/* Echo Personal Sound System */
-macro_line|#ifndef PSS_BASE
-DECL|macro|PSS_BASE
-mdefine_line|#define PSS_BASE        0x220   /* 0x240 or */
-macro_line|#endif
-macro_line|#ifndef PSS_IRQ
-DECL|macro|PSS_IRQ
-mdefine_line|#define PSS_IRQ         7
-macro_line|#endif
-macro_line|#ifndef PSS_DMA
-DECL|macro|PSS_DMA
-mdefine_line|#define PSS_DMA         1
-macro_line|#endif
 macro_line|#ifndef MAX_REALTIME_FACTOR
 DECL|macro|MAX_REALTIME_FACTOR
 mdefine_line|#define MAX_REALTIME_FACTOR&t;4
@@ -147,7 +87,7 @@ DECL|macro|SND_DEV_STATUS
 mdefine_line|#define SND_DEV_STATUS&t;6&t;/* /dev/sndstat */
 multiline_comment|/* #7 not in use now. Was in 2.4. Free for use after v3.0. */
 DECL|macro|SND_DEV_SEQ2
-mdefine_line|#define SND_DEV_SEQ2&t;8&t;/* /dev/sequencer, level 2 interface */
+mdefine_line|#define SND_DEV_SEQ2&t;8&t;/* /dev/sequecer, level 2 interface */
 DECL|macro|SND_DEV_SNDPROC
 mdefine_line|#define SND_DEV_SNDPROC 9&t;/* /dev/sndproc for programmable devices */
 DECL|macro|SND_DEV_PSS
@@ -161,7 +101,7 @@ mdefine_line|#define OFF&t;&t;0
 DECL|macro|MAX_AUDIO_DEV
 mdefine_line|#define MAX_AUDIO_DEV&t;5
 DECL|macro|MAX_MIXER_DEV
-mdefine_line|#define MAX_MIXER_DEV&t;2
+mdefine_line|#define MAX_MIXER_DEV&t;5
 DECL|macro|MAX_SYNTH_DEV
 mdefine_line|#define MAX_SYNTH_DEV&t;3
 DECL|macro|MAX_MIDI_DEV
@@ -177,6 +117,12 @@ r_int
 id|mode
 suffix:semicolon
 multiline_comment|/* Open mode */
+id|DECLARE_FILE
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/* Reference to file-flags. OS-dependent. */
 )brace
 suffix:semicolon
 DECL|struct|address_info
@@ -195,6 +141,11 @@ DECL|member|dma
 r_int
 id|dma
 suffix:semicolon
+DECL|member|always_detect
+r_int
+id|always_detect
+suffix:semicolon
+multiline_comment|/* 1=Trust me, it&squot;s there */
 )brace
 suffix:semicolon
 DECL|macro|SYNTH_MAX_VOICES
@@ -225,6 +176,17 @@ id|SYNTH_MAX_VOICES
 )braket
 suffix:semicolon
 multiline_comment|/* (ch &lt;&lt; 8) | (note+1) */
+DECL|member|timestamp
+r_int
+id|timestamp
+suffix:semicolon
+DECL|member|alloc_times
+r_int
+id|alloc_times
+(braket
+id|SYNTH_MAX_VOICES
+)braket
+suffix:semicolon
 )brace
 suffix:semicolon
 DECL|struct|channel_info
@@ -234,6 +196,10 @@ id|channel_info
 DECL|member|pgm_num
 r_int
 id|pgm_num
+suffix:semicolon
+DECL|member|bender_value
+r_int
+id|bender_value
 suffix:semicolon
 DECL|member|controllers
 r_int
@@ -262,18 +228,19 @@ DECL|macro|OPEN_WRITE
 mdefine_line|#define OPEN_WRITE&t;2
 DECL|macro|OPEN_READWRITE
 mdefine_line|#define OPEN_READWRITE&t;3
-macro_line|#include &quot;os.h&quot;
 macro_line|#include &quot;sound_calls.h&quot;
 macro_line|#include &quot;dev_table.h&quot;
 macro_line|#ifndef DEB
 DECL|macro|DEB
 mdefine_line|#define DEB(x)
+macro_line|#endif
+macro_line|#ifndef DDB
+DECL|macro|DDB
+mdefine_line|#define DDB(x)
+macro_line|#endif
 DECL|macro|TIMER_ARMED
 mdefine_line|#define TIMER_ARMED&t;121234
 DECL|macro|TIMER_NOT_ARMED
 mdefine_line|#define TIMER_NOT_ARMED&t;1
-DECL|macro|FUTURE_VERSION
-mdefine_line|#define FUTURE_VERSION
-macro_line|#endif
 macro_line|#endif
 eof

@@ -71,9 +71,9 @@ mdefine_line|#define MAX_READY_RETRIES 5
 DECL|macro|NO_TAPE
 mdefine_line|#define NO_TAPE  NOT_READY
 DECL|macro|ST_TIMEOUT
-mdefine_line|#define ST_TIMEOUT 90000
+mdefine_line|#define ST_TIMEOUT (900 * HZ)
 DECL|macro|ST_LONG_TIMEOUT
-mdefine_line|#define ST_LONG_TIMEOUT 200000
+mdefine_line|#define ST_LONG_TIMEOUT (2000 * HZ)
 DECL|variable|st_nbr_buffers
 r_static
 r_int

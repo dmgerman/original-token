@@ -184,6 +184,34 @@ r_int
 id|value
 )paren
 suffix:semicolon
+r_void
+id|midi_synth_setup_voice
+(paren
+r_int
+id|dev
+comma
+r_int
+id|voice
+comma
+r_int
+id|chn
+)paren
+suffix:semicolon
+r_void
+id|do_midi_msg
+(paren
+r_int
+id|synthno
+comma
+r_int
+r_char
+op_star
+id|msg
+comma
+r_int
+id|mlen
+)paren
+suffix:semicolon
 macro_line|#ifndef _MIDI_SYNTH_C_
 DECL|variable|std_synth_info
 r_static
@@ -256,6 +284,11 @@ comma
 id|midi_synth_patchmgr
 comma
 id|midi_synth_bender
+comma
+l_int|NULL
+comma
+multiline_comment|/* alloc_voice */
+id|midi_synth_setup_voice
 )brace
 suffix:semicolon
 macro_line|#endif

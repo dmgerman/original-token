@@ -582,6 +582,10 @@ comma
 op_amp
 id|std_midi_synth
 comma
+(brace
+l_int|0
+)brace
+comma
 id|gus_midi_open
 comma
 id|gus_midi_close
@@ -763,6 +767,7 @@ id|u_MidiControl
 suffix:semicolon
 )brace
 )brace
+macro_line|#if 0
 r_if
 c_cond
 (paren
@@ -772,7 +777,7 @@ id|MIDI_FRAME_ERR
 )paren
 id|printk
 (paren
-l_string|&quot;Midi framing error&bslash;n&quot;
+l_string|&quot;GUS: Midi framing error&bslash;n&quot;
 )paren
 suffix:semicolon
 r_if
@@ -789,6 +794,7 @@ id|printk
 l_string|&quot;GUS: Midi input overrun&bslash;n&quot;
 )paren
 suffix:semicolon
+macro_line|#endif
 id|RESTORE_INTR
 (paren
 id|flags

@@ -285,8 +285,10 @@ id|dir-&gt;i_sb
 comma
 id|function
 comma
-l_string|&quot;bad directory entry: %s&bslash;n&quot;
+l_string|&quot;bad entry in directory #%lu: %s - &quot;
 l_string|&quot;offset=%lu, inode=%lu, rec_len=%d, name_len=%d&quot;
+comma
+id|dir-&gt;i_ino
 comma
 id|error_msg
 comma
@@ -470,6 +472,23 @@ op_logical_neg
 id|bh
 )paren
 (brace
+id|ext2_error
+(paren
+id|sb
+comma
+l_string|&quot;ext2_readdir&quot;
+comma
+l_string|&quot;directory #%lu contains a hole at offset %lu&quot;
+comma
+id|inode-&gt;i_ino
+comma
+(paren
+r_int
+r_int
+)paren
+id|filp-&gt;f_pos
+)paren
+suffix:semicolon
 id|filp-&gt;f_pos
 op_add_assign
 id|sb-&gt;s_blocksize

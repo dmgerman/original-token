@@ -904,7 +904,7 @@ multiline_comment|/* read type-1 data &t;&t;*/
 multiline_comment|/*&n; * preliminary extension for transferring audio frames&n; * currently used by cdu31a.c and sbpcd.c&n; * (still may change if other drivers will use it, too):&n; */
 DECL|macro|CDROMREADAUDIO
 mdefine_line|#define&t;CDROMREADAUDIO&t;&t;0x530e&t;&t;/* (struct cdrom_read_audio)&t;*/
-multiline_comment|/*&n; * preliminary extension for enable (1) / disable (0) auto-ejecting&n; * currently used by sbpcd.c&n; * (still may change if other drivers will use it, too):&n; */
+multiline_comment|/*&n; * preliminary extension for enable (1) / disable (0) auto-ejecting&n; * currently used by sbpcd.c and sr.c&n; * (still may change if other drivers will use it, too):&n; */
 DECL|macro|CDROMEJECT_SW
 mdefine_line|#define&t;CDROMEJECT_SW&t;&t;0x530f&t;&t;/* arg: 0 or 1 */
 multiline_comment|/*&n; * obtain the start-of-last-session address of multi session disks&n; */

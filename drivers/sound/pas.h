@@ -52,6 +52,8 @@ DECL|macro|WAIT_STATE
 mdefine_line|#define WAIT_STATE&t;&t;&t;0xBF88&t;&t;/* R W&t;Control&t;&t;Four-bit bus wait-state count (~140ns ea.)&t;*/
 DECL|macro|BOARD_REV_ID
 mdefine_line|#define BOARD_REV_ID&t;&t;&t;0x2789&t;&t;/* R&t;Control&t;&t;Extended Board Revision ID&t;&t;&t;*/
+DECL|macro|CHIP_REV
+mdefine_line|#define CHIP_REV&t;&t;&t;0xFF88&t;&t;/* R&t;0=PAS, 1=PAS+, 2=CDPC, 3=PAS16C, 4=PAS16D */
 DECL|macro|SYSTEM_CONFIGURATION_1
 mdefine_line|#define SYSTEM_CONFIGURATION_1&t;&t;0x8388&t;&t;/* R W&t;Control&t;&t;&t;&t;&t;&t;&t;&t;*/
 DECL|macro|S_C_1_PCS_ENABLE
@@ -84,6 +86,8 @@ DECL|macro|IO_CONFIGURATION_1
 mdefine_line|#define IO_CONFIGURATION_1&t;&t;0xF388&t;&t;/* R W&t;Control&t;&t;&t;&t;&t;&t;&t;&t;*/
 DECL|macro|I_C_1_BOOT_RESET_ENABLE
 mdefine_line|#define I_C_1_BOOT_RESET_ENABLE&t;0x80&t;&t;/* R W  Control&t;&t;1=reset board on warm boot, 0=don&squot;t&t;&t;*/
+DECL|macro|I_C_1_JOYSTICK_ENABLE
+mdefine_line|#define I_C_1_JOYSTICK_ENABLE&t;0x40&t;&t;/* R W  Control&t;&t;1=enable joystick port, 0=don&squot;t&t;&t;        */
 DECL|macro|IO_CONFIGURATION_2
 mdefine_line|#define IO_CONFIGURATION_2&t;&t;0xF389&t;&t;/* R W  Control&t;&t;&t;&t;&t;&t;&t;&t;*/
 DECL|macro|I_C_2_PCM_DMA_DISABLED
@@ -123,7 +127,7 @@ mdefine_line|#define OPERATION_MODE_1&t;&t;0xEF8B&t;&t;/* R&t;Control&t;&t;&t;&t
 DECL|macro|O_M_1_CDROM_TYPE
 mdefine_line|#define&t;O_M_1_CDROM_TYPE&t;0x03&t;&t;/* R&t;CD-ROM&t;&t;3=SCSI, 2=Sony, 0=no CD-ROM interface&t;&t;*/
 DECL|macro|O_M_1_FM_TYPE
-mdefine_line|#define O_M_1_FM_TYPE&t;&t;0x04&t;&t;/* R&t;FM&t;&t;1=stereo, 0=mono FM chip&t;&t;&t;*/
+mdefine_line|#define O_M_1_FM_TYPE&t;&t;0x04&t;&t;/* R&t;FM&t;&t;1=sterero, 0=mono FM chip&t;&t;&t;*/
 DECL|macro|O_M_1_PCM_TYPE
 mdefine_line|#define O_M_1_PCM_TYPE &t;&t;0x08&t;&t;/* R&t;PCM&t;&t;1=16-bit Codec, 0=8-bit DAC&t;&t;&t;*/
 DECL|macro|OPERATION_MODE_2
