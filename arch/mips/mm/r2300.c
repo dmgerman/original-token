@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * r2300.c: R2000 and R3000 specific mmu/cache code.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; *&n; * with a lot of changes to make this thing work for R3000s&n; * Copyright (C) 1998, 2000 Harald Koerfgen&n; * Copyright (C) 1998 Gleb Raiko &amp; Vladimir Roganov&n; *&n; * $Id: r2300.c,v 1.16 2000/03/13 10:33:05 raiko Exp $&n; */
+multiline_comment|/*&n; * r2300.c: R2000 and R3000 specific mmu/cache code.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; *&n; * with a lot of changes to make this thing work for R3000s&n; * Copyright (C) 1998, 2000 Harald Koerfgen&n; * Copyright (C) 1998 Gleb Raiko &amp; Vladimir Roganov&n; */
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -913,10 +913,8 @@ id|mm-&gt;context
 op_eq
 l_int|0
 )paren
-(brace
 r_return
 suffix:semicolon
-)brace
 id|start
 op_and_assign
 id|PAGE_MASK
@@ -959,7 +957,7 @@ c_cond
 (paren
 id|mm-&gt;context
 op_ne
-id|current-&gt;mm-&gt;context
+id|current-&gt;active_mm-&gt;context
 )paren
 (brace
 id|flush_cache_all
@@ -1005,7 +1003,6 @@ id|mm
 )paren
 )paren
 )paren
-(brace
 id|r3k_flush_icache_range
 c_func
 (paren
@@ -1014,7 +1011,6 @@ comma
 id|PAGE_SIZE
 )paren
 suffix:semicolon
-)brace
 id|start
 op_add_assign
 id|PAGE_SIZE
@@ -1059,10 +1055,8 @@ id|mm-&gt;context
 op_eq
 l_int|0
 )paren
-(brace
 r_return
 suffix:semicolon
-)brace
 macro_line|#ifdef DEBUG_CACHE
 id|printk
 c_func
@@ -1105,7 +1099,6 @@ id|vma-&gt;vm_mm
 )paren
 )paren
 )paren
-(brace
 id|r3k_flush_icache_range
 c_func
 (paren
@@ -1114,7 +1107,6 @@ comma
 id|PAGE_SIZE
 )paren
 suffix:semicolon
-)brace
 )brace
 )brace
 DECL|function|r3k_flush_page_to_ram
@@ -1897,16 +1889,24 @@ id|idx
 comma
 id|pid
 suffix:semicolon
+multiline_comment|/*&n;&t; * Handle debugger faulting in for debugee.&n;&t; */
+r_if
+c_cond
+(paren
+id|current-&gt;active_mm
+op_ne
+id|vma-&gt;vm_mm
+)paren
+r_return
+suffix:semicolon
 id|pid
 op_assign
-(paren
 id|get_entryhi
 c_func
 (paren
 )paren
 op_amp
 l_int|0xfc0
-)paren
 suffix:semicolon
 macro_line|#ifdef DEBUG_TLB
 r_if

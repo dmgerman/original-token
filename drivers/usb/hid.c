@@ -7808,4 +7808,16 @@ c_func
 id|hid_exit
 )paren
 suffix:semicolon
+id|MODULE_AUTHOR
+c_func
+(paren
+l_string|&quot;Andreas Gal, Vojtech Pavlik &lt;vojtech@suse.cz&gt;&quot;
+)paren
+suffix:semicolon
+id|MODULE_DESCRIPTION
+c_func
+(paren
+l_string|&quot;USB HID support drivers&quot;
+)paren
+suffix:semicolon
 eof

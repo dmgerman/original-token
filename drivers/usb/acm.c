@@ -3094,4 +3094,16 @@ c_func
 id|acm_exit
 )paren
 suffix:semicolon
+id|MODULE_AUTHOR
+c_func
+(paren
+l_string|&quot;Armin Fuerst, Pavel Machek, Johannes Erdfelt, Vojtech Pavlik&quot;
+)paren
+suffix:semicolon
+id|MODULE_DESCRIPTION
+c_func
+(paren
+l_string|&quot;USB Abstract Control Model driver for USB modems and ISDN adapters&quot;
+)paren
+suffix:semicolon
 eof

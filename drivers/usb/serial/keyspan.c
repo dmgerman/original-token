@@ -2795,4 +2795,16 @@ c_func
 id|keyspan_exit
 )paren
 suffix:semicolon
+id|MODULE_AUTHOR
+c_func
+(paren
+l_string|&quot;Hugh Blemings &lt;hugh@linuxcare.com&gt;&quot;
+)paren
+suffix:semicolon
+id|MODULE_DESCRIPTION
+c_func
+(paren
+l_string|&quot;Keyspan USB to Serial Converter driver&quot;
+)paren
+suffix:semicolon
 eof

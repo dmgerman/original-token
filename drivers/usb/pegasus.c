@@ -265,6 +265,14 @@ comma
 l_string|&quot;i&quot;
 )paren
 suffix:semicolon
+id|MODULE_PARM_DESC
+c_func
+(paren
+id|loopback
+comma
+l_string|&quot;Enable loopback mode (Bit 0) and ??? (Bit 1)&quot;
+)paren
+suffix:semicolon
 DECL|variable|usb_dev_id
 r_static
 r_struct

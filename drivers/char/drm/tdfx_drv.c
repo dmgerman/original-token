@@ -2069,6 +2069,11 @@ op_amp
 id|dev-&gt;count_lock
 )paren
 suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_return
 op_minus
 id|EBUSY
@@ -2079,6 +2084,11 @@ c_func
 (paren
 op_amp
 id|dev-&gt;count_lock
+)paren
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
 )paren
 suffix:semicolon
 r_return

@@ -1290,6 +1290,13 @@ op_star
 l_int|0x100000
 suffix:semicolon
 multiline_comment|/* Points to 1M */
+id|free_mem_end_ptr
+op_assign
+(paren
+r_int
+)paren
+id|real_mode
+suffix:semicolon
 )brace
 DECL|struct|moveparams
 r_struct

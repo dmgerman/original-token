@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: andes.c,v 1.10 2000/02/13 20:52:05 harald Exp $&n; *&n; * andes.c: MMU and cache operations for the R10000 (ANDES).&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; */
+multiline_comment|/*&n; * andes.c: MMU and cache operations for the R10000 (ANDES).&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; */
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;

@@ -249,12 +249,28 @@ comma
 l_string|&quot;i&quot;
 )paren
 suffix:semicolon
+id|MODULE_PARM_DESC
+c_func
+(paren
+id|debug
+comma
+l_string|&quot;Debug level: 0-9 (default=0)&quot;
+)paren
+suffix:semicolon
 id|MODULE_PARM
 c_func
 (paren
 id|flags
 comma
 l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM_DESC
+c_func
+(paren
+id|flags
+comma
+l_string|&quot;Bitfield: 0=VIDIOCSYNC, 1=B/W, 2=show hints, 3=show stats, 4=test pattern, 5=seperate frames, 6=clean frames&quot;
 )paren
 suffix:semicolon
 id|MODULE_PARM
@@ -265,12 +281,28 @@ comma
 l_string|&quot;i&quot;
 )paren
 suffix:semicolon
+id|MODULE_PARM_DESC
+c_func
+(paren
+id|framerate
+comma
+l_string|&quot;Framerate setting: 0=slowest, 6=fastest (default=2)&quot;
+)paren
+suffix:semicolon
 id|MODULE_PARM
 c_func
 (paren
 id|lighting
 comma
 l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM_DESC
+c_func
+(paren
+id|lighting
+comma
+l_string|&quot;Photosensitivity: 0=bright, 1=medium (default), 2=low light&quot;
 )paren
 suffix:semicolon
 id|MODULE_PARM
@@ -281,12 +313,28 @@ comma
 l_string|&quot;i&quot;
 )paren
 suffix:semicolon
+id|MODULE_PARM_DESC
+c_func
+(paren
+id|sharpness
+comma
+l_string|&quot;Model1 noise reduction: 0=smooth, 6=sharp (default=4)&quot;
+)paren
+suffix:semicolon
 id|MODULE_PARM
 c_func
 (paren
 id|videosize
 comma
 l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM_DESC
+c_func
+(paren
+id|videosize
+comma
+l_string|&quot;Image size: 0=128x96, 1=176x144, 2=352x288, 3=320x240, 4=352x240 (default=1)&quot;
 )paren
 suffix:semicolon
 id|MODULE_PARM
@@ -297,12 +345,28 @@ comma
 l_string|&quot;i&quot;
 )paren
 suffix:semicolon
+id|MODULE_PARM_DESC
+c_func
+(paren
+id|init_brightness
+comma
+l_string|&quot;Brightness preconfiguration: 0-255 (default=128)&quot;
+)paren
+suffix:semicolon
 id|MODULE_PARM
 c_func
 (paren
 id|init_contrast
 comma
 l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM_DESC
+c_func
+(paren
+id|init_contrast
+comma
+l_string|&quot;Contrast preconfiguration: 0-255 (default=192)&quot;
 )paren
 suffix:semicolon
 id|MODULE_PARM
@@ -313,12 +377,28 @@ comma
 l_string|&quot;i&quot;
 )paren
 suffix:semicolon
+id|MODULE_PARM_DESC
+c_func
+(paren
+id|init_color
+comma
+l_string|&quot;Dolor preconfiguration: 0-255 (default=128)&quot;
+)paren
+suffix:semicolon
 id|MODULE_PARM
 c_func
 (paren
 id|init_hue
 comma
 l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM_DESC
+c_func
+(paren
+id|init_hue
+comma
+l_string|&quot;Hue preconfiguration: 0-255 (default=128)&quot;
 )paren
 suffix:semicolon
 id|MODULE_PARM
@@ -329,12 +409,28 @@ comma
 l_string|&quot;i&quot;
 )paren
 suffix:semicolon
+id|MODULE_PARM_DESC
+c_func
+(paren
+id|hue_correction
+comma
+l_string|&quot;YUV colorspace regulation: 0-255 (default=128)&quot;
+)paren
+suffix:semicolon
 id|MODULE_PARM
 c_func
 (paren
 id|init_model2_rg
 comma
 l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM_DESC
+c_func
+(paren
+id|init_model2_rg
+comma
+l_string|&quot;Model2 preconfiguration: 0-255 (default=112)&quot;
 )paren
 suffix:semicolon
 id|MODULE_PARM
@@ -345,6 +441,14 @@ comma
 l_string|&quot;i&quot;
 )paren
 suffix:semicolon
+id|MODULE_PARM_DESC
+c_func
+(paren
+id|init_model2_rg2
+comma
+l_string|&quot;Model2 preconfiguration: 0-255 (default=47)&quot;
+)paren
+suffix:semicolon
 id|MODULE_PARM
 c_func
 (paren
@@ -353,12 +457,28 @@ comma
 l_string|&quot;i&quot;
 )paren
 suffix:semicolon
+id|MODULE_PARM_DESC
+c_func
+(paren
+id|init_model2_sat
+comma
+l_string|&quot;Model2 preconfiguration: 0-255 (default=52)&quot;
+)paren
+suffix:semicolon
 id|MODULE_PARM
 c_func
 (paren
 id|init_model2_yb
 comma
 l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM_DESC
+c_func
+(paren
+id|init_model2_yb
+comma
+l_string|&quot;Model2 preconfiguration: 0-255 (default=160)&quot;
 )paren
 suffix:semicolon
 id|MODULE_AUTHOR

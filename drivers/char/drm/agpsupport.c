@@ -2,6 +2,7 @@ multiline_comment|/* agpsupport.c -- DRM support for AGP/GART backend -*- linux-
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
 macro_line|#include &quot;drmP.h&quot;
+macro_line|#include &lt;linux/module.h&gt;
 DECL|variable|drm_agp
 id|drm_agp_func_t
 id|drm_agp

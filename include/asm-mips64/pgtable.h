@@ -14,16 +14,6 @@ r_extern
 r_void
 (paren
 op_star
-id|_flush_cache_all
-)paren
-(paren
-r_void
-)paren
-suffix:semicolon
-r_extern
-r_void
-(paren
-op_star
 id|_flush_cache_mm
 )paren
 (paren
@@ -75,6 +65,59 @@ r_extern
 r_void
 (paren
 op_star
+id|_flush_page_to_ram
+)paren
+(paren
+r_struct
+id|page
+op_star
+id|page
+)paren
+suffix:semicolon
+DECL|macro|flush_cache_all
+mdefine_line|#define flush_cache_all()&t;&t;do { } while(0)
+macro_line|#ifndef CONFIG_CPU_R10000
+DECL|macro|flush_cache_mm
+mdefine_line|#define flush_cache_mm(mm)&t;&t;_flush_cache_mm(mm)
+DECL|macro|flush_cache_range
+mdefine_line|#define flush_cache_range(mm,start,end)&t;_flush_cache_range(mm,start,end)
+DECL|macro|flush_cache_page
+mdefine_line|#define flush_cache_page(vma,page)&t;_flush_cache_page(vma, page)
+DECL|macro|flush_page_to_ram
+mdefine_line|#define flush_page_to_ram(page)&t;&t;_flush_page_to_ram(page)
+DECL|macro|flush_icache_range
+mdefine_line|#define flush_icache_range(start, end)&t;_flush_cache_l1()
+DECL|macro|flush_icache_page
+mdefine_line|#define flush_icache_page(vma, page)&t;&t;&t;&t;&t;&bslash;&n;do {&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;unsigned long addr;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;addr = page_address(page);&t;&t;&t;&t;&t;&bslash;&n;&t;_flush_cache_page(vma, addr);&t;&t;&t;&t;&t;&bslash;&n;} while (0)                                                              
+macro_line|#else /* !CONFIG_CPU_R10000 */
+multiline_comment|/*&n; * Since the r10k handles VCEs in hardware, most of the flush cache&n; * routines are not needed. Only the icache on a processor is not&n; * coherent with the dcache of the _same_ processor, so we must flush&n; * the icache so that it does not contain stale contents of physical&n; * memory. No flushes are needed for dma coherency, since the o200s &n; * are io coherent. The only place where we might be overoptimizing &n; * out icache flushes are from mprotect (when PROT_EXEC is added).&n; */
+r_extern
+r_void
+id|andes_flush_icache_page
+c_func
+(paren
+r_int
+r_int
+)paren
+suffix:semicolon
+DECL|macro|flush_cache_mm
+mdefine_line|#define flush_cache_mm(mm)&t;&t;do { } while(0)
+DECL|macro|flush_cache_range
+mdefine_line|#define flush_cache_range(mm,start,end)&t;do { } while(0)
+DECL|macro|flush_cache_page
+mdefine_line|#define flush_cache_page(vma,page)&t;do { } while(0)
+DECL|macro|flush_page_to_ram
+mdefine_line|#define flush_page_to_ram(page)&t;&t;do { } while(0)
+DECL|macro|flush_icache_range
+mdefine_line|#define flush_icache_range(start, end)&t;_flush_cache_l1()
+DECL|macro|flush_icache_page
+mdefine_line|#define flush_icache_page(vma, page)&t;&t;&t;&t;&t;&bslash;&n;do {&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;if ((vma)-&gt;vm_flags &amp; VM_EXEC)&t;&t;&t;&t;&t;&bslash;&n;&t;&t;andes_flush_icache_page(page_address(page));&t;&t;&bslash;&n;} while (0)
+macro_line|#endif /* !CONFIG_CPU_R10000 */
+multiline_comment|/*&n; * The foll cache flushing routines are MIPS specific.&n; * flush_cache_l2 is needed only during initialization.&n; */
+r_extern
+r_void
+(paren
+op_star
 id|_flush_cache_sigtramp
 )paren
 (paren
@@ -87,31 +130,28 @@ r_extern
 r_void
 (paren
 op_star
-id|_flush_page_to_ram
+id|_flush_cache_l2
 )paren
 (paren
-r_struct
-id|page
-op_star
-id|page
+r_void
 )paren
 suffix:semicolon
-DECL|macro|flush_cache_all
-mdefine_line|#define flush_cache_all()&t;&t;_flush_cache_all()
-DECL|macro|flush_cache_mm
-mdefine_line|#define flush_cache_mm(mm)&t;&t;_flush_cache_mm(mm)
-DECL|macro|flush_cache_range
-mdefine_line|#define flush_cache_range(mm,start,end)&t;_flush_cache_range(mm,start,end)
-DECL|macro|flush_cache_page
-mdefine_line|#define flush_cache_page(vma,page)&t;_flush_cache_page(vma, page)
+r_extern
+r_void
+(paren
+op_star
+id|_flush_cache_l1
+)paren
+(paren
+r_void
+)paren
+suffix:semicolon
 DECL|macro|flush_cache_sigtramp
 mdefine_line|#define flush_cache_sigtramp(addr)&t;_flush_cache_sigtramp(addr)
-DECL|macro|flush_page_to_ram
-mdefine_line|#define flush_page_to_ram(page)&t;&t;_flush_page_to_ram(page)
-DECL|macro|flush_icache_range
-mdefine_line|#define flush_icache_range(start, end)&t;flush_cache_all()
-DECL|macro|flush_icache_page
-mdefine_line|#define flush_icache_page(vma, page)&t;&t;&t;&t;&t;&bslash;&n;do {&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;unsigned long addr;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;addr = page_address(page);&t;&t;&t;&t;&t;&bslash;&n;&t;_flush_cache_page(vma, addr);&t;&t;&t;&t;&t;&bslash;&n;} while (0)                                                              
+DECL|macro|flush_cache_l2
+mdefine_line|#define flush_cache_l2()&t;&t;_flush_cache_l2()
+DECL|macro|flush_cache_l1
+mdefine_line|#define flush_cache_l1()&t;&t;_flush_cache_l1()
 multiline_comment|/*&n; * Each address space has 2 4K pages as its page directory, giving 1024&n; * (== PTRS_PER_PGD) 8 byte pointers to pmd tables. Each pmd table is a&n; * pair of 4K pages, giving 1024 (== PTRS_PER_PMD) 8 byte pointers to&n; * page tables. Each page table is a single 4K page, giving 512 (==&n; * PTRS_PER_PTE) 8 byte ptes. Each pgde is initialized to point to&n; * invalid_pmd_table, each pmde is initialized to point to &n; * invalid_pte_table, each pte is initialized to 0. When memory is low,&n; * and a pmd table or a page table allocation fails, empty_bad_pmd_table&n; * and empty_bad_page_table is returned back to higher layer code, so&n; * that the failure is recognized later on. Linux does not seem to &n; * handle these failures very well though. The empty_bad_page_table has&n; * invalid pte entries in it, to force page faults.&n; * Vmalloc handling: vmalloc uses swapper_pg_dir[0] (returned by &n; * pgd_offset_k), which is initalized to point to kpmdtbl. kpmdtbl is &n; * the only single page pmd in the system. kpmdtbl entries point into &n; * kptbl[] array. We reserve 1&lt;&lt;KPTBL_PAGE_ORDER pages to hold the&n; * vmalloc range translations, which the fault handler looks at.&n; */
 macro_line|#endif /* !defined (_LANGUAGE_ASSEMBLY) */
 multiline_comment|/* PMD_SHIFT determines the size of the area a second-level page table can map */

@@ -3583,6 +3583,13 @@ comma
 l_string|&quot;i&quot;
 )paren
 suffix:semicolon
+id|MODULE_PARM_DESC
+(paren
+id|buffers
+comma
+l_string|&quot;Number of buffers (default=256)&quot;
+)paren
+suffix:semicolon
 DECL|function|init_module
 r_int
 id|__init

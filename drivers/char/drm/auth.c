@@ -85,13 +85,6 @@ id|pt-&gt;next
 r_if
 c_cond
 (paren
-id|pt-&gt;priv-&gt;authenticated
-)paren
-r_continue
-suffix:semicolon
-r_if
-c_cond
-(paren
 id|pt-&gt;magic
 op_eq
 id|magic

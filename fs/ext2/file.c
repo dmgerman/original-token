@@ -1,7 +1,6 @@
 multiline_comment|/*&n; *  linux/fs/ext2/file.c&n; *&n; * Copyright (C) 1992, 1993, 1994, 1995&n; * Remy Card (card@masi.ibp.fr)&n; * Laboratoire MASI - Institut Blaise Pascal&n; * Universite Pierre et Marie Curie (Paris VI)&n; *&n; *  from&n; *&n; *  linux/fs/minix/file.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *&n; *  ext2 fs regular file handling primitives&n; *&n; *  64-bit file support on 64-bit platforms by Jakub Jelinek&n; * &t;(jj@sunsite.ms.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
-macro_line|#include &lt;linux/smp_lock.h&gt;
 r_static
 id|loff_t
 id|ext2_file_lseek
@@ -231,23 +230,11 @@ id|filp-&gt;f_mode
 op_amp
 id|FMODE_WRITE
 )paren
-(brace
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 id|ext2_discard_prealloc
 (paren
 id|inode
 )paren
 suffix:semicolon
-id|unlock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
-)brace
 r_return
 l_int|0
 suffix:semicolon

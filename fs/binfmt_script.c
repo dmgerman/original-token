@@ -42,7 +42,7 @@ suffix:semicolon
 r_char
 id|interp
 (braket
-l_int|128
+id|BINPRM_BUF_SIZE
 )braket
 suffix:semicolon
 r_int
@@ -99,7 +99,9 @@ l_int|NULL
 suffix:semicolon
 id|bprm-&gt;buf
 (braket
-l_int|127
+id|BINPRM_BUF_SIZE
+op_minus
+l_int|1
 )braket
 op_assign
 l_char|&squot;&bslash;0&squot;
@@ -125,7 +127,9 @@ id|cp
 op_assign
 id|bprm-&gt;buf
 op_plus
-l_int|127
+id|BINPRM_BUF_SIZE
+op_minus
+l_int|1
 suffix:semicolon
 op_star
 id|cp

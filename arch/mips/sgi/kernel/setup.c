@@ -563,6 +563,14 @@ id|r4k_ticks
 (braket
 l_int|3
 )braket
+op_assign
+(brace
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+)brace
 suffix:semicolon
 r_int
 r_int
@@ -597,7 +605,7 @@ comma
 id|tc2p
 )paren
 suffix:semicolon
-multiline_comment|/* First sample. */
+multiline_comment|/* Prime cache. */
 id|dosample
 c_func
 (paren
@@ -606,35 +614,43 @@ comma
 id|tc2p
 )paren
 suffix:semicolon
-multiline_comment|/* Eat one.     */
+multiline_comment|/* Prime cache. */
+multiline_comment|/* Zero is NOT an option. */
+r_while
+c_loop
+(paren
+op_logical_neg
+id|r4k_ticks
+(braket
+l_int|0
+)braket
+)paren
 id|r4k_ticks
 (braket
 l_int|0
 )braket
 op_assign
 id|dosample
-c_func
 (paren
 id|tcwp
 comma
 id|tc2p
 )paren
 suffix:semicolon
-multiline_comment|/* Second sample. */
-id|dosample
-c_func
+r_while
+c_loop
 (paren
-id|tcwp
-comma
-id|tc2p
-)paren
-suffix:semicolon
-multiline_comment|/* Eat another. */
+op_logical_neg
 id|r4k_ticks
 (braket
 l_int|1
 )braket
-op_add_assign
+)paren
+id|r4k_ticks
+(braket
+l_int|1
+)braket
+op_assign
 id|dosample
 (paren
 id|tcwp
@@ -642,7 +658,6 @@ comma
 id|tc2p
 )paren
 suffix:semicolon
-multiline_comment|/* Third sample. */
 r_if
 c_cond
 (paren
@@ -660,13 +675,6 @@ l_int|1
 id|printk
 (paren
 l_string|&quot;warning: timer counts differ, retrying...&quot;
-)paren
-suffix:semicolon
-id|dosample
-(paren
-id|tcwp
-comma
-id|tc2p
 )paren
 suffix:semicolon
 id|r4k_ticks

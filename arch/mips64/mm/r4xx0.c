@@ -6827,7 +6827,7 @@ op_ge
 id|dcache_size
 )paren
 (brace
-id|flush_cache_all
+id|flush_cache_l1
 c_func
 (paren
 )paren
@@ -6948,7 +6948,7 @@ op_ge
 id|scache_size
 )paren
 (brace
-id|flush_cache_all
+id|flush_cache_l1
 c_func
 (paren
 )paren
@@ -7042,7 +7042,7 @@ op_ge
 id|dcache_size
 )paren
 (brace
-id|flush_cache_all
+id|flush_cache_l1
 c_func
 (paren
 )paren
@@ -7163,7 +7163,7 @@ op_ge
 id|scache_size
 )paren
 (brace
-id|flush_cache_all
+id|flush_cache_l1
 c_func
 (paren
 )paren
@@ -8104,6 +8104,15 @@ id|flags
 suffix:semicolon
 )brace
 )brace
+r_static
+r_void
+id|r4k_flush_cache_l2
+c_func
+(paren
+r_void
+)paren
+(brace
+)brace
 macro_line|#ifdef DEBUG_TLBUPDATE
 r_static
 r_int
@@ -8169,6 +8178,16 @@ r_int
 id|idx
 comma
 id|pid
+suffix:semicolon
+multiline_comment|/*&n;&t; * Handle debugger faulting in for debugee.&n;&t; */
+r_if
+c_cond
+(paren
+id|current-&gt;active_mm
+op_ne
+id|vma-&gt;vm_mm
+)paren
+r_return
 suffix:semicolon
 id|__save_and_cli
 c_func
@@ -9384,7 +9403,7 @@ id|_copy_page
 op_assign
 id|r4k_copy_page_d16
 suffix:semicolon
-id|_flush_cache_all
+id|_flush_cache_l1
 op_assign
 id|r4k_flush_cache_all_d16i16
 suffix:semicolon
@@ -9467,7 +9486,7 @@ op_assign
 id|r4k_copy_page_d32
 suffix:semicolon
 )brace
-id|_flush_cache_all
+id|_flush_cache_l1
 op_assign
 id|r4k_flush_cache_all_d32i32
 suffix:semicolon
@@ -9531,7 +9550,7 @@ id|dc_lsize
 r_case
 l_int|16
 suffix:colon
-id|_flush_cache_all
+id|_flush_cache_l1
 op_assign
 id|r4k_flush_cache_all_s16d16i16
 suffix:semicolon
@@ -9586,7 +9605,7 @@ id|dc_lsize
 r_case
 l_int|16
 suffix:colon
-id|_flush_cache_all
+id|_flush_cache_l1
 op_assign
 id|r4k_flush_cache_all_s32d16i16
 suffix:semicolon
@@ -9611,7 +9630,7 @@ suffix:semicolon
 r_case
 l_int|32
 suffix:colon
-id|_flush_cache_all
+id|_flush_cache_l1
 op_assign
 id|r4k_flush_cache_all_s32d32i32
 suffix:semicolon
@@ -9657,7 +9676,7 @@ id|dc_lsize
 r_case
 l_int|16
 suffix:colon
-id|_flush_cache_all
+id|_flush_cache_l1
 op_assign
 id|r4k_flush_cache_all_s64d16i16
 suffix:semicolon
@@ -9682,7 +9701,7 @@ suffix:semicolon
 r_case
 l_int|32
 suffix:colon
-id|_flush_cache_all
+id|_flush_cache_l1
 op_assign
 id|r4k_flush_cache_all_s64d32i32
 suffix:semicolon
@@ -9728,7 +9747,7 @@ id|dc_lsize
 r_case
 l_int|16
 suffix:colon
-id|_flush_cache_all
+id|_flush_cache_l1
 op_assign
 id|r4k_flush_cache_all_s128d16i16
 suffix:semicolon
@@ -9753,7 +9772,7 @@ suffix:semicolon
 r_case
 l_int|32
 suffix:colon
-id|_flush_cache_all
+id|_flush_cache_l1
 op_assign
 id|r4k_flush_cache_all_s128d32i32
 suffix:semicolon
@@ -10021,6 +10040,10 @@ id|_flush_tlb_page
 op_assign
 id|r4k_flush_tlb_page
 suffix:semicolon
+id|_flush_cache_l2
+op_assign
+id|r4k_flush_cache_l2
+suffix:semicolon
 id|update_mmu_cache
 op_assign
 id|r4k_update_mmu_cache
@@ -10033,7 +10056,7 @@ id|_user_mode
 op_assign
 id|r4k_user_mode
 suffix:semicolon
-id|flush_cache_all
+id|flush_cache_l1
 c_func
 (paren
 )paren

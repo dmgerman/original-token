@@ -3398,7 +3398,7 @@ l_int|5
 suffix:semicolon
 id|v.green.length
 op_assign
-l_int|5
+l_int|6
 suffix:semicolon
 id|v.blue.length
 op_assign
@@ -5364,7 +5364,7 @@ op_amp
 l_int|0xf800
 )paren
 op_rshift
-l_int|1
+l_int|0
 )paren
 op_or
 (paren
@@ -5374,7 +5374,7 @@ op_amp
 l_int|0xf800
 )paren
 op_rshift
-l_int|6
+l_int|5
 )paren
 op_or
 (paren

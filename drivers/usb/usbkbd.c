@@ -12,6 +12,12 @@ c_func
 l_string|&quot;Vojtech Pavlik &lt;vojtech@suse.cz&gt;&quot;
 )paren
 suffix:semicolon
+id|MODULE_DESCRIPTION
+c_func
+(paren
+l_string|&quot;USB HID Boot Protocol keyboard driver&quot;
+)paren
+suffix:semicolon
 DECL|variable|usb_kbd_keycode
 r_static
 r_int

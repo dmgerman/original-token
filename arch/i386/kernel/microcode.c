@@ -441,6 +441,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+multiline_comment|/* our specific f_op-&gt;release() method needs no locking */
 DECL|function|microcode_release
 r_static
 r_int
@@ -458,11 +459,6 @@ op_star
 id|file
 )paren
 (brace
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 id|clear_bit
 c_func
 (paren
@@ -470,11 +466,6 @@ id|MICROCODE_IS_OPEN
 comma
 op_amp
 id|microcode_status
-)paren
-suffix:semicolon
-id|unlock_kernel
-c_func
-(paren
 )paren
 suffix:semicolon
 r_return

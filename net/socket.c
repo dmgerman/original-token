@@ -6502,7 +6502,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;Linux NET4.0 for Linux 2.3&bslash;n&quot;
+l_string|&quot;Linux NET4.0 for Linux 2.4&bslash;n&quot;
 )paren
 suffix:semicolon
 id|printk

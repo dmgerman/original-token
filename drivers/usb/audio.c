@@ -23381,5 +23381,17 @@ id|usb_audio_driver
 )paren
 suffix:semicolon
 )brace
+id|MODULE_AUTHOR
+c_func
+(paren
+l_string|&quot;Alan Cox &lt;alan@lxorguk.ukuu.org.uk&gt;, Thomas Sailer (sailer@ife.ee.ethz.ch)&quot;
+)paren
+suffix:semicolon
+id|MODULE_DESCRIPTION
+c_func
+(paren
+l_string|&quot;USB Audio Class driver&quot;
+)paren
+suffix:semicolon
 macro_line|#endif
 eof

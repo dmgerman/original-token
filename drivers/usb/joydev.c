@@ -185,6 +185,12 @@ c_func
 l_string|&quot;Vojtech Pavlik &lt;vojtech@suse.cz&gt;&quot;
 )paren
 suffix:semicolon
+id|MODULE_DESCRIPTION
+c_func
+(paren
+l_string|&quot;Joystick device driver&quot;
+)paren
+suffix:semicolon
 id|MODULE_SUPPORTED_DEVICE
 c_func
 (paren

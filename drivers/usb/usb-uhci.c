@@ -12879,6 +12879,18 @@ id|uhci_cleanup
 )paren
 suffix:semicolon
 )brace
+id|MODULE_AUTHOR
+c_func
+(paren
+l_string|&quot;Georg Acher, Deti Fliegl, Thomas Sailer, Roman Weissgaerber&quot;
+)paren
+suffix:semicolon
+id|MODULE_DESCRIPTION
+c_func
+(paren
+l_string|&quot;USB Universal Host Controller Interface driver&quot;
+)paren
+suffix:semicolon
 macro_line|#endif 
 singleline_comment|//MODULE
 eof

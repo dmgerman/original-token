@@ -46,7 +46,7 @@ DECL|macro|D_TIMING
 mdefine_line|#define D_TIMING&t;4096&t;/* show time needed to copy buffers to card */
 macro_line|#ifndef ARCNET_DEBUG_MAX
 DECL|macro|ARCNET_DEBUG_MAX
-mdefine_line|#define ARCNET_DEBUG_MAX (~0)&t;/* enable ALL debug messages       */
+mdefine_line|#define ARCNET_DEBUG_MAX (127)&t;/* change to ~0 if you want detailed debugging */
 macro_line|#endif
 macro_line|#ifndef ARCNET_DEBUG
 DECL|macro|ARCNET_DEBUG

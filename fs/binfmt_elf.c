@@ -2250,7 +2250,7 @@ l_int|0
 comma
 id|bprm-&gt;buf
 comma
-l_int|128
+id|BINPRM_BUF_SIZE
 )paren
 suffix:semicolon
 r_if

@@ -39,16 +39,6 @@ id|from
 )paren
 suffix:semicolon
 multiline_comment|/* Cache operations. */
-DECL|variable|_flush_cache_all
-r_void
-(paren
-op_star
-id|_flush_cache_all
-)paren
-(paren
-r_void
-)paren
-suffix:semicolon
 DECL|variable|_flush_cache_mm
 r_void
 (paren
@@ -100,6 +90,20 @@ r_int
 id|page
 )paren
 suffix:semicolon
+DECL|variable|_flush_page_to_ram
+r_void
+(paren
+op_star
+id|_flush_page_to_ram
+)paren
+(paren
+r_struct
+id|page
+op_star
+id|page
+)paren
+suffix:semicolon
+multiline_comment|/* MIPS specific cache operations */
 DECL|variable|_flush_cache_sigtramp
 r_void
 (paren
@@ -112,17 +116,24 @@ r_int
 id|addr
 )paren
 suffix:semicolon
-DECL|variable|_flush_page_to_ram
+DECL|variable|_flush_cache_l2
 r_void
 (paren
 op_star
-id|_flush_page_to_ram
+id|_flush_cache_l2
 )paren
 (paren
-r_struct
-id|page
+r_void
+)paren
+suffix:semicolon
+DECL|variable|_flush_cache_l1
+r_void
+(paren
 op_star
-id|page
+id|_flush_cache_l1
+)paren
+(paren
+r_void
 )paren
 suffix:semicolon
 multiline_comment|/* DMA cache operations. */

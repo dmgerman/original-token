@@ -2366,4 +2366,16 @@ c_func
 id|mousedev_exit
 )paren
 suffix:semicolon
+id|MODULE_AUTHOR
+c_func
+(paren
+l_string|&quot;Vojtech Pavlik &lt;vojtech@suse.cz&gt;&quot;
+)paren
+suffix:semicolon
+id|MODULE_DESCRIPTION
+c_func
+(paren
+l_string|&quot;Input driver to PS/2 or ImPS/2 device driver&quot;
+)paren
+suffix:semicolon
 eof

@@ -1,7 +1,7 @@
-multiline_comment|/*&n; * $Id: elf.h,v 1.6 1999/02/15 02:22:10 ralf Exp $&n; */
-macro_line|#ifndef __ASM_MIPS_ELF_H
-DECL|macro|__ASM_MIPS_ELF_H
-mdefine_line|#define __ASM_MIPS_ELF_H
+multiline_comment|/*&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; */
+macro_line|#ifndef __ASM_ELF_H
+DECL|macro|__ASM_ELF_H
+mdefine_line|#define __ASM_ELF_H
 multiline_comment|/* ELF register definitions */
 DECL|macro|ELF_NGREG
 mdefine_line|#define ELF_NGREG&t;45
@@ -36,10 +36,10 @@ id|ELF_NFPREG
 suffix:semicolon
 multiline_comment|/*&n; * This is used to ensure we don&squot;t load something for the wrong architecture&n; * and also rejects IRIX binaries.&n; */
 DECL|macro|elf_check_arch
-mdefine_line|#define elf_check_arch(hdr)&t;&t;&t;&t;&t;&t;&bslash;&n;({&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;int __res = 0;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;struct elfhdr *__h = (hdr);&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;if ((__h-&gt;e_machine != EM_MIPS) &amp;&amp; (__h-&gt;e_machine != EM_MIPS))&t;&bslash;&n;&t;&t;__res = -ENOEXEC;&t;&t;&t;&t;&t;&bslash;&n;&t;if (__h-&gt;e_flags &amp; EF_MIPS_ARCH)&t;&t;&t;&t;&bslash;&n;&t;&t;__res = -ENOEXEC;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;__res;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;})
+mdefine_line|#define elf_check_arch(hdr)&t;&t;&t;&t;&t;&t;&bslash;&n;({&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;int __res = 1;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;struct elfhdr *__h = (hdr);&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;if ((__h-&gt;e_machine != EM_MIPS) &amp;&amp;&t;&t;&t;&t;&bslash;&n;&t;    (__h-&gt;e_machine != EM_MIPS_RS4_BE))&t;&t;&t;&t;&bslash;&n;&t;&t;__res = 0;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;if (__h-&gt;e_flags &amp; EF_MIPS_ARCH)&t;&t;&t;&t;&bslash;&n;&t;&t;__res = 0;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;__res;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;})
 multiline_comment|/* This one accepts IRIX binaries.  */
 DECL|macro|irix_elf_check_arch
-mdefine_line|#define irix_elf_check_arch(hdr)&t;&t;&t;&t;&t;&bslash;&n;({&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;int __res = 0;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;struct elfhdr *__h = (hdr);&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;if ((__h-&gt;e_machine != EM_MIPS) &amp;&amp; (__h-&gt;e_machine != EM_MIPS))&t;&bslash;&n;&t;&t;__res = -ENOEXEC;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;__res;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;})
+mdefine_line|#define irix_elf_check_arch(hdr)&t;&t;&t;&t;&t;&bslash;&n;({&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;int __res = 1;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;struct elfhdr *__h = (hdr);&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;if ((__h-&gt;e_machine != EM_MIPS) &amp;&amp;&t;&t;&t;&t;&bslash;&n;&t;    (__h-&gt;e_machine != EM_MIPS_RS4_BE))&t;&t;&t;&t;&bslash;&n;&t;&t;__res = 0;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;__res;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;})
 multiline_comment|/*&n; * These are used to set parameters in the core dumps.&n; */
 DECL|macro|ELF_CLASS
 mdefine_line|#define ELF_CLASS&t;ELFCLASS32
@@ -74,5 +74,5 @@ macro_line|#ifdef __KERNEL__
 DECL|macro|SET_PERSONALITY
 mdefine_line|#define SET_PERSONALITY(ex, ibcs2) set_personality((ibcs2)?PER_SVR4:PER_LINUX)
 macro_line|#endif
-macro_line|#endif /* __ASM_MIPS_ELF_H */
+macro_line|#endif /* __ASM_ELF_H */
 eof

@@ -1507,5 +1507,17 @@ id|usb_dsbr100_driver
 )paren
 suffix:semicolon
 )brace
+id|MODULE_AUTHOR
+c_func
+(paren
+l_string|&quot;Markus Demleitner &lt;msdemlei@tucana.harvard.edu&gt;&quot;
+)paren
+suffix:semicolon
+id|MODULE_DESCRIPTION
+c_func
+(paren
+l_string|&quot;D-Link DSB-R100 USB radio driver&quot;
+)paren
+suffix:semicolon
 multiline_comment|/*&n;vi: ts=8&n;Sigh.  Of course, I am one of the ts=2 heretics, but Linus&squot; wish is&n;my command.&n;*/
 eof

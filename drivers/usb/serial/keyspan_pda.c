@@ -2889,4 +2889,16 @@ c_func
 id|keyspan_pda_exit
 )paren
 suffix:semicolon
+id|MODULE_AUTHOR
+c_func
+(paren
+l_string|&quot;Brian Warner &lt;warner@lothar.com&gt;&quot;
+)paren
+suffix:semicolon
+id|MODULE_DESCRIPTION
+c_func
+(paren
+l_string|&quot;USB Keyspan PDA Converter driver&quot;
+)paren
+suffix:semicolon
 eof

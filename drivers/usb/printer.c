@@ -2223,4 +2223,16 @@ c_func
 id|usblp_exit
 )paren
 suffix:semicolon
+id|MODULE_AUTHOR
+c_func
+(paren
+l_string|&quot;Michael Gee, Pavel Machek, Vojtech Pavlik, Randy Dunlap&quot;
+)paren
+suffix:semicolon
+id|MODULE_DESCRIPTION
+c_func
+(paren
+l_string|&quot;USB Printer Device Class driver&quot;
+)paren
+suffix:semicolon
 eof

@@ -1002,7 +1002,7 @@ id|cache
 )paren
 (brace
 multiline_comment|/* XXX Just get it working for now... */
-id|flush_cache_all
+id|flush_cache_l1
 c_func
 (paren
 )paren

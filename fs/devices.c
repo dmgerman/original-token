@@ -325,7 +325,6 @@ c_func
 id|name
 )paren
 suffix:semicolon
-)brace
 id|read_lock
 c_func
 (paren
@@ -353,6 +352,7 @@ op_amp
 id|chrdevs_lock
 )paren
 suffix:semicolon
+)brace
 macro_line|#endif
 r_return
 id|ret

@@ -1,4 +1,4 @@
-multiline_comment|/* Driver for USB Mass Storage compliant devices&n; *&n; * $Id: transport.c,v 1.3 2000/07/20 01:06:40 mdharm Exp $&n; *&n; * Current development and maintainance by:&n; *   (c) 1999, 2000 Matthew Dharm (mdharm-usb@one-eyed-alien.net)&n; *&n; * Developed with the assistance of:&n; *   (c) 2000 David L. Brown, Jr. (usb-storage@davidb.org)&n; *&n; * Initial work by:&n; *   (c) 1999 Michael Gee (michael@linuxspecific.com)&n; *&n; * This driver is based on the &squot;USB Mass Storage Class&squot; document. This&n; * describes in detail the protocol used to communicate with such&n; * devices.  Clearly, the designers had SCSI and ATAPI commands in&n; * mind when they created this document.  The commands are all very&n; * similar to commands in the SCSI-II and ATAPI specifications.&n; *&n; * It is important to note that in a number of cases this class&n; * exhibits class-specific exemptions from the USB specification.&n; * Notably the usage of NAK, STALL and ACK differs from the norm, in&n; * that they are used to communicate wait, failed and OK on commands.&n; *&n; * Also, for certain devices, the interrupt endpoint is used to convey&n; * status of a command.&n; *&n; * Please see http://www.one-eyed-alien.net/~mdharm/linux-usb for more&n; * information about this driver.&n; *&n; * This program is free software; you can redistribute it and/or modify it&n; * under the terms of the GNU General Public License as published by the&n; * Free Software Foundation; either version 2, or (at your option) any&n; * later version.&n; *&n; * This program is distributed in the hope that it will be useful, but&n; * WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU&n; * General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License along&n; * with this program; if not, write to the Free Software Foundation, Inc.,&n; * 675 Mass Ave, Cambridge, MA 02139, USA.&n; */
+multiline_comment|/* Driver for USB Mass Storage compliant devices&n; *&n; * $Id: transport.c,v 1.4 2000/07/25 23:04:47 mdharm Exp $&n; *&n; * Current development and maintainance by:&n; *   (c) 1999, 2000 Matthew Dharm (mdharm-usb@one-eyed-alien.net)&n; *&n; * Developed with the assistance of:&n; *   (c) 2000 David L. Brown, Jr. (usb-storage@davidb.org)&n; *&n; * Initial work by:&n; *   (c) 1999 Michael Gee (michael@linuxspecific.com)&n; *&n; * This driver is based on the &squot;USB Mass Storage Class&squot; document. This&n; * describes in detail the protocol used to communicate with such&n; * devices.  Clearly, the designers had SCSI and ATAPI commands in&n; * mind when they created this document.  The commands are all very&n; * similar to commands in the SCSI-II and ATAPI specifications.&n; *&n; * It is important to note that in a number of cases this class&n; * exhibits class-specific exemptions from the USB specification.&n; * Notably the usage of NAK, STALL and ACK differs from the norm, in&n; * that they are used to communicate wait, failed and OK on commands.&n; *&n; * Also, for certain devices, the interrupt endpoint is used to convey&n; * status of a command.&n; *&n; * Please see http://www.one-eyed-alien.net/~mdharm/linux-usb for more&n; * information about this driver.&n; *&n; * This program is free software; you can redistribute it and/or modify it&n; * under the terms of the GNU General Public License as published by the&n; * Free Software Foundation; either version 2, or (at your option) any&n; * later version.&n; *&n; * This program is distributed in the hope that it will be useful, but&n; * WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU&n; * General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License along&n; * with this program; if not, write to the Free Software Foundation, Inc.,&n; * 675 Mass Ave, Cambridge, MA 02139, USA.&n; */
 macro_line|#include &quot;transport.h&quot;
 macro_line|#include &quot;protocol.h&quot;
 macro_line|#include &quot;usb.h&quot;
@@ -591,14 +591,9 @@ multiline_comment|/* calculate the appropriate pipe information */
 r_if
 c_cond
 (paren
-id|US_DIRECTION
-c_func
-(paren
-id|us-&gt;srb-&gt;cmnd
-(braket
-l_int|0
-)braket
-)paren
+id|us-&gt;srb-&gt;sc_data_direction
+op_eq
+id|SCSI_DATA_READ
 )paren
 id|pipe
 op_assign
@@ -783,9 +778,6 @@ r_struct
 id|us_data
 op_star
 id|us
-comma
-r_int
-id|dir_in
 )paren
 (brace
 r_int
@@ -1294,10 +1286,15 @@ op_star
 id|old_request_buffer
 suffix:semicolon
 r_int
+r_int
 id|old_sg
 suffix:semicolon
 r_int
 id|old_request_bufflen
+suffix:semicolon
+r_int
+r_char
+id|old_sc_data_direction
 suffix:semicolon
 r_int
 r_char
@@ -1371,15 +1368,34 @@ l_int|5
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* set the buffer length for transfer */
+multiline_comment|/* set the transfer direction */
+id|old_sc_data_direction
+op_assign
+id|srb-&gt;sc_data_direction
+suffix:semicolon
+id|srb-&gt;sc_data_direction
+op_assign
+id|SCSI_DATA_READ
+suffix:semicolon
+multiline_comment|/* use the new buffer we have */
 id|old_request_buffer
 op_assign
 id|srb-&gt;request_buffer
 suffix:semicolon
+id|srb-&gt;request_buffer
+op_assign
+id|srb-&gt;sense_buffer
+suffix:semicolon
+multiline_comment|/* set the buffer length for transfer */
 id|old_request_bufflen
 op_assign
 id|srb-&gt;request_bufflen
 suffix:semicolon
+id|srb-&gt;request_bufflen
+op_assign
+l_int|18
+suffix:semicolon
+multiline_comment|/* set up for no scatter-gather use */
 id|old_sg
 op_assign
 id|srb-&gt;use_sg
@@ -1387,14 +1403,6 @@ suffix:semicolon
 id|srb-&gt;use_sg
 op_assign
 l_int|0
-suffix:semicolon
-id|srb-&gt;request_bufflen
-op_assign
-l_int|18
-suffix:semicolon
-id|srb-&gt;request_buffer
-op_assign
-id|srb-&gt;sense_buffer
 suffix:semicolon
 multiline_comment|/* issue the auto-sense command */
 id|temp_result
@@ -1486,6 +1494,10 @@ suffix:semicolon
 id|srb-&gt;use_sg
 op_assign
 id|old_sg
+suffix:semicolon
+id|srb-&gt;sc_data_direction
+op_assign
+id|old_sc_data_direction
 suffix:semicolon
 id|memcpy
 c_func
@@ -1852,15 +1864,6 @@ c_func
 id|srb
 comma
 id|us
-comma
-id|US_DIRECTION
-c_func
-(paren
-id|srb-&gt;cmnd
-(braket
-l_int|0
-)braket
-)paren
 )paren
 suffix:semicolon
 id|US_DEBUGP
@@ -2215,15 +2218,6 @@ c_func
 id|srb
 comma
 id|us
-comma
-id|US_DIRECTION
-c_func
-(paren
-id|srb-&gt;cmnd
-(braket
-l_int|0
-)braket
-)paren
 )paren
 suffix:semicolon
 id|US_DEBUGP
@@ -2428,16 +2422,16 @@ id|us
 suffix:semicolon
 id|bcb.Flags
 op_assign
-id|US_DIRECTION
-c_func
-(paren
-id|srb-&gt;cmnd
-(braket
-l_int|0
-)braket
-)paren
+id|srb-&gt;sc_data_direction
+op_eq
+id|SCSI_DATA_READ
+ques
+c_cond
+l_int|1
 op_lshift
 l_int|7
+suffix:colon
+l_int|0
 suffix:semicolon
 id|bcb.Tag
 op_assign
@@ -2613,8 +2607,6 @@ c_func
 id|srb
 comma
 id|us
-comma
-id|bcb.Flags
 )paren
 suffix:semicolon
 id|US_DEBUGP

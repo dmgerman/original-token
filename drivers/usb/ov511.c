@@ -141,12 +141,28 @@ comma
 l_string|&quot;i&quot;
 )paren
 suffix:semicolon
+id|MODULE_PARM_DESC
+c_func
+(paren
+id|autoadjust
+comma
+l_string|&quot;CCD dynamically changes exposure&quot;
+)paren
+suffix:semicolon
 id|MODULE_PARM
 c_func
 (paren
 id|debug
 comma
 l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM_DESC
+c_func
+(paren
+id|debug
+comma
+l_string|&quot;Debug level: 0=none, 1=init/detection, 2=warning, 3=config/control, 4=function call, 5=max&quot;
 )paren
 suffix:semicolon
 id|MODULE_PARM
@@ -157,12 +173,28 @@ comma
 l_string|&quot;i&quot;
 )paren
 suffix:semicolon
+id|MODULE_PARM_DESC
+c_func
+(paren
+id|fix_rgb_offset
+comma
+l_string|&quot;Fix vertical misalignment of red and blue at 640x480&quot;
+)paren
+suffix:semicolon
 id|MODULE_PARM
 c_func
 (paren
 id|snapshot
 comma
 l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM_DESC
+c_func
+(paren
+id|snapshot
+comma
+l_string|&quot;Enable snapshot mode&quot;
 )paren
 suffix:semicolon
 id|MODULE_PARM
@@ -173,12 +205,28 @@ comma
 l_string|&quot;i&quot;
 )paren
 suffix:semicolon
+id|MODULE_PARM_DESC
+c_func
+(paren
+id|sensor
+comma
+l_string|&quot;Override sensor detection&quot;
+)paren
+suffix:semicolon
 id|MODULE_PARM
 c_func
 (paren
 id|i2c_detect_tries
 comma
 l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM_DESC
+c_func
+(paren
+id|i2c_detect_tries
+comma
+l_string|&quot;Number of tries to detect sensor&quot;
 )paren
 suffix:semicolon
 id|MODULE_PARM
@@ -189,12 +237,28 @@ comma
 l_string|&quot;i&quot;
 )paren
 suffix:semicolon
+id|MODULE_PARM_DESC
+c_func
+(paren
+id|aperture
+comma
+l_string|&quot;Read the OV7610/7620 specs&quot;
+)paren
+suffix:semicolon
 id|MODULE_PARM
 c_func
 (paren
 id|force_rgb
 comma
 l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM_DESC
+c_func
+(paren
+id|force_rgb
+comma
+l_string|&quot;Read RBG instead of BGR&quot;
 )paren
 suffix:semicolon
 id|MODULE_PARM
@@ -205,6 +269,14 @@ comma
 l_string|&quot;i&quot;
 )paren
 suffix:semicolon
+id|MODULE_PARM_DESC
+c_func
+(paren
+id|buf_timeout
+comma
+l_string|&quot;Number of seconds before buffer deallocation&quot;
+)paren
+suffix:semicolon
 id|MODULE_PARM
 c_func
 (paren
@@ -213,12 +285,28 @@ comma
 l_string|&quot;i&quot;
 )paren
 suffix:semicolon
+id|MODULE_PARM_DESC
+c_func
+(paren
+id|cams
+comma
+l_string|&quot;Number of simultaneous cameras&quot;
+)paren
+suffix:semicolon
 id|MODULE_PARM
 c_func
 (paren
 id|retry_sync
 comma
 l_string|&quot;i&quot;
+)paren
+suffix:semicolon
+id|MODULE_PARM_DESC
+c_func
+(paren
+id|retry_sync
+comma
+l_string|&quot;Prevent apps from timing out&quot;
 )paren
 suffix:semicolon
 id|MODULE_AUTHOR

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: r4xx0.c,v 1.29 2000/02/24 00:12:40 ralf Exp $&n; *&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * r4xx0.c: R4000 processor variant specific MMU/Cache routines.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; * Copyright (C) 1997, 1998 Ralf Baechle ralf@gnu.org&n; *&n; * To do:&n; *&n; *  - this code is a overbloated pig&n; *  - many of the bug workarounds are not efficient at all, but at&n; *    least they are functional ...&n; */
+multiline_comment|/*&n; * This file is subject to the terms and conditions of the GNU General Public&n; * License.  See the file &quot;COPYING&quot; in the main directory of this archive&n; * for more details.&n; *&n; * r4xx0.c: R4000 processor variant specific MMU/Cache routines.&n; *&n; * Copyright (C) 1996 David S. Miller (dm@engr.sgi.com)&n; * Copyright (C) 1997, 1998, 1999, 2000 Ralf Baechle ralf@gnu.org&n; *&n; * To do:&n; *&n; *  - this code is a overbloated pig&n; *  - many of the bug workarounds are not efficient at all, but at&n; *    least they are functional ...&n; */
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -2168,10 +2168,8 @@ id|mm-&gt;context
 op_eq
 l_int|0
 )paren
-(brace
 r_return
 suffix:semicolon
-)brace
 id|start
 op_and_assign
 id|PAGE_MASK
@@ -2214,7 +2212,7 @@ c_cond
 (paren
 id|mm-&gt;context
 op_ne
-id|current-&gt;mm-&gt;context
+id|current-&gt;active_mm-&gt;context
 )paren
 (brace
 id|r4k_flush_cache_all_s16d16i16
@@ -2360,10 +2358,8 @@ id|mm-&gt;context
 op_eq
 l_int|0
 )paren
-(brace
 r_return
 suffix:semicolon
-)brace
 id|start
 op_and_assign
 id|PAGE_MASK
@@ -2406,7 +2402,7 @@ c_cond
 (paren
 id|mm-&gt;context
 op_ne
-id|current-&gt;mm-&gt;context
+id|current-&gt;active_mm-&gt;context
 )paren
 (brace
 id|r4k_flush_cache_all_s32d16i16
@@ -2552,10 +2548,8 @@ id|mm-&gt;context
 op_eq
 l_int|0
 )paren
-(brace
 r_return
 suffix:semicolon
-)brace
 id|start
 op_and_assign
 id|PAGE_MASK
@@ -2598,7 +2592,7 @@ c_cond
 (paren
 id|mm-&gt;context
 op_ne
-id|current-&gt;mm-&gt;context
+id|current-&gt;active_mm-&gt;context
 )paren
 (brace
 id|r4k_flush_cache_all_s64d16i16
@@ -2744,10 +2738,8 @@ id|mm-&gt;context
 op_eq
 l_int|0
 )paren
-(brace
 r_return
 suffix:semicolon
-)brace
 id|start
 op_and_assign
 id|PAGE_MASK
@@ -2790,7 +2782,7 @@ c_cond
 (paren
 id|mm-&gt;context
 op_ne
-id|current-&gt;mm-&gt;context
+id|current-&gt;active_mm-&gt;context
 )paren
 (brace
 id|r4k_flush_cache_all_s128d16i16
@@ -2936,10 +2928,8 @@ id|mm-&gt;context
 op_eq
 l_int|0
 )paren
-(brace
 r_return
 suffix:semicolon
-)brace
 id|start
 op_and_assign
 id|PAGE_MASK
@@ -2982,7 +2972,7 @@ c_cond
 (paren
 id|mm-&gt;context
 op_ne
-id|current-&gt;mm-&gt;context
+id|current-&gt;active_mm-&gt;context
 )paren
 (brace
 id|r4k_flush_cache_all_s32d32i32
@@ -3128,10 +3118,8 @@ id|mm-&gt;context
 op_eq
 l_int|0
 )paren
-(brace
 r_return
 suffix:semicolon
-)brace
 id|start
 op_and_assign
 id|PAGE_MASK
@@ -3174,7 +3162,7 @@ c_cond
 (paren
 id|mm-&gt;context
 op_ne
-id|current-&gt;mm-&gt;context
+id|current-&gt;active_mm-&gt;context
 )paren
 (brace
 id|r4k_flush_cache_all_s64d32i32
@@ -3320,10 +3308,8 @@ id|mm-&gt;context
 op_eq
 l_int|0
 )paren
-(brace
 r_return
 suffix:semicolon
-)brace
 id|start
 op_and_assign
 id|PAGE_MASK
@@ -3366,7 +3352,7 @@ c_cond
 (paren
 id|mm-&gt;context
 op_ne
-id|current-&gt;mm-&gt;context
+id|current-&gt;active_mm-&gt;context
 )paren
 (brace
 id|r4k_flush_cache_all_s128d32i32
@@ -4033,10 +4019,8 @@ id|mm-&gt;context
 op_eq
 l_int|0
 )paren
-(brace
 r_return
 suffix:semicolon
-)brace
 macro_line|#ifdef DEBUG_CACHE
 id|printk
 c_func
@@ -4108,11 +4092,9 @@ op_amp
 id|_PAGE_VALID
 )paren
 )paren
-(brace
 r_goto
 id|out
 suffix:semicolon
-)brace
 id|text
 op_assign
 (paren
@@ -4127,7 +4109,7 @@ c_cond
 (paren
 id|mm-&gt;context
 op_ne
-id|current-&gt;mm-&gt;context
+id|current-&gt;active_mm-&gt;context
 )paren
 (brace
 multiline_comment|/* Do indexed flush, too much work to get the (possible)&n;&t;&t; * tlb refills to work correctly.&n;&t;&t; */
@@ -4239,10 +4221,8 @@ id|mm-&gt;context
 op_eq
 l_int|0
 )paren
-(brace
 r_return
 suffix:semicolon
-)brace
 macro_line|#ifdef DEBUG_CACHE
 id|printk
 c_func
@@ -4314,11 +4294,9 @@ op_amp
 id|_PAGE_VALID
 )paren
 )paren
-(brace
 r_goto
 id|out
 suffix:semicolon
-)brace
 id|text
 op_assign
 (paren
@@ -4333,7 +4311,7 @@ c_cond
 (paren
 id|mm-&gt;context
 op_ne
-id|current-&gt;mm-&gt;context
+id|current-&gt;active_mm-&gt;context
 )paren
 (brace
 multiline_comment|/* Do indexed flush, too much work to get the (possible)&n;&t;&t; * tlb refills to work correctly.&n;&t;&t; */
@@ -4445,10 +4423,8 @@ id|mm-&gt;context
 op_eq
 l_int|0
 )paren
-(brace
 r_return
 suffix:semicolon
-)brace
 macro_line|#ifdef DEBUG_CACHE
 id|printk
 c_func
@@ -4520,11 +4496,9 @@ op_amp
 id|_PAGE_VALID
 )paren
 )paren
-(brace
 r_goto
 id|out
 suffix:semicolon
-)brace
 id|text
 op_assign
 (paren
@@ -4539,7 +4513,7 @@ c_cond
 (paren
 id|mm-&gt;context
 op_ne
-id|current-&gt;mm-&gt;context
+id|current-&gt;active_mm-&gt;context
 )paren
 (brace
 multiline_comment|/* Do indexed flush, too much work to get the (possible)&n;&t;&t; * tlb refills to work correctly.&n;&t;&t; */
@@ -4651,10 +4625,8 @@ id|mm-&gt;context
 op_eq
 l_int|0
 )paren
-(brace
 r_return
 suffix:semicolon
-)brace
 macro_line|#ifdef DEBUG_CACHE
 id|printk
 c_func
@@ -4726,11 +4698,9 @@ op_amp
 id|_PAGE_VALID
 )paren
 )paren
-(brace
 r_goto
 id|out
 suffix:semicolon
-)brace
 id|text
 op_assign
 (paren
@@ -4745,7 +4715,7 @@ c_cond
 (paren
 id|mm-&gt;context
 op_ne
-id|current-&gt;mm-&gt;context
+id|current-&gt;active_mm-&gt;context
 )paren
 (brace
 multiline_comment|/*&n;&t;&t; * Do indexed flush, too much work to get the (possible)&n;&t;&t; * tlb refills to work correctly.&n;&t;&t; */
@@ -4857,10 +4827,8 @@ id|mm-&gt;context
 op_eq
 l_int|0
 )paren
-(brace
 r_return
 suffix:semicolon
-)brace
 macro_line|#ifdef DEBUG_CACHE
 id|printk
 c_func
@@ -4932,11 +4900,9 @@ op_amp
 id|_PAGE_VALID
 )paren
 )paren
-(brace
 r_goto
 id|out
 suffix:semicolon
-)brace
 id|text
 op_assign
 (paren
@@ -4951,7 +4917,7 @@ c_cond
 (paren
 id|mm-&gt;context
 op_ne
-id|current-&gt;mm-&gt;context
+id|current-&gt;active_mm-&gt;context
 )paren
 (brace
 multiline_comment|/*&n;&t;&t; * Do indexed flush, too much work to get the (possible)&n;&t;&t; * tlb refills to work correctly.&n;&t;&t; */
@@ -5063,10 +5029,8 @@ id|mm-&gt;context
 op_eq
 l_int|0
 )paren
-(brace
 r_return
 suffix:semicolon
-)brace
 macro_line|#ifdef DEBUG_CACHE
 id|printk
 c_func
@@ -5138,11 +5102,9 @@ op_amp
 id|_PAGE_VALID
 )paren
 )paren
-(brace
 r_goto
 id|out
 suffix:semicolon
-)brace
 id|text
 op_assign
 (paren
@@ -5157,7 +5119,7 @@ c_cond
 (paren
 id|mm-&gt;context
 op_ne
-id|current-&gt;mm-&gt;context
+id|current-&gt;active_mm-&gt;context
 )paren
 (brace
 multiline_comment|/*&n;&t;&t; * Do indexed flush, too much work to get the (possible)&n;&t;&t; * tlb refills to work correctly.&n;&t;&t; */
@@ -5342,11 +5304,9 @@ op_amp
 id|_PAGE_VALID
 )paren
 )paren
-(brace
 r_goto
 id|out
 suffix:semicolon
-)brace
 id|text
 op_assign
 (paren
@@ -5361,7 +5321,7 @@ c_cond
 (paren
 id|mm-&gt;context
 op_ne
-id|current-&gt;mm-&gt;context
+id|current-&gt;active_mm-&gt;context
 )paren
 (brace
 multiline_comment|/* Do indexed flush, too much work to get the (possible)&n;&t;&t; * tlb refills to work correctly.&n;&t;&t; */
@@ -5473,10 +5433,8 @@ id|mm-&gt;context
 op_eq
 l_int|0
 )paren
-(brace
 r_return
 suffix:semicolon
-)brace
 macro_line|#ifdef DEBUG_CACHE
 id|printk
 c_func
@@ -5548,11 +5506,9 @@ op_amp
 id|_PAGE_VALID
 )paren
 )paren
-(brace
 r_goto
 id|out
 suffix:semicolon
-)brace
 id|text
 op_assign
 (paren
@@ -5567,7 +5523,7 @@ c_cond
 (paren
 id|mm
 op_eq
-id|current-&gt;mm
+id|current-&gt;active_mm
 )paren
 (brace
 id|blast_dcache16_page
@@ -5688,10 +5644,8 @@ id|mm-&gt;context
 op_eq
 l_int|0
 )paren
-(brace
 r_return
 suffix:semicolon
-)brace
 macro_line|#ifdef DEBUG_CACHE
 id|printk
 c_func
@@ -5763,11 +5717,9 @@ op_amp
 id|_PAGE_PRESENT
 )paren
 )paren
-(brace
 r_goto
 id|out
 suffix:semicolon
-)brace
 id|text
 op_assign
 (paren
@@ -5783,7 +5735,7 @@ c_cond
 (paren
 id|mm
 op_eq
-id|current-&gt;mm
+id|current-&gt;active_mm
 )paren
 op_logical_and
 (paren
@@ -5916,10 +5868,8 @@ id|mm-&gt;context
 op_eq
 l_int|0
 )paren
-(brace
 r_return
 suffix:semicolon
-)brace
 macro_line|#ifdef DEBUG_CACHE
 id|printk
 c_func
@@ -7506,9 +7456,8 @@ c_cond
 (paren
 id|mm
 op_eq
-id|current-&gt;mm
+id|current-&gt;active_mm
 )paren
-(brace
 id|set_entryhi
 c_func
 (paren
@@ -7517,7 +7466,6 @@ op_amp
 l_int|0xff
 )paren
 suffix:semicolon
-)brace
 id|restore_flags
 c_func
 (paren
@@ -7771,9 +7719,8 @@ c_cond
 (paren
 id|mm
 op_eq
-id|current-&gt;mm
+id|current-&gt;active_mm
 )paren
-(brace
 id|set_entryhi
 c_func
 (paren
@@ -7782,7 +7729,6 @@ op_amp
 l_int|0xff
 )paren
 suffix:semicolon
-)brace
 )brace
 id|restore_flags
 c_func
@@ -8177,6 +8123,16 @@ r_int
 id|idx
 comma
 id|pid
+suffix:semicolon
+multiline_comment|/*&n;&t; * Handle debugger faulting in for debugee.&n;&t; */
+r_if
+c_cond
+(paren
+id|current-&gt;active_mm
+op_ne
+id|vma-&gt;vm_mm
+)paren
+r_return
 suffix:semicolon
 id|pid
 op_assign

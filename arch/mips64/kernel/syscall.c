@@ -960,7 +960,7 @@ suffix:semicolon
 r_case
 id|FLUSH_CACHE
 suffix:colon
-id|flush_cache_all
+id|flush_cache_l1
 c_func
 (paren
 )paren

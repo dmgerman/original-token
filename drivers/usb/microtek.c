@@ -3563,4 +3563,16 @@ c_func
 id|microtek_drv_exit
 )paren
 suffix:semicolon
+id|MODULE_AUTHOR
+c_func
+(paren
+l_string|&quot;John Fremlin &lt;vii@penguinpowered.com&gt;, Oliver Neukum &lt;Oliver.Neukum@lrz.uni-muenchen.de&gt;&quot;
+)paren
+suffix:semicolon
+id|MODULE_DESCRIPTION
+c_func
+(paren
+l_string|&quot;Microtek Scanmaker X6 USB scanner driver&quot;
+)paren
+suffix:semicolon
 eof

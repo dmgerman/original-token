@@ -181,6 +181,8 @@ suffix:semicolon
 DECL|macro|RW_LOCK_UNLOCKED
 mdefine_line|#define RW_LOCK_UNLOCKED (rwlock_t) { 0 }
 macro_line|#endif
+DECL|macro|rwlock_init
+mdefine_line|#define rwlock_init(lock)&t;do { } while(0)
 DECL|macro|read_lock
 mdefine_line|#define read_lock(lock)&t;&t;(void)(lock) /* Not &quot;unused variable&quot;. */
 DECL|macro|read_unlock

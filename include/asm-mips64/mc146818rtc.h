@@ -67,5 +67,7 @@ id|rtc_ops
 op_star
 id|rtc_ops
 suffix:semicolon
+DECL|macro|RTC_IRQ
+mdefine_line|#define RTC_IRQ 8
 macro_line|#endif /* _ASM_MC146818RTC_H */
 eof

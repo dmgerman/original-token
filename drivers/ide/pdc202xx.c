@@ -5675,11 +5675,6 @@ op_assign
 op_amp
 id|pdc202xx_reset
 suffix:semicolon
-id|hwif-&gt;tri_proc
-op_assign
-op_amp
-id|pdc202xx_tristate
-suffix:semicolon
 )brace
 macro_line|#ifdef CONFIG_BLK_DEV_IDEDMA
 r_if

@@ -5381,6 +5381,7 @@ id|page
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * We are taking a block for data and we don&squot;t want any output from any&n; * buffer-cache aliases starting from return from that function and&n; * until the moment when something will explicitly mark the buffer&n; * dirty (hopefully that will not happen until we will free that block ;-)&n; * We don&squot;t even need to mark it not-uptodate - nobody can expect&n; * anything from a newly allocated buffer anyway. We used to used&n; * unmap_buffer() for such invalidation, but that was wrong. We definitely&n; * don&squot;t want to mark the alias unmapped, for example - it would confuse&n; * anyone who might pick it with bread() afterwards...&n; */
 DECL|function|unmap_underlying_metadata
 r_static
 r_void
@@ -5416,10 +5417,25 @@ c_cond
 id|old_bh
 )paren
 (brace
-id|unmap_buffer
+id|mark_buffer_clean
 c_func
 (paren
 id|old_bh
+)paren
+suffix:semicolon
+id|wait_on_buffer
+c_func
+(paren
+id|old_bh
+)paren
+suffix:semicolon
+id|clear_bit
+c_func
+(paren
+id|BH_Req
+comma
+op_amp
+id|old_bh-&gt;b_state
 )paren
 suffix:semicolon
 multiline_comment|/* Here we could run brelse or bforget. We use&n;&t;&t;   bforget because it will try to put the buffer&n;&t;&t;   in the freelist. */

@@ -12,6 +12,12 @@ c_func
 l_string|&quot;Vojtech Pavlik &lt;vojtech@suse.cz&gt;&quot;
 )paren
 suffix:semicolon
+id|MODULE_DESCRIPTION
+c_func
+(paren
+l_string|&quot;USB Wacom Graphire and Wacom Intuos tablet driver&quot;
+)paren
+suffix:semicolon
 multiline_comment|/*&n; * Wacom Graphire packet:&n; *&n; * byte 0: report ID (2)&n; * byte 1: bit7&t;&t;pointer in range&n; *&t;   bit5-6&t;pointer type 0 - pen, 1 - rubber, 2 - mouse&n; *&t;   bit4&t;&t;1 ?&n; *&t;   bit3&t;&t;0 ?&n; *&t;   bit2&t;&t;mouse middle button / pen button2&n; *&t;   bit1&t;&t;mouse right button / pen button1&n; *&t;   bit0&t;&t;mouse left button / touch&n; * byte 2: X low bits&n; * byte 3: X high bits&n; * byte 4: Y low bits&n; * byte 5: Y high bits&n; * byte 6: pen pressure low bits / mouse wheel&n; * byte 7: pen presure high bits / mouse distance&n; * &n; * There are also two single-byte feature reports (2 and 3).&n; *&n; * Wacom Intuos status packet:&n; *&n; * byte 0: report ID (2)&n; * byte 1: bit7&t;&t;1 - sync bit &n; *&t;   bit6&t;&t;pointer in range&n; *&t;   bit5&t;&t;pointer type report&n; *&t;   bit4&t;&t;0 ?&n; *&t;   bit3&t;&t;0 ?&n; *&t;   bit2&t;&t;pen button2&n; *&t;   bit1&t;&t;pen button1&n; *&t;   bit0&t;&t;0 ?&n; * byte 2: X high bits&n; * byte 3: X low bits&n; * byte 4: Y high bits&n; * byte 5: Y low bits&n; * byte 6: bits 0-7: pressure&t;(bits 2-9)&n; * byte 7: bits 6-7: pressure&t;(bits 0-1)&n; * byte 7: bits 0-5: X tilt&t;(bits 1-6)&n; * byte 8: bit    7: X tilt&t;(bit  0)&n; * byte 8: bits 0-6: Y tilt&t;(bits 0-6)&n; * byte 9: bits 4-7: distance&n; */
 DECL|macro|USB_VENDOR_ID_WACOM
 mdefine_line|#define USB_VENDOR_ID_WACOM&t;0x056a

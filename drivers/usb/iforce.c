@@ -14,6 +14,12 @@ c_func
 l_string|&quot;Vojtech Pavlik &lt;vojtech@suse.cz&gt;&quot;
 )paren
 suffix:semicolon
+id|MODULE_DESCRIPTION
+c_func
+(paren
+l_string|&quot;USB/RS232 I-Force joysticks and wheels driver&quot;
+)paren
+suffix:semicolon
 DECL|macro|USB_VENDOR_ID_LOGITECH
 mdefine_line|#define USB_VENDOR_ID_LOGITECH&t;&t;0x046d
 DECL|macro|USB_DEVICE_ID_LOGITECH_WMFORCE

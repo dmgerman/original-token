@@ -1309,7 +1309,12 @@ comma
 l_int|0x100
 )paren
 suffix:semicolon
-id|flush_cache_all
+id|flush_cache_l1
+c_func
+(paren
+)paren
+suffix:semicolon
+id|flush_cache_l2
 c_func
 (paren
 )paren
@@ -1779,7 +1784,12 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|flush_cache_all
+id|flush_cache_l1
+c_func
+(paren
+)paren
+suffix:semicolon
+id|flush_cache_l2
 c_func
 (paren
 )paren

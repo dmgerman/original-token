@@ -54,6 +54,14 @@ comma
 l_string|&quot;i&quot;
 )paren
 suffix:semicolon
+id|MODULE_PARM_DESC
+c_func
+(paren
+id|debug
+comma
+l_string|&quot;Debug level&quot;
+)paren
+suffix:semicolon
 DECL|variable|uhci_td_cachep
 r_static
 id|kmem_cache_t
@@ -10880,6 +10888,18 @@ c_func
 )paren
 suffix:semicolon
 )brace
+id|MODULE_AUTHOR
+c_func
+(paren
+l_string|&quot;Linus Torvalds, Johannes Erdfelt, Randy Dunlap, Georg Acher, Deti Fliegl, Thomas Sailer, Roman Weissgaerber&quot;
+)paren
+suffix:semicolon
+id|MODULE_DESCRIPTION
+c_func
+(paren
+l_string|&quot;USB Universal Host Controller Interface driver&quot;
+)paren
+suffix:semicolon
 macro_line|#endif 
 singleline_comment|//MODULE
 eof

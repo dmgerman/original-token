@@ -307,6 +307,7 @@ mdefine_line|#define __MODULE_STRING_1(x)&t;#x
 DECL|macro|__MODULE_STRING
 mdefine_line|#define __MODULE_STRING(x)&t;__MODULE_STRING_1(x)
 multiline_comment|/* Find a symbol exported by the kernel or another module */
+macro_line|#ifdef CONFIG_MODULES
 r_extern
 r_int
 r_int
@@ -329,6 +330,44 @@ r_int
 r_int
 )paren
 suffix:semicolon
+macro_line|#else
+DECL|function|get_module_symbol
+r_static
+r_inline
+r_int
+r_int
+id|get_module_symbol
+c_func
+(paren
+r_char
+op_star
+id|unused1
+comma
+r_char
+op_star
+id|unused2
+)paren
+(brace
+r_return
+l_int|0
+suffix:semicolon
+)brace
+suffix:semicolon
+DECL|function|put_module_symbol
+r_static
+r_inline
+r_void
+id|put_module_symbol
+c_func
+(paren
+r_int
+r_int
+id|unused
+)paren
+(brace
+)brace
+suffix:semicolon
+macro_line|#endif
 r_extern
 r_int
 id|try_inc_mod_count

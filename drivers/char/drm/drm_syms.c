@@ -1,3 +1,4 @@
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &quot;drmP.h&quot;
 multiline_comment|/* Misc. support (init.c) */
 DECL|variable|drm_flags

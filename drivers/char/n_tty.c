@@ -5699,10 +5699,6 @@ l_int|0
 )paren
 r_break
 suffix:semicolon
-id|current-&gt;state
-op_assign
-id|TASK_RUNNING
-suffix:semicolon
 id|get_user
 c_func
 (paren
@@ -5710,10 +5706,6 @@ id|c
 comma
 id|b
 )paren
-suffix:semicolon
-id|current-&gt;state
-op_assign
-id|TASK_INTERRUPTIBLE
 suffix:semicolon
 r_if
 c_cond
@@ -5753,10 +5745,6 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|current-&gt;state
-op_assign
-id|TASK_RUNNING
-suffix:semicolon
 id|c
 op_assign
 id|tty-&gt;driver
@@ -5772,10 +5760,6 @@ id|b
 comma
 id|nr
 )paren
-suffix:semicolon
-id|current-&gt;state
-op_assign
-id|TASK_INTERRUPTIBLE
 suffix:semicolon
 r_if
 c_cond

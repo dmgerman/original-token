@@ -1,6 +1,5 @@
 multiline_comment|/*&n; * Network device driver for the GMAC ethernet controller on&n; * Apple G4 Powermacs.&n; *&n; * Copyright (C) 2000 Paul Mackerras &amp; Ben. Herrenschmidt&n; * &n; * portions based on sunhme.c by David S. Miller&n; * &n; */
 macro_line|#include &lt;linux/module.h&gt;
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/types.h&gt;

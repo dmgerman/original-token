@@ -1726,4 +1726,16 @@ c_func
 id|usb_rio_cleanup
 )paren
 suffix:semicolon
+id|MODULE_AUTHOR
+c_func
+(paren
+l_string|&quot;Cesar Miquel &lt;miquel@df.uba.ar&gt;&quot;
+)paren
+suffix:semicolon
+id|MODULE_DESCRIPTION
+c_func
+(paren
+l_string|&quot;USB Rio 500 driver&quot;
+)paren
+suffix:semicolon
 eof

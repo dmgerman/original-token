@@ -166,7 +166,7 @@ mdefine_line|#define save_flags(x) ((x)=__global_save_flags())
 DECL|macro|restore_flags
 mdefine_line|#define restore_flags(x) __global_restore_flags(x)
 DECL|macro|save_and_cli
-mdefine_line|#define save_and_cli(x) do { save_flags(flags); cli(); } while(0)
+mdefine_line|#define save_and_cli(x) do { save_flags(x); cli(); } while(0)
 macro_line|#else
 DECL|macro|cli
 mdefine_line|#define cli() __cli()

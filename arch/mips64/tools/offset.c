@@ -636,6 +636,17 @@ suffix:semicolon
 id|offset
 c_func
 (paren
+l_string|&quot;#define TASK_PTRACE        &quot;
+comma
+r_struct
+id|task_struct
+comma
+id|ptrace
+)paren
+suffix:semicolon
+id|offset
+c_func
+(paren
 l_string|&quot;#define TASK_COUNTER       &quot;
 comma
 r_struct

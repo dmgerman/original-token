@@ -310,11 +310,11 @@ c_func
 id|_flush_page_to_ram
 )paren
 suffix:semicolon
-DECL|variable|_flush_cache_all
+DECL|variable|_flush_cache_l1
 id|EXPORT_SYMBOL
 c_func
 (paren
-id|_flush_cache_all
+id|_flush_cache_l1
 )paren
 suffix:semicolon
 macro_line|#ifndef CONFIG_COHERENT_IO

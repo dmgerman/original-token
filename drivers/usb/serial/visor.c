@@ -1725,4 +1725,16 @@ c_func
 id|visor_exit
 )paren
 suffix:semicolon
+id|MODULE_AUTHOR
+c_func
+(paren
+l_string|&quot;Greg Kroah-Hartman &lt;greg@kroah.com&gt;&quot;
+)paren
+suffix:semicolon
+id|MODULE_DESCRIPTION
+c_func
+(paren
+l_string|&quot;USB HandSpring Visor driver&quot;
+)paren
+suffix:semicolon
 eof

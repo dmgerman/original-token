@@ -6279,4 +6279,16 @@ c_func
 id|digi_exit
 )paren
 suffix:semicolon
+id|MODULE_AUTHOR
+c_func
+(paren
+l_string|&quot;Peter Berger &lt;pberger@brimson.com&gt;, Al Borchers &lt;borchers@steinerpoint.com&gt;&quot;
+)paren
+suffix:semicolon
+id|MODULE_DESCRIPTION
+c_func
+(paren
+l_string|&quot;Digi AccelePort USB-4 Serial Converter driver&quot;
+)paren
+suffix:semicolon
 eof

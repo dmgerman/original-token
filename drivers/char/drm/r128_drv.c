@@ -2212,11 +2212,6 @@ id|dev-&gt;count_lock
 )paren
 suffix:semicolon
 )brace
-id|unlock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 r_return
 id|retcode
 suffix:semicolon

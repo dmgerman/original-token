@@ -5773,7 +5773,7 @@ suffix:semicolon
 )brace
 macro_line|#endif
 multiline_comment|/*&n; * Some host adapters that are plugging into other subsystems register&n; * their hosts through the modules entrypoints, and don&squot;t use the big&n; * list in hosts.c.&n; */
-macro_line|#if defined(CONFIG_MODULES) || defined(CONFIG_BLK_DEV_IDESCSI) || defined(CONFIG_USB_STORAGE)&t;/* a big #ifdef block... */
+macro_line|#if defined(CONFIG_MODULES) || defined(CONFIG_BLK_DEV_IDESCSI) || defined(CONFIG_USB_STORAGE) || defined(CONFIG_USB_MICROTEK)&t;/* a big #ifdef block... */
 multiline_comment|/*&n; * This entry point should be called by a loadable module if it is trying&n; * add a low level scsi driver to the system.&n; */
 DECL|function|scsi_register_host
 r_static

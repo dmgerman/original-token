@@ -10,6 +10,12 @@ c_func
 l_string|&quot;Vojtech Pavlik &lt;vojtech@suse.cz&gt;&quot;
 )paren
 suffix:semicolon
+id|MODULE_DESCRIPTION
+c_func
+(paren
+l_string|&quot;Input layer module&quot;
+)paren
+suffix:semicolon
 DECL|variable|input_register_device
 id|EXPORT_SYMBOL
 c_func

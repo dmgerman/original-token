@@ -341,13 +341,14 @@ op_assign
 l_int|0
 suffix:semicolon
 r_int
-r_int
-id|flags
-suffix:semicolon
-r_int
 id|startnode
 comma
 id|tnode
+suffix:semicolon
+macro_line|#ifndef CONFIG_NUMA
+r_int
+r_int
+id|flags
 suffix:semicolon
 r_static
 r_int
@@ -355,6 +356,7 @@ id|nextnid
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -365,6 +367,15 @@ id|MAX_ORDER
 r_return
 l_int|NULL
 suffix:semicolon
+macro_line|#ifdef CONFIG_NUMA
+id|tnode
+op_assign
+id|numa_node_id
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#else
 id|spin_lock_irqsave
 c_func
 (paren
@@ -401,6 +412,7 @@ comma
 id|flags
 )paren
 suffix:semicolon
+macro_line|#endif
 id|startnode
 op_assign
 id|tnode

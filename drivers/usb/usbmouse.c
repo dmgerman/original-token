@@ -12,6 +12,12 @@ c_func
 l_string|&quot;Vojtech Pavlik &lt;vojtech@suse.cz&gt;&quot;
 )paren
 suffix:semicolon
+id|MODULE_DESCRIPTION
+c_func
+(paren
+l_string|&quot;USB HID Boot Protocol mouse driver&quot;
+)paren
+suffix:semicolon
 DECL|struct|usb_mouse
 r_struct
 id|usb_mouse

@@ -719,6 +719,42 @@ id|legsup
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * VIA VT82C598 has its device ID settable and many BIOSes&n; * set it to the ID of VT82C597 for backward compatibility.&n; * We need to switch it off to be able to recognize the real&n; * type of the chip.&n; */
+DECL|function|quirk_vt82c598_id
+r_static
+r_void
+id|__init
+id|quirk_vt82c598_id
+c_func
+(paren
+r_struct
+id|pci_dev
+op_star
+id|dev
+)paren
+(brace
+id|pci_write_config_byte
+c_func
+(paren
+id|dev
+comma
+l_int|0xfc
+comma
+l_int|0
+)paren
+suffix:semicolon
+id|pci_read_config_word
+c_func
+(paren
+id|dev
+comma
+id|PCI_DEVICE_ID
+comma
+op_amp
+id|dev-&gt;device
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/*&n; *  The main table of quirks.&n; */
 DECL|variable|__initdata
 r_static
@@ -750,7 +786,7 @@ comma
 id|quirk_passive_release
 )brace
 comma
-multiline_comment|/*&n;&t; * Its not totally clear which chipsets are the problematic ones&n;&t; * We know 82C586 and 82C596 variants are affected.&n;&t; *&n;&t; */
+multiline_comment|/*&n;&t; * Its not totally clear which chipsets are the problematic ones&n;&t; * We know 82C586 and 82C596 variants are affected.&n;&t; */
 (brace
 id|PCI_FIXUP_FINAL
 comma
@@ -919,6 +955,16 @@ comma
 id|PCI_DEVICE_ID_SI_496
 comma
 id|quirk_nopcipci
+)brace
+comma
+(brace
+id|PCI_FIXUP_HEADER
+comma
+id|PCI_VENDOR_ID_VIA
+comma
+id|PCI_DEVICE_ID_VIA_82C597_0
+comma
+id|quirk_vt82c598_id
 )brace
 comma
 (brace

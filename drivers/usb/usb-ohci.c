@@ -29,6 +29,10 @@ macro_line|#ifdef CONFIG_PMAC_PBOOK
 multiline_comment|/* All this PMAC_PBOOK stuff should disappear when those&n; * platforms fully support the 2.4 kernel PCI APIs.&n; */
 macro_line|#include &lt;linux/adb.h&gt;
 macro_line|#include &lt;linux/pmu.h&gt;
+macro_line|#ifndef CONFIG_PM
+DECL|macro|CONFIG_PM
+mdefine_line|#define CONFIG_PM
+macro_line|#endif
 macro_line|#endif
 multiline_comment|/* For initializing controller (mask in an HCFS mode too) */
 DECL|macro|OHCI_CONTROL_INIT
@@ -1854,11 +1858,11 @@ c_cond
 (paren
 id|urb-&gt;hcpriv
 )paren
+multiline_comment|/* urb already in use */
 r_return
 op_minus
 id|EINVAL
 suffix:semicolon
-multiline_comment|/* urb already in use */
 singleline_comment|//&t;if(usb_endpoint_halted (urb-&gt;dev, usb_pipeendpoint (pipe), usb_pipeout (pipe))) 
 singleline_comment|//&t;&t;return -EPIPE;
 id|usb_inc_dev_use
@@ -1911,10 +1915,17 @@ c_cond
 (paren
 id|ohci-&gt;disabled
 )paren
+(brace
+id|usb_dec_dev_use
+(paren
+id|urb-&gt;dev
+)paren
+suffix:semicolon
 r_return
 op_minus
 id|ESHUTDOWN
 suffix:semicolon
+)brace
 multiline_comment|/* every endpoint has a ed, locate and fill it */
 r_if
 c_cond
@@ -8229,6 +8240,11 @@ id|urb-&gt;complete
 id|urb
 )paren
 suffix:semicolon
+id|usb_dec_dev_use
+(paren
+id|urb-&gt;dev
+)paren
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -8835,7 +8851,15 @@ id|ohci-&gt;ohci_dev-&gt;slot_name
 )paren
 suffix:semicolon
 singleline_comment|// e.g. due to PCI Master/Target Abort
-macro_line|#ifndef&t;DEBUG
+macro_line|#ifdef&t;DEBUG
+id|ohci_dump
+(paren
+id|ohci
+comma
+l_int|1
+)paren
+suffix:semicolon
+macro_line|#else
 singleline_comment|// FIXME: be optimistic, hope that bug won&squot;t repeat often.
 singleline_comment|// Make some non-interrupt context restart the controller.
 singleline_comment|// Count and limit the retries though; either hardware or
@@ -8983,6 +9007,7 @@ op_amp
 id|regs-&gt;intrenable
 )paren
 suffix:semicolon
+multiline_comment|/* FIXME:  check URB timeouts */
 )brace
 multiline_comment|/*-------------------------------------------------------------------------*/
 multiline_comment|/* allocate OHCI */
@@ -9013,11 +9038,13 @@ op_assign
 id|ohci_t
 op_star
 )paren
-id|__get_free_pages
+id|kmalloc
 (paren
-id|GFP_KERNEL
+r_sizeof
+op_star
+id|ohci
 comma
-l_int|1
+id|GFP_KERNEL
 )paren
 suffix:semicolon
 r_if
@@ -9065,15 +9092,9 @@ op_logical_neg
 id|bus
 )paren
 (brace
-id|free_pages
+id|kfree
 (paren
-(paren
-r_int
-r_int
-)paren
 id|ohci
-comma
-l_int|1
 )paren
 suffix:semicolon
 r_return
@@ -9195,15 +9216,9 @@ id|iounmap
 id|ohci-&gt;regs
 )paren
 suffix:semicolon
-id|free_pages
+id|kfree
 (paren
-(paren
-r_int
-r_int
-)paren
 id|ohci
-comma
-l_int|1
 )paren
 suffix:semicolon
 )brace
@@ -9639,6 +9654,8 @@ id|id
 r_int
 r_int
 id|mem_resource
+comma
+id|mem_len
 suffix:semicolon
 id|u8
 id|latency
@@ -9664,6 +9681,78 @@ r_return
 op_minus
 id|ENODEV
 suffix:semicolon
+multiline_comment|/* we read its hardware registers as memory */
+id|mem_resource
+op_assign
+id|pci_resource_start
+c_func
+(paren
+id|dev
+comma
+l_int|0
+)paren
+suffix:semicolon
+id|mem_len
+op_assign
+id|pci_resource_len
+c_func
+(paren
+id|dev
+comma
+l_int|0
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|request_mem_region
+(paren
+id|mem_resource
+comma
+id|mem_len
+comma
+id|ohci_pci_driver.name
+)paren
+)paren
+(brace
+id|dbg
+(paren
+l_string|&quot;controller already in use&quot;
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|EBUSY
+suffix:semicolon
+)brace
+id|mem_base
+op_assign
+id|ioremap_nocache
+(paren
+id|mem_resource
+comma
+id|mem_len
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|mem_base
+)paren
+(brace
+id|err
+c_func
+(paren
+l_string|&quot;Error mapping OHCI memory&quot;
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|EFAULT
+suffix:semicolon
+)brace
 multiline_comment|/* controller writes into our memory */
 id|pci_set_master
 (paren
@@ -9723,45 +9812,6 @@ id|limit
 )paren
 suffix:semicolon
 )brace
-)brace
-multiline_comment|/* we read its hardware registers as memory */
-id|mem_resource
-op_assign
-id|pci_resource_start
-c_func
-(paren
-id|dev
-comma
-l_int|0
-)paren
-suffix:semicolon
-multiline_comment|/* request_mem_region ... */
-id|mem_base
-op_assign
-id|ioremap_nocache
-(paren
-id|mem_resource
-comma
-l_int|4096
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|mem_base
-)paren
-(brace
-id|err
-c_func
-(paren
-l_string|&quot;Error mapping OHCI memory&quot;
-)paren
-suffix:semicolon
-r_return
-op_minus
-id|EFAULT
-suffix:semicolon
 )brace
 r_return
 id|hc_found_ohci
@@ -9876,6 +9926,23 @@ suffix:semicolon
 id|hc_release_ohci
 (paren
 id|ohci
+)paren
+suffix:semicolon
+id|release_mem_region
+(paren
+id|pci_resource_start
+(paren
+id|dev
+comma
+l_int|0
+)paren
+comma
+id|pci_resource_len
+(paren
+id|dev
+comma
+l_int|0
+)paren
 )paren
 suffix:semicolon
 )brace
@@ -10160,8 +10227,8 @@ DECL|variable|ohci_pci_ids
 r_static
 r_const
 r_struct
-id|__devinitdata
 id|pci_device_id
+id|__devinitdata
 id|ohci_pci_ids
 (braket
 )braket
@@ -10434,6 +10501,11 @@ id|ohci_hcd_cleanup
 )paren
 suffix:semicolon
 macro_line|#endif /* MODULE */
+id|MODULE_AUTHOR
+(paren
+l_string|&quot;Roman Weissgaerber &lt;weissg@vienna.at&gt;&quot;
+)paren
+suffix:semicolon
 id|MODULE_DESCRIPTION
 (paren
 l_string|&quot;USB OHCI Host Controller Driver&quot;

@@ -211,10 +211,6 @@ op_amp
 id|init_mm
 )paren
 suffix:semicolon
-id|global_irq_holder
-op_assign
-l_int|0
-suffix:semicolon
 id|current-&gt;processor
 op_assign
 l_int|0

@@ -1320,6 +1320,7 @@ l_int|8
 l_string|&quot;i&quot;
 )paren
 suffix:semicolon
+macro_line|#endif
 DECL|function|ace_module_cleanup
 r_void
 id|__exit
@@ -1723,7 +1724,6 @@ id|next
 suffix:semicolon
 )brace
 )brace
-macro_line|#endif
 DECL|function|ace_module_init
 r_int
 id|__init

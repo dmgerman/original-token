@@ -3028,4 +3028,16 @@ c_func
 id|ftdi_sio_exit
 )paren
 suffix:semicolon
+id|MODULE_AUTHOR
+c_func
+(paren
+l_string|&quot;Greg Kroah-Hartman &lt;greg@kroah.com&gt;, Bill Ryder &lt;bryder@sgi.com&gt;&quot;
+)paren
+suffix:semicolon
+id|MODULE_DESCRIPTION
+c_func
+(paren
+l_string|&quot;USB FTDI SIO driver&quot;
+)paren
+suffix:semicolon
 eof
