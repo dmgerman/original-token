@@ -1,6 +1,7 @@
 macro_line|#ifndef _NFS_FS_SB
 DECL|macro|_NFS_FS_SB
 mdefine_line|#define _NFS_FS_SB
+macro_line|#include &lt;linux/rpcsock.h&gt;
 macro_line|#include &lt;linux/nfs.h&gt;
 DECL|struct|nfs_server
 r_struct
@@ -11,6 +12,12 @@ r_struct
 id|file
 op_star
 id|file
+suffix:semicolon
+DECL|member|rsock
+r_struct
+id|rpc_sock
+op_star
+id|rsock
 suffix:semicolon
 DECL|member|toaddr
 r_struct

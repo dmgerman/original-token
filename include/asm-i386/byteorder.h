@@ -66,6 +66,7 @@ r_int
 )paren
 suffix:semicolon
 r_extern
+id|__inline__
 r_int
 r_int
 r_int
@@ -78,6 +79,7 @@ r_int
 )paren
 suffix:semicolon
 r_extern
+id|__inline__
 r_int
 r_int
 r_int
@@ -90,6 +92,7 @@ r_int
 )paren
 suffix:semicolon
 r_extern
+id|__inline__
 r_int
 r_int
 r_int
@@ -102,6 +105,7 @@ r_int
 )paren
 suffix:semicolon
 r_extern
+id|__inline__
 r_int
 r_int
 r_int

@@ -215,6 +215,8 @@ suffix:semicolon
 suffix:semicolon
 macro_line|#ifdef __KERNEL__
 multiline_comment|/*&n; * This is our internal structure for each serial port&squot;s state.&n; * &n; * Many fields are paralleled by the structure used by the serial_struct&n; * structure.&n; *&n; * For definitions of the flags field, see tty.h&n; */
+macro_line|#include &lt;linux/termios.h&gt;
+macro_line|#include &lt;linux/tqueue.h&gt;
 DECL|struct|async_struct
 r_struct
 id|async_struct

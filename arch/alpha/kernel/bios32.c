@@ -899,7 +899,7 @@ id|devfn
 (brace
 r_int
 r_int
-id|current
+id|curr
 op_assign
 l_int|0
 suffix:semicolon
@@ -937,7 +937,7 @@ id|device_id
 r_if
 c_cond
 (paren
-id|current
+id|curr
 op_eq
 id|index
 )paren
@@ -957,7 +957,7 @@ id|PCIBIOS_SUCCESSFUL
 suffix:semicolon
 )brace
 op_increment
-id|current
+id|curr
 suffix:semicolon
 )brace
 )brace
@@ -991,7 +991,7 @@ id|devfn
 (brace
 r_int
 r_int
-id|current
+id|curr
 op_assign
 l_int|0
 suffix:semicolon
@@ -1027,7 +1027,7 @@ id|class_code
 r_if
 c_cond
 (paren
-id|current
+id|curr
 op_eq
 id|index
 )paren
@@ -1047,7 +1047,7 @@ id|PCIBIOS_SUCCESSFUL
 suffix:semicolon
 )brace
 op_increment
-id|current
+id|curr
 suffix:semicolon
 )brace
 )brace

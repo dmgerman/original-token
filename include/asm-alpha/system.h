@@ -27,6 +27,45 @@ mdefine_line|#define START_ADDR&t;0xfffffc0000310000
 DECL|macro|START_SIZE
 mdefine_line|#define START_SIZE&t;(2*1024*1024)
 macro_line|#ifndef __ASSEMBLY__
+multiline_comment|/*&n; * This is the logout header that should be common to all platforms&n; * (assuming they are running OSF/1 PALcode, I guess).&n; */
+DECL|struct|el_common
+r_struct
+id|el_common
+(brace
+DECL|member|size
+r_int
+r_int
+id|size
+suffix:semicolon
+multiline_comment|/* size in bytes of logout area */
+DECL|member|sbz1
+r_int
+id|sbz1
+suffix:colon
+l_int|31
+suffix:semicolon
+multiline_comment|/* should be zero */
+DECL|member|retry
+r_char
+id|retry
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* retry flag */
+DECL|member|proc_offset
+r_int
+r_int
+id|proc_offset
+suffix:semicolon
+multiline_comment|/* processor-specific offset */
+DECL|member|sys_offset
+r_int
+r_int
+id|sys_offset
+suffix:semicolon
+multiline_comment|/* system-specific offset */
+)brace
+suffix:semicolon
 r_extern
 r_void
 id|wrent

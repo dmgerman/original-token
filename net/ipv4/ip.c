@@ -5405,6 +5405,12 @@ op_star
 )paren
 id|skb-&gt;proto_priv
 suffix:semicolon
+r_int
+id|encap
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* Encap length */
 macro_line|#ifdef CONFIG_IP_FIREWALL
 r_int
 id|fw_res
@@ -5422,12 +5428,6 @@ id|skb
 suffix:semicolon
 multiline_comment|/* So we can remember if the masquerader did some swaps */
 macro_line|#endif
-r_int
-id|encap
-op_assign
-l_int|0
-suffix:semicolon
-multiline_comment|/* Encap length */
 multiline_comment|/* &n;&t; *&t;See if we are allowed to forward this.&n; &t; *&t;Note: demasqueraded fragments are always &squot;back&squot;warded.&n;&t; */
 r_if
 c_cond

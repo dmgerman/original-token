@@ -985,6 +985,16 @@ op_star
 )paren
 suffix:semicolon
 r_extern
+r_void
+id|release_thread
+c_func
+(paren
+r_struct
+id|task_struct
+op_star
+)paren
+suffix:semicolon
+r_extern
 r_int
 id|do_execve
 c_func

@@ -78,6 +78,8 @@ mdefine_line|#define _IOC_WRITE&t;2U
 multiline_comment|/* used to decode ioctl numbers.. */
 DECL|macro|_IOC_DIR
 mdefine_line|#define _IOC_DIR(nr)&t;&t;(((nr) &gt;&gt; _IOC_DIRSHIFT) &amp; _IOC_DIRMASK)
+DECL|macro|_IOC_TYPE
+mdefine_line|#define _IOC_TYPE(nr)&t;&t;(((nr) &gt;&gt; _IOC_TYPESHIFT) &amp; _IOC_TYPEMASK)
 DECL|macro|_IOC_NR
 mdefine_line|#define _IOC_NR(nr)&t;&t;(((nr) &gt;&gt; _IOC_NRSHIFT) &amp; _IOC_NRMASK)
 DECL|macro|_IOC_SIZE

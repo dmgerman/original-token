@@ -1721,7 +1721,7 @@ id|regs
 )paren
 (brace
 r_struct
-id|el_common_logout_header
+id|el_common
 op_star
 id|mchk_header
 suffix:semicolon
@@ -1734,7 +1734,7 @@ id|mchk_header
 op_assign
 (paren
 r_struct
-id|el_common_logout_header
+id|el_common
 op_star
 )paren
 id|la_ptr
@@ -1749,7 +1749,7 @@ op_star
 (paren
 id|la_ptr
 op_plus
-id|mchk_header-&gt;elfl_sysoffset
+id|mchk_header-&gt;sys_offset
 )paren
 suffix:semicolon
 id|DBG
@@ -1772,11 +1772,11 @@ l_string|&quot;                     pc=0x%lx size=0x%x procoffset=0x%x sysoffset
 comma
 id|regs-&gt;pc
 comma
-id|mchk_header-&gt;elfl_size
+id|mchk_header-&gt;size
 comma
-id|mchk_header-&gt;elfl_procoffset
+id|mchk_header-&gt;proc_offset
 comma
-id|mchk_header-&gt;elfl_sysoffset
+id|mchk_header-&gt;sys_offset
 )paren
 )paren
 suffix:semicolon
@@ -1821,7 +1821,7 @@ l_int|0
 suffix:semicolon
 id|i
 OL
-id|mchk_header-&gt;elfl_size
+id|mchk_header-&gt;size
 op_div
 r_sizeof
 (paren

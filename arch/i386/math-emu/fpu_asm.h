@@ -1,9 +1,8 @@
-multiline_comment|/*---------------------------------------------------------------------------+&n; |  fpu_asm.h                                                                |&n; |                                                                           |&n; | Copyright (C) 1992    W. Metzenthen, 22 Parker St, Ormond, Vic 3163,      |&n; |                       Australia.  E-mail   billm@vaxc.cc.monash.edu.au    |&n; |                                                                           |&n; +---------------------------------------------------------------------------*/
+multiline_comment|/*---------------------------------------------------------------------------+&n; |  fpu_asm.h                                                                |&n; |                                                                           |&n; | Copyright (C) 1992,1995                                                   |&n; |                       W. Metzenthen, 22 Parker St, Ormond, Vic 3163,      |&n; |                       Australia.  E-mail billm@jacobi.maths.monash.edu.au |&n; |                                                                           |&n; +---------------------------------------------------------------------------*/
 macro_line|#ifndef _FPU_ASM_H_
 DECL|macro|_FPU_ASM_H_
 mdefine_line|#define _FPU_ASM_H_
 macro_line|#include &lt;linux/linkage.h&gt;
-macro_line|#include &quot;fpu_emu.h&quot;
 DECL|macro|EXCEPTION
 mdefine_line|#define&t;EXCEPTION&t;SYMBOL_NAME(exception)
 DECL|macro|PARAM1

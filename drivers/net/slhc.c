@@ -30,6 +30,9 @@ macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;net/checksum.h&gt;
 macro_line|#include &quot;slhc.h&quot;
+macro_line|#ifdef __alpha__
+macro_line|# include &lt;asm/unaligned.h&gt;
+macro_line|#endif
 DECL|variable|last_retran
 r_int
 id|last_retran
@@ -2386,6 +2389,32 @@ op_star
 l_int|4
 suffix:semicolon
 )brace
+macro_line|#ifdef __alpha__
+id|stw_u
+c_func
+(paren
+id|ip_fast_csum
+c_func
+(paren
+id|icp
+comma
+id|ip-&gt;ihl
+)paren
+comma
+op_amp
+(paren
+(paren
+r_struct
+id|iphdr
+op_star
+)paren
+id|icp
+)paren
+op_member_access_from_pointer
+id|check
+)paren
+suffix:semicolon
+macro_line|#else
 (paren
 (paren
 r_struct
@@ -2414,6 +2443,7 @@ op_member_access_from_pointer
 id|ihl
 )paren
 suffix:semicolon
+macro_line|#endif
 id|memcpy
 c_func
 (paren

@@ -982,9 +982,11 @@ c_cond
 (paren
 id|nicsr
 op_eq
+(paren
 id|TXD
 op_or
 id|RXD
+)paren
 )paren
 (brace
 multiline_comment|/*&n;    ** Check that the EEPROM is alive and well and not living on Pluto...&n;    */

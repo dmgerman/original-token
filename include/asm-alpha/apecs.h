@@ -1163,42 +1163,7 @@ id|mem_end
 )paren
 suffix:semicolon
 macro_line|#endif /* __KERNEL__ */
-multiline_comment|/*&n; * data structures for handling APECS machine checks&n; */
-DECL|struct|el_common_logout_header
-r_struct
-id|el_common_logout_header
-(brace
-DECL|member|elfl_size
-id|u_int
-id|elfl_size
-suffix:semicolon
-multiline_comment|/* size in bytes of logout area. */
-DECL|member|elfl_sbz1
-r_int
-id|elfl_sbz1
-suffix:colon
-l_int|31
-suffix:semicolon
-multiline_comment|/* Should be zero. */
-DECL|member|elfl_retry
-r_char
-id|elfl_retry
-suffix:colon
-l_int|1
-suffix:semicolon
-multiline_comment|/* Retry flag. */
-DECL|member|elfl_procoffset
-id|u_int
-id|elfl_procoffset
-suffix:semicolon
-multiline_comment|/* Processor-specific offset. */
-DECL|member|elfl_sysoffset
-id|u_int
-id|elfl_sysoffset
-suffix:semicolon
-multiline_comment|/* Offset of system-specific. */
-)brace
-suffix:semicolon
+multiline_comment|/*&n; * Data structure for handling APECS machine checks:&n; */
 DECL|struct|el_apecs_sysdata_mcheck
 r_struct
 id|el_apecs_sysdata_mcheck

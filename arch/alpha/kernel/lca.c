@@ -11,6 +11,36 @@ multiline_comment|/*&n; * BIOS32-style PCI interface:&n; */
 macro_line|#ifdef CONFIG_ALPHA_LCA
 DECL|macro|vulp
 mdefine_line|#define vulp&t;volatile unsigned long *
+multiline_comment|/*&n; * Machine check reasons.  Defined according to PALcode sources&n; * (osf.h and platform.h).&n; */
+DECL|macro|MCHK_K_TPERR
+mdefine_line|#define MCHK_K_TPERR&t;&t;0x0080
+DECL|macro|MCHK_K_TCPERR
+mdefine_line|#define MCHK_K_TCPERR&t;&t;0x0082
+DECL|macro|MCHK_K_HERR
+mdefine_line|#define MCHK_K_HERR&t;&t;0x0084
+DECL|macro|MCHK_K_ECC_C
+mdefine_line|#define MCHK_K_ECC_C&t;&t;0x0086
+DECL|macro|MCHK_K_ECC_NC
+mdefine_line|#define MCHK_K_ECC_NC&t;&t;0x0088
+DECL|macro|MCHK_K_UNKNOWN
+mdefine_line|#define MCHK_K_UNKNOWN&t;&t;0x008A
+DECL|macro|MCHK_K_CACKSOFT
+mdefine_line|#define MCHK_K_CACKSOFT&t;&t;0x008C
+DECL|macro|MCHK_K_BUGCHECK
+mdefine_line|#define MCHK_K_BUGCHECK&t;&t;0x008E
+DECL|macro|MCHK_K_OS_BUGCHECK
+mdefine_line|#define MCHK_K_OS_BUGCHECK&t;0x0090
+DECL|macro|MCHK_K_DCPERR
+mdefine_line|#define MCHK_K_DCPERR&t;&t;0x0092
+DECL|macro|MCHK_K_ICPERR
+mdefine_line|#define MCHK_K_ICPERR&t;&t;0x0094
+multiline_comment|/*&n; * Platform-specific machine-check reasons:&n; */
+DECL|macro|MCHK_K_SIO_SERR
+mdefine_line|#define MCHK_K_SIO_SERR&t;&t;0x204&t;/* all platforms so far */
+DECL|macro|MCHK_K_SIO_IOCHK
+mdefine_line|#define MCHK_K_SIO_IOCHK&t;0x206&t;/* all platforms so far */
+DECL|macro|MCHK_K_DCSR
+mdefine_line|#define MCHK_K_DCSR&t;&t;0x208&t;/* all but Noname */
 multiline_comment|/*&n; * Given a bus, device, and function number, compute resulting&n; * configuration space address and setup the LCA_IOC_CONF register&n; * accordingly.  It is therefore not safe to have concurrent&n; * invocations to configuration space access routines, but there&n; * really shouldn&squot;t be any need for this.&n; *&n; * Type 0:&n; *&n; *  3 3|3 3 2 2|2 2 2 2|2 2 2 2|1 1 1 1|1 1 1 1|1 1 &n; *  3 2|1 0 9 8|7 6 5 4|3 2 1 0|9 8 7 6|5 4 3 2|1 0 9 8|7 6 5 4|3 2 1 0&n; * +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+&n; * | | | | | | | | | | | | | | | | | | | | | | | |F|F|F|R|R|R|R|R|R|0|0|&n; * +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+&n; *&n; *&t;31:11&t;Device select bit.&n; * &t;10:8&t;Function number&n; * &t; 7:2&t;Register number&n; *&n; * Type 1:&n; *&n; *  3 3|3 3 2 2|2 2 2 2|2 2 2 2|1 1 1 1|1 1 1 1|1 1 &n; *  3 2|1 0 9 8|7 6 5 4|3 2 1 0|9 8 7 6|5 4 3 2|1 0 9 8|7 6 5 4|3 2 1 0&n; * +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+&n; * | | | | | | | | | | |B|B|B|B|B|B|B|B|D|D|D|D|D|F|F|F|R|R|R|R|R|R|0|1|&n; * +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+&n; *&n; *&t;31:24&t;reserved&n; *&t;23:16&t;bus number (8 bits = 128 possible buses)&n; *&t;15:11&t;Device number (5 bits)&n; *&t;10:8&t;function number&n; *&t; 7:2&t;register number&n; *  &n; * Notes:&n; *&t;The function number selects which function of a multi-function device &n; *&t;(e.g., scsi and ethernet).&n; * &n; *&t;The register selects a DWORD (32 bit) register offset.  Hence it&n; *&t;doesn&squot;t get shifted by 2 bits as we want to &quot;drop&quot; the bottom two&n; *&t;bits.&n; */
 DECL|function|mk_conf_addr
 r_static
@@ -1122,86 +1152,303 @@ op_star
 id|regs
 )paren
 (brace
-r_int
-r_int
-id|mces
+r_const
+r_char
+op_star
+id|reason
 suffix:semicolon
-id|mces
+r_union
+id|el_lca
+id|el
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;lca: machine check (la=0x%lx)&bslash;n&quot;
+comma
+id|la
+)paren
+suffix:semicolon
+id|el.c
 op_assign
+(paren
+r_struct
+id|el_common
+op_star
+)paren
+id|la
+suffix:semicolon
+multiline_comment|/*&n;&t; * The first quadword after the common header always seems to&n;&t; * be the machine check reason---don&squot;t know why this isn&squot;t&n;&t; * part of the common header instead.&n;&t; */
+r_switch
+c_cond
+(paren
+id|el.s-&gt;reason
+)paren
+(brace
+r_case
+id|MCHK_K_TPERR
+suffix:colon
+id|reason
+op_assign
+l_string|&quot;tag parity error&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|MCHK_K_TCPERR
+suffix:colon
+id|reason
+op_assign
+l_string|&quot;tag something parity error&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|MCHK_K_HERR
+suffix:colon
+id|reason
+op_assign
+l_string|&quot;access to non-existent memory&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|MCHK_K_ECC_C
+suffix:colon
+id|reason
+op_assign
+l_string|&quot;correctable ECC error&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|MCHK_K_ECC_NC
+suffix:colon
+id|reason
+op_assign
+l_string|&quot;non-correctable ECC error&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|MCHK_K_CACKSOFT
+suffix:colon
+id|reason
+op_assign
+l_string|&quot;MCHK_K_CACKSOFT&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+multiline_comment|/* what&squot;s this? */
+r_case
+id|MCHK_K_BUGCHECK
+suffix:colon
+id|reason
+op_assign
+l_string|&quot;illegal exception in PAL mode&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|MCHK_K_OS_BUGCHECK
+suffix:colon
+id|reason
+op_assign
+l_string|&quot;callsys in kernel mode&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|MCHK_K_DCPERR
+suffix:colon
+id|reason
+op_assign
+l_string|&quot;d-cache parity error&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|MCHK_K_ICPERR
+suffix:colon
+id|reason
+op_assign
+l_string|&quot;i-cache parity error&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|MCHK_K_SIO_SERR
+suffix:colon
+id|reason
+op_assign
+l_string|&quot;SIO SERR occurred on on PCI bus&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|MCHK_K_SIO_IOCHK
+suffix:colon
+id|reason
+op_assign
+l_string|&quot;SIO IOCHK occurred on ISA bus&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|MCHK_K_DCSR
+suffix:colon
+id|reason
+op_assign
+l_string|&quot;MCHK_K_DCSR&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|MCHK_K_UNKNOWN
+suffix:colon
+r_default
+suffix:colon
+id|reason
+op_assign
+l_string|&quot;reason for machine-check unknown&quot;
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
+r_switch
+c_cond
+(paren
+id|el.c-&gt;size
+)paren
+(brace
+r_case
+r_sizeof
+(paren
+r_struct
+id|el_lca_mcheck_short
+)paren
+suffix:colon
+id|printk
+c_func
+(paren
+l_string|&quot;  Reason: %s (short frame%s):&bslash;n&quot;
+comma
+id|reason
+comma
+id|el.h-&gt;retry
+ques
+c_cond
+l_string|&quot;, retryable&quot;
+suffix:colon
+l_string|&quot;&quot;
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;&bslash;tesr: %lx  ear: %lx&bslash;n&quot;
+comma
+id|el.s-&gt;esr
+comma
+id|el.s-&gt;ear
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;&bslash;tdc_stat: %lx  ioc_stat0: %lx  ioc_stat1: %lx&bslash;n&quot;
+comma
+id|el.s-&gt;dc_stat
+comma
+id|el.s-&gt;ioc_stat0
+comma
+id|el.s-&gt;ioc_stat1
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+r_sizeof
+(paren
+r_struct
+id|el_lca_mcheck_long
+)paren
+suffix:colon
+id|printk
+c_func
+(paren
+l_string|&quot;  Reason: %s (long frame%s):&bslash;n&quot;
+comma
+id|reason
+comma
+id|el.h-&gt;retry
+ques
+c_cond
+l_string|&quot;, retryable&quot;
+suffix:colon
+l_string|&quot;&quot;
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;&bslash;treason: %lx  exc_addr: %lx  dc_stat: %lx&bslash;n&quot;
+comma
+id|el.l-&gt;pt
+(braket
+l_int|0
+)braket
+comma
+id|el.l-&gt;exc_addr
+comma
+id|el.l-&gt;dc_stat
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;&bslash;tesr: %lx  ear: %lx  car: %lx&bslash;n&quot;
+comma
+id|el.l-&gt;esr
+comma
+id|el.l-&gt;ear
+comma
+id|el.l-&gt;car
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;&bslash;tioc_stat0: %lx  ioc_stat1: %lx&bslash;n&quot;
+comma
+id|el.l-&gt;ioc_stat0
+comma
+id|el.l-&gt;ioc_stat1
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_default
+suffix:colon
+id|printk
+c_func
+(paren
+l_string|&quot;  Unknown errorlog size %d&bslash;n&quot;
+comma
+id|el.c-&gt;size
+)paren
+suffix:semicolon
+)brace
+id|wrmces
+c_func
+(paren
 id|rdmces
 c_func
 (paren
 )paren
-suffix:semicolon
-id|wrmces
-c_func
-(paren
-id|mces
 )paren
 suffix:semicolon
 multiline_comment|/* reset machine check asap */
-id|printk
-c_func
-(paren
-l_string|&quot;Machine check (la=0x%lx,mces=0x%lx)&bslash;n&quot;
-comma
-id|la
-comma
-id|mces
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;esr=%lx, ear=%lx, ioc_stat0=%lx, ioc_stat1=%lx&bslash;n&quot;
-comma
-op_star
-(paren
-r_int
-r_int
-op_star
-)paren
-id|LCA_MEM_ESR
-comma
-op_star
-(paren
-r_int
-r_int
-op_star
-)paren
-id|LCA_MEM_EAR
-comma
-op_star
-(paren
-r_int
-r_int
-op_star
-)paren
-id|LCA_IOC_STAT0
-comma
-op_star
-(paren
-r_int
-r_int
-op_star
-)paren
-id|LCA_IOC_STAT1
-)paren
-suffix:semicolon
-macro_line|#ifdef CONFIG_ALPHA_NONAME
-id|printk
-c_func
-(paren
-l_string|&quot;NMMI status &amp; control (0x61)=%02x&bslash;n&quot;
-comma
-id|inb
-c_func
-(paren
-l_int|0x61
-)paren
-)paren
-suffix:semicolon
-macro_line|#endif
 )brace
 macro_line|#endif /* CONFIG_ALPHA_LCA */
 eof

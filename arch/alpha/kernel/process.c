@@ -258,6 +258,18 @@ r_void
 )paren
 (brace
 )brace
+DECL|function|release_thread
+r_void
+id|release_thread
+c_func
+(paren
+r_struct
+id|task_struct
+op_star
+id|dead_task
+)paren
+(brace
+)brace
 multiline_comment|/*&n; * &quot;alpha_clone()&quot;.. By the time we get here, the&n; * non-volatile registers have also been saved on the&n; * stack. We do some ugly pointer stuff here.. (see&n; * also copy_thread)&n; *&n; * Notice that &quot;fork()&quot; is implemented in terms of clone,&n; * with parameters (SIGCHLD, 0).&n; */
 DECL|function|alpha_clone
 r_int

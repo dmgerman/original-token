@@ -165,6 +165,19 @@ r_void
 (brace
 multiline_comment|/*&n;&t; * Nothing to do&n;&t; */
 )brace
+DECL|function|release_thread
+r_void
+id|release_thread
+c_func
+(paren
+r_struct
+id|task_struct
+op_star
+id|dead_task
+)paren
+(brace
+multiline_comment|/*&n;&t; * Nothing to do&n;&t; */
+)brace
 DECL|macro|IS_CLONE
 mdefine_line|#define IS_CLONE (regs-&gt;orig_reg2 == __NR_clone)
 DECL|function|copy_thread

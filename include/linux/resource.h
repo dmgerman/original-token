@@ -1,6 +1,7 @@
 macro_line|#ifndef _LINUX_RESOURCE_H
 DECL|macro|_LINUX_RESOURCE_H
 mdefine_line|#define _LINUX_RESOURCE_H
+macro_line|#include &lt;linux/time.h&gt;
 multiline_comment|/*&n; * Resource control/accounting header file for linux&n; */
 multiline_comment|/*&n; * Definition of struct rusage taken from BSD 4.3 Reno&n; * &n; * We don&squot;t support all of these yet, but we might as well have them....&n; * Otherwise, each time we add new items, programs which depend on this&n; * structure will lose.  This reduces the chances of that happening.&n; */
 DECL|macro|RUSAGE_SELF

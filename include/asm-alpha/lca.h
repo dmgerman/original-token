@@ -4,6 +4,7 @@ mdefine_line|#define __ALPHA_LCA__H__
 multiline_comment|/*&n; * Low Cost Alpha (LCA) definitions (these apply to 21066 and 21068,&n; * for example).&n; *&n; * This file is based on:&n; *&n; *&t;DECchip 21066 and DECchip 21068 Alpha AXP Microprocessors&n; *&t;Hardware Reference Manual; Digital Equipment Corp.; May 1994;&n; *&t;Maynard, MA; Order Number: EC-N2681-71.&n; */
 multiline_comment|/*&n; * NOTE: The LCA uses a Host Address Extension (HAE) register to access&n; *&t; PCI addresses that are beyond the first 27 bits of address&n; *&t; space.  Updating the HAE requires an external cycle (and&n; *&t; a memory barrier), which tends to be slow.  Instead of updating&n; *&t; it on each sparse memory access, we keep the current HAE value&n; *&t; cached in variable cache_hae.  Only if the cached HAE differs&n; *&t; from the desired HAE value do we actually updated HAE register.&n; *&t; The HAE register is preserved by the interrupt handler entry/exit&n; *&t; code, so this scheme works even in the presence of interrupts.&n; *&n; * Dense memory space doesn&squot;t require the HAE, but is restricted to&n; * aligned 32 and 64 bit accesses.  Special Cycle and Interrupt&n; * Acknowledge cycles may also require the use of the HAE.  The LCA&n; * limits I/O address space to the bottom 24 bits of address space,&n; * but this easily covers the 16 bit ISA I/O address space.&n; */
 multiline_comment|/*&n; * NOTE 2! The memory operations do not set any memory barriers, as&n; * it&squot;s not needed for cases like a frame buffer that is essentially&n; * memory-like.  You need to do them by hand if the operations depend&n; * on ordering.&n; *&n; * Similarly, the port I/O operations do a &quot;mb&quot; only after a write&n; * operation: if an mb is needed before (as in the case of doing&n; * memory mapped I/O first, and then a port I/O operation to the same&n; * device), it needs to be done by hand.&n; *&n; * After the above has bitten me 100 times, I&squot;ll give up and just do&n; * the mb all the time, but right now I&squot;m hoping this will work out.&n; * Avoiding mb&squot;s may potentially be a noticeable speed improvement,&n; * but I can&squot;t honestly say I&squot;ve tested it.&n; *&n; * Handling interrupts that need to do mb&squot;s to synchronize to&n; * non-interrupts is another fun race area.  Don&squot;t do it (because if&n; * you do, I&squot;ll have to do *everything* with interrupts disabled,&n; * ugh).&n; */
+macro_line|#include &lt;asm/system.h&gt;
 DECL|macro|LCA_DMA_WIN_BASE
 mdefine_line|#define LCA_DMA_WIN_BASE&t;(1024*1024*1024)
 DECL|macro|LCA_DMA_WIN_SIZE
@@ -1126,6 +1127,184 @@ id|mem_end
 )paren
 suffix:semicolon
 macro_line|#endif /* __KERNEL__ */
+multiline_comment|/*&n; * Data structure for handling LCA machine checks.  Correctable errors&n; * result in a short logout frame, uncorrectably ones in a long one.&n; */
+DECL|struct|el_lca_mcheck_short
+r_struct
+id|el_lca_mcheck_short
+(brace
+DECL|member|h
+r_struct
+id|el_common
+id|h
+suffix:semicolon
+multiline_comment|/* common logout header */
+DECL|member|reason
+r_int
+r_int
+id|reason
+suffix:semicolon
+multiline_comment|/* reason for machine check */
+DECL|member|esr
+r_int
+r_int
+id|esr
+suffix:semicolon
+multiline_comment|/* error-status register */
+DECL|member|ear
+r_int
+r_int
+id|ear
+suffix:semicolon
+multiline_comment|/* error-address register */
+DECL|member|dc_stat
+r_int
+r_int
+id|dc_stat
+suffix:semicolon
+multiline_comment|/* dcache status register */
+DECL|member|ioc_stat0
+r_int
+r_int
+id|ioc_stat0
+suffix:semicolon
+multiline_comment|/* I/O controller status register 0 */
+DECL|member|ioc_stat1
+r_int
+r_int
+id|ioc_stat1
+suffix:semicolon
+multiline_comment|/* I/O controller status register 1 */
+)brace
+suffix:semicolon
+DECL|struct|el_lca_mcheck_long
+r_struct
+id|el_lca_mcheck_long
+(brace
+DECL|member|h
+r_struct
+id|el_common
+id|h
+suffix:semicolon
+multiline_comment|/* common logout header */
+DECL|member|pt
+r_int
+r_int
+id|pt
+(braket
+l_int|32
+)braket
+suffix:semicolon
+multiline_comment|/* PAL temps (pt[0] is reason) */
+DECL|member|exc_addr
+r_int
+r_int
+id|exc_addr
+suffix:semicolon
+multiline_comment|/* exception address */
+DECL|member|pal_base
+r_int
+r_int
+id|pal_base
+suffix:semicolon
+multiline_comment|/* PALcode base address */
+DECL|member|hier
+r_int
+r_int
+id|hier
+suffix:semicolon
+multiline_comment|/* hw interrupt enable */
+DECL|member|hirr
+r_int
+r_int
+id|hirr
+suffix:semicolon
+multiline_comment|/* hw interrupt request */
+DECL|member|mm_csr
+r_int
+r_int
+id|mm_csr
+suffix:semicolon
+multiline_comment|/* MMU control &amp; status */
+DECL|member|dc_stat
+r_int
+r_int
+id|dc_stat
+suffix:semicolon
+multiline_comment|/* data cache status */
+DECL|member|dc_addr
+r_int
+r_int
+id|dc_addr
+suffix:semicolon
+multiline_comment|/* data cache addr register */
+DECL|member|abox_ctl
+r_int
+r_int
+id|abox_ctl
+suffix:semicolon
+multiline_comment|/* address box control register */
+DECL|member|esr
+r_int
+r_int
+id|esr
+suffix:semicolon
+multiline_comment|/* error status register */
+DECL|member|ear
+r_int
+r_int
+id|ear
+suffix:semicolon
+multiline_comment|/* error address register */
+DECL|member|car
+r_int
+r_int
+id|car
+suffix:semicolon
+multiline_comment|/* cache control register */
+DECL|member|ioc_stat0
+r_int
+r_int
+id|ioc_stat0
+suffix:semicolon
+multiline_comment|/* I/O controller status register 0 */
+DECL|member|ioc_stat1
+r_int
+r_int
+id|ioc_stat1
+suffix:semicolon
+multiline_comment|/* I/O controller status register 1 */
+DECL|member|va
+r_int
+r_int
+id|va
+suffix:semicolon
+multiline_comment|/* virtual address register */
+)brace
+suffix:semicolon
+DECL|union|el_lca
+r_union
+id|el_lca
+(brace
+DECL|member|c
+r_struct
+id|el_common
+op_star
+id|c
+suffix:semicolon
+DECL|member|l
+r_struct
+id|el_lca_mcheck_long
+op_star
+id|l
+suffix:semicolon
+DECL|member|s
+r_struct
+id|el_lca_mcheck_short
+op_star
+id|s
+suffix:semicolon
+)brace
+suffix:semicolon
 DECL|macro|RTC_PORT
 mdefine_line|#define RTC_PORT(x)&t;(0x70 + (x))
 DECL|macro|RTC_ADDR

@@ -542,6 +542,7 @@ l_int|4
 op_ne
 l_int|0x0000
 op_logical_or
+(paren
 id|read_eeprom
 c_func
 (paren
@@ -551,6 +552,7 @@ l_int|5
 )paren
 op_amp
 l_int|0xff00
+)paren
 op_ne
 l_int|0xF400
 )paren

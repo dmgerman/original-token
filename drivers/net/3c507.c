@@ -3031,9 +3031,11 @@ id|rx_head
 op_plus
 l_int|22
 op_logical_or
+(paren
 id|pkt_len
 op_amp
 l_int|0xC000
+)paren
 op_ne
 l_int|0xC000
 )paren

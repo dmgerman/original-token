@@ -1879,9 +1879,11 @@ multiline_comment|/* ...and the catch-all. */
 r_if
 c_cond
 (paren
+(paren
 id|tx_status
 op_or
 l_int|0x0760
+)paren
 op_ne
 l_int|0x0760
 )paren

@@ -497,6 +497,12 @@ c_func
 id|p
 )paren
 suffix:semicolon
+id|release_thread
+c_func
+(paren
+id|p
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren

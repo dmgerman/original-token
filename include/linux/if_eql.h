@@ -2,6 +2,7 @@ multiline_comment|/*&n; * Equalizer Load-balancer for serial network interfaces.
 macro_line|#ifndef _LINUX_IF_EQL_H
 DECL|macro|_LINUX_IF_EQL_H
 mdefine_line|#define _LINUX_IF_EQL_H
+macro_line|#include &lt;linux/timer.h&gt;
 DECL|macro|EQL_DEFAULT_SLAVE_PRIORITY
 mdefine_line|#define EQL_DEFAULT_SLAVE_PRIORITY 28800
 DECL|macro|EQL_DEFAULT_MAX_SLAVES

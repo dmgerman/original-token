@@ -147,6 +147,12 @@ c_func
 id|sb-&gt;u.nfs_sb.s_server.file
 )paren
 suffix:semicolon
+id|rpc_closesock
+c_func
+(paren
+id|sb-&gt;u.nfs_sb.s_server.rsock
+)paren
+suffix:semicolon
 id|lock_super
 c_func
 (paren
@@ -601,6 +607,34 @@ id|server-&gt;toaddr
 suffix:semicolon
 )brace
 multiline_comment|/* End of JSP NFS patch */
+r_if
+c_cond
+(paren
+(paren
+id|server-&gt;rsock
+op_assign
+id|rpc_makesock
+c_func
+(paren
+id|filp
+)paren
+)paren
+op_eq
+l_int|NULL
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;NFS: cannot create RPC socket.&bslash;n&quot;
+)paren
+suffix:semicolon
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
+r_return
+l_int|NULL
+suffix:semicolon
+)brace
 id|sb-&gt;u.nfs_sb.s_root
 op_assign
 id|data-&gt;root
