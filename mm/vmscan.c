@@ -415,6 +415,23 @@ id|page
 r_goto
 id|out_swap_free
 suffix:semicolon
+id|swap_duplicate
+c_func
+(paren
+id|entry
+)paren
+suffix:semicolon
+multiline_comment|/* One for the process, one for the swap cache */
+multiline_comment|/* This will also lock the page */
+id|add_to_swap_cache
+c_func
+(paren
+id|page
+comma
+id|entry
+)paren
+suffix:semicolon
+multiline_comment|/* Put the swap entry into the pte after the page is in swapcache */
 id|vma-&gt;vm_mm-&gt;rss
 op_decrement
 suffix:semicolon
@@ -430,12 +447,6 @@ id|entry
 )paren
 )paren
 suffix:semicolon
-id|vmlist_access_unlock
-c_func
-(paren
-id|vma-&gt;vm_mm
-)paren
-suffix:semicolon
 id|flush_tlb_page
 c_func
 (paren
@@ -444,20 +455,10 @@ comma
 id|address
 )paren
 suffix:semicolon
-id|swap_duplicate
+id|vmlist_access_unlock
 c_func
 (paren
-id|entry
-)paren
-suffix:semicolon
-multiline_comment|/* One for the process, one for the swap cache */
-multiline_comment|/* This will also lock the page */
-id|add_to_swap_cache
-c_func
-(paren
-id|page
-comma
-id|entry
+id|vma-&gt;vm_mm
 )paren
 suffix:semicolon
 multiline_comment|/* OK, do a physical asynchronous write to swap.  */

@@ -3234,16 +3234,10 @@ comma
 multiline_comment|/* writepage */
 l_int|NULL
 comma
-multiline_comment|/* flushpage */
-l_int|NULL
-comma
 multiline_comment|/* truncate */
 l_int|NULL
 comma
 multiline_comment|/* permission */
-l_int|NULL
-comma
-multiline_comment|/* smap */
 l_int|NULL
 comma
 multiline_comment|/* revalidate */

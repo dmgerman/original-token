@@ -2148,7 +2148,7 @@ r_int
 r_int
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * the order of these functions within the VFS template has been&n;&t; * changed because SMP locking has changed: from now on all get_block,&n;&t; * readpage, writepage and flushpage functions are supposed to do&n;&t; * whatever locking they need to get proper SMP operation - for&n;&t; * now in most cases this means a lock/unlock_kernel at entry/exit.&n;&t; * [The new order is also slightly more logical :)]&n;&t; */
+multiline_comment|/*&n;&t; * the order of these functions within the VFS template has been&n;&t; * changed because SMP locking has changed: from now on all get_block,&n;&t; * readpage and writepage functions are supposed to do&n;&t; * whatever locking they need to get proper SMP operation - for&n;&t; * now in most cases this means a lock/unlock_kernel at entry/exit.&n;&t; * [The new order is also slightly more logical :)]&n;&t; */
 multiline_comment|/*&n;&t; * Generic block allocator exported by the lowlevel fs. All metadata&n;&t; * details are handled by the lowlevel fs, all &squot;logical data content&squot;&n;&t; * details are handled by the highlevel block layer.&n;&t; */
 DECL|member|get_block
 r_int
@@ -2202,25 +2202,6 @@ id|page
 op_star
 )paren
 suffix:semicolon
-DECL|member|flushpage
-r_int
-(paren
-op_star
-id|flushpage
-)paren
-(paren
-r_struct
-id|inode
-op_star
-comma
-r_struct
-id|page
-op_star
-comma
-r_int
-r_int
-)paren
-suffix:semicolon
 DECL|member|truncate
 r_void
 (paren
@@ -2238,20 +2219,6 @@ r_int
 (paren
 op_star
 id|permission
-)paren
-(paren
-r_struct
-id|inode
-op_star
-comma
-r_int
-)paren
-suffix:semicolon
-DECL|member|smap
-r_int
-(paren
-op_star
-id|smap
 )paren
 (paren
 r_struct
@@ -2786,8 +2753,8 @@ r_struct
 id|dentry
 op_star
 comma
-r_int
-r_int
+id|loff_t
+id|start
 )paren
 suffix:semicolon
 r_extern
@@ -4125,10 +4092,6 @@ id|block_flushpage
 c_func
 (paren
 r_struct
-id|inode
-op_star
-comma
-r_struct
 id|page
 op_star
 comma
@@ -4434,11 +4397,11 @@ id|inode
 comma
 r_int
 r_int
-id|start
+id|start_idx
 comma
 r_int
 r_int
-id|end
+id|end_idx
 )paren
 suffix:semicolon
 r_extern

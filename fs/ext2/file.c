@@ -545,18 +545,12 @@ multiline_comment|/* readpage */
 id|block_write_full_page
 comma
 multiline_comment|/* writepage */
-id|block_flushpage
-comma
-multiline_comment|/* flushpage */
 id|ext2_truncate
 comma
 multiline_comment|/* truncate */
 id|ext2_permission
 comma
 multiline_comment|/* permission */
-l_int|NULL
-comma
-multiline_comment|/* smap */
 l_int|NULL
 comma
 multiline_comment|/* revalidate */

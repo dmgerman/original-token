@@ -746,9 +746,6 @@ multiline_comment|/* readpage */
 l_int|NULL
 comma
 multiline_comment|/* writepage */
-l_int|NULL
-comma
-multiline_comment|/* flushpage */
 macro_line|#ifdef CONFIG_QNX4FS_RW
 id|qnx4_truncate
 comma
@@ -760,9 +757,6 @@ macro_line|#endif
 l_int|NULL
 comma
 multiline_comment|/* permission */
-l_int|NULL
-comma
-multiline_comment|/* smap */
 l_int|NULL
 multiline_comment|/* revalidate */
 )brace
@@ -867,15 +861,6 @@ c_func
 (paren
 op_amp
 id|page-&gt;count
-)paren
-suffix:semicolon
-id|set_bit
-c_func
-(paren
-id|PG_locked
-comma
-op_amp
-id|page-&gt;flags
 )paren
 suffix:semicolon
 id|buf
@@ -1084,20 +1069,10 @@ id|page-&gt;flags
 )paren
 suffix:semicolon
 )brace
-id|clear_bit
+id|Unlock_Page
 c_func
 (paren
-id|PG_locked
-comma
-op_amp
-id|page-&gt;flags
-)paren
-suffix:semicolon
-id|wake_up
-c_func
-(paren
-op_amp
-id|page-&gt;wait
+id|page
 )paren
 suffix:semicolon
 multiline_comment|/*  free_page(buf); */

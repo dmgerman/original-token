@@ -681,8 +681,6 @@ suffix:semicolon
 )brace
 DECL|macro|page_address
 mdefine_line|#define page_address(page)&t;((page)-&gt;virtual)
-DECL|macro|__page_address
-mdefine_line|#define __page_address(page)&t;(PAGE_OFFSET + (((page) - mem_map) &lt;&lt; PAGE_SHIFT))
 multiline_comment|/*&n; * The following only work if pte_present() is true.&n; * Undefined behaviour if not..&n; */
 DECL|function|pte_read
 r_extern

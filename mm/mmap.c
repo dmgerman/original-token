@@ -498,10 +498,10 @@ suffix:semicolon
 DECL|macro|_trans
 macro_line|#undef _trans
 )brace
-DECL|function|do_mmap
+DECL|function|do_mmap_pgoff
 r_int
 r_int
-id|do_mmap
+id|do_mmap_pgoff
 c_func
 (paren
 r_struct
@@ -527,7 +527,7 @@ id|flags
 comma
 r_int
 r_int
-id|off
+id|pgoff
 )paren
 (brace
 r_struct
@@ -597,37 +597,25 @@ r_return
 op_minus
 id|EINVAL
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|off
-op_amp
-op_complement
-id|PAGE_MASK
-)paren
-r_return
-op_minus
-id|EINVAL
-suffix:semicolon
 multiline_comment|/* offset overflow? */
 r_if
 c_cond
 (paren
-id|off
+(paren
+id|pgoff
 op_plus
+(paren
 id|len
+op_rshift
+id|PAGE_SHIFT
+)paren
+)paren
 OL
-id|off
+id|pgoff
 )paren
 r_return
 op_minus
 id|EINVAL
-suffix:semicolon
-id|off
-op_assign
-id|off
-op_rshift
-id|PAGE_SHIFT
 suffix:semicolon
 multiline_comment|/* Too many mappings? */
 r_if
@@ -970,7 +958,7 @@ l_int|NULL
 suffix:semicolon
 id|vma-&gt;vm_pgoff
 op_assign
-id|off
+id|pgoff
 suffix:semicolon
 id|vma-&gt;vm_file
 op_assign

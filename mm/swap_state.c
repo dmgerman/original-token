@@ -178,6 +178,13 @@ c_func
 (paren
 id|page
 )paren
+op_logical_or
+op_logical_neg
+id|PageLocked
+c_func
+(paren
+id|page
+)paren
 )paren
 id|PAGE_BUG
 c_func
@@ -235,8 +242,8 @@ id|entry
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * This will never put the page into the free list, the caller has&n; * a reference on the page.&n; */
 DECL|function|delete_from_swap_cache_nolock
-r_static
 r_void
 id|delete_from_swap_cache_nolock
 c_func
@@ -253,8 +260,6 @@ c_cond
 id|block_flushpage
 c_func
 (paren
-l_int|NULL
-comma
 id|page
 comma
 l_int|0
@@ -272,8 +277,14 @@ c_func
 id|page
 )paren
 suffix:semicolon
+id|page_cache_release
+c_func
+(paren
+id|page
+)paren
+suffix:semicolon
 )brace
-multiline_comment|/*&n; * This must be called only on pages that have&n; * been verified to be in the swap cache.&n; */
+multiline_comment|/*&n; * This must be called only on pages that have&n; * been verified to be in the swap cache and locked.&n; */
 DECL|function|delete_from_swap_cache
 r_void
 id|delete_from_swap_cache
@@ -303,14 +314,8 @@ c_func
 id|page
 )paren
 suffix:semicolon
-id|page_cache_release
-c_func
-(paren
-id|page
-)paren
-suffix:semicolon
 )brace
-multiline_comment|/* &n; * Perform a free_page(), also freeing any swap cache associated with&n; * this page if it is the last user of the page. &n; */
+multiline_comment|/* &n; * Perform a free_page(), also freeing any swap cache associated with&n; * this page if it is the last user of the page. Can not do a lock_page,&n; * as we are holding the page_table_lock spinlock.&n; */
 DECL|function|free_page_and_swap_cache
 r_void
 id|free_page_and_swap_cache
@@ -322,13 +327,7 @@ op_star
 id|page
 )paren
 (brace
-multiline_comment|/* &n;&t; * If we are the only user, then free up the swap cache. &n;&t; */
-id|lock_page
-c_func
-(paren
-id|page
-)paren
-suffix:semicolon
+multiline_comment|/* &n;&t; * If we are the only user, then try to free up the swap cache. &n;&t; */
 r_if
 c_cond
 (paren
@@ -338,6 +337,17 @@ c_func
 id|page
 )paren
 op_logical_and
+op_logical_neg
+id|TryLockPage
+c_func
+(paren
+id|page
+)paren
+)paren
+(brace
+r_if
+c_cond
+(paren
 op_logical_neg
 id|is_page_shared
 c_func
@@ -352,12 +362,6 @@ c_func
 id|page
 )paren
 suffix:semicolon
-id|page_cache_release
-c_func
-(paren
-id|page
-)paren
-suffix:semicolon
 )brace
 id|UnlockPage
 c_func
@@ -365,6 +369,7 @@ c_func
 id|page
 )paren
 suffix:semicolon
+)brace
 id|clear_bit
 c_func
 (paren
@@ -410,6 +415,8 @@ l_int|1
 )paren
 (brace
 multiline_comment|/*&n;&t;&t; * Right now the pagecache is 32-bit only.  But it&squot;s a 32 bit index. =)&n;&t;&t; */
+id|repeat
+suffix:colon
 id|found
 op_assign
 id|find_lock_page
@@ -430,6 +437,34 @@ id|found
 r_return
 l_int|0
 suffix:semicolon
+multiline_comment|/*&n;&t;&t; * Though the &quot;found&quot; page was in the swap cache an instant&n;&t;&t; * earlier, it might have been removed by shrink_mmap etc.&n;&t;&t; * Re search ... Since find_lock_page grabs a reference on&n;&t;&t; * the page, it can not be reused for anything else, namely&n;&t;&t; * it can not be associated with another swaphandle, so it&n;&t;&t; * is enough to check whether the page is still in the scache.&n;&t;&t; */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|PageSwapCache
+c_func
+(paren
+id|found
+)paren
+)paren
+(brace
+id|UnlockPage
+c_func
+(paren
+id|found
+)paren
+suffix:semicolon
+id|__free_page
+c_func
+(paren
+id|found
+)paren
+suffix:semicolon
+r_goto
+id|repeat
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -437,13 +472,6 @@ id|found-&gt;mapping
 op_ne
 op_amp
 id|swapper_space
-op_logical_or
-op_logical_neg
-id|PageSwapCache
-c_func
-(paren
-id|found
-)paren
 )paren
 r_goto
 id|out_bad

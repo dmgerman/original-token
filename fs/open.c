@@ -243,8 +243,7 @@ id|dentry
 op_star
 id|dentry
 comma
-r_int
-r_int
+id|loff_t
 id|length
 )paren
 (brace
@@ -262,13 +261,10 @@ r_struct
 id|iattr
 id|newattrs
 suffix:semicolon
-multiline_comment|/* Not pretty: &quot;inode-&gt;i_size&quot; shouldn&squot;t really be &quot;off_t&quot;. But it is. */
+multiline_comment|/* Not pretty: &quot;inode-&gt;i_size&quot; shouldn&squot;t really be signed. But it is. */
 r_if
 c_cond
 (paren
-(paren
-id|off_t
-)paren
 id|length
 OL
 l_int|0

@@ -1519,6 +1519,14 @@ id|active_mm
 op_assign
 id|current-&gt;active_mm
 suffix:semicolon
+id|init_new_context
+c_func
+(paren
+id|current
+comma
+id|mm
+)paren
+suffix:semicolon
 id|current-&gt;mm
 op_assign
 id|mm

@@ -5032,11 +5032,6 @@ id|block_flushpage
 c_func
 (paren
 r_struct
-id|inode
-op_star
-id|inode
-comma
-r_struct
 id|page
 op_star
 id|page

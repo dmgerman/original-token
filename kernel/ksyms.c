@@ -29,6 +29,7 @@ macro_line|#include &lt;linux/file.h&gt;
 macro_line|#include &lt;linux/iobuf.h&gt;
 macro_line|#include &lt;linux/console.h&gt;
 macro_line|#include &lt;linux/poll.h&gt;
+macro_line|#include &lt;linux/mmzone.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/capability.h&gt;
 macro_line|#if defined(CONFIG_PROC_FS)
@@ -189,11 +190,11 @@ id|get_options
 )paren
 suffix:semicolon
 multiline_comment|/* process memory management */
-DECL|variable|do_mmap
+DECL|variable|do_mmap_pgoff
 id|EXPORT_SYMBOL
 c_func
 (paren
-id|do_mmap
+id|do_mmap_pgoff
 )paren
 suffix:semicolon
 DECL|variable|do_munmap
@@ -246,6 +247,13 @@ c_func
 id|__alloc_pages
 )paren
 suffix:semicolon
+DECL|variable|alloc_pages_node
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|alloc_pages_node
+)paren
+suffix:semicolon
 DECL|variable|__free_pages_ok
 id|EXPORT_SYMBOL
 c_func
@@ -253,13 +261,15 @@ c_func
 id|__free_pages_ok
 )paren
 suffix:semicolon
-DECL|variable|zonelists
+macro_line|#ifndef CONFIG_DISCONTIGMEM
+DECL|variable|contig_page_data
 id|EXPORT_SYMBOL
 c_func
 (paren
-id|zonelists
+id|contig_page_data
 )paren
 suffix:semicolon
+macro_line|#endif
 DECL|variable|kmem_find_general_cachep
 id|EXPORT_SYMBOL
 c_func
@@ -859,13 +869,6 @@ c_func
 id|block_write_cont_page
 )paren
 suffix:semicolon
-DECL|variable|block_flushpage
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|block_flushpage
-)paren
-suffix:semicolon
 DECL|variable|generic_file_read
 id|EXPORT_SYMBOL
 c_func
@@ -964,13 +967,6 @@ c_func
 id|dput
 )paren
 suffix:semicolon
-DECL|variable|put_cached_page
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|put_cached_page
-)paren
-suffix:semicolon
 DECL|variable|is_root_busy
 id|EXPORT_SYMBOL
 c_func
@@ -1053,13 +1049,6 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|ROOT_DEV
-)paren
-suffix:semicolon
-DECL|variable|add_to_page_cache_unique
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|add_to_page_cache_unique
 )paren
 suffix:semicolon
 DECL|variable|__find_get_page

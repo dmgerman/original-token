@@ -110,16 +110,10 @@ comma
 multiline_comment|/* writepage&t;&t;&t;*/
 l_int|NULL
 comma
-multiline_comment|/* flushpage&t;&t;&t;*/
-l_int|NULL
-comma
 multiline_comment|/* truncate&t;&t;&t;*/
 l_int|NULL
 comma
 multiline_comment|/* permission&t;&t;&t;*/
-l_int|NULL
-comma
-multiline_comment|/* smap&t;&t;&t;&t;*/
 l_int|NULL
 multiline_comment|/* revalidate&t;&t;&t;*/
 )brace

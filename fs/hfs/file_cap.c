@@ -161,18 +161,12 @@ multiline_comment|/* readpage */
 l_int|NULL
 comma
 multiline_comment|/* writepage */
-l_int|NULL
-comma
-multiline_comment|/* flushpage */
 id|cap_info_truncate
 comma
 multiline_comment|/* truncate */
 l_int|NULL
 comma
 multiline_comment|/* permission */
-l_int|NULL
-comma
-multiline_comment|/* smap */
 l_int|NULL
 multiline_comment|/* revalidata */
 )brace

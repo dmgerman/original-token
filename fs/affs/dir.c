@@ -139,16 +139,10 @@ comma
 multiline_comment|/* writepage */
 l_int|NULL
 comma
-multiline_comment|/* flushpage */
-l_int|NULL
-comma
 multiline_comment|/* truncate */
 l_int|NULL
 comma
 multiline_comment|/* permissions */
-l_int|NULL
-comma
-multiline_comment|/* smap */
 l_int|NULL
 multiline_comment|/* revalidate */
 )brace

@@ -160,16 +160,10 @@ comma
 multiline_comment|/* writepage */
 id|EIO_ERROR
 comma
-multiline_comment|/* flushpage */
-id|EIO_ERROR
-comma
 multiline_comment|/* truncate */
 id|EIO_ERROR
 comma
 multiline_comment|/* permission */
-id|EIO_ERROR
-comma
-multiline_comment|/* smap */
 id|EIO_ERROR
 multiline_comment|/* revalidate */
 )brace

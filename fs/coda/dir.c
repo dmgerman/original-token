@@ -354,16 +354,10 @@ comma
 multiline_comment|/* writepage */
 l_int|NULL
 comma
-multiline_comment|/* flushpage */
-l_int|NULL
-comma
 multiline_comment|/* truncate */
 id|coda_permission
 comma
 multiline_comment|/* permission */
-l_int|NULL
-comma
-multiline_comment|/* smap */
 id|coda_revalidate_inode
 multiline_comment|/* revalidate */
 )brace

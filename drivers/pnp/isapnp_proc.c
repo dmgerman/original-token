@@ -922,53 +922,6 @@ op_amp
 id|isapnp_info_entry_operations
 comma
 multiline_comment|/* default sound info directory file-ops */
-l_int|NULL
-comma
-multiline_comment|/* create */
-l_int|NULL
-comma
-multiline_comment|/* lookup */
-l_int|NULL
-comma
-multiline_comment|/* link */
-l_int|NULL
-comma
-multiline_comment|/* unlink */
-l_int|NULL
-comma
-multiline_comment|/* symlink */
-l_int|NULL
-comma
-multiline_comment|/* mkdir */
-l_int|NULL
-comma
-multiline_comment|/* rmdir */
-l_int|NULL
-comma
-multiline_comment|/* mknod */
-l_int|NULL
-comma
-multiline_comment|/* rename */
-l_int|NULL
-comma
-multiline_comment|/* readlink */
-l_int|NULL
-comma
-multiline_comment|/* follow_link */
-l_int|NULL
-comma
-multiline_comment|/* readpage */
-l_int|NULL
-comma
-multiline_comment|/* writepage */
-l_int|NULL
-comma
-multiline_comment|/* bmap */
-l_int|NULL
-comma
-multiline_comment|/* truncate */
-l_int|NULL
-multiline_comment|/* permission */
 )brace
 suffix:semicolon
 DECL|function|isapnp_proc_init

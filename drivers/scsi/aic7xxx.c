@@ -2856,7 +2856,7 @@ macro_line|#endif
 )brace
 multiline_comment|/*+F*************************************************************************&n; * Function:&n; *   aic7xxx_setup&n; *&n; * Description:&n; *   Handle Linux boot parameters. This routine allows for assigning a value&n; *   to a parameter with a &squot;:&squot; between the parameter and the value.&n; *   ie. aic7xxx=unpause:0x0A,extended&n; *-F*************************************************************************/
 r_static
-r_void
+r_int
 DECL|function|aic7xxx_setup
 id|aic7xxx_setup
 c_func
@@ -3711,6 +3711,9 @@ suffix:semicolon
 )brace
 )brace
 )brace
+r_return
+l_int|1
+suffix:semicolon
 )brace
 id|__setup
 c_func

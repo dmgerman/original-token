@@ -199,9 +199,6 @@ multiline_comment|/* readpage */
 id|block_write_full_page
 comma
 multiline_comment|/* writepage */
-id|block_flushpage
-comma
-multiline_comment|/* flushpage */
 macro_line|#ifdef CONFIG_UDF_RW
 id|udf_truncate
 comma
@@ -214,9 +211,6 @@ macro_line|#endif
 l_int|NULL
 comma
 multiline_comment|/* permission */
-l_int|NULL
-comma
-multiline_comment|/* smap */
 l_int|NULL
 multiline_comment|/* revalidate */
 )brace
@@ -325,9 +319,6 @@ multiline_comment|/* readpage */
 id|block_write_full_page
 comma
 multiline_comment|/* writepage */
-id|block_flushpage
-comma
-multiline_comment|/* flushpage */
 macro_line|#ifdef CONFIG_UDF_RW
 id|udf_truncate
 comma
@@ -340,9 +331,6 @@ macro_line|#endif
 l_int|NULL
 comma
 multiline_comment|/* permission */
-l_int|NULL
-comma
-multiline_comment|/* smap */
 l_int|NULL
 multiline_comment|/* revalidate */
 )brace

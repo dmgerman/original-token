@@ -325,7 +325,7 @@ id|flags
 )paren
 suffix:semicolon
 r_return
-id|__page_address
+id|page_address
 c_func
 (paren
 id|page

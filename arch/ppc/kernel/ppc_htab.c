@@ -193,62 +193,6 @@ op_amp
 id|ppc_htab_operations
 comma
 multiline_comment|/* default proc file-ops */
-l_int|NULL
-comma
-multiline_comment|/* create&t;   */
-l_int|NULL
-comma
-multiline_comment|/* lookup&t;   */
-l_int|NULL
-comma
-multiline_comment|/* link&t;   */
-l_int|NULL
-comma
-multiline_comment|/* unlink&t;   */
-l_int|NULL
-comma
-multiline_comment|/* symlink&t;   */
-l_int|NULL
-comma
-multiline_comment|/* mkdir&t;   */
-l_int|NULL
-comma
-multiline_comment|/* rmdir&t;   */
-l_int|NULL
-comma
-multiline_comment|/* mknod&t;   */
-l_int|NULL
-comma
-multiline_comment|/* rename&t;   */
-l_int|NULL
-comma
-multiline_comment|/* readlink&t;   */
-l_int|NULL
-comma
-multiline_comment|/* follow_link */
-l_int|NULL
-comma
-multiline_comment|/* get_block   */
-l_int|NULL
-comma
-multiline_comment|/* readpage&t;   */
-l_int|NULL
-comma
-multiline_comment|/* writepage   */
-l_int|NULL
-comma
-multiline_comment|/* flushpage   */
-l_int|NULL
-comma
-multiline_comment|/* truncate&t;   */
-l_int|NULL
-comma
-multiline_comment|/* permission  */
-l_int|NULL
-comma
-multiline_comment|/* smap        */
-l_int|NULL
-multiline_comment|/* revalidate  */
 )brace
 suffix:semicolon
 multiline_comment|/* these will go into processor.h when I&squot;m done debugging -- Cort */

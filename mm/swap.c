@@ -9,19 +9,19 @@ macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt; /* for copy_to/from_user */
 macro_line|#include &lt;asm/pgtable.h&gt;
-multiline_comment|/*&n; * We identify three levels of free memory.  We never let free mem&n; * fall below the freepages.min except for atomic allocations.  We&n; * start background swapping if we fall below freepages.high free&n; * pages, and we begin intensive swapping below freepages.low.&n; *&n; * These values are there to keep GCC from complaining. Actual&n; * initialization is done in mm/page_alloc.c or arch/sparc(64)/mm/init.c.&n; */
+multiline_comment|/*&n; * We identify three levels of free memory.  We never let free mem&n; * fall below the freepages.min except for atomic allocations.  We&n; * start background swapping if we fall below freepages.high free&n; * pages, and we begin intensive swapping below freepages.low.&n; *&n; * Actual initialization is done in mm/page_alloc.c or &n; * arch/sparc(64)/mm/init.c.&n; */
 DECL|variable|freepages
 id|freepages_t
 id|freepages
 op_assign
 (brace
-l_int|48
+l_int|0
 comma
 multiline_comment|/* freepages.min */
-l_int|96
+l_int|0
 comma
 multiline_comment|/* freepages.low */
-l_int|144
+l_int|0
 multiline_comment|/* freepages.high */
 )brace
 suffix:semicolon

@@ -646,6 +646,13 @@ r_return
 op_minus
 id|ENOMEM
 suffix:semicolon
+id|spin_lock
+c_func
+(paren
+op_amp
+id|current-&gt;mm-&gt;page_table_lock
+)paren
+suffix:semicolon
 id|io_remap_pte_range
 c_func
 (paren
@@ -664,6 +671,13 @@ comma
 id|prot
 comma
 id|space
+)paren
+suffix:semicolon
+id|spin_unlock
+c_func
+(paren
+op_amp
+id|current-&gt;mm-&gt;page_table_lock
 )paren
 suffix:semicolon
 id|address

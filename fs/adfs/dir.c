@@ -150,16 +150,10 @@ comma
 multiline_comment|/* write page */
 l_int|NULL
 comma
-multiline_comment|/* flush page */
-l_int|NULL
-comma
 multiline_comment|/* truncate */
 l_int|NULL
 comma
 multiline_comment|/* permission */
-l_int|NULL
-comma
-multiline_comment|/* smap */
 l_int|NULL
 multiline_comment|/* revalidate */
 )brace

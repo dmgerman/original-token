@@ -462,8 +462,6 @@ mdefine_line|#define&t;pmd_clear(pmdp)&t;&t;do { pmd_val(*(pmdp)) = 0; } while (
 multiline_comment|/*&n; * Permanent address of a page.&n; */
 DECL|macro|page_address
 mdefine_line|#define page_address(page)  ({ if (!(page)-&gt;virtual) BUG(); (page)-&gt;virtual; })
-DECL|macro|__page_address
-mdefine_line|#define __page_address(page) (PAGE_OFFSET + (((page) - mem_map) &lt;&lt; PAGE_SHIFT))
 DECL|macro|pages_to_mb
 mdefine_line|#define pages_to_mb(x)&t;&t;((x) &gt;&gt; (20-PAGE_SHIFT))
 DECL|macro|pte_page

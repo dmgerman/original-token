@@ -1465,62 +1465,6 @@ op_amp
 id|proc_ringbuf_operations
 comma
 multiline_comment|/* default base directory file-ops */
-l_int|NULL
-comma
-multiline_comment|/* create */
-l_int|NULL
-comma
-multiline_comment|/* lookup */
-l_int|NULL
-comma
-multiline_comment|/* link */
-l_int|NULL
-comma
-multiline_comment|/* unlink */
-l_int|NULL
-comma
-multiline_comment|/* symlink */
-l_int|NULL
-comma
-multiline_comment|/* mkdir */
-l_int|NULL
-comma
-multiline_comment|/* rmdir */
-l_int|NULL
-comma
-multiline_comment|/* mknod */
-l_int|NULL
-comma
-multiline_comment|/* rename */
-l_int|NULL
-comma
-multiline_comment|/* readlink */
-l_int|NULL
-comma
-multiline_comment|/* follow_link */
-l_int|NULL
-comma
-multiline_comment|/* get_block */
-l_int|NULL
-comma
-multiline_comment|/* readpage */
-l_int|NULL
-comma
-multiline_comment|/* writepage */
-l_int|NULL
-comma
-multiline_comment|/* flushpage */
-l_int|NULL
-comma
-multiline_comment|/* truncate */
-l_int|NULL
-comma
-multiline_comment|/* permission */
-l_int|NULL
-comma
-multiline_comment|/* smap */
-l_int|NULL
-multiline_comment|/* revalidate */
 )brace
 suffix:semicolon
 eof

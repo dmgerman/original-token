@@ -386,6 +386,17 @@ id|page
 suffix:semicolon
 r_extern
 r_void
+id|delete_from_swap_cache_nolock
+c_func
+(paren
+r_struct
+id|page
+op_star
+id|page
+)paren
+suffix:semicolon
+r_extern
+r_void
 id|free_page_and_swap_cache
 c_func
 (paren
