@@ -1,9 +1,7 @@
 multiline_comment|/*&n; *  linux/fs/buffer.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; */
 multiline_comment|/*&n; *  &squot;buffer.c&squot; implements the buffer-cache functions. Race-conditions have&n; * been avoided by NEVER letting an interrupt change a buffer (except for the&n; * data, of course), but instead letting the caller do it.&n; */
 multiline_comment|/*&n; * NOTE! There is one discordant note here: checking floppies for&n; * disk change. This is where it fits best, I think, as it should&n; * invalidate changed floppy-disk-caches.&n; */
-macro_line|#include &lt;stdarg.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
-macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/major.h&gt;
@@ -786,9 +784,13 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;Weird - unlocked, clean and not uptodate buffer on list %d&bslash;n&quot;
+l_string|&quot;Weird - unlocked, clean and not uptodate buffer on list %d %x %lu&bslash;n&quot;
 comma
 id|nlist
+comma
+id|bh-&gt;b_dev
+comma
+id|bh-&gt;b_blocknr
 )paren
 suffix:semicolon
 r_continue
@@ -8943,8 +8945,8 @@ id|nr_buffers_type
 id|nlist
 )braket
 suffix:semicolon
-op_decrement
 id|i
+op_decrement
 OG
 l_int|0
 op_logical_and
@@ -9136,9 +9138,14 @@ l_int|1
 )paren
 )paren
 )paren
+(brace
+id|bdflush_running
+op_decrement
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
+)brace
 id|current-&gt;signal
 op_assign
 l_int|0

@@ -58,8 +58,10 @@ DECL|macro|DBG_XA
 mdefine_line|#define DBG_XA &t;&t;22&t;/* XA mode debugging */
 DECL|macro|DBG_LCK
 mdefine_line|#define DBG_LCK&t;&t;23&t;/* door (un)lock info */
+DECL|macro|DBG_SQ
+mdefine_line|#define DBG_SQ &t;&t;24&t;/* dump SubQ frame */
 DECL|macro|DBG_000
-mdefine_line|#define DBG_000&t;&t;24&t;/* unnecessary information */
+mdefine_line|#define DBG_000&t;&t;25&t;/* unnecessary information */
 multiline_comment|/*==========================================================================*/
 multiline_comment|/*==========================================================================*/
 multiline_comment|/*&n; * bits of flags_cmd_out:&n; */
@@ -226,6 +228,8 @@ DECL|macro|CD_FRAMESIZE_XA
 mdefine_line|#define CD_FRAMESIZE_XA         2340  /* bytes per frame, &quot;xa&quot; mode      */
 DECL|macro|CD_FRAMESIZE_RAW
 mdefine_line|#define CD_FRAMESIZE_RAW        2352  /* bytes per frame, &quot;raw&quot; mode     */
+DECL|macro|CD_FRAMESIZE_SUB
+mdefine_line|#define CD_FRAMESIZE_SUB          96  /* subchannel data size            */
 DECL|macro|CD_BLOCK_OFFSET
 mdefine_line|#define CD_BLOCK_OFFSET          150  /* offset of first logical frame   */
 DECL|macro|CD_XA_HEAD

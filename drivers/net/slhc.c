@@ -44,6 +44,7 @@ op_star
 id|cp
 comma
 r_int
+r_int
 id|n
 )paren
 suffix:semicolon
@@ -458,6 +459,7 @@ suffix:semicolon
 )brace
 multiline_comment|/* Put a short in host order into a char array in network order */
 r_static
+r_inline
 r_int
 r_char
 op_star
@@ -506,6 +508,7 @@ r_char
 op_star
 id|cp
 comma
+r_int
 r_int
 id|n
 )paren

@@ -2335,6 +2335,33 @@ id|inode-&gt;i_op
 op_assign
 l_int|NULL
 suffix:semicolon
+multiline_comment|/* A volume number of 0 is nonsense.  Disable checking if we see&n;&t;   this */
+r_if
+c_cond
+(paren
+id|inode-&gt;i_sb-&gt;u.isofs_sb.s_cruft
+op_eq
+l_char|&squot;n&squot;
+op_logical_and
+id|isonum_723
+(paren
+id|raw_inode-&gt;volume_sequence_number
+)paren
+op_eq
+l_int|0
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;Warning: defective cdrom.  Enabling &bslash;&quot;cruft&bslash;&quot; mount option.&bslash;n&quot;
+)paren
+suffix:semicolon
+id|inode-&gt;i_sb-&gt;u.isofs_sb.s_cruft
+op_assign
+l_char|&squot;y&squot;
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
