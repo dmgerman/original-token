@@ -25,6 +25,7 @@ op_assign
 id|readl
 c_func
 (paren
+op_amp
 id|ohci-&gt;regs-&gt;revision
 )paren
 suffix:semicolon
@@ -33,6 +34,7 @@ op_assign
 id|readl
 c_func
 (paren
+op_amp
 id|ohci-&gt;regs-&gt;control
 )paren
 suffix:semicolon
@@ -41,6 +43,7 @@ op_assign
 id|readl
 c_func
 (paren
+op_amp
 id|ohci-&gt;regs-&gt;cmdstatus
 )paren
 suffix:semicolon
@@ -49,6 +52,7 @@ op_assign
 id|readl
 c_func
 (paren
+op_amp
 id|ohci-&gt;regs-&gt;intrstatus
 )paren
 suffix:semicolon
@@ -57,15 +61,8 @@ op_assign
 id|readl
 c_func
 (paren
+op_amp
 id|ohci-&gt;regs-&gt;intrenable
-)paren
-suffix:semicolon
-id|regs.intrdisable
-op_assign
-id|readl
-c_func
-(paren
-id|ohci-&gt;regs-&gt;intrdisable
 )paren
 suffix:semicolon
 id|regs.hcca
@@ -73,6 +70,7 @@ op_assign
 id|readl
 c_func
 (paren
+op_amp
 id|ohci-&gt;regs-&gt;hcca
 )paren
 suffix:semicolon
@@ -81,6 +79,7 @@ op_assign
 id|readl
 c_func
 (paren
+op_amp
 id|ohci-&gt;regs-&gt;ed_periodcurrent
 )paren
 suffix:semicolon
@@ -89,7 +88,17 @@ op_assign
 id|readl
 c_func
 (paren
+op_amp
 id|ohci-&gt;regs-&gt;ed_controlhead
+)paren
+suffix:semicolon
+id|regs.ed_controlcurrent
+op_assign
+id|readl
+c_func
+(paren
+op_amp
+id|ohci-&gt;regs-&gt;ed_controlcurrent
 )paren
 suffix:semicolon
 id|regs.ed_bulkhead
@@ -97,6 +106,7 @@ op_assign
 id|readl
 c_func
 (paren
+op_amp
 id|ohci-&gt;regs-&gt;ed_bulkhead
 )paren
 suffix:semicolon
@@ -105,6 +115,7 @@ op_assign
 id|readl
 c_func
 (paren
+op_amp
 id|ohci-&gt;regs-&gt;ed_bulkcurrent
 )paren
 suffix:semicolon
@@ -113,6 +124,7 @@ op_assign
 id|readl
 c_func
 (paren
+op_amp
 id|ohci-&gt;regs-&gt;current_donehead
 )paren
 suffix:semicolon
@@ -121,6 +133,7 @@ op_assign
 id|readl
 c_func
 (paren
+op_amp
 id|ohci-&gt;regs-&gt;fminterval
 )paren
 suffix:semicolon
@@ -129,6 +142,7 @@ op_assign
 id|readl
 c_func
 (paren
+op_amp
 id|ohci-&gt;regs-&gt;fmremaining
 )paren
 suffix:semicolon
@@ -137,6 +151,7 @@ op_assign
 id|readl
 c_func
 (paren
+op_amp
 id|ohci-&gt;regs-&gt;fmnumber
 )paren
 suffix:semicolon
@@ -145,6 +160,7 @@ op_assign
 id|readl
 c_func
 (paren
+op_amp
 id|ohci-&gt;regs-&gt;periodicstart
 )paren
 suffix:semicolon
@@ -153,6 +169,7 @@ op_assign
 id|readl
 c_func
 (paren
+op_amp
 id|ohci-&gt;regs-&gt;lsthresh
 )paren
 suffix:semicolon
@@ -161,6 +178,7 @@ op_assign
 id|readl
 c_func
 (paren
+op_amp
 id|ohci-&gt;regs-&gt;roothub.a
 )paren
 suffix:semicolon
@@ -169,6 +187,7 @@ op_assign
 id|readl
 c_func
 (paren
+op_amp
 id|ohci-&gt;regs-&gt;roothub.b
 )paren
 suffix:semicolon
@@ -177,6 +196,7 @@ op_assign
 id|readl
 c_func
 (paren
+op_amp
 id|ohci-&gt;regs-&gt;roothub.status
 )paren
 suffix:semicolon
@@ -202,6 +222,7 @@ op_assign
 id|readl
 c_func
 (paren
+op_amp
 id|ohci-&gt;regs-&gt;roothub.portstatus
 (braket
 id|i
@@ -211,7 +232,8 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;  ohci revision    =  0x%x&bslash;n&quot;
+id|KERN_DEBUG
+l_string|&quot;  ohci revision    =  %x&bslash;n&quot;
 comma
 id|regs.revision
 )paren
@@ -219,7 +241,8 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;  ohci control     =  0x%x&bslash;n&quot;
+id|KERN_DEBUG
+l_string|&quot;  ohci control     =  %x&bslash;n&quot;
 comma
 id|regs.control
 )paren
@@ -227,7 +250,8 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;  ohci cmdstatus   =  0x%x&bslash;n&quot;
+id|KERN_DEBUG
+l_string|&quot;  ohci cmdstatus   =  %x&bslash;n&quot;
 comma
 id|regs.cmdstatus
 )paren
@@ -235,7 +259,8 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;  ohci intrstatus  =  0x%x&bslash;n&quot;
+id|KERN_DEBUG
+l_string|&quot;  ohci intrstatus  =  %x&bslash;n&quot;
 comma
 id|regs.intrstatus
 )paren
@@ -243,7 +268,125 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;  ohci roothub.a   =  0x%x&bslash;n&quot;
+id|KERN_DEBUG
+l_string|&quot;  ohci intrenable  =  %x&bslash;n&quot;
+comma
+id|regs.intrenable
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_DEBUG
+l_string|&quot;  ohci hcca        =  %x&bslash;n&quot;
+comma
+id|regs.hcca
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_DEBUG
+l_string|&quot;  ohci ed_pdcur    =  %x&bslash;n&quot;
+comma
+id|regs.ed_periodcurrent
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_DEBUG
+l_string|&quot;  ohci ed_ctrlhead =  %x&bslash;n&quot;
+comma
+id|regs.ed_controlhead
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_DEBUG
+l_string|&quot;  ohci ed_ctrlcur  =  %x&bslash;n&quot;
+comma
+id|regs.ed_controlcurrent
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_DEBUG
+l_string|&quot;  ohci ed_bulkhead =  %x&bslash;n&quot;
+comma
+id|regs.ed_bulkhead
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_DEBUG
+l_string|&quot;  ohci ed_bulkcur  =  %x&bslash;n&quot;
+comma
+id|regs.ed_bulkcurrent
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_DEBUG
+l_string|&quot;  ohci curdonehead =  %x&bslash;n&quot;
+comma
+id|regs.current_donehead
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_DEBUG
+l_string|&quot;  ohci fminterval  =  %x&bslash;n&quot;
+comma
+id|regs.fminterval
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_DEBUG
+l_string|&quot;  ohci fmremaining =  %x&bslash;n&quot;
+comma
+id|regs.fmremaining
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_DEBUG
+l_string|&quot;  ohci fmnumber    =  %x&bslash;n&quot;
+comma
+id|regs.fmnumber
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_DEBUG
+l_string|&quot;  ohci pdstart     =  %x&bslash;n&quot;
+comma
+id|regs.periodicstart
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_DEBUG
+l_string|&quot;  ohci lsthresh    =  %x&bslash;n&quot;
+comma
+id|regs.lsthresh
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_DEBUG
+l_string|&quot;  ohci roothub.a   =  %x&bslash;n&quot;
 comma
 id|regs.roothub.a
 )paren
@@ -251,7 +394,8 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;  ohci roothub.b   =  0x%x&bslash;n&quot;
+id|KERN_DEBUG
+l_string|&quot;  ohci roothub.b   =  %x&bslash;n&quot;
 comma
 id|regs.roothub.b
 )paren
@@ -259,15 +403,39 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;  ohci root status =  0x%x&bslash;n&quot;
+id|KERN_DEBUG
+l_string|&quot;  ohci root status =  %x&bslash;n&quot;
 comma
 id|regs.roothub.status
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_DEBUG
+l_string|&quot;    roothub.port0  =  %x&bslash;n&quot;
+comma
+id|regs.roothub.portstatus
+(braket
+l_int|0
+)braket
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_DEBUG
+l_string|&quot;    roothub.port1  =  %x&bslash;n&quot;
+comma
+id|regs.roothub.portstatus
+(braket
+l_int|1
+)braket
 )paren
 suffix:semicolon
 )brace
 multiline_comment|/* show_ohci_status() */
 DECL|function|show_ohci_ed
-r_static
 r_void
 id|show_ohci_ed
 c_func
@@ -354,7 +522,7 @@ r_int
 id|halted
 op_assign
 (paren
-id|ed-&gt;head_td
+id|ed-&gt;_head_td
 op_amp
 l_int|1
 )paren
@@ -363,7 +531,7 @@ r_int
 id|toggle
 op_assign
 (paren
-id|ed-&gt;head_td
+id|ed-&gt;_head_td
 op_amp
 l_int|2
 )paren
@@ -373,12 +541,14 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;   ohci ED:&bslash;n&quot;
 )paren
 suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;     status     =  0x%x&bslash;n&quot;
 comma
 id|stat
@@ -387,6 +557,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;       %sMPS %d%s%s%s%s tc%d e%d fa%d&bslash;n&quot;
 comma
 id|skip
@@ -408,7 +579,7 @@ comma
 id|low_speed
 ques
 c_cond
-l_string|&quot;LowSpd &quot;
+l_string|&quot; LowSpd&quot;
 suffix:colon
 l_string|&quot;&quot;
 comma
@@ -419,7 +590,7 @@ id|OHCI_ED_D_IN
 )paren
 ques
 c_cond
-l_string|&quot;Input &quot;
+l_string|&quot; Input&quot;
 suffix:colon
 (paren
 id|dir
@@ -428,14 +599,14 @@ id|OHCI_ED_D_OUT
 )paren
 ques
 c_cond
-l_string|&quot;Output &quot;
+l_string|&quot; Output&quot;
 suffix:colon
 l_string|&quot;&quot;
 comma
 id|halted
 ques
 c_cond
-l_string|&quot;Halted &quot;
+l_string|&quot; Halted&quot;
 suffix:colon
 l_string|&quot;&quot;
 comma
@@ -449,6 +620,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;     tail_td    =  0x%x&bslash;n&quot;
 comma
 id|ed-&gt;tail_td
@@ -457,14 +629,20 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;     head_td    =  0x%x&bslash;n&quot;
 comma
-id|ed-&gt;head_td
+id|ed_head_td
+c_func
+(paren
+id|ed
+)paren
 )paren
 suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;     next_ed    =  0x%x&bslash;n&quot;
 comma
 id|ed-&gt;next_ed
@@ -473,7 +651,6 @@ suffix:semicolon
 )brace
 multiline_comment|/* show_ohci_ed() */
 DECL|function|show_ohci_td
-r_static
 r_void
 id|show_ohci_td
 c_func
@@ -501,16 +678,24 @@ suffix:semicolon
 r_int
 id|td_int_delay
 op_assign
+(paren
 id|td-&gt;info
 op_amp
 id|OHCI_TD_IOC_DELAY
+)paren
+op_rshift
+l_int|21
 suffix:semicolon
 r_int
 id|td_toggle
 op_assign
+(paren
 id|td-&gt;info
 op_amp
 id|OHCI_TD_DT
+)paren
+op_rshift
+l_int|24
 suffix:semicolon
 r_int
 id|td_errcnt
@@ -518,25 +703,30 @@ op_assign
 id|td_errorcount
 c_func
 (paren
-id|td-&gt;info
+op_star
+id|td
 )paren
 suffix:semicolon
 r_int
 id|td_cc
 op_assign
+id|OHCI_TD_CC_GET
+c_func
+(paren
 id|td-&gt;info
-op_amp
-id|OHCI_TD_CC
+)paren
 suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;   ohci TD hardware fields:&bslash;n&quot;
 )paren
 suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;      info     =  0x%x&bslash;n&quot;
 comma
 id|td-&gt;info
@@ -545,7 +735,8 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;        %s%s%s%d%s%s%d%s%d&bslash;n&quot;
+id|KERN_DEBUG
+l_string|&quot;        %s%s%s%d %s&bslash;n&quot;
 comma
 id|td_round
 ques
@@ -586,15 +777,33 @@ comma
 l_string|&quot;IntDelay &quot;
 comma
 id|td_int_delay
-op_rshift
-l_int|21
 comma
+(paren
 id|td_toggle
+OL
+l_int|2
+)paren
+ques
+c_cond
+l_string|&quot; &quot;
+suffix:colon
+(paren
+id|td_toggle
+op_amp
+l_int|1
+)paren
 ques
 c_cond
 l_string|&quot;Data1 &quot;
 suffix:colon
 l_string|&quot;Data0 &quot;
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_DEBUG
+l_string|&quot;        %s%d %s0x%x, %sAccessed, %sActive&bslash;n&quot;
 comma
 l_string|&quot;ErrorCnt &quot;
 comma
@@ -603,17 +812,12 @@ comma
 l_string|&quot;ComplCode &quot;
 comma
 id|td_cc
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;       %sAccessed, %sActive&bslash;n&quot;
 comma
 id|td_cc_accessed
 c_func
 (paren
-id|td-&gt;info
+op_star
+id|td
 )paren
 ques
 c_cond
@@ -624,7 +828,8 @@ comma
 id|td_active
 c_func
 (paren
-id|td-&gt;info
+op_star
+id|td
 )paren
 ques
 c_cond
@@ -636,6 +841,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;      cur_buf  =  0x%x&bslash;n&quot;
 comma
 id|td-&gt;cur_buf
@@ -644,6 +850,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;      next_td  =  0x%x&bslash;n&quot;
 comma
 id|td-&gt;next_td
@@ -652,6 +859,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;      buf_end  =  0x%x&bslash;n&quot;
 comma
 id|td-&gt;buf_end
@@ -660,12 +868,14 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;   ohci TD driver fields:&bslash;n&quot;
 )paren
 suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;      data     =  %p&bslash;n&quot;
 comma
 id|td-&gt;data
@@ -674,6 +884,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;      dev_id   =  %p&bslash;n&quot;
 comma
 id|td-&gt;dev_id
@@ -682,11 +893,75 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;      ed_bus   =  %x&bslash;n&quot;
+id|KERN_DEBUG
+l_string|&quot;      ed       =  %p&bslash;n&quot;
 comma
-id|td-&gt;ed_bus
+id|td-&gt;ed
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|td-&gt;data
+op_ne
+l_int|NULL
+)paren
+(brace
+r_int
+r_char
+op_star
+id|d
+op_assign
+id|td-&gt;data
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_DEBUG
+l_string|&quot;   DATA: %02x %02x %02x %02x %02x %02x %02x %02x&bslash;n&quot;
+comma
+id|d
+(braket
+l_int|0
+)braket
+comma
+id|d
+(braket
+l_int|1
+)braket
+comma
+id|d
+(braket
+l_int|2
+)braket
+comma
+id|d
+(braket
+l_int|3
+)braket
+comma
+id|d
+(braket
+l_int|4
+)braket
+comma
+id|d
+(braket
+l_int|5
+)braket
+comma
+id|d
+(braket
+l_int|6
+)braket
+comma
+id|d
+(braket
+l_int|7
+)braket
+)paren
+suffix:semicolon
+)brace
 )brace
 multiline_comment|/* show_ohci_td() */
 DECL|function|show_ohci_device
@@ -706,6 +981,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;  ohci_device usb       =  %p&bslash;n&quot;
 comma
 id|dev-&gt;usb
@@ -714,6 +990,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;  ohci_device ohci      =  %p&bslash;n&quot;
 comma
 id|dev-&gt;ohci
@@ -722,6 +999,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;  ohci_device ohci_hcca =  %p&bslash;n&quot;
 comma
 id|dev-&gt;hcca
@@ -736,7 +1014,7 @@ l_int|0
 suffix:semicolon
 id|idx
 OL
-l_int|8
+l_int|3
 multiline_comment|/*NUM_EDS*/
 suffix:semicolon
 op_increment
@@ -746,6 +1024,7 @@ id|idx
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;   [ed num %d] &quot;
 comma
 id|idx
@@ -771,7 +1050,7 @@ l_int|0
 suffix:semicolon
 id|idx
 OL
-l_int|8
+l_int|3
 multiline_comment|/*NUM_TDS*/
 suffix:semicolon
 op_increment
@@ -781,6 +1060,7 @@ id|idx
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;   [td num %d] &quot;
 comma
 id|idx
@@ -800,6 +1080,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;  ohci_device data&bslash;n    &quot;
 )paren
 suffix:semicolon
@@ -821,6 +1102,7 @@ id|idx
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot; %08lx&quot;
 comma
 id|dev-&gt;data
@@ -833,10 +1115,81 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
 multiline_comment|/* show_ohci_device() */
+DECL|function|show_ohci_hcca
+r_void
+id|show_ohci_hcca
+c_func
+(paren
+r_struct
+id|ohci_hcca
+op_star
+id|hcca
+)paren
+(brace
+r_int
+id|idx
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_DEBUG
+l_string|&quot;  ohci_hcca&bslash;n&quot;
+)paren
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|idx
+op_assign
+l_int|0
+suffix:semicolon
+id|idx
+OL
+id|NUM_INTS
+suffix:semicolon
+id|idx
+op_increment
+)paren
+(brace
+id|printk
+c_func
+(paren
+id|KERN_DEBUG
+l_string|&quot;    int_table[%2d]  == %p&bslash;n&quot;
+comma
+id|idx
+comma
+id|hcca-&gt;int_table
+op_plus
+id|idx
+)paren
+suffix:semicolon
+)brace
+id|printk
+c_func
+(paren
+id|KERN_DEBUG
+l_string|&quot;    frame_no          == %d&bslash;n&quot;
+comma
+id|hcca-&gt;frame_no
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+id|KERN_DEBUG
+l_string|&quot;    donehead          == 0x%08x&bslash;n&quot;
+comma
+id|hcca-&gt;donehead
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/* show_ohci_hcca() */
 multiline_comment|/* vim:sw=8&n; */
 eof

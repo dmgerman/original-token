@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  $Id: init.c,v 1.163 1999/04/09 06:37:13 cort Exp $&n; *&n; *  PowerPC version &n; *    Copyright (C) 1995-1996 Gary Thomas (gdt@linuxppc.org)&n; *&n; *  Modifications by Paul Mackerras (PowerMac) (paulus@cs.anu.edu.au)&n; *  and Cort Dougan (PReP) (cort@cs.nmt.edu)&n; *    Copyright (C) 1996 Paul Mackerras&n; *  Amiga/APUS changes by Jesper Skov (jskov@cygnus.co.uk).&n; *&n; *  Derived from &quot;arch/i386/mm/init.c&quot;&n; *    Copyright (C) 1991, 1992, 1993, 1994  Linus Torvalds&n; *&n; *  This program is free software; you can redistribute it and/or&n; *  modify it under the terms of the GNU General Public License&n; *  as published by the Free Software Foundation; either version&n; *  2 of the License, or (at your option) any later version.&n; *&n; */
+multiline_comment|/*&n; *  $Id: init.c,v 1.164 1999/05/05 17:33:55 cort Exp $&n; *&n; *  PowerPC version &n; *    Copyright (C) 1995-1996 Gary Thomas (gdt@linuxppc.org)&n; *&n; *  Modifications by Paul Mackerras (PowerMac) (paulus@cs.anu.edu.au)&n; *  and Cort Dougan (PReP) (cort@cs.nmt.edu)&n; *    Copyright (C) 1996 Paul Mackerras&n; *  Amiga/APUS changes by Jesper Skov (jskov@cygnus.co.uk).&n; *&n; *  Derived from &quot;arch/i386/mm/init.c&quot;&n; *    Copyright (C) 1991, 1992, 1993, 1994  Linus Torvalds&n; *&n; *  This program is free software; you can redistribute it and/or&n; *  modify it under the terms of the GNU General Public License&n; *  as published by the Free Software Foundation; either version&n; *  2 of the License, or (at your option) any later version.&n; *&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -381,11 +381,20 @@ comma
 id|Hash_mask
 suffix:semicolon
 macro_line|#ifndef CONFIG_8xx
+macro_line|#ifdef CONFIG_PPC64
+DECL|variable|_SDR1
+r_int
+r_int
+r_int
+id|_SDR1
+suffix:semicolon
+macro_line|#else
 DECL|variable|_SDR1
 r_int
 r_int
 id|_SDR1
 suffix:semicolon
+macro_line|#endif
 r_static
 r_void
 id|hash_init
@@ -403,10 +412,15 @@ DECL|member|bat
 id|BAT
 id|bat
 suffix:semicolon
-DECL|member|bat_601
-id|P601_BAT
-id|bat_601
+macro_line|#ifdef CONFIG_PPC64
+DECL|member|word
+id|u64
+id|word
+(braket
+l_int|2
+)braket
 suffix:semicolon
+macro_line|#else
 DECL|member|word
 id|u32
 id|word
@@ -414,6 +428,7 @@ id|word
 l_int|2
 )braket
 suffix:semicolon
+macro_line|#endif&t;
 DECL|variable|BATS
 )brace
 id|BATS
@@ -1471,7 +1486,6 @@ r_return
 l_int|NULL
 suffix:semicolon
 macro_line|#ifndef CONFIG_8xx
-macro_line|#if 0&t;
 multiline_comment|/*&n;&t; * Is it already mapped?  Perhaps overlapped by a previous&n;&t; * BAT mapping.  If the whole area is mapped then we&squot;re done,&n;&t; * otherwise remap it since we want to keep the virt addrs for&n;&t; * each request contiguous.&n;&t; *&n;&t; * We make the assumption here that if the bottom and top&n;&t; * of the range we want are mapped then it&squot;s mapped to the&n;&t; * same virt address (and this is contiguous).&n;&t; *  -- Cort&n;&t; */
 r_if
 c_cond
@@ -1490,7 +1504,6 @@ multiline_comment|/*&amp;&amp; p_mapped_by_bats(addr+(size-1))*/
 r_goto
 id|out
 suffix:semicolon
-macro_line|#endif&t;
 macro_line|#endif /* CONFIG_8xx */
 r_if
 c_cond
@@ -1622,6 +1635,8 @@ comma
 id|flags
 )paren
 suffix:semicolon
+id|out
+suffix:colon
 r_return
 (paren
 r_void
@@ -1631,7 +1646,7 @@ op_star
 id|v
 op_plus
 (paren
-id|addr
+id|p
 op_amp
 op_complement
 id|PAGE_MASK
@@ -6701,6 +6716,50 @@ id|end_of_DRAM
 op_minus
 id|KERNELBASE
 suffix:semicolon
+macro_line|#ifdef CONFIG_PPC64&t;
+id|Hash_mask
+op_assign
+l_int|0
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|h
+op_assign
+l_int|256
+op_lshift
+l_int|10
+suffix:semicolon
+id|h
+OL
+id|ramsize
+op_div
+l_int|256
+op_logical_and
+id|h
+OL
+l_int|4
+op_lshift
+l_int|20
+suffix:semicolon
+id|h
+op_mul_assign
+l_int|2
+comma
+id|Hash_mask
+op_increment
+)paren
+suffix:semicolon
+id|Hash_size
+op_assign
+id|h
+suffix:semicolon
+id|Hash_mask
+op_lshift
+l_int|10
+suffix:semicolon
+multiline_comment|/* so setting _SDR1 works the same -- Cort */
+macro_line|#else
 r_for
 c_loop
 (paren
@@ -6741,6 +6800,7 @@ l_int|6
 op_minus
 l_int|1
 suffix:semicolon
+macro_line|#endif&t;
 macro_line|#ifdef NO_RELOAD_HTAB
 multiline_comment|/* shrink the htab since we don&squot;t use it on 603&squot;s -- Cort */
 r_switch

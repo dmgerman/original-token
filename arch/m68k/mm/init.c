@@ -456,11 +456,13 @@ op_assign
 l_int|0
 suffix:semicolon
 macro_line|#endif
-DECL|function|kernel_page_table
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 id|pte_t
 op_star
-id|__init
 id|kernel_page_table
 c_func
 (paren
@@ -468,6 +470,7 @@ r_int
 r_int
 op_star
 id|memavailp
+)paren
 )paren
 (brace
 id|pte_t
@@ -540,11 +543,13 @@ id|__initdata
 op_assign
 l_int|NULL
 suffix:semicolon
-DECL|function|kernel_ptr_table
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 id|pmd_t
 op_star
-id|__init
 id|kernel_ptr_table
 c_func
 (paren
@@ -552,6 +557,7 @@ r_int
 r_int
 op_star
 id|memavailp
+)paren
 )paren
 (brace
 r_if
@@ -570,6 +576,7 @@ suffix:semicolon
 r_int
 id|i
 suffix:semicolon
+multiline_comment|/* Find the last ptr table that was used in head.S and&n;&t;&t; * reuse the remaining space in that page for further&n;&t;&t; * ptr tables.&n;&t;&t; */
 id|last
 op_assign
 (paren
@@ -597,7 +604,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|pgd_val
+id|pgd_present
 c_func
 (paren
 id|kernel_pg_dir
@@ -735,11 +742,13 @@ r_return
 id|last_pgtable
 suffix:semicolon
 )brace
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_static
 r_int
 r_int
-id|__init
-DECL|function|map_chunk
 id|map_chunk
 (paren
 r_int
@@ -753,6 +762,7 @@ r_int
 r_int
 op_star
 id|memavailp
+)paren
 )paren
 (brace
 DECL|macro|PTRTREESIZE
@@ -1238,10 +1248,12 @@ comma
 id|__init_end
 suffix:semicolon
 multiline_comment|/*&n; * paging_init() continues the virtual memory environment setup which&n; * was begun by the code in arch/head.S.&n; */
-DECL|function|paging_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_int
 r_int
-id|__init
 id|paging_init
 c_func
 (paren
@@ -1252,6 +1264,7 @@ comma
 r_int
 r_int
 id|end_mem
+)paren
 )paren
 (brace
 r_int
@@ -1675,9 +1688,11 @@ id|end_mem
 )paren
 suffix:semicolon
 )brace
-DECL|function|mem_init
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
-id|__init
 id|mem_init
 c_func
 (paren
@@ -1688,6 +1703,7 @@ comma
 r_int
 r_int
 id|end_mem
+)paren
 )paren
 (brace
 r_int
@@ -2002,7 +2018,7 @@ op_increment
 r_if
 c_cond
 (paren
-id|pgd_val
+id|pgd_present
 c_func
 (paren
 id|kernel_pg_dir

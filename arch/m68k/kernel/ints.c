@@ -10,6 +10,9 @@ macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;asm/traps.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;asm/machdep.h&gt;
+macro_line|#ifdef CONFIG_Q40
+macro_line|#include &lt;asm/q40ints.h&gt;
+macro_line|#endif
 multiline_comment|/* table for system interrupt handlers */
 DECL|variable|irq_list
 r_static
@@ -780,7 +783,7 @@ id|irq
 )braket
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Do we need these probe functions on the m68k?&n; */
+multiline_comment|/*&n; * Do we need these probe functions on the m68k?&n; *&n; *  ... may be usefull with ISA devices&n; */
 DECL|function|probe_irq_on
 r_int
 r_int
@@ -789,6 +792,19 @@ id|probe_irq_on
 r_void
 )paren
 (brace
+macro_line|#ifdef CONFIG_Q40
+r_if
+c_cond
+(paren
+id|MACH_IS_Q40
+)paren
+r_return
+id|q40_probe_irq_on
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
@@ -802,6 +818,20 @@ r_int
 id|irqs
 )paren
 (brace
+macro_line|#ifdef CONFIG_Q40
+r_if
+c_cond
+(paren
+id|MACH_IS_Q40
+)paren
+r_return
+id|q40_probe_irq_off
+c_func
+(paren
+id|irqs
+)paren
+suffix:semicolon
+macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon

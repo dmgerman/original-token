@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * $Id: prep_pci.c,v 1.31 1999/04/21 18:21:37 cort Exp $&n; * PReP pci functions.&n; * Originally by Gary Thomas&n; * rewritten and updated by Cort Dougan (cort@cs.nmt.edu)&n; *&n; * The motherboard routes/maps will disappear shortly. -- Cort&n; */
+multiline_comment|/*&n; * $Id: prep_pci.c,v 1.33 1999/05/09 20:15:54 cort Exp $&n; * PReP pci functions.&n; * Originally by Gary Thomas&n; * rewritten and updated by Cort Dougan (cort@cs.nmt.edu)&n; *&n; * The motherboard routes/maps will disappear shortly. -- Cort&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -37,6 +37,14 @@ r_char
 op_star
 id|Motherboard_routes
 suffix:semicolon
+multiline_comment|/* Used for Motorola to store system config register */
+DECL|variable|ProcInfo
+r_static
+r_int
+r_int
+op_star
+id|ProcInfo
+suffix:semicolon
 multiline_comment|/* Tables for known hardware */
 multiline_comment|/* Motorola PowerStackII - Utah */
 DECL|variable|__prepdata
@@ -55,7 +63,7 @@ multiline_comment|/* Slot 0  - unused */
 l_int|0
 comma
 multiline_comment|/* Slot 1  - unused */
-l_int|4
+l_int|5
 comma
 multiline_comment|/* Slot 2  - SCSI - NCR825A  */
 l_int|0
@@ -67,16 +75,16 @@ multiline_comment|/* Slot 4  - Ethernet - DEC2114x */
 l_int|0
 comma
 multiline_comment|/* Slot 5  - unused */
-l_int|2
-comma
-multiline_comment|/* Slot 6  - PCI Card slot #1 */
 l_int|3
 comma
-multiline_comment|/* Slot 7  - PCI Card slot #2 */
+multiline_comment|/* Slot 6  - PCI Card slot #1 */
 l_int|4
 comma
+multiline_comment|/* Slot 7  - PCI Card slot #2 */
+l_int|5
+comma
 multiline_comment|/* Slot 8  - PCI Card slot #3 */
-l_int|4
+l_int|5
 comma
 multiline_comment|/* Slot 9  - PCI Bridge */
 multiline_comment|/* added here in case we ever support PCI bridges */
@@ -87,32 +95,39 @@ multiline_comment|/* Slot 10 - unused */
 l_int|0
 comma
 multiline_comment|/* Slot 11 - unused */
-l_int|4
+l_int|5
 comma
 multiline_comment|/* Slot 12 - SCSI - NCR825A */
 l_int|0
 comma
 multiline_comment|/* Slot 13 - unused */
-l_int|2
+l_int|3
 comma
 multiline_comment|/* Slot 14 - enet */
 l_int|0
 comma
 multiline_comment|/* Slot 15 - unused */
+l_int|2
+comma
+multiline_comment|/* Slot 16 - unused */
+l_int|3
+comma
+multiline_comment|/* Slot 17 - unused */
+l_int|5
+comma
+multiline_comment|/* Slot 18 - unused */
 l_int|0
 comma
+multiline_comment|/* Slot 19 - unused */
 l_int|0
 comma
+multiline_comment|/* Slot 20 - unused */
 l_int|0
 comma
+multiline_comment|/* Slot 21 - unused */
 l_int|0
 comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
+multiline_comment|/* Slot 22 - unused */
 )brace
 suffix:semicolon
 DECL|variable|__prepdata
@@ -130,15 +145,18 @@ multiline_comment|/* Line 0 - Unused */
 l_int|9
 comma
 multiline_comment|/* Line 1 */
-l_int|11
+l_int|10
 comma
 multiline_comment|/* Line 2 */
-l_int|14
+l_int|11
 comma
 multiline_comment|/* Line 3 */
-l_int|15
+l_int|14
 comma
 multiline_comment|/* Line 4 */
+l_int|15
+comma
+multiline_comment|/* Line 5 */
 )brace
 suffix:semicolon
 multiline_comment|/* Motorola PowerStackII - Omaha */
@@ -343,6 +361,343 @@ l_int|15
 multiline_comment|/* Line 4 */
 )brace
 suffix:semicolon
+multiline_comment|/* Motorola Mesquite */
+DECL|variable|__prepdata
+r_static
+r_char
+id|Mesquite_pci_IRQ_map
+(braket
+l_int|23
+)braket
+id|__prepdata
+op_assign
+(brace
+l_int|0
+comma
+multiline_comment|/* Slot 0  - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 1  - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 2  - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 3  - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 4  - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 5  - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 6  - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 7  - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 8  - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 9  - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 10 - unxued */
+l_int|0
+comma
+multiline_comment|/* Slot 11 - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 12 - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 13 - unused */
+l_int|2
+comma
+multiline_comment|/* Slot 14 - Ethernet */
+l_int|0
+comma
+multiline_comment|/* Slot 15 - unused */
+l_int|3
+comma
+multiline_comment|/* Slot 16 - PMC */
+l_int|0
+comma
+multiline_comment|/* Slot 17 - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 18 - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 19 - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 20 - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 21 - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 22 - unused */
+)brace
+suffix:semicolon
+multiline_comment|/* Motorola Sitka */
+DECL|variable|__prepdata
+r_static
+r_char
+id|Sitka_pci_IRQ_map
+(braket
+l_int|21
+)braket
+id|__prepdata
+op_assign
+(brace
+l_int|0
+comma
+multiline_comment|/* Slot 0  - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 1  - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 2  - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 3  - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 4  - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 5  - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 6  - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 7  - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 8  - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 9  - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 10 - unxued */
+l_int|0
+comma
+multiline_comment|/* Slot 11 - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 12 - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 13 - unused */
+l_int|2
+comma
+multiline_comment|/* Slot 14 - Ethernet */
+l_int|0
+comma
+multiline_comment|/* Slot 15 - unused */
+l_int|9
+comma
+multiline_comment|/* Slot 16 - PMC 1  */
+l_int|12
+comma
+multiline_comment|/* Slot 17 - PMC 2  */
+l_int|0
+comma
+multiline_comment|/* Slot 18 - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 19 - unused */
+l_int|4
+comma
+multiline_comment|/* Slot 20 - NT P2P bridge */
+)brace
+suffix:semicolon
+multiline_comment|/* Motorola MTX */
+DECL|variable|__prepdata
+r_static
+r_char
+id|MTX_pci_IRQ_map
+(braket
+l_int|23
+)braket
+id|__prepdata
+op_assign
+(brace
+l_int|0
+comma
+multiline_comment|/* Slot 0  - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 1  - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 2  - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 3  - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 4  - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 5  - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 6  - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 7  - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 8  - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 9  - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 10 - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 11 - unused */
+l_int|3
+comma
+multiline_comment|/* Slot 12 - SCSI */
+l_int|0
+comma
+multiline_comment|/* Slot 13 - unused */
+l_int|2
+comma
+multiline_comment|/* Slot 14 - Ethernet */
+l_int|0
+comma
+multiline_comment|/* Slot 15 - unused */
+l_int|9
+comma
+multiline_comment|/* Slot 16 - PCI/PMC slot 1 */
+l_int|10
+comma
+multiline_comment|/* Slot 17 - PCI/PMC slot 2 */
+l_int|11
+comma
+multiline_comment|/* Slot 18 - PCI slot 3 */
+l_int|0
+comma
+multiline_comment|/* Slot 19 - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 20 - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 21 - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 22 - unused */
+)brace
+suffix:semicolon
+multiline_comment|/* Motorola MTX Plus */
+multiline_comment|/* Secondary bus interrupt routing is not supported yet */
+DECL|variable|__prepdata
+r_static
+r_char
+id|MTXplus_pci_IRQ_map
+(braket
+l_int|23
+)braket
+id|__prepdata
+op_assign
+(brace
+l_int|0
+comma
+multiline_comment|/* Slot 0  - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 1  - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 2  - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 3  - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 4  - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 5  - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 6  - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 7  - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 8  - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 9  - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 10 - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 11 - unused */
+l_int|3
+comma
+multiline_comment|/* Slot 12 - SCSI */
+l_int|0
+comma
+multiline_comment|/* Slot 13 - unused */
+l_int|2
+comma
+multiline_comment|/* Slot 14 - Ethernet 1 */
+l_int|0
+comma
+multiline_comment|/* Slot 15 - unused */
+l_int|9
+comma
+multiline_comment|/* Slot 16 - PCI slot 1P */
+l_int|10
+comma
+multiline_comment|/* Slot 17 - PCI slot 2P */
+l_int|11
+comma
+multiline_comment|/* Slot 18 - PCI slot 3P */
+l_int|10
+comma
+multiline_comment|/* Slot 19 - Ethernet 2 */
+l_int|0
+comma
+multiline_comment|/* Slot 20 - P2P Bridge */
+l_int|0
+comma
+multiline_comment|/* Slot 21 - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 22 - unused */
+)brace
+suffix:semicolon
+DECL|variable|__prepdata
+r_static
+r_char
+id|Raven_pci_IRQ_routes
+(braket
+)braket
+id|__prepdata
+op_assign
+(brace
+l_int|0
+comma
+multiline_comment|/* This is a dummy structure */
+)brace
+suffix:semicolon
 multiline_comment|/* Motorola MVME16xx */
 DECL|variable|__prepdata
 r_static
@@ -429,8 +784,6 @@ l_int|15
 multiline_comment|/* Line 4 */
 )brace
 suffix:semicolon
-multiline_comment|/* Motorola Genesis2 MVME26XX, MVME 36XX */
-multiline_comment|/* The final version for these boards should use the Raven PPC/PCI bridge &n;interrupt controller which is much sophisticated and allows more&n;devices on the PCI bus. */
 DECL|variable|__prepdata
 r_static
 r_char
@@ -443,7 +796,7 @@ op_assign
 (brace
 l_int|0
 comma
-multiline_comment|/* Slot 0  - ECC memory controller/PCI bridge */
+multiline_comment|/* Slot 0  - unused */
 l_int|0
 comma
 multiline_comment|/* Slot 1  - unused */
@@ -473,68 +826,43 @@ comma
 multiline_comment|/* Slot 9  - unused */
 l_int|0
 comma
-multiline_comment|/* Slot 10 - unused */
+multiline_comment|/* Slot 10 - Ethernet */
 l_int|0
 comma
-multiline_comment|/* Slot 11 - ISA bridge */
+multiline_comment|/* Slot 11 - Universe PCI - VME Bridge */
 l_int|3
 comma
-multiline_comment|/* Slot 12 - SCSI */
+multiline_comment|/* Slot 12 - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 13 - unused */
 l_int|2
 comma
-multiline_comment|/* Slot 13 - Universe PCI/VME bridge (and 22..24) */
-l_int|1
-comma
-multiline_comment|/* Slot 14 - Ethernet */
+multiline_comment|/* Slot 14 - SCSI */
 l_int|0
 comma
-multiline_comment|/* Slot 15 - Unused (graphics on 3600, would be 20 ?) */
-l_int|4
+multiline_comment|/* Slot 15 - graphics on 3600 */
+l_int|9
 comma
-multiline_comment|/* Slot 16 - PMC slot, assume uses INTA */
-l_int|0
+multiline_comment|/* Slot 16 - PMC */
+l_int|12
 comma
-multiline_comment|/* Slot 17 */
-l_int|0
-comma
-multiline_comment|/* Slot 18 */
-l_int|0
-comma
-multiline_comment|/* Slot 19 */
-l_int|0
-comma
-multiline_comment|/* Slot 20 */
-l_int|0
-comma
-multiline_comment|/* Slot 21 */
-l_int|0
-comma
-multiline_comment|/* Slot 22 */
-)brace
-suffix:semicolon
-DECL|variable|__prepdata
-r_static
-r_char
-id|Genesis2_pci_IRQ_routes
-(braket
-)braket
-id|__prepdata
-op_assign
-(brace
-l_int|0
-comma
-multiline_comment|/* Line 0 - Unused */
-l_int|10
-comma
-multiline_comment|/* Line 1 - INTA */
+multiline_comment|/* Slot 17 - pci */
 l_int|11
 comma
-multiline_comment|/* Line 2 - INTB */
-l_int|14
+multiline_comment|/* Slot 18 - pci */
+l_int|10
 comma
-multiline_comment|/* Line 3 - INTC */
-l_int|15
-multiline_comment|/* Line 4 - INTD */
+multiline_comment|/* Slot 19 - pci */
+l_int|0
+comma
+multiline_comment|/* Slot 20 - pci */
+l_int|0
+comma
+multiline_comment|/* Slot 21 - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 22 - unused */
 )brace
 suffix:semicolon
 multiline_comment|/* Motorola Series-E */
@@ -543,7 +871,7 @@ r_static
 r_char
 id|Comet_pci_IRQ_map
 (braket
-l_int|16
+l_int|23
 )braket
 id|__prepdata
 op_assign
@@ -596,6 +924,24 @@ multiline_comment|/* Slot 14 - Ethernet */
 l_int|0
 comma
 multiline_comment|/* Slot 15 - unused */
+l_int|1
+comma
+multiline_comment|/* Slot 16 - PCI slot 1 */
+l_int|2
+comma
+multiline_comment|/* Slot 17 - PCI slot 2 */
+l_int|3
+comma
+multiline_comment|/* Slot 18 - PCI slot 3 */
+l_int|4
+comma
+multiline_comment|/* Slot 19 - PCI bridge */
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
 )brace
 suffix:semicolon
 DECL|variable|__prepdata
@@ -620,6 +966,111 @@ l_int|14
 comma
 multiline_comment|/* Line 3 */
 l_int|15
+multiline_comment|/* Line 4 */
+)brace
+suffix:semicolon
+multiline_comment|/* Motorola Series-EX */
+DECL|variable|__prepdata
+r_static
+r_char
+id|Comet2_pci_IRQ_map
+(braket
+l_int|23
+)braket
+id|__prepdata
+op_assign
+(brace
+l_int|0
+comma
+multiline_comment|/* Slot 0  - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 1  - unused */
+l_int|3
+comma
+multiline_comment|/* Slot 2  - SCSI - NCR825A */
+l_int|0
+comma
+multiline_comment|/* Slot 3  - unused */
+l_int|1
+comma
+multiline_comment|/* Slot 4  - Ethernet - DEC2104X */
+l_int|0
+comma
+multiline_comment|/* Slot 5  - unused */
+l_int|1
+comma
+multiline_comment|/* Slot 6  - PCI slot 1 */
+l_int|2
+comma
+multiline_comment|/* Slot 7  - PCI slot 2 */
+l_int|3
+comma
+multiline_comment|/* Slot 8  - PCI slot 3 */
+l_int|4
+comma
+multiline_comment|/* Slot 9  - PCI bridge  */
+l_int|0
+comma
+multiline_comment|/* Slot 10 - unused */
+l_int|0
+comma
+multiline_comment|/* Slot 11 - unused */
+l_int|3
+comma
+multiline_comment|/* Slot 12 - SCSI - NCR825A */
+l_int|0
+comma
+multiline_comment|/* Slot 13 - unused */
+l_int|1
+comma
+multiline_comment|/* Slot 14 - Ethernet - DEC2104X */
+l_int|0
+comma
+multiline_comment|/* Slot 15 - unused */
+l_int|1
+comma
+multiline_comment|/* Slot 16 - PCI slot 1 */
+l_int|2
+comma
+multiline_comment|/* Slot 17 - PCI slot 2 */
+l_int|3
+comma
+multiline_comment|/* Slot 18 - PCI slot 3 */
+l_int|4
+comma
+multiline_comment|/* Slot 19 - PCI bridge */
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+)brace
+suffix:semicolon
+DECL|variable|__prepdata
+r_static
+r_char
+id|Comet2_pci_IRQ_routes
+(braket
+)braket
+id|__prepdata
+op_assign
+(brace
+l_int|0
+comma
+multiline_comment|/* Line 0 - Unused */
+l_int|10
+comma
+multiline_comment|/* Line 1 */
+l_int|11
+comma
+multiline_comment|/* Line 2 */
+l_int|14
+comma
+multiline_comment|/* Line 3 */
+l_int|15
+comma
 multiline_comment|/* Line 4 */
 )brace
 suffix:semicolon
@@ -1450,6 +1901,732 @@ r_return
 id|PCIBIOS_SUCCESSFUL
 suffix:semicolon
 )brace
+DECL|macro|MOTOROLA_CPUTYPE_REG
+mdefine_line|#define MOTOROLA_CPUTYPE_REG&t;0x800
+DECL|macro|MOTOROLA_BASETYPE_REG
+mdefine_line|#define MOTOROLA_BASETYPE_REG&t;0x803
+DECL|macro|MPIC_RAVEN_ID
+mdefine_line|#define MPIC_RAVEN_ID&t;&t;0x48010000
+DECL|macro|MPIC_HAWK_ID
+mdefine_line|#define&t;MPIC_HAWK_ID&t;&t;0x48030000
+DECL|macro|MOT_PROC2_BIT
+mdefine_line|#define&t;MOT_PROC2_BIT&t;&t;0x800
+DECL|variable|__initdata
+r_static
+id|u_char
+id|mvme2600_openpic_initsenses
+(braket
+)braket
+id|__initdata
+op_assign
+(brace
+l_int|1
+comma
+multiline_comment|/* MVME2600_INT_SIO */
+l_int|0
+comma
+multiline_comment|/* MVME2600_INT_FALCN_ECC_ERR */
+l_int|1
+comma
+multiline_comment|/* MVME2600_INT_PCI_ETHERNET */
+l_int|1
+comma
+multiline_comment|/* MVME2600_INT_PCI_SCSI */
+l_int|1
+comma
+multiline_comment|/* MVME2600_INT_PCI_GRAPHICS */
+l_int|1
+comma
+multiline_comment|/* MVME2600_INT_PCI_VME0 */
+l_int|1
+comma
+multiline_comment|/* MVME2600_INT_PCI_VME1 */
+l_int|1
+comma
+multiline_comment|/* MVME2600_INT_PCI_VME2 */
+l_int|1
+comma
+multiline_comment|/* MVME2600_INT_PCI_VME3 */
+l_int|1
+comma
+multiline_comment|/* MVME2600_INT_PCI_INTA */
+l_int|1
+comma
+multiline_comment|/* MVME2600_INT_PCI_INTB */
+l_int|1
+comma
+multiline_comment|/* MVME2600_INT_PCI_INTC */
+l_int|1
+comma
+multiline_comment|/* MVME2600_INT_PCI_INTD */
+l_int|1
+comma
+multiline_comment|/* MVME2600_INT_LM_SIG0 */
+l_int|1
+comma
+multiline_comment|/* MVME2600_INT_LM_SIG1 */
+)brace
+suffix:semicolon
+DECL|macro|MOT_RAVEN_PRESENT
+mdefine_line|#define MOT_RAVEN_PRESENT&t;0x1
+DECL|macro|MOT_HAWK_PRESENT
+mdefine_line|#define MOT_HAWK_PRESENT&t;0x2
+DECL|variable|prep_keybd_present
+r_int
+id|prep_keybd_present
+op_assign
+l_int|1
+suffix:semicolon
+DECL|variable|MotMPIC
+r_int
+id|MotMPIC
+op_assign
+l_int|0
+suffix:semicolon
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
+r_int
+id|raven_init
+c_func
+(paren
+r_void
+)paren
+)paren
+(brace
+r_int
+r_int
+id|devid
+suffix:semicolon
+r_int
+r_int
+id|pci_membase
+suffix:semicolon
+r_int
+r_char
+id|base_mod
+suffix:semicolon
+multiline_comment|/* Check to see if the Raven chip exists. */
+r_if
+c_cond
+(paren
+id|_prep_type
+op_ne
+id|_PREP_Motorola
+)paren
+(brace
+id|OpenPIC
+op_assign
+l_int|NULL
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+multiline_comment|/* Check to see if this board is a type that might have a Raven. */
+r_if
+c_cond
+(paren
+(paren
+id|inb
+c_func
+(paren
+id|MOTOROLA_CPUTYPE_REG
+)paren
+op_amp
+l_int|0xF0
+)paren
+op_ne
+l_int|0xE0
+)paren
+(brace
+id|OpenPIC
+op_assign
+l_int|NULL
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+multiline_comment|/* Check the first PCI device to see if it is a Raven. */
+id|pcibios_read_config_dword
+c_func
+(paren
+l_int|0
+comma
+l_int|0
+comma
+id|PCI_VENDOR_ID
+comma
+op_amp
+id|devid
+)paren
+suffix:semicolon
+r_switch
+c_cond
+(paren
+id|devid
+op_amp
+l_int|0xffff0000
+)paren
+(brace
+r_case
+id|MPIC_RAVEN_ID
+suffix:colon
+id|MotMPIC
+op_assign
+id|MOT_RAVEN_PRESENT
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|MPIC_HAWK_ID
+suffix:colon
+id|MotMPIC
+op_assign
+id|MOT_HAWK_PRESENT
+suffix:semicolon
+r_break
+suffix:semicolon
+r_default
+suffix:colon
+id|OpenPIC
+op_assign
+l_int|NULL
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+multiline_comment|/* Read the memory base register. */
+id|pcibios_read_config_dword
+c_func
+(paren
+l_int|0
+comma
+l_int|0
+comma
+id|PCI_BASE_ADDRESS_1
+comma
+op_amp
+id|pci_membase
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|pci_membase
+op_eq
+l_int|0
+)paren
+(brace
+id|OpenPIC
+op_assign
+l_int|NULL
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+multiline_comment|/* Map the Raven MPIC registers to virtual memory. */
+id|OpenPIC
+op_assign
+(paren
+r_struct
+id|OpenPIC
+op_star
+)paren
+id|ioremap
+c_func
+(paren
+id|pci_membase
+op_plus
+l_int|0xC0000000
+comma
+l_int|0x22000
+)paren
+suffix:semicolon
+id|OpenPIC_InitSenses
+op_assign
+id|mvme2600_openpic_initsenses
+suffix:semicolon
+id|OpenPIC_NumInitSenses
+op_assign
+r_sizeof
+(paren
+id|mvme2600_openpic_initsenses
+)paren
+suffix:semicolon
+multiline_comment|/* If raven is present on Motorola store the system config register&n;&t; * for later use.&n;&t; */
+id|ProcInfo
+op_assign
+(paren
+r_int
+r_int
+op_star
+)paren
+id|ioremap
+c_func
+(paren
+l_int|0xfef80400
+comma
+l_int|4
+)paren
+suffix:semicolon
+multiline_comment|/* This is a hack.  If this is a 2300 or 2400 mot board then there is&n;&t; * no keyboard controller and we have to indicate that.&n;&t; */
+id|base_mod
+op_assign
+id|inb
+c_func
+(paren
+id|MOTOROLA_BASETYPE_REG
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|MotMPIC
+op_eq
+id|MOT_HAWK_PRESENT
+)paren
+op_logical_or
+(paren
+id|base_mod
+op_eq
+l_int|0xF9
+)paren
+op_logical_or
+(paren
+id|base_mod
+op_eq
+l_int|0xFA
+)paren
+op_logical_or
+(paren
+id|base_mod
+op_eq
+l_int|0xE1
+)paren
+)paren
+id|prep_keybd_present
+op_assign
+l_int|0
+suffix:semicolon
+r_return
+l_int|1
+suffix:semicolon
+)brace
+DECL|struct|mot_info
+r_struct
+id|mot_info
+(brace
+DECL|member|cpu_type
+r_int
+id|cpu_type
+suffix:semicolon
+multiline_comment|/* 0x100 mask assumes for Raven and Hawk boards that the level/edge are set */
+multiline_comment|/* 0x200 if this board has a Hawk chip. */
+DECL|member|base_type
+r_int
+id|base_type
+suffix:semicolon
+DECL|member|max_cpu
+r_int
+id|max_cpu
+suffix:semicolon
+multiline_comment|/* ored with 0x80 if this board should be checked for multi CPU */
+DECL|member|name
+r_const
+r_char
+op_star
+id|name
+suffix:semicolon
+DECL|member|map
+r_int
+r_char
+op_star
+id|map
+suffix:semicolon
+DECL|member|routes
+r_int
+r_char
+op_star
+id|routes
+suffix:semicolon
+DECL|variable|mot_info
+)brace
+id|mot_info
+(braket
+)braket
+op_assign
+(brace
+(brace
+l_int|0x300
+comma
+l_int|0x00
+comma
+l_int|0x00
+comma
+l_string|&quot;MVME 2400&quot;
+comma
+id|Genesis2_pci_IRQ_map
+comma
+id|Raven_pci_IRQ_routes
+)brace
+comma
+(brace
+l_int|0x010
+comma
+l_int|0x00
+comma
+l_int|0x00
+comma
+l_string|&quot;Genesis&quot;
+comma
+id|Genesis_pci_IRQ_map
+comma
+id|Genesis_pci_IRQ_routes
+)brace
+comma
+(brace
+l_int|0x020
+comma
+l_int|0x00
+comma
+l_int|0x00
+comma
+l_string|&quot;Powerstack (Series E)&quot;
+comma
+id|Comet_pci_IRQ_map
+comma
+id|Comet_pci_IRQ_routes
+)brace
+comma
+(brace
+l_int|0x040
+comma
+l_int|0x00
+comma
+l_int|0x00
+comma
+l_string|&quot;Blackhawk (Powerstack)&quot;
+comma
+id|Blackhawk_pci_IRQ_map
+comma
+id|Blackhawk_pci_IRQ_routes
+)brace
+comma
+(brace
+l_int|0x050
+comma
+l_int|0x00
+comma
+l_int|0x00
+comma
+l_string|&quot;Omaha (PowerStack II Pro3000)&quot;
+comma
+id|Omaha_pci_IRQ_map
+comma
+id|Omaha_pci_IRQ_routes
+)brace
+comma
+(brace
+l_int|0x060
+comma
+l_int|0x00
+comma
+l_int|0x00
+comma
+l_string|&quot;Utah (Powerstack II Pro4000)&quot;
+comma
+id|Utah_pci_IRQ_map
+comma
+id|Utah_pci_IRQ_routes
+)brace
+comma
+(brace
+l_int|0x0A0
+comma
+l_int|0x00
+comma
+l_int|0x00
+comma
+l_string|&quot;Powerstack (Series EX)&quot;
+comma
+id|Comet2_pci_IRQ_map
+comma
+id|Comet2_pci_IRQ_routes
+)brace
+comma
+(brace
+l_int|0x1E0
+comma
+l_int|0xE0
+comma
+l_int|0x00
+comma
+l_string|&quot;Mesquite cPCI (MCP750)&quot;
+comma
+id|Mesquite_pci_IRQ_map
+comma
+id|Raven_pci_IRQ_routes
+)brace
+comma
+(brace
+l_int|0x1E0
+comma
+l_int|0xE1
+comma
+l_int|0x00
+comma
+l_string|&quot;Sitka cPCI (MCPN750)&quot;
+comma
+id|Sitka_pci_IRQ_map
+comma
+id|Raven_pci_IRQ_routes
+)brace
+comma
+(brace
+l_int|0x1E0
+comma
+l_int|0xE2
+comma
+l_int|0x00
+comma
+l_string|&quot;Mesquite cPCI (MCP750) w/ HAC&quot;
+comma
+id|Mesquite_pci_IRQ_map
+comma
+id|Raven_pci_IRQ_routes
+)brace
+comma
+(brace
+l_int|0x1E0
+comma
+l_int|0xF6
+comma
+l_int|0x80
+comma
+l_string|&quot;MTX Plus&quot;
+comma
+id|MTXplus_pci_IRQ_map
+comma
+id|Raven_pci_IRQ_routes
+)brace
+comma
+(brace
+l_int|0x1E0
+comma
+l_int|0xF6
+comma
+l_int|0x81
+comma
+l_string|&quot;Dual MTX Plus&quot;
+comma
+id|MTXplus_pci_IRQ_map
+comma
+id|Raven_pci_IRQ_routes
+)brace
+comma
+(brace
+l_int|0x1E0
+comma
+l_int|0xF7
+comma
+l_int|0x80
+comma
+l_string|&quot;MTX wo/ Parallel Port&quot;
+comma
+id|MTX_pci_IRQ_map
+comma
+id|Raven_pci_IRQ_routes
+)brace
+comma
+(brace
+l_int|0x1E0
+comma
+l_int|0xF7
+comma
+l_int|0x81
+comma
+l_string|&quot;Dual MTX wo/ Parallel Port&quot;
+comma
+id|MTX_pci_IRQ_map
+comma
+id|Raven_pci_IRQ_routes
+)brace
+comma
+(brace
+l_int|0x1E0
+comma
+l_int|0xF8
+comma
+l_int|0x80
+comma
+l_string|&quot;MTX w/ Parallel Port&quot;
+comma
+id|MTX_pci_IRQ_map
+comma
+id|Raven_pci_IRQ_routes
+)brace
+comma
+(brace
+l_int|0x1E0
+comma
+l_int|0xF8
+comma
+l_int|0x81
+comma
+l_string|&quot;Dual MTX w/ Parallel Port&quot;
+comma
+id|MTX_pci_IRQ_map
+comma
+id|Raven_pci_IRQ_routes
+)brace
+comma
+(brace
+l_int|0x1E0
+comma
+l_int|0xF9
+comma
+l_int|0x00
+comma
+l_string|&quot;MVME 2300&quot;
+comma
+id|Genesis2_pci_IRQ_map
+comma
+id|Raven_pci_IRQ_routes
+)brace
+comma
+(brace
+l_int|0x1E0
+comma
+l_int|0xFA
+comma
+l_int|0x00
+comma
+l_string|&quot;MVME 2300SC/2600&quot;
+comma
+id|Genesis2_pci_IRQ_map
+comma
+id|Raven_pci_IRQ_routes
+)brace
+comma
+(brace
+l_int|0x1E0
+comma
+l_int|0xFB
+comma
+l_int|0x00
+comma
+l_string|&quot;MVME 2600 with MVME712M&quot;
+comma
+id|Genesis2_pci_IRQ_map
+comma
+id|Raven_pci_IRQ_routes
+)brace
+comma
+(brace
+l_int|0x1E0
+comma
+l_int|0xFC
+comma
+l_int|0x00
+comma
+l_string|&quot;MVME 2600/2700 with MVME761&quot;
+comma
+id|Genesis2_pci_IRQ_map
+comma
+id|Raven_pci_IRQ_routes
+)brace
+comma
+(brace
+l_int|0x1E0
+comma
+l_int|0xFD
+comma
+l_int|0x80
+comma
+l_string|&quot;MVME 3600 with MVME712M&quot;
+comma
+id|Genesis2_pci_IRQ_map
+comma
+id|Raven_pci_IRQ_routes
+)brace
+comma
+(brace
+l_int|0x1E0
+comma
+l_int|0xFD
+comma
+l_int|0x81
+comma
+l_string|&quot;MVME 4600 with MVME712M&quot;
+comma
+id|Genesis2_pci_IRQ_map
+comma
+id|Raven_pci_IRQ_routes
+)brace
+comma
+(brace
+l_int|0x1E0
+comma
+l_int|0xFE
+comma
+l_int|0x80
+comma
+l_string|&quot;MVME 3600 with MVME761&quot;
+comma
+id|Genesis2_pci_IRQ_map
+comma
+id|Raven_pci_IRQ_routes
+)brace
+comma
+(brace
+l_int|0x1E0
+comma
+l_int|0xFE
+comma
+l_int|0x81
+comma
+l_string|&quot;MVME 4600 with MVME761&quot;
+comma
+id|Genesis2_pci_IRQ_map
+comma
+id|Raven_pci_IRQ_routes
+)brace
+comma
+(brace
+l_int|0x1E0
+comma
+l_int|0xFF
+comma
+l_int|0x00
+comma
+l_string|&quot;MVME 1600-001 or 1600-011&quot;
+comma
+id|Genesis2_pci_IRQ_map
+comma
+id|Raven_pci_IRQ_routes
+)brace
+comma
+(brace
+l_int|0x000
+comma
+l_int|0x00
+comma
+l_int|0x00
+comma
+l_string|&quot;&quot;
+comma
+l_int|NULL
+comma
+l_int|NULL
+)brace
+)brace
+suffix:semicolon
 DECL|function|__initfunc
 id|__initfunc
 c_func
@@ -1502,134 +2679,291 @@ r_int
 r_int
 id|irq_mode
 suffix:semicolon
-r_switch
-c_cond
-(paren
+r_int
+r_char
+id|cpu_type
+suffix:semicolon
+r_int
+r_char
+id|base_mod
+suffix:semicolon
+r_int
+id|entry
+suffix:semicolon
+r_int
+id|mot_entry
+op_assign
+op_minus
+l_int|1
+suffix:semicolon
+id|cpu_type
+op_assign
 id|inb
 c_func
 (paren
-l_int|0x800
+id|MOTOROLA_CPUTYPE_REG
 )paren
 op_amp
 l_int|0xF0
+suffix:semicolon
+id|base_mod
+op_assign
+id|inb
+c_func
+(paren
+id|MOTOROLA_BASETYPE_REG
 )paren
-(brace
-r_case
-l_int|0x10
-suffix:colon
-multiline_comment|/* MVME16xx */
-id|Motherboard_map_name
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|entry
 op_assign
-l_string|&quot;Genesis&quot;
-suffix:semicolon
-id|Motherboard_map
-op_assign
-id|Genesis_pci_IRQ_map
-suffix:semicolon
-id|Motherboard_routes
-op_assign
-id|Genesis_pci_IRQ_routes
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-l_int|0x20
-suffix:colon
-multiline_comment|/* Series E */
-id|Motherboard_map_name
-op_assign
-l_string|&quot;Powerstack (Series E)&quot;
-suffix:semicolon
-id|Motherboard_map
-op_assign
-id|Comet_pci_IRQ_map
-suffix:semicolon
-id|Motherboard_routes
-op_assign
-id|Comet_pci_IRQ_routes
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-l_int|0x50
-suffix:colon
-multiline_comment|/* PowerStackII Pro3000 */
-id|Motherboard_map_name
-op_assign
-l_string|&quot;Omaha (PowerStack II Pro3000)&quot;
-suffix:semicolon
-id|Motherboard_map
-op_assign
-id|Omaha_pci_IRQ_map
-suffix:semicolon
-id|Motherboard_routes
-op_assign
-id|Omaha_pci_IRQ_routes
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-l_int|0x60
-suffix:colon
-multiline_comment|/* PowerStackII Pro4000 */
-id|Motherboard_map_name
-op_assign
-l_string|&quot;Utah (Powerstack II Pro4000)&quot;
-suffix:semicolon
-id|Motherboard_map
-op_assign
-id|Utah_pci_IRQ_map
-suffix:semicolon
-id|Motherboard_routes
-op_assign
-id|Utah_pci_IRQ_routes
-suffix:semicolon
-r_break
-suffix:semicolon
-r_case
-l_int|0xE0
-suffix:colon
-multiline_comment|/* MVME 26xx, 36xx, MTX ? */
-id|Motherboard_map_name
-op_assign
-l_string|&quot;Genesis2&quot;
-suffix:semicolon
-id|Motherboard_map
-op_assign
-id|Genesis2_pci_IRQ_map
-suffix:semicolon
-id|Motherboard_routes
-op_assign
-id|Genesis2_pci_IRQ_routes
-suffix:semicolon
-multiline_comment|/* Return: different ibc_pcicon and&n;&t;&t;&t;   pirq already set up by firmware. */
-r_return
 l_int|0
 suffix:semicolon
-r_break
+id|mot_info
+(braket
+id|entry
+)braket
+dot
+id|cpu_type
+op_ne
+l_int|0
 suffix:semicolon
-r_case
-l_int|0x40
-suffix:colon
-multiline_comment|/* PowerStack */
-r_default
-suffix:colon
-multiline_comment|/* Can&squot;t hurt, can it? */
-id|Motherboard_map_name
-op_assign
-l_string|&quot;Blackhawk (Powerstack)&quot;
+id|entry
+op_increment
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|mot_info
+(braket
+id|entry
+)braket
+dot
+id|cpu_type
+op_amp
+l_int|0x200
+)paren
+(brace
+multiline_comment|/* Check for Hawk chip */
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|MotMPIC
+op_amp
+id|MOT_HAWK_PRESENT
+)paren
+)paren
+r_continue
 suffix:semicolon
-id|Motherboard_map
-op_assign
-id|Blackhawk_pci_IRQ_map
+)brace
+r_else
+(brace
+multiline_comment|/* Check non hawk boards */
+r_if
+c_cond
+(paren
+(paren
+id|mot_info
+(braket
+id|entry
+)braket
+dot
+id|cpu_type
+op_amp
+l_int|0xff
+)paren
+op_ne
+id|cpu_type
+)paren
+r_continue
 suffix:semicolon
-id|Motherboard_routes
+r_if
+c_cond
+(paren
+id|mot_info
+(braket
+id|entry
+)braket
+dot
+id|base_type
+op_eq
+l_int|0
+)paren
+(brace
+id|mot_entry
 op_assign
-id|Blackhawk_pci_IRQ_routes
+id|entry
 suffix:semicolon
 r_break
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|mot_info
+(braket
+id|entry
+)braket
+dot
+id|base_type
+op_ne
+id|base_mod
+)paren
+r_continue
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|mot_info
+(braket
+id|entry
+)braket
+dot
+id|max_cpu
+op_amp
+l_int|0x80
+)paren
+)paren
+(brace
+id|mot_entry
+op_assign
+id|entry
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
+multiline_comment|/* processor 1 not present and max processor zero indicated */
+r_if
+c_cond
+(paren
+(paren
+op_star
+id|ProcInfo
+op_amp
+id|MOT_PROC2_BIT
+)paren
+op_logical_and
+op_logical_neg
+(paren
+id|mot_info
+(braket
+id|entry
+)braket
+dot
+id|max_cpu
+op_amp
+l_int|0x7f
+)paren
+)paren
+(brace
+id|mot_entry
+op_assign
+id|entry
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
+multiline_comment|/* processor 1 present and max processor zero indicated */
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+op_star
+id|ProcInfo
+op_amp
+id|MOT_PROC2_BIT
+)paren
+op_logical_and
+(paren
+id|mot_info
+(braket
+id|entry
+)braket
+dot
+id|max_cpu
+op_amp
+l_int|0x7f
+)paren
+)paren
+(brace
+id|mot_entry
+op_assign
+id|entry
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
+)brace
+r_if
+c_cond
+(paren
+id|mot_entry
+op_eq
+op_minus
+l_int|1
+)paren
+multiline_comment|/* No particular cpu type found - assume Blackhawk */
+id|mot_entry
+op_assign
+l_int|3
+suffix:semicolon
+id|Motherboard_map_name
+op_assign
+(paren
+r_int
+r_char
+op_star
+)paren
+id|mot_info
+(braket
+id|mot_entry
+)braket
+dot
+id|name
+suffix:semicolon
+id|Motherboard_map
+op_assign
+id|mot_info
+(braket
+id|mot_entry
+)braket
+dot
+id|map
+suffix:semicolon
+id|Motherboard_routes
+op_assign
+id|mot_info
+(braket
+id|mot_entry
+)braket
+dot
+id|routes
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|mot_info
+(braket
+id|entry
+)braket
+dot
+id|cpu_type
+op_amp
+l_int|0x100
+)paren
+)paren
+(brace
 multiline_comment|/* AJF adjust level/edge control according to routes */
 id|irq_mode
 op_assign
@@ -1686,6 +3020,7 @@ comma
 l_int|0x4d1
 )paren
 suffix:semicolon
+)brace
 )brace
 r_else
 r_if
@@ -2025,367 +3360,6 @@ DECL|function|__initfunc
 id|__initfunc
 c_func
 (paren
-r_static
-r_inline
-r_void
-id|fixup_pci_interrupts
-c_func
-(paren
-id|PnP_TAG_PACKET
-op_star
-id|pkt
-)paren
-)paren
-(brace
-DECL|macro|data
-mdefine_line|#define data pkt-&gt;L4_Pack.L4_Data.L4_PPCPack.PPCData
-id|u_int
-id|bus
-op_assign
-id|data
-(braket
-l_int|16
-)braket
-suffix:semicolon
-id|u_char
-op_star
-id|End
-comma
-op_star
-id|p
-suffix:semicolon
-id|End
-op_assign
-id|data
-op_plus
-id|ld_le16
-c_func
-(paren
-(paren
-id|u_short
-op_star
-)paren
-(paren
-op_amp
-id|pkt-&gt;L4_Pack.Count0
-)paren
-)paren
-op_minus
-l_int|1
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;Interrupt mapping from %d to %d&bslash;n&quot;
-comma
-l_int|20
-comma
-id|End
-op_minus
-id|data
-)paren
-suffix:semicolon
-r_for
-c_loop
-(paren
-id|p
-op_assign
-id|data
-op_plus
-l_int|20
-suffix:semicolon
-id|p
-OL
-id|End
-suffix:semicolon
-id|p
-op_add_assign
-l_int|12
-)paren
-(brace
-r_struct
-id|pci_dev
-op_star
-id|dev
-suffix:semicolon
-r_for
-c_loop
-(paren
-id|dev
-op_assign
-id|pci_devices
-suffix:semicolon
-id|dev
-suffix:semicolon
-id|dev
-op_assign
-id|dev-&gt;next
-)paren
-(brace
-r_int
-id|code
-comma
-id|irq
-suffix:semicolon
-id|u_char
-id|pin
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|dev-&gt;bus-&gt;number
-op_ne
-id|bus
-op_logical_or
-id|PCI_SLOT
-c_func
-(paren
-id|dev-&gt;devfn
-)paren
-op_ne
-id|PCI_SLOT
-c_func
-(paren
-id|p
-(braket
-l_int|1
-)braket
-)paren
-)paren
-r_continue
-suffix:semicolon
-id|pci_read_config_byte
-c_func
-(paren
-id|dev
-comma
-id|PCI_INTERRUPT_PIN
-comma
-op_amp
-id|pin
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|pin
-)paren
-(brace
-r_continue
-suffix:semicolon
-)brace
-id|code
-op_assign
-id|ld_le16
-c_func
-(paren
-(paren
-r_int
-r_int
-op_star
-)paren
-(paren
-id|p
-op_plus
-l_int|4
-op_plus
-l_int|2
-op_star
-(paren
-id|pin
-op_minus
-l_int|1
-)paren
-)paren
-)paren
-suffix:semicolon
-multiline_comment|/* Set vector to 0 for unrouted PCI ints. This code&n;                         * is ugly but handles correctly the special case of&n;                         * interrupt 0 (8259 cascade) on OpenPIC&n;                         */
-id|irq
-op_assign
-(paren
-id|code
-op_eq
-l_int|0xffff
-)paren
-ques
-c_cond
-l_int|0
-suffix:colon
-id|code
-op_amp
-l_int|0x7fff
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|p
-(braket
-l_int|2
-)braket
-op_eq
-l_int|2
-)paren
-(brace
-multiline_comment|/* OpenPIC */
-r_if
-c_cond
-(paren
-id|irq
-)paren
-(brace
-id|openpic_set_sense
-c_func
-(paren
-id|irq
-comma
-id|code
-OL
-l_int|0x8000
-)paren
-suffix:semicolon
-id|irq
-op_assign
-id|openpic_to_irq
-c_func
-(paren
-id|irq
-)paren
-suffix:semicolon
-)brace
-r_else
-r_continue
-suffix:semicolon
-)brace
-r_else
-r_if
-c_cond
-(paren
-id|p
-(braket
-l_int|2
-)braket
-op_ne
-l_int|1
-)paren
-(brace
-multiline_comment|/* Not 8259 */
-id|printk
-c_func
-(paren
-l_string|&quot;Unknown or unsupported &quot;
-l_string|&quot;interrupt controller&quot;
-l_string|&quot;type %d.&bslash;n&quot;
-comma
-id|p
-(braket
-l_int|2
-)braket
-)paren
-suffix:semicolon
-r_continue
-suffix:semicolon
-)brace
-id|dev-&gt;irq
-op_assign
-id|irq
-suffix:semicolon
-)brace
-)brace
-)brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
-r_static
-r_inline
-r_void
-id|fixup_bases
-c_func
-(paren
-r_struct
-id|pci_dev
-op_star
-id|dev
-)paren
-)paren
-(brace
-r_int
-id|k
-suffix:semicolon
-r_for
-c_loop
-(paren
-id|k
-op_assign
-l_int|0
-suffix:semicolon
-id|k
-OL
-l_int|6
-suffix:semicolon
-id|k
-op_increment
-)paren
-(brace
-multiline_comment|/* FIXME: get the base address physical offset from &n;&t;&t;&t;the Raven instead of hard coding it.&n;&t;&t;&t;&t;-- Troy */
-r_if
-c_cond
-(paren
-id|dev-&gt;base_address
-(braket
-id|k
-)braket
-op_logical_and
-(paren
-id|dev-&gt;base_address
-(braket
-id|k
-)braket
-op_amp
-id|PCI_BASE_ADDRESS_SPACE
-)paren
-op_eq
-id|PCI_BASE_ADDRESS_SPACE_MEMORY
-)paren
-id|dev-&gt;base_address
-(braket
-id|k
-)braket
-op_add_assign
-l_int|0xC0000000
-suffix:semicolon
-r_if
-c_cond
-(paren
-(paren
-id|dev-&gt;base_address
-(braket
-id|k
-)braket
-op_amp
-(paren
-id|PCI_BASE_ADDRESS_SPACE
-op_or
-id|PCI_BASE_ADDRESS_MEM_TYPE_MASK
-)paren
-)paren
-op_eq
-(paren
-id|PCI_BASE_ADDRESS_SPACE_MEMORY
-op_or
-id|PCI_BASE_ADDRESS_MEM_TYPE_64
-)paren
-)paren
-id|k
-op_increment
-suffix:semicolon
-)brace
-)brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
-(paren
 r_void
 id|prep_pcibios_fixup
 c_func
@@ -2429,14 +3403,29 @@ c_func
 l_string|&quot;Radstone boards require no PCI fixups&bslash;n&quot;
 )paren
 suffix:semicolon
+r_return
+suffix:semicolon
 )brace
-r_else
-(brace
 id|prep_route_pci_interrupts
 c_func
 (paren
 )paren
 suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;Setting PCI interrupts for a &bslash;&quot;%s&bslash;&quot;&bslash;n&quot;
+comma
+id|Motherboard_map_name
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|OpenPIC
+)paren
+(brace
+multiline_comment|/* PCI interrupts are controlled by the OpenPIC */
 r_for
 c_loop
 (paren
@@ -2451,7 +3440,61 @@ op_assign
 id|dev-&gt;next
 )paren
 (brace
-multiline_comment|/*&n;                         * Use our old hard-coded kludge to figure out what&n;                         * irq this device uses.  This is necessary on things&n;                         * without residual data. -- Cort&n;                         */
+r_if
+c_cond
+(paren
+id|dev-&gt;bus-&gt;number
+op_eq
+l_int|0
+)paren
+(brace
+id|dev-&gt;irq
+op_assign
+id|openpic_to_irq
+c_func
+(paren
+id|Motherboard_map
+(braket
+id|PCI_SLOT
+c_func
+(paren
+id|dev-&gt;devfn
+)paren
+)braket
+)paren
+suffix:semicolon
+id|pcibios_write_config_byte
+c_func
+(paren
+id|dev-&gt;bus-&gt;number
+comma
+id|dev-&gt;devfn
+comma
+id|PCI_INTERRUPT_PIN
+comma
+id|dev-&gt;irq
+)paren
+suffix:semicolon
+)brace
+)brace
+r_return
+suffix:semicolon
+)brace
+r_for
+c_loop
+(paren
+id|dev
+op_assign
+id|pci_devices
+suffix:semicolon
+id|dev
+suffix:semicolon
+id|dev
+op_assign
+id|dev-&gt;next
+)paren
+(brace
+multiline_comment|/*&n;&t;&t; * Use our old hard-coded kludge to figure out what&n;&t;&t; * irq this device uses.  This is necessary on things&n;&t;&t; * without residual data. -- Cort&n;&t;&t; */
 r_int
 r_char
 id|d
@@ -2558,7 +3601,7 @@ suffix:semicolon
 )brace
 )brace
 macro_line|#if 0
-multiline_comment|/*&n;                         * If we have residual data and if it knows about this&n;                         * device ask it what the irq is.&n;                         *  -- Cort&n;                         */
+multiline_comment|/*&n;&t;&t; * If we have residual data and if it knows about this&n;&t;&t; * device ask it what the irq is.&n;&t;&t; *  -- Cort&n;&t;&t; */
 id|ppcd
 op_assign
 id|residual_find_device_id
@@ -2582,7 +3625,6 @@ l_int|0
 )paren
 suffix:semicolon
 macro_line|#endif
-)brace
 )brace
 )brace
 DECL|variable|indirect

@@ -355,8 +355,57 @@ DECL|macro|PAGE_OFFSET
 mdefine_line|#define PAGE_OFFSET&t;&t;0
 DECL|macro|__pa
 mdefine_line|#define __pa(x)&t;&t;&t;((unsigned long)(x)-PAGE_OFFSET)
-DECL|macro|__va
-mdefine_line|#define __va(x)&t;&t;&t;((void *)((unsigned long)(x)+PAGE_OFFSET))
+multiline_comment|/*&n; * A hacky workaround for the problems with mmap() of frame buffer&n; * memory in the lower 16MB physical memoryspace.&n; *&n; * This is a short term solution, we will have to deal properly&n; * with this in 2.3.x.&n; */
+DECL|function|__va
+r_extern
+r_inline
+r_void
+op_star
+id|__va
+c_func
+(paren
+r_int
+r_int
+id|physaddr
+)paren
+(brace
+macro_line|#ifdef CONFIG_AMIGA
+r_if
+c_cond
+(paren
+id|MACH_IS_AMIGA
+op_logical_and
+(paren
+id|physaddr
+OL
+l_int|16
+op_star
+l_int|1024
+op_star
+l_int|1024
+)paren
+)paren
+r_return
+(paren
+r_void
+op_star
+)paren
+l_int|0xffffffff
+suffix:semicolon
+r_else
+macro_line|#endif
+r_return
+(paren
+r_void
+op_star
+)paren
+(paren
+id|physaddr
+op_plus
+id|PAGE_OFFSET
+)paren
+suffix:semicolon
+)brace
 DECL|macro|MAP_NR
 mdefine_line|#define MAP_NR(addr)&t;&t;(__pa(addr) &gt;&gt; PAGE_SHIFT)
 macro_line|#endif /* __KERNEL__ */

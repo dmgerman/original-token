@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sys_sparc.c,v 1.51 1999/03/20 22:02:00 davem Exp $&n; * linux/arch/sparc/kernel/sys_sparc.c&n; *&n; * This file contains various random system calls that&n; * have a non-standard calling sequence on the Linux/sparc&n; * platform.&n; */
+multiline_comment|/* $Id: sys_sparc.c,v 1.52 1999/05/08 08:09:48 anton Exp $&n; * linux/arch/sparc/kernel/sys_sparc.c&n; *&n; * This file contains various random system calls that&n; * have a non-standard calling sequence on the Linux/sparc&n; * platform.&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -1040,7 +1040,11 @@ c_func
 suffix:semicolon
 id|printk
 (paren
-l_string|&quot;Unimplemented SPARC system call %d&bslash;n&quot;
+l_string|&quot;%s[%d]: Unimplemented SPARC system call %d&bslash;n&quot;
+comma
+id|current-&gt;comm
+comma
+id|current-&gt;pid
 comma
 (paren
 r_int

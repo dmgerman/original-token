@@ -3169,13 +3169,13 @@ id|offset
 op_assign
 (paren
 id|address
+op_amp
+id|PAGE_MASK
+)paren
 op_minus
 id|area-&gt;vm_start
 op_plus
 id|area-&gt;vm_offset
-)paren
-op_amp
-id|PAGE_MASK
 suffix:semicolon
 r_if
 c_cond

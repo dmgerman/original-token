@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: init.c,v 1.126 1999/04/09 16:16:41 jj Exp $&n; *  arch/sparc64/mm/init.c&n; *&n; *  Copyright (C) 1996-1999 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1997-1999 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/*  $Id: init.c,v 1.127 1999/05/08 03:00:38 davem Exp $&n; *  arch/sparc64/mm/init.c&n; *&n; *  Copyright (C) 1996-1999 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1997-1999 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
@@ -4755,7 +4755,7 @@ id|mmu_context_bmap
 id|CTX_BMAP_SLOTS
 )braket
 suffix:semicolon
-multiline_comment|/* We are always protected by scheduler_lock under SMP.&n; * Caller does TLB context flushing on local CPU if necessary.&n; *&n; * We must be careful about boundary cases so that we never&n; * let the user have CTX 0 (nucleus) or we ever use a CTX&n; * version of zero (and thus NO_CONTEXT would not be caught&n; * by version mis-match tests in mmu_context.h).&n; */
+multiline_comment|/* Caller does TLB context flushing on local CPU if necessary.&n; *&n; * We must be careful about boundary cases so that we never&n; * let the user have CTX 0 (nucleus) or we ever use a CTX&n; * version of zero (and thus NO_CONTEXT would not be caught&n; * by version mis-match tests in mmu_context.h).&n; */
 DECL|function|get_new_mmu_context
 r_void
 id|get_new_mmu_context

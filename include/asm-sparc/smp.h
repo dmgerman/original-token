@@ -643,6 +643,7 @@ suffix:semicolon
 macro_line|#endif
 DECL|macro|smp_processor_id
 mdefine_line|#define smp_processor_id() hard_smp_processor_id()
+multiline_comment|/* XXX We really need to implement this now.  -DaveM */
 DECL|function|smp_send_reschedule
 r_extern
 id|__inline__

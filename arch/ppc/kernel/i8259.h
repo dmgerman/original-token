@@ -14,5 +14,12 @@ c_func
 r_void
 )paren
 suffix:semicolon
+r_int
+id|i8259_irq
+c_func
+(paren
+r_int
+)paren
+suffix:semicolon
 macro_line|#endif /* _PPC_KERNEL_i8259_H */
 eof

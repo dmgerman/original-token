@@ -1,6 +1,7 @@
 macro_line|#ifndef __ALPHA_SYSTEM_H
 DECL|macro|__ALPHA_SYSTEM_H
 mdefine_line|#define __ALPHA_SYSTEM_H
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/pal.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
 multiline_comment|/*&n; * System defines.. Note that this is included both from .c and .S&n; * files, so it does only defines, not any C code.&n; */

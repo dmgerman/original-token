@@ -34,7 +34,6 @@ suffix:semicolon
 macro_line|#endif /* __SMP__ */
 DECL|function|chrp_mask_and_ack_irq
 r_void
-id|__openfirmware
 id|chrp_mask_and_ack_irq
 c_func
 (paren
@@ -64,7 +63,6 @@ suffix:semicolon
 DECL|function|chrp_mask_irq
 r_static
 r_void
-id|__openfirmware
 id|chrp_mask_irq
 c_func
 (paren
@@ -105,7 +103,6 @@ suffix:semicolon
 DECL|function|chrp_unmask_irq
 r_static
 r_void
-id|__openfirmware
 id|chrp_unmask_irq
 c_func
 (paren

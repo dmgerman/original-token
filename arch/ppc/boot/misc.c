@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * misc.c&n; *&n; * $Id: misc.c,v 1.63 1999/04/05 21:48:20 cort Exp $&n; * &n; * Adapted for PowerPC by Gary Thomas&n; *&n; * Rewritten by Cort Dougan (cort@cs.nmt.edu)&n; * One day to be replaced by a single bootloader for chrp/prep/pmac. -- Cort&n; */
+multiline_comment|/*&n; * misc.c&n; *&n; * $Id: misc.c,v 1.64 1999/04/30 05:52:46 cort Exp $&n; * &n; * Adapted for PowerPC by Gary Thomas&n; *&n; * Rewritten by Cort Dougan (cort@cs.nmt.edu)&n; * One day to be replaced by a single bootloader for chrp/prep/pmac. -- Cort&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &quot;../coffboot/zlib.h&quot;
 macro_line|#include &quot;asm/residual.h&quot;
@@ -1686,7 +1686,7 @@ c_func
 l_int|0x803
 )paren
 suffix:semicolon
-multiline_comment|/* if a MVME2300 or a MCME2400 then no keyboard */
+multiline_comment|/* if a MVME2300/2400 or a Sitka then no keyboard */
 r_if
 c_cond
 (paren
@@ -1700,6 +1700,12 @@ op_logical_or
 id|base_mod
 op_eq
 l_int|0xF9
+)paren
+op_logical_or
+(paren
+id|base_mod
+op_eq
+l_int|0xE1
 )paren
 )paren
 (brace
@@ -2291,6 +2297,7 @@ c_func
 l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
+macro_line|#ifdef OMIT
 id|avail_ram
 op_assign
 (paren
@@ -2374,6 +2381,7 @@ c_func
 l_string|&quot;&bslash;n&quot;
 )paren
 suffix:semicolon
+macro_line|#endif
 )brace
 id|avail_ram
 op_assign

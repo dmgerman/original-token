@@ -1789,6 +1789,7 @@ id|__asm__
 id|__volatile__
 (paren
 l_string|&quot;.chip 68040&bslash;n&bslash;t&quot;
+l_string|&quot;pflushan&bslash;n&bslash;t&quot;
 l_string|&quot;movec %0,%%urp&bslash;n&bslash;t&quot;
 l_string|&quot;.chip 68k&quot;
 suffix:colon
@@ -1813,13 +1814,27 @@ id|__volatile__
 (paren
 l_string|&quot;movec  %%cacr,%0&bslash;n&bslash;t&quot;
 l_string|&quot;orw #0x0808,%0&bslash;n&bslash;t&quot;
-l_string|&quot;movec %0,%%cacr&bslash;n&bslash;t&quot;
-l_string|&quot;pmove %1,%%crp&bslash;n&bslash;t&quot;
+l_string|&quot;movec %0,%%cacr&quot;
 suffix:colon
 l_string|&quot;=d&quot;
 (paren
 id|tmp
 )paren
+)paren
+suffix:semicolon
+multiline_comment|/* For a 030-only kernel, avoid flushing the whole&n;&t;&t;&t;   ATC, we only need to flush the user entries.&n;&t;&t;&t;   The 68851 does this by itself.  Avoid a runtime&n;&t;&t;&t;   check here.  */
+id|__asm__
+id|__volatile__
+(paren
+macro_line|#ifdef CPU_M68030_ONLY
+l_string|&quot;.chip 68030&bslash;n&bslash;t&quot;
+l_string|&quot;pmovefd %0,%%crp&bslash;n&bslash;t&quot;
+l_string|&quot;.chip 68k&bslash;n&bslash;t&quot;
+l_string|&quot;pflush #0,#4&quot;
+macro_line|#else
+l_string|&quot;pmove %0,%%crp&quot;
+macro_line|#endif
+suffix:colon
 suffix:colon
 l_string|&quot;m&quot;
 (paren

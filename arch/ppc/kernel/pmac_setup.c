@@ -147,7 +147,8 @@ c_func
 r_void
 )paren
 suffix:semicolon
-r_extern
+macro_line|#ifdef CONFIG_MAGIC_SYSRQ
+DECL|variable|mackbd_sysrq_xlate
 r_int
 r_char
 id|mackbd_sysrq_xlate
@@ -155,6 +156,7 @@ id|mackbd_sysrq_xlate
 l_int|128
 )braket
 suffix:semicolon
+macro_line|#endif /* CONFIG_MAGIC_SYSRQ */
 r_extern
 r_int
 id|pckbd_setkeycode
@@ -2329,7 +2331,7 @@ id|ppc_md.calibrate_decr
 op_assign
 id|pmac_calibrate_decr
 suffix:semicolon
-macro_line|#ifdef CONFIG_VT
+macro_line|#if defined(CONFIG_VT) &amp;&amp; defined(CONFIG_MAC_KEYBOARD)
 id|ppc_md.kbd_setkeycode
 op_assign
 id|mackbd_setkeycode
@@ -2359,7 +2361,7 @@ id|ppc_md.kbd_sysrq_xlate
 op_assign
 id|mackbd_sysrq_xlate
 suffix:semicolon
-macro_line|#endif&t;
+macro_line|#endif
 macro_line|#endif
 macro_line|#if defined(CONFIG_BLK_DEV_IDE_PMAC)
 id|ppc_ide_md.insw

@@ -249,27 +249,8 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|dir
-op_logical_or
-op_logical_neg
 id|dir-&gt;i_sb
 )paren
-(brace
-r_if
-c_cond
-(paren
-op_logical_neg
-id|dir
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;qnx4: NULL dir.&bslash;n&quot;
-)paren
-suffix:semicolon
-)brace
-r_else
 (brace
 id|printk
 c_func
@@ -277,7 +258,6 @@ c_func
 l_string|&quot;qnx4: no superblock on dir.&bslash;n&quot;
 )paren
 suffix:semicolon
-)brace
 r_return
 l_int|NULL
 suffix:semicolon

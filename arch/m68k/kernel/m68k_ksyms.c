@@ -17,6 +17,7 @@ macro_line|#include &lt;asm/semaphore.h&gt;
 macro_line|#include &lt;asm/checksum.h&gt;
 macro_line|#include &lt;asm/hardirq.h&gt;
 macro_line|#include &lt;asm/softirq.h&gt;
+macro_line|#include &lt;asm/m68kserial.h&gt;
 id|asmlinkage
 r_int
 r_int
@@ -235,6 +236,20 @@ c_func
 id|kernel_thread
 )paren
 suffix:semicolon
+DECL|variable|register_serial
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|register_serial
+)paren
+suffix:semicolon
+DECL|variable|unregister_serial
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|unregister_serial
+)paren
+suffix:semicolon
 multiline_comment|/* Networking helper routines. */
 DECL|variable|csum_partial_copy
 id|EXPORT_SYMBOL
@@ -284,6 +299,13 @@ id|EXPORT_SYMBOL_NOVERS
 c_func
 (paren
 id|__down_failed_interruptible
+)paren
+suffix:semicolon
+DECL|variable|__down_failed_trylock
+id|EXPORT_SYMBOL_NOVERS
+c_func
+(paren
+id|__down_failed_trylock
 )paren
 suffix:semicolon
 DECL|variable|__up_wakeup

@@ -29,6 +29,16 @@ macro_line|#endif
 macro_line|#ifdef CONFIG_APM
 macro_line|#include &lt;linux/apm_bios.h&gt;
 macro_line|#endif
+macro_line|#ifdef CONFIG_MAC
+r_extern
+r_void
+id|nubus_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/*&n; * Versions of gcc older than that listed below may actually compile&n; * and link okay, but the end product can have subtle run time bugs.&n; * To avoid associated bogus bug reports, we flatly refuse to compile&n; * with a gcc that is known to be too old from the very beginning.&n; */
 macro_line|#if __GNUC__ &lt; 2 || (__GNUC__ == 2 &amp;&amp; __GNUC_MINOR__ &lt; 6)
 macro_line|#error sorry, your GCC is too old. It builds incorrect kernels.
@@ -3584,7 +3594,7 @@ id|stram_swap_setup
 )brace
 comma
 macro_line|#endif
-macro_line|#if defined(CONFIG_A4000T_SCSI) || defined(CONFIG_WARPENGINE_SCSI) &bslash;&n;&t;    || defined(CONFIG_A4091_SCSI) || defined(CONFIG_MVME16x_SCSI) &bslash;&n;&t;    || defined(CONFIG_BVME6000_SCSI)
+macro_line|#if defined(CONFIG_A4000T_SCSI) || defined(CONFIG_WARPENGINE_SCSI) &bslash;&n;&t;    || defined(CONFIG_A4091_SCSI) || defined(CONFIG_MVME16x_SCSI) &bslash;&n;&t;    || defined(CONFIG_BVME6000_SCSI) &bslash;&n;&t;    || defined(CONFIG_BLZ603EPLUS_SCSI)
 (brace
 l_string|&quot;53c7xx=&quot;
 comma
@@ -5350,6 +5360,13 @@ suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef CONFIG_DIO
 id|dio_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_MAC
+id|nubus_init
 c_func
 (paren
 )paren

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sparc64_ksyms.c,v 1.57 1999/03/14 20:51:28 davem Exp $&n; * arch/sparc64/kernel/sparc64_ksyms.c: Sparc64 specific ksyms support.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; * Copyright (C) 1999 Jakub Jelinek (jj@ultra.linux.cz)&n; */
+multiline_comment|/* $Id: sparc64_ksyms.c,v 1.58 1999/05/08 03:00:31 davem Exp $&n; * arch/sparc64/kernel/sparc64_ksyms.c: Sparc64 specific ksyms support.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; * Copyright (C) 1999 Jakub Jelinek (jj@ultra.linux.cz)&n; */
 multiline_comment|/* Tell string.h we don&squot;t want memcpy etc. as cpp defines */
 DECL|macro|EXPORT_SYMTAB_STROPS
 mdefine_line|#define EXPORT_SYMTAB_STROPS
@@ -456,10 +456,6 @@ suffix:semicolon
 macro_line|#ifdef __SMP__
 r_extern
 id|spinlock_t
-id|scheduler_lock
-suffix:semicolon
-r_extern
-id|spinlock_t
 id|kernel_flag
 suffix:semicolon
 r_extern
@@ -563,13 +559,6 @@ mdefine_line|#define EXPORT_SYMBOL_PRIVATE(sym)&t;&t;&t;&t;&bslash;&n;extern int
 multiline_comment|/* used by various drivers */
 macro_line|#ifdef __SMP__
 multiline_comment|/* Kernel wide locking */
-DECL|variable|scheduler_lock
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|scheduler_lock
-)paren
-suffix:semicolon
 DECL|variable|kernel_flag
 id|EXPORT_SYMBOL
 c_func

@@ -475,7 +475,7 @@ id|driver_list
 suffix:semicolon
 )brace
 suffix:semicolon
-multiline_comment|/*&n; * Pointer to a device endpoint interrupt function -greg&n; */
+multiline_comment|/*&n; * Pointer to a device endpoint interrupt function -greg&n; *   Parameters:&n; *     int status - This needs to be defined.  Right now each HCD&n; *         passes different transfer status bits back.  Don&squot;t use it&n; *         until we come up with a common meaning.&n; *     void *buffer - This is a pointer to the data used in this&n; *         USB transfer.&n; *     void *dev_id - This is a user defined pointer set when the IRQ&n; *         is requested that is passed back.&n; */
 DECL|typedef|usb_device_irq
 r_typedef
 r_int

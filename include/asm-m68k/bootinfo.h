@@ -332,10 +332,14 @@ DECL|macro|ATARI_BOOTI_VERSION
 mdefine_line|#define ATARI_BOOTI_VERSION    MK_BI_VERSION( 2, 1 )
 DECL|macro|MAC_BOOTI_VERSION
 mdefine_line|#define MAC_BOOTI_VERSION      MK_BI_VERSION( 2, 0 )
+DECL|macro|MVME147_BOOTI_VERSION
+mdefine_line|#define MVME147_BOOTI_VERSION  MK_BI_VERSION( 2, 0 )
 DECL|macro|MVME16x_BOOTI_VERSION
 mdefine_line|#define MVME16x_BOOTI_VERSION  MK_BI_VERSION( 2, 0 )
 DECL|macro|BVME6000_BOOTI_VERSION
 mdefine_line|#define BVME6000_BOOTI_VERSION MK_BI_VERSION( 2, 0 )
+DECL|macro|Q40_BOOTI_VERSION
+mdefine_line|#define Q40_BOOTI_VERSION      MK_BI_VERSION( 2, 0 )
 macro_line|#ifdef BOOTINFO_COMPAT_1_0
 multiline_comment|/*&n;     *  Backwards compatibility with bootinfo interface version 1.0&n;     */
 DECL|macro|COMPAT_AMIGA_BOOTI_VERSION

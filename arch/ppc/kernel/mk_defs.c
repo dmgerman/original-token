@@ -271,20 +271,6 @@ id|fpscr
 )paren
 )paren
 suffix:semicolon
-id|DEFINE
-c_func
-(paren
-id|TSS_SMP_FORK_RET
-comma
-m_offsetof
-(paren
-r_struct
-id|thread_struct
-comma
-id|smp_fork_ret
-)paren
-)paren
-suffix:semicolon
 multiline_comment|/* Interrupt register frame */
 id|DEFINE
 c_func

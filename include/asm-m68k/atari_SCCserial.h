@@ -27,6 +27,10 @@ DECL|macro|SCC_BAUD_BASE_PCLK
 mdefine_line|#define SCC_BAUD_BASE_PCLK&t;503374&t;/* 8.0539763 MHz */
 DECL|macro|SCC_BAUD_BASE_NONE
 mdefine_line|#define SCC_BAUD_BASE_NONE&t;0&t;&t;/* for not connected or unused&n;&t;&t;&t;&t;&t;&t; * clock sources */
+DECL|macro|SCC_BAUD_BASE_M147_PCLK
+mdefine_line|#define SCC_BAUD_BASE_M147_PCLK&t;312500&t;/* 5 MHz */
+DECL|macro|SCC_BAUD_BASE_M147
+mdefine_line|#define SCC_BAUD_BASE_M147&t;312500&t;/* 5 MHz */
 DECL|macro|SCC_BAUD_BASE_MVME_PCLK
 mdefine_line|#define SCC_BAUD_BASE_MVME_PCLK&t;781250&t;/* 12.5 MHz */
 DECL|macro|SCC_BAUD_BASE_MVME

@@ -1,11 +1,14 @@
 macro_line|#ifndef __LINUX_OHCI_H
 DECL|macro|__LINUX_OHCI_H
 mdefine_line|#define __LINUX_OHCI_H
-multiline_comment|/*&n; * Open Host Controller Interface data structures and defines.&n; *&n; * (C) Copyright 1999 Gregory P. Smith &lt;greg@electricrain.com&gt;&n; *&n; * $Id: ohci.h,v 1.6 1999/04/24 22:50:06 greg Exp $&n; */
+multiline_comment|/*&n; * Open Host Controller Interface data structures and defines.&n; *&n; * (C) Copyright 1999 Gregory P. Smith &lt;greg@electricrain.com&gt;&n; *&n; * $Id: ohci.h,v 1.15 1999/05/09 23:25:49 greg Exp $&n; */
 macro_line|#include &lt;linux/list.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &quot;usb.h&quot;
-multiline_comment|/*&n; * Each TD must be aligned on a 16-byte boundary.  From the OHCI v1.0 spec&n; * it does not state that TDs must be contiguious in memory (due to the&n; * use of the next_td field).  This gives us extra room at the end of a&n; * TD for our own driver specific data.&n; *&n; * This structure&squot;s size must be a multiple of 16 bytes.&n; */
+r_struct
+id|ohci_ed
+suffix:semicolon
+multiline_comment|/*&n; * Each TD must be aligned on a 16-byte boundary.  From the OHCI v1.0 spec&n; * it does not state that TDs must be contiguious in memory (due to the&n; * use of the next_td field).  This gives us extra room at the end of a&n; * TD for our own driver specific data.&n; *&n; * This structure&squot;s size must be a multiple of 16 bytes. ?? no way, I&n; * don&squot;t see why.  Alignment should be all that matters.&n; */
 DECL|struct|ohci_td
 r_struct
 id|ohci_td
@@ -15,50 +18,60 @@ DECL|member|info
 id|__u32
 id|info
 suffix:semicolon
+multiline_comment|/* TD status &amp; type flags */
 DECL|member|cur_buf
 id|__u32
 id|cur_buf
 suffix:semicolon
-multiline_comment|/* Current Buffer Pointer */
+multiline_comment|/* Current Buffer Pointer (bus address) */
 DECL|member|next_td
 id|__u32
 id|next_td
 suffix:semicolon
-multiline_comment|/* Next TD Pointer */
+multiline_comment|/* Next TD Pointer (bus address) */
 DECL|member|buf_end
 id|__u32
 id|buf_end
 suffix:semicolon
-multiline_comment|/* Memory Buffer End Pointer */
+multiline_comment|/* Memory Buffer End Pointer (bus address) */
 multiline_comment|/* Driver specific fields */
-DECL|member|irq_list
+DECL|member|ed
 r_struct
-id|list_head
-id|irq_list
+id|ohci_ed
+op_star
+id|ed
 suffix:semicolon
-multiline_comment|/* Active interrupt list */
-DECL|member|completed
-id|usb_device_irq
-id|completed
+multiline_comment|/* address of the ED this TD is on */
+DECL|member|next_dl_td
+r_struct
+id|ohci_td
+op_star
+id|next_dl_td
 suffix:semicolon
-multiline_comment|/* Completion handler routine */
+multiline_comment|/* used during donelist processing */
 DECL|member|data
 r_void
 op_star
 id|data
 suffix:semicolon
-multiline_comment|/* XXX ? */
+multiline_comment|/* virt. address of the the buffer */
+DECL|member|completed
+id|usb_device_irq
+id|completed
+suffix:semicolon
+multiline_comment|/* Completion handler routine */
+DECL|member|allocated
+r_int
+id|allocated
+suffix:semicolon
+multiline_comment|/* boolean: is this TD allocated? */
+multiline_comment|/* User or Device class driver specific fields */
 DECL|member|dev_id
 r_void
 op_star
 id|dev_id
 suffix:semicolon
-multiline_comment|/* XXX ? */
-DECL|member|ed_bus
-id|__u32
-id|ed_bus
-suffix:semicolon
-multiline_comment|/* bus address of original ED */
+multiline_comment|/* user defined pointer passed to irq handler */
 )brace
 id|__attribute
 c_func
@@ -67,7 +80,7 @@ c_func
 id|aligned
 c_func
 (paren
-l_int|32
+l_int|16
 )paren
 )paren
 )paren
@@ -75,13 +88,13 @@ suffix:semicolon
 DECL|macro|OHCI_TD_ROUND
 mdefine_line|#define OHCI_TD_ROUND&t;(1 &lt;&lt; 18)&t;/* buffer rounding bit */
 DECL|macro|OHCI_TD_D
-mdefine_line|#define OHCI_TD_D&t;(3 &lt;&lt; 11)&t;/* direction of xfer: */
+mdefine_line|#define OHCI_TD_D&t;(3 &lt;&lt; 19)&t;/* direction of xfer: */
 DECL|macro|OHCI_TD_D_IN
-mdefine_line|#define OHCI_TD_D_IN&t;(2 &lt;&lt; 11)
+mdefine_line|#define OHCI_TD_D_IN&t;(2 &lt;&lt; 19)
 DECL|macro|OHCI_TD_D_OUT
-mdefine_line|#define OHCI_TD_D_OUT&t;(1 &lt;&lt; 11)
+mdefine_line|#define OHCI_TD_D_OUT&t;(1 &lt;&lt; 19)
 DECL|macro|OHCI_TD_D_SETUP
-mdefine_line|#define OHCI_TD_D_SETUP (0)
+mdefine_line|#define OHCI_TD_D_SETUP (0 &lt;&lt; 19)
 DECL|macro|td_set_dir_in
 mdefine_line|#define td_set_dir_in(d)&t;((d) ? OHCI_TD_D_IN : OHCI_TD_D_OUT )
 DECL|macro|td_set_dir_out
@@ -92,26 +105,40 @@ DECL|macro|OHCI_TD_IOC_OFF
 mdefine_line|#define OHCI_TD_IOC_OFF&t;(OHCI_TD_IOC_DELAY)&t;/* no interrupt on complete */
 DECL|macro|OHCI_TD_DT
 mdefine_line|#define OHCI_TD_DT&t;(3 &lt;&lt; 24)&t;/* data toggle bits */
+DECL|macro|TOGGLE_AUTO
+mdefine_line|#define TOGGLE_AUTO&t;(0 &lt;&lt; 24)&t;/* automatic (from the ED) */
+DECL|macro|TOGGLE_DATA0
+mdefine_line|#define TOGGLE_DATA0&t;(2 &lt;&lt; 24)&t;/* force Data0 */
+DECL|macro|TOGGLE_DATA1
+mdefine_line|#define TOGGLE_DATA1&t;(3 &lt;&lt; 24)&t;/* force Data1 */
 DECL|macro|td_force_toggle
 mdefine_line|#define td_force_toggle(b)&t;(((b) | 2) &lt;&lt; 24)
 DECL|macro|OHCI_TD_ERRCNT
 mdefine_line|#define OHCI_TD_ERRCNT&t;(3 &lt;&lt; 26)&t;/* error count */
 DECL|macro|td_errorcount
-mdefine_line|#define td_errorcount(td)&t;(((td) &gt;&gt; 26) &amp; 3)
+mdefine_line|#define td_errorcount(td)&t;(((td).info &gt;&gt; 26) &amp; 3)
 DECL|macro|OHCI_TD_CC
 mdefine_line|#define OHCI_TD_CC&t;(0xf &lt;&lt; 28)&t;/* condition code */
+DECL|macro|OHCI_TD_CC_GET
+mdefine_line|#define OHCI_TD_CC_GET(td_i) (((td_i) &gt;&gt; 28) &amp; 0xf)
 DECL|macro|OHCI_TD_CC_NEW
 mdefine_line|#define OHCI_TD_CC_NEW&t;(OHCI_TD_CC)&t;/* set this on all unaccessed TDs! */
 DECL|macro|td_cc_notaccessed
-mdefine_line|#define td_cc_notaccessed(td)&t;((td &gt;&gt; 29) == 7)
+mdefine_line|#define td_cc_notaccessed(td)&t;(((td).info &gt;&gt; 29) == 7)
 DECL|macro|td_cc_accessed
-mdefine_line|#define td_cc_accessed(td)&t;((td &gt;&gt; 29) != 7)
+mdefine_line|#define td_cc_accessed(td)&t;(((td).info &gt;&gt; 29) != 7)
 DECL|macro|td_cc_noerror
-mdefine_line|#define td_cc_noerror(td)&t;(((td) &amp; OHCI_TD_CC) == 0)
+mdefine_line|#define td_cc_noerror(td)&t;((((td).info) &amp; OHCI_TD_CC) == 0)
 DECL|macro|td_active
 mdefine_line|#define td_active(td)&t;(!td_cc_noerror((td)) &amp;&amp; (td_errorcount((td)) &lt; 3))
 DECL|macro|td_done
 mdefine_line|#define td_done(td)&t;(td_cc_noerror((td)) || (td_errorcount((td)) == 3))
+DECL|macro|td_allocated
+mdefine_line|#define td_allocated(td)&t;((td).allocated)
+DECL|macro|allocate_td
+mdefine_line|#define allocate_td(td)&t;&t;((td)-&gt;allocated = 1)
+DECL|macro|ohci_free_td
+mdefine_line|#define ohci_free_td(td)&t;((td)-&gt;allocated = 0)
 multiline_comment|/*&n; * The endpoint descriptors also requires 16-byte alignment&n; */
 DECL|struct|ohci_ed
 r_struct
@@ -127,11 +154,11 @@ id|__u32
 id|tail_td
 suffix:semicolon
 multiline_comment|/* TD Queue tail pointer */
-DECL|member|head_td
+DECL|member|_head_td
 id|__u32
-id|head_td
+id|_head_td
 suffix:semicolon
-multiline_comment|/* TD Queue head pointer */
+multiline_comment|/* TD Queue head pointer, toggle carry &amp; halted bits */
 DECL|member|next_ed
 id|__u32
 id|next_ed
@@ -150,6 +177,12 @@ l_int|16
 )paren
 )paren
 suffix:semicolon
+multiline_comment|/* get the head_td */
+DECL|macro|ed_head_td
+mdefine_line|#define ed_head_td(ed)&t;((ed)-&gt;_head_td &amp; 0xfffffff0)
+multiline_comment|/* save the carry flag while setting the head_td */
+DECL|macro|set_ed_head_td
+mdefine_line|#define set_ed_head_td(ed, td)&t;((ed)-&gt;_head_td = (td) | ((ed)-&gt;_head_td &amp; 3))
 DECL|macro|OHCI_ED_SKIP
 mdefine_line|#define OHCI_ED_SKIP&t;(1 &lt;&lt; 14)
 DECL|macro|OHCI_ED_MPS
@@ -184,7 +217,7 @@ mdefine_line|#define OHCI_ED_EN&t;(0xf &lt;&lt; 7)
 DECL|macro|OHCI_ED_FA
 mdefine_line|#define OHCI_ED_FA&t;(0x7f)
 multiline_comment|/* NOTE: bits 27-31 of the status dword are reserved for the driver */
-multiline_comment|/*&n; * We&squot;ll use this status flag for the non-predefined EDs to mark if&n; * they&squot;re in use or not.&n; *&n; * FIXME: unimplemented (needed?)&n; */
+multiline_comment|/*&n; * We&squot;ll use this status flag for to mark if an ED is in use by the&n; * driver or not.  If the bit is set, it is used.&n; *&n; * FIXME: implement this!&n; */
 DECL|macro|ED_USED
 mdefine_line|#define ED_USED&t;(1 &lt;&lt; 31)
 multiline_comment|/*&n; * The HCCA (Host Controller Communications Area) is a 256 byte&n; * structure defined in the OHCI spec. that the host controller is&n; * told the base address of.  It must be 256-byte aligned.&n; */
@@ -326,7 +359,7 @@ DECL|macro|ED_ISO
 mdefine_line|#define ED_ISO&t;&t;ED_INT_1&t;/* same as 1ms interrupt queue */
 DECL|macro|ED_FIRST_AVAIL
 mdefine_line|#define ED_FIRST_AVAIL  8&t;&t;/* first non-reserved ED */
-multiline_comment|/*&n; * Given a period p in ms, convert it to the closest endpoint&n; * interrupt frequency; rounding down.  I&squot;m sure many feel that this&n; * is a gross macro.  Feel free to toss it for actual code.&n; */
+multiline_comment|/*&n; * Given a period p in ms, convert it to the closest endpoint&n; * interrupt frequency; rounding down.  This is a gross macro.&n; * Feel free to toss it for actual code. (gasp!)&n; */
 DECL|macro|ms_to_ed_int
 mdefine_line|#define ms_to_ed_int(p) &bslash;&n;&t;((p &gt;= 32) ? ED_INT_32 : &bslash;&n;&t; ((p &amp; 16) ? ED_INT_16 : &bslash;&n;&t;  ((p &amp; 8) ? ED_INT_8 : &bslash;&n;&t;   ((p &amp; 4) ? ED_INT_4 : &bslash;&n;&t;    ((p &amp; 2) ? ED_INT_2 : &bslash;&n;&t;     ED_INT_1)))))  /* hmm.. scheme or lisp anyone? */
 multiline_comment|/*&n; * This is the maximum number of root hub ports.  I don&squot;t think we&squot;ll&n; * ever see more than two as that&squot;s the space available on an ATX&n; * motherboard&squot;s case, but it could happen.  The OHCI spec allows for&n; * up to 15... (which is insane!)&n; * &n; * Although I suppose several &quot;ports&quot; could be connected directly to&n; * internal laptop devices such as a keyboard, mouse, camera and&n; * serial/parallel ports.  hmm...  That&squot;d be neat.&n; */
@@ -484,6 +517,19 @@ DECL|macro|PORT_OCIC
 mdefine_line|#define PORT_OCIC&t;(1 &lt;&lt; 19)&t;/* port over current indicator chg */
 DECL|macro|PORT_PRSC
 mdefine_line|#define PORT_PRSC&t;(1 &lt;&lt; 20)&t;/* port reset status change */
+multiline_comment|/*&n; * Root Hub status register masks&n; */
+DECL|macro|OHCI_ROOT_LPS
+mdefine_line|#define OHCI_ROOT_LPS&t;(1)&t;&t;/* turn off root hub ports power */
+DECL|macro|OHCI_ROOT_OCI
+mdefine_line|#define OHCI_ROOT_OCI&t;(1 &lt;&lt; 1)&t;/* Overcurrent Indicator */
+DECL|macro|OHCI_ROOT_DRWE
+mdefine_line|#define OHCI_ROOT_DRWE&t;(1 &lt;&lt; 15)&t;/* Device remote wakeup enable */
+DECL|macro|OHCI_ROOT_LPSC
+mdefine_line|#define OHCI_ROOT_LPSC&t;(1 &lt;&lt; 16)&t;/* turn on root hub ports power */
+DECL|macro|OHCI_ROOT_OCIC
+mdefine_line|#define OHCI_ROOT_OCIC&t;(1 &lt;&lt; 17)&t;/* Overcurrent indicator change */
+DECL|macro|OHCI_ROOT_CRWE
+mdefine_line|#define OHCI_ROOT_CRWE&t;(1 &lt;&lt; 31)&t;/* Clear RemoteWakeupEnable */
 multiline_comment|/*&n; * Interrupt register masks&n; */
 DECL|macro|OHCI_INTR_SO
 mdefine_line|#define OHCI_INTR_SO&t;(1)
@@ -508,6 +554,25 @@ DECL|macro|OHCI_USB_OPER
 mdefine_line|#define OHCI_USB_OPER&t;&t;(2 &lt;&lt; 6)
 DECL|macro|OHCI_USB_SUSPEND
 mdefine_line|#define OHCI_USB_SUSPEND&t;(3 &lt;&lt; 6)
+DECL|macro|OHCI_USB_PLE
+mdefine_line|#define OHCI_USB_PLE&t;&t;(1 &lt;&lt; 2)  /* Periodic (interrupt) list enable */
+DECL|macro|OHCI_USB_IE
+mdefine_line|#define OHCI_USB_IE&t;&t;(1 &lt;&lt; 3)  /* Isochronous list enable */
+DECL|macro|OHCI_USB_CLE
+mdefine_line|#define OHCI_USB_CLE&t;&t;(1 &lt;&lt; 4)  /* Control list enable */
+DECL|macro|OHCI_USB_BLE
+mdefine_line|#define OHCI_USB_BLE&t;&t;(1 &lt;&lt; 5)  /* Bulk list enable */
+multiline_comment|/*&n; * Command status register masks&n; */
+DECL|macro|OHCI_CMDSTAT_HCR
+mdefine_line|#define OHCI_CMDSTAT_HCR&t;(1)
+DECL|macro|OHCI_CMDSTAT_CLF
+mdefine_line|#define OHCI_CMDSTAT_CLF&t;(1 &lt;&lt; 1)
+DECL|macro|OHCI_CMDSTAT_BLF
+mdefine_line|#define OHCI_CMDSTAT_BLF&t;(1 &lt;&lt; 2)
+DECL|macro|OHCI_CMDSTAT_OCR
+mdefine_line|#define OHCI_CMDSTAT_OCR&t;(1 &lt;&lt; 3)
+DECL|macro|OHCI_CMDSTAT_SOC
+mdefine_line|#define OHCI_CMDSTAT_SOC&t;(3 &lt;&lt; 16)
 multiline_comment|/*&n; * This is the full ohci controller description&n; *&n; * Note how the &quot;proper&quot; USB information is just&n; * a subset of what the full implementation needs. (Linus)&n; */
 DECL|struct|ohci
 r_struct
@@ -545,9 +610,13 @@ suffix:semicolon
 multiline_comment|/* List of interrupt active TDs for this OHCI */
 )brace
 suffix:semicolon
+DECL|macro|OHCI_TIMER
+mdefine_line|#define OHCI_TIMER
+DECL|macro|OHCI_TIMER_FREQ
+mdefine_line|#define OHCI_TIMER_FREQ&t;(1)&t;&t;/* frequency of OHCI status checks */
 multiline_comment|/* Debugging code */
 r_void
-id|show_ed
+id|show_ohci_ed
 c_func
 (paren
 r_struct
@@ -557,7 +626,7 @@ id|ed
 )paren
 suffix:semicolon
 r_void
-id|show_td
+id|show_ohci_td
 c_func
 (paren
 r_struct
@@ -567,13 +636,33 @@ id|td
 )paren
 suffix:semicolon
 r_void
-id|show_status
+id|show_ohci_status
 c_func
 (paren
 r_struct
 id|ohci
 op_star
 id|ohci
+)paren
+suffix:semicolon
+r_void
+id|show_ohci_device
+c_func
+(paren
+r_struct
+id|ohci_device
+op_star
+id|dev
+)paren
+suffix:semicolon
+r_void
+id|show_ohci_hcca
+c_func
+(paren
+r_struct
+id|ohci_hcca
+op_star
+id|hcca
 )paren
 suffix:semicolon
 macro_line|#endif

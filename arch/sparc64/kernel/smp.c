@@ -404,7 +404,7 @@ id|id
 dot
 id|idle_volume
 op_assign
-l_int|0
+l_int|1
 suffix:semicolon
 r_for
 c_loop
@@ -820,6 +820,11 @@ c_func
 (paren
 )paren
 suffix:semicolon
+id|init_idle
+c_func
+(paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -945,6 +950,11 @@ id|p-&gt;processor
 op_assign
 id|i
 suffix:semicolon
+id|p-&gt;has_cpu
+op_assign
+l_int|1
+suffix:semicolon
+multiline_comment|/* we schedule the first task manually */
 id|callin_flag
 op_assign
 l_int|0
@@ -2165,13 +2175,6 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|spin_lock
-c_func
-(paren
-op_amp
-id|scheduler_lock
-)paren
-suffix:semicolon
 multiline_comment|/* Try to handle two special cases to avoid cross calls&n;&t;&t; * in common scenerios where we are swapping process&n;&t;&t; * pages out.&n;&t;&t; */
 r_if
 c_cond
@@ -2194,13 +2197,6 @@ l_int|0
 )paren
 (brace
 multiline_comment|/* A dead context cannot ever become &quot;alive&quot; until&n;&t;&t;&t; * a task switch is done to it.&n;&t;&t;&t; */
-id|spin_unlock
-c_func
-(paren
-op_amp
-id|scheduler_lock
-)paren
-suffix:semicolon
 r_return
 suffix:semicolon
 multiline_comment|/* It&squot;s dead, nothing to do. */
@@ -2220,13 +2216,6 @@ c_func
 )paren
 )paren
 (brace
-id|spin_unlock
-c_func
-(paren
-op_amp
-id|scheduler_lock
-)paren
-suffix:semicolon
 id|__flush_tlb_page
 c_func
 (paren
@@ -2241,13 +2230,6 @@ r_return
 suffix:semicolon
 multiline_comment|/* Only local flush is necessary. */
 )brace
-id|spin_unlock
-c_func
-(paren
-op_amp
-id|scheduler_lock
-)paren
-suffix:semicolon
 )brace
 id|smp_cross_call
 c_func

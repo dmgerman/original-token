@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * $Id: process.c,v 1.78 1999/04/07 07:27:00 paulus Exp $&n; *&n; *  linux/arch/ppc/kernel/process.c&n; *&n; *  Derived from &quot;arch/i386/kernel/process.c&quot;&n; *    Copyright (C) 1995  Linus Torvalds&n; *&n; *  Updated and modified by Cort Dougan (cort@cs.nmt.edu) and&n; *  Paul Mackerras (paulus@cs.anu.edu.au)&n; *&n; *  PowerPC version &n; *    Copyright (C) 1995-1996 Gary Thomas (gdt@linuxppc.org)&n; *&n; *  This program is free software; you can redistribute it and/or&n; *  modify it under the terms of the GNU General Public License&n; *  as published by the Free Software Foundation; either version&n; *  2 of the License, or (at your option) any later version.&n; *&n; */
+multiline_comment|/*&n; * $Id: process.c,v 1.83 1999/05/10 04:43:43 cort Exp $&n; *&n; *  linux/arch/ppc/kernel/process.c&n; *&n; *  Derived from &quot;arch/i386/kernel/process.c&quot;&n; *    Copyright (C) 1995  Linus Torvalds&n; *&n; *  Updated and modified by Cort Dougan (cort@cs.nmt.edu) and&n; *  Paul Mackerras (paulus@cs.anu.edu.au)&n; *&n; *  PowerPC version &n; *    Copyright (C) 1995-1996 Gary Thomas (gdt@linuxppc.org)&n; *&n; *  This program is free software; you can redistribute it and/or&n; *  modify it under the terms of the GNU General Public License&n; *  as published by the Free Software Foundation; either version&n; *  2 of the License, or (at your option) any later version.&n; *&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -34,19 +34,6 @@ op_star
 id|fpregs
 )paren
 suffix:semicolon
-r_void
-id|switch_to
-c_func
-(paren
-r_struct
-id|task_struct
-op_star
-comma
-r_struct
-id|task_struct
-op_star
-)paren
-suffix:semicolon
 r_extern
 r_int
 r_int
@@ -55,10 +42,6 @@ c_func
 (paren
 r_void
 )paren
-suffix:semicolon
-r_extern
-id|spinlock_t
-id|scheduler_lock
 suffix:semicolon
 DECL|variable|last_task_used_math
 r_struct
@@ -581,8 +564,8 @@ id|ret
 suffix:semicolon
 )brace
 r_void
-DECL|function|switch_to
-id|switch_to
+DECL|function|_switch_to
+id|_switch_to
 c_func
 (paren
 r_struct
@@ -594,6 +577,12 @@ r_struct
 id|task_struct
 op_star
 r_new
+comma
+r_struct
+id|task_struct
+op_star
+op_star
+id|last
 )paren
 (brace
 r_struct
@@ -630,7 +619,7 @@ macro_line|#ifdef SHOW_TASK_SWITCHES
 id|printk
 c_func
 (paren
-l_string|&quot;%s/%d -&gt; %s/%d NIP %08lx cpu %d lock %x root %x/%x&bslash;n&quot;
+l_string|&quot;%s/%d -&gt; %s/%d NIP %08lx cpu %d root %x/%x&bslash;n&quot;
 comma
 id|prev-&gt;comm
 comma
@@ -652,8 +641,6 @@ r_new
 op_member_access_from_pointer
 id|processor
 comma
-id|scheduler_lock.lock
-comma
 r_new
 op_member_access_from_pointer
 id|fs-&gt;root
@@ -663,7 +650,7 @@ id|prev-&gt;fs-&gt;root
 suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef __SMP__
-multiline_comment|/* avoid complexity of lazy save/restore of fpu&n;&t; * by just saving it every time we switch out if&n;&t; * this task used the fpu during the last quantum.&n;&t; * &n;&t; * If it tries to use the fpu again, it&squot;ll trap and&n;&t; * reload its fp regs.&n;&t; *  -- Cort&n;&t; */
+multiline_comment|/* avoid complexity of lazy save/restore of fpu&n;&t; * by just saving it every time we switch out if&n;&t; * this task used the fpu during the last quantum.&n;&t; * &n;&t; * If it tries to use the fpu again, it&squot;ll trap and&n;&t; * reload its fp regs.  So we don&squot;t have to do a restore&n;&t; * every switch, just a save.&n;&t; *  -- Cort&n;&t; */
 r_if
 c_cond
 (paren
@@ -708,6 +695,9 @@ op_assign
 op_amp
 id|current-&gt;tss
 suffix:semicolon
+op_star
+id|last
+op_assign
 id|_switch
 c_func
 (paren
@@ -1146,7 +1136,29 @@ r_struct
 id|pt_regs
 op_star
 id|childregs
+comma
+op_star
+id|kregs
 suffix:semicolon
+macro_line|#ifdef __SMP__
+r_extern
+r_void
+id|ret_from_smpfork
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+macro_line|#else
+r_extern
+r_void
+id|ret_from_syscall
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/* Copy registers */
 id|childregs
 op_assign
@@ -1212,6 +1224,10 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* Result from fork() */
+id|p-&gt;tss.regs
+op_assign
+id|childregs
+suffix:semicolon
 id|p-&gt;tss.ksp
 op_assign
 (paren
@@ -1222,9 +1238,75 @@ id|childregs
 op_minus
 id|STACK_FRAME_OVERHEAD
 suffix:semicolon
-id|p-&gt;tss.regs
+id|p-&gt;tss.ksp
+op_sub_assign
+r_sizeof
+(paren
+r_struct
+id|pt_regs
+)paren
+op_plus
+id|STACK_FRAME_OVERHEAD
+suffix:semicolon
+id|kregs
 op_assign
+(paren
+r_struct
+id|pt_regs
+op_star
+)paren
+(paren
+id|p-&gt;tss.ksp
+op_plus
+id|STACK_FRAME_OVERHEAD
+)paren
+suffix:semicolon
+macro_line|#ifdef __SMP__
+id|kregs-&gt;nip
+op_assign
+(paren
+r_int
+r_int
+)paren
+id|ret_from_smpfork
+suffix:semicolon
+macro_line|#else&t;
+id|kregs-&gt;nip
+op_assign
+(paren
+r_int
+r_int
+)paren
+id|ret_from_syscall
+suffix:semicolon
+macro_line|#endif&t;
+id|kregs-&gt;msr
+op_assign
+id|MSR_KERNEL
+suffix:semicolon
+id|kregs-&gt;gpr
+(braket
+l_int|1
+)braket
+op_assign
+(paren
+r_int
+r_int
+)paren
 id|childregs
+op_minus
+id|STACK_FRAME_OVERHEAD
+suffix:semicolon
+id|kregs-&gt;gpr
+(braket
+l_int|2
+)braket
+op_assign
+(paren
+r_int
+r_int
+)paren
+id|p
 suffix:semicolon
 r_if
 c_cond
@@ -1310,26 +1392,6 @@ op_complement
 id|MSR_FP
 suffix:semicolon
 macro_line|#ifdef __SMP__
-r_if
-c_cond
-(paren
-(paren
-id|p-&gt;pid
-op_ne
-l_int|0
-)paren
-op_logical_or
-op_logical_neg
-(paren
-id|clone_flags
-op_amp
-id|CLONE_PID
-)paren
-)paren
-id|p-&gt;tss.smp_fork_ret
-op_assign
-l_int|1
-suffix:semicolon
 id|p-&gt;last_processor
 op_assign
 id|NO_PROC_ID
@@ -1688,7 +1750,6 @@ comma
 id|regs
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; * only parent returns here, child returns to either&n;&t; * syscall_ret_1() or kernel_thread()&n;&t; * -- Cort&n;&t; */
 macro_line|#ifdef __SMP__
 multiline_comment|/* When we clone the idle task we keep the same pid but&n;&t; * the return value of 0 for both causes problems.&n;&t; * -- Cort&n;&t; */
 r_if
@@ -1769,7 +1830,6 @@ comma
 id|regs
 )paren
 suffix:semicolon
-multiline_comment|/* only parent returns here */
 macro_line|#ifdef __SMP__
 multiline_comment|/* When we clone the idle task we keep the same pid but&n;&t; * the return value of 0 for both causes problems.&n;&t; * -- Cort&n;&t; */
 r_if

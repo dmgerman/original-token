@@ -1633,10 +1633,24 @@ id|IRQ_8259_CASCADE
 )paren
 (brace
 multiline_comment|/*&n;                 * This magic address generates a PCI IACK cycle.&n;                 *&n;                 * This should go in the above mask/ack code soon. -- Cort&n;                 */
+r_if
+c_cond
+(paren
+id|chrp_int_ack_special
+)paren
 id|irq
 op_assign
 op_star
 id|chrp_int_ack_special
+suffix:semicolon
+r_else
+id|irq
+op_assign
+id|i8259_irq
+c_func
+(paren
+l_int|0
+)paren
 suffix:semicolon
 multiline_comment|/*&n;                 * Acknowledge as soon as possible to allow i8259&n;                 * interrupt nesting                         */
 id|openpic_eoi

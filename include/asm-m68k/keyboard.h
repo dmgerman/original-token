@@ -6,6 +6,9 @@ DECL|macro|__M68K_KEYBOARD_H
 mdefine_line|#define __M68K_KEYBOARD_H
 macro_line|#ifdef __KERNEL__
 macro_line|#include &lt;asm/machdep.h&gt;
+macro_line|#ifdef CONFIG_Q40
+macro_line|#include &lt;asm/q40_keyboard.h&gt;
+macro_line|#endif
 DECL|function|kbd_setkeycode
 r_static
 id|__inline__
@@ -22,6 +25,22 @@ r_int
 id|keycode
 )paren
 (brace
+macro_line|#ifdef CONFIG_Q40
+r_if
+c_cond
+(paren
+id|MACH_IS_Q40
+)paren
+r_return
+id|q40kbd_setkeycode
+c_func
+(paren
+id|scancode
+comma
+id|keycode
+)paren
+suffix:semicolon
+macro_line|#endif
 r_return
 op_minus
 id|EOPNOTSUPP
@@ -39,6 +58,20 @@ r_int
 id|scancode
 )paren
 (brace
+macro_line|#ifdef CONFIG_Q40
+r_if
+c_cond
+(paren
+id|MACH_IS_Q40
+)paren
+r_return
+id|q40kbd_getkeycode
+c_func
+(paren
+id|scancode
+)paren
+suffix:semicolon
+macro_line|#endif
 r_return
 id|scancode
 OG
@@ -71,6 +104,24 @@ r_char
 id|raw_mode
 )paren
 (brace
+macro_line|#ifdef CONFIG_Q40
+r_if
+c_cond
+(paren
+id|MACH_IS_Q40
+)paren
+r_return
+id|q40kbd_translate
+c_func
+(paren
+id|scancode
+comma
+id|keycode
+comma
+id|raw_mode
+)paren
+suffix:semicolon
+macro_line|#endif
 op_star
 id|keycode
 op_assign
@@ -92,6 +143,20 @@ r_char
 id|keycode
 )paren
 (brace
+macro_line|#ifdef CONFIG_Q40
+r_if
+c_cond
+(paren
+id|MACH_IS_Q40
+)paren
+r_return
+id|q40kbd_unexpected_up
+c_func
+(paren
+id|keycode
+)paren
+suffix:semicolon
+macro_line|#endif
 r_return
 l_int|0200
 suffix:semicolon

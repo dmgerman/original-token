@@ -140,15 +140,6 @@ id|res_dir
 op_assign
 l_int|NULL
 suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|dir
-)paren
-r_return
-l_int|NULL
-suffix:semicolon
 id|sb
 op_assign
 id|dir-&gt;i_sb

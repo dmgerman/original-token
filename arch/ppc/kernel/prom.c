@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * $Id: prom.c,v 1.53 1999/04/22 22:45:42 cort Exp $&n; *&n; * Procedures for interfacing to the Open Firmware PROM on&n; * Power Macintosh computers.&n; *&n; * In particular, we are interested in the device tree&n; * and in using some of its services (exit, write to stdout).&n; *&n; * Paul Mackerras&t;August 1996.&n; * Copyright (C) 1996 Paul Mackerras.&n; */
+multiline_comment|/*&n; * $Id: prom.c,v 1.54 1999/05/10 04:43:46 cort Exp $&n; *&n; * Procedures for interfacing to the Open Firmware PROM on&n; * Power Macintosh computers.&n; *&n; * In particular, we are interested in the device tree&n; * and in using some of its services (exit, write to stdout).&n; *&n; * Paul Mackerras&t;August 1996.&n; * Copyright (C) 1996 Paul Mackerras.&n; */
 macro_line|#include &lt;stdarg.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -2300,7 +2300,7 @@ id|offset
 )paren
 suffix:semicolon
 macro_line|#ifdef CONFIG_SMP
-multiline_comment|/*&n;&t; * With CHRP SMP we need to use the OF to start the other&n;&t; * processors so we can&squot;t wait until smp_boot_cpus (the OF is&n;&t; * trashed by then) so we have to put the processors into&n;&t; * a holding pattern controlled by the kernel (not OF) before&n;&t; * we destroy the OF.&n;&t; *&n;&t; * This used a chunk of high memory, puts some holding pattern&n;&t; * code there and sends the other processors off to there until&n;&t; * smp_boot_cpus tells them to do something.  We do that by using&n;&t; * physical address 0x0.  The holding pattern checks that address&n;&t; * until its cpu # is there, when it is that cpu jumps to&n;&t; * __secondary_start().  smp_boot_cpus() takes care of setting those&n;&t; * values.&n;&t; *&n;&t; * We also use physical address 0x4 here to tell when a cpu&n;&t; * is in its holding pattern code.&n;&t; *&n;&t; * -- Cort&n;&t; */
+multiline_comment|/*&n;&t; * With CHRP SMP we need to use the OF to start the other&n;&t; * processors so we can&squot;t wait until smp_boot_cpus (the OF is&n;&t; * trashed by then) so we have to put the processors into&n;&t; * a holding pattern controlled by the kernel (not OF) before&n;&t; * we destroy the OF.&n;&t; *&n;&t; * This uses a chunk of high memory, puts some holding pattern&n;&t; * code there and sends the other processors off to there until&n;&t; * smp_boot_cpus tells them to do something.  We do that by using&n;&t; * physical address 0x0.  The holding pattern checks that address&n;&t; * until its cpu # is there, when it is that cpu jumps to&n;&t; * __secondary_start().  smp_boot_cpus() takes care of setting those&n;&t; * values.&n;&t; *&n;&t; * We also use physical address 0x4 here to tell when a cpu&n;&t; * is in its holding pattern code.&n;&t; *&n;&t; * -- Cort&n;&t; */
 (brace
 r_extern
 r_void

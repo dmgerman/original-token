@@ -1009,7 +1009,7 @@ DECL|member|reserved4
 id|__u8
 id|reserved4
 suffix:colon
-l_int|4
+l_int|1
 suffix:semicolon
 multiline_comment|/* Drive can read multisession discs. */
 DECL|member|multisession

@@ -240,15 +240,6 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|dir
-)paren
-r_return
-l_int|NULL
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
 (paren
 id|block
 op_assign

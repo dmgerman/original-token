@@ -699,6 +699,11 @@ c_func
 (paren
 )paren
 suffix:semicolon
+id|init_idle
+c_func
+(paren
+)paren
+suffix:semicolon
 id|local_flush_cache_all
 c_func
 (paren
@@ -798,6 +803,11 @@ id|p-&gt;processor
 op_assign
 id|i
 suffix:semicolon
+id|p-&gt;has_cpu
+op_assign
+l_int|1
+suffix:semicolon
+multiline_comment|/* we schedule the first task manually */
 id|current_set
 (braket
 id|i

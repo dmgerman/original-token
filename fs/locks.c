@@ -667,13 +667,20 @@ c_cond
 (paren
 id|wait
 )paren
+(brace
 multiline_comment|/* Let the blocked process remove waiter from the&n;&t;&t;&t; * block list when it gets scheduled.&n;&t;&t;&t; */
+id|current-&gt;policy
+op_or_assign
+id|SCHED_YIELD
+suffix:semicolon
 id|schedule
 c_func
 (paren
 )paren
 suffix:semicolon
+)brace
 r_else
+(brace
 multiline_comment|/* Remove waiter from the block list, because by the&n;&t;&t;&t; * time it wakes up blocker won&squot;t exist any more.&n;&t;&t;&t; */
 id|locks_delete_block
 c_func
@@ -683,6 +690,7 @@ comma
 id|waiter
 )paren
 suffix:semicolon
+)brace
 )brace
 r_return
 suffix:semicolon

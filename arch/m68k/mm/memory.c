@@ -6,6 +6,7 @@ macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/pagemap.h&gt;
 macro_line|#include &lt;asm/setup.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
@@ -387,21 +388,22 @@ id|ptable_list
 suffix:semicolon
 DECL|macro|PD_MARKBITS
 mdefine_line|#define PD_MARKBITS(dp) (*(unsigned char *)&amp;(dp)-&gt;offset)
-DECL|macro|PD_PAGE
-mdefine_line|#define PD_PAGE(dp) (PAGE_OFFSET + ((dp)-&gt;map_nr &lt;&lt; PAGE_SHIFT))
 DECL|macro|PAGE_PD
 mdefine_line|#define PAGE_PD(page) ((ptable_desc *)&amp;mem_map[MAP_NR(page)])
 DECL|macro|PTABLE_SIZE
 mdefine_line|#define PTABLE_SIZE (PTRS_PER_PMD * sizeof(pmd_t))
-DECL|function|init_pointer_table
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
 r_void
-id|__init
 id|init_pointer_table
 c_func
 (paren
 r_int
 r_int
 id|ptable
+)paren
 )paren
 (brace
 id|ptable_desc
@@ -758,7 +760,7 @@ id|pmd_t
 op_star
 )paren
 (paren
-id|PD_PAGE
+id|page_address
 c_func
 (paren
 id|dp
@@ -1010,16 +1012,16 @@ r_if
 c_cond
 (paren
 (paren
+(paren
 id|SUPER_DATA
+op_xor
+id|base
+)paren
 op_amp
 id|mask
 )paren
 op_ne
-(paren
-id|base
-op_amp
-id|mask
-)paren
+l_int|0
 )paren
 r_return
 l_int|0
@@ -1054,27 +1056,25 @@ id|mask
 op_assign
 op_complement
 (paren
-(paren
 id|regval
 op_lshift
 l_int|8
 )paren
 op_amp
 l_int|0xff000000
-)paren
 suffix:semicolon
 r_return
 (paren
+(paren
 id|vaddr
+op_xor
+id|base
+)paren
 op_amp
 id|mask
 )paren
 op_eq
-(paren
-id|base
-op_amp
-id|mask
-)paren
+l_int|0
 suffix:semicolon
 )brace
 macro_line|#ifndef CONFIG_SINGLE_MEMORY_CHUNK

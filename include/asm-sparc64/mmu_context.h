@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: mmu_context.h,v 1.34 1999/01/11 13:45:44 davem Exp $ */
+multiline_comment|/* $Id: mmu_context.h,v 1.35 1999/05/08 03:03:20 davem Exp $ */
 macro_line|#ifndef __SPARC64_MMU_CONTEXT_H
 DECL|macro|__SPARC64_MMU_CONTEXT_H
 mdefine_line|#define __SPARC64_MMU_CONTEXT_H
@@ -13,10 +13,6 @@ r_extern
 r_int
 r_int
 id|tlb_context_cache
-suffix:semicolon
-r_extern
-id|spinlock_t
-id|scheduler_lock
 suffix:semicolon
 r_extern
 r_int
@@ -47,7 +43,7 @@ DECL|macro|init_new_context
 mdefine_line|#define init_new_context(__mm)&t;((__mm)-&gt;context = NO_CONTEXT)
 multiline_comment|/* Kernel threads like rpciod and nfsd drop their mm, and then use&n; * init_mm, when this happens we must make sure the tsk-&gt;tss.ctx is&n; * updated as well.  Otherwise we have disasters relating to&n; * set_fs/get_fs usage later on.&n; *&n; * Also we can only clear the mmu_context_bmap bit when this is&n; * the final reference to the address space.&n; */
 DECL|macro|destroy_context
-mdefine_line|#define destroy_context(__mm)&t;do { &t;&t;&t;&t;&t;&t;&bslash;&n;&t;if ((__mm)-&gt;context != NO_CONTEXT &amp;&amp;&t;&t;&t;&t;&t;&bslash;&n;&t;    atomic_read(&amp;(__mm)-&gt;count) == 1) { &t;&t;&t;&t;&bslash;&n;&t;&t;spin_lock(&amp;scheduler_lock); &t;&t;&t;&t;&t;&bslash;&n;&t;&t;if (!(((__mm)-&gt;context ^ tlb_context_cache) &amp; CTX_VERSION_MASK))&bslash;&n;&t;&t;&t;clear_bit((__mm)-&gt;context &amp; ~(CTX_VERSION_MASK),&t;&bslash;&n;&t;&t;&t;&t;  mmu_context_bmap);&t;&t;&t;&t;&bslash;&n;&t;&t;spin_unlock(&amp;scheduler_lock); &t;&t;&t;&t;&t;&bslash;&n;&t;&t;(__mm)-&gt;context = NO_CONTEXT; &t;&t;&t;&t;&t;&bslash;&n;&t;&t;if(current-&gt;mm == (__mm)) {&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;current-&gt;tss.ctx = 0;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;spitfire_set_secondary_context(0);&t;&t;&t;&bslash;&n;&t;&t;&t;__asm__ __volatile__(&quot;flush %g6&quot;);&t;&t;&t;&bslash;&n;&t;&t;}&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;} &t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;} while (0)
+mdefine_line|#define destroy_context(__mm)&t;do { &t;&t;&t;&t;&t;&t;&bslash;&n;&t;if ((__mm)-&gt;context != NO_CONTEXT &amp;&amp;&t;&t;&t;&t;&t;&bslash;&n;&t;    atomic_read(&amp;(__mm)-&gt;count) == 1) { &t;&t;&t;&t;&bslash;&n;&t;&t;if (!(((__mm)-&gt;context ^ tlb_context_cache) &amp; CTX_VERSION_MASK))&bslash;&n;&t;&t;&t;clear_bit((__mm)-&gt;context &amp; ~(CTX_VERSION_MASK),&t;&bslash;&n;&t;&t;&t;&t;  mmu_context_bmap);&t;&t;&t;&t;&bslash;&n;&t;&t;(__mm)-&gt;context = NO_CONTEXT; &t;&t;&t;&t;&t;&bslash;&n;&t;&t;if(current-&gt;mm == (__mm)) {&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;current-&gt;tss.ctx = 0;&t;&t;&t;&t;&t;&bslash;&n;&t;&t;&t;spitfire_set_secondary_context(0);&t;&t;&t;&bslash;&n;&t;&t;&t;__asm__ __volatile__(&quot;flush %g6&quot;);&t;&t;&t;&bslash;&n;&t;&t;}&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;} &t;&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;} while (0)
 multiline_comment|/* This routine must called with interrupts off,&n; * this is necessary to guarentee that the current-&gt;tss.ctx&n; * to CPU secontary context register relationship is maintained&n; * when traps can happen.&n; *&n; * Also the caller must flush the current set of user windows&n; * to the stack (if necessary) before we get here.&n; */
 DECL|function|__get_mmu_context
 r_extern
@@ -381,7 +377,7 @@ DECL|macro|get_mmu_context
 mdefine_line|#define get_mmu_context(x)&t;do { } while(0)
 multiline_comment|/*&n; * After we have set current-&gt;mm to a new value, this activates&n; * the context for the new mm so we see the new mappings.  Currently,&n; * this is always called for &squot;current&squot;, if that changes put appropriate&n; * checks here.&n; *&n; * We set the cpu_vm_mask first to zero to enforce a tlb flush for&n; * the new context above, then we set it to the current cpu so the&n; * smp tlb flush routines do not get confused.&n; */
 DECL|macro|activate_context
-mdefine_line|#define activate_context(__tsk)&t;&t;&bslash;&n;do {&t;flushw_user();&t;&t;&t;&bslash;&n;&t;(__tsk)-&gt;mm-&gt;cpu_vm_mask = 0;&t;&bslash;&n;&t;spin_lock(&amp;scheduler_lock);&t;&bslash;&n;&t;__get_mmu_context(__tsk);&t;&bslash;&n;&t;spin_unlock(&amp;scheduler_lock);&t;&bslash;&n;&t;(__tsk)-&gt;mm-&gt;cpu_vm_mask = (1UL&lt;&lt;smp_processor_id()); &bslash;&n;} while(0)
+mdefine_line|#define activate_context(__tsk)&t;&t;&bslash;&n;do {&t;flushw_user();&t;&t;&t;&bslash;&n;&t;(__tsk)-&gt;mm-&gt;cpu_vm_mask = 0;&t;&bslash;&n;&t;__get_mmu_context(__tsk);&t;&bslash;&n;&t;(__tsk)-&gt;mm-&gt;cpu_vm_mask = (1UL&lt;&lt;smp_processor_id()); &bslash;&n;} while(0)
 macro_line|#endif /* !(__ASSEMBLY__) */
 macro_line|#endif /* !(__SPARC64_MMU_CONTEXT_H) */
 eof

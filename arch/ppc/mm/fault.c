@@ -443,6 +443,10 @@ r_goto
 id|bad_area
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+op_logical_neg
 id|handle_mm_fault
 c_func
 (paren
@@ -456,6 +460,9 @@ id|error_code
 op_amp
 l_int|0x02000000
 )paren
+)paren
+r_goto
+id|bad_area
 suffix:semicolon
 id|up
 c_func

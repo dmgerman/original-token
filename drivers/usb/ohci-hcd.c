@@ -1,6 +1,7 @@
 multiline_comment|/*&n; * OHCI HCD (Host Controller Driver) for USB.&n; *&n; * (C) Copyright 1999 Roman Weissgaerber &lt;weissg@vienna.at&gt;&n; *&n; * The OHCI HCD layer is a simple but nearly complete implementation of what the&n; * USB people would call a HCD  for the OHCI. &n; * (ISO comming soon, Bulk disabled, INT u. CTRL transfers enabled)&n; * The layer on top of it, is for interfacing to the alternate-usb device-drivers.&n; * &n; * [ This is based on Linus&squot; UHCI code and gregs OHCI fragments (0.03c source tree). ]&n; * [ Open Host Controller Interface driver for USB. ]&n; * [ (C) Copyright 1999 Linus Torvalds (uhci.c) ]&n; * [ (C) Copyright 1999 Gregory P. Smith &lt;greg@electricrain.com&gt; ]&n; * [ $Log: ohci.c,v $ ]&n; * [ Revision 1.1  1999/04/05 08:32:30  greg ]&n; * &n; * &n; * v2.1 1999/05/09 ep_addr correction, code clean up&n; * v2.0 1999/05/04 &n; * virtual root hub is now an option, &n; * memory allocation based on kmalloc and kfree now, Bus error handling, &n; * INT and CTRL transfers enabled, Bulk included but disabled, ISO needs completion&n; * &n; * from Linus Torvalds (uhci.c) (APM not tested; hub, usb_device, bus and related stuff)&n; * from Greg Smith (ohci.c) (reset controller handling, hub)&n; * &n; * v1.0 1999/04/27 initial release&n; * ohci-hcd.c&n; */
 multiline_comment|/* #define OHCI_DBG  */
 multiline_comment|/* printk some debug information */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;

@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: process.c,v 1.90 1999/03/22 02:12:16 davem Exp $&n; *  arch/sparc64/kernel/process.c&n; *&n; *  Copyright (C) 1995, 1996 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1996       Eddie C. Dost   (ecd@skynet.be)&n; *  Copyright (C) 1997, 1998 Jakub Jelinek   (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/*  $Id: process.c,v 1.92 1999/05/08 23:04:48 davem Exp $&n; *  arch/sparc64/kernel/process.c&n; *&n; *  Copyright (C) 1995, 1996 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1996       Eddie C. Dost   (ecd@skynet.be)&n; *  Copyright (C) 1997, 1998 Jakub Jelinek   (jj@sunsite.mff.cuni.cz)&n; */
 multiline_comment|/*&n; * This file handles the architecture-dependent parts of process handling..&n; */
 DECL|macro|__KERNEL_SYSCALLS__
 mdefine_line|#define __KERNEL_SYSCALLS__
@@ -60,6 +60,11 @@ op_assign
 op_minus
 l_int|100
 suffix:semicolon
+id|init_idle
+c_func
+(paren
+)paren
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -106,6 +111,11 @@ id|current-&gt;counter
 op_assign
 op_minus
 l_int|100
+suffix:semicolon
+id|init_idle
+c_func
+(paren
+)paren
 suffix:semicolon
 r_while
 c_loop
