@@ -60,12 +60,12 @@ op_star
 )paren
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_BLK_DEV_SD
 r_int
 id|fdomain_16x0_biosparam
 c_func
 (paren
-r_int
+id|Disk
+op_star
 comma
 r_int
 comma
@@ -73,10 +73,6 @@ r_int
 op_star
 )paren
 suffix:semicolon
-macro_line|#else
-DECL|macro|fdomain_16x0_biosparam
-mdefine_line|#define    fdomain_16x0_biosparam NULL
-macro_line|#endif
 DECL|macro|FDOMAIN_16X0
 mdefine_line|#define FDOMAIN_16X0 { &quot;Future Domain TMC-16x0&quot;,          &bslash;&n;&t;&t;&t;fdomain_16x0_detect,              &bslash;&n;&t;&t;        fdomain_16x0_info,                &bslash;&n;&t;&t;        fdomain_16x0_command,             &bslash;&n;&t;&t;        fdomain_16x0_queue,               &bslash;&n;&t;&t;        fdomain_16x0_abort,               &bslash;&n;&t;&t;        fdomain_16x0_reset,               &bslash;&n;&t;&t;        NULL,                             &bslash;&n;&t;&t;        fdomain_16x0_biosparam,           &bslash;&n;&t;&t;        1, 6, 64 /* SG_NONE */, 1 ,0, 0, DISABLE_CLUSTERING}
 macro_line|#endif

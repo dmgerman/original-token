@@ -24,6 +24,7 @@ macro_line|#include &quot;../block/blk.h&quot;
 macro_line|#include &quot;scsi.h&quot;
 macro_line|#include &quot;hosts.h&quot;
 macro_line|#include &quot;ultrastor.h&quot;
+macro_line|#include &quot;sd.h&quot;
 DECL|macro|FALSE
 mdefine_line|#define FALSE 0
 DECL|macro|TRUE
@@ -3678,8 +3679,9 @@ r_int
 id|ultrastor_biosparam
 c_func
 (paren
-r_int
-id|size
+id|Disk
+op_star
+id|disk
 comma
 r_int
 id|dev
@@ -3689,6 +3691,11 @@ op_star
 id|dkinfo
 )paren
 (brace
+r_int
+id|size
+op_assign
+id|disk-&gt;capacity
+suffix:semicolon
 r_int
 r_int
 id|s

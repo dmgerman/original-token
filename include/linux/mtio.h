@@ -269,5 +269,7 @@ DECL|macro|MT_ST_READ_AHEAD
 mdefine_line|#define MT_ST_READ_AHEAD&t;0x4
 DECL|macro|MT_ST_DEBUGGING
 mdefine_line|#define MT_ST_DEBUGGING&t;&t;0x8
+DECL|macro|MT_ST_TWO_FM
+mdefine_line|#define MT_ST_TWO_FM&t;&t;0x10
 macro_line|#endif /* _LINUX_MTIO_H */
 eof

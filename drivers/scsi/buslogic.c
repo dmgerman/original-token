@@ -1,7 +1,6 @@
 multiline_comment|/*&n; *&t;buslogic.c&t;(C) 1993 David B. Gentzel&n; *&t;Low-level scsi driver for BusLogic adapters&n; *&t;by David B. Gentzel, Whitfield Software Services, Carnegie, PA&n; *&t;    (gentzel@nova.enet.dec.com)&n; *&t;Thanks to BusLogic for providing the necessary documentation&n; *&n; *&t;The original version of this driver was derived from aha1542.[ch] which&n; *&t;is Copyright (C) 1992 Tommy Thorn.  Much has been reworked, but most of&n; *&t;basic structure and substantial chunks of code still remain.&n; */
 multiline_comment|/*&n; * TODO:&n; *&t;1. Cleanup error handling &amp; reporting.&n; *&t;2. Find out why scatter/gather is limited to 16 requests per command.&n; *&t;3. Add multiple outstanding requests.&n; *&t;4. See if we can make good use of having more than one command per lun.&n; *&t;5. Test/improve/fix abort &amp; reset functions.&n; *&t;6. Look at command linking.&n; */
 multiline_comment|/*&n; * NOTES:&n; *    BusLogic (formerly BusTek) manufactures an extensive family of&n; *    intelligent, high performance SCSI-2 host adapters.  They all support&n; *    command queueing and scatter/gather I/O.  Most importantly, they all&n; *    support identical programming interfaces, so a single driver can be used&n; *    for all boards.&n; *&n; *    Actually, they all support TWO identical programming interfaces!  They&n; *    have an Adaptec 154x compatible interface (complete with 24 bit&n; *    addresses) as well as a &quot;native&quot; 32 bit interface.  As such, the Linux&n; *    aha1542 driver can be used to drive them, but with less than optimal&n; *    performance (at least for the EISA, VESA, and MCA boards).&n; *&n; *    Here is the scoop on the various models:&n; *&t;BT-542B - ISA first-party DMA with floppy support.&n; *&t;BT-545S - 542B + FAST SCSI and active termination.&n; *&t;BT-545D - 545S + differential termination.&n; *&t;BT-445S - VESA bus-master FAST SCSI with active termination and floppy&n; *&t;&t;  support.&n; *&t;BT-640A - MCA bus-master with floppy support.&n; *&t;BT-646S - 640A + FAST SCSI and active termination.&n; *&t;BT-646D - 646S + differential termination.&n; *&t;BT-742A - EISA bus-master with floppy support.&n; *&t;BT-747S - 742A + FAST SCSI, active termination, and 2.88M floppy.&n; *&t;BT-747D - 747S + differential termination.&n; *&t;BT-757S - 747S + WIDE SCSI.&n; *&t;BT-757D - 747D + WIDE SCSI.&n; *&n; *    Should you require further information on any of these boards, BusLogic&n; *    can be reached at (408)492-9090.&n; *&n; *    This driver SHOULD support all of these boards.  It has only been tested&n; *    with a 747S.  An earlier version was tested with a 445S.&n; *&n; *    Places flagged with a triple question-mark are things which are either&n; *    unfinished, questionable, or wrong.&n; */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -14,9 +13,7 @@ macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &quot;../block/blk.h&quot;
 macro_line|#include &quot;scsi.h&quot;
 macro_line|#include &quot;hosts.h&quot;
-macro_line|#ifdef CONFIG_BLK_DEV_SD
 macro_line|# include &quot;sd.h&quot;
-macro_line|#endif
 DECL|macro|BUSLOGIC_PRIVATE_H
 mdefine_line|#define BUSLOGIC_PRIVATE_H&t;/* Get the &quot;private&quot; stuff */
 macro_line|#include &quot;buslogic.h&quot;
@@ -5043,8 +5040,9 @@ r_int
 id|buslogic_biosparam
 c_func
 (paren
-r_int
-id|size
+id|Disk
+op_star
+id|disk
 comma
 r_int
 id|dev
@@ -5054,36 +5052,21 @@ op_star
 id|ip
 )paren
 (brace
-multiline_comment|/* ??? This is wrong if disk is configured for &gt; 1G mapping.&n;       Unfortunately, unlike UltraStor, I see know way of determining whether&n;       &gt; 1G mapping has been enabled. */
-macro_line|#ifdef CONFIG_BLK_DEV_SD
+r_int
+id|size
+op_assign
+id|disk-&gt;capacity
+suffix:semicolon
 r_int
 id|translation_algorithm
 suffix:semicolon
-id|Scsi_Device
-op_star
-id|disk
-suffix:semicolon
-id|disk
-op_assign
-id|rscsi_disks
-(braket
-id|MINOR
-c_func
-(paren
-id|dev
-)paren
-op_rshift
-l_int|4
-)braket
-dot
-id|device
-suffix:semicolon
+multiline_comment|/* ??? This is wrong if disk is configured for &gt; 1G mapping.&n;     Unfortunately, unlike UltraStor, I see know way of determining whether&n;     &gt; 1G mapping has been enabled. */
 id|translation_algorithm
 op_assign
 id|HOSTDATA
 c_func
 (paren
-id|disk-&gt;host
+id|disk-&gt;device-&gt;host
 )paren
 op_member_access_from_pointer
 id|bios_translation
@@ -5159,7 +5142,6 @@ l_int|11
 suffix:semicolon
 )brace
 multiline_comment|/*    if (ip[2] &gt; 1024)&n;      ip[2] = 1024; */
-macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon

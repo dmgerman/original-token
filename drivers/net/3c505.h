@@ -70,7 +70,7 @@ DECL|macro|MAX_PCB_DATA
 mdefine_line|#define&t;MAX_PCB_DATA&t;62
 multiline_comment|/*****************************************************************&n; *&n; *  timeout value&n; *&t;this is a rough value used for loops to stop them from &n; *&t;locking up the whole machine in the case of failure or&n; *&t;error conditions&n; *&n; *****************************************************************/
 DECL|macro|TIMEOUT
-mdefine_line|#define&t;TIMEOUT&t;10000
+mdefine_line|#define&t;TIMEOUT&t;300
 multiline_comment|/*****************************************************************&n; *&n; * PCB commands&n; *&n; *****************************************************************/
 r_enum
 (brace
@@ -159,6 +159,9 @@ DECL|enumerator|CMD_ADAPTER_INFO
 id|CMD_ADAPTER_INFO
 op_assign
 l_int|0x11
+comma
+DECL|enumerator|NUM_TRANSMIT_CMDS
+id|NUM_TRANSMIT_CMDS
 comma
 multiline_comment|/*&n;   * adapter PCB commands&n;   */
 DECL|enumerator|CMD_CONFIGURE_ADAPTER_RESPONSE

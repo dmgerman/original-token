@@ -167,6 +167,7 @@ op_member_access_from_pointer
 id|bios_param
 c_func
 (paren
+op_amp
 id|rscsi_disks
 (braket
 id|MINOR
@@ -177,8 +178,6 @@ id|dev
 op_rshift
 l_int|4
 )braket
-dot
-id|capacity
 comma
 id|dev
 comma

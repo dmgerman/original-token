@@ -442,7 +442,8 @@ r_int
 id|aha1740_biosparam
 c_func
 (paren
-r_int
+id|Disk
+op_star
 comma
 r_int
 comma

@@ -96,6 +96,14 @@ op_star
 id|SCpnt
 )paren
 suffix:semicolon
+r_static
+r_int
+id|check_cdrom_media_change
+c_func
+(paren
+id|dev_t
+)paren
+suffix:semicolon
 DECL|function|sr_release
 r_static
 r_void
@@ -180,12 +188,21 @@ comma
 multiline_comment|/* mmap */
 id|sr_open
 comma
-multiline_comment|/* no special open code */
+multiline_comment|/* special open code */
 id|sr_release
 comma
 multiline_comment|/* release */
 l_int|NULL
+comma
 multiline_comment|/* fsync */
+l_int|NULL
+comma
+multiline_comment|/* fasync */
+id|check_cdrom_media_change
+comma
+multiline_comment|/* Disk change */
+l_int|NULL
+multiline_comment|/* revalidate */
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * This function checks to see if the media has been changed in the&n; * CDROM drive.  It is possible that we have already sensed a change,&n; * or the drive may have sensed one and not yet reported it.  We must&n; * be ready for either case. This function always reports the current&n; * value of the changed bit.  If flag is 0, then the changed bit is reset.&n; * This function could be done as an ioctl, but we would need to have&n; * an inode for that to work, and we do not always have one.&n; */
@@ -195,11 +212,8 @@ r_int
 id|check_cdrom_media_change
 c_func
 (paren
-r_int
+id|dev_t
 id|full_dev
-comma
-r_int
-id|flag
 )paren
 (brace
 r_int
@@ -210,6 +224,11 @@ suffix:semicolon
 r_struct
 id|inode
 id|inode
+suffix:semicolon
+r_int
+id|flag
+op_assign
+l_int|0
 suffix:semicolon
 id|target
 op_assign

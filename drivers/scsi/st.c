@@ -1,4 +1,4 @@
-multiline_comment|/*&n;  SCSI Tape Driver for Linux version 1.1 and newer. See the accompanying&n;  file README.st for more information.&n;&n;  History:&n;  Rewritten from Dwayne Forsyth&squot;s SCSI tape driver by Kai Makisara.&n;  Contribution and ideas from several people including (in alphabetical&n;  order) Klaus Ehrenfried, Wolfgang Denk, J&quot;org Weule, and&n;  Eric Youngdale.&n;&n;  Copyright 1992, 1993, 1994 Kai Makisara&n;&t;&t; email makisara@vtinsx.ins.vtt.fi or Kai.Makisara@vtt.fi&n;&n;  Last modified: Wed May  4 20:29:42 1994 by root@kai.home&n;*/
+multiline_comment|/*&n;  SCSI Tape Driver for Linux version 1.1 and newer. See the accompanying&n;  file README.st for more information.&n;&n;  History:&n;  Rewritten from Dwayne Forsyth&squot;s SCSI tape driver by Kai Makisara.&n;  Contribution and ideas from several people including (in alphabetical&n;  order) Klaus Ehrenfried, Wolfgang Denk, J&quot;org Weule, and&n;  Eric Youngdale.&n;&n;  Copyright 1992, 1993, 1994 Kai Makisara&n;&t;&t; email makisara@vtinsx.ins.vtt.fi or Kai.Makisara@vtt.fi&n;&n;  Last modified: Wed Jun 22 23:37:10 1994 by root@kai.home&n;*/
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -20,6 +20,8 @@ multiline_comment|/* #define DEBUG */
 multiline_comment|/* #define ST_NOWAIT */
 multiline_comment|/* #define ST_IN_FILE_POS */
 multiline_comment|/* #define ST_RECOVERED_WRITE_FATAL */
+DECL|macro|ST_TWO_FM
+mdefine_line|#define ST_TWO_FM 0
 DECL|macro|ST_BUFFER_WRITES
 mdefine_line|#define ST_BUFFER_WRITES 1
 DECL|macro|ST_ASYNC_WRITES
@@ -58,7 +60,7 @@ mdefine_line|#define MAX_READY_RETRIES 5
 DECL|macro|NO_TAPE
 mdefine_line|#define NO_TAPE  NOT_READY
 DECL|macro|ST_TIMEOUT
-mdefine_line|#define ST_TIMEOUT 9000
+mdefine_line|#define ST_TIMEOUT 27000
 DECL|macro|ST_LONG_TIMEOUT
 mdefine_line|#define ST_LONG_TIMEOUT 200000
 DECL|variable|st_nbr_buffers
@@ -909,6 +911,43 @@ op_assign
 op_minus
 l_int|1
 suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|STp-&gt;buffer
+)paren
+op_member_access_from_pointer
+id|last_result
+op_ne
+l_int|0
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;st%d: Backing over filemark failed.&bslash;n&quot;
+comma
+id|dev
+)paren
+suffix:semicolon
+(paren
+id|STp-&gt;mt_status
+)paren
+op_member_access_from_pointer
+id|mt_fileno
+op_add_assign
+l_int|1
+suffix:semicolon
+(paren
+id|STp-&gt;mt_status
+)paren
+op_member_access_from_pointer
+id|mt_blkno
+op_assign
+l_int|0
+suffix:semicolon
+)brace
 r_return
 (paren
 id|STp-&gt;buffer
@@ -2796,8 +2835,8 @@ id|buffer_blocks
 )paren
 suffix:semicolon
 macro_line|#endif
-r_if
-c_cond
+id|STp-&gt;drv_write_prot
+op_assign
 (paren
 (paren
 id|STp-&gt;buffer
@@ -2809,6 +2848,14 @@ l_int|2
 )braket
 op_amp
 l_int|0x80
+)paren
+op_ne
+l_int|0
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|STp-&gt;drv_write_prot
 )paren
 (brace
 id|STp-&gt;write_prot
@@ -3007,6 +3054,8 @@ l_int|4
 )braket
 op_assign
 l_int|1
+op_plus
+id|STp-&gt;two_fm
 suffix:semicolon
 id|SCpnt-&gt;request.dev
 op_assign
@@ -3069,6 +3118,13 @@ id|last_result_fatal
 op_ne
 l_int|0
 )paren
+(brace
+id|SCpnt-&gt;request.dev
+op_assign
+op_minus
+l_int|1
+suffix:semicolon
+multiline_comment|/* Mark as not busy */
 id|printk
 c_func
 (paren
@@ -3077,8 +3133,15 @@ comma
 id|dev
 )paren
 suffix:semicolon
+)brace
 r_else
 (brace
+id|SCpnt-&gt;request.dev
+op_assign
+op_minus
+l_int|1
+suffix:semicolon
+multiline_comment|/* Mark as not busy */
 (paren
 id|STp-&gt;mt_status
 )paren
@@ -3090,13 +3153,18 @@ id|STp-&gt;drv_block
 op_assign
 l_int|0
 suffix:semicolon
-)brace
-id|SCpnt-&gt;request.dev
-op_assign
-op_minus
-l_int|1
+r_if
+c_cond
+(paren
+id|STp-&gt;two_fm
+)paren
+id|back_over_eof
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
-multiline_comment|/* Mark as not busy */
+)brace
 )brace
 macro_line|#ifdef DEBUG
 r_if
@@ -3107,9 +3175,14 @@ id|debugging
 id|printk
 c_func
 (paren
-l_string|&quot;st%d: Buffer flushed, EOF written&bslash;n&quot;
+l_string|&quot;st%d: Buffer flushed, %d EOF(s) written&bslash;n&quot;
 comma
 id|dev
+comma
+id|cmd
+(braket
+l_int|4
+)braket
 )paren
 suffix:semicolon
 macro_line|#endif
@@ -3354,6 +3427,16 @@ op_assign
 id|ST_WRITING
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|STp-&gt;moves_after_eof
+OL
+l_int|255
+)paren
+id|STp-&gt;moves_after_eof
+op_increment
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -4580,6 +4663,16 @@ op_assign
 id|ST_READING
 suffix:semicolon
 )brace
+r_if
+c_cond
+(paren
+id|STp-&gt;moves_after_eof
+OL
+l_int|255
+)paren
+id|STp-&gt;moves_after_eof
+op_increment
+suffix:semicolon
 macro_line|#ifdef DEBUG
 r_if
 c_cond
@@ -5239,8 +5332,8 @@ id|total
 suffix:semicolon
 macro_line|#endif
 )brace
-multiline_comment|/* end of EOF, EOM, ILI test */
 )brace
+multiline_comment|/* end of EOF, EOM, ILI test */
 r_else
 (brace
 multiline_comment|/* nonzero sense key */
@@ -5280,12 +5373,53 @@ r_return
 id|total
 suffix:semicolon
 r_else
+r_if
+c_cond
+(paren
+id|STp-&gt;moves_after_eof
+op_eq
+l_int|1
+op_logical_and
+(paren
+id|SCpnt-&gt;sense_buffer
+(braket
+l_int|2
+)braket
+op_amp
+l_int|0x0f
+)paren
+op_eq
+id|BLANK_CHECK
+)paren
+(brace
+macro_line|#ifdef DEBUG
+r_if
+c_cond
+(paren
+id|debugging
+)paren
+id|printk
+c_func
+(paren
+l_string|&quot;st%d: Zero returned for first BLANK CHECK after EOF.&bslash;n&quot;
+comma
+id|dev
+)paren
+suffix:semicolon
+macro_line|#endif
+r_return
+l_int|0
+suffix:semicolon
+multiline_comment|/* First BLANK_CHECK after EOF */
+)brace
+r_else
 r_return
 op_minus
 id|EIO
 suffix:semicolon
 )brace
 )brace
+multiline_comment|/* End of extended sense test */
 r_else
 (brace
 id|transfer
@@ -5307,6 +5441,7 @@ id|transfer
 suffix:semicolon
 )brace
 )brace
+multiline_comment|/* End of error handling */
 r_else
 multiline_comment|/* Read successful */
 (paren
@@ -5501,6 +5636,17 @@ id|STp-&gt;drv_block
 op_assign
 l_int|0
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|STp-&gt;moves_after_eof
+OG
+l_int|1
+)paren
+id|STp-&gt;moves_after_eof
+op_assign
+l_int|0
+suffix:semicolon
 (paren
 id|STp-&gt;mt_status
 )paren
@@ -5643,6 +5789,16 @@ id|MT_ST_READ_AHEAD
 op_ne
 l_int|0
 suffix:semicolon
+id|STp-&gt;two_fm
+op_assign
+(paren
+id|options
+op_amp
+id|MT_ST_TWO_FM
+)paren
+op_ne
+l_int|0
+suffix:semicolon
 macro_line|#ifdef DEBUG
 id|debugging
 op_assign
@@ -5671,7 +5827,9 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;              debugging: %d&bslash;n&quot;
+l_string|&quot;              two FMs: %d, debugging: %d&bslash;n&quot;
+comma
+id|STp-&gt;two_fm
 comma
 id|debugging
 )paren
@@ -7328,6 +7486,14 @@ op_logical_neg
 id|ioctl_result
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|cmd_in
+op_ne
+id|MTSEEK
+)paren
+(brace
 id|STp-&gt;drv_block
 op_assign
 id|blkno
@@ -7339,6 +7505,37 @@ op_member_access_from_pointer
 id|mt_fileno
 op_assign
 id|fileno
+suffix:semicolon
+)brace
+r_else
+id|STp-&gt;drv_block
+op_assign
+(paren
+id|STp-&gt;mt_status
+)paren
+op_member_access_from_pointer
+id|mt_fileno
+op_assign
+(paren
+op_minus
+l_int|1
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|cmd_in
+op_eq
+id|MTFSF
+)paren
+id|STp-&gt;moves_after_eof
+op_assign
+l_int|0
+suffix:semicolon
+r_else
+id|STp-&gt;moves_after_eof
+op_assign
+l_int|1
 suffix:semicolon
 r_if
 c_cond
@@ -7473,7 +7670,11 @@ id|MTSETDRVBUFFER
 )paren
 id|STp-&gt;drv_buffer
 op_assign
+(paren
 id|arg
+op_amp
+l_int|7
+)paren
 suffix:semicolon
 r_else
 r_if
@@ -7494,10 +7695,6 @@ c_cond
 id|cmd_in
 op_eq
 id|MTEOM
-op_logical_or
-id|cmd_in
-op_eq
-id|MTWEOF
 )paren
 (brace
 id|STp-&gt;eof
@@ -7927,6 +8124,10 @@ id|file
 comma
 id|mtc.mt_op
 op_eq
+id|MTNOP
+op_logical_or
+id|mtc.mt_op
+op_eq
 id|MTSEEK
 op_logical_or
 id|mtc.mt_op
@@ -8153,6 +8354,31 @@ op_div
 id|STp-&gt;block_size
 suffix:semicolon
 )brace
+(paren
+id|STp-&gt;mt_status
+)paren
+op_member_access_from_pointer
+id|mt_gstat
+op_assign
+l_int|0
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|STp-&gt;drv_write_prot
+)paren
+(paren
+id|STp-&gt;mt_status
+)paren
+op_member_access_from_pointer
+id|mt_gstat
+op_or_assign
+id|GMT_WR_PROT
+c_func
+(paren
+l_int|0xffffffff
+)paren
+suffix:semicolon
 id|memcpy_tofs
 c_func
 (paren
@@ -8998,6 +9224,10 @@ id|STp-&gt;do_read_ahead
 op_assign
 id|ST_READ_AHEAD
 suffix:semicolon
+id|STp-&gt;two_fm
+op_assign
+id|ST_TWO_FM
+suffix:semicolon
 id|STp-&gt;write_threshold
 op_assign
 id|st_write_threshold
@@ -9005,6 +9235,10 @@ suffix:semicolon
 id|STp-&gt;drv_block
 op_assign
 l_int|0
+suffix:semicolon
+id|STp-&gt;moves_after_eof
+op_assign
+l_int|1
 suffix:semicolon
 id|STp-&gt;mt_status
 op_assign

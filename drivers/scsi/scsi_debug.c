@@ -12,6 +12,7 @@ macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &quot;../block/blk.h&quot;
 macro_line|#include &quot;scsi.h&quot;
 macro_line|#include &quot;hosts.h&quot;
+macro_line|#include &quot;sd.h&quot;
 multiline_comment|/* A few options that we want selected */
 multiline_comment|/* Do not attempt to use a timer to simulate a real disk with latency */
 multiline_comment|/* Only use this in the actual kernel, not in the simulator. */
@@ -2864,8 +2865,9 @@ r_int
 id|scsi_debug_biosparam
 c_func
 (paren
-r_int
-id|size
+id|Disk
+op_star
+id|disk
 comma
 r_int
 id|dev
@@ -2875,6 +2877,11 @@ op_star
 id|info
 )paren
 (brace
+r_int
+id|size
+op_assign
+id|disk-&gt;capacity
+suffix:semicolon
 id|info
 (braket
 l_int|0

@@ -1994,7 +1994,7 @@ suffix:semicolon
 )brace
 )brace
 r_extern
-r_void
+r_int
 id|check_disk_change
 c_func
 (paren

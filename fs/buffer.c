@@ -2325,6 +2325,8 @@ id|bh-&gt;b_uptodate
 op_assign
 id|bh-&gt;b_dirt
 op_assign
+id|bh-&gt;b_req
+op_assign
 id|bh-&gt;b_flushtime
 op_assign
 l_int|0

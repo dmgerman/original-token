@@ -2283,12 +2283,6 @@ r_if
 c_cond
 (paren
 id|inode
-op_logical_and
-id|S_ISREG
-c_func
-(paren
-id|inode-&gt;i_mode
-)paren
 )paren
 id|fcntl_remove_locks
 c_func

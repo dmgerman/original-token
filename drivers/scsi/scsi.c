@@ -325,15 +325,6 @@ l_string|&quot;MAXTOR&quot;
 comma
 l_string|&quot;XT-8760S&quot;
 comma
-l_string|&quot;B6B&quot;
-)brace
-comma
-multiline_comment|/* Locks-up when LUN &gt; 0 is polled */
-(brace
-l_string|&quot;MAXTOR&quot;
-comma
-l_string|&quot;XT-8760S&quot;
-comma
 l_string|&quot;B7B&quot;
 )brace
 comma
@@ -5503,6 +5494,16 @@ id|host-&gt;host_busy
 op_decrement
 suffix:semicolon
 )brace
+macro_line|#ifdef DEBUG
+id|printk
+c_func
+(paren
+l_string|&quot;scsi reset function returned %d&bslash;n&quot;
+comma
+id|temp
+)paren
+suffix:semicolon
+macro_line|#endif
 r_switch
 c_cond
 (paren

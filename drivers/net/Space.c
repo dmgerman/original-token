@@ -64,6 +64,17 @@ id|dev
 suffix:semicolon
 r_extern
 r_int
+id|hp_plus_probe
+c_func
+(paren
+r_struct
+id|device
+op_star
+id|dev
+)paren
+suffix:semicolon
+r_extern
+r_int
 id|znet_probe
 c_func
 (paren
@@ -170,6 +181,17 @@ c_func
 r_struct
 id|device
 op_star
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|SK_init
+c_func
+(paren
+r_struct
+id|device
+op_star
+id|dev
 )paren
 suffix:semicolon
 multiline_comment|/* Detachable devices (&quot;pocket adaptors&quot; and special PCMCIA drivers). */
@@ -279,6 +301,14 @@ c_func
 id|dev
 )paren
 macro_line|#endif
+macro_line|#if defined(CONFIG_HPLAN_PLUS)
+op_logical_and
+id|hp_plus_probe
+c_func
+(paren
+id|dev
+)paren
+macro_line|#endif
 macro_line|#ifdef CONFIG_AT1500
 op_logical_and
 id|at1500_probe
@@ -378,6 +408,14 @@ macro_line|#endif
 macro_line|#ifdef CONFIG_DE620&t;&t;/* D-Link DE-620 adapter */
 op_logical_and
 id|de620_probe
+c_func
+(paren
+id|dev
+)paren
+macro_line|#endif
+macro_line|#if defined(CONFIG_SK_G16)
+op_logical_and
+id|SK_init
 c_func
 (paren
 id|dev

@@ -16,8 +16,10 @@ id|hd_struct
 op_star
 id|sd
 suffix:semicolon
+DECL|struct|scsi_disk
 r_typedef
 r_struct
+id|scsi_disk
 (brace
 DECL|member|capacity
 r_int

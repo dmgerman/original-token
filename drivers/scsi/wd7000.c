@@ -13,6 +13,7 @@ macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &quot;../block/blk.h&quot;
 macro_line|#include &quot;scsi.h&quot;
 macro_line|#include &quot;hosts.h&quot;
+macro_line|#include &quot;sd.h&quot;
 DECL|macro|ANY2SCSI_INLINE
 mdefine_line|#define ANY2SCSI_INLINE    /* undef this to use old macros */
 DECL|macro|DEBUG
@@ -3985,8 +3986,9 @@ r_int
 id|wd7000_biosparam
 c_func
 (paren
-r_int
-id|size
+id|Disk
+op_star
+id|disk
 comma
 r_int
 id|dev
@@ -3996,6 +3998,11 @@ op_star
 id|ip
 )paren
 (brace
+r_int
+id|size
+op_assign
+id|disk-&gt;capacity
+suffix:semicolon
 id|ip
 (braket
 l_int|0

@@ -16,6 +16,8 @@ DECL|macro|FLOPPY_DMA
 mdefine_line|#define FLOPPY_DMA 2
 DECL|macro|FDC_FIFO_UNTESTED
 mdefine_line|#define FDC_FIFO_UNTESTED           /* -bb */
+DECL|macro|FDC_FIFO_BUG
+mdefine_line|#define FDC_FIFO_BUG
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -910,7 +912,6 @@ c_func
 r_void
 )paren
 suffix:semicolon
-r_static
 r_int
 id|floppy_grab_irq_and_dma
 c_func
@@ -918,7 +919,6 @@ c_func
 r_void
 )paren
 suffix:semicolon
-r_static
 r_void
 id|floppy_release_irq_and_dma
 c_func
@@ -1994,6 +1994,129 @@ l_string|&quot;Unable to send byte to FDC&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
+macro_line|#ifdef FDC_FIFO_BUG
+DECL|function|output_byte_force
+r_static
+r_void
+id|output_byte_force
+c_func
+(paren
+r_char
+id|byte
+)paren
+(brace
+r_int
+id|counter
+suffix:semicolon
+r_int
+r_char
+id|status
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|reset
+)paren
+r_return
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|counter
+op_assign
+l_int|0
+suffix:semicolon
+id|counter
+OL
+l_int|10000
+suffix:semicolon
+id|counter
+op_increment
+)paren
+(brace
+id|status
+op_assign
+id|inb_p
+c_func
+(paren
+id|FD_STATUS
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|status
+op_amp
+(paren
+id|STATUS_READY
+op_or
+id|STATUS_DIR
+)paren
+)paren
+op_eq
+id|STATUS_READY
+)paren
+(brace
+id|outb
+c_func
+(paren
+id|byte
+comma
+id|FD_DATA
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+(paren
+id|status
+op_amp
+(paren
+id|STATUS_READY
+op_or
+id|STATUS_BUSY
+)paren
+)paren
+op_eq
+(paren
+id|STATUS_READY
+op_or
+id|STATUS_BUSY
+)paren
+)paren
+(brace
+id|outb
+c_func
+(paren
+id|byte
+comma
+id|FD_DATA
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
+)brace
+id|current_track
+op_assign
+id|NO_TRACK
+suffix:semicolon
+id|reset
+op_assign
+l_int|1
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;Unable to send byte to FDC&bslash;n&quot;
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif&t;&t;/* FDC_FIFO_BUG */
 DECL|function|result
 r_static
 r_int
@@ -2270,6 +2393,7 @@ id|r
 op_eq
 l_int|0
 )paren
+macro_line|#ifndef FDC_FIFO_BUG
 id|output_byte
 c_func
 (paren
@@ -2277,6 +2401,15 @@ l_int|2
 )paren
 suffix:semicolon
 multiline_comment|/* perpendicular, 500 kbps */
+macro_line|#else
+id|output_byte_force
+c_func
+(paren
+l_int|2
+)paren
+suffix:semicolon
+multiline_comment|/* perpendicular, 500 kbps */
+macro_line|#endif
 r_else
 r_if
 c_cond
@@ -2285,6 +2418,7 @@ id|r
 op_eq
 l_int|3
 )paren
+macro_line|#ifndef FDC_FIFO_BUG
 id|output_byte
 c_func
 (paren
@@ -2292,6 +2426,15 @@ l_int|3
 )paren
 suffix:semicolon
 multiline_comment|/* perpendicular, 1Mbps */
+macro_line|#else
+id|output_byte_force
+c_func
+(paren
+l_int|3
+)paren
+suffix:semicolon
+multiline_comment|/* perpendicular, 1Mbps */
+macro_line|#endif
 r_else
 (brace
 id|printk
@@ -2308,6 +2451,7 @@ suffix:semicolon
 )brace
 )brace
 r_else
+macro_line|#ifndef FDC_FIFO_BUG
 id|output_byte
 c_func
 (paren
@@ -2315,6 +2459,15 @@ l_int|0
 )paren
 suffix:semicolon
 multiline_comment|/* conventional mode */
+macro_line|#else
+id|output_byte_force
+c_func
+(paren
+l_int|0
+)paren
+suffix:semicolon
+multiline_comment|/* conventional mode */
+macro_line|#endif
 )brace
 r_else
 (brace
@@ -2370,12 +2523,21 @@ c_func
 id|FD_CONFIGURE
 )paren
 suffix:semicolon
+macro_line|#ifndef FDC_FIFO_BUG
 id|output_byte
 c_func
 (paren
 l_int|0
 )paren
 suffix:semicolon
+macro_line|#else
+id|output_byte_force
+c_func
+(paren
+l_int|0
+)paren
+suffix:semicolon
+macro_line|#endif
 id|output_byte
 c_func
 (paren
@@ -2383,6 +2545,7 @@ l_int|0x1A
 )paren
 suffix:semicolon
 multiline_comment|/* FIFO on, polling off, 10 byte threshold */
+macro_line|#ifndef FDC_FIFO_BUG
 id|output_byte
 c_func
 (paren
@@ -2390,6 +2553,15 @@ l_int|0
 )paren
 suffix:semicolon
 multiline_comment|/* precompensation from track 0 upwards */
+macro_line|#else
+id|output_byte_force
+c_func
+(paren
+l_int|0
+)paren
+suffix:semicolon
+multiline_comment|/* precompensation from track 0 upwards */
+macro_line|#endif
 id|need_configure
 op_assign
 l_int|0
@@ -6380,7 +6552,6 @@ op_assign
 l_int|0
 suffix:semicolon
 DECL|function|floppy_grab_irq_and_dma
-r_static
 r_int
 id|floppy_grab_irq_and_dma
 c_func
@@ -6463,7 +6634,6 @@ l_int|0
 suffix:semicolon
 )brace
 DECL|function|floppy_release_irq_and_dma
-r_static
 r_void
 id|floppy_release_irq_and_dma
 c_func

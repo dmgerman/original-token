@@ -1,7 +1,7 @@
 macro_line|#ifndef _AHA152X_H
 DECL|macro|_AHA152X_H
 mdefine_line|#define _AHA152X_H
-multiline_comment|/*&n; * $Id: aha152x.h,v 1.0 1994/03/25 12:52:00 root Exp $&n; */
+multiline_comment|/*&n; * $Id: aha152x.h,v 1.2 1994/07/03 13:01:47 root Exp $&n; */
 macro_line|#include &quot;../block/blk.h&quot;
 macro_line|#include &quot;scsi.h&quot;
 macro_line|#if defined(__KERNEL__)
@@ -68,7 +68,8 @@ r_int
 id|aha152x_biosparam
 c_func
 (paren
-r_int
+id|Disk
+op_star
 comma
 r_int
 comma
@@ -80,7 +81,7 @@ multiline_comment|/* number of queueable commands&n;   (unless we support more t
 DECL|macro|AHA152X_MAXQUEUE
 mdefine_line|#define AHA152X_MAXQUEUE&t;7&t;&t;
 DECL|macro|AHA152X_REVID
-mdefine_line|#define AHA152X_REVID&t;&quot;Adaptec 152x SCSI driver; $Revision: 1.0 $&quot;
+mdefine_line|#define AHA152X_REVID &quot;Adaptec 152x SCSI driver; $Revision: 1.2 $&quot;
 multiline_comment|/* Initial value of Scsi_Host entry */
 DECL|macro|AHA152X
 mdefine_line|#define AHA152X       { /* name */&t;&t;AHA152X_REVID, &bslash;&n;&t;&t;&t;/* detect */&t;&t;aha152x_detect,             &bslash;&n;&t;&t;&t;/* info */&t;&t;aha152x_info,               &bslash;&n;&t;&t;&t;/* command */&t;&t;aha152x_command,            &bslash;&n;&t;&t;&t;/* queuecommand */&t;aha152x_queue,              &bslash;&n;                        /* abort */&t;&t;aha152x_abort,              &bslash;&n;                        /* reset */&t;&t;aha152x_reset,              &bslash;&n;                        /* slave_attach */&t;/* NULL */  0,              &bslash;&n;                        /* bios_param */&t;aha152x_biosparam,          &bslash;&n;&t;&t;&t;/* can_queue */&t;&t;1,                          &bslash;&n;                        /* this_id */&t;&t;7,                          &bslash;&n;                        /* sg_tablesize */&t;SG_ALL,                     &bslash;&n;                        /* cmd_per_lun */&t;1,                          &bslash;&n;                        /* present */&t;&t;0,                          &bslash;&n;                        /* unchecked_isa_dma */&t;0,&t;&t;&t;    &bslash;&n;&t;&t;&t;/* use_clustering */&t;DISABLE_CLUSTERING }

@@ -9,6 +9,7 @@ macro_line|#include &lt;linux/ptrace.h&gt;
 macro_line|#include &lt;linux/sys.h&gt;
 macro_line|#include &lt;linux/utsname.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
+macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;linux/binfmts.h&gt;
 macro_line|#include &lt;linux/personality.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
@@ -541,6 +542,18 @@ c_func
 id|bh_mask
 )paren
 comma
+id|X
+c_func
+(paren
+id|add_timer
+)paren
+comma
+id|X
+c_func
+(paren
+id|del_timer
+)paren
+comma
 multiline_comment|/* dma handling */
 id|X
 c_func
@@ -592,6 +605,12 @@ id|xtime
 )paren
 comma
 multiline_comment|/* misc */
+id|X
+c_func
+(paren
+id|panic
+)paren
+comma
 id|X
 c_func
 (paren

@@ -11,6 +11,7 @@ macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &quot;../block/blk.h&quot;
 macro_line|#include &quot;scsi.h&quot;
 macro_line|#include &quot;hosts.h&quot;
+macro_line|#include &quot;sd.h&quot;
 macro_line|#include &quot;aha1740.h&quot;
 multiline_comment|/* IF YOU ARE HAVING PROBLEMS WITH THIS DRIVER, AND WANT TO WATCH&n;   IT WORK, THEN:&n;#define DEBUG&n;*/
 macro_line|#ifdef DEBUG
@@ -2333,8 +2334,9 @@ r_int
 id|aha1740_biosparam
 c_func
 (paren
-r_int
-id|size
+id|Disk
+op_star
+id|disk
 comma
 r_int
 id|dev
@@ -2344,6 +2346,11 @@ op_star
 id|ip
 )paren
 (brace
+r_int
+id|size
+op_assign
+id|disk-&gt;capacity
+suffix:semicolon
 id|DEB
 c_func
 (paren

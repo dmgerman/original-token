@@ -7,55 +7,8 @@ macro_line|#include &lt;linux/ext_fs.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
+macro_line|#include &lt;linux/config.h&gt;
 multiline_comment|/*&n; * Ugly. We&squot;ll fix this once all the drivers use the f_ops-&gt;check_media_change()&n; * stuff instead..&n; */
-macro_line|#ifdef CONFIG_SCSI
-macro_line|#ifdef CONFIG_BLK_DEV_SR
-r_extern
-r_int
-id|check_cdrom_media_change
-c_func
-(paren
-r_int
-comma
-r_int
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_BLK_DEV_SD
-r_extern
-r_int
-id|check_scsidisk_media_change
-c_func
-(paren
-r_int
-comma
-r_int
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|revalidate_scsidisk
-c_func
-(paren
-r_int
-comma
-r_int
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#endif
-macro_line|#ifdef CONFIG_CDU31A
-r_extern
-r_int
-id|check_cdu31a_media_change
-c_func
-(paren
-r_int
-comma
-r_int
-)paren
-suffix:semicolon
-macro_line|#endif
 macro_line|#ifdef CONFIG_MCD
 r_extern
 r_int
@@ -638,7 +591,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * This routine checks whether a removable media has been changed,&n; * and invalidates all buffer-cache-entries in that case. This&n; * is a relatively slow routine, so we have to try to minimize using&n; * it. Thus it is called only upon a &squot;mount&squot; or &squot;open&squot;. This&n; * is the best way of combining speed and utility, I think.&n; * People changing diskettes in the middle of an operation deserve&n; * to loose :-)&n; */
 DECL|function|check_disk_change
-r_void
+r_int
 id|check_disk_change
 c_func
 (paren
@@ -683,6 +636,7 @@ op_eq
 l_int|NULL
 )paren
 r_return
+l_int|0
 suffix:semicolon
 r_if
 c_cond
@@ -705,6 +659,7 @@ id|dev
 )paren
 )paren
 r_return
+l_int|0
 suffix:semicolon
 )brace
 macro_line|#if 1 /* this will go soon.. */
@@ -719,69 +674,6 @@ id|dev
 )paren
 )paren
 (brace
-macro_line|#if defined(CONFIG_BLK_DEV_SD) &amp;&amp; defined(CONFIG_SCSI)
-r_case
-id|SCSI_DISK_MAJOR
-suffix:colon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|check_scsidisk_media_change
-c_func
-(paren
-id|dev
-comma
-l_int|0
-)paren
-)paren
-r_return
-suffix:semicolon
-r_break
-suffix:semicolon
-macro_line|#endif
-macro_line|#if defined(CONFIG_BLK_DEV_SR) &amp;&amp; defined(CONFIG_SCSI)
-r_case
-id|SCSI_CDROM_MAJOR
-suffix:colon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|check_cdrom_media_change
-c_func
-(paren
-id|dev
-comma
-l_int|0
-)paren
-)paren
-r_return
-suffix:semicolon
-r_break
-suffix:semicolon
-macro_line|#endif
-macro_line|#if defined(CONFIG_CDU31A)
-r_case
-id|CDU31A_CDROM_MAJOR
-suffix:colon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|check_cdu31a_media_change
-c_func
-(paren
-id|dev
-comma
-l_int|0
-)paren
-)paren
-r_return
-suffix:semicolon
-r_break
-suffix:semicolon
-macro_line|#endif
 macro_line|#if defined(CONFIG_MCD)
 r_case
 id|MITSUMI_CDROM_MAJOR
@@ -799,6 +691,7 @@ l_int|0
 )paren
 )paren
 r_return
+l_int|0
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -820,6 +713,7 @@ l_int|0
 )paren
 )paren
 r_return
+l_int|0
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -827,6 +721,7 @@ macro_line|#endif
 r_default
 suffix:colon
 r_return
+l_int|0
 suffix:semicolon
 )brace
 macro_line|#endif&t;/* will go away */
@@ -910,28 +805,9 @@ c_func
 id|dev
 )paren
 suffix:semicolon
-macro_line|#if defined(CONFIG_BLK_DEV_SD) &amp;&amp; defined(CONFIG_SCSI)
-multiline_comment|/* This is trickier for a removable hardisk, because we have to invalidate&n;   all of the partitions that lie on the disk. */
-r_if
-c_cond
-(paren
-id|MAJOR
-c_func
-(paren
-id|dev
-)paren
-op_eq
-id|SCSI_DISK_MAJOR
-)paren
-id|revalidate_scsidisk
-c_func
-(paren
-id|dev
-comma
-l_int|0
-)paren
+r_return
+l_int|1
 suffix:semicolon
-macro_line|#endif
 )brace
 multiline_comment|/*&n; * Called every time a block special file is opened&n; */
 DECL|function|blkdev_open

@@ -4,7 +4,6 @@ macro_line|#include &lt;linux/head.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;asm/dma.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -5562,16 +5561,15 @@ r_return
 id|SCSI_RESET_PUNT
 suffix:semicolon
 )brace
-macro_line|#ifdef CONFIG_BLK_DEV_SD
 macro_line|#include &quot;sd.h&quot;
-macro_line|#endif
 DECL|function|aha1542_biosparam
 r_int
 id|aha1542_biosparam
 c_func
 (paren
-r_int
-id|size
+id|Scsi_Disk
+op_star
+id|disk
 comma
 r_int
 id|dev
@@ -5584,32 +5582,17 @@ id|ip
 r_int
 id|translation_algorithm
 suffix:semicolon
-macro_line|#ifdef CONFIG_BLK_DEV_SD
-id|Scsi_Device
-op_star
-id|disk
-suffix:semicolon
-id|disk
+r_int
+id|size
 op_assign
-id|rscsi_disks
-(braket
-id|MINOR
-c_func
-(paren
-id|dev
-)paren
-op_rshift
-l_int|4
-)braket
-dot
-id|device
+id|disk-&gt;capacity
 suffix:semicolon
 id|translation_algorithm
 op_assign
 id|HOSTDATA
 c_func
 (paren
-id|disk-&gt;host
+id|disk-&gt;device-&gt;host
 )paren
 op_member_access_from_pointer
 id|bios_translation
@@ -5686,7 +5669,6 @@ suffix:semicolon
 )brace
 suffix:semicolon
 multiline_comment|/*  if (ip[2] &gt;= 1024) ip[2] = 1024; */
-macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon

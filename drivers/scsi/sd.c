@@ -80,6 +80,22 @@ r_int
 )paren
 suffix:semicolon
 r_static
+r_int
+id|check_scsidisk_media_change
+c_func
+(paren
+id|dev_t
+)paren
+suffix:semicolon
+r_static
+r_int
+id|fop_revalidate_scsidisk
+c_func
+(paren
+id|dev_t
+)paren
+suffix:semicolon
+r_static
 id|sd_init_onedisk
 c_func
 (paren
@@ -345,7 +361,16 @@ id|sd_release
 comma
 multiline_comment|/* release */
 id|block_fsync
+comma
 multiline_comment|/* fsync */
+l_int|NULL
+comma
+multiline_comment|/* fasync */
+id|check_scsidisk_media_change
+comma
+multiline_comment|/* Disk change */
+id|fop_revalidate_scsidisk
+multiline_comment|/* revalidate */
 )brace
 suffix:semicolon
 DECL|variable|sd_gendisk
@@ -3409,16 +3434,14 @@ id|MAX_RETRIES
 suffix:semicolon
 )brace
 DECL|function|check_scsidisk_media_change
+r_static
 r_int
 (def_block
 id|check_scsidisk_media_change
 c_func
 (paren
-r_int
+id|dev_t
 id|full_dev
-comma
-r_int
-id|flag
 )paren
 (brace
 r_int
@@ -3430,6 +3453,11 @@ suffix:semicolon
 r_struct
 id|inode
 id|inode
+suffix:semicolon
+r_int
+id|flag
+op_assign
+l_int|0
 suffix:semicolon
 id|target
 op_assign
@@ -5198,6 +5226,28 @@ l_int|0
 suffix:semicolon
 r_return
 l_int|0
+suffix:semicolon
+)brace
+)def_block
+DECL|function|fop_revalidate_scsidisk
+r_static
+r_int
+(def_block
+id|fop_revalidate_scsidisk
+c_func
+(paren
+id|dev_t
+id|dev
+)paren
+(brace
+r_return
+id|revalidate_scsidisk
+c_func
+(paren
+id|dev
+comma
+l_int|0
+)paren
 suffix:semicolon
 )brace
 )def_block

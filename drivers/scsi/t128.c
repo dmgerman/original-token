@@ -16,6 +16,7 @@ DECL|macro|AUTOPROBE_IRQ
 mdefine_line|#define AUTOPROBE_IRQ
 macro_line|#include &quot;NCR5380.h&quot;
 macro_line|#include &quot;constants.h&quot;
+macro_line|#include &quot;sd.h&quot;
 DECL|struct|override
 r_static
 r_struct
@@ -740,15 +741,16 @@ r_return
 id|count
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function : int t128_biosparam(int size, int dev, int *ip)&n; *&n; * Purpose : Generates a BIOS / DOS compatable H-C-S mapping for &n; *&t;the specified device / size.&n; * &n; * Inputs : size = size of device in sectors (512 bytes), dev = block device&n; *&t;major / minor, ip[] = {heads, sectors, cylinders}  &n; *&n; * Returns : allways 0 (success), initializes ip&n; *&t;&n; */
+multiline_comment|/*&n; * Function : int t128_biosparam(Disk * disk, int dev, int *ip)&n; *&n; * Purpose : Generates a BIOS / DOS compatable H-C-S mapping for &n; *&t;the specified device / size.&n; * &n; * Inputs : size = size of device in sectors (512 bytes), dev = block device&n; *&t;major / minor, ip[] = {heads, sectors, cylinders}  &n; *&n; * Returns : allways 0 (success), initializes ip&n; *&t;&n; */
 multiline_comment|/* &n; * XXX Most SCSI boards use this mapping, I could be incorrect.  Some one&n; * using hard disks on a trantor should verify that this mapping corresponds&n; * to that used by the BIOS / ASPI driver by running the linux fdisk program&n; * and matching the H_C_S coordinates to what DOS uses.&n; */
 DECL|function|t128_biosparam
 r_int
 id|t128_biosparam
 c_func
 (paren
-r_int
-id|size
+id|Disk
+op_star
+id|disk
 comma
 r_int
 id|dev
@@ -758,6 +760,11 @@ op_star
 id|ip
 )paren
 (brace
+r_int
+id|size
+op_assign
+id|disk-&gt;capacity
+suffix:semicolon
 id|ip
 (braket
 l_int|0

@@ -66,12 +66,12 @@ macro_line|#ifndef NULL
 DECL|macro|NULL
 mdefine_line|#define NULL 0
 macro_line|#endif
-macro_line|#ifdef CONFIG_BLK_DEV_SD
 r_int
 id|seagate_st0x_biosparam
 c_func
 (paren
-r_int
+id|Disk
+op_star
 comma
 r_int
 comma
@@ -79,10 +79,6 @@ r_int
 op_star
 )paren
 suffix:semicolon
-macro_line|#else
-DECL|macro|seagate_st0x_biosparam
-mdefine_line|#define seagate_st0x_biosparam NULL
-macro_line|#endif
 DECL|macro|SEAGATE_ST0X
 mdefine_line|#define SEAGATE_ST0X  {&quot;Seagate ST-01/ST-02&quot;, seagate_st0x_detect, &t;&bslash;&n;&t;&t;&t; seagate_st0x_info, seagate_st0x_command,  &t;&bslash;&n;&t;&t;&t; seagate_st0x_queue_command, seagate_st0x_abort, &bslash;&n;&t;&t;&t; seagate_st0x_reset, NULL, seagate_st0x_biosparam, &bslash;&n;&t;&t;&t; 1, 7, SG_ALL, 1, 0, 0, DISABLE_CLUSTERING}
 macro_line|#endif

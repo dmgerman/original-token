@@ -58,7 +58,8 @@ r_int
 id|t128_biosparam
 c_func
 (paren
-r_int
+id|Disk
+op_star
 comma
 r_int
 comma

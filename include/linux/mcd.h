@@ -7,7 +7,7 @@ DECL|macro|MCD_INTR_NR
 mdefine_line|#define MCD_INTR_NR&t;&t;10
 multiline_comment|/* Increase this if you get lots of timeouts */
 DECL|macro|MCD_STATUS_DELAY
-mdefine_line|#define MCD_STATUS_DELAY&t;100
+mdefine_line|#define MCD_STATUS_DELAY&t;200
 multiline_comment|/* number of times to retry a command before giving up */
 DECL|macro|MCD_RETRY_ATTEMPTS
 mdefine_line|#define MCD_RETRY_ATTEMPTS      5

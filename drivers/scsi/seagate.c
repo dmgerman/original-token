@@ -4463,7 +4463,6 @@ r_return
 id|SCSI_RESET_PENDING
 suffix:semicolon
 )brace
-macro_line|#ifdef CONFIG_BLK_DEV_SD
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &quot;sd.h&quot;
 macro_line|#include &quot;scsi_ioctl.h&quot;
@@ -4472,8 +4471,9 @@ r_int
 id|seagate_st0x_biosparam
 c_func
 (paren
-r_int
-id|size
+id|Disk
+op_star
+id|disk
 comma
 r_int
 id|dev
@@ -4525,30 +4525,11 @@ id|heads
 comma
 id|sectors
 suffix:semicolon
-id|Scsi_Device
-op_star
-id|disk
-suffix:semicolon
-id|disk
-op_assign
-id|rscsi_disks
-(braket
-id|MINOR
-c_func
-(paren
-id|dev
-)paren
-op_rshift
-l_int|4
-)braket
-dot
-id|device
-suffix:semicolon
 multiline_comment|/*&n; * Only SCSI-I CCS drives and later implement the necessary mode sense &n; * pages.  &n; */
 r_if
 c_cond
 (paren
-id|disk-&gt;scsi_level
+id|disk-&gt;device-&gt;scsi_level
 OL
 l_int|2
 )paren
@@ -4590,7 +4571,7 @@ l_int|1
 )braket
 op_assign
 (paren
-id|disk-&gt;lun
+id|disk-&gt;device-&gt;lun
 op_lshift
 l_int|5
 )paren
@@ -4659,7 +4640,7 @@ id|result
 op_assign
 id|kernel_scsi_ioctl
 (paren
-id|disk
+id|disk-&gt;device
 comma
 id|SCSI_IOCTL_SEND_COMMAND
 comma
@@ -4745,7 +4726,7 @@ id|result
 op_assign
 id|kernel_scsi_ioctl
 (paren
-id|disk
+id|disk-&gt;device
 comma
 id|SCSI_IOCTL_SEND_COMMAND
 comma
@@ -4932,6 +4913,5 @@ r_return
 id|result
 suffix:semicolon
 )brace
-macro_line|#endif /* CONFIG_BLK_DEV_SD */
 macro_line|#endif&t;/* defined(CONFIG_SCSI_SEGATE) */
 eof

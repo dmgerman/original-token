@@ -3,16 +3,23 @@ macro_line|#ifndef _HOSTS_H
 DECL|macro|_HOSTS_H
 mdefine_line|#define _HOSTS_H
 multiline_comment|/*&n;&t;$Header: /usr/src/linux/kernel/blk_drv/scsi/RCS/hosts.h,v 1.3 1993/09/24 12:21:00 drew Exp drew $&n;*/
+multiline_comment|/* It is senseless to set SG_ALL any higher than this - the performance&n;   does not get any better, and it wastes memory */
 DECL|macro|SG_NONE
 mdefine_line|#define SG_NONE 0
 DECL|macro|SG_ALL
-mdefine_line|#define SG_ALL 0x7fff
+mdefine_line|#define SG_ALL 0xff
 DECL|macro|DISABLE_CLUSTERING
 mdefine_line|#define DISABLE_CLUSTERING 0
 DECL|macro|ENABLE_CLUSTERING
 mdefine_line|#define ENABLE_CLUSTERING 1
 multiline_comment|/* The various choices mean:&n;   NONE: Self evident.  Host adapter is not capable of scatter-gather.&n;   ALL:  Means that the host adapter module can do scatter-gather,&n;         and that there is no limit to the size of the table to which&n;&t; we scatter/gather data.&n;  Anything else:  Indicates the maximum number of chains that can be&n;        used in one scatter-gather request.&n;*/
 multiline_comment|/*&n;&t;The Scsi_Host_Template type has all that is needed to interface with a SCSI&n;&t;host in a device independant matter.  There is one entry for each different&n;&t;type of host adapter that is supported on the system.&n;*/
+DECL|typedef|Disk
+r_typedef
+r_struct
+id|scsi_disk
+id|Disk
+suffix:semicolon
 r_typedef
 r_struct
 (brace
@@ -125,7 +132,8 @@ op_star
 id|bios_param
 )paren
 (paren
-r_int
+id|Disk
+op_star
 comma
 r_int
 comma

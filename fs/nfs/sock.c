@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/fs/nfs/sock.c&n; *&n; *  Copyright (C) 1992, 1993  Rick Sladkey&n; *&n; *  low-level nfs remote procedure call interface&n; */
+multiline_comment|/*&n; *  linux/fs/nfs/sock.c&n; *&n; *  Copyright (C) 1992, 1993  Rick Sladkey&n; *&n; *  low-level nfs remote procedure call interface&n; *&n; * FIXES&n; *&n; * 2/7/94 James Bottomley and Jon Peatfield DAMTP, Cambridge University&n; *&n; * An xid mismatch no longer causes the request to be trashed.&n; *&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/nfs_fs.h&gt;
@@ -8,6 +8,10 @@ macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;linux/in.h&gt;
 macro_line|#include &lt;linux/net.h&gt;
+macro_line|#include &lt;linux/mm.h&gt;
+multiline_comment|/* JEJB/JSP 2/7/94&n; * this must match the value of NFS_SLACK_SPACE in linux/fs/nfs/proc.c &n; * ***FIXME*** should probably put this in nfs_fs.h */
+DECL|macro|NFS_SLACK_SPACE
+mdefine_line|#define NFS_SLACK_SPACE 1024
 r_extern
 r_struct
 id|socket
@@ -126,6 +130,10 @@ suffix:semicolon
 r_int
 r_int
 id|old_mask
+suffix:semicolon
+multiline_comment|/* JEJB/JSP 2/7/94&n;&t; * This is for a 4 byte recv of the xid only */
+r_int
+id|recv_xid
 suffix:semicolon
 id|xid
 op_assign
@@ -424,10 +432,21 @@ id|timeout
 OG
 id|max_timeout
 )paren
+(brace
+multiline_comment|/* JEJB/JSP 2/7/94&n;&t;&t;&t;   * This is useful to see if the system is&n;&t;&t;&t;   * hanging */
+id|printk
+c_func
+(paren
+l_string|&quot;NFS max timeout reached on %s&bslash;n&quot;
+comma
+id|server_name
+)paren
+suffix:semicolon
 id|timeout
 op_assign
 id|max_timeout
 suffix:semicolon
+)brace
 id|current-&gt;timeout
 op_assign
 id|jiffies
@@ -579,6 +598,7 @@ id|addrlen
 op_assign
 l_int|0
 suffix:semicolon
+multiline_comment|/* JEJB/JSP 2/7/94&n;&t;&t; * Get the xid from the next packet using a peek, so keep it&n;&t;&t; * on the recv queue.  If it is wrong, it will be some reply&n;&t;&t; * we don&squot;t now need, so discard it */
 id|result
 op_assign
 id|sock-&gt;ops
@@ -592,13 +612,17 @@ comma
 r_void
 op_star
 )paren
-id|start
+op_amp
+id|recv_xid
 comma
-id|PAGE_SIZE
+r_sizeof
+(paren
+id|recv_xid
+)paren
 comma
 l_int|1
 comma
-l_int|0
+id|MSG_PEEK
 comma
 l_int|NULL
 comma
@@ -681,8 +705,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_star
-id|start
+id|recv_xid
 op_eq
 id|xid
 )paren
@@ -703,6 +726,39 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
+multiline_comment|/* JEJB/JSP 2/7/94&n;&t;&t; * we have xid mismatch, so discard the packet and start&n;&t;&t; * again.  What a hack! but I can&squot;t call recvfrom with&n;&t;&t; * a null buffer yet. */
+(paren
+r_void
+)paren
+id|sock-&gt;ops
+op_member_access_from_pointer
+id|recvfrom
+c_func
+(paren
+id|sock
+comma
+(paren
+r_void
+op_star
+)paren
+op_amp
+id|recv_xid
+comma
+r_sizeof
+(paren
+id|recv_xid
+)paren
+comma
+l_int|1
+comma
+l_int|0
+comma
+l_int|NULL
+comma
+op_amp
+id|addrlen
+)paren
+suffix:semicolon
 macro_line|#if 0
 id|printk
 c_func
@@ -712,6 +768,36 @@ l_string|&quot;nfs_rpc_call: XID mismatch&bslash;n&quot;
 suffix:semicolon
 macro_line|#endif
 )brace
+multiline_comment|/* JEJB/JSP 2/7/94&n;&t; *&n;&t; * we have the correct xid, so read into the correct place and&n;&t; * return it&n;&t; *&n;&t; * Here we need to know the size given to alloc, server-&gt;wsize for&n;&t; * writes or server-&gt;rsize for reads.  In practice these are the&n;&t; * same. &n;&t; *&n;&t; * If they are not the same then a reply to a write request will be&n;&t; * a small acknowledgement, so even if wsize &lt; rsize we should never&n;&t; * cause data to be written past the end of the buffer (unless some&n;&t; * brain damaged implementation sends out a large write acknowledge).&n;&t; *&n;&t; * FIXME:  I should really know how big a packet was alloc&squot;d --&n;&t; *         should pass it to do_nfs_rpc. */
+id|result
+op_assign
+id|sock-&gt;ops
+op_member_access_from_pointer
+id|recvfrom
+c_func
+(paren
+id|sock
+comma
+(paren
+r_void
+op_star
+)paren
+id|start
+comma
+id|server-&gt;rsize
+op_plus
+id|NFS_SLACK_SPACE
+comma
+l_int|1
+comma
+l_int|0
+comma
+l_int|NULL
+comma
+op_amp
+id|addrlen
+)paren
+suffix:semicolon
 id|current-&gt;blocked
 op_assign
 id|old_mask

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * slip.c&t;This module implements the SLIP protocol for kernel-based&n; *&t;&t;devices like TTY.  It interfaces between a raw TTY, and the&n; *&t;&t;kernel&squot;s INET protocol layers (via DDI).&n; *&n; * Version:&t;@(#)slip.c&t;0.7.6&t;05/25/93&n; *&n; * Authors:&t;Laurence Culhane, &lt;loz@holmes.demon.co.uk&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uwalt.nl.mugnet.org&gt;&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;: &t;Sanity checks and avoid tx overruns.&n; *&t;&t;&t;&t;&t;Has a new sl-&gt;mtu field.&n; *&t;&t;Alan Cox&t;: &t;Found cause of overrun. ifconfig sl0 mtu upwards.&n; *&t;&t;&t;&t;&t;Driver now spots this and grows/shrinks its buffers(hack!).&n; *&t;&t;&t;&t;&t;Memory leak if you run out of memory setting up a slip driver fixed.&n; *&t;&t;Matt Dillon&t;:&t;Printable slip (borrowed from NET2E)&n; *&t;Pauline Middelink&t;:&t;Slip driver fixes.&n; *&t;&t;Alan Cox&t;:&t;Honours the old SL_COMPRESSED flag&n; *&t;&t;Alan Cox&t;:&t;KISS AX.25 and AXUI IP support&n; *&t;&t;Michael Riepe&t;:&t;Automatic CSLIP recognition added&n; *&t;&t;Charles Hedrick :&t;CSLIP header length problem fix.&n; *&t;&t;Alan Cox&t;:&t;Corrected non-IP cases of the above.&n; *&t;&t;Alan Cox&t;:&t;Now uses hardware type as per FvK.&n; *&t;&t;Alan Cox&t;:&t;Default to 192.168.0.0 (RFC 1597)&n; *&n; *&n; *&t;FIXME:&t;This driver still makes some IP&squot;ish assumptions. It should build cleanly KISS TNC only without&n; *&t;CONFIG_INET defined.&n; */
+multiline_comment|/*&n; * slip.c&t;This module implements the SLIP protocol for kernel-based&n; *&t;&t;devices like TTY.  It interfaces between a raw TTY, and the&n; *&t;&t;kernel&squot;s INET protocol layers (via DDI).&n; *&n; * Version:&t;@(#)slip.c&t;0.7.6&t;05/25/93&n; *&n; * Authors:&t;Laurence Culhane, &lt;loz@holmes.demon.co.uk&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uwalt.nl.mugnet.org&gt;&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;: &t;Sanity checks and avoid tx overruns.&n; *&t;&t;&t;&t;&t;Has a new sl-&gt;mtu field.&n; *&t;&t;Alan Cox&t;: &t;Found cause of overrun. ifconfig sl0 mtu upwards.&n; *&t;&t;&t;&t;&t;Driver now spots this and grows/shrinks its buffers(hack!).&n; *&t;&t;&t;&t;&t;Memory leak if you run out of memory setting up a slip driver fixed.&n; *&t;&t;Matt Dillon&t;:&t;Printable slip (borrowed from NET2E)&n; *&t;Pauline Middelink&t;:&t;Slip driver fixes.&n; *&t;&t;Alan Cox&t;:&t;Honours the old SL_COMPRESSED flag&n; *&t;&t;Alan Cox&t;:&t;KISS AX.25 and AXUI IP support&n; *&t;&t;Michael Riepe&t;:&t;Automatic CSLIP recognition added&n; *&t;&t;Charles Hedrick :&t;CSLIP header length problem fix.&n; *&t;&t;Alan Cox&t;:&t;Corrected non-IP cases of the above.&n; *&t;&t;Alan Cox&t;:&t;Now uses hardware type as per FvK.&n; *&t;&t;Alan Cox&t;:&t;Default to 192.168.0.0 (RFC 1597)&n; *&t;&t;A.N.Kuznetsov&t;:&t;dev_tint() recursion fix.&n; *&t;Dmitry Gorodchanin&t;:&t;SLIP memory leaks&n; *&n; *&n; *&t;FIXME:&t;This driver still makes some IP&squot;ish assumptions. It should build cleanly KISS TNC only without&n; *&t;CONFIG_INET defined.&n; */
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
@@ -1392,10 +1392,10 @@ c_func
 id|sl
 )paren
 suffix:semicolon
-id|dev_tint
+id|mark_bh
 c_func
 (paren
-id|sl-&gt;dev
+id|NET_BH
 )paren
 suffix:semicolon
 )brace
@@ -1552,10 +1552,10 @@ c_func
 id|sl
 )paren
 suffix:semicolon
-id|dev_tint
+id|mark_bh
 c_func
 (paren
-id|sl-&gt;dev
+id|NET_BH
 )paren
 suffix:semicolon
 )brace
@@ -2048,18 +2048,15 @@ op_eq
 l_int|NULL
 )paren
 (brace
-id|kfree_s
+id|kfree
 c_func
 (paren
 (paren
-r_void
+r_int
+r_char
 op_star
 )paren
 id|sl-&gt;dev-&gt;mem_start
-comma
-id|l
-op_plus
-l_int|4
 )paren
 suffix:semicolon
 r_return
@@ -2166,6 +2163,17 @@ op_star
 id|sl-&gt;dev-&gt;mem_start
 )paren
 suffix:semicolon
+id|kfree
+c_func
+(paren
+(paren
+r_int
+r_char
+op_star
+)paren
+id|sl-&gt;dev-&gt;rmem_start
+)paren
+suffix:semicolon
 r_return
 op_minus
 id|ENOMEM
@@ -2219,6 +2227,11 @@ suffix:semicolon
 id|kfree
 c_func
 (paren
+(paren
+r_int
+r_char
+op_star
+)paren
 id|sl-&gt;cbuff
 )paren
 suffix:semicolon
