@@ -161,6 +161,16 @@ id|arg
 suffix:semicolon
 r_extern
 r_int
+id|addrconf_del_ifaddr
+c_func
+(paren
+r_void
+op_star
+id|arg
+)paren
+suffix:semicolon
+r_extern
+r_int
 id|addrconf_set_dstaddr
 c_func
 (paren

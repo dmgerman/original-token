@@ -11,6 +11,7 @@ multiline_comment|/* Reserved fields must be filled with zeros.                 
 macro_line|#ifndef _RESIDUAL_
 DECL|macro|_RESIDUAL_
 mdefine_line|#define _RESIDUAL_
+macro_line|#ifndef __ASSEMBLY__
 DECL|macro|MAX_CPUS
 mdefine_line|#define MAX_CPUS 32                     /* These should be set to the maximum */
 DECL|macro|MAX_MEMS
@@ -1203,5 +1204,13 @@ r_extern
 id|RESIDUAL
 id|res
 suffix:semicolon
+r_void
+id|print_residual_device_info
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+macro_line|#endif /* __ASSEMBLY__ */
 macro_line|#endif  /* ndef _RESIDUAL_ */
 eof

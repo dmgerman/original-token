@@ -3,6 +3,7 @@ macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;net/netlink.h&gt;
 DECL|macro|NEXT_DEV
 mdefine_line|#define&t;NEXT_DEV&t;NULL
 multiline_comment|/* A unified ethernet device probe.  This is the easiest way to have every&n;   ethernet adaptor have the name &quot;eth[0123...]&quot;.&n;   */
@@ -255,7 +256,6 @@ id|device
 op_star
 )paren
 suffix:semicolon
-macro_line|#if&t;defined(CONFIG_WAVELAN)
 r_extern
 r_int
 id|wavelan_probe
@@ -266,7 +266,6 @@ id|device
 op_star
 )paren
 suffix:semicolon
-macro_line|#endif&t;/* defined(CONFIG_WAVELAN) */
 r_extern
 r_int
 id|el16_probe
@@ -320,6 +319,16 @@ suffix:semicolon
 r_extern
 r_int
 id|e2100_probe
+c_func
+(paren
+r_struct
+id|device
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|ni5010_probe
 c_func
 (paren
 r_struct
@@ -509,7 +518,28 @@ op_star
 suffix:semicolon
 r_extern
 r_int
+id|mace_probe
+c_func
+(paren
+r_struct
+id|device
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_int
 id|cs89x0_probe
+c_func
+(paren
+r_struct
+id|device
+op_star
+id|dev
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|ethertap_probe
 c_func
 (paren
 r_struct
@@ -593,6 +623,15 @@ r_if
 c_cond
 (paren
 l_int|1
+macro_line|#ifdef CONFIG_HAPPYMEAL
+multiline_comment|/* Please keep this one first, we&squot;d like the on-board ethernet&n;&t; * to be probed first before other PCI cards on Ultra/PCI.  -DaveM&n;&t; */
+op_logical_and
+id|happy_meal_probe
+c_func
+(paren
+id|dev
+)paren
+macro_line|#endif
 macro_line|#ifdef CONFIG_DGRS
 op_logical_and
 id|dgrs_probe
@@ -906,6 +945,14 @@ c_func
 id|dev
 )paren
 macro_line|#endif
+macro_line|#ifdef CONFIG_NI5010
+op_logical_and
+id|ni5010_probe
+c_func
+(paren
+id|dev
+)paren
+macro_line|#endif
 macro_line|#ifdef CONFIG_NI52
 op_logical_and
 id|ni52_probe
@@ -970,14 +1017,6 @@ c_func
 id|dev
 )paren
 macro_line|#endif
-macro_line|#ifdef CONFIG_HAPPYMEAL
-op_logical_and
-id|happy_meal_probe
-c_func
-(paren
-id|dev
-)paren
-macro_line|#endif
 macro_line|#ifdef CONFIG_SUNQE
 op_logical_and
 id|qec_probe
@@ -989,6 +1028,14 @@ macro_line|#endif
 macro_line|#ifdef CONFIG_MYRI_SBUS
 op_logical_and
 id|myri_sbus_probe
+c_func
+(paren
+id|dev
+)paren
+macro_line|#endif
+macro_line|#ifdef CONFIG_MACE
+op_logical_and
+id|mace_probe
 c_func
 (paren
 id|dev
@@ -1023,6 +1070,45 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#ifdef CONFIG_ETHERTAP
+DECL|variable|tap0_dev
+r_static
+r_struct
+id|device
+id|tap0_dev
+op_assign
+(brace
+l_string|&quot;tap0&quot;
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+id|NETLINK_TAPBASE
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+id|NEXT_DEV
+comma
+id|ethertap_probe
+comma
+)brace
+suffix:semicolon
+DECL|macro|NEXT_DEV
+macro_line|#   undef NEXT_DEV
+DECL|macro|NEXT_DEV
+macro_line|#   define NEXT_DEV&t;(&amp;tap0_dev)
+macro_line|#endif
 macro_line|#ifdef CONFIG_SDLA
 r_extern
 r_int
@@ -1112,56 +1198,6 @@ DECL|macro|NEXT_DEV
 macro_line|#   undef NEXT_DEV
 DECL|macro|NEXT_DEV
 macro_line|#   define NEXT_DEV&t;(&amp;atp_dev)
-macro_line|#endif
-macro_line|#ifdef CONFIG_ARCNET
-r_extern
-r_int
-id|arcnet_probe
-c_func
-(paren
-r_struct
-id|device
-op_star
-id|dev
-)paren
-suffix:semicolon
-DECL|variable|arcnet_dev
-r_static
-r_struct
-id|device
-id|arcnet_dev
-op_assign
-(brace
-l_string|&quot;arc0&quot;
-comma
-l_int|0x0
-comma
-l_int|0x0
-comma
-l_int|0x0
-comma
-l_int|0x0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-id|NEXT_DEV
-comma
-id|arcnet_probe
-comma
-)brace
-suffix:semicolon
-DECL|macro|NEXT_DEV
-macro_line|#   undef&t;NEXT_DEV
-DECL|macro|NEXT_DEV
-macro_line|#   define&t;NEXT_DEV&t;(&amp;arcnet_dev)
 macro_line|#endif
 macro_line|#if defined(CONFIG_LTPC)
 r_extern

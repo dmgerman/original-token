@@ -66,12 +66,14 @@ suffix:semicolon
 DECL|variable|active_map
 r_static
 r_int
+r_int
 id|active_map
 op_assign
 l_int|0
 suffix:semicolon
 DECL|variable|open_map
 r_static
+r_int
 r_int
 id|open_map
 op_assign

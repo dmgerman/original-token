@@ -2021,6 +2021,7 @@ id|mm
 )paren
 suffix:semicolon
 )brace
+macro_line|#if 0 /* XXX Disabled until further notice... */
 r_else
 r_if
 c_cond
@@ -2071,6 +2072,7 @@ id|local_flush_and_out
 suffix:semicolon
 )brace
 )brace
+macro_line|#endif
 id|smp_cross_call
 c_func
 (paren

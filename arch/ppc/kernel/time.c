@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * $Id: time.c,v 1.8 1997/08/11 08:37:51 cort Exp $&n; * Common time routines among all ppc machines.&n; *&n; * Written by Cort Dougan (cort@cs.nmt.edu) to merge&n; * Paul Mackerras&squot; version and mine for PReP and Pmac.&n; */
+multiline_comment|/*&n; * $Id: time.c,v 1.10 1997/08/27 22:06:56 cort Exp $&n; * Common time routines among all ppc machines.&n; *&n; * Written by Cort Dougan (cort@cs.nmt.edu) to merge&n; * Paul Mackerras&squot; version and mine for PReP and Pmac.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -16,7 +16,7 @@ macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/processor.h&gt;
 macro_line|#include &lt;asm/nvram.h&gt;
 macro_line|#include &quot;time.h&quot;
-multiline_comment|/* this is set to the appropriate pmac/prep func in init_IRQ() */
+multiline_comment|/* this is set to the appropriate pmac/prep/chrp func in init_IRQ() */
 DECL|variable|set_rtc_time
 r_int
 (paren
@@ -357,7 +357,6 @@ c_func
 r_void
 )paren
 (brace
-macro_line|#ifdef CONFIG_PREP
 multiline_comment|/* pmac hasn&squot;t yet called via_cuda_init() */
 r_if
 c_cond
@@ -366,8 +365,23 @@ id|_machine
 op_ne
 id|_MACH_Pmac
 )paren
-multiline_comment|/* prep */
 (brace
+r_if
+c_cond
+(paren
+id|_machine
+op_eq
+id|_MACH_chrp
+)paren
+id|xtime.tv_sec
+op_assign
+id|chrp_get_rtc_time
+c_func
+(paren
+)paren
+suffix:semicolon
+r_else
+multiline_comment|/* assume prep */
 id|xtime.tv_sec
 op_assign
 id|prep_get_rtc_time
@@ -385,7 +399,6 @@ op_assign
 id|xtime.tv_sec
 suffix:semicolon
 )brace
-macro_line|#endif /* CONFIG_PREP */
 r_if
 c_cond
 (paren
@@ -415,50 +428,58 @@ op_assign
 id|COUNT_PERIOD_DEN_601
 suffix:semicolon
 )brace
-r_else
-(brace
-multiline_comment|/*&n;&t;&t; * These should setup decrementer_count &n;&t;&t; */
-r_if
+r_switch
 c_cond
 (paren
 id|_machine
-op_eq
-id|_MACH_Pmac
 )paren
+(brace
+r_case
+id|_MACH_Pmac
+suffix:colon
 id|pmac_calibrate_decr
 c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_PREP
-r_else
-multiline_comment|/* PReP */
+id|set_rtc_time
+op_assign
+id|pmac_set_rtc_time
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|_MACH_IBM
+suffix:colon
+r_case
+id|_MACH_Motorola
+suffix:colon
 id|prep_calibrate_decr
 c_func
 (paren
 )paren
 suffix:semicolon
-macro_line|#endif /* CONFIG_PREP */
-)brace
-r_if
-c_cond
-(paren
-id|_machine
-op_eq
-id|_MACH_Pmac
-)paren
-id|set_rtc_time
-op_assign
-id|pmac_set_rtc_time
-suffix:semicolon
-macro_line|#ifdef CONFIG_PREP
-r_else
-multiline_comment|/* prep */
 id|set_rtc_time
 op_assign
 id|prep_set_rtc_time
 suffix:semicolon
-macro_line|#endif /* CONFIG_PREP */
+r_break
+suffix:semicolon
+r_case
+id|_MACH_chrp
+suffix:colon
+id|chrp_calibrate_decr
+c_func
+(paren
+)paren
+suffix:semicolon
+id|set_rtc_time
+op_assign
+id|chrp_set_rtc_time
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
 id|set_dec
 c_func
 (paren
@@ -466,7 +487,6 @@ id|decrementer_count
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifdef CONFIG_PREP
 multiline_comment|/*&n; * Uses the on-board timer to calibrate the on-chip decrementer register&n; * for prep systems.  On the pmac the OF tells us what the frequency is&n; * but on prep we have to figure it out.&n; * -- Cort&n; */
 DECL|variable|calibrate_done
 r_int
@@ -719,5 +739,178 @@ l_int|1
 suffix:semicolon
 )brace
 )brace
-macro_line|#endif /* CONFIG_PREP */
+DECL|function|chrp_calibrate_decr
+r_void
+id|chrp_calibrate_decr
+c_func
+(paren
+r_void
+)paren
+(brace
+r_int
+id|freq
+comma
+id|fp
+comma
+id|divisor
+suffix:semicolon
+id|fp
+op_assign
+l_int|16666000
+suffix:semicolon
+multiline_comment|/* hardcoded for now */
+id|freq
+op_assign
+id|fp
+op_star
+l_int|60
+suffix:semicolon
+multiline_comment|/* try to make freq/1e6 an integer */
+id|divisor
+op_assign
+l_int|60
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;time_init: decrementer frequency = %d/%d&bslash;n&quot;
+comma
+id|freq
+comma
+id|divisor
+)paren
+suffix:semicolon
+id|decrementer_count
+op_assign
+id|freq
+op_div
+id|HZ
+op_div
+id|divisor
+suffix:semicolon
+id|count_period_num
+op_assign
+id|divisor
+suffix:semicolon
+id|count_period_den
+op_assign
+id|freq
+op_div
+l_int|1000000
+suffix:semicolon
+)brace
+multiline_comment|/* Converts Gregorian date to seconds since 1970-01-01 00:00:00.&n; * Assumes input in normal date format, i.e. 1980-12-31 23:59:59&n; * =&gt; year=1980, mon=12, day=31, hour=23, min=59, sec=59.&n; *&n; * [For the Julian calendar (which was used in Russia before 1917,&n; * Britain &amp; colonies before 1752, anywhere else before 1582,&n; * and is still in use by some communities) leave out the&n; * -year/100+year/400 terms, and add 10.]&n; *&n; * This algorithm was first published by Gauss (I think).&n; *&n; * WARNING: this function will overflow on 2106-02-07 06:28:16 on&n; * machines were long is 32-bit! (However, as time_t is signed, we&n; * will already get problems at other places on 2038-01-19 03:14:08)&n; */
+DECL|function|mktime
+r_inline
+r_int
+r_int
+id|mktime
+c_func
+(paren
+r_int
+r_int
+id|year
+comma
+r_int
+r_int
+id|mon
+comma
+r_int
+r_int
+id|day
+comma
+r_int
+r_int
+id|hour
+comma
+r_int
+r_int
+id|min
+comma
+r_int
+r_int
+id|sec
+)paren
+(brace
+r_if
+c_cond
+(paren
+l_int|0
+op_ge
+(paren
+r_int
+)paren
+(paren
+id|mon
+op_sub_assign
+l_int|2
+)paren
+)paren
+(brace
+multiline_comment|/* 1..12 -&gt; 11,12,1..10 */
+id|mon
+op_add_assign
+l_int|12
+suffix:semicolon
+multiline_comment|/* Puts Feb last since it has leap day */
+id|year
+op_sub_assign
+l_int|1
+suffix:semicolon
+)brace
+r_return
+(paren
+(paren
+(paren
+(paren
+r_int
+r_int
+)paren
+(paren
+id|year
+op_div
+l_int|4
+op_minus
+id|year
+op_div
+l_int|100
+op_plus
+id|year
+op_div
+l_int|400
+op_plus
+l_int|367
+op_star
+id|mon
+op_div
+l_int|12
+op_plus
+id|day
+)paren
+op_plus
+id|year
+op_star
+l_int|365
+op_minus
+l_int|719499
+)paren
+op_star
+l_int|24
+op_plus
+id|hour
+multiline_comment|/* now have hours */
+)paren
+op_star
+l_int|60
+op_plus
+id|min
+multiline_comment|/* now have minutes */
+)paren
+op_star
+l_int|60
+op_plus
+id|sec
+suffix:semicolon
+multiline_comment|/* finally seconds */
+)brace
 eof

@@ -3571,6 +3571,8 @@ op_assign
 id|sk_alloc
 c_func
 (paren
+id|AF_APPLETALK
+comma
 id|GFP_KERNEL
 )paren
 suffix:semicolon
@@ -3650,34 +3652,6 @@ l_int|1
 suffix:semicolon
 r_return
 l_int|0
-suffix:semicolon
-)brace
-multiline_comment|/*&n; *&t;Copy a socket. No work needed.&n; */
-DECL|function|atalk_dup
-r_static
-r_int
-id|atalk_dup
-c_func
-(paren
-r_struct
-id|socket
-op_star
-id|newsock
-comma
-r_struct
-id|socket
-op_star
-id|oldsock
-)paren
-(brace
-r_return
-id|atalk_create
-c_func
-(paren
-id|newsock
-comma
-id|SOCK_DGRAM
-)paren
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;Free a socket. No work needed&n; */
@@ -4304,29 +4278,6 @@ id|TCP_ESTABLISHED
 suffix:semicolon
 r_return
 l_int|0
-suffix:semicolon
-)brace
-multiline_comment|/*&n; *&t;Not relevant&n; */
-DECL|function|atalk_socketpair
-r_static
-r_int
-id|atalk_socketpair
-c_func
-(paren
-r_struct
-id|socket
-op_star
-id|sock1
-comma
-r_struct
-id|socket
-op_star
-id|sock2
-)paren
-(brace
-r_return
-op_minus
-id|EOPNOTSUPP
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;Not relevant&n; */
@@ -7607,6 +7558,15 @@ suffix:colon
 r_case
 id|SIOCDELMULTI
 suffix:colon
+r_case
+id|SIOCGIFCOUNT
+suffix:colon
+r_case
+id|SIOGIFINDEX
+suffix:colon
+r_case
+id|SIOGIFNAME
+suffix:colon
 r_return
 id|dev_ioctl
 c_func
@@ -7690,7 +7650,7 @@ op_assign
 (brace
 id|AF_APPLETALK
 comma
-id|atalk_dup
+id|sock_no_dup
 comma
 id|atalk_release
 comma
@@ -7698,7 +7658,7 @@ id|atalk_bind
 comma
 id|atalk_connect
 comma
-id|atalk_socketpair
+id|sock_no_socketpair
 comma
 id|atalk_accept
 comma

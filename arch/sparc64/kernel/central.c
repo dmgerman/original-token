@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: central.c,v 1.3 1997/08/12 14:51:55 davem Exp $&n; * central.c: Central FHC driver for Sunfire/Starfire/Wildfire.&n; *&n; * Copyright (C) 1997 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: central.c,v 1.4 1997/08/19 14:17:49 jj Exp $&n; * central.c: Central FHC driver for Sunfire/Starfire/Wildfire.&n; *&n; * Copyright (C) 1997 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
@@ -118,12 +118,6 @@ id|fnode
 comma
 id|err
 suffix:semicolon
-id|prom_printf
-c_func
-(paren
-l_string|&quot;CENTRAL: &quot;
-)paren
-suffix:semicolon
 id|printk
 c_func
 (paren
@@ -151,12 +145,6 @@ op_minus
 l_int|1
 )paren
 (brace
-id|prom_printf
-c_func
-(paren
-l_string|&quot;no central found.&bslash;n&quot;
-)paren
-suffix:semicolon
 id|printk
 c_func
 (paren
@@ -170,7 +158,7 @@ suffix:semicolon
 id|prom_printf
 c_func
 (paren
-l_string|&quot;found central PROM node.&bslash;n&quot;
+l_string|&quot;CENTRAL: found central PROM node.&bslash;n&quot;
 )paren
 suffix:semicolon
 id|printk

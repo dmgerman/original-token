@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: console.c,v 1.7 1997/07/19 08:28:29 ecd Exp $&n; * console.c: Routines that deal with sending and receiving IO&n; *            to/from the current console device using the PROM.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996,1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: console.c,v 1.8 1997/08/16 08:00:16 davem Exp $&n; * console.c: Routines that deal with sending and receiving IO&n; *            to/from the current console device using the PROM.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1996,1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -306,10 +306,7 @@ id|propb
 comma
 l_string|&quot;serial&quot;
 comma
-r_sizeof
-(paren
-l_string|&quot;serial&quot;
-)paren
+l_int|6
 )paren
 )paren
 (brace
@@ -369,11 +366,6 @@ op_logical_neg
 id|propb
 (braket
 l_int|3
-)braket
-op_logical_or
-id|propb
-(braket
-l_int|4
 )braket
 )paren
 r_return
@@ -495,10 +487,7 @@ l_string|&quot;serial&quot;
 comma
 id|propb
 comma
-r_sizeof
-(paren
-l_string|&quot;serial&quot;
-)paren
+l_int|6
 )paren
 )paren
 (brace
@@ -558,11 +547,6 @@ op_logical_neg
 id|propb
 (braket
 l_int|3
-)braket
-op_logical_or
-id|propb
-(braket
-l_int|4
 )braket
 )paren
 r_return

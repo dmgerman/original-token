@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sunfb.c,v 1.26 1997/07/17 02:21:48 davem Exp $&n; * sunfb.c: Sun generic frame buffer support.&n; *&n; * Copyright (C) 1995, 1996 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * &n; * Added getcmap ioctl, may, 96&n; * Support for multiple fbs, sep, 96&n; */
+multiline_comment|/* $Id: sunfb.c,v 1.28 1997/08/22 15:55:23 jj Exp $&n; * sunfb.c: Sun generic frame buffer support.&n; *&n; * Copyright (C) 1995, 1996 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * &n; * Added getcmap ioctl, may, 96&n; * Support for multiple fbs, sep, 96&n; */
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
@@ -31,14 +31,6 @@ macro_line|#include &quot;fb.h&quot;
 r_extern
 r_void
 id|set_other_palette
-(paren
-r_int
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|sun_clear_fb
-c_func
 (paren
 r_int
 )paren
@@ -1271,14 +1263,14 @@ op_minus
 id|EINVAL
 suffix:semicolon
 multiline_comment|/* Don&squot;t let graphics programs hide our nice text cursor */
-id|sun_hw_cursor_shown
+id|sbus_hw_cursor_shown
 op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* Forget state of our text cursor */
 )brace
 r_return
-id|sun_hw_scursor
+id|sbus_hw_scursor
 (paren
 (paren
 r_struct
@@ -1501,11 +1493,28 @@ c_cond
 (paren
 id|fb-&gt;mmaped
 )paren
-id|sun_clear_fb
+(brace
+id|fb-&gt;clear_fb
 (paren
 id|minor
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|minor
+op_logical_and
+id|suncons_ops.clear_margin
+)paren
+id|suncons_ops
+dot
+id|clear_margin
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
 id|cursor.set
 op_assign
 id|FB_CUR_SETCUR

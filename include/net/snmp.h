@@ -2,6 +2,7 @@ multiline_comment|/*&n; *&n; *&t;&t;SNMP MIB entries for the IP subsystem.&n; *&
 macro_line|#ifndef _SNMP_H
 DECL|macro|_SNMP_H
 mdefine_line|#define _SNMP_H
+macro_line|#include &lt;linux/config.h&gt;
 multiline_comment|/*&n; *&t;We use all unsigned longs. Linux will soon be so reliable that even these&n; *&t;will rapidly get too small 8-). Seriously consider the IpInReceives count&n; *&t;on the 20Gb/s + networks people expect in a few years time!&n; */
 DECL|struct|ip_mib
 r_struct

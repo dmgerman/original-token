@@ -1,4 +1,5 @@
-multiline_comment|/* keyboard.c: Sun keyboard driver.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Added vuid event generation and /dev/kbd device for SunOS&n; * compatibility - Miguel (miguel@nuclecu.unam.mx)&n; */
+multiline_comment|/* keyboard.c: Sun keyboard driver.&n; *&n; * Copyright (C) 1995, 1996, 1997 David S. Miller (davem@caip.rutgers.edu)&n; *&n; * Added vuid event generation and /dev/kbd device for SunOS&n; * compatibility - Miguel (miguel@nuclecu.unam.mx)&n; *&n; * Added PCI 8042 controller support -DaveM&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
@@ -10,16 +11,23 @@ macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/poll.h&gt;
 macro_line|#include &lt;linux/random.h&gt;
+macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/kbio.h&gt;
 macro_line|#include &lt;asm/vuid_event.h&gt;
-macro_line|#include &lt;asm/delay.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
 macro_line|#include &lt;asm/oplib.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;linux/kbd_kern.h&gt;
 macro_line|#include &lt;linux/kbd_diacr.h&gt;
 macro_line|#include &lt;linux/vt_kern.h&gt;
+macro_line|#ifdef CONFIG_PCI
+macro_line|#include &lt;linux/pci.h&gt;
+macro_line|#include &lt;linux/bios32.h&gt;
+macro_line|#include &lt;asm/pbm.h&gt;
+macro_line|#include &lt;asm/ebus.h&gt;
+macro_line|#endif
+macro_line|#include &quot;sunkbd.h&quot;
 DECL|macro|SIZE
 mdefine_line|#define SIZE(x) (sizeof(x)/sizeof((x)[0]))
 multiline_comment|/* Define this one if you are making a new frame buffer driver */
@@ -86,6 +94,17 @@ c_func
 (paren
 r_int
 )paren
+suffix:semicolon
+DECL|variable|l1a_state
+r_struct
+id|l1a_kbd_state
+id|l1a_state
+op_assign
+(brace
+l_int|0
+comma
+l_int|0
+)brace
 suffix:semicolon
 DECL|variable|kbd_read_mask
 r_int
@@ -703,15 +722,32 @@ DECL|macro|KEY_ALT
 mdefine_line|#define KEY_ALT         0x86
 DECL|macro|KEY_L1
 mdefine_line|#define KEY_L1          0x87
-r_extern
+multiline_comment|/* Do to kbd_init() being called before rs_init(), and kbd_init() doing:&n; *&n; *&t;init_bh(KEYBOARD_BH, kbd_bh);&n; *&t;mark_bh(KEYBOARD_BH);&n; *&n; * this might well be called before some driver has claimed interest in&n; * handling the keyboard input/output. So we need to assign an initial nop.&n; *&n; * Otherwise this would lead to the following (DaveM might want to look at):&n; *&n; *&t;sparc64_dtlb_refbit_catch(),&n; *&t;do_sparc64_fault(),&n; *&t;kernel NULL pointer dereference at do_sparc64_fault + 0x2c0 ;-(&n; */
+DECL|function|nop_kbd_put_char
+r_static
 r_void
-id|kbd_put_char
+id|nop_kbd_put_char
 c_func
 (paren
 r_int
 r_char
-id|ch
+id|c
 )paren
+(brace
+)brace
+DECL|variable|kbd_put_char
+r_static
+r_void
+(paren
+op_star
+id|kbd_put_char
+)paren
+(paren
+r_int
+r_char
+)paren
+op_assign
+id|nop_kbd_put_char
 suffix:semicolon
 DECL|function|send_cmd
 r_static
@@ -6317,6 +6353,14 @@ id|keyboard_zsinit
 c_func
 (paren
 r_void
+(paren
+op_star
+id|put_char
+)paren
+(paren
+r_int
+r_char
+)paren
 )paren
 )paren
 (brace
@@ -6325,10 +6369,32 @@ id|timeout
 op_assign
 l_int|0
 suffix:semicolon
+id|kbd_put_char
+op_assign
+id|put_char
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|kbd_put_char
+)paren
+id|panic
+c_func
+(paren
+l_string|&quot;keyboard_zsinit: no put_char parameter&quot;
+)paren
+suffix:semicolon
 multiline_comment|/* Test out the leds */
 id|sunkbd_type
 op_assign
 l_int|255
+suffix:semicolon
+id|send_cmd
+c_func
+(paren
+id|SKBDCMD_RESET
+)paren
 suffix:semicolon
 id|send_cmd
 c_func

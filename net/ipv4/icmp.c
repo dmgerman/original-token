@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;NET3:&t;Implementation of the ICMP protocol layer. &n; *&t;&n; *&t;&t;Alan Cox, &lt;alan@cymru.net&gt;&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; *&t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;Some of the function names and the icmp unreach table for this&n; *&t;module were derived from [icmp.c 1.0.11 06/02/93] by&n; *&t;Ross Biro, Fred N. van Kempen, Mark Evans, Alan Cox, Gerhard Koerting.&n; *&t;Other than that this module is a complete rewrite.&n; *&n; *&t;Fixes:&n; *&t;&t;Mike Shaver&t;:&t;RFC1122 checks.&n; *&t;&t;Alan Cox&t;:&t;Multicast ping reply as self.&n; *&t;&t;Alan Cox&t;:&t;Fix atomicity lockup in ip_build_xmit &n; *&t;&t;&t;&t;&t;call.&n; *&t;&t;Alan Cox&t;:&t;Added 216,128 byte paths to the MTU &n; *&t;&t;&t;&t;&t;code.&n; *&t;&t;Martin Mares&t;:&t;RFC1812 checks.&n; *&t;&t;Martin Mares&t;:&t;Can be configured to follow redirects &n; *&t;&t;&t;&t;&t;if acting as a router _without_ a&n; *&t;&t;&t;&t;&t;routing protocol (RFC 1812).&n; *&t;&t;Martin Mares&t;:&t;Echo requests may be configured to &n; *&t;&t;&t;&t;&t;be ignored (RFC 1812).&n; *&t;&t;Martin Mares&t;:&t;Limitation of ICMP error message &n; *&t;&t;&t;&t;&t;transmit rate (RFC 1812).&n; *&t;&t;Martin Mares&t;:&t;TOS and Precedence set correctly &n; *&t;&t;&t;&t;&t;(RFC 1812).&n; *&t;&t;Martin Mares&t;:&t;Now copying as much data from the &n; *&t;&t;&t;&t;&t;original packet as we can without&n; *&t;&t;&t;&t;&t;exceeding 576 bytes (RFC 1812).&n; *&t;Willy Konynenberg&t;:&t;Transparent proxying support.&n; *&t;&t;Keith Owens&t;:&t;RFC1191 correction for 4.2BSD based &n; *&t;&t;&t;&t;&t;path MTU bug.&n; *&t;&t;Thomas Quinot&t;:&t;ICMP Dest Unreach codes up to 15 are&n; *&t;&t;&t;&t;&t;valid (RFC 1812).&n; *&n; *&n; * RFC1122 (Host Requirements -- Comm. Layer) Status:&n; * (boy, are there a lot of rules for ICMP)&n; *  3.2.2 (Generic ICMP stuff)&n; *   MUST discard messages of unknown type. (OK)&n; *   MUST copy at least the first 8 bytes from the offending packet&n; *     when sending ICMP errors. (OBSOLETE -- see RFC1812)&n; *   MUST pass received ICMP errors up to protocol level. (OK)&n; *   SHOULD send ICMP errors with TOS == 0. (OBSOLETE -- see RFC1812)&n; *   MUST NOT send ICMP errors in reply to:&n; *     ICMP errors (OK)&n; *     Broadcast/multicast datagrams (OK)&n; *     MAC broadcasts (OK)&n; *     Non-initial fragments (OK)&n; *     Datagram with a source address that isn&squot;t a single host. (OK)&n; *  3.2.2.1 (Destination Unreachable)&n; *   All the rules govern the IP layer, and are dealt with in ip.c, not here.&n; *  3.2.2.2 (Redirect)&n; *   Host SHOULD NOT send ICMP_REDIRECTs.  (OK)&n; *   MUST update routing table in response to host or network redirects.&n; *     (host OK, network OBSOLETE)&n; *   SHOULD drop redirects if they&squot;re not from directly connected gateway&n; *     (OK -- we drop it if it&squot;s not from our old gateway, which is close&n; *      enough)&n; * 3.2.2.3 (Source Quench)&n; *   MUST pass incoming SOURCE_QUENCHs to transport layer (OK)&n; *   Other requirements are dealt with at the transport layer.&n; * 3.2.2.4 (Time Exceeded)&n; *   MUST pass TIME_EXCEEDED to transport layer (OK)&n; *   Other requirements dealt with at IP (generating TIME_EXCEEDED).&n; * 3.2.2.5 (Parameter Problem)&n; *   SHOULD generate these (OK)&n; *   MUST pass received PARAMPROBLEM to transport layer (NOT YET)&n; *   &t;[Solaris 2.X seems to assert EPROTO when this occurs] -- AC&n; * 3.2.2.6 (Echo Request/Reply)&n; *   MUST reply to ECHO_REQUEST, and give app to do ECHO stuff (OK, OK)&n; *   MAY discard broadcast ECHO_REQUESTs. (We don&squot;t, but that&squot;s OK.)&n; *   MUST reply using same source address as the request was sent to.&n; *     We&squot;re OK for unicast ECHOs, and it doesn&squot;t say anything about&n; *     how to handle broadcast ones, since it&squot;s optional.&n; *   MUST copy data from REQUEST to REPLY (OK)&n; *     unless it would require illegal fragmentation (OK)&n; *   MUST pass REPLYs to transport/user layer (OK)&n; *   MUST use any provided source route (reversed) for REPLY. (NOT YET)&n; * 3.2.2.7 (Information Request/Reply)&n; *   MUST NOT implement this. (I guess that means silently discard...?) (OK)&n; * 3.2.2.8 (Timestamp Request/Reply)&n; *   MAY implement (OK)&n; *   SHOULD be in-kernel for &quot;minimum variability&quot; (OK)&n; *   MAY discard broadcast REQUESTs.  (OK, but see source for inconsistency)&n; *   MUST reply using same source address as the request was sent to. (OK)&n; *   MUST reverse source route, as per ECHO (NOT YET)&n; *   MUST pass REPLYs to transport/user layer (requires RAW, just like &n; *&t;ECHO) (OK)&n; *   MUST update clock for timestamp at least 15 times/sec (OK)&n; *   MUST be &quot;correct within a few minutes&quot; (OK)&n; * 3.2.2.9 (Address Mask Request/Reply)&n; *   MAY implement (OK)&n; *   MUST send a broadcast REQUEST if using this system to set netmask&n; *     (OK... we don&squot;t use it)&n; *   MUST discard received REPLYs if not using this system (OK)&n; *   MUST NOT send replies unless specifically made agent for this sort&n; *     of thing. (OK)&n; *&n; *&n; * RFC 1812 (IPv4 Router Requirements) Status (even longer):&n; *  4.3.2.1 (Unknown Message Types)&n; *   MUST pass messages of unknown type to ICMP user iface or silently discard&n; *     them (OK)&n; *  4.3.2.2 (ICMP Message TTL)&n; *   MUST initialize TTL when originating an ICMP message (OK)&n; *  4.3.2.3 (Original Message Header)&n; *   SHOULD copy as much data from the offending packet as possible without&n; *     the length of the ICMP datagram exceeding 576 bytes (OK)&n; *   MUST leave original IP header of the offending packet, but we&squot;re not&n; *     required to undo modifications made (OK)&n; *  4.3.2.4 (Original Message Source Address)&n; *   MUST use one of addresses for the interface the orig. packet arrived as&n; *     source address (OK)&n; *  4.3.2.5 (TOS and Precedence)&n; *   SHOULD leave TOS set to the same value unless the packet would be &n; *     discarded for that reason (OK)&n; *   MUST use TOS=0 if not possible to leave original value (OK)&n; *   MUST leave IP Precedence for Source Quench messages (OK -- not sent &n; *&t;at all)&n; *   SHOULD use IP Precedence = 6 (Internetwork Control) or 7 (Network Control)&n; *     for all other error messages (OK, we use 6)&n; *   MAY allow configuration of IP Precedence (OK -- not done)&n; *   MUST leave IP Precedence and TOS for reply messages (OK)&n; *  4.3.2.6 (Source Route)&n; *   SHOULD use reverse source route UNLESS sending Parameter Problem on source&n; *     routing and UNLESS the packet would be immediately discarded (NOT YET)&n; *  4.3.2.7 (When Not to Send ICMP Errors)&n; *   MUST NOT send ICMP errors in reply to:&n; *     ICMP errors (OK)&n; *     Packets failing IP header validation tests unless otherwise noted (OK)&n; *     Broadcast/multicast datagrams (OK)&n; *     MAC broadcasts (OK)&n; *     Non-initial fragments (OK)&n; *     Datagram with a source address that isn&squot;t a single host. (OK)&n; *  4.3.2.8 (Rate Limiting)&n; *   SHOULD be able to limit error message rate (OK)&n; *   SHOULD allow setting of rate limits (OK, in the source)&n; *  4.3.3.1 (Destination Unreachable)&n; *   All the rules govern the IP layer, and are dealt with in ip.c, not here.&n; *  4.3.3.2 (Redirect)&n; *   MAY ignore ICMP Redirects if running a routing protocol or if forwarding&n; *     is enabled on the interface (OK -- ignores)&n; *  4.3.3.3 (Source Quench)&n; *   SHOULD NOT originate SQ messages (OK)&n; *   MUST be able to limit SQ rate if originates them (OK as we don&squot;t &n; *&t;send them)&n; *   MAY ignore SQ messages it receives (OK -- we don&squot;t)&n; *  4.3.3.4 (Time Exceeded)&n; *   Requirements dealt with at IP (generating TIME_EXCEEDED).&n; *  4.3.3.5 (Parameter Problem)&n; *   MUST generate these for all errors not covered by other messages (OK)&n; *   MUST include original value of the value pointed by (OK)&n; *  4.3.3.6 (Echo Request)&n; *   MUST implement echo server function (OK)&n; *   MUST process at ER of at least max(576, MTU) (OK)&n; *   MAY reject broadcast/multicast ER&squot;s (We don&squot;t, but that&squot;s OK)&n; *   SHOULD have a config option for silently ignoring ER&squot;s (OK)&n; *   MUST have a default value for the above switch = NO (OK)&n; *   MUST have application layer interface for Echo Request/Reply (OK)&n; *   MUST reply using same source address as the request was sent to.&n; *     We&squot;re OK for unicast ECHOs, and it doesn&squot;t say anything about&n; *     how to handle broadcast ones, since it&squot;s optional.&n; *   MUST copy data from Request to Reply (OK)&n; *   SHOULD update Record Route / Timestamp options (??)&n; *   MUST use reversed Source Route for Reply if possible (NOT YET)&n; *  4.3.3.7 (Information Request/Reply)&n; *   SHOULD NOT originate or respond to these (OK)&n; *  4.3.3.8 (Timestamp / Timestamp Reply)&n; *   MAY implement (OK)&n; *   MUST reply to every Timestamp message received (OK)&n; *   MAY discard broadcast REQUESTs.  (OK, but see source for inconsistency)&n; *   MUST reply using same source address as the request was sent to. (OK)&n; *   MUST use reversed Source Route if possible (NOT YET)&n; *   SHOULD update Record Route / Timestamp options (??)&n; *   MUST pass REPLYs to transport/user layer (requires RAW, just like &n; *&t;ECHO) (OK)&n; *   MUST update clock for timestamp at least 16 times/sec (OK)&n; *   MUST be &quot;correct within a few minutes&quot; (OK)&n; * 4.3.3.9 (Address Mask Request/Reply)&n; *   MUST have support for receiving AMRq and responding with AMRe (OK, &n; *&t;but only as a compile-time option)&n; *   SHOULD have option for each interface for AMRe&squot;s, MUST default to &n; *&t;NO (NOT YET)&n; *   MUST NOT reply to AMRq before knows the correct AM (OK)&n; *   MUST NOT respond to AMRq with source address 0.0.0.0 on physical&n; *    &t;interfaces having multiple logical i-faces with different masks&n; *&t;(NOT YET)&n; *   SHOULD examine all AMRe&squot;s it receives and check them (NOT YET)&n; *   SHOULD log invalid AMRe&squot;s (AM+sender) (NOT YET)&n; *   MUST NOT use contents of AMRe to determine correct AM (OK)&n; *   MAY broadcast AMRe&squot;s after having configured address masks (OK -- doesn&squot;t)&n; *   MUST NOT do broadcast AMRe&squot;s if not set by extra option (OK, no option)&n; *   MUST use the { &lt;NetPrefix&gt;, -1 } form of broadcast addresses (OK)&n; * 4.3.3.10 (Router Advertisement and Solicitations)&n; *   MUST support router part of Router Discovery Protocol on all networks we&n; *     support broadcast or multicast addressing. (OK -- done by gated)&n; *   MUST have all config parameters with the respective defaults (OK)&n; * 5.2.7.1 (Destination Unreachable)&n; *   MUST generate DU&squot;s (OK)&n; *   SHOULD choose a best-match response code (OK)&n; *   SHOULD NOT generate Host Isolated codes (OK)&n; *   SHOULD use Communication Administratively Prohibited when administratively&n; *     filtering packets (NOT YET -- bug-to-bug compatibility)&n; *   MAY include config option for not generating the above and silently&n; *&t;discard the packets instead (OK)&n; *   MAY include config option for not generating Precedence Violation and&n; *     Precedence Cutoff messages (OK as we don&squot;t generate them at all)&n; *   MUST use Host Unreachable or Dest. Host Unknown codes whenever other hosts&n; *     on the same network might be reachable (OK -- no net unreach&squot;s at all)&n; *   MUST use new form of Fragmentation Needed and DF Set messages (OK)&n; * 5.2.7.2 (Redirect)&n; *   MUST NOT generate network redirects (OK)&n; *   MUST be able to generate host redirects (OK)&n; *   SHOULD be able to generate Host+TOS redirects (NO as we don&squot;t use TOS)&n; *   MUST have an option to use Host redirects instead of Host+TOS ones (OK as&n; *     no Host+TOS Redirects are used)&n; *   MUST NOT generate redirects unless forwarding to the same i-face and the&n; *     dest. address is on the same subnet as the src. address and no source&n; *     routing is in use. (OK)&n; *   MUST NOT follow redirects when using a routing protocol (OK)&n; *   MAY use redirects if not using a routing protocol (OK, compile-time option)&n; *   MUST comply to Host Requirements when not acting as a router (OK)&n; *  5.2.7.3 (Time Exceeded)&n; *   MUST generate Time Exceeded Code 0 when discarding packet due to TTL=0 (OK)&n; *   MAY have a per-interface option to disable origination of TE messages, but&n; *     it MUST default to &quot;originate&quot; (OK -- we don&squot;t support it)&n; */
+multiline_comment|/*&n; *&t;NET3:&t;Implementation of the ICMP protocol layer. &n; *&t;&n; *&t;&t;Alan Cox, &lt;alan@cymru.net&gt;&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; *&t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;Some of the function names and the icmp unreach table for this&n; *&t;module were derived from [icmp.c 1.0.11 06/02/93] by&n; *&t;Ross Biro, Fred N. van Kempen, Mark Evans, Alan Cox, Gerhard Koerting.&n; *&t;Other than that this module is a complete rewrite.&n; *&n; *&t;Fixes:&n; *&t;&t;Mike Shaver&t;:&t;RFC1122 checks.&n; *&t;&t;Alan Cox&t;:&t;Multicast ping reply as self.&n; *&t;&t;Alan Cox&t;:&t;Fix atomicity lockup in ip_build_xmit &n; *&t;&t;&t;&t;&t;call.&n; *&t;&t;Alan Cox&t;:&t;Added 216,128 byte paths to the MTU &n; *&t;&t;&t;&t;&t;code.&n; *&t;&t;Martin Mares&t;:&t;RFC1812 checks.&n; *&t;&t;Martin Mares&t;:&t;Can be configured to follow redirects &n; *&t;&t;&t;&t;&t;if acting as a router _without_ a&n; *&t;&t;&t;&t;&t;routing protocol (RFC 1812).&n; *&t;&t;Martin Mares&t;:&t;Echo requests may be configured to &n; *&t;&t;&t;&t;&t;be ignored (RFC 1812).&n; *&t;&t;Martin Mares&t;:&t;Limitation of ICMP error message &n; *&t;&t;&t;&t;&t;transmit rate (RFC 1812).&n; *&t;&t;Martin Mares&t;:&t;TOS and Precedence set correctly &n; *&t;&t;&t;&t;&t;(RFC 1812).&n; *&t;&t;Martin Mares&t;:&t;Now copying as much data from the &n; *&t;&t;&t;&t;&t;original packet as we can without&n; *&t;&t;&t;&t;&t;exceeding 576 bytes (RFC 1812).&n; *&t;Willy Konynenberg&t;:&t;Transparent proxying support.&n; *&t;&t;Keith Owens&t;:&t;RFC1191 correction for 4.2BSD based &n; *&t;&t;&t;&t;&t;path MTU bug.&n; *&t;&t;Thomas Quinot&t;:&t;ICMP Dest Unreach codes up to 15 are&n; *&t;&t;&t;&t;&t;valid (RFC 1812).&n; *&t;&t;Andi Kleen&t;:&t;Check all packet lengths properly&n; *&t;&t;&t;&t;&t;and moved all kfree_skb() up to&n; *&t;&t;&t;&t;&t;icmp_rcv.&n; *&n; * RFC1122 (Host Requirements -- Comm. Layer) Status:&n; * (boy, are there a lot of rules for ICMP)&n; *  3.2.2 (Generic ICMP stuff)&n; *   MUST discard messages of unknown type. (OK)&n; *   MUST copy at least the first 8 bytes from the offending packet&n; *     when sending ICMP errors. (OBSOLETE -- see RFC1812)&n; *   MUST pass received ICMP errors up to protocol level. (OK)&n; *   SHOULD send ICMP errors with TOS == 0. (OBSOLETE -- see RFC1812)&n; *   MUST NOT send ICMP errors in reply to:&n; *     ICMP errors (OK)&n; *     Broadcast/multicast datagrams (OK)&n; *     MAC broadcasts (OK)&n; *     Non-initial fragments (OK)&n; *     Datagram with a source address that isn&squot;t a single host. (OK)&n; *  3.2.2.1 (Destination Unreachable)&n; *   All the rules govern the IP layer, and are dealt with in ip.c, not here.&n; *  3.2.2.2 (Redirect)&n; *   Host SHOULD NOT send ICMP_REDIRECTs.  (OK)&n; *   MUST update routing table in response to host or network redirects.&n; *     (host OK, network OBSOLETE)&n; *   SHOULD drop redirects if they&squot;re not from directly connected gateway&n; *     (OK -- we drop it if it&squot;s not from our old gateway, which is close&n; *      enough)&n; * 3.2.2.3 (Source Quench)&n; *   MUST pass incoming SOURCE_QUENCHs to transport layer (OK)&n; *   Other requirements are dealt with at the transport layer.&n; * 3.2.2.4 (Time Exceeded)&n; *   MUST pass TIME_EXCEEDED to transport layer (OK)&n; *   Other requirements dealt with at IP (generating TIME_EXCEEDED).&n; * 3.2.2.5 (Parameter Problem)&n; *   SHOULD generate these (OK)&n; *   MUST pass received PARAMPROBLEM to transport layer (NOT YET)&n; *   &t;[Solaris 2.X seems to assert EPROTO when this occurs] -- AC&n; * 3.2.2.6 (Echo Request/Reply)&n; *   MUST reply to ECHO_REQUEST, and give app to do ECHO stuff (OK, OK)&n; *   MAY discard broadcast ECHO_REQUESTs. (We don&squot;t, but that&squot;s OK.)&n; *   MUST reply using same source address as the request was sent to.&n; *     We&squot;re OK for unicast ECHOs, and it doesn&squot;t say anything about&n; *     how to handle broadcast ones, since it&squot;s optional.&n; *   MUST copy data from REQUEST to REPLY (OK)&n; *     unless it would require illegal fragmentation (OK)&n; *   MUST pass REPLYs to transport/user layer (OK)&n; *   MUST use any provided source route (reversed) for REPLY. (NOT YET)&n; * 3.2.2.7 (Information Request/Reply)&n; *   MUST NOT implement this. (I guess that means silently discard...?) (OK)&n; * 3.2.2.8 (Timestamp Request/Reply)&n; *   MAY implement (OK)&n; *   SHOULD be in-kernel for &quot;minimum variability&quot; (OK)&n; *   MAY discard broadcast REQUESTs.  (OK, but see source for inconsistency)&n; *   MUST reply using same source address as the request was sent to. (OK)&n; *   MUST reverse source route, as per ECHO (NOT YET)&n; *   MUST pass REPLYs to transport/user layer (requires RAW, just like &n; *&t;ECHO) (OK)&n; *   MUST update clock for timestamp at least 15 times/sec (OK)&n; *   MUST be &quot;correct within a few minutes&quot; (OK)&n; * 3.2.2.9 (Address Mask Request/Reply)&n; *   MAY implement (OK)&n; *   MUST send a broadcast REQUEST if using this system to set netmask&n; *     (OK... we don&squot;t use it)&n; *   MUST discard received REPLYs if not using this system (OK)&n; *   MUST NOT send replies unless specifically made agent for this sort&n; *     of thing. (OK)&n; *&n; *&n; * RFC 1812 (IPv4 Router Requirements) Status (even longer):&n; *  4.3.2.1 (Unknown Message Types)&n; *   MUST pass messages of unknown type to ICMP user iface or silently discard&n; *     them (OK)&n; *  4.3.2.2 (ICMP Message TTL)&n; *   MUST initialize TTL when originating an ICMP message (OK)&n; *  4.3.2.3 (Original Message Header)&n; *   SHOULD copy as much data from the offending packet as possible without&n; *     the length of the ICMP datagram exceeding 576 bytes (OK)&n; *   MUST leave original IP header of the offending packet, but we&squot;re not&n; *     required to undo modifications made (OK)&n; *  4.3.2.4 (Original Message Source Address)&n; *   MUST use one of addresses for the interface the orig. packet arrived as&n; *     source address (OK)&n; *  4.3.2.5 (TOS and Precedence)&n; *   SHOULD leave TOS set to the same value unless the packet would be &n; *     discarded for that reason (OK)&n; *   MUST use TOS=0 if not possible to leave original value (OK)&n; *   MUST leave IP Precedence for Source Quench messages (OK -- not sent &n; *&t;at all)&n; *   SHOULD use IP Precedence = 6 (Internetwork Control) or 7 (Network Control)&n; *     for all other error messages (OK, we use 6)&n; *   MAY allow configuration of IP Precedence (OK -- not done)&n; *   MUST leave IP Precedence and TOS for reply messages (OK)&n; *  4.3.2.6 (Source Route)&n; *   SHOULD use reverse source route UNLESS sending Parameter Problem on source&n; *     routing and UNLESS the packet would be immediately discarded (NOT YET)&n; *  4.3.2.7 (When Not to Send ICMP Errors)&n; *   MUST NOT send ICMP errors in reply to:&n; *     ICMP errors (OK)&n; *     Packets failing IP header validation tests unless otherwise noted (OK)&n; *     Broadcast/multicast datagrams (OK)&n; *     MAC broadcasts (OK)&n; *     Non-initial fragments (OK)&n; *     Datagram with a source address that isn&squot;t a single host. (OK)&n; *  4.3.2.8 (Rate Limiting)&n; *   SHOULD be able to limit error message rate (OK)&n; *   SHOULD allow setting of rate limits (OK, in the source)&n; *  4.3.3.1 (Destination Unreachable)&n; *   All the rules govern the IP layer, and are dealt with in ip.c, not here.&n; *  4.3.3.2 (Redirect)&n; *   MAY ignore ICMP Redirects if running a routing protocol or if forwarding&n; *     is enabled on the interface (OK -- ignores)&n; *  4.3.3.3 (Source Quench)&n; *   SHOULD NOT originate SQ messages (OK)&n; *   MUST be able to limit SQ rate if originates them (OK as we don&squot;t &n; *&t;send them)&n; *   MAY ignore SQ messages it receives (OK -- we don&squot;t)&n; *  4.3.3.4 (Time Exceeded)&n; *   Requirements dealt with at IP (generating TIME_EXCEEDED).&n; *  4.3.3.5 (Parameter Problem)&n; *   MUST generate these for all errors not covered by other messages (OK)&n; *   MUST include original value of the value pointed by (OK)&n; *  4.3.3.6 (Echo Request)&n; *   MUST implement echo server function (OK)&n; *   MUST process at ER of at least max(576, MTU) (OK)&n; *   MAY reject broadcast/multicast ER&squot;s (We don&squot;t, but that&squot;s OK)&n; *   SHOULD have a config option for silently ignoring ER&squot;s (OK)&n; *   MUST have a default value for the above switch = NO (OK)&n; *   MUST have application layer interface for Echo Request/Reply (OK)&n; *   MUST reply using same source address as the request was sent to.&n; *     We&squot;re OK for unicast ECHOs, and it doesn&squot;t say anything about&n; *     how to handle broadcast ones, since it&squot;s optional.&n; *   MUST copy data from Request to Reply (OK)&n; *   SHOULD update Record Route / Timestamp options (??)&n; *   MUST use reversed Source Route for Reply if possible (NOT YET)&n; *  4.3.3.7 (Information Request/Reply)&n; *   SHOULD NOT originate or respond to these (OK)&n; *  4.3.3.8 (Timestamp / Timestamp Reply)&n; *   MAY implement (OK)&n; *   MUST reply to every Timestamp message received (OK)&n; *   MAY discard broadcast REQUESTs.  (OK, but see source for inconsistency)&n; *   MUST reply using same source address as the request was sent to. (OK)&n; *   MUST use reversed Source Route if possible (NOT YET)&n; *   SHOULD update Record Route / Timestamp options (??)&n; *   MUST pass REPLYs to transport/user layer (requires RAW, just like &n; *&t;ECHO) (OK)&n; *   MUST update clock for timestamp at least 16 times/sec (OK)&n; *   MUST be &quot;correct within a few minutes&quot; (OK)&n; * 4.3.3.9 (Address Mask Request/Reply)&n; *   MUST have support for receiving AMRq and responding with AMRe (OK, &n; *&t;but only as a compile-time option)&n; *   SHOULD have option for each interface for AMRe&squot;s, MUST default to &n; *&t;NO (NOT YET)&n; *   MUST NOT reply to AMRq before knows the correct AM (OK)&n; *   MUST NOT respond to AMRq with source address 0.0.0.0 on physical&n; *    &t;interfaces having multiple logical i-faces with different masks&n; *&t;(NOT YET)&n; *   SHOULD examine all AMRe&squot;s it receives and check them (NOT YET)&n; *   SHOULD log invalid AMRe&squot;s (AM+sender) (NOT YET)&n; *   MUST NOT use contents of AMRe to determine correct AM (OK)&n; *   MAY broadcast AMRe&squot;s after having configured address masks (OK -- doesn&squot;t)&n; *   MUST NOT do broadcast AMRe&squot;s if not set by extra option (OK, no option)&n; *   MUST use the { &lt;NetPrefix&gt;, -1 } form of broadcast addresses (OK)&n; * 4.3.3.10 (Router Advertisement and Solicitations)&n; *   MUST support router part of Router Discovery Protocol on all networks we&n; *     support broadcast or multicast addressing. (OK -- done by gated)&n; *   MUST have all config parameters with the respective defaults (OK)&n; * 5.2.7.1 (Destination Unreachable)&n; *   MUST generate DU&squot;s (OK)&n; *   SHOULD choose a best-match response code (OK)&n; *   SHOULD NOT generate Host Isolated codes (OK)&n; *   SHOULD use Communication Administratively Prohibited when administratively&n; *     filtering packets (NOT YET -- bug-to-bug compatibility)&n; *   MAY include config option for not generating the above and silently&n; *&t;discard the packets instead (OK)&n; *   MAY include config option for not generating Precedence Violation and&n; *     Precedence Cutoff messages (OK as we don&squot;t generate them at all)&n; *   MUST use Host Unreachable or Dest. Host Unknown codes whenever other hosts&n; *     on the same network might be reachable (OK -- no net unreach&squot;s at all)&n; *   MUST use new form of Fragmentation Needed and DF Set messages (OK)&n; * 5.2.7.2 (Redirect)&n; *   MUST NOT generate network redirects (OK)&n; *   MUST be able to generate host redirects (OK)&n; *   SHOULD be able to generate Host+TOS redirects (NO as we don&squot;t use TOS)&n; *   MUST have an option to use Host redirects instead of Host+TOS ones (OK as&n; *     no Host+TOS Redirects are used)&n; *   MUST NOT generate redirects unless forwarding to the same i-face and the&n; *     dest. address is on the same subnet as the src. address and no source&n; *     routing is in use. (OK)&n; *   MUST NOT follow redirects when using a routing protocol (OK)&n; *   MAY use redirects if not using a routing protocol (OK, compile-time option)&n; *   MUST comply to Host Requirements when not acting as a router (OK)&n; *  5.2.7.3 (Time Exceeded)&n; *   MUST generate Time Exceeded Code 0 when discarding packet due to TTL=0 (OK)&n; *   MAY have a per-interface option to disable origination of TE messages, but&n; *     it MUST default to &quot;originate&quot; (OK -- we don&squot;t support it)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -1557,28 +1557,21 @@ id|sock
 op_star
 id|raw_sk
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;Incomplete header ?&n;&t; */
+multiline_comment|/*&n;&t; *&t;Incomplete header ?&n;&t; * &t;Only checks for the IP header, there should be an&n;&t; *&t;additional check for longer headers in upper levels.&n;&t; */
 r_if
 c_cond
 (paren
-id|skb-&gt;len
+id|len
 OL
 r_sizeof
 (paren
 r_struct
 id|iphdr
 )paren
-op_plus
-l_int|8
 )paren
 (brace
-id|kfree_skb
-c_func
-(paren
-id|skb
-comma
-id|FREE_READ
-)paren
+id|icmp_statistics.IcmpInErrors
+op_increment
 suffix:semicolon
 r_return
 suffix:semicolon
@@ -1649,6 +1642,15 @@ c_cond
 (paren
 id|ipv4_config.no_pmtu_disc
 )paren
+(brace
+r_if
+c_cond
+(paren
+id|net_ratelimit
+c_func
+(paren
+)paren
+)paren
 id|printk
 c_func
 (paren
@@ -1662,6 +1664,7 @@ id|iph-&gt;daddr
 )paren
 )paren
 suffix:semicolon
+)brace
 r_else
 (brace
 r_int
@@ -1688,18 +1691,8 @@ c_cond
 op_logical_neg
 id|new_mtu
 )paren
-(brace
-id|kfree_skb
-c_func
-(paren
-id|skb
-comma
-id|FREE_READ
-)paren
-suffix:semicolon
 r_return
 suffix:semicolon
-)brace
 id|icmph-&gt;un.frag.mtu
 op_assign
 id|htons
@@ -1714,6 +1707,14 @@ suffix:semicolon
 r_case
 id|ICMP_SR_FAILED
 suffix:colon
+r_if
+c_cond
+(paren
+id|net_ratelimit
+c_func
+(paren
+)paren
+)paren
 id|printk
 c_func
 (paren
@@ -1741,18 +1742,8 @@ id|icmph-&gt;code
 OG
 id|NR_ICMP_UNREACH
 )paren
-(brace
-id|kfree_skb
-c_func
-(paren
-id|skb
-comma
-id|FREE_READ
-)paren
-suffix:semicolon
 r_return
 suffix:semicolon
-)brace
 )brace
 multiline_comment|/*&n;&t; *&t;Throw it at our lower layers&n;&t; *&n;&t; *&t;RFC 1122: 3.2.2 MUST extract the protocol ID from the passed header.&n;&t; *&t;RFC 1122: 3.2.2.1 MUST pass ICMP unreach messages to the transport layer.&n;&t; *&t;RFC 1122: 3.2.2.2 MUST pass ICMP time expired messages to transport layer.&n;&t; */
 multiline_comment|/*&n;&t; *&t;Check the other end isnt violating RFC 1122. Some routers send&n;&t; *&t;bogus responses to broadcast frames. If you see this message&n;&t; *&t;first check your netmask matches at both ends, if it does then&n;&t; *&t;get the other vendor to fix their kit.&n;&t; */
@@ -1768,6 +1759,14 @@ op_eq
 id|IS_BROADCAST
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|net_ratelimit
+c_func
+(paren
+)paren
+)paren
 id|printk
 c_func
 (paren
@@ -1780,13 +1779,7 @@ id|skb-&gt;nh.iph-&gt;saddr
 )paren
 )paren
 suffix:semicolon
-id|kfree_skb
-c_func
-(paren
-id|skb
-comma
-id|FREE_READ
-)paren
+r_return
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; *&t;Deliver ICMP message to raw sockets. Pretty useless feature?&n;&t; */
@@ -1922,14 +1915,6 @@ op_assign
 id|nextip
 suffix:semicolon
 )brace
-id|kfree_skb
-c_func
-(paren
-id|skb
-comma
-id|FREE_READ
-)paren
-suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;Handle ICMP_REDIRECT. &n; */
 DECL|function|icmp_redirect
@@ -1961,6 +1946,24 @@ r_int
 r_int
 id|ip
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|len
+OL
+r_sizeof
+(paren
+r_struct
+id|iphdr
+)paren
+)paren
+(brace
+id|icmp_statistics.IcmpInErrors
+op_increment
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
 multiline_comment|/*&n;&t; *&t;Get the copied header of the packet that caused the redirect&n;&t; */
 id|iph
 op_assign
@@ -2023,15 +2026,6 @@ suffix:colon
 r_break
 suffix:semicolon
 )brace
-multiline_comment|/*&n;  &t; *&t;Discard the original packet&n;  &t; */
-id|kfree_skb
-c_func
-(paren
-id|skb
-comma
-id|FREE_READ
-)paren
-suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;Handle ICMP_ECHO (&quot;ping&quot;) requests. &n; *&n; *&t;RFC 1122: 3.2.2.6 MUST have an echo server that answers ICMP echo requests.&n; *&t;RFC 1122: 3.2.2.6 Data received in the ICMP_ECHO request MUST be included in the reply.&n; *&t;RFC 1812: 4.3.3.6 SHOULD have a config option for silently ignoring echo requests, MUST have default=NOT.&n; *&t;See also WRT handling of options once they are done and working.&n; */
 DECL|function|icmp_echo
@@ -2090,14 +2084,6 @@ id|skb
 )paren
 suffix:semicolon
 macro_line|#endif
-id|kfree_skb
-c_func
-(paren
-id|skb
-comma
-id|FREE_READ
-)paren
-suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;Handle ICMP Timestamp requests. &n; *&t;RFC 1122: 3.2.2.8 MAY implement ICMP timestamp requests.&n; *&t;&t;  SHOULD be in the kernel for minimum random latency.&n; *&t;&t;  MUST be accurate to a few minutes.&n; *&t;&t;  MUST be updated at least at 15Hz.&n; */
 DECL|function|icmp_timestamp
@@ -2146,14 +2132,6 @@ l_int|12
 (brace
 id|icmp_statistics.IcmpInErrors
 op_increment
-suffix:semicolon
-id|kfree_skb
-c_func
-(paren
-id|skb
-comma
-id|FREE_READ
-)paren
 suffix:semicolon
 r_return
 suffix:semicolon
@@ -2249,14 +2227,6 @@ comma
 id|skb
 )paren
 suffix:semicolon
-id|kfree_skb
-c_func
-(paren
-id|skb
-comma
-id|FREE_READ
-)paren
-suffix:semicolon
 )brace
 multiline_comment|/* &n; *&t;Handle ICMP_ADDRESS_MASK requests.  (RFC950)&n; *&n; * RFC1122 (3.2.2.9).  A host MUST only send replies to &n; * ADDRESS_MASK requests if it&squot;s been configured as an address mask &n; * agent.  Receiving a request doesn&squot;t constitute implicit permission to &n; * act as one. Of course, implementing this correctly requires (SHOULD) &n; * a way to turn the functionality on and off.  Another one for sysctl(), &n; * I guess. -- MS&n; *&n; * RFC1812 (4.3.3.9).&t;A router MUST implement it.&n; *&t;&t;&t;A router SHOULD have switch turning it on/off.&n; *&t;&t;      &t;This switch MUST be ON by default.&n; *&n; * Gratuitous replies, zero-source replies are not implemented,&n; * that complies with RFC. DO NOT implement them!!! All the idea&n; * of broadcast addrmask replies as specified in RFC950 is broken.&n; * The problem is that it is not uncommon to have several prefixes&n; * on one physical interface. Moreover, addrmask agent can even be&n; * not aware of existing another prefixes.&n; * If source is zero, addrmask agent cannot choose correct prefix.&n; * Gratuitous mask announcements suffer from the same problem.&n; * RFC1812 explains it, but still allows to use ADDRMASK,&n; * that is pretty silly. --ANK&n; */
 DECL|function|icmp_address
@@ -2308,6 +2278,10 @@ c_cond
 op_logical_neg
 id|ipv4_config.addrmask_agent
 op_logical_or
+id|len
+OL
+l_int|4
+op_logical_or
 id|ZERONET
 c_func
 (paren
@@ -2346,13 +2320,8 @@ id|IFF_IP_MASK_OK
 )paren
 )paren
 (brace
-id|kfree_skb
-c_func
-(paren
-id|skb
-comma
-id|FREE_READ
-)paren
+id|icmp_statistics.IcmpInErrors
+op_increment
 suffix:semicolon
 r_return
 suffix:semicolon
@@ -2385,14 +2354,6 @@ op_amp
 id|icmp_param
 comma
 id|skb
-)paren
-suffix:semicolon
-id|kfree_skb
-c_func
-(paren
-id|skb
-comma
-id|FREE_READ
 )paren
 suffix:semicolon
 )brace
@@ -2477,13 +2438,8 @@ id|IFF_IP_MASK_OK
 )paren
 )paren
 (brace
-id|kfree_skb
-c_func
-(paren
-id|skb
-comma
-id|FREE_READ
-)paren
+id|icmp_statistics.IcmpInErrors
+op_increment
 suffix:semicolon
 r_return
 suffix:semicolon
@@ -2507,6 +2463,11 @@ c_cond
 id|mask
 op_ne
 id|dev-&gt;pa_mask
+op_logical_and
+id|net_ratelimit
+c_func
+(paren
+)paren
 )paren
 id|printk
 c_func
@@ -2527,14 +2488,6 @@ id|rt-&gt;rt_src
 )paren
 comma
 id|dev-&gt;name
-)paren
-suffix:semicolon
-id|kfree_skb
-c_func
-(paren
-id|skb
-comma
-id|FREE_READ
 )paren
 suffix:semicolon
 )brace
@@ -2558,13 +2511,7 @@ r_int
 id|len
 )paren
 (brace
-id|kfree_skb
-c_func
-(paren
-id|skb
-comma
-id|FREE_READ
-)paren
+r_return
 suffix:semicolon
 )brace
 macro_line|#ifdef CONFIG_IP_TRANSPARENT_PROXY
@@ -2916,99 +2863,18 @@ suffix:semicolon
 id|icmp_statistics.IcmpInMsgs
 op_increment
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|len
-OL
-r_sizeof
-(paren
-r_struct
-id|icmphdr
-)paren
-)paren
-(brace
-id|icmp_statistics.IcmpInErrors
-op_increment
-suffix:semicolon
-id|printk
-c_func
-(paren
-id|KERN_INFO
-l_string|&quot;ICMP: runt packet&bslash;n&quot;
-)paren
-suffix:semicolon
-id|kfree_skb
-c_func
-(paren
-id|skb
-comma
-id|FREE_READ
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
-multiline_comment|/*&n;&t; *&t;Validate the packet&n;  &t; */
-r_if
-c_cond
-(paren
-id|ip_compute_csum
-c_func
-(paren
-(paren
-r_int
-r_char
-op_star
-)paren
-id|icmph
-comma
-id|len
-)paren
-)paren
-(brace
-id|icmp_statistics.IcmpInErrors
-op_increment
-suffix:semicolon
-id|printk
-c_func
-(paren
-id|KERN_INFO
-l_string|&quot;ICMP: failed checksum from %s!&bslash;n&quot;
-comma
-id|in_ntoa
-c_func
-(paren
-id|skb-&gt;nh.iph-&gt;saddr
-)paren
-)paren
-suffix:semicolon
-id|kfree_skb
-c_func
-(paren
-id|skb
-comma
-id|FREE_READ
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-)brace
 multiline_comment|/*&n;&t; *&t;18 is the highest &squot;known&squot; ICMP type. Anything else is a mystery&n;&t; *&n;&t; *&t;RFC 1122: 3.2.2  Unknown ICMP messages types MUST be silently discarded.&n;&t; */
 r_if
 c_cond
 (paren
-id|icmph-&gt;type
-OG
+id|len
+template_param
 id|NR_ICMP_TYPES
 )paren
 (brace
 id|icmp_statistics.IcmpInErrors
 op_increment
 suffix:semicolon
-multiline_comment|/* Is this right - or do we ignore ? */
 id|kfree_skb
 c_func
 (paren
@@ -3104,6 +2970,14 @@ comma
 id|skb
 comma
 id|len
+)paren
+suffix:semicolon
+id|kfree_skb
+c_func
+(paren
+id|skb
+comma
+id|FREE_READ
 )paren
 suffix:semicolon
 r_return

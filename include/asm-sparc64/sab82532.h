@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sab82532.h,v 1.2 1997/08/12 04:13:15 ecd Exp $&n; * sab82532.h: Register Definitions for the Siemens SAB82532 DUSCC&n; *&n; * Copyright (C) 1997  Eddie C. Dost  (ecd@skynet.be)&n; */
+multiline_comment|/* $Id: sab82532.h,v 1.3 1997/09/03 11:55:04 ecd Exp $&n; * sab82532.h: Register Definitions for the Siemens SAB82532 DUSCC&n; *&n; * Copyright (C) 1997  Eddie C. Dost  (ecd@skynet.be)&n; */
 macro_line|#ifndef _SPARC64_SAB82532_H
 DECL|macro|_SPARC64_SAB82532_H
 mdefine_line|#define _SPARC64_SAB82532_H
@@ -501,11 +501,6 @@ r_int
 r_char
 id|isr1
 suffix:semicolon
-DECL|member|ddsr
-r_int
-r_char
-id|ddsr
-suffix:semicolon
 DECL|member|sreg
 )brace
 id|sreg
@@ -566,6 +561,10 @@ DECL|member|xmit_fifo_size
 r_int
 id|xmit_fifo_size
 suffix:semicolon
+DECL|member|recv_fifo_size
+r_int
+id|recv_fifo_size
+suffix:semicolon
 DECL|member|custom_divisor
 r_int
 id|custom_divisor
@@ -619,6 +618,21 @@ DECL|member|pvr_dsr_bit
 r_int
 r_char
 id|pvr_dsr_bit
+suffix:semicolon
+DECL|member|dcd
+r_int
+r_char
+id|dcd
+suffix:semicolon
+DECL|member|cts
+r_int
+r_char
+id|cts
+suffix:semicolon
+DECL|member|dsr
+r_int
+r_char
+id|dsr
 suffix:semicolon
 DECL|member|event
 r_int
@@ -981,10 +995,12 @@ mdefine_line|#define SAB82532_ISR1_XPR&t;&t;0x01
 multiline_comment|/* Interrupt Mask Register 0 (IMR0) */
 DECL|macro|SAB82532_IMR0_TCD
 mdefine_line|#define SAB82532_IMR0_TCD&t;&t;0x80
+DECL|macro|SAB82532_IMR0_TIME
+mdefine_line|#define SAB82532_IMR0_TIME&t;&t;0x40
 DECL|macro|SAB82532_IMR0_PERR
 mdefine_line|#define SAB82532_IMR0_PERR&t;&t;0x20
-DECL|macro|SAB82532_IMR0_SCD
-mdefine_line|#define SAB82532_IMR0_SCD&t;&t;0x10
+DECL|macro|SAB82532_IMR0_FERR
+mdefine_line|#define SAB82532_IMR0_FERR&t;&t;0x10
 DECL|macro|SAB82532_IMR0_PLLA
 mdefine_line|#define SAB82532_IMR0_PLLA&t;&t;0x08
 DECL|macro|SAB82532_IMR0_CDSC
@@ -993,23 +1009,23 @@ DECL|macro|SAB82532_IMR0_RFO
 mdefine_line|#define SAB82532_IMR0_RFO&t;&t;0x02
 DECL|macro|SAB82532_IMR0_RPF
 mdefine_line|#define SAB82532_IMR0_RPF&t;&t;0x01
-DECL|macro|SAB82532_IMR0_OR_ME_IN
-mdefine_line|#define SAB82532_IMR0_OR_ME_IN&t;&t;0x40
 multiline_comment|/* Interrupt Mask Register 1 (IMR1) */
+DECL|macro|SAB82532_IMR1_BRK
+mdefine_line|#define SAB82532_IMR1_BRK&t;&t;0x80
+DECL|macro|SAB82532_IMR1_BRKT
+mdefine_line|#define SAB82532_IMR1_BRKT&t;&t;0x40
 DECL|macro|SAB82532_IMR1_ALLS
 mdefine_line|#define SAB82532_IMR1_ALLS&t;&t;0x20
-DECL|macro|SAB82532_IMR1_XDU
-mdefine_line|#define SAB82532_IMR1_XDU&t;&t;0x10
+DECL|macro|SAB82532_IMR1_XOFF
+mdefine_line|#define SAB82532_IMR1_XOFF&t;&t;0x10
 DECL|macro|SAB82532_IMR1_TIN
 mdefine_line|#define SAB82532_IMR1_TIN&t;&t;0x08
 DECL|macro|SAB82532_IMR1_CSC
 mdefine_line|#define SAB82532_IMR1_CSC&t;&t;0x04
-DECL|macro|SAB82532_IMR1_XMR
-mdefine_line|#define SAB82532_IMR1_XMR&t;&t;0x02
+DECL|macro|SAB82532_IMR1_XON
+mdefine_line|#define SAB82532_IMR1_XON&t;&t;0x02
 DECL|macro|SAB82532_IMR1_XPR
 mdefine_line|#define SAB82532_IMR1_XPR&t;&t;0x01
-DECL|macro|SAB82532_IMR1_OR_ME_IN
-mdefine_line|#define SAB82532_IMR1_OR_ME_IN&t;&t;0xc0
 multiline_comment|/* Port Interrupt Status Register (PIS) */
 DECL|macro|SAB82532_PIS_SYNC_B
 mdefine_line|#define SAB82532_PIS_SYNC_B&t;&t;0x08

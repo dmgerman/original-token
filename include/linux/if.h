@@ -31,6 +31,10 @@ DECL|macro|IFF_SLAVE
 mdefine_line|#define IFF_SLAVE&t;0x800&t;&t;/* slave of a load balancer&t;*/
 DECL|macro|IFF_MULTICAST
 mdefine_line|#define IFF_MULTICAST&t;0x1000&t;&t;/* Supports multicast&t;&t;*/
+DECL|macro|IFF_PORTSEL
+mdefine_line|#define IFF_PORTSEL&t;0x2000          /* can set media type&t;&t;*/
+DECL|macro|IFF_AUTOMEDIA
+mdefine_line|#define IFF_AUTOMEDIA&t;0x4000&t;&t;/* auto media select active&t;*/
 multiline_comment|/*&n; * The ifaddr structure contains information about one address&n; * of an interface.  They are maintained by the different address&n; * families, are allocated and attached when an address is set,&n; * and are linked together so all addresses for an interface can&n; * be located.&n; */
 DECL|struct|ifaddr
 r_struct

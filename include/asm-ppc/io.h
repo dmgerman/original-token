@@ -30,22 +30,27 @@ DECL|macro|SLOW_DOWN_IO
 mdefine_line|#define SLOW_DOWN_IO
 DECL|macro|_IO_BASE
 mdefine_line|#define _IO_BASE io_base
+r_extern
+r_int
+r_int
+id|pci_dram_offset
+suffix:semicolon
 DECL|macro|PCI_DRAM_OFFSET
 macro_line|#undef PCI_DRAM_OFFSET
 DECL|macro|PCI_DRAM_OFFSET
-mdefine_line|#define PCI_DRAM_OFFSET  _IO_BASE
+mdefine_line|#define PCI_DRAM_OFFSET  pci_dram_offset
 DECL|macro|readb
 mdefine_line|#define readb(addr) (*(volatile unsigned char *) (addr))
 DECL|macro|readw
 mdefine_line|#define readw(addr) ld_le16((volatile unsigned short *)(addr))
 DECL|macro|readl
-mdefine_line|#define readl(addr) ld_le32(addr)
+mdefine_line|#define readl(addr) ld_le32((volatile unsigned *)addr)
 DECL|macro|writeb
 mdefine_line|#define writeb(b,addr) ((*(volatile unsigned char *) (addr)) = (b))
 DECL|macro|writew
 mdefine_line|#define writew(b,addr) st_le16((volatile unsigned short *)(addr),(b))
 DECL|macro|writel
-mdefine_line|#define writel(b,addr) st_le32((addr),(b))
+mdefine_line|#define writel(b,addr) st_le32((volatile unsigned *)(addr),(b))
 DECL|macro|insb
 mdefine_line|#define insb(port, buf, ns)&t;_insb((unsigned char *)((port)+_IO_BASE), (buf), (ns))
 DECL|macro|outsb
@@ -79,7 +84,7 @@ mdefine_line|#define inw_p(port)&t;&t;in_le16((unsigned short *)((port)+_IO_BASE
 DECL|macro|outw_p
 mdefine_line|#define outw_p(val, port)&t;out_le16((unsigned short *)((port)+_IO_BASE), (val))
 DECL|macro|inl_p
-mdefine_line|#define inl_p(port)&t;&t;in_le32(((unsigned *)port))
+mdefine_line|#define inl_p(port)&t;&t;in_le32(((unsigned *)(port)+_IO_BASE))
 DECL|macro|outl_p
 mdefine_line|#define outl_p(val, port)&t;out_le32((unsigned *)((port)+_IO_BASE), (val))
 r_extern
@@ -292,6 +297,17 @@ comma
 r_int
 r_int
 id|size
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|iounmap
+c_func
+(paren
+r_int
+r_int
+op_star
+id|addr
 )paren
 suffix:semicolon
 multiline_comment|/*&n; * Change virtual addresses to physical addresses and vv, for&n; * addresses in the area where the kernel has the RAM mapped.&n; */

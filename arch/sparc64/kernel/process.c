@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: process.c,v 1.29 1997/07/17 02:20:40 davem Exp $&n; *  arch/sparc64/kernel/process.c&n; *&n; *  Copyright (C) 1995, 1996 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1996 Eddie C. Dost   (ecd@skynet.be)&n; *  Copyright (C) 1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/*  $Id: process.c,v 1.42 1997/08/19 14:17:55 jj Exp $&n; *  arch/sparc64/kernel/process.c&n; *&n; *  Copyright (C) 1995, 1996 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1996 Eddie C. Dost   (ecd@skynet.be)&n; *  Copyright (C) 1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 multiline_comment|/*&n; * This file handles the architecture-dependent parts of process handling..&n; */
 DECL|macro|__KERNEL_SYSCALLS__
 mdefine_line|#define __KERNEL_SYSCALLS__
@@ -1999,10 +1999,16 @@ id|current-&gt;tss.new_signal
 op_assign
 l_int|0
 suffix:semicolon
-id|current-&gt;flags
+id|current-&gt;tss.flags
 op_and_assign
 op_complement
-id|PF_USEDFPU
+(paren
+id|SPARC_FLAG_USEDFPU
+op_or
+id|SPARC_FLAG_USEDFPUL
+op_or
+id|SPARC_FLAG_USEDFPUU
+)paren
 suffix:semicolon
 multiline_comment|/* Now, this task is no longer a kernel thread. */
 id|current-&gt;tss.current_ds
@@ -3422,6 +3428,11 @@ suffix:semicolon
 id|regs-&gt;fprs
 op_assign
 l_int|0
+suffix:semicolon
+id|regs-&gt;tstate
+op_and_assign
+op_complement
+id|TSTATE_PEF
 suffix:semicolon
 )brace
 id|out

@@ -7,6 +7,8 @@ DECL|macro|mb
 mdefine_line|#define mb()  __asm__ __volatile__ (&quot;sync&quot; : : : &quot;memory&quot;)
 DECL|macro|__save_flags
 mdefine_line|#define __save_flags(flags)&t;({&bslash;&n;&t;__asm__ __volatile__ (&quot;mfmsr %0&quot; : &quot;=r&quot; ((flags)) : : &quot;memory&quot;); })
+DECL|macro|__save_and_cli
+mdefine_line|#define __save_and_cli(flags)&t;({__save_flags(flags);__cli();})
 DECL|function|__restore_flags
 r_extern
 id|__inline__
@@ -384,30 +386,52 @@ DECL|macro|save_flags
 mdefine_line|#define save_flags(flags)&t;__save_flags(flags)
 DECL|macro|restore_flags
 mdefine_line|#define restore_flags(flags)&t;__restore_flags(flags)
-macro_line|#else
-macro_line|#error need global cli/sti etc. defined for SMP
-macro_line|#endif
-DECL|macro|xchg
-mdefine_line|#define xchg(ptr,x) ((__typeof__(*(ptr)))__xchg((unsigned long)(x),(ptr),sizeof(*(ptr))))
-multiline_comment|/* this guy lives in arch/ppc/kernel */
+macro_line|#else /* __SMP__ */
 r_extern
-r_inline
-r_int
-r_int
-op_star
-id|xchg_u32
+r_void
+id|__global_cli
 c_func
 (paren
 r_void
-op_star
-id|m
-comma
-r_int
-r_int
-id|val
 )paren
 suffix:semicolon
-multiline_comment|/*&n; *  these guys don&squot;t exist.&n; *  someone should create them.&n; *              -- Cort&n; */
+r_extern
+r_void
+id|__global_sti
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_int
+r_int
+id|__global_save_flags
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|__global_restore_flags
+c_func
+(paren
+r_int
+r_int
+)paren
+suffix:semicolon
+DECL|macro|cli
+mdefine_line|#define cli() __global_cli()
+DECL|macro|sti
+mdefine_line|#define sti() __global_sti()
+DECL|macro|save_flags
+mdefine_line|#define save_flags(x) ((x)=__global_save_flags())
+DECL|macro|restore_flags
+mdefine_line|#define restore_flags(x) __global_restore_flags(x)
+macro_line|#endif /* !__SMP__ */
+DECL|macro|xchg
+mdefine_line|#define xchg(ptr,x) ((__typeof__(*(ptr)))__xchg((unsigned long)(x),(ptr),sizeof(*(ptr))))
 r_extern
 r_void
 op_star
@@ -424,15 +448,17 @@ id|val
 )paren
 suffix:semicolon
 r_extern
-r_int
-id|xchg_u8
+r_void
+op_star
+id|xchg_u32
 c_func
 (paren
-r_char
+r_void
 op_star
 id|m
 comma
-r_char
+r_int
+r_int
 id|val
 )paren
 suffix:semicolon
@@ -445,6 +471,10 @@ c_func
 r_void
 )paren
 suffix:semicolon
+DECL|macro|xchg
+mdefine_line|#define xchg(ptr,x) ((__typeof__(*(ptr)))__xchg((unsigned long)(x),(ptr),sizeof(*(ptr))))
+DECL|macro|tas
+mdefine_line|#define tas(ptr) (xchg((ptr),1))
 DECL|function|__xchg
 r_static
 r_inline
@@ -511,28 +541,6 @@ c_func
 suffix:semicolon
 r_return
 id|x
-suffix:semicolon
-)brace
-DECL|function|tas
-r_extern
-r_inline
-r_int
-id|tas
-c_func
-(paren
-r_char
-op_star
-id|m
-)paren
-(brace
-r_return
-id|xchg_u8
-c_func
-(paren
-id|m
-comma
-l_int|1
-)paren
 suffix:semicolon
 )brace
 DECL|function|xchg_ptr

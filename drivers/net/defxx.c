@@ -6279,7 +6279,7 @@ l_int|127
 )paren
 op_amp
 op_complement
-l_int|128
+l_int|127
 )paren
 suffix:semicolon
 id|bp-&gt;descr_block_virt-&gt;rcv_data
@@ -6678,7 +6678,7 @@ l_int|127
 )paren
 op_amp
 op_complement
-l_int|128
+l_int|127
 )paren
 suffix:semicolon
 id|skb

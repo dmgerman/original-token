@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: setup.c,v 1.11 1997/07/24 12:15:05 davem Exp $&n; *  linux/arch/sparc64/kernel/setup.c&n; *&n; *  Copyright (C) 1995,1996  David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1997       Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/*  $Id: setup.c,v 1.12 1997/08/28 02:23:19 ecd Exp $&n; *  linux/arch/sparc64/kernel/setup.c&n; *&n; *  Copyright (C) 1995,1996  David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1997       Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -826,23 +826,6 @@ mdefine_line|#define RAMDISK_LOAD_FLAG&t;&t;0x4000
 r_extern
 r_int
 id|root_mountflags
-suffix:semicolon
-r_extern
-r_void
-id|register_console
-c_func
-(paren
-r_void
-(paren
-op_star
-id|proc
-)paren
-(paren
-r_const
-r_char
-op_star
-)paren
-)paren
 suffix:semicolon
 DECL|variable|saved_command_line
 r_char

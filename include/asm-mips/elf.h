@@ -57,5 +57,8 @@ mdefine_line|#define ELF_CORE_COPY_REGS(_dest,_regs)&t;&t;&t;&t;&bslash;&n;&t;me
 multiline_comment|/* See comments in asm-alpha/elf.h, this is the same thing&n; * on the MIPS.&n; */
 DECL|macro|ELF_PLAT_INIT
 mdefine_line|#define ELF_PLAT_INIT(_r)&t;_r-&gt;regs[2] = 0;
+multiline_comment|/* This is the location that an ET_DYN program is loaded if exec&squot;ed.  Typical&n;   use of this is to invoke &quot;./ld.so someprog&quot; to test out a new version of&n;   the loader.  We need to make sure that it is out of the way of the program&n;   that it will &quot;exec&quot;, and that there is sufficient room for the brk.  */
+DECL|macro|ELF_ET_DYN_BASE
+mdefine_line|#define ELF_ET_DYN_BASE         (2 * TASK_SIZE / 3)
 macro_line|#endif /* __ASM_MIPS_ELF_H */
 eof

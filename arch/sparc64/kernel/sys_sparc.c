@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sys_sparc.c,v 1.3 1997/07/29 09:35:10 davem Exp $&n; * linux/arch/sparc64/kernel/sys_sparc.c&n; *&n; * This file contains various random system calls that&n; * have a non-standard calling sequence on the Linux/sparc&n; * platform.&n; */
+multiline_comment|/* $Id: sys_sparc.c,v 1.5 1997/09/03 12:29:05 jj Exp $&n; * linux/arch/sparc64/kernel/sys_sparc.c&n; *&n; * This file contains various random system calls that&n; * have a non-standard calling sequence on the Linux/sparc&n; * platform.&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -821,11 +821,27 @@ op_star
 id|regs
 )paren
 (brace
+r_static
+r_int
+id|count
+op_assign
+l_int|0
+suffix:semicolon
 id|lock_kernel
 c_func
 (paren
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_increment
+id|count
+op_le
+l_int|20
+)paren
+(brace
+multiline_comment|/* Don&squot;t make the system unusable, if someone goes stuck */
 id|printk
 (paren
 l_string|&quot;Unimplemented SPARC system call %ld&bslash;n&quot;
@@ -841,6 +857,7 @@ id|show_regs
 id|regs
 )paren
 suffix:semicolon
+)brace
 id|unlock_kernel
 c_func
 (paren
@@ -1133,6 +1150,60 @@ r_void
 r_return
 op_minus
 id|ENOSYS
+suffix:semicolon
+)brace
+DECL|function|solaris_syscall
+id|asmlinkage
+r_int
+id|solaris_syscall
+c_func
+(paren
+r_struct
+id|pt_regs
+op_star
+id|regs
+)paren
+(brace
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+id|regs-&gt;tpc
+op_assign
+id|regs-&gt;tnpc
+suffix:semicolon
+id|regs-&gt;tnpc
+op_add_assign
+l_int|4
+suffix:semicolon
+id|printk
+(paren
+l_string|&quot;For Solaris binary emulation you need solaris module loaded&bslash;n&quot;
+)paren
+suffix:semicolon
+id|show_regs
+(paren
+id|regs
+)paren
+suffix:semicolon
+id|send_sig
+c_func
+(paren
+id|SIGSEGV
+comma
+id|current
+comma
+l_int|1
+)paren
+suffix:semicolon
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
+r_return
+l_int|0
 suffix:semicolon
 )brace
 eof

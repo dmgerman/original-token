@@ -23,6 +23,7 @@ macro_line|#include &lt;asm/processor.h&gt;
 macro_line|#include &lt;asm/residual.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
+macro_line|#include &lt;asm/ide.h&gt;
 multiline_comment|/* for the mac fs */
 DECL|variable|boot_dev
 id|kdev_t
@@ -89,90 +90,65 @@ id|saved_command_line
 l_int|256
 )braket
 suffix:semicolon
-DECL|variable|screen_info
-r_struct
-id|screen_info
-id|screen_info
+DECL|function|prep_ide_init_hwif_ports
+r_void
+id|prep_ide_init_hwif_ports
+(paren
+id|ide_ioreg_t
+op_star
+id|p
+comma
+id|ide_ioreg_t
+id|base
+comma
+r_int
+op_star
+id|irq
+)paren
+(brace
+id|ide_ioreg_t
+id|port
 op_assign
-(brace
-l_int|0
-comma
-l_int|25
-comma
-multiline_comment|/* orig-x, orig-y */
-(brace
-l_int|0
-comma
-l_int|0
-)brace
-comma
-multiline_comment|/* unused */
-l_int|0
-comma
-multiline_comment|/* orig-video-page */
-l_int|0
-comma
-multiline_comment|/* orig-video-mode */
-l_int|80
-comma
-multiline_comment|/* orig-video-cols */
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-multiline_comment|/* ega_ax, ega_bx, ega_cx */
-l_int|25
-comma
-multiline_comment|/* orig-video-lines */
-l_int|1
-comma
-multiline_comment|/* orig-video-isVGA */
-l_int|16
-multiline_comment|/* orig-video-points */
-)brace
+id|base
 suffix:semicolon
-multiline_comment|/*&n; * these are here to get by until the pmac/prep merge is done&n; */
-DECL|function|pmac_display_supported
 r_int
-id|pmac_display_supported
-c_func
+id|i
+op_assign
+l_int|8
+suffix:semicolon
+r_while
+c_loop
 (paren
-r_char
+id|i
+op_decrement
+)paren
 op_star
-id|name
-)paren
-(brace
-r_return
-l_int|0
+id|p
+op_increment
+op_assign
+id|port
+op_increment
 suffix:semicolon
-)brace
-DECL|function|sd_find_target
-r_int
-id|sd_find_target
-c_func
-(paren
-r_void
 op_star
-id|a
-comma
-r_int
-id|b
+id|p
+op_increment
+op_assign
+id|base
+op_plus
+l_int|0x206
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|irq
+op_ne
+l_int|NULL
 )paren
-(brace
-r_return
+op_star
+id|irq
+op_assign
 l_int|0
 suffix:semicolon
-)brace
-DECL|function|pmac_find_display
-r_void
-id|pmac_find_display
-c_func
-(paren
-r_void
-)paren
-(brace
 )brace
 r_int
 DECL|function|prep_get_cpuinfo
@@ -859,6 +835,10 @@ r_extern
 r_int
 id|panic_timeout
 suffix:semicolon
+r_int
+r_char
+id|reg
+suffix:semicolon
 multiline_comment|/* Save unparsed command line copy for /proc/cmdline */
 id|strcpy
 c_func
@@ -945,6 +925,50 @@ id|aux_device_present
 op_assign
 l_int|0xaa
 suffix:semicolon
+multiline_comment|/* Set up floppy in PS/2 mode */
+id|outb
+c_func
+(paren
+l_int|0x09
+comma
+id|SIO_CONFIG_RA
+)paren
+suffix:semicolon
+id|reg
+op_assign
+id|inb
+c_func
+(paren
+id|SIO_CONFIG_RD
+)paren
+suffix:semicolon
+id|reg
+op_assign
+(paren
+id|reg
+op_amp
+l_int|0x3F
+)paren
+op_or
+l_int|0x40
+suffix:semicolon
+id|outb
+c_func
+(paren
+id|reg
+comma
+id|SIO_CONFIG_RD
+)paren
+suffix:semicolon
+id|outb
+c_func
+(paren
+id|reg
+comma
+id|SIO_CONFIG_RD
+)paren
+suffix:semicolon
+multiline_comment|/* Have to write twice to change! */
 r_switch
 c_cond
 (paren
@@ -1045,6 +1069,11 @@ c_func
 l_string|&quot;Boot arguments: %s&bslash;n&quot;
 comma
 id|cmd_line
+)paren
+suffix:semicolon
+id|print_residual_device_info
+c_func
+(paren
 )paren
 suffix:semicolon
 id|request_region

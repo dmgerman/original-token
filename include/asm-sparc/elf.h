@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: elf.h,v 1.5 1996/08/08 00:06:13 ecd Exp $ */
+multiline_comment|/* $Id: elf.h,v 1.7 1997/08/29 17:04:34 richard Exp $ */
 macro_line|#ifndef __ASMSPARC_ELF_H
 DECL|macro|__ASMSPARC_ELF_H
 mdefine_line|#define __ASMSPARC_ELF_H
@@ -40,5 +40,8 @@ DECL|macro|USE_ELF_CORE_DUMP
 mdefine_line|#define USE_ELF_CORE_DUMP
 DECL|macro|ELF_EXEC_PAGESIZE
 mdefine_line|#define ELF_EXEC_PAGESIZE&t;4096
+multiline_comment|/* This is the location that an ET_DYN program is loaded if exec&squot;ed.  Typical&n;   use of this is to invoke &quot;./ld.so someprog&quot; to test out a new version of&n;   the loader.  We need to make sure that it is out of the way of the program&n;   that it will &quot;exec&quot;, and that there is sufficient room for the brk.  */
+DECL|macro|ELF_ET_DYN_BASE
+mdefine_line|#define ELF_ET_DYN_BASE         (TASK_UNMAPPED_BASE + 0x1000000)
 macro_line|#endif /* !(__ASMSPARC_ELF_H) */
 eof

@@ -35,5 +35,10 @@ multiline_comment|/* PReP systems are like PCs */
 DECL|macro|ISA_DMA_THRESHOLD
 mdefine_line|#define ISA_DMA_THRESHOLD (0x00ffffff)
 macro_line|#endif
+macro_line|#ifdef CONFIG_CHRP
+multiline_comment|/* The W83C553F supports 32-bit DMA on ISA */
+DECL|macro|ISA_DMA_THRESHOLD
+mdefine_line|#define ISA_DMA_THRESHOLD (~0UL)
+macro_line|#endif
 macro_line|#endif /* !(_PPC_SCATTERLIST_H) */
 eof

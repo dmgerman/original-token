@@ -1,13 +1,13 @@
-multiline_comment|/* $Id: leo.c,v 1.21 1997/07/17 02:21:48 davem Exp $&n; * leo.c: SUNW,leo 24/8bit frame buffer driver&n; *&n; * Copyright (C) 1996,1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; * Copyright (C) 1997 Michal Rehacek (Michal.Rehacek@st.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: leo.c,v 1.25 1997/08/22 17:33:58 jj Exp $&n; * leo.c: SUNW,leo 24/8bit frame buffer driver&n; *&n; * Copyright (C) 1996,1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; * Copyright (C) 1997 Michal Rehacek (Michal.Rehacek@st.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/kd.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/proc_fs.h&gt;
+macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;asm/sbus.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/fbio.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
-macro_line|#include &lt;asm/delay.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 multiline_comment|/* These must be included after asm/fbio.h */
 macro_line|#include &lt;linux/vt_kern.h&gt;
@@ -392,6 +392,18 @@ r_int
 comma
 r_int
 op_star
+)paren
+suffix:semicolon
+r_static
+r_void
+id|leo_penguin
+c_func
+(paren
+r_int
+comma
+r_int
+comma
+r_int
 )paren
 suffix:semicolon
 r_static
@@ -2843,9 +2855,15 @@ id|fb
 r_if
 c_cond
 (paren
-id|fb-&gt;setcursor
+id|fb
+op_eq
+op_amp
+id|fbinfo
+(braket
+l_int|0
+)braket
 )paren
-id|sun_hw_hide_cursor
+id|sbus_hw_hide_cursor
 (paren
 )paren
 suffix:semicolon
@@ -3086,6 +3104,10 @@ suffix:semicolon
 id|fb-&gt;fill
 op_assign
 id|leo_fill
+suffix:semicolon
+id|fb-&gt;draw_penguin
+op_assign
+id|leo_penguin
 suffix:semicolon
 id|fb-&gt;base_depth
 op_assign
@@ -4204,5 +4226,33 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
+)brace
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
+r_void
+id|leo_penguin
+c_func
+(paren
+r_int
+id|x_margin
+comma
+r_int
+id|y_margin
+comma
+r_int
+id|ncpus
+)paren
+)paren
+(brace
+id|suncons_ops
+dot
+id|clear_screen
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/* FIXME: Write this */
 )brace
 eof

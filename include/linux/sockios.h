@@ -67,6 +67,12 @@ DECL|macro|SIOCDELMULTI
 mdefine_line|#define SIOCDELMULTI&t;0x8932
 DECL|macro|SIOGIFINDEX
 mdefine_line|#define SIOGIFINDEX&t;0x8933&t;&t;/* name -&gt; if_index mapping&t;*/
+DECL|macro|SIOGIFNAME
+mdefine_line|#define SIOGIFNAME&t;0x8934&t;&t;/* if_index -&gt; name mapping&t;*/
+DECL|macro|SIOCGIFCOUNT
+mdefine_line|#define SIOCGIFCOUNT&t;0x8935&t;&t;/* get number of interfaces&t;*/
+DECL|macro|SIOCDIFADDR
+mdefine_line|#define SIOCDIFADDR&t;0x8936&t;&t;/* delete PA address&t;&t;*/
 DECL|macro|SIOCGIFBR
 mdefine_line|#define SIOCGIFBR&t;0x8940&t;&t;/* Bridging support&t;&t;*/
 DECL|macro|SIOCSIFBR

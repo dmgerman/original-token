@@ -674,6 +674,20 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+multiline_comment|/* &n; * 2 options for multicast:&n; *    1) fake it for aliases.&n; *    2) allow aliases and actual device to set it.&n; * current choice: option 1&n; */
+DECL|function|net_alias_setmulticast
+r_static
+r_void
+id|net_alias_setmulticast
+c_func
+(paren
+r_struct
+id|device
+op_star
+id|dev
+)paren
+(brace
+)brace
 multiline_comment|/*&n; *&t;Hard_start_xmit() should not be called.&n; *&t;ignore ... but shout!.&n; */
 DECL|function|net_alias_hard_start_xmit
 r_static
@@ -844,6 +858,15 @@ suffix:semicolon
 id|dev-&gt;stop
 op_assign
 id|net_alias_close
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|main_dev-&gt;set_multicast_list
+)paren
+id|dev-&gt;set_multicast_list
+op_assign
+id|net_alias_setmulticast
 suffix:semicolon
 id|dev-&gt;hard_header_len
 op_assign

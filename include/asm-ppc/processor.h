@@ -2,6 +2,7 @@ macro_line|#ifndef __ASM_PPC_PROCESSOR_H
 DECL|macro|__ASM_PPC_PROCESSOR_H
 mdefine_line|#define __ASM_PPC_PROCESSOR_H
 macro_line|#include &lt;asm/ptrace.h&gt;
+macro_line|#include &lt;asm/residual.h&gt;
 multiline_comment|/* Bit encodings for Machine State Register (MSR) */
 DECL|macro|MSR_POW
 mdefine_line|#define MSR_POW&t;&t;(1&lt;&lt;18)&t;&t;/* Enable Power Management */
@@ -85,8 +86,55 @@ DECL|macro|FPSCR_FX
 mdefine_line|#define FPSCR_FX        (1&lt;&lt;31)
 DECL|macro|FPSCR_FEX
 mdefine_line|#define FPSCR_FEX       (1&lt;&lt;30)
+DECL|macro|_MACH_Motorola
+mdefine_line|#define _MACH_Motorola 1 /* motorola prep */
+DECL|macro|_MACH_IBM
+mdefine_line|#define _MACH_IBM      2 /* ibm prep */
+DECL|macro|_MACH_Pmac
+mdefine_line|#define _MACH_Pmac     4 /* pmac or pmac clone (non-chrp) */
+DECL|macro|_MACH_chrp
+mdefine_line|#define _MACH_chrp     8 /* chrp machine */
 macro_line|#ifndef __ASSEMBLY__
-multiline_comment|/*&n; * PowerPC machine specifics&n; */
+r_extern
+r_int
+id|_machine
+suffix:semicolon
+multiline_comment|/* if we&squot;re a prep machine */
+DECL|macro|is_prep
+mdefine_line|#define is_prep (_machine &amp; (_MACH_Motorola|_MACH_IBM))
+multiline_comment|/*&n; * if we have openfirmware - pmac/chrp have it implicitly&n; * but we have to check residual data to know on prep&n; */
+DECL|function|have_of
+r_extern
+id|__inline__
+r_int
+id|have_of
+c_func
+(paren
+r_void
+)paren
+(brace
+r_if
+c_cond
+(paren
+(paren
+id|_machine
+op_amp
+(paren
+id|_MACH_Pmac
+op_or
+id|_MACH_chrp
+)paren
+)paren
+multiline_comment|/*||&n;&t;     ( is_prep &amp;&amp; (res.VitalProductData.FirmwareSupplier &amp; OpenFirmware))*/
+)paren
+r_return
+l_int|1
+suffix:semicolon
+r_else
+r_return
+l_int|0
+suffix:semicolon
+)brace
 r_struct
 id|task_struct
 suffix:semicolon
@@ -126,12 +174,7 @@ DECL|macro|MCA_bus
 mdefine_line|#define MCA_bus 0
 DECL|macro|MCA_bus__is_a_macro
 mdefine_line|#define MCA_bus__is_a_macro /* for versions in ksyms.c */
-multiline_comment|/*&n; * Write Protection works right in supervisor mode on the PowerPC&n; */
-DECL|macro|wp_works_ok
-mdefine_line|#define wp_works_ok 1
-DECL|macro|wp_works_ok__is_a_macro
-mdefine_line|#define wp_works_ok__is_a_macro /* for versions in ksyms.c */
-multiline_comment|/*&n; * User space process size: 2GB. This is hardcoded into a few places,&n; * so don&squot;t change it unless you know what you are doing.&n; */
+multiline_comment|/*&n; * this is the minimum allowable io space due to the location&n; * of the io areas on prep (first one at 0x80000000) but&n; * as soon as I get around to remapping the io areas with the BATs&n; * to match the mac we can raise this. -- Cort&n; */
 DECL|macro|TASK_SIZE
 mdefine_line|#define TASK_SIZE&t;(0x80000000UL)
 multiline_comment|/* This decides where the kernel will search for a free chunk of vm&n; * space during mmap&squot;s.&n; */
@@ -253,24 +296,10 @@ r_char
 op_star
 )paren
 suffix:semicolon
-r_extern
-r_int
-id|_machine
-suffix:semicolon
-macro_line|#endif /* ndef ASSEMBLY*/
-DECL|macro|_MACH_Motorola
-mdefine_line|#define _MACH_Motorola 1 /* motorola prep */
-DECL|macro|_MACH_IBM
-mdefine_line|#define _MACH_IBM      2 /* ibm prep */
-DECL|macro|_MACH_Pmac
-mdefine_line|#define _MACH_Pmac     4 /* pmac or pmac clone */
-DECL|macro|_MACH_chrp
-mdefine_line|#define _MACH_chrp     8 /* chrp machine */
-DECL|macro|is_prep
-mdefine_line|#define is_prep ((_machine == _MACH_Motorola)||(_machine == _MACH_IBM))
 DECL|macro|init_task
 mdefine_line|#define init_task&t;(init_task_union.task)
 DECL|macro|init_stack
 mdefine_line|#define init_stack&t;(init_task_union.stack)
+macro_line|#endif /* ndef ASSEMBLY*/
 macro_line|#endif /* __ASM_PPC_PROCESSOR_H */
 eof

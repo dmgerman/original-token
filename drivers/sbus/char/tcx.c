@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: tcx.c,v 1.17 1997/07/17 02:21:50 davem Exp $&n; * tcx.c: SUNW,tcx 24/8bit frame buffer driver&n; *&n; * Copyright (C) 1996 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; * Copyright (C) 1996 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; */
+multiline_comment|/* $Id: tcx.c,v 1.20 1997/08/22 15:55:14 jj Exp $&n; * tcx.c: SUNW,tcx 24/8bit frame buffer driver&n; *&n; * Copyright (C) 1996 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; * Copyright (C) 1996 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; */
 macro_line|#include &lt;linux/kd.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
@@ -1061,8 +1061,16 @@ r_if
 c_cond
 (paren
 id|fb-&gt;setcursor
+op_logical_and
+id|fb
+op_eq
+op_amp
+id|fbinfo
+(braket
+l_int|0
+)braket
 )paren
-id|sun_hw_hide_cursor
+id|sbus_hw_hide_cursor
 (paren
 )paren
 suffix:semicolon
@@ -1195,7 +1203,7 @@ id|tcx_switch_from_graph
 suffix:semicolon
 id|fb-&gt;postsetup
 op_assign
-id|sun_cg_postsetup
+id|cg_postsetup
 suffix:semicolon
 id|tcxinfo
 op_assign
@@ -1345,6 +1353,9 @@ id|fb-&gt;base
 (brace
 id|fb-&gt;base
 op_assign
+(paren
+id|uint
+)paren
 (paren
 r_int
 r_int

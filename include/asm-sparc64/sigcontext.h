@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sigcontext.h,v 1.8 1997/06/20 11:54:41 davem Exp $ */
+multiline_comment|/* $Id: sigcontext.h,v 1.9 1997/08/19 14:18:38 jj Exp $ */
 macro_line|#ifndef __SPARC64_SIGCONTEXT_H
 DECL|macro|__SPARC64_SIGCONTEXT_H
 mdefine_line|#define __SPARC64_SIGCONTEXT_H
@@ -74,7 +74,6 @@ id|sigc_oswins
 suffix:semicolon
 multiline_comment|/* outstanding windows */
 multiline_comment|/* stack ptrs for each regwin buf */
-multiline_comment|/* XXX 32-bit ptrs pinhead... */
 DECL|member|sigc_spbuf
 r_int
 id|sigc_spbuf
@@ -223,30 +222,10 @@ r_int
 r_int
 id|si_gsr
 suffix:semicolon
-DECL|member|si_fpqdepth
+DECL|member|si_fprs
 r_int
 r_int
-id|si_fpqdepth
-suffix:semicolon
-r_struct
-(brace
-DECL|member|insn_addr
-r_int
-r_int
-op_star
-id|insn_addr
-suffix:semicolon
-DECL|member|insn
-r_int
-r_int
-id|insn
-suffix:semicolon
-DECL|member|si_fpqueue
-)brace
-id|si_fpqueue
-(braket
-l_int|16
-)braket
+id|si_fprs
 suffix:semicolon
 DECL|typedef|__siginfo_fpu_t
 )brace

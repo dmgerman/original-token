@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: srmmu.c,v 1.150 1997/07/25 23:06:17 davem Exp $&n; * srmmu.c:  SRMMU specific routines for memory management.&n; *&n; * Copyright (C) 1995 David S. Miller  (davem@caip.rutgers.edu)&n; * Copyright (C) 1995 Peter A. Zaitcev (zaitcev@ithil.mcst.ru)&n; * Copyright (C) 1996 Eddie C. Dost    (ecd@skynet.be)&n; * Copyright (C) 1997 Jakub Jelinek    (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: srmmu.c,v 1.151 1997/08/28 11:10:54 jj Exp $&n; * srmmu.c:  SRMMU specific routines for memory management.&n; *&n; * Copyright (C) 1995 David S. Miller  (davem@caip.rutgers.edu)&n; * Copyright (C) 1995 Peter A. Zaitcev (zaitcev@ithil.mcst.ru)&n; * Copyright (C) 1996 Eddie C. Dost    (ecd@skynet.be)&n; * Copyright (C) 1997 Jakub Jelinek    (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -11913,6 +11913,20 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* for init.c:taint_real_pages()   */
+r_if
+c_cond
+(paren
+id|sparc_cpu_model
+op_eq
+id|sun4d
+)paren
+id|num_contexts
+op_assign
+l_int|65536
+suffix:semicolon
+multiline_comment|/* We now it is Viking */
+r_else
+(brace
 multiline_comment|/* Find the number of contexts on the srmmu. */
 id|cpunode
 op_assign
@@ -11984,6 +11998,7 @@ l_int|0x8
 suffix:semicolon
 r_break
 suffix:semicolon
+)brace
 )brace
 )brace
 r_if

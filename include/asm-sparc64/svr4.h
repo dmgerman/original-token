@@ -131,14 +131,14 @@ r_typedef
 r_struct
 (brace
 DECL|member|rwin_lo
-id|uint
+id|u32
 id|rwin_lo
 (braket
 l_int|8
 )braket
 suffix:semicolon
 DECL|member|rwin_in
-id|uint
+id|u32
 id|rwin_in
 (braket
 l_int|8
@@ -155,10 +155,8 @@ DECL|member|count
 r_int
 id|count
 suffix:semicolon
-multiline_comment|/* XXX 32-bit pointers on 64-bit kernel... fixme XXX */
 DECL|member|winptr
-r_int
-op_star
+id|u32
 id|winptr
 (braket
 id|SVR4_MAXWIN
@@ -189,19 +187,18 @@ r_typedef
 r_struct
 (brace
 DECL|member|fpu_regs
-r_float
+id|u64
 id|fpu_regs
 (braket
 l_int|32
 )braket
 suffix:semicolon
 DECL|member|fp_q
-r_void
-op_star
+id|u32
 id|fp_q
 suffix:semicolon
 DECL|member|fp_fsr
-r_int
+id|u32
 id|fp_fsr
 suffix:semicolon
 DECL|member|fp_nqel
@@ -225,13 +222,12 @@ r_typedef
 r_struct
 (brace
 DECL|member|id
-id|uint
+id|u32
 id|id
 suffix:semicolon
 multiline_comment|/* if this holds &quot;xrs&quot; string =&gt; ptr is valid */
-multiline_comment|/* XXX what is caddr_t on sparc64?? XXX */
 DECL|member|ptr
-id|caddr_t
+id|u32
 id|ptr
 suffix:semicolon
 DECL|typedef|svr4_xrs_t
@@ -247,10 +243,8 @@ id|svr4_gregset_t
 id|greg
 suffix:semicolon
 multiline_comment|/* registers 0..19 (see top) */
-multiline_comment|/* XXX 32-bit pointers again... fixme XXX */
 DECL|member|gwin
-id|svr4_gwindows_t
-op_star
+id|u32
 id|gwin
 suffix:semicolon
 multiline_comment|/* may point to register windows */
@@ -318,15 +312,12 @@ r_struct
 id|svr4_ucontext_t
 (brace
 DECL|member|flags
-id|u_int
+id|u32
 id|flags
 suffix:semicolon
 multiline_comment|/* context flags, indicate what is loaded */
-multiline_comment|/* XXX 32-bit pointer... fixme XXX */
 DECL|member|link
-r_struct
-id|svr4_ucontext
-op_star
+id|u32
 id|link
 suffix:semicolon
 DECL|member|sigmask

@@ -345,8 +345,6 @@ DECL|macro|B614400
 mdefine_line|#define  B614400  0x00001008
 DECL|macro|B921600
 mdefine_line|#define  B921600  0x00001009
-DECL|macro|B1843200
-mdefine_line|#define  B1843200 0x0000100a
 DECL|macro|CIBAUD
 mdefine_line|#define CIBAUD&t;  0x100f0000  /* input baud rate (not used) */
 DECL|macro|CMSPAR

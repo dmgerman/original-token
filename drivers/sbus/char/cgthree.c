@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: cgthree.c,v 1.23 1997/07/17 02:21:46 davem Exp $&n; * cgtree.c: cg3 frame buffer driver&n; *&n; * Copyright (C) 1996 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; * Copyright (C) 1996 Jakub Jelinek   (jj@sunsite.mff.cuni.cz)&n; * Copyright (C) 1997 Eddie C. Dost   (ecd@skynet.be)&n; *&n; * Support for cgRDI added, Nov/96, jj.&n; */
+multiline_comment|/* $Id: cgthree.c,v 1.24 1997/08/20 07:38:37 davem Exp $&n; * cgtree.c: cg3 frame buffer driver&n; *&n; * Copyright (C) 1996 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; * Copyright (C) 1996 Jakub Jelinek   (jj@sunsite.mff.cuni.cz)&n; * Copyright (C) 1997 Eddie C. Dost   (ecd@skynet.be)&n; *&n; * Support for cgRDI added, Nov/96, jj.&n; */
 macro_line|#include &lt;linux/kd.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
@@ -916,7 +916,7 @@ id|cg3_loadcmap
 suffix:semicolon
 id|fb-&gt;postsetup
 op_assign
-id|sun_cg_postsetup
+id|cg_postsetup
 suffix:semicolon
 id|fb-&gt;ioctl
 op_assign

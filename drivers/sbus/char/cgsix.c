@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: cgsix.c,v 1.35 1997/07/17 02:21:45 davem Exp $&n; * cgsix.c: cgsix frame buffer driver&n; *&n; * Copyright (C) 1996 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; * Copyright (C) 1996 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; */
+multiline_comment|/* $Id: cgsix.c,v 1.37 1997/08/22 15:55:20 jj Exp $&n; * cgsix.c: cgsix frame buffer driver&n; *&n; * Copyright (C) 1996 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; * Copyright (C) 1996 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; * Copyright (C) 1996 Eddie C. Dost (ecd@skynet.be)&n; */
 macro_line|#include &lt;linux/kd.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
@@ -1752,9 +1752,15 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|fb-&gt;setcursor
+id|fb
+op_eq
+op_amp
+id|fbinfo
+(braket
+l_int|0
+)braket
 )paren
-id|sun_hw_hide_cursor
+id|sbus_hw_hide_cursor
 (paren
 )paren
 suffix:semicolon
@@ -2006,7 +2012,7 @@ id|cg6_setcurshape
 suffix:semicolon
 id|fb-&gt;postsetup
 op_assign
-id|sun_cg_postsetup
+id|cg_postsetup
 suffix:semicolon
 id|fb-&gt;blitc
 op_assign

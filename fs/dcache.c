@@ -1195,11 +1195,7 @@ c_func
 l_string|&quot;VFS: moving negative dcache entry&bslash;n&quot;
 )paren
 suffix:semicolon
-multiline_comment|/* Switch the hashes.. */
-id|oldhead
-op_assign
-id|dentry-&gt;d_hash.prev
-suffix:semicolon
+multiline_comment|/* Move the dentry to the target hash queue */
 id|list_del
 c_func
 (paren
@@ -1217,6 +1213,7 @@ op_amp
 id|target-&gt;d_hash
 )paren
 suffix:semicolon
+multiline_comment|/* Unhash the target: dput() will then get rid of it */
 id|list_del
 c_func
 (paren
@@ -1224,13 +1221,11 @@ op_amp
 id|target-&gt;d_hash
 )paren
 suffix:semicolon
-id|list_add
+id|INIT_LIST_HEAD
 c_func
 (paren
 op_amp
 id|target-&gt;d_hash
-comma
-id|oldhead
 )paren
 suffix:semicolon
 multiline_comment|/* Switch the parents and the names.. */
@@ -1264,13 +1259,6 @@ c_cond
 id|dentry-&gt;d_name.hash
 comma
 id|target-&gt;d_name.hash
-)paren
-suffix:semicolon
-multiline_comment|/* Mark the (now overwritten) target deleted. */
-id|d_delete
-c_func
-(paren
-id|target
 )paren
 suffix:semicolon
 )brace

@@ -18,6 +18,7 @@ macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/in.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
+macro_line|#include &lt;linux/delay.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
@@ -32,6 +33,7 @@ macro_line|#include &lt;asm/oplib.h&gt;
 macro_line|#include &lt;asm/auxio.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
+macro_line|#include &lt;asm/irq.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
@@ -516,8 +518,7 @@ dot
 id|rx_addr
 op_assign
 (paren
-r_int
-r_int
+id|u32
 )paren
 (paren
 (paren
@@ -1782,6 +1783,29 @@ id|qep-&gt;net_stats.tx_bytes
 op_add_assign
 id|skb-&gt;len
 suffix:semicolon
+macro_line|#ifdef NEED_DMA_SYNCHRONIZATION
+id|mmu_sync_dma
+c_func
+(paren
+(paren
+(paren
+id|u32
+)paren
+(paren
+(paren
+r_int
+r_int
+)paren
+id|skb-&gt;data
+)paren
+)paren
+comma
+id|skb-&gt;len
+comma
+id|qep-&gt;qe_sbusdev-&gt;my_bus
+)paren
+suffix:semicolon
+macro_line|#endif
 id|dev_kfree_skb
 c_func
 (paren
@@ -1990,8 +2014,7 @@ suffix:semicolon
 id|this-&gt;rx_addr
 op_assign
 (paren
-r_int
-r_int
+id|u32
 )paren
 (paren
 (paren
@@ -2029,6 +2052,29 @@ id|qep-&gt;rx_skbs
 id|elem
 )braket
 suffix:semicolon
+macro_line|#ifdef NEED_DMA_SYNCHRONIZATION
+id|mmu_sync_dma
+c_func
+(paren
+(paren
+(paren
+id|u32
+)paren
+(paren
+(paren
+r_int
+r_int
+)paren
+id|skb-&gt;data
+)paren
+)paren
+comma
+id|skb-&gt;len
+comma
+id|qep-&gt;qe_sbusdev-&gt;my_bus
+)paren
+suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -2102,8 +2148,7 @@ dot
 id|rx_addr
 op_assign
 (paren
-r_int
-r_int
+id|u32
 )paren
 (paren
 (paren
@@ -2219,8 +2264,7 @@ dot
 id|rx_addr
 op_assign
 (paren
-r_int
-r_int
+id|u32
 )paren
 (paren
 (paren
@@ -3206,7 +3250,6 @@ id|entry
 op_assign
 id|skb
 suffix:semicolon
-multiline_comment|/* FIX FOR ULTRA */
 id|qep-&gt;qe_block-&gt;qe_txd
 (braket
 id|entry
@@ -3215,10 +3258,15 @@ dot
 id|tx_addr
 op_assign
 (paren
+id|u32
+)paren
+(paren
+(paren
 r_int
 r_int
 )paren
 id|skb-&gt;data
+)paren
 suffix:semicolon
 id|qep-&gt;qe_block-&gt;qe_txd
 (braket
@@ -5454,6 +5502,86 @@ id|qec_free_devs
 suffix:semicolon
 )brace
 )brace
+macro_line|#ifdef __sparc_v9__
+r_else
+r_if
+c_cond
+(paren
+id|sparc_cpu_model
+op_eq
+id|sun4u
+)paren
+(brace
+r_struct
+id|devid_cookie
+id|dcookie
+suffix:semicolon
+id|dcookie.real_dev_id
+op_assign
+id|qecp
+suffix:semicolon
+id|dcookie.imap
+op_assign
+id|dcookie.iclr
+op_assign
+l_int|0
+suffix:semicolon
+id|dcookie.pil
+op_assign
+op_minus
+l_int|1
+suffix:semicolon
+id|dcookie.bus_cookie
+op_assign
+id|sdev-&gt;my_bus
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|request_irq
+c_func
+(paren
+id|sdev-&gt;irqs
+(braket
+l_int|0
+)braket
+dot
+id|pri
+comma
+op_amp
+id|qec_interrupt
+comma
+(paren
+id|SA_SHIRQ
+op_or
+id|SA_SBUS
+op_or
+id|SA_DCOOKIE
+)paren
+comma
+l_string|&quot;QuadEther&quot;
+comma
+op_amp
+id|dcookie
+)paren
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;QuadEther: Can&squot;t register QEC master irq handler.&bslash;n&quot;
+)paren
+suffix:semicolon
+id|res
+op_assign
+id|EAGAIN
+suffix:semicolon
+r_goto
+id|qec_free_devs
+suffix:semicolon
+)brace
+)brace
+macro_line|#endif
 r_else
 (brace
 r_if

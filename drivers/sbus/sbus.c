@@ -236,6 +236,35 @@ id|sun4u
 )paren
 (brace
 multiline_comment|/* Ahh, we can determine the slot and offset */
+r_if
+c_cond
+(paren
+id|sparc_cpu_model
+op_eq
+id|sun4u
+)paren
+(brace
+multiline_comment|/* A bit tricky on the SYSIO. */
+id|sbus_dev-&gt;slot
+op_assign
+id|sbus_dev-&gt;reg_addrs
+(braket
+l_int|0
+)braket
+dot
+id|which_io
+suffix:semicolon
+id|sbus_dev-&gt;offset
+op_assign
+id|sbus_dev_offset
+c_func
+(paren
+id|base
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
 id|sbus_dev-&gt;slot
 op_assign
 id|sbus_dev_slot
@@ -252,6 +281,7 @@ c_func
 id|base
 )paren
 suffix:semicolon
+)brace
 )brace
 r_else
 (brace
@@ -522,6 +552,70 @@ id|sbus_dev-&gt;num_irqs
 op_assign
 l_int|1
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|sbus_dev-&gt;irqs
+(braket
+l_int|0
+)braket
+dot
+id|pri
+OL
+l_int|0x20
+)paren
+(brace
+r_int
+id|old_irq
+op_assign
+id|sbus_dev-&gt;irqs
+(braket
+l_int|0
+)braket
+dot
+id|pri
+suffix:semicolon
+multiline_comment|/* Need to do special SLOT fixups in this case. */
+macro_line|#if 0 /* DEBUGGING */
+id|printk
+c_func
+(paren
+l_string|&quot;SBUS[%x:%lx]: INO fixup from [%x] to [%x]&bslash;n&quot;
+comma
+id|sbus_dev-&gt;slot
+comma
+id|sbus_dev-&gt;offset
+comma
+id|old_irq
+comma
+id|old_irq
+op_plus
+(paren
+id|sbus_dev-&gt;slot
+op_star
+l_int|8
+)paren
+)paren
+suffix:semicolon
+macro_line|#endif
+id|sbus_dev-&gt;irqs
+(braket
+l_int|0
+)braket
+dot
+id|pri
+op_assign
+(paren
+id|old_irq
+op_plus
+(paren
+id|sbus_dev-&gt;slot
+op_star
+l_int|8
+)paren
+)paren
+suffix:semicolon
+)brace
 )brace
 )brace
 r_else
@@ -1054,6 +1148,7 @@ r_return
 id|memory_start
 suffix:semicolon
 )brace
+multiline_comment|/* #define E3000_DEBUG */
 DECL|function|__initfunc
 id|__initfunc
 c_func
@@ -1105,6 +1200,14 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* How many did we find? */
+macro_line|#ifdef E3000_DEBUG
+id|prom_printf
+c_func
+(paren
+l_string|&quot;sbus_init: Radek, record following output for me. -DaveM&bslash;n&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
 id|memory_start
 op_assign
 (paren
@@ -1141,9 +1244,6 @@ op_eq
 id|sun4u
 )paren
 (brace
-multiline_comment|/* IOMMU &quot;hides&quot; inside SBUS/SYSIO node. */
-id|iommund
-op_assign
 id|nd
 op_assign
 id|prom_searchsiblings
@@ -1162,6 +1262,21 @@ op_eq
 l_int|0
 )paren
 (brace
+macro_line|#ifdef CONFIG_PCI
+id|printk
+c_func
+(paren
+l_string|&quot;SBUS: No SBUS&squot;s found.&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+id|sun_console_init
+c_func
+(paren
+id|memory_start
+)paren
+suffix:semicolon
+macro_line|#else
 id|prom_printf
 c_func
 (paren
@@ -1173,6 +1288,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
+macro_line|#endif
 )brace
 )brace
 r_else
@@ -1308,6 +1424,16 @@ l_string|&quot;sbus not found&quot;
 suffix:semicolon
 )brace
 )brace
+macro_line|#ifdef E3000_DEBUG
+id|prom_printf
+c_func
+(paren
+l_string|&quot;sbus_init: 1st sbus node(%x)&bslash;n&quot;
+comma
+id|nd
+)paren
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/* Ok, we&squot;ve found the first one, allocate first SBus struct&n;&t; * and place in chain.&n;&t; */
 id|sbus
 op_assign
@@ -1336,7 +1462,14 @@ id|this_sbus
 op_assign
 id|nd
 suffix:semicolon
-multiline_comment|/* Have IOMMU will travel. XXX grrr - this should be per sbus... */
+r_if
+c_cond
+(paren
+id|sparc_cpu_model
+op_ne
+id|sun4u
+)paren
+multiline_comment|/* Have IOMMU will travel.&n;&t;&t; *&n;&t;&t; * XXX This should be per sbus on sun4d...&n;&t;&t; */
 r_if
 c_cond
 (paren
@@ -1381,6 +1514,48 @@ c_loop
 id|this_sbus
 )paren
 (brace
+multiline_comment|/* IOMMU hides inside SBUS/SYSIO prom node on Ultra. */
+macro_line|#ifdef E3000_DEBUG
+id|prom_printf
+c_func
+(paren
+l_string|&quot;sbus%d: [ii()&quot;
+comma
+id|num_sbus
+)paren
+suffix:semicolon
+macro_line|#endif
+r_if
+c_cond
+(paren
+id|sparc_cpu_model
+op_eq
+id|sun4u
+)paren
+(brace
+id|memory_start
+op_assign
+id|iommu_init
+c_func
+(paren
+id|this_sbus
+comma
+id|memory_start
+comma
+id|memory_end
+comma
+id|sbus
+)paren
+suffix:semicolon
+)brace
+macro_line|#ifdef E3000_DEBUG
+id|prom_printf
+c_func
+(paren
+l_string|&quot;1&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
 id|printk
 c_func
 (paren
@@ -1503,6 +1678,14 @@ id|sbus-&gt;clock_freq
 op_assign
 id|sbus_clock
 suffix:semicolon
+macro_line|#ifdef E3000_DEBUG
+id|prom_printf
+c_func
+(paren
+l_string|&quot;psri()&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
 id|prom_sbus_ranges_init
 (paren
 id|iommund
@@ -1518,6 +1701,16 @@ c_func
 id|this_sbus
 )paren
 suffix:semicolon
+macro_line|#ifdef E3000_DEBUG
+id|prom_printf
+c_func
+(paren
+l_string|&quot;chld(%x)&quot;
+comma
+id|sbus_devs
+)paren
+suffix:semicolon
+macro_line|#endif
 id|sbus-&gt;devices
 op_assign
 (paren
@@ -1543,6 +1736,14 @@ id|this_dev-&gt;next
 op_assign
 l_int|0
 suffix:semicolon
+macro_line|#ifdef E3000_DEBUG
+id|prom_printf
+c_func
+(paren
+l_string|&quot;fsd()&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
 id|fill_sbus_device
 c_func
 (paren
@@ -1585,6 +1786,14 @@ id|linux_sbus_device
 )paren
 suffix:semicolon
 multiline_comment|/* Fill it */
+macro_line|#ifdef E3000_DEBUG
+id|prom_printf
+c_func
+(paren
+l_string|&quot;fsd(chld)&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
 id|fill_sbus_device
 c_func
 (paren
@@ -1601,6 +1810,14 @@ id|this_dev-&gt;child-&gt;my_bus
 op_assign
 id|sbus
 suffix:semicolon
+macro_line|#ifdef E3000_DEBUG
+id|prom_printf
+c_func
+(paren
+l_string|&quot;sdcs()&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
 id|memory_start
 op_assign
 id|sbus_do_child_siblings
@@ -1627,6 +1844,14 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
+macro_line|#ifdef E3000_DEBUG
+id|prom_printf
+c_func
+(paren
+l_string|&quot;2&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
 r_while
 c_loop
 (paren
@@ -1670,6 +1895,14 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* Fill it */
+macro_line|#ifdef E3000_DEBUG
+id|prom_printf
+c_func
+(paren
+l_string|&quot;fsd()&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
 id|fill_sbus_device
 c_func
 (paren
@@ -1712,6 +1945,14 @@ id|linux_sbus_device
 )paren
 suffix:semicolon
 multiline_comment|/* Fill it */
+macro_line|#ifdef E3000_DEBUG
+id|prom_printf
+c_func
+(paren
+l_string|&quot;fsd()&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
 id|fill_sbus_device
 c_func
 (paren
@@ -1728,6 +1969,14 @@ id|this_dev-&gt;child-&gt;my_bus
 op_assign
 id|sbus
 suffix:semicolon
+macro_line|#ifdef E3000_DEBUG
+id|prom_printf
+c_func
+(paren
+l_string|&quot;sdcs()&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
 id|memory_start
 op_assign
 id|sbus_do_child_siblings
@@ -1755,6 +2004,14 @@ l_int|0
 suffix:semicolon
 )brace
 )brace
+macro_line|#ifdef E3000_DEBUG
+id|prom_printf
+c_func
+(paren
+l_string|&quot;di()&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
 id|memory_start
 op_assign
 id|dvma_init
@@ -1768,6 +2025,14 @@ suffix:semicolon
 id|num_sbus
 op_increment
 suffix:semicolon
+macro_line|#ifdef E3000_DEBUG
+id|prom_printf
+c_func
+(paren
+l_string|&quot;3, off to next sbus&bslash;n&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -1784,6 +2049,16 @@ c_func
 id|this_sbus
 )paren
 suffix:semicolon
+macro_line|#ifdef E3000_DEBUG
+id|prom_printf
+c_func
+(paren
+l_string|&quot;sbus_init: sibling(%x), &quot;
+comma
+id|this_sbus
+)paren
+suffix:semicolon
+macro_line|#endif
 r_if
 c_cond
 (paren
@@ -1804,6 +2079,16 @@ comma
 l_string|&quot;sbus&quot;
 )paren
 suffix:semicolon
+macro_line|#ifdef E3000_DEBUG
+id|prom_printf
+c_func
+(paren
+l_string|&quot;next sbus node(%x),&quot;
+comma
+id|this_sbus
+)paren
+suffix:semicolon
+macro_line|#endif
 )brace
 r_else
 r_if
@@ -1904,6 +2189,14 @@ c_cond
 id|this_sbus
 )paren
 (brace
+macro_line|#ifdef E3000_DEBUG
+id|prom_printf
+c_func
+(paren
+l_string|&quot; scanning another sbus&bslash;n&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
 id|sbus-&gt;next
 op_assign
 (paren
@@ -1937,6 +2230,14 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/* while(this_sbus) */
+macro_line|#ifdef E3000_DEBUG
+id|prom_printf
+c_func
+(paren
+l_string|&quot;sbus_init: No more sbus&squot;s, calling sun_console_init()&bslash;n&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
 id|memory_start
 op_assign
 id|sun_console_init
@@ -1946,6 +2247,14 @@ id|memory_start
 )paren
 suffix:semicolon
 multiline_comment|/* whee... */
+macro_line|#ifdef E3000_DEBUG
+id|prom_printf
+c_func
+(paren
+l_string|&quot;sbus_init: back from sun_console_init()&bslash;n&quot;
+)paren
+suffix:semicolon
+macro_line|#endif
 macro_line|#ifdef CONFIG_SUN_OPENPROMIO
 id|openprom_init
 c_func
@@ -2004,7 +2313,20 @@ c_func
 r_void
 )paren
 suffix:semicolon
+r_extern
+r_void
+id|clock_probe
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
 id|sun4u_start_timers
+c_func
+(paren
+)paren
+suffix:semicolon
+id|clock_probe
 c_func
 (paren
 )paren

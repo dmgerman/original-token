@@ -6,6 +6,7 @@ macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/smp.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/delay.h&gt;
+macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;asm/oplib.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/auxio.h&gt;
@@ -102,6 +103,10 @@ id|edev
 op_assign
 l_int|0
 suffix:semicolon
+r_int
+r_int
+id|led_auxio
+suffix:semicolon
 id|for_all_ebusdev
 c_func
 (paren
@@ -129,50 +134,81 @@ c_cond
 id|edev
 )paren
 (brace
-id|auxio_register
-op_assign
+r_if
+c_cond
 (paren
-r_int
-r_char
-op_star
-)paren
-id|sparc_alloc_io
+id|check_region
 c_func
 (paren
-id|edev-&gt;regs
+id|edev-&gt;base_address
 (braket
 l_int|0
 )braket
-dot
-id|phys_addr
 comma
-l_int|0
+r_sizeof
+(paren
+r_int
+r_int
+)paren
+)paren
+)paren
+(brace
+id|prom_printf
+c_func
+(paren
+l_string|&quot;%s: Can&squot;t get region %lx, %d&bslash;n&quot;
 comma
-id|edev-&gt;regs
+id|__FUNCTION__
+comma
+id|edev-&gt;base_address
 (braket
 l_int|0
 )braket
-dot
-id|reg_size
 comma
-l_string|&quot;auxiliaryIO&quot;
-comma
-id|edev-&gt;regs
-(braket
-l_int|0
-)braket
-dot
-id|which_io
-comma
-l_int|0x0
+r_sizeof
+(paren
+r_int
+r_int
+)paren
 )paren
 suffix:semicolon
-op_star
+id|prom_halt
+c_func
 (paren
-id|auxio_register
 )paren
+suffix:semicolon
+)brace
+id|request_region
+c_func
+(paren
+id|edev-&gt;base_address
+(braket
+l_int|0
+)braket
+comma
+r_sizeof
+(paren
+r_int
+r_int
+)paren
+comma
+l_string|&quot;LED auxio&quot;
+)paren
+suffix:semicolon
+id|led_auxio
 op_assign
+id|edev-&gt;base_address
+(braket
+l_int|0
+)braket
+suffix:semicolon
+id|outl
+c_func
+(paren
 l_int|0x01
+comma
+id|led_auxio
+)paren
 suffix:semicolon
 r_return
 suffix:semicolon

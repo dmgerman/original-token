@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: time.c,v 1.9 1997/08/12 04:12:40 ecd Exp $&n; * time.c: UltraSparc timer and TOD clock support.&n; *&n; * Copyright (C) 1997 David S. Miller (davem@caip.rutgers.edu)&n; *&n; * Based largely on code which is:&n; *&n; * Copyright (C) 1996 Thomas K. Dyas (tdyas@eden.rutgers.edu)&n; */
+multiline_comment|/* $Id: time.c,v 1.12 1997/08/22 20:12:13 davem Exp $&n; * time.c: UltraSparc timer and TOD clock support.&n; *&n; * Copyright (C) 1997 David S. Miller (davem@caip.rutgers.edu)&n; *&n; * Based largely on code which is:&n; *&n; * Copyright (C) 1996 Thomas K. Dyas (tdyas@eden.rutgers.edu)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -9,6 +9,7 @@ macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
 macro_line|#include &lt;linux/timex.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;asm/oplib.h&gt;
 macro_line|#include &lt;asm/mostek.h&gt;
 macro_line|#include &lt;asm/timer.h&gt;
@@ -1013,6 +1014,8 @@ id|prom_printf
 c_func
 (paren
 l_string|&quot;%s: Mostek not probed by EBUS&bslash;n&quot;
+comma
+id|__FUNCTION__
 )paren
 suffix:semicolon
 id|prom_halt
@@ -1021,15 +1024,85 @@ c_func
 )paren
 suffix:semicolon
 )brace
-id|clk_reg
+r_if
+c_cond
+(paren
+id|check_region
+c_func
+(paren
+id|edev-&gt;base_address
 (braket
 l_int|0
 )braket
+comma
+r_sizeof
+(paren
+r_struct
+id|mostek48t59
+)paren
+)paren
+)paren
+(brace
+id|prom_printf
+c_func
+(paren
+l_string|&quot;%s: Can&squot;t get region %lx, %d&bslash;n&quot;
+comma
+id|__FUNCTION__
+comma
+id|edev-&gt;base_address
+(braket
+l_int|0
+)braket
+comma
+r_sizeof
+(paren
+r_struct
+id|mostek48t59
+)paren
+)paren
+suffix:semicolon
+id|prom_halt
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+id|request_region
+c_func
+(paren
+id|edev-&gt;base_address
+(braket
+l_int|0
+)braket
+comma
+r_sizeof
+(paren
+r_struct
+id|mostek48t59
+)paren
+comma
+l_string|&quot;clock&quot;
+)paren
+suffix:semicolon
+id|mstk48t59_regs
 op_assign
-id|edev-&gt;regs
+(paren
+r_struct
+id|mostek48t59
+op_star
+)paren
+id|edev-&gt;base_address
 (braket
 l_int|0
 )braket
+suffix:semicolon
+id|mstk48t02_regs
+op_assign
+op_amp
+id|mstk48t59_regs-&gt;regs
+suffix:semicolon
+r_break
 suffix:semicolon
 )brace
 macro_line|#endif
@@ -1398,7 +1471,7 @@ op_star
 id|tv
 )paren
 (brace
-multiline_comment|/* Load doubles must be used on xtime so that what we get&n;&t; * is guarenteed to be atomic, this is why we can run this&n;&t; * with interrupts on full blast.  Don&squot;t touch this... -DaveM&n;&t; */
+multiline_comment|/* Load doubles must be used on xtime so that what we get&n;&t; * is guarenteed to be atomic, this is why we can run this&n;&t; * with interrupts on full blast.  Don&squot;t touch this... -DaveM&n;&t; *&n;&t; * Note with time_t changes to the timeval type, I must now use&n;&t; * nucleus atomic quad 128-bit loads.&n;&t; */
 id|__asm__
 id|__volatile__
 c_func
@@ -1439,20 +1512,27 @@ id|linux_timers
 comma
 op_mod
 id|g3
-l_int|1
-suffix:colon
-id|ldd
-(braket
+op_logical_or
 op_mod
 id|g2
-op_plus
+comma
 op_mod
 id|lo
 c_func
 (paren
 id|xtime
 )paren
+comma
+op_mod
+id|g2
+l_int|1
+suffix:colon
+id|ldda
+(braket
+op_mod
+id|g2
 )braket
+l_int|0x24
 comma
 op_mod
 id|o4
@@ -1468,18 +1548,12 @@ op_mod
 id|o1
 id|membar
 macro_line|#LoadLoad | #MemIssue
-id|ldd
+id|ldda
 (braket
 op_mod
 id|g2
-op_plus
-op_mod
-id|lo
-c_func
-(paren
-id|xtime
-)paren
 )braket
+l_int|0x24
 comma
 op_mod
 id|o2
@@ -1516,7 +1590,7 @@ id|bne
 comma
 id|pn
 op_mod
-id|icc
+id|xcc
 comma
 l_int|1
 id|b
@@ -1542,7 +1616,7 @@ id|tick
 comma
 op_mod
 id|o3
-id|ld
+id|ldx
 (braket
 op_mod
 id|o3
@@ -1644,10 +1718,10 @@ id|a
 comma
 id|pn
 op_mod
-id|icc
+id|xcc
 comma
 l_float|1f
-id|st
+id|stx
 op_mod
 id|o4
 comma
@@ -1674,7 +1748,7 @@ id|o2
 comma
 op_mod
 id|o5
-id|st
+id|stx
 op_mod
 id|o4
 comma
@@ -1686,7 +1760,7 @@ l_int|0x0
 )braket
 l_int|1
 suffix:colon
-id|st
+id|stx
 op_mod
 id|o5
 comma
@@ -1694,7 +1768,7 @@ comma
 op_mod
 id|o0
 op_plus
-l_int|0x4
+l_int|0x8
 )braket
 "&quot;"
 )paren

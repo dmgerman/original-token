@@ -253,7 +253,42 @@ id|tx_window_errors
 suffix:semicolon
 )brace
 suffix:semicolon
+multiline_comment|/* Media selection options. */
+r_enum
+(brace
+DECL|enumerator|IF_PORT_UNKNOWN
+id|IF_PORT_UNKNOWN
+op_assign
+l_int|0
+comma
+DECL|enumerator|IF_PORT_10BASE2
+id|IF_PORT_10BASE2
+comma
+DECL|enumerator|IF_PORT_10BASET
+id|IF_PORT_10BASET
+comma
+DECL|enumerator|IF_PORT_AUI
+id|IF_PORT_AUI
+comma
+DECL|enumerator|IF_PORT_100BASET
+id|IF_PORT_100BASET
+comma
+DECL|enumerator|IF_PORT_100BASETX
+id|IF_PORT_100BASETX
+comma
+DECL|enumerator|IF_PORT_100BASEFX
+id|IF_PORT_100BASEFX
+)brace
+suffix:semicolon
 macro_line|#ifdef __KERNEL__
+r_extern
+r_const
+r_char
+op_star
+id|if_port_text
+(braket
+)braket
+suffix:semicolon
 macro_line|#include &lt;linux/skbuff.h&gt;
 multiline_comment|/*&n; *&t;The DEVICE structure.&n; *&t;Actually, this whole structure is a big mistake.  It mixes I/O&n; *&t;data with strictly &quot;high-level&quot; data, and it has to know about&n; *&t;almost every data structure used in the INET module.&n; *&n; *&t;FIXME: cleanup struct device such that network protocol info&n; *&t;moves out.&n; */
 DECL|struct|device
@@ -299,7 +334,7 @@ suffix:semicolon
 multiline_comment|/* device I/O address&t;*/
 DECL|member|irq
 r_int
-r_char
+r_int
 id|irq
 suffix:semicolon
 multiline_comment|/* device IRQ number&t;*/

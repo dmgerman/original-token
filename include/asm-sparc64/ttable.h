@@ -1,7 +1,8 @@
-multiline_comment|/* $Id: ttable.h,v 1.2 1997/08/09 09:03:36 davem Exp $ */
+multiline_comment|/* $Id: ttable.h,v 1.3 1997/08/29 15:52:35 jj Exp $ */
 macro_line|#ifndef _SPARC64_TTABLE_H
 DECL|macro|_SPARC64_TTABLE_H
 mdefine_line|#define _SPARC64_TTABLE_H
+macro_line|#include &lt;linux/config.h&gt;
 DECL|macro|BOOT_KERNEL
 mdefine_line|#define BOOT_KERNEL b sparc64_boot; nop; nop; nop; nop; nop; nop; nop;
 multiline_comment|/* We need a &quot;cleaned&quot; instruction... */
@@ -23,6 +24,8 @@ DECL|macro|ACCESS_EXCEPTION_TRAP
 mdefine_line|#define ACCESS_EXCEPTION_TRAP(routine)&t;&t;&t;&bslash;&n;&t;rdpr&t;%pstate, %g1;&t;&t;&t;&t;&bslash;&n;&t;wrpr&t;%g1, PSTATE_MG|PSTATE_AG, %pstate;&t;&bslash;&n;&t;ba,pt&t;%xcc, etrap;&t;&t;&t;&t;&bslash;&n;&t; rd&t;%pc, %g7;&t;&t;&t;&t;&bslash;&n;&t;call&t;routine;&t;&t;&t;&t;&bslash;&n;&t; add&t;%sp, STACK_BIAS + REGWIN_SZ, %o0;&t;&bslash;&n;&t;ba,pt&t;%xcc, rtrap;&t;&t;&t;&t;&bslash;&n;&t; clr&t;%l6;
 DECL|macro|ACCESS_EXCEPTION_TRAPTL1
 mdefine_line|#define ACCESS_EXCEPTION_TRAPTL1(routine)&t;&t;&bslash;&n;&t;rdpr&t;%pstate, %g1;&t;&t;&t;&t;&bslash;&n;&t;wrpr&t;%g1, PSTATE_MG|PSTATE_AG, %pstate;&t;&bslash;&n;&t;ba,pt&t;%xcc, etraptl1;&t;&t;&t;&t;&bslash;&n;&t; rd&t;%pc, %g7;&t;&t;&t;&t;&bslash;&n;&t;call&t;routine;&t;&t;&t;&t;&bslash;&n;&t; add&t;%sp, STACK_BIAS + REGWIN_SZ, %o0;&t;&bslash;&n;&t;ba,pt&t;%xcc, rtrap;&t;&t;&t;&t;&bslash;&n;&t; clr&t;%l6;
+DECL|macro|INDIRECT_SOLARIS_SYSCALL
+mdefine_line|#define INDIRECT_SOLARIS_SYSCALL(num)&t;&t;&t;&bslash;&n;&t;sethi&t;%hi(109f), %g7;&t;&t;&t;&t;&bslash;&n;&t;ba,pt&t;%xcc, etrap;&t;&t;&t;&t;&bslash;&n;109:&t; or&t;%g7, %lo(109b), %g7;&t;&t;&t;&bslash;&n;&t;ba,pt&t;%xcc, tl0_solaris + 0xc;&t;&t;&bslash;&n;&t; mov&t;num, %g1;&t;&t;&t;&t;&bslash;&n;&t;nop;nop;nop;
 DECL|macro|SUNOS_SYSCALL_TRAP
 mdefine_line|#define SUNOS_SYSCALL_TRAP SYSCALL_TRAP(linux_sparc_syscall, sunos_sys_table)
 DECL|macro|LINUX_32BIT_SYSCALL_TRAP
@@ -33,15 +36,18 @@ DECL|macro|GETCC_TRAP
 mdefine_line|#define GETCC_TRAP TRAP(getcc)
 DECL|macro|SETCC_TRAP
 mdefine_line|#define SETCC_TRAP TRAP(setcc)
+macro_line|#ifdef CONFIG_SOLARIS_EMUL
+DECL|macro|SOLARIS_SYSCALL_TRAP
+mdefine_line|#define SOLARIS_SYSCALL_TRAP TRAP(solaris_sparc_syscall)
+macro_line|#else
+DECL|macro|SOLARIS_SYSCALL_TRAP
+mdefine_line|#define SOLARIS_SYSCALL_TRAP TRAP(solaris_syscall)
+macro_line|#endif
 multiline_comment|/* FIXME: Write these actually */
 DECL|macro|NETBSD_SYSCALL_TRAP
 mdefine_line|#define NETBSD_SYSCALL_TRAP TRAP(netbsd_syscall)
-DECL|macro|SOLARIS_SYSCALL_TRAP
-mdefine_line|#define SOLARIS_SYSCALL_TRAP TRAP(solaris_syscall)
 DECL|macro|BREAKPOINT_TRAP
 mdefine_line|#define BREAKPOINT_TRAP TRAP(breakpoint_trap)
-DECL|macro|INDIRECT_SOLARIS_SYSCALL
-mdefine_line|#define INDIRECT_SOLARIS_SYSCALL(tlvl) TRAP_ARG(indirect_syscall, tlvl)
 DECL|macro|TRAP_IRQ
 mdefine_line|#define TRAP_IRQ(routine, level)&t;&t;&t;&bslash;&n;&t;rdpr&t;%pil, %g2;&t;&t;&t;&t;&bslash;&n;&t;wrpr&t;%g0, 15, %pil;&t;&t;&t;&t;&bslash;&n;&t;b,pt&t;%xcc, etrap_irq;&t;&t;&t;&bslash;&n;&t; rd&t;%pc, %g7;&t;&t;&t;&t;&bslash;&n;&t;mov&t;level, %o0;&t;&t;&t;&t;&bslash;&n;&t;call&t;routine;&t;&t;&t;&t;&bslash;&n;&t; add&t;%sp, STACK_BIAS + REGWIN_SZ, %o1;&t;&bslash;&n;&t;ba,a,pt&t;%xcc, rtrap_clr_l6;
 macro_line|#ifdef __SMP__

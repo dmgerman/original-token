@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;The IP fragmentation functionality.&n; *&t;&t;&n; * Version:&t;$Id: ip_fragment.c,v 1.23 1997/05/31 12:36:35 freitag Exp $&n; *&n; * Authors:&t;Fred N. van Kempen &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Alan Cox &lt;Alan.Cox@linux.org&gt;&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;:&t;Split from ip.c , see ip_input.c for history.&n; *&t;&t;David S. Miller :&t;Begin massive cleanup...&n; *&t;&t;Andi Kleen&t;:&t;Add sysctls.&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;The IP fragmentation functionality.&n; *&t;&t;&n; * Version:&t;$Id: ip_fragment.c,v 1.25 1997/08/17 05:56:07 freitag Exp $&n; *&n; * Authors:&t;Fred N. van Kempen &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Alan Cox &lt;Alan.Cox@linux.org&gt;&n; *&n; * Fixes:&n; *&t;&t;Alan Cox&t;:&t;Split from ip.c , see ip_input.c for history.&n; *&t;&t;David S. Miller :&t;Begin massive cleanup...&n; *&t;&t;Andi Kleen&t;:&t;Add sysctls.&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -1169,13 +1169,10 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;Oversized IP packet from %s.&bslash;n&quot;
+l_string|&quot;Oversized IP packet from %I.&bslash;n&quot;
 comma
-id|in_ntoa
-c_func
-(paren
+op_amp
 id|qp-&gt;iph-&gt;saddr
-)paren
 )paren
 suffix:semicolon
 id|ip_statistics.IpReasmFails
@@ -1714,13 +1711,10 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;Oversized packet received from %s&bslash;n&quot;
+l_string|&quot;Oversized packet received from %I&bslash;n&quot;
 comma
-id|in_ntoa
-c_func
-(paren
+op_amp
 id|iph-&gt;saddr
-)paren
 )paren
 suffix:semicolon
 id|frag_kfree_skb

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: cgfourteen.c,v 1.24 1997/07/17 02:21:44 davem Exp $&n; * cgfourteen.c: Sun SparcStation console support.&n; *&n; * Copyright (C) 1995 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; * Copyright (C) 1996 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; *&n; * TODO:&n; *&n; * Add the ioctls for CLUT manipulation.&n; * Map only the amount requested, not a constant amount.&n; * XBGR mapping.&n; * Add the interrupt handler.&n;*/
+multiline_comment|/* $Id: cgfourteen.c,v 1.25 1997/08/20 07:38:36 davem Exp $&n; * cgfourteen.c: Sun SparcStation console support.&n; *&n; * Copyright (C) 1995 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; * Copyright (C) 1996 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; *&n; * TODO:&n; *&n; * Add the ioctls for CLUT manipulation.&n; * Map only the amount requested, not a constant amount.&n; * XBGR mapping.&n; * Add the interrupt handler.&n;*/
 macro_line|#include &lt;linux/kd.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
@@ -1986,7 +1986,7 @@ id|cg14_switch_from_graph
 suffix:semicolon
 id|fb-&gt;postsetup
 op_assign
-id|sun_cg_postsetup
+id|cg_postsetup
 suffix:semicolon
 id|fb-&gt;reset
 op_assign

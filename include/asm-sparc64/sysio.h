@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: sysio.h,v 1.6 1997/08/15 06:44:53 davem Exp $&n; * sysio.h: UltraSparc sun5 specific SBUS definitions.&n; *&n; * Copyright (C) 1997 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: sysio.h,v 1.7 1997/08/18 03:47:26 davem Exp $&n; * sysio.h: UltraSparc sun5 specific SBUS definitions.&n; *&n; * Copyright (C) 1997 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef __SPARC64_SYSIO_H
 DECL|macro|__SPARC64_SYSIO_H
 mdefine_line|#define __SPARC64_SYSIO_H
@@ -1004,7 +1004,7 @@ DECL|macro|SYSIO_SBAFSR_MID
 mdefine_line|#define SYSIO_SBAFSR_MID&t;0x000003e000000000 /* MID causing the error        */
 DECL|macro|SYSIO_SBAFSR_RESV3
 mdefine_line|#define SYSIO_SBAFSR_RESV3&t;0x0000001fffffffff /* Reserved                     */
-multiline_comment|/* SYSIO SBUS Slot Configuration Register */
+multiline_comment|/* SYSIO SBUS Slot Configuration Register(s) */
 DECL|macro|SYSIO_SBSCFG_RESV1
 mdefine_line|#define SYSIO_SBSCFG_RESV1&t;0xfffffffff8000000 /* Reserved                     */
 DECL|macro|SYSIO_SBSCFG_SADDR
@@ -1072,10 +1072,181 @@ mdefine_line|#define SYSIO_ICLR_PENDING&t;0x00000003&t;/* Transition to pending 
 multiline_comment|/* SYSIO Interrupt Retry Timer register. */
 DECL|macro|SYSIO_IRETRY_LIMIT
 mdefine_line|#define SYSIO_IRETRY_LIMIT&t;0x000000ff&t;/* The retry interval.&t;&t;   */
-multiline_comment|/* SYSIO Interrupt State registers. XXX fields to be documented later */
-multiline_comment|/* SYSIO Counter register. XXX fields to be documented later */
-multiline_comment|/* SYSIO Limit register. XXX fields to be documented later */
-multiline_comment|/* SYSIO Performance Monitor Control register. XXX fields to be documented later */
-multiline_comment|/* SYSIO Performance Monitor Counter register. XXX fields to be documented later */
+multiline_comment|/* SYSIO Interrupt State registers. */
+DECL|macro|SYSIO_ISTATE_IDLE
+mdefine_line|#define SYSIO_ISTATE_IDLE&t;0x0 /* No interrupt received or pending */
+DECL|macro|SYSIO_ISTATE_TRANSMIT
+mdefine_line|#define SYSIO_ISTATE_TRANSMIT&t;0x1 /* Received, but IRQ not dispatched */
+DECL|macro|SYSIO_ISTATE_ILLEGAL
+mdefine_line|#define SYSIO_ISTATE_ILLEGAL&t;0x2 /* Impossible state                 */
+DECL|macro|SYSIO_ISTATE_PENDING
+mdefine_line|#define SYSIO_ISTATE_PENDING&t;0x3 /* Received and dispatched          */
+multiline_comment|/* Two ways to get at the right bits, your choice... note that level&n; * zero is illegal.  For slots 0 --&gt; 3 the formula for the bit range&n; * in the register is:&n; *&n; *&t;LSB&t;((SBUS_SLOT X 16) + (SBUS_LEVEL X 2))&n; *&t;MSB&t;((SBUS_SLOT X 16) + (SBUS_LEVEL X 2)) + 1&n; *&n; * Thus the following macro.&n; */
+DECL|macro|SYSIO_SBUS_ISTATE
+mdefine_line|#define SYSIO_SBUS_ISTATE(regval, slot, level)&t;&bslash;&n;&t;(((regval) &gt;&gt; (((slot) * 16) + ((level) * 2))) &amp; 0x3)
+DECL|macro|SYSIO_SBUS_ISTATE_S0L1
+mdefine_line|#define SYSIO_SBUS_ISTATE_S0L1&t;0x000000000000000c /* Slot 0, level 1 */
+DECL|macro|SYSIO_SBUS_ISTATE_S0L2
+mdefine_line|#define SYSIO_SBUS_ISTATE_S0L2&t;0x0000000000000030 /* Slot 0, level 2 */
+DECL|macro|SYSIO_SBUS_ISTATE_S0L3
+mdefine_line|#define SYSIO_SBUS_ISTATE_S0L3&t;0x00000000000000c0 /* Slot 0, level 3 */
+DECL|macro|SYSIO_SBUS_ISTATE_S0L4
+mdefine_line|#define SYSIO_SBUS_ISTATE_S0L4&t;0x0000000000000300 /* Slot 0, level 4 */
+DECL|macro|SYSIO_SBUS_ISTATE_S0L5
+mdefine_line|#define SYSIO_SBUS_ISTATE_S0L5&t;0x0000000000000c00 /* Slot 0, level 5 */
+DECL|macro|SYSIO_SBUS_ISTATE_S0L6
+mdefine_line|#define SYSIO_SBUS_ISTATE_S0L6&t;0x0000000000003000 /* Slot 0, level 6 */
+DECL|macro|SYSIO_SBUS_ISTATE_S0L7
+mdefine_line|#define SYSIO_SBUS_ISTATE_S0L7&t;0x000000000000c000 /* Slot 0, level 7 */
+DECL|macro|SYSIO_SBUS_ISTATE_S1L1
+mdefine_line|#define SYSIO_SBUS_ISTATE_S1L1&t;0x00000000000c0000 /* Slot 1, level 1 */
+DECL|macro|SYSIO_SBUS_ISTATE_S1L2
+mdefine_line|#define SYSIO_SBUS_ISTATE_S1L2&t;0x0000000000300000 /* Slot 1, level 2 */
+DECL|macro|SYSIO_SBUS_ISTATE_S1L3
+mdefine_line|#define SYSIO_SBUS_ISTATE_S1L3&t;0x0000000000c00000 /* Slot 1, level 3 */
+DECL|macro|SYSIO_SBUS_ISTATE_S1L4
+mdefine_line|#define SYSIO_SBUS_ISTATE_S1L4&t;0x0000000003000000 /* Slot 1, level 4 */
+DECL|macro|SYSIO_SBUS_ISTATE_S1L5
+mdefine_line|#define SYSIO_SBUS_ISTATE_S1L5&t;0x000000000c000000 /* Slot 1, level 5 */
+DECL|macro|SYSIO_SBUS_ISTATE_S1L6
+mdefine_line|#define SYSIO_SBUS_ISTATE_S1L6&t;0x0000000030000000 /* Slot 1, level 6 */
+DECL|macro|SYSIO_SBUS_ISTATE_S1L7
+mdefine_line|#define SYSIO_SBUS_ISTATE_S1L7&t;0x00000000c0000000 /* Slot 1, level 7 */
+DECL|macro|SYSIO_SBUS_ISTATE_S2L1
+mdefine_line|#define SYSIO_SBUS_ISTATE_S2L1&t;0x0000000c00000000 /* Slot 2, level 1 */
+DECL|macro|SYSIO_SBUS_ISTATE_S2L2
+mdefine_line|#define SYSIO_SBUS_ISTATE_S2L2&t;0x0000003000000000 /* Slot 2, level 2 */
+DECL|macro|SYSIO_SBUS_ISTATE_S2L3
+mdefine_line|#define SYSIO_SBUS_ISTATE_S2L3&t;0x000000c000000000 /* Slot 2, level 3 */
+DECL|macro|SYSIO_SBUS_ISTATE_S2L4
+mdefine_line|#define SYSIO_SBUS_ISTATE_S2L4&t;0x0000030000000000 /* Slot 2, level 4 */
+DECL|macro|SYSIO_SBUS_ISTATE_S2L5
+mdefine_line|#define SYSIO_SBUS_ISTATE_S2L5&t;0x00000c0000000000 /* Slot 2, level 5 */
+DECL|macro|SYSIO_SBUS_ISTATE_S2L6
+mdefine_line|#define SYSIO_SBUS_ISTATE_S2L6&t;0x0000300000000000 /* Slot 2, level 6 */
+DECL|macro|SYSIO_SBUS_ISTATE_S2L7
+mdefine_line|#define SYSIO_SBUS_ISTATE_S2L7&t;0x0000c00000000000 /* Slot 2, level 7 */
+DECL|macro|SYSIO_SBUS_ISTATE_S3L1
+mdefine_line|#define SYSIO_SBUS_ISTATE_S3L1&t;0x000c000000000000 /* Slot 3, level 1 */
+DECL|macro|SYSIO_SBUS_ISTATE_S3L2
+mdefine_line|#define SYSIO_SBUS_ISTATE_S3L2&t;0x0030000000000000 /* Slot 3, level 2 */
+DECL|macro|SYSIO_SBUS_ISTATE_S3L3
+mdefine_line|#define SYSIO_SBUS_ISTATE_S3L3&t;0x00c0000000000000 /* Slot 3, level 3 */
+DECL|macro|SYSIO_SBUS_ISTATE_S3L4
+mdefine_line|#define SYSIO_SBUS_ISTATE_S3L4&t;0x0300000000000000 /* Slot 3, level 4 */
+DECL|macro|SYSIO_SBUS_ISTATE_S3L5
+mdefine_line|#define SYSIO_SBUS_ISTATE_S3L5&t;0x0c00000000000000 /* Slot 3, level 5 */
+DECL|macro|SYSIO_SBUS_ISTATE_S3L6
+mdefine_line|#define SYSIO_SBUS_ISTATE_S3L6&t;0x3000000000000000 /* Slot 3, level 6 */
+DECL|macro|SYSIO_SBUS_ISTATE_S3L7
+mdefine_line|#define SYSIO_SBUS_ISTATE_S3L7&t;0xc000000000000000 /* Slot 3, level 7 */
+multiline_comment|/* For OBIO devices things are a bit different, you just have to know what&n; * you are looking for.&n; */
+DECL|macro|SYSIO_OBIO_ISTATE_SCSI
+mdefine_line|#define SYSIO_OBIO_ISTATE_SCSI&t;0x0000000000000003 /* Scsi&t;&t;*/
+DECL|macro|SYSIO_OBIO_ISTATE_ETH
+mdefine_line|#define SYSIO_OBIO_ISTATE_ETH&t;0x000000000000000c /* Ethernet&t;&t;*/
+DECL|macro|SYSIO_OBIO_ISTATE_PP
+mdefine_line|#define SYSIO_OBIO_ISTATE_PP&t;0x0000000000000030 /* Parallel Port&t;*/
+DECL|macro|SYSIO_OBIO_ISTATE_AUDIO
+mdefine_line|#define SYSIO_OBIO_ISTATE_AUDIO&t;0x00000000000000c0 /* Sun Audio&t;&t;*/
+DECL|macro|SYSIO_OBIO_ISTATE_PFAIL
+mdefine_line|#define SYSIO_OBIO_ISTATE_PFAIL&t;0x0000000000000300 /* Power Fail&t;*/
+DECL|macro|SYSIO_OBIO_ISTATE_KBMS
+mdefine_line|#define SYSIO_OBIO_ISTATE_KBMS&t;0x0000000000000c00 /* kbd/mouse/serial&t;*/
+DECL|macro|SYSIO_OBIO_ISTATE_FLPY
+mdefine_line|#define SYSIO_OBIO_ISTATE_FLPY&t;0x0000000000003000 /* Floppy Controller&t;*/
+DECL|macro|SYSIO_OBIO_ISTATE_SPHW
+mdefine_line|#define SYSIO_OBIO_ISTATE_SPHW&t;0x000000000000c000 /* Spare HW&t;&t;*/
+DECL|macro|SYSIO_OBIO_ISTATE_KBD
+mdefine_line|#define SYSIO_OBIO_ISTATE_KBD&t;0x0000000000030000 /* Keyboard&t;&t;*/
+DECL|macro|SYSIO_OBIO_ISTATE_MS
+mdefine_line|#define SYSIO_OBIO_ISTATE_MS&t;0x00000000000c0000 /* Mouse&t;&t;*/
+DECL|macro|SYSIO_OBIO_ISTATE_SER
+mdefine_line|#define SYSIO_OBIO_ISTATE_SER&t;0x0000000000300000 /* Serial&t;&t;*/
+DECL|macro|SYSIO_OBIO_ISTATE_TIM0
+mdefine_line|#define SYSIO_OBIO_ISTATE_TIM0&t;0x0000000000c00000 /* Timer 0&t;&t;*/
+DECL|macro|SYSIO_OBIO_ISTATE_TIM1
+mdefine_line|#define SYSIO_OBIO_ISTATE_TIM1&t;0x0000000003000000 /* Timer 1&t;&t;*/
+DECL|macro|SYSIO_OBIO_ISTATE_UE
+mdefine_line|#define SYSIO_OBIO_ISTATE_UE&t;0x000000000c000000 /* Uncorrectable Err&t;*/
+DECL|macro|SYSIO_OBIO_ISTATE_CE
+mdefine_line|#define SYSIO_OBIO_ISTATE_CE&t;0x0000000030000000 /* Correctable Err&t;*/
+DECL|macro|SYSIO_OBIO_ISTATE_SERR
+mdefine_line|#define SYSIO_OBIO_ISTATE_SERR&t;0x00000000c0000000 /* SBUS Err&t;&t;*/
+DECL|macro|SYSIO_OBIO_ISTATE_PMGMT
+mdefine_line|#define SYSIO_OBIO_ISTATE_PMGMT&t;0x0000000300000000 /* Power Management&t;*/
+DECL|macro|SYSIO_OBIO_ISTATE_RSVI
+mdefine_line|#define SYSIO_OBIO_ISTATE_RSVI&t;0x0000000400000000 /* Reserved Int&t;*/
+DECL|macro|SYSIO_OBIO_ISTATE_EUPA
+mdefine_line|#define SYSIO_OBIO_ISTATE_EUPA&t;0x0000000800000000 /* Expansion UPA (creator) */
+DECL|macro|SYSIO_OBIO_ISTATE_RESV
+mdefine_line|#define SYSIO_OBIO_ISTATE_RESV&t;0xfffffff000000000 /* Reserved...&t;*/
+multiline_comment|/* SYSIO Counter and Limit registers are documented in timer.h as these&n; * are generic SUN4U things.&n; */
+multiline_comment|/* SYSIO Performance Monitor Control register. */
+DECL|macro|SYSIO_PCNTRL_CLR1
+mdefine_line|#define SYSIO_PCNTRL_CLR1&t;0x0000000000008000 /* Clear SEL1 counter              */
+DECL|macro|SYSIO_PCNTRL_SEL1_SDR
+mdefine_line|#define SYSIO_PCNTRL_SEL1_SDR&t;0x0000000000000000 /* SEL1: Streaming DVMA reads      */
+DECL|macro|SYSIO_PCNTRL_SEL1_SDW
+mdefine_line|#define SYSIO_PCNTRL_SEL1_SDW&t;0x0000000000000100 /* SEL1: Streaming DVMA writes     */
+DECL|macro|SYSIO_PCNTRL_SEL1_CDR
+mdefine_line|#define SYSIO_PCNTRL_SEL1_CDR&t;0x0000000000000200 /* SEL1: Consistent DVMA reads     */
+DECL|macro|SYSIO_PCNTRL_SEL1_CDW
+mdefine_line|#define SYSIO_PCNTRL_SEL1_CDW&t;0x0000000000000300 /* SEL1: Consistent DVMA writes    */
+DECL|macro|SYSIO_PCNTRL_SEL1_TMISS
+mdefine_line|#define SYSIO_PCNTRL_SEL1_TMISS&t;0x0000000000000400 /* SEL1: IOMMU TLB misses          */
+DECL|macro|SYSIO_PCNTRL_SEL1_SMISS
+mdefine_line|#define SYSIO_PCNTRL_SEL1_SMISS&t;0x0000000000000500 /* SEL1: Streaming Buffer misses   */
+DECL|macro|SYSIO_PCNTRL_SEL1_SDC
+mdefine_line|#define SYSIO_PCNTRL_SEL1_SDC&t;0x0000000000000600 /* SEL1: SBUS dvma cycles          */
+DECL|macro|SYSIO_PCNTRL_SEL1_DB
+mdefine_line|#define SYSIO_PCNTRL_SEL1_DB&t;0x0000000000000700 /* SEL1: DVMA bytes transferred    */
+DECL|macro|SYSIO_PCNTRL_SEL1_IRQ
+mdefine_line|#define SYSIO_PCNTRL_SEL1_IRQ&t;0x0000000000000800 /* SEL1: Interrupts                */
+DECL|macro|SYSIO_PCNTRL_SEL1_UIN
+mdefine_line|#define SYSIO_PCNTRL_SEL1_UIN&t;0x0000000000000900 /* SEL1: UPA IRQ NACK&squot;s            */
+DECL|macro|SYSIO_PCNTRL_SEL1_PRD
+mdefine_line|#define SYSIO_PCNTRL_SEL1_PRD&t;0x0000000000000a00 /* SEL1: PIO reads                 */
+DECL|macro|SYSIO_PCNTRL_SEL1_PWR
+mdefine_line|#define SYSIO_PCNTRL_SEL1_PWR&t;0x0000000000000b00 /* SEL1: PIO writes                */
+DECL|macro|SYSIO_PCNTRL_SEL1_SRR
+mdefine_line|#define SYSIO_PCNTRL_SEL1_SRR&t;0x0000000000000c00 /* SEL1: SBUS reruns               */
+DECL|macro|SYSIO_PCNTRL_SEL1_SPIO
+mdefine_line|#define SYSIO_PCNTRL_SEL1_SPIO&t;0x0000000000000d00 /* SEL1: SYSIO PIO cycles          */
+DECL|macro|SYSIO_PCNTRL_CLR0
+mdefine_line|#define SYSIO_PCNTRL_CLR0&t;0x0000000000000080 /* Clear SEL0 counter              */
+DECL|macro|SYSIO_PCNTRL_SEL0_SDR
+mdefine_line|#define SYSIO_PCNTRL_SEL0_SDR&t;0x0000000000000000 /* SEL0: Streaming DVMA reads      */
+DECL|macro|SYSIO_PCNTRL_SEL0_SDW
+mdefine_line|#define SYSIO_PCNTRL_SEL0_SDW&t;0x0000000000000001 /* SEL0: Streaming DVMA writes     */
+DECL|macro|SYSIO_PCNTRL_SEL0_CDR
+mdefine_line|#define SYSIO_PCNTRL_SEL0_CDR&t;0x0000000000000002 /* SEL0: Consistent DVMA reads     */
+DECL|macro|SYSIO_PCNTRL_SEL0_CDW
+mdefine_line|#define SYSIO_PCNTRL_SEL0_CDW&t;0x0000000000000003 /* SEL0: Consistent DVMA writes    */
+DECL|macro|SYSIO_PCNTRL_SEL0_TMISS
+mdefine_line|#define SYSIO_PCNTRL_SEL0_TMISS&t;0x0000000000000004 /* SEL0: IOMMU TLB misses          */
+DECL|macro|SYSIO_PCNTRL_SEL0_SMISS
+mdefine_line|#define SYSIO_PCNTRL_SEL0_SMISS&t;0x0000000000000005 /* SEL0: Streaming Buffer misses   */
+DECL|macro|SYSIO_PCNTRL_SEL0_SDC
+mdefine_line|#define SYSIO_PCNTRL_SEL0_SDC&t;0x0000000000000006 /* SEL0: SBUS dvma cycles          */
+DECL|macro|SYSIO_PCNTRL_SEL0_DB
+mdefine_line|#define SYSIO_PCNTRL_SEL0_DB&t;0x0000000000000007 /* SEL0: DVMA bytes transferred    */
+DECL|macro|SYSIO_PCNTRL_SEL0_IRQ
+mdefine_line|#define SYSIO_PCNTRL_SEL0_IRQ&t;0x0000000000000008 /* SEL0: Interrupts                */
+DECL|macro|SYSIO_PCNTRL_SEL0_UIN
+mdefine_line|#define SYSIO_PCNTRL_SEL0_UIN&t;0x0000000000000009 /* SEL0: UPA IRQ NACK&squot;s            */
+DECL|macro|SYSIO_PCNTRL_SEL0_PRD
+mdefine_line|#define SYSIO_PCNTRL_SEL0_PRD&t;0x000000000000000a /* SEL0: PIO reads                 */
+DECL|macro|SYSIO_PCNTRL_SEL0_PWR
+mdefine_line|#define SYSIO_PCNTRL_SEL0_PWR&t;0x000000000000000b /* SEL0: PIO writes                */
+DECL|macro|SYSIO_PCNTRL_SEL0_SRR
+mdefine_line|#define SYSIO_PCNTRL_SEL0_SRR&t;0x000000000000000c /* SEL0: SBUS reruns               */
+DECL|macro|SYSIO_PCNTRL_SEL0_SPIO
+mdefine_line|#define SYSIO_PCNTRL_SEL0_SPIO&t;0x000000000000000d /* SEL0: SYSIO PIO cycles          */
+multiline_comment|/* SYSIO Performance Monitor Counter register. */
+DECL|macro|SYSIO_PCOUNT_CNT0
+mdefine_line|#define SYSIO_PCOUNT_CNT0&t;0xffffffff00000000 /* Counter zero  */
+DECL|macro|SYSIO_PCOUNT_CNT1
+mdefine_line|#define SYSIO_PCOUNT_CNT1&t;0x00000000ffffffff /* Counter one  */
 macro_line|#endif /* !(__SPARC64_SYSIO_H) */
 eof

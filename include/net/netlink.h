@@ -3,14 +3,8 @@ DECL|macro|__NET_NETLINK_H
 mdefine_line|#define __NET_NETLINK_H
 DECL|macro|NET_MAJOR
 mdefine_line|#define NET_MAJOR 36&t;&t;/* Major 18 is reserved for networking &t;&t;&t;&t;&t;&t;*/
-multiline_comment|/* so....                                ^^ is this 36? */
-multiline_comment|/* and the things below... */
 DECL|macro|MAX_LINKS
-mdefine_line|#define MAX_LINKS 16&t;&t;/* 18,0 for route updates, 18,1 for SKIP, 18,2 debug tap 18,3 PPP reserved &t;*/
-multiline_comment|/* 4-7 are psi0-psi3  8 is arpd 9 is ppp */
-multiline_comment|/* 10 is for IPSEC &lt;John Ioannidis&gt; */
-multiline_comment|/* 11 IPv6 route updates&t;&t;*/
-multiline_comment|/* 12 is for firewall trapout&t;*/
+mdefine_line|#define MAX_LINKS 32
 DECL|macro|MAX_QBYTES
 mdefine_line|#define MAX_QBYTES 32768&t;/* Maximum bytes in the queue &t;&t;&t;&t;&t;&t;&t;*/
 macro_line|#include &lt;linux/netlink.h&gt;
@@ -83,7 +77,7 @@ r_void
 suffix:semicolon
 multiline_comment|/*&n; *&t;skb should fit one page. This choice is good for headerless malloc.&n; */
 DECL|macro|NLMSG_GOODSIZE
-mdefine_line|#define NLMSG_GOODSIZE (PAGE_SIZE - ((sizeof(struct sk_buff)+0xF)&amp;~0xF))
+mdefine_line|#define NLMSG_GOODSIZE (PAGE_SIZE - ((sizeof(struct sk_buff)+0xF)&amp;~0xF)-32)
 DECL|macro|NLMSG_RECOVERY_TIMEO
 mdefine_line|#define NLMSG_RECOVERY_TIMEO&t;(HZ/2)&t;&t;/* If deleivery was failed,&n;&t;&t;&t;&t;&t;&t;   retry after */
 DECL|struct|nlmsg_ctl
@@ -250,17 +244,19 @@ DECL|macro|NETLINK_USERSOCK
 mdefine_line|#define NETLINK_USERSOCK&t;2&t;/* Reserved for user mode socket protocols &t;*/
 DECL|macro|NETLINK_FIREWALL
 mdefine_line|#define NETLINK_FIREWALL&t;3&t;/* Firewalling hook&t;&t;&t;&t;*/
-DECL|macro|NETLINK_PSI
-mdefine_line|#define NETLINK_PSI&t;&t;4&t;/* PSI devices - 4 to 7 */
+DECL|macro|NETLINK_FREE
+mdefine_line|#define NETLINK_FREE&t;&t;4&t;/* PSI devices - 4 to 7 (obsolete)&t;&t;*/
 DECL|macro|NETLINK_ARPD
-mdefine_line|#define NETLINK_ARPD&t;&t;8
+mdefine_line|#define NETLINK_ARPD&t;&t;8&t;/* ARP daemon for big switched networks&t;&t;*/
 DECL|macro|NETLINK_IPSEC
-mdefine_line|#define NETLINK_IPSEC&t;&t;10&t;/* IPSEC */
+mdefine_line|#define NETLINK_IPSEC&t;&t;10&t;/* IPSEC  (JI)&t;&t;&t;&t;&t;*/
 DECL|macro|NETLINK_ROUTE6
-mdefine_line|#define NETLINK_ROUTE6&t;&t;11&t;/* af_inet6 route comm channel */
+mdefine_line|#define NETLINK_ROUTE6&t;&t;11&t;/* Af_inet6 route communication channel&t;&t;*/
 DECL|macro|NETLINK_IP6_FW
-mdefine_line|#define NETLINK_IP6_FW&t;&t;13
-multiline_comment|/* Wouldn&squot;t this suffice instead of the confusion at the top of&n;   this file?  i.e. 3 is firewall or ppp... */
-multiline_comment|/* #define MAX_LINKS&t;&t;16 */
+mdefine_line|#define NETLINK_IP6_FW&t;&t;13&t;/* IPv6 firewall trap outs&t;&t;&t;*/
+DECL|macro|NETLINK_DNRT
+mdefine_line|#define NETLINK_DNRT&t;&t;14&t;/* DECnet routing messages&t;&t;&t;*/
+DECL|macro|NETLINK_TAPBASE
+mdefine_line|#define NETLINK_TAPBASE&t;&t;16&t;/* 16-&gt;31 are the ethertap devices &t;&t;*/
 macro_line|#endif
 eof

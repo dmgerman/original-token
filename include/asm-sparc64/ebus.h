@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: ebus.h,v 1.1 1997/08/12 04:13:12 ecd Exp $&n; * ebus.h: PCI to Ebus pseudo driver software state.&n; *&n; * Copyright (C) 1997 Eddie C. Dost (ecd@skynet.be)&n; */
+multiline_comment|/* $Id: ebus.h,v 1.2 1997/08/17 22:40:07 ecd Exp $&n; * ebus.h: PCI to Ebus pseudo driver software state.&n; *&n; * Copyright (C) 1997 Eddie C. Dost (ecd@skynet.be)&n; */
 macro_line|#ifndef __SPARC64_EBUS_H
 DECL|macro|__SPARC64_EBUS_H
 mdefine_line|#define __SPARC64_EBUS_H
@@ -30,21 +30,21 @@ id|prom_name
 l_int|64
 )braket
 suffix:semicolon
-DECL|member|regs
-r_struct
-id|linux_prom_registers
-id|regs
+DECL|member|base_address
+r_int
+r_int
+id|base_address
 (braket
 id|PROMREG_MAX
 )braket
 suffix:semicolon
-DECL|member|num_registers
+DECL|member|num_addrs
 r_int
-id|num_registers
+id|num_addrs
 suffix:semicolon
 DECL|member|irqs
-r_struct
-id|linux_prom_irqs
+r_int
+r_int
 id|irqs
 (braket
 id|PROMINTR_MAX
@@ -78,6 +78,12 @@ id|linux_pbm_info
 op_star
 id|parent
 suffix:semicolon
+DECL|member|self
+r_struct
+id|pci_dev
+op_star
+id|self
+suffix:semicolon
 DECL|member|prom_node
 r_int
 id|prom_node
@@ -91,7 +97,7 @@ l_int|64
 suffix:semicolon
 DECL|member|ebus_ranges
 r_struct
-id|linux_prom_ranges
+id|linux_prom_ebus_ranges
 id|ebus_ranges
 (braket
 id|PROMREG_MAX
@@ -120,25 +126,6 @@ r_int
 comma
 r_int
 r_int
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|prom_apply_ebus_ranges
-c_func
-(paren
-r_struct
-id|linux_ebus
-op_star
-id|ebus
-comma
-r_struct
-id|linux_prom_registers
-op_star
-id|regs
-comma
-r_int
-id|nregs
 )paren
 suffix:semicolon
 DECL|macro|for_each_ebus

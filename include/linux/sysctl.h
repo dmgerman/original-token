@@ -431,11 +431,14 @@ comma
 DECL|enumerator|NET_TCP_SYNCOOKIES
 id|NET_TCP_SYNCOOKIES
 comma
-DECL|enumerator|NET_TCP_ALWAYS_SYNCOOKIE
-id|NET_TCP_ALWAYS_SYNCOOKIE
-comma
 DECL|enumerator|NET_TCP_STDURG
 id|NET_TCP_STDURG
+comma
+DECL|enumerator|NET_TCP_SYN_TAILDROP
+id|NET_TCP_SYN_TAILDROP
+comma
+DECL|enumerator|NET_TCP_MAX_SYN_BACKLOG
+id|NET_TCP_MAX_SYN_BACKLOG
 comma
 )brace
 suffix:semicolon

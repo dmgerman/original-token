@@ -13,14 +13,14 @@ multiline_comment|/* only one bit is on for each enum                           
 macro_line|#ifndef _PNP_
 DECL|macro|_PNP_
 mdefine_line|#define _PNP_
+macro_line|#ifndef __ASSEMBLY__
 DECL|macro|MAX_MEM_REGISTERS
 mdefine_line|#define MAX_MEM_REGISTERS 9
 DECL|macro|MAX_IO_PORTS
 mdefine_line|#define MAX_IO_PORTS 20
 DECL|macro|MAX_IRQS
 mdefine_line|#define MAX_IRQS 7
-DECL|macro|MAX_DMA_CHANNELS
-mdefine_line|#define MAX_DMA_CHANNELS 7
+multiline_comment|/*#define MAX_DMA_CHANNELS 7*/
 multiline_comment|/* Interrupt controllers */
 DECL|macro|PNPinterrupt0
 mdefine_line|#define PNPinterrupt0 &quot;PNP0000&quot;      /* AT Interrupt Controller               */
@@ -1929,5 +1929,6 @@ DECL|typedef|PnP_TAG_PACKET
 )brace
 id|PnP_TAG_PACKET
 suffix:semicolon
+macro_line|#endif /* __ASSEMBLY__ */
 macro_line|#endif  /* ndef _PNP_ */
 eof

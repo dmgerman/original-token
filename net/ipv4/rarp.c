@@ -141,6 +141,7 @@ l_int|NULL
 suffix:semicolon
 DECL|variable|initflag
 r_static
+r_int
 id|initflag
 op_assign
 l_int|1

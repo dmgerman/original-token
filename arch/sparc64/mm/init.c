@@ -1,4 +1,4 @@
-multiline_comment|/*  $Id: init.c,v 1.54 1997/08/15 06:44:23 davem Exp $&n; *  arch/sparc64/mm/init.c&n; *&n; *  Copyright (C) 1996,1997 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/*  $Id: init.c,v 1.55 1997/08/24 01:22:29 davem Exp $&n; *  arch/sparc64/mm/init.c&n; *&n; *  Copyright (C) 1996,1997 David S. Miller (davem@caip.rutgers.edu)&n; *  Copyright (C) 1997 Jakub Jelinek (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
@@ -815,7 +815,7 @@ macro_line|#endif
 id|printk
 c_func
 (paren
-l_string|&quot;IOMMU: IMPL[%x] VERS[%x] SYSIO mapped at %016lx&bslash;n&quot;
+l_string|&quot;IOMMU(SBUS): IMPL[%x] VERS[%x] SYSIO mapped at %016lx&bslash;n&quot;
 comma
 (paren
 r_int

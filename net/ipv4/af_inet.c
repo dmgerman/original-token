@@ -798,7 +798,6 @@ op_minus
 id|EAGAIN
 suffix:semicolon
 multiline_comment|/* We might as well re use these. */
-multiline_comment|/*&n;&t; * note that the backlog is &quot;unsigned char&quot;, so truncate it&n;&t; * somewhere. We might as well truncate it to what everybody&n;&t; * else does..&n;&t; * Now truncate to 128 not 5. &n;&t; */
 r_if
 c_cond
 (paren
@@ -906,6 +905,8 @@ op_assign
 id|sk_alloc
 c_func
 (paren
+id|AF_INET
+comma
 id|GFP_KERNEL
 )paren
 suffix:semicolon
@@ -1306,34 +1307,6 @@ suffix:colon
 r_return
 op_minus
 id|ENOBUFS
-suffix:semicolon
-)brace
-multiline_comment|/*&n; *&t;Duplicate a socket.&n; */
-DECL|function|inet_dup
-r_static
-r_int
-id|inet_dup
-c_func
-(paren
-r_struct
-id|socket
-op_star
-id|newsock
-comma
-r_struct
-id|socket
-op_star
-id|oldsock
-)paren
-(brace
-r_return
-id|inet_create
-c_func
-(paren
-id|newsock
-comma
-id|oldsock-&gt;sk-&gt;protocol
-)paren
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;The peer socket should always be NULL (or else). When we call this&n; *&t;function we are destroying the object and from then on nobody&n; *&t;should refer to it.&n; */
@@ -3387,6 +3360,12 @@ suffix:colon
 r_case
 id|SIOGIFINDEX
 suffix:colon
+r_case
+id|SIOGIFNAME
+suffix:colon
+r_case
+id|SIOCGIFCOUNT
+suffix:colon
 r_return
 id|dev_ioctl
 c_func
@@ -3594,7 +3573,7 @@ op_assign
 (brace
 id|AF_INET
 comma
-id|inet_dup
+id|sock_no_dup
 comma
 id|inet_release
 comma
@@ -3602,7 +3581,7 @@ id|inet_bind
 comma
 id|inet_stream_connect
 comma
-l_int|NULL
+id|sock_no_socketpair
 comma
 id|inet_accept
 comma
@@ -3635,7 +3614,7 @@ op_assign
 (brace
 id|AF_INET
 comma
-id|inet_dup
+id|sock_no_dup
 comma
 id|inet_release
 comma
@@ -3643,9 +3622,9 @@ id|inet_bind
 comma
 id|inet_dgram_connect
 comma
-l_int|NULL
+id|sock_no_socketpair
 comma
-l_int|NULL
+id|sock_no_accept
 comma
 id|inet_getname
 comma
@@ -3678,11 +3657,6 @@ id|AF_INET
 comma
 id|inet_create
 )brace
-suffix:semicolon
-r_extern
-r_int
-r_int
-id|seq_offset
 suffix:semicolon
 macro_line|#ifdef CONFIG_PROC_FS
 macro_line|#ifdef CONFIG_INET_RARP
@@ -3950,12 +3924,6 @@ c_func
 op_amp
 id|inet_family_ops
 )paren
-suffix:semicolon
-id|seq_offset
-op_assign
-id|CURRENT_TIME
-op_star
-l_int|250
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Add all the protocols. &n;&t; */
 id|printk

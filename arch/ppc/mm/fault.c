@@ -513,9 +513,11 @@ macro_line|#endif
 id|panic
 c_func
 (paren
-l_string|&quot;kernel access of bad area&bslash;n pc %lx address %lX tsk %s/%d&quot;
+l_string|&quot;kernel access of bad area pc %lx lr %lx address %lX tsk %s/%d&quot;
 comma
 id|regs-&gt;nip
+comma
+id|regs-&gt;link
 comma
 id|address
 comma

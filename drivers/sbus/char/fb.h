@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: fb.h,v 1.29 1997/07/15 09:48:48 jj Exp $&n; * fb.h: contains the definitions of the structures that various sun&n; *       frame buffer can use to do console driver stuff.&n; *&n; * (C) 1996 Dave Redman     (djhr@tadpole.co.uk)&n; * (C) 1996 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; * (C) 1996 David Miller    (davem@rutgers.edu)&n; * (C) 1996 Peter Zaitcev   (zaitcev@lab.ipmce.su)&n; * (C) 1996 Eddie C. Dost   (ecd@skynet.be)&n; * (C) 1996 Jakub Jelinek   (jj@sunsite.mff.cuni.cz)&n; */
+multiline_comment|/* $Id: fb.h,v 1.33 1997/08/25 07:50:29 jj Exp $&n; * fb.h: contains the definitions of the structures that various sun&n; *       frame buffer can use to do console driver stuff.&n; *&n; * (C) 1996 Dave Redman     (djhr@tadpole.co.uk)&n; * (C) 1996 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; * (C) 1996 David Miller    (davem@rutgers.edu)&n; * (C) 1996 Peter Zaitcev   (zaitcev@lab.ipmce.su)&n; * (C) 1996 Eddie C. Dost   (ecd@skynet.be)&n; * (C) 1996 Jakub Jelinek   (jj@sunsite.mff.cuni.cz)&n; */
 macro_line|#ifndef __SPARC_FB_H_
 DECL|macro|__SPARC_FB_H_
 mdefine_line|#define __SPARC_FB_H_
@@ -438,6 +438,11 @@ r_struct
 id|ffb_info
 id|ffb
 suffix:semicolon
+DECL|member|private
+r_void
+op_star
+r_private
+suffix:semicolon
 DECL|member|info
 )brace
 id|info
@@ -502,6 +507,11 @@ r_int
 id|base_depth
 suffix:semicolon
 multiline_comment|/* depth of fb-&gt;base piece */
+DECL|member|linebytes
+r_int
+id|linebytes
+suffix:semicolon
+multiline_comment|/* number of bytes in a row */
 DECL|member|cursor
 r_struct
 id|cg_cursor
@@ -692,6 +702,26 @@ r_int
 r_int
 )paren
 suffix:semicolon
+DECL|member|clear_fb
+r_void
+(paren
+op_star
+id|clear_fb
+)paren
+(paren
+r_int
+)paren
+suffix:semicolon
+DECL|member|set_other_palette
+r_void
+(paren
+op_star
+id|set_other_palette
+)paren
+(paren
+r_int
+)paren
+suffix:semicolon
 DECL|member|blitc
 r_void
 (paren
@@ -757,6 +787,20 @@ r_int
 op_star
 )paren
 suffix:semicolon
+DECL|member|draw_penguin
+r_void
+(paren
+op_star
+id|draw_penguin
+)paren
+(paren
+r_int
+comma
+r_int
+comma
+r_int
+)paren
+suffix:semicolon
 DECL|member|color_map
 r_int
 r_char
@@ -774,6 +818,13 @@ id|fbinfo_t
 suffix:semicolon
 DECL|macro|CM
 mdefine_line|#define CM(i, j) [3*(i)+(j)]
+r_extern
+r_int
+r_char
+id|sparc_color_table
+(braket
+)braket
+suffix:semicolon
 r_extern
 r_int
 r_char
@@ -979,7 +1030,7 @@ r_void
 suffix:semicolon
 r_extern
 r_void
-id|sun_hw_hide_cursor
+id|sbus_hw_hide_cursor
 c_func
 (paren
 r_void
@@ -987,7 +1038,7 @@ r_void
 suffix:semicolon
 r_extern
 r_void
-id|sun_hw_set_cursor
+id|sbus_hw_set_cursor
 c_func
 (paren
 r_int
@@ -997,7 +1048,7 @@ r_int
 suffix:semicolon
 r_extern
 r_int
-id|sun_hw_scursor
+id|sbus_hw_scursor
 c_func
 (paren
 r_struct
@@ -1010,7 +1061,7 @@ op_star
 suffix:semicolon
 r_extern
 r_int
-id|sun_hw_cursor_shown
+id|sbus_hw_cursor_shown
 suffix:semicolon
 r_extern
 r_int
@@ -1019,7 +1070,7 @@ suffix:semicolon
 r_extern
 r_int
 r_int
-id|sun_cg_postsetup
+id|cg_postsetup
 c_func
 (paren
 id|fbinfo_t
@@ -1169,6 +1220,52 @@ comma
 r_int
 id|space
 )paren
+suffix:semicolon
+r_extern
+r_int
+r_char
+id|linux_logo_red
+(braket
+)braket
+suffix:semicolon
+r_extern
+r_int
+r_char
+id|linux_logo_green
+(braket
+)braket
+suffix:semicolon
+r_extern
+r_int
+r_char
+id|linux_logo_blue
+(braket
+)braket
+suffix:semicolon
+r_extern
+r_int
+r_char
+id|linux_logo
+(braket
+)braket
+suffix:semicolon
+r_extern
+r_int
+r_char
+id|linux_logo_bw
+(braket
+)braket
+suffix:semicolon
+r_extern
+r_int
+r_int
+id|linux_logo_colors
+suffix:semicolon
+r_extern
+r_char
+id|logo_banner
+(braket
+)braket
 suffix:semicolon
 macro_line|#endif __SPARC_FB_H_
 eof

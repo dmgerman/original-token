@@ -10,8 +10,8 @@ mdefine_line|#define PAGE_SIZE&t;(1UL &lt;&lt; PAGE_SHIFT)
 DECL|macro|PAGE_MASK
 mdefine_line|#define PAGE_MASK&t;(~(PAGE_SIZE-1))
 multiline_comment|/* This handles the memory map.. */
-multiline_comment|/*&n; * these virtual mappings for prep and pmac&n; * on the prep machine the io areas are at different physical locations&n; * than their virtual address.  On the pmac the io areas&n; * are mapped 1-1 virtual/physical.&n; * -- Cort&n; */
-macro_line|#ifdef CONFIG_PREP
+multiline_comment|/*&n; * these virtual mappings for prep and pmac&n; * on the prep machine the io areas are at different physical locations&n; * than their virtual address.  On the pmac and chrp the io areas&n; * are mapped 1-1 virtual/physical.&n; * -- Cort&n; */
+macro_line|#if defined(CONFIG_PREP) || defined(CONFIG_CHRP)
 DECL|macro|KERNELBASE
 mdefine_line|#define KERNELBASE&t;0x90000000
 macro_line|#endif

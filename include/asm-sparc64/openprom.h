@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: openprom.h,v 1.5 1997/08/15 06:44:51 davem Exp $ */
+multiline_comment|/* $Id: openprom.h,v 1.6 1997/08/17 22:40:09 ecd Exp $ */
 macro_line|#ifndef __SPARC64_OPENPROM_H
 DECL|macro|__SPARC64_OPENPROM_H
 mdefine_line|#define __SPARC64_OPENPROM_H
@@ -1111,6 +1111,42 @@ DECL|member|size_lo
 r_int
 r_int
 id|size_lo
+suffix:semicolon
+)brace
+suffix:semicolon
+DECL|struct|linux_prom_ebus_ranges
+r_struct
+id|linux_prom_ebus_ranges
+(brace
+DECL|member|child_phys_hi
+r_int
+r_int
+id|child_phys_hi
+suffix:semicolon
+DECL|member|child_phys_lo
+r_int
+r_int
+id|child_phys_lo
+suffix:semicolon
+DECL|member|parent_phys_hi
+r_int
+r_int
+id|parent_phys_hi
+suffix:semicolon
+DECL|member|parent_phys_mid
+r_int
+r_int
+id|parent_phys_mid
+suffix:semicolon
+DECL|member|parent_phys_lo
+r_int
+r_int
+id|parent_phys_lo
+suffix:semicolon
+DECL|member|size
+r_int
+r_int
+id|size
 suffix:semicolon
 )brace
 suffix:semicolon

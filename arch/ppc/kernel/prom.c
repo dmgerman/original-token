@@ -6,6 +6,7 @@ macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/blk.h&gt;
 macro_line|#include &lt;asm/prom.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
+macro_line|#include &lt;asm/processor.h&gt;
 DECL|macro|getpromprop
 mdefine_line|#define getpromprop(node, name, buf, len)&t;&bslash;&n;&t;((int)call_prom(&quot;getprop&quot;, 4, 1, (node), (name), (buf), (len)))
 DECL|variable|prom_stdout
@@ -533,11 +534,12 @@ multiline_comment|/* First get a handle for the stdout device */
 r_if
 c_cond
 (paren
-id|_machine
-op_ne
-id|_MACH_Pmac
+op_logical_neg
+id|have_of
+c_func
+(paren
 )paren
-multiline_comment|/* prep */
+)paren
 r_return
 suffix:semicolon
 id|prom_entry

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: pbm.h,v 1.4 1997/08/15 06:44:52 davem Exp $&n; * pbm.h: U2P PCI bus module pseudo driver software state.&n; *&n; * Copyright (C) 1997 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: pbm.h,v 1.7 1997/08/25 06:01:14 davem Exp $&n; * pbm.h: U2P PCI bus module pseudo driver software state.&n; *&n; * Copyright (C) 1997 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef __SPARC64_PBM_H
 DECL|macro|__SPARC64_PBM_H
 mdefine_line|#define __SPARC64_PBM_H
@@ -6,6 +6,48 @@ macro_line|#include &lt;linux/bios32.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
 macro_line|#include &lt;asm/psycho.h&gt;
 macro_line|#include &lt;asm/oplib.h&gt;
+r_struct
+id|linux_pbm_info
+suffix:semicolon
+multiline_comment|/* This is what we use to determine what the PROM has assigned so&n; * far, so that we can perform assignments for addresses which&n; * were not taken care of by OBP.  See psycho.c for details.&n; * Per-PBM these are ordered by start address.&n; */
+DECL|struct|pci_vma
+r_struct
+id|pci_vma
+(brace
+DECL|member|next
+r_struct
+id|pci_vma
+op_star
+id|next
+suffix:semicolon
+DECL|member|pbm
+r_struct
+id|linux_pbm_info
+op_star
+id|pbm
+suffix:semicolon
+DECL|member|start
+r_int
+r_int
+id|start
+suffix:semicolon
+DECL|member|end
+r_int
+r_int
+id|end
+suffix:semicolon
+DECL|member|base_reg
+r_int
+r_int
+id|base_reg
+suffix:semicolon
+DECL|member|_pad
+r_int
+r_int
+id|_pad
+suffix:semicolon
+)brace
+suffix:semicolon
 r_struct
 id|linux_psycho
 suffix:semicolon
@@ -19,17 +61,17 @@ id|linux_psycho
 op_star
 id|parent
 suffix:semicolon
-DECL|member|pbm_IO
-r_int
-r_int
+DECL|member|IO_assignments
+r_struct
+id|pci_vma
 op_star
-id|pbm_IO
+id|IO_assignments
 suffix:semicolon
-DECL|member|pbm_mem
-r_int
-r_int
+DECL|member|MEM_assignments
+r_struct
+id|pci_vma
 op_star
-id|pbm_mem
+id|MEM_assignments
 suffix:semicolon
 DECL|member|prom_node
 r_int
@@ -122,11 +164,126 @@ id|pbm_B
 suffix:semicolon
 )brace
 suffix:semicolon
+multiline_comment|/* PCI devices which are not bridges have this placed in their pci_dev&n; * sysdata member.  This makes OBP aware PCI device drivers easier to&n; * code.&n; */
+DECL|struct|pcidev_cookie
+r_struct
+id|pcidev_cookie
+(brace
+DECL|member|pbm
+r_struct
+id|linux_pbm_info
+op_star
+id|pbm
+suffix:semicolon
+DECL|member|prom_node
+r_int
+id|prom_node
+suffix:semicolon
+)brace
+suffix:semicolon
 r_extern
 r_struct
 id|linux_psycho
 op_star
 id|psycho_root
 suffix:semicolon
+multiline_comment|/* Special PCI IRQ encoding, this just makes life easier for the generic&n; * irq registry layer, there is already enough crap in there due to sbus,&n; * fhc, and dcookies.&n; */
+DECL|macro|PCI_IRQ_IDENT
+mdefine_line|#define PCI_IRQ_IDENT&t;&t;0x80000000&t;/* This tells irq.c what we are        */
+DECL|macro|PCI_IRQ_IMAP_OFF
+mdefine_line|#define PCI_IRQ_IMAP_OFF&t;0x7ff00000&t;/* Offset from first PSYCHO imap       */
+DECL|macro|PCI_IRQ_IMAP_OFF_SHFT
+mdefine_line|#define PCI_IRQ_IMAP_OFF_SHFT&t;20
+DECL|macro|PCI_IRQ_BUSNO
+mdefine_line|#define PCI_IRQ_BUSNO&t;&t;0x000f8000&t;/* PSYCHO instance, currently unused   */
+DECL|macro|PCI_IRQ_BUSNO_SHFT
+mdefine_line|#define PCI_IRQ_BUSNO_SHFT&t;15
+DECL|macro|PCI_IRQ_IGN
+mdefine_line|#define PCI_IRQ_IGN&t;&t;0x000007c0&t;/* PSYCHO &quot;Int Group Number&quot;           */
+DECL|macro|PCI_IRQ_INO
+mdefine_line|#define PCI_IRQ_INO&t;&t;0x0000003f&t;/* PSYCHO INO                          */
+DECL|macro|PCI_IRQ_P
+mdefine_line|#define PCI_IRQ_P(__irq)&t;(((__irq) &amp; PCI_IRQ_IDENT) != 0)
+DECL|function|pci_irq_encode
+r_extern
+id|__inline__
+r_int
+r_int
+id|pci_irq_encode
+c_func
+(paren
+r_int
+r_int
+id|imap_off
+comma
+r_int
+r_int
+id|psycho_instance
+comma
+r_int
+r_int
+id|ign
+comma
+r_int
+r_int
+id|ino
+)paren
+(brace
+r_int
+r_int
+id|irq
+suffix:semicolon
+id|irq
+op_assign
+id|PCI_IRQ_IDENT
+suffix:semicolon
+id|irq
+op_or_assign
+(paren
+(paren
+id|imap_off
+op_lshift
+id|PCI_IRQ_IMAP_OFF_SHFT
+)paren
+op_amp
+id|PCI_IRQ_IMAP_OFF
+)paren
+suffix:semicolon
+id|irq
+op_or_assign
+(paren
+(paren
+id|psycho_instance
+op_lshift
+id|PCI_IRQ_BUSNO_SHFT
+)paren
+op_amp
+id|PCI_IRQ_BUSNO
+)paren
+suffix:semicolon
+id|irq
+op_or_assign
+(paren
+(paren
+id|ign
+op_lshift
+l_int|6
+)paren
+op_amp
+id|PCI_IRQ_IGN
+)paren
+suffix:semicolon
+id|irq
+op_or_assign
+(paren
+id|ino
+op_amp
+id|PCI_IRQ_INO
+)paren
+suffix:semicolon
+r_return
+id|irq
+suffix:semicolon
+)brace
 macro_line|#endif /* !(__SPARC64_PBM_H) */
 eof

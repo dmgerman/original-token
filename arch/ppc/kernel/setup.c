@@ -1,12 +1,14 @@
-multiline_comment|/*&n; * $Id: setup.c,v 1.12 1997/08/13 03:06:17 cort Exp $&n; * Common prep/pmac boot and setup code.&n; */
+multiline_comment|/*&n; * $Id: setup.c,v 1.16 1997/08/27 22:06:54 cort Exp $&n; * Common prep/pmac boot and setup code.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;linux/reboot.h&gt;
+macro_line|#include &lt;linux/openpic.h&gt;
 macro_line|#include &lt;asm/cuda.h&gt;
 macro_line|#include &lt;asm/residual.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
+macro_line|#include &lt;asm/ide.h&gt;
 DECL|variable|saved_command_line
 r_char
 id|saved_command_line
@@ -28,6 +30,94 @@ DECL|variable|_machine
 r_int
 id|_machine
 suffix:semicolon
+multiline_comment|/*&n; * Perhaps we can put the pmac screen_info[] here&n; * on pmac as well so we don&squot;t need the ifdef&squot;s.&n; * Until we get multiple-console support in here&n; * that is.  -- Cort&n; */
+macro_line|#if defined(CONFIG_CHRP) || defined(CONFIG_PREP )
+DECL|variable|screen_info
+r_struct
+id|screen_info
+id|screen_info
+op_assign
+(brace
+l_int|0
+comma
+l_int|25
+comma
+multiline_comment|/* orig-x, orig-y */
+(brace
+l_int|0
+comma
+l_int|0
+)brace
+comma
+multiline_comment|/* unused */
+l_int|0
+comma
+multiline_comment|/* orig-video-page */
+l_int|0
+comma
+multiline_comment|/* orig-video-mode */
+l_int|80
+comma
+multiline_comment|/* orig-video-cols */
+l_int|0
+comma
+l_int|0
+comma
+l_int|0
+comma
+multiline_comment|/* ega_ax, ega_bx, ega_cx */
+l_int|25
+comma
+multiline_comment|/* orig-video-lines */
+l_int|1
+comma
+multiline_comment|/* orig-video-isVGA */
+l_int|16
+multiline_comment|/* orig-video-points */
+)brace
+suffix:semicolon
+multiline_comment|/*&n; * I really need to add multiple-console support... -- Cort&n; */
+DECL|function|pmac_display_supported
+r_int
+id|pmac_display_supported
+c_func
+(paren
+r_char
+op_star
+id|name
+)paren
+(brace
+r_return
+l_int|0
+suffix:semicolon
+)brace
+DECL|function|sd_find_target
+r_int
+id|sd_find_target
+c_func
+(paren
+r_void
+op_star
+id|a
+comma
+r_int
+id|b
+)paren
+(brace
+r_return
+l_int|0
+suffix:semicolon
+)brace
+DECL|function|pmac_find_display
+r_void
+id|pmac_find_display
+c_func
+(paren
+r_void
+)paren
+(brace
+)brace
+macro_line|#endif
 multiline_comment|/*&n; * Find out what kind of machine we&squot;re on and save any data we need&n; * from the early boot process (devtree is copied on pmac by prom_init() )&n; */
 DECL|function|identify_machine
 r_int
@@ -77,55 +167,6 @@ id|_MACH_Pmac
 suffix:semicolon
 macro_line|#endif /* CONFIG_PMAC */
 macro_line|#ifdef CONFIG_PREP
-r_if
-c_cond
-(paren
-op_logical_neg
-id|strncmp
-c_func
-(paren
-id|res.VitalProductData.PrintableModel
-comma
-l_string|&quot;IBM&quot;
-comma
-l_int|3
-)paren
-)paren
-id|_machine
-op_assign
-id|_MACH_IBM
-suffix:semicolon
-r_else
-id|_machine
-op_assign
-id|_MACH_Motorola
-suffix:semicolon
-macro_line|#endif /* CONFIG_PREP */
-r_if
-c_cond
-(paren
-id|_machine
-op_eq
-id|_MACH_Pmac
-)paren
-(brace
-id|io_base
-op_assign
-l_int|0
-suffix:semicolon
-)brace
-r_else
-r_if
-c_cond
-(paren
-id|is_prep
-)paren
-multiline_comment|/* prep */
-(brace
-id|io_base
-op_assign
-l_int|0x80000000
-suffix:semicolon
 multiline_comment|/* make a copy of residual data */
 r_if
 c_cond
@@ -157,6 +198,142 @@ r_sizeof
 id|RESIDUAL
 )paren
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|strncmp
+c_func
+(paren
+id|res.VitalProductData.PrintableModel
+comma
+l_string|&quot;IBM&quot;
+comma
+l_int|3
+)paren
+)paren
+id|_machine
+op_assign
+id|_MACH_IBM
+suffix:semicolon
+r_else
+id|_machine
+op_assign
+id|_MACH_Motorola
+suffix:semicolon
+macro_line|#endif /* CONFIG_PREP */
+macro_line|#ifdef CONFIG_CHRP 
+id|_machine
+op_assign
+id|_MACH_chrp
+suffix:semicolon
+macro_line|#endif /* CONFIG_CHRP */
+r_switch
+c_cond
+(paren
+id|_machine
+)paren
+(brace
+r_case
+id|_MACH_Pmac
+suffix:colon
+id|io_base
+op_assign
+l_int|0
+suffix:semicolon
+id|pci_dram_offset
+op_assign
+l_int|0
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|_MACH_IBM
+suffix:colon
+r_case
+id|_MACH_Motorola
+suffix:colon
+id|io_base
+op_assign
+l_int|0x80000000
+suffix:semicolon
+id|pci_dram_offset
+op_assign
+l_int|0x80000000
+suffix:semicolon
+macro_line|#ifdef CONFIG_BLK_DEV_RAM
+multiline_comment|/* take care of initrd if we have one */
+r_if
+c_cond
+(paren
+id|r4
+)paren
+(brace
+id|initrd_start
+op_assign
+id|r4
+op_plus
+id|KERNELBASE
+suffix:semicolon
+id|initrd_end
+op_assign
+id|r5
+op_plus
+id|KERNELBASE
+suffix:semicolon
+)brace
+macro_line|#endif /* CONFIG_BLK_DEV_RAM */
+multiline_comment|/* take care of cmd line */
+r_if
+c_cond
+(paren
+id|r6
+)paren
+(brace
+op_star
+(paren
+r_char
+op_star
+)paren
+(paren
+id|r7
+op_plus
+id|KERNELBASE
+)paren
+op_assign
+l_int|0
+suffix:semicolon
+id|strcpy
+c_func
+(paren
+id|cmd_line
+comma
+(paren
+r_char
+op_star
+)paren
+(paren
+id|r6
+op_plus
+id|KERNELBASE
+)paren
+)paren
+suffix:semicolon
+)brace
+r_break
+suffix:semicolon
+r_case
+id|_MACH_chrp
+suffix:colon
+multiline_comment|/* LongTrail */
+id|io_base
+op_assign
+l_int|0xf8000000
+suffix:semicolon
+id|pci_dram_offset
+op_assign
+l_int|0
 suffix:semicolon
 multiline_comment|/* take care of initrd if we have one */
 r_if
@@ -215,9 +392,10 @@ id|KERNELBASE
 )paren
 suffix:semicolon
 )brace
-)brace
-r_else
-(brace
+r_break
+suffix:semicolon
+r_default
+suffix:colon
 id|printk
 c_func
 (paren
@@ -254,14 +432,15 @@ id|i
 op_assign
 l_int|10000
 suffix:semicolon
-r_if
+r_switch
 c_cond
 (paren
 id|_machine
-op_eq
-id|_MACH_Pmac
 )paren
 (brace
+r_case
+id|_MACH_Pmac
+suffix:colon
 id|cuda_request
 c_func
 (paren
@@ -288,10 +467,14 @@ c_func
 (paren
 )paren
 suffix:semicolon
-)brace
-r_else
-multiline_comment|/* prep */
-(brace
+r_break
+suffix:semicolon
+r_case
+id|_MACH_IBM
+suffix:colon
+r_case
+id|_MACH_Motorola
+suffix:colon
 id|_disable_interrupts
 c_func
 (paren
@@ -359,6 +542,21 @@ c_func
 l_string|&quot;restart failed&bslash;n&quot;
 )paren
 suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|_MACH_chrp
+suffix:colon
+id|openpic_init_processor
+c_func
+(paren
+l_int|1
+op_lshift
+l_int|0
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
 )brace
 )brace
 DECL|function|machine_power_off
@@ -409,7 +607,7 @@ c_func
 suffix:semicolon
 )brace
 r_else
-multiline_comment|/* prep */
+multiline_comment|/* prep or chrp */
 (brace
 id|machine_restart
 c_func
@@ -452,7 +650,7 @@ multiline_comment|/* for now */
 macro_line|#endif
 )brace
 r_else
-multiline_comment|/* prep */
+multiline_comment|/* prep or chrp */
 id|machine_restart
 c_func
 (paren
@@ -460,27 +658,50 @@ l_int|NULL
 )paren
 suffix:semicolon
 )brace
-DECL|function|__initfunc
-id|__initfunc
-c_func
+DECL|function|ide_init_hwif_ports
+r_void
+id|ide_init_hwif_ports
 (paren
-r_int
-r_int
-id|bios32_init
-c_func
-(paren
-r_int
-r_int
-id|memory_start
+id|ide_ioreg_t
+op_star
+id|p
+comma
+id|ide_ioreg_t
+id|base
 comma
 r_int
-r_int
-id|memory_end
-)paren
+op_star
+id|irq
 )paren
 (brace
-r_return
-id|memory_start
+r_if
+c_cond
+(paren
+id|_machine
+op_eq
+id|_MACH_Pmac
+)paren
+id|pmac_ide_init_hwif_ports
+c_func
+(paren
+id|p
+comma
+id|base
+comma
+id|irq
+)paren
+suffix:semicolon
+r_else
+multiline_comment|/* prep */
+id|prep_ide_init_hwif_ports
+c_func
+(paren
+id|p
+comma
+id|base
+comma
+id|irq
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Will merge more into here later  -- Cort&n; */
@@ -505,6 +726,15 @@ op_star
 suffix:semicolon
 r_extern
 r_int
+id|chrp_get_cpuinfo
+c_func
+(paren
+r_char
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_int
 id|prep_get_cpuinfo
 c_func
 (paren
@@ -512,13 +742,15 @@ r_char
 op_star
 )paren
 suffix:semicolon
-r_if
+r_switch
 c_cond
 (paren
 id|_machine
-op_eq
-id|_MACH_Pmac
 )paren
+(brace
+r_case
+id|_MACH_Pmac
+suffix:colon
 r_return
 id|pmac_get_cpuinfo
 c_func
@@ -526,9 +758,14 @@ c_func
 id|buffer
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_PREP
-r_else
-multiline_comment|/* prep */
+r_break
+suffix:semicolon
+r_case
+id|_MACH_Motorola
+suffix:colon
+r_case
+id|_MACH_IBM
+suffix:colon
 r_return
 id|prep_get_cpuinfo
 c_func
@@ -536,7 +773,55 @@ c_func
 id|buffer
 )paren
 suffix:semicolon
-macro_line|#endif /* CONFIG_PREP */
+r_break
+suffix:semicolon
+r_case
+id|_MACH_chrp
+suffix:colon
+r_return
+id|chrp_get_cpuinfo
+c_func
+(paren
+id|buffer
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
+id|printk
+c_func
+(paren
+l_string|&quot;Unknown machine %d in get_cpuinfo()&bslash;n&quot;
+comma
+id|_machine
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
+DECL|function|__initfunc
+id|__initfunc
+c_func
+(paren
+r_int
+r_int
+id|bios32_init
+c_func
+(paren
+r_int
+r_int
+id|memory_start
+comma
+r_int
+r_int
+id|memory_end
+)paren
+)paren
+(brace
+r_return
+id|memory_start
+suffix:semicolon
 )brace
 DECL|function|__initfunc
 id|__initfunc
@@ -583,6 +868,24 @@ op_star
 suffix:semicolon
 r_extern
 r_void
+id|chrp_setup_arch
+c_func
+(paren
+r_char
+op_star
+op_star
+comma
+r_int
+r_int
+op_star
+comma
+r_int
+r_int
+op_star
+)paren
+suffix:semicolon
+r_extern
+r_void
 id|prep_setup_arch
 c_func
 (paren
@@ -599,13 +902,15 @@ r_int
 op_star
 )paren
 suffix:semicolon
-r_if
+r_switch
 c_cond
 (paren
 id|_machine
-op_eq
-id|_MACH_Pmac
 )paren
+(brace
+r_case
+id|_MACH_Pmac
+suffix:colon
 id|pmac_setup_arch
 c_func
 (paren
@@ -616,9 +921,14 @@ comma
 id|memory_end_p
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_PREP
-r_else
-multiline_comment|/* prep */
+r_break
+suffix:semicolon
+r_case
+id|_MACH_Motorola
+suffix:colon
+r_case
+id|_MACH_IBM
+suffix:colon
 id|prep_setup_arch
 c_func
 (paren
@@ -629,6 +939,32 @@ comma
 id|memory_end_p
 )paren
 suffix:semicolon
-macro_line|#endif /* CONFIG_PREP */
+r_break
+suffix:semicolon
+r_case
+id|_MACH_chrp
+suffix:colon
+r_return
+id|chrp_setup_arch
+c_func
+(paren
+id|cmdline_p
+comma
+id|memory_start_p
+comma
+id|memory_end_p
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
+id|printk
+c_func
+(paren
+l_string|&quot;Unknown machine %d in setup_arch()&bslash;n&quot;
+comma
+id|_machine
+)paren
+suffix:semicolon
 )brace
 eof

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: ioport.c,v 1.12 1997/08/08 05:07:02 davem Exp $&n; * ioport.c:  Simple io mapping allocator.&n; *&n; * Copyright (C) 1995,1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1995 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; */
+multiline_comment|/* $Id: ioport.c,v 1.13 1997/08/18 01:20:22 davem Exp $&n; * ioport.c:  Simple io mapping allocator.&n; *&n; * Copyright (C) 1995,1996 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1995 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; */
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -355,6 +355,14 @@ l_int|1
 op_amp
 id|PAGE_MASK
 suffix:semicolon
+id|release_region
+c_func
+(paren
+id|vaddr
+comma
+id|plen
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -371,14 +379,6 @@ op_plus
 l_int|0x10000000000UL
 )paren
 r_return
-suffix:semicolon
-id|release_region
-c_func
-(paren
-id|vaddr
-comma
-id|plen
-)paren
 suffix:semicolon
 r_for
 c_loop

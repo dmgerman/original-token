@@ -1,5 +1,6 @@
-multiline_comment|/* sunmouse.c: Sun mouse driver for the Sparc&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1995 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; *&n; * Parts based on the psaux.c driver written by:&n; * Johan Myreen.&n; *&n; * Dec/19/95 Added SunOS mouse ioctls - miguel.&n; * Jan/5/96  Added VUID support, sigio support - miguel.&n; * Mar/5/96  Added proper mouse stream support - miguel.&n; * Sep/96    Allow more than one reader -miguel.&n; */
+multiline_comment|/* sunmouse.c: Sun mouse driver for the Sparc&n; *&n; * Copyright (C) 1995, 1996, 1997 David S. Miller (davem@caip.rutgers.edu)&n; * Copyright (C) 1995 Miguel de Icaza (miguel@nuclecu.unam.mx)&n; *&n; * Parts based on the psaux.c driver written by:&n; * Johan Myreen.&n; *&n; * Dec/19/95 Added SunOS mouse ioctls - miguel.&n; * Jan/5/96  Added VUID support, sigio support - miguel.&n; * Mar/5/96  Added proper mouse stream support - miguel.&n; * Sep/96    Allow more than one reader -miguel.&n; * Aug/97    Added PCI 8042 controller support -DaveM&n; */
 multiline_comment|/* The mouse is run off of one of the Zilog serial ports.  On&n; * that port is the mouse and the keyboard, each gets a zs channel.&n; * The mouse itself is mouse-systems in nature.  So the protocol is:&n; *&n; * Byte 1) Button state which is bit-encoded as&n; *            0x4 == left-button down, else up&n; *            0x2 == middle-button down, else up&n; *            0x1 == right-button down, else up&n; *&n; * Byte 2) Delta-x&n; * Byte 3) Delta-y&n; * Byte 4) Delta-x again&n; * Byte 5) Delta-y again&n; *&n; * One day this driver will have to support more than one mouse in the system.&n; *&n; * This driver has two modes of operation: the default VUID_NATIVE is&n; * set when the device is opened and allows the application to see the&n; * mouse character stream as we get it from the serial (for gpm for&n; * example).  The second method, VUID_FIRM_EVENT will provide cooked&n; * events in Firm_event records as expected by SunOS/Solaris applications.&n; *&n; * FIXME: We need to support more than one mouse.&n; * */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
@@ -151,7 +152,8 @@ r_char
 id|ch
 )paren
 suffix:semicolon
-multiline_comment|/* #define SMOUSE_DEBUG */
+DECL|macro|SMOUSE_DEBUG
+macro_line|#undef SMOUSE_DEBUG
 r_static
 r_void
 DECL|function|push_event
@@ -272,6 +274,20 @@ op_ne
 id|sunmouse.tail
 )paren
 (brace
+macro_line|#ifdef SMOUSE_DEBUG
+id|printk
+c_func
+(paren
+l_string|&quot;P&lt;%02x&gt;&bslash;n&quot;
+comma
+(paren
+r_int
+r_char
+)paren
+id|c
+)paren
+suffix:semicolon
+macro_line|#endif
 id|sunmouse.queue.stream
 (braket
 id|sunmouse.head
@@ -342,7 +358,7 @@ r_void
 (brace
 r_extern
 r_void
-id|zs_change_mouse_baud
+id|rs_change_mouse_baud
 c_func
 (paren
 r_int
@@ -367,7 +383,7 @@ id|mouse_baud
 op_assign
 l_int|1200
 suffix:semicolon
-id|zs_change_mouse_baud
+id|rs_change_mouse_baud
 c_func
 (paren
 id|mouse_baud
@@ -1270,6 +1286,111 @@ id|queue_empty
 )paren
 )paren
 (brace
+macro_line|#ifdef CONFIG_SPARC32_COMPAT
+r_if
+c_cond
+(paren
+id|current-&gt;tss.flags
+op_amp
+id|SPARC_FLAG_32BIT
+)paren
+(brace
+id|Firm_event
+op_star
+id|q
+op_assign
+id|get_from_queue
+c_func
+(paren
+)paren
+suffix:semicolon
+id|copy_to_user_ret
+c_func
+(paren
+(paren
+id|Firm_event
+op_star
+)paren
+id|p
+comma
+id|q
+comma
+r_sizeof
+(paren
+id|Firm_event
+)paren
+op_minus
+r_sizeof
+(paren
+r_struct
+id|timeval
+)paren
+comma
+op_minus
+id|EFAULT
+)paren
+suffix:semicolon
+id|p
+op_add_assign
+r_sizeof
+(paren
+id|Firm_event
+)paren
+op_minus
+r_sizeof
+(paren
+r_struct
+id|timeval
+)paren
+suffix:semicolon
+id|__put_user_ret
+c_func
+(paren
+id|q-&gt;time.tv_sec
+comma
+(paren
+id|u32
+op_star
+)paren
+id|p
+comma
+op_minus
+id|EFAULT
+)paren
+suffix:semicolon
+id|p
+op_add_assign
+r_sizeof
+(paren
+id|u32
+)paren
+suffix:semicolon
+id|__put_user_ret
+c_func
+(paren
+id|q-&gt;time.tv_usec
+comma
+(paren
+id|u32
+op_star
+)paren
+id|p
+comma
+op_minus
+id|EFAULT
+)paren
+suffix:semicolon
+id|p
+op_add_assign
+r_sizeof
+(paren
+id|u32
+)paren
+suffix:semicolon
+)brace
+r_else
+macro_line|#endif&t;
+(brace
 id|copy_to_user_ret
 c_func
 (paren
@@ -1300,6 +1421,7 @@ r_sizeof
 id|Firm_event
 )paren
 suffix:semicolon
+)brace
 )brace
 id|sunmouse.ready
 op_assign

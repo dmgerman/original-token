@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;AF_INET6 socket family&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;Adapted from linux/net/ipv4/af_inet.c&n; *&n; *&t;$Id: af_inet6.c,v 1.19 1997/06/02 14:40:40 alan Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; *&t;AF_INET6 socket family&n; *&t;Linux INET6 implementation &n; *&n; *&t;Authors:&n; *&t;Pedro Roque&t;&t;&lt;roque@di.fc.ul.pt&gt;&t;&n; *&n; *&t;Adapted from linux/net/ipv4/af_inet.c&n; *&n; *&t;$Id: af_inet6.c,v 1.21 1997/08/20 11:25:00 alan Exp $&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -152,6 +152,8 @@ op_assign
 id|sk_alloc
 c_func
 (paren
+id|AF_INET6
+comma
 id|GFP_KERNEL
 )paren
 suffix:semicolon
@@ -516,33 +518,6 @@ suffix:colon
 r_return
 op_minus
 id|ENOBUFS
-suffix:semicolon
-)brace
-DECL|function|inet6_dup
-r_static
-r_int
-id|inet6_dup
-c_func
-(paren
-r_struct
-id|socket
-op_star
-id|newsock
-comma
-r_struct
-id|socket
-op_star
-id|oldsock
-)paren
-(brace
-r_return
-id|inet6_create
-c_func
-(paren
-id|newsock
-comma
-id|oldsock-&gt;sk-&gt;protocol
-)paren
 suffix:semicolon
 )brace
 multiline_comment|/* bind for INET6 API */
@@ -931,28 +906,6 @@ id|sock
 comma
 id|peer
 )paren
-suffix:semicolon
-)brace
-DECL|function|inet6_socketpair
-r_static
-r_int
-id|inet6_socketpair
-c_func
-(paren
-r_struct
-id|socket
-op_star
-id|sock1
-comma
-r_struct
-id|socket
-op_star
-id|sock2
-)paren
-(brace
-r_return
-op_minus
-id|EOPNOTSUPP
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;This does both peername and sockname.&n; */
@@ -1369,6 +1322,12 @@ suffix:colon
 r_case
 id|SIOGIFINDEX
 suffix:colon
+r_case
+id|SIOGIFNAME
+suffix:colon
+r_case
+id|SIOCGIFCOUNT
+suffix:colon
 r_return
 id|dev_ioctl
 c_func
@@ -1387,6 +1346,20 @@ id|SIOCSIFADDR
 suffix:colon
 r_return
 id|addrconf_add_ifaddr
+c_func
+(paren
+(paren
+r_void
+op_star
+)paren
+id|arg
+)paren
+suffix:semicolon
+r_case
+id|SIOCDIFADDR
+suffix:colon
+r_return
+id|addrconf_del_ifaddr
 c_func
 (paren
 (paren
@@ -1484,7 +1457,7 @@ op_assign
 (brace
 id|AF_INET6
 comma
-id|inet6_dup
+id|sock_no_dup
 comma
 id|inet6_release
 comma
@@ -1493,7 +1466,7 @@ comma
 id|inet_stream_connect
 comma
 multiline_comment|/* ok&t;&t;*/
-id|inet6_socketpair
+id|sock_no_socketpair
 comma
 multiline_comment|/* a do nothing&t;*/
 id|inet_accept
@@ -1537,7 +1510,7 @@ op_assign
 (brace
 id|AF_INET6
 comma
-id|inet6_dup
+id|sock_no_dup
 comma
 id|inet6_release
 comma
@@ -1546,7 +1519,7 @@ comma
 id|inet_dgram_connect
 comma
 multiline_comment|/* ok&t;&t;*/
-id|inet6_socketpair
+id|sock_no_socketpair
 comma
 multiline_comment|/* a do nothing&t;*/
 id|inet_accept

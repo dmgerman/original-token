@@ -700,9 +700,9 @@ l_string|&quot; (root)&quot;
 suffix:semicolon
 )brace
 )brace
-DECL|function|ide_init_hwif_ports
+DECL|function|pmac_ide_init_hwif_ports
 r_void
-id|ide_init_hwif_ports
+id|pmac_ide_init_hwif_ports
 c_func
 (paren
 id|ide_ioreg_t
