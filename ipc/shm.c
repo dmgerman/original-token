@@ -95,14 +95,6 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* number of shared memory pages that are in swap */
-DECL|variable|shm_seq
-r_static
-r_int
-id|shm_seq
-op_assign
-l_int|0
-suffix:semicolon
-multiline_comment|/* is incremented, for recognizing stale ids */
 DECL|variable|max_shmid
 r_static
 r_int
@@ -130,6 +122,15 @@ id|shm_segs
 id|SHMMNI
 )braket
 suffix:semicolon
+DECL|variable|shm_seq
+r_static
+r_int
+r_int
+id|shm_seq
+op_assign
+l_int|0
+suffix:semicolon
+multiline_comment|/* incremented, for recognizing stale ids */
 multiline_comment|/* some statistics */
 DECL|variable|swap_attempts
 r_static
@@ -630,6 +631,9 @@ suffix:semicolon
 r_return
 id|id
 op_plus
+(paren
+r_int
+)paren
 id|shm_seq
 op_star
 id|SHMMNI
@@ -861,28 +865,8 @@ id|numpages
 op_assign
 id|shp-&gt;shm_npages
 suffix:semicolon
-r_if
-c_cond
-(paren
-(paren
-r_int
-)paren
-(paren
-(paren
+id|shm_seq
 op_increment
-id|shm_seq
-op_plus
-l_int|1
-)paren
-op_star
-id|SHMMNI
-)paren
-OL
-l_int|0
-)paren
-id|shm_seq
-op_assign
-l_int|0
 suffix:semicolon
 id|shm_segs
 (braket

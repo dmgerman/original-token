@@ -226,6 +226,8 @@ DECL|macro|SUGGEST_DIE
 mdefine_line|#define SUGGEST_DIE&t;&t;0x40
 DECL|macro|SUGGEST_SENSE
 mdefine_line|#define SUGGEST_SENSE&t;&t;0x80
+DECL|macro|SUGGEST_IS_OK
+mdefine_line|#define SUGGEST_IS_OK&t;&t;0xff
 DECL|macro|DRIVER_SENSE
 mdefine_line|#define DRIVER_SENSE&t;&t;0x08
 DECL|macro|DRIVER_MASK

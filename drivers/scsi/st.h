@@ -42,6 +42,10 @@ DECL|member|last_result
 r_int
 id|last_result
 suffix:semicolon
+DECL|member|last_result_fatal
+r_int
+id|last_result_fatal
+suffix:semicolon
 DECL|member|b_data
 r_int
 r_char
@@ -136,6 +140,10 @@ DECL|member|max_block
 r_int
 id|max_block
 suffix:semicolon
+DECL|member|recover_count
+r_int
+id|recover_count
+suffix:semicolon
 DECL|member|SCpnt
 id|Scsi_Cmnd
 id|SCpnt
@@ -144,6 +152,22 @@ DECL|typedef|Scsi_Tape
 )brace
 id|Scsi_Tape
 suffix:semicolon
+multiline_comment|/* Values of eof */
+DECL|macro|ST_NOEOF
+mdefine_line|#define&t;ST_NOEOF&t;0
+DECL|macro|ST_FM
+mdefine_line|#define&t;ST_FM&t;&t;1
+DECL|macro|ST_EOM_OK
+mdefine_line|#define&t;ST_EOM_OK&t;2
+DECL|macro|ST_EOM_ERROR
+mdefine_line|#define ST_EOM_ERROR&t;3
+multiline_comment|/* Values of rw */
+DECL|macro|ST_IDLE
+mdefine_line|#define&t;ST_IDLE&t;&t;0
+DECL|macro|ST_READING
+mdefine_line|#define&t;ST_READING&t;1
+DECL|macro|ST_WRITING
+mdefine_line|#define&t;ST_WRITING&t;2
 multiline_comment|/* Positioning SCSI-commands for Tandberg, etc. drives */
 DECL|macro|QFA_REQUEST_BLOCK
 mdefine_line|#define&t;QFA_REQUEST_BLOCK&t;0x02

@@ -308,6 +308,11 @@ id|LOG_BUF_LEN
 op_minus
 l_int|1
 suffix:semicolon
+id|sti
+c_func
+(paren
+)paren
+suffix:semicolon
 id|put_fs_byte
 c_func
 (paren
@@ -321,6 +326,11 @@ op_increment
 suffix:semicolon
 id|i
 op_increment
+suffix:semicolon
+id|cli
+c_func
+(paren
+)paren
 suffix:semicolon
 )brace
 id|sti

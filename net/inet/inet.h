@@ -12,7 +12,7 @@ DECL|macro|DPRINTF
 macro_line|#  define&t;DPRINTF(x)&t;dprintf x 
 macro_line|#else
 DECL|macro|DPRINTF
-macro_line|#   define&t;DPRINTF(x)&t;/*zilch*/
+macro_line|#   define&t;DPRINTF(x)&t;do ; while (0)
 macro_line|#endif
 multiline_comment|/* Debug levels. One per module. */
 DECL|macro|DBG_OFF

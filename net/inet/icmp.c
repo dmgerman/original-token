@@ -900,6 +900,8 @@ c_func
 id|RTF_DYNAMIC
 op_or
 id|RTF_MODIFIED
+op_or
+id|RTF_GATEWAY
 )paren
 comma
 id|ip
@@ -923,6 +925,8 @@ op_or
 id|RTF_MODIFIED
 op_or
 id|RTF_HOST
+op_or
+id|RTF_GATEWAY
 )paren
 comma
 id|ip
