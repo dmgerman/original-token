@@ -2308,15 +2308,11 @@ suffix:semicolon
 )paren
 suffix:semicolon
 multiline_comment|/* Finished changing speed, so we are not busy any longer */
-id|self-&gt;netdev-&gt;tbusy
-op_assign
-l_int|0
-suffix:semicolon
 multiline_comment|/* Signal network layer so it can try to send the frame */
-id|mark_bh
+id|netif_wake_queue
 c_func
 (paren
-id|NET_BH
+id|self-&gt;netdev
 )paren
 suffix:semicolon
 r_return
@@ -2376,25 +2372,11 @@ suffix:semicolon
 )paren
 suffix:semicolon
 multiline_comment|/* Lock transmit buffer */
-r_if
-c_cond
-(paren
-id|irda_lock
+id|netif_stop_queue
 c_func
 (paren
-(paren
-r_void
-op_star
+id|dev
 )paren
-op_amp
-id|dev-&gt;tbusy
-)paren
-op_eq
-id|FALSE
-)paren
-r_return
-op_minus
-id|EBUSY
 suffix:semicolon
 multiline_comment|/* Check if we need to change the speed */
 r_if
@@ -2669,16 +2651,11 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|self-&gt;netdev-&gt;tbusy
-op_assign
-l_int|0
-suffix:semicolon
-multiline_comment|/* Unlock */
 multiline_comment|/* Tell network layer that we want more frames */
-id|mark_bh
+id|netif_wake_queue
 c_func
 (paren
-id|NET_BH
+id|self-&gt;netdev
 )paren
 suffix:semicolon
 )brace
@@ -3220,17 +3197,11 @@ l_string|&quot;()&bslash;n&quot;
 )paren
 suffix:semicolon
 multiline_comment|/* Ready to play! */
-id|dev-&gt;tbusy
-op_assign
-l_int|0
-suffix:semicolon
-id|dev-&gt;interrupt
-op_assign
-l_int|0
-suffix:semicolon
-id|dev-&gt;start
-op_assign
-l_int|1
+id|netif_start_queue
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
 multiline_comment|/* Make sure we can receive more data */
 id|irtty_stop_receiver
@@ -3319,13 +3290,11 @@ id|TRUE
 )paren
 suffix:semicolon
 multiline_comment|/* Stop device */
-id|dev-&gt;tbusy
-op_assign
-l_int|1
-suffix:semicolon
-id|dev-&gt;start
-op_assign
-l_int|0
+id|netif_stop_queue
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
 multiline_comment|/* Stop and remove instance of IrLAP */
 r_if

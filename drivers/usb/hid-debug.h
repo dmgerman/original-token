@@ -281,7 +281,7 @@ l_int|0
 comma
 l_int|0x81
 comma
-l_string|&quot;System PowerDown&quot;
+l_string|&quot;SystemPowerDown&quot;
 )brace
 comma
 (brace
@@ -289,7 +289,7 @@ l_int|0
 comma
 l_int|0x82
 comma
-l_string|&quot;System Sleep&quot;
+l_string|&quot;SystemSleep&quot;
 )brace
 comma
 (brace
@@ -297,7 +297,7 @@ l_int|0
 comma
 l_int|0x83
 comma
-l_string|&quot;System WakeUp&quot;
+l_string|&quot;SystemWakeUp&quot;
 )brace
 comma
 (brace
@@ -305,7 +305,7 @@ l_int|0
 comma
 l_int|0x84
 comma
-l_string|&quot;System ContextMenu&quot;
+l_string|&quot;SystemContextMenu&quot;
 )brace
 comma
 (brace
@@ -313,7 +313,7 @@ l_int|0
 comma
 l_int|0x85
 comma
-l_string|&quot;System MainMenu&quot;
+l_string|&quot;SystemMainMenu&quot;
 )brace
 comma
 (brace
@@ -321,7 +321,7 @@ l_int|0
 comma
 l_int|0x86
 comma
-l_string|&quot;System AppMenu&quot;
+l_string|&quot;SystemAppMenu&quot;
 )brace
 comma
 (brace
@@ -329,7 +329,7 @@ l_int|0
 comma
 l_int|0x87
 comma
-l_string|&quot;System MenuHelp&quot;
+l_string|&quot;SystemMenuHelp&quot;
 )brace
 comma
 (brace
@@ -337,7 +337,7 @@ l_int|0
 comma
 l_int|0x88
 comma
-l_string|&quot;System MenuExit&quot;
+l_string|&quot;SystemMenuExit&quot;
 )brace
 comma
 (brace
@@ -345,7 +345,7 @@ l_int|0
 comma
 l_int|0x89
 comma
-l_string|&quot;System MenuSelect&quot;
+l_string|&quot;SystemMenuSelect&quot;
 )brace
 comma
 (brace
@@ -353,7 +353,7 @@ l_int|0
 comma
 l_int|0x8a
 comma
-l_string|&quot;System MenuRight&quot;
+l_string|&quot;SystemMenuRight&quot;
 )brace
 comma
 (brace
@@ -361,7 +361,7 @@ l_int|0
 comma
 l_int|0x8b
 comma
-l_string|&quot;System MenuLeft&quot;
+l_string|&quot;SystemMenuLeft&quot;
 )brace
 comma
 (brace
@@ -369,7 +369,7 @@ l_int|0
 comma
 l_int|0x8c
 comma
-l_string|&quot;System MenuUp&quot;
+l_string|&quot;SystemMenuUp&quot;
 )brace
 comma
 (brace
@@ -377,7 +377,7 @@ l_int|0
 comma
 l_int|0x8d
 comma
-l_string|&quot;System MenuDown&quot;
+l_string|&quot;SystemMenuDown&quot;
 )brace
 comma
 (brace
@@ -434,6 +434,14 @@ comma
 l_int|0
 comma
 l_string|&quot;Button&quot;
+)brace
+comma
+(brace
+l_int|12
+comma
+l_int|0
+comma
+l_string|&quot;Hotkey&quot;
 )brace
 comma
 (brace

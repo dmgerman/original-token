@@ -1136,4 +1136,11 @@ r_void
 (brace
 )brace
 macro_line|#endif
+DECL|variable|input_init
+id|__initcall
+c_func
+(paren
+id|input_init
+)paren
+suffix:semicolon
 eof

@@ -2921,4 +2921,11 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|variable|usb_acm_init
+id|__initcall
+c_func
+(paren
+id|usb_acm_init
+)paren
+suffix:semicolon
 eof

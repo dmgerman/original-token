@@ -2846,7 +2846,7 @@ c_func
 id|dev
 )paren
 suffix:semicolon
-id|netif_wake_queue
+id|netif_start_queue
 c_func
 (paren
 id|dev

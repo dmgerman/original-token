@@ -3804,6 +3804,13 @@ id|leds
 suffix:semicolon
 )brace
 )brace
+DECL|variable|keyboard_tasklet
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|keyboard_tasklet
+)paren
+suffix:semicolon
 id|DECLARE_TASKLET_DISABLED
 c_func
 (paren

@@ -2035,16 +2035,6 @@ id|dev
 )paren
 suffix:semicolon
 multiline_comment|/* Active System Interface */
-id|dev-&gt;tbusy
-op_assign
-l_int|0
-suffix:semicolon
-multiline_comment|/* Can transmit packet */
-id|dev-&gt;start
-op_assign
-l_int|1
-suffix:semicolon
-multiline_comment|/* interface ready */
 id|MOD_INC_USE_COUNT
 suffix:semicolon
 multiline_comment|/* set and active a timer process */
@@ -2077,6 +2067,12 @@ c_func
 (paren
 op_amp
 id|db-&gt;timer
+)paren
+suffix:semicolon
+id|netif_wake_queue
+c_func
+(paren
+id|dev
 )paren
 suffix:semicolon
 r_return
@@ -2333,28 +2329,11 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-r_if
-c_cond
+id|netif_stop_queue
+c_func
 (paren
-(paren
-id|dev-&gt;tbusy
-op_eq
-l_int|1
+id|dev
 )paren
-op_logical_and
-(paren
-id|db-&gt;tx_packet_cnt
-op_ne
-l_int|0
-)paren
-)paren
-r_return
-l_int|1
-suffix:semicolon
-r_else
-id|dev-&gt;tbusy
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* Too large packet check */
 r_if
@@ -2369,7 +2348,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;%s: oversized frame (%d bytes) received.&bslash;n&quot;
+l_string|&quot;%s: oversized frame (%d bytes) for transmit.&bslash;n&quot;
 comma
 id|dev-&gt;name
 comma
@@ -2398,28 +2377,8 @@ op_ge
 id|TX_FREE_DESC_CNT
 )paren
 (brace
-id|printk
-c_func
-(paren
-id|KERN_WARNING
-l_string|&quot;%s: No Tx resource, enter xmit() again &bslash;n&quot;
-comma
-id|dev-&gt;name
-)paren
-suffix:semicolon
-id|dev_kfree_skb
-c_func
-(paren
-id|skb
-)paren
-suffix:semicolon
-id|dev-&gt;tbusy
-op_assign
-l_int|1
-suffix:semicolon
 r_return
-op_minus
-id|EBUSY
+l_int|1
 suffix:semicolon
 )brace
 multiline_comment|/* transmit this packet */
@@ -2489,12 +2448,14 @@ r_if
 c_cond
 (paren
 id|db-&gt;tx_packet_cnt
-op_ge
+OL
 id|TX_FREE_DESC_CNT
 )paren
-id|dev-&gt;tbusy
-op_assign
-l_int|1
+id|netif_wake_queue
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
 multiline_comment|/* Set transmit time stamp */
 id|dev-&gt;trans_start
@@ -2548,17 +2509,12 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-multiline_comment|/* disable system */
-id|dev-&gt;start
-op_assign
-l_int|0
+id|netif_stop_queue
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
-multiline_comment|/* interface disable */
-id|dev-&gt;tbusy
-op_assign
-l_int|1
-suffix:semicolon
-multiline_comment|/* can&squot;t transmit */
 multiline_comment|/* Reset &amp; stop DM910X board */
 id|outl
 c_func
@@ -2675,31 +2631,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-r_if
-c_cond
-(paren
-id|dev-&gt;interrupt
-)paren
-(brace
-id|DMFE_DBUG
-c_func
-(paren
-l_int|1
-comma
-l_string|&quot;dmfe_interrupt() re-entry &quot;
-comma
-l_int|0
-)paren
-suffix:semicolon
-r_return
-suffix:semicolon
-)brace
 multiline_comment|/* A real interrupt coming */
-id|dev-&gt;interrupt
-op_assign
-l_int|1
-suffix:semicolon
-multiline_comment|/* Lock interrupt */
 id|db
 op_assign
 (paren
@@ -2776,9 +2708,11 @@ comma
 id|db-&gt;cr5_data
 )paren
 suffix:semicolon
-id|dev-&gt;tbusy
-op_assign
-l_int|1
+id|netif_stop_queue
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
 id|db-&gt;wait_reset
 op_assign
@@ -2796,11 +2730,6 @@ id|DCR7
 )paren
 suffix:semicolon
 multiline_comment|/* disable all interrupt */
-id|dev-&gt;interrupt
-op_assign
-l_int|0
-suffix:semicolon
-multiline_comment|/* unlock interrupt */
 r_return
 suffix:semicolon
 )brace
@@ -2871,28 +2800,16 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|dev-&gt;tbusy
-op_logical_and
-(paren
 id|db-&gt;tx_packet_cnt
 OL
 id|TX_FREE_DESC_CNT
 )paren
-)paren
-(brace
-id|dev-&gt;tbusy
-op_assign
-l_int|0
-suffix:semicolon
-multiline_comment|/* free a resource */
-id|mark_bh
+id|netif_wake_queue
 c_func
 (paren
-id|NET_BH
+id|dev
 )paren
 suffix:semicolon
-multiline_comment|/* active bottom half */
-)brace
 multiline_comment|/* Received the coming packet */
 r_if
 c_cond
@@ -2947,11 +2864,6 @@ id|db-&gt;ioaddr
 )paren
 suffix:semicolon
 )brace
-id|dev-&gt;interrupt
-op_assign
-l_int|0
-suffix:semicolon
-multiline_comment|/* release interrupt lock */
 multiline_comment|/* Restore CR7 to enable interrupt mask */
 r_if
 c_cond
@@ -3919,16 +3831,12 @@ op_assign
 l_int|1
 suffix:semicolon
 multiline_comment|/* Disable upper layer interface */
-id|dev-&gt;tbusy
-op_assign
-l_int|1
+id|netif_stop_queue
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
-multiline_comment|/* transmit packet disable */
-id|dev-&gt;start
-op_assign
-l_int|0
-suffix:semicolon
-multiline_comment|/* interface not ready */
 id|db-&gt;cr6_data
 op_and_assign
 op_complement
@@ -3982,21 +3890,17 @@ c_func
 id|dev
 )paren
 suffix:semicolon
-multiline_comment|/* Restart upper layer interface */
-id|dev-&gt;tbusy
-op_assign
-l_int|0
-suffix:semicolon
-multiline_comment|/* Can transmit packet */
-id|dev-&gt;start
-op_assign
-l_int|1
-suffix:semicolon
-multiline_comment|/* interface ready */
 multiline_comment|/* Leave dynamic reser route */
 id|db-&gt;in_reset_state
 op_assign
 l_int|0
+suffix:semicolon
+multiline_comment|/* Restart upper layer interface */
+id|netif_wake_queue
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;Free all allocated rx buffer &n; */
@@ -4751,9 +4655,11 @@ multiline_comment|/* prepare the setup frame */
 id|db-&gt;tx_packet_cnt
 op_increment
 suffix:semicolon
-id|dev-&gt;tbusy
-op_assign
-l_int|1
+id|netif_stop_queue
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
 id|txptr-&gt;tdes1
 op_assign

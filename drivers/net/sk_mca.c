@@ -327,7 +327,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-multiline_comment|/* reset POS 104 Bits 0+1 so the shared memory region goes to the&n;       configured area between 640K and 1M.  Afterwards, enable the MC2.&n;       I really don&squot;t know what rode SK to do this... */
+multiline_comment|/* reset POS 104 Bits 0+1 so the shared memory region goes to the&n;&t;&t;   configured area between 640K and 1M.  Afterwards, enable the MC2.&n;&t;&t;   I really don&squot;t know what rode SK to do this... */
 id|mca_write_pos
 c_func
 (paren
@@ -971,7 +971,7 @@ id|dev
 id|u32
 id|bufaddr
 suffix:semicolon
-multiline_comment|/* Set up Tx descriptors. The board has only 16K RAM so bits 16..23&n;     are always 0. */
+multiline_comment|/* Set up Tx descriptors. The board has only 16K RAM so bits 16..23&n;&t;   are always 0. */
 id|bufaddr
 op_assign
 id|RAM_DATABASE
@@ -1393,7 +1393,7 @@ c_func
 id|dev
 )paren
 suffix:semicolon
-multiline_comment|/* next RX descriptor to be read is the first one.  Since the LANCE&n;     will start from the beginning after initialization, we have to &n;     reset out pointers too. */
+multiline_comment|/* next RX descriptor to be read is the first one.  Since the LANCE&n;&t;   will start from the beginning after initialization, we have to &n;&t;   reset out pointers too. */
 id|priv-&gt;nextrx
 op_assign
 l_int|0
@@ -1452,11 +1452,13 @@ l_int|0xff
 )paren
 suffix:semicolon
 multiline_comment|/* we don&squot;t get ready until the LANCE has read the init block */
-id|dev-&gt;tbusy
-op_assign
-l_int|1
+id|netif_stop_queue
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
-multiline_comment|/* let LANCE read the initialization block.  LANCE is ready&n;     when we receive the corresponding interrupt. */
+multiline_comment|/* let LANCE read the initialization block.  LANCE is ready&n;&t;   when we receive the corresponding interrupt. */
 id|SetLANCE
 c_func
 (paren
@@ -1484,9 +1486,11 @@ id|dev
 )paren
 (brace
 multiline_comment|/* can&squot;t take frames any more */
-id|dev-&gt;tbusy
-op_assign
-l_int|1
+id|netif_stop_queue
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
 multiline_comment|/* disable interrupts, stop it */
 id|SetLANCE
@@ -1516,7 +1520,7 @@ id|dev
 id|LANCE_InitBlock
 id|block
 suffix:semicolon
-multiline_comment|/* Lay out the shared RAM - first we create the init block for the LANCE.&n;     We do not overwrite it later because we need it again when we switch&n;     promiscous mode on/off. */
+multiline_comment|/* Lay out the shared RAM - first we create the init block for the LANCE.&n;&t;   We do not overwrite it later because we need it again when we switch&n;&t;   promiscous mode on/off. */
 id|block.Mode
 op_assign
 l_int|0
@@ -1653,9 +1657,11 @@ id|oldcsr0
 )paren
 (brace
 multiline_comment|/* now we&squot;re ready to transmit */
-id|dev-&gt;tbusy
-op_assign
-l_int|0
+id|netif_wake_queue
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
 multiline_comment|/* reset IDON bit, start LANCE */
 id|SetLANCE
@@ -1924,7 +1930,7 @@ suffix:semicolon
 id|priv-&gt;stat.rx_packets
 op_increment
 suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &gt;= 0x020119       /* byte counters for &gt;= 2.1.25 */
+macro_line|#if LINUX_VERSION_CODE &gt;= 0x020119&t;/* byte counters for &gt;= 2.1.25 */
 id|priv-&gt;stat.rx_bytes
 op_add_assign
 id|descr.Len
@@ -2133,7 +2139,7 @@ l_int|0
 id|priv-&gt;stat.tx_packets
 op_increment
 suffix:semicolon
-macro_line|#if LINUX_VERSION_CODE &gt;= 0x020119       /* byte counters for &gt;= 2.1.25 */
+macro_line|#if LINUX_VERSION_CODE &gt;= 0x020119&t;/* byte counters for &gt;= 2.1.25 */
 id|priv-&gt;stat.tx_bytes
 op_increment
 suffix:semicolon
@@ -2267,16 +2273,11 @@ comma
 id|LANCE_CSR0
 )paren
 suffix:semicolon
-multiline_comment|/* at least one descriptor is freed.  Therefore we can accept&n;     a new one */
-id|dev-&gt;tbusy
-op_assign
-l_int|0
-suffix:semicolon
-multiline_comment|/* inform upper layers we&squot;re in business again */
-id|mark_bh
+multiline_comment|/* at least one descriptor is freed.  Therefore we can accept&n;&t;   a new one */
+id|netif_wake_queue
 c_func
 (paren
-id|NET_BH
+id|dev
 )paren
 suffix:semicolon
 r_return
@@ -2342,10 +2343,6 @@ op_eq
 l_int|0
 )paren
 r_return
-suffix:semicolon
-id|dev-&gt;interrupt
-op_assign
-l_int|1
 suffix:semicolon
 multiline_comment|/* loop through the interrupt bits until everything is clear */
 r_do
@@ -2425,10 +2422,6 @@ id|CSR0_INTR
 op_ne
 l_int|0
 )paren
-suffix:semicolon
-id|dev-&gt;interrupt
-op_assign
-l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* ------------------------------------------------------------------------&n; * driver methods&n; * ------------------------------------------------------------------------ */
@@ -2809,33 +2802,13 @@ r_int
 r_int
 id|flags
 suffix:semicolon
-multiline_comment|/* if we get called with a NULL descriptor, the Ethernet layer thinks &n;     our card is stuck an we should reset it.  We&squot;ll do this completely: */
-r_if
-c_cond
-(paren
-id|skb
-op_eq
-l_int|NULL
-)paren
-(brace
-id|DeinitBoard
+id|netif_stop_queue
 c_func
 (paren
 id|dev
 )paren
 suffix:semicolon
-id|InitBoard
-c_func
-(paren
-id|dev
-)paren
-suffix:semicolon
-r_return
-l_int|0
-suffix:semicolon
-multiline_comment|/* don&squot;t try to free the block here ;-) */
-)brace
-multiline_comment|/* is there space in the Tx queue ? If no, the upper layer gave us a&n;     packet in spite of us not being ready and is really in trouble.&n;     We&squot;ll do the dropping for him: */
+multiline_comment|/* is there space in the Tx queue ? If no, the upper layer gave us a&n;&t;   packet in spite of us not being ready and is really in trouble.&n;&t;   We&squot;ll do the dropping for him: */
 r_if
 c_cond
 (paren
@@ -2908,7 +2881,7 @@ l_int|65536
 op_minus
 id|tmplen
 suffix:semicolon
-multiline_comment|/* copy filler into RAM - in case we&squot;re filling up... &n;     we&squot;re filling a bit more than necessary, but that doesn&squot;t harm&n;     since the buffer is far larger... */
+multiline_comment|/* copy filler into RAM - in case we&squot;re filling up... &n;&t;   we&squot;re filling a bit more than necessary, but that doesn&squot;t harm&n;&t;   since the buffer is far larger... */
 r_if
 c_cond
 (paren
@@ -3033,12 +3006,17 @@ suffix:semicolon
 id|priv-&gt;txbusy
 op_increment
 suffix:semicolon
-id|dev-&gt;tbusy
-op_assign
+r_if
+c_cond
 (paren
 id|priv-&gt;txbusy
-op_ge
+OL
 id|TXCOUNT
+)paren
+id|netif_wake_queue
+c_func
+(paren
+id|dev
 )paren
 suffix:semicolon
 multiline_comment|/* write descriptor back to RAM */
@@ -3058,7 +3036,7 @@ id|LANCE_TxDescr
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/* if no descriptors were active, give the LANCE a hint to read it&n;     immediately */
+multiline_comment|/* if no descriptors were active, give the LANCE a hint to read it&n;&t;   immediately */
 r_if
 c_cond
 (paren
@@ -3087,23 +3065,12 @@ suffix:semicolon
 id|tx_done
 suffix:colon
 multiline_comment|/* When did that change exactly ? */
-macro_line|#if LINUX_VERSION_CODE &gt;= 0x020200
 id|dev_kfree_skb
 c_func
 (paren
 id|skb
 )paren
 suffix:semicolon
-macro_line|#else
-id|dev_kfree_skb
-c_func
-(paren
-id|skb
-comma
-id|FREE_WRITE
-)paren
-suffix:semicolon
-macro_line|#endif
 r_return
 id|retval
 suffix:semicolon
@@ -3226,8 +3193,8 @@ id|dev-&gt;flags
 op_amp
 id|IFF_ALLMULTI
 )paren
-multiline_comment|/* get all multicasts */
 (brace
+multiline_comment|/* get all multicasts */
 id|memset
 c_func
 (paren
@@ -3240,8 +3207,8 @@ l_int|0xff
 suffix:semicolon
 )brace
 r_else
-multiline_comment|/* get selected/no multicasts */
 (brace
+multiline_comment|/* get selected/no multicasts */
 r_struct
 id|dev_mc_list
 op_star
@@ -3339,7 +3306,7 @@ suffix:semicolon
 multiline_comment|/* counts through slots when probing multiple devices */
 macro_line|#else
 DECL|macro|startslot
-mdefine_line|#define startslot 0   /* otherwise a dummy, since there is only eth0 in-kern*/
+mdefine_line|#define startslot 0&t;&t;/* otherwise a dummy, since there is only eth0 in-kern */
 macro_line|#endif
 DECL|function|skmca_probe
 r_int
@@ -3794,18 +3761,6 @@ c_func
 (paren
 id|dev
 )paren
-suffix:semicolon
-id|dev-&gt;interrupt
-op_assign
-l_int|0
-suffix:semicolon
-id|dev-&gt;tbusy
-op_assign
-l_int|0
-suffix:semicolon
-id|dev-&gt;start
-op_assign
-l_int|0
 suffix:semicolon
 multiline_comment|/* copy out MAC address */
 r_for
@@ -4315,5 +4270,5 @@ suffix:semicolon
 )brace
 )brace
 )brace
-macro_line|#endif /* MODULE */
+macro_line|#endif&t;&t;&t;&t;/* MODULE */
 eof

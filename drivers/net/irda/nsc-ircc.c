@@ -4215,10 +4215,6 @@ op_plus
 id|EXCR2
 )paren
 suffix:semicolon
-id|self-&gt;netdev-&gt;tbusy
-op_assign
-l_int|0
-suffix:semicolon
 multiline_comment|/* Enable some interrupts so we can receive frames */
 id|switch_bank
 c_func
@@ -4287,6 +4283,12 @@ op_plus
 id|BSR
 )paren
 suffix:semicolon
+id|netif_wake_queue
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
 )brace
 multiline_comment|/*&n; * Function nsc_ircc_hard_xmit (skb, dev)&n; *&n; *    Transmit the frame!&n; *&n; */
 DECL|function|nsc_ircc_hard_xmit_sir
@@ -4349,26 +4351,11 @@ id|iobase
 op_assign
 id|self-&gt;io.fir_base
 suffix:semicolon
-multiline_comment|/* Lock transmit buffer */
-r_if
-c_cond
-(paren
-id|irda_lock
+id|netif_stop_queue
 c_func
 (paren
-(paren
-r_void
-op_star
+id|dev
 )paren
-op_amp
-id|dev-&gt;tbusy
-)paren
-op_eq
-id|FALSE
-)paren
-r_return
-op_minus
-id|EBUSY
 suffix:semicolon
 multiline_comment|/* Check if we need to change the speed */
 r_if
@@ -4532,26 +4519,11 @@ id|iobase
 op_assign
 id|self-&gt;io.fir_base
 suffix:semicolon
-multiline_comment|/* Lock transmit buffer */
-r_if
-c_cond
-(paren
-id|irda_lock
+id|netif_stop_queue
 c_func
 (paren
-(paren
-r_void
-op_star
+id|dev
 )paren
-op_amp
-id|dev-&gt;tbusy
-)paren
-op_eq
-id|FALSE
-)paren
-r_return
-op_minus
-id|EBUSY
 suffix:semicolon
 multiline_comment|/* Check if we need to change the speed */
 r_if
@@ -4843,9 +4815,11 @@ id|self-&gt;tx_fifo.free
 OL
 id|MAX_TX_WINDOW
 )paren
-id|dev-&gt;tbusy
-op_assign
-l_int|0
+id|netif_wake_queue
+c_func
+(paren
+id|self-&gt;netdev
+)paren
 suffix:semicolon
 multiline_comment|/* Restore bank register */
 id|outb
@@ -5369,15 +5343,11 @@ id|MAX_TX_WINDOW
 )paren
 (brace
 multiline_comment|/* Not busy transmitting anymore */
-id|self-&gt;netdev-&gt;tbusy
-op_assign
-l_int|0
-suffix:semicolon
 multiline_comment|/* Tell the network layer, that we can accept more frames */
-id|mark_bh
+id|netif_wake_queue
 c_func
 (paren
-id|NET_BH
+id|self-&gt;netdev
 )paren
 suffix:semicolon
 )brace
@@ -6238,18 +6208,13 @@ id|IER_TXLDL_IE
 suffix:semicolon
 r_else
 (brace
-id|self-&gt;netdev-&gt;tbusy
-op_assign
-l_int|0
-suffix:semicolon
-multiline_comment|/* Unlock */
 id|self-&gt;stats.tx_packets
 op_increment
 suffix:semicolon
-id|mark_bh
+id|netif_wakeup_queue
 c_func
 (paren
-id|NET_BH
+id|self-&gt;netdev
 )paren
 suffix:semicolon
 id|self-&gt;ier
@@ -6689,10 +6654,6 @@ op_amp
 id|self-&gt;lock
 )paren
 suffix:semicolon
-id|dev-&gt;interrupt
-op_assign
-l_int|1
-suffix:semicolon
 id|iobase
 op_assign
 id|self-&gt;io.fir_base
@@ -6806,10 +6767,6 @@ id|BSR
 )paren
 suffix:semicolon
 multiline_comment|/* Restore bank register */
-id|dev-&gt;interrupt
-op_assign
-l_int|0
-suffix:semicolon
 id|spin_unlock
 c_func
 (paren
@@ -7173,17 +7130,11 @@ id|BSR
 )paren
 suffix:semicolon
 multiline_comment|/* Ready to play! */
-id|dev-&gt;tbusy
-op_assign
-l_int|0
-suffix:semicolon
-id|dev-&gt;interrupt
-op_assign
-l_int|0
-suffix:semicolon
-id|dev-&gt;start
-op_assign
-l_int|1
+id|netif_start_queue
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
 multiline_comment|/* &n;&t; * Open new IrLAP layer instance, now that everything should be&n;&t; * initialized properly &n;&t; */
 id|self-&gt;irlap
@@ -7271,13 +7222,11 @@ suffix:semicolon
 )paren
 suffix:semicolon
 multiline_comment|/* Stop device */
-id|dev-&gt;tbusy
-op_assign
-l_int|1
-suffix:semicolon
-id|dev-&gt;start
-op_assign
-l_int|0
+id|netif_stop_queue
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
 multiline_comment|/* Stop and remove instance of IrLAP */
 r_if

@@ -1,4 +1,4 @@
-multiline_comment|/*******************************************************************************&n; *&n; *  Linux ThunderLAN Driver&n; *&n; *  tlan.c&n; *  by James Banks&n; *&n; *  (C) 1997-1998 Caldera, Inc.&n; *  (C) 1998 James Banks&n; *  (C) 1999, 2000 Torben Mathiasen&n; *&n; *  This software may be used and distributed according to the terms&n; *  of the GNU Public License, incorporated herein by reference.&n; *&n; ** This file is best viewed/edited with columns&gt;=132.&n; *&n; ** Useful (if not required) reading:&n; *&n; *&t;&t;Texas Instruments, ThunderLAN Programmer&squot;s Guide,&n; *&t;&t;&t;TI Literature Number SPWU013A&n; *&t;&t;&t;available in PDF format from www.ti.com&n; *&t;&t;Level One, LXT901 and LXT970 Data Sheets&n; *&t;&t;&t;available in PDF format from www.level1.com&n; *&t;&t;National Semiconductor, DP83840A Data Sheet&n; *&t;&t;&t;available in PDF format from www.national.com&n; *&t;&t;Microchip Technology, 24C01A/02A/04A Data Sheet&n; *&t;&t;&t;available in PDF format from www.microchip.com&n; *&n; * Change History&n; *&n; *&t;Tigran Aivazian &lt;tigran@sco.com&gt;:&t;TLan_PciProbe() now uses&n; *&t;&t;&t;&t;&t;&t;new PCI BIOS interface.&n; *&t;Alan Cox&t;&lt;alan@redhat.com&gt;:&t;Fixed the out of memory&n; *&t;&t;&t;&t;&t;&t;handling.&n; *      &n; *&t;Torben Mathiasen &lt;torben.mathiasen@compaq.com&gt; New Maintainer!&n; *&n; *&t;v1.1 Dec 20, 1999    - Removed linux version checking&n; *&t;&t;&t;       Patch from Tigran Aivazian. &n; *&t;&t;&t;     - v1.1 includes Alan&squot;s SMP updates.&n; *&t;&t;&t;     - We still have problems on SMP though,&n; *&t;&t;&t;       but I&squot;m looking into that. &n; *&t;&t;&t;&n; *&t;v1.2 Jan 02, 2000    - Hopefully fixed the SMP deadlock.&n; *&t;&t;&t;     - Removed dependency of HZ being 100.&n; *&t;&t;&t;     - We now allow higher priority timers to &n; *&t;&t;&t;       overwrite timers like TLAN_TIMER_ACTIVITY&n; *&t;&t;&t;       Patch from John Cagle &lt;john.cagle@compaq.com&gt;.&n; *&t;&t;&t;     - Fixed a few compiler warnings.&n; *&n; *&t;v1.3 Feb 04, 2000    - Fixed the remaining HZ issues.&n; *&t;&t;&t;     - Removed call to pci_present(). &n; *&t;&t;&t;     - Removed SA_INTERRUPT flag from irq handler.&n; *&t;&t;&t;     - Added __init and __initdata to reduce resisdent &n; *&t;&t;&t;       code size.&n; *&t;&t;&t;     - Driver now uses module_init/module_exit.&n; *&t;&t;&t;     - Rewrote init_module and tlan_probe to&n; *&t;&t;&t;       share a lot more code. We now use tlan_probe&n; *&t;&t;&t;       with builtin and module driver.&n; *&t;&t;&t;     - Driver ported to new net API. &n; *&t;&t;&t;     - tlan.txt has been reworked to reflect current &n; *&t;&t;&t;       driver (almost)&n; *&t;&t;&t;     - Other minor stuff&n; *&n; *******************************************************************************/
+multiline_comment|/*******************************************************************************&n; *&n; *  Linux ThunderLAN Driver&n; *&n; *  tlan.c&n; *  by James Banks&n; *&n; *  (C) 1997-1998 Caldera, Inc.&n; *  (C) 1998 James Banks&n; *  (C) 1999, 2000 Torben Mathiasen&n; *&n; *  This software may be used and distributed according to the terms&n; *  of the GNU Public License, incorporated herein by reference.&n; *&n; ** This file is best viewed/edited with columns&gt;=132.&n; *&n; ** Useful (if not required) reading:&n; *&n; *&t;&t;Texas Instruments, ThunderLAN Programmer&squot;s Guide,&n; *&t;&t;&t;TI Literature Number SPWU013A&n; *&t;&t;&t;available in PDF format from www.ti.com&n; *&t;&t;Level One, LXT901 and LXT970 Data Sheets&n; *&t;&t;&t;available in PDF format from www.level1.com&n; *&t;&t;National Semiconductor, DP83840A Data Sheet&n; *&t;&t;&t;available in PDF format from www.national.com&n; *&t;&t;Microchip Technology, 24C01A/02A/04A Data Sheet&n; *&t;&t;&t;available in PDF format from www.microchip.com&n; *&n; * Change History&n; *&n; *&t;Tigran Aivazian &lt;tigran@sco.com&gt;:&t;TLan_PciProbe() now uses&n; *&t;&t;&t;&t;&t;&t;new PCI BIOS interface.&n; *&t;Alan Cox&t;&lt;alan@redhat.com&gt;:&t;Fixed the out of memory&n; *&t;&t;&t;&t;&t;&t;handling.&n; *      &n; *&t;Torben Mathiasen &lt;torben.mathiasen@compaq.com&gt; New Maintainer!&n; *&n; *&t;v1.1 Dec 20, 1999    - Removed linux version checking&n; *&t;&t;&t;       Patch from Tigran Aivazian. &n; *&t;&t;&t;     - v1.1 includes Alan&squot;s SMP updates.&n; *&t;&t;&t;     - We still have problems on SMP though,&n; *&t;&t;&t;       but I&squot;m looking into that. &n; *&t;&t;&t;&n; *&t;v1.2 Jan 02, 2000    - Hopefully fixed the SMP deadlock.&n; *&t;&t;&t;     - Removed dependency of HZ being 100.&n; *&t;&t;&t;     - We now allow higher priority timers to &n; *&t;&t;&t;       overwrite timers like TLAN_TIMER_ACTIVITY&n; *&t;&t;&t;       Patch from John Cagle &lt;john.cagle@compaq.com&gt;.&n; *&t;&t;&t;     - Fixed a few compiler warnings.&n; *&n; *&t;v1.3 Feb 04, 2000    - Fixed the remaining HZ issues.&n; *&t;&t;&t;     - Removed call to pci_present(). &n; *&t;&t;&t;     - Removed SA_INTERRUPT flag from irq handler.&n; *&t;&t;&t;     - Added __init and __initdata to reduce resisdent &n; *&t;&t;&t;       code size.&n; *&t;&t;&t;     - Driver now uses module_init/module_exit.&n; *&t;&t;&t;     - Rewrote init_module and tlan_probe to&n; *&t;&t;&t;       share a lot more code. We now use tlan_probe&n; *&t;&t;&t;       with builtin and module driver.&n; *&t;&t;&t;     - Driver ported to new net API. &n; *&t;&t;&t;     - tlan.txt has been reworked to reflect current &n; *&t;&t;&t;       driver (almost)&n; *&t;&t;&t;     - Other minor stuff&n; *&n; *&t;v1.4 Feb 10, 2000    - Updated with more changes required after Dave&squot;s&n; *&t;                       network cleanup in 2.3.43pre7 (Tigran &amp; myself)&n; *&t;                     - Minor stuff.&n; *&n; *******************************************************************************/
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &quot;tlan.h&quot;
 macro_line|#include &lt;linux/init.h&gt;
@@ -135,7 +135,7 @@ r_static
 r_int
 id|TLanVersionMinor
 op_assign
-l_int|3
+l_int|4
 suffix:semicolon
 DECL|variable|__initdata
 r_static
@@ -1059,7 +1059,7 @@ id|printk
 c_func
 (paren
 id|KERN_INFO
-l_string|&quot;ThunderLAN driver v%d.%d:&bslash;n&quot;
+l_string|&quot;ThunderLAN driver v%d.%d&bslash;n&quot;
 comma
 id|TLanVersionMajor
 comma
@@ -1412,7 +1412,9 @@ id|tlan_exit
 suffix:semicolon
 multiline_comment|/***************************************************************&n;&t; *&t;TLan_PciProbe&n;&t; *&n;&t; *&t;Returns:&n;&t; *&t;&t;1 if another TLAN card was found, 0 if not.&n;&t; *&t;Parms:&n;&t; *&t;&t;pci_dfn&t;&t;The PCI whatever the card was&n;&t; *&t;&t;&t;&t;found at.&n;&t; *&t;&t;pci_irq&t;&t;The IRQ of the found adapter.&n;&t; *&t;&t;pci_rev&t;&t;The revision of the adapter.&n;&t; *&t;&t;pci_io_base&t;The first IO port used by the&n;&t; *&t;&t;&t;&t;adapter.&n;&t; *&t;&t;dl_ix&t;&t;The index in the device list&n;&t; *&t;&t;&t;&t;of the adapter.&n;&t; *&n;&t; *&t;This function searches for an adapter with PCI vendor&n;&t; *&t;and device IDs matching those in the TLanAdapterList.&n;&t; *&t;The function &squot;remembers&squot; the last device it found,&n;&t; *&t;and so finds a new device (if anymore are to be found)&n;&t; *&t;each time the function is called.  It then looks up&n;&t; *&t;pertinent PCI info and returns it to the caller.&n;&t; *&n;&t; **************************************************************/
 DECL|function|TLan_PciProbe
+r_static
 r_int
+id|__init
 id|TLan_PciProbe
 c_func
 (paren
@@ -2003,6 +2005,7 @@ suffix:semicolon
 multiline_comment|/* TLan_Init */
 multiline_comment|/***************************************************************&n;&t; *&t;TLan_Open&n;&t; *&n;&t; *&t;Returns:&n;&t; *&t;&t;0 on success, error code otherwise.&n;&t; *&t;Parms:&n;&t; *&t;&t;dev&t;Structure of device to be opened.&n;&t; *&n;&t; *&t;This routine puts the driver and TLAN adapter in a&n;&t; *&t;state where it is ready to send and receive packets.&n;&t; *&t;It allocates the IRQ, resets and brings the adapter&n;&t; *&t;out of reset, and allows interrupts.  It also delays&n;&t; *&t;the startup for autonegotiation or sends a Rx GO&n;&t; *&t;command to the adapter, as appropriate.&n;&t; *&n;&t; **************************************************************/
 DECL|function|TLan_Open
+r_static
 r_int
 id|TLan_Open
 c_func
@@ -2122,6 +2125,7 @@ suffix:semicolon
 multiline_comment|/* TLan_Open */
 multiline_comment|/***************************************************************&n;&t; *&t;TLan_StartTx&n;&t; *  &n;&t; *&t;Returns:&n;&t; *&t;&t;0 on success, non-zero on failure.&n;&t; *&t;Parms:&n;&t; *&t;&t;skb&t;A pointer to the sk_buff containing the&n;&t; *&t;&t;&t;frame to be sent.&n;&t; *&t;&t;dev&t;The device to send the data on.&n;&t; *&n;&t; *&t;This function adds a frame to the Tx list to be sent&n;&t; *&t;ASAP.  First it&t;verifies that the adapter is ready and&n;&t; *&t;there is room in the queue.  Then it sets up the next&n;&t; *&t;available list, copies the frame to the&t;corresponding&n;&t; *&t;buffer.  If the adapter Tx channel is idle, it gives&n;&t; *&t;the adapter a Tx Go command on the list, otherwise it&n;&t; *&t;sets the forward address of the previous list to point&n;&t; *&t;to this one.  Then it frees the sk_buff.&n;&t; *&n;&t; **************************************************************/
 DECL|function|TLan_StartTx
+r_static
 r_int
 id|TLan_StartTx
 c_func
@@ -2179,6 +2183,21 @@ comma
 id|dev-&gt;name
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|in_irq
+c_func
+(paren
+)paren
+)paren
+id|dev_kfree_skb_irq
+c_func
+(paren
+id|skb
+)paren
+suffix:semicolon
+r_else
 id|dev_kfree_skb
 c_func
 (paren
@@ -2549,6 +2568,21 @@ c_cond
 id|bbuf
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|in_irq
+c_func
+(paren
+)paren
+)paren
+id|dev_kfree_skb_irq
+c_func
+(paren
+id|skb
+)paren
+suffix:semicolon
+r_else
 id|dev_kfree_skb
 c_func
 (paren
@@ -2567,6 +2601,7 @@ suffix:semicolon
 multiline_comment|/* TLan_StartTx */
 multiline_comment|/***************************************************************&n;&t; *&t;TLan_HandleInterrupt&n;&t; *  &n;&t; *&t;Returns:&t;&n;&t; *&t;&t;Nothing&n;&t; *&t;Parms:&n;&t; *&t;&t;irq&t;The line on which the interrupt&n;&t; *&t;&t;&t;occurred.&n;&t; *&t;&t;dev_id&t;A pointer to the device assigned to&n;&t; *&t;&t;&t;this irq line.&n;&t; *&t;&t;regs&t;???&n;&t; *&n;&t; *&t;This function handles an interrupt generated by its&n;&t; *&t;assigned TLAN adapter.  The function deactivates&n;&t; *&t;interrupts on its adapter, records the type of&n;&t; *&t;interrupt, executes the appropriate subhandler, and&n;&t; *&t;acknowdges the interrupt to the adapter (thus&n;&t; *&t;re-enabling adapter interrupts.&n;&t; *&n;&t; **************************************************************/
 DECL|function|TLan_HandleInterrupt
+r_static
 r_void
 id|TLan_HandleInterrupt
 c_func
@@ -2711,6 +2746,7 @@ suffix:semicolon
 multiline_comment|/* TLan_HandleInterrupts */
 multiline_comment|/***************************************************************&n;&t; *&t;TLan_Close&n;&t; *  &n;&t; * &t;Returns:&n;&t; *&t;&t;An error code.&n;&t; *&t;Parms:&n;&t; *&t;&t;dev&t;The device structure of the device to&n;&t; *&t;&t;&t;close.&n;&t; *&n;&t; *&t;This function shuts down the adapter.  It records any&n;&t; *&t;stats, puts the adapter into reset state, deactivates&n;&t; *&t;its time as needed, and&t;frees the irq it is using.&n;&t; *&n;&t; **************************************************************/
 DECL|function|TLan_Close
+r_static
 r_int
 id|TLan_Close
 c_func
@@ -2802,6 +2838,7 @@ suffix:semicolon
 multiline_comment|/* TLan_Close */
 multiline_comment|/***************************************************************&n;&t; *&t;TLan_GetStats&n;&t; *  &n;&t; *&t;Returns:&n;&t; *&t;&t;A pointer to the device&squot;s statistics structure.&n;&t; *&t;Parms:&n;&t; *&t;&t;dev&t;The device structure to return the&n;&t; *&t;&t;&t;stats for.&n;&t; *&n;&t; *&t;This function updates the devices statistics by reading&n;&t; *&t;the TLAN chip&squot;s onboard registers.  Then it returns the&n;&t; *&t;address of the statistics structure.&n;&t; *&n;&t; **************************************************************/
 DECL|function|TLan_GetStats
+r_static
 r_struct
 id|net_device_stats
 op_star
@@ -2960,6 +2997,7 @@ suffix:semicolon
 multiline_comment|/* TLan_GetStats */
 multiline_comment|/***************************************************************&n;&t; *&t;TLan_SetMulticastList&n;&t; *  &n;&t; *&t;Returns:&n;&t; *&t;&t;Nothing&n;&t; *&t;Parms:&n;&t; *&t;&t;dev&t;The device structure to set the&n;&t; *&t;&t;&t;multicast list for.&n;&t; *&n;&t; *&t;This function sets the TLAN adaptor to various receive&n;&t; *&t;modes.  If the IFF_PROMISC flag is set, promiscuous&n;&t; *&t;mode is acitviated.  Otherwise,&t;promiscuous mode is&n;&t; *&t;turned off.  If the IFF_ALLMULTI flag is set, then&n;&t; *&t;the hash table is set to receive all group addresses.&n;&t; *&t;Otherwise, the first three multicast addresses are&n;&t; *&t;stored in AREG_1-3, and the rest are selected via the&n;&t; *&t;hash table, as necessary.&n;&t; *&n;&t; **************************************************************/
 DECL|function|TLan_SetMulticastList
+r_static
 r_void
 id|TLan_SetMulticastList
 c_func
@@ -3340,6 +3378,31 @@ op_logical_neg
 id|bbuf
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|in_irq
+c_func
+(paren
+)paren
+)paren
+id|dev_kfree_skb_irq
+c_func
+(paren
+(paren
+r_struct
+id|sk_buff
+op_star
+)paren
+id|head_list-&gt;buffer
+(braket
+l_int|9
+)braket
+dot
+id|address
+)paren
+suffix:semicolon
+r_else
 id|dev_kfree_skb
 c_func
 (paren

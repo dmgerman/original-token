@@ -1949,9 +1949,11 @@ op_plus
 id|UFR
 )paren
 suffix:semicolon
-id|self-&gt;netdev-&gt;tbusy
-op_assign
-l_int|0
+id|netif_wake_queue
+c_func
+(paren
+id|self-&gt;netdev
+)paren
 suffix:semicolon
 multiline_comment|/* Enable some interrupts so we can receive frames */
 id|switch_bank
@@ -2074,25 +2076,11 @@ id|skb-&gt;len
 )paren
 suffix:semicolon
 multiline_comment|/* Lock transmit buffer */
-r_if
-c_cond
-(paren
-id|irda_lock
+id|netif_stop_queue
 c_func
 (paren
-(paren
-r_void
-op_star
+id|dev
 )paren
-op_amp
-id|dev-&gt;tbusy
-)paren
-op_eq
-id|FALSE
-)paren
-r_return
-op_minus
-id|EBUSY
 suffix:semicolon
 multiline_comment|/* Check if we need to change the speed */
 r_if
@@ -2925,16 +2913,11 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* Unlock tx_buff and request another frame */
-id|self-&gt;netdev-&gt;tbusy
-op_assign
-l_int|0
-suffix:semicolon
-multiline_comment|/* Unlock */
 multiline_comment|/* Tell the network layer, that we want more frames */
-id|mark_bh
+id|netif_wake_queue
 c_func
 (paren
-id|NET_BH
+id|self-&gt;netdev
 )paren
 suffix:semicolon
 multiline_comment|/* Restore set */
@@ -3973,19 +3956,14 @@ op_plus
 id|SSR
 )paren
 suffix:semicolon
-id|self-&gt;netdev-&gt;tbusy
-op_assign
-l_int|0
-suffix:semicolon
-multiline_comment|/* Unlock */
 id|self-&gt;stats.tx_packets
 op_increment
 suffix:semicolon
-multiline_comment|/* Schedule network layer */
-id|mark_bh
+multiline_comment|/* Feed me more packets */
+id|netif_wake_queue
 c_func
 (paren
-id|NET_BH
+id|self-&gt;netdev
 )paren
 suffix:semicolon
 id|new_icr
@@ -4377,10 +4355,6 @@ op_star
 )paren
 id|dev-&gt;priv
 suffix:semicolon
-id|dev-&gt;interrupt
-op_assign
-l_int|1
-suffix:semicolon
 id|iobase
 op_assign
 id|self-&gt;io.fir_base
@@ -4496,10 +4470,6 @@ id|SSR
 )paren
 suffix:semicolon
 multiline_comment|/* Restore bank register */
-id|self-&gt;netdev-&gt;interrupt
-op_assign
-l_int|0
-suffix:semicolon
 )brace
 multiline_comment|/*&n; * Function w83977af_is_receiving (self)&n; *&n; *    Return TRUE is we are currently receiving a frame&n; *&n; */
 DECL|function|w83977af_is_receiving
@@ -4842,17 +4812,11 @@ id|SSR
 )paren
 suffix:semicolon
 multiline_comment|/* Ready to play! */
-id|dev-&gt;tbusy
-op_assign
-l_int|0
-suffix:semicolon
-id|dev-&gt;interrupt
-op_assign
-l_int|0
-suffix:semicolon
-id|dev-&gt;start
-op_assign
-l_int|1
+id|netif_start_queue
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
 multiline_comment|/* &n;&t; * Open new IrLAP layer instance, now that everything should be&n;&t; * initialized properly &n;&t; */
 id|self-&gt;irlap
@@ -4944,13 +4908,11 @@ op_assign
 id|self-&gt;io.fir_base
 suffix:semicolon
 multiline_comment|/* Stop device */
-id|dev-&gt;tbusy
-op_assign
-l_int|1
-suffix:semicolon
-id|dev-&gt;start
-op_assign
-l_int|0
+id|netif_stop_queue
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
 multiline_comment|/* Stop and remove instance of IrLAP */
 r_if

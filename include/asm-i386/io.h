@@ -345,28 +345,28 @@ multiline_comment|/*&n; * ISA space is &squot;always mapped&squot; on a typical 
 DECL|macro|__ISA_IO_base
 mdefine_line|#define __ISA_IO_base ((char *)(PAGE_OFFSET))
 DECL|macro|isa_readb
-mdefine_line|#define isa_readb(a) readb(__ISA_IO_base + (unsigned long)(a))
+mdefine_line|#define isa_readb(a) readb(__ISA_IO_base + (a))
 DECL|macro|isa_readw
-mdefine_line|#define isa_readw(a) readw(__ISA_IO_base + (unsigned long)(a))
+mdefine_line|#define isa_readw(a) readw(__ISA_IO_base + (a))
 DECL|macro|isa_readl
-mdefine_line|#define isa_readl(a) readl(__ISA_IO_base + (unsigned long)(a))
+mdefine_line|#define isa_readl(a) readl(__ISA_IO_base + (a))
 DECL|macro|isa_writeb
-mdefine_line|#define isa_writeb(b,a) writeb(b,__ISA_IO_base + (unsigned long)(a))
+mdefine_line|#define isa_writeb(b,a) writeb(b,__ISA_IO_base + (a))
 DECL|macro|isa_writew
-mdefine_line|#define isa_writew(w,a) writew(w,__ISA_IO_base + (unsigned long)(a))
+mdefine_line|#define isa_writew(w,a) writew(w,__ISA_IO_base + (a))
 DECL|macro|isa_writel
-mdefine_line|#define isa_writel(l,a) writel(l,__ISA_IO_base + (unsigned long)(a))
+mdefine_line|#define isa_writel(l,a) writel(l,__ISA_IO_base + (a))
 DECL|macro|isa_memset_io
-mdefine_line|#define isa_memset_io(a,b,c)&t;&t;memset_io(__ISA_IO_base + (unsigned long)(a),(b),(c))
+mdefine_line|#define isa_memset_io(a,b,c)&t;&t;memset_io(__ISA_IO_base + (a),(b),(c))
 DECL|macro|isa_memcpy_fromio
-mdefine_line|#define isa_memcpy_fromio(a,b,c)&t;memcpy_fromio((a),__ISA_IO_base + (unsigned long)(b),(c))
+mdefine_line|#define isa_memcpy_fromio(a,b,c)&t;memcpy_fromio((a),__ISA_IO_base + (b),(c))
 DECL|macro|isa_memcpy_toio
-mdefine_line|#define isa_memcpy_toio(a,b,c)&t;&t;memcpy_toio(__ISA_IO_base + (unsigned long)(a),(b),(c))
+mdefine_line|#define isa_memcpy_toio(a,b,c)&t;&t;memcpy_toio(__ISA_IO_base + (a),(b),(c))
 multiline_comment|/*&n; * Again, i386 does not require mem IO specific function.&n; */
 DECL|macro|eth_io_copy_and_sum
 mdefine_line|#define eth_io_copy_and_sum(a,b,c,d)&t;&t;eth_copy_and_sum((a),__io_virt(b),(c),(d))
 DECL|macro|isa_eth_io_copy_and_sum
-mdefine_line|#define isa_eth_io_copy_and_sum(a,b,c,d)&t;eth_copy_and_sum((a),__io_virt(__ISA_IO_base + (unsigned long)(b)),(c),(d))
+mdefine_line|#define isa_eth_io_copy_and_sum(a,b,c,d)&t;eth_copy_and_sum((a),__io_virt(__ISA_IO_base + (b)),(c),(d))
 DECL|function|check_signature
 r_static
 r_inline

@@ -5548,5 +5548,13 @@ id|usb_serial_driver
 )paren
 suffix:semicolon
 )brace
+macro_line|#else
+DECL|variable|usb_serial_init
+id|__initcall
+c_func
+(paren
+id|usb_serial_init
+)paren
+suffix:semicolon
 macro_line|#endif
 eof

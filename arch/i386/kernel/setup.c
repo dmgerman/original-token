@@ -6392,6 +6392,7 @@ suffix:semicolon
 multiline_comment|/*&n; * cpu_init() initializes state that is per-CPU. Some data is already&n; * initialized (naturally) in the bootstrap process, such as the GDT&n; * and IDT. We reload them nevertheless, this function acts as a&n; * &squot;CPU state barrier&squot;, nothing should get across.&n; */
 DECL|function|cpu_init
 r_void
+id|__init
 id|cpu_init
 (paren
 r_void

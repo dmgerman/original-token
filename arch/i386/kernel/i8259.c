@@ -820,6 +820,7 @@ suffix:semicolon
 )brace
 DECL|function|init_8259A
 r_void
+id|__init
 id|init_8259A
 c_func
 (paren

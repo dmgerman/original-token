@@ -1803,4 +1803,11 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|variable|usb_printer_init
+id|__initcall
+c_func
+(paren
+id|usb_printer_init
+)paren
+suffix:semicolon
 eof

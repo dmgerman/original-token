@@ -269,9 +269,11 @@ op_assign
 id|hostess_input
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Go go go&n;&t; */
-id|d-&gt;tbusy
-op_assign
-l_int|0
+id|netif_start_queue
+c_func
+(paren
+id|d
+)paren
 suffix:semicolon
 id|MOD_INC_USE_COUNT
 suffix:semicolon
@@ -311,9 +313,11 @@ id|d
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Link layer down&n;&t; */
-id|d-&gt;tbusy
-op_assign
-l_int|1
+id|netif_stop_queue
+c_func
+(paren
+id|d
+)paren
 suffix:semicolon
 r_switch
 c_cond

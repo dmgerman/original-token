@@ -34,13 +34,6 @@ r_void
 suffix:semicolon
 multiline_comment|/*&n; * USB device drivers&n; */
 r_int
-id|usb_acm_init
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_int
 id|usb_audio_init
 c_func
 (paren
@@ -83,13 +76,6 @@ r_void
 )paren
 suffix:semicolon
 r_int
-id|usb_printer_init
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_int
 id|usb_stor_init
 c_func
 (paren
@@ -97,28 +83,7 @@ r_void
 )paren
 suffix:semicolon
 r_int
-id|usb_serial_init
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_int
 id|dabusb_init
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_int
-id|hid_init
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_int
-id|input_init
 c_func
 (paren
 r_void
@@ -233,27 +198,6 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef CONFIG_USB_ACM
-id|usb_acm_init
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_USB_PRINTER
-id|usb_printer_init
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_USB_SERIAL
-id|usb_serial_init
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
 macro_line|#ifdef CONFIG_USB_CPIA
 id|usb_cpia_init
 c_func
@@ -291,20 +235,6 @@ suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef CONFIG_USB_DABUSB
 id|dabusb_init
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#if defined(CONFIG_USB_HID) || defined(CONFIG_USB_MOUSE) || defined(CONFIG_USB_KBD) || defined(CONFIG_USB_GRAPHIRE)
-id|input_init
-c_func
-(paren
-)paren
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifdef CONFIG_USB_HID
-id|hid_init
 c_func
 (paren
 )paren

@@ -3305,19 +3305,13 @@ op_eq
 id|SUCCESS
 )paren
 (brace
-id|dev-&gt;tbusy
-op_assign
-l_int|0
-suffix:semicolon
-id|dev-&gt;interrupt
-op_assign
-l_int|0
-suffix:semicolon
-id|dev-&gt;start
-op_assign
-l_int|1
-suffix:semicolon
 multiline_comment|/* NEED to see smem size *AND* reset high 512 bytes if needed */
+id|netif_start_queue
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
 id|MOD_INC_USE_COUNT
 suffix:semicolon
 r_return
@@ -3353,6 +3347,12 @@ id|tok_info
 op_star
 )paren
 id|dev-&gt;priv
+suffix:semicolon
+id|netif_stop_queue
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
 id|isa_writeb
 c_func
@@ -3434,10 +3434,6 @@ id|ret_code
 )paren
 )paren
 )paren
-suffix:semicolon
-id|dev-&gt;start
-op_assign
-l_int|0
 suffix:semicolon
 macro_line|#ifdef PCMCIA
 id|ti-&gt;sram
@@ -3521,10 +3517,6 @@ id|ti-&gt;lock
 )paren
 suffix:semicolon
 multiline_comment|/* Disable interrupts till processing is finished */
-id|dev-&gt;interrupt
-op_assign
-l_int|1
-suffix:semicolon
 id|isa_writeb
 c_func
 (paren
@@ -3614,10 +3606,6 @@ id|ti-&gt;lock
 )paren
 )paren
 suffix:semicolon
-id|dev-&gt;interrupt
-op_assign
-l_int|0
-suffix:semicolon
 r_return
 suffix:semicolon
 )brace
@@ -3653,10 +3641,6 @@ op_amp
 id|ti-&gt;lock
 )paren
 )paren
-suffix:semicolon
-id|dev-&gt;interrupt
-op_assign
-l_int|0
 suffix:semicolon
 r_return
 suffix:semicolon
@@ -3779,10 +3763,6 @@ op_plus
 id|ISRP_EVEN
 )paren
 suffix:semicolon
-id|dev-&gt;interrupt
-op_assign
-l_int|0
-suffix:semicolon
 )brace
 r_else
 r_if
@@ -3864,10 +3844,6 @@ id|ACA_SET
 op_plus
 id|ISRP_EVEN
 )paren
-suffix:semicolon
-id|dev-&gt;interrupt
-op_assign
-l_int|0
 suffix:semicolon
 )brace
 r_else
@@ -3965,9 +3941,11 @@ op_assign
 l_int|NULL
 suffix:semicolon
 )brace
-id|dev-&gt;tbusy
-op_assign
-l_int|0
+id|netif_wake_queue
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -4041,9 +4019,11 @@ op_assign
 l_int|NULL
 suffix:semicolon
 )brace
-id|dev-&gt;tbusy
-op_assign
-l_int|0
+id|netif_wake_queue
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -4823,9 +4803,11 @@ id|token_errors
 )paren
 suffix:semicolon
 )brace
-id|dev-&gt;tbusy
-op_assign
-l_int|0
+id|netif_wake_queue
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -5168,7 +5150,14 @@ id|LOG_OVERFLOW
 r_if
 c_cond
 (paren
-id|dev-&gt;tbusy
+id|test_bit
+c_func
+(paren
+id|LINK_STATE_XOFF
+comma
+op_amp
+id|dev-&gt;state
+)paren
 )paren
 id|ti-&gt;readlog_pending
 op_assign
@@ -5400,10 +5389,6 @@ suffix:semicolon
 multiline_comment|/* SSB response */
 )brace
 multiline_comment|/* SRB, ARB, ASB or SSB response */
-id|dev-&gt;interrupt
-op_assign
-l_int|0
-suffix:semicolon
 id|isa_writeb
 c_func
 (paren
@@ -5880,11 +5865,12 @@ op_assign
 id|FIRST_INT
 suffix:semicolon
 multiline_comment|/* Reset adapter */
-id|dev-&gt;tbusy
-op_assign
-l_int|1
+id|netif_stop_queue
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
-multiline_comment|/* nothing can be done before reset and open completed */
 macro_line|#ifdef ENABLE_PAGING
 r_if
 c_cond
@@ -7018,10 +7004,6 @@ id|ti-&gt;tr_stats.tx_bytes
 op_add_assign
 id|ti-&gt;current_skb-&gt;len
 suffix:semicolon
-id|dev-&gt;tbusy
-op_assign
-l_int|0
-suffix:semicolon
 id|dev_kfree_skb
 c_func
 (paren
@@ -7032,10 +7014,10 @@ id|ti-&gt;current_skb
 op_assign
 l_int|NULL
 suffix:semicolon
-id|mark_bh
+id|netif_wake_queue
 c_func
 (paren
-id|NET_BH
+id|dev
 )paren
 suffix:semicolon
 r_if
@@ -8349,6 +8331,10 @@ id|tok_info
 op_star
 id|ti
 suffix:semicolon
+r_int
+r_int
+id|flags
+suffix:semicolon
 id|ti
 op_assign
 (paren
@@ -8358,74 +8344,11 @@ op_star
 )paren
 id|dev-&gt;priv
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|dev-&gt;tbusy
-)paren
-(brace
-r_int
-id|ticks_waited
-suffix:semicolon
-id|ticks_waited
-op_assign
-id|jiffies
-op_minus
-id|dev-&gt;trans_start
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|ticks_waited
-OL
-id|TR_BUSY_INTERVAL
-)paren
-r_return
-l_int|1
-suffix:semicolon
-id|DPRINTK
+id|netif_stop_queue
 c_func
 (paren
-l_string|&quot;Arrg. Transmitter busy.&bslash;n&quot;
+id|dev
 )paren
-suffix:semicolon
-id|dev-&gt;trans_start
-op_add_assign
-l_int|5
-suffix:semicolon
-multiline_comment|/* we fake the transmission start time... */
-r_return
-l_int|1
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|test_and_set_bit
-c_func
-(paren
-l_int|0
-comma
-(paren
-r_void
-op_star
-)paren
-op_amp
-id|dev-&gt;tbusy
-)paren
-op_ne
-l_int|0
-)paren
-id|DPRINTK
-c_func
-(paren
-l_string|&quot;Transmitter access conflict&bslash;n&quot;
-)paren
-suffix:semicolon
-r_else
-(brace
-r_int
-id|flags
 suffix:semicolon
 multiline_comment|/* lock against other CPUs */
 id|spin_lock_irqsave
@@ -8507,7 +8430,6 @@ id|dev-&gt;trans_start
 op_assign
 id|jiffies
 suffix:semicolon
-)brace
 r_return
 l_int|0
 suffix:semicolon
@@ -8624,11 +8546,12 @@ op_plus
 id|ISRA_ODD
 )paren
 suffix:semicolon
-id|dev-&gt;tbusy
-op_assign
-l_int|1
+id|netif_stop_queue
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
-multiline_comment|/* really srb busy... */
 )brace
 multiline_comment|/* tok_get_stats():  Basically a scaffold routine which will return&n;   the address of the tr_statistics structure associated with&n;   this device -- the tr.... structure is an ethnet look-alike&n;   so at least for this iteration may suffice.   */
 DECL|function|tok_get_stats

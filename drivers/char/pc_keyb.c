@@ -1300,6 +1300,14 @@ suffix:semicolon
 )brace
 macro_line|#endif
 )brace
+DECL|variable|kbd_exists
+r_static
+r_int
+r_char
+id|kbd_exists
+op_assign
+l_int|1
+suffix:semicolon
 DECL|function|handle_keyboard_event
 r_static
 r_inline
@@ -1313,6 +1321,10 @@ id|scancode
 )paren
 (brace
 macro_line|#ifdef CONFIG_VT
+id|kbd_exists
+op_assign
+l_int|1
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1641,6 +1653,9 @@ id|leds
 r_if
 c_cond
 (paren
+id|kbd_exists
+op_logical_and
+(paren
 op_logical_neg
 id|send_data
 c_func
@@ -1655,6 +1670,8 @@ c_func
 id|leds
 )paren
 )paren
+)paren
+(brace
 id|send_data
 c_func
 (paren
@@ -1662,6 +1679,11 @@ id|KBD_CMD_ENABLE
 )paren
 suffix:semicolon
 multiline_comment|/* re-enable kbd if any errors */
+id|kbd_exists
+op_assign
+l_int|0
+suffix:semicolon
+)brace
 )brace
 multiline_comment|/*&n; * In case we run on a non-x86 hardware we need to initialize both the&n; * keyboard controller and the keyboard.  On a x86, the BIOS will&n; * already have initialized them.&n; *&n; * Some x86 BIOSes do not correctly initialize the keyboard, so the&n; * &quot;kbd-reset&quot; command line options can be given to force a reset.&n; * [Ranger]&n; */
 macro_line|#ifdef __i386__

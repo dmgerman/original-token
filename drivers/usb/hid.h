@@ -178,6 +178,8 @@ DECL|macro|HID_UP_LED
 mdefine_line|#define HID_UP_LED &t;&t;0x00080000
 DECL|macro|HID_UP_BUTTON
 mdefine_line|#define HID_UP_BUTTON &t;&t;0x00090000
+DECL|macro|HID_UP_HOTKEY
+mdefine_line|#define HID_UP_HOTKEY&t;&t;0x000c0000
 DECL|macro|HID_UP_DIGITIZER
 mdefine_line|#define HID_UP_DIGITIZER &t;0x000d0000
 DECL|macro|HID_UP_PID

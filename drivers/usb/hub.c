@@ -2114,6 +2114,13 @@ id|portstatus
 op_amp
 id|USB_PORT_STAT_CONNECTION
 )paren
+op_logical_and
+(paren
+id|dev-&gt;children
+(braket
+id|i
+)braket
+)paren
 )paren
 (brace
 id|err

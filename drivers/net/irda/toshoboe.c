@@ -941,6 +941,12 @@ id|self-&gt;new_speed
 op_assign
 id|speed
 suffix:semicolon
+id|netif_stop_queue
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1094,40 +1100,25 @@ suffix:semicolon
 id|self-&gt;txpending
 op_increment
 suffix:semicolon
-multiline_comment|/*FIXME: ask about tbusy,media_busy stuff, for the moment */
-multiline_comment|/*tbusy means can&squot;t queue any more */
+multiline_comment|/*FIXME: ask about busy,media_busy stuff, for the moment */
+multiline_comment|/*busy means can&squot;t queue any more */
 macro_line|#ifndef ONETASK
 r_if
 c_cond
 (paren
 id|self-&gt;txpending
-op_eq
+op_ne
 id|TX_SLOTS
 )paren
 (brace
-macro_line|#else
-(brace
-macro_line|#endif
-r_if
-c_cond
+id|netif_wake_queue
+c_func
 (paren
-id|irda_lock
-(paren
-(paren
-r_void
-op_star
+id|dev
 )paren
-op_amp
-id|dev-&gt;tbusy
-)paren
-op_eq
-id|FALSE
-)paren
-r_return
-op_minus
-id|EBUSY
 suffix:semicolon
 )brace
+macro_line|#endif
 id|outb_p
 (paren
 l_int|0x80
@@ -1288,16 +1279,11 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
-id|self-&gt;netdev-&gt;tbusy
-op_assign
-l_int|0
-suffix:semicolon
-multiline_comment|/* Unlock */
 multiline_comment|/* Tell network layer that we want more frames */
-id|mark_bh
+id|netif_wake_queue
 c_func
 (paren
-id|NET_BH
+id|self-&gt;netdev
 )paren
 suffix:semicolon
 )brace
@@ -1738,17 +1724,11 @@ id|self
 )paren
 suffix:semicolon
 multiline_comment|/* Ready to play! */
-id|dev-&gt;tbusy
-op_assign
-l_int|0
-suffix:semicolon
-id|dev-&gt;interrupt
-op_assign
-l_int|0
-suffix:semicolon
-id|dev-&gt;start
-op_assign
-l_int|1
+id|netif_start_queue
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
 multiline_comment|/* &n;   * Open new IrLAP layer instance, now that everything should be&n;   * initialized properly &n;   */
 id|self-&gt;irlap
@@ -1818,13 +1798,11 @@ op_star
 id|dev-&gt;priv
 suffix:semicolon
 multiline_comment|/* Stop device */
-id|dev-&gt;tbusy
-op_assign
-l_int|1
-suffix:semicolon
-id|dev-&gt;start
-op_assign
-l_int|0
+id|netif_stop_queue
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
 multiline_comment|/* Stop and remove instance of IrLAP */
 r_if
@@ -3142,21 +3120,11 @@ id|toshoboe_initptrs
 id|self
 )paren
 suffix:semicolon
-id|dev-&gt;tbusy
-op_assign
-l_int|0
-suffix:semicolon
-id|dev-&gt;interrupt
-op_assign
-l_int|0
-suffix:semicolon
-id|dev-&gt;start
-op_assign
-l_int|1
-suffix:semicolon
-id|self-&gt;stopped
-op_assign
-l_int|0
+id|netif_wake_queue
+c_func
+(paren
+id|self-&gt;netdev
+)paren
 suffix:semicolon
 id|restore_flags
 (paren

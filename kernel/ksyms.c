@@ -2352,6 +2352,13 @@ c_func
 id|tasklet_hi_vec
 )paren
 suffix:semicolon
+DECL|variable|tasklet_vec
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|tasklet_vec
+)paren
+suffix:semicolon
 DECL|variable|bh_task_vec
 id|EXPORT_SYMBOL
 c_func

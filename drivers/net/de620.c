@@ -1124,9 +1124,9 @@ suffix:semicolon
 )brace
 "&f;"
 multiline_comment|/*********************************************************************&n; *&n; * Open/initialize the board.&n; *&n; * This routine should set everything up anew at each open, even&n; * registers that &quot;should&quot; only need to be set once at boot, so that&n; * there is a non-reboot way to recover if something goes wrong.&n; *&n; */
+DECL|function|de620_open
 r_static
 r_int
-DECL|function|de620_open
 id|de620_open
 c_func
 (paren
@@ -1156,6 +1156,7 @@ id|dev
 (brace
 id|printk
 (paren
+id|KERN_ERR
 l_string|&quot;%s: unable to get IRQ %d&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -1167,8 +1168,6 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
-id|MOD_INC_USE_COUNT
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1178,23 +1177,25 @@ c_func
 id|dev
 )paren
 )paren
-(brace
 r_return
 l_int|1
 suffix:semicolon
-)brace
-id|dev-&gt;start
-op_assign
-l_int|1
+id|MOD_INC_USE_COUNT
+suffix:semicolon
+id|netif_start_queue
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/************************************************&n; *&n; * The inverse routine to de620_open().&n; *&n; */
+DECL|function|de620_close
 r_static
 r_int
-DECL|function|de620_close
 id|de620_close
 c_func
 (paren
@@ -1204,6 +1205,12 @@ op_star
 id|dev
 )paren
 (brace
+id|netif_stop_queue
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
 multiline_comment|/* disable recv */
 id|de620_set_register
 c_func
@@ -1222,10 +1229,6 @@ id|dev-&gt;irq
 comma
 id|dev
 )paren
-suffix:semicolon
-id|dev-&gt;start
-op_assign
-l_int|0
 suffix:semicolon
 id|MOD_DEC_USE_COUNT
 suffix:semicolon
@@ -1325,10 +1328,52 @@ id|TCR_DEF
 suffix:semicolon
 )brace
 )brace
+multiline_comment|/*******************************************************&n; *&t;&n; * Handle timeouts on transmit&n; */
+DECL|function|de620_timeout
+r_static
+r_void
+id|de620_timeout
+c_func
+(paren
+r_struct
+id|net_device
+op_star
+id|dev
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;%s: transmit timed out, %s?&bslash;n&quot;
+comma
+id|dev-&gt;name
+comma
+l_string|&quot;network cable problem&quot;
+)paren
+suffix:semicolon
+multiline_comment|/* Restart the adapter. */
+r_if
+c_cond
+(paren
+op_logical_neg
+id|adapter_init
+c_func
+(paren
+id|dev
+)paren
+)paren
+multiline_comment|/* maybe close it */
+id|netif_wake_queue
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
+)brace
 multiline_comment|/*******************************************************&n; *&n; * Copy a buffer to the adapter transmit page memory.&n; * Start sending.&n; */
+DECL|function|de620_start_xmit
 r_static
 r_int
-DECL|function|de620_start_xmit
 id|de620_start_xmit
 c_func
 (paren
@@ -1350,9 +1395,6 @@ suffix:semicolon
 r_int
 id|len
 suffix:semicolon
-r_int
-id|tickssofar
-suffix:semicolon
 id|byte
 op_star
 id|buffer
@@ -1371,70 +1413,12 @@ id|dev
 )paren
 suffix:semicolon
 multiline_comment|/* Peek at the adapter */
-id|dev-&gt;tbusy
-op_assign
-(paren
-id|using_txbuf
-op_eq
-(paren
-id|TXBF0
-op_or
-id|TXBF1
-)paren
-)paren
-suffix:semicolon
-multiline_comment|/* Boolean! */
-r_if
-c_cond
-(paren
-id|dev-&gt;tbusy
-)paren
-(brace
-multiline_comment|/* Do timeouts, to avoid hangs. */
-id|tickssofar
-op_assign
-id|jiffies
-op_minus
-id|dev-&gt;trans_start
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|tickssofar
-OL
-l_int|5
-)paren
-r_return
-l_int|1
-suffix:semicolon
-multiline_comment|/* else */
-id|printk
-c_func
-(paren
-l_string|&quot;%s: transmit timed out (%d), %s?&bslash;n&quot;
-comma
-id|dev-&gt;name
-comma
-id|tickssofar
-comma
-l_string|&quot;network cable problem&quot;
-)paren
-suffix:semicolon
-multiline_comment|/* Restart the adapter. */
-r_if
-c_cond
-(paren
-id|adapter_init
+id|netif_stop_queue
 c_func
 (paren
 id|dev
 )paren
-)paren
-multiline_comment|/* maybe close it */
-r_return
-l_int|1
 suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -1549,7 +1533,10 @@ multiline_comment|/* NONE!!! */
 id|printk
 c_func
 (paren
-l_string|&quot;de620: Ouch! No tx-buffer available!&bslash;n&quot;
+id|KERN_WARNING
+l_string|&quot;%s: No tx-buffer available!&bslash;n&quot;
+comma
+id|dev-&gt;name
 )paren
 suffix:semicolon
 id|restore_flags
@@ -1578,8 +1565,10 @@ id|dev-&gt;trans_start
 op_assign
 id|jiffies
 suffix:semicolon
-id|dev-&gt;tbusy
-op_assign
+r_if
+c_cond
+(paren
+op_logical_neg
 (paren
 id|using_txbuf
 op_eq
@@ -1589,8 +1578,15 @@ op_or
 id|TXBF1
 )paren
 )paren
+)paren
+(brace
+id|netif_wake_queue
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
-multiline_comment|/* Boolean! */
+)brace
 (paren
 (paren
 r_struct
@@ -1623,9 +1619,9 @@ suffix:semicolon
 )brace
 "&f;"
 multiline_comment|/*****************************************************&n; *&n; * Handle the network interface interrupts.&n; *&n; */
+DECL|function|de620_interrupt
 r_static
 r_void
-DECL|function|de620_interrupt
 id|de620_interrupt
 c_func
 (paren
@@ -1697,15 +1693,6 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-id|cli
-c_func
-(paren
-)paren
-suffix:semicolon
-id|dev-&gt;interrupt
-op_assign
-l_int|1
-suffix:semicolon
 multiline_comment|/* Read the status register (_not_ the status port) */
 id|irq_status
 op_assign
@@ -1770,39 +1757,34 @@ l_int|100
 )paren
 suffix:semicolon
 )brace
-id|dev-&gt;tbusy
-op_assign
+r_if
+c_cond
 (paren
 id|de620_tx_buffs
 c_func
 (paren
 id|dev
 )paren
-op_eq
+op_ne
 (paren
 id|TXBF0
 op_or
 id|TXBF1
 )paren
 )paren
-suffix:semicolon
-multiline_comment|/* Boolean! */
-id|dev-&gt;interrupt
-op_assign
-l_int|0
-suffix:semicolon
-id|sti
+(brace
+id|netif_wake_queue
 c_func
 (paren
+id|dev
 )paren
 suffix:semicolon
-r_return
-suffix:semicolon
+)brace
 )brace
 multiline_comment|/**************************************&n; *&n; * Get a packet from the adapter&n; *&n; * Send it &quot;upstairs&quot;&n; *&n; */
+DECL|function|de620_rx_intr
 r_static
 r_int
-DECL|function|de620_rx_intr
 id|de620_rx_intr
 c_func
 (paren
@@ -1946,6 +1928,7 @@ multiline_comment|/* Ouch... Forget it! Skip all and start afresh... */
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;%s: Ring overrun? Restoring...&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -1953,6 +1936,12 @@ id|dev-&gt;name
 suffix:semicolon
 multiline_comment|/* You win some, you lose some. And sometimes plenty... */
 id|adapter_init
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
+id|netif_wake_queue
 c_func
 (paren
 id|dev
@@ -2029,6 +2018,7 @@ multiline_comment|/* Naah, we&squot;ll skip this packet. Probably bogus data as 
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;%s: Page link out of sync! Restoring...&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -2104,6 +2094,7 @@ id|size
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;%s: Illegal packet size: %d!&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -2137,6 +2128,7 @@ multiline_comment|/* Yeah, but no place to put it... */
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;%s: Couldn&squot;t allocate a sk_buff of size %d.&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -2290,9 +2282,9 @@ multiline_comment|/* That was slightly tricky... */
 )brace
 "&f;"
 multiline_comment|/*********************************************&n; *&n; * Reset the adapter to a known state&n; *&n; */
+DECL|function|adapter_init
 r_static
 r_int
-DECL|function|adapter_init
 id|adapter_init
 c_func
 (paren
@@ -2582,11 +2574,14 @@ id|CHECK_OK
 id|printk
 c_func
 (paren
-l_string|&quot;Something has happened to the DE-620!  Please check it&quot;
+id|KERN_ERR
+l_string|&quot;%s: Something has happened to the DE-620!  Please check it&quot;
 macro_line|#ifdef SHUTDOWN_WHEN_LOST
 l_string|&quot; and do a new ifconfig&quot;
 macro_line|#endif
 l_string|&quot;! (%02x)&bslash;n&quot;
+comma
+id|dev-&gt;name
 comma
 id|i
 )paren
@@ -2623,7 +2618,10 @@ id|was_down
 id|printk
 c_func
 (paren
-l_string|&quot;Thanks, I feel much better now!&bslash;n&quot;
+id|KERN_WARNING
+l_string|&quot;%s: Thanks, I feel much better now!&bslash;n&quot;
+comma
+id|dev-&gt;name
 )paren
 suffix:semicolon
 id|was_down
@@ -2650,9 +2648,9 @@ multiline_comment|/* all ok */
 "&f;"
 multiline_comment|/******************************************************************************&n; *&n; * Only start-up code below&n; *&n; */
 multiline_comment|/****************************************&n; *&n; * Check if there is a DE-620 connected&n; */
+DECL|function|de620_probe
 r_int
 id|__init
-DECL|function|de620_probe
 id|de620_probe
 c_func
 (paren
@@ -2698,6 +2696,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_INFO
 l_string|&quot;D-Link DE-620 pocket adapter&quot;
 )paren
 suffix:semicolon
@@ -2932,12 +2931,20 @@ id|de620_close
 suffix:semicolon
 id|dev-&gt;hard_start_xmit
 op_assign
-op_amp
 id|de620_start_xmit
+suffix:semicolon
+id|dev-&gt;tx_timeout
+op_assign
+id|de620_timeout
+suffix:semicolon
+id|dev-&gt;watchdog_timeo
+op_assign
+id|HZ
+op_star
+l_int|2
 suffix:semicolon
 id|dev-&gt;set_multicast_list
 op_assign
-op_amp
 id|de620_set_multicast_list
 suffix:semicolon
 multiline_comment|/* base_addr and irq are already set, see above! */
@@ -3037,11 +3044,11 @@ suffix:semicolon
 multiline_comment|/**********************************&n; *&n; * Read info from on-board EEPROM&n; *&n; * Note: Bitwise serial I/O to/from the EEPROM vi the status _register_!&n; */
 DECL|macro|sendit
 mdefine_line|#define sendit(dev,data) de620_set_register(dev, W_EIP, data | EIPRegister);
+DECL|function|ReadAWord
 r_static
 r_int
 r_int
 id|__init
-DECL|function|ReadAWord
 id|ReadAWord
 c_func
 (paren
@@ -3319,10 +3326,10 @@ r_return
 id|data
 suffix:semicolon
 )brace
+DECL|function|read_eeprom
 r_static
 r_int
 id|__init
-DECL|function|read_eeprom
 id|read_eeprom
 c_func
 (paren
@@ -3594,8 +3601,8 @@ comma
 id|de620_probe
 )brace
 suffix:semicolon
-r_int
 DECL|function|init_module
+r_int
 id|init_module
 c_func
 (paren
@@ -3622,8 +3629,8 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-r_void
 DECL|function|cleanup_module
+r_void
 id|cleanup_module
 c_func
 (paren
