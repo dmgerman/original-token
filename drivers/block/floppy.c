@@ -1532,6 +1532,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; * floppy-change is never called from an interrupt, so we can relax a bit&n; * here, sleep etc. Note that floppy-on tries to set current_DOR to point&n; * to the desired drive, but it will probably not survive the sleep if&n; * several floppies are used at the same time: thus the loop.&n; */
 DECL|function|floppy_change
+r_static
 r_int
 id|floppy_change
 c_func
@@ -5892,20 +5893,6 @@ suffix:semicolon
 r_int
 id|old_dev
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|floppy_grab_irq_and_dma
-c_func
-(paren
-)paren
-)paren
-(brace
-r_return
-op_minus
-id|EBUSY
-suffix:semicolon
-)brace
 id|drive
 op_assign
 id|inode-&gt;i_rdev
@@ -5933,6 +5920,18 @@ c_cond
 id|old_dev
 op_ne
 id|inode-&gt;i_rdev
+)paren
+r_return
+op_minus
+id|EBUSY
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|floppy_grab_irq_and_dma
+c_func
+(paren
+)paren
 )paren
 r_return
 op_minus
@@ -6007,7 +6006,7 @@ op_star
 id|filp
 )paren
 (brace
-id|sync_dev
+id|fsync_dev
 c_func
 (paren
 id|inode-&gt;i_rdev
@@ -6048,6 +6047,63 @@ c_func
 )paren
 suffix:semicolon
 )brace
+DECL|function|check_floppy_change
+r_static
+r_int
+id|check_floppy_change
+c_func
+(paren
+id|dev_t
+id|dev
+)paren
+(brace
+r_int
+id|i
+suffix:semicolon
+r_struct
+id|buffer_head
+op_star
+id|bh
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|bh
+op_assign
+id|getblk
+c_func
+(paren
+id|dev
+comma
+l_int|0
+comma
+l_int|1024
+)paren
+)paren
+)paren
+r_return
+l_int|0
+suffix:semicolon
+id|i
+op_assign
+id|floppy_change
+c_func
+(paren
+id|bh
+)paren
+suffix:semicolon
+id|brelse
+c_func
+(paren
+id|bh
+)paren
+suffix:semicolon
+r_return
+id|i
+suffix:semicolon
+)brace
 DECL|variable|floppy_fops
 r_static
 r_struct
@@ -6083,39 +6139,18 @@ id|floppy_release
 comma
 multiline_comment|/* release */
 id|block_fsync
-multiline_comment|/* fsync */
-)brace
-suffix:semicolon
-multiline_comment|/*&n; * The version command is not supposed to generate an interrupt, but&n; * my FDC does, except when booting in SVGA screen mode.&n; * When it does generate an interrupt, it doesn&squot;t return any status bytes.&n; * It appears to have something to do with the version command...&n; *&n; * This should never be called, because of the reset after the version check.&n; */
-DECL|function|ignore_interrupt
-r_static
-r_void
-id|ignore_interrupt
-c_func
-(paren
-r_void
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|DEVICE_NAME
-l_string|&quot;: weird interrupt ignored (%d)&bslash;n&quot;
 comma
-id|result
-c_func
-(paren
-)paren
-)paren
-suffix:semicolon
-id|reset
-op_assign
-l_int|1
-suffix:semicolon
-id|CLEAR_INTR
-suffix:semicolon
-multiline_comment|/* ignore only once */
+multiline_comment|/* fsync */
+l_int|NULL
+comma
+multiline_comment|/* fasync */
+id|check_floppy_change
+comma
+multiline_comment|/* media_change */
+l_int|NULL
+multiline_comment|/* revalidate */
 )brace
+suffix:semicolon
 DECL|function|floppy_interrupt
 r_static
 r_void
@@ -6256,11 +6291,6 @@ c_func
 )paren
 suffix:semicolon
 multiline_comment|/* Try to determine the floppy controller type */
-id|DEVICE_INTR
-op_assign
-id|ignore_interrupt
-suffix:semicolon
-multiline_comment|/* don&squot;t ask ... */
 id|output_byte
 c_func
 (paren
@@ -6342,6 +6372,13 @@ c_func
 suffix:semicolon
 )brace
 )brace
+DECL|variable|usage_count
+r_static
+r_int
+id|usage_count
+op_assign
+l_int|0
+suffix:semicolon
 DECL|function|floppy_grab_irq_and_dma
 r_static
 r_int
@@ -6351,6 +6388,15 @@ c_func
 r_void
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|usage_count
+op_increment
+)paren
+r_return
+l_int|0
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -6425,6 +6471,14 @@ c_func
 r_void
 )paren
 (brace
+r_if
+c_cond
+(paren
+op_decrement
+id|usage_count
+)paren
+r_return
+suffix:semicolon
 id|disable_dma
 c_func
 (paren

@@ -4,7 +4,7 @@ DECL|macro|MCD_BASE_ADDR
 mdefine_line|#define MCD_BASE_ADDR&t;        0x300
 multiline_comment|/* *** change this to set the interrupt number */
 DECL|macro|MCD_INTR_NR
-mdefine_line|#define MCD_INTR_NR&t;&t;11
+mdefine_line|#define MCD_INTR_NR&t;&t;10
 multiline_comment|/* Increase this if you get lots of timeouts */
 DECL|macro|MCD_STATUS_DELAY
 mdefine_line|#define MCD_STATUS_DELAY&t;100

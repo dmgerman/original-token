@@ -4,7 +4,7 @@ DECL|macro|_LINUX_CDROM_H
 mdefine_line|#define&t;_LINUX_CDROM_H
 multiline_comment|/*&n; * some fix numbers&n; */
 DECL|macro|CD_MINS
-mdefine_line|#define CD_MINS                   75  /* minutes per CD                  */
+mdefine_line|#define CD_MINS                   74  /* max. minutes per CD             */
 DECL|macro|CD_SECS
 mdefine_line|#define CD_SECS                   60  /* seconds per minute              */
 DECL|macro|CD_FRAMES
@@ -601,9 +601,9 @@ suffix:semicolon
 suffix:semicolon
 multiline_comment|/*&n; * CD-ROM address types (cdrom_tocentry.cdte_format)&n; */
 DECL|macro|CDROM_LBA
-mdefine_line|#define&t;CDROM_LBA&t;0x01
+mdefine_line|#define&t;CDROM_LBA 0x01 /* &quot;logical block&quot;: first frame is #0 */
 DECL|macro|CDROM_MSF
-mdefine_line|#define&t;CDROM_MSF&t;0x02
+mdefine_line|#define&t;CDROM_MSF 0x02 /* &quot;minute-second-frame&quot;: binary, not bcd here! */
 multiline_comment|/*&n; * bit to tell whether track is data or audio&n; */
 DECL|macro|CDROM_DATA_TRACK
 mdefine_line|#define&t;CDROM_DATA_TRACK&t;0x04
@@ -796,7 +796,7 @@ DECL|member|nframes
 r_int
 id|nframes
 suffix:semicolon
-multiline_comment|/* number of 2352-byte-frames to read at once, currently only 1 allowed */
+multiline_comment|/* number of 2352-byte-frames to read at once, limited by the drivers */
 DECL|member|buf
 id|u_char
 op_star
@@ -842,7 +842,7 @@ mdefine_line|#define&t;CDROMVOLCTRL&t;&t;0x530a&t;&t;/* (struct cdrom_volctrl)&t
 multiline_comment|/* vlume control&t;&t;*/
 DECL|macro|CDROMSUBCHNL
 mdefine_line|#define&t;CDROMSUBCHNL&t;&t;0x530b&t;&t;/* (struct cdrom_subchnl)&t;*/
-multiline_comment|/* read sub-channel data &t;*/
+multiline_comment|/* read Q sub-channel data &t;*/
 DECL|macro|CDROMREADMODE2
 mdefine_line|#define&t;CDROMREADMODE2&t;&t;0x530c&t;&t;/* (struct cdrom_read)&t;&t;*/
 multiline_comment|/* read type-2 data (not suppt)&t;*/
