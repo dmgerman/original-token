@@ -1,5 +1,4 @@
 multiline_comment|/* sun4setup.c: Setup the hardware address of various items in the sun4&n; * &t;&t;architecture. Called from idprom_init&n; *&n; * Copyright (C) 1998 Chris G. Davis (cdavis@cois.on.ca)&n; */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;asm/oplib.h&gt;
 macro_line|#include &lt;asm/idprom.h&gt;

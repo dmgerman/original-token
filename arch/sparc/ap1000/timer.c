@@ -1,6 +1,5 @@
 multiline_comment|/*&n;   * Copyright 1996 The Australian National University.&n;   * Copyright 1996 Fujitsu Laboratories Limited&n;   * &n;   * This software may be distributed under the terms of the Gnu&n;   * Public License version 2 or later&n;  */
 multiline_comment|/* routines to control the AP1000 timer chip */
-macro_line|#include &lt;linux/config.h&gt; /* for CONFIG_PROFILE */
 macro_line|#include &lt;linux/time.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/interrupt.h&gt;
@@ -240,7 +239,6 @@ op_assign
 id|new_freerun
 suffix:semicolon
 )brace
-macro_line|#ifdef CONFIG_PROFILE
 DECL|function|profile_interrupt
 r_static
 r_void
@@ -367,7 +365,6 @@ id|MC_INTR_ITIM0_SH
 suffix:semicolon
 )brace
 )brace
-macro_line|#endif
 DECL|function|ap_init_timers
 r_void
 id|ap_init_timers
@@ -432,7 +429,6 @@ comma
 l_int|NULL
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_PROFILE&t;
 id|request_irq
 c_func
 (paren
@@ -451,7 +447,6 @@ comma
 l_int|NULL
 )paren
 suffix:semicolon
-macro_line|#endif
 id|ap_clear_clock_irq
 c_func
 (paren

@@ -1,5 +1,6 @@
 multiline_comment|/*&n; * Device driver for the via-pmu on Apple Powermacs.&n; *&n; * The VIA (versatile interface adapter) interfaces to the PMU,&n; * a 6805 microprocessor core whose primary function is to control&n; * battery charging and system power on the PowerBook 3400 and 2400.&n; * The PMU also controls the ADB (Apple Desktop Bus) which connects&n; * to the keyboard and mouse, as well as the non-volatile RAM&n; * and the RTC (real time clock) chip.&n; *&n; * Copyright (C) 1998 Paul Mackerras and Fabio Riccardi.&n; */
 macro_line|#include &lt;stdarg.h&gt;
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;

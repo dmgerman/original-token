@@ -1586,6 +1586,7 @@ comma
 id|this_cpu
 )paren
 suffix:semicolon
+multiline_comment|/* Do &quot;administrative&quot; work here while we don&squot;t hold any locks */
 r_if
 c_cond
 (paren
@@ -1596,6 +1597,13 @@ id|bh_mask
 id|do_bottom_half
 c_func
 (paren
+)paren
+suffix:semicolon
+id|run_task_queue
+c_func
+(paren
+op_amp
+id|tq_scheduler
 )paren
 suffix:semicolon
 id|spin_lock

@@ -330,18 +330,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; * tq_scheduler currently assumes we&squot;re running in a process&n;&t;&t; * context (ie that we hold the kernel lock..)&n;&t;&t; */
-r_if
-c_cond
-(paren
-id|tq_scheduler
-)paren
-(brace
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 id|run_task_queue
 c_func
 (paren
@@ -349,12 +337,6 @@ op_amp
 id|tq_scheduler
 )paren
 suffix:semicolon
-id|unlock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
-)brace
 multiline_comment|/* endless idle loop with no priority at all */
 id|current-&gt;counter
 op_assign

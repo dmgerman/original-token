@@ -24,6 +24,7 @@ macro_line|#ifdef CONFIG_PROC_FS
 macro_line|#include &lt;linux/proc_fs.h&gt;
 macro_line|#endif
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
@@ -1279,6 +1280,7 @@ l_int|NULL
 multiline_comment|/* hung_up_tty_fasync */
 )brace
 suffix:semicolon
+multiline_comment|/*&n; * This can be called through the &quot;tq_scheduler&quot; &n; * task-list. That is process synchronous, but&n; * doesn&squot;t hold any locks, so we need to make&n; * sure we have the appropriate locks for what&n; * we&squot;re doing..&n; */
 DECL|function|do_tty_hangup
 r_void
 id|do_tty_hangup
@@ -1311,10 +1313,6 @@ id|task_struct
 op_star
 id|p
 suffix:semicolon
-r_int
-r_int
-id|flags
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1323,13 +1321,8 @@ id|tty
 )paren
 r_return
 suffix:semicolon
-id|save_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
-id|cli
+multiline_comment|/* inuse_filps is protected by the single kernel lock */
+id|lock_kernel
 c_func
 (paren
 )paren
@@ -1418,6 +1411,23 @@ op_amp
 id|hung_up_tty_fops
 suffix:semicolon
 )brace
+multiline_comment|/* FIXME! What are the locking issues here? This may me overdoing things.. */
+(brace
+r_int
+r_int
+id|flags
+suffix:semicolon
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+id|cli
+c_func
+(paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1467,6 +1477,13 @@ id|tty-&gt;ldisc.write_wakeup
 id|tty
 )paren
 suffix:semicolon
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
+)brace
 id|wake_up_interruptible
 c_func
 (paren
@@ -1675,10 +1692,9 @@ id|tty-&gt;driver.hangup
 id|tty
 )paren
 suffix:semicolon
-id|restore_flags
+id|unlock_kernel
 c_func
 (paren
-id|flags
 )paren
 suffix:semicolon
 )brace
@@ -1722,7 +1738,7 @@ op_amp
 id|tty-&gt;tq_hangup
 comma
 op_amp
-id|tq_timer
+id|tq_scheduler
 )paren
 suffix:semicolon
 )brace
@@ -4606,6 +4622,13 @@ c_func
 (paren
 op_amp
 id|tq_timer
+)paren
+suffix:semicolon
+id|run_task_queue
+c_func
+(paren
+op_amp
+id|tq_scheduler
 )paren
 suffix:semicolon
 multiline_comment|/* &n;&t; * The release_mem function takes care of the details of clearing&n;&t; * the slots and preserving the termios structure.&n;&t; */

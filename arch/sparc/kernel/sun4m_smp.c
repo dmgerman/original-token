@@ -1,5 +1,4 @@
 multiline_comment|/* sun4m_smp.c: Sparc SUN4M SMP support.&n; *&n; * Copyright (C) 1996 David S. Miller (davem@caip.rutgers.edu)&n; */
-macro_line|#include &lt;linux/config.h&gt; /* for CONFIG_PROFILE */
 macro_line|#include &lt;asm/head.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -2249,7 +2248,6 @@ id|ticker_lock
 op_assign
 id|SPIN_LOCK_UNLOCKED
 suffix:semicolon
-macro_line|#ifdef CONFIG_PROFILE
 multiline_comment|/* 32-bit Sparc specific profiling function. */
 DECL|function|sparc_do_profile
 r_static
@@ -2328,7 +2326,6 @@ id|ticker_lock
 suffix:semicolon
 )brace
 )brace
-macro_line|#endif
 r_extern
 r_int
 r_int
@@ -2399,7 +2396,6 @@ id|cpu
 )braket
 )paren
 suffix:semicolon
-macro_line|#ifdef CONFIG_PROFILE
 r_if
 c_cond
 (paren
@@ -2418,7 +2414,6 @@ id|regs-&gt;pc
 )paren
 suffix:semicolon
 )brace
-macro_line|#endif
 r_if
 c_cond
 (paren

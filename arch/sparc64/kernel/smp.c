@@ -1,5 +1,4 @@
 multiline_comment|/* smp.c: Sparc64 SMP support.&n; *&n; * Copyright (C) 1997 David S. Miller (davem@caip.rutgers.edu)&n; */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/tasks.h&gt;

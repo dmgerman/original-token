@@ -21,6 +21,7 @@ macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/ioport.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
+macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
@@ -8774,6 +8775,11 @@ l_int|NULL
 )paren
 r_return
 suffix:semicolon
+id|lock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -8934,6 +8940,11 @@ suffix:semicolon
 )brace
 )brace
 )brace
+id|unlock_kernel
+c_func
+(paren
+)paren
+suffix:semicolon
 )brace
 multiline_comment|/*****************************************************************************/
 multiline_comment|/*&n; *&t;Map in interrupt vector to this driver. Check that we don&squot;t&n; *&t;already have this vector mapped, we might be sharing this&n; *&t;interrupt across multiple boards.&n; */

@@ -1,5 +1,4 @@
 multiline_comment|/*&n; *  linux/arch/ppc/amiga/bootinfo.c&n; *&n; *  Extracted from arch/m68k/kernel/setup.c.&n; *  Should be properly generalized and put somewhere else.&n; *                              Jesper&n; */
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
