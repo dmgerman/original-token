@@ -29,16 +29,6 @@ suffix:semicolon
 macro_line|#ifdef CONFIG_VIDEO_BT848
 r_extern
 r_int
-id|init_bttv_cards
-c_func
-(paren
-r_struct
-id|video_init
-op_star
-)paren
-suffix:semicolon
-r_extern
-r_int
 id|i2c_tuner_init
 c_func
 (paren

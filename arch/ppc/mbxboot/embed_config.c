@@ -1,6 +1,6 @@
 multiline_comment|/* Board specific functions for those embedded 8xx boards that do&n; * not have boot monitor support for board information.&n; */
 macro_line|#include &lt;sys/types.h&gt;
-macro_line|#include &lt;linux/autoconf.h&gt;
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#ifdef CONFIG_8xx
 macro_line|#include &lt;asm/mpc8xx.h&gt;
 macro_line|#endif

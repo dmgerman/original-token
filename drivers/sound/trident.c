@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&n; *&t;Trident 4D-Wave/SiS 7018 OSS driver for Linux 2.2.x&n; *&n; *&t;Driver: Alan Cox &lt;alan@redhat.com&gt;&n; *&n; *  Built from:&n; *&t;Low level code: &lt;audio@tridentmicro.com&gt; from ALSA&n; *&t;Framework: Thomas Sailer &lt;sailer@ife.ee.ethz.ch&gt;&n; *&t;Extended by: Zach Brown &lt;zab@redhat.com&gt;  &n; *&n; *  Hacked up by:&n; *&t;Aaron Holtzman &lt;aholtzma@ess.engr.uvic.ca&gt;&n; *&t;Ollie Lho &lt;ollie@sis.com.tw&gt; SiS 7018 Audio Core Support&n; *&n; *&n; *&t;This program is free software; you can redistribute it and/or modify&n; *&t;it under the terms of the GNU General Public License as published by&n; *&t;the Free Software Foundation; either version 2 of the License, or&n; *&t;(at your option) any later version.&n; *&n; *&t;This program is distributed in the hope that it will be useful,&n; *&t;but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *&t;MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *&t;GNU General Public License for more details.&n; *&n; *&t;You should have received a copy of the GNU General Public License&n; *&t;along with this program; if not, write to the Free Software&n; *&t;Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; *  History&n; *  v0.14.2 Mar 29 2000 Ching Ling Lee&n; *&t;Add clear to silence advance in trident_update_ptr &n; *&t;fix invalid data of the end of the sound&n; *  v0.14.1 Mar 24 2000 Ching Ling Lee&n; *&t;ALi 5451 support added, playback and recording O.K.&n; *&t;ALi 5451 originally developed and structured based on sonicvibes, and&n; *&t;suggested to merge into this file by Alan Cox.&n; *  v0.14 Mar 15 2000 Ollie Lho&n; *&t;5.1 channel output support with channel binding. What&squot;s the Matrix ?&n; *  v0.13.1 Mar 10 2000 Ollie Lho&n; *&t;few minor bugs on dual codec support, needs more testing&n; *  v0.13 Mar 03 2000 Ollie Lho&n; *&t;new pci_* for 2.4 kernel, back ported to 2.2&n; *  v0.12 Feb 23 2000 Ollie Lho&n; *&t;Preliminary Recording support&n; *  v0.11.2 Feb 19 2000 Ollie Lho&n; *&t;removed incomplete full-dulplex support&n; *  v0.11.1 Jan 28 2000 Ollie Lho&n; *&t;small bug in setting sample rate for 4d-nx (reported by Aaron)&n; *  v0.11 Jan 27 2000 Ollie Lho&n; *&t;DMA bug, scheduler latency, second try&n; *  v0.10 Jan 24 2000 Ollie Lho&n; *&t;DMA bug fixed, found kernel scheduling problem&n; *  v0.09 Jan 20 2000 Ollie Lho&n; *&t;Clean up of channel register access routine (prepare for channel binding)&n; *  v0.08 Jan 14 2000 Ollie Lho&n; *&t;Isolation of AC97 codec code&n; *  v0.07 Jan 13 2000 Ollie Lho&n; *&t;Get rid of ugly old low level access routines (e.g. CHRegs.lp****)&n; *  v0.06 Jan 11 2000 Ollie Lho&n; *&t;Preliminary support for dual (more ?) AC97 codecs&n; *  v0.05 Jan 08 2000 Luca Montecchiani &lt;m.luca@iname.com&gt;&n; *&t;adapt to 2.3.x new __setup/__init call&n; *  v0.04 Dec 31 1999 Ollie Lho&n; *&t;Multiple Open, using Middle Loop Interrupt to smooth playback&n; *  v0.03 Dec 24 1999 Ollie Lho&n; *&t;mem leak in prog_dmabuf and dealloc_dmabuf removed&n; *  v0.02 Dec 15 1999 Ollie Lho&n; *&t;SiS 7018 support added, playback O.K.&n; *  v0.01 Alan Cox et. al.&n; *&t;Initial Release in kernel 2.3.30, does not work&n; * &n; *  ToDo&n; *&t;Clean up of low level channel register access code. (done)&n; *&t;Fix the bug on dma buffer management in update_ptr, read/write, drain_dac (done)&n; *&t;Dual AC97 codecs support (done)&n; *&t;Recording support (done)&n; *&t;Mmap support&n; *&t;&quot;Channel Binding&quot; ioctl extension (done)&n; *&t;new pci device driver interface for 2.4 kernel (done)&n; */
+multiline_comment|/*&n; *&n; *&t;Trident 4D-Wave/SiS 7018 OSS driver for Linux 2.2.x&n; *&n; *&t;Driver: Alan Cox &lt;alan@redhat.com&gt;&n; *&n; *  Built from:&n; *&t;Low level code: &lt;audio@tridentmicro.com&gt; from ALSA&n; *&t;Framework: Thomas Sailer &lt;sailer@ife.ee.ethz.ch&gt;&n; *&t;Extended by: Zach Brown &lt;zab@redhat.com&gt;  &n; *&n; *  Hacked up by:&n; *&t;Aaron Holtzman &lt;aholtzma@ess.engr.uvic.ca&gt;&n; *&t;Ollie Lho &lt;ollie@sis.com.tw&gt; SiS 7018 Audio Core Support&n; *&n; *&n; *&t;This program is free software; you can redistribute it and/or modify&n; *&t;it under the terms of the GNU General Public License as published by&n; *&t;the Free Software Foundation; either version 2 of the License, or&n; *&t;(at your option) any later version.&n; *&n; *&t;This program is distributed in the hope that it will be useful,&n; *&t;but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *&t;MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *&t;GNU General Public License for more details.&n; *&n; *&t;You should have received a copy of the GNU General Public License&n; *&t;along with this program; if not, write to the Free Software&n; *&t;Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; *  History&n; *  v0.14.3 May 20 2000 Aaron Holtzman&n; *  Fix kfree&squot;d memory access in release&n; *  Fix race in open while looking for a free virtual channel slot&n; *  remove open_wait wq (which appears to be unused)&n; *  v0.14.2 Mar 29 2000 Ching Ling Lee&n; *&t;Add clear to silence advance in trident_update_ptr &n; *&t;fix invalid data of the end of the sound&n; *  v0.14.1 Mar 24 2000 Ching Ling Lee&n; *&t;ALi 5451 support added, playback and recording O.K.&n; *&t;ALi 5451 originally developed and structured based on sonicvibes, and&n; *&t;suggested to merge into this file by Alan Cox.&n; *  v0.14 Mar 15 2000 Ollie Lho&n; *&t;5.1 channel output support with channel binding. What&squot;s the Matrix ?&n; *  v0.13.1 Mar 10 2000 Ollie Lho&n; *&t;few minor bugs on dual codec support, needs more testing&n; *  v0.13 Mar 03 2000 Ollie Lho&n; *&t;new pci_* for 2.4 kernel, back ported to 2.2&n; *  v0.12 Feb 23 2000 Ollie Lho&n; *&t;Preliminary Recording support&n; *  v0.11.2 Feb 19 2000 Ollie Lho&n; *&t;removed incomplete full-dulplex support&n; *  v0.11.1 Jan 28 2000 Ollie Lho&n; *&t;small bug in setting sample rate for 4d-nx (reported by Aaron)&n; *  v0.11 Jan 27 2000 Ollie Lho&n; *&t;DMA bug, scheduler latency, second try&n; *  v0.10 Jan 24 2000 Ollie Lho&n; *&t;DMA bug fixed, found kernel scheduling problem&n; *  v0.09 Jan 20 2000 Ollie Lho&n; *&t;Clean up of channel register access routine (prepare for channel binding)&n; *  v0.08 Jan 14 2000 Ollie Lho&n; *&t;Isolation of AC97 codec code&n; *  v0.07 Jan 13 2000 Ollie Lho&n; *&t;Get rid of ugly old low level access routines (e.g. CHRegs.lp****)&n; *  v0.06 Jan 11 2000 Ollie Lho&n; *&t;Preliminary support for dual (more ?) AC97 codecs&n; *  v0.05 Jan 08 2000 Luca Montecchiani &lt;m.luca@iname.com&gt;&n; *&t;adapt to 2.3.x new __setup/__init call&n; *  v0.04 Dec 31 1999 Ollie Lho&n; *&t;Multiple Open, using Middle Loop Interrupt to smooth playback&n; *  v0.03 Dec 24 1999 Ollie Lho&n; *&t;mem leak in prog_dmabuf and dealloc_dmabuf removed&n; *  v0.02 Dec 15 1999 Ollie Lho&n; *&t;SiS 7018 support added, playback O.K.&n; *  v0.01 Alan Cox et. al.&n; *&t;Initial Release in kernel 2.3.30, does not work&n; * &n; *  ToDo&n; *&t;Clean up of low level channel register access code. (done)&n; *&t;Fix the bug on dma buffer management in update_ptr, read/write, drain_dac (done)&n; *&t;Dual AC97 codecs support (done)&n; *&t;Recording support (done)&n; *&t;Mmap support&n; *&t;&quot;Channel Binding&quot; ioctl extension (done)&n; *&t;new pci device driver interface for 2.4 kernel (done)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
@@ -230,16 +230,6 @@ op_star
 id|card
 suffix:semicolon
 multiline_comment|/* Card info */
-multiline_comment|/* single open lock mechanism, only used for recording */
-DECL|member|open_sem
-r_struct
-id|semaphore
-id|open_sem
-suffix:semicolon
-DECL|member|open_wait
-id|wait_queue_head_t
-id|open_wait
-suffix:semicolon
 multiline_comment|/* file mode */
 DECL|member|open_mode
 id|mode_t
@@ -519,6 +509,12 @@ r_struct
 id|trident_card
 op_star
 id|next
+suffix:semicolon
+multiline_comment|/* single open lock mechanism, only used for recording */
+DECL|member|open_sem
+r_struct
+id|semaphore
+id|open_sem
 suffix:semicolon
 multiline_comment|/* The trident has a certain amount of cross channel interaction&n;&t;   so we use a single per card lock */
 DECL|member|lock
@@ -8650,6 +8646,13 @@ op_ne
 l_int|NULL
 )paren
 (brace
+id|down
+c_func
+(paren
+op_amp
+id|card-&gt;open_sem
+)paren
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -8735,6 +8738,13 @@ id|found_virt
 suffix:semicolon
 )brace
 )brace
+id|up
+c_func
+(paren
+op_amp
+id|card-&gt;open_sem
+)paren
+suffix:semicolon
 id|card
 op_assign
 id|card-&gt;next
@@ -8832,23 +8842,9 @@ op_amp
 id|dmabuf-&gt;wait
 )paren
 suffix:semicolon
-id|init_MUTEX
-c_func
-(paren
-op_amp
-id|state-&gt;open_sem
-)paren
-suffix:semicolon
 id|file-&gt;private_data
 op_assign
 id|state
-suffix:semicolon
-id|down
-c_func
-(paren
-op_amp
-id|state-&gt;open_sem
-)paren
 suffix:semicolon
 multiline_comment|/* set default sample format. According to OSS Programmer&squot;s Guide  /dev/dsp&n;&t;   should be default to unsigned 8-bits, mono, with sample rate 8kHz and&n;&t;   /dev/dspW will accept 16-bits sample */
 r_if
@@ -9025,7 +9021,7 @@ id|up
 c_func
 (paren
 op_amp
-id|state-&gt;open_sem
+id|card-&gt;open_sem
 )paren
 suffix:semicolon
 macro_line|#ifdef DEBUG
@@ -9077,6 +9073,13 @@ op_star
 id|file-&gt;private_data
 suffix:semicolon
 r_struct
+id|trident_card
+op_star
+id|card
+op_assign
+id|state-&gt;card
+suffix:semicolon
+r_struct
 id|dmabuf
 op_star
 id|dmabuf
@@ -9120,7 +9123,7 @@ id|down
 c_func
 (paren
 op_amp
-id|state-&gt;open_sem
+id|card-&gt;open_sem
 )paren
 suffix:semicolon
 r_if
@@ -9185,33 +9188,17 @@ id|dmabuf-&gt;channel-&gt;num
 )paren
 suffix:semicolon
 )brace
-id|kfree
-c_func
-(paren
-id|state-&gt;card-&gt;states
-(braket
-id|state-&gt;virt
-)braket
-)paren
-suffix:semicolon
-id|state-&gt;card-&gt;states
+id|card-&gt;states
 (braket
 id|state-&gt;virt
 )braket
 op_assign
 l_int|NULL
 suffix:semicolon
-id|state-&gt;open_mode
-op_and_assign
+id|kfree
+c_func
 (paren
-op_complement
-id|file-&gt;f_mode
-)paren
-op_amp
-(paren
-id|FMODE_READ
-op_or
-id|FMODE_WRITE
+id|state
 )paren
 suffix:semicolon
 multiline_comment|/* we&squot;re covered by the open_sem */
@@ -9219,7 +9206,7 @@ id|up
 c_func
 (paren
 op_amp
-id|state-&gt;open_sem
+id|card-&gt;open_sem
 )paren
 suffix:semicolon
 id|MOD_DEC_USE_COUNT
@@ -11205,6 +11192,13 @@ dot
 id|bitmap
 op_assign
 l_int|0UL
+suffix:semicolon
+id|init_MUTEX
+c_func
+(paren
+op_amp
+id|card-&gt;open_sem
+)paren
 suffix:semicolon
 id|spin_lock_init
 c_func

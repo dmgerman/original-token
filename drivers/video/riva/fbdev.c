@@ -38,62 +38,85 @@ mdefine_line|#define DPRINTK(fmt, args...)
 macro_line|#endif
 macro_line|#ifndef RIVA_NDEBUG
 DECL|macro|assert
-mdefine_line|#define assert(expr) &bslash;&n;&t;if(!(expr)) { &bslash;&n;        printk( &quot;Assertion failed! %s,%s,%s,line=%d&bslash;n&quot;,&bslash;&n;        #expr,__FILE__,__FUNCTION__,__LINE__); &bslash;&n;&t;BUG();
-)brace
+mdefine_line|#define assert(expr) &bslash;&n;&t;if(!(expr)) { &bslash;&n;        printk( &quot;Assertion failed! %s,%s,%s,line=%d&bslash;n&quot;,&bslash;&n;        #expr,__FILE__,__FUNCTION__,__LINE__); &bslash;&n;&t;BUG(); &bslash;&n;        }
 macro_line|#else
+DECL|macro|assert
 mdefine_line|#define assert(expr)
 macro_line|#endif
 multiline_comment|/* GGI compatibility macros */
+DECL|macro|io_out8
 mdefine_line|#define io_out8&t;&t;&t;outb
+DECL|macro|io_in8
 mdefine_line|#define io_in8&t;&t;&t;inb
+DECL|macro|NUM_SEQ_REGS
 mdefine_line|#define NUM_SEQ_REGS&t;&t;0x05
+DECL|macro|NUM_CRT_REGS
 mdefine_line|#define NUM_CRT_REGS&t;&t;0x41
+DECL|macro|NUM_GRC_REGS
 mdefine_line|#define NUM_GRC_REGS&t;&t;0x09
+DECL|macro|NUM_ATC_REGS
 mdefine_line|#define NUM_ATC_REGS&t;&t;0x15
+DECL|macro|PFX
 mdefine_line|#define PFX &quot;rivafb: &quot;
+DECL|macro|CNVT_TOHW
 mdefine_line|#define CNVT_TOHW(val,width)&t;((((val)&lt;&lt;(width))+0x7FFF-(val))&gt;&gt;16)
 multiline_comment|/* macro that allows you to set overflow bits */
+DECL|macro|SetBitField
 mdefine_line|#define SetBitField(value,from,to) SetBF(to,GetBF(value,from))
+DECL|macro|SetBit
 mdefine_line|#define SetBit(n)&t;&t;(1&lt;&lt;(n))
+DECL|macro|Set8Bits
 mdefine_line|#define Set8Bits(value)&t;&t;((value)&amp;0xff)
+DECL|enum|riva_chips
 r_enum
 id|riva_chips
 (brace
+DECL|enumerator|CH_RIVA_128
 id|CH_RIVA_128
 op_assign
 l_int|0
 comma
+DECL|enumerator|CH_RIVA_TNT
 id|CH_RIVA_TNT
 comma
+DECL|enumerator|CH_RIVA_TNT2
 id|CH_RIVA_TNT2
 comma
+DECL|enumerator|CH_RIVA_UTNT2
 id|CH_RIVA_UTNT2
 comma
 multiline_comment|/* UTNT2 */
+DECL|enumerator|CH_RIVA_VTNT2
 id|CH_RIVA_VTNT2
 comma
 multiline_comment|/* VTNT2 */
+DECL|enumerator|CH_RIVA_UVTNT2
 id|CH_RIVA_UVTNT2
 comma
 multiline_comment|/* VTNT2 */
+DECL|enumerator|CH_RIVA_ITNT2
 id|CH_RIVA_ITNT2
 comma
 multiline_comment|/* ITNT2 */
 )brace
 suffix:semicolon
 multiline_comment|/* directly indexed by riva_chips enum, above */
+DECL|struct|riva_chip_info
 r_static
 r_struct
 id|riva_chip_info
 (brace
+DECL|member|name
 r_const
 r_char
 op_star
 id|name
 suffix:semicolon
+DECL|member|arch_rev
 r_int
 id|arch_rev
 suffix:semicolon
+DECL|variable|__devinitdata
 )brace
 id|riva_chip_info
 (braket
@@ -145,6 +168,7 @@ l_int|5
 comma
 )brace
 suffix:semicolon
+DECL|variable|__devinitdata
 r_static
 r_struct
 id|pci_device_id
@@ -282,54 +306,65 @@ id|rivafb_pci_tbl
 )paren
 suffix:semicolon
 multiline_comment|/* holds the state of the VGA core and extended Riva hw state from riva_hw.c.&n; * From KGI originally. */
+DECL|struct|riva_regs
 r_struct
 id|riva_regs
 (brace
+DECL|member|attr
 id|u8
 id|attr
 (braket
 id|NUM_ATC_REGS
 )braket
 suffix:semicolon
+DECL|member|crtc
 id|u8
 id|crtc
 (braket
 id|NUM_CRT_REGS
 )braket
 suffix:semicolon
+DECL|member|gra
 id|u8
 id|gra
 (braket
 id|NUM_GRC_REGS
 )braket
 suffix:semicolon
+DECL|member|seq
 id|u8
 id|seq
 (braket
 id|NUM_SEQ_REGS
 )braket
 suffix:semicolon
+DECL|member|misc_output
 id|u8
 id|misc_output
 suffix:semicolon
+DECL|member|ext
 id|RIVA_HW_STATE
 id|ext
 suffix:semicolon
 )brace
 suffix:semicolon
 multiline_comment|/*&n; * describes the state of a Riva board&n; */
+DECL|struct|rivafb_par
 r_struct
 id|rivafb_par
 (brace
+DECL|member|state
 r_struct
 id|riva_regs
 id|state
 suffix:semicolon
 multiline_comment|/* state of hw board */
+DECL|member|visual
 id|__u32
 id|visual
 suffix:semicolon
 multiline_comment|/* FB_VISUAL_xxx */
+DECL|member|depth
 r_int
 id|depth
 suffix:semicolon
@@ -339,6 +374,10 @@ suffix:semicolon
 r_typedef
 r_struct
 (brace
+DECL|member|red
+DECL|member|green
+DECL|member|blue
+DECL|member|transp
 r_int
 r_char
 id|red
@@ -349,92 +388,112 @@ id|blue
 comma
 id|transp
 suffix:semicolon
+DECL|typedef|riva_cfb8_cmap_t
 )brace
 id|riva_cfb8_cmap_t
 suffix:semicolon
 r_struct
 id|rivafb_info
 suffix:semicolon
+DECL|struct|rivafb_info
 r_struct
 id|rivafb_info
 (brace
+DECL|member|info
 r_struct
 id|fb_info
 id|info
 suffix:semicolon
 multiline_comment|/* kernel framebuffer info */
+DECL|member|riva
 id|RIVA_HW_INST
 id|riva
 suffix:semicolon
 multiline_comment|/* interface to riva_hw.c */
+DECL|member|drvr_name
 r_const
 r_char
 op_star
 id|drvr_name
 suffix:semicolon
 multiline_comment|/* Riva hardware board type */
+DECL|member|ctrl_base_phys
 r_int
 r_int
 id|ctrl_base_phys
 suffix:semicolon
 multiline_comment|/* physical control register base addr */
+DECL|member|fb_base_phys
 r_int
 r_int
 id|fb_base_phys
 suffix:semicolon
 multiline_comment|/* physical framebuffer base addr */
+DECL|member|ctrl_base
 id|caddr_t
 id|ctrl_base
 suffix:semicolon
 multiline_comment|/* virtual control register base addr */
+DECL|member|fb_base
 id|caddr_t
 id|fb_base
 suffix:semicolon
 multiline_comment|/* virtual framebuffer base addr */
+DECL|member|ram_amount
 r_int
 id|ram_amount
 suffix:semicolon
 multiline_comment|/* amount of RAM on card, in bytes */
+DECL|member|dclk_max
 r_int
 id|dclk_max
 suffix:semicolon
 multiline_comment|/* max DCLK */
+DECL|member|initial_state
 r_struct
 id|riva_regs
 id|initial_state
 suffix:semicolon
 multiline_comment|/* initial startup video mode */
+DECL|member|disp
 r_struct
 id|display
 id|disp
 suffix:semicolon
+DECL|member|currcon
 r_int
 id|currcon
 suffix:semicolon
+DECL|member|currcon_display
 r_struct
 id|display
 op_star
 id|currcon_display
 suffix:semicolon
+DECL|member|next
 r_struct
 id|rivafb_info
 op_star
 id|next
 suffix:semicolon
+DECL|member|pd
 r_struct
 id|pci_dev
 op_star
 id|pd
 suffix:semicolon
 multiline_comment|/* pointer to board&squot;s pci info */
+DECL|member|base0_region_size
 r_int
 id|base0_region_size
 suffix:semicolon
 multiline_comment|/* size of control register region */
+DECL|member|base1_region_size
 r_int
 id|base1_region_size
 suffix:semicolon
 multiline_comment|/* size of framebuffer region */
+DECL|member|palette
 id|riva_cfb8_cmap_t
 id|palette
 (braket
@@ -446,6 +505,7 @@ macro_line|#if defined(FBCON_HAS_CFB16) || defined(FBCON_HAS_CFB32)
 r_union
 (brace
 macro_line|#ifdef FBCON_HAS_CFB16
+DECL|member|cfb16
 id|u_int16_t
 id|cfb16
 (braket
@@ -454,6 +514,7 @@ l_int|16
 suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef FBCON_HAS_CFB32
+DECL|member|cfb32
 id|u_int32_t
 id|cfb32
 (braket
@@ -461,6 +522,7 @@ l_int|16
 )braket
 suffix:semicolon
 macro_line|#endif
+DECL|member|con_cmap
 )brace
 id|con_cmap
 suffix:semicolon
@@ -468,6 +530,7 @@ macro_line|#endif&t;&t;&t;&t;/* FBCON_HAS_CFB16 | FBCON_HAS_CFB32 */
 )brace
 suffix:semicolon
 multiline_comment|/* ------------------- global variables ------------------------ */
+DECL|variable|riva_boards
 r_static
 r_struct
 id|rivafb_info
@@ -477,6 +540,7 @@ op_assign
 l_int|NULL
 suffix:semicolon
 multiline_comment|/* command line data, set in rivafb_setup() */
+DECL|variable|__initdata
 r_static
 r_char
 id|fontname
@@ -486,12 +550,14 @@ l_int|40
 id|__initdata
 suffix:semicolon
 macro_line|#ifndef MODULE
+DECL|variable|__initdata
 r_static
 r_char
 id|noaccel
 id|__initdata
 suffix:semicolon
 multiline_comment|/* unused */
+DECL|variable|__initdata
 r_static
 r_const
 r_char
@@ -500,6 +566,7 @@ id|mode_option
 id|__initdata
 suffix:semicolon
 macro_line|#endif
+DECL|variable|rivafb_default_var
 r_static
 r_struct
 id|fb_var_screeninfo
@@ -972,6 +1039,7 @@ id|blue
 )paren
 suffix:semicolon
 multiline_comment|/* kernel interface */
+DECL|variable|riva_fb_ops
 r_static
 r_struct
 id|fb_ops
@@ -998,6 +1066,7 @@ id|rivafb_ioctl
 )brace
 suffix:semicolon
 multiline_comment|/* from GGI */
+DECL|variable|reg_template
 r_static
 r_const
 r_struct
@@ -1228,6 +1297,7 @@ multiline_comment|/* MISC */
 suffix:semicolon
 multiline_comment|/* ------------------- general utility functions -------------------------- */
 multiline_comment|/**&n; * riva_set_dispsw&n; * @rivainfo: pointer to internal driver struct for a given Riva card&n; *&n; * DESCRIPTION:&n; * Sets up console Low level operations depending on the current? color depth&n; * of the display&n; */
+DECL|function|riva_set_dispsw
 r_static
 r_void
 id|riva_set_dispsw
@@ -1375,6 +1445,7 @@ l_string|&quot;EXIT&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
+DECL|function|riva_init_disp_var
 r_static
 r_int
 id|riva_init_disp_var
@@ -1435,6 +1506,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|riva_init_disp
 r_static
 r_int
 id|__devinit
@@ -1577,6 +1649,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|riva_set_fbinfo
 r_static
 r_int
 id|__devinit
@@ -1693,6 +1766,7 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* ----------------------------- PCI bus ----------------------------- */
+DECL|function|riva_init_clut
 r_static
 r_void
 id|__devinit
@@ -1820,6 +1894,7 @@ id|blue
 suffix:semicolon
 )brace
 )brace
+DECL|function|rivafb_init_one
 r_static
 r_int
 id|__devinit
@@ -2436,6 +2511,7 @@ op_minus
 id|ENODEV
 suffix:semicolon
 )brace
+DECL|function|rivafb_remove_one
 r_static
 r_void
 id|__devexit
@@ -2511,6 +2587,7 @@ id|board
 suffix:semicolon
 )brace
 multiline_comment|/*** riva_wclut - set CLUT entry ***/
+DECL|function|riva_wclut
 r_static
 r_void
 id|riva_wclut
@@ -2570,6 +2647,7 @@ suffix:semicolon
 )brace
 multiline_comment|/* ------------ Hardware Independent Functions ------------ */
 macro_line|#ifndef MODULE
+DECL|function|rivafb_setup
 r_int
 id|__init
 id|rivafb_setup
@@ -2738,6 +2816,7 @@ macro_line|#endif&t;&t;&t;&t;/* !MODULE */
 multiline_comment|/*&n;     *  Initialization&n;     */
 multiline_comment|/* ------------------------------------------------------------------------- */
 multiline_comment|/*&n;     *  Frame buffer operations&n;     */
+DECL|function|rivafb_open
 r_static
 r_int
 id|rivafb_open
@@ -2758,6 +2837,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|rivafb_release
 r_static
 r_int
 id|rivafb_release
@@ -2777,6 +2857,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|rivafb_get_fix
 r_static
 r_int
 id|rivafb_get_fix
@@ -2953,6 +3034,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|rivafb_get_var
 r_static
 r_int
 id|rivafb_get_var
@@ -3030,6 +3112,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|rivafb_set_var
 r_static
 r_int
 id|rivafb_set_var
@@ -3955,6 +4038,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|rivafb_get_cmap
 r_static
 r_int
 id|rivafb_get_cmap
@@ -4116,6 +4200,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|rivafb_set_cmap
 r_static
 r_int
 id|rivafb_set_cmap
@@ -4301,6 +4386,7 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/**&n; * rivafb_pan_display&n; * @var: standard kernel fb changeable data&n; * @par: riva-specific hardware info about current video mode&n; * @info: pointer to rivafb_info object containing info for current riva board&n; *&n; * DESCRIPTION:&n; * Pan (or wrap, depending on the `vmode&squot; field) the display using the&n; * `xoffset&squot; and `yoffset&squot; fields of the `var&squot; structure.&n; * If the values don&squot;t fit, return -EINVAL.&n; *&n; * This call looks only at xoffset, yoffset and the FB_VMODE_YWRAP flag&n; */
+DECL|function|rivafb_pan_display
 r_static
 r_int
 id|rivafb_pan_display
@@ -4506,6 +4592,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|rivafb_ioctl
 r_static
 r_int
 id|rivafb_ioctl
@@ -4572,6 +4659,7 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
+DECL|function|rivafb_switch
 r_static
 r_int
 id|rivafb_switch
@@ -4830,6 +4918,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+DECL|function|rivafb_updatevar
 r_static
 r_int
 id|rivafb_updatevar
@@ -4889,6 +4978,7 @@ r_return
 id|rc
 suffix:semicolon
 )brace
+DECL|function|rivafb_blank
 r_static
 r_void
 id|rivafb_blank
@@ -4964,6 +5054,7 @@ suffix:semicolon
 )brace
 multiline_comment|/* -------------------------------------------------------------------------&n; *&n; * internal fb_ops helper functions&n; *&n; * -------------------------------------------------------------------------&n; */
 multiline_comment|/**&n; * riva_get_cmap_len&n; * @var:&n; *&n; * DESCRIPTION:&n; */
+DECL|function|riva_get_cmap_len
 r_static
 r_int
 id|riva_get_cmap_len
@@ -5060,6 +5151,7 @@ id|rc
 suffix:semicolon
 )brace
 multiline_comment|/**&n; * riva_getcolreg&n; * @regno:&n; * @red:&n; * @green:&n; * @blue:&n; * @transp:&n; * @info: pointer to rivafb_info object containing info for current riva board&n; *&n; * DESCRIPTION:&n; * Read a single color register and split it into colors/transparent.&n; * The return values must have a 16 bit magnitude.&n; * Return != 0 for invalid regno.&n; *&n; * CALLED FROM:&n; * fbcmap.c:fb_get_cmap()&n; *&t;fbgen.c:fbgen_get_cmap()&n; *&t;fbgen.c:fbgen_switch()&n; */
+DECL|function|riva_getcolreg
 r_static
 r_int
 id|riva_getcolreg
@@ -5151,6 +5243,7 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/**&n; * riva_setcolreg&n; * @regno:&n; * @red:&n; * @green:&n; * @blue:&n; * @transp:&n; * @info: pointer to rivafb_info object containing info for current riva board&n; *&n; * DESCRIPTION:&n; * Set a single color register. The values supplied have a 16 bit&n; * magnitude.&n; * Return != 0 for invalid regno.&n; *&n; * CALLED FROM:&n; * fbcmap.c:fb_set_cmap()&n; *&t;fbgen.c:fbgen_get_cmap()&n; *&t;fbgen.c:fbgen_install_cmap()&n; *&t;&t;fbgen.c:fbgen_set_var()&n; *&t;&t;fbgen.c:fbgen_switch()&n; *&t;&t;fbgen.c:fbgen_blank()&n; *&t;fbgen.c:fbgen_blank()&n; */
+DECL|function|riva_setcolreg
 r_static
 r_int
 id|riva_setcolreg
@@ -5528,6 +5621,7 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * riva_load_video_mode()&n; *&n; * calculate some timings and then send em off to riva_load_state()&n; */
+DECL|function|riva_load_video_mode
 r_static
 r_void
 id|riva_load_video_mode
@@ -6084,6 +6178,7 @@ suffix:semicolon
 )brace
 multiline_comment|/* ------------------------------------------------------------------------- */
 multiline_comment|/*&n;     *  Modularization&n;     */
+DECL|variable|rivafb_driver
 r_static
 r_struct
 id|pci_driver
@@ -6108,6 +6203,7 @@ id|rivafb_remove_one
 comma
 )brace
 suffix:semicolon
+DECL|function|rivafb_init
 r_int
 id|__init
 id|rivafb_init
@@ -6123,6 +6219,7 @@ id|rivafb_driver
 )paren
 suffix:semicolon
 )brace
+DECL|function|rivafb_exit
 r_static
 r_void
 id|__exit
@@ -6139,6 +6236,7 @@ id|rivafb_driver
 suffix:semicolon
 )brace
 macro_line|#ifdef MODULE
+DECL|variable|rivafb_init
 id|module_init
 c_func
 (paren
@@ -6146,6 +6244,7 @@ id|rivafb_init
 )paren
 suffix:semicolon
 macro_line|#endif&t;&t;&t;&t;/* MODULE */
+DECL|variable|rivafb_exit
 id|module_exit
 c_func
 (paren
@@ -6165,6 +6264,7 @@ l_string|&quot;Framebuffer driver for nVidia Riva 128, TNT, TNT2&quot;
 )paren
 suffix:semicolon
 multiline_comment|/* from GGI */
+DECL|function|riva_save_state
 r_static
 r_void
 id|riva_save_state
@@ -6350,6 +6450,7 @@ suffix:semicolon
 )brace
 multiline_comment|/* from GGI */
 r_static
+DECL|function|riva_load_state
 r_void
 id|riva_load_state
 (paren
@@ -6696,6 +6797,7 @@ suffix:semicolon
 )brace
 multiline_comment|/**&n; * riva_board_list_add&n; * @board_list: Root node of list of boards&n; * @new_node: New node to be added&n; *&n; * DESCRIPTION:&n; * Adds @new_node to the list referenced by @board_list&n; *&n; * RETURNS:&n; * New root node&n; */
 r_static
+DECL|function|riva_board_list_add
 r_struct
 id|rivafb_info
 op_star

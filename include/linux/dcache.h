@@ -600,6 +600,16 @@ id|inode
 op_star
 )paren
 suffix:semicolon
+r_extern
+r_void
+id|d_prune_aliases
+c_func
+(paren
+r_struct
+id|inode
+op_star
+)paren
+suffix:semicolon
 multiline_comment|/* test whether we have any submounts in a subdir tree */
 r_extern
 r_int

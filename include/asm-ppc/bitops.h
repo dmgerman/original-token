@@ -2,6 +2,7 @@ multiline_comment|/*&n; * $Id: bitops.h,v 1.12 2000/02/09 03:28:31 davem Exp $&n
 macro_line|#ifndef _PPC_BITOPS_H
 DECL|macro|_PPC_BITOPS_H
 mdefine_line|#define _PPC_BITOPS_H
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/byteorder.h&gt;
 r_extern
 r_void

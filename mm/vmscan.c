@@ -110,6 +110,14 @@ id|page
 r_goto
 id|out_failed
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|mm-&gt;swap_cnt
+)paren
+id|mm-&gt;swap_cnt
+op_decrement
+suffix:semicolon
 multiline_comment|/* Don&squot;t look at this pte if it&squot;s been accessed recently. */
 r_if
 c_cond
@@ -196,9 +204,6 @@ c_func
 (paren
 id|page
 )paren
-suffix:semicolon
-id|mm-&gt;swap_cnt
-op_decrement
 suffix:semicolon
 id|vma-&gt;vm_mm-&gt;rss
 op_decrement
@@ -324,9 +329,6 @@ c_func
 id|page_table
 )paren
 suffix:semicolon
-id|mm-&gt;swap_cnt
-op_decrement
-suffix:semicolon
 id|vma-&gt;vm_mm-&gt;rss
 op_decrement
 suffix:semicolon
@@ -442,9 +444,6 @@ id|entry
 )paren
 suffix:semicolon
 multiline_comment|/* Put the swap entry into the pte after the page is in swapcache */
-id|mm-&gt;swap_cnt
-op_decrement
-suffix:semicolon
 id|vma-&gt;vm_mm-&gt;rss
 op_decrement
 suffix:semicolon
@@ -1194,13 +1193,13 @@ op_assign
 (paren
 id|nr_threads
 op_lshift
-l_int|1
+l_int|2
 )paren
 op_rshift
 (paren
 id|priority
 op_rshift
-l_int|1
+l_int|2
 )paren
 suffix:semicolon
 r_if
@@ -1447,7 +1446,7 @@ multiline_comment|/*&n; * We need to make the locks finer granularity, but right
 DECL|macro|FREE_COUNT
 mdefine_line|#define FREE_COUNT&t;8
 DECL|macro|SWAP_COUNT
-mdefine_line|#define SWAP_COUNT&t;8
+mdefine_line|#define SWAP_COUNT&t;16
 DECL|function|do_try_to_free_pages
 r_static
 r_int
@@ -1467,6 +1466,9 @@ id|count
 op_assign
 id|FREE_COUNT
 suffix:semicolon
+r_int
+id|swap_count
+suffix:semicolon
 multiline_comment|/* Always trim SLAB caches when memory gets low. */
 id|kmem_cache_reap
 c_func
@@ -1476,7 +1478,7 @@ id|gfp_mask
 suffix:semicolon
 id|priority
 op_assign
-l_int|32
+l_int|64
 suffix:semicolon
 r_do
 (brace
@@ -1568,8 +1570,6 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/*&n;&t;&t; * Then, try to page stuff out..&n;&t;&t; *&n;&t;&t; * This will not actually free any pages (they get&n;&t;&t; * put in the swap cache), so we must not count this&n;&t;&t; * as a &quot;count&quot; success.&n;&t;&t; */
-(brace
-r_int
 id|swap_count
 op_assign
 id|SWAP_COUNT
@@ -1595,7 +1595,6 @@ l_int|0
 )paren
 r_break
 suffix:semicolon
-)brace
 )brace
 r_while
 c_loop
@@ -1630,8 +1629,13 @@ r_goto
 id|done
 suffix:semicolon
 )brace
+multiline_comment|/* We return 1 if we are freed some page */
 r_return
-l_int|0
+(paren
+id|count
+op_ne
+id|FREE_COUNT
+)paren
 suffix:semicolon
 id|done
 suffix:colon

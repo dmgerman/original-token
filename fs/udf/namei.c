@@ -1642,7 +1642,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|dentry-&gt;d_name.len
+id|dentry
 )paren
 (brace
 r_if
@@ -2216,6 +2216,9 @@ c_cond
 (paren
 op_logical_neg
 id|lfi
+op_logical_or
+op_logical_neg
+id|dentry
 )paren
 r_continue
 suffix:semicolon
@@ -2235,11 +2238,7 @@ comma
 id|lfi
 )paren
 )paren
-)paren
-(brace
-r_if
-c_cond
-(paren
+op_logical_and
 id|udf_match
 c_func
 (paren
@@ -2288,7 +2287,6 @@ suffix:semicolon
 r_return
 l_int|NULL
 suffix:semicolon
-)brace
 )brace
 )brace
 )brace
@@ -3578,10 +3576,6 @@ comma
 op_star
 id|fi
 suffix:semicolon
-r_struct
-id|dentry
-id|parent
-suffix:semicolon
 id|err
 op_assign
 op_minus
@@ -3643,14 +3637,6 @@ op_assign
 op_amp
 id|udf_dir_operations
 suffix:semicolon
-id|parent.d_name.len
-op_assign
-l_int|0
-suffix:semicolon
-id|parent.d_name.name
-op_assign
-l_int|NULL
-suffix:semicolon
 id|inode-&gt;i_size
 op_assign
 l_int|0
@@ -3667,8 +3653,7 @@ c_func
 (paren
 id|inode
 comma
-op_amp
-id|parent
+l_int|NULL
 comma
 op_amp
 id|fibh

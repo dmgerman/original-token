@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: unistd.h,v 1.42 2000/01/29 17:57:26 jj Exp $ */
+multiline_comment|/* $Id: unistd.h,v 1.44 2000/05/16 16:42:33 jj Exp $ */
 macro_line|#ifndef _SPARC64_UNISTD_H
 DECL|macro|_SPARC64_UNISTD_H
 mdefine_line|#define _SPARC64_UNISTD_H
@@ -405,8 +405,10 @@ DECL|macro|__NR_setfsgid
 mdefine_line|#define __NR_setfsgid           229 /* Linux Specific                              */
 DECL|macro|__NR__newselect
 mdefine_line|#define __NR__newselect         230 /* Linux Specific                              */
+macro_line|#ifdef __KERNEL__
 DECL|macro|__NR_time
-mdefine_line|#define __NR_time               231 /* Linux Specific                              */
+mdefine_line|#define __NR_time&t;&t;231 /* Linux sparc32                               */
+macro_line|#endif
 multiline_comment|/* #define __NR_oldstat         232    Linux Specific                              */
 DECL|macro|__NR_stime
 mdefine_line|#define __NR_stime              233 /* Linux Specific                              */

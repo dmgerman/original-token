@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: pgalloc.h,v 1.3 2000/02/03 10:13:31 jj Exp $ */
+multiline_comment|/* $Id: pgalloc.h,v 1.4 2000/05/09 17:40:15 davem Exp $ */
 macro_line|#ifndef _SPARC_PGALLOC_H
 DECL|macro|_SPARC_PGALLOC_H
 mdefine_line|#define _SPARC_PGALLOC_H

@@ -2152,8 +2152,6 @@ r_struct
 id|vfsmount
 op_star
 id|pipe_mnt
-op_assign
-l_int|NULL
 suffix:semicolon
 DECL|function|get_pipe_inode
 r_static

@@ -755,6 +755,7 @@ id|pagecache_lock
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * nr_dirty represents the number of dirty pages that we will write async&n; * before doing sync writes.  We can only do sync writes if we can&n; * wait for IO (__GFP_IO set).&n; */
 DECL|function|shrink_mmap
 r_int
 id|shrink_mmap
@@ -773,6 +774,8 @@ op_assign
 l_int|0
 comma
 id|count
+comma
+id|nr_dirty
 suffix:semicolon
 r_struct
 id|list_head
@@ -795,6 +798,10 @@ id|priority
 op_plus
 l_int|1
 )paren
+suffix:semicolon
+id|nr_dirty
+op_assign
+id|priority
 suffix:semicolon
 multiline_comment|/* we need pagemap_lru_lock for list_del() ... subtle code below */
 id|spin_lock
@@ -840,9 +847,6 @@ c_func
 id|page_lru
 )paren
 suffix:semicolon
-id|count
-op_decrement
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -854,6 +858,9 @@ id|page
 )paren
 r_goto
 id|dispose_continue
+suffix:semicolon
+id|count
+op_decrement
 suffix:semicolon
 multiline_comment|/*&n;&t;&t; * Avoid unscalable SMP locking for pages we can&n;&t;&t; * immediate tell are untouchable..&n;&t;&t; */
 r_if
@@ -907,6 +914,24 @@ c_cond
 id|page-&gt;buffers
 )paren
 (brace
+r_int
+id|wait
+op_assign
+(paren
+(paren
+id|gfp_mask
+op_amp
+id|__GFP_IO
+)paren
+op_logical_and
+(paren
+id|nr_dirty
+op_decrement
+OL
+l_int|0
+)paren
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -916,7 +941,7 @@ c_func
 (paren
 id|page
 comma
-l_int|1
+id|wait
 )paren
 )paren
 r_goto

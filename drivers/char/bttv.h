@@ -330,6 +330,10 @@ DECL|member|channel
 r_int
 id|channel
 suffix:semicolon
+DECL|member|s_lock
+id|spinlock_t
+id|s_lock
+suffix:semicolon
 DECL|member|nr
 r_int
 r_int

@@ -1706,6 +1706,10 @@ id|parport
 op_star
 id|port
 suffix:semicolon
+r_int
+r_int
+id|flags
+suffix:semicolon
 macro_line|#ifdef PARPORT_PARANOID
 r_if
 c_cond
@@ -1736,6 +1740,14 @@ id|port
 op_assign
 id|dev-&gt;port-&gt;physport
 suffix:semicolon
+id|read_lock_irqsave
+(paren
+op_amp
+id|port-&gt;cad_lock
+comma
+id|flags
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1744,6 +1756,14 @@ op_eq
 id|dev
 )paren
 (brace
+id|read_unlock_irqrestore
+(paren
+op_amp
+id|port-&gt;cad_lock
+comma
+id|flags
+)paren
+suffix:semicolon
 id|printk
 c_func
 (paren
@@ -1761,6 +1781,14 @@ id|dev
 )paren
 suffix:semicolon
 )brace
+id|read_unlock_irqrestore
+(paren
+op_amp
+id|port-&gt;cad_lock
+comma
+id|flags
+)paren
+suffix:semicolon
 id|spin_lock
 c_func
 (paren
@@ -1880,6 +1908,14 @@ r_int
 r_int
 id|flags
 suffix:semicolon
+id|read_lock_irqsave
+(paren
+op_amp
+id|port-&gt;cad_lock
+comma
+id|flags
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1888,6 +1924,14 @@ op_eq
 id|dev
 )paren
 (brace
+id|read_unlock_irqrestore
+(paren
+op_amp
+id|port-&gt;cad_lock
+comma
+id|flags
+)paren
+suffix:semicolon
 id|printk
 c_func
 (paren
@@ -1903,9 +1947,23 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-id|try_again
-suffix:colon
+id|read_unlock_irqrestore
+(paren
+op_amp
+id|port-&gt;cad_lock
+comma
+id|flags
+)paren
+suffix:semicolon
 multiline_comment|/* Preempt any current device */
+id|write_lock_irqsave
+(paren
+op_amp
+id|port-&gt;cad_lock
+comma
+id|flags
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1963,6 +2021,7 @@ op_ne
 id|oldcad
 )paren
 (brace
+multiline_comment|/* I think we&squot;ll actually deadlock rather than&n;                           get here, but just in case.. */
 id|printk
 c_func
 (paren
@@ -2050,27 +2109,9 @@ l_int|NULL
 suffix:semicolon
 )brace
 multiline_comment|/* Now we do the change of devices */
-id|write_lock_irqsave
-c_func
-(paren
-op_amp
-id|port-&gt;cad_lock
-comma
-id|flags
-)paren
-suffix:semicolon
 id|port-&gt;cad
 op_assign
 id|dev
-suffix:semicolon
-id|write_unlock_irqrestore
-c_func
-(paren
-op_amp
-id|port-&gt;cad_lock
-comma
-id|flags
-)paren
 suffix:semicolon
 macro_line|#ifdef CONFIG_PARPORT_1284
 multiline_comment|/* If it&squot;s a mux port, select it. */
@@ -2128,6 +2169,15 @@ comma
 id|dev-&gt;state
 )paren
 suffix:semicolon
+id|write_unlock_irqrestore
+c_func
+(paren
+op_amp
+id|port-&gt;cad_lock
+comma
+id|flags
+)paren
+suffix:semicolon
 id|dev-&gt;time
 op_assign
 id|jiffies
@@ -2138,6 +2188,7 @@ suffix:semicolon
 id|blocked
 suffix:colon
 multiline_comment|/* If this is the first time we tried to claim the port, register an&n;&t;   interest.  This is only allowed for devices sleeping in&n;&t;   parport_claim_or_block(), or those with a wakeup function.  */
+multiline_comment|/* The cad_lock is still held for writing here */
 r_if
 c_cond
 (paren
@@ -2148,35 +2199,12 @@ op_logical_or
 id|dev-&gt;wakeup
 )paren
 (brace
-id|spin_lock_irqsave
+id|spin_lock
 (paren
 op_amp
 id|port-&gt;waitlist_lock
-comma
-id|flags
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|port-&gt;cad
-op_eq
-l_int|NULL
-)paren
-(brace
-multiline_comment|/* The port got released in the meantime. */
-id|spin_unlock_irqrestore
-(paren
-op_amp
-id|port-&gt;waitlist_lock
-comma
-id|flags
-)paren
-suffix:semicolon
-r_goto
-id|try_again
-suffix:semicolon
-)brace
 r_if
 c_cond
 (paren
@@ -2224,15 +2252,21 @@ op_assign
 id|dev
 suffix:semicolon
 )brace
-id|spin_unlock_irqrestore
+id|spin_unlock
 (paren
 op_amp
 id|port-&gt;waitlist_lock
+)paren
+suffix:semicolon
+)brace
+id|write_unlock_irqrestore
+(paren
+op_amp
+id|port-&gt;cad_lock
 comma
 id|flags
 )paren
 suffix:semicolon
-)brace
 r_return
 op_minus
 id|EAGAIN
@@ -2408,6 +2442,15 @@ r_int
 id|flags
 suffix:semicolon
 multiline_comment|/* Make sure that dev is the current device */
+id|write_lock_irqsave
+c_func
+(paren
+op_amp
+id|port-&gt;cad_lock
+comma
+id|flags
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2416,6 +2459,14 @@ op_ne
 id|dev
 )paren
 (brace
+id|write_unlock_irqrestore
+(paren
+op_amp
+id|port-&gt;cad_lock
+comma
+id|flags
+)paren
+suffix:semicolon
 id|printk
 c_func
 (paren
@@ -2469,15 +2520,6 @@ l_int|1
 suffix:semicolon
 )brace
 macro_line|#endif
-id|write_lock_irqsave
-c_func
-(paren
-op_amp
-id|port-&gt;cad_lock
-comma
-id|flags
-)paren
-suffix:semicolon
 id|port-&gt;cad
 op_assign
 l_int|NULL
@@ -2574,6 +2616,7 @@ c_cond
 (paren
 id|dev-&gt;port-&gt;cad
 )paren
+multiline_comment|/* racy but no matter */
 r_return
 suffix:semicolon
 )brace

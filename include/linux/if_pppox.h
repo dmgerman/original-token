@@ -2,11 +2,11 @@ multiline_comment|/*************************************************************
 macro_line|#ifndef __LINUX_IF_PPPOX_H
 DECL|macro|__LINUX_IF_PPPOX_H
 mdefine_line|#define __LINUX_IF_PPPOX_H
-macro_line|#include &lt;linux/if_ether.h&gt;
-macro_line|#include &lt;linux/if.h&gt;
 macro_line|#include &lt;asm/types.h&gt;
 macro_line|#include &lt;asm/byteorder.h&gt;
 macro_line|#ifdef  __KERNEL__
+macro_line|#include &lt;linux/if_ether.h&gt;
+macro_line|#include &lt;linux/if.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;asm/semaphore.h&gt;

@@ -3112,26 +3112,6 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|file-&gt;f_dentry-&gt;d_inode-&gt;i_ino
-op_ne
-id|entry-&gt;low_ino
-)paren
-(brace
-id|printk
-c_func
-(paren
-id|KERN_ERR
-l_string|&quot;comx_write_proc: file &lt;-&gt; data internal error&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-op_minus
-id|EIO
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
 id|count
 OG
 id|PAGE_SIZE

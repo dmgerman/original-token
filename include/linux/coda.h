@@ -5,8 +5,8 @@ multiline_comment|/*&n; *&n; * Based on cfs.h from Mach, but revamped for increa
 macro_line|#ifndef _CODA_HEADER_
 DECL|macro|_CODA_HEADER_
 mdefine_line|#define _CODA_HEADER_
-multiline_comment|/* Catch new _KERNEL defn for NetBSD */
-macro_line|#ifdef __NetBSD__
+multiline_comment|/* Catch new _KERNEL defn for NetBSD and DJGPP/__CYGWIN32__ */
+macro_line|#if defined(__NetBSD__) || &bslash;&n;  ((defined(DJGPP) || defined(__CYGWIN32__)) &amp;&amp; !defined(KERNEL))
 macro_line|#include &lt;sys/types.h&gt;
 macro_line|#endif 
 macro_line|#ifndef CODA_MAXSYMLINKS
@@ -82,7 +82,6 @@ suffix:semicolon
 )brace
 suffix:semicolon
 macro_line|#else  /* DJGPP but not KERNEL */
-macro_line|#include &lt;sys/types.h&gt;
 macro_line|#include &lt;sys/time.h&gt;
 DECL|typedef|u_quad_t
 r_typedef

@@ -13,7 +13,6 @@ DECL|macro|__EXPLICIT_DEF_H__
 mdefine_line|#define __EXPLICIT_DEF_H__
 DECL|macro|__NO_VERSION__
 mdefine_line|#define __NO_VERSION__
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;

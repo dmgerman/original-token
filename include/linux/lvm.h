@@ -16,13 +16,17 @@ mdefine_line|#define&t;LVM_HD_NAME
 multiline_comment|/* lots of debugging output (see driver source)&n;   #define DEBUG_LVM_GET_INFO&n;   #define DEBUG&n;   #define DEBUG_MAP&n;   #define DEBUG_MAP_SIZE&n;   #define DEBUG_IOCTL&n;   #define DEBUG_READ&n;   #define DEBUG_GENDISK&n;   #define DEBUG_VG_CREATE&n;   #define DEBUG_LVM_BLK_OPEN&n;   #define DEBUG_KFREE&n; */
 macro_line|#include &lt;linux/version.h&gt;
 macro_line|#ifndef __KERNEL__
+DECL|macro|____NOT_KERNEL____
+mdefine_line|#define ____NOT_KERNEL____
 DECL|macro|__KERNEL__
 mdefine_line|#define __KERNEL__
+macro_line|#endif
 macro_line|#include &lt;linux/kdev_t.h&gt;
+macro_line|#ifdef ____NOT_KERNEL____
+DECL|macro|____NOT_KERNEL____
+macro_line|#undef ____NOT_KERNEL____
 DECL|macro|__KERNEL__
 macro_line|#undef __KERNEL__
-macro_line|#else
-macro_line|#include &lt;linux/kdev_t.h&gt;
 macro_line|#endif
 macro_line|#include &lt;linux/major.h&gt;
 macro_line|#if LINUX_VERSION_CODE &gt;= KERNEL_VERSION ( 2, 3 ,0)

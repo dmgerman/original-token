@@ -158,8 +158,7 @@ l_int|NULL
 suffix:semicolon
 DECL|macro|K_64
 mdefine_line|#define K_64&t;0x10000&t;&t;/* 64KB */
-macro_line|#include &lt;asm/floppy.h&gt;
-multiline_comment|/* the following is the mask of allowed drives. By default units 2 and&n; * 3 of both floppy controllers are disabled, because switching on the&n; * motor of these drives causes system hangs on some PCI computers. drive&n; * 0 is the low bit (0x1), and drive 7 is the high bit (0x80). Bits are on if&n; * a drive is allowed. */
+multiline_comment|/* the following is the mask of allowed drives. By default units 2 and&n; * 3 of both floppy controllers are disabled, because switching on the&n; * motor of these drives causes system hangs on some PCI computers. drive&n; * 0 is the low bit (0x1), and drive 7 is the high bit (0x80). Bits are on if&n; * a drive is allowed.&n; *&n; * NOTE: This must come before we include the arch floppy header because&n; *       some ports reference this variable from there. -DaveM&n; */
 DECL|variable|allowed_drive_mask
 r_static
 r_int
@@ -167,6 +166,7 @@ id|allowed_drive_mask
 op_assign
 l_int|0x33
 suffix:semicolon
+macro_line|#include &lt;asm/floppy.h&gt;
 DECL|variable|irqdma_allocated
 r_static
 r_int

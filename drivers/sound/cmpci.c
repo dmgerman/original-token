@@ -2251,7 +2251,7 @@ suffix:semicolon
 )brace
 multiline_comment|/* --------------------------------------------------------------------- */
 DECL|macro|DMABUF_DEFAULTORDER
-mdefine_line|#define DMABUF_DEFAULTORDER (17-PAGE_SHIFT)
+mdefine_line|#define DMABUF_DEFAULTORDER (16-PAGE_SHIFT)
 DECL|macro|DMABUF_MINORDER
 mdefine_line|#define DMABUF_MINORDER 1
 DECL|function|dealloc_dmabuf

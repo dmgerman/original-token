@@ -443,7 +443,6 @@ r_static
 r_inline
 r_int
 id|alloc_area_pte
-c_func
 (paren
 id|pte_t
 op_star
@@ -456,6 +455,9 @@ comma
 r_int
 r_int
 id|size
+comma
+r_int
+id|gfp_mask
 )paren
 (brace
 r_int
@@ -514,9 +516,7 @@ op_assign
 id|alloc_page
 c_func
 (paren
-id|GFP_KERNEL
-op_or
-id|__GFP_HIGHMEM
+id|gfp_mask
 )paren
 suffix:semicolon
 r_if
@@ -581,6 +581,9 @@ comma
 r_int
 r_int
 id|size
+comma
+r_int
+id|gfp_mask
 )paren
 (brace
 r_int
@@ -646,6 +649,8 @@ comma
 id|end
 op_minus
 id|address
+comma
+id|gfp_mask
 )paren
 )paren
 r_return
@@ -679,9 +684,9 @@ l_int|0
 suffix:semicolon
 )brace
 DECL|function|vmalloc_area_pages
+r_inline
 r_int
 id|vmalloc_area_pages
-c_func
 (paren
 r_int
 r_int
@@ -690,6 +695,9 @@ comma
 r_int
 r_int
 id|size
+comma
+r_int
+id|gfp_mask
 )paren
 (brace
 id|pgd_t
@@ -762,6 +770,8 @@ comma
 id|end
 op_minus
 id|address
+comma
+id|gfp_mask
 )paren
 )paren
 r_return
@@ -1154,15 +1164,17 @@ id|addr
 )paren
 suffix:semicolon
 )brace
-DECL|function|vmalloc
+DECL|function|__vmalloc
 r_void
 op_star
-id|vmalloc
-c_func
+id|__vmalloc
 (paren
 r_int
 r_int
 id|size
+comma
+r_int
+id|gfp_mask
 )paren
 (brace
 r_void
@@ -1249,6 +1261,8 @@ id|addr
 )paren
 comma
 id|size
+comma
+id|gfp_mask
 )paren
 )paren
 (brace

@@ -51,15 +51,6 @@ id|lp_count
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* Test if printer is ready */
-DECL|macro|LP_READY
-mdefine_line|#define&t;LP_READY(status)&t;((status) &amp; LP_PBUSY)
-multiline_comment|/* Test if the printer is not acking the strobe */
-DECL|macro|LP_NO_ACKING
-mdefine_line|#define&t;LP_NO_ACKING(status)&t;((status) &amp; LP_PACK)
-multiline_comment|/* Test if the printer has error conditions */
-DECL|macro|LP_NO_ERROR
-mdefine_line|#define LP_NO_ERROR(status)&t;((status) &amp; LP_PERRORP)
 DECL|macro|LP_DEBUG
 macro_line|#undef LP_DEBUG
 multiline_comment|/* --- low-level port access ----------------------------------- */
@@ -634,6 +625,20 @@ dot
 id|timeout
 )paren
 suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|retv
+op_assign
+id|lp_check_status
+(paren
+id|minor
+)paren
+)paren
+op_eq
+l_int|0
+)paren
 r_do
 (brace
 multiline_comment|/* Write the data. */

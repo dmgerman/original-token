@@ -366,7 +366,7 @@ suffix:semicolon
 r_char
 id|newlabel
 (braket
-l_int|1024
+l_int|2048
 )braket
 suffix:semicolon
 r_char
@@ -3227,7 +3227,7 @@ id|filename
 r_char
 id|buffer
 (braket
-l_int|1024
+l_int|2048
 )braket
 suffix:semicolon
 id|FILE

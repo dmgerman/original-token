@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: debuglocks.c,v 1.4 2000/01/31 04:59:10 davem Exp $&n; * debuglocks.c: Debugging versions of SMP locking primitives.&n; *&n; * Copyright (C) 1998 David S. Miller (davem@redhat.com)&n; */
+multiline_comment|/* $Id: debuglocks.c,v 1.5 2000/05/09 17:40:14 davem Exp $&n; * debuglocks.c: Debugging versions of SMP locking primitives.&n; *&n; * Copyright (C) 1998 David S. Miller (davem@redhat.com)&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;

@@ -487,14 +487,6 @@ l_int|0
 )paren
 r_break
 suffix:semicolon
-id|proc_register
-c_func
-(paren
-id|de
-comma
-id|al
-)paren
-suffix:semicolon
 op_star
 id|lastp
 op_assign

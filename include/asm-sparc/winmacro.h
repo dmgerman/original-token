@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: winmacro.h,v 1.21 1999/08/14 03:52:13 anton Exp $&n; * winmacro.h: Window loading-unloading macros.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
+multiline_comment|/* $Id: winmacro.h,v 1.22 2000/05/09 17:40:15 davem Exp $&n; * winmacro.h: Window loading-unloading macros.&n; *&n; * Copyright (C) 1995 David S. Miller (davem@caip.rutgers.edu)&n; */
 macro_line|#ifndef _SPARC_WINMACRO_H
 DECL|macro|_SPARC_WINMACRO_H
 mdefine_line|#define _SPARC_WINMACRO_H

@@ -12590,11 +12590,10 @@ l_string|&quot;1-5i&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifndef LINUX_2_1
-DECL|variable|devname
-r_static
+multiline_comment|/* Allocate 5 string of length IFNAMSIZ, one string for each device */
+DECL|variable|hp100_name
 r_char
-id|devname
+id|hp100_name
 (braket
 l_int|5
 )braket
@@ -12614,41 +12613,20 @@ comma
 l_string|&quot;&quot;
 )brace
 suffix:semicolon
-DECL|variable|hp100_name
-r_static
-r_char
-op_star
+macro_line|#ifdef LINUX_2_1
+multiline_comment|/* Allow insmod to write those 5 strings individually */
+id|MODULE_PARM
+c_func
+(paren
 id|hp100_name
-(braket
-l_int|5
-)braket
-op_assign
-(brace
-id|devname
-(braket
-l_int|0
-)braket
 comma
-id|devname
-(braket
-l_int|1
-)braket
-comma
-id|devname
-(braket
-l_int|2
-)braket
-comma
-id|devname
-(braket
-l_int|3
-)braket
-comma
-id|devname
-(braket
-l_int|4
-)braket
-)brace
+l_string|&quot;1-5c&quot;
+id|__MODULE_STRING
+c_func
+(paren
+id|IFNAMSIZ
+)paren
+)paren
 suffix:semicolon
 macro_line|#endif
 multiline_comment|/* List of devices */
@@ -12777,7 +12755,27 @@ id|net_device
 )paren
 )paren
 suffix:semicolon
-macro_line|#ifndef LINUX_2_1
+macro_line|#if LINUX_VERSION_CODE &gt;= 0x020362&t;/* 2.3.99-pre7 */
+id|memcpy
+c_func
+(paren
+id|hp100_devlist
+(braket
+id|i
+)braket
+op_member_access_from_pointer
+id|name
+comma
+id|hp100_name
+(braket
+id|i
+)braket
+comma
+id|IFNAMSIZ
+)paren
+suffix:semicolon
+multiline_comment|/* Copy name */
+macro_line|#else
 id|hp100_devlist
 (braket
 id|i
@@ -12790,7 +12788,7 @@ id|hp100_name
 id|i
 )braket
 suffix:semicolon
-macro_line|#endif
+macro_line|#endif /* LINUX_VERSION_CODE &gt;= 0x020362 */
 id|hp100_devlist
 (braket
 id|i

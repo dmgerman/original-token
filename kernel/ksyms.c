@@ -1060,6 +1060,13 @@ c_func
 id|d_find_alias
 )paren
 suffix:semicolon
+DECL|variable|d_prune_aliases
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|d_prune_aliases
+)paren
+suffix:semicolon
 DECL|variable|prune_dcache
 id|EXPORT_SYMBOL
 c_func

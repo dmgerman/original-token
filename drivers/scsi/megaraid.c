@@ -5470,9 +5470,17 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+(paren
 id|magic
 op_ne
 id|AMI_SIGNATURE
+)paren
+op_logical_and
+(paren
+id|magic
+op_ne
+id|AMI_SIGNATURE_471
+)paren
 )paren
 r_continue
 suffix:semicolon

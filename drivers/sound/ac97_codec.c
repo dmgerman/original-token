@@ -276,6 +276,14 @@ id|sigmatel_init
 )brace
 comma
 (brace
+l_int|0x54524106
+comma
+l_string|&quot;TriTech TR28026&quot;
+comma
+l_int|NULL
+)brace
+comma
+(brace
 l_int|0x54524108
 comma
 l_string|&quot;TriTech TR28028&quot;
@@ -1753,6 +1761,40 @@ l_int|0x07
 suffix:semicolon
 )brace
 multiline_comment|/* else, write the first set in the mask as the&n;&t;   output */
+multiline_comment|/* clear out current set value first (AC97 supports only 1 input!) */
+id|val
+op_assign
+(paren
+l_int|1
+op_lshift
+id|ac97_rm2oss
+(braket
+id|codec
+op_member_access_from_pointer
+id|codec_read
+c_func
+(paren
+id|codec
+comma
+id|AC97_RECORD_SELECT
+)paren
+op_amp
+l_int|0x07
+)braket
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|mask
+op_ne
+id|val
+)paren
+id|mask
+op_and_assign
+op_complement
+id|val
+suffix:semicolon
 id|val
 op_assign
 id|ffs
@@ -2220,6 +2262,17 @@ r_return
 op_minus
 id|EINVAL
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|val
+)paren
+(brace
+r_return
+l_int|0
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren

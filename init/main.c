@@ -2866,10 +2866,6 @@ c_cond
 (paren
 id|mount_initrd
 op_logical_and
-id|ROOT_DEV
-op_ne
-id|real_root_dev
-op_logical_and
 id|MAJOR
 c_func
 (paren

@@ -16764,6 +16764,20 @@ id|net_device
 )paren
 )paren
 suffix:semicolon
+id|memcpy
+c_func
+(paren
+id|dev-&gt;name
+comma
+id|name
+(braket
+id|i
+)braket
+comma
+id|IFNAMSIZ
+)paren
+suffix:semicolon
+multiline_comment|/* Copy name */
 id|dev-&gt;base_addr
 op_assign
 id|io
