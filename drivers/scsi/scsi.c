@@ -456,7 +456,7 @@ DECL|macro|SCSI_TIMEOUT
 mdefine_line|#define SCSI_TIMEOUT (5*HZ)
 macro_line|#else
 DECL|macro|SCSI_TIMEOUT
-mdefine_line|#define SCSI_TIMEOUT (1*HZ)
+mdefine_line|#define SCSI_TIMEOUT (2*HZ)
 macro_line|#endif
 macro_line|#ifdef DEBUG
 DECL|macro|SENSE_TIMEOUT
@@ -467,17 +467,17 @@ DECL|macro|RESET_TIMEOUT
 mdefine_line|#define RESET_TIMEOUT SCSI_TIMEOUT
 macro_line|#else
 DECL|macro|SENSE_TIMEOUT
-mdefine_line|#define SENSE_TIMEOUT (5*HZ/10)
+mdefine_line|#define SENSE_TIMEOUT (1*HZ)
 DECL|macro|RESET_TIMEOUT
-mdefine_line|#define RESET_TIMEOUT (5*HZ/10)
+mdefine_line|#define RESET_TIMEOUT (5*HZ)
 DECL|macro|ABORT_TIMEOUT
-mdefine_line|#define ABORT_TIMEOUT (5*HZ/10)
+mdefine_line|#define ABORT_TIMEOUT (5*HZ)
 macro_line|#endif
 DECL|macro|MIN_RESET_DELAY
-mdefine_line|#define MIN_RESET_DELAY (1*HZ)
+mdefine_line|#define MIN_RESET_DELAY (3*HZ)
 multiline_comment|/* Do not call reset on error if we just did a reset within 10 sec. */
 DECL|macro|MIN_RESET_PERIOD
-mdefine_line|#define MIN_RESET_PERIOD (10*HZ)
+mdefine_line|#define MIN_RESET_PERIOD (15*HZ)
 multiline_comment|/* The following devices are known not to tolerate a lun != 0 scan for&n; * one reason or another.  Some will respond to all luns, others will&n; * lock up. &n; */
 DECL|macro|BLIST_NOLUN
 mdefine_line|#define BLIST_NOLUN     0x01
@@ -2338,7 +2338,13 @@ macro_line|#endif
 r_if
 c_cond
 (paren
+id|host_byte
+c_func
+(paren
 id|SCpnt-&gt;result
+)paren
+op_ne
+id|DID_OK
 )paren
 (brace
 r_if
@@ -3339,11 +3345,13 @@ multiline_comment|/*&n; *  Flag bits for the internal_timeout array&n; */
 DECL|macro|NORMAL_TIMEOUT
 mdefine_line|#define NORMAL_TIMEOUT 0
 DECL|macro|IN_ABORT
-mdefine_line|#define IN_ABORT 1
+mdefine_line|#define IN_ABORT  1
 DECL|macro|IN_RESET
-mdefine_line|#define IN_RESET 2
+mdefine_line|#define IN_RESET  2
 DECL|macro|IN_RESET2
 mdefine_line|#define IN_RESET2 4
+DECL|macro|IN_RESET3
+mdefine_line|#define IN_RESET3 8
 multiline_comment|/*&n; * This is our time out function, called when the timer expires for a&n; * given host adapter.  It will attempt to abort the currently executing&n; * command, that failing perform a kernel panic.&n; */
 DECL|function|scsi_times_out
 r_static
@@ -3366,6 +3374,8 @@ op_or
 id|IN_RESET
 op_or
 id|IN_RESET2
+op_or
+id|IN_RESET3
 )paren
 )paren
 (brace
@@ -3434,9 +3444,12 @@ multiline_comment|/* This might be controversial, but if there is a bus hang,&n;
 id|printk
 c_func
 (paren
-l_string|&quot;SCSI host %d reset (pid %ld) timed out - trying harder&bslash;n&quot;
+l_string|&quot;SCSI host %d channel %d reset (pid %ld) timed out - &quot;
+l_string|&quot;trying harder&bslash;n&quot;
 comma
 id|SCpnt-&gt;host-&gt;host_no
+comma
+id|SCpnt-&gt;channel
 comma
 id|SCpnt-&gt;pid
 )paren
@@ -3457,6 +3470,50 @@ comma
 id|SCSI_RESET_ASYNCHRONOUS
 op_or
 id|SCSI_RESET_SUGGEST_BUS_RESET
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+r_case
+(paren
+id|IN_ABORT
+op_or
+id|IN_RESET
+op_or
+id|IN_RESET2
+)paren
+suffix:colon
+multiline_comment|/* Obviously the bus reset didn&squot;t work.&n;&t; * Let&squot;s try even harder and call for an HBA reset.&n;         * Maybe the HBA itself crashed and this will shake it loose.&n;&t; */
+id|printk
+c_func
+(paren
+l_string|&quot;SCSI host %d reset (pid %ld) timed out - trying to shake it loose&bslash;n&quot;
+comma
+id|SCpnt-&gt;host-&gt;host_no
+comma
+id|SCpnt-&gt;pid
+)paren
+suffix:semicolon
+id|SCpnt-&gt;internal_timeout
+op_and_assign
+op_complement
+(paren
+id|IN_RESET
+op_or
+id|IN_RESET2
+)paren
+suffix:semicolon
+id|SCpnt-&gt;internal_timeout
+op_or_assign
+id|IN_RESET3
+suffix:semicolon
+id|scsi_reset
+(paren
+id|SCpnt
+comma
+id|SCSI_RESET_ASYNCHRONOUS
+op_or
+id|SCSI_RESET_SUGGEST_HOST_RESET
 )paren
 suffix:semicolon
 r_return
@@ -7217,9 +7274,11 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;SCSI bus is being reset for host %d.&bslash;n&quot;
+l_string|&quot;SCSI bus is being reset for host %d channel %d.&bslash;n&quot;
 comma
 id|host-&gt;host_no
+comma
+id|SCpnt-&gt;channel
 )paren
 suffix:semicolon
 macro_line|#if 0
@@ -7591,7 +7650,13 @@ suffix:semicolon
 id|SCpnt-&gt;internal_timeout
 op_and_assign
 op_complement
+(paren
 id|IN_RESET
+op_or
+id|IN_RESET2
+op_or
+id|IN_RESET3
+)paren
 suffix:semicolon
 id|restore_flags
 c_func
@@ -7653,7 +7718,13 @@ suffix:colon
 id|SCpnt-&gt;internal_timeout
 op_and_assign
 op_complement
+(paren
 id|IN_RESET
+op_or
+id|IN_RESET2
+op_or
+id|IN_RESET3
+)paren
 suffix:semicolon
 id|scsi_request_sense
 (paren
@@ -7705,20 +7776,26 @@ suffix:semicolon
 id|SCpnt-&gt;internal_timeout
 op_and_assign
 op_complement
+(paren
 id|IN_RESET
+op_or
+id|IN_RESET2
+op_or
+id|IN_RESET3
+)paren
 suffix:semicolon
 id|scsi_request_sense
 (paren
 id|SCpnt
 )paren
 suffix:semicolon
-multiline_comment|/*&n;                 * Since a bus reset was performed, we&n;                 * need to wake up each and every command&n;                 * that was active on the bus.&n;                 */
+multiline_comment|/*&n;                 * If a bus reset was performed, we&n;                 * need to wake up each and every command&n;                 * that was active on the bus or if it was a HBA&n;                 * reset all active commands on all channels&n;                 */
 r_if
 c_cond
 (paren
 id|temp
 op_amp
-id|SCSI_RESET_BUS_RESET
+id|SCSI_RESET_HOST_RESET
 )paren
 (brace
 id|SCpnt1
@@ -7753,6 +7830,53 @@ id|SCpnt1-&gt;next
 suffix:semicolon
 )brace
 )brace
+r_else
+r_if
+c_cond
+(paren
+id|temp
+op_amp
+id|SCSI_RESET_BUS_RESET
+)paren
+(brace
+id|SCpnt1
+op_assign
+id|host-&gt;host_queue
+suffix:semicolon
+r_while
+c_loop
+(paren
+id|SCpnt1
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|SCpnt1-&gt;request.rq_status
+op_ne
+id|RQ_INACTIVE
+op_logical_and
+id|SCpnt1
+op_ne
+id|SCpnt
+op_logical_and
+id|SCpnt1-&gt;channel
+op_eq
+id|SCpnt-&gt;channel
+)paren
+(brace
+id|scsi_request_sense
+(paren
+id|SCpnt
+)paren
+suffix:semicolon
+)brace
+id|SCpnt1
+op_assign
+id|SCpnt1-&gt;next
+suffix:semicolon
+)brace
+)brace
 r_return
 l_int|0
 suffix:semicolon
@@ -7774,7 +7898,13 @@ suffix:semicolon
 id|SCpnt-&gt;internal_timeout
 op_and_assign
 op_complement
+(paren
 id|IN_RESET
+op_or
+id|IN_RESET2
+op_or
+id|IN_RESET3
+)paren
 suffix:semicolon
 id|update_timeout
 c_func

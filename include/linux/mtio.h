@@ -83,6 +83,10 @@ DECL|macro|MTUNLOAD
 mdefine_line|#define MTUNLOAD 31&t;/* execute the SCSI unload command */
 DECL|macro|MTCOMPRESSION
 mdefine_line|#define MTCOMPRESSION 32/* control compression with SCSI mode page 15 */
+DECL|macro|MTSETPART
+mdefine_line|#define MTSETPART 33&t;/* Change the active tape partition */
+DECL|macro|MTMKPART
+mdefine_line|#define MTMKPART  34&t;/* Format the tape with one or two partitions */
 multiline_comment|/* structure for MTIOCGET - mag tape get status command */
 DECL|struct|mtget
 r_struct
@@ -411,6 +415,10 @@ DECL|macro|MT_ST_CAN_BSR
 mdefine_line|#define MT_ST_CAN_BSR&t;&t;0x100
 DECL|macro|MT_ST_NO_BLKLIMS
 mdefine_line|#define MT_ST_NO_BLKLIMS&t;0x200
+DECL|macro|MT_ST_CAN_PARTITIONS
+mdefine_line|#define MT_ST_CAN_PARTITIONS    0x400
+DECL|macro|MT_ST_SCSI2LOGICAL
+mdefine_line|#define MT_ST_SCSI2LOGICAL      0x800
 multiline_comment|/* The mode parameters to be controlled. Parameter chosen with bits 20-28 */
 DECL|macro|MT_ST_CLEAR_DEFAULT
 mdefine_line|#define MT_ST_CLEAR_DEFAULT&t;0xfffff

@@ -125,6 +125,40 @@ DECL|macro|ST_MODE_SHIFT
 mdefine_line|#define ST_MODE_SHIFT (7 - ST_NBR_MODE_BITS)
 DECL|macro|ST_MODE_MASK
 mdefine_line|#define ST_MODE_MASK ((ST_NBR_MODES - 1) &lt;&lt; ST_MODE_SHIFT)
+multiline_comment|/* The status related to each partition */
+r_typedef
+r_struct
+(brace
+DECL|member|rw
+r_int
+r_char
+id|rw
+suffix:semicolon
+DECL|member|moves_after_eof
+r_int
+r_char
+id|moves_after_eof
+suffix:semicolon
+DECL|member|at_sm
+r_int
+r_char
+id|at_sm
+suffix:semicolon
+DECL|member|last_block_valid
+r_int
+r_char
+id|last_block_valid
+suffix:semicolon
+DECL|member|last_block_visited
+id|u32
+id|last_block_visited
+suffix:semicolon
+DECL|typedef|ST_partstat
+)brace
+id|ST_partstat
+suffix:semicolon
+DECL|macro|ST_NBR_PARTITIONS
+mdefine_line|#define ST_NBR_PARTITIONS 4
 multiline_comment|/* The tape drive descriptor */
 r_typedef
 r_struct
@@ -178,6 +212,11 @@ r_int
 r_char
 id|can_bsr
 suffix:semicolon
+DECL|member|can_partitions
+r_int
+r_char
+id|can_partitions
+suffix:semicolon
 DECL|member|two_fm
 r_int
 r_char
@@ -192,6 +231,11 @@ DECL|member|restr_dma
 r_int
 r_char
 id|restr_dma
+suffix:semicolon
+DECL|member|scsi2_logical
+r_int
+r_char
+id|scsi2_logical
 suffix:semicolon
 DECL|member|default_drvbuffer
 r_int
@@ -216,15 +260,30 @@ r_int
 id|current_mode
 suffix:semicolon
 multiline_comment|/* Status variables */
+DECL|member|partition
+r_int
+id|partition
+suffix:semicolon
+DECL|member|new_partition
+r_int
+id|new_partition
+suffix:semicolon
+DECL|member|nbr_partitions
+r_int
+id|nbr_partitions
+suffix:semicolon
+multiline_comment|/* zero until partition support enabled */
+DECL|member|ps
+id|ST_partstat
+id|ps
+(braket
+id|ST_NBR_PARTITIONS
+)braket
+suffix:semicolon
 DECL|member|dirty
 r_int
 r_char
 id|dirty
-suffix:semicolon
-DECL|member|rw
-r_int
-r_char
-id|rw
 suffix:semicolon
 DECL|member|ready
 r_int
@@ -255,16 +314,6 @@ DECL|member|eof_hit
 r_int
 r_char
 id|eof_hit
-suffix:semicolon
-DECL|member|moves_after_eof
-r_int
-r_char
-id|moves_after_eof
-suffix:semicolon
-DECL|member|at_sm
-r_int
-r_char
-id|at_sm
 suffix:semicolon
 DECL|member|blksize_changed
 r_int

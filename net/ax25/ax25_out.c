@@ -1527,6 +1527,15 @@ id|ax25o-&gt;next
 r_if
 c_cond
 (paren
+id|ax25o
+op_eq
+id|ax25
+)paren
+r_continue
+suffix:semicolon
+r_if
+c_cond
+(paren
 id|ax25o-&gt;device
 op_ne
 id|ax25-&gt;device

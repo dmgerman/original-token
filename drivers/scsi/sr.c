@@ -14,7 +14,7 @@ macro_line|#include &lt;linux/blk.h&gt;
 macro_line|#include &quot;scsi.h&quot;
 macro_line|#include &quot;hosts.h&quot;
 macro_line|#include &quot;sr.h&quot;
-macro_line|#include &quot;scsi_ioctl.h&quot;   /* For the door lock/unlock commands */
+macro_line|#include &lt;scsi/scsi_ioctl.h&gt;   /* For the door lock/unlock commands */
 macro_line|#include &quot;constants.h&quot;
 DECL|macro|MAX_RETRIES
 mdefine_line|#define MAX_RETRIES 3

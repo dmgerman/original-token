@@ -2569,7 +2569,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-multiline_comment|/* sigh.. atempt to prevent multiple entry */
+multiline_comment|/* sigh.. attempt to prevent multiple entry */
 id|last_keycode
 op_assign
 l_int|1

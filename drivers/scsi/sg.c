@@ -15,8 +15,8 @@ macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/blk.h&gt;
 macro_line|#include &quot;scsi.h&quot;
 macro_line|#include &quot;hosts.h&quot;
-macro_line|#include &quot;scsi_ioctl.h&quot;
-macro_line|#include &quot;sg.h&quot;
+macro_line|#include &lt;scsi/scsi_ioctl.h&gt;
+macro_line|#include &lt;scsi/sg.h&gt;
 r_static
 r_int
 id|sg_init

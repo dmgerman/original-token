@@ -15,7 +15,7 @@ macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/blk.h&gt;
 macro_line|#include &quot;scsi.h&quot;
 macro_line|#include &quot;hosts.h&quot;
-macro_line|#include &quot;scsi_ioctl.h&quot;
+macro_line|#include &lt;scsi/scsi_ioctl.h&gt;
 DECL|macro|MAX_RETRIES
 mdefine_line|#define MAX_RETRIES 5   
 DECL|macro|MAX_TIMEOUT

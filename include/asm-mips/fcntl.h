@@ -77,6 +77,8 @@ DECL|macro|F_POSIX
 mdefine_line|#define F_POSIX&t;&t;1
 DECL|macro|F_FLOCK
 mdefine_line|#define F_FLOCK&t;&t;2
+DECL|macro|F_BROKEN
+mdefine_line|#define F_BROKEN&t;4&t;/* broken flock() emulation */
 macro_line|#endif /* __KERNEL__ */
 DECL|struct|flock
 r_typedef

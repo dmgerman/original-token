@@ -2,7 +2,7 @@ multiline_comment|/*&n; *&t;eata.h - used by the low-level driver for EATA/DMA S
 macro_line|#ifndef _EATA_H
 DECL|macro|_EATA_H
 mdefine_line|#define _EATA_H
-macro_line|#include &lt;linux/scsicam.h&gt;
+macro_line|#include &lt;scsi/scsicam.h&gt;
 r_int
 id|eata2x_detect
 c_func

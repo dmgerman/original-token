@@ -714,7 +714,7 @@ id|tunnel_hlen
 )paren
 suffix:semicolon
 multiline_comment|/* Free the old packet, we no longer need it */
-id|kfree_skb
+id|dev_kfree_skb
 c_func
 (paren
 id|skb

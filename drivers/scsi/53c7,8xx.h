@@ -14,7 +14,7 @@ macro_line|#endif
 macro_line|#endif
 multiline_comment|/* &n; * Prevent name space pollution in hosts.c, and only provide the &n; * define we need to get the NCR53c7x0 driver into the host template&n; * array.&n; */
 macro_line|#if defined(HOSTS_C) || defined(MODULE)
-macro_line|#include &lt;linux/scsicam.h&gt;
+macro_line|#include &lt;scsi/scsicam.h&gt;
 r_extern
 r_int
 id|NCR53c7xx_abort

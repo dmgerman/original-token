@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * linux/drivers/block/ide-tape.h&t;Version 1.3 - ALPHA&t;Feb   9, 1996&n; *&n; * Copyright (C) 1995, 1996 Gadi Oxman &lt;tgud@tochnapc2.technion.ac.il&gt;&n; */
+multiline_comment|/*&n; * linux/drivers/block/ide-tape.h&t;Version 1.5 - ALPHA&t;Apr  12, 1996&n; *&n; * Copyright (C) 1995, 1996 Gadi Oxman &lt;gadio@netvision.net.il&gt;&n; */
 multiline_comment|/*&n; * Include file for the IDE ATAPI streaming tape driver.&n; *&n; * This file contains various ide-tape related structures and function&n; * prototypes which are already used in ide.h.&n; *&n; * The various compile time options are described below.&n; */
 macro_line|#ifndef IDETAPE_H
 DECL|macro|IDETAPE_H

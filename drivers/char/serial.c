@@ -7035,7 +7035,7 @@ r_return
 id|retval
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * get_lsr_info - get line status register info&n; *&n; * Purpose: Let user call ioctl() to get info when the UART physically&n; * &t;    is emptied.  On bus types like RS485, the transmitter must&n; * &t;    release the bus after transmitting. This must be done when&n; * &t;    the transmit shift register is empty, not be done when the&n; * &t;    transmit holding register is empty.  This functionality&n; * &t;    allows RS485 driver to be written in user space. &n; */
+multiline_comment|/*&n; * get_lsr_info - get line status register info&n; *&n; * Purpose: Let user call ioctl() to get info when the UART physically&n; * &t;    is emptied.  On bus types like RS485, the transmitter must&n; * &t;    release the bus after transmitting. This must be done when&n; * &t;    the transmit shift register is empty, not be done when the&n; * &t;    transmit holding register is empty.  This functionality&n; * &t;    allows an RS485 driver to be written in user space. &n; */
 DECL|function|get_lsr_info
 r_static
 r_int

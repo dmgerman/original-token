@@ -3,7 +3,7 @@ multiline_comment|/*&n; * $Log: AM53C974.h,v $&n; */
 macro_line|#ifndef AM53C974_H
 DECL|macro|AM53C974_H
 mdefine_line|#define AM53C974_H
-macro_line|#include &lt;linux/scsicam.h&gt;
+macro_line|#include &lt;scsi/scsicam.h&gt;
 multiline_comment|/***************************************************************************************&n;* Default setting of the controller&squot;s SCSI id. Edit and uncomment this only if your    *&n;* BIOS does not correctly initialize the controller&squot;s SCSI id.                         *&n;* If you don&squot;t get a warning during boot, it is correctly initialized.                 *&n;****************************************************************************************/
 multiline_comment|/* #define AM53C974_SCSI_ID 7 */
 multiline_comment|/***************************************************************************************&n;* Default settings for sync. negotiation enable, transfer rate and sync. offset.       *&n;* These settings can be replaced by LILO overrides (append) with the following syntax:          *&n;* AM53C974=host-scsi-id, target-scsi-id, max-rate, max-offset                          *&n;* Sync. negotiation is disabled by default and will be enabled for those targets which *&n;* are specified in the LILO override                                                   *&n;****************************************************************************************/

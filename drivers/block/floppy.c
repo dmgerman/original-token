@@ -7354,14 +7354,6 @@ l_string|&quot;reset interrupt:&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef __sparc__
-id|fdc_specify
-c_func
-(paren
-)paren
-suffix:semicolon
-multiline_comment|/* P3: It gives us &quot;sector not found&quot; without this. */
-macro_line|#endif
 id|result
 c_func
 (paren
@@ -18186,6 +18178,13 @@ id|FDCS-&gt;dor
 op_assign
 l_int|0x4
 suffix:semicolon
+macro_line|#ifdef __sparc__
+multiline_comment|/*sparcs don&squot;t have a DOR reset which we can fall back on to*/
+id|FDCS-&gt;version
+op_assign
+id|FDC_82072A
+suffix:semicolon
+macro_line|#endif
 )brace
 id|fdc_state
 (braket
@@ -18356,6 +18355,10 @@ id|FDCS-&gt;address
 op_assign
 op_minus
 l_int|1
+suffix:semicolon
+id|FDCS-&gt;version
+op_assign
+id|FDC_NONE
 suffix:semicolon
 r_continue
 suffix:semicolon
@@ -19380,7 +19383,7 @@ suffix:semicolon
 id|lock_fdc
 c_func
 (paren
-l_int|0
+id|MAXTIMEOUT
 comma
 l_int|0
 )paren

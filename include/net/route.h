@@ -1,11 +1,11 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET  is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Definitions for the IP router.&n; *&n; * Version:&t;@(#)route.h&t;1.0.4&t;05/27/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; * Fixes:&n; *&t;&t;Alan Cox&t;:&t;Reformatted. Added ip_rt_local()&n; *&t;&t;Alan Cox&t;:&t;Support for TCP parameters.&n; *&t;&t;Alexey Kuznetsov:&t;Major changes for new routing code.&n; *&n; *&t;FIXME:&n; *&t;&t;Modules stuff is broken at the moment.&n; *&t;&t;Make atomic ops more generic and hide them in asm/...&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET  is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Definitions for the IP router.&n; *&n; * Version:&t;@(#)route.h&t;1.0.4&t;05/27/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; * Fixes:&n; *&t;&t;Alan Cox&t;:&t;Reformatted. Added ip_rt_local()&n; *&t;&t;Alan Cox&t;:&t;Support for TCP parameters.&n; *&t;&t;Alexey Kuznetsov:&t;Major changes for new routing code.&n; *&n; *&t;FIXME:&n; *&t;&t;Make atomic ops more generic and hide them in asm/...&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
 macro_line|#ifndef _ROUTE_H
 DECL|macro|_ROUTE_H
 mdefine_line|#define _ROUTE_H
 macro_line|#include &lt;linux/config.h&gt;
 multiline_comment|/*&n; * 0 - no debugging messages&n; * 1 - rare events and bugs situations (default)&n; * 2 - trace mode.&n; */
 DECL|macro|RT_CACHE_DEBUG
-mdefine_line|#define RT_CACHE_DEBUG&t;&t;1
+mdefine_line|#define RT_CACHE_DEBUG&t;&t;0
 DECL|macro|RT_HASH_DIVISOR
 mdefine_line|#define RT_HASH_DIVISOR&t;    &t;256
 DECL|macro|RT_CACHE_SIZE_MAX

@@ -714,6 +714,13 @@ suffix:colon
 l_int|1
 suffix:semicolon
 multiline_comment|/* flag: okay to unmask other irqs */
+DECL|member|nobios
+r_int
+id|nobios
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* flag: do not probe bios for drive */
 DECL|member|autotune
 r_int
 id|autotune
@@ -1130,6 +1137,13 @@ suffix:colon
 l_int|1
 suffix:semicolon
 multiline_comment|/* 1 = already alloc&squot;d our irq */
+DECL|member|sharing_irq
+r_int
+id|sharing_irq
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* 1 = sharing irq with another hwif */
 macro_line|#ifdef CONFIG_BLK_DEV_PROMISE
 DECL|member|is_promise2
 r_int

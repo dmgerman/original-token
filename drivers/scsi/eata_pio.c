@@ -1,4 +1,4 @@
-multiline_comment|/************************************************************&n; *                                                          *&n; *               Linux EATA SCSI PIO driver                 *&n; *                                                          *&n; *  based on the CAM document CAM/89-004 rev. 2.0c,         *&n; *  DPT&squot;s driver kit, some internal documents and source,   *&n; *  and several other Linux scsi drivers and kernel docs.   *&n; *                                                          *&n; *  The driver currently:                                   *&n; *      -supports all EATA-PIO boards                       *&n; *      -only supports DASD devices                         *&n; *                                                          *&n; *  (c)1993,94,95 Michael Neuffer, Alfred Arnold            *&n; *                neuffer@goofy.zdv.uni-mainz.de            *&n; *                a.arnold@kfa-juelich.de                   * &n; *                                                          *&n; *  This program is free software; you can redistribute it  *&n; *  and/or modify it under the terms of the GNU General     *&n; *  Public License as published by the Free Software        *&n; *  Foundation; either version 2 of the License, or         *&n; *  (at your option) any later version.                     *&n; *                                                          *&n; *  This program is distributed in the hope that it will be *&n; *  useful, but WITHOUT ANY WARRANTY; without even the      *&n; *  implied warranty of MERCHANTABILITY or FITNESS FOR A    *&n; *  PARTICULAR PURPOSE.  See the GNU General Public License *&n; *  for more details.                                       *&n; *                                                          *&n; *  You should have received a copy of the GNU General      *&n; *  Public License along with this kernel; if not, write to *&n; *  the Free Software Foundation, Inc., 675 Mass Ave,       *&n; *  Cambridge, MA 02139, USA.                               *&n; *                                                          *&n; ************************************************************&n; *  last change: 95/08/04                 OS: Linux 1.3.15  *&n; ************************************************************/
+multiline_comment|/************************************************************&n; *                                                          *&n; *               Linux EATA SCSI PIO driver                 *&n; *                                                          *&n; *  based on the CAM document CAM/89-004 rev. 2.0c,         *&n; *  DPT&squot;s driver kit, some internal documents and source,   *&n; *  and several other Linux scsi drivers and kernel docs.   *&n; *                                                          *&n; *  The driver currently:                                   *&n; *      -supports all EATA-PIO boards                       *&n; *      -only supports DASD devices                         *&n; *                                                          *&n; *  (c)1993-96 Michael Neuffer, Alfred Arnold               *&n; *             neuffer@goofy.zdv.uni-mainz.de               *&n; *             a.arnold@kfa-juelich.de                      * &n; *                                                          *&n; *  This program is free software; you can redistribute it  *&n; *  and/or modify it under the terms of the GNU General     *&n; *  Public License as published by the Free Software        *&n; *  Foundation; either version 2 of the License, or         *&n; *  (at your option) any later version.                     *&n; *                                                          *&n; *  This program is distributed in the hope that it will be *&n; *  useful, but WITHOUT ANY WARRANTY; without even the      *&n; *  implied warranty of MERCHANTABILITY or FITNESS FOR A    *&n; *  PARTICULAR PURPOSE.  See the GNU General Public License *&n; *  for more details.                                       *&n; *                                                          *&n; *  You should have received a copy of the GNU General      *&n; *  Public License along with this kernel; if not, write to *&n; *  the Free Software Foundation, Inc., 675 Mass Ave,       *&n; *  Cambridge, MA 02139, USA.                               *&n; *                                                          *&n; ************************************************************&n; *  last change: 95/03/28                 OS: Linux 1.3.80  *&n; ************************************************************/
 multiline_comment|/* Look in eata_pio.h for configuration information */
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -1138,7 +1138,9 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;eata_pio: int_handler, freeing locked queueslot&bslash;n&quot;
+id|KERN_NOTICE
+l_string|&quot;eata_pio: int_handler, freeing locked &quot;
+l_string|&quot;queueslot&bslash;n&quot;
 )paren
 suffix:semicolon
 id|DBG
@@ -1175,6 +1177,7 @@ l_int|0x50
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;stat: %#.2x, result: %#.8x&bslash;n&quot;
 comma
 id|stat
@@ -1399,6 +1402,7 @@ comma
 id|printk
 c_func
 (paren
+id|KERN_EMERG
 l_string|&quot;can_queue %d, x %d, y %d&bslash;n&quot;
 comma
 id|sh-&gt;can_queue
@@ -1413,7 +1417,9 @@ macro_line|#if DEBUG_EATA
 id|panic
 c_func
 (paren
-l_string|&quot;eata_pio: run out of queue slots cmdno:%ld intrno: %ld&bslash;n&quot;
+id|KERN_EMERG
+l_string|&quot;eata_pio: run out of queue slots cmdno:%ld &quot;
+l_string|&quot;intrno: %ld&bslash;n&quot;
 comma
 id|queue_counter
 comma
@@ -1424,6 +1430,7 @@ macro_line|#else
 id|panic
 c_func
 (paren
+id|KERN_EMERG
 l_string|&quot;eata_pio: run out of queue slots....&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -1477,7 +1484,9 @@ comma
 id|printk
 c_func
 (paren
-l_string|&quot;eata_pio_queue pid %ld, target: %x, lun: %x, y %d&bslash;n&quot;
+id|KERN_DEBUG
+l_string|&quot;eata_pio_queue pid %ld, target: %x, lun:&quot;
+l_string|&quot; %x, y %d&bslash;n&quot;
 comma
 id|cmd-&gt;pid
 comma
@@ -1797,8 +1806,9 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;eata_pio_queue target %d, pid %ld, HBA busy, returning &quot;
-l_string|&quot;DID_BUS_BUSY, done.&bslash;n&quot;
+id|KERN_NOTICE
+l_string|&quot;eata_pio_queue target %d, pid %ld, HBA busy, &quot;
+l_string|&quot;returning DID_BUS_BUSY, done.&bslash;n&quot;
 comma
 id|cmd-&gt;target
 comma
@@ -1898,8 +1908,9 @@ comma
 id|printk
 c_func
 (paren
-l_string|&quot;Queued base %#.4lx pid: %ld target: %x lun: %x &quot;
-l_string|&quot;slot %d irq %d&bslash;n&quot;
+id|KERN_DEBUG
+l_string|&quot;Queued base %#.4lx pid: %ld target: %x &quot;
+l_string|&quot;lun: %x slot %d irq %d&bslash;n&quot;
 comma
 (paren
 r_int
@@ -1981,8 +1992,9 @@ comma
 id|printk
 c_func
 (paren
-l_string|&quot;eata_pio_abort called pid: %ld target: %x lun: %x&quot;
-l_string|&quot; reason %x&bslash;n&quot;
+id|KERN_WARNING
+l_string|&quot;eata_pio_abort called pid: %ld &quot;
+l_string|&quot;target: %x lun: %x reason %x&bslash;n&quot;
 comma
 id|cmd-&gt;pid
 comma
@@ -2038,6 +2050,7 @@ l_int|0
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;eata_pio: abort, timeout error.&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -2089,6 +2102,7 @@ comma
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;Returning: SCSI_ABORT_NOT_RUNNING&bslash;n&quot;
 )paren
 )paren
@@ -2127,6 +2141,7 @@ comma
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;Returning: SCSI_ABORT_BUSY&bslash;n&quot;
 )paren
 )paren
@@ -2167,6 +2182,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;eata_pio: abort, command reset error.&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -2218,7 +2234,9 @@ comma
 id|printk
 c_func
 (paren
-l_string|&quot;eata_pio: abort, queue slot locked.&bslash;n&quot;
+id|KERN_WARNING
+l_string|&quot;eata_pio: abort, queue slot &quot;
+l_string|&quot;locked.&bslash;n&quot;
 )paren
 )paren
 suffix:semicolon
@@ -2263,6 +2281,9 @@ c_func
 id|Scsi_Cmnd
 op_star
 id|cmd
+comma
+r_int
+id|dummy
 )paren
 (brace
 id|uint
@@ -2313,8 +2334,9 @@ comma
 id|printk
 c_func
 (paren
-l_string|&quot;eata_pio_reset called pid:%ld target: %x lun: %x &quot;
-l_string|&quot;reason %x&bslash;n&quot;
+id|KERN_WARNING
+l_string|&quot;eata_pio_reset called pid:%ld target:&quot;
+l_string|&quot; %x lun: %x reason %x&bslash;n&quot;
 comma
 id|cmd-&gt;pid
 comma
@@ -2343,6 +2365,7 @@ id|RESET
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;eata_pio_reset: exit, already in reset.&bslash;n&quot;
 )paren
 suffix:semicolon
@@ -2489,6 +2512,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;eata_pio_reset: slot %d in reset, pid %ld.&bslash;n&quot;
 comma
 id|x
@@ -2562,6 +2586,7 @@ comma
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;eata_pio_reset: board reset done.&bslash;n&quot;
 )paren
 )paren
@@ -2609,7 +2634,9 @@ comma
 id|printk
 c_func
 (paren
-l_string|&quot;eata_pio_reset: interrupts disabled, loops %d.&bslash;n&quot;
+id|KERN_WARNING
+l_string|&quot;eata_pio_reset: interrupts disabled, &quot;
+l_string|&quot;loops %d.&bslash;n&quot;
 comma
 id|limit
 )paren
@@ -2690,7 +2717,8 @@ multiline_comment|/* This mailbox is terminated */
 id|printk
 c_func
 (paren
-l_string|&quot;eata_pio_reset: reset ccb %d.&bslash;n&quot;
+id|KERN_WARNING
+l_string|&quot;eata_pio_reset: resetted ccb %d.&bslash;n&quot;
 comma
 id|x
 )paren
@@ -2761,6 +2789,7 @@ comma
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;eata_pio_reset: exit, success.&bslash;n&quot;
 )paren
 )paren
@@ -2795,6 +2824,7 @@ comma
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;eata_pio_reset: exit, wakeup.&bslash;n&quot;
 )paren
 )paren
@@ -3233,6 +3263,7 @@ comma
 id|printk
 c_func
 (paren
+id|KERN_DEBUG
 l_string|&quot;Issuing PIO READ CONFIG to HBA at %#x&bslash;n&quot;
 comma
 id|base
@@ -3373,8 +3404,9 @@ comma
 id|printk
 c_func
 (paren
-l_string|&quot;EATA Controller found at %#4x &quot;
-l_string|&quot;EATA Level: %x&bslash;n&quot;
+id|KERN_NOTICE
+l_string|&quot;EATA Controller found &quot;
+l_string|&quot;at %#4x EATA Level: %x&bslash;n&quot;
 comma
 id|base
 comma
@@ -4905,7 +4937,9 @@ comma
 id|printk
 c_func
 (paren
-l_string|&quot;EISA EATA id tags found: %x %x %x &bslash;n&quot;
+id|KERN_NOTICE
+l_string|&quot;EISA EATA id tags found: &quot;
+l_string|&quot;%x %x %x &bslash;n&quot;
 comma
 (paren
 r_int
@@ -4974,7 +5008,9 @@ r_else
 id|printk
 c_func
 (paren
-l_string|&quot;eata_dma: No valid IRQ. HBA removed from list&bslash;n&quot;
+id|KERN_NOTICE
+l_string|&quot;eata_dma: No valid IRQ. HBA &quot;
+l_string|&quot;removed from list&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace
@@ -5013,7 +5049,9 @@ macro_line|#ifndef CONFIG_PCI
 id|printk
 c_func
 (paren
-l_string|&quot;eata_pio: kernel PCI support not enabled. Skipping scan for PCI HBAs.&bslash;n&quot;
+id|KERN_ERR
+l_string|&quot;eata_pio: kernel PCI support not enabled. Skipping scan &quot;
+l_string|&quot;for PCI HBAs.&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#else

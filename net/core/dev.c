@@ -1312,7 +1312,7 @@ suffix:semicolon
 )brace
 )brace
 multiline_comment|/**********************************************************************************&n;&n;&t;&t;&t;Receive Queue Processor&n;&t;&t;&t;&n;***********************************************************************************/
-multiline_comment|/*&n; *&t;When we are called the queue is ready to grab, the interrupts are&n; *&t;on and hardware can interrupt and queue to the receive queue a we&n; *&t;run with no problems.&n; *&t;This is run as a bottom half after an interrupt handler that does&n; *&t;mark_bh(NET_BH);&n; */
+multiline_comment|/*&n; *&t;When we are called the queue is ready to grab, the interrupts are&n; *&t;on and hardware can interrupt and queue to the receive queue as we&n; *&t;run with no problems.&n; *&t;This is run as a bottom half after an interrupt handler that does&n; *&t;mark_bh(NET_BH);&n; */
 DECL|function|net_bh
 r_void
 id|net_bh

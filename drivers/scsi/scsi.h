@@ -3,7 +3,7 @@ macro_line|#ifndef _SCSI_H
 DECL|macro|_SCSI_H
 mdefine_line|#define _SCSI_H
 multiline_comment|/*&n; * Some of the public constants are being moved to this file.&n; * We include it here so that what came from where is transparent.&n; */
-macro_line|#include &lt;linux/scsi.h&gt;
+macro_line|#include &lt;scsi/scsi.h&gt;
 multiline_comment|/*&n; * Some defs, in case these are not defined elsewhere.&n; */
 macro_line|#ifndef TRUE
 DECL|macro|TRUE

@@ -9,7 +9,7 @@ macro_line|#include &lt;linux/blk.h&gt;
 macro_line|#include &quot;scsi.h&quot;
 macro_line|#include &quot;hosts.h&quot;
 macro_line|#include &quot;sr.h&quot;
-macro_line|#include &quot;scsi_ioctl.h&quot;
+macro_line|#include &lt;scsi/scsi_ioctl.h&gt;
 macro_line|#include &lt;linux/cdrom.h&gt;
 r_extern
 r_void
@@ -3328,6 +3328,7 @@ suffix:semicolon
 r_case
 id|BLKRASET
 suffix:colon
+(brace
 r_if
 c_cond
 (paren
@@ -3392,6 +3393,35 @@ comma
 id|arg
 )paren
 suffix:semicolon
+)brace
+r_case
+id|CDROMRESET
+suffix:colon
+(brace
+id|invalidate_buffers
+c_func
+(paren
+id|MKDEV
+c_func
+(paren
+id|MAJOR
+c_func
+(paren
+id|inode-&gt;i_rdev
+)paren
+comma
+id|MINOR
+c_func
+(paren
+id|inode-&gt;i_rdev
+)paren
+)paren
+)paren
+suffix:semicolon
+r_return
+l_int|0
+suffix:semicolon
+)brace
 r_default
 suffix:colon
 r_return

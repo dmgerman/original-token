@@ -551,7 +551,7 @@ comma
 l_int|0
 )brace
 suffix:semicolon
-multiline_comment|/* Reading and writing Zilog8530 registers.  The delays are to make this&n; * driver work on the Sun4 which needs a settling delay after each chip&n; * register access, other machines handle this in hardware via auxiliary&n; * flip-flops which implement the settle time we do in software.&n; */
+multiline_comment|/* &n; * Reading and writing Zilog8530 registers.  The delays are to make this&n; * driver work on the Sun4 which needs a settling delay after each chip&n; * register access, other machines handle this in hardware via auxiliary&n; * flip-flops which implement the settle time we do in software.&n; */
 DECL|function|read_zsreg
 r_static
 r_inline
@@ -2671,7 +2671,7 @@ id|tty
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * This subroutine is called when the RS_TIMER goes off.  It is used&n; * by the serial driver to handle ports that do not have an interrupt&n; * (irq=0).  This doesn&squot;t work very well for 16450&squot;s, but gives barely&n; * passable results for a 16550A.  (Although at the expense of much&n; * CPU overhead).&n; */
+multiline_comment|/*&n; * This subroutine is called when the RS_TIMER goes off.  It is used&n; * by the serial driver to handle ports that do not have an interrupt&n; * (irq=0).  This doesn&squot;t work at all for 16450&squot;s, as a sun has a Z8530.&n; */
 DECL|function|rs_timer
 r_static
 r_void
@@ -4148,7 +4148,7 @@ l_int|1
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Last character is being transmitted now (hopefuly). */
+multiline_comment|/* Last character is being transmitted now (hopefully). */
 id|zs_conschan-&gt;control
 op_assign
 id|RES_Tx_P
@@ -5492,7 +5492,7 @@ r_return
 id|retval
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * get_lsr_info - get line status register info&n; *&n; * Purpose: Let user call ioctl() to get info when the UART physically&n; * &t;    is emptied.  On bus types like RS485, the transmitter must&n; * &t;    release the bus after transmitting. This must be done when&n; * &t;    the transmit shift register is empty, not be done when the&n; * &t;    transmit holding register is empty.  This functionality&n; * &t;    allows RS485 driver to be written in user space. &n; */
+multiline_comment|/*&n; * get_lsr_info - get line status register info&n; *&n; * Purpose: Let user call ioctl() to get info when the UART physically&n; * &t;    is emptied.  On bus types like RS485, the transmitter must&n; * &t;    release the bus after transmitting. This must be done when&n; * &t;    the transmit shift register is empty, not be done when the&n; * &t;    transmit holding register is empty.  This functionality&n; * &t;    allows an RS485 driver to be written in user space. &n; */
 DECL|function|get_lsr_info
 r_static
 r_int

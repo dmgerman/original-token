@@ -231,6 +231,10 @@ l_int|2
 )paren
 )paren
 suffix:semicolon
+DECL|macro|pr_debug
+mdefine_line|#define pr_debug(show,fmt,arg...) &bslash;&n;&t;do { if (show) printk(KERN_DEBUG fmt,##arg); } while (0)
+DECL|macro|pr_info
+mdefine_line|#define pr_info(fmt,arg...) &bslash;&n;&t;printk(KERN_INFO fmt,##arg)
 multiline_comment|/*&n; * &quot;suser()&quot; checks against the effective user id, while &quot;fsuser()&quot;&n; * is used for file permission checking and checks against the fsuid..&n; */
 DECL|macro|fsuser
 mdefine_line|#define fsuser() (current-&gt;fsuid == 0)

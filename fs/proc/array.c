@@ -4459,6 +4459,14 @@ r_char
 op_star
 )paren
 suffix:semicolon
+r_extern
+r_int
+id|get_locks_status
+(paren
+r_char
+op_star
+)paren
+suffix:semicolon
 macro_line|#ifdef __SMP_PROF__
 r_extern
 r_int
@@ -4719,6 +4727,16 @@ id|page
 )paren
 suffix:semicolon
 macro_line|#endif
+r_case
+id|PROC_LOCKS
+suffix:colon
+r_return
+id|get_locks_status
+c_func
+(paren
+id|page
+)paren
+suffix:semicolon
 )brace
 r_return
 op_minus

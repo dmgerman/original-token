@@ -36,8 +36,9 @@ DECL|macro|EXT2_BOOT_LOADER_INO
 mdefine_line|#define EXT2_BOOT_LOADER_INO&t; 5&t;/* Boot loader inode */
 DECL|macro|EXT2_UNDEL_DIR_INO
 mdefine_line|#define EXT2_UNDEL_DIR_INO&t; 6&t;/* Undelete directory inode */
-DECL|macro|EXT2_FIRST_INO
-mdefine_line|#define EXT2_FIRST_INO&t;&t;11&t;/* First non reserved inode */
+multiline_comment|/* First non-reserved inode for old ext2 filesystems */
+DECL|macro|EXT2_GOOD_OLD_FIRST_INO
+mdefine_line|#define EXT2_GOOD_OLD_FIRST_INO&t;11
 multiline_comment|/*&n; * The second extended file system magic number&n; */
 DECL|macro|EXT2_SUPER_MAGIC
 mdefine_line|#define EXT2_SUPER_MAGIC&t;0xEF53
@@ -69,13 +70,18 @@ macro_line|#else
 DECL|macro|EXT2_BLOCK_SIZE_BITS
 macro_line|# define EXT2_BLOCK_SIZE_BITS(s)&t;((s)-&gt;s_log_block_size + 10)
 macro_line|#endif
-DECL|macro|EXT2_INODES_PER_BLOCK
-mdefine_line|#define&t;EXT2_INODES_PER_BLOCK(s)&t;(EXT2_BLOCK_SIZE(s) / sizeof (struct ext2_inode))
 macro_line|#ifdef __KERNEL__
 DECL|macro|EXT2_ADDR_PER_BLOCK_BITS
 mdefine_line|#define&t;EXT2_ADDR_PER_BLOCK_BITS(s)&t;((s)-&gt;u.ext2_sb.s_addr_per_block_bits)
-DECL|macro|EXT2_INODES_PER_BLOCK_BITS
-mdefine_line|#define&t;EXT2_INODES_PER_BLOCK_BITS(s)&t;((s)-&gt;u.ext2_sb.s_inodes_per_block_bits)
+DECL|macro|EXT2_INODE_SIZE
+mdefine_line|#define EXT2_INODE_SIZE(s)&t;&t;((s)-&gt;u.ext2_sb.s_inode_size)
+DECL|macro|EXT2_FIRST_INO
+mdefine_line|#define EXT2_FIRST_INO(s)&t;&t;((s)-&gt;u.ext2_sb.s_first_ino)
+macro_line|#else
+DECL|macro|EXT2_INODE_SIZE
+mdefine_line|#define EXT2_INODE_SIZE(s)&t;(((s)-&gt;s_rev_level == EXT2_GOOD_OLD_REV) ? &bslash;&n;&t;&t;&t;&t; EXT2_GOOD_OLD_INODE_SIZE : &bslash;&n;&t;&t;&t;&t; (s)-&gt;s_inode_size)
+DECL|macro|EXT2_FIRST_INO
+mdefine_line|#define EXT2_FIRST_INO(s)&t;(((s)-&gt;s_rev_level == EXT2_GOOD_OLD_REV) ? &bslash;&n;&t;&t;&t;&t; EXT2_GOOD_OLD_FIRST_INO : &bslash;&n;&t;&t;&t;&t; (s)-&gt;s_first_ino)
 macro_line|#endif
 multiline_comment|/*&n; * Macro-instructions used to manage fragments&n; */
 DECL|macro|EXT2_MIN_FRAG_SIZE
@@ -247,6 +253,8 @@ DECL|macro|EXT2_APPEND_FL
 mdefine_line|#define EXT2_APPEND_FL&t;&t;&t;0x00000020 /* writes to file may only append */
 DECL|macro|EXT2_NODUMP_FL
 mdefine_line|#define EXT2_NODUMP_FL&t;&t;&t;0x00000040 /* do not dump file */
+DECL|macro|EXT2_RESERVED_FL
+mdefine_line|#define EXT2_RESERVED_FL&t;&t;0x80000000 /* reserved for ext2 lib */
 multiline_comment|/*&n; * ioctl commands&n; */
 DECL|macro|EXT2_IOC_GETFLAGS
 mdefine_line|#define&t;EXT2_IOC_GETFLAGS&t;&t;_IOR(&squot;f&squot;, 1, long)
@@ -649,10 +657,11 @@ id|__u16
 id|s_errors
 suffix:semicolon
 multiline_comment|/* Behaviour when detecting errors */
-DECL|member|s_pad
+DECL|member|s_minor_rev_level
 id|__u16
-id|s_pad
+id|s_minor_rev_level
 suffix:semicolon
+multiline_comment|/* minor revision level */
 DECL|member|s_lastcheck
 id|__u32
 id|s_lastcheck
@@ -683,11 +692,37 @@ id|__u16
 id|s_def_resgid
 suffix:semicolon
 multiline_comment|/* Default gid for reserved blocks */
+multiline_comment|/*&n;&t; * These fields are for EXT2_DYNAMIC_REV superblocks only.&n;&t; *&n;&t; * Note: the difference between the compatible feature set and&n;&t; * the incompatible feature set is that if there is a bit set&n;&t; * in the incompatible feature set that the kernel doesn&squot;t&n;&t; * know about, it should refuse to mount the filesystem.&n;&t; * &n;&t; * e2fsck&squot;s requirements are more strict; if it doesn&squot;t know&n;&t; * about a feature in either the compatible or incompatible&n;&t; * feature set, it must abort and not try to meddle with&n;&t; * things it doesn&squot;t understand...&n;&t; */
+DECL|member|s_first_ino
+id|__u32
+id|s_first_ino
+suffix:semicolon
+multiline_comment|/* First non-reserved inode */
+DECL|member|s_inode_size
+id|__u16
+id|s_inode_size
+suffix:semicolon
+multiline_comment|/* size of inode structure */
+DECL|member|s_block_group_nr
+id|__u16
+id|s_block_group_nr
+suffix:semicolon
+multiline_comment|/* block group # of this superblock */
+DECL|member|s_feature_compat
+id|__u32
+id|s_feature_compat
+suffix:semicolon
+multiline_comment|/* compatible feature set */
+DECL|member|s_feature_incompat
+id|__u32
+id|s_feature_incompat
+suffix:semicolon
+multiline_comment|/* incompatible feature set */
 DECL|member|s_reserved
 id|__u32
 id|s_reserved
 (braket
-l_int|235
+l_int|231
 )braket
 suffix:semicolon
 multiline_comment|/* Padding to the end of the block */
@@ -707,8 +742,14 @@ mdefine_line|#define EXT2_OS_LITES&t;&t;4
 multiline_comment|/*&n; * Revision levels&n; */
 DECL|macro|EXT2_GOOD_OLD_REV
 mdefine_line|#define EXT2_GOOD_OLD_REV&t;0&t;/* The good old (original) format */
+DECL|macro|EXT2_DYNAMIC_REV
+mdefine_line|#define EXT2_DYNAMIC_REV&t;1 &t;/* V2 format w/ dynamic inode sizes */
 DECL|macro|EXT2_CURRENT_REV
 mdefine_line|#define EXT2_CURRENT_REV&t;EXT2_GOOD_OLD_REV
+DECL|macro|EXT2_MAX_SUPP_REV
+mdefine_line|#define EXT2_MAX_SUPP_REV&t;EXT2_DYNAMIC_REV
+DECL|macro|EXT2_GOOD_OLD_INODE_SIZE
+mdefine_line|#define EXT2_GOOD_OLD_INODE_SIZE 128
 multiline_comment|/*&n; * Default values for user and/or group using reserved blocks&n; */
 DECL|macro|EXT2_DEF_RESUID
 mdefine_line|#define&t;EXT2_DEF_RESUID&t;&t;0
@@ -753,6 +794,11 @@ DECL|macro|EXT2_DIR_ROUND
 mdefine_line|#define EXT2_DIR_ROUND &t;&t;&t;(EXT2_DIR_PAD - 1)
 DECL|macro|EXT2_DIR_REC_LEN
 mdefine_line|#define EXT2_DIR_REC_LEN(name_len)&t;(((name_len) + 8 + EXT2_DIR_ROUND) &amp; &bslash;&n;&t;&t;&t;&t;&t; ~EXT2_DIR_ROUND)
+multiline_comment|/*&n; * Feature set definitions --- none are defined as of now&n; */
+DECL|macro|EXT2_FEATURE_COMPAT_SUPP
+mdefine_line|#define EXT2_FEATURE_COMPAT_SUPP&t;0
+DECL|macro|EXT2_FEATURE_INCOMPAT_SUPP
+mdefine_line|#define EXT2_FEATURE_INCOMPAT_SUPP&t;0
 macro_line|#ifdef __KERNEL__
 multiline_comment|/*&n; * Function prototypes&n; */
 multiline_comment|/*&n; * Ok, these declarations are also in &lt;linux/kernel.h&gt; but none of the&n; * ext2 source programs needs to include it so they are duplicated here.&n; */

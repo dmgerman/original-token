@@ -935,8 +935,7 @@ suffix:colon
 r_if
 c_cond
 (paren
-op_logical_neg
-id|PIPE_FULL
+id|PIPE_EMPTY
 c_func
 (paren
 op_star

@@ -70,6 +70,13 @@ DECL|member|i_prealloc_count
 id|__u32
 id|i_prealloc_count
 suffix:semicolon
+DECL|member|i_new_inode
+r_int
+id|i_new_inode
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* Is a freshly allocated inode */
 )brace
 suffix:semicolon
 macro_line|#endif&t;/* _LINUX_EXT2_FS_I */

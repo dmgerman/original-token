@@ -2205,7 +2205,7 @@ id|ax25_route
 op_star
 id|ax25_rt
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;Bind to the physical interface we heard them on, or the default&n;&t; *&t;route if non is found;&n;&t; */
+multiline_comment|/*&n;&t; *&t;Bind to the physical interface we heard them on, or the default&n;&t; *&t;route if none is found;&n;&t; */
 r_for
 c_loop
 (paren

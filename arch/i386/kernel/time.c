@@ -24,6 +24,7 @@ id|irqaction
 op_star
 )paren
 suffix:semicolon
+macro_line|#ifndef&t;CONFIG_APM&t;/* cycle counter may be unreliable */
 multiline_comment|/* Cycle counter value at the previous timer interrupt.. */
 DECL|variable|last_timer_cc
 r_static
@@ -258,6 +259,7 @@ r_return
 id|quotient
 suffix:semicolon
 )brace
+macro_line|#endif
 multiline_comment|/* This function must be called with interrupts disabled &n; * It was inspired by Steve McCanne&squot;s microtime-i386 for BSD.  -- jrs&n; * &n; * However, the pc-audio speaker driver changes the divisor so that&n; * it gets interrupted rather more often - it loads 64 into the&n; * counter rather than 11932! This has an adverse impact on&n; * do_gettimeoffset() -- it stops working! What is also not&n; * good is that the interval that our timer function gets called&n; * is no longer 10.0002 ms, but 9.9767 ms. To get around this&n; * would require using a different timing source. Maybe someone&n; * could use the RTC - I know that this can interrupt at frequencies&n; * ranging from 8192Hz to 2Hz. If I had the energy, I&squot;d somehow fix&n; * it so that at startup, the timer code in sched.c would select&n; * using either the RTC or the 8253 timer. The decision would be&n; * based on whether there was any other device around that needed&n; * to trample on the 8253. I&squot;d set up the RTC to interrupt at 1024 Hz,&n; * and then do some jiggery to have a version of do_timer that &n; * advanced the clock by 1/1024 s. Every time that reached over 1/100&n; * of a second, then do all the old code. If the time was kept correct&n; * then do_gettimeoffset could just return 0 - there is no low order&n; * divider that can be accessed.&n; *&n; * Ideally, you would be able to use the RTC for the speaker driver,&n; * but it appears that the speaker driver really needs interrupt more&n; * often than every 120 us or so.&n; *&n; * Anyway, this needs more thought....&t;&t;pjsg (1993-08-28)&n; * &n; * If you are really that interested, you should be reading&n; * comp.protocols.time.ntp!&n; */
 DECL|macro|TICK_SIZE
 mdefine_line|#define TICK_SIZE tick
@@ -508,11 +510,11 @@ id|TIME_BAD
 suffix:semicolon
 id|time_maxerror
 op_assign
-l_int|0x70000000
+id|MAXPHASE
 suffix:semicolon
 id|time_esterror
 op_assign
-l_int|0x70000000
+id|MAXPHASE
 suffix:semicolon
 id|sti
 c_func
@@ -840,6 +842,7 @@ multiline_comment|/* do it again in 60 s */
 multiline_comment|/* As we return to user mode fire off the other CPU schedulers.. this is &n;&t;   basically because we don&squot;t yet share IRQ&squot;s around. This message is&n;&t;   rigged to be safe on the 386 - basically its a hack, so don&squot;t look&n;&t;   closely for now.. */
 multiline_comment|/*smp_message_pass(MSG_ALL_BUT_SELF, MSG_RESCHEDULE, 0L, 0); */
 )brace
+macro_line|#ifndef&t;CONFIG_APM&t;/* cycle counter may be unreliable */
 multiline_comment|/*&n; * This is the same as the above, except we _also_ save the current&n; * cycle counter value at the time of the timer interrupt, so that&n; * we later on can estimate the time of day more exactly.&n; */
 DECL|function|pentium_timer_interrupt
 r_static
@@ -910,6 +913,7 @@ id|regs
 )paren
 suffix:semicolon
 )brace
+macro_line|#endif
 multiline_comment|/* Converts Gregorian date to seconds since 1970-01-01 00:00:00.&n; * Assumes input in normal date format, i.e. 1980-12-31 23:59:59&n; * =&gt; year=1980, mon=12, day=31, hour=23, min=59, sec=59.&n; *&n; * [For the Julian calendar (which was used in Russia before 1917,&n; * Britain &amp; colonies before 1752, anywhere else before 1582,&n; * and is still in use by some communities) leave out the&n; * -year/100+year/400 terms, and add 10.]&n; *&n; * This algorithm was first published by Gauss (I think).&n; *&n; * WARNING: this function will overflow on 2106-02-07 06:28:16 on&n; * machines were long is 32-bit! (However, as time_t is signed, we&n; * will already get problems at other places on 2038-01-19 03:14:08)&n; */
 DECL|function|mktime
 r_static

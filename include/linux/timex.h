@@ -286,7 +286,7 @@ mdefine_line|#define TIME_DEL&t;2&t;/* delete leap second */
 DECL|macro|TIME_OOP
 mdefine_line|#define TIME_OOP&t;3&t;/* leap second in progress */
 DECL|macro|TIME_WAIT
-mdefine_line|#define TIME_WAIT&t;4&t;/* leap second has occured */
+mdefine_line|#define TIME_WAIT&t;4&t;/* leap second has occurred */
 DECL|macro|TIME_ERROR
 mdefine_line|#define TIME_ERROR&t;5&t;/* clock not synchronized */
 DECL|macro|TIME_BAD

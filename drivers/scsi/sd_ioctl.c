@@ -8,10 +8,10 @@ macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;linux/blk.h&gt;
 macro_line|#include &quot;scsi.h&quot;
-macro_line|#include &quot;scsi_ioctl.h&quot;
+macro_line|#include &lt;scsi/scsi_ioctl.h&gt;
 macro_line|#include &quot;hosts.h&quot;
 macro_line|#include &quot;sd.h&quot;
-macro_line|#include &lt;linux/scsicam.h&gt;     /* must follow &quot;hosts.h&quot; */
+macro_line|#include &lt;scsi/scsicam.h&gt;     /* must follow &quot;hosts.h&quot; */
 DECL|function|sd_ioctl
 r_int
 id|sd_ioctl

@@ -426,7 +426,7 @@ comma
 l_int|0
 )paren
 suffix:semicolon
-multiline_comment|/* requiered for SunOS emulation */
+multiline_comment|/* required for SunOS emulation */
 r_if
 c_cond
 (paren

@@ -98,6 +98,9 @@ id|PROC_MD
 comma
 DECL|enumerator|PROC_RTC
 id|PROC_RTC
+comma
+DECL|enumerator|PROC_LOCKS
+id|PROC_LOCKS
 )brace
 suffix:semicolon
 DECL|enum|pid_directory_inos

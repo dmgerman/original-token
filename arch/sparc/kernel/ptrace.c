@@ -1706,7 +1706,7 @@ suffix:semicolon
 r_case
 l_int|948
 suffix:colon
-multiline_comment|/* Isn&squot;t binary compatability _fun_??? */
+multiline_comment|/* Isn&squot;t binary compatibility _fun_??? */
 r_if
 c_cond
 (paren

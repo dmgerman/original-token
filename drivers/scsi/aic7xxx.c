@@ -4732,6 +4732,29 @@ id|base
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* Ensure we don&squot;t get a RSTI interrupt from this. */
+id|outb
+c_func
+(paren
+id|CLRSCSIRSTI
+op_or
+id|CLRSELTIMEO
+comma
+id|CLRSINT1
+op_plus
+id|base
+)paren
+suffix:semicolon
+id|outb
+c_func
+(paren
+id|CLRSCSIINT
+comma
+id|CLRINT
+op_plus
+id|base
+)paren
+suffix:semicolon
 id|outb
 c_func
 (paren
@@ -4774,6 +4797,29 @@ id|base
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/* Ensure we don&squot;t get a RSTI interrupt from this. */
+id|outb
+c_func
+(paren
+id|CLRSCSIRSTI
+op_or
+id|CLRSELTIMEO
+comma
+id|CLRSINT1
+op_plus
+id|base
+)paren
+suffix:semicolon
+id|outb
+c_func
+(paren
+id|CLRSCSIINT
+comma
+id|CLRINT
+op_plus
+id|base
+)paren
+suffix:semicolon
 id|RESTART_SEQUENCER
 c_func
 (paren
@@ -10607,8 +10653,9 @@ id|scsi_conf
 op_assign
 id|config-&gt;scsi_id
 op_or
-id|config-&gt;bus_speed
+id|DFTHRSH_100
 suffix:semicolon
+macro_line|#if 0
 r_if
 c_cond
 (paren
@@ -10622,6 +10669,7 @@ op_or_assign
 id|ENSPCHK
 suffix:semicolon
 )brace
+macro_line|#endif
 id|outb
 c_func
 (paren
@@ -10635,7 +10683,7 @@ suffix:semicolon
 id|outb
 c_func
 (paren
-id|config-&gt;bus_speed
+id|DFTHRSH_100
 comma
 id|DSPCISTATUS
 op_plus
@@ -10643,18 +10691,17 @@ id|base
 )paren
 suffix:semicolon
 multiline_comment|/*&n;       * In case we are a wide card...&n;       */
+multiline_comment|/*&n; * Try the following:&n; *&n; * 1) outb(config-&gt;scsi_id, SCSICONF + base + 1);&n; * 2) outb(scsiconf, SCSICONF + base + 1);&n; *&n; */
 id|outb
 c_func
 (paren
-id|scsi_conf
+id|config-&gt;scsi_id
 comma
-(paren
 id|SCSICONF
 op_plus
 id|base
 op_plus
 l_int|1
-)paren
 )paren
 suffix:semicolon
 id|printk
@@ -11414,10 +11461,6 @@ id|outb
 c_func
 (paren
 id|ENSELTIMO
-op_or
-id|ENSCSIRST
-op_or
-id|ENSCSIPERR
 comma
 id|SIMODE1
 op_plus
@@ -11525,10 +11568,6 @@ id|outb
 c_func
 (paren
 id|ENSELTIMO
-op_or
-id|ENSCSIRST
-op_or
-id|ENSCSIPERR
 comma
 id|SIMODE1
 op_plus
@@ -12067,6 +12106,27 @@ op_plus
 id|base
 )paren
 suffix:semicolon
+multiline_comment|/* Ensure we don&squot;t get a RSTI interrupt from this. */
+id|outb
+c_func
+(paren
+id|CLRSCSIRSTI
+comma
+id|CLRSINT1
+op_plus
+id|base
+)paren
+suffix:semicolon
+id|outb
+c_func
+(paren
+id|CLRSCSIINT
+comma
+id|CLRINT
+op_plus
+id|base
+)paren
+suffix:semicolon
 multiline_comment|/*&n;       * Select Channel A.&n;       */
 id|outb
 c_func
@@ -12108,6 +12168,27 @@ c_func
 l_int|0
 comma
 id|SCSISEQ
+op_plus
+id|base
+)paren
+suffix:semicolon
+multiline_comment|/* Ensure we don&squot;t get a RSTI interrupt from this. */
+id|outb
+c_func
+(paren
+id|CLRSCSIRSTI
+comma
+id|CLRSINT1
+op_plus
+id|base
+)paren
+suffix:semicolon
+id|outb
+c_func
+(paren
+id|CLRSCSIINT
+comma
+id|CLRINT
 op_plus
 id|base
 )paren

@@ -1,4 +1,5 @@
 multiline_comment|/*&n; *  linux/kernel/sys.c&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -17,6 +18,9 @@ macro_line|#include &lt;linux/swap.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/acct.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
+macro_line|#if defined(CONFIG_APM) &amp;&amp; defined(CONFIG_APM_POWER_OFF)
+macro_line|#include &lt;linux/apm_bios.h&gt;
+macro_line|#endif
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 multiline_comment|/*&n; * this indicates whether you can reboot with ctrl-alt-del: the default is yes&n; */
@@ -650,6 +654,14 @@ comma
 id|SIGKILL
 )paren
 suffix:semicolon
+macro_line|#if defined(CONFIG_APM) &amp;&amp; defined(CONFIG_APM_POWER_OFF)
+id|apm_set_power_state
+c_func
+(paren
+id|APM_STATE_OFF
+)paren
+suffix:semicolon
+macro_line|#endif
 id|do_exit
 c_func
 (paren

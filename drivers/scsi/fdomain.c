@@ -6372,7 +6372,7 @@ id|SCSI_RESET_WAKEUP
 suffix:semicolon
 )brace
 macro_line|#include &quot;sd.h&quot;
-macro_line|#include &quot;scsi_ioctl.h&quot;
+macro_line|#include &lt;scsi/scsi_ioctl.h&gt;
 DECL|function|fdomain_16x0_biosparam
 r_int
 id|fdomain_16x0_biosparam

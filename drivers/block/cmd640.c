@@ -112,7 +112,6 @@ id|val
 )paren
 suffix:semicolon
 DECL|variable|get_cmd640_reg
-r_static
 id|byte
 (paren
 op_star

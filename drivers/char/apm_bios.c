@@ -1,4 +1,4 @@
-multiline_comment|/* -*- linux-c -*-&n; * APM BIOS driver for Linux&n; * Copyright 1994, 1995, 1996 Stephen Rothwell&n; *                           (Stephen.Rothwell@canb.auug.org.au)&n; *&n; * This program is free software; you can redistribute it and/or modify it&n; * under the terms of the GNU General Public License as published by the&n; * Free Software Foundation; either version 2, or (at your option) any&n; * later version.&n; *&n; * This program is distributed in the hope that it will be useful, but&n; * WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU&n; * General Public License for more details.&n; *&n; * $Id: apm_bios.c,v 0.22 1995/03/09 14:12:02 sfr Exp $&n; *&n; * October 1995, Rik Faith (faith@cs.unc.edu):&n; *    Minor enhancements and updates (to the patch set) for 1.3.x&n; *    Documentation&n; * January 1996, Rik Faith (faith@cs.unc.edu):&n; *    Make /proc/apm easy to format (bump driver version)&n; * March 1996, Rik Faith (faith@cs.unc.edu):&n; *    Prohibit APM BIOS calls unless apm_enabled.&n; *    (Thanks to Ulrich Windl &lt;Ulrich.Windl@rz.uni-regensburg.de&gt;)&n; * April 1996, Stephen Rothwell (Stephen.Rothwell@canb.auug.org.au)&n; *    Version 1.0&n; *&n; * History:&n; *    0.6b: first version in official kernel, Linux 1.3.46&n; *    0.7: changed /proc/apm format, Linux 1.3.58&n; *    0.8: fixed gcc 2.7.[12] compilation problems, Linux 1.3.59&n; *    0.9: only call bios if bios is present, Linux 1.3.72&n; *    1.0: use fixed device number, consolidate /proc/apm into&n; *         this file, Linux 1.3.85&n; *&n; * Reference:&n; *&n; *   Intel Corporation, Microsoft Corporation. Advanced Power Management&n; *   (APM) BIOS Interface Specification, Revision 1.1, September 1993.&n; *   Intel Order Number 241704-001.  Microsoft Part Number 781-110-X01.&n; *&n; * [This document is available free from Intel by calling 800.628.8686 (fax&n; * 916.356.6100) or 800.548.4725; or via anonymous ftp from&n; * ftp://ftp.intel.com/pub/IAL/software_specs/apmv11.doc.  It is also&n; * available from Microsoft by calling 206.882.8080.]&n; *&n; */
+multiline_comment|/* -*- linux-c -*-&n; * APM BIOS driver for Linux&n; * Copyright 1994, 1995, 1996 Stephen Rothwell&n; *                           (Stephen.Rothwell@canb.auug.org.au)&n; *&n; * This program is free software; you can redistribute it and/or modify it&n; * under the terms of the GNU General Public License as published by the&n; * Free Software Foundation; either version 2, or (at your option) any&n; * later version.&n; *&n; * This program is distributed in the hope that it will be useful, but&n; * WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU&n; * General Public License for more details.&n; *&n; * $Id: apm_bios.c,v 0.22 1995/03/09 14:12:02 sfr Exp $&n; *&n; * October 1995, Rik Faith (faith@cs.unc.edu):&n; *    Minor enhancements and updates (to the patch set) for 1.3.x&n; *    Documentation&n; * January 1996, Rik Faith (faith@cs.unc.edu):&n; *    Make /proc/apm easy to format (bump driver version)&n; * March 1996, Rik Faith (faith@cs.unc.edu):&n; *    Prohibit APM BIOS calls unless apm_enabled.&n; *    (Thanks to Ulrich Windl &lt;Ulrich.Windl@rz.uni-regensburg.de&gt;)&n; * April 1996, Stephen Rothwell (Stephen.Rothwell@canb.auug.org.au)&n; *    Version 1.0 and 1.1&n; *&n; * History:&n; *    0.6b: first version in official kernel, Linux 1.3.46&n; *    0.7: changed /proc/apm format, Linux 1.3.58&n; *    0.8: fixed gcc 2.7.[12] compilation problems, Linux 1.3.59&n; *    0.9: only call bios if bios is present, Linux 1.3.72&n; *    1.0: use fixed device number, consolidate /proc/apm into this file,&n; *         Linux 1.3.85&n; *    1.1: support user-space standby and suspend, power off after system&n; *         halted, Linux 1.3.98&n; *&n; * Reference:&n; *&n; *   Intel Corporation, Microsoft Corporation. Advanced Power Management&n; *   (APM) BIOS Interface Specification, Revision 1.1, September 1993.&n; *   Intel Order Number 241704-001.  Microsoft Part Number 781-110-X01.&n; *&n; * [This document is available free from Intel by calling 800.628.8686 (fax&n; * 916.356.6100) or 800.548.4725; or via anonymous ftp from&n; * ftp://ftp.intel.com/pub/IAL/software_specs/apmv11.doc.  It is also&n; * available from Microsoft by calling 206.882.8080.]&n; *&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -50,7 +50,7 @@ suffix:semicolon
 multiline_comment|/*&n; * The apm_bios device is one of the misc char devices.&n; * This is its minor number.&n; */
 DECL|macro|APM_MINOR_DEV
 mdefine_line|#define&t;APM_MINOR_DEV&t;134
-multiline_comment|/* Configurable options:&n; *  &n; * CONFIG_APM_IGNORE_USER_SUSPEND: define to ignore USER SUSPEND requests.&n; * This is necessary on the NEC Versa M series, which generates these when&n; * resuming from SYSTEM SUSPEND.  However, enabling this on other laptops&n; * will cause the laptop to generate a CRITICAL SUSPEND when an appropriate&n; * USER SUSPEND is ignored -- this may prevent the APM driver from updating&n; * the system time on a RESUME.&n; *&n; * CONFIG_APM_DO_ENABLE: enable APM features at boot time.  From page 36 of&n; * the specification: &quot;When disabled, the APM BIOS does not automatically&n; * power manage devices, enter the Standby State, enter the Suspend State,&n; * or take power saving steps in response to CPU Idle calls.&quot;  This driver&n; * will make CPU Idle calls when Linux is idle (unless this feature is&n; * turned off -- see below).  This should always save battery power, but&n; * more complicated APM features will be dependent on your BIOS&n; * implementation.  You may need to turn this option off if your computer&n; * hangs at boot time when using APM support, or if it beeps continuously&n; * instead of suspending.  Turn this off if you have a NEC UltraLite Versa&n; * 33/C or a Toshiba T400CDT.  This is off by default since most machines&n; * do fine without this feature.&n; *&n; * CONFIG_APM_CPU_IDLE: enable calls to APM CPU Idle/CPU Busy inside the&n; * idle loop.  On some machines, this can activate improved power savings,&n; * such as a slowed CPU clock rate, when the machine is idle.  These idle&n; * call is made after the idle loop has run for some length of time (e.g.,&n; * 333 mS).  On some machines, this will cause a hang at boot time or&n; * whenever the CPU becomes idle.&n; *&n; * CONFIG_APM_DISPLAY_BLANK: enable console blanking using the APM.  Some&n; * laptops can use this to turn of the LCD backlight when the VC screen&n; * blanker blanks the screen.  Note that this is only used by the VC screen&n; * blanker, and probably won&squot;t turn off the backlight when using X11.&n; *&n; * If you are debugging the APM support for your laptop, note that code for&n; * all of these options is contained in this file, so you can #define or&n; * #undef these on the next line to avoid recompiling the whole kernel.&n; *&n; */
+multiline_comment|/* Configurable options:&n; *  &n; * CONFIG_APM_IGNORE_USER_SUSPEND: define to ignore USER SUSPEND requests.&n; * This is necessary on the NEC Versa M series, which generates these when&n; * resuming from SYSTEM SUSPEND.  However, enabling this on other laptops&n; * will cause the laptop to generate a CRITICAL SUSPEND when an appropriate&n; * USER SUSPEND is ignored -- this may prevent the APM driver from updating&n; * the system time on a RESUME.&n; *&n; * CONFIG_APM_DO_ENABLE: enable APM features at boot time.  From page 36 of&n; * the specification: &quot;When disabled, the APM BIOS does not automatically&n; * power manage devices, enter the Standby State, enter the Suspend State,&n; * or take power saving steps in response to CPU Idle calls.&quot;  This driver&n; * will make CPU Idle calls when Linux is idle (unless this feature is&n; * turned off -- see below).  This should always save battery power, but&n; * more complicated APM features will be dependent on your BIOS&n; * implementation.  You may need to turn this option off if your computer&n; * hangs at boot time when using APM support, or if it beeps continuously&n; * instead of suspending.  Turn this off if you have a NEC UltraLite Versa&n; * 33/C or a Toshiba T400CDT.  This is off by default since most machines&n; * do fine without this feature.&n; *&n; * CONFIG_APM_CPU_IDLE: enable calls to APM CPU Idle/CPU Busy inside the&n; * idle loop.  On some machines, this can activate improved power savings,&n; * such as a slowed CPU clock rate, when the machine is idle.  These idle&n; * call is made after the idle loop has run for some length of time (e.g.,&n; * 333 mS).  On some machines, this will cause a hang at boot time or&n; * whenever the CPU becomes idle.&n; *&n; * CONFIG_APM_DISPLAY_BLANK: enable console blanking using the APM.  Some&n; * laptops can use this to turn of the LCD backlight when the VC screen&n; * blanker blanks the screen.  Note that this is only used by the VC screen&n; * blanker, and probably won&squot;t turn off the backlight when using X11.  Some&n; * problems have been reported when using this option with gpm (if you&squot;d&n; * like to debug this, please do so).&n; *&n; * If you are debugging the APM support for your laptop, note that code for&n; * all of these options is contained in this file, so you can #define or&n; * #undef these on the next line to avoid recompiling the whole kernel.&n; *&n; */
 multiline_comment|/* KNOWN PROBLEM MACHINES:&n; *&n; * U: TI 4000M TravelMate: BIOS is *NOT* APM compliant&n; *                         [Confirmed by TI representative]&n; * U: ACER 486DX4/75: uses dseg 0040, in violation of APM specification&n; *                    [Confirmed by BIOS disassembly]&n; * P: Toshiba 1950S: battery life information only gets updated after resume&n; *&n; * Legend: U = unusable with APM patches&n; *         P = partially usable with APM patches&n; */
 multiline_comment|/*&n; * Define to have debug messages.&n; */
 DECL|macro|APM_DEBUG
@@ -384,7 +384,7 @@ id|driver_version
 (braket
 )braket
 op_assign
-l_string|&quot;1.0&quot;
+l_string|&quot;1.1&quot;
 suffix:semicolon
 multiline_comment|/* no spaces */
 macro_line|#ifdef APM_DEBUG
@@ -725,7 +725,6 @@ id|APM_SUCCESS
 suffix:semicolon
 )brace
 DECL|function|apm_set_power_state
-r_static
 r_int
 id|apm_set_power_state
 c_func
@@ -1340,6 +1339,11 @@ c_func
 (paren
 id|apm_event_t
 id|event
+comma
+r_struct
+id|apm_bios_struct
+op_star
+id|sender
 )paren
 (brace
 r_struct
@@ -1373,6 +1377,15 @@ op_assign
 id|as-&gt;next
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|as
+op_eq
+id|sender
+)paren
+r_continue
+suffix:semicolon
 id|as-&gt;event_head
 op_assign
 (paren
@@ -1698,6 +1711,11 @@ id|event
 comma
 id|apm_event_t
 id|undo
+comma
+r_struct
+id|apm_bios_struct
+op_star
+id|sender
 )paren
 (brace
 id|callback_list_t
@@ -1782,6 +1800,8 @@ id|queue_event
 c_func
 (paren
 id|event
+comma
+id|sender
 )paren
 suffix:semicolon
 )brace
@@ -1830,6 +1850,8 @@ c_func
 id|event
 comma
 id|APM_STANDBY_RESUME
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 r_if
@@ -1850,6 +1872,13 @@ r_case
 id|APM_USER_SUSPEND
 suffix:colon
 macro_line|#ifdef CONFIG_APM_IGNORE_USER_SUSPEND
+r_if
+c_cond
+(paren
+id|apm_bios_info.version
+OG
+l_int|0x100
+)paren
 id|apm_set_power_state
 c_func
 (paren
@@ -1868,6 +1897,8 @@ c_func
 id|event
 comma
 id|APM_NORMAL_RESUME
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 r_if
@@ -1904,6 +1935,8 @@ c_func
 id|event
 comma
 l_int|0
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 r_break
@@ -1920,6 +1953,8 @@ c_func
 id|event
 comma
 l_int|0
+comma
+l_int|NULL
 )paren
 suffix:semicolon
 r_break
@@ -2461,6 +2496,35 @@ id|event
 )paren
 )paren
 suffix:semicolon
+r_switch
+c_cond
+(paren
+id|event
+)paren
+(brace
+r_case
+id|APM_SYS_SUSPEND
+suffix:colon
+r_case
+id|APM_USER_SUSPEND
+suffix:colon
+id|as-&gt;suspends_read
+op_increment
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|APM_SYS_STANDBY
+suffix:colon
+r_case
+id|APM_USER_STANDBY
+suffix:colon
+id|as-&gt;standbys_read
+op_increment
+suffix:semicolon
+r_break
+suffix:semicolon
+)brace
 id|buf
 op_add_assign
 r_sizeof
@@ -2634,6 +2698,16 @@ r_return
 op_minus
 id|EIO
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|as-&gt;suser
+)paren
+r_return
+op_minus
+id|EPERM
+suffix:semicolon
 r_switch
 c_cond
 (paren
@@ -2646,16 +2720,31 @@ suffix:colon
 r_if
 c_cond
 (paren
-id|as-&gt;standbys_pending
+id|as-&gt;standbys_read
 OG
 l_int|0
 )paren
 (brace
+id|as-&gt;standbys_read
+op_decrement
+suffix:semicolon
 id|as-&gt;standbys_pending
 op_decrement
 suffix:semicolon
 id|standbys_pending
 op_decrement
+suffix:semicolon
+)brace
+r_else
+id|send_event
+c_func
+(paren
+id|APM_USER_STANDBY
+comma
+id|APM_STANDBY_RESUME
+comma
+id|as
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -2669,7 +2758,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-)brace
 r_break
 suffix:semicolon
 r_case
@@ -2678,16 +2766,31 @@ suffix:colon
 r_if
 c_cond
 (paren
-id|as-&gt;suspends_pending
+id|as-&gt;suspends_read
 OG
 l_int|0
 )paren
 (brace
+id|as-&gt;suspends_read
+op_decrement
+suffix:semicolon
 id|as-&gt;suspends_pending
 op_decrement
 suffix:semicolon
 id|suspends_pending
 op_decrement
+suffix:semicolon
+)brace
+r_else
+id|send_event
+c_func
+(paren
+id|APM_USER_SUSPEND
+comma
+id|APM_NORMAL_RESUME
+comma
+id|as
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -2701,7 +2804,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-)brace
 r_break
 suffix:semicolon
 r_default
@@ -2961,6 +3063,12 @@ suffix:semicolon
 id|as-&gt;suspends_pending
 op_assign
 id|as-&gt;standbys_pending
+op_assign
+l_int|0
+suffix:semicolon
+id|as-&gt;suspends_read
+op_assign
+id|as-&gt;standbys_read
 op_assign
 l_int|0
 suffix:semicolon
