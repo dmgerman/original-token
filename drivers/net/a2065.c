@@ -1911,8 +1911,6 @@ suffix:semicolon
 r_int
 id|ret
 suffix:semicolon
-id|MOD_INC_USE_COUNT
-suffix:semicolon
 id|last_dev
 op_assign
 id|dev
@@ -1939,13 +1937,9 @@ c_cond
 (paren
 id|ret
 )paren
-(brace
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
 r_return
 id|ret
 suffix:semicolon
-)brace
 multiline_comment|/* Stop the Lance */
 id|ll-&gt;rap
 op_assign
@@ -2038,8 +2032,6 @@ id|IRQ_AMIGA_PORTS
 comma
 id|dev
 )paren
-suffix:semicolon
-id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return
 l_int|0
@@ -3117,13 +3109,14 @@ op_minus
 id|ENOMEM
 suffix:semicolon
 )brace
+id|SET_MODULE_OWNER
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
 id|priv
 op_assign
-(paren
-r_struct
-id|lance_private
-op_star
-)paren
 id|dev-&gt;priv
 suffix:semicolon
 id|r1-&gt;name

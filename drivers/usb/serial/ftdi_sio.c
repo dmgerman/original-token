@@ -1047,6 +1047,22 @@ l_int|0
 multiline_comment|/* file-&gt;f_flags &amp; O_NONBLOCK */
 )paren
 (brace
+id|remove_wait_queue
+c_func
+(paren
+op_amp
+id|port-&gt;write_wait
+comma
+op_amp
+id|wait
+)paren
+suffix:semicolon
+id|set_current_state
+c_func
+(paren
+id|TASK_RUNNING
+)paren
+suffix:semicolon
 id|rc
 op_assign
 op_minus
@@ -1092,6 +1108,11 @@ suffix:semicolon
 id|schedule
 c_func
 (paren
+)paren
+suffix:semicolon
+id|set_current_state
+(paren
+id|TASK_INTERRUPTIBLE
 )paren
 suffix:semicolon
 )brace

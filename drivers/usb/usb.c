@@ -3169,6 +3169,10 @@ c_func
 id|urb
 )paren
 suffix:semicolon
+id|current-&gt;state
+op_assign
+id|TASK_RUNNING
+suffix:semicolon
 id|remove_wait_queue
 c_func
 (paren
@@ -3217,6 +3221,10 @@ r_else
 id|status
 op_assign
 l_int|1
+suffix:semicolon
+id|current-&gt;state
+op_assign
+id|TASK_RUNNING
 suffix:semicolon
 id|remove_wait_queue
 c_func

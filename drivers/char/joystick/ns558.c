@@ -94,11 +94,6 @@ id|ns558
 op_star
 id|ns558
 suffix:semicolon
-DECL|variable|have_pci_devices
-r_static
-r_int
-id|have_pci_devices
-suffix:semicolon
 multiline_comment|/*&n; * ns558_isa_probe() tries to find an isa gameport at the&n; * specified address, and also checks for mirrors.&n; * A joystick must be attached for this to work.&n; */
 DECL|function|ns558_isa_probe
 r_static
@@ -1330,7 +1325,7 @@ macro_line|#endif
 multiline_comment|/*&n; * Probe for PCI ports.  Always probe for PCI first,&n; * it is the least-invasive probe.&n; */
 id|i
 op_assign
-id|pci_module_init
+id|pci_register_driver
 c_func
 (paren
 op_amp
@@ -1341,12 +1336,11 @@ r_if
 c_cond
 (paren
 id|i
-op_eq
+OL
 l_int|0
 )paren
-id|have_pci_devices
-op_assign
-l_int|1
+r_return
+id|i
 suffix:semicolon
 multiline_comment|/*&n; * Probe for ISA ports.&n; */
 r_while
@@ -1420,13 +1414,7 @@ suffix:semicolon
 )brace
 macro_line|#endif
 r_return
-id|ns558
-ques
-c_cond
 l_int|0
-suffix:colon
-op_minus
-id|ENODEV
 suffix:semicolon
 )brace
 DECL|function|ns558_exit
@@ -1506,11 +1494,6 @@ op_assign
 id|port-&gt;next
 suffix:semicolon
 )brace
-r_if
-c_cond
-(paren
-id|have_pci_devices
-)paren
 id|pci_unregister_driver
 c_func
 (paren

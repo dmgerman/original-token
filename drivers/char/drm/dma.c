@@ -1770,6 +1770,16 @@ op_amp
 id|q-&gt;use_count
 )paren
 suffix:semicolon
+id|remove_wait_queue
+c_func
+(paren
+op_amp
+id|q-&gt;write_queue
+comma
+op_amp
+id|entry
+)paren
+suffix:semicolon
 r_return
 op_minus
 id|EINTR

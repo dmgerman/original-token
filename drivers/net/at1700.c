@@ -518,6 +518,7 @@ macro_line|#endif
 multiline_comment|/* Check for a network adaptor of this type, and return &squot;0&squot; iff one exists.&n;   If dev-&gt;base_addr == 0, probe all likely locations.&n;   If dev-&gt;base_addr == 1, always return failure.&n;   If dev-&gt;base_addr == 2, allocate space for the device and return success&n;   (detachable devices only).&n;   */
 DECL|function|at1700_probe
 r_int
+id|__init
 id|at1700_probe
 c_func
 (paren
@@ -533,12 +534,13 @@ suffix:semicolon
 r_int
 id|base_addr
 op_assign
-id|dev
-ques
-c_cond
 id|dev-&gt;base_addr
-suffix:colon
-l_int|0
+suffix:semicolon
+id|SET_MODULE_OWNER
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -2221,8 +2223,6 @@ c_func
 id|dev
 )paren
 suffix:semicolon
-id|MOD_INC_USE_COUNT
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -3451,8 +3451,6 @@ id|ioaddr
 op_plus
 id|CONFIG_1
 )paren
-suffix:semicolon
-id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return
 l_int|0

@@ -61,9 +61,10 @@ id|inode
 op_star
 id|inode
 op_assign
-id|get_empty_inode
+id|new_inode
 c_func
 (paren
+id|sb
 )paren
 suffix:semicolon
 r_if
@@ -96,19 +97,7 @@ c_func
 id|cramfs_inode
 )paren
 suffix:semicolon
-id|inode-&gt;i_sb
-op_assign
-id|sb
-suffix:semicolon
-id|inode-&gt;i_dev
-op_assign
-id|sb-&gt;s_dev
-suffix:semicolon
-id|inode-&gt;i_nlink
-op_assign
-l_int|1
-suffix:semicolon
-multiline_comment|/* arguably wrong for directories,&n;&t;&t;&t;&t;       but it&squot;s the best we can do&n;&t;&t;&t;&t;       without reading the directory&n;&t;&t;&t;&t;       contents.  1 yields the right&n;&t;&t;&t;&t;       result in GNU find, even&n;&t;&t;&t;&t;       without -noleaf option. */
+multiline_comment|/* inode-&gt;i_nlink is left 1 - arguably wrong for directories,&n;&t;&t;   but it&squot;s the best we can do without reading the directory&n;&t;           contents.  1 yields the right result in GNU find, even&n;&t;&t;   without -noleaf option. */
 id|insert_inode_hash
 c_func
 (paren

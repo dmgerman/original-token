@@ -20,9 +20,9 @@ macro_line|#include &lt;asm/io.h&gt;
 DECL|macro|SMART2_DRIVER_VERSION
 mdefine_line|#define SMART2_DRIVER_VERSION(maj,min,submin) ((maj&lt;&lt;16)|(min&lt;&lt;8)|(submin))
 DECL|macro|DRIVER_NAME
-mdefine_line|#define DRIVER_NAME &quot;Compaq SMART2 Driver (v 2.4.0)&quot;
+mdefine_line|#define DRIVER_NAME &quot;Compaq SMART2 Driver (v 2.4.1)&quot;
 DECL|macro|DRIVER_VERSION
-mdefine_line|#define DRIVER_VERSION SMART2_DRIVER_VERSION(2,4,0)
+mdefine_line|#define DRIVER_VERSION SMART2_DRIVER_VERSION(2,4,1)
 multiline_comment|/* Embedded module documentation macros - see modules.h */
 multiline_comment|/* Original author Chris Frantz - Compaq Computer Corporation */
 id|MODULE_AUTHOR
@@ -8503,6 +8503,9 @@ id|hba
 id|ctlr
 )braket
 suffix:semicolon
+r_int
+id|i
+suffix:semicolon
 id|info_p-&gt;log_drv_map
 op_assign
 l_int|0
@@ -8826,24 +8829,32 @@ op_assign
 id|id_ctlr_buf-&gt;nr_drvs
 suffix:semicolon
 suffix:semicolon
-op_star
+r_for
+c_loop
 (paren
-id|__u32
-op_star
-)paren
-(paren
-id|info_p-&gt;firm_rev
-)paren
+id|i
 op_assign
-op_star
-(paren
-id|__u32
-op_star
-)paren
-(paren
-id|id_ctlr_buf-&gt;firm_rev
-)paren
+l_int|0
 suffix:semicolon
+id|i
+OL
+l_int|4
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
+id|info_p-&gt;firm_rev
+(braket
+id|i
+)braket
+op_assign
+id|id_ctlr_buf-&gt;firm_rev
+(braket
+id|i
+)braket
+suffix:semicolon
+)brace
 id|info_p-&gt;ctlr_sig
 op_assign
 id|id_ctlr_buf-&gt;cfg_sig

@@ -2135,6 +2135,10 @@ id|dev-&gt;wait
 op_assign
 l_int|0
 suffix:semicolon
+id|current-&gt;state
+op_assign
+id|TASK_RUNNING
+suffix:semicolon
 id|remove_wait_queue
 (paren
 op_amp

@@ -3328,6 +3328,16 @@ suffix:semicolon
 )brace
 macro_line|#endif
 )brace
+id|remove_wait_queue
+c_func
+(paren
+op_amp
+id|apm_waitqueue
+comma
+op_amp
+id|wait
+)paren
+suffix:semicolon
 )brace
 DECL|function|check_apm_user
 r_static

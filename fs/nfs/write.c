@@ -2384,9 +2384,6 @@ c_func
 id|inode
 )paren
 suffix:semicolon
-r_int
-id|retval
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2400,11 +2397,7 @@ id|req
 r_return
 l_int|0
 suffix:semicolon
-id|req-&gt;wb_count
-op_increment
-suffix:semicolon
-id|retval
-op_assign
+r_return
 id|nfs_wait_event
 c_func
 (paren
@@ -2419,15 +2412,6 @@ c_func
 id|req
 )paren
 )paren
-suffix:semicolon
-id|nfs_release_request
-c_func
-(paren
-id|req
-)paren
-suffix:semicolon
-r_return
-id|retval
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Wait for a request to complete.&n; *&n; * Interruptible by signals only if mounted with intr flag.&n; */
@@ -5182,6 +5166,15 @@ suffix:semicolon
 )brace
 )brace
 macro_line|#endif
+multiline_comment|/*&n;&t; * Update attributes as result of writeback.&n;&t; * FIXME: There is an inherent race with invalidate_inode_pages and&n;&t; *&t;  writebacks since the page-&gt;count is kept &gt; 1 for as long&n;&t; *&t;  as the page has a write request pending.&n;&t; */
+id|nfs_write_attributes
+c_func
+(paren
+id|inode
+comma
+id|resp-&gt;fattr
+)paren
+suffix:semicolon
 r_while
 c_loop
 (paren
@@ -5365,15 +5358,6 @@ id|req
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Update attributes as result of writeback. */
-id|nfs_write_attributes
-c_func
-(paren
-id|inode
-comma
-id|resp-&gt;fattr
-)paren
-suffix:semicolon
 )brace
 macro_line|#ifdef CONFIG_NFS_V3
 multiline_comment|/*&n; * Set up the argument/result storage required for the RPC call.&n; */
@@ -5860,6 +5844,14 @@ comma
 id|task-&gt;tk_status
 )paren
 suffix:semicolon
+id|nfs_write_attributes
+c_func
+(paren
+id|inode
+comma
+id|resp-&gt;fattr
+)paren
+suffix:semicolon
 r_while
 c_loop
 (paren
@@ -6005,14 +5997,6 @@ id|req
 )paren
 suffix:semicolon
 )brace
-id|nfs_write_attributes
-c_func
-(paren
-id|inode
-comma
-id|resp-&gt;fattr
-)paren
-suffix:semicolon
 )brace
 macro_line|#endif
 DECL|function|nfs_flush_file

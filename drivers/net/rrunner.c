@@ -7229,11 +7229,6 @@ id|EOPNOTSUPP
 suffix:semicolon
 id|rrpriv
 op_assign
-(paren
-r_struct
-id|rr_private
-op_star
-)paren
 id|dev-&gt;priv
 suffix:semicolon
 r_switch
@@ -7255,10 +7250,12 @@ c_func
 id|CAP_SYS_RAWIO
 )paren
 )paren
+(brace
 r_return
 op_minus
 id|EPERM
 suffix:semicolon
+)brace
 id|image
 op_assign
 id|kmalloc
@@ -7417,10 +7414,12 @@ c_func
 id|CAP_SYS_RAWIO
 )paren
 )paren
+(brace
 r_return
 op_minus
 id|EPERM
 suffix:semicolon
+)brace
 id|image
 op_assign
 id|kmalloc

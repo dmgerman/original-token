@@ -3560,10 +3560,6 @@ macro_line|#ifdef MODULE
 DECL|macro|rio_init
 mdefine_line|#define rio_init init_module
 macro_line|#endif
-r_extern
-r_int
-id|gs_debug
-suffix:semicolon
 DECL|function|rio_init
 r_int
 id|rio_init
@@ -3636,12 +3632,6 @@ l_string|&quot;Initing rio module... (rio_debug=%d)&bslash;n&quot;
 comma
 id|rio_debug
 )paren
-suffix:semicolon
-id|gs_debug
-op_assign
-id|rio_debug
-op_rshift
-l_int|24
 suffix:semicolon
 r_if
 c_cond

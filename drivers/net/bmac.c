@@ -6949,6 +6949,12 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+id|SET_MODULE_OWNER
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
 id|dev-&gt;base_addr
 op_assign
 (paren
@@ -7578,8 +7584,6 @@ id|dev-&gt;flags
 op_or_assign
 id|IFF_RUNNING
 suffix:semicolon
-id|MOD_INC_USE_COUNT
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -7863,8 +7867,6 @@ c_func
 l_string|&quot;bmac: all bufs freed&bslash;n&quot;
 )paren
 )paren
-suffix:semicolon
-id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return
 l_int|0

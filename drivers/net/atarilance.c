@@ -823,6 +823,7 @@ suffix:semicolon
 multiline_comment|/************************* End of Prototypes **************************/
 "&f;"
 DECL|function|slow_memcpy
+r_static
 r_void
 op_star
 id|slow_memcpy
@@ -899,6 +900,12 @@ r_int
 id|found
 op_assign
 l_int|0
+suffix:semicolon
+id|SET_MODULE_OWNER
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
 r_if
 c_cond
@@ -2274,8 +2281,6 @@ comma
 id|DREG
 )paren
 )paren
-suffix:semicolon
-id|MOD_INC_USE_COUNT
 suffix:semicolon
 r_return
 l_int|0
@@ -4312,8 +4317,6 @@ id|DREG
 op_assign
 id|CSR0_STOP
 suffix:semicolon
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -4681,54 +4684,11 @@ suffix:semicolon
 )brace
 "&f;"
 macro_line|#ifdef MODULE
-DECL|variable|devicename
-r_static
-r_char
-id|devicename
-(braket
-l_int|9
-)braket
-op_assign
-(brace
-l_int|0
-comma
-)brace
-suffix:semicolon
 DECL|variable|atarilance_dev
 r_static
 r_struct
 id|net_device
 id|atarilance_dev
-op_assign
-(brace
-id|devicename
-comma
-multiline_comment|/* filled in by register_netdev() */
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-multiline_comment|/* memory */
-l_int|0
-comma
-l_int|0
-comma
-multiline_comment|/* base, irq */
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|NULL
-comma
-id|atarilance_probe
-comma
-)brace
 suffix:semicolon
 DECL|function|init_module
 r_int
@@ -4740,6 +4700,10 @@ r_void
 (brace
 r_int
 id|err
+suffix:semicolon
+id|atarilance_dev.init
+op_assign
+id|atarilance_probe
 suffix:semicolon
 r_if
 c_cond

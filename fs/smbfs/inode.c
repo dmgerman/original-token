@@ -181,9 +181,10 @@ id|fattr
 suffix:semicolon
 id|result
 op_assign
-id|get_empty_inode
+id|new_inode
 c_func
 (paren
+id|sb
 )paren
 suffix:semicolon
 r_if
@@ -194,14 +195,6 @@ id|result
 )paren
 r_return
 id|result
-suffix:semicolon
-id|result-&gt;i_sb
-op_assign
-id|sb
-suffix:semicolon
-id|result-&gt;i_dev
-op_assign
-id|sb-&gt;s_dev
 suffix:semicolon
 id|result-&gt;i_ino
 op_assign

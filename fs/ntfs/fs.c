@@ -2270,9 +2270,10 @@ id|si
 suffix:semicolon
 id|r
 op_assign
-id|get_empty_inode
+id|new_inode
 c_func
 (paren
+id|dir-&gt;i_sb
 )paren
 suffix:semicolon
 r_if
@@ -2428,14 +2429,6 @@ suffix:semicolon
 id|r-&gt;i_gid
 op_assign
 id|vol-&gt;gid
-suffix:semicolon
-id|r-&gt;i_nlink
-op_assign
-l_int|1
-suffix:semicolon
-id|r-&gt;i_sb
-op_assign
-id|dir-&gt;i_sb
 suffix:semicolon
 multiline_comment|/* FIXME: dirty? dev? */
 multiline_comment|/* get the file modification times from the standard information */
@@ -2658,9 +2651,10 @@ id|EIO
 suffix:semicolon
 id|r
 op_assign
-id|get_empty_inode
+id|new_inode
 c_func
 (paren
+id|dir-&gt;i_sb
 )paren
 suffix:semicolon
 r_if
@@ -2756,14 +2750,6 @@ suffix:semicolon
 id|r-&gt;i_gid
 op_assign
 id|vol-&gt;gid
-suffix:semicolon
-id|r-&gt;i_nlink
-op_assign
-l_int|1
-suffix:semicolon
-id|r-&gt;i_sb
-op_assign
-id|dir-&gt;i_sb
 suffix:semicolon
 id|si
 op_assign

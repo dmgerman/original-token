@@ -3346,7 +3346,7 @@ suffix:semicolon
 multiline_comment|/* --------------------------------------------------------------------- */
 macro_line|#ifdef __i386__
 DECL|macro|GETTICK
-mdefine_line|#define GETTICK(x)                                                &bslash;&n;({                                                                &bslash;&n;&t;if (current_cpu_data.x86_capability &amp; X86_FEATURE_TSC)    &bslash;&n;&t;&t;__asm__ __volatile__(&quot;rdtsc&quot; : &quot;=a&quot; (x) : : &quot;dx&quot;);&bslash;&n;})
+mdefine_line|#define GETTICK(x)                                                &bslash;&n;({                                                                &bslash;&n;&t;if (cpu_has_tsc)                                          &bslash;&n;&t;&t;__asm__ __volatile__(&quot;rdtsc&quot; : &quot;=a&quot; (x) : : &quot;dx&quot;);&bslash;&n;})
 macro_line|#else /* __i386__ */
 DECL|macro|GETTICK
 mdefine_line|#define GETTICK(x)

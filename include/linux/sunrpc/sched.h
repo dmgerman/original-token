@@ -240,21 +240,12 @@ suffix:colon
 l_int|1
 suffix:semicolon
 multiline_comment|/* Task waiting to wake up */
-DECL|member|tk_running
-r_volatile
+DECL|member|tk_runstate
 r_int
-r_char
-id|tk_running
-suffix:colon
-l_int|1
-comma
-multiline_comment|/* Task is running */
-DECL|member|tk_sleeping
-id|tk_sleeping
-suffix:colon
-l_int|1
+r_int
+id|tk_runstate
 suffix:semicolon
-multiline_comment|/* Task is truly asleep */
+multiline_comment|/* Task run status */
 macro_line|#ifdef RPC_DEBUG
 DECL|member|tk_pid
 r_int
@@ -313,14 +304,26 @@ DECL|macro|RPC_DO_ROOTOVERRIDE
 mdefine_line|#define RPC_DO_ROOTOVERRIDE(t)&t;((t)-&gt;tk_flags &amp; RPC_TASK_ROOTCREDS)
 DECL|macro|RPC_ASSASSINATED
 mdefine_line|#define RPC_ASSASSINATED(t)&t;((t)-&gt;tk_flags &amp; RPC_TASK_KILLED)
-DECL|macro|RPC_IS_RUNNING
-mdefine_line|#define RPC_IS_RUNNING(t)&t;((t)-&gt;tk_running)
-DECL|macro|RPC_IS_SLEEPING
-mdefine_line|#define RPC_IS_SLEEPING(t)&t;((t)-&gt;tk_sleeping)
 DECL|macro|RPC_IS_ACTIVATED
 mdefine_line|#define RPC_IS_ACTIVATED(t)&t;((t)-&gt;tk_active)
 DECL|macro|RPC_DO_CALLBACK
 mdefine_line|#define RPC_DO_CALLBACK(t)&t;((t)-&gt;tk_callback != NULL)
+DECL|macro|RPC_TASK_SLEEPING
+mdefine_line|#define RPC_TASK_SLEEPING&t;0
+DECL|macro|RPC_TASK_RUNNING
+mdefine_line|#define RPC_TASK_RUNNING&t;1
+DECL|macro|RPC_IS_SLEEPING
+mdefine_line|#define RPC_IS_SLEEPING(t)&t;(test_bit(RPC_TASK_SLEEPING, &amp;(t)-&gt;tk_runstate))
+DECL|macro|RPC_IS_RUNNING
+mdefine_line|#define RPC_IS_RUNNING(t)&t;(test_bit(RPC_TASK_RUNNING, &amp;(t)-&gt;tk_runstate))
+DECL|macro|rpc_set_running
+mdefine_line|#define rpc_set_running(t)&t;(set_bit(RPC_TASK_RUNNING, &amp;(t)-&gt;tk_runstate))
+DECL|macro|rpc_clear_running
+mdefine_line|#define rpc_clear_running(t)&t;(clear_bit(RPC_TASK_RUNNING, &amp;(t)-&gt;tk_runstate))
+DECL|macro|rpc_set_sleeping
+mdefine_line|#define rpc_set_sleeping(t)&t;(set_bit(RPC_TASK_SLEEPING, &amp;(t)-&gt;tk_runstate))
+DECL|macro|rpc_clear_sleeping
+mdefine_line|#define rpc_clear_sleeping(t) &bslash;&n;&t;do { &bslash;&n;&t;&t;smp_mb__before_clear_bit(); &bslash;&n;&t;&t;clear_bit(RPC_TASK_SLEEPING, &amp;(t)-&gt;tk_runstate); &bslash;&n;&t;&t;smp_mb__after_clear_bit(); &bslash;&n;&t;} while(0)
 multiline_comment|/*&n; * RPC synchronization objects&n; */
 DECL|struct|rpc_wait_queue
 r_struct

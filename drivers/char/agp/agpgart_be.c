@@ -8673,6 +8673,21 @@ comma
 id|intel_generic_setup
 )brace
 comma
+multiline_comment|/* could we add support for PCI_DEVICE_ID_INTEL_815_1 too ? */
+(brace
+id|PCI_DEVICE_ID_INTEL_815_0
+comma
+id|PCI_VENDOR_ID_INTEL
+comma
+id|INTEL_I815
+comma
+l_string|&quot;Intel&quot;
+comma
+l_string|&quot;i815&quot;
+comma
+id|intel_generic_setup
+)brace
+comma
 (brace
 id|PCI_DEVICE_ID_INTEL_840_0
 comma

@@ -1604,6 +1604,9 @@ suffix:semicolon
 id|si.si_code
 op_assign
 id|reason
+op_amp
+op_complement
+id|__SI_MASK
 suffix:semicolon
 multiline_comment|/* Make sure we are called with one of the POLL_*&n;&t;&t;&t;   reasons, otherwise we could leak kernel stack into&n;&t;&t;&t;   userspace.  */
 r_if
@@ -1628,7 +1631,7 @@ c_cond
 id|reason
 op_minus
 id|POLL_IN
-OG
+op_ge
 id|NSIGPOLL
 )paren
 id|si.si_band

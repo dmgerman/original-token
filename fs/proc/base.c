@@ -3156,9 +3156,10 @@ suffix:semicolon
 multiline_comment|/* We need a new inode */
 id|inode
 op_assign
-id|get_empty_inode
+id|new_inode
 c_func
 (paren
+id|sb
 )paren
 suffix:semicolon
 r_if
@@ -3171,14 +3172,6 @@ r_goto
 id|out
 suffix:semicolon
 multiline_comment|/* Common stuff */
-id|inode-&gt;i_sb
-op_assign
-id|sb
-suffix:semicolon
-id|inode-&gt;i_dev
-op_assign
-id|sb-&gt;s_dev
-suffix:semicolon
 id|inode-&gt;i_mtime
 op_assign
 id|inode-&gt;i_atime
@@ -4321,9 +4314,10 @@ l_int|4
 (brace
 id|inode
 op_assign
-id|get_empty_inode
+id|new_inode
 c_func
 (paren
+id|dir-&gt;i_sb
 )paren
 suffix:semicolon
 r_if
@@ -4339,14 +4333,6 @@ c_func
 op_minus
 id|ENOMEM
 )paren
-suffix:semicolon
-id|inode-&gt;i_sb
-op_assign
-id|dir-&gt;i_sb
-suffix:semicolon
-id|inode-&gt;i_dev
-op_assign
-id|dir-&gt;i_sb-&gt;s_dev
 suffix:semicolon
 id|inode-&gt;i_mtime
 op_assign

@@ -1291,7 +1291,10 @@ op_amp
 id|smp_commenced
 )paren
 )paren
-multiline_comment|/* nothing */
+id|rep_nop
+c_func
+(paren
+)paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * low-memory mappings have been cleared, flush them from&n;&t; * the local TLBs too.&n;&t; */
 id|local_flush_tlb

@@ -245,6 +245,17 @@ c_func
 r_void
 )paren
 suffix:semicolon
+r_extern
+r_void
+id|schedule_task
+c_func
+(paren
+r_struct
+id|tq_struct
+op_star
+id|task
+)paren
+suffix:semicolon
 multiline_comment|/*&n; * The default fd array needs to be at least BITS_PER_LONG,&n; * as this is the granularity returned by copy_fdset().&n; */
 DECL|macro|NR_OPEN_DEFAULT
 mdefine_line|#define NR_OPEN_DEFAULT BITS_PER_LONG

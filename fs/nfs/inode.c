@@ -2969,9 +2969,10 @@ id|inode
 op_star
 id|inode
 op_assign
-id|get_empty_inode
+id|new_inode
 c_func
 (paren
+id|sb
 )paren
 suffix:semicolon
 r_if
@@ -2982,14 +2983,6 @@ id|inode
 )paren
 r_goto
 id|out
-suffix:semicolon
-id|inode-&gt;i_sb
-op_assign
-id|sb
-suffix:semicolon
-id|inode-&gt;i_dev
-op_assign
-id|sb-&gt;s_dev
 suffix:semicolon
 id|inode-&gt;i_flags
 op_assign

@@ -642,6 +642,7 @@ op_amp
 id|cs-&gt;HW_Flags
 )paren
 suffix:semicolon
+macro_line|#if CONFIG_PCI
 r_for
 c_loop
 (paren
@@ -649,7 +650,6 @@ suffix:semicolon
 suffix:semicolon
 )paren
 (brace
-macro_line|#if CONFIG_PCI
 r_if
 c_cond
 (paren

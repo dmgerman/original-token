@@ -971,16 +971,6 @@ c_func
 )paren
 suffix:semicolon
 )brace
-id|remove_wait_queue
-c_func
-(paren
-op_amp
-id|vcc-&gt;sleep
-comma
-op_amp
-id|wait
-)paren
-suffix:semicolon
 id|clear_bit
 c_func
 (paren

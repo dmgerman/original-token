@@ -831,9 +831,10 @@ id|inode
 suffix:semicolon
 id|inode
 op_assign
-id|get_empty_inode
+id|new_inode
 c_func
 (paren
+id|sb
 )paren
 suffix:semicolon
 r_if
@@ -849,14 +850,6 @@ id|inode-&gt;i_version
 op_assign
 op_increment
 id|event
-suffix:semicolon
-id|inode-&gt;i_sb
-op_assign
-id|sb
-suffix:semicolon
-id|inode-&gt;i_dev
-op_assign
-id|sb-&gt;s_dev
 suffix:semicolon
 id|inode-&gt;i_uid
 op_assign

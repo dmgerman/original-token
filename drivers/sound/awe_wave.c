@@ -22445,7 +22445,7 @@ c_func
 id|cmd
 )paren
 op_amp
-id|_IOC_WRITE
+id|_SIOC_WRITE
 )paren
 (brace
 r_switch

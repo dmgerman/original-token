@@ -1452,9 +1452,9 @@ suffix:semicolon
 id|PRIMOUTREG
 c_func
 (paren
-id|MGAREG_DMAPAD
+id|MGAREG_TEXCTL2
 comma
-l_int|0
+l_int|0x00008000
 )paren
 suffix:semicolon
 id|PRIMOUTREG

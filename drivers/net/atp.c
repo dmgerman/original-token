@@ -994,6 +994,12 @@ r_return
 op_minus
 id|ENOMEM
 suffix:semicolon
+id|SET_MODULE_OWNER
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
 multiline_comment|/* Find the IRQ used by triggering an interrupt. */
 id|write_reg_byte
 c_func
@@ -1591,8 +1597,6 @@ suffix:semicolon
 r_int
 id|ret
 suffix:semicolon
-id|MOD_INC_USE_COUNT
-suffix:semicolon
 multiline_comment|/* The interrupt line is turned off (tri-stated) when the device isn&squot;t in&n;&t;   use.  That&squot;s especially important for &quot;attached&quot; interfaces where the&n;&t;   port or interrupt may be shared. */
 id|ret
 op_assign
@@ -1616,13 +1620,9 @@ c_cond
 (paren
 id|ret
 )paren
-(brace
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
 r_return
 id|ret
 suffix:semicolon
-)brace
 id|hardware_init
 c_func
 (paren
@@ -3934,8 +3934,6 @@ id|CMR1h_RESET
 op_or
 id|CMR1h_MUX
 )paren
-suffix:semicolon
-id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return
 l_int|0

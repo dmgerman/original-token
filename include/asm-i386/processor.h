@@ -177,21 +177,21 @@ DECL|macro|current_cpu_data
 mdefine_line|#define current_cpu_data boot_cpu_data
 macro_line|#endif
 DECL|macro|cpu_has_pge
-mdefine_line|#define cpu_has_pge &bslash;&n;&t;&t;(test_bit(X86_FEATURE_PGE,  &amp;boot_cpu_data.x86_capability))
+mdefine_line|#define cpu_has_pge&t;(test_bit(X86_FEATURE_PGE,  boot_cpu_data.x86_capability))
 DECL|macro|cpu_has_pse
-mdefine_line|#define cpu_has_pse &bslash;&n;&t;&t;(test_bit(X86_FEATURE_PSE,  &amp;boot_cpu_data.x86_capability))
+mdefine_line|#define cpu_has_pse&t;(test_bit(X86_FEATURE_PSE,  boot_cpu_data.x86_capability))
 DECL|macro|cpu_has_pae
-mdefine_line|#define cpu_has_pae &bslash;&n;&t;&t;(test_bit(X86_FEATURE_PAE,  &amp;boot_cpu_data.x86_capability))
+mdefine_line|#define cpu_has_pae&t;(test_bit(X86_FEATURE_PAE,  boot_cpu_data.x86_capability))
 DECL|macro|cpu_has_tsc
-mdefine_line|#define cpu_has_tsc &bslash;&n;&t;&t;(test_bit(X86_FEATURE_TSC,  &amp;boot_cpu_data.x86_capability))
+mdefine_line|#define cpu_has_tsc&t;(test_bit(X86_FEATURE_TSC,  boot_cpu_data.x86_capability))
 DECL|macro|cpu_has_de
-mdefine_line|#define cpu_has_de &bslash;&n;&t;&t;(test_bit(X86_FEATURE_DE,   &amp;boot_cpu_data.x86_capability))
+mdefine_line|#define cpu_has_de&t;(test_bit(X86_FEATURE_DE,   boot_cpu_data.x86_capability))
 DECL|macro|cpu_has_vme
-mdefine_line|#define cpu_has_vme &bslash;&n;&t;&t;(test_bit(X86_FEATURE_VME,  &amp;boot_cpu_data.x86_capability))
+mdefine_line|#define cpu_has_vme&t;(test_bit(X86_FEATURE_VME,  boot_cpu_data.x86_capability))
 DECL|macro|cpu_has_fxsr
-mdefine_line|#define cpu_has_fxsr &bslash;&n;&t;&t;(test_bit(X86_FEATURE_FXSR, &amp;boot_cpu_data.x86_capability))
+mdefine_line|#define cpu_has_fxsr&t;(test_bit(X86_FEATURE_FXSR, boot_cpu_data.x86_capability))
 DECL|macro|cpu_has_xmm
-mdefine_line|#define cpu_has_xmm &bslash;&n;&t;&t;(test_bit(X86_FEATURE_XMM,  &amp;boot_cpu_data.x86_capability))
+mdefine_line|#define cpu_has_xmm&t;(test_bit(X86_FEATURE_XMM,  boot_cpu_data.x86_capability))
 r_extern
 r_char
 id|ignore_irq13
@@ -1449,5 +1449,24 @@ suffix:semicolon
 suffix:semicolon
 DECL|macro|MICROCODE_IOCFREE
 mdefine_line|#define MICROCODE_IOCFREE&t;_IO(&squot;6&squot;,0) /* because it is for P6 */
+multiline_comment|/* REP NOP (PAUSE) is a good thing to insert into busy-wait loops. */
+DECL|function|rep_nop
+r_extern
+r_inline
+r_void
+id|rep_nop
+c_func
+(paren
+r_void
+)paren
+(brace
+id|__asm__
+id|__volatile__
+c_func
+(paren
+l_string|&quot;rep;nop&quot;
+)paren
+suffix:semicolon
+)brace
 macro_line|#endif /* __ASM_I386_PROCESSOR_H */
 eof

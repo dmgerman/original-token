@@ -270,6 +270,10 @@ c_func
 )paren
 suffix:semicolon
 macro_line|#endif
+id|q-&gt;flags
+op_assign
+l_int|0
+suffix:semicolon
 id|q-&gt;task
 op_assign
 id|p

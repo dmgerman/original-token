@@ -11279,6 +11279,12 @@ op_minus
 id|EINTR
 suffix:semicolon
 )brace
+id|set_current_state
+c_func
+(paren
+id|TASK_INTERRUPTIBLE
+)paren
+suffix:semicolon
 )brace
 id|remove_wait_queue
 (paren

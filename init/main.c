@@ -179,6 +179,14 @@ r_void
 suffix:semicolon
 r_extern
 r_void
+id|net_notifier_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_extern
+r_void
 id|free_initmem
 c_func
 (paren
@@ -2772,6 +2780,12 @@ c_func
 suffix:semicolon
 multiline_comment|/* Do this last */
 macro_line|#endif
+multiline_comment|/* do this after other &squot;do this last&squot; stuff, because we want&n;&t; * to minimize spurious executions of /sbin/hotplug&n;&t; * during boot-up&n;&t; */
+id|net_notifier_init
+c_func
+(paren
+)paren
+suffix:semicolon
 multiline_comment|/* Mount the root filesystem.. */
 id|mount_root
 c_func

@@ -1073,16 +1073,11 @@ op_minus
 id|ENODEV
 suffix:semicolon
 )brace
-r_if
-c_cond
+id|SET_MODULE_OWNER
+c_func
 (paren
 id|dev
-op_eq
-l_int|NULL
 )paren
-r_return
-op_minus
-id|ENODEV
 suffix:semicolon
 r_if
 c_cond
@@ -1376,8 +1371,6 @@ c_func
 op_amp
 id|bionet_timer
 )paren
-suffix:semicolon
-id|MOD_INC_USE_COUNT
 suffix:semicolon
 r_return
 l_int|0
@@ -2568,8 +2561,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -2607,49 +2598,11 @@ id|lp-&gt;stats
 suffix:semicolon
 )brace
 macro_line|#ifdef MODULE
-DECL|variable|bio_name
-r_static
-r_char
-id|bio_name
-(braket
-l_int|16
-)braket
-suffix:semicolon
 DECL|variable|bio_dev
 r_static
 r_struct
 id|net_device
 id|bio_dev
-op_assign
-(brace
-id|bio_name
-comma
-multiline_comment|/* filled in by register_netdev() */
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-multiline_comment|/* memory */
-l_int|0
-comma
-l_int|0
-comma
-multiline_comment|/* base, irq */
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|NULL
-comma
-id|bionet_probe
-comma
-)brace
 suffix:semicolon
 r_int
 DECL|function|init_module
@@ -2661,6 +2614,10 @@ r_void
 (brace
 r_int
 id|err
+suffix:semicolon
+id|bio_dev.init
+op_assign
+id|bionet_probe
 suffix:semicolon
 r_if
 c_cond

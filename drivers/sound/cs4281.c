@@ -7265,7 +7265,7 @@ id|cmd
 op_ne
 l_char|&squot;M&squot;
 op_logical_or
-id|_IOC_SIZE
+id|_SIOC_SIZE
 c_func
 (paren
 id|cmd
@@ -7280,18 +7280,18 @@ r_return
 op_minus
 id|EINVAL
 suffix:semicolon
-singleline_comment|// If ioctl has only the IOC_READ bit(bit 31)
+singleline_comment|// If ioctl has only the SIOC_READ bit(bit 31)
 singleline_comment|// on, process the only-read commands. 
 r_if
 c_cond
 (paren
-id|_IOC_DIR
+id|_SIOC_DIR
 c_func
 (paren
 id|cmd
 )paren
 op_eq
-id|_IOC_READ
+id|_SIOC_READ
 )paren
 (brace
 r_switch
@@ -7493,21 +7493,21 @@ id|arg
 suffix:semicolon
 )brace
 )brace
-singleline_comment|// If ioctl doesn&squot;t have both the IOC_READ and 
-singleline_comment|// the IOC_WRITE bit set, return invalid.
+singleline_comment|// If ioctl doesn&squot;t have both the SIOC_READ and 
+singleline_comment|// the SIOC_WRITE bit set, return invalid.
 r_if
 c_cond
 (paren
-id|_IOC_DIR
+id|_SIOC_DIR
 c_func
 (paren
 id|cmd
 )paren
 op_ne
 (paren
-id|_IOC_READ
+id|_SIOC_READ
 op_or
-id|_IOC_WRITE
+id|_SIOC_WRITE
 )paren
 )paren
 r_return
@@ -9112,10 +9112,6 @@ id|s-&gt;dma_adc.mapped
 r_return
 l_int|0
 suffix:semicolon
-id|current-&gt;state
-op_assign
-id|TASK_INTERRUPTIBLE
-suffix:semicolon
 id|add_wait_queue
 c_func
 (paren
@@ -9133,6 +9129,12 @@ suffix:semicolon
 suffix:semicolon
 )paren
 (brace
+id|set_current_state
+c_func
+(paren
+id|TASK_INTERRUPTIBLE
+)paren
+suffix:semicolon
 id|spin_lock_irqsave
 c_func
 (paren
@@ -9368,10 +9370,6 @@ id|s-&gt;dma_dac.mapped
 r_return
 l_int|0
 suffix:semicolon
-id|current-&gt;state
-op_assign
-id|TASK_INTERRUPTIBLE
-suffix:semicolon
 id|add_wait_queue
 c_func
 (paren
@@ -9389,6 +9387,12 @@ suffix:semicolon
 suffix:semicolon
 )paren
 (brace
+id|set_current_state
+c_func
+(paren
+id|TASK_INTERRUPTIBLE
+)paren
+suffix:semicolon
 id|spin_lock_irqsave
 c_func
 (paren
@@ -16446,10 +16450,6 @@ op_amp
 id|FMODE_WRITE
 )paren
 (brace
-id|current-&gt;state
-op_assign
-id|TASK_INTERRUPTIBLE
-suffix:semicolon
 id|add_wait_queue
 c_func
 (paren
@@ -16467,6 +16467,12 @@ suffix:semicolon
 suffix:semicolon
 )paren
 (brace
+id|set_current_state
+c_func
+(paren
+id|TASK_INTERRUPTIBLE
+)paren
+suffix:semicolon
 id|spin_lock_irqsave
 c_func
 (paren

@@ -5454,6 +5454,12 @@ id|found
 op_assign
 l_int|0
 suffix:semicolon
+id|SET_MODULE_OWNER
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
 id|ARLAN_DEBUG_ENTRY
 c_func
 (paren
@@ -6691,8 +6697,6 @@ c_func
 op_amp
 id|priv-&gt;timer
 )paren
-suffix:semicolon
-id|MOD_INC_USE_COUNT
 suffix:semicolon
 macro_line|#ifdef CONFIG_PROC_FS
 macro_line|#ifndef MODULE
@@ -9309,8 +9313,6 @@ id|dev-&gt;irq
 comma
 id|dev
 )paren
-suffix:semicolon
-id|MOD_DEC_USE_COUNT
 suffix:semicolon
 id|ARLAN_DEBUG_EXIT
 c_func

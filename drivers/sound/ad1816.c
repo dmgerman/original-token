@@ -4052,12 +4052,12 @@ multiline_comment|/* set ioctl */
 r_if
 c_cond
 (paren
-id|_IOC_DIR
+id|_SIOC_DIR
 (paren
 id|cmd
 )paren
 op_amp
-id|_IOC_WRITE
+id|_SIOC_WRITE
 )paren
 (brace
 r_switch

@@ -255,6 +255,12 @@ r_return
 op_minus
 id|ENODEV
 suffix:semicolon
+id|SET_MODULE_OWNER
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -1236,8 +1242,6 @@ c_func
 id|dev
 )paren
 suffix:semicolon
-id|MOD_INC_USE_COUNT
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -1274,8 +1278,6 @@ c_func
 (paren
 id|dev
 )paren
-suffix:semicolon
-id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return
 l_int|0
@@ -2392,12 +2394,6 @@ r_static
 r_struct
 id|net_device
 id|apne_dev
-op_assign
-(brace
-id|init
-suffix:colon
-id|apne_probe
-)brace
 suffix:semicolon
 DECL|function|init_module
 r_int
@@ -2409,6 +2405,10 @@ r_void
 (brace
 r_int
 id|err
+suffix:semicolon
+id|apne_dev.init
+op_assign
+id|apne_probe
 suffix:semicolon
 r_if
 c_cond

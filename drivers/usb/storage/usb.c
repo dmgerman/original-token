@@ -1027,6 +1027,12 @@ suffix:semicolon
 r_break
 suffix:semicolon
 )brace
+id|set_current_state
+c_func
+(paren
+id|TASK_INTERRUPTIBLE
+)paren
+suffix:semicolon
 )brace
 multiline_comment|/* for (;;) */
 multiline_comment|/* notify the exit routine that we&squot;re actually exiting now */
@@ -1037,6 +1043,18 @@ op_amp
 (paren
 id|us-&gt;notify
 )paren
+)paren
+suffix:semicolon
+id|remove_wait_queue
+c_func
+(paren
+op_amp
+(paren
+id|us-&gt;wqh
+)paren
+comma
+op_amp
+id|wait
 )paren
 suffix:semicolon
 r_return

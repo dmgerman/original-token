@@ -1725,17 +1725,6 @@ l_int|0
 suffix:semicolon
 )brace
 macro_line|#endif
-multiline_comment|/* Pad device name to IFNAMSIZ=16. F.e. __PAD6 is string of 9 zeros. */
-DECL|macro|__PAD6
-mdefine_line|#define __PAD6 &quot;&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&bslash;0&quot;
-DECL|macro|__PAD5
-mdefine_line|#define __PAD5 __PAD6 &quot;&bslash;0&quot;
-DECL|macro|__PAD4
-mdefine_line|#define __PAD4 __PAD5 &quot;&bslash;0&quot;
-DECL|macro|__PAD3
-mdefine_line|#define __PAD3 __PAD4 &quot;&bslash;0&quot;
-DECL|macro|__PAD2
-mdefine_line|#define __PAD2 __PAD3 &quot;&bslash;0&quot;
 macro_line|#ifdef CONFIG_NET_FC
 DECL|function|fcif_probe
 r_static
@@ -1795,7 +1784,6 @@ id|tap0_dev
 op_assign
 (brace
 l_string|&quot;tap0&quot;
-id|__PAD4
 comma
 l_int|0
 comma
@@ -1845,7 +1833,6 @@ id|sdla0_dev
 op_assign
 (brace
 l_string|&quot;sdla0&quot;
-id|__PAD5
 comma
 l_int|0
 comma
@@ -1895,7 +1882,6 @@ id|dev_ltpc
 op_assign
 (brace
 l_string|&quot;lt0&quot;
-id|__PAD3
 comma
 l_int|0
 comma
@@ -1944,7 +1930,6 @@ id|cops2_dev
 op_assign
 (brace
 l_string|&quot;lt2&quot;
-id|__PAD3
 comma
 l_int|0
 comma
@@ -1977,7 +1962,6 @@ id|cops1_dev
 op_assign
 (brace
 l_string|&quot;lt1&quot;
-id|__PAD3
 comma
 l_int|0
 comma
@@ -2011,7 +1995,6 @@ id|cops0_dev
 op_assign
 (brace
 l_string|&quot;lt0&quot;
-id|__PAD3
 comma
 l_int|0
 comma
@@ -2062,7 +2045,6 @@ id|eth7_dev
 op_assign
 (brace
 l_string|&quot;eth%d&quot;
-id|__PAD5
 comma
 l_int|0
 comma
@@ -2096,7 +2078,6 @@ id|eth6_dev
 op_assign
 (brace
 l_string|&quot;eth%d&quot;
-id|__PAD5
 comma
 l_int|0
 comma
@@ -2131,7 +2112,6 @@ id|eth5_dev
 op_assign
 (brace
 l_string|&quot;eth%d&quot;
-id|__PAD5
 comma
 l_int|0
 comma
@@ -2166,7 +2146,6 @@ id|eth4_dev
 op_assign
 (brace
 l_string|&quot;eth%d&quot;
-id|__PAD5
 comma
 l_int|0
 comma
@@ -2201,7 +2180,6 @@ id|eth3_dev
 op_assign
 (brace
 l_string|&quot;eth%d&quot;
-id|__PAD5
 comma
 l_int|0
 comma
@@ -2236,7 +2214,6 @@ id|eth2_dev
 op_assign
 (brace
 l_string|&quot;eth%d&quot;
-id|__PAD5
 comma
 l_int|0
 comma
@@ -2271,7 +2248,6 @@ id|eth1_dev
 op_assign
 (brace
 l_string|&quot;eth%d&quot;
-id|__PAD5
 comma
 l_int|0
 comma
@@ -2306,7 +2282,6 @@ id|eth0_dev
 op_assign
 (brace
 l_string|&quot;eth%d&quot;
-id|__PAD5
 comma
 l_int|0
 comma
@@ -2429,7 +2404,6 @@ id|tr7_dev
 op_assign
 (brace
 l_string|&quot;tr%d&quot;
-id|__PAD3
 comma
 l_int|0
 comma
@@ -2462,7 +2436,6 @@ id|tr6_dev
 op_assign
 (brace
 l_string|&quot;tr%d&quot;
-id|__PAD3
 comma
 l_int|0
 comma
@@ -2496,7 +2469,6 @@ id|tr5_dev
 op_assign
 (brace
 l_string|&quot;tr%d&quot;
-id|__PAD3
 comma
 l_int|0
 comma
@@ -2530,7 +2502,6 @@ id|tr4_dev
 op_assign
 (brace
 l_string|&quot;tr%d&quot;
-id|__PAD3
 comma
 l_int|0
 comma
@@ -2564,7 +2535,6 @@ id|tr3_dev
 op_assign
 (brace
 l_string|&quot;tr%d&quot;
-id|__PAD3
 comma
 l_int|0
 comma
@@ -2598,7 +2568,6 @@ id|tr2_dev
 op_assign
 (brace
 l_string|&quot;tr%d&quot;
-id|__PAD3
 comma
 l_int|0
 comma
@@ -2632,7 +2601,6 @@ id|tr1_dev
 op_assign
 (brace
 l_string|&quot;tr%d&quot;
-id|__PAD3
 comma
 l_int|0
 comma
@@ -2666,7 +2634,6 @@ id|tr0_dev
 op_assign
 (brace
 l_string|&quot;tr%d&quot;
-id|__PAD3
 comma
 l_int|0
 comma
@@ -2706,7 +2673,6 @@ id|fddi7_dev
 op_assign
 (brace
 l_string|&quot;fddi7&quot;
-id|__PAD5
 comma
 l_int|0
 comma
@@ -2739,7 +2705,6 @@ id|fddi6_dev
 op_assign
 (brace
 l_string|&quot;fddi6&quot;
-id|__PAD5
 comma
 l_int|0
 comma
@@ -2773,7 +2738,6 @@ id|fddi5_dev
 op_assign
 (brace
 l_string|&quot;fddi5&quot;
-id|__PAD5
 comma
 l_int|0
 comma
@@ -2807,7 +2771,6 @@ id|fddi4_dev
 op_assign
 (brace
 l_string|&quot;fddi4&quot;
-id|__PAD5
 comma
 l_int|0
 comma
@@ -2841,7 +2804,6 @@ id|fddi3_dev
 op_assign
 (brace
 l_string|&quot;fddi3&quot;
-id|__PAD5
 comma
 l_int|0
 comma
@@ -2875,7 +2837,6 @@ id|fddi2_dev
 op_assign
 (brace
 l_string|&quot;fddi2&quot;
-id|__PAD5
 comma
 l_int|0
 comma
@@ -2909,7 +2870,6 @@ id|fddi1_dev
 op_assign
 (brace
 l_string|&quot;fddi1&quot;
-id|__PAD5
 comma
 l_int|0
 comma
@@ -2943,7 +2903,6 @@ id|fddi0_dev
 op_assign
 (brace
 l_string|&quot;fddi0&quot;
-id|__PAD5
 comma
 l_int|0
 comma

@@ -1496,7 +1496,7 @@ c_cond
 (paren
 id|cmd
 op_amp
-id|IOC_IN
+id|SIOC_IN
 )paren
 multiline_comment|/* read and write */
 r_switch

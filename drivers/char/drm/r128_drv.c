@@ -1371,15 +1371,9 @@ r_if
 c_cond
 (paren
 id|dev-&gt;agp-&gt;acquired
-op_logical_and
-id|drm_agp_p-&gt;release
 )paren
-(paren
-op_star
-(paren
-id|drm_agp_p-&gt;release
-)paren
-)paren
+id|_drm_agp_release
+c_func
 (paren
 )paren
 suffix:semicolon

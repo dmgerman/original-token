@@ -1932,13 +1932,6 @@ c_cond
 (paren
 op_logical_neg
 id|q
-op_logical_or
-op_logical_neg
-id|waitqueue_active
-c_func
-(paren
-id|q
-)paren
 )paren
 r_goto
 id|out

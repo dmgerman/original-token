@@ -447,6 +447,8 @@ l_string|&quot;-s&quot;
 comma
 l_string|&quot;-k&quot;
 comma
+l_string|&quot;--&quot;
+comma
 (paren
 r_char
 op_star

@@ -70,6 +70,10 @@ comma
 id|flags
 )paren
 suffix:semicolon
+id|wait-&gt;flags
+op_assign
+l_int|0
+suffix:semicolon
 id|__add_wait_queue
 c_func
 (paren
@@ -116,7 +120,7 @@ id|flags
 )paren
 suffix:semicolon
 id|wait-&gt;flags
-op_or_assign
+op_assign
 id|WQ_FLAG_EXCLUSIVE
 suffix:semicolon
 id|__add_wait_queue_tail

@@ -3382,6 +3382,16 @@ c_func
 (paren
 )paren
 suffix:semicolon
+id|remove_wait_queue
+c_func
+(paren
+op_amp
+id|chip-&gt;wq
+comma
+op_amp
+id|wait
+)paren
+suffix:semicolon
 r_goto
 id|retry
 suffix:semicolon

@@ -204,6 +204,12 @@ suffix:semicolon
 r_int
 id|err
 suffix:semicolon
+id|SET_MODULE_OWNER
+c_func
+(paren
+id|dev
+)paren
+suffix:semicolon
 r_while
 c_loop
 (paren
@@ -903,8 +909,6 @@ c_func
 id|dev
 )paren
 suffix:semicolon
-id|MOD_INC_USE_COUNT
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -941,8 +945,6 @@ c_func
 (paren
 id|dev
 )paren
-suffix:semicolon
-id|MOD_DEC_USE_COUNT
 suffix:semicolon
 r_return
 l_int|0
@@ -1782,12 +1784,6 @@ r_static
 r_struct
 id|net_device
 id|ariadne2_dev
-op_assign
-(brace
-id|init
-suffix:colon
-id|ariadne2_probe
-)brace
 suffix:semicolon
 DECL|function|init_module
 r_int
@@ -1799,6 +1795,10 @@ r_void
 (brace
 r_int
 id|err
+suffix:semicolon
+id|ariadne2_dev.init
+op_assign
+id|ariadne2_probe
 suffix:semicolon
 r_if
 c_cond
@@ -1815,17 +1815,10 @@ id|ariadne2_dev
 )paren
 )paren
 (brace
-r_if
-c_cond
-(paren
-id|err
-op_eq
-op_minus
-id|EIO
-)paren
 id|printk
 c_func
 (paren
+id|KERN_WARNING
 l_string|&quot;No AriadNE2 ethernet card found.&bslash;n&quot;
 )paren
 suffix:semicolon

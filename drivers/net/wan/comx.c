@@ -4593,7 +4593,6 @@ c_func
 (paren
 id|dentry-&gt;d_name.name
 comma
-op_amp
 id|comx_root_dir
 )paren
 suffix:semicolon

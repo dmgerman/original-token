@@ -9,7 +9,7 @@ macro_line|#include &lt;linux/sunrpc/auth.h&gt;
 macro_line|#include &lt;linux/nfs_xdr.h&gt;
 multiline_comment|/*&n; * Valid flags for a dirty buffer&n; */
 DECL|macro|PG_BUSY
-mdefine_line|#define PG_BUSY&t;&t;&t;0x0001
+mdefine_line|#define PG_BUSY&t;&t;&t;0
 DECL|struct|nfs_page
 r_struct
 id|nfs_page
@@ -91,7 +91,7 @@ multiline_comment|/* Commit cookie */
 )brace
 suffix:semicolon
 DECL|macro|NFS_WBACK_BUSY
-mdefine_line|#define NFS_WBACK_BUSY(req)&t;((req)-&gt;wb_flags &amp; PG_BUSY)
+mdefine_line|#define NFS_WBACK_BUSY(req)&t;(test_bit(PG_BUSY,&amp;(req)-&gt;wb_flags))
 r_extern
 r_struct
 id|nfs_page
@@ -247,10 +247,13 @@ id|req
 r_if
 c_cond
 (paren
-id|NFS_WBACK_BUSY
+id|test_and_set_bit
 c_func
 (paren
-id|req
+id|PG_BUSY
+comma
+op_amp
+id|req-&gt;wb_flags
 )paren
 )paren
 r_return
@@ -258,10 +261,6 @@ l_int|0
 suffix:semicolon
 id|req-&gt;wb_count
 op_increment
-suffix:semicolon
-id|req-&gt;wb_flags
-op_or_assign
-id|PG_BUSY
 suffix:semicolon
 r_return
 l_int|1
@@ -298,14 +297,41 @@ id|KERN_ERR
 l_string|&quot;NFS: Invalid unlock attempted&bslash;n&quot;
 )paren
 suffix:semicolon
-r_return
+id|BUG
+c_func
+(paren
+)paren
 suffix:semicolon
 )brace
-id|req-&gt;wb_flags
-op_and_assign
-op_complement
-id|PG_BUSY
+id|smp_mb__before_clear_bit
+c_func
+(paren
+)paren
 suffix:semicolon
+id|clear_bit
+c_func
+(paren
+id|PG_BUSY
+comma
+op_amp
+id|req-&gt;wb_flags
+)paren
+suffix:semicolon
+id|smp_mb__after_clear_bit
+c_func
+(paren
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|waitqueue_active
+c_func
+(paren
+op_amp
+id|req-&gt;wb_wait
+)paren
+)paren
 id|wake_up
 c_func
 (paren

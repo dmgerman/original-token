@@ -2991,6 +2991,16 @@ comma
 id|flags
 )paren
 suffix:semicolon
+id|remove_wait_queue
+c_func
+(paren
+op_amp
+id|raw-&gt;empty_wait
+comma
+op_amp
+id|wait
+)paren
+suffix:semicolon
 id|current-&gt;state
 op_assign
 id|TASK_RUNNING

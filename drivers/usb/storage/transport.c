@@ -1058,6 +1058,10 @@ id|us-&gt;current_urb_sem
 )paren
 )paren
 suffix:semicolon
+id|current-&gt;state
+op_assign
+id|TASK_RUNNING
+suffix:semicolon
 id|remove_wait_queue
 c_func
 (paren
@@ -1299,6 +1303,10 @@ op_amp
 id|us-&gt;current_urb_sem
 )paren
 )paren
+suffix:semicolon
+id|current-&gt;state
+op_assign
+id|TASK_RUNNING
 suffix:semicolon
 id|remove_wait_queue
 c_func

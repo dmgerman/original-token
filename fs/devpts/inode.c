@@ -676,9 +676,10 @@ suffix:semicolon
 )brace
 id|inode
 op_assign
-id|get_empty_inode
+id|new_inode
 c_func
 (paren
+id|s
 )paren
 suffix:semicolon
 r_if
@@ -689,14 +690,6 @@ id|inode
 )paren
 r_goto
 id|fail_free
-suffix:semicolon
-id|inode-&gt;i_sb
-op_assign
-id|s
-suffix:semicolon
-id|inode-&gt;i_dev
-op_assign
-id|s-&gt;s_dev
 suffix:semicolon
 id|inode-&gt;i_ino
 op_assign
@@ -709,10 +702,6 @@ op_assign
 id|inode-&gt;i_ctime
 op_assign
 id|CURRENT_TIME
-suffix:semicolon
-id|inode-&gt;i_size
-op_assign
-l_int|0
 suffix:semicolon
 id|inode-&gt;i_blocks
 op_assign
@@ -913,9 +902,10 @@ suffix:semicolon
 multiline_comment|/* Already registered, this does happen */
 id|inode
 op_assign
-id|get_empty_inode
+id|new_inode
 c_func
 (paren
+id|sb
 )paren
 suffix:semicolon
 r_if
@@ -925,14 +915,6 @@ op_logical_neg
 id|inode
 )paren
 r_return
-suffix:semicolon
-id|inode-&gt;i_sb
-op_assign
-id|sb
-suffix:semicolon
-id|inode-&gt;i_dev
-op_assign
-id|sb-&gt;s_dev
 suffix:semicolon
 id|inode-&gt;i_ino
 op_assign

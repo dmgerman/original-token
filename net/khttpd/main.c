@@ -192,16 +192,9 @@ comma
 id|CPUNR
 )paren
 suffix:semicolon
-id|lock_kernel
+id|daemonize
 c_func
 (paren
-)paren
-suffix:semicolon
-multiline_comment|/* This seems to be required for exit_mm */
-id|exit_mm
-c_func
-(paren
-id|current
 )paren
 suffix:semicolon
 id|init_waitqueue_head
@@ -565,16 +558,9 @@ comma
 l_string|&quot;khttpd manager&quot;
 )paren
 suffix:semicolon
-id|lock_kernel
+id|daemonize
 c_func
 (paren
-)paren
-suffix:semicolon
-multiline_comment|/* This seems to be required for exit_mm */
-id|exit_mm
-c_func
-(paren
-id|current
 )paren
 suffix:semicolon
 multiline_comment|/* Block all signals except SIGKILL and SIGSTOP */

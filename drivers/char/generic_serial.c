@@ -4047,11 +4047,4 @@ c_func
 id|gs_getserial
 )paren
 suffix:semicolon
-DECL|variable|gs_debug
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|gs_debug
-)paren
-suffix:semicolon
 eof

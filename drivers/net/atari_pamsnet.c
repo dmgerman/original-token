@@ -1870,7 +1870,6 @@ suffix:semicolon
 )brace
 multiline_comment|/* The following higher level routines work on virtual addresses and convert them to&n; * physical addresses when passed to the lowlevel routines. It&squot;s up to the higher level&n; * routines to copy data from Alternate RAM to ST RAM if neccesary!&n; */
 multiline_comment|/* Check for a network adaptor of this type, and return &squot;0&squot; if one exists.&n; */
-r_extern
 r_int
 id|__init
 DECL|function|pamsnet_probe
@@ -1919,6 +1918,12 @@ id|no_more_found
 r_return
 op_minus
 id|ENODEV
+suffix:semicolon
+id|SET_MODULE_OWNER
+c_func
+(paren
+id|dev
+)paren
 suffix:semicolon
 id|no_more_found
 op_assign
@@ -2400,8 +2405,6 @@ c_func
 op_amp
 id|pamsnet_timer
 )paren
-suffix:semicolon
-id|MOD_INC_USE_COUNT
 suffix:semicolon
 r_return
 l_int|0
@@ -3054,8 +3057,6 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|MOD_DEC_USE_COUNT
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -3093,54 +3094,11 @@ id|lp-&gt;stats
 suffix:semicolon
 )brace
 macro_line|#ifdef MODULE
-DECL|variable|devicename
-r_static
-r_char
-id|devicename
-(braket
-l_int|9
-)braket
-op_assign
-(brace
-l_int|0
-comma
-)brace
-suffix:semicolon
 DECL|variable|pam_dev
 r_static
 r_struct
 id|net_device
 id|pam_dev
-op_assign
-(brace
-id|devicename
-comma
-multiline_comment|/* filled in by register_netdev() */
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-multiline_comment|/* memory */
-l_int|0
-comma
-l_int|0
-comma
-multiline_comment|/* base, irq */
-l_int|0
-comma
-l_int|0
-comma
-l_int|0
-comma
-l_int|NULL
-comma
-id|pamsnet_probe
-comma
-)brace
 suffix:semicolon
 r_int
 DECL|function|init_module
@@ -3152,6 +3110,10 @@ r_void
 (brace
 r_int
 id|err
+suffix:semicolon
+id|pam_dev.init
+op_assign
+id|pamsnet_probe
 suffix:semicolon
 r_if
 c_cond

@@ -60,9 +60,9 @@ DECL|member|cap
 id|socket_cap_t
 id|cap
 suffix:semicolon
-DECL|member|wait
-id|wait_queue_head_t
-id|wait
+DECL|member|event_lock
+id|spinlock_t
+id|event_lock
 suffix:semicolon
 DECL|member|events
 r_int
@@ -74,6 +74,16 @@ r_struct
 id|socket_info_t
 op_star
 id|pcmcia_socket
+suffix:semicolon
+DECL|member|tq_task
+r_struct
+id|tq_struct
+id|tq_task
+suffix:semicolon
+DECL|member|poll_timer
+r_struct
+id|timer_list
+id|poll_timer
 suffix:semicolon
 multiline_comment|/* A few words of private data for the low-level driver.. */
 DECL|member|private

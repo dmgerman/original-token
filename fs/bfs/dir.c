@@ -381,9 +381,10 @@ id|ino
 suffix:semicolon
 id|inode
 op_assign
-id|get_empty_inode
+id|new_inode
 c_func
 (paren
+id|s
 )paren
 suffix:semicolon
 r_if
@@ -395,10 +396,6 @@ id|inode
 r_return
 op_minus
 id|ENOSPC
-suffix:semicolon
-id|inode-&gt;i_sb
-op_assign
-id|s
 suffix:semicolon
 id|ino
 op_assign
@@ -439,10 +436,6 @@ id|s-&gt;su_imap
 suffix:semicolon
 id|s-&gt;su_freei
 op_decrement
-suffix:semicolon
-id|inode-&gt;i_dev
-op_assign
-id|s-&gt;s_dev
 suffix:semicolon
 id|inode-&gt;i_uid
 op_assign

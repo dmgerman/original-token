@@ -397,6 +397,13 @@ c_func
 id|init_mm
 )paren
 suffix:semicolon
+DECL|variable|deactivate_page
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|deactivate_page
+)paren
+suffix:semicolon
 macro_line|#ifdef CONFIG_HIGHMEM
 DECL|variable|kmap_high
 id|EXPORT_SYMBOL

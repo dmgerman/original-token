@@ -36,6 +36,9 @@ comma
 DECL|enumerator|INTEL_I810
 id|INTEL_I810
 comma
+DECL|enumerator|INTEL_I815
+id|INTEL_I815
+comma
 DECL|enumerator|INTEL_I840
 id|INTEL_I840
 comma

@@ -697,11 +697,11 @@ id|dev-&gt;driver_data
 op_assign
 id|socket
 suffix:semicolon
-id|init_waitqueue_head
+id|spin_lock_init
 c_func
 (paren
 op_amp
-id|socket-&gt;wait
+id|socket-&gt;event_lock
 )paren
 suffix:semicolon
 r_return

@@ -1,4 +1,4 @@
-multiline_comment|/* $Id: su.c,v 1.42 2000/10/14 10:09:04 davem Exp $&n; * su.c: Small serial driver for keyboard/mouse interface on sparc32/PCI&n; *&n; * Copyright (C) 1997  Eddie C. Dost  (ecd@skynet.be)&n; * Copyright (C) 1998-1999  Pete Zaitcev   (zaitcev@metabyte.com)&n; *&n; * This is mainly a variation of drivers/char/serial.c,&n; * credits go to authors mentioned therein.&n; */
+multiline_comment|/* $Id: su.c,v 1.43 2000/11/15 07:28:09 davem Exp $&n; * su.c: Small serial driver for keyboard/mouse interface on sparc32/PCI&n; *&n; * Copyright (C) 1997  Eddie C. Dost  (ecd@skynet.be)&n; * Copyright (C) 1998-1999  Pete Zaitcev   (zaitcev@metabyte.com)&n; *&n; * This is mainly a variation of drivers/char/serial.c,&n; * credits go to authors mentioned therein.&n; */
 multiline_comment|/*&n; * Configuration section.&n; */
 DECL|macro|SERIAL_PARANOIA_CHECK
 mdefine_line|#define SERIAL_PARANOIA_CHECK
@@ -8330,6 +8330,10 @@ c_func
 )paren
 suffix:semicolon
 )brace
+id|current-&gt;state
+op_assign
+id|TASK_RUNNING
+suffix:semicolon
 id|remove_wait_queue
 c_func
 (paren
@@ -9308,7 +9312,7 @@ r_char
 op_star
 id|revision
 op_assign
-l_string|&quot;$Revision: 1.42 $&quot;
+l_string|&quot;$Revision: 1.43 $&quot;
 suffix:semicolon
 r_char
 op_star
