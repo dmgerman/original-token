@@ -67,24 +67,26 @@ id|entry-&gt;wait
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n; * Due to kernel stack usage, we use a _limited_ fd_set type here, and once&n; * we really start supporting &gt;256 file descriptors we&squot;ll probably have to&n; * allocate the kernel fd_set copies dynamically.. (The kernel select routines&n; * are careful to touch only the defined low bits of any fd_set pointer, this&n; * is important for performance too).&n; */
-DECL|typedef|limited_fd_set
+multiline_comment|/*&n; * For the kernel fd_set we use a fixed set-size for allocation purposes.&n; * This set-size doesn&squot;t necessarily bear any relation to the size the user&n; * uses, but should preferably obviously be larger than any possible user&n; * size (NR_OPEN bits).&n; *&n; * We need 6 bitmaps (in/out/ex for both incoming and outgoing), and we&n; * allocate one page for all the bitmaps. Thus we have 8*PAGE_SIZE bits,&n; * to be divided by 6. And we&squot;d better make sure we round to a full&n; * long-word (in fact, we&squot;ll round to 64 bytes).&n; */
+DECL|macro|KFDS_64BLOCK
+mdefine_line|#define KFDS_64BLOCK ((PAGE_SIZE/(6*64))*64)
+DECL|macro|KFDS_NR
+mdefine_line|#define KFDS_NR (KFDS_64BLOCK*8 &gt; NR_OPEN ? NR_OPEN : KFDS_64BLOCK*8)
+DECL|typedef|kernel_fd_set
 r_typedef
 r_int
 r_int
-id|limited_fd_set
+id|kernel_fd_set
 (braket
-id|NR_OPEN
+id|KFDS_NR
 op_div
 (paren
 l_int|8
 op_star
-(paren
 r_sizeof
 (paren
 r_int
 r_int
-)paren
 )paren
 )paren
 )braket
@@ -95,7 +97,7 @@ r_struct
 DECL|member|in
 DECL|member|out
 DECL|member|ex
-id|limited_fd_set
+id|kernel_fd_set
 id|in
 comma
 id|out
@@ -105,7 +107,7 @@ suffix:semicolon
 DECL|member|res_in
 DECL|member|res_out
 DECL|member|res_ex
-id|limited_fd_set
+id|kernel_fd_set
 id|res_in
 comma
 id|res_out
@@ -119,15 +121,15 @@ suffix:semicolon
 DECL|macro|__IN
 mdefine_line|#define __IN(in)&t;(in)
 DECL|macro|__OUT
-mdefine_line|#define __OUT(in)&t;(in + sizeof(limited_fd_set)/sizeof(unsigned long))
+mdefine_line|#define __OUT(in)&t;(in + sizeof(kernel_fd_set)/sizeof(unsigned long))
 DECL|macro|__EX
-mdefine_line|#define __EX(in)&t;(in + 2*sizeof(limited_fd_set)/sizeof(unsigned long))
+mdefine_line|#define __EX(in)&t;(in + 2*sizeof(kernel_fd_set)/sizeof(unsigned long))
 DECL|macro|__RES_IN
-mdefine_line|#define __RES_IN(in)&t;(in + 3*sizeof(limited_fd_set)/sizeof(unsigned long))
+mdefine_line|#define __RES_IN(in)&t;(in + 3*sizeof(kernel_fd_set)/sizeof(unsigned long))
 DECL|macro|__RES_OUT
-mdefine_line|#define __RES_OUT(in)&t;(in + 4*sizeof(limited_fd_set)/sizeof(unsigned long))
+mdefine_line|#define __RES_OUT(in)&t;(in + 4*sizeof(kernel_fd_set)/sizeof(unsigned long))
 DECL|macro|__RES_EX
-mdefine_line|#define __RES_EX(in)&t;(in + 5*sizeof(limited_fd_set)/sizeof(unsigned long))
+mdefine_line|#define __RES_EX(in)&t;(in + 5*sizeof(kernel_fd_set)/sizeof(unsigned long))
 DECL|macro|BITS
 mdefine_line|#define BITS(in)&t;(*__IN(in)|*__OUT(in)|*__EX(in))
 DECL|function|max_select_fd
@@ -1006,6 +1008,7 @@ op_minus
 id|EINVAL
 suffix:semicolon
 id|fd_set_buffer
+op_star
 id|fds
 suffix:semicolon
 r_int
@@ -1016,6 +1019,27 @@ id|lock_kernel
 c_func
 (paren
 )paren
+suffix:semicolon
+id|fds
+op_assign
+(paren
+id|fd_set_buffer
+op_star
+)paren
+id|__get_free_page
+c_func
+(paren
+id|GFP_KERNEL
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|fds
+)paren
+r_goto
+id|out
 suffix:semicolon
 r_if
 c_cond
@@ -1032,11 +1056,11 @@ c_cond
 (paren
 id|n
 OG
-id|NR_OPEN
+id|KFDS_NR
 )paren
 id|n
 op_assign
-id|NR_OPEN
+id|KFDS_NR
 suffix:semicolon
 r_if
 c_cond
@@ -1052,7 +1076,7 @@ comma
 id|inp
 comma
 op_amp
-id|fds.in
+id|fds-&gt;in
 )paren
 )paren
 op_logical_or
@@ -1067,7 +1091,7 @@ comma
 id|outp
 comma
 op_amp
-id|fds.out
+id|fds-&gt;out
 )paren
 )paren
 op_logical_or
@@ -1082,7 +1106,7 @@ comma
 id|exp
 comma
 op_amp
-id|fds.ex
+id|fds-&gt;ex
 )paren
 )paren
 )paren
@@ -1190,7 +1214,7 @@ c_func
 id|n
 comma
 op_amp
-id|fds.res_in
+id|fds-&gt;res_in
 )paren
 suffix:semicolon
 id|zero_fd_set
@@ -1199,7 +1223,7 @@ c_func
 id|n
 comma
 op_amp
-id|fds.res_out
+id|fds-&gt;res_out
 )paren
 suffix:semicolon
 id|zero_fd_set
@@ -1208,7 +1232,7 @@ c_func
 id|n
 comma
 op_amp
-id|fds.res_ex
+id|fds-&gt;res_ex
 )paren
 suffix:semicolon
 id|current-&gt;timeout
@@ -1222,7 +1246,6 @@ c_func
 (paren
 id|n
 comma
-op_amp
 id|fds
 )paren
 suffix:semicolon
@@ -1344,7 +1367,7 @@ comma
 id|inp
 comma
 op_amp
-id|fds.res_in
+id|fds-&gt;res_in
 )paren
 suffix:semicolon
 id|set_fd_set
@@ -1355,7 +1378,7 @@ comma
 id|outp
 comma
 op_amp
-id|fds.res_out
+id|fds-&gt;res_out
 )paren
 suffix:semicolon
 id|set_fd_set
@@ -1366,11 +1389,21 @@ comma
 id|exp
 comma
 op_amp
-id|fds.res_ex
+id|fds-&gt;res_ex
 )paren
 suffix:semicolon
 id|out
 suffix:colon
+id|free_page
+c_func
+(paren
+(paren
+r_int
+r_int
+)paren
+id|fds
+)paren
+suffix:semicolon
 id|unlock_kernel
 c_func
 (paren
@@ -1610,9 +1643,6 @@ comma
 id|fdcount
 comma
 id|err
-op_assign
-op_minus
-id|EINVAL
 suffix:semicolon
 r_struct
 id|pollfd
@@ -1634,16 +1664,6 @@ id|lock_kernel
 c_func
 (paren
 )paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|nfds
-OG
-id|NR_OPEN
-)paren
-r_goto
-id|out
 suffix:semicolon
 id|err
 op_assign

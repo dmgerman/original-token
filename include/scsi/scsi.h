@@ -114,6 +114,8 @@ DECL|macro|MODE_SELECT_10
 mdefine_line|#define MODE_SELECT_10        0x55
 DECL|macro|MODE_SENSE_10
 mdefine_line|#define MODE_SENSE_10         0x5a
+DECL|macro|MOVE_MEDIUM
+mdefine_line|#define MOVE_MEDIUM           0xa5
 DECL|macro|READ_12
 mdefine_line|#define READ_12               0xa8
 DECL|macro|WRITE_12
@@ -126,6 +128,8 @@ DECL|macro|SEARCH_EQUAL_12
 mdefine_line|#define SEARCH_EQUAL_12       0xb1
 DECL|macro|SEARCH_LOW_12
 mdefine_line|#define SEARCH_LOW_12         0xb2
+DECL|macro|READ_ELEMENT_STATUS
+mdefine_line|#define READ_ELEMENT_STATUS   0xb8
 DECL|macro|SEND_VOLUME_TAG
 mdefine_line|#define SEND_VOLUME_TAG       0xb6
 DECL|macro|WRITE_LONG_2

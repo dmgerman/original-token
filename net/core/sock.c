@@ -268,6 +268,7 @@ id|sk-&gt;sndbuf
 op_assign
 id|val
 suffix:semicolon
+multiline_comment|/*&n;&t;&t;&t; *&t;FIXME: Wake up sending tasks if we&n;&t;&t;&t; *&t;upped the value.&n;&t;&t;&t; */
 r_break
 suffix:semicolon
 r_case

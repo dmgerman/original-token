@@ -1163,6 +1163,18 @@ comma
 id|DEVICE
 c_func
 (paren
+l_int|3
+id|COM
+comma
+l_int|3
+id|COM_3C905TX
+comma
+l_string|&quot;3C905 100bTX&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
 id|AL
 comma
 id|AL_M1445
@@ -2349,9 +2361,9 @@ comma
 id|DEVICE
 c_func
 (paren
-id|HER
+id|ARK
 comma
-id|HER_STING
+id|ARK_STING
 comma
 l_string|&quot;Stingray&quot;
 )paren
@@ -2359,11 +2371,21 @@ comma
 id|DEVICE
 c_func
 (paren
-id|HER
+id|ARK
 comma
-id|HER_STINGARK
+id|ARK_STINGARK
 comma
 l_string|&quot;Stingray ARK 2000PV&quot;
+)paren
+comma
+id|DEVICE
+c_func
+(paren
+id|ARK
+comma
+id|ARK_2000MT
+comma
+l_string|&quot;2000MT&quot;
 )paren
 )brace
 suffix:semicolon
@@ -3605,10 +3627,10 @@ r_return
 l_string|&quot;Atronics&quot;
 suffix:semicolon
 r_case
-id|PCI_VENDOR_ID_HER
+id|PCI_VENDOR_ID_ARK
 suffix:colon
 r_return
-l_string|&quot;Hercules&quot;
+l_string|&quot;ARK Logic&quot;
 suffix:semicolon
 r_default
 suffix:colon

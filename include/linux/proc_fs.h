@@ -340,6 +340,9 @@ comma
 DECL|enumerator|PROC_NET_X25
 id|PROC_NET_X25
 comma
+DECL|enumerator|PROC_NET_TR_RIF
+id|PROC_NET_TR_RIF
+comma
 DECL|enumerator|PROC_NET_LAST
 id|PROC_NET_LAST
 )brace

@@ -2174,9 +2174,11 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+(paren
 id|rt-&gt;rt_flags
 op_amp
 id|RTF_BROADCAST
+)paren
 op_logical_and
 op_logical_neg
 id|sk-&gt;broadcast

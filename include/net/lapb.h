@@ -62,15 +62,15 @@ DECL|macro|LAPB_ADDR_D
 mdefine_line|#define&t;LAPB_ADDR_D&t;0x07
 multiline_comment|/* Define Link State constants. */
 DECL|macro|LAPB_STATE_0
-mdefine_line|#define LAPB_STATE_0&t;0
+mdefine_line|#define&t;LAPB_STATE_0&t;0&t;&t;/* Disconnected State&t;&t;*/
 DECL|macro|LAPB_STATE_1
-mdefine_line|#define LAPB_STATE_1&t;1
+mdefine_line|#define&t;LAPB_STATE_1&t;1&t;&t;/* Awaiting Connection State&t;*/
 DECL|macro|LAPB_STATE_2
-mdefine_line|#define LAPB_STATE_2&t;2
+mdefine_line|#define&t;LAPB_STATE_2&t;2&t;&t;/* Awaiting Disconnection State&t;*/
 DECL|macro|LAPB_STATE_3
-mdefine_line|#define LAPB_STATE_3&t;3
+mdefine_line|#define&t;LAPB_STATE_3&t;3&t;&t;/* Data Transfer State&t;&t;*/
 DECL|macro|LAPB_STATE_4
-mdefine_line|#define LAPB_STATE_4&t;4
+mdefine_line|#define&t;LAPB_STATE_4&t;4&t;&t;/* Frame Reject State&t;&t;*/
 DECL|macro|LAPB_DEFAULT_MODE
 mdefine_line|#define&t;LAPB_DEFAULT_MODE&t;&t;(LAPB_STANDARD | LAPB_SLP | LAPB_DTE)
 DECL|macro|LAPB_DEFAULT_WINDOW
@@ -151,6 +151,11 @@ id|t1timer
 comma
 id|t2timer
 suffix:semicolon
+DECL|member|input_queue
+r_struct
+id|sk_buff_head
+id|input_queue
+suffix:semicolon
 DECL|member|write_queue
 r_struct
 id|sk_buff_head
@@ -181,16 +186,6 @@ DECL|typedef|lapb_cb
 id|lapb_cb
 suffix:semicolon
 multiline_comment|/* lapb_iface.c */
-r_extern
-id|lapb_cb
-op_star
-id|lapb_tokentostruct
-c_func
-(paren
-r_void
-op_star
-)paren
-suffix:semicolon
 r_extern
 r_void
 id|lapb_connect_confirmation
@@ -262,6 +257,19 @@ op_star
 )paren
 suffix:semicolon
 multiline_comment|/* lapb_in.c */
+r_extern
+r_void
+id|lapb_data_input
+c_func
+(paren
+id|lapb_cb
+op_star
+comma
+r_struct
+id|sk_buff
+op_star
+)paren
+suffix:semicolon
 multiline_comment|/* lapb_out.c */
 r_extern
 r_void
@@ -289,25 +297,7 @@ r_int
 suffix:semicolon
 r_extern
 r_void
-id|lapb_nr_error_recovery
-c_func
-(paren
-id|lapb_cb
-op_star
-)paren
-suffix:semicolon
-r_extern
-r_void
 id|lapb_establish_data_link
-c_func
-(paren
-id|lapb_cb
-op_star
-)paren
-suffix:semicolon
-r_extern
-r_void
-id|lapb_transmit_enquiry
 c_func
 (paren
 id|lapb_cb

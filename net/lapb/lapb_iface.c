@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;LAPB release 001&n; *&n; *&t;This is ALPHA test software. This code may break your machine, randomly fail to work with new &n; *&t;releases, misbehave and/or generally screw up. It might even work. &n; *&n; *&t;This code REQUIRES 2.1.15 or higher/ NET3.038&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;History&n; *&t;LAPB 001&t;Jonathan Naylor&t;Started Coding&n; */
+multiline_comment|/*&n; *&t;LAPB release 001&n; *&n; *&t;This is ALPHA test software. This code may break your machine, randomly fail to work with new &n; *&t;releases, misbehave and/or generally screw up. It might even work. &n; *&n; *&t;This code REQUIRES 2.1.15 or higher/ NET3.038&n; *&n; *&t;This module:&n; *&t;&t;This module is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;History&n; *&t;LAPB 001&t;Jonathan Naylor&t;Started Coding&n; *&n; *&t;TODO&n; *&t;Add FRMRs.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#if defined(CONFIG_LAPB) || defined(CONFIG_LAPB_MODULE)
 macro_line|#include &lt;linux/module.h&gt;
@@ -203,6 +203,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;Convert the integer token used by the device driver into a pointer&n; *&t;to a LAPB control structure.&n; */
 DECL|function|lapb_tokentostruct
+r_static
 id|lapb_cb
 op_star
 id|lapb_tokentostruct
@@ -303,6 +304,13 @@ r_sizeof
 op_star
 id|lapb
 )paren
+)paren
+suffix:semicolon
+id|skb_queue_head_init
+c_func
+(paren
+op_amp
+id|lapb-&gt;input_queue
 )paren
 suffix:semicolon
 id|skb_queue_head_init
@@ -1005,6 +1013,56 @@ id|lapb_kick
 c_func
 (paren
 id|lapb
+)paren
+suffix:semicolon
+r_return
+id|LAPB_OK
+suffix:semicolon
+)brace
+DECL|function|lapb_data_received
+r_int
+id|lapb_data_received
+c_func
+(paren
+r_void
+op_star
+id|token
+comma
+r_struct
+id|sk_buff
+op_star
+id|skb
+)paren
+(brace
+id|lapb_cb
+op_star
+id|lapb
+suffix:semicolon
+r_if
+c_cond
+(paren
+(paren
+id|lapb
+op_assign
+id|lapb_tokentostruct
+c_func
+(paren
+id|token
+)paren
+)paren
+op_eq
+l_int|NULL
+)paren
+r_return
+id|LAPB_BADTOKEN
+suffix:semicolon
+id|skb_queue_tail
+c_func
+(paren
+op_amp
+id|lapb-&gt;input_queue
+comma
+id|skb
 )paren
 suffix:semicolon
 r_return

@@ -2029,6 +2029,10 @@ id|msg.msg_name
 op_assign
 l_int|NULL
 suffix:semicolon
+id|msg.msg_namelen
+op_assign
+l_int|0
+suffix:semicolon
 id|msg.msg_iov
 op_assign
 op_amp
@@ -2139,6 +2143,10 @@ suffix:semicolon
 id|msg.msg_name
 op_assign
 l_int|NULL
+suffix:semicolon
+id|msg.msg_namelen
+op_assign
+l_int|0
 suffix:semicolon
 id|msg.msg_iov
 op_assign

@@ -361,7 +361,6 @@ r_char
 id|dma
 suffix:semicolon
 multiline_comment|/* DMA channel&t;&t;*/
-multiline_comment|/*&n;&t; *&t;FIXME:&n;&t; *&t;The description &squot;enet_statistics&squot; is misleading. We&n;&t; *&t;should change this.&n;&t; */
 DECL|member|get_stats
 r_struct
 id|net_device_stats

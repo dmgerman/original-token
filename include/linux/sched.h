@@ -187,7 +187,6 @@ id|count
 suffix:semicolon
 DECL|member|umask
 r_int
-r_int
 id|umask
 suffix:semicolon
 DECL|member|root

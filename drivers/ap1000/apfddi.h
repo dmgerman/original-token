@@ -252,7 +252,7 @@ id|apfddi_device
 suffix:semicolon
 r_extern
 r_struct
-id|enet_statistics
+id|net_device_stats
 op_star
 id|apfddi_stats
 suffix:semicolon

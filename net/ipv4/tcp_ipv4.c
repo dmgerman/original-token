@@ -2537,7 +2537,7 @@ id|printk
 c_func
 (paren
 id|KERN_DEBUG
-l_string|&quot;droping syn ack:%d max:%d&bslash;n&quot;
+l_string|&quot;dropping syn ack:%d max:%d&bslash;n&quot;
 comma
 id|sk-&gt;ack_backlog
 comma

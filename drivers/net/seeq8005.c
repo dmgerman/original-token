@@ -71,7 +71,7 @@ id|net_local
 (brace
 DECL|member|stats
 r_struct
-id|net_driver_stats
+id|net_device_stats
 id|stats
 suffix:semicolon
 DECL|member|receive_ptr
@@ -189,7 +189,7 @@ id|dev
 suffix:semicolon
 r_static
 r_struct
-id|net_driver_stats
+id|net_device_stats
 op_star
 id|seeq8005_get_stats
 c_func
@@ -2658,7 +2658,7 @@ multiline_comment|/* Get the current statistics.&t;This may be called with the c
 DECL|function|seeq8005_get_stats
 r_static
 r_struct
-id|net_driver_stats
+id|net_device_stats
 op_star
 id|seeq8005_get_stats
 c_func

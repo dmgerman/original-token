@@ -147,10 +147,9 @@ id|pi_local
 (brace
 DECL|member|stats
 r_struct
-id|netstats
+id|net_device_stats
 id|stats
 suffix:semicolon
-multiline_comment|/* %%%dp*/
 DECL|member|open_time
 r_int
 id|open_time

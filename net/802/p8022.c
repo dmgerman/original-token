@@ -117,6 +117,10 @@ id|skb-&gt;h.raw
 op_add_assign
 l_int|3
 suffix:semicolon
+id|skb-&gt;nh.raw
+op_add_assign
+l_int|3
+suffix:semicolon
 id|skb_pull
 c_func
 (paren

@@ -8387,12 +8387,6 @@ id|ipxhdr
 op_star
 id|ipx
 suffix:semicolon
-id|skb-&gt;h.raw
-op_assign
-(paren
-r_void
-op_star
-)paren
 id|ipx
 op_assign
 id|skb-&gt;nh.ipxh

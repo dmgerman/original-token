@@ -652,17 +652,6 @@ id|BLIST_NOLUN
 comma
 multiline_comment|/*Responds to all lun */
 (brace
-l_string|&quot;HP&quot;
-comma
-l_string|&quot;C3725S&quot;
-comma
-l_string|&quot;*&quot;
-comma
-id|BLIST_NOTQ
-)brace
-comma
-multiline_comment|/* Buggy Tagged Queuing */
-(brace
 l_string|&quot;MICROP&quot;
 comma
 l_string|&quot;4110&quot;

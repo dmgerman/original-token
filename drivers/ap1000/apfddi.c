@@ -778,7 +778,7 @@ l_int|NULL
 suffix:semicolon
 DECL|variable|apfddi_stats
 r_struct
-id|enet_statistics
+id|net_device_stats
 op_star
 id|apfddi_stats
 op_assign
@@ -1393,7 +1393,7 @@ id|mbuf
 suffix:semicolon
 r_static
 r_struct
-id|enet_statistics
+id|net_device_stats
 op_star
 id|apfddi_get_stats
 c_func
@@ -2361,7 +2361,7 @@ c_func
 r_sizeof
 (paren
 r_struct
-id|enet_statistics
+id|net_device_stats
 )paren
 comma
 id|GFP_ATOMIC
@@ -2388,7 +2388,7 @@ comma
 r_sizeof
 (paren
 r_struct
-id|enet_statistics
+id|net_device_stats
 )paren
 )paren
 suffix:semicolon
@@ -2396,7 +2396,7 @@ id|apfddi_stats
 op_assign
 (paren
 r_struct
-id|enet_statistics
+id|net_device_stats
 op_star
 )paren
 id|apfddi_device-&gt;priv
@@ -3328,7 +3328,7 @@ multiline_comment|/*&n; * Return statistics of fddi driver.&n; */
 DECL|function|apfddi_get_stats
 r_static
 r_struct
-id|enet_statistics
+id|net_device_stats
 op_star
 id|apfddi_get_stats
 c_func
@@ -3342,7 +3342,7 @@ id|dev
 r_return
 (paren
 r_struct
-id|enet_statistics
+id|net_device_stats
 op_star
 )paren
 id|dev-&gt;priv

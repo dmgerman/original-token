@@ -1,4 +1,5 @@
-multiline_comment|/*&n; *  esp.c - driver for Hayes ESP serial cards&n; *&n; *  --- Notices from serial.c, upon which this driver is based ---&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *&n; *  Extensively rewritten by Theodore Ts&squot;o, 8/16/92 -- 9/14/92.  Now&n; *  much more extensible to support other serial cards based on the&n; *  16450/16550A UART&squot;s.  Added support for the AST FourPort and the&n; *  Accent Async board.  &n; *&n; *  set_serial_info fixed to set the flags, custom divisor, and uart&n; * &t;type fields.  Fix suggested by Michael K. Johnson 12/12/92.&n; *&n; *  11/95: TIOCMIWAIT, TIOCGICOUNT by Angelo Haritsis &lt;ah@doc.ic.ac.uk&gt;&n; *&n; *  03/96: Modularised by Angelo Haritsis &lt;ah@doc.ic.ac.uk&gt;&n; *&n; *  rs_set_termios fixed to look also for changes of the input&n; *      flags INPCK, BRKINT, PARMRK, IGNPAR and IGNBRK.&n; *                                            Bernd Anh&#xfffd;upl 05/17/96.&n; *&n; * --- End of notices from serial.c ---&n; *&n; * Support for the ESP serial card by Andrew J. Robinson&n; *     &lt;arobinso@nyx.net&gt; (Card detection routine taken from a patch&n; *     by Dennis J. Boylan).  Patches to allow use with 2.1.x contributed&n; *     by Chris Faylor.&n; *&n; * Most recent changes: (Andrew J. Robinson)&n; *     Remove all references to tty-&gt;hw_stopped.&n; *     Request a single region for multiple ports if possible.&n; *     Stop a DMA transfer on a port when it is closed.&n; *     Rename esp_init() to espserial_init().&n; *     Improve validation of IRQ (only accept those allowed by the ESP card).&n; *     Return if a signal is received while wait for a break to start.&n; *     Split NEED_DMA logic into NEED_DMA_RX and NEED_DMA_TX.&n; *&n; * This module exports the following rs232 io functions:&n; *&n; *&t;int espserial_init(void);&n; */
+multiline_comment|/*&n; *  esp.c - driver for Hayes ESP serial cards&n; *&n; *  --- Notices from serial.c, upon which this driver is based ---&n; *&n; *  Copyright (C) 1991, 1992  Linus Torvalds&n; *&n; *  Extensively rewritten by Theodore Ts&squot;o, 8/16/92 -- 9/14/92.  Now&n; *  much more extensible to support other serial cards based on the&n; *  16450/16550A UART&squot;s.  Added support for the AST FourPort and the&n; *  Accent Async board.  &n; *&n; *  set_serial_info fixed to set the flags, custom divisor, and uart&n; * &t;type fields.  Fix suggested by Michael K. Johnson 12/12/92.&n; *&n; *  11/95: TIOCMIWAIT, TIOCGICOUNT by Angelo Haritsis &lt;ah@doc.ic.ac.uk&gt;&n; *&n; *  03/96: Modularised by Angelo Haritsis &lt;ah@doc.ic.ac.uk&gt;&n; *&n; *  rs_set_termios fixed to look also for changes of the input&n; *      flags INPCK, BRKINT, PARMRK, IGNPAR and IGNBRK.&n; *                                            Bernd Anh&#xfffd;upl 05/17/96.&n; *&n; * --- End of notices from serial.c ---&n; *&n; * Support for the ESP serial card by Andrew J. Robinson&n; *     &lt;arobinso@nyx.net&gt; (Card detection routine taken from a patch&n; *     by Dennis J. Boylan).  Patches to allow use with 2.1.x contributed&n; *     by Chris Faylor.&n; *&n; * Most recent changes: (Andrew J. Robinson)&n; *     Don&squot;t cause a kernel panic if memory could not be allocated or if the&n; *     device couldn&squot;t be registered.&n; *     Always set RTS when transitioning away from B0 status (since the&n; *     flow is really being handled by the ESP card).&n; *&n; * This module exports the following rs232 io functions:&n; *&n; *&t;int espserial_init(void);&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/signal.h&gt;
@@ -8,7 +9,6 @@ macro_line|#include &lt;linux/tty.h&gt;
 macro_line|#include &lt;linux/tty_flip.h&gt;
 macro_line|#include &lt;linux/serial.h&gt;
 macro_line|#include &lt;linux/serial_reg.h&gt;
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/major.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
@@ -163,7 +163,7 @@ r_char
 op_star
 id|serial_version
 op_assign
-l_string|&quot;1.3&quot;
+l_string|&quot;1.5&quot;
 suffix:semicolon
 DECL|variable|tq_esp
 id|DECLARE_TASK_QUEUE
@@ -8204,21 +8204,11 @@ id|CBAUD
 (brace
 id|info-&gt;MCR
 op_or_assign
+(paren
 id|UART_MCR_DTR
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-(paren
-id|tty-&gt;termios-&gt;c_cflag
-op_amp
-id|CRTSCTS
-)paren
-)paren
-id|info-&gt;MCR
-op_or_assign
+op_or
 id|UART_MCR_RTS
+)paren
 suffix:semicolon
 id|cli
 c_func
@@ -10663,12 +10653,18 @@ op_amp
 id|esp_driver
 )paren
 )paren
-id|panic
+(brace
+id|printk
 c_func
 (paren
-l_string|&quot;Couldn&squot;t register serial driver&bslash;n&quot;
+id|KERN_ERR
+l_string|&quot;Couldn&squot;t register esp serial driver&quot;
 )paren
 suffix:semicolon
+r_return
+l_int|1
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -10679,12 +10675,25 @@ op_amp
 id|esp_callout_driver
 )paren
 )paren
-id|panic
+(brace
+id|printk
 c_func
 (paren
-l_string|&quot;Couldn&squot;t register callout driver&bslash;n&quot;
+id|KERN_ERR
+l_string|&quot;Couldn&squot;t register esp callout driver&quot;
 )paren
 suffix:semicolon
+id|tty_unregister_driver
+c_func
+(paren
+op_amp
+id|esp_driver
+)paren
+suffix:semicolon
+r_return
+l_int|1
+suffix:semicolon
+)brace
 id|info
 op_assign
 (paren
@@ -10710,12 +10719,32 @@ c_cond
 op_logical_neg
 id|info
 )paren
-id|panic
+(brace
+id|printk
 c_func
 (paren
-l_string|&quot;Could not allocate memory for device information&bslash;n&quot;
+id|KERN_ERR
+l_string|&quot;Couldn&squot;t allocate memory for esp serial device information&bslash;n&quot;
 )paren
 suffix:semicolon
+id|tty_unregister_driver
+c_func
+(paren
+op_amp
+id|esp_driver
+)paren
+suffix:semicolon
+id|tty_unregister_driver
+c_func
+(paren
+op_amp
+id|esp_callout_driver
+)paren
+suffix:semicolon
+r_return
+l_int|1
+suffix:semicolon
+)brace
 id|memset
 c_func
 (paren
@@ -10972,12 +11001,19 @@ c_cond
 op_logical_neg
 id|info
 )paren
-id|panic
+(brace
+id|printk
 c_func
 (paren
-l_string|&quot;Could not allocate memory for device information&bslash;n&quot;
+id|KERN_ERR
+l_string|&quot;Couldn&squot;t allocate memory for esp serial device information&bslash;n&quot;
 )paren
 suffix:semicolon
+multiline_comment|/* allow use of the already detected ports */
+r_return
+l_int|0
+suffix:semicolon
+)brace
 id|memset
 c_func
 (paren

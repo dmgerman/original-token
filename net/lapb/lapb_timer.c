@@ -117,16 +117,43 @@ op_star
 )paren
 id|param
 suffix:semicolon
+r_struct
+id|sk_buff
+op_star
+id|skb
+suffix:semicolon
+multiline_comment|/*&n;&t; *&t;Process all packet received since the last clock tick.&n;&t; */
+r_while
+c_loop
+(paren
+(paren
+id|skb
+op_assign
+id|skb_dequeue
+c_func
+(paren
+op_amp
+id|lapb-&gt;input_queue
+)paren
+)paren
+op_ne
+l_int|NULL
+)paren
+id|lapb_data_input
+c_func
+(paren
+id|lapb
+comma
+id|skb
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t; *&t;If in a data transfer state, transmit any data.&n;&t; */
 r_if
 c_cond
 (paren
 id|lapb-&gt;state
 op_eq
 id|LAPB_STATE_3
-op_logical_or
-id|lapb-&gt;state
-op_eq
-id|LAPB_STATE_4
 )paren
 id|lapb_kick
 c_func
@@ -134,6 +161,7 @@ c_func
 id|lapb
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t; *&t;T2 expiry code.&n;&t; */
 r_if
 c_cond
 (paren
@@ -153,10 +181,6 @@ c_cond
 id|lapb-&gt;state
 op_eq
 id|LAPB_STATE_3
-op_logical_or
-id|lapb-&gt;state
-op_eq
-id|LAPB_STATE_4
 )paren
 (brace
 r_if
@@ -181,6 +205,7 @@ suffix:semicolon
 )brace
 )brace
 )brace
+multiline_comment|/*&n;&t; *&t;If T1 isn&squot;t running, or hasn&squot;t timed out yet, keep going.&n;&t; */
 r_if
 c_cond
 (paren
@@ -203,12 +228,14 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+multiline_comment|/*&n;&t; *&t;T1 has expired.&n;&t; */
 r_switch
 c_cond
 (paren
 id|lapb-&gt;state
 )paren
 (brace
+multiline_comment|/*&n;&t;&t; *&t;If we are a DCE, keep going DM .. DM .. DM&n;&t;&t; */
 r_case
 id|LAPB_STATE_0
 suffix:colon
@@ -233,6 +260,7 @@ id|LAPB_RESPONSE
 suffix:semicolon
 r_break
 suffix:semicolon
+multiline_comment|/*&n;&t;&t; *&t;Awaiting connection state, send SABM(E), up to N2 times.&n;&t;&t; */
 r_case
 id|LAPB_STATE_1
 suffix:colon
@@ -344,6 +372,7 @@ suffix:semicolon
 )brace
 r_break
 suffix:semicolon
+multiline_comment|/*&n;&t;&t; *&t;Awaiting disconnection state, send DISC, up to N2 times.&n;&t;&t; */
 r_case
 id|LAPB_STATE_2
 suffix:colon
@@ -420,38 +449,9 @@ suffix:semicolon
 )brace
 r_break
 suffix:semicolon
+multiline_comment|/*&n;&t;&t; *&t;Data transfer state, restransmit I frames, up to N2 times.&n;&t;&t; */
 r_case
 id|LAPB_STATE_3
-suffix:colon
-id|lapb-&gt;n2count
-op_assign
-l_int|1
-suffix:semicolon
-id|lapb_transmit_enquiry
-c_func
-(paren
-id|lapb
-)paren
-suffix:semicolon
-id|lapb-&gt;state
-op_assign
-id|LAPB_STATE_4
-suffix:semicolon
-macro_line|#if LAPB_DEBUG &gt; 0
-id|printk
-c_func
-(paren
-id|KERN_DEBUG
-l_string|&quot;lapb: (%p) S3 -&gt; S4&bslash;n&quot;
-comma
-id|lapb-&gt;token
-)paren
-suffix:semicolon
-macro_line|#endif
-r_break
-suffix:semicolon
-r_case
-id|LAPB_STATE_4
 suffix:colon
 r_if
 c_cond
@@ -488,7 +488,7 @@ id|printk
 c_func
 (paren
 id|KERN_DEBUG
-l_string|&quot;lapb: (%p) S4 -&gt; S0&bslash;n&quot;
+l_string|&quot;lapb: (%p) S3 -&gt; S0&bslash;n&quot;
 comma
 id|lapb-&gt;token
 )paren
@@ -500,7 +500,7 @@ r_else
 id|lapb-&gt;n2count
 op_increment
 suffix:semicolon
-id|lapb_transmit_enquiry
+id|lapb_requeue_frames
 c_func
 (paren
 id|lapb

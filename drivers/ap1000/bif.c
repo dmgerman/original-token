@@ -48,7 +48,7 @@ suffix:semicolon
 DECL|variable|bif_stats
 r_static
 r_struct
-id|enet_statistics
+id|net_device_stats
 op_star
 id|bif_stats
 op_assign
@@ -112,7 +112,7 @@ id|dev
 suffix:semicolon
 r_static
 r_struct
-id|enet_statistics
+id|net_device_stats
 op_star
 id|bif_get_stats
 c_func
@@ -425,7 +425,7 @@ c_func
 r_sizeof
 (paren
 r_struct
-id|enet_statistics
+id|net_device_stats
 )paren
 comma
 id|GFP_KERNEL
@@ -452,7 +452,7 @@ comma
 r_sizeof
 (paren
 r_struct
-id|enet_statistics
+id|net_device_stats
 )paren
 )paren
 suffix:semicolon
@@ -460,7 +460,7 @@ id|bif_stats
 op_assign
 (paren
 r_struct
-id|enet_statistics
+id|net_device_stats
 op_star
 )paren
 id|bif_device-&gt;priv
@@ -1150,7 +1150,7 @@ multiline_comment|/*&n; * Return statistics of bif driver.&n; */
 DECL|function|bif_get_stats
 r_static
 r_struct
-id|enet_statistics
+id|net_device_stats
 op_star
 id|bif_get_stats
 c_func
@@ -1164,7 +1164,7 @@ id|dev
 r_return
 (paren
 r_struct
-id|enet_statistics
+id|net_device_stats
 op_star
 )paren
 id|dev-&gt;priv

@@ -135,6 +135,7 @@ id|un
 suffix:semicolon
 )brace
 suffix:semicolon
+macro_line|#ifdef __KERNEL__
 DECL|struct|icmp_err
 r_struct
 id|icmp_err
@@ -151,5 +152,6 @@ l_int|1
 suffix:semicolon
 )brace
 suffix:semicolon
+macro_line|#endif
 macro_line|#endif&t;/* _LINUX_ICMP_H */
 eof

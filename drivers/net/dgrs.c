@@ -1001,7 +1001,7 @@ comma
 id|len
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;There are three modes here for doing the packet copy.&n;&t; *&t;If we have DMA, and the packet is &quot;long&quot;, we use the&n;&t; *&t;chaining mode of DMA.  If its shorter, we use single&n;&t; *&t;DMA&squot;s.  Otherwise, we use memcpy().&n;&t; */
+multiline_comment|/*&n;&t; *&t;There are three modes here for doing the packet copy.&n;&t; *&t;If we have DMA, and the packet is &quot;long&quot;, we use the&n;&t; *&t;chaining mode of DMA.  If it&squot;s shorter, we use single&n;&t; *&t;DMA&squot;s.  Otherwise, we use memcpy().&n;&t; */
 r_if
 c_cond
 (paren

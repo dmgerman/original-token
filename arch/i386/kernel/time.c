@@ -49,7 +49,15 @@ id|init_timer_cc
 comma
 id|last_timer_cc
 suffix:semicolon
-multiline_comment|/*&n; * This is more assembly than C, but it&squot;s also rather&n; * timing-critical and we have to use assembler to get&n; * reasonable 64-bit arithmetic&n; */
+r_extern
+r_volatile
+r_int
+r_int
+id|lost_ticks
+suffix:semicolon
+multiline_comment|/* change this if you have some constant time drift */
+DECL|macro|USECS_PER_JIFFY
+mdefine_line|#define USECS_PER_JIFFY (1000020/HZ)
 DECL|function|do_fast_gettimeoffset
 r_static
 r_int
@@ -87,10 +95,8 @@ comma
 id|quotient
 comma
 id|low_timer
-comma
-id|missing_time
 suffix:semicolon
-multiline_comment|/* Last jiffy when do_fast_gettimeoffset() was called.. */
+multiline_comment|/* Last jiffy when do_fast_gettimeoffset() was called. */
 r_static
 r_int
 r_int
@@ -98,7 +104,7 @@ id|last_jiffies
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* Cached &quot;clocks per usec&quot; value.. */
+multiline_comment|/*&n;&t; * Cached &quot;1/(clocks per usec)*2^32&quot; value. &n;&t; * It has to be recalculated once each jiffy.&n;&t; */
 r_static
 r_int
 r_int
@@ -106,7 +112,6 @@ id|cached_quotient
 op_assign
 l_int|0
 suffix:semicolon
-multiline_comment|/* The &quot;clocks per usec&quot; value is calculated once each jiffy */
 id|tmp
 op_assign
 id|jiffies
@@ -118,10 +123,6 @@ suffix:semicolon
 id|low_timer
 op_assign
 id|last_timer_cc.low
-suffix:semicolon
-id|missing_time
-op_assign
-l_int|0
 suffix:semicolon
 r_if
 c_cond
@@ -135,27 +136,6 @@ id|last_jiffies
 op_assign
 id|tmp
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; * test for hanging bottom handler (this means xtime is not &n;&t;&t; * updated yet)&n;&t;&t; */
-r_if
-c_cond
-(paren
-id|test_bit
-c_func
-(paren
-id|TIMER_BH
-comma
-op_amp
-id|bh_active
-)paren
-)paren
-(brace
-id|missing_time
-op_assign
-l_int|1000020
-op_div
-id|HZ
-suffix:semicolon
-)brace
 multiline_comment|/* Get last timer tick in absolute kernel time */
 id|eax
 op_assign
@@ -204,7 +184,7 @@ id|edx
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t;&t; * Divide the 64-bit time with the 32-bit jiffy counter,&n;&t;&t; * getting the quotient in clocks.&n;&t;&t; *&n;&t;&t; * Giving quotient = &quot;average internal clocks per usec&quot;&n;&t;&t; */
+multiline_comment|/*&n;&t;&t; * Divide the 64-bit time with the 32-bit jiffy counter,&n;&t;&t; * getting the quotient in clocks.&n;&t;&t; *&n;&t;&t; * Giving quotient = &quot;1/(average internal clocks per usec)*2^32&quot;&n;&t;&t; * we do this &squot;1/...&squot; trick to get the &squot;mull&squot; into the critical &n;&t;&t; * path. &squot;mull&squot; is much faster than divl (10 vs. 41 clocks)&n;&t;&t; */
 id|__asm__
 c_func
 (paren
@@ -238,9 +218,7 @@ id|edx
 suffix:semicolon
 id|edx
 op_assign
-l_int|1000020
-op_div
-id|HZ
+id|USECS_PER_JIFFY
 suffix:semicolon
 id|tmp
 op_assign
@@ -316,7 +294,7 @@ id|eax
 op_sub_assign
 id|low_timer
 suffix:semicolon
-multiline_comment|/*&n;&t; * Time offset = (1000020/HZ * time_low) / quotient.&n;&t; */
+multiline_comment|/*&n;&t; * Time offset = (USECS_PER_JIFFY * time_low) * quotient.&n;&t; */
 id|__asm__
 c_func
 (paren
@@ -348,32 +326,22 @@ id|edx
 )paren
 )paren
 suffix:semicolon
-multiline_comment|/*&n; &t; * Due to rounding errors (and jiffies inconsistencies),&n;&t; * we need to check the result so that we&squot;ll get a timer&n;&t; * that is monotonic.&n;&t; */
+multiline_comment|/*&n; &t; * Due to possible jiffies inconsistencies, we need to check &n;&t; * the result so that we&squot;ll get a timer that is monotonic.&n;&t; */
 r_if
 c_cond
 (paren
 id|edx
 op_ge
-l_int|1000020
-op_div
-id|HZ
+id|USECS_PER_JIFFY
 )paren
 id|edx
 op_assign
-l_int|1000020
-op_div
-id|HZ
+id|USECS_PER_JIFFY
 op_minus
 l_int|1
 suffix:semicolon
-id|eax
-op_assign
-id|edx
-op_plus
-id|missing_time
-suffix:semicolon
 r_return
-id|eax
+id|edx
 suffix:semicolon
 )brace
 macro_line|#endif
@@ -397,14 +365,9 @@ r_static
 r_int
 id|count_p
 op_assign
-l_int|0
+id|LATCH
 suffix:semicolon
-r_int
-r_int
-id|offset
-op_assign
-l_int|0
-suffix:semicolon
+multiline_comment|/* for the first call after boot */
 r_static
 r_int
 r_int
@@ -436,9 +399,14 @@ l_int|0x40
 )paren
 suffix:semicolon
 multiline_comment|/* read the latched count */
+multiline_comment|/*&n;&t; * We do this guaranteed double memory access instead of a _p &n;&t; * postfix in the previous port access. Wheee, hackady hack&n;&t; */
+id|jiffies_t
+op_assign
+id|jiffies
+suffix:semicolon
 id|count
 op_or_assign
-id|inb
+id|inb_p
 c_func
 (paren
 l_int|0x40
@@ -446,19 +414,10 @@ l_int|0x40
 op_lshift
 l_int|8
 suffix:semicolon
-id|jiffies_t
-op_assign
-id|jiffies
-suffix:semicolon
-multiline_comment|/*&n;&t; * avoiding timer inconsistencies (they are rare, but they happen)...&n;&t; * there are three kinds of problems that must be avoided here:&n;&t; *  1. the timer counter underflows&n;&t; *  2. hardware problem with the timer, not giving us continuous time,&n;&t; *     the counter does small &quot;jumps&quot; upwards on some Pentium systems,&n;&t; *     thus causes time warps&n;&t; *  3. we are after the timer interrupt, but the bottom half handler&n;&t; *     hasn&squot;t executed yet.&n;&t; */
-r_if
-c_cond
-(paren
-id|count
-OG
-id|count_p
-)paren
-(brace
+multiline_comment|/*&n;&t; * avoiding timer inconsistencies (they are rare, but they happen)...&n;&t; * there are two kinds of problems that must be avoided here:&n;&t; *  1. the timer counter underflows&n;&t; *  2. hardware problem with the timer, not giving us continuous time,&n;&t; *     the counter does small &quot;jumps&quot; upwards on some Pentium systems,&n;&t; *     (see c&squot;t 95/10 page 335 for Neptun bug.)&n;&t; */
+multiline_comment|/* you can safely undefine this if you dont have the Neptun chipset */
+DECL|macro|BUGGY_NEPTUN_TIMER
+mdefine_line|#define BUGGY_NEPTUN_TIMER
 r_if
 c_cond
 (paren
@@ -472,74 +431,65 @@ c_cond
 (paren
 id|count
 OG
-id|LATCH
-op_minus
-id|LATCH
-op_div
-l_int|100
+id|count_p
 )paren
 (brace
-id|offset
-op_assign
-id|TICK_SIZE
+multiline_comment|/* the nutcase */
+id|outb_p
+c_func
+(paren
+l_int|0x0A
+comma
+l_int|0x20
+)paren
 suffix:semicolon
-)brace
-r_else
-multiline_comment|/*&n;&t;&t;&t;&t; * argh, the timer is bugging we cant do nothing &n;&t;&t;&t;&t; * but to give the previous clock value.&n;&t;&t;&t;&t; */
-id|count
-op_assign
-id|count_p
-suffix:semicolon
-)brace
-r_else
-(brace
+multiline_comment|/* assumption about timer being IRQ1 */
 r_if
 c_cond
 (paren
-id|test_bit
+id|inb
 c_func
 (paren
-id|TIMER_BH
-comma
+l_int|0x20
+)paren
 op_amp
-id|bh_active
-)paren
+l_int|0x01
 )paren
 (brace
-multiline_comment|/*&n;&t;&t;&t;&t; * we have detected a counter underflow.&n;&t;&t;&t; &t; */
-id|offset
-op_assign
-id|TICK_SIZE
-suffix:semicolon
-id|count_p
-op_assign
+multiline_comment|/*&n;&t;&t;&t;&t; * We cannot detect lost timer interrupts ... &n;&t;&t;&t;&t; * well, thats why we call them lost, dont we? :)&n;&t;&t;&t;&t; * [hmm, on the Pentium and Alpha we can ... sort of]&n;&t;&t;&t;&t; */
 id|count
+op_sub_assign
+id|LATCH
 suffix:semicolon
 )brace
 r_else
 (brace
-id|count_p
-op_assign
+macro_line|#ifdef BUGGY_NEPTUN_TIMER
+multiline_comment|/*&n;&t;&t;&t;&t; * for the Neptun bug we know that the &squot;latch&squot;&n;&t;&t;&t;&t; * command doesnt latch the high and low value&n;&t;&t;&t;&t; * of the counter atomically. Thus we have to &n;&t;&t;&t;&t; * substract 256 from the counter &n;&t;&t;&t;&t; * ... funny, isnt it? :)&n;&t;&t;&t;&t; */
 id|count
+op_sub_assign
+l_int|256
 suffix:semicolon
-id|jiffies_p
-op_assign
-id|jiffies_t
+macro_line|#else
+id|printk
+c_func
+(paren
+l_string|&quot;do_slow_gettimeoffset(): hardware timer problem?&bslash;n&quot;
+)paren
 suffix:semicolon
+macro_line|#endif
 )brace
 )brace
 )brace
 r_else
-(brace
-id|count_p
-op_assign
-id|count
-suffix:semicolon
 id|jiffies_p
 op_assign
 id|jiffies_t
 suffix:semicolon
-)brace
+id|count_p
+op_assign
+id|count
+suffix:semicolon
 id|count
 op_assign
 (paren
@@ -567,8 +517,6 @@ op_div
 id|LATCH
 suffix:semicolon
 r_return
-id|offset
-op_plus
 id|count
 suffix:semicolon
 )brace
@@ -644,6 +592,22 @@ c_func
 (paren
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t; * xtime is atomically updated in timer_bh. lost_ticks is&n;&t; * nonzero if the timer bottom half hasnt executed yet.&n;&t; */
+r_if
+c_cond
+(paren
+id|lost_ticks
+)paren
+id|tv-&gt;tv_usec
+op_add_assign
+id|USECS_PER_JIFFY
+suffix:semicolon
+id|restore_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -660,12 +624,6 @@ id|tv-&gt;tv_sec
 op_increment
 suffix:semicolon
 )brace
-id|restore_flags
-c_func
-(paren
-id|flags
-)paren
-suffix:semicolon
 )brace
 DECL|function|do_settimeofday
 r_void

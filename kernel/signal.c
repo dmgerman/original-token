@@ -176,19 +176,10 @@ r_void
 r_int
 id|ret
 suffix:semicolon
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
+multiline_comment|/* SMP safe */
 id|ret
 op_assign
 id|current-&gt;blocked
-suffix:semicolon
-id|unlock_kernel
-c_func
-(paren
-)paren
 suffix:semicolon
 r_return
 id|ret

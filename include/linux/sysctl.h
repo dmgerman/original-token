@@ -153,6 +153,8 @@ DECL|macro|NET_ROSE
 mdefine_line|#define NET_ROSE&t;12
 DECL|macro|NET_X25
 mdefine_line|#define NET_X25&t;&t;13
+DECL|macro|NET_TR
+mdefine_line|#define NET_TR&t;&t;14
 multiline_comment|/* /proc/sys/net/core */
 multiline_comment|/* /proc/sys/net/ethernet */
 multiline_comment|/* /proc/sys/net/802 */
@@ -324,6 +326,15 @@ id|NET_X25_CLEAR_REQUEST_TIMEOUT
 comma
 DECL|enumerator|NET_X25_ACK_HOLD_BACK_TIMEOUT
 id|NET_X25_ACK_HOLD_BACK_TIMEOUT
+)brace
+suffix:semicolon
+multiline_comment|/* /proc/sys/net/token-ring */
+r_enum
+(brace
+DECL|enumerator|NET_TR_RIF_TIMEOUT
+id|NET_TR_RIF_TIMEOUT
+op_assign
+l_int|1
 )brace
 suffix:semicolon
 multiline_comment|/* CTL_PROC names: */

@@ -16,7 +16,7 @@ multiline_comment|/* Fixed constants first: */
 DECL|macro|NR_OPEN
 macro_line|#undef NR_OPEN
 DECL|macro|NR_OPEN
-mdefine_line|#define NR_OPEN 256
+mdefine_line|#define NR_OPEN 1024
 DECL|macro|NR_SUPER
 mdefine_line|#define NR_SUPER 64
 DECL|macro|BLOCK_SIZE

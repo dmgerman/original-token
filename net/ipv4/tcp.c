@@ -2008,9 +2008,6 @@ op_assign
 id|csum_partial_copy_from_user
 c_func
 (paren
-op_amp
-id|err
-comma
 id|from
 comma
 id|skb_put
@@ -2024,6 +2021,9 @@ comma
 id|copy
 comma
 l_int|0
+comma
+op_amp
+id|err
 )paren
 suffix:semicolon
 id|from

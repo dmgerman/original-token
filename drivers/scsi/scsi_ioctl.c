@@ -841,6 +841,9 @@ suffix:semicolon
 r_case
 id|START_STOP
 suffix:colon
+r_case
+id|MOVE_MEDIUM
+suffix:colon
 id|timeout
 op_assign
 l_int|60

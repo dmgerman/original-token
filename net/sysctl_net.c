@@ -64,6 +64,14 @@ id|ipv6_table
 )braket
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifdef CONFIG_TR
+r_extern
+id|ctl_table
+id|tr_table
+(braket
+)braket
+suffix:semicolon
+macro_line|#endif
 DECL|variable|net_table
 id|ctl_table
 id|net_table
@@ -206,6 +214,22 @@ comma
 l_int|0555
 comma
 id|ipv6_table
+)brace
+comma
+macro_line|#endif
+macro_line|#ifdef CONFIG_TR
+(brace
+id|NET_TR
+comma
+l_string|&quot;token-ring&quot;
+comma
+l_int|NULL
+comma
+l_int|0
+comma
+l_int|0555
+comma
+id|tr_table
 )brace
 comma
 macro_line|#endif

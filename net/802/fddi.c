@@ -47,9 +47,35 @@ r_int
 id|len
 )paren
 (brace
+r_int
+id|hl
+op_assign
+id|FDDI_K_SNAP_HLEN
+suffix:semicolon
 r_struct
 id|fddihdr
 op_star
+id|fddi
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|type
+op_ne
+id|htons
+c_func
+(paren
+id|ETH_P_IP
+)paren
+)paren
+(brace
+id|hl
+op_assign
+id|FDDI_K_8022_HLEN
+op_minus
+l_int|3
+suffix:semicolon
+)brace
 id|fddi
 op_assign
 (paren
@@ -62,14 +88,25 @@ c_func
 (paren
 id|skb
 comma
-id|FDDI_K_SNAP_HLEN
+id|hl
 )paren
 suffix:semicolon
-multiline_comment|/* Fill in frame header - assume 802.2 SNAP frames for now */
 id|fddi-&gt;fc
 op_assign
 id|FDDI_FC_K_ASYNC_LLC_DEF
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|type
+op_eq
+id|htons
+c_func
+(paren
+id|ETH_P_IP
+)paren
+)paren
+(brace
 id|fddi-&gt;hdr.llc_snap.dsap
 op_assign
 id|FDDI_EXTENDED_SAP
@@ -111,6 +148,7 @@ c_func
 id|type
 )paren
 suffix:semicolon
+)brace
 multiline_comment|/* Set the source and destination hardware addresses */
 r_if
 c_cond
@@ -159,12 +197,12 @@ id|dev-&gt;addr_len
 )paren
 suffix:semicolon
 r_return
-id|FDDI_K_SNAP_HLEN
+id|hl
 suffix:semicolon
 )brace
 r_return
 op_minus
-id|FDDI_K_SNAP_HLEN
+id|hl
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * Rebuild the FDDI MAC header. This is called after an ARP&n; * (or in future other address resolution) has completed on&n; * this sk_buff.  We now let ARP fill in the other fields.&n; */
@@ -270,12 +308,45 @@ op_star
 )paren
 id|skb-&gt;data
 suffix:semicolon
+r_int
+r_int
+id|type
+suffix:semicolon
 multiline_comment|/*&n;&t; * Set mac.raw field to point to FC byte, set data field to point&n;&t; * to start of packet data.  Assume 802.2 SNAP frames for now.&n;&t; */
 id|skb-&gt;mac.raw
 op_assign
 id|skb-&gt;data
 suffix:semicolon
 multiline_comment|/* point to frame control (FC) */
+r_if
+c_cond
+(paren
+id|fddi-&gt;hdr.llc_8022_1.dsap
+op_eq
+l_int|0xe0
+)paren
+(brace
+id|skb_pull
+c_func
+(paren
+id|skb
+comma
+id|FDDI_K_8022_HLEN
+op_minus
+l_int|3
+)paren
+suffix:semicolon
+id|type
+op_assign
+id|htons
+c_func
+(paren
+id|ETH_P_8022
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
 id|skb_pull
 c_func
 (paren
@@ -285,6 +356,11 @@ id|FDDI_K_SNAP_HLEN
 )paren
 suffix:semicolon
 multiline_comment|/* adjust for 21 byte header */
+id|type
+op_assign
+id|fddi-&gt;hdr.llc_snap.ethertype
+suffix:semicolon
+)brace
 multiline_comment|/* Set packet type based on destination address and flag settings */
 r_if
 c_cond
@@ -349,7 +425,7 @@ suffix:semicolon
 )brace
 multiline_comment|/* Assume 802.2 SNAP frames, for now */
 r_return
-id|fddi-&gt;hdr.llc_snap.ethertype
+id|type
 suffix:semicolon
 )brace
 eof
