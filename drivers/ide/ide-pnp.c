@@ -322,6 +322,7 @@ suffix:semicolon
 macro_line|#endif
 multiline_comment|/*&n; * Probe for ISA PnP IDE interfaces.&n; */
 r_void
+id|__init
 id|pnpide_init
 c_func
 (paren

@@ -3320,7 +3320,7 @@ id|sx_dprintk
 (paren
 id|SX_DEBUG_TRANSMIT
 comma
-l_string|&quot; %d(%d) &bslash;n&quot;
+l_string|&quot; %d(%ld) &bslash;n&quot;
 comma
 id|c
 comma

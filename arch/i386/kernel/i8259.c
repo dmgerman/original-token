@@ -1141,6 +1141,15 @@ op_star
 id|regs
 )paren
 (brace
+r_extern
+r_void
+id|math_error
+c_func
+(paren
+r_void
+op_star
+)paren
+suffix:semicolon
 id|outb
 c_func
 (paren
@@ -1162,6 +1171,11 @@ suffix:semicolon
 id|math_error
 c_func
 (paren
+(paren
+r_void
+op_star
+)paren
+id|regs-&gt;eip
 )paren
 suffix:semicolon
 )brace

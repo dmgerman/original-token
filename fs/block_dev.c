@@ -1718,6 +1718,7 @@ suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;Filp may be NULL when we are called by an msync of a vma&n; *&t;since the vma has no handle.&n; */
 DECL|function|block_fsync
+r_static
 r_int
 id|block_fsync
 c_func
@@ -3415,6 +3416,7 @@ id|ret
 suffix:semicolon
 )brace
 DECL|function|blkdev_close
+r_static
 r_int
 id|blkdev_close
 c_func

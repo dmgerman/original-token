@@ -2715,6 +2715,7 @@ op_amp
 id|outfile.f_pos
 )paren
 suffix:semicolon
+macro_line|#if !defined(CONFIG_ARCH_S390)
 r_if
 c_cond
 (paren
@@ -2743,6 +2744,7 @@ id|rotate
 op_increment
 suffix:semicolon
 )brace
+macro_line|#endif
 )brace
 id|printk
 c_func

@@ -204,133 +204,166 @@ mdefine_line|#define si_band&t;&t;_sifields._sigpoll._band
 DECL|macro|si_fd
 mdefine_line|#define si_fd&t;&t;_sifields._sigpoll._fd
 multiline_comment|/*&n; * si_code values&n; * Positive values for kernel-generated signals.&n; */
+macro_line|#ifdef __KERNEL__
+DECL|macro|__SI_MASK
+mdefine_line|#define __SI_MASK&t;0xffff0000
+DECL|macro|__SI_KILL
+mdefine_line|#define __SI_KILL&t;(0 &lt;&lt; 16)
+DECL|macro|__SI_TIMER
+mdefine_line|#define __SI_TIMER&t;(1 &lt;&lt; 16)
+DECL|macro|__SI_POLL
+mdefine_line|#define __SI_POLL&t;(2 &lt;&lt; 16)
+DECL|macro|__SI_FAULT
+mdefine_line|#define __SI_FAULT&t;(3 &lt;&lt; 16)
+DECL|macro|__SI_CHLD
+mdefine_line|#define __SI_CHLD&t;(4 &lt;&lt; 16)
+DECL|macro|__SI_RT
+mdefine_line|#define __SI_RT&t;&t;(5 &lt;&lt; 16)
+DECL|macro|__SI_CODE
+mdefine_line|#define __SI_CODE(T,N)&t;((T) &lt;&lt; 16 | ((N) &amp; 0xffff))
+macro_line|#else
+DECL|macro|__SI_KILL
+mdefine_line|#define __SI_KILL&t;0
+DECL|macro|__SI_TIMER
+mdefine_line|#define __SI_TIMER&t;0
+DECL|macro|__SI_POLL
+mdefine_line|#define __SI_POLL&t;0
+DECL|macro|__SI_FAULT
+mdefine_line|#define __SI_FAULT&t;0
+DECL|macro|__SI_CHLD
+mdefine_line|#define __SI_CHLD&t;0
+DECL|macro|__SI_RT
+mdefine_line|#define __SI_RT&t;&t;0
+DECL|macro|__SI_CODE
+mdefine_line|#define __SI_CODE(T,N)&t;(N)
+macro_line|#endif
 DECL|macro|SI_USER
-mdefine_line|#define SI_USER&t;&t;0&t;/* sent by kill, sigsend, raise */
+mdefine_line|#define SI_USER&t;&t;0&t;&t;/* sent by kill, sigsend, raise */
 DECL|macro|SI_KERNEL
-mdefine_line|#define SI_KERNEL&t;0x80&t;/* sent by the kernel from somewhere */
+mdefine_line|#define SI_KERNEL&t;0x80&t;&t;/* sent by the kernel from somewhere */
 DECL|macro|SI_QUEUE
-mdefine_line|#define SI_QUEUE&t;-1&t;/* sent by sigqueue */
+mdefine_line|#define SI_QUEUE&t;-1&t;&t;/* sent by sigqueue */
 DECL|macro|SI_TIMER
-mdefine_line|#define SI_TIMER&t;-2&t;/* sent by timer expiration */
+mdefine_line|#define SI_TIMER __SI_CODE(__SI_TIMER,-2) /* sent by timer expiration */
 DECL|macro|SI_MESGQ
-mdefine_line|#define SI_MESGQ&t;-3&t;/* sent by real time mesq state change */
+mdefine_line|#define SI_MESGQ&t;-3&t;&t;/* sent by real time mesq state change */
 DECL|macro|SI_ASYNCIO
-mdefine_line|#define SI_ASYNCIO&t;-4&t;/* sent by AIO completion */
+mdefine_line|#define SI_ASYNCIO&t;-4&t;&t;/* sent by AIO completion */
 DECL|macro|SI_SIGIO
-mdefine_line|#define SI_SIGIO&t;-5&t;/* sent by queued SIGIO */
+mdefine_line|#define SI_SIGIO&t;-5&t;&t;/* sent by queued SIGIO */
 DECL|macro|SI_FROMUSER
 mdefine_line|#define SI_FROMUSER(siptr)&t;((siptr)-&gt;si_code &lt;= 0)
 DECL|macro|SI_FROMKERNEL
 mdefine_line|#define SI_FROMKERNEL(siptr)&t;((siptr)-&gt;si_code &gt; 0)
 multiline_comment|/*&n; * SIGILL si_codes&n; */
 DECL|macro|ILL_ILLOPC
-mdefine_line|#define ILL_ILLOPC&t;1&t;/* illegal opcode */
+mdefine_line|#define ILL_ILLOPC&t;(__SI_FAULT|1)&t;/* illegal opcode */
 DECL|macro|ILL_ILLOPN
-mdefine_line|#define ILL_ILLOPN&t;2&t;/* illegal operand */
+mdefine_line|#define ILL_ILLOPN&t;(__SI_FAULT|2)&t;/* illegal operand */
 DECL|macro|ILL_ILLADR
-mdefine_line|#define ILL_ILLADR&t;3&t;/* illegal addressing mode */
+mdefine_line|#define ILL_ILLADR&t;(__SI_FAULT|3)&t;/* illegal addressing mode */
 DECL|macro|ILL_ILLTRP
-mdefine_line|#define ILL_ILLTRP&t;4&t;/* illegal trap */
+mdefine_line|#define ILL_ILLTRP&t;(__SI_FAULT|4)&t;/* illegal trap */
 DECL|macro|ILL_PRVOPC
-mdefine_line|#define ILL_PRVOPC&t;5&t;/* privileged opcode */
+mdefine_line|#define ILL_PRVOPC&t;(__SI_FAULT|5)&t;/* privileged opcode */
 DECL|macro|ILL_PRVREG
-mdefine_line|#define ILL_PRVREG&t;6&t;/* privileged register */
+mdefine_line|#define ILL_PRVREG&t;(__SI_FAULT|6)&t;/* privileged register */
 DECL|macro|ILL_COPROC
-mdefine_line|#define ILL_COPROC&t;7&t;/* coprocessor error */
+mdefine_line|#define ILL_COPROC&t;(__SI_FAULT|7)&t;/* coprocessor error */
 DECL|macro|ILL_BADSTK
-mdefine_line|#define ILL_BADSTK&t;8&t;/* internal stack error */
+mdefine_line|#define ILL_BADSTK&t;(__SI_FAULT|8)&t;/* internal stack error */
 DECL|macro|ILL_BADIADDR
-mdefine_line|#define ILL_BADIADDR    9&t;/* unimplemented instruction address */
+mdefine_line|#define ILL_BADIADDR&t;(__SI_FAULT|9)&t;/* unimplemented instruction address */
 DECL|macro|__ILL_BREAK
-mdefine_line|#define __ILL_BREAK&t;10&t;/* illegal break */
+mdefine_line|#define __ILL_BREAK&t;(__SI_FAULT|10)&t;/* illegal break */
 DECL|macro|NSIGILL
 mdefine_line|#define NSIGILL&t;&t;10
 multiline_comment|/*&n; * SIGFPE si_codes&n; */
 DECL|macro|FPE_INTDIV
-mdefine_line|#define FPE_INTDIV&t;1&t;/* integer divide by zero */
+mdefine_line|#define FPE_INTDIV&t;(__SI_FAULT|1)&t;/* integer divide by zero */
 DECL|macro|FPE_INTOVF
-mdefine_line|#define FPE_INTOVF&t;2&t;/* integer overflow */
+mdefine_line|#define FPE_INTOVF&t;(__SI_FAULT|2)&t;/* integer overflow */
 DECL|macro|FPE_FLTDIV
-mdefine_line|#define FPE_FLTDIV&t;3&t;/* floating point divide by zero */
+mdefine_line|#define FPE_FLTDIV&t;(__SI_FAULT|3)&t;/* floating point divide by zero */
 DECL|macro|FPE_FLTOVF
-mdefine_line|#define FPE_FLTOVF&t;4&t;/* floating point overflow */
+mdefine_line|#define FPE_FLTOVF&t;(__SI_FAULT|4)&t;/* floating point overflow */
 DECL|macro|FPE_FLTUND
-mdefine_line|#define FPE_FLTUND&t;5&t;/* floating point underflow */
+mdefine_line|#define FPE_FLTUND&t;(__SI_FAULT|5)&t;/* floating point underflow */
 DECL|macro|FPE_FLTRES
-mdefine_line|#define FPE_FLTRES&t;6&t;/* floating point inexact result */
+mdefine_line|#define FPE_FLTRES&t;(__SI_FAULT|6)&t;/* floating point inexact result */
 DECL|macro|FPE_FLTINV
-mdefine_line|#define FPE_FLTINV&t;7&t;/* floating point invalid operation */
+mdefine_line|#define FPE_FLTINV&t;(__SI_FAULT|7)&t;/* floating point invalid operation */
 DECL|macro|FPE_FLTSUB
-mdefine_line|#define FPE_FLTSUB&t;8&t;/* subscript out of range */
+mdefine_line|#define FPE_FLTSUB&t;(__SI_FAULT|8)&t;/* subscript out of range */
 DECL|macro|__FPE_DECOVF
-mdefine_line|#define __FPE_DECOVF&t;9&t;/* decimal overflow */
+mdefine_line|#define __FPE_DECOVF&t;(__SI_FAULT|9)&t;/* decimal overflow */
 DECL|macro|__FPE_DECDIV
-mdefine_line|#define __FPE_DECDIV&t;10&t;/* decimal division by zero */
+mdefine_line|#define __FPE_DECDIV&t;(__SI_FAULT|10)&t;/* decimal division by zero */
 DECL|macro|__FPE_DECERR
-mdefine_line|#define __FPE_DECERR&t;11&t;/* packed decimal error */
+mdefine_line|#define __FPE_DECERR&t;(__SI_FAULT|11)&t;/* packed decimal error */
 DECL|macro|__FPE_INVASC
-mdefine_line|#define __FPE_INVASC&t;12&t;/* invalid ASCII digit */
+mdefine_line|#define __FPE_INVASC&t;(__SI_FAULT|12)&t;/* invalid ASCII digit */
 DECL|macro|__FPE_INVDEC
-mdefine_line|#define __FPE_INVDEC&t;13&t;/* invalid decimal digit */
+mdefine_line|#define __FPE_INVDEC&t;(__SI_FAULT|13)&t;/* invalid decimal digit */
 DECL|macro|NSIGFPE
 mdefine_line|#define NSIGFPE&t;&t;13
 multiline_comment|/*&n; * SIGSEGV si_codes&n; */
 DECL|macro|SEGV_MAPERR
-mdefine_line|#define SEGV_MAPERR&t;1&t;/* address not mapped to object */
+mdefine_line|#define SEGV_MAPERR&t;(__SI_FAULT|1)&t;/* address not mapped to object */
 DECL|macro|SEGV_ACCERR
-mdefine_line|#define SEGV_ACCERR&t;2&t;/* invalid permissions for mapped object */
+mdefine_line|#define SEGV_ACCERR&t;(__SI_FAULT|2)&t;/* invalid permissions for mapped object */
 DECL|macro|__SEGV_PSTKOVF
-mdefine_line|#define __SEGV_PSTKOVF&t;3&t;/* paragraph stack overflow */
+mdefine_line|#define __SEGV_PSTKOVF&t;(__SI_FAULT|3)&t;/* paragraph stack overflow */
 DECL|macro|NSIGSEGV
 mdefine_line|#define NSIGSEGV&t;3
 multiline_comment|/*&n; * SIGBUS si_codes&n; */
 DECL|macro|BUS_ADRALN
-mdefine_line|#define BUS_ADRALN&t;1&t;/* invalid address alignment */
+mdefine_line|#define BUS_ADRALN&t;(__SI_FAULT|1)&t;/* invalid address alignment */
 DECL|macro|BUS_ADRERR
-mdefine_line|#define BUS_ADRERR&t;2&t;/* non-existant physical address */
+mdefine_line|#define BUS_ADRERR&t;(__SI_FAULT|2)&t;/* non-existant physical address */
 DECL|macro|BUS_OBJERR
-mdefine_line|#define BUS_OBJERR&t;3&t;/* object specific hardware error */
+mdefine_line|#define BUS_OBJERR&t;(__SI_FAULT|3)&t;/* object specific hardware error */
 DECL|macro|NSIGBUS
 mdefine_line|#define NSIGBUS&t;&t;3
 multiline_comment|/*&n; * SIGTRAP si_codes&n; */
 DECL|macro|TRAP_BRKPT
-mdefine_line|#define TRAP_BRKPT&t;1&t;/* process breakpoint */
+mdefine_line|#define TRAP_BRKPT&t;(__SI_FAULT|1)&t;/* process breakpoint */
 DECL|macro|TRAP_TRACE
-mdefine_line|#define TRAP_TRACE&t;2&t;/* process trace trap */
+mdefine_line|#define TRAP_TRACE&t;(__SI_FAULT|2)&t;/* process trace trap */
 DECL|macro|TRAP_BRANCH
-mdefine_line|#define TRAP_BRANCH&t;3&t;/* process taken branch trap */
+mdefine_line|#define TRAP_BRANCH&t;(__SI_FAULT|3)&t;/* process taken branch trap */
 DECL|macro|TRAP_HWBKPT
-mdefine_line|#define TRAP_HWBKPT&t;4&t;/* hardware breakpoint or watchpoint */
+mdefine_line|#define TRAP_HWBKPT&t;(__SI_FAULT|4)&t;/* hardware breakpoint or watchpoint */
 DECL|macro|NSIGTRAP
 mdefine_line|#define NSIGTRAP&t;4
 multiline_comment|/*&n; * SIGCHLD si_codes&n; */
 DECL|macro|CLD_EXITED
-mdefine_line|#define CLD_EXITED&t;1&t;/* child has exited */
+mdefine_line|#define CLD_EXITED&t;(__SI_CHLD|1)&t;/* child has exited */
 DECL|macro|CLD_KILLED
-mdefine_line|#define CLD_KILLED&t;2&t;/* child was killed */
+mdefine_line|#define CLD_KILLED&t;(__SI_CHLD|2)&t;/* child was killed */
 DECL|macro|CLD_DUMPED
-mdefine_line|#define CLD_DUMPED&t;3&t;/* child terminated abnormally */
+mdefine_line|#define CLD_DUMPED&t;(__SI_CHLD|3)&t;/* child terminated abnormally */
 DECL|macro|CLD_TRAPPED
-mdefine_line|#define CLD_TRAPPED&t;4&t;/* traced child has trapped */
+mdefine_line|#define CLD_TRAPPED&t;(__SI_CHLD|4)&t;/* traced child has trapped */
 DECL|macro|CLD_STOPPED
-mdefine_line|#define CLD_STOPPED&t;5&t;/* child has stopped */
+mdefine_line|#define CLD_STOPPED&t;(__SI_CHLD|5)&t;/* child has stopped */
 DECL|macro|CLD_CONTINUED
-mdefine_line|#define CLD_CONTINUED&t;6&t;/* stopped child has continued */
+mdefine_line|#define CLD_CONTINUED&t;(__SI_CHLD|6)&t;/* stopped child has continued */
 DECL|macro|NSIGCHLD
 mdefine_line|#define NSIGCHLD&t;6
 multiline_comment|/*&n; * SIGPOLL si_codes&n; */
 DECL|macro|POLL_IN
-mdefine_line|#define POLL_IN&t;&t;1&t;/* data input available */
+mdefine_line|#define POLL_IN&t;&t;(__SI_POLL|1)&t;/* data input available */
 DECL|macro|POLL_OUT
-mdefine_line|#define POLL_OUT&t;2&t;/* output buffers available */
+mdefine_line|#define POLL_OUT&t;(__SI_POLL|2)&t;/* output buffers available */
 DECL|macro|POLL_MSG
-mdefine_line|#define POLL_MSG&t;3&t;/* input message available */
+mdefine_line|#define POLL_MSG&t;(__SI_POLL|3)&t;/* input message available */
 DECL|macro|POLL_ERR
-mdefine_line|#define POLL_ERR&t;4&t;/* i/o error */
+mdefine_line|#define POLL_ERR&t;(__SI_POLL|4)&t;/* i/o error */
 DECL|macro|POLL_PRI
-mdefine_line|#define POLL_PRI&t;5&t;/* high priority input available */
+mdefine_line|#define POLL_PRI&t;(__SI_POLL|5)&t;/* high priority input available */
 DECL|macro|POLL_HUP
-mdefine_line|#define POLL_HUP&t;6&t;/* device disconnected */
+mdefine_line|#define POLL_HUP&t;(__SI_POLL|6)&t;/* device disconnected */
 DECL|macro|NSIGPOLL
 mdefine_line|#define NSIGPOLL&t;6
 multiline_comment|/*&n; * sigevent definitions&n; * &n; * It seems likely that SIGEV_THREAD will have to be handled from &n; * userspace, libpthread transmuting it to SIGEV_SIGNAL, which the&n; * thread manager then catches and does the appropriate nonsense.&n; * However, everything is written out here so as to not get lost.&n; */
@@ -404,5 +437,81 @@ DECL|macro|sigev_notify_function
 mdefine_line|#define sigev_notify_function&t;_sigev_un._sigev_thread._function
 DECL|macro|sigev_notify_attributes
 mdefine_line|#define sigev_notify_attributes&t;_sigev_un._sigev_thread._attribute
+macro_line|#ifdef __KERNEL__
+macro_line|#include &lt;linux/string.h&gt;
+DECL|function|copy_siginfo
+r_extern
+r_inline
+r_void
+id|copy_siginfo
+c_func
+(paren
+id|siginfo_t
+op_star
+id|to
+comma
+id|siginfo_t
+op_star
+id|from
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|from-&gt;si_code
+OL
+l_int|0
+)paren
+id|memcpy
+c_func
+(paren
+id|to
+comma
+id|from
+comma
+r_sizeof
+(paren
+id|siginfo_t
+)paren
+)paren
+suffix:semicolon
+r_else
+multiline_comment|/* _sigchld is currently the largest know union member */
+id|memcpy
+c_func
+(paren
+id|to
+comma
+id|from
+comma
+l_int|3
+op_star
+r_sizeof
+(paren
+r_int
+)paren
+op_plus
+r_sizeof
+(paren
+id|from-&gt;_sifields._sigchld
+)paren
+)paren
+suffix:semicolon
+)brace
+r_extern
+r_int
+id|copy_siginfo_to_user
+c_func
+(paren
+id|siginfo_t
+op_star
+id|to
+comma
+id|siginfo_t
+op_star
+id|from
+)paren
+suffix:semicolon
+macro_line|#endif /* __KERNEL__ */
 macro_line|#endif /* _ASM_IA64_SIGINFO_H */
 eof

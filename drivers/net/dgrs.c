@@ -3198,6 +3198,12 @@ id|jiffies
 suffix:semicolon
 )paren
 (brace
+id|barrier
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/* Gcc 2.95 needs this */
 r_if
 c_cond
 (paren

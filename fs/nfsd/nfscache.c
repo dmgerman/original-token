@@ -219,9 +219,15 @@ op_logical_neg
 id|hash_list
 )paren
 (brace
-id|kfree
+id|free_pages
 (paren
+(paren
+r_int
+r_int
+)paren
 id|nfscache
+comma
+id|order
 )paren
 suffix:semicolon
 id|nfscache

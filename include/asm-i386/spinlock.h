@@ -78,7 +78,6 @@ mdefine_line|#define spin_lock_string &bslash;&n;&t;&quot;&bslash;n1:&bslash;t&q
 multiline_comment|/*&n; * This works. Despite all the confusion.&n; */
 DECL|macro|spin_unlock_string
 mdefine_line|#define spin_unlock_string &bslash;&n;&t;&quot;movb $1,%0&quot;
-multiline_comment|/*&n; * Won&squot;t work on i386-SMP. Does anybody care?&n; */
 DECL|function|spin_trylock
 r_static
 r_inline
@@ -98,9 +97,9 @@ id|__asm__
 id|__volatile__
 c_func
 (paren
-l_string|&quot;lock ; cmpxchg %b2,%1&quot;
+l_string|&quot;xchgb %b0,%1&quot;
 suffix:colon
-l_string|&quot;=a&quot;
+l_string|&quot;=q&quot;
 (paren
 id|oldval
 )paren
@@ -114,14 +113,9 @@ id|lock
 )paren
 )paren
 suffix:colon
-l_string|&quot;q&quot;
-(paren
-l_int|0
-)paren
-comma
 l_string|&quot;0&quot;
 (paren
-l_int|1
+l_int|0
 )paren
 )paren
 suffix:semicolon

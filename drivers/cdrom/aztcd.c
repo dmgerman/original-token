@@ -7555,7 +7555,12 @@ suffix:semicolon
 id|count
 op_increment
 )paren
+id|barrier
+c_func
+(paren
+)paren
 suffix:semicolon
+multiline_comment|/* Stop gcc 2.96 being smart */
 r_if
 c_cond
 (paren

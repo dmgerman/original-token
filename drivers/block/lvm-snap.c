@@ -1131,7 +1131,7 @@ op_plus
 l_int|1
 suffix:semicolon
 r_return
-l_int|0
+l_int|1
 suffix:semicolon
 multiline_comment|/* slow path */
 id|out
@@ -1145,6 +1145,7 @@ id|reason
 )paren
 suffix:semicolon
 r_return
+op_minus
 l_int|1
 suffix:semicolon
 id|fail_out_of_space

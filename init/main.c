@@ -2213,6 +2213,12 @@ r_int
 r_int
 id|mempages
 suffix:semicolon
+r_extern
+r_char
+id|saved_command_line
+(braket
+)braket
+suffix:semicolon
 multiline_comment|/*&n; * Interrupts are still disabled. Do necessary setups, then&n; * enable them&n; */
 id|lock_kernel
 c_func
@@ -2230,6 +2236,14 @@ c_func
 (paren
 op_amp
 id|command_line
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;Kernel command line: %s&bslash;n&quot;
+comma
+id|saved_command_line
 )paren
 suffix:semicolon
 id|trap_init

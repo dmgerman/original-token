@@ -1021,7 +1021,7 @@ id|page
 suffix:semicolon
 id|mem
 op_assign
-id|vmalloc
+id|vmalloc_32
 c_func
 (paren
 id|size

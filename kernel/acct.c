@@ -63,18 +63,6 @@ r_static
 r_struct
 id|timer_list
 id|acct_timer
-op_assign
-(brace
-l_int|NULL
-comma
-l_int|NULL
-comma
-l_int|0
-comma
-l_int|0
-comma
-id|acct_timeout
-)brace
 suffix:semicolon
 r_static
 r_int
@@ -506,6 +494,18 @@ suffix:semicolon
 id|acct_active
 op_assign
 l_int|1
+suffix:semicolon
+multiline_comment|/* Its been deleted if it was used before so this is safe */
+id|init_timer
+c_func
+(paren
+op_amp
+id|acct_timer
+)paren
+suffix:semicolon
+id|acct_timer.function
+op_assign
+id|acct_timeout
 suffix:semicolon
 id|acct_timer.expires
 op_assign

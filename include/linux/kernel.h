@@ -55,14 +55,6 @@ DECL|macro|FASTCALL
 mdefine_line|#define FASTCALL(x)&t;x
 macro_line|#endif
 r_extern
-r_void
-id|math_error
-c_func
-(paren
-r_void
-)paren
-suffix:semicolon
-r_extern
 r_struct
 id|notifier_block
 op_star

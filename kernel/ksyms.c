@@ -40,28 +40,6 @@ macro_line|#endif
 macro_line|#ifdef CONFIG_KMOD
 macro_line|#include &lt;linux/kmod.h&gt;
 macro_line|#endif
-macro_line|#ifdef CONFIG_BLK_DEV_LVM_MODULE
-r_extern
-r_void
-(paren
-op_star
-id|lvm_hd_name_ptr
-)paren
-(paren
-r_char
-op_star
-comma
-r_int
-)paren
-suffix:semicolon
-DECL|variable|lvm_hd_name_ptr
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|lvm_hd_name_ptr
-)paren
-suffix:semicolon
-macro_line|#endif
 r_extern
 r_int
 id|console_loglevel
@@ -1256,13 +1234,6 @@ c_func
 id|page_symlink_inode_operations
 )paren
 suffix:semicolon
-DECL|variable|block_fsync
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|block_fsync
-)paren
-suffix:semicolon
 DECL|variable|block_symlink
 id|EXPORT_SYMBOL
 c_func
@@ -1476,13 +1447,6 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|blkdev_open
-)paren
-suffix:semicolon
-DECL|variable|blkdev_close
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|blkdev_close
 )paren
 suffix:semicolon
 DECL|variable|blkdev_get

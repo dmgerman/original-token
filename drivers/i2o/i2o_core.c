@@ -488,10 +488,9 @@ mdefine_line|#define MODINC(x,y) (x = x++ % y)
 multiline_comment|/*&n; * I2O configuration spinlock. This isnt a big deal for contention&n; * so we have one only&n; */
 DECL|variable|i2o_configuration_lock
 r_static
-id|spinlock_t
+r_struct
+id|semaphore
 id|i2o_configuration_lock
-op_assign
-id|SPIN_LOCK_UNLOCKED
 suffix:semicolon
 multiline_comment|/* &n; * Event spinlock.  Used to keep event queue sane and from&n; * handling multiple events simultaneously.&n; */
 DECL|variable|i2o_evt_lock
@@ -532,6 +531,7 @@ l_int|0
 suffix:semicolon
 multiline_comment|/*&n; * I2O Core reply handler&n; */
 DECL|function|i2o_core_reply
+r_static
 r_void
 id|i2o_core_reply
 c_func
@@ -867,7 +867,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;Install an I2O handler - these handle the asynchronous messaging&n; *&t;from the card once it has initialised.&n; */
+multiline_comment|/**&n; *&t;i2o_install_handler - install a message handler&n; *&t;@h: Handler structure&n; *&n; *&t;Install an I2O handler - these handle the asynchronous messaging&n; *&t;from the card once it has initialised. If the table of handlers is&n; *&t;full then -ENOSPC is returned. On a success 0 is returned and the&n; *&t;context field is set by the function. The structure is part of the&n; *&t;system from this time onwards. It must not be freed until it has&n; *&t;been uninstalled&n; */
 DECL|function|i2o_install_handler
 r_int
 id|i2o_install_handler
@@ -882,7 +882,7 @@ id|h
 r_int
 id|i
 suffix:semicolon
-id|spin_lock
+id|down
 c_func
 (paren
 op_amp
@@ -926,7 +926,7 @@ id|i
 op_assign
 id|h
 suffix:semicolon
-id|spin_unlock
+id|up
 c_func
 (paren
 op_amp
@@ -938,7 +938,7 @@ l_int|0
 suffix:semicolon
 )brace
 )brace
-id|spin_unlock
+id|up
 c_func
 (paren
 op_amp
@@ -950,6 +950,7 @@ op_minus
 id|ENOSPC
 suffix:semicolon
 )brace
+multiline_comment|/**&n; *&t;i2o_remove_handler - remove an i2o message handler&n; *&t;@h: handler&n; *&n; *&t;Remove a message handler previously installed with i2o_install_handler.&n; *&t;After this function returns the handler object can be freed or re-used&n; */
 DECL|function|i2o_remove_handler
 r_int
 id|i2o_remove_handler
@@ -973,6 +974,7 @@ l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;Each I2O controller has a chain of devices on it.&n; * Each device has a pointer to it&squot;s LCT entry to be used&n; * for fun purposes.&n; */
+multiline_comment|/**&n; *&t;i2o_install_device&t;-&t;attach a device to a controller&n; *&t;@c: controller&n; *&t;@d: device&n; * &t;&n; *&t;Add a new device to an i2o controller. This can be called from&n; *&t;non interrupt contexts only. It adds the device and marks it as&n; *&t;unclaimed. The device memory becomes part of the kernel and must&n; *&t;be uninstalled before being freed or reused. Zero is returned&n; *&t;on success.&n; */
 DECL|function|i2o_install_device
 r_int
 id|i2o_install_device
@@ -992,7 +994,7 @@ id|d
 r_int
 id|i
 suffix:semicolon
-id|spin_lock
+id|down
 c_func
 (paren
 op_amp
@@ -1043,7 +1045,7 @@ op_assign
 l_int|NULL
 suffix:semicolon
 )brace
-id|spin_unlock
+id|up
 c_func
 (paren
 op_amp
@@ -1245,6 +1247,7 @@ op_minus
 id|EINVAL
 suffix:semicolon
 )brace
+multiline_comment|/**&n; *&t;i2o_delete_device&t;-&t;remove an i2o device&n; *&t;@d: device to remove&n; *&n; *&t;This function unhooks a device from a controller. The device&n; *&t;will not be unhooked if it has an owner who does not wish to free&n; *&t;it, or if the owner lacks a dev_del_notify function. In that case&n; *&t;-EBUSY is returned. On success 0 is returned. Other errors cause&n; *&t;negative errno values to be returned&n; */
 DECL|function|i2o_delete_device
 r_int
 id|i2o_delete_device
@@ -1259,7 +1262,7 @@ id|d
 r_int
 id|ret
 suffix:semicolon
-id|spin_lock
+id|down
 c_func
 (paren
 op_amp
@@ -1275,7 +1278,7 @@ c_func
 id|d
 )paren
 suffix:semicolon
-id|spin_unlock
+id|up
 c_func
 (paren
 op_amp
@@ -1286,7 +1289,7 @@ r_return
 id|ret
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;Add and remove controllers from the I2O controller list&n; */
+multiline_comment|/**&n; *&t;i2o_install_controller&t;-&t;attach a controller&n; *&t;@c: controller&n; * &t;&n; *&t;Add a new controller to the i2o layer. This can be called from&n; *&t;non interrupt contexts only. It adds the controller and marks it as&n; *&t;unused with no devices. If the tables are full or memory allocations&n; *&t;fail then a negative errno code is returned. On success zero is&n; *&t;returned and the controller is bound to the system. The structure&n; *&t;must not be freed or reused until being uninstalled.&n; */
 DECL|function|i2o_install_controller
 r_int
 id|i2o_install_controller
@@ -1301,7 +1304,7 @@ id|c
 r_int
 id|i
 suffix:semicolon
-id|spin_lock
+id|down
 c_func
 (paren
 op_amp
@@ -1334,6 +1337,40 @@ op_eq
 l_int|NULL
 )paren
 (brace
+id|c-&gt;dlct
+op_assign
+(paren
+id|i2o_lct
+op_star
+)paren
+id|kmalloc
+c_func
+(paren
+l_int|8192
+comma
+id|GFP_KERNEL
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|c-&gt;dlct
+op_eq
+l_int|NULL
+)paren
+(brace
+id|up
+c_func
+(paren
+op_amp
+id|i2o_configuration_lock
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|ENOMEM
+suffix:semicolon
+)brace
 id|i2o_controllers
 (braket
 id|i
@@ -1369,20 +1406,6 @@ id|c-&gt;lct
 op_assign
 l_int|NULL
 suffix:semicolon
-id|c-&gt;dlct
-op_assign
-(paren
-id|i2o_lct
-op_star
-)paren
-id|kmalloc
-c_func
-(paren
-l_int|8192
-comma
-id|GFP_KERNEL
-)paren
-suffix:semicolon
 id|c-&gt;status_block
 op_assign
 l_int|NULL
@@ -1407,7 +1430,7 @@ op_amp
 id|c-&gt;lct_sem
 )paren
 suffix:semicolon
-id|spin_unlock
+id|up
 c_func
 (paren
 op_amp
@@ -1426,7 +1449,7 @@ id|KERN_ERR
 l_string|&quot;No free i2o controller slots.&bslash;n&quot;
 )paren
 suffix:semicolon
-id|spin_unlock
+id|up
 c_func
 (paren
 op_amp
@@ -1438,6 +1461,7 @@ op_minus
 id|EBUSY
 suffix:semicolon
 )brace
+multiline_comment|/**&n; *&t;i2o_delete_controller&t;- delete a controller&n; *&t;@c: controller&n; *&t;&n; *&t;Remove an i2o controller from the system. If the controller or its&n; *&t;devices are busy then -EBUSY is returned. On a failure a negative&n; *&t;errno code is returned. On success zero is returned.&n; */
 DECL|function|i2o_delete_controller
 r_int
 id|i2o_delete_controller
@@ -1500,7 +1524,7 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
-id|spin_lock
+id|down
 c_func
 (paren
 op_amp
@@ -1533,7 +1557,7 @@ comma
 id|c-&gt;name
 )paren
 suffix:semicolon
-id|spin_unlock
+id|up
 c_func
 (paren
 op_amp
@@ -1572,7 +1596,7 @@ c_func
 id|c
 )paren
 suffix:semicolon
-id|spin_unlock
+id|up
 c_func
 (paren
 op_amp
@@ -1699,7 +1723,7 @@ id|p
 op_assign
 id|c-&gt;next
 suffix:semicolon
-id|spin_unlock
+id|up
 c_func
 (paren
 op_amp
@@ -1829,7 +1853,7 @@ id|next
 )paren
 suffix:semicolon
 )brace
-id|spin_unlock
+id|up
 c_func
 (paren
 op_amp
@@ -1848,6 +1872,7 @@ op_minus
 id|ENOENT
 suffix:semicolon
 )brace
+multiline_comment|/**&n; *&t;i2o_unlock_controller&t;-&t;unlock a controller&n; *&t;@c: controller to unlock&n; *&n; *&t;Take a lock on an i2o controller. This prevents it being deleted.&n; *&t;i2o controllers are not refcounted so a deletion of an in use device&n; *&t;will fail, not take affect on the last dereference.&n; */
 DECL|function|i2o_unlock_controller
 r_void
 id|i2o_unlock_controller
@@ -1867,6 +1892,7 @@ id|c-&gt;users
 )paren
 suffix:semicolon
 )brace
+multiline_comment|/**&n; *&t;i2o_find_controller - return a locked controller&n; *&t;@n: controller number&n; *&n; *&t;Returns a pointer to the controller object. The controller is locked&n; *&t;on return. NULL is returned if the controller is not found.&n; */
 DECL|function|i2o_find_controller
 r_struct
 id|i2o_controller
@@ -1899,7 +1925,7 @@ r_return
 l_int|NULL
 suffix:semicolon
 )brace
-id|spin_lock
+id|down
 c_func
 (paren
 op_amp
@@ -1929,7 +1955,7 @@ id|c-&gt;users
 )paren
 suffix:semicolon
 )brace
-id|spin_unlock
+id|up
 c_func
 (paren
 op_amp
@@ -1940,7 +1966,7 @@ r_return
 id|c
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;Issue UTIL_CLAIM or UTIL_RELEASE message&n; */
+multiline_comment|/**&n; *&t;i2o_issue_claim&t;- claim or release a device&n; *&t;@cmd: command&n; *&t;@c: controller to claim for&n; *&t;@tid: i2o task id&n; *&t;@type: type of claim&n; *&n; *&t;Issue I2O UTIL_CLAIM and UTIL_RELEASE messages. The message to be sent&n; *&t;is set by cmd. The tid is the task id of the object to claim and the&n; *&t;type is the claim type (see the i2o standard)&n; *&n; *&t;Zero is returned on success.&n; */
 DECL|function|i2o_issue_claim
 r_static
 r_int
@@ -2023,7 +2049,7 @@ l_int|60
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Claim a device for use by an OSM&n; */
+multiline_comment|/*&n; * &t;i2o_claim_device - claim a device for use by an OSM&n; *&t;@d: device to claim&n; *&t;@h: handler for this device&n; *&n; *&t;Do the leg work to assign a device to a given OSM on Linux. The&n; *&t;kernel updates the internal handler data for the device and then&n; *&t;performs an I2O claim for the device, attempting to claim the&n; *&t;device as primary. If the attempt fails a negative errno code&n; *&t;is returned. On success zero is returned.&n; */
 DECL|function|i2o_claim_device
 r_int
 id|i2o_claim_device
@@ -2040,7 +2066,7 @@ op_star
 id|h
 )paren
 (brace
-id|spin_lock
+id|down
 c_func
 (paren
 op_amp
@@ -2062,7 +2088,7 @@ comma
 id|h-&gt;name
 )paren
 suffix:semicolon
-id|spin_unlock
+id|up
 c_func
 (paren
 op_amp
@@ -2074,6 +2100,10 @@ op_minus
 id|EBUSY
 suffix:semicolon
 )brace
+id|d-&gt;owner
+op_assign
+id|h
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2090,23 +2120,16 @@ id|I2O_CLAIM_PRIMARY
 )paren
 )paren
 (brace
-id|spin_unlock
-c_func
-(paren
-op_amp
-id|i2o_configuration_lock
-)paren
+id|d-&gt;owner
+op_assign
+l_int|NULL
 suffix:semicolon
 r_return
 op_minus
 id|EBUSY
 suffix:semicolon
 )brace
-id|d-&gt;owner
-op_assign
-id|h
-suffix:semicolon
-id|spin_unlock
+id|up
 c_func
 (paren
 op_amp
@@ -2117,7 +2140,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Release a device that the OSM is using&n; */
+multiline_comment|/**&n; *&t;i2o_release_device - release a device that the OSM is using&n; *&t;@d: device to claim&n; *&t;@h: handler for this device&n; *&n; *&t;Drop a claim by an OSM on a given I2O device. The handler is cleared&n; *&t;and 0 is returned on success.&n; *&n; */
 DECL|function|i2o_release_device
 r_int
 id|i2o_release_device
@@ -2139,7 +2162,7 @@ id|err
 op_assign
 l_int|0
 suffix:semicolon
-id|spin_lock
+id|down
 c_func
 (paren
 op_amp
@@ -2163,7 +2186,7 @@ comma
 id|h-&gt;name
 )paren
 suffix:semicolon
-id|spin_unlock
+id|up
 c_func
 (paren
 op_amp
@@ -2175,6 +2198,10 @@ op_minus
 id|ENOENT
 suffix:semicolon
 )brace
+id|d-&gt;owner
+op_assign
+l_int|NULL
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2196,12 +2223,12 @@ op_assign
 op_minus
 id|ENXIO
 suffix:semicolon
-)brace
 id|d-&gt;owner
 op_assign
-l_int|NULL
+id|h
 suffix:semicolon
-id|spin_unlock
+)brace
+id|up
 c_func
 (paren
 op_amp
@@ -3412,7 +3439,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;This is called by the bus specific driver layer when an interrupt&n; *&t;or poll of this card interface is desired.&n; */
+multiline_comment|/**&n; *&t;i2o_run_queue&t;-&t;process pending events on a controller&n; *&t;@c: controller to process&n; *&n; *&t;This is called by the bus specific driver layer when an interrupt&n; *&t;or poll of this card interface is desired.&n; */
 DECL|function|i2o_run_queue
 r_void
 id|i2o_run_queue
@@ -3616,7 +3643,7 @@ suffix:semicolon
 )brace
 )brace
 )brace
-multiline_comment|/*&n; *&t;Do i2o class name lookup&n; */
+multiline_comment|/**&n; *&t;i2o_get_class_name - &t;do i2o class name lookup&n; *&t;@class: class number&n; *&n; *&t;Return a descriptive string for an i2o class&n; */
 DECL|function|i2o_get_class_name
 r_const
 r_char
@@ -3836,7 +3863,7 @@ id|idx
 )braket
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t;Wait up to 5 seconds for a message slot to be available.&n; */
+multiline_comment|/**&n; *&t;i2o_wait_message&n; *&t;@c: controller&n; *&t;@why: explanation&n; *&n; *&t;This function waits up to 5 seconds for a message slot to be&n; *&t;available. If no message is available it prints an error message&n; *&t;that is expected to be what the message will be used for (eg&n; *&t;&quot;get_status&quot;). 0xFFFFFFFF is returned on a failure.&n; *&n; *&t;On a success the message is returned. This is the physical page&n; *&t;frame offset address from the read port. (See the i2o spec)&n; */
 DECL|function|i2o_wait_message
 id|u32
 id|i2o_wait_message
@@ -3920,7 +3947,7 @@ r_return
 id|m
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *&t; Dump the information block associated with a given unit (TID)&n; */
+multiline_comment|/**&n; *&t;i2o_report_controller_unit - print information about a tid&n; *&t;@c: controller&n; *&t;@d: device&n; *&t;&n; *&t;Dump an information block associated with a given unit (TID). The&n; *&t;tables are read and a block of text is output to printk that is&n; *&t;formatted intended for the user.&n; */
 DECL|function|i2o_report_controller_unit
 r_void
 id|i2o_report_controller_unit
@@ -5010,7 +5037,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/* &n; * Quiesce IOP. Causes IOP to make external operation quiescend. &n; * Internal operation of the IOP continues normally.&n; */
+multiline_comment|/**&n; *&t;i2o_quiesce_controller - quiesce controller&n; *&t;@c: controller &n; *&n; *&t;Quiesce an IOP. Causes IOP to make external operation quiescent&n; *&t;(i2o &squot;READY&squot; state). Internal operation of the IOP continues normally.&n; */
 DECL|function|i2o_quiesce_controller
 r_int
 id|i2o_quiesce_controller
@@ -5145,7 +5172,7 @@ r_return
 id|ret
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Enable IOP. Allows the IOP to resume external operations.&n; */
+multiline_comment|/**&n; *&t;i2o_enable_controller - move controller from ready to operational&n; *&t;@c: controller&n; *&n; *&t;Enable IOP. This allows the IOP to resume external operations and&n; *&t;reverses the effect of a quiesce. In the event of an error a negative&n; *&t;errno code is returned.&n; */
 DECL|function|i2o_enable_controller
 r_int
 id|i2o_enable_controller
@@ -5266,7 +5293,7 @@ r_return
 id|ret
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Clear an IOP to HOLD state, ie. terminate external operations, clear all&n; * input queues and prepare for a system restart. IOP&squot;s internal operation&n; * continues normally and the outbound queue is alive.&n; * IOP is not expected to rebuild its LCT.&n; */
+multiline_comment|/**&n; *&t;i2o_clear_controller&t;-&t;clear a controller&n; *&t;@c: controller&n; *&n; *&t;Clear an IOP to HOLD state, ie. terminate external operations, clear all&n; *&t;input queues and prepare for a system restart. IOP&squot;s internal operation&n; *&t;continues normally and the outbound queue is alive.&n; *&t;The IOP is not expected to rebuild its LCT.&n; */
 DECL|function|i2o_clear_controller
 r_int
 id|i2o_clear_controller
@@ -5424,7 +5451,7 @@ r_return
 id|ret
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Reset the IOP into INIT state and wait until IOP gets into RESET state.&n; * Terminate all external operations, clear IOP&squot;s inbound and outbound&n; * queues, terminate all DDMs, and reload the IOP&squot;s operating environment&n; * and all local DDMs. IOP rebuilds its LCT.&n; */
+multiline_comment|/**&n; *&t;i2o_reset_controller&n; *&t;@c: controller to reset&n; *&n; *&t;Reset the IOP into INIT state and wait until IOP gets into RESET state.&n; *&t;Terminate all external operations, clear IOP&squot;s inbound and outbound&n; *&t;queues, terminate all DDMs, and reload the IOP&squot;s operating environment&n; *&t;and all local DDMs. The IOP rebuilds its LCT.&n; */
 DECL|function|i2o_reset_controller
 r_static
 r_int
@@ -5873,7 +5900,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Get the status block for the IOP&n; */
+multiline_comment|/**&n; * &t;i2o_status_get&t;-&t;get the status block for the IOP&n; *&t;@c: controller&n; *&n; *&t;Issue a status query on the controller. This updates the&n; *&t;attached status_block. If the controller fails to reply or an&n; *&t;error occurs then a negative errno code is returned. On success&n; *&t;zero is returned and the status_blok is updated.&n; */
 DECL|function|i2o_status_get
 r_int
 id|i2o_status_get
@@ -6725,6 +6752,7 @@ id|__init
 id|i2o_sys_init
 c_func
 (paren
+r_void
 )paren
 (brace
 r_struct
@@ -6945,7 +6973,7 @@ l_int|0xFFFFFFFF
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n; * Shutdown I2O system&n; */
+multiline_comment|/**&n; *&t;i2o_sys_shutdown - shutdown I2O system&n; *&n; *&t;Bring down each i2o controller and then return. Each controller&n; *&t;is taken through an orderly shutdown&n; */
 DECL|function|i2o_sys_shutdown
 r_static
 r_void
@@ -6991,7 +7019,7 @@ id|iop
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n; *&t;Bring an I2O controller into HOLD state. See the spec.&n; */
+multiline_comment|/**&n; *&t;i2o_activate_controller&t;-&t;bring controller up to HOLD&n; *&t;@iop: controller&n; *&n; *&t;This function brings an I2O controller into HOLD state. The adapter&n; *&t;is reset if neccessary and then the queues and resource table&n; *&t;are read. -1 is returned on a failure, 0 on success.&n; *&t;&n; */
 DECL|function|i2o_activate_controller
 r_int
 id|i2o_activate_controller
@@ -7179,7 +7207,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Clear and (re)initialize IOP&squot;s outbound queue&n; */
+multiline_comment|/**&n; *&t;i2o_init_outbound_queue&t;- setup the outbound queue&n; *&t;@c: controller&n; *&n; *&t;Clear and (re)initialize IOP&squot;s outbound queue. Returns 0 on&n; *&t;success or a negative errno code on a failure.&n; */
 DECL|function|i2o_init_outbound_q
 r_int
 id|i2o_init_outbound_q
@@ -7500,6 +7528,7 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+multiline_comment|/**&n; *&t;i2o_post_outbound_messages&t;-&t;fill message queue&n; *&t;@c: controller&n; *&n; *&t;Allocate a message frame and load the messages into the IOP. The&n; *&t;function returns zero on success or a negative errno code on&n; *&t;failure.&n; */
 DECL|function|i2o_post_outbound_messages
 r_int
 id|i2o_post_outbound_messages
@@ -12117,6 +12146,13 @@ c_func
 (paren
 id|KERN_INFO
 l_string|&quot;Loading I2O Core - (c) Copyright 1999 Red Hat Software&bslash;n&quot;
+)paren
+suffix:semicolon
+id|init_MUTEX
+c_func
+(paren
+op_amp
+id|i2o_configuration_lock
 )paren
 suffix:semicolon
 r_if

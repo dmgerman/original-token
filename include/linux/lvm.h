@@ -12,7 +12,7 @@ mdefine_line|#define&t;LVM_TOTAL_RESET
 DECL|macro|LVM_GET_INODE
 mdefine_line|#define LVM_GET_INODE
 DECL|macro|LVM_HD_NAME
-mdefine_line|#define&t;LVM_HD_NAME
+macro_line|#undef&t;LVM_HD_NAME
 multiline_comment|/* lots of debugging output (see driver source)&n;   #define DEBUG_LVM_GET_INFO&n;   #define DEBUG&n;   #define DEBUG_MAP&n;   #define DEBUG_MAP_SIZE&n;   #define DEBUG_IOCTL&n;   #define DEBUG_READ&n;   #define DEBUG_GENDISK&n;   #define DEBUG_VG_CREATE&n;   #define DEBUG_LVM_BLK_OPEN&n;   #define DEBUG_KFREE&n; */
 macro_line|#include &lt;linux/version.h&gt;
 macro_line|#ifndef __KERNEL__
@@ -162,9 +162,9 @@ mdefine_line|#define&t;LVM_MAX_SIZE            ( 1024LU * 1024 * 1024 * 2)&t;/* 
 DECL|macro|LVM_MAX_MIRRORS
 mdefine_line|#define&t;LVM_MAX_MIRRORS    &t;2&t;/* future use */
 DECL|macro|LVM_MIN_READ_AHEAD
-mdefine_line|#define&t;LVM_MIN_READ_AHEAD&t;2&t;/* minimum read ahead sectors */
+mdefine_line|#define&t;LVM_MIN_READ_AHEAD&t;0&t;/* minimum read ahead sectors */
 DECL|macro|LVM_MAX_READ_AHEAD
-mdefine_line|#define&t;LVM_MAX_READ_AHEAD&t;120&t;/* maximum read ahead sectors */
+mdefine_line|#define&t;LVM_MAX_READ_AHEAD&t;256&t;/* maximum read ahead sectors */
 DECL|macro|LVM_MAX_LV_IO_TIMEOUT
 mdefine_line|#define&t;LVM_MAX_LV_IO_TIMEOUT&t;60&t;/* seconds I/O timeout (future use) */
 DECL|macro|LVM_PARTITION
@@ -1001,6 +1001,10 @@ id|lv_block_exception_t
 op_star
 id|lv_block_exception
 suffix:semicolon
+DECL|member|__unused
+r_uint8
+id|__unused
+suffix:semicolon
 DECL|member|lv_remap_ptr
 r_uint32
 id|lv_remap_ptr
@@ -1681,10 +1685,6 @@ id|pv_name
 (braket
 id|NAME_LEN
 )braket
-suffix:semicolon
-DECL|member|pv_dev
-id|kdev_t
-id|pv_dev
 suffix:semicolon
 )brace
 DECL|typedef|pv_flush_req_t

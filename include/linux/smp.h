@@ -138,6 +138,8 @@ DECL|macro|cpu_number_map
 mdefine_line|#define cpu_number_map(cpu)&t;&t;&t;0
 DECL|macro|smp_call_function
 mdefine_line|#define smp_call_function(func,info,retry,wait)&t;({ 0; })
+DECL|macro|cpu_online_map
+mdefine_line|#define cpu_online_map&t;&t;&t;&t;1
 macro_line|#endif
 macro_line|#endif
 eof
