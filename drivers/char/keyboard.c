@@ -4872,7 +4872,7 @@ l_int|0x60
 comma
 l_int|16
 comma
-l_string|&quot;kbd&quot;
+l_string|&quot;keyboard&quot;
 )paren
 suffix:semicolon
 macro_line|#ifdef INIT_KBD

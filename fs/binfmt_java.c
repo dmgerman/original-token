@@ -6,11 +6,11 @@ macro_line|#include &lt;linux/malloc.h&gt;
 macro_line|#include &lt;linux/binfmts.h&gt;
 macro_line|#include &lt;paths.h&gt;
 DECL|macro|_PATH_JAVA
-mdefine_line|#define _PATH_JAVA&t;&quot;/usr/local/java/bin/java&quot;
+mdefine_line|#define _PATH_JAVA&t;&quot;/usr/bin/java&quot;
 DECL|macro|_PATH_APPLET
-mdefine_line|#define _PATH_APPLET&t;&quot;/usr/local/java/bin/appletviewer&quot;
-DECL|macro|_PATH_BASH
-mdefine_line|#define _PATH_BASH&t;&quot;/bin/bash&quot;
+mdefine_line|#define _PATH_APPLET&t;&quot;/usr/bin/appletviewer&quot;
+DECL|macro|_PATH_SH
+mdefine_line|#define _PATH_SH&t;&quot;/bin/sh&quot;
 DECL|function|do_load_script
 r_static
 r_int
@@ -106,7 +106,7 @@ id|bprm-&gt;dont_iput
 op_assign
 l_int|1
 suffix:semicolon
-multiline_comment|/*&n;&t; * OK, we&squot;ve set the interpreter name&n;&t; * Splice in (1) the interpreter&squot;s name for argv[0] (_PATH_BASH)&n;&t; *           (2) the name of the java wrapper for argv[1] (_PATH_JAVA)&n;&t; *           (3) filename of Java class (replace argv[0])&n;&t; *               without leading path or trailing &squot;.class&squot;&n;&t; *&n;&t; * This is done in reverse order, because of how the&n;&t; * user environment and arguments are stored.&n;&t; */
+multiline_comment|/*&n;&t; * OK, we&squot;ve set the interpreter name&n;&t; * Splice in (1) the interpreter&squot;s name for argv[0] (_PATH_SH)&n;&t; *           (2) the name of the java wrapper for argv[1] (_PATH_JAVA)&n;&t; *           (3) filename of Java class (replace argv[0])&n;&t; *               without leading path or trailing &squot;.class&squot;&n;&t; *&n;&t; * This is done in reverse order, because of how the&n;&t; * user environment and arguments are stored.&n;&t; */
 id|remove_arg_zero
 c_func
 (paren
@@ -213,7 +213,7 @@ id|strcpy
 (paren
 id|bprm-&gt;buf
 comma
-id|_PATH_BASH
+id|_PATH_SH
 )paren
 suffix:semicolon
 id|interp

@@ -1,4 +1,4 @@
-multiline_comment|/*+M*************************************************************************&n; * Adaptec AIC7xxx device driver for Linux.&n; *&n; * Copyright (c) 1994 John Aycock&n; *   The University of Calgary Department of Computer Science.&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; see the file COPYING.  If not, write to&n; * the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * Sources include the Adaptec 1740 driver (aha1740.c), the Ultrastor 24F&n; * driver (ultrastor.c), various Linux kernel source, the Adaptec EISA&n; * config file (!adp7771.cfg), the Adaptec AHA-2740A Series User&squot;s Guide,&n; * the Linux Kernel Hacker&squot;s Guide, Writing a SCSI Device Driver for Linux,&n; * the Adaptec 1542 driver (aha1542.c), the Adaptec EISA overlay file&n; * (adp7770.ovl), the Adaptec AHA-2740 Series Technical Reference Manual,&n; * the Adaptec AIC-7770 Data Book, the ANSI SCSI specification, the&n; * ANSI SCSI-2 specification (draft 10c), ...&n; *&n; * ----------------------------------------------------------------&n; *  Modified to include support for wide and twin bus adapters,&n; *  DMAing of SCBs, tagged queueing, IRQ sharing, bug fixes,&n; *  and other rework of the code.&n; *&n; *  Parts of this driver are based on the FreeBSD driver by Justin&n; *  T. Gibbs.&n; *&n; *  A Boot time option was also added for not resetting the scsi bus.&n; *&n; *    Form:  aic7xxx=extended,no_reset&n; *&n; *    -- Daniel M. Eischen, deischen@iworks.InterWorks.org, 04/03/95&n; *&n; *  $Id: aic7xxx.c,v 3.0 1996/04/16 09:11:53 deang Exp $&n; *-M*************************************************************************/
+multiline_comment|/*+M*************************************************************************&n; * Adaptec AIC7xxx device driver for Linux.&n; *&n; * Copyright (c) 1994 John Aycock&n; *   The University of Calgary Department of Computer Science.&n; *&n; * This program is free software; you can redistribute it and/or modify&n; * it under the terms of the GNU General Public License as published by&n; * the Free Software Foundation; either version 2, or (at your option)&n; * any later version.&n; *&n; * This program is distributed in the hope that it will be useful,&n; * but WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; * GNU General Public License for more details.&n; *&n; * You should have received a copy of the GNU General Public License&n; * along with this program; see the file COPYING.  If not, write to&n; * the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; * Sources include the Adaptec 1740 driver (aha1740.c), the Ultrastor 24F&n; * driver (ultrastor.c), various Linux kernel source, the Adaptec EISA&n; * config file (!adp7771.cfg), the Adaptec AHA-2740A Series User&squot;s Guide,&n; * the Linux Kernel Hacker&squot;s Guide, Writing a SCSI Device Driver for Linux,&n; * the Adaptec 1542 driver (aha1542.c), the Adaptec EISA overlay file&n; * (adp7770.ovl), the Adaptec AHA-2740 Series Technical Reference Manual,&n; * the Adaptec AIC-7770 Data Book, the ANSI SCSI specification, the&n; * ANSI SCSI-2 specification (draft 10c), ...&n; *&n; * ----------------------------------------------------------------&n; *  Modified to include support for wide and twin bus adapters,&n; *  DMAing of SCBs, tagged queueing, IRQ sharing, bug fixes,&n; *  and other rework of the code.&n; *&n; *  Parts of this driver are based on the FreeBSD driver by Justin&n; *  T. Gibbs.&n; *&n; *  A Boot time option was also added for not resetting the scsi bus.&n; *&n; *    Form:  aic7xxx=extended,no_reset&n; *&n; *    -- Daniel M. Eischen, deischen@iworks.InterWorks.org, 04/03/95&n; *&n; *  $Id: aic7xxx.c,v 3.2 1996/05/12 17:28:23 deang Exp $&n; *-M*************************************************************************/
 macro_line|#ifdef MODULE
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#endif
@@ -43,7 +43,7 @@ l_int|2
 )brace
 suffix:semicolon
 DECL|macro|AIC7XXX_C_VERSION
-mdefine_line|#define AIC7XXX_C_VERSION  &quot;$Revision: 3.0 $&quot;
+mdefine_line|#define AIC7XXX_C_VERSION  &quot;$Revision: 3.2 $&quot;
 DECL|macro|NUMBER
 mdefine_line|#define NUMBER(arr)     (sizeof(arr) / sizeof(arr[0]))
 DECL|macro|MIN
@@ -4732,7 +4732,7 @@ id|base
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Ensure we don&squot;t get a RSTI interrupt from this. */
+multiline_comment|/*&n;     * Ensure we don&squot;t get a RSTI interrupt from this.&n;     */
 id|outb
 c_func
 (paren
@@ -4797,7 +4797,7 @@ id|base
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* Ensure we don&squot;t get a RSTI interrupt from this. */
+multiline_comment|/*&n;     * Ensure we don&squot;t get a RSTI interrupt from this.&n;     */
 id|outb
 c_func
 (paren
@@ -10653,7 +10653,7 @@ id|scsi_conf
 op_assign
 id|config-&gt;scsi_id
 op_or
-id|DFTHRSH_100
+id|config-&gt;bus_speed
 suffix:semicolon
 macro_line|#if 0
 r_if
@@ -10683,7 +10683,7 @@ suffix:semicolon
 id|outb
 c_func
 (paren
-id|DFTHRSH_100
+id|config-&gt;bus_speed
 comma
 id|DSPCISTATUS
 op_plus
@@ -10691,7 +10691,6 @@ id|base
 )paren
 suffix:semicolon
 multiline_comment|/*&n;       * In case we are a wide card...&n;       */
-multiline_comment|/*&n; * Try the following:&n; *&n; * 1) outb(config-&gt;scsi_id, SCSICONF + base + 1);&n; * 2) outb(scsiconf, SCSICONF + base + 1);&n; *&n; */
 id|outb
 c_func
 (paren
@@ -11979,7 +11978,7 @@ c_func
 op_minus
 id|i
 op_amp
-l_int|0xff
+l_int|0xFF
 comma
 id|COMP_SCBCOUNT
 op_plus
@@ -12106,7 +12105,7 @@ op_plus
 id|base
 )paren
 suffix:semicolon
-multiline_comment|/* Ensure we don&squot;t get a RSTI interrupt from this. */
+multiline_comment|/*&n;       * Ensure we don&squot;t get a RSTI interrupt from this.&n;       */
 id|outb
 c_func
 (paren
@@ -12172,7 +12171,7 @@ op_plus
 id|base
 )paren
 suffix:semicolon
-multiline_comment|/* Ensure we don&squot;t get a RSTI interrupt from this. */
+multiline_comment|/*&n;     * Ensure we don&squot;t get a RSTI interrupt from this.&n;     */
 id|outb
 c_func
 (paren
@@ -12772,7 +12771,7 @@ id|config.chan_num
 op_assign
 id|number_of_39xxs
 op_amp
-l_int|0x1
+l_int|0x01
 suffix:semicolon
 multiline_comment|/* Has 2 controllers */
 id|number_of_39xxs
@@ -12806,7 +12805,7 @@ id|config.chan_num
 op_assign
 id|number_of_39xxs
 op_amp
-l_int|0x3
+l_int|0x03
 suffix:semicolon
 multiline_comment|/* Has 3 controllers */
 id|number_of_39xxs
@@ -13043,7 +13042,7 @@ id|base
 op_assign
 id|io_port
 op_amp
-l_int|0xfffffffe
+l_int|0xFFFFFFFE
 suffix:semicolon
 multiline_comment|/*&n;           * I don&squot;t think we need to bother with allowing&n;           * spurious interrupts for the 787x/785x, but what&n;           * the hey.&n;           */
 id|aic7xxx_spurious_count
@@ -14697,6 +14696,10 @@ c_func
 id|Scsi_Cmnd
 op_star
 id|cmd
+comma
+r_int
+r_int
+id|resetFlags
 )paren
 (brace
 macro_line|#ifdef AIC7XXX_DEBUG_ABORT
@@ -14822,9 +14825,11 @@ c_cond
 (paren
 id|p-&gt;extended
 op_logical_and
+(paren
 id|cylinders
 OG
 l_int|1024
+)paren
 )paren
 (brace
 id|heads
@@ -14840,9 +14845,9 @@ op_assign
 id|disk-&gt;capacity
 op_div
 (paren
-l_int|255
+id|heads
 op_star
-l_int|63
+id|sectors
 )paren
 suffix:semicolon
 )brace

@@ -1176,6 +1176,8 @@ op_minus
 id|ENXIO
 suffix:semicolon
 multiline_comment|/* no hardware */
+id|MOD_INC_USE_COUNT
+suffix:semicolon
 id|get_status
 (paren
 )paren
@@ -1201,14 +1203,14 @@ id|printk
 l_string|&quot;GSCD: no disk or door open&bslash;n&quot;
 )paren
 suffix:semicolon
+id|MOD_DEC_USE_COUNT
+suffix:semicolon
 r_return
 op_minus
 id|ENXIO
 suffix:semicolon
 )brace
 multiline_comment|/*&t;if (updateToc() &lt; 0)&n;&t;&t;return -EIO;&n;*/
-id|MOD_INC_USE_COUNT
-suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon

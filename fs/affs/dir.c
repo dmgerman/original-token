@@ -602,7 +602,7 @@ id|j
 op_assign
 l_int|0
 suffix:semicolon
-id|pd_debug
+id|pr_debug
 c_func
 (paren
 l_string|&quot;AFFS: readdir() left off=%lu&bslash;n&quot;
@@ -615,7 +615,7 @@ id|filp-&gt;f_version
 op_assign
 id|dir-&gt;i_version
 suffix:semicolon
-id|pd_debug
+id|pr_debug
 c_func
 (paren
 l_string|&quot;AFFS: hash_pos=%lu chain_pos=%lu&bslash;n&quot;
