@@ -841,12 +841,12 @@ id|QNX4DEBUG
 c_func
 (paren
 (paren
-l_string|&quot;qnx4: readpage offset=[%ld]&bslash;n&quot;
+l_string|&quot;qnx4: readpage index=[%ld]&bslash;n&quot;
 comma
 (paren
 r_int
 )paren
-id|page-&gt;offset
+id|page-&gt;index
 )paren
 )paren
 suffix:semicolon
@@ -913,7 +913,9 @@ id|page-&gt;flags
 suffix:semicolon
 id|offset
 op_assign
-id|page-&gt;offset
+id|page-&gt;index
+op_lshift
+id|PAGE_SHIFT
 suffix:semicolon
 r_if
 c_cond

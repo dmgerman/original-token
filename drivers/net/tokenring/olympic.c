@@ -9254,14 +9254,7 @@ id|i
 suffix:semicolon
 macro_line|#if OLYMPIC_NETWORK_MONITOR
 macro_line|#ifdef CONFIG_PROC_FS
-r_struct
-id|proc_dir_entry
-op_star
-id|ent
-suffix:semicolon
-id|ent
-op_assign
-id|create_proc_entry
+id|create_proc_read_entry
 c_func
 (paren
 l_string|&quot;net/olympic_tr&quot;
@@ -9269,12 +9262,11 @@ comma
 l_int|0
 comma
 l_int|0
-)paren
-suffix:semicolon
-id|ent-&gt;read_proc
-op_assign
-op_amp
+comma
 id|olympic_proc_info
+comma
+l_int|NULL
+)paren
 suffix:semicolon
 macro_line|#endif
 macro_line|#endif

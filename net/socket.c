@@ -907,12 +907,6 @@ id|socket
 op_star
 id|sock
 suffix:semicolon
-id|lock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
-multiline_comment|/* Damn! get_empty_inode is not SMP safe.&n;&t;   I ask, why does it have decorative spinlock&n;&t;   at the very beginning? Probably, dcache ops should&n;&t;   be lock_kernel&squot;ed inside inode.c&n;&t; */
 id|inode
 op_assign
 id|get_empty_inode
@@ -926,20 +920,8 @@ c_cond
 op_logical_neg
 id|inode
 )paren
-(brace
-id|unlock_kernel
-c_func
-(paren
-)paren
-suffix:semicolon
 r_return
 l_int|NULL
-suffix:semicolon
-)brace
-id|unlock_kernel
-c_func
-(paren
-)paren
 suffix:semicolon
 id|sock
 op_assign

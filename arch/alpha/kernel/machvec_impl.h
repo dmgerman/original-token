@@ -1,11 +1,13 @@
 multiline_comment|/*&n; *&t;linux/arch/alpha/kernel/machvec.h&n; *&n; *&t;Copyright (C) 1997, 1998  Richard Henderson&n; *&n; * This file has goodies to help simplify instantiation of machine vectors.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/pgalloc.h&gt;
-multiline_comment|/* Whee.  Both TSUNAMI and POLARIS don&squot;t have an HAE.  Fix things up for&n;   the GENERIC kernel by defining the HAE address to be that of the cache.&n;   Now we can read and write it as we like.  ;-)  */
-DECL|macro|TSUNAMI_HAE_ADDRESS
-mdefine_line|#define TSUNAMI_HAE_ADDRESS&t;(&amp;alpha_mv.hae_cache)
+multiline_comment|/* Whee.  IRONGATE, POLARIS and TSUNAMI don&squot;t have an HAE.  Fix things up for&n;   the GENERIC kernel by defining the HAE address to be that of the cache.&n;   Now we can read and write it as we like.  ;-)  */
+DECL|macro|IRONGATE_HAE_ADDRESS
+mdefine_line|#define IRONGATE_HAE_ADDRESS&t;(&amp;alpha_mv.hae_cache)
 DECL|macro|POLARIS_HAE_ADDRESS
 mdefine_line|#define POLARIS_HAE_ADDRESS&t;(&amp;alpha_mv.hae_cache)
+DECL|macro|TSUNAMI_HAE_ADDRESS
+mdefine_line|#define TSUNAMI_HAE_ADDRESS&t;(&amp;alpha_mv.hae_cache)
 macro_line|#if CIA_ONE_HAE_WINDOW
 DECL|macro|CIA_HAE_ADDRESS
 mdefine_line|#define CIA_HAE_ADDRESS&t;&t;(&amp;alpha_mv.hae_cache)
@@ -41,14 +43,16 @@ DECL|macro|DO_APECS_IO
 mdefine_line|#define DO_APECS_IO&t;IO(APECS,apecs)
 DECL|macro|DO_CIA_IO
 mdefine_line|#define DO_CIA_IO&t;IO(CIA,cia)
+DECL|macro|DO_IRONGATE_IO
+mdefine_line|#define DO_IRONGATE_IO&t;IO(IRONGATE,irongate)
 DECL|macro|DO_LCA_IO
 mdefine_line|#define DO_LCA_IO&t;IO(LCA,lca)
 DECL|macro|DO_MCPCIA_IO
 mdefine_line|#define DO_MCPCIA_IO&t;IO(MCPCIA,mcpcia)
-DECL|macro|DO_PYXIS_IO
-mdefine_line|#define DO_PYXIS_IO&t;IO(PYXIS,pyxis)
 DECL|macro|DO_POLARIS_IO
 mdefine_line|#define DO_POLARIS_IO&t;IO(POLARIS,polaris)
+DECL|macro|DO_PYXIS_IO
+mdefine_line|#define DO_PYXIS_IO&t;IO(PYXIS,pyxis)
 DECL|macro|DO_T2_IO
 mdefine_line|#define DO_T2_IO&t;IO(T2,t2)
 DECL|macro|DO_TSUNAMI_IO
@@ -59,6 +63,8 @@ DECL|macro|DO_APECS_BUS
 mdefine_line|#define DO_APECS_BUS&t;BUS(apecs)
 DECL|macro|DO_CIA_BUS
 mdefine_line|#define DO_CIA_BUS&t;BUS(cia)
+DECL|macro|DO_IRONGATE_BUS
+mdefine_line|#define DO_IRONGATE_BUS&t;BUS(irongate)
 DECL|macro|DO_LCA_BUS
 mdefine_line|#define DO_LCA_BUS&t;BUS(lca)
 DECL|macro|DO_MCPCIA_BUS

@@ -28,7 +28,7 @@ DECL|macro|DBG_CFG
 macro_line|# define DBG_CFG(args)
 macro_line|#endif
 DECL|macro|MCPCIA_MAX_HOSES
-mdefine_line|#define MCPCIA_MAX_HOSES 2
+mdefine_line|#define MCPCIA_MAX_HOSES 4
 multiline_comment|/* Dodge has PCI0 and PCI1 at MID 4 and 5 respectively.  Durango adds&n;   PCI2 and PCI3 at MID 6 and 7 respectively.  */
 DECL|macro|hose2mid
 mdefine_line|#define hose2mid(h)&t;((h) + 4)
@@ -635,6 +635,10 @@ op_star
 id|hose
 op_assign
 id|dev-&gt;sysdata
+ques
+c_cond
+suffix:colon
+id|probing_hose
 suffix:semicolon
 r_int
 r_int
@@ -726,6 +730,10 @@ op_star
 id|hose
 op_assign
 id|dev-&gt;sysdata
+ques
+c_cond
+suffix:colon
+id|probing_hose
 suffix:semicolon
 r_int
 r_int
@@ -817,6 +825,10 @@ op_star
 id|hose
 op_assign
 id|dev-&gt;sysdata
+ques
+c_cond
+suffix:colon
+id|probing_hose
 suffix:semicolon
 r_int
 r_int
@@ -896,6 +908,10 @@ op_star
 id|hose
 op_assign
 id|dev-&gt;sysdata
+ques
+c_cond
+suffix:colon
+id|probing_hose
 suffix:semicolon
 r_int
 r_int
@@ -1135,6 +1151,12 @@ c_func
 (paren
 )paren
 suffix:semicolon
+id|wrmces
+c_func
+(paren
+l_int|7
+)paren
+suffix:semicolon
 id|mcheck_expected
 c_func
 (paren
@@ -1346,6 +1368,10 @@ id|pci_io_names
 id|h
 )braket
 suffix:semicolon
+id|io-&gt;flags
+op_assign
+id|IORESOURCE_IO
+suffix:semicolon
 id|mem-&gt;start
 op_assign
 id|MCPCIA_DENSE
@@ -1369,6 +1395,10 @@ id|pci_mem_names
 id|h
 )braket
 suffix:semicolon
+id|mem-&gt;flags
+op_assign
+id|IORESOURCE_MEM
+suffix:semicolon
 id|hae_mem-&gt;start
 op_assign
 id|mem-&gt;start
@@ -1383,6 +1413,13 @@ id|hae_mem-&gt;name
 op_assign
 id|pci_hae0_name
 suffix:semicolon
+id|hae_mem-&gt;flags
+op_assign
+id|IORESOURCE_MEM
+suffix:semicolon
+r_if
+c_cond
+(paren
 id|request_resource
 c_func
 (paren
@@ -1391,7 +1428,21 @@ id|ioport_resource
 comma
 id|io
 )paren
+OL
+l_int|0
+)paren
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;Failed to request IO on hose %d&bslash;n&quot;
+comma
+id|h
+)paren
 suffix:semicolon
+r_if
+c_cond
+(paren
 id|request_resource
 c_func
 (paren
@@ -1400,7 +1451,21 @@ id|iomem_resource
 comma
 id|mem
 )paren
+OL
+l_int|0
+)paren
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;Failed to request MEM on hose %d&bslash;n&quot;
+comma
+id|h
+)paren
 suffix:semicolon
+r_if
+c_cond
+(paren
 id|request_resource
 c_func
 (paren
@@ -1408,7 +1473,68 @@ id|mem
 comma
 id|hae_mem
 )paren
+OL
+l_int|0
+)paren
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;Failed to request HAE_MEM on hose %d&bslash;n&quot;
+comma
+id|h
+)paren
 suffix:semicolon
+)brace
+r_static
+r_void
+DECL|function|mcpcia_pci_clr_err
+id|mcpcia_pci_clr_err
+c_func
+(paren
+r_int
+id|mid
+)paren
+(brace
+op_star
+(paren
+id|vuip
+)paren
+id|MCPCIA_CAP_ERR
+c_func
+(paren
+id|mid
+)paren
+suffix:semicolon
+op_star
+(paren
+id|vuip
+)paren
+id|MCPCIA_CAP_ERR
+c_func
+(paren
+id|mid
+)paren
+op_assign
+l_int|0xffffffff
+suffix:semicolon
+multiline_comment|/* Clear them all.  */
+id|mb
+c_func
+(paren
+)paren
+suffix:semicolon
+op_star
+(paren
+id|vuip
+)paren
+id|MCPCIA_CAP_ERR
+c_func
+(paren
+id|mid
+)paren
+suffix:semicolon
+multiline_comment|/* Re-read for force write.  */
 )brace
 r_static
 r_void
@@ -1436,55 +1562,13 @@ r_int
 r_int
 id|tmp
 suffix:semicolon
-multiline_comment|/* &n;&t; * Set up error reporting. Make sure CPU_PE is OFF in the mask.&n;&t; */
-macro_line|#if 0
-id|tmp
-op_assign
-op_star
-(paren
-id|vuip
-)paren
-id|MCPCIA_ERR_MASK
+id|mcpcia_pci_clr_err
 c_func
 (paren
 id|mid
 )paren
 suffix:semicolon
-id|tmp
-op_and_assign
-op_complement
-l_int|4
-suffix:semicolon
-op_star
-(paren
-id|vuip
-)paren
-id|MCPCIA_ERR_MASK
-c_func
-(paren
-id|mid
-)paren
-op_assign
-id|tmp
-suffix:semicolon
-id|mb
-c_func
-(paren
-)paren
-suffix:semicolon
-id|tmp
-op_assign
-op_star
-(paren
-id|vuip
-)paren
-id|MCPCIA_ERR_MASK
-c_func
-(paren
-id|mid
-)paren
-suffix:semicolon
-macro_line|#endif
+multiline_comment|/* &n;&t; * Set up error reporting.&n;&t; */
 id|tmp
 op_assign
 op_star
@@ -1750,15 +1834,35 @@ c_func
 r_void
 )paren
 (brace
-r_extern
-id|asmlinkage
+multiline_comment|/* With multiple PCI busses, we play with I/O as physical addrs.  */
+id|ioport_resource.end
+op_assign
+op_complement
+l_int|0UL
+suffix:semicolon
+id|iomem_resource.end
+op_assign
+op_complement
+l_int|0UL
+suffix:semicolon
+multiline_comment|/* Allocate hose 0.  That&squot;s the one that all the ISA junk hangs&n;&t;   off of, from which we&squot;ll be registering stuff here in a bit.&n;&t;   Other hose detection is done in mcpcia_init_hoses, which is&n;&t;   called from init_IRQ.  */
+id|mcpcia_new_hose
+c_func
+(paren
+l_int|0
+)paren
+suffix:semicolon
+)brace
+multiline_comment|/* This is called from init_IRQ, since we cannot take interrupts&n;   before then.  Which means we cannot do this in init_arch.  */
 r_void
-id|entInt
+id|__init
+DECL|function|mcpcia_init_hoses
+id|mcpcia_init_hoses
 c_func
 (paren
 r_void
 )paren
-suffix:semicolon
+(brace
 r_struct
 id|pci_controler
 op_star
@@ -1770,26 +1874,6 @@ comma
 id|hose_count
 op_assign
 l_int|0
-suffix:semicolon
-multiline_comment|/* Ho hum.. init_arch is called before init_IRQ, but we need to be&n;&t;   able to handle machine checks.  So install the handler now.  */
-id|wrent
-c_func
-(paren
-id|entInt
-comma
-l_int|0
-)paren
-suffix:semicolon
-multiline_comment|/* With multiple PCI busses, we play with I/O as physical addrs.  */
-id|ioport_resource.end
-op_assign
-op_complement
-l_int|0UL
-suffix:semicolon
-id|iomem_resource.end
-op_assign
-op_complement
-l_int|0UL
 suffix:semicolon
 multiline_comment|/* First, find how many hoses we have.  */
 r_for
@@ -1817,6 +1901,13 @@ id|h
 )paren
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|h
+op_ne
+l_int|0
+)paren
 id|mcpcia_new_hose
 c_func
 (paren
@@ -1831,7 +1922,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;mcpcia_init_arch: found %d hoses&bslash;n&quot;
+l_string|&quot;mcpcia_init_hoses: found %d hoses&bslash;n&quot;
 comma
 id|hose_count
 )paren
@@ -1856,56 +1947,6 @@ c_func
 id|hose
 )paren
 suffix:semicolon
-)brace
-r_static
-r_void
-DECL|function|mcpcia_pci_clr_err
-id|mcpcia_pci_clr_err
-c_func
-(paren
-r_int
-id|mid
-)paren
-(brace
-op_star
-(paren
-id|vuip
-)paren
-id|MCPCIA_CAP_ERR
-c_func
-(paren
-id|mid
-)paren
-suffix:semicolon
-op_star
-(paren
-id|vuip
-)paren
-id|MCPCIA_CAP_ERR
-c_func
-(paren
-id|mid
-)paren
-op_assign
-l_int|0xffffffff
-suffix:semicolon
-multiline_comment|/* Clear them all.  */
-id|mb
-c_func
-(paren
-)paren
-suffix:semicolon
-op_star
-(paren
-id|vuip
-)paren
-id|MCPCIA_CAP_ERR
-c_func
-(paren
-id|mid
-)paren
-suffix:semicolon
-multiline_comment|/* Re-read for force write.  */
 )brace
 r_static
 r_void
@@ -1952,7 +1993,7 @@ l_int|2
 id|printk
 c_func
 (paren
-l_string|&quot;&bslash;tpal temp[%d-%d]&bslash;t&bslash;t= %16lx %16lx&bslash;n&bslash;r&quot;
+l_string|&quot;  paltmp[%d-%d] = %16lx %16lx&bslash;n&quot;
 comma
 id|i
 comma
@@ -1993,7 +2034,7 @@ l_int|2
 id|printk
 c_func
 (paren
-l_string|&quot;&bslash;tshadow[%d-%d]&bslash;t&bslash;t= %16lx %16lx&bslash;n&bslash;r&quot;
+l_string|&quot;  shadow[%d-%d] = %16lx %16lx&bslash;n&quot;
 comma
 id|i
 comma
@@ -2018,7 +2059,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;&bslash;tAddr of excepting instruction&bslash;t= %16lx&bslash;n&bslash;r&quot;
+l_string|&quot;  Addr of excepting instruction  = %16lx&bslash;n&quot;
 comma
 id|frame-&gt;exc_addr
 )paren
@@ -2026,7 +2067,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;&bslash;tSummary of arithmetic traps&bslash;t= %16lx&bslash;n&bslash;r&quot;
+l_string|&quot;  Summary of arithmetic traps    = %16lx&bslash;n&quot;
 comma
 id|frame-&gt;exc_sum
 )paren
@@ -2034,7 +2075,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;&bslash;tException mask&bslash;t&bslash;t&bslash;t= %16lx&bslash;n&bslash;r&quot;
+l_string|&quot;  Exception mask                 = %16lx&bslash;n&quot;
 comma
 id|frame-&gt;exc_mask
 )paren
@@ -2042,7 +2083,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;&bslash;tBase address for PALcode&bslash;t= %16lx&bslash;n&bslash;r&quot;
+l_string|&quot;  Base address for PALcode       = %16lx&bslash;n&quot;
 comma
 id|frame-&gt;pal_base
 )paren
@@ -2050,7 +2091,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;&bslash;tInterrupt Status Reg&bslash;t&bslash;t= %16lx&bslash;n&bslash;r&quot;
+l_string|&quot;  Interrupt Status Reg           = %16lx&bslash;n&quot;
 comma
 id|frame-&gt;isr
 )paren
@@ -2058,7 +2099,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;&bslash;tCURRENT SETUP OF EV5 IBOX&bslash;t= %16lx&bslash;n&bslash;r&quot;
+l_string|&quot;  CURRENT SETUP OF EV5 IBOX      = %16lx&bslash;n&quot;
 comma
 id|frame-&gt;icsr
 )paren
@@ -2066,7 +2107,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;&bslash;tI-CACHE Reg %s parity error&bslash;t= %16lx&bslash;n&bslash;r&quot;
+l_string|&quot;  I-CACHE Reg %s parity error   = %16lx&bslash;n&quot;
 comma
 (paren
 id|frame-&gt;ic_perr_stat
@@ -2085,7 +2126,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;&bslash;tD-CACHE error Reg&bslash;t&bslash;t= %16lx&bslash;n&bslash;r&quot;
+l_string|&quot;  D-CACHE error Reg              = %16lx&bslash;n&quot;
 comma
 id|frame-&gt;dc_perr_stat
 )paren
@@ -2112,7 +2153,7 @@ suffix:colon
 id|printk
 c_func
 (paren
-l_string|&quot;&bslash;t&bslash;tData error in bank 1&bslash;n&bslash;r&quot;
+l_string|&quot;    Data error in bank 1&bslash;n&quot;
 )paren
 suffix:semicolon
 r_break
@@ -2123,7 +2164,7 @@ suffix:colon
 id|printk
 c_func
 (paren
-l_string|&quot;&bslash;t&bslash;tData error in bank 0&bslash;n&bslash;r&quot;
+l_string|&quot;    Data error in bank 0&bslash;n&quot;
 )paren
 suffix:semicolon
 r_break
@@ -2134,7 +2175,7 @@ suffix:colon
 id|printk
 c_func
 (paren
-l_string|&quot;&bslash;t&bslash;tTag error in bank 1&bslash;n&bslash;r&quot;
+l_string|&quot;    Tag error in bank 1&bslash;n&quot;
 )paren
 suffix:semicolon
 r_break
@@ -2145,7 +2186,7 @@ suffix:colon
 id|printk
 c_func
 (paren
-l_string|&quot;&bslash;t&bslash;tTag error in bank 0&bslash;n&bslash;r&quot;
+l_string|&quot;    Tag error in bank 0&bslash;n&quot;
 )paren
 suffix:semicolon
 r_break
@@ -2155,7 +2196,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;&bslash;tEffective VA&bslash;t&bslash;t&bslash;t= %16lx&bslash;n&bslash;r&quot;
+l_string|&quot;  Effective VA                   = %16lx&bslash;n&quot;
 comma
 id|frame-&gt;va
 )paren
@@ -2163,7 +2204,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;&bslash;tReason for D-stream&bslash;t&bslash;t= %16lx&bslash;n&bslash;r&quot;
+l_string|&quot;  Reason for D-stream            = %16lx&bslash;n&quot;
 comma
 id|frame-&gt;mm_stat
 )paren
@@ -2171,7 +2212,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;&bslash;tEV5 SCache address&bslash;t&bslash;t= %16lx&bslash;n&bslash;r&quot;
+l_string|&quot;  EV5 SCache address             = %16lx&bslash;n&quot;
 comma
 id|frame-&gt;sc_addr
 )paren
@@ -2179,7 +2220,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;&bslash;tEV5 SCache TAG/Data parity&bslash;t= %16lx&bslash;n&bslash;r&quot;
+l_string|&quot;  EV5 SCache TAG/Data parity     = %16lx&bslash;n&quot;
 comma
 id|frame-&gt;sc_stat
 )paren
@@ -2187,7 +2228,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;&bslash;tEV5 BC_TAG_ADDR&bslash;t&bslash;t&bslash;t= %16lx&bslash;n&bslash;r&quot;
+l_string|&quot;  EV5 BC_TAG_ADDR                = %16lx&bslash;n&quot;
 comma
 id|frame-&gt;bc_tag_addr
 )paren
@@ -2195,7 +2236,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;&bslash;tEV5 EI_ADDR: Phys addr of Xfer&bslash;t= %16lx&bslash;n&bslash;r&quot;
+l_string|&quot;  EV5 EI_ADDR: Phys addr of Xfer = %16lx&bslash;n&quot;
 comma
 id|frame-&gt;ei_addr
 )paren
@@ -2203,7 +2244,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;&bslash;tFill Syndrome&bslash;t&bslash;t&bslash;t= %16lx&bslash;n&bslash;r&quot;
+l_string|&quot;  Fill Syndrome                  = %16lx&bslash;n&quot;
 comma
 id|frame-&gt;fill_syndrome
 )paren
@@ -2211,7 +2252,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;&bslash;tEI_STAT reg&bslash;t&bslash;t&bslash;t= %16lx&bslash;n&bslash;r&quot;
+l_string|&quot;  EI_STAT reg                    = %16lx&bslash;n&quot;
 comma
 id|frame-&gt;ei_stat
 )paren
@@ -2219,7 +2260,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;&bslash;tLD_LOCK&bslash;t&bslash;t&bslash;t&bslash;t= %16lx&bslash;n&bslash;r&quot;
+l_string|&quot;  LD_LOCK                        = %16lx&bslash;n&quot;
 comma
 id|frame-&gt;ld_lock
 )paren
@@ -2320,7 +2361,7 @@ suffix:semicolon
 )brace
 r_else
 (brace
-multiline_comment|/* FIXME: how do we figure out which hose the error was on?  */
+multiline_comment|/* FIXME: how do we figure out which hose the&n;&t;&t;   error was on?  */
 r_struct
 id|pci_controler
 op_star

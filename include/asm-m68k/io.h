@@ -37,6 +37,8 @@ DECL|macro|outb
 mdefine_line|#define outb(x,addr) ((void) writeb(x,addr))
 DECL|macro|outb_p
 mdefine_line|#define outb_p(x,addr) outb(x,addr)
+DECL|macro|IO_SPACE_LIMIT
+mdefine_line|#define IO_SPACE_LIMIT 0xffff
 multiline_comment|/* Values for nocacheflag and cmode */
 DECL|macro|IOMAP_FULL_CACHING
 mdefine_line|#define IOMAP_FULL_CACHING&t;&t;0

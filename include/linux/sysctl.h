@@ -265,7 +265,7 @@ id|KERN_SHMMAX
 op_assign
 l_int|34
 comma
-multiline_comment|/* int: Maximum shared memory segment */
+multiline_comment|/* long: Maximum shared memory segment */
 DECL|enumerator|KERN_MSGMAX
 id|KERN_MSGMAX
 op_assign
@@ -319,12 +319,18 @@ id|KERN_SEM
 op_assign
 l_int|43
 comma
-multiline_comment|/* int: sysv semaphore limits */
+multiline_comment|/* struct: sysv semaphore limits */
 DECL|enumerator|KERN_SPARC_STOP_A
 id|KERN_SPARC_STOP_A
 op_assign
 l_int|44
+comma
 multiline_comment|/* int: Sparc Stop-A enable */
+DECL|enumerator|KERN_SHMMNI
+id|KERN_SHMMNI
+op_assign
+l_int|45
+multiline_comment|/* int: shm array identifiers */
 )brace
 suffix:semicolon
 multiline_comment|/* CTL_VM names: */

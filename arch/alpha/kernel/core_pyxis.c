@@ -1560,6 +1560,12 @@ c_func
 r_void
 )paren
 (brace
+r_int
+r_int
+id|tmp
+suffix:semicolon
+id|tmp
+op_assign
 op_star
 (paren
 id|vuip
@@ -1572,7 +1578,7 @@ id|vuip
 )paren
 id|PYXIS_ERR
 op_assign
-l_int|0x0180
+id|tmp
 suffix:semicolon
 id|mb
 c_func

@@ -245,20 +245,22 @@ macro_line|#if defined(CONFIG_ALPHA_APECS)
 macro_line|# include &lt;asm/core_apecs.h&gt;
 macro_line|#elif defined(CONFIG_ALPHA_CIA)
 macro_line|# include &lt;asm/core_cia.h&gt;
+macro_line|#elif defined(CONFIG_ALPHA_IRONGATE)
+macro_line|# include &lt;asm/core_irongate.h&gt;
+macro_line|#elif defined(CONFIG_ALPHA_JENSEN)
+macro_line|# include &lt;asm/jensen.h&gt;
 macro_line|#elif defined(CONFIG_ALPHA_LCA)
 macro_line|# include &lt;asm/core_lca.h&gt;
 macro_line|#elif defined(CONFIG_ALPHA_MCPCIA)
 macro_line|# include &lt;asm/core_mcpcia.h&gt;
+macro_line|#elif defined(CONFIG_ALPHA_POLARIS)
+macro_line|# include &lt;asm/core_polaris.h&gt;
 macro_line|#elif defined(CONFIG_ALPHA_PYXIS)
 macro_line|# include &lt;asm/core_pyxis.h&gt;
 macro_line|#elif defined(CONFIG_ALPHA_T2)
 macro_line|# include &lt;asm/core_t2.h&gt;
 macro_line|#elif defined(CONFIG_ALPHA_TSUNAMI)
 macro_line|# include &lt;asm/core_tsunami.h&gt;
-macro_line|#elif defined(CONFIG_ALPHA_JENSEN)
-macro_line|# include &lt;asm/jensen.h&gt;
-macro_line|#elif defined(CONFIG_ALPHA_POLARIS)
-macro_line|# include &lt;asm/core_polaris.h&gt;
 macro_line|#else
 macro_line|#error &quot;What system is this?&quot;
 macro_line|#endif
@@ -486,6 +488,8 @@ macro_line|#ifndef outl_p
 DECL|macro|outl_p
 macro_line|# define outl_p&t;&t;outl
 macro_line|#endif
+DECL|macro|IO_SPACE_LIMIT
+mdefine_line|#define IO_SPACE_LIMIT 0xffff
 macro_line|#else 
 multiline_comment|/* Userspace declarations.  */
 r_extern

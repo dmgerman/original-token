@@ -87,11 +87,18 @@ DECL|macro|ST_DEC_WILDFIRE
 mdefine_line|#define ST_DEC_WILDFIRE&t;&t; 35&t;/* Wildfire systype&t;*/
 DECL|macro|ST_DEC_CUSCO
 mdefine_line|#define ST_DEC_CUSCO&t;&t; 36&t;/* CUSCO systype&t;*/
+DECL|macro|ST_DEC_EIGER
+mdefine_line|#define ST_DEC_EIGER&t;&t; 37&t;/* Eiger systype&t;*/
 multiline_comment|/* UNOFFICIAL!!! */
 DECL|macro|ST_UNOFFICIAL_BIAS
 mdefine_line|#define ST_UNOFFICIAL_BIAS&t;100
 DECL|macro|ST_DTI_RUFFIAN
 mdefine_line|#define ST_DTI_RUFFIAN&t;&t;101&t;/* RUFFIAN systype&t;*/
+multiline_comment|/* Alpha Processor, Inc. systems */
+DECL|macro|ST_API_BIAS
+mdefine_line|#define ST_API_BIAS&t;&t;200&t;&t;&t;/* Offset for API systems */
+DECL|macro|ST_API_NAUTILUS
+mdefine_line|#define ST_API_NAUTILUS&t;&t;(ST_API_BIAS + 1)&t;/* Nautilus systype */
 DECL|struct|pcb_struct
 r_struct
 id|pcb_struct

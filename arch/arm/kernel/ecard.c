@@ -3320,12 +3320,10 @@ r_void
 (brace
 id|proc_bus_ecard_dir
 op_assign
-id|create_proc_entry
+id|proc_mkdir
 c_func
 (paren
 l_string|&quot;ecard&quot;
-comma
-id|S_IFDIR
 comma
 id|proc_bus
 )paren

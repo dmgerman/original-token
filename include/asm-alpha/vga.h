@@ -7,6 +7,8 @@ DECL|macro|VT_BUF_HAVE_RW
 mdefine_line|#define VT_BUF_HAVE_RW
 DECL|macro|VT_BUF_HAVE_MEMSETW
 mdefine_line|#define VT_BUF_HAVE_MEMSETW
+DECL|macro|VT_BUF_HAVE_MEMCPYW
+mdefine_line|#define VT_BUF_HAVE_MEMCPYW
 DECL|macro|VT_BUF_HAVE_MEMCPYF
 mdefine_line|#define VT_BUF_HAVE_MEMCPYF
 DECL|function|scr_writew
@@ -153,11 +155,10 @@ id|count
 )paren
 suffix:semicolon
 )brace
-DECL|function|scr_memcpyw_from
+multiline_comment|/* Do not trust that the usage will be correct; analyze the arguments.  */
 r_extern
-r_inline
 r_void
-id|scr_memcpyw_from
+id|scr_memcpyw
 c_func
 (paren
 id|u16
@@ -173,50 +174,11 @@ r_int
 r_int
 id|count
 )paren
-(brace
-id|memcpy_fromio
-c_func
-(paren
-id|d
-comma
-id|s
-comma
-id|count
-)paren
 suffix:semicolon
-)brace
-DECL|function|scr_memcpyw_to
-r_extern
-r_inline
-r_void
-id|scr_memcpyw_to
-c_func
-(paren
-id|u16
-op_star
-id|d
-comma
-r_const
-id|u16
-op_star
-id|s
-comma
-r_int
-r_int
-id|count
-)paren
-(brace
-id|memcpy_toio
-c_func
-(paren
-id|d
-comma
-id|s
-comma
-id|count
-)paren
-suffix:semicolon
-)brace
+DECL|macro|scr_memcpyw_from
+mdefine_line|#define scr_memcpyw_from scr_memcpyw
+DECL|macro|scr_memcpyw_to
+mdefine_line|#define scr_memcpyw_to   scr_memcpyw
 multiline_comment|/* ??? These are currently only used for downloading character sets.  As&n;   such, they don&squot;t need memory barriers.  Is this all they are intended&n;   to be used for?  */
 DECL|macro|vga_readb
 mdefine_line|#define vga_readb&t;readb

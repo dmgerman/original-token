@@ -72,6 +72,12 @@ op_assign
 op_amp
 id|hose_head
 suffix:semicolon
+DECL|variable|probing_hose
+r_struct
+id|pci_controler
+op_star
+id|probing_hose
+suffix:semicolon
 multiline_comment|/*&n; * Quirks.&n; */
 r_static
 r_void
@@ -157,16 +163,15 @@ DECL|macro|MB
 mdefine_line|#define MB&t;&t;&t;(1024*KB)
 DECL|macro|GB
 mdefine_line|#define GB&t;&t;&t;(1024*MB)
-DECL|function|resource_fixup
-r_int
-r_int
-id|resource_fixup
+r_void
+id|__init
+DECL|function|pcibios_align_resource
+id|pcibios_align_resource
 c_func
 (paren
-r_struct
-id|pci_dev
+r_void
 op_star
-id|dev
+id|data
 comma
 r_struct
 id|resource
@@ -175,16 +180,25 @@ id|res
 comma
 r_int
 r_int
-id|start
-comma
-r_int
-r_int
 id|size
 )paren
 (brace
+r_struct
+id|pci_dev
+op_star
+id|dev
+op_assign
+id|data
+suffix:semicolon
 r_int
 r_int
 id|alignto
+suffix:semicolon
+r_int
+r_int
+id|start
+op_assign
+id|res-&gt;start
 suffix:semicolon
 r_if
 c_cond
@@ -226,7 +240,7 @@ id|IORESOURCE_MEM
 )paren
 (brace
 multiline_comment|/*&n;&t;&t; * The following holds at least for the Low Cost&n;&t;&t; * Alpha implementation of the PCI interface:&n;&t;&t; *&n;&t;&t; * In sparse memory address space, the first&n;&t;&t; * octant (16MB) of every 128MB segment is&n;&t;&t; * aliased to the very first 16 MB of the&n;&t;&t; * address space (i.e., it aliases the ISA&n;&t;&t; * memory address space).  Thus, we try to&n;&t;&t; * avoid allocating PCI devices in that range.&n;&t;&t; * Can be allocated in 2nd-7th octant only.&n;&t;&t; * Devices that need more than 112MB of&n;&t;&t; * address space must be accessed through&n;&t;&t; * dense memory space only!&n;&t;&t; */
-multiline_comment|/* align to multiple of size of minimum base */
+multiline_comment|/* Align to multiple of size of minimum base.  */
 id|alignto
 op_assign
 id|MAX
@@ -258,6 +272,7 @@ l_int|16
 op_star
 id|MB
 )paren
+(brace
 id|printk
 c_func
 (paren
@@ -272,6 +287,7 @@ comma
 id|size
 )paren
 suffix:semicolon
+)brace
 r_else
 (brace
 r_if
@@ -380,7 +396,8 @@ suffix:semicolon
 )brace
 )brace
 )brace
-r_return
+id|res-&gt;start
+op_assign
 id|start
 suffix:semicolon
 )brace
@@ -686,12 +703,7 @@ id|pci_controler
 op_star
 id|hose
 op_assign
-(paren
-r_struct
-id|pci_controler
-op_star
-)paren
-id|bus-&gt;sysdata
+id|probing_hose
 suffix:semicolon
 r_struct
 id|pci_dev
@@ -725,6 +737,11 @@ id|dev
 op_assign
 id|dev-&gt;sibling
 )paren
+(brace
+id|dev-&gt;sysdata
+op_assign
+id|hose
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -746,6 +763,7 @@ comma
 id|bus
 )paren
 suffix:semicolon
+)brace
 )brace
 r_void
 id|__init
@@ -1067,6 +1085,10 @@ id|hose-&gt;last_busno
 op_assign
 l_int|0xff
 suffix:semicolon
+id|probing_hose
+op_assign
+id|hose
+suffix:semicolon
 id|bus
 op_assign
 id|pci_scan_bus
@@ -1094,6 +1116,10 @@ op_add_assign
 l_int|1
 suffix:semicolon
 )brace
+id|probing_hose
+op_assign
+l_int|NULL
+suffix:semicolon
 id|pci_assign_unassigned_resources
 c_func
 (paren

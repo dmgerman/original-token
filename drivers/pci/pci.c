@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;$Id: pci.c,v 1.91 1999/01/21 13:34:01 davem Exp $&n; *&n; *&t;PCI Bus Services, see include/linux/pci.h for further explanation.&n; *&n; *&t;Copyright 1993 -- 1997 Drew Eckhardt, Frederic Potter,&n; *&t;David Mosberger-Tang&n; *&n; *&t;Copyright 1997 -- 1999 Martin Mares &lt;mj@atrey.karlin.mff.cuni.cz&gt;&n; */
+multiline_comment|/*&n; *&t;$Id: pci.c,v 1.91 1999/01/21 13:34:01 davem Exp $&n; *&n; *&t;PCI Bus Services, see include/linux/pci.h for further explanation.&n; *&n; *&t;Copyright 1993 -- 1997 Drew Eckhardt, Frederic Potter,&n; *&t;David Mosberger-Tang&n; *&n; *&t;Copyright 1997 -- 1999 Martin Mares &lt;mj@suse.cz&gt;&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
@@ -2301,10 +2301,6 @@ id|dev-&gt;bus
 op_assign
 id|bus
 suffix:semicolon
-id|dev-&gt;sysdata
-op_assign
-id|bus-&gt;sysdata
-suffix:semicolon
 id|dev-&gt;devfn
 op_assign
 id|devfn
@@ -2832,10 +2828,6 @@ suffix:semicolon
 id|child-&gt;ops
 op_assign
 id|bus-&gt;ops
-suffix:semicolon
-id|child-&gt;sysdata
-op_assign
-id|bus-&gt;sysdata
 suffix:semicolon
 multiline_comment|/*&n;&t;&t;&t; * Set up the primary, secondary and subordinate&n;&t;&t;&t; * bus numbers.  Read resource ranges behind the bridge.&n;&t;&t;&t; */
 id|child-&gt;number

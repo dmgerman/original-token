@@ -1336,13 +1336,6 @@ id|name
 l_int|3
 )braket
 suffix:semicolon
-macro_line|#ifdef PCMCIA_DEBUG
-r_struct
-id|proc_dir_entry
-op_star
-id|ent
-suffix:semicolon
-macro_line|#endif
 id|sprintf
 c_func
 (paren
@@ -1355,20 +1348,16 @@ id|i
 suffix:semicolon
 id|s-&gt;proc
 op_assign
-id|create_proc_entry
+id|proc_mkdir
 c_func
 (paren
 id|name
-comma
-id|S_IFDIR
 comma
 id|proc_pccard
 )paren
 suffix:semicolon
 macro_line|#ifdef PCMCIA_DEBUG
-id|ent
-op_assign
-id|create_proc_entry
+id|create_proc_read_entry
 c_func
 (paren
 l_string|&quot;clients&quot;
@@ -1376,15 +1365,11 @@ comma
 l_int|0
 comma
 id|s-&gt;proc
-)paren
-suffix:semicolon
-id|ent-&gt;read_proc
-op_assign
+comma
 id|proc_read_clients
-suffix:semicolon
-id|ent-&gt;data
-op_assign
+comma
 id|s
+)paren
 suffix:semicolon
 macro_line|#endif
 id|ss_entry
@@ -10741,12 +10726,10 @@ macro_line|#endif
 macro_line|#ifdef CONFIG_PROC_FS
 id|proc_pccard
 op_assign
-id|create_proc_entry
+id|proc_mkdir
 c_func
 (paren
 l_string|&quot;pccard&quot;
-comma
-id|S_IFDIR
 comma
 id|proc_bus
 )paren

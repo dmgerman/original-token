@@ -61,11 +61,6 @@ mdefine_line|#define IPC_STAT 2     /* get ipc_perm options */
 DECL|macro|IPC_INFO
 mdefine_line|#define IPC_INFO 3     /* see ipcs */
 macro_line|#ifdef __KERNEL__
-multiline_comment|/* special shmsegs[id]  values */
-DECL|macro|IPC_UNUSED
-mdefine_line|#define IPC_UNUSED&t;((void *) -1)
-DECL|macro|IPC_NOID
-mdefine_line|#define IPC_NOID&t;((void *) -2)&t;&t;/* being allocated/destroyed */
 DECL|macro|IPCMNI
 mdefine_line|#define IPCMNI 32768  /* &lt;= MAX_INT limit for ipc arrays (including sysctl changes) */
 macro_line|#endif /* __KERNEL__ */

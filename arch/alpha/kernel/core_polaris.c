@@ -443,7 +443,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|__kernel_ldbu
+id|__kernel_ldwu
 c_func
 (paren
 op_star

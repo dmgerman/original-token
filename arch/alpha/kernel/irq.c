@@ -33,8 +33,8 @@ r_int
 id|__local_bh_count
 suffix:semicolon
 macro_line|#endif
-macro_line|#if NR_IRQS &gt; 64
-macro_line|#  error Unable to handle more than 64 irq levels.
+macro_line|#if NR_IRQS &gt; 128
+macro_line|#  error Unable to handle more than 128 irq levels.
 macro_line|#endif
 macro_line|#ifdef CONFIG_ALPHA_GENERIC
 DECL|macro|ACTUAL_NR_IRQS
@@ -47,13 +47,21 @@ multiline_comment|/* Reserved interrupts.  These must NEVER be requested by any 
 DECL|macro|IS_RESERVED_IRQ
 mdefine_line|#define&t;IS_RESERVED_IRQ(irq)&t;((irq)==2)
 multiline_comment|/*&n; * Shadow-copy of masked interrupts.&n; */
-DECL|variable|alpha_irq_mask
+DECL|variable|_alpha_irq_masks
 r_int
 r_int
-id|alpha_irq_mask
+id|_alpha_irq_masks
+(braket
+l_int|2
+)braket
 op_assign
+(brace
 op_complement
 l_int|0UL
+comma
+op_complement
+l_int|0UL
+)brace
 suffix:semicolon
 multiline_comment|/*&n; * The ack_irq routine used by 80% of the systems.&n; */
 r_void
@@ -180,6 +188,9 @@ macro_line|# define IACK_SC&t;TSUNAMI_IACK_SC
 macro_line|#elif defined(CONFIG_ALPHA_POLARIS)
 DECL|macro|IACK_SC
 macro_line|# define IACK_SC&t;POLARIS_IACK_SC
+macro_line|#elif defined(CONFIG_ALPHA_IRONGATE)
+DECL|macro|IACK_SC
+macro_line|# define IACK_SC        IRONGATE_IACK_SC
 macro_line|#else
 multiline_comment|/* This is bogus but necessary to get it to compile on all platforms. */
 DECL|macro|IACK_SC
@@ -412,6 +423,14 @@ r_int
 id|irq
 )paren
 (brace
+id|set_bit
+c_func
+(paren
+id|irq
+comma
+id|_alpha_irq_masks
+)paren
+suffix:semicolon
 id|alpha_mv
 dot
 id|update_irq_hw
@@ -420,10 +439,6 @@ c_func
 id|irq
 comma
 id|alpha_irq_mask
-op_or_assign
-l_int|1UL
-op_lshift
-id|irq
 comma
 l_int|0
 )paren
@@ -441,6 +456,14 @@ r_int
 id|irq
 )paren
 (brace
+id|clear_bit
+c_func
+(paren
+id|irq
+comma
+id|_alpha_irq_masks
+)paren
+suffix:semicolon
 id|alpha_mv
 dot
 id|update_irq_hw
@@ -449,13 +472,6 @@ c_func
 id|irq
 comma
 id|alpha_irq_mask
-op_and_assign
-op_complement
-(paren
-l_int|1UL
-op_lshift
-id|irq
-)paren
 comma
 l_int|1
 )paren
@@ -1532,7 +1548,7 @@ id|global_irq_lock
 )paren
 )paren
 (brace
-multiline_comment|/* do we already hold the lock? */
+multiline_comment|/* Do we already hold the lock?  */
 r_if
 c_cond
 (paren
@@ -1540,21 +1556,9 @@ id|cpu
 op_eq
 id|global_irq_holder
 )paren
-(brace
-macro_line|#if 0
-id|printk
-c_func
-(paren
-l_string|&quot;get_irqlock: already held at %08lx&bslash;n&quot;
-comma
-id|previous_irqholder
-)paren
-suffix:semicolon
-macro_line|#endif
 r_return
 suffix:semicolon
-)brace
-multiline_comment|/* Uhhuh.. Somebody else got it. Wait.. */
+multiline_comment|/* Uhhuh.. Somebody else got it.  Wait.  */
 id|spin_lock
 c_func
 (paren
@@ -2888,14 +2892,19 @@ r_int
 r_int
 id|i
 suffix:semicolon
+multiline_comment|/* Handle only the first 64 IRQs here.  This is enough for&n;&t;   [E]ISA, which is the only thing that needs probing anyway.  */
 r_for
 c_loop
 (paren
 id|i
 op_assign
+(paren
 id|ACTUAL_NR_IRQS
 op_minus
 l_int|1
+)paren
+op_amp
+l_int|63
 suffix:semicolon
 id|i
 OG
@@ -3001,6 +3010,7 @@ id|irqs
 r_int
 id|i
 suffix:semicolon
+multiline_comment|/* Handle only the first 64 IRQs here.  This is enough for&n;&t;   [E]ISA, which is the only thing that needs probing anyway.  */
 id|irqs
 op_and_assign
 id|alpha_irq_mask

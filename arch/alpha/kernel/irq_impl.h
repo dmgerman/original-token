@@ -5,8 +5,13 @@ mdefine_line|#define STANDARD_INIT_IRQ_PROLOG&t;&bslash;&n;&t;outb(0, DMA1_RESET
 r_extern
 r_int
 r_int
-id|alpha_irq_mask
+id|_alpha_irq_masks
+(braket
+l_int|2
+)braket
 suffix:semicolon
+DECL|macro|alpha_irq_mask
+mdefine_line|#define alpha_irq_mask _alpha_irq_masks[0]
 r_extern
 r_void
 id|common_ack_irq
@@ -72,6 +77,42 @@ mdefine_line|#define TIMER_IRQ  0&t;&t;&t; /* timer is the pit */
 macro_line|#else
 DECL|macro|TIMER_IRQ
 mdefine_line|#define TIMER_IRQ  RTC_IRQ&t;&t; /* timer is the rtc */
+macro_line|#endif
+multiline_comment|/*&n; * PROBE_MASK is the bitset of irqs that we consider for autoprobing.&n; */
+multiline_comment|/* NOTE: we only handle the first 64 IRQs in this code. */
+multiline_comment|/* The normal mask includes all the IRQs except timer IRQ 0.  */
+DECL|macro|_PROBE_MASK
+mdefine_line|#define _PROBE_MASK(nr_irqs)&t;&bslash;&n;&t;(((nr_irqs &gt; 63) ? ~0UL : ((1UL &lt;&lt; (nr_irqs &amp; 63)) - 1)) &amp; ~1UL)
+multiline_comment|/* Mask out unused timer irq 0 and RTC irq 8. */
+DECL|macro|P2K_PROBE_MASK
+mdefine_line|#define P2K_PROBE_MASK&t;&t;(_PROBE_MASK(16) &amp; ~0x101UL)
+multiline_comment|/* Mask out unused timer irq 0, &quot;irqs&quot; 20-30, and the EISA cascade. */
+DECL|macro|ALCOR_PROBE_MASK
+mdefine_line|#define ALCOR_PROBE_MASK&t;(_PROBE_MASK(48) &amp; ~0xfff000000001UL)
+multiline_comment|/* Leave timer IRQ 0 in the mask.  */
+DECL|macro|RUFFIAN_PROBE_MASK
+mdefine_line|#define RUFFIAN_PROBE_MASK&t;(_PROBE_MASK(48) | 1UL)
+multiline_comment|/* Do not probe/enable beyond the PCI devices. */
+DECL|macro|TSUNAMI_PROBE_MASK
+mdefine_line|#define TSUNAMI_PROBE_MASK&t;_PROBE_MASK(48)
+macro_line|#if defined(CONFIG_ALPHA_GENERIC)
+DECL|macro|PROBE_MASK
+macro_line|# define PROBE_MASK&t;alpha_mv.irq_probe_mask
+macro_line|#elif defined(CONFIG_ALPHA_P2K)
+DECL|macro|PROBE_MASK
+macro_line|# define PROBE_MASK&t;P2K_PROBE_MASK
+macro_line|#elif defined(CONFIG_ALPHA_ALCOR) || defined(CONFIG_ALPHA_XLT)
+DECL|macro|PROBE_MASK
+macro_line|# define PROBE_MASK&t;ALCOR_PROBE_MASK
+macro_line|#elif defined(CONFIG_ALPHA_RUFFIAN)
+DECL|macro|PROBE_MASK
+macro_line|# define PROBE_MASK&t;RUFFIAN_PROBE_MASK
+macro_line|#elif defined(CONFIG_ALPHA_DP264)
+DECL|macro|PROBE_MASK
+macro_line|# define PROBE_MASK&t;TSUNAMI_PROBE_MASK
+macro_line|#else
+DECL|macro|PROBE_MASK
+macro_line|# define PROBE_MASK&t;_PROBE_MASK(NR_IRQS)
 macro_line|#endif
 r_extern
 r_char

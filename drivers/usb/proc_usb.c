@@ -5219,12 +5219,10 @@ op_logical_neg
 (paren
 id|bus-&gt;proc_entry
 op_assign
-id|create_proc_entry
+id|proc_mkdir
 c_func
 (paren
 id|buf
-comma
-id|S_IFDIR
 comma
 id|usbdir
 )paren
@@ -5413,11 +5411,9 @@ r_void
 (brace
 id|usbdir
 op_assign
-id|create_proc_entry
+id|proc_mkdir
 (paren
 l_string|&quot;usb&quot;
-comma
-id|S_IFDIR
 comma
 id|proc_bus
 )paren

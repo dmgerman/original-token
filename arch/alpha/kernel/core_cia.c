@@ -1867,6 +1867,13 @@ id|hae_mem-&gt;name
 op_assign
 id|pci_hae0_name
 suffix:semicolon
+id|hae_mem-&gt;flags
+op_assign
+id|IORESOURCE_MEM
+suffix:semicolon
+r_if
+c_cond
+(paren
 id|request_resource
 c_func
 (paren
@@ -1874,6 +1881,15 @@ op_amp
 id|iomem_resource
 comma
 id|hae_mem
+)paren
+OL
+l_int|0
+)paren
+id|printk
+c_func
+(paren
+id|KERN_ERR
+l_string|&quot;Failed to request HAE_MEM&bslash;n&quot;
 )paren
 suffix:semicolon
 )brace

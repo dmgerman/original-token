@@ -243,6 +243,13 @@ c_func
 id|eb66p_mv
 )paren
 suffix:semicolon
+DECL|variable|eiger_mv
+id|WEAK
+c_func
+(paren
+id|eiger_mv
+)paren
+suffix:semicolon
 DECL|variable|jensen_mv
 id|WEAK
 c_func
@@ -283,6 +290,13 @@ id|WEAK
 c_func
 (paren
 id|monet_mv
+)paren
+suffix:semicolon
+DECL|variable|nautilus_mv
+id|WEAK
+c_func
+(paren
+id|nautilus_mv
 )paren
 suffix:semicolon
 DECL|variable|noname_mv
@@ -598,10 +612,10 @@ DECL|macro|PFN_MAX
 mdefine_line|#define PFN_MAX&t;&t;PFN_DOWN(0x80000000)
 DECL|macro|for_each_mem_cluster
 mdefine_line|#define for_each_mem_cluster(memdesc, cluster, i)&t;&t;&bslash;&n;&t;for ((cluster) = (memdesc)-&gt;cluster, (i) = 0;&t;&t;&bslash;&n;&t;     (i) &lt; (memdesc)-&gt;numclusters; (i)++, (cluster)++)
-DECL|function|setup_memory
 r_static
 r_void
 id|__init
+DECL|function|setup_memory
 id|setup_memory
 c_func
 (paren
@@ -643,7 +657,7 @@ suffix:semicolon
 r_int
 id|i
 suffix:semicolon
-multiline_comment|/* find free clusters, and init and free the bootmem accordingly */
+multiline_comment|/* Find free clusters, and init and free the bootmem accordingly.  */
 id|memdesc
 op_assign
 (paren
@@ -687,7 +701,7 @@ op_plus
 id|cluster-&gt;numpages
 )paren
 suffix:semicolon
-multiline_comment|/* Bit 0 is console/PALcode reserved.  Bit 1 is&n;&t;&t;   non-volatile memory -- we might want to mark&n;&t;&t;   this for later */
+multiline_comment|/* Bit 0 is console/PALcode reserved.  Bit 1 is&n;&t;&t;   non-volatile memory -- we might want to mark&n;&t;&t;   this for later.  */
 r_if
 c_cond
 (paren
@@ -735,7 +749,7 @@ comma
 id|max_low_pfn
 )paren
 suffix:semicolon
-multiline_comment|/* find the end of the kernel memory */
+multiline_comment|/* Find the end of the kernel memory.  */
 id|start_pfn
 op_assign
 id|PFN_UP
@@ -778,7 +792,7 @@ c_func
 l_string|&quot;not enough memory to boot&quot;
 )paren
 suffix:semicolon
-multiline_comment|/* we need to know how many physically contigous pages&n;&t;   we&squot;ll need for the bootmap */
+multiline_comment|/* We need to know how many physically contigous pages&n;&t;   we&squot;ll need for the bootmap.  */
 id|bootmap_pages
 op_assign
 id|bootmem_bootmap_pages
@@ -795,7 +809,7 @@ comma
 id|bootmap_pages
 )paren
 suffix:semicolon
-multiline_comment|/* now find a good region where to allocate the bootmap */
+multiline_comment|/* Now find a good region where to allocate the bootmap.  */
 id|for_each_mem_cluster
 c_func
 (paren
@@ -920,7 +934,7 @@ r_goto
 id|try_again
 suffix:semicolon
 )brace
-multiline_comment|/* allocate the bootmap and mark the whole MM as reserved */
+multiline_comment|/* Allocate the bootmap and mark the whole MM as reserved.  */
 id|bootmap_size
 op_assign
 id|init_bootmem
@@ -931,7 +945,7 @@ comma
 id|max_low_pfn
 )paren
 suffix:semicolon
-multiline_comment|/* mark the free regions */
+multiline_comment|/* Mark the free regions.  */
 id|for_each_mem_cluster
 c_func
 (paren
@@ -1037,7 +1051,7 @@ id|end
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/* reserve the bootmap memory */
+multiline_comment|/* Reserve the bootmap memory.  */
 id|reserve_bootmem
 c_func
 (paren
@@ -1140,6 +1154,7 @@ l_int|0
 suffix:semicolon
 )brace
 r_else
+(brace
 id|reserve_bootmem
 c_func
 (paren
@@ -1152,6 +1167,7 @@ comma
 id|INITRD_SIZE
 )paren
 suffix:semicolon
+)brace
 )brace
 macro_line|#endif /* CONFIG_BLK_DEV_INITRD */
 )brace
@@ -1204,9 +1220,9 @@ r_struct
 id|hwrpb_struct
 op_star
 )paren
+id|__va
+c_func
 (paren
-id|IDENT_ADDR
-op_plus
 id|INIT_HWRPB-&gt;phys_addr
 )paren
 suffix:semicolon
@@ -1477,11 +1493,13 @@ op_ne
 op_amp
 id|alpha_mv
 )paren
+(brace
 id|alpha_mv
 op_assign
 op_star
 id|vec
 suffix:semicolon
+)brace
 macro_line|#ifdef CONFIG_ALPHA_GENERIC
 multiline_comment|/* Assume that we&squot;ve booted from SRM if we havn&squot;t booted from MILO.&n;&t;   Detect the later by looking for &quot;MILO&quot; in the system serial nr.  */
 id|alpha_using_srm
@@ -1754,6 +1772,8 @@ comma
 l_string|&quot;Wildfire&quot;
 comma
 l_string|&quot;CUSCO&quot;
+comma
+l_string|&quot;Eiger&quot;
 )brace
 suffix:semicolon
 DECL|variable|unofficial_names
@@ -1770,6 +1790,22 @@ op_assign
 l_string|&quot;100&quot;
 comma
 l_string|&quot;Ruffian&quot;
+)brace
+suffix:semicolon
+DECL|variable|api_names
+r_static
+r_char
+id|api_names
+(braket
+)braket
+(braket
+l_int|16
+)braket
+op_assign
+(brace
+l_string|&quot;200&quot;
+comma
+l_string|&quot;Nautilus&quot;
 )brace
 suffix:semicolon
 DECL|variable|eb164_names
@@ -2217,6 +2253,10 @@ multiline_comment|/* Wildfire */
 l_int|NULL
 comma
 multiline_comment|/* CUSCO */
+op_amp
+id|eiger_mv
+comma
+multiline_comment|/* Eiger */
 )brace
 suffix:semicolon
 r_static
@@ -2234,6 +2274,24 @@ comma
 multiline_comment|/* 100 */
 op_amp
 id|ruffian_mv
+comma
+)brace
+suffix:semicolon
+r_static
+r_struct
+id|alpha_machine_vector
+op_star
+id|api_vecs
+(braket
+)braket
+id|__initlocaldata
+op_assign
+(brace
+l_int|NULL
+comma
+multiline_comment|/* 200 */
+op_amp
+id|nautilus_mv
 comma
 )brace
 suffix:semicolon
@@ -2407,6 +2465,39 @@ op_assign
 id|systype_vecs
 (braket
 id|type
+)braket
+suffix:semicolon
+)brace
+r_else
+r_if
+c_cond
+(paren
+(paren
+id|type
+OG
+id|ST_API_BIAS
+)paren
+op_logical_and
+(paren
+id|type
+op_minus
+id|ST_API_BIAS
+)paren
+OL
+id|N
+c_func
+(paren
+id|api_vecs
+)paren
+)paren
+(brace
+id|vec
+op_assign
+id|api_vecs
+(braket
+id|type
+op_minus
+id|ST_API_BIAS
 )braket
 suffix:semicolon
 )brace
@@ -2754,6 +2845,9 @@ op_amp
 id|eb66p_mv
 comma
 op_amp
+id|eiger_mv
+comma
+op_amp
 id|jensen_mv
 comma
 op_amp
@@ -2770,6 +2864,9 @@ id|mikasa_primo_mv
 comma
 op_amp
 id|monet_mv
+comma
+op_amp
+id|nautilus_mv
 comma
 op_amp
 id|noname_mv
@@ -2937,6 +3034,40 @@ op_assign
 id|systype_names
 (braket
 id|type
+)braket
+suffix:semicolon
+)brace
+r_else
+r_if
+c_cond
+(paren
+(paren
+id|type
+OG
+id|ST_API_BIAS
+)paren
+op_logical_and
+(paren
+id|type
+op_minus
+id|ST_API_BIAS
+)paren
+OL
+id|N
+c_func
+(paren
+id|api_names
+)paren
+)paren
+(brace
+op_star
+id|type_name
+op_assign
+id|api_names
+(braket
+id|type
+op_minus
+id|ST_API_BIAS
 )braket
 suffix:semicolon
 )brace

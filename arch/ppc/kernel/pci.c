@@ -795,4 +795,25 @@ id|irq
 suffix:semicolon
 multiline_comment|/* XXX FIXME - update OF device tree node interrupt property */
 )brace
+r_void
+id|__init
+DECL|function|pcibios_align_resource
+id|pcibios_align_resource
+c_func
+(paren
+r_void
+op_star
+id|data
+comma
+r_struct
+id|resource
+op_star
+id|res
+comma
+r_int
+r_int
+id|size
+)paren
+(brace
+)brace
 eof

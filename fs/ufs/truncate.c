@@ -25,7 +25,7 @@ mdefine_line|#define DIRECT_BLOCK ((inode-&gt;i_size + uspi-&gt;s_bsize - 1) &gt
 DECL|macro|DIRECT_FRAGMENT
 mdefine_line|#define DIRECT_FRAGMENT ((inode-&gt;i_size + uspi-&gt;s_fsize - 1) &gt;&gt; uspi-&gt;s_fshift)
 DECL|macro|DATA_BUFFER_USED
-mdefine_line|#define DATA_BUFFER_USED(bh) &bslash;&n;&t;(atomic_read(&amp;bh-&gt;b_count) || buffer_locked(bh))
+mdefine_line|#define DATA_BUFFER_USED(bh) &bslash;&n;&t;(atomic_read(&amp;bh-&gt;b_count)&gt;1 || buffer_locked(bh))
 DECL|function|ufs_trunc_direct
 r_static
 r_int

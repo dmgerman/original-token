@@ -2961,12 +2961,10 @@ l_int|NULL
 suffix:semicolon
 id|atm_proc_root
 op_assign
-id|create_proc_entry
+id|proc_mkdir
 c_func
 (paren
 l_string|&quot;atm&quot;
-comma
-id|S_IFDIR
 comma
 op_amp
 id|proc_root

@@ -304,6 +304,8 @@ l_int|1
 comma
 id|size
 comma
+id|pcibios_align_resource
+comma
 id|dev
 )paren
 OL

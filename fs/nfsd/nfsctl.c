@@ -169,12 +169,10 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|create_proc_entry
+id|proc_mkdir
 c_func
 (paren
 l_string|&quot;fs/nfs&quot;
-comma
-id|S_IFDIR
 comma
 l_int|0
 )paren

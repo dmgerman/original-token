@@ -2360,16 +2360,15 @@ id|reg
 suffix:semicolon
 id|bm_dir
 op_assign
-id|create_proc_entry
+id|proc_mkdir
 c_func
 (paren
 l_string|&quot;sys/fs/binfmt_misc&quot;
 comma
-id|S_IFDIR
-comma
 l_int|NULL
 )paren
 suffix:semicolon
+multiline_comment|/* WTF??? */
 r_if
 c_cond
 (paren

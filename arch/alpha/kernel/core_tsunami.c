@@ -64,6 +64,10 @@ op_star
 id|hose
 op_assign
 id|dev-&gt;sysdata
+ques
+c_cond
+suffix:colon
+id|probing_hose
 suffix:semicolon
 r_int
 r_int
@@ -408,6 +412,16 @@ c_func
 (paren
 )paren
 suffix:semicolon
+id|__kernel_ldbu
+c_func
+(paren
+op_star
+(paren
+id|vucp
+)paren
+id|addr
+)paren
+suffix:semicolon
 r_return
 id|PCIBIOS_SUCCESSFUL
 suffix:semicolon
@@ -475,6 +489,16 @@ c_func
 (paren
 )paren
 suffix:semicolon
+id|__kernel_ldwu
+c_func
+(paren
+op_star
+(paren
+id|vusp
+)paren
+id|addr
+)paren
+suffix:semicolon
 r_return
 id|PCIBIOS_SUCCESSFUL
 suffix:semicolon
@@ -537,6 +561,12 @@ id|mb
 c_func
 (paren
 )paren
+suffix:semicolon
+op_star
+(paren
+id|vuip
+)paren
+id|addr
 suffix:semicolon
 r_return
 id|PCIBIOS_SUCCESSFUL
@@ -881,7 +911,7 @@ id|hose-&gt;io_space-&gt;end
 op_assign
 id|hose-&gt;io_space-&gt;start
 op_plus
-id|TSUNAMI_IO_SPACE
+l_int|0xffff
 suffix:semicolon
 id|hose-&gt;io_space-&gt;name
 op_assign
@@ -904,7 +934,6 @@ id|index
 op_minus
 id|TSUNAMI_MEM_BIAS
 suffix:semicolon
-multiline_comment|/* the IOMEM address space is larger than 32bit but most pci&n;&t;   cars doesn&squot;t support 64bit address space so we stick with&n;&t;   32bit here (see the TSUNAMI_MEM_SPACE define). */
 id|hose-&gt;mem_space-&gt;end
 op_assign
 id|hose-&gt;mem_space-&gt;start
@@ -940,7 +969,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;failed to request IO on hose %d&quot;
+l_string|&quot;Failed to request IO on hose %d&bslash;n&quot;
 comma
 id|index
 )paren
@@ -963,7 +992,7 @@ id|printk
 c_func
 (paren
 id|KERN_ERR
-l_string|&quot;failed to request IOMEM on hose %d&quot;
+l_string|&quot;Failed to request MEM on hose %d&bslash;n&quot;
 comma
 id|index
 )paren

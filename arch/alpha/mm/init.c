@@ -807,8 +807,8 @@ id|pcb
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * paging_init() sets up the page tables: in the alpha version this actually&n; * unmaps the bootup page table (as we&squot;re now in KSEG, so we don&squot;t need it).&n; */
-DECL|function|paging_init
 r_void
+DECL|function|paging_init
 id|paging_init
 c_func
 (paren
@@ -919,7 +919,7 @@ op_minus
 id|dma_pfn
 suffix:semicolon
 )brace
-multiline_comment|/* initialize mem_map[] */
+multiline_comment|/* Initialize mem_map[].  */
 id|free_area_init
 c_func
 (paren
@@ -1265,8 +1265,8 @@ l_int|10
 suffix:semicolon
 )brace
 macro_line|#ifdef CONFIG_BLK_DEV_INITRD
-DECL|function|free_initrd_mem
 r_void
+DECL|function|free_initrd_mem
 id|free_initrd_mem
 c_func
 (paren

@@ -1053,12 +1053,10 @@ l_int|NULL
 (brace
 id|proc_array
 op_assign
-id|create_proc_entry
+id|proc_mkdir
 c_func
 (paren
 l_string|&quot;driver/array&quot;
-comma
-id|S_IFDIR
 comma
 l_int|NULL
 )paren

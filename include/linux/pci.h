@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;$Id: pci.h,v 1.87 1998/10/11 15:13:12 mj Exp $&n; *&n; *&t;PCI defines and function prototypes&n; *&t;Copyright 1994, Drew Eckhardt&n; *&t;Copyright 1997--1999 Martin Mares &lt;mj@atrey.karlin.mff.cuni.cz&gt;&n; *&n; *&t;For more information, please consult the following manuals (look at&n; *&t;http://www.pcisig.com/ for how to get them):&n; *&n; *&t;PCI BIOS Specification&n; *&t;PCI Local Bus Specification&n; *&t;PCI to PCI Bridge Specification&n; *&t;PCI System Design Guide&n; */
+multiline_comment|/*&n; *&t;$Id: pci.h,v 1.87 1998/10/11 15:13:12 mj Exp $&n; *&n; *&t;PCI defines and function prototypes&n; *&t;Copyright 1994, Drew Eckhardt&n; *&t;Copyright 1997--1999 Martin Mares &lt;mj@suse.cz&gt;&n; *&n; *&t;For more information, please consult the following manuals (look at&n; *&t;http://www.pcisig.com/ for how to get them):&n; *&n; *&t;PCI BIOS Specification&n; *&t;PCI Local Bus Specification&n; *&t;PCI to PCI Bridge Specification&n; *&t;PCI System Design Guide&n; */
 macro_line|#ifndef LINUX_PCI_H
 DECL|macro|LINUX_PCI_H
 mdefine_line|#define LINUX_PCI_H
@@ -1005,6 +1005,21 @@ id|pcibios_setup
 r_char
 op_star
 id|str
+)paren
+suffix:semicolon
+r_void
+id|pcibios_align_resource
+c_func
+(paren
+r_void
+op_star
+comma
+r_struct
+id|resource
+op_star
+comma
+r_int
+r_int
 )paren
 suffix:semicolon
 r_void

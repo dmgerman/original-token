@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;$Id: proc.c,v 1.13 1998/05/12 07:36:07 mj Exp $&n; *&n; *&t;Procfs interface for the PCI bus.&n; *&n; *&t;Copyright (c) 1997, 1998 Martin Mares &lt;mj@atrey.karlin.mff.cuni.cz&gt;&n; */
+multiline_comment|/*&n; *&t;$Id: proc.c,v 1.13 1998/05/12 07:36:07 mj Exp $&n; *&n; *&t;Procfs interface for the PCI bus.&n; *&n; *&t;Copyright (c) 1997--1999 Martin Mares &lt;mj@suse.cz&gt;&n; */
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/pci.h&gt;
@@ -1298,12 +1298,10 @@ id|de
 op_assign
 id|bus-&gt;procdir
 op_assign
-id|create_proc_entry
+id|proc_mkdir
 c_func
 (paren
 id|name
-comma
-id|S_IFDIR
 comma
 id|proc_bus_pci_dir
 )paren
@@ -2555,12 +2553,10 @@ c_func
 (brace
 id|proc_bus_pci_dir
 op_assign
-id|create_proc_entry
+id|proc_mkdir
 c_func
 (paren
 l_string|&quot;pci&quot;
-comma
-id|S_IFDIR
 comma
 id|proc_bus
 )paren

@@ -3,11 +3,22 @@ DECL|macro|__I386_MMU_CONTEXT_H
 mdefine_line|#define __I386_MMU_CONTEXT_H
 macro_line|#include &lt;asm/desc.h&gt;
 macro_line|#include &lt;asm/atomic.h&gt;
+macro_line|#include &lt;asm/pgalloc.h&gt;
 multiline_comment|/*&n; * possibly do the LDT unload here?&n; */
 DECL|macro|destroy_context
 mdefine_line|#define destroy_context(mm)&t;&t;do { } while(0)
 DECL|macro|init_new_context
 mdefine_line|#define init_new_context(tsk,mm)&t;do { } while (0)
+macro_line|#ifdef __SMP__
+r_extern
+r_int
+r_int
+id|cpu_tlbbad
+(braket
+id|NR_CPUS
+)braket
+suffix:semicolon
+macro_line|#endif
 DECL|function|switch_mm
 r_static
 r_inline
@@ -83,6 +94,33 @@ id|prev-&gt;cpu_vm_mask
 )paren
 suffix:semicolon
 )brace
+macro_line|#ifdef __SMP__
+r_else
+(brace
+r_if
+c_cond
+(paren
+id|cpu_tlbbad
+(braket
+id|cpu
+)braket
+)paren
+(brace
+id|local_flush_tlb
+c_func
+(paren
+)paren
+suffix:semicolon
+)brace
+)brace
+id|cpu_tlbbad
+(braket
+id|cpu
+)braket
+op_assign
+l_int|0
+suffix:semicolon
+macro_line|#endif
 id|set_bit
 c_func
 (paren

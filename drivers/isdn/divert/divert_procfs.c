@@ -1230,16 +1230,10 @@ suffix:semicolon
 macro_line|#ifdef CONFIG_PROC_FS
 id|isdn_proc_entry
 op_assign
-id|create_proc_entry
+id|proc_mkdir
 c_func
 (paren
 l_string|&quot;isdn&quot;
-comma
-id|S_IFDIR
-op_or
-id|S_IRUGO
-op_or
-id|S_IXUGO
 comma
 id|proc_net
 )paren
@@ -1261,9 +1255,7 @@ c_func
 (paren
 l_string|&quot;divert&quot;
 comma
-id|S_IFREG
-op_or
-id|S_IRUGO
+l_int|0
 comma
 id|isdn_proc_entry
 )paren

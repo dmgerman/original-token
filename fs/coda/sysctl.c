@@ -1805,12 +1805,10 @@ suffix:semicolon
 macro_line|#ifdef CONFIG_PROC_FS
 id|proc_fs_coda
 op_assign
-id|create_proc_entry
+id|proc_mkdir
 c_func
 (paren
 l_string|&quot;coda&quot;
-comma
-id|S_IFDIR
 comma
 id|proc_root_fs
 )paren

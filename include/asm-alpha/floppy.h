@@ -77,7 +77,7 @@ macro_line|#ifdef CONFIG_ALPHA_GENERIC
 DECL|macro|CROSS_64KB
 macro_line|# define CROSS_64KB(a,s)   (__CROSS_64KB(a,s) &amp;&amp; ~alpha_mv.max_dma_address)
 macro_line|#else
-macro_line|# if defined(CONFIG_ALPHA_XL) || defined(CONFIG_ALPHA_RUFFIAN)
+macro_line|# if defined(CONFIG_ALPHA_XL) || defined(CONFIG_ALPHA_RUFFIAN) || defined(CONFIG_ALPHA_NAUTILUS)
 DECL|macro|CROSS_64KB
 macro_line|#  define CROSS_64KB(a,s)  __CROSS_64KB(a,s)
 macro_line|# else

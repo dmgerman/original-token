@@ -85,6 +85,8 @@ id|goal
 suffix:semicolon
 DECL|macro|alloc_bootmem
 mdefine_line|#define alloc_bootmem(x) &bslash;&n;&t;__alloc_bootmem((x), SMP_CACHE_BYTES, __pa(MAX_DMA_ADDRESS))
+DECL|macro|alloc_bootmem_low
+mdefine_line|#define alloc_bootmem_low(x) &bslash;&n;&t;__alloc_bootmem((x), SMP_CACHE_BYTES, 0)
 DECL|macro|alloc_bootmem_pages
 mdefine_line|#define alloc_bootmem_pages(x) &bslash;&n;&t;__alloc_bootmem((x), PAGE_SIZE, __pa(MAX_DMA_ADDRESS))
 DECL|macro|alloc_bootmem_low_pages

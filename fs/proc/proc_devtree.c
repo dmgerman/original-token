@@ -1014,12 +1014,10 @@ r_return
 suffix:semicolon
 id|proc_device_tree
 op_assign
-id|create_proc_entry
+id|proc_mkdir
 c_func
 (paren
 l_string|&quot;device-tree&quot;
-comma
-id|S_IFDIR
 comma
 l_int|0
 )paren

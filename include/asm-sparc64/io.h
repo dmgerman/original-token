@@ -790,6 +790,8 @@ DECL|macro|writew
 mdefine_line|#define writew(__w, __addr)&t;(_writew((__w), (unsigned long)(__addr)))
 DECL|macro|writel
 mdefine_line|#define writel(__l, __addr)&t;(_writel((__l), (unsigned long)(__addr)))
+DECL|macro|IO_SPACE_LIMIT
+mdefine_line|#define IO_SPACE_LIMIT 0xffffffff
 multiline_comment|/*&n; * Memcpy to/from I/O space is just a regular memory operation on&n; * Ultra as well.&n; */
 multiline_comment|/*&n; * FIXME: Write faster routines using ASL_*L for this.&n; */
 r_static

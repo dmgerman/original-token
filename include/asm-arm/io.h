@@ -268,6 +268,8 @@ mdefine_line|#define memcpy_toio(to,from,len)&t;_memcpy_toio((unsigned long)(to)
 DECL|macro|memset_io
 mdefine_line|#define memset_io(addr,c,len)&t;&t;_memset_io((unsigned long)(addr),(c),(len))
 macro_line|#endif
+DECL|macro|IO_SPACE_LIMIT
+mdefine_line|#define IO_SPACE_LIMIT 0xffff
 multiline_comment|/*&n; * This isn&squot;t especially architecture dependent so it seems like it&n; * might as well go here as anywhere.&n; */
 DECL|function|check_signature
 r_static

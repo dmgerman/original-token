@@ -206,12 +206,10 @@ id|i
 suffix:semicolon
 id|proc_irda
 op_assign
-id|create_proc_entry
+id|proc_mkdir
 c_func
 (paren
 l_string|&quot;net/irda&quot;
-comma
-id|S_IFDIR
 comma
 l_int|NULL
 )paren

@@ -153,7 +153,7 @@ suffix:semicolon
 )brace
 suffix:semicolon
 DECL|macro|MSGMNI
-mdefine_line|#define MSGMNI   128   /* &lt;= IPCMNI */     /* max # of msg queue identifiers */
+mdefine_line|#define MSGMNI    16   /* &lt;= IPCMNI */     /* max # of msg queue identifiers */
 DECL|macro|MSGMAX
 mdefine_line|#define MSGMAX  8192   /* &lt;= INT_MAX */   /* max size of message (bytes) */
 DECL|macro|MSGMNB

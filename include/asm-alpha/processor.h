@@ -289,11 +289,13 @@ op_star
 id|p
 )paren
 suffix:semicolon
-multiline_comment|/*&n;* See arch/alpha/kernel/ptrace.c for details.&n;*/
+multiline_comment|/* See arch/alpha/kernel/ptrace.c for details.  */
 DECL|macro|PT_REG
-mdefine_line|#define PT_REG(reg)&t;&t;(PAGE_SIZE - sizeof(struct pt_regs)&t;&bslash;&n;&t;&t;&t;&t; + (long)&amp;((struct pt_regs *)0)-&gt;reg)
+mdefine_line|#define PT_REG(reg)&t;(PAGE_SIZE*2 - sizeof(struct pt_regs)&t;&t;&bslash;&n;&t;&t;&t; + (long)&amp;((struct pt_regs *)0)-&gt;reg)
+DECL|macro|SW_REG
+mdefine_line|#define SW_REG(reg)&t;(PAGE_SIZE*2 - sizeof(struct pt_regs)&t;&t;&bslash;&n;&t;&t;&t; - sizeof(struct switch_stack)&t;&t;&t;&bslash;&n;&t;&t;&t; + (long)&amp;((struct switch_stack *)0)-&gt;reg)
 DECL|macro|KSTK_EIP
-mdefine_line|#define KSTK_EIP(tsk) &bslash;&n;    (*(unsigned long *)(PT_REG(pc) + PAGE_SIZE + (unsigned long)(tsk)))
+mdefine_line|#define KSTK_EIP(tsk) &bslash;&n;    (*(unsigned long *)(PT_REG(pc) + (unsigned long)(tsk)))
 DECL|macro|KSTK_ESP
 mdefine_line|#define KSTK_ESP(tsk)&t;((tsk) == current ? rdusp() : (tsk)-&gt;thread.usp)
 multiline_comment|/* NOTE: The task struct and the stack go together!  */

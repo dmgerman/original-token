@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;Generate devlist.h from the PCI ID file.&n; *&n; *&t;(c) 1999 Martin Mares &lt;mj@ucw.cz&gt;&n; */
+multiline_comment|/*&n; *&t;Generate devlist.h from the PCI ID file.&n; *&n; *&t;(c) 1999 Martin Mares &lt;mj@suse.cz&gt;&n; */
 macro_line|#include &lt;stdio.h&gt;
 macro_line|#include &lt;string.h&gt;
 r_static

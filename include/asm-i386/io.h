@@ -124,6 +124,8 @@ c_func
 (paren
 id|l
 )paren
+DECL|macro|IO_SPACE_LIMIT
+mdefine_line|#define IO_SPACE_LIMIT 0xffff
 macro_line|#ifdef __KERNEL__
 macro_line|#include &lt;linux/vmalloc.h&gt;
 multiline_comment|/*&n; * Temporary debugging check to catch old code using&n; * unmapped ISA addresses. Will be removed in 2.4.&n; */

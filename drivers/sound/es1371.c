@@ -16555,26 +16555,19 @@ macro_line|#ifdef ES1371_DEBUG
 multiline_comment|/* intialize the debug proc device */
 id|s-&gt;ps
 op_assign
-id|create_proc_entry
+id|create_proc_read_entry
 c_func
 (paren
 l_string|&quot;es1371&quot;
 comma
-id|S_IFREG
-op_or
-id|S_IRUGO
+l_int|0
+comma
+l_int|NULL
+comma
+id|proc_es1371_dump
 comma
 l_int|NULL
 )paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|s-&gt;ps
-)paren
-id|s-&gt;ps-&gt;read_proc
-op_assign
-id|proc_es1371_dump
 suffix:semicolon
 macro_line|#endif /* ES1371_DEBUG */
 multiline_comment|/* initialize codec registers */

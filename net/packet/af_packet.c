@@ -7029,9 +7029,7 @@ id|packet_netdev_notifier
 )paren
 suffix:semicolon
 macro_line|#ifdef CONFIG_PROC_FS
-id|ent
-op_assign
-id|create_proc_entry
+id|create_proc_read_entry
 c_func
 (paren
 l_string|&quot;net/packet&quot;
@@ -7039,11 +7037,11 @@ comma
 l_int|0
 comma
 l_int|0
-)paren
-suffix:semicolon
-id|ent-&gt;read_proc
-op_assign
+comma
 id|packet_read_proc
+comma
+l_int|NULL
+)paren
 suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef MODULE

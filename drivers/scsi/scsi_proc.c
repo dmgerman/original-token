@@ -430,12 +430,10 @@ suffix:semicolon
 multiline_comment|/* see scsi_unregister_host() */
 id|tpnt-&gt;proc_dir
 op_assign
-id|create_proc_entry
+id|proc_mkdir
 c_func
 (paren
 id|tpnt-&gt;proc_name
-comma
-id|S_IFDIR
 comma
 id|proc_scsi
 )paren

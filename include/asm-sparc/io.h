@@ -467,6 +467,8 @@ DECL|macro|inb_p
 mdefine_line|#define inb_p inb
 DECL|macro|outb_p
 mdefine_line|#define outb_p outb
+DECL|macro|IO_SPACE_LIMIT
+mdefine_line|#define IO_SPACE_LIMIT 0xffffffff
 r_extern
 r_void
 id|sun4c_mapioaddr

@@ -7689,11 +7689,10 @@ multiline_comment|/*&n;&t; * This makes /proc/scsi and /proc/scsi/scsi visible.&
 macro_line|#ifdef CONFIG_PROC_FS
 id|proc_scsi
 op_assign
-id|create_proc_entry
+id|proc_mkdir
+c_func
 (paren
 l_string|&quot;scsi&quot;
-comma
-id|S_IFDIR
 comma
 l_int|0
 )paren
@@ -12998,11 +12997,10 @@ multiline_comment|/*&n;&t; * This makes /proc/scsi and /proc/scsi/scsi visible.&
 macro_line|#ifdef CONFIG_PROC_FS
 id|proc_scsi
 op_assign
-id|create_proc_entry
+id|proc_mkdir
+c_func
 (paren
 l_string|&quot;scsi&quot;
-comma
-id|S_IFDIR
 comma
 l_int|0
 )paren

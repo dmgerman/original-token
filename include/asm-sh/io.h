@@ -788,6 +788,8 @@ mdefine_line|#define inb_p inb
 DECL|macro|outb_p
 mdefine_line|#define outb_p outb
 macro_line|#ifdef __KERNEL__
+DECL|macro|IO_SPACE_LIMIT
+mdefine_line|#define IO_SPACE_LIMIT 0xffff
 macro_line|#include &lt;asm/addrspace.h&gt;
 multiline_comment|/*&n; * Change virtual addresses to physical addresses and vv.&n; * These are trivial on the 1:1 Linux/SuperH mapping&n; */
 DECL|function|virt_to_phys

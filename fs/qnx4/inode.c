@@ -209,34 +209,6 @@ op_assign
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|qnx4_put_inode
-r_static
-r_void
-id|qnx4_put_inode
-c_func
-(paren
-r_struct
-id|inode
-op_star
-id|inode
-)paren
-(brace
-r_if
-c_cond
-(paren
-id|inode-&gt;i_nlink
-op_ne
-l_int|0
-)paren
-(brace
-r_return
-suffix:semicolon
-)brace
-id|inode-&gt;i_size
-op_assign
-l_int|0
-suffix:semicolon
-)brace
 DECL|function|qnx4_write_inode
 r_static
 r_void
@@ -518,25 +490,20 @@ macro_line|#else
 l_int|NULL
 comma
 macro_line|#endif
-macro_line|#ifdef CONFIG_QNX4FS_RW
-id|qnx4_put_inode
-comma
-id|qnx4_delete_inode
-comma
-l_int|NULL
-comma
-multiline_comment|/* notify_change */
-macro_line|#else
 l_int|NULL
 comma
 multiline_comment|/* put_inode */
+macro_line|#ifdef CONFIG_QNX4FS_RW
+id|qnx4_delete_inode
+comma
+macro_line|#else
 l_int|NULL
 comma
 multiline_comment|/* delete_inode */
+macro_line|#endif
 l_int|NULL
 comma
 multiline_comment|/* notify_change */
-macro_line|#endif
 id|qnx4_put_super
 comma
 macro_line|#ifdef CONFIG_QNX4FS_RW
