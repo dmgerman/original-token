@@ -2,9 +2,9 @@ multiline_comment|/*&n; *  linux/fs/minix/blkdev.c&n; *&n; *  (C) 1991  Linus To
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/minix_fs.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
+macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;errno.h&gt;
 macro_line|#include &lt;fcntl.h&gt;
-macro_line|#include &lt;sys/stat.h&gt;
 multiline_comment|/*&n; * Called every time a minix block special file is opened&n; */
 DECL|function|blkdev_open
 r_static

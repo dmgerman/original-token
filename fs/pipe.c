@@ -810,6 +810,14 @@ id|i
 comma
 id|j
 suffix:semicolon
+id|verify_area
+c_func
+(paren
+id|fildes
+comma
+l_int|8
+)paren
+suffix:semicolon
 id|j
 op_assign
 l_int|0

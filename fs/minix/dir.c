@@ -1,9 +1,9 @@
 multiline_comment|/*&n; *  linux/fs/minix/dir.c&n; *&n; *  (C) 1991 Linus Torvalds&n; *&n; *  minix directory handling functions&n; */
 macro_line|#include &lt;errno.h&gt;
-macro_line|#include &lt;sys/stat.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/minix_fs.h&gt;
+macro_line|#include &lt;linux/stat.h&gt;
 r_static
 r_int
 id|minix_readdir

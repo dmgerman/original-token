@@ -1,7 +1,7 @@
 multiline_comment|/*&n; *  linux/mm/swap.c&n; *&n; *  (C) 1991  Linus Torvalds&n; */
 multiline_comment|/*&n; * This file should contain most things doing the swapping from/to disk.&n; * Started 18.12.91&n; */
 macro_line|#include &lt;errno.h&gt;
-macro_line|#include &lt;sys/stat.h&gt;
+macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;

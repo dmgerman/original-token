@@ -180,7 +180,8 @@ id|dev_t
 id|i_dev
 suffix:semicolon
 DECL|member|i_ino
-id|ino_t
+r_int
+r_int
 id|i_ino
 suffix:semicolon
 DECL|member|i_mode

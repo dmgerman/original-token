@@ -7,7 +7,7 @@ macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;fcntl.h&gt;
 macro_line|#include &lt;errno.h&gt;
 macro_line|#include &lt;const.h&gt;
-macro_line|#include &lt;sys/stat.h&gt;
+macro_line|#include &lt;linux/stat.h&gt;
 r_struct
 id|inode
 op_star

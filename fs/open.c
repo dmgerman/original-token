@@ -3,8 +3,8 @@ macro_line|#include &lt;errno.h&gt;
 macro_line|#include &lt;fcntl.h&gt;
 macro_line|#include &lt;sys/types.h&gt;
 macro_line|#include &lt;utime.h&gt;
-macro_line|#include &lt;sys/stat.h&gt;
 macro_line|#include &lt;sys/vfs.h&gt;
+macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -671,13 +671,15 @@ r_else
 r_if
 c_cond
 (paren
-id|current-&gt;gid
-op_eq
+id|in_group_p
+c_func
+(paren
 id|inode-&gt;i_gid
+)paren
 )paren
 id|res
 op_rshift_assign
-l_int|6
+l_int|3
 suffix:semicolon
 r_if
 c_cond

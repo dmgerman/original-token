@@ -38,8 +38,8 @@ DECL|macro|__NR_chown
 mdefine_line|#define __NR_chown&t;&t; 16
 DECL|macro|__NR_break
 mdefine_line|#define __NR_break&t;&t; 17
-DECL|macro|__NR_stat
-mdefine_line|#define __NR_stat&t;&t; 18
+DECL|macro|__NR_oldstat
+mdefine_line|#define __NR_oldstat&t;&t; 18
 DECL|macro|__NR_lseek
 mdefine_line|#define __NR_lseek&t;&t; 19
 DECL|macro|__NR_getpid
@@ -58,8 +58,8 @@ DECL|macro|__NR_ptrace
 mdefine_line|#define __NR_ptrace&t;&t; 26
 DECL|macro|__NR_alarm
 mdefine_line|#define __NR_alarm&t;&t; 27
-DECL|macro|__NR_fstat
-mdefine_line|#define __NR_fstat&t;&t; 28
+DECL|macro|__NR_oldfstat
+mdefine_line|#define __NR_oldfstat&t;&t; 28
 DECL|macro|__NR_pause
 mdefine_line|#define __NR_pause&t;&t; 29
 DECL|macro|__NR_utime
@@ -120,8 +120,8 @@ DECL|macro|__NR_setpgid
 mdefine_line|#define __NR_setpgid&t;&t; 57
 DECL|macro|__NR_ulimit
 mdefine_line|#define __NR_ulimit&t;&t; 58
-DECL|macro|__NR_uname
-mdefine_line|#define __NR_uname&t;&t; 59
+DECL|macro|__NR_olduname
+mdefine_line|#define __NR_olduname&t;&t; 59
 DECL|macro|__NR_umask
 mdefine_line|#define __NR_umask&t;&t; 60
 DECL|macro|__NR_chroot
@@ -170,8 +170,8 @@ DECL|macro|__NR_select
 mdefine_line|#define __NR_select&t;&t; 82
 DECL|macro|__NR_symlink
 mdefine_line|#define __NR_symlink&t;&t; 83
-DECL|macro|__NR_lstat
-mdefine_line|#define __NR_lstat&t;&t; 84
+DECL|macro|__NR_oldlstat
+mdefine_line|#define __NR_oldlstat&t;&t; 84
 DECL|macro|__NR_readlink
 mdefine_line|#define __NR_readlink&t;&t; 85
 DECL|macro|__NR_uselib
@@ -194,7 +194,6 @@ DECL|macro|__NR_fchmod
 mdefine_line|#define __NR_fchmod&t;&t; 94
 DECL|macro|__NR_fchown
 mdefine_line|#define __NR_fchown&t;&t; 95
-multiline_comment|/*&n; * Not all of these are implemented yet, but these are the&n; * numbers they will use.&n; */
 DECL|macro|__NR_getpriority
 mdefine_line|#define __NR_getpriority&t; 96
 DECL|macro|__NR_setpriority
@@ -211,14 +210,22 @@ DECL|macro|__NR_socketcall
 mdefine_line|#define __NR_socketcall&t;&t;102
 DECL|macro|__NR_syslog
 mdefine_line|#define __NR_syslog&t;&t;103
-r_extern
-r_int
-id|errno
-suffix:semicolon
 DECL|macro|__NR_setitimer
 mdefine_line|#define __NR_setitimer&t;&t;104
 DECL|macro|__NR_getitimer
 mdefine_line|#define __NR_getitimer&t;&t;105
+DECL|macro|__NR_stat
+mdefine_line|#define __NR_stat&t;&t;106
+DECL|macro|__NR_lstat
+mdefine_line|#define __NR_lstat&t;&t;107
+DECL|macro|__NR_fstat
+mdefine_line|#define __NR_fstat&t;&t;108
+DECL|macro|__NR_uname
+mdefine_line|#define __NR_uname&t;&t;109
+r_extern
+r_int
+id|errno
+suffix:semicolon
 multiline_comment|/* XXX - _foo needs to be __foo, while __NR_bar could be _NR_bar. */
 DECL|macro|_syscall0
 mdefine_line|#define _syscall0(type,name) &bslash;&n;type name(void) &bslash;&n;{ &bslash;&n;long __res; &bslash;&n;__asm__ volatile (&quot;int $0x80&quot; &bslash;&n;&t;: &quot;=a&quot; (__res) &bslash;&n;&t;: &quot;0&quot; (__NR_##name)); &bslash;&n;if (__res &gt;= 0) &bslash;&n;&t;return (type) __res; &bslash;&n;errno = -__res; &bslash;&n;return -1; &bslash;&n;}

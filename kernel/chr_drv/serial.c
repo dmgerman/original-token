@@ -1,5 +1,5 @@
 multiline_comment|/*&n; *  linux/kernel/serial.c&n; *&n; *  (C) 1991  Linus Torvalds&n; */
-multiline_comment|/*&n; *&t;serial.c&n; *&n; * This module implements the rs232 io functions&n; *&t;void rs_write(struct tty_struct * queue);&n; *&t;void rs_init(void);&n; * and all interrupts pertaining to serial IO.&n; */
+multiline_comment|/*&n; *&t;serial.c&n; *&n; * This module implements the rs232 io functions&n; *&t;void rs_write(struct tty_struct * queue);&n; *&t;long rs_init(long);&n; * and all interrupts pertaining to serial IO.&n; */
 macro_line|#include &lt;signal.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/timer.h&gt;
@@ -107,6 +107,7 @@ comma
 l_int|1
 )paren
 suffix:semicolon
+macro_line|#if 0
 r_if
 c_cond
 (paren
@@ -127,6 +128,7 @@ id|tty-&gt;stopped
 op_assign
 l_int|1
 suffix:semicolon
+macro_line|#endif
 )brace
 multiline_comment|/*&n; * There are several races here: we avoid most of them by disabling timer_active&n; * for the crucial part of the process.. That&squot;s a good idea anyway.&n; *&n; * The problem is that we have to output characters /both/ from interrupts&n; * and from the normal write: the latter to be sure the interrupts start up&n; * again. With serial lines, the interrupts can happen so often that the&n; * races actually are noticeable.&n; */
 DECL|function|send_intr
@@ -287,39 +289,35 @@ op_star
 id|tty
 )paren
 (brace
-r_if
-c_cond
+r_while
+c_loop
 (paren
+op_logical_neg
 id|FULL
 c_func
 (paren
 id|tty-&gt;read_q
 )paren
 )paren
-r_return
-suffix:semicolon
-id|outb_p
-c_func
+(brace
+r_if
+c_cond
 (paren
+op_logical_neg
 (paren
 id|inb
 c_func
 (paren
 id|port
 op_plus
-l_int|4
+l_int|5
 )paren
 op_amp
-l_int|0x0d
+l_int|1
 )paren
-comma
-id|port
-op_plus
-l_int|4
 )paren
+r_break
 suffix:semicolon
-r_do
-(brace
 id|PUTCH
 c_func
 (paren
@@ -333,50 +331,6 @@ id|tty-&gt;read_q
 )paren
 suffix:semicolon
 )brace
-r_while
-c_loop
-(paren
-(paren
-id|inb
-c_func
-(paren
-id|port
-op_plus
-l_int|5
-)paren
-op_amp
-l_int|0x01
-op_ne
-l_int|0
-)paren
-op_logical_and
-op_logical_neg
-id|FULL
-c_func
-(paren
-id|tty-&gt;read_q
-)paren
-)paren
-suffix:semicolon
-id|outb_p
-c_func
-(paren
-(paren
-id|inb
-c_func
-(paren
-id|port
-op_plus
-l_int|4
-)paren
-op_or
-l_int|0x02
-)paren
-comma
-id|port
-op_plus
-l_int|4
-)paren
 suffix:semicolon
 id|timer_active
 op_or_assign
@@ -574,7 +528,7 @@ l_int|67
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * IRQ4 normally handles com1 and com2&n; */
+multiline_comment|/*&n; * IRQ4 normally handles com1 and com3&n; */
 DECL|function|do_IRQ4
 r_void
 id|do_IRQ4
@@ -1347,11 +1301,12 @@ c_func
 suffix:semicolon
 )brace
 DECL|function|rs_init
-r_void
+r_int
 id|rs_init
 c_func
 (paren
-r_void
+r_int
+id|kmem_start
 )paren
 (brace
 multiline_comment|/* SERx_TIMER timers are used for receiving: timeout is always 0 (immediate) */
@@ -1581,6 +1536,9 @@ l_int|0xE7
 comma
 l_int|0x21
 )paren
+suffix:semicolon
+r_return
+id|kmem_start
 suffix:semicolon
 )brace
 multiline_comment|/*&n; * This routine gets called when tty_write has put something into&n; * the write_queue. It must check wheter the queue is empty, and&n; * set the interrupt register accordingly&n; *&n; *&t;void _rs_write(struct tty_struct * tty);&n; */

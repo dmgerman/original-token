@@ -30,7 +30,7 @@ suffix:semicolon
 )brace
 id|vt_cons
 (braket
-id|MAX_CONSOLES
+id|NR_CONSOLES
 )braket
 suffix:semicolon
 macro_line|#endif /* _VT_KERN_H */

@@ -1,5 +1,5 @@
 multiline_comment|/*&n; *&t;linux/mm/mmap.c&n; *&n; * Written by obz.&n; */
-macro_line|#include &lt;sys/stat.h&gt;
+macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;

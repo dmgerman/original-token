@@ -3,16 +3,15 @@ macro_line|#ifndef _TTY_H
 DECL|macro|_TTY_H
 mdefine_line|#define _TTY_H
 macro_line|#include &lt;asm/system.h&gt;
-DECL|macro|MAX_CONSOLES
-mdefine_line|#define MAX_CONSOLES&t;8
+DECL|macro|NR_CONSOLES
+mdefine_line|#define NR_CONSOLES&t;8
 DECL|macro|NR_SERIALS
 mdefine_line|#define NR_SERIALS&t;4
 DECL|macro|NR_PTYS
 mdefine_line|#define NR_PTYS&t;&t;4
-r_extern
-r_int
-id|NR_CONSOLES
-suffix:semicolon
+multiline_comment|/*&n; * This character is the same as _POSIX_VDISABLE: it cannot be used as&n; * a c_cc[] character, but indicates that a particular special character&n; * isn&squot;t in use (eg VINTR ahs no character etc)&n; */
+DECL|macro|__DISABLED_CHAR
+mdefine_line|#define __DISABLED_CHAR &squot;&bslash;0&squot;
 macro_line|#include &lt;termios.h&gt;
 DECL|macro|TTY_BUF_SIZE
 mdefine_line|#define TTY_BUF_SIZE 2048
@@ -371,35 +370,35 @@ multiline_comment|/*&t;intr=^C&t;&t;quit=^|&t;&t;erase=del&t;kill=^U&n;&t;eof=^D
 DECL|macro|INIT_C_CC
 mdefine_line|#define INIT_C_CC &quot;&bslash;003&bslash;034&bslash;177&bslash;025&bslash;004&bslash;0&bslash;1&bslash;0&bslash;021&bslash;023&bslash;032&bslash;0&bslash;022&bslash;017&bslash;027&bslash;026&bslash;0&quot;
 r_extern
-r_void
+r_int
 id|rs_init
 c_func
 (paren
-r_void
+r_int
 )paren
 suffix:semicolon
 r_extern
-r_void
+r_int
 id|lp_init
 c_func
 (paren
-r_void
+r_int
 )paren
 suffix:semicolon
 r_extern
-r_void
+r_int
 id|con_init
 c_func
 (paren
-r_void
+r_int
 )paren
 suffix:semicolon
 r_extern
-r_void
+r_int
 id|tty_init
 c_func
 (paren
-r_void
+r_int
 )paren
 suffix:semicolon
 r_extern

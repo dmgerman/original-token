@@ -94,6 +94,11 @@ r_extern
 r_int
 id|errno
 suffix:semicolon
+macro_line|#ifdef __cplusplus
+r_extern
+l_string|&quot;C&quot;
+(brace
+macro_line|#endif
 multiline_comment|/* XXX - several non-POSIX functions here, and POSIX functions that are&n; * supposed to be declared elsewhere.  Non-promotion of short types in&n; * prototypes may cause trouble.  Arg names should be prefixed by&n; * underscores.&n; */
 r_int
 id|access
@@ -970,5 +975,8 @@ op_star
 id|specialfile
 )paren
 suffix:semicolon
+macro_line|#ifdef __cplusplus
+)brace
+macro_line|#endif
 macro_line|#endif
 eof

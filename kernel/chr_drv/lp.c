@@ -636,11 +636,12 @@ id|lp_release
 )brace
 suffix:semicolon
 DECL|function|lp_init
-r_void
+r_int
 id|lp_init
 c_func
 (paren
-r_void
+r_int
+id|kmem_start
 )paren
 (brace
 r_int
@@ -772,6 +773,9 @@ c_func
 (paren
 l_string|&quot;lp_init: no lp devices found&bslash;n&quot;
 )paren
+suffix:semicolon
+r_return
+id|kmem_start
 suffix:semicolon
 )brace
 eof

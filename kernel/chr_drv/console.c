@@ -1,5 +1,5 @@
 multiline_comment|/*&n; *  linux/kernel/console.c&n; *&n; *  (C) 1991  Linus Torvalds&n; */
-multiline_comment|/*&n; *&t;console.c&n; *&n; * This module implements the console io functions&n; *&t;&squot;void con_init(void)&squot;&n; *&t;&squot;void con_write(struct tty_queue * queue)&squot;&n; * Hopefully this will be a rather complete VT102 implementation.&n; *&n; * Beeping thanks to John T Kohl.&n; * &n; * Virtual Consoles, Screen Blanking, Screen Dumping, Color, Graphics&n; *   Chars, and VT100 enhancements by Peter MacDonald.&n; */
+multiline_comment|/*&n; *&t;console.c&n; *&n; * This module implements the console io functions&n; *&t;&squot;long con_init(long)&squot;&n; *&t;&squot;void con_write(struct tty_queue * queue)&squot;&n; * Hopefully this will be a rather complete VT102 implementation.&n; *&n; * Beeping thanks to John T Kohl.&n; * &n; * Virtual Consoles, Screen Blanking, Screen Dumping, Color, Graphics&n; *   Chars, and VT100 enhancements by Peter MacDonald.&n; */
 multiline_comment|/*&n; *  NOTE!!! We sometimes disable and enable interrupts for a short while&n; * (to put a word in video IO), but this will work even for keyboard&n; * interrupts. We know interrupts aren&squot;t enabled when getting a keyboard&n; * interrupt, as we use trap-gates. Hopefully all is well.&n; */
 multiline_comment|/*&n; * Code to check for different video-cards mostly by Galen Hunt,&n; * &lt;g-hunt@ee.utah.edu&gt;&n; */
 macro_line|#include &lt;linux/sched.h&gt;
@@ -45,12 +45,6 @@ DECL|macro|VIDEO_TYPE_EGAC
 mdefine_line|#define VIDEO_TYPE_EGAC&t;&t;0x21&t;/* EGA/VGA in Color Mode&t;*/
 DECL|macro|NPAR
 mdefine_line|#define NPAR 16
-DECL|variable|NR_CONSOLES
-r_int
-id|NR_CONSOLES
-op_assign
-l_int|0
-suffix:semicolon
 r_extern
 r_void
 id|vt_init
@@ -301,7 +295,7 @@ DECL|variable|vc_cons
 )brace
 id|vc_cons
 (braket
-id|MAX_CONSOLES
+id|NR_CONSOLES
 )braket
 suffix:semicolon
 DECL|macro|MEM_BUFFER_SIZE
@@ -312,18 +306,15 @@ r_int
 op_star
 id|vc_scrbuf
 (braket
-id|MAX_CONSOLES
+id|NR_CONSOLES
 )braket
 suffix:semicolon
 DECL|variable|vc_scrmembuf
+r_static
 r_int
 r_int
+op_star
 id|vc_scrmembuf
-(braket
-id|MEM_BUFFER_SIZE
-op_div
-l_int|2
-)braket
 suffix:semicolon
 DECL|variable|console_blanked
 r_static
@@ -2483,7 +2474,7 @@ c_cond
 (paren
 id|currcons
 op_ge
-id|MAX_CONSOLES
+id|NR_CONSOLES
 )paren
 (brace
 id|printk
@@ -4146,13 +4137,14 @@ r_return
 id|s
 suffix:semicolon
 )brace
-multiline_comment|/*&n; *  void con_init(void);&n; *&n; * This routine initalizes console interrupts, and does nothing&n; * else. If you want the screen to clear, call tty_write with&n; * the appropriate escape-sequece.&n; *&n; * Reads the information preserved by setup.s to determine the current display&n; * type and sets everything accordingly.&n; */
+multiline_comment|/*&n; *  long con_init(long);&n; *&n; * This routine initalizes console interrupts, and does nothing&n; * else. If you want the screen to clear, call tty_write with&n; * the appropriate escape-sequece.&n; *&n; * Reads the information preserved by setup.s to determine the current display&n; * type and sets everything accordingly.&n; */
 DECL|function|con_init
-r_void
+r_int
 id|con_init
 c_func
 (paren
-r_void
+r_int
+id|kmem_start
 )paren
 (brace
 r_register
@@ -4188,6 +4180,15 @@ id|orig_y
 op_assign
 id|ORIG_Y
 suffix:semicolon
+id|vc_scrmembuf
+op_assign
+(paren
+r_int
+r_int
+op_star
+)paren
+id|kmem_start
+suffix:semicolon
 id|video_num_columns
 op_assign
 id|ORIG_VIDEO_COLS
@@ -4209,6 +4210,20 @@ suffix:semicolon
 id|video_erase_char
 op_assign
 l_int|0x0720
+suffix:semicolon
+id|screen_size
+op_assign
+(paren
+id|video_num_lines
+op_star
+id|video_size_row
+)paren
+suffix:semicolon
+id|kmem_start
+op_add_assign
+id|NR_CONSOLES
+op_star
+id|screen_size
 suffix:semicolon
 id|timer_table
 (braket
@@ -4427,41 +4442,6 @@ r_int
 )paren
 id|vc_scrmembuf
 suffix:semicolon
-id|screen_size
-op_assign
-(paren
-id|video_num_lines
-op_star
-id|video_size_row
-)paren
-suffix:semicolon
-id|NR_CONSOLES
-op_assign
-id|MEM_BUFFER_SIZE
-op_div
-id|screen_size
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|NR_CONSOLES
-OG
-id|MAX_CONSOLES
-)paren
-id|NR_CONSOLES
-op_assign
-id|MAX_CONSOLES
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|NR_CONSOLES
-)paren
-id|NR_CONSOLES
-op_assign
-l_int|1
-suffix:semicolon
 multiline_comment|/* Initialize the variables used for scrolling (mostly EGA/VGA)&t;*/
 id|base
 op_assign
@@ -4622,6 +4602,14 @@ id|base
 op_add_assign
 id|screen_size
 suffix:semicolon
+id|x
+op_assign
+id|y
+op_assign
+l_int|0
+suffix:semicolon
+id|pos
+op_assign
 id|origin
 op_assign
 id|video_mem_start
@@ -4647,16 +4635,6 @@ r_int
 op_star
 )paren
 id|origin
-suffix:semicolon
-id|gotoxy
-c_func
-(paren
-id|currcons
-comma
-l_int|0
-comma
-l_int|0
-)paren
 suffix:semicolon
 )brace
 id|currcons
@@ -4759,6 +4737,9 @@ id|a
 comma
 l_int|0x61
 )paren
+suffix:semicolon
+r_return
+id|kmem_start
 suffix:semicolon
 )brace
 DECL|function|kbdsave
@@ -5317,7 +5298,7 @@ l_int|0
 op_logical_or
 (paren
 id|currcons
-OG
+op_ge
 id|NR_CONSOLES
 )paren
 )paren

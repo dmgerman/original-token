@@ -446,6 +446,11 @@ DECL|macro|TCSADRAIN
 mdefine_line|#define&t;TCSADRAIN&t;1
 DECL|macro|TCSAFLUSH
 mdefine_line|#define&t;TCSAFLUSH&t;2
+macro_line|#ifdef __cplusplus
+r_extern
+l_string|&quot;C&quot;
+(brace
+macro_line|#endif
 r_extern
 id|speed_t
 id|cfgetispeed
@@ -572,5 +577,8 @@ op_star
 id|termios_p
 )paren
 suffix:semicolon
+macro_line|#ifdef __cplusplus
+)brace
+macro_line|#endif
 macro_line|#endif
 eof

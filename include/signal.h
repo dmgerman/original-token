@@ -134,6 +134,11 @@ r_void
 suffix:semicolon
 )brace
 suffix:semicolon
+macro_line|#ifdef __cplusplus
+r_extern
+l_string|&quot;C&quot;
+(brace
+macro_line|#endif
 r_void
 (paren
 op_star
@@ -283,5 +288,8 @@ op_star
 id|oldact
 )paren
 suffix:semicolon
+macro_line|#ifdef __cplusplus
+)brace
+macro_line|#endif
 macro_line|#endif /* _SIGNAL_H */
 eof

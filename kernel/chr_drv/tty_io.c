@@ -1,14 +1,13 @@
 multiline_comment|/*&n; *  linux/kernel/tty_io.c&n; *&n; *  (C) 1991  Linus Torvalds&n; */
 multiline_comment|/*&n; * &squot;tty_io.c&squot; gives an orthogonal feeling to tty&squot;s, be they consoles&n; * or rs-channels. It also implements echoing, cooked mode etc.&n; *&n; * Kill-line thanks to John T Kohl, who also corrected VMIN = VTIME = 0.&n; */
-macro_line|#include &lt;linux/ctype.h&gt;
 macro_line|#include &lt;errno.h&gt;
 macro_line|#include &lt;signal.h&gt;
-macro_line|#include &lt;unistd.h&gt;
 macro_line|#include &lt;fcntl.h&gt;
 DECL|macro|ALRMMASK
 mdefine_line|#define ALRMMASK (1&lt;&lt;(SIGALRM-1))
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
+macro_line|#include &lt;linux/ctype.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -19,15 +18,13 @@ DECL|macro|MIN
 mdefine_line|#define MIN(a,b) ((a) &lt; (b) ? (a) : (b))
 macro_line|#endif
 DECL|macro|QUEUES
-mdefine_line|#define QUEUES&t;(3*(MAX_CONSOLES+NR_SERIALS+2*NR_PTYS))
+mdefine_line|#define QUEUES&t;(3*(NR_CONSOLES+NR_SERIALS+2*NR_PTYS))
 DECL|variable|tty_queues
 r_static
 r_struct
 id|tty_queue
+op_star
 id|tty_queues
-(braket
-id|QUEUES
-)braket
 suffix:semicolon
 DECL|variable|tty_table
 r_struct
@@ -40,11 +37,11 @@ suffix:semicolon
 DECL|macro|con_queues
 mdefine_line|#define con_queues tty_queues
 DECL|macro|rs_queues
-mdefine_line|#define rs_queues ((3*MAX_CONSOLES) + tty_queues)
+mdefine_line|#define rs_queues ((3*NR_CONSOLES) + tty_queues)
 DECL|macro|mpty_queues
-mdefine_line|#define mpty_queues ((3*(MAX_CONSOLES+NR_SERIALS)) + tty_queues)
+mdefine_line|#define mpty_queues ((3*(NR_CONSOLES+NR_SERIALS)) + tty_queues)
 DECL|macro|spty_queues
-mdefine_line|#define spty_queues ((3*(MAX_CONSOLES+NR_SERIALS+NR_PTYS)) + tty_queues)
+mdefine_line|#define spty_queues ((3*(NR_CONSOLES+NR_SERIALS+NR_PTYS)) + tty_queues)
 DECL|macro|con_table
 mdefine_line|#define con_table tty_table
 DECL|macro|rs_table
@@ -77,7 +74,11 @@ id|table_list
 (braket
 )braket
 op_assign
-initialization_block
+(brace
+l_int|NULL
+comma
+l_int|NULL
+)brace
 suffix:semicolon
 DECL|function|change_console
 r_void
@@ -412,7 +413,7 @@ c_func
 id|tty
 )paren
 op_ne
-id|_POSIX_VDISABLE
+id|__DISABLED_CHAR
 )paren
 op_logical_and
 (paren
@@ -458,7 +459,7 @@ c_func
 id|tty
 )paren
 op_ne
-id|_POSIX_VDISABLE
+id|__DISABLED_CHAR
 )paren
 op_logical_and
 (paren
@@ -568,7 +569,7 @@ c_func
 id|tty
 )paren
 op_ne
-id|_POSIX_VDISABLE
+id|__DISABLED_CHAR
 )paren
 op_logical_and
 (paren
@@ -611,7 +612,7 @@ c_func
 id|tty
 )paren
 op_ne
-id|_POSIX_VDISABLE
+id|__DISABLED_CHAR
 )paren
 op_logical_and
 (paren
@@ -731,7 +732,7 @@ c_func
 id|tty
 )paren
 op_ne
-id|_POSIX_VDISABLE
+id|__DISABLED_CHAR
 )paren
 op_logical_and
 (paren
@@ -762,7 +763,7 @@ c_func
 id|tty
 )paren
 op_ne
-id|_POSIX_VDISABLE
+id|__DISABLED_CHAR
 )paren
 op_logical_and
 (paren
@@ -810,7 +811,7 @@ c_func
 id|tty
 )paren
 op_ne
-id|_POSIX_VDISABLE
+id|__DISABLED_CHAR
 )paren
 op_logical_and
 (paren
@@ -847,7 +848,7 @@ c_func
 id|tty
 )paren
 op_ne
-id|_POSIX_VDISABLE
+id|__DISABLED_CHAR
 )paren
 op_logical_and
 (paren
@@ -884,7 +885,7 @@ c_func
 id|tty
 )paren
 op_ne
-id|_POSIX_VDISABLE
+id|__DISABLED_CHAR
 )paren
 op_logical_and
 (paren
@@ -936,7 +937,7 @@ c_func
 id|tty
 )paren
 op_ne
-id|_POSIX_VDISABLE
+id|__DISABLED_CHAR
 op_logical_and
 id|c
 op_eq
@@ -960,10 +961,18 @@ c_func
 id|tty
 )paren
 op_logical_or
+(paren
+id|L_CANON
+c_func
+(paren
+id|tty
+)paren
+op_logical_and
 id|L_ECHONL
 c_func
 (paren
 id|tty
+)paren
 )paren
 )paren
 op_logical_and
@@ -1582,7 +1591,7 @@ c_func
 id|tty
 )paren
 op_ne
-id|_POSIX_VDISABLE
+id|__DISABLED_CHAR
 op_logical_and
 id|c
 op_eq
@@ -1610,7 +1619,7 @@ c_func
 id|tty
 )paren
 op_ne
-id|_POSIX_VDISABLE
+id|__DISABLED_CHAR
 op_logical_and
 id|c
 op_eq
@@ -2821,15 +2830,55 @@ id|tty_release
 )brace
 suffix:semicolon
 DECL|function|tty_init
-r_void
+r_int
 id|tty_init
 c_func
 (paren
-r_void
+r_int
+id|kmem_start
 )paren
 (brace
 r_int
 id|i
+suffix:semicolon
+id|tty_queues
+op_assign
+(paren
+r_struct
+id|tty_queue
+op_star
+)paren
+id|kmem_start
+suffix:semicolon
+id|kmem_start
+op_add_assign
+id|QUEUES
+op_star
+(paren
+r_sizeof
+(paren
+r_struct
+id|tty_queue
+)paren
+)paren
+suffix:semicolon
+id|table_list
+(braket
+l_int|0
+)braket
+op_assign
+id|con_queues
+op_plus
+l_int|0
+suffix:semicolon
+id|table_list
+(braket
+l_int|1
+)braket
+op_assign
+id|con_queues
+op_plus
+l_int|1
 suffix:semicolon
 id|chrdev_fops
 (braket
@@ -3120,9 +3169,12 @@ l_int|NULL
 )brace
 suffix:semicolon
 )brace
+id|kmem_start
+op_assign
 id|con_init
 c_func
 (paren
+id|kmem_start
 )paren
 suffix:semicolon
 r_for
@@ -3499,9 +3551,12 @@ l_int|3
 )brace
 suffix:semicolon
 )brace
+id|kmem_start
+op_assign
 id|rs_init
 c_func
 (paren
+id|kmem_start
 )paren
 suffix:semicolon
 id|printk
@@ -3519,6 +3574,9 @@ l_string|&quot;%d pty&squot;s&bslash;n&bslash;r&quot;
 comma
 id|NR_PTYS
 )paren
+suffix:semicolon
+r_return
+id|kmem_start
 suffix:semicolon
 )brace
 eof

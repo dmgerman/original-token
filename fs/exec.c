@@ -4,7 +4,7 @@ multiline_comment|/*&n; * Demand-loading implemented 01.12.91 - no need to read 
 macro_line|#include &lt;signal.h&gt;
 macro_line|#include &lt;errno.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
-macro_line|#include &lt;sys/stat.h&gt;
+macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;sys/ptrace.h&gt;
 macro_line|#include &lt;a.out.h&gt;
 macro_line|#include &lt;fcntl.h&gt;

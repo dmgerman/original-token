@@ -1,8 +1,8 @@
 multiline_comment|/*&n; *  linux/fs/read_write.c&n; *&n; *  (C) 1991  Linus Torvalds&n; */
 macro_line|#include &lt;errno.h&gt;
 macro_line|#include &lt;sys/types.h&gt;
-macro_line|#include &lt;sys/stat.h&gt;
 macro_line|#include &lt;sys/dirent.h&gt;
+macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/minix_fs.h&gt;

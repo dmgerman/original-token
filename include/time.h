@@ -75,6 +75,11 @@ suffix:semicolon
 suffix:semicolon
 DECL|macro|__isleap
 mdefine_line|#define&t;__isleap(year)&t;&bslash;&n;  ((year) % 4 == 0 &amp;&amp; ((year) % 100 != 0 || (year) % 400 == 0))
+macro_line|#ifdef __cplusplus
+r_extern
+l_string|&quot;C&quot;
+(brace
+macro_line|#endif
 id|clock_t
 id|clock
 c_func
@@ -189,5 +194,8 @@ c_func
 r_void
 )paren
 suffix:semicolon
+macro_line|#ifdef __cplusplus
+)brace
+macro_line|#endif
 macro_line|#endif
 eof

@@ -113,11 +113,11 @@ DECL|macro|LP_DELAY
 mdefine_line|#define LP_DELAY &t;150000
 multiline_comment|/*&n; * function prototypes&n; */
 r_extern
-r_void
+r_int
 id|lp_init
 c_func
 (paren
-r_void
+r_int
 )paren
 suffix:semicolon
 eof

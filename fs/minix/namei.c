@@ -2,12 +2,12 @@ multiline_comment|/*&n; *  linux/fs/minix/namei.c&n; *&n; *  (C) 1991  Linus Tor
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/minix_fs.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
-macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
+macro_line|#include &lt;linux/stat.h&gt;
+macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;fcntl.h&gt;
 macro_line|#include &lt;errno.h&gt;
 macro_line|#include &lt;const.h&gt;
-macro_line|#include &lt;sys/stat.h&gt;
 multiline_comment|/*&n; * comment out this line if you want names &gt; MINIX_NAME_LEN chars to be&n; * truncated. Else they will be disallowed.&n; */
 multiline_comment|/* #define NO_TRUNCATE */
 multiline_comment|/*&n; * ok, we cannot use strncmp, as the name is not in our data space.&n; * Thus we&squot;ll have to use minix_match. No big problem. Match also makes&n; * some sanity tests.&n; *&n; * NOTE! unlike strncmp, minix_match returns 1 for success, 0 for failure.&n; */

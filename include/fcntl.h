@@ -79,6 +79,11 @@ id|l_pid
 suffix:semicolon
 )brace
 suffix:semicolon
+macro_line|#ifdef __cplusplus
+r_extern
+l_string|&quot;C&quot;
+(brace
+macro_line|#endif
 r_extern
 r_int
 id|creat
@@ -127,5 +132,8 @@ dot
 dot
 )paren
 suffix:semicolon
+macro_line|#ifdef __cplusplus
+)brace
+macro_line|#endif
 macro_line|#endif
 eof

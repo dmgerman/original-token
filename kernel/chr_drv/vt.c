@@ -16,12 +16,8 @@ r_struct
 id|vt_cons
 id|vt_cons
 (braket
-id|MAX_CONSOLES
-)braket
-suffix:semicolon
-r_extern
-r_int
 id|NR_CONSOLES
+)braket
 suffix:semicolon
 r_extern
 r_int

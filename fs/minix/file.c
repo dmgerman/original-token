@@ -2,12 +2,12 @@ multiline_comment|/*&n; *  linux/fs/minix/file.c&n; *&n; *  (C) 1991 Linus Torva
 macro_line|#include &lt;errno.h&gt;
 macro_line|#include &lt;fcntl.h&gt;
 macro_line|#include &lt;sys/dirent.h&gt;
-macro_line|#include &lt;sys/stat.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/minix_fs.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
+macro_line|#include &lt;linux/stat.h&gt;
 DECL|macro|NBUF
 mdefine_line|#define&t;NBUF&t;16
 DECL|macro|MIN
