@@ -1,6 +1,11 @@
 macro_line|#ifndef _LINUX_MM_H
 DECL|macro|_LINUX_MM_H
 mdefine_line|#define _LINUX_MM_H
+r_extern
+r_int
+r_int
+id|high_memory
+suffix:semicolon
 macro_line|#include &lt;asm/page.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -10,6 +15,13 @@ DECL|macro|VERIFY_READ
 mdefine_line|#define VERIFY_READ 0
 DECL|macro|VERIFY_WRITE
 mdefine_line|#define VERIFY_WRITE 1
+r_extern
+id|pgd_t
+id|swapper_pg_dir
+(braket
+l_int|1024
+)braket
+suffix:semicolon
 r_extern
 r_int
 id|verify_area
@@ -49,8 +61,7 @@ r_int
 id|vm_end
 suffix:semicolon
 DECL|member|vm_page_prot
-r_int
-r_int
+id|pgprot_t
 id|vm_page_prot
 suffix:semicolon
 DECL|member|vm_flags
@@ -58,14 +69,11 @@ r_int
 r_int
 id|vm_flags
 suffix:semicolon
-multiline_comment|/* linked list of VM areas per task, sorted by address */
-DECL|member|vm_next
-r_struct
-id|vm_area_struct
-op_star
-id|vm_next
-suffix:semicolon
 multiline_comment|/* AVL tree of VM areas per task, sorted by address */
+DECL|member|vm_avl_height
+r_int
+id|vm_avl_height
+suffix:semicolon
 DECL|member|vm_avl_left
 r_struct
 id|vm_area_struct
@@ -78,9 +86,12 @@ id|vm_area_struct
 op_star
 id|vm_avl_right
 suffix:semicolon
-DECL|member|vm_avl_height
-r_int
-id|vm_avl_height
+multiline_comment|/* linked list of VM areas per task, sorted by address */
+DECL|member|vm_next
+r_struct
+id|vm_area_struct
+op_star
+id|vm_next
 suffix:semicolon
 multiline_comment|/* for areas with inode, the circular list inode-&gt;i_mmap */
 multiline_comment|/* for shm areas, the circular list of attaches */
@@ -152,6 +163,14 @@ DECL|macro|VM_EXECUTABLE
 mdefine_line|#define VM_EXECUTABLE&t;0x1000
 DECL|macro|VM_STACK_FLAGS
 mdefine_line|#define VM_STACK_FLAGS&t;0x0177
+multiline_comment|/*&n; * mapping from the currently active vm_flags protection bits (the&n; * low four bits) to a page protection mask..&n; */
+r_extern
+id|pgprot_t
+id|protection_map
+(braket
+l_int|16
+)braket
+suffix:semicolon
 multiline_comment|/*&n; * These are the virtual MM functions - opening of an area, closing and&n; * unmapping it (needed to keep files on disk up-to-date etc), pointer&n; * to the functions called when a no-page or a wp-page exception occurs. &n; */
 DECL|struct|vm_operations_struct
 r_struct
@@ -328,14 +347,12 @@ comma
 r_int
 r_int
 comma
-r_int
-r_int
+id|pte_t
 op_star
 )paren
 suffix:semicolon
 DECL|member|swapin
-r_int
-r_int
+id|pte_t
 (paren
 op_star
 id|swapin
@@ -675,8 +692,8 @@ r_int
 r_int
 id|size
 comma
-r_int
-id|mask
+id|pgprot_t
+id|prot
 )paren
 suffix:semicolon
 r_extern
@@ -692,8 +709,8 @@ r_int
 r_int
 id|size
 comma
-r_int
-id|mask
+id|pgprot_t
+id|prot
 )paren
 suffix:semicolon
 r_extern
@@ -838,29 +855,35 @@ c_func
 (paren
 r_int
 r_int
-id|page_nr
 )paren
 suffix:semicolon
 r_extern
-r_int
-r_int
+r_void
 id|swap_duplicate
 c_func
 (paren
 r_int
 r_int
-id|page_nr
 )paren
 suffix:semicolon
 r_extern
-r_int
-r_int
+r_void
 id|swap_in
 c_func
 (paren
+r_struct
+id|vm_area_struct
+op_star
+comma
+id|pte_t
+op_star
+comma
 r_int
 r_int
-id|entry
+id|id
+comma
+r_int
+id|write_access
 )paren
 suffix:semicolon
 r_extern
@@ -1039,11 +1062,6 @@ DECL|macro|read_swap_page
 mdefine_line|#define read_swap_page(nr,buf) &bslash;&n;&t;rw_swap_page(READ,(nr),(buf))
 DECL|macro|write_swap_page
 mdefine_line|#define write_swap_page(nr,buf) &bslash;&n;&t;rw_swap_page(WRITE,(nr),(buf))
-r_extern
-r_int
-r_int
-id|high_memory
-suffix:semicolon
 DECL|macro|GFP_BUFFER
 mdefine_line|#define GFP_BUFFER&t;0x00
 DECL|macro|GFP_ATOMIC

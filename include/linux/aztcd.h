@@ -1,7 +1,10 @@
-multiline_comment|/* $Id$&n; * Definitions for a AztechCD268 CD-ROM interface&n; *&t;Copyright (C) 1994, 1995  Werner Zimmermann&n; *&n; *&t;based on Mitsumi CDROM driver by Martin Harriss&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; *  History:&t;W.Zimmermann adaption to Aztech CD268-01A Version 1.3&n; *&t;&t;Oktober 1994 Email: zimmerma@rz.fht-esslingen.de&n; *  Note:&t;Points marked with ??? are questionable !&n; */
+multiline_comment|/* $Id: aztcd.h,v 0.80 1995/01/21 19:55:04 root Exp $&n; * Definitions for a AztechCD268 CD-ROM interface&n; *&t;Copyright (C) 1994, 1995  Werner Zimmermann&n; *&n; *&t;based on Mitsumi CDROM driver by Martin Harriss&n; *&n; *  This program is free software; you can redistribute it and/or modify&n; *  it under the terms of the GNU General Public License as published by&n; *  the Free Software Foundation; either version 2 of the License, or&n; *  (at your option) any later version.&n; *&n; *  This program is distributed in the hope that it will be useful,&n; *  but WITHOUT ANY WARRANTY; without even the implied warranty of&n; *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the&n; *  GNU General Public License for more details.&n; *&n; *  You should have received a copy of the GNU General Public License&n; *  along with this program; if not, write to the Free Software&n; *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.&n; *&n; *  History:&t;W.Zimmermann adaption to Aztech CD268-01A Version 1.3&n; *&t;&t;Oktober 1994 Email: zimmerma@rz.fht-esslingen.de&n; */
 multiline_comment|/* *** change this to set the I/O port address */
 DECL|macro|AZT_BASE_ADDR
 mdefine_line|#define AZT_BASE_ADDR&t;&t;0x320
+multiline_comment|/* use incompatible ioctls for reading in raw and cooked mode */
+DECL|macro|AZT_PRIVATE_IOCTLS
+mdefine_line|#define AZT_PRIVATE_IOCTLS
 multiline_comment|/* Increase this if you get lots of timeouts; if you get kernel panic, replace&n;   STEN_LOW_WAIT by STEN_LOW in the source code */
 DECL|macro|AZT_STATUS_DELAY
 mdefine_line|#define AZT_STATUS_DELAY&t;400       /*for timer wait, STEN_LOW_WAIT*/
@@ -12,20 +15,6 @@ mdefine_line|#define AZT_FAST_TIMEOUT&t;10000     /*for reading the version stri
 multiline_comment|/* number of times to retry a command before giving up */
 DECL|macro|AZT_RETRY_ATTEMPTS
 mdefine_line|#define AZT_RETRY_ATTEMPTS&t;3
-multiline_comment|/*defines for compatibility with mcd.c/mcd.h for Mitsumi drive, will probably&n;  go away, when the AZTECH driver is integrated in the standard Linux kernel*/
-macro_line|#ifdef CONFIG_AZTCD
-macro_line|#else
-DECL|macro|AZTCD_TIMER
-mdefine_line|#define AZTCD_TIMER&t;&t;    MCD_TIMER
-DECL|macro|aztcd_init
-mdefine_line|#define aztcd_init&t;&t;    mcd_init
-DECL|macro|do_aztcd_request
-mdefine_line|#define do_aztcd_request&t;    do_mcd_request
-DECL|macro|aztcd_setup
-mdefine_line|#define aztcd_setup&t;&t;    mcd_setup
-DECL|macro|check_aztcd_media_change
-mdefine_line|#define check_aztcd_media_change    check_mcd_media_change
-macro_line|#endif
 multiline_comment|/* port access macros */
 DECL|macro|CMD_PORT
 mdefine_line|#define CMD_PORT&t;&t;azt_port
@@ -94,11 +83,10 @@ DECL|macro|ACMD_SET_MODE
 mdefine_line|#define ACMD_SET_MODE&t;&t;0xA1&t;&t;/* set drive mode */
 DECL|macro|ACMD_SET_VOLUME
 mdefine_line|#define ACMD_SET_VOLUME&t;&t;0xAE&t;&t;/* set audio level */
-multiline_comment|/* borrowed from hd.c */
 DECL|macro|SET_TIMER
-mdefine_line|#define SET_TIMER(func, jifs) &bslash;&n;&t;((timer_table[AZTCD_TIMER].expires = jiffies + jifs), &bslash;&n;&t;(timer_table[AZTCD_TIMER].fn = func), &bslash;&n;&t;(timer_active |= 1&lt;&lt;AZTCD_TIMER))
+mdefine_line|#define SET_TIMER(func, jifs) &bslash;&n;        delay_timer.expires = jifs; &bslash;&n;        delay_timer.function = (void *) func; &bslash;&n;        add_timer(&amp;delay_timer);
 DECL|macro|CLEAR_TIMER
-mdefine_line|#define CLEAR_TIMER&t;&t;timer_active &amp;= ~(1&lt;&lt;AZTCD_TIMER)
+mdefine_line|#define CLEAR_TIMER             del_timer(&amp;delay_timer)
 DECL|macro|MAX_TRACKS
 mdefine_line|#define MAX_TRACKS&t;&t;104
 DECL|struct|msf

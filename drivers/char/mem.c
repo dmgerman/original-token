@@ -364,7 +364,8 @@ r_return
 op_minus
 id|ENXIO
 suffix:semicolon
-macro_line|#ifdef __i386__
+macro_line|#if 0 &amp;&amp; defined(__i386__)
+multiline_comment|/*&n;&t; * hmm.. This disables high-memory caching, as the XFree86 team wondered&n;&t; * about that at one time. It doesn&squot;t seem to make a difference, though:&n;&t; * the surround logic should disable caching for the high device addresses&n;&t; * anyway.&n;&t; */
 r_if
 c_cond
 (paren
@@ -807,9 +808,9 @@ id|vma
 r_if
 c_cond
 (paren
-id|vma-&gt;vm_page_prot
+id|vma-&gt;vm_flags
 op_amp
-id|PAGE_RW
+id|VM_SHARED
 )paren
 r_return
 op_minus

@@ -271,7 +271,7 @@ suffix:semicolon
 )brace
 suffix:semicolon
 DECL|macro|INIT_MMAP
-mdefine_line|#define INIT_MMAP { &amp;init_task, 0, 0x40000000, PAGE_SHARED, }
+mdefine_line|#define INIT_MMAP { &amp;init_task, 0, 0x40000000, PAGE_SHARED, VM_READ | VM_WRITE | VM_EXEC }
 DECL|macro|INIT_MM
 mdefine_line|#define INIT_MM { &bslash;&n;&t;&t;0, &bslash;&n;&t;&t;0, 0, 0, &bslash;&n;&t;&t;0, 0, 0, 0, &bslash;&n;&t;&t;0, 0, 0, 0, &bslash;&n;&t;&t;0, &bslash;&n;/* ?_flt */&t;0, 0, 0, 0, &bslash;&n;&t;&t;0, &bslash;&n;/* swap */&t;0, 0, 0, 0, &bslash;&n;&t;&t;&amp;init_mmap, &amp;init_mmap }
 DECL|struct|task_struct

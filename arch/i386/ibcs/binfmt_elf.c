@@ -242,9 +242,7 @@ id|TASK_SIZE
 suffix:semicolon
 id|mpnt-&gt;vm_page_prot
 op_assign
-id|PAGE_PRIVATE
-op_or
-id|PAGE_DIRTY
+id|PAGE_COPY
 suffix:semicolon
 id|mpnt-&gt;vm_flags
 op_assign

@@ -1,11 +1,11 @@
-multiline_comment|/*  ewrk3.c: A DIGITAL EtherWORKS 3 ethernet driver for linux.&n;&n;    Written 1994 by David C. Davies.&n;&n;    Copyright 1994 Digital Equipment Corporation.&n;&n;    This software may be used and distributed according to the terms of&n;    the GNU Public License, incorporated herein by reference.&n;&n;    This driver is written for the Digital Equipment Corporation series&n;    of EtherWORKS ethernet cards:&n;&n;&t;DE203 Turbo (BNC)&n;&t;DE204 Turbo (TP)&n;&t;DE205 Turbo (TP BNC)&n;&n;    The driver has been tested on a relatively busy  network using the DE205&n;    card and benchmarked with &squot;ttcp&squot;: it transferred 16M  of data at 975kB/s&n;    (7.8Mb/s) to a DECstation 5000/200.&n;&n;    The author may    be  reached as davies@wanton.lkg.dec.com  or   Digital&n;    Equipment Corporation, 550 King Street, Littleton MA 01460.&n;&n;    =========================================================================&n;    This driver has been written  substantially  from scratch, although  its&n;    inheritance of style and stack interface from &squot;depca.c&squot; and in turn from&n;    Donald Becker&squot;s &squot;lance.c&squot; should be obvious.&n;&n;    The  DE203/4/5 boards  all  use a new proprietary   chip in place of the&n;    LANCE chip used in prior cards  (DEPCA, DE100, DE200/1/2, DE210, DE422).&n;    Use the depca.c driver in the standard distribution  for the LANCE based&n;    cards from DIGITAL; this driver will not work with them.&n;&n;    The DE203/4/5 cards have 2  main modes: shared memory  and I/O only. I/O&n;    only makes  all the card accesses through  I/O transactions and  no high&n;    (shared)  memory is used. This  mode provides a &gt;48% performance penalty&n;    and  is deprecated in this  driver,  although allowed to provide initial&n;    setup when hardstrapped.&n;&n;    The shared memory mode comes in 3 flavours: 2kB, 32kB and 64kB. There is&n;    no point in using any mode other than the 2kB  mode - their performances&n;    are virtually identical, although the driver has  been tested in the 2kB&n;    and 32kB modes. I would suggest you uncomment the line:&n;&n;                             FORCE_2K_MODE;&n;&n;    to allow the driver to configure the card as a  2kB card at your current&n;    base  address, thus leaving more  room to clutter  your  system box with&n;    other memory hungry boards.&n;&n;    Upto 21 ISA and 7 EISA cards can be supported under this driver, limited&n;    primarily by the  available  IRQ   lines.   I have   checked   different&n;    configurations  of multiple depca  cards and  ewrk3 cards  and  have not&n;    found a problem yet (provided you have at least depca.c v0.38) ...&n;&n;    The board IRQ setting   must be at  an unused  IRQ which is  auto-probed&n;    using  Donald  Becker&squot;s autoprobe  routines.   All  these cards   are at&n;    {5,10,11,15}.&n;&n;    No 16MB memory  limitation should exist with this  driver as DMA is  not&n;    used and the common memory area is in low memory on the network card (my&n;    current system has 20MB and I&squot;ve not had problems yet).&n;&n;    The ability to load  this driver as a  loadable module has been included&n;    and used  extensively during the  driver development (to save those long&n;    reboot sequences). To utilise this ability, you have to do 8 things:&n;&n;    0) have a copy of the loadable modules code installed on your system.&n;    1) copy ewrk3.c from the  /linux/drivers/net directory to your favourite&n;    temporary directory.&n;    2) edit the  source code near  line 1340 to reflect  the I/O address and&n;    IRQ you&squot;re using.&n;    3) compile  ewrk3.c, but include -DMODULE in  the command line to ensure&n;    that the correct bits are compiled (see end of source code).&n;    4) if you are wanting to add a new  card, goto 5. Otherwise, recompile a&n;    kernel with the ewrk3 configuration turned off and reboot.&n;    5) insmod ewrk3.o&n;    6) run the net startup bits for your new eth?? interface manually &n;    (usually /etc/rc.inet[12] at boot time). &n;    7) enjoy!&n;    &n;    [Alan Cox: Changed this so you can insmod ewrk3.o irq=x io=y]&n;&n;    Note that autoprobing is not allowed in loadable modules - the system is&n;    already up and running and you&squot;re messing with interrupts.&n;&n;    To unload a module, turn off the associated interface &n;    &squot;ifconfig eth?? down&squot; then &squot;rmmod ewrk3&squot;.&n;&n;    Promiscuous   mode has been  turned  off  in this driver,   but  all the&n;    multicast  address bits  have been   turned on. This  improved the  send&n;    performance on a busy network by about 13%.&n;&n;    Ioctl&squot;s have now been provided (primarily because  I wanted to grab some&n;    packet size statistics). They  are patterned after &squot;plipconfig.c&squot; from a&n;    suggestion by Alan Cox.  Using these  ioctls, you can enable promiscuous&n;    mode, add/delete multicast  addresses, change the hardware address,  get&n;    packet size distribution statistics and muck around with the control and&n;    status register. I&squot;ll add others if and when the need arises.&n;&n;    TO DO:&n;    ------&n;&n;&n;    Revision History&n;    ----------------&n;&n;    Version   Date        Description&n;  &n;      0.1     26-aug-94   Initial writing. ALPHA code release.&n;      0.11    31-aug-94   Fixed: 2k mode memory base calc., &n;                                 LeMAC version calc.,&n;&t;&t;&t;&t; IRQ vector assignments during autoprobe.&n;      0.12    31-aug-94   Tested working on LeMAC2 (DE20[345]-AC) card.&n;                          Fixed up MCA hash table algorithm.&n;      0.20     4-sep-94   Added IOCTL functionality.&n;      0.21    14-sep-94   Added I/O mode.&n;      0.21axp 15-sep-94   Special version for ALPHA AXP Linux V1.0&n;      0.22    16-sep-94   Added more IOCTLs &amp; tidied up.&n;      0.23    21-sep-94   Added transmit cut through&n;      0.24    31-oct-94   Added uid checks in some ioctls&n;      0.30     1-nov-94   BETA code release&n;      0.31     5-dec-94   Added check/snarf_region code.&n;&n;    =========================================================================&n;*/
+multiline_comment|/*  ewrk3.c: A DIGITAL EtherWORKS 3 ethernet driver for linux.&n;&n;    Written 1994 by David C. Davies.&n;&n;    Copyright 1994 Digital Equipment Corporation.&n;&n;    This software may be used and distributed according to the terms of&n;    the GNU Public License, incorporated herein by reference.&n;&n;    This driver is written for the Digital Equipment Corporation series&n;    of EtherWORKS ethernet cards:&n;&n;&t;DE203 Turbo (BNC)&n;&t;DE204 Turbo (TP)&n;&t;DE205 Turbo (TP BNC)&n;&n;    The driver has been tested on a relatively busy  network using the DE205&n;    card and benchmarked with &squot;ttcp&squot;: it transferred 16M  of data at 975kB/s&n;    (7.8Mb/s) to a DECstation 5000/200.&n;&n;    The author may    be  reached as davies@wanton.lkg.dec.com  or   Digital&n;    Equipment Corporation, 550 King Street, Littleton MA 01460.&n;&n;    =========================================================================&n;    This driver has been written  substantially  from scratch, although  its&n;    inheritance of style and stack interface from &squot;depca.c&squot; and in turn from&n;    Donald Becker&squot;s &squot;lance.c&squot; should be obvious.&n;&n;    The  DE203/4/5 boards  all  use a new proprietary   chip in place of the&n;    LANCE chip used in prior cards  (DEPCA, DE100, DE200/1/2, DE210, DE422).&n;    Use the depca.c driver in the standard distribution  for the LANCE based&n;    cards from DIGITAL; this driver will not work with them.&n;&n;    The DE203/4/5 cards have 2  main modes: shared memory  and I/O only. I/O&n;    only makes  all the card accesses through  I/O transactions and  no high&n;    (shared)  memory is used. This  mode provides a &gt;48% performance penalty&n;    and  is deprecated in this  driver,  although allowed to provide initial&n;    setup when hardstrapped.&n;&n;    The shared memory mode comes in 3 flavours: 2kB, 32kB and 64kB. There is&n;    no point in using any mode other than the 2kB  mode - their performances&n;    are virtually identical, although the driver has  been tested in the 2kB&n;    and 32kB modes. I would suggest you uncomment the line:&n;&n;                             FORCE_2K_MODE;&n;&n;    to allow the driver to configure the card as a  2kB card at your current&n;    base  address, thus leaving more  room to clutter  your  system box with&n;    other memory hungry boards.&n;&n;    Upto 21 ISA and 7 EISA cards can be supported under this driver, limited&n;    primarily by the  available  IRQ   lines.   I have   checked   different&n;    configurations  of multiple depca  cards and  ewrk3 cards  and  have not&n;    found a problem yet (provided you have at least depca.c v0.38) ...&n;&n;    The board IRQ setting   must be at  an unused  IRQ which is  auto-probed&n;    using  Donald  Becker&squot;s autoprobe  routines.   All  these cards   are at&n;    {5,10,11,15}.&n;&n;    No 16MB memory  limitation should exist with this  driver as DMA is  not&n;    used and the common memory area is in low memory on the network card (my&n;    current system has 20MB and I&squot;ve not had problems yet).&n;&n;    The ability to load  this driver as a  loadable module has been included&n;    and used  extensively during the  driver development (to save those long&n;    reboot sequences). To utilise this ability, you have to do 8 things:&n;&n;    0) have a copy of the loadable modules code installed on your system.&n;    1) copy ewrk3.c from the  /linux/drivers/net directory to your favourite&n;    temporary directory.&n;    2) edit the  source code near  line 1830 to reflect  the I/O address and&n;    IRQ you&squot;re using.&n;    3) compile  ewrk3.c, but include -DMODULE in  the command line to ensure&n;    that the correct bits are compiled (see end of source code).&n;    4) if you are wanting to add a new  card, goto 5. Otherwise, recompile a&n;    kernel with the ewrk3 configuration turned off and reboot.&n;    5) insmod ewrk3.o&n;    6) run the net startup bits for your new eth?? interface manually &n;    (usually /etc/rc.inet[12] at boot time). &n;    7) enjoy!&n;&n;    [Alan Cox: Changed this so you can insmod ewrk3.o irq=x io=y]&n;&n;    Note that autoprobing is not allowed in loadable modules - the system is&n;    already up and running and you&squot;re messing with interrupts.&n;&n;    To unload a module, turn off the associated interface &n;    &squot;ifconfig eth?? down&squot; then &squot;rmmod ewrk3&squot;.&n;&n;    Promiscuous   mode has been  turned  off  in this driver,   but  all the&n;    multicast  address bits  have been   turned on. This  improved the  send&n;    performance on a busy network by about 13%.&n;&n;    Ioctl&squot;s have now been provided (primarily because  I wanted to grab some&n;    packet size statistics). They  are patterned after &squot;plipconfig.c&squot; from a&n;    suggestion by Alan Cox.  Using these  ioctls, you can enable promiscuous&n;    mode, add/delete multicast  addresses, change the hardware address,  get&n;    packet size distribution statistics and muck around with the control and&n;    status register. I&squot;ll add others if and when the need arises.&n;&n;    TO DO:&n;    ------&n;&n;&n;    Revision History&n;    ----------------&n;&n;    Version   Date        Description&n;  &n;      0.1     26-aug-94   Initial writing. ALPHA code release.&n;      0.11    31-aug-94   Fixed: 2k mode memory base calc., &n;                                 LeMAC version calc.,&n;&t;&t;&t;&t; IRQ vector assignments during autoprobe.&n;      0.12    31-aug-94   Tested working on LeMAC2 (DE20[345]-AC) card.&n;                          Fixed up MCA hash table algorithm.&n;      0.20     4-sep-94   Added IOCTL functionality.&n;      0.21    14-sep-94   Added I/O mode.&n;      0.21axp 15-sep-94   Special version for ALPHA AXP Linux V1.0&n;      0.22    16-sep-94   Added more IOCTLs &amp; tidied up.&n;      0.23    21-sep-94   Added transmit cut through&n;      0.24    31-oct-94   Added uid checks in some ioctls&n;      0.30     1-nov-94   BETA code release&n;      0.31     5-dec-94   Added check/snarf_region code.&n;      0.32    16-jan-95   Broadcast packet fix&n;&n;    =========================================================================&n;*/
 DECL|variable|version
 r_static
 r_char
 op_star
 id|version
 op_assign
-l_string|&quot;ewrk3.c:v0.31 12/5/94 davies@wanton.lkg.dec.com&bslash;n&quot;
+l_string|&quot;ewrk3.c:v0.32 1/16/95 davies@wanton.lkg.dec.com&bslash;n&quot;
 suffix:semicolon
 macro_line|#include &lt;stdarg.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -71,6 +71,8 @@ DECL|macro|EWRK3_IO_BASE
 mdefine_line|#define EWRK3_IO_BASE 0x100             /* Start address for probe search */
 DECL|macro|EWRK3_IOP_INC
 mdefine_line|#define EWRK3_IOP_INC 0x20              /* I/O address increment */
+DECL|macro|EWRK3_TOTAL_SIZE
+mdefine_line|#define EWRK3_TOTAL_SIZE 0x20           /* required I/O address space */
 DECL|macro|EWRK3_IO_SEARCH
 mdefine_line|#define EWRK3_IO_SEARCH 0x007dff7f      /* probe search mask */
 DECL|variable|mem_chkd
@@ -96,10 +98,10 @@ mdefine_line|#define MAX_EISA_SLOTS 8
 DECL|macro|EISA_SLOT_INC
 mdefine_line|#define EISA_SLOT_INC 0x1000
 macro_line|#endif
-macro_line|#ifndef CRC_POLYNOMIAL
-DECL|macro|CRC_POLYNOMIAL
-mdefine_line|#define CRC_POLYNOMIAL 0x04c11db7       /* Ethernet CRC polynomial */
-macro_line|#endif /* CRC_POLYNOMIAL */
+DECL|macro|CRC_POLYNOMIAL_BE
+mdefine_line|#define CRC_POLYNOMIAL_BE 0x04c11db7UL   /* Ethernet CRC, big endian */
+DECL|macro|CRC_POLYNOMIAL_LE
+mdefine_line|#define CRC_POLYNOMIAL_LE 0xedb88320UL   /* Ethernet CRC, little endian */
 multiline_comment|/*&n;** EtherWORKS 3 shared memory window sizes&n;*/
 DECL|macro|IO_ONLY
 mdefine_line|#define IO_ONLY         0x00
@@ -644,7 +646,7 @@ c_func
 (paren
 id|base_addr
 comma
-id|EWRK3_IOP_INC
+id|EWRK3_TOTAL_SIZE
 )paren
 )paren
 (brace
@@ -685,6 +687,7 @@ l_int|0
 )paren
 (brace
 multiline_comment|/* Is EWRK3 really here? */
+multiline_comment|/* Register I/O Region */
 id|request_region
 c_func
 (paren
@@ -695,7 +698,6 @@ comma
 l_string|&quot;ewrk3&quot;
 )paren
 suffix:semicolon
-multiline_comment|/* Register I/O region */
 id|status
 op_assign
 id|ewrk3_hw_init
@@ -5023,7 +5025,7 @@ id|EWRK3_CSR
 suffix:semicolon
 )brace
 )brace
-multiline_comment|/*&n;** Calculate the hash code and update the logical address filter&n;** from a list of ethernet multicast addresses.&n;** Derived from a &squot;C&squot; program in the AMD data book:&n;** &quot;Am79C90 CMOS Local Area Network Controller for Ethernet (C-LANCE)&quot;, &n;** Pub #17781, Rev. A, May 1993&n;**&n;*/
+multiline_comment|/*&n;** Calculate the hash code and update the logical address filter&n;** from a list of ethernet multicast addresses.&n;** Little endian crc one liner from Matt Thomas, DEC.&n;**&n;** Note that when clearing the table, the broadcast bit must remain asserted&n;** to receive broadcast messages.&n;*/
 DECL|function|SetMulticastFilter
 r_static
 r_void
@@ -5060,6 +5062,8 @@ op_star
 id|dev-&gt;priv
 suffix:semicolon
 r_int
+id|i
+comma
 id|iobase
 op_assign
 id|dev-&gt;base_addr
@@ -5067,11 +5071,9 @@ suffix:semicolon
 r_char
 id|j
 comma
-id|ctrl
-comma
 id|bit
 comma
-id|octet
+id|byte
 suffix:semicolon
 r_int
 op_star
@@ -5083,24 +5085,15 @@ op_star
 )paren
 id|multicast_table
 suffix:semicolon
-r_int
-r_int
+id|u_short
 id|hashcode
 suffix:semicolon
-r_int
-id|i
-suffix:semicolon
-r_int
-r_int
+id|u_long
 id|crc
 comma
 id|poly
 op_assign
-(paren
-r_int
-r_int
-)paren
-id|CRC_POLYNOMIAL
+id|CRC_POLYNOMIAL_LE
 suffix:semicolon
 r_while
 c_loop
@@ -5226,14 +5219,8 @@ suffix:semicolon
 )brace
 )brace
 r_else
-r_if
-c_cond
-(paren
-id|num_addrs
-op_eq
-l_int|0
-)paren
 (brace
+multiline_comment|/* Clear table except for broadcast bit */
 r_if
 c_cond
 (paren
@@ -5248,6 +5235,45 @@ c_loop
 id|i
 op_assign
 l_int|0
+suffix:semicolon
+id|i
+OL
+(paren
+id|HASH_TABLE_LEN
+op_rshift
+l_int|4
+)paren
+op_minus
+l_int|1
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
+id|outb
+c_func
+(paren
+l_int|0x00
+comma
+id|EWRK3_DATA
+)paren
+suffix:semicolon
+)brace
+id|outb
+c_func
+(paren
+l_int|0x80
+comma
+id|EWRK3_DATA
+)paren
+suffix:semicolon
+id|i
+op_increment
+suffix:semicolon
+multiline_comment|/* insert the broadcast bit */
+r_for
+c_loop
+(paren
 suffix:semicolon
 id|i
 OL
@@ -5287,10 +5313,23 @@ l_int|3
 )paren
 )paren
 suffix:semicolon
+op_star
+(paren
+id|multicast_table
+op_plus
+(paren
+id|HASH_TABLE_LEN
+op_rshift
+l_int|4
+)paren
+op_minus
+l_int|1
+)paren
+op_assign
+l_int|0x80
+suffix:semicolon
 )brace
-)brace
-r_else
-(brace
+multiline_comment|/* Update table */
 r_for
 c_loop
 (paren
@@ -5311,17 +5350,8 @@ r_if
 c_cond
 (paren
 (paren
-(paren
-r_char
-)paren
 op_star
-(paren
 id|addrs
-op_plus
-id|ETH_ALEN
-op_star
-id|i
-)paren
 op_amp
 l_int|0x01
 )paren
@@ -5332,32 +5362,35 @@ l_int|1
 multiline_comment|/* multicast address? */
 id|crc
 op_assign
-(paren
-r_int
-r_int
-)paren
 l_int|0xffffffff
 suffix:semicolon
 multiline_comment|/* init CRC for each address */
 r_for
 c_loop
 (paren
-id|octet
+id|byte
 op_assign
 l_int|0
 suffix:semicolon
-id|octet
+id|byte
 OL
 id|ETH_ALEN
 suffix:semicolon
-id|octet
+id|byte
 op_increment
 )paren
 (brace
-multiline_comment|/* for each address octet */
+multiline_comment|/* for each address byte */
+multiline_comment|/* process each address bit */
 r_for
 c_loop
 (paren
+id|bit
+op_assign
+op_star
+id|addrs
+op_increment
+comma
 id|j
 op_assign
 l_int|0
@@ -5368,125 +5401,72 @@ l_int|8
 suffix:semicolon
 id|j
 op_increment
+comma
+id|bit
+op_rshift_assign
+l_int|1
 )paren
 (brace
-multiline_comment|/* process each address bit */
-id|bit
+id|crc
 op_assign
 (paren
-(paren
-(paren
-r_char
-)paren
-op_star
-(paren
-id|addrs
-op_plus
-id|ETH_ALEN
-op_star
-id|i
-op_plus
-id|octet
-)paren
-)paren
+id|crc
 op_rshift
-id|j
+l_int|1
 )paren
-op_amp
-l_int|0x01
-suffix:semicolon
-id|ctrl
-op_assign
+op_xor
+(paren
 (paren
 (paren
 id|crc
-OL
-l_int|0
+op_xor
+id|bit
+)paren
+op_amp
+l_int|0x01
 )paren
 ques
 c_cond
-l_int|1
+id|poly
 suffix:colon
 l_int|0
 )paren
 suffix:semicolon
-multiline_comment|/* shift the control bit */
-id|crc
-op_lshift_assign
-l_int|1
-suffix:semicolon
-multiline_comment|/* shift the CRC */
-r_if
-c_cond
-(paren
-id|bit
-op_xor
-id|ctrl
-)paren
-(brace
-multiline_comment|/* (bit) XOR (control bit) */
-id|crc
-op_xor_assign
-id|poly
-suffix:semicolon
-multiline_comment|/* (CRC) XOR (polynomial) */
-)brace
 )brace
 )brace
 id|hashcode
 op_assign
-(paren
-(paren
-id|crc
-op_rshift_assign
-l_int|23
-)paren
-op_amp
-l_int|0x01
-)paren
-suffix:semicolon
-multiline_comment|/* hashcode is 9 MSb of CRC ... */
-r_for
-c_loop
-(paren
-id|j
-op_assign
-l_int|0
-suffix:semicolon
-id|j
-OL
-l_int|8
-suffix:semicolon
-id|j
-op_increment
-)paren
-(brace
-multiline_comment|/* ... in reverse order. */
-id|hashcode
-op_lshift_assign
-l_int|1
-suffix:semicolon
-id|crc
-op_rshift_assign
-l_int|1
-suffix:semicolon
-id|hashcode
-op_or_assign
-(paren
 id|crc
 op_amp
-l_int|0x01
+(paren
+(paren
+l_int|1
+op_lshift
+l_int|9
+)paren
+op_minus
+l_int|1
 )paren
 suffix:semicolon
-)brace
-id|octet
+multiline_comment|/* hashcode is 9 LSb of CRC */
+id|byte
 op_assign
 id|hashcode
 op_rshift
 l_int|3
 suffix:semicolon
-multiline_comment|/* bit[3-8] -&gt; octet in filter */
-multiline_comment|/* bit[0-2] -&gt; bit in octet */
+multiline_comment|/* bit[3-8] -&gt; byte in filter */
+id|bit
+op_assign
+l_int|1
+op_lshift
+(paren
+id|hashcode
+op_amp
+l_int|0x07
+)paren
+suffix:semicolon
+multiline_comment|/* bit[0-2] -&gt; bit in byte */
 r_if
 c_cond
 (paren
@@ -5512,7 +5492,7 @@ r_int
 id|multicast_table
 )paren
 op_plus
-id|octet
+id|byte
 comma
 id|EWRK3_PIR1
 )paren
@@ -5527,15 +5507,7 @@ id|EWRK3_DATA
 suffix:semicolon
 id|tmp
 op_or_assign
-(paren
-l_int|1
-op_lshift
-(paren
-id|hashcode
-op_amp
-l_int|0x07
-)paren
-)paren
+id|bit
 suffix:semicolon
 id|outw
 c_func
@@ -5550,7 +5522,7 @@ r_int
 id|multicast_table
 )paren
 op_plus
-id|octet
+id|byte
 comma
 id|EWRK3_PIR1
 )paren
@@ -5568,20 +5540,20 @@ r_else
 (brace
 id|multicast_table
 (braket
-id|octet
+id|byte
 )braket
 op_or_assign
-(paren
-l_int|1
-op_lshift
-(paren
-id|hashcode
-op_amp
-l_int|0x07
-)paren
-)paren
+id|bit
 suffix:semicolon
 )brace
+)brace
+r_else
+(brace
+multiline_comment|/* skip this address */
+id|addrs
+op_add_assign
+id|ETH_ALEN
+suffix:semicolon
 )brace
 )brace
 )brace
@@ -5669,7 +5641,7 @@ c_func
 (paren
 id|iobase
 comma
-id|EWRK3_IOP_INC
+id|EWRK3_TOTAL_SIZE
 )paren
 )paren
 (brace
@@ -5870,7 +5842,7 @@ c_func
 (paren
 id|iobase
 comma
-id|EWRK3_IOP_INC
+id|EWRK3_TOTAL_SIZE
 )paren
 )paren
 (brace

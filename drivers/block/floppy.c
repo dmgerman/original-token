@@ -24,6 +24,7 @@ mdefine_line|#define DEBUGT 2
 DECL|macro|DCL_DEBUG
 mdefine_line|#define DCL_DEBUG /* debug disk change line */
 macro_line|#include &lt;linux/config.h&gt;
+macro_line|#ifdef CONFIG_BLK_DEV_FD
 macro_line|#ifndef FD_MODULE
 multiline_comment|/* the following is the mask of allowed drives. By default units 2 and&n; * 3 of both floppy controllers are disabled, because switching on the&n; * motor of these drives causes system hangs on some PCI computers. drive&n; * 0 is the low bit (0x1), and drive 7 is the high bit (0x80). Bits are on if&n; * a drive is allowed. */
 DECL|variable|ALLOWED_DRIVE_MASK
@@ -50,7 +51,6 @@ suffix:semicolon
 macro_line|#endif
 DECL|macro|MODULE_AWARE_DRIVER
 mdefine_line|#define MODULE_AWARE_DRIVER
-macro_line|#ifdef CONFIG_BLK_DEV_FD
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -4270,7 +4270,7 @@ suffix:semicolon
 id|output_byte
 c_func
 (paren
-l_int|0x1A
+l_int|0x2A
 )paren
 suffix:semicolon
 multiline_comment|/* FIFO on, polling off, 10 byte threshold */
@@ -7305,22 +7305,22 @@ r_void
 r_int
 id|probed_format
 suffix:semicolon
+id|probed_format
+op_assign
+id|DRS-&gt;probed_format
+suffix:semicolon
 r_while
 c_loop
 (paren
 l_int|1
 )paren
 (brace
-id|probed_format
-op_assign
-id|DRS-&gt;probed_format
-suffix:semicolon
 r_if
 c_cond
 (paren
 id|probed_format
-OG
-id|N_DRIVE
+op_ge
+l_int|8
 op_logical_or
 op_logical_neg
 id|DP-&gt;autodetect

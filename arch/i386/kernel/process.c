@@ -65,12 +65,13 @@ suffix:semicolon
 id|i
 op_increment
 )paren
+id|pgd_clear
+c_func
+(paren
 id|swapper_pg_dir
-(braket
+op_plus
 id|i
-)braket
-op_assign
-l_int|0
+)paren
 suffix:semicolon
 multiline_comment|/* endless idle loop with no priority at all */
 id|current-&gt;counter

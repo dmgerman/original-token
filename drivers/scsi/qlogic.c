@@ -1,7 +1,10 @@
 multiline_comment|/*----------------------------------------------------------------*/
-multiline_comment|/*&n;   Qlogic linux driver - work in progress. No Warranty express or implied.&n;   Use at your own risk.  Support Tort Reform so you won&squot;t have to read all&n;   these silly disclaimers.&n;&n;   Copyright 1994, Tom Zerucha.&n;   zerucha@shell.portal.com&n;&n;   Additional Code, and much appreciated help by&n;   Michael A. Griffith&n;   grif@cs.ucr.edu&n;&n;   Reference Qlogic FAS408 Technical Manual, 53408-510-00A, May 10, 1994&n;   (you can reference it, but it is incomplete and inaccurate in places)&n;&n;   Version 0.38a&n;&n;   This also works with loadable SCSI as a module.  Check configuration&n;   options QL_INT_ACTIVE_HIGH and QL_TURBO_PDMA for PCMCIA usage (which&n;   also requires an enabler).&n;&n;   Redistributable under terms of the GNU Public License&n;&n;*/
+multiline_comment|/*&n;   Qlogic linux driver - work in progress. No Warranty express or implied.&n;   Use at your own risk.  Support Tort Reform so you won&squot;t have to read all&n;   these silly disclaimers.&n;&n;   Copyright 1994, Tom Zerucha.&n;   zerucha@shell.portal.com&n;&n;   Additional Code, and much appreciated help by&n;   Michael A. Griffith&n;   grif@cs.ucr.edu&n;&n;   Reference Qlogic FAS408 Technical Manual, 53408-510-00A, May 10, 1994&n;   (you can reference it, but it is incomplete and inaccurate in places)&n;&n;   Version 0.38b&n;&n;   This also works with loadable SCSI as a module.  Check configuration&n;   options QL_INT_ACTIVE_HIGH and QL_TURBO_PDMA for PCMCIA usage (which&n;   also requires an enabler).&n;&n;   Redistributable under terms of the GNU Public License&n;&n;*/
 multiline_comment|/*----------------------------------------------------------------*/
 multiline_comment|/* Configuration */
+multiline_comment|/* Set this if you are using the PCMCIA adapter - it will automatically&n;   take care of several settings */
+DECL|macro|QL_PCMCIA
+mdefine_line|#define QL_PCMCIA 0
 multiline_comment|/* Set the following to 2 to use normal interrupt (active high/totempole-&n;   tristate), otherwise use 0 (REQUIRED FOR PCMCIA) for active low, open&n;   drain */
 DECL|macro|QL_INT_ACTIVE_HIGH
 mdefine_line|#define QL_INT_ACTIVE_HIGH 2
@@ -30,6 +33,17 @@ multiline_comment|/* This is the count of how many synchronous transfers can tak
 DECL|macro|SYNCOFFST
 mdefine_line|#define SYNCOFFST 0
 multiline_comment|/* for the curious, bits 7&amp;6 control the deassertion delay in 1/2 cycles&n;&t;of the 40Mhz clock. If FASTCLK is 1, specifying 01 (1/2) will&n;&t;cause the deassertion to be early by 1/2 clock.  Bits 5&amp;4 control&n;&t;the assertion delay, also in 1/2 clocks (FASTCLK is ignored here). */
+multiline_comment|/* Option Synchronization */
+macro_line|#if QL_PCMCIA
+DECL|macro|QL_INT_ACTIVE_HIGH
+macro_line|#undef QL_INT_ACTIVE_HIGH
+DECL|macro|QL_TURBO_PDMA
+macro_line|#undef QL_TURBO_PDMA
+DECL|macro|QL_INT_ACTIVE_HIGH
+mdefine_line|#define QL_INT_ACTIVE_HIGH 0
+DECL|macro|QL_TURBO_PDMA
+mdefine_line|#define QL_TURBO_PDMA 0
+macro_line|#endif
 multiline_comment|/*----------------------------------------------------------------*/
 macro_line|#include &quot;../block/blk.h&quot;&t;/* to get disk capacity */
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -122,6 +136,16 @@ c_func
 r_int
 id|x
 suffix:semicolon
+r_int
+r_int
+id|flags
+suffix:semicolon
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 id|cli
 c_func
 (paren
@@ -170,9 +194,10 @@ l_int|0x80
 )paren
 id|REG1
 suffix:semicolon
-id|sti
+id|restore_flags
 c_func
 (paren
+id|flags
 )paren
 suffix:semicolon
 )brace
@@ -824,9 +849,19 @@ r_int
 r_int
 id|i
 suffix:semicolon
+r_int
+r_int
+id|flags
+suffix:semicolon
 id|qabort
 op_assign
 l_int|0
+suffix:semicolon
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
 suffix:semicolon
 id|cli
 c_func
@@ -1104,9 +1139,10 @@ l_int|3
 )paren
 suffix:semicolon
 multiline_comment|/* select and send command */
-id|sti
+id|restore_flags
 c_func
 (paren
+id|flags
 )paren
 suffix:semicolon
 )brace
@@ -2185,6 +2221,10 @@ op_star
 id|hreg
 suffix:semicolon
 multiline_comment|/* registered host structure */
+r_int
+r_int
+id|flags
+suffix:semicolon
 multiline_comment|/* Qlogic Cards only exist at 0x230 or 0x330 (the chip itself decodes the&n;   address - I check 230 first since MIDI cards are typically at 330&n;   Note that this will not work for 2 Qlogic cards in 1 system.  The&n;   easiest way to do that is to create 2 versions of this file, one for&n;   230 and one for 330.&n;&n;   Alternately, the Scsi_Host structure now stores the i/o port and can&n;   be used to set the port (go through and replace qbase with&n;   (struct Scsi_Cmnd *) cmd-&gt;host-&gt;io_port, or for efficiency, set a local&n;   copy of qbase.  There will also need to be something similar within the&n;   IRQ handlers to sort out which board it came from and thus which port.&n;*/
 r_for
 c_loop
@@ -2202,6 +2242,7 @@ op_add_assign
 l_int|0x100
 )paren
 (brace
+macro_line|#ifndef PCMCIA
 r_if
 c_cond
 (paren
@@ -2217,6 +2258,7 @@ l_int|0x10
 r_continue
 suffix:semicolon
 )brace
+macro_line|#endif&t;&t;&t;
 id|REG1
 suffix:semicolon
 r_if
@@ -2383,6 +2425,12 @@ suffix:semicolon
 macro_line|#endif
 macro_line|#if QL_USE_IRQ
 multiline_comment|/* IRQ probe - toggle pin and check request pending */
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 id|cli
 c_func
 (paren
@@ -2554,12 +2602,14 @@ id|host-&gt;can_queue
 op_assign
 l_int|1
 suffix:semicolon
-id|sti
+id|restore_flags
 c_func
 (paren
+id|flags
 )paren
 suffix:semicolon
 macro_line|#endif
+macro_line|#ifndef PCMCIA
 id|request_region
 c_func
 (paren
@@ -2570,6 +2620,7 @@ comma
 l_string|&quot;qlogic&quot;
 )paren
 suffix:semicolon
+macro_line|#endif
 id|hreg
 op_assign
 id|scsi_register
@@ -2608,13 +2659,17 @@ c_func
 (paren
 id|qinfo
 comma
-l_string|&quot;Qlogic Driver version 0.38a, chip %02X at %03X, IRQ %d&quot;
+l_string|&quot;Qlogic Driver version 0.38b, chip %02X at %03X, IRQ %d, Opts:%d%d&quot;
 comma
 id|qltyp
 comma
 id|qbase
 comma
 id|qlirq
+comma
+id|QL_INT_ACTIVE_HIGH
+comma
+id|QL_TURBO_PDMA
 )paren
 suffix:semicolon
 id|host-&gt;name

@@ -359,7 +359,12 @@ r_void
 id|xd_interrupt_handler
 (paren
 r_int
-id|unused
+id|irq
+comma
+r_struct
+id|pt_regs
+op_star
+id|regs
 )paren
 suffix:semicolon
 r_static

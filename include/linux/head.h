@@ -22,14 +22,6 @@ l_int|256
 )braket
 suffix:semicolon
 r_extern
-r_int
-r_int
-id|swapper_pg_dir
-(braket
-l_int|1024
-)braket
-suffix:semicolon
-r_extern
 id|desc_table
 id|idt
 comma

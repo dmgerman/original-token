@@ -1,12 +1,12 @@
 multiline_comment|/* smc-ultra.c: A SMC Ultra ethernet driver for linux. */
-multiline_comment|/*&n;&t;Written 1993-94 by Donald Becker.&n;&n;&t;Copyright 1993 United States Government as represented by the&n;&t;Director, National Security Agency.&n;&n;&t;This software may be used and distributed according to the terms&n;&t;of the GNU Public License, incorporated herein by reference.&n;&n;&t;The author may be reached as becker@CESDIS.gsfc.nasa.gov, or C/O&n;&t;Center of Excellence in Space Data and Information Sciences&n;&t;&t;Code 930.5, Goddard Space Flight Center, Greenbelt MD 20771&n;&n;&t;This is a driver for the SMC Ultra ethercard.&n;&n;*/
+multiline_comment|/*&n;&t;Written 1993,1994,1995 by Donald Becker.&n;&n;&t;Copyright 1993 United States Government as represented by the&n;&t;Director, National Security Agency.&n;&n;&t;This software may be used and distributed according to the terms&n;&t;of the GNU Public License, incorporated herein by reference.&n;&n;&t;The author may be reached as becker@CESDIS.gsfc.nasa.gov, or C/O&n;&t;Center of Excellence in Space Data and Information Sciences&n;&t;&t;Code 930.5, Goddard Space Flight Center, Greenbelt MD 20771&n;&n;&t;This is a driver for the SMC Ultra and SMC EtherEZ ethercards.&n;&n;&t;This driver uses the cards in the 8390-compatible, shared memory mode.&n;&t;Most of the run-time complexity is handled by the generic code in&n;&t;8390.c.  The code in this file is responsible for&n;&n;&t;&t;ultra_probe()&t; &t;Detecting and initializing the card.&n;&t;&t;ultra_probe1()&t;&n;&n;&t;&t;ultra_open()&t;&t;The card-specific details of starting, stopping&n;&t;&t;ultra_reset_8390()&t;and resetting the 8390 NIC core.&n;&t;&t;ultra_close()&n;&n;&t;&t;ultra_block_input()&t;&t;Routines for reading and writing blocks of&n;&t;&t;ultra_block_output()&t;packet buffer memory.&n;&n;&t;This driver enables the shared memory only when doing the actual data&n;&t;transfers to avoid a bug in early version of the card that corrupted&n;&t;data transferred by a AHA1542.&n;&n;&t;This driver does not support the programmed-I/O data transfer mode of&n;&t;the EtherEZ.  That support (if available) is smc-ez.c.  Nor does it&n;&t;use the non-8390-compatible &quot;Altego&quot; mode. (No support currently planned.)&n;*/
 DECL|variable|version
 r_static
 r_char
 op_star
 id|version
 op_assign
-l_string|&quot;smc-ultra.c:v1.11 11/21/94 Donald Becker (becker@cesdis.gsfc.nasa.gov)&bslash;n&quot;
+l_string|&quot;smc-ultra.c:v1.12 1/18/95 Donald Becker (becker@cesdis.gsfc.nasa.gov)&bslash;n&quot;
 suffix:semicolon
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
@@ -348,7 +348,21 @@ comma
 id|irqreg
 comma
 id|addr
-comma
+suffix:semicolon
+r_int
+r_char
+id|idreg
+op_assign
+id|inb
+c_func
+(paren
+id|ioaddr
+op_plus
+l_int|7
+)paren
+suffix:semicolon
+r_int
+r_char
 id|reg4
 op_assign
 id|inb
@@ -366,19 +380,23 @@ r_if
 c_cond
 (paren
 (paren
-id|inb
-c_func
-(paren
-id|ioaddr
-op_plus
-l_int|7
-)paren
+id|idreg
 op_amp
 l_int|0xF0
 )paren
 op_ne
 l_int|0x20
+multiline_comment|/* SMC Ultra */
+op_logical_and
+(paren
+id|idreg
+op_amp
+l_int|0xF0
 )paren
+op_ne
+l_int|0x40
+)paren
+multiline_comment|/* SMC EtherEZ */
 r_return
 id|ENODEV
 suffix:semicolon
@@ -456,12 +474,29 @@ comma
 l_int|0
 )paren
 suffix:semicolon
+id|model_name
+op_assign
+(paren
+id|idreg
+op_amp
+l_int|0xF0
+)paren
+op_eq
+l_int|0x20
+ques
+c_cond
+l_string|&quot;SMC Ultra&quot;
+suffix:colon
+l_string|&quot;SMC EtherEZ&quot;
+suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;%s: SMC Ultra at %#3x,&quot;
+l_string|&quot;%s: %s at %#3x,&quot;
 comma
 id|dev-&gt;name
+comma
+id|model_name
 comma
 id|ioaddr
 )paren
@@ -564,10 +599,6 @@ op_plus
 l_int|4
 )paren
 suffix:semicolon
-id|model_name
-op_assign
-l_string|&quot;SMC Ultra&quot;
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -657,7 +688,7 @@ op_assign
 l_int|1
 suffix:semicolon
 )brace
-multiline_comment|/* OK, were are certain this is going to work.  Setup the device. */
+multiline_comment|/* OK, we are certain this is going to work.  Setup the device. */
 id|request_region
 c_func
 (paren
@@ -665,7 +696,7 @@ id|ioaddr
 comma
 l_int|32
 comma
-l_string|&quot;smc-ultra&quot;
+id|model_name
 )paren
 suffix:semicolon
 multiline_comment|/* The 8390 isn&squot;t at the base address, so fake the offset */
@@ -898,7 +929,7 @@ id|ei_interrupt
 comma
 l_int|0
 comma
-l_string|&quot;SMC Ultra&quot;
+id|ei_status.name
 )paren
 )paren
 r_return

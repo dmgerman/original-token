@@ -1,6 +1,8 @@
 macro_line|#ifndef _ALPHA_PAGE_H
 DECL|macro|_ALPHA_PAGE_H
 mdefine_line|#define _ALPHA_PAGE_H
+DECL|macro|CONFIG_STRICT_MM_TYPECHECKS
+mdefine_line|#define CONFIG_STRICT_MM_TYPECHECKS
 DECL|macro|invalidate_all
 mdefine_line|#define invalidate_all() &bslash;&n;__asm__ __volatile__( &bslash;&n;&t;&quot;lda $16,-2($31)&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;.long 51&quot; &bslash;&n;&t;: : :&quot;$1&quot;, &quot;$16&quot;, &quot;$17&quot;, &quot;$22&quot;,&quot;$23&quot;,&quot;$24&quot;,&quot;$25&quot;)
 DECL|macro|invalidate
@@ -14,6 +16,7 @@ DECL|macro|PAGE_SIZE
 mdefine_line|#define PAGE_SIZE&t;&t;&t;(1UL &lt;&lt; PAGE_SHIFT)
 DECL|macro|PGDIR_SIZE
 mdefine_line|#define PGDIR_SIZE&t;&t;&t;(1UL &lt;&lt; PGDIR_SHIFT)
+macro_line|#ifdef __KERNEL__
 DECL|macro|PAGE_OFFSET
 mdefine_line|#define PAGE_OFFSET 0xFFFFFC0000000000
 DECL|macro|MAP_NR
@@ -26,37 +29,174 @@ r_int
 r_int
 id|mem_map_t
 suffix:semicolon
-DECL|macro|PAGE_PRESENT
-mdefine_line|#define PAGE_PRESENT&t;0x001
-DECL|macro|PAGE_RW
-mdefine_line|#define PAGE_RW&t;&t;0x002
-DECL|macro|PAGE_USER
-mdefine_line|#define PAGE_USER&t;0x004
-DECL|macro|PAGE_ACCESSED
-mdefine_line|#define PAGE_ACCESSED&t;0x020
-DECL|macro|PAGE_DIRTY
-mdefine_line|#define PAGE_DIRTY&t;0x040
-DECL|macro|PAGE_COW
-mdefine_line|#define PAGE_COW&t;0x200&t;/* implemented in software (one of the AVL bits) */
-DECL|macro|PAGE_PRIVATE
-mdefine_line|#define PAGE_PRIVATE&t;(PAGE_PRESENT | PAGE_RW | PAGE_USER | PAGE_ACCESSED | PAGE_COW)
+macro_line|#ifdef CONFIG_STRICT_MM_TYPECHECKS
+multiline_comment|/*&n; * These are used to make use of C type-checking..&n; */
+DECL|member|pte
+DECL|typedef|pte_t
+r_typedef
+r_struct
+(brace
+r_int
+r_int
+id|pte
+suffix:semicolon
+)brace
+id|pte_t
+suffix:semicolon
+DECL|member|pgd
+DECL|typedef|pgd_t
+r_typedef
+r_struct
+(brace
+r_int
+r_int
+id|pgd
+suffix:semicolon
+)brace
+id|pgd_t
+suffix:semicolon
+DECL|member|pgprot
+DECL|typedef|pgprot_t
+r_typedef
+r_struct
+(brace
+r_int
+r_int
+id|pgprot
+suffix:semicolon
+)brace
+id|pgprot_t
+suffix:semicolon
+DECL|macro|pte_val
+mdefine_line|#define pte_val(x)&t;((x).pte)
+DECL|macro|pgd_val
+mdefine_line|#define pgd_val(x)&t;((x).pgd)
+DECL|macro|pgprot_val
+mdefine_line|#define pgprot_val(x)&t;((x).pgprot)
+DECL|macro|__pte
+mdefine_line|#define __pte(x)&t;((pte_t) { (x) } )
+DECL|macro|__pgd
+mdefine_line|#define __pgd(x)&t;((pgd_t) { (x) } )
+DECL|macro|__pgprot
+mdefine_line|#define __pgprot(x)&t;((pgprot_t) { (x) } )
+macro_line|#else
+multiline_comment|/*&n; * .. while these make it easier on the compiler&n; */
+DECL|typedef|pte_t
+r_typedef
+r_int
+r_int
+id|pte_t
+suffix:semicolon
+DECL|typedef|pgd_t
+r_typedef
+r_int
+r_int
+id|pgd_t
+suffix:semicolon
+DECL|typedef|pgprot_t
+r_typedef
+r_int
+r_int
+id|pgprot_t
+suffix:semicolon
+DECL|macro|pte_val
+mdefine_line|#define pte_val(x)&t;(x)
+DECL|macro|pgd_val
+mdefine_line|#define pgd_val(x)&t;(x)
+DECL|macro|pgprot_val
+mdefine_line|#define pgprot_val(x)&t;(x)
+DECL|macro|__pte
+mdefine_line|#define __pte(x)&t;(x)
+DECL|macro|__pgd
+mdefine_line|#define __pgd(x)&t;(x)
+DECL|macro|__pgprot
+mdefine_line|#define __pgprot(x)&t;(x)
+macro_line|#endif
+multiline_comment|/*&n; * OSF/1 PAL-code-imposed page table bits&n; */
+DECL|macro|_PAGE_VALID
+mdefine_line|#define _PAGE_VALID&t;0x0001
+DECL|macro|_PAGE_FOR
+mdefine_line|#define _PAGE_FOR&t;0x0002&t;/* used for page protection (fault on read) */
+DECL|macro|_PAGE_FOW
+mdefine_line|#define _PAGE_FOW&t;0x0004&t;/* used for page protection (fault on write) */
+DECL|macro|_PAGE_FOE
+mdefine_line|#define _PAGE_FOE&t;0x0008&t;/* used for page protection (fault on exec) */
+DECL|macro|_PAGE_ASM
+mdefine_line|#define _PAGE_ASM&t;0x0010
+DECL|macro|_PAGE_KRE
+mdefine_line|#define _PAGE_KRE&t;0x0100&t;/* xxx - see below on the &quot;accessed&quot; bit */
+DECL|macro|_PAGE_URE
+mdefine_line|#define _PAGE_URE&t;0x0200&t;/* xxx */
+DECL|macro|_PAGE_KWE
+mdefine_line|#define _PAGE_KWE&t;0x1000&t;/* used to do the dirty bit in software */
+DECL|macro|_PAGE_UWE
+mdefine_line|#define _PAGE_UWE&t;0x2000&t;/* used to do the dirty bit in software */
+multiline_comment|/* .. and these are ours ... */
+DECL|macro|_PAGE_COW
+mdefine_line|#define _PAGE_COW&t;0x10000
+DECL|macro|_PAGE_DIRTY
+mdefine_line|#define _PAGE_DIRTY&t;0x20000
+DECL|macro|_PAGE_ACCESSED
+mdefine_line|#define _PAGE_ACCESSED&t;0x40000
+multiline_comment|/*&n; * NOTE! The &quot;accessed&quot; bit isn&squot;t necessarily exact: it can be kept exactly&n; * by software (use the KRE/URE/KWE/UWE bits appropritely), but I&squot;ll fake it.&n; * Under Linux/AXP, the &quot;accessed&quot; bit just means &quot;read&quot;, and I&squot;ll just use&n; * the KRE/URE bits to watch for it. That way we don&squot;t need to overload the&n; * KWE/UWE bits with both handling dirty and accessed.&n; *&n; * Note that the kernel uses the accessed bit just to check whether to page&n; * out a page or not, so it doesn&squot;t have to be exact anyway.&n; */
+DECL|macro|__DIRTY_BITS
+mdefine_line|#define __DIRTY_BITS&t;(_PAGE_DIRTY | _PAGE_KWE | _PAGE_UWE)
+DECL|macro|__ACCESS_BITS
+mdefine_line|#define __ACCESS_BITS&t;(_PAGE_ACCESSED | _PAGE_KRE | _PAGE_URE)
+DECL|macro|_PFN_MASK
+mdefine_line|#define _PFN_MASK&t;0xFFFFFFFF00000000
+DECL|macro|_PAGE_TABLE
+mdefine_line|#define _PAGE_TABLE&t;(_PAGE_VALID | __DIRTY_BITS | __ACCESS_BITS)
+DECL|macro|_PAGE_CHG_MASK
+mdefine_line|#define _PAGE_CHG_MASK&t;(_PFN_MASK | __DIRTY_BITS | __ACCESS_BITS)
+multiline_comment|/*&n; * All the normal masks have the &quot;page accessed&quot; bits on, as any time they are used,&n; * the page is accessed. They are cleared only by the page-out routines&n; */
+DECL|macro|PAGE_NONE
+mdefine_line|#define PAGE_NONE&t;__pgprot(_PAGE_VALID | __ACCESS_BITS | _PAGE_FOR | _PAGE_FOW | _PAGE_FOE)
 DECL|macro|PAGE_SHARED
-mdefine_line|#define PAGE_SHARED&t;(PAGE_PRESENT | PAGE_RW | PAGE_USER | PAGE_ACCESSED)
+mdefine_line|#define PAGE_SHARED&t;__pgprot(_PAGE_VALID | __ACCESS_BITS)
 DECL|macro|PAGE_COPY
-mdefine_line|#define PAGE_COPY&t;(PAGE_PRESENT | PAGE_USER | PAGE_ACCESSED | PAGE_COW)
+mdefine_line|#define PAGE_COPY&t;__pgprot(_PAGE_VALID | __ACCESS_BITS | _PAGE_FOW | _PAGE_COW)
 DECL|macro|PAGE_READONLY
-mdefine_line|#define PAGE_READONLY&t;(PAGE_PRESENT | PAGE_USER | PAGE_ACCESSED)
-DECL|macro|PAGE_EXECONLY
-mdefine_line|#define PAGE_EXECONLY&t;(PAGE_PRESENT | PAGE_USER | PAGE_ACCESSED)
-DECL|macro|PAGE_TABLE
-mdefine_line|#define PAGE_TABLE&t;(PAGE_PRESENT | PAGE_RW | PAGE_USER | PAGE_ACCESSED)
-DECL|macro|PAGE_CHG_MASK
-mdefine_line|#define PAGE_CHG_MASK (PAGE_MASK | PAGE_ACCESSED | PAGE_DIRTY)
-macro_line|#ifdef __KERNEL__
+mdefine_line|#define PAGE_READONLY&t;__pgprot(_PAGE_VALID | __ACCESS_BITS | _PAGE_FOW)
+DECL|macro|PAGE_KERNEL
+mdefine_line|#define PAGE_KERNEL&t;__pgprot(_PAGE_VALID | _PAGE_ASM | __ACCESS_BITS | __DIRTY_BITS)
+DECL|macro|_PAGE_NORMAL
+mdefine_line|#define _PAGE_NORMAL(x) __pgprot(_PAGE_VALID | __ACCESS_BITS | (x))
+DECL|macro|__P000
+mdefine_line|#define __P000&t;_PAGE_NORMAL(_PAGE_COW | _PAGE_FOR | _PAGE_FOW | _PAGE_FOE)
+DECL|macro|__P001
+mdefine_line|#define __P001&t;_PAGE_NORMAL(_PAGE_COW | _PAGE_FOW | _PAGE_FOE)
+DECL|macro|__P010
+mdefine_line|#define __P010&t;_PAGE_NORMAL(_PAGE_COW | _PAGE_FOR | _PAGE_FOE)
+DECL|macro|__P011
+mdefine_line|#define __P011&t;_PAGE_NORMAL(_PAGE_COW | _PAGE_FOE)
+DECL|macro|__P100
+mdefine_line|#define __P100&t;_PAGE_NORMAL(_PAGE_COW | _PAGE_FOR | _PAGE_FOW)
+DECL|macro|__P101
+mdefine_line|#define __P101&t;_PAGE_NORMAL(_PAGE_COW | _PAGE_FOW)
+DECL|macro|__P110
+mdefine_line|#define __P110&t;_PAGE_NORMAL(_PAGE_COW | _PAGE_FOR)
+DECL|macro|__P111
+mdefine_line|#define __P111&t;_PAGE_NORMAL(_PAGE_COW)
+DECL|macro|__S000
+mdefine_line|#define __S000&t;_PAGE_NORMAL(_PAGE_FOR | _PAGE_FOW | _PAGE_FOE)
+DECL|macro|__S001
+mdefine_line|#define __S001&t;_PAGE_NORMAL(_PAGE_FOW | _PAGE_FOE)
+DECL|macro|__S010
+mdefine_line|#define __S010&t;_PAGE_NORMAL(_PAGE_FOR | _PAGE_FOE)
+DECL|macro|__S011
+mdefine_line|#define __S011&t;_PAGE_NORMAL(_PAGE_FOE)
+DECL|macro|__S100
+mdefine_line|#define __S100&t;_PAGE_NORMAL(_PAGE_FOR | _PAGE_FOW)
+DECL|macro|__S101
+mdefine_line|#define __S101&t;_PAGE_NORMAL(_PAGE_FOW)
+DECL|macro|__S110
+mdefine_line|#define __S110&t;_PAGE_NORMAL(_PAGE_FOR)
+DECL|macro|__S111
+mdefine_line|#define __S111&t;_PAGE_NORMAL(0)
 multiline_comment|/*&n; * BAD_PAGETABLE is used when we need a bogus page-table, while&n; * BAD_PAGE is used for a bogus page.&n; *&n; * ZERO_PAGE is a global shared page that is always zero: used&n; * for zero-mapped memory areas etc..&n; */
 r_extern
-r_int
-r_int
+id|pte_t
 id|__bad_page
 c_func
 (paren
@@ -64,8 +204,8 @@ r_void
 )paren
 suffix:semicolon
 r_extern
-r_int
-r_int
+id|pte_t
+op_star
 id|__bad_pagetable
 c_func
 (paren
@@ -103,13 +243,12 @@ multiline_comment|/* to align the pointer to a pointer address */
 DECL|macro|PTR_MASK
 mdefine_line|#define PTR_MASK&t;&t;&t;(~(sizeof(void*)-1))
 multiline_comment|/* sizeof(void*)==1&lt;&lt;SIZEOF_PTR_LOG2 */
-multiline_comment|/* 64-bit machines, beware!  SRB. */
 DECL|macro|SIZEOF_PTR_LOG2
 mdefine_line|#define SIZEOF_PTR_LOG2&t;&t;&t;3
 multiline_comment|/* to find an entry in a page-table-directory */
 multiline_comment|/*&n; * XXXXX This isn&squot;t right: we shouldn&squot;t use the ptbr, but the L2 pointer.&n; * This is just for getting it through the compiler right now&n; */
 DECL|macro|PAGE_DIR_OFFSET
-mdefine_line|#define PAGE_DIR_OFFSET(tsk,address) &bslash;&n;((unsigned long *) ((tsk)-&gt;tss.ptbr + ((((unsigned long)(address)) &gt;&gt; 21) &amp; PTR_MASK &amp; ~PAGE_MASK)))
+mdefine_line|#define PAGE_DIR_OFFSET(tsk,address) &bslash;&n;((pgd_t *) ((tsk)-&gt;tss.ptbr + ((((unsigned long)(address)) &gt;&gt; 21) &amp; PTR_MASK &amp; ~PAGE_MASK)))
 multiline_comment|/* to find an entry in a page-table */
 DECL|macro|PAGE_PTR
 mdefine_line|#define PAGE_PTR(address)&t;&t;&bslash;&n;  ((unsigned long)(address)&gt;&gt;(PAGE_SHIFT-SIZEOF_PTR_LOG2)&amp;PTR_MASK&amp;~PAGE_MASK)
@@ -120,6 +259,777 @@ multiline_comment|/* to set the page-dir */
 multiline_comment|/*&n; * XXXXX This isn&squot;t right: we shouldn&squot;t use the ptbr, but the L2 pointer.&n; * This is just for getting it through the compiler right now&n; */
 DECL|macro|SET_PAGE_DIR
 mdefine_line|#define SET_PAGE_DIR(tsk,pgdir) &bslash;&n;do { &bslash;&n;&t;(tsk)-&gt;tss.ptbr = (unsigned long) (pgdir); &bslash;&n;&t;if ((tsk) == current) &bslash;&n;&t;&t;invalidate(); &bslash;&n;} while (0)
+r_extern
+r_int
+r_int
+id|high_memory
+suffix:semicolon
+multiline_comment|/*&n; * Conversion functions: convert a page and protection to a page entry,&n; * and a page entry and page directory to the page they refer to.&n; */
+DECL|function|mk_pte
+r_extern
+r_inline
+id|pte_t
+id|mk_pte
+c_func
+(paren
+r_int
+r_int
+id|page
+comma
+id|pgprot_t
+id|pgprot
+)paren
+(brace
+id|pte_t
+id|pte
+suffix:semicolon
+id|pte_val
+c_func
+(paren
+id|pte
+)paren
+op_assign
+(paren
+id|page
+op_lshift
+(paren
+l_int|32
+op_minus
+id|PAGE_SHIFT
+)paren
+)paren
+op_or
+id|pgprot_val
+c_func
+(paren
+id|pgprot
+)paren
+suffix:semicolon
+r_return
+id|pte
+suffix:semicolon
+)brace
+DECL|function|pte_modify
+r_extern
+r_inline
+id|pte_t
+id|pte_modify
+c_func
+(paren
+id|pte_t
+id|pte
+comma
+id|pgprot_t
+id|newprot
+)paren
+(brace
+id|pte_val
+c_func
+(paren
+id|pte
+)paren
+op_assign
+(paren
+id|pte_val
+c_func
+(paren
+id|pte
+)paren
+op_amp
+id|_PAGE_CHG_MASK
+)paren
+op_or
+id|pgprot_val
+c_func
+(paren
+id|newprot
+)paren
+suffix:semicolon
+r_return
+id|pte
+suffix:semicolon
+)brace
+DECL|function|pgd_set
+r_extern
+r_inline
+r_void
+id|pgd_set
+c_func
+(paren
+id|pgd_t
+op_star
+id|pgdp
+comma
+id|pte_t
+op_star
+id|ptep
+)paren
+(brace
+id|pgd_val
+c_func
+(paren
+op_star
+id|pgdp
+)paren
+op_assign
+id|_PAGE_TABLE
+op_or
+(paren
+(paren
+(paren
+r_int
+r_int
+)paren
+id|ptep
+)paren
+op_lshift
+(paren
+l_int|32
+op_minus
+id|PAGE_SHIFT
+)paren
+)paren
+suffix:semicolon
+)brace
+DECL|function|pte_page
+r_extern
+r_inline
+r_int
+r_int
+id|pte_page
+c_func
+(paren
+id|pte_t
+id|pte
+)paren
+(brace
+r_return
+(paren
+id|pte_val
+c_func
+(paren
+id|pte
+)paren
+op_amp
+id|_PFN_MASK
+)paren
+op_rshift
+(paren
+l_int|32
+op_minus
+id|PAGE_SHIFT
+)paren
+suffix:semicolon
+)brace
+DECL|function|pgd_page
+r_extern
+r_inline
+r_int
+r_int
+id|pgd_page
+c_func
+(paren
+id|pgd_t
+id|pgd
+)paren
+(brace
+r_return
+(paren
+id|pgd_val
+c_func
+(paren
+id|pgd
+)paren
+op_amp
+id|_PFN_MASK
+)paren
+op_rshift
+(paren
+l_int|32
+op_minus
+id|PAGE_SHIFT
+)paren
+suffix:semicolon
+)brace
+DECL|function|pte_none
+r_extern
+r_inline
+r_int
+id|pte_none
+c_func
+(paren
+id|pte_t
+id|pte
+)paren
+(brace
+r_return
+op_logical_neg
+id|pte_val
+c_func
+(paren
+id|pte
+)paren
+suffix:semicolon
+)brace
+DECL|function|pte_present
+r_extern
+r_inline
+r_int
+id|pte_present
+c_func
+(paren
+id|pte_t
+id|pte
+)paren
+(brace
+r_return
+id|pte_val
+c_func
+(paren
+id|pte
+)paren
+op_amp
+id|_PAGE_VALID
+suffix:semicolon
+)brace
+DECL|function|pte_clear
+r_extern
+r_inline
+r_void
+id|pte_clear
+c_func
+(paren
+id|pte_t
+op_star
+id|ptep
+)paren
+(brace
+id|pte_val
+c_func
+(paren
+op_star
+id|ptep
+)paren
+op_assign
+l_int|0
+suffix:semicolon
+)brace
+DECL|function|pgd_none
+r_extern
+r_inline
+r_int
+id|pgd_none
+c_func
+(paren
+id|pgd_t
+id|pgd
+)paren
+(brace
+r_return
+op_logical_neg
+id|pgd_val
+c_func
+(paren
+id|pgd
+)paren
+suffix:semicolon
+)brace
+DECL|function|pgd_bad
+r_extern
+r_inline
+r_int
+id|pgd_bad
+c_func
+(paren
+id|pgd_t
+id|pgd
+)paren
+(brace
+r_return
+(paren
+id|pgd_val
+c_func
+(paren
+id|pgd
+)paren
+op_amp
+op_complement
+id|_PFN_MASK
+)paren
+op_ne
+id|_PAGE_TABLE
+op_logical_or
+id|pgd_page
+c_func
+(paren
+id|pgd
+)paren
+OG
+id|high_memory
+suffix:semicolon
+)brace
+DECL|function|pgd_present
+r_extern
+r_inline
+r_int
+id|pgd_present
+c_func
+(paren
+id|pgd_t
+id|pgd
+)paren
+(brace
+r_return
+id|pgd_val
+c_func
+(paren
+id|pgd
+)paren
+op_amp
+id|_PAGE_VALID
+suffix:semicolon
+)brace
+DECL|function|pgd_clear
+r_extern
+r_inline
+r_void
+id|pgd_clear
+c_func
+(paren
+id|pgd_t
+op_star
+id|pgdp
+)paren
+(brace
+id|pgd_val
+c_func
+(paren
+op_star
+id|pgdp
+)paren
+op_assign
+l_int|0
+suffix:semicolon
+)brace
+multiline_comment|/*&n; * The following only work if pte_present() is true.&n; * Undefined behaviour if not..&n; */
+DECL|function|pte_read
+r_extern
+r_inline
+r_int
+id|pte_read
+c_func
+(paren
+id|pte_t
+id|pte
+)paren
+(brace
+r_return
+op_logical_neg
+(paren
+id|pte_val
+c_func
+(paren
+id|pte
+)paren
+op_amp
+id|_PAGE_FOR
+)paren
+suffix:semicolon
+)brace
+DECL|function|pte_write
+r_extern
+r_inline
+r_int
+id|pte_write
+c_func
+(paren
+id|pte_t
+id|pte
+)paren
+(brace
+r_return
+op_logical_neg
+(paren
+id|pte_val
+c_func
+(paren
+id|pte
+)paren
+op_amp
+id|_PAGE_FOW
+)paren
+suffix:semicolon
+)brace
+DECL|function|pte_exec
+r_extern
+r_inline
+r_int
+id|pte_exec
+c_func
+(paren
+id|pte_t
+id|pte
+)paren
+(brace
+r_return
+op_logical_neg
+(paren
+id|pte_val
+c_func
+(paren
+id|pte
+)paren
+op_amp
+id|_PAGE_FOE
+)paren
+suffix:semicolon
+)brace
+DECL|function|pte_dirty
+r_extern
+r_inline
+r_int
+id|pte_dirty
+c_func
+(paren
+id|pte_t
+id|pte
+)paren
+(brace
+r_return
+id|pte_val
+c_func
+(paren
+id|pte
+)paren
+op_amp
+id|_PAGE_DIRTY
+suffix:semicolon
+)brace
+DECL|function|pte_young
+r_extern
+r_inline
+r_int
+id|pte_young
+c_func
+(paren
+id|pte_t
+id|pte
+)paren
+(brace
+r_return
+id|pte_val
+c_func
+(paren
+id|pte
+)paren
+op_amp
+id|_PAGE_ACCESSED
+suffix:semicolon
+)brace
+DECL|function|pte_cow
+r_extern
+r_inline
+r_int
+id|pte_cow
+c_func
+(paren
+id|pte_t
+id|pte
+)paren
+(brace
+r_return
+id|pte_val
+c_func
+(paren
+id|pte
+)paren
+op_amp
+id|_PAGE_COW
+suffix:semicolon
+)brace
+DECL|function|pte_wrprotect
+r_extern
+r_inline
+id|pte_t
+id|pte_wrprotect
+c_func
+(paren
+id|pte_t
+id|pte
+)paren
+(brace
+id|pte_val
+c_func
+(paren
+id|pte
+)paren
+op_or_assign
+id|_PAGE_FOW
+suffix:semicolon
+r_return
+id|pte
+suffix:semicolon
+)brace
+DECL|function|pte_rdprotect
+r_extern
+r_inline
+id|pte_t
+id|pte_rdprotect
+c_func
+(paren
+id|pte_t
+id|pte
+)paren
+(brace
+id|pte_val
+c_func
+(paren
+id|pte
+)paren
+op_or_assign
+id|_PAGE_FOR
+suffix:semicolon
+r_return
+id|pte
+suffix:semicolon
+)brace
+DECL|function|pte_exprotect
+r_extern
+r_inline
+id|pte_t
+id|pte_exprotect
+c_func
+(paren
+id|pte_t
+id|pte
+)paren
+(brace
+id|pte_val
+c_func
+(paren
+id|pte
+)paren
+op_or_assign
+id|_PAGE_FOE
+suffix:semicolon
+r_return
+id|pte
+suffix:semicolon
+)brace
+DECL|function|pte_mkclean
+r_extern
+r_inline
+id|pte_t
+id|pte_mkclean
+c_func
+(paren
+id|pte_t
+id|pte
+)paren
+(brace
+id|pte_val
+c_func
+(paren
+id|pte
+)paren
+op_and_assign
+op_complement
+(paren
+id|__DIRTY_BITS
+)paren
+suffix:semicolon
+r_return
+id|pte
+suffix:semicolon
+)brace
+DECL|function|pte_mkold
+r_extern
+r_inline
+id|pte_t
+id|pte_mkold
+c_func
+(paren
+id|pte_t
+id|pte
+)paren
+(brace
+id|pte_val
+c_func
+(paren
+id|pte
+)paren
+op_and_assign
+op_complement
+(paren
+id|__ACCESS_BITS
+)paren
+suffix:semicolon
+r_return
+id|pte
+suffix:semicolon
+)brace
+DECL|function|pte_uncow
+r_extern
+r_inline
+id|pte_t
+id|pte_uncow
+c_func
+(paren
+id|pte_t
+id|pte
+)paren
+(brace
+id|pte_val
+c_func
+(paren
+id|pte
+)paren
+op_and_assign
+op_complement
+id|_PAGE_COW
+suffix:semicolon
+r_return
+id|pte
+suffix:semicolon
+)brace
+DECL|function|pte_mkwrite
+r_extern
+r_inline
+id|pte_t
+id|pte_mkwrite
+c_func
+(paren
+id|pte_t
+id|pte
+)paren
+(brace
+id|pte_val
+c_func
+(paren
+id|pte
+)paren
+op_and_assign
+id|_PAGE_FOW
+suffix:semicolon
+r_return
+id|pte
+suffix:semicolon
+)brace
+DECL|function|pte_mkread
+r_extern
+r_inline
+id|pte_t
+id|pte_mkread
+c_func
+(paren
+id|pte_t
+id|pte
+)paren
+(brace
+id|pte_val
+c_func
+(paren
+id|pte
+)paren
+op_and_assign
+id|_PAGE_FOR
+suffix:semicolon
+r_return
+id|pte
+suffix:semicolon
+)brace
+DECL|function|pte_mkexec
+r_extern
+r_inline
+id|pte_t
+id|pte_mkexec
+c_func
+(paren
+id|pte_t
+id|pte
+)paren
+(brace
+id|pte_val
+c_func
+(paren
+id|pte
+)paren
+op_and_assign
+id|_PAGE_FOE
+suffix:semicolon
+r_return
+id|pte
+suffix:semicolon
+)brace
+DECL|function|pte_mkdirty
+r_extern
+r_inline
+id|pte_t
+id|pte_mkdirty
+c_func
+(paren
+id|pte_t
+id|pte
+)paren
+(brace
+id|pte_val
+c_func
+(paren
+id|pte
+)paren
+op_or_assign
+id|__DIRTY_BITS
+suffix:semicolon
+r_return
+id|pte
+suffix:semicolon
+)brace
+DECL|function|pte_mkyoung
+r_extern
+r_inline
+id|pte_t
+id|pte_mkyoung
+c_func
+(paren
+id|pte_t
+id|pte
+)paren
+(brace
+id|pte_val
+c_func
+(paren
+id|pte
+)paren
+op_or_assign
+id|__ACCESS_BITS
+suffix:semicolon
+r_return
+id|pte
+suffix:semicolon
+)brace
+DECL|function|pte_mkcow
+r_extern
+r_inline
+id|pte_t
+id|pte_mkcow
+c_func
+(paren
+id|pte_t
+id|pte
+)paren
+(brace
+id|pte_val
+c_func
+(paren
+id|pte
+)paren
+op_or_assign
+id|_PAGE_COW
+suffix:semicolon
+r_return
+id|pte
+suffix:semicolon
+)brace
 macro_line|#endif /* __KERNEL__ */
 macro_line|#endif /* _ALPHA_PAGE_H */
 eof

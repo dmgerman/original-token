@@ -27,7 +27,7 @@ comma
 r_int
 )paren
 suffix:semicolon
-multiline_comment|/*&n; * This routine handles page faults.  It determines the address,&n; * and the problem, and then passes it off to one of the appropriate&n; * routines.&n; */
+multiline_comment|/*&n; * This routine handles page faults.  It determines the address,&n; * and the problem, and then passes it off to one of the appropriate&n; * routines.&n; *&n; * error_code:&n; *&t;bit 0 == 0 means no page found, 1 means protection fault&n; *&t;bit 1 == 0 means read, 1 means write&n; *&t;bit 2 == 0 means kernel, 1 means user-mode&n; */
 DECL|function|do_page_fault
 id|asmlinkage
 r_void
@@ -149,6 +149,61 @@ suffix:semicolon
 multiline_comment|/*&n; * Ok, we have a good vm_area for this memory access, so&n; * we can handle it..&n; */
 id|good_area
 suffix:colon
+multiline_comment|/*&n;&t; * was it a write?&n;&t; */
+r_if
+c_cond
+(paren
+id|error_code
+op_amp
+l_int|2
+)paren
+(brace
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|vma-&gt;vm_flags
+op_amp
+id|VM_WRITE
+)paren
+)paren
+r_goto
+id|bad_area
+suffix:semicolon
+)brace
+r_else
+(brace
+multiline_comment|/* read with protection fault? */
+r_if
+c_cond
+(paren
+id|error_code
+op_amp
+l_int|1
+)paren
+r_goto
+id|bad_area
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|vma-&gt;vm_flags
+op_amp
+(paren
+id|VM_READ
+op_or
+id|VM_EXEC
+)paren
+)paren
+)paren
+r_goto
+id|bad_area
+suffix:semicolon
+)brace
+multiline_comment|/*&n;&t; * Did it hit the DOS screen memory VA from vm86 mode?&n;&t; */
 r_if
 c_cond
 (paren
@@ -186,41 +241,11 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
-(paren
-id|vma-&gt;vm_page_prot
-op_amp
-id|PAGE_USER
-)paren
-)paren
-r_goto
-id|bad_area
-suffix:semicolon
-r_if
-c_cond
-(paren
 id|error_code
 op_amp
-id|PAGE_PRESENT
+l_int|1
 )paren
 (brace
-r_if
-c_cond
-(paren
-op_logical_neg
-(paren
-id|vma-&gt;vm_page_prot
-op_amp
-(paren
-id|PAGE_RW
-op_or
-id|PAGE_COW
-)paren
-)paren
-)paren
-r_goto
-id|bad_area
-suffix:semicolon
 macro_line|#ifdef CONFIG_TEST_VERIFY_AREA
 r_if
 c_cond
@@ -247,7 +272,7 @@ id|address
 comma
 id|error_code
 op_amp
-id|PAGE_RW
+l_int|2
 )paren
 suffix:semicolon
 r_return
@@ -262,7 +287,7 @@ id|address
 comma
 id|error_code
 op_amp
-id|PAGE_RW
+l_int|2
 )paren
 suffix:semicolon
 r_return
@@ -275,7 +300,7 @@ c_cond
 (paren
 id|error_code
 op_amp
-id|PAGE_USER
+l_int|4
 )paren
 (brace
 id|current-&gt;tss.cr2
@@ -303,7 +328,7 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Oops. The kernel tried to access some bad page. We&squot;ll have to&n; * terminate things with extreme prejudice.&n; */
+multiline_comment|/*&n; * Oops. The kernel tried to access some bad page. We&squot;ll have to&n; * terminate things with extreme prejudice.&n; *&n; * First we check if it was the bootup rw-test, though..&n; */
 r_if
 c_cond
 (paren
@@ -318,7 +343,7 @@ op_logical_and
 (paren
 id|error_code
 op_amp
-id|PAGE_PRESENT
+l_int|1
 )paren
 )paren
 (brace
@@ -331,7 +356,17 @@ id|pg0
 l_int|0
 )braket
 op_assign
+id|pte_val
+c_func
+(paren
+id|mk_pte
+c_func
+(paren
+l_int|0
+comma
 id|PAGE_SHARED
+)paren
+)paren
 suffix:semicolon
 id|invalidate
 c_func
@@ -375,7 +410,17 @@ id|pg0
 l_int|0
 )braket
 op_assign
+id|pte_val
+c_func
+(paren
+id|mk_pte
+c_func
+(paren
+l_int|0
+comma
 id|PAGE_SHARED
+)paren
+)paren
 suffix:semicolon
 )brace
 r_else
@@ -446,7 +491,7 @@ c_cond
 (paren
 id|page
 op_amp
-id|PAGE_PRESENT
+l_int|1
 )paren
 (brace
 id|page

@@ -1,12 +1,12 @@
 multiline_comment|/* lance.c: An AMD LANCE ethernet driver for linux. */
-multiline_comment|/*&n;&t;Written 1993-94 by Donald Becker.&n;&n;&t;Copyright 1993 United States Government as represented by the&n;&t;Director, National Security Agency.&n;&t;This software may be used and distributed according to the terms&n;&t;of the GNU Public License, incorporated herein by reference.&n;&n;&t;This driver is for the Allied Telesis AT1500 and HP J2405A, and should work&n;&t;with most other LANCE-based bus-master (NE2100 clone) ethercards.&n;&n;&t;The author may be reached as becker@CESDIS.gsfc.nasa.gov, or C/O&n;&t;Center of Excellence in Space Data and Information Sciences&n;&t;   Code 930.5, Goddard Space Flight Center, Greenbelt MD 20771&n;*/
+multiline_comment|/*&n;&t;Written 1993,1994,1995 by Donald Becker.&n;&n;&t;Copyright 1993 United States Government as represented by the&n;&t;Director, National Security Agency.&n;&t;This software may be used and distributed according to the terms&n;&t;of the GNU Public License, incorporated herein by reference.&n;&n;&t;This driver is for the Allied Telesis AT1500 and HP J2405A, and should work&n;&t;with most other LANCE-based bus-master (NE2100 clone) ethercards.&n;&n;&t;The author may be reached as becker@CESDIS.gsfc.nasa.gov, or C/O&n;&t;Center of Excellence in Space Data and Information Sciences&n;&t;   Code 930.5, Goddard Space Flight Center, Greenbelt MD 20771&n;*/
 DECL|variable|version
 r_static
 r_char
 op_star
 id|version
 op_assign
-l_string|&quot;lance.c:v1.06 11/29/94 becker@cesdis.gsfc.nasa.gov&bslash;n&quot;
+l_string|&quot;lance.c:v1.07 1/18/95 becker@cesdis.gsfc.nasa.gov&bslash;n&quot;
 suffix:semicolon
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -227,12 +227,15 @@ DECL|struct|lance_private
 r_struct
 id|lance_private
 (brace
-DECL|member|devname
+DECL|member|name
 r_char
-id|devname
-(braket
-l_int|8
-)braket
+op_star
+id|name
+suffix:semicolon
+DECL|member|pad
+r_void
+op_star
+id|pad
 suffix:semicolon
 multiline_comment|/* The Tx and Rx ring entries must aligned on 8-byte boundaries. */
 DECL|member|rx_ring
@@ -630,6 +633,10 @@ r_int
 r_int
 id|pci_ioaddr
 suffix:semicolon
+r_int
+r_int
+id|pci_command
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -684,6 +691,54 @@ op_and_assign
 op_complement
 l_int|3
 suffix:semicolon
+multiline_comment|/* PCI Spec 2.1 states that it is either the driver or PCI card&squot;s&n;&t; &t;&t; * responsibility to set the PCI Master Enable Bit if needed.&n;&t;&t;&t; *&t;(From Mark Stockton &lt;marks@schooner.sys.hou.compaq.com&gt;)&n;&t;&t;&t; */
+id|pcibios_read_config_word
+c_func
+(paren
+id|pci_bus
+comma
+id|pci_device_fn
+comma
+id|PCI_COMMAND
+comma
+op_amp
+id|pci_command
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|pci_command
+op_amp
+id|PCI_COMMAND_MASTER
+)paren
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;PCI Master Bit has not been set. Setting...&bslash;n&quot;
+)paren
+suffix:semicolon
+id|pci_command
+op_or_assign
+id|PCI_COMMAND_MASTER
+suffix:semicolon
+id|pcibios_write_config_word
+c_func
+(paren
+id|pci_bus
+comma
+id|pci_device_fn
+comma
+id|PCI_COMMAND
+comma
+id|pci_command
+)paren
+suffix:semicolon
+)brace
 id|printk
 c_func
 (paren
@@ -817,6 +872,10 @@ comma
 id|reset_val
 comma
 id|lance_version
+suffix:semicolon
+r_char
+op_star
+id|chipname
 suffix:semicolon
 multiline_comment|/* Flags for specific chips or boards. */
 r_int
@@ -1180,6 +1239,15 @@ op_amp
 id|mem_start
 )paren
 suffix:semicolon
+id|chipname
+op_assign
+id|chip_table
+(braket
+id|lance_version
+)braket
+dot
+id|name
+suffix:semicolon
 id|printk
 c_func
 (paren
@@ -1187,12 +1255,7 @@ l_string|&quot;%s: %s at %#3x,&quot;
 comma
 id|dev-&gt;name
 comma
-id|chip_table
-(braket
-id|lance_version
-)braket
-dot
-id|name
+id|chipname
 comma
 id|ioaddr
 )paren
@@ -1242,7 +1305,12 @@ id|ioaddr
 comma
 id|LANCE_TOTAL_SIZE
 comma
-l_string|&quot;lance&quot;
+id|chip_table
+(braket
+id|lance_version
+)braket
+dot
+id|name
 )paren
 suffix:semicolon
 multiline_comment|/* Make certain the data structures used by the LANCE are aligned. */
@@ -1274,6 +1342,10 @@ id|lance_private
 op_star
 )paren
 id|dev-&gt;priv
+suffix:semicolon
+id|lp-&gt;name
+op_assign
+id|chipname
 suffix:semicolon
 id|lp-&gt;rx_buffs
 op_assign
@@ -1904,7 +1976,7 @@ c_func
 (paren
 id|dev-&gt;dma
 comma
-l_string|&quot;lance&quot;
+id|chipname
 )paren
 )paren
 (brace
@@ -2007,7 +2079,7 @@ c_func
 (paren
 id|dma
 comma
-l_string|&quot;lance&quot;
+id|chipname
 )paren
 )paren
 r_continue
@@ -2259,7 +2331,7 @@ id|lance_interrupt
 comma
 l_int|0
 comma
-l_string|&quot;lance&quot;
+id|lp-&gt;name
 )paren
 )paren
 (brace
@@ -2533,10 +2605,11 @@ l_int|0x0100
 )paren
 r_break
 suffix:semicolon
+multiline_comment|/* &n;&t; * We used to clear the InitDone bit, 0x0100, here but Mark Stockton&n;&t; * reports that doing so triggers a bug in the &squot;974.&n;&t; */
 id|outw
 c_func
 (paren
-l_int|0x0142
+l_int|0x0042
 comma
 id|ioaddr
 op_plus

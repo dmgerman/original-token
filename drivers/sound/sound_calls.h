@@ -1627,6 +1627,11 @@ id|ad1848_interrupt
 (paren
 r_int
 id|dev
+comma
+r_struct
+id|pt_regs
+op_star
+id|regs
 )paren
 suffix:semicolon
 r_int

@@ -727,26 +727,6 @@ id|opt
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef CONFIG_IP_FIREWALL
-r_if
-c_cond
-(paren
-op_logical_neg
-id|ip_fw_chk
-c_func
-(paren
-id|iph
-comma
-id|ip_fw_blk_chain
-)paren
-)paren
-(brace
-r_return
-op_minus
-id|EPERM
-suffix:semicolon
-)brace
-macro_line|#endif&t;&t;
 r_return
 l_int|20
 op_plus

@@ -1,4 +1,4 @@
-multiline_comment|/* aha152x.c -- Adaptec AHA-152x driver&n; * Author: Juergen E. Fischer, fischer@server.et-inf.fho-emden.de&n; * Copyright 1993, 1994 Juergen E. Fischer&n; *&n; *&n; * This driver is based on&n; *   fdomain.c -- Future Domain TMC-16x0 driver&n; * which is&n; *   Copyright 1992, 1993 Rickard E. Faith (faith@cs.unc.edu)&n; *&n;&n; * This program is free software; you can redistribute it and/or modify it&n; * under the terms of the GNU General Public License as published by the&n; * Free Software Foundation; either version 2, or (at your option) any&n; * later version.&n;&n; * This program is distributed in the hope that it will be useful, but&n; * WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU&n; * General Public License for more details.&n; &n; *&n; * $Id: aha152x.c,v 1.6 1994/11/24 20:35:27 root Exp $&n; *&n;&n; * $Log: aha152x.c,v $&n; * Revision 1.6  1994/11/24  20:35:27  root&n; * - problem with odd number of bytes in fifo fixed&n; *&n; * Revision 1.5  1994/10/30  14:39:56  root&n; * - abort code fixed&n; * - debugging improved&n; *&n; * Revision 1.4  1994/09/12  11:33:01  root&n; * - irqaction to request_irq&n; * - abortion updated&n; *&n; * Revision 1.3  1994/08/04  13:53:05  root&n; * - updates for mid-level-driver changes&n; * - accept unexpected BUSFREE phase as error condition&n; * - parity check now configurable&n; *&n; * Revision 1.2  1994/07/03  12:56:36  root&n; * - cleaned up debugging code&n; * - more tweaking on reset delays&n; * - updated abort/reset code (pretty untested...)&n; *&n; * Revision 1.1  1994/05/28  21:18:49  root&n; * - update for mid-level interface change (abort-reset)&n; * - delays after resets adjusted for some slow devices&n; *&n; * Revision 1.0  1994/03/25  12:52:00  root&n; * - Fixed &quot;more data than expected&quot; problem&n; * - added new BIOS signatures&n; *&n; * Revision 0.102  1994/01/31  20:44:12  root&n; * - minor changes in insw/outsw handling&n; *&n; * Revision 0.101  1993/12/13  01:16:27  root&n; * - fixed STATUS phase (non-GOOD stati were dropped sometimes;&n; *   fixes problems with CD-ROM sector size detection &amp; media change)&n; *&n; * Revision 0.100  1993/12/10  16:58:47  root&n; * - fix for unsuccessful selections in case of non-continuous id assignments&n; *   on the scsi bus.&n; *&n; * Revision 0.99  1993/10/24  16:19:59  root&n; * - fixed DATA IN (rare read errors gone)&n; *&n; * Revision 0.98  1993/10/17  12:54:44  root&n; * - fixed some recent fixes (shame on me)&n; * - moved initialization of scratch area to aha152x_queue&n; *&n; * Revision 0.97  1993/10/09  18:53:53  root&n; * - DATA IN fixed. Rarely left data in the fifo.&n; *&n; * Revision 0.96  1993/10/03  00:53:59  root&n; * - minor changes on DATA IN&n; *&n; * Revision 0.95  1993/09/24  10:36:01  root&n; * - change handling of MSGI after reselection&n; * - fixed sti/cli&n; * - minor changes&n; *&n; * Revision 0.94  1993/09/18  14:08:22  root&n; * - fixed bug in multiple outstanding command code&n; * - changed detection&n; * - support for kernel command line configuration&n; * - reset corrected&n; * - changed message handling&n; *&n; * Revision 0.93  1993/09/15  20:41:19  root&n; * - fixed bugs with multiple outstanding commands&n; *&n; * Revision 0.92  1993/09/13  02:46:33  root&n; * - multiple outstanding commands work (no problems with IBM drive)&n; *&n; * Revision 0.91  1993/09/12  20:51:46  root&n; * added multiple outstanding commands&n; * (some problem with this $%&amp;? IBM device remain)&n; *&n; * Revision 0.9  1993/09/12  11:11:22  root&n; * - corrected auto-configuration&n; * - changed the auto-configuration (added some &squot;#define&squot;s)&n; * - added support for dis-/reconnection&n; *&n; * Revision 0.8  1993/09/06  23:09:39  root&n; * - added support for the drive activity light&n; * - minor changes&n; *&n; * Revision 0.7  1993/09/05  14:30:15  root&n; * - improved phase detection&n; * - now using the new snarf_region code of 0.99pl13&n; *&n; * Revision 0.6  1993/09/02  11:01:38  root&n; * first public release; added some signatures and biosparam()&n; *&n; * Revision 0.5  1993/08/30  10:23:30  root&n; * fixed timing problems with my IBM drive&n; *&n; * Revision 0.4  1993/08/29  14:06:52  root&n; * fixed some problems with timeouts due incomplete commands&n; *&n; * Revision 0.3  1993/08/28  15:55:03  root&n; * writing data works too.  mounted and worked on a dos partition&n; *&n; * Revision 0.2  1993/08/27  22:42:07  root&n; * reading data works.  Mounted a msdos partition.&n; *&n; * Revision 0.1  1993/08/25  13:38:30  root&n; * first &quot;damn thing doesn&squot;t work&quot; version&n; *&n; * Revision 0.0  1993/08/14  19:54:25  root&n; * empty function bodies; detect() works.&n; *&n;&n; **************************************************************************&n;&n;&n; &n; DESCRIPTION:&n;&n; This is the Linux low-level SCSI driver for Adaptec AHA-1520/1522&n; SCSI host adapters.&n;&n;&n; PER-DEFINE CONFIGURABLE OPTIONS:&n;&n; AUTOCONF       : use configuration the controller reports (only 152x)&n; IRQ            : override interrupt channel (9,10,11 or 12) (default 11)&n; SCSI_ID        : override scsiid of AIC-6260 (0-7) (default 7)&n; RECONNECT      : override target dis-/reconnection/multiple outstanding commands (default on)&n; PARITY&t;&t;: override parity check (default on)&n; SKIP_BIOSTEST  : Don&squot;t test for BIOS signature (AHA-1510 or disabled BIOS)&n; PORTBASE       : Force port base. Don&squot;t try to probe&n;&n;&n; LILO COMMAND LINE OPTIONS:&n;&n; aha152x=&lt;PORTBASE&gt;[,&lt;IRQ&gt;[,&lt;SCSI-ID&gt;[,&lt;RECONNECT&gt;[,&lt;PARITY&gt;]]]]&n;&n; The normal configuration can be overridden by specifying a command line.&n; When you do this, the BIOS test is skipped. Entered values have to be&n; valid (known). Don&squot;t use values that aren&squot;t support under normal operation.&n; If you think that you need other values: contact me.&n;&n;&n; REFERENCES USED:&n;&n; &quot;AIC-6260 SCSI Chip Specification&quot;, Adaptec Corporation.&n;&n; &quot;SCSI COMPUTER SYSTEM INTERFACE - 2 (SCSI-2)&quot;, X3T9.2/86-109 rev. 10h&n;&n; &quot;Writing a SCSI device driver for Linux&quot;, Rik Faith (faith@cs.unc.edu)&n;&n; &quot;Kernel Hacker&squot;s Guide&quot;, Michael K. Johnson (johnsonm@sunsite.unc.edu)&n;&n; &quot;Adaptec 1520/1522 User&squot;s Guide&quot;, Adaptec Corporation.&n; &n; Michael K. Johnson (johnsonm@sunsite.unc.edu)&n;&n; Drew Eckhardt (drew@cs.colorado.edu)&n;&n; Eric Youngdale (ericy@cais.com) &n;&n; special thanks to Eric Youngdale for the free(!) supplying the&n; documentation on the chip.&n;&n; **************************************************************************/
+multiline_comment|/* aha152x.c -- Adaptec AHA-152x driver&n; * Author: Juergen E. Fischer, fischer@server.et-inf.fho-emden.de&n; * Copyright 1993, 1994 Juergen E. Fischer&n; *&n; *&n; * This driver is based on&n; *   fdomain.c -- Future Domain TMC-16x0 driver&n; * which is&n; *   Copyright 1992, 1993 Rickard E. Faith (faith@cs.unc.edu)&n; *&n;&n; * This program is free software; you can redistribute it and/or modify it&n; * under the terms of the GNU General Public License as published by the&n; * Free Software Foundation; either version 2, or (at your option) any&n; * later version.&n;&n; * This program is distributed in the hope that it will be useful, but&n; * WITHOUT ANY WARRANTY; without even the implied warranty of&n; * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU&n; * General Public License for more details.&n; &n; *&n; * $Id: aha152x.c,v 1.8 1995/01/21 22:07:19 root Exp root $&n; *&n;&n; * $Log: aha152x.c,v $&n; * Revision 1.8  1995/01/21  22:07:19  root&n; * - snarf_region =&gt; request_region&n; * - aha152x_intr interface change&n; *&n; * Revision 1.7  1995/01/02  23:19:36  root&n; * - updated COMMAND_SIZE to cmd_len&n; * - changed sti() to restore_flags()&n; * - fixed some #ifdef which generated warnings&n; *&n; * Revision 1.6  1994/11/24  20:35:27  root&n; * - problem with odd number of bytes in fifo fixed&n; *&n; * Revision 1.5  1994/10/30  14:39:56  root&n; * - abort code fixed&n; * - debugging improved&n; *&n; * Revision 1.4  1994/09/12  11:33:01  root&n; * - irqaction to request_irq&n; * - abortion updated&n; *&n; * Revision 1.3  1994/08/04  13:53:05  root&n; * - updates for mid-level-driver changes&n; * - accept unexpected BUSFREE phase as error condition&n; * - parity check now configurable&n; *&n; * Revision 1.2  1994/07/03  12:56:36  root&n; * - cleaned up debugging code&n; * - more tweaking on reset delays&n; * - updated abort/reset code (pretty untested...)&n; *&n; * Revision 1.1  1994/05/28  21:18:49  root&n; * - update for mid-level interface change (abort-reset)&n; * - delays after resets adjusted for some slow devices&n; *&n; * Revision 1.0  1994/03/25  12:52:00  root&n; * - Fixed &quot;more data than expected&quot; problem&n; * - added new BIOS signatures&n; *&n; * Revision 0.102  1994/01/31  20:44:12  root&n; * - minor changes in insw/outsw handling&n; *&n; * Revision 0.101  1993/12/13  01:16:27  root&n; * - fixed STATUS phase (non-GOOD stati were dropped sometimes;&n; *   fixes problems with CD-ROM sector size detection &amp; media change)&n; *&n; * Revision 0.100  1993/12/10  16:58:47  root&n; * - fix for unsuccessful selections in case of non-continuous id assignments&n; *   on the scsi bus.&n; *&n; * Revision 0.99  1993/10/24  16:19:59  root&n; * - fixed DATA IN (rare read errors gone)&n; *&n; * Revision 0.98  1993/10/17  12:54:44  root&n; * - fixed some recent fixes (shame on me)&n; * - moved initialization of scratch area to aha152x_queue&n; *&n; * Revision 0.97  1993/10/09  18:53:53  root&n; * - DATA IN fixed. Rarely left data in the fifo.&n; *&n; * Revision 0.96  1993/10/03  00:53:59  root&n; * - minor changes on DATA IN&n; *&n; * Revision 0.95  1993/09/24  10:36:01  root&n; * - change handling of MSGI after reselection&n; * - fixed sti/cli&n; * - minor changes&n; *&n; * Revision 0.94  1993/09/18  14:08:22  root&n; * - fixed bug in multiple outstanding command code&n; * - changed detection&n; * - support for kernel command line configuration&n; * - reset corrected&n; * - changed message handling&n; *&n; * Revision 0.93  1993/09/15  20:41:19  root&n; * - fixed bugs with multiple outstanding commands&n; *&n; * Revision 0.92  1993/09/13  02:46:33  root&n; * - multiple outstanding commands work (no problems with IBM drive)&n; *&n; * Revision 0.91  1993/09/12  20:51:46  root&n; * added multiple outstanding commands&n; * (some problem with this $%&amp;? IBM device remain)&n; *&n; * Revision 0.9  1993/09/12  11:11:22  root&n; * - corrected auto-configuration&n; * - changed the auto-configuration (added some &squot;#define&squot;s)&n; * - added support for dis-/reconnection&n; *&n; * Revision 0.8  1993/09/06  23:09:39  root&n; * - added support for the drive activity light&n; * - minor changes&n; *&n; * Revision 0.7  1993/09/05  14:30:15  root&n; * - improved phase detection&n; * - now using the new snarf_region code of 0.99pl13&n; *&n; * Revision 0.6  1993/09/02  11:01:38  root&n; * first public release; added some signatures and biosparam()&n; *&n; * Revision 0.5  1993/08/30  10:23:30  root&n; * fixed timing problems with my IBM drive&n; *&n; * Revision 0.4  1993/08/29  14:06:52  root&n; * fixed some problems with timeouts due incomplete commands&n; *&n; * Revision 0.3  1993/08/28  15:55:03  root&n; * writing data works too.  mounted and worked on a dos partition&n; *&n; * Revision 0.2  1993/08/27  22:42:07  root&n; * reading data works.  Mounted a msdos partition.&n; *&n; * Revision 0.1  1993/08/25  13:38:30  root&n; * first &quot;damn thing doesn&squot;t work&quot; version&n; *&n; * Revision 0.0  1993/08/14  19:54:25  root&n; * empty function bodies; detect() works.&n; *&n;&n; **************************************************************************&n;&n;&n; &n; DESCRIPTION:&n;&n; This is the Linux low-level SCSI driver for Adaptec AHA-1520/1522&n; SCSI host adapters.&n;&n;&n; PER-DEFINE CONFIGURABLE OPTIONS:&n;&n; AUTOCONF       : use configuration the controller reports (only 152x)&n; IRQ            : override interrupt channel (9,10,11 or 12) (default 11)&n; SCSI_ID        : override scsiid of AIC-6260 (0-7) (default 7)&n; RECONNECT      : override target dis-/reconnection/multiple outstanding commands (default on)&n; PARITY&t;&t;: override parity check (default on)&n; SKIP_BIOSTEST  : Don&squot;t test for BIOS signature (AHA-1510 or disabled BIOS)&n; PORTBASE       : Force port base. Don&squot;t try to probe&n;&n;&n; LILO COMMAND LINE OPTIONS:&n;&n; aha152x=&lt;PORTBASE&gt;[,&lt;IRQ&gt;[,&lt;SCSI-ID&gt;[,&lt;RECONNECT&gt;[,&lt;PARITY&gt;]]]]&n;&n; The normal configuration can be overridden by specifying a command line.&n; When you do this, the BIOS test is skipped. Entered values have to be&n; valid (known). Don&squot;t use values that aren&squot;t support under normal operation.&n; If you think that you need other values: contact me.&n;&n;&n; REFERENCES USED:&n;&n; &quot;AIC-6260 SCSI Chip Specification&quot;, Adaptec Corporation.&n;&n; &quot;SCSI COMPUTER SYSTEM INTERFACE - 2 (SCSI-2)&quot;, X3T9.2/86-109 rev. 10h&n;&n; &quot;Writing a SCSI device driver for Linux&quot;, Rik Faith (faith@cs.unc.edu)&n;&n; &quot;Kernel Hacker&squot;s Guide&quot;, Michael K. Johnson (johnsonm@sunsite.unc.edu)&n;&n; &quot;Adaptec 1520/1522 User&squot;s Guide&quot;, Adaptec Corporation.&n; &n; Michael K. Johnson (johnsonm@sunsite.unc.edu)&n;&n; Drew Eckhardt (drew@cs.colorado.edu)&n;&n; Eric Youngdale (ericy@cais.com) &n;&n; special thanks to Eric Youngdale for the free(!) supplying the&n; documentation on the chip.&n;&n; **************************************************************************/
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &quot;../block/blk.h&quot;
@@ -69,17 +69,15 @@ macro_line|#undef  DEBUG_QUEUES            /* debug reselection */
 multiline_comment|/* recently used for debugging */
 macro_line|#if 0
 macro_line|#endif
-DECL|macro|DEBUG_QUEUE
-mdefine_line|#define DEBUG_QUEUE
 DECL|macro|DEBUG_PHASES
 mdefine_line|#define DEBUG_PHASES
-macro_line|#endif
 DECL|macro|DEBUG_RESET
-mdefine_line|#define DEBUG_RESET             /* resets should be rare */
+mdefine_line|#define DEBUG_RESET
 DECL|macro|DEBUG_ABORT
-mdefine_line|#define DEBUG_ABORT             /* aborts too */
+mdefine_line|#define DEBUG_ABORT
 DECL|macro|DEBUG_DEFAULT
 mdefine_line|#define DEBUG_DEFAULT (debug_reset|debug_abort)
+macro_line|#endif
 multiline_comment|/* END OF DEFINES */
 multiline_comment|/* some additional &quot;phases&quot; for getphase() */
 DECL|macro|P_BUSFREE
@@ -375,6 +373,46 @@ op_star
 )paren
 suffix:semicolon
 macro_line|#endif
+multiline_comment|/* possible i/o addresses for the AIC-6260 */
+DECL|variable|ports
+r_static
+r_int
+r_int
+id|ports
+(braket
+)braket
+op_assign
+(brace
+l_int|0x340
+comma
+multiline_comment|/* default first */
+l_int|0x140
+)brace
+suffix:semicolon
+DECL|macro|PORT_COUNT
+mdefine_line|#define PORT_COUNT (sizeof( ports ) / sizeof( unsigned short ))
+multiline_comment|/* possible interrupt channels */
+DECL|variable|irqs
+r_static
+r_int
+r_int
+id|irqs
+(braket
+)braket
+op_assign
+(brace
+l_int|9
+comma
+l_int|10
+comma
+l_int|11
+comma
+l_int|12
+comma
+l_int|0
+)brace
+suffix:semicolon
+macro_line|#if !defined(SKIP_BIOSTEST)
 multiline_comment|/* possible locations for the Adaptec BIOS */
 DECL|variable|addresses
 r_static
@@ -445,43 +483,6 @@ multiline_comment|/* VTech Platinum SMP */
 suffix:semicolon
 DECL|macro|ADDRESS_COUNT
 mdefine_line|#define ADDRESS_COUNT (sizeof( addresses ) / sizeof( void * ))
-multiline_comment|/* possible i/o addresses for the AIC-6260 */
-DECL|variable|ports
-r_static
-r_int
-r_int
-id|ports
-(braket
-)braket
-op_assign
-(brace
-l_int|0x340
-comma
-multiline_comment|/* default first */
-l_int|0x140
-)brace
-suffix:semicolon
-DECL|macro|PORT_COUNT
-mdefine_line|#define PORT_COUNT (sizeof( ports ) / sizeof( unsigned short ))
-multiline_comment|/* possible interrupt channels */
-DECL|variable|ints
-r_static
-r_int
-r_int
-id|ints
-(braket
-)braket
-op_assign
-(brace
-l_int|9
-comma
-l_int|10
-comma
-l_int|11
-comma
-l_int|12
-)brace
-suffix:semicolon
 multiline_comment|/* signatures for various AIC-6[23]60 based controllers.&n;   The point in detecting signatures is to avoid useless&n;   and maybe harmful probes on ports. I&squot;m not sure that&n;   all listed boards pass auto-configuration. For those&n;   which fail the BIOS signature is obsolete, because&n;   user intervention to supply the configuration is &n;   needed anyway. */
 DECL|struct|signature
 r_static
@@ -575,6 +576,7 @@ multiline_comment|/* Gigabyte Local-Bus-SCSI */
 suffix:semicolon
 DECL|macro|SIGNATURE_COUNT
 mdefine_line|#define SIGNATURE_COUNT (sizeof( signatures ) / sizeof( struct signature ))
+macro_line|#endif
 DECL|function|do_pause
 r_static
 r_void
@@ -1314,13 +1316,13 @@ id|tpnt
 r_int
 id|i
 comma
-id|j
-comma
 id|ok
 suffix:semicolon
+macro_line|#if defined(AUTOCONF)
 id|aha152x_config
 id|conf
 suffix:semicolon
+macro_line|#endif
 r_int
 id|interrupt_level
 suffix:semicolon
@@ -1498,7 +1500,7 @@ suffix:semicolon
 r_while
 c_loop
 (paren
-id|ints
+id|irqs
 (braket
 id|i
 )braket
@@ -1506,7 +1508,7 @@ op_logical_and
 (paren
 id|interrupt_level
 op_ne
-id|ints
+id|irqs
 (braket
 id|i
 )braket
@@ -1521,7 +1523,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|ints
+id|irqs
 (braket
 id|i
 )braket
@@ -1653,6 +1655,9 @@ suffix:semicolon
 r_else
 (brace
 macro_line|#if !defined(SKIP_BIOSTEST)
+r_int
+id|j
+suffix:semicolon
 id|ok
 op_assign
 l_int|0
@@ -1857,7 +1862,7 @@ id|PORTB
 suffix:semicolon
 id|interrupt_level
 op_assign
-id|ints
+id|irqs
 (braket
 id|conf.cf_irq
 )braket
@@ -2151,6 +2156,10 @@ op_star
 )paren
 )paren
 (brace
+r_int
+r_int
+id|flags
+suffix:semicolon
 macro_line|#if defined(DEBUG_RACE)
 id|enter_driver
 c_func
@@ -2205,7 +2214,9 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;, pieces = %d size = %u), &quot;
+l_string|&quot;, cmd_len=%d, pieces = %d size = %u), &quot;
+comma
+id|SCpnt-&gt;cmd_len
 comma
 id|SCpnt-&gt;use_sg
 comma
@@ -2298,6 +2309,12 @@ op_assign
 l_int|0
 suffix:semicolon
 multiline_comment|/* Turn led on, when this is the first command. */
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 id|cli
 c_func
 (paren
@@ -2386,9 +2403,10 @@ l_int|0
 )paren
 suffix:semicolon
 )brace
-id|sti
+id|restore_flags
 c_func
 (paren
+id|flags
 )paren
 suffix:semicolon
 macro_line|#if defined(DEBUG_RACE)
@@ -2436,12 +2454,22 @@ op_star
 id|SCpnt
 )paren
 (brace
+r_int
+r_int
+id|flags
+suffix:semicolon
 id|Scsi_Cmnd
 op_star
 id|ptr
 comma
 op_star
 id|prev
+suffix:semicolon
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
 suffix:semicolon
 id|cli
 c_func
@@ -2536,9 +2564,10 @@ op_star
 )paren
 id|ptr-&gt;host_scribble
 suffix:semicolon
-id|sti
+id|restore_flags
 c_func
 (paren
+id|flags
 )paren
 suffix:semicolon
 id|ptr-&gt;host_scribble
@@ -2599,9 +2628,10 @@ l_string|&quot;bus busy w/o current command, &quot;
 )paren
 suffix:semicolon
 )brace
-id|sti
+id|restore_flags
 c_func
 (paren
+id|flags
 )paren
 suffix:semicolon
 r_return
@@ -2616,9 +2646,10 @@ id|current_SC
 )paren
 (brace
 multiline_comment|/* target entered bus free before COMMAND COMPLETE, nothing to abort */
-id|sti
+id|restore_flags
 c_func
 (paren
+id|flags
 )paren
 suffix:semicolon
 id|current_SC-&gt;result
@@ -2799,6 +2830,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
+multiline_comment|/* Hi Eric, guess what ;-) */
 multiline_comment|/* sleep until the abortion is complete */
 r_while
 c_loop
@@ -2820,9 +2852,10 @@ suffix:semicolon
 r_else
 (brace
 multiline_comment|/* we&squot;re already aborting a command */
-id|sti
+id|restore_flags
 c_func
 (paren
+id|flags
 )paren
 suffix:semicolon
 r_return
@@ -2836,9 +2869,10 @@ c_func
 l_string|&quot;command not found&bslash;n&quot;
 )paren
 suffix:semicolon
-id|sti
+id|restore_flags
 c_func
 (paren
+id|flags
 )paren
 suffix:semicolon
 r_return
@@ -3009,6 +3043,10 @@ op_star
 id|__unused
 )paren
 (brace
+r_int
+r_int
+id|flags
+suffix:semicolon
 id|Scsi_Cmnd
 op_star
 id|ptr
@@ -3099,6 +3137,12 @@ op_assign
 l_int|NULL
 suffix:semicolon
 )brace
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 id|cli
 c_func
 (paren
@@ -3192,9 +3236,10 @@ id|ptr-&gt;host_scribble
 suffix:semicolon
 )brace
 )brace
-id|sti
+id|restore_flags
 c_func
 (paren
+id|flags
 )paren
 suffix:semicolon
 macro_line|#if defined( DEBUG_RESET )
@@ -3407,6 +3452,10 @@ r_int
 id|error
 )paren
 (brace
+r_int
+r_int
+id|flags
+suffix:semicolon
 id|Scsi_Cmnd
 op_star
 id|done_SC
@@ -3458,6 +3507,12 @@ id|error
 suffix:semicolon
 )brace
 macro_line|#endif
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 id|cli
 c_func
 (paren
@@ -3511,9 +3566,10 @@ id|commands
 suffix:semicolon
 )brace
 macro_line|#endif
-id|sti
+id|restore_flags
 c_func
 (paren
+id|flags
 )paren
 suffix:semicolon
 id|SETPORT
@@ -3675,6 +3731,10 @@ id|regs
 )paren
 (brace
 r_int
+r_int
+id|flags
+suffix:semicolon
+r_int
 id|done
 op_assign
 l_int|0
@@ -3721,6 +3781,7 @@ c_func
 (paren
 )paren
 suffix:semicolon
+multiline_comment|/* Yes, sti() really needs to be here */
 multiline_comment|/* disconnected target is trying to reconnect.&n;     Only possible, if we have disconnected nexuses and&n;     nothing is occupying the bus.&n;  */
 r_if
 c_cond
@@ -3778,6 +3839,12 @@ l_string|&quot;i+, &quot;
 suffix:semicolon
 )brace
 macro_line|#endif
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 id|cli
 c_func
 (paren
@@ -3796,9 +3863,10 @@ id|current_SC
 op_assign
 l_int|NULL
 suffix:semicolon
-id|sti
+id|restore_flags
 c_func
 (paren
+id|flags
 )paren
 suffix:semicolon
 )brace
@@ -4091,6 +4159,12 @@ l_int|0x3f
 suffix:semicolon
 )brace
 macro_line|#endif
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 id|cli
 c_func
 (paren
@@ -4157,9 +4231,10 @@ op_and_assign
 op_complement
 id|disconnected
 suffix:semicolon
-id|sti
+id|restore_flags
 c_func
 (paren
+id|flags
 )paren
 suffix:semicolon
 id|SETPORT
@@ -4222,6 +4297,12 @@ op_logical_and
 id|issue_SC
 )paren
 (brace
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 id|cli
 c_func
 (paren
@@ -4253,9 +4334,10 @@ op_amp
 id|issue_SC
 )paren
 suffix:semicolon
-id|sti
+id|restore_flags
 c_func
 (paren
+id|flags
 )paren
 suffix:semicolon
 macro_line|#if defined(DEBUG_INTR) || defined(DEBUG_SELECTION) || defined(DEBUG_PHASES)
@@ -5420,7 +5502,9 @@ id|debug_cmd
 id|printk
 c_func
 (paren
-l_string|&quot;DFIFOEMP, outsw (%d words), &quot;
+l_string|&quot;DFIFOEMP, outsw (%d bytes, %d words), &quot;
+comma
+id|current_SC-&gt;cmd_len
 comma
 id|current_SC-&gt;cmd_len
 op_rshift
@@ -5480,6 +5564,23 @@ c_func
 suffix:semicolon
 )brace
 macro_line|#endif
+macro_line|#if defined(DEBUG_CMD)
+r_if
+c_cond
+(paren
+id|aha152x_debug
+op_amp
+id|debug_cmd
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;waiting for SEMPTY, &quot;
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
 multiline_comment|/* wait for SCSI FIFO to get empty.&n;             very important to send complete commands. */
 r_while
 c_loop
@@ -5494,6 +5595,23 @@ id|SEMPTY
 (brace
 suffix:semicolon
 )brace
+macro_line|#if defined(DEBUG_CMD)
+r_if
+c_cond
+(paren
+id|aha152x_debug
+op_amp
+id|debug_cmd
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;SEMPTY, &quot;
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
 id|CLRBITS
 c_func
 (paren
@@ -5519,6 +5637,23 @@ id|SCSIEN
 (brace
 suffix:semicolon
 )brace
+macro_line|#if defined(DEBUG_CMD)
+r_if
+c_cond
+(paren
+id|aha152x_debug
+op_amp
+id|debug_cmd
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;!SEMPTY, &quot;
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
 id|CLRBITS
 c_func
 (paren
@@ -6184,6 +6319,12 @@ op_amp
 id|disconnected
 )paren
 (brace
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 id|cli
 c_func
 (paren
@@ -6219,9 +6360,10 @@ id|current_SC
 op_assign
 l_int|NULL
 suffix:semicolon
-id|sti
+id|restore_flags
 c_func
 (paren
+id|flags
 )paren
 suffix:semicolon
 id|SETBITS
@@ -8021,6 +8163,7 @@ macro_line|#ifdef DEBUG_AHA152X
 r_int
 id|s
 suffix:semicolon
+macro_line|#ifdef SKIP_PORTS
 r_if
 c_cond
 (paren
@@ -8032,6 +8175,7 @@ id|debug_skipports
 r_return
 suffix:semicolon
 )brace
+macro_line|#endif
 id|printk
 c_func
 (paren
@@ -9766,6 +9910,16 @@ op_star
 id|func
 )paren
 (brace
+r_int
+r_int
+id|flags
+suffix:semicolon
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 id|cli
 c_func
 (paren
@@ -9809,9 +9963,10 @@ id|should_leave
 op_assign
 id|func
 suffix:semicolon
-id|sti
+id|restore_flags
 c_func
 (paren
+id|flags
 )paren
 suffix:semicolon
 )brace
@@ -9827,6 +9982,16 @@ op_star
 id|func
 )paren
 (brace
+r_int
+r_int
+id|flags
+suffix:semicolon
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
+suffix:semicolon
 id|cli
 c_func
 (paren
@@ -9871,9 +10036,10 @@ id|should_leave
 op_assign
 id|func
 suffix:semicolon
-id|sti
+id|restore_flags
 c_func
 (paren
+id|flags
 )paren
 suffix:semicolon
 )brace
@@ -10149,9 +10315,19 @@ c_func
 r_void
 )paren
 (brace
+r_int
+r_int
+id|flags
+suffix:semicolon
 id|Scsi_Cmnd
 op_star
 id|ptr
+suffix:semicolon
+id|save_flags
+c_func
+(paren
+id|flags
+)paren
 suffix:semicolon
 id|cli
 c_func
@@ -10256,9 +10432,10 @@ c_func
 (paren
 )paren
 suffix:semicolon
-id|sti
+id|restore_flags
 c_func
 (paren
+id|flags
 )paren
 suffix:semicolon
 )brace

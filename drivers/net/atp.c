@@ -1,14 +1,14 @@
-multiline_comment|/* atp.c: Attached (pocket) ethernet adaptor driver for linux. */
-multiline_comment|/*&n;&t;Written 1993 by Donald Becker.&n;&t;Copyright 1993 United States Government as represented by the Director,&n;&t;National Security Agency.  This software may only be used and distributed&n;&t;according to the terms of the GNU Public License as modified by SRC,&n;&t;incorporated herein by reference.&n;&n;&t;The author may be reached as becker@super.org or&n;&t;C/O Supercomputing Research Ctr., 17100 Science Dr., Bowie MD 20715&n;&n;*/
+multiline_comment|/* atp.c: Attached (pocket) ethernet adapter driver for linux. */
+multiline_comment|/*&n;&t;This is a driver for a commonly OEMed pocket (parallel port)&n;&t;ethernet adapter.  &n;&n;&t;Written 1993,1994,1995 by Donald Becker.&n;&n;&t;Copyright 1993 United States Government as represented by the&n;&t;Director, National Security Agency.&n;&n;&t;This software may be used and distributed according to the terms&n;&t;of the GNU Public License, incorporated herein by reference.&n;&n;&t;The author may be reached as becker@CESDIS.gsfc.nasa.gov, or C/O&n;&t;Center of Excellence in Space Data and Information Sciences&n;&t;&t;Code 930.5, Goddard Space Flight Center, Greenbelt MD 20771&n;&n;&t;The timer-based reset code was written by Bill Carlson, wwc@super.org.&n;*/
 DECL|variable|version
 r_static
 r_char
 op_star
 id|version
 op_assign
-l_string|&quot;atp.c:v0.04 2/25/94 Donald Becker (becker@super.org)&bslash;n&quot;
+l_string|&quot;atp.c:v1.01 1/18/95 Donald Becker (becker@cesdis.gsfc.nasa.gov)&bslash;n&quot;
 suffix:semicolon
-multiline_comment|/*&n;&t;This file is a device driver for the RealTek (aka AT-Lan-Tec) pocket&n;&t;ethernet adaptor.  This is a common low-cost OEM pocket ethernet&n;&t;adaptor, sold under many names.&n;&n;  Sources:&n;&t;This driver was written from the packet driver assembly code provided by&n;&t;Vincent Bono of AT-Lan-Tec.&t; Ever try to figure out how a complicated&n;&t;device works just from the assembly code?  It ain&squot;t pretty.  The following&n;&t;description is written based on guesses and writing lots of special-purpose&n;&t;code to test my theorized operation.&n;&n;&t;&t;&t;&t;&t;Theory of Operation&n;&t;&n;&t;The RTL8002 adaptor seems to be built around a custom spin of the SEEQ&n;&t;controller core.  It probably has a 16K or 64K internal packet buffer, of&n;&t;which the first 4K is devoted to transmit and the rest to receive.&n;&t;The controller maintains the queue of received packet and the packet buffer&n;&t;access pointer internally, with only &squot;reset to beginning&squot; and &squot;skip to next&n;&t;packet&squot; commands visible.  The transmit packet queue holds two (or more?)&n;&t;packets: both &squot;retransmit this packet&squot; (due to collision) and &squot;transmit next&n;&t;packet&squot; commands must be started by hand.&n;&n;&t;The station address is stored in a standard bit-serial EEPROM which must be&n;&t;read (ughh) by the device driver.  (Provisions have been made for&n;&t;substituting a 74S288 PROM, but I haven&squot;t gotten reports of any models&n;&t;using it.)  Unlike built-in devices, a pocket adaptor can temporarily lose&n;&t;power without indication to the device driver.  The major effect is that&n;&t;the station address, receive filter (promiscuous, etc.) and transceiver&n;&t;must be reset.&n;&n;&t;The controller itself has 16 registers, some of which use only the lower&n;&t;bits.  The registers are read and written 4 bits at a time.  The four bit&n;&t;register address is presented on the data lines along with a few additional&n;&t;timing and control bits.  The data is then read from status port or written&n;&t;to the data port.&n;&n;&t;Since the bulk data transfer of the actual packets through the slow&n;&t;parallel port dominates the driver&squot;s running time, four distinct data&n;&t;(non-register) transfer modes are provided by the adaptor, two in each&n;&t;direction.  In the first mode timing for the nibble transfers is&n;&t;provided through the data port.  In the second mode the same timing is&n;&t;provided through the control port.  In either case the data is read from&n;&t;the status port and written to the data port, just as it is accessing&n;&t;registers.&n;&n;&t;In addition to the basic data transfer methods, several more are modes are&n;&t;created by adding some delay by doing multiple reads of the data to allow&n;&t;it to stabilize.  This delay seems to be needed on most machines.&n;&n;&t;The data transfer mode is stored in the &squot;dev-&gt;if_port&squot; field.  Its default&n;&t;value is &squot;4&squot;.  It may be overridden at boot-time using the third parameter&n;&t;to the &quot;ether=...&quot; initialization.&n;&n;&t;The header file &lt;atp.h&gt; provides inline functions that encapsulate the&n;&t;register and data access methods.  These functions are hand-tuned to&n;&t;generate reasonable object code.  This header file also documents my&n;&t;interpretations of the device registers.&n;*/
+multiline_comment|/*&n;&t;This file is a device driver for the RealTek (aka AT-Lan-Tec) pocket&n;&t;ethernet adapter.  This is a common low-cost OEM pocket ethernet&n;&t;adapter, sold under many names.&n;&n;  Sources:&n;&t;This driver was written from the packet driver assembly code provided by&n;&t;Vincent Bono of AT-Lan-Tec.&t; Ever try to figure out how a complicated&n;&t;device works just from the assembly code?  It ain&squot;t pretty.  The following&n;&t;description is written based on guesses and writing lots of special-purpose&n;&t;code to test my theorized operation.&n;&n;&t;&t;&t;&t;&t;Theory of Operation&n;&t;&n;&t;The RTL8002 adapter seems to be built around a custom spin of the SEEQ&n;&t;controller core.  It probably has a 16K or 64K internal packet buffer, of&n;&t;which the first 4K is devoted to transmit and the rest to receive.&n;&t;The controller maintains the queue of received packet and the packet buffer&n;&t;access pointer internally, with only &squot;reset to beginning&squot; and &squot;skip to next&n;&t;packet&squot; commands visible.  The transmit packet queue holds two (or more?)&n;&t;packets: both &squot;retransmit this packet&squot; (due to collision) and &squot;transmit next&n;&t;packet&squot; commands must be started by hand.&n;&n;&t;The station address is stored in a standard bit-serial EEPROM which must be&n;&t;read (ughh) by the device driver.  (Provisions have been made for&n;&t;substituting a 74S288 PROM, but I haven&squot;t gotten reports of any models&n;&t;using it.)  Unlike built-in devices, a pocket adapter can temporarily lose&n;&t;power without indication to the device driver.  The major effect is that&n;&t;the station address, receive filter (promiscuous, etc.) and transceiver&n;&t;must be reset.&n;&n;&t;The controller itself has 16 registers, some of which use only the lower&n;&t;bits.  The registers are read and written 4 bits at a time.  The four bit&n;&t;register address is presented on the data lines along with a few additional&n;&t;timing and control bits.  The data is then read from status port or written&n;&t;to the data port.&n;&n;&t;Since the bulk data transfer of the actual packets through the slow&n;&t;parallel port dominates the driver&squot;s running time, four distinct data&n;&t;(non-register) transfer modes are provided by the adapter, two in each&n;&t;direction.  In the first mode timing for the nibble transfers is&n;&t;provided through the data port.  In the second mode the same timing is&n;&t;provided through the control port.  In either case the data is read from&n;&t;the status port and written to the data port, just as it is accessing&n;&t;registers.&n;&n;&t;In addition to the basic data transfer methods, several more are modes are&n;&t;created by adding some delay by doing multiple reads of the data to allow&n;&t;it to stabilize.  This delay seems to be needed on most machines.&n;&n;&t;The data transfer mode is stored in the &squot;dev-&gt;if_port&squot; field.  Its default&n;&t;value is &squot;4&squot;.  It may be overridden at boot-time using the third parameter&n;&t;to the &quot;ether=...&quot; initialization.&n;&n;&t;The header file &lt;atp.h&gt; provides inline functions that encapsulate the&n;&t;register and data access methods.  These functions are hand-tuned to&n;&t;generate reasonable object code.  This header file also documents my&n;&t;interpretations of the device registers.&n;*/
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
@@ -28,54 +28,10 @@ macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
 macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &quot;atp.h&quot;
-multiline_comment|/* Compatibility definitions for earlier kernel versions. */
-macro_line|#ifndef HAVE_AUTOIRQ
-multiline_comment|/* From auto_irq.c, in ioport.h for later versions. */
-r_extern
-r_void
-id|autoirq_setup
-c_func
-(paren
-r_int
-id|waittime
-)paren
-suffix:semicolon
-r_extern
-r_int
-id|autoirq_report
-c_func
-(paren
-r_int
-id|waittime
-)paren
-suffix:semicolon
-multiline_comment|/* The map from IRQ number (as passed to the interrupt handler) to&n;   &squot;struct device&squot;. */
-r_extern
-r_struct
-id|device
-op_star
-id|irq2dev_map
-(braket
-l_int|16
-)braket
-suffix:semicolon
-macro_line|#endif
-macro_line|#ifndef HAVE_ALLOC_SKB
-DECL|macro|alloc_skb
-mdefine_line|#define alloc_skb(size, priority) (struct sk_buff *) kmalloc(size,priority)
-DECL|macro|kfree_skbmem
-mdefine_line|#define kfree_skbmem(addr, size) kfree_s(addr,size);
-macro_line|#endif
-macro_line|#ifndef HAVE_PORTRESERVE
-DECL|macro|check_region
-mdefine_line|#define check_region(ioaddr, size)&t;&t;0
-DECL|macro|request_region
-mdefine_line|#define request_region(ioaddr, size,name)&t;do ; while (0)
-macro_line|#endif
 multiline_comment|/* use 0 for production, 1 for verification, &gt;2 for debug */
 macro_line|#ifndef NET_DEBUG
 DECL|macro|NET_DEBUG
-mdefine_line|#define NET_DEBUG 4
+mdefine_line|#define NET_DEBUG 1
 macro_line|#endif
 DECL|variable|net_debug
 r_static
@@ -88,6 +44,47 @@ suffix:semicolon
 multiline_comment|/* The number of low I/O ports used by the ethercard. */
 DECL|macro|ETHERCARD_TOTAL_SIZE
 mdefine_line|#define ETHERCARD_TOTAL_SIZE&t;3
+multiline_comment|/* This code, written by wwc@super.org, resets the adapter every&n;   TIMED_CHECKER ticks.  This recovers from an unknown error which&n;   hangs the device. */
+DECL|macro|TIMED_CHECKER
+mdefine_line|#define TIMED_CHECKER (HZ/4)
+macro_line|#ifdef TIMED_CHECKER
+macro_line|#include &lt;linux/timer.h&gt;
+r_static
+r_void
+id|atp_timed_checker
+c_func
+(paren
+r_int
+r_int
+id|ignored
+)paren
+suffix:semicolon
+DECL|variable|atp_timed_dev
+r_static
+r_struct
+id|device
+op_star
+id|atp_timed_dev
+suffix:semicolon
+DECL|variable|atp_timer
+r_static
+r_struct
+id|timer_list
+id|atp_timer
+op_assign
+(brace
+l_int|NULL
+comma
+l_int|NULL
+comma
+l_int|0
+comma
+l_int|0
+comma
+id|atp_timed_checker
+)brace
+suffix:semicolon
+macro_line|#endif
 multiline_comment|/* Index to functions, as function prototypes. */
 r_extern
 r_int
@@ -297,7 +294,7 @@ id|addrs
 )paren
 suffix:semicolon
 "&f;"
-multiline_comment|/* Check for a network adaptor of this type, and return &squot;0&squot; iff one exists.&n;   If dev-&gt;base_addr == 0, probe all likely locations.&n;   If dev-&gt;base_addr == 1, always return failure.&n;   If dev-&gt;base_addr == 2, allocate space for the device and return success&n;   (detachable devices only).&n;   */
+multiline_comment|/* Check for a network adapter of this type, and return &squot;0&squot; iff one exists.&n;   If dev-&gt;base_addr == 0, probe all likely locations.&n;   If dev-&gt;base_addr == 1, always return failure.&n;   If dev-&gt;base_addr == 2, allocate space for the device and return success&n;   (detachable devices only).&n;   */
 r_int
 DECL|function|atp_init
 id|atp_init
@@ -517,7 +514,7 @@ op_ne
 l_int|0x08
 )paren
 (brace
-multiline_comment|/* The pocket adaptor probe failed, restore the control register. */
+multiline_comment|/* The pocket adapter probe failed, restore the control register. */
 id|outb
 c_func
 (paren
@@ -645,7 +642,7 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;%s: Pocket adaptor found at %#3x, IRQ %d, SAPROM &quot;
+l_string|&quot;%s: Pocket adapter found at %#3x, IRQ %d, SAPROM &quot;
 l_string|&quot;%02X:%02X:%02X:%02X:%02X:%02X.&bslash;n&quot;
 comma
 id|dev-&gt;name
@@ -760,7 +757,7 @@ op_assign
 id|CMR2h_Normal
 suffix:semicolon
 )brace
-multiline_comment|/* For the ATP adaptor the &quot;if_port&quot; is really the data transfer mode. */
+multiline_comment|/* For the ATP adapter the &quot;if_port&quot; is really the data transfer mode. */
 id|dev-&gt;if_port
 op_assign
 (paren
@@ -810,6 +807,30 @@ op_assign
 op_amp
 id|set_multicast_list
 suffix:semicolon
+macro_line|#ifdef TIMED_CHECKER
+id|del_timer
+c_func
+(paren
+op_amp
+id|atp_timer
+)paren
+suffix:semicolon
+id|atp_timer.expires
+op_assign
+id|TIMED_CHECKER
+suffix:semicolon
+id|atp_timed_dev
+op_assign
+id|dev
+suffix:semicolon
+id|add_timer
+c_func
+(paren
+op_amp
+id|atp_timer
+)paren
+suffix:semicolon
+macro_line|#endif
 r_return
 l_int|0
 suffix:semicolon
@@ -851,7 +872,7 @@ id|CMR2_EEPROM
 )paren
 suffix:semicolon
 multiline_comment|/* Point to the EEPROM control registers. */
-multiline_comment|/* Some adaptors have the station address at offset 15 instead of offset&n;&t;   zero.  Check for it, and fix it if needed. */
+multiline_comment|/* Some adapters have the station address at offset 15 instead of offset&n;&t;   zero.  Check for it, and fix it if needed. */
 r_if
 c_cond
 (paren
@@ -1100,7 +1121,7 @@ id|net_interrupt
 comma
 l_int|0
 comma
-l_string|&quot;atp&quot;
+l_string|&quot;ATP&quot;
 )paren
 )paren
 (brace
@@ -1678,7 +1699,7 @@ suffix:semicolon
 id|lp-&gt;stats.tx_errors
 op_increment
 suffix:semicolon
-multiline_comment|/* Try to restart the adaptor. */
+multiline_comment|/* Try to restart the adapter. */
 id|hardware_init
 c_func
 (paren
@@ -1993,7 +2014,7 @@ op_plus
 id|PAR_CONTROL
 )paren
 suffix:semicolon
-multiline_comment|/* The adaptor&squot;s output is currently the IRQ line, switch it to data. */
+multiline_comment|/* The adapter&squot;s output is currently the IRQ line, switch it to data. */
 id|write_reg
 c_func
 (paren
@@ -2246,7 +2267,7 @@ c_func
 l_string|&quot;handling Tx done..&quot;
 )paren
 suffix:semicolon
-multiline_comment|/* Clear the Tx interrupt.  We should check for too many failures&n;&t;&t;&t;   and reinitialize the adaptor. */
+multiline_comment|/* Clear the Tx interrupt.  We should check for too many failures&n;&t;&t;&t;   and reinitialize the adapter. */
 id|write_reg
 c_func
 (paren
@@ -2448,7 +2469,7 @@ r_else
 r_break
 suffix:semicolon
 )brace
-multiline_comment|/* This following code fixes a rare (and very difficult to track down)&n;&t;   problem where the adaptor forgets its ethernet address. */
+multiline_comment|/* This following code fixes a rare (and very difficult to track down)&n;&t;   problem where the adapter forgets its ethernet address. */
 (brace
 r_int
 id|i
@@ -2482,8 +2503,28 @@ id|i
 )braket
 )paren
 suffix:semicolon
+macro_line|#ifdef TIMED_CHECKER
+id|del_timer
+c_func
+(paren
+op_amp
+id|atp_timer
+)paren
+suffix:semicolon
+id|atp_timer.expires
+op_assign
+id|TIMED_CHECKER
+suffix:semicolon
+id|add_timer
+c_func
+(paren
+op_amp
+id|atp_timer
+)paren
+suffix:semicolon
+macro_line|#endif
 )brace
-multiline_comment|/* Tell the adaptor that it can go back to using the output line as IRQ. */
+multiline_comment|/* Tell the adapter that it can go back to using the output line as IRQ. */
 id|write_reg
 c_func
 (paren
@@ -2553,6 +2594,170 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+macro_line|#ifdef TIMED_CHECKER
+multiline_comment|/* This following code fixes a rare (and very difficult to track down)&n;   problem where the adapter forgets its ethernet address. */
+DECL|function|atp_timed_checker
+r_static
+r_void
+id|atp_timed_checker
+c_func
+(paren
+r_int
+r_int
+id|ignored
+)paren
+(brace
+r_int
+id|i
+suffix:semicolon
+r_int
+id|ioaddr
+op_assign
+id|atp_timed_dev-&gt;base_addr
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|atp_timed_dev-&gt;interrupt
+)paren
+(brace
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+l_int|6
+suffix:semicolon
+id|i
+op_increment
+)paren
+macro_line|#if 0
+r_if
+c_cond
+(paren
+id|read_cmd_byte
+c_func
+(paren
+id|ioaddr
+comma
+id|PAR0
+op_plus
+id|i
+)paren
+op_ne
+id|atp_timed_dev-&gt;dev_addr
+(braket
+id|i
+)braket
+)paren
+(brace
+r_struct
+id|net_local
+op_star
+id|lp
+op_assign
+(paren
+r_struct
+id|net_local
+op_star
+)paren
+id|atp_timed_dev-&gt;priv
+suffix:semicolon
+id|write_reg_byte
+c_func
+(paren
+id|ioaddr
+comma
+id|PAR0
+op_plus
+id|i
+comma
+id|atp_timed_dev-&gt;dev_addr
+(braket
+id|i
+)braket
+)paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|i
+op_eq
+l_int|2
+)paren
+id|lp-&gt;stats.tx_errors
+op_increment
+suffix:semicolon
+r_else
+r_if
+c_cond
+(paren
+id|i
+op_eq
+l_int|3
+)paren
+id|lp-&gt;stats.tx_dropped
+op_increment
+suffix:semicolon
+r_else
+r_if
+c_cond
+(paren
+id|i
+op_eq
+l_int|4
+)paren
+id|lp-&gt;stats.collisions
+op_increment
+suffix:semicolon
+r_else
+id|lp-&gt;stats.rx_errors
+op_increment
+suffix:semicolon
+)brace
+macro_line|#else
+id|write_reg_byte
+c_func
+(paren
+id|ioaddr
+comma
+id|PAR0
+op_plus
+id|i
+comma
+id|atp_timed_dev-&gt;dev_addr
+(braket
+id|i
+)braket
+)paren
+suffix:semicolon
+macro_line|#endif
+)brace
+id|del_timer
+c_func
+(paren
+op_amp
+id|atp_timer
+)paren
+suffix:semicolon
+id|atp_timer.expires
+op_assign
+id|TIMED_CHECKER
+suffix:semicolon
+id|add_timer
+c_func
+(paren
+op_amp
+id|atp_timer
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif
 multiline_comment|/* We have a good packet(s), get it/them out of the buffers. */
 DECL|function|net_rx
 r_static
@@ -3195,7 +3400,7 @@ op_amp
 id|lp-&gt;stats
 suffix:semicolon
 )brace
-multiline_comment|/* Set or clear the multicast filter for this adaptor.&n;   num_addrs == -1&t;Promiscuous mode, receive all packets&n;   num_addrs == 0&t;Normal mode, clear multicast list&n;   num_addrs &gt; 0&t;Multicast mode, receive normal and MC packets, and do&n;&t;&t;&t;best-effort filtering.&n; */
+multiline_comment|/* Set or clear the multicast filter for this adapter.&n;   num_addrs == -1&t;Promiscuous mode, receive all packets&n;   num_addrs == 0&t;Normal mode, clear multicast list&n;   num_addrs &gt; 0&t;Multicast mode, receive normal and MC packets, and do&n;&t;&t;&t;best-effort filtering.&n; */
 r_static
 r_void
 DECL|function|set_multicast_list

@@ -63,9 +63,9 @@ id|address
 op_logical_or
 op_logical_neg
 (paren
-id|vma-&gt;vm_page_prot
+id|vma-&gt;vm_flags
 op_amp
-id|PAGE_USER
+id|VM_READ
 )paren
 )paren
 r_return
@@ -98,9 +98,9 @@ op_eq
 id|vma-&gt;vm_end
 op_logical_and
 (paren
-id|vma-&gt;vm_next-&gt;vm_page_prot
+id|vma-&gt;vm_next-&gt;vm_flags
 op_amp
-id|PAGE_USER
+id|VM_READ
 )paren
 )paren
 r_return

@@ -320,9 +320,9 @@ id|vma
 r_if
 c_cond
 (paren
-id|vma-&gt;vm_page_prot
+id|vma-&gt;vm_flags
 op_amp
-id|PAGE_RW
+id|VM_SHARED
 )paren
 multiline_comment|/* only PAGE_COW or read-only supported now */
 r_return

@@ -10,7 +10,7 @@ macro_line|#include &lt;linux/if_ether.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/netdevice.h&gt;
 macro_line|#include &lt;linux/etherdevice.h&gt;
-multiline_comment|/* The network devices currently exist only in the socket namespace, so these&n;   entries are unused.  The only ones that make sense are&n;    open&t;start the ethercard&n;    close&t;stop  the ethercard&n;    ioctl&t;To get statistics, perhaps set the interface port (AUI, BNC, etc.)&n;   One can also imagine getting raw packets using&n;    read &amp; write&n;   but this is probably better handled by a raw packet socket.&n;&n;   Given that almost all of these functions are handled in the current&n;   socket-based scheme, putting ethercard devices in /dev/ seems pointless.&n;   &n;   [Removed all support for /dev network devices. When someone adds streams then&n;    by magic we get them, but otherwise they are un-needed and a space waste]&n;*/
+multiline_comment|/* The network devices currently exist only in the socket namespace, so these&n;   entries are unused.  The only ones that make sense are&n;    open&t;start the ethercard&n;    close&t;stop  the ethercard&n;    ioctl&t;To get statistics, perhaps set the interface port (AUI, BNC, etc.)&n;   One can also imagine getting raw packets using&n;    read &amp; write&n;   but this is probably better handled by a raw packet socket.&n;&n;   Given that almost all of these functions are handled in the current&n;   socket-based scheme, putting ethercard devices in /dev/ seems pointless.&n;   &n;   [Removed all support for /dev network devices. When someone adds&n;    streams then by magic we get them, but otherwise they are un-needed&n;&t;and a space waste]&n;*/
 multiline_comment|/* The list of used and available &quot;eth&quot; slots (for &quot;eth0&quot;, &quot;eth1&quot;, etc.) */
 DECL|macro|MAX_ETH_CARDS
 mdefine_line|#define MAX_ETH_CARDS 16 /* same as the number if irq&squot;s in irq2dev[] */
@@ -66,6 +66,20 @@ r_int
 id|mem_end
 )paren
 suffix:semicolon
+r_int
+r_int
+id|dec21040_init
+c_func
+(paren
+r_int
+r_int
+id|mem_start
+comma
+r_int
+r_int
+id|mem_end
+)paren
+suffix:semicolon
 multiline_comment|/*&n;  net_dev_init() is our network device initialization routine.&n;  It&squot;s called from init/main.c with the start and end of free memory,&n;  and returns the new start of free memory.&n;  */
 DECL|function|net_dev_init
 r_int
@@ -81,7 +95,8 @@ r_int
 id|mem_end
 )paren
 (brace
-macro_line|#if defined(CONFIG_LANCE)&t;&t;&t;/* Note this is _not_ CONFIG_AT1500. */
+multiline_comment|/* Network device initialization for devices that must allocate&n;&t;   low-memory or contiguous DMA buffers.&n;&t;   */
+macro_line|#if defined(CONFIG_LANCE)
 id|mem_start
 op_assign
 id|lance_init
@@ -97,6 +112,18 @@ macro_line|#if defined(CONFIG_PI)
 id|mem_start
 op_assign
 id|pi_init
+c_func
+(paren
+id|mem_start
+comma
+id|mem_end
+)paren
+suffix:semicolon
+macro_line|#endif&t;
+macro_line|#if defined(CONFIG_DEC_ELCP)
+id|mem_start
+op_assign
+id|dec21040_init
 c_func
 (paren
 id|mem_start
@@ -123,7 +150,7 @@ op_star
 id|dev
 comma
 r_int
-id|sizeof_private
+id|sizeof_priv
 comma
 r_int
 r_int
@@ -139,6 +166,7 @@ suffix:semicolon
 r_int
 id|i
 suffix:semicolon
+multiline_comment|/* Use an existing correctly named device in Space.c:dev_base. */
 r_if
 c_cond
 (paren
@@ -161,10 +189,136 @@ r_sizeof
 l_string|&quot;eth%d  &quot;
 )paren
 op_plus
-id|sizeof_private
+id|sizeof_priv
 op_plus
 l_int|3
 suffix:semicolon
+r_struct
+id|device
+op_star
+id|cur_dev
+suffix:semicolon
+r_char
+id|pname
+(braket
+l_int|8
+)braket
+suffix:semicolon
+multiline_comment|/* Putative name for the device.  */
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|MAX_ETH_CARDS
+suffix:semicolon
+op_increment
+id|i
+)paren
+r_if
+c_cond
+(paren
+id|ethdev_index
+(braket
+id|i
+)braket
+op_eq
+l_int|NULL
+)paren
+(brace
+id|sprintf
+c_func
+(paren
+id|pname
+comma
+l_string|&quot;eth%d&quot;
+comma
+id|i
+)paren
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|cur_dev
+op_assign
+id|dev_base
+suffix:semicolon
+id|cur_dev
+suffix:semicolon
+id|cur_dev
+op_assign
+id|cur_dev-&gt;next
+)paren
+r_if
+c_cond
+(paren
+id|strcmp
+c_func
+(paren
+id|pname
+comma
+id|cur_dev-&gt;name
+)paren
+op_eq
+l_int|0
+)paren
+(brace
+id|dev
+op_assign
+id|cur_dev
+suffix:semicolon
+id|dev-&gt;init
+op_assign
+l_int|NULL
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|mem_startp
+op_logical_and
+op_star
+id|mem_startp
+)paren
+(brace
+id|dev-&gt;priv
+op_assign
+(paren
+r_void
+op_star
+)paren
+op_star
+id|mem_startp
+suffix:semicolon
+op_star
+id|mem_startp
+op_add_assign
+id|sizeof_priv
+op_plus
+l_int|3
+suffix:semicolon
+)brace
+r_else
+id|dev-&gt;priv
+op_assign
+id|kmalloc
+c_func
+(paren
+id|sizeof_priv
+op_plus
+l_int|3
+comma
+id|GFP_KERNEL
+)paren
+suffix:semicolon
+r_goto
+id|found
+suffix:semicolon
+)brace
+)brace
 id|alloc_size
 op_and_assign
 op_complement
@@ -225,7 +379,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|sizeof_private
+id|sizeof_priv
 )paren
 id|dev-&gt;priv
 op_assign
@@ -241,7 +395,7 @@ l_int|1
 suffix:semicolon
 id|dev-&gt;name
 op_assign
-id|sizeof_private
+id|sizeof_priv
 op_plus
 (paren
 r_char
@@ -258,6 +412,9 @@ op_assign
 l_int|1
 suffix:semicolon
 )brace
+id|found
+suffix:colon
+multiline_comment|/* From the double loop above. */
 r_if
 c_cond
 (paren
@@ -336,7 +493,7 @@ c_func
 id|dev
 )paren
 suffix:semicolon
-multiline_comment|/* should this be called here? */
+multiline_comment|/* Hmmm, should this be called here? */
 r_if
 c_cond
 (paren

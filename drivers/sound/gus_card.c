@@ -280,6 +280,8 @@ id|have_gus_max
 id|ad1848_interrupt
 (paren
 id|irq
+comma
+id|regs
 )paren
 suffix:semicolon
 macro_line|#endif

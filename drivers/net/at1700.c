@@ -1,11 +1,11 @@
-multiline_comment|/* at1700.c: A network device driver for  the Allied Telesis AT1700.&n;&n;&t;Written 1993-94 by Donald Becker.&n;&n;&t;Copyright 1993 United States Government as represented by the&n;&t;Director, National Security Agency.&n;&n;&t;This software may be used and distributed according to the terms&n;&t;of the GNU Public License, incorporated herein by reference.&n;&n;&t;The author may be reached as becker@CESDIS.gsfc.nasa.gov, or C/O&n;&t;Center of Excellence in Space Data and Information Sciences&n;&t;   Code 930.5, Goddard Space Flight Center, Greenbelt MD 20771&n;&n;&t;This is a device driver for the Allied Telesis AT1700, which is a&n;&t;straight-forward Fujitsu MB86965 implementation.&n;&n;  Sources:&n;    The Fujitsu MB86695 datasheet.&n;&n;&t;After the initial version of this driver was written Gerry Sockins of&n;&t;ATI provided their EEPROM configuration code header file.&n;    Thanks to NIIBE Yutaka &lt;gniibe@mri.co.jp&gt; for bug fixes.&n;&n;  Bugs:&n;&t;The MB86695 has a design flaw that makes all probes unreliable.  Not&n;&t;only is it difficult to detect, it also moves around in I/O space in&n;&t;response to inb()s from other device probes!&n;*/
+multiline_comment|/* at1700.c: A network device driver for  the Allied Telesis AT1700.&n;&n;&t;Written 1993-94 by Donald Becker.&n;&n;&t;Copyright 1993 United States Government as represented by the&n;&t;Director, National Security Agency.&n;&n;&t;This software may be used and distributed according to the terms&n;&t;of the GNU Public License, incorporated herein by reference.&n;&n;&t;The author may be reached as becker@CESDIS.gsfc.nasa.gov, or C/O&n;&t;Center of Excellence in Space Data and Information Sciences&n;&t;   Code 930.5, Goddard Space Flight Center, Greenbelt MD 20771&n;&n;&t;This is a device driver for the Allied Telesis AT1700, which is a&n;&t;straight-forward Fujitsu MB86965 implementation.&n;&n;  Sources:&n;    The Fujitsu MB86965 datasheet.&n;&n;&t;After the initial version of this driver was written Gerry Sawkins of&n;&t;ATI provided their EEPROM configuration code header file.&n;    Thanks to NIIBE Yutaka &lt;gniibe@mri.co.jp&gt; for bug fixes.&n;&n;  Bugs:&n;&t;The MB86965 has a design flaw that makes all probes unreliable.  Not&n;&t;only is it difficult to detect, it also moves around in I/O space in&n;&t;response to inb()s from other device probes!&n;*/
 DECL|variable|version
 r_static
 r_char
 op_star
 id|version
 op_assign
-l_string|&quot;at1700.c:v1.10 9/24/94  Donald Becker (becker@cesdis.gsfc.nasa.gov)&bslash;n&quot;
+l_string|&quot;at1700.c:v1.12 1/18/95  Donald Becker (becker@cesdis.gsfc.nasa.gov)&bslash;n&quot;
 suffix:semicolon
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -104,11 +104,6 @@ r_struct
 id|enet_statistics
 id|stats
 suffix:semicolon
-DECL|member|open_time
-r_int
-id|open_time
-suffix:semicolon
-multiline_comment|/* Useless example local info. */
 DECL|member|tx_started
 id|uint
 id|tx_started
@@ -1407,6 +1402,18 @@ op_plus
 id|CONFIG_1
 )paren
 suffix:semicolon
+id|lp-&gt;tx_started
+op_assign
+l_int|0
+suffix:semicolon
+id|lp-&gt;tx_queue
+op_assign
+l_int|0
+suffix:semicolon
+id|lp-&gt;tx_queue_len
+op_assign
+l_int|0
+suffix:semicolon
 multiline_comment|/* Turn on Rx interrupts, leave Tx interrupts off until packet Tx. */
 id|outb
 c_func
@@ -1427,10 +1434,6 @@ id|ioaddr
 op_plus
 id|RX_INTR
 )paren
-suffix:semicolon
-id|lp-&gt;open_time
-op_assign
-id|jiffies
 suffix:semicolon
 id|dev-&gt;tbusy
 op_assign
@@ -1660,6 +1663,18 @@ suffix:semicolon
 id|dev-&gt;trans_start
 op_assign
 id|jiffies
+suffix:semicolon
+id|lp-&gt;tx_started
+op_assign
+l_int|0
+suffix:semicolon
+id|lp-&gt;tx_queue
+op_assign
+l_int|0
+suffix:semicolon
+id|lp-&gt;tx_queue_len
+op_assign
+l_int|0
 suffix:semicolon
 )brace
 multiline_comment|/* If some higher layer thinks we&squot;ve missed an tx-done interrupt&n;&t;   we are passed NULL. Caution: dev_tint() handles the cli()/sti()&n;&t;   itself. */
@@ -2166,6 +2181,17 @@ op_plus
 id|DATAPORT
 )paren
 suffix:semicolon
+id|ushort
+id|pkt_len
+op_assign
+id|inw
+c_func
+(paren
+id|ioaddr
+op_plus
+id|DATAPORT
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -2273,17 +2299,6 @@ suffix:semicolon
 )brace
 r_else
 (brace
-id|ushort
-id|pkt_len
-op_assign
-id|inw
-c_func
-(paren
-id|ioaddr
-op_plus
-id|DATAPORT
-)paren
-suffix:semicolon
 multiline_comment|/* Malloc up new buffer. */
 r_struct
 id|sk_buff
@@ -2306,6 +2321,23 @@ comma
 id|dev-&gt;name
 comma
 id|pkt_len
+)paren
+suffix:semicolon
+multiline_comment|/* Prime the FIFO and then flush the packet. */
+id|inw
+c_func
+(paren
+id|ioaddr
+op_plus
+id|DATAPORT
+)paren
+suffix:semicolon
+id|inw
+c_func
+(paren
+id|ioaddr
+op_plus
+id|DATAPORT
 )paren
 suffix:semicolon
 id|outb
@@ -2354,6 +2386,23 @@ comma
 id|pkt_len
 )paren
 suffix:semicolon
+multiline_comment|/* Prime the FIFO and then flush the packet. */
+id|inw
+c_func
+(paren
+id|ioaddr
+op_plus
+id|DATAPORT
+)paren
+suffix:semicolon
+id|inw
+c_func
+(paren
+id|ioaddr
+op_plus
+id|DATAPORT
+)paren
+suffix:semicolon
 id|outb
 c_func
 (paren
@@ -2396,59 +2445,6 @@ op_rshift
 l_int|1
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|net_debug
-OG
-l_int|5
-)paren
-(brace
-r_int
-id|i
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;%s: Rxed packet of length %d: &quot;
-comma
-id|dev-&gt;name
-comma
-id|pkt_len
-)paren
-suffix:semicolon
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-l_int|14
-suffix:semicolon
-id|i
-op_increment
-)paren
-id|printk
-c_func
-(paren
-l_string|&quot; %02x&quot;
-comma
-id|skb-&gt;data
-(braket
-id|i
-)braket
-)paren
-suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;.&bslash;n&quot;
-)paren
-suffix:semicolon
-)brace
 id|netif_rx
 c_func
 (paren
@@ -2587,10 +2583,6 @@ r_int
 id|ioaddr
 op_assign
 id|dev-&gt;base_addr
-suffix:semicolon
-id|lp-&gt;open_time
-op_assign
-l_int|0
 suffix:semicolon
 id|dev-&gt;tbusy
 op_assign

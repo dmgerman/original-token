@@ -1,4 +1,4 @@
-multiline_comment|/********************************************************&n;* Header file for eata_dma.c Linux EATA-DMA SCSI driver *&n;* (c) 1993,94,95 Michael Neuffer                        *&n;*********************************************************&n;* last change: 95/01/15                                 *&n;********************************************************/
+multiline_comment|/********************************************************&n;* Header file for eata_dma.c Linux EATA-DMA SCSI driver *&n;* (c) 1993,94,95 Michael Neuffer                        *&n;*********************************************************&n;* last change: 95/01/16                                 *&n;********************************************************/
 macro_line|#ifndef _EATA_DMA_H
 DECL|macro|_EATA_DMA_H
 mdefine_line|#define _EATA_DMA_H
@@ -11,7 +11,7 @@ mdefine_line|#define VER_MAJOR 2
 DECL|macro|VER_MINOR
 mdefine_line|#define VER_MINOR 1
 DECL|macro|VER_SUB
-mdefine_line|#define VER_SUB   &quot;0g&quot;
+mdefine_line|#define VER_SUB   &quot;0h&quot;
 multiline_comment|/************************************************************************&n; * Here you can configure your drives that are using a non-standard     *&n; * geometry.                                                            *&n; * To enable this set HARDCODED to 1                                    *&n; * If you have only one drive that need reconfiguration, set ID1 to -1  *&n; ************************************************************************/
 DECL|macro|HARDCODED
 mdefine_line|#define HARDCODED     0          /* Here are drives running in emu. mode   */
@@ -35,8 +35,8 @@ multiline_comment|/*************************************************************
 DECL|macro|CHECKPAL
 mdefine_line|#define CHECKPAL        0        /* EISA pal checking on/off            */
 multiline_comment|/************************************************************************&n; * Debug options.                                                       * &n; * Enable DEBUG and whichever options you require.                      *&n; ************************************************************************/
-DECL|macro|DEBUG
-mdefine_line|#define DEBUG&t;&t;1&t;/* Enable debug code. &t;&t;&t;*/
+DECL|macro|DEBUG_EATA
+mdefine_line|#define DEBUG_EATA&t;1&t;/* Enable debug code. &t;&t;&t;*/
 DECL|macro|DPT_DEBUG
 mdefine_line|#define DPT_DEBUG       0       /* Bobs special                         */
 DECL|macro|DBG_DELAY
@@ -59,11 +59,13 @@ DECL|macro|DBG_QUEUE
 mdefine_line|#define DBG_QUEUE&t;0&t;/* Trace command queueing. &t;&t;*/
 DECL|macro|DBG_INTR
 mdefine_line|#define DBG_INTR&t;0       /* Trace interrupt service routine. &t;*/
+DECL|macro|DBG_INTR2
+mdefine_line|#define DBG_INTR2&t;0       /* Trace interrupt service routine. &t;*/
 DECL|macro|DBG_REGISTER
 mdefine_line|#define DBG_REGISTER    0       /* */
 DECL|macro|DBG_ABNORM
 mdefine_line|#define DBG_ABNORM&t;1&t;/* Debug abnormal actions (reset, abort)*/
-macro_line|#if DEBUG 
+macro_line|#if DEBUG_EATA 
 DECL|macro|DBG
 mdefine_line|#define DBG(x, y)&t;if ((x)) {y;} 
 macro_line|#else
@@ -71,7 +73,7 @@ DECL|macro|DBG
 mdefine_line|#define DBG(x, y)
 macro_line|#endif
 DECL|macro|EATA_DMA
-mdefine_line|#define EATA_DMA {                   &bslash;&n;&t;NULL, NULL,                  &bslash;&n;        &quot;EATA (Extended Attachment) driver&quot;, &bslash;&n;        eata_detect,                 &bslash;&n;        NULL,                        &bslash;&n;        eata_info,                   &bslash;&n;        eata_command,                &bslash;&n;        eata_queue,                  &bslash;&n;        eata_abort,                  &bslash;&n;        eata_reset,                  &bslash;&n;        NULL, /* Slave attach */     &bslash;&n;&t;scsicam_bios_param,          &bslash;&n;        0,      /* Canqueue     */   &bslash;&n;        0,      /* this_id      */   &bslash;&n;        0,      /* sg_tablesize */   &bslash;&n;        0,      /* cmd_per_lun  */   &bslash;&n;        0,      /* present      */   &bslash;&n;        0,      /* True if ISA  */   &bslash;&n;&t;ENABLE_CLUSTERING }
+mdefine_line|#define EATA_DMA {                   &bslash;&n;&t;NULL, NULL,                  &bslash;&n;        &quot;EATA (Extended Attachment) driver&quot;, &bslash;&n;        eata_detect,                 &bslash;&n;        NULL,                        &bslash;&n;        eata_info,                   &bslash;&n;        eata_command,                &bslash;&n;        eata_queue,                  &bslash;&n;        eata_abort,                  &bslash;&n;        eata_reset,                  &bslash;&n;        NULL, /* Slave attach */     &bslash;&n;&t;scsicam_bios_param,          &bslash;&n;        0,      /* Canqueue     */   &bslash;&n;        0,      /* this_id      */   &bslash;&n;        0,      /* sg_tablesize */   &bslash;&n;        0,      /* cmd_per_lun  */   &bslash;&n;        0,      /* present      */   &bslash;&n;        1,      /* True if ISA  */   &bslash;&n;&t;ENABLE_CLUSTERING }
 r_int
 id|eata_detect
 c_func
@@ -154,27 +156,28 @@ DECL|macro|MAXIRQ
 mdefine_line|#define MAXIRQ    16 
 DECL|macro|MAXTARGET
 mdefine_line|#define MAXTARGET  8
-multiline_comment|/* PCI Bus And Device Limitations */
 DECL|macro|MAX_PCI_DEVICES
-mdefine_line|#define MAX_PCI_DEVICES          32       /* Maximum # Of Devices Per Bus   */
+mdefine_line|#define MAX_PCI_DEVICES   32             /* Maximum # Of Devices Per Bus   */
 DECL|macro|MAX_METHOD_2
-mdefine_line|#define MAX_METHOD_2             16       /* Max Devices For Method 2       */
+mdefine_line|#define MAX_METHOD_2      16             /* Max Devices For Method 2       */
 DECL|macro|MAX_PCI_BUS
-mdefine_line|#define MAX_PCI_BUS              16       /* Maximum # Of Busses Allowed    */
+mdefine_line|#define MAX_PCI_BUS       16             /* Maximum # Of Busses Allowed    */
 DECL|macro|SG_SIZE
-mdefine_line|#define SG_SIZE   64
+mdefine_line|#define SG_SIZE           64 
 DECL|macro|C_P_L_DIV
-mdefine_line|#define C_P_L_DIV 32     
+mdefine_line|#define C_P_L_DIV          8             /* 1 &lt;= C_P_L_DIV &lt;= 8            */
+DECL|macro|C_P_L_CURRENT_MAX
+mdefine_line|#define C_P_L_CURRENT_MAX  2             /* Until this limit is removed    */
 DECL|macro|FREE
-mdefine_line|#define FREE      0
+mdefine_line|#define FREE       0
 DECL|macro|USED
-mdefine_line|#define USED      1
+mdefine_line|#define USED       1
 DECL|macro|TIMEOUT
-mdefine_line|#define TIMEOUT   2
+mdefine_line|#define TIMEOUT    2
 DECL|macro|RESET
-mdefine_line|#define RESET     4
+mdefine_line|#define RESET      4
 DECL|macro|LOCKED
-mdefine_line|#define LOCKED    8
+mdefine_line|#define LOCKED     8
 DECL|macro|HD
 mdefine_line|#define HD(cmd)  ((hostdata *)&amp;(cmd-&gt;host-&gt;hostdata))
 DECL|macro|CD
@@ -911,6 +914,10 @@ id|revision
 (braket
 l_int|6
 )braket
+suffix:semicolon
+DECL|member|EATA_revision
+r_char
+id|EATA_revision
 suffix:semicolon
 DECL|member|bustype
 id|unchar
