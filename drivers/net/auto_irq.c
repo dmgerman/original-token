@@ -40,6 +40,8 @@ c_func
 )paren
 suffix:semicolon
 )brace
+DECL|macro|BUSY_LOOP_UNTIL
+mdefine_line|#define BUSY_LOOP_UNTIL(j) while ((long)(jiffies-(j)) &lt; 0) ;
 DECL|function|autoirq_report
 r_int
 id|autoirq_report
@@ -49,6 +51,19 @@ r_int
 id|waittime
 )paren
 (brace
+r_int
+r_int
+id|delay
+op_assign
+id|jiffies
+op_plus
+id|waittime
+suffix:semicolon
+id|BUSY_LOOP_UNTIL
+c_func
+(paren
+id|delay
+)paren
 r_return
 id|probe_irq_off
 c_func

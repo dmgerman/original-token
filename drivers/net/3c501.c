@@ -2332,7 +2332,7 @@ c_func
 (paren
 id|dev-&gt;irq
 comma
-l_int|NULL
+id|dev
 )paren
 suffix:semicolon
 id|outb

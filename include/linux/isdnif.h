@@ -541,11 +541,11 @@ mdefine_line|#define GET_USER get_user
 DECL|macro|PUT_USER
 mdefine_line|#define PUT_USER put_user
 DECL|macro|RWTYPE
-mdefine_line|#define RWTYPE long
+mdefine_line|#define RWTYPE ssize_t
 DECL|macro|LSTYPE
 mdefine_line|#define LSTYPE long long
 DECL|macro|RWARG
-mdefine_line|#define RWARG unsigned long
+mdefine_line|#define RWARG size_t
 DECL|macro|LSARG
 mdefine_line|#define LSARG long long
 macro_line|#endif

@@ -3304,11 +3304,6 @@ id|isdn_read
 c_func
 (paren
 r_struct
-id|inode
-op_star
-id|inode
-comma
-r_struct
 id|file
 op_star
 id|file
@@ -3319,6 +3314,10 @@ id|buf
 comma
 id|RWARG
 id|count
+comma
+id|loff_t
+op_star
+id|off
 )paren
 (brace
 id|uint
@@ -3327,7 +3326,7 @@ op_assign
 id|MINOR
 c_func
 (paren
-id|inode-&gt;i_rdev
+id|file-&gt;f_dentry-&gt;d_inode-&gt;i_rdev
 )paren
 suffix:semicolon
 r_int
@@ -3428,7 +3427,8 @@ r_return
 op_minus
 id|EFAULT
 suffix:semicolon
-id|file-&gt;f_pos
+op_star
+id|off
 op_add_assign
 id|len
 suffix:semicolon
@@ -3529,7 +3529,8 @@ comma
 l_int|1
 )paren
 suffix:semicolon
-id|file-&gt;f_pos
+op_star
+id|off
 op_add_assign
 id|len
 suffix:semicolon
@@ -3704,7 +3705,8 @@ c_func
 id|flags
 )paren
 suffix:semicolon
-id|file-&gt;f_pos
+op_star
+id|off
 op_add_assign
 id|len
 suffix:semicolon
@@ -3773,11 +3775,6 @@ id|isdn_write
 c_func
 (paren
 r_struct
-id|inode
-op_star
-id|inode
-comma
-r_struct
 id|file
 op_star
 id|file
@@ -3789,6 +3786,10 @@ id|buf
 comma
 id|RWARG
 id|count
+comma
+id|loff_t
+op_star
+id|off
 )paren
 (brace
 id|uint
@@ -3797,7 +3798,7 @@ op_assign
 id|MINOR
 c_func
 (paren
-id|inode-&gt;i_rdev
+id|file-&gt;f_dentry-&gt;d_inode-&gt;i_rdev
 )paren
 suffix:semicolon
 r_int

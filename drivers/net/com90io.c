@@ -1127,7 +1127,7 @@ c_func
 (paren
 id|airq
 comma
-l_int|NULL
+id|dev
 )paren
 suffix:semicolon
 id|release_region
@@ -3266,7 +3266,7 @@ c_func
 (paren
 id|dev-&gt;irq
 comma
-l_int|NULL
+id|dev
 )paren
 suffix:semicolon
 )brace

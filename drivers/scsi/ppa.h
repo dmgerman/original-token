@@ -129,7 +129,6 @@ r_int
 op_star
 )paren
 suffix:semicolon
-r_static
 r_int
 id|ppa_release
 c_func

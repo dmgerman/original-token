@@ -12829,6 +12829,11 @@ id|tpnt-&gt;finish
 )paren
 suffix:semicolon
 )brace
+id|resize_dma_pool
+c_func
+(paren
+)paren
+suffix:semicolon
 id|MOD_INC_USE_COUNT
 suffix:semicolon
 r_return

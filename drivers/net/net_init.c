@@ -18,7 +18,7 @@ macro_line|#include &lt;linux/if_ltalk.h&gt;
 multiline_comment|/* The network devices currently exist only in the socket namespace, so these&n;   entries are unused.  The only ones that make sense are&n;    open&t;start the ethercard&n;    close&t;stop  the ethercard&n;    ioctl&t;To get statistics, perhaps set the interface port (AUI, BNC, etc.)&n;   One can also imagine getting raw packets using&n;    read &amp; write&n;   but this is probably better handled by a raw packet socket.&n;&n;   Given that almost all of these functions are handled in the current&n;   socket-based scheme, putting ethercard devices in /dev/ seems pointless.&n;   &n;   [Removed all support for /dev network devices. When someone adds&n;    streams then by magic we get them, but otherwise they are un-needed&n;&t;and a space waste]&n;*/
 multiline_comment|/* The list of used and available &quot;eth&quot; slots (for &quot;eth0&quot;, &quot;eth1&quot;, etc.) */
 DECL|macro|MAX_ETH_CARDS
-mdefine_line|#define MAX_ETH_CARDS 16 /* same as the number if irq&squot;s in irq2dev[] */
+mdefine_line|#define MAX_ETH_CARDS 16
 DECL|variable|ethdev_index
 r_static
 r_struct
@@ -1586,7 +1586,7 @@ suffix:semicolon
 macro_line|#ifdef CONFIG_TR
 multiline_comment|/* The list of used and available &quot;tr&quot; slots */
 DECL|macro|MAX_TR_CARDS
-mdefine_line|#define MAX_TR_CARDS 16 /* same as the number of irq&squot;s in irq2dev[] */
+mdefine_line|#define MAX_TR_CARDS 16
 DECL|variable|trdev_index
 r_static
 r_struct

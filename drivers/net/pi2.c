@@ -6604,7 +6604,7 @@ c_func
 (paren
 id|dev-&gt;irq
 comma
-l_int|NULL
+id|dev
 )paren
 suffix:semicolon
 r_return
@@ -7585,7 +7585,8 @@ c_func
 (paren
 id|pi0a.irq
 comma
-l_int|NULL
+op_amp
+id|pi0a
 )paren
 suffix:semicolon
 multiline_comment|/* IRQs and IO Ports are shared */

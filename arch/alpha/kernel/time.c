@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *  linux/arch/alpha/kernel/time.c&n; *&n; *  Copyright (C) 1991, 1992, 1995  Linus Torvalds&n; *&n; * This file contains the PC-specific time handling details:&n; * reading the RTC at bootup, etc..&n; * 1994-07-02    Alan Modra&n; *&t;fixed set_rtc_mmss, fixed time.year for &gt;= 2000, new mktime&n; * 1995-03-26    Markus Kuhn&n; *      fixed 500 ms bug at call to set_rtc_mmss, fixed DS12887&n; *      precision CMOS clock update&n; * 1997-01-09    Adrian Sun&n; *      use interval timer if CONFIG_RTC=y&n; */
+multiline_comment|/*&n; *  linux/arch/alpha/kernel/time.c&n; *&n; *  Copyright (C) 1991, 1992, 1995  Linus Torvalds&n; *&n; * This file contains the PC-specific time handling details:&n; * reading the RTC at bootup, etc..&n; * 1994-07-02    Alan Modra&n; *&t;fixed set_rtc_mmss, fixed time.year for &gt;= 2000, new mktime&n; * 1995-03-26    Markus Kuhn&n; *      fixed 500 ms bug at call to set_rtc_mmss, fixed DS12887&n; *      precision CMOS clock update&n; * 1997-01-09    Adrian Sun&n; *      use interval timer if CONFIG_RTC=y&n; * 1997-10-29    John Bowman (bowman@math.ualberta.ca)&n; *      fixed tick loss calculation in timer_interrupt&n; *      (round system clock to nearest tick instead of truncating)&n; *      fixed algorithm in time_init for getting time from CMOS clock&n; */
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
@@ -8,6 +8,7 @@ macro_line|#include &lt;linux/mm.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;asm/hwrpb.h&gt;
+macro_line|#include &lt;asm/delay.h&gt;
 macro_line|#include &lt;linux/mc146818rtc.h&gt;
 macro_line|#include &lt;linux/timex.h&gt;
 macro_line|#ifdef CONFIG_RTC 
@@ -35,6 +36,12 @@ suffix:semicolon
 multiline_comment|/*&n; * Shift amount by which scaled_ticks_per_cycle is scaled.  Shifting&n; * by 48 gives us 16 bits for HZ while keeping the accuracy good even&n; * for large CPU clock rates.&n; */
 DECL|macro|FIX_SHIFT
 mdefine_line|#define FIX_SHIFT&t;48
+DECL|variable|round_ticks
+r_static
+r_int
+r_int
+id|round_ticks
+suffix:semicolon
 multiline_comment|/* lump static variables together for more efficient access: */
 r_static
 r_struct
@@ -44,11 +51,6 @@ id|__u32
 id|last_time
 suffix:semicolon
 multiline_comment|/* cycle counter last time it got invoked */
-DECL|member|max_cycles_per_tick
-id|__u32
-id|max_cycles_per_tick
-suffix:semicolon
-multiline_comment|/* more makes us think we lost an interrupt */
 DECL|member|scaled_ticks_per_cycle
 r_int
 r_int
@@ -116,6 +118,11 @@ id|delta
 comma
 id|now
 suffix:semicolon
+r_int
+id|i
+comma
+id|nticks
+suffix:semicolon
 id|now
 op_assign
 id|rpcc
@@ -133,32 +140,19 @@ id|state.last_time
 op_assign
 id|now
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|delta
-OG
-id|state.max_cycles_per_tick
-)paren
-(brace
-r_int
-id|i
-comma
-id|missed_ticks
-suffix:semicolon
-id|missed_ticks
+id|nticks
 op_assign
 (paren
 (paren
 id|delta
 op_star
 id|state.scaled_ticks_per_cycle
+op_plus
+id|round_ticks
 )paren
 op_rshift
 id|FIX_SHIFT
 )paren
-op_minus
-l_int|1
 suffix:semicolon
 r_for
 c_loop
@@ -169,7 +163,7 @@ l_int|0
 suffix:semicolon
 id|i
 OL
-id|missed_ticks
+id|nticks
 suffix:semicolon
 op_increment
 id|i
@@ -182,13 +176,6 @@ id|regs
 )paren
 suffix:semicolon
 )brace
-)brace
-id|do_timer
-c_func
-(paren
-id|regs
-)paren
-suffix:semicolon
 multiline_comment|/*&n;&t; * If we have an externally synchronized Linux clock, then update&n;&t; * CMOS clock accordingly every ~11 minutes. Set_rtc_mmss() has to be&n;&t; * called as close as possible to 500 ms before the new second starts.&n;&t; */
 r_if
 c_cond
@@ -406,56 +393,11 @@ id|min
 comma
 id|sec
 suffix:semicolon
-r_int
-id|i
-suffix:semicolon
 multiline_comment|/* The Linux interpretation of the CMOS clock register contents:&n;&t; * When the Update-In-Progress (UIP) flag goes from 1 to 0, the&n;&t; * RTC registers show the second which has precisely just started.&n;&t; * Let&squot;s hope other operating systems interpret the RTC the same way.&n;&t; */
 multiline_comment|/* read RTC exactly on falling edge of update flag */
-r_for
+multiline_comment|/* Wait for rise.... (may take up to 1 second) */
+r_while
 c_loop
-(paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-l_int|1000000
-suffix:semicolon
-id|i
-op_increment
-)paren
-multiline_comment|/* may take up to 1 second... */
-r_if
-c_cond
-(paren
-id|CMOS_READ
-c_func
-(paren
-id|RTC_FREQ_SELECT
-)paren
-op_amp
-id|RTC_UIP
-)paren
-r_break
-suffix:semicolon
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-l_int|1000000
-suffix:semicolon
-id|i
-op_increment
-)paren
-multiline_comment|/* must try at least 2.228 ms */
-r_if
-c_cond
 (paren
 op_logical_neg
 (paren
@@ -468,11 +410,30 @@ op_amp
 id|RTC_UIP
 )paren
 )paren
-r_break
-suffix:semicolon
-r_do
 (brace
-multiline_comment|/* Isn&squot;t this overkill ? UIP above should guarantee consistency */
+suffix:semicolon
+)brace
+multiline_comment|/* Wait for fall.... */
+r_while
+c_loop
+(paren
+id|CMOS_READ
+c_func
+(paren
+id|RTC_FREQ_SELECT
+)paren
+op_amp
+id|RTC_UIP
+)paren
+(brace
+suffix:semicolon
+)brace
+id|__delay
+c_func
+(paren
+l_int|1000000
+)paren
+suffix:semicolon
 id|sec
 op_assign
 id|CMOS_READ
@@ -519,19 +480,6 @@ id|CMOS_READ
 c_func
 (paren
 id|RTC_YEAR
-)paren
-suffix:semicolon
-)brace
-r_while
-c_loop
-(paren
-id|sec
-op_ne
-id|CMOS_READ
-c_func
-(paren
-id|RTC_SECONDS
-)paren
 )paren
 suffix:semicolon
 r_if
@@ -678,15 +626,19 @@ id|FIX_SHIFT
 op_div
 id|hwrpb-&gt;cycle_freq
 suffix:semicolon
-id|state.max_cycles_per_tick
+id|round_ticks
 op_assign
 (paren
-l_int|2
-op_star
-id|hwrpb-&gt;cycle_freq
+r_int
+r_int
 )paren
-op_div
-id|HZ
+l_int|1
+op_lshift
+(paren
+id|FIX_SHIFT
+op_minus
+l_int|1
+)paren
 suffix:semicolon
 id|state.last_rtc_update
 op_assign

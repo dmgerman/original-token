@@ -7681,7 +7681,8 @@ c_func
 (paren
 id|sdla0.irq
 comma
-l_int|NULL
+op_amp
+id|sdla0
 )paren
 suffix:semicolon
 )brace

@@ -3685,7 +3685,8 @@ c_func
 (paren
 id|dev_cops.irq
 comma
-l_int|NULL
+op_amp
+id|dev_cops
 )paren
 suffix:semicolon
 id|release_region

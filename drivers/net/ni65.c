@@ -870,7 +870,7 @@ c_func
 (paren
 id|dev-&gt;irq
 comma
-l_int|NULL
+id|dev
 )paren
 suffix:semicolon
 id|dev-&gt;start
@@ -981,7 +981,7 @@ c_func
 (paren
 id|dev-&gt;irq
 comma
-l_int|NULL
+id|dev
 )paren
 suffix:semicolon
 id|dev-&gt;tbusy

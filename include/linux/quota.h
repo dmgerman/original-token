@@ -121,7 +121,7 @@ mdefine_line|#define&t;dq_btime&t;dq_dqb.dqb_btime
 DECL|macro|dq_itime
 mdefine_line|#define&t;dq_itime&t;dq_dqb.dqb_itime
 DECL|macro|dqoff
-mdefine_line|#define dqoff(UID)      ((off_t)((UID) * sizeof (struct dqblk)))
+mdefine_line|#define dqoff(UID)      ((loff_t)((UID) * sizeof (struct dqblk)))
 DECL|struct|dqstats
 r_struct
 id|dqstats

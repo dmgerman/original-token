@@ -639,6 +639,13 @@ c_func
 id|invalidate_inode_pages
 )paren
 suffix:semicolon
+DECL|variable|truncate_inode_pages
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|truncate_inode_pages
+)paren
+suffix:semicolon
 DECL|variable|fsync_dev
 id|EXPORT_SYMBOL
 c_func
@@ -847,6 +854,13 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|put_cached_page
+)paren
+suffix:semicolon
+DECL|variable|shrink_dcache_sb
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|shrink_dcache_sb
 )paren
 suffix:semicolon
 macro_line|#if !defined(CONFIG_NFSD) &amp;&amp; defined(CONFIG_NFSD_MODULE)

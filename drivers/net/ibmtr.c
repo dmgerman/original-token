@@ -8142,7 +8142,10 @@ id|i
 op_member_access_from_pointer
 id|irq
 comma
-l_int|NULL
+id|dev_ibmtr
+(braket
+id|i
+)braket
 )paren
 suffix:semicolon
 id|release_region

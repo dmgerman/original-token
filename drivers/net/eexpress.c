@@ -1318,7 +1318,7 @@ c_func
 (paren
 id|irq
 comma
-l_int|NULL
+id|dev
 )paren
 suffix:semicolon
 id|outb

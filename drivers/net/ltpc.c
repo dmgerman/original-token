@@ -3916,7 +3916,7 @@ c_func
 (paren
 l_int|3
 comma
-l_int|NULL
+id|dev
 )paren
 suffix:semicolon
 r_if
@@ -3930,7 +3930,7 @@ c_func
 (paren
 l_int|4
 comma
-l_int|NULL
+id|dev
 )paren
 suffix:semicolon
 r_if
@@ -3944,7 +3944,7 @@ c_func
 (paren
 l_int|9
 comma
-l_int|NULL
+id|dev
 )paren
 suffix:semicolon
 id|sti
@@ -5123,7 +5123,8 @@ c_func
 (paren
 id|dev_ltpc.irq
 comma
-l_int|NULL
+op_amp
+id|dev_ltpc
 )paren
 suffix:semicolon
 id|dev_ltpc.irq

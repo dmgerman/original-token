@@ -439,7 +439,6 @@ r_return
 suffix:semicolon
 )brace
 DECL|function|ppa_release
-r_static
 r_int
 id|ppa_release
 c_func

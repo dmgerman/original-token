@@ -1049,7 +1049,7 @@ c_func
 (paren
 id|dev-&gt;irq
 comma
-l_int|NULL
+id|dev
 )paren
 suffix:semicolon
 r_return
@@ -1730,7 +1730,7 @@ c_func
 (paren
 id|dev-&gt;irq
 comma
-l_int|NULL
+id|dev
 )paren
 suffix:semicolon
 id|free_dma
@@ -2066,7 +2066,7 @@ id|this_device
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * If we don&squot;t do this, we can&squot;t re-insmod it later.&n;&t; * Release irq/dma here, when you have jumpered versions and&n;&t; * allocate them in net_probe1().&n;&t; */
-multiline_comment|/*&n;&t;   free_irq(this_device.irq, NULL);&n;&t;   free_dma(this_device.dma);&n;&t;*/
+multiline_comment|/*&n;&t;   free_irq(this_device.irq, dev);&n;&t;   free_dma(this_device.dma);&n;&t;*/
 id|release_region
 c_func
 (paren

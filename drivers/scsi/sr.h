@@ -2,7 +2,6 @@ multiline_comment|/*&n; *      sr.h by David Giller&n; *      CD-ROM disk driver
 macro_line|#ifndef _SR_H
 DECL|macro|_SR_H
 mdefine_line|#define _SR_H
-macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &quot;scsi.h&quot;
 r_typedef
 r_struct
@@ -80,7 +79,21 @@ id|xa_flag
 suffix:colon
 l_int|1
 suffix:semicolon
-multiline_comment|/* CD has XA sectors */
+multiline_comment|/* CD has XA sectors ? */
+DECL|member|readcd_known
+r_int
+id|readcd_known
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* drive supports READ_CD (0xbe) */
+DECL|member|readcd_cdda
+r_int
+id|readcd_cdda
+suffix:colon
+l_int|1
+suffix:semicolon
+multiline_comment|/* reading audio data using READ_CD */
 DECL|member|cdi
 r_struct
 id|cdrom_device_info
@@ -107,6 +120,8 @@ op_star
 comma
 r_void
 op_star
+comma
+r_int
 comma
 r_int
 )paren
@@ -189,6 +204,19 @@ op_star
 )paren
 suffix:semicolon
 r_int
+id|sr_select_speed
+c_func
+(paren
+r_struct
+id|cdrom_device_info
+op_star
+id|cdi
+comma
+r_int
+id|speed
+)paren
+suffix:semicolon
+r_int
 id|sr_audio_ioctl
 c_func
 (paren
@@ -218,25 +246,6 @@ r_int
 r_int
 )paren
 suffix:semicolon
-multiline_comment|/* vendor-specific */
-macro_line|#ifdef CONFIG_BLK_DEV_SR_VENDOR
-r_void
-id|sr_vendor_init
-c_func
-(paren
-r_int
-id|minor
-)paren
-suffix:semicolon
-r_int
-id|sr_cd_check
-c_func
-(paren
-r_struct
-id|cdrom_device_info
-op_star
-)paren
-suffix:semicolon
 r_int
 id|sr_read_sector
 c_func
@@ -256,6 +265,42 @@ op_star
 id|dest
 )paren
 suffix:semicolon
-macro_line|#endif
+r_int
+id|sr_is_xa
+c_func
+(paren
+r_int
+id|minor
+)paren
+suffix:semicolon
+multiline_comment|/* sr_vendor.c */
+r_void
+id|sr_vendor_init
+c_func
+(paren
+r_int
+id|minor
+)paren
+suffix:semicolon
+r_int
+id|sr_cd_check
+c_func
+(paren
+r_struct
+id|cdrom_device_info
+op_star
+)paren
+suffix:semicolon
+r_int
+id|sr_set_blocklength
+c_func
+(paren
+r_int
+id|minor
+comma
+r_int
+id|blocklength
+)paren
+suffix:semicolon
 macro_line|#endif
 eof

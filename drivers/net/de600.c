@@ -665,7 +665,7 @@ c_func
 (paren
 id|DE600_IRQ
 comma
-l_int|NULL
+id|dev
 )paren
 suffix:semicolon
 id|dev-&gt;start
