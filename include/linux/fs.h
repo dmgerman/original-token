@@ -42,9 +42,9 @@ comma
 id|nr_free_files
 suffix:semicolon
 DECL|macro|NR_INODE
-mdefine_line|#define NR_INODE 4096&t;/* this should be bigger than NR_FILE */
+mdefine_line|#define NR_INODE 4096&t;/* This should no longer be bigger than NR_FILE */
 DECL|macro|NR_FILE
-mdefine_line|#define NR_FILE 1024&t;/* this can well be larger on a larger system */
+mdefine_line|#define NR_FILE  4096&t;/* this can well be larger on a larger system */
 DECL|macro|NR_RESERVED_FILES
 mdefine_line|#define NR_RESERVED_FILES 10 /* reserved for root */
 DECL|macro|MAY_EXEC
@@ -605,6 +605,7 @@ macro_line|#include &lt;linux/nfs_fs_i.h&gt;
 macro_line|#include &lt;linux/sysv_fs_i.h&gt;
 macro_line|#include &lt;linux/affs_fs_i.h&gt;
 macro_line|#include &lt;linux/ufs_fs_i.h&gt;
+macro_line|#include &lt;linux/coda_fs_i.h&gt;
 macro_line|#include &lt;linux/romfs_fs_i.h&gt;
 macro_line|#include &lt;linux/smb_fs_i.h&gt;
 macro_line|#include &lt;linux/hfs_fs_i.h&gt;
@@ -923,6 +924,11 @@ DECL|member|romfs_i
 r_struct
 id|romfs_inode_info
 id|romfs_i
+suffix:semicolon
+DECL|member|coda_i
+r_struct
+id|coda_inode_info
+id|coda_i
 suffix:semicolon
 DECL|member|smbfs_i
 r_struct

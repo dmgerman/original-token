@@ -7,6 +7,8 @@ macro_line|#include &lt;linux/types.h&gt;
 macro_line|#ifdef __KERNEL__
 DECL|macro|NCP_DEFAULT_BUFSIZE
 mdefine_line|#define NCP_DEFAULT_BUFSIZE 1024
+DECL|macro|NCP_DEFAULT_OPTIONS
+mdefine_line|#define NCP_DEFAULT_OPTIONS 0&t;&t;/* 2 for packet signatures */
 DECL|struct|ncp_server
 r_struct
 id|ncp_server
@@ -22,6 +24,8 @@ id|__u8
 id|name_space
 (braket
 id|NCP_NUMBER_OF_VOLUMES
+op_plus
+l_int|2
 )braket
 suffix:semicolon
 DECL|member|ncp_filp
@@ -104,11 +108,85 @@ r_struct
 id|ncp_inode_info
 id|root
 suffix:semicolon
-DECL|member|root_path
+macro_line|#if 0
 r_char
 id|root_path
 suffix:semicolon
 multiline_comment|/* &squot;&bslash;0&squot; */
+macro_line|#else
+DECL|member|root_dentry
+r_struct
+id|dentry
+op_star
+id|root_dentry
+suffix:semicolon
+macro_line|#endif
+multiline_comment|/* info for packet signing */
+DECL|member|sign_wanted
+r_int
+id|sign_wanted
+suffix:semicolon
+multiline_comment|/* 1=Server needs signed packets */
+DECL|member|sign_active
+r_int
+id|sign_active
+suffix:semicolon
+multiline_comment|/* 0=don&squot;t do signing, 1=do */
+DECL|member|sign_root
+r_char
+id|sign_root
+(braket
+l_int|8
+)braket
+suffix:semicolon
+multiline_comment|/* generated from password and encr. key */
+DECL|member|sign_last
+r_char
+id|sign_last
+(braket
+l_int|16
+)braket
+suffix:semicolon
+multiline_comment|/* Authentication info: NDS or BINDERY, username */
+r_struct
+(brace
+DECL|member|auth_type
+r_int
+id|auth_type
+suffix:semicolon
+DECL|member|object_name_len
+r_int
+id|object_name_len
+suffix:semicolon
+DECL|member|object_name
+r_void
+op_star
+id|object_name
+suffix:semicolon
+DECL|member|object_type
+r_int
+id|object_type
+suffix:semicolon
+DECL|member|auth
+)brace
+id|auth
+suffix:semicolon
+multiline_comment|/* Password info */
+r_struct
+(brace
+DECL|member|len
+r_int
+id|len
+suffix:semicolon
+DECL|member|data
+r_void
+op_star
+id|data
+suffix:semicolon
+DECL|member|priv
+)brace
+id|priv
+suffix:semicolon
 )brace
 suffix:semicolon
 DECL|function|ncp_conn_valid

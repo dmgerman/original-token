@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET  is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Definitions for the IP router.&n; *&n; * Version:&t;@(#)route.h&t;1.0.4&t;05/27/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; * Fixes:&n; *&t;&t;Alan Cox&t;:&t;Reformatted. Added ip_rt_local()&n; *&t;&t;Alan Cox&t;:&t;Support for TCP parameters.&n; *&t;&t;Alexey Kuznetsov:&t;Major changes for new routing code.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET  is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Definitions for the IP router.&n; *&n; * Version:&t;@(#)route.h&t;1.0.4&t;05/27/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; * Fixes:&n; *&t;&t;Alan Cox&t;:&t;Reformatted. Added ip_rt_local()&n; *&t;&t;Alan Cox&t;:&t;Support for TCP parameters.&n; *&t;&t;Alexey Kuznetsov:&t;Major changes for new routing code.&n; *&t;&t;Mike McLagan    :&t;Routing by source&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
 macro_line|#ifndef _ROUTE_H
 DECL|macro|_ROUTE_H
 mdefine_line|#define _ROUTE_H
@@ -8,26 +8,6 @@ macro_line|#include &lt;linux/in_route.h&gt;
 macro_line|#include &lt;linux/rtnetlink.h&gt;
 DECL|macro|RT_HASH_DIVISOR
 mdefine_line|#define RT_HASH_DIVISOR&t;    &t;256
-DECL|macro|RT_CACHE_MAX_SIZE
-mdefine_line|#define RT_CACHE_MAX_SIZE    &t;256
-multiline_comment|/*&n; * Maximal time to live for unused entry.&n; */
-DECL|macro|RT_CACHE_TIMEOUT
-mdefine_line|#define RT_CACHE_TIMEOUT&t;&t;(HZ*300)
-multiline_comment|/*&n; * Periodic timer frequency&n; */
-DECL|macro|RT_GC_INTERVAL
-mdefine_line|#define RT_GC_INTERVAL&t;&t;&t;(HZ*60)
-multiline_comment|/*&n; * Cache invalidations can be delayed by:&n; */
-DECL|macro|RT_FLUSH_DELAY
-mdefine_line|#define RT_FLUSH_DELAY (5*HZ)
-DECL|macro|RT_REDIRECT_NUMBER
-mdefine_line|#define RT_REDIRECT_NUMBER&t;&t;9
-DECL|macro|RT_REDIRECT_LOAD
-mdefine_line|#define RT_REDIRECT_LOAD&t;&t;(HZ/50)&t;/* 20 msec */
-DECL|macro|RT_REDIRECT_SILENCE
-mdefine_line|#define RT_REDIRECT_SILENCE&t;&t;(RT_REDIRECT_LOAD&lt;&lt;(RT_REDIRECT_NUMBER+1))
-multiline_comment|/* 20sec */
-DECL|macro|RT_ERROR_LOAD
-mdefine_line|#define RT_ERROR_LOAD&t;&t;&t;(1*HZ)
 multiline_comment|/*&n; * Prevents LRU trashing, entries considered equivalent,&n; * if the difference between last use times is less then this number.&n; */
 DECL|macro|RT_CACHE_BUBBLE_THRESHOLD
 mdefine_line|#define RT_CACHE_BUBBLE_THRESHOLD&t;(5*HZ)
@@ -36,6 +16,13 @@ DECL|macro|RTO_ONLINK
 mdefine_line|#define RTO_ONLINK&t;0x01
 DECL|macro|RTO_TPROXY
 mdefine_line|#define RTO_TPROXY&t;0x80000000
+macro_line|#ifdef CONFIG_IP_TRANSPARENT_PROXY
+DECL|macro|RTO_CONN
+mdefine_line|#define RTO_CONN&t;RTO_TPROXY
+macro_line|#else
+DECL|macro|RTO_CONN
+mdefine_line|#define RTO_CONN&t;0
+macro_line|#endif
 DECL|struct|rt_key
 r_struct
 id|rt_key
@@ -136,17 +123,6 @@ id|__u32
 id|rt_dst_map
 suffix:semicolon
 macro_line|#endif
-multiline_comment|/* ICMP statistics */
-DECL|member|last_error
-r_int
-r_int
-id|last_error
-suffix:semicolon
-DECL|member|errors
-r_int
-r_int
-id|errors
-suffix:semicolon
 )brace
 suffix:semicolon
 macro_line|#ifdef __KERNEL__

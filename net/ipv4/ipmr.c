@@ -1,4 +1,4 @@
-multiline_comment|/*&n; *&t;IP multicast routing support for mrouted 3.6/3.8&n; *&n; *&t;&t;(c) 1995 Alan Cox, &lt;alan@cymru.net&gt;&n; *&t;  Linux Consultancy and Custom Driver Development&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; *&t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;Version: $Id: ipmr.c,v 1.29 1997/12/13 21:52:55 kuznet Exp $&n; *&n; *&t;Fixes:&n; *&t;Michael Chastain&t;:&t;Incorrect size of copying.&n; *&t;Alan Cox&t;&t;:&t;Added the cache manager code&n; *&t;Alan Cox&t;&t;:&t;Fixed the clone/copy bug and device race.&n; *&t;Malcolm Beattie&t;&t;:&t;Buffer handling fixes.&n; *&t;Alexey Kuznetsov&t;:&t;Double buffer free and other fixes.&n; *&t;SVR Anand&t;&t;:&t;Fixed several multicast bugs and problems.&n; *&t;Alexey Kuznetsov&t;:&t;Status, optimisations and more.&n; *&t;Brad Parker&t;&t;:&t;Better behaviour on mrouted upcall&n; *&t;&t;&t;&t;&t;overflow.&n; *      Carlos Picoto           :       PIMv1 Support&n; *&n; */
+multiline_comment|/*&n; *&t;IP multicast routing support for mrouted 3.6/3.8&n; *&n; *&t;&t;(c) 1995 Alan Cox, &lt;alan@cymru.net&gt;&n; *&t;  Linux Consultancy and Custom Driver Development&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *&t;modify it under the terms of the GNU General Public License&n; *&t;as published by the Free Software Foundation; either version&n; *&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;Version: $Id: ipmr.c,v 1.29 1997/12/13 21:52:55 kuznet Exp $&n; *&n; *&t;Fixes:&n; *&t;Michael Chastain&t;:&t;Incorrect size of copying.&n; *&t;Alan Cox&t;&t;:&t;Added the cache manager code&n; *&t;Alan Cox&t;&t;:&t;Fixed the clone/copy bug and device race.&n; *&t;Mike McLagan&t;&t;:&t;Routing by source&n; *&t;Malcolm Beattie&t;&t;:&t;Buffer handling fixes.&n; *&t;Alexey Kuznetsov&t;:&t;Double buffer free and other fixes.&n; *&t;SVR Anand&t;&t;:&t;Fixed several multicast bugs and problems.&n; *&t;Alexey Kuznetsov&t;:&t;Status, optimisations and more.&n; *&t;Brad Parker&t;&t;:&t;Better behaviour on mrouted upcall&n; *&t;&t;&t;&t;&t;overflow.&n; *      Carlos Picoto           :       PIMv1 Support&n; *&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
@@ -346,6 +346,10 @@ l_int|NULL
 r_goto
 id|failure
 suffix:semicolon
+id|in_dev-&gt;cnf.rp_filter
+op_assign
+l_int|0
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -637,6 +641,10 @@ l_int|NULL
 r_goto
 id|failure
 suffix:semicolon
+id|in_dev-&gt;cnf.rp_filter
+op_assign
+l_int|0
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -773,10 +781,9 @@ id|dev-&gt;ip_ptr
 op_ne
 l_int|NULL
 )paren
-id|in_dev-&gt;flags
-op_and_assign
-op_complement
-id|IFF_IP_MFORWARD
+id|in_dev-&gt;cnf.mc_forwarding
+op_assign
+l_int|0
 suffix:semicolon
 id|dev_set_allmulti
 c_func
@@ -2477,7 +2484,7 @@ op_eq
 id|mroute_socket
 )paren
 (brace
-id|ipv4_config.multicast_route
+id|ipv4_devconf.mc_forwarding
 op_assign
 l_int|0
 suffix:semicolon
@@ -2637,7 +2644,7 @@ id|mroute_socket
 op_assign
 id|sk
 suffix:semicolon
-id|ipv4_config.multicast_route
+id|ipv4_devconf.mc_forwarding
 op_assign
 l_int|1
 suffix:semicolon
@@ -2918,17 +2925,15 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|in_dev-&gt;flags
-op_amp
-id|IFF_IP_MFORWARD
+id|in_dev-&gt;cnf.mc_forwarding
 )paren
 r_return
 op_minus
 id|EADDRINUSE
 suffix:semicolon
-id|in_dev-&gt;flags
-op_or_assign
-id|IFF_IP_MFORWARD
+id|in_dev-&gt;cnf.mc_forwarding
+op_assign
+l_int|1
 suffix:semicolon
 id|dev_set_allmulti
 c_func
@@ -5555,6 +5560,7 @@ id|c-&gt;mfc_parent
 dot
 id|dev
 suffix:semicolon
+macro_line|#ifdef CONFIG_RTNL_OLD_IFINFO
 r_if
 c_cond
 (paren
@@ -5587,6 +5593,50 @@ op_minus
 id|o
 suffix:semicolon
 )brace
+macro_line|#else
+r_struct
+id|rtattr
+op_star
+id|mp_head
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|dev
+)paren
+id|RTA_PUT
+c_func
+(paren
+id|skb
+comma
+id|RTA_IIF
+comma
+l_int|4
+comma
+op_amp
+id|dev-&gt;ifindex
+)paren
+suffix:semicolon
+id|mp_head
+op_assign
+(paren
+r_struct
+id|rtattr
+op_star
+)paren
+id|skb_put
+c_func
+(paren
+id|skb
+comma
+id|RTA_LENGTH
+c_func
+(paren
+l_int|0
+)paren
+)paren
+suffix:semicolon
+macro_line|#endif
 r_for
 c_loop
 (paren
@@ -5692,11 +5742,29 @@ op_star
 id|nhp
 )paren
 suffix:semicolon
+macro_line|#ifdef CONFIG_RTNL_OLD_IFINFO
 id|rtm-&gt;rtm_nhs
 op_increment
 suffix:semicolon
+macro_line|#endif
 )brace
 )brace
+macro_line|#ifndef CONFIG_RTNL_OLD_IFINFO
+id|mp_head-&gt;rta_type
+op_assign
+id|RTA_MULTIPATH
+suffix:semicolon
+id|mp_head-&gt;rta_len
+op_assign
+id|skb-&gt;tail
+op_minus
+(paren
+id|u8
+op_star
+)paren
+id|mp_head
+suffix:semicolon
+macro_line|#endif
 id|rtm-&gt;rtm_type
 op_assign
 id|RTN_MULTICAST

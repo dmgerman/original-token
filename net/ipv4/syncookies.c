@@ -687,6 +687,8 @@ comma
 id|req-&gt;af.v4_req.loc_addr
 comma
 id|sk-&gt;ip_tos
+op_or
+id|RTO_CONN
 comma
 l_int|0
 )paren

@@ -1,4 +1,5 @@
 multiline_comment|/*&n; *  linux/fs/ncpfs/sock.c&n; *&n; *  Copyright (C) 1992, 1993  Rick Sladkey&n; *&n; *  Modified 1995, 1996 by Volker Lendecke to be usable for ncp&n; *  Modified 1997 Peter Waltenberg, Bill Hawes, David Woodhouse for 2.1 dcache&n; *&n; */
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/socket.h&gt;
@@ -14,9 +15,13 @@ macro_line|#include &lt;net/scm.h&gt;
 macro_line|#include &lt;net/sock.h&gt;
 macro_line|#include &lt;linux/ipx.h&gt;
 macro_line|#include &lt;linux/poll.h&gt;
+macro_line|#include &lt;linux/file.h&gt;
 macro_line|#include &lt;linux/ncp.h&gt;
 macro_line|#include &lt;linux/ncp_fs.h&gt;
 macro_line|#include &lt;linux/ncp_fs_sb.h&gt;
+macro_line|#ifdef CONFIG_NCPFS_PACKET_SIGNING
+macro_line|#include &quot;ncpsign_kernel.h&quot;
+macro_line|#endif
 DECL|function|_recv
 r_static
 r_int
@@ -688,6 +693,12 @@ op_amp
 id|entry.wait
 )paren
 suffix:semicolon
+id|fput
+c_func
+(paren
+id|file
+)paren
+suffix:semicolon
 id|current-&gt;state
 op_assign
 id|TASK_RUNNING
@@ -799,6 +810,7 @@ c_cond
 (paren
 id|wait_table.nr
 )paren
+(brace
 id|remove_wait_queue
 c_func
 (paren
@@ -808,6 +820,13 @@ op_amp
 id|entry.wait
 )paren
 suffix:semicolon
+id|fput
+c_func
+(paren
+id|file
+)paren
+suffix:semicolon
+)brace
 id|current-&gt;state
 op_assign
 id|TASK_RUNNING
@@ -1254,6 +1273,24 @@ op_minus
 id|EIO
 suffix:semicolon
 )brace
+macro_line|#ifdef CONFIG_NCPFS_PACKET_SIGNING
+r_if
+c_cond
+(paren
+id|server-&gt;sign_active
+)paren
+(brace
+id|sign_packet
+c_func
+(paren
+id|server
+comma
+op_amp
+id|size
+)paren
+suffix:semicolon
+)brace
+macro_line|#endif /* CONFIG_NCPFS_PACKET_SIGNING */
 id|result
 op_assign
 id|do_ncp_rpc_call

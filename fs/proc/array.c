@@ -2488,6 +2488,7 @@ op_plus
 l_int|1
 suffix:semicolon
 )brace
+multiline_comment|/*&n; * The task state array is a strange &quot;bitmap&quot; of&n; * reasons to sleep. Thus &quot;running&quot; is zero, and&n; * you can test for combinations of others with&n; * simple bit tests.&n; */
 DECL|variable|task_state_array
 r_static
 r_const
@@ -2498,19 +2499,23 @@ id|task_state_array
 )braket
 op_assign
 (brace
-l_string|&quot;. Huh?&quot;
-comma
 l_string|&quot;R (running)&quot;
 comma
+multiline_comment|/*  0 */
 l_string|&quot;S (sleeping)&quot;
 comma
+multiline_comment|/*  1 */
 l_string|&quot;D (disk sleep)&quot;
 comma
+multiline_comment|/*  2 */
 l_string|&quot;Z (zombie)&quot;
 comma
+multiline_comment|/*  4 */
 l_string|&quot;T (stopped)&quot;
 comma
+multiline_comment|/*  8 */
 l_string|&quot;W (paging)&quot;
+multiline_comment|/* 16 */
 )brace
 suffix:semicolon
 DECL|function|get_task_state

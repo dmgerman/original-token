@@ -499,6 +499,17 @@ id|device_list
 op_assign
 (brace
 (brace
+l_string|&quot;Aashima&quot;
+comma
+l_string|&quot;IMAGERY 2400SP&quot;
+comma
+l_string|&quot;1.03&quot;
+comma
+id|BLIST_NOLUN
+)brace
+comma
+multiline_comment|/* Locks up if polled for lun != 0 */
+(brace
 l_string|&quot;CHINON&quot;
 comma
 l_string|&quot;CD-ROM CDS-431&quot;

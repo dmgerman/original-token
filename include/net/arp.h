@@ -149,5 +149,10 @@ op_star
 id|dev
 )paren
 suffix:semicolon
+r_extern
+r_struct
+id|neigh_ops
+id|arp_broken_ops
+suffix:semicolon
 macro_line|#endif&t;/* _ARP_H */
 eof

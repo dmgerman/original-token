@@ -225,17 +225,17 @@ DECL|member|flow_lbl
 id|__u32
 id|flow_lbl
 suffix:semicolon
-DECL|member|priority
-id|__u8
-id|priority
-suffix:semicolon
 DECL|member|hop_limit
-id|__u8
+r_int
 id|hop_limit
 suffix:semicolon
 DECL|member|mcast_hops
-id|__u8
+r_int
 id|mcast_hops
+suffix:semicolon
+DECL|member|priority
+id|__u8
+id|priority
 suffix:semicolon
 multiline_comment|/* sockopt flags */
 DECL|member|recvsrcrt
@@ -2899,6 +2899,7 @@ op_star
 id|skb
 )paren
 (brace
+multiline_comment|/* Cast skb-&gt;rcvbuf to unsigned... It&squot;s pointless, but reduces&n;&t;   number of warnings when compiling with -W --ANK&n;&t; */
 r_if
 c_cond
 (paren
@@ -2911,6 +2912,9 @@ id|sk-&gt;rmem_alloc
 op_plus
 id|skb-&gt;truesize
 op_ge
+(paren
+r_int
+)paren
 id|sk-&gt;rcvbuf
 )paren
 r_return
@@ -2999,6 +3003,7 @@ op_star
 id|skb
 )paren
 (brace
+multiline_comment|/* Cast skb-&gt;rcvbuf to unsigned... It&squot;s pointless, but reduces&n;&t;   number of warnings when compiling with -W --ANK&n;&t; */
 r_if
 c_cond
 (paren
@@ -3011,6 +3016,9 @@ id|sk-&gt;rmem_alloc
 op_plus
 id|skb-&gt;truesize
 op_ge
+(paren
+r_int
+)paren
 id|sk-&gt;rcvbuf
 )paren
 r_return
@@ -3072,6 +3080,7 @@ op_star
 id|skb
 )paren
 (brace
+multiline_comment|/* Cast skb-&gt;rcvbuf to unsigned... It&squot;s pointless, but reduces&n;&t;   number of warnings when compiling with -W --ANK&n;&t; */
 r_if
 c_cond
 (paren
@@ -3084,6 +3093,9 @@ id|sk-&gt;rmem_alloc
 op_plus
 id|skb-&gt;truesize
 op_ge
+(paren
+r_int
+)paren
 id|sk-&gt;rcvbuf
 )paren
 r_return

@@ -22,7 +22,7 @@ macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;linux/coda.h&gt;
 macro_line|#include &lt;linux/coda_linux.h&gt;
 macro_line|#include &lt;linux/coda_psdev.h&gt;
-macro_line|#include &lt;linux/coda_cnode.h&gt;
+macro_line|#include &lt;linux/coda_fs_i.h&gt;
 macro_line|#include &lt;linux/coda_cache.h&gt;
 multiline_comment|/* VFS super_block ops */
 r_static
@@ -436,8 +436,6 @@ c_func
 (paren
 op_amp
 id|fid
-comma
-id|str
 )paren
 )paren
 suffix:semicolon
@@ -490,15 +488,11 @@ suffix:semicolon
 id|printk
 c_func
 (paren
-l_string|&quot;coda_read_super: rootinode is %ld dev %s&bslash;n&quot;
+l_string|&quot;coda_read_super: rootinode is %ld dev %d&bslash;n&quot;
 comma
 id|root-&gt;i_ino
 comma
-id|kdevname
-c_func
-(paren
 id|root-&gt;i_dev
-)paren
 )paren
 suffix:semicolon
 id|sbi-&gt;sbi_root
@@ -572,16 +566,6 @@ id|iput
 c_func
 (paren
 id|root
-)paren
-suffix:semicolon
-id|coda_cnode_free
-c_func
-(paren
-id|ITOC
-c_func
-(paren
-id|root
-)paren
 )paren
 suffix:semicolon
 )brace
@@ -688,11 +672,24 @@ op_star
 id|inode
 )paren
 (brace
+r_struct
+id|coda_inode_info
+op_star
+id|cnp
+suffix:semicolon
 id|ENTRY
 suffix:semicolon
-id|inode-&gt;u.generic_ip
+id|cnp
 op_assign
-l_int|NULL
+id|ITOC
+c_func
+(paren
+id|inode
+)paren
+suffix:semicolon
+id|cnp-&gt;c_magic
+op_assign
+l_int|0
 suffix:semicolon
 r_return
 suffix:semicolon
@@ -716,12 +713,23 @@ c_func
 (paren
 id|D_INODE
 comma
-l_string|&quot;ino: %ld, cnp: %p&bslash;n&quot;
+l_string|&quot;ino: %ld, count %d&bslash;n&quot;
 comma
 id|in-&gt;i_ino
 comma
-id|in-&gt;u.generic_ip
+id|in-&gt;i_count
 )paren
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|in-&gt;i_count
+op_eq
+l_int|1
+)paren
+id|in-&gt;i_nlink
+op_assign
+l_int|0
 suffix:semicolon
 )brace
 DECL|function|coda_delete_inode
@@ -737,7 +745,7 @@ id|inode
 )paren
 (brace
 r_struct
-id|cnode
+id|coda_inode_info
 op_star
 id|cnp
 suffix:semicolon
@@ -760,12 +768,24 @@ comma
 id|inode-&gt;i_count
 )paren
 suffix:semicolon
+id|cnp
+op_assign
+id|ITOC
+c_func
+(paren
+id|inode
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
 id|inode-&gt;i_ino
 op_eq
 id|CTL_INO
+op_logical_or
+id|cnp-&gt;c_magic
+op_ne
+id|CODA_CNODE_MAGIC
 )paren
 (brace
 id|clear_inode
@@ -777,14 +797,6 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
-id|cnp
-op_assign
-id|ITOC
-c_func
-(paren
-id|inode
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -845,12 +857,6 @@ id|inode-&gt;u.generic_ip
 op_assign
 l_int|NULL
 suffix:semicolon
-id|coda_cnode_free
-c_func
-(paren
-id|cnp
-)paren
-suffix:semicolon
 id|clear_inode
 c_func
 (paren
@@ -885,7 +891,7 @@ op_assign
 id|de-&gt;d_inode
 suffix:semicolon
 r_struct
-id|cnode
+id|coda_inode_info
 op_star
 id|cnp
 suffix:semicolon
@@ -1425,11 +1431,7 @@ c_func
 (paren
 l_string|&quot;minor %d not an allocated Coda PSDEV&bslash;n&quot;
 comma
-id|MINOR
-c_func
-(paren
 id|psdev-&gt;i_rdev
-)paren
 )paren
 suffix:semicolon
 r_return

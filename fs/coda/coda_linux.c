@@ -12,7 +12,7 @@ macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/coda.h&gt;
 macro_line|#include &lt;linux/coda_linux.h&gt;
 macro_line|#include &lt;linux/coda_psdev.h&gt;
-macro_line|#include &lt;linux/coda_cnode.h&gt;
+macro_line|#include &lt;linux/coda_fs_i.h&gt;
 macro_line|#include &lt;linux/coda_cache.h&gt;
 multiline_comment|/* initialize the debugging variables */
 DECL|variable|coda_debug
@@ -43,12 +43,15 @@ c_func
 id|ViceFid
 op_star
 id|f
-comma
-r_char
-op_star
-id|s
 )paren
 (brace
+r_static
+r_char
+id|s
+(braket
+l_int|50
+)braket
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -60,7 +63,7 @@ c_func
 (paren
 id|s
 comma
-l_string|&quot;(%-#10lx,%-#10lx,%-#10lx)&quot;
+l_string|&quot;(%10lx,%10lx,%10lx)&quot;
 comma
 id|f-&gt;Volume
 comma

@@ -12,6 +12,7 @@ macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/io.h&gt;
 macro_line|#include &lt;linux/blk.h&gt;
+macro_line|#include &lt;linux/module.h&gt;
 DECL|macro|ATOMIC_ON
 mdefine_line|#define ATOMIC_ON()&t;do { } while (0)
 DECL|macro|ATOMIC_OFF
@@ -3370,4 +3371,12 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
+suffix:semicolon
+DECL|variable|io_request_lock
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|io_request_lock
+)paren
+suffix:semicolon
 eof

@@ -6,6 +6,7 @@ DECL|macro|RTCF_DEAD
 mdefine_line|#define RTCF_DEAD&t;RTNH_F_DEAD
 DECL|macro|RTCF_ONLINK
 mdefine_line|#define RTCF_ONLINK&t;RTNH_F_ONLINK
+multiline_comment|/* Obsolete flag. About to be deleted */
 DECL|macro|RTCF_NOPMTUDISC
 mdefine_line|#define RTCF_NOPMTUDISC RTM_F_NOPMTUDISC
 DECL|macro|RTCF_NOTIFY

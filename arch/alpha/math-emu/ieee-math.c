@@ -3229,6 +3229,7 @@ op_logical_neg
 id|midway
 )paren
 op_increment
+op_star
 id|b
 suffix:semicolon
 )brace
@@ -3246,12 +3247,13 @@ id|temp.f
 l_int|0
 )braket
 op_amp
-l_int|0x003fffffffffffff
+l_int|0x007fffffffffffff
 )paren
 op_ne
 l_int|0
 )paren
 op_increment
+op_star
 id|b
 suffix:semicolon
 r_break
@@ -3268,12 +3270,13 @@ id|temp.f
 l_int|0
 )braket
 op_amp
-l_int|0x003fffffffffffff
+l_int|0x007fffffffffffff
 )paren
 op_ne
 l_int|0
 )paren
 op_decrement
+op_star
 id|b
 suffix:semicolon
 r_break
@@ -3294,7 +3297,7 @@ id|temp.f
 l_int|0
 )braket
 op_amp
-l_int|0x003fffffffffffff
+l_int|0x007fffffffffffff
 )paren
 op_ne
 l_int|0

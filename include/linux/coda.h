@@ -6,7 +6,74 @@ multiline_comment|/* Catch new _KERNEL defn for NetBSD */
 macro_line|#ifdef __NetBSD__
 macro_line|#include &lt;sys/types.h&gt;
 macro_line|#endif 
-macro_line|#ifdef __linux__
+macro_line|#ifdef DJGPP
+macro_line|#ifdef KERNEL
+DECL|typedef|u_long
+r_typedef
+r_int
+r_int
+id|u_long
+suffix:semicolon
+DECL|typedef|u_int
+r_typedef
+r_int
+r_int
+id|u_int
+suffix:semicolon
+DECL|typedef|u_short
+r_typedef
+r_int
+r_int
+id|u_short
+suffix:semicolon
+DECL|typedef|ino_t
+r_typedef
+id|u_long
+id|ino_t
+suffix:semicolon
+DECL|typedef|dev_t
+r_typedef
+id|u_long
+id|dev_t
+suffix:semicolon
+DECL|typedef|caddr_t
+r_typedef
+r_void
+op_star
+id|caddr_t
+suffix:semicolon
+DECL|typedef|u_quad_t
+r_typedef
+id|u_long
+id|u_quad_t
+suffix:semicolon
+DECL|macro|inline
+mdefine_line|#define inline
+DECL|struct|timespec
+r_struct
+id|timespec
+(brace
+DECL|member|ts_sec
+r_int
+id|ts_sec
+suffix:semicolon
+DECL|member|ts_nsec
+r_int
+id|ts_nsec
+suffix:semicolon
+)brace
+suffix:semicolon
+macro_line|#else  /* DJGPP but not KERNEL */
+macro_line|#include &lt;sys/types.h&gt;
+macro_line|#include &lt;sys/time.h&gt;
+DECL|typedef|u_quad_t
+r_typedef
+id|u_long
+id|u_quad_t
+suffix:semicolon
+macro_line|#endif /* !KERNEL */
+macro_line|#endif /* !DJGPP */
+macro_line|#if defined(__linux__) || defined(__CYGWIN32__)
 DECL|macro|cdev_t
 mdefine_line|#define cdev_t u_quad_t
 macro_line|#if !defined(_UQUAD_T_) &amp;&amp; (!defined(__GLIBC__) || __GLIBC__ &lt; 2)
@@ -19,10 +86,34 @@ r_int
 r_int
 id|u_quad_t
 suffix:semicolon
-macro_line|#endif 
+macro_line|#endif
 macro_line|#else
 DECL|macro|cdev_t
 mdefine_line|#define cdev_t dev_t
+macro_line|#endif
+macro_line|#ifdef __CYGWIN32__
+DECL|typedef|u_int8_t
+r_typedef
+r_int
+r_char
+id|u_int8_t
+suffix:semicolon
+DECL|struct|timespec
+r_struct
+id|timespec
+(brace
+DECL|member|tv_sec
+id|time_t
+id|tv_sec
+suffix:semicolon
+multiline_comment|/* seconds */
+DECL|member|tv_nsec
+r_int
+id|tv_nsec
+suffix:semicolon
+multiline_comment|/* nanoseconds */
+)brace
+suffix:semicolon
 macro_line|#endif
 multiline_comment|/*&n; * Cfs constants&n; */
 DECL|macro|CFS_MAXNAMLEN
@@ -100,29 +191,29 @@ macro_line|#undef DIRSIZ
 DECL|macro|DIRSIZ
 mdefine_line|#define DIRSIZ(dp)      ((sizeof (struct venus_dirent) - (CFS_MAXNAMLEN+1)) + &bslash;&n;                         (((dp)-&gt;d_namlen+1 + 3) &amp;~ 3))
 multiline_comment|/*&n; * File types&n; */
-DECL|macro|DT_UNKNOWN
-mdefine_line|#define&t;DT_UNKNOWN&t; 0
-DECL|macro|DT_FIFO
-mdefine_line|#define&t;DT_FIFO&t;&t; 1
-DECL|macro|DT_CHR
-mdefine_line|#define&t;DT_CHR&t;&t; 2
-DECL|macro|DT_DIR
-mdefine_line|#define&t;DT_DIR&t;&t; 4
-DECL|macro|DT_BLK
-mdefine_line|#define&t;DT_BLK&t;&t; 6
-DECL|macro|DT_REG
-mdefine_line|#define&t;DT_REG&t;&t; 8
-DECL|macro|DT_LNK
-mdefine_line|#define&t;DT_LNK&t;&t;10
-DECL|macro|DT_SOCK
-mdefine_line|#define&t;DT_SOCK&t;&t;12
-DECL|macro|DT_WHT
-mdefine_line|#define&t;DT_WHT&t;&t;14
+DECL|macro|CDT_UNKNOWN
+mdefine_line|#define&t;CDT_UNKNOWN&t; 0
+DECL|macro|CDT_FIFO
+mdefine_line|#define&t;CDT_FIFO&t;&t; 1
+DECL|macro|CDT_CHR
+mdefine_line|#define&t;CDT_CHR&t;&t; 2
+DECL|macro|CDT_DIR
+mdefine_line|#define&t;CDT_DIR&t;&t; 4
+DECL|macro|CDT_BLK
+mdefine_line|#define&t;CDT_BLK&t;&t; 6
+DECL|macro|CDT_REG
+mdefine_line|#define&t;CDT_REG&t;&t; 8
+DECL|macro|CDT_LNK
+mdefine_line|#define&t;CDT_LNK&t;&t;10
+DECL|macro|CDT_SOCK
+mdefine_line|#define&t;CDT_SOCK&t;&t;12
+DECL|macro|CDT_WHT
+mdefine_line|#define&t;CDT_WHT&t;&t;14
 multiline_comment|/*&n; * Convert between stat structure types and directory types.&n; */
-DECL|macro|IFTODT
-mdefine_line|#define&t;IFTODT(mode)&t;(((mode) &amp; 0170000) &gt;&gt; 12)
-DECL|macro|DTTOIF
-mdefine_line|#define&t;DTTOIF(dirtype)&t;((dirtype) &lt;&lt; 12)
+DECL|macro|IFTOCDT
+mdefine_line|#define&t;IFTOCDT(mode)&t;(((mode) &amp; 0170000) &gt;&gt; 12)
+DECL|macro|CDTTOIF
+mdefine_line|#define&t;CDTTOIF(dirtype)&t;((dirtype) &lt;&lt; 12)
 macro_line|#endif
 macro_line|#ifndef&t;_FID_T_
 DECL|macro|_FID_T_
@@ -252,6 +343,22 @@ comma
 id|cr_fsuid
 suffix:semicolon
 multiline_comment|/* Real, efftve, set, fs uid*/
+macro_line|#if&t;defined(__NetBSD__) || defined(__FreeBSD__)
+DECL|member|cr_groupid
+DECL|member|cr_egid
+DECL|member|cr_sgid
+DECL|member|cr_fsgid
+id|vgid_t
+id|cr_groupid
+comma
+id|cr_egid
+comma
+id|cr_sgid
+comma
+id|cr_fsgid
+suffix:semicolon
+multiline_comment|/* same for groups */
+macro_line|#else
 DECL|member|cr_gid
 DECL|member|cr_egid
 DECL|member|cr_sgid
@@ -266,6 +373,7 @@ comma
 id|cr_fsgid
 suffix:semicolon
 multiline_comment|/* same for groups */
+macro_line|#endif
 )brace
 suffix:semicolon
 macro_line|#endif 
@@ -455,8 +563,10 @@ DECL|macro|CFS_ZAPVNODE
 mdefine_line|#define CFS_ZAPVNODE    ((u_long) 29)
 DECL|macro|CFS_PURGEFID
 mdefine_line|#define CFS_PURGEFID    ((u_long) 30)
+DECL|macro|CFS_OPEN_BY_PATH
+mdefine_line|#define CFS_OPEN_BY_PATH ((u_long) 31)
 DECL|macro|CFS_NCALLS
-mdefine_line|#define CFS_NCALLS 31
+mdefine_line|#define CFS_NCALLS 32
 DECL|macro|DOWNCALL
 mdefine_line|#define DOWNCALL(opcode) (opcode &gt;= CFS_REPLACE &amp;&amp; opcode &lt;= CFS_PURGEFID)
 DECL|macro|VC_MAXDATASIZE
@@ -1429,6 +1539,41 @@ id|OldFid
 suffix:semicolon
 )brace
 suffix:semicolon
+multiline_comment|/* cfs_open_by_path: */
+DECL|struct|cfs_open_by_path_in
+r_struct
+id|cfs_open_by_path_in
+(brace
+DECL|member|ih
+r_struct
+id|cfs_in_hdr
+id|ih
+suffix:semicolon
+DECL|member|VFid
+id|ViceFid
+id|VFid
+suffix:semicolon
+DECL|member|flags
+r_int
+id|flags
+suffix:semicolon
+)brace
+suffix:semicolon
+DECL|struct|cfs_open_by_path_out
+r_struct
+id|cfs_open_by_path_out
+(brace
+DECL|member|oh
+r_struct
+id|cfs_out_hdr
+id|oh
+suffix:semicolon
+DECL|member|path
+r_int
+id|path
+suffix:semicolon
+)brace
+suffix:semicolon
 multiline_comment|/* &n; * Occasionally, don&squot;t cache the fid returned by CFS_LOOKUP. For instance, if&n; * the fid is inconsistent. This case is handled by setting the top bit of the&n; * return result parameter.&n; */
 DECL|macro|CFS_NOCACHE
 mdefine_line|#define CFS_NOCACHE          0x80000000
@@ -1542,6 +1687,11 @@ r_struct
 id|cfs_rdwr_in
 id|cfs_rdwr
 suffix:semicolon
+DECL|member|cfs_open_by_path
+r_struct
+id|cfs_open_by_path_in
+id|cfs_open_by_path
+suffix:semicolon
 )brace
 suffix:semicolon
 DECL|union|outputArgs
@@ -1638,6 +1788,11 @@ DECL|member|cfs_replace
 r_struct
 id|cfs_replace_out
 id|cfs_replace
+suffix:semicolon
+DECL|member|cfs_open_by_path
+r_struct
+id|cfs_open_by_path_out
+id|cfs_open_by_path
 suffix:semicolon
 )brace
 suffix:semicolon

@@ -353,11 +353,13 @@ id|net_timer
 suffix:semicolon
 id|sk-&gt;net_pinfo.af_inet6.hop_limit
 op_assign
-id|ipv6_config.hop_limit
+op_minus
+l_int|1
 suffix:semicolon
 id|sk-&gt;net_pinfo.af_inet6.mcast_hops
 op_assign
-id|IPV6_DEFAULT_MCASTHOPS
+op_minus
+l_int|1
 suffix:semicolon
 id|sk-&gt;net_pinfo.af_inet6.mc_loop
 op_assign

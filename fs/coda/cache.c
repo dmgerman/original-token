@@ -13,7 +13,7 @@ macro_line|#include &lt;linux/list.h&gt;
 macro_line|#include &lt;linux/coda.h&gt;
 macro_line|#include &lt;linux/coda_linux.h&gt;
 macro_line|#include &lt;linux/coda_psdev.h&gt;
-macro_line|#include &lt;linux/coda_cnode.h&gt;
+macro_line|#include &lt;linux/coda_fs_i.h&gt;
 macro_line|#include &lt;linux/coda_cache.h&gt;
 multiline_comment|/* Keep various stats */
 DECL|variable|cfsnc_stat
@@ -92,7 +92,7 @@ op_star
 id|el
 comma
 r_struct
-id|cnode
+id|coda_inode_info
 op_star
 id|cnp
 )paren
@@ -142,11 +142,25 @@ id|el
 (brace
 id|ENTRY
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|el-&gt;cc_cclist.next
+op_logical_and
+id|el-&gt;cc_cclist.prev
+)paren
 id|list_del
 c_func
 (paren
 op_amp
 id|el-&gt;cc_cclist
+)paren
+suffix:semicolon
+r_else
+id|printk
+c_func
+(paren
+l_string|&quot;coda_cnremove: trying to remove 0 entry!&quot;
 )paren
 suffix:semicolon
 )brace
@@ -163,11 +177,25 @@ id|el
 (brace
 id|ENTRY
 suffix:semicolon
+r_if
+c_cond
+(paren
+id|el-&gt;cc_cnlist.next
+op_logical_and
+id|el-&gt;cc_cnlist.prev
+)paren
 id|list_del
 c_func
 (paren
 op_amp
 id|el-&gt;cc_cnlist
+)paren
+suffix:semicolon
+r_else
+id|printk
+c_func
+(paren
+l_string|&quot;coda_cnremove: trying to remove 0 entry!&quot;
 )paren
 suffix:semicolon
 )brace
@@ -186,7 +214,7 @@ id|mask
 )paren
 (brace
 r_struct
-id|cnode
+id|coda_inode_info
 op_star
 id|cnp
 op_assign
@@ -286,7 +314,7 @@ id|inode
 )paren
 (brace
 r_struct
-id|cnode
+id|coda_inode_info
 op_star
 id|cnp
 op_assign
@@ -432,7 +460,7 @@ id|coda_cache_clear_cnp
 c_func
 (paren
 r_struct
-id|cnode
+id|coda_inode_info
 op_star
 id|cnp
 )paren
@@ -776,7 +804,7 @@ id|mask
 )paren
 (brace
 r_struct
-id|cnode
+id|coda_inode_info
 op_star
 id|cnp
 op_assign
@@ -909,7 +937,7 @@ op_star
 id|child
 suffix:semicolon
 r_struct
-id|cnode
+id|coda_inode_info
 op_star
 id|cnp
 suffix:semicolon
@@ -917,12 +945,6 @@ r_struct
 id|dentry
 op_star
 id|de
-suffix:semicolon
-r_char
-id|str
-(braket
-l_int|50
-)braket
 suffix:semicolon
 id|child
 op_assign
@@ -979,8 +1001,6 @@ c_func
 (paren
 op_amp
 id|cnp-&gt;c_fid
-comma
-id|str
 )paren
 )paren
 suffix:semicolon
@@ -1012,7 +1032,7 @@ op_assign
 id|dentry-&gt;d_inode
 suffix:semicolon
 r_struct
-id|cnode
+id|coda_inode_info
 op_star
 id|cnp
 op_assign
@@ -1125,7 +1145,7 @@ id|coda_zap_cnode
 c_func
 (paren
 r_struct
-id|cnode
+id|coda_inode_info
 op_star
 id|cnp
 comma
@@ -1172,7 +1192,7 @@ op_assign
 l_int|NULL
 suffix:semicolon
 r_struct
-id|cnode
+id|coda_inode_info
 op_star
 id|cnp
 suffix:semicolon
@@ -1266,7 +1286,7 @@ c_func
 id|le
 comma
 r_struct
-id|cnode
+id|coda_inode_info
 comma
 id|c_volrootlist
 )paren
@@ -1326,28 +1346,6 @@ c_func
 id|inode
 )paren
 suffix:semicolon
-id|CHECK_CNODE
-c_func
-(paren
-id|cnp
-)paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-op_logical_neg
-id|cnp
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;coda_zapfid: no cnode!&bslash;n&quot;
-)paren
-suffix:semicolon
-r_return
-suffix:semicolon
-)brace
 id|coda_zap_cnode
 c_func
 (paren

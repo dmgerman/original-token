@@ -570,6 +570,8 @@ DECL|macro|__NR_getrusage
 mdefine_line|#define __NR_getrusage&t;&t;&t;364
 DECL|macro|__NR_wait4
 mdefine_line|#define __NR_wait4&t;&t;&t;365
+DECL|macro|__NR_adjtimex
+mdefine_line|#define __NR_adjtimex&t;&t;&t;366
 macro_line|#if defined(__LIBRARY__) &amp;&amp; defined(__GNUC__)
 multiline_comment|/* XXX - _foo needs to be __foo, while __NR_bar could be _NR_bar. */
 DECL|macro|_syscall0

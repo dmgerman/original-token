@@ -13187,6 +13187,13 @@ c_func
 id|ide_cmd
 )paren
 suffix:semicolon
+DECL|variable|ide_wait_cmd
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|ide_wait_cmd
+)paren
+suffix:semicolon
 DECL|variable|ide_stall_queue
 id|EXPORT_SYMBOL
 c_func

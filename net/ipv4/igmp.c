@@ -38,7 +38,7 @@ DECL|macro|IGMP_Initial_Report_Delay
 mdefine_line|#define IGMP_Initial_Report_Delay&t;&t;(1*HZ)
 multiline_comment|/* IGMP_Initial_Report_Delay is not from IGMP specs!&n; * IGMP specs require to report membership immediately after&n; * joining a group, but we delay the first report by a&n; * small interval. It seems more natural and still does not&n; * contradict to specs provided this delay is small enough.&n; */
 DECL|macro|IGMP_V1_SEEN
-mdefine_line|#define IGMP_V1_SEEN(in_dev) ((in_dev)-&gt;mr_v1_seen &amp;&amp; jiffies - (in_dev)-&gt;mr_v1_seen &lt; 0)
+mdefine_line|#define IGMP_V1_SEEN(in_dev) ((in_dev)-&gt;mr_v1_seen &amp;&amp; (long)(jiffies - (in_dev)-&gt;mr_v1_seen) &lt; 0)
 multiline_comment|/*&n; *&t;Timer management&n; */
 DECL|function|igmp_stop_timer
 r_static
@@ -796,9 +796,14 @@ c_cond
 (paren
 id|im-&gt;tm_running
 op_logical_and
+(paren
+r_int
+)paren
+(paren
 id|im-&gt;timer.expires
 op_minus
 id|jiffies
+)paren
 OG
 id|max_delay
 )paren

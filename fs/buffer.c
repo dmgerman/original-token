@@ -3413,14 +3413,6 @@ multiline_comment|/*&n;&t; * Convert a reserved page into buffers ... should hap
 r_if
 c_cond
 (paren
-id|nr_free_pages
-OG
-(paren
-id|min_free_pages
-op_rshift
-l_int|1
-)paren
-op_logical_and
 id|grow_buffers
 c_func
 (paren

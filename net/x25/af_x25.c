@@ -2772,6 +2772,15 @@ id|newsk-&gt;pair
 op_assign
 l_int|NULL
 suffix:semicolon
+id|newsk-&gt;socket
+op_assign
+id|newsock
+suffix:semicolon
+id|newsk-&gt;sleep
+op_assign
+op_amp
+id|newsock-&gt;wait
+suffix:semicolon
 id|sti
 c_func
 (paren

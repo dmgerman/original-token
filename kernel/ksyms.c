@@ -82,7 +82,7 @@ r_void
 id|set_device_ro
 c_func
 (paren
-r_int
+id|kdev_t
 id|dev
 comma
 r_int

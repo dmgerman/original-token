@@ -296,8 +296,8 @@ suffix:semicolon
 )brace
 DECL|function|inet6_mc_check
 r_static
-r_int
 id|__inline__
+r_int
 id|inet6_mc_check
 c_func
 (paren
@@ -957,10 +957,7 @@ id|skb
 suffix:semicolon
 r_int
 id|copied
-op_assign
-l_int|0
-suffix:semicolon
-r_int
+comma
 id|err
 suffix:semicolon
 r_if
@@ -1016,15 +1013,12 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
 id|skb
-op_eq
-l_int|NULL
 )paren
-(brace
-r_return
-id|err
+r_goto
+id|out
 suffix:semicolon
-)brace
 id|copied
 op_assign
 id|min
@@ -1060,8 +1054,8 @@ c_cond
 (paren
 id|err
 )paren
-r_return
-id|err
+r_goto
+id|out_free
 suffix:semicolon
 multiline_comment|/* Copy the address. */
 r_if
@@ -1090,15 +1084,6 @@ id|in6_addr
 )paren
 )paren
 suffix:semicolon
-op_star
-id|addr_len
-op_assign
-r_sizeof
-(paren
-r_struct
-id|sockaddr_in6
-)paren
-suffix:semicolon
 )brace
 r_if
 c_cond
@@ -1115,6 +1100,12 @@ comma
 id|skb
 )paren
 suffix:semicolon
+id|err
+op_assign
+id|copied
+suffix:semicolon
+id|out_free
+suffix:colon
 id|skb_free_datagram
 c_func
 (paren
@@ -1123,10 +1114,10 @@ comma
 id|skb
 )paren
 suffix:semicolon
+id|out
+suffix:colon
 r_return
-(paren
-id|copied
-)paren
+id|err
 suffix:semicolon
 )brace
 multiline_comment|/*&n; *&t;Sending...&n; */

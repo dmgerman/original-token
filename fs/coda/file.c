@@ -11,7 +11,7 @@ macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;linux/coda.h&gt;
 macro_line|#include &lt;linux/coda_linux.h&gt;
-macro_line|#include &lt;linux/coda_cnode.h&gt;
+macro_line|#include &lt;linux/coda_fs_i.h&gt;
 macro_line|#include &lt;linux/coda_psdev.h&gt;
 macro_line|#include &lt;linux/coda_cache.h&gt;
 multiline_comment|/* file operations */
@@ -266,7 +266,7 @@ op_star
 id|cont_inode
 suffix:semicolon
 r_struct
-id|cnode
+id|coda_inode_info
 op_star
 id|cnp
 suffix:semicolon
@@ -361,7 +361,7 @@ id|vma
 )paren
 (brace
 r_struct
-id|cnode
+id|coda_inode_info
 op_star
 id|cnp
 suffix:semicolon
@@ -410,7 +410,7 @@ id|ppos
 )paren
 (brace
 r_struct
-id|cnode
+id|coda_inode_info
 op_star
 id|cnp
 suffix:semicolon
@@ -601,7 +601,7 @@ id|ppos
 )paren
 (brace
 r_struct
-id|cnode
+id|coda_inode_info
 op_star
 id|cnp
 suffix:semicolon
@@ -781,7 +781,7 @@ id|coda_dentry
 )paren
 (brace
 r_struct
-id|cnode
+id|coda_inode_info
 op_star
 id|cnp
 suffix:semicolon
@@ -1060,10 +1060,7 @@ op_assign
 id|open_file-&gt;f_pos
 suffix:semicolon
 multiline_comment|/* XXX what about setting the mtime here too? */
-id|coda_inode-&gt;i_mtime
-op_assign
-id|open_inode-&gt;i_mtime
-suffix:semicolon
+multiline_comment|/* coda_inode-&gt;i_mtime = open_inode-&gt;i_mtime; */
 id|coda_inode-&gt;i_size
 op_assign
 id|open_inode-&gt;i_size
@@ -1100,11 +1097,7 @@ op_assign
 id|get_super
 c_func
 (paren
-id|to_kdev_t
-c_func
-(paren
 id|dev
-)paren
 )paren
 suffix:semicolon
 r_if

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * &t;NET3&t;Protocol independent device support routines.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;Derived from the non IP parts of dev.c 1.0.19&n; * &t;&t;Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&n; *&t;Additional Authors:&n; *&t;&t;Florian la Roche &lt;rzsfl@rz.uni-sb.de&gt;&n; *&t;&t;Alan Cox &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;David Hinds &lt;dhinds@allegro.stanford.edu&gt;&n; *&t;&t;Alexey Kuznetsov &lt;kuznet@ms2.inr.ac.ru&gt;&n; *&n; *&t;Changes:&n; *&t;&t;Alan Cox&t;:&t;device private ioctl copies fields back.&n; *&t;&t;Alan Cox&t;:&t;Transmit queue code does relevant stunts to&n; *&t;&t;&t;&t;&t;keep the queue safe.&n; *&t;&t;Alan Cox&t;:&t;Fixed double lock.&n; *&t;&t;Alan Cox&t;:&t;Fixed promisc NULL pointer trap&n; *&t;&t;????????&t;:&t;Support the full private ioctl range&n; *&t;&t;Alan Cox&t;:&t;Moved ioctl permission check into drivers&n; *&t;&t;Tim Kordas&t;:&t;SIOCADDMULTI/SIOCDELMULTI&n; *&t;&t;Alan Cox&t;:&t;100 backlog just doesn&squot;t cut it when&n; *&t;&t;&t;&t;&t;you start doing multicast video 8)&n; *&t;&t;Alan Cox&t;:&t;Rewrote net_bh and list manager.&n; *&t;&t;Alan Cox&t;: &t;Fix ETH_P_ALL echoback lengths.&n; *&t;&t;Alan Cox&t;:&t;Took out transmit every packet pass&n; *&t;&t;&t;&t;&t;Saved a few bytes in the ioctl handler&n; *&t;&t;Alan Cox&t;:&t;Network driver sets packet type before calling netif_rx. Saves&n; *&t;&t;&t;&t;&t;a function call a packet.&n; *&t;&t;Alan Cox&t;:&t;Hashed net_bh()&n; *&t;&t;Richard Kooijman:&t;Timestamp fixes.&n; *&t;&t;Alan Cox&t;:&t;Wrong field in SIOCGIFDSTADDR&n; *&t;&t;Alan Cox&t;:&t;Device lock protection.&n; *&t;&t;Alan Cox&t;: &t;Fixed nasty side effect of device close changes.&n; *&t;&t;Rudi Cilibrasi&t;:&t;Pass the right thing to set_mac_address()&n; *&t;&t;Dave Miller&t;:&t;32bit quantity for the device lock to make it work out&n; *&t;&t;&t;&t;&t;on a Sparc.&n; *&t;&t;Bjorn Ekwall&t;:&t;Added KERNELD hack.&n; *&t;&t;Alan Cox&t;:&t;Cleaned up the backlog initialise.&n; *&t;&t;Craig Metz&t;:&t;SIOCGIFCONF fix if space for under&n; *&t;&t;&t;&t;&t;1 device.&n; *&t;    Thomas Bogendoerfer :&t;Return ENODEV for dev_open, if there&n; *&t;&t;&t;&t;&t;is no device open function.&n; *&t;&t;Andi Kleen&t;:&t;Fix error reporting for SIOCGIFCONF&n; *&t;&t;R&#xfffd;gis Duchesne&t;:&t;Fix the argument check in dev_ioctl()&n; *&n; */
+multiline_comment|/*&n; * &t;NET3&t;Protocol independent device support routines.&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; *&n; *&t;Derived from the non IP parts of dev.c 1.0.19&n; * &t;&t;Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;&t;&t;Mark Evans, &lt;evansmp@uhura.aston.ac.uk&gt;&n; *&n; *&t;Additional Authors:&n; *&t;&t;Florian la Roche &lt;rzsfl@rz.uni-sb.de&gt;&n; *&t;&t;Alan Cox &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&t;&t;David Hinds &lt;dhinds@allegro.stanford.edu&gt;&n; *&t;&t;Alexey Kuznetsov &lt;kuznet@ms2.inr.ac.ru&gt;&n; *&n; *&t;Changes:&n; *&t;&t;Alan Cox&t;:&t;device private ioctl copies fields back.&n; *&t;&t;Alan Cox&t;:&t;Transmit queue code does relevant stunts to&n; *&t;&t;&t;&t;&t;keep the queue safe.&n; *&t;&t;Alan Cox&t;:&t;Fixed double lock.&n; *&t;&t;Alan Cox&t;:&t;Fixed promisc NULL pointer trap&n; *&t;&t;????????&t;:&t;Support the full private ioctl range&n; *&t;&t;Alan Cox&t;:&t;Moved ioctl permission check into drivers&n; *&t;&t;Tim Kordas&t;:&t;SIOCADDMULTI/SIOCDELMULTI&n; *&t;&t;Alan Cox&t;:&t;100 backlog just doesn&squot;t cut it when&n; *&t;&t;&t;&t;&t;you start doing multicast video 8)&n; *&t;&t;Alan Cox&t;:&t;Rewrote net_bh and list manager.&n; *&t;&t;Alan Cox&t;: &t;Fix ETH_P_ALL echoback lengths.&n; *&t;&t;Alan Cox&t;:&t;Took out transmit every packet pass&n; *&t;&t;&t;&t;&t;Saved a few bytes in the ioctl handler&n; *&t;&t;Alan Cox&t;:&t;Network driver sets packet type before calling netif_rx. Saves&n; *&t;&t;&t;&t;&t;a function call a packet.&n; *&t;&t;Alan Cox&t;:&t;Hashed net_bh()&n; *&t;&t;Richard Kooijman:&t;Timestamp fixes.&n; *&t;&t;Alan Cox&t;:&t;Wrong field in SIOCGIFDSTADDR&n; *&t;&t;Alan Cox&t;:&t;Device lock protection.&n; *&t;&t;Alan Cox&t;: &t;Fixed nasty side effect of device close changes.&n; *&t;&t;Rudi Cilibrasi&t;:&t;Pass the right thing to set_mac_address()&n; *&t;&t;Dave Miller&t;:&t;32bit quantity for the device lock to make it work out&n; *&t;&t;&t;&t;&t;on a Sparc.&n; *&t;&t;Bjorn Ekwall&t;:&t;Added KERNELD hack.&n; *&t;&t;Alan Cox&t;:&t;Cleaned up the backlog initialise.&n; *&t;&t;Craig Metz&t;:&t;SIOCGIFCONF fix if space for under&n; *&t;&t;&t;&t;&t;1 device.&n; *&t;    Thomas Bogendoerfer :&t;Return ENODEV for dev_open, if there&n; *&t;&t;&t;&t;&t;is no device open function.&n; *&t;&t;Andi Kleen&t;:&t;Fix error reporting for SIOCGIFCONF&n; *&t;    Michael Chastain&t;:&t;Fix signed/unsigned for SIOCGIFCONF&n; *&n; */
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/bitops.h&gt;
@@ -27,9 +27,7 @@ macro_line|#include &lt;net/dst.h&gt;
 macro_line|#include &lt;net/pkt_sched.h&gt;
 macro_line|#include &lt;net/profile.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
-macro_line|#ifdef CONFIG_KERNELD
 macro_line|#include &lt;linux/kerneld.h&gt;
-macro_line|#endif
 macro_line|#ifdef CONFIG_NET_RADIO
 macro_line|#include &lt;linux/wireless.h&gt;
 macro_line|#endif&t;/* CONFIG_NET_RADIO */
@@ -716,6 +714,11 @@ c_func
 (paren
 id|name
 )paren
+op_logical_and
+id|suser
+c_func
+(paren
+)paren
 )paren
 (brace
 id|request_module
@@ -726,10 +729,28 @@ id|name
 suffix:semicolon
 )brace
 )brace
+macro_line|#else
+DECL|function|dev_load
+r_extern
+r_inline
+r_void
+(def_block
+id|dev_load
+c_func
+(paren
+r_const
+r_char
+op_star
+id|unused
+)paren
+(brace
+suffix:semicolon
+)brace
+)def_block
 macro_line|#endif
+DECL|function|default_rebuild_header
 r_static
 r_int
-DECL|function|default_rebuild_header
 id|default_rebuild_header
 c_func
 (paren
@@ -2684,29 +2705,14 @@ r_return
 suffix:semicolon
 )brace
 multiline_comment|/* Protocol dependent address dumping routines */
-DECL|variable|gifconf
+DECL|variable|gifconf_list
 r_static
-r_int
-(paren
+id|gifconf_func_t
 op_star
-id|gifconf
+id|gifconf_list
 (braket
 id|NPROTO
 )braket
-)paren
-(paren
-r_struct
-id|device
-op_star
-id|dev
-comma
-r_char
-op_star
-id|bufptr
-comma
-r_int
-id|len
-)paren
 suffix:semicolon
 DECL|function|register_gifconf
 r_int
@@ -2714,35 +2720,17 @@ id|register_gifconf
 c_func
 (paren
 r_int
+r_int
 id|family
 comma
-r_int
-(paren
+id|gifconf_func_t
 op_star
-id|func
-)paren
-(paren
-r_struct
-id|device
-op_star
-id|dev
-comma
-r_char
-op_star
-id|bufptr
-comma
-r_int
-id|len
-)paren
+id|gifconf
 )paren
 (brace
 r_if
 c_cond
 (paren
-id|family
-OL
-l_int|0
-op_logical_or
 id|family
 op_ge
 id|NPROTO
@@ -2751,12 +2739,12 @@ r_return
 op_minus
 id|EINVAL
 suffix:semicolon
-id|gifconf
+id|gifconf_list
 (braket
 id|family
 )braket
 op_assign
-id|func
+id|gifconf
 suffix:semicolon
 r_return
 l_int|0
@@ -2948,15 +2936,18 @@ op_star
 id|pos
 suffix:semicolon
 r_int
-r_int
 id|len
 suffix:semicolon
 r_int
-id|err
+id|total
+suffix:semicolon
+r_int
+id|i
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Fetch the caller&squot;s info block. &n;&t; */
-id|err
-op_assign
+r_if
+c_cond
+(paren
 id|copy_from_user
 c_func
 (paren
@@ -2971,11 +2962,6 @@ r_struct
 id|ifconf
 )paren
 )paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|err
 )paren
 r_return
 op_minus
@@ -2985,22 +2971,15 @@ id|pos
 op_assign
 id|ifc.ifc_buf
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|pos
-op_eq
-l_int|NULL
-)paren
-id|ifc.ifc_len
-op_assign
-l_int|0
-suffix:semicolon
 id|len
 op_assign
 id|ifc.ifc_len
 suffix:semicolon
 multiline_comment|/*&n;&t; *&t;Loop over the interfaces, and write an info block for each. &n;&t; */
+id|total
+op_assign
+l_int|0
+suffix:semicolon
 r_for
 c_loop
 (paren
@@ -3017,9 +2996,6 @@ op_assign
 id|dev-&gt;next
 )paren
 (brace
-r_int
-id|i
-suffix:semicolon
 r_for
 c_loop
 (paren
@@ -3035,24 +3011,46 @@ id|i
 op_increment
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|gifconf_list
+(braket
+id|i
+)braket
+)paren
+(brace
 r_int
 id|done
 suffix:semicolon
 r_if
 c_cond
 (paren
-id|gifconf
-(braket
-id|i
-)braket
+id|pos
 op_eq
 l_int|NULL
 )paren
-r_continue
-suffix:semicolon
+(brace
 id|done
 op_assign
-id|gifconf
+id|gifconf_list
+(braket
+id|i
+)braket
+(paren
+id|dev
+comma
+l_int|NULL
+comma
+l_int|0
+)paren
+suffix:semicolon
+)brace
+r_else
+(brace
+id|done
+op_assign
+id|gifconf_list
 (braket
 id|i
 )braket
@@ -3060,10 +3058,15 @@ id|i
 id|dev
 comma
 id|pos
+op_plus
+id|total
 comma
 id|len
+op_minus
+id|total
 )paren
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -3075,25 +3078,17 @@ r_return
 op_minus
 id|EFAULT
 suffix:semicolon
-id|len
-op_sub_assign
-id|done
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|pos
-)paren
-id|pos
+id|total
 op_add_assign
 id|done
 suffix:semicolon
 )brace
 )brace
+)brace
 multiline_comment|/*&n;&t; *&t;All done.  Write the updated control block back to the caller. &n;&t; */
 id|ifc.ifc_len
-op_sub_assign
-id|len
+op_assign
+id|total
 suffix:semicolon
 r_if
 c_cond
@@ -4812,12 +4807,10 @@ suffix:semicolon
 r_int
 id|ret
 suffix:semicolon
-macro_line|#ifdef CONFIG_NET_ALIAS
 r_char
 op_star
 id|colon
 suffix:semicolon
-macro_line|#endif
 multiline_comment|/* One special case: SIOCGIFCONF takes ifconf argument&n;&t;   and requires shared lock, because it sleeps writing&n;&t;   to user space.&n;&t; */
 r_if
 c_cond
@@ -4895,7 +4888,6 @@ id|arg
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n;&t; *&t;Fetch the interface name from the info block. &n;&t; */
 r_if
 c_cond
 (paren
@@ -4927,7 +4919,6 @@ l_int|1
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#ifdef CONFIG_NET_ALIAS
 id|colon
 op_assign
 id|strchr
@@ -4948,7 +4939,7 @@ id|colon
 op_assign
 l_int|0
 suffix:semicolon
-macro_line|#endif
+multiline_comment|/*&n;&t; *&t;See which interface the caller is talking about. &n;&t; */
 r_switch
 c_cond
 (paren
@@ -4980,14 +4971,12 @@ suffix:colon
 r_case
 id|SIOCGIFTXQLEN
 suffix:colon
-macro_line|#ifdef CONFIG_KERNELD
 id|dev_load
 c_func
 (paren
 id|ifr.ifr_name
 )paren
 suffix:semicolon
-macro_line|#endif&t;
 id|ret
 op_assign
 id|dev_ifsioc
@@ -5006,7 +4995,6 @@ op_logical_neg
 id|ret
 )paren
 (brace
-macro_line|#ifdef CONFIG_NET_ALIAS
 r_if
 c_cond
 (paren
@@ -5017,7 +5005,6 @@ id|colon
 op_assign
 l_char|&squot;:&squot;
 suffix:semicolon
-macro_line|#endif
 r_if
 c_cond
 (paren
@@ -5088,14 +5075,12 @@ r_return
 op_minus
 id|EPERM
 suffix:semicolon
-macro_line|#ifdef CONFIG_KERNELD
 id|dev_load
 c_func
 (paren
 id|ifr.ifr_name
 )paren
 suffix:semicolon
-macro_line|#endif&t;
 id|rtnl_lock
 c_func
 (paren
@@ -5154,14 +5139,12 @@ op_plus
 l_int|15
 )paren
 (brace
-macro_line|#ifdef CONFIG_KERNELD
 id|dev_load
 c_func
 (paren
 id|ifr.ifr_name
 )paren
 suffix:semicolon
-macro_line|#endif&t;
 id|rtnl_lock
 c_func
 (paren
@@ -5225,6 +5208,12 @@ op_le
 id|SIOCIWLAST
 )paren
 (brace
+id|dev_load
+c_func
+(paren
+id|ifr.ifr_name
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -5248,29 +5237,12 @@ r_return
 op_minus
 id|EPERM
 suffix:semicolon
-macro_line|#ifdef CONFIG_KERNELD
-id|dev_load
-c_func
-(paren
-id|ifr.ifr_name
-)paren
-suffix:semicolon
-macro_line|#endif&t;
 id|rtnl_lock
 c_func
 (paren
 )paren
 suffix:semicolon
 )brace
-macro_line|#ifdef CONFIG_KERNELD
-r_else
-id|dev_load
-c_func
-(paren
-id|ifr.ifr_name
-)paren
-suffix:semicolon
-macro_line|#endif&t;
 id|ret
 op_assign
 id|dev_ifsioc
@@ -5343,6 +5315,7 @@ r_int
 id|dev_new_index
 c_func
 (paren
+r_void
 )paren
 (brace
 r_static
@@ -6152,11 +6125,6 @@ op_amp
 id|proc_net_dev
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-l_int|1
-)paren
 (brace
 r_struct
 id|proc_dir_entry

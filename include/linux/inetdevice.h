@@ -1,22 +1,67 @@
 macro_line|#ifndef _LINUX_INETDEVICE_H
 DECL|macro|_LINUX_INETDEVICE_H
 mdefine_line|#define _LINUX_INETDEVICE_H
-multiline_comment|/* IPv4 specific flags. They are initialized from global sysctl variables,&n;   when IPv4 is initialized.&n; */
-DECL|macro|IFF_IP_FORWARD
-mdefine_line|#define IFF_IP_FORWARD&t;&t;1
-DECL|macro|IFF_IP_PROXYARP
-mdefine_line|#define IFF_IP_PROXYARP&t;&t;2
-DECL|macro|IFF_IP_RXREDIRECTS
-mdefine_line|#define IFF_IP_RXREDIRECTS&t;4
-DECL|macro|IFF_IP_TXREDIRECTS
-mdefine_line|#define IFF_IP_TXREDIRECTS&t;8
-DECL|macro|IFF_IP_SHAREDMEDIA
-mdefine_line|#define IFF_IP_SHAREDMEDIA&t;0x10
-DECL|macro|IFF_IP_MFORWARD
-mdefine_line|#define IFF_IP_MFORWARD&t;&t;0x20
-DECL|macro|IFF_IP_RPFILTER
-mdefine_line|#define IFF_IP_RPFILTER&t;&t;0x40
 macro_line|#ifdef __KERNEL__
+DECL|struct|ipv4_devconf
+r_struct
+id|ipv4_devconf
+(brace
+DECL|member|accept_redirects
+r_int
+id|accept_redirects
+suffix:semicolon
+DECL|member|send_redirects
+r_int
+id|send_redirects
+suffix:semicolon
+DECL|member|secure_redirects
+r_int
+id|secure_redirects
+suffix:semicolon
+DECL|member|shared_media
+r_int
+id|shared_media
+suffix:semicolon
+DECL|member|accept_source_route
+r_int
+id|accept_source_route
+suffix:semicolon
+DECL|member|rp_filter
+r_int
+id|rp_filter
+suffix:semicolon
+DECL|member|proxy_arp
+r_int
+id|proxy_arp
+suffix:semicolon
+DECL|member|bootp_relay
+r_int
+id|bootp_relay
+suffix:semicolon
+DECL|member|log_martians
+r_int
+id|log_martians
+suffix:semicolon
+DECL|member|forwarding
+r_int
+id|forwarding
+suffix:semicolon
+DECL|member|mc_forwarding
+r_int
+id|mc_forwarding
+suffix:semicolon
+DECL|member|sysctl
+r_void
+op_star
+id|sysctl
+suffix:semicolon
+)brace
+suffix:semicolon
+r_extern
+r_struct
+id|ipv4_devconf
+id|ipv4_devconf
+suffix:semicolon
 DECL|struct|in_device
 r_struct
 id|in_device
@@ -56,22 +101,35 @@ id|neigh_parms
 op_star
 id|arp_parms
 suffix:semicolon
+DECL|member|cnf
+r_struct
+id|ipv4_devconf
+id|cnf
+suffix:semicolon
 )brace
 suffix:semicolon
-DECL|macro|IN_DEV_RPFILTER
-mdefine_line|#define IN_DEV_RPFILTER(in_dev)&t;(ipv4_config.rfc1812_filter &amp;&amp; ((in_dev)-&gt;flags&amp;IFF_IP_RPFILTER))
-DECL|macro|IN_DEV_MFORWARD
-mdefine_line|#define IN_DEV_MFORWARD(in_dev)&t;(ipv4_config.multicast_route &amp;&amp; ((in_dev)-&gt;flags&amp;IFF_IP_MFORWARD))
-DECL|macro|IN_DEV_PROXY_ARP
-mdefine_line|#define IN_DEV_PROXY_ARP(in_dev)&t;(ipv4_config.proxy_arp || (in_dev)-&gt;flags&amp;IFF_IP_PROXYARP)
 DECL|macro|IN_DEV_FORWARD
-mdefine_line|#define IN_DEV_FORWARD(in_dev)&t;&t;(IS_ROUTER || ((in_dev)-&gt;flags&amp;IFF_IP_FORWARD))
+mdefine_line|#define IN_DEV_FORWARD(in_dev)&t;&t;((in_dev)-&gt;cnf.forwarding)
+DECL|macro|IN_DEV_MFORWARD
+mdefine_line|#define IN_DEV_MFORWARD(in_dev)&t;&t;(ipv4_devconf.mc_forwarding &amp;&amp; (in_dev)-&gt;cnf.mc_forwarding)
+DECL|macro|IN_DEV_RPFILTER
+mdefine_line|#define IN_DEV_RPFILTER(in_dev)&t;&t;(ipv4_devconf.rp_filter &amp;&amp; (in_dev)-&gt;cnf.rp_filter)
+DECL|macro|IN_DEV_SOURCE_ROUTE
+mdefine_line|#define IN_DEV_SOURCE_ROUTE(in_dev)&t;(ipv4_devconf.accept_source_route &amp;&amp; (in_dev)-&gt;cnf.accept_source_route)
+DECL|macro|IN_DEV_BOOTP_RELAY
+mdefine_line|#define IN_DEV_BOOTP_RELAY(in_dev)&t;(ipv4_devconf.bootp_relay &amp;&amp; (in_dev)-&gt;cnf.bootp_relay)
+DECL|macro|IN_DEV_LOG_MARTIANS
+mdefine_line|#define IN_DEV_LOG_MARTIANS(in_dev)&t;(ipv4_devconf.log_martians || (in_dev)-&gt;cnf.log_martians)
+DECL|macro|IN_DEV_PROXY_ARP
+mdefine_line|#define IN_DEV_PROXY_ARP(in_dev)&t;(ipv4_devconf.proxy_arp || (in_dev)-&gt;cnf.proxy_arp)
 DECL|macro|IN_DEV_SHARED_MEDIA
-mdefine_line|#define IN_DEV_SHARED_MEDIA(in_dev)&t;(ipv4_config.rfc1620_redirects || (in_dev)-&gt;flags&amp;IFF_IP_SHAREDMEDIA)
-DECL|macro|IN_DEV_RX_REDIRECTS
-mdefine_line|#define IN_DEV_RX_REDIRECTS(in_dev)&t;(ipv4_config.accept_redirects || (in_dev)-&gt;flags&amp;IFF_IP_RXREDIRECTS)
+mdefine_line|#define IN_DEV_SHARED_MEDIA(in_dev)&t;(ipv4_devconf.shared_media || (in_dev)-&gt;cnf.shared_media)
 DECL|macro|IN_DEV_TX_REDIRECTS
-mdefine_line|#define IN_DEV_TX_REDIRECTS(in_dev)&t;(/*ipv4_config.send_redirects ||*/ (in_dev)-&gt;flags&amp;IFF_IP_TXREDIRECTS)
+mdefine_line|#define IN_DEV_TX_REDIRECTS(in_dev)&t;(ipv4_devconf.send_redirects || (in_dev)-&gt;cnf.send_redirects)
+DECL|macro|IN_DEV_SEC_REDIRECTS
+mdefine_line|#define IN_DEV_SEC_REDIRECTS(in_dev)&t;(ipv4_devconf.secure_redirects || (in_dev)-&gt;cnf.secure_redirects)
+DECL|macro|IN_DEV_RX_REDIRECTS
+mdefine_line|#define IN_DEV_RX_REDIRECTS(in_dev) &bslash;&n;&t;((IN_DEV_FORWARD(in_dev) &amp;&amp; &bslash;&n;&t;  (ipv4_devconf.accept_redirects &amp;&amp; (in_dev)-&gt;cnf.accept_redirects)) &bslash;&n;&t; || (!IN_DEV_FORWARD(in_dev) &amp;&amp; &bslash;&n;&t;  (ipv4_devconf.accept_redirects || (in_dev)-&gt;cnf.accept_redirects)))
 DECL|struct|in_ifaddr
 r_struct
 id|in_ifaddr
@@ -284,6 +342,14 @@ r_struct
 id|device
 op_star
 id|dev
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|inet_forward_change
+c_func
+(paren
+r_void
 )paren
 suffix:semicolon
 DECL|function|inet_ifa_match

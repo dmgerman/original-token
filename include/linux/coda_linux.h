@@ -113,10 +113,6 @@ c_func
 id|ViceFid
 op_star
 id|f
-comma
-r_char
-op_star
-id|s
 )paren
 suffix:semicolon
 r_int
@@ -347,7 +343,7 @@ mdefine_line|#define ENTRY    &bslash;&n;    if(coda_print_entry) printk(&quot;P
 DECL|macro|EXIT
 mdefine_line|#define EXIT    &bslash;&n;    if(coda_print_entry) printk(&quot;Process %d leaving %s&bslash;n&quot;,current-&gt;pid,__FUNCTION__)
 DECL|macro|CHECK_CNODE
-mdefine_line|#define CHECK_CNODE(c)                                                &bslash;&n;do {                                                                  &bslash;&n;  if ( coda_debug ) {&bslash;&n;    struct cnode *cnode = (c);                                          &bslash;&n;  if (!cnode)                                                         &bslash;&n;    printk (&quot;%s(%d): cnode is null&bslash;n&quot;, __FUNCTION__, __LINE__);        &bslash;&n;  if (cnode-&gt;c_magic != CODA_CNODE_MAGIC)                             &bslash;&n;    printk (&quot;%s(%d): cnode magic wrong&bslash;n&quot;, __FUNCTION__, __LINE__);    &bslash;&n;  if (!cnode-&gt;c_vnode)                                                &bslash;&n;    printk (&quot;%s(%d): cnode has null inode&bslash;n&quot;, __FUNCTION__, __LINE__); &bslash;&n;  if ( (struct cnode *)cnode-&gt;c_vnode-&gt;u.generic_ip != cnode )           &bslash;&n;    printk(&quot;AAooh, %s(%d) cnode doesn&squot;t link right!&bslash;n&quot;, __FUNCTION__,__LINE__);&bslash;&n;}} while (0);
+mdefine_line|#define CHECK_CNODE(c) do {  } while (0);
 DECL|macro|CODA_ALLOC
 mdefine_line|#define CODA_ALLOC(ptr, cast, size)                                       &bslash;&n;do {                                                                      &bslash;&n;    if (size &lt; 3000) {                                                    &bslash;&n;        ptr = (cast)kmalloc((unsigned long) size, GFP_KERNEL);            &bslash;&n;                CDEBUG(D_MALLOC, &quot;kmalloced: %x at %x.&bslash;n&quot;, (int) size, (int) ptr);&bslash;&n;     }  else {                                                             &bslash;&n;        ptr = (cast)vmalloc((unsigned long) size);                        &bslash;&n;&t;CDEBUG(D_MALLOC, &quot;vmalloced: %x at %x.&bslash;n&quot;, (int) size, (int) ptr);}&bslash;&n;    if (ptr == 0) {                                                       &bslash;&n;        printk(&quot;kernel malloc returns 0 at %s:%d&bslash;n&quot;, __FILE__, __LINE__);  &bslash;&n;    }                                                                     &bslash;&n;    memset( ptr, 0, size );                                                   &bslash;&n;} while (0)
 DECL|macro|CODA_FREE

@@ -17,6 +17,7 @@ macro_line|#include &lt;linux/smp.h&gt;
 macro_line|#include &lt;linux/smp_lock.h&gt;
 macro_line|#include &lt;linux/blkdev.h&gt;
 macro_line|#include &lt;linux/file.h&gt;
+macro_line|#include &lt;linux/swapctl.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/pgtable.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
@@ -539,7 +540,13 @@ id|page-&gt;count
 r_case
 l_int|1
 suffix:colon
-multiline_comment|/* If it has been referenced recently, don&squot;t free it */
+multiline_comment|/* is it a swap-cache or page-cache page? */
+r_if
+c_cond
+(paren
+id|page-&gt;inode
+)paren
+(brace
 r_if
 c_cond
 (paren
@@ -552,15 +559,29 @@ op_amp
 id|page-&gt;flags
 )paren
 )paren
+(brace
+id|touch_page
+c_func
+(paren
+id|page
+)paren
+suffix:semicolon
 r_break
 suffix:semicolon
-multiline_comment|/* is it a swap-cache or page-cache page? */
+)brace
+id|age_page
+c_func
+(paren
+id|page
+)paren
+suffix:semicolon
 r_if
 c_cond
 (paren
-id|page-&gt;inode
+id|page-&gt;age
 )paren
-(brace
+r_break
+suffix:semicolon
 r_if
 c_cond
 (paren
@@ -603,6 +624,21 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
+multiline_comment|/* It&squot;s not a cache page, so we don&squot;t do aging.&n;&t;&t;&t;&t; * If it has been referenced recently, don&squot;t free it */
+r_if
+c_cond
+(paren
+id|test_and_clear_bit
+c_func
+(paren
+id|PG_referenced
+comma
+op_amp
+id|page-&gt;flags
+)paren
+)paren
+r_break
+suffix:semicolon
 multiline_comment|/* is it a buffer cache page? */
 r_if
 c_cond

@@ -1,23 +1,20 @@
-multiline_comment|/*&n; * Cnode definitions for Coda.&n; * Original version: (C) 1996 Peter Braam &n; * Rewritten for Linux 2.1: (C) 1997 Carnegie Mellon University&n; *&n; * Carnegie Mellon encourages users of this code to contribute improvements&n; * to the Coda project. Contact Peter Braam &lt;coda@cs.cmu.edu&gt;.&n; */
-macro_line|#ifndef&t;_CNODE_H_
-DECL|macro|_CNODE_H_
-mdefine_line|#define&t;_CNODE_H_
+multiline_comment|/*&n; *  coda_fs_i.h&n; *&n; *  Copyright (C) 1998 Carnegie Mellon University&n; *&n; */
+macro_line|#ifndef _LINUX_CODA_FS_I
+DECL|macro|_LINUX_CODA_FS_I
+mdefine_line|#define _LINUX_CODA_FS_I
+macro_line|#ifdef __KERNEL__
+macro_line|#include &lt;linux/types.h&gt;
+macro_line|#include &lt;linux/list.h&gt;
 macro_line|#include &lt;linux/coda.h&gt;
 DECL|macro|CODA_CNODE_MAGIC
 mdefine_line|#define CODA_CNODE_MAGIC        0x47114711
-multiline_comment|/* defintion of cnode, which combines ViceFid with inode information */
-DECL|struct|cnode
+multiline_comment|/*&n; * smb fs inode data (in memory only)&n; */
+DECL|struct|coda_inode_info
 r_struct
-id|cnode
+id|coda_inode_info
 (brace
-DECL|member|c_vnode
-r_struct
-id|inode
-op_star
-id|c_vnode
-suffix:semicolon
-multiline_comment|/*  inode associated with cnode */
 DECL|member|c_fid
+r_struct
 id|ViceFid
 id|c_fid
 suffix:semicolon
@@ -27,11 +24,6 @@ id|u_short
 id|c_flags
 suffix:semicolon
 multiline_comment|/* flags (see below) */
-DECL|member|c_magic
-r_int
-id|c_magic
-suffix:semicolon
-multiline_comment|/* to verify the data structure */
 DECL|member|c_ocount
 id|u_short
 id|c_ocount
@@ -53,7 +45,7 @@ id|inode
 op_star
 id|c_ovp
 suffix:semicolon
-multiline_comment|/* open vnode pointer */
+multiline_comment|/* open inode  pointer */
 DECL|member|c_cnhead
 r_struct
 id|list_head
@@ -66,6 +58,18 @@ id|list_head
 id|c_volrootlist
 suffix:semicolon
 multiline_comment|/* list of volroot cnoddes */
+DECL|member|c_vnode
+r_struct
+id|inode
+op_star
+id|c_vnode
+suffix:semicolon
+multiline_comment|/*  inode associated with cnode */
+DECL|member|c_magic
+r_int
+id|c_magic
+suffix:semicolon
+multiline_comment|/* to verify the data structure */
 )brace
 suffix:semicolon
 multiline_comment|/* flags */
@@ -79,15 +83,8 @@ DECL|macro|C_ZAPFID
 mdefine_line|#define C_ZAPFID      0x8
 DECL|macro|C_ZAPDIR
 mdefine_line|#define C_ZAPDIR      0x10
-r_void
-id|coda_cnode_free
-c_func
-(paren
-r_struct
-id|cnode
-op_star
-)paren
-suffix:semicolon
+DECL|macro|C_INITED
+mdefine_line|#define C_INITED      0x20
 r_int
 id|coda_cnode_make
 c_func
@@ -139,53 +136,8 @@ id|sb
 )paren
 suffix:semicolon
 multiline_comment|/* inode to cnode */
-DECL|function|ITOC
-r_static
-r_inline
-r_struct
-id|cnode
-op_star
-id|ITOC
-c_func
-(paren
-r_struct
-id|inode
-op_star
-id|inode
-)paren
-(brace
-r_return
-(paren
-(paren
-r_struct
-id|cnode
-op_star
-)paren
-id|inode-&gt;u.generic_ip
-)paren
-suffix:semicolon
-)brace
-multiline_comment|/* cnode to inode */
-DECL|function|CTOI
-r_static
-r_inline
-r_struct
-id|inode
-op_star
-id|CTOI
-c_func
-(paren
-r_struct
-id|cnode
-op_star
-id|cnode
-)paren
-(brace
-r_return
-(paren
-id|cnode-&gt;c_vnode
-)paren
-suffix:semicolon
-)brace
-macro_line|#endif&t;
+DECL|macro|ITOC
+mdefine_line|#define ITOC(inode) ((struct coda_inode_info *)&amp;((inode)-&gt;u.coda_i))
+macro_line|#endif
+macro_line|#endif
 eof

@@ -12,7 +12,7 @@ macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/coda.h&gt;
 macro_line|#include &lt;linux/coda_linux.h&gt;
 macro_line|#include &lt;linux/coda_psdev.h&gt;
-macro_line|#include &lt;linux/coda_cnode.h&gt;
+macro_line|#include &lt;linux/coda_fs_i.h&gt;
 macro_line|#include &lt;linux/coda_cache.h&gt;
 r_static
 r_int
@@ -152,7 +152,7 @@ op_star
 id|buf
 suffix:semicolon
 r_struct
-id|cnode
+id|coda_inode_info
 op_star
 id|cp
 suffix:semicolon
@@ -317,7 +317,7 @@ r_int
 id|error
 suffix:semicolon
 r_struct
-id|cnode
+id|coda_inode_info
 op_star
 id|cnp
 suffix:semicolon
@@ -342,13 +342,9 @@ c_func
 (paren
 id|D_INODE
 comma
-l_string|&quot;(%s/%ld)&bslash;n&quot;
+l_string|&quot;(%x/%ld)&bslash;n&quot;
 comma
-id|kdevname
-c_func
-(paren
 id|inode-&gt;i_dev
-)paren
 comma
 id|inode-&gt;i_ino
 )paren

@@ -1,6 +1,8 @@
 multiline_comment|/*&n; * Mostly platform independent upcall operations to Venus:&n; *  -- upcalls&n; *  -- upcall routines&n; *&n; * Linux 2.0 version&n; * Copyright (C) 1996 Peter J. Braam &lt;braam@maths.ox.ac.uk&gt;, &n; * Michael Callahan &lt;callahan@maths.ox.ac.uk&gt; &n; * &n; * Redone for Linux 2.1&n; * Copyright (C) 1997 Carnegie Mellon University&n; *&n; * Carnegie Mellon University encourages users of this code to contribute&n; * improvements to the Coda project. Contact Peter Braam &lt;coda@cs.cmu.edu&gt;.&n; */
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
+macro_line|#include &lt;asm/signal.h&gt;
+macro_line|#include &lt;linux/signal.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -16,7 +18,7 @@ macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;linux/coda.h&gt;
 macro_line|#include &lt;linux/coda_linux.h&gt;
 macro_line|#include &lt;linux/coda_psdev.h&gt;
-macro_line|#include &lt;linux/coda_cnode.h&gt;
+macro_line|#include &lt;linux/coda_fs_i.h&gt;
 macro_line|#include &lt;linux/coda_cache.h&gt;
 DECL|macro|UPARG
 mdefine_line|#define UPARG(op)&bslash;&n;do {&bslash;&n;  &t;CODA_ALLOC(inp, union inputArgs *, insize);&bslash;&n;&t;outp = (union outputArgs *) (inp);&bslash;&n;        inp-&gt;ih.opcode = (op);&bslash;&n;&t;inp-&gt;ih.pid = current-&gt;pid;&bslash;&n;&t;inp-&gt;ih.pgid = current-&gt;pgrp;&bslash;&n;&t;coda_load_creds(&amp;(inp-&gt;ih.cred));&bslash;&n;        outsize = insize;&bslash;&n;} while (0)
@@ -2808,8 +2810,6 @@ id|coda_f2s
 c_func
 (paren
 id|fid
-comma
-id|str
 )paren
 )paren
 suffix:semicolon
@@ -2964,6 +2964,9 @@ comma
 l_int|NULL
 )brace
 suffix:semicolon
+id|old_sigset_t
+id|pending
+suffix:semicolon
 id|vmp-&gt;vm_posttime
 op_assign
 id|jiffies
@@ -3001,6 +3004,7 @@ id|current-&gt;state
 op_assign
 id|TASK_UNINTERRUPTIBLE
 suffix:semicolon
+multiline_comment|/* got a reply */
 r_if
 c_cond
 (paren
@@ -3013,12 +3017,21 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+op_logical_neg
 id|signal_pending
 c_func
 (paren
 id|current
 )paren
-op_logical_and
+)paren
+id|schedule
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/* signal is present: after timeout always return */
+r_if
+c_cond
 (paren
 id|jiffies
 OG
@@ -3028,9 +3041,59 @@ id|coda_timeout
 op_star
 id|HZ
 )paren
+r_break
+suffix:semicolon
+id|spin_lock_irq
+c_func
+(paren
+op_amp
+id|current-&gt;sigmask_lock
+)paren
+suffix:semicolon
+id|pending
+op_assign
+id|current-&gt;blocked.sig
+(braket
+l_int|0
+)braket
+op_amp
+id|current-&gt;signal.sig
+(braket
+l_int|0
+)braket
+suffix:semicolon
+id|spin_unlock_irq
+c_func
+(paren
+op_amp
+id|current-&gt;sigmask_lock
+)paren
+suffix:semicolon
+multiline_comment|/* if this process really wants to die, let it go */
+r_if
+c_cond
+(paren
+id|sigismember
+c_func
+(paren
+op_amp
+id|pending
+comma
+id|SIGKILL
+)paren
+op_logical_or
+id|sigismember
+c_func
+(paren
+op_amp
+id|pending
+comma
+id|SIGINT
+)paren
 )paren
 r_break
 suffix:semicolon
+r_else
 id|schedule
 c_func
 (paren
@@ -3808,8 +3871,6 @@ id|coda_f2s
 c_func
 (paren
 id|fid
-comma
-id|str
 )paren
 )paren
 suffix:semicolon
@@ -3889,8 +3950,6 @@ id|coda_f2s
 c_func
 (paren
 id|fid
-comma
-id|str
 )paren
 )paren
 suffix:semicolon
@@ -3974,8 +4033,6 @@ id|coda_f2s
 c_func
 (paren
 id|fid
-comma
-id|str
 )paren
 )paren
 suffix:semicolon
@@ -4038,8 +4095,6 @@ id|coda_f2s
 c_func
 (paren
 id|fid
-comma
-id|str
 )paren
 )paren
 suffix:semicolon

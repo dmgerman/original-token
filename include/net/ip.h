@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Definitions for the IP module.&n; *&n; * Version:&t;@(#)ip.h&t;1.0.2&t;05/07/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Definitions for the IP module.&n; *&n; * Version:&t;@(#)ip.h&t;1.0.2&t;05/07/93&n; *&n; * Authors:&t;Ross Biro, &lt;bir7@leland.Stanford.Edu&gt;&n; *&t;&t;Fred N. van Kempen, &lt;waltje@uWalt.NL.Mugnet.ORG&gt;&n; *&t;&t;Alan Cox, &lt;gw4pts@gw4pts.ampr.org&gt;&n; *&n; * Changes:&n; *&t;&t;Mike McLagan    :       Routing by source&n; *&n; *&t;&t;This program is free software; you can redistribute it and/or&n; *&t;&t;modify it under the terms of the GNU General Public License&n; *&t;&t;as published by the Free Software Foundation; either version&n; *&t;&t;2 of the License, or (at your option) any later version.&n; */
 macro_line|#ifndef _IP_H
 DECL|macro|_IP_H
 mdefine_line|#define _IP_H
@@ -438,54 +438,13 @@ op_star
 id|skb
 )paren
 suffix:semicolon
-r_extern
-r_struct
-id|ip_mib
-id|ip_statistics
-suffix:semicolon
 DECL|struct|ipv4_config
 r_struct
 id|ipv4_config
 (brace
-DECL|member|accept_redirects
-r_int
-id|accept_redirects
-suffix:semicolon
-DECL|member|secure_redirects
-r_int
-id|secure_redirects
-suffix:semicolon
-DECL|member|rfc1620_redirects
-r_int
-id|rfc1620_redirects
-suffix:semicolon
-DECL|member|rfc1812_filter
-r_int
-id|rfc1812_filter
-suffix:semicolon
-DECL|member|send_redirects
-r_int
-id|send_redirects
-suffix:semicolon
 DECL|member|log_martians
 r_int
 id|log_martians
-suffix:semicolon
-DECL|member|source_route
-r_int
-id|source_route
-suffix:semicolon
-DECL|member|multicast_route
-r_int
-id|multicast_route
-suffix:semicolon
-DECL|member|proxy_arp
-r_int
-id|proxy_arp
-suffix:semicolon
-DECL|member|bootp_relay
-r_int
-id|bootp_relay
 suffix:semicolon
 DECL|member|autoconfig
 r_int
@@ -503,14 +462,17 @@ id|ipv4_config
 id|ipv4_config
 suffix:semicolon
 r_extern
+r_struct
+id|ip_mib
+id|ip_statistics
+suffix:semicolon
+r_extern
 r_int
 id|sysctl_local_port_range
 (braket
 l_int|2
 )braket
 suffix:semicolon
-DECL|macro|IS_ROUTER
-mdefine_line|#define IS_ROUTER&t;(ip_statistics.IpForwarding == 1)
 DECL|function|ip_finish_output
 r_extern
 id|__inline__

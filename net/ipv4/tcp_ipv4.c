@@ -1,5 +1,5 @@
 multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;Implementation of the Transmission Control Protocol(TCP).&n; *&n; * Version:&t;$Id: tcp_ipv4.c,v 1.79 1998/01/15 22:40:47 freitag Exp $&n; *&n; *&t;&t;IPv4 specific functions&n; *&n; *&n; *&t;&t;code split from:&n; *&t;&t;linux/ipv4/tcp.c&n; *&t;&t;linux/ipv4/tcp_input.c&n; *&t;&t;linux/ipv4/tcp_output.c&n; *&n; *&t;&t;See tcp.c for author information&n; *&n; *&t;This program is free software; you can redistribute it and/or&n; *      modify it under the terms of the GNU General Public License&n; *      as published by the Free Software Foundation; either version&n; *      2 of the License, or (at your option) any later version.&n; */
-multiline_comment|/*&n; * Changes:&n; *&t;&t;David S. Miller&t;:&t;New socket lookup architecture.&n; *&t;&t;&t;&t;&t;This code is dedicated to John Dyson.&n; *&t;&t;David S. Miller :&t;Change semantics of established hash,&n; *&t;&t;&t;&t;&t;half is devoted to TIME_WAIT sockets&n; *&t;&t;&t;&t;&t;and the rest go in the other half.&n; *&t;&t;Andi Kleen :&t;&t;Add support for syncookies and fixed&n; *&t;&t;&t;&t;&t;some bugs: ip options weren&squot;t passed to&n; *&t;&t;&t;&t;&t;the TCP layer, missed a check for an ACK bit.&n; *&t;&t;Andi Kleen :&t;&t;Implemented fast path mtu discovery.&n; *&t;     &t;&t;&t;&t;Fixed many serious bugs in the&n; *&t;&t;&t;&t;&t;open_request handling and moved&n; *&t;&t;&t;&t;&t;most of it into the af independent code.&n; *&t;&t;&t;&t;&t;Added tail drop and some other bugfixes.&n; *&t;&t;&t;&t;&t;Added new listen sematics (ifdefed by&n; *&t;&t;&t;&t;&t;NEW_LISTEN for now)&n; *&t;Juan Jose Ciarlante:&t;&t;ip_dynaddr bits&n; *&t;&t;Andi Kleen:&t;&t;various fixes.&n; *&t;Vitaly E. Lavrov&t;:&t;Transparent proxy revived after year coma.&n; */
+multiline_comment|/*&n; * Changes:&n; *&t;&t;David S. Miller&t;:&t;New socket lookup architecture.&n; *&t;&t;&t;&t;&t;This code is dedicated to John Dyson.&n; *&t;&t;David S. Miller :&t;Change semantics of established hash,&n; *&t;&t;&t;&t;&t;half is devoted to TIME_WAIT sockets&n; *&t;&t;&t;&t;&t;and the rest go in the other half.&n; *&t;&t;Andi Kleen :&t;&t;Add support for syncookies and fixed&n; *&t;&t;&t;&t;&t;some bugs: ip options weren&squot;t passed to&n; *&t;&t;&t;&t;&t;the TCP layer, missed a check for an ACK bit.&n; *&t;&t;Andi Kleen :&t;&t;Implemented fast path mtu discovery.&n; *&t;     &t;&t;&t;&t;Fixed many serious bugs in the&n; *&t;&t;&t;&t;&t;open_request handling and moved&n; *&t;&t;&t;&t;&t;most of it into the af independent code.&n; *&t;&t;&t;&t;&t;Added tail drop and some other bugfixes.&n; *&t;&t;&t;&t;&t;Added new listen sematics (ifdefed by&n; *&t;&t;&t;&t;&t;NEW_LISTEN for now)&n; *&t;&t;Mike McLagan&t;:&t;Routing by source&n; *&t;Juan Jose Ciarlante:&t;&t;ip_dynaddr bits&n; *&t;&t;Andi Kleen:&t;&t;various fixes.&n; *&t;Vitaly E. Lavrov&t;:&t;Transparent proxy revived after year coma.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
@@ -2227,23 +2227,19 @@ id|current-&gt;comm
 )paren
 suffix:semicolon
 )brace
-r_if
-c_cond
-(paren
-id|sk-&gt;dst_cache
-)paren
-(brace
 id|dst_release
 c_func
 (paren
+id|xchg
+c_func
+(paren
+op_amp
 id|sk-&gt;dst_cache
+comma
+l_int|NULL
+)paren
 )paren
 suffix:semicolon
-id|sk-&gt;dst_cache
-op_assign
-l_int|NULL
-suffix:semicolon
-)brace
 id|tmp
 op_assign
 id|ip_route_connect
@@ -2262,11 +2258,7 @@ c_func
 id|sk-&gt;ip_tos
 )paren
 op_or
-(paren
 id|sk-&gt;localroute
-op_logical_or
-l_int|0
-)paren
 comma
 id|sk-&gt;bound_dev_if
 )paren
@@ -2592,9 +2584,15 @@ id|sk-&gt;ip_pmtudisc
 op_eq
 id|IP_PMTUDISC_WANT
 op_logical_and
-id|rt-&gt;rt_flags
+(paren
+id|rt-&gt;u.dst.mxlock
 op_amp
-id|RTCF_NOPMTUDISC
+(paren
+l_int|1
+op_lshift
+id|RTAX_MTU
+)paren
+)paren
 )paren
 )paren
 op_logical_and
@@ -5537,6 +5535,8 @@ comma
 id|newsk-&gt;saddr
 comma
 id|newsk-&gt;ip_tos
+op_or
+id|RTO_CONN
 comma
 l_int|0
 )paren
@@ -6674,11 +6674,7 @@ c_func
 id|sk-&gt;ip_tos
 )paren
 op_or
-(paren
 id|sk-&gt;localroute
-op_logical_or
-l_int|0
-)paren
 comma
 id|sk-&gt;bound_dev_if
 )paren
@@ -6746,6 +6742,8 @@ comma
 id|rt-&gt;rt_src
 comma
 id|rt-&gt;key.tos
+op_or
+id|RTO_CONN
 comma
 id|rt-&gt;key.oif
 )paren

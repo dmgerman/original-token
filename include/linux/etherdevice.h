@@ -134,8 +134,8 @@ suffix:semicolon
 macro_line|#ifdef CONFIG_IP_ROUTER
 DECL|function|eth_copy_and_sum
 r_static
+id|__inline__
 r_void
-r_inline
 id|eth_copy_and_sum
 (paren
 r_struct

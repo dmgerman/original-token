@@ -129,6 +129,10 @@ DECL|member|rt6i_metric
 id|u32
 id|rt6i_metric
 suffix:semicolon
+DECL|member|rt6i_hoplimit
+id|u8
+id|rt6i_hoplimit
+suffix:semicolon
 DECL|member|rt6i_expires
 r_int
 r_int
@@ -328,6 +332,16 @@ r_struct
 id|rt6_info
 op_star
 id|rt
+)paren
+suffix:semicolon
+r_extern
+r_void
+id|fib6_run_gc
+c_func
+(paren
+r_int
+r_int
+id|dummy
 )paren
 suffix:semicolon
 macro_line|#endif

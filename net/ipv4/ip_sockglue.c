@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;The IP to API glue.&n; *&t;&t;&n; * Version:&t;$Id: ip_sockglue.c,v 1.30 1997/12/29 19:52:39 kuznet Exp $&n; *&n; * Authors:&t;see ip.c&n; *&n; * Fixes:&n; *&t;&t;Many&t;&t;:&t;Split from ip.c , see ip.c for history.&n; *&t;&t;Martin Mares&t;:&t;TOS setting fixed.&n; *&t;&t;Alan Cox&t;:&t;Fixed a couple of oopses in Martin&squot;s &n; *&t;&t;&t;&t;&t;TOS tweaks.&n; */
+multiline_comment|/*&n; * INET&t;&t;An implementation of the TCP/IP protocol suite for the LINUX&n; *&t;&t;operating system.  INET is implemented using the  BSD Socket&n; *&t;&t;interface as the means of communication with the user level.&n; *&n; *&t;&t;The IP to API glue.&n; *&t;&t;&n; * Version:&t;$Id: ip_sockglue.c,v 1.30 1997/12/29 19:52:39 kuznet Exp $&n; *&n; * Authors:&t;see ip.c&n; *&n; * Fixes:&n; *&t;&t;Many&t;&t;:&t;Split from ip.c , see ip.c for history.&n; *&t;&t;Martin Mares&t;:&t;TOS setting fixed.&n; *&t;&t;Alan Cox&t;:&t;Fixed a couple of oopses in Martin&squot;s &n; *&t;&t;&t;&t;&t;TOS tweaks.&n; *&t;&t;Mike McLagan&t;:&t;Routing by source&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/mm.h&gt;
@@ -1318,11 +1318,6 @@ op_ne
 id|val
 )paren
 (brace
-id|start_bh_atomic
-c_func
-(paren
-)paren
-suffix:semicolon
 id|sk-&gt;ip_tos
 op_assign
 id|val
@@ -1335,26 +1330,17 @@ c_func
 id|val
 )paren
 suffix:semicolon
-r_if
-c_cond
-(paren
-id|sk-&gt;dst_cache
-)paren
-(brace
 id|dst_release
 c_func
 (paren
-id|sk-&gt;dst_cache
-)paren
-suffix:semicolon
-id|sk-&gt;dst_cache
-op_assign
-l_int|NULL
-suffix:semicolon
-)brace
-id|end_bh_atomic
+id|xchg
 c_func
 (paren
+op_amp
+id|sk-&gt;dst_cache
+comma
+l_int|NULL
+)paren
 )paren
 suffix:semicolon
 )brace

@@ -21,5 +21,9 @@ DECL|macro|SIOCSOUTFILL
 mdefine_line|#define SIOCSOUTFILL&t;(SIOCDEVPRIVATE+2)&t;&t;/* Set outfill timeout */
 DECL|macro|SIOCGOUTFILL
 mdefine_line|#define&t;SIOCGOUTFILL&t;(SIOCDEVPRIVATE+3)&t;&t;/* Get outfill timeout */
+DECL|macro|SIOCSLEASE
+mdefine_line|#define SIOCSLEASE&t;(SIOCDEVPRIVATE+4)&t;&t;/* Set &quot;leased&quot; line type */
+DECL|macro|SIOCGLEASE
+mdefine_line|#define&t;SIOCGLEASE&t;(SIOCDEVPRIVATE+5)&t;&t;/* Get line type */
 macro_line|#endif
 eof

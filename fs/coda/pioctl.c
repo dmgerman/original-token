@@ -11,7 +11,7 @@ macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;linux/coda.h&gt;
 macro_line|#include &lt;linux/coda_linux.h&gt;
-macro_line|#include &lt;linux/coda_cnode.h&gt;
+macro_line|#include &lt;linux/coda_fs_i.h&gt;
 macro_line|#include &lt;linux/coda_cache.h&gt;
 macro_line|#include &lt;linux/coda_psdev.h&gt;
 multiline_comment|/* pioctl ops */
@@ -313,7 +313,7 @@ op_assign
 l_int|NULL
 suffix:semicolon
 r_struct
-id|cnode
+id|coda_inode_info
 op_star
 id|cnp
 suffix:semicolon
@@ -387,8 +387,14 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-op_logical_neg
+id|PTR_ERR
+c_func
+(paren
 id|target_de
+)paren
+op_eq
+op_minus
+id|ENOENT
 )paren
 (brace
 id|CDEBUG
@@ -400,8 +406,11 @@ l_string|&quot;error: lookup fails.&bslash;n&quot;
 )paren
 suffix:semicolon
 r_return
-op_minus
-id|EINVAL
+id|PTR_ERR
+c_func
+(paren
+id|target_de
+)paren
 suffix:semicolon
 )brace
 r_else
@@ -416,15 +425,11 @@ c_func
 (paren
 id|D_PIOCTL
 comma
-l_string|&quot;target ino: 0x%ld, dev: %s&bslash;n&quot;
+l_string|&quot;target ino: 0x%ld, dev: 0x%d&bslash;n&quot;
 comma
 id|target_inode-&gt;i_ino
 comma
-id|kdevname
-c_func
-(paren
 id|target_inode-&gt;i_dev
-)paren
 )paren
 suffix:semicolon
 multiline_comment|/* return if it is not a Coda inode */

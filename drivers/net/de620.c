@@ -24,7 +24,7 @@ DECL|macro|WRITE_DELAY
 mdefine_line|#define WRITE_DELAY 100&t;/* adapter internal write delay in 100ns units */
 macro_line|#endif
 multiline_comment|/*&n; * Enable this #define if you want the adapter to do a &quot;ifconfig down&quot; on&n; * itself when we have detected that something is possibly wrong with it.&n; * The default behaviour is to retry with &quot;adapter_init()&quot; until success.&n; * This should be used for debugging purposes only.&n; *&n;#define SHUTDOWN_WHEN_LOST&n; */
-multiline_comment|/*&n; * Enable debugging by &quot;-DDE620_DEBUG=3&quot; when compiling,&n; * OR in &quot;./CONFIG&quot;&n; * OR by enabling the following #define&n; *&n; * use 0 for production, 1 for verification, &gt;2 for debug&n; *&n;#define DE620_DEBUG 3&n; */
+multiline_comment|/*&n; * Enable debugging by &quot;-DDE620_DEBUG=3&quot; when compiling,&n; * OR by enabling the following #define&n; *&n; * use 0 for production, 1 for verification, &gt;2 for debug&n; *&n;#define DE620_DEBUG 3&n; */
 macro_line|#ifdef LOWSPEED
 multiline_comment|/*&n; * Enable this #define if you want to see debugging output that show how long&n; * we have to wait before the DE-620 is ready for the next read/write/command.&n; *&n;#define COUNT_LOOPS&n; */
 macro_line|#endif

@@ -21,8 +21,8 @@ macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
-macro_line|#if defined(CONFIG_DLCI) || defined(CONFIG_DLCI_MODULE)
-macro_line|#include &lt;linux/if_frad.h&gt;
+macro_line|#ifdef CONFIG_INET
+macro_line|#include &lt;net/inet_common.h&gt;
 macro_line|#endif
 macro_line|#ifdef CONFIG_BRIDGE
 macro_line|#include &lt;net/br.h&gt;
@@ -2090,17 +2090,14 @@ id|sk
 op_assign
 id|sock-&gt;sk
 suffix:semicolon
-r_int
-id|copied
-op_assign
-l_int|0
-suffix:semicolon
 r_struct
 id|sk_buff
 op_star
 id|skb
 suffix:semicolon
 r_int
+id|copied
+comma
 id|err
 suffix:semicolon
 macro_line|#if 0
@@ -2169,8 +2166,8 @@ op_eq
 l_int|NULL
 )paren
 (brace
-r_return
-id|err
+r_goto
+id|out
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&t; *&t;You lose any data beyond the buffer you gave. If it worries a&n;&t; *&t;user program they can ask the device for its MTU anyway.&n;&t; */
@@ -2213,12 +2210,9 @@ c_cond
 (paren
 id|err
 )paren
-(brace
-r_return
-op_minus
-id|EFAULT
+r_goto
+id|out_free
 suffix:semicolon
-)brace
 id|sk-&gt;stamp
 op_assign
 id|skb-&gt;stamp
@@ -2238,7 +2232,13 @@ comma
 id|msg-&gt;msg_namelen
 )paren
 suffix:semicolon
-multiline_comment|/*&n;&t; *&t;Free or return the buffer as appropriate. Again this hides all the&n;&t; *&t;races and re-entrancy issues from us.&n;&t; */
+multiline_comment|/*&n;&t; *&t;Free or return the buffer as appropriate. Again this&n;&t; *&t;hides all the races and re-entrancy issues from us.&n;&t; */
+id|err
+op_assign
+id|copied
+suffix:semicolon
+id|out_free
+suffix:colon
 id|skb_free_datagram
 c_func
 (paren
@@ -2247,8 +2247,10 @@ comma
 id|skb
 )paren
 suffix:semicolon
+id|out
+suffix:colon
 r_return
-id|copied
+id|err
 suffix:semicolon
 )brace
 macro_line|#ifdef CONFIG_SOCK_PACKET
@@ -3591,9 +3593,11 @@ suffix:semicolon
 r_case
 id|SIOCGIFFLAGS
 suffix:colon
+macro_line|#ifndef CONFIG_INET
 r_case
 id|SIOCSIFFLAGS
 suffix:colon
+macro_line|#endif
 r_case
 id|SIOCGIFCONF
 suffix:colon
@@ -3687,68 +3691,78 @@ op_minus
 id|ENOPKG
 suffix:semicolon
 macro_line|#endif&t;&t;&t;&t;&t;&t;
+macro_line|#ifdef CONFIG_INET
+r_case
+id|SIOCADDRT
+suffix:colon
+r_case
+id|SIOCDELRT
+suffix:colon
+r_case
+id|SIOCDARP
+suffix:colon
+r_case
+id|SIOCGARP
+suffix:colon
+r_case
+id|SIOCSARP
+suffix:colon
+r_case
+id|SIOCDRARP
+suffix:colon
+r_case
+id|SIOCGRARP
+suffix:colon
+r_case
+id|SIOCSRARP
+suffix:colon
+r_case
+id|SIOCGIFADDR
+suffix:colon
+r_case
+id|SIOCSIFADDR
+suffix:colon
+r_case
+id|SIOCGIFBRDADDR
+suffix:colon
+r_case
+id|SIOCSIFBRDADDR
+suffix:colon
+r_case
+id|SIOCGIFNETMASK
+suffix:colon
+r_case
+id|SIOCSIFNETMASK
+suffix:colon
+r_case
+id|SIOCGIFDSTADDR
+suffix:colon
+r_case
+id|SIOCSIFDSTADDR
+suffix:colon
+r_case
+id|SIOCSIFFLAGS
+suffix:colon
 r_case
 id|SIOCADDDLCI
 suffix:colon
 r_case
 id|SIOCDELDLCI
 suffix:colon
-macro_line|#ifdef CONFIG_DLCI
 r_return
-id|dlci_ioctl
+id|inet_dgram_ops
+dot
+id|ioctl
 c_func
 (paren
+id|sock
+comma
 id|cmd
 comma
-(paren
-r_void
-op_star
-)paren
 id|arg
 )paren
 suffix:semicolon
 macro_line|#endif
-macro_line|#ifdef CONFIG_DLCI_MODULE
-macro_line|#ifdef CONFIG_KERNELD
-r_if
-c_cond
-(paren
-id|dlci_ioctl_hook
-op_eq
-l_int|NULL
-)paren
-id|request_module
-c_func
-(paren
-l_string|&quot;dlci&quot;
-)paren
-suffix:semicolon
-macro_line|#endif
-r_if
-c_cond
-(paren
-id|dlci_ioctl_hook
-)paren
-r_return
-(paren
-op_star
-id|dlci_ioctl_hook
-)paren
-(paren
-id|cmd
-comma
-(paren
-r_void
-op_star
-)paren
-id|arg
-)paren
-suffix:semicolon
-macro_line|#endif
-r_return
-op_minus
-id|ENOPKG
-suffix:semicolon
 r_default
 suffix:colon
 (brace

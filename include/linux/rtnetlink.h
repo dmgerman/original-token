@@ -5,6 +5,8 @@ macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/netlink.h&gt;
 DECL|macro|RTNL_DEBUG
 mdefine_line|#define RTNL_DEBUG 1
+DECL|macro|CONFIG_RTNL_OLD_IFINFO
+mdefine_line|#define CONFIG_RTNL_OLD_IFINFO 1
 multiline_comment|/****&n; *&t;&t;Routing/neighbour discovery messages.&n; ****/
 multiline_comment|/* Types of messages */
 DECL|macro|RTM_BASE
@@ -39,9 +41,27 @@ DECL|macro|RTM_DELRULE
 mdefine_line|#define&t;RTM_DELRULE&t;(RTM_BASE+17)
 DECL|macro|RTM_GETRULE
 mdefine_line|#define&t;RTM_GETRULE&t;(RTM_BASE+18)
+DECL|macro|RTM_NEWQDISC
+mdefine_line|#define&t;RTM_NEWQDISC&t;(RTM_BASE+20)
+DECL|macro|RTM_DELQDSIC
+mdefine_line|#define&t;RTM_DELQDSIC&t;(RTM_BASE+21)
+DECL|macro|RTM_GETQDISC
+mdefine_line|#define&t;RTM_GETQDISC&t;(RTM_BASE+22)
+DECL|macro|RTM_NEWTFLOW
+mdefine_line|#define&t;RTM_NEWTFLOW&t;(RTM_BASE+24)
+DECL|macro|RTM_DELTFLOW
+mdefine_line|#define&t;RTM_DELTFLOW&t;(RTM_BASE+25)
+DECL|macro|RTM_GETTFLOW
+mdefine_line|#define&t;RTM_GETTFLOW&t;(RTM_BASE+26)
+DECL|macro|RTM_NEWTFILTER
+mdefine_line|#define&t;RTM_NEWTFILTER&t;(RTM_BASE+28)
+DECL|macro|RTM_DELTFILTER
+mdefine_line|#define&t;RTM_DELTFILTER&t;(RTM_BASE+29)
+DECL|macro|RTM_GETTFILTER
+mdefine_line|#define&t;RTM_GETTFILTER&t;(RTM_BASE+30)
 DECL|macro|RTM_MAX
-mdefine_line|#define&t;RTM_MAX&t;&t;(RTM_BASE+19)
-multiline_comment|/* Generic structure for encapsulation optional route&n;   information. It is reminiscent of sockaddr, but with sa_family&n;   replaced with attribute type.&n;   It would be good, if constructions of sort:&n;   struct something {&n;     struct rtattr rta;&n;     struct a_content a;&n;   }&n;   had correct alignment. It is true for x86, but I have no idea&n;   how to make it on 64bit architectures. Please, teach me. --ANK&n; */
+mdefine_line|#define&t;RTM_MAX&t;&t;(RTM_BASE+31)
+multiline_comment|/* &n;   Generic structure for encapsulation optional route information.&n;   It is reminiscent of sockaddr, but with sa_family replaced&n;   with attribute type.&n; */
 DECL|struct|rtattr
 r_struct
 id|rtattr
@@ -58,52 +78,6 @@ id|rta_type
 suffix:semicolon
 )brace
 suffix:semicolon
-DECL|enum|rtattr_type_t
-r_enum
-id|rtattr_type_t
-(brace
-DECL|enumerator|RTA_UNSPEC
-id|RTA_UNSPEC
-comma
-DECL|enumerator|RTA_DST
-id|RTA_DST
-comma
-DECL|enumerator|RTA_SRC
-id|RTA_SRC
-comma
-DECL|enumerator|RTA_IIF
-id|RTA_IIF
-comma
-DECL|enumerator|RTA_OIF
-id|RTA_OIF
-comma
-DECL|enumerator|RTA_GATEWAY
-id|RTA_GATEWAY
-comma
-DECL|enumerator|RTA_PRIORITY
-id|RTA_PRIORITY
-comma
-DECL|enumerator|RTA_PREFSRC
-id|RTA_PREFSRC
-comma
-DECL|enumerator|RTA_WINDOW
-id|RTA_WINDOW
-comma
-DECL|enumerator|RTA_RTT
-id|RTA_RTT
-comma
-DECL|enumerator|RTA_MTU
-id|RTA_MTU
-comma
-DECL|enumerator|RTA_IFNAME
-id|RTA_IFNAME
-comma
-DECL|enumerator|RTA_CACHEINFO
-id|RTA_CACHEINFO
-)brace
-suffix:semicolon
-DECL|macro|RTA_MAX
-mdefine_line|#define RTA_MAX RTA_CACHEINFO
 multiline_comment|/* Macros to handle rtattributes */
 DECL|macro|RTA_ALIGNTO
 mdefine_line|#define RTA_ALIGNTO&t;4
@@ -119,80 +93,9 @@ DECL|macro|RTA_SPACE
 mdefine_line|#define RTA_SPACE(len)&t;RTA_ALIGN(RTA_LENGTH(len))
 DECL|macro|RTA_DATA
 mdefine_line|#define RTA_DATA(rta)   ((void*)(((char*)(rta)) + RTA_LENGTH(0)))
-DECL|struct|rta_cacheinfo
-r_struct
-id|rta_cacheinfo
-(brace
-DECL|member|rta_clntref
-id|__u32
-id|rta_clntref
-suffix:semicolon
-DECL|member|rta_lastuse
-id|__u32
-id|rta_lastuse
-suffix:semicolon
-DECL|member|rta_expires
-id|__s32
-id|rta_expires
-suffix:semicolon
-DECL|member|rta_error
-id|__u32
-id|rta_error
-suffix:semicolon
-DECL|member|rta_used
-id|__u32
-id|rta_used
-suffix:semicolon
-)brace
-suffix:semicolon
-multiline_comment|/*&n; * &quot;struct rtnexthop&quot; describres all necessary nexthop information,&n; * i.e. parameters of path to a destination via this nextop.&n; *&n; * At the moment it is impossible to set different prefsrc, mtu, window&n; * and rtt for different paths from multipath.&n; */
-DECL|struct|rtnexthop
-r_struct
-id|rtnexthop
-(brace
-DECL|member|rtnh_len
-r_int
-r_int
-id|rtnh_len
-suffix:semicolon
-DECL|member|rtnh_flags
-r_int
-r_char
-id|rtnh_flags
-suffix:semicolon
-DECL|member|rtnh_hops
-r_int
-r_char
-id|rtnh_hops
-suffix:semicolon
-DECL|member|rtnh_ifindex
-r_int
-id|rtnh_ifindex
-suffix:semicolon
-)brace
-suffix:semicolon
-multiline_comment|/* rtnh_flags */
-DECL|macro|RTNH_F_DEAD
-mdefine_line|#define RTNH_F_DEAD&t;&t;1&t;/* Nexthop is dead (used by multipath)&t;*/
-DECL|macro|RTNH_F_PERVASIVE
-mdefine_line|#define RTNH_F_PERVASIVE&t;2&t;/* Do recursive gateway lookup&t;*/
-DECL|macro|RTNH_F_ONLINK
-mdefine_line|#define RTNH_F_ONLINK&t;&t;4&t;/* Gateway is forced on link&t;*/
-multiline_comment|/* Macros to handle hexthops */
-DECL|macro|RTNH_ALIGNTO
-mdefine_line|#define RTNH_ALIGNTO&t;4
-DECL|macro|RTNH_ALIGN
-mdefine_line|#define RTNH_ALIGN(len) ( ((len)+RTNH_ALIGNTO-1) &amp; ~(RTNH_ALIGNTO-1) )
-DECL|macro|RTNH_OK
-mdefine_line|#define RTNH_OK(rtnh,len) ((rtnh)-&gt;rtnh_len &gt;= sizeof(struct rtnexthop) &amp;&amp; &bslash;&n;&t;&t;&t;   (rtnh)-&gt;rtnh_len &lt;= (len))
-DECL|macro|RTNH_NEXT
-mdefine_line|#define RTNH_NEXT(rtnh)&t;((struct rtnexthop*)(((char*)(rtnh)) + RTNH_ALIGN((rtnh)-&gt;rtnh_len)))
-DECL|macro|RTNH_LENGTH
-mdefine_line|#define RTNH_LENGTH(len) (RTNH_ALIGN(sizeof(struct rtnexthop)) + (len))
-DECL|macro|RTNH_SPACE
-mdefine_line|#define RTNH_SPACE(len)&t;RTNH_ALIGN(RTNH_LENGTH(len))
-DECL|macro|RTNH_DATA
-mdefine_line|#define RTNH_DATA(rtnh)   ((struct rtattr*)(((char*)(rtnh)) + RTNH_LENGTH(0)))
+DECL|macro|RTA_PAYLOAD
+mdefine_line|#define RTA_PAYLOAD(rta) ((rta)-&gt;rta_len - RTA_LENGTH(0))
+multiline_comment|/******************************************************************************&n; *&t;&t;Definitions used in routing table administation.&n; ****/
 DECL|struct|rtmsg
 r_struct
 id|rtmsg
@@ -229,18 +132,28 @@ r_char
 id|rtm_protocol
 suffix:semicolon
 multiline_comment|/* Routing protocol; see below&t;*/
+macro_line|#ifdef CONFIG_RTNL_OLD_IFINFO
 DECL|member|rtm_nhs
 r_int
 r_char
 id|rtm_nhs
 suffix:semicolon
 multiline_comment|/* Number of nexthops */
+macro_line|#else
+DECL|member|rtm_scope
+r_int
+r_char
+id|rtm_scope
+suffix:semicolon
+multiline_comment|/* See below */
+macro_line|#endif
 DECL|member|rtm_type
 r_int
 r_char
 id|rtm_type
 suffix:semicolon
 multiline_comment|/* See below&t;*/
+macro_line|#ifdef CONFIG_RTNL_OLD_IFINFO
 DECL|member|rtm_optlen
 r_int
 r_int
@@ -259,18 +172,13 @@ r_char
 id|rtm_whatsit
 suffix:semicolon
 multiline_comment|/* Unused byte */
+macro_line|#endif
 DECL|member|rtm_flags
 r_int
 id|rtm_flags
 suffix:semicolon
 )brace
 suffix:semicolon
-DECL|macro|RTM_RTA
-mdefine_line|#define RTM_RTA(r)  ((struct rtattr*)(((char*)(r)) + NLMSG_ALIGN(sizeof(struct rtmsg))))
-DECL|macro|RTM_RTNH
-mdefine_line|#define RTM_RTNH(r) ((struct rtnexthop*)(((char*)(r)) + NLMSG_ALIGN(sizeof(struct rtmsg)) &bslash;&n;&t;&t;&t;&t;&t;   + NLMSG_ALIGN((r)-&gt;rtm_optlen)))
-DECL|macro|RTM_NHLEN
-mdefine_line|#define RTM_NHLEN(nlh,r) ((nlh)-&gt;nlmsg_len - NLMSG_SPACE(sizeof(struct rtmsg)) - NLMSG_ALIGN((r)-&gt;rtm_optlen))
 multiline_comment|/* rtm_type */
 r_enum
 (brace
@@ -345,7 +253,7 @@ DECL|macro|RTPROT_MRT
 mdefine_line|#define RTPROT_MRT&t;10&t;/* Merit MRT */
 DECL|macro|RTPROT_ZEBRA
 mdefine_line|#define RTPROT_ZEBRA&t;11&t;/* Zebra */
-multiline_comment|/* rtm_scope&n;&n;   Really it is not scope, but sort of distance to the destination.&n;   NOWHERE are reserved for not existing destinations, HOST is our&n;   local addresses, LINK are destinations, locate on directly attached&n;   link and UNIVERSE is everywhere in the Universe :-)&n;&n;   Intermediate values are also possible f.e. interior routes&n;   could be assigned a value between UNIVERSE and LINK.&n;*/
+multiline_comment|/* rtm_scope&n;&n;   Really it is not scope, but sort of distance to the destination.&n;   NOWHERE are reserved for not existing destinations, HOST is our&n;   local addresses, LINK are destinations, located on directly attached&n;   link and UNIVERSE is everywhere in the Universe.&n;&n;   Intermediate values are also possible f.e. interior routes&n;   could be assigned a value between UNIVERSE and LINK.&n;*/
 DECL|enum|rt_scope_t
 r_enum
 id|rt_scope_t
@@ -355,7 +263,7 @@ id|RT_SCOPE_UNIVERSE
 op_assign
 l_int|0
 comma
-multiline_comment|/* User defined values f.e. &quot;site&quot; */
+multiline_comment|/* User defined values  */
 DECL|enumerator|RT_SCOPE_SITE
 id|RT_SCOPE_SITE
 op_assign
@@ -382,10 +290,12 @@ DECL|macro|RTM_F_NOTIFY
 mdefine_line|#define RTM_F_NOTIFY&t;&t;0x100&t;/* Notify user of route change&t;*/
 DECL|macro|RTM_F_CLONED
 mdefine_line|#define RTM_F_CLONED&t;&t;0x200&t;/* This route is cloned&t;&t;*/
-DECL|macro|RTM_F_NOPMTUDISC
-mdefine_line|#define RTM_F_NOPMTUDISC&t;0x400&t;/* Do not make PMTU discovery&t;*/
 DECL|macro|RTM_F_EQUALIZE
-mdefine_line|#define RTM_F_EQUALIZE&t;&t;0x800&t;/* Multipath equalizer: NI&t;*/
+mdefine_line|#define RTM_F_EQUALIZE&t;&t;0x400&t;/* Multipath equalizer: NI&t;*/
+macro_line|#ifdef CONFIG_RTNL_OLD_IFINFO
+DECL|macro|RTM_F_NOPMTUDISC
+mdefine_line|#define RTM_F_NOPMTUDISC&t;0x800&t;/* Do not make PMTU discovery&t;*/
+macro_line|#endif
 multiline_comment|/* Reserved table identifiers */
 DECL|enum|rt_class_t
 r_enum
@@ -415,6 +325,180 @@ l_int|255
 suffix:semicolon
 DECL|macro|RT_TABLE_MAX
 mdefine_line|#define RT_TABLE_MAX RT_TABLE_LOCAL
+multiline_comment|/* Routing message attributes */
+DECL|enum|rtattr_type_t
+r_enum
+id|rtattr_type_t
+(brace
+DECL|enumerator|RTA_UNSPEC
+id|RTA_UNSPEC
+comma
+DECL|enumerator|RTA_DST
+id|RTA_DST
+comma
+DECL|enumerator|RTA_SRC
+id|RTA_SRC
+comma
+DECL|enumerator|RTA_IIF
+id|RTA_IIF
+comma
+DECL|enumerator|RTA_OIF
+id|RTA_OIF
+comma
+DECL|enumerator|RTA_GATEWAY
+id|RTA_GATEWAY
+comma
+DECL|enumerator|RTA_PRIORITY
+id|RTA_PRIORITY
+comma
+DECL|enumerator|RTA_PREFSRC
+id|RTA_PREFSRC
+comma
+macro_line|#ifndef CONFIG_RTNL_OLD_IFINFO
+DECL|enumerator|RTA_METRICS
+id|RTA_METRICS
+comma
+DECL|enumerator|RTA_MULTIPATH
+id|RTA_MULTIPATH
+comma
+DECL|enumerator|RTA_PROTOINFO
+id|RTA_PROTOINFO
+comma
+DECL|enumerator|RTA_FLOW
+id|RTA_FLOW
+comma
+macro_line|#else
+id|RTA_WINDOW
+comma
+id|RTA_RTT
+comma
+id|RTA_MTU
+comma
+id|RTA_IFNAME
+comma
+macro_line|#endif
+DECL|enumerator|RTA_CACHEINFO
+id|RTA_CACHEINFO
+)brace
+suffix:semicolon
+DECL|macro|RTA_MAX
+mdefine_line|#define RTA_MAX RTA_CACHEINFO
+DECL|macro|RTM_RTA
+mdefine_line|#define RTM_RTA(r)  ((struct rtattr*)(((char*)(r)) + NLMSG_ALIGN(sizeof(struct rtmsg))))
+DECL|macro|RTM_PAYLOAD
+mdefine_line|#define RTM_PAYLOAD(n) NLMSG_PAYLOAD(n,sizeof(struct rtmsg))
+multiline_comment|/* RTM_MULTIPATH --- array of struct rtnexthop.&n; *&n; * &quot;struct rtnexthop&quot; describres all necessary nexthop information,&n; * i.e. parameters of path to a destination via this nextop.&n; *&n; * At the moment it is impossible to set different prefsrc, mtu, window&n; * and rtt for different paths from multipath.&n; */
+DECL|struct|rtnexthop
+r_struct
+id|rtnexthop
+(brace
+DECL|member|rtnh_len
+r_int
+r_int
+id|rtnh_len
+suffix:semicolon
+DECL|member|rtnh_flags
+r_int
+r_char
+id|rtnh_flags
+suffix:semicolon
+DECL|member|rtnh_hops
+r_int
+r_char
+id|rtnh_hops
+suffix:semicolon
+DECL|member|rtnh_ifindex
+r_int
+id|rtnh_ifindex
+suffix:semicolon
+)brace
+suffix:semicolon
+multiline_comment|/* rtnh_flags */
+DECL|macro|RTNH_F_DEAD
+mdefine_line|#define RTNH_F_DEAD&t;&t;1&t;/* Nexthop is dead (used by multipath)&t;*/
+DECL|macro|RTNH_F_PERVASIVE
+mdefine_line|#define RTNH_F_PERVASIVE&t;2&t;/* Do recursive gateway lookup&t;*/
+DECL|macro|RTNH_F_ONLINK
+mdefine_line|#define RTNH_F_ONLINK&t;&t;4&t;/* Gateway is forced on link&t;*/
+multiline_comment|/* Macros to handle hexthops */
+DECL|macro|RTNH_ALIGNTO
+mdefine_line|#define RTNH_ALIGNTO&t;4
+DECL|macro|RTNH_ALIGN
+mdefine_line|#define RTNH_ALIGN(len) ( ((len)+RTNH_ALIGNTO-1) &amp; ~(RTNH_ALIGNTO-1) )
+DECL|macro|RTNH_OK
+mdefine_line|#define RTNH_OK(rtnh,len) ((rtnh)-&gt;rtnh_len &gt;= sizeof(struct rtnexthop) &amp;&amp; &bslash;&n;&t;&t;&t;   (rtnh)-&gt;rtnh_len &lt;= (len))
+DECL|macro|RTNH_NEXT
+mdefine_line|#define RTNH_NEXT(rtnh)&t;((struct rtnexthop*)(((char*)(rtnh)) + RTNH_ALIGN((rtnh)-&gt;rtnh_len)))
+DECL|macro|RTNH_LENGTH
+mdefine_line|#define RTNH_LENGTH(len) (RTNH_ALIGN(sizeof(struct rtnexthop)) + (len))
+DECL|macro|RTNH_SPACE
+mdefine_line|#define RTNH_SPACE(len)&t;RTNH_ALIGN(RTNH_LENGTH(len))
+DECL|macro|RTNH_DATA
+mdefine_line|#define RTNH_DATA(rtnh)   ((struct rtattr*)(((char*)(rtnh)) + RTNH_LENGTH(0)))
+macro_line|#ifdef CONFIG_RTNL_OLD_IFINFO
+DECL|macro|RTM_RTNH
+mdefine_line|#define RTM_RTNH(r) ((struct rtnexthop*)(((char*)(r)) + NLMSG_ALIGN(sizeof(struct rtmsg)) &bslash;&n;&t;&t;&t;&t;&t;   + NLMSG_ALIGN((r)-&gt;rtm_optlen)))
+DECL|macro|RTM_NHLEN
+mdefine_line|#define RTM_NHLEN(nlh,r) ((nlh)-&gt;nlmsg_len - NLMSG_SPACE(sizeof(struct rtmsg)) - NLMSG_ALIGN((r)-&gt;rtm_optlen))
+macro_line|#endif
+multiline_comment|/* RTM_CACHEINFO */
+DECL|struct|rta_cacheinfo
+r_struct
+id|rta_cacheinfo
+(brace
+DECL|member|rta_clntref
+id|__u32
+id|rta_clntref
+suffix:semicolon
+DECL|member|rta_lastuse
+id|__u32
+id|rta_lastuse
+suffix:semicolon
+DECL|member|rta_expires
+id|__s32
+id|rta_expires
+suffix:semicolon
+DECL|member|rta_error
+id|__u32
+id|rta_error
+suffix:semicolon
+DECL|member|rta_used
+id|__u32
+id|rta_used
+suffix:semicolon
+)brace
+suffix:semicolon
+multiline_comment|/* RTM_METRICS --- array of struct rtattr with types of RTAX_* */
+r_enum
+(brace
+DECL|enumerator|RTAX_UNSPEC
+id|RTAX_UNSPEC
+comma
+DECL|enumerator|RTAX_LOCK
+id|RTAX_LOCK
+comma
+DECL|enumerator|RTAX_MTU
+id|RTAX_MTU
+comma
+DECL|enumerator|RTAX_WINDOW
+id|RTAX_WINDOW
+comma
+DECL|enumerator|RTAX_RTT
+id|RTAX_RTT
+comma
+DECL|enumerator|RTAX_HOPS
+id|RTAX_HOPS
+comma
+DECL|enumerator|RTAX_SSTHRESH
+id|RTAX_SSTHRESH
+comma
+DECL|enumerator|RTAX_CWND
+id|RTAX_CWND
+comma
+)brace
+suffix:semicolon
+DECL|macro|RTAX_MAX
+mdefine_line|#define RTAX_MAX RTAX_CWND
 multiline_comment|/*********************************************************&n; *&t;&t;Interface address.&n; ****/
 DECL|struct|ifaddrmsg
 r_struct
@@ -501,6 +585,8 @@ suffix:semicolon
 suffix:semicolon
 DECL|macro|IFA_RTA
 mdefine_line|#define IFA_RTA(r)  ((struct rtattr*)(((char*)(r)) + NLMSG_ALIGN(sizeof(struct ifaddrmsg))))
+DECL|macro|IFA_PAYLOAD
+mdefine_line|#define IFA_PAYLOAD(n) NLMSG_PAYLOAD(n,sizeof(struct ifaddrmsg))
 multiline_comment|/*&n;   Important comment:&n;   IFA_ADDRESS is prefix address, rather than local interface address.&n;   It makes no difference for normally configured broadcast interfaces,&n;   but for point-to-point IFA_ADDRESS is DESTINATION address,&n;   local address is supplied in IFA_LOCAL attribute.&n; */
 multiline_comment|/**************************************************************&n; *&t;&t;Neighbour discovery.&n; ****/
 DECL|struct|ndmsg
@@ -511,6 +597,16 @@ DECL|member|ndm_family
 r_int
 r_char
 id|ndm_family
+suffix:semicolon
+DECL|member|ndm_pad1
+r_int
+r_char
+id|ndm_pad1
+suffix:semicolon
+DECL|member|ndm_pad2
+r_int
+r_int
+id|ndm_pad2
 suffix:semicolon
 DECL|member|ndm_ifindex
 r_int
@@ -550,6 +646,33 @@ DECL|macro|NDA_MAX
 mdefine_line|#define NDA_MAX NDA_CACHEINFO
 DECL|macro|NDA_RTA
 mdefine_line|#define NDA_RTA(r)  ((struct rtattr*)(((char*)(r)) + NLMSG_ALIGN(sizeof(struct ndmsg))))
+DECL|macro|NDA_PAYLOAD
+mdefine_line|#define NDA_PAYLOAD(n) NLMSG_PAYLOAD(n,sizeof(struct ndmsg))
+multiline_comment|/*&n; *&t;Neighbor Cache Entry Flags&n; */
+DECL|macro|NTF_PROXY
+mdefine_line|#define NTF_PROXY&t;0x08&t;/* == ATF_PUBL */
+DECL|macro|NTF_ROUTER
+mdefine_line|#define NTF_ROUTER&t;0x80
+multiline_comment|/*&n; *&t;Neighbor Cache Entry States.&n; */
+DECL|macro|NUD_INCOMPLETE
+mdefine_line|#define NUD_INCOMPLETE&t;0x01
+DECL|macro|NUD_REACHABLE
+mdefine_line|#define NUD_REACHABLE&t;0x02
+DECL|macro|NUD_STALE
+mdefine_line|#define NUD_STALE&t;0x04
+DECL|macro|NUD_DELAY
+mdefine_line|#define NUD_DELAY&t;0x08
+DECL|macro|NUD_PROBE
+mdefine_line|#define NUD_PROBE&t;0x10
+DECL|macro|NUD_FAILED
+mdefine_line|#define NUD_FAILED&t;0x20
+multiline_comment|/* Dummy states */
+DECL|macro|NUD_NOARP
+mdefine_line|#define NUD_NOARP&t;0x40
+DECL|macro|NUD_PERMANENT
+mdefine_line|#define NUD_PERMANENT&t;0x80
+DECL|macro|NUD_NONE
+mdefine_line|#define NUD_NONE&t;0x00
 DECL|struct|nda_cacheinfo
 r_struct
 id|nda_cacheinfo
@@ -586,6 +709,7 @@ suffix:semicolon
 suffix:semicolon
 multiline_comment|/*****************************************************************&n; *&t;&t;Link layer specific messages.&n; ****/
 multiline_comment|/* struct ifinfomsg&n; * passes link level specific information, not dependent&n; * on network protocol.&n; */
+macro_line|#ifdef CONFIG_RTNL_OLD_IFINFO
 DECL|struct|ifinfomsg
 r_struct
 id|ifinfomsg
@@ -682,12 +806,146 @@ DECL|enumerator|IFLA_STATS
 id|IFLA_STATS
 )brace
 suffix:semicolon
+macro_line|#else
+DECL|struct|ifinfomsg
+r_struct
+id|ifinfomsg
+(brace
+DECL|member|ifi_family
+r_int
+r_char
+id|ifi_family
+suffix:semicolon
+DECL|member|__ifi_pad
+r_int
+r_char
+id|__ifi_pad
+suffix:semicolon
+DECL|member|ifi_type
+r_int
+r_int
+id|ifi_type
+suffix:semicolon
+multiline_comment|/* ARPHRD_* */
+DECL|member|ifi_index
+r_int
+id|ifi_index
+suffix:semicolon
+multiline_comment|/* Link index&t;*/
+DECL|member|ifi_flags
+r_int
+id|ifi_flags
+suffix:semicolon
+multiline_comment|/* IFF_* flags&t;*/
+DECL|member|ifi_change
+r_int
+id|ifi_change
+suffix:semicolon
+multiline_comment|/* IFF_* change mask */
+)brace
+suffix:semicolon
+r_enum
+(brace
+DECL|enumerator|IFLA_UNSPEC
+id|IFLA_UNSPEC
+comma
+DECL|enumerator|IFLA_ADDRESS
+id|IFLA_ADDRESS
+comma
+DECL|enumerator|IFLA_BROADCAST
+id|IFLA_BROADCAST
+comma
+DECL|enumerator|IFLA_IFNAME
+id|IFLA_IFNAME
+comma
+DECL|enumerator|IFLA_MTU
+id|IFLA_MTU
+comma
+DECL|enumerator|IFLA_LINK
+id|IFLA_LINK
+comma
+DECL|enumerator|IFLA_QDISC
+id|IFLA_QDISC
+comma
+DECL|enumerator|IFLA_STATS
+id|IFLA_STATS
+)brace
+suffix:semicolon
+macro_line|#endif
 DECL|macro|IFLA_MAX
 mdefine_line|#define IFLA_MAX IFLA_STATS
 DECL|macro|IFLA_RTA
 mdefine_line|#define IFLA_RTA(r)  ((struct rtattr*)(((char*)(r)) + NLMSG_ALIGN(sizeof(struct ifinfomsg))))
+DECL|macro|IFLA_PAYLOAD
+mdefine_line|#define IFLA_PAYLOAD(n) NLMSG_PAYLOAD(n,sizeof(struct ifinfomsg))
 multiline_comment|/* ifi_flags.&n;&n;   IFF_* flags.&n;&n;   The only change is:&n;   IFF_LOOPBACK, IFF_BROADCAST and IFF_POINTOPOINT are&n;   more not changeable by user. They describe link media&n;   characteristics and set by device driver.&n;&n;   Comments:&n;   - Combination IFF_BROADCAST|IFF_POINTOPOINT is invalid&n;   - If neiher of these three flags are set;&n;     the interface is NBMA.&n;&n;   - IFF_MULTICAST does not mean anything special:&n;   multicasts can be used on all not-NBMA links.&n;   IFF_MULTICAST means that this media uses special encapsulation&n;   for multicast frames. Apparently, all IFF_POINTOPOINT and&n;   IFF_BROADCAST devices are able to use multicasts too.&n; */
 multiline_comment|/* ifi_link.&n;   For usual devices it is equal ifi_index.&n;   If it is a &quot;virtual interface&quot; (f.e. tunnel), ifi_link&n;   can point to real physical interface (f.e. for bandwidth calculations),&n;   or maybe 0, what means, that real media is unknown (usual&n;   for IPIP tunnels, when route to endpoint is allowed to change)&n; */
+multiline_comment|/*****************************************************************&n; *&t;&t;Traffic control messages.&n; ****/
+DECL|struct|tcmsg
+r_struct
+id|tcmsg
+(brace
+DECL|member|tcm_family
+r_int
+r_char
+id|tcm_family
+suffix:semicolon
+DECL|member|tcm__pad1
+r_int
+r_char
+id|tcm__pad1
+suffix:semicolon
+DECL|member|tcm__pad2
+r_int
+r_int
+id|tcm__pad2
+suffix:semicolon
+DECL|member|tcm_ifindex
+r_int
+id|tcm_ifindex
+suffix:semicolon
+DECL|member|tcm_handle
+id|__u32
+id|tcm_handle
+suffix:semicolon
+DECL|member|tcm_parent
+id|__u32
+id|tcm_parent
+suffix:semicolon
+DECL|member|tcm_info
+id|__u32
+id|tcm_info
+suffix:semicolon
+)brace
+suffix:semicolon
+r_enum
+(brace
+DECL|enumerator|TCA_UNSPEC
+id|TCA_UNSPEC
+comma
+DECL|enumerator|TCA_KIND
+id|TCA_KIND
+comma
+DECL|enumerator|TCA_OPTIONS
+id|TCA_OPTIONS
+comma
+DECL|enumerator|TCA_STATS
+id|TCA_STATS
+comma
+DECL|enumerator|TCA_XSTATS
+id|TCA_XSTATS
+)brace
+suffix:semicolon
+DECL|macro|TCA_MAX
+mdefine_line|#define TCA_MAX TCA_XSTATS
+DECL|macro|TCA_RTA
+mdefine_line|#define TCA_RTA(r)  ((struct rtattr*)(((char*)(r)) + NLMSG_ALIGN(sizeof(struct tcmsg))))
+DECL|macro|TCA_PAYLOAD
+mdefine_line|#define TCA_PAYLOAD(n) NLMSG_PAYLOAD(n,sizeof(struct tcmsg))
+multiline_comment|/* SUMMARY: maximal rtattr understood by kernel */
+DECL|macro|RTATTR_MAX
+mdefine_line|#define RTATTR_MAX&t;&t;RTA_MAX
+multiline_comment|/* RTnetlink multicast groups */
 DECL|macro|RTMGRP_LINK
 mdefine_line|#define RTMGRP_LINK&t;&t;1
 DECL|macro|RTMGRP_NOTIFY
@@ -706,107 +964,8 @@ DECL|macro|RTMGRP_IPV6_MROUTE
 mdefine_line|#define RTMGRP_IPV6_MROUTE&t;0x200
 DECL|macro|RTMGRP_IPV6_ROUTE
 mdefine_line|#define RTMGRP_IPV6_ROUTE&t;0x400
+multiline_comment|/* End of information exported to user level */
 macro_line|#ifdef __KERNEL__
-DECL|struct|kern_rta
-r_struct
-id|kern_rta
-(brace
-DECL|member|rta_dst
-r_void
-op_star
-id|rta_dst
-suffix:semicolon
-DECL|member|rta_src
-r_void
-op_star
-id|rta_src
-suffix:semicolon
-DECL|member|rta_iif
-r_int
-op_star
-id|rta_iif
-suffix:semicolon
-DECL|member|rta_oif
-r_int
-op_star
-id|rta_oif
-suffix:semicolon
-DECL|member|rta_gw
-r_void
-op_star
-id|rta_gw
-suffix:semicolon
-DECL|member|rta_priority
-id|u32
-op_star
-id|rta_priority
-suffix:semicolon
-DECL|member|rta_prefsrc
-r_void
-op_star
-id|rta_prefsrc
-suffix:semicolon
-DECL|member|rta_window
-r_int
-op_star
-id|rta_window
-suffix:semicolon
-DECL|member|rta_rtt
-r_int
-op_star
-id|rta_rtt
-suffix:semicolon
-DECL|member|rta_mtu
-r_int
-op_star
-id|rta_mtu
-suffix:semicolon
-DECL|member|rta_ifname
-r_int
-r_char
-op_star
-id|rta_ifname
-suffix:semicolon
-DECL|member|rta_ci
-r_struct
-id|rta_cacheinfo
-op_star
-id|rta_ci
-suffix:semicolon
-)brace
-suffix:semicolon
-DECL|struct|kern_ifa
-r_struct
-id|kern_ifa
-(brace
-DECL|member|ifa_address
-r_void
-op_star
-id|ifa_address
-suffix:semicolon
-DECL|member|ifa_local
-r_void
-op_star
-id|ifa_local
-suffix:semicolon
-DECL|member|ifa_label
-r_int
-r_char
-op_star
-id|ifa_label
-suffix:semicolon
-DECL|member|ifa_broadcast
-r_void
-op_star
-id|ifa_broadcast
-suffix:semicolon
-DECL|member|ifa_anycast
-r_void
-op_star
-id|ifa_anycast
-suffix:semicolon
-)brace
-suffix:semicolon
 r_extern
 id|atomic_t
 id|rtnl_rlockct

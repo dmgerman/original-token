@@ -2,6 +2,7 @@ multiline_comment|/*&n; *  ncplib_kernel.h&n; *&n; *  Copyright (C) 1995, 1996 b
 macro_line|#ifndef _NCPLIB_H
 DECL|macro|_NCPLIB_H
 mdefine_line|#define _NCPLIB_H
+macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
@@ -27,6 +28,30 @@ r_int
 comma
 r_int
 op_star
+)paren
+suffix:semicolon
+r_int
+id|ncp_negotiate_size_and_options
+c_func
+(paren
+r_struct
+id|ncp_server
+op_star
+id|server
+comma
+r_int
+id|size
+comma
+r_int
+id|options
+comma
+r_int
+op_star
+id|ret_size
+comma
+r_int
+op_star
+id|ret_options
 )paren
 suffix:semicolon
 r_int
@@ -163,6 +188,19 @@ id|info
 )paren
 suffix:semicolon
 r_int
+id|ncp_del_file_or_subdir2
+c_func
+(paren
+r_struct
+id|ncp_server
+op_star
+comma
+r_struct
+id|dentry
+op_star
+)paren
+suffix:semicolon
+r_int
 id|ncp_del_file_or_subdir
 c_func
 (paren
@@ -266,5 +304,76 @@ r_char
 op_star
 )paren
 suffix:semicolon
+r_int
+id|ncp_LogPhysicalRecord
+c_func
+(paren
+r_struct
+id|ncp_server
+op_star
+id|server
+comma
+r_const
+r_char
+op_star
+id|file_id
+comma
+id|__u8
+id|locktype
+comma
+id|__u32
+id|offset
+comma
+id|__u32
+id|length
+comma
+id|__u16
+id|timeout
+)paren
+suffix:semicolon
+macro_line|#ifdef CONFIG_NCPFS_IOCTL_LOCKING
+r_int
+id|ncp_ClearPhysicalRecord
+c_func
+(paren
+r_struct
+id|ncp_server
+op_star
+id|server
+comma
+r_const
+r_char
+op_star
+id|file_id
+comma
+id|__u32
+id|offset
+comma
+id|__u32
+id|length
+)paren
+suffix:semicolon
+macro_line|#endif&t;/* CONFIG_NCPFS_IOCTL_LOCKING */
+macro_line|#ifdef CONFIG_NCPFS_MOUNT_SUBDIR
+r_int
+id|ncp_mount_subdir
+c_func
+(paren
+r_struct
+id|ncp_server
+op_star
+id|server
+comma
+id|__u8
+id|volNumber
+comma
+id|__u8
+id|srcNS
+comma
+id|__u32
+id|srcDirEntNum
+)paren
+suffix:semicolon
+macro_line|#endif&t;/* CONFIG_NCPFS_MOUNT_SUBDIR */
 macro_line|#endif /* _NCPLIB_H */
 eof

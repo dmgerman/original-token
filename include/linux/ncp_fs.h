@@ -44,7 +44,7 @@ id|sockaddr_ipx
 id|addr
 suffix:semicolon
 DECL|member|mounted_uid
-id|uid_t
+id|__kernel_uid_t
 id|mounted_uid
 suffix:semicolon
 DECL|member|connection
@@ -67,16 +67,158 @@ id|directory_id
 suffix:semicolon
 )brace
 suffix:semicolon
+DECL|struct|ncp_sign_init
+r_struct
+id|ncp_sign_init
+(brace
+DECL|member|sign_root
+r_char
+id|sign_root
+(braket
+l_int|8
+)braket
+suffix:semicolon
+DECL|member|sign_last
+r_char
+id|sign_last
+(braket
+l_int|16
+)braket
+suffix:semicolon
+)brace
+suffix:semicolon
+DECL|struct|ncp_lock_ioctl
+r_struct
+id|ncp_lock_ioctl
+(brace
+DECL|macro|NCP_LOCK_LOG
+mdefine_line|#define NCP_LOCK_LOG&t;0
+DECL|macro|NCP_LOCK_SH
+mdefine_line|#define NCP_LOCK_SH&t;1
+DECL|macro|NCP_LOCK_EX
+mdefine_line|#define NCP_LOCK_EX&t;2
+DECL|macro|NCP_LOCK_CLEAR
+mdefine_line|#define NCP_LOCK_CLEAR&t;256
+DECL|member|cmd
+r_int
+id|cmd
+suffix:semicolon
+DECL|member|origin
+r_int
+id|origin
+suffix:semicolon
+DECL|member|offset
+r_int
+r_int
+id|offset
+suffix:semicolon
+DECL|member|length
+r_int
+r_int
+id|length
+suffix:semicolon
+DECL|macro|NCP_LOCK_DEFAULT_TIMEOUT
+mdefine_line|#define NCP_LOCK_DEFAULT_TIMEOUT&t;18
+DECL|macro|NCP_LOCK_MAX_TIMEOUT
+mdefine_line|#define NCP_LOCK_MAX_TIMEOUT&t;&t;180
+DECL|member|timeout
+r_int
+id|timeout
+suffix:semicolon
+)brace
+suffix:semicolon
+DECL|struct|ncp_setroot_ioctl
+r_struct
+id|ncp_setroot_ioctl
+(brace
+DECL|member|volNumber
+r_int
+id|volNumber
+suffix:semicolon
+DECL|member|namespace
+r_int
+r_namespace
+suffix:semicolon
+DECL|member|dirEntNum
+id|__u32
+id|dirEntNum
+suffix:semicolon
+)brace
+suffix:semicolon
+DECL|struct|ncp_objectname_ioctl
+r_struct
+id|ncp_objectname_ioctl
+(brace
+DECL|macro|NCP_AUTH_NONE
+mdefine_line|#define NCP_AUTH_NONE&t;0x00
+DECL|macro|NCP_AUTH_BIND
+mdefine_line|#define NCP_AUTH_BIND&t;0x31
+DECL|macro|NCP_AUTH_NDS
+mdefine_line|#define NCP_AUTH_NDS&t;0x32
+DECL|member|auth_type
+r_int
+id|auth_type
+suffix:semicolon
+DECL|member|object_name_len
+r_int
+id|object_name_len
+suffix:semicolon
+DECL|member|object_name
+r_void
+op_star
+id|object_name
+suffix:semicolon
+multiline_comment|/* an userspace data, in most cases user name */
+)brace
+suffix:semicolon
+DECL|struct|ncp_privatedata_ioctl
+r_struct
+id|ncp_privatedata_ioctl
+(brace
+DECL|member|len
+r_int
+id|len
+suffix:semicolon
+DECL|member|data
+r_void
+op_star
+id|data
+suffix:semicolon
+multiline_comment|/* ~1000 for NDS */
+)brace
+suffix:semicolon
 DECL|macro|NCP_IOC_NCPREQUEST
 mdefine_line|#define&t;NCP_IOC_NCPREQUEST&t;&t;_IOR(&squot;n&squot;, 1, struct ncp_ioctl_request)
 DECL|macro|NCP_IOC_GETMOUNTUID
 mdefine_line|#define&t;NCP_IOC_GETMOUNTUID&t;&t;_IOW(&squot;n&squot;, 2, uid_t)
+DECL|macro|NCP_IOC_GETMOUNTUID_INT
+mdefine_line|#define NCP_IOC_GETMOUNTUID_INT&t;&t;_IOW(&squot;n&squot;, 2, unsigned int)
 DECL|macro|NCP_IOC_CONN_LOGGED_IN
 mdefine_line|#define NCP_IOC_CONN_LOGGED_IN          _IO(&squot;n&squot;, 3)
 DECL|macro|NCP_GET_FS_INFO_VERSION
 mdefine_line|#define NCP_GET_FS_INFO_VERSION (1)
 DECL|macro|NCP_IOC_GET_FS_INFO
 mdefine_line|#define NCP_IOC_GET_FS_INFO             _IOWR(&squot;n&squot;, 4, struct ncp_fs_info)
+DECL|macro|NCP_IOC_SIGN_INIT
+mdefine_line|#define NCP_IOC_SIGN_INIT&t;&t;_IOR(&squot;n&squot;, 5, struct ncp_sign_init)
+DECL|macro|NCP_IOC_SIGN_WANTED
+mdefine_line|#define NCP_IOC_SIGN_WANTED&t;&t;_IOR(&squot;n&squot;, 6, int)
+DECL|macro|NCP_IOC_SET_SIGN_WANTED
+mdefine_line|#define NCP_IOC_SET_SIGN_WANTED&t;&t;_IOW(&squot;n&squot;, 6, int)
+DECL|macro|NCP_IOC_LOCKUNLOCK
+mdefine_line|#define NCP_IOC_LOCKUNLOCK&t;&t;_IOR(&squot;n&squot;, 7, struct ncp_lock_ioctl)
+DECL|macro|NCP_IOC_GETROOT
+mdefine_line|#define NCP_IOC_GETROOT&t;&t;&t;_IOW(&squot;n&squot;, 8, struct ncp_setroot_ioctl)
+DECL|macro|NCP_IOC_SETROOT
+mdefine_line|#define NCP_IOC_SETROOT&t;&t;&t;_IOR(&squot;n&squot;, 8, struct ncp_setroot_ioctl)
+DECL|macro|NCP_IOC_GETOBJECTNAME
+mdefine_line|#define NCP_IOC_GETOBJECTNAME&t;&t;_IOWR(&squot;n&squot;, 9, struct ncp_objectname_ioctl)
+DECL|macro|NCP_IOC_SETOBJECTNAME
+mdefine_line|#define NCP_IOC_SETOBJECTNAME&t;&t;_IOR(&squot;n&squot;, 9, struct ncp_objectname_ioctl)
+DECL|macro|NCP_IOC_GETPRIVATEDATA
+mdefine_line|#define NCP_IOC_GETPRIVATEDATA&t;&t;_IOWR(&squot;n&squot;, 10, struct ncp_privatedata_ioctl)
+DECL|macro|NCP_IOC_SETPRIVATEDATA
+mdefine_line|#define NCP_IOC_SETPRIVATEDATA&t;&t;_IOR(&squot;n&squot;, 10, struct ncp_privatedata_ioctl)
 multiline_comment|/*&n; * The packet size to allocate. One page should be enough.&n; */
 DECL|macro|NCP_PACKET_SIZE
 mdefine_line|#define NCP_PACKET_SIZE 4070
@@ -85,10 +227,13 @@ mdefine_line|#define NCP_MAXPATHLEN 255
 DECL|macro|NCP_MAXNAMELEN
 mdefine_line|#define NCP_MAXNAMELEN 14
 macro_line|#ifdef __KERNEL__
+macro_line|#include &lt;linux/config.h&gt;
 DECL|macro|NCPFS_PARANOIA
 macro_line|#undef NCPFS_PARANOIA
+macro_line|#ifndef DEBUG_NCP
 DECL|macro|DEBUG_NCP
 mdefine_line|#define DEBUG_NCP 0
+macro_line|#endif
 macro_line|#if DEBUG_NCP &gt; 0
 DECL|macro|DPRINTK
 mdefine_line|#define DPRINTK(format, args...) printk(format , ## args)
@@ -298,6 +443,20 @@ DECL|macro|ncp_kfree_s
 mdefine_line|#define ncp_kfree_s(o,s) kfree_s(o,s)
 macro_line|#endif&t;&t;&t;&t;/* DEBUG_NCP_MALLOC */
 multiline_comment|/* linux/fs/ncpfs/inode.c */
+r_int
+id|ncp_notify_change
+c_func
+(paren
+r_struct
+id|dentry
+op_star
+comma
+r_struct
+id|iattr
+op_star
+id|attr
+)paren
+suffix:semicolon
 r_struct
 id|super_block
 op_star
@@ -331,6 +490,19 @@ op_star
 suffix:semicolon
 r_void
 id|ncp_update_inode
+c_func
+(paren
+r_struct
+id|inode
+op_star
+comma
+r_struct
+id|nw_file_info
+op_star
+)paren
+suffix:semicolon
+r_void
+id|ncp_update_inode2
 c_func
 (paren
 r_struct
@@ -676,16 +848,35 @@ op_star
 id|i
 )paren
 (brace
-r_return
-(paren
+macro_line|#if defined(CONFIG_NCPFS_NFS_NS) || defined(CONFIG_NCPFS_OS2_NS)
+r_int
+id|ns
+op_assign
 id|ncp_namespace
 c_func
 (paren
 id|i
 )paren
+suffix:semicolon
+macro_line|#endif
+r_return
+macro_line|#ifdef CONFIG_NCPFS_OS2_NS
+(paren
+id|ns
 op_eq
 id|NW_NS_OS2
 )paren
+op_logical_or
+macro_line|#endif&t;/* CONFIG_NCPFS_OS2_NS */
+macro_line|#ifdef CONFIG_NCPFS_NFS_NS
+(paren
+id|ns
+op_eq
+id|NW_NS_NFS
+)paren
+op_logical_or
+macro_line|#endif&t;/* CONFIG_NCPFS_NFS_NS */
+l_int|0
 suffix:semicolon
 )brace
 DECL|function|ncp_case_sensitive
@@ -701,9 +892,21 @@ op_star
 id|i
 )paren
 (brace
+macro_line|#ifdef CONFIG_NCPFS_NFS_NS
+r_return
+id|ncp_namespace
+c_func
+(paren
+id|i
+)paren
+op_eq
+id|NW_NS_NFS
+suffix:semicolon
+macro_line|#else
 r_return
 l_int|0
 suffix:semicolon
+macro_line|#endif&t;/* CONFIG_NCPFS_NFS_NS */
 )brace
 macro_line|#endif&t;&t;&t;&t;/* __KERNEL__ */
 macro_line|#endif&t;&t;&t;&t;/* _LINUX_NCP_FS_H */

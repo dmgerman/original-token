@@ -95,7 +95,6 @@ id|tcp_bhashnext
 c_func
 (paren
 id|__u16
-r_int
 id|lport
 comma
 id|__u16

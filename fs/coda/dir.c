@@ -12,7 +12,7 @@ macro_line|#include &lt;linux/string.h&gt;
 macro_line|#include &lt;linux/coda.h&gt;
 macro_line|#include &lt;linux/coda_linux.h&gt;
 macro_line|#include &lt;linux/coda_psdev.h&gt;
-macro_line|#include &lt;linux/coda_cnode.h&gt;
+macro_line|#include &lt;linux/coda_fs_i.h&gt;
 macro_line|#include &lt;linux/coda_cache.h&gt;
 multiline_comment|/* dir inode-ops */
 r_static
@@ -368,7 +368,7 @@ id|entry
 )paren
 (brace
 r_struct
-id|cnode
+id|coda_inode_info
 op_star
 id|dircnp
 suffix:semicolon
@@ -408,12 +408,6 @@ r_int
 id|length
 op_assign
 id|entry-&gt;d_name.len
-suffix:semicolon
-r_char
-id|str
-(braket
-l_int|50
-)braket
 suffix:semicolon
 id|ENTRY
 suffix:semicolon
@@ -488,8 +482,6 @@ c_func
 (paren
 op_amp
 id|dircnp-&gt;c_fid
-comma
-id|str
 )paren
 comma
 id|length
@@ -518,8 +510,6 @@ c_func
 (paren
 op_amp
 id|dircnp-&gt;c_fid
-comma
-id|str
 )paren
 )paren
 suffix:semicolon
@@ -673,8 +663,6 @@ c_func
 (paren
 op_amp
 id|dircnp-&gt;c_fid
-comma
-id|str
 )paren
 comma
 id|length
@@ -702,8 +690,6 @@ c_func
 (paren
 op_amp
 id|resfid
-comma
-id|str
 )paren
 comma
 id|type
@@ -764,18 +750,12 @@ id|mask
 )paren
 (brace
 r_struct
-id|cnode
+id|coda_inode_info
 op_star
 id|cp
 suffix:semicolon
 r_int
 id|error
-suffix:semicolon
-r_char
-id|str
-(braket
-l_int|50
-)braket
 suffix:semicolon
 id|ENTRY
 suffix:semicolon
@@ -871,8 +851,6 @@ op_amp
 (paren
 id|cp-&gt;c_fid
 )paren
-comma
-id|str
 )paren
 comma
 id|inode-&gt;i_ino
@@ -930,7 +908,7 @@ op_assign
 l_int|0
 suffix:semicolon
 r_struct
-id|cnode
+id|coda_inode_info
 op_star
 id|dircnp
 suffix:semicolon
@@ -1059,8 +1037,6 @@ c_func
 (paren
 op_amp
 id|dircnp-&gt;c_fid
-comma
-id|str
 )paren
 comma
 id|name
@@ -1122,8 +1098,6 @@ c_func
 (paren
 op_amp
 id|newfid
-comma
-id|str
 )paren
 comma
 id|error
@@ -1212,7 +1186,7 @@ id|mode
 )paren
 (brace
 r_struct
-id|cnode
+id|coda_inode_info
 op_star
 id|dircnp
 suffix:semicolon
@@ -1243,12 +1217,6 @@ suffix:semicolon
 r_struct
 id|ViceFid
 id|newfid
-suffix:semicolon
-r_char
-id|fidstr
-(braket
-l_int|50
-)braket
 suffix:semicolon
 r_if
 c_cond
@@ -1339,8 +1307,6 @@ op_amp
 (paren
 id|dircnp-&gt;c_fid
 )paren
-comma
-id|fidstr
 )paren
 comma
 id|mode
@@ -1391,8 +1357,6 @@ c_func
 (paren
 op_amp
 id|newfid
-comma
-id|fidstr
 )paren
 comma
 id|error
@@ -1420,8 +1384,6 @@ c_func
 (paren
 op_amp
 id|newfid
-comma
-id|fidstr
 )paren
 )paren
 suffix:semicolon
@@ -1519,7 +1481,7 @@ op_assign
 id|de-&gt;d_name.len
 suffix:semicolon
 r_struct
-id|cnode
+id|coda_inode_info
 op_star
 id|dir_cnp
 comma
@@ -1600,8 +1562,6 @@ op_amp
 (paren
 id|cnp-&gt;c_fid
 )paren
-comma
-id|str
 )paren
 )paren
 suffix:semicolon
@@ -1619,8 +1579,6 @@ op_amp
 (paren
 id|dir_cnp-&gt;c_fid
 )paren
-comma
-id|str
 )paren
 )paren
 suffix:semicolon
@@ -1754,7 +1712,7 @@ op_assign
 id|de-&gt;d_name.len
 suffix:semicolon
 r_struct
-id|cnode
+id|coda_inode_info
 op_star
 id|dir_cnp
 op_assign
@@ -1911,7 +1869,7 @@ id|de
 )paren
 (brace
 r_struct
-id|cnode
+id|coda_inode_info
 op_star
 id|dircnp
 suffix:semicolon
@@ -1968,8 +1926,6 @@ op_amp
 (paren
 id|dircnp-&gt;c_fid
 )paren
-comma
-id|fidstr
 )paren
 comma
 id|dir-&gt;i_ino
@@ -2049,7 +2005,7 @@ id|de
 )paren
 (brace
 r_struct
-id|cnode
+id|coda_inode_info
 op_star
 id|dircnp
 suffix:semicolon
@@ -2314,7 +2270,7 @@ op_assign
 id|new_dentry-&gt;d_inode
 suffix:semicolon
 r_struct
-id|cnode
+id|coda_inode_info
 op_star
 id|new_cnp
 comma
@@ -2586,7 +2542,7 @@ op_assign
 l_int|0
 suffix:semicolon
 r_struct
-id|cnode
+id|coda_inode_info
 op_star
 id|cnp
 suffix:semicolon
@@ -2772,7 +2728,7 @@ id|dev_t
 id|dev
 suffix:semicolon
 r_struct
-id|cnode
+id|coda_inode_info
 op_star
 id|cnp
 suffix:semicolon
@@ -3022,7 +2978,7 @@ id|f
 )paren
 (brace
 r_struct
-id|cnode
+id|coda_inode_info
 op_star
 id|cnp
 suffix:semicolon

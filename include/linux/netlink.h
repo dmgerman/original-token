@@ -102,6 +102,8 @@ DECL|macro|NLM_F_EXCL
 mdefine_line|#define NLM_F_EXCL&t;0x200&t;/* Do not touch, if it exists&t;*/
 DECL|macro|NLM_F_CREATE
 mdefine_line|#define NLM_F_CREATE&t;0x400&t;/* Create, if it does not exist&t;*/
+DECL|macro|NLM_F_APPEND
+mdefine_line|#define NLM_F_APPEND&t;0x800&t;/* Add to end of list&t;&t;*/
 multiline_comment|/*&n;   4.4BSD ADD&t;&t;NLM_F_CREATE|NLM_F_EXCL&n;   4.4BSD CHANGE&t;NLM_F_REPLACE&n;&n;   True CHANGE&t;&t;NLM_F_CREATE|NLM_F_REPLACE&n;   Append&t;&t;NLM_F_CREATE&n;   Check&t;&t;NLM_F_EXCL&n; */
 DECL|macro|NLMSG_ALIGNTO
 mdefine_line|#define NLMSG_ALIGNTO&t;4
@@ -117,6 +119,8 @@ DECL|macro|NLMSG_NEXT
 mdefine_line|#define NLMSG_NEXT(nlh,len)&t; ((len) -= NLMSG_ALIGN((nlh)-&gt;nlmsg_len), &bslash;&n;&t;&t;&t;&t;  (struct nlmsghdr*)(((char*)(nlh)) + NLMSG_ALIGN((nlh)-&gt;nlmsg_len)))
 DECL|macro|NLMSG_OK
 mdefine_line|#define NLMSG_OK(nlh,len) ((nlh)-&gt;nlmsg_len &gt;= sizeof(struct nlmsghdr) &amp;&amp; &bslash;&n;&t;&t;&t;   (nlh)-&gt;nlmsg_len &lt;= (len))
+DECL|macro|NLMSG_PAYLOAD
+mdefine_line|#define NLMSG_PAYLOAD(nlh,len) ((nlh)-&gt;nlmsg_len - NLMSG_SPACE((len)))
 DECL|macro|NLMSG_NOOP
 mdefine_line|#define NLMSG_NOOP&t;&t;0x1&t;/* Nothing.&t;&t;*/
 DECL|macro|NLMSG_ERROR

@@ -92,8 +92,6 @@ r_int
 r_int
 id|io_apic_irqs
 suffix:semicolon
-DECL|macro|IO_APIC_IRQ
-mdefine_line|#define IO_APIC_IRQ(x) ((1&lt;&lt;x) &amp; io_apic_irqs)
 DECL|macro|MAX_IRQ_SOURCES
 mdefine_line|#define MAX_IRQ_SOURCES 128
 DECL|macro|MAX_MP_BUSSES
@@ -210,11 +208,20 @@ id|cpu
 )paren
 suffix:semicolon
 )brace
+DECL|macro|IO_APIC_IRQ
+mdefine_line|#define IO_APIC_IRQ(x) ((1&lt;&lt;x) &amp; io_apic_irqs)
 macro_line|#else
 DECL|macro|irq_enter
 mdefine_line|#define irq_enter(cpu, irq)&t;(++local_irq_count[cpu])
 DECL|macro|irq_exit
 mdefine_line|#define irq_exit(cpu, irq)&t;(--local_irq_count[cpu])
+multiline_comment|/* Make these no-ops when not using SMP */
+DECL|macro|enable_IO_APIC_irq
+mdefine_line|#define enable_IO_APIC_irq(x)&t;do { } while (0)
+DECL|macro|disable_IO_APIC_irq
+mdefine_line|#define disable_IO_APIC_irq(x)&t;do { } while (0)
+DECL|macro|IO_APIC_IRQ
+mdefine_line|#define IO_APIC_IRQ(x)&t;(0)
 macro_line|#endif
 DECL|macro|__STR
 mdefine_line|#define __STR(x) #x

@@ -55,7 +55,7 @@ op_star
 id|el
 comma
 r_struct
-id|cnode
+id|coda_inode_info
 op_star
 id|cnp
 )paren
@@ -123,7 +123,7 @@ id|coda_cache_clear_cnp
 c_func
 (paren
 r_struct
-id|cnode
+id|coda_inode_info
 op_star
 id|cnp
 )paren

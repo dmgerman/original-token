@@ -966,6 +966,13 @@ op_assign
 id|skb-&gt;dev
 suffix:semicolon
 multiline_comment|/* Start a timer for this entry. */
+id|init_timer
+c_func
+(paren
+op_amp
+id|qp-&gt;timer
+)paren
+suffix:semicolon
 id|qp-&gt;timer.expires
 op_assign
 id|jiffies

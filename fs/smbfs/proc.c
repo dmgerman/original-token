@@ -1,8 +1,9 @@
 multiline_comment|/*&n; *  proc.c&n; *&n; *  Copyright (C) 1995, 1996 by Paal-Kr. Engstad and Volker Lendecke&n; *  Copyright (C) 1997 by Volker Lendecke&n; *&n; *  28/06/96 - Fixed long file name support (smb_proc_readdir_long) by Yuri Per&n; *  28/09/97 - Fixed smb_d_path [now smb_build_path()] to be non-recursive&n; *             by Riccardo Facchetti&n; */
-macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/errno.h&gt;
 macro_line|#include &lt;linux/malloc.h&gt;
+macro_line|#include &lt;linux/fs.h&gt;
+macro_line|#include &lt;linux/file.h&gt;
 macro_line|#include &lt;linux/stat.h&gt;
 macro_line|#include &lt;linux/fcntl.h&gt;
 macro_line|#include &lt;linux/dcache.h&gt;
@@ -2242,37 +2243,59 @@ id|current-&gt;pid
 )paren
 suffix:semicolon
 macro_line|#endif
+multiline_comment|/*&n;&t; * Make sure we don&squot;t already have a pid ...&n;&t; */
+id|error
+op_assign
+op_minus
+id|EINVAL
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|server-&gt;conn_pid
+)paren
+r_goto
+id|out
+suffix:semicolon
+id|error
+op_assign
+op_minus
+id|EACCES
+suffix:semicolon
+r_if
+c_cond
+(paren
+id|current-&gt;uid
+op_ne
+id|server-&gt;mnt-&gt;mounted_uid
+op_logical_and
+op_logical_neg
+id|suser
+c_func
+(paren
+)paren
+)paren
+r_goto
+id|out
+suffix:semicolon
 id|error
 op_assign
 op_minus
 id|EBADF
 suffix:semicolon
-r_if
-c_cond
+id|filp
+op_assign
+id|fget
+c_func
 (paren
 id|opt-&gt;fd
-OL
-l_int|0
-op_logical_or
-id|opt-&gt;fd
-op_ge
-id|NR_OPEN
 )paren
-r_goto
-id|out
 suffix:semicolon
 r_if
 c_cond
 (paren
 op_logical_neg
-(paren
 id|filp
-op_assign
-id|current-&gt;files-&gt;fd
-(braket
-id|opt-&gt;fd
-)braket
-)paren
 )paren
 r_goto
 id|out
@@ -2288,64 +2311,15 @@ id|filp-&gt;f_dentry-&gt;d_inode
 )paren
 )paren
 r_goto
-id|out
-suffix:semicolon
-id|error
-op_assign
-op_minus
-id|EACCES
-suffix:semicolon
-r_if
-c_cond
-(paren
-(paren
-id|current-&gt;uid
-op_ne
-id|server-&gt;mnt-&gt;mounted_uid
-)paren
-op_logical_and
-op_logical_neg
-id|suser
-c_func
-(paren
-)paren
-)paren
-r_goto
-id|out
-suffix:semicolon
-multiline_comment|/*&n;&t; * Make sure we don&squot;t already have a pid ...&n;&t; */
-id|error
-op_assign
-op_minus
-id|EINVAL
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|server-&gt;conn_pid
-)paren
-(brace
-id|printk
-c_func
-(paren
-l_string|&quot;SMBFS: invalid ioctl call&bslash;n&quot;
-)paren
-suffix:semicolon
-r_goto
-id|out
-suffix:semicolon
-)brace
-id|server-&gt;conn_pid
-op_assign
-id|current-&gt;pid
-suffix:semicolon
-id|filp-&gt;f_count
-op_add_assign
-l_int|1
+id|out_putf
 suffix:semicolon
 id|server-&gt;sock_file
 op_assign
 id|filp
+suffix:semicolon
+id|server-&gt;conn_pid
+op_assign
+id|current-&gt;pid
 suffix:semicolon
 id|smb_catch_keepalive
 c_func
@@ -2395,6 +2369,17 @@ id|server-&gt;wait
 suffix:semicolon
 r_return
 id|error
+suffix:semicolon
+id|out_putf
+suffix:colon
+id|fput
+c_func
+(paren
+id|filp
+)paren
+suffix:semicolon
+r_goto
+id|out
 suffix:semicolon
 )brace
 multiline_comment|/* smb_setup_header: We completely set up the packet. You only have to&n;   insert the command-specific fields */

@@ -214,6 +214,19 @@ r_char
 id|mode
 suffix:semicolon
 multiline_comment|/* SLIP mode&t;&t;&t;*/
+DECL|member|leased
+r_int
+r_char
+id|leased
+suffix:semicolon
+DECL|member|line
+id|kdev_t
+id|line
+suffix:semicolon
+DECL|member|pid
+id|pid_t
+id|pid
+suffix:semicolon
 DECL|macro|SL_MODE_SLIP
 mdefine_line|#define SL_MODE_SLIP&t;0
 DECL|macro|SL_MODE_CSLIP

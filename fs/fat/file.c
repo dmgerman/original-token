@@ -1309,6 +1309,7 @@ comma
 id|ppos
 )paren
 suffix:semicolon
+multiline_comment|/*&n;&t; * MS-DOS filesystems with a blocksize &gt; 512 may have blocks&n;&t; * spread over several hardware sectors (unaligned), which&n;&t; * is not something the generic routines can (or would want&n;&t; * to) handle).&n;&t; */
 r_if
 c_cond
 (paren
@@ -1320,6 +1321,10 @@ id|inode
 )paren
 op_member_access_from_pointer
 id|i_binary
+op_logical_or
+id|inode-&gt;i_sb-&gt;s_blocksize
+OG
+l_int|512
 )paren
 r_return
 id|fat_file_read_text

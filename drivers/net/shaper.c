@@ -15,6 +15,7 @@ macro_line|#include &lt;linux/skbuff.h&gt;
 macro_line|#include &lt;linux/if_arp.h&gt;
 macro_line|#include &lt;linux/init.h&gt;
 macro_line|#include &lt;net/dst.h&gt;
+macro_line|#include &lt;net/arp.h&gt;
 macro_line|#include &lt;linux/if_shaper.h&gt;
 DECL|variable|sh_debug
 r_int
@@ -1248,7 +1249,7 @@ r_return
 id|v
 suffix:semicolon
 )brace
-DECL|function|shaper_cache
+macro_line|#if 0
 r_static
 r_int
 id|shaper_cache
@@ -1321,7 +1322,6 @@ r_return
 id|ret
 suffix:semicolon
 )brace
-DECL|function|shaper_cache_update
 r_static
 r_void
 id|shaper_cache_update
@@ -1374,6 +1374,83 @@ id|sh-&gt;dev
 comma
 id|haddr
 )paren
+suffix:semicolon
+)brace
+macro_line|#endif
+DECL|function|shaper_neigh_setup
+r_static
+r_int
+id|shaper_neigh_setup
+c_func
+(paren
+r_struct
+id|neighbour
+op_star
+id|n
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|n-&gt;nud_state
+op_eq
+id|NUD_NONE
+)paren
+(brace
+id|n-&gt;ops
+op_assign
+op_amp
+id|arp_broken_ops
+suffix:semicolon
+id|n-&gt;output
+op_assign
+id|n-&gt;ops-&gt;output
+suffix:semicolon
+)brace
+r_return
+l_int|0
+suffix:semicolon
+)brace
+DECL|function|shaper_neigh_setup_dev
+r_static
+r_int
+id|shaper_neigh_setup_dev
+c_func
+(paren
+r_struct
+id|device
+op_star
+id|dev
+comma
+r_struct
+id|neigh_parms
+op_star
+id|p
+)paren
+(brace
+r_if
+c_cond
+(paren
+id|p-&gt;tbl-&gt;family
+op_eq
+id|AF_INET
+)paren
+(brace
+id|p-&gt;neigh_setup
+op_assign
+id|shaper_neigh_setup
+suffix:semicolon
+id|p-&gt;ucast_probes
+op_assign
+l_int|0
+suffix:semicolon
+id|p-&gt;mcast_probes
+op_assign
+l_int|0
+suffix:semicolon
+)brace
+r_return
+l_int|0
 suffix:semicolon
 )brace
 DECL|function|shaper_attach
@@ -1502,7 +1579,11 @@ id|shdev-&gt;hard_header_cache
 op_assign
 l_int|NULL
 suffix:semicolon
-macro_line|#endif&t;&t;
+macro_line|#endif
+id|shdev-&gt;neigh_setup
+op_assign
+id|shaper_neigh_setup_dev
+suffix:semicolon
 id|shdev-&gt;hard_header_len
 op_assign
 id|dev-&gt;hard_header_len
@@ -1801,6 +1882,7 @@ id|dev-&gt;rebuild_header
 op_assign
 id|shaper_rebuild_header
 suffix:semicolon
+macro_line|#if 0
 id|dev-&gt;hard_header_cache
 op_assign
 id|shaper_cache
@@ -1808,6 +1890,11 @@ suffix:semicolon
 id|dev-&gt;header_cache_update
 op_assign
 id|shaper_cache_update
+suffix:semicolon
+macro_line|#endif
+id|dev-&gt;neigh_setup
+op_assign
+id|shaper_neigh_setup_dev
 suffix:semicolon
 id|dev-&gt;do_ioctl
 op_assign

@@ -497,9 +497,14 @@ id|tp
 multiline_comment|/* FIXME: must check that ts_recent is not&n; &t; * more than 24 days old here. Yuck.&n; &t; */
 r_return
 (paren
+(paren
+id|s32
+)paren
+(paren
 id|tp-&gt;rcv_tsval
 op_minus
 id|tp-&gt;ts_recent
+)paren
 OL
 l_int|0
 )paren

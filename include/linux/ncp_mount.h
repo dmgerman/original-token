@@ -13,6 +13,12 @@ DECL|macro|NCP_MOUNT_SOFT
 mdefine_line|#define NCP_MOUNT_SOFT 0x0001
 DECL|macro|NCP_MOUNT_INTR
 mdefine_line|#define NCP_MOUNT_INTR 0x0002
+DECL|macro|NCP_MOUNT_STRONG
+mdefine_line|#define NCP_MOUNT_STRONG 0x0004   /* enable delete/rename of r/o files */
+DECL|macro|NCP_MOUNT_NO_OS2
+mdefine_line|#define NCP_MOUNT_NO_OS2 0x0008
+DECL|macro|NCP_MOUNT_NO_NFS
+mdefine_line|#define NCP_MOUNT_NO_NFS 0x0010
 DECL|struct|ncp_mount_data
 r_struct
 id|ncp_mount_data
@@ -28,12 +34,12 @@ id|ncp_fd
 suffix:semicolon
 multiline_comment|/* The socket to the ncp port */
 DECL|member|mounted_uid
-id|uid_t
+id|__kernel_uid_t
 id|mounted_uid
 suffix:semicolon
 multiline_comment|/* Who may umount() this filesystem? */
 DECL|member|wdog_pid
-id|pid_t
+id|__kernel_pid_t
 id|wdog_pid
 suffix:semicolon
 multiline_comment|/* Who cares for our watchdog packets? */
@@ -65,19 +71,19 @@ r_int
 id|flags
 suffix:semicolon
 DECL|member|uid
-id|uid_t
+id|__kernel_uid_t
 id|uid
 suffix:semicolon
 DECL|member|gid
-id|gid_t
+id|__kernel_gid_t
 id|gid
 suffix:semicolon
 DECL|member|file_mode
-id|mode_t
+id|__kernel_mode_t
 id|file_mode
 suffix:semicolon
 DECL|member|dir_mode
-id|mode_t
+id|__kernel_mode_t
 id|dir_mode
 suffix:semicolon
 )brace

@@ -46,6 +46,13 @@ r_int
 id|seq
 suffix:semicolon
 multiline_comment|/* Connection seqno&t;*/
+DECL|member|file
+r_struct
+id|file
+op_star
+id|file
+suffix:semicolon
+multiline_comment|/* file for socket&t;*/
 DECL|member|sock
 r_struct
 id|socket
