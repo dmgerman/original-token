@@ -25,11 +25,6 @@ id|ip_options
 id|opt
 suffix:semicolon
 multiline_comment|/* Compiled IP options&t;&t;*/
-DECL|member|redirport
-id|u16
-id|redirport
-suffix:semicolon
-multiline_comment|/* Redirect port&t;&t;*/
 DECL|member|flags
 r_int
 r_char

@@ -319,10 +319,10 @@ DECL|macro|BRDRW_ULTRA2
 mdefine_line|#define&t;&t;BRDRW_ULTRA2    &t;0x02
 DECL|macro|BRDCTL1
 mdefine_line|#define&t;&t;BRDCTL1         &t;0x02
-DECL|macro|BRDSTB_ULTRA2
-mdefine_line|#define&t;&t;BRDSTB_ULTRA2   &t;0x01
 DECL|macro|BRDCTL0
 mdefine_line|#define&t;&t;BRDCTL0         &t;0x01
+DECL|macro|BRDSTB_ULTRA2
+mdefine_line|#define&t;&t;BRDSTB_ULTRA2   &t;0x01
 DECL|macro|SEECTL
 mdefine_line|#define&t;SEECTL          &t;&t;0x1e
 DECL|macro|EXTARBACK
@@ -633,8 +633,8 @@ DECL|macro|BAD_STATUS
 mdefine_line|#define&t;&t;BAD_STATUS      &t;0x71
 DECL|macro|REJECT_MSG
 mdefine_line|#define&t;&t;REJECT_MSG      &t;0x61
-DECL|macro|ABORT_REQUESTED
-mdefine_line|#define&t;&t;ABORT_REQUESTED &t;0x51
+DECL|macro|WIDE_RESIDUE
+mdefine_line|#define&t;&t;WIDE_RESIDUE    &t;0x51
 DECL|macro|EXTENDED_MSG
 mdefine_line|#define&t;&t;EXTENDED_MSG    &t;0x41
 DECL|macro|NO_MATCH
@@ -735,6 +735,8 @@ DECL|macro|TARGCRCENDEN
 mdefine_line|#define&t;&t;TARGCRCENDEN    &t;0x08
 DECL|macro|TARGCRCCNTEN
 mdefine_line|#define&t;&t;TARGCRCCNTEN    &t;0x04
+DECL|macro|QOUTCNT
+mdefine_line|#define&t;QOUTCNT         &t;&t;0x9e
 DECL|macro|SCSIPHASE
 mdefine_line|#define&t;SCSIPHASE       &t;&t;0x9e
 DECL|macro|SP_STATUS
@@ -749,8 +751,6 @@ DECL|macro|SP_DATA_IN
 mdefine_line|#define&t;&t;SP_DATA_IN      &t;0x02
 DECL|macro|SP_DATA_OUT
 mdefine_line|#define&t;&t;SP_DATA_OUT     &t;0x01
-DECL|macro|QOUTCNT
-mdefine_line|#define&t;QOUTCNT         &t;&t;0x9e
 DECL|macro|SFUNCT
 mdefine_line|#define&t;SFUNCT          &t;&t;0x9f
 DECL|macro|ALT_MODE
@@ -921,10 +921,10 @@ DECL|macro|RD_DFTHRSH_50
 mdefine_line|#define&t;&t;RD_DFTHRSH_50   &t;0x02
 DECL|macro|RD_DFTHRSH_25
 mdefine_line|#define&t;&t;RD_DFTHRSH_25   &t;0x01
-DECL|macro|WR_DFTHRSH_MIN
-mdefine_line|#define&t;&t;WR_DFTHRSH_MIN  &t;0x00
 DECL|macro|RD_DFTHRSH_MIN
 mdefine_line|#define&t;&t;RD_DFTHRSH_MIN  &t;0x00
+DECL|macro|WR_DFTHRSH_MIN
+mdefine_line|#define&t;&t;WR_DFTHRSH_MIN  &t;0x00
 DECL|macro|SG_CACHEPTR
 mdefine_line|#define&t;SG_CACHEPTR     &t;&t;0xfc
 DECL|macro|SG_USER_DATA
@@ -933,6 +933,14 @@ DECL|macro|LAST_SEG
 mdefine_line|#define&t;&t;LAST_SEG        &t;0x02
 DECL|macro|LAST_SEG_DONE
 mdefine_line|#define&t;&t;LAST_SEG_DONE   &t;0x01
+DECL|macro|CMD_GROUP_CODE_SHIFT
+mdefine_line|#define&t;CMD_GROUP_CODE_SHIFT&t;0x05
+DECL|macro|BUS_8_BIT
+mdefine_line|#define&t;BUS_8_BIT&t;0x00
+DECL|macro|QOUTFIFO_OFFSET
+mdefine_line|#define&t;QOUTFIFO_OFFSET&t;0x01
+DECL|macro|CCSGRAM_MAXSEGS
+mdefine_line|#define&t;CCSGRAM_MAXSEGS&t;0x10
 DECL|macro|CMD_GROUP2_BYTE_DELTA
 mdefine_line|#define&t;CMD_GROUP2_BYTE_DELTA&t;0xfa
 DECL|macro|MAX_OFFSET_8BIT
@@ -943,20 +951,12 @@ DECL|macro|QINFIFO_OFFSET
 mdefine_line|#define&t;QINFIFO_OFFSET&t;0x02
 DECL|macro|CMD_GROUP5_BYTE_DELTA
 mdefine_line|#define&t;CMD_GROUP5_BYTE_DELTA&t;0x0b
-DECL|macro|CMD_GROUP_CODE_SHIFT
-mdefine_line|#define&t;CMD_GROUP_CODE_SHIFT&t;0x05
 DECL|macro|MAX_OFFSET_ULTRA2
 mdefine_line|#define&t;MAX_OFFSET_ULTRA2&t;0x7f
 DECL|macro|MAX_OFFSET_16BIT
 mdefine_line|#define&t;MAX_OFFSET_16BIT&t;0x08
-DECL|macro|BUS_8_BIT
-mdefine_line|#define&t;BUS_8_BIT&t;0x00
-DECL|macro|QOUTFIFO_OFFSET
-mdefine_line|#define&t;QOUTFIFO_OFFSET&t;0x01
 DECL|macro|UNTAGGEDSCB_OFFSET
 mdefine_line|#define&t;UNTAGGEDSCB_OFFSET&t;0x00
-DECL|macro|CCSGRAM_MAXSEGS
-mdefine_line|#define&t;CCSGRAM_MAXSEGS&t;0x10
 DECL|macro|SCB_LIST_NULL
 mdefine_line|#define&t;SCB_LIST_NULL&t;0xff
 DECL|macro|SG_SIZEOF

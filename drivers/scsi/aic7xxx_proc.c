@@ -558,7 +558,7 @@ c_func
 (paren
 id|BLS
 comma
-l_string|&quot;                         Twin Channel&bslash;n&quot;
+l_string|&quot;                         Twin Channel Controller &quot;
 )paren
 suffix:semicolon
 r_else
@@ -698,7 +698,7 @@ c_func
 (paren
 id|BLS
 comma
-l_string|&quot;                           %s%sController%s&bslash;n&quot;
+l_string|&quot;                           %s%sController%s &quot;
 comma
 id|ultra
 comma
@@ -706,6 +706,78 @@ id|wide
 comma
 id|channel
 )paren
+suffix:semicolon
+)brace
+r_switch
+c_cond
+(paren
+id|p-&gt;chip
+op_amp
+op_complement
+id|AHC_CHIPID_MASK
+)paren
+(brace
+r_case
+id|AHC_VL
+suffix:colon
+id|size
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|BLS
+comma
+l_string|&quot;at VLB slot %d&bslash;n&quot;
+comma
+id|p-&gt;pci_device_fn
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_case
+id|AHC_EISA
+suffix:colon
+id|size
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|BLS
+comma
+l_string|&quot;at EISA slot %d&bslash;n&quot;
+comma
+id|p-&gt;pci_device_fn
+)paren
+suffix:semicolon
+r_break
+suffix:semicolon
+r_default
+suffix:colon
+id|size
+op_add_assign
+id|sprintf
+c_func
+(paren
+id|BLS
+comma
+l_string|&quot;at PCI %d/%d/%d&bslash;n&quot;
+comma
+id|p-&gt;pci_bus
+comma
+id|PCI_SLOT
+c_func
+(paren
+id|p-&gt;pci_device_fn
+)paren
+comma
+id|PCI_FUNC
+c_func
+(paren
+id|p-&gt;pci_device_fn
+)paren
+)paren
+suffix:semicolon
+r_break
 suffix:semicolon
 )brace
 r_if
@@ -769,29 +841,6 @@ comma
 l_string|&quot;    BIOS Memory Address: 0x%08x&bslash;n&quot;
 comma
 id|p-&gt;bios_address
-)paren
-suffix:semicolon
-)brace
-r_if
-c_cond
-(paren
-id|p-&gt;chip
-op_amp
-id|AHC_PCI
-)paren
-(brace
-id|size
-op_add_assign
-id|sprintf
-c_func
-(paren
-id|BLS
-comma
-l_string|&quot;    PCI Bus 0x%02x Device 0x%02x&bslash;n&quot;
-comma
-id|p-&gt;pci_bus
-comma
-id|p-&gt;pci_device_fn
 )paren
 suffix:semicolon
 )brace

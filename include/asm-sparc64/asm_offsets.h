@@ -192,185 +192,185 @@ mdefine_line|#define ASIZ_task_it_virt_incr&t;0x00000008
 DECL|macro|AOFF_task_real_timer
 mdefine_line|#define AOFF_task_real_timer&t;0x00000160
 DECL|macro|ASIZ_task_real_timer
-mdefine_line|#define ASIZ_task_real_timer&t;0x00000028
+mdefine_line|#define ASIZ_task_real_timer&t;0x00000030
 DECL|macro|AOFF_task_times
-mdefine_line|#define AOFF_task_times&t;0x00000188
+mdefine_line|#define AOFF_task_times&t;0x00000190
 DECL|macro|ASIZ_task_times
 mdefine_line|#define ASIZ_task_times&t;0x00000020
 DECL|macro|AOFF_task_start_time
-mdefine_line|#define AOFF_task_start_time&t;0x000001a8
+mdefine_line|#define AOFF_task_start_time&t;0x000001b0
 DECL|macro|ASIZ_task_start_time
 mdefine_line|#define ASIZ_task_start_time&t;0x00000008
 DECL|macro|AOFF_task_per_cpu_utime
-mdefine_line|#define AOFF_task_per_cpu_utime&t;0x000001b0
+mdefine_line|#define AOFF_task_per_cpu_utime&t;0x000001b8
 DECL|macro|ASIZ_task_per_cpu_utime
 mdefine_line|#define ASIZ_task_per_cpu_utime&t;0x00000008
 DECL|macro|AOFF_task_min_flt
-mdefine_line|#define AOFF_task_min_flt&t;0x000001c0
+mdefine_line|#define AOFF_task_min_flt&t;0x000001c8
 DECL|macro|ASIZ_task_min_flt
 mdefine_line|#define ASIZ_task_min_flt&t;0x00000008
 DECL|macro|AOFF_task_maj_flt
-mdefine_line|#define AOFF_task_maj_flt&t;0x000001c8
+mdefine_line|#define AOFF_task_maj_flt&t;0x000001d0
 DECL|macro|ASIZ_task_maj_flt
 mdefine_line|#define ASIZ_task_maj_flt&t;0x00000008
 DECL|macro|AOFF_task_nswap
-mdefine_line|#define AOFF_task_nswap&t;0x000001d0
+mdefine_line|#define AOFF_task_nswap&t;0x000001d8
 DECL|macro|ASIZ_task_nswap
 mdefine_line|#define ASIZ_task_nswap&t;0x00000008
 DECL|macro|AOFF_task_cmin_flt
-mdefine_line|#define AOFF_task_cmin_flt&t;0x000001d8
+mdefine_line|#define AOFF_task_cmin_flt&t;0x000001e0
 DECL|macro|ASIZ_task_cmin_flt
 mdefine_line|#define ASIZ_task_cmin_flt&t;0x00000008
 DECL|macro|AOFF_task_cmaj_flt
-mdefine_line|#define AOFF_task_cmaj_flt&t;0x000001e0
+mdefine_line|#define AOFF_task_cmaj_flt&t;0x000001e8
 DECL|macro|ASIZ_task_cmaj_flt
 mdefine_line|#define ASIZ_task_cmaj_flt&t;0x00000008
 DECL|macro|AOFF_task_cnswap
-mdefine_line|#define AOFF_task_cnswap&t;0x000001e8
+mdefine_line|#define AOFF_task_cnswap&t;0x000001f0
 DECL|macro|ASIZ_task_cnswap
 mdefine_line|#define ASIZ_task_cnswap&t;0x00000008
 DECL|macro|AOFF_task_uid
-mdefine_line|#define AOFF_task_uid&t;0x000001f4
+mdefine_line|#define AOFF_task_uid&t;0x000001fc
 DECL|macro|ASIZ_task_uid
 mdefine_line|#define ASIZ_task_uid&t;0x00000004
 DECL|macro|AOFF_task_euid
-mdefine_line|#define AOFF_task_euid&t;0x000001f8
+mdefine_line|#define AOFF_task_euid&t;0x00000200
 DECL|macro|ASIZ_task_euid
 mdefine_line|#define ASIZ_task_euid&t;0x00000004
 DECL|macro|AOFF_task_suid
-mdefine_line|#define AOFF_task_suid&t;0x000001fc
+mdefine_line|#define AOFF_task_suid&t;0x00000204
 DECL|macro|ASIZ_task_suid
 mdefine_line|#define ASIZ_task_suid&t;0x00000004
 DECL|macro|AOFF_task_fsuid
-mdefine_line|#define AOFF_task_fsuid&t;0x00000200
+mdefine_line|#define AOFF_task_fsuid&t;0x00000208
 DECL|macro|ASIZ_task_fsuid
 mdefine_line|#define ASIZ_task_fsuid&t;0x00000004
 DECL|macro|AOFF_task_gid
-mdefine_line|#define AOFF_task_gid&t;0x00000204
+mdefine_line|#define AOFF_task_gid&t;0x0000020c
 DECL|macro|ASIZ_task_gid
 mdefine_line|#define ASIZ_task_gid&t;0x00000004
 DECL|macro|AOFF_task_egid
-mdefine_line|#define AOFF_task_egid&t;0x00000208
+mdefine_line|#define AOFF_task_egid&t;0x00000210
 DECL|macro|ASIZ_task_egid
 mdefine_line|#define ASIZ_task_egid&t;0x00000004
 DECL|macro|AOFF_task_sgid
-mdefine_line|#define AOFF_task_sgid&t;0x0000020c
+mdefine_line|#define AOFF_task_sgid&t;0x00000214
 DECL|macro|ASIZ_task_sgid
 mdefine_line|#define ASIZ_task_sgid&t;0x00000004
 DECL|macro|AOFF_task_fsgid
-mdefine_line|#define AOFF_task_fsgid&t;0x00000210
+mdefine_line|#define AOFF_task_fsgid&t;0x00000218
 DECL|macro|ASIZ_task_fsgid
 mdefine_line|#define ASIZ_task_fsgid&t;0x00000004
 DECL|macro|AOFF_task_ngroups
-mdefine_line|#define AOFF_task_ngroups&t;0x00000214
+mdefine_line|#define AOFF_task_ngroups&t;0x0000021c
 DECL|macro|ASIZ_task_ngroups
 mdefine_line|#define ASIZ_task_ngroups&t;0x00000004
 DECL|macro|AOFF_task_groups
-mdefine_line|#define AOFF_task_groups&t;0x00000218
+mdefine_line|#define AOFF_task_groups&t;0x00000220
 DECL|macro|ASIZ_task_groups
 mdefine_line|#define ASIZ_task_groups&t;0x00000080
 DECL|macro|AOFF_task_cap_effective
-mdefine_line|#define AOFF_task_cap_effective&t;0x00000298
+mdefine_line|#define AOFF_task_cap_effective&t;0x000002a0
 DECL|macro|ASIZ_task_cap_effective
 mdefine_line|#define ASIZ_task_cap_effective&t;0x00000004
 DECL|macro|AOFF_task_cap_inheritable
-mdefine_line|#define AOFF_task_cap_inheritable&t;0x0000029c
+mdefine_line|#define AOFF_task_cap_inheritable&t;0x000002a4
 DECL|macro|ASIZ_task_cap_inheritable
 mdefine_line|#define ASIZ_task_cap_inheritable&t;0x00000004
 DECL|macro|AOFF_task_cap_permitted
-mdefine_line|#define AOFF_task_cap_permitted&t;0x000002a0
+mdefine_line|#define AOFF_task_cap_permitted&t;0x000002a8
 DECL|macro|ASIZ_task_cap_permitted
 mdefine_line|#define ASIZ_task_cap_permitted&t;0x00000004
 DECL|macro|AOFF_task_user
-mdefine_line|#define AOFF_task_user&t;0x000002a8
+mdefine_line|#define AOFF_task_user&t;0x000002b0
 DECL|macro|ASIZ_task_user
 mdefine_line|#define ASIZ_task_user&t;0x00000008
 DECL|macro|AOFF_task_rlim
-mdefine_line|#define AOFF_task_rlim&t;0x000002b0
+mdefine_line|#define AOFF_task_rlim&t;0x000002b8
 DECL|macro|ASIZ_task_rlim
 mdefine_line|#define ASIZ_task_rlim&t;0x000000a0
 DECL|macro|AOFF_task_used_math
-mdefine_line|#define AOFF_task_used_math&t;0x00000350
+mdefine_line|#define AOFF_task_used_math&t;0x00000358
 DECL|macro|ASIZ_task_used_math
 mdefine_line|#define ASIZ_task_used_math&t;0x00000002
 DECL|macro|AOFF_task_comm
-mdefine_line|#define AOFF_task_comm&t;0x00000352
+mdefine_line|#define AOFF_task_comm&t;0x0000035a
 DECL|macro|ASIZ_task_comm
 mdefine_line|#define ASIZ_task_comm&t;0x00000010
 DECL|macro|AOFF_task_link_count
-mdefine_line|#define AOFF_task_link_count&t;0x00000364
+mdefine_line|#define AOFF_task_link_count&t;0x0000036c
 DECL|macro|ASIZ_task_link_count
 mdefine_line|#define ASIZ_task_link_count&t;0x00000004
 DECL|macro|AOFF_task_tty
-mdefine_line|#define AOFF_task_tty&t;0x00000368
+mdefine_line|#define AOFF_task_tty&t;0x00000370
 DECL|macro|ASIZ_task_tty
 mdefine_line|#define ASIZ_task_tty&t;0x00000008
 DECL|macro|AOFF_task_semundo
-mdefine_line|#define AOFF_task_semundo&t;0x00000370
+mdefine_line|#define AOFF_task_semundo&t;0x00000378
 DECL|macro|ASIZ_task_semundo
 mdefine_line|#define ASIZ_task_semundo&t;0x00000008
 DECL|macro|AOFF_task_semsleeping
-mdefine_line|#define AOFF_task_semsleeping&t;0x00000378
+mdefine_line|#define AOFF_task_semsleeping&t;0x00000380
 DECL|macro|ASIZ_task_semsleeping
 mdefine_line|#define ASIZ_task_semsleeping&t;0x00000008
 DECL|macro|AOFF_task_thread
-mdefine_line|#define AOFF_task_thread&t;0x00000380
+mdefine_line|#define AOFF_task_thread&t;0x00000390
 DECL|macro|ASIZ_task_thread
 mdefine_line|#define ASIZ_task_thread&t;0x00000450
 DECL|macro|AOFF_task_fs
-mdefine_line|#define AOFF_task_fs&t;0x000007d0
+mdefine_line|#define AOFF_task_fs&t;0x000007e0
 DECL|macro|ASIZ_task_fs
 mdefine_line|#define ASIZ_task_fs&t;0x00000008
 DECL|macro|AOFF_task_files
-mdefine_line|#define AOFF_task_files&t;0x000007d8
+mdefine_line|#define AOFF_task_files&t;0x000007e8
 DECL|macro|ASIZ_task_files
 mdefine_line|#define ASIZ_task_files&t;0x00000008
 DECL|macro|AOFF_task_sigmask_lock
-mdefine_line|#define AOFF_task_sigmask_lock&t;0x000007e0
+mdefine_line|#define AOFF_task_sigmask_lock&t;0x000007f0
 DECL|macro|ASIZ_task_sigmask_lock
 mdefine_line|#define ASIZ_task_sigmask_lock&t;0x00000000
 DECL|macro|AOFF_task_sig
-mdefine_line|#define AOFF_task_sig&t;0x000007e0
+mdefine_line|#define AOFF_task_sig&t;0x000007f0
 DECL|macro|ASIZ_task_sig
 mdefine_line|#define ASIZ_task_sig&t;0x00000008
 DECL|macro|AOFF_task_signal
-mdefine_line|#define AOFF_task_signal&t;0x000007e8
+mdefine_line|#define AOFF_task_signal&t;0x000007f8
 DECL|macro|ASIZ_task_signal
 mdefine_line|#define ASIZ_task_signal&t;0x00000008
 DECL|macro|AOFF_task_blocked
-mdefine_line|#define AOFF_task_blocked&t;0x000007f0
+mdefine_line|#define AOFF_task_blocked&t;0x00000800
 DECL|macro|ASIZ_task_blocked
 mdefine_line|#define ASIZ_task_blocked&t;0x00000008
 DECL|macro|AOFF_task_sigqueue
-mdefine_line|#define AOFF_task_sigqueue&t;0x000007f8
+mdefine_line|#define AOFF_task_sigqueue&t;0x00000808
 DECL|macro|ASIZ_task_sigqueue
 mdefine_line|#define ASIZ_task_sigqueue&t;0x00000008
 DECL|macro|AOFF_task_sigqueue_tail
-mdefine_line|#define AOFF_task_sigqueue_tail&t;0x00000800
+mdefine_line|#define AOFF_task_sigqueue_tail&t;0x00000810
 DECL|macro|ASIZ_task_sigqueue_tail
 mdefine_line|#define ASIZ_task_sigqueue_tail&t;0x00000008
 DECL|macro|AOFF_task_sas_ss_sp
-mdefine_line|#define AOFF_task_sas_ss_sp&t;0x00000808
+mdefine_line|#define AOFF_task_sas_ss_sp&t;0x00000818
 DECL|macro|ASIZ_task_sas_ss_sp
 mdefine_line|#define ASIZ_task_sas_ss_sp&t;0x00000008
 DECL|macro|AOFF_task_sas_ss_size
-mdefine_line|#define AOFF_task_sas_ss_size&t;0x00000810
+mdefine_line|#define AOFF_task_sas_ss_size&t;0x00000820
 DECL|macro|ASIZ_task_sas_ss_size
 mdefine_line|#define ASIZ_task_sas_ss_size&t;0x00000008
 DECL|macro|AOFF_task_parent_exec_id
-mdefine_line|#define AOFF_task_parent_exec_id&t;0x00000818
+mdefine_line|#define AOFF_task_parent_exec_id&t;0x00000828
 DECL|macro|ASIZ_task_parent_exec_id
 mdefine_line|#define ASIZ_task_parent_exec_id&t;0x00000004
 DECL|macro|AOFF_task_self_exec_id
-mdefine_line|#define AOFF_task_self_exec_id&t;0x0000081c
+mdefine_line|#define AOFF_task_self_exec_id&t;0x0000082c
 DECL|macro|ASIZ_task_self_exec_id
 mdefine_line|#define ASIZ_task_self_exec_id&t;0x00000004
 DECL|macro|AOFF_task_exit_sem
-mdefine_line|#define AOFF_task_exit_sem&t;0x00000820
+mdefine_line|#define AOFF_task_exit_sem&t;0x00000830
 DECL|macro|ASIZ_task_exit_sem
 mdefine_line|#define ASIZ_task_exit_sem&t;0x00000030
 DECL|macro|ASIZ_task
-mdefine_line|#define ASIZ_task&t;0x00000850
+mdefine_line|#define ASIZ_task&t;0x00000860
 DECL|macro|AOFF_mm_mmap
 mdefine_line|#define AOFF_mm_mmap&t;0x00000000
 DECL|macro|ASIZ_mm_mmap
@@ -760,125 +760,125 @@ mdefine_line|#define ASIZ_task_it_virt_incr&t;0x00000008
 DECL|macro|AOFF_task_real_timer
 mdefine_line|#define AOFF_task_real_timer&t;0x00000168
 DECL|macro|ASIZ_task_real_timer
-mdefine_line|#define ASIZ_task_real_timer&t;0x00000028
+mdefine_line|#define ASIZ_task_real_timer&t;0x00000030
 DECL|macro|AOFF_task_times
-mdefine_line|#define AOFF_task_times&t;0x00000190
+mdefine_line|#define AOFF_task_times&t;0x00000198
 DECL|macro|ASIZ_task_times
 mdefine_line|#define ASIZ_task_times&t;0x00000020
 DECL|macro|AOFF_task_start_time
-mdefine_line|#define AOFF_task_start_time&t;0x000001b0
+mdefine_line|#define AOFF_task_start_time&t;0x000001b8
 DECL|macro|ASIZ_task_start_time
 mdefine_line|#define ASIZ_task_start_time&t;0x00000008
 DECL|macro|AOFF_task_per_cpu_utime
-mdefine_line|#define AOFF_task_per_cpu_utime&t;0x000001b8
+mdefine_line|#define AOFF_task_per_cpu_utime&t;0x000001c0
 DECL|macro|ASIZ_task_per_cpu_utime
 mdefine_line|#define ASIZ_task_per_cpu_utime&t;0x00000100
 DECL|macro|AOFF_task_min_flt
-mdefine_line|#define AOFF_task_min_flt&t;0x000003b8
+mdefine_line|#define AOFF_task_min_flt&t;0x000003c0
 DECL|macro|ASIZ_task_min_flt
 mdefine_line|#define ASIZ_task_min_flt&t;0x00000008
 DECL|macro|AOFF_task_maj_flt
-mdefine_line|#define AOFF_task_maj_flt&t;0x000003c0
+mdefine_line|#define AOFF_task_maj_flt&t;0x000003c8
 DECL|macro|ASIZ_task_maj_flt
 mdefine_line|#define ASIZ_task_maj_flt&t;0x00000008
 DECL|macro|AOFF_task_nswap
-mdefine_line|#define AOFF_task_nswap&t;0x000003c8
+mdefine_line|#define AOFF_task_nswap&t;0x000003d0
 DECL|macro|ASIZ_task_nswap
 mdefine_line|#define ASIZ_task_nswap&t;0x00000008
 DECL|macro|AOFF_task_cmin_flt
-mdefine_line|#define AOFF_task_cmin_flt&t;0x000003d0
+mdefine_line|#define AOFF_task_cmin_flt&t;0x000003d8
 DECL|macro|ASIZ_task_cmin_flt
 mdefine_line|#define ASIZ_task_cmin_flt&t;0x00000008
 DECL|macro|AOFF_task_cmaj_flt
-mdefine_line|#define AOFF_task_cmaj_flt&t;0x000003d8
+mdefine_line|#define AOFF_task_cmaj_flt&t;0x000003e0
 DECL|macro|ASIZ_task_cmaj_flt
 mdefine_line|#define ASIZ_task_cmaj_flt&t;0x00000008
 DECL|macro|AOFF_task_cnswap
-mdefine_line|#define AOFF_task_cnswap&t;0x000003e0
+mdefine_line|#define AOFF_task_cnswap&t;0x000003e8
 DECL|macro|ASIZ_task_cnswap
 mdefine_line|#define ASIZ_task_cnswap&t;0x00000008
 DECL|macro|AOFF_task_uid
-mdefine_line|#define AOFF_task_uid&t;0x000003ec
+mdefine_line|#define AOFF_task_uid&t;0x000003f4
 DECL|macro|ASIZ_task_uid
 mdefine_line|#define ASIZ_task_uid&t;0x00000004
 DECL|macro|AOFF_task_euid
-mdefine_line|#define AOFF_task_euid&t;0x000003f0
+mdefine_line|#define AOFF_task_euid&t;0x000003f8
 DECL|macro|ASIZ_task_euid
 mdefine_line|#define ASIZ_task_euid&t;0x00000004
 DECL|macro|AOFF_task_suid
-mdefine_line|#define AOFF_task_suid&t;0x000003f4
+mdefine_line|#define AOFF_task_suid&t;0x000003fc
 DECL|macro|ASIZ_task_suid
 mdefine_line|#define ASIZ_task_suid&t;0x00000004
 DECL|macro|AOFF_task_fsuid
-mdefine_line|#define AOFF_task_fsuid&t;0x000003f8
+mdefine_line|#define AOFF_task_fsuid&t;0x00000400
 DECL|macro|ASIZ_task_fsuid
 mdefine_line|#define ASIZ_task_fsuid&t;0x00000004
 DECL|macro|AOFF_task_gid
-mdefine_line|#define AOFF_task_gid&t;0x000003fc
+mdefine_line|#define AOFF_task_gid&t;0x00000404
 DECL|macro|ASIZ_task_gid
 mdefine_line|#define ASIZ_task_gid&t;0x00000004
 DECL|macro|AOFF_task_egid
-mdefine_line|#define AOFF_task_egid&t;0x00000400
+mdefine_line|#define AOFF_task_egid&t;0x00000408
 DECL|macro|ASIZ_task_egid
 mdefine_line|#define ASIZ_task_egid&t;0x00000004
 DECL|macro|AOFF_task_sgid
-mdefine_line|#define AOFF_task_sgid&t;0x00000404
+mdefine_line|#define AOFF_task_sgid&t;0x0000040c
 DECL|macro|ASIZ_task_sgid
 mdefine_line|#define ASIZ_task_sgid&t;0x00000004
 DECL|macro|AOFF_task_fsgid
-mdefine_line|#define AOFF_task_fsgid&t;0x00000408
+mdefine_line|#define AOFF_task_fsgid&t;0x00000410
 DECL|macro|ASIZ_task_fsgid
 mdefine_line|#define ASIZ_task_fsgid&t;0x00000004
 DECL|macro|AOFF_task_ngroups
-mdefine_line|#define AOFF_task_ngroups&t;0x0000040c
+mdefine_line|#define AOFF_task_ngroups&t;0x00000414
 DECL|macro|ASIZ_task_ngroups
 mdefine_line|#define ASIZ_task_ngroups&t;0x00000004
 DECL|macro|AOFF_task_groups
-mdefine_line|#define AOFF_task_groups&t;0x00000410
+mdefine_line|#define AOFF_task_groups&t;0x00000418
 DECL|macro|ASIZ_task_groups
 mdefine_line|#define ASIZ_task_groups&t;0x00000080
 DECL|macro|AOFF_task_cap_effective
-mdefine_line|#define AOFF_task_cap_effective&t;0x00000490
+mdefine_line|#define AOFF_task_cap_effective&t;0x00000498
 DECL|macro|ASIZ_task_cap_effective
 mdefine_line|#define ASIZ_task_cap_effective&t;0x00000004
 DECL|macro|AOFF_task_cap_inheritable
-mdefine_line|#define AOFF_task_cap_inheritable&t;0x00000494
+mdefine_line|#define AOFF_task_cap_inheritable&t;0x0000049c
 DECL|macro|ASIZ_task_cap_inheritable
 mdefine_line|#define ASIZ_task_cap_inheritable&t;0x00000004
 DECL|macro|AOFF_task_cap_permitted
-mdefine_line|#define AOFF_task_cap_permitted&t;0x00000498
+mdefine_line|#define AOFF_task_cap_permitted&t;0x000004a0
 DECL|macro|ASIZ_task_cap_permitted
 mdefine_line|#define ASIZ_task_cap_permitted&t;0x00000004
 DECL|macro|AOFF_task_user
-mdefine_line|#define AOFF_task_user&t;0x000004a0
+mdefine_line|#define AOFF_task_user&t;0x000004a8
 DECL|macro|ASIZ_task_user
 mdefine_line|#define ASIZ_task_user&t;0x00000008
 DECL|macro|AOFF_task_rlim
-mdefine_line|#define AOFF_task_rlim&t;0x000004a8
+mdefine_line|#define AOFF_task_rlim&t;0x000004b0
 DECL|macro|ASIZ_task_rlim
 mdefine_line|#define ASIZ_task_rlim&t;0x000000a0
 DECL|macro|AOFF_task_used_math
-mdefine_line|#define AOFF_task_used_math&t;0x00000548
+mdefine_line|#define AOFF_task_used_math&t;0x00000550
 DECL|macro|ASIZ_task_used_math
 mdefine_line|#define ASIZ_task_used_math&t;0x00000002
 DECL|macro|AOFF_task_comm
-mdefine_line|#define AOFF_task_comm&t;0x0000054a
+mdefine_line|#define AOFF_task_comm&t;0x00000552
 DECL|macro|ASIZ_task_comm
 mdefine_line|#define ASIZ_task_comm&t;0x00000010
 DECL|macro|AOFF_task_link_count
-mdefine_line|#define AOFF_task_link_count&t;0x0000055c
+mdefine_line|#define AOFF_task_link_count&t;0x00000564
 DECL|macro|ASIZ_task_link_count
 mdefine_line|#define ASIZ_task_link_count&t;0x00000004
 DECL|macro|AOFF_task_tty
-mdefine_line|#define AOFF_task_tty&t;0x00000560
+mdefine_line|#define AOFF_task_tty&t;0x00000568
 DECL|macro|ASIZ_task_tty
 mdefine_line|#define ASIZ_task_tty&t;0x00000008
 DECL|macro|AOFF_task_semundo
-mdefine_line|#define AOFF_task_semundo&t;0x00000568
+mdefine_line|#define AOFF_task_semundo&t;0x00000570
 DECL|macro|ASIZ_task_semundo
 mdefine_line|#define ASIZ_task_semundo&t;0x00000008
 DECL|macro|AOFF_task_semsleeping
-mdefine_line|#define AOFF_task_semsleeping&t;0x00000570
+mdefine_line|#define AOFF_task_semsleeping&t;0x00000578
 DECL|macro|ASIZ_task_semsleeping
 mdefine_line|#define ASIZ_task_semsleeping&t;0x00000008
 DECL|macro|AOFF_task_thread
@@ -1327,185 +1327,185 @@ mdefine_line|#define ASIZ_task_it_virt_incr&t;0x00000008
 DECL|macro|AOFF_task_real_timer
 mdefine_line|#define AOFF_task_real_timer&t;0x00000170
 DECL|macro|ASIZ_task_real_timer
-mdefine_line|#define ASIZ_task_real_timer&t;0x00000028
+mdefine_line|#define ASIZ_task_real_timer&t;0x00000030
 DECL|macro|AOFF_task_times
-mdefine_line|#define AOFF_task_times&t;0x00000198
+mdefine_line|#define AOFF_task_times&t;0x000001a0
 DECL|macro|ASIZ_task_times
 mdefine_line|#define ASIZ_task_times&t;0x00000020
 DECL|macro|AOFF_task_start_time
-mdefine_line|#define AOFF_task_start_time&t;0x000001b8
+mdefine_line|#define AOFF_task_start_time&t;0x000001c0
 DECL|macro|ASIZ_task_start_time
 mdefine_line|#define ASIZ_task_start_time&t;0x00000008
 DECL|macro|AOFF_task_per_cpu_utime
-mdefine_line|#define AOFF_task_per_cpu_utime&t;0x000001c0
+mdefine_line|#define AOFF_task_per_cpu_utime&t;0x000001c8
 DECL|macro|ASIZ_task_per_cpu_utime
 mdefine_line|#define ASIZ_task_per_cpu_utime&t;0x00000100
 DECL|macro|AOFF_task_min_flt
-mdefine_line|#define AOFF_task_min_flt&t;0x000003c0
+mdefine_line|#define AOFF_task_min_flt&t;0x000003c8
 DECL|macro|ASIZ_task_min_flt
 mdefine_line|#define ASIZ_task_min_flt&t;0x00000008
 DECL|macro|AOFF_task_maj_flt
-mdefine_line|#define AOFF_task_maj_flt&t;0x000003c8
+mdefine_line|#define AOFF_task_maj_flt&t;0x000003d0
 DECL|macro|ASIZ_task_maj_flt
 mdefine_line|#define ASIZ_task_maj_flt&t;0x00000008
 DECL|macro|AOFF_task_nswap
-mdefine_line|#define AOFF_task_nswap&t;0x000003d0
+mdefine_line|#define AOFF_task_nswap&t;0x000003d8
 DECL|macro|ASIZ_task_nswap
 mdefine_line|#define ASIZ_task_nswap&t;0x00000008
 DECL|macro|AOFF_task_cmin_flt
-mdefine_line|#define AOFF_task_cmin_flt&t;0x000003d8
+mdefine_line|#define AOFF_task_cmin_flt&t;0x000003e0
 DECL|macro|ASIZ_task_cmin_flt
 mdefine_line|#define ASIZ_task_cmin_flt&t;0x00000008
 DECL|macro|AOFF_task_cmaj_flt
-mdefine_line|#define AOFF_task_cmaj_flt&t;0x000003e0
+mdefine_line|#define AOFF_task_cmaj_flt&t;0x000003e8
 DECL|macro|ASIZ_task_cmaj_flt
 mdefine_line|#define ASIZ_task_cmaj_flt&t;0x00000008
 DECL|macro|AOFF_task_cnswap
-mdefine_line|#define AOFF_task_cnswap&t;0x000003e8
+mdefine_line|#define AOFF_task_cnswap&t;0x000003f0
 DECL|macro|ASIZ_task_cnswap
 mdefine_line|#define ASIZ_task_cnswap&t;0x00000008
 DECL|macro|AOFF_task_uid
-mdefine_line|#define AOFF_task_uid&t;0x000003f4
+mdefine_line|#define AOFF_task_uid&t;0x000003fc
 DECL|macro|ASIZ_task_uid
 mdefine_line|#define ASIZ_task_uid&t;0x00000004
 DECL|macro|AOFF_task_euid
-mdefine_line|#define AOFF_task_euid&t;0x000003f8
+mdefine_line|#define AOFF_task_euid&t;0x00000400
 DECL|macro|ASIZ_task_euid
 mdefine_line|#define ASIZ_task_euid&t;0x00000004
 DECL|macro|AOFF_task_suid
-mdefine_line|#define AOFF_task_suid&t;0x000003fc
+mdefine_line|#define AOFF_task_suid&t;0x00000404
 DECL|macro|ASIZ_task_suid
 mdefine_line|#define ASIZ_task_suid&t;0x00000004
 DECL|macro|AOFF_task_fsuid
-mdefine_line|#define AOFF_task_fsuid&t;0x00000400
+mdefine_line|#define AOFF_task_fsuid&t;0x00000408
 DECL|macro|ASIZ_task_fsuid
 mdefine_line|#define ASIZ_task_fsuid&t;0x00000004
 DECL|macro|AOFF_task_gid
-mdefine_line|#define AOFF_task_gid&t;0x00000404
+mdefine_line|#define AOFF_task_gid&t;0x0000040c
 DECL|macro|ASIZ_task_gid
 mdefine_line|#define ASIZ_task_gid&t;0x00000004
 DECL|macro|AOFF_task_egid
-mdefine_line|#define AOFF_task_egid&t;0x00000408
+mdefine_line|#define AOFF_task_egid&t;0x00000410
 DECL|macro|ASIZ_task_egid
 mdefine_line|#define ASIZ_task_egid&t;0x00000004
 DECL|macro|AOFF_task_sgid
-mdefine_line|#define AOFF_task_sgid&t;0x0000040c
+mdefine_line|#define AOFF_task_sgid&t;0x00000414
 DECL|macro|ASIZ_task_sgid
 mdefine_line|#define ASIZ_task_sgid&t;0x00000004
 DECL|macro|AOFF_task_fsgid
-mdefine_line|#define AOFF_task_fsgid&t;0x00000410
+mdefine_line|#define AOFF_task_fsgid&t;0x00000418
 DECL|macro|ASIZ_task_fsgid
 mdefine_line|#define ASIZ_task_fsgid&t;0x00000004
 DECL|macro|AOFF_task_ngroups
-mdefine_line|#define AOFF_task_ngroups&t;0x00000414
+mdefine_line|#define AOFF_task_ngroups&t;0x0000041c
 DECL|macro|ASIZ_task_ngroups
 mdefine_line|#define ASIZ_task_ngroups&t;0x00000004
 DECL|macro|AOFF_task_groups
-mdefine_line|#define AOFF_task_groups&t;0x00000418
+mdefine_line|#define AOFF_task_groups&t;0x00000420
 DECL|macro|ASIZ_task_groups
 mdefine_line|#define ASIZ_task_groups&t;0x00000080
 DECL|macro|AOFF_task_cap_effective
-mdefine_line|#define AOFF_task_cap_effective&t;0x00000498
+mdefine_line|#define AOFF_task_cap_effective&t;0x000004a0
 DECL|macro|ASIZ_task_cap_effective
 mdefine_line|#define ASIZ_task_cap_effective&t;0x00000004
 DECL|macro|AOFF_task_cap_inheritable
-mdefine_line|#define AOFF_task_cap_inheritable&t;0x0000049c
+mdefine_line|#define AOFF_task_cap_inheritable&t;0x000004a4
 DECL|macro|ASIZ_task_cap_inheritable
 mdefine_line|#define ASIZ_task_cap_inheritable&t;0x00000004
 DECL|macro|AOFF_task_cap_permitted
-mdefine_line|#define AOFF_task_cap_permitted&t;0x000004a0
+mdefine_line|#define AOFF_task_cap_permitted&t;0x000004a8
 DECL|macro|ASIZ_task_cap_permitted
 mdefine_line|#define ASIZ_task_cap_permitted&t;0x00000004
 DECL|macro|AOFF_task_user
-mdefine_line|#define AOFF_task_user&t;0x000004a8
+mdefine_line|#define AOFF_task_user&t;0x000004b0
 DECL|macro|ASIZ_task_user
 mdefine_line|#define ASIZ_task_user&t;0x00000008
 DECL|macro|AOFF_task_rlim
-mdefine_line|#define AOFF_task_rlim&t;0x000004b0
+mdefine_line|#define AOFF_task_rlim&t;0x000004b8
 DECL|macro|ASIZ_task_rlim
 mdefine_line|#define ASIZ_task_rlim&t;0x000000a0
 DECL|macro|AOFF_task_used_math
-mdefine_line|#define AOFF_task_used_math&t;0x00000550
+mdefine_line|#define AOFF_task_used_math&t;0x00000558
 DECL|macro|ASIZ_task_used_math
 mdefine_line|#define ASIZ_task_used_math&t;0x00000002
 DECL|macro|AOFF_task_comm
-mdefine_line|#define AOFF_task_comm&t;0x00000552
+mdefine_line|#define AOFF_task_comm&t;0x0000055a
 DECL|macro|ASIZ_task_comm
 mdefine_line|#define ASIZ_task_comm&t;0x00000010
 DECL|macro|AOFF_task_link_count
-mdefine_line|#define AOFF_task_link_count&t;0x00000564
+mdefine_line|#define AOFF_task_link_count&t;0x0000056c
 DECL|macro|ASIZ_task_link_count
 mdefine_line|#define ASIZ_task_link_count&t;0x00000004
 DECL|macro|AOFF_task_tty
-mdefine_line|#define AOFF_task_tty&t;0x00000568
+mdefine_line|#define AOFF_task_tty&t;0x00000570
 DECL|macro|ASIZ_task_tty
 mdefine_line|#define ASIZ_task_tty&t;0x00000008
 DECL|macro|AOFF_task_semundo
-mdefine_line|#define AOFF_task_semundo&t;0x00000570
+mdefine_line|#define AOFF_task_semundo&t;0x00000578
 DECL|macro|ASIZ_task_semundo
 mdefine_line|#define ASIZ_task_semundo&t;0x00000008
 DECL|macro|AOFF_task_semsleeping
-mdefine_line|#define AOFF_task_semsleeping&t;0x00000578
+mdefine_line|#define AOFF_task_semsleeping&t;0x00000580
 DECL|macro|ASIZ_task_semsleeping
 mdefine_line|#define ASIZ_task_semsleeping&t;0x00000008
 DECL|macro|AOFF_task_thread
-mdefine_line|#define AOFF_task_thread&t;0x00000580
+mdefine_line|#define AOFF_task_thread&t;0x00000590
 DECL|macro|ASIZ_task_thread
 mdefine_line|#define ASIZ_task_thread&t;0x00000450
 DECL|macro|AOFF_task_fs
-mdefine_line|#define AOFF_task_fs&t;0x000009d0
+mdefine_line|#define AOFF_task_fs&t;0x000009e0
 DECL|macro|ASIZ_task_fs
 mdefine_line|#define ASIZ_task_fs&t;0x00000008
 DECL|macro|AOFF_task_files
-mdefine_line|#define AOFF_task_files&t;0x000009d8
+mdefine_line|#define AOFF_task_files&t;0x000009e8
 DECL|macro|ASIZ_task_files
 mdefine_line|#define ASIZ_task_files&t;0x00000008
 DECL|macro|AOFF_task_sigmask_lock
-mdefine_line|#define AOFF_task_sigmask_lock&t;0x000009e0
+mdefine_line|#define AOFF_task_sigmask_lock&t;0x000009f0
 DECL|macro|ASIZ_task_sigmask_lock
 mdefine_line|#define ASIZ_task_sigmask_lock&t;0x0000000c
 DECL|macro|AOFF_task_sig
-mdefine_line|#define AOFF_task_sig&t;0x000009f0
+mdefine_line|#define AOFF_task_sig&t;0x00000a00
 DECL|macro|ASIZ_task_sig
 mdefine_line|#define ASIZ_task_sig&t;0x00000008
 DECL|macro|AOFF_task_signal
-mdefine_line|#define AOFF_task_signal&t;0x000009f8
+mdefine_line|#define AOFF_task_signal&t;0x00000a08
 DECL|macro|ASIZ_task_signal
 mdefine_line|#define ASIZ_task_signal&t;0x00000008
 DECL|macro|AOFF_task_blocked
-mdefine_line|#define AOFF_task_blocked&t;0x00000a00
+mdefine_line|#define AOFF_task_blocked&t;0x00000a10
 DECL|macro|ASIZ_task_blocked
 mdefine_line|#define ASIZ_task_blocked&t;0x00000008
 DECL|macro|AOFF_task_sigqueue
-mdefine_line|#define AOFF_task_sigqueue&t;0x00000a08
+mdefine_line|#define AOFF_task_sigqueue&t;0x00000a18
 DECL|macro|ASIZ_task_sigqueue
 mdefine_line|#define ASIZ_task_sigqueue&t;0x00000008
 DECL|macro|AOFF_task_sigqueue_tail
-mdefine_line|#define AOFF_task_sigqueue_tail&t;0x00000a10
+mdefine_line|#define AOFF_task_sigqueue_tail&t;0x00000a20
 DECL|macro|ASIZ_task_sigqueue_tail
 mdefine_line|#define ASIZ_task_sigqueue_tail&t;0x00000008
 DECL|macro|AOFF_task_sas_ss_sp
-mdefine_line|#define AOFF_task_sas_ss_sp&t;0x00000a18
+mdefine_line|#define AOFF_task_sas_ss_sp&t;0x00000a28
 DECL|macro|ASIZ_task_sas_ss_sp
 mdefine_line|#define ASIZ_task_sas_ss_sp&t;0x00000008
 DECL|macro|AOFF_task_sas_ss_size
-mdefine_line|#define AOFF_task_sas_ss_size&t;0x00000a20
+mdefine_line|#define AOFF_task_sas_ss_size&t;0x00000a30
 DECL|macro|ASIZ_task_sas_ss_size
 mdefine_line|#define ASIZ_task_sas_ss_size&t;0x00000008
 DECL|macro|AOFF_task_parent_exec_id
-mdefine_line|#define AOFF_task_parent_exec_id&t;0x00000a28
+mdefine_line|#define AOFF_task_parent_exec_id&t;0x00000a38
 DECL|macro|ASIZ_task_parent_exec_id
 mdefine_line|#define ASIZ_task_parent_exec_id&t;0x00000004
 DECL|macro|AOFF_task_self_exec_id
-mdefine_line|#define AOFF_task_self_exec_id&t;0x00000a2c
+mdefine_line|#define AOFF_task_self_exec_id&t;0x00000a3c
 DECL|macro|ASIZ_task_self_exec_id
 mdefine_line|#define ASIZ_task_self_exec_id&t;0x00000004
 DECL|macro|AOFF_task_exit_sem
-mdefine_line|#define AOFF_task_exit_sem&t;0x00000a30
+mdefine_line|#define AOFF_task_exit_sem&t;0x00000a40
 DECL|macro|ASIZ_task_exit_sem
 mdefine_line|#define ASIZ_task_exit_sem&t;0x00000040
 DECL|macro|ASIZ_task
-mdefine_line|#define ASIZ_task&t;0x00000a70
+mdefine_line|#define ASIZ_task&t;0x00000a80
 DECL|macro|AOFF_mm_mmap
 mdefine_line|#define AOFF_mm_mmap&t;0x00000000
 DECL|macro|ASIZ_mm_mmap

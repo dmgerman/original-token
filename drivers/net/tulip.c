@@ -12170,13 +12170,6 @@ c_func
 id|dev
 )paren
 suffix:semicolon
-id|spin_lock
-c_func
-(paren
-op_amp
-id|tp-&gt;tx_lock
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -12194,6 +12187,13 @@ id|TxIntr
 r_int
 r_int
 id|dirty_tx
+suffix:semicolon
+id|spin_lock
+c_func
+(paren
+op_amp
+id|tp-&gt;tx_lock
+)paren
 suffix:semicolon
 r_for
 c_loop
@@ -12532,7 +12532,6 @@ id|CSR6
 )paren
 suffix:semicolon
 )brace
-)brace
 id|spin_unlock
 c_func
 (paren
@@ -12540,6 +12539,7 @@ op_amp
 id|tp-&gt;tx_lock
 )paren
 suffix:semicolon
+)brace
 multiline_comment|/* Log errors. */
 r_if
 c_cond
