@@ -5288,6 +5288,13 @@ r_return
 id|s-&gt;cap.cb_dev-&gt;subordinate
 suffix:semicolon
 )brace
+DECL|variable|pcmcia_lookup_bus
+id|EXPORT_SYMBOL
+c_func
+(paren
+id|pcmcia_lookup_bus
+)paren
+suffix:semicolon
 macro_line|#endif
 multiline_comment|/*======================================================================&n;&n;    Get the current socket state bits.  We don&squot;t support the latched&n;    SocketState yet: I haven&squot;t seen any point for it.&n;    &n;======================================================================*/
 DECL|function|pcmcia_get_status
@@ -10266,6 +10273,7 @@ op_amp
 id|m
 )paren
 suffix:semicolon
+op_star
 (paren
 id|memory_handle_t
 op_star
@@ -10347,6 +10355,7 @@ op_amp
 id|w
 )paren
 suffix:semicolon
+op_star
 (paren
 id|eraseq_handle_t
 op_star
@@ -10488,6 +10497,7 @@ op_amp
 id|w
 )paren
 suffix:semicolon
+op_star
 (paren
 id|window_handle_t
 op_star
@@ -10888,13 +10898,6 @@ id|EXPORT_SYMBOL
 c_func
 (paren
 id|pcmcia_insert_card
-)paren
-suffix:semicolon
-DECL|variable|pcmcia_lookup_bus
-id|EXPORT_SYMBOL
-c_func
-(paren
-id|pcmcia_lookup_bus
 )paren
 suffix:semicolon
 DECL|variable|pcmcia_map_mem_page

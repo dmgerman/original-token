@@ -94,6 +94,8 @@ r_int
 id|arg
 )paren
 suffix:semicolon
+DECL|macro|arraysize
+mdefine_line|#define arraysize(x)&t;(sizeof(x)/sizeof((x)[0]))
 r_static
 r_struct
 (brace
@@ -2051,7 +2053,7 @@ op_member_access_from_pointer
 id|read_mixer
 c_func
 (paren
-id|card
+id|codec
 comma
 id|i
 )paren
@@ -2804,6 +2806,14 @@ l_int|0x8000
 r_return
 l_int|0
 suffix:semicolon
+id|codec-&gt;name
+op_assign
+l_int|NULL
+suffix:semicolon
+id|codec-&gt;codec_init
+op_assign
+l_int|NULL
+suffix:semicolon
 id|id1
 op_assign
 id|codec
@@ -2834,19 +2844,13 @@ c_loop
 id|i
 op_assign
 l_int|0
-comma
-id|codec-&gt;name
-op_assign
-l_int|NULL
 suffix:semicolon
 id|i
 OL
 id|arraysize
+c_func
 (paren
 id|ac97_codec_ids
-(braket
-id|i
-)braket
 )paren
 suffix:semicolon
 id|i
