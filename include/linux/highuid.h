@@ -46,14 +46,6 @@ DECL|macro|SET_STAT_UID
 mdefine_line|#define SET_STAT_UID(stat, uid)&t;&t;(stat).st_uid = high2lowuid(uid)
 DECL|macro|SET_STAT_GID
 mdefine_line|#define SET_STAT_GID(stat, gid)&t;&t;(stat).st_gid = high2lowgid(gid)
-multiline_comment|/* specific to kernel/signal.c */
-macro_line|#ifdef UID16_SIGINFO_COMPAT_NEEDED
-DECL|macro|SET_SIGINFO_UID16
-mdefine_line|#define SET_SIGINFO_UID16(var, uid)&t;var = high2lowuid(uid)
-macro_line|#else
-DECL|macro|SET_SIGINFO_UID16
-mdefine_line|#define SET_SIGINFO_UID16(var, uid)&t;do { ; } while (0)
-macro_line|#endif
 macro_line|#else
 DECL|macro|SET_UID16
 mdefine_line|#define SET_UID16(var, uid)&t;do { ; } while (0)
@@ -71,8 +63,6 @@ DECL|macro|SET_STAT_UID
 mdefine_line|#define SET_STAT_UID(stat, uid)&t;&t;(stat).st_uid = uid
 DECL|macro|SET_STAT_GID
 mdefine_line|#define SET_STAT_GID(stat, gid)&t;&t;(stat).st_gid = gid
-DECL|macro|SET_SIGINFO_UID16
-mdefine_line|#define SET_SIGINFO_UID16(var, uid)&t;do { ; } while (0)
 macro_line|#endif /* CONFIG_UID16 */
 multiline_comment|/*&n; * Everything below this line is needed on all architectures, to deal with&n; * filesystems that only store 16 bits of the UID/GID, etc.&n; */
 multiline_comment|/*&n; * This is the UID and GID that will get written to disk if a filesystem&n; * only supports 16-bit UIDs and the kernel has a high UID/GID to write&n; */

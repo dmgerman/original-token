@@ -17,8 +17,7 @@ DECL|macro|DEBUG_ALL
 macro_line|#undef DEBUG_ALL
 macro_line|#include &quot;usb.h&quot;
 macro_line|#include &quot;dabusb.h&quot;
-macro_line|#include &quot;bitstream.h&quot;
-macro_line|#include &quot;firmware.h&quot;
+macro_line|#include &quot;dabfirmware.h&quot;
 multiline_comment|/* --------------------------------------------------------------------- */
 DECL|macro|NRDABUSB
 mdefine_line|#define NRDABUSB 4

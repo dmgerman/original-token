@@ -1,9 +1,11 @@
 macro_line|#ifndef __LINUX_UHCI_H
 DECL|macro|__LINUX_UHCI_H
 mdefine_line|#define __LINUX_UHCI_H
-multiline_comment|/*&n;   $Id: uhci.h,v 1.30 1999/12/15 17:57:25 fliegl Exp $&n; */
+multiline_comment|/*&n;   $Id: usb-uhci.h,v 1.31 2000/01/15 22:02:30 acher Exp $&n; */
 DECL|macro|MODNAME
 mdefine_line|#define MODNAME &quot;usb-uhci&quot;
+DECL|macro|MODSTR
+mdefine_line|#define MODSTR MODNAME&quot;: &quot;
 DECL|macro|VERSTR
 mdefine_line|#define VERSTR &quot;version v0.9 time &quot; __TIME__ &quot; &quot; __DATE__
 multiline_comment|/* Command register */
@@ -351,6 +353,10 @@ DECL|member|maxports
 r_int
 r_int
 id|maxports
+suffix:semicolon
+DECL|member|running
+r_int
+id|running
 suffix:semicolon
 DECL|member|apm_state
 r_int

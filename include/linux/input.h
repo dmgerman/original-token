@@ -483,16 +483,26 @@ DECL|macro|BTN_MODE
 mdefine_line|#define BTN_MODE&t;&t;0x13c
 DECL|macro|BTN_DIGI
 mdefine_line|#define BTN_DIGI&t;&t;0x140
-DECL|macro|BTN_PEN
-mdefine_line|#define BTN_PEN&t;&t;&t;0x140
-DECL|macro|BTN_RUBBER
-mdefine_line|#define BTN_RUBBER&t;&t;0x141
-DECL|macro|BTN_PEN_SIDE
-mdefine_line|#define BTN_PEN_SIDE&t;&t;0x142
-DECL|macro|BTN_PEN_SIDE2
-mdefine_line|#define BTN_PEN_SIDE2&t;&t;0x143
-DECL|macro|BTN_NEAR
-mdefine_line|#define BTN_NEAR&t;&t;0x144
+DECL|macro|BTN_TOOL_PEN
+mdefine_line|#define BTN_TOOL_PEN&t;&t;0x140
+DECL|macro|BTN_TOOL_RUBBER
+mdefine_line|#define BTN_TOOL_RUBBER&t;&t;0x141
+DECL|macro|BTN_TOOL_BRUSH
+mdefine_line|#define BTN_TOOL_BRUSH&t;&t;0x142
+DECL|macro|BTN_TOOL_PENCIL
+mdefine_line|#define BTN_TOOL_PENCIL&t;&t;0x143
+DECL|macro|BTN_TOOL_AIRBRUSH
+mdefine_line|#define BTN_TOOL_AIRBRUSH&t;0x144
+DECL|macro|BTN_TOOL_FINGER
+mdefine_line|#define BTN_TOOL_FINGER&t;&t;0x145
+DECL|macro|BTN_TOOL_MOUSE
+mdefine_line|#define BTN_TOOL_MOUSE&t;&t;0x146
+DECL|macro|BTN_TOUCH
+mdefine_line|#define BTN_TOUCH&t;&t;0x147
+DECL|macro|BTN_STYLUS
+mdefine_line|#define BTN_STYLUS&t;&t;0x148
+DECL|macro|BTN_STYLUS2
+mdefine_line|#define BTN_STYLUS2&t;&t;0x149
 DECL|macro|KEY_MAX
 mdefine_line|#define KEY_MAX&t;&t;&t;0x1ff
 multiline_comment|/*&n; * Relative axes&n; */

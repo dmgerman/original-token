@@ -185,6 +185,8 @@ DECL|macro|HID_UP_PID
 mdefine_line|#define HID_UP_PID &t;&t;0x000f0000
 DECL|macro|HID_USAGE
 mdefine_line|#define HID_USAGE&t;&t;0x0000ffff
+DECL|macro|HID_GD_POINTER
+mdefine_line|#define HID_GD_POINTER&t;&t;0x00010001
 DECL|macro|HID_GD_MOUSE
 mdefine_line|#define HID_GD_MOUSE&t;&t;0x00010002
 DECL|macro|HID_GD_JOYSTICK

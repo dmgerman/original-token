@@ -576,9 +576,9 @@ suffix:colon
 l_int|1
 suffix:semicolon
 singleline_comment|// 49 IORDY supported
-DECL|member|ReservedPsuedoDMA
+DECL|member|ReservedPseudoDMA
 id|USHORT
-id|ReservedPsuedoDMA
+id|ReservedPseudoDMA
 suffix:colon
 l_int|1
 suffix:semicolon

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * drivers/usb/usb.c&n; *&n; * (C) Copyright Linus Torvalds 1999&n; * (C) Copyright Johannes Erdfelt 1999&n; * (C) Copyright Andreas Gal 1999&n; * (C) Copyright Gregory P. Smith 1999&n; * (C) Copyright Deti Fliegl 1999 (new USB architecture)&n; *&n; * NOTE! This is not actually a driver at all, rather this is&n; * just a collection of helper routines that implement the&n; * generic USB things that the real drivers can use..&n; *&n; * Think of this as a &quot;USB library&quot; rather than anything else.&n; * It should be considered a slave, with no callbacks. Callbacks&n; * are evil.&n; *&n; * $Id: usb.c,v 1.39 1999/12/27 15:17:47 acher Exp $&n; */
+multiline_comment|/*&n; * drivers/usb/usb.c&n; *&n; * (C) Copyright Linus Torvalds 1999&n; * (C) Copyright Johannes Erdfelt 1999&n; * (C) Copyright Andreas Gal 1999&n; * (C) Copyright Gregory P. Smith 1999&n; * (C) Copyright Deti Fliegl 1999 (new USB architecture)&n; *&n; * NOTE! This is not actually a driver at all, rather this is&n; * just a collection of helper routines that implement the&n; * generic USB things that the real drivers can use..&n; *&n; * Think of this as a &quot;USB library&quot; rather than anything else.&n; * It should be considered a slave, with no callbacks. Callbacks&n; * are evil.&n; *&n; * $Id: usb.c,v 1.53 2000/01/14 16:19:09 acher Exp $&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/module.h&gt;
 macro_line|#include &lt;linux/string.h&gt;
@@ -1646,12 +1646,19 @@ op_star
 id|urb
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|urb
+)paren
+(brace
 id|kfree
 c_func
 (paren
 id|urb
 )paren
 suffix:semicolon
+)brace
 )brace
 multiline_comment|/*-------------------------------------------------------------------*/
 DECL|function|usb_submit_urb
@@ -1830,9 +1837,8 @@ r_int
 id|timeout
 comma
 r_int
-r_int
 op_star
-id|rval
+id|actual_length
 )paren
 (brace
 id|DECLARE_WAITQUEUE
@@ -1873,7 +1879,7 @@ id|wqh
 suffix:semicolon
 id|current-&gt;state
 op_assign
-id|TASK_UNINTERRUPTIBLE
+id|TASK_INTERRUPTIBLE
 suffix:semicolon
 id|add_wait_queue
 c_func
@@ -1978,10 +1984,10 @@ id|status
 )paren
 (brace
 singleline_comment|// timeout
-id|dbg
+id|printk
 c_func
 (paren
-l_string|&quot;usb_control/bulk_msg: timeout&quot;
+l_string|&quot;usb_control/bulk_msg: timeout&bslash;n&quot;
 )paren
 suffix:semicolon
 id|usb_unlink_urb
@@ -2005,10 +2011,10 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|rval
+id|actual_length
 )paren
 op_star
-id|rval
+id|actual_length
 op_assign
 id|urb-&gt;actual_length
 suffix:semicolon
@@ -2060,7 +2066,6 @@ suffix:semicolon
 r_int
 id|retv
 suffix:semicolon
-r_int
 r_int
 id|length
 suffix:semicolon
@@ -2178,17 +2183,44 @@ id|timeout
 )paren
 (brace
 id|devrequest
+op_star
 id|dr
+op_assign
+id|kmalloc
+c_func
+(paren
+r_sizeof
+(paren
+id|devrequest
+)paren
+comma
+id|GFP_KERNEL
+)paren
 suffix:semicolon
-id|dr.requesttype
+r_int
+id|ret
+suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|dr
+)paren
+(brace
+r_return
+op_minus
+id|ENOMEM
+suffix:semicolon
+)brace
+id|dr-&gt;requesttype
 op_assign
 id|requesttype
 suffix:semicolon
-id|dr.request
+id|dr-&gt;request
 op_assign
 id|request
 suffix:semicolon
-id|dr.value
+id|dr-&gt;value
 op_assign
 id|cpu_to_le16p
 c_func
@@ -2197,7 +2229,7 @@ op_amp
 id|value
 )paren
 suffix:semicolon
-id|dr.index
+id|dr-&gt;index
 op_assign
 id|cpu_to_le16p
 c_func
@@ -2206,7 +2238,7 @@ op_amp
 id|index
 )paren
 suffix:semicolon
-id|dr.length
+id|dr-&gt;length
 op_assign
 id|cpu_to_le16p
 c_func
@@ -2216,7 +2248,8 @@ id|size
 )paren
 suffix:semicolon
 singleline_comment|//dbg(&quot;usb_control_msg&quot;);&t;
-r_return
+id|ret
+op_assign
 id|usb_internal_control_msg
 c_func
 (paren
@@ -2224,7 +2257,6 @@ id|dev
 comma
 id|pipe
 comma
-op_amp
 id|dr
 comma
 id|data
@@ -2233,6 +2265,15 @@ id|size
 comma
 id|timeout
 )paren
+suffix:semicolon
+id|kfree
+c_func
+(paren
+id|dr
+)paren
+suffix:semicolon
+r_return
+id|ret
 suffix:semicolon
 )brace
 multiline_comment|/*-------------------------------------------------------------------*/
@@ -2260,9 +2301,8 @@ r_int
 id|len
 comma
 r_int
-r_int
 op_star
-id|rval
+id|actual_length
 comma
 r_int
 id|timeout
@@ -2336,7 +2376,7 @@ id|urb
 comma
 id|timeout
 comma
-id|rval
+id|actual_length
 )paren
 suffix:semicolon
 )brace
@@ -2374,6 +2414,20 @@ id|dev_id
 id|urb_t
 op_star
 id|urb
+suffix:semicolon
+id|DECLARE_WAITQUEUE
+c_func
+(paren
+id|wait
+comma
+id|current
+)paren
+suffix:semicolon
+id|DECLARE_WAIT_QUEUE_HEAD
+c_func
+(paren
+id|wqh
+)paren
 suffix:semicolon
 id|api_wrapper_data
 op_star
@@ -4365,9 +4419,17 @@ suffix:semicolon
 r_if
 c_cond
 (paren
+(paren
 id|header-&gt;bLength
 OG
 id|size
+)paren
+op_logical_or
+(paren
+id|header-&gt;bLength
+op_le
+l_int|2
+)paren
 )paren
 (brace
 id|err
@@ -4920,6 +4982,12 @@ id|dev-&gt;children
 op_plus
 id|i
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_star
+id|child
+)paren
 id|usb_disconnect
 c_func
 (paren
@@ -4974,6 +5042,7 @@ r_int
 id|devnum
 suffix:semicolon
 singleline_comment|// FIXME needs locking for SMP!!
+multiline_comment|/* why? this is called only from the hub thread, &n;&t; * which hopefully doesn&squot;t run on multiple CPU&squot;s simulatenously 8-)&n;&t; */
 id|dev-&gt;descriptor.bMaxPacketSize0
 op_assign
 l_int|8
@@ -5093,6 +5162,17 @@ suffix:semicolon
 r_int
 id|result
 suffix:semicolon
+id|memset
+c_func
+(paren
+id|buf
+comma
+l_int|0
+comma
+id|size
+)paren
+suffix:semicolon
+singleline_comment|// Make sure we parse really received data
 r_while
 c_loop
 (paren
@@ -5754,7 +5834,7 @@ op_star
 id|dev
 comma
 r_int
-id|endp
+id|pipe
 )paren
 (brace
 r_int
@@ -5762,6 +5842,25 @@ id|result
 suffix:semicolon
 id|__u16
 id|status
+suffix:semicolon
+r_int
+id|endp
+op_assign
+id|usb_pipeendpoint
+c_func
+(paren
+id|pipe
+)paren
+op_or
+(paren
+id|usb_pipein
+c_func
+(paren
+id|pipe
+)paren
+op_lshift
+l_int|7
+)paren
 suffix:semicolon
 multiline_comment|/*&n;&t;if (!usb_endpoint_halted(dev, endp &amp; 0x0f, usb_endpoint_out(endp)))&n;&t;&t;return 0;&n;*/
 id|result
@@ -5872,14 +5971,16 @@ c_func
 (paren
 id|dev
 comma
-id|endp
-op_amp
-l_int|0x0f
-comma
-id|usb_endpoint_out
+id|usb_pipeendpoint
 c_func
 (paren
-id|endp
+id|pipe
+)paren
+comma
+id|usb_pipeout
+c_func
+(paren
+id|pipe
 )paren
 )paren
 suffix:semicolon
@@ -5889,14 +5990,16 @@ c_func
 (paren
 id|dev
 comma
-id|endp
-op_amp
-l_int|0x0f
-comma
-id|usb_endpoint_out
+id|usb_pipeendpoint
 c_func
 (paren
-id|endp
+id|pipe
+)paren
+comma
+id|usb_pipeout
+c_func
+(paren
+id|pipe
 )paren
 comma
 l_int|0
@@ -6377,6 +6480,10 @@ r_char
 op_star
 id|bigbuffer
 suffix:semicolon
+r_int
+r_int
+id|tmp
+suffix:semicolon
 r_struct
 id|usb_config_descriptor
 op_star
@@ -6520,13 +6627,31 @@ c_cond
 (paren
 id|result
 OL
-l_int|0
+l_int|8
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|result
+OL
+l_int|0
+)paren
 id|err
 c_func
 (paren
 l_string|&quot;unable to get descriptor&quot;
+)paren
+suffix:semicolon
+r_else
+id|err
+c_func
+(paren
+l_string|&quot;config descriptor too short (expected %i, got %i)&quot;
+comma
+l_int|8
+comma
+id|result
 )paren
 suffix:semicolon
 r_goto
@@ -6573,6 +6698,10 @@ r_goto
 id|err
 suffix:semicolon
 )brace
+id|tmp
+op_assign
+id|desc-&gt;wTotalLength
+suffix:semicolon
 multiline_comment|/* Now that we know the length, get the whole thing */
 id|result
 op_assign
@@ -6602,6 +6731,34 @@ id|err
 c_func
 (paren
 l_string|&quot;couldn&squot;t get all of config descriptors&quot;
+)paren
+suffix:semicolon
+id|kfree
+c_func
+(paren
+id|bigbuffer
+)paren
+suffix:semicolon
+r_goto
+id|err
+suffix:semicolon
+)brace
+r_if
+c_cond
+(paren
+id|result
+OL
+id|tmp
+)paren
+(brace
+id|err
+c_func
+(paren
+l_string|&quot;config descriptor too short (expected %i, got %i)&quot;
+comma
+id|tmp
+comma
+id|result
 )paren
 suffix:semicolon
 id|kfree
@@ -6928,6 +7085,9 @@ id|addr
 comma
 id|err
 suffix:semicolon
+r_int
+id|tmp
+suffix:semicolon
 id|info
 c_func
 (paren
@@ -6986,13 +7146,31 @@ c_cond
 (paren
 id|err
 OL
-l_int|0
+l_int|8
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|err
+OL
+l_int|0
+)paren
 id|err
 c_func
 (paren
 l_string|&quot;USB device not responding, giving up (error=%d)&quot;
+comma
+id|err
+)paren
+suffix:semicolon
+r_else
+id|err
+c_func
+(paren
+l_string|&quot;USB device descriptor short read (expected %i, got %i)&quot;
+comma
+l_int|8
 comma
 id|err
 )paren
@@ -7125,6 +7303,13 @@ l_int|10
 )paren
 suffix:semicolon
 multiline_comment|/* Let the SET_ADDRESS settle */
+id|tmp
+op_assign
+r_sizeof
+(paren
+id|dev-&gt;descriptor
+)paren
+suffix:semicolon
 id|err
 op_assign
 id|usb_get_device_descriptor
@@ -7138,13 +7323,31 @@ c_cond
 (paren
 id|err
 OL
-l_int|0
+id|tmp
 )paren
 (brace
+r_if
+c_cond
+(paren
+id|err
+OL
+l_int|0
+)paren
 id|err
 c_func
 (paren
 l_string|&quot;unable to get device descriptor (error=%d)&quot;
+comma
+id|err
+)paren
+suffix:semicolon
+r_else
+id|err
+c_func
+(paren
+l_string|&quot;USB device descriptor short read (expected %i, got %i)&quot;
+comma
+id|tmp
 comma
 id|err
 )paren

@@ -196,48 +196,6 @@ id|temp
 suffix:semicolon
 )brace
 multiline_comment|/*&n;&n; * The SCSI_IOCTL_SEND_COMMAND ioctl sends a command out to the SCSI host.&n; * The IOCTL_NORMAL_TIMEOUT and NORMAL_RETRIES  variables are used.  &n; * &n; * dev is the SCSI device struct ptr, *(int *) arg is the length of the&n; * input data, if any, not including the command string &amp; counts, &n; * *((int *)arg + 1) is the output buffer size in bytes.&n; * &n; * *(char *) ((int *) arg)[2] the actual command byte.   &n; * &n; * Note that if more than MAX_BUF bytes are requested to be transfered,&n; * the ioctl will fail with error EINVAL.  MAX_BUF can be increased in&n; * the future by increasing the size that scsi_malloc will accept.&n; * &n; * This size *does not* include the initial lengths that were passed.&n; * &n; * The SCSI command is read from the memory location immediately after the&n; * length words, and the input data is right after the command.  The SCSI&n; * routines know the command size based on the opcode decode.  &n; * &n; * The output area is then filled in starting from the command byte. &n; */
-DECL|function|scsi_ioctl_done
-r_static
-r_void
-id|scsi_ioctl_done
-c_func
-(paren
-id|Scsi_Cmnd
-op_star
-id|SCpnt
-)paren
-(brace
-r_struct
-id|request
-op_star
-id|req
-suffix:semicolon
-id|req
-op_assign
-op_amp
-id|SCpnt-&gt;request
-suffix:semicolon
-id|req-&gt;rq_status
-op_assign
-id|RQ_SCSI_DONE
-suffix:semicolon
-multiline_comment|/* Busy, but indicate request done */
-r_if
-c_cond
-(paren
-id|req-&gt;sem
-op_ne
-l_int|NULL
-)paren
-(brace
-id|up
-c_func
-(paren
-id|req-&gt;sem
-)paren
-suffix:semicolon
-)brace
-)brace
 DECL|function|ioctl_internal_command
 r_static
 r_int
@@ -322,8 +280,6 @@ comma
 l_int|NULL
 comma
 l_int|0
-comma
-id|scsi_ioctl_done
 comma
 id|timeout
 comma
@@ -554,7 +510,7 @@ r_int
 r_char
 id|cmd
 (braket
-l_int|12
+id|MAX_COMMAND_SIZE
 )braket
 suffix:semicolon
 r_char
@@ -943,8 +899,6 @@ id|buf
 comma
 id|needed
 comma
-id|scsi_ioctl_done
-comma
 id|timeout
 comma
 id|retries
@@ -1203,7 +1157,7 @@ suffix:semicolon
 r_char
 id|scsi_cmd
 (braket
-l_int|12
+id|MAX_COMMAND_SIZE
 )braket
 suffix:semicolon
 multiline_comment|/* No idea how this happens.... */

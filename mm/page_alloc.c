@@ -840,11 +840,7 @@ op_logical_neg
 (paren
 id|gfp_mask
 op_amp
-(paren
-id|__GFP_MED
-op_or
 id|__GFP_HIGH
-)paren
 )paren
 )paren
 r_return
@@ -970,11 +966,7 @@ op_logical_neg
 (paren
 id|gfp_mask
 op_amp
-(paren
-id|__GFP_MED
-op_or
 id|__GFP_HIGH
-)paren
 )paren
 )paren
 r_return

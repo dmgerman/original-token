@@ -40,6 +40,7 @@ r_int
 id|hanum
 comma
 id|Scsi_Cmnd
+op_star
 id|scp
 )paren
 suffix:semicolon
@@ -59,6 +60,7 @@ r_int
 id|hanum
 comma
 id|Scsi_Cmnd
+op_star
 id|scp
 )paren
 suffix:semicolon

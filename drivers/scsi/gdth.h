@@ -157,7 +157,9 @@ mdefine_line|#define PCI_DEVICE_ID_VORTEX_GDTMAXRP   0x2ff
 macro_line|#endif
 multiline_comment|/* limits */
 DECL|macro|GDTH_SCRATCH
-mdefine_line|#define GDTH_SCRATCH    4096                    /* 4KB scratch buffer */
+mdefine_line|#define GDTH_SCRATCH    PAGE_SIZE                    /* 4KB scratch buffer */
+DECL|macro|GDTH_SCRATCH_ORD
+mdefine_line|#define GDTH_SCRATCH_ORD 0                      /* order 0 means 1 page */
 DECL|macro|GDTH_MAXCMDS
 mdefine_line|#define GDTH_MAXCMDS    124
 DECL|macro|GDTH_MAXC_P_L

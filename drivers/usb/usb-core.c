@@ -55,6 +55,13 @@ r_void
 )paren
 suffix:semicolon
 r_int
+id|usb_ibmcam_init
+c_func
+(paren
+r_void
+)paren
+suffix:semicolon
+r_int
 id|usb_ov511_init
 c_func
 (paren
@@ -249,6 +256,13 @@ suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef CONFIG_USB_CPIA
 id|usb_cpia_init
+c_func
+(paren
+)paren
+suffix:semicolon
+macro_line|#endif
+macro_line|#ifdef CONFIG_USB_IBMCAM
+id|usb_ibmcam_init
 c_func
 (paren
 )paren

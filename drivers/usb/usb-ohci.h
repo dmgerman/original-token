@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * URB OHCI HCD (Host Controller Driver) for USB.&n; * &n; *(C) Copyright 1999 Roman Weissgaerber &lt;weissg@vienna.at&gt;&n; * &n; * ohci-hcd.h&n; * &n; */
+multiline_comment|/*&n; * URB OHCI HCD (Host Controller Driver) for USB.&n; * &n; *(C) Copyright 1999 Roman Weissgaerber &lt;weissg@vienna.at&gt;&n; * &n; * usb-ohci.h&n; * &n; */
 DECL|macro|MODSTR
 mdefine_line|#define MODSTR &quot;ohci: &quot;
 DECL|variable|cc_to_error

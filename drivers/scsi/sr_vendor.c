@@ -233,7 +233,7 @@ r_int
 r_char
 id|cmd
 (braket
-l_int|12
+id|MAX_COMMAND_SIZE
 )braket
 suffix:semicolon
 multiline_comment|/* the scsi-command */
@@ -315,7 +315,7 @@ id|cmd
 comma
 l_int|0
 comma
-l_int|12
+id|MAX_COMMAND_SIZE
 )paren
 suffix:semicolon
 id|cmd
@@ -492,7 +492,7 @@ r_int
 r_char
 id|cmd
 (braket
-l_int|12
+id|MAX_COMMAND_SIZE
 )braket
 suffix:semicolon
 multiline_comment|/* the scsi-command */
@@ -579,7 +579,7 @@ id|cmd
 comma
 l_int|0
 comma
-l_int|12
+id|MAX_COMMAND_SIZE
 )paren
 suffix:semicolon
 id|cmd
@@ -754,7 +754,7 @@ id|cmd
 comma
 l_int|0
 comma
-l_int|12
+id|MAX_COMMAND_SIZE
 )paren
 suffix:semicolon
 id|cmd
@@ -919,7 +919,7 @@ id|cmd
 comma
 l_int|0
 comma
-l_int|12
+id|MAX_COMMAND_SIZE
 )paren
 suffix:semicolon
 id|cmd
@@ -1075,7 +1075,7 @@ id|cmd
 comma
 l_int|0
 comma
-l_int|12
+id|MAX_COMMAND_SIZE
 )paren
 suffix:semicolon
 id|cmd

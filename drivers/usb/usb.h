@@ -4,6 +4,9 @@ mdefine_line|#define __LINUX_USB_H
 macro_line|#include &lt;linux/types.h&gt;
 macro_line|#include &lt;linux/ioctl.h&gt;
 macro_line|#include &lt;linux/version.h&gt;
+macro_line|#include &lt;linux/sched.h&gt;
+macro_line|#include &lt;linux/delay.h&gt;
+macro_line|#include &lt;linux/interrupt.h&gt;&t;/* for in_interrupt() */
 multiline_comment|/* USB constants */
 multiline_comment|/*&n; * Device and/or Interface Class codes&n; */
 DECL|macro|USB_CLASS_PER_INTERFACE
@@ -226,6 +229,16 @@ r_int
 id|ms
 )paren
 (brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|in_interrupt
+c_func
+(paren
+)paren
+)paren
+(brace
 id|current-&gt;state
 op_assign
 id|TASK_UNINTERRUPTIBLE
@@ -240,6 +253,14 @@ op_star
 id|HZ
 op_div
 l_int|1000
+)paren
+suffix:semicolon
+)brace
+r_else
+id|mdelay
+c_func
+(paren
+id|ms
 )paren
 suffix:semicolon
 )brace
@@ -517,6 +538,67 @@ multiline_comment|/* Extra descriptors */
 DECL|member|extralen
 r_int
 id|extralen
+suffix:semicolon
+)brace
+id|__attribute__
+(paren
+(paren
+id|packed
+)paren
+)paren
+suffix:semicolon
+multiline_comment|/* HID descriptor */
+DECL|struct|usb_hid_class_descriptor
+r_struct
+id|usb_hid_class_descriptor
+(brace
+DECL|member|bDescriptorType
+id|__u8
+id|bDescriptorType
+suffix:semicolon
+DECL|member|wDescriptorLength
+id|__u16
+id|wDescriptorLength
+suffix:semicolon
+)brace
+id|__attribute__
+(paren
+(paren
+id|packed
+)paren
+)paren
+suffix:semicolon
+DECL|struct|usb_hid_descriptor
+r_struct
+id|usb_hid_descriptor
+(brace
+DECL|member|bLength
+id|__u8
+id|bLength
+suffix:semicolon
+DECL|member|bDescriptorType
+id|__u8
+id|bDescriptorType
+suffix:semicolon
+DECL|member|bcdHID
+id|__u16
+id|bcdHID
+suffix:semicolon
+DECL|member|bCountryCode
+id|__u8
+id|bCountryCode
+suffix:semicolon
+DECL|member|bNumDescriptors
+id|__u8
+id|bNumDescriptors
+suffix:semicolon
+DECL|member|desc
+r_struct
+id|usb_hid_class_descriptor
+id|desc
+(braket
+l_int|1
+)braket
 suffix:semicolon
 )brace
 id|__attribute__
@@ -1051,9 +1133,8 @@ r_int
 id|len
 comma
 r_int
-r_int
 op_star
-id|rval
+id|actual_length
 comma
 r_int
 id|timeout
@@ -2127,7 +2208,7 @@ op_star
 id|dev
 comma
 r_int
-id|endp
+id|pipe
 )paren
 suffix:semicolon
 DECL|macro|usb_get_extra_descriptor

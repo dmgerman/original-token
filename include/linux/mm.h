@@ -1564,35 +1564,31 @@ suffix:semicolon
 multiline_comment|/*&n; * GFP bitmasks..&n; */
 DECL|macro|__GFP_WAIT
 mdefine_line|#define __GFP_WAIT&t;0x01
-DECL|macro|__GFP_LOW
-mdefine_line|#define __GFP_LOW&t;0x02
-DECL|macro|__GFP_MED
-mdefine_line|#define __GFP_MED&t;0x04
 DECL|macro|__GFP_HIGH
-mdefine_line|#define __GFP_HIGH&t;0x08
+mdefine_line|#define __GFP_HIGH&t;0x02
 DECL|macro|__GFP_IO
-mdefine_line|#define __GFP_IO&t;0x10
+mdefine_line|#define __GFP_IO&t;0x04
 DECL|macro|__GFP_SWAP
-mdefine_line|#define __GFP_SWAP&t;0x20
+mdefine_line|#define __GFP_SWAP&t;0x08
 macro_line|#ifdef CONFIG_HIGHMEM
 DECL|macro|__GFP_HIGHMEM
-mdefine_line|#define __GFP_HIGHMEM&t;0x40
+mdefine_line|#define __GFP_HIGHMEM&t;0x10
 macro_line|#else
 DECL|macro|__GFP_HIGHMEM
 mdefine_line|#define __GFP_HIGHMEM&t;0x0 /* noop */
 macro_line|#endif
 DECL|macro|__GFP_DMA
-mdefine_line|#define __GFP_DMA&t;0x80
+mdefine_line|#define __GFP_DMA&t;0x20
 DECL|macro|GFP_BUFFER
-mdefine_line|#define GFP_BUFFER&t;(__GFP_LOW | __GFP_WAIT)
+mdefine_line|#define GFP_BUFFER&t;(__GFP_WAIT)
 DECL|macro|GFP_ATOMIC
 mdefine_line|#define GFP_ATOMIC&t;(__GFP_HIGH)
 DECL|macro|GFP_USER
-mdefine_line|#define GFP_USER&t;(__GFP_LOW | __GFP_WAIT | __GFP_IO)
+mdefine_line|#define GFP_USER&t;(__GFP_WAIT | __GFP_IO)
 DECL|macro|GFP_HIGHUSER
 mdefine_line|#define GFP_HIGHUSER&t;(GFP_USER | __GFP_HIGHMEM)
 DECL|macro|GFP_KERNEL
-mdefine_line|#define GFP_KERNEL&t;(__GFP_MED | __GFP_WAIT | __GFP_IO)
+mdefine_line|#define GFP_KERNEL&t;(__GFP_HIGH | __GFP_WAIT | __GFP_IO)
 DECL|macro|GFP_NFS
 mdefine_line|#define GFP_NFS&t;&t;(__GFP_HIGH | __GFP_WAIT | __GFP_IO)
 DECL|macro|GFP_KSWAPD

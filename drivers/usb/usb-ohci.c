@@ -20,7 +20,7 @@ macro_line|#undef DEBUG
 DECL|macro|OHCI_USE_NPS
 mdefine_line|#define OHCI_USE_NPS
 macro_line|#include &quot;usb.h&quot;
-macro_line|#include &quot;ohci-hcd.h&quot;
+macro_line|#include &quot;usb-ohci.h&quot;
 macro_line|#ifdef CONFIG_APM
 macro_line|#include &lt;linux/apm_bios.h&gt;
 r_static
@@ -2121,7 +2121,7 @@ id|ohci-&gt;ed_controltail
 suffix:semicolon
 id|ohci-&gt;ed_controltail
 op_assign
-id|ed
+id|edi
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -2171,7 +2171,7 @@ id|ohci-&gt;ed_bulktail
 suffix:semicolon
 id|ohci-&gt;ed_bulktail
 op_assign
-id|ed
+id|edi
 suffix:semicolon
 r_break
 suffix:semicolon
@@ -2494,7 +2494,7 @@ suffix:semicolon
 )brace
 id|ohci-&gt;ed_isotail
 op_assign
-id|ed
+id|edi
 suffix:semicolon
 macro_line|#ifdef DEBUG
 id|ep_print_int_eds
@@ -3090,6 +3090,10 @@ id|td_t
 op_star
 id|td
 suffix:semicolon
+id|ed_t
+op_star
+id|ed_ret
+suffix:semicolon
 r_volatile
 id|ed_t
 op_star
@@ -3102,6 +3106,8 @@ id|usb_ed_lock
 )paren
 suffix:semicolon
 id|ed
+op_assign
+id|ed_ret
 op_assign
 op_amp
 (paren
@@ -3344,7 +3350,7 @@ id|usb_ed_lock
 )paren
 suffix:semicolon
 r_return
-id|ed
+id|ed_ret
 suffix:semicolon
 )brace
 multiline_comment|/*-------------------------------------------------------------------------*/
@@ -3558,6 +3564,11 @@ suffix:semicolon
 multiline_comment|/* fill the old dummy TD */
 id|td
 op_assign
+id|urb_priv-&gt;td
+(braket
+id|index
+)braket
+op_assign
 (paren
 id|td_t
 op_star
@@ -3727,13 +3738,6 @@ suffix:semicolon
 id|td-&gt;ed-&gt;hwTailP
 op_assign
 id|td-&gt;hwNextTD
-suffix:semicolon
-id|urb_priv-&gt;td
-(braket
-id|index
-)braket
-op_assign
-id|td
 suffix:semicolon
 id|td-&gt;next_dl_td
 op_assign

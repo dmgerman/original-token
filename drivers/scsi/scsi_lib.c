@@ -25,6 +25,16 @@ macro_line|#include &quot;hosts.h&quot;
 macro_line|#include &quot;constants.h&quot;
 macro_line|#include &lt;scsi/scsi_ioctl.h&gt;
 multiline_comment|/*&n; * This entire source file deals with the new queueing code.&n; */
+multiline_comment|/*&n; * For hosts that request single-file access to the ISA bus, this is a pointer to&n; * the currently active host.&n; */
+DECL|variable|host_active
+r_volatile
+r_struct
+id|Scsi_Host
+op_star
+id|host_active
+op_assign
+l_int|NULL
+suffix:semicolon
 multiline_comment|/*&n; * Function:    scsi_insert_special_cmd()&n; *&n; * Purpose:     Insert pre-formed command into request queue.&n; *&n; * Arguments:   SCpnt   - command that is ready to be queued.&n; *              at_head - boolean.  True if we should insert at head&n; *                        of queue, false if we should insert at tail.&n; *&n; * Lock status: Assumed that lock is not held upon entry.&n; *&n; * Returns:     Nothing&n; *&n; * Notes:       This function is called from character device and from&n; *              ioctl types of functions where the caller knows exactly&n; *              what SCSI command needs to be issued.   The idea is that&n; *              we merely inject the command into the queue (at the head&n; *              for now), and then call the queue request function to actually&n; *              process it.&n; */
 DECL|function|scsi_insert_special_cmd
 r_int
@@ -319,7 +329,7 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Function:    scsi_queue_next_request()&n; *&n; * Purpose:     Handle post-processing of completed commands.&n; *&n; * Arguments:   SCpnt   - command that may need to be requeued.&n; *&n; * Returns:     Nothing&n; *&n; * Notes:       After command completion, there may be blocks left&n; *              over which weren&squot;t finished by the previous command&n; *              this can be for a number of reasons - the main one is&n; *              that a medium error occurred, and the sectors after&n; *              the bad block need to be re-read.&n; *&n; *              If SCpnt is NULL, it means that the previous command&n; *              was completely finished, and we should simply start&n; *              a new command, if possible.&n; */
+multiline_comment|/*&n; * Function:    scsi_queue_next_request()&n; *&n; * Purpose:     Handle post-processing of completed commands.&n; *&n; * Arguments:   SCpnt   - command that may need to be requeued.&n; *&n; * Returns:     Nothing&n; *&n; * Notes:       After command completion, there may be blocks left&n; *              over which weren&squot;t finished by the previous command&n; *              this can be for a number of reasons - the main one is&n; *              that a medium error occurred, and the sectors after&n; *              the bad block need to be re-read.&n; *&n; *              If SCpnt is NULL, it means that the previous command&n; *              was completely finished, and we should simply start&n; *              a new command, if possible.&n; *&n; *&t;&t;This is where a lot of special case code has begun to&n; *&t;&t;accumulate.  It doesn&squot;t really affect readability or&n; *&t;&t;anything, but it might be considered architecturally&n; *&t;&t;inelegant.  If more of these special cases start to&n; *&t;&t;accumulate, I am thinking along the lines of implementing&n; *&t;&t;an atexit() like technology that gets run when commands&n; *&t;&t;complete.  I am not convinced that it is worth the&n; *&t;&t;added overhead, however.  Right now as things stand,&n; *&t;&t;there are simple conditional checks, and most hosts&n; *&t;&t;would skip past.&n; *&n; *&t;&t;Another possible solution would be to tailor different&n; *&t;&t;handler functions, sort of like what we did in scsi_merge.c.&n; *&t;&t;This is probably a better solution, but the number of different&n; *&t;&t;permutations grows as 2**N, and if too many more special cases&n; *&t;&t;get added, we start to get screwed.&n; */
 DECL|function|scsi_queue_next_request
 r_void
 id|scsi_queue_next_request

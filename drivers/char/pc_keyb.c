@@ -1299,6 +1299,14 @@ suffix:semicolon
 )brace
 macro_line|#endif
 )brace
+DECL|variable|kbd_exists
+r_static
+r_int
+r_char
+id|kbd_exists
+op_assign
+l_int|1
+suffix:semicolon
 DECL|function|handle_keyboard_event
 r_static
 r_inline
@@ -1311,6 +1319,10 @@ r_char
 id|scancode
 )paren
 (brace
+id|kbd_exists
+op_assign
+l_int|1
+suffix:semicolon
 macro_line|#ifdef CONFIG_VT
 r_if
 c_cond
@@ -1526,6 +1538,15 @@ id|retries
 op_assign
 l_int|3
 suffix:semicolon
+r_if
+c_cond
+(paren
+op_logical_neg
+id|kbd_exists
+)paren
+r_return
+l_int|0
+suffix:semicolon
 r_do
 (brace
 r_int
@@ -1594,10 +1615,14 @@ id|printk
 c_func
 (paren
 id|KERN_WARNING
-l_string|&quot;Keyboard timeout[2]&bslash;n&quot;
+l_string|&quot;keyboard: Timeout - AT keyboard not present?&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
+id|kbd_exists
+op_assign
+l_int|0
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon
@@ -1622,6 +1647,10 @@ l_string|&quot;keyboard: Too many NACKs -- noisy kbd cable?&bslash;n&quot;
 )paren
 suffix:semicolon
 macro_line|#endif
+id|kbd_exists
+op_assign
+l_int|0
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon

@@ -1,4 +1,4 @@
-multiline_comment|/*&n; * USB hub driver.&n; *&n; * (C) Copyright 1999 Linus Torvalds&n; * (C) Copyright 1999 Johannes Erdfelt&n; * (C) Copyright 1999 Gregory P. Smith&n; *&n; * $Id: hub.c,v 1.15 1999/12/27 15:17:45 acher Exp $&n; */
+multiline_comment|/*&n; * USB hub driver.&n; *&n; * (C) Copyright 1999 Linus Torvalds&n; * (C) Copyright 1999 Johannes Erdfelt&n; * (C) Copyright 1999 Gregory P. Smith&n; *&n; * $Id: hub.c,v 1.21 2000/01/16 21:19:44 acher Exp $&n; */
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/list.h&gt;
@@ -10,71 +10,6 @@ DECL|macro|DEBUG
 mdefine_line|#define DEBUG
 macro_line|#include &quot;usb.h&quot;
 macro_line|#include &quot;hub.h&quot;
-macro_line|#ifdef __alpha
-macro_line|#if LINUX_VERSION_CODE &lt; KERNEL_VERSION(2,3,0)
-r_extern
-r_int
-id|__kernel_thread
-c_func
-(paren
-r_int
-r_int
-comma
-r_int
-(paren
-op_star
-)paren
-(paren
-r_void
-op_star
-)paren
-comma
-r_void
-op_star
-)paren
-suffix:semicolon
-DECL|function|kernel_thread
-r_static
-r_inline
-r_int
-id|kernel_thread
-c_func
-(paren
-r_int
-(paren
-op_star
-id|fn
-)paren
-(paren
-r_void
-op_star
-)paren
-comma
-r_void
-op_star
-id|arg
-comma
-r_int
-r_int
-id|flags
-)paren
-(brace
-r_return
-id|__kernel_thread
-c_func
-(paren
-id|flags
-op_or
-id|CLONE_VM
-comma
-id|fn
-comma
-id|arg
-)paren
-suffix:semicolon
-)brace
-macro_line|#endif
-macro_line|#endif
 multiline_comment|/* Wakes up khubd */
 DECL|variable|hub_event_lock
 r_static
@@ -538,6 +473,55 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
+DECL|function|usb_hub_power_on
+r_static
+r_void
+id|usb_hub_power_on
+c_func
+(paren
+r_struct
+id|usb_hub
+op_star
+id|hub
+)paren
+(brace
+r_int
+id|i
+suffix:semicolon
+multiline_comment|/* Enable power to the ports */
+id|dbg
+c_func
+(paren
+l_string|&quot;enabling power on all ports&quot;
+)paren
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|hub-&gt;nports
+suffix:semicolon
+id|i
+op_increment
+)paren
+id|usb_set_port_feature
+c_func
+(paren
+id|hub-&gt;dev
+comma
+id|i
+op_plus
+l_int|1
+comma
+id|USB_PORT_FEAT_POWER
+)paren
+suffix:semicolon
+)brace
 DECL|function|usb_hub_configure
 r_static
 r_int
@@ -955,37 +939,10 @@ suffix:colon
 l_string|&quot;no &quot;
 )paren
 suffix:semicolon
-multiline_comment|/* Enable power to the ports */
-id|dbg
+id|usb_hub_power_on
 c_func
 (paren
-l_string|&quot;enabling power on all ports&quot;
-)paren
-suffix:semicolon
-r_for
-c_loop
-(paren
-id|i
-op_assign
-l_int|0
-suffix:semicolon
-id|i
-OL
-id|hub-&gt;nports
-suffix:semicolon
-id|i
-op_increment
-)paren
-id|usb_set_port_feature
-c_func
-(paren
-id|dev
-comma
-id|i
-op_plus
-l_int|1
-comma
-id|USB_PORT_FEAT_POWER
+id|hub
 )paren
 suffix:semicolon
 r_return
@@ -1555,9 +1512,23 @@ suffix:colon
 l_string|&quot;High Speed&quot;
 )paren
 suffix:semicolon
-multiline_comment|/* If it&squot;s not in CONNECT and ENABLE state, we&squot;re done */
+multiline_comment|/* Clear the connection change status */
+id|usb_clear_port_feature
+c_func
+(paren
+id|hub
+comma
+id|port
+op_plus
+l_int|1
+comma
+id|USB_PORT_FEAT_C_CONNECTION
+)paren
+suffix:semicolon
+multiline_comment|/* Disconnect any existing devices under this port */
 r_if
 c_cond
+(paren
 (paren
 (paren
 op_logical_neg
@@ -1577,8 +1548,15 @@ id|USB_PORT_STAT_ENABLE
 )paren
 )paren
 )paren
+op_logical_or
+(paren
+id|hub-&gt;children
+(braket
+id|port
+)braket
+)paren
+)paren
 (brace
-multiline_comment|/* Disconnect anything that may have been there */
 id|usb_disconnect
 c_func
 (paren
@@ -1589,7 +1567,17 @@ id|port
 )braket
 )paren
 suffix:semicolon
-multiline_comment|/* We&squot;re done now, we already disconnected the device */
+multiline_comment|/* Return now if nothing is connected */
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|portstatus
+op_amp
+id|USB_PORT_STAT_CONNECTION
+)paren
+)paren
 r_return
 suffix:semicolon
 )brace
@@ -1706,14 +1694,26 @@ r_if
 c_cond
 (paren
 (paren
+id|portchange
+op_amp
+id|USB_PORT_STAT_C_CONNECTION
+)paren
+op_logical_or
+op_logical_neg
+(paren
 id|portstatus
 op_amp
+id|USB_PORT_STAT_CONNECTION
+)paren
+)paren
+r_return
+suffix:semicolon
+r_if
+c_cond
 (paren
-l_int|1
-op_lshift
-id|USB_PORT_FEAT_ENABLE
-)paren
-)paren
+id|portstatus
+op_amp
+id|USB_PORT_STAT_ENABLE
 )paren
 r_break
 suffix:semicolon
@@ -1753,6 +1753,18 @@ suffix:semicolon
 r_return
 suffix:semicolon
 )brace
+id|usb_clear_port_feature
+c_func
+(paren
+id|hub
+comma
+id|port
+op_plus
+l_int|1
+comma
+id|USB_PORT_FEAT_C_RESET
+)paren
+suffix:semicolon
 multiline_comment|/* Allocate a new device struct for it */
 id|usb
 op_assign
@@ -2043,18 +2055,6 @@ op_plus
 l_int|1
 )paren
 suffix:semicolon
-id|usb_clear_port_feature
-c_func
-(paren
-id|dev
-comma
-id|i
-op_plus
-l_int|1
-comma
-id|USB_PORT_FEAT_C_CONNECTION
-)paren
-suffix:semicolon
 id|usb_hub_port_connect_change
 c_func
 (paren
@@ -2098,10 +2098,11 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|portchange
+id|portstatus
 op_amp
-id|USB_PORT_STAT_C_SUSPEND
+id|USB_PORT_STAT_SUSPEND
 )paren
+(brace
 id|dbg
 c_func
 (paren
@@ -2112,6 +2113,19 @@ op_plus
 l_int|1
 )paren
 suffix:semicolon
+id|usb_clear_port_feature
+c_func
+(paren
+id|dev
+comma
+id|i
+op_plus
+l_int|1
+comma
+id|USB_PORT_FEAT_SUSPEND
+)paren
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -2120,7 +2134,7 @@ op_amp
 id|USB_PORT_STAT_C_OVERCURRENT
 )paren
 (brace
-id|dbg
+id|err
 c_func
 (paren
 l_string|&quot;port %d over-current change&quot;
@@ -2140,6 +2154,12 @@ op_plus
 l_int|1
 comma
 id|USB_PORT_FEAT_C_OVER_CURRENT
+)paren
+suffix:semicolon
+id|usb_hub_power_on
+c_func
+(paren
+id|hub
 )paren
 suffix:semicolon
 )brace
@@ -2256,12 +2276,25 @@ c_func
 l_string|&quot;hub overcurrent change&quot;
 )paren
 suffix:semicolon
+id|wait_ms
+c_func
+(paren
+l_int|500
+)paren
+suffix:semicolon
+singleline_comment|//Cool down
 id|usb_clear_hub_feature
 c_func
 (paren
 id|dev
 comma
 id|C_HUB_OVER_CURRENT
+)paren
+suffix:semicolon
+id|usb_hub_power_on
+c_func
+(paren
+id|hub
 )paren
 suffix:semicolon
 )brace
@@ -2302,6 +2335,13 @@ c_func
 )paren
 suffix:semicolon
 multiline_comment|/*&n;&t; * This thread doesn&squot;t need any user-level access,&n;&t; * so get rid of all our resources&n;&t; */
+id|exit_files
+c_func
+(paren
+id|current
+)paren
+suffix:semicolon
+multiline_comment|/* daemonize doesn&squot;t do exit_files */
 id|daemonize
 c_func
 (paren

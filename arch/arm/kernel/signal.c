@@ -13,7 +13,6 @@ macro_line|#include &lt;linux/unistd.h&gt;
 macro_line|#include &lt;linux/stddef.h&gt;
 macro_line|#include &lt;linux/binfmts.h&gt;
 macro_line|#include &lt;linux/tty.h&gt;
-macro_line|#include &lt;linux/highuid.h&gt;
 macro_line|#include &lt;asm/ucontext.h&gt;
 macro_line|#include &lt;asm/uaccess.h&gt;
 macro_line|#include &lt;asm/pgalloc.h&gt;
@@ -2398,14 +2397,6 @@ suffix:semicolon
 id|info.si_uid
 op_assign
 id|current-&gt;p_pptr-&gt;uid
-suffix:semicolon
-id|info.si_uid16
-op_assign
-id|high2lowuid
-c_func
-(paren
-id|current-&gt;p_pptr-&gt;uid
-)paren
 suffix:semicolon
 )brace
 multiline_comment|/* If the (new) signal is now blocked, requeue it.  */

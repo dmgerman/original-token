@@ -1,7 +1,8 @@
 multiline_comment|/*&n; * debug.c - USB debug helper routines.&n; *&n; * I just want these out of the way where they aren&squot;t in your&n; * face, but so that you can still use them..&n; */
 macro_line|#include &lt;linux/version.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
-macro_line|#include &lt;linux/slab.h&gt;
+macro_line|#include &lt;linux/mm.h&gt;
+macro_line|#include &lt;linux/malloc.h&gt;
 DECL|macro|DEBUG
 mdefine_line|#define DEBUG
 macro_line|#include &quot;usb.h&quot;
@@ -213,6 +214,22 @@ op_star
 id|desc
 )paren
 (brace
+r_if
+c_cond
+(paren
+op_logical_neg
+id|desc
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;Invalid USB device descriptor (NULL POINTER)&bslash;n&quot;
+)paren
+suffix:semicolon
+r_return
+suffix:semicolon
+)brace
 id|printk
 c_func
 (paren
@@ -590,6 +607,123 @@ id|desc-&gt;iInterface
 )paren
 suffix:semicolon
 )brace
+DECL|function|usb_show_hid_descriptor
+r_void
+id|usb_show_hid_descriptor
+c_func
+(paren
+r_struct
+id|usb_hid_descriptor
+op_star
+id|desc
+)paren
+(brace
+r_int
+id|i
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;    HID:&bslash;n&quot;
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;      HID version %x.%02x&bslash;n&quot;
+comma
+id|desc-&gt;bcdHID
+op_rshift
+l_int|8
+comma
+id|desc-&gt;bcdHID
+op_amp
+l_int|0xff
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;      bLength             = %4d&bslash;n&quot;
+comma
+id|desc-&gt;bLength
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;      bDescriptorType     =   %02x&bslash;n&quot;
+comma
+id|desc-&gt;bDescriptorType
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;      bCountryCode        =   %02x&bslash;n&quot;
+comma
+id|desc-&gt;bCountryCode
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;      bNumDescriptors     =   %02x&bslash;n&quot;
+comma
+id|desc-&gt;bNumDescriptors
+)paren
+suffix:semicolon
+r_for
+c_loop
+(paren
+id|i
+op_assign
+l_int|0
+suffix:semicolon
+id|i
+OL
+id|desc-&gt;bNumDescriptors
+suffix:semicolon
+id|i
+op_increment
+)paren
+(brace
+id|printk
+c_func
+(paren
+l_string|&quot;        %d:&bslash;n&quot;
+comma
+id|i
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;            bDescriptorType      =   %02x&bslash;n&quot;
+comma
+id|desc-&gt;desc
+(braket
+id|i
+)braket
+dot
+id|bDescriptorType
+)paren
+suffix:semicolon
+id|printk
+c_func
+(paren
+l_string|&quot;            wDescriptorLength    =   %04x&bslash;n&quot;
+comma
+id|desc-&gt;desc
+(braket
+id|i
+)braket
+dot
+id|wDescriptorLength
+)paren
+suffix:semicolon
+)brace
+)brace
 DECL|function|usb_show_endpoint_descriptor
 r_void
 id|usb_show_endpoint_descriptor
@@ -815,6 +949,127 @@ id|kfree
 c_func
 (paren
 id|buf
+)paren
+suffix:semicolon
+)brace
+DECL|function|usb_dump_urb
+r_void
+id|usb_dump_urb
+(paren
+id|purb_t
+id|purb
+)paren
+(brace
+id|printk
+(paren
+l_string|&quot;urb                   :%p&bslash;n&quot;
+comma
+id|purb
+)paren
+suffix:semicolon
+id|printk
+(paren
+l_string|&quot;next                  :%p&bslash;n&quot;
+comma
+id|purb-&gt;next
+)paren
+suffix:semicolon
+id|printk
+(paren
+l_string|&quot;dev                   :%p&bslash;n&quot;
+comma
+id|purb-&gt;dev
+)paren
+suffix:semicolon
+id|printk
+(paren
+l_string|&quot;pipe                  :%08X&bslash;n&quot;
+comma
+id|purb-&gt;pipe
+)paren
+suffix:semicolon
+id|printk
+(paren
+l_string|&quot;status                :%d&bslash;n&quot;
+comma
+id|purb-&gt;status
+)paren
+suffix:semicolon
+id|printk
+(paren
+l_string|&quot;transfer_flags        :%08X&bslash;n&quot;
+comma
+id|purb-&gt;transfer_flags
+)paren
+suffix:semicolon
+id|printk
+(paren
+l_string|&quot;transfer_buffer       :%p&bslash;n&quot;
+comma
+id|purb-&gt;transfer_buffer
+)paren
+suffix:semicolon
+id|printk
+(paren
+l_string|&quot;transfer_buffer_length:%d&bslash;n&quot;
+comma
+id|purb-&gt;transfer_buffer_length
+)paren
+suffix:semicolon
+id|printk
+(paren
+l_string|&quot;actual_length         :%d&bslash;n&quot;
+comma
+id|purb-&gt;actual_length
+)paren
+suffix:semicolon
+id|printk
+(paren
+l_string|&quot;setup_packet          :%p&bslash;n&quot;
+comma
+id|purb-&gt;setup_packet
+)paren
+suffix:semicolon
+id|printk
+(paren
+l_string|&quot;start_frame           :%d&bslash;n&quot;
+comma
+id|purb-&gt;start_frame
+)paren
+suffix:semicolon
+id|printk
+(paren
+l_string|&quot;number_of_packets     :%d&bslash;n&quot;
+comma
+id|purb-&gt;number_of_packets
+)paren
+suffix:semicolon
+id|printk
+(paren
+l_string|&quot;interval              :%d&bslash;n&quot;
+comma
+id|purb-&gt;interval
+)paren
+suffix:semicolon
+id|printk
+(paren
+l_string|&quot;error_count           :%d&bslash;n&quot;
+comma
+id|purb-&gt;error_count
+)paren
+suffix:semicolon
+id|printk
+(paren
+l_string|&quot;context               :%p&bslash;n&quot;
+comma
+id|purb-&gt;context
+)paren
+suffix:semicolon
+id|printk
+(paren
+l_string|&quot;complete              :%p&bslash;n&quot;
+comma
+id|purb-&gt;complete
 )paren
 suffix:semicolon
 )brace

@@ -150,8 +150,6 @@ multiline_comment|/* Do not call reset on error if we just did a reset within 15
 DECL|macro|MIN_RESET_PERIOD
 mdefine_line|#define MIN_RESET_PERIOD (15*HZ)
 multiline_comment|/*&n; *  Flag bits for the internal_timeout array&n; */
-DECL|macro|NORMAL_TIMEOUT
-mdefine_line|#define NORMAL_TIMEOUT 0
 DECL|macro|IN_ABORT
 mdefine_line|#define IN_ABORT  1
 DECL|macro|IN_RESET

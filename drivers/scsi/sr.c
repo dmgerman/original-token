@@ -1775,48 +1775,6 @@ r_return
 l_int|0
 suffix:semicolon
 )brace
-DECL|function|sr_init_done
-r_static
-r_void
-id|sr_init_done
-c_func
-(paren
-id|Scsi_Cmnd
-op_star
-id|SCpnt
-)paren
-(brace
-r_struct
-id|request
-op_star
-id|req
-suffix:semicolon
-id|req
-op_assign
-op_amp
-id|SCpnt-&gt;request
-suffix:semicolon
-id|req-&gt;rq_status
-op_assign
-id|RQ_SCSI_DONE
-suffix:semicolon
-multiline_comment|/* Busy, but indicate request done */
-r_if
-c_cond
-(paren
-id|req-&gt;sem
-op_ne
-l_int|NULL
-)paren
-(brace
-id|up
-c_func
-(paren
-id|req-&gt;sem
-)paren
-suffix:semicolon
-)brace
-)brace
 DECL|function|get_sectorsize
 r_void
 id|get_sectorsize
@@ -1967,8 +1925,6 @@ op_star
 id|buffer
 comma
 l_int|512
-comma
-id|sr_init_done
 comma
 id|SR_TIMEOUT
 comma
@@ -3024,7 +2980,7 @@ id|SCpnt-&gt;request.rq_dev
 op_assign
 id|cdi-&gt;dev
 suffix:semicolon
-multiline_comment|/* scsi_do_cmd sets the command length */
+multiline_comment|/* scsi_wait_cmd sets the command length */
 id|SCpnt-&gt;cmd_len
 op_assign
 l_int|0
@@ -3047,8 +3003,6 @@ op_star
 id|buffer
 comma
 id|cgc-&gt;buflen
-comma
-id|sr_init_done
 comma
 id|SR_TIMEOUT
 comma
