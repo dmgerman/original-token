@@ -74,7 +74,7 @@ mdefine_line|#define __setup(str, fn)&t;&t;&t;&t;&t;&t;&t;&t;&bslash;&n;&t;stati
 macro_line|#endif /* __ASSEMBLY__ */
 multiline_comment|/*&n; * Mark functions and data as being only used at initialization&n; * or exit time.&n; */
 DECL|macro|__init
-mdefine_line|#define __init&t;&t;__attribute__ ((__section__ (&quot;.text.init&quot;)))
+mdefine_line|#define __init&t;&t;/* __attribute__ ((__section__ (&quot;.text.init&quot;))) */
 DECL|macro|__exit
 mdefine_line|#define __exit&t;&t;__attribute__ ((unused, __section__(&quot;.text.exit&quot;)))
 DECL|macro|__initdata

@@ -12419,11 +12419,7 @@ id|raid5_init
 r_void
 )paren
 (brace
-r_int
-id|err
-suffix:semicolon
-id|err
-op_assign
+r_return
 id|register_md_personality
 (paren
 id|RAID5
@@ -12431,23 +12427,6 @@ comma
 op_amp
 id|raid5_personality
 )paren
-suffix:semicolon
-r_if
-c_cond
-(paren
-id|err
-)paren
-r_return
-id|err
-suffix:semicolon
-multiline_comment|/*&n;&t; * pick a XOR routine, runtime.&n;&t; */
-id|calibrate_xor_block
-c_func
-(paren
-)paren
-suffix:semicolon
-r_return
-l_int|0
 suffix:semicolon
 )brace
 macro_line|#ifdef MODULE

@@ -169,7 +169,7 @@ l_string|&quot;&t;blbs&t;%0,2b&bslash;n&quot;
 l_string|&quot;&t;br&t;1b&bslash;n&quot;
 l_string|&quot;.previous&quot;
 suffix:colon
-l_string|&quot;=r&quot;
+l_string|&quot;=&amp;r&quot;
 (paren
 id|tmp
 )paren

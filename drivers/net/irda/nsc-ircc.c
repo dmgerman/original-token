@@ -4571,7 +4571,7 @@ op_logical_neg
 id|skb-&gt;len
 )paren
 (brace
-id|nsc_ircc_change_speed_complete
+id|nsc_ircc_change_speed
 c_func
 (paren
 id|self

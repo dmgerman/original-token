@@ -1112,13 +1112,7 @@ macro_line|#ifdef CONFIG_SMP
 r_int
 id|policy
 suffix:semicolon
-multiline_comment|/*&n;&t; * fast path falls through. We have to clear has_cpu before&n;&t; * checking prev-&gt;state to avoid a wakeup race - thus we&n;&t; * also have to protect against the task exiting early.&n;&t; */
-id|task_lock
-c_func
-(paren
-id|prev
-)paren
-suffix:semicolon
+multiline_comment|/*&n;&t; * prev-&gt;policy can be written from here only before `prev&squot;&n;&t; * can be scheduled (before setting prev-&gt;has_cpu to zero).&n;&t; * Of course it must also be read before allowing prev&n;&t; * to be rescheduled, but since the write depends on the read&n;&t; * to complete, wmb() is enough. (the spin_lock() acquired&n;&t; * before setting has_cpu is not enough because the spin_lock()&n;&t; * common code semantics allows code outside the critical section&n;&t; * to enter inside the critical section)&n;&t; */
 id|policy
 op_assign
 id|prev-&gt;policy
@@ -1130,11 +1124,23 @@ op_amp
 op_complement
 id|SCHED_YIELD
 suffix:semicolon
+id|wmb
+c_func
+(paren
+)paren
+suffix:semicolon
+multiline_comment|/*&n;&t; * fast path falls through. We have to clear has_cpu before&n;&t; * checking prev-&gt;state to avoid a wakeup race - thus we&n;&t; * also have to protect against the task exiting early.&n;&t; */
+id|task_lock
+c_func
+(paren
+id|prev
+)paren
+suffix:semicolon
 id|prev-&gt;has_cpu
 op_assign
 l_int|0
 suffix:semicolon
-id|wmb
+id|mb
 c_func
 (paren
 )paren

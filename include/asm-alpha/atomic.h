@@ -154,8 +154,8 @@ id|__volatile__
 c_func
 (paren
 l_string|&quot;1:&t;ldl_l %0,%1&bslash;n&quot;
+l_string|&quot;&t;addl %0,%3,%2&bslash;n&quot;
 l_string|&quot;&t;addl %0,%3,%0&bslash;n&quot;
-l_string|&quot;&t;mov %0,%2&bslash;n&quot;
 l_string|&quot;&t;stl_c %0,%1&bslash;n&quot;
 l_string|&quot;&t;beq %0,2f&bslash;n&quot;
 l_string|&quot;&t;mb&bslash;n&quot;
@@ -220,8 +220,8 @@ id|__volatile__
 c_func
 (paren
 l_string|&quot;1:&t;ldl_l %0,%1&bslash;n&quot;
+l_string|&quot;&t;subl %0,%3,%2&bslash;n&quot;
 l_string|&quot;&t;subl %0,%3,%0&bslash;n&quot;
-l_string|&quot;&t;mov %0,%2&bslash;n&quot;
 l_string|&quot;&t;stl_c %0,%1&bslash;n&quot;
 l_string|&quot;&t;beq %0,2f&bslash;n&quot;
 l_string|&quot;&t;mb&bslash;n&quot;

@@ -913,6 +913,14 @@ op_eq
 l_int|NULL
 )paren
 (brace
+id|release_mem_region
+c_func
+(paren
+id|address
+comma
+l_int|256
+)paren
+suffix:semicolon
 r_continue
 suffix:semicolon
 )brace
