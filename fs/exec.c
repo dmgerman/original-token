@@ -44,7 +44,7 @@ id|library
 )paren
 (brace
 r_struct
-id|m_inode
+id|inode
 op_star
 id|inode
 suffix:semicolon
@@ -573,10 +573,8 @@ r_if
 c_cond
 (paren
 id|p
-op_minus
-id|len
 OL
-l_int|0
+id|len
 )paren
 (brace
 multiline_comment|/* this shouldn&squot;t happen - 128kB */
@@ -913,7 +911,7 @@ id|envp
 )paren
 (brace
 r_struct
-id|m_inode
+id|inode
 op_star
 id|inode
 suffix:semicolon
@@ -1067,6 +1065,26 @@ id|i
 op_assign
 id|inode-&gt;i_mode
 suffix:semicolon
+multiline_comment|/* make sure we don&squot;t let suid, sgid files be ptraced. */
+r_if
+c_cond
+(paren
+id|current-&gt;flags
+op_amp
+id|PF_PTRACED
+)paren
+(brace
+id|e_uid
+op_assign
+id|current-&gt;euid
+suffix:semicolon
+id|e_gid
+op_assign
+id|current-&gt;egid
+suffix:semicolon
+)brace
+r_else
+(brace
 id|e_uid
 op_assign
 (paren
@@ -1093,6 +1111,7 @@ id|inode-&gt;i_gid
 suffix:colon
 id|current-&gt;egid
 suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -1146,7 +1165,7 @@ c_func
 id|retval
 op_assign
 op_minus
-id|ENOEXEC
+id|EACCES
 suffix:semicolon
 r_goto
 id|exec_error2
@@ -1164,7 +1183,7 @@ c_func
 (paren
 id|inode-&gt;i_dev
 comma
-id|inode-&gt;i_zone
+id|inode-&gt;i_data
 (braket
 l_int|0
 )braket
@@ -1957,8 +1976,6 @@ suffix:semicolon
 id|current-&gt;start_stack
 op_assign
 id|p
-op_amp
-l_int|0xfffff000
 suffix:semicolon
 id|current-&gt;suid
 op_assign
@@ -1988,6 +2005,23 @@ op_assign
 id|p
 suffix:semicolon
 multiline_comment|/* stack pointer */
+r_if
+c_cond
+(paren
+id|current-&gt;flags
+op_amp
+id|PF_PTRACED
+)paren
+id|send_sig
+c_func
+(paren
+id|SIGTRAP
+comma
+id|current
+comma
+l_int|0
+)paren
+suffix:semicolon
 r_return
 l_int|0
 suffix:semicolon

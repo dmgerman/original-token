@@ -39,6 +39,7 @@ suffix:semicolon
 id|__asm__
 c_func
 (paren
+l_string|&quot;movl %2,%%ebx&bslash;n&bslash;t&quot;
 l_string|&quot;int $0x80&quot;
 suffix:colon
 l_string|&quot;=a&quot;
@@ -51,9 +52,14 @@ l_string|&quot;0&quot;
 id|__NR_open
 )paren
 comma
-l_string|&quot;b&quot;
+l_string|&quot;g&quot;
+(paren
+(paren
+r_int
+)paren
 (paren
 id|filename
+)paren
 )paren
 comma
 l_string|&quot;c&quot;

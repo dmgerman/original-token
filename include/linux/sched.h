@@ -475,6 +475,10 @@ r_int
 id|used_math
 suffix:semicolon
 multiline_comment|/* file system info */
+DECL|member|link_count
+r_int
+id|link_count
+suffix:semicolon
 DECL|member|tty
 r_int
 id|tty
@@ -487,25 +491,25 @@ id|umask
 suffix:semicolon
 DECL|member|pwd
 r_struct
-id|m_inode
+id|inode
 op_star
 id|pwd
 suffix:semicolon
 DECL|member|root
 r_struct
-id|m_inode
+id|inode
 op_star
 id|root
 suffix:semicolon
 DECL|member|executable
 r_struct
-id|m_inode
+id|inode
 op_star
 id|executable
 suffix:semicolon
 DECL|member|library
 r_struct
-id|m_inode
+id|inode
 op_star
 id|library
 suffix:semicolon
@@ -544,9 +548,15 @@ multiline_comment|/*&n; * Per process flags&n; */
 DECL|macro|PF_ALIGNWARN
 mdefine_line|#define PF_ALIGNWARN&t;0x00000001&t;/* Print alignment warning msgs */
 multiline_comment|/* Not implemented yet, only for 486*/
+DECL|macro|PF_PTRACED
+mdefine_line|#define PF_PTRACED&t;0x00000010&t;/* set if ptrace (0) has been called. */
+DECL|macro|PF_VM86
+mdefine_line|#define PF_VM86&t;&t;0x00000020&t;/* set if process can execute a vm86 */
+multiline_comment|/* task. */
+multiline_comment|/* not impelmented. */
 multiline_comment|/*&n; *  INIT_TASK is used to set up the first task table, touch at&n; * your own risk!. Base=0, limit=0x9ffff (=640kB)&n; */
 DECL|macro|INIT_TASK
-mdefine_line|#define INIT_TASK &bslash;&n;/* state etc */&t;{ 0,15,15, &bslash;&n;/* signals */&t;0,{{},},0, &bslash;&n;/* ec,brk... */&t;0,0,0,0,0,0, &bslash;&n;/* pid etc.. */&t;0,0,0,0, &bslash;&n;/* suppl grps*/ {NOGROUP,}, &bslash;&n;/* proc links*/ &amp;init_task.task,0,0,0, &bslash;&n;/* uid etc */&t;0,0,0,0,0,0, &bslash;&n;/* timeout */&t;0,0,0,0,0,0,0, &bslash;&n;/* rlimits */   { {0x7fffffff, 0x7fffffff}, {0x7fffffff, 0x7fffffff},  &bslash;&n;&t;&t;  {0x7fffffff, 0x7fffffff}, {0x7fffffff, 0x7fffffff}, &bslash;&n;&t;&t;  {0x7fffffff, 0x7fffffff}, {0x7fffffff, 0x7fffffff}}, &bslash;&n;/* flags */&t;0, &bslash;&n;/* math */&t;0, &bslash;&n;/* fs info */&t;-1,0022,NULL,NULL,NULL,NULL,0, &bslash;&n;/* filp */&t;{NULL,}, &bslash;&n;&t;{ &bslash;&n;&t;&t;{0,0}, &bslash;&n;/* ldt */&t;{0x9f,0xc0fa00}, &bslash;&n;&t;&t;{0x9f,0xc0f200}, &bslash;&n;&t;}, &bslash;&n;/*tss*/&t;{0,PAGE_SIZE+(long)&amp;init_task,0x10,0,0,0,0,(long)&amp;pg_dir,&bslash;&n;&t; 0,0,0,0,0,0,0,0, &bslash;&n;&t; 0,0,0x17,0x17,0x17,0x17,0x17,0x17, &bslash;&n;&t; _LDT(0),0x80000000, &bslash;&n;&t;&t;{} &bslash;&n;&t;}, &bslash;&n;}
+mdefine_line|#define INIT_TASK &bslash;&n;/* state etc */&t;{ 0,15,15, &bslash;&n;/* signals */&t;0,{{},},0, &bslash;&n;/* ec,brk... */&t;0,0,0,0,0,0, &bslash;&n;/* pid etc.. */&t;0,0,0,0, &bslash;&n;/* suppl grps*/ {NOGROUP,}, &bslash;&n;/* proc links*/ &amp;init_task.task,0,0,0, &bslash;&n;/* uid etc */&t;0,0,0,0,0,0, &bslash;&n;/* timeout */&t;0,0,0,0,0,0,0, &bslash;&n;/* rlimits */   { {0x7fffffff, 0x7fffffff}, {0x7fffffff, 0x7fffffff},  &bslash;&n;&t;&t;  {0x7fffffff, 0x7fffffff}, {0x7fffffff, 0x7fffffff}, &bslash;&n;&t;&t;  {0x7fffffff, 0x7fffffff}, {0x7fffffff, 0x7fffffff}}, &bslash;&n;/* flags */&t;0, &bslash;&n;/* math */&t;0, &bslash;&n;/* fs info */&t;0,-1,0022,NULL,NULL,NULL,NULL,0, &bslash;&n;/* filp */&t;{NULL,}, &bslash;&n;&t;{ &bslash;&n;&t;&t;{0,0}, &bslash;&n;/* ldt */&t;{0x9f,0xc0fa00}, &bslash;&n;&t;&t;{0x9f,0xc0f200}, &bslash;&n;&t;}, &bslash;&n;/*tss*/&t;{0,PAGE_SIZE+(long)&amp;init_task,0x10,0,0,0,0,(long)&amp;pg_dir,&bslash;&n;&t; 0,0,0,0,0,0,0,0, &bslash;&n;&t; 0,0,0x17,0x17,0x17,0x17,0x17,0x17, &bslash;&n;&t; _LDT(0),0x80000000, &bslash;&n;&t;&t;{} &bslash;&n;&t;}, &bslash;&n;}
 r_extern
 r_struct
 id|task_struct
@@ -662,10 +672,10 @@ mdefine_line|#define ltr(n) __asm__(&quot;ltr %%ax&quot;::&quot;a&quot; (_TSS(n)
 DECL|macro|lldt
 mdefine_line|#define lldt(n) __asm__(&quot;lldt %%ax&quot;::&quot;a&quot; (_LDT(n)))
 DECL|macro|str
-mdefine_line|#define str(n) &bslash;&n;__asm__(&quot;str %%ax&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;subl %2,%%eax&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;shrl $4,%%eax&quot; &bslash;&n;&t;:&quot;=a&quot; (n) &bslash;&n;&t;:&quot;a&quot; (0),&quot;i&quot; (FIRST_TSS_ENTRY&lt;&lt;3))
+mdefine_line|#define str(n) &bslash;&n;__asm__(&quot;str %%ax&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;subl %2,%%eax&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;shrl $4,%%eax&quot; &bslash;&n;&t;:&quot;=a&quot; (n) &bslash;&n;&t;:&quot;0&quot; (0),&quot;i&quot; (FIRST_TSS_ENTRY&lt;&lt;3))
 multiline_comment|/*&n; *&t;switch_to(n) should switch tasks to task nr n, first&n; * checking that n isn&squot;t the current task, in which case it does nothing.&n; * This also clears the TS-flag if the task we switched to has used&n; * tha math co-processor latest.&n; */
 DECL|macro|switch_to
-mdefine_line|#define switch_to(n) {&bslash;&n;struct {long a,b;} __tmp; &bslash;&n;__asm__(&quot;cmpl %%ecx,_current&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;je 1f&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;movw %%dx,%1&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;xchgl %%ecx,_current&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;ljmp %0&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;cmpl %%ecx,_last_task_used_math&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;jne 1f&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;clts&bslash;n&quot; &bslash;&n;&t;&quot;1:&quot; &bslash;&n;&t;::&quot;m&quot; (*&amp;__tmp.a),&quot;m&quot; (*&amp;__tmp.b), &bslash;&n;&t;&quot;d&quot; (_TSS(n)),&quot;c&quot; ((long) task[n])); &bslash;&n;}
+mdefine_line|#define switch_to(n) {&bslash;&n;struct {long a,b;} __tmp; &bslash;&n;__asm__(&quot;cmpl %%ecx,_current&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;je 1f&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;movw %%dx,%1&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;xchgl %%ecx,_current&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;ljmp %0&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;cmpl %%ecx,_last_task_used_math&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;jne 1f&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;clts&bslash;n&quot; &bslash;&n;&t;&quot;1:&quot; &bslash;&n;&t;::&quot;m&quot; (*&amp;__tmp.a),&quot;m&quot; (*&amp;__tmp.b), &bslash;&n;&t;&quot;d&quot; (_TSS(n)),&quot;c&quot; ((long) task[n]) &bslash;&n;&t;:&quot;cx&quot;); &bslash;&n;}
 DECL|macro|PAGE_ALIGN
 mdefine_line|#define PAGE_ALIGN(n) (((n)+0xfff)&amp;0xfffff000)
 DECL|macro|_set_base
@@ -676,11 +686,117 @@ DECL|macro|set_base
 mdefine_line|#define set_base(ldt,base) _set_base( ((char *)&amp;(ldt)) , base )
 DECL|macro|set_limit
 mdefine_line|#define set_limit(ldt,limit) _set_limit( ((char *)&amp;(ldt)) , (limit-1)&gt;&gt;12 )
-DECL|macro|_get_base
-mdefine_line|#define _get_base(addr) ({&bslash;&n;unsigned long __base; &bslash;&n;__asm__(&quot;movb %3,%%dh&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;movb %2,%%dl&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;shll $16,%%edx&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;movw %1,%%dx&quot; &bslash;&n;&t;:&quot;=d&quot; (__base) &bslash;&n;&t;:&quot;m&quot; (*((addr)+2)), &bslash;&n;&t; &quot;m&quot; (*((addr)+4)), &bslash;&n;&t; &quot;m&quot; (*((addr)+7))); &bslash;&n;__base;})
+DECL|function|_get_base
+r_static
+r_int
+r_int
+r_inline
+id|_get_base
+c_func
+(paren
+r_char
+op_star
+id|addr
+)paren
+(brace
+r_int
+r_int
+id|__base
+suffix:semicolon
+id|__asm__
+c_func
+(paren
+l_string|&quot;movb %3,%%dh&bslash;n&bslash;t&quot;
+l_string|&quot;movb %2,%%dl&bslash;n&bslash;t&quot;
+l_string|&quot;shll $16,%%edx&bslash;n&bslash;t&quot;
+l_string|&quot;movw %1,%%dx&quot;
+suffix:colon
+l_string|&quot;=&amp;d&quot;
+(paren
+id|__base
+)paren
+suffix:colon
+l_string|&quot;m&quot;
+(paren
+op_star
+(paren
+(paren
+id|addr
+)paren
+op_plus
+l_int|2
+)paren
+)paren
+comma
+l_string|&quot;m&quot;
+(paren
+op_star
+(paren
+(paren
+id|addr
+)paren
+op_plus
+l_int|4
+)paren
+)paren
+comma
+l_string|&quot;m&quot;
+(paren
+op_star
+(paren
+(paren
+id|addr
+)paren
+op_plus
+l_int|7
+)paren
+)paren
+)paren
+suffix:semicolon
+r_return
+id|__base
+suffix:semicolon
+)brace
 DECL|macro|get_base
 mdefine_line|#define get_base(ldt) _get_base( ((char *)&amp;(ldt)) )
-DECL|macro|get_limit
-mdefine_line|#define get_limit(segment) ({ &bslash;&n;unsigned long __limit; &bslash;&n;__asm__(&quot;lsll %1,%0&bslash;n&bslash;tincl %0&quot;:&quot;=r&quot; (__limit):&quot;r&quot; (segment)); &bslash;&n;__limit;})
+DECL|function|get_limit
+r_static
+r_int
+r_int
+r_inline
+id|get_limit
+c_func
+(paren
+r_int
+r_int
+id|segment
+)paren
+(brace
+r_int
+r_int
+id|__limit
+suffix:semicolon
+id|__asm__
+c_func
+(paren
+l_string|&quot;lsll %1,%0&quot;
+suffix:colon
+l_string|&quot;=r&quot;
+(paren
+id|__limit
+)paren
+suffix:colon
+l_string|&quot;r&quot;
+(paren
+id|segment
+)paren
+)paren
+suffix:semicolon
+r_return
+id|__limit
+op_plus
+l_int|1
+suffix:semicolon
+)brace
 macro_line|#endif
 eof

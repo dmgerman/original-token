@@ -1,6 +1,9 @@
 macro_line|#ifndef _CONFIG_H
 DECL|macro|_CONFIG_H
 mdefine_line|#define _CONFIG_H
+multiline_comment|/*&n; * Define this if you want the math-emulation code: if this is undefined,&n; * the kernel will be smaller, but you&squot;ll get FPU exceptions if you don&squot;t&n; * have a 387 and are trying to use math.&n; */
+DECL|macro|KERNEL_MATH_EMULATION
+mdefine_line|#define KERNEL_MATH_EMULATION
 multiline_comment|/*&n; * Defines for what uname() should return &n; */
 DECL|macro|UTS_SYSNAME
 mdefine_line|#define UTS_SYSNAME &quot;Linux&quot;
@@ -20,7 +23,7 @@ mdefine_line|#define DEF_SYSSEG&t;0x1000
 DECL|macro|DEF_SETUPSEG
 mdefine_line|#define DEF_SETUPSEG&t;0x9020
 DECL|macro|DEF_SYSSIZE
-mdefine_line|#define DEF_SYSSIZE&t;0x3000
+mdefine_line|#define DEF_SYSSIZE&t;0x4000
 multiline_comment|/*&n; * The root-device is no longer hard-coded. You can change the default&n; * root-device by changing the line ROOT_DEV = XXX in boot/bootsect.s&n; */
 multiline_comment|/*&n; * The keyboard is now defined in kernel/chr_dev/keyboard.S&n; */
 multiline_comment|/*&n; * Normally, Linux can get the drive parameters from the BIOS at&n; * startup, but if this for some unfathomable reason fails, you&squot;d&n; * be left stranded. For this case, you can define HD_TYPE, which&n; * contains all necessary info on your harddisk.&n; *&n; * The HD_TYPE macro should look like this:&n; *&n; * #define HD_TYPE { head, sect, cyl, wpcom, lzone, ctl}&n; *&n; * In case of two harddisks, the info should be sepatated by&n; * commas:&n; *&n; * #define HD_TYPE { h,s,c,wpcom,lz,ctl },{ h,s,c,wpcom,lz,ctl }&n; */

@@ -22,7 +22,7 @@ mdefine_line|#define O_TRUNC&t;&t;01000&t;/* not fcntl */
 DECL|macro|O_APPEND
 mdefine_line|#define O_APPEND&t;02000
 DECL|macro|O_NONBLOCK
-mdefine_line|#define O_NONBLOCK&t;04000&t;/* not fcntl */
+mdefine_line|#define O_NONBLOCK&t;04000
 DECL|macro|O_NDELAY
 mdefine_line|#define O_NDELAY&t;O_NONBLOCK
 multiline_comment|/* Defines for fcntl-commands. Note that currently&n; * locking isn&squot;t supported, and other things aren&squot;t really&n; * tested.&n; */

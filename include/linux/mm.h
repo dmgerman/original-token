@@ -3,16 +3,41 @@ DECL|macro|_MM_H
 mdefine_line|#define _MM_H
 DECL|macro|PAGE_SIZE
 mdefine_line|#define PAGE_SIZE 4096
+macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;signal.h&gt;
 r_extern
 r_int
-id|SWAP_DEV
+r_int
+id|swap_device
+suffix:semicolon
+r_extern
+r_struct
+id|inode
+op_star
+id|swap_file
+suffix:semicolon
+r_extern
+r_void
+id|rw_swap_page
+c_func
+(paren
+r_int
+id|rw
+comma
+r_int
+r_int
+id|nr
+comma
+r_char
+op_star
+id|buf
+)paren
 suffix:semicolon
 DECL|macro|read_swap_page
-mdefine_line|#define read_swap_page(nr,buffer) ll_rw_page(READ,SWAP_DEV,(nr),(buffer));
+mdefine_line|#define read_swap_page(nr,buf) &bslash;&n;&t;rw_swap_page(READ,(nr),(buf))
 DECL|macro|write_swap_page
-mdefine_line|#define write_swap_page(nr,buffer) ll_rw_page(WRITE,SWAP_DEV,(nr),(buffer));
+mdefine_line|#define write_swap_page(nr,buf) &bslash;&n;&t;rw_swap_page(WRITE,(nr),(buf))
 r_extern
 r_int
 r_int

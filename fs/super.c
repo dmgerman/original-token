@@ -2,6 +2,7 @@ multiline_comment|/*&n; *  linux/fs/super.c&n; *&n; *  (C) 1991  Linus Torvalds&
 multiline_comment|/*&n; * super.c contains code to handle the super-block tables.&n; */
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
+macro_line|#include &lt;linux/minix_fs.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
 macro_line|#include &lt;errno.h&gt;
@@ -285,7 +286,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|sb-&gt;s_imount
+id|sb-&gt;s_covered
 )paren
 (brace
 id|printk
@@ -316,7 +317,7 @@ l_int|0
 suffix:semicolon
 id|i
 OL
-id|I_MAP_SLOTS
+id|MINIX_I_MAP_SLOTS
 suffix:semicolon
 id|i
 op_increment
@@ -341,7 +342,7 @@ l_int|0
 suffix:semicolon
 id|i
 OL
-id|Z_MAP_SLOTS
+id|MINIX_Z_MAP_SLOTS
 suffix:semicolon
 id|i
 op_increment
@@ -461,11 +462,11 @@ id|s-&gt;s_dev
 op_assign
 id|dev
 suffix:semicolon
-id|s-&gt;s_isup
+id|s-&gt;s_mounted
 op_assign
 l_int|NULL
 suffix:semicolon
-id|s-&gt;s_imount
+id|s-&gt;s_covered
 op_assign
 l_int|NULL
 suffix:semicolon
@@ -522,7 +523,7 @@ op_star
 (paren
 (paren
 r_struct
-id|d_super_block
+id|minix_super_block
 op_star
 )paren
 id|s
@@ -532,7 +533,7 @@ op_star
 (paren
 (paren
 r_struct
-id|d_super_block
+id|minix_super_block
 op_star
 )paren
 id|bh-&gt;b_data
@@ -549,7 +550,7 @@ c_cond
 (paren
 id|s-&gt;s_magic
 op_ne
-id|SUPER_MAGIC
+id|MINIX_SUPER_MAGIC
 )paren
 (brace
 id|s-&gt;s_dev
@@ -575,7 +576,7 @@ l_int|0
 suffix:semicolon
 id|i
 OL
-id|I_MAP_SLOTS
+id|MINIX_I_MAP_SLOTS
 suffix:semicolon
 id|i
 op_increment
@@ -596,7 +597,7 @@ l_int|0
 suffix:semicolon
 id|i
 OL
-id|Z_MAP_SLOTS
+id|MINIX_Z_MAP_SLOTS
 suffix:semicolon
 id|i
 op_increment
@@ -705,7 +706,7 @@ l_int|0
 suffix:semicolon
 id|i
 OL
-id|I_MAP_SLOTS
+id|MINIX_I_MAP_SLOTS
 suffix:semicolon
 id|i
 op_increment
@@ -730,7 +731,7 @@ l_int|0
 suffix:semicolon
 id|i
 OL
-id|Z_MAP_SLOTS
+id|MINIX_Z_MAP_SLOTS
 suffix:semicolon
 id|i
 op_increment
@@ -805,7 +806,7 @@ id|dev_name
 )paren
 (brace
 r_struct
-id|m_inode
+id|inode
 op_star
 id|inode
 suffix:semicolon
@@ -837,10 +838,7 @@ id|ENOENT
 suffix:semicolon
 id|dev
 op_assign
-id|inode-&gt;i_zone
-(braket
-l_int|0
-)braket
+id|inode-&gt;i_rdev
 suffix:semicolon
 r_if
 c_cond
@@ -897,7 +895,7 @@ id|dev
 op_logical_or
 op_logical_neg
 (paren
-id|sb-&gt;s_imount
+id|sb-&gt;s_covered
 )paren
 )paren
 r_return
@@ -908,7 +906,7 @@ r_if
 c_cond
 (paren
 op_logical_neg
-id|sb-&gt;s_imount-&gt;i_mount
+id|sb-&gt;s_covered-&gt;i_mount
 )paren
 id|printk
 c_func
@@ -943,31 +941,45 @@ id|dev
 op_logical_and
 id|inode-&gt;i_count
 )paren
+r_if
+c_cond
+(paren
+id|inode
+op_eq
+id|sb-&gt;s_mounted
+op_logical_and
+id|inode-&gt;i_count
+op_eq
+l_int|1
+)paren
+r_continue
+suffix:semicolon
+r_else
 r_return
 op_minus
 id|EBUSY
 suffix:semicolon
-id|sb-&gt;s_imount-&gt;i_mount
+id|sb-&gt;s_covered-&gt;i_mount
 op_assign
 l_int|0
 suffix:semicolon
 id|iput
 c_func
 (paren
-id|sb-&gt;s_imount
+id|sb-&gt;s_covered
 )paren
 suffix:semicolon
-id|sb-&gt;s_imount
+id|sb-&gt;s_covered
 op_assign
 l_int|NULL
 suffix:semicolon
 id|iput
 c_func
 (paren
-id|sb-&gt;s_isup
+id|sb-&gt;s_mounted
 )paren
 suffix:semicolon
-id|sb-&gt;s_isup
+id|sb-&gt;s_mounted
 op_assign
 l_int|NULL
 suffix:semicolon
@@ -1005,7 +1017,7 @@ id|rw_flag
 )paren
 (brace
 r_struct
-id|m_inode
+id|inode
 op_star
 id|dev_i
 comma
@@ -1040,10 +1052,7 @@ id|ENOENT
 suffix:semicolon
 id|dev
 op_assign
-id|dev_i-&gt;i_zone
-(braket
-l_int|0
-)braket
+id|dev_i-&gt;i_rdev
 suffix:semicolon
 r_if
 c_cond
@@ -1098,9 +1107,9 @@ id|dir_i-&gt;i_count
 op_ne
 l_int|1
 op_logical_or
-id|dir_i-&gt;i_num
+id|dir_i-&gt;i_ino
 op_eq
-id|ROOT_INO
+id|MINIX_ROOT_INO
 )paren
 (brace
 id|iput
@@ -1165,7 +1174,7 @@ suffix:semicolon
 r_if
 c_cond
 (paren
-id|sb-&gt;s_imount
+id|sb-&gt;s_covered
 )paren
 (brace
 id|iput
@@ -1196,7 +1205,35 @@ op_minus
 id|EPERM
 suffix:semicolon
 )brace
-id|sb-&gt;s_imount
+r_if
+c_cond
+(paren
+op_logical_neg
+(paren
+id|sb-&gt;s_mounted
+op_assign
+id|iget
+c_func
+(paren
+id|dev
+comma
+id|MINIX_ROOT_INO
+)paren
+)paren
+)paren
+(brace
+id|iput
+c_func
+(paren
+id|dir_i
+)paren
+suffix:semicolon
+r_return
+op_minus
+id|EPERM
+suffix:semicolon
+)brace
+id|sb-&gt;s_covered
 op_assign
 id|dir_i
 suffix:semicolon
@@ -1233,7 +1270,7 @@ op_star
 id|p
 suffix:semicolon
 r_struct
-id|m_inode
+id|inode
 op_star
 id|mi
 suffix:semicolon
@@ -1245,7 +1282,7 @@ op_ne
 r_sizeof
 (paren
 r_struct
-id|d_inode
+id|minix_inode
 )paren
 )paren
 id|panic
@@ -1371,7 +1408,7 @@ c_func
 (paren
 id|ROOT_DEV
 comma
-id|ROOT_INO
+id|MINIX_ROOT_INO
 )paren
 )paren
 )paren
@@ -1386,9 +1423,9 @@ op_add_assign
 l_int|3
 suffix:semicolon
 multiline_comment|/* NOTE! it is logically used 4 times, not 1 */
-id|p-&gt;s_isup
+id|p-&gt;s_mounted
 op_assign
-id|p-&gt;s_imount
+id|p-&gt;s_covered
 op_assign
 id|mi
 suffix:semicolon

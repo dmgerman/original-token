@@ -608,6 +608,20 @@ c_func
 (paren
 )paren
 suffix:semicolon
+r_extern
+r_int
+id|sys_swapon
+c_func
+(paren
+)paren
+suffix:semicolon
+r_extern
+r_int
+id|sys_reboot
+c_func
+(paren
+)paren
+suffix:semicolon
 DECL|variable|sys_call_table
 id|fn_ptr
 id|sys_call_table
@@ -788,6 +802,10 @@ comma
 id|sys_readlink
 comma
 id|sys_uselib
+comma
+id|sys_swapon
+comma
+id|sys_reboot
 )brace
 suffix:semicolon
 multiline_comment|/* So we don&squot;t have to do any more manual updating.... */

@@ -62,7 +62,7 @@ suffix:semicolon
 suffix:semicolon
 multiline_comment|/*&n; * This is used in the elevator algorithm: Note that&n; * reads always go before writes. This is natural: reads&n; * are much more time-critical than writes.&n; */
 DECL|macro|IN_ORDER
-mdefine_line|#define IN_ORDER(s1,s2) &bslash;&n;((s1)-&gt;cmd&lt;(s2)-&gt;cmd || (s1)-&gt;cmd==(s2)-&gt;cmd &amp;&amp; &bslash;&n;((s1)-&gt;dev &lt; (s2)-&gt;dev || ((s1)-&gt;dev == (s2)-&gt;dev &amp;&amp; &bslash;&n;(s1)-&gt;sector &lt; (s2)-&gt;sector)))
+mdefine_line|#define IN_ORDER(s1,s2) &bslash;&n;((s1)-&gt;cmd&lt;(s2)-&gt;cmd || ((s1)-&gt;cmd==(s2)-&gt;cmd &amp;&amp; &bslash;&n;((s1)-&gt;dev &lt; (s2)-&gt;dev || (((s1)-&gt;dev == (s2)-&gt;dev &amp;&amp; &bslash;&n;(s1)-&gt;sector &lt; (s2)-&gt;sector)))))
 DECL|struct|blk_dev_struct
 r_struct
 id|blk_dev_struct
@@ -150,11 +150,11 @@ mdefine_line|#define DEVICE_NAME &quot;harddisk&quot;
 DECL|macro|DEVICE_INTR
 mdefine_line|#define DEVICE_INTR do_hd
 DECL|macro|DEVICE_TIMEOUT
-mdefine_line|#define DEVICE_TIMEOUT hd_timeout
+mdefine_line|#define DEVICE_TIMEOUT HD_TIMER
 DECL|macro|DEVICE_REQUEST
 mdefine_line|#define DEVICE_REQUEST do_hd_request
 DECL|macro|DEVICE_NR
-mdefine_line|#define DEVICE_NR(device) (MINOR(device)/5)
+mdefine_line|#define DEVICE_NR(device) (MINOR(device)&gt;&gt;6)
 DECL|macro|DEVICE_ON
 mdefine_line|#define DEVICE_ON(device)
 DECL|macro|DEVICE_OFF
@@ -182,14 +182,8 @@ l_int|NULL
 suffix:semicolon
 macro_line|#endif
 macro_line|#ifdef DEVICE_TIMEOUT
-DECL|variable|DEVICE_TIMEOUT
-r_int
-id|DEVICE_TIMEOUT
-op_assign
-l_int|0
-suffix:semicolon
 DECL|macro|SET_INTR
-mdefine_line|#define SET_INTR(x) (DEVICE_INTR = (x),DEVICE_TIMEOUT = 200)
+mdefine_line|#define SET_INTR(x) (DEVICE_INTR = (x), &bslash;&n;&t;timer_table[DEVICE_TIMEOUT].expires = jiffies + 200, &bslash;&n;&t;timer_active |= 1&lt;&lt;DEVICE_TIMEOUT)
 macro_line|#else
 DECL|macro|SET_INTR
 mdefine_line|#define SET_INTR(x) (DEVICE_INTR = (x))
@@ -326,7 +320,7 @@ suffix:semicolon
 )brace
 macro_line|#ifdef DEVICE_TIMEOUT
 DECL|macro|CLEAR_DEVICE_TIMEOUT
-mdefine_line|#define CLEAR_DEVICE_TIMEOUT DEVICE_TIMEOUT = 0;
+mdefine_line|#define CLEAR_DEVICE_TIMEOUT timer_active &amp;= ~(1&lt;&lt;DEVICE_TIMEOUT);
 macro_line|#else
 DECL|macro|CLEAR_DEVICE_TIMEOUT
 mdefine_line|#define CLEAR_DEVICE_TIMEOUT

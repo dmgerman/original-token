@@ -2,6 +2,7 @@ multiline_comment|/*&n; *  linux/kernel/blk_drv/ramdisk.c&n; *&n; *  Written by 
 macro_line|#include &lt;string.h&gt;
 macro_line|#include &lt;linux/config.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
+macro_line|#include &lt;linux/minix_fs.h&gt;
 macro_line|#include &lt;linux/fs.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;asm/system.h&gt;
@@ -333,7 +334,7 @@ op_star
 (paren
 (paren
 r_struct
-id|d_super_block
+id|minix_super_block
 op_star
 )paren
 op_amp
@@ -344,7 +345,7 @@ op_star
 (paren
 (paren
 r_struct
-id|d_super_block
+id|minix_super_block
 op_star
 )paren
 id|bh-&gt;b_data
@@ -361,7 +362,7 @@ c_cond
 (paren
 id|s.s_magic
 op_ne
-id|SUPER_MAGIC
+id|MINIX_SUPER_MAGIC
 )paren
 multiline_comment|/* No ram disk image present, assume normal floppy boot */
 r_return

@@ -2,19 +2,24 @@ multiline_comment|/*&n; *  linux/fs/pipe.c&n; *&n; *  (C) 1991  Linus Torvalds&n
 macro_line|#include &lt;signal.h&gt;
 macro_line|#include &lt;errno.h&gt;
 macro_line|#include &lt;termios.h&gt;
+macro_line|#include &lt;fcntl.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
-macro_line|#include &lt;linux/mm.h&gt;&t;/* for get_free_page */
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
-DECL|function|read_pipe
+DECL|function|pipe_read
 r_int
-id|read_pipe
+id|pipe_read
 c_func
 (paren
 r_struct
-id|m_inode
+id|inode
 op_star
 id|inode
+comma
+r_struct
+id|file
+op_star
+id|filp
 comma
 r_char
 op_star
@@ -33,27 +38,25 @@ id|read
 op_assign
 l_int|0
 suffix:semicolon
-r_while
-c_loop
+r_if
+c_cond
 (paren
-id|count
-OG
-l_int|0
+op_logical_neg
+(paren
+id|filp-&gt;f_flags
+op_amp
+id|O_NONBLOCK
 )paren
-(brace
+)paren
 r_while
 c_loop
 (paren
 op_logical_neg
-(paren
-id|size
-op_assign
 id|PIPE_SIZE
 c_func
 (paren
 op_star
 id|inode
-)paren
 )paren
 )paren
 (brace
@@ -78,7 +81,7 @@ l_int|2
 )paren
 multiline_comment|/* are there any writers? */
 r_return
-id|read
+l_int|0
 suffix:semicolon
 r_if
 c_cond
@@ -89,11 +92,6 @@ op_complement
 id|current-&gt;blocked
 )paren
 r_return
-id|read
-ques
-c_cond
-id|read
-suffix:colon
 op_minus
 id|ERESTARTSYS
 suffix:semicolon
@@ -110,6 +108,25 @@ id|inode
 )paren
 suffix:semicolon
 )brace
+r_while
+c_loop
+(paren
+id|count
+OG
+l_int|0
+op_logical_and
+(paren
+id|size
+op_assign
+id|PIPE_SIZE
+c_func
+(paren
+op_star
+id|inode
+)paren
+)paren
+)paren
+(brace
 id|chars
 op_assign
 id|PAGE_SIZE
@@ -226,15 +243,20 @@ r_return
 id|read
 suffix:semicolon
 )brace
-DECL|function|write_pipe
+DECL|function|pipe_write
 r_int
-id|write_pipe
+id|pipe_write
 c_func
 (paren
 r_struct
-id|m_inode
+id|inode
 op_star
 id|inode
+comma
+r_struct
+id|file
+op_star
+id|filp
 comma
 r_char
 op_star
@@ -323,10 +345,27 @@ c_cond
 id|written
 suffix:colon
 op_minus
-l_int|1
+id|EINTR
 suffix:semicolon
 )brace
-id|sleep_on
+r_if
+c_cond
+(paren
+id|current-&gt;signal
+op_amp
+op_complement
+id|current-&gt;blocked
+)paren
+r_return
+id|written
+ques
+c_cond
+id|written
+suffix:colon
+op_minus
+id|EINTR
+suffix:semicolon
+id|interruptible_sleep_on
 c_func
 (paren
 op_amp
@@ -467,7 +506,7 @@ id|fildes
 )paren
 (brace
 r_struct
-id|m_inode
+id|inode
 op_star
 id|inode
 suffix:semicolon
@@ -803,7 +842,7 @@ id|pipe_ioctl
 c_func
 (paren
 r_struct
-id|m_inode
+id|inode
 op_star
 id|pino
 comma

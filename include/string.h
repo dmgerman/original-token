@@ -1058,11 +1058,19 @@ l_string|&quot;7:&bslash;ttestl %0,%0&bslash;n&bslash;t&quot;
 l_string|&quot;jne 8f&bslash;n&bslash;t&quot;
 l_string|&quot;movl %0,%1&bslash;n&quot;
 l_string|&quot;8:&quot;
+macro_line|#if __GNUC__ == 2
+suffix:colon
+l_string|&quot;=r&quot;
+(paren
+id|__res
+)paren
+macro_line|#else
 suffix:colon
 l_string|&quot;=b&quot;
 (paren
 id|__res
 )paren
+macro_line|#endif
 comma
 l_string|&quot;=S&quot;
 (paren
@@ -1214,7 +1222,8 @@ c_func
 (paren
 l_string|&quot;std&bslash;n&bslash;t&quot;
 l_string|&quot;rep&bslash;n&bslash;t&quot;
-l_string|&quot;movsb&quot;
+l_string|&quot;movsb&bslash;n&bslash;t&quot;
+l_string|&quot;cld&quot;
 op_scope_resolution
 l_string|&quot;c&quot;
 (paren

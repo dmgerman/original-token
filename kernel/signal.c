@@ -3,7 +3,20 @@ macro_line|#include &lt;linux/sched.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 macro_line|#include &lt;asm/segment.h&gt;
 macro_line|#include &lt;signal.h&gt;
+macro_line|#include &lt;sys/wait.h&gt;
 macro_line|#include &lt;errno.h&gt;
+r_int
+id|send_sig
+(paren
+r_int
+comma
+r_struct
+id|task_struct
+op_star
+comma
+r_int
+)paren
+suffix:semicolon
 DECL|function|sys_sgetmask
 r_int
 id|sys_sgetmask
@@ -552,6 +565,23 @@ l_int|0
 suffix:semicolon
 multiline_comment|/* We didn&squot;t do a dump */
 )brace
+r_extern
+r_int
+id|sys_waitpid
+c_func
+(paren
+id|pid_t
+id|pid
+comma
+r_int
+r_int
+op_star
+id|stat_addr
+comma
+r_int
+id|options
+)paren
+suffix:semicolon
 DECL|function|do_signal
 r_int
 id|do_signal
@@ -559,9 +589,6 @@ c_func
 (paren
 r_int
 id|signr
-comma
-r_int
-id|eax
 comma
 r_int
 id|ebx
@@ -573,16 +600,31 @@ r_int
 id|edx
 comma
 r_int
-id|orig_eax
+id|esi
 comma
 r_int
-id|fs
+id|edi
+comma
+r_int
+id|ebp
+comma
+r_int
+id|eax
+comma
+r_int
+id|ds
 comma
 r_int
 id|es
 comma
 r_int
-id|ds
+id|fs
+comma
+r_int
+id|gs
+comma
+r_int
+id|orig_eax
 comma
 r_int
 id|eip
@@ -745,10 +787,38 @@ id|sa_handler
 op_eq
 l_int|1
 )paren
+(brace
+multiline_comment|/* check for SIGCHLD: it&squot;s special */
+r_if
+c_cond
+(paren
+id|signr
+op_eq
+id|SIGCHLD
+)paren
+r_while
+c_loop
+(paren
+id|sys_waitpid
+c_func
+(paren
+op_minus
+l_int|1
+comma
+l_int|NULL
+comma
+id|WNOHANG
+)paren
+OG
+l_int|0
+)paren
+multiline_comment|/* nothing */
+suffix:semicolon
 r_return
 l_int|1
 suffix:semicolon
 multiline_comment|/* Ignore, see if there are more signals... */
+)brace
 r_if
 c_cond
 (paren
@@ -767,6 +837,9 @@ id|SIGCONT
 suffix:colon
 r_case
 id|SIGCHLD
+suffix:colon
+r_case
+id|SIGWINCH
 suffix:colon
 r_return
 l_int|1
@@ -809,18 +882,17 @@ op_amp
 id|SA_NOCLDSTOP
 )paren
 )paren
-id|current-&gt;p_pptr-&gt;signal
-op_or_assign
-(paren
-l_int|1
-op_lshift
+id|send_sig
+c_func
 (paren
 id|SIGCHLD
-op_minus
+comma
+id|current-&gt;p_pptr
+comma
 l_int|1
 )paren
-)paren
 suffix:semicolon
+multiline_comment|/*&t;&t;&t;&t;current-&gt;p_pptr-&gt;signal |= (1&lt;&lt;(SIGCHLD-1));*/
 r_return
 l_int|1
 suffix:semicolon
@@ -1014,6 +1086,23 @@ suffix:semicolon
 id|current-&gt;blocked
 op_or_assign
 id|sa-&gt;sa_mask
+suffix:semicolon
+multiline_comment|/* force a supervisor-mode page-in of the signal handler to reduce races */
+id|__asm__
+c_func
+(paren
+l_string|&quot;testb $0,%%fs:%0&quot;
+op_scope_resolution
+l_string|&quot;m&quot;
+(paren
+op_star
+(paren
+r_char
+op_star
+)paren
+id|sa_handler
+)paren
+)paren
 suffix:semicolon
 r_return
 l_int|0

@@ -21,7 +21,7 @@ id|__asm__
 (paren
 l_string|&quot;movb %%fs:%1,%0&quot;
 suffix:colon
-l_string|&quot;=r&quot;
+l_string|&quot;=q&quot;
 (paren
 id|_v
 )paren
@@ -135,7 +135,7 @@ id|__asm__
 (paren
 l_string|&quot;movb %0,%%fs:%1&quot;
 op_scope_resolution
-l_string|&quot;r&quot;
+l_string|&quot;q&quot;
 (paren
 id|val
 )paren
@@ -214,7 +214,7 @@ id|addr
 )paren
 suffix:semicolon
 )brace
-multiline_comment|/*&n; * Someone who knows GNU asm better than I should double check the followig.&n; * It seems to work, but I don&squot;t know if I&squot;m doing something subtly wrong.&n; * --- TYT, 11/24/91&n; * [ nothing wrong here, Linus ]&n; */
+multiline_comment|/*&n; * Someone who knows GNU asm better than I should double check the followig.&n; * It seems to work, but I don&squot;t know if I&squot;m doing something subtly wrong.&n; * --- TYT, 11/24/91&n; * [ nothing wrong here, Linus: I just changed the ax to be any reg ]&n; */
 DECL|function|get_fs
 r_extern
 r_inline
@@ -232,9 +232,9 @@ suffix:semicolon
 id|__asm__
 c_func
 (paren
-l_string|&quot;mov %%fs,%%ax&quot;
+l_string|&quot;mov %%fs,%0&quot;
 suffix:colon
-l_string|&quot;=a&quot;
+l_string|&quot;=r&quot;
 (paren
 id|_v
 )paren
@@ -262,9 +262,9 @@ suffix:semicolon
 id|__asm__
 c_func
 (paren
-l_string|&quot;mov %%ds,%%ax&quot;
+l_string|&quot;mov %%ds,%0&quot;
 suffix:colon
-l_string|&quot;=a&quot;
+l_string|&quot;=r&quot;
 (paren
 id|_v
 )paren
@@ -292,7 +292,7 @@ c_func
 (paren
 l_string|&quot;mov %0,%%fs&quot;
 op_scope_resolution
-l_string|&quot;a&quot;
+l_string|&quot;r&quot;
 (paren
 (paren
 r_int

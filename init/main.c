@@ -222,8 +222,6 @@ DECL|macro|DRIVE_INFO
 mdefine_line|#define DRIVE_INFO (*(struct drive_info *)0x90080)
 DECL|macro|ORIG_ROOT_DEV
 mdefine_line|#define ORIG_ROOT_DEV (*(unsigned short *)0x901FC)
-DECL|macro|ORIG_SWAP_DEV
-mdefine_line|#define ORIG_SWAP_DEV (*(unsigned short *)0x901FA)
 multiline_comment|/*&n; * Yeah, yeah, it&squot;s ugly, but I cannot find how to do this correctly&n; * and this seems to work. I anybody has more info on the real-time&n; * clock I&squot;d be interested. Most of this was trial and error, and some&n; * bios-listing reading. Urghh.&n; */
 DECL|macro|CMOS_READ
 mdefine_line|#define CMOS_READ(addr) ({ &bslash;&n;outb_p(0x80|addr,0x70); &bslash;&n;inb_p(0x71); &bslash;&n;})
@@ -383,6 +381,36 @@ id|term
 l_int|32
 )braket
 suffix:semicolon
+DECL|variable|argv_init
+r_static
+r_char
+op_star
+id|argv_init
+(braket
+)braket
+op_assign
+(brace
+l_string|&quot;/bin/init&quot;
+comma
+l_int|NULL
+)brace
+suffix:semicolon
+DECL|variable|envp_init
+r_static
+r_char
+op_star
+id|envp_init
+(braket
+)braket
+op_assign
+(brace
+l_string|&quot;HOME=/&quot;
+comma
+l_int|NULL
+comma
+l_int|NULL
+)brace
+suffix:semicolon
 DECL|variable|argv_rc
 r_static
 r_char
@@ -458,24 +486,18 @@ suffix:semicolon
 )brace
 id|drive_info
 suffix:semicolon
-DECL|function|main
+DECL|function|start_kernel
 r_void
-id|main
+id|start_kernel
 c_func
 (paren
 r_void
 )paren
-multiline_comment|/* This really IS void, no error here. */
 (brace
-multiline_comment|/* The startup routine assumes (well, ...) this */
 multiline_comment|/*&n; * Interrupts are still disabled. Do necessary setups, then&n; * enable them&n; */
 id|ROOT_DEV
 op_assign
 id|ORIG_ROOT_DEV
-suffix:semicolon
-id|SWAP_DEV
-op_assign
-id|ORIG_SWAP_DEV
 suffix:semicolon
 id|sprintf
 c_func
@@ -497,6 +519,13 @@ op_assign
 id|term
 suffix:semicolon
 id|envp_rc
+(braket
+l_int|1
+)braket
+op_assign
+id|term
+suffix:semicolon
+id|envp_init
 (braket
 l_int|1
 )braket
@@ -548,7 +577,7 @@ r_if
 c_cond
 (paren
 id|memory_end
-OG
+op_ge
 l_int|12
 op_star
 l_int|1024
@@ -568,7 +597,7 @@ r_if
 c_cond
 (paren
 id|memory_end
-OG
+op_ge
 l_int|6
 op_star
 l_int|1024
@@ -580,6 +609,26 @@ op_assign
 l_int|2
 op_star
 l_int|1024
+op_star
+l_int|1024
+suffix:semicolon
+r_else
+r_if
+c_cond
+(paren
+id|memory_end
+op_ge
+l_int|4
+op_star
+l_int|1024
+op_star
+l_int|1024
+)paren
+id|buffer_memory_end
+op_assign
+l_int|3
+op_star
+l_int|512
 op_star
 l_int|1024
 suffix:semicolon
@@ -851,6 +900,17 @@ op_minus
 id|main_memory_start
 )paren
 suffix:semicolon
+id|execve
+c_func
+(paren
+l_string|&quot;/bin/init&quot;
+comma
+id|argv_init
+comma
+id|envp_init
+)paren
+suffix:semicolon
+multiline_comment|/* if this fails, fall through to original stuff */
 r_if
 c_cond
 (paren

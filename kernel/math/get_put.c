@@ -1142,7 +1142,7 @@ id|addr
 suffix:semicolon
 )brace
 DECL|macro|DIV10
-mdefine_line|#define DIV10(low,high,rem) &bslash;&n;__asm__(&quot;divl %6 ; xchgl %1,%2 ; divl %6&quot; &bslash;&n;&t;:&quot;=d&quot; (rem),&quot;=a&quot; (low),&quot;=b&quot; (high) &bslash;&n;&t;:&quot;0&quot; (0),&quot;1&quot; (high),&quot;2&quot; (low),&quot;c&quot; (10))
+mdefine_line|#define DIV10(low,high,rem) &bslash;&n;__asm__(&quot;divl %6 ; xchgl %1,%2 ; divl %6&quot; &bslash;&n;&t;:&quot;=d&quot; (rem),&quot;=a&quot; (low),&quot;=r&quot; (high) &bslash;&n;&t;:&quot;0&quot; (0),&quot;1&quot; (high),&quot;2&quot; (low),&quot;c&quot; (10))
 DECL|function|put_BCD
 r_void
 id|put_BCD

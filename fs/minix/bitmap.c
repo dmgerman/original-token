@@ -2,18 +2,19 @@ multiline_comment|/*&n; *  linux/fs/bitmap.c&n; *&n; *  (C) 1991  Linus Torvalds
 multiline_comment|/* bitmap.c contains the code that handles the inode and block bitmaps */
 macro_line|#include &lt;string.h&gt;
 macro_line|#include &lt;linux/sched.h&gt;
+macro_line|#include &lt;linux/minix_fs.h&gt;
 macro_line|#include &lt;linux/kernel.h&gt;
 DECL|macro|clear_block
 mdefine_line|#define clear_block(addr) &bslash;&n;__asm__(&quot;cld&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;rep&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;stosl&quot; &bslash;&n;&t;::&quot;a&quot; (0),&quot;c&quot; (BLOCK_SIZE/4),&quot;D&quot; ((long) (addr)):&quot;cx&quot;,&quot;di&quot;)
 DECL|macro|set_bit
-mdefine_line|#define set_bit(nr,addr) ({&bslash;&n;register int res __asm__(&quot;ax&quot;); &bslash;&n;__asm__ __volatile__(&quot;btsl %2,%3&bslash;n&bslash;tsetb %%al&quot;: &bslash;&n;&quot;=a&quot; (res):&quot;0&quot; (0),&quot;r&quot; (nr),&quot;m&quot; (*(addr))); &bslash;&n;res;})
+mdefine_line|#define set_bit(nr,addr) ({&bslash;&n;char res; &bslash;&n;__asm__ __volatile__(&quot;btsl %1,%2&bslash;n&bslash;tsetb %0&quot;: &bslash;&n;&quot;=q&quot; (res):&quot;r&quot; (nr),&quot;m&quot; (*(addr))); &bslash;&n;res;})
 DECL|macro|clear_bit
-mdefine_line|#define clear_bit(nr,addr) ({&bslash;&n;register int res __asm__(&quot;ax&quot;); &bslash;&n;__asm__ __volatile__(&quot;btrl %2,%3&bslash;n&bslash;tsetnb %%al&quot;: &bslash;&n;&quot;=a&quot; (res):&quot;0&quot; (0),&quot;r&quot; (nr),&quot;m&quot; (*(addr))); &bslash;&n;res;})
+mdefine_line|#define clear_bit(nr,addr) ({&bslash;&n;char res; &bslash;&n;__asm__ __volatile__(&quot;btrl %1,%2&bslash;n&bslash;tsetnb %0&quot;: &bslash;&n;&quot;=q&quot; (res):&quot;r&quot; (nr),&quot;m&quot; (*(addr))); &bslash;&n;res;})
 DECL|macro|find_first_zero
-mdefine_line|#define find_first_zero(addr) ({ &bslash;&n;int __res; &bslash;&n;__asm__(&quot;cld&bslash;n&quot; &bslash;&n;&t;&quot;1:&bslash;tlodsl&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;notl %%eax&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;bsfl %%eax,%%edx&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;je 2f&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;addl %%edx,%%ecx&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;jmp 3f&bslash;n&quot; &bslash;&n;&t;&quot;2:&bslash;taddl $32,%%ecx&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;cmpl $8192,%%ecx&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;jl 1b&bslash;n&quot; &bslash;&n;&t;&quot;3:&quot; &bslash;&n;&t;:&quot;=c&quot; (__res):&quot;c&quot; (0),&quot;S&quot; (addr):&quot;ax&quot;,&quot;dx&quot;,&quot;si&quot;); &bslash;&n;__res;})
-DECL|function|free_block
+mdefine_line|#define find_first_zero(addr) ({ &bslash;&n;int __res; &bslash;&n;__asm__(&quot;cld&bslash;n&quot; &bslash;&n;&t;&quot;1:&bslash;tlodsl&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;notl %%eax&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;bsfl %%eax,%%edx&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;jne 2f&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;addl $32,%%ecx&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;cmpl $8192,%%ecx&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;jl 1b&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;xorl %%edx,%%edx&bslash;n&quot; &bslash;&n;&t;&quot;2:&bslash;taddl %%edx,%%ecx&quot; &bslash;&n;&t;:&quot;=c&quot; (__res):&quot;0&quot; (0),&quot;S&quot; (addr):&quot;ax&quot;,&quot;dx&quot;,&quot;si&quot;); &bslash;&n;__res;})
+DECL|function|minix_free_block
 r_int
-id|free_block
+id|minix_free_block
 c_func
 (paren
 r_int
@@ -32,6 +33,12 @@ r_struct
 id|buffer_head
 op_star
 id|bh
+suffix:semicolon
+r_int
+r_int
+id|bit
+comma
+id|zone
 suffix:semicolon
 r_if
 c_cond
@@ -124,11 +131,30 @@ id|bh
 )paren
 suffix:semicolon
 )brace
+id|zone
+op_assign
 id|block
-op_sub_assign
-id|sb-&gt;s_firstdatazone
 op_minus
+id|sb-&gt;s_firstdatazone
+op_plus
 l_int|1
+suffix:semicolon
+id|bit
+op_assign
+id|zone
+op_amp
+l_int|8191
+suffix:semicolon
+id|zone
+op_rshift_assign
+l_int|13
+suffix:semicolon
+id|bh
+op_assign
+id|sb-&gt;s_zmap
+(braket
+id|zone
+)braket
 suffix:semicolon
 r_if
 c_cond
@@ -136,50 +162,22 @@ c_cond
 id|clear_bit
 c_func
 (paren
-id|block
-op_amp
-l_int|8191
+id|bit
 comma
-id|sb-&gt;s_zmap
-(braket
-id|block
-op_div
-l_int|8192
-)braket
-op_member_access_from_pointer
-id|b_data
+id|bh-&gt;b_data
 )paren
 )paren
-(brace
 id|printk
 c_func
 (paren
-l_string|&quot;block (%04x:%d) &quot;
+l_string|&quot;free_block (%04x:%d): bit already cleared&bslash;n&quot;
 comma
 id|dev
 comma
 id|block
-op_plus
-id|sb-&gt;s_firstdatazone
-op_minus
-l_int|1
 )paren
 suffix:semicolon
-id|printk
-c_func
-(paren
-l_string|&quot;free_block: bit already cleared&bslash;n&quot;
-)paren
-suffix:semicolon
-)brace
-id|sb-&gt;s_zmap
-(braket
-id|block
-op_div
-l_int|8192
-)braket
-op_member_access_from_pointer
-id|b_dirt
+id|bh-&gt;b_dirt
 op_assign
 l_int|1
 suffix:semicolon
@@ -187,9 +185,9 @@ r_return
 l_int|1
 suffix:semicolon
 )brace
-DECL|function|new_block
+DECL|function|minix_new_block
 r_int
-id|new_block
+id|minix_new_block
 c_func
 (paren
 r_int
@@ -393,22 +391,17 @@ r_return
 id|j
 suffix:semicolon
 )brace
-DECL|function|free_inode
+DECL|function|minix_free_inode
 r_void
-id|free_inode
+id|minix_free_inode
 c_func
 (paren
 r_struct
-id|m_inode
+id|inode
 op_star
 id|inode
 )paren
 (brace
-r_struct
-id|super_block
-op_star
-id|sb
-suffix:semicolon
 r_struct
 id|buffer_head
 op_star
@@ -457,62 +450,64 @@ l_int|1
 id|printk
 c_func
 (paren
-l_string|&quot;trying to free inode with count=%d&bslash;n&quot;
+l_string|&quot;free_inode: inode has count=%d&bslash;n&quot;
 comma
 id|inode-&gt;i_count
 )paren
 suffix:semicolon
-id|panic
-c_func
-(paren
-l_string|&quot;free_inode&quot;
-)paren
+r_return
 suffix:semicolon
 )brace
 r_if
 c_cond
 (paren
-id|inode-&gt;i_nlinks
+id|inode-&gt;i_nlink
 )paren
-id|panic
+(brace
+id|printk
 c_func
 (paren
-l_string|&quot;trying to free inode with links&quot;
+l_string|&quot;free_inode: inode has nlink=%d&bslash;n&quot;
+comma
+id|inode-&gt;i_nlink
 )paren
 suffix:semicolon
+r_return
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
 op_logical_neg
-(paren
-id|sb
-op_assign
-id|get_super
+id|inode-&gt;i_sb
+)paren
+(brace
+id|printk
 c_func
 (paren
-id|inode-&gt;i_dev
-)paren
-)paren
-)paren
-id|panic
-c_func
-(paren
-l_string|&quot;trying to free inode on nonexistent device&quot;
+l_string|&quot;free_inode: inode on nonexistent device&bslash;n&quot;
 )paren
 suffix:semicolon
+r_return
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
-id|inode-&gt;i_num
+id|inode-&gt;i_ino
 template_param
-id|sb-&gt;s_ninodes
+id|inode-&gt;i_sb-&gt;s_ninodes
 )paren
-id|panic
+(brace
+id|printk
 c_func
 (paren
-l_string|&quot;trying to free inode 0 or nonexistant inode&quot;
+l_string|&quot;free_inode: inode 0 or nonexistent inode&bslash;n&quot;
 )paren
 suffix:semicolon
+r_return
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
@@ -520,27 +515,31 @@ op_logical_neg
 (paren
 id|bh
 op_assign
-id|sb-&gt;s_imap
+id|inode-&gt;i_sb-&gt;s_imap
 (braket
-id|inode-&gt;i_num
+id|inode-&gt;i_ino
 op_rshift
 l_int|13
 )braket
 )paren
 )paren
-id|panic
+(brace
+id|printk
 c_func
 (paren
-l_string|&quot;nonexistent imap in superblock&quot;
+l_string|&quot;free_inode: nonexistent imap in superblock&bslash;n&quot;
 )paren
 suffix:semicolon
+r_return
+suffix:semicolon
+)brace
 r_if
 c_cond
 (paren
 id|clear_bit
 c_func
 (paren
-id|inode-&gt;i_num
+id|inode-&gt;i_ino
 op_amp
 l_int|8191
 comma
@@ -572,11 +571,11 @@ id|inode
 )paren
 suffix:semicolon
 )brace
-DECL|function|new_inode
+DECL|function|minix_new_inode
 r_struct
-id|m_inode
+id|inode
 op_star
-id|new_inode
+id|minix_new_inode
 c_func
 (paren
 r_int
@@ -584,14 +583,9 @@ id|dev
 )paren
 (brace
 r_struct
-id|m_inode
+id|inode
 op_star
 id|inode
-suffix:semicolon
-r_struct
-id|super_block
-op_star
-id|sb
 suffix:semicolon
 r_struct
 id|buffer_head
@@ -624,7 +618,7 @@ c_cond
 (paren
 op_logical_neg
 (paren
-id|sb
+id|inode-&gt;i_sb
 op_assign
 id|get_super
 c_func
@@ -633,12 +627,23 @@ id|dev
 )paren
 )paren
 )paren
-id|panic
+(brace
+id|printk
 c_func
 (paren
-l_string|&quot;new_inode with unknown device&quot;
+l_string|&quot;new_inode: unknown device&bslash;n&quot;
 )paren
 suffix:semicolon
+id|iput
+c_func
+(paren
+id|inode
+)paren
+suffix:semicolon
+r_return
+l_int|NULL
+suffix:semicolon
+)brace
 id|j
 op_assign
 l_int|8192
@@ -662,7 +667,7 @@ c_cond
 (paren
 id|bh
 op_assign
-id|sb-&gt;s_imap
+id|inode-&gt;i_sb-&gt;s_imap
 (braket
 id|i
 )braket
@@ -700,7 +705,7 @@ id|i
 op_star
 l_int|8192
 OG
-id|sb-&gt;s_ninodes
+id|inode-&gt;i_sb-&gt;s_ninodes
 )paren
 (brace
 id|iput
@@ -724,12 +729,24 @@ comma
 id|bh-&gt;b_data
 )paren
 )paren
-id|panic
+(brace
+multiline_comment|/* shouldn&squot;t happen */
+id|printk
 c_func
 (paren
 l_string|&quot;new_inode: bit already set&quot;
 )paren
 suffix:semicolon
+id|iput
+c_func
+(paren
+id|inode
+)paren
+suffix:semicolon
+r_return
+l_int|NULL
+suffix:semicolon
+)brace
 id|bh-&gt;b_dirt
 op_assign
 l_int|1
@@ -738,7 +755,7 @@ id|inode-&gt;i_count
 op_assign
 l_int|1
 suffix:semicolon
-id|inode-&gt;i_nlinks
+id|inode-&gt;i_nlink
 op_assign
 l_int|1
 suffix:semicolon
@@ -758,7 +775,7 @@ id|inode-&gt;i_dirt
 op_assign
 l_int|1
 suffix:semicolon
-id|inode-&gt;i_num
+id|inode-&gt;i_ino
 op_assign
 id|j
 op_plus
@@ -773,6 +790,11 @@ op_assign
 id|inode-&gt;i_ctime
 op_assign
 id|CURRENT_TIME
+suffix:semicolon
+id|inode-&gt;i_op
+op_assign
+op_amp
+id|minix_inode_operations
 suffix:semicolon
 r_return
 id|inode

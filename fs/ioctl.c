@@ -24,7 +24,7 @@ id|pipe_ioctl
 c_func
 (paren
 r_struct
-id|m_inode
+id|inode
 op_star
 id|pino
 comma
@@ -167,10 +167,7 @@ id|EINVAL
 suffix:semicolon
 id|dev
 op_assign
-id|filp-&gt;f_inode-&gt;i_zone
-(braket
-l_int|0
-)braket
+id|filp-&gt;f_inode-&gt;i_rdev
 suffix:semicolon
 r_if
 c_cond

@@ -74,6 +74,8 @@ DECL|macro|ECC_ERR
 mdefine_line|#define ECC_ERR&t;&t;0x40&t;/* ? */
 DECL|macro|BBD_ERR
 mdefine_line|#define&t;BBD_ERR&t;&t;0x80&t;/* ? */
+DECL|macro|EXTENDED_PARTITION
+mdefine_line|#define EXTENDED_PARTITION 5
 DECL|struct|partition
 r_struct
 id|partition
@@ -83,49 +85,49 @@ r_int
 r_char
 id|boot_ind
 suffix:semicolon
-multiline_comment|/* 0x80 - active (unused) */
+multiline_comment|/* 0x80 - active */
 DECL|member|head
 r_int
 r_char
 id|head
 suffix:semicolon
-multiline_comment|/* ? */
+multiline_comment|/* starting head */
 DECL|member|sector
 r_int
 r_char
 id|sector
 suffix:semicolon
-multiline_comment|/* ? */
+multiline_comment|/* starting sector */
 DECL|member|cyl
 r_int
 r_char
 id|cyl
 suffix:semicolon
-multiline_comment|/* ? */
+multiline_comment|/* starting cylinder */
 DECL|member|sys_ind
 r_int
 r_char
 id|sys_ind
 suffix:semicolon
-multiline_comment|/* ? */
+multiline_comment|/* What partition type */
 DECL|member|end_head
 r_int
 r_char
 id|end_head
 suffix:semicolon
-multiline_comment|/* ? */
+multiline_comment|/* end head */
 DECL|member|end_sector
 r_int
 r_char
 id|end_sector
 suffix:semicolon
-multiline_comment|/* ? */
+multiline_comment|/* end sector */
 DECL|member|end_cyl
 r_int
 r_char
 id|end_cyl
 suffix:semicolon
-multiline_comment|/* ? */
+multiline_comment|/* end cylinder */
 DECL|member|start_sect
 r_int
 r_int

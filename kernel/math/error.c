@@ -9,12 +9,6 @@ c_func
 r_void
 )paren
 (brace
-id|__asm__
-c_func
-(paren
-l_string|&quot;fnclex&quot;
-)paren
-suffix:semicolon
 r_if
 c_cond
 (paren
@@ -28,6 +22,12 @@ op_lshift
 id|SIGFPE
 op_minus
 l_int|1
+)paren
+suffix:semicolon
+id|__asm__
+c_func
+(paren
+l_string|&quot;fnclex&quot;
 )paren
 suffix:semicolon
 )brace

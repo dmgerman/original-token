@@ -9,7 +9,7 @@ mdefine_line|#define nop() __asm__ (&quot;nop&quot;::)
 DECL|macro|iret
 mdefine_line|#define iret() __asm__ (&quot;iret&quot;::)
 DECL|macro|_set_gate
-mdefine_line|#define _set_gate(gate_addr,type,dpl,addr) &bslash;&n;__asm__ (&quot;movw %%dx,%%ax&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;movw %0,%%dx&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;movl %%eax,%1&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;movl %%edx,%2&quot; &bslash;&n;&t;: &bslash;&n;&t;: &quot;i&quot; ((short) (0x8000+(dpl&lt;&lt;13)+(type&lt;&lt;8))), &bslash;&n;&t;&quot;o&quot; (*((char *) (gate_addr))), &bslash;&n;&t;&quot;o&quot; (*(4+(char *) (gate_addr))), &bslash;&n;&t;&quot;d&quot; ((char *) (addr)),&quot;a&quot; (0x00080000))
+mdefine_line|#define _set_gate(gate_addr,type,dpl,addr) &bslash;&n;__asm__ (&quot;movw %%dx,%%ax&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;movw %0,%%dx&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;movl %%eax,%1&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;movl %%edx,%2&quot; &bslash;&n;&t;:: &quot;i&quot; ((short) (0x8000+(dpl&lt;&lt;13)+(type&lt;&lt;8))), &bslash;&n;&t;&quot;m&quot; (*((char *) (gate_addr))), &bslash;&n;&t;&quot;m&quot; (*(4+(char *) (gate_addr))), &bslash;&n;&t;&quot;d&quot; ((char *) (addr)),&quot;a&quot; (0x00080000) &bslash;&n;&t;:&quot;ax&quot;,&quot;dx&quot;)
 DECL|macro|set_intr_gate
 mdefine_line|#define set_intr_gate(n,addr) &bslash;&n;&t;_set_gate(&amp;idt[n],14,0,addr)
 DECL|macro|set_trap_gate

@@ -15,6 +15,7 @@ id|exit_code
 id|__asm__
 c_func
 (paren
+l_string|&quot;movl %1,%%ebx&bslash;n&bslash;t&quot;
 l_string|&quot;int $0x80&quot;
 op_scope_resolution
 l_string|&quot;a&quot;
@@ -22,7 +23,7 @@ l_string|&quot;a&quot;
 id|__NR_exit
 )paren
 comma
-l_string|&quot;b&quot;
+l_string|&quot;g&quot;
 (paren
 id|exit_code
 )paren

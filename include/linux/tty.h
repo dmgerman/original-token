@@ -116,6 +116,11 @@ DECL|member|stopped
 r_int
 id|stopped
 suffix:semicolon
+DECL|member|winsize
+r_struct
+id|winsize
+id|winsize
+suffix:semicolon
 DECL|member|write
 r_void
 (paren
@@ -160,6 +165,16 @@ r_extern
 r_int
 id|fg_console
 suffix:semicolon
+r_extern
+r_int
+r_int
+id|video_num_columns
+suffix:semicolon
+r_extern
+r_int
+r_int
+id|video_num_lines
+suffix:semicolon
 DECL|macro|TTY_TABLE
 mdefine_line|#define TTY_TABLE(nr) &bslash;&n;(tty_table + ((nr) ? (((nr) &lt; 64)? (nr)-1:(nr))&t;: fg_console))
 multiline_comment|/*&t;intr=^C&t;&t;quit=^|&t;&t;erase=del&t;kill=^U&n;&t;eof=^D&t;&t;vtime=&bslash;0&t;vmin=&bslash;1&t;&t;sxtc=&bslash;0&n;&t;start=^Q&t;stop=^S&t;&t;susp=^Z&t;&t;eol=&bslash;0&n;&t;reprint=^R&t;discard=^U&t;werase=^W&t;lnext=^V&n;&t;eol2=&bslash;0&n;*/
@@ -199,6 +214,10 @@ id|buf
 comma
 r_int
 id|n
+comma
+r_int
+r_int
+id|flags
 )paren
 suffix:semicolon
 r_int
@@ -270,7 +289,8 @@ r_void
 id|update_screen
 c_func
 (paren
-r_void
+r_int
+id|new_console
 )paren
 suffix:semicolon
 macro_line|#endif

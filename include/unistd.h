@@ -5,15 +5,15 @@ multiline_comment|/* ok, this may be a joke, but I&squot;m working on it */
 DECL|macro|_POSIX_VERSION
 mdefine_line|#define _POSIX_VERSION 198808L
 DECL|macro|_POSIX_CHOWN_RESTRICTED
-mdefine_line|#define _POSIX_CHOWN_RESTRICTED&t;/* only root can do a chown (I think..) */
+mdefine_line|#define _POSIX_CHOWN_RESTRICTED&t;1    /* only root can do a chown (I think..) */
 DECL|macro|_POSIX_NO_TRUNC
-mdefine_line|#define _POSIX_NO_TRUNC&t;&t;/* no pathname truncation (but see in kernel) */
+mdefine_line|#define _POSIX_NO_TRUNC&t;&t;1    /* no pathname truncation (but see kernel) */
 DECL|macro|_POSIX_VDISABLE
-mdefine_line|#define _POSIX_VDISABLE &squot;&bslash;0&squot;&t;/* character to disable things like ^C */
+mdefine_line|#define _POSIX_VDISABLE&t;&t;&squot;&bslash;0&squot; /* character to disable things like ^C */
 DECL|macro|_POSIX_JOB_CONTROL
-mdefine_line|#define _POSIX_JOB_CONTROL
+mdefine_line|#define _POSIX_JOB_CONTROL&t;1
 DECL|macro|_POSIX_SAVED_IDS
-mdefine_line|#define _POSIX_SAVED_IDS&t;/* Implemented, for whatever good it is */
+mdefine_line|#define _POSIX_SAVED_IDS&t;1    /* Implemented, for whatever good it is */
 DECL|macro|STDIN_FILENO
 mdefine_line|#define STDIN_FILENO&t;0
 DECL|macro|STDOUT_FILENO
@@ -257,14 +257,18 @@ DECL|macro|__NR_readlink
 mdefine_line|#define __NR_readlink&t;85
 DECL|macro|__NR_uselib
 mdefine_line|#define __NR_uselib&t;86
+DECL|macro|__NR_swapon
+mdefine_line|#define __NR_swapon&t;87
+DECL|macro|__NR_reboot
+mdefine_line|#define __NR_reboot&t;88
 DECL|macro|_syscall0
 mdefine_line|#define _syscall0(type,name) &bslash;&n;type name(void) &bslash;&n;{ &bslash;&n;long __res; &bslash;&n;__asm__ volatile (&quot;int $0x80&quot; &bslash;&n;&t;: &quot;=a&quot; (__res) &bslash;&n;&t;: &quot;0&quot; (__NR_##name)); &bslash;&n;if (__res &gt;= 0) &bslash;&n;&t;return (type) __res; &bslash;&n;errno = -__res; &bslash;&n;return -1; &bslash;&n;}
 DECL|macro|_syscall1
-mdefine_line|#define _syscall1(type,name,atype,a) &bslash;&n;type name(atype a) &bslash;&n;{ &bslash;&n;long __res; &bslash;&n;__asm__ volatile (&quot;int $0x80&quot; &bslash;&n;&t;: &quot;=a&quot; (__res) &bslash;&n;&t;: &quot;0&quot; (__NR_##name),&quot;b&quot; ((long)(a))); &bslash;&n;if (__res &gt;= 0) &bslash;&n;&t;return (type) __res; &bslash;&n;errno = -__res; &bslash;&n;return -1; &bslash;&n;}
+mdefine_line|#define _syscall1(type,name,atype,a) &bslash;&n;type name(atype a) &bslash;&n;{ &bslash;&n;long __res; &bslash;&n;__asm__ volatile (&quot;movl %2,%%ebx&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;int $0x80&quot; &bslash;&n;&t;: &quot;=a&quot; (__res) &bslash;&n;&t;: &quot;0&quot; (__NR_##name),&quot;g&quot; ((long)(a)):&quot;bx&quot;); &bslash;&n;if (__res &gt;= 0) &bslash;&n;&t;return (type) __res; &bslash;&n;errno = -__res; &bslash;&n;return -1; &bslash;&n;}
 DECL|macro|_syscall2
-mdefine_line|#define _syscall2(type,name,atype,a,btype,b) &bslash;&n;type name(atype a,btype b) &bslash;&n;{ &bslash;&n;long __res; &bslash;&n;__asm__ volatile (&quot;int $0x80&quot; &bslash;&n;&t;: &quot;=a&quot; (__res) &bslash;&n;&t;: &quot;0&quot; (__NR_##name),&quot;b&quot; ((long)(a)),&quot;c&quot; ((long)(b))); &bslash;&n;if (__res &gt;= 0) &bslash;&n;&t;return (type) __res; &bslash;&n;errno = -__res; &bslash;&n;return -1; &bslash;&n;}
+mdefine_line|#define _syscall2(type,name,atype,a,btype,b) &bslash;&n;type name(atype a,btype b) &bslash;&n;{ &bslash;&n;long __res; &bslash;&n;__asm__ volatile (&quot;movl %2,%%ebx&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;int $0x80&quot; &bslash;&n;&t;: &quot;=a&quot; (__res) &bslash;&n;&t;: &quot;0&quot; (__NR_##name),&quot;g&quot; ((long)(a)),&quot;c&quot; ((long)(b)):&quot;bx&quot;); &bslash;&n;if (__res &gt;= 0) &bslash;&n;&t;return (type) __res; &bslash;&n;errno = -__res; &bslash;&n;return -1; &bslash;&n;}
 DECL|macro|_syscall3
-mdefine_line|#define _syscall3(type,name,atype,a,btype,b,ctype,c) &bslash;&n;type name(atype a,btype b,ctype c) &bslash;&n;{ &bslash;&n;long __res; &bslash;&n;__asm__ volatile (&quot;int $0x80&quot; &bslash;&n;&t;: &quot;=a&quot; (__res) &bslash;&n;&t;: &quot;0&quot; (__NR_##name),&quot;b&quot; ((long)(a)),&quot;c&quot; ((long)(b)),&quot;d&quot; ((long)(c))); &bslash;&n;if (__res&gt;=0) &bslash;&n;&t;return (type) __res; &bslash;&n;errno=-__res; &bslash;&n;return -1; &bslash;&n;}
+mdefine_line|#define _syscall3(type,name,atype,a,btype,b,ctype,c) &bslash;&n;type name(atype a,btype b,ctype c) &bslash;&n;{ &bslash;&n;long __res; &bslash;&n;__asm__ volatile (&quot;movl %2,%%ebx&bslash;n&bslash;t&quot; &bslash;&n;&t;&quot;int $0x80&quot; &bslash;&n;&t;: &quot;=a&quot; (__res) &bslash;&n;&t;: &quot;0&quot; (__NR_##name),&quot;g&quot; ((long)(a)),&quot;c&quot; ((long)(b)),&quot;d&quot; ((long)(c)):&quot;bx&quot;); &bslash;&n;if (__res&gt;=0) &bslash;&n;&t;return (type) __res; &bslash;&n;errno=-__res; &bslash;&n;return -1; &bslash;&n;}
 macro_line|#endif /* __LIBRARY__ */
 r_extern
 r_int
@@ -1117,6 +1121,16 @@ r_struct
 id|timeval
 op_star
 id|timeout
+)paren
+suffix:semicolon
+r_int
+id|swapon
+c_func
+(paren
+r_const
+r_char
+op_star
+id|specialfile
 )paren
 suffix:semicolon
 macro_line|#endif

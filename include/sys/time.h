@@ -56,6 +56,8 @@ DECL|macro|DST_TUR
 mdefine_line|#define&t;DST_TUR&t;&t;9&t;/* Turkey */
 DECL|macro|DST_AUSTALT
 mdefine_line|#define&t;DST_AUSTALT&t;10&t;/* Australian style with shift in 1986 */
+DECL|macro|FD_SETSIZE
+mdefine_line|#define FD_SETSIZE&t;&t;(8*sizeof(fd_set))
 DECL|macro|FD_SET
 mdefine_line|#define FD_SET(fd,fdsetp)&t;(*(fdsetp) |= (1 &lt;&lt; (fd)))
 DECL|macro|FD_CLR

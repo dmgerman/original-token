@@ -75,7 +75,7 @@ l_string|&quot;addl %%eax,4(%2)&bslash;n&bslash;t&quot;
 l_string|&quot;adcl %%edx,8(%2)&bslash;n&bslash;t&quot;
 l_string|&quot;adcl $0,12(%2)&quot;
 op_scope_resolution
-l_string|&quot;b&quot;
+l_string|&quot;S&quot;
 (paren
 (paren
 r_int

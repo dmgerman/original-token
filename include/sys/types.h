@@ -77,7 +77,7 @@ suffix:semicolon
 DECL|typedef|nlink_t
 r_typedef
 r_int
-r_char
+r_int
 id|nlink_t
 suffix:semicolon
 DECL|typedef|daddr_t
@@ -101,6 +101,12 @@ r_typedef
 r_int
 r_int
 id|ushort
+suffix:semicolon
+DECL|typedef|caddr_t
+r_typedef
+r_char
+op_star
+id|caddr_t
 suffix:semicolon
 DECL|typedef|cc_t
 r_typedef
